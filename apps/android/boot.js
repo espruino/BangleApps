@@ -122,7 +122,10 @@
         var cal = require("Storage").readJSON("android.calendar.json",true);
         //if any of those happen we are out of sync!
         if (!cal || !Array.isArray(cal)) cal = [];
-        cal = cal.filter(e=>e.id!=event.id);
+        if (Array.isArray(event.id))
+          cal = cal.filter(e=>!event.id.includes(e.id));
+        else
+          cal = cal.filter(e=>e.id!=event.id);
         require("Storage").writeJSON("android.calendar.json", cal);
       },
       //triggered by GB, send all ids
