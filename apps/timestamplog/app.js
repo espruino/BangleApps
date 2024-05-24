@@ -278,6 +278,7 @@ class MainScreen {
 
     // Kill layout handlers
     Bangle.removeListener('drag', this.listeners.drag);
+    Bangle.removeListener('touch', this.listeners.touch);
     Bangle.setUI();
   }
 
@@ -329,7 +330,8 @@ class MainScreen {
     // Populate log items in layout
     for (i = 0; i < this.itemsPerPage; i++) {
       layout.logItems.c.push(
-        {type: 'custom', render: renderLogItem, item: undefined, fillx: 1, height: logItemHeight}
+        {type: 'custom', render: renderLogItem, item: undefined, itemIdx: undefined,
+         fillx: 1, height: logItemHeight}
       );
     }
     layout.logScroll.height = logItemHeight * this.itemsPerPage;
@@ -347,6 +349,7 @@ class MainScreen {
       for (let elem of layLogItems.c) {
         logIdx++;
         elem.item = this.stampLog.log[logIdx];
+        elem.itemIdx = logIdx;
       }
       this.layout.render(layLogItems);
       this.layout.render(this.layout.logScroll);
@@ -412,6 +415,23 @@ class MainScreen {
 
     this.listeners.drag = dragHandler.bind(this);
     Bangle.on('drag', this.listeners.drag);
+
+    function touchHandler(button, xy) {
+      // Handle taps on log entries
+      let logUIItems = this.layout.logItems.c;
+      for (var logUIObj of logUIItems) {
+        if (!xy.type &&
+            logUIObj.x <= xy.x && xy.x < logUIObj.x + logUIObj.w &&
+            logUIObj.y <= xy.y && xy.y < logUIObj.y + logUIObj.h &&
+            logUIObj.item) {
+          switchUI(new LogEntryScreen(this.stampLog, logUIObj.itemIdx));
+          break;
+        }
+      }
+    }
+
+    this.listeners.touch = touchHandler.bind(this);
+    Bangle.on('touch', this.listeners.touch);
   }
 
   // Add current timestamp to log if possible and update UI display
@@ -474,6 +494,96 @@ class MainScreen {
 }
 
 
+// Log entry screen interface, launched by calling start()
+class LogEntryScreen {
+
+  constructor(stampLog, logIdx) {
+    this.stampLog = stampLog;
+    this.logIdx = logIdx;
+    this.logItem = stampLog.log[logIdx];
+
+    this.defaultFont = fontSpec(
+      SETTINGS.logFont, SETTINGS.logFontHSize, SETTINGS.logFontVSize);
+  }
+
+  start() {
+    this._initLayout();
+    this.layout.clear();
+    this.render();
+  }
+
+  stop() {
+    Bangle.setUI();
+  }
+
+  back() {
+    this.stop();
+    switchUI(mainUI);
+  }
+
+  _initLayout() {
+    let layout = new Layout(
+      {type: 'v',
+       c: [
+         {type: 'txt', font: this.defaultFont, label: locale.date(this.logItem.stamp, 1)},
+         {type: 'txt', font: this.defaultFont, label: locale.time(this.logItem.stamp).trim()},
+         {type: '', id: 'placeholder', fillx: 1, filly: 1},
+         {type: 'btn', font: '6x15', label: 'Delete', cb: this.delLogItem.bind(this),
+          cbl: this.delLogItem.bind(this)},
+       ],
+      },
+      {
+        back: this.back.bind(this),
+        btns: [
+          {label: '<', cb: this.prevLogItem.bind(this)},
+          {label: '>', cb: this.nextLogItem.bind(this)},
+        ],
+      }
+    );
+
+    layout.update();
+    this.layout = layout;
+  }
+
+  render(item) {
+    this.layout.clear();
+    this.layout.render();
+  }
+
+  refresh() {
+    this.logItem = this.stampLog.log[this.logIdx];
+    this._initLayout();
+    this.render();
+  }
+
+  prevLogItem() {
+    this.logIdx = this.logIdx ? this.logIdx-1 : this.stampLog.log.length-1;
+    this.refresh();
+  }
+
+  nextLogItem() {
+    this.logIdx = this.logIdx == this.stampLog.log.length-1 ? 0 : this.logIdx+1;
+    this.refresh();
+  }
+
+  delLogItem() {
+    this.stampLog.deleteEntries([this.logItem]);
+    if (!this.stampLog.log.length) {
+      this.back();
+      return;
+    } else if (this.logIdx > this.stampLog.log.length - 1) {
+      this.logIdx = this.stampLog.log.length - 1;
+    }
+
+    // Create a brief “blink” on the screen to provide user feedback
+    // that the deletion has been performed
+    this.layout.clear();
+    setTimeout(this.refresh.bind(this), 250);
+  }
+
+}
+
+
 function settingsMenu() {
   const fonts = g.getFonts();
 
@@ -508,6 +618,7 @@ function settingsMenu() {
           SETTINGS.rotateLog = !SETTINGS.rotateLog;
         }
       },
+      'Clear log': clearLogPrompt,
     });
   }
 
@@ -547,6 +658,20 @@ function settingsMenu() {
     currentUI.start();
   }
 
+  function clearLogPrompt() {
+    E.showPrompt('Erase ALL log entries?', {
+      title: 'Clear log',
+      buttons: {'Erase':1, "Don't":0}
+    }).then((yes) => {
+      if (yes) {
+        stampLog.deleteEntries(stampLog.log)
+        endMenu();
+      } else {
+        logMenu();
+      }
+    });
+  }
+
   currentUI.stop();
   topMenu();
 }
@@ -564,6 +689,13 @@ function saveErrorAlert() {
 }
 
 
+function switchUI(newUI) {
+  currentUI.stop();
+  currentUI = newUI;
+  currentUI.start();
+}
+
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
@@ -572,4 +704,5 @@ E.on('kill', stampLog.save.bind(stampLog));
 stampLog.on('saveError', saveErrorAlert);
 
 var currentUI = new MainScreen(stampLog);
+var mainUI = currentUI;
 currentUI.start();
