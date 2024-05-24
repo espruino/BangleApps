@@ -1,2 +1,3 @@
 0.01: New app!
 0.02: Advertise accelerometer data and sensor location
+0.03: Use the bleAdvert module

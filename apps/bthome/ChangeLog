@@ -3,3 +3,4 @@
 0.03: Cope with identical duplicate buttons (fix #3260)
       Set 'n' for buttons in Bangle.btHomeData correctly (avoids adding extra buttons on end of advertising)
 0.04: Fix duplicate button on edit->save
+0.05: Use the bleAdvert module
