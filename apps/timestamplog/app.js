@@ -21,7 +21,15 @@ const SETTINGS = Object.assign({
   logFontVSize: 1,
   maxLogLength: 30,
   rotateLog: false,
+  buttonAction: 'Log time',
 }, storage.readJSON(SETTINGS_FILENAME, true) || {});
+
+const SETTINGS_BUTTON_ACTION = [
+  'Log time',
+  'Show menu',
+  'Quit app',
+  'Do nothing',
+];
 
 function saveSettings() {
   if (!storage.writeJSON(SETTINGS_FILENAME, SETTINGS)) {
@@ -279,6 +287,7 @@ class MainScreen {
     // Kill layout handlers
     Bangle.removeListener('drag', this.listeners.drag);
     Bangle.removeListener('touch', this.listeners.touch);
+    clearWatch(this.listeners.btnWatch);
     Bangle.setUI();
   }
 
@@ -432,6 +441,23 @@ class MainScreen {
 
     this.listeners.touch = touchHandler.bind(this);
     Bangle.on('touch', this.listeners.touch);
+
+    function buttonHandler() {
+      let act = SETTINGS.buttonAction;
+      if (act == 'Log time') {
+        if (currentUI != mainUI) {
+          switchUI(mainUI);
+        }
+        mainUI.addTimestamp();
+      } else if (act == 'Show menu') {
+        settingsMenu();
+      } else if (act == 'Quit app') {
+        Bangle.showClock();
+      }
+    }
+
+    this.listeners.btnWatch = setWatch(buttonHandler, BTN,
+      {edge: 'falling', debounce: 50, repeat: true});
   }
 
   // Add current timestamp to log if possible and update UI display
@@ -509,7 +535,7 @@ class LogEntryScreen {
   start() {
     this._initLayout();
     this.layout.clear();
-    this.render();
+    this.refresh();
   }
 
   stop() {
@@ -525,8 +551,8 @@ class LogEntryScreen {
     let layout = new Layout(
       {type: 'v',
        c: [
-         {type: 'txt', font: this.defaultFont, label: locale.date(this.logItem.stamp, 1)},
-         {type: 'txt', font: this.defaultFont, label: locale.time(this.logItem.stamp).trim()},
+         {type: 'txt', font: this.defaultFont, id: 'date', label: '?'},
+         {type: 'txt', font: this.defaultFont, id: 'time', label: '?'},
          {type: '', id: 'placeholder', fillx: 1, filly: 1},
          {type: 'btn', font: '6x15', label: 'Delete', cb: this.delLogItem.bind(this),
           cbl: this.delLogItem.bind(this)},
@@ -552,7 +578,9 @@ class LogEntryScreen {
 
   refresh() {
     this.logItem = this.stampLog.log[this.logIdx];
-    this._initLayout();
+    this.layout.date.label = locale.date(this.logItem.stamp, 1);
+    this.layout.time.label = locale.time(this.logItem.stamp).trim();
+    this.layout.update();
     this.render();
   }
 
@@ -595,6 +623,14 @@ function settingsMenu() {
       },
       'Log': logMenu,
       'Appearance': appearanceMenu,
+      'Button': {
+        value: SETTINGS_BUTTON_ACTION.indexOf(SETTINGS.buttonAction),
+        min: 0, max: SETTINGS_BUTTON_ACTION.length - 1,
+        format: v => SETTINGS_BUTTON_ACTION[v],
+        onchange: v => {
+          SETTINGS.buttonAction = SETTINGS_BUTTON_ACTION[v];
+        },
+      },
     });
   }
 
