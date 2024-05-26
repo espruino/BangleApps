@@ -320,7 +320,7 @@ class MainScreen {
             {type: 'btn', font: '6x8:2', fillx: 1, label: '+ XX:XX', id: 'addBtn',
              cb: this.addTimestamp.bind(this)},
             {type: 'btn', font: '6x8:2', label: getIcon('menu'), id: 'menuBtn',
-             cb: settingsMenu},
+             cb: launchSettingsMenu},
           ],
          },
        ],
@@ -450,7 +450,7 @@ class MainScreen {
         }
         mainUI.addTimestamp();
       } else if (act == 'Show menu') {
-        settingsMenu();
+        launchSettingsMenu();
       } else if (act == 'Quit app') {
         Bangle.showClock();
       }
@@ -612,7 +612,7 @@ class LogEntryScreen {
 }
 
 
-function settingsMenu() {
+function launchSettingsMenu() {
   const fonts = g.getFonts();
 
   function topMenu() {
