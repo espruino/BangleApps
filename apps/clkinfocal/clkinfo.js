@@ -5,7 +5,7 @@
   var getDateString = function(dt) {
     switch(settings.fmt) {
     case "dd MMM":
-      return '' + dt.getDate() + ' ' + require("locale").month(dt,1).toUpperCase();
+      return require("locale").month(dt,1).toUpperCase();
     case "DDD dd":
       return require("locale").dow(dt,1).toUpperCase() + ' ' + dt.getDate();
     default: // DDD

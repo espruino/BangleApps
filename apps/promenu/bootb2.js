@@ -12,12 +12,10 @@ E.showMenu = function (items) {
         g.fillPoly(RectRnd(x1, y1, x2, y2, r));
         g.setColor(255, 255, 255);
     };
+    var options = items && items[""] || {};
+    if (items)
+        delete items[""];
     var menuItems = Object.keys(items);
-    var options = items[""] || {};
-    if (!(options instanceof Object))
-        options = {};
-    if (options)
-        menuItems.splice(menuItems.indexOf(""), 1);
     var fontHeight = options.fontHeight || 25;
     var selected = options.scroll || options.selected || 0;
     var ar = Bangle.appRect;
@@ -144,7 +142,7 @@ E.showMenu = function (items) {
     l.draw();
     var back = options.back;
     if (!back) {
-        var backItem = items["< Back"];
+        var backItem = items && items["< Back"];
         if (typeof backItem === "function")
             back = backItem;
         else if (backItem && "back" in backItem)
