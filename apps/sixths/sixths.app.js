@@ -702,7 +702,7 @@ function queueDraw() {
     next = 60000;
   else
     next =  1000;
-  setTimeout(draw, (Date.now() % next));
+  setTimeout(draw, next - (Date.now() % next));
 }
 function start() {
   g.reset();
