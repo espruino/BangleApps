@@ -1,4 +1,5 @@
 declare let exports: any;
+declare let BLE_DEBUG: undefined | true;
 
 type BleAdvert = { [key: string | number]: number[] };
 type BangleWithAdvert = (typeof Bangle) & { bleAdvert?: BleAdvert | BleAdvert[]; };
@@ -27,18 +28,30 @@ exports.set = (id: string | number, advert: number[], options?: SetAdvertisingOp
 			if(ad[id]){
 				ad[id] = advert;
 				found = true;
+                if(typeof BLE_DEBUG !== "undefined")
+                    console.log(`bleAdvert is array, found existing entry for ${id}, replaced`)
 				break;
 			}
 		}
-		if(!found)
+		if(!found){
 			bangle.bleAdvert.push({ [id]: advert });
+            if(typeof BLE_DEBUG !== "undefined")
+                console.log(`bleAdvert is array, no entry for ${id}, created`)
+		}
 	}else if(bangle.bleAdvert){
+        if(typeof BLE_DEBUG !== "undefined")
+            console.log(`bleAdvert is object, ${id} entry ${id in bangle.bleAdvert ? "replaced" : "created"}`);
 		bangle.bleAdvert[id] = advert;
 	}else{
+        if(typeof BLE_DEBUG !== "undefined")
+            console.log(`bleAdvert not present, created`);
 		bangle.bleAdvert = {
 			[id]: advert,
 		};
 	}
+
+    if(typeof BLE_DEBUG !== "undefined")
+        console.log(`NRF.setAdvertising({ ${Object.keys(bangle.bleAdvert).join(", ")} }, ${JSON.stringify(options)})`);
 
 	NRF.setAdvertising(clone(bangle.bleAdvert), options);
 	// clone the object, to avoid firmware behaving like so:
@@ -58,6 +71,9 @@ exports.set = (id: string | number, advert: number[], options?: SetAdvertisingOp
 
 exports.remove = (id: string | number, options?: SetAdvertisingOptions) => {
 	const bangle = Bangle as BangleWithAdvert;
+
+    if(typeof BLE_DEBUG !== "undefined")
+        console.log(`ble_advert.remove(${id}, ${JSON.stringify(options)})`);
 
 	if(Array.isArray(bangle.bleAdvert)){
 		let i = 0;
