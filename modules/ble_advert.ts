@@ -102,6 +102,7 @@ exports.push = (adv: number[], options?: SetAdvertisingOptions) => {
 	advertise(options);
 };
 
+/*
 exports.remove = (id: string | number, options?: SetAdvertisingOptions) => {
 	const bangle = Bangle as BangleWithAdvert;
 
@@ -132,3 +133,4 @@ exports.remove = (id: string | number, options?: SetAdvertisingOptions) => {
 
 	advertise(options);
 };
+*/
