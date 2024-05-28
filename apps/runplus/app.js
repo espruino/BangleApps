@@ -1,5 +1,4 @@
 let runInterval;
-let statusTimeout;
 let screen = "main"; // main | karvonen | menu | zoom
 // Run interface wrapped in a function
 const ExStats = require("exstats");
@@ -27,10 +26,7 @@ let settings = Object.assign({
   B5: "step",
   B6: "caden",
   paceLength: 1000,
-  resume: {
-    promptAfter: 10000,
-    default: false,
-  },
+  alwaysResume: false,
   notify: {
     dist: {
       value: 0,
@@ -54,15 +50,9 @@ let statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,setti
 let exs = ExStats.getStats(statIDs, settings);
 // ---------------------------
 
-function inPauseWindow() {
-  return exs.state.duration <= settings.resume.promptAfter;
-}
-
 function setStatus(running) {
-  const paused = inPauseWindow();
-
-  layout.button.label = running ? "STOP" : paused ? "RESUME" : "START";
-  layout.status.label = running ? "RUN" : paused ? "PAUSE" : "STOP";
+  layout.button.label = running ? "STOP" : "START";
+  layout.status.label = running ? "RUN" : "STOP";
   layout.status.bgCol = running ? "#0f0" : "#f00";
   if (screen === "main") layout.render();
 }
@@ -75,10 +65,10 @@ function onStartStop() {
   }
 
   var running = !exs.state.active;
-  var shouldResume = settings.resume.default;
+  var shouldResume = settings.alwaysResume;
   var promise = Promise.resolve();
 
-  if (running && !inPauseWindow()) { // if more than N seconds of duration, ask if we should resume?
+  if (!shouldResume && running && exs.state.duration > 10000) { // if more than 10 seconds of duration, ask if we should resume?
     promise = promise.
       then(() => {
         screen = "menu";
@@ -114,8 +104,6 @@ function onStartStop() {
   }
 
   promise.then(() => {
-    if(statusTimeout) clearTimeout(statusTimeout);
-
     if (running) {
       if (shouldResume)
         exs.resume();
@@ -123,12 +111,6 @@ function onStartStop() {
         exs.start();
     } else {
       exs.stop();
-
-      // convert start/stop label when pause-window ends
-      statusTimeout = setTimeout(() => {
-        statusTimeout = undefined;
-        setStatus(running);
-      }, settings.resume.promptAfter);
     }
     // if stopping running, don't clear state
     // so we can at least refer to what we've done

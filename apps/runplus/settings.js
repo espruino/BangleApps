@@ -17,10 +17,7 @@
     B5: "step",
     B6: "caden",
     paceLength: 1000, // TODO: Default to either 1km or 1mi based on locale
-    resume: {
-      promptAfter: 10000,
-      default: false,
-    },
+    alwaysResume: false,
     notify: {
       dist: {
         increment: 0,
@@ -76,27 +73,17 @@
         saveSettings();
       }
     };
+  menu[/*LANG*/"Always resume run"] = {
+    value : settings.alwaysResume,
+    onchange : v => {
+      settings.alwaysResume = v;
+      saveSettings();
+    },
+  };
   var notificationsMenu = {
     '< Back': function() { E.showMenu(menu) },
   }
   menu[/*LANG*/"Notifications"] = function() { E.showMenu(notificationsMenu)};
-  var resumeMenu = {
-    "Prompt after": {
-      value : settings.resume.promptAfter / 1000,
-      onchange : v => {
-        settings.resume.promptAfter = v * 1000;
-        saveSettings();
-      }
-    },
-    "Resume by default": {
-      value : settings.resume.default,
-      onchange : v => {
-        settings.resume.default = v;
-        saveSettings();
-      },
-    },
-  };
-  menu[/*LANG*/"Resume"] = function() { E.showMenu(resumeMenu) };
   ExStats.appendMenuItems(menu, settings, saveSettings);
   ExStats.appendNotifyMenuItems(notificationsMenu, settings, saveSettings);
   var vibPatterns = [/*LANG*/"Off", ".", "-", "--", "-.-", "---"];
