@@ -1,59 +1,27 @@
 declare let exports: any;
-declare let BLE_DEBUG: undefined | true;
+//declare let BLE_DEBUG: undefined | true;
 
-type BleAdvert = { [key: string | number]: number[] };
+type BleAdvertObj = { [key: string | number]: number[] };
+type BleAdvert = BleAdvertObj | number[];
 type BangleWithAdvert = (typeof Bangle) & { bleAdvert?: BleAdvert | BleAdvert[]; };
 type SetAdvertisingOptions = typeof NRF.setAdvertising extends (data: any, options: infer Opts) => any ? Opts : never;
 
-const clone = (obj: any): any => {
-	// just for our use-case
-	if(Array.isArray(obj)){
-		return obj.map(clone);
-	}else if(typeof obj === "object"){
-		const r = {};
-		for(const k in obj)
-			// @ts-expect-error implicitly
-			r[k] = clone(obj[k]);
-		return r;
-	}
-	return obj;
-};
-
-exports.set = (id: string | number, advert: number[], options?: SetAdvertisingOptions) => {
-	const bangle = Bangle as BangleWithAdvert;
-
-	if(Array.isArray(bangle.bleAdvert)){
-		let found = false;
-		for(let ad of bangle.bleAdvert){
-			if(ad[id]){
-				ad[id] = advert;
-				found = true;
-                if(typeof BLE_DEBUG !== "undefined")
-                    console.log(`bleAdvert is array, found existing entry for ${id}, replaced`)
-				break;
+const advertise = (options: SetAdvertisingOptions) => {
+	const clone = (obj: any): any => {
+		// just for our use-case
+		if(Array.isArray(obj)){
+			return obj.map(clone);
+		}else if(typeof obj === "object"){
+			const r = {};
+			for(const k in obj){
+				// @ts-expect-error implicitly
+				r[k] = clone(obj[k]);
 			}
+			return r;
 		}
-		if(!found){
-			bangle.bleAdvert.push({ [id]: advert });
-            if(typeof BLE_DEBUG !== "undefined")
-                console.log(`bleAdvert is array, no entry for ${id}, created`)
-		}
-	}else if(bangle.bleAdvert){
-        if(typeof BLE_DEBUG !== "undefined")
-            console.log(`bleAdvert is object, ${id} entry ${id in bangle.bleAdvert ? "replaced" : "created"}`);
-		bangle.bleAdvert[id] = advert;
-	}else{
-        if(typeof BLE_DEBUG !== "undefined")
-            console.log(`bleAdvert not present, created`);
-		bangle.bleAdvert = {
-			[id]: advert,
-		};
-	}
+		return obj;
+	};
 
-    if(typeof BLE_DEBUG !== "undefined")
-        console.log(`NRF.setAdvertising({ ${Object.keys(bangle.bleAdvert).join(", ")} }, ${JSON.stringify(options)})`);
-
-	NRF.setAdvertising(clone(bangle.bleAdvert), options);
 	// clone the object, to avoid firmware behaving like so:
 	// bleAdvert = [Uint8Array, { [0x180f]: ... }]
 	//              ^           ^
@@ -67,17 +35,83 @@ exports.set = (id: string | number, advert: number[], options?: SetAdvertisingOp
 	// taking effect for later calls.
 	//
 	// This also allows us to identify previous adverts correctly by id.
+	NRF.setAdvertising(clone((Bangle as BangleWithAdvert).bleAdvert), options);
+};
+
+const manyAdv = (bleAdvert: BleAdvert | BleAdvert[] | undefined): bleAdvert is BleAdvert[] => {
+	return Array.isArray(bleAdvert) && typeof bleAdvert[0] === "object";
+};
+
+exports.set = (id: string | number, advert: number[], options?: SetAdvertisingOptions) => {
+	const bangle = Bangle as BangleWithAdvert;
+
+	if(manyAdv(bangle.bleAdvert)){
+		let found = false;
+		let obj;
+		for(let ad of bangle.bleAdvert){
+			if(Array.isArray(ad)) continue;
+			obj = ad;
+			if(ad[id]){
+				ad[id] = advert;
+				found = true;
+				// if(typeof BLE_DEBUG !== "undefined")
+				// 	console.log(`bleAdvert is array, found existing entry for ${id}, replaced`)
+				break;
+			}
+		}
+		if(!found){
+			if(obj)
+				obj[id] = advert;
+			else
+				bangle.bleAdvert.push({ [id]: advert });
+			// if(typeof BLE_DEBUG !== "undefined")
+			// 	console.log(`bleAdvert is array, no entry for ${id}, created`)
+		}
+	}else if(bangle.bleAdvert){
+		// if(typeof BLE_DEBUG !== "undefined")
+		// 	console.log(`bleAdvert is object, ${id} entry ${id in bangle.bleAdvert ? "replaced" : "created"}`);
+		if(Array.isArray(bangle.bleAdvert)){
+			bangle.bleAdvert = [bangle.bleAdvert, { [id]: advert }];
+		}else{
+			bangle.bleAdvert[id] = advert;
+		}
+	}else{
+		// if(typeof BLE_DEBUG !== "undefined")
+		// 	console.log(`bleAdvert not present, created`);
+		bangle.bleAdvert = { [id]: advert };
+	}
+
+	// if(typeof BLE_DEBUG !== "undefined")
+	// 	console.log(`NRF.setAdvertising({ ${Object.keys(bangle.bleAdvert).join(", ")} }, ${JSON.stringify(options)})`);
+
+	advertise(options);
+};
+
+exports.push = (adv: number[], options?: SetAdvertisingOptions) => {
+	const bangle = Bangle as BangleWithAdvert;
+
+	if(manyAdv(bangle.bleAdvert)){
+		bangle.bleAdvert.push(adv);
+	}else if(bangle.bleAdvert){
+		bangle.bleAdvert = [bangle.bleAdvert, adv];
+	}else{
+		// keep a second entry for normal/original advertising as well as this extra one
+		bangle.bleAdvert = [adv, {}];
+	}
+
+	advertise(options);
 };
 
 exports.remove = (id: string | number, options?: SetAdvertisingOptions) => {
 	const bangle = Bangle as BangleWithAdvert;
 
-    if(typeof BLE_DEBUG !== "undefined")
-        console.log(`ble_advert.remove(${id}, ${JSON.stringify(options)})`);
+	// if(typeof BLE_DEBUG !== "undefined")
+	// 	console.log(`ble_advert.remove(${id}, ${JSON.stringify(options)})`);
 
-	if(Array.isArray(bangle.bleAdvert)){
+	if(manyAdv(bangle.bleAdvert)){
 		let i = 0;
 		for(const ad of bangle.bleAdvert){
+			if(Array.isArray(ad)) continue;
 			if(ad[id]){
 				delete ad[id];
 				let empty = true;
@@ -92,8 +126,9 @@ exports.remove = (id: string | number, options?: SetAdvertisingOptions) => {
 			i++;
 		}
 	}else if(bangle.bleAdvert){
-		delete bangle.bleAdvert[id];
+		if(!Array.isArray(bangle.bleAdvert))
+			delete bangle.bleAdvert[id];
 	}
 
-	NRF.setAdvertising(bangle.bleAdvert, options);
+	advertise(options);
 };
