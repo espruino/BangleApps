@@ -40,7 +40,7 @@ const key = E.toUint8Array(atob(${JSON.stringify(keyValue)})); // public key
 const mac = [ key[0] | 0b11000000, key[1], key[2], key[3], key[4], key[5] ].map(x => x.toString(16).padStart(2, '0')).join(':'); // mac address
 const adv = [ 0x1e, 0xff, 0x4c, 0x00, 0x12, 0x19, 0x00, key[6], key[7], key[8], key[9], key[10], key[11], key[12], key[13], key[14], key[15], key[16], key[17], key[18], key[19], key[20], key[21], key[22], key[23], key[24], key[25], key[26], key[27], key[0] >> 6, 0x00 ]; // advertising packet
 NRF.setAddress(mac);
-NRF.setAdvertising([adv,{}],{whenConnected: true, interval: 1000}); // advertise AirTag *and* normal device name (to remain connectable)
+require("ble_advert").push(adv, {whenConnected: true, interval: 1000}); // advertise AirTag *and* normal device name (to remain connectable)
 }
 `;
         // send finished app
