@@ -554,8 +554,8 @@ class LogEntryScreen {
          {type: 'txt', font: this.defaultFont, id: 'date', label: '?'},
          {type: 'txt', font: this.defaultFont, id: 'time', label: '?'},
          {type: '', id: 'placeholder', fillx: 1, filly: 1},
-         {type: 'btn', font: '6x15', label: 'Hold to delete',
-          cbl: this.delLogItem.bind(this)},
+         {type: 'btn', font: '12x20', label: 'Delete',
+          cb: this.delLogItem.bind(this)},
        ],
       },
       {
