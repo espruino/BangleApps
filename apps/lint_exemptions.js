@@ -197,9 +197,8 @@ module.exports = {
     ]
   },
   "apps/sixths/sixths.app.js": {
-    "hash": "b4572a529b31a5edcbd6ca5843b91c54abcbf75b2a28e90bd33751f7d6a3ebcd",
+    "hash": "2a4676828bdf78df052df402de34e6f1abd1c847ebe0d193fc789cd6e9dd0e5c",
     "rules": [
-      "no-unused-vars",
       "no-undef"
     ]
   },
@@ -1157,12 +1156,6 @@ module.exports = {
   },
   "apps/contourclock/contourclock.settings.js": {
     "hash": "dfbd3057e8dba227b7f83e28c1efea44ac8b3a1312a61c1b4896b8786b96c342",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/contacts/contacts.app.js": {
-    "hash": "f105adae91ef5bb79266bd20b8f1f5aaebe9863853c714d1f2b22c97d9ff7773",
     "rules": [
       "no-undef"
     ]
