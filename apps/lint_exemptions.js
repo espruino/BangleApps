@@ -1161,12 +1161,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/contacts/contacts.app.js": {
-    "hash": "f105adae91ef5bb79266bd20b8f1f5aaebe9863853c714d1f2b22c97d9ff7773",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/calendar/settings.js": {
     "hash": "9f05366b91d0293ed965d8de019bfd044f96683542b86ebabaa3c8d3cc3ad3a7",
     "rules": [
