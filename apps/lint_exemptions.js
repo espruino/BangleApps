@@ -197,9 +197,8 @@ module.exports = {
     ]
   },
   "apps/sixths/sixths.app.js": {
-    "hash": "b4572a529b31a5edcbd6ca5843b91c54abcbf75b2a28e90bd33751f7d6a3ebcd",
+    "hash": "2a4676828bdf78df052df402de34e6f1abd1c847ebe0d193fc789cd6e9dd0e5c",
     "rules": [
-      "no-unused-vars",
       "no-undef"
     ]
   },
