@@ -3,13 +3,11 @@
 
 // Options you'll want to edit
 const rest_altitude = 354;
-const geoid_to_sea_level = 0; // Maybe BangleJS2 already compensates?
 
 const W = g.getWidth();
 const H = g.getHeight();
 
-var cx = 100, cy = 105, sc = 70,
-temp = 0, alt = 0, bpm = 0;
+var cx = 100, cy = 105, sc = 70, temp = 0, alt = 0, bpm = 0;
 var buzz = "",      /* Set this to transmit morse via vibrations */
     inm = "", l = "", /* For incoming morse handling */
     in_str = "",
@@ -45,15 +43,15 @@ var cur_mark = null;
 // Icons
 
 var icon_alt = "\0\x08\x1a\1\x00\x00\x00\x20\x30\x78\x7C\xFE\xFF\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00";
-var icon_m = "\0\x08\x1a\1\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00";
+//var icon_m = "\0\x08\x1a\1\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00";
 var icon_km = "\0\x08\x1a\1\xC3\xC6\xCC\xD8\xF0\xD8\xCC\xC6\xC3\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00";
 var icon_kph = "\0\x08\x1a\1\xC3\xC6\xCC\xD8\xF0\xD8\xCC\xC6\xC3\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\xFF\x00\xC3\xC3\xFF\xC3\xC3";
 var icon_c = "\0\x08\x1a\1\x00\x00\x60\x90\x90\x60\x00\x7F\xFF\xC0\xC0\xC0\xC0\xC0\xFF\x7F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 
 function toMorse(x) {
-  var r = "";
+  let r = "";
   for (var i = 0; i < x.length; i++) {
-    var c = x[i];
+    let c = x[i];
     if (c == " ") {
       r += " ";
       continue;
@@ -113,20 +111,15 @@ function gpsHandleFix(fix) {
     doBuzz(" .");
     prev_fix = fix;
   }
-  if (0) {
-    /* GPS altitude fluctuates a lot, not really usable */
-    alt_adjust = cur_altitude - (fix.alt + geoid_to_sea_level);
-    alt_adjust_mode = "g";
-  }
   if (1) {
     let now1 = Date();
     let now2 = fix.time;
-    var n1 = now1.getMinutes() * 60 + now1.getSeconds();
-    var n2 = now2.getMinutes() * 60 + now2.getSeconds();
+    let n1 = now1.getMinutes() * 60 + now1.getSeconds();
+    let n2 = now2.getMinutes() * 60 + now2.getSeconds();
     debug2 = "te "+(n2-n1)+"s";
   }
   loggps(fix);
-  var d = calcDistance(fix, prev_fix);
+  let d = calcDistance(fix, prev_fix);
   if (d > 30) {
     prev_fix = fix;
     gps_dist += d/1000;
@@ -135,7 +128,7 @@ function gpsHandleFix(fix) {
 function gpsHandle() {
   let msg = "";
   if (!last_restart) {
-      var d = (getTime()-last_pause);
+      let d = (getTime()-last_pause);
       if (last_fix)
           msg = "PL"+ fmtTimeDiff(getTime()-last_fix);
       else
@@ -146,7 +139,7 @@ function gpsHandle() {
         gpsRestart();
       }
     } else {
-      var fix = Bangle.getGPSFix();
+      let fix = Bangle.getGPSFix();
       if (fix && fix.fix && fix.lat) {
         gpsHandleFix(fix);
         msg = fix.speed.toFixed(1) + icon_kph;
@@ -167,8 +160,8 @@ function gpsHandle() {
         }
       }
 
-      var d = (getTime()-last_restart);
-      var d2 = (getTime()-last_fstart);
+      let d = (getTime()-last_restart);
+      let d2 = (getTime()-last_fstart);
       print("gps on, restarted ", d, gps_needed, d2, fix.lat);
       if (getTime() > gps_speed_limit &&
           (d > gps_needed || (last_fstart && d2 > 10))) {
@@ -192,7 +185,7 @@ function markNew() {
 }
 function markHandle() {
   let m = cur_mark;
-  var msg = m.name + ">" + fmtTimeDiff(getTime()- m.time);
+  let msg = m.name + ">" + fmtTimeDiff(getTime()- m.time);
   if (m.fix && m.fix.fix) {
     let s = fmtDist(calcDistance(m.fix, prev_fix)/1000) + icon_km;
     msg += " " + s;
@@ -230,9 +223,9 @@ function inputHandler(s) {
     return;
   }
   switch(s) {
-    case 'B':
+    case 'B': {
       s = ' B';
-      var bat = E.getBattery();
+      let bat = E.getBattery();
       if (bat > 45)
         s += 'E';
       else
@@ -240,6 +233,7 @@ function inputHandler(s) {
       doBuzz(toMorse(s));
       show("Bat "+bat+"%", 60);
       break;
+    }
     case 'F': gpsOff(); show("GPS off", 3); break;
     case 'G': gpsOn(); gps_limit = getTime() + 60*60*4; show("GPS on", 3); break;
     case 'I':
@@ -253,13 +247,14 @@ function inputHandler(s) {
     case 'N': mode = 1; show(">", 10); mode_time = getTime(); break;
     case 'O': aload("orloj.app.js"); break;
     case 'S': gpsOn(); gps_limit = getTime() + 60*30; gps_speed_limit = gps_limit; show("GPS on", 3); break;
-    case 'T':
+    case 'T': {
       s = ' T';
-      var d = new Date();
+      let d = new Date();
       s += d.getHours() % 10;
       s += add0(d.getMinutes());
       doBuzz(toMorse(s));
       break;
+    }
     case 'R': aload("run.app.js"); break;
     case 'Y': doBuzz(buzz); Bangle.resetCompass(); break;
   }
@@ -378,7 +373,7 @@ function loggps(fix) {
 }
 function hourly() {
   print("hourly");
-  var s = ' T';
+  let s = ' T';
   if (is_active)
     doBuzz(toMorse(s));
   logstamp("");
@@ -388,8 +383,8 @@ function show(msg, timeout) {
 }
 function fivemin() {
   print("fivemin");
-  var s = ' B';
-  var bat = E.getBattery();
+  let s = ' B';
+  let bat = E.getBattery();
   if (bat < 25) {
       if (is_active)
         doBuzz(toMorse(s));
@@ -470,7 +465,7 @@ function drawDot(h, d, s) {
   g.fillCircle(x,y, 10);
 }
 function drawBackground() {
-  var acc = Bangle.getAccel();
+  let acc = Bangle.getAccel();
   is_level = (acc.z < -0.95);
   if (is_level) {
     let obj = Bangle.getCompass();
@@ -551,7 +546,7 @@ function draw() {
     let alt_adjust = cur_altitude - rest_altitude;
     let abs = Math.abs(alt_adjust);
     print("adj", alt_adjust);
-    var o = Bangle.getOptions();
+    let o = Bangle.getOptions();
     if (abs > 10 && abs < 150) {
       let a = 0.01;
       // FIXME: draw is called often compared to alt reading
@@ -588,16 +583,16 @@ function draw_all() {
   let now = new Date();
   g.drawString(now.getHours() + ":" + add0(now.getMinutes()) + ":" + add0(now.getSeconds()), 10, 40);
 
-  var acc = Bangle.getAccel();
+  let acc = Bangle.getAccel();
   let ax = 0 + acc.x, ay = 0.75 + acc.y, az = 0.75 + acc.y;
   let diff = ax * ax + ay * ay + az * az;
   diff = diff * 3;
   if (diff > 1)
     diff = 1;
 
-  var co = Bangle.getCompass();
-  var step = Bangle.getStepCount();
-  var bat = E.getBattery();
+  let co = Bangle.getCompass();
+  let step = Bangle.getStepCount();
+  let bat = E.getBattery();
   Bangle.getPressure().then((x) => { alt = x.altitude; temp = x.temperature; },
                                  print);
 
@@ -618,7 +613,7 @@ function draw_all() {
     g.fillCircle(cx + sc * co.dx / 300, cy + sc * co.dz / 400, 5);
   }
   if (1) {
-    h = co.heading / 360 * 2 * Math.PI;
+    let h = co.heading / 360 * 2 * Math.PI;
     g.setColor(0, 0, 0.5);
     g.fillCircle(cx + sc * Math.sin(h), cy + sc * Math.cos(h), 5);
   }
@@ -635,10 +630,10 @@ function draw_all() {
   queueDraw();
 }
 function accelTask() {
-  var tm = 100;
-  var acc = Bangle.getAccel();
-  var en = !Bangle.isLocked();
-  var msg;
+  let tm = 100;
+  let acc = Bangle.getAccel();
+  let en = !Bangle.isLocked();
+  let msg = "";
   if (en && acc.z < -0.95) {
     msg = "Level";
     doBuzz(".-..");
@@ -654,14 +649,14 @@ function accelTask() {
     doBuzz("..-");
     tm = 3000;
   }
-
+  print(msg);
   setTimeout(accelTask, tm);
 }
 function buzzTask() {
   if (buzz != "") {
-    var now = buzz[0];
+    let now = buzz[0];
     buzz = buzz.substring(1);
-    var dot = 100;
+    let dot = 100;
     if (now == " ") {
       setTimeout(buzzTask, 300);
     } else if (now == ".") {
@@ -730,7 +725,8 @@ function start() {
 
   draw();
   buzzTask();
-  //accelTask();
+  if (0)
+      accelTask();
 
   if (1) {
     last_acc = Bangle.getAccel();

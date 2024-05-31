@@ -54,5 +54,3 @@ possibly allowing scrolling).
 Todo:
 
 *) only turn on compass when needed
-
-*) adjust draw timeouts to save power
