@@ -155,15 +155,10 @@ Bangle.setUI({
     drawTimeout = undefined;
     delete Graphics.prototype.setFontPlayfairDisplay
     delete Graphics.prototype.setFontPlayfairDisplaySm
-    delete clockInfoItems;
     clockInfoMenu1&&clockInfoMenu1.remove();
-    delete clockInfoMenu1;
     clockInfoMenu2&&clockInfoMenu2.remove();
-    delete clockInfoMenu2;
     clockInfoMenu3&&clockInfoMenu3.remove();
-    delete clockInfoMenu3;
     clockInfoMenu4&&clockInfoMenu4.remove();
-    delete clockInfoMenu4;
   }});
 
 Bangle.loadWidgets();
