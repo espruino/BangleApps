@@ -1,5 +1,6 @@
 { // must be inside our own scope here so that when we are unloaded everything disappears
-  // we also define functions using 'let fn = function() {..}' for the same reason. function decls are global
+  // we also define functions using 'let fn = function() {..}' for the same reason. function decls are globalj
+let removeHasNotRun = true;
 let drawTimeout;
 
 const supaClockImg = {
@@ -35,6 +36,7 @@ let drawSplashScreen = function (frame, total) {
 }
 
 // for fast startup-feeling, draw the splash screen once directly once
+g.clear()
 drawSplashScreen(0, 20);
 
 let splashScreen = function () {
@@ -42,9 +44,11 @@ let splashScreen = function () {
   return new Promise((resolve, reject) => {
     let frame = 0;
     function tick() {
-      drawSplashScreen(frame, 20);
+      if (removeHasNotRun) drawSplashScreen(frame, 20);
       frame += 1;
-      if (frame < 20) {
+      if (!removeHasNotRun) {
+        reject();
+      } else if (frame < 20) {
         setTimeout(tick, 50);
       } else {
         resolve();
@@ -118,7 +122,7 @@ let clockInfoDraw = (itm, info, options) => {
     g.drawImage(info.img, options.x+1,options.y+2);
   }
   var text = info.text.toString().toUpperCase();
-  if (g.setFontPlayfairDisplaySm().stringWidth(text)+24-2>options.w) g.setFont("8x12");
+  if (g.setFontPlayfairDisplaySm().stringWidth(text)+24-2>options.w) g.setFont("4x6:2");
   g.setFontAlign(-1,-1).drawString(text, options.x+24+3, options.y+6);
 };
 
@@ -131,7 +135,7 @@ let clockInfoDrawR = (itm, info, options) => {
     g.drawImage(info.img, options.x + options.w-1-24,options.y+2);
   }
   var text = info.text.toString().toUpperCase();
-  if (g.setFontPlayfairDisplaySm().stringWidth(text)+24-2>options.w) g.setFont("8x12");
+  if (g.setFontPlayfairDisplaySm().stringWidth(text)+24-2>options.w) g.setFont("4x6:2");
   g.setFontAlign(1,-1).drawString(text, options.x+options.w-24-3, options.y+6);
 };
 
@@ -146,19 +150,15 @@ let clockInfoMenu4;
 Bangle.setUI({
   mode : "clock",
   remove : function() {  // for fastloading, clear the app memory
+    removeHasNotRun = false;
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
     delete Graphics.prototype.setFontPlayfairDisplay
     delete Graphics.prototype.setFontPlayfairDisplaySm
-    delete clockInfoItems;
-    clockInfoMenu1.remove();
-    delete clockInfoMenu1;
-    clockInfoMenu2.remove();
-    delete clockInfoMenu2;
-    clockInfoMenu3.remove();
-    delete clockInfoMenu3;
-    clockInfoMenu4.remove();
-    delete clockInfoMenu4;
+    clockInfoMenu1&&clockInfoMenu1.remove();
+    clockInfoMenu2&&clockInfoMenu2.remove();
+    clockInfoMenu3&&clockInfoMenu3.remove();
+    clockInfoMenu4&&clockInfoMenu4.remove();
   }});
 
 Bangle.loadWidgets();
@@ -190,6 +190,6 @@ splashScreen().then(() => {
       }
     }
   }, 1);
-});
+},() => {});
 
 }
