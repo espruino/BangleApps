@@ -376,7 +376,7 @@ function hourly() {
   let s = ' T';
   if (is_active)
     doBuzz(toMorse(s));
-  logstamp("");
+  //logstamp("");
 }
 function show(msg, timeout) {
   note = msg;
