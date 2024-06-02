@@ -185,8 +185,11 @@ function markNew() {
 }
 function markHandle() {
   let m = cur_mark;
-  let msg = m.name + ">" + fmtTimeDiff(getTime()- m.time);
-  if (m.fix && m.fix.fix) {
+  let msg = m.name + ">";
+  if (m.time) {
+    msg += fmtTimeDiff(getTime()- m.time);
+  }
+  if (prev_fix && prev_fix.fix && m.fix && m.fix.fix) {
     let s = fmtDist(calcDistance(m.fix, prev_fix)/1000) + icon_km;
     msg += " " + s;
     debug = "wp>" + s;
@@ -206,6 +209,34 @@ function entryDone() {
   }
   in_str = 0;
   mode = 0;
+}
+var waypoints = [], sel_wp = 0;
+function loadWPs() {
+  waypoints = require("Storage").readJSON(`waypoints.json`)||[{}];
+  print("Have waypoints", waypoints);
+}
+function saveWPs() {
+  require("Storage").writeJSON(`waypoints.json`,waypoints);
+}
+function selectWP(i) {
+  sel_wp += i;
+  if (sel_wp < 0)
+    sel_wp = 0;
+  if (sel_wp >= waypoints.length)
+    sel_wp = waypoints.length - 1;
+  if (sel_wp < 0) {
+    show("No WPs", 60);
+  }
+  let wp = waypoints[sel_wp];
+  cur_mark = {};
+  cur_mark.name = wp.name;
+  cur_mark.gps_dist = 0; /* HACK */
+  cur_mark.fix = {};
+  cur_mark.fix.fix = 1;
+  cur_mark.fix.lat = wp.lat;
+  cur_mark.fix.lon = wp.lon; 
+  show("WP:"+wp.name, 60);
+  print("Select waypoint: ", cur_mark);
 }
 function inputHandler(s) {
   print("Ascii: ", s, s[0], s[1]);
@@ -234,6 +265,7 @@ function inputHandler(s) {
       show("Bat "+bat+"%", 60);
       break;
     }
+    case 'D': selectWP(1); break;
     case 'F': gpsOff(); show("GPS off", 3); break;
     case 'G': gpsOn(); gps_limit = getTime() + 60*60*4; show("GPS on", 3); break;
     case 'I':
@@ -256,6 +288,7 @@ function inputHandler(s) {
       break;
     }
     case 'R': aload("run.app.js"); break;
+    case 'U': selectWP(-1); break;
     case 'Y': doBuzz(buzz); Bangle.resetCompass(); break;
   }
 }
@@ -695,7 +728,7 @@ function lockHandler(locked) {
 }
 
 function queueDraw() {
-  if (getTime() - last_unlocked > 5*60)
+  if (getTime() - last_unlocked > 3*60)
     next = 60000;
   else
     next =  1000;
@@ -724,6 +757,7 @@ function start() {
   }
 
   draw();
+  loadWPs();
   buzzTask();
   if (0)
       accelTask();

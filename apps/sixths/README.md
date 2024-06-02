@@ -54,3 +54,7 @@ possibly allowing scrolling).
 Todo:
 
 *) only turn on compass when needed
+
+*) only warn about battery low when it crosses thresholds, update battery low message.
+
+*) rename "show" to something else -- it collides with built-in
