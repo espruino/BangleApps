@@ -14,3 +14,4 @@
 0.09: Fix scrolling to last line for long text
 0.10: Track Listeners added with prependListener
       Handle changed internal callback variable name for watches introduced in 2v21.104
+0.11: Update for new setLCDOverlay remove handler

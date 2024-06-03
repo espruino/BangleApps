@@ -55,7 +55,7 @@ const show = function(){
   if (ovr.getBPP() == 1) {
     img.palette = new Uint16Array([g.theme.fg,g.theme.bg]);
   }
-  Bangle.setLCDOverlay(img, ovrx, ovry);
+  Bangle.setLCDOverlay(img, ovrx, ovry, {id:"messagesoverlay", remove:cleanup});
 };
 
 const manageEvent = function(event) {
@@ -618,7 +618,7 @@ const cleanup = function(){
   }
   restoreHandlers();
 
-  Bangle.setLCDOverlay();
+  Bangle.setLCDOverlay(undefined, {id: "messagesoverlay"});
   ovr = undefined;
 };
 
