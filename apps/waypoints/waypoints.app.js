@@ -39,7 +39,7 @@ function mainMenu() {
   }
   menu["Remove"]=removeCard;
   menu["Format"]=setFormat;
-  if (textInputInstalled) {
+  if (textInputInstalled && BANGLEJS2) {
     menu["Mark GPS"]=markGps;
   }
   g.clear();
@@ -47,17 +47,16 @@ function mainMenu() {
 }
 
 function updateGps() {
-  let lat = "lat", lon = "lon", alt = "alt", speed = "speed";
+  let pos = "lat/lon", alt = "alt", speed = "speed";
   
   if (cancel_gps)
     return;
   fix = Bangle.getGPSFix();
   
-  speed = "no fix for " + (getTime() - gps_start).toFixed(0) + "s";
+  speed = "no fix (" + (getTime() - gps_start).toFixed(0) + "s)";
   
   if (fix && fix.fix && fix.lat) {
-    lat = "" + lat(fix.lat);
-    lon = "" + lon(fix.lon);
+    pos = "" + lat(fix.lat) + " " + lon(fix.lon);
     alt = "alt " + fix.alt.toFixed(0) + "m";
     speed = "speed " + fix.speed.toFixed(1) + "kt";
   }
@@ -67,8 +66,7 @@ function updateGps() {
     .fillRect(0, 0, 176, 120)
     .setColor(0,0,0)
     .drawString(key, 0, 0)
-    .drawString(lat, 0, 20)
-    .drawString(lon, 0, 40)
+    .drawString(pos, 0, 20)
     .drawString(alt, 0, 60)
     .drawString(speed, 0, 80);
 
