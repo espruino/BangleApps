@@ -39,21 +39,6 @@ displays waypoints in the watch (if dependencies exist).
 put the map back in its default location, or choose whether to draw the currently
 recording GPS track (from the `Recorder` app).
 
-**Note:** If enabled, drawing the currently recorded GPS track can take a second
-or two (which happens after you've finished scrolling the screen with your finger).
-
-
-## Library
-
-See the documentation in the library itself for full usage info:
-https://github.com/espruino/BangleApps/blob/master/apps/openstmap/openstmap.js
-
-Or check the app itself: https://github.com/espruino/BangleApps/blob/master/apps/openstmap/app.js
-
-But in the most simple form:
-
-```
-var m = require("openstmap");
-// m.lat/lon are now the center of the loaded map
-m.draw(); // draw centered on the middle of the loaded map
-```
+##Github URL
+Including app,app-icon,ChangeLog,README.md,interface,metadata
+https://github.com/nhq12/BangleApps/tree/master/apps/zzz
