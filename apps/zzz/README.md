@@ -8,3 +8,4 @@ allows you to use the maps in your Bangle.js applications.
 ##Github URL
 Including app,app-icon,ChangeLog,README.md,interface,metadata
 https://github.com/nhq12/BangleApps/tree/master/apps/zzz
+thanks to openstmap
