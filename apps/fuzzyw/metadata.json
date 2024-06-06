@@ -2,7 +2,7 @@
   "id":"fuzzyw",
   "name":"Fuzzy Text Clock",
   "shortName": "Fuzzy Text",
-  "version": "0.04",
+  "version": "0.05",
   "description": "An imprecise clock for when you're not in a rush",
   "readme": "README.md",
   "icon":"fuzzyw.png",

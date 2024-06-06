@@ -82,6 +82,23 @@ Other functions:
 - `layout.debug(obj)` - draw outlines for objects on screen
 - `layout.clear(obj)` - clear the given object (you can also just specify `bgCol` to clear before each render)
 - `layout.forgetLazyState()` - if lazy rendering is enabled, makes the next call to `render()` perform a full re-render
+- `layout.setUI()` - Re-add any UI input handlers
+
+
+Using with `E.showMenu`/`E.showPrompt`/etc
+--------------------------------------
+
+When calling `E.showMenu` or anything that internally calls `Bangle.setUI` to set
+handlers for user input, any input handlers set by `layout` will get removed.
+
+To re-add them (and re-render the screen) you must call the following afterwards:
+
+```
+layout.setUI(); // re-add input handlers
+layout.forgetLazyState(); // if using lazy rendering, ensure we re-render everything
+layout.render(); // render screen
+```
+
 
 Links
 -----

@@ -28,7 +28,7 @@ if (!lintRule) {
 
 const filePathInput = process.argv[3];
 const filePathMatch = filePathInput?.match(
-  /^(?:.*?\/apps\/|apps\/|\/)?(?<path>.*\.js)$/iu,
+  /^(?:.*?\/apps\/|apps\/|\/)?(?<path>.*\.[jt]s)$/iu,
 );
 const filePath = filePathMatch?.groups?.path;
 if (!filePath) {

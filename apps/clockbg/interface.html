@@ -2,27 +2,29 @@
   <head>
     <link rel="stylesheet" href="../../css/spectre.min.css">
     <style>
-      .flag {
+      .thumbnail {
         width : 100px;
         cursor: pointer;
       }
       #preview {
-        width : 176px;
-        height: 176px;
+        width : 178px; /* include the border */
+        height: 178px;
         border: 1px solid black;
       }
     </style>
   </head>
   <body>
-    <p>Upload an image:</p>
-    <div id="flaglist"></div>
+    <p>Upload an image: <input class="form-input" id="customfile" type="file"></p>
+    <div id="thumbnaillist"></div>
     <p>If you'd like to contribute images you can <a href="https://github.com/espruino/BangleApps/tree/master/apps/patriotclk/img" target="_blank">add them on GitHub</a>!</p>
     <div style="float:right">Preview:<br/><canvas width="176" height="176" id="preview"></canvas></div>
     <div class="form-group">
-      <label class="form-switch">
-        <input type="checkbox" id="box_zoom">
-        <i class="form-icon"></i> Zoom
-      </label>
+      <select class="form-select" id="box_zoom" style="width:inherit">
+        <option value="0">No Zoom</option>
+        <option value="1">10% Zoom</option>
+        <option value="1.5">15% Zoom</option>
+        <option value="2">20% Zoom</option>
+      </select><br/>
       <label class="form-switch">
         <input type="checkbox" id="box_mirror">
         <i class="form-icon"></i> Mirror
@@ -55,6 +57,8 @@
         {"path":"img/ai_robot.jpeg","dither":true},
         {"path":"img/ai_eye.jpeg","dither":true},
         {"path":"img/ai_hero.jpeg","dither":true},
+        {"path":"img/ai_flow.jpeg","dither":true},
+        {"path":"img/ai_horse.jpeg","dither":true},
         {"path":"img/icons8-australia-480.png","dither":false},
         {"path":"img/icons8-austria-480.png","dither":false},
         {"path":"img/icons8-belgium-480.png","dither":false},
@@ -85,22 +89,21 @@
       var selectedImage;
       var bgImageData;
 
-      document.getElementById("flaglist").innerHTML =
-        IMAGES.map(f => `<img class="flag" src="${f.path}" data-file="${f.path}"/>`).join("\n");
-      var elements = document.querySelectorAll(".flag");
+      document.getElementById("thumbnaillist").innerHTML = `<img class="thumbnail" id="customimage" src="" face="custom" style="display:none"/>\n`+
+        IMAGES.map(f => `<img class="thumbnail" src="${f.path}" data-file="${f.path}"/>`).join("\n");
+      var elements = document.querySelectorAll(".thumbnail");
       for (var i=0;i<elements.length;i++)
         elements[i].addEventListener("click", function(e) {
           selectedImage = e.target;
           drawPreview();
-          document.getElementById("upload").classList.remove("disabled")
         });
 
 
       function drawPreview() {
         if (!selectedImage) return;
         var imgPath = selectedImage.getAttribute("data-file");
-        var img = IMAGES.find(img => img.path == imgPath);
-        var zoom = document.getElementById("box_zoom").checked;
+        var img = IMAGES.find(img => img.path == imgPath) || {"dither":true}; // No IMAGES entry for custom images
+        var zoom = document.getElementById("box_zoom").value;
         var dither = document.getElementById("box_dither").value;
         if (dither=="" && img.dither) dither="bayer2";
         if (dither=="no" || dither=="") dither=undefined;
@@ -115,8 +118,13 @@
         let imgW = selectedImage.naturalWidth;
         let imgH = selectedImage.naturalHeight;
         let border = 0;
-        if (imgW > 400) border = 20;
-        if (zoom) border = (border*5) >> 1;
+        let imgMin = Math.min(imgW,imgH);
+        switch (zoom) {
+          case "0": border = 0; break;
+          case "1": border = Math.round(imgMin*0.1); break;
+          case "1.5": border = Math.round(imgMin*0.15); break;
+          case "2": border = Math.round(imgMin*0.2); break;
+        }
         ctx.save(); // Save the current state
         if (mirror) {
           ctx.translate(canvas.width, 0);
@@ -135,6 +143,7 @@
           brightness:64*brightness
         };
         bgImageData = imageconverter.canvastoString(canvas, options);
+        document.getElementById("upload").classList.remove("disabled")
       }
 
       // If options changed
@@ -163,6 +172,20 @@
           });
         });
       });
+      // Custom image upload
+      document.getElementById('customfile').onchange = function (evt) {
+      var tgt = evt.target || window.event.srcElement, files = tgt.files;
+      if (FileReader && files && files.length) {
+        var fr = new FileReader();
+        fr.onload = function () {
+          document.getElementById("customimage").src = fr.result;
+          document.getElementById("customimage").style.display = "inline-block";
+          selectedImage = document.getElementById("customimage");
+          drawPreview();
+        }
+        fr.readAsDataURL(files[0]);
+      }
+    }
 
       function onInit() {
         Util.readStorageJSON("clockbg.json", function(data) {

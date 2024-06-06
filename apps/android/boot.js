@@ -1,21 +1,22 @@
-(function() {
-  function gbSend(message) {
+/* global GB */
+{
+  let gbSend = function(message) {
     Bluetooth.println("");
     Bluetooth.println(JSON.stringify(message));
   }
-  var lastMsg; // for music messages - may not be needed now...
-  var actInterval; // Realtime activity reporting interval when `act` is true
-  var actHRMHandler; // For Realtime activity reporting
-  var gpsState = {}; // keep information on GPS via Gadgetbridge
+  let lastMsg; // for music messages - may not be needed now...
+  let actInterval; // Realtime activity reporting interval when `act` is true
+  let actHRMHandler; // For Realtime activity reporting
+  let gpsState = {}; // keep information on GPS via Gadgetbridge
 
   // this settings var is deleted after this executes to save memory
-  var settings = require("Storage").readJSON("android.settings.json",1)||{};
+  let settings = require("Storage").readJSON("android.settings.json",1)||{};
   //default alarm settings
   if (settings.rp == undefined) settings.rp = true;
   if (settings.as == undefined) settings.as = true;
   if (settings.vibrate == undefined) settings.vibrate = "..";
   require('Storage').writeJSON("android.settings.json", settings);
-  var _GB = global.GB;
+  let _GB = global.GB;
   let fetchRecInterval;
   global.GB = (event) => {
     // feed a copy to other handlers if there were any
@@ -121,7 +122,10 @@
         var cal = require("Storage").readJSON("android.calendar.json",true);
         //if any of those happen we are out of sync!
         if (!cal || !Array.isArray(cal)) cal = [];
-        cal = cal.filter(e=>e.id!=event.id);
+        if (Array.isArray(event.id))
+          cal = cal.filter(e=>!event.id.includes(e.id));
+        else
+          cal = cal.filter(e=>e.id!=event.id);
         require("Storage").writeJSON("android.calendar.json", cal);
       },
       //triggered by GB, send all ids
@@ -292,6 +296,10 @@
         // we receive all, just override what we have
         if (Array.isArray(event.d))
           require("Storage").writeJSON("android.cards.json", event.d);
+      },
+      "accelsender": function () {
+        require("Storage").writeJSON("accelsender.json", {enabled: event.enable, interval: event.interval});
+        load();
       }
     };
     var h = HANDLERS[event.t];
@@ -332,7 +340,7 @@
   };
 
   // Battery monitor
-  function sendBattery() { gbSend({ t: "status", bat: E.getBattery(), chg: Bangle.isCharging()?1:0 }); }
+  let sendBattery = function() { gbSend({ t: "status", bat: E.getBattery(), chg: Bangle.isCharging()?1:0 }); }
   Bangle.on("charging", sendBattery);
   NRF.on("connect", () => setTimeout(function() {
     sendBattery();
@@ -427,4 +435,4 @@
 
   // remove settings object so it's not taking up RAM
   delete settings;
-})();
+}

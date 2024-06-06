@@ -1,0 +1,22 @@
+{
+  "id": "blecsc",
+  "name": "BLE Cycling Speed Sensor Library",
+  "shortName": "BLE CSC",
+  "version": "0.04",
+  "description": "Module to get live values from a BLE Cycle Speed (CSC) sensor. Includes recorder and clockinfo plugins",
+  "icon": "icons8-cycling-48.png",
+  "tags": "outdoors,exercise,ble,bluetooth,clkinfo",
+  "type":"module",
+  "provides_modules" : ["blecsc"],
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"blecsc","url":"blecsc.js"},
+    {"name":"blecsc.settings.js","url":"settings.js"},
+    {"name":"blecsc.recorder.js","url":"recorder.js"},
+    {"name":"blecsc.clkinfo.js","url":"clkinfo.js"}
+  ],
+  "data": [
+    {"name":"blecsc.json"}
+  ]
+}

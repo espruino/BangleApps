@@ -4,6 +4,7 @@
   "version":"0.01",
   "description": "A detailed description of my clock",
   "icon": "icon.png",
+  "screenshots": [{"url":"screenshot.png"}],
   "type": "clock",
   "tags": "clock",
   "supports" : ["BANGLEJS2"],

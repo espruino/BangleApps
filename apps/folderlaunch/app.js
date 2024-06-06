@@ -78,19 +78,21 @@
                 var text = void 0;
                 var fontSize = void 0;
                 switch (entry.type) {
-                    case 'app':
+                    case 'app': {
                         var app_1 = storage_1.readJSON(entry.id + '.info', false);
                         icon = storage_1.read(app_1.icon);
                         text = app_1.name;
                         empty = false;
                         fontSize = config_1.display.font;
                         break;
-                    case 'folder':
+                    }
+                    case 'folder': {
                         icon = FOLDER_ICON_1;
                         text = entry.id;
                         empty = false;
                         fontSize = config_1.display.font ? config_1.display.font : 12;
                         break;
+                    }
                     default:
                         continue;
                 }
@@ -132,12 +134,13 @@
             y = config_1.display.rows - 1;
         var entry = grid_1[x][y];
         switch (entry.type) {
-            case "app":
+            case "app": {
                 buzz_1();
                 var infoFile = storage_1.readJSON(entry.id + '.info', false);
                 load(infoFile.src);
                 break;
-            case "folder":
+            }
+            case "folder": {
                 buzz_1();
                 resetTimeout_1();
                 page_1 = 0;
@@ -145,9 +148,11 @@
                 folder_1 = getFolder_1(folderPath_1);
                 render_1();
                 break;
-            default:
+            }
+            default: {
                 resetTimeout_1();
                 break;
+            }
         }
     };
     var page_1 = 0;

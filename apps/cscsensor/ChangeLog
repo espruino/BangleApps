@@ -8,3 +8,6 @@
 0.07: Make Bangle.js 2 compatible
 0.08: Convert Yes/No On/Off in settings to checkboxes
 0.09: Automatically reconnect on error
+0.10: Fix cscsensor when using coospoo sensor that supports crank *and* wheel
+0.11: Update to use blecsc library
+0.12: Fix regression reporting cadence (reported per second when should be per minute) (fix #3434)

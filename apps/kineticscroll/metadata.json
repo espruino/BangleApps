@@ -1,7 +1,7 @@
 { "id": "kineticscroll",
   "name": "Kinetic Scroll",
   "shortName":"Kinetic Scroll",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Replacement for the system scroller with kinetic scrolling.",
   "icon": "app.png",
   "type": "bootloader",

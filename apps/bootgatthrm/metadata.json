@@ -2,7 +2,7 @@
   "id": "bootgatthrm",
   "name": "BLE GATT HRM Service",
   "shortName": "BLE HRM Service",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Adds the GATT HRM Service to advertise the measured HRM over Bluetooth.\n",
   "icon": "bluetooth.png",
   "type": "bootloader",

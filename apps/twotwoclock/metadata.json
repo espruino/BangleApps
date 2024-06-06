@@ -1,0 +1,16 @@
+{ "id": "twotwoclock",
+  "name": "TwoTwo Clock",
+  "shortName":"22 Clock",
+  "version":"0.01",
+  "description": "A clock with the time split over two lines, with custom backgrounds and two ClockInfos",
+  "icon": "icon.png",
+  "type": "clock",
+  "tags": "clock,clkinfo,clockbg",
+  "supports" : ["BANGLEJS2"],
+  "dependencies" : { "clock_info":"module", "clockbg":"module" },
+  "screenshots": [{"url":"screenshot.png"}],
+  "storage": [
+    {"name":"twotwoclock.app.js","url":"app.js"},
+    {"name":"twotwoclock.img","url":"app-icon.js","evaluate":true}
+  ]
+}
