@@ -1,7 +1,7 @@
 {
   "id": "burn",
   "name": "Burn",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Simple Calorie Counter -- saves to flash (kcal.txt) and resets at midnight",
   "icon": "burn_icon.png",
   "tags": "tool",
