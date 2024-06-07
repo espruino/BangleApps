@@ -1,10 +1,11 @@
 {
   "id": "burn",
   "name": "Burn",
-  "version": "0.01",
-  "description": "Calorie Counter",
+  "version": "0.02",
+  "description": "Simple Calorie Counter -- saves to flash and resets at midnight",
   "icon": "burn_icon.png",
   "tags": "tool",
+  "readme":"README.md",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "screenshots": [{"url":"bangle1-burn-screenshot.png"}],
   "allow_emulator": true,
