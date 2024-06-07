@@ -1,8 +1,8 @@
 {
   "id": "burn",
   "name": "Burn",
-  "version": "0.04",
-  "description": "Simple Calorie Counter -- saves to flash (kcal.txt) and resets at midnight",
+  "version": "0.05",
+  "description": "Simple Calorie Counter -- saves to flash and resets at midnight. I often keep mine running while the digital clock widget is at the top",
   "icon": "burn_icon.png",
   "tags": "tool",
   "readme":"README.md",

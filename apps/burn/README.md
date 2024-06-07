@@ -1,10 +1,11 @@
 # Burn: Calorie Counter
 
-Burn is a calorie counter application for Bangle.js (Espruino). It is based on the original Counter app and has been enhanced with additional features.
+Burn is a simple calorie counter application. It is based on the original Counter app and has been enhanced with additional features (I recommend using
+it with the "Digital Clock Widget", if you intend to keep it running).
 
 ## Features
 
-- **Persistent counter**: The counter value is saved to a file, so it persists even when the app is closed or the device is restarted.
+- **Persistent counter**: The counter value is saved to flash, so it persists even when the app is closed or the device is restarted.
 - **Daily reset**: The counter resets each day, allowing you to track your calorie intake on a daily basis.
 - **Adjustable increment value**: You can adjust the increment value to suit your needs.
 
