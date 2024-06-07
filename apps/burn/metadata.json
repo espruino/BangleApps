@@ -1,0 +1,15 @@
+{
+  "id": "burn",
+  "name": "Burn",
+  "version": "0.01",
+  "description": "Calorie Counter",
+  "icon": "burn_icon.png",
+  "tags": "tool",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "screenshots": [{"url":"bangle1-burn-screenshot.png"}],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"burn.app.js","url":"burn.js"},
+    {"name":"burn.img","url":"burn-icon.js","evaluate":true}
+  ]
+}
