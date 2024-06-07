@@ -26,6 +26,7 @@ let settings = Object.assign({
   B5: "step",
   B6: "caden",
   paceLength: 1000,
+  alwaysResume: false,
   notify: {
     dist: {
       value: 0,
@@ -64,10 +65,10 @@ function onStartStop() {
   }
 
   var running = !exs.state.active;
-  var shouldResume = false;
+  var shouldResume = settings.alwaysResume;
   var promise = Promise.resolve();
 
-  if (running && exs.state.duration > 10000) { // if more than 10 seconds of duration, ask if we should resume?
+  if (!shouldResume && running && exs.state.duration > 10000) { // if more than 10 seconds of duration, ask if we should resume?
     promise = promise.
       then(() => {
         screen = "menu";

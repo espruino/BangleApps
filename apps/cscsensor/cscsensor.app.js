@@ -157,7 +157,7 @@ csc.on("data", e => {
   mySensor.movingTime += e.wdt;
   if (mySensor.speed>mySensor.maxSpeed && (mySensor.movingTime>3 || mySensor.speed<20) && mySensor.speed<50)
     mySensor.maxSpeed = mySensor.speed;
-  mySensor.cadence = e.crps;
+  mySensor.cadence = e.crps*60;
   mySensor.updateScreen();
   mySensor.updateScreen();
 });
