@@ -180,8 +180,8 @@ function drawMoonTimesPage(gps, title) {
   const moonColor = g.theme.dark ? {r: 1, g: 1, b: 1} : {r: 0, g: 0, b: 0};
 
   const pageData = {
-    Rise: dateToTimeString(times.rise),
-    Set: dateToTimeString(times.set),
+    Rise: times.rise ? dateToTimeString(times.rise) : "Not today",
+    Set: times.set ? dateToTimeString(times.set) : "Not today",
   };
 
   drawData(title, pageData, null, g.getHeight()/2 - Object.keys(pageData).length/2*20 + 5);
