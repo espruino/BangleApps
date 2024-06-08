@@ -1,0 +1,13 @@
+{ "id": "snappybtn",
+  "name": "Snappy Button (BETA)",
+  "version":"0.01",
+  "description": "Make your Bangle.js 2 watch react quicker when you press the hardware button. This is an **experimental or BETA** app.",
+  "icon": "app.png",
+  "tags": "ui,interface,ux,faster,quicker,shorter,speed",
+  "type": "bootloader",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"snappybtn.boot.js","url":"boot.js"}
+  ]
+}
