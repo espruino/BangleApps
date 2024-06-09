@@ -1,16 +1,16 @@
 {
   "id": "burn",
   "name": "Burn",
-  "version": "0.05",
+  "version": "0.06",
   "description": "Simple Calorie Counter -- saves to flash and resets at midnight. I often keep mine running while the digital clock widget is at the top",
-  "icon": "burn_icon.png",
+  "icon": "app-icon.png",
   "tags": "tool",
   "readme":"README.md",
   "supports": ["BANGLEJS", "BANGLEJS2"],
-  "screenshots": [{"url":"bangle1-burn-screenshot.png"}],
+  "screenshots": [{"url":"app-screenshot.png"}],
   "allow_emulator": true,
   "storage": [
-    {"name":"burn.app.js","url":"burn.js"},
-    {"name":"burn.img","url":"burn-icon.js","evaluate":true}
+    {"name":"burn.app.js","url":"app.js"},
+    {"name":"burn.img","url":"app-icon.js","evaluate":true}
   ]
 }

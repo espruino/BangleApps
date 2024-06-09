@@ -19,6 +19,9 @@
 // File variable to handle file operations
 let file;
 
+// Check if the hardware version is Bangle.js 2
+const BANGLEJS2 = process.env.HWVERSION == 2;
+
 // Importing the Storage module for file operations
 const Storage = require("Storage");
 
@@ -26,11 +29,11 @@ const Storage = require("Storage");
 const PATH = "kcal.txt";
 
 // Function to get the current date as a string
-const dayString = () => {
+function dayString() {
   const date = new Date();
   // Month is 0-indexed, so we add 1 to get the correct month number
   return `${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear()}`;
-};
+}
 
 // Counter object to keep track of the count and the date
 let counter = { count: 0, date: dayString() };
@@ -134,23 +137,6 @@ const createIntervalFunctions = function () {
 const intervalFunctions = createIntervalFunctions();
 const getInterval = intervalFunctions.getInterval;
 const rotateIncrement = intervalFunctions.rotateIncrement;
-
-// Check if the hardware version is Bangle.js 2
-const BANGLEJS2 = process.env.HWVERSION == 2;
-
-// Variables for drag handling and screen coordinates
-let drag, y, x;
-
-// If the hardware version is Bangle.js 2, set the coordinates accordingly
-if (BANGLEJS2) {
-  drag = undefined;
-  y = 45;
-  x = 5;
-} else {
-  // If the hardware version is Bangle.js 1, set the coordinates accordingly
-  y = 100;
-  x = 25;
-}
 
 // Function to update the screen
 function updateScreen() {
