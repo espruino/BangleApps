@@ -232,6 +232,8 @@ function drawSunShowPage(gps, key, date) {
   return null;
 }
 
+let m;
+
 function sunIndexPageMenu(gps) {
   const sunTimes = SunCalc.getTimes(new Date(), gps.lat, gps.lon);
 
@@ -300,9 +302,9 @@ function indexPageMenu(gps) {
   return E.showMenu(menu);
 }
 
-function getCenterStringX(str) {
-  return (g.getWidth() - g.stringWidth(str)) / 2;
-}
+//function getCenterStringX(str) {
+//  return (g.getWidth() - g.stringWidth(str)) / 2;
+//}
 
 function init() {
   let location = require("Storage").readJSON("mylocation.json",1)||{"lat":51.5072,"lon":0.1276,"location":"London"};
@@ -311,5 +313,4 @@ function init() {
   Bangle.drawWidgets();
 }
 
-let m;
 init();
