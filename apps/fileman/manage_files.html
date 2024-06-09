@@ -26,6 +26,25 @@
     </tr>
   </tbody>
 </table>
+<div v-if="fileContents">
+    <div class="modal active" id="modal-id">
+      <div class="modal-container" style="max-height: 95vh;">
+        <div class="modal-header">
+          <div class="modal-title h5">File Contents</div>
+        </div>
+        <div class="modal-body">
+          <div class="content">
+            <pre><code>
+              {{fileContents}}
+            </code></pre>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" v-on:click="hideFile()">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -35,6 +54,7 @@
       files: ['Click load files to see something'],
       fileFilter: '',
       stats: [['No stats', 'loaded']],
+      fileContents: null,
     },
     computed: {
       filteredFiles: function () {
@@ -68,8 +88,11 @@
       },
       showFile: function (file) {
         Puck.eval(`require("Storage").read("${file}")`, (contents) => {
-          alert(contents);
+          this.fileContents = contents;
         })
+      },
+      hideFile: function () {
+        this.fileContents = null;
       }
     }
   })
