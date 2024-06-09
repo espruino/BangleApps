@@ -161,6 +161,9 @@ function updateScreen() {
 }
 
 // If the hardware version is Bangle.js 2, set up the drag handling and button watch
+
+let drag;
+
 if (BANGLEJS2) {
   // Set up drag handling
   Bangle.on("drag", (e) => {
