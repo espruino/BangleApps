@@ -232,8 +232,6 @@ function drawSunShowPage(gps, key, date) {
   return null;
 }
 
-let m;
-
 function sunIndexPageMenu(gps) {
   const sunTimes = SunCalc.getTimes(new Date(), gps.lat, gps.lon);
 
@@ -242,7 +240,7 @@ function sunIndexPageMenu(gps) {
       "title": "-- Sun --",
     },
     "Current Pos": () => {
-      m = E.showMenu();
+      E.showMenu();
       drawSunShowPage(gps, "Current Pos", new Date());
     },
   };
@@ -250,13 +248,13 @@ function sunIndexPageMenu(gps) {
   Object.keys(sunTimes).sort().reduce((menu, key) => {
     const title = titlizeKey(key);
     menu[title] = () => {
-      m = E.showMenu();
+      E.showMenu();
       drawSunShowPage(gps, key, sunTimes[key]);
     };
     return menu;
   }, sunMenu);
 
-  sunMenu["< Back"] = () => m = indexPageMenu(gps);
+  sunMenu["< Back"] = () => indexPageMenu(gps);
 
   return E.showMenu(sunMenu);
 }
@@ -268,18 +266,18 @@ function moonIndexPageMenu(gps) {
       "title": "-- Moon --",
     },
     "Times": () => {
-      m = E.showMenu();
+      E.showMenu();
       drawMoonTimesPage(gps, /*LANG*/"Times");
     },
     "Position": () => {
-      m = E.showMenu();
+      E.showMenu();
       drawMoonPositionPage(gps, /*LANG*/"Position");
     },
     "Illumination": () => {
-      m = E.showMenu();
+      E.showMenu();
       drawMoonIlluminationPage(gps, /*LANG*/"Illumination");
     },
-    "< Back": () => m = indexPageMenu(gps),
+    "< Back": () => indexPageMenu(gps),
   };
 
   return E.showMenu(moonMenu);
@@ -291,10 +289,10 @@ function indexPageMenu(gps) {
       "title": /*LANG*/"Select",
     },
     /*LANG*/"Sun": () => {
-      m = sunIndexPageMenu(gps);
+      sunIndexPageMenu(gps);
     },
     /*LANG*/"Moon": () => {
-      m = moonIndexPageMenu(gps);
+      moonIndexPageMenu(gps);
     },
     "< Back": () => { load(); }
   };
