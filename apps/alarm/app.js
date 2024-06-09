@@ -123,7 +123,6 @@ function showNewMenu(group) {
 }
 
 function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate, scroll, group) {
-  console.log(scroll);
   var isNew = alarmIndex === undefined;
 
   var alarm = require("sched").newDefaultAlarm();
