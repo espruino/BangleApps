@@ -4,6 +4,7 @@
   "version":"0.01",
   "description": "A library that allows to pick a date and time by swiping.",
   "icon":"app.png",
+  "type":"module",
   "tags":"datetimeinput",
   "supports" : ["BANGLEJS2"],
   "provides_modules" : ["datetimeinput"],
