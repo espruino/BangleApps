@@ -180,8 +180,8 @@ function drawMoonTimesPage(gps, title) {
   const moonColor = g.theme.dark ? {r: 1, g: 1, b: 1} : {r: 0, g: 0, b: 0};
 
   const pageData = {
-    Rise: dateToTimeString(times.rise),
-    Set: dateToTimeString(times.set),
+    Rise: times.rise ? dateToTimeString(times.rise) : "Not today",
+    Set: times.set ? dateToTimeString(times.set) : "Not today",
   };
 
   drawData(title, pageData, null, g.getHeight()/2 - Object.keys(pageData).length/2*20 + 5);
@@ -240,7 +240,7 @@ function sunIndexPageMenu(gps) {
       "title": "-- Sun --",
     },
     "Current Pos": () => {
-      m = E.showMenu();
+      E.showMenu();
       drawSunShowPage(gps, "Current Pos", new Date());
     },
   };
@@ -248,13 +248,13 @@ function sunIndexPageMenu(gps) {
   Object.keys(sunTimes).sort().reduce((menu, key) => {
     const title = titlizeKey(key);
     menu[title] = () => {
-      m = E.showMenu();
+      E.showMenu();
       drawSunShowPage(gps, key, sunTimes[key]);
     };
     return menu;
   }, sunMenu);
 
-  sunMenu["< Back"] = () => m = indexPageMenu(gps);
+  sunMenu["< Back"] = () => indexPageMenu(gps);
 
   return E.showMenu(sunMenu);
 }
@@ -266,18 +266,18 @@ function moonIndexPageMenu(gps) {
       "title": "-- Moon --",
     },
     "Times": () => {
-      m = E.showMenu();
+      E.showMenu();
       drawMoonTimesPage(gps, /*LANG*/"Times");
     },
     "Position": () => {
-      m = E.showMenu();
+      E.showMenu();
       drawMoonPositionPage(gps, /*LANG*/"Position");
     },
     "Illumination": () => {
-      m = E.showMenu();
+      E.showMenu();
       drawMoonIlluminationPage(gps, /*LANG*/"Illumination");
     },
-    "< Back": () => m = indexPageMenu(gps),
+    "< Back": () => indexPageMenu(gps),
   };
 
   return E.showMenu(moonMenu);
@@ -289,10 +289,10 @@ function indexPageMenu(gps) {
       "title": /*LANG*/"Select",
     },
     /*LANG*/"Sun": () => {
-      m = sunIndexPageMenu(gps);
+      sunIndexPageMenu(gps);
     },
     /*LANG*/"Moon": () => {
-      m = moonIndexPageMenu(gps);
+      moonIndexPageMenu(gps);
     },
     "< Back": () => { load(); }
   };
@@ -300,9 +300,9 @@ function indexPageMenu(gps) {
   return E.showMenu(menu);
 }
 
-function getCenterStringX(str) {
-  return (g.getWidth() - g.stringWidth(str)) / 2;
-}
+//function getCenterStringX(str) {
+//  return (g.getWidth() - g.stringWidth(str)) / 2;
+//}
 
 function init() {
   let location = require("Storage").readJSON("mylocation.json",1)||{"lat":51.5072,"lon":0.1276,"location":"London"};
@@ -311,5 +311,4 @@ function init() {
   Bangle.drawWidgets();
 }
 
-let m;
 init();
