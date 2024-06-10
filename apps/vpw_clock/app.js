@@ -167,7 +167,6 @@ Graphics.prototype.setFontMadeSunflower = function () {
       if (drawTimeout) clearTimeout(drawTimeout);
       // remove custom font
       delete Graphics.prototype.setFontMadeSunflower;
-      delete Graphics.prototype.setFontVGA8;
       // revert theme to how it was before
       g.setTheme(originalTheme);
     }
