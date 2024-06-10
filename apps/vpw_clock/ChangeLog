@@ -3,3 +3,4 @@
 0.03: Set theme to light, add black as an option for foreground color
 0.04: Handle fast loading
 0.05: Fix theme reset for some themes
+0.06: Minor fix: do not remove VGA8 font
