@@ -98,25 +98,39 @@ let swipeHandler = function(LR, _) {
   }
 };
 
+let buttonHandler = (n)=>{load();};
+
 // Navigation input on the main layout
 let setUI = function() {
 // Bangle.setUI code from rigrig's smessages app for volume control: https://git.tubul.net/rigrig/BangleApps/src/branch/personal/apps/smessages/app.js
-  Bangle.setUI(
-    {mode : "updown",
+  Bangle.setUI({
+      mode : "updown",
       remove : ()=>{
-        Bangle.removeListener("touch", touchHandler);
-        Bangle.removeListener("swipe", swipeHandler);
-        clearWatch(buttonHandler);
-        widgetUtils.show();
-      }
+       widgetUtils.show();
+      },
+      /**
+       * TODO: Proposal: Handlers added at the same level as the `mode : "updown"` entry
+       * will replace those that come with the mode - if there were any of that type.
+       * The handlers in the `extra` object below will still be added in addition to these ones.
+       **/
+      swipe : swipeHandler,
+      btn : buttonHandler,
+      btnEdge : "rising", // TODO: Proposal: a new, optional, way to choose what edge the button(-s) should act on.
+      //touch : touchHandler, // TODO: Proposal: if added on the top level along `mode : "updown"` this replaces the touch handling of the mode.
+
+      /**
+       * TODO: Proposal: a way to add extra handlers in addition to the ones set up
+       * by e.g. mode "updown".
+       **/
+      extra : {
+        touch : touchHandler,
+        //drag : dragHandler // TODO: Proposal: a drag handler here would be set up in addition to the one set up by `mode : "updown"`
+      },
     },
       ud => {
         if (ud) Bangle.musicControl(ud>0 ? "volumedown" : "volumeup");
       }
   );
-  Bangle.on("touch", touchHandler);
-  Bangle.on("swipe", swipeHandler);
-  let buttonHandler = setWatch(()=>{load();}, BTN, {edge:'falling'});
 };
 
 // Get back to the main layout
