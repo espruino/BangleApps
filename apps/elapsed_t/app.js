@@ -206,8 +206,24 @@ var menu = {
     setTarget(false);
     updateQueueMillis(settings.displaySeconds);
     draw();
+  },
+  'Set clock as default': function () {
+    setClockAsDefault();
+    E.showAlert("Elapsed Time was set as default").then(function() {
+      E.showMenu();
+      inMenu = false;
+      Bangle.setUI("clock");
+      draw();
+    });
   }
 };
+
+function setClockAsDefault(){
+  let storage = require('Storage');
+  let settings = storage.readJSON('setting.json',true)||{clock:null};
+  settings.clock = "elapsed_t.app.js";
+  storage.writeJSON('setting.json', settings);
+}
 
 function setTarget(set) {
   if (set) {
