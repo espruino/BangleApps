@@ -2,16 +2,16 @@
   "id": "cycling",
   "name": "Bangle Cycling",
   "shortName": "Cycling",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Display live values from a BLE CSC sensor",
   "icon": "icons8-cycling-48.png",
   "tags": "outdoors,exercise,ble,bluetooth",
+  "dependencies" : { "blecsc":"module" },
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"cycling.app.js","url":"cycling.app.js"},
     {"name":"cycling.settings.js","url":"settings.js"},
-    {"name":"blecsc","url":"blecsc.js"},
     {"name":"cycling.img","url":"cycling.icon.js","evaluate": true}
   ],
   "data": [

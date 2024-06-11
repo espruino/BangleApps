@@ -26,7 +26,8 @@
       return appInfo && {
         'name': appInfo.name,
         'sortorder': appInfo.sortorder,
-        'src': appInfo.src
+        'src': appInfo.src,
+        'files': appInfo.files
       };
     }).filter(app => app && !!app.src);
     apps.sort((a, b) => {

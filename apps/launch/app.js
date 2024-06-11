@@ -42,47 +42,52 @@ let apps = launchCache.apps;
 if (!settings.fullscreen)
   Bangle.loadWidgets();
 
-E.showScroller({
-  h : 64*scaleval, c : apps.length,
-  draw : (i, r) => {
-    var app = apps[i];
-    if (!app) return;
-    g.clearRect((r.x),(r.y),(r.x+r.w-1), (r.y+r.h-1));
-    g.setFont(font).setFontAlign(-1,0).drawString(app.name,64*scaleval,r.y+(32*scaleval));
-    if (app.icon) {
-      if (!app.img) app.img = s.read(app.icon); // load icon if it wasn't loaded
-      try {g.drawImage(app.img,8*scaleval, r.y+(8*scaleval), {scale: scaleval});} catch(e){}
+const drawMenu = () => {
+  E.showScroller({
+    h : 64*scaleval, c : apps.length,
+    draw : (i, r) => {
+      var app = apps[i];
+      if (!app) return;
+      g.clearRect((r.x),(r.y),(r.x+r.w-1), (r.y+r.h-1));
+      g.setFont(font).setFontAlign(-1,0).drawString(app.name,64*scaleval,r.y+(32*scaleval));
+      if (app.icon) {
+        if (!app.img) app.img = s.read(app.icon); // load icon if it wasn't loaded
+        try {g.drawImage(app.img,8*scaleval, r.y+(8*scaleval), {scale: scaleval});} catch(e){}
+      }
+    },
+    select : i => {
+      var app = apps[i];
+      if (!app) return;
+      if (!app.src || require("Storage").read(app.src)===undefined) {
+        E.showScroller();
+        E.showMessage(/*LANG*/"App Source\nNot found");
+        setTimeout(drawMenu, 2000);
+      } else {
+        load(app.src);
+      }
+    },
+    back : Bangle.showClock, // button press or tap in top left shows clock now
+    remove : () => {
+      // cleanup the timeout to not leave anything behind after being removed from ram
+      if (lockTimeout) clearTimeout(lockTimeout);
+      Bangle.removeListener("lock", lockHandler);
     }
-  },
-  select : i => {
-    var app = apps[i];
-    if (!app) return;
-    if (!app.src || require("Storage").read(app.src)===undefined) {
-      E.showMessage(/*LANG*/"App Source\nNot found");
-      setTimeout(drawMenu, 2000);
-    } else {
-      load(app.src);
-    }
-  },
-  back : Bangle.showClock, // button press or tap in top left shows clock now
-  remove : () => {
-    // cleanup the timeout to not leave anything behind after being removed from ram
-    if (lockTimeout) clearTimeout(lockTimeout);
-    Bangle.removeListener("lock", lockHandler);
-  }
-});
-g.flip(); // force a render before widgets have finished drawing
+  });
+  g.flip(); // force a render before widgets have finished drawing
 
-// 10s of inactivity goes back to clock
-Bangle.setLocked(false); // unlock initially
-let lockTimeout;
-let lockHandler = function(locked) {
-  if (lockTimeout) clearTimeout(lockTimeout);
-  lockTimeout = undefined;
-  if (locked)
-    lockTimeout = setTimeout(Bangle.showClock, 10000);
-}
-Bangle.on("lock", lockHandler);
+  // 10s of inactivity goes back to clock
+  Bangle.setLocked(false); // unlock initially
+  let lockTimeout;
+  let lockHandler = function(locked) {
+    if (lockTimeout) clearTimeout(lockTimeout);
+    lockTimeout = undefined;
+    if (locked)
+      lockTimeout = setTimeout(Bangle.showClock, 10000);
+  }
+  Bangle.on("lock", lockHandler);
+};
+drawMenu();
+
 if (!settings.fullscreen) // finally draw widgets
   Bangle.drawWidgets();
 }

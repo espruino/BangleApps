@@ -1,7 +1,7 @@
 {
   "id": "ha",
   "name": "Home Assistant",
-  "version": "0.11",
+  "version": "0.12",
   "description": "Integrates your Bangle.js into Home Assistant using Android Integration/Gadgetbridge",
   "icon": "ha.png",
   "type": "app",

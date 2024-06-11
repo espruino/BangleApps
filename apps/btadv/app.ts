@@ -1,5 +1,6 @@
 {
-// @ts-ignore helper
+// @ts-expect-error helper
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const __assign = Object.assign;
 
 const Layout = require("Layout");
@@ -666,6 +667,8 @@ const getBleAdvert = <T>(map: (s: BleServ) => T, all = false) => {
 
 // done via advertise in setServices()
 //const updateBleAdvert = () => {
+//  require("ble_advert").set(...)
+//
 //  let bleAdvert: ReturnType<typeof getBleAdvert<undefined>>;
 //
 //  if (!(bleAdvert = (Bangle as any).bleAdvert)) {

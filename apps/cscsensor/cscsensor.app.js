@@ -1,8 +1,3 @@
-var device;
-var gatt;
-var service;
-var characteristic;
-
 const SETTINGS_FILE = 'cscsensor.json';
 const storage = require('Storage');
 const W = g.getWidth();
@@ -17,12 +12,10 @@ class CSCSensor {
   constructor() {
     this.movingTime = 0;
     this.lastTime = 0;
-    this.lastBangleTime = Date.now();
     this.lastRevs = -1;
     this.settings = storage.readJSON(SETTINGS_FILE, 1) || {};
     this.settings.totaldist = this.settings.totaldist || 0;
     this.totaldist = this.settings.totaldist;
-    this.wheelCirc = (this.settings.wheelcirc || 2230)/25.4;
     this.speedFailed = 0;
     this.speed = 0;
     this.maxSpeed = 0;
@@ -34,8 +27,6 @@ class CSCSensor {
     this.distFactor = this.qMetric ? 1.609344 : 1;
     this.screenInit = true;
     this.batteryLevel = -1;
-    this.lastCrankTime = 0;
-    this.lastCrankRevs = 0;
     this.showCadence = false;
     this.cadence = 0;
   }
@@ -63,10 +54,6 @@ class CSCSensor {
     }
   }
 
-  updateBatteryLevel(event) {
-    if (event.target.uuid == "0x2a19") this.setBatteryLevel(event.target.value.getUint8(0));
-  }
-
   drawBatteryIcon() {
     g.setColor(1, 1, 1).drawRect(10*W/240, yStart+0.029167*H, 20*W/240, yStart+0.1125*H)
       .fillRect(14*W/240, yStart+0.020833*H, 16*W/240, yStart+0.029167*H)
@@ -81,7 +68,7 @@ class CSCSensor {
   }
 
   updateScreenRevs() {
-    var dist = this.distFactor*(this.lastRevs-this.lastRevsStart)*this.wheelCirc/63360.0;
+    var dist = this.distFactor*(this.lastRevs-this.lastRevsStart)*csc.settings.circum/63360.0;
     var ddist = Math.round(100*dist)/100;
     var tdist = Math.round(this.distFactor*this.totaldist*10)/10;
     var dspeed = Math.round(10*this.distFactor*this.speed)/10;
@@ -157,114 +144,38 @@ class CSCSensor {
     }
   }
 
-  updateSensor(event) {
-    var qChanged = false;
-    if (event.target.uuid == "0x2a5b") {
-      if (event.target.value.getUint8(0, true) & 0x2) {
-        // crank revolution - if enabled
-        const crankRevs = event.target.value.getUint16(1, true);
-        const crankTime = event.target.value.getUint16(3, true);
-        if (crankTime > this.lastCrankTime) {
-          this.cadence = (crankRevs-this.lastCrankRevs)/(crankTime-this.lastCrankTime)*(60*1024);
-          qChanged = true;
-        }
-        this.lastCrankRevs = crankRevs;
-        this.lastCrankTime = crankTime;
-      } else {
-        // wheel revolution
-        var wheelRevs = event.target.value.getUint32(1, true);
-        var dRevs = (this.lastRevs>0 ? wheelRevs-this.lastRevs : 0);
-        if (dRevs>0) {
-          qChanged = true;
-          this.totaldist += dRevs*this.wheelCirc/63360.0;
-          if ((this.totaldist-this.settings.totaldist)>0.1) {
-            this.settings.totaldist = this.totaldist;
-            storage.writeJSON(SETTINGS_FILE, this.settings);
-          }
-        }
-        this.lastRevs = wheelRevs;
-        if (this.lastRevsStart<0) this.lastRevsStart = wheelRevs;
-        var wheelTime = event.target.value.getUint16(5, true);
-        var dT = (wheelTime-this.lastTime)/1024;
-        var dBT = (Date.now()-this.lastBangleTime)/1000;
-        this.lastBangleTime = Date.now();
-        if (dT<0) dT+=64;
-        if (Math.abs(dT-dBT)>3) dT = dBT;
-        this.lastTime = wheelTime;
-        this.speed = this.lastSpeed;
-        if (dRevs>0 && dT>0) {
-          this.speed = (dRevs*this.wheelCirc/63360.0)*3600/dT;
-          this.speedFailed = 0;
-          this.movingTime += dT;
-        } else if (!this.showCadence) {
-          this.speedFailed++;
-          qChanged = false;
-          if (this.speedFailed>3) {
-            this.speed = 0;
-            qChanged = (this.lastSpeed>0);
-          }
-        }
-        this.lastSpeed = this.speed;
-        if (this.speed>this.maxSpeed && (this.movingTime>3 || this.speed<20) && this.speed<50) this.maxSpeed = this.speed;
-      }
-    }
-    if (qChanged) this.updateScreen();
-  }
 }
 
 var mySensor = new CSCSensor();
 
-function getSensorBatteryLevel(gatt) {
-  gatt.getPrimaryService("180f").then(function(s) {
-    return s.getCharacteristic("2a19");
-  }).then(function(c) {
-    c.on('characteristicvaluechanged', (event)=>mySensor.updateBatteryLevel(event));
-    return c.startNotifications();
-  });
-}
+var csc = require("blecsc").getInstance();
+csc.on("data", e => {
+  mySensor.totaldist += e.wr * csc.settings.circum/*mm*/ / 1000000; // finally in km
+  mySensor.lastRevs = e.cwr;
+  if (mySensor.lastRevsStart<0) mySensor.lastRevsStart = e.cwr;
+  mySensor.speed = e.kph;
+  mySensor.movingTime += e.wdt;
+  if (mySensor.speed>mySensor.maxSpeed && (mySensor.movingTime>3 || mySensor.speed<20) && mySensor.speed<50)
+    mySensor.maxSpeed = mySensor.speed;
+  mySensor.cadence = e.crps*60;
+  mySensor.updateScreen();
+  mySensor.updateScreen();
+});
 
-function connection_setup() {
-  mySensor.screenInit = true;
-  E.showMessage("Scanning for CSC sensor...");
-  NRF.requestDevice({ filters: [{services:["1816"]}], maxInterval: 100}).then(function(d) {
-    device = d;
-    E.showMessage("Found device");
-    return device.gatt.connect();
-  }).then(function(ga) {
-    gatt = ga;
-    E.showMessage("Connected");
-    return gatt.getPrimaryService("1816");
-  }).then(function(s) {
-    service = s;
-    return service.getCharacteristic("2a5b");
-  }).then(function(c) {
-    characteristic = c;
-    characteristic.on('characteristicvaluechanged', (event)=>mySensor.updateSensor(event));
-    return characteristic.startNotifications();
-  }).then(function() {
-    console.log("Done!");
-    g.reset().clearRect(Bangle.appRect).flip();
-    getSensorBatteryLevel(gatt);
-    mySensor.updateScreen();
-  }).catch(function(e) {
-    E.showMessage(e.toString(), "ERROR");
-    console.log(e);
-    setTimeout(connection_setup, 1000);
-  });
-}
-
-connection_setup();
+csc.on("status", txt => {
+  //print("->", txt);
+  E.showMessage(txt);
+});
 E.on('kill',()=>{
-  if (gatt!=undefined) gatt.disconnect();
+  csc.stop();
   mySensor.settings.totaldist = mySensor.totaldist;
   storage.writeJSON(SETTINGS_FILE, mySensor.settings);
 });
-NRF.on('disconnect', connection_setup); // restart if disconnected
 Bangle.setUI("updown", d=>{
   if (d<0) { mySensor.reset(); g.clearRect(0, yStart, W, H); mySensor.updateScreen(); }
-  else if (d>0) { if (Date.now()-mySensor.lastBangleTime>10000) connection_setup(); }
-  else { mySensor.toggleDisplayCadence(); g.clearRect(0, yStart, W, H); mySensor.updateScreen(); }
+  else if (!d) { mySensor.toggleDisplayCadence(); g.clearRect(0, yStart, W, H); mySensor.updateScreen(); }
 });
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+csc.start(); // start a connection

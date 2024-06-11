@@ -6,3 +6,4 @@
 0.06: Fix azimuth (bug #2651), only show degrees
 0.07: Minor code improvements
 0.08: Minor code improvements
+0.09: Fix: Handle when the moon rise/set do not occur on the current day

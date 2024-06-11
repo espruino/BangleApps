@@ -1,3 +1,4 @@
 0.01: attempt to import
 0.02: better GPS support, adding altitude and temperature support
-0.03: Minor code improvements
+0.03: minor code improvements
+0.04: make height auto-calibration useful and slow ticks to save power

@@ -1,3 +1,9 @@
 0.01: New App!
 0.02: Add Bangle.js 2 Support
 0.03: Minor code improvements
+0.04: Fix display/overwriting of boolean menu items. Handle back
+      functionality, both via `.back` and `"< Back"` items, displaying an
+      entry and the `setUI` back widget. Fix `setUI`'s back overwrite. Add
+      support for scroll.
+0.05: Fix display of final menu item when no options are given and
+      handling of E.showMenu() with no arguments

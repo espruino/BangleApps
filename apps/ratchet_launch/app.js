@@ -5,13 +5,13 @@ var font = g.getFonts().includes("6x15") ? "6x15" : "6x8:2";
 var largeFont = g.getFonts().includes("12x20") ? "12x20" : "6x8:3";
 var currentApp = 0;
 var overscroll = 0;
-var blankImage = Graphics.createImage(` `);
+var blankImage = Graphics.createImage(`\n \n`);
 var rowHeight = g.getHeight()/3;
 
 // Load apps list
 var apps;
 
-var launchCache = s.readJSON("launch.cache.json", true)||{};
+var launchCache = Storage.readJSON("launch.cache.json", true)||{};
 var launchHash = require("Storage").hash(/\.info/);
 if (launchCache.hash==launchHash) {
   apps = launchCache.apps;
@@ -39,7 +39,7 @@ if (launchCache.hash==launchHash) {
   });
 
   launchCache = { apps, hash: launchHash };
-  s.writeJSON("launch.cache.json", launchCache);
+  Storage.writeJSON("launch.cache.json", launchCache);
 }
 
 // Uncomment for testing in the emulator without apps:

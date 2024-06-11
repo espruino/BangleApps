@@ -56,7 +56,7 @@ Graphics.prototype.setFontAudiowide = function() {
   };
 
   // Show launcher when middle button pressed
-  Bangle.setUI({mode:"clock", remove:function() { //f ree memory
+  Bangle.setUI({mode:"clock", remove:function() { // free memory
     if (drawTimeout) clearTimeout(drawTimeout);
     if (widgetTimeout) clearTimeout(widgetTimeout);
     require("widget_utils").show();
@@ -64,7 +64,7 @@ Graphics.prototype.setFontAudiowide = function() {
     g.reset().clearRect(e.x,e.y,e.x+63,e.y+23);
     delete WIDGETS["patriot"];
     delete Graphics.prototype.setFontAudiowide;
-  }});  
+  }});
   // Load widgets (make them swipeable)
   Bangle.loadWidgets();
   WIDGETS["patriot"] = {
@@ -85,5 +85,5 @@ Graphics.prototype.setFontAudiowide = function() {
   // Clear the screen once, at startup
   g.clear();
   // draw immediately at first, queue update
-  draw();  
+  draw();
 }

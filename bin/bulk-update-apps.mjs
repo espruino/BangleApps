@@ -12,7 +12,7 @@
  * node bin/bulk-update-apps.mjs GITHASH CHANGELOGMESSAGE
  *
  * Example command:
- * node bin/exempt-lint.mjs 29ced17i7 'Minor code improvements'
+ * node bin/bulk-update-apps.mjs 29ced17i7 'Minor code improvements'
  *
  * You can also run it in output mode like this:
  * node bin/bulk-update-apps.mjs GITHASH --output

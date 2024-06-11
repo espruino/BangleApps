@@ -1,46 +1,3 @@
-require("FontVGA8").add(Graphics);
-
-const COLOUR_BLACK = 0x0;
-const COLOUR_WHITE = 0xffff;
-//const COLOUR_DARK_GREY = "#3F3F3F";
-//const COLOUR_GREY = "#7F7F7F";
-//const COLOUR_LIGHT_GREY = "#BFBFBF";
-const COLOUR_RED = "#FF0000";
-//const COLOUR_BLUE = "#0000FF";
-//const COLOUR_YELLOW = "#FFFF00";
-//const COLOUR_LIGHT_CYAN = "#7FFFFF";
-//const COLOUR_DARK_YELLOW = "#7F7F00";
-//const COLOUR_DARK_CYAN = "#007F7F";
-//const COLOUR_ORANGE = "#FF7F00";
-const COLOUR_VPW_GREEN = 0xf0f;
-//const COLOUR_MAGENTA = "#ff00ff";
-const COLOUR_PURPLE = "#8000FF";
-
-var settings = Object.assign({
-  // default values
-  foregroundColor: 0
-}, require('Storage').readJSON("vpw_clock.settings.json", true) || {});
-
-var foregroundColor = COLOUR_BLACK;
-
-switch (settings.foregroundColor) {
-  case 0:
-    foregroundColor = COLOUR_RED;
-    break;
-
-  case 1:
-    foregroundColor = COLOUR_PURPLE;
-    break;
-
-  case 2:
-    foregroundColor = COLOUR_WHITE;
-    break;
-
-  default:
-    foregroundColor = COLOUR_BLACK; // to detect problems
-    break;
-}
-
 Graphics.prototype.setFontMadeSunflower = function () {
   // Actual height 46 (45 - 0)
   return this.setFontCustom(
@@ -51,113 +8,171 @@ Graphics.prototype.setFontMadeSunflower = function () {
   );
 };
 
-var sun_img = require("heatshrink").decompress(atob("2GwwZC/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4AUjdt23btuAH/MNHwQCD7CA8AQlsIGsGHwwCD2BAzgI+IAQfAIOVp22bARZAxjaAKAQdsIOGatOmARuAIF02QBgCEIFsBQBwCDQlsNQB4CC7BBsQCACDIFcDQCACDsBBqjSDUtBBq6dtmwCTIFMGQCQCD0BBognTps0AScwINEmQa2mIE8BmmTpICVwBBnQCoCCIM8NknSpoCV6BBmhKDYzRBmfyACJIMyAXQdECpMkyQCXoBBlQbVgIMkSQbVIIMkaQbVoQf6DmyVpkwCZIMqDapJB/IP5BnghB/IL0gIP5B/IP5B/IP5B/IP5B/IP5B/IP5B4gBB/ILxAjIP5B/IP4AGiRBapBB/IP5BogRBaoBB/IP4CCIEgABIP5B/AAcJILGQIM0BILGAIP5BogBBYIE8AghBWkBB/INUAIKxApgESIKlIINUCIKlAINUAIKhArgEJIKWQINkBIKWAINkAIKRAtAAJBQIF8AiRBOpBBwgBBOIGMAhJBMyBBygEEIJUgIGYABiRBIpBA1ZBLC0QxSA4AH4A/AH4A/AGA"));
+{ // must be inside our own scope here so that when we are unloaded everything disappears
+  // we also define functions using 'let fn = function() {..}' for the same reason. function decls are global
+  require("FontVGA8").add(Graphics);
 
-function drawPolygonWithGrid(x1, y1, x2, y2, x3, y3, x4, y4, M, N) {
-  // Draw the polygon
-  g.drawLine(x1, y1, x2, y2);
-  g.drawLine(x2, y2, x3, y3);
-  g.drawLine(x3, y3, x4, y4);
-  g.drawLine(x4, y4, x1, y1);
+  const COLOUR_BLACK = 0x0;
+  const COLOUR_WHITE = 0xffff;
+  const COLOUR_RED = "#FF0000";
+  const COLOUR_VPW_GREEN = 0xf0f;
+  const COLOUR_PURPLE = "#8000FF";
+  //const COLOUR_DARK_GREY = "#3F3F3F";
+  //const COLOUR_GREY = "#7F7F7F";
+  //const COLOUR_LIGHT_GREY = "#BFBFBF";
+  //const COLOUR_BLUE = "#0000FF";
+  //const COLOUR_YELLOW = "#FFFF00";
+  //const COLOUR_LIGHT_CYAN = "#7FFFFF";
+  //const COLOUR_DARK_YELLOW = "#7F7F00";
+  //const COLOUR_DARK_CYAN = "#007F7F";
+  //const COLOUR_ORANGE = "#FF7F00";
+  //const COLOUR_MAGENTA = "#ff00ff";
 
-  for (let i = 1; i < N; i++) {
-    let xi1 = x1 + i * ((x2 - x1) / N);
-    let yi1 = y1 + i * ((y2 - y1) / N);
+  const sun_img = require("heatshrink").decompress(atob("2GwwZC/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4AUjdt23btuAH/MNHwQCD7CA8AQlsIGsGHwwCD2BAzgI+IAQfAIOVp22bARZAxjaAKAQdsIOGatOmARuAIF02QBgCEIFsBQBwCDQlsNQB4CC7BBsQCACDIFcDQCACDsBBqjSDUtBBq6dtmwCTIFMGQCQCD0BBognTps0AScwINEmQa2mIE8BmmTpICVwBBnQCoCCIM8NknSpoCV6BBmhKDYzRBmfyACJIMyAXQdECpMkyQCXoBBlQbVgIMkSQbVIIMkaQbVoQf6DmyVpkwCZIMqDapJB/IP5BnghB/IL0gIP5B/IP5B/IP5B/IP5B/IP5B/IP5B4gBB/ILxAjIP5B/IP4AGiRBapBB/IP5BogRBaoBB/IP4CCIEgABIP5B/AAcJILGQIM0BILGAIP5BogBBYIE8AghBWkBB/INUAIKxApgESIKlIINUCIKlAINUAIKhArgEJIKWQINkBIKWAINkAIKRAtAAJBQIF8AiRBOpBBwgBBOIGMAhJBMyBBygEEIJUgIGYABiRBIpBA1ZBLC0QxSA4AH4A/AH4A/AGA"));
 
-    let xi2 = x4 - i * ((x4 - x3) / N);
-    let yi2 = y4 - i * ((y4 - y3) / N);
+  let settings = Object.assign({
+    // default values
+    foregroundColor: 0
+  }, require('Storage').readJSON("vpw_clock.settings.json", true) || {});
 
-    g.drawLine(xi1, yi1, xi2, yi2);
+  let foregroundColor;
+
+  switch (settings.foregroundColor) {
+    case 0:
+      foregroundColor = COLOUR_RED;
+      break;
+
+    case 1:
+      foregroundColor = COLOUR_PURPLE;
+      break;
+
+    case 2:
+      foregroundColor = COLOUR_WHITE;
+      break;
+
+    case 3:
+      foregroundColor = COLOUR_BLACK;
+      break;
+
+    default:
+      foregroundColor = COLOUR_BLACK; // to detect problems
+      break;
   }
 
-  for (let j = 1; j < M; j++) {
-    let xi1 = x1 + j * ((x4 - x1) / M);
-    let yi1 = y1 + j * ((y4 - y1) / M);
+  let drawPolygonWithGrid = function (x1, y1, x2, y2, x3, y3, x4, y4, M, N) {
+    // Draw the polygon
+    g.drawLine(x1, y1, x2, y2);
+    g.drawLine(x2, y2, x3, y3);
+    g.drawLine(x3, y3, x4, y4);
+    g.drawLine(x4, y4, x1, y1);
 
-    let xi2 = x2 - j * ((x2 - x3) / M);
-    let yi2 = y2 - j * ((y2 - y3) / M);
+    for (let i = 1; i < N; i++) {
+      let xi1 = x1 + i * ((x2 - x1) / N);
+      let yi1 = y1 + i * ((y2 - y1) / N);
 
-    g.drawLine(xi1, yi1, xi2, yi2);
-  }
-}
+      let xi2 = x4 - i * ((x4 - x3) / N);
+      let yi2 = y4 - i * ((y4 - y3) / N);
 
-var SCREEN_WIDTH = 176;
-var SCREEN_HEIGHT = 176;
-var GROUND_HEIGHT = 176 - 45;
+      g.drawLine(xi1, yi1, xi2, yi2);
+    }
 
-var GRID_BASE_OFFSET = 100;
+    for (let j = 1; j < M; j++) {
+      let xi1 = x1 + j * ((x4 - x1) / M);
+      let yi1 = y1 + j * ((y4 - y1) / M);
 
-// timeout used to update every minute
-var drawTimeout;
+      let xi2 = x2 - j * ((x2 - x3) / M);
+      let yi2 = y2 - j * ((y2 - y3) / M);
 
-// schedule a draw for the next minute
-function queueDraw() {
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function () {
-    drawTimeout = undefined;
-    draw();
-  }, 60000 - (Date.now() % 60000));
-}
+      g.drawLine(xi1, yi1, xi2, yi2);
+    }
+  };
 
-function draw() {
-  var x = g.getWidth() / 2;
-  var y = 24 + 20;
+  const SCREEN_WIDTH = 176;
+  const SCREEN_HEIGHT = 176;
+  const GROUND_HEIGHT = 176 - 45;
 
-  g.reset().clearRect(0, 24, g.getWidth(), g.getHeight());
+  const GRID_BASE_OFFSET = 100;
 
-  //sky
-  g.setColor(COLOUR_VPW_GREEN);
-  g.fillRect(0, 24, SCREEN_WIDTH, GROUND_HEIGHT - 1);
+  // timeout used to update every minute
+  let drawTimeout;
 
-  g.drawImage(sun_img, 0, 0);
-
-  //ground
-  g.setColor("#8000FF");
-  g.fillRect(0, GROUND_HEIGHT, 176, SCREEN_HEIGHT);
-
-  //lines
-  g.setColor(COLOUR_WHITE);
-  drawPolygonWithGrid(0, GROUND_HEIGHT,
-    SCREEN_WIDTH, GROUND_HEIGHT,
-    SCREEN_WIDTH + GRID_BASE_OFFSET, SCREEN_HEIGHT - 1,
-    0 - GRID_BASE_OFFSET, SCREEN_HEIGHT - 1,
-    7, //vertical
-    15); //horizontal
-
-  // work out locale-friendly date/time
-  var date = new Date();
-  var timeStr = require("locale").time(date, 1);
-  var dateStr = require("locale").date(date).toUpperCase();
-  var dowStr = require("locale").dow(date).toUpperCase();
-  // draw time
-  g.setFontAlign(0, 0).setFontMadeSunflower().setColor(foregroundColor);
-  g.drawString(timeStr, x, y + 20);
-  // draw date
-  y += 35;
-  g.setFontAlign(0, 0, 1).setFont("VGA8");
-  g.drawString(dateStr, g.getWidth() - 8, g.getHeight() / 2 - 10);
-  // draw the day of the week
-  g.setFontAlign(0, 0, 3).setFont("VGA8");
-  g.drawString(dowStr, 8, g.getHeight() / 2 - 10);
-  // queue draw in one minute
-  queueDraw();
-}
-
-// Clear the screen once, at startup
-g.setTheme({ bg: COLOUR_VPW_GREEN, fg: foregroundColor, dark: true }).clear();
-// draw immediately at first, queue update
-draw();
-// Stop updates when LCD is off, restart when on
-Bangle.on('lcdPower', on => {
-  if (on) {
-    draw(); // draw immediately, queue redraw
-  } else { // stop draw timer
+  // schedule a draw for the next minute
+  let queueDraw = function () {
     if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = undefined;
-  }
-});
-// Show launcher when middle button pressed
-Bangle.setUI("clock");
-// Load widgets
-Bangle.loadWidgets();
-Bangle.drawWidgets();
+    drawTimeout = setTimeout(function () {
+      drawTimeout = undefined;
+      draw();
+    }, 60000 - (Date.now() % 60000));
+  };
+
+  let draw = function () {
+    var x = g.getWidth() / 2;
+    var y = 24 + 20;
+
+    g.reset().clearRect(0, 24, g.getWidth(), g.getHeight());
+
+    //sky
+    g.setColor(COLOUR_VPW_GREEN);
+    g.fillRect(0, 24, SCREEN_WIDTH, GROUND_HEIGHT - 1);
+
+    g.drawImage(sun_img, 0, 0);
+
+    //ground
+    g.setColor("#8000FF");
+    g.fillRect(0, GROUND_HEIGHT, 176, SCREEN_HEIGHT);
+
+    //lines
+    g.setColor(COLOUR_WHITE);
+    drawPolygonWithGrid(0, GROUND_HEIGHT,
+      SCREEN_WIDTH, GROUND_HEIGHT,
+      SCREEN_WIDTH + GRID_BASE_OFFSET, SCREEN_HEIGHT - 1,
+      0 - GRID_BASE_OFFSET, SCREEN_HEIGHT - 1,
+      7, //vertical
+      15); //horizontal
+
+    // work out locale-friendly date/time
+    var date = new Date();
+    var timeStr = require("locale").time(date, 1);
+    var dateStr = require("locale").date(date).toUpperCase();
+    var dowStr = require("locale").dow(date).toUpperCase();
+    // draw time
+    g.setFontAlign(0, 0).setFontMadeSunflower().setColor(foregroundColor);
+    g.drawString(timeStr, x, y + 20);
+    // draw date
+    y += 35;
+    g.setFontAlign(0, 0, 1).setFont("VGA8");
+    g.drawString(dateStr, g.getWidth() - 8, g.getHeight() / 2 - 10);
+    // draw the day of the week
+    g.setFontAlign(0, 0, 3).setFont("VGA8");
+    g.drawString(dowStr, 8, g.getHeight() / 2 - 10);
+    // queue draw in one minute
+    queueDraw();
+  };
+
+  // store the theme before drawing
+  let originalTheme = g.theme;
+
+  // Clear the screen once, at startup
+  g.setTheme({ bg: COLOUR_VPW_GREEN, fg: foregroundColor, dark: false }).clear();
+
+  // draw immediately at first, queue update
+  draw();
+
+  // Show launcher when middle button pressed
+  // handle fast loading
+  Bangle.setUI({
+    mode: "clock",
+    remove: function () {
+      // clear timeout
+      if (drawTimeout) clearTimeout(drawTimeout);
+      // remove custom font
+      delete Graphics.prototype.setFontMadeSunflower;
+      // revert theme to how it was before
+      g.setTheme(originalTheme);
+    }
+  });
+
+  // Load widgets
+  Bangle.loadWidgets();
+  Bangle.drawWidgets();
+}

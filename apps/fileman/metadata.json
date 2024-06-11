@@ -7,6 +7,7 @@
   "icon": "icons8-filing-cabinet-48.png",
   "tags": "tools",
   "supports": ["BANGLEJS","BANGLEJS2"],
+  "interface": "manage_files.html",
   "readme": "README.md",
   "storage": [
     {"name":"fileman.app.js","url":"fileman.app.js"},
