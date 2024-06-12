@@ -346,7 +346,7 @@ function diffToTarget() {
     diff.M = end.getMonth() - start.getMonth();
     diff.D = end.getDate() - start.getDate();
     diff.hh = end.getHours() - start.getHours();
-    diff.mm = end.getMinutes() - start.getMinutes();
+    diff.mm = end.getMinutes() - start.getMinutes() + end.getTimezoneOffset() - start.getTimezoneOffset();
     diff.ss = end.getSeconds() - start.getSeconds();
 
     // Adjust negative differences
