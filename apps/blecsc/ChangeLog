@@ -2,3 +2,4 @@
 0.02: Minor code improvements
 0.03: Moved from cycling app, fixed connection issues and cadence
 0.04: Added support for <1 wheel/crank event/second (using idle counters) (ref #3434)
+0.05: Fix <1 event/second issue
