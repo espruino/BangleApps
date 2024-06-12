@@ -119,9 +119,10 @@ class BLECSC {
           if (this.lastLwet === undefined) this.lastLwet = this.lwet;
           if (this.lwet < this.lastLwet) this.lastLwet -= 65536;
           let secs = (this.lwet - this.lastLwet) / 1024;
-          if (secs)
+          if (secs) {
             this.wrps = (this.cwr - this.lastCwr) / secs;
-          else {
+            this.widle = 0;
+          } else {
             if (this.widle<5) this.widle++;
             else this.wrps = 0;
           }
@@ -145,9 +146,10 @@ class BLECSC {
           if (this.lastLcet === undefined) this.lastLcet = this.lcet;
           if (this.lcet < this.lastLcet) this.lastLcet -= 65536;
           let secs = (this.lcet - this.lastLcet) / 1024;
-          if (secs)
+          if (secs) {
             this.crps = (this.ccr - this.lastCcr) / secs;
-          else {
+            this.cidle = 0;
+          } else {
             if (this.cidle<5) this.cidle++;
             else this.crps = 0;
           }

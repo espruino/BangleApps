@@ -68,7 +68,7 @@ class CSCSensor {
   }
 
   updateScreenRevs() {
-    var dist = this.distFactor*(this.lastRevs-this.lastRevsStart)*csc.settings.circum/63360.0;
+    var dist = this.distFactor*(this.lastRevs-this.lastRevsStart) * csc.settings.circum/*mm*/ / 1000000;
     var ddist = Math.round(100*dist)/100;
     var tdist = Math.round(this.distFactor*this.totaldist*10)/10;
     var dspeed = Math.round(10*this.distFactor*this.speed)/10;
