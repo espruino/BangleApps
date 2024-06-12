@@ -11,3 +11,4 @@
 0.10: Fix cscsensor when using coospoo sensor that supports crank *and* wheel
 0.11: Update to use blecsc library
 0.12: Fix regression reporting cadence (reported per second when should be per minute) (fix #3434)
+0.13: Fix total distance calculation
