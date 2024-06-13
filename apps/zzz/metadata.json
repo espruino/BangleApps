@@ -1,0 +1,22 @@
+{
+  "id": "zzz",
+  "name": "UQUZone",
+  "shortName": "UQUZone",
+  "version": "0.07",
+  "description": "UQUZone is designed to assist pilgrims during Hajj, ensuring their experience is smoother and more fulfilling,by adding zone Area around mina and muzdalifah to insure pilgrims never lost his way ",
+  "readme": "README.md",
+  "icon": "app.png",
+  "tags": "outdoors,gps,osm",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "screenshots": [{"url":"screenshot.png"}],
+  "interface": "interface.html",
+  "storage": [
+    {"name":"zzz","url":"zzz.js"},
+    {"name":"zzz.app.js","url":"app.js"},
+    {"name":"zzz.img","url":"app-icon.js","evaluate":true}
+  ], "data": [
+    {"name":"zzz.json"},
+    {"wildcard":"zzz.*.json"},
+    {"wildcard":"zzz.*.img"}
+  ]
+}

@@ -1,0 +1,20 @@
+{ "id": "zzon",
+  "name": "test zzon",
+  "shortName":"zon",
+  "version":"0.10",
+  "description": "zone area project",
+  "icon": "app.png",
+  "tags": "tool",
+  "supports" : ["BANGLEJS","BANGLEJS2"],  
+  "interface": "interface.html",
+  "readme": "README.md",
+  "storage": [
+    {"name":"zzon","url":"zzon.js"},
+    {"name":"zzon.app.js","url":"app.js"},
+    {"name":"zzon.img","url":"app-icon.js","evaluate":true}
+  ], "data": [
+    {"name":"zzon.json"},
+    {"wildcard":"zzon.*.json"},
+    {"wildcard":"zzon.*.img"}
+  ]
+}
