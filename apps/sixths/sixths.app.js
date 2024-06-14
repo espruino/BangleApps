@@ -12,7 +12,7 @@ var buzz = "",      /* Set this to transmit morse via vibrations */
     inm = "", l = "", /* For incoming morse handling */
     in_str = "",
     note = "(NOTEHERE)",
-    debug = "v1119", debug2 = "(otherdb)", debug3 = "(short)";
+    debug = "v0.04.1", debug2 = "(otherdb)", debug3 = "(short)";
 var mode = 0, mode_time = 0; // 0 .. normal, 1 .. note, 2.. mark name
 var disp_mode = 0;  // 0 .. normal, 1 .. small time
 
@@ -278,6 +278,7 @@ function inputHandler(s) {
     case 'M': mode = 2; show("M>", 10); cur_mark = markNew(); mode_time = getTime(); break;
     case 'N': mode = 1; show(">", 10); mode_time = getTime(); break;
     case 'O': aload("orloj.app.js"); break;
+    case 'R': aload("runplus.app.js"); break;
     case 'S': gpsOn(); gps_limit = getTime() + 60*30; gps_speed_limit = gps_limit; show("GPS on", 3); break;
     case 'T': {
       s = ' T';
@@ -287,7 +288,6 @@ function inputHandler(s) {
       doBuzz(toMorse(s));
       break;
     }
-    case 'R': aload("run.app.js"); break;
     case 'U': selectWP(-1); break;
     case 'Y': doBuzz(buzz); Bangle.resetCompass(); break;
   }
