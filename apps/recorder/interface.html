@@ -270,21 +270,24 @@ ${trackData.Latitude ? `
             var trackid = parseInt(button.getAttribute("trackid"));
             if (!filename || trackid===undefined) return;
             var task = button.getAttribute("task");
-            if (task=="delete") {
-              Util.showModal("Deleting Track...");
-              Util.eraseStorageFile(filename,()=>{
-                Util.hideModal();
-                getTrackList();
-              });
-            }
-            if (task=="downloadkml") {
-              downloadTrack(filename, track => saveKML(track, `Bangle.js Track ${trackid}`));
-            }
-            if (task=="downloadgpx") {
-              downloadTrack(filename, track => saveGPX(track, `Bangle.js Track ${trackid}`));
-            }
-            if (task=="downloadcsv") {
-              downloadTrack(filename, track => saveCSV(track, `Bangle.js Track ${trackid}`));
+            switch(task) {
+              case "delete":
+                Util.showModal("Deleting Track...");
+                Util.eraseStorageFile(filename,()=>{
+                  Util.hideModal();
+                  getTrackList();
+                });
+                break;
+
+              case "downloadkml":
+                downloadTrack(filename, track => saveKML(track, `Bangle.js Track ${trackid}`));
+                break;
+              case "downloadgpx":
+                downloadTrack(filename, track => saveGPX(track, `Bangle.js Track ${trackid}`));
+                break;
+              case "downloadcsv":
+                downloadTrack(filename, track => saveCSV(track, `Bangle.js Track ${trackid}`));
+                break;
             }
           });
         }
