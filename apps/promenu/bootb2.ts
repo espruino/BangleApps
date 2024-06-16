@@ -136,6 +136,8 @@ E.showMenu = (items?: Menu): MenuInstance => {
       const item = selectEdit;
 
       if (typeof item === "object" && typeof item.value === "number") {
+        const orig = item.value;
+
         item.value += (-dir||1) * (item.step||1);
 
         if (item.min && item.value < item.min)
@@ -144,10 +146,12 @@ E.showMenu = (items?: Menu): MenuInstance => {
         if ("max" in item && item.value > item.max)
           item.value = item.wrap ? item.min as number : item.max;
 
-        if (item.onchange)
-          item.onchange(item.value);
+        if (item.value !== orig) {
+          if (item.onchange)
+            item.onchange(item.value);
 
-        l.draw(selected, selected);
+          l.draw(selected, selected);
+        }
 
       } else {
         const lastSelected = selected;
