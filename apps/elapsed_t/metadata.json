@@ -3,7 +3,7 @@
   "name": "Elapsed Time Clock",
   "shortName": "Elapsed Time",
   "type": "clock",
-  "version":"0.02",
+  "version":"0.03",
   "description": "A clock that calculates the time difference between now and any given target date.",
   "tags": "clock,tool",
   "supports": ["BANGLEJS2"],
