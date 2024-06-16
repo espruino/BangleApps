@@ -153,7 +153,7 @@ function trackLineToObject(headers, l) {
 }
 
 function downloadTrack(filename, callback) {
-  Util.showModal("Downloading Track...");
+  Util.showModal(`Downloading ${filename}...`);
   Util.readStorageFile(filename,data=>{
     Util.hideModal();
     var lines = data.trim().split("\n");
@@ -306,7 +306,7 @@ ${trackData.Latitude ? `
 
             switch(task) {
               case "delete":
-                Util.showModal("Deleting Track...");
+                Util.showModal(`Deleting ${filename}...`);
                 Util.eraseStorageFile(filename,()=>{
                   Util.hideModal();
                   getTrackList();
