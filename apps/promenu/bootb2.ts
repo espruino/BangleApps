@@ -140,7 +140,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
 
         item.value += (-dir||1) * (item.step||1);
 
-        if (item.min && item.value < item.min)
+        if ("min" in item && item.value < item.min)
           item.value = item.wrap ? item.max as number : item.min;
 
         if ("max" in item && item.value > item.max)
