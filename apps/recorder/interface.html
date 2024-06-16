@@ -127,6 +127,10 @@ function saveGPX(track, title) {
 }
 
 function saveCSV(track, title) {
+  if(!track[0]){
+    showToast(`Can't save empty csv "${title}" (no headers)`, "error");
+    return;
+  }
   var headers = Object.keys(track[0]);
   var csv = headers.join(",")+"\n";
   track.forEach(t=>{
