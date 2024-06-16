@@ -235,8 +235,8 @@ ${trackData.Latitude ? `
            </div>
          </div>
         `;
-        });
-        if (trackList.length==0) {
+      });
+      if (trackList.length==0) {
         html += `
          <div class="column col-12">
            <div class="card-header">
@@ -245,8 +245,8 @@ ${trackData.Latitude ? `
            </div>
          </div>
          `;
-        }
-        html += `
+      }
+      html += `
         </div><!-- columns -->
         <h2>Settings</h2>
         <div class="form-group">
@@ -256,39 +256,39 @@ ${trackData.Latitude ? `
           </label>
         </div>
         </div>`;
-        domTracks.innerHTML = html;
-        document.getElementById("settings-allow-no-gps").addEventListener("change",event=>{
-          var allowNoGPS = event.target.checked;
-          localStorage.setItem("recorder-allow-no-gps", allowNoGPS);
-        });
-        Util.hideModal();
-        var buttons = domTracks.querySelectorAll("button");
+      domTracks.innerHTML = html;
+      document.getElementById("settings-allow-no-gps").addEventListener("change",event=>{
+        var allowNoGPS = event.target.checked;
+        localStorage.setItem("recorder-allow-no-gps", allowNoGPS);
+      });
+      Util.hideModal();
+      var buttons = domTracks.querySelectorAll("button");
         for (var i=0;i<buttons.length;i++) {
-        buttons[i].addEventListener("click",event => {
-         var button = event.currentTarget;
-         var filename = button.getAttribute("filename");
-         var trackid = parseInt(button.getAttribute("trackid"));
-         if (!filename || trackid===undefined) return;
-         var task = button.getAttribute("task");
-         if (task=="delete") {
-           Util.showModal("Deleting Track...");
-           Util.eraseStorageFile(filename,()=>{
-             Util.hideModal();
-             getTrackList();
-           });
-         }
-         if (task=="downloadkml") {
-           downloadTrack(filename, track => saveKML(track, `Bangle.js Track ${trackid}`));
-         }
-         if (task=="downloadgpx") {
-           downloadTrack(filename, track => saveGPX(track, `Bangle.js Track ${trackid}`));
-         }
-         if (task=="downloadcsv") {
-           downloadTrack(filename, track => saveCSV(track, `Bangle.js Track ${trackid}`));
-         }
-        });
-      }
-    });
+          buttons[i].addEventListener("click",event => {
+            var button = event.currentTarget;
+            var filename = button.getAttribute("filename");
+            var trackid = parseInt(button.getAttribute("trackid"));
+            if (!filename || trackid===undefined) return;
+            var task = button.getAttribute("task");
+            if (task=="delete") {
+              Util.showModal("Deleting Track...");
+              Util.eraseStorageFile(filename,()=>{
+                Util.hideModal();
+                getTrackList();
+              });
+            }
+            if (task=="downloadkml") {
+              downloadTrack(filename, track => saveKML(track, `Bangle.js Track ${trackid}`));
+            }
+            if (task=="downloadgpx") {
+              downloadTrack(filename, track => saveGPX(track, `Bangle.js Track ${trackid}`));
+            }
+            if (task=="downloadcsv") {
+              downloadTrack(filename, track => saveCSV(track, `Bangle.js Track ${trackid}`));
+            }
+          });
+        }
+      });
   });
 }
 
