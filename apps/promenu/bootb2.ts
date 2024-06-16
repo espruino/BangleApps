@@ -177,17 +177,16 @@ E.showMenu = (items?: Menu): MenuInstance => {
   }
 
   Bangle.setUI({
-          mode: "updown",
-          back,
-          remove: () => {
-              Bangle.removeListener("swipe", onSwipe);
-          },
-      } as SetUIArg<"updown">,
-      dir => {
-          if (dir) l.move(dir);
-          else l.select();
-      }
-  );
+    mode: "updown",
+    back,
+    remove: () => {
+      Bangle.removeListener("swipe", onSwipe);
+    },
+  } as SetUIArg<"updown">,
+  dir => {
+    if (dir) l.move(dir);
+    else l.select();
+  });
 
   return l;
 };
