@@ -50,11 +50,15 @@ function handleFirstDayOfWeek(dow) {
 alarms.filter(e => e.timer === undefined).forEach(a => a.dow = handleFirstDayOfWeek(a.dow));
 
 function getLabel(e) {
-  const dateStr = e.date && require("locale").date(new Date(e.date), 1);
+  const dateStr = getDateText(e.date);
   return (e.timer
       ? require("time_utils").formatDuration(e.timer)
       : (dateStr ? `${dateStr}${e.rp?"*":""} ${require("time_utils").formatTime(e.t)}` : require("time_utils").formatTime(e.t) + (e.rp ? ` ${decodeRepeat(e)}` : ""))
       ) + (e.msg ? ` ${e.msg}` : "");
+}
+
+function getDateText(d) {
+  return d && (settings.menuDateFormat === "mmdd" ? d.substring(d.startsWith(new Date().getFullYear()) ? 5 : 0) : require("locale").date(new Date(d), 1));
 }
 
 function trimLabel(label, maxLength) {
@@ -75,10 +79,10 @@ function formatAlarmProperty(msg) {
   }
 }
 
-function showMainMenu(scroll, group) {
+function showMainMenu(scroll, group, scrollback) {
   const menu = {
     "": { "title": group || /*LANG*/"Alarms & Timers", scroll: scroll },
-    "< Back": () => group ? showMainMenu() : load(),
+    "< Back": () => group ? showMainMenu(scrollback) : load(),
     /*LANG*/"New...": () => showNewMenu(group)
   };
   const getGroups = settings.showGroup && !group;
@@ -98,7 +102,7 @@ function showMainMenu(scroll, group) {
   });
 
   if (!group) {
-    Object.keys(groups).sort().forEach(g => menu[g] = () => showMainMenu(null, g));
+    Object.keys(groups).sort().forEach(g => menu[g] = () => showMainMenu(null, g, scroller.scroll));
     menu[/*LANG*/"Advanced"] = () => showAdvancedMenu();
   }
 
@@ -138,6 +142,8 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate, scroll, group) {
   var title = date ? (isNew ? /*LANG*/"New Event" : /*LANG*/"Edit Event") : (isNew ? /*LANG*/"New Alarm" : /*LANG*/"Edit Alarm");
   var keyboard = "textinput";
   try {keyboard = require(keyboard);} catch(e) {keyboard = null;}
+  var datetimeinput;
+  try {datetimeinput = require("datetimeinput");} catch(e) {datetimeinput = null;}
 
   const menu = {
     "": { "title": title },
@@ -145,41 +151,66 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate, scroll, group) {
       prepareAlarmForSave(alarm, alarmIndex, time, date);
       saveAndReload();
       showMainMenu(scroll, group);
-    },
-    /*LANG*/"Hour": {
-      value: time.h,
-      format: v => ("0" + v).substr(-2),
-      min: 0,
-      max: 23,
-      wrap: true,
-      onchange: v => time.h = v
-    },
-    /*LANG*/"Minute": {
-      value: time.m,
-      format: v => ("0" + v).substr(-2),
-      min: 0,
-      max: 59,
-      wrap: true,
-      onchange: v => time.m = v
-    },
-    /*LANG*/"Day": {
-      value: date ? date.getDate() : null,
-      min: 1,
-      max: 31,
-      wrap: true,
-      onchange: v => date.setDate(v)
-    },
-    /*LANG*/"Month": {
-      value: date ? date.getMonth() + 1 : null,
-      format: v => require("date_utils").month(v),
-      onchange: v => date.setMonth((v+11)%12)
-    },
-    /*LANG*/"Year": {
-      value: date ? date.getFullYear() : null,
-      min: new Date().getFullYear(),
-      max: 2100,
-      onchange: v => date.setFullYear(v)
-    },
+    }
+  };
+
+  if (alarm.date && datetimeinput) {
+    menu[`${getDateText(date.toLocalISOString().slice(0,10))} ${require("time_utils").formatTime(time)}`] = {
+      value: date,
+      format: v => "",
+      onchange: v => {
+        setTimeout(() => {
+          var datetime = new Date(v.getTime());
+          datetime.setHours(time.h, time.m);
+          datetimeinput.input({datetime}).then(result => {
+            time.h = result.getHours();
+            time.m = result.getMinutes();
+            prepareAlarmForSave(alarm, alarmIndex, time, result, true);
+            setTimeout(showEditAlarmMenu, 10, alarm, alarmIndex, withDate, scroll, group);
+          });
+        }, 100);
+      }
+    };
+  } else {
+    Object.assign(menu, {
+      /*LANG*/"Hour": {
+        value: time.h,
+        format: v => ("0" + v).substr(-2),
+        min: 0,
+        max: 23,
+        wrap: true,
+        onchange: v => time.h = v
+      },
+      /*LANG*/"Minute": {
+        value: time.m,
+        format: v => ("0" + v).substr(-2),
+        min: 0,
+        max: 59,
+        wrap: true,
+        onchange: v => time.m = v
+      },
+      /*LANG*/"Day": {
+        value: date ? date.getDate() : null,
+        min: 1,
+        max: 31,
+        wrap: true,
+        onchange: v => date.setDate(v)
+      },
+      /*LANG*/"Month": {
+        value: date ? date.getMonth() + 1 : null,
+        format: v => require("date_utils").month(v),
+        onchange: v => date.setMonth((v+11)%12)
+      },
+      /*LANG*/"Year": {
+        value: date ? date.getFullYear() : null,
+        min: new Date().getFullYear(),
+        max: 2100,
+        onchange: v => date.setFullYear(v)
+      }
+    });
+  }
+
+  Object.assign(menu, {
     /*LANG*/"Message": {
       value: alarm.msg,
       format: formatAlarmProperty,
@@ -241,7 +272,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate, scroll, group) {
       saveAndReload();
       showMainMenu(scroll, group);
     }
-  };
+  });
 
   if (!keyboard) delete menu[/*LANG*/"Message"];
   if (!keyboard || !settings.showGroup) delete menu[/*LANG*/"Group"];
