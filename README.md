@@ -405,7 +405,7 @@ in an iframe.
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
-    <script src="../../lib/interface.js"></script>
+    <script src="../../core/lib/interface.js"></script>
     <div id="t">Loading...</div>
     <script>
       function onInit() {
