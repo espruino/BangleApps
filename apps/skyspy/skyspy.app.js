@@ -3,6 +3,44 @@
    1 .. DD MM.mmm'
    2 .. DD MM'ss"
 */
+
+let libgps = {
+  state: {},
+  on_gps: function(f) {
+    let fix = this.getGPSFix();
+    f(fix);
+
+  /*
+  "lat": number,      // Latitude in degrees
+  "lon": number,      // Longitude in degrees
+  "alt": number,      // altitude in M
+  "speed": number,    // Speed in kph
+  "course": number,   // Course in degrees
+  "time": Date,       // Current Time (or undefined if not known)
+  "satellites": 7,    // Number of satellites
+  "fix": 1            // NMEA Fix state - 0 is no fix
+  "hdop": number,     // Horizontal Dilution of Precision
+  */
+    this.state.timeout = setTimeout(this.on_gps, 1000, f);
+  },
+  off_gps: function() {
+    clearTimeout(gps_state.timeout);
+  },
+  getGPSFix: function() {
+    let fix = {};
+    fix.fix = 1;
+    fix.lat = 50;
+    fix.lon = 14;
+    fix.alt = 200;
+    fix.speed = 5;
+    fix.course = 30;
+    fix.time = Date();
+    fix.satellites = 5;
+    fix.hdop = 12;
+    return fix;
+  }
+};
+
 var mode = 1;
 var display = 0;
 
@@ -69,7 +107,8 @@ function updateGps() {
 
   if (cancel_gps)
     return;
-  fix = Bangle.getGPSFix();
+  //fix = Bangle.getGPSFix();
+  fix = libgps.getGPSFix();
 
   try {
     Bangle.getPressure().then((x) => {
@@ -81,6 +120,7 @@ function updateGps() {
 
   speed = getTime() - gps_start;
 
+  print(fix);
   if (fix && fix.fix && fix.lat) {
     lat = "" + format(fix.lat);
     lon = "" + format(fix.lon);
@@ -244,10 +284,20 @@ function markGps() {
   updateGps();
 }
 
+function drawBusy() {
+  g.reset().setFont("Vector", 20)
+    .setColor(1,1,1)
+    .fillRect(0, wi, 176, 176)
+    .setColor(0,0,0)
+    .drawString(".oO busy", 0, 30);
+
+}
+
 function onSwipe(dir) {
   display = display + 1;
   if (display == 3)
     display = 0;
+  drawBusy();
 }
 
 Bangle.setUI({
@@ -257,4 +307,5 @@ Bangle.setUI({
 });
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+drawBusy();
 markGps();
