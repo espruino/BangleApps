@@ -1,4 +1,4 @@
-import { SIDE_BIN, MIDDLE_BIN } from './constants';
+const constants = require("cards.constants.js");
 
 const encode = require("cards.encode.js");
 const Barcode = require("cards.Barcode.js");
@@ -27,11 +27,11 @@ class EAN extends Barcode {
 
 	encode() {
 		const data = [
-			SIDE_BIN,
+			constants.SIDE_BIN,
 			this.leftEncode(),
-			MIDDLE_BIN,
+			constants.MIDDLE_BIN,
 			this.rightEncode(),
-			SIDE_BIN
+			constants.SIDE_BIN
 		];
 
 		return {

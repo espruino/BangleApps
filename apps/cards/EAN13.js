@@ -1,7 +1,7 @@
 // Encoding documentation:
 // https://en.wikipedia.org/wiki/International_Article_Number_(EAN)#Binary_encoding_of_data_digits_into_EAN-13_barcode
 
-import { EAN13_STRUCTURE } from './constants';
+const constants = require("cards.constants.js");
 
 const EAN = require("cards.EAN.js");
 
@@ -47,7 +47,7 @@ class EAN13 extends EAN {
 
 	leftEncode() {
 		const data = this.data.substr(1, 6);
-		const structure = EAN13_STRUCTURE[this.data[0]];
+		const structure = constants.EAN13_STRUCTURE[this.data[0]];
 		return super.leftEncode(data, structure);
 	}
 
