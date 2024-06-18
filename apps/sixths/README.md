@@ -78,4 +78,8 @@ battery low message
 
 *) rename "show" to something else -- it collides with built-in
 
-*) adjust clock according to gps
+*) adjust clock according to GPS
+
+*) show something more reasonable than (NOTEHERE).
+
+*) hide messages after timeout.
