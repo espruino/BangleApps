@@ -21,30 +21,30 @@
 	};
 
 	function draw() {
-	var s = width - 1;
-	var x = this.x;
-	var	y = this.y;
-	if (x !== undefined && y !== undefined) {
-		g.setBgColor(COLORS.white);
-		g.clearRect(old_x, old_y, old_x + width, old_y + height);
+		var s = width - 1;
+		var x = this.x;
+		var	y = this.y;
+		if (x !== undefined && y !== undefined) {
+			g.setBgColor(COLORS.white);
+			g.clearRect(old_x, old_y, old_x + width, old_y + height);
 
-		const l = E.getBattery(); // debug: Math.floor(Math.random() * 101);
-		let xl = x+4+l*(s-12)/100;
+			const l = E.getBattery(); // debug: Math.floor(Math.random() * 101);
+			let xl = x+4+l*(s-12)/100;
 
-		g.setColor(levelColor(l));
-		g.fillRect(x+4,y+14+3,xl,y+16+3); // charging bar
-		// Show percentage
-		g.setColor(COLORS.black);
-		g.setFontAlign(0,0);
-		g.setFont('Vector',16);
-		g.drawString(l, x + 14, y + 10);
+			g.setColor(levelColor(l));
+			g.fillRect(x+4,y+14+3,xl,y+16+3); // charging bar
+			// Show percentage
+			g.setColor(COLORS.black);
+			g.setFontAlign(0,0);
+			g.setFont('Vector',16);
+			g.drawString(l, x + 14, y + 10);
 
-	}
+		}
 		old_x = this.x;
 		old_y = this.y;
 
-	if (Bangle.isCharging()) changeInterval(id, intervalHigh);
-		else					 changeInterval(id, intervalLow);
+		if (Bangle.isCharging()) changeInterval(id, intervalHigh);
+		else changeInterval(id, intervalLow);
 	}
 
 	Bangle.on('charging',function(charging) { draw(); });
