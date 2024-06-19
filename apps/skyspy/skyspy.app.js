@@ -1,11 +1,34 @@
 /* Sky spy */
-/* 0 .. DD.ddddd
-   1 .. DD MM.mmm'
-   2 .. DD MM'ss"
-*/
 
 let libgps = {
   state: {},
+  /* 0 .. DD.ddddd
+     1 .. DD MM.mmm'
+     2 .. DD MM'ss"
+   */
+  mode: 1,
+  format: function(x) {
+    switch (this.mode) {
+      case 0:
+        return "" + x;
+      case 1: {
+        let d = Math.floor(x);
+        let m = x - d;
+        m = m*60;
+        return "" + d + " " + m.toFixed(3) + "'";
+      }
+      case 2: {
+        let d = Math.floor(x);
+        let m = x - d;
+        m = m*60;
+        let mf = Math.floor(m);
+        let s = m - mf;
+        s = s*60;
+        return "" + d + " " + mf + "'" + s.toFixed(0) + '"';
+      }
+    } 
+    return "bad mode?";
+  },
   on_gps: function(f) {
     let fix = this.getGPSFix();
     f(fix);
@@ -27,6 +50,7 @@ let libgps = {
     clearTimeout(gps_state.timeout);
   },
   getGPSFix: function() {
+    if (0) Bangle.getGPSFix();
     let fix = {};
     fix.fix = 1;
     fix.lat = 50;
@@ -41,7 +65,6 @@ let libgps = {
   }
 };
 
-var mode = 1;
 var display = 0;
 
 var debug = 0;
@@ -65,25 +88,6 @@ function radY(p, d) {
   return h/2 - Math.cos(a)*radD(d) + wi;
 }
 
-function format(x) {
-  switch (mode) {
-    case 0:
-      return "" + x;
-    case 1:
-      d = Math.floor(x);
-      m = x - d;
-      m = m*60;
-      return "" + d + " " + m.toFixed(3) + "'";
-    case 2:
-      d = Math.floor(x);
-      m = x - d;
-      m = m*60;
-      mf = Math.floor(m);
-      s = m - mf;
-      s = s*60;
-      return "" + d + " " + mf + "'" + s.toFixed(0) + '"';
-  }
-}
 var qalt = -1;
 function resetAlt() {
   min_dalt = 9999; max_dalt = -9999; step = 0;
@@ -107,7 +111,6 @@ function updateGps() {
 
   if (cancel_gps)
     return;
-  //fix = Bangle.getGPSFix();
   fix = libgps.getGPSFix();
 
   try {
@@ -122,8 +125,8 @@ function updateGps() {
 
   print(fix);
   if (fix && fix.fix && fix.lat) {
-    lat = "" + format(fix.lat);
-    lon = "" + format(fix.lon);
+    lat = "" + libgps.format(fix.lat);
+    lon = "" + libgps.format(fix.lon);
     alt = "" + fix.alt.toFixed(1);
     speed = "" + fix.speed.toFixed(1);
     hdop = "" + fix.hdop.toFixed(1);
