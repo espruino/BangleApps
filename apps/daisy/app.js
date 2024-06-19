@@ -118,8 +118,10 @@ function batteryString(){
   if (settings.batt_hours) {
     var batt_usage = 200000/E.getPowerUsage().total;
     let rounded;
-    if (batt_usage > 99) {
-      rounded = Math.round(batt_usage);
+    if (batt_usage > 24) {
+      var days = Math.floor(batt_usage/24);
+      var hours = Math.round((batt_usage/24 - days) * 24);
+      stringToInsert = '\n' + days + ((days < 2) ? 'd' : 'ds') + ' ' + hours + ((hours < 2) ? 'h' : 'hs');
     }
     else if (batt_usage > 9) {
       rounded = Math.round(200000/E.getPowerUsage().total * 10) / 10;
@@ -127,7 +129,9 @@ function batteryString(){
     else {
       rounded = Math.round(200000/E.getPowerUsage().total * 100) / 100;
     }
-    stringToInsert = '\n' + rounded + ' ' + ((batt_usage < 2) ? 'h' : 'hs');
+    if (batt_usage < 24) {
+      stringToInsert = '\n' + rounded + ' ' + ((batt_usage < 2) ? 'h' : 'hs');
+    }
   }
   else{
     stringToInsert = ' ' + E.getBattery() + '%';
