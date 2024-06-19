@@ -1,6 +1,11 @@
-/* Sky spy */
+ /* Sky spy */
 
 let libgps = {
+  emulator: -1,
+  init: function(x) {
+    this.emulator = (process.env.BOARD=="EMSCRIPTEN" 
+                     || process.env.BOARD=="EMSCRIPTEN2")?1:0;
+  },
   state: {},
   /* 0 .. DD.ddddd
      1 .. DD MM.mmm'
@@ -50,7 +55,8 @@ let libgps = {
     clearTimeout(gps_state.timeout);
   },
   getGPSFix: function() {
-    if (0) Bangle.getGPSFix();
+    if (!this.emulator)
+      return Bangle.getGPSFix();
     let fix = {};
     fix.fix = 1;
     fix.lat = 50;
@@ -130,7 +136,7 @@ function updateGps() {
 
   speed = getTime() - gps_start;
 
-  print(fix);
+  //print(fix);
   if (fix && fix.fix && fix.lat) {
     lat = "" + libgps.format(fix.lat);
     lon = "" + libgps.format(fix.lon);
@@ -325,6 +331,7 @@ function touchHandler(d) {
     nextScreen();
 }
 
+libgps.init();
 
 Bangle.on("drag", touchHandler);
 Bangle.setUI({
