@@ -77,6 +77,8 @@ var h = 176-wi, w = 176;
 
 var fix;
 
+var adj_time = 0;
+
 function radA(p) { return p*(Math.PI*2); }
 function radD(d) { return d*(h/2); }
 function radX(p, d) {
@@ -112,6 +114,11 @@ function updateGps() {
   if (cancel_gps)
     return;
   fix = libgps.getGPSFix();
+  if (adj_time) {
+    print("Adjusting time");
+    setTime(fix.time.getTime()/1000);
+    adj_time = 0;
+  }
 
   try {
     Bangle.getPressure().then((x) => {
@@ -293,21 +300,39 @@ function drawBusy() {
     .fillRect(0, wi, 176, 176)
     .setColor(0,0,0)
     .drawString(".oO busy", 0, 30);
+}
+
+function nextScreen() {
+    display = display + 1;
+  if (display == 3)
+    display = 0;
+  drawBusy();
 
 }
 
 function onSwipe(dir) {
-  display = display + 1;
-  if (display == 3)
-    display = 0;
-  drawBusy();
+  nextScreen();
 }
 
+function touchHandler(d) {
+  let x = Math.floor(d.x);
+  let y = Math.floor(d.y);
+
+  if ((x<h/2) && (y<w/2))
+    adj_time = 1;
+
+  if ((x>h/2) && (y>w/2))
+    nextScreen();
+}
+
+
+Bangle.on("drag", touchHandler);
 Bangle.setUI({
   mode : "custom",
   swipe : onSwipe,
   clock : 0
 });
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 drawBusy();
