@@ -195,6 +195,13 @@ type NRFFilters = {
 
 type NRFSecurityStatus = {
   advertising: boolean,
+  privacy?: ShortBoolean | {
+    mode: "off"
+  } | {
+    mode: "device_privacy" | "network_privacy",
+    addr_type: "random_private_resolvable" | "random_private_non_resolvable",
+    addr_cycle_s: number,
+  },
 } & (
   {
     connected: true,
@@ -2057,6 +2064,9 @@ declare class NRF {
    *   encryptUart : bool // default false (unless oob or passkey specified)
    *                      // This sets the BLE UART service such that it
    *                      // is encrypted and can only be used from a paired connection
+   *   privacy : // default false, true to enable with (ideally sensible) defaults,
+   *             // or an object defining BLE privacy / random address options - see below for more info
+   *             // only available if Espruino was compiled with private address support (like for example on Bangle.js 2)
    * });
    * ```
    * **NOTE:** Some combinations of arguments will cause an error. For example
@@ -2121,6 +2131,42 @@ declare class NRF {
    * **Note:** If `passkey` or `oob` is specified, the Nordic UART service (if
    * enabled) will automatically be set to require encryption, but otherwise it is
    * open.
+   * On Bangle.js 2, the `privacy` parameter can be used to set this device's BLE privacy / random address settings.
+   * The privacy feature provides a way to avoid being tracked over a period of time.
+   * This works by replacing the real BLE address with a random private address,
+   * that automatically changes at a specified interval.
+   * If a `"random_private_resolvable"` address is used, that address is generated with the help
+   * of an identity resolving key (IRK), that is exchanged during bonding.
+   * This allows a bonded device to still identify another device that is using a random private resolvable address.
+   * Note that, while this can help against being tracked, there are other ways a Bluetooth device can reveal its identity.
+   * For example, the name or services it advertises may be unique enough.
+   * ```
+   * NRF.setSecurity({
+   *   privacy: {
+   *     mode : "off"/"device_privacy"/"network_privacy" // The privacy mode that should be used.
+   *     addr_type : "random_private_resolvable"/"random_private_non_resolvable" // The type of address to use.
+   *     addr_cycle_s : int // How often the address should change, in seconds.
+   *   }
+   * });
+   * // enabled with (ideally sensible) defaults of:
+   * // mode: device_privacy
+   * // addr_type: random_private_resolvable
+   * // addr_cycle_s: 0 (use default address change interval)
+   * NRF.setSecurity({
+   *   privacy: 1
+   * });
+   * ```
+   * `mode` can be one of:
+   * * `"off"` - Use the real address.
+   * * `"device_privacy"` - Use a private address.
+   * * `"network_privacy"` - Use a private address,
+   *                         and reject a peer that uses its real address if we know that peer's IRK.
+   * If `mode` is `"off"`, all other fields are ignored and become optional.
+   * `addr_type` can be one of:
+   * * `"random_private_resolvable"` - Address that can be resolved by a bonded peer that knows our IRK.
+   * * `"random_private_non_resolvable"` - Address that cannot be resolved.
+   * `addr_cycle_s` must be an integer. Pass `0` to use the default address change interval.
+   * The default is usually to change the address every 15 minutes (or 900 seconds).
    *
    * @param {any} options - An object containing security-related options (see below)
    * @url http://www.espruino.com/Reference#l_NRF_setSecurity
@@ -2138,6 +2184,8 @@ declare class NRF {
    *   bonded          // The peer is bonded with us
    *   advertising     // Are we currently advertising?
    *   connected_addr  // If connected=true, the MAC address of the currently connected device
+   *   privacy         // Current BLE privacy / random address settings.
+   *                   // Only present if Espruino was compiled with private address support (like for example on Bangle.js 2).
    * }
    * ```
    * If there is no active connection, `{connected:false}` will be returned.
@@ -4035,7 +4083,7 @@ declare class Bangle {
   /**
    * This function can be used to adjust the brightness of Bangle.js's display, and
    * hence prolong its battery life.
-   * Due to hardware design constraints, software PWM has to be used which means that
+   * Due to hardware design constraints on Bangle.js 1, software PWM has to be used which means that
    * the display may flicker slightly when Bluetooth is active and the display is not
    * at full power.
    * **Power consumption**
@@ -4045,6 +4093,8 @@ declare class Bangle {
    * * 0.5 = 28mA
    * * 0.9 = 40mA (switching overhead)
    * * 1 = 40mA
+   * In 2v21 and earlier, this function would erroneously turn the LCD backlight on. 2v22 and later
+   * fix this, and if you want the backlight on your should use `Bangle.setLCDPowerBacklight()`
    *
    * @param {number} brightness - The brightness of Bangle.js's display - from 0(off) to 1(on full)
    * @url http://www.espruino.com/Reference#l_Bangle_setLCDBrightness
@@ -4104,39 +4154,38 @@ declare class Bangle {
    * GwIKCngWC14sB7QKCh4CBCwN/64KDgfACwWn6vWGwYsBCwOputWJgYsCgGqytVBQYsCLYOlqtqwAsFEINVrR4BFgghBBQosDEINWIQ
    * YsDEIQ3DFgYhCG4msSYeVFgnrFhMvOAgsEkE/FhEggYWCFgIhDkEACwQKBEIYKBCwSGFBQJxCQwYhBBQTKDqohCBQhCCEIJlDXwrKE
    * BQoWHBQdaCwuqJoI4CCwgKECwJ9CJgIKDq+qBYUq1WtBQf+BYIAC3/VBQX/tQKDz/9BQY5BAAVV/4WCBQJcBKwVf+oHBv4wCAAYhB`));
-   * Bangle.setLCDOverlay(img,66,66);
+   * Bangle.setLCDOverlay(img,66,66, {id: "myOverlay", remove: () => print("Removed")});
    * ```
    * Or use a `Graphics` instance:
    * ```
-   * var ovr = Graphics.createArrayBuffer(100,100,1,{msb:true}); // 1bpp
-   * ovr.drawLine(0,0,100,100);
-   * ovr.drawRect(0,0,99,99);
-   * Bangle.setLCDOverlay(ovr,38,38);
-   * ```
-   * Although `Graphics` can be specified directly, it can often make more sense to
-   * create an Image from the `Graphics` instance, as this gives you access
-   * to color palettes and transparent colors. For instance this will draw a colored
-   * overlay with rounded corners:
-   * ```
    * var ovr = Graphics.createArrayBuffer(100,100,2,{msb:true});
+   * ovr.transparent = 0; // (optional) set a transparent color
+   * ovr.palette = new Uint16Array([0,0,g.toColor("#F00"),g.toColor("#FFF")]); // (optional) set a color palette
    * ovr.setColor(1).fillRect({x:0,y:0,w:99,h:99,r:8});
    * ovr.setColor(3).fillRect({x:2,y:2,w:95,h:95,r:7});
    * ovr.setColor(2).setFont("Vector:30").setFontAlign(0,0).drawString("Hi",50,50);
-   * Bangle.setLCDOverlay({
-   *   width:ovr.getWidth(), height:ovr.getHeight(),
-   *   bpp:2, transparent:0,
-   *   palette:new Uint16Array([0,0,g.toColor("#F00"),g.toColor("#FFF")]),
-   *   buffer:ovr.buffer
-   * },38,38);
+   * Bangle.setLCDOverlay(ovr,38,38, {id: "myOverlay", remove: () => print("Removed")});
    * ```
+   * To remove an overlay, simply call:
+   * ```
+   * Bangle.setLCDOverlay(undefined, {id: "myOverlay"});
+   * ```
+   * Before 2v22 the `options` object isn't parsed, and as a result
+   * the remove callback won't be called, and `Bangle.setLCDOverlay(undefined)` will
+   * remove *any* active overlay.
+   * The `remove` callback is called when the current overlay is removed or replaced with
+   * another, but *not* if setLCDOverlay is called again with an image and the same ID.
    *
    * @param {any} img - An image, or undefined to clear
-   * @param {number} x - The X offset the graphics instance should be overlaid on the screen with
+   * @param {any} x - The X offset the graphics instance should be overlaid on the screen with
    * @param {number} y - The Y offset the graphics instance should be overlaid on the screen with
+   * @param {any} options - [Optional] object `{remove:fn, id:"str"}`
    * @url http://www.espruino.com/Reference#l_Bangle_setLCDOverlay
    */
   static setLCDOverlay(img: any, x: number, y: number): void;
   static setLCDOverlay(): void;
+  static setLCDOverlay(img: any, x: number, y: number, options: { id : string, remove: () => void }): void;
+  static setLCDOverlay(img: any, options: { id : string }): void;
 
   /**
    * This function can be used to turn Bangle.js's LCD power saving on or off.
@@ -4206,6 +4255,10 @@ declare class Bangle {
    *    current value. If you desire a specific interval (e.g. the default 80ms) you
    *    must set it manually with `Bangle.setPollInterval(80)` after setting
    *    `powerSave:false`.
+   * * `lowResistanceFix` (Bangle.js 2, 2v22+) In the very rare case that your watch button
+   * gets damaged such that it has a low resistance and always stays on, putting the watch
+   * into a boot loop, setting this flag may improve matters (by forcing the input low
+   * before reading and disabling the hardware watch on BTN1).
    * * `lockTimeout` how many milliseconds before the screen locks
    * * `lcdPowerTimeout` how many milliseconds before the screen turns off
    * * `backlightTimeout` how many milliseconds before the screen's backlight turns
@@ -4244,6 +4297,7 @@ declare class Bangle {
 
   /**
    * Also see the `Bangle.lcdPower` event
+   * You can use `Bangle.setLCDPower` to turn on the LCD (on Bangle.js 2 the LCD is normally on, and draws very little power so can be left on).
    * @returns {boolean} Is the display on or not?
    * @url http://www.espruino.com/Reference#l_Bangle_isLCDOn
    */
@@ -4251,6 +4305,7 @@ declare class Bangle {
 
   /**
    * Also see the `Bangle.backlight` event
+   * You can use `Bangle.setLCDPowerBacklight` to turn on the LCD backlight.
    * @returns {boolean} Is the backlight on or not?
    * @url http://www.espruino.com/Reference#l_Bangle_isBacklightOn
    */
@@ -6182,19 +6237,21 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * like Bangle.js. Maximum layer count right now is 4.
    * ```
    * layers = [ {
-   *   {x : int, // x start position
-   *    y : int, // y start position
-   *    image : string/object,
+   *   {x : float, // x start position
+   *    y : float, // y start position
+   *    image : string/object/Graphics,
    *    scale : float, // scale factor, default 1
    *    rotate : float, // angle in radians
    *    center : bool // center on x,y? default is top left
    *    repeat : should this image be repeated (tiled?)
    *    nobounds : bool // if true, the bounds of the image are not used to work out the default area to draw
+   *    palette : new Uint16Array(2/4/8/16/256) // (2v22+) a color palette to use with the image (overrides the image's palette)
+   *    compose : ""/"add"/"or"/"xor" // (2v22+) if set, the operation used when combining with the previous layer
    *   }
    * ]
-   * options = { // the area to render. Defaults to rendering just enough to cover what's requested
-   *  x,y,
-   *  width,height
+   * options = {
+   *  x,y, : int // the area to render. Defaults to rendering just enough to cover what's requested
+   *  width,height : int
    * }
    * ```
    *
@@ -6217,9 +6274,15 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * * Is 8 bpp *OR* the `{msb:true}` option was given
    * * No other format options (zigzag/etc) were given
    * Otherwise data will be copied, which takes up more space and may be quite slow.
-   * If the `Graphics` object contains `transparent` or `pelette` fields,
+   * If the `Graphics` object contains `transparent` or `palette` fields,
    * [as you might find in an image](http://www.espruino.com/Graphics#images-bitmaps),
    * those will be included in the generated image too.
+   * ```
+   * var gfx = Graphics.createArrayBuffer(8,8,1);
+   * gfx.transparent = 0;
+   * gfx.drawString("X",0,0);
+   * var im = gfx.asImage("string");
+   * ```
    *
    * @param {any} type - The type of image to return. Either `object`/undefined to return an image object, or `string` to return an image string
    * @returns {any} An Image that can be used with `Graphics.drawImage`
@@ -6401,6 +6464,36 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * @url http://www.espruino.com/Reference#l_Graphics_setTheme
    */
   setTheme(theme: { [key in keyof Theme]?: Theme[key] extends number ? ColorResolvable : Theme[key] }): Graphics;
+
+  /**
+   * Perform a filter on the current Graphics instance. Requires the Graphics
+   * instance to support readback (eg `getPixel` should work), and only uses
+   * 8 bit values for buffer and filter.
+   * ```
+   * g.filter([ // a gaussian filter
+   *     1, 4, 7, 4, 1,
+   *     4,16,26,16, 4,
+   *     7,26,41,26, 7,
+   *     4,16,26,16, 4,
+   *     1, 4, 7, 4, 1
+   * ], { w:5, h:5, div:273 });
+   * ```
+   * ```
+   * {
+   *   w,h,    // filter width+height
+   *   div,    // divisor applied after filter
+   *   offset, // DC offset applied to filter before division (default 0)
+   *   max,    // maximum output value (default=max allowed by bpp)
+   *   filter, // undefined (replace), or "max" (use max(original,filtered))
+   * }
+   * ```
+   *
+   * @param {any} filter - An array of filter params between -128 and 127 (2D arrays should be unwrapped)
+   * @param {any} options - An object of options, see below
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_filter
+   */
+  filter(filter: any, options: any): Graphics;
 }
 
 /**
@@ -9688,7 +9781,13 @@ interface Object {
   toString(radix?: any): string;
 
   /**
-   * Copy this object completely
+   * Copy this object to a new object, but as a shallow copy. This has a similar effect to calling `Object.assign({}, obj)`.
+   * ```
+   * orig = { a : 1, b : [ 2, 3 ] }
+   * copy = orig.clone();
+   * // copy = { a : 1, b : [ 2, 3 ] }
+   * ```
+   * **Note:** This is not a standard JavaScript function, but is unique to Espruino
    * @returns {any} A copy of this Object
    * @url http://www.espruino.com/Reference#l_Object_clone
    */
@@ -10165,12 +10264,12 @@ interface JSONConstructor {
    *   not as if they were objects (since it is more compact)
    *
    * @param {any} data - The data to be converted to a JSON string
-   * @param {any} replacer - This value is ignored
-   * @param {any} space - The number of spaces to use for padding, a string, or null/undefined for no whitespace
+   * @param {any} [replacer] - [optional] This value is ignored
+   * @param {any} [space] - [optional] The number of spaces to use for padding, a string, or null/undefined for no whitespace
    * @returns {any} A JSON string
    * @url http://www.espruino.com/Reference#l_JSON_stringify
    */
-  stringify(data: any, replacer: any, space: any): any;
+  stringify(data: any, replacer?: any, space?: any): any;
 
   /**
    * Parse the given JSON string into a JavaScript object
@@ -12413,7 +12512,7 @@ declare function shiftOut(pins: Pin | Pin[], options: { clk?: Pin, clkPol?: bool
  *
  * @param {any} function - A Function or String to be executed
  * @param {Pin} pin - The pin to watch
- * @param {any} options - If a boolean or integer, it determines whether to call this once (false = default) or every time a change occurs (true). Can be an object of the form `{ repeat: true/false(default), edge:'rising'/'falling'/'both'(default), debounce:10}` - see below for more information.
+ * @param {any} options - If a boolean or integer, it determines whether to call this once (false = default) or every time a change occurs (true). Can be an object of the form `{ repeat: true/false(default), edge:'rising'/'falling'/'both', debounce:10}` - see below for more information.
  * @returns {any} An ID that can be passed to clearWatch
  * @url http://www.espruino.com/Reference#l__global_setWatch
  */

@@ -80,3 +80,4 @@ of 'Select Clock'
 0.69: Add option to wake on double tap
 0.70: Fix load() typo
 0.71: Minor code improvements
+0.72: Add setting for configuring BLE privacy
