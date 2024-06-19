@@ -7,3 +7,4 @@
       support for scroll.
 0.05: Fix display of final menu item when no options are given and
       handling of E.showMenu() with no arguments
+0.06: Fix lower bounding of numeric values
