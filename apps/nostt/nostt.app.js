@@ -48,7 +48,6 @@ class View {
   }
 
   start() {
-    // @ts-ignore
     g.clear();
     if (this.nextStartPage) {
       this.show(this.nextStartPage);
@@ -213,7 +212,7 @@ class View {
     g.setFontAlign(-1, -1);
     g.setFont('4x6');
 
-    // @ts-ignore
+
     const bytes = E.toUint8Array(E.decodeUTF8(source));
     let rowIndex = 0;
     let totalIndex = 0;

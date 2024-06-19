@@ -4,7 +4,6 @@
     "shortName": "Teletekst",
     "version": "1.00",
     "description": "Dutch Teletekst using the NOS Teletekst api. Requires http access via BangleJS GadgetBridge.",
-    "src":"nostt.app.js",
     "type": "app",
     "storage": [
         {"name":"nostt.app.js","url":"nostt.app.js"},
