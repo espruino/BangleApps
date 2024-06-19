@@ -123,14 +123,17 @@ E.showMenu = function (items) {
         move: function (dir) {
             var item = selectEdit;
             if (typeof item === "object" && typeof item.value === "number") {
+                var orig = item.value;
                 item.value += (-dir || 1) * (item.step || 1);
-                if (item.min && item.value < item.min)
+                if ("min" in item && item.value < item.min)
                     item.value = item.wrap ? item.max : item.min;
                 if ("max" in item && item.value > item.max)
                     item.value = item.wrap ? item.min : item.max;
-                if (item.onchange)
-                    item.onchange(item.value);
-                l.draw(selected, selected);
+                if (item.value !== orig) {
+                    if (item.onchange)
+                        item.onchange(item.value);
+                    l.draw(selected, selected);
+                }
             }
             else {
                 var lastSelected = selected;
