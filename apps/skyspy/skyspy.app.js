@@ -152,7 +152,7 @@ function updateGps() {
     .setColor(1,1,1)
     .fillRect(0, wi, 176, 176)
     .setColor(0,0,0)
-    .drawString("Acquiring GPS", 0, 30)
+    .drawString("terr "+(getTime()-fix.time.getTime()/1000), 0, 30)
     .drawString(lat, 0, 50)
     .drawString(lon, 0, 70)
     .drawString("alt "+alt, 0, 90)
