@@ -160,9 +160,17 @@ function updateGps() {
          speed + "km/h\n"+ alt + "m+" + adelta + "\nmsghere";
   }
   if (display == 2) {
+    /* FIXME: ddalt/qalt should be updated in all modes */
+    /* qalt is altitude quality estimate -- over ten seconds,
+       computes differences between GPS and barometric altitude.
+       The lower the better.
+       
+       ddalt is just a debugging -- same estimate, but without
+       waiting 10 seconds, so will be always optimistic at start
+       of the cycle */
     msg = speed + "km/h\n" +
-      "e"+hdop + "m/"+step
-      +"\ndd "+qalt.toFixed(0) + "\n(" + ddalt.toFixed(0) + ")" +
+      "e"+hdop + "m"
+      +"\ndd "+qalt.toFixed(0) + "\n(" + step + "/" + ddalt.toFixed(0) + ")" +
       "\n"+alt + "m+" + adelta;
     step++;
     if (step == 10) {
