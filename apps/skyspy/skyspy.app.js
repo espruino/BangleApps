@@ -71,7 +71,7 @@ let libgps = {
   }
 };
 
-var display = 0;
+var display = 1;
 var debug = 0;
 var cancel_gps, gps_start;
 var cur_altitude;
@@ -111,8 +111,9 @@ function calcAlt(alt, cur_altitude) {
     return ddalt;
 }
 function updateGps() {
-  let /*have = false,*/ lat = "lat", lon = "lon", alt = "alt",
-      speed = "speed", hdop = "hdop"; // balt = "balt";
+  let have = false, lat = "lat ", lon = "lon ", alt = "alt ",
+      speed = "speed ", hdop = "hdop ", adelta = "adelta ",
+      tdelta = "tdelta ";
 
   if (cancel_gps)
     return;
@@ -129,7 +130,7 @@ function updateGps() {
       cur_altitude = x.altitude;
     }, print);
   } catch (e) {
-    print("Altimeter error", e);
+    //print("Altimeter error", e);
   }
 
   speed = getTime() - gps_start;
@@ -138,17 +139,20 @@ function updateGps() {
   if (fix && fix.fix && fix.lat) {
     lat = "" + libgps.format(fix.lat);
     lon = "" + libgps.format(fix.lon);
-    alt = "" + fix.alt.toFixed(1);
+    alt = "" + fix.alt.toFixed(0);
+    adelta = "" + (cur_altitude - fix.alt).toFixed(0);
+    tdelta = "" + (getTime() - fix.time.getTime()/1000).toFixed(0);
     speed = "" + fix.speed.toFixed(1);
-    hdop = "" + fix.hdop.toFixed(1);
-    //have = true;
+    hdop = "" + fix.hdop.toFixed(0);
+    have = true;
   }
 
   let ddalt = calcAlt(alt, cur_altitude);
   let msg = "";
   if (display == 1) {
-    msg = lat + "\n" + lon + "\n" + alt + "m" + speed + "km/h\n"
-         + "hdop "+hdop + "m\nbalt" + cur_altitude + "m";
+    msg = lat + "\n" + lon + 
+         "\ne" + hdop + "m "+tdelta+"s\n" + 
+         speed + "km/h\n"+ alt + "m+" + adelta + "\nmsghere";
   }
   if (display == 2) {
     msg = speed + "km/h\n" +
@@ -168,7 +172,7 @@ function updateGps() {
     .setColor(1,1,1)
     .fillRect(0, wi, 176, 176)
     .setColor(0,0,0)
-    .drawString(msg, 3, 25)
+    .drawString(msg, 3, 25);
   }
   if (debug > 0)
     print(fix);
