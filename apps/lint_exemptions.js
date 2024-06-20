@@ -249,7 +249,7 @@ module.exports = {
     ]
   },
   "apps/lcars/lcars.app.js": {
-    "hash": "a305f73ee4e77b6534746ea79e699f700fd3db305f2b0289ef081d8869e1faf1",
+    "hash": "297b92373c9e8db3ba31cb3aa42909d18a1951eef9bd7e8e0847957aa411765d",
     "rules": [
       "no-unused-vars",
       "no-undef"
