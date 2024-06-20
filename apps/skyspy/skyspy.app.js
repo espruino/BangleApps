@@ -71,15 +71,13 @@ let libgps = {
   }
 };
 
-var display = 1;
+var display = 0;
 var debug = 0;
 var cancel_gps, gps_start;
 var cur_altitude;
 var wi = 24;
 var h = 176-wi, w = 176;
-
 var fix;
-
 var adj_time = 0;
 
 function radA(p) { return p*(Math.PI*2); }
@@ -147,8 +145,9 @@ function updateGps() {
     hdop = "" + fix.hdop.toFixed(0);
     have = true;
   } else {
-    lat = "NO FIX";
-    lon = "" + (getTime() - gps_start).toFixed(0) + "s";
+    lat = "NO FIX ";
+    lon = "" + (getTime() - gps_start).toFixed(0) + "s " 
+          + sats_used + "/" + snum;
     if (cur_altitude)
       adelta = "" + cur_altitude.toFixed(0);
   }
@@ -241,7 +240,7 @@ function drawSats(sats) {
 
 var sats = [];
 var snum = 0;
-//var sats_receiving = 0;
+var sats_used = 0;
 
 function parseRaw(msg, lost) {
   if (lost)
@@ -256,6 +255,7 @@ function parseRaw(msg, lost) {
   if (s[2] == "1") {
     snum = 0;
     sats = [];
+    sats_used = 0;
   }
 
   let view = 1 * s[3];
@@ -274,6 +274,8 @@ function parseRaw(msg, lost) {
     sat.ele = 1*s[i++];
     sat.azi = 1*s[i++];
     sat.snr = s[i++];
+    if (sat.snr != "")
+      sats_used++;
     if (debug > 0)
       print("  ", sat);
     sats[snum++] = sat;
