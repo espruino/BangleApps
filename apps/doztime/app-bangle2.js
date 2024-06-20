@@ -16,11 +16,12 @@ const B2 = [30,30,30,30,31,31,31,31,31,30,30,30];
 const timeColour = "#ffffff";
 const dateColours = ["#ff0000","#ff8000","#ffff00","#00ff00","#0080ff","#ff00ff","#ffffff"];
 const calen10 = {"size":26,"pt0":[18-g_x_off,16],"step":[16,0],"dx":-4.5,"dy":-4.5}; // positioning for usual calendar line
-const calen7 = {"size":26,"pt0":[48-g_x_off,16],"step":[16,0],"dx":-4.5,"dy":-4.5}; // positioning for S-day calendar line
+const calen7 = {"size":26,"pt0":[42-g_x_off,16],"step":[16,0],"dx":-4.5,"dy":-4.5}; // positioning for S-day calendar line
 const time5 = {"size":42,"pt0":[39-g_x_off,24],"step":[26,0],"dx":-6.5,"dy":-6.5}; // positioning for lull time line
 const time6 = {"size":42,"pt0":[26-g_x_off,24],"step":[26,0],"dx":-6.5,"dy":-6.5}; // positioning for twinkling time line ft w 48, 48-g, step 30
 const baseYear = 11584;
 const baseDate = Date(2020,11,21); // month values run from 0 to 11
+let calenDef = calen10;
 let accum = new Date(baseDate.getTime());
 let sequence = [];
 let timeActiveUntil;
@@ -139,7 +140,7 @@ function writeDozTime(text,def){
   }
 }
 function writeDozDate(text,def,colour){
-  
+
   dateColour = colour;
   //let pts = def.pts;
   let x=def.pt0[0];
@@ -169,20 +170,22 @@ function drawTime()
   let date = "";
   let timeDef;
   let x = 0;
+  let time;
+  let wait;
   dt.setDate(dt.getDate());
   if(addTimeDigit){
     x =
     10368*dt.getHours()+172.8*dt.getMinutes()+2.88*dt.getSeconds()+0.00288*dt.getMilliseconds();
     let msg = "00000"+Math.floor(x).toString(12);
-    let time = msg.substr(-5,3)+"."+msg.substr(-2); //TODO: should `time` and `wait` have been defined outside the if block?
-    let wait = 347*(1-(x%1));
+    time = msg.substr(-5,3)+"."+msg.substr(-2); //TODO: should `time` and `wait` have been defined outside the if block?
+    wait = 347*(1-(x%1));
     timeDef = time6;
   } else {
     x =
     864*dt.getHours()+14.4*dt.getMinutes()+0.24*dt.getSeconds()+0.00024*dt.getMilliseconds();
     let msg = "0000"+Math.floor(x).toString(12);
-    let time = msg.substr(-4,3)+"."+msg.substr(-1);
-    let wait = 4167*(1-(x%1));
+    time = msg.substr(-4,3)+"."+msg.substr(-1);
+    wait = 4167*(1-(x%1));
     timeDef = time5;
   }
   if(lastX > x){ res = getDate(dt); } // calculate date once at start-up and once when turning over to a new day

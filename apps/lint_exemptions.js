@@ -412,13 +412,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "apps/doztime/app-bangle2.js": {
-    "hash": "81592fe1bc6537f80d7dbe7b2e8145924d2400f98ea780c68dd5bd9694376c8a",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "apps/devstopwatch/app.js": {
     "hash": "28ca59e605f280a2d8fd4a74f553783205d51f8bb7042d6f51cf8ec11d44c264",
     "rules": [
@@ -514,12 +507,6 @@ module.exports = {
     "rules": [
       "no-unused-vars",
       "no-undef"
-    ]
-  },
-  "apps/astrocalc/astrocalc-app.js": {
-    "hash": "29f978064e42f947b36c94ab3f212512fb5d0a41fa265354c6039e2cf042b92c",
-    "rules": [
-      "no-unused-vars"
     ]
   },
   "apps/HRV/app.js": {
