@@ -161,11 +161,9 @@ function updateGps() {
   }
   if (display == 2) {
     msg = speed + "km/h\n" +
-      "hdop "+hdop +
-      "\ndd "+qalt.toFixed(0) + " (" + ddalt.toFixed(0) + ")" +
-      "\nalt "+alt +
-      "\nbalt "+cur_altitude +
-      "/" + step;
+      "e"+hdop + "m/"+step
+      +"\ndd "+qalt.toFixed(0) + "\n(" + ddalt.toFixed(0) + ")" +
+      "\n"+alt + "m+" + adelta;
     step++;
     if (step == 10) {
       qalt = max_dalt - min_dalt;
