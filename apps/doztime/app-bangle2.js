@@ -139,7 +139,7 @@ function writeDozTime(text,def){
   }
 }
 function writeDozDate(text,def,colour){
-  
+
   dateColour = colour;
   //let pts = def.pts;
   let x=def.pt0[0];
