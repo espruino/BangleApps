@@ -320,9 +320,16 @@ function onSwipe(dir) {
   nextScreen();
 }
 
+var last_b = 0;
 function touchHandler(d) {
   let x = Math.floor(d.x);
   let y = Math.floor(d.y);
+  
+  if (d.b != 1 || last_b != 0) {
+    last_b = d.b;
+    return;
+  }
+  last_b = d.b;
 
   if ((x<h/2) && (y<w/2))
     adj_time = 1;
