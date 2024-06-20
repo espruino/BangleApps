@@ -1,21 +1,26 @@
 # Golf GPS
 
-I have used Rebble clock since I bought my Banglejs 2, and wanted to make my own clock with much simpler features and to switch the time window and the feature window because I'm wearing my watch on my left wrist and about a half (left side) of the screen is covered by the sleeve of my jacket or shirts. Of course it won't happen during summer, but I decided to make my first Bagle app with these changes. See Features below for the items displayed on the screen.
-- The layout is inspired by the Rebble clock.
-- The big font KdamThmor is copied from the Rebble clock.
+I have made a few watches for golfing. See this [LINK](https://jeonlab.wordpress.com/category/golf-gps-watch/) if you are interested.
+Now that I have a Bangle.js 2 watch, I wanted to port my program to it for golfing. For my previous watches I have used TFT LCD or OLED displays and they all draw a lot of current and display information only when I press a button to wake up from the black screen. One of the best feature of the Bangle.js 2, I think, is the memory LCD which consumes very small power and it is always on! 
 
 ## Features
-- Single screen
-- No settings
-- Time on the right side with big font
-- On the sidebar on the left
-  - Day of week
-  - Day
-  - Month
-  - Steps
-  - Bluetooth connection status
-  - Battery %
-- Update time and status every 1 minute
+- Play or view previously played scores
+- Save your favourite course data (see below instruction)
+- In play mode
+  - Hole number
+  - Par as background color of the hole number (red: 3, green: 4, blue: 5)
+  - Distance to the center of the green (coordinates you saved)
+  - Distance from the last shot (where you swiped up to add a shot)
+  - Number of shots on current hole
+  - Total number of shots
+  - Clock
+- How to change holes and add/subtract shots
+  - Swipe left/right to change the hole to next/previous (you can move to any hole to update your shots in case you entered wrong number of shots by mistake)
+  - Swip up/down to add/substract the number of shots. This will update the total number of shots as well as current shots.
+- After the game
+  - Press the button to either finish the game or go back to the play screen (if you pressed the button by accident).
+  - If you choose to finish the game, it will show the summary of the score with 3x6 matix, shots - par. For example, -1 is for birdie and 0 is for par, and +2 is for double bogey. It also shows the total shots and total par as well.
+
 
 ## Screenshots
 ![](jclock_screenshot_no_BT.png)
