@@ -72,12 +72,9 @@ let libgps = {
 };
 
 var display = 0;
-
 var debug = 0;
-
 var cancel_gps, gps_start;
 var cur_altitude;
-
 var wi = 24;
 var h = 176-wi, w = 176;
 
@@ -123,6 +120,7 @@ function updateGps() {
   if (adj_time) {
     print("Adjusting time");
     setTime(fix.time.getTime()/1000);
+    drawMsg("Time\nadjusted");
     adj_time = 0;
   }
 
@@ -147,38 +145,31 @@ function updateGps() {
   }
 
   let ddalt = calcAlt(alt, cur_altitude);
-  if (display == 1)
-    g.reset().setFont("Vector", 20)
-    .setColor(1,1,1)
-    .fillRect(0, wi, 176, 176)
-    .setColor(0,0,0)
-    .drawString("terr "+(getTime()-fix.time.getTime()/1000), 0, 30)
-    .drawString(lat, 0, 50)
-    .drawString(lon, 0, 70)
-    .drawString("alt "+alt, 0, 90)
-    .drawString("speed "+speed, 0, 110)
-    .drawString("hdop "+hdop, 0, 130)
-    .drawString("balt" + cur_altitude, 0, 150);
-
+  let msg = "";
+  if (display == 1) {
+    msg = lat + "\n" + lon + "\n" + alt + "m" + speed + "km/h\n"
+         + "hdop "+hdop + "m\nbalt" + cur_altitude + "m";
+  }
   if (display == 2) {
-    g.reset().setFont("Vector", 20)
-    .setColor(1,1,1)
-    .fillRect(0, wi, 176, 176)
-    .setColor(0,0,0)
-    .drawString("GPS status", 0, 30)
-    .drawString("speed "+speed, 0, 50)
-    .drawString("hdop "+hdop, 0, 70)
-    .drawString("dd "+qalt.toFixed(0) + " (" + ddalt.toFixed(0) + ")", 0, 90)
-    .drawString("alt "+alt, 0, 110)
-    .drawString("balt " + cur_altitude, 0, 130)
-    .drawString(step, 0, 150);
+    msg = speed + "km/h\n" +
+      "hdop "+hdop +
+      "\ndd "+qalt.toFixed(0) + " (" + ddalt.toFixed(0) + ")" +
+      "\nalt "+alt +
+      "\nbalt "+cur_altitude +
+      "/" + step;
     step++;
     if (step == 10) {
       qalt = max_dalt - min_dalt;
       resetAlt();
     }
   }
-
+  if (display > 0) {
+    g.reset().setFont("Vector", 31)
+    .setColor(1,1,1)
+    .fillRect(0, wi, 176, 176)
+    .setColor(0,0,0)
+    .drawString(msg, 3, 25)
+  }
   if (debug > 0)
     print(fix);
   setTimeout(updateGps, 1000);
@@ -299,13 +290,15 @@ function markGps() {
   gps_start = getTime();
   updateGps();
 }
-
-function drawBusy() {
-  g.reset().setFont("Vector", 20)
+function drawMsg(msg) {
+  g.reset().setFont("Vector", 35)
     .setColor(1,1,1)
     .fillRect(0, wi, 176, 176)
     .setColor(0,0,0)
-    .drawString(".oO busy", 0, 30);
+    .drawString(msg, 5, 30);
+}
+function drawBusy() {
+  drawMsg("\n.oO busy");
 }
 
 function nextScreen() {
