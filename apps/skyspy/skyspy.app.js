@@ -111,8 +111,8 @@ function calcAlt(alt, cur_altitude) {
     return ddalt;
 }
 function updateGps() {
-  let have = false, lat = "lat ", lon = "lon ", alt = "alt ",
-      speed = "speed ", hdop = "hdop ", adelta = "adelta ",
+  let have = false, lat = "lat ", lon = "lon ", alt = "?",
+      speed = "speed ", hdop = "?", adelta = "adelta ",
       tdelta = "tdelta ";
 
   if (cancel_gps)
@@ -133,18 +133,24 @@ function updateGps() {
     //print("Altimeter error", e);
   }
 
-  speed = getTime() - gps_start;
 
   //print(fix);
+  if (fix && fix.time) {
+    tdelta = "" + (getTime() - fix.time.getTime()/1000).toFixed(0);
+  }
   if (fix && fix.fix && fix.lat) {
     lat = "" + libgps.format(fix.lat);
     lon = "" + libgps.format(fix.lon);
     alt = "" + fix.alt.toFixed(0);
     adelta = "" + (cur_altitude - fix.alt).toFixed(0);
-    tdelta = "" + (getTime() - fix.time.getTime()/1000).toFixed(0);
     speed = "" + fix.speed.toFixed(1);
     hdop = "" + fix.hdop.toFixed(0);
     have = true;
+  } else {
+    lat = "NO FIX";
+    lon = "" + (getTime() - gps_start).toFixed(0) + "s";
+    if (cur_altitude)
+      adelta = "" + cur_altitude.toFixed(0);
   }
 
   let ddalt = calcAlt(alt, cur_altitude);
