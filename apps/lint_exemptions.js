@@ -516,12 +516,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/astrocalc/astrocalc-app.js": {
-    "hash": "29f978064e42f947b36c94ab3f212512fb5d0a41fa265354c6039e2cf042b92c",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "apps/HRV/app.js": {
     "hash": "265b4b0272c43126670b5026079711354cee0a211096bcd2c18139b7a3ee774a",
     "rules": [
