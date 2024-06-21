@@ -27,9 +27,11 @@ Now that I have a Bangle.js 2 watch, I wanted to port my program to it for golfi
 ## Screenshots
 ![](startUp.png)
 ![](fixGPS.png)
+
 ![](par3.png)
 ![](par4.png)
 ![](par5.png)
+
 ![](finishGame.png)
 ![](scoreView.png)
 
