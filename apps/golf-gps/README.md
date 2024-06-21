@@ -17,7 +17,7 @@ Now that I have a Bangle.js 2 watch, I wanted to port my program to it for golfi
 ![](playScreen.png)
 - How to change holes and add/subtract shots
   - Swipe left/right to change the hole to next/previous (you can move to any hole to update your shots in case you entered wrong number of shots by mistake)
-  - Swip up/down to add/subtract the number of shots. This will update the total number of shots as well as current shots.
+  - Swipe up/down to add/subtract the number of shots. This will update the total number of shots as well as current shots.
 - After the game
   - Press the button to either finish the game or go back to the play screen (if you pressed the button by accident).
   - If you choose to finish the game, it will show the summary of the score with 3x6 matix, shots - par. For example, -1 is for birdie and 0 is for par, and +2 is for double bogey. It also shows the total shots and total par as well.
