@@ -15,7 +15,7 @@ exports.reply = function (options) {
     layout.setUI();
     layout.render();
     if (options.sendReply == null || options.sendReply) {
-      Bluetooth.println(JSON.stringify(result));
+      Bluetooth.println(JSON.stringify(responseMessage));
     }
     resolve(responseMessage);
   }
