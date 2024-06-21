@@ -199,7 +199,7 @@ function showPlayData() {
 
   // distance to hole in yards
   g.setColor(g.theme.fg).setFontAlign(1, -1).setFontDroidSansMono52();
-  g.drawString(distanceToHole > 1000 ? ">1k" : distanceToHole.toFixed(0), W - 2, 1);
+  g.drawString(distanceToHole > 1000 ? "000" : distanceToHole.toFixed(0), W - 2, 1);
 
   // distance from last shot in yards
   g.setFontDroidSansMono35().setColor('#00f').drawString(distanceFromLast.toFixed(0), W - 2, 70);
