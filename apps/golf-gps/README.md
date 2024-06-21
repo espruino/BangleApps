@@ -14,7 +14,8 @@ Now that I have a Bangle.js 2 watch, I wanted to port my program to it for golfi
   - Number of shots on current hole
   - Total number of shots
   - Clock
-    ![](playScreen.png)
+    
+![](playScreen.png)
 - How to change holes and add/subtract shots
   - Swipe left/right to change the hole to next/previous (you can move to any hole to update your shots in case you entered wrong number of shots by mistake)
   - Swip up/down to add/subtract the number of shots. This will update the total number of shots as well as current shots.
@@ -24,9 +25,13 @@ Now that I have a Bangle.js 2 watch, I wanted to port my program to it for golfi
 
 
 ## Screenshots
+![](startUp.png)
+![](fixGPS.png)
 ![](par3.png)
 ![](par4.png)
 ![](par5.png)
+![](finishGame.png)
+![](scoreView.png)
 
 ## Creator
 
