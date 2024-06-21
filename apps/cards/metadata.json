@@ -16,7 +16,6 @@
     {"name":"cards.qrcode.js","url":"qrcode.js"},
     {"name":"cards.codabar.js","url":"codabar.js"},
     {"name":"cards.code39.js","url":"code39.js"},
-    {"name":"cards.constants.js","url":"constants.js"},
     {"name":"cards.EAN.js","url":"EAN.js"},
     {"name":"cards.EAN8.js","url":"EAN8.js"},
     {"name":"cards.EAN13.js","url":"EAN13.js"},

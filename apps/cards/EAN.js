@@ -24,10 +24,12 @@
  * IN THE SOFTWARE.
  */
 
-const constants = require("cards.constants.js");
-
 const encode = require("cards.encode.js");
 const Barcode = require("cards.Barcode.js");
+
+// Standard start end and middle bits
+const SIDE_BIN = '101';
+const MIDDLE_BIN = '01010';
 
 // Base class for EAN8 & EAN13
 class EAN extends Barcode {
@@ -53,11 +55,11 @@ class EAN extends Barcode {
 
 	encode() {
 		const data = [
-			constants.SIDE_BIN,
+			SIDE_BIN,
 			this.leftEncode(),
-			constants.MIDDLE_BIN,
+			MIDDLE_BIN,
 			this.rightEncode(),
-			constants.SIDE_BIN
+			SIDE_BIN
 		];
 
 		return {

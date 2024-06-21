@@ -26,10 +26,12 @@
  * IN THE SOFTWARE.
  */
 
-const constants = require("cards.constants.js");
-
 const EAN = require("cards.EAN.js");
 
+const EAN13_STRUCTURE = [
+	'LLLLLL', 'LLGLGG', 'LLGGLG', 'LLGGGL', 'LGLLGG',
+	'LGGLLG', 'LGGGLL', 'LGLGLG', 'LGLGGL', 'LGGLGL'
+];
 
 // Calculate the checksum digit
 // https://en.wikipedia.org/wiki/International_Article_Number_(EAN)#Calculation_of_checksum_digit
@@ -72,7 +74,7 @@ class EAN13 extends EAN {
 
 	leftEncode() {
 		const data = this.data.substr(1, 6);
-		const structure = constants.EAN13_STRUCTURE[this.data[0]];
+		const structure = EAN13_STRUCTURE[this.data[0]];
 		return super.leftEncode(data, structure);
 	}
 
