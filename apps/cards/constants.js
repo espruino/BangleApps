@@ -52,15 +52,6 @@ module.exports = {
 		]
 	},
 
-	// Define the EAN-2 structure
-	EAN2_STRUCTURE : ['LL', 'LG', 'GL', 'GG'],
-
-	// Define the EAN-5 structure
-	EAN5_STRUCTURE : [
-		'GGLLL', 'GLGLL', 'GLLGL', 'GLLLG', 'LGGLL',
-		'LLGGL', 'LLLGG', 'LGLGL', 'LGLLG', 'LLGLG'
-	],
-
 	// Define the EAN-13 structure
 	EAN13_STRUCTURE : [
 		'LLLLLL', 'LLGLGG', 'LLGGLG', 'LLGGGL', 'LGLLGG',

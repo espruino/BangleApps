@@ -133,24 +133,6 @@ function showCode(card) {
       printLinearCode(code.encode().data);
       break;
     }
-    case "EAN_2": {
-      g.setFont("Vector:20");
-      g.setFontAlign(0,1).setColor(BLACK);
-      g.drawString(card.value, g.getWidth()/2, g.getHeight());
-      const EAN2 = require("cards.EAN2.js");
-      let code = new EAN2(card.value, {});
-      printLinearCode(code.encode().data);
-      break;
-    }
-    case "EAN_5": {
-      g.setFont("Vector:20");
-      g.setFontAlign(0,1).setColor(BLACK);
-      g.drawString(card.value, g.getWidth()/2, g.getHeight());
-      const EAN5 = require("cards.EAN5.js");
-      let code = new EAN5(card.value, {});
-      printLinearCode(code.encode().data);
-      break;
-    }
     case "EAN_8": {
       g.setFont("Vector:20");
       g.setFontAlign(0,1).setColor(BLACK);
