@@ -119,7 +119,6 @@ function updateGps() {
   if (adj_time) {
     print("Adjusting time");
     setTime(fix.time.getTime()/1000);
-    drawMsg("Time\nadjusted");
     adj_time = 0;
   }
 
@@ -160,7 +159,6 @@ function updateGps() {
          speed + "km/h\n"+ alt + "m+" + adelta + "\nmsghere";
   }
   if (display == 2) {
-    /* FIXME: ddalt/qalt should be updated in all modes */
     /* qalt is altitude quality estimate -- over ten seconds,
        computes differences between GPS and barometric altitude.
        The lower the better.
@@ -172,12 +170,12 @@ function updateGps() {
       "e"+hdop + "m"
       +"\ndd "+qalt.toFixed(0) + "\n(" + step + "/" + ddalt.toFixed(0) + ")" +
       "\n"+alt + "m+" + adelta;
+  }
     step++;
     if (step == 10) {
       qalt = max_dalt - min_dalt;
       resetAlt();
     }
-  }
   if (display > 0) {
     g.reset().setFont("Vector", 31)
     .setColor(1,1,1)
@@ -342,8 +340,10 @@ function touchHandler(d) {
   }
   last_b = d.b;
 
-  if ((x<h/2) && (y<w/2))
+  if ((x<h/2) && (y<w/2)) {
+    drawMsg("Clock\nadjust");
     adj_time = 1;
+  }
 
   if ((x>h/2) && (y>w/2))
     nextScreen();
