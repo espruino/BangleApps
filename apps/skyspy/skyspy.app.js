@@ -1,74 +1,97 @@
- /* Sky spy */
+/* Sky spy */
 
-let libgps = {
-  emulator: -1,
-  init: function(x) {
-    this.emulator = (process.env.BOARD=="EMSCRIPTEN" 
-                     || process.env.BOARD=="EMSCRIPTEN2")?1:0;
-  },
-  state: {},
+let fmt = {
+    icon_alt : "\0\x08\x1a\1\x00\x00\x00\x20\x30\x78\x7C\xFE\xFF\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00",
+    icon_m : "\0\x08\x1a\1\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00",
+    icon_km : "\0\x08\x1a\1\xC3\xC6\xCC\xD8\xF0\xD8\xCC\xC6\xC3\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00",
+    icon_kph : "\0\x08\x1a\1\xC3\xC6\xCC\xD8\xF0\xD8\xCC\xC6\xC3\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\xFF\x00\xC3\xC3\xFF\xC3\xC3",
+    icon_c : "\0\x08\x1a\1\x00\x00\x60\x90\x90\x60\x00\x7F\xFF\xC0\xC0\xC0\xC0\xC0\xFF\x7F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
+
   /* 0 .. DD.ddddd
      1 .. DD MM.mmm'
      2 .. DD MM'ss"
    */
-  mode: 1,
-  format: function(x) {
-    switch (this.mode) {
-      case 0:
-        return "" + x;
-      case 1: {
-        let d = Math.floor(x);
-        let m = x - d;
-        m = m*60;
-        return "" + d + " " + m.toFixed(3) + "'";
-      }
-      case 2: {
-        let d = Math.floor(x);
-        let m = x - d;
-        m = m*60;
-        let mf = Math.floor(m);
-        let s = m - mf;
-        s = s*60;
-        return "" + d + " " + mf + "'" + s.toFixed(0) + '"';
-      }
-    } 
-    return "bad mode?";
-  },
-  on_gps: function(f) {
-    let fix = this.getGPSFix();
-    f(fix);
+    geo_mode : 1,
+    
+    init: function() {},
+    fmtDist: function(km) { return km.toFixed(1) + this.icon_km; },
+    fmtSteps: function(n) { return fmtDist(0.001 * 0.719 * n); },
+    fmtAlt: function(m) { return m.toFixed(0) + this.icon_alt; },
+    fmtTimeDiff: function(d) {
+	if (d < 180)
+	    return ""+d.toFixed(0);
+	d = d/60;
+	return ""+d.toFixed(0)+"m";
+    },
+    fmtAngle: function(x) {
+	switch (this.geo_mode) {
+	case 0:
+            return "" + x;
+	case 1: {
+            let d = Math.floor(x);
+            let m = x - d;
+            m = m*60;
+            return "" + d + " " + m.toFixed(3) + "'";
+	}
+	case 2: {
+            let d = Math.floor(x);
+            let m = x - d;
+            m = m*60;
+            let mf = Math.floor(m);
+            let s = m - mf;
+            s = s*60;
+            return "" + d + " " + mf + "'" + s.toFixed(0) + '"';
+	}
+	}
+	return "bad mode?";
+    },
+    fmtPos: function(pos) {
+	return this.fmtAngle(pos.lat) + "\n" + this.fmtAngle(pos.lon);
+    },
+};
 
-  /*
-  "lat": number,      // Latitude in degrees
-  "lon": number,      // Longitude in degrees
-  "alt": number,      // altitude in M
-  "speed": number,    // Speed in kph
-  "course": number,   // Course in degrees
-  "time": Date,       // Current Time (or undefined if not known)
-  "satellites": 7,    // Number of satellites
-  "fix": 1            // NMEA Fix state - 0 is no fix
-  "hdop": number,     // Horizontal Dilution of Precision
-  */
-    this.state.timeout = setTimeout(this.on_gps, 1000, f);
-  },
-  off_gps: function() {
-    clearTimeout(gps_state.timeout);
-  },
-  getGPSFix: function() {
-    if (!this.emulator)
-      return Bangle.getGPSFix();
-    let fix = {};
-    fix.fix = 1;
-    fix.lat = 50;
-    fix.lon = 14;
-    fix.alt = 200;
-    fix.speed = 5;
-    fix.course = 30;
-    fix.time = Date();
-    fix.satellites = 5;
-    fix.hdop = 12;
-    return fix;
-  }
+let gps = {
+    emulator: -1,
+    init: function(x) {
+	this.emulator = (process.env.BOARD=="EMSCRIPTEN" 
+			 || process.env.BOARD=="EMSCRIPTEN2")?1:0;
+    },
+    state: {},
+    on_gps: function(f) {
+	let fix = this.getGPSFix();
+	f(fix);
+
+	/*
+	  "lat": number,      // Latitude in degrees
+	  "lon": number,      // Longitude in degrees
+	  "alt": number,      // altitude in M
+	  "speed": number,    // Speed in kph
+	  "course": number,   // Course in degrees
+	  "time": Date,       // Current Time (or undefined if not known)
+	  "satellites": 7,    // Number of satellites
+	  "fix": 1            // NMEA Fix state - 0 is no fix
+	  "hdop": number,     // Horizontal Dilution of Precision
+	*/
+	this.state.timeout = setTimeout(this.on_gps, 1000, f);
+    },
+    off_gps: function() {
+	clearTimeout(gps_state.timeout);
+    },
+    getGPSFix: function() {
+	if (!this.emulator)
+	    return Bangle.getGPSFix();
+	let fix = {};
+	fix.fix = 1;
+	fix.lat = 50;
+	fix.lon = 14;
+	fix.alt = 200;
+	fix.speed = 5;
+	fix.course = 30;
+	fix.time = Date();
+	fix.satellites = 5;
+	fix.hdop = 12;
+	return fix;
+    }
 };
 
 var display = 0;
@@ -109,13 +132,13 @@ function calcAlt(alt, cur_altitude) {
     return ddalt;
 }
 function updateGps() {
-  let have = false, lat = "lat ", lon = "lon ", alt = "?",
+  let have = false, lat = "lat ", alt = "?",
       speed = "speed ", hdop = "?", adelta = "adelta ",
       tdelta = "tdelta ";
 
   if (cancel_gps)
     return;
-  fix = libgps.getGPSFix();
+  fix = gps.getGPSFix();
   if (adj_time) {
     print("Adjusting time");
     setTime(fix.time.getTime()/1000);
@@ -136,16 +159,15 @@ function updateGps() {
     tdelta = "" + (getTime() - fix.time.getTime()/1000).toFixed(0);
   }
   if (fix && fix.fix && fix.lat) {
-    lat = "" + libgps.format(fix.lat);
-    lon = "" + libgps.format(fix.lon);
+    lat = "" + fmt.fmtPos(fix);
     alt = "" + fix.alt.toFixed(0);
     adelta = "" + (cur_altitude - fix.alt).toFixed(0);
     speed = "" + fix.speed.toFixed(1);
     hdop = "" + fix.hdop.toFixed(0);
     have = true;
   } else {
-    lat = "NO FIX ";
-    lon = "" + (getTime() - gps_start).toFixed(0) + "s " 
+    lat = "NO FIX\n"
+       + "" + (getTime() - gps_start).toFixed(0) + "s " 
           + sats_used + "/" + snum;
     if (cur_altitude)
       adelta = "" + cur_altitude.toFixed(0);
@@ -154,7 +176,7 @@ function updateGps() {
   let ddalt = calcAlt(alt, cur_altitude);
   let msg = "";
   if (display == 1) {
-    msg = lat + "\n" + lon + 
+    msg = lat +
          "\ne" + hdop + "m "+tdelta+"s\n" + 
          speed + "km/h\n"+ alt + "m+" + adelta + "\nmsghere";
   }
@@ -349,7 +371,8 @@ function touchHandler(d) {
     nextScreen();
 }
 
-libgps.init();
+gps.init();
+fmt.init();
 
 Bangle.on("drag", touchHandler);
 Bangle.setUI({
