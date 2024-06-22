@@ -1,7 +1,7 @@
 {
   require("Font7x11Numeric7Seg").add(Graphics);
   g.setFont("7x11Numeric7Seg");
-  g.setFontAlign(0,0);
+  g.setFontAlign(0, 0);
 
   const centerX = g.getWidth() / 2, //88
     centerY = g.getHeight() / 2; //88
@@ -20,12 +20,12 @@
       drawTime();
     }, 60000 - (Date.now() % 60000));
   };
-  
+
   let drawCenterLine = function () {
     // center line
     g.drawLineAA(0, centerY, g.getWidth(), centerY);
     // left decoration
-    var steps = [0,1,0,0,1,0,1,1,1,1,1,1,1,1,1,1,1];
+    var steps = [0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
     var stepsReversed = steps.slice();
     stepsReversed.reverse();
     var polyLeftTop = [];
@@ -33,16 +33,16 @@
     var polyRightTop = [];
     var polyRightBottom = [];
     let xL = 0;
-    let xR = g.getWidth();
+    let xR = g.getWidth() - 1;
     let yT = centerY - 13;
     let yB = centerY + 13;
 
-    for(i = 0; i < steps.length; i++) {
+    for (i = 0; i < steps.length; i++) {
       xL += steps[i];
       xR -= steps[i];
       yT += stepsReversed[i];
       yB -= stepsReversed[i];
-      
+
       // Left Top
       polyLeftTop.push(xL);
       polyLeftTop.push(yT);
@@ -60,15 +60,15 @@
       polyRightBottom.push(yB);
     }
 
-    polyLeftTop.push(0,88);
-    polyLeftBottom.push(0,88);
-    polyRightTop.push(g.getWidth(),88);
-    polyRightBottom.push(g.getWidth(),88);
+    polyLeftTop.push(0, 88);
+    polyLeftBottom.push(0, 88);
+    polyRightTop.push(g.getWidth(), 88);
+    polyRightBottom.push(g.getWidth(), 88);
 
-    g.fillPolyAA(polyLeftTop,true);
-    g.fillPolyAA(polyLeftBottom,true);
-    g.fillPolyAA(polyRightTop,true);
-    g.fillPolyAA(polyRightBottom,true);
+    g.fillPolyAA(polyLeftTop, true);
+    g.fillPolyAA(polyLeftBottom, true);
+    g.fillPolyAA(polyRightTop, true);
+    g.fillPolyAA(polyRightBottom, true);
   };
 
   let drawTime = function () {
@@ -84,15 +84,15 @@
     var bottomReached = false;
 
     if (g.theme.dark) {
-      g.setColor(1,1,1);
+      g.setColor(1, 1, 1);
     } else {
-      g.setColor(0,0,0);
+      g.setColor(0, 0, 0);
     }
     drawCenterLine();
 
     var lineEnd = lineEndDefault;
     g.setFont("7x11Numeric7Seg", 2);
-    g.setFontAlign(0,0);
+    g.setFontAlign(0, 0);
 
     // gone
     do {
