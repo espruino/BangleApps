@@ -83,11 +83,6 @@
     var yBottomLines = centerY - offset + 5;
     var bottomReached = false;
 
-    if (g.theme.dark) {
-      g.setColor(1, 1, 1);
-    } else {
-      g.setColor(0, 0, 0);
-    }
     drawCenterLine();
 
     var lineEnd = lineEndDefault;
@@ -164,7 +159,6 @@
       }
     } while (!bottomReached);
 
-    Bangle.drawWidgets();
     queueDrawTime();
   };
 
@@ -183,5 +177,5 @@
   );
 
   Bangle.loadWidgets();
-  Bangle.drawWidgets();
+  require("widget_utils").swipeOn();
 }
