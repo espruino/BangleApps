@@ -4,7 +4,7 @@
     // Load settings
     var settings = Object.assign({
         // default values
-        displaySeconds: true,
+        displaySeconds: 1,
         displayMonthsYears: true,
         dateFormat: 0,
         time24: true
@@ -15,17 +15,20 @@
     }
 
     var dateFormats = ["DD/MM/YYYY", "MM/DD/YYYY", "YYYY-MM-DD"];
+    var displaySecondsFormats = ["Never", "Unlocked", "Always"];
   
     // Show the menu
     E.showMenu({
       "" : { "title" : "Elapsed Time" },
       "< Back" : () => back(),
       'Show\nseconds': {
-        value: !!settings.displaySeconds,
+        value: settings.displaySeconds,
+        min: 0, max: 2, wrap: true,
         onchange: v => {
           settings.displaySeconds = v;
           writeSettings();
-        }
+        },
+        format: function (v) {return displaySecondsFormats[v];}
       },
       'Show months/\nyears': {
         value: !!settings.displayMonthsYears,

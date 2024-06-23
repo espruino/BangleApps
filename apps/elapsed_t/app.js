@@ -24,13 +24,11 @@ var now = new Date();
 
 var settings = Object.assign({
   // default values
-  displaySeconds: true,
+  displaySeconds: 1,
   displayMonthsYears: true,
   dateFormat: 0,
   time24: true
 }, require('Storage').readJSON(APP_NAME + ".settings.json", true) || {});
-
-var temp_displaySeconds = settings.displaySeconds;
 
 var data = Object.assign({
   // default values
@@ -116,15 +114,6 @@ function formatHourToAMPM(h) {
 
 function howManyDaysInMonth(month, year) {
   return new Date(year, month, 0).getDate();
-}
-
-function handleExceedingDay() {
-  var maxDays = howManyDaysInMonth(data.target.M, data.target.Y);
-  menu.Day.max = maxDays;
-  if (data.target.D > maxDays) {
-    menu.Day.value = maxDays;
-    data.target.D = maxDays;
-  }
 }
 
 function getDatePickerObject() {
@@ -248,7 +237,6 @@ function showMainMenu() {
       inMenu = false;
       Bangle.setUI("clock");
       setTarget(false);
-      updateQueueMillis(settings.displaySeconds);
       draw();
     },
     'Set clock as default': function () {
@@ -307,7 +295,8 @@ var target;
 setTarget(data.target.isSet);
 
 var drawTimeout;
-var queueMillis = 1000;
+var temp_displaySeconds;
+var queueMillis;
 
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
@@ -322,27 +311,25 @@ function queueDraw() {
   }, delay);
 }
 
-function updateQueueMillis(displaySeconds) {
+function updateQueueMillisAndDraw(displaySeconds) {
+  temp_displaySeconds = displaySeconds;
   if (displaySeconds) {
     queueMillis = 1000;
   } else {
     queueMillis = 60000;
   }
+  draw();
 }
 
 Bangle.on('lock', function (on, reason) {
-  if (inMenu) { // if already in a menu, nothing to do
+  if (inMenu || settings.displaySeconds == 0 || settings.displaySeconds == 2) { // if already in a menu, or always/never show seconds, nothing to do
     return;
   }
 
   if (on) { // screen is locked
-    temp_displaySeconds = false;
-    updateQueueMillis(false);
-    draw();
+    updateQueueMillisAndDraw(false);
   } else { // screen is unlocked
-    temp_displaySeconds = settings.displaySeconds;
-    updateQueueMillis(temp_displaySeconds);
-    draw();
+    updateQueueMillisAndDraw(true);
   }
 });
 
@@ -532,11 +519,14 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.setUI("clock");
 
-if (Bangle.isBacklightOn()) {
-  temp_displaySeconds = settings.displaySeconds;
-  updateQueueMillis(temp_displaySeconds);
-} else {
-  temp_displaySeconds = false;
-  updateQueueMillis(false);
+switch (settings.displaySeconds) {
+  case 0: // never
+    updateQueueMillisAndDraw(false);
+    break;
+  case 1: // unlocked
+    updateQueueMillisAndDraw(Bangle.isBacklightOn());
+    break;
+  case 2: // always
+    updateQueueMillisAndDraw(true);
+    break;
 }
-draw();
