@@ -30,6 +30,15 @@ var settings = Object.assign({
   time24: true
 }, require('Storage').readJSON(APP_NAME + ".settings.json", true) || {});
 
+function writeSettings() {
+  require('Storage').writeJSON(APP_NAME + ".settings.json", settings);
+}
+
+if (typeof settings.displaySeconds === 'boolean') {
+  settings.displaySeconds = 1;
+  writeSettings();
+}
+
 var data = Object.assign({
   // default values
   target: {

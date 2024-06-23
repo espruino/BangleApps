@@ -14,6 +14,11 @@
       require('Storage').writeJSON(FILE, settings);
     }
 
+    if (typeof settings.displaySeconds === 'boolean') {
+      settings.displaySeconds = 1;
+      writeSettings();
+    }
+
     var dateFormats = ["DD/MM/YYYY", "MM/DD/YYYY", "YYYY-MM-DD"];
     var displaySecondsFormats = ["Never", "Unlocked", "Always"];
   
