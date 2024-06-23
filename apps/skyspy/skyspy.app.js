@@ -113,7 +113,7 @@ var cur_altitude;
 var wi = 24;
 var h = 176-wi, w = 176;
 var fix;
-var adj_time = 0;
+var adj_time = 0, adj_alt = 0;
 
 function radA(p) { return p*(Math.PI*2); }
 function radD(d) { return d*(h/2); }
@@ -155,6 +155,26 @@ function updateGps() {
     print("Adjusting time");
     setTime(fix.time.getTime()/1000);
     adj_time = 0;
+  }
+  if (adj_alt) {
+      print("Adjust altitude");
+      if (qalt < 5) {
+	  let rest_altitude = fix.alt;
+	  let alt_adjust = cur_altitude - rest_altitude;
+	  let abs = Math.abs(alt_adjust);
+	  print("adj", alt_adjust);
+	  let o = Bangle.getOptions();
+	  if (abs > 10 && abs < 150) {
+	      let a = 0.01;
+	      // FIXME: draw is called often compared to alt reading
+	      if (cur_altitude > rest_altitude)
+		  a = -a;
+	      o.seaLevelPressure = o.seaLevelPressure + a;
+	      Bangle.setOptions(o);
+	  }
+	  msg = o.seaLevelPressure.toFixed(1) + "hPa";
+	  print(msg);
+      }
   }
 
   try {
@@ -351,36 +371,50 @@ function drawBusy() {
   drawMsg("\n.oO busy");
 }
 
+var numScreens = 3;
+
 function nextScreen() {
     display = display + 1;
-  if (display == 3)
-    display = 0;
-  drawBusy();
+    if (display == numScreens)
+	display = 0;
+    drawBusy();
+}
 
+function prevScreen() {
+    display = display - 1;
+    if (display < 0)
+	display = numScreens - 1;
+    drawBusy();
 }
 
 function onSwipe(dir) {
-  nextScreen();
+    nextScreen();
 }
 
 var last_b = 0;
 function touchHandler(d) {
-  let x = Math.floor(d.x);
-  let y = Math.floor(d.y);
-  
-  if (d.b != 1 || last_b != 0) {
+    let x = Math.floor(d.x);
+    let y = Math.floor(d.y);
+    
+    if (d.b != 1 || last_b != 0) {
+	last_b = d.b;
+	return;
+    }
     last_b = d.b;
-    return;
-  }
-  last_b = d.b;
 
-  if ((x<h/2) && (y<w/2)) {
-    drawMsg("Clock\nadjust");
-    adj_time = 1;
-  }
+    if ((x<h/2) && (y<w/2)) {
+	drawMsg("Clock\nadjust");
+	adj_time = 1;
+    }
+    if ((x>h/2) && (y<w/2)) {
+	drawMsg("Alt\nadjust");
+	adj_alt = 1;
+    }
 
-  if ((x>h/2) && (y>w/2))
-    nextScreen();
+    if ((x<h/2) && (y>w/2))
+	prevScreen();
+    if ((x>h/2) && (y>w/2))
+	nextScreen();
 }
 
 gps.init();
