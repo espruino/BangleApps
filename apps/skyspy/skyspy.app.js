@@ -46,7 +46,19 @@ let fmt = {
 	return "bad mode?";
     },
     fmtPos: function(pos) {
-	return this.fmtAngle(pos.lat) + "\n" + this.fmtAngle(pos.lon);
+	let x = pos.lat;
+	let c = "N";
+	if (x<0) {
+	    c = "S";
+	    x = -x;
+	}
+	let s = c+this.fmtAngle(pos.lat) + "\n";
+	c = "E";
+	if (x<0) {
+	    c = "W";
+	    x = -x;
+	}
+	return s + c + this.fmtAngle(pos.lon);
     },
 };
 
