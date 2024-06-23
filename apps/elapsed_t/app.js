@@ -532,5 +532,11 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.setUI("clock");
 
+if (Bangle.isBacklightOn()) {
+  temp_displaySeconds = settings.displaySeconds;
+  updateQueueMillis(temp_displaySeconds);
+} else {
+  temp_displaySeconds = false;
+  updateQueueMillis(false);
+}
 draw();
-
