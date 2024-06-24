@@ -178,31 +178,31 @@ function updateGps() {
 
 function stopGps() {
   cancel_gps=true;
-  Bangle.setGPSPower(0, "waypoint_editor");
+  Bangle.setGPSPower(0, "waypoints");
 }
 
 function confirmGps(s) {
-  key = s;
-   var la = new Layout (
-     {type:"v", c: [
-       {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
-       {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
-       {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
-       {type:"h", c: [
-         {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "YES", cb:l=>{
-           print("should mark", key, fix); createWP(fix.lat, fix.lon, key); cancel_gps=true; mainMenu();
-         }},
-         {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " NO", cb:l=>{ cancel_gps=true; mainMenu(); }}
-       ]}
-     ], lazy:true});
-  g.clear();
-  la.render();
-  updateGps();
+    key = s;
+    var la = new Layout (
+	{type:"v", c: [
+	    {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
+	    {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
+	    {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
+	    {type:"h", c: [
+		{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "YES", cb:l=>{
+		    print("should mark", key, fix); createWP(fix.lat, fix.lon, key); cancel_gps=true; mainMenu();
+		}},
+		{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " NO", cb:l=>{ cancel_gps=true; mainMenu(); }}
+	    ]}
+	], lazy:true});
+    g.clear();
+    la.render();
+    updateGps();
 }
 
 function markGps() {
   cancel_gps = false;
-  Bangle.setGPSPower(1, "waypoint_editor");
+  Bangle.setGPSPower(1, "waypoints");
   gps_start = getTime();
   require("textinput").input({text:"wp"}).then(key => {
     confirmGps(key);
@@ -219,53 +219,6 @@ function setFormat() {
     ], lazy:true});
   g.clear();
   la.render();
-}
-
-function format(x) {
-  switch (fmt.geo_mode) {
-    case 0:
-      return "" + x;
-    case 1:
-      d = Math.floor(x);
-      m = x - d;
-      m = m*60;
-      return "" + d + " " + m + "'";
-    case 2:
-      d = Math.floor(x);
-      m = x - d;
-      m = m*60;
-      mf = Math.floor(m);
-      s = m - mf;
-      s = s*60;
-      return "" + d + " " + mf + "'" + s + '"';
-  }
-}
-function lat(x) {
-  c = "N";
-  if (x<0) {
-    c = "S";
-    x = -x;
-  }
-  return c+format(x);
-}
-function lon(x) {
-  c = "E";
-  if (x<0) {
-    c = "W";
-    x = -x;
-  }
-  return c+format(x);
-}
-
-function show(pin) {
-  var i = wp[pin];
-  var l = lat(i["lat"]) + "\n" + lon(i["lon"]);
-  E.showPrompt(l,{
-    title:i["name"],
-    buttons : {"Ok":true}
-  }).then(function(v) {
-    mainMenu();
-  });
 }
 
 function showNumpad(text, key_, callback) {
@@ -324,54 +277,64 @@ function showNumpad(text, key_, callback) {
   update();
 }
 
-function showCard() {
-      var menu = {
-    "" : {title : "Select WP"},
-    "< Back" : mainMenu
-  };
-  if (Object.keys(wp).length==0) Object.assign(menu, {"No WPs":""});
-  else {
-    wp.forEach((val, card) => {
-      const name = wp[card].name;
-      menu[name]= () => show(card);
+function show(pin) {
+    var i = wp[pin];
+    var l = fmt.fmtPos(i);
+    E.showPrompt(l,{
+	title:i["name"],
+	buttons : {"Ok":true}
+    }).then(function(v) {
+	mainMenu();
     });
-  }
-  E.showMenu(menu);
+}
+
+function showCard() {
+    var menu = {
+	"" : {title : "Select WP"},
+	"< Back" : mainMenu
+    };
+    if (Object.keys(wp).length==0) Object.assign(menu, {"No WPs":""});
+    else {
+	wp.forEach((val, card) => {
+	    const name = wp[card].name;
+	    menu[name]= () => show(card);
+	});
+    }
+    E.showMenu(menu);
 }
 
 function remove(pin)
 {
-  let card = wp[pin];
-  let name = card["name"];
-  print("Remove?", card, name);
+    let card = wp[pin];
+    let name = card["name"];
+    print("Remove?", card, name);
 
-        E.showPrompt(name,{
-          title:"Delete",
-        }).then(function(v) {
-          if (v) {
+    E.showPrompt(name,{
+        title:"Delete",
+    }).then(function(v) {
+        if (v) {
             wp.splice(pin, 1);
             writeWP();
             mainMenu();
-          } else {
+        } else {
             mainMenu();
-          }
         }
-                );
-                }
+    });
+}
 
 function removeCard() {
-  var menu = {
-    "" : {title : "Select WP"},
-    "< Back" : mainMenu
-  };
-  if (Object.keys(wp).length==0) Object.assign(menu, {"No WPs":""});
-  else {
-    wp.forEach((val, card) => {
-      const name = wp[card].name;
-      menu[name]=()=> remove(card);
-    });
-  }
-  E.showMenu(menu);
+    var menu = {
+	"" : {title : "Select WP"},
+	"< Back" : mainMenu
+    };
+    if (Object.keys(wp).length==0) Object.assign(menu, {"No WPs":""});
+    else {
+	wp.forEach((val, card) => {
+	    const name = wp[card].name;
+	    menu[name]=()=> remove(card);
+	});
+    }
+    E.showMenu(menu);
 }
 
 function ask01(t, cb) {
