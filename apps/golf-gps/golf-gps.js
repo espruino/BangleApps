@@ -81,10 +81,9 @@ function readOneCourseData() {
 }
 
 function distanceCalc(lat1, long1, lat2, long2) {
-  const distLat = (lat1 - lat2) * 111151.3; // 111151.3 = (2*6368500*pi)/360, 6368500 ~ Earth radius at latitude 42.3°
-  const averageLat = (lat1 + lat2) / 2;
-  const distLong = (long1 - long2) * 111151.3 * Math.cos(radians(averageLat));
-  return Math.sqrt(distLat * distLat + distLong * distLong) / 0.9144; // in yards
+  const delLat = Math.abs(lat1 - lat2) * 111151.3; // 111151.3 = (2*6368500*pi)/360, 6368500 ~ Earth radius at latitude 42.3°
+  const delLong = Math.abs(long1 - long2) * 111151.3 * Math.cos(radians((lat1 + lat2)/2));
+  return Math.sqrt(delLat * delLat + delLong * delLong) / 0.9144; // in yards
 }
 
 function mainMenu() {
