@@ -407,6 +407,10 @@ function loggps(fix) {
 function hourly() {
   print("hourly");
   let s = ' T';
+  if (bat < 25) {
+      s = ' B';
+      show("Bat "+bat+"%", 60);
+  }
   if (is_active)
     doBuzz(toMorse(s));
   //logstamp("");
@@ -418,11 +422,6 @@ function fivemin() {
   print("fivemin");
   let s = ' B';
   let bat = E.getBattery();
-  if (bat < 25) {
-      if (is_active)
-        doBuzz(toMorse(s));
-      show("Bat "+bat+"%", 60);
-  }
   try {
     Bangle.getPressure().then((x) => { cur_altitude = x.altitude;
                                      cur_temperature = x.temperature; },
@@ -500,6 +499,7 @@ function drawDot(h, d, s) {
 function drawBackground() {
   let acc = Bangle.getAccel();
   is_level = (acc.z < -0.95);
+  Bangle.setCompassPower(!!is_level, "sixths");
   if (is_level) {
     let obj = Bangle.getCompass();
     if (obj) {
@@ -745,7 +745,7 @@ function start() {
   Bangle.on("drag", touchHandler);
   Bangle.on("lock", lockHandler);
   if (0)
-    Bangle.on("accel", accelHandler);
+      Bangle.on("accel", accelHandler);
   if (0) {
     Bangle.setCompassPower(1, "sixths");
     Bangle.setBarometerPower(1, "sixths");
