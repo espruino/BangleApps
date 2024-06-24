@@ -56,13 +56,13 @@ let fmt = {
 	    c = "S";
 	    x = -x;
 	}
-	let s = c+this.fmtAngle(pos.lat) + "\n";
+	let s = c+this.fmtAngle(x) + "\n";
 	c = "E";
 	if (x<0) {
 	    c = "W";
 	    x = -x;
 	}
-	return s + c + this.fmtAngle(pos.lon);
+	return s + c + this.fmtAngle(x);
     },
 };
 
@@ -133,13 +133,10 @@ function mainMenu() {
   var menu = {
     "< Back" : () => load()
   };
-  for (let id in wp) {
-    let i = id;
-    menu[wp[id]["name"]]=()=>{ show(i); };
-  }
   if (textInputInstalled && BANGLEJS2) {
     menu["Add"]=addCard;
   }
+  menu["Show"]=showCard;
   menu["Remove"]=removeCard;
   menu["Format"]=setFormat;
   if (textInputInstalled && BANGLEJS2) {
@@ -326,6 +323,50 @@ function showNumpad(text, key_, callback) {
   numPad.render();  
   update();
 }
+
+function showCard() {
+      var menu = {
+    "" : {title : "Select WP"},
+    "< Back" : mainMenu
+  };
+  if (Object.keys(wp).length==0) Object.assign(menu, {"No WPs":""});
+  else {
+    wp.forEach((val, card) => {
+      const name = wp[card].name;
+      menu[name]= () => show(card);
+    });
+  }
+  E.showMenu(menu);
+}
+
+
+function removeCard() {
+  var menu = {
+    "" : {title : "Select WP"},
+    "< Back" : mainMenu
+  };
+  if (Object.keys(wp).length==0) Object.assign(menu, {"No WPs":""});
+  else {
+    wp.forEach((val, card) => {
+      const name = wp[card].name;
+      menu[name]=()=>{
+        E.showPrompt(name,{
+          title:"Delete",
+        }).then(function(v) {
+          if (v) {
+            wp.splice(card, 1);
+            writeWP();
+            mainMenu();
+          } else {
+            mainMenu();
+          }
+        });
+      };
+    });
+  }
+  E.showMenu(menu);
+}
+
 
 function removeCard() {
   var menu = {
