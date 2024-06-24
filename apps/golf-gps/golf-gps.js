@@ -99,6 +99,11 @@ function mainMenu() {
   });
 }
 
+function backToClock() {
+  NRF.wake();
+  load();
+}
+
 function browseScore() {
   const scoreFiles = require("Storage").list(/^Scorecard-/);
   if (scoreFiles.length === 0) {
@@ -108,7 +113,7 @@ function browseScore() {
         "END": 1
       }
     }).then(choice => {
-      if (choice === 1) load();
+      if (choice === 1) backToClock();
     });
   }
   let fileIndx = scoreFiles.length - 1;
@@ -126,7 +131,7 @@ function browseScore() {
     }).then(choice => {
       if (choice === 1) fileIndx = (fileIndx - 1 + scoreFiles.length) % scoreFiles.length;
       else if (choice === 2) fileIndx = (fileIndx + 1) % scoreFiles.length;
-      else if (choice === 3) load();
+      else if (choice === 3) backToClock();
       browseFiles();
     });
   }
@@ -134,6 +139,7 @@ function browseScore() {
 }
 
 function fixGPS() {
+  NRF.sleep();
   Bangle.on('GPS', onGPS);
   Bangle.setGPSPower(1, "golf-gps");
   E.showMessage("Golf GPS v0.1\n\nWaiting for GPS fix...\n\nwritten by\nJinseok Jeon\n\n ");
