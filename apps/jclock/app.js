@@ -17,7 +17,7 @@ var drawTimeout;
 // schedule a draw for the next minute
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
+  drawTimeout = setTimeout(() => {
     drawTimeout = undefined;
     draw();
   }, 60000 - (Date.now() % 60000));
@@ -26,43 +26,56 @@ function queueDraw() {
 const zeroPad = (num, places) => String(num).padStart(places, '0');
 
 function draw() {
-  let barWidth = 64;
+  const barWidth = 64;
   let date = new Date();
-  
+  let battColor = '#0ff';
+
   // queue next draw in one minute
   queueDraw();
-  
+
   // clean screen
   g.reset().clearRect(Bangle.appRect);
-  
+
   // draw side bar in blue
-  g.setColor('#00f');
-  g.fillRect(0, 0, barWidth, g.getHeight());
-  
+  g.setColor('#000').fillRect(0, 0, barWidth, g.getHeight());
+
   // show time on the right
-  g.setColor(g.theme.fg);
-  g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getHours(),2), 120, 10);
-  g.setFontKdamThmor().setFontAlign(0,-1).drawString(zeroPad(date.getMinutes(),2), 120, g.getHeight()/2+10);
-  
-  // show date
-  g.setFont('Vector', 20).setFontAlign(0, -1).setColor('#fff');
-  g.drawString(require("date_utils").dow(date.getDay(),1).toUpperCase(), barWidth/2, 3);
-  g.drawString(date.getDate(), barWidth/2, 28);
-  g.drawString(require("date_utils").month(date.getMonth()+1,1).toUpperCase(), barWidth/2, 53);
-  
-  // divider, place holder for any other info
-  g.drawString('=====', barWidth/2, 78);
-  
+  g.setColor(g.theme.fg).setFontAlign(0, 0).setFontKdamThmor();
+  g.setColor('#11f').drawString(zeroPad(date.getHours(), 2), 120, g.getHeight() / 4 + 12);
+  g.setColor('#000').drawString(zeroPad(date.getMinutes(), 2), 120, g.getHeight() * 3 / 4 + 12);
+
+  // day of week
+  g.setColor('#fff').setFontAlign(0, -1).setFont('Vector', 28).drawString(require("date_utils").dow(date.getDay(), 1).toUpperCase(), barWidth / 2 + 1, 3);
+  //g.setFont('Vector', 30).drawString(twoCharsDayOfWeek[date.getDay()], barWidth/2, 3);
+
+  // month
+  g.drawString(require("date_utils").month(date.getMonth() + 1, 1).toUpperCase(), barWidth / 2 + 1, 84);
+
+  // date
+  g.setColor('#0ff').setFont('Vector', 48).drawString(date.getDate(), barWidth / 2 + 5, 36);
+
   // show daily steps
-  g.drawString(Bangle.getHealthStatus("day").steps, barWidth/2, 103);
-  
+  g.setFontAlign(1, -1).setColor('#fff').setFont('Vector', 24).drawString((Bangle.getHealthStatus("day").steps / 1000).toFixed(1) + 'k', barWidth, 125);
+
+  // Bluetooth/GPS/Compass connection status
+  if (NRF.getSecurityStatus().connected) g.setColor('#0ff').fillRect(5, 115, barWidth - 5, 120);
+
   // show battery remaining percentage
-  g.drawString(E.getBattery() + '%', barWidth/2,  153);
-  
-  // Bluetooth connection status
-  if (NRF.getSecurityStatus().connected) g.drawString('>BT<', barWidth/2, 128);
+  battColor = Bangle.isCharging() ? '#f00' : (E.getBattery() < 30 ? '#ff0' : '#0f0');
+  g.setColor(battColor).drawString(E.getBattery() + '%', barWidth, 153);
 }
 
-draw();
+function handleEvent() {
+  draw();
+}
+
+Bangle.on('charging', handleEvent);
+NRF.on('connect', handleEvent);
+NRF.on('disconnect', handleEvent);
 
 Bangle.setUI("clock");
+
+// Load widgets
+Bangle.loadWidgets();
+require("widget_utils").hide();
+draw();
