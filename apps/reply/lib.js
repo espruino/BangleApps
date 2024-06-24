@@ -41,7 +41,7 @@ exports.reply = function (options) {
       require("Storage").readJSON(
         options.fileOverride || "replies.json",
         true
-      ) || {};
+      ) || [];
     replies.forEach((reply) => {
       menu = Object.defineProperty(menu, reply.text, {
         value: () => constructReply(options.msg ?? {}, reply.text, resolve),
