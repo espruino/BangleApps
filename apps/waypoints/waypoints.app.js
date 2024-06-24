@@ -339,6 +339,25 @@ function showCard() {
   E.showMenu(menu);
 }
 
+function remove(pin)
+{
+  let card = wp[pin];
+  let name = card["name"];
+  print("Remove?", card, name);
+
+        E.showPrompt(name,{
+          title:"Delete",
+        }).then(function(v) {
+          if (v) {
+            wp.splice(pin, 1);
+            writeWP();
+            mainMenu();
+          } else {
+            mainMenu();
+          }
+        }
+                );
+                }
 
 function removeCard() {
   var menu = {
@@ -349,47 +368,7 @@ function removeCard() {
   else {
     wp.forEach((val, card) => {
       const name = wp[card].name;
-      menu[name]=()=>{
-        E.showPrompt(name,{
-          title:"Delete",
-        }).then(function(v) {
-          if (v) {
-            wp.splice(card, 1);
-            writeWP();
-            mainMenu();
-          } else {
-            mainMenu();
-          }
-        });
-      };
-    });
-  }
-  E.showMenu(menu);
-}
-
-
-function removeCard() {
-  var menu = {
-    "" : {title : "Select WP"},
-    "< Back" : mainMenu
-  };
-  if (Object.keys(wp).length==0) Object.assign(menu, {"No WPs":""});
-  else {
-    wp.forEach((val, card) => {
-      const name = wp[card].name;
-      menu[name]=()=>{
-        E.showPrompt(name,{
-          title:"Delete",
-        }).then(function(v) {
-          if (v) {
-            wp.splice(card, 1);
-            writeWP();
-            mainMenu();
-          } else {
-            mainMenu();
-          }
-        });
-      };
+      menu[name]=()=> remove(card);
     });
   }
   E.showMenu(menu);
