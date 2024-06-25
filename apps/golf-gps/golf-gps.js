@@ -42,7 +42,7 @@ var lastFix = {
   lon: 0,
   alt: 0, // altitude in m
   speed: 0, // km/h
-  course: 0, // heading in degree
+  course: 0, // heading in degrees
   time: 0,
   satellites: 0,
   fix: 0,
@@ -81,9 +81,9 @@ function readOneCourseData() {
 }
 
 function distanceCalc(lat1, long1, lat2, long2) {
-  const delLat = Math.abs(lat1 - lat2) * 111151.3; // 111151.3 = (2*6368500*pi)/360, 6368500 ~ Earth radius at latitude 42.3°
-  const delLong = Math.abs(long1 - long2) * 111151.3 * Math.cos(radians((lat1 + lat2)/2));
-  return Math.sqrt(delLat * delLat + delLong * delLong) / 0.9144; // in yards
+  const delLat = Math.abs(lat1 - lat2) * 111194.9; // 111194.9 = (2*6371000*pi)/360, 6371000 ~ Earth's average radius
+  const delLong = Math.abs(long1 - long2) * 111194.9 * Math.cos(radians((lat1+lat2)/2));
+  return Math.sqrt(delLat * delLat + delLong * delLong)/0.9144; // in yards
 }
 
 function mainMenu() {
