@@ -3,8 +3,7 @@
   g.setFont("7x11Numeric7Seg");
   g.setFontAlign(0, 0);
 
-  const centerX = g.getWidth() / 2, //88
-    centerY = g.getHeight() / 2; //88
+  const centerY = g.getHeight() / 2; //88
   const lineStart = 25;
   const lineEndFull = 110;
   const lineEndHalf = 90;
@@ -37,7 +36,7 @@
     let yT = centerY - 13;
     let yB = centerY + 13;
 
-    for (i = 0; i < steps.length; i++) {
+    for (let i = 0; i < steps.length; i++) {
       xL += steps[i];
       xR -= steps[i];
       yT += stepsReversed[i];
