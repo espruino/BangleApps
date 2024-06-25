@@ -15,8 +15,8 @@
     "npm-watch": "^0.11.0"
   },
   "scripts": {
-    "lint-apps": "node bin/sync-lint-exemptions.mjs && eslint ./apps",
-    "lint-modules": "eslint ./modules",
+    "lint-apps": "node bin/sync-lint-exemptions.mjs && eslint --max-warnings 0 ./apps",
+    "lint-modules": "eslint --max-warnings 0 ./modules",
     "test": "node bin/sanitycheck.js && npm run lint-apps && npm run lint-modules",
     "fix": "eslint --fix ./apps ./modules",
     "update-local-apps": "./bin/create_apps_json.sh apps.local.json",
