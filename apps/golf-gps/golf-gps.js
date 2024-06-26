@@ -1,3 +1,9 @@
+/*
+  Golf-GPS app v0.01
+  written by JeonLab (https://jeonlab.wordpress.com)
+  6/26/2024
+*/
+
 var currentHole = 1,
   totalShots = 0,
   courseName = "",
@@ -72,8 +78,8 @@ function readOneCourseData() {
     l = courseData.readLine();
     if (l !== undefined) {
       const parts = l.split(',');
-      lat[i] = parseFloat(parts[0]).toFixed(6);
-      lon[i] = parseFloat(parts[1]).toFixed(6);
+      lat[i] = parseFloat(parts[0]);
+      lon[i] = parseFloat(parts[1]);
       par[i] = parseInt(parts[2]);
       score[i] = 0;
     }
@@ -81,8 +87,8 @@ function readOneCourseData() {
 }
 
 function distanceCalc(lat1, long1, lat2, long2) {
-  const delLat = Math.abs(lat1 - lat2) * 111194.9; // 111194.9 = (2*6371000*pi)/360, 6371000 ~ Earth's average radius
-  const delLong = Math.abs(long1 - long2) * 111194.9 * Math.cos(radians((lat1+lat2)/2));
+  let delLat = Math.abs(lat1 - lat2) * 111194.9; // 111194.9 = (2*6371000*pi)/360, 6371000 ~ Earth's average radius
+  let delLong = Math.abs(long1 - long2) * 111194.9 * Math.cos(radians((lat1+lat2)/2));
   return Math.sqrt(delLat * delLat + delLong * delLong)/0.9144; // in yards
 }
 
@@ -141,7 +147,7 @@ function fixGPS() {
   let fixInterval = setInterval(() => {
     let date = new Date();
     g.clearRect(0, 150, W, H);
-    g.setFontAlign(1, 1).setFont('6x8:3').drawString(E.getBattery(), W, H);
+    g.setFontAlign(1, 1).setFont('6x8:3').drawString(lastFix.hdop, W, H);
     g.setFontAlign(-1, 1).setFont('6x8:3').drawString((date.getHours() > 12 ? date.getHours() % 12 : date.getHours()) + ':' + zeroPad(date.getMinutes(), 2), 2, H);
     if (lastFix.fix && lastFix.hdop <= 5) {
       clearInterval(fixInterval);
