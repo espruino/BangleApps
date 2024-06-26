@@ -407,6 +407,7 @@ function loggps(fix) {
 function hourly() {
   print("hourly");
   let s = ' T';
+  let bat = E.getBattery();
   if (bat < 25) {
       s = ' B';
       show("Bat "+bat+"%", 60);
@@ -421,7 +422,6 @@ function show(msg, timeout) {
 function fivemin() {
   print("fivemin");
   let s = ' B';
-  let bat = E.getBattery();
   try {
     Bangle.getPressure().then((x) => { cur_altitude = x.altitude;
                                      cur_temperature = x.temperature; },
