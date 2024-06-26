@@ -1,17 +1,7 @@
 var btHomeBatterySequence = 0;
 
 function advertiseBTHomeBattery() {
-  var advert = [ 0x40, /* BTHome Device Information
-              bit 0: "Encryption flag"
-              bit 1-4: "Reserved for future use"
-              bit 5-7: "BTHome Version" */
-
-              0x00, // Sequence number
-              btHomeBatterySequence,
-
-              0x01, // Battery, 8 bit
-              E.getBattery()
-  ];
+  var advert = [0x40, 0x00, btHomeBatterySequence, 0x01, E.getBattery()];
 
   if(Array.isArray(Bangle.bleAdvert)){
     var found = false;
