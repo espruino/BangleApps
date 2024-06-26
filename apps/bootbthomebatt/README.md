@@ -1,6 +1,6 @@
 # BLE BTHome Battery Service
 
-Broadcasts battery remaining percentage over BLE using the BTHome protocol
+Broadcasts battery remaining percentage over BLE using the [BTHome protocol](https://bthome.io/)
 
 ## Usage
 
