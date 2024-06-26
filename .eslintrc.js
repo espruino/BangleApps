@@ -245,4 +245,5 @@ module.exports = {
         })),
     ],
     ignorePatterns: findGeneratedJS(["apps/", "modules/"]),
+    reportUnusedDisableDirectives: true,
 }
