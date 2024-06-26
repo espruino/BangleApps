@@ -11,7 +11,7 @@ var cx = 100, cy = 105, sc = 70, temp = 0, alt = 0, bpm = 0;
 var buzz = "",      /* Set this to transmit morse via vibrations */
     inm = "", l = "", /* For incoming morse handling */
     in_str = "",
-    note = "(NOTEHERE)",
+    note = "",
     debug = "v0.04.1", debug2 = "(otherdb)", debug3 = "(short)";
 var mode = 0, mode_time = 0; // 0 .. normal, 1 .. note, 2.. mark name
 var disp_mode = 0;  // 0 .. normal, 1 .. small time
@@ -553,7 +553,11 @@ function draw() {
   if (gps_on) {
     msg = gpsHandle();
   } else {
-    msg = note;
+    let o = Bangle.getOptions();
+    msg = o.seaLevelPressure.toFixed(1) + "hPa";
+    if (note != "") {
+      msg = note;
+    }
   }
   drawBackground();
 
