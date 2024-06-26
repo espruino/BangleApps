@@ -71,3 +71,4 @@
 0.60: Minor code improvements
 0.61: Instead of breaking execution with an Exception when updating boot, just use if..else (fix 'Uncaught undefined')
 0.62: Handle setting for configuring BLE privacy
+0.63: Only set BLE `display:1` if we have a passkey

@@ -79,9 +79,9 @@ if (global.save) boot += `global.save = function() { throw new Error("You can't 
 if (s.options) boot+=`Bangle.setOptions(${E.toJS(s.options)});\n`;
 if (s.brightness && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightness});\n`;
 if (s.bleprivacy || (s.passkey!==undefined && s.passkey.length==6)) {
-  let passkey = s.passkey ? `passkey:${E.toJS(s.passkey.toString())},` : "";
+  let passkey = s.passkey ? `passkey:${E.toJS(s.passkey.toString())},display:1,mitm:1,` : "";
   let privacy = s.bleprivacy ? `privacy:${E.toJS(s.bleprivacy)},` : "";
-  boot+=`NRF.setSecurity({${passkey}${privacy}mitm:1,display:1});\n`;
+  boot+=`NRF.setSecurity({${passkey}${privacy}});\n`;
 }
 if (s.blename === false) boot+=`NRF.setAdvertising({},{showName:false});\n`;
 if (s.whitelist && !s.whitelist_disabled) boot+=`NRF.on('connect', function(addr) { if (!NRF.ignoreWhitelist) { let whitelist = (require('Storage').readJSON('setting.json',1)||{}).whitelist; if (NRF.resolveAddress !== undefined) { let resolvedAddr = NRF.resolveAddress(addr); if (resolvedAddr !== undefined) addr = resolvedAddr + " (resolved)"; } if (!whitelist.includes(addr)) NRF.disconnect(); }});\n`;
