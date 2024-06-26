@@ -771,7 +771,11 @@ enableSensors();
   const bangle2 = Bangle as {
     bleAdvert?: BleAdvert | BleAdvert[];
   };
-  const cycle = Array.isArray(bangle2.bleAdvert) ? bangle2.bleAdvert : [];
+  const cycle = Array.isArray(bangle2.bleAdvert)
+    ? bangle2.bleAdvert
+    : bangle2.bleAdvert
+    ? [bangle2.bleAdvert]
+    : [];
 
   for(const id in ad){
     const serv = ad[id as BleServ];
