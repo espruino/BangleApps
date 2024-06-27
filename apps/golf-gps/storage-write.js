@@ -12,7 +12,8 @@
   and hit HOME and type " and hit END and type \n"+.
 */
  
-f = require("Storage").open("course-data","w"); // "w" to create or overwrite, "a" to append
+const Storage = require("Storage");
+const f = Storage.open("course-data", "a"); // "w" to create or overwrite, "a" to append
 f.write(
 "course name\n"+
 "00.000000,00.000000,0\n"+
