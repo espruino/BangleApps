@@ -12,8 +12,6 @@ exports.reply = function (options) {
       responseMessage = { t: "notify", id: msg.id, n: "REPLY", msg: replyText };
     }
     E.showMenu();
-    layout.setUI();
-    layout.render();
     if (options.sendReply == null || options.sendReply) {
       Bluetooth.println(JSON.stringify(responseMessage));
     }
@@ -26,8 +24,6 @@ exports.reply = function (options) {
         title: options.title || /*LANG*/ "Reply with:",
         back: function () {
           E.showMenu();
-          layout.setUI();
-          layout.render();
           reject("User pressed back");
         },
       }, // options
@@ -56,8 +52,6 @@ exports.reply = function (options) {
           {
             buttons: { Ok: true },
             remove: function () {
-              layout.setUI();
-              layout.render();
               reject(
                 "Please install a keyboard app, or set a custom reply via the app loader!"
               );

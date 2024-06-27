@@ -61,13 +61,13 @@
         function toggleVisibility() {
             let empty = document.getElementById("empty");
             let loading = document.getElementById("loading");
-            if (replies.length == 0) {
-                empty.setAttribute("class", "d-block");
-                loading.setAttribute("class", "d-hide");
-            }
-            else if (fetching) {
+            if (fetching) {
                 loading.setAttribute("class", "d-block");
                 empty.setAttribute("class", "d-hide");
+            }
+            else if (replies.length == 0) {
+                empty.setAttribute("class", "d-block");
+                loading.setAttribute("class", "d-hide");
             }
             else {
                 loading.setAttribute("class", "d-hide");
@@ -105,7 +105,7 @@
             var reply = {};
             reply.text = document.getElementById('msg').value;
             replies.push(reply);
-            return updateDevice();
+            updateDevice();
         }
 
         function updateDevice() {
@@ -114,10 +114,7 @@
             Util.writeStorage("replies.json", JSON.stringify(replies), () => {
                 fetching = false;
                 renderReplyList();
-                return true;
             });
-            fetching = false;
-            return false;
         }
     </script>
 </body>
