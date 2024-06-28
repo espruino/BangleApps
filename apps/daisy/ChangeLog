@@ -9,3 +9,4 @@
 0.09: Use 'modules/suncalc.js' to avoid it being copied 8 times for different apps
 0.10: Use widget_utils.
 0.11: Minor code improvements
+0.12: Added setting to change Battery estimate to hours

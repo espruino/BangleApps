@@ -83,6 +83,7 @@ function loadSettings() {
   settings.gy = settings.gy||'#020';
   settings.fg = settings.fg||'#0f0';
   settings.idle_check = (settings.idle_check === undefined ? true : settings.idle_check);
+  settings.batt_hours = (settings.batt_hours === undefined ? true : settings.batt_hours);
   assignPalettes();
 }
 
@@ -112,13 +113,39 @@ function updateSunRiseSunSet(now, lat, lon, line){
   sunSet = extractTime(times.sunset);
 }
 
+function batteryString(){
+  let stringToInsert;
+  if (settings.batt_hours) {
+    var batt_usage = 200000/E.getPowerUsage().total;
+    let rounded;
+    if (batt_usage > 24) {
+      var days = Math.floor(batt_usage/24);
+      var hours = Math.round((batt_usage/24 - days) * 24);
+      stringToInsert = '\n' + days + ((days < 2) ? 'd' : 'ds') + ' ' + hours + ((hours < 2) ? 'h' : 'hs');
+    }
+    else if (batt_usage > 9) {
+      rounded = Math.round(200000/E.getPowerUsage().total * 10) / 10;
+    }
+    else {
+      rounded = Math.round(200000/E.getPowerUsage().total * 100) / 100;
+    }
+    if (batt_usage < 24) {
+      stringToInsert = '\n' + rounded + ' ' + ((batt_usage < 2) ? 'h' : 'hs');
+    }
+  }
+  else{
+    stringToInsert = ' ' + E.getBattery() + '%';
+  }
+  return 'BATTERY' + stringToInsert;
+}
+
 const infoData = {
   ID_DATE:  { calc: () => {var d = (new Date()).toString().split(" "); return d[2] + ' ' + d[1] + ' ' + d[3];} },
   ID_DAY:   { calc: () => {var d = require("locale").dow(new Date()).toLowerCase(); return d[0].toUpperCase() + d.substring(1);} },
   ID_SR:    { calc: () => 'SUNRISE ' + sunRise },
   ID_SS:    { calc: () => 'SUNSET ' + sunSet },
   ID_STEP:  { calc: () => 'STEPS ' + getSteps() },
-  ID_BATT:  { calc: () => 'BATTERY ' + E.getBattery() + '%' },
+  ID_BATT:  { calc: batteryString},
   ID_HRM:   { calc: () => hrmCurrent }
 };
 
