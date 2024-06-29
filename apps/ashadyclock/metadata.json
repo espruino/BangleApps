@@ -6,7 +6,6 @@
   "description": "A nice clock with drop shadow. Hours and minutes. Create any color combination with the existing images by changing only the app color values.",
   "type": "clock",
   "tags": "clock",
-  "allow_emulator": true,
   "screenshots": [{"url":"screenshot.png"},{"url":"screenshot-1.png"}],  
   "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
