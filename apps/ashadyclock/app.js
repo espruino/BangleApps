@@ -14,7 +14,7 @@ for (i=0;i<10;i++) {
   {
     width : 98, height : 100, bpp : 3,
     transparent: 4,
-    buffer : require("Storage").read("ashadyclock.".i + ".bin")
+    buffer : require("Storage").read("ashadyclock." + i + ".bin")
   };
   images[i] = image;
 }
