@@ -1,7 +1,7 @@
 { "id": "line_clock",
   "name": "Line Clock",
   "shortName":"Line Clock",
-  "version":"0.1",
+  "version":"0.2",
   "description": "a readable analog clock",
   "icon": "app-icon.png",
   "type": "clock",
