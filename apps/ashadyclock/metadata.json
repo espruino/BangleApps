@@ -3,7 +3,7 @@
   "shortName":"Shady Clk",
   "icon": "app.png",
   "version":"0.01",
-  "description": "A nice clock with drop shadow. Hours and minutes. Create any color combination with the existing images by changing only the app color values.",
+  "description": "A nice clock with drop shadow. Hours and minutes. Configure color and widgets in settings. Create any color combination with the existing images by changing only the app color values.",
   "type": "clock",
   "tags": "clock",
   "screenshots": [{"url":"screenshot-1.png"},{"url":"screenshot.png"}],  
