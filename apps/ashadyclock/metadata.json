@@ -6,7 +6,7 @@
   "description": "A nice clock with drop shadow. Hours and minutes. Create any color combination with the existing images by changing only the app color values.",
   "type": "clock",
   "tags": "clock",
-  "screenshots": [{"url":"screenshot.png"},{"url":"screenshot-1.png"}],  
+  "screenshots": [{"url":"screenshot-1.png"},{"url":"screenshot.png"}],  
   "supports": ["BANGLEJS","BANGLEJS2"],
     "storage": [
       {"name":"ashadyclock.app.js","url":"app.js"},
