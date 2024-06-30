@@ -20,6 +20,8 @@
       {"name":"ashadyclock.6.bin","url":"6.bin"},
       {"name":"ashadyclock.7.bin","url":"7.bin"},
       {"name":"ashadyclock.8.bin","url":"8.bin"},
-      {"name":"ashadyclock.9.bin","url":"9.bin"}      
-    ]
+      {"name":"ashadyclock.9.bin","url":"9.bin"},
+      {"name":"ashadyclock.settings.js","url":"settings.js"},
+    ],
+  "data": [{"name":"ashadyclock.json"}
 }
