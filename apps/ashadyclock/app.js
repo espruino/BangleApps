@@ -87,8 +87,9 @@ function drawNumber(number, x, y, palette, options) {
 function draw() {
   let d = new Date();  
   g.clearRect(0, settings.showWidgets ? 24 : 0, g.getWidth(),g.getHeight());
-  drawBottom(0, 5);
-  drawTop(0, 5);
+
+  drawBottom(Math.floor(d.getMinutes()/10), d.getMinutes() % 10);
+  drawTop(Math.floor(d.getHours()/10), d.getHours() % 10);
 
   queueDraw();
 }
