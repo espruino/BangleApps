@@ -14,7 +14,6 @@ let gfx = function() {
   widgetUtils.hide();
   R = Bangle.appRect;
   const MARIGIN = 8;
-  // g.drawString(str, x, y, solid)
   g.clearRect(R);
   g.reset();
 
@@ -100,23 +99,17 @@ let swipeHandler = function(LR, _) {
 
 // Navigation input on the main layout
 let setUI = function() {
-// Bangle.setUI code from rigrig's smessages app for volume control: https://git.tubul.net/rigrig/BangleApps/src/branch/personal/apps/smessages/app.js
   Bangle.setUI(
     {mode : "updown",
-      remove : ()=>{
-        Bangle.removeListener("touch", touchHandler);
-        Bangle.removeListener("swipe", swipeHandler);
-        clearWatch(buttonHandler);
-        widgetUtils.show();
-      }
+     touch: touchHandler,
+     swipe: swipeHandler,
+     btn: ()=>load(),
+     remove : ()=>widgetUtils.show(),
     },
       ud => {
         if (ud) Bangle.musicControl(ud>0 ? "volumedown" : "volumeup");
       }
   );
-  Bangle.on("touch", touchHandler);
-  Bangle.on("swipe", swipeHandler);
-  let buttonHandler = setWatch(()=>{load();}, BTN, {edge:'falling'});
 };
 
 // Get back to the main layout
