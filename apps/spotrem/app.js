@@ -9,6 +9,8 @@ let backToMenu = false;
 let isPaused = true;
 let dark = g.theme.dark; // bool
 
+let marigin, x, y, len, playPause;
+
 // The main layout of the app
 let gfx = function() {
   widgetUtils.hide();
