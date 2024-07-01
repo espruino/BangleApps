@@ -228,7 +228,7 @@ function showPlayData() {
   // battery level bar
   g.setColor('#000').drawRect(59, H * 2 / 3 - 2, W - 5, H * 2 / 3 + 4);
   g.drawRect(58, H * 2 / 3 - 1, W - 4, H * 2 / 3 + 5);
-  g.setColor(E.getBattery() > 30 ? '#03f' : 'f00').fillRect(60, H * 2 / 3, 60 + E.getBattery() / 100 * (W - 60), H * 2 / 3 + 3);
+  g.setColor(E.getBattery() > 15 ? '#03f' : '#f00').fillRect(60, H * 2 / 3, 60 + E.getBattery() / 100 * (W - 60), H * 2 / 3 + 3);
 
   // hdop level indicator
   if (lastFix.hdop < 5) g.setColor('#0f0').fillRect(60, H / 3, 96, H / 3 + 5);
