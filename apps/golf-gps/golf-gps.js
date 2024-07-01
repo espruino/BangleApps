@@ -238,7 +238,7 @@ function showPlayData() {
 
 function finishGame() {
   let date = new Date();
-  let saveFileContents = ' '; // ALT 255
+  let saveFileContents = ' ';
   let parTotal = 0;
 
   Bangle.setGPSPower(0);
@@ -246,7 +246,7 @@ function finishGame() {
   const saveFile = require("Storage").open(saveFilename, "w");
   for (let i = 1; i < 19; i++) {
     saveFileContents += String(score[i] - par[i]).padStart(2, ' ');
-    saveFileContents += (i == 18 ? ' ' : (i % 6 == 0 ? ' \n ' : ''));
+    saveFileContents += (i == 18 ? ' ' : (i % 6 == 0 ? ' \n ' : ''));
     parTotal += par[i];
   }
   saveFile.write(`${date.getFullYear()}_${zeroPad(date.getMonth() + 1, 2)}_${zeroPad(date.getDate(), 2)}\n${courseName}${totalShots}/${parTotal}\n${saveFileContents}`);
