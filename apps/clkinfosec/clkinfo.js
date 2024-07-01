@@ -11,7 +11,7 @@
           g.drawImage(atob("GBgBAP4AA/+ABwHAHABwGAAwMAAYYAAMYAAMwAAGwAAGwAAGwAAGwAAGwAAGwAAGYAAMYAAMMAAYGAAwHABwBwHAA/+AAP4AAAAA"));
           g.drawLine(11,11,x,y).drawLine(12,11,x+1,y).drawLine(11,12,x,y+1).drawLine(12,12,x+1,y+1);
           return {
-            text : s.toString().padStart(2,0)+"s",
+            text : s.toString().padStart(2,0),
             img : g.asImage("string")
           };
         },
