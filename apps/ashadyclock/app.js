@@ -55,11 +55,11 @@ let yOffset = (g.getHeight() - 176) / 2;
 
 function drawTop(d0, d1) {  
   if (settings.showWidgets && g.getHeight()<=176) {
-    drawNumber(d0, 82  + xOffset, 24 + yOffset, palTop, {scale: 0.825});
-    drawNumber(d1, 13  + xOffset, 24 + yOffset, palTop, {scale: 0.825});
+    drawNumber(d1, 82  + xOffset, 24 + yOffset, palTop, {scale: 0.825});
+    drawNumber(d0, 13  + xOffset, 24 + yOffset, palTop, {scale: 0.825});
   } else {
-    drawNumber(d0, 80, 0, palTop);
-    drawNumber(d1, -1, 0, palTop);    
+    drawNumber(d1, 80, 0, palTop);
+    drawNumber(d0, -1, 0, palTop);    
   }  
 }
 
