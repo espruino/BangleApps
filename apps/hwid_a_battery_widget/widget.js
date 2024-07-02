@@ -54,7 +54,13 @@
 
 	if(E.getPowerUsage){
 		drawText = function(l, pwrOverride) {
-			const u = pwrOverride == null ? E.getPowerUsage().total : pwrOverride;
+			const pwr = E.getPowerUsage();
+			let total = 0;
+			for(const key in pwr){
+				if(!key.startsWith("LCD"))
+					total += pwr[key];
+			}
+			const u = pwrOverride == null ? total : pwrOverride;
 
 			// text colour is based off power usage
 			// colour height is based off time left, higher = more
