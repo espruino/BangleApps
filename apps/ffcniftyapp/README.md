@@ -1,13 +1,13 @@
-# Nifty-A Clock
-
-Colors are black/white - photos have non correct camera color "blue".
+# Nifty-A ++ Clock
 
 This is the clock:
 
-![](screenshot_nifty.png)
+![](screenshot_niftyapp.png)
 
 The week number (ISO8601) can be turned off in settings (default is `On`)
+Weather and Steps can be also turned off in settings.
 
-![](screenshot_settings_nifty.png)
+![](screenshot_settings_niftyapp.png)
 
+Based on the # Nifty-A Clock by @alessandrococco
 
