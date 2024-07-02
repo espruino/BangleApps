@@ -19,7 +19,7 @@
 		return COLORS.low;
 	};
 
-	function draw(_self, pwrOverride, battOvr) {
+	function draw() {
 		let x = this.x;
 		let	y = this.y;
 		if (x != null && y != null) {
@@ -27,7 +27,7 @@
 			g.setBgColor(COLORS.white);
 			g.clearRect(old_x, old_y, old_x + width, old_y + height - 1);
 
-			const l = battOvr != null ? battOvr : E.getBattery();
+			const l = E.getBattery();
 
 			// Charging bar
 			g.setColor(levelColor(l));
@@ -37,7 +37,7 @@
 			// Show percentage
 			g.setFontAlign(0,0);
 			g.setFont('Vector',16);
-			this.drawText(l, pwrOverride);
+			this.drawText(l);
 		}
 		old_x = this.x;
 		old_y = this.y;
@@ -52,16 +52,15 @@
 	let drawText;
 
 	if(E.getPowerUsage){
-		drawText = function(batt, pwrOverride) {
+		drawText = function(batt) {
 			const pwr = E.getPowerUsage();
 			let total = 0;
 			for(const key in pwr.device){
 				if(!/^(LCD|LED)/.test(key))
 					total += pwr.device[key];
 			}
-			const u = pwrOverride == null ? total : pwrOverride;
 
-			const hrs = 200000 / u;
+			const hrs = 200000 / total;
 			const days = hrs / 24;
 			const txt = days >= 1 ? `${Math.round(days)}d` : `${Math.round(hrs)}h`;
 
@@ -72,9 +71,9 @@
 			drawString.call(this, txt);
 
 			g.setClipRect(this.x, this.y + th * (1 - batt / 100), this.x + width, this.y + th);
-			if(u >= 23000)
+			if(total >= 23000)
 				g.setColor("#f00"); // red, e.g. GPS ~20k
-			else if(u > 2000)
+			else if(total > 2000)
 				g.setColor("#fc0"); // yellow, e.g. CPU ~1k, HRM ~700
 			else
 				g.setColor("#0f0"); // green: ok
