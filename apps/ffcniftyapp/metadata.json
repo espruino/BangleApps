@@ -5,7 +5,7 @@
   "description": "A nifty clock with time and date and more",
   "dependencies": {"weather":"app"},
   "icon": "app.png",
-  "screenshots": [{"url":"screenshot_nifty.png"}],
+  "screenshots": [{"url":"screenshot_niftyapp.png"}],
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS","BANGLEJS2"],
