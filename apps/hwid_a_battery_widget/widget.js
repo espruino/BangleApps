@@ -19,21 +19,20 @@
 		return COLORS.low;
 	};
 
-	function draw(_self, pwrOverride) {
+	function draw(_self, pwrOverride, battOvr) {
 		let x = this.x;
 		let	y = this.y;
 		if (x != null && y != null) {
 			g.reset();
 			g.setBgColor(COLORS.white);
-			g.clearRect(old_x, old_y, old_x + width, old_y + height);
+			g.clearRect(old_x, old_y, old_x + width, old_y + height - 1);
 
-			const l = E.getBattery(); // debug: Math.floor(Math.random() * 101);
-			let s = width - 1;
-			let xl = x+4+l*(s-12)/100;
+			const l = battOvr != null ? battOvr : E.getBattery();
 
 			// Charging bar
 			g.setColor(levelColor(l));
-			g.fillRect(x+4,y+14+3,xl,y+16+3);
+			const xl = x+1+(width - 1)*l/100;
+			g.fillRect(x+1,y+height-3,xl,y+height-1);
 
 			// Show percentage
 			g.setFontAlign(0,0);
@@ -53,41 +52,38 @@
 	let drawText;
 
 	if(E.getPowerUsage){
-		drawText = function(l, pwrOverride) {
+		drawText = function(batt, pwrOverride) {
 			const pwr = E.getPowerUsage();
 			let total = 0;
-			for(const key in pwr){
-				if(!key.startsWith("LCD"))
-					total += pwr[key];
+			for(const key in pwr.device){
+				if(!/^(LCD|LED)/.test(key))
+					total += pwr.device[key];
 			}
 			const u = pwrOverride == null ? total : pwrOverride;
 
-			// text colour is based off power usage
-			// colour height is based off time left, higher = more
+			const hrs = 200000 / u;
+			const days = hrs / 24;
+			const txt = days >= 1 ? `${Math.round(days)}d` : `${Math.round(hrs)}h`;
 
+			// draw time left, then shade it based on batt %
+			const th = 14;
 			g.setColor(COLORS.black);
-			drawString.call(this, l);
+			g.setClipRect(this.x, this.y, this.x + width, this.y + th);
+			drawString.call(this, txt);
 
+			g.setClipRect(this.x, this.y + th * (1 - batt / 100), this.x + width, this.y + th);
 			if(u >= 23000)
 				g.setColor("#f00"); // red, e.g. GPS ~20k
 			else if(u > 2000)
 				g.setColor("#fc0"); // yellow, e.g. CPU ~1k, HRM ~700
 			else
 				g.setColor("#0f0"); // green: ok
-
-			const hrs = 200000 / u;
-			const days = hrs / 24;
-			const dayPercent = Math.min(days / 16, 1);
-			const th = g.getFontHeight();
-
-			g.setClipRect(this.x, this.y + dayPercent * th, this.x + width, this.y + th);
-
-			drawString.call(this, l);
+			drawString.call(this, txt);
 		};
 	}else{
-		drawText = function(l) {
+		drawText = function(batt) {
 			g.setColor(COLORS.black);
-			drawString.call(this, l);
+			drawString.call(this, batt);
 		};
 	}
 
@@ -95,7 +91,7 @@
 	Bangle.on('charging', d);
 	var id = setInterval(d, intervalLow);
 	var width = 30;
-	var height = 19;
+	var height = 24;
 
 	WIDGETS["hwid_a_battery_widget"]={area:"tr",width,draw,drawText};
 })();
