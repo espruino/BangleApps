@@ -5,7 +5,6 @@
 	var old_x = this.x;
 	var old_y = this.y;
 
-
 	let COLORS = {
 		'white': g.theme.dark ? "#000" : "#fff",
 		'black': g.theme.dark ? "#fff" : "#000",
@@ -20,37 +19,83 @@
 		return COLORS.low;
 	};
 
-	function draw() {
-	var s = width - 1;
-	var x = this.x;
-	var	y = this.y;
-	if (x !== undefined && y !== undefined) {
-		g.setBgColor(COLORS.white);
-		g.clearRect(old_x, old_y, old_x + width, old_y + height);
+	function draw(_self, pwrOverride) {
+		let x = this.x;
+		let	y = this.y;
+		if (x != null && y != null) {
+			g.reset();
+			g.setBgColor(COLORS.white);
+			g.clearRect(old_x, old_y, old_x + width, old_y + height);
 
-		const l = E.getBattery(); // debug: Math.floor(Math.random() * 101);
-		let xl = x+4+l*(s-12)/100;
+			const l = E.getBattery(); // debug: Math.floor(Math.random() * 101);
+			let s = width - 1;
+			let xl = x+4+l*(s-12)/100;
 
-		g.setColor(levelColor(l));
-		g.fillRect(x+4,y+14+3,xl,y+16+3); // charging bar
-		// Show percentage
-		g.setColor(COLORS.black);
-		g.setFontAlign(0,0);
-		g.setFont('Vector',16);
-		g.drawString(l, x + 14, y + 10);
+			// Charging bar
+			g.setColor(levelColor(l));
+			g.fillRect(x+4,y+14+3,xl,y+16+3);
 
-	}
+			// Show percentage
+			g.setFontAlign(0,0);
+			g.setFont('Vector',16);
+			this.drawText(l, pwrOverride);
+		}
 		old_x = this.x;
 		old_y = this.y;
 
-	if (Bangle.isCharging()) changeInterval(id, intervalHigh);
-		else					 changeInterval(id, intervalLow);
+		if (Bangle.isCharging()) changeInterval(id, intervalHigh);
+		else changeInterval(id, intervalLow);
 	}
 
-	Bangle.on('charging',function(charging) { draw(); });
-	var id = setInterval(()=>WIDGETS["hwid_a_battery_widget"].draw(), intervalLow);
+	const drawString = function(l) {
+		g.drawString(l, this.x + 14, this.y + 10);
+	};
+	let drawText;
+
+	if(E.getPowerUsage){
+		drawText = function(l, pwrOverride) {
+			const pwr = E.getPowerUsage();
+			let total = 0;
+			for(const key in pwr){
+				if(!key.startsWith("LCD"))
+					total += pwr[key];
+			}
+			const u = pwrOverride == null ? total : pwrOverride;
+
+			// text colour is based off power usage
+			// colour height is based off time left, higher = more
+
+			g.setColor(COLORS.black);
+			drawString.call(this, l);
+
+			if(u >= 23000)
+				g.setColor("#f00"); // red, e.g. GPS ~20k
+			else if(u > 2000)
+				g.setColor("#fc0"); // yellow, e.g. CPU ~1k, HRM ~700
+			else
+				g.setColor("#0f0"); // green: ok
+
+			const hrs = 200000 / u;
+			const days = hrs / 24;
+			const dayPercent = Math.min(days / 16, 1);
+			const th = g.getFontHeight();
+
+			g.setClipRect(this.x, this.y + dayPercent * th, this.x + width, this.y + th);
+
+			drawString.call(this, l);
+		};
+	}else{
+		drawText = function(l) {
+			g.setColor(COLORS.black);
+			drawString.call(this, l);
+		};
+	}
+
+	const d = () => WIDGETS["hwid_a_battery_widget"].draw();
+	Bangle.on('charging', d);
+	var id = setInterval(d, intervalLow);
 	var width = 30;
 	var height = 19;
 
-	WIDGETS["hwid_a_battery_widget"]={area:"tr",width,draw:draw};
+	WIDGETS["hwid_a_battery_widget"]={area:"tr",width,draw,drawText};
 })();
