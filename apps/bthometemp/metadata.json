@@ -1,7 +1,7 @@
 { "id": "bthometemp",
   "name": "BTHome Temperature and Pressure",
   "shortName":"BTHome T",
-  "version":"0.02",
+  "version":"0.03",
   "description": "Displays temperature and pressure, and advertises them over bluetooth for Home Assistant using BTHome.io standard",
   "icon": "app.png",
   "tags": "bthome,bluetooth,temperature",

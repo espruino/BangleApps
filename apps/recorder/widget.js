@@ -1,8 +1,8 @@
 {
   let storageFile; // file for GPS track
-  let entriesWritten = 0;
   let activeRecorders = [];
-  let writeSetup;
+  let writeSetup; // the interval for writing, or 'true' if using GPS
+  let writeSubSecs; // true if we should write .1s for time, otherwise round to nearest second
 
   let loadSettings = function() {
     var settings = require("Storage").readJSON("recorder.json",1)||{};
@@ -63,7 +63,7 @@
         function onHRM(h) {
           bpmConfidence = h.confidence;
           bpm = h.bpm;
-          srv = h.src;
+          src = h.src;
         }
         return {
           name : "HR",
@@ -176,11 +176,10 @@
   };
   let getCSVHeaders = activeRecorders => ["Time"].concat(activeRecorders.map(r=>r.fields));
 
-  let writeLog = function(period) {
-    entriesWritten++;
+  let writeLog = function() {
     WIDGETS["recorder"].draw();
     try {
-      var fields = [period===1?getTime().toFixed(1):Math.round(getTime())];
+      var fields = [writeSubSecs?getTime().toFixed(1):Math.round(getTime())];
       activeRecorders.forEach(recorder => fields.push.apply(fields,recorder.getValues()));
       if (storageFile) storageFile.write(fields.join(",")+"\n");
     } catch(e) {
@@ -194,18 +193,15 @@
     }
   }
 
-  let writeOnGPS = function() {writeLog(settings.period);};
-
   // Called by the GPS app to reload settings and decide what to do
   let reload = function() {
     var settings = loadSettings();
     if (typeof writeSetup === "number") clearInterval(writeSetup);
     writeSetup = undefined;
-    Bangle.removeListener('GPS', writeOnGPS);
+    Bangle.removeListener('GPS', writeLog);
 
     activeRecorders.forEach(rec => rec.stop());
     activeRecorders = [];
-    entriesWritten = 0;
 
     if (settings.recording) {
       // set up recorders
@@ -225,8 +221,9 @@
       }
       // start recording...
       WIDGETS["recorder"].draw();
+      writeSubSecs = settings.period===1;
       if (settings.period===1 && settings.record.includes("gps")) {
-        Bangle.on('GPS', writeOnGPS);
+        Bangle.on('GPS', writeLog);
         writeSetup = true;
       } else {
         writeSetup = setInterval(writeLog, settings.period*1000, settings.period);

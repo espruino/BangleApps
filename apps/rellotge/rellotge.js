@@ -6,81 +6,206 @@
   const dateFontSize = 2;
   const font = "12x20";
 
-  const xyCenter = g.getWidth() /9;
-  const yposTime = 55;
-  const yposDate = 130;
+  const Panel = {
+    STEPS: 0,
+    DATE: 1
+  };
+
+  let panel = Panel.STEPS;
+
+  const timeTextMagin = 15;
+  const xyCenter = timeTextMagin;
+  const yposTime = 45;
   const leshores = ["Les dotze","La una","Les dues","Les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze","La una","Les dues","Les tres","Les quatre","Les cinc","Les sis","Les set","Les vuit","Les nou","Les deu","Les onze","Les dotze"];
-  const leshores2 = ["d\'una\r\nel mati","de dues\r\ndel mati","de tres\r\ndel mati","de quatre\r\ndel mati","de cinc\r\ndel mati","de sis\r\ndel mati","de set\r\ndel mati","de vuit\r\ndel mati","de nou\r\ndel mati","de deu\r\ndel mati","d'onze\r\ndel mati","de dotze\r\ndel mati","d'una\r\nde la tarda","de dues\r\nde la tarda","de tres\r\nde la tarda","de quatre\r\nde la tarda","de cinc\r\nde la tarda","de sis\r\nde la tarda","de set\r\nde la tarda","de vuit\r\nde la tarda","de nou\r\ndel vespre","de deu\r\ndel vespre","d'onze\r\ndel vespre","de dotze"];
+  const leshores2 = ["d'una","de dues","de tres","de quatre","de cinc","de sis","de set","de vuit","de nou","de deu","d'onze","de dotze"];
+  const RED = '#f00';
+  const BLACK = "#000"
+
+  function getHora(hour) {
+    if (hour >= 12) {
+      hour -= 12;
+    }
+    return leshores2[hour];
+  }
+
+  function addLineFeeds(inputString, g, posX) {
+      const margin = timeTextMagin;
+      const words = inputString.split(' ');
+      let lines = "";
+      let line = "";
+      const totalWidth = g.getWidth();
+
+      for (const word of words) {
+          const nextLine = line + word;
+          const width = posX + g.stringWidth(nextLine) + margin;
+
+          if (width > totalWidth) {
+              lines += line.trim() + "\r\n";
+              line = "";
+          }
+          line += word + " ";
+      }
+      lines += line.trim();
+      return lines;
+  }
+
+  // Define the center coordinates of the watch face
+  const margin = 10;
+  const centerX = 40 + margin;
+  const centerY = g.getHeight() - 40 - margin;
+
+  // Function to draw the watch face
+  function drawWatchFace() {
+
+    const diameter = 40;
+    g.setColor(BLACK);
+    g.drawCircle(centerX, centerY, diameter);
+
+    // Draw hour markers
+    for (let i = 0; i < 12; i++) {
+      const angle = (i / 12) * Math.PI * 2;
+      const x1 = centerX + Math.sin(angle) * 70 / 2;
+      const y1 = centerY - Math.cos(angle) * 70 / 2;
+      const x2 = centerX + Math.sin(angle) * 60 / 2;
+      const y2 = centerY - Math.cos(angle) * 60 / 2;
+      g.drawLine(x1, y1, x2, y2);
+    }
+  }
+
+  function drawHand(centerX, centerY, hourAngle, handLength) {
+    const hourHandX = centerX + Math.sin(hourAngle) * handLength;
+    const hourHandY = centerY - Math.cos(hourAngle) * handLength;
+    g.drawLine(centerX, centerY, hourHandX, hourHandY);
+  }
+
+  // Function to update the watch display
+  function updateWatch() {
+    const now = new Date();
+    const hours = now.getHours() % 12;
+    const minutes = now.getMinutes();
+
+    // Calculate angles for hour, minute, and second hands
+    const hourAngle = ((hours + minutes / 60) / 12) * Math.PI * 2;
+    const minuteAngle = (minutes / 60) * Math.PI * 2;
+    g.setColor(BLACK);
+
+    drawHand(centerX, centerY, hourAngle, 10);
+    drawHand(centerX, centerY, minuteAngle, 15);
+  }
+
+  function getSteps() {
+    var steps = Bangle.getHealthStatus("day").steps;
+    steps = Math.round(steps/1000);
+    return steps + "k";
+  }
+
+  function drawDate() {
+    g.setFont(font, dateFontSize);
+
+    const date = new Date();
+    const dow = require("locale").dow(date, 2).toUpperCase(); //dj.
+    g.drawString(dow, g.getWidth() - 60, g.getHeight() - 60, true);
+
+    const mon = date.getDate() + " " + require("locale").month(date, 1);
+    g.setFont(font, "4x6");
+    g.drawString(mon, g.getWidth() - 70, g.getHeight() - 25, true);
+  }
+
+  function drawSteps() {
+  
+    g.setFont(font, dateFontSize);
+    const steps = getSteps()
+    g.drawString(steps, g.getWidth() - 60, g.getHeight() - 60, true);
+
+    g.setFont(font, "4x6");
+    const text = "Passos"
+    g.drawString(text, g.getWidth() - 70, g.getHeight() - 25, true);
+  }
 
   function drawSimpleClock() {
-    g.clearRect(Bangle.appRect);
+
     // get date
     var d = new Date();
     var m = d.getMinutes();
 
-    // drawSting centered
+    let t;
+    if (m == 0) {
+      t = leshores[d.getHours()] + " en punt";
+    } else if (m >= 1 && m < 4) {
+      t = leshores[d.getHours()] + " tocades";
+    } else if (m >= 4 && m < 7) {
+      t = leshores[d.getHours()] + " ben tocades";
+    } else if (m == 7) {
+      t = "Mig quart " + getHora(d.getHours());
+    } else if (m >= 8 && m < 12) {
+      t = "Mig quart tocat " + getHora(d.getHours());
+    } else if (m >= 12 && m < 15) {
+      t = "Mig quart ben tocat " + getHora(d.getHours());
+    } else if (m == 15) {
+      t = "Un quart " + getHora(d.getHours());
+    } else if (m >= 16 && m < 19) {
+      t = "Un quart tocat " + getHora(d.getHours());
+    } else if (m >= 19 && m < 22) {
+      t = "Un quart ben tocat " + getHora(d.getHours());
+    } else if (m == 22) {
+      t = "Un quart i mig " + getHora(d.getHours());
+    } else if (m >= 23 && m < 26) {
+      t = "Un quart i mig tocat " + getHora(d.getHours());
+    } else if (m >= 26 && m < 30) {
+      t = "Un quart i mig ben tocat " + getHora(d.getHours());
+    } else if (m == 30) {
+      t = "Dos quarts " + getHora(d.getHours());
+    } else if (m >= 31 && m < 34) {
+      t = "Dos quarts tocats " + getHora(d.getHours());
+    } else if (m >= 34 && m < 37) {
+      t = "Dos quarts ben tocats " + getHora(d.getHours());
+    } else if (m == 37) {
+      t = "Dos quarts i mig " + getHora(d.getHours());
+    } else if (m >= 38 && m < 42) {
+      t = "Dos quarts i mig tocats " + getHora(d.getHours());
+    } else if (m >= 42 && m < 45) {
+      t = "Dos quarts i mig ben tocats " + getHora(d.getHours());
+    } else if (m == 45) {
+      t = "Tres quarts " + getHora(d.getHours());
+    } else if (m >= 46 && m < 49) {
+      t = "Tres quarts tocats " + getHora(d.getHours());
+    } else if (m >= 49 && m < 52) {
+      t = "Tres quarts ben tocats " + getHora(d.getHours());
+    } else if (m == 52) {
+      t = "Tres quarts i mig " + getHora(d.getHours());
+    } else if (m >= 53 && m < 56) {
+      t = "Tres quarts i mig tocats " + getHora(d.getHours());
+    } else if (m >= 57) {
+      t = "Tres quarts i mig ben tocats " + getHora(d.getHours());
+    }
+    g.clearRect(Bangle.appRect);
+    // drawString centered
     g.setFontAlign(-1, 0);
 
-    // draw time
-    let t;
-    if (m >= 0 && m < 2) {
-      t = leshores[d.getHours()] + "\r\nen punt";
-    } else if (m >= 2 && m < 5) {
-      t = leshores[d.getHours()] + "\r\ntocades";
-    } else if (m >= 5 && m < 7) {
-      t = leshores[d.getHours()] + "\r\nben tocades";
-    } else if (m >= 7 && m < 10) {
-      t = "Mig quart\r\n" + leshores2[d.getHours()];
-    } else if (m >= 10 && m < 12) {
-      t = "Mig quart\r\ntocat\r\n" + leshores2[d.getHours()];
-    } else if (m >= 12 && m < 15) {
-      t = "Mig quart\r\nben tocat\r\n" + leshores2[d.getHours()];
-    } else if (m >= 15 && m < 17) {
-      t = "Un quart\r\n" + leshores2[d.getHours()];
-    } else if (m >= 17 && m < 20) {
-      t = "Un quart\r\ntocat\r\n" + leshores2[d.getHours()];
-    } else if (m >= 20 && m < 22) {
-      t = "Un quart\r\nben tocat\r\n" + leshores2[d.getHours()];
-    } else if (m >= 22 && m < 25) {
-      t = "Un quart i mig\r\n" + leshores2[d.getHours()];
-    } else if (m >= 25 && m < 27) {
-      t = "Un quart i mig\r\ntocat\r\n" + leshores2[d.getHours()];
-    } else if (m >= 27 && m < 30) {
-      t = "Un quart i mig\r\nben tocat\r\n" + leshores2[d.getHours()];
-    } else if (m >= 30 && m < 32) {
-      t = "Dos quarts\r\n" + leshores2[d.getHours()];
-    } else if (m >= 32 && m < 35) {
-      t = "Dos quarts\r\ntocats\r\n" + leshores2[d.getHours()];
-    } else if (m >= 35 && m < 37) {
-      t = "Dos quarts\r\nben tocats\r\n" + leshores2[d.getHours()];
-    } else if (m >= 37 && m < 40) {
-      t = "Dos quarts i mig\r\n" + leshores2[d.getHours()];
-    } else if (m >= 40 && m < 42) {
-      t = "Dos quarts i mig\r\ntocats\r\n" + leshores2[d.getHours()];
-    } else if (m >= 42 && m < 45) {
-      t = "Dos quarts i mig\r\nben tocats\r\n" + leshores2[d.getHours()];
-    } else if (m >= 45 && m < 47) {
-      t = "Tres quarts\r\n" + leshores2[d.getHours()];
-    } else if (m >= 47 && m < 50) {
-      t = "Tres quarts\r\ntocats\r\n" + leshores2[d.getHours()];
-    } else if (m >= 50 && m < 52) {
-      t = "Tres quarts\r\nben tocats\r\n" + leshores2[d.getHours()];
-    } else if (m >= 52 && m < 55) {
-      t = "Tres quarts i mig\r\n" + leshores2[d.getHours()];
-    } else if (m >= 55 && m < 57) {
-      t = "Tres quarts i mig\r\ntocats\r\n" + leshores2[d.getHours()];
-    } else if (m >= 57) {
-      t = "Tres quarts i mig\r\nben tocats\r\n" + leshores2[d.getHours()];
-    }
     g.setFont(font, timeFontSize);
+    t = addLineFeeds(t, g, xyCenter);
+
+    let color;
+    if (E.getBattery() < 15) {
+      color = RED;
+    }
+    else {
+      color = BLACK;
+    }
+
+    g.setColor(color);
     g.drawString(t, xyCenter, yposTime, true);
-
-    // draw Hours
-    g.setFont(font, dateFontSize);    
-    var mu = "";
-    if (m < 10) {mu = "0"+m;} else {mu = m;}
-
-    g.drawString(d.getHours()+":"+mu, xyCenter, yposDate, true);
+    g.setColor(BLACK);
+    if (panel == Panel.STEPS) {
+       drawSteps();
+       panel = Panel.DATE;
+    } else {
+       drawDate();
+       panel = Panel.STEPS;
+    }
+   
+    drawWatchFace();
+    updateWatch();
   }
 
   // handle switch display on by pressing BTN1
@@ -91,8 +216,15 @@
       Bangle.removeListener('lcdPower', onLcd);
     }
   }
-  Bangle.on('lcdPower', onLcd);
-  Bangle.setUI("clock");
+ Bangle.on('lcdPower', onLcd);
+ Bangle.setUI({
+         mode: "clockupdown"
+     },
+     btn => {
+         // up & down even which forces panel switch
+         drawSimpleClock();
+     });
+
   Bangle.loadWidgets();
   require("widget_utils").swipeOn();
 

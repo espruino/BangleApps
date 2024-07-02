@@ -1,1 +1,2 @@
 0.01: New App!
+0.02: added check if settings file exists and create if missing

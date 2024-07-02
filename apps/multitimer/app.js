@@ -691,10 +691,12 @@ function setUI() {
   // E.showMenu/E.showScroller/E.showAlert call setUI, so we register onDrag() separately
   // and tack on uiRemove after the fact to avoid interfering
   Bangle.on("drag", onDrag);
+  const origRemove = Bangle.uiRemove;
   Bangle.uiRemove = () => {
     Bangle.removeListener("drag", onDrag);
     Object.values(timerInt1).forEach(clearTimeout);
     Object.values(timerInt2).forEach(clearTimeout);
+    if (origRemove) origRemove();
   };
 }
 

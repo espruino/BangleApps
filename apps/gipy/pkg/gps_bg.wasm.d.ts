@@ -1,5 +1,5 @@
 /* tslint:disable */
-/* eslint-disable */
+
 export const memory: WebAssembly.Memory;
 export function __wbg_gps_free(a: number): void;
 export function disable_elevation(a: number): void;

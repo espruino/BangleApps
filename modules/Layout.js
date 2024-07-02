@@ -186,7 +186,7 @@ Layout.prototype.render = function (l) {
         x+4,y+h-1,
         x,y+h-5,
         x,y+4
-      ], bg = l.bgCol!==undefined?l.bgCol:gfx.theme.bg,
+      ],
       btnborder = l.btnBorderCol!==undefined?l.btnBorderCol:gfx.theme.fg2,
       btnface = l.btnFaceCol!==undefined?l.btnFaceCol:gfx.theme.bg2;
     if(l.selected){

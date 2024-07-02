@@ -1,14 +1,14 @@
 exports.enable = () => {
-  var settings = Object.assign(
+  let settings = Object.assign(
     require('Storage').readJSON("bthrm.default.json", true) || {},
     require('Storage').readJSON("bthrm.json", true) || {}
   );
 
-  var log = function(text, param){
+  let log = function(text, param){
     if (global.showStatusInfo)
       global.showStatusInfo(text);
     if (settings.debuglog){
-      var logline = new Date().toISOString() + " - " + text;
+      let logline = new Date().toISOString() + " - " + text;
       if (param) logline += ": " + JSON.stringify(param);
       print(logline);
     }
@@ -16,60 +16,33 @@ exports.enable = () => {
 
   log("Settings: ", settings);
 
-  if (settings.enabled){
+  //this is for compatibility with 0.18 and older
+  let oldCache = require('Storage').readJSON("bthrm.cache.json", true);
+  if(oldCache){
+    settings.cache = oldCache;
+    require('Storage').writeJSON("bthrm.json", settings);
+    require('Storage').erase("bthrm.cache.json");
+  }
 
-    var clearCache = function() {
-      return require('Storage').erase("bthrm.cache.json");
-    };
+  if (settings.enabled && settings.cache){
 
-    var getCache = function() {
-      var cache = require('Storage').readJSON("bthrm.cache.json", true) || {};
-      if (settings.btid && settings.btid === cache.id) return cache;
-      clearCache();
-      return {};
-    };
+    log("Start");
 
-    var addNotificationHandler = function(characteristic) {
+    let addNotificationHandler = function(characteristic) {
       log("Setting notification handler"/*supportedCharacteristics[characteristic.uuid].handler*/);
       characteristic.on('characteristicvaluechanged', (ev) => supportedCharacteristics[characteristic.uuid].handler(ev.target.value));
     };
 
-    var writeCache = function(cache) {
-      var oldCache = getCache();
-      if (oldCache !== cache) {
-        log("Writing cache");
-        require('Storage').writeJSON("bthrm.cache.json", cache);
-      } else {
-        log("No changes, don't write cache");
-      }
-    };
 
-    var characteristicsToCache = function(characteristics) {
-      log("Cache characteristics");
-      var cache = getCache();
-      if (!cache.characteristics) cache.characteristics = {};
-      for (var c of characteristics){
-        //"handle_value":16,"handle_decl":15
-        log("Saving handle " + c.handle_value + " for characteristic: ", c);
-        cache.characteristics[c.uuid] = {
-          "handle": c.handle_value,
-          "uuid": c.uuid,
-          "notify": c.properties.notify,
-          "read": c.properties.read
-        };
-      }
-      writeCache(cache);
-    };
-
-    var characteristicsFromCache = function(device) {
-      var service = { device : device }; // fake a BluetoothRemoteGATTService
+    let characteristicsFromCache = function(device) {
+      let service = { device : device }; // fake a BluetoothRemoteGATTService
       log("Read cached characteristics");
-      var cache = getCache();
+      let cache = settings.cache;
       if (!cache.characteristics) return [];
-      var restored = [];
-      for (var c in cache.characteristics){
-        var cached = cache.characteristics[c];
-        var r = new BluetoothRemoteGATTCharacteristic();
+      let restored = [];
+      for (let c in cache.characteristics){
+        let cached = cache.characteristics[c];
+        let r = new BluetoothRemoteGATTCharacteristic();
         log("Restoring characteristic ", cached);
         r.handle_value = cached.handle;
         r.uuid = cached.uuid;
@@ -84,26 +57,14 @@ exports.enable = () => {
       return restored;
     };
 
-    log("Start");
-
-    var lastReceivedData={
-    };
-
-    var supportedServices = [
-      "0x180d", // Heart Rate
-      "0x180f", // Battery
-    ];
-
-    var bpmTimeout;
-
-    var supportedCharacteristics = {
+    let supportedCharacteristics = {
       "0x2a37": {
         //Heart rate measurement
         active: false,
         handler: function (dv){
-          var flags = dv.getUint8(0);
+          let flags = dv.getUint8(0);
 
-          var bpm = (flags & 1) ? (dv.getUint16(1) / 100 /* ? */ ) : dv.getUint8(1); // 8 or 16 bit
+          let bpm = (flags & 1) ? (dv.getUint16(1) / 100 /* ? */ ) : dv.getUint8(1); // 8 or 16 bit
           supportedCharacteristics["0x2a37"].active = bpm > 0;
           log("BTHRM BPM " + supportedCharacteristics["0x2a37"].active);
           switchFallback();
@@ -114,42 +75,42 @@ exports.enable = () => {
             startFallback();
           }, 3000);
 
-          var sensorContact;
+          let sensorContact;
 
           if (flags & 2){
             sensorContact = !!(flags & 4);
           }
 
-          var idx = 2 + (flags&1);
+          let idx = 2 + (flags&1);
 
-          var energyExpended;
+          let energyExpended;
           if (flags & 8){
             energyExpended = dv.getUint16(idx,1);
             idx += 2;
           }
-          var interval;
+          let interval;
           if (flags & 16) {
             interval = [];
-            var maxIntervalBytes = (dv.byteLength - idx);
+            let maxIntervalBytes = (dv.byteLength - idx);
             log("Found " + (maxIntervalBytes / 2) + " rr data fields");
-            for(var i = 0 ; i < maxIntervalBytes / 2; i++){
+            for(let i = 0 ; i < maxIntervalBytes / 2; i++){
               interval[i] = dv.getUint16(idx,1); // in milliseconds
               idx += 2;
             }
           }
 
-          var location;
+          let location;
           if (lastReceivedData && lastReceivedData["0x180d"] && lastReceivedData["0x180d"]["0x2a38"]){
             location = lastReceivedData["0x180d"]["0x2a38"];
           }
 
-          var battery;
+          let battery;
           if (lastReceivedData && lastReceivedData["0x180f"] && lastReceivedData["0x180f"]["0x2a19"]){
             battery = lastReceivedData["0x180f"]["0x2a19"];
           }
 
           if (settings.replace && bpm > 0){
-            var repEvent = {
+            let repEvent = {
               bpm: bpm,
               confidence: (sensorContact || sensorContact === undefined)? 100 : 0,
               src: "bthrm"
@@ -159,7 +120,7 @@ exports.enable = () => {
             Bangle.emit("HRM_R", repEvent);
           }
 
-          var newEvent = {
+          let newEvent = {
             bpm: bpm
           };
 
@@ -177,6 +138,7 @@ exports.enable = () => {
         //Body sensor location
         handler: function(dv){
           if (!lastReceivedData["0x180d"]) lastReceivedData["0x180d"] = {};
+          log("Got location", dv);
           lastReceivedData["0x180d"]["0x2a38"] = parseInt(dv.buffer, 10);
         }
       },
@@ -184,26 +146,27 @@ exports.enable = () => {
         //Battery
         handler: function (dv){
           if (!lastReceivedData["0x180f"]) lastReceivedData["0x180f"] = {};
+          log("Got battery", dv);
           lastReceivedData["0x180f"]["0x2a19"] = dv.getUint8(0);
         }
       }
     };
 
-    var device;
-    var gatt;
-    var characteristics = [];
-    var blockInit = false;
-    var currentRetryTimeout;
-    var initialRetryTime = 40;
-    var maxRetryTime = 60000;
-    var retryTime = initialRetryTime;
-
-    var connectSettings = {
-      minInterval: 7.5,
-      maxInterval: 1500
+    let lastReceivedData={
     };
 
-    var waitingPromise = function(timeout) {
+    let bpmTimeout;
+
+    let device;
+    let gatt;
+    let characteristics = [];
+    let blockInit = false;
+    let currentRetryTimeout;
+    let initialRetryTime = 40;
+    let maxRetryTime = 60000;
+    let retryTime = initialRetryTime;
+
+    let waitingPromise = function(timeout) {
       return new Promise(function(resolve){
         log("Start waiting for " + timeout);
         setTimeout(()=>{
@@ -240,7 +203,7 @@ exports.enable = () => {
       };
     }
 
-    var clearRetryTimeout = function(resetTime) {
+    let clearRetryTimeout = function(resetTime) {
       if (currentRetryTimeout){
         log("Clearing timeout " + currentRetryTimeout);
         clearTimeout(currentRetryTimeout);
@@ -252,12 +215,12 @@ exports.enable = () => {
       }
     };
 
-    var retry = function() {
+    let retry = function() {
       log("Retry");
 
       if (!currentRetryTimeout && !powerdownRequested){
 
-        var clampedTime = retryTime < 100 ? 100 : retryTime;
+        let clampedTime = retryTime < 100 ? 100 : retryTime;
 
         log("Set timeout for retry as " + clampedTime);
         clearRetryTimeout();
@@ -276,20 +239,21 @@ exports.enable = () => {
       }
     };
 
-    var buzzing = false;
-    var onDisconnect = function(reason) {
+    let initialDisconnects = true;
+    let buzzing = false;
+    let onDisconnect = function(reason) {
       log("Disconnect: " + reason);
       log("GATT", gatt);
       log("Characteristics", characteristics);
 
-      var retryTimeResetNeeded = true;
+      let retryTimeResetNeeded = true;
       retryTimeResetNeeded &= reason != "Connection Timeout";
       retryTimeResetNeeded &= reason != "No device found matching filters";
       clearRetryTimeout(retryTimeResetNeeded);
       supportedCharacteristics["0x2a37"].active = false;
       if (!powerdownRequested) startFallback();
       blockInit = false;
-      if (settings.warnDisconnect && !buzzing){
+      if (settings.warnDisconnect && !buzzing && !initialDisconnects){
         buzzing = true;
         Bangle.buzz(500,0.3).then(()=>waitingPromise(4500)).then(()=>{buzzing = false;});
       }
@@ -298,9 +262,9 @@ exports.enable = () => {
       }
     };
 
-    var createCharacteristicPromise = function(newCharacteristic) {
+    let createCharacteristicPromise = function(newCharacteristic) {
       log("Create characteristic promise", newCharacteristic);
-      var result = Promise.resolve();
+      let result = Promise.resolve();
       // For values that can be read, go ahead and read them, even if we might be notified in the future
       // Allows for getting initial state of infrequently updating characteristics, like battery
       if (newCharacteristic.readValue){
@@ -316,58 +280,29 @@ exports.enable = () => {
       if (newCharacteristic.properties.notify){
         result = result.then(()=>{
           log("Starting notifications", newCharacteristic);
-          var startPromise = newCharacteristic.startNotifications().then(()=>log("Notifications started", newCharacteristic));
-          
-          log("Add " + settings.gracePeriodNotification + "ms grace period after starting notifications");
-          startPromise = startPromise.then(()=>{
-            log("Wait after connect");
-            return waitingPromise(settings.gracePeriodNotification);
-          });
-          
+          let startPromise = newCharacteristic.startNotifications().then(()=>log("Notifications started", newCharacteristic));
+
+          if (settings.gracePeriodNotification){
+            log("Add " + settings.gracePeriodNotification + "ms grace period after starting notifications");
+            startPromise = startPromise.then(()=>{
+              log("Wait after connect");
+              return waitingPromise(settings.gracePeriodNotification);
+            });
+          }
           return startPromise;
         });
       }
       return result.then(()=>log("Handled characteristic", newCharacteristic));
     };
 
-    var attachCharacteristicPromise = function(promise, characteristic) {
+    let attachCharacteristicPromise = function(promise, characteristic) {
       return promise.then(()=>{
         log("Handling characteristic:", characteristic);
         return createCharacteristicPromise(characteristic);
       });
     };
 
-    var createCharacteristicsPromise = function(newCharacteristics) {
-      log("Create characteristics promis ", newCharacteristics);
-      var result = Promise.resolve();
-      for (var c of newCharacteristics){
-        if (!supportedCharacteristics[c.uuid]) continue;
-        log("Supporting characteristic", c);
-        characteristics.push(c);
-        if (c.properties.notify){
-          addNotificationHandler(c);
-        }
-
-        result = attachCharacteristicPromise(result, c);
-      }
-      return result.then(()=>log("Handled characteristics"));
-    };
-
-    var createServicePromise = function(service) {
-      log("Create service promise", service);
-      var result = Promise.resolve();
-      result = result.then(()=>{
-        log("Handling service" + service.uuid);
-        return service.getCharacteristics().then((c)=>createCharacteristicsPromise(c));
-      });
-      return result.then(()=>log("Handled service" + service.uuid));
-    };
-
-    var attachServicePromise = function(promise, service) {
-      return promise.then(()=>createServicePromise(service));
-    };
-
-    var initBt = function () {
+    let initBt = function () {
       log("initBt with blockInit: " + blockInit);
       if (blockInit && !powerdownRequested){
         retry();
@@ -376,8 +311,8 @@ exports.enable = () => {
 
       blockInit = true;
 
-      var promise;
-      var filters;
+      let promise;
+      let filters;
 
       if (!device){
         if (settings.btid){
@@ -394,9 +329,13 @@ exports.enable = () => {
           onDisconnect(e);
           return;
         }
-        
+
         if (settings.gracePeriodRequest){
           log("Add " + settings.gracePeriodRequest + "ms grace period after request");
+          promise = promise.then((d)=>{
+            log("Wait after request");
+            return waitingPromise(settings.gracePeriodRequest).then(()=>Promise.resolve(d));
+          });
         }
 
         promise = promise.then((d)=>{
@@ -404,100 +343,42 @@ exports.enable = () => {
           d.on('gattserverdisconnected', onDisconnect);
           device = d;
         });
-
-        promise = promise.then(()=>{
-          log("Wait after request");
-          return waitingPromise(settings.gracePeriodRequest);
-        });
       } else {
         promise = Promise.resolve();
         log("Reuse device", device);
       }
 
       promise = promise.then(()=>{
-        if (gatt){
-          log("Reuse GATT", gatt);
-        } else {
-          log("GATT is new", gatt);
-          characteristics = [];
-          var cachedId = getCache().id;
-          if (device.id !== cachedId){
-            log("Device ID changed from " + cachedId + " to " + device.id + ", clearing cache");
-            clearCache();
-          }
-          var newCache = getCache();
-          newCache.id = device.id;
-          writeCache(newCache);
-          gatt = device.gatt;
-        }
-
+        gatt = device.gatt;
         return Promise.resolve(gatt);
       });
 
       promise = promise.then((gatt)=>{
         if (!gatt.connected){
           log("Connecting...");
-          var connectPromise = gatt.connect(connectSettings).then(function() {
+          let connectPromise = gatt.connect().then(function() {
             log("Connected.");
           });
-          log("Add " + settings.gracePeriodConnect + "ms grace period after connecting");
-          connectPromise = connectPromise.then(()=>{
-            log("Wait after connect");
-            return waitingPromise(settings.gracePeriodConnect);
-          });
+          if (settings.gracePeriodConnect){
+            log("Add " + settings.gracePeriodConnect + "ms grace period after connecting");
+            connectPromise = connectPromise.then(()=>{
+              log("Wait after connect");
+              return waitingPromise(settings.gracePeriodConnect);
+            });
+          }
           return connectPromise;
         } else {
           return Promise.resolve();
         }
       });
-      
-      if (settings.bonding){
-        promise = promise.then(() => {
-          log(JSON.stringify(gatt.getSecurityStatus()));
-          if (gatt.getSecurityStatus()['bonded']) {
-            log("Already bonded");
-            return Promise.resolve();
-          } else {
-            log("Start bonding");
-            return gatt.startBonding()
-              .then(() => log("Security status" + gatt.getSecurityStatus()));
-          }
-        });
-      }
 
       promise = promise.then(()=>{
-        if (!characteristics || characteristics.length === 0){
+        if (!characteristics || characteristics.length == 0){
           characteristics = characteristicsFromCache(device);
         }
-      });
-
-      promise = promise.then(()=>{
-        var characteristicsPromise = Promise.resolve();
-        if (characteristics.length === 0){
-          characteristicsPromise = characteristicsPromise.then(()=>{
-            log("Getting services");
-            return gatt.getPrimaryServices();
-          });
-
-          characteristicsPromise = characteristicsPromise.then((services)=>{
-            log("Got services", services);
-            var result = Promise.resolve();
-            for (var service of services){
-              if (!(supportedServices.includes(service.uuid))) continue;
-              log("Supporting service", service.uuid);
-              result = attachServicePromise(result, service);
-            }
-            log("Add " + settings.gracePeriodService + "ms grace period after services");
-            result = result.then(()=>{
-              log("Wait after services");
-              return waitingPromise(settings.gracePeriodService);
-            });
-            return result;
-          });
-        } else {
-          for (var characteristic of characteristics){
-            characteristicsPromise = attachCharacteristicPromise(characteristicsPromise, characteristic, true);
-          }
+        let characteristicsPromise = Promise.resolve();
+        for (let characteristic of characteristics){
+          characteristicsPromise = attachCharacteristicPromise(characteristicsPromise, characteristic, true);
         }
 
         return characteristicsPromise;
@@ -505,7 +386,7 @@ exports.enable = () => {
 
       return promise.then(()=>{
         log("Connection established, waiting for notifications");
-        characteristicsToCache(characteristics);
+        initialDisconnects = false;
         clearRetryTimeout(true);
       }).catch((e) => {
         characteristics = [];
@@ -514,7 +395,7 @@ exports.enable = () => {
       });
     };
 
-    var powerdownRequested = false;
+    let powerdownRequested = false;
 
     Bangle.setBTHRMPower = function(isOn, app) {
       // Do app power handling
@@ -526,6 +407,7 @@ exports.enable = () => {
       isOn = Bangle._PWR.BTHRM.length;
       // so now we know if we're really on
       if (isOn) {
+        initialDisconnects = true;
         powerdownRequested = false;
         switchFallback();
         if (!Bangle.isBTHRMConnected()) initBt();
@@ -598,17 +480,18 @@ exports.enable = () => {
             Bangle.setBTHRMPower(0);
             if (!isOn) stopFallback();
           }
+          return Bangle.isBTHRMOn() || Bangle.isHRMOn();
         }
         if ((settings.enabled && !settings.replace) || !settings.enabled){
-          Bangle.origSetHRMPower(isOn, app);
+          return Bangle.origSetHRMPower(isOn, app);
         }
       };
     }
 
-    var fallbackActive = false;
-    var inSwitch = false;
+    let fallbackActive = false;
+    let inSwitch = false;
 
-    var stopFallback = function(){
+    let stopFallback = function(){
       if (fallbackActive){
         Bangle.origSetHRMPower(0, "bthrm_fallback");
         fallbackActive = false;
@@ -616,7 +499,7 @@ exports.enable = () => {
       }
     };
 
-    var startFallback = function(){
+    let startFallback = function(){
       if (!fallbackActive && settings.allowFallback) {
         fallbackActive = true;
         Bangle.origSetHRMPower(1, "bthrm_fallback");
@@ -624,7 +507,7 @@ exports.enable = () => {
       }
     };
 
-    var switchFallback = function() {
+    let switchFallback = function() {
       log("Check falling back to HRM");
       if (!inSwitch){
         inSwitch = true;
@@ -640,8 +523,8 @@ exports.enable = () => {
     if (settings.replace){
       log("Replace HRM event");
       if (Bangle._PWR && Bangle._PWR.HRM){
-        for (var i = 0; i < Bangle._PWR.HRM.length; i++){
-          var app = Bangle._PWR.HRM[i];
+        for (let i = 0; i < Bangle._PWR.HRM.length; i++){
+          let app = Bangle._PWR.HRM[i];
           log("Moving app " + app);
           Bangle.origSetHRMPower(0, app);
           Bangle.setBTHRMPower(1, app);

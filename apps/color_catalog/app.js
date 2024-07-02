@@ -35,22 +35,22 @@ var v_model=process.env.BOARD;
     var v_color_text='#FB0E01';
     var v_color_statictxt='#e56e06'; //orange RGB format rrggbb 
     //RGB565 requires only 16 (5+6+5) bits/2 bytes
-    var a_colors_str= Array('White RGB565 0x','Orange','DarkGreen','Yellow',
+    var a_colors_str= ['White RGB565 0x','Orange','DarkGreen','Yellow',
     'Maroon','Blue','green','Purple',
     'cyan','olive','DarkCyan','DarkGrey',
     'Navy','Red','Magenta','GreenYellow',
     'Blush RGB888','pure red','Orange','Grey green',
     'D. grey','Almond','Amber','Bone',
     'Canary','Aero blue','Camel','Baby pink',
-    'Y.Corn','Cultured','Eigengrau','Citrine');
-    var a_colors= Array(0xFFFF,0xFD20,0x03E0,0xFFE0,
+    'Y.Corn','Cultured','Eigengrau','Citrine'];
+    var a_colors= [0xFFFF,0xFD20,0x03E0,0xFFE0,
     0x7800,0x001F,0x07E0,0x780F,
     0x07FF,0x7BE0,0x03EF,0x7BEF,
     0x000F,0xF800,0xF81F,0xAFE5,
     '#DE5D83','#FB0E01','#E56E06','#7E795C',
     '#404040','#EFDECD','#FFBF00','#E3DAC9',
     '#FFFF99','#C0E8D5','#C19A6B','#F4C2C2',
-    '#FBEC5D','#F5F5F5','#16161D','#E4D00A');
+    '#FBEC5D','#F5F5F5','#16161D','#E4D00A'];
     var v_color_lines=0xFFFF; //White hex format
     
     

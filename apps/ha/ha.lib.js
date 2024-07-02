@@ -2,8 +2,8 @@
  * This library can be used to read all triggers that a user
  * configured and send a trigger to homeassistant.
  */
-function _getIcon(trigger){
-    const icon = trigger.icon;
+function _getIcon(){
+    const icon = this.icon;
     if(icon == "light"){
       return {
         width : 48, height : 48, bpp : 1,
@@ -33,27 +33,26 @@ function _getIcon(trigger){
 }
 
 exports.getTriggers = function(){
-    var triggers = [
-        {display: "Empty", trigger: "NOP", icon: "ha"},
-    ];
+    var triggers;
 
     try{
-        triggers = require("Storage").read("ha.trigger.json");
-        triggers = JSON.parse(triggers);
-
-        // We lazy load all icons, otherwise, we have to keep
-        // all the icons n times in memory which can be
-        // problematic for embedded devices. Therefore,
-        // we lazy load icons only if needed using the getIcon
-        // method of each trigger...
-        triggers.forEach(trigger => {
-            trigger.getIcon = function(){
-                return _getIcon(trigger);
-            }
-        })
+        triggers = require("Storage").readJSON("ha.trigger.json");
     } catch(e) {
         // In case there are no user triggers yet, we show the default...
+        console.log("ha: error loading triggers:", e);
+        triggers = [
+            {display: "Empty", trigger: "NOP", icon: "ha"},
+        ];
     }
+
+    // We lazy load all icons, otherwise, we have to keep
+    // all the icons n times in memory which can be
+    // problematic for embedded devices. Therefore,
+    // we lazy load icons only if needed using the getIcon
+    // method of each trigger...
+    triggers.forEach(trigger => {
+        trigger.getIcon = _getIcon.bind(trigger);
+    })
 
     return triggers;
 }
@@ -66,16 +65,26 @@ exports.sendTrigger = function(triggerName){
             // Now lets send the trigger that we sould send.
             Bluetooth.println("");
             Bluetooth.println(JSON.stringify({
-            t:"intent",
-            action:"com.espruino.gadgetbridge.banglejs.HA",
-            extra:{
-                trigger: triggerName
-            }})
+                t:"intent",
+                action:"com.espruino.gadgetbridge.banglejs.HA",
+                extra:{
+                    trigger: triggerName
+                }})
             );
-            retries = -1;
+            break;
 
         } catch(e){
             retries--;
         }
     }
 }
+
+exports.sendValue = function(trigger, value){
+    Bluetooth.println(
+        JSON.stringify({
+            t: "intent",
+            action: "com.espruino.gadgetbridge.banglejs.HA",
+            extra: { trigger, value },
+        })
+    );
+};

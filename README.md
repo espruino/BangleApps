@@ -6,6 +6,8 @@ Bangle.js App Loader (and Apps)
 * Try the **release version** at [banglejs.com/apps](https://banglejs.com/apps)
 * Try the **development version** at [espruino.github.io](https://espruino.github.io/BangleApps/)
 
+The release version is manually refreshed with regular intervals while the development version is continuously updated as new code is committed to this repository.
+
 **All software (including apps) in this repository is MIT Licensed - see [LICENSE](LICENSE)** By
 submitting code to this repository you confirm that you are happy with it being MIT licensed,
 and that it is not licensed in another way that would make this impossible.
@@ -403,7 +405,7 @@ in an iframe.
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
-    <script src="../../lib/interface.js"></script>
+    <script src="../../core/lib/interface.js"></script>
     <div id="t">Loading...</div>
     <script>
       function onInit() {

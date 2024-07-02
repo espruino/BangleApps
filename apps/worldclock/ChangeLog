@@ -6,3 +6,4 @@
       Fix rendering of single extra timezone on Bangle.js 2
 0.06: Minor code improvements
 0.07: Minor code improvements
+0.08: Add internationalisation of dates

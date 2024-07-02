@@ -157,6 +157,7 @@ exports.hide = function(options) {
   hideCallback = undefined;
   id = null;
   Bangle.removeListener("touch", exports.hide);
+  E.stopEventPropagation && E.stopEventPropagation();
   function anim() {
     pos += 4;
     if (pos > 0) {

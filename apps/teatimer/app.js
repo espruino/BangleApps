@@ -18,7 +18,7 @@ E.setTimeZone(setting.timezone);
 
 // Title showing current time
 function appTitle() {
-  return "Tea Timer " + currentTime();
+  return "Tea Timer\n" + currentTime();
 }
 
 function currentTime() {
@@ -28,7 +28,7 @@ function currentTime() {
 }
 
 function timeFormated(sec) {
-  var min = Math.floor(sec / 60);
+  let min = Math.floor(sec / 60);
   sec = sec % 60;
   if (sec < 10) sec = "0" + sec;
   return min + ":" + sec;
@@ -223,6 +223,7 @@ function showHelp() {
   }
   // return to start
   else if (state == states.help) {
+    counterStart = counter;
     initTimer();
   }
 }

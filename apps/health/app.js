@@ -176,7 +176,6 @@ function barChart(label, dt) {
   chart_label = label;
   chart_data = dt;
   drawBarChart();
-  swipe_enabled = true;
 }
 
 function drawBarChart() {

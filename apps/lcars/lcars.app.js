@@ -678,7 +678,7 @@ let getWeather = function(){
     let weather = weatherJson.weather;
 
     // Temperature
-    weather.temp = locale.temp(weather.temp-273.15);
+    weather.temp = locale.temp(weather.temp-273.15).replace('°', '\'');
 
     // Humidity
     weather.hum = weather.hum + "%";

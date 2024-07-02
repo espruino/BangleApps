@@ -19,7 +19,7 @@ const exemptionsFilePath = "../apps/lint_exemptions.js";
 const exemptions = (await import(exemptionsFilePath)).default;
 
 for (const filePath of Object.keys(exemptions)) {
-  const fileContents = await fs.readFile(`apps/${filePath}`, "utf8");
+  const fileContents = await fs.readFile(filePath, "utf8");
   const currentHash = await hashContents(fileContents);
   if (exemptions[filePath].hash !== currentHash) {
     delete exemptions[filePath];

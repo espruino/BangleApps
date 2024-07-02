@@ -3,6 +3,7 @@ Draws a fullscreen image from flash memory
 Saves a small image to flash which is just the area where the clock is
 Keeps an offscreen buffer and draws the time to that
 */
+g.clear(); //clears other apps's graphics
 var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
 var inf = require("Storage").readJSON("imgclock.face.json");
 var img = require("Storage").read("imgclock.face.img");

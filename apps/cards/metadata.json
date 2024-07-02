@@ -1,12 +1,13 @@
 {
   "id": "cards",
   "name": "Cards",
-  "version": "0.04",
+  "version": "0.05",
   "description": "Display loyalty cards",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot_cards_overview.png"}, {"url":"screenshot_cards_card1.png"}, {"url":"screenshot_cards_card2.png"}, {"url":"screenshot_cards_barcode.png"}, {"url":"screenshot_cards_qrcode.png"}],
   "tags": "cards",
   "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
   "readme": "README.md",
   "storage": [
     {"name":"cards.app.js","url":"app.js"},
@@ -15,6 +16,12 @@
     {"name":"cards.qrcode.js","url":"qrcode.js"},
     {"name":"cards.codabar.js","url":"codabar.js"},
     {"name":"cards.code39.js","url":"code39.js"},
+    {"name":"cards.EAN.js","url":"EAN.js"},
+    {"name":"cards.EAN8.js","url":"EAN8.js"},
+    {"name":"cards.EAN13.js","url":"EAN13.js"},
+    {"name":"cards.UPC.js","url":"UPC.js"},
+    {"name":"cards.UPCE.js","url":"UPCE.js"},
+    {"name":"cards.encode.js","url":"encode.js"},
     {"name":"cards.img","url":"app-icon.js","evaluate":true}
   ],
   "data": [{"name":"cards.settings.json"}]

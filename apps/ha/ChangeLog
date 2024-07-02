@@ -9,3 +9,4 @@
 0.09: Improve web interface, arrows in UI
 0.10: Issue newline before GB commands (solves issue with console.log and ignored commands)
 0.11: Minor code improvements
+0.12: Add slider functionality

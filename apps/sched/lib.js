@@ -4,6 +4,7 @@ exports.getAlarms = function() {
 };
 // Write a list of alarms back to storage
 exports.setAlarms = function(alarms) {
+  alarms.forEach(e => e.t %= 86400000); // Also fix #3281 from other apps, e.g. multitimer
   return require("Storage").writeJSON("sched.json",alarms);
 };
 // Return an alarm object based on ID
@@ -35,7 +36,7 @@ exports.setAlarm = function(id, alarm) {
     if (alarm.timer) { // if it's a timer, set the start time as a time from *now*
       var time = new Date();
       var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
-      alarm.t = currentTime + alarm.timer;
+      alarm.t = (currentTime + alarm.timer) % 86400000;
     }
     alarms.push(alarm);
   }
