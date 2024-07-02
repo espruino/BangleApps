@@ -85,6 +85,11 @@
       setWatch(Bangle.showLauncher, BTN1, {repeat:1,edge:"rising"})
     ];
   } else if (mode=="custom") {
+    if (options.clock) {
+      Bangle.btnWatches = [
+        setWatch(Bangle.showLauncher, BTN1, {repeat:1,edge:"rising"})
+      ];
+    }
   } else
     throw new Error("Unknown UI mode "+E.toJS(mode));
   if (options.clock) Bangle.CLOCK=1;
@@ -98,15 +103,13 @@
     Bangle.swipeHandler = options.swipe;
     Bangle.on("swipe", Bangle.swipeHandler);
   }
-  if (options.btn) {
-    Bangle.btnWatches = [
-      setWatch(function() { options.btn(1); }, BTN1, {repeat:1,edge:"rising"})
-    ];
-  } else if (options.clock) {
-    Bangle.btnWatches = [
-      setWatch(Bangle.showLauncher, BTN1, {repeat:1,edge:"rising"})
-    ];
+  if (options.btn || options.btnRelease) {
+    // Make sure we only add the custom btn handlers. TODO: Deliberate on whether this is the right approach or not.
+    Bangle.btnWatches.forEach(clearWatch);
+    Bangle.btnWatches = [];
   }
+  if (options.btn) Bangle.btnWatches.push(setWatch(options.btn.bind(options), BTN1, {repeat:1,edge:"rising"}))
+  if (options.btnRelease) Bangle.btnWatches.push(setWatch(options.btnRelease.bind(options), BTN1, {repeat:1,edge:"falling"}))
   if (options.remove) // handler for removing the UI (intervals/etc)
     Bangle.uiRemove = options.remove;
   if (options.redraw) // handler for redrawing the UI
