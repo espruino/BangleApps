@@ -1,5 +1,16 @@
 const SETTINGS_FILE = "quietSwitch.json";
 const storage = require("Storage");
+
+//check if settings file exists and create if missing
+if (storage.read(SETTINGS_FILE)=== undefined) {
+  print("data file not existing, using defaults");
+  let saved = {
+    quietWhenSleep: 0, //off
+    quietMode: 1, //alerts
+  };
+  storage.writeJSON(SETTINGS_FILE,saved);
+}
+
 let saved = storage.readJSON(SETTINGS_FILE, 1) || {};
 
 // Main menu

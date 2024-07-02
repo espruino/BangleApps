@@ -25,3 +25,9 @@ It reuses the widget from [Quiet Mode Schedule and Widget](https://github.com/es
 -optimization of code (and check if needed)
 
 -feedback is always welcome
+
+#### Attributions
+The app icon is downloaded from [https://icons8.com](https://icons8.com).
+
+#### License
+[MIT License](LICENSE)
