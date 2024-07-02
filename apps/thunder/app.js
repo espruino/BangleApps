@@ -22,7 +22,7 @@ var layout = new Layout( {
     {type:"txt", pad:8, font:"20%", label:"", id:"distance", fillx:1},
     {type:"h", c: [
       {type:"btn", font:"6x8:2", label:"Flash", cb: l=>flash() },
-      {type:"img", pad:4, src:require("heatshrink").decompress(atob("h0awkBiMQBAQFBAxwdDAoIGKCYQGGFBQTCAyIAPgIGGIAoFCAxITDAxIFDAxATEJwIMEAw4TEAwo")) },
+      {type:"img", pad:4, src:atob("DhoBH+B/gf4P8D/A/gP4H+B/AfwH8B//////7/+A/APwD4A+APADwA4AcAHABgAYAA==") },
       {type:"btn", font:"6x8:2", label:"Boom", cb: l=>boom() }
     ]},
   ]
@@ -79,21 +79,27 @@ const renderIntervalCallback = function() {
   updateTimeAndDistance();
 };
 
-const flash = function() {
-  Bangle.buzz(50, 0.5);
-  
-  startTime = startTime = Date.now();
-  updateTimeAndDistance();
-  renderIntervalId = setInterval(renderIntervalCallback, 100);
-};
-
-const boom = function() {
+const flashAndBoom = function() {
   Bangle.buzz(50, 0.5);
 
   if (renderIntervalId !== undefined) {
     clearInterval(renderIntervalId);
     renderIntervalId = undefined;
   }
+};
+
+const flash = function() {
+  flashAndBoom();
+  
+  startTime = undefined;
+  updateTimeAndDistance();
+
+  startTime = Date.now();
+  renderIntervalId = setInterval(renderIntervalCallback, 100);
+};
+
+const boom = function() {
+  flashAndBoom();
   
   updateTimeAndDistance();
   startTime = undefined;

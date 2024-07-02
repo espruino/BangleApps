@@ -195,6 +195,13 @@ type NRFFilters = {
 
 type NRFSecurityStatus = {
   advertising: boolean,
+  privacy?: ShortBoolean | {
+    mode: "off"
+  } | {
+    mode: "device_privacy" | "network_privacy",
+    addr_type: "random_private_resolvable" | "random_private_non_resolvable",
+    addr_cycle_s: number,
+  },
 } & (
   {
     connected: true,
@@ -1129,7 +1136,7 @@ declare class NRF {
    * advertise battery level and its name as well as both Eddystone and iBeacon :
    * ```
    * NRF.setAdvertising([
-   *   {0x180F : [Puck.getBatteryPercentage()]}, // normal advertising, with battery %
+   *   {0x180F : [E.getBattery()]}, // normal advertising, with battery %
    *   require("ble_ibeacon").get(...), // iBeacon
    *   require("ble_eddystone").get(...), // eddystone
    * ], {interval:300});
@@ -1880,10 +1887,19 @@ declare class NRF {
    * * `active` - whether to perform active scanning (requesting 'scan response'
    * packets from any devices that are found). e.g. `NRF.requestDevice({ active:true,
    * filters: [ ... ] })`
-   * * `phy` - (NRF52833/NRF52840 only) use the long-range coded phy (`"1mbps"` default, can
-   *   be `"1mbps/2mbps/both/coded"`)
+   * * `phy` - (NRF52833/NRF52840 only) the type of Bluetooth signals to scan for (can
+   *   be `"1mbps/coded/both/2mbps"`)
+   *   * `1mbps` (default) - standard Bluetooth LE advertising
+   *   * `coded` - long range
+   *   * `both` - standard and long range
+   *   * `2mbps` - high speed 2mbps (not working)
    * * `extended` - (NRF52833/NRF52840 only) support receiving extended-length advertising
    *   packets (default=true if phy isn't `"1mbps"`)
+   * * `extended` - (NRF52833/NRF52840 only) support receiving extended-length advertising
+   *   packets (default=true if phy isn't `"1mbps"`)
+   * * `window` - (2v22+) how long we scan for in milliseconds (default 100ms)
+   * * `interval` - (2v22+) how often we scan in milliseconds (default 100ms) - `window=interval=100`(default) is all the time. When
+   * scanning on both `1mbps` and `coded`, `interval` needs to be twice `window`.
    * **NOTE:** `timeout` and `active` are not part of the Web Bluetooth standard.
    * The following filter types are implemented:
    * * `services` - list of services as strings (all of which must match). 128 bit
@@ -2048,6 +2064,9 @@ declare class NRF {
    *   encryptUart : bool // default false (unless oob or passkey specified)
    *                      // This sets the BLE UART service such that it
    *                      // is encrypted and can only be used from a paired connection
+   *   privacy : // default false, true to enable with (ideally sensible) defaults,
+   *             // or an object defining BLE privacy / random address options - see below for more info
+   *             // only available if Espruino was compiled with private address support (like for example on Bangle.js 2)
    * });
    * ```
    * **NOTE:** Some combinations of arguments will cause an error. For example
@@ -2112,6 +2131,42 @@ declare class NRF {
    * **Note:** If `passkey` or `oob` is specified, the Nordic UART service (if
    * enabled) will automatically be set to require encryption, but otherwise it is
    * open.
+   * On Bangle.js 2, the `privacy` parameter can be used to set this device's BLE privacy / random address settings.
+   * The privacy feature provides a way to avoid being tracked over a period of time.
+   * This works by replacing the real BLE address with a random private address,
+   * that automatically changes at a specified interval.
+   * If a `"random_private_resolvable"` address is used, that address is generated with the help
+   * of an identity resolving key (IRK), that is exchanged during bonding.
+   * This allows a bonded device to still identify another device that is using a random private resolvable address.
+   * Note that, while this can help against being tracked, there are other ways a Bluetooth device can reveal its identity.
+   * For example, the name or services it advertises may be unique enough.
+   * ```
+   * NRF.setSecurity({
+   *   privacy: {
+   *     mode : "off"/"device_privacy"/"network_privacy" // The privacy mode that should be used.
+   *     addr_type : "random_private_resolvable"/"random_private_non_resolvable" // The type of address to use.
+   *     addr_cycle_s : int // How often the address should change, in seconds.
+   *   }
+   * });
+   * // enabled with (ideally sensible) defaults of:
+   * // mode: device_privacy
+   * // addr_type: random_private_resolvable
+   * // addr_cycle_s: 0 (use default address change interval)
+   * NRF.setSecurity({
+   *   privacy: 1
+   * });
+   * ```
+   * `mode` can be one of:
+   * * `"off"` - Use the real address.
+   * * `"device_privacy"` - Use a private address.
+   * * `"network_privacy"` - Use a private address,
+   *                         and reject a peer that uses its real address if we know that peer's IRK.
+   * If `mode` is `"off"`, all other fields are ignored and become optional.
+   * `addr_type` can be one of:
+   * * `"random_private_resolvable"` - Address that can be resolved by a bonded peer that knows our IRK.
+   * * `"random_private_non_resolvable"` - Address that cannot be resolved.
+   * `addr_cycle_s` must be an integer. Pass `0` to use the default address change interval.
+   * The default is usually to change the address every 15 minutes (or 900 seconds).
    *
    * @param {any} options - An object containing security-related options (see below)
    * @url http://www.espruino.com/Reference#l_NRF_setSecurity
@@ -2129,6 +2184,8 @@ declare class NRF {
    *   bonded          // The peer is bonded with us
    *   advertising     // Are we currently advertising?
    *   connected_addr  // If connected=true, the MAC address of the currently connected device
+   *   privacy         // Current BLE privacy / random address settings.
+   *                   // Only present if Espruino was compiled with private address support (like for example on Bangle.js 2).
    * }
    * ```
    * If there is no active connection, `{connected:false}` will be returned.
@@ -2225,7 +2282,7 @@ declare class AES {
  */
 declare class Pixl {
   /**
-   * DEPRECATED - Please use `E.getBattery()` instead.
+   * **DEPRECATED** - Please use `E.getBattery()` instead.
    * Return an approximate battery percentage remaining based on a normal CR2032
    * battery (2.8 - 2.2v)
    * @returns {number} A percentage between 0 and 100
@@ -3249,25 +3306,44 @@ declare class Puck {
    * Check out [the Puck.js page on the
    * magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
    * information.
+   * ```JS
+   * Puck.magOn(10); // 10 Hz
+   * Puck.on('mag', function(e) {
+   *   print(e);
+   * });
+   * // { "x": -874, "y": -332, "z": -1938 }
+   * ```
    * @param {string} event - The event to listen to.
-   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @param {(xyz: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `xyz` an object of the form `{x,y,z}`
    * @url http://www.espruino.com/Reference#l_Puck_mag
    */
-  static on(event: "mag", callback: () => void): void;
+  static on(event: "mag", callback: (xyz: any) => void): void;
 
   /**
    * Only on Puck.js v2.0
    * Called after `Puck.accelOn()` every time accelerometer data is sampled. There is
    * one argument which is an object of the form `{acc:{x,y,z}, gyro:{x,y,z}}`
    * containing the data.
+   * ```JS
+   * Puck.accelOn(12.5); // default 12.5Hz
+   * Puck.on('accel', function(e) {
+   *   print(e);
+   * });
+   * //{
+   * //  "acc": { "x": -525, "y": -112, "z": 8160 },
+   * //  "gyro": { "x": 154, "y": -152, "z": -34 }
+   * //}
+   * ```
    * The data is as it comes off the accelerometer and is not scaled to 1g. For more
    * information see `Puck.accel()` or [the Puck.js page on the
    * magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals).
    * @param {string} event - The event to listen to.
-   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @param {(e: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `e` an object of the form `{acc:{x,y,z}, gyro:{x,y,z}}`
    * @url http://www.espruino.com/Reference#l_Puck_accel
    */
-  static on(event: "accel", callback: () => void): void;
+  static on(event: "accel", callback: (e: any) => void): void;
 
   /**
    * Turn the magnetometer on and start periodic sampling. Samples will then cause a
@@ -3472,7 +3548,7 @@ declare class Puck {
   static light(): number;
 
   /**
-   * DEPRECATED - Please use `E.getBattery()` instead.
+   * **DEPRECATED** - Please use `E.getBattery()` instead.
    * Return an approximate battery percentage remaining based on a normal CR2032
    * battery (2.8 - 2.2v).
    * @returns {number} A percentage between 0 and 100
@@ -3503,7 +3579,7 @@ declare class Puck {
  */
 declare class Jolt {
   /**
-   * `Q0` and `Q1` Qwiic connectors can have their power controlled by a 500mA FET connected to GND.
+   * `Q0` and `Q1` Qwiic connectors can have their power controlled by a 500mA FET (`Jolt.Q0.fet`) which switches GND.
    * The `sda` and `scl` pins on this port are also analog inputs - use `analogRead(Jolt.Q0.sda)`/etc
    * To turn this connector on run `Jolt.Q0.setPower(1)`
    * @returns {any} An object containing the pins for the Q0 connector on Jolt.js `{sda,scl,fet}`
@@ -3512,7 +3588,7 @@ declare class Jolt {
   static Q0: Qwiic;
 
   /**
-   * `Q0` and `Q1` Qwiic connectors can have their power controlled by a 500mA FET connected to GND.
+   * `Q0` and `Q1` Qwiic connectors can have their power controlled by a 500mA FET  (`Jolt.Q1.fet`) which switches GND.
    * The `sda` and `scl` pins on this port are also analog inputs - use `analogRead(Jolt.Q1.sda)`/etc
    * To turn this connector on run `Jolt.Q1.setPower(1)`
    * @returns {any} An object containing the pins for the Q1 connector on Jolt.js `{sda,scl,fet}`
@@ -3540,23 +3616,26 @@ declare class Jolt {
 
   /**
    * Sets the mode of the motor drivers. Jolt.js has two motor drivers,
-   * one (`0`) for outputs 0..3, and one (`1`) for outputs 4..7. They
+   * one (`0`) for outputs H0..H3, and one (`1`) for outputs H4..H7. They
    * can be controlled independently.
    * Mode can be:
-   * * `undefined` / `false` / `"off"` - the motor driver is off, all motor driver pins are open circuit
-   * * `true` / `"output"` - **[recommended]** driver is set to "Independent bridge" mode. All 4 outputs are enabled and are either
-   * * `"motor"` - driver is set to "4 pin interface" mode where pins are paired up (V0+V1, V2+V3, etc). If both
+   * * `undefined` / `false` / `"off"` - the motor driver is off, all motor driver pins are open circuit (the motor driver still has a ~2.5k pulldown to GND)
+   * * `"auto"` - (default) - if any pin in the set of 4 pins (H0..H3, H4..H7) is set as an output, the driver is turned on. Eg `H0.set()` will
+   * turn the driver on with a high output, `H0.reset()` will pull the output to GND and `H0.read()` (or `H0.mode("input")` to set the state explicitly) is needed to
+   * turn the motor driver off.
+   * * `true` / `"output"` - **[recommended]** driver is set to "Independent bridge" mode. All 4 outputs in the bank are enabled
+   * * `"motor"` - driver is set to "4 pin interface" mode where pins are paired up (H0+H1, H2+H3, etc). If both
    * in a pair are 0 the output is open circuit (motor coast), if both are 1 both otputs are 0 (motor brake), and
    * if both are different, those values are on the output:
-   * `output` mode:
-   * | V0 | V1 | Out 0 | Out 1 |
+   * `output`/`auto` mode:
+   * | H0 | H1 | Out 0 | Out 1 |
    * |----|----|-------|-------|
    * | 0  | 0  | Low   | Low   |
    * | 0  | 1  | Low   | High  |
    * | 1  | 0  | High  | Low   |
    * | 1  | 1  | High  | High  |
    * `motor` mode
-   * | V0 | V1 | Out 0 | Out 1 |
+   * | H0 | H1 | Out 0 | Out 1 |
    * |----|----|-------|-------|
    * | 0  | 0  | Open  | Open  |
    * | 0  | 1  | Low   | High  |
@@ -4004,7 +4083,7 @@ declare class Bangle {
   /**
    * This function can be used to adjust the brightness of Bangle.js's display, and
    * hence prolong its battery life.
-   * Due to hardware design constraints, software PWM has to be used which means that
+   * Due to hardware design constraints on Bangle.js 1, software PWM has to be used which means that
    * the display may flicker slightly when Bluetooth is active and the display is not
    * at full power.
    * **Power consumption**
@@ -4014,6 +4093,8 @@ declare class Bangle {
    * * 0.5 = 28mA
    * * 0.9 = 40mA (switching overhead)
    * * 1 = 40mA
+   * In 2v21 and earlier, this function would erroneously turn the LCD backlight on. 2v22 and later
+   * fix this, and if you want the backlight on your should use `Bangle.setLCDPowerBacklight()`
    *
    * @param {number} brightness - The brightness of Bangle.js's display - from 0(off) to 1(on full)
    * @url http://www.espruino.com/Reference#l_Bangle_setLCDBrightness
@@ -4073,39 +4154,38 @@ declare class Bangle {
    * GwIKCngWC14sB7QKCh4CBCwN/64KDgfACwWn6vWGwYsBCwOputWJgYsCgGqytVBQYsCLYOlqtqwAsFEINVrR4BFgghBBQosDEINWIQ
    * YsDEIQ3DFgYhCG4msSYeVFgnrFhMvOAgsEkE/FhEggYWCFgIhDkEACwQKBEIYKBCwSGFBQJxCQwYhBBQTKDqohCBQhCCEIJlDXwrKE
    * BQoWHBQdaCwuqJoI4CCwgKECwJ9CJgIKDq+qBYUq1WtBQf+BYIAC3/VBQX/tQKDz/9BQY5BAAVV/4WCBQJcBKwVf+oHBv4wCAAYhB`));
-   * Bangle.setLCDOverlay(img,66,66);
+   * Bangle.setLCDOverlay(img,66,66, {id: "myOverlay", remove: () => print("Removed")});
    * ```
    * Or use a `Graphics` instance:
    * ```
-   * var ovr = Graphics.createArrayBuffer(100,100,1,{msb:true}); // 1bpp
-   * ovr.drawLine(0,0,100,100);
-   * ovr.drawRect(0,0,99,99);
-   * Bangle.setLCDOverlay(ovr,38,38);
-   * ```
-   * Although `Graphics` can be specified directly, it can often make more sense to
-   * create an Image from the `Graphics` instance, as this gives you access
-   * to color palettes and transparent colors. For instance this will draw a colored
-   * overlay with rounded corners:
-   * ```
    * var ovr = Graphics.createArrayBuffer(100,100,2,{msb:true});
+   * ovr.transparent = 0; // (optional) set a transparent color
+   * ovr.palette = new Uint16Array([0,0,g.toColor("#F00"),g.toColor("#FFF")]); // (optional) set a color palette
    * ovr.setColor(1).fillRect({x:0,y:0,w:99,h:99,r:8});
    * ovr.setColor(3).fillRect({x:2,y:2,w:95,h:95,r:7});
    * ovr.setColor(2).setFont("Vector:30").setFontAlign(0,0).drawString("Hi",50,50);
-   * Bangle.setLCDOverlay({
-   *   width:ovr.getWidth(), height:ovr.getHeight(),
-   *   bpp:2, transparent:0,
-   *   palette:new Uint16Array([0,0,g.toColor("#F00"),g.toColor("#FFF")]),
-   *   buffer:ovr.buffer
-   * },38,38);
+   * Bangle.setLCDOverlay(ovr,38,38, {id: "myOverlay", remove: () => print("Removed")});
    * ```
+   * To remove an overlay, simply call:
+   * ```
+   * Bangle.setLCDOverlay(undefined, {id: "myOverlay"});
+   * ```
+   * Before 2v22 the `options` object isn't parsed, and as a result
+   * the remove callback won't be called, and `Bangle.setLCDOverlay(undefined)` will
+   * remove *any* active overlay.
+   * The `remove` callback is called when the current overlay is removed or replaced with
+   * another, but *not* if setLCDOverlay is called again with an image and the same ID.
    *
    * @param {any} img - An image, or undefined to clear
-   * @param {number} x - The X offset the graphics instance should be overlaid on the screen with
+   * @param {any} x - The X offset the graphics instance should be overlaid on the screen with
    * @param {number} y - The Y offset the graphics instance should be overlaid on the screen with
+   * @param {any} options - [Optional] object `{remove:fn, id:"str"}`
    * @url http://www.espruino.com/Reference#l_Bangle_setLCDOverlay
    */
   static setLCDOverlay(img: any, x: number, y: number): void;
   static setLCDOverlay(): void;
+  static setLCDOverlay(img: any, x: number, y: number, options: { id : string, remove: () => void }): void;
+  static setLCDOverlay(img: any, options: { id : string }): void;
 
   /**
    * This function can be used to turn Bangle.js's LCD power saving on or off.
@@ -4175,6 +4255,10 @@ declare class Bangle {
    *    current value. If you desire a specific interval (e.g. the default 80ms) you
    *    must set it manually with `Bangle.setPollInterval(80)` after setting
    *    `powerSave:false`.
+   * * `lowResistanceFix` (Bangle.js 2, 2v22+) In the very rare case that your watch button
+   * gets damaged such that it has a low resistance and always stays on, putting the watch
+   * into a boot loop, setting this flag may improve matters (by forcing the input low
+   * before reading and disabling the hardware watch on BTN1).
    * * `lockTimeout` how many milliseconds before the screen locks
    * * `lcdPowerTimeout` how many milliseconds before the screen turns off
    * * `backlightTimeout` how many milliseconds before the screen's backlight turns
@@ -4195,6 +4279,8 @@ declare class Bangle {
    * * `hrmPushEnv` - (Bangle.js 2, 2v19+) if true (default is false) HRM environment readings will be produced as `Bangle.on(`HRM-env`, ...)` events. This is reset when the HRM is initialised with `Bangle.setHRMPower`.
    * * `seaLevelPressure` (Bangle.js 2) Normally 1013.25 millibars - this is used for
    *   calculating altitude with the pressure sensor
+   * * `lcdBufferPtr` (Bangle.js 2 2v21+) Return a pointer to the first pixel of the 3 bit graphics buffer used by Bangle.js for the screen (stride = 178 bytes)
+   * * `lcdDoubleRefresh` (Bangle.js 2 2v22+) If enabled, pulses EXTCOMIN twice per poll interval (avoids off-axis flicker)
    * Where accelerations are used they are in internal units, where `8192 = 1g`
    *
    * @param {any} options
@@ -4211,6 +4297,7 @@ declare class Bangle {
 
   /**
    * Also see the `Bangle.lcdPower` event
+   * You can use `Bangle.setLCDPower` to turn on the LCD (on Bangle.js 2 the LCD is normally on, and draws very little power so can be left on).
    * @returns {boolean} Is the display on or not?
    * @url http://www.espruino.com/Reference#l_Bangle_isLCDOn
    */
@@ -4218,6 +4305,7 @@ declare class Bangle {
 
   /**
    * Also see the `Bangle.backlight` event
+   * You can use `Bangle.setLCDPowerBacklight` to turn on the LCD backlight.
    * @returns {boolean} Is the backlight on or not?
    * @url http://www.espruino.com/Reference#l_Bangle_isBacklightOn
    */
@@ -4530,11 +4618,11 @@ declare class Bangle {
    * Read temperature, pressure and altitude data. A promise is returned which will
    * be resolved with `{temperature, pressure, altitude}`.
    * If the Barometer has been turned on with `Bangle.setBarometerPower` then this
-   * will return almost immediately with the reading. If the Barometer is off,
+   * will return with the *next* reading as of 2v21 (or the existing reading on 2v20 or earlier). If the Barometer is off,
    * conversions take between 500-750ms.
    * Altitude assumes a sea-level pressure of 1013.25 hPa
    * If there's no pressure device (for example, the emulator),
-   * this returns undefined, rather than a promise.
+   * this returns `undefined`, rather than a Promise.
    * ```
    * Bangle.getPressure().then(d=>{
    *   console.log(d);
@@ -4705,24 +4793,14 @@ declare class Bangle {
    * While you could use setWatch/etc manually, the benefit here is that you don't
    * end up with multiple `setWatch` instances, and the actual input method (touch,
    * or buttons) is implemented dependent on the watch (Bangle.js 1 or 2)
-   * **Note:** You can override this function in boot code to change the interaction
-   * mode with the watch. For instance you could make all clocks start the launcher
-   * with a swipe by using:
    * ```
-   * (function() {
-   *   var sui = Bangle.setUI;
-   *   Bangle.setUI = function(mode, cb) {
-   *     var m = ("object"==typeof mode) ? mode.mode : mode;
-   *     if (m!="clock") return sui(mode,cb);
-   *     sui(); // clear
-   *     Bangle.CLOCK=1;
-   *     Bangle.swipeHandler = Bangle.showLauncher;
-   *     Bangle.on("swipe", Bangle.swipeHandler);
-   *   };
-   * })();
+   * Bangle.setUI("updown", function (dir) {
+   *   // dir is +/- 1 for swipes up/down
+   *   // dir is 0 when button pressed
+   * });
    * ```
    * The first argument can also be an object, in which case more options can be
-   * specified:
+   * specified with `mode:"custom"`:
    * ```
    * Bangle.setUI({
    *   mode : "custom",
@@ -4740,7 +4818,23 @@ declare class Bangle {
    * may choose to just call the `remove` function and then load a new app without resetting Bangle.js.
    * As a result, **if you specify 'remove' you should make sure you test that after calling `Bangle.setUI()`
    * without arguments your app is completely unloaded**, otherwise you may end up with memory leaks or
-   * other issues when switching apps. Please see http://www.espruino.com/Bangle.js+Fast+Load for more details on this.
+   * other issues when switching apps. Please see the [Bangle.js Fast Load Tutorial](https://www.espruino.com/Bangle.js+Fast+Load) for more details on this.
+   * **Note:** You can override this function in boot code to change the interaction
+   * mode with the watch. For instance you could make all clocks start the launcher
+   * with a swipe by using:
+   * ```
+   * (function() {
+   *   var sui = Bangle.setUI;
+   *   Bangle.setUI = function(mode, cb) {
+   *     var m = ("object"==typeof mode) ? mode.mode : mode;
+   *     if (m!="clock") return sui(mode,cb);
+   *     sui(); // clear
+   *     Bangle.CLOCK=1;
+   *     Bangle.swipeHandler = Bangle.showLauncher;
+   *     Bangle.on("swipe", Bangle.swipeHandler);
+   *   };
+   * })();
+   * ```
    *
    * @param {any} type - The type of UI input: 'updown', 'leftright', 'clock', 'clockupdown' or undefined to cancel. Can also be an object (see below)
    * @param {any} callback - A function with one argument which is the direction
@@ -4795,6 +4889,7 @@ declare class Badge {
   static capSense(corner: number): number;
 
   /**
+   * **DEPRECATED** - Please use `E.getBattery()` instead.
    * Return an approximate battery percentage remaining based on a normal CR2032
    * battery (2.8 - 2.2v)
    * @returns {number} A percentage between 0 and 100
@@ -5401,11 +5496,11 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
   /**
    * Set the current font
    *
-   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
+   * @param {number} scale - (optional) If >1 the font will be scaled up by that amount
    * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_setFont6x15
    */
-  setFont6x15(scale?: number): Graphics;
+  setFont6x15(scale: number): Graphics;
 
   /**
    * On instances of graphics that drive a display with an offscreen buffer, calling
@@ -5775,10 +5870,11 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
   /**
    *
    * @param {any} file - The font as a PBF file
+   * @param {number} scale - The scale factor, default=1 (2=2x size)
    * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_setFontPBF
    */
-  setFontPBF(file: any): Graphics;
+  setFontPBF(file: any, scale: number): Graphics;
 
   /**
    * Set the alignment for subsequent calls to `drawString`
@@ -6141,19 +6237,21 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * like Bangle.js. Maximum layer count right now is 4.
    * ```
    * layers = [ {
-   *   {x : int, // x start position
-   *    y : int, // y start position
-   *    image : string/object,
+   *   {x : float, // x start position
+   *    y : float, // y start position
+   *    image : string/object/Graphics,
    *    scale : float, // scale factor, default 1
    *    rotate : float, // angle in radians
    *    center : bool // center on x,y? default is top left
    *    repeat : should this image be repeated (tiled?)
    *    nobounds : bool // if true, the bounds of the image are not used to work out the default area to draw
+   *    palette : new Uint16Array(2/4/8/16/256) // (2v22+) a color palette to use with the image (overrides the image's palette)
+   *    compose : ""/"add"/"or"/"xor" // (2v22+) if set, the operation used when combining with the previous layer
    *   }
    * ]
-   * options = { // the area to render. Defaults to rendering just enough to cover what's requested
-   *  x,y,
-   *  width,height
+   * options = {
+   *  x,y, : int // the area to render. Defaults to rendering just enough to cover what's requested
+   *  width,height : int
    * }
    * ```
    *
@@ -6176,9 +6274,15 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * * Is 8 bpp *OR* the `{msb:true}` option was given
    * * No other format options (zigzag/etc) were given
    * Otherwise data will be copied, which takes up more space and may be quite slow.
-   * If the `Graphics` object contains `transparent` or `pelette` fields,
+   * If the `Graphics` object contains `transparent` or `palette` fields,
    * [as you might find in an image](http://www.espruino.com/Graphics#images-bitmaps),
    * those will be included in the generated image too.
+   * ```
+   * var gfx = Graphics.createArrayBuffer(8,8,1);
+   * gfx.transparent = 0;
+   * gfx.drawString("X",0,0);
+   * var im = gfx.asImage("string");
+   * ```
    *
    * @param {any} type - The type of image to return. Either `object`/undefined to return an image object, or `string` to return an image string
    * @returns {any} An Image that can be used with `Graphics.drawImage`
@@ -6360,6 +6464,36 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * @url http://www.espruino.com/Reference#l_Graphics_setTheme
    */
   setTheme(theme: { [key in keyof Theme]?: Theme[key] extends number ? ColorResolvable : Theme[key] }): Graphics;
+
+  /**
+   * Perform a filter on the current Graphics instance. Requires the Graphics
+   * instance to support readback (eg `getPixel` should work), and only uses
+   * 8 bit values for buffer and filter.
+   * ```
+   * g.filter([ // a gaussian filter
+   *     1, 4, 7, 4, 1,
+   *     4,16,26,16, 4,
+   *     7,26,41,26, 7,
+   *     4,16,26,16, 4,
+   *     1, 4, 7, 4, 1
+   * ], { w:5, h:5, div:273 });
+   * ```
+   * ```
+   * {
+   *   w,h,    // filter width+height
+   *   div,    // divisor applied after filter
+   *   offset, // DC offset applied to filter before division (default 0)
+   *   max,    // maximum output value (default=max allowed by bpp)
+   *   filter, // undefined (replace), or "max" (use max(original,filtered))
+   * }
+   * ```
+   *
+   * @param {any} filter - An array of filter params between -128 and 127 (2D arrays should be unwrapped)
+   * @param {any} options - An object of options, see below
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_filter
+   */
+  filter(filter: any, options: any): Graphics;
 }
 
 /**
@@ -7492,12 +7626,12 @@ interface Date {
   /**
    * Month of the year 0..11
    *
-   * @param {number} yearValue - The month, between 0 and 11
+   * @param {number} monthValue - The month, between 0 and 11
    * @param {any} [dayValue] - [optional] the day, between 0 and 31
    * @returns {number} The number of milliseconds since 1970
    * @url http://www.espruino.com/Reference#l_Date_setMonth
    */
-  setMonth(yearValue: number, dayValue?: number): number;
+  setMonth(monthValue: number, dayValue?: number): number;
 
   /**
    *
@@ -7863,6 +7997,7 @@ declare class E {
    *   "A Number" : {
    *     value : number,
    *     min:0,max:100,step:10,
+   *     // noList : true, // On Bangle.js devices this forces use of the number-chooser (and not a scrolling list)
    *     onchange : v => { number=v; }
    *   },
    *   "Exit" : function() { E.showMenu(); }, // remove the menu
@@ -8415,19 +8550,27 @@ declare class E {
   static getAnalogVRef(): number;
 
   /**
-   * ADVANCED: This is a great way to crash Espruino if you're not sure what you are
-   * doing
+   * ADVANCED: It's very easy to crash Espruino using this function if
+   * you get the code/arguments you supply wrong!
    * Create a native function that executes the code at the given address, e.g.
    * `E.nativeCall(0x08012345,'double (double,double)')(1.1, 2.2)`
    * If you're executing a thumb function, you'll almost certainly need to set the
    * bottom bit of the address to 1.
    * Note it's not guaranteed that the call signature you provide can be used - there
-   * are limits on the number of arguments allowed.
+   * are limits on the number of arguments allowed (5).
    * When supplying `data`, if it is a 'flat string' then it will be used directly,
    * otherwise it'll be converted to a flat string and used.
+   * The argument types in `sig` are:
+   * * `void` - returns nothing
+   * * `bool` -  boolean value
+   * * `int` - 32 bit integer
+   * * `double` - 64 bit floating point
+   * * `float` - 32 bit floating point (2v21 and later)
+   * * `Pin` - Espruino 'pin' value (8 bit integer)
+   * * `JsVar` - Pointer to an Espruino JsVar structure
    *
    * @param {number} addr - The address in memory of the function (or offset in `data` if it was supplied
-   * @param {any} sig - The signature of the call, `returnType (arg1,arg2,...)`. Allowed types are `void`,`bool`,`int`,`double`,`Pin`,`JsVar`
+   * @param {any} sig - The signature of the call, `returnType (arg1,arg2,...)`. Allowed types are `void`,`bool`,`int`,`double`,`float`,`Pin`,`JsVar`
    * @param {any} data - (Optional) A string containing the function itself. If not supplied then 'addr' is used as an absolute address.
    * @returns {any} The native function
    * @url http://www.espruino.com/Reference#l_E_nativeCall
@@ -8777,12 +8920,11 @@ declare class E {
   static toJS(arg: any): string;
 
   /**
-   * This creates and returns a special type of string, which actually references a
-   * specific memory address. It can be used in order to use sections of Flash memory
-   * directly in Espruino (for example to execute code straight from flash memory
-   * with `eval(E.memoryArea( ... ))`)
-   * **Note:** This is only tested on STM32-based platforms (Espruino Original and
-   * Espruino Pico) at the moment.
+   * This creates and returns a special type of string, which references a
+   * specific address in memory. It can be used in order to use sections of
+   * Flash memory directly in Espruino (for example `Storage` uses it
+   * to allow files to be read directly from Flash).
+   * **Note:** As of 2v21, Calling `E.memoryArea` with an address of 0 will return `undefined`
    *
    * @param {number} addr - The address of the memory area
    * @param {number} len - The length (in bytes) of the memory area
@@ -9314,6 +9456,35 @@ declare class E {
   static getRTCPrescaler(calibrate: boolean): number;
 
   /**
+   * This function returns an object detailing the current **estimated** power usage
+   * of the Espruino device in microamps (uA). It is not intended to be a replacement
+   * for measuring actual power consumption, but can be useful for finding obvious power
+   * draws.
+   * Where an Espruino device has outputs that are connected to other things, those
+   * are not included in the power usage figures.
+   * Results look like:
+   * ```
+   * {
+   *   device: {
+   *     CPU : 2000, // microcontroller
+   *     LCD : 100, // LCD
+   *     // ...
+   *   },
+   *   total : 5500 // estimated usage in microamps
+   * }
+   * ```
+   * **Note:** Currently only nRF52-based devices have variable CPU power usage
+   * figures. These are based on the time passed for each SysTick event, so under heavy
+   * usage the figure will update within 0.3s, but under low CPU usage it could take
+   * minutes for the CPU usage figure to update.
+   * **Note:** On Jolt.js we take account of internal resistance on H0/H2/H4/H6 where
+   * we can measure voltage. H1/H3/H5/H7 cannot be measured.
+   * @returns {any} An object detailing power usage in microamps
+   * @url http://www.espruino.com/Reference#l_E_getPowerUsage
+   */
+  static getPowerUsage(): any;
+
+  /**
    * Decode a UTF8 string.
    * * Any decoded character less than 256 gets passed straight through
    * * Otherwise if `lookup` is an array and an item with that char code exists in `lookup` then that is used
@@ -9610,7 +9781,13 @@ interface Object {
   toString(radix?: any): string;
 
   /**
-   * Copy this object completely
+   * Copy this object to a new object, but as a shallow copy. This has a similar effect to calling `Object.assign({}, obj)`.
+   * ```
+   * orig = { a : 1, b : [ 2, 3 ] }
+   * copy = orig.clone();
+   * // copy = { a : 1, b : [ 2, 3 ] }
+   * ```
+   * **Note:** This is not a standard JavaScript function, but is unique to Espruino
    * @returns {any} A copy of this Object
    * @url http://www.espruino.com/Reference#l_Object_clone
    */
@@ -10087,12 +10264,12 @@ interface JSONConstructor {
    *   not as if they were objects (since it is more compact)
    *
    * @param {any} data - The data to be converted to a JSON string
-   * @param {any} replacer - This value is ignored
-   * @param {any} space - The number of spaces to use for padding, a string, or null/undefined for no whitespace
+   * @param {any} [replacer] - [optional] This value is ignored
+   * @param {any} [space] - [optional] The number of spaces to use for padding, a string, or null/undefined for no whitespace
    * @returns {any} A JSON string
    * @url http://www.espruino.com/Reference#l_JSON_stringify
    */
-  stringify(data: any, replacer: any, space: any): any;
+  stringify(data: any, replacer?: any, space?: any): any;
 
   /**
    * Parse the given JSON string into a JavaScript object
@@ -10335,7 +10512,7 @@ interface PromiseConstructor {
    * @returns {any} A new Promise
    * @url http://www.espruino.com/Reference#l_Promise_resolve
    */
-  resolve<T extends any>(promises: T): Promise<T>;
+  resolve<T extends any>(promises?: T): Promise<T>;
 
   /**
    * Return a new promise that is already rejected (at idle it'll call `.catch`)
@@ -10828,6 +11005,85 @@ declare class Serial {
   flush(): void;
 }
 
+/**
+ * (2v21+ only) This class allows Espruino to control stepper motors.
+ * ```
+ * // initialise
+ * var s = new Stepper({
+ *   pins : [D1,D0,D2,D3],
+ *   freq : 200
+ * });
+ * // step 1000 steps...
+ * s.moveTo(1000, {turnOff:true}).then(() => {
+ *   print("Done!");
+ * });
+ * ```
+ * On Espruino before 2v20 you can still use the Stepper Motor module at https://www.espruino.com/StepperMotor - it just isn't quite as fast.
+ * @url http://www.espruino.com/Reference#Stepper
+ */
+declare class Stepper {
+  /**
+   * Create a `Stepper` class. `options` can contain:
+   * ```
+   * ... = new Stepper({
+   *   pins : [...], // required - 4 element array of pins
+   *   pattern : [...], // optional - a 4/8 element array of step patterns
+   *   offpattern : 0, // optional (default 0) - the pattern to output to stop driving the stepper motor
+   *   freq : 500,   // optional (default 100) steps per second
+   * })
+   * ```
+   * `pins` must be supplied as a 4 element array of pins. When created,
+   * if pin state has not been set manually on each pin, the pins will
+   * be set to outputs.
+   * If `pattern` isn't specified, a default pattern of `[0b0001,0b0010,0b0100,0b1000]` will be used. You
+   * can specify different patterns, for example `[0b1100,0b1000,0b1001,0b0001,0b0011,0b0010,0b0110,0b0100]`.
+   * @constructor
+   *
+   * @param {any} options - options struct `{pins:[1,2,3,4]}`
+   * @returns {any} An Stepper object
+   * @url http://www.espruino.com/Reference#l_Stepper_Stepper
+   */
+  static new(options: any): any;
+
+  /**
+   * Move a a certain number of steps in either direction. `position` is remembered, so
+   * `s.moveTo(1000)` will move 1000 steps forward the first time it is called, but
+   * `s.moveTo(1500)` called afterwards will only move 500 steps.
+   * , `options` can be:
+   * ```
+   * s.moveTo(steps, {
+   *   freq : 100, // optional (frequency in Hz) step frequency
+   *   turnOff : true, // optional (default false) turn off stepper after this movement?
+   *   relative : true, // optional (default false) the step number is relative (not absolute)
+   * }).then(() => {
+   *   // movement finished...
+   * });
+   * ```
+   *
+   * @param {number} position - The position in steps to move to (can be either positive or negative)
+   * @param {any} options - Optional options struct
+   * @returns {any} A Promise that resolves when the stepper has finished moving
+   * @url http://www.espruino.com/Reference#l_Stepper_moveTo
+   */
+  moveTo(position: number, options: any): Promise<void>;
+
+  /**
+   * Stop a stepper motor that is currently running.
+   * You can specify `.stop({turnOff:true})` to force the stepper motor to turn off.
+   *
+   * @param {any} options - Optional options struct
+   * @url http://www.espruino.com/Reference#l_Stepper_stop
+   */
+  stop(options: any): void;
+
+  /**
+   * Get the current position of the stepper motor in steps
+   * @returns {number} The current position of the stepper motor in steps
+   * @url http://www.espruino.com/Reference#l_Stepper_getPosition
+   */
+  getPosition(): number;
+}
+
 interface StringConstructor {
   /**
    * Return the character(s) represented by the given character code(s).
@@ -10927,15 +11183,25 @@ interface String {
 
   /**
    * Search and replace ONE occurrence of `subStr` with `newSubStr` and return the
-   * result. This doesn't alter the original string. Regular expressions not
-   * supported.
+   * result. This doesn't alter the original string.
    *
-   * @param {any} subStr - The string to search for
-   * @param {any} newSubStr - The string to replace it with
+   * @param {any} subStr - The string (or Regular Expression) to search for
+   * @param {any} newSubStr - The string to replace it with. Replacer functions are supported, but only when subStr is a `RegExp`
    * @returns {any} This string with `subStr` replaced
    * @url http://www.espruino.com/Reference#l_String_replace
    */
   replace(subStr: any, newSubStr: any): any;
+
+  /**
+   * Search and replace ALL occurrences of `subStr` with `newSubStr` and return the
+   * result. This doesn't alter the original string.
+   *
+   * @param {any} subStr - The string (or Regular Expression) to search for
+   * @param {any} newSubStr - The string to replace it with. Replacer functions are supported, but only when subStr is a `RegExp`
+   * @returns {any} This string with `subStr` replaced
+   * @url http://www.espruino.com/Reference#l_String_replaceAll
+   */
+  replaceAll(subStr: any, newSubStr: any): any;
 
   /**
    *
@@ -10991,6 +11257,9 @@ interface String {
   toUpperCase(): any;
 
   /**
+   * This is not a standard JavaScript function, but is provided to allow use of fonts
+   * that only support ASCII (char codes 0..127, like the 4x6 font) with character input
+   * that might be in the ISO8859-1 range.
    * @returns {any} This string with the accents/diacritics (such as é, ü) removed from characters in the ISO 8859-1 set
    * @url http://www.espruino.com/Reference#l_String_removeAccents
    */
@@ -11455,6 +11724,42 @@ declare function compass(): any;
 declare const FET: Pin;
 
 /**
+ * `Q0` and `Q1` Qwiic connectors can have their power controlled by a 500mA FET (`Q0.fet`) which switches GND.
+ * The `sda` and `scl` pins on this port are also analog inputs - use `analogRead(Q0.sda)`/etc
+ * To turn this connector on run `Q0.setPower(1)`
+ * @returns {any} An object containing the pins for the Q0 connector on Jolt.js `{sda,scl,fet}`
+ * @url http://www.espruino.com/Reference#l__global_Q0
+ */
+declare const Q0: Qwiic;
+
+/**
+ * `Q0` and `Q1` Qwiic connectors can have their power controlled by a 500mA FET (`Q1.fet`) which switches GND.
+ * The `sda` and `scl` pins on this port are also analog inputs - use `analogRead(Q1.sda)`/etc
+ * To turn this connector on run `Q1.setPower(1)`
+ * @returns {any} An object containing the pins for the Q1 connector on Jolt.js `{sda,scl,fet}`
+ * @url http://www.espruino.com/Reference#l__global_Q1
+ */
+declare const Q1: Qwiic;
+
+/**
+ * `Q2` and `Q3` have all 4 pins connected to Jolt.js's GPIO (including those usually used for power).
+ * As such only around 8mA of power can be supplied to any connected device.
+ * To use this as a normal Qwiic connector, run `Q2.setPower(1)`
+ * @returns {any} An object containing the pins for the Q2 connector on Jolt.js `{sda,scl,gnd,vcc}`
+ * @url http://www.espruino.com/Reference#l__global_Q2
+ */
+declare const Q2: Qwiic;
+
+/**
+ * `Q2` and `Q3` have all 4 pins connected to Jolt.js's GPIO (including those usually used for power).
+ * As such only around 8mA of power can be supplied to any connected device.
+ * To use this as a normal Qwiic connector, run `Q3.setPower(1)`
+ * @returns {any} An object containing the pins for the Q3 connector on Jolt.js `{sda,scl,gnd,vcc}`
+ * @url http://www.espruino.com/Reference#l__global_Q3
+ */
+declare const Q3: Qwiic;
+
+/**
  * The Bangle.js's vibration motor.
  * @returns {Pin}
  * @url http://www.espruino.com/Reference#l__global_VIBRATE
@@ -11640,110 +11945,6 @@ declare const IOEXT3: Pin;
  * @url http://www.espruino.com/Reference#l__global_Terminal
  */
 declare const Terminal: Serial;
-
-declare const global: {
-  SDA: typeof SDA;
-  SCL: typeof SCL;
-  show: typeof show;
-  acceleration: typeof acceleration;
-  compass: typeof compass;
-  FET: typeof FET;
-  VIBRATE: typeof VIBRATE;
-  LED: typeof LED;
-  LED1: typeof LED1;
-  LED2: typeof LED2;
-  BTNA: typeof BTNA;
-  BTNB: typeof BTNB;
-  BTNU: typeof BTNU;
-  BTND: typeof BTND;
-  BTNL: typeof BTNL;
-  BTNR: typeof BTNR;
-  CORNER1: typeof CORNER1;
-  CORNER2: typeof CORNER2;
-  CORNER3: typeof CORNER3;
-  CORNER4: typeof CORNER4;
-  CORNER5: typeof CORNER5;
-  CORNER6: typeof CORNER6;
-  Bluetooth: typeof Bluetooth;
-  MOS1: typeof MOS1;
-  MOS2: typeof MOS2;
-  MOS3: typeof MOS3;
-  MOS4: typeof MOS4;
-  IOEXT0: typeof IOEXT0;
-  IOEXT1: typeof IOEXT1;
-  IOEXT2: typeof IOEXT2;
-  IOEXT3: typeof IOEXT3;
-  Terminal: typeof Terminal;
-  global: typeof global;
-  setBusyIndicator: typeof setBusyIndicator;
-  setSleepIndicator: typeof setSleepIndicator;
-  setDeepSleep: typeof setDeepSleep;
-  dump: typeof dump;
-  load: typeof load;
-  save: typeof save;
-  reset: typeof reset;
-  edit: typeof edit;
-  echo: typeof echo;
-  getTime: typeof getTime;
-  setTime: typeof setTime;
-  getSerial: typeof getSerial;
-  setInterval: typeof setInterval;
-  setTimeout: typeof setTimeout;
-  clearInterval: typeof clearInterval;
-  clearTimeout: typeof clearTimeout;
-  changeInterval: typeof changeInterval;
-  peek8: typeof peek8;
-  poke8: typeof poke8;
-  peek16: typeof peek16;
-  poke16: typeof poke16;
-  peek32: typeof peek32;
-  poke32: typeof poke32;
-  analogRead: typeof analogRead;
-  analogWrite: typeof analogWrite;
-  digitalPulse: typeof digitalPulse;
-  digitalWrite: typeof digitalWrite;
-  digitalRead: typeof digitalRead;
-  pinMode: typeof pinMode;
-  getPinMode: typeof getPinMode;
-  shiftOut: typeof shiftOut;
-  setWatch: typeof setWatch;
-  clearWatch: typeof clearWatch;
-  arguments: typeof arguments;
-  eval: typeof eval;
-  parseInt: typeof parseInt;
-  parseFloat: typeof parseFloat;
-  isFinite: typeof isFinite;
-  isNaN: typeof isNaN;
-  btoa: typeof btoa;
-  atob: typeof atob;
-  encodeURIComponent: typeof encodeURIComponent;
-  decodeURIComponent: typeof decodeURIComponent;
-  trace: typeof trace;
-  print: typeof print;
-  require: typeof require;
-  __FILE__: typeof __FILE__;
-  SPI1: typeof SPI1;
-  SPI2: typeof SPI2;
-  SPI3: typeof SPI3;
-  I2C1: typeof I2C1;
-  I2C2: typeof I2C2;
-  I2C3: typeof I2C3;
-  USB: typeof USB;
-  Serial1: typeof Serial1;
-  Serial2: typeof Serial2;
-  Serial3: typeof Serial3;
-  Serial4: typeof Serial4;
-  Serial5: typeof Serial5;
-  Serial6: typeof Serial6;
-  LoopbackA: typeof LoopbackA;
-  LoopbackB: typeof LoopbackB;
-  Telnet: typeof Telnet;
-  NaN: typeof NaN;
-  Infinity: typeof Infinity;
-  HIGH: typeof HIGH;
-  LOW: typeof LOW;
-  [key: string]: any;
-}
 
 /**
  * When Espruino is busy, set the pin specified here high. Set this to undefined to
@@ -12072,16 +12273,19 @@ declare function peek32(addr: number, count: number): Uint8Array;
 declare function poke32(addr: number, value: number | number[]): void;
 
 /**
- * Get the analogue value of the given pin
+ * Get the analogue value of the given pin.
  * This is different to Arduino which only returns an integer between 0 and 1023
  * However only pins connected to an ADC will work (see the datasheet)
- *  **Note:** if you didn't call `pinMode` beforehand then this function will also
- *  reset pin's state to `"analog"`
+ * **Note:** if you didn't call `pinMode` beforehand then this function will also
+ * reset pin's state to `"analog"`
+ * **Note:** [Jolt.js](https://www.espruino.com/Jolt.js) motor driver pins with
+ * analog inputs are scaled with a potential divider, and so those pins return a
+ * number which is the actual voltage.
  *
  * @param {Pin} pin
  * The pin to use
  * You can find out which pins to use by looking at [your board's reference page](#boards) and searching for pins with the `ADC` markers.
- * @returns {number} The analog Value of the Pin between 0 and 1
+ * @returns {number} The Analog Value of the Pin between 0(GND) and 1(VCC). See below.
  * @url http://www.espruino.com/Reference#l__global_analogRead
  */
 declare function analogRead(pin: Pin): number;
@@ -12132,8 +12336,12 @@ declare function digitalPulse(pin: Pin, value: boolean, time: number | number[])
 
 /**
  * Set the digital value of the given pin.
- *  **Note:** if you didn't call `pinMode` beforehand then this function will also
- *  reset pin's state to `"output"`
+ * ```
+ * digitalWrite(LED1, 1); // light LED1
+ * digitalWrite([LED1,LED2,LED3], 0b101); // lights LED1 and LED3
+ * ```
+ *  **Note:** if you didn't call `pinMode(pin, ...)` or `Pin.mode(...)` beforehand then this function will also
+ * reset pin's state to `"output"`
  * If pin argument is an array of pins (e.g. `[A2,A1,A0]`) the value argument will
  * be treated as an array of bits where the last array element is the least
  * significant bit.
@@ -12141,11 +12349,15 @@ declare function digitalPulse(pin: Pin, value: boolean, time: number | number[])
  * right-hand side of the array of pins). This means you can use the same pin
  * multiple times, for example `digitalWrite([A1,A1,A0,A0],0b0101)` would pulse A0
  * followed by A1.
+ * In 2v22 and later firmwares, using a boolean for the value will set *all* pins in
+ * the array to the same value, eg `digitalWrite(pins, value?0xFFFFFFFF:0)`. Previously
+ * digitalWrite with a boolean behaved like `digitalWrite(pins, value?1:0)` and would
+ * only set the first pin.
  * If the pin argument is an object with a `write` method, the `write` method will
  * be called with the value passed through.
  *
  * @param {any} pin - The pin to use
- * @param {number} value - Whether to pulse high (true) or low (false)
+ * @param {any} value - Whether to write a high (true) or low (false) value
  * @url http://www.espruino.com/Reference#l__global_digitalWrite
  */
 declare function digitalWrite(pin: Pin, value: boolean): void;
@@ -12300,7 +12512,7 @@ declare function shiftOut(pins: Pin | Pin[], options: { clk?: Pin, clkPol?: bool
  *
  * @param {any} function - A Function or String to be executed
  * @param {Pin} pin - The pin to watch
- * @param {any} options - If a boolean or integer, it determines whether to call this once (false = default) or every time a change occurs (true). Can be an object of the form `{ repeat: true/false(default), edge:'rising'/'falling'/'both'(default), debounce:10}` - see below for more information.
+ * @param {any} options - If a boolean or integer, it determines whether to call this once (false = default) or every time a change occurs (true). Can be an object of the form `{ repeat: true/false(default), edge:'rising'/'falling'/'both', debounce:10}` - see below for more information.
  * @returns {any} An ID that can be passed to clearWatch
  * @url http://www.espruino.com/Reference#l__global_setWatch
  */
@@ -12315,6 +12527,123 @@ declare function setWatch(func: ((arg: { state: boolean, time: number, lastTime:
  */
 declare function clearWatch(id: number): void;
 declare function clearWatch(): void;
+
+declare const global: {
+  SDA: typeof SDA;
+  SCL: typeof SCL;
+  show: typeof show;
+  acceleration: typeof acceleration;
+  compass: typeof compass;
+  FET: typeof FET;
+  Q0: typeof Q0;
+  Q1: typeof Q1;
+  Q2: typeof Q2;
+  Q3: typeof Q3;
+  VIBRATE: typeof VIBRATE;
+  LED: typeof LED;
+  LED1: typeof LED1;
+  LED2: typeof LED2;
+  BTNA: typeof BTNA;
+  BTNB: typeof BTNB;
+  BTNU: typeof BTNU;
+  BTND: typeof BTND;
+  BTNL: typeof BTNL;
+  BTNR: typeof BTNR;
+  CORNER1: typeof CORNER1;
+  CORNER2: typeof CORNER2;
+  CORNER3: typeof CORNER3;
+  CORNER4: typeof CORNER4;
+  CORNER5: typeof CORNER5;
+  CORNER6: typeof CORNER6;
+  Bluetooth: typeof Bluetooth;
+  MOS1: typeof MOS1;
+  MOS2: typeof MOS2;
+  MOS3: typeof MOS3;
+  MOS4: typeof MOS4;
+  IOEXT0: typeof IOEXT0;
+  IOEXT1: typeof IOEXT1;
+  IOEXT2: typeof IOEXT2;
+  IOEXT3: typeof IOEXT3;
+  Terminal: typeof Terminal;
+  setBusyIndicator: typeof setBusyIndicator;
+  setSleepIndicator: typeof setSleepIndicator;
+  setDeepSleep: typeof setDeepSleep;
+  dump: typeof dump;
+  load: typeof load;
+  save: typeof save;
+  reset: typeof reset;
+  edit: typeof edit;
+  echo: typeof echo;
+  getTime: typeof getTime;
+  setTime: typeof setTime;
+  getSerial: typeof getSerial;
+  setInterval: typeof setInterval;
+  setTimeout: typeof setTimeout;
+  clearInterval: typeof clearInterval;
+  clearTimeout: typeof clearTimeout;
+  changeInterval: typeof changeInterval;
+  peek8: typeof peek8;
+  poke8: typeof poke8;
+  peek16: typeof peek16;
+  poke16: typeof poke16;
+  peek32: typeof peek32;
+  poke32: typeof poke32;
+  analogRead: typeof analogRead;
+  analogWrite: typeof analogWrite;
+  digitalPulse: typeof digitalPulse;
+  digitalWrite: typeof digitalWrite;
+  digitalRead: typeof digitalRead;
+  pinMode: typeof pinMode;
+  getPinMode: typeof getPinMode;
+  shiftOut: typeof shiftOut;
+  setWatch: typeof setWatch;
+  clearWatch: typeof clearWatch;
+  global: typeof global;
+  globalThis: typeof globalThis;
+  arguments: typeof arguments;
+  eval: typeof eval;
+  parseInt: typeof parseInt;
+  parseFloat: typeof parseFloat;
+  isFinite: typeof isFinite;
+  isNaN: typeof isNaN;
+  btoa: typeof btoa;
+  atob: typeof atob;
+  encodeURIComponent: typeof encodeURIComponent;
+  decodeURIComponent: typeof decodeURIComponent;
+  trace: typeof trace;
+  print: typeof print;
+  require: typeof require;
+  __FILE__: typeof __FILE__;
+  SPI1: typeof SPI1;
+  SPI2: typeof SPI2;
+  SPI3: typeof SPI3;
+  I2C1: typeof I2C1;
+  I2C2: typeof I2C2;
+  I2C3: typeof I2C3;
+  USB: typeof USB;
+  Serial1: typeof Serial1;
+  Serial2: typeof Serial2;
+  Serial3: typeof Serial3;
+  Serial4: typeof Serial4;
+  Serial5: typeof Serial5;
+  Serial6: typeof Serial6;
+  LoopbackA: typeof LoopbackA;
+  LoopbackB: typeof LoopbackB;
+  Telnet: typeof Telnet;
+  NaN: typeof NaN;
+  Infinity: typeof Infinity;
+  HIGH: typeof HIGH;
+  LOW: typeof LOW;
+  [key: string]: any;
+}
+
+/**
+ * A reference to the global scope, where everything is defined.
+ * This is identical to `global` but was introduced in the ECMAScript spec.
+ * @returns {any} The global scope
+ * @url http://www.espruino.com/Reference#l__global_globalThis
+ */
+// globalThis - builtin
 
 /**
  * A variable containing the arguments given to the function:

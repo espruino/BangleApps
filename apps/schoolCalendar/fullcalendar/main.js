@@ -111,7 +111,7 @@ var FullCalendar = (function (exports) {
         ContextType.Provider = function () {
             var _this = this;
             var isNew = !this.getChildContext;
-            var children = origProvider.apply(this, arguments); // eslint-disable-line prefer-rest-params
+            var children = origProvider.apply(this, arguments);
             if (isNew) {
                 var subs_1 = [];
                 this.shouldComponentUpdate = function (_props) {
@@ -4688,14 +4688,14 @@ var FullCalendar = (function (exports) {
         var wrappedSuccess = function () {
             if (!isResolved) {
                 isResolved = true;
-                success.apply(this, arguments); // eslint-disable-line prefer-rest-params
+                success.apply(this, arguments);
             }
         };
         var wrappedFailure = function () {
             if (!isResolved) {
                 isResolved = true;
                 if (failure) {
-                    failure.apply(this, arguments); // eslint-disable-line prefer-rest-params
+                    failure.apply(this, arguments);
                 }
             }
         };
@@ -5008,7 +5008,7 @@ var FullCalendar = (function (exports) {
     var createPortal = FullCalendarVDom.createPortal;
     var flushToDom = FullCalendarVDom.flushToDom;
     var unmountComponentAtNode = FullCalendarVDom.unmountComponentAtNode;
-    /* eslint-enable */
+
 
     var ScrollResponder = /** @class */ (function () {
         function ScrollResponder(execFunc, emitter, scrollTime, scrollTimeReset) {
@@ -5085,7 +5085,7 @@ var FullCalendar = (function (exports) {
         }
         PureComponent.prototype.shouldComponentUpdate = function (nextProps, nextState) {
             if (this.debug) {
-                // eslint-disable-next-line no-console
+
                 console.log(getUnequalProps(nextProps, this.props), getUnequalProps(nextState, this.state));
             }
             return !compareObjs(this.props, nextProps, this.propEquality) ||
@@ -6613,7 +6613,7 @@ var FullCalendar = (function (exports) {
         var endMarker = framingRange.end;
         var instanceStarts = [];
         while (dayMarker < endMarker) {
-            var instanceStart 
+            var instanceStart
             // if everyday, or this particular day-of-week
             = void 0;
             // if everyday, or this particular day-of-week
@@ -11731,7 +11731,7 @@ var FullCalendar = (function (exports) {
             }
             dragging.emitter.on('pointerdown', this.handlePointerDown);
             dragging.emitter.on('dragstart', this.handleDragStart);
-            new ExternalElementDragging(dragging, settings.eventData); // eslint-disable-line no-new
+            new ExternalElementDragging(dragging, settings.eventData);
         }
         ExternalDraggable.prototype.destroy = function () {
             this.dragging.destroy();
@@ -11833,7 +11833,7 @@ var FullCalendar = (function (exports) {
             if (typeof settings.mirrorSelector === 'string') {
                 dragging.mirrorSelector = settings.mirrorSelector;
             }
-            new ExternalElementDragging(dragging, settings.eventData); // eslint-disable-line no-new
+            new ExternalElementDragging(dragging, settings.eventData);
         }
         ThirdPartyDraggable.prototype.destroy = function () {
             this.dragging.destroy();
@@ -13605,7 +13605,7 @@ var FullCalendar = (function (exports) {
             if (!slatCoords) {
                 return null;
             }
-            return segs.map(function (seg, i) { return (createElement(NowIndicatorRoot, { isAxis: false, date: date, 
+            return segs.map(function (seg, i) { return (createElement(NowIndicatorRoot, { isAxis: false, date: date,
                 // key doesn't matter. will only ever be one
                 key: i }, function (rootElRef, classNames, innerElRef, innerContent) { return (createElement("div", { ref: rootElRef, className: ['fc-timegrid-now-indicator-line'].concat(classNames).join(' '), style: { top: slatCoords.computeDateTop(seg.start, date) } }, innerContent)); })); });
         };

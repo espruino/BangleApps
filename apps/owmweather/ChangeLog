@@ -2,3 +2,5 @@
 0.02: Do first update request 5s after boot to boot up faster
 0.03: Fix updating weather too often
 0.04: Minor code improvements
+0.05: Upgrade OWM to One Call API 3.0. Add pressure to weather.json
+0.06: Fix One Call API 3.0 not returning city names, which are required by the weather app

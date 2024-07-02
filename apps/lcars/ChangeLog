@@ -28,3 +28,4 @@
 0.28: Battery Vref implemented correctly.
 0.29: Support fastload.
 0.30: Add many new colors to the settings and allows random colors on startup if enabled.
+0.31: Replace degree symbol in temperature by '.

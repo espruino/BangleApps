@@ -50,3 +50,4 @@
 0.45: Fix new alarm when selectedAlarm is undefined
 0.46: Show alarm groups if the Show Group setting is ON.  Scroll alarms menu back to previous position when getting back to it.
 0.47: Fix wrap around when snoozed through midnight
+0.48: Use datetimeinput for Events, if available. Scroll back when getting out of group.  Menu date format setting for shorter dates on current year.

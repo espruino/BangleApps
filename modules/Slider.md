@@ -18,11 +18,15 @@ Bangle.on("drag", slider.f.dragSlider);
 // Bangle.prependListener("drag", slider.f.dragSlider);
 ```
 
-`callbackFunction` (`cb`) (first argument) determines what `slider` is used for. `slider` will pass two arguments, `mode` and `feedback` (`fb`), into `callbackFunction` (if `slider` is interactive or auto progressing). The different `mode`/`feedback` combinations to expect are:
+`callbackFunction` (`cb`) (first argument) determines what `slider` is used for. `slider` will pass three arguments, `mode`, `feedback` (`fb`) and (if fired from an input event) `event` (`e`), into `callbackFunction` (if `slider` is interactive or auto progressing). The different `mode`/`feedback` combinations to expect are:
 - `"map", o.v.level` | current level when interacting by mapping interface.
 - `"incr", incr` | where `incr` == +/-1, when interacting by incrementing interface.
 - `"remove", o.v.level` | last level when the slider times out.
 - `"auto", o.v.level` | when auto progressing.
+
+The event will be a drag, from the `Bangle.on('drag', ...)` event.
+
+The callback function will always be called for the "final" event, which is when the user lifts their finger from the screen. This can be detected by looking for `e.b == 0`.
 
 `configObject` (`conf`) (second argument, optional) has the following defaults:
 
@@ -91,7 +95,7 @@ slider = require("Slider").create(()=>{}, {autoProgress:true})
       r: 22 }
    }
  }
-> 
+>
 ```
 Tips
 ----

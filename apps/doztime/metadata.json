@@ -2,7 +2,7 @@
   "id": "doztime",
   "name": "Dozenal Digital Time",
   "shortName": "Dozenal Digital",
-  "version": "0.06",
+  "version": "0.07",
   "description": "A dozenal Holocene calendar and dozenal diurnal digital clock",
   "icon": "app.png",
   "type": "clock",

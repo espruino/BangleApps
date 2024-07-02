@@ -125,6 +125,7 @@ exports.create = function(cb, conf) {
         if (o.v.timeoutID) {clearTimeout(o.v.timeoutID); o.v.timeoutID = undefined;}
         if (e.b==0 && !o.v.timeoutID && (o.c.timeout || o.c.timeout===0)) o.v.timeoutID = setTimeout(o.f.remove, 1000*o.c.timeout);
 
+        let cbObj;
         if (useMap && o.f.wasOnIndicator(o.v.exFirst)) { // If draging starts on the indicator, adjust one-to-one.
 
           let input = !o.c.horizontal?
@@ -134,7 +135,7 @@ exports.create = function(cb, conf) {
 
           o.v.level = Math.min(Math.max(input,0),o.c.steps);
 
-          o.v.cbObj = {mode:"map", value:o.v.level};
+          cbObj = {mode:"map", value:o.v.level};
 
         } else if (useIncr) { // Heavily inspired by "updown" mode of setUI.
 
@@ -149,16 +150,16 @@ exports.create = function(cb, conf) {
 
             o.v.level = Math.min(Math.max(o.v.level-incr,0),o.c.steps);
 
-            o.v.cbObj = {mode:"incr", value:incr};
+            cbObj = {mode:"incr", value:incr};
           }
         }
-        if (o.v.cbObj && (o.v.level!==o.v.prevLevel||o.v.level===0||o.v.level===o.c.steps)) {
-          cb(o.v.cbObj.mode, o.v.cbObj.value);
+        if (cbObj && (o.v.level!==o.v.prevLevel||o.v.level===0||o.v.level===o.c.steps||e.b===0)) {
+          cb(cbObj.mode, cbObj.value, e);
           o.f.draw&&o.f.draw(o.v.level);
         }
-        o.v.cbObj = null;
         o.v.prevLevel = o.v.level;
         o.v.ebLast = e.b;
+        if (e.b==0) o.v.dragActive = false;
       }
     };
 

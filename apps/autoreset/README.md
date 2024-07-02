@@ -6,11 +6,11 @@ Sets a timeout to load the clock face. The timeout is stopped and started again 
 
 Install with app loader and Auto Reset will run in background. If you don't interact with the watch it will time out to the clock face after 10 minutes.
 
+Through the settings apps can be black-/whitelisted and the timeout length can be configured.
+
 ## TODO
 
-- Add settings page
-  - set how many minutes the timeout should count down.
-  - whitelist/blacklist for apps.
+- per app specific timeout lengths?
 
 ## Requests
 

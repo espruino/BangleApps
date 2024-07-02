@@ -1,6 +1,6 @@
 { "id": "clkinfosec",
-  "name": "Secondx Clockinfo",
-  "version":"0.01",
+  "name": "Seconds Clockinfo",
+  "version":"0.02",
   "description": "For clocks that display 'clockinfo' (messages that can be cycled through using the clock_info module) this displays the time in seconds (many clocks only display minutes)",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

@@ -6,7 +6,7 @@
   "version":"0.12",
   "icon": "app.png",
   "type": "app",
-  "tags": "tool,activity",
+  "tags": "tool,activity,health",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
   "storage": [

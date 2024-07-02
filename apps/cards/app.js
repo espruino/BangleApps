@@ -82,16 +82,17 @@ function printSquareCode(binary, size) {
   }
 }
 function printLinearCode(binary) {
+  var padding = 5;
   var yFrom = 15;
   var yTo = 28;
-  var width = g.getWidth()/binary.length;
+  var width = (g.getWidth()-(2*padding))/binary.length;
   for(var b = 0; b < binary.length; b++){
     var x = b * width;
     if(binary[b] === "1"){
-      g.setColor(BLACK).fillRect({x:x, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
+      g.setColor(BLACK).fillRect({x:x+padding, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
     }
     else if(binary[b]){
-      g.setColor(WHITE).fillRect({x:x, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
+      g.setColor(WHITE).fillRect({x:x+padding, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
     }
   }
 }
@@ -129,6 +130,42 @@ function showCode(card) {
       g.drawString(card.value, g.getWidth()/2, g.getHeight());
       const codabar = require("cards.codabar.js");
       let code = new codabar(card.value, {});
+      printLinearCode(code.encode().data);
+      break;
+    }
+    case "EAN_8": {
+      g.setFont("Vector:20");
+      g.setFontAlign(0,1).setColor(BLACK);
+      g.drawString(card.value, g.getWidth()/2, g.getHeight());
+      const EAN8 = require("cards.EAN8.js");
+      let code = new EAN8(card.value, {});
+      printLinearCode(code.encode().data);
+      break;
+    }
+    case "EAN_13": {
+      g.setFont("Vector:20");
+      g.setFontAlign(0,1).setColor(BLACK);
+      g.drawString(card.value, g.getWidth()/2, g.getHeight());
+      const EAN13 = require("cards.EAN13.js");
+      let code = new EAN13(card.value, {});
+      printLinearCode(code.encode().data);
+      break;
+    }
+    case "UPC_A": {
+      g.setFont("Vector:20");
+      g.setFontAlign(0,1).setColor(BLACK);
+      g.drawString(card.value, g.getWidth()/2, g.getHeight());
+      const UPC = require("cards.UPC.js");
+      let code = new UPC.UPC(card.value, {});
+      printLinearCode(code.encode().data);
+      break;
+    }
+    case "UPC_E": {
+      g.setFont("Vector:20");
+      g.setFontAlign(0,1).setColor(BLACK);
+      g.drawString(card.value, g.getWidth()/2, g.getHeight());
+      const UPCE = require("cards.UPCE.js");
+      let code = new UPCE(card.value, {});
       printLinearCode(code.encode().data);
       break;
     }

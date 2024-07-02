@@ -57,7 +57,7 @@ function writeSettings() {
 let inMenu = false;
 
 Bangle.on('touch', function (zone, e) {
-  if (!inMenu) {
+  if (!inMenu && e.y > 24) {
     if (drawTimeout) clearTimeout(drawTimeout);
     E.showMenu(menu);
     inMenu = true;
@@ -206,8 +206,24 @@ var menu = {
     setTarget(false);
     updateQueueMillis(settings.displaySeconds);
     draw();
+  },
+  'Set clock as default': function () {
+    setClockAsDefault();
+    E.showAlert("Elapsed Time was set as default").then(function() {
+      E.showMenu();
+      inMenu = false;
+      Bangle.setUI("clock");
+      draw();
+    });
   }
 };
+
+function setClockAsDefault(){
+  let storage = require('Storage');
+  let settings = storage.readJSON('setting.json',true)||{clock:null};
+  settings.clock = "elapsed_t.app.js";
+  storage.writeJSON('setting.json', settings);
+}
 
 function setTarget(set) {
   if (set) {
@@ -276,6 +292,10 @@ function updateQueueMillis(displaySeconds) {
 }
 
 Bangle.on('lock', function (on, reason) {
+  if (inMenu) { // if already in a menu, nothing to do
+    return;
+  }
+
   if (on) { // screen is locked
     temp_displaySeconds = false;
     updateQueueMillis(false);
@@ -326,7 +346,7 @@ function diffToTarget() {
     diff.M = end.getMonth() - start.getMonth();
     diff.D = end.getDate() - start.getDate();
     diff.hh = end.getHours() - start.getHours();
-    diff.mm = end.getMinutes() - start.getMinutes();
+    diff.mm = end.getMinutes() - start.getMinutes() + end.getTimezoneOffset() - start.getTimezoneOffset();
     diff.ss = end.getSeconds() - start.getSeconds();
 
     // Adjust negative differences

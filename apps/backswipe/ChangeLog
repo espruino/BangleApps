@@ -1,3 +1,6 @@
 0.01: New App!
 0.02: Don't fire if the app uses swipes already.
 0.03: Only count defined handlers in the handler array.
+0.04: Fix messages auto opened by `messagegui` could not be blacklisted. Needs
+	a refresh by deselecting and reselecting the "Messages" app throught Back Swipe
+	settings.
