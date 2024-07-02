@@ -106,16 +106,8 @@ let setUI = function() {
     {mode : "updown",
      touch: touchHandler,
      swipe: swipeHandler,
-     btn: {
-          fn: ()=>{
-          load();
-          try{Bangle.buzz(30);}catch(e){}
-          },
-          edge: "falling"
-        },
-     remove : ()=>{
-       widgetUtils.show();
-     },
+     btn: ()=>load(),
+     remove : ()=>widgetUtils.show(),
     },
       ud => {
         if (ud) Bangle.musicControl(ud>0 ? "volumedown" : "volumeup");
