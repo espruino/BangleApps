@@ -8,6 +8,6 @@
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name":"setuichange.app.js","url":"boot.js"}
+    {"name":"setuichange.boot.0.js","url":"boot.js"}
   ]
 }
