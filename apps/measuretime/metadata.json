@@ -1,0 +1,17 @@
+{
+  "id": "measuretime",
+  "name": "Measure Time",
+  "version": "0.1",
+  "description": "Measure Time in a fancy way.",
+  "icon": "small_measuretime.png",
+  "screenshots": [{ "url": "measuretime.png" }],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    { "name": "measuretime.app.js", "url": "measuretime.app.js" },
+    { "name": "measuretime.img", "url": "measuretime-icon.js", "evaluate": true }
+  ]
+}
