@@ -19,7 +19,7 @@
 		return COLORS.low;
 	};
 
-	function draw(_self, uu) {
+	function draw(_self, pwrOverride) {
 		let x = this.x;
 		let	y = this.y;
 		if (x != null && y != null) {
@@ -38,7 +38,7 @@
 			// Show percentage
 			g.setFontAlign(0,0);
 			g.setFont('Vector',16);
-			this.drawText(l, uu);
+			this.drawText(l, pwrOverride);
 		}
 		old_x = this.x;
 		old_y = this.y;
@@ -53,8 +53,8 @@
 	let drawText;
 
 	if(E.getPowerUsage){
-		drawText = function(l, uu) {
-			const u = uu == null ? E.getPowerUsage().total : uu;
+		drawText = function(l, pwrOverride) {
+			const u = pwrOverride == null ? E.getPowerUsage().total : pwrOverride;
 
 			// text colour is based off power usage
 			// colour height is based off time left, higher = more
