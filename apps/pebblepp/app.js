@@ -38,6 +38,8 @@ let draw = function() {
 
   g.reset();
   g.setBgColor(theme.bg).clearRect(0, h2, w, h3);
+  g.setFontLECO1976Regular22().setFontAlign(0, -1);
+  g.setColor(0, 0, 0).drawString(date.getDay() + "." + (date.getMonth() + 1), w / 2, h3 + 5);
   g.setFontLECO1976Regular42().setFontAlign(0, -1);
   g.setColor(theme.fg);
   g.drawString(time, w/2, h2 + 8);
@@ -133,7 +135,7 @@ background.fillRect(Bangle.appRect); // start off with completely clear backgrou
 // contrast bar (top)
 g.setColor(theme.fg).fillRect(0, h2 - 6, w, h2);
 // contrast bar (bottom)
-g.setColor(theme.fg).fillRect(0, h3, w, h3 + 6);
+g.setColor(theme.fg).fillRect(w / 2 - 30, h3, w / 2 + 30, h);
 
 draw();
 }
