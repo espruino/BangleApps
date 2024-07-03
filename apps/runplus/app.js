@@ -143,7 +143,7 @@ function zoom(statID) {
       .clearRect(R)
       .setFontAlign(0, 0);
 
-    layout.render(layout.bottom);
+    tick();
 
     const value = exs.state.active ? stat.getString() : "____";
 
@@ -217,6 +217,20 @@ Bangle.on("GPS", function(fix) {
   }
 });
 
+const tick = () => {
+  layout.clock.label = locale.time(new Date(),1);
+  switch (screen) {
+    case "main":
+      layout.render();
+      break;
+    case "zoom":
+      layout.render(layout.bottom);
+      break;
+    case "menu":
+      break;
+  }
+};
+
 function setScreen(to) {
   if (screen === "karvonen") {
     require("runplus_karvonen").stop();
@@ -235,12 +249,8 @@ function setScreen(to) {
       layout.render();
       layout.lazy = true;
       // We always call ourselves once a second to update
-      if (!runInterval){
-        runInterval = setInterval(function() {
-          layout.clock.label = locale.time(new Date(),1);
-          if (screen !== "menu") layout.render();
-        }, 1000);
-      }
+      if (!runInterval)
+        runInterval = setInterval(tick, 1000);
       break;
 
     case "karvonen":
