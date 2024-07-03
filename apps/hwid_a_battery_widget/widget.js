@@ -5,6 +5,7 @@
 	var old_x = this.x;
 	var old_y = this.y;
 
+
 	let COLORS = {
 		'white': g.theme.dark ? "#000" : "#fff",
 		'black': g.theme.dark ? "#fff" : "#000",
@@ -20,77 +21,36 @@
 	};
 
 	function draw() {
-		let x = this.x;
-		let	y = this.y;
-		if (x != null && y != null) {
-			g.reset();
-			g.setBgColor(COLORS.white);
-			g.clearRect(old_x, old_y, old_x + width, old_y + height - 1);
+	var s = width - 1;
+	var x = this.x;
+	var	y = this.y;
+	if (x !== undefined && y !== undefined) {
+		g.setBgColor(COLORS.white);
+		g.clearRect(old_x, old_y, old_x + width, old_y + height);
 
-			const l = E.getBattery();
+		const l = E.getBattery(); // debug: Math.floor(Math.random() * 101);
+		let xl = x+4+l*(s-12)/100;
 
-			// Charging bar
-			g.setColor(levelColor(l));
-			const xl = x+1+(width - 1)*l/100;
-			g.fillRect(x+1,y+height-3,xl,y+height-1);
+		g.setColor(levelColor(l));
+		g.fillRect(x+4,y+14+3,xl,y+16+3); // charging bar
+		// Show percentage
+		g.setColor(COLORS.black);
+		g.setFontAlign(0,0);
+		g.setFont('Vector',16);
+		g.drawString(l, x + 14, y + 10);
 
-			// Show percentage
-			g.setFontAlign(0,0);
-			g.setFont('Vector',16);
-			this.drawText(l);
-		}
+	}
 		old_x = this.x;
 		old_y = this.y;
 
-		if (Bangle.isCharging()) changeInterval(id, intervalHigh);
-		else changeInterval(id, intervalLow);
+	if (Bangle.isCharging()) changeInterval(id, intervalHigh);
+		else					 changeInterval(id, intervalLow);
 	}
 
-	const drawString = function(l) {
-		g.drawString(l, this.x + 14, this.y + 10);
-	};
-	let drawText;
-
-	if(E.getPowerUsage){
-		drawText = function(batt) {
-			const pwr = E.getPowerUsage();
-			let total = 0;
-			for(const key in pwr.device){
-				if(!/^(LCD|LED)/.test(key))
-					total += pwr.device[key];
-			}
-
-			const hrs = 200000 / total;
-			const days = hrs / 24;
-			const txt = days >= 1 ? `${Math.round(days)}d` : `${Math.round(hrs)}h`;
-
-			// draw time left, then shade it based on batt %
-			const th = 14;
-			g.setColor(COLORS.black);
-			g.setClipRect(this.x, this.y, this.x + width, this.y + th);
-			drawString.call(this, txt);
-
-			g.setClipRect(this.x, this.y + th * (1 - batt / 100), this.x + width, this.y + th);
-			if(total >= 23000)
-				g.setColor("#f00"); // red, e.g. GPS ~20k
-			else if(total > 2000)
-				g.setColor("#fc0"); // yellow, e.g. CPU ~1k, HRM ~700
-			else
-				g.setColor("#0f0"); // green: ok
-			drawString.call(this, txt);
-		};
-	}else{
-		drawText = function(batt) {
-			g.setColor(COLORS.black);
-			drawString.call(this, batt);
-		};
-	}
-
-	const d = () => WIDGETS["hwid_a_battery_widget"].draw();
-	Bangle.on('charging', d);
-	var id = setInterval(d, intervalLow);
+	Bangle.on('charging',function(charging) { draw(); });
+	var id = setInterval(()=>WIDGETS["hwid_a_battery_widget"].draw(), intervalLow);
 	var width = 30;
-	var height = 24;
+	var height = 19;
 
-	WIDGETS["hwid_a_battery_widget"]={area:"tr",width,draw,drawText};
+	WIDGETS["hwid_a_battery_widget"]={area:"tr",width,draw:draw};
 })();
