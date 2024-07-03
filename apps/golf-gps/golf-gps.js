@@ -241,7 +241,7 @@ function finishGame() {
   let saveFileContents = ' ';
   let parTotal = 0;
 
-  Bangle.setGPSPower(0);
+  Bangle.setGPSPower(0, "golf-gps");
   const saveFilename = `Scorecard-${date.getFullYear()}${zeroPad(date.getMonth() + 1, 2)}${zeroPad(date.getDate(), 2)}`;
   const saveFile = require("Storage").open(saveFilename, "w");
   for (let i = 1; i < 19; i++) {
