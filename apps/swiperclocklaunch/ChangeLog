@@ -4,3 +4,4 @@
 0.04: Update to work with new 'fast switch' clock->launcher functionality
 0.05: Keep track of event listeners we "overwrite", and remove them at the start of setUI
 0.06: Handle apps that call setUI({}) to reset
+0.07: Use a more reliable method of detecting a clock
