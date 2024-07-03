@@ -1,4 +1,4 @@
-(function(mode, cb) {
+Bangle.setUI = (function(mode, cb) {
   var options = {};
   if ("object"==typeof mode) {
     options = mode;
