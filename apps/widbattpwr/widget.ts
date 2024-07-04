@@ -3,6 +3,7 @@
 	const intervalHigh = 2000;
 	const width = 30;
 	const height = 24;
+	let showPct = false;
 
 	const powerColour = (pwr: number) =>
 		pwr >= 23000
@@ -42,9 +43,14 @@
 		g.setFontAlign(0, 0);
 		g.setFont("Vector", 16);
 		{
-			const hrs = 200000 / usage;
-			const days = hrs / 24;
-			const txt = days >= 1 ? `${Math.round(Math.min(days, 99))}d` : `${Math.round(hrs)}h`;
+			let txt;
+			if(showPct){
+				txt = `${batt}%`;
+			}else{
+				const hrs = 200000 / usage;
+				const days = hrs / 24;
+				txt = days >= 1 ? `${Math.round(Math.min(days, 99))}d` : `${Math.round(hrs)}h`;
+			}
 
 			// draw time remaining, then shade it based on batt %
 			const txth = 14;
@@ -65,6 +71,24 @@
 
 	Bangle.on("charging", charging => {
 		changeInterval(id, charging ? intervalHigh : intervalLow);
+	});
+
+	Bangle.on("touch", (_btn, xy) => {
+		if(WIDGETS["back"] || !xy) return;
+
+		const oversize = 5;
+		const w = WIDGETS["battpwr"]!;
+		const { x, y } = xy;
+
+		if(w.x! - oversize <= x && x < w.x! + width + oversize
+		&& w.y! - oversize <= y && y < w.y! + height + oversize)
+		{
+			E.stopEventPropagation && E.stopEventPropagation();
+
+			showPct = true;
+			setTimeout(() => (showPct = false, w.draw(w)), 1000);
+			w.draw(w);
+		}
 	});
 
 	WIDGETS["battpwr"] = { area: "tr", width, draw };

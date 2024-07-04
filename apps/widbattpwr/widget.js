@@ -3,6 +3,7 @@
     var intervalHigh = 2000;
     var width = 30;
     var height = 24;
+    var showPct = false;
     var powerColour = function (pwr) {
         return pwr >= 23000
             ? "#f00"
@@ -37,9 +38,15 @@
         g.setFontAlign(0, 0);
         g.setFont("Vector", 16);
         {
-            var hrs = 200000 / usage;
-            var days = hrs / 24;
-            var txt = days >= 1 ? "".concat(Math.round(Math.min(days, 99)), "d") : "".concat(Math.round(hrs), "h");
+            var txt = void 0;
+            if (showPct) {
+                txt = "".concat(batt, "%");
+            }
+            else {
+                var hrs = 200000 / usage;
+                var days = hrs / 24;
+                txt = days >= 1 ? "".concat(Math.round(Math.min(days, 99)), "d") : "".concat(Math.round(hrs), "h");
+            }
             var txth = 14;
             g.setColor(g.theme.fg);
             g.setClipRect(x, y, x + width, y + txth);
@@ -55,6 +62,20 @@
     }, intervalLow);
     Bangle.on("charging", function (charging) {
         changeInterval(id, charging ? intervalHigh : intervalLow);
+    });
+    Bangle.on("touch", function (_btn, xy) {
+        if (WIDGETS["back"] || !xy)
+            return;
+        var oversize = 5;
+        var w = WIDGETS["battpwr"];
+        var x = xy.x, y = xy.y;
+        if (w.x - oversize <= x && x < w.x + width + oversize
+            && w.y - oversize <= y && y < w.y + height + oversize) {
+            E.stopEventPropagation && E.stopEventPropagation();
+            showPct = true;
+            setTimeout(function () { return (showPct = false, w.draw(w)); }, 1000);
+            w.draw(w);
+        }
     });
     WIDGETS["battpwr"] = { area: "tr", width: width, draw: draw };
 })();
