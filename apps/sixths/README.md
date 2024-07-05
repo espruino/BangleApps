@@ -83,3 +83,17 @@ battery low message
 *) show something more reasonable than (NOTEHERE).
 
 *) hide messages after timeout.
+
+*) show route lengths after the fact
+
+*) implement longer recording than "G".
+
+*) Probably T should be G.
+
+*) sum gps distances for a day
+
+*) allow setting up home altitude, or at least disable auto-calibration
+
+*) show time-to-sunset / sunrise?
+
+*) one-second updates when gps is active
