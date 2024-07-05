@@ -9,11 +9,12 @@ var accelz = new Int16Array(SAMPLES); // Into clock face
 var timestep = new Int16Array(SAMPLES); // Into clock face
 var accelIdx = 0;
 var lastAccel;
+var timestep_start = 0;
 
 function accelHandlerTrigger(a) {
     "ram"
     if (a.mag * 2 > THRESH) { // *2 because 8g mode
-        tStart = getTime();
+        timestep_start = getTime();
         g.drawString("Recording", g.getWidth() / 2, g.getHeight() / 2, 1);
         Bangle.removeListener('accel', accelHandlerTrigger);
         Bangle.on('accel', accelHandlerRecord);
@@ -31,7 +32,7 @@ function accelHandlerRecord(a) {
     accelx[i] = a.x * SCALE * 2; // *2 because of 8g mode
     accely[i] = -a.y * SCALE * 2;
     accelz[i] = a.z * SCALE * 2;
-    timestep[i] = (getTime() - tStart) * 1000;
+    timestep[i] = (getTime() - timestep_start) * 1000;
     if (accelIdx >= SAMPLES) recordStop();
 }
 
@@ -94,8 +95,7 @@ function showData() {
     var maxAccel = 0;
     var tStart = SAMPLES,
         tEnd = 0;
-    var vel = 0,
-        maxVel = 0;
+    var maxVel = 0;
     for (var i = 0; i < SAMPLES; i++) {
         var a = Math.abs(accely[i] / SCALE);
         let a_yz = Math.sqrt(Math.pow(accely[i] / SCALE, 2) + Math.pow(accelz[i] / SCALE, 2));
@@ -116,7 +116,7 @@ function showData() {
     g.setFont("6x8").setFontAlign(0, 0, 1);
     g.drawString("FINISH", g.getWidth() - 4, g.getHeight() / 2);
     setWatch(function() {
-        showMenu();
+        showSaveMenu();
     }, global.BTN2 ? BTN2 : BTN);
 }
 
