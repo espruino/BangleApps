@@ -17,6 +17,9 @@ var currentHole = 1,
   score = Array(19).fill(0),
   playON = false;
 
+var fileIndx;
+var scoreFiles;
+
 require("Font7x11Numeric7Seg").add(Graphics);
 
 Graphics.prototype.setFontDroidSansMono52 = function() {
@@ -106,7 +109,7 @@ function mainMenu() {
 }
 
 function browseScore() {
-  const scoreFiles = require("Storage").list(/^Scorecard-/);
+  scoreFiles = require("Storage").list(/^Scorecard-/);
   if (scoreFiles.length === 0) {
     E.showPrompt("No score file found.\n\nYou need to play at least a game.", {
       title: `Error`,
@@ -117,26 +120,26 @@ function browseScore() {
       if (choice === 1) load();
     });
   }
-  let fileIndx = scoreFiles.length - 1;
-
-  function browseFiles() {
-    const browsefile = require("Storage").open(scoreFiles[fileIndx].substring(0, 18), "r");
-    const l = browsefile.read(80);
-
-    E.showPrompt(l, {
-      buttons: {
-        "<<": 1,
-        ">>": 2,
-        "End": 3
-      }
-    }).then(choice => {
-      if (choice === 1) fileIndx = (fileIndx - 1 + scoreFiles.length) % scoreFiles.length;
-      else if (choice === 2) fileIndx = (fileIndx + 1) % scoreFiles.length;
-      else if (choice === 3) load();
-      browseFiles();
-    });
-  }
+  fileIndx = scoreFiles.length - 1;
   browseFiles();
+}
+
+function browseFiles() {
+  const browsefile = require("Storage").open(scoreFiles[fileIndx].substring(0, 18), "r");
+  const l = browsefile.read(80);
+
+  E.showPrompt(l, {
+    buttons: {
+      "<<": 1,
+      ">>": 2,
+      "End": 3
+    }
+  }).then(choice => {
+    if (choice === 1) fileIndx = (fileIndx - 1 + scoreFiles.length) % scoreFiles.length;
+    else if (choice === 2) fileIndx = (fileIndx + 1) % scoreFiles.length;
+    else if (choice === 3) load();
+    browseFiles();
+  });
 }
 
 function fixGPS() {
