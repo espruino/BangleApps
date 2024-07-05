@@ -1,3 +1,4 @@
+{
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
@@ -984,3 +985,4 @@ function showTouchscreenCalibration() {
 }
 
 showMainMenu();
+}

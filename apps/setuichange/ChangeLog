@@ -1,0 +1,3 @@
+0.01: New App!
+0.02: Fix case where we tried to push to Bangle.btnWatches but it wasn't
+	defined.

@@ -33,3 +33,9 @@ The app functionality is inspired by the [Quiet Mode Schedule and Widget](https:
 -transfer of configuration into settings, so app can be used as a shortcut to switch theme.
 
 -feedback is always welcome
+
+#### Attributions
+The app icon is downloaded from [https://icons8.com](https://icons8.com).
+
+#### License
+[MIT License](LICENSE)
