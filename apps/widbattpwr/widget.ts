@@ -47,7 +47,8 @@
 			if(showPct){
 				txt = `${batt}%`;
 			}else{
-				const hrs = 200000 / usage;
+				// 175mAh, scaled based on battery (batt/100), scaled down based on usage
+				const hrs = 175000 * batt / (100 * usage);
 				const days = hrs / 24;
 				txt = days >= 1 ? `${Math.round(Math.min(days, 99))}d` : `${Math.round(hrs)}h`;
 			}

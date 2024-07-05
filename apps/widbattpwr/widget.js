@@ -43,7 +43,7 @@
                 txt = "".concat(batt, "%");
             }
             else {
-                var hrs = 200000 / usage;
+                var hrs = 175000 * batt / (100 * usage);
                 var days = hrs / 24;
                 txt = days >= 1 ? "".concat(Math.round(Math.min(days, 99)), "d") : "".concat(Math.round(hrs), "h");
             }
