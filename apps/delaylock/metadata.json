@@ -1,0 +1,13 @@
+{ "id": "delaylock",
+  "name": "Delayed Locking",
+  "version":"0.01",
+  "description": "Delay the locking of the screen to 5 seconds after the backlight turns off.",
+  "icon": "app.png",
+  "tags": "settings, configuration, backlight, touchscreen, screen",
+  "type": "bootloader",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"delaylock.boot.js","url":"boot.js"}
+  ]
+}
