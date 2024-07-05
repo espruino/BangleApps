@@ -1,7 +1,7 @@
 { "id": "bthome",
   "name": "BTHome",
   "shortName":"BTHome",
-  "version":"0.05",
+  "version":"0.06",
   "description": "Allow your Bangle to advertise with BTHome and send events to Home Assistant via Bluetooth",
   "icon": "icon.png",
   "type": "app",

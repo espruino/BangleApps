@@ -4,3 +4,4 @@
       Set 'n' for buttons in Bangle.btHomeData correctly (avoids adding extra buttons on end of advertising)
 0.04: Fix duplicate button on edit->save
 0.05: Use the bleAdvert module
+0.06: button number can't be 0. Now generates number automatically 

@@ -11,10 +11,24 @@
     require("Storage").writeJSON("bthome.json",settings)
   }
 
+  function getNewIdNumber(){
+    var id_start = 1;
+    var select = false;
+    while(!select){
+      select = true;
+      settings.buttons.forEach((button, idx) => {
+        if (id_start == button.n){
+          id_start++;
+          select = false;
+        }
+      });
+    }
+    return id_start;
+  }
+
   function showButtonMenu(button, isNew) {
-    var isNew = false;
     if (!button) {
-      button = {name:"home", icon:"home", n:0, v:"press"};
+      button = {name:"home", icon:"home", n:getNewIdNumber(), v:"press"};
       isNew = true;
     }
     var actions = ["press","double_press","triple_press","long_press","long_double_press","long_triple_press"];
@@ -50,10 +64,6 @@
         value : Math.max(0,actions.indexOf(button.v)), min:0, max:actions.length-1,
         format : v => actions[v],
         onchange : v => button.v=actions[v]
-      },
-      /*LANG*/"Button #" : {
-        value : button.n, min:0, max:3,
-        onchange : v => button.n=v
       },
       /*LANG*/"Save" : () => {
         if (isNew) settings.buttons.push(button);
