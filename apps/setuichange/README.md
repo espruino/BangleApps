@@ -17,7 +17,7 @@ Just install it and it modifies setUI at boot time.
 ## Requests
 
 Please report your experience and thoughts on this issue:
-[ Discussion: HW buttons should act on 'rising' edge #3435 ](https://github.com/espruino/BangleApps/issues/3435) or on the related forum conversation (Link will be added when the conversation has opened).
+[ Discussion: HW buttons should act on 'rising' edge #3435 ](https://github.com/espruino/BangleApps/issues/3435) or on the related forum conversation [Making Bangle.js more responsive](https://forum.espruino.com/conversations/397606/).
 
 ## Creator
 
