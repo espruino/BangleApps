@@ -72,7 +72,7 @@ Bangle.setUI = (function(mode, cb) {
     ];
   } else if (mode=="clock") {
     Bangle.CLOCK=1;
-    Bangle.btnWatches = [
+    if (!(options.btn||options.btnRelease)) Bangle.btnWatches = [
       setWatch(Bangle.showLauncher, BTN1, {repeat:1,edge:"rising"})
     ];
   } else if (mode=="clockupdown") {
@@ -81,11 +81,11 @@ Bangle.setUI = (function(mode, cb) {
       if (e.x < 120) return;
       b();cb((e.y > 88) ? 1 : -1);
     };
-    Bangle.btnWatches = [
+    if (!(options.btn||options.btnRelease)) Bangle.btnWatches = [
       setWatch(Bangle.showLauncher, BTN1, {repeat:1,edge:"rising"})
     ];
   } else if (mode=="custom") {
-    if (options.clock) {
+    if (options.clock && !(options.btn||options.btnRelease)) {
       Bangle.btnWatches = [
         setWatch(Bangle.showLauncher, BTN1, {repeat:1,edge:"rising"})
       ];
