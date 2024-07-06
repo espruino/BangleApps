@@ -61,6 +61,8 @@
      "url":"widbt_notify.json"},
     {"name":"recorder.json",
      "url":"recorder.json"},
+    {"name":"edgeclk.settings.json",
+     "url":"edgeclk.settings.json"},
     {"name":"setting.json",
      "url":"setting.json"}
   ]
