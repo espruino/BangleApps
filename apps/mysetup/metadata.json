@@ -1,6 +1,6 @@
 { "id": "mysetup",
   "name": "My Setup",
-  "version":"0.02",
+  "version":"0.03",
   "description": "Setup the Bangle.js watch as I want it.",
   "icon": "app.png",
   "type": "settings",
@@ -34,15 +34,14 @@
     "recorder":"app",
     "bthrm":"app",
     "fastload":"app",
-    "fastreset":"app",
     "agenda":"app",
     "edgeclk":"app",
-    "activityreminder":"app",
     "twenties":"app",
     "autoreset":"app",
     "chargent":"app",
     "setting":"app",
-    "boot":"app"
+    "boot":"app",
+    "setuichange":"app"
   },
   "readme": "README.md",
   "storage": [
