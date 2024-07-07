@@ -47,7 +47,7 @@
         save();
       },
     },
-    'Expected Battery Life In Hours': {
+    'Expected Battery Life In Days Not Percentage': {
       value: !!s.batt_hours,
       onchange: v => {
         s.batt_hours = v;
