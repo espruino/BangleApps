@@ -131,7 +131,6 @@
 // ===================================================
 
       function jsFromBase64(b64) {
-        var bin = atob(b64);
         var chunkSize = 128;
         var js = "\x10Bangle.setGPSPower(1,'agps');\n"; // turn GPS on
         if (isB1) { // UBLOX
@@ -157,9 +156,9 @@
           // or AGPS.zip uses AID-INI (0x0B 0x01)
         }
 
-        for (var i=0;i<bin.length;i+=chunkSize) {
-          var chunk = bin.substr(i,chunkSize);
-          js += `\x10Serial1.write(atob("${btoa(chunk)}"))\n`;
+        for (var i=0;i<b64.length;i+=chunkSize) {
+          var chunk = b64.substr(i,chunkSize);
+          js += `\x10Serial1.write(atob("${chunk}"))\n`;
         }
         js += "\x10setTimeout(() => Bangle.setGPSPower(0,'agps'), 1000);\n"; // turn GPS off after a delay
         return js;
