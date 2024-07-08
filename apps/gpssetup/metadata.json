@@ -6,7 +6,7 @@
   "description": "Configure the GPS power options and store them in the GPS nvram",
   "icon": "gpssetup.png",
   "tags": "gps,tools,outdoors",
-  "supports": ["BANGLEJS"],
+  "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"gpssetup","url":"gpssetup.js"},

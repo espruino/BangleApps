@@ -18,8 +18,8 @@ I have used Rebble clock since I bought my Banglejs 2, and wanted to make my own
 - Update time and status every 1 minute
 
 ## Screenshots
-![](jclock_screenshot_no_BT.png)
-![](jclock_screenshot_BT.png)
+![](screenshot_noBT.png)
+![](screenshot_BT.png)
 
 ## Creator
 
