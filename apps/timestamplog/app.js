@@ -1,45 +1,15 @@
-Layout = require('Layout');
-locale = require('locale');
-storage = require('Storage');
+const Layout = require('Layout');
+const locale = require('locale');
+const storage = require('Storage');
 
-// Storage filenames
-const LOG_FILENAME = 'timestamplog.json';
-const SETTINGS_FILENAME = 'timestamplog.settings.json';
+const tsl = require('timestamplog');
+
 
 // Min number of pixels of movement to recognize a touchscreen drag/swipe
 const DRAG_THRESHOLD = 30;
 
 // Width of scroll indicators
 const SCROLL_BAR_WIDTH = 12;
-
-
-// Settings
-
-const SETTINGS = Object.assign({
-  logFont: '12x20',
-  logFontHSize: 1,
-  logFontVSize: 1,
-  maxLogLength: 30,
-  rotateLog: false,
-  buttonAction: 'Log time',
-}, storage.readJSON(SETTINGS_FILENAME, true) || {});
-
-const SETTINGS_BUTTON_ACTION = [
-  'Log time',
-  'Show menu',
-  'Quit app',
-  'Do nothing',
-];
-
-function saveSettings() {
-  if (!storage.writeJSON(SETTINGS_FILENAME, SETTINGS)) {
-    E.showAlert('Trouble saving settings');
-  }
-}
-
-function fontSpec(name, hsize, vsize) {
-  return name + ':' + hsize + 'x' + vsize;
-}
 
 
 // Fetch a stringified image
@@ -88,120 +58,13 @@ function getIcon(id) {
 }
 
 
-//// Data models //////////////////////////////////
-
-// High-level timestamp log object that provides an interface to the
-// UI for managing log entries and automatically loading/saving
-// changes to flash storage.
-class StampLog {
-  constructor(filename, maxLength) {
-    // Name of file to save log to
-    this.filename = filename;
-    // Maximum entries for log before old entries are overwritten with
-    // newer ones
-    this.maxLength = maxLength;
-
-    // `true` when we have changes that need to be saved
-    this.isDirty = false;
-    // Wait at most this many msec upon first data change before
-    // saving (this is to avoid excessive writes to flash if several
-    // changes happen quickly; we wait a little bit so they can be
-    // rolled into a single write)
-    this.saveTimeout = 30000;
-    // setTimeout ID for scheduled save job
-    this.saveId = null;
-    // Underlying raw log data object. Outside this class it's
-    // recommended to use only the class methods to change it rather
-    // than modifying the object directly to ensure that changes are
-    // recognized and saved to storage.
-    this.log = this.load();
-  }
-
-  // Return the version of the log data that is currently in storage
-  load() {
-    let log = storage.readJSON(this.filename, true);
-    if (!log) log = [];
-    // Convert stringified datetimes back into Date objects
-    for (let logEntry of log) {
-      logEntry.stamp = new Date(logEntry.stamp);
-    }
-    return log;
-  }
-
-  // Write current log data to storage if anything needs to be saved
-  save() {
-    // Cancel any pending scheduled calls to save()
-    if (this.saveId) {
-      clearTimeout(this.saveId);
-      this.saveId = null;
-    }
-
-    if (this.isDirty) {
-      let logToSave = [];
-      for (let logEntry of this.log) {
-        // Serialize each Date object into an ISO string before saving
-        let newEntry = Object.assign({}, logEntry);
-        newEntry.stamp = logEntry.stamp.toISOString();
-        logToSave.push(newEntry);
-      }
-
-      if (storage.writeJSON(this.filename, logToSave)) {
-        console.log('stamplog: save to storage completed');
-        this.isDirty = false;
-      } else {
-        console.log('stamplog: save to storage FAILED');
-        this.emit('saveError');
-      }
-    } else {
-      console.log('stamplog: skipping save to storage because no changes made');
-    }
-  }
-
-  // Mark log as needing to be (re)written to storage
-  setDirty() {
-    this.isDirty = true;
-    if (!this.saveId) {
-      this.saveId = setTimeout(this.save.bind(this), this.saveTimeout);
-    }
-  }
-
-  // Add a timestamp for the current time to the end of the log
-  addEntry() {
-    // If log full, purge an old entry to make room for new one
-    if (this.maxLength) {
-      while (this.log.length + 1 > this.maxLength) {
-        this.log.shift();
-      }
-    }
-    // Add new entry
-    this.log.push({
-      stamp: new Date()
-    });
-    this.setDirty();
-  }
-
-  // Delete the log objects given in the array `entries` from the log
-  deleteEntries(entries) {
-    this.log = this.log.filter(entry => !entries.includes(entry));
-    this.setDirty();
-  }
-
-  // Does the log currently contain the maximum possible number of entries?
-  isFull() {
-    return this.log.length >= this.maxLength;
-  }
-}
-
-
-//// UI ///////////////////////////////////////////
-
 // UI layout render callback for log entries
 function renderLogItem(elem) {
   if (elem.item) {
     g.setColor(g.theme.bg)
      .fillRect(elem.x, elem.y, elem.x + elem.w - 1, elem.y + elem.h - 1)
-     .setFont(fontSpec(SETTINGS.logFont,
-                       SETTINGS.logFontHSize, SETTINGS.logFontVSize))
+     .setFont(tsl.fontSpec(tsl.SETTINGS.logFont,
+                       tsl.SETTINGS.logFontHSize, tsl.SETTINGS.logFontVSize))
      .setFontAlign(-1, -1)
      .setColor(g.theme.fg)
      .drawLine(elem.x, elem.y, elem.x + elem.w - 1, elem.y)
@@ -254,9 +117,7 @@ function renderScrollBar(elem, scroll) {
 // Main app screen interface, launched by calling start()
 class MainScreen {
 
-  constructor(stampLog) {
-    this.stampLog = stampLog;
-
+  constructor() {
     // Values set up by start()
     this.itemsPerPage = null;
     this.scrollPos = null;
@@ -320,7 +181,7 @@ class MainScreen {
             {type: 'btn', font: '6x8:2', fillx: 1, label: '+ XX:XX', id: 'addBtn',
              cb: this.addTimestamp.bind(this)},
             {type: 'btn', font: '6x8:2', label: getIcon('menu'), id: 'menuBtn',
-             cb: launchSettingsMenu},
+             cb: () => launchSettingsMenu(returnFromSettings)},
           ],
          },
        ],
@@ -330,8 +191,8 @@ class MainScreen {
     // Calculate how many log items per page we have space to display
     layout.update();
     let availableHeight = layout.placeholder.h;
-    g.setFont(fontSpec(SETTINGS.logFont,
-                       SETTINGS.logFontHSize, SETTINGS.logFontVSize));
+    g.setFont(tsl.fontSpec(tsl.SETTINGS.logFont,
+                       tsl.SETTINGS.logFontHSize, tsl.SETTINGS.logFontVSize));
     let logItemHeight = g.getFontHeight() * 2;
     this.itemsPerPage = Math.max(1,
                                  Math.floor(availableHeight / logItemHeight));
@@ -357,7 +218,7 @@ class MainScreen {
       let logIdx = this.scrollPos - this.itemsPerPage;
       for (let elem of layLogItems.c) {
         logIdx++;
-        elem.item = this.stampLog.log[logIdx];
+        elem.item = stampLog.log[logIdx];
         elem.itemIdx = logIdx;
       }
       this.layout.render(layLogItems);
@@ -367,7 +228,7 @@ class MainScreen {
     if (!item || item == 'buttons') {
       let addBtn = this.layout.addBtn;
 
-      if (!SETTINGS.rotateLog && this.stampLog.isFull()) {
+      if (!tsl.SETTINGS.rotateLog && stampLog.isFull()) {
         // Dimmed appearance for unselectable button
         addBtn.btnFaceCol = g.blendColor(g.theme.bg2, g.theme.bg, 0.5);
         addBtn.btnBorderCol = g.blendColor(g.theme.fg2, g.theme.bg, 0.5);
@@ -433,7 +294,7 @@ class MainScreen {
             logUIObj.x <= xy.x && xy.x < logUIObj.x + logUIObj.w &&
             logUIObj.y <= xy.y && xy.y < logUIObj.y + logUIObj.h &&
             logUIObj.item) {
-          switchUI(new LogEntryScreen(this.stampLog, logUIObj.itemIdx));
+          switchUI(new LogEntryScreen(stampLog, logUIObj.itemIdx));
           break;
         }
       }
@@ -443,14 +304,14 @@ class MainScreen {
     Bangle.on('touch', this.listeners.touch);
 
     function buttonHandler() {
-      let act = SETTINGS.buttonAction;
+      let act = tsl.SETTINGS.buttonAction;
       if (act == 'Log time') {
         if (currentUI != mainUI) {
           switchUI(mainUI);
         }
         mainUI.addTimestamp();
-      } else if (act == 'Show menu') {
-        launchSettingsMenu();
+      } else if (act == 'Open settings') {
+        launchSettingsMenu(returnFromSettings);
       } else if (act == 'Quit app') {
         Bangle.showClock();
       }
@@ -462,8 +323,8 @@ class MainScreen {
 
   // Add current timestamp to log if possible and update UI display
   addTimestamp() {
-    if (SETTINGS.rotateLog || !this.stampLog.isFull()) {
-      this.stampLog.addEntry();
+    if (tsl.SETTINGS.rotateLog || !stampLog.isFull()) {
+      stampLog.addEntry();
       this.scroll('b');
       this.render('buttons');
     }
@@ -473,8 +334,8 @@ class MainScreen {
   scrollInfo() {
     return {
       pos: this.scrollPos,
-      min: (this.stampLog.log.length - 1) % this.itemsPerPage,
-      max: this.stampLog.log.length - 1,
+      min: (stampLog.log.length - 1) % this.itemsPerPage,
+      max: stampLog.log.length - 1,
       itemsPerPage: this.itemsPerPage
     };
   }
@@ -524,12 +385,12 @@ class MainScreen {
 class LogEntryScreen {
 
   constructor(stampLog, logIdx) {
-    this.stampLog = stampLog;
+    stampLog = stampLog;
     this.logIdx = logIdx;
     this.logItem = stampLog.log[logIdx];
 
-    this.defaultFont = fontSpec(
-      SETTINGS.logFont, SETTINGS.logFontHSize, SETTINGS.logFontVSize);
+    this.defaultFont = tsl.fontSpec(
+      tsl.SETTINGS.logFont, tsl.SETTINGS.logFontHSize, tsl.SETTINGS.logFontVSize);
   }
 
   start() {
@@ -577,7 +438,7 @@ class LogEntryScreen {
   }
 
   refresh() {
-    this.logItem = this.stampLog.log[this.logIdx];
+    this.logItem = stampLog.log[this.logIdx];
     this.layout.date.label = locale.date(this.logItem.stamp, 1);
     this.layout.time.label = locale.time(this.logItem.stamp).trim();
     this.layout.update();
@@ -585,22 +446,22 @@ class LogEntryScreen {
   }
 
   prevLogItem() {
-    this.logIdx = this.logIdx ? this.logIdx-1 : this.stampLog.log.length-1;
+    this.logIdx = this.logIdx ? this.logIdx-1 : stampLog.log.length-1;
     this.refresh();
   }
 
   nextLogItem() {
-    this.logIdx = this.logIdx == this.stampLog.log.length-1 ? 0 : this.logIdx+1;
+    this.logIdx = this.logIdx == stampLog.log.length-1 ? 0 : this.logIdx+1;
     this.refresh();
   }
 
   delLogItem() {
-    this.stampLog.deleteEntries([this.logItem]);
-    if (!this.stampLog.log.length) {
+    stampLog.deleteEntries([this.logItem]);
+    if (!stampLog.log.length) {
       this.back();
       return;
-    } else if (this.logIdx > this.stampLog.log.length - 1) {
-      this.logIdx = this.stampLog.log.length - 1;
+    } else if (this.logIdx > stampLog.log.length - 1) {
+      this.logIdx = stampLog.log.length - 1;
     }
 
     // Create a brief “blink” on the screen to provide user feedback
@@ -612,104 +473,10 @@ class LogEntryScreen {
 }
 
 
-function launchSettingsMenu() {
-  const fonts = g.getFonts();
-
-  function topMenu() {
-    E.showMenu({
-      '': {
-        title: 'Stamplog',
-        back: endMenu,
-      },
-      'Log': logMenu,
-      'Appearance': appearanceMenu,
-      'Button': {
-        value: SETTINGS_BUTTON_ACTION.indexOf(SETTINGS.buttonAction),
-        min: 0, max: SETTINGS_BUTTON_ACTION.length - 1,
-        format: v => SETTINGS_BUTTON_ACTION[v],
-        onchange: v => {
-          SETTINGS.buttonAction = SETTINGS_BUTTON_ACTION[v];
-        },
-      },
-    });
-  }
-
-  function logMenu() {
-    E.showMenu({
-      '': {
-        title: 'Log',
-        back: topMenu,
-      },
-      'Max entries': {
-        value: SETTINGS.maxLogLength,
-        min: 5, max: 100, step: 5,
-        onchange: v => {
-          SETTINGS.maxLogLength = v;
-          stampLog.maxLength = v;
-        }
-      },
-      'Auto-delete oldest': {
-        value: SETTINGS.rotateLog,
-        onchange: v => {
-          SETTINGS.rotateLog = !SETTINGS.rotateLog;
-        }
-      },
-      'Clear log': clearLogPrompt,
-    });
-  }
-
-  function appearanceMenu() {
-    E.showMenu({
-      '': {
-        title: 'Appearance',
-        back: topMenu,
-      },
-      'Log font': {
-        value: fonts.indexOf(SETTINGS.logFont),
-        min: 0, max: fonts.length - 1,
-        format: v => fonts[v],
-        onchange: v => {
-          SETTINGS.logFont = fonts[v];
-        },
-      },
-      'Log font H size': {
-        value: SETTINGS.logFontHSize,
-        min: 1, max: 50,
-        onchange: v => {
-          SETTINGS.logFontHSize = v;
-        },
-      },
-      'Log font V size': {
-        value: SETTINGS.logFontVSize,
-        min: 1, max: 50,
-        onchange: v => {
-          SETTINGS.logFontVSize = v;
-        },
-      },
-    });
-  }
-
-  function endMenu() {
-    saveSettings();
-    currentUI.start();
-  }
-
-  function clearLogPrompt() {
-    E.showPrompt('Erase ALL log entries?', {
-      title: 'Clear log',
-      buttons: {'Erase':1, "Don't":0}
-    }).then((yes) => {
-      if (yes) {
-        stampLog.deleteEntries(stampLog.log)
-        endMenu();
-      } else {
-        logMenu();
-      }
-    });
-  }
-
+function switchUI(newUI) {
   currentUI.stop();
-  topMenu();
+  currentUI = newUI;
+  currentUI.start();
 }
 
 
@@ -725,17 +492,29 @@ function saveErrorAlert() {
 }
 
 
-function switchUI(newUI) {
+function launchSettingsMenu(backCb) {
   currentUI.stop();
-  currentUI = newUI;
+  stampLog.save();
+  tsl.launchSettingsMenu(backCb);
+}
+
+function returnFromSettings() {
+  // Reload stampLog to pick up any changes made from settings UI
+  stampLog = loadStampLog();
   currentUI.start();
+}
+
+
+function loadStampLog() {
+  // Create a StampLog object with its data loaded from storage
+  return new tsl.StampLog(tsl.LOG_FILENAME, tsl.SETTINGS.maxLogLength);
 }
 
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-stampLog = new StampLog(LOG_FILENAME, SETTINGS.maxLogLength);
+var stampLog = loadStampLog();
 E.on('kill', stampLog.save.bind(stampLog));
 stampLog.on('saveError', saveErrorAlert);
 
