@@ -4,6 +4,7 @@ type PowerUsage = {
 	batt: number, // battery percentage
 };
 
+// eslint-disable-next-line no-unused-vars
 type PowerUsageModule = {
 	get: () => PowerUsage,
 };
