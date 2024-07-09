@@ -1,6 +1,5 @@
 const Layout = require('Layout');
 const locale = require('locale');
-const storage = require('Storage');
 
 const tsl = require('timestamplog');
 
@@ -198,7 +197,7 @@ class MainScreen {
                                  Math.floor(availableHeight / logItemHeight));
 
     // Populate log items in layout
-    for (i = 0; i < this.itemsPerPage; i++) {
+    for (let i = 0; i < this.itemsPerPage; i++) {
       layout.logItems.c.push(
         {type: 'custom', render: renderLogItem, item: undefined, itemIdx: undefined,
          fillx: 1, height: logItemHeight}
@@ -385,7 +384,6 @@ class MainScreen {
 class LogEntryScreen {
 
   constructor(stampLog, logIdx) {
-    stampLog = stampLog;
     this.logIdx = logIdx;
     this.logItem = stampLog.log[logIdx];
 
