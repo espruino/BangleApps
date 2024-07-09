@@ -1,7 +1,7 @@
 { "id": "slpquiet",
   "name": "Sleep Quiet (activate quiet mode when asleep)",
   "shortName":"Sleep Quiet",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Set Quiet mode (or alarms only mode), when the sleep tracking app detects sleep (each 10 min evaluated)",
   "icon": "app.png",
   "tags": "tool,widget",

@@ -505,7 +505,7 @@ function checkMessages(options) {
         // draw the body
         g.drawString(l.join("\n"), x+10,r.y+20+pady);
       }
-      if (!longBody && msg.src) g.setFontAlign(-1,1).setFont("6x8").drawString(msg.src, r.x+r.w-2, r.y+r.h-2);
+      if (!longBody && msg.src) g.setFontAlign(1,1).setFont("6x8").drawString(msg.src, r.x+r.w-2, r.y+r.h-2);
       g.setColor("#888").fillRect(r.x,r.y+r.h-1,r.x+r.w-1,r.y+r.h-1); // dividing line between items
     },
     select : idx => {

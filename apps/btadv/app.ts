@@ -767,12 +767,6 @@ enableSensors();
     },
   );
 
-  type BleAdvert = { [key: string]: number[] };
-  const bangle2 = Bangle as {
-    bleAdvert?: BleAdvert | BleAdvert[];
-  };
-  const cycle = Array.isArray(bangle2.bleAdvert) ? bangle2.bleAdvert : [];
-
   for(const id in ad){
     const serv = ad[id as BleServ];
     let value;
@@ -783,16 +777,7 @@ enableSensors();
       break;
     }
 
-    cycle.push({ [id]: value || [] });
+    require("ble_advert").set(id, value || []);
   }
-
-  bangle2.bleAdvert = cycle;
-
-  NRF.setAdvertising(
-    cycle,
-    {
-      interval: 100,
-    }
-  );
 }
 }

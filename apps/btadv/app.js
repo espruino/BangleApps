@@ -1,4 +1,3 @@
-var _a;
 {
     var __assign = Object.assign;
     var Layout_1 = require("Layout");
@@ -441,8 +440,6 @@ var _a;
         NRF.setServices(ad, {
             uart: false,
         });
-        var bangle2 = Bangle;
-        var cycle = Array.isArray(bangle2.bleAdvert) ? bangle2.bleAdvert : [];
         for (var id in ad) {
             var serv = ad[id];
             var value = void 0;
@@ -450,11 +447,7 @@ var _a;
                 value = serv[ch].value;
                 break;
             }
-            cycle.push((_a = {}, _a[id] = value || [], _a));
+            require("ble_advert").set(id, value || []);
         }
-        bangle2.bleAdvert = cycle;
-        NRF.setAdvertising(cycle, {
-            interval: 100,
-        });
     }
 }

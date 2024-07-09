@@ -2,7 +2,7 @@
   "id": "btadv",
   "name": "btadv",
   "shortName": "btadv",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Advertise & export live heart rate, accel, pressure, GPS & mag data over bluetooth",
   "icon": "icon.png",
   "tags": "health,tool,sensors,bluetooth",
