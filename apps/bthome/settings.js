@@ -11,19 +11,9 @@
     require("Storage").writeJSON("bthome.json",settings)
   }
 
+  // Get id number for button that is sent to bthome
   function getNewIdNumber(){
-    var id_start = 1;
-    var select = false;
-    while(!select){
-      select = true;
-      settings.buttons.forEach((button, idx) => {
-        if (id_start == button.n){
-          id_start++;
-          select = false;
-        }
-      });
-    }
-    return id_start;
+    return [1, 2, 3, 4, 5, 6, 7, 8, 9].find(id => settings.buttons.every(button => id != button.n));
   }
 
   function showButtonMenu(button, isNew) {
