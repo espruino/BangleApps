@@ -3,6 +3,11 @@
   "shortName":"8ball",
   "icon": "8ball.png",
   "version":"0.01",
+  "screenshots": [
+    {"url":"screenshot.png"},
+    {"url":"screenshot-1.png"},
+    {"url":"screenshot-2.png"}
+  ],
   "description": "It tells your future!",
   "tags": "game",
   "supports": ["BANGLEJS2"],
