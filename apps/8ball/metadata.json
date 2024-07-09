@@ -3,9 +3,7 @@
   "shortName":"8ball",
   "icon": "8ball.png",
   "version":"0.01",
-  "description": "It tells your future!
-  
-  Ask the 8ball a question by clicking start and then clicking the screen! Then it will answer you question with a yes or no answer (hint : only ask it yes or no questions, its a little dumb).",
+  "description": "It tells your future!",
   "tags": "Games",
   "supports": ["BANGLEJS2"],
   "storage": [
