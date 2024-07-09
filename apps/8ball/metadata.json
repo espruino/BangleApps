@@ -4,7 +4,7 @@
   "icon": "8ball.png",
   "version":"0.01",
   "description": "It tells your future!",
-  "tags": "game",
+  "tags": "'game'",
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"8ball.app.js","url":"app.js"},
