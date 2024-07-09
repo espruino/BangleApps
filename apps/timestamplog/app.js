@@ -412,6 +412,7 @@ class LogEntryScreen {
     let layout = new Layout(
       {type: 'v',
        c: [
+         {type: 'txt', font: this.defaultFont, id: 'entryno', label: 'Entry ?/?'},
          {type: 'txt', font: this.defaultFont, id: 'date', label: '?'},
          {type: 'txt', font: this.defaultFont, id: 'time', label: '?'},
          {type: '', id: 'placeholder', fillx: 1, filly: 1},
@@ -439,6 +440,7 @@ class LogEntryScreen {
 
   refresh() {
     this.logItem = stampLog.log[this.logIdx];
+    this.layout.entryno.label = 'Entry ' + (this.logIdx+1) + '/' + stampLog.log.length;
     this.layout.date.label = locale.date(this.logItem.stamp, 1);
     this.layout.time.label = locale.time(this.logItem.stamp).trim();
     this.layout.update();
