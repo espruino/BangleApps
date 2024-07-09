@@ -8,6 +8,7 @@
     {"url":"screenshot-1.png"},
     {"url":"screenshot-2.png"}
   ],
+  "allow_emulator": true,
   "description": "It tells your future!",
   "tags": "game",
   "supports": ["BANGLEJS2"],
