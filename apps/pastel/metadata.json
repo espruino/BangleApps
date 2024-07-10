@@ -2,7 +2,7 @@
   "id": "pastel",
   "name": "Pastel Clock",
   "shortName": "Pastel",
-  "version": "0.19",
+  "version": "0.20",
   "description": "A Configurable clock with custom fonts, background and weather display. Has a cyclic information line that includes, day, date, battery, sunrise and sunset times",
   "icon": "pastel.png",
   "dependencies": {"mylocation":"app","weather":"app"},

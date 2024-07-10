@@ -1,0 +1,16 @@
+{
+  "id": "sportmode",
+  "name": "HRM Sport mode",
+  "shortName":"Sport mode",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "Allows to set the sport mode of the Heart rate monitor in app settings.",
+  "type": "bootloader",
+  "tags": "health",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"sportmode.boot.js","url":"boot.js"},
+    {"name":"sportmode.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"sportmode.json"}]
+}

@@ -4,3 +4,5 @@
 0.04: Always show the widgets, swifter animations and lighter sea line
 0.05: Fixed hours increasing too early, added missing 23 o'clock, simplified code
 0.06: Draw the screen exactly on the minute boundary
+0.07: Minor code improvements
+0.08: Minor code improvements

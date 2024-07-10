@@ -1,6 +1,6 @@
 // Simply listen for core events and show data
 
-var btm = g.getHeight() - 1;
+//var btm = g.getHeight() - 1;
 var px = g.getWidth() / 2;
 
 // Dark or light logo

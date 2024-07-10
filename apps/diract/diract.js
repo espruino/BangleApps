@@ -74,6 +74,7 @@ let digestTime = new Uint8Array([ 0, 0, 0 ]);
 let numberOfDigestPages = 0;
 let sensorData = [ 0x82, 0x08, 0x3f ];
 let cyclicCount = 0;
+let encodedBattery = 0;
 let lastDigestTime = Math.round(getTime());
 let lastResetTime = Math.round(getTime());
 let isExciterPresent = false;
@@ -517,7 +518,7 @@ function updateSensorData() {
     encodedBattery = encodeBatteryPercentage();
   }
 
-  encodedAcceleration = encodeAcceleration();
+  let encodedAcceleration = encodeAcceleration();
 
   sensorData[0] = ((encodedAcceleration.x << 2) & 0xfc) |
                   ((encodedAcceleration.y >> 4) & 0x3f);

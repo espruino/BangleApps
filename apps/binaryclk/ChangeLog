@@ -1,0 +1,12 @@
+0.01: Added app
+0.02: Removed unneeded squares
+0.03: Added setting for fullscreen option
+0.04: Added settings to hide unused squares and show date
+0.05: Minor code improvements
+0.06: Added setting to show battery and added artwork to date
+0.07: Removed percentage from battery and cleaned up logic
+0.08: Changed month to day and text color to black on date
+0.09: Changed day color back to white
+0.10: Add blinking when charging
+0.11: Changed battery to buzz instead of blink and fixed battery counter
+0.12: Got rid of battery counter

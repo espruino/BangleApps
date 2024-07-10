@@ -1,7 +1,6 @@
 (() => {
   function getFace(){
     var intervalRefSec;
-    var buf;
     var days;
     var prevInfo;
     var prevDate;
@@ -37,8 +36,8 @@
     }
 
     function showMem(msg) {
-      var val = process.memory();
-      var str = msg + " " + Math.round(val.usage*100/val.total) + "%";
+      //var val = process.memory();
+      //var str = msg + " " + Math.round(val.usage*100/val.total) + "%";
       //console.log(str);
     }
     
@@ -59,8 +58,8 @@
       if (btn === 2) Bangle.showLauncher();
     }
     
-    function getGPSfix() { return undefined; }
-    function setGPSfix(f) {}
+    //function getGPSfix() { return undefined; }
+    //function setGPSfix(f) {}
    
     function draw() {
       var d = new Date();

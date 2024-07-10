@@ -77,7 +77,7 @@ var colors = color_map[settings.color];
 /************************************************
  * Globals
  */
-var W = g.getWidth(),R=W/2;
+var W = g.getWidth();
 var H = g.getHeight();
 var drawTimeout;
 

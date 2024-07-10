@@ -87,7 +87,7 @@ declare module Sched {
     defaultSnoozeMillis: number,
     defaultAutoSnooze: boolean,
     defaultDeleteExpiredTimers: boolean,
-    buzzCount: number,
+    buzzCount: number | null, // null means buzz forever
     buzzIntervalMillis: number,
     defaultAlarmPattern: string,
     defaultTimerPattern: string,

@@ -194,16 +194,14 @@ function sendCommandRX(device, text, callback) {
     function done() {
       Terminal.println("\\n============\\n     Disconnected");
       device.disconnect();
-      if (global.BTN3 !== undefined) {
-        setTimeout(function() {
-          setWatch(function() {
-            if (callback) callback();
-            resolve();
-          }, BTN3);
-          g.reset().setFont("6x8",2).setFontAlign(0,0,1);
-          g.drawString("Back", g.getWidth()-10, g.getHeight()-50);
-        }, 200);
-      }
+      setTimeout(function() {
+        setWatch(function() {
+          if (callback) callback();
+          resolve();
+        }, (process.env.HWVERSION==2) ? BTN1 : BTN2);
+        g.reset().setFont("6x8",2).setFontAlign(0,0,1);
+        g.drawString("Back", g.getWidth()-10, g.getHeight()/2);
+      }, 200);
     }
     device.getPrimaryService("6e400001-b5a3-f393-e0a9-e50e24dcca9e").then(function(s) {
       service = s;

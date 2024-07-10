@@ -1,6 +1,6 @@
 (function (back) {
     var FILE = "clockcal.json";
-    defaults={
+    const defaults={
         CAL_ROWS: 4, //number of calendar rows.(weeks) Shouldn't exceed 5 when using widgets.
         BUZZ_ON_BT: true, //2x slow buzz on disconnect, 2x fast buzz on connect. Will be extra widget eventually
         MODE24: true, //24h mode vs 12h mode
@@ -9,19 +9,19 @@
         REDSAT: true, // Use red color for saturday?
         DRAGDOWN: "[AI:messg]",
         DRAGRIGHT: "[AI:music]",
-        DRAGLEFT: "[ignore]",
+        DRAGLEFT: "[AI:agenda]",
         DRAGUP: "[calend.]"
     };
-    settings = Object.assign(defaults, require('Storage').readJSON(FILE, true) || {});
+    let settings = Object.assign(defaults, require('Storage').readJSON(FILE, true) || {});
 
-    actions = ["[ignore]","[calend.]","[AI:music]","[AI:messg]"];
+    let actions = ["[ignore]","[calend.]","[AI:music]","[AI:messg]","[AI:agenda]"];
     require("Storage").list(RegExp(".app.js")).forEach(element => actions.push(element.replace(".app.js","")));
 
     function writeSettings() {
         require('Storage').writeJSON(FILE, settings);
     }
 
-    menu = {
+    const menu = {
         "": { "title": "Clock & Calendar" },
         "< Back": () => back(),
         'Buzz(dis)conn.?': {

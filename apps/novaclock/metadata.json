@@ -3,7 +3,7 @@
   "shortName":"Nova Clock",
   "icon": "app.png",
   "type": "clock",
-  "version":"0.11",
+  "version": "0.12",
   "description": "A clock inspired by the Kirby series",
   "tags": "clock",
   "supports": ["BANGLEJS2"],

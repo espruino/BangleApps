@@ -65,14 +65,16 @@ function redraw() {
 
 // Draw the POIs
 function drawPOI() {
+  let waypoints;
   try {
-    var waypoints = require("waypoints").load();
+    waypoints = require("waypoints").load();
   } catch (ex) {
     // Waypoints module not available.
     return;
   }
   g.setFont("Vector", 18);
   waypoints.forEach((wp, idx) => {
+    if (wp.lat === undefined || wp.lon === undefined) return;
     var p = m.latLonToXY(wp.lat, wp.lon);
     var sz = 2;
     g.setColor(0,0,0);
@@ -80,7 +82,7 @@ function drawPOI() {
     g.setColor(0,0,0);
     g.drawString(wp.name, p.x, p.y);
     //print(wp.name);
-  })
+  });
 }
 
 function isInside(rect, e, w, h) {
@@ -250,7 +252,7 @@ function showMap() {
       hasScrolled = true;
       drawLocation();
     } else if (hasScrolled) {
-      delta = getTime() - startDrag;
+      const delta = getTime() - startDrag;
       startDrag = 0;
       hasScrolled = false;
       if (delta < 0.2) {
@@ -268,7 +270,12 @@ function showMap() {
   }, btn: () => showMenu() });
 }
 
-showMap();
+
+if (m.maps.length === 0) {
+  E.showPrompt(/*LANG*/'Please upload a map first.', {buttons : {/*LANG*/"Ok":true}}).then(v => load());
+} else {
+  showMap();
+}
 
 // Write settings on exit via button
 setWatch(() => writeSettings(), BTN, { repeat: true, edge: "rising" });

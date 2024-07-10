@@ -13,7 +13,7 @@ g.setFontCustom(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/nA/+cD/5wP/nAAAAAAAAPwAA/gA
 require("Font7x11Numeric7Seg").add(Graphics);
 
 
-var temperature = 13;
+//var temperature = 13;
 
 //the following 2 sections are used from waveclk to schedule minutely updates
 // timeout used to update every minute
@@ -57,7 +57,7 @@ function draw(){
   drawBackground();
   var date = new Date();
   var h = date.getHours(), m = date.getMinutes();
-  var d = date.getDate(), w = date.getDay();
+  var w = date.getDay();
 
   g.setBgColor(0,0,0);
   g.setColor(1,1,1);

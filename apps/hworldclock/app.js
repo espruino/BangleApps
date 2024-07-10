@@ -4,6 +4,7 @@
 const SETTINGSFILE = "hworldclock.json";
 let secondsMode;
 let showSunInfo;
+let singleOffsetSmall;
 let colorWhenDark;
 let rotationTarget;
 // ------- Settings file
@@ -17,7 +18,7 @@ let font5x9 = require("Font5x9Numeric7Seg").add(Graphics);
 let font10x18 = require("FontTeletext10x18Ascii").add(Graphics);
 
 // Font for single secondary time
-const secondaryTimeFontSize = 4; 
+const secondaryTimeFontSize = 4;
 const secondaryTimeZoneFontSize = 2;
 
 // Font / columns for multiple secondary times
@@ -40,7 +41,7 @@ const yposWorld = big ? 170 : 120;
 const OFFSET_TIME_ZONE = 0;
 const OFFSET_HOURS = 1;
 
-let PosInterval = 0; 
+let PosInterval = undefined;
 
 let offsets = require("Storage").readJSON("hworldclock.settings.json") || [];
 
@@ -93,7 +94,7 @@ const mockOffsets = {
 //offsets = mockOffsets.fourOffsets; // should render in columns
 
 // END TESTING CODE
- 
+
 
 // ================ Load settings
 // Helper function default setting
@@ -143,7 +144,7 @@ let queueDrawSeconds = function() {
 		}, secondsTimeout - (Date.now() % secondsTimeout));
 }
 
-let doublenum = function(x) {	
+let doublenum = function(x) {
 	return x < 10 ? "0" + x : "" + x;
 }
 
@@ -151,11 +152,11 @@ let getCurrentTimeFromOffset = function(dt, offset) {
 	return new Date(dt.getTime() + offset * 60 * 60 * 1000);
 }
 
-let updatePos = function() {	
+let updatePos = function() {
 	let coord = require("Storage").readJSON(LOCATION_FILE,1)||  {"lat":0,"lon":0,"location":"-"}; //{"lat":53.3,"lon":10.1,"location":"Pattensen"};
 	if (coord.lat != 0 && coord.lon != 0) {
-	//pos = SunCalc.getPosition(Date.now(), coord.lat, coord.lon);	
-	times = SunCalc.getTimes(Date.now(), coord.lat, coord.lon);
+	//pos = SunCalc.getPosition(Date.now(), coord.lat, coord.lon);
+	const times = SunCalc.getTimes(Date.now(), coord.lat, coord.lon);
 	rise = "^" + times.sunrise.toString().split(" ")[4].substr(0,5);
 	set	= "v" + times.sunset.toString().split(" ")[4].substr(0,5);
 	//noonpos = SunCalc.getPosition(times.solarNoon, coord.lat, coord.lon);
@@ -188,7 +189,7 @@ let drawSeconds = function() {
 		g.setColor(g.theme.fg);
 	}
 	if (Bangle.isLocked() && secondsMode != "always") seconds = seconds.slice(0, -1) + ':::'; // we use :: as the font does not have an x
-	g.drawString(`${seconds}`, xyCenterSeconds, yposTime+14, true); 
+	g.drawString(`${seconds}`, xyCenterSeconds, yposTime+14, true);
 	queueDrawSeconds();
 
 }
@@ -205,18 +206,18 @@ let draw = function() {
 	let time = da[4].split(":");
 	let hours = time[0],
 	minutes = time[1];
-	
-	
+
+
 	if (_12hour){
 		//do 12 hour stuff
 		if (hours > 12) {
 			ampm = "PM";
-			hours = hours - 12;	
-			if (hours < 10) hours = doublenum(hours);	
+			hours = hours - 12;
+			if (hours < 10) hours = doublenum(hours);
 		} else {
-			ampm = "AM";	 
-		}	 
-	}	
+			ampm = "AM";
+		}
+	}
 
 	g.setFont("5x9Numeric7Seg",primaryTimeFontSize);
 	if (g.theme.dark) {
@@ -229,18 +230,18 @@ let draw = function() {
 		g.setColor(g.theme.fg);
 	}
 	g.drawString(`${hours}:${minutes}`, xyCenter-10, yposTime, true);
-	
+
 	// am / PM ?
 	if (_12hour){
 	//do 12 hour stuff
 		//let ampm = require("locale").medidian(new Date()); Not working
 		g.setFont("Vector", 17);
 		g.drawString(ampm, xyCenterSeconds, yAmPm, true);
-	}	
+	}
 
 	if (secondsMode != "none") drawSeconds(); // To make sure...
-	
-	// draw Day, name of month, Date	
+
+	// draw Day, name of month, Date
 	//DATE
 	let localDate = require("locale").date(new Date(), 1);
 	localDate = localDate.substring(0, localDate.length - 5);
@@ -253,15 +254,15 @@ let draw = function() {
 
 	// Loop through offset(s) and render
 	offsets.forEach((offset, index) => {
-	dx = getCurrentTimeFromOffset(gmt, offset[OFFSET_HOURS]);
+	const dx = getCurrentTimeFromOffset(gmt, offset[OFFSET_HOURS]);
 	hours = doublenum(dx.getHours());
 	minutes = doublenum(dx.getMinutes());
 
 
 	if (offsets.length === 1 && !singleOffsetSmall) {
-		let date = [require("locale").dow(new Date(), 1), require("locale").date(new Date(), 1)];	
+		let date = [require("locale").dow(new Date(), 1), require("locale").date(new Date(), 1)];
 		// For a single secondary timezone, draw it bigger and drop time zone to second line
-		const xOffset = 30;
+		//const xOffset = 30;
 		g.setFont(font, secondaryTimeFontSize).drawString(`${hours}:${minutes}`, xyCenter, yposTime2, true);
 		g.setFont(font, secondaryTimeZoneFontSize).drawString(offset[OFFSET_TIME_ZONE], xyCenter, yposTime2 + 30, true);
 
@@ -285,7 +286,7 @@ let draw = function() {
 			g.setFontAlign(-1, 0).setFont("Vector",12).drawString(`${rise}`, 10, 3 + yposWorld + 3 * 15, true); // draw rise
 			g.setFontAlign(1, 0).drawString(`${set}`, xcol2, 3 + yposWorld + 3 * 15, true); // draw set
 		} else {
-			g.setFontAlign(-1, 0).setFont("Vector",11).drawString("set city in \'my location\' app!", 10, 3 + yposWorld + 3 * 15, true); 
+			g.setFontAlign(-1, 0).setFont("Vector",11).drawString("set city in \'my location\' app!", 10, 3 + yposWorld + 3 * 15, true);
 		}
 	}
 	//debug settings
@@ -295,15 +296,15 @@ let draw = function() {
 	//g.drawString(colorWhenDark, xcol2, 3 + yposWorld + 3 * 15, true);
 
 	queueDraw();
-	
+
 	if (secondsMode != "none") queueDrawSeconds();
 }
 
 
 
-	
-//if (BANGLEJS2) { 	
-	let onDrag = e => {	
+
+//if (BANGLEJS2) {
+	let onDrag = e => {
 		if (!drag) { // start dragging
 			drag = {x: e.x, y: e.y};
 		} else if (!e.b) { // released
@@ -355,7 +356,7 @@ let draw = function() {
 
 if (!Bangle.isLocked())  { // Initial state
 		if (showSunInfo) {
-			if (PosInterval != 0 && typeof PosInterval != 'undefined') clearInterval(PosInterval);
+			if (PosInterval) clearInterval(PosInterval);
 			PosInterval = setInterval(updatePos, 60*10E3);	// refesh every 10 mins
 			updatePos();
 		}
@@ -364,15 +365,15 @@ if (!Bangle.isLocked())  { // Initial state
 		if (secondsMode != "none") {
 			if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
 			drawTimeoutSeconds = undefined;
-		}	
+		}
 		if (drawTimeout) clearTimeout(drawTimeout);
 		drawTimeout = undefined;
 		draw(); // draw immediately, queue redraw
-		
+
   }else{
 		if (secondsMode == "always") secondsTimeout = 1000;
 		if (secondsMode == "when unlocked") secondsTimeout = 10 * 1000;
-		
+
 		if (secondsMode != "none") {
 			if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
 			drawTimeoutSeconds = undefined;
@@ -381,18 +382,18 @@ if (!Bangle.isLocked())  { // Initial state
 		drawTimeout = undefined;
 
 		if (showSunInfo) {
-			if (PosInterval != 0 && typeof PosInterval != 'undefined') clearInterval(PosInterval);
+			if (PosInterval) clearInterval(PosInterval);
 			PosInterval = setInterval(updatePos, 60*60E3);	// refesh every 60 mins
 			updatePos();
 		}
 		draw(); // draw immediately, queue redraw
   }
- 
 
-let onLock = on => {	
+
+let onLock = on => {
   if (!on) { // UNlocked
 		if (showSunInfo) {
-			if (PosInterval != 0) clearInterval(PosInterval);
+			if (PosInterval) clearInterval(PosInterval);
 			PosInterval = setInterval(updatePos, 60*10E3);	// refesh every 10 mins
 			updatePos();
 		}
@@ -401,7 +402,7 @@ let onLock = on => {
 		if (secondsMode != "none") {
 			if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
 			drawTimeoutSeconds = undefined;
-		}	
+		}
 		if (drawTimeout) clearTimeout(drawTimeout);
 		drawTimeout = undefined;
 
@@ -410,7 +411,7 @@ let onLock = on => {
 
 		if (secondsMode == "always") secondsTimeout = 1000;
 		if (secondsMode == "when unlocked") secondsTimeout = 10 * 1000;
-		
+
 		if (secondsMode != "none") {
 			if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
 			drawTimeoutSeconds = undefined;
@@ -419,11 +420,11 @@ let onLock = on => {
 		drawTimeout = undefined;
 
 		if (showSunInfo) {
-			if (PosInterval != 0) clearInterval(PosInterval);
+			if (PosInterval) clearInterval(PosInterval);
 			PosInterval = setInterval(updatePos, 60*60E3);	// refesh every 60 mins
 			updatePos();
 		}
-		draw(); // draw immediately, queue redraw		
+		draw(); // draw immediately, queue redraw
   }
  };
 Bangle.on('lock', onLock);
@@ -434,28 +435,22 @@ Bangle.setUI({
   mode : "custom",clock:true,
   remove : function() {
     // Called to unload all of the clock app
-	g.setRotation(defaultRotation); // bring back default rotation
-	if (typeof PosInterval === "undefined") {
-		console.log("PosInterval is undefined");
-	} else {
-		if (PosInterval) clearInterval(PosInterval);
-	}	
+    g.setRotation(defaultRotation); // bring back default rotation
+    if (PosInterval) clearInterval(PosInterval);
     PosInterval = undefined;
     if (drawTimeoutSeconds) clearTimeout(drawTimeoutSeconds);
     drawTimeoutSeconds = undefined;
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
-	//if (BANGLEJS2) 
-	Bangle.removeListener("drag",onDrag);
-	Bangle.removeListener("onLock",onLock);
+    //if (BANGLEJS2)
+    Bangle.removeListener("drag",onDrag);
+    Bangle.removeListener("lock",onLock);
   }});
-
 
 g.clear().setRotation(defaultRotation); // clean app screen and make sure the default rotation is set
 draw(); // draw immediately at first, queue update
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
- 
-// );
+
 }

@@ -76,11 +76,11 @@
       function getData() {
         // show loading window
         Util.showModal("Loading...");
-        Util.readStorage('grocery_list.json', data=>{
+        Util.readStorageJSON('grocery_list.json', data=>{
           // remove window
           Util.hideModal();
 
-          settings = JSON.parse(data || '{"products": []}');
+          settings = data || {"products": []};
           products = settings.products;
           renderProducts();
         });

@@ -2,7 +2,7 @@
   <head>
     <link rel="stylesheet" href="../../css/spectre.min.css">
 
-    <style> 
+    <style>
       .table_wrapper{
         display: block;
         overflow-x: auto;
@@ -101,11 +101,9 @@ function viewDeferredTable(filename) {
   Puck.eval(`require("Storage").list("powermanager.def.json").length > 0`, (f)=>{
     if (f) {
       Util.showModal("Reading summarized info...");
-      Util.readStorage(
-        filename, data => {
+      Util.readStorageJSON(
+        filename, parsed => {
           Util.hideModal();
-          let parsed = JSON.parse(data);
-          
           let sum = 0;
           let rows = [];
           for (var i in parsed.deferred) {
@@ -128,7 +126,7 @@ function viewDeferredTable(filename) {
             <button class="btn btn-primary" id="back" style="float: right;margin-right: 5px;margin-left: 10px;">Back</button>
             <div>
               This are functions used in timeouts and intervals and their accumulated execution times. Recorded in a time span of <b>${timeFormat(duration)}</b>. Timeouts/intervals have run for <b>${timeFormat(sum)} (${(sum/duration*100).toFixed(2)}%)</b>. Percentages are calculated from summarized timeout/interval running time.
-            </div>           
+            </div>
 
             <div class="table_wrapper">
 
@@ -181,13 +179,12 @@ function viewHardwareTable(filename) {
   Puck.eval(`require("Storage").list("powermanager.hw.json").length > 0`, (f)=>{
     if (f) {
       Util.showModal("Reading hardware info...");
-      Util.readStorage(
-        filename, data => {
+      Util.readStorageJSON(
+        filename, parsed => {
           Util.hideModal();
-          let parsed = JSON.parse(data);
           console.log("Hardware", parsed);
           let duration = parsed.saved - parsed.start;
-          
+
           let rows = [];
           for (var i in parsed.power) {
             rows.push({func: i, time: parsed.power[i]});
@@ -244,7 +241,7 @@ function viewDetailsTable(filename) {
   Util.readStorageFile(
     filename, data => {
       Util.hideModal();
-      
+
       var htmlOverview = `<h1>Detailed logging</h1>
       <button class="btn btn-primary" id="back" style="float: right;margin-right: 5px;">Back</button>
       <div>

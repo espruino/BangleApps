@@ -2,7 +2,7 @@
   "name": "Wrist Light",
   "shortName":"Wrist Light",
   "icon": "wristlight48.png",
-  "version":"0.01",
+  "version": "0.02",
   "description": "A flash light with different colors on your wrist",
   "tags": "flash,light",
   "allow_emulator":true, 

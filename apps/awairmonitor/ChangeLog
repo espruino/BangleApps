@@ -1,3 +1,4 @@
 0.01: Beta version for Bangle 2 paired with Chrome (2021/12/11)
 0.02: The app is now a clock, the data is greyed after the connection is lost (2021/12/22)
 0.03: Set the Awair's IP directly on the webpage (2021/12/27)
+0.04: Minor code improvements

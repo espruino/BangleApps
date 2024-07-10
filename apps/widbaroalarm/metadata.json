@@ -2,7 +2,7 @@
   "id": "widbaroalarm",
   "name": "Barometer Alarm Widget",
   "shortName": "Barometer Alarm",
-  "version": "0.08",
+  "version": "0.10",
   "description": "A widget that can alarm on when the pressure reaches defined thresholds.",
   "icon": "widget.png",
   "type": "widget",

@@ -2,7 +2,7 @@
   "name": "Red 7 Card Game",
   "shortName" : "Red 7",
   "icon": "icon.png",
-  "version":"0.06",
+  "version":"0.07",
   "description": "An implementation of the card game Red 7 for your watch. Play against the AI and be the last player still in the game to win!",
   "tags": "game",
   "supports":["BANGLEJS2"],

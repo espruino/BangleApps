@@ -2,7 +2,7 @@
   "id": "hworldclock",
   "name": "Hanks World Clock",
   "shortName": "Hanks World Clock",
-  "version": "0.32",
+  "version": "0.36",
   "description": "Current time zone plus up to three others",
   "allow_emulator":true,
   "icon": "app.png",
@@ -12,7 +12,7 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "custom": "custom.html",
-  "dependencies": {"mylocation":"app"},  
+  "dependencies": {"mylocation":"app"},
   "storage": [
     {"name":"hworldclock.app.js","url":"app.js"},
     {"name":"hworldclock.img","url":"hworldclock-icon.js","evaluate":true},

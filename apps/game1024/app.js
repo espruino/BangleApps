@@ -410,7 +410,6 @@ function addToScore (val) {
   if (val == 10) mover.gameWon = true;
 }
 function createGrid () {
-  let cn =0;
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       let x0 = borderWidth + c*(borderWidth + sqWidth) - (rows/2)*(2*borderWidth + sqWidth) + middle.x + Math.floor(sqWidth/3);

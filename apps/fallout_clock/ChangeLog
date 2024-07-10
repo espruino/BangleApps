@@ -1,0 +1,5 @@
+0.10: (20240125) Basic Working Clock.
+0.11: (20240125) Widgets Added. Improved Interval Loop.
+0.12: (20240221) Fix: Month Reporting Wrong.
+0.20: (20240223) Created as a Package.
+0.21: (20240223) Added StandardJS and NPM.

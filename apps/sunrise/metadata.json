@@ -2,7 +2,7 @@
   "id": "sunrise",
   "name": "Sunrise",
   "shortName": "Sunrise",
-  "version": "0.06",
+  "version": "0.08",
   "type": "clock",
   "description": "Show sunrise and sunset times",
   "icon": "app.png",

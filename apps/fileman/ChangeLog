@@ -1,3 +1,4 @@
 0.01: New app!
 0.02: Improve handling of large amounts of files (fix #579)
 0.03: Update RegExp use (Was using backreference instead of character code)
+

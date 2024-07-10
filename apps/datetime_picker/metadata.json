@@ -1,0 +1,17 @@
+{ "id": "datetime_picker",
+  "name": "Datetime picker",
+  "shortName":"Datetime picker",
+  "version":"0.01",
+  "description": "A library that allows to pick a date and time by swiping.",
+  "icon":"app.png",
+  "type":"module",
+  "tags":"datetimeinput",
+  "supports" : ["BANGLEJS2"],
+  "provides_modules" : ["datetimeinput"],
+  "readme": "README.md",
+  "screenshots" : [ { "url":"screenshot.png" } ],
+  "storage": [
+    {"name":"datetimeinput","url":"lib.js"},
+    {"name":"datetime_picker.img","url":"app-icon.js","evaluate":true}
+  ]
+}

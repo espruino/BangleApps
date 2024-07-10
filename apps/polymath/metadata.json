@@ -2,7 +2,7 @@
   "name": "A Polymaths Clock",
   "shortName":"Polymath",
   "icon": "app.png",
-  "version":"0.01",
+  "version": "0.02",
   "description": "This is a graphical clock based on Anton Clock with date, day and moon phase. Beta",
  "screenshots" : [ { "url":"screenshot.png" }, { "url":"polymathclock.jpg" } ],
  "type":"clock",   

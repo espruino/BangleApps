@@ -2,7 +2,7 @@
   "id": "sokoban",
   "name": "Sokoban",
   "shortName": "Sokoban",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Classic Sokoban game (microban levels).",
   "allow_emulator":false,
   "icon": "sokoban.png",

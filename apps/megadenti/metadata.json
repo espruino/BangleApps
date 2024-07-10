@@ -2,7 +2,7 @@
   "name": "Denti",
   "shortName":"My Denti",
   "icon": "brush-teeth.png",
-  "version":"0.01",
+  "version": "0.02",
   "description": "This app allows you wash your teeth in an efficent way. A coloured timer guides you while your smile becomes bright!",
   "tags": "game",
   "supports": ["BANGLEJS"],

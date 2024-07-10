@@ -2,7 +2,7 @@
   "id": "speedalt",
   "name": "GPS Adventure Sports",
   "shortName": "GPS Adv Sport",
-  "version": "0.13",
+  "version": "0.14",
   "description": "GPS speed, altitude and distance to waypoint display. Designed for easy viewing and use during outdoor activities such as para-gliding, hang-gliding, sailing, cycling etc.",
   "icon": "app.png",
   "type": "app",

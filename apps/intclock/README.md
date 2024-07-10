@@ -1,4 +1,4 @@
-# Analogue Clock
+# Interlaced Clock
 
-![](screenshot_analog.png)
+![](screenshot.png)
 

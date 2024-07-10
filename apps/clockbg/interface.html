@@ -1,0 +1,202 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <style>
+      .thumbnail {
+        width : 100px;
+        cursor: pointer;
+      }
+      #preview {
+        width : 178px; /* include the border */
+        height: 178px;
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <p>Upload an image: <input class="form-input" id="customfile" type="file"></p>
+    <div id="thumbnaillist"></div>
+    <p>If you'd like to contribute images you can <a href="https://github.com/espruino/BangleApps/tree/master/apps/patriotclk/img" target="_blank">add them on GitHub</a>!</p>
+    <div style="float:right">Preview:<br/><canvas width="176" height="176" id="preview"></canvas></div>
+    <div class="form-group">
+      <select class="form-select" id="box_zoom" style="width:inherit">
+        <option value="0">No Zoom</option>
+        <option value="1">10% Zoom</option>
+        <option value="1.5">15% Zoom</option>
+        <option value="2">20% Zoom</option>
+      </select><br/>
+      <label class="form-switch">
+        <input type="checkbox" id="box_mirror">
+        <i class="form-icon"></i> Mirror
+      </label>
+      <select class="form-select" id="box_bright" style="width:inherit">
+        <option value="0">Normal Brightness</option>
+        <option value="1">Brighten</option>
+        <option value="-1">Darken</option>
+      </select><br/>
+      <select class="form-select" id="box_dither" style="width:inherit">
+        <option value="">Default Dither</option>
+        <option value="no">No Dither</option>
+        <option value="bayer2">Bayer Dither</option>
+        <option value="error">Diffusion Dither</option>
+        <option value="random1">Random Dither</option>
+        <option value="comic">'Comic' Dither</option>
+      </select>
+    </div>
+
+
+    <p>Click <button id="upload" class="btn btn-primary disabled" style>Upload</button></p>
+
+
+    <script src="../../core/lib/interface.js"></script>
+    <script src="../../webtools/imageconverter.js"></script>
+
+    <script>
+      const IMAGES =[
+        {"path":"img/ai_rock.jpeg","dither":true},
+        {"path":"img/ai_robot.jpeg","dither":true},
+        {"path":"img/ai_eye.jpeg","dither":true},
+        {"path":"img/ai_hero.jpeg","dither":true},
+        {"path":"img/ai_flow.jpeg","dither":true},
+        {"path":"img/ai_horse.jpeg","dither":true},
+        {"path":"img/icons8-australia-480.png","dither":false},
+        {"path":"img/icons8-austria-480.png","dither":false},
+        {"path":"img/icons8-belgium-480.png","dither":false},
+        {"path":"img/icons8-brazil-480.png","dither":false},
+        {"path":"img/icons8-canada-480.png","dither":false},
+        {"path":"img/icons8-china-480.png","dither":false},
+        {"path":"img/icons8-denmark-480.png","dither":false},
+        {"path":"img/icons8-england-480.png","dither":false},
+        {"path":"img/icons8-flag-of-europe-480.png","dither":false},
+        {"path":"img/icons8-france-480.png","dither":false},
+        {"path":"img/icons8-germany-480.png","dither":false},
+        {"path":"img/icons8-great-britain-480.png","dither":false},
+        {"path":"img/icons8-greece-480.png","dither":false},
+        {"path":"img/icons8-hungary-480.png","dither":false},
+        {"path":"img/icons8-italy-480.png","dither":false},
+        {"path":"img/icons8-netherlands-480.png","dither":false},
+        {"path":"img/icons8-new-zealand-480.png","dither":false},
+        {"path":"img/icons8-norway-480.png","dither":false},
+        {"path":"img/icons8-scotland-480.png","dither":false},
+        {"path":"img/icons8-spain-480.png","dither":false},
+        {"path":"img/icons8-sweden-480.png","dither":false},
+        {"path":"img/icons8-switzerland-480.png","dither":false},
+        {"path":"img/icons8-usa-480.png","dither":false},
+        {"path":"img/icons8-wales-480.png","dither":false},
+        {"path":"img/icons8-lgbt-flag-480.png","dither":true},
+        {"path":"img/icons8-ukraine-480.png","dither":true}];
+
+      var selectedImage;
+      var bgImageData;
+
+      document.getElementById("thumbnaillist").innerHTML = `<img class="thumbnail" id="customimage" src="" face="custom" style="display:none"/>\n`+
+        IMAGES.map(f => `<img class="thumbnail" src="${f.path}" data-file="${f.path}"/>`).join("\n");
+      var elements = document.querySelectorAll(".thumbnail");
+      for (var i=0;i<elements.length;i++)
+        elements[i].addEventListener("click", function(e) {
+          selectedImage = e.target;
+          drawPreview();
+        });
+
+
+      function drawPreview() {
+        if (!selectedImage) return;
+        var imgPath = selectedImage.getAttribute("data-file");
+        var img = IMAGES.find(img => img.path == imgPath) || {"dither":true}; // No IMAGES entry for custom images
+        var zoom = document.getElementById("box_zoom").value;
+        var dither = document.getElementById("box_dither").value;
+        if (dither=="" && img.dither) dither="bayer2";
+        if (dither=="no" || dither=="") dither=undefined;
+        var mirror = document.getElementById("box_mirror").checked;
+        var brightness = 0|document.getElementById("box_bright").value;
+        const canvas = document.getElementById("preview");
+        canvas.width = 176; // setting size clears canvas
+        canvas.height = 176;
+        const ctx = canvas.getContext("2d");
+        var y = 0;
+        console.log(selectedImage);
+        let imgW = selectedImage.naturalWidth;
+        let imgH = selectedImage.naturalHeight;
+        let border = 0;
+        let imgMin = Math.min(imgW,imgH);
+        switch (zoom) {
+          case "0": border = 0; break;
+          case "1": border = Math.round(imgMin*0.1); break;
+          case "1.5": border = Math.round(imgMin*0.15); break;
+          case "2": border = Math.round(imgMin*0.2); break;
+        }
+        ctx.save(); // Save the current state
+        if (mirror) {
+          ctx.translate(canvas.width, 0);
+          ctx.scale(-1, 1);
+        }
+        ctx.drawImage(selectedImage, border, border, imgW-border*2, imgH-border*2, 0, y, canvas.width, canvas.height);
+        ctx.restore();
+        var options = {
+          mode:"3bit",
+          output:"raw",
+          compression:false,
+          updateCanvas:true,
+          transparent:false,
+          diffusion:dither,
+          contrast: brightness ? -64 : 64,
+          brightness:64*brightness
+        };
+        bgImageData = imageconverter.canvastoString(canvas, options);
+        document.getElementById("upload").classList.remove("disabled")
+      }
+
+      // If options changed
+      document.getElementById("box_zoom").addEventListener("click", function() {
+        drawPreview();
+      });
+      document.getElementById("box_dither").addEventListener("click", function() {
+        drawPreview();
+      });
+      document.getElementById("box_mirror").addEventListener("click", function() {
+        drawPreview();
+      });
+      document.getElementById("box_bright").addEventListener("click", function() {
+        drawPreview();
+      });
+      // When the 'upload' button is clicked...
+      document.getElementById("upload").addEventListener("click", function() {
+        let settings = {
+            style : "image",
+            fn : "clockbg.bg0.img"
+        };
+        Util.showModal("Uploading Image...");
+        Util.writeStorage(settings.fn, bgImageData, function(data) {
+          Util.writeStorage("clockbg.json", JSON.stringify(settings), function(data) {
+            Util.hideModal()
+          });
+        });
+      });
+      // Custom image upload
+      document.getElementById('customfile').onchange = function (evt) {
+      var tgt = evt.target || window.event.srcElement, files = tgt.files;
+      if (FileReader && files && files.length) {
+        var fr = new FileReader();
+        fr.onload = function () {
+          document.getElementById("customimage").src = fr.result;
+          document.getElementById("customimage").style.display = "inline-block";
+          selectedImage = document.getElementById("customimage");
+          drawPreview();
+        }
+        fr.readAsDataURL(files[0]);
+      }
+    }
+
+      function onInit() {
+        Util.readStorageJSON("clockbg.json", function(data) {
+          let settings = Object.assign({
+            style : "randomcolor",
+            colors : ["#F00","#0F0","#00F"]
+          },data);
+          console.log(settings);
+        });
+      }
+
+    </script>
+  </body>
+</html>

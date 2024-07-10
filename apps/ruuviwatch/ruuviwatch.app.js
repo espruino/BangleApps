@@ -16,9 +16,9 @@ let paused = false;
 const SCAN_FREQ = 1000 * 30;
 
 // ALERT LIMITS
-LIMIT_SAUNA = 60;
-LIMIT_FRIDGE = 4;
-LIMIT_FREEZER = -18;
+const LIMIT_SAUNA = 60;
+const LIMIT_FRIDGE = 4;
+const LIMIT_FREEZER = -18;
 // TODO add wine cellar limits
 // TODO configurable limits
 
@@ -486,6 +486,6 @@ g.drawImage(
 g.setFont(FONT_M);
 g.drawString("Ruuvi Watch", CENTER, HUMID_PRESSURE_Y);
 
-var ageInterval = setInterval(redrawAge, 1000);
-var scanInterval = setInterval(scan, SCAN_FREQ);
+setInterval(redrawAge, 1000);
+setInterval(scan, SCAN_FREQ);
 scan();
