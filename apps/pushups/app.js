@@ -36,6 +36,17 @@ const IMAGES = [
   )
 ];
 
+// number of movements or duration required for each activity
+const DEFAULTS = [10, 10, 10, 30, 30, 30];
+
+function default_routine() {
+  let routine = [];
+  DEFAULTS.forEach((d, i) => {
+    routine.push([i, d]);
+  });
+  return routine;
+}
+
 const DETECTORS = [
   (xyz) => {
     return xyz.y > 0.4 ? 1 : 0;
@@ -53,28 +64,25 @@ const DETECTORS = [
     }
   },
   null,
-  (xyz) => {
-    if (xyz.y > 0.2) {
-      return 0;
-    }
-    if (xyz.y < 0) {
-      return 1;
-    }
-    return null;
-  },
+  null,
+  // (xyz) => {
+  //   if (xyz.y > 0.2) {
+  //     return 0;
+  //   }
+  //   if (xyz.y < 0) {
+  //     return 1;
+  //   }
+  //   return null;
+  // }, // TODO: jumping jacks detector does not work
   null
 ];
 
 class FitnessStatus {
   constructor(duration) {
-    this.routine = [
-      [0, 10],
-      [1, 10],
-      [2, 10],
-      [3, 30],
-      [4, 10],
-      [5, 30],
-    ];
+    this.routine = require("Storage").readJSON("pushups.cfg", true);
+    if (this.routine === undefined) {
+      this.routine = default_routine();
+    }
     this.routine_step = 0;
     this.current_status = 0;
     this.buzzing = false;
@@ -257,8 +265,6 @@ function start_routine() {
 
 
 function edit_menu() {
-  let w = g.getWidth();
-  let h = g.getHeight();
   let routine = status.routine;
 
   E.showScroller({
@@ -273,7 +279,6 @@ function edit_menu() {
     } else {
       let activity = routine[idx][0];
       let count = routine[idx][1];
-      let activity_name = ACTIVITIES[activity];
       let img = IMAGES[activity];
       g.drawImage(img, r.x + r.w / 5, r.y + 10);
       g.setFont("6x8:2").setFontAlign(0, 0).drawString(""+count, r.x+r.w*4/5, r.y+r.h/2);
@@ -282,9 +287,11 @@ function edit_menu() {
   select : function(idx) {
     if (idx == routine.length + 1) {
       E.showScroller();    
+      require("Storage").writeJSON("pushups.cfg", routine);
       start_routine();
     } else if (idx == routine.length) {
-      console.log("TODO: add");
+      E.showScroller();    
+      add_activity();
     } else {
       E.showScroller();    
       set_counter(idx);
@@ -292,6 +299,26 @@ function edit_menu() {
   }
   });
 }
+
+
+function add_activity() {
+  E.showScroller({
+  h : 60,
+  c : IMAGES.length,
+  draw : function(idx, r) { 
+    g.setColor(1).drawRect(r.x, r.y, r.w, r.h);
+    let img = IMAGES[idx];
+    g.drawImage(img, r.x + r.w / 3, r.y + 10);
+  },
+  select : function(idx) {
+    let new_index = status.routine.length;
+    status.routine.push([idx, 10]);
+    E.showScroller();    
+    set_counter(new_index);
+  }
+  });
+}
+
 
 function set_counter(index) {
   let w = g.getWidth();
