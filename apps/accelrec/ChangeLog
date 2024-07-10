@@ -4,3 +4,4 @@
       Trigger on 1.04g now, and record 10 samples before trigger
 0.03: Bangle.js 2 compatibility
 0.04: Minor code improvements
+0.05: Can record 100hz, z-axis color changed to yellow, autosave to file, no need select, delete old records

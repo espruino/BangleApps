@@ -7,3 +7,4 @@
 0.06: Use the clockbg library to allow custom image backgrounds
 0.07: Fix automatic coloring of middle of clockinfo images if clockinfo image goes right to the top or left
 0.08: Use new clockinfo lib with function to render images wirh borders
+0.09: Add date on the bottom
