@@ -663,7 +663,7 @@ function showUtilMenu() {
   };
   if (BANGLEJS2)
     menu[/*LANG*/'Calibrate Battery'] = () => {
-      E.showPrompt(/*LANG*/"Is the battery fully charged?",{title:/*LANG*/"Calibrate"}).then(ok => {
+      E.showPrompt(/*LANG*/"Is the battery fully charged?",{title:/*LANG*/"Calibrate",back:showUtilMenu}).then(ok => {
         if (ok) {
           var s=storage.readJSON("setting.json");
           s.batFullVoltage = (analogRead(D3)+analogRead(D3)+analogRead(D3)+analogRead(D3))/4;
@@ -675,7 +675,7 @@ function showUtilMenu() {
       });
     };
   menu[/*LANG*/'Reset Settings'] = () => {
-      E.showPrompt(/*LANG*/'Reset to Defaults?',{title:/*LANG*/"Settings"}).then((v) => {
+      E.showPrompt(/*LANG*/'Reset to Defaults?',{title:/*LANG*/"Settings",back:showUtilMenu}).then((v) => {
         if (v) {
           E.showMessage(/*LANG*/'Resetting');
           resetSettings();
@@ -685,7 +685,7 @@ function showUtilMenu() {
     };
   menu[/*LANG*/"Turn Off"] = () => {
     E.showPrompt(/*LANG*/"Are you sure? Alarms and timers won't fire", {
-      title:/*LANG*/"Turn Off"
+      title:/*LANG*/"Turn Off",back:showUtilMenu
     }).then((confirmed) => {
       if (confirmed) {
         E.showMessage(/*LANG*/"See you\nlater!", /*LANG*/"Goodbye");
