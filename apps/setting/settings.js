@@ -702,14 +702,24 @@ function showUtilMenu() {
       }
     });
   };
-
   if (Bangle.factoryReset) {
     menu[/*LANG*/'Factory Reset'] = ()=>{
-      E.showPrompt(/*LANG*/'This will remove everything!',{title:/*LANG*/"Factory Reset"}).then((v) => {
+      E.showPrompt(/*LANG*/'This will remove everything!',{title:/*LANG*/"Factory Reset",back:showUtilMenu}).then((v) => {
         if (v) {
-          E.showMessage();
-          Terminal.setConsole();
-          Bangle.factoryReset();
+          var n = ((Math.random()*4)&3) + 1;
+          E.showPrompt(/*LANG*/"To confirm, please press "+n,{
+            title:/*LANG*/"Factory Reset",
+            buttons : {"1":1,"2":2,"3":3,"4":4},
+            back:showUtilMenu
+          }).then(function(v) {
+            if (v==n) {
+              E.showMessage();
+              Terminal.setConsole();
+              Bangle.factoryReset();
+            } else {
+              showUtilMenu();
+            }
+          });
         } else showUtilMenu();
       });
     }
