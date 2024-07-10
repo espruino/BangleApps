@@ -15,4 +15,5 @@
   "storage": [
     {"name":"8ball.app.js","url":"app.js"},
     {"name":"8ball.img","url":"app-icon.js","evaluate":true}
+  ]
 }
