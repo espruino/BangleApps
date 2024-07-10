@@ -2,6 +2,13 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
+// disable fastload to ensure settings are applied when we exit the settings app
+// or if we load into another app from here
+if(global._load){
+  global.load = global._load;
+  delete global._load;
+}
+
 const BANGLEJS2 = process.env.HWVERSION==2;
 const storage = require('Storage');
 let settings;

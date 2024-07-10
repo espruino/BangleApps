@@ -33,11 +33,8 @@
     at: 0
   };
 
-  var writtenSettings = false;
-
   function writeSettings() {
     require('Storage').writeJSON("widdst.json", settings);
-    writtenSettings = true;
   }
 
   function writeSubMenuSettings() {
@@ -139,15 +136,7 @@
     "": {
       "Title": /*LANG*/"Daylight Saving"
     },
-    "< Back": () => {
-      if(writtenSettings && global._load){
-        // disable fastload to ensure settings are applied
-        // when we exit the settings app
-        global.load = global._load;
-        delete global._load;
-      }
-      back();
-    },
+    "< Back": back,
     /*LANG*/"Enabled": {
       value: !!settings.has_dst,
       onchange: v => {
