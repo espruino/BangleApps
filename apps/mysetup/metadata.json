@@ -6,6 +6,7 @@
   "type": "settings",
   "tags": "system,clkinfo",
   "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
   "dependencies" : {
     "sched":"app",
     "kbmulti":"app",
@@ -33,17 +34,17 @@
     "alarm":"app",
     "recorder":"app",
     "bthrm":"app",
-    "fastload":"app",
     "agenda":"app",
     "edgeclk":"app",
     "twenties":"app",
     "autoreset":"app",
     "chargent":"app",
     "setting":"app",
+    "fastload":"app",
     "boot":"app",
+    "delaylock":"app",
     "setuichange":"app"
   },
-  "readme": "README.md",
   "storage": [
     {"name":"backswipe.json",
      "url":"backswipe.json"},
