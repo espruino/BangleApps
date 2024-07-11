@@ -3,7 +3,7 @@ exports.get = function () {
     var batt = E.getBattery();
     var usage = 0;
     for (var key in pwr.device) {
-        if (!/^(LCD|LED)/.test(key))
+        if (!key.startsWith("LCD"))
             usage += pwr.device[key];
     }
     var hrsLeft = 175000 * batt / (100 * usage);

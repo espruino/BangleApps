@@ -14,7 +14,7 @@ exports.get = (): PowerUsage => {
 		const batt = E.getBattery();
 		let usage = 0;
 		for(const key in pwr.device){
-			if(!/^(LCD|LED)/.test(key))
+			if(!key.startsWith("LCD"))
 				usage += pwr.device[key];
 		}
 
