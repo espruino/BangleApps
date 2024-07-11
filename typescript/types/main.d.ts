@@ -11290,7 +11290,7 @@ interface String {
    * @returns {boolean} `true` if the given characters are found at the beginning of the string, otherwise, `false`.
    * @url http://www.espruino.com/Reference#l_String_startsWith
    */
-  startsWith(searchString: any, position: number): boolean;
+  startsWith(searchString: any, position?: number): boolean;
 
   /**
    *
