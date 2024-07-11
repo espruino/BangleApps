@@ -1,4 +1,4 @@
-type PowerUsage = {
+type Pwr = {
 	usage: number,
 	hrsLeft: number,
 	batt: number, // battery percentage
@@ -6,16 +6,16 @@ type PowerUsage = {
 
 // eslint-disable-next-line no-unused-vars
 type PowerUsageModule = {
-	get: () => PowerUsage,
+	get: () => Pwr,
 };
 
-exports.get = (): PowerUsage => {
+exports.get = (): Pwr => {
 		const pwr = E.getPowerUsage();
 		const batt = E.getBattery();
 		let usage = 0;
 		for(const key in pwr.device){
 			if(!key.startsWith("LCD"))
-				usage += pwr.device[key];
+				usage += pwr.device[key as keyof typeof pwr.device]!;
 		}
 
 		// 175mAh, scaled based on battery (batt/100), scaled down based on usage
