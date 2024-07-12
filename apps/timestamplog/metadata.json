@@ -5,6 +5,8 @@
   "icon": "app.png",
   "version": "0.01",
   "description": "Conveniently record a series of date/time stamps",
+  "screenshots": [ {"url": "screenshot.png" } ],
+  "readme": "README.md",
   "tags": "timestamp, log",
   "supports": ["BANGLEJS2"],
   "interface": "interface.html",
