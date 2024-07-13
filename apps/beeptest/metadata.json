@@ -4,12 +4,12 @@
   "shortName": "Beep Test",
   "version": "0.01",
   "description": "Aerobic fitness test created by Léger & Lambert",
-  "icon": "app.png",
+  "icon": "beeptest.png",
   "tags": "",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    { "name": "beeptest.app.js", "url": "app.js" },
+    { "name": "beeptest.app.js", "url": "beeptest.js" },
     { "name": "beeptest.img", "url": "app-icon.js", "evaluate": true }
   ]
 }
