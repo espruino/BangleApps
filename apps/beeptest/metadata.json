@@ -7,7 +7,7 @@
   "icon": "beeptest.png",
   "tags": "",
   "supports": ["BANGLEJS2"],
-  "readme": "README.md",
+  "readme": "readme.md",
   "storage": [
     { "name": "beeptest.app.js", "url": "beeptest.js" },
     { "name": "beeptest.img", "url": "app-icon.js", "evaluate": true }
