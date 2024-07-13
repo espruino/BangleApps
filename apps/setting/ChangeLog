@@ -82,3 +82,4 @@ of 'Select Clock'
 0.71: Minor code improvements
 0.72: Add setting for configuring BLE privacy
 0.73: Fix `const` bug / work with fastload
+0.74: Add extra layer of checks before allowing a factory reset (fix #3476)

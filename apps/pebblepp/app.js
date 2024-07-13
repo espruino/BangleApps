@@ -38,6 +38,9 @@ let draw = function() {
 
   g.reset();
   g.setBgColor(theme.bg).clearRect(0, h2, w, h3);
+  g.setColor(theme.fg).fillRect(w / 2 - 30, h3 + 5, w / 2 + 30, h); // refresh date background
+  g.setFontLECO1976Regular22().setFontAlign(0, -1);
+  g.setColor(theme.bg).drawString(date.getDate() + "." + (date.getMonth() + 1), w / 2, h3 + 5);
   g.setFontLECO1976Regular42().setFontAlign(0, -1);
   g.setColor(theme.fg);
   g.drawString(time, w/2, h2 + 8);
@@ -130,10 +133,8 @@ Bangle.setUI({
 Bangle.loadWidgets();
 require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
 background.fillRect(Bangle.appRect); // start off with completely clear background
-// contrast bar (top)
-g.setColor(theme.fg).fillRect(0, h2 - 6, w, h2);
-// contrast bar (bottom)
-g.setColor(theme.fg).fillRect(0, h3, w, h3 + 6);
+// background contrast bar
+g.setColor(theme.fg).fillRect(0, h2 - 6, w, h3 + 5);
 
 draw();
 }
