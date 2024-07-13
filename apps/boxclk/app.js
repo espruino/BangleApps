@@ -165,7 +165,6 @@ Modules.addCached("widget_utils", function() {
     };
     for (let key in boxesConfig) {
         if (key === 'bg' && boxesConfig[key].img) {
-            bgImage = storage.read(boxesConfig[key].img);
         } else if (key !== 'selectedConfig') {
             boxes[key] = Object.assign({}, boxesConfig[key]);
         }
