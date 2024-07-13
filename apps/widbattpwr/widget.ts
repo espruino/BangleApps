@@ -44,7 +44,7 @@
 		g.setFont("Vector", 16);
 		{
 			let txt;
-			if(showPct){
+			if(showPct || Bangle.isCharging()){
 				txt = `${batt}%`;
 			}else{
 				// 175mAh, scaled based on battery (batt/100), scaled down based on usage
