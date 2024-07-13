@@ -64,6 +64,7 @@ Bangle.on("lock", function() {
     kule[2] = Math.random();
   }
   function selectColor (x) {
+    let c;
     if (x < g.getWidth()/2) {
       c = 0;
     } else {
@@ -114,7 +115,6 @@ Bangle.on("lock", function() {
     g.clear();
     if (mode == "draw")
       return;
-    const w = g.getWidth;
     g.setColor(0, 0, 0.5);
     g.fillRect(0, 0, g.getWidth(), g.getHeight());
     g.setColor(1, 1, 1);
@@ -278,15 +278,13 @@ Bangle.on("lock", function() {
     do_draw(from, to);
     drawUtil();
   }
-  function on_btn_old(n) {
-  }
   function on_btn(n) {
     function f(i) {
       return "\\x" + i.toString(16).padStart(2, '0');
     }
     print("on_btn", n);
     print(g.getPixel(0, 0));
-    s = f(0) + f(font_width) + f(font_height) + f(1);
+    let s = f(0) + f(font_width) + f(font_height) + f(1);
     // 0..black, 65535..white
     for (let y = 0; y < font_height; y++) {
       let v = 0;
