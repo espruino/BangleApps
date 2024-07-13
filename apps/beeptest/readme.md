@@ -12,7 +12,7 @@ Push the button when you need to stop
 ## Features
 
 Buzzing on each shuttle run
-Results page with vO2max and total distance covered
+Results page with vO2max and total distance covered.
 
 ## Controls
 
