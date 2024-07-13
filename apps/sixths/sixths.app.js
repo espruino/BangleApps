@@ -530,13 +530,6 @@ function drawTime(now) {
     dot = ".";
   g.drawString(now.getHours() + dot + add0(now.getMinutes()), W, 90);
 }
-function adjPressure(a) {
-  var o = Bangle.getOptions();
-  print(o);
-  o.seaLevelPressure = o.seaLevelPressure * m + a;
-  Bangle.setOptions(o);
-  var avr = [];
-}
 function draw() {
   if (disp_mode == 2) {
     draw_all();
@@ -707,13 +700,14 @@ function buzzTask() {
     } else print("Unknown character -- ", now, buzz);
   }
 }
+var last_acc;
 function aliveTask() {
   function cmp(s) {
     let d = acc[s] - last_acc[s];
     return d < -0.03 || d > 0.03;
   }
   // HRM seems to detect hand quite nicely
-  acc = Bangle.getAccel();
+  let acc = Bangle.getAccel();
   is_active = false;
   if (cmp("x") || cmp("y") || cmp("z")) {
     print("active");
@@ -732,6 +726,7 @@ function lockHandler(locked) {
 }
 
 function queueDraw() {
+  let next;
   if (getTime() - last_unlocked > 3*60)
     next = 60000;
   else
@@ -748,8 +743,6 @@ function start() {
 
   Bangle.on("drag", touchHandler);
   Bangle.on("lock", lockHandler);
-  if (0)
-      Bangle.on("accel", accelHandler);
   if (0) {
     Bangle.setCompassPower(1, "sixths");
     Bangle.setBarometerPower(1, "sixths");
