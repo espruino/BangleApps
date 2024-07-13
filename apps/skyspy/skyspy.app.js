@@ -16,25 +16,25 @@ let fmt = {
     
     init: function() {},
     fmtDist: function(km) { return km.toFixed(1) + this.icon_km; },
-    fmtSteps: function(n) { return fmtDist(0.001 * 0.719 * n); },
+    fmtSteps: function(n) { return this.fmtDist(0.001 * 0.719 * n); },
     fmtAlt: function(m) { return m.toFixed(0) + this.icon_alt; },
     fmtTimeDiff: function(d) {
-	if (d < 180)
-	    return ""+d.toFixed(0);
-	d = d/60;
-	return ""+d.toFixed(0)+"m";
+        if (d < 180)
+            return ""+d.toFixed(0);
+        d = d/60;
+        return ""+d.toFixed(0)+"m";
     },
     fmtAngle: function(x) {
-	switch (this.geo_mode) {
-	case 0:
+        switch (this.geo_mode) {
+        case 0:
             return "" + x;
-	case 1: {
+        case 1: {
             let d = Math.floor(x);
             let m = x - d;
             m = m*60;
             return "" + d + " " + m.toFixed(3) + "'";
-	}
-	case 2: {
+        }
+        case 2: {
             let d = Math.floor(x);
             let m = x - d;
             m = m*60;
@@ -42,24 +42,24 @@ let fmt = {
             let s = m - mf;
             s = s*60;
             return "" + d + " " + mf + "'" + s.toFixed(0) + '"';
-	}
-	}
-	return "bad mode?";
+        }
+        }
+        return "bad mode?";
     },
     fmtPos: function(pos) {
-	let x = pos.lat;
-	let c = "N";
-	if (x<0) {
-	    c = "S";
-	    x = -x;
-	}
-	let s = c+this.fmtAngle(pos.lat) + "\n";
-	c = "E";
-	if (x<0) {
-	    c = "W";
-	    x = -x;
-	}
-	return s + c + this.fmtAngle(pos.lon);
+        let x = pos.lat;
+        let c = "N";
+        if (x<0) {
+            c = "S";
+            x = -x;
+        }
+        let s = c+this.fmtAngle(pos.lat) + "\n";
+        c = "E";
+        if (x<0) {
+            c = "W";
+            x = -x;
+        }
+        return s + c + this.fmtAngle(pos.lon);
     },
 };
 
@@ -67,50 +67,50 @@ let fmt = {
 let gps = {
     emulator: -1,
     init: function(x) {
-	this.emulator = (process.env.BOARD=="EMSCRIPTEN" 
-			 || process.env.BOARD=="EMSCRIPTEN2")?1:0;
+        this.emulator = (process.env.BOARD=="EMSCRIPTEN" 
+                         || process.env.BOARD=="EMSCRIPTEN2")?1:0;
     },
     state: {},
     on_gps: function(f) {
-	let fix = this.getGPSFix();
-	f(fix);
+        let fix = this.getGPSFix();
+        f(fix);
 
-	/*
-	  "lat": number,      // Latitude in degrees
-	  "lon": number,      // Longitude in degrees
-	  "alt": number,      // altitude in M
-	  "speed": number,    // Speed in kph
-	  "course": number,   // Course in degrees
-	  "time": Date,       // Current Time (or undefined if not known)
-	  "satellites": 7,    // Number of satellites
-	  "fix": 1            // NMEA Fix state - 0 is no fix
-	  "hdop": number,     // Horizontal Dilution of Precision
-	*/
-	this.state.timeout = setTimeout(this.on_gps, 1000, f);
+        /*
+          "lat": number,      // Latitude in degrees
+          "lon": number,      // Longitude in degrees
+          "alt": number,      // altitude in M
+          "speed": number,    // Speed in kph
+          "course": number,   // Course in degrees
+          "time": Date,       // Current Time (or undefined if not known)
+          "satellites": 7,    // Number of satellites
+          "fix": 1            // NMEA Fix state - 0 is no fix
+          "hdop": number,     // Horizontal Dilution of Precision
+        */
+        this.state.timeout = setTimeout(this.on_gps, 1000, f);
     },
     off_gps: function() {
-	clearTimeout(gps_state.timeout);
+        clearTimeout(this.state.timeout);
     },
     getGPSFix: function() {
-	if (!this.emulator)
-	    return Bangle.getGPSFix();
-	let fix = {};
-	fix.fix = 1;
-	fix.lat = 50;
-	fix.lon = 14;
-	fix.alt = 200;
-	fix.speed = 5;
-	fix.course = 30;
-	fix.time = Date();
-	fix.satellites = 5;
-	fix.hdop = 12;
-	return fix;
+        if (!this.emulator)
+            return Bangle.getGPSFix();
+        let fix = {};
+        fix.fix = 1;
+        fix.lat = 50;
+        fix.lon = 14;
+        fix.alt = 200;
+        fix.speed = 5;
+        fix.course = 30;
+        fix.time = Date();
+        fix.satellites = 5;
+        fix.hdop = 12;
+        return fix;
     }
 };
 
 var display = 0;
 var debug = 0;
-var cancel_gps, gps_start;
+var gps_start;
 var cur_altitude;
 var wi = 24;
 var h = 176-wi, w = 176;
@@ -128,7 +128,7 @@ function radY(p, d) {
   return h/2 - Math.cos(a)*radD(d) + wi;
 }
 
-var qalt = -1;
+var qalt = -1, min_dalt, max_dalt, step;
 function resetAlt() {
   min_dalt = 9999; max_dalt = -9999; step = 0;
 }
@@ -150,8 +150,6 @@ function updateGps() {
       speed = "speed ", hdop = "?", adelta = "adelta ",
       tdelta = "tdelta ";
 
-  if (cancel_gps)
-    return;
   fix = gps.getGPSFix();
   if (adj_time) {
     print("Adjusting time");
@@ -161,21 +159,21 @@ function updateGps() {
   if (adj_alt) {
       print("Adjust altitude");
       if (qalt < 5) {
-	  let rest_altitude = fix.alt;
-	  let alt_adjust = cur_altitude - rest_altitude;
-	  let abs = Math.abs(alt_adjust);
-	  print("adj", alt_adjust);
-	  let o = Bangle.getOptions();
-	  if (abs > 10 && abs < 150) {
-	      let a = 0.01;
-	      // FIXME: draw is called often compared to alt reading
-	      if (cur_altitude > rest_altitude)
-		  a = -a;
-	      o.seaLevelPressure = o.seaLevelPressure + a;
-	      Bangle.setOptions(o);
-	  }
-	  msg = o.seaLevelPressure.toFixed(1) + "hPa";
-	  print(msg);
+          let rest_altitude = fix.alt;
+          let alt_adjust = cur_altitude - rest_altitude;
+          let abs = Math.abs(alt_adjust);
+          print("adj", alt_adjust);
+          let o = Bangle.getOptions();
+          if (abs > 10 && abs < 150) {
+              let a = 0.01;
+              // FIXME: draw is called often compared to alt reading
+              if (cur_altitude > rest_altitude)
+                  a = -a;
+              o.seaLevelPressure = o.seaLevelPressure + a;
+              Bangle.setOptions(o);
+          }
+          msg = o.seaLevelPressure.toFixed(1) + "hPa";
+          print(msg);
       }
   }
 
@@ -350,13 +348,7 @@ function parseRaw(msg, lost) {
   }
 }
 
-function stopGps() {
-  cancel_gps=true;
-  Bangle.setGPSPower(0, "skyspy");
-}
-
 function markGps() {
-  cancel_gps = false;
   Bangle.setGPSPower(1, "skyspy");
   Bangle.on('GPS-raw', parseRaw);
   gps_start = getTime();
@@ -378,14 +370,14 @@ var numScreens = 3;
 function nextScreen() {
     display = display + 1;
     if (display == numScreens)
-	display = 0;
+        display = 0;
     drawBusy();
 }
 
 function prevScreen() {
     display = display - 1;
     if (display < 0)
-	display = numScreens - 1;
+        display = numScreens - 1;
     drawBusy();
 }
 
@@ -399,24 +391,24 @@ function touchHandler(d) {
     let y = Math.floor(d.y);
     
     if (d.b != 1 || last_b != 0) {
-	last_b = d.b;
-	return;
+        last_b = d.b;
+        return;
     }
     last_b = d.b;
 
     if ((x<h/2) && (y<w/2)) {
-	drawMsg("Clock\nadjust");
-	adj_time = 1;
+        drawMsg("Clock\nadjust");
+        adj_time = 1;
     }
     if ((x>h/2) && (y<w/2)) {
-	drawMsg("Alt\nadjust");
-	adj_alt = 1;
+        drawMsg("Alt\nadjust");
+        adj_alt = 1;
     }
 
     if ((x<h/2) && (y>w/2))
-	prevScreen();
+        prevScreen();
     if ((x>h/2) && (y>w/2))
-	nextScreen();
+        nextScreen();
 }
 
 gps.init();
