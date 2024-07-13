@@ -22,13 +22,7 @@
 		let x = this.x!;
 		let y = this.y!;
 
-		const batt = E.getBattery();
-		const pwr = E.getPowerUsage();
-		let usage = 0;
-		for(const key in pwr.device){
-			if(!/^(LCD|LED)/.test(key))
-				usage += pwr.device[key];
-		}
+		const { usage, hrsLeft, batt } = require("power_usage").get();
 		const pwrColour = powerColour(usage);
 
 		g.reset()
@@ -47,10 +41,8 @@
 			if(showPct || Bangle.isCharging()){
 				txt = `${batt}%`;
 			}else{
-				// 175mAh, scaled based on battery (batt/100), scaled down based on usage
-				const hrs = 175000 * batt / (100 * usage);
-				const days = hrs / 24;
-				txt = days >= 1 ? `${Math.round(Math.min(days, 99))}d` : `${Math.round(hrs)}h`;
+				const days = hrsLeft / 24;
+				txt = days >= 1 ? `${Math.round(Math.min(days, 99))}d` : `${Math.round(hrsLeft)}h`;
 			}
 
 			// draw time remaining, then shade it based on batt %

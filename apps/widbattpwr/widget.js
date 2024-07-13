@@ -20,13 +20,7 @@
     function draw() {
         var x = this.x;
         var y = this.y;
-        var batt = E.getBattery();
-        var pwr = E.getPowerUsage();
-        var usage = 0;
-        for (var key in pwr.device) {
-            if (!/^(LCD|LED)/.test(key))
-                usage += pwr.device[key];
-        }
+        var _a = require("power_usage").get(), usage = _a.usage, hrsLeft = _a.hrsLeft, batt = _a.batt;
         var pwrColour = powerColour(usage);
         g.reset()
             .setBgColor(g.theme.bg)
@@ -43,9 +37,8 @@
                 txt = "".concat(batt, "%");
             }
             else {
-                var hrs = 175000 * batt / (100 * usage);
-                var days = hrs / 24;
-                txt = days >= 1 ? "".concat(Math.round(Math.min(days, 99)), "d") : "".concat(Math.round(hrs), "h");
+                var days = hrsLeft / 24;
+                txt = days >= 1 ? "".concat(Math.round(Math.min(days, 99)), "d") : "".concat(Math.round(hrsLeft), "h");
             }
             var txth = 14;
             g.setColor(g.theme.fg);
