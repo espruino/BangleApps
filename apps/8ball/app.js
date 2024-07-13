@@ -27,7 +27,7 @@ function menu()
   E.showMenu();
   menuOpen = 1;
   E.showMenu({
-    "" : { title : /*LANG*/Name },
+    "" : { title : Name },
     "< Back" : () => menu(),
     "Start" : () => {
       E.showMenu();
@@ -36,7 +36,7 @@ function menu()
       Drawtext("ask " + Name + " a yes or no question");
     },
       "regenerate name" : () => {
-      E.showMenu();
+      menu();
       generateName();
     },
     "show answers" : () => {
@@ -51,17 +51,19 @@ function menu()
 
     "Add answer" : () => {
       E.showMenu();
-      var result = keyboard.input({}).then(result => {if(result != ""){answers.push(result);} menu();});
+      keyboard.input({}).then(result => {if(result != ""){answers.push(result);} menu();});
     },
     "Edit name" : () => {
         E.showMenu();
-        var result = keyboard.input({}).then(result => {menu(), Name = result;});
+        keyboard.input({}).then(result => {if(result != ""){Name = result;} menu();});
+
     },
     "Exit" : () => load(),
   });
 }
 menu();
-var answer;
+
+      var answer;
 function Drawtext(text)
 {
   g.clear();
@@ -82,7 +84,6 @@ function WriteAnswer()
   }
 
 }
-
 setWatch(function() {
           menu();
 
