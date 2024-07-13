@@ -146,7 +146,7 @@ function calcAlt(alt, cur_altitude) {
     return ddalt;
 }
 function updateGps() {
-  let have = false, lat = "lat ", alt = "?",
+  let lat = "lat ", alt = "?",
       speed = "speed ", hdop = "?", adelta = "adelta ",
       tdelta = "tdelta ";
 
@@ -196,7 +196,6 @@ function updateGps() {
     adelta = "" + (cur_altitude - fix.alt).toFixed(0);
     speed = "" + fix.speed.toFixed(1);
     hdop = "" + fix.hdop.toFixed(0);
-    have = true;
   } else {
     lat = "NO FIX\n"
        + "" + (getTime() - gps_start).toFixed(0) + "s " 
