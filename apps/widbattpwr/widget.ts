@@ -38,7 +38,7 @@
 		g.setFont("Vector", 16);
 		{
 			let txt;
-			if(showPct){
+			if(showPct || Bangle.isCharging()){
 				txt = `${batt}%`;
 			}else{
 				const days = hrsLeft / 24;

@@ -33,7 +33,7 @@
         g.setFont("Vector", 16);
         {
             var txt = void 0;
-            if (showPct) {
+            if (showPct || Bangle.isCharging()) {
                 txt = "".concat(batt, "%");
             }
             else {
