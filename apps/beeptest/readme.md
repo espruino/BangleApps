@@ -1,30 +1,27 @@
 # App Name
 
-More information on making apps:
-
-* http://www.espruino.com/Bangle.js+First+App
-* http://www.espruino.com/Bangle.js+App+Loader
-
-Describe the app...
-
-Add screen shots (if possible) to the app folder and link then into this file with ![](<name>.png)
+Beep Test
 
 ## Usage
 
-Describe how to use it
+Mark out a 20m space
+Click the side button to start the test
+Shuttle run between your markers when the watch buzzes
+Push the button when you need to stop
 
 ## Features
 
-Name the function
+Buzzing on each shuttle run
+Results page with vO2max and total distance covered
 
 ## Controls
 
-Name the buttons and what they are used for
+Side button starts, stops and resets the app.
 
 ## Requests
 
-Name who should be contacted for support/update requests
+bb0x88 on giuthub
 
 ## Creator
 
-Your name
+Blade
