@@ -5,11 +5,11 @@
   "version": "0.01",
   "description": "Aerobic fitness test created by Léger & Lambert",
   "icon": "beeptest.png",
-  "tags": "",
+  "tags": "Health",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     { "name": "beeptest.app.js", "url": "beeptest.js" },
-    { "name": "beeptest.img", "url": "app-icon.js", "evaluate": true }
+    { "name": "beeptest.png", "url": "app-icon.js", "evaluate": true }
   ]
 }
