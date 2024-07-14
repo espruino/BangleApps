@@ -27,10 +27,10 @@
     var steps = [0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
     var stepsReversed = steps.slice();
     stepsReversed.reverse();
-    var polyLeftTop = [];
-    var polyLeftBottom = [];
-    var polyRightTop = [];
-    var polyRightBottom = [];
+    var polyLeftTop = [0, 0];
+    var polyLeftBottom = [0, g.getHeight()];
+    var polyRightTop = [g.getWidth() - 1, 0];
+    var polyRightBottom = [g.getWidth() - 1, g.getHeight()];
     let xL = 0;
     let xR = g.getWidth() - 1;
     let yT = centerY - 13;
