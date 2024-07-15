@@ -323,6 +323,7 @@ function showMessageSettings(msg) {
 }
 
 function showMessage(msgid, persist) {
+  if (replying) { return; }
   if(!persist) resetReloadTimeout();
   let idx = MESSAGES.findIndex(m=>m.id==msgid);
   var msg = MESSAGES[idx];
