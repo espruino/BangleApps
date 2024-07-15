@@ -72,7 +72,7 @@
     if (hour == 1) {
       return lineEndFull - 5;
     }
-    if (hour < 10 || hour > 20) {
+    if (hour < 10 || hour >= 20) {
       return lineEndFull + 5;
     }
     return lineEndFull - 5;
