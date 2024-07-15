@@ -24,6 +24,7 @@ require("messages").pushMessage({"t":"add","id":"call","src":"Phone","title":"Bo
 var Layout = require("Layout");
 var layout; // global var containing the layout for the currently displayed message
 var settings = require('Storage').readJSON("messages.settings.json", true) || {};
+var reply = require("reply");
 var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
 var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
@@ -45,6 +46,7 @@ if (Graphics.prototype.setFontIntl) {
 
 var active; // active screen (undefined/"list"/"music"/"map"/"message"/"scroller"/"settings")
 var openMusic = false; // go back to music screen after we handle something else?
+var replying = false; // If we're replying to a message, don't interrupt
 // hack for 2v10 firmware's lack of ':size' font handling
 try {
   g.setFont("6x8:2");
@@ -267,11 +269,27 @@ function showMessageSettings(msg) {
     /*LANG*/"View Message" : () => {
       showMessageScroller(msg);
     },
+    /*LANG*/"Reply": () => {
+      replying = true;
+      reply.reply({msg: msg})
+        .then(result => {
+          Bluetooth.println(JSON.stringify(result));
+          replying = false;
+          showMessage(msg.id);
+        })
+        .catch(() => {
+          replying = false;
+          showMessage(msg.id);
+        });
+    },
     /*LANG*/"Delete" : () => {
       MESSAGES = MESSAGES.filter(m=>m.id!=msg.id);
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
     },
   };
+
+  if (!msg.reply || !reply) delete menu[/*LANG*/"Reply"];
+
   if (Bangle.messageIgnore && msg.src)
     menu[/*LANG*/"Ignore"] = () => {
       E.showPrompt(/*LANG*/"Ignore all messages from "+E.toJS(msg.src)+"?", {title:/*LANG*/"Ignore"}).then(isYes => {
