@@ -8,7 +8,7 @@
   "type": "app",
   "tags": "tool,system",
   "supports": ["BANGLEJS","BANGLEJS2"],
-  "dependencies" : { "messageicons":"module" },
+  "dependencies" : { "messageicons":"module", "reply": "module" },
   "provides_modules": ["messagegui"],
   "default": true,
   "readme": "README.md",
