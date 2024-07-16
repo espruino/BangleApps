@@ -14,7 +14,7 @@
 
       function HTMLStampLog(stampLog) {
         html = ''
-        if (stampLog.length) {
+        if (stampLog !== undefined && stampLog.length) {
           html += '<ol>';
           for (const logItem of stampLog) {
             html += ('<li>' + new Date(logItem.stamp).toLocaleString() + '</li>');
