@@ -1,7 +1,9 @@
 # Measure Time
 
 Measure time in a fancy way. Inspired by a Watchface I had on my first Pebble Watch.
+Icon from [Flaticon created by Smartline]("https://www.flaticon.com/free-icons/scale")
 
-Written by [prefectAtEarth](https://www.github.com/prefectAtEarth/)
+Watchface written by [prefectAtEarth](https://www.github.com/prefectAtEarth/)
 
-![](measuretime.png)
+![](screenshot_light.png)
+![](screenshot_dark.png)
