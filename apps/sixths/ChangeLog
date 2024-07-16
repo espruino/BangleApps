@@ -2,3 +2,4 @@
 0.02: better GPS support, adding altitude and temperature support
 0.03: minor code improvements
 0.04: make height auto-calibration useful and slow ticks to save power
+0.05: add ability to navigate to waypoints, better documentation

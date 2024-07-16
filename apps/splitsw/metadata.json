@@ -1,0 +1,16 @@
+{ "id": "splitsw",
+  "name": "Stopwatch with split times",
+  "shortName":"Stopwatch",
+  "version":"0.01",
+  "description": "A basic stopwatch with support for split times",
+  "icon": "app.png",
+  "tags": "tool,outdoors,health",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "screenshots": [{ "url": "screenshot.png" }],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"splitsw.app.js","url":"app.js"},
+    {"name":"splitsw.img","url":"app-icon.js","evaluate":true}
+  ]
+}
