@@ -141,14 +141,17 @@ function launchSettingsMenu(backCb) {
   const stampLog = new StampLog(LOG_FILENAME, SETTINGS.maxLogLength);
 
   function saveSettings() {
+    console.log('Saving timestamp log and settings');
     stampLog.save();
     if (!storage.writeJSON(SETTINGS_FILENAME, SETTINGS)) {
       E.showAlert('Trouble saving settings');
     }
   }
+  E.on('kill', saveSettings);
 
   function endMenu() {
     saveSettings();
+    E.removeListener('kill', saveSettings);
     backCb();
   }
 
