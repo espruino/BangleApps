@@ -1,7 +1,5 @@
 {
   require("Font7x11Numeric7Seg").add(Graphics);
-  g.setFont("7x11Numeric7Seg");
-  g.setFontAlign(0, 0);
 
   const centerY = g.getHeight() / 2; //88
   const lineStart = 25;
@@ -27,10 +25,10 @@
     var steps = [0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
     var stepsReversed = steps.slice();
     stepsReversed.reverse();
-    var polyLeftTop = [];
-    var polyLeftBottom = [];
-    var polyRightTop = [];
-    var polyRightBottom = [];
+    var polyLeftTop = [0, 0];
+    var polyLeftBottom = [0, g.getHeight()];
+    var polyRightTop = [g.getWidth() - 1, 0];
+    var polyRightBottom = [g.getWidth() - 1, g.getHeight()];
     let xL = 0;
     let xR = g.getWidth() - 1;
     let yT = centerY - 13;
@@ -70,6 +68,16 @@
     g.fillPolyAA(polyRightBottom, true);
   };
 
+  let hourStringXOffset = function (hour) {
+    if (hour == 1) {
+      return lineEndFull - 5;
+    }
+    if (hour < 10 || hour >= 20) {
+      return lineEndFull + 5;
+    }
+    return lineEndFull - 5;
+  };
+
   let drawTime = function () {
     g.clear();
     var d = new Date();
@@ -86,19 +94,19 @@
 
     var lineEnd = lineEndDefault;
     g.setFont("7x11Numeric7Seg", 2);
-    g.setFontAlign(0, 0);
+    g.setFontAlign(-1, 0);
 
     // gone
     do {
       switch (yTopLines - 88 + mins) {
         case -60:
           lineEnd = lineEndFull;
-          g.drawString(d.getHours() - 1, lineEnd + 10, yTopLines, true);
+          g.drawString(d.getHours()-1, hourStringXOffset(d.getHours()-1), yTopLines, true);
           break;
         case 0:
         case 60:
           lineEnd = lineEndFull;
-          g.drawString(d.getHours(), lineEnd + 10, yTopLines, true);
+          g.drawString(d.getHours(), hourStringXOffset(d.getHours()), yTopLines, true);
           break;
         case 45:
         case -45:
@@ -128,11 +136,11 @@
         case 0:
         case 60:
           lineEnd = lineEndFull;
-          g.drawString(d.getHours() + 1, lineEnd + 10, yBottomLines, true);
+          g.drawString(d.getHours() + 1,  hourStringXOffset(d.getHours()+1), yBottomLines, true);
           break;
         case 120:
           lineEnd = lineEndFull;
-          g.drawString(d.getHours() + 2, lineEnd + 10, yBottomLines, true);
+          g.drawString(d.getHours() + 2,  hourStringXOffset(d.getHours()+2), yBottomLines, true);
           break;
         case 15:
         case 75:
