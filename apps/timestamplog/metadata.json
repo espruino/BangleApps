@@ -1,0 +1,23 @@
+{
+  "id": "timestamplog",
+  "name": "Timestamp log",
+  "shortName":"Timestamp log",
+  "icon": "app.png",
+  "version": "0.01",
+  "description": "Conveniently record a series of date/time stamps",
+  "screenshots": [ {"url": "screenshot.png" } ],
+  "readme": "README.md",
+  "tags": "timestamp, log",
+  "supports": ["BANGLEJS2"],
+  "interface": "interface.html",
+  "storage": [
+    {"name": "timestamplog.app.js", "url": "app.js"},
+    {"name": "timestamplog.img", "url": "app-icon.js", "evaluate": true},
+    {"name": "timestamplog", "url": "lib.js"},
+    {"name": "timestamplog.settings.js", "url": "settings.js"}
+  ],
+  "data": [
+    {"name": "timestamplog.settings"},
+    {"name": "timestamplog.json"}
+  ]
+}
