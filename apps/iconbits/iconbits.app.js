@@ -82,14 +82,13 @@ Bangle.on("lock", function() {
   }
   function selectColor(x) {
     if (color) {
-      i = Math.floor((x - 32) / 4);
+      let i = Math.floor((x - 32) / 4);
       kule = toColor(i);
       return;
     }
+    let c = 255;
     if (x < g.getWidth()/2) {
       c = 0;
-    } else {
-      c = 255;
     }
     kule[0] = c;
     kule[1] = c;
@@ -170,7 +169,7 @@ Bangle.on("lock", function() {
     g.setColor(kule[0], kule[1], kule[2]);
     g.fillRect(0, 0, g.getWidth(), top_bar);
     for (let i = 0; i < 3*3*3; i++) {
-      r = toColor(i);
+      let r = toColor(i);
       g.setColor(r[0], r[1], r[2]);
       g.fillRect(32+4*i, 12, 32+4*i+3, top_bar);
     }
@@ -378,7 +377,7 @@ function show_unc_icon(icon) {
 }
 
 function show_icon(icon) {
-  unc = require("heatshrink").decompress(atob(icon));
+  let unc = require("heatshrink").decompress(atob(icon));
   show_bin_icon(unc);
 }
 
@@ -389,7 +388,7 @@ function load_bin_icon(i) {
 }
 
 function load_icon(icon) {
-  unc = require("heatshrink").decompress(atob(icon));
+  let unc = require("heatshrink").decompress(atob(icon));
   load_bin_icon(unc);
 }
 
