@@ -235,11 +235,9 @@ Bangle.on("lock", function() {
   }
     
   function do_draw(from, to) {
-    print("do-draw", from, to);
     from = transform(from);
     to = transform(to);
     if (from && to) {
-      print("__draw", from, to);
       __draw(sg, from, to);
     }
     update();
@@ -327,7 +325,6 @@ Bangle.on("lock", function() {
       if (!line_from) {
         line_from = to;
       } else {
-        print("draw -- ", line_from, to);
         do_draw(line_from, to);
         line_from = null;
       }
@@ -335,7 +332,8 @@ Bangle.on("lock", function() {
     }
     drawUtil();
   }
-  function on_btn(n) {
+
+function dump(n) {
     function f(i) {
       return "\\x" + i.toString(16).padStart(2, '0');
     }
@@ -361,7 +359,7 @@ drawArea();
 Bangle.setUI({
       "mode": "custom",
       "drag": on_drag,
-      "btn": on_btn,
+      "btn": dump,
 });
 drawUtil();
 
