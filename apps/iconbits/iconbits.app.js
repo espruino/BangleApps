@@ -10,6 +10,7 @@
   let kule = [0, 0, 0]; // R, G, B
   var font_height = 22, font_width = 8;
   var zoom_x = 64, zoom_y = 24, zoom_f = 6;
+  var color = true;
   let oldLock = false;
   let sg = null;
   
@@ -17,7 +18,7 @@
     sg.setColor(1,1,1).fillRect(0,0, font_width, font_height);
   }
 
-  function setup(m) {
+  function __setup(m) {
     mode = m;
     switch (m) {
       case 'font':
@@ -37,8 +38,21 @@
         zoom_f = 2;
         break;
     }
+  }
+  function setup(m) {
+    __setup(m);
     sg = Graphics.createArrayBuffer(font_width, font_height, 8, {});
     clear();
+  }
+
+  function icon_big() {
+    zoom_x = 16;
+    zoom_y = 25;
+    zoom_f = 3;
+  }
+
+  function icon_small() {
+    __setup("icon");
   }
 
   function updateLock() {
@@ -66,7 +80,11 @@ Bangle.on("lock", function() {
     kule[2] = Math.random();
   }
   function selectColor (x) {
-    let c;
+    if (color) {
+      i = Math.floor((x - 25) / 4);
+      kule = toColor(i);
+      return;
+    }
     if (x < g.getWidth()/2) {
       c = 0;
     } else {
@@ -117,6 +135,7 @@ Bangle.on("lock", function() {
     g.clear();
     if (mode == "draw")
       return;
+    const w = g.getWidth;
     g.setColor(0, 0, 0.5);
     g.fillRect(0, 0, g.getWidth(), g.getHeight());
     g.setColor(1, 1, 1);
@@ -129,6 +148,16 @@ Bangle.on("lock", function() {
     update();
   }
 
+  function toColor(i) {
+    let r = [0, 0, 0];
+    r[0] = (i % 3) / 2;
+    i = Math.floor(i / 3);
+    r[1] = (i % 3) / 2;
+    i = Math.floor(i / 3);
+    r[2] = (i % 3) / 2;
+    return r;
+  }
+
   function drawUtil () {
     if (Bangle.isLocked()) {
       updateLock();
@@ -136,6 +165,11 @@ Bangle.on("lock", function() {
     // titlebar
     g.setColor(kule[0], kule[1], kule[2]);
     g.fillRect(0, 0, g.getWidth(), 20);
+    for (let i = 0; i < 3*3*3; i++) {
+      r = toColor(i);
+      g.setColor(r[0], r[1], r[2]);
+      g.fillRect(25+4*i, 20, 25+4*i+3, 24);
+    }
     // clear button
     g.setColor('#000'); // black
     g.fillCircle(10, 10, 8, 8);
@@ -173,7 +207,7 @@ Bangle.on("lock", function() {
         var XS = (to.x - from.x) / 32;
         var YS = (to.y - from.y) / 32;
         for (let i = 0; i < 32; i++) {
-          g.fillCircle(from.x + (i * XS), from.y + (i * YS), 4, 4);
+          g.fillCircle(from.x + (i * XS), from.y + (i * YS), 2, 2);
         }
         break;
       case 'square':
@@ -182,7 +216,7 @@ Bangle.on("lock", function() {
         for (let i = 0; i < 32; i++) {
           const posX = from.x + (i * XS);
           const posY = from.y + (i * YS);
-          g.fillRect(posX - 10, posY - 10, posX + 10, posY + 10);
+          g.fillRect(posX - 4, posY - 4, posX + 4, posY + 4);
         }
         break;
     }
@@ -190,7 +224,7 @@ Bangle.on("lock", function() {
   }
   
   function update() {
-    g.drawImage(sg, 0, 64, {});
+    g.drawImage(sg, 4, 64, {});
     g.drawImage(sg, zoom_x, zoom_y, { scale: zoom_f });
   }
     
@@ -226,8 +260,9 @@ Bangle.on("lock", function() {
       oldY = -1;
     }, 100);
 
+    let top_bar = 20;
     // tap and hold the clear button
-    if (tap.x < 32 && tap.y < 32) {
+    if (tap.x < 32 && tap.y < top_bar) {
       if (tap.b === 1) {
         if (tapTimer === null) {
           tapTimer = setTimeout(function () {
@@ -244,7 +279,7 @@ Bangle.on("lock", function() {
       }
       return;
     }
-    if (tap.x > g.getWidth() - 32 && tap.y < 32) {
+    if (tap.x > g.getWidth() - 32 && tap.y < top_bar) {
       if (tap.b === 1) {
         if (tapTimer === null) {
           tapTimer = setTimeout(function () {
@@ -264,7 +299,7 @@ Bangle.on("lock", function() {
       }
       drawUtil();
       return;
-    } else if (tap.y < 32) {
+    } else if (tap.y < top_bar) {
       if (mode == "draw")
         nextColor();
       else
@@ -308,6 +343,7 @@ Bangle.on("lock", function() {
       //print("wh", im, typeof im, im[0], typeof im[0]);
       //print("Image:", im.length, s);
       print('fi("'+btoa(im)+'");');
+      print(btoa(require('heatshrink').compress(im)));
     }
 
 
