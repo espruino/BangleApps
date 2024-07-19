@@ -330,18 +330,15 @@ Bangle.on("lock", function() {
       s += f(v);
     }
     print("Manual bitmap\n");
-    print('ft("' + s + '");');
+    print('show_font("' + s + '");');
     if (1) {
       s = "";
       var im = sg.asImage("string");
       for (var v of im) {
-        //print("val", v, typeof v);
         s += f(v);
       }
-      //print("wh", im, typeof im, im[0], typeof im[0]);
-      //print("Image:", im.length, s);
-      print('fi("'+btoa(im)+'");');
-      print(btoa(require('heatshrink').compress(im)));
+      //print('show_unc_icon("'+btoa(im)+'");');
+      print('show_icon("'+btoa(require('heatshrink').compress(im))+'");');
     }
   }
 
@@ -354,14 +351,22 @@ Bangle.setUI({
 });
 drawUtil();
 
-function ft(icon) {
+function show_font(icon) {
   g.reset().clear();
   g.setFont("Vector", 26).drawString("Hellord" + icon, 0, 0);
 }
 
-function fi(icon) {
+function show_bin_icon(icon) {
   g.reset().clear();
-  g.drawImage(atob(icon), 40, 40);
+  g.drawImage(icon, 40, 40);
 }
 
-//ft(icon_10 + "23.1" + icon_hpa);
+function show_unc_icon(icon) {
+  show_bin_icon(atob(icon));
+}
+
+function show_icon(icon) {
+  unc = require("heatshrink").decompress(atob(icon));
+  show_bin_icon(unc);
+}
+
