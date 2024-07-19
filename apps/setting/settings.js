@@ -651,7 +651,7 @@ function showUtilMenu() {
       E.showMessage(/*LANG*/'Flattening battery - this can take hours.\nLong-press button to cancel.');
       Bangle.setLCDTimeout(0);
       Bangle.setLCDPower(1);
-      Bangle.setLCDBrightness(1);	
+      Bangle.setLCDBrightness(1);
       if (Bangle.setGPSPower) Bangle.setGPSPower(1,"flat");
       if (Bangle.setHRMPower) Bangle.setHRMPower(1,"flat");
       if (Bangle.setCompassPower) Bangle.setCompassPower(1,"flat");
