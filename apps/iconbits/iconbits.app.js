@@ -98,8 +98,8 @@ Bangle.on("lock", function() {
   function nextPen () {
     switch (pen) {
       case 'circle': pen = 'pixel'; break;
-      case 'pixel': pen = 'crayon'; break;
-      case 'crayon': pen = 'square'; break;
+      case 'pixel': pen = 'line'; break;
+      case 'line': pen = 'square'; break;
       case 'square': pen = 'circle'; break;
       default: pen = 'pixel'; break;
     }
@@ -108,8 +108,8 @@ Bangle.on("lock", function() {
     discard = setTimeout(function () { oldX = -1; oldY = -1; console.log('timeout'); discard = null; }, 500);
   }
 
-  var oldX = -1;
-  var oldY = -1;
+  var oldX = -1, oldY = -1;
+  var line_from = null;
 
   function drawBrushIcon () {
     const w = g.getWidth();
@@ -128,6 +128,9 @@ Bangle.on("lock", function() {
         g.drawLine(w - 10, 5, w - 10, 15);
         g.drawLine(w - 14, 6, w - 10, 12);
         g.drawLine(w - 6, 6, w - 10, 12);
+        break;
+      case 'line':
+        g.drawLine(w - 5, 5, w - 15, 15);
         break;
     }
   }
@@ -199,6 +202,7 @@ Bangle.on("lock", function() {
     let YS = (to.y - from.y) / 32;
 
     switch (pen) {
+      case 'line':
       case 'pixel':
         g.drawLine(from.x, from.y, to.x, to.y);
         break;
@@ -219,6 +223,8 @@ Bangle.on("lock", function() {
           g.fillRect(posX - 4, posY - 4, posX + 4, posY + 4);
         }
         break;
+      default:
+        print("Unkown pen ", pen);
     }
   }
   
@@ -229,9 +235,11 @@ Bangle.on("lock", function() {
   }
     
   function do_draw(from, to) {
+    print("do-draw", from, to);
     from = transform(from);
     to = transform(to);
     if (from && to) {
+      print("__draw", from, to);
       __draw(sg, from, to);
     }
     update();
@@ -306,20 +314,31 @@ Bangle.on("lock", function() {
       drawUtil();
       return;
     }
-    oldX = to.x;
-    oldY = to.y;
     sg.setColor(kule[0], kule[1], kule[2]);
     g.setColor(kule[0], kule[1], kule[2]);
+    oldX = to.x;
+    oldY = to.y;
 
-    do_draw(from, to);
+    if (pen != "line") {
+      do_draw(from, to);
+    } else {
+      if (tap.b == 1) {
+      print(line_from);
+      if (!line_from) {
+        line_from = to;
+      } else {
+        print("draw -- ", line_from, to);
+        do_draw(line_from, to);
+        line_from = null;
+      }
+      }
+    }
     drawUtil();
   }
   function on_btn(n) {
     function f(i) {
       return "\\x" + i.toString(16).padStart(2, '0');
     }
-    print("on_btn", n);
-    print(g.getPixel(0, 0));
     let s = f(0) + f(font_width) + f(font_height) + f(1);
     // 0..black, 65535..white
     for (let y = 0; y < font_height; y++) {
@@ -330,17 +349,11 @@ Bangle.on("lock", function() {
       }
       s += f(v);
     }
-    print("Manual bitmap\n");
-    print('show_font("' + s + '");');
-    if (1) {
-      s = "";
-      var im = sg.asImage("string");
-      for (var v of im) {
-        s += f(v);
-      }
-      //print('show_unc_icon("'+btoa(im)+'");');
-      print('show_icon("'+btoa(require('heatshrink').compress(im))+'");');
-    }
+    if (mode == "font")
+      print('show_font("' + s + '");');
+    var im = sg.asImage("string");
+    //print('show_unc_icon("'+btoa(im)+'");');
+    print('show_icon("'+btoa(require('heatshrink').compress(im))+'");');
   }
 
 setup("icon");
