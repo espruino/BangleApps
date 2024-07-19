@@ -223,7 +223,8 @@ Bangle.on("lock", function() {
   }
   
   function update() {
-    g.drawImage(sg, 4, 64, {});
+    if (zoom_f < 3)
+      g.drawImage(sg, 4, 64, {});
     g.drawImage(sg, zoom_x, zoom_y, { scale: zoom_f });
   }
     
@@ -368,5 +369,22 @@ function show_unc_icon(icon) {
 function show_icon(icon) {
   unc = require("heatshrink").decompress(atob(icon));
   show_bin_icon(unc);
+}
+
+function load_bin_icon(i) {
+  sg.reset().clear();
+  sg.drawImage(i, 0, 0);
+  drawArea();
+}
+
+function load_icon(icon) {
+  unc = require("heatshrink").decompress(atob(icon));
+  load_bin_icon(unc);
+}
+
+function for_screen() {
+  g.reset().clear();
+  icon_big();
+  update();
 }
 
