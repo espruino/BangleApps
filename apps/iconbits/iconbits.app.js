@@ -194,6 +194,9 @@ Bangle.on("lock", function() {
   }
   
   function __draw (g, from, to) {
+    let XS = (to.x - from.x) / 32;
+    let YS = (to.y - from.y) / 32;
+
     switch (pen) {
       case 'pixel':
         g.drawLine(from.x, from.y, to.x, to.y);
@@ -204,15 +207,11 @@ Bangle.on("lock", function() {
         g.drawLine(from.x + 2, from.y + 2, to.x, to.y + 2);
         break;
       case 'circle':
-        var XS = (to.x - from.x) / 32;
-        var YS = (to.y - from.y) / 32;
         for (let i = 0; i < 32; i++) {
           g.fillCircle(from.x + (i * XS), from.y + (i * YS), 2, 2);
         }
         break;
       case 'square':
-        var XS = (to.x - from.x) / 32;
-        var YS = (to.y - from.y) / 32;
         for (let i = 0; i < 32; i++) {
           const posX = from.x + (i * XS);
           const posY = from.y + (i * YS);
@@ -220,7 +219,6 @@ Bangle.on("lock", function() {
         }
         break;
     }
-
   }
   
   function update() {
