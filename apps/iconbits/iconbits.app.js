@@ -13,6 +13,7 @@
   var color = true;
   let oldLock = false;
   let sg = null;
+  const top_bar = 20;
   
   function clear(m) {
     sg.setColor(1,1,1).fillRect(0,0, font_width, font_height);
@@ -61,9 +62,9 @@
       }
       g.setColor('#fff');
       g.fillRect(0, 0, g.getWidth(), 20);
-      g.setFont('6x8', 2);
+      g.setFont('Vector', 22);
       g.setColor('#000');
-      g.drawString('PLEASE UNLOCK', 10, 2);
+      g.drawString('PLEASE\nUNLOCK', 10, 2);
       oldLock = true;
   }
 Bangle.on("lock", function() {
@@ -74,14 +75,14 @@ Bangle.on("lock", function() {
       drawUtil();
     }
 });
-  function nextColor () {
+  function nextColor() {
     kule[0] = Math.random();
     kule[1] = Math.random();
     kule[2] = Math.random();
   }
-  function selectColor (x) {
+  function selectColor(x) {
     if (color) {
-      i = Math.floor((x - 25) / 4);
+      i = Math.floor((x - 32) / 4);
       kule = toColor(i);
       return;
     }
@@ -131,7 +132,7 @@ Bangle.on("lock", function() {
     }
   }
   
-  function drawArea () {
+  function drawArea() {
     g.clear();
     if (mode == "draw")
       return;
@@ -158,17 +159,17 @@ Bangle.on("lock", function() {
     return r;
   }
 
-  function drawUtil () {
+  function drawUtil() {
     if (Bangle.isLocked()) {
       updateLock();
     }
     // titlebar
     g.setColor(kule[0], kule[1], kule[2]);
-    g.fillRect(0, 0, g.getWidth(), 20);
+    g.fillRect(0, 0, g.getWidth(), top_bar);
     for (let i = 0; i < 3*3*3; i++) {
       r = toColor(i);
       g.setColor(r[0], r[1], r[2]);
-      g.fillRect(25+4*i, 20, 25+4*i+3, 24);
+      g.fillRect(32+4*i, 12, 32+4*i+3, top_bar);
     }
     // clear button
     g.setColor('#000'); // black
@@ -183,7 +184,7 @@ Bangle.on("lock", function() {
     drawBrushIcon();
   }
   
-  function transform (p) {
+  function transform(p) {
     if (p.x < zoom_x || p.y < zoom_y)
       return p;
     p.x = ((p.x - zoom_x) / zoom_f);
@@ -193,7 +194,7 @@ Bangle.on("lock", function() {
     return p;
   }
   
-  function __draw (g, from, to) {
+  function __draw(g, from, to) {
     let XS = (to.x - from.x) / 32;
     let YS = (to.y - from.y) / 32;
 
@@ -258,7 +259,6 @@ Bangle.on("lock", function() {
       oldY = -1;
     }, 100);
 
-    let top_bar = 20;
     // tap and hold the clear button
     if (tap.x < 32 && tap.y < top_bar) {
       if (tap.b === 1) {
@@ -343,19 +343,16 @@ Bangle.on("lock", function() {
       print('fi("'+btoa(im)+'");');
       print(btoa(require('heatshrink').compress(im)));
     }
-
-
   }
 
-  setup("icon");
-  drawArea();
-  Bangle.setUI({
+setup("icon");
+drawArea();
+Bangle.setUI({
       "mode": "custom",
       "drag": on_drag,
       "btn": on_btn,
-  });
-  drawUtil();
-
+});
+drawUtil();
 
 function ft(icon) {
   g.reset().clear();
