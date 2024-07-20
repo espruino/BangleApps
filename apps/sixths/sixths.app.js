@@ -542,18 +542,6 @@ function draw() {
     g.setColor(0.25, 1, 1);
     g.fillPoly([ W/2, 24, W, 80, 0, 80 ]);
   }
-  let msg = "";
-  if (gps_on) {
-    msg = gpsHandle();
-  } else {
-    let o = Bangle.getOptions();
-    let pr = o.seaLevelPressure;
-    if (pr)
-      msg = pr.toFixed(1) + "hPa";
-    if (note != "") {
-      msg = note;
-    }
-  }
   drawBackground();
 
   let now = new Date();
@@ -564,16 +552,21 @@ function draw() {
 
   //let km = 0.001 * 0.719 * Bangle.getHealthStatus("day").steps;
 
-  g.setFontAlign(-1, 1);
   // 33 still fits
   g.setFont('Vector', 30);
 
   const weekday = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+  
+  msg = weekday[now.getDay()] + "" + now.getDate() + ". "
+        + fmtSteps(Bangle.getHealthStatus("day").steps) + "\n";
 
-  g.drawString(weekday[now.getDay()] + "" + now.getDate() + ". "
-               + fmtSteps(Bangle.getHealthStatus("day").steps), 10, 115);
-
-  g.drawString(msg, 10, 145);
+  if (gps_on) {
+    msg += gpsHandle() + "\n";
+  }
+  
+  if (cur_mark) {
+    msg += markHandle() + "\n";
+  }
 
   if (getTime() - last_active > 15*60) {
     let alt_adjust = cur_altitude - rest_altitude;
@@ -589,17 +582,27 @@ function draw() {
       Bangle.setOptions(o);
     }
     let pr = o.seaLevelPressure;
-    msg = "emu?";
     if (pr)
-      msg = pr.toFixed(1) + "hPa";
+      msg += pr.toFixed(1) + "hPa";
+    else
+      msg += "emu?";
   } else {
-    msg = fmtAlt(cur_altitude);
+    msg += fmtAlt(cur_altitude);
   }
-  msg = msg + " " + cur_temperature.toFixed(1)+icon_c;
-  if (cur_mark) {
-    msg = markHandle();
+  msg = msg + " " + cur_temperature.toFixed(1)+icon_c + "\n";
+
+  if (note != "")
+    msg += note + "\n";
+
+  {
+    let o = Bangle.getOptions();
+    let pr = o.seaLevelPressure;
+
+    if (pr)
+      msg += pr.toFixed(1) + "hPa\n";
   }
-  g.drawString(msg, 10, 175);
+  g.setFontAlign(-1, -1);
+  g.drawString(msg, 10, 85);
 
   if (disp_mode == 1) {
     g.drawString(debug, 10, 45);
