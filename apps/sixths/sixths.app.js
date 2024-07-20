@@ -154,7 +154,7 @@ function gpsHandle() {
           msg = "L"+ fmtTimeDiff(getTime()-last_fix);
         else {
           msg = "N"+ fmtTimeDiff(getTime()-gps_on);
-          if (fix) {
+          if (0 && fix) {
             msg += " " + fix.satellites + "sats";
           }
         }
@@ -238,6 +238,10 @@ function selectWP(i) {
   show("WP:"+wp.name, 60);
   print("Select waypoint: ", cur_mark);
 }
+function ack(cmd) {
+  show(cmd, 3);
+  doBuzz(' .');
+}
 function inputHandler(s) {
   print("Ascii: ", s, s[0], s[1]);
   if (s[0] == '^') {
@@ -265,22 +269,23 @@ function inputHandler(s) {
       show("Bat "+bat+"%", 60);
       break;
     }
-    case 'D': selectWP(1); break;
-    case 'F': gpsOff(); show("GPS off", 3); break;
-    case 'G': gpsOn(); gps_limit = getTime() + 60*60*4; show("GPS on", 3); break;
+    case 'D': doBuzz(' .'); selectWP(1); break;
+    case 'F': gpsOff(); ack("GPS off"); break;
+    case 'T': gpsOn(); gps_limit = getTime() + 60*60*4; ack("GPS on"); break;
     case 'I':
+      doBuzz(' .');
       disp_mode += 1;
       if (disp_mode == 2) {
         disp_mode = 0;
       }
       break;
     case 'L': aload("altimeter.app.js"); break;
-    case 'M': mode = 2; show("M>", 10); cur_mark = markNew(); mode_time = getTime(); break;
-    case 'N': mode = 1; show(">", 10); mode_time = getTime(); break;
+    case 'M': doBuzz(' .'); mode = 2; show("M>", 10); cur_mark = markNew(); mode_time = getTime(); break;
+    case 'N': doBuzz(' .'); mode = 1; show(">", 10); mode_time = getTime(); break;
     case 'O': aload("orloj.app.js"); break;
     case 'R': aload("runplus.app.js"); break;
-    case 'S': gpsOn(); gps_limit = getTime() + 60*30; gps_speed_limit = gps_limit; show("GPS on", 3); break;
-    case 'T': {
+    case 'S': gpsOn(); gps_limit = getTime() + 60*30; gps_speed_limit = gps_limit; ack("GPS speed"); break;
+    case 'G': {
       s = ' T';
       let d = new Date();
       s += d.getHours() % 10;
@@ -288,8 +293,9 @@ function inputHandler(s) {
       doBuzz(toMorse(s));
       break;
     }
-    case 'U': selectWP(-1); break;
-    case 'Y': doBuzz(buzz); Bangle.resetCompass(); break;
+    case 'U': doBuzz(' .'); selectWP(-1); break;
+    case 'Y': ack('Compass reset'); Bangle.resetCompass(); break;
+    default: doBuzz(' ..'); show("Unknown "+s, 5); break;
   }
 }
 const morseDict = {
