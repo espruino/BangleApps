@@ -91,10 +91,10 @@
 
   // Draw hour or minute boxes
   let drawBox = function drawBox(current, boxes, size, colour) {
-    x1 = (boxes[current].x * Bangle.appRect.h) + (Bangle.appRect.y/2);
-    y1 = (boxes[current].y * Bangle.appRect.h) + Bangle.appRect.y;
-    x2 = x1 + size;
-    y2 = y1 + size;
+    let x1 = (boxes[current].x * Bangle.appRect.h) + (Bangle.appRect.y/2);
+    let y1 = (boxes[current].y * Bangle.appRect.h) + Bangle.appRect.y;
+    let x2 = x1 + size;
+    let y2 = y1 + size;
     g.setColor(colour);
     g.fillRect(x1, y1, x2, y2);
   };
