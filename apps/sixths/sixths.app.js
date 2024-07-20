@@ -547,7 +547,9 @@ function draw() {
     msg = gpsHandle();
   } else {
     let o = Bangle.getOptions();
-    msg = o.seaLevelPressure.toFixed(1) + "hPa";
+    let pr = o.seaLevelPressure;
+    if (pr)
+      msg = pr.toFixed(1) + "hPa";
     if (note != "") {
       msg = note;
     }
@@ -563,7 +565,8 @@ function draw() {
   //let km = 0.001 * 0.719 * Bangle.getHealthStatus("day").steps;
 
   g.setFontAlign(-1, 1);
-  g.setFont('Vector', 26);
+  // 33 still fits
+  g.setFont('Vector', 30);
 
   const weekday = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
@@ -585,7 +588,10 @@ function draw() {
       o.seaLevelPressure = o.seaLevelPressure + a;
       Bangle.setOptions(o);
     }
-    msg = o.seaLevelPressure.toFixed(1) + "hPa";
+    let pr = o.seaLevelPressure;
+    msg = "emu?";
+    if (pr)
+      msg = pr.toFixed(1) + "hPa";
   } else {
     msg = fmtAlt(cur_altitude);
   }
