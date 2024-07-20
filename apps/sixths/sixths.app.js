@@ -22,7 +22,8 @@ var gps_on = 0, // time GPS was turned on
     last_restart = 0, last_pause = 0, last_fstart = 0; // utime
 var gps_needed = 0, // how long to wait for a fix
     gps_limit = 0, // timeout -- when to stop recording
-    gps_speed_limit = 0;
+    gps_speed_limit = 0,
+    keep_fix_for = 10;
 var prev_fix = null;
 var gps_dist = 0;
 
@@ -148,6 +149,11 @@ function gpsHandle() {
         if (!last_fstart)
           last_fstart = getTime();
         last_fix = getTime();
+        keep_fix_for = gps_needed / 3;
+        if (keep_fix_for < 10)
+          keep_fix_for = 10;
+        if (keep_fix_for > 3*60)
+          keep_fix_for = 3*60;
         gps_needed = 60;
       } else {
         if (last_fix)
@@ -164,7 +170,7 @@ function gpsHandle() {
       let d2 = (getTime()-last_fstart);
       print("gps on, restarted ", d, gps_needed, d2, fix.lat);
       if (getTime() > gps_speed_limit &&
-          (d > gps_needed || (last_fstart && d2 > 10))) {
+          (d > gps_needed || (last_fstart && d2 > keep_fix_for))) {
         gpsPause();
         gps_needed = gps_needed * 1.5;
         print("Pausing, next try", gps_needed);

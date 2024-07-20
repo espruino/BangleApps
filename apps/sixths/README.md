@@ -26,8 +26,8 @@ Useful gestures:
 
  B -- "Battery", show/buzz battery info
 D -- "Down", previous waypoint
-F -- "oFf", disable GPS.
-G -- "Gps", enable GPS for 4 hours in low power mode.
+F -- "turn oFf gps", disable GPS.
+T -- "Turn on gps", enable GPS for 4 hours in low power mode.
 I -- "Info", toggle info display
  L -- "aLtimeter", load altimeter app
 M -- "Mark", create mark from current position
@@ -35,7 +35,7 @@ N -- "Note", take a note and write it to the log.
  O -- "Orloj", run orloj app
  R -- "Run", run "runplus" app
 S -- "Speed", enable GPS for 30 minutes in high power mode.
- T -- "Time", buzz current time
+ G -- "Get time", buzz current time
 U -- "Up", next waypoint
 Y -- "compass", reset compass
 
