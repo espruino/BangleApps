@@ -125,12 +125,15 @@
   // Remove handler to allow fast loading
   Bangle.setUI({mode:"clock", remove:function() {
     if (drawTimeout) clearTimeout(drawTimeout);
+    require("widget_utils").show();
   }});
 
   // Load and display widgets
+  Bangle.loadWidgets();
   if (settings.showWidgets) {
-    Bangle.loadWidgets();
-    Bangle.drawWidgets();
+    require("widget_utils").show();
+  } else {
+    require("widget_utils").hide();
   }
 
   // draw initial boxes and queue subsequent redraws
