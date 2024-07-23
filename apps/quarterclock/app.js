@@ -63,7 +63,7 @@
   // Draw battery box
   let drawBattery = function drawBattery() {
     // Round battery up to 10% interval
-    let battery = (Math.floor(E.getBattery()/10)+1)/10;
+    let battery = Math.min((Math.floor(E.getBattery()/10)+1)/10, 1);
 
     // Maximum battery box
     let batterySize = 30;
