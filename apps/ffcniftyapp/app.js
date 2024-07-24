@@ -171,15 +171,14 @@ const clock = new ClockFace({
     let cTemp= (curr === "no data" ? 273 : curr.temp);
     // const temp = locale.temp(curr.temp - 273.15).match(/^(\D*\d*)(.*)$/);
 
-    if (locale == "en" || locale == "en_GB" || locale == "en_US") {
-      let w_icon = chooseIcon(curr.txt === undefined ? "no data" : curr.txt);
+    let w_icon = getErr;
+    if (locale.name === "en" || locale.name === "en_GB" || locale.name === "en_US") {
+      w_icon = chooseIcon(curr.txt === undefined ? "no data" : curr.txt);
     } else {
-      // cannot use condition string to determine icon of language is not English; use weather code instead
+    // cannot use condition string to determine icon of language is not English; use weather code instead
       const code = curr.code || -1;
         if (code > 0) {
-          let w_icon = chooseIconByCode(curr.code);
-        } else {
-          let w_icon = getErr();
+          w_icon = chooseIconByCode(curr.code);
         }
     }
 
