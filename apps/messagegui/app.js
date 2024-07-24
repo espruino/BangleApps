@@ -24,7 +24,8 @@ require("messages").pushMessage({"t":"add","id":"call","src":"Phone","title":"Bo
 var Layout = require("Layout");
 var layout; // global var containing the layout for the currently displayed message
 var settings = require('Storage').readJSON("messages.settings.json", true) || {};
-var reply = require("reply");
+var reply;
+try { reply = require("reply"); } catch (e) {}
 var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
 var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
@@ -269,7 +270,10 @@ function showMessageSettings(msg) {
     /*LANG*/"View Message" : () => {
       showMessageScroller(msg);
     },
-    /*LANG*/"Reply": () => {
+  };
+
+  if (msg.reply && reply) {
+    menu[/*LANG*/"Reply"] = () => {
       replying = true;
       reply.reply({msg: msg})
         .then(result => {
@@ -281,14 +285,15 @@ function showMessageSettings(msg) {
           replying = false;
           showMessage(msg.id);
         });
-    },
+    };
+  }
+
+  menu = Object.assign(menu, {
     /*LANG*/"Delete" : () => {
       MESSAGES = MESSAGES.filter(m=>m.id!=msg.id);
       checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
     },
-  };
-
-  if (!msg.reply || !reply) delete menu[/*LANG*/"Reply"];
+  });
 
   if (Bangle.messageIgnore && msg.src)
     menu[/*LANG*/"Ignore"] = () => {
@@ -393,15 +398,32 @@ function showMessage(msgid, persist) {
     }; footer.push({type:"img",src:atob("PhAB4A8AAAAAAAPAfAMAAAAAD4PwHAAAAAA/H4DwAAAAAH78B8AAAAAA/+A/AAAAAAH/Af//////w/gP//////8P4D///////H/Af//////z/4D8AAAAAB+/AfAAAAAA/H4DwAAAAAPg/AcAAAAADwHwDAAAAAA4A8AAAAAAAA=="),col:"#f00",cb:negHandler});
   }
   footer.push({fillx:1}); // push images to left/right
-  if (msg.positive) {
+  if (msg.reply && reply) {
+    posHandler = ()=>{
+      replying = true;
+      msg.new = false;
+      cancelReloadTimeout(); // don't auto-reload to clock now
+      reply.reply({msg: msg})
+        .then(result => {
+          Bluetooth.println(JSON.stringify(result));
+          replying = false;
+          layout.render();
+          checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:openMusic});
+        })
+        .catch(() => {
+          replying = false;
+          layout.render();
+          showMessage(msg.id);
+        });
+    }; footer.push({type:"img",src:atob("QRABAAAAAAAH//+AAAAABgP//8AAAAADgf//4AAAAAHg4ABwAAAAAPh8APgAAAAAfj+B////////geHv///////hf+f///////GPw///////8cGBwAAAAAPx/gDgAAAAAfD/gHAAAAAA8DngOAAAAABwDHP8AAAAADACGf4AAAAAAAAM/w=="),col:"#0f0", cb:posHandler});
+  }
+  else if (msg.positive) {
     posHandler = ()=>{
       msg.new = false;
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,true);
       checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:openMusic});
-    };
-        footer.push({type:"img",src:atob("QRABAAAAAAAAAAOAAAAABgAAA8AAAAADgAAD4AAAAAHgAAPgAAAAAPgAA+AAAAAAfgAD4///////gAPh///////gA+D///////AD4H//////8cPgAAAAAAPw8+AAAAAAAfB/4AAAAAAA8B/gAAAAAABwB+AAAAAAADAB4AAAAAAAAABgAA=="),col:"#0f0",cb:posHandler});
-
+    }; footer.push({type:"img",src:atob("QRABAAAAAAAAAAOAAAAABgAAA8AAAAADgAAD4AAAAAHgAAPgAAAAAPgAA+AAAAAAfgAD4///////gAPh///////gA+D///////AD4H//////8cPgAAAAAAPw8+AAAAAAAfB/4AAAAAAA8B/gAAAAAABwB+AAAAAAADAB4AAAAAAAAABgAA=="),col:"#0f0",cb:posHandler});
   }
 
   layout = new Layout({ type:"v", c: [
