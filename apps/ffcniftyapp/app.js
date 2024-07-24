@@ -175,7 +175,7 @@ const clock = new ClockFace({
     if (locale.name === "en" || locale.name === "en_GB" || locale.name === "en_US") {
       w_icon = chooseIcon(curr.txt === undefined ? "no data" : curr.txt);
     } else {
-    // cannot use condition string to determine icon of language is not English; use weather code instead
+    // cannot use condition string to determine icon if language is not English; use weather code instead
       const code = curr.code || -1;
         if (code > 0) {
           w_icon = chooseIconByCode(curr.code);
