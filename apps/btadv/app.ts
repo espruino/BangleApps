@@ -1,5 +1,6 @@
 {
-// @ts-ignore helper
+// @ts-expect-error helper
+
 const __assign = Object.assign;
 
 const Layout = require("Layout");
@@ -666,6 +667,8 @@ const getBleAdvert = <T>(map: (s: BleServ) => T, all = false) => {
 
 // done via advertise in setServices()
 //const updateBleAdvert = () => {
+//  require("ble_advert").set(...)
+//
 //  let bleAdvert: ReturnType<typeof getBleAdvert<undefined>>;
 //
 //  if (!(bleAdvert = (Bangle as any).bleAdvert)) {
@@ -764,12 +767,6 @@ enableSensors();
     },
   );
 
-  type BleAdvert = { [key: string]: number[] };
-  const bangle2 = Bangle as {
-    bleAdvert?: BleAdvert | BleAdvert[];
-  };
-  const cycle = Array.isArray(bangle2.bleAdvert) ? bangle2.bleAdvert : [];
-
   for(const id in ad){
     const serv = ad[id as BleServ];
     let value;
@@ -780,16 +777,7 @@ enableSensors();
       break;
     }
 
-    cycle.push({ [id]: value || [] });
+    require("ble_advert").set(id, value || []);
   }
-
-  bangle2.bleAdvert = cycle;
-
-  NRF.setAdvertising(
-    cycle,
-    {
-      interval: 100,
-    }
-  );
 }
 }

@@ -7,6 +7,7 @@
     strideLength: 0, // 0 = not set
     birthday: '1970-01-01',
     height: 0, // 0 = not set
+    weight: 0, // 0 = not set
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeProfile() {
@@ -99,6 +100,17 @@
             }, 1);
           }
         }
+      },
+
+      /*LANG*/"Weight": {
+        value: myprofile.weight,
+        min:0,
+        step:1,
+        format: v => v ? v + "kg" : '-',
+        onchange: v => {
+          myprofile.weight=v;
+          writeProfile();
+        },
       },
 
       /*LANG*/'HR max': {

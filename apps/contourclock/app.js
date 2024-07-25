@@ -2,8 +2,8 @@
   let drawTimeout;
   let extrasTimeout;
   let onLock;
-  let onTap;
-  let onTwist;
+  //let onTap;
+  //let onTwist;
   let settings = require('Storage').readJSON("contourclock.json", true) || {};
   if (settings.fontIndex == undefined) {
     settings.fontIndex = 0;
@@ -60,7 +60,6 @@
       drawTimeout = undefined;
       draw();
     }, 60000 - (Date.now() % 60000));
-    let date = new Date();
     g.reset();
     if (extrasShown) drawExtras();
     else hideExtras();

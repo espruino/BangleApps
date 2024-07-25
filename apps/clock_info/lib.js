@@ -224,6 +224,13 @@ exports.addInteractive = function(menu, options) {
       options.menuB = b;
     }
   }
+  const save = () => {
+    // save the currently showing clock_info
+    const settings = exports.loadSettings();
+    settings.apps[appName] = {a:options.menuA, b:options.menuB};
+    require("Storage").writeJSON("clock_info.json",settings);
+  };
+  E.on("kill", save);
 
   if (options.menuA===undefined) options.menuA = 0;
   if (options.menuB===undefined) options.menuB = Math.min(exports.loadCount, menu[options.menuA].items.length)-1;
@@ -234,7 +241,7 @@ exports.addInteractive = function(menu, options) {
     options.redrawHandler = ()=>drawItem(itm);
     itm.on('redraw', options.redrawHandler);
     itm.uses = (0|itm.uses)+1;
-    if (itm.uses==1) itm.show();
+    if (itm.uses==1) itm.show(options);
     itm.emit("redraw");
   }
   function menuHideItem(itm) {
@@ -242,7 +249,7 @@ exports.addInteractive = function(menu, options) {
     delete options.redrawHandler;
     itm.uses--;
     if (!itm.uses)
-      itm.hide();
+      itm.hide(options);
   }
   // handling for swipe between menu items
   function swipeHandler(lr,ud){
@@ -276,46 +283,51 @@ exports.addInteractive = function(menu, options) {
       oldMenuItem.removeAllListeners("draw");
       menuShowItem(menu[options.menuA].items[options.menuB]);
     }
-    // save the currently showing clock_info
-    let settings = exports.loadSettings();
-    settings.apps[appName] = {a:options.menuA,b:options.menuB};
-    require("Storage").writeJSON("clock_info.json",settings);
     // On 2v18+ firmware we can stop other event handlers from being executed since we handled this
     E.stopEventPropagation&&E.stopEventPropagation();
   }
-  Bangle.on("swipe",swipeHandler);
+  if (Bangle.prependListener) {Bangle.prependListener("swipe",swipeHandler);} else {Bangle.on("swipe",swipeHandler);}
+  const blur = () => {
+    options.focus=false;
+    Bangle.CLKINFO_FOCUS--;
+    const itm = menu[options.menuA].items[options.menuB];
+    let redraw = true;
+    if (itm.blur && itm.blur(options) === false)
+      redraw = false;
+    if (redraw) options.redraw();
+  };
+  const focus = () => {
+    let redraw = true;
+    Bangle.CLKINFO_FOCUS = (0 | Bangle.CLKINFO_FOCUS) + 1;
+    if (!options.focus) {
+      options.focus=true;
+      const itm = menu[options.menuA].items[options.menuB];
+      if (itm.focus && itm.focus(options) === false)
+        redraw = false;
+    }
+    if (redraw) options.redraw();
+  };
   let touchHandler, lockHandler;
   if (options.x!==undefined && options.y!==undefined && options.w && options.h) {
     touchHandler = function(_,e) {
       if (e.x<options.x || e.y<options.y ||
           e.x>(options.x+options.w) || e.y>(options.y+options.h)) {
-        if (options.focus) {
-          options.focus=false;
-          delete Bangle.CLKINFO_FOCUS;
-          options.redraw();
-        }
+        if (options.focus)
+          blur();
         return; // outside area
       }
       if (!options.focus) {
-        options.focus=true; // if not focussed, set focus
-        Bangle.CLKINFO_FOCUS=true;
-        options.redraw();
+        focus();
       } else if (menu[options.menuA].items[options.menuB].run) {
         Bangle.buzz(100, 0.7);
-        menu[options.menuA].items[options.menuB].run(); // allow tap on an item to run it (eg home assistant)
-      } else {
-        options.focus=true;
-        Bangle.CLKINFO_FOCUS=true;
+        menu[options.menuA].items[options.menuB].run(options); // allow tap on an item to run it (eg home assistant)
       }
     };
     Bangle.on("touch",touchHandler);
     if (settings.defocusOnLock) {
       lockHandler = function() {
-        if(options.focus) {
-          options.focus=false;
-          delete Bangle.CLKINFO_FOCUS;
-          options.redraw();
-        }
+        if(options.focus)
+          blur();
       };
       Bangle.on("lock", lockHandler);
     }
@@ -324,10 +336,12 @@ exports.addInteractive = function(menu, options) {
   menuShowItem(menu[options.menuA].items[options.menuB]);
   // return an object with info that can be used to remove the info
   options.remove = function() {
+    save();
+    E.removeListener("kill", save);
     Bangle.removeListener("swipe",swipeHandler);
     if (touchHandler) Bangle.removeListener("touch",touchHandler);
     if (lockHandler) Bangle.removeListener("lock", lockHandler);
-    delete Bangle.CLKINFO_FOCUS;
+    Bangle.CLKINFO_FOCUS--;
     menuHideItem(menu[options.menuA].items[options.menuB]);
     exports.loadCount--;
     delete exports.clockInfos[options.index];
@@ -352,8 +366,49 @@ exports.addInteractive = function(menu, options) {
 
     return true;
   };
+  if (options.focus) focus();
   delete settings; // don't keep settings in RAM - save space
   return options;
+};
+
+/* clockinfos usually return a 24x24 image. This draws that image but
+recolors it such that it is transparent, with the middle of the image as background
+and the image itself as foreground. options is passed to g.drawImage */
+exports.drawFilledImage = function(img,x,y,options) {
+  if (!img) return;
+  if (!g.floodFill/*2v18+*/) return g.drawImage(img,x,y,options);
+  let gfx = exports.imgGfx;
+  if (!gfx) {
+    gfx = exports.imgGfx = Graphics.createArrayBuffer(26, 26, 2, {msb:true});
+    gfx.transparent = 3;
+    gfx.palette = new Uint16Array([g.theme.bg, g.theme.fg, g.toColor("#888"), g.toColor("#888")]);
+  }
+  /* img is (usually) a black and white transparent image. But we really would like the bits in
+  the middle of it to be white. So what we do is we draw a slightly bigger rectangle in white,
+  draw the image, and then flood-fill the rectangle back to the background color. floodFill
+  was only added in 2v18 so we have to check for it and fallback if not. */
+  gfx.clear(1).setColor(1).drawImage(img, 1,1).floodFill(0,0,3);
+  var scale = (options && options.scale) || 1;
+  return g.drawImage(gfx, x-scale,y-scale,options);
+};
+
+/* clockinfos usually return a 24x24 image. This creates a 26x26 gfx of the image but
+recolors it such that it is transparent, with the middle and border of the image as background
+and the image itself as foreground. options is passed to g.drawImage */
+exports.drawBorderedImage = function(img,x,y,options) {
+  if (!img) return;
+  if (!g.floodFill/*2v18+*/) return g.drawImage(img,x,y,options);
+  let gfx = exports.imgGfxB;
+  if (!gfx) {
+    gfx = exports.imgGfxB = Graphics.createArrayBuffer(28, 28, 2, {msb:true});
+    gfx.transparent = 3;
+    gfx.palette = new Uint16Array([g.theme.bg, g.theme.fg, g.theme.bg/*border*/, g.toColor("#888")]);
+  }
+  gfx.clear(1).setColor(2).drawImage(img, 1,1).drawImage(img, 3,1).drawImage(img, 1,3).drawImage(img, 3,3); // border
+  gfx.setColor(1).drawImage(img, 2,2); // main image
+  gfx.floodFill(27,27,3); // flood fill edge to transparent
+  var o = ((options && options.scale) || 1)*2;
+  return g.drawImage(gfx, x-o,y-o,options);
 };
 
 // Code for testing (plots all elements from first list)

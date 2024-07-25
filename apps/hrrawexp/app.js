@@ -5,7 +5,6 @@ var value;
 var filt;
 
 var fileClosed = 0;
-var Storage = require("Storage");
 var file;
 
 var screenSize = g.getHeight();
@@ -122,8 +121,8 @@ function countDown() {
         g.drawString(fmtMSS(counter), g.getWidth() / 2, g.getHeight() / 2);
 }
 
-var HRVal = 0;
-var HRConfidence = 0;
+//var HRVal = 0;
+//var HRConfidence = 0;
 
 update_timer();
 

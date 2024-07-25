@@ -2,7 +2,7 @@
 
 This app allows you to add/modify any alarms, timers and events.
 
-Optional: When a keyboard app is detected, you can add a message to display when any of these is triggered.
+Optional: When a keyboard app is detected, you can add a message to display when any of these is triggered.  If a datetime input app (e.g. datetime_picker) is detected, it will be used for the selection of the date+time of events.
 
 It uses the [`sched` library](https://github.com/espruino/BangleApps/blob/master/apps/sched) to handle the alarm scheduling in an efficient way that can work alongside other apps.
 

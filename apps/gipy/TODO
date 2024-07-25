@@ -1,5 +1,7 @@
 
-urgent TODO:
+- is path projection wrong for high res ?
+
+medium TODO:
 
 - prefetch tiles ?
 - update documentation to reflect new display ?

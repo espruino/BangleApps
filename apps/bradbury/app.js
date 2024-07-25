@@ -2,7 +2,7 @@ require("Font7x11Numeric7Seg").add(Graphics);
 require("Font5x9Numeric7Seg").add(Graphics);
 require("Font8x12").add(Graphics);
 require("FontDylex7x13").add(Graphics);
-const X = 98, Y = 46;
+//const X = 98, Y = 46;
 var wizible = 0;
 
 function getImg() {

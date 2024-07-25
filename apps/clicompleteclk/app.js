@@ -17,8 +17,8 @@ const textColorRed = g.theme.dark ? "#FF0000" : "#FF0000";
 let hrtValue;
 let hrtValueIsOld = false;
 
-let localTempValue;
-let weatherTempString;
+//let localTempValue;
+//let weatherTempString;
 let lastHeartRateRowIndex;
 let lastStepsRowIndex;
 let i = 2;
@@ -114,7 +114,7 @@ function drawWeather() {
     const currentWeather = weatherJson.weather;
 
     const weatherTempValue = locale.temp(currentWeather.temp-273.15);
-    weatherTempString = weatherTempValue;
+    //weatherTempString = weatherTempValue;
     writeLineTopic("WTHR", i);
     writeLine(currentWeather.txt,i);
     i++;

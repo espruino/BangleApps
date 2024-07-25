@@ -1,7 +1,7 @@
 { "id": "7x7dotsclock",
   "name": "7x7 Dots Clock",
   "shortName":"7x7 Dots Clock",
-  "version":"0.03",
+  "version": "0.04",
   "description": "A clock with a big 7x7 dots Font",
   "icon": "dotsfontclock.png",
   "tags": "clock",

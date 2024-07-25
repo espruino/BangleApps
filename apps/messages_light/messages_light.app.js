@@ -41,7 +41,7 @@ let EventQueue=[];    //in posizione 0, c'è quello attualmente visualizzato
 let callInProgress=false;
 
 
-let justOpened=true;
+//let justOpened=true;
 
 
 
@@ -506,7 +506,7 @@ let main = function(){
     LOG("file event not found! -> ?? open debug text");
     setTimeout(_=>{      GB({"t":"notify","id":15754117198411,"src":"Hangouts","title":"A Name","body":"Debug notification \nmessage contents  demo demo demo demo"})    },0);
   }
-  justOpened=false;
+  //justOpened=false;
 
 };
 

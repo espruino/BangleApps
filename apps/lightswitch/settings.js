@@ -147,7 +147,7 @@
 
   // show main menu
   function showMain() {
-    var mainMenu = E.showMenu({
+    E.showMenu({
       "": {
         title: "Light Switch"
       },

@@ -1,6 +1,6 @@
 // Settings menu for Time calendar clock
 (function(exit) {
-  ABR_DAY = require("locale") && require("locale").abday ? require("locale").abday : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const ABR_DAY = require("locale") && require("locale").abday ? require("locale").abday : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   var FILE = "timecal.settings.json";
 
@@ -19,7 +19,7 @@
 
     calBrdr:false 
   };
-  validSttngs = require("Storage").readJSON(FILE, 1) || {};
+  let validSttngs = require("Storage").readJSON(FILE, 1) || {};
   for (const k in validSttngs) if (!DEFAULTS.hasOwnProperty(k)) delete this.validSttngs[k]; //remove invalid settings
   for (const k in DEFAULTS) if(!validSttngs.hasOwnProperty(k)) validSttngs[k] = DEFAULTS[k]; //assign missing defaults fixed
 

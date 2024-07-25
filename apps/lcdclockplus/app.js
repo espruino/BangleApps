@@ -43,7 +43,7 @@ let draw = function() {
 };
 
 let clockInfoDraw = (itm, info, options) => {
-  let texty = options.y+41;
+  //let texty = options.y+41;
   g.reset().setFont("7Seg").setColor(g.theme.bg).setBgColor(g.theme.fg);
   if (options.focus) g.setBgColor("#FF0");
   g.clearRect({x:options.x,y:options.y,w:options.w,h:options.h,r:8});

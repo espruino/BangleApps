@@ -5,6 +5,8 @@ type Settings = {
 
 	ble: boolean,
 	blerepl: boolean,
+	bleprivacy?: NRFSecurityStatus["privacy"],
+	blename?: boolean,
 	HID?: false | "kbmedia" | "kb" | "com" | "joy",
 
 	passkey?: string,

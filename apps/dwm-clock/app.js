@@ -143,7 +143,7 @@ function renderScreen() {
 }
 
 function renderAndQueue() {
-  timeoutID = setTimeout(renderAndQueue, 60000 - (Date.now() % 60000));
+  /*timeoutID =*/ setTimeout(renderAndQueue, 60000 - (Date.now() % 60000));
   renderScreen();
 }
 
@@ -162,7 +162,7 @@ var now = new Date();
 var defLonOffset = getLongitudeOffset().lon;
 var lonOffset = defLonOffset;
 
-var timeoutID;
+//var timeoutID;
 var timeoutIDTouch;
 
 Bangle.on('drag', function(touch) {

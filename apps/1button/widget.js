@@ -22,7 +22,7 @@
     console.log("Button let go");
     digitalWrite(LED2,0);
     var unpress_time = new Date();
-    recFile = require("Storage").open("one_button_presses.csv","a");
+    const recFile = require("Storage").open("one_button_presses.csv","a");
     recFile.write([press_time.getTime(),unpress_time.getTime()].join(",")+"\n");
   }, BTN1, { repeat: true, edge: 'falling', debounce: 50 });
 

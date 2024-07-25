@@ -30,7 +30,8 @@ if (readFreq>saveFreq) console.log("Read refresh freq should be higher than savi
 if (v_mode_debug>0) console.log("original BG/FG color="+v_color_erase+" / "+v_color);
 
 
-
+let v_font_size1;
+let v_font_size2;
 function SetVariables(){
 //EMSCRIPTEN,EMSCRIPTEN2
 if (v_model=='BANGLEJS'||v_model=='EMSCRIPTEN') {
@@ -209,7 +210,7 @@ g.drawString("Mode debug: "+v_mode_debug, x, y - ((v_font_size1*1)+2));
 g.drawString("Read frq(ms): "+readFreq, x, y );
 g.drawString("Save file: "+v_saveToFile, x, y+ ((v_font_size1*1)+2) );
 g.drawString("Save frq(ms):"+saveFreq, x, y+((v_font_size1*2)+2) );
-fr=require("Storage").read(v_filename+"\1");//suffix required
+const fr=require("Storage").read(v_filename+"\1");//suffix required
 if (fr)  g.drawString("Filesize:"+fr.length.toString()+"kb", x, y+((v_font_size1*3)+2) );
 else g.drawString("File not exist", x, y+((v_font_size1*3)+2));
 }

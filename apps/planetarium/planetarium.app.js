@@ -174,7 +174,7 @@ const size = 240; //Bangle size screen
 
 Bangle.setGPSPower(1);
 
-var gps = { fix : 0};
+//var gps = { fix : 0};
 var prevSats = 0;
 g.clear();
 
@@ -185,7 +185,7 @@ g.setFontAlign(0,0);
 
 Bangle.on('GPS',function(gp) {
   date = new Date();
-  gps = gp;
+  //gps = gp;
   if (gp.fix) {
     lat = gp.lat;
     lon = gp.lon;

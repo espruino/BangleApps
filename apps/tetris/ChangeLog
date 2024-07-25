@@ -4,3 +4,4 @@
 0.04: Bring back old controls as "swipe" in menu, exit with button press
 0.10: Major overhaul: added score, levels, bugfixes and misc, inspired by NES tetris
 0.11: Save/Restore game state
+0.12: Minor code improvements

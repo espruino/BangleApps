@@ -45,7 +45,11 @@
       <div id="map">
       </div>
       <div id="controls">
-        <div style="display:inline-block;text-align:center;vertical-align: top;" id="3bitdiv"> <input type="checkbox" id="3bit"></input><br/><span>3 bit</span></div>
+        <div style="display:inline-block;text-align:left;vertical-align: top;" id="3bitdiv">
+          <input type="checkbox" id="3bit"></input><span>3 bit</span>
+          <br>
+          <input type="checkbox" id="preview"><span>Preview</span>
+        </div>
         <div class="form-group" style="display:inline-block;">
         <select class="form-select" id="mapSize">
           <option value="4">Small (4x4)</option>
@@ -143,11 +147,13 @@ TODO:
         let mapsLoadedContainer = document.getElementById("mapsLoadedContainer");
         mapsLoadedContainer.innerHTML = "";
         loadedMaps = [];
+        const mapsLoaded = [];
 
-        Puck.write(`\x10Bluetooth.println(require("Storage").list(/openstmap\\.\\d+\\.json/))\n`,function(files) {
+        Puck.eval(`require("Storage").list(/openstmap\\.\\d+\\.json/)\n`,function(files) {
           console.log("MAPS:",files);
+          files.sort();
           let promise = Promise.resolve();
-          files.trim().split(",").forEach(filename => {
+          files.forEach(filename => {
             if (filename=="") return;
             promise = promise.then(() => new Promise(resolve => {
               Util.readStorageJSON(filename, mapInfo => {
@@ -155,7 +161,7 @@ TODO:
                 let mapNumber = filename.match(/\d+/)[0]; // figure out what map number we are
                 loadedMaps[mapNumber] = mapInfo;
                 if (mapInfo!==undefined) {
-                  let latlon = L.latLng(mapInfo.lat, mapInfo.lon);
+                  mapsLoaded.push({mapNumber: mapNumber, mapInfo: mapInfo});
                   mapsLoadedContainer.innerHTML += `
 <div class="tile">
   <div class="tile-icon">
@@ -171,19 +177,27 @@ TODO:
   </div>
 </div>
                   `;
-                  setTimeout(function() {
-                    let map = L.map(`tile-map-${mapNumber}`);
-                    L.tileLayer(PREVIEWTILELAYER, {
-                      maxZoom: 18
-                    }).addTo(map);
-                    let marker = new L.marker(latlon).addTo(map);
-                    map.fitBounds(latlon.toBounds(2000/*meters*/), {animation: false});
-                  }, 500);
                 }
                 resolve();
               });
             }));
           });
+          promise = promise.then(() => new Promise(resolve => {
+            setTimeout(() => {
+              mapsLoaded.forEach(mapLoaded => {
+                let latlon = L.latLng(mapLoaded.mapInfo.lat, mapLoaded.mapInfo.lon);
+                let map = L.map(`tile-map-${mapLoaded.mapNumber}`);
+                L.tileLayer(PREVIEWTILELAYER, {
+                  maxZoom: 18
+                }).addTo(map);
+                let marker = new L.marker(latlon).addTo(map);
+                const dist = mapLoaded.mapInfo.scale * mapLoaded.mapInfo.tilesize * mapLoaded.mapInfo.w;
+                map.fitBounds(latlon.toBounds(dist/2/*meters*/), {animation: false});
+              });
+            }, 0);
+
+            resolve();
+          }));
           promise = promise.then(() => new Promise(resolve => {
             if (!loadedMaps.length) {
               mapsLoadedContainer.innerHTML += `
@@ -275,7 +289,9 @@ TODO:
             options.width = TILESIZE;
             options.height = TILESIZE;
             var imgstr = imageconverter.RGBAtoString(rgba, options);
-            //ctx.putImageData(imageData,x*TILESIZE, y*TILESIZE); // write preview
+            if (document.getElementById("preview").checked) {
+              ctx.putImageData(imageData,x*TILESIZE, y*TILESIZE); // write preview
+            }
             /*var compress = 'require("heatshrink").decompress('
             if (!imgstr.startsWith(compress)) throw "Data in wrong format";
             imgstr = imgstr.slice(compress.length,-1);*/

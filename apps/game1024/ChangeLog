@@ -9,3 +9,4 @@
 0.09: Added settings menu, removed symbol selection button (*), added highscore reset
 0.10: fixed clockmode in settings
 0.11: Use default Bangle formatter for booleans
+0.12: Minor code improvements

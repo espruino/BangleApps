@@ -71,13 +71,19 @@
     ]
   };
 
+  const restoreMainItem = function(clkinfo) {
+    clkinfo.menuB = 0;
+    // clock info redraws after this
+  };
+
   var offsets = [+5,-5];
   offsets.forEach((o, i) => {
     smpltmrItems.items = smpltmrItems.items.concat({
       name: null,
       get: () => ({ text: (o > 0 ? "+" : "") + o + " min.", img: smpltmrItems.img }),
       show: function() { },
-      hide: function () { },
+      hide: function() { },
+      blur: restoreMainItem,
       run: function() {
         if(o > 0) increaseAlarm(o);
         else decreaseAlarm(Math.abs(o));

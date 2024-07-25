@@ -1,7 +1,7 @@
 {
   "id": "messagelist",
   "name": "Message List",
-  "version": "0.04",
+  "version": "0.05",
   "description": "Display notifications from iOS and Gadgetbridge/Android as a list",
   "icon": "app.png",
   "type": "app",

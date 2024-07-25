@@ -12,7 +12,6 @@ const lon = 14.45;
 const h = g.getHeight();
 const w = g.getWidth();
 const sm = 15;
-let settings, location, mode = 0;
 var altitude, temperature;
 
 var img_north = Graphics.createImage(`
@@ -136,7 +135,6 @@ function fracHour(d) {
 
   let twoPi  = 2*Math.PI;
   let Pi     = Math.PI;
-  let halfPi = Math.PI/2;
 
   let sin = Math.sin, cos = Math.cos;
 
@@ -299,17 +297,17 @@ function drawBorders() {
   }
   {
     d = new Date();
-    sun = SunCalc.getTimes(d, lat, lon);
+    const sun = SunCalc.getTimes(d, lat, lon);
     g.setColor(0.5, 0.5, 0);
     print("sun", sun);
     drawTimeIcon(sun.sunset, img_sunrise, { rotate: Math.PI, scale: 2 });
     drawTimeIcon(sun.sunrise, img_sunrise, { scale: 2 });
     g.setColor(0, 0, 0);
-    moon = SunCalc.getMoonTimes(d, lat, lon);
+    const moon = SunCalc.getMoonTimes(d, lat, lon);
     print("moon", moon);
     drawTimeIcon(moon.set, img_moonrise, { rotate: Math.PI, scale: 2 });
     drawTimeIcon(moon.rise, img_sunrise, { scale: 2 });
-    pos = SunCalc.getPosition(d, lat, lon);
+    let pos = SunCalc.getPosition(d, lat, lon);
     print("sun:", pos);
     if (pos.altitude > -0.1) {
       g.setColor(0.5, 0.5, 0);

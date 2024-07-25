@@ -1,8 +1,8 @@
 {
 	"id": "binaryclk",
 	"name": "Bin Clock",
-	"version": "0.03",
-	"description": "Clock face to show binary time in 24 hr format",
+	"version": "0.12",
+	"description": "Binary clock with date and battery",
 	"icon": "app-icon.png",
 	"screenshots": [{"url":"screenshot.png"}],
 	"type": "clock",

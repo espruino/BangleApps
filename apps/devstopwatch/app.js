@@ -12,7 +12,7 @@ const FONT = '6x8';
 const CHRONO = '/* C H R O N O */';
 
 
-var reset = false;
+//var reset = false;
 var currentLap = '';
 var chronoInterval;
 
@@ -43,7 +43,7 @@ Bangle.setUI("clockupdown", btn=>{
 function resetChrono() {
   state.laps = [EMPTY_H, EMPTY_H, EMPTY_LAP, EMPTY_LAP, EMPTY_LAP, EMPTY_LAP, EMPTY_LAP];
   state.started = false;
-  reset = true;
+  //reset = true;
   state.currentLapIndex = 1;
   currentLap = '';
 
@@ -61,11 +61,11 @@ function chronometer() {
     state.whenStarted = rightNow;
     state.whenStartedTotal = rightNow;
     state.started = true;
-    reset = false;
+    //reset = false;
   }
 
   currentLap = calculateLap(state.whenStarted);
-  total = calculateLap(state.whenStartedTotal);
+  const total = calculateLap(state.whenStartedTotal);
 
   state.laps[0] = total;
   state.laps[1] = currentLap;
@@ -123,7 +123,7 @@ function printChrono() {
     g.setColor(g.theme.fg);
     let suffix = ' ';
     if (state.currentLapIndex === i) {
-      let suffix = '*';
+      let suffix = '*'; //TODO: Should `let` be removed here?
       if (process.env.HWVERSION==2) g.setColor("#0ee");
       else g.setColor("#f70");
     }

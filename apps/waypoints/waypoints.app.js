@@ -3,9 +3,6 @@
 var Layout = require("Layout");
 const BANGLEJS2 = process.env.HWVERSION == 2; // check for bangle 2
 
-const W = g.getWidth();
-const H = g.getHeight();
-
 var wp = require('Storage').readJSON("waypoints.json", true) || [];
 // Use this with corrupted waypoints
 //var wp = [];
@@ -50,7 +47,7 @@ function mainMenu() {
 }
 
 function updateGps() {
-  let have = false, lat = "lat", lon = "lon", alt = "alt", speed = "speed";
+  let lat = "lat", lon = "lon", alt = "alt", speed = "speed";
   
   if (cancel_gps)
     return;
@@ -63,7 +60,6 @@ function updateGps() {
     lon = "" + lon(fix.lon);
     alt = "alt " + fix.alt.toFixed(0) + "m";
     speed = "speed " + fix.speed.toFixed(1) + "kt";
-    have = true;
   }
   
   g.reset().setFont("Vector", 20)
@@ -266,7 +262,7 @@ function ask01(t, cb) {
 }
 
 function askCoordinate(t1, t2, callback) {
-  let sign = 1;
+  //let sign = 1;
   ask01(t1, function(sign) {
       switch (mode) {
         case 0: s = "DDD.dddd"; break;
@@ -297,7 +293,6 @@ function askCoordinate(t1, t2, callback) {
 }
 
 function askPosition(callback) {
-  let full = "";
   askCoordinate("NS", "0", function(lat) {
     askCoordinate("EW", "", function(lon) {
         callback(lat, lon);

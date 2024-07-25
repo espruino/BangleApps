@@ -3,8 +3,6 @@ const storage = require('Storage');
 exports.load = function () {
   const medicalinfo = storage.readJSON('medicalinfo.json') || {
     bloodType: "",
-    height: "",
-    weight: "",
     medicalAlert: [""]
   };
 

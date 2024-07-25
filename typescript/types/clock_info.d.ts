@@ -11,10 +11,12 @@ declare module ClockInfo {
 
   type MenuItem = {
     name: string,
-    show(): void,
-    hide(): void,
+    show(options: InteractiveOptions): void,
+    hide(options: InteractiveOptions): void,
     on(what: "redraw", cb: () => void): void, // extending from Object
-    run?(): void,
+    run?(options: InteractiveOptions): void,
+    focus?(options: InteractiveOptions): void | false,
+    blur?(options: InteractiveOptions): void | false,
   } & (
     {
       hasRange: true,
@@ -28,7 +30,7 @@ declare module ClockInfo {
   type Item = {
     text: string,
     short?: string,
-    img?: string,
+    img?: Image,
   };
 
   type RangeItem =
@@ -59,5 +61,5 @@ declare module ClockInfo {
 }
 
 interface BangleExt {
-  CLKINFO_FOCUS?: true;
+  CLKINFO_FOCUS?: number;
 }

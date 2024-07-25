@@ -85,7 +85,7 @@ const drawTime = function() {
 };
 
 const draw = function() {
-  let last = tCurrent;
+  //let last = tCurrent;
   if (running) tCurrent = Date.now();
   g.setColor(g.theme.fg);
   if (redrawButtons) drawButtons();

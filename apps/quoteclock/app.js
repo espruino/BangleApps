@@ -105,12 +105,12 @@ function drawStrCenter(str, colour) {
     g.setColor(colour);
     g.setFont("Vector", 13);
     str = "\"" + str + "\"";
-    maxLength = 24;
+    const maxLength = 24;
     var ta = [];
     let index = 0;
     let linestart = 0;
     while (index < str.length) {
-        newIndex = str.indexOf(" ", index);
+        const newIndex = str.indexOf(" ", index);
         if (newIndex == -1) {
             if ((str.length - linestart) > maxLength) {
                 ta.push(str.substring(linestart, index));
@@ -122,7 +122,7 @@ function drawStrCenter(str, colour) {
             linestart = index;
         } else index = newIndex + 1;
     }
-    y = 110 - ta.length * 5;
+    let y = 110 - ta.length * 5;
     ta.forEach((e) => {
         g.setFontAlign(0, -1).drawString(e.trim(), 88, y);
         y += 12;

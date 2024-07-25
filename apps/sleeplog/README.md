@@ -65,6 +65,8 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
       _30_ / _31_ / ... / __100__ / ... / _200_
     - __Light Sleep__ | light sleep threshold
       _100_ / _110_ / ... / __200__ / ... / _400_
+    - __Wear Temperature__ | Set the minimum measured temperature of the wearable to consider it being worn. Can be disabled to use the HRM instead to detect if it's being worn.
+      __Disabled__ / _20.0°C_ / _20.5°C_ / ... / _40.0°C_
     - __Reset to Default__ | reset to bold values above
   - __BreakToD__ | time of day to break view
     _0:00_ / _1:00_ / ... / __12:00__ / ... / _23:00_

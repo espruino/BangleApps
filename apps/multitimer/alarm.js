@@ -17,6 +17,7 @@ function hardMode(tries, max) {
     g.reset();
     g.setClipRect(R.x,R.y,R.x2,R.y2);
     var code = Math.abs(E.hwRand()%4);
+    let dir;
     if (code == 0) dir = "up";
     else if (code == 1) dir = "right";
     else if (code == 2) dir = "down";

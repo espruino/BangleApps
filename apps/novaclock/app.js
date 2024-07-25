@@ -85,7 +85,7 @@ function novaOpenEyes(speed, white, animation) {
           scale: 2.2
         });
       }, speed * 5);
-    } else {}
+    }
   } else {
 
     g.drawImage(novaEyesStage4(), -10, -10, {
@@ -126,7 +126,7 @@ function novaOpenEyes(speed, white, animation) {
         });
         open = true;
       }, speed * 5);
-    } else {}
+    }
   }
 }
 
@@ -136,7 +136,7 @@ function novaCloseEyes(speed, white, animation) {
       g.drawImage(novaEyesStage0(), -10, -10, {
         scale: 2.2
       });
-    } else {}
+    }
     setTimeout(function() {
       g.drawImage(novaEyesStage1(), -10, -10, {
         scale: 2.2
@@ -164,7 +164,7 @@ function novaCloseEyes(speed, white, animation) {
       g.drawImage(novaEyesWhiteStage0(), -10, -10, {
         scale: 2.2
       });
-    } else {}
+    }
     setTimeout(function() {
       timedraw(true);
       g.drawImage(novaEyesTransStage1(), -10, -10, {
@@ -247,7 +247,6 @@ g.setFont("6x8", 4);
 g.setColor("#FFF");
 var open = false;
 var timemode = true;
-var clockmode;
 var novaYPos = -7;
 Bangle.setUI("clock");
 g.clear();
@@ -263,7 +262,7 @@ g.drawImage(star(), 120, -5, {scale:0.8});
 
 
 
-var secondInterval = setInterval(function() {
+setInterval(function() {
   timedraw();
   g.drawImage(novaTopRedraw(), -10, novaYPos, {
     scale: 2.2

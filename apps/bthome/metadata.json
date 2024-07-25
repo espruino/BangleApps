@@ -1,0 +1,20 @@
+{ "id": "bthome",
+  "name": "BTHome",
+  "shortName":"BTHome",
+  "version":"0.06",
+  "description": "Allow your Bangle to advertise with BTHome and send events to Home Assistant via Bluetooth",
+  "icon": "icon.png",
+  "type": "app",
+  "tags": "clkinfo,bthome,bluetooth",
+  "supports" : ["BANGLEJS2"],
+  "dependencies": {"textinput":"type", "icons":"module"},
+  "readme": "README.md",
+  "storage": [
+    {"name":"bthome.img","url":"app-icon.js","evaluate":true},
+    {"name":"bthome.clkinfo.js","url":"clkinfo.js"},
+    {"name":"bthome.boot.js","url":"boot.js"},
+    {"name":"bthome.app.js","url":"app.js"},
+    {"name":"bthome.settings.js","url":"settings.js"}
+  ],
+  "data":[{"name":"bthome.json"}]
+}

@@ -2,7 +2,6 @@
 // sunrise/sunset script by Matt Kane from https://github.com/Triggertrap/sun-js
 
 const LOCATION_FILE = 'mylocation.json';
-let location;
 
 Bangle.setUI('clock');
 Bangle.loadWidgets();
@@ -89,7 +88,7 @@ Date.prototype.sunriseSet = function (latitude, longitude, sunrise, zenith) {
 
   sinDec = 0.39782 * Math.sinDeg(sunTrueLongitude);
   cosDec = Math.cosDeg(Math.asinDeg(sinDec));
-  cosLocalHourAngle = ((Math.cosDeg(zenith)) - (sinDec * (Math.sinDeg(latitude)))) / (cosDec * (Math.cosDeg(latitude)));
+  const cosLocalHourAngle = ((Math.cosDeg(zenith)) - (sinDec * (Math.sinDeg(latitude)))) / (cosDec * (Math.cosDeg(latitude)));
 
   localHourAngle = Math.acosDeg(cosLocalHourAngle);
 
@@ -191,7 +190,7 @@ function drawSinuses () {
   g.setColor(1, 1, 1);
   let y = ypos(x);
   while (x < w) {
-    y2 = ypos(x + sinStep);
+    const y2 = ypos(x + sinStep);
     g.drawLine(x, y, x + sinStep, y2);
     y = y2;
     x += sinStep; // no need to draw all steps

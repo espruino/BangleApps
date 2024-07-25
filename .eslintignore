@@ -1,11 +1,6 @@
-apps/animclk/V29.LBM.js
-apps/banglerun/rollup.config.js
-apps/schoolCalendar/fullcalendar/main.js
-apps/authentiwatch/qr_packed.js
-apps/qrcode/qr-scanner.umd.min.js
-apps/gipy/pkg/gps.js
-apps/health/chart.min.js
-*.test.js
 
-# typescript/generated files
-apps/btadv/*.js
+# Needs to be ignored because it uses ESM export/import
+apps/gipy/pkg/gps.js
+
+# Needs to be ignored because it includes broken JS
+apps/health/chart.min.js

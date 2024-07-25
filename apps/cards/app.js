@@ -14,6 +14,14 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
+// get brightness
+let brightness;
+
+function loadBrightness() {
+    const getBrightness = require('Storage').readJSON("setting.json", 1) || {};
+    brightness = getBrightness.brightness || 0.1;
+}
+
 //may make it configurable in the future
 const WHITE=-1
 const BLACK=0
@@ -21,10 +29,10 @@ const BLACK=0
 const Locale = require("locale");
 const widget_utils = require('widget_utils');
 
-var fontSmall = "6x8";
+//var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
 var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
-var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
+//var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
 
 var CARDS = require("Storage").readJSON("android.cards.json",true)||[];
 var settings = require("Storage").readJSON("cards.settings.json",true)||{};
@@ -74,21 +82,26 @@ function printSquareCode(binary, size) {
   }
 }
 function printLinearCode(binary) {
+  var padding = 5;
   var yFrom = 15;
   var yTo = 28;
-  var width = g.getWidth()/binary.length;
+  var width = (g.getWidth()-(2*padding))/binary.length;
   for(var b = 0; b < binary.length; b++){
     var x = b * width;
     if(binary[b] === "1"){
-      g.setColor(BLACK).fillRect({x:x, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
+      g.setColor(BLACK).fillRect({x:x+padding, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
     }
     else if(binary[b]){
-      g.setColor(WHITE).fillRect({x:x, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
+      g.setColor(WHITE).fillRect({x:x+padding, y:yFrom, w:width, h:g.getHeight() - (yTo+yFrom)});
     }
   }
 }
 
 function showCode(card) {
+  // set to full bright when the setting is true
+  if(settings.fullBrightness) {
+    Bangle.setLCDBrightness(1);
+  }
   widget_utils.hide();
   E.showScroller();
   // keeping it on rising edge would come back twice..
@@ -120,6 +133,42 @@ function showCode(card) {
       printLinearCode(code.encode().data);
       break;
     }
+    case "EAN_8": {
+      g.setFont("Vector:20");
+      g.setFontAlign(0,1).setColor(BLACK);
+      g.drawString(card.value, g.getWidth()/2, g.getHeight());
+      const EAN8 = require("cards.EAN8.js");
+      let code = new EAN8(card.value, {});
+      printLinearCode(code.encode().data);
+      break;
+    }
+    case "EAN_13": {
+      g.setFont("Vector:20");
+      g.setFontAlign(0,1).setColor(BLACK);
+      g.drawString(card.value, g.getWidth()/2, g.getHeight());
+      const EAN13 = require("cards.EAN13.js");
+      let code = new EAN13(card.value, {});
+      printLinearCode(code.encode().data);
+      break;
+    }
+    case "UPC_A": {
+      g.setFont("Vector:20");
+      g.setFontAlign(0,1).setColor(BLACK);
+      g.drawString(card.value, g.getWidth()/2, g.getHeight());
+      const UPC = require("cards.UPC.js");
+      let code = new UPC.UPC(card.value, {});
+      printLinearCode(code.encode().data);
+      break;
+    }
+    case "UPC_E": {
+      g.setFont("Vector:20");
+      g.setFontAlign(0,1).setColor(BLACK);
+      g.drawString(card.value, g.getWidth()/2, g.getHeight());
+      const UPCE = require("cards.UPCE.js");
+      let code = new UPCE(card.value, {});
+      printLinearCode(code.encode().data);
+      break;
+    }
     default:
       g.clear(true);
       g.setFont("Vector:30");
@@ -129,6 +178,10 @@ function showCode(card) {
 }
 
 function showCard(card) {
+  // reset brightness to old value after maxing it out
+  if(settings.fullBrightness) {
+    Bangle.setLCDBrightness(brightness);
+  }
   var lines = [];
   var bodyFont = fontBig;
   if(!card) return;
@@ -136,8 +189,6 @@ function showCard(card) {
   //var lines = [];
   if (card.name) lines = g.wrapString(card.name, g.getWidth()-10);
   var titleCnt = lines.length;
-  var start = getDate(card.expiration);
-  var includeDay = true;
   lines = lines.concat("", /*LANG*/"View code");
   var valueLine = lines.length - 1;
   if (card.expiration)
@@ -207,5 +258,8 @@ function showList() {
     select : idx => showCard(CARDS[idx]),
     back : () => load()
   });
+}
+if(settings.fullBrightness) {
+  loadBrightness();
 }
 showList();

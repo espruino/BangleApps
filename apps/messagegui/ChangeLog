@@ -102,3 +102,7 @@
 0.73: Add sharp left+right nav icons
 0.74: Add option for driving on left (affects roundabout icons in navigation)
 0.75: Handle text with images in messages list by just displaying the first line
+0.76: Swipe up/down on a shown message to show the next newer/older message.
+0.77: Messages can now use international fonts if they are installed
+0.78: Fix: When user taps on a new message, clear the unread timeout
+0.79: Fix: Reset the unread timeout each time a new message is shown. When the message is read from user input, do not set an unread timeout.

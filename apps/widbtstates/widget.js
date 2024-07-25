@@ -17,12 +17,12 @@
     };
     var colours = (_a = {},
         _a[1] = {
-            false: "#fff",
+            false: "#000",
             true: "#fff",
         },
         _a[2] = {
-            false: "#0ff",
-            true: "#00f",
+            false: "#00f",
+            true: "#0ff",
         },
         _a);
     WIDGETS["bluetooth"] = {

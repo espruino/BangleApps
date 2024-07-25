@@ -55,6 +55,9 @@
     <label for="autodetect_waypoints">detect waypoints</label>
     <input type="checkbox" id="include_elevation" name="include_elevation" checked/>
     <label for="include_elevation">include elevation</label>
+    <input type="checkbox" id="ski" name="ski"/>
+    <label for="ski">ski</label>
+
     <div id="status"></div>
     <div id="svgmap"></div>
 
@@ -140,7 +143,9 @@ if ((e.which !== 1) && (e.button !== 1)) { return; }
 		        this._map.containerPointToLatLng(this._point));
     let south_west = bounds.getSouthWest();
     let north_east = bounds.getNorthEast();
-    gps_data = gps_from_area(south_west.lng, south_west.lat, north_east.lng, north_east.lat);
+    let ski = document.getElementById("ski").checked;
+    console.log("ski", ski);
+    gps_data = gps_from_area(south_west.lng, south_west.lat, north_east.lng, north_east.lat, ski);
 		document.getElementById('gps_file').value = "";
     display_polygon(this._map);
 

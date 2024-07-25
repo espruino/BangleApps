@@ -1,0 +1,18 @@
+{ "id": "hassio",
+  "name": "Home Assistant API Interface",
+  "shortName":"Hassio",
+  "icon": "hassio.png",
+  "version":"0.02",
+  "description": "This app gives access to viewing Home Assistant data and sends health, compass, accelerometer, and battery information to Home Assistant as a sensor through the Home Assistant REST API.",
+  "tags": "tool,sensors",
+  "supports": ["BANGLEJS2"],
+  "dependencies": {"android":"app"},
+  "interface": "interface.html",
+  "readme": "README.md",
+  "storage": [
+    {"name":"hassio.app.js","url":"hassio.app.js"},
+    {"name":"hassio.boot.js","url":"hassio.boot.js"},
+    {"name":"hassio.img","url":"hassio.img"}
+  ],
+  "data": [{"name":"hassio.json"}]
+}

@@ -127,6 +127,10 @@ function saveGPX(track, title) {
 }
 
 function saveCSV(track, title) {
+  if(!track[0]){
+    showToast(`Can't save empty csv "${title}" (no headers)`, "error");
+    return;
+  }
   var headers = Object.keys(track[0]);
   var csv = headers.join(",")+"\n";
   track.forEach(t=>{
@@ -149,7 +153,7 @@ function trackLineToObject(headers, l) {
 }
 
 function downloadTrack(filename, callback) {
-  Util.showModal("Downloading Track...");
+  Util.showModal(`Downloading ${filename}...`);
   Util.readStorageFile(filename,data=>{
     Util.hideModal();
     var lines = data.trim().split("\n");
@@ -157,6 +161,28 @@ function downloadTrack(filename, callback) {
     var track = lines.map(l=>trackLineToObject(headers, l));
     callback(track);
   });
+}
+
+function downloadAll(trackList, cb) {
+  const tracks = trackList.slice();
+
+  const downloadOne = () => {
+    const track = tracks.pop();
+    if(!track) {
+      showToast("Finished downloading all.", "success");
+      return;
+    }
+
+    downloadTrack(
+      track.filename,
+      lines => {
+        cb(lines, `Bangle.js Track ${track.number}`);
+        downloadOne();
+      }
+    );
+  };
+
+  downloadOne();
 }
 
 function getTrackList() {
@@ -235,8 +261,8 @@ ${trackData.Latitude ? `
            </div>
          </div>
         `;
-        });
-        if (trackList.length==0) {
+      });
+      if (trackList.length==0) {
         html += `
          <div class="column col-12">
            <div class="card-header">
@@ -245,9 +271,15 @@ ${trackData.Latitude ? `
            </div>
          </div>
          `;
-        }
-        html += `
+      }
+      html += `
         </div><!-- columns -->
+        <h2>Batch</h2>
+        <div class="form-group">
+          <button class="btn btn-primary" task="downloadkml_all">Download all KML</button>
+          <button class="btn btn-primary" task="downloadgpx_all">Download all GPX</button>
+          <button class="btn btn-primary" task="downloadcsv_all">Download all CSV</button>
+        </div>
         <h2>Settings</h2>
         <div class="form-group">
           <label class="form-switch">
@@ -256,39 +288,54 @@ ${trackData.Latitude ? `
           </label>
         </div>
         </div>`;
-        domTracks.innerHTML = html;
-        document.getElementById("settings-allow-no-gps").addEventListener("change",event=>{
-          var allowNoGPS = event.target.checked;
-          localStorage.setItem("recorder-allow-no-gps", allowNoGPS);
-        });
-        Util.hideModal();
-        var buttons = domTracks.querySelectorAll("button");
+      domTracks.innerHTML = html;
+      document.getElementById("settings-allow-no-gps").addEventListener("change",event=>{
+        var allowNoGPS = event.target.checked;
+        localStorage.setItem("recorder-allow-no-gps", allowNoGPS);
+      });
+      Util.hideModal();
+      var buttons = domTracks.querySelectorAll("button");
         for (var i=0;i<buttons.length;i++) {
-        buttons[i].addEventListener("click",event => {
-         var button = event.currentTarget;
-         var filename = button.getAttribute("filename");
-         var trackid = parseInt(button.getAttribute("trackid"));
-         if (!filename || trackid===undefined) return;
-         var task = button.getAttribute("task");
-         if (task=="delete") {
-           Util.showModal("Deleting Track...");
-           Util.eraseStorageFile(filename,()=>{
-             Util.hideModal();
-             getTrackList();
-           });
-         }
-         if (task=="downloadkml") {
-           downloadTrack(filename, track => saveKML(track, `Bangle.js Track ${trackid}`));
-         }
-         if (task=="downloadgpx") {
-           downloadTrack(filename, track => saveGPX(track, `Bangle.js Track ${trackid}`));
-         }
-         if (task=="downloadcsv") {
-           downloadTrack(filename, track => saveCSV(track, `Bangle.js Track ${trackid}`));
-         }
-        });
-      }
-    });
+          buttons[i].addEventListener("click",event => {
+            var button = event.currentTarget;
+            var filename = button.getAttribute("filename");
+            var trackid = parseInt(button.getAttribute("trackid"));
+            var task = button.getAttribute("task");
+
+            if (!/_all$/.test(task) && (!filename || trackid===undefined)) return;
+
+            switch(task) {
+              case "delete":
+                Util.showModal(`Deleting ${filename}...`);
+                Util.eraseStorageFile(filename,()=>{
+                  Util.hideModal();
+                  getTrackList();
+                });
+                break;
+
+              case "downloadkml":
+                downloadTrack(filename, track => saveKML(track, `Bangle.js Track ${trackid}`));
+                break;
+              case "downloadgpx":
+                downloadTrack(filename, track => saveGPX(track, `Bangle.js Track ${trackid}`));
+                break;
+              case "downloadcsv":
+                downloadTrack(filename, track => saveCSV(track, `Bangle.js Track ${trackid}`));
+                break;
+
+              case "downloadkml_all":
+                downloadAll(trackList, saveKML);
+                break;
+              case "downloadgpx_all":
+                downloadAll(trackList, saveGPX);
+                break;
+              case "downloadcsv_all":
+                downloadAll(trackList, saveCSV);
+                break;
+            }
+          });
+        }
+      });
   });
 }
 

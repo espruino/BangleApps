@@ -143,7 +143,7 @@ function redraw() {
 g.clear();
 fullRedraw();
 buzzForEvents();
-var minuteInterval = setInterval(redraw, 60 * 1000);
+/*var minuteInterval =*/ setInterval(redraw, 60 * 1000);
 
 Bangle.setUI("clock");
 Bangle.loadWidgets();

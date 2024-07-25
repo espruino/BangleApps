@@ -1,0 +1,15 @@
+{ "id": "rest",
+  "name": "Rest - Workout Timer App",
+  "shortName":"Rest",
+  "version": "0.01",
+  "description": "Rest timer and Set counter for workout, fitness and lifting things.",
+  "icon": "app.png",
+  "screenshots": [{"url": "screenshot1.png"}, {"url": "screenshot2.png"}, {"url": "screenshot3.png"}],
+  "tags": "workout,weight lifting,rest,fitness,timer",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"rest.app.js","url":"rest.app.js"},
+    {"name":"rest.img","url":"app-icon.js","evaluate":true}
+  ]
+}

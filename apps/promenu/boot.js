@@ -1,6 +1,6 @@
 E.showMenu = function(items) {
   function RectRnd(x1,y1,x2,y2,r) {
-    pp = [];
+    let pp = [];
     pp.push.apply(pp,g.quadraticBezier([x2-r,y1, x2,y1,x2,y1+r]));
     pp.push.apply(pp,g.quadraticBezier([x2,y2-r,x2,y2,x2-r,y2]));
     pp.push.apply(pp,g.quadraticBezier([x1+r,y2,x1,y2,x1,y2-r]));

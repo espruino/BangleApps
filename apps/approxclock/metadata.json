@@ -1,7 +1,7 @@
 { "id": "approxclock",
   "name": "Approximate Clock",
   "shortName" : "Approx Clock",
-  "version": "0.3",
+  "version": "0.04",
   "icon": "app.png",
   "description": "A really basic spelled out time display for people looking for the vague time at a glance.",
   "readme": "readme.md",

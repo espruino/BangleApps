@@ -1,0 +1,122 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+</head>
+
+<body>
+    <form id="replyForm">
+        <label class="label">New Custom Reply:</label>
+        <input class="form-input" id="msg" type="text" required></input>
+        <input class="btn btn-primary" type="submit" value="Add">
+        <br>
+        <br>
+    </form>
+    <button class="btn btn-primary" onclick="updateDevice()">Update Device</button>
+    <div>
+        <div id="loading">
+            <div class="empty">
+                <div class="empty-icon">
+                    <div class="loading loading-lg"></div>
+                </div>
+                <p class="empty-title h5">Loading</p>
+                <p class="empty-subtitle">Syncing custom replies with your watch</p>
+            </div>
+        </div>
+        <div id="empty" class="d-hide">
+            <div class="empty">
+                <div class="empty-icon">
+                    <i class="icon icon-more-horiz"></i>
+                </div>
+                <p class="empty-title h5">No custom replies</p>
+                <p class="empty-subtitle">Use the field above to add a custom reply</p>
+            </div>
+        </div>
+
+        <table id="replyList" class="table table-striped table-hover"></table>
+    </div>
+
+    <script src="../../core/lib/customize.js"></script>
+    <script>
+        const form = document.querySelector("#replyForm");
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            saveReply();
+        });
+        var replies = [];
+        var fetching = true; // Bit of a hack
+        var el = document.getElementById('items');
+        function onInit(device) {
+            fetching = true;
+            Util.readStorageJSON("replies.json", (arr) => {
+                if (arr) { 
+                    replies = replies.concat(arr);
+                    fetching = false;
+                    renderReplyList();
+                }
+            });
+        }
+
+        function toggleVisibility() {
+            let empty = document.getElementById("empty");
+            let loading = document.getElementById("loading");
+            if (fetching) {
+                loading.setAttribute("class", "d-block");
+                empty.setAttribute("class", "d-hide");
+            }
+            else if (replies.length == 0) {
+                empty.setAttribute("class", "d-block");
+                loading.setAttribute("class", "d-hide");
+            }
+            else {
+                loading.setAttribute("class", "d-hide");
+                empty.setAttribute("class", "d-hide");
+            }
+        }
+
+        function renderReplyList() {
+            toggleVisibility();
+            let table = document.getElementById("replyList");
+            table.innerHTML = "";
+            if (!fetching) {
+                for (var i = 0; i < replies.length; i++) {
+                    var reply = replies[i];
+                    var li = document.createElement("tr");
+                    var label = document.createElement("td");
+                    label.innerHTML = reply.text + "      ";
+                    var deleteButton = document.createElement("button");
+                    deleteButton.innerText = "Delete";
+                    deleteButton.setAttribute("onclick", `deleteReply(${i})`);
+                    deleteButton.setAttribute("class", "btn btn-error");
+                    li.appendChild(label);
+                    li.appendChild(deleteButton);
+                    table.appendChild(li);
+                }
+            }
+        }
+
+        function deleteReply(index) {
+            replies.splice(index, 1);
+            renderReplyList(replies);
+        }
+
+        function saveReply() {
+            var reply = {};
+            reply.text = document.getElementById('msg').value;
+            replies.push(reply);
+            updateDevice();
+        }
+
+        function updateDevice() {
+            fetching = true;
+            renderReplyList();
+            Util.writeStorage("replies.json", JSON.stringify(replies), () => {
+                fetching = false;
+                renderReplyList();
+            });
+        }
+    </script>
+</body>
+
+</html>

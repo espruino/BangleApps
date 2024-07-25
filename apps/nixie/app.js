@@ -5,7 +5,6 @@ const isB2 = g.getWidth() < 200;
 // global coordinate system
 const wX = g.getWidth();
 const wY = g.getHeight();
-const midX = wX/2, midY = wY/2;
 // relative positioning: send 0 <= coord < 1
 function relX(x) { return Math.floor(x*wX); }
 function relY(y) { return Math.floor(y*wY); }
@@ -13,7 +12,7 @@ function relY(y) { return Math.floor(y*wY); }
 // colors
 const col_bg = 0;
 const col_nm =isB2 ? 1 :"#206040";
-const col_sep = isB2 ? 6 :"#202020";
+//const col_sep = isB2 ? 6 :"#202020";
 const col_off = isB2 ? 1 : "#202020";
 const col_shad1 = isB2 ? 4 :"#FF0000";
 const col_shad2 = isB2 ? 6 :"#FF6000";
@@ -27,16 +26,15 @@ var imgTube = {
   width : 64, height : 128, bpp : 2,
   buffer : require("heatshrink").decompress(atob("AE9AB7sQD54AOiFQB5tVsgPN0uoBxkByEFB5kGyIPNhVVB5tpLwKAMoJuOgNQggMJgtVDhsVqtEZ5cVrWlEBcFtWq1WlJxUaBwOq1IgJgIdCqoABEBEC1WVBwTkGKgUGFYIOCgIRDC4kaFoVUOQQKCQ4IgCB4YKDCYIgCq2QgEqHwJLIEoOkgFqB4KaIEoNkB4Z7JHQVqquqD5EVDYQPCVRIPE1IPKgsAtJTCAA8GyEBD4TrKqAPOgNRB5sRB5wfPgAPOiA/RP4IPaiD6BB5oCBB5kAdQIPNH5wPCvIPMBgIPMR4QPcL4QPNgIPQvS/MqtAB59+B9cVB91VL91BF91RF79RB4OVD5wPsH59BB51FB5sQB/0AD7xvPV4elD5wPLqIPOgJPeX/6//X8YPMH5wPPL74PfN55PQB6TfPB5afDB51/D57P/Z/7P/B97vOB5kAB58VoAA="))
 };
-var imgTubeBW = {
+/*var imgTubeBW = {
   width : 46, height : 92, bpp : 1,
   buffer : require("heatshrink").decompress(atob("AD0EAomAAgcCBQkQEykwAgcP/gFD/wKECok4AgcB4A7DgwQEjAFEsYWExg2DhkgAoVAE4kA8AEDgZqEhw+JgA+DCwIKEhhrJCyJELFqBbQIiByLIk6gWZyC3WOSItWOVq3nCywA="))
-};
+};*/
 
 require("Font8x12").add(Graphics);
 g.setFont("8x12", 1);
-let interval = null;
 
-let alarming = false;
+//let alarming = false;
 let nightMode = false;
 
 // our scale factor
@@ -239,7 +237,7 @@ for (let idx=0; idx*2 < points6.length; idx++) {
    points9[idx*2+1] = 99-points6[idx*2+1];
 }
 
-pointsArray = [points0, points1, points2, points3, points4, points5, points6, points7, points8, points9];
+const pointsArray = [points0, points1, points2, points3, points4, points5, points6, points7, points8, points9];
 
 function eraseDigit(d, x, y) {
   if(d < 0 || d > 9) return;

@@ -44,7 +44,7 @@ function onGPS(fix) {
   if (fix.fix && isFinite(fix.speed)) {
     var speed = require("locale").speed(fix.speed);
     var m = speed.match(/([0-9,\.]+)(.*)/); // regex splits numbers from units
-    var txt = (fix.speed<20) ? fix.speed.toFixed(1) : Math.round(fix.speed);
+    //var txt = (fix.speed<20) ? fix.speed.toFixed(1) : Math.round(fix.speed);
     layout.speed.label = m[1];
     layout.units.label = m[2];
   }
