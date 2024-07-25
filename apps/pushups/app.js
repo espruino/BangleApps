@@ -49,10 +49,17 @@ function default_routine() {
 
 const DETECTORS = [
   (xyz) => {
-    return xyz.y > 0.4 ? 1 : 0;
+    return xyz.y > 0.3 ? 1 : 0;
   },
   (xyz) => {
-    return xyz.x > 0 ? 1 : 0;
+    if (xyz.x > 0.15) {
+      return 1;
+    } else if (xyz.x < -0.15) {
+      return 0;
+    } else {
+      return null;
+    }
+    // return xyz.x > 0 ? 1 : 0;
   },
   (xyz) => {
     if (xyz.z > -1) {
