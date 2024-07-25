@@ -49,7 +49,13 @@ function default_routine() {
 
 const DETECTORS = [
   (xyz) => {
-    return xyz.y > 0.3 ? 1 : 0;
+    if (xyz.y > 0.3) {
+      return 1;
+    } else if (xyz.y < 0.2) {
+      return 0;
+    } else {
+      return null;
+    }
   },
   (xyz) => {
     if (xyz.x > 0.15) {
@@ -62,9 +68,9 @@ const DETECTORS = [
     // return xyz.x > 0 ? 1 : 0;
   },
   (xyz) => {
-    if (xyz.z > -1) {
+    if (xyz.z > -0.4) {
       return 0;
-    } else if (xyz.z < -1.1) {
+    } else if (xyz.z < -0.6) {
       return 1;
     } else {
       return null;
@@ -233,14 +239,15 @@ class FitnessStatus {
 let status = new FitnessStatus(10 * 60);
 // status.display();
 
-  Bangle.accelWr(0x18,0b01110100); // off, +-8g // NOTE: this code is taken from 'accelrec' app
-  Bangle.accelWr(0x1B,0x03 | 0x40); // 100hz output, ODR/2 filter
-  Bangle.accelWr(0x18,0b11110100); // +-8g
+  // Bangle.accelWr(0x18,0b01110100); // off, +-8g // NOTE: this code is taken from 'accelrec' app
+  // Bangle.accelWr(0x1B,0x03 | 0x40); // 100hz output, ODR/2 filter
+  // Bangle.accelWr(0x18,0b11110100); // +-8g
 Bangle.setPollInterval(10);
 
 
 function start_routine() {
 
+  status.remaining = status.routine[status.routine_step][1];
   Bangle.loadWidgets();
   
   Bangle.on("swipe", function (directionLR, directionUD) {
@@ -331,10 +338,22 @@ function set_counter(index) {
   let w = g.getWidth();
   let h = g.getHeight();
   let counter = status.routine[index][1];
-  g.setFont("Vector:64")
-   .setFontAlign(0, 0);
-  g.clear();
-  g.drawString(""+counter, w/2, h/2);
+  function display() {
+    g.clear();
+    g.setFont("6x8:2")
+     .setFontAlign(1, 0)
+     .drawString("+1", w, h/2);
+    g.setFontAlign(-1, 0)
+     .drawString("-1", 0, h/2);
+    g.setFontAlign(0, -1)
+     .drawString("+5", w/2, 0);
+    g.setFontAlign(0, 1)
+     .drawString("-5", w/2, h);
+    g.setFont("Vector:64")
+     .setFontAlign(0, 0)
+     .drawString(""+counter, w/2, h/2);
+  }
+  display();
   Bangle.on("swipe", function (directionLR, directionUD) {
     if (directionUD == -1) {
       counter += 5;
@@ -348,8 +367,7 @@ function set_counter(index) {
     if (counter < 0) {
       counter = 0;
     }
-    g.clear();
-    g.drawString(""+counter, w/2, h/2);
+    display();
   });
   Bangle.on("touch", function(button, xy) {
     if (counter == 0) {
