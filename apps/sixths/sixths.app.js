@@ -754,7 +754,8 @@ function lockHandler(locked) {
 
 function queueDraw() {
   let next;
-  if (getTime() - last_unlocked > 3*60)
+  if ((getTime() - last_unlocked > 3*60) &&
+      (getTime() > gps_limit))
     next = 60000;
   else
     next =  1000;
