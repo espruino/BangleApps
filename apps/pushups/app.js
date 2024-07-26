@@ -49,18 +49,18 @@ function default_routine() {
 
 const DETECTORS = [
   (xyz) => {
-    if (xyz.y > 0.3) {
+    if (xyz.y > 0.15) {
       return 1;
-    } else if (xyz.y < 0.2) {
+    } else if (xyz.y < 0.1) {
       return 0;
     } else {
       return null;
     }
   },
   (xyz) => {
-    if (xyz.x > 0.15) {
+    if (xyz.x > 0.075) {
       return 1;
-    } else if (xyz.x < -0.15) {
+    } else if (xyz.x < -0.075) {
       return 0;
     } else {
       return null;
@@ -167,6 +167,10 @@ class FitnessStatus {
 
     if (this.completed) {
       Bangle.buzz(1000).then(() => {
+        Bangle.setPollInterval(80); // default poll interval
+        Bangle.accelWr(0x18, 0b01101100); // off, +-4g
+        Bangle.accelWr(0x1B, 0x0); // default 12.5hz output
+        Bangle.accelWr(0x18, 0b11101100); // +-4g
         load();
       });
       return;
@@ -239,16 +243,28 @@ class FitnessStatus {
 let status = new FitnessStatus(10 * 60);
 // status.display();
 
-  // Bangle.accelWr(0x18,0b01110100); // off, +-8g // NOTE: this code is taken from 'accelrec' app
-  // Bangle.accelWr(0x1B,0x03 | 0x40); // 100hz output, ODR/2 filter
-  // Bangle.accelWr(0x18,0b11110100); // +-8g
-Bangle.setPollInterval(10);
-
 
 function start_routine() {
 
+  Bangle.accelWr(0x18,0b01110100); // off, +-8g // NOTE: this code is taken from 'accelrec' app
+  Bangle.accelWr(0x1B,0x03 | 0x40); // 100hz output, ODR/2 filter
+  Bangle.accelWr(0x18,0b11110100); // +-8g
+  Bangle.setPollInterval(10);
+
+        Bangle.setPollInterval(80); // default poll interval
+        Bangle.accelWr(0x18, 0b01101100); // off, +-4g
+        Bangle.accelWr(0x1B, 0x0); // default 12.5hz output
+        Bangle.accelWr(0x18, 0b11101100); // +-4g
   status.remaining = status.routine[status.routine_step][1];
+        Bangle.setPollInterval(80); // default poll interval
+        Bangle.accelWr(0x18, 0b01101100); // off, +-4g
+        Bangle.accelWr(0x1B, 0x0); // default 12.5hz output
+        Bangle.accelWr(0x18, 0b11101100); // +-4g
   Bangle.loadWidgets();
+        Bangle.setPollInterval(80); // default poll interval
+        Bangle.accelWr(0x18, 0b01101100); // off, +-4g
+        Bangle.accelWr(0x1B, 0x0); // default 12.5hz output
+        Bangle.accelWr(0x18, 0b11101100); // +-4g
   
   Bangle.on("swipe", function (directionLR, directionUD) {
     if (directionUD == -1) {
