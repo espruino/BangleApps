@@ -115,7 +115,8 @@ function gpsHandleFix(fix) {
     doBuzz(" .");
     prev_fix = fix;
   }
-  if (1) {
+  if (0) {
+    /* Display error between GPS and system time */
     let now1 = Date();
     let now2 = fix.time;
     let n1 = now1.getMinutes() * 60 + now1.getSeconds();
@@ -154,7 +155,7 @@ function gpsHandle() {
         if (!last_fstart)
           last_fstart = getTime();
         last_fix = getTime();
-        keep_fix_for = gps_needed / 1.5;
+        keep_fix_for = (last_fstart - last_restart) / 2;
         if (keep_fix_for < 10)
           keep_fix_for = 10;
         if (keep_fix_for > 4*60)
@@ -175,7 +176,7 @@ function gpsHandle() {
       let d2 = (getTime()-last_fstart);
       print("gps on, restarted ", d, gps_needed, d2, fix.lat);
       if (getTime() > gps_speed_limit &&
-          (d > gps_needed || (last_fstart && d2 > keep_fix_for))) {
+          ((d > gps_needed && !last_fstart) || (last_fstart && d2 > keep_fix_for))) {
         gpsPause();
         gps_needed = gps_needed * 1.5;
         print("Pausing, next try", gps_needed);
