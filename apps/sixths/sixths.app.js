@@ -13,6 +13,7 @@ var buzz = "",      /* Set this to transmit morse via vibrations */
     in_str = "",
     note = "",
     debug = "v0.05.1", debug2 = "(otherdb)", debug3 = "(short)";
+var note_limit = 0;
 var mode = 0, mode_time = 0; // 0 .. normal, 1 .. note, 2.. mark name
 var disp_mode = 0;  // 0 .. normal, 1 .. small time
 
@@ -111,7 +112,7 @@ function fmtTimeDiff(d) {
 }
 function gpsHandleFix(fix) {
   if (!prev_fix) {
-    show("GPS acquired", 10);
+    showMsg("GPS acquired", 10);
     doBuzz(" .");
     prev_fix = fix;
   }
@@ -213,7 +214,7 @@ function markHandle() {
   return msg;
 }
 function entryDone() {
-  show(":" + in_str);
+  showMsg(":" + in_str);
   doBuzz(" .");
   switch (mode) {
   case 1: logstamp(">" + in_str); break;
@@ -237,7 +238,7 @@ function selectWP(i) {
   if (sel_wp >= waypoints.length)
     sel_wp = waypoints.length - 1;
   if (sel_wp < 0) {
-    show("No WPs", 60);
+    showMsg("No WPs", 60);
   }
   let wp = waypoints[sel_wp];
   cur_mark = {};
@@ -247,11 +248,11 @@ function selectWP(i) {
   cur_mark.fix.fix = 1;
   cur_mark.fix.lat = wp.lat;
   cur_mark.fix.lon = wp.lon; 
-  show("WP:"+wp.name, 60);
+  showMsg("WP:"+wp.name, 60);
   print("Select waypoint: ", cur_mark);
 }
 function ack(cmd) {
-  show(cmd, 3);
+  showMsg(cmd, 3);
   doBuzz(' .');
 }
 function inputHandler(s) {
@@ -265,7 +266,7 @@ function inputHandler(s) {
   }
   if ((mode == 1) || (mode == 2)){
     in_str = in_str + s;
-    show(">"+in_str, 10);
+    showMsg(">"+in_str, 10);
     mode_time = getTime();
     return;
   }
@@ -278,7 +279,7 @@ function inputHandler(s) {
       else
         s = s+(bat/5);
       doBuzz(toMorse(s));
-      show("Bat "+bat+"%", 60);
+      showMsg("Bat "+bat+"%", 60);
       break;
     }
     case 'D': doBuzz(' .'); selectWP(1); break;
@@ -292,8 +293,8 @@ function inputHandler(s) {
       }
       break;
     case 'L': aload("altimeter.app.js"); break;
-    case 'M': doBuzz(' .'); mode = 2; show("M>", 10); cur_mark = markNew(); mode_time = getTime(); break;
-    case 'N': doBuzz(' .'); mode = 1; show(">", 10); mode_time = getTime(); break;
+    case 'M': doBuzz(' .'); mode = 2; showMsg("M>", 10); cur_mark = markNew(); mode_time = getTime(); break;
+    case 'N': doBuzz(' .'); mode = 1; showMsg(">", 10); mode_time = getTime(); break;
     case 'O': aload("orloj.app.js"); break;
     case 'R': gpsReset(); ack("GPS reset"); break;
     case 'P': aload("runplus.app.js"); break;
@@ -308,7 +309,7 @@ function inputHandler(s) {
     }
     case 'U': doBuzz(' .'); selectWP(-1); break;
     case 'Y': ack('Compass reset'); Bangle.resetCompass(); break;
-    default: doBuzz(' ..'); show("Unknown "+s, 5); break;
+    default: doBuzz(' ..'); showMsg("Unknown "+s, 5); break;
   }
 }
 const morseDict = {
@@ -429,13 +430,14 @@ function hourly() {
   let bat = E.getBattery();
   if (bat < 25) {
       s = ' B';
-      show("Bat "+bat+"%", 60);
+      showMsg("Bat "+bat+"%", 60);
   }
   if (is_active)
     doBuzz(toMorse(s));
   //logstamp("");
 }
-function show(msg, timeout) {
+function showMsg(msg, timeout) {
+  note_limit = getTime() + timeout;
   note = msg;
 }
 function fivemin() {
@@ -587,6 +589,13 @@ function draw() {
     msg += markHandle() + "\n";
   }
 
+  if (note != "") {
+    if (getTime() > note_limit)
+      note = "";
+    else
+      msg += note + "\n";
+  }
+
   if (getTime() - last_active > 15*60) {
     let alt_adjust = cur_altitude - rest_altitude;
     let abs = Math.abs(alt_adjust);
@@ -608,10 +617,8 @@ function draw() {
   } else {
     msg += fmtAlt(cur_altitude);
   }
-  msg = msg + " " + cur_temperature.toFixed(1)+icon_c + "\n";
 
-  if (note != "")
-    msg += note + "\n";
+  msg = msg + " " + cur_temperature.toFixed(1)+icon_c + "\n";
 
   {
     let o = Bangle.getOptions();
