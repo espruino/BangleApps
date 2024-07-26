@@ -12,14 +12,15 @@ var buzz = "",      /* Set this to transmit morse via vibrations */
     inm = "", l = "", /* For incoming morse handling */
     in_str = "",
     note = "",
-    debug = "v0.04.1", debug2 = "(otherdb)", debug3 = "(short)";
+    debug = "v0.05.1", debug2 = "(otherdb)", debug3 = "(short)";
 var mode = 0, mode_time = 0; // 0 .. normal, 1 .. note, 2.. mark name
 var disp_mode = 0;  // 0 .. normal, 1 .. small time
 
 // GPS handling
 var gps_on = 0, // time GPS was turned on
     last_fix = 0, // time of last fix
-    last_restart = 0, last_pause = 0, last_fstart = 0; // utime
+    last_restart = 0, last_pause = 0; // utime
+    last_fstart = 0; // utime, time of start of last fix
 var gps_needed = 0, // how long to wait for a fix
     gps_limit = 0, // timeout -- when to stop recording
     gps_speed_limit = 0,
@@ -85,12 +86,14 @@ function gpsPause() {
   last_restart = 0;
   last_pause = getTime();
 }
+function gpsReset() {
+  prev_fix = null;
+  gps_dist = 0;
+}
 function gpsOn() {
   gps_on = getTime();
   gps_needed = 1000;
   last_fix = 0;
-  prev_fix = null;
-  gps_dist = 0;
   gpsRestart();
 }
 function gpsOff() {
@@ -128,6 +131,8 @@ function gpsHandleFix(fix) {
 }
 function gpsHandle() {
   let msg = "";
+  debug2 = "Ne" + gps_needed;
+  debug3 = "Ke" + keep_fix_for;
   if (!last_restart) {
       let d = (getTime()-last_pause);
       if (last_fix)
@@ -149,11 +154,11 @@ function gpsHandle() {
         if (!last_fstart)
           last_fstart = getTime();
         last_fix = getTime();
-        keep_fix_for = gps_needed / 3;
+        keep_fix_for = gps_needed / 1.5;
         if (keep_fix_for < 10)
           keep_fix_for = 10;
-        if (keep_fix_for > 3*60)
-          keep_fix_for = 3*60;
+        if (keep_fix_for > 4*60)
+          keep_fix_for = 4*60;
         gps_needed = 60;
       } else {
         if (last_fix)
@@ -289,7 +294,8 @@ function inputHandler(s) {
     case 'M': doBuzz(' .'); mode = 2; show("M>", 10); cur_mark = markNew(); mode_time = getTime(); break;
     case 'N': doBuzz(' .'); mode = 1; show(">", 10); mode_time = getTime(); break;
     case 'O': aload("orloj.app.js"); break;
-    case 'R': aload("runplus.app.js"); break;
+    case 'R': gpsReset(); ack("GPS reset"); break;
+    case 'P': aload("runplus.app.js"); break;
     case 'S': gpsOn(); gps_limit = getTime() + 60*30; gps_speed_limit = gps_limit; ack("GPS speed"); break;
     case 'G': {
       s = ' T';
@@ -617,9 +623,8 @@ function draw() {
   g.drawString(msg, 10, 85);
 
   if (disp_mode == 1) {
-    g.drawString(debug, 10, 45);
-    g.drawString(debug2, 10, 65);
-    g.drawString(debug3, 10, 85);
+    g.setFont('Vector', 21);
+    g.drawString(debug + "\n" + debug2 + "\n" + debug3, 10, 20);
   }
 
   queueDraw();
