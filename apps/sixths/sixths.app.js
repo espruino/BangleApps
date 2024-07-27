@@ -11,7 +11,7 @@ var buzz = "",      /* Set this to transmit morse via vibrations */
     inm = "", l = "", /* For incoming morse handling */
     in_str = "",
     note = "",
-    debug = "v0.05.2", debug2 = "(otherdb)", debug3 = "(short)";
+    debug = "v0.05.3", debug2 = "(otherdb)", debug3 = "(short)";
 var note_limit = 0;
 var mode = 0, mode_time = 0; // 0 .. normal, 1 .. note, 2.. mark name
 var disp_mode = 0;  // 0 .. normal, 1 .. small time
@@ -178,7 +178,7 @@ function gpsHandle() {
       let d = (getTime()-last_restart);
       let d2 = (getTime()-last_fstart);
       print("gps on, restarted ", d, gps_needed, d2, fix.lat);
-      if (getTime() > gps_speed_limit &&
+      if (getTime() > state.gps_speed_limit &&
           ((d > gps_needed && !last_fstart) || (last_fstart && d2 > keep_fix_for))) {
         gpsPause();
         gps_needed = gps_needed * 1.5;
