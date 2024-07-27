@@ -105,30 +105,30 @@ class TilesOffsets {
     offset += 2;
 
     let bytes = (type_size==24)?3:2;
-    let buffer = E.toArrayBuffer(s.read(filename, offset, bytes_per_tile_index*non_empty_tiles_number+bytes*non_empty_tiles_number));
+    let buffer = E.toArrayBuffer(s.read(filename, offset, bytes_per_tile_index*non_empty_tiles_number));
     if (bytes_per_tile_index == 2) {
       this.non_empty_tiles = Uint16Array(buffer, 0, non_empty_tiles_number);
     } else {
       this.non_empty_tiles = Uint24Array(buffer, 0, non_empty_tiles_number);
     }
     offset += bytes_per_tile_index * non_empty_tiles_number;
+    let tile_buffer = E.toArrayBuffer(s.read(filename, offset, bytes*non_empty_tiles_number));
     if (type_size == 24) {
       this.non_empty_tiles_ends = Uint24Array(
-        buffer,
-        2*non_empty_tiles_number,
+        tile_buffer,
+        0,
         non_empty_tiles_number
       );
-      offset += 3 * non_empty_tiles_number;
     } else if (type_size == 16) {
       this.non_empty_tiles_ends = Uint16Array(
-        buffer,
-        2*non_empty_tiles_number,
+        tile_buffer,
+        0,
         non_empty_tiles_number
       );
-      offset += 2 * non_empty_tiles_number;
     } else {
       throw "unknown size";
     }
+    offset += bytes * non_empty_tiles_number;
     return [this, offset];
   }
   tile_start_offset(tile_index) {
@@ -183,10 +183,7 @@ class Map {
     offset += 8;
 
     // tiles offsets
-    let bytes_per_tile_index = 2;
-    if (this.grid_size[0] * this.grid_size[1]) >= 65536 {
-      bytes_per_tile_index = 3;
-    }
+    let bytes_per_tile_index = (this.grid_size[0] * this.grid_size[1] > 65536)?3:2;
     let res = new TilesOffsets(filename, offset, bytes_per_tile_index);
     this.tiles_offsets = res[0];
     offset = res[1];
@@ -322,11 +319,8 @@ class Interests {
     this.side = side_array[0];
     offset += 8;
 
-    let bytes_per_tile_index = 2;
-    if (this.grid_size[0] * this.grid_size[1]) >= 65536 {
-      bytes_per_tile_index = 3;
-    }
-    let res = new TilesOffsets(filename, offset);
+    let bytes_per_tile_index = (this.grid_size[0] * this.grid_size[1] > 65536)?3:2;
+    let res = new TilesOffsets(filename, offset, bytes_per_tile_index);
     offset = res[1];
     this.offsets = res[0];
     let end = this.offsets.end_offset();
