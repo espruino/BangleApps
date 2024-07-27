@@ -13,7 +13,7 @@ var PI   = Math.PI,
   tan  = Math.tan,
   asin = Math.asin,
   atan = Math.atan2,
-  acos = Math.acos,
+  //acos = Math.acos,
   rad  = PI / 180,
   dayMs = 1000 * 60 * 60 * 24,
   J1970 = 2440588,
@@ -228,7 +228,7 @@ function getMPhaseSim (offset) {
   if(dd<10){dd='0'+dd;}
   var mm = String(date.getMonth() + 1);
   if(mm<10){mm='0'+mm;}
-  var yyyy = date.getFullYear();
+  //var yyyy = date.getFullYear();
   var phase = SunCalc.getMoonIllumination(date);
   return phase.name;
 }

@@ -105,4 +105,4 @@ function main() {
   Bangle.setLCDPower(1);
 }
 
-var interval = setInterval(main, 300);
+setInterval(main, 300);

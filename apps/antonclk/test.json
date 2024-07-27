@@ -1,0 +1,15 @@
+{
+  "app" : "antonclk",
+  "tests" : [{
+    "description": "Check memory usage after setUI",
+    "steps" : [
+      {"t":"cmd", "js": "Bangle.loadWidgets()"},
+      {"t":"cmd", "js": "eval(require('Storage').read('antonclk.app.js'))"},
+      {"t":"cmd", "js": "Bangle.setUI()"},
+      {"t":"saveMemoryUsage"},
+      {"t":"cmd", "js": "eval(require('Storage').read('antonclk.app.js'))"},
+      {"t":"cmd", "js":"Bangle.setUI()"},
+      {"t":"checkMemoryUsage"}
+    ]
+  }]
+}

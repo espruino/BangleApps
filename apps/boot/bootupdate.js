@@ -4,7 +4,7 @@ of the time. */
 { // execute in our own scope so we don't have to free variables...
 E.showMessage(/*LANG*/"Updating boot0...");
 let s = require('Storage').readJSON('setting.json',1)||{};
-const BANGLEJS2 = process.env.HWVERSION==2; // Is Bangle.js 2
+//const BANGLEJS2 = process.env.HWVERSION==2; // Is Bangle.js 2
 const FWVERSION = parseFloat(process.env.VERSION.replace("v","").replace(/\.(\d\d)$/,".0$1"));
 const DEBUG = s.bootDebug; // we can set this to enable debugging output in boot0
 let boot = "", bootPost = "";
@@ -14,15 +14,15 @@ if (DEBUG) {
 }
 if (require('Storage').hash) { // new in 2v11 - helps ensure files haven't changed
   let CRC = E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\.boot\.js/)+E.CRC32(process.env.GIT_COMMIT);
-  boot += `if (E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\\.boot\\.js/)+E.CRC32(process.env.GIT_COMMIT)!=${CRC})`;
+  boot += `if(E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\\.boot\\.js/)+E.CRC32(process.env.GIT_COMMIT)!=${CRC})`;
 } else {
   let CRC = E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\.boot\.js/))+E.CRC32(process.env.GIT_COMMIT);
-  boot += `if (E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\\.boot\\.js/))+E.CRC32(process.env.GIT_COMMIT)!=${CRC})`;
+  boot += `if(E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\\.boot\\.js/))+E.CRC32(process.env.GIT_COMMIT)!=${CRC})`;
 }
-boot += ` { eval(require('Storage').read('bootupdate.js')); throw "Storage Updated!"}\n`;
+boot += `{eval(require('Storage').read('bootupdate.js'));print("Storage Updated!")}else{\n`;
 boot += `E.setFlags({pretokenise:1});\n`;
 boot += `var bleServices = {}, bleServiceOptions = { uart : true};\n`;
-bootPost += `NRF.setServices(bleServices, bleServiceOptions);delete bleServices,bleServiceOptions;\n`; // executed after other boot code
+bootPost += `NRF.setServices(bleServices,bleServiceOptions);delete bleServices,bleServiceOptions;\n`; // executed after other boot code
 if (s.ble!==false) {
   if (s.HID) { // Human interface device
     if (s.HID=="joy") boot += `Bangle.HID = E.toUint8Array(atob("BQEJBKEBCQGhAAUJGQEpBRUAJQGVBXUBgQKVA3UBgQMFAQkwCTEVgSV/dQiVAoECwMA="));`;
@@ -78,7 +78,12 @@ if (global.save) boot += `global.save = function() { throw new Error("You can't 
 // Apply any settings-specific stuff
 if (s.options) boot+=`Bangle.setOptions(${E.toJS(s.options)});\n`;
 if (s.brightness && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightness});\n`;
-if (s.passkey!==undefined && s.passkey.length==6) boot+=`NRF.setSecurity({passkey:${E.toJS(s.passkey.toString())}, mitm:1, display:1});\n`;
+if (s.bleprivacy || (s.passkey!==undefined && s.passkey.length==6)) {
+  let passkey = s.passkey ? `passkey:${E.toJS(s.passkey.toString())},display:1,mitm:1,` : "";
+  let privacy = s.bleprivacy ? `privacy:${E.toJS(s.bleprivacy)},` : "";
+  boot+=`NRF.setSecurity({${passkey}${privacy}});\n`;
+}
+if (s.blename === false) boot+=`NRF.setAdvertising({},{showName:false});\n`;
 if (s.whitelist && !s.whitelist_disabled) boot+=`NRF.on('connect', function(addr) { if (!NRF.ignoreWhitelist) { let whitelist = (require('Storage').readJSON('setting.json',1)||{}).whitelist; if (NRF.resolveAddress !== undefined) { let resolvedAddr = NRF.resolveAddress(addr); if (resolvedAddr !== undefined) addr = resolvedAddr + " (resolved)"; } if (!whitelist.includes(addr)) NRF.disconnect(); }});\n`;
 if (s.rotate) boot+=`g.setRotation(${s.rotate&3},${s.rotate>>2});\n` // screen rotation
 // ================================================== FIXING OLDER FIRMWARES
@@ -105,7 +110,7 @@ if (!date.toLocalISOString) boot += `Date.prototype.toLocalISOString = function(
 // show timings
 if (DEBUG) boot += `print(".boot0",0|(Date.now()-_tm),"ms");_tm=Date.now();\n`
 // ================================================== BOOT.JS
-// Append *.boot.js files. 
+// Append *.boot.js files.
 // Name files with a number - eg 'foo.5.boot.js' to enforce order (lowest first). Numbered files get placed before non-numbered
 // These could change bleServices/bleServiceOptions if needed
 let bootFiles = require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
@@ -122,6 +127,7 @@ let bootFiles = require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
   return a==b ? 0 : (a>b ? 1 : -1);
 });
 // precalculate file size
+bootPost += "}";
 let fileSize = boot.length + bootPost.length;
 bootFiles.forEach(bootFile=>{
   // match the size of data we're adding below in bootFiles.forEach

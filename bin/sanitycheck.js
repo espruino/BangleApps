@@ -19,6 +19,7 @@ try {
 var BASEDIR = __dirname+"/../";
 var APPSDIR_RELATIVE = "apps/";
 var APPSDIR = BASEDIR + APPSDIR_RELATIVE;
+var knownWarningCount = 0;
 var warningCount = 0;
 var errorCount = 0;
 function ERROR(msg, opt) {
@@ -32,10 +33,11 @@ function WARN(msg, opt) {
   opt = opt||{};
   if (KNOWN_WARNINGS.includes(msg)) {
     console.log(`Known warning : ${msg}`);
+    knownWarningCount++;
   } else {
     console.log(`::warning${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
+    warningCount++;
   }
-  warningCount++;
 }
 
 var apps = [];
@@ -150,10 +152,13 @@ apps.forEach((app,appIdx) => {
     } else {
       var changeLog = fs.readFileSync(appDir+"ChangeLog").toString();
       var versions = changeLog.match(/\d+\.\d+:/g);
-      if (!versions) ERROR(`No versions found in ${app.id} ChangeLog (${appDir}ChangeLog)`, {file:metadataFile});
-      var lastChangeLog = versions.pop().slice(0,-1);
-      if (lastChangeLog != app.version)
-        ERROR(`App ${app.id} app version (${app.version}) and ChangeLog (${lastChangeLog}) don't agree`, {file:appDirRelative+"ChangeLog", line:changeLog.split("\n").length-1});
+      if (!versions) {
+        ERROR(`No versions found in ${app.id} ChangeLog (${appDir}ChangeLog)`, {file:metadataFile});
+      } else {
+        var lastChangeLog = versions.pop().slice(0,-1);
+        if (lastChangeLog != app.version)
+          ERROR(`App ${app.id} app version (${app.version}) and ChangeLog (${lastChangeLog}) don't agree`, {file:appDirRelative+"ChangeLog", line:changeLog.split("\n").length-1});
+      }
     }
   }
   if (!app.description) ERROR(`App ${app.id} has no description`, {file:metadataFile});
@@ -256,9 +261,17 @@ apps.forEach((app,appIdx) => {
         if (a>=0 && b>=0 && a<b)
           WARN(`Clock ${app.id} file calls loadWidgets before setUI (clock widget/etc won't be aware a clock app is running)`, {file:appDirRelative+file.url, line : fileContents.substr(0,a).split("\n").length});
       }
-      // if settings, suggest adding to datafiles
-      if (/\.settings?\.js$/.test(file.name) && (!app.data || app.data.every(d => !d.name || !d.name.endsWith(".json")))) {
-        WARN(`App ${app.id} has a setting file but no corresponding data entry (add \`"data":[{"name":"${app.id}.settings.json"}]\`)`, {file:appDirRelative+file.url});
+      // if settings
+      if (/\.settings?\.js$/.test(file.name)) {
+        // suggest adding to datafiles
+        if (!app.data || app.data.every(d => !d.name || !d.name.endsWith(".json"))) {
+          WARN(`App ${app.id} has a setting file but no corresponding data entry (add \`"data":[{"name":"${app.id}.settings.json"}]\`)`, {file:appDirRelative+file.url});
+        }
+        // check for manual boolean formatter
+        const m = fileContents.match(/format: *\(?\w*\)? *=>.*["'](yes|on)["']/i);
+        if (m) {
+          WARN(`Settings for ${app.id} has a boolean formatter - this is handled automatically, the line can be removed`, {file:appDirRelative+file.url, line: fileContents.substr(0, m.index).split("\n").length});
+        }
       }
     }
     for (const key in file) {
@@ -385,8 +398,11 @@ while(fileA=allFiles.pop()) {
 }
 
 console.log("==================================");
-console.log(`${errorCount} errors, ${warningCount} warnings`);
+console.log(`${errorCount} errors, ${warningCount} warnings (and ${knownWarningCount} known warnings)`);
 console.log("==================================");
 if (errorCount)  {
+  process.exit(1);
+} else if ("CI" in process.env && warningCount) {
+  console.log("Running in CI, raising an error from warnings");
   process.exit(1);
 }

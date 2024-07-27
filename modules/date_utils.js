@@ -34,7 +34,6 @@ exports.dow = (i, abbreviated) => {
  */
 exports.dows = (firstDayOfWeek, abbreviated) => {
   var dows = [];
-  var locale = require("locale");
   for (var i = 0; i < 7; i++) {
     dows.push(exports.dow(i + (firstDayOfWeek || 0), abbreviated))
   }

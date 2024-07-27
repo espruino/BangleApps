@@ -1,0 +1,15 @@
+{
+    "id": "quoteclock",
+    "name": "Quote Clock",
+    "version": "0.02",
+    "description": "A clock showing quotes every hour",
+    "icon": "app.png",
+    "type": "clock",
+    "tags": "clock,shakespeare",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"quoteclock.app.js","url":"app.js"},
+      {"name":"quoteclock.img","url":"app-icon.js","evaluate":true}
+    ]
+  }

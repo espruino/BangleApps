@@ -2,7 +2,7 @@
   "id": "flow",
   "name": "FLOW",
   "shortName": "FLOW",
-  "version": "0.01",
+  "version": "0.02",
   "description": "A game where you have to help a flow avoid white obstacles thing by tapping! This is a demake of an app which I forgot the name of. Press BTN(1) to restart. See if you can get to 2500 score!",
   "icon": "app.png",
   "tags": "game",

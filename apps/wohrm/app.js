@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+
 const Setter = {
   NONE: "none",
   UPPER: 'upper',
@@ -31,7 +31,7 @@ const upperLshape = isB1 ? {
   left: 210,
   bottom: 40,
   top: 210,
-  rectWidth: 30, 
+  rectWidth: 30,
   cornerRoundness: 5,
   orientation: -1,
   color: '#f00'
@@ -62,7 +62,7 @@ const centerBar = {
   minY: (upperLshape.bottom + upperLshape.top - (upperLshape.rectWidth*1.5))/2,
   maxY: (upperLshape.bottom + upperLshape.top + (upperLshape.rectWidth*1.5))/2,
   confidenceWidth: isB1 ? 10 : 8,
-  minX: isB1 ? 55 : upperLshape.rectWidth + 14, 
+  minX: isB1 ? 55 : upperLshape.rectWidth + 14,
   maxX: isB1 ? 165 : Bangle.appRect.x2 - upperLshape.rectWidth - 14
 };
 

@@ -2,7 +2,7 @@
   "id"            : "wrkmem",
   "name"          : "Working Memory Helper",
   "shortName"     : "Work Mem",
-  "version"       : "1.01",
+  "version": "1.02",
   "description"   : "Externalize your working memory to help stay on task.",
   "dependencies"  : {"textinput": "type"},
   "icon"          : "icon.png",

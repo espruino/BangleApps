@@ -9,12 +9,12 @@
         
         function drawClock(){
           var now=Date();
-          d=now.toString().split(' ');
-          var min=d[4].substr(3,2);
-          var sec=d[4].substr(-2);
+          let d=now.toString().split(' ');
+          //var min=d[4].substr(3,2);
+          //var sec=d[4].substr(-2);
           var tm=d[4].substring(0,5);
-          var hr=d[4].substr(0,2);
-          lastmin=min;
+          //var hr=d[4].substr(0,2);
+          //lastmin=min;
           g.reset();
           g.clearRect(0,24,W-1,H-1);
           g.setColor(g.theme.fg);

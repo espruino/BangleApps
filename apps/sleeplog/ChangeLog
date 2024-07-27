@@ -11,3 +11,6 @@
 0.13: Prevent to stay in consecutive sleep if not worn, correct trigger calling, add trigger object itself as argument to the fn function
 0.14: Add "Delete all logfiles before" to interface.html, display all logfiles in the interface
 0.15: Issue newline before GB commands (solves issue with console.log and ignored commands)
+0.16: Only write logs if we have a non-empty log to write
+0.17: Minor code improvements
+0.18: Add back as a function to prevent translation making it a menu entry

@@ -1,7 +1,7 @@
 { "id": "themesetter",
   "name": "Theme Setter",
   "shortName":"Theme Setter",
-  "version":"0.04",
+  "version": "0.05",
   "description": "a comfortable way to configure theme colors",
   "icon": "app-icon.png",
   "type": "app",

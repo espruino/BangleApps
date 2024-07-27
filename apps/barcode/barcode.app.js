@@ -8,8 +8,8 @@ let digitBarHeight = 100;
 let textBarWidth = 56;
 let textBarHeight = 20;
 
-let textWidth = 14;
-let textHeight = 20;
+//let textWidth = 14;
+//let textHeight = 20;
 
 /* Offsets */
 var startOffsetX = 17;
@@ -39,7 +39,7 @@ let rightBarsStartY = upperTextBarRightOffsetY + textBarHeight;
 /* Utilities */
 let stepCount = require("Storage").readJSON("stepCount",1);
 if(stepCount === undefined) stepCount = 0;
-let intCaster = num => Number(num);
+//let intCaster = num => Number(num);
 
 var drawTimeout;
 
@@ -50,7 +50,7 @@ function renderWatch(l) {
 
     var d = new Date();
     var h = d.getHours(), m = d.getMinutes();
-    var time = h + ":" + ("0"+m).substr(-2);
+    //var time = h + ":" + ("0"+m).substr(-2);
     //var month = ("0" + (d.getMonth()+1)).slice(-2);
     var dayOfMonth = ('0' + d.getDate()).slice(-2);
     var dayOfWeek = d.getDay() || 7;

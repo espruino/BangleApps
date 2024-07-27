@@ -1,7 +1,7 @@
 const app = "drained";
 
 // from boot.js
-declare var drainedInterval: IntervalId | undefined;
+declare let drainedInterval: IntervalId | undefined;
 if(typeof drainedInterval !== "undefined")
   drainedInterval = clearInterval(drainedInterval) as undefined;
 
@@ -72,21 +72,31 @@ const draw = () => {
 };
 
 const reload = () => {
+  const showMenu = () => {
+    const menu: { [k: string]: () => void } = {
+      "Restore to full power": drainedRestore,
+    };
+
+    if (NRF.getSecurityStatus().advertising)
+      menu["Disable BLE"] = () => { NRF.sleep(); showMenu(); };
+    else
+      menu["Enable BLE"] = () => { NRF.wake(); showMenu(); };
+
+    menu["Settings"] = () => load("setting.app.js");
+    menu["Recovery"] = () => Bangle.showRecoveryMenu();
+    menu["Exit menu"] = reload;
+
+    if(nextDraw) clearTimeout(nextDraw);
+    E.showMenu(menu);
+  };
+
   Bangle.setUI({
     mode: "custom",
     remove: () => {
       if (nextDraw) clearTimeout(nextDraw);
       nextDraw = undefined;
     },
-    btn: () => {
-      E.showPrompt("Restore watch to full power?").then(v => {
-        if(v){
-          drainedRestore();
-        }else{
-          reload();
-        }
-      })
-    }
+    btn: showMenu
   });
   Bangle.CLOCK=1;
 

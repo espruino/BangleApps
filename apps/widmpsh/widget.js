@@ -1,6 +1,6 @@
 WIDGETS["widmoonsh"] = { area: "tr", width: 24, draw: function() {
   const MC = 29.5305882, NM = 694039.09;
-  var r = 11, mx = this.x + 12; my = this.y + 12;
+  var r = 11, mx = this.x + 12, my = this.y + 12;
 
   function moonPhase(d) {
     var tmp, month = d.getMonth(), year = d.getFullYear(), day = d.getDate();

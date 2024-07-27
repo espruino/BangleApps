@@ -43,7 +43,6 @@
 
     /*LANG*/"Step Goal Notification": {
       value: "stepGoalNotification" in settings ? settings.stepGoalNotification : false,
-      format: () => (settings.stepGoalNotification ? 'Yes' : 'No'),
       onchange: () => {
         settings.stepGoalNotification = !settings.stepGoalNotification;
         setSettings();

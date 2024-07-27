@@ -2,7 +2,7 @@
   "id": "UI4swatch",
   "name": "UI 4 swatch",
   "shortName": "UI 4 swatch",
-  "version": "0.01",
+  "version": "0.02",
   "description": "A UI/UX for espruino smartwatches, displays dinamically calc. x,y coordinates.",
   "icon": "app.png",
   "tags": "Color,input,buttons,touch,UI",

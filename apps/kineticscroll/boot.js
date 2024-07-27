@@ -9,29 +9,40 @@
       remove = function()
       select = function(idx, touch)
     }
-  
+
     returns {
       scroll: int                // current scroll amount
       draw: function()           // draw all
       drawItem : function(idx)   // draw specific item
       isActive : function()      // is this scroller still active?
     }
-  
+
     */
     if (!options) return Bangle.setUI(); // remove existing handlers
-    
-    const MAX_VELOCITY=100;
+
+    const SPEED=100;
+    const LAST_DRAG_WAIT=150;
+    const MIN_VELOCITY=0.1;
+
     let scheduledDraw;
+
     let velocity = 0;
     let accDy = 0;
-    let scheduledBrake = setInterval(()=>{velocity*=0.9;}, 50);
+    let direction = 0;
+
+    let lastTouchedDrag = 0;
     let lastDragStart = 0;
-    let R = Bangle.appRect;
+
     let menuScrollMin = 0|options.scrollMin;
-    let menuScrollMax = options.h*options.c - R.h;
-    if (menuScrollMax<menuScrollMin) menuScrollMax=menuScrollMin;
-    
+
+    const getMenuScrollMax = () => {
+      let menuScrollMax = options.h*options.c - Bangle.appRect.h;
+      if (menuScrollMax<menuScrollMin) menuScrollMax=menuScrollMin;
+      return menuScrollMax;
+    };
+
     const touchHandler = (_,e)=>{
+      let R = Bangle.appRect;
       if (e.y<R.y-4) return;
       velocity = 0;
       accDy = 0;
@@ -39,42 +50,46 @@
       if ((menuScrollMin<0 || i>=0) && i<options.c){
         let yAbs = (e.y + rScroll - R.y);
         let yInElement = yAbs - i*options.h;
-        print("selected");
         options.select(i, {x:e.x, y:yInElement});
       }
     };
 
     const uiDraw = () => {
+      let R = Bangle.appRect;
       g.reset().clearRect(R).setClipRect(R.x,R.y,R.x2,R.y2);
       var a = YtoIdx(R.y);
       var b = Math.min(YtoIdx(R.y2),options.c-1);
       for (var i=a;i<=b;i++)
         options.draw(i, {x:R.x,y:idxToY(i),w:R.w,h:options.h});
       g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
-    }
+    };
 
     const draw = () => {
-      let dy = velocity;
-      if (s.scroll - dy > menuScrollMax){
-        dy = s.scroll - menuScrollMax;
+      let R = Bangle.appRect;
+      if (velocity > MIN_VELOCITY){
+        if (!scheduledDraw)
+          scheduledDraw = setTimeout(draw, 0);
+        velocity *= 1-((Date.now() - lastTouchedDrag) / 8000);
+        if (velocity <= MIN_VELOCITY){
+          velocity = 0;
+        } else {
+          s.scroll -= velocity * direction;
+        }
+      }
+      let menuScrollMax = getMenuScrollMax();
+      if (s.scroll > menuScrollMax){
+        s.scroll = menuScrollMax;
         velocity = 0;
       }
-      if (s.scroll - dy < menuScrollMin){
-        dy = s.scroll - menuScrollMin;
+      if (s.scroll < menuScrollMin){
+        s.scroll = menuScrollMin;
         velocity = 0;
       }
-    
-      s.scroll -= dy;
-    
+
       let oldScroll = rScroll;
       rScroll = s.scroll &~1;
       let d = oldScroll-rScroll;
-    
-      if (Math.abs(velocity) > 0.01)
-        scheduledDraw = setTimeout(draw,0);
-      else
-        scheduledDraw = undefined;
-    
+
       if (!d) {
         return;
       }
@@ -83,7 +98,7 @@
         let y = Math.max(R.y2-(1-d), R.y);
         g.setClipRect(R.x,y,R.x2,R.y2);
         let i = YtoIdx(y);
-    
+
         for (y = idxToY(i);y < R.y2;y+=options.h) {
           options.draw(i, {x:R.x,y:y,w:R.w,h:options.h});
           i++;
@@ -93,86 +108,85 @@
         g.setClipRect(R.x,R.y,R.x2,y);
         let i = YtoIdx(y);
         y = idxToY(i);
-    
+
         for (y = idxToY(i);y > R.y-options.h;y-=options.h) {
           options.draw(i, {x:R.x,y:y,w:R.w,h:options.h});
           i--;
         }
       }
       g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
+      scheduledDraw = undefined;
     };
-    
+
     const dragHandler = e=>{
-      if ((velocity <0 && e.dy>0) || (velocity > 0 && e.dy<0)){
-        velocity *= -1;
-        accDy = 5 * velocity;
-      }
-      //velocity += e.dy * (Date.now() - lastDrag);
+      let now=Date.now();
+      direction = Math.sign(e.dy);
+      s.scroll -= e.dy;
       if (e.b > 0){
-        if (!lastDragStart){
-          lastDragStart = Date.now();
+        // Finger touches the display or direction has been reversed
+        lastTouchedDrag = now;
+        if (!lastDragStart || (accDy * direction < 0 && e.dy * direction > 0)){
+          lastDragStart = lastTouchedDrag;
           velocity = 0;
           accDy = 0;
         }
+
         accDy += e.dy;
-      }
-      velocity = accDy / (Date.now() - lastDragStart) * MAX_VELOCITY;
-    
-      if (lastDragStart && e.b == 0){
-        accDy = 0;
+      } else {
+        // Finger has left the display, only start scrolling kinetically when the last drag event is close enough
+        if (now - lastTouchedDrag < LAST_DRAG_WAIT){
+          velocity = direction * accDy / (now - lastDragStart) * SPEED;
+        }
         lastDragStart = 0;
       }
-    
-      velocity = E.clip(velocity,-MAX_VELOCITY,MAX_VELOCITY);
-      lastDrag=Date.now();
-      if (!scheduledDraw){
-        scheduledDraw = setTimeout(draw,0);
-      }
+      draw();
     };
-    
+
     let uiOpts = {
       mode : "custom",
       back : options.back,
       drag : dragHandler,
       touch : touchHandler,
       redraw : uiDraw
-    }
+    };
 
     if (options.remove) uiOpts.remove = () => {
       if (scheduledDraw)
         clearTimeout(scheduledDraw);
-      clearInterval(scheduledBrake);
       options.remove();
-    }
+    };
 
     Bangle.setUI(uiOpts);
 
-
-    
     function idxToY(i) {
-      return i*options.h + R.y - rScroll;
+      return i*options.h + Bangle.appRect.y - rScroll;
     }
+
     function YtoIdx(y) {
-      return Math.floor((y + rScroll - R.y)/options.h);
+      return Math.floor((y + rScroll - Bangle.appRect.y)/options.h);
     }
-    
+
     let s = {
-      scroll : E.clip(0|options.scroll,menuScrollMin,menuScrollMax),
+      scroll : E.clip(0|options.scroll,menuScrollMin,getMenuScrollMax()),
       draw : () => {
+        let R = Bangle.appRect;
         g.reset().clearRect(R).setClipRect(R.x,R.y,R.x2,R.y2);
         let a = YtoIdx(R.y);
         let b = Math.min(YtoIdx(R.y2),options.c-1);
         for (let i=a;i<=b;i++)
           options.draw(i, {x:R.x,y:idxToY(i),w:R.w,h:options.h});
         g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
-      }, drawItem : i => {
+      },
+      drawItem : i => {
+        let R = Bangle.appRect;
         let y = idxToY(i);
         g.reset().setClipRect(R.x,Math.max(y,R.y),R.x2,Math.min(y+options.h,R.y2));
         options.draw(i, {x:R.x,y:y,w:R.w,h:options.h});
         g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
-  }, isActive : () => Bangle.uiRedraw == uiDraw
+      },
+      isActive : () => Bangle.uiRedraw == uiDraw
     };
-    
+
     let rScroll = s.scroll&~1; // rendered menu scroll (we only shift by 2 because of dither)
     s.draw(); // draw the full scroller
     g.flip(); // force an update now to make this snappier

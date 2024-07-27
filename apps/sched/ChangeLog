@@ -23,3 +23,7 @@
 0.20: Alarm dismiss and snooze events
 0.21: Fix crash in clock_info
 0.22: Dated event repeat option
+0.23: Allow buzzing forever when an alarm fires
+0.24: Emit alarmReload when alarms change (used by widalarm)
+0.25: Fix wrap around when snoozed through midnight
+0.26: Fix hitting snooze on an alarm after when the snooze would've fired

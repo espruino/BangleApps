@@ -2,7 +2,7 @@
   "id": "espruinoterm",
   "name": "Espruino Terminal",
   "shortName": "Espruino Term",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Send commands to other Espruino devices via the Bluetooth UART interface, and see the result on a VT100 terminal. Customisable commands!",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

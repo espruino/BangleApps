@@ -42,7 +42,7 @@
   let Npages = Math.ceil(Napps/4);
   let maxPage = Npages-1;
   let selected = -1;
-  let oldselected = -1;
+  //let oldselected = -1;
   let page = 0;
   const XOFF = 24;
   const YOFF = 30;
@@ -104,7 +104,7 @@
   let swipeListenerDt = function(dirLeftRight, dirUpDown){
     updateTimeoutToClock();
     selected = -1;
-    oldselected=-1;
+    //oldselected=-1;
     if(settings.swipeExit && dirLeftRight==1) Bangle.showClock();
     if (dirUpDown==-1||dirLeftRight==-1){
       ++page; if (page>maxPage) page=0;

@@ -12,3 +12,4 @@
 0.12: Added stepo2 as a replacement for stepo and digi
 0.13: Added long press BTN2 toggle gpsrec status in GPS clock
 0.14: Move waypoints.json (and editor) to 'waypoints' app
+0.15: Minor code improvements

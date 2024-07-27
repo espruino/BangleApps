@@ -107,7 +107,7 @@ exports.input = function(options) {
     "ram";
     // ABCDEFGHIJKLMNOPQRSTUVWXYZ
     // Choose character by draging along red rectangle at bottom of screen
-    if (event.y >= ( (R.y+R.h) - 12 )) {
+    if (event.y >= ( (R.y+R.h) - 26 )) {
       // Translate x-position to character
       if (event.x < ABCPADDING) { abcHL = 0; }
       else if (event.x >= 176-ABCPADDING) { abcHL = 25; }
@@ -139,7 +139,7 @@ exports.input = function(options) {
 
     // 12345678901234567890
     // Choose number or puctuation by draging on green rectangle
-    else if ((event.y < ( (R.y+R.h) - 12 )) && (event.y > ( (R.y+R.h) - 52 ))) {
+    else if ((event.y < ( (R.y+R.h) - 26 )) && (event.y > ( (R.y+R.h) - 52 ))) {
       // Translate x-position to character
       if (event.x < NUMPADDING) { numHL = 0; }
       else if (event.x > 176-NUMPADDING) { numHL = NUM.length-1; }

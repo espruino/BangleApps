@@ -1,0 +1,99 @@
+{
+  "app" : "android",
+  "setup" : [{
+    "id": "default",
+    "steps" : [
+      {"t":"cmd", "js": "Bangle.setGPSPower=(isOn, appID)=>{if (!appID) appID='?';if (!Bangle._PWR) Bangle._PWR={};if (!Bangle._PWR.GPS) Bangle._PWR.GPS=[];if (isOn && !Bangle._PWR.GPS.includes(appID)) Bangle._PWR.GPS.push(appID);if (!isOn && Bangle._PWR.GPS.includes(appID)) Bangle._PWR.GPS.splice(Bangle._PWR.GPS.indexOf(appID),1);return Bangle._PWR.GPS.length>0;};", "text": "Fake the setGPSPower"},
+      {"t":"wrap", "fn": "Bangle.setGPSPower", "id": "gpspower"},
+      {"t":"cmd", "js": "Serial1.println = () => { }", "text": "Fake the serial port println"},
+      {"t":"cmd", "js": "Bluetooth.println = () => { }", "text": "Fake the Bluetooth println"},
+      {"t":"cmd", "js": "Bangle._PWR={}", "text": "Prepare an empty _PWR for following asserts"},
+      {"t":"cmd", "js": "require('Storage').writeJSON('android.settings.json', {overwriteGps: true})", "text": "Enable GPS overwrite"},
+      {"t":"cmd", "js": "eval(require('Storage').read('android.boot.js'))", "text": "Load the boot code"}
+    ]
+  },{
+    "id": "connected",
+    "steps" : [
+      {"t":"cmd", "js": "NRF.getSecurityStatus = () => { return { connected: true };}", "text": "Control the security status to be connected"}
+    ]
+  },{
+    "id": "disconnected",
+    "steps" : [
+      {"t":"cmd", "js": "NRF.getSecurityStatus = () => { return { connected: false };}", "text": "Control the security status to be disconnected"}
+    ]
+  }],
+  "tests" : [{
+    "description": "Check setGPSPower is replaced", 
+    "steps" : [
+      {"t":"cmd", "js": "Serial1.println = () => { }", "text": "Fake the serial port"},
+      {"t":"cmd", "js": "Bluetooth.println = () => { }", "text": "Fake the Bluetooth println"},
+      {"t":"cmd", "js": "require('Storage').writeJSON('android.settings.json', {overwriteGps: true})", "text": "Enable GPS overwrite"},
+      {"t":"cmd", "js": "eval(require('Storage').read('android.boot.js'))", "text": "Load the boot code"},
+      {"t":"assert", "js": "Bangle.setGPSPower.toString().includes('native')", "is":"false", "text": "setGPSPower has been replaced"}
+    ]
+  },{
+    "description": "Test switching hardware GPS on and off", 
+    "steps" : [
+      {"t":"setup", "id": "default"},
+      {"t":"setup", "id": "connected"},
+      {"t":"assertArray", "js": "Bangle._PWR.GPS", "is":"undefinedOrEmpty", "text": "No GPS clients"},
+      {"t":"assert", "js": "Bangle.isGPSOn()", "is":"falsy", "text": "isGPSOn shows GPS as off"},
+      {"t":"assert", "js": "Bangle.setGPSPower(1, 'test')", "is":"truthy", "text": "setGPSPower returns truthy when switching on"},
+      {"t":"assertArray", "js": "Bangle._PWR.GPS", "is":"notEmpty", "text": "GPS clients"},
+      {"t":"assert", "js": "Bangle.isGPSOn()", "is":"truthy", "text": "isGPSOn shows GPS as on"},
+      {"t":"assertCall", "id": "gpspower", "count": 1, "argAsserts": [ { "t": "assert", "arg": "0", "is": "equal", "to": 1 } ] , "text": "internal GPS switched on"},
+      {"t":"assert", "js": "Bangle.setGPSPower(0, 'test')", "is":"falsy", "text": "setGPSPower returns falsy when switching off"},
+      {"t":"assertArray", "js": "Bangle._PWR.GPS", "is":"undefinedOrEmpty", "text": "No GPS clients"},
+      {"t":"assert", "js": "Bangle.isGPSOn()", "is":"falsy", "text": "isGPSOn shows GPS as off"},
+      {"t":"assertCall", "id": "gpspower", "count": 2, "argAsserts": [ { "t": "assert", "arg": "0", "is": "equal", "to": 0 } ] , "text": "internal GPS switched off"}
+    ]
+  },{
+    "description": "Test switching when GB GPS is available, internal GPS active until GB GPS event arrives", 
+    "steps" : [
+      {"t":"setup", "id": "default"},
+      {"t":"setup", "id": "connected"},
+      {"t":"assertArray", "js": "Bangle._PWR.GPS", "is":"undefinedOrEmpty", "text": "No GPS clients"},
+      {"t":"assert", "js": "Bangle.isGPSOn()", "is":"falsy", "text": "isGPSOn shows GPS as off"},
+      
+      {"t":"assert", "js": "Bangle.setGPSPower(1, 'test')", "is":"truthy", "text": "setGPSPower returns truthy when switching on"},
+      {"t":"assertArray", "js": "Bangle._PWR.GPS", "is":"notEmpty", "text": "GPS clients"},
+      {"t":"assert", "js": "Bangle.isGPSOn()", "is":"truthy", "text": "isGPSOn shows GPS as on"},
+      {"t":"assertCall", "id": "gpspower", "count": 1, "argAsserts": [ { "t": "assert", "arg": "0", "is": "equal", "to": 1 } ], "text": "internal GPS switched on"},
+      
+      {"t":"gb", "obj":{"t":"gps"}},
+      {"t":"assertArray", "js": "Bangle._PWR.GPS", "is":"notEmpty", "text": "GPS clients still there"},
+      {"t":"assert", "js": "Bangle.isGPSOn()", "is":"truthy", "text": "isGPSOn still shows GPS as on"},
+      {"t":"assertCall", "id": "gpspower", "count": 2, "argAsserts": [ { "t": "assert", "arg": "0", "is": "equal", "to": 0 } ], "text": "internal GPS switched off"}
+    ]
+  },{
+    "description": "Test switching when GB GPS is available, internal stays off", 
+    "steps" : [
+      {"t":"setup", "id": "default"},
+      {"t":"setup", "id": "connected"},
+      
+      {"t":"assert", "js": "Bangle.setGPSPower(1, 'test')", "is":"truthy", "text": "setGPSPower returns truthy when switching on"},
+      
+      {"t":"gb", "obj":{"t":"gps"}},
+      {"t":"assertCall", "id": "gpspower", "argAsserts": [ { "t": "assert", "arg": "0", "is": "equal", "to": 0 } ], "text": "internal GPS switched off"},
+
+      {"t":"assert", "js": "Bangle.setGPSPower(0, 'test')", "is":"falsy", "text": "setGPSPower returns truthy when switching on"},
+      {"t":"assertCall", "id": "gpspower", "argAsserts": [ { "t": "assert", "arg": "0", "is": "equal", "to": 0 } ], "text": "internal GPS still switched off"}
+    ]
+  },{
+    "description": "Test switching when GB GPS is available, but no event arrives", 
+    "steps" : [
+      {"t":"setup", "id": "default"},
+      {"t":"setup", "id": "connected"},
+      
+      {"t":"assert", "js": "Bangle.setGPSPower(1, 'test')", "is":"truthy", "text": "setGPSPower returns truthy when switching on"},
+
+      {"t":"resetCall", "id": "gpspower"},
+      {"t":"gb", "obj":{"t":"gps"}, "text": "trigger switch"},
+      {"t":"assertCall", "id": "gpspower", "argAsserts": [ { "t": "assert", "arg": "0", "is": "equal", "to": 0 } ], "text": "internal GPS switched off"},
+
+      {"t":"resetCall", "id": "gpspower"},
+      {"t":"advanceTimers", "ms":"12000", "text": "wait for fallback"},
+      {"t":"assertCall", "id": "gpspower", "argAsserts": [ { "t": "assert", "arg": "0", "is": "equal", "to": 1 } ], "text": "internal GPS switched on caused by missing GB event"}
+    ]
+  }]
+}

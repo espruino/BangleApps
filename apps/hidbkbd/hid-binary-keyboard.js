@@ -71,8 +71,8 @@ function show(chars,callback) {
     return;
   }
   var m = chars.length/2;
-  charl=chars.slice(0,m);
-  charr=chars.slice(m);
+  let charl=chars.slice(0,m);
+  let charr=chars.slice(m);
   showChars(0,charl);
   showChars(120,charr);
   setWatch(() => {

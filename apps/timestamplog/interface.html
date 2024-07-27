@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <script src="../../core/lib/interface.js"></script>
+    <div id="content">Loading...</div>
+    <script>
+      function onInit() {
+        Util.readStorageJSON('timestamplog.json', stampLog => {
+          document.getElementById("content").innerHTML = HTMLStampLog(stampLog);
+        });
+      }
+
+      function HTMLStampLog(stampLog) {
+        html = ''
+        if (stampLog !== undefined && stampLog.length) {
+          html += '<ol>';
+          for (const logItem of stampLog) {
+            html += ('<li>' + new Date(logItem.stamp).toLocaleString() + '</li>');
+          }
+          html += '</ol>';
+        } else {
+          html += '(empty)';
+        }
+        console.log(html);
+        return html;
+      }
+    </script>
+  </body>
+</html>

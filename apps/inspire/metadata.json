@@ -2,7 +2,7 @@
   "id": "inspire",
   "name": "Inspire Breathing",
   "shortName": "Inspire",
-  "version": "0.02",
+  "version": "0.03",
   "description": "exercise breathing every now and then",
   "icon": "app-icon.png",
   "tags": "tools,health",

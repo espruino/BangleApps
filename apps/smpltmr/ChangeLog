@@ -6,3 +6,4 @@
 0.06: Ensure Timer supplies an image for clkinfo items
 0.07: Update clock_info to avoid a redraw
 0.08: Timer ClockInfo now updates once a minute
+0.09: Timer ClockInfo resets to timer menu when blurred

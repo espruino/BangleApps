@@ -1,0 +1,18 @@
+{
+  "id": "regattatimer",
+  "name": "Regatta Timer",
+  "shortName": "RegattaTimer",
+  "version": "0.41",
+  "description": "Regatta Timer with 5-4-1 Countdown",
+  "icon": "icon.png",
+  "tags": "tool,outdoors,sailing,race,regatta,boat,timer",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name": "regattatimer.app.js", "url": "app.js"},
+    {"name": "regattatimer.settings.js", "url": "settings.js"},
+    {"name": "regattatimer.img", "url": "app-icon.js", "evaluate": true}
+  ],
+  "data": [{"name": "regattatimer.json"}],
+  "screenshots": [{"url": "screenshot.png"},{"url": "screenshot-1.png"},{"url": "screenshot-2.png"},{"url": "screenshot-3.png"},{"url": "screenshot-4.png"},{"url": "screenshot-5.png"},{"url": "screenshot-6.png"},{"url": "screenshot-7.png"}]
+}

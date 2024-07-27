@@ -69,5 +69,5 @@ Bangle.on('touch', function (button) {
   started = !started;
 });
 
-var interval = setInterval(countDown, 1000);
+setInterval(countDown, 1000);
 drawInterface();

@@ -7,16 +7,17 @@ const FIELD_WIDTH = Bangle.appRect.w/8;
 const FIELD_HEIGHT = Bangle.appRect.h/8;
 const SETTINGS_FILE = "chess.json";
 const ICON_SIZE=45;
-const ICON_BISHOP = require("heatshrink").decompress(atob("lstwMB/4Ac/wFE4IED/kPAofgn4FDGon8j4QEBQgQE4EHBQcACwfAgF/BQYWD8EAHAX+NgI4C+AQEwAQDDYIhDDYMDCAQKBGQQsHHogKDCAJODCAI3CHoQKCHoIQDHoIQCFgoQBFgfgIQYmBEIQECKgIrCBYQKDC4OBg/8iCvEAC+AA="));
-const ICON_PAWN = require("heatshrink").decompress(atob("lstwMB/4At/AFEGon4h4FDwE/AgX8CAngCAkAv4bDgYbECAf4gAhD4AhD/kAg4mDCAkACAYbBEIYQBG4gbDEII9DFhXAgEfBQYWDEwJUC/wKBGQXwCAgEBE4RCBCAYmBCAQmCCAQmBCAbdCCAIbCQ4gAYwA="));
-const ICON_KING = require("heatshrink").decompress(atob("lstwMB/4Ac/wFE+4KEh4FD+F/AofvCwgKE+IKEg4bEj4FDwADC/k8g+HAoJhCC4PwAoQXBNod//AECgYfBAoUP/gQE8AQEBQcfCAaLBCAZmBEIZuBBQgyDJAIWCPgXAEAQWDBQRUCPgQnBHgJqBLwYhDOwRvDGQc/EIaSDCwLedwAA=="));
-const ICON_QUEEN = require("heatshrink").decompress(atob("lstwMB/4Ac/l/AgXn4PzAgP+j0Ph4FB8FwuE///PgeDwPn/k8n0+j0f4Hz+Px8F+g/Px+fgf4vgACn/jAAf/x8Pj0en/8vAsB+P/+PBwcHj//w0MjEwJgMwsHBw5CBwMEhBDBPoR6B/gFCDYPgAoRZBAgUH//4AoQbB4AbDCAYbBCAZ1CAgJ7CwAKDGQQmBCAYmBEIQmC+AQEDYQQBDYQQCFgo3CXQIsFBYIEDACmAA="));
-const ICON_ROOK = require("heatshrink").decompress(atob("lstwMB/4Ax/0HgPAAoPwnEOg4FBwBFBn///gEBI4XgAoMPAoJWCv4QDDYXwBQf/4AKD/wmDCARuDGQImCEIQbCGQMDCAQKBj4EB/AFBBQQsgDYQQCNQQhCOog3CCAQ3BEIRvCAoSRCE4IxCKgQmCKgYAZwA="));
-const ICON_KNIGHT = require("heatshrink").decompress(atob("lstwMB/4Ann1/AgX48IKD4UPAgX+gEHAoXwgALDJQMfDYQFBEQWAgBSCBQQcC4AFBn///hnCBQPgAgMDGIQnDGIIQDAgQQBEwQQCGIIQCEwMECAQxBsAQBEwMPCAQmBAIJDB4EPDoM/CAIoBKgP4BQQQB/AzCKgJlIPgQ+COwJlCHoJlDJwJlDS4aBDDYQsCADOA"));
+const get_icon_bishop = () => require("heatshrink").decompress(atob("lstwMB/4Ac/wFE4IED/kPAofgn4FDGon8j4QEBQgQE4EHBQcACwfAgF/BQYWD8EAHAX+NgI4C+AQEwAQDDYIhDDYMDCAQKBGQQsHHogKDCAJODCAI3CHoQKCHoIQDHoIQCFgoQBFgfgIQYmBEIQECKgIrCBYQKDC4OBg/8iCvEAC+AA="));
+const get_icon_pawn = () => require("heatshrink").decompress(atob("lstwMB/4At/AFEGon4h4FDwE/AgX8CAngCAkAv4bDgYbECAf4gAhD4AhD/kAg4mDCAkACAYbBEIYQBG4gbDEII9DFhXAgEfBQYWDEwJUC/wKBGQXwCAgEBE4RCBCAYmBCAQmCCAQmBCAbdCCAIbCQ4gAYwA="));
+const get_icon_king = () => require("heatshrink").decompress(atob("lstwMB/4Ac/wFE+4KEh4FD+F/AofvCwgKE+IKEg4bEj4FDwADC/k8g+HAoJhCC4PwAoQXBNod//AECgYfBAoUP/gQE8AQEBQcfCAaLBCAZmBEIZuBBQgyDJAIWCPgXAEAQWDBQRUCPgQnBHgJqBLwYhDOwRvDGQc/EIaSDCwLedwAA=="));
+const get_icon_queen = () => require("heatshrink").decompress(atob("lstwMB/4Ac/l/AgXn4PzAgP+j0Ph4FB8FwuE///PgeDwPn/k8n0+j0f4Hz+Px8F+g/Px+fgf4vgACn/jAAf/x8Pj0en/8vAsB+P/+PBwcHj//w0MjEwJgMwsHBw5CBwMEhBDBPoR6B/gFCDYPgAoRZBAgUH//4AoQbB4AbDCAYbBCAZ1CAgJ7CwAKDGQQmBCAYmBEIQmC+AQEDYQQBDYQQCFgo3CXQIsFBYIEDACmAA="));
+const get_icon_rook = () => require("heatshrink").decompress(atob("lstwMB/4Ax/0HgPAAoPwnEOg4FBwBFBn///gEBI4XgAoMPAoJWCv4QDDYXwBQf/4AKD/wmDCARuDGQImCEIQbCGQMDCAQKBj4EB/AFBBQQsgDYQQCNQQhCOog3CCAQ3BEIRvCAoSRCE4IxCKgQmCKgYAZwA="));
+const get_icon_knight = () => require("heatshrink").decompress(atob("lstwMB/4Ann1/AgX48IKD4UPAgX+gEHAoXwgALDJQMfDYQFBEQWAgBSCBQQcC4AFBn///hnCBQPgAgMDGIQnDGIIQDAgQQBEwQQCGIIQCEwMECAQxBsAQBEwMPCAQmBAIJDB4EPDoM/CAIoBKgP4BQQQB/AzCKgJlIPgQ+COwJlCHoJlDJwJlDS4aBDDYQsCADOA"));
 
 const settings = Object.assign({
   state: engine.P4_INITIAL_BOARD,
   computer_level: 0, // default to "stupid" which is the fastest
+  buzz: false, // Buzz when computer move is done
 }, require("Storage").readJSON(SETTINGS_FILE,1) || {});
 
 const ovr = Graphics.createArrayBuffer(Bangle.appRect.w,Bangle.appRect.h,2,{msb:true});
@@ -56,22 +57,22 @@ const drawPiece = (buf, x, y, piece) => {
 
   switch(piece & ~0x1) {
     case engine.P4_PAWN:
-      icon = ICON_PAWN;
+      icon = get_icon_pawn();
       break;
     case engine.P4_BISHOP:
-      icon = ICON_BISHOP;
+      icon = get_icon_bishop();
       break;
     case engine.P4_KING:
-      icon = ICON_KING;
+      icon = get_icon_king();
       break;
     case engine.P4_QUEEN:
-      icon = ICON_QUEEN;
+      icon = get_icon_queen();
       break;
     case engine.P4_ROOK:
-      icon = ICON_ROOK;
+      icon = get_icon_rook();
       break;
     case engine.P4_KNIGHT:
-      icon = ICON_KNIGHT;
+      icon = get_icon_knight();
       break;
   }
 
@@ -177,7 +178,7 @@ const move = (from,to,cbok) => {
 };
 
 const showMessage = (msg) => {
-  g.setColor("#f00").setFont("4x6:2").setFontAlign(-1,1).drawString(msg, 10, Bangle.appRect.y2-10);
+  g.setColor("#f00").setFont("4x6:2").setFontAlign(-1,1).drawString(msg, 10, Bangle.appRect.y2-10).flip();
 };
 
 // Run
@@ -223,32 +224,31 @@ Bangle.on('touch', (button, xy) => {
         showMessage(/*LANG*/"Moving..");
         const posFrom = idx2Pos(startfield[0]/FIELD_WIDTH, startfield[1]/FIELD_HEIGHT);
         const posTo = idx2Pos(colTo/FIELD_WIDTH, rowTo/FIELD_HEIGHT);
-        setTimeout(() => {
-          const cb = () => {
-            // human move ok, update
-            drawBoard();
-            drawSelectedField();
-            if (!finished) {
-              // do computer move
-              Bangle.setBacklight(false); // this can take some time, turn off to save power
-              showMessage(/*LANG*/"Calculating..");
-              setTimeout(() => {
-                const compMove = state.findmove(settings.computer_level+1);
-                const result = move(compMove[0], compMove[1]);
-                if (result.ok) {
-                  writeSettings();
-                }
-                Bangle.setLCDPower(true);
-                Bangle.setLocked(false);
-                Bangle.setBacklight(true);
-                if (!showmenu) {
-                  showAlert(result.string);
-                }
-              }, 300); // execute after display update
+        const cb = () => {
+          // human move ok, update
+          drawBoard();
+          drawSelectedField();
+          if (!finished) {
+            // do computer move
+            Bangle.setBacklight(false); // this can take some time, turn off to save power
+            showMessage(/*LANG*/"Calculating..");
+            const compMove = state.findmove(settings.computer_level+1);
+            const result = move(compMove[0], compMove[1]);
+            if (result.ok) {
+              writeSettings();
             }
-          };
-          move(posFrom, posTo,cb);
-        }, 100); // execute after display update
+            Bangle.setLCDPower(true);
+            Bangle.setLocked(false);
+            Bangle.setBacklight(true);
+            if (settings.buzz) {
+              Bangle.buzz(500);
+            }
+            if (!showmenu) {
+              showAlert(result.string);
+            }
+          }
+        };
+        move(posFrom, posTo,cb);
       } // piece_sel === 0
       startfield[0] = startfield[1] = undefined;
       piece_sel = 0;
@@ -295,6 +295,13 @@ setWatch(() => {
       format: v => [/*LANG*/'stupid', /*LANG*/'middling', /*LANG*/'default', /*LANG*/'slow', /*LANG*/'slowest'][v],
       onchange: v => {
         settings.computer_level = v;
+        writeSettings();
+      }
+    },
+    /*LANG*/'Buzz on next turn': {
+      value: !!settings.buzz,
+      onchange: v => {
+        settings.buzz = v;
         writeSettings();
       }
     },

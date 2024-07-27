@@ -11,7 +11,6 @@
     '< Back': back,
     'Buzz': {
       value: "buzz" in settings ? settings.buzz : false,
-      format: () => (settings.buzz ? 'Yes' : 'No'),
       onchange: () => {
         settings.buzz = !settings.buzz;
         save('buzz', settings.buzz);

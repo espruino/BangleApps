@@ -2,7 +2,7 @@
   "id": "cliock",
   "name": "Commandline-Clock",
   "shortName": "CLI-Clock",
-  "version": "0.15",
+  "version": "0.16",
   "description": "Simple CLI-Styled Clock",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot_cli.png"}],

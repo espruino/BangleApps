@@ -30,12 +30,12 @@
 		}
 	} = {
 		[State.Active]: {
-			false: "#fff",
+			false: "#000",
 			true: "#fff",
 		},
 		[State.Connected]: {
-			false: "#0ff",
-			true: "#00f",
+			false: "#00f",
+			true: "#0ff",
 		},
 	};
 

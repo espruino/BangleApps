@@ -15,14 +15,14 @@
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-var FILE = "android.calendar.json";
+//var FILE = "android.calendar.json";
 
 var Locale = require("locale");
 
-var fontSmall = "6x8";
+//var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
 var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
-var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
+//var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
 
 //FIXME maybe write the end from GB already? Not durationInSeconds here (or do while receiving?)
 var CALENDAR = require("Storage").readJSON("android.calendar.json",true)||[];

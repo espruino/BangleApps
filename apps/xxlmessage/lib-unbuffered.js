@@ -66,7 +66,7 @@ var xxl = {
     },
 
     draw: function() {
-        wh = 24; // widgets height
+        const wh = 24; // widgets height
         var gw = g.getWidth();
         var h = (g.getHeight() - wh)/2; // height of drawing area per stripe
 

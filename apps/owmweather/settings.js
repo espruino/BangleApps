@@ -70,7 +70,7 @@
           E.showMenu(buildMainMenu());
         });
       } else {
-        E.showPrompt("Install a text input lib"),then(()=>{
+        E.showAlert("Install a text input lib").then(()=>{
           E.showMenu(buildMainMenu());
         });
       }

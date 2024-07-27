@@ -37,7 +37,6 @@
     },
     'Show Progress': {
       value: s.progress,
-      format: () => (s.progress ? 'Yes' : 'No'),
       onchange: () => {
         s.progress = !s.progress
         save();
@@ -45,7 +44,6 @@
     },
     'Large Digits': {
       value: s.large,
-      format: () => (s.large ? 'Yes' : 'No'),
       onchange: () => {
         s.large = !s.large
         save();
@@ -53,7 +51,6 @@
     },
     'Hide Widget': {
       value: s.hide,
-      format: () => (s.hide ? 'Yes' : 'No'),
       onchange: () => {
         s.hide = !s.hide
         save();

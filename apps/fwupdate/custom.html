@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
-    <p>This tool allows you to update the firmware on <a href="https://www.espruino.com/Bangle.js2">Bangle.js 2</a> devices
+    <p>This tool allows you to update the firmware on <a href="https://www.espruino.com/Bangle.js2" target="_blank">Bangle.js 2</a> devices
       from within the App Loader.</p>
 
     <div id="fw-unknown">
@@ -12,12 +12,12 @@
     <a href="https://www.espruino.com/Bangle.js#firmware-updates" target="_blank">see the Bangle.js 1 instructions</a></b></p>
   </div>
     <ul>
-    <p>Your current firmware version is <span id="fw-version" style="font-weight:bold">unknown</span> and DFU is <span id="boot-version" style="font-weight:bold">unknown</span>. 
+    <p>Your current firmware version is <span id="fw-version" style="font-weight:bold">unknown</span> and DFU is <span id="boot-version" style="font-weight:bold">unknown</span>.
     The DFU (bootloader) rarely changes, so it does not have to be the same version as your main firmware.</p>
   </ul>
     <div id="fw-ok" style="display:none">
       <p  id="fw-old-bootloader-msg">If you have an early (KickStarter or developer) Bangle.js device and still have the old 2v10.x DFU, the Firmware Update
-        will fail with a message about the DFU version. If so, please <a href="bootloader_espruino_2v12_banglejs2.hex" class="fw-link">click here to update to DFU 2v12</a> and then click the 'Upload' button that appears.</p>
+        will fail with a message about the DFU version. If so, please <a href="bootloader_espruino_2v20_banglejs2.hex" class="fw-link">click here to update to DFU 2v20</a> and then click the 'Upload' button that appears.</p>
       <div id="latest-firmware" style="display:none">
         <p>The currently available Espruino firmware releases are:</p>
         <ul id="latest-firmware-list">
@@ -32,7 +32,8 @@
         bit of code that runs when Bangle.js starts, and it is able to update the
         Bangle.js firmware. Normally you would update firmware via this Firmware
         Updater app, but if for some reason Bangle.js will not boot, you can
-        <a href="https://www.espruino.com/Bangle.js2#firmware-updates">always use DFU to to the update manually</a>.</p>
+        <a href="https://www.espruino.com/Bangle.js2#firmware-updates" target="_blank">always use DFU to do the update manually</a>.
+        On DFU 2v19 and earlier, iOS devices could have issues updating firmware - 2v20 fixes this.</p>
         <p>DFU is itself a bootloader, but here we're calling it DFU to avoid confusion
         with the Bootloader app in the app loader (which prepares Bangle.js for running apps).</p>
       </div>
@@ -41,7 +42,7 @@
       <div id="advanced-div" style="display:none">
         <p><b>Advanced</b></p>
         <p>Firmware updates via this tool work differently to the NRF Connect method mentioned on
-          <a href="https://www.espruino.com/Bangle.js2#firmware-updates">the Bangle.js 2 page</a>. Firmware
+          <a href="https://www.espruino.com/Bangle.js2#firmware-updates" target="_blank">the Bangle.js 2 page</a>. Firmware
           is uploaded to a file on the Bangle. Once complete the Bangle reboots and DFU copies
           the new firmware into internal Storage.</p>
         <p>In addition to the links above, you can upload a hex or zip file directly below. This file should be an <code>.app_hex</code>
@@ -56,6 +57,15 @@
 
 
     <pre id="log"></pre>
+
+    <p><a href="#" id="changelog-btn">Firmware ChangeLog ▼</a></p>
+    <div id="changelog-div" style="display:none">
+      <p><b>Firmware ChangeLog</b></p>
+      <ul>
+        <li><a href="https://www.espruino.com/ChangeLog" target="_blank">Released</a></li>
+        <li><a href="https://github.com/espruino/Espruino/blob/master/ChangeLog" target="_blank">Cutting Edge</a></li>
+      </ul>
+    </div>
 
     <script src="../../core/lib/customize.js"></script>
     <script src="../../core/lib/espruinotools.js"></script>
@@ -87,28 +97,36 @@ function onInit(device) {
     document.getElementById("fw-unknown").style = "display:none";
     document.getElementById("fw-ok").style = "";
   }
-  Puck.eval("E.CRC32(E.memoryArea(0xF7000,0x7000))", crc => {
-    console.log("DFU CRC = "+crc);
-    var version = `unknown (CRC ${crc})`;
+  Puck.eval("[E.CRC32(E.memoryArea(0xF7000,0x6000)),E.CRC32(E.memoryArea(0xF7000,0x7000))]", crcs => {
+    console.log("DFU CRC (6 pages) = "+crcs[0]);
+    console.log("DFU CRC (7 pages) = "+crcs[1]);
+    var version = `unknown (CRC ${crcs[1]})`;
     var ok = true;
-    if (crc==1339551013) { version = "2v10.219"; ok = false; }
-    if (crc==1207580954) { version = "2v10.236"; ok = false; }
-    if (crc==3435933210) version = "2v11.52";
-    if (crc==46757280) version = "2v11.58";
-    if (crc==3508163280 || crc==1418074094) version = "2v12";
-    if (crc==4056371285) version = "2v13";
-    if (crc==1038322422) version = "2v14";
-    if (crc==2560806221) version = "2v15";
-    if (crc==2886730689) version = "2v16";
-    if (crc==156320890) version = "2v17";
-    if (crc==4012421318) version = "2v18";
-    if (crc==1856454048) version = "2v19";
+    if (crcs[0] == 1787004733) version = "2v20"; // check 6 page CRCs - the 7th page isn't used in 2v20+
+    else if (crcs[0] == 3816337552) version = "2v21";
+    else if (crcs[0] == 3329616485) version = "2v22";
+    else if (crcs[0] == 1569433504) version = "2v23";
+    else { // for other versions all 7 pages are used, check those
+      var crc = crcs[1];
+      if (crc==1339551013) { version = "2v10.219"; ok = false; }
+      if (crc==1207580954) { version = "2v10.236"; ok = false; }
+      if (crc==3435933210) version = "2v11.52";
+      if (crc==46757280) version = "2v11.58";
+      if (crc==3508163280 || crc==1418074094) version = "2v12";
+      if (crc==4056371285) version = "2v13";
+      if (crc==1038322422) version = "2v14";
+      if (crc==2560806221) version = "2v15";
+      if (crc==2886730689) version = "2v16";
+      if (crc==156320890) version = "2v17";
+      if (crc==4012421318) version = "2v18";
+      if (crc==1856454048) version = "2v19";
+    }
     if (!ok) {
       version += 	`(&#9888; update required)`;
     }
     document.getElementById("boot-version").innerHTML = version;
     var versionNumber = parseFloat(version.replace(".","").replace("v","."));
-    if (versionNumber>=2.15)
+    if (versionNumber>=2.20)
       document.getElementById("fw-old-bootloader-msg").style.display = "none";
   });
 }
@@ -211,8 +229,15 @@ function convertZipFile(binary) {
   Promise.resolve(binary).then(binary => {
     info.binary = binary;
     return JSZip.loadAsync(binary)
-  }).then(function(zipFile) {
-    info.zipFile = zipFile;
+  }).then(async function(zipFile) {
+    const fileArray = Object.values(zipFile.files);
+    // If the contents are zipped twice, extract the contents of the inner zip file
+    if(fileArray.length === 1 && fileArray[0].name?.endsWith(".zip")){
+      const zipBlob = await zipFile.file(fileArray[0].name).async("blob");
+      info.zipFile = await JSZip.loadAsync(zipBlob);
+    }else{
+      info.zipFile = zipFile;
+    }
     return info.zipFile.file("manifest.json").async("string");
   }).then(function(content) {
     info.manifest = JSON.parse(content).manifest;
@@ -424,18 +449,25 @@ function handleUpload() {
     storage:[
       {name:"RAM", content:hexJS},
     ]
-  });
+  }, { noFinish: true });
 }
 
 document.getElementById('fileLoader').addEventListener('change', handleFileSelect, false);
 document.getElementById("upload").addEventListener("click", handleUpload);
-document.getElementById("info-btn").addEventListener("click", function() {
+document.getElementById("info-btn").addEventListener("click", function(e) {
   document.getElementById("info-btn").style = "display:none";
   document.getElementById("info-div").style = "";
+  e.preventDefault();
 });
-document.getElementById("advanced-btn").addEventListener("click", function() {
+document.getElementById("advanced-btn").addEventListener("click", function(e) {
   document.getElementById("advanced-btn").style = "display:none";
   document.getElementById("advanced-div").style = "";
+  e.preventDefault();
+});
+document.getElementById("changelog-btn").addEventListener("click", function(e) {
+  document.getElementById("changelog-btn").style = "display:none";
+  document.getElementById("changelog-div").style = "";
+  e.preventDefault();
 });
 setTimeout(checkForFileOnServer, 10);
 

@@ -53,9 +53,7 @@
   function check() {
     const now = new Date(),
       h = now.getHours(),
-      m = now.getMinutes(),
-      s = now.getSeconds(),
-      ms = now.getMilliseconds();
+      m = now.getMinutes();
     if (settings.sleep && (
         h > settings.end ||
         (h >= settings.end && m !== 0) ||
