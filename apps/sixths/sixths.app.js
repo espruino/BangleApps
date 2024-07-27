@@ -1,8 +1,7 @@
 // Sixth sense
 /* eslint-disable no-unused-vars */
 
-// Options you'll want to edit
-const rest_altitude = 354;
+var location;
 
 const W = g.getWidth();
 const H = g.getHeight();
@@ -12,7 +11,7 @@ var buzz = "",      /* Set this to transmit morse via vibrations */
     inm = "", l = "", /* For incoming morse handling */
     in_str = "",
     note = "",
-    debug = "v0.05.1", debug2 = "(otherdb)", debug3 = "(short)";
+    debug = "v0.05.2", debug2 = "(otherdb)", debug3 = "(short)";
 var note_limit = 0;
 var mode = 0, mode_time = 0; // 0 .. normal, 1 .. note, 2.. mark name
 var disp_mode = 0;  // 0 .. normal, 1 .. small time
@@ -597,14 +596,14 @@ function draw() {
   }
 
   if (getTime() - last_active > 15*60) {
-    let alt_adjust = cur_altitude - rest_altitude;
+    let alt_adjust = cur_altitude - location.alt;
     let abs = Math.abs(alt_adjust);
     print("adj", alt_adjust);
     let o = Bangle.getOptions();
     if (abs > 10 && abs < 150) {
       let a = 0.01;
       // FIXME: draw is called often compared to alt reading
-      if (cur_altitude > rest_altitude)
+      if (cur_altitude > location.alt)
         a = -a;
       o.seaLevelPressure = o.seaLevelPressure + a;
       Bangle.setOptions(o);
@@ -789,6 +788,7 @@ function start() {
   }
 
   draw();
+  location = require("Storage").readJSON("mylocation.json",1)||{"lat":50,"lon":14.45,"alt":354,"location":"Woods"};
   loadWPs();
   buzzTask();
   if (0)

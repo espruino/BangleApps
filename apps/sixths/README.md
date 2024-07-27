@@ -33,7 +33,8 @@ I -- "Info", toggle info display
 M -- "Mark", create mark from current position
 N -- "Note", take a note and write it to the log.
  O -- "Orloj", run orloj app
- R -- "Run", run "runplus" app
+ P -- "runPlus", run "runplus" app
+R -- "Reset" daily statistics
 S -- "Speed", enable GPS for 30 minutes in high power mode.
  G -- "Get time", buzz current time
 U -- "Up", next waypoint
@@ -44,6 +45,7 @@ to communicate back to the user.
 
 B -- battery low.
 E -- acknowledge, gesture understood.
+I -- unknown gesture.
 T -- start of new hour.
 
 Three colored dots may appear on display. North is on the 12 o'clock
@@ -72,14 +74,6 @@ possibly allowing scrolling).
 Todo:
 
 *) only turn on compass when needed
-
-*) rename "show" to something else -- it collides with built-in
-
-*) adjust clock according to GPS
-
-*) show something more reasonable than (NOTEHERE).
-
-*) hide messages after timeout.
 
 *) implement longer recording than "G".
 
