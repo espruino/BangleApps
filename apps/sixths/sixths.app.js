@@ -16,17 +16,23 @@ var note_limit = 0;
 var mode = 0, mode_time = 0; // 0 .. normal, 1 .. note, 2.. mark name
 var disp_mode = 0;  // 0 .. normal, 1 .. small time
 
+var state = {
+  gps_limit: 0, // timeout -- when to stop recording
+  gps_speed_limit: 0,
+  prev_fix: null,
+  gps_dist: 0,
+
+  // Marks
+  cur_mark: null,
+};
+
 // GPS handling
 var gps_on = 0, // time GPS was turned on
     last_fix = 0, // time of last fix
     last_restart = 0, last_pause = 0; // utime
     last_fstart = 0; // utime, time of start of last fix
 var gps_needed = 0, // how long to wait for a fix
-    gps_limit = 0, // timeout -- when to stop recording
-    gps_speed_limit = 0,
     keep_fix_for = 10;
-var prev_fix = null;
-var gps_dist = 0;
 
 var mark_heading = -1;
 
@@ -38,9 +44,6 @@ var is_level = false;
 // For altitude handling.
 var cur_altitude = 0;
 var cur_temperature = 0;
-
-// Marks
-var cur_mark = null;
 
 // Icons
 
@@ -87,8 +90,8 @@ function gpsPause() {
   last_pause = getTime();
 }
 function gpsReset() {
-  prev_fix = null;
-  gps_dist = 0;
+  state.prev_fix = null;
+  state.gps_dist = 0;
 }
 function gpsOn() {
   gps_on = getTime();
@@ -110,10 +113,10 @@ function fmtTimeDiff(d) {
   return ""+d.toFixed(0)+"m";
 }
 function gpsHandleFix(fix) {
-  if (!prev_fix) {
+  if (!state.prev_fix) {
     showMsg("GPS acquired", 10);
     doBuzz(" .");
-    prev_fix = fix;
+    state.prev_fix = fix;
   }
   if (0) {
     /* Display error between GPS and system time */
@@ -124,10 +127,10 @@ function gpsHandleFix(fix) {
     debug2 = "te "+(n2-n1)+"s";
   }
   loggps(fix);
-  let d = calcDistance(fix, prev_fix);
+  let d = calcDistance(fix, state.prev_fix);
   if (d > 30) {
-    prev_fix = fix;
-    gps_dist += d/1000;
+    state.prev_fix = fix;
+    state.gps_dist += d/1000;
   }
 }
 function gpsHandle() {
@@ -182,33 +185,33 @@ function gpsHandle() {
         print("Pausing, next try", gps_needed);
       }
     }
-  msg += " "+gps_dist.toFixed(1)+icon_km;
+  msg += " "+state.gps_dist.toFixed(1)+icon_km;
   return msg;
 }
 function markNew() {
   let r = {};
   r.time = getTime();
-  r.fix = prev_fix;
+  r.fix = state.prev_fix;
   r.steps = Bangle.getHealthStatus("day").steps;
-  r.gps_dist = gps_dist;
+  r.gps_dist = state.gps_dist;
   r.altitude = cur_altitude;
   r.name = "auto";
   return r;
 }
 function markHandle() {
-  let m = cur_mark;
+  let m = state.cur_mark;
   let msg = m.name + ">";
   if (m.time) {
     msg += fmtTimeDiff(getTime()- m.time);
   }
-  if (prev_fix && prev_fix.fix && m.fix && m.fix.fix) {
-    let s = fmtDist(calcDistance(m.fix, prev_fix)/1000) + icon_km;
+  if (state.prev_fix && state.prev_fix.fix && m.fix && m.fix.fix) {
+    let s = fmtDist(calcDistance(m.fix, state.prev_fix)/1000) + icon_km;
     msg += " " + s;
     debug = "wp>" + s;
-    mark_heading = 180 + calcBearing(m.fix, prev_fix);
+    mark_heading = 180 + calcBearing(m.fix, state.prev_fix);
     debug2 = "wp>" + mark_heading;
   } else {
-    msg += " w" + fmtDist(gps_dist - m.gps_dist);
+    msg += " w" + fmtDist(state.gps_dist - m.gps_dist);
   }
   return msg;
 }
@@ -217,7 +220,7 @@ function entryDone() {
   doBuzz(" .");
   switch (mode) {
   case 1: logstamp(">" + in_str); break;
-  case 2: cur_mark.name = in_str; break;
+  case 2: state.cur_mark.name = in_str; break;
   }
   in_str = 0;
   mode = 0;
@@ -240,15 +243,15 @@ function selectWP(i) {
     showMsg("No WPs", 60);
   }
   let wp = waypoints[sel_wp];
-  cur_mark = {};
-  cur_mark.name = wp.name;
-  cur_mark.gps_dist = 0; /* HACK */
-  cur_mark.fix = {};
-  cur_mark.fix.fix = 1;
-  cur_mark.fix.lat = wp.lat;
-  cur_mark.fix.lon = wp.lon; 
+  state.cur_mark = {};
+  state.cur_mark.name = wp.name;
+  state.cur_mark.gps_dist = 0; /* HACK */
+  state.cur_mark.fix = {};
+  state.cur_mark.fix.fix = 1;
+  state.cur_mark.fix.lat = wp.lat;
+  state.cur_mark.fix.lon = wp.lon; 
   showMsg("WP:"+wp.name, 60);
-  print("Select waypoint: ", cur_mark);
+  print("Select waypoint: ", state.cur_mark);
 }
 function ack(cmd) {
   showMsg(cmd, 3);
@@ -283,7 +286,7 @@ function inputHandler(s) {
     }
     case 'D': doBuzz(' .'); selectWP(1); break;
     case 'F': gpsOff(); ack("GPS off"); break;
-    case 'T': gpsOn(); gps_limit = getTime() + 60*60*4; ack("GPS on"); break;
+    case 'T': gpsOn(); state.gps_limit = getTime() + 60*60*4; ack("GPS on"); break;
     case 'I':
       doBuzz(' .');
       disp_mode += 1;
@@ -292,12 +295,12 @@ function inputHandler(s) {
       }
       break;
     case 'L': aload("altimeter.app.js"); break;
-    case 'M': doBuzz(' .'); mode = 2; showMsg("M>", 10); cur_mark = markNew(); mode_time = getTime(); break;
+    case 'M': doBuzz(' .'); mode = 2; showMsg("M>", 10); state.cur_mark = markNew(); mode_time = getTime(); break;
     case 'N': doBuzz(' .'); mode = 1; showMsg(">", 10); mode_time = getTime(); break;
     case 'O': aload("orloj.app.js"); break;
     case 'R': gpsReset(); ack("GPS reset"); break;
     case 'P': aload("runplus.app.js"); break;
-    case 'S': gpsOn(); gps_limit = getTime() + 60*30; gps_speed_limit = gps_limit; ack("GPS speed"); break;
+    case 'S': gpsOn(); state.gps_limit = getTime() + 60*30; state.gps_speed_limit = state.gps_limit; ack("GPS speed"); break;
     case 'G': {
       s = ' T';
       let d = new Date();
@@ -458,7 +461,7 @@ function every(now) {
     }
     mode = 0;
   }
-  if (gps_on && getTime() > gps_limit && getTime() > gps_speed_limit) {
+  if (gps_on && getTime() > state.gps_limit && getTime() > state.gps_speed_limit) {
     Bangle.setGPSPower(0, "sixths");
     gps_on = 0;
   }
@@ -529,9 +532,9 @@ function drawBackground() {
       drawDot(h, 0.7, 10);
     }
   }
-  if (prev_fix && prev_fix.fix) {
+  if (state.prev_fix && state.prev_fix.fix) {
     g.setColor(0.5, 1, 0.5);
-    drawDot(prev_fix.course, 0.5, 6);
+    drawDot(state.prev_fix.course, 0.5, 6);
   }
   if (mark_heading != -1) {
     g.setColor(1, 0.5, 0.5);
@@ -584,7 +587,7 @@ function draw() {
     msg += gpsHandle() + "\n";
   }
   
-  if (cur_mark) {
+  if (state.cur_mark) {
     msg += markHandle() + "\n";
   }
 
@@ -761,7 +764,7 @@ function lockHandler(locked) {
 function queueDraw() {
   let next;
   if ((getTime() - last_unlocked > 3*60) &&
-      (getTime() > gps_limit))
+      (getTime() > state.gps_limit))
     next = 60000;
   else
     next =  1000;
@@ -789,6 +792,7 @@ function start() {
 
   draw();
   location = require("Storage").readJSON("mylocation.json",1)||{"lat":50,"lon":14.45,"alt":354,"location":"Woods"};
+  state = require("Storage").readJSON("sixths.json",1)||state;
   loadWPs();
   buzzTask();
   if (0)
