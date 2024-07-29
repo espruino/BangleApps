@@ -37,7 +37,7 @@ const IMAGES = [
 ];
 
 // number of movements or duration required for each activity
-const DEFAULTS = [10, 10, 10, 30, 30, 30];
+const DEFAULTS = [7, 10, 10, 30, 15, 30];
 
 function default_routine() {
   let routine = [];
@@ -80,16 +80,16 @@ const DETECTORS = [
     }
   },
   null,
-  null,
-  // (xyz) => {
-  //   if (xyz.y > 0.2) {
-  //     return 0;
-  //   }
-  //   if (xyz.y < 0) {
-  //     return 1;
-  //   }
-  //   return null;
-  // }, // TODO: jumping jacks detector does not work
+  (xyz) => {
+    "ram"
+    if (xyz.x < -0.8) {
+      return 0;
+    }
+    if (xyz.x > 0.3) {
+      return 1;
+    }
+    return null;
+  },
   null
 ];
 
