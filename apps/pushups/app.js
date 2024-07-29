@@ -49,6 +49,7 @@ function default_routine() {
 
 const DETECTORS = [
   (xyz) => {
+    "ram"
     if (xyz.y > 0.15) {
       return 1;
     } else if (xyz.y < 0.1) {
@@ -58,6 +59,7 @@ const DETECTORS = [
     }
   },
   (xyz) => {
+    "ram"
     if (xyz.x > 0.075) {
       return 1;
     } else if (xyz.x < -0.075) {
@@ -68,6 +70,7 @@ const DETECTORS = [
     // return xyz.x > 0 ? 1 : 0;
   },
   (xyz) => {
+    "ram"
     if (xyz.z > -0.4) {
       return 0;
     } else if (xyz.z < -0.6) {
@@ -251,20 +254,8 @@ function start_routine() {
   Bangle.accelWr(0x18,0b11110100); // +-8g
   Bangle.setPollInterval(10);
 
-        Bangle.setPollInterval(80); // default poll interval
-        Bangle.accelWr(0x18, 0b01101100); // off, +-4g
-        Bangle.accelWr(0x1B, 0x0); // default 12.5hz output
-        Bangle.accelWr(0x18, 0b11101100); // +-4g
   status.remaining = status.routine[status.routine_step][1];
-        Bangle.setPollInterval(80); // default poll interval
-        Bangle.accelWr(0x18, 0b01101100); // off, +-4g
-        Bangle.accelWr(0x1B, 0x0); // default 12.5hz output
-        Bangle.accelWr(0x18, 0b11101100); // +-4g
   Bangle.loadWidgets();
-        Bangle.setPollInterval(80); // default poll interval
-        Bangle.accelWr(0x18, 0b01101100); // off, +-4g
-        Bangle.accelWr(0x1B, 0x0); // default 12.5hz output
-        Bangle.accelWr(0x18, 0b11101100); // +-4g
   
   Bangle.on("swipe", function (directionLR, directionUD) {
     if (directionUD == -1) {
