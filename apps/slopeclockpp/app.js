@@ -86,6 +86,7 @@ let draw = function() {
 
 let isAnimIn = true;
 let animInterval;
+let minuteX;
 // Draw *just* the minute image
 let drawMinute = function() {
   var yo = slopeBorder + offsy + y - 2*slope*minuteX/R.w;
