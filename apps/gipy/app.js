@@ -1474,6 +1474,62 @@ function start_gipy(path, maps, interests, heights) {
           }
         },
       };
+      try {
+        // plot openstmap option if installed
+        const osm = require("openstmap");
+        menu[/*LANG*/"Plot OpenStMap"] = function() {
+          E.showMenu(); // remove menu
+
+          // compute min/max coordinates
+          let minLat = 90;
+          let maxLat = -90;
+          let minLong = 180;
+          let maxLong = -180;
+          for(let i=0; i<path.len; i++) {
+            const point = path.point(i);
+            if(point.lat>maxLat) maxLat=point.lat; if(point.lat<minLat) minLat=point.lat;
+            if(point.lon>maxLong) maxLong=point.lon; if(point.lon<minLong) minLong=point.lon;
+          }
+          const max = Bangle.project({lat: maxLat, lon: maxLong});
+          const min = Bangle.project({lat: minLat, lon: minLong});
+          const scaleX = (max.x-min.x)/Bangle.appRect.w;
+          const scaleY = (max.y-min.y)/Bangle.appRect.h;
+
+          // openstmap initialization
+          osm.scale = Math.ceil((scaleX > scaleY ? scaleX : scaleY)*1.1); // add 10% margin
+          osm.lat = (minLat+maxLat)/2.0;
+          osm.lon = (minLong+maxLong)/2.0;
+          osm.draw();
+
+          // draw track
+          g.setColor("#f09");
+          for(let i=0; i<path.len; i++) {
+            const point = path.point(i);
+            const mp = osm.latLonToXY(point.lat, point.lon);
+            g.lineTo(mp.x,mp.y);
+            g.fillCircle(mp.x,mp.y,2); // make the track more visible
+          }
+
+          // draw current position
+          g.setColor("#000");
+          if (Bangle.getGPSFix().lat && Bangle.getGPSFix().lon) {
+            const icon = require("heatshrink").decompress(atob("jEYwYPMyVJkgHEkgICyAHCgIIDyQIChIIEoAIDC4IIEBwOAgEEyVIBAY4DBD4sGHxBQIMRAIIPpAyCHAYILUJEAiVJkAIFgVJXo5fCABQA==")); // 24x24px
+            const mp = osm.latLonToXY(Bangle.getGPSFix().lat, Bangle.getGPSFix().lon);
+            g.drawImage(icon, mp.x, mp.y);
+          }
+
+          // back handling
+          g.setFont("6x8",2);
+          g.setFontAlign(0,0,3);
+          g.drawString(/*LANG*/"Back", g.getWidth() - 10, g.getHeight()/2);
+          setWatch(function() {
+            E.showMenu(menu);
+          }, BTN1, {edge:"falling"});
+          Bangle.drawWidgets();
+        };
+      } catch (ex) {
+        // openstmap not available.
+      }
       E.showMenu(menu);
     },
     BTN1,
