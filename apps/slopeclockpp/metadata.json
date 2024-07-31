@@ -1,6 +1,6 @@
 { "id": "slopeclockpp",
   "name": "Slope Clock ++",
-  "version":"0.10",
+  "version":"0.11",
   "description": "A clock where hours and minutes are divided by a sloping line. When the minute changes, the numbers slide off the screen. This is a clone of the original Slope Clock which shows extra information and allows the colors to be selected.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],
