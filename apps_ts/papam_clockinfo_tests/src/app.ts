@@ -19,13 +19,15 @@ interface Result {
 }
 
 (function() {
+    let totalIntervalInMillis: number = appConfig.default.refreshPeriodSec;
+
     function show(this: { interval?: number; emit: (event: string) => void }) {
         this.interval = setTimeout(() => {
             this.emit("redraw");
             this.interval = setInterval(() => {
                 this.emit("redraw");
-            }, 60000);
-        }, 60000 - (Date.now() % 60000));
+            }, totalIntervalInMillis);
+        }, totalIntervalInMillis - (Date.now() % totalIntervalInMillis));
     }
 
     function hide(this: { interval?: number }) {
