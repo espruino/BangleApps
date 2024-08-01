@@ -34,7 +34,7 @@ function prepare_for_espruino(cb) {
 
     const buildproc = fork(
         require.resolve("espruino/bin/espruino-cli"),
-        ["--board", envConfig.board, appFileName, "-o", espReadyBundleFileName],
+        ["-d Bangle2.js -v --board", envConfig.board, appFileName, "-o", espReadyBundleFileName],
         { cwd: distDir });
     buildproc.on('close', () => {
         cb();
