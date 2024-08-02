@@ -11,3 +11,4 @@
 0.11: Minor code improvements
 0.12: Added setting to change Battery estimate to hours
 0.13: Fixed Battery estimate Default to percentage and improved setting string
+0.14: Use `power_usage` module

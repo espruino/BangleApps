@@ -1,1 +1,3 @@
 0.1: Initial release
+0.2: Draw line for 3d effect, fix number alignment
+0.3: Fix day-end overflowing hour calculation

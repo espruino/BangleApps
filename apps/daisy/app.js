@@ -116,7 +116,7 @@ function updateSunRiseSunSet(now, lat, lon, line){
 function batteryString(){
   let stringToInsert;
   if (settings.batt_hours) {
-    var batt_usage = 200000/E.getPowerUsage().total;
+    var batt_usage = require("power_usage").get().hrsLeft;
     let rounded;
     if (batt_usage > 24) {
       var days = Math.floor(batt_usage/24);

@@ -196,12 +196,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/sixths/sixths.app.js": {
-    "hash": "2a4676828bdf78df052df402de34e6f1abd1c847ebe0d193fc789cd6e9dd0e5c",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/scribble/app.js": {
     "hash": "6d13abd27bab8009a6bdabe1df2df394bc14aac20c68f67e8f8b085fa6b427cd",
     "rules": [
@@ -1245,12 +1239,6 @@ module.exports = {
   },
   "apps/activepedom/app.js": {
     "hash": "c57c787ac33834dce2291562af8106b7a9de1f7116cdeab2a4236004e723273a",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/accelrec/app.js": {
-    "hash": "b5369a60afc8f360f0b33f71080eb3f5d09a1bf3703acfcf07cd80dd19f1997d",
     "rules": [
       "no-undef"
     ]

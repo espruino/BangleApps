@@ -134,8 +134,8 @@ for (var i=0;i<10;i++)
     if (g.stringWidth(txt) > options.w) // if too big, smaller font
       g.setFont("LECO1976Regular14");
     if (g.stringWidth(txt) > options.w) {// if still too big, split to 2 lines
-      var l = g.wrapString(txt, options.w);
-      txt = l.slice(0,2).join("\n") + (l.length>2)?"...":"";
+      var l = g.wrapString(txt, options.w-4);
+      txt = l.slice(0,2).join("\n") + ((l.length>2)?"...":"");
     }
     var x = options.x+options.w/2, y = options.y+54;
     g.setColor(g.theme.bg).drawString(txt, x-2, y). // draw the text background
@@ -147,12 +147,12 @@ for (var i=0;i<10;i++)
   };
 
   clockInfoMenuA = require("clock_info").addInteractive(clockInfoItems, {
-    app:"pebblepp",
+    app:"twotwoclock",
     x : g.getWidth()-clockInfoW, y: 0, w: clockInfoW, h:clockInfoH,
     draw : clockInfoDraw
   });
   clockInfoMenuB = require("clock_info").addInteractive(clockInfoItems, {
-    app:"pebblepp",
+    app:"twotwoclock",
     x : g.getWidth()-clockInfoW, y: clockInfoH, w: clockInfoW, h:clockInfoH,
     draw : clockInfoDraw
   });

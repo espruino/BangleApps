@@ -1,7 +1,7 @@
 { "id": "twotwoclock",
   "name": "TwoTwo Clock",
   "shortName":"22 Clock",
-  "version":"0.01",
+  "version":"0.02",
   "description": "A clock with the time split over two lines, with custom backgrounds and two ClockInfos",
   "icon": "icon.png",
   "type": "clock",

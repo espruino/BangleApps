@@ -316,6 +316,48 @@ type VariableSizeInformation = {
   more?: VariableSizeInformation;
 };
 
+type PowerUsage = {
+    total: number,
+    device: {
+        CPU?: number,
+        UART?: number,
+        PWM?: number,
+        LED1?: number,
+        LED2?: number,
+        LED3?: number,
+
+        // bangle
+        LCD?: number,
+        LCD_backlight?: number,
+        LCD_touch?: number,
+        HRM?: number,
+        GPS?: number,
+        compass?: number,
+        baro?: number,
+
+        // nrf
+        BLE_periph?: number,
+        BLE_central?: number,
+        BLE_advertise?: number,
+        BLE_scan?: number,
+
+        // pixljs
+        //LCD?: number, // (see above)
+
+        // puck
+        mag?: number,
+        accel?: number,
+
+        // jolt
+        driver0?: number,
+        driver1?: number,
+        pin0_internal_resistance?: number,
+        pin2_internal_resistance?: number,
+        pin4_internal_resistance?: number,
+        pin6_internal_resistance?: number,
+    },
+};
+
 type PipeOptions = {
   chunkSize?: number,
   end?: boolean,
@@ -1014,13 +1056,15 @@ declare class NRF {
   static eraseBonds(callback?: any): void;
 
   /**
-   * Get this device's default Bluetooth MAC address.
+   * Get this device's default or current Bluetooth MAC address.
    * For Puck.js, the last 5 characters of this (e.g. `ee:ff`) are used in the
    * device's advertised Bluetooth name.
+   *
+   * @param {boolean} current - If true, return the current address rather than the default
    * @returns {any} MAC address - a string of the form 'aa:bb:cc:dd:ee:ff'
    * @url http://www.espruino.com/Reference#l_NRF_getAddress
    */
-  static getAddress(): any;
+  static getAddress(current: boolean): any;
 
   /**
    * Set this device's default Bluetooth MAC address:
@@ -4524,10 +4568,32 @@ declare class Bangle {
   static dbg(): any;
 
   /**
-   * Writes a register on the accelerometer
+   * Writes a register on the touch controller
    *
    * @param {number} reg
    * @param {number} data
+   * @url http://www.espruino.com/Reference#l_Bangle_touchWr
+   */
+  static touchWr(reg: number, data: number): void;
+
+  /**
+   * Reads a register from the touch controller
+   * **Note:** On Espruino 2v06 and before this function only returns a number (`cnt`
+   * is ignored).
+   *
+   * @param {number} reg - Register number to read
+   * @param {number} cnt - If specified, returns an array of the given length (max 128). If not (or 0) it returns a number
+   * @returns {any}
+   * @url http://www.espruino.com/Reference#l_Bangle_touchRd
+   */
+  static touchRd(reg: number, cnt?: 0): number;
+  static touchRd(reg: number, cnt: number): number[];
+
+  /**
+   * Writes a register on the accelerometer
+   *
+   * @param {number} reg - Register number to write
+   * @param {number} data - An integer value to write to the register
    * @url http://www.espruino.com/Reference#l_Bangle_accelWr
    */
   static accelWr(reg: number, data: number): void;
@@ -8343,7 +8409,7 @@ declare class E {
    * E.showScroller({
    *   h : 40, c : 8,
    *   draw : (idx, r) => {
-   *     g.setBgColor((idx&1)?"#666":"#999").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
+   *     g.setBgColor((idx&1)?"#666":"#CCC").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
    *     g.setFont("6x8:2").drawString("Item Number\n"+idx,r.x+10,r.y+4);
    *   },
    *   select : (idx) => console.log("You selected ", idx)
@@ -9482,7 +9548,7 @@ declare class E {
    * @returns {any} An object detailing power usage in microamps
    * @url http://www.espruino.com/Reference#l_E_getPowerUsage
    */
-  static getPowerUsage(): any;
+  static getPowerUsage(): PowerUsage;
 
   /**
    * Decode a UTF8 string.
@@ -11137,21 +11203,21 @@ interface String {
    * Return the index of substring in this string, or -1 if not found
    *
    * @param {any} substring - The string to search for
-   * @param {any} fromIndex - Index to search from
+   * @param {any} [fromIndex] - [optional] Index to search from
    * @returns {number} The index of the string, or -1 if not found
    * @url http://www.espruino.com/Reference#l_String_indexOf
    */
-  indexOf(substring: any, fromIndex: any): number;
+  indexOf(substring: any, fromIndex?: any): number;
 
   /**
    * Return the last index of substring in this string, or -1 if not found
    *
    * @param {any} substring - The string to search for
-   * @param {any} fromIndex - Index to search from
+   * @param {any} [fromIndex] - [optional] Index to search from
    * @returns {number} The index of the string, or -1 if not found
    * @url http://www.espruino.com/Reference#l_String_lastIndexOf
    */
-  lastIndexOf(substring: any, fromIndex: any): number;
+  lastIndexOf(substring: any, fromIndex?: any): number;
 
   /**
    * Matches an occurrence `subStr` in the string.
@@ -11206,20 +11272,20 @@ interface String {
   /**
    *
    * @param {number} start - The start character index (inclusive)
-   * @param {any} end - The end character index (exclusive)
+   * @param {any} [end] - [optional] The end character index (exclusive)
    * @returns {any} The part of this string between start and end
    * @url http://www.espruino.com/Reference#l_String_substring
    */
-  substring(start: number, end: any): any;
+  substring(start: number, end?: any): any;
 
   /**
    *
    * @param {number} start - The start character index
-   * @param {any} len - The number of characters
+   * @param {any} [len] - [optional] The number of characters
    * @returns {any} Part of this string from start for len characters
    * @url http://www.espruino.com/Reference#l_String_substr
    */
-  substr(start: number, len: any): any;
+  substr(start: number, len?: any): any;
 
   /**
    *
@@ -11286,29 +11352,29 @@ interface String {
   /**
    *
    * @param {any} searchString - The string to search for
-   * @param {number} position - The start character index (or 0 if not defined)
+   * @param {number} [position] - [optional] The start character index (or 0 if not defined)
    * @returns {boolean} `true` if the given characters are found at the beginning of the string, otherwise, `false`.
    * @url http://www.espruino.com/Reference#l_String_startsWith
    */
-  startsWith(searchString: any, position: number): boolean;
+  startsWith(searchString: any, position?: number): boolean;
 
   /**
    *
    * @param {any} searchString - The string to search for
-   * @param {any} length - The 'end' of the string - if left off the actual length of the string is used
+   * @param {any} [length] - [optional] The 'end' of the string - if left off the actual length of the string is used
    * @returns {boolean} `true` if the given characters are found at the end of the string, otherwise, `false`.
    * @url http://www.espruino.com/Reference#l_String_endsWith
    */
-  endsWith(searchString: any, length: any): boolean;
+  endsWith(searchString: any, length?: any): boolean;
 
   /**
    *
    * @param {any} substring - The string to search for
-   * @param {any} fromIndex - The start character index (or 0 if not defined)
+   * @param {any} [fromIndex] - [optional] The start character index (or 0 if not defined)
    * @returns {boolean} `true` if the given characters are in the string, otherwise, `false`.
    * @url http://www.espruino.com/Reference#l_String_includes
    */
-  includes(substring: any, fromIndex: any): boolean;
+  includes(substring: any, fromIndex?: any): boolean;
 
   /**
    * Repeat this string the given number of times.
@@ -11411,8 +11477,10 @@ interface RegExp {
 /**
  * The built-in class for handling Regular Expressions
  * **Note:** Espruino's regular expression parser does not contain all the features
- * present in a full ES6 JS engine. However it does contain support for the all the
- * basics.
+ * present in a full ES6 JS engine. however some parts of the spec are not implemented:
+ * * [Assertions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Assertions) other than `^` and `$`
+ * * [Numeric quantifiers](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Quantifiers) (eg `x{3}`)
+ * There's a GitHub issue [concerning RegExp features here](https://github.com/espruino/Espruino/issues/1257)
  * @url http://www.espruino.com/Reference#RegExp
  */
 declare const RegExp: RegExpConstructor

@@ -2,7 +2,7 @@
   "id": "smpltmr",
   "name": "Simple Timer",
   "shortName": "Simple Timer",
-  "version": "0.09",
+  "version": "0.10",
   "description": "A very simple app to start a timer.",
   "icon": "app.png",
   "tags": "tool,alarm,timer,clkinfo",
