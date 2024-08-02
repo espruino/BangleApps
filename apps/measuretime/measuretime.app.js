@@ -149,7 +149,7 @@
         case 0:
         case 60:
           lineEnd = lineEndFull;
-          drawHourString(d.getHours() + 1, yBottomLines);;
+          drawHourString(d.getHours() + 1, yBottomLines);
           break;
         case 120:
           lineEnd = lineEndFull;
