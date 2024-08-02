@@ -1525,7 +1525,6 @@ function start_gipy(path, maps, interests, heights) {
           setWatch(function() {
             E.showMenu(menu);
           }, BTN1, {edge:"falling"});
-          Bangle.drawWidgets();
         };
       } catch (ex) {
         // openstmap not available.
