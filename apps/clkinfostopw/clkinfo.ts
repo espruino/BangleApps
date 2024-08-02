@@ -48,7 +48,7 @@
   const img = () => atob("GBiBAAAAAAB+AAB+AAAAAAB+AAH/sAOB8AcA4A4YcAwYMBgYGBgYGBg8GBg8GBgYGBgAGAwAMA4AcAcA4AOBwAH/gAB+AAAAAAAAAA==");
 
   return {
-    name: "timer",
+    name: "Timer",
     img: img(),
     items: [
       {
