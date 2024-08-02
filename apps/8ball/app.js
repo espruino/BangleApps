@@ -1,4 +1,4 @@
-try {keyboard = require(keyboard);} catch(e) {keyboard = null;}var keyboard = "textinput";
+var keyboard = "textinput";
 var Name = "";
 Bangle.setLCDTimeout(0);
 var menuOpen = 1;
