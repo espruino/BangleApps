@@ -190,7 +190,7 @@ function confirmGps(s) {
 	    {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
 	    {type:"h", c: [
 		{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "YES", cb:l=>{
-		    print("should mark", key, fix); createWP(fix.lat, fix.lon, key); cancel_gps=true; mainMenu();
+		  print("should mark", key, fix); createWP(fix.lat, fix.lon, fix.alt, key); cancel_gps=true; mainMenu();
 		}},
 		{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " NO", cb:l=>{ cancel_gps=true; mainMenu(); }}
 	    ]}
@@ -387,11 +387,13 @@ function askPosition(callback) {
   });
 }
 
-function createWP(lat, lon, name) {
+function createWP(lat, lon, alt, name) {
   let n = {};
   n["name"] = name;
   n["lat"] = lat;
   n["lon"] = lon;
+  if (alt != -9999)
+    n["alt"] = alt;
   wp.push(n);
   print("add -- waypoints", wp);
   writeWP();
@@ -401,7 +403,7 @@ function addCardName(name) {
   g.clear();
   askPosition(function(lat, lon) {
     print("position -- ", lat, lon);
-    createWP(lat, lon, result);
+    createWP(lat, lon, -9999, result);
     mainMenu();
   });
 }
