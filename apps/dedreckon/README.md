@@ -15,3 +15,6 @@ to indicate a turn.
 
 Map shows blue line for track from dead reckonging, and green line for
 track from GPS.
+
+You probably want magnav installed (and calibrated) for useful
+results, as it provides library with better compass.
