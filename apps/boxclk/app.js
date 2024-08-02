@@ -167,8 +167,8 @@ Modules.addCached("widget_utils", function() {
     boxKeys.forEach((key) => {
         let boxConfig = boxes[key];
         boxPos[key] = {
-            x: w * boxConfig.boxPos.x,
-            y: h * boxConfig.boxPos.y
+            let background = require("clockbg");
+            Modules.addCached("widget_utils", function() {
         };
         isDragging[key] = false;
         wasDragging[key] = false;
