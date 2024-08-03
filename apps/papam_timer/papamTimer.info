@@ -1,6 +1,0 @@
-require("Storage").write("papamTimer.info",{
-  "id":"papamTimer",
-  "name":"PapaM Timer",
-  "src":"papamTimer.app.js",
-  "icon":"papamTimer.img"
-});
