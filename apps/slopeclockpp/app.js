@@ -86,6 +86,7 @@ let draw = function() {
 
 let isAnimIn = true;
 let animInterval;
+let minuteX;
 // Draw *just* the minute image
 let drawMinute = function() {
   var yo = slopeBorder + offsy + y - 2*slope*minuteX/R.w;
@@ -128,9 +129,9 @@ let clockInfoDraw = (itm, info, options) => {
   let texty = options.y+41;
   // set a cliprect to stop us drawing outside our box
   g.reset().setClipRect(options.x, options.y, options.x+options.w-1, options.y+options.h-1);
-  g.setFont("6x15").setBgColor(options.bg).setColor(options.fg).clearRect(options.x, texty-15, options.x+options.w-2, texty);
+  g.setFont("6x15").setBgColor(options.bg).clearRect(options.x, texty-15, options.x+options.w-2, texty);
 
-  if (options.focus) g.setColor(options.hl);
+  g.setColor(options.focus ? options.hl : options.fg);
   if (options.x < g.getWidth()/2) { // left align
     let x = options.x+2;
     if (info.img) g.clearRect(x, options.y, x+23, options.y+23).drawImage(info.img, x, options.y);
@@ -150,7 +151,7 @@ let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {  // t
 });
 let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, { // bottom left
   app:"slopeclockpp",x:0, y:115, w:50, h:40,
-  draw : clockInfoDraw, bg : bgColor, fg : g.theme.bg, hl : (bgColor=="#000")?"#f00"/*red*/:g.theme.fg
+  draw : clockInfoDraw, bg : bgColor, fg : g.theme.bg, hl : (g.theme.fg===g.toColor(bgColor))?"#f00"/*red*/:g.theme.fg
 });
 
 // Show launcher when middle button pressed
