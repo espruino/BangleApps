@@ -75,6 +75,8 @@
   boxKeys.forEach((key) => {
     let boxConfig = boxes[key];
     boxPos[key] = {
+      x: w * boxConfig.boxPos.x,
+      y: h * boxConfig.boxPos.y
     };
     isDragging[key] = false;
     wasDragging[key] = false;
