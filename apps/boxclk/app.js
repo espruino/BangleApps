@@ -5,6 +5,7 @@
   * ---------------------------------------------------------------
   */
 
+  let background = require("clockbg");
   let storage = require("Storage");
   let locale = require("locale");
   let widgets = require("widget_utils");
@@ -215,9 +216,7 @@
     return function(boxes) {
       date = new Date();
       g.clear();
-      if (bgImage) {
-        g.drawImage(bgImage, 0, 0);
-      }
+      background.fillRect(Bangle.appRect);
       if (boxes.time) {
         boxes.time.string = modString(boxes.time, locale.time(date, isBool(boxes.time.short, true) ? 1 : 0));
         updatePerMinute = isBool(boxes.time.short, true);
