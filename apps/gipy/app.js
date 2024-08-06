@@ -1481,10 +1481,11 @@ function start_gipy(path, maps, interests, heights) {
           E.showMenu(); // remove menu
 
           // compute min/max coordinates
-          let minLat = 90;
-          let maxLat = -90;
-          let minLong = 180;
-          let maxLong = -180;
+          const fix = Bangle.getGPSFix();
+          let minLat = fix.lat ? fix.lat : 90;
+          let maxLat = fix.lat ? fix.lat : -90;
+          let minLong = fix.lon ? fix.lon : 180;
+          let maxLong = fix.lon ? fix.lon : -180;
           for(let i=0; i<path.len; i++) {
             const point = path.point(i);
             if(point.lat>maxLat) maxLat=point.lat; if(point.lat<minLat) minLat=point.lat;
@@ -1499,32 +1500,62 @@ function start_gipy(path, maps, interests, heights) {
           osm.scale = Math.ceil((scaleX > scaleY ? scaleX : scaleY)*1.1); // add 10% margin
           osm.lat = (minLat+maxLat)/2.0;
           osm.lon = (minLong+maxLong)/2.0;
-          osm.draw();
 
-          // draw track
-          g.setColor("#f09");
-          for(let i=0; i<path.len; i++) {
-            const point = path.point(i);
-            const mp = osm.latLonToXY(point.lat, point.lon);
-            g.lineTo(mp.x,mp.y);
-            g.fillCircle(mp.x,mp.y,2); // make the track more visible
-          }
+          const drawOpenStmap = () => {
+            osm.draw();
 
-          // draw current position
-          g.setColor("#000");
-          if (Bangle.getGPSFix().lat && Bangle.getGPSFix().lon) {
-            const icon = require("heatshrink").decompress(atob("jEYwYPMyVJkgHEkgICyAHCgIIDyQIChIIEoAIDC4IIEBwOAgEEyVIBAY4DBD4sGHxBQIMRAIIPpAyCHAYILUJEAiVJkAIFgVJXo5fCABQA==")); // 24x24px
-            const mp = osm.latLonToXY(Bangle.getGPSFix().lat, Bangle.getGPSFix().lon);
-            g.drawImage(icon, mp.x, mp.y);
-          }
+            // draw track
+            g.setColor("#f09");
+            for(let i=0; i<path.len; i++) {
+              const point = path.point(i);
+              const mp = osm.latLonToXY(point.lat, point.lon);
+              g.lineTo(mp.x,mp.y);
+              g.fillCircle(mp.x,mp.y,2); // make the track more visible
+            }
 
-          // back handling
-          g.setFont("6x8",2);
-          g.setFontAlign(0,0,3);
-          g.drawString(/*LANG*/"Back", g.getWidth() - 10, g.getHeight()/2);
-          setWatch(function() {
-            E.showMenu(menu);
-          }, BTN1, {edge:"falling"});
+            // draw current position
+            g.setColor("#000");
+            if (fix.lat && fix.lon) {
+              const icon = require("heatshrink").decompress(atob("jEYwYPMyVJkgHEkgICyAHCgIIDyQIChIIEoAIDC4IIEBwOAgEEyVIBAY4DBD4sGHxBQIMRAIIPpAyCHAYILUJEAiVJkAIFgVJXo5fCABQA==")); // 24x24px
+              const mp = osm.latLonToXY(fix.lat, fix.lon);
+              g.drawImage(icon, mp.x, mp.y);
+            }
+
+            // labels
+            g.setFont("6x8",2);
+            g.setFontAlign(0,0,3);
+            g.drawString(/*LANG*/"Back", g.getWidth() - 10, g.getHeight()/2);
+            g.drawString("+", g.getWidth() - 10, g.getHeight()/4);
+            g.drawString("-", g.getWidth() - 10, g.getHeight()/4*3);
+          };
+          drawOpenStmap();
+
+          let startDrag = 0;
+          Bangle.setUI({
+            mode: "custom",
+            btn: (n) => { // back handling
+              E.showMenu(menu);
+            },
+            drag: (ev) => { // zoom, move
+              if (ev.b) {
+                osm.scroll(ev.dx, ev.dy);
+                if (!startDrag) {
+                  startDrag = getTime();
+                }
+              } else {
+                if (getTime() - startDrag < 0.2) {
+                  // tap
+                  if (ev.y > g.getHeight() / 2) {
+                    osm.scale *= 2;
+                  } else {
+                    osm.scale /= 2;
+                  }
+                }
+                startDrag = 0;
+                drawOpenStmap();
+              }
+            },
+          });
         };
       } catch (ex) {
         // openstmap not available.
