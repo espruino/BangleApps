@@ -3,9 +3,8 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../../css/spectre.min.css">
     <style>
-      table { width:100%;margin:20px;}
-      .table_t {font-weight:bold;width:40%;}
-      .form-group > * {display:block;}
+      table { width:100%;}
+      .table_t {font-weight:bold;width:40%;};
     </style>
   </head>
   <body>
@@ -16,15 +15,13 @@
     </select>
     </div>
     <div class="form-group">
-      <label><input id="translations" type="checkbox" /> Add common language translations like "Yes", "No", "On", "Off"<br/><i>(Not recommended. For translations use the option under <code>More...</code> in the app loader.</i></label>
-      <label><input id="customize" type="checkbox" /> Customize the time and date patterns.</label>
+      <input id="translations" type="checkbox" /> <label for="translations">Add common language translations like "Yes", "No", "On", "Off"<br/><i>(Not recommended. For translations use the option under <code>More...</code> in the app loader.</i></label>
     </div>
     <p>
-      <span id="customize-warning"></span>
-      <table id="examples-short-long"></table>
-      <table id="examples"></table>
+      <table id="examples">
     </p>
 
+    </table>
     <p>Then click <button id="upload" class="btn btn-primary">Upload</button></p>
 
     <script src="../../core/lib/customize.js"></script>
@@ -94,6 +91,7 @@ exports = { name : "system", currencySym:"£",
         /*else if (chCode<256) // it's non-ascii, but <256 - just escape it
           n = chCode;*/
         else {
+          if (CODEPAGE_CONVERSIONS[ch]) return CODEPAGE_CONVERSIONS[ch];
           console.error(`Locale ${lang}: Character ${ch} (${chCode}) is not in Code Page ${codePage.name}`);
           return undefined;
         }
@@ -101,14 +99,41 @@ exports = { name : "system", currencySym:"£",
         return '\\x'+(n+256).toString(16).slice(-2);
       }
 
-      function createLocaleModule() {
+      // do some sanity checks
+      Object.keys(locales).forEach(function(localeName) {
+        var locale = locales[localeName];
+        if (locale.trans && !locale.trans.on) console.error(localeName+": If translations are provided, 'on' *must* be included");
+        if (distanceUnits[locale.distance[0]]===undefined) console.error(localeName+": Unknown distance unit "+locale.distance[0]);
+        if (distanceUnits[locale.distance[1]]===undefined) console.error(localeName+": Unknown distance unit "+locale.distance[1]);
+        if (speedUnits[locale.speed]===undefined) console.error(localeName+": Unknown speed unit "+locale.speed);
+        if (locale.temperature!='°C' && locale.temperature!='°F')
+          console.error(localeName+": Unknown temperature unit "+locale.temperature);
+        // Now check that codepage is ok and all chars in translation are in that codepage
+        const codePageName = "ISO8859-1";
+        if (locale.codePage) codePageName = locale.codePage;
+        const codePage = codePages[codePageName];
+        if (codePage===undefined) console.error(localeName+": Unknown codePage "+codePageName);
+        function checkChars(v,path) {
+          if ("object"==typeof v)
+            Object.keys(v).forEach(k=>checkChars(v[k], path+"."+k));
+          else if ("string"==typeof v)
+            for (var i=0;i<v.length;i++)
+              if (codePageLookup(localeName, codePage, v[i])===undefined)
+                console.error(` ... in ${path}[${i}]`);
+        }
+        checkChars(locale,localeName);
+      });
+
+
+      function createLocaleModule(lang) {
         console.log(`Language ${lang}`);
 
         const translations = document.getElementById('translations').checked;
         console.log(`Translations: ${translations}`);
 
+        const locale = locales[lang];
         if (!locale) {
-          alert(`Locale not set for language ${lang}!`);
+          alert(`Language ${lang} not found!`);
           return;
         }
 
@@ -221,119 +246,22 @@ exports = {
         eval(getLocaleModule(true));
         console.log("exports:",exports);
 
-        function patternOutput(pattern){
-          Object.keys(replaceList).forEach(e => {
-            pattern = pattern.replace(e,"${"+replaceList[e]+"}");
-          });
-          pattern = eval(`let d = new Date();\`${pattern}\``);
-          return pattern;
-        }
-        function dataList(id, options, formatter){
-          let output = `<datalist id="${id}">`;
-            for(const option of options){
-              let formatted = option;
-              formatted = formatter?.(formatted) || formatted;
-              output+=`\n<option value="${option}">${formatted}</option>`
-            }
-          output += "\n</datalist>";
-          return output;
-        }
-
         var date = new Date();
-        // TODO: This warning should have a link to an article explaining how the formats work, and how long they are allowed to be
-        document.getElementById("customize-warning").innerText = customizeLocale ? "⚠️ If you make the formats too long, some apps will not work!" : "";
-        document.getElementById("examples-short-long").innerHTML = `
+        document.getElementById("examples").innerHTML = `
 <tr><td class="table_t"></td><td style="font-weight:bold">Short</td><td style="font-weight:bold">Long</td></tr>
 <tr><td class="table_t">Day</td><td>${exports.dow(date,1)}</td><td>${exports.dow(date,0)}</td></tr>
 <tr><td class="table_t">Month</td><td>${exports.month(date,1)}</td><td>${exports.month(date,0)}</td></tr>
-${customizeLocale ? `<tr><td class="table_t">Date Pattern</td>
-    <td>
-      <input type=text id="short-date-pattern" list="short-date-patterns" value="${locale?.datePattern["1"]}"/>
-      ${dataList("short-date-patterns", datePatterns["1"], patternOutput)}
-    </td>
-    <td>
-      <input type=text id="long-date-pattern" list="long-date-patterns" value="${locale?.datePattern["0"]}"/>
-      ${dataList("long-date-patterns", datePatterns["0"], patternOutput)}
-    </td>
-    </td>`
-  : ""}
-<tr><td class="table_t">Date</td>
-  <td id="short-date-pattern-output">${exports.date(date,1)}</td>
-  <td id="long-date-pattern-output">${exports.date(date,0)}</td>
-</tr>
-${customizeLocale ? `<tr><td class="table_t">Time Pattern</td>
-    <td>
-      <input type=text id="short-time-pattern" list="short-time-patterns" value="${locale?.timePattern["1"]}"/>
-      ${dataList("short-time-patterns", timePatterns["1"], patternOutput)}
-    </td>
-    <td>
-      <input type=text id="long-time-pattern" list="long-time-patterns" value="${locale?.timePattern["0"]}"/>
-      ${dataList("long-time-patterns", timePatterns["0"], patternOutput)}
-    </td>
-    </td>`
-  : ""}
-<tr><td class="table_t">Time</td>
-  <td id="short-time-pattern-output">${exports.time(date,1)}</td>
-  <td id="long-time-pattern-output">${exports.time(date,0)}</td>
-</tr>
-  <tr><td class="table_t">Number</td><td>${exports.number(12.3456789)}</td><td>${exports.number(12.3456789,4)}</td></tr>
-  <tr><td class="table_t">Distance</td><td>${exports.distance(12.34,0)}</td><td>${exports.distance(12345.6,1)}</td></tr>
+<tr><td class="table_t">Date</td><td>${exports.date(date,1)}</td><td>${exports.date(date,0)}</td></tr>
+<tr><td class="table_t">Time</td><td>${exports.time(date,1)}</td><td>${exports.time(date,0)}</td></tr>
+<tr><td class="table_t">Number</td><td>${exports.number(12.3456789)}</td><td>${exports.number(12.3456789,4)}</td></tr>
+<tr><td class="table_t">Distance</td><td>${exports.distance(12.34,0)}</td><td>${exports.distance(12345.6,1)}</td></tr>
+<tr><td class="table_t">Speed</td><td></td><td>${exports.speed(123)}</td></tr>
+<tr><td class="table_t">Temperature</td><td></td><td>${exports.temp(12,0)}</td></tr>
 `;
-document.getElementById("examples").innerHTML = `
-<tr><td class="table_t"></td><td style="font-weight:bold">Value</td></tr>
-${customizeLocale ? `<tr><td class="table_t">Meridian format</td>
-    <td>
-      <input type=text id="meridian-am" list="meridian-ams" value="${locale?.ampm["0"]}"/>
-      ${dataList("meridian-ams", meridians["0"])}
-    </td>
-    <td>
-      <input type=text id="meridian-pm" list="meridian-pms" value="${locale?.ampm["1"]}"/>
-      ${dataList("meridian-pms", meridians["1"])}
-    </td>
-    </tr>`
-  : ""}
-<tr><td class="table_t">Meridian</td><td>
-  <span id="meridian-am-output">${exports.meridian(new Date(0))}</span> /
-  <span id="meridian-pm-output">${exports.meridian(new Date(43200000))}</span>
-</td></tr>
-<tr><td class="table_t">Speed</td><td>${exports.speed(123)}</td></tr>
-<tr><td class="table_t">Temperature</td><td>${exports.temp(12,0)}</td></tr>
-`;
-
-        if(customizeLocale){
-          document.querySelector("input#short-date-pattern").addEventListener("input", event => {
-            locale.datePattern["1"] = event.target.value;
-            document.querySelector("td#short-date-pattern-output").innerText = patternOutput(event.target.value);
-          });
-          document.querySelector("input#long-date-pattern").addEventListener("input", event => {
-            locale.datePattern["0"] = event.target.value;
-            document.querySelector("td#long-date-pattern-output").innerText = patternOutput(event.target.value);
-          });
-          document.querySelector("input#short-time-pattern").addEventListener("input", event => {
-            locale.timePattern["1"] = event.target.value;
-            document.querySelector("td#short-time-pattern-output").innerText = patternOutput(event.target.value);
-          });
-          document.querySelector("input#long-time-pattern").addEventListener("input", event => {
-            locale.timePattern["0"] = event.target.value;
-            document.querySelector("td#long-time-pattern-output").innerText = patternOutput(event.target.value);
-          });
-          document.querySelector("input#meridian-am").addEventListener("input", event => {
-            locale.ampm["0"] = event.target.value;
-            document.querySelector("span#meridian-am-output").innerText = patternOutput(event.target.value);
-          });
-          document.querySelector("input#meridian-pm").addEventListener("input", event => {
-            locale.ampm["1"] = event.target.value;
-            document.querySelector("span#meridian-pm-output").innerText = patternOutput(event.target.value);
-          });
-        }
         return getLocaleModule(false);
       }
 
-      var lang;
-      var locale;
-      var customizeLocale;
       var languageSelector = document.getElementById("languages");
-      var customizeSelector = document.getElementById('customize');
       languageSelector.innerHTML = Object.keys(locales).map(l=>{
         var locale = locales[l];
         var localeParts = l.split("_"); // en_GB -> ["en","GB"]
@@ -346,24 +274,17 @@ ${customizeLocale ? `<tr><td class="table_t">Meridian format</td>
         return `<option value="${l}">${icon}${l}${locale.notes?" - "+locale.notes:""}</option>`
       }).join("\n");
       languageSelector.addEventListener('change', function() {
-        lang = languageSelector.options[languageSelector.selectedIndex].value;
-        locale = locales[lang]
-        createLocaleModule();
-      });
-      customizeSelector.addEventListener('change', function() {
-        customizeLocale = customizeSelector.checked;
-        createLocaleModule();
+        const lang = languageSelector.options[languageSelector.selectedIndex].value;
+        createLocaleModule(lang);
       });
       // initial value
-      lang = languageSelector.options[languageSelector.selectedIndex].value;
-      locale = locales[lang];
-      customizeLocale = false;
-      createLocaleModule();
+      createLocaleModule(languageSelector.options[languageSelector.selectedIndex].value);
 
 
 
       document.getElementById("upload").addEventListener("click", function() {
 
+        const lang = languageSelector.options[languageSelector.selectedIndex].value;
         var localeModule = createLocaleModule(lang);
 
         console.log("Locale Module is:",localeModule);
