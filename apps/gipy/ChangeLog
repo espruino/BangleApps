@@ -136,3 +136,4 @@
 	* Experimental ski mode : have a ski slopes map
 	* Fix for path projection display when lost and zoomed out
 0.25: Minor code improvements
+0.26: Add option to plot openstmap if installed
