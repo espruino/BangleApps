@@ -755,4 +755,27 @@ var locales = {
     day: "ראשון,שני,שלישי,רביעי,חמישי,שישי,שבת",
     trans: { yes: "כן", Yes: "כן", no: "לא", No: "לא", ok: "אישור", on: "פעיל", off: "כבוי" }
   }*/
+ /**
+  * These test strings are designed to be as wide and tall as real locale strings can be.
+  * All apps should be able to display them properly, to ensure that they work with all locales.
+  * To make the strings as long as possible, wide characters like "w" and "m" is used,
+  * and to make them taller, "k" and "g" are used together. 
+  */
+ "test": {
+    lang: "test",
+    icon: "🐛",
+    notes: "Produces the longest possible output. Useful for testing.",
+    decimal_point: ",",
+    thousands_sep: ",",
+    speed: "km/h",
+    distance: { 0: "kmi", 1: "kmi" },
+    temperature: "°C",
+    ampm: { 0: "dop", 1: "odp" },
+    timePattern: { 0: "%HHh%MM:%SS", 1: "%HHh%MM" },
+    datePattern: { 0: "%b, %d, %Y", 1: "%d. %m %Y" },
+    abmonth: Array(12).fill("mgmk").join(","),
+    month: Array(12).fill("megmmaskuum").join(","),
+    abday: Array(7).fill("mgmk").join(","),
+    day: Array(7).fill("megmavammkkom").join(","),
+  },
 };
