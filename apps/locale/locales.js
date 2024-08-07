@@ -1737,13 +1737,13 @@ var locales = {
     "abday": "die,hën,mar,mër,enj,pre,sht",
     "day": "e diel,e hënë,e martë,e mërkurë,e enjte,e premte,e shtunë"
   },
-  "ts_TS": {
-    "lang": "ts_TS",
+  "ts_TS test": {
+    "lang": "ts_TS test",
     "icon": "🐛",
     "notes": "Produces the longest possible output. Useful for testing.",
     "calendar": "gregory",
     "numberingSystem": "latn",
-    "decimal_point": ".",
+    "decimal_point": ",",
     "thousands_sep": ",",
     "speed": "km/h",
     "distance": {
@@ -1753,7 +1753,7 @@ var locales = {
     "temperature": "°C",
     "ampm": {
       "0": "dop",
-      "1": "pop"
+      "1": "odp"
     },
     "timePattern": {
       "0": "%HHh%MM:%SS",
@@ -1763,9 +1763,9 @@ var locales = {
       "0": "%b, %d, %Y",
       "1": "%d. %m %Y"
     },
-    "abmonth": "mema,mema,mema,mema,mema,mema,mema,mema,mema,mema,mema,mema",
-    "month": "mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum,mermmaskuum",
-    "abday": "wewa,wewa,wewa,wewa,wewa,wewa,wewa",
-    "day": "weswavammkkom,weswavammkkom,weswavammkkom,weswavammkkom,weswavammkkom,weswavammkkom,weswavammkkom"
+    "abmonth": "mgmk,mgmk,mgmk,mgmk,mgmk,mgmk,mgmk,mgmk,mgmk,mgmk,mgmk,mgmk",
+    "month": "megmmaskuum,megmmaskuum,megmmaskuum,megmmaskuum,megmmaskuum,megmmaskuum,megmmaskuum,megmmaskuum,megmmaskuum,megmmaskuum,megmmaskuum,megmmaskuum",
+    "abday": "mgmk,mgmk,mgmk,mgmk,mgmk,mgmk,mgmk",
+    "day": "megmavammkkom,megmavammkkom,megmavammkkom,megmavammkkom,megmavammkkom,megmavammkkom,megmavammkkom"
   }
 };
