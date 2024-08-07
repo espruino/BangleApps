@@ -38,6 +38,11 @@ Graphics.prototype.setFontLatoSmall = function(scale) {
   // must be inside our own scope here so that when we are unloaded everything disappears
   // we also define functions using 'let fn = function() {..}' for the same reason. function decls are global
 
+  let settings = Object.assign({
+    dateDisplay: false,
+    dateFormat: 0,
+  }, require("Storage").readJSON("lato.json", true) || {});
+
   let draw = function() {
     var date = new Date();
     var timeStr = require("locale").time(date,1);
@@ -53,6 +58,25 @@ Graphics.prototype.setFontLatoSmall = function(scale) {
     g.setFontAlign(0, 0);
     g.setColor(g.theme.fg);
     g.drawString(timeStr, w/2, h/2);
+
+    if (settings.dateDisplay) {
+      switch (settings.dateFormat) {
+        case 1:
+          var dateStr = require("locale").date(date,1);
+          break;
+        
+        case 2:
+          var dateStr = require("locale").date(date);
+          break;
+      
+        default:
+          var dateStr = require("locale").dow(date,1) + ', ' + date.getDate() + ' ' + require("locale").month(date,1);
+          break;
+    }
+      g.setFontVector(16);
+      g.drawString(dateStr, w/2, h/4 -4);
+    }
+
     clockInfoMenu.redraw();   // clock_info_support
 
     // schedule a draw for the next minute
