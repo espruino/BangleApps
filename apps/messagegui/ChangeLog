@@ -106,3 +106,4 @@
 0.77: Messages can now use international fonts if they are installed
 0.78: Fix: When user taps on a new message, clear the unread timeout
 0.79: Fix: Reset the unread timeout each time a new message is shown. When the message is read from user input, do not set an unread timeout.
+0.80: Add ability to reply to messages if a reply library is installed and the message can be replied to
