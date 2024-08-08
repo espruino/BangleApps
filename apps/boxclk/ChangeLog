@@ -3,3 +3,4 @@
 0.03: Allows showing the month in short or long format by setting `"shortMonth"` to true or false
 0.04: Improves touchscreen drag handling for background apps such as Pattern Launcher
 0.05: Fixes step count not resetting after a new day starts
+0.06  Added clockbackground app functionality

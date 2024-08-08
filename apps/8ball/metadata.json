@@ -1,0 +1,19 @@
+{ "id": "8ball",
+  "name": "Magic 8 ball",
+  "shortName":"8ball",
+  "icon": "8ball.png",
+  "version":"0.01",
+  "screenshots": [
+    {"url":"screenshot.png"},
+    {"url":"screenshot-1.png"},
+    {"url":"screenshot-2.png"}
+  ],
+  "allow_emulator": true,
+  "description": "A very sarcastic magic 8ball",
+  "tags": "game",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"8ball.app.js","url":"app.js"},
+    {"name":"8ball.img","url":"app-icon.js","evaluate":true}
+  ]
+}

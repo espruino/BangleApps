@@ -4,6 +4,7 @@
   "version": "0.05",
   "description": "A customizable clock with configurable text boxes that can be positioned to show your favorite background",
   "icon": "app.png",
+  "dependencies" : { "clockbg":"module" },
   "screenshots": [
     {"url":"screenshot.png"},
     {"url":"screenshot-1.png"},
