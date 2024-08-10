@@ -28,6 +28,9 @@ E.showMenu = function (items) {
         y += 22;
     var lastIdx = 0;
     var selectEdit = undefined;
+    var scroller = {
+        scroll: selected,
+    };
     var l = {
         draw: function (rowmin, rowmax) {
             var rows = 0 | Math.min((y2 - y) / fontHeight, menuItems.length);
@@ -138,9 +141,11 @@ E.showMenu = function (items) {
             else {
                 var lastSelected = selected;
                 selected = (selected + dir + menuItems.length) % menuItems.length;
+                scroller.scroll = selected;
                 l.draw(Math.min(lastSelected, selected), Math.max(lastSelected, selected));
             }
         },
+        scroller: scroller,
     };
     l.draw();
     var back = options.back;
