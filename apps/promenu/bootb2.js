@@ -79,10 +79,11 @@ E.showMenu = function (items) {
                     v = "";
                 }
                 {
-                    if (name.length >= 17 - v.length && typeof item === "object") {
+                    var vplain = v.indexOf("\0") < 0;
+                    if (vplain && name.length >= 17 - v.length && typeof item === "object") {
                         g.drawString(name.substring(0, 12 - v.length) + "...", x + 3.7, iy + 2.7);
                     }
-                    else if (name.length >= 15) {
+                    else if (vplain && name.length >= 15) {
                         g.drawString(name.substring(0, 15) + "...", x + 3.7, iy + 2.7);
                     }
                     else {
