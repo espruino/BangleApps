@@ -33,10 +33,10 @@ let g2img = {
    width:g2.getWidth() / 2, height:g2.getHeight() / 2, bpp:1,
    buffer:g2.buffer, transparent:0
 };
-const slope = 20;
-const offsY = 20; // offset of numbers from middle
+const slope = 10;
+const offsY = 10; // offset of numbers from middle
 const fontBorder = 4; // offset from left/right
-const slopeBorder = 10, slopeBorderUpper = 4; // fudge-factor to move minutes down from slope
+const slopeBorder = 5, slopeBorderUpper = 2; // fudge-factor to move minutes down from slope
 let R,x,y; // middle of the clock face
 let dateStr = "";
 let bgColors = [];
@@ -82,6 +82,7 @@ let draw = function() {
   g.reset().clearRect(rRaw); // clear whole background (w/o widgets)
   g.setFontAlign(-1, 0).setFont("PaytoneOne");
   g.drawString(hourStr, fontBorder, y-offsY).setFont("4x6"); // draw and unload custom font
+
   // add slope in background color
   g.setColor(g.theme.bg)
       .fillPoly([0,y+slope-slopeBorderUpper, R.w,y-slope-slopeBorderUpper, R.w,y-slope, 0,y+slope]);
@@ -90,6 +91,7 @@ let draw = function() {
   g2.setColor(0).fillRect(0,0,g2.getWidth(),g2.getHeight()).setFontAlign(1, 0).setFont("PaytoneOne");
   g2.setColor(1).drawString(minStr, g2.getWidth()-fontBorder, g2.getHeight()/2).setFont("4x6"); // draw and unload custom font
   g2.setColor(0).fillPoly([0,0, g2.getWidth(),0, 0,slope*2]);
+
   // redraw the top widget
   clockInfoMenu.redraw();
   // start the animation *in*
