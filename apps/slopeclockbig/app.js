@@ -23,10 +23,15 @@ Graphics.prototype.setFontPaytoneOne = function(scale) {
 
 let drawTimeout;
 
-let g2 = Graphics.createArrayBuffer(g.getWidth(),90,1,{msb:true});
+//let g2 = Graphics.createArrayBuffer(g.getWidth(),90,1,{msb:true});
+let g2 = Graphics.createArrayBuffer(g.getWidth() / 2,g.getHeight() / 2,1,{msb:true});
+// let g2img = {
+//   width:g2.getWidth(), height:g2.getHeight(), bpp:1,
+//   buffer:g2.buffer, transparent:0
+// };
 let g2img = {
-  width:g2.getWidth(), height:g2.getHeight(), bpp:1,
-  buffer:g2.buffer, transparent:0
+   width:g2.getWidth() / 2, height:g2.getHeight() / 2, bpp:1,
+   buffer:g2.buffer, transparent:0
 };
 const slope = 20;
 const offsY = 20; // offset of numbers from middle
