@@ -1502,6 +1502,7 @@ function start_gipy(path, maps, interests, heights) {
           osm.lon = (minLong+maxLong)/2.0;
 
           const drawOpenStmap = () => {
+            g.clearRect(Bangle.appRect);
             osm.draw();
 
             // draw track
@@ -1509,7 +1510,11 @@ function start_gipy(path, maps, interests, heights) {
             for(let i=0; i<path.len; i++) {
               const point = path.point(i);
               const mp = osm.latLonToXY(point.lat, point.lon);
-              g.lineTo(mp.x,mp.y);
+              if (i == 0) {
+                g.moveTo(mp.x,mp.y);
+              } else {
+                g.lineTo(mp.x,mp.y);
+              }
               g.fillCircle(mp.x,mp.y,2); // make the track more visible
             }
 
@@ -1534,6 +1539,7 @@ function start_gipy(path, maps, interests, heights) {
           Bangle.setUI({
             mode: "custom",
             btn: (n) => { // back handling
+              g.clearRect(0, 0, g.getWidth(), g.getHeight());
               E.showMenu(menu);
             },
             drag: (ev) => { // zoom, move
