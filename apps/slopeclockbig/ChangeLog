@@ -5,3 +5,4 @@
 0.40: Try with halving the other scalars
 0.41: Use different font for clock
 0.42: Minor fix; use proper amount of g2
+0.50: Increase size of clock_info stuff bottom, left

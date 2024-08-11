@@ -160,7 +160,7 @@ let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {  // t
   draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : "#f00"/*red*/
 });
 let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, { // bottom left
-  app:"slopeclockbig",x:0, y:115, w:50, h:40,
+  app:"slopeclockbig",x:0, y:92, w:85, h:80,
   draw : clockInfoDraw, bg : bgColor, fg : g.theme.bg, hl : (g.theme.fg===g.toColor(bgColor))?"#f00"/*red*/:g.theme.fg
 });
 
