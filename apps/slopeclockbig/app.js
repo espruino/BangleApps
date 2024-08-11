@@ -74,7 +74,7 @@ let draw = function() {
   dateStr = require("locale").dow(date, 1).toUpperCase()+ " " + require("locale").date(date, 0).toUpperCase();
 
   // Draw hour
-  g.reset().clearRect(R); // clear whole background (w/o widgets)
+  g.reset().clearRect(rRaw); // clear whole background (w/o widgets)
   g.setFontAlign(-1, 0).setFont("PaytoneOne");
   g.drawString(hourStr, fontBorder, y-offsY).setFont("4x6"); // draw and unload custom font
   // add slope in background color
