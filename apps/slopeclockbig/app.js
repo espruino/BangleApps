@@ -137,7 +137,7 @@ let animate = function(isIn, callback) {
 // clock info menus (scroll up/down for info)
 let clockInfoDraw = (itm, info, options) => {
   let textY = options.y+41;
-  // set a cliprect to stop us drawing outside our box
+  // set a clip-rect to stop us drawing outside our box
   g.reset().setClipRect(options.x, options.y, options.x+options.w-1, options.y+options.h-1);
   g.setFont("6x15").setBgColor(options.bg).clearRect(options.x, textY-15, options.x+options.w-2, textY);
 
@@ -154,14 +154,18 @@ let clockInfoDraw = (itm, info, options) => {
   // return ClipRect
   g.setClipRect(0,0,g.getWidth()-1, g.getHeight()-1);
 };
+//load first
 let clockInfoItems = require("clock_info").load();
 let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {  // top right
   app:"slopeclockbig",x:132, y:settings.hideWidgets ? 12 : 24, w:44, h:40,
-  draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : "#f00"/*red*/
+  draw : clockInfoDraw,
+  bg : g.theme.bg, fg : g.theme.fg, hl : "#f00"/*red*/
 });
 let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, { // bottom left
-  app:"slopeclockbig",x:0, y:92, w:85, h:80,
-  draw : clockInfoDraw, bg : bgColor, fg : g.theme.bg, hl : (g.theme.fg===g.toColor(bgColor))?"#f00"/*red*/:g.theme.fg
+  app:"slopeclockbig",
+  x:0, y:92, w:85, h:80,
+  draw : clockInfoDraw,
+  bg : bgColor, fg : g.theme.bg, hl : (g.theme.fg===g.toColor(bgColor))?"#f00"/*red*/:g.theme.fg
 });
 
 // Show launcher when middle button pressed
