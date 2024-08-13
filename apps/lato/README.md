@@ -5,6 +5,7 @@ A simple clock with the Lato font, with fast load and clock_info
 ![](screenshot1.png)
 ![](screenshot2.png)
 ![](screenshot3.png)
+![](screenshot4.png)
 
 This clock is a Lato version of Simplest++. Simplest++ provided the
 smallest example of a clock that supports 'fast load' and 'clock
@@ -24,6 +25,8 @@ Pastel Clock.
   there is only one type of data so this will have no effect)
 
 * Settings are saved automatically and reloaded along with the clock.
+
+* Date display can be enabled and disabled, along with format choice in the app settings
 
 ## About Clock Info's
 
@@ -52,3 +55,5 @@ Pastel Clock.
 Written by: [Hugh Barney](https://github.com/hughbarney) For support
 and discussion please post in the [Bangle JS
 Forum](http://forum.espruino.com/microcosms/1424/)
+
+Date functionality added by [Septolum](https://github.com/Septolum)
