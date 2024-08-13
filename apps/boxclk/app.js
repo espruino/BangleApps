@@ -5,11 +5,11 @@
   * ---------------------------------------------------------------
   */
 
+  let background = require("clockbg");
   let storage = require("Storage");
   let locale = require("locale");
   let widgets = require("widget_utils");
   let date = new Date();
-  let bgImage;
   let configNumber = (storage.readJSON("boxclk.json", 1) || {}).selectedConfig || 0;
   let fileName = 'boxclk' + (configNumber > 0 ? `-${configNumber}` : '') + '.json';
   // Add a condition to check if the file exists, if it does not, default to 'boxclk.json'
@@ -70,14 +70,6 @@
   * 5. Initial settings of boxes and their positions
   * ---------------------------------------------------------------
   */
-
-  for (let key in boxesConfig) {
-    if (key === 'bg' && boxesConfig[key].img) {
-      bgImage = storage.read(boxesConfig[key].img);
-    } else if (key !== 'selectedConfig') {
-      boxes[key] = Object.assign({}, boxesConfig[key]);
-    }
-  }
 
   let boxKeys = Object.keys(boxes);
 
@@ -224,9 +216,7 @@
     return function(boxes) {
       date = new Date();
       g.clear();
-      if (bgImage) {
-        g.drawImage(bgImage, 0, 0);
-      }
+      background.fillRect(Bangle.appRect);
       if (boxes.time) {
         boxes.time.string = modString(boxes.time, locale.time(date, isBool(boxes.time.short, true) ? 1 : 0));
         updatePerMinute = isBool(boxes.time.short, true);
