@@ -85,12 +85,10 @@ Todo:
 
 *) +-3.5hPa 1012hPa
 
-*) display gps alt + offset to baro
+?) display gps alt + offset to baro
 
-*) start logging altitudes, baro pressure
+?) start logging baro pressure
 
 *) compute climb/descent
 
 *) switch to compensated compass
-
-*) only accept gps fix when altitude matches baro

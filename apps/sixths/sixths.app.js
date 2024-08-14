@@ -582,10 +582,13 @@ function touchHandler(d) {
 }
 var lastHour = -1, lastMin = -1;
 function logstamp(s) {
-    logfile.write("utime=" + getTime() + " " + s + "\n");
+  logfile.write("utime=" + getTime() +
+                " bele=" + cur_altitude +
+                " batperc=" + E.getBattery() +
+                " " + s + "\n");
 }
 function loggps(fix) {
-  logfile.write(fix.lat + " " + fix.lon + " ");
+  logfile.write(fix.lat + " " + fix.lon + " ele=" + fix.alt + " ");
   logstamp("");
 }
 function hourly() {
