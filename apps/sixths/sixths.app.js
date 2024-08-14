@@ -215,14 +215,6 @@ var is_level = false;
 var cur_altitude = 0;
 var cur_temperature = 0;
 
-// Icons
-
-var icon_alt = "\0\x08\x1a\1\x00\x00\x00\x20\x30\x78\x7C\xFE\xFF\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00";
-//var icon_m = "\0\x08\x1a\1\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00";
-var icon_km = "\0\x08\x1a\1\xC3\xC6\xCC\xD8\xF0\xD8\xCC\xC6\xC3\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00";
-var icon_kph = "\0\x08\x1a\1\xC3\xC6\xCC\xD8\xF0\xD8\xCC\xC6\xC3\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\xFF\x00\xC3\xC3\xFF\xC3\xC3";
-var icon_c = "\0\x08\x1a\1\x00\x00\x60\x90\x90\x60\x00\x7F\xFF\xC0\xC0\xC0\xC0\xC0\xFF\x7F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-
 function toMorse(x) {
   let r = "";
   for (var i = 0; i < x.length; i++) {
@@ -313,7 +305,7 @@ function gpsHandle() {
       let fix = Bangle.getGPSFix();
       if (fix && fix.fix && fix.lat) {
         gpsHandleFix(fix);
-        msg = fix.speed.toFixed(1) + icon_kph;
+        msg = fmt.fmtSpeed(fix.speed);
         print("GPS FIX", msg);
 
         if (!last_fstart)
@@ -346,7 +338,7 @@ function gpsHandle() {
         print("Pausing, next try", gps_needed);
       }
     }
-  msg += " "+state.gps_dist.toFixed(1)+icon_km;
+  msg += " "+fmt.fmtDist(state.gps_dist);
   return msg;
 }
 function markNew() {
@@ -366,7 +358,7 @@ function markHandle() {
     msg += fmt.fmtTimeDiff(getTime()- m.time);
   }
   if (state.prev_fix && state.prev_fix.fix && m.fix && m.fix.fix) {
-    let s = fmt.fmtDist(fmt.distance(m.fix, state.prev_fix)/1000) + icon_km;
+    let s = fmt.fmtDist(fmt.distance(m.fix, state.prev_fix)/1000) + fmt.icon_km;
     msg += " " + s;
     debug = "wp>" + s;
     mark_heading = 180 + fmt.bearing(m.fix, state.prev_fix);
@@ -754,7 +746,7 @@ function draw() {
     msg += fmt.fmtAlt(cur_altitude);
   }
 
-  msg = msg + " " + cur_temperature.toFixed(1)+icon_c + "\n";
+  msg = msg + " " + cur_temperature.toFixed(1)+fmt.icon_c + "\n";
 
   {
     let o = Bangle.getOptions();
