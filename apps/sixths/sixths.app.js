@@ -1,6 +1,176 @@
 // Sixth sense
 /* eslint-disable no-unused-vars */
 
+/* fmt library v0.2.2 */
+let fmt = {
+  icon_alt : "\0\x08\x1a\1\x00\x00\x00\x20\x30\x78\x7C\xFE\xFF\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00",
+  icon_m : "\0\x08\x1a\1\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00",
+  icon_km : "\0\x08\x1a\1\xC3\xC6\xCC\xD8\xF0\xD8\xCC\xC6\xC3\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00",
+  icon_kph : "\0\x08\x1a\1\xC3\xC6\xCC\xD8\xF0\xD8\xCC\xC6\xC3\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\xFF\x00\xC3\xC3\xFF\xC3\xC3",
+  icon_c : "\0\x08\x1a\1\x00\x00\x60\x90\x90\x60\x00\x7F\xFF\xC0\xC0\xC0\xC0\xC0\xFF\x7F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
+
+  /* 0 .. DD.ddddd
+     1 .. DD MM.mmm'
+     2 .. DD MM'ss"
+  */
+  geo_mode : 1,
+
+  init: function() {},
+  fmtDist: function(km) {
+    if (km >= 1.0) return km.toFixed(1) + this.icon_km;
+    return (km*1000).toFixed(0) + this.icon_m;
+  },
+  fmtSteps: function(n) { return this.fmtDist(0.001 * 0.719 * n); },
+  fmtAlt: function(m) { return m.toFixed(0) + this.icon_alt; },
+  draw_dot : 1,
+  add0: function(i) {
+    if (i > 9) {
+      return ""+i;
+    } else {
+      return "0"+i;
+    }
+  },
+  fmtTOD: function(now) {
+    this.draw_dot = !this.draw_dot;
+    let dot = ":";
+    if (!this.draw_dot)
+      dot = ".";
+    return now.getHours() + dot + this.add0(now.getMinutes());
+  },
+  fmtNow: function() { return this.fmtTOD(new Date()); },
+  fmtTimeDiff: function(d) {
+    if (d < 180)
+      return ""+d.toFixed(0);
+    d = d/60;
+    return ""+d.toFixed(0)+"m";
+  },
+  fmtAngle: function(x) {
+    switch (this.geo_mode) {
+    case 0:
+      return "" + x;
+    case 1: {
+      let d = Math.floor(x);
+      let m = x - d;
+      m = m*60;
+      return "" + d + " " + m.toFixed(3) + "'";
+    }
+    case 2: {
+      let d = Math.floor(x);
+      let m = x - d;
+      m = m*60;
+      let mf = Math.floor(m);
+      let s = m - mf;
+      s = s*60;
+      return "" + d + " " + mf + "'" + s.toFixed(0) + '"';
+    }
+    }
+    return "bad mode?";
+  },
+  fmtPos: function(pos) {
+    let x = pos.lat;
+    let c = "N";
+    if (x<0) {
+      c = "S";
+      x = -x;
+    }
+    let s = c+this.fmtAngle(x) + "\n";
+    c = "E";
+    if (x<0) {
+      c = "W";
+      x = -x;
+    }
+    return s + c + this.fmtAngle(x);
+  },
+  fmtFix: function(fix, t) {
+    if (fix && fix.fix && fix.lat) {
+      return this.fmtSpeed(fix.speed) + " " +
+        this.fmtAlt(fix.alt);
+    } else {
+      return "N/FIX " + this.fmtTimeDiff(t);
+    }
+  },
+  fmtSpeed: function(kph) {
+    return kph.toFixed(1) + this.icon_kph;
+  },
+  radians: function(a) { return a*Math.PI/180; },
+  degrees: function(a) { return a*180/Math.PI; },
+  // distance between 2 lat and lons, in meters, Mean Earth Radius = 6371km
+  // https://www.movable-type.co.uk/scripts/latlong.html
+  // (Equirectangular approximation)
+  // returns value in meters
+  distance: function(a,b) {
+    var x = this.radians(b.lon-a.lon) * Math.cos(this.radians((a.lat+b.lat)/2));
+    var y = this.radians(b.lat-a.lat);
+    return Math.sqrt(x*x + y*y) * 6371000;
+  },
+  // thanks to waypointer
+  bearing: function(a,b) {
+    var delta = this.radians(b.lon-a.lon);
+    var alat = this.radians(a.lat);
+    var blat = this.radians(b.lat);
+    var y = Math.sin(delta) * Math.cos(blat);
+    var x = Math.cos(alat) * Math.sin(blat) -
+        Math.sin(alat)*Math.cos(blat)*Math.cos(delta);
+    return Math.round(this.degrees(Math.atan2(y, x)));
+  },
+};
+
+/* gps library v0.1.2 */
+let gps = {
+  emulator: -1,
+  init: function(x) {
+    this.emulator = (process.env.BOARD=="EMSCRIPTEN"
+                     || process.env.BOARD=="EMSCRIPTEN2")?1:0;
+  },
+  state: {},
+  on_gps: function(f) {
+    let fix = this.getGPSFix();
+    f(fix);
+
+    /*
+      "lat": number,      // Latitude in degrees
+      "lon": number,      // Longitude in degrees
+      "alt": number,      // altitude in M
+      "speed": number,    // Speed in kph
+      "course": number,   // Course in degrees
+      "time": Date,       // Current Time (or undefined if not known)
+      "satellites": 7,    // Number of satellites
+      "fix": 1            // NMEA Fix state - 0 is no fix
+      "hdop": number,     // Horizontal Dilution of Precision
+    */
+    this.state.timeout = setTimeout(this.on_gps, 1000, f);
+  },
+  off_gps: function() {
+    clearTimeout(this.state.timeout);
+  },
+  getGPSFix: function() {
+    if (!this.emulator)
+      return Bangle.getGPSFix();
+    let fix = {};
+    fix.fix = 1;
+    fix.lat = 50;
+    fix.lon = 14-(getTime()-this.gps_start) / 1000; /* Go West! */
+    fix.alt = 200;
+    fix.speed = 5;
+    fix.course = 30;
+    fix.time = Date();
+    fix.satellites = 5;
+    fix.hdop = 12;
+    return fix;
+  },
+  gps_start : -1,
+  start_gps: function() {
+    Bangle.setGPSPower(1, "libgps");
+    this.gps_start = getTime();
+  },
+  stop_gps: function() {
+    Bangle.setGPSPower(0, "libgps");
+  },
+};
+
+fmt.init();
+gps.init();
+
 var location;
 
 const W = g.getWidth();
@@ -11,7 +181,7 @@ var buzz = "",      /* Set this to transmit morse via vibrations */
     inm = "", l = "", /* For incoming morse handling */
     in_str = "",
     note = "",
-    debug = "v0.05.3", debug2 = "(otherdb)", debug3 = "(short)";
+    debug = "v0.6.0", debug2 = "(otherdb)", debug3 = "(short)";
 var note_limit = 0;
 var mode = 0, mode_time = 0; // 0 .. normal, 1 .. note, 2.. mark name
 var disp_mode = 0;  // 0 .. normal, 1 .. small time
@@ -103,15 +273,6 @@ function gpsOff() {
   Bangle.setGPSPower(0, "sixths");
   gps_on = 0;
 }
-function fmtDist(km) { return km.toFixed(1) + icon_km; }
-function fmtSteps(n) { return fmtDist(0.001 * 0.719 * n); }
-function fmtAlt(m) { return m.toFixed(0) + icon_alt; }
-function fmtTimeDiff(d) {
-  if (d < 180)
-    return ""+d.toFixed(0);
-  d = d/60;
-  return ""+d.toFixed(0)+"m";
-}
 function gpsHandleFix(fix) {
   if (!state.prev_fix) {
     showMsg("GPS acquired", 10);
@@ -140,9 +301,9 @@ function gpsHandle() {
   if (!last_restart) {
       let d = (getTime()-last_pause);
       if (last_fix)
-          msg = "PL"+ fmtTimeDiff(getTime()-last_fix);
+          msg = "PL"+ fmt.fmtTimeDiff(getTime()-last_fix);
       else
-          msg = "PN"+ fmtTimeDiff(getTime()-gps_on);
+          msg = "PN"+ fmt.fmtTimeDiff(getTime()-gps_on);
 
       print("gps on, paused ", d, gps_needed);
       if (d > gps_needed * 2) {
@@ -166,9 +327,9 @@ function gpsHandle() {
         gps_needed = 60;
       } else {
         if (last_fix)
-          msg = "L"+ fmtTimeDiff(getTime()-last_fix);
+          msg = "L"+ fmt.fmtTimeDiff(getTime()-last_fix);
         else {
-          msg = "N"+ fmtTimeDiff(getTime()-gps_on);
+          msg = "N"+ fmt.fmtTimeDiff(getTime()-gps_on);
           if (0 && fix) {
             msg += " " + fix.satellites + "sats";
           }
@@ -177,7 +338,7 @@ function gpsHandle() {
 
       let d = (getTime()-last_restart);
       let d2 = (getTime()-last_fstart);
-      print("gps on, restarted ", d, gps_needed, d2, fix.lat);
+      print("gps on, restarted ", d, gps_needed, d2);
       if (getTime() > state.gps_speed_limit &&
           ((d > gps_needed && !last_fstart) || (last_fstart && d2 > keep_fix_for))) {
         gpsPause();
@@ -202,16 +363,16 @@ function markHandle() {
   let m = state.cur_mark;
   let msg = m.name + ">";
   if (m.time) {
-    msg += fmtTimeDiff(getTime()- m.time);
+    msg += fmt.fmtTimeDiff(getTime()- m.time);
   }
   if (state.prev_fix && state.prev_fix.fix && m.fix && m.fix.fix) {
-    let s = fmtDist(calcDistance(m.fix, state.prev_fix)/1000) + icon_km;
+    let s = fmt.fmtDist(fmt.distance(m.fix, state.prev_fix)/1000) + icon_km;
     msg += " " + s;
     debug = "wp>" + s;
-    mark_heading = 180 + calcBearing(m.fix, state.prev_fix);
+    mark_heading = 180 + fmt.bearing(m.fix, state.prev_fix);
     debug2 = "wp>" + mark_heading;
   } else {
-    msg += " w" + fmtDist(state.gps_dist - m.gps_dist);
+    msg += " w" + fmt.fmtDist(state.gps_dist - m.gps_dist);
   }
   return msg;
 }
@@ -249,7 +410,7 @@ function selectWP(i) {
   state.cur_mark.fix = {};
   state.cur_mark.fix.fix = 1;
   state.cur_mark.fix.lat = wp.lat;
-  state.cur_mark.fix.lon = wp.lon; 
+  state.cur_mark.fix.lon = wp.lon;
   showMsg("WP:"+wp.name, 60);
   print("Select waypoint: ", state.cur_mark);
 }
@@ -305,7 +466,7 @@ function inputHandler(s) {
       s = ' T';
       let d = new Date();
       s += d.getHours() % 10;
-      s += add0(d.getMinutes());
+      s += fmt.add0(d.getMinutes());
       doBuzz(toMorse(s));
       break;
     }
@@ -411,13 +572,6 @@ function touchHandler(d) {
 
   //print(inm, "drag:", d);
 }
-function add0(i) {
-  if (i > 9) {
-    return ""+i;
-  } else {
-    return "0"+i;
-  }
-}
 var lastHour = -1, lastMin = -1;
 function logstamp(s) {
     logfile.write("utime=" + getTime() + " " + s + "\n");
@@ -477,31 +631,11 @@ function every(now) {
 
 }
 
-function radians(a) { return a*Math.PI/180; }
-function degrees(a) { return a*180/Math.PI; }
-// distance between 2 lat and lons, in meters, Mean Earth Radius = 6371km
-// https://www.movable-type.co.uk/scripts/latlong.html
-// (Equirectangular approximation)
-function calcDistance(a,b) {
-  var x = radians(b.lon-a.lon) * Math.cos(radians((a.lat+b.lat)/2));
-  var y = radians(b.lat-a.lat);
-  return Math.sqrt(x*x + y*y) * 6371000;
-}
-// thanks to waypointer
-function calcBearing(a,b){
-  var delta = radians(b.lon-a.lon);
-  var alat = radians(a.lat);
-  var blat = radians(b.lat);
-  var y = Math.sin(delta) * Math.cos(blat);
-  var x = Math.cos(alat)*Math.sin(blat) -
-        Math.sin(alat)*Math.cos(blat)*Math.cos(delta);
-  return Math.round(degrees(Math.atan2(y, x)));
-}
 function testBearing() {
   let p1 = {}, p2 = {};
   p1.lat = 40; p2.lat = 50;
   p1.lon = 14; p2.lon = 14;
-  print("bearing = ", calcBearing(p1, p2));
+  print("bearing = ", fmt.bearing(p1, p2));
 }
 
 function radA(p) { return p*(Math.PI*2); }
@@ -551,7 +685,7 @@ function drawTime(now) {
   let dot = ":";
   if (!draw_dot)
     dot = ".";
-  g.drawString(now.getHours() + dot + add0(now.getMinutes()), W, 90);
+  g.drawString(now.getHours() + dot + fmt.add0(now.getMinutes()), W, 90);
 }
 function draw() {
   if (disp_mode == 2) {
@@ -579,14 +713,14 @@ function draw() {
   g.setFont('Vector', 30);
 
   const weekday = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-  
+
   msg = weekday[now.getDay()] + "" + now.getDate() + ". "
-        + fmtSteps(Bangle.getHealthStatus("day").steps) + "\n";
+        + fmt.fmtSteps(Bangle.getHealthStatus("day").steps) + "\n";
 
   if (gps_on) {
     msg += gpsHandle() + "\n";
   }
-  
+
   if (state.cur_mark) {
     msg += markHandle() + "\n";
   }
@@ -617,7 +751,7 @@ function draw() {
     else
       msg += "emu?";
   } else {
-    msg += fmtAlt(cur_altitude);
+    msg += fmt.fmtAlt(cur_altitude);
   }
 
   msg = msg + " " + cur_temperature.toFixed(1)+icon_c + "\n";
@@ -647,7 +781,7 @@ function draw_all() {
   g.setColor(1, 1, 1);
   g.setFontAlign(-1, 1);
   let now = new Date();
-  g.drawString(now.getHours() + ":" + add0(now.getMinutes()) + ":" + add0(now.getSeconds()), 10, 40);
+  g.drawString(now.getHours() + ":" + fmt.add0(now.getMinutes()) + ":" + fmt.add0(now.getSeconds()), 10, 40);
 
   let acc = Bangle.getAccel();
   let ax = 0 + acc.x, ay = 0.75 + acc.y, az = 0.75 + acc.y;

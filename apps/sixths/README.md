@@ -80,3 +80,19 @@ Todo:
 *) allow setting up home altitude, or at least disable auto-calibration
 
 *) show time-to-sunset / sunrise?
+
+*) "myprofile" to read step length
+
+*) +-3.5hPa 1012hPa
+
+*) keep GPS on longer
+
+*) display gps alt + offset to baro
+
+*) start logging altitudes, baro pressure
+
+*) compute climb/descent
+
+*) switch to compensated compass
+
+*) only accept gps fix when altitude matches baro
