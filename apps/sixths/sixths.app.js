@@ -28,13 +28,13 @@ let fmt = {
   fmtTemp: function(c) { return c.toFixed(1) + this.icon_c; },
   fmtPress: function(p) { 
     if (p < 900 || p > 1100)
-      return p.toFixed(1) + this.icon_hpa; 
+      return p.toFixed(0) + this.icon_hpa; 
     if (p < 1000) {
       p -= 900;
-      return this.icon_9 + p.toFixed(1) + this.icon_hpa;
+      return this.icon_9 + p.toFixed(0) + this.icon_hpa;
     }
     p -= 1000;
-    return this.icon_10 + p.toFixed(1) + this.icon_hpa;
+    return this.icon_10 + p.toFixed(0) + this.icon_hpa;
   },
   draw_dot : 1,
   add0: function(i) {
@@ -228,6 +228,7 @@ var is_level = false;
 // For altitude handling.
 var cur_altitude = 0;
 var cur_temperature = 0;
+var night_pressure = 0;
 
 function toMorse(x) {
   let r = "";
@@ -771,6 +772,10 @@ function draw() {
     let o = Bangle.getOptions();
     let pr = o.seaLevelPressure;
 
+    if (now.hour < 6)
+      night_pressure = pr;
+    if (night_pressure)
+      msg += (pr-night_pressure).toFixed(1) + fmt.icon_hpa + " ";
     if (pr)
       msg += fmt.fmtPress(pr) + "\n";
   }
