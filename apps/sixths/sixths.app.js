@@ -216,7 +216,7 @@ var gps_on = 0, // time GPS was turned on
     last_restart = 0, last_pause = 0; // utime
     last_fstart = 0; // utime, time of start of last fix
 var gps_needed = 0, // how long to wait for a fix
-    keep_fix_for = 10;
+    keep_fix_for = 30;
 
 var mark_heading = -1;
 
@@ -325,11 +325,11 @@ function gpsHandle() {
         if (!last_fstart)
           last_fstart = getTime();
         last_fix = getTime();
-        keep_fix_for = (last_fstart - last_restart) / 2;
-        if (keep_fix_for < 10)
-          keep_fix_for = 10;
-        if (keep_fix_for > 4*60)
-          keep_fix_for = 4*60;
+        keep_fix_for = (last_fstart - last_restart) / 1.5;
+        if (keep_fix_for < 20)
+          keep_fix_for = 20;
+        if (keep_fix_for > 6*60)
+          keep_fix_for = 6*60;
         gps_needed = 60;
       } else {
         if (last_fix)

@@ -85,8 +85,6 @@ Todo:
 
 *) +-3.5hPa 1012hPa
 
-*) keep GPS on longer
-
 *) display gps alt + offset to baro
 
 *) start logging altitudes, baro pressure
