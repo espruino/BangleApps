@@ -8,6 +8,9 @@ let fmt = {
   icon_km : "\0\x08\x1a\1\xC3\xC6\xCC\xD8\xF0\xD8\xCC\xC6\xC3\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00",
   icon_kph : "\0\x08\x1a\1\xC3\xC6\xCC\xD8\xF0\xD8\xCC\xC6\xC3\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\xFF\x00\xC3\xC3\xFF\xC3\xC3",
   icon_c : "\0\x08\x1a\1\x00\x00\x60\x90\x90\x60\x00\x7F\xFF\xC0\xC0\xC0\xC0\xC0\xFF\x7F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
+  icon_hpa : "\x00\x08\x16\x01\x00\x80\xb0\xc8\x88\x88\x88\x00\xf0\x88\x84\x84\x88\xf0\x80\x8c\x92\x22\x25\x19\x00\x00",
+  icon_9 : "\x00\x08\x16\x01\x00\x00\x00\x00\x38\x44\x44\x4c\x34\x04\x04\x38\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
+  icon_10 : "\x00\x08\x16\x01\x00\x08\x18\x28\x08\x08\x08\x00\x00\x18\x24\x24\x24\x24\x18\x00\x00\x00\x00\x00\x00\x00",
 
   /* 0 .. DD.ddddd
      1 .. DD MM.mmm'
@@ -22,6 +25,17 @@ let fmt = {
   },
   fmtSteps: function(n) { return this.fmtDist(0.001 * 0.719 * n); },
   fmtAlt: function(m) { return m.toFixed(0) + this.icon_alt; },
+  fmtTemp: function(c) { return c.toFixed(1) + this.icon_c; },
+  fmtPress: function(p) { 
+    if (p < 900 || p > 1100)
+      return p.toFixed(1) + this.icon_hpa; 
+    if (p < 1000) {
+      p -= 900;
+      return this.icon_9 + p.toFixed(1) + this.icon_hpa;
+    }
+    p -= 1000;
+    return this.icon_10 + p.toFixed(1) + this.icon_hpa;
+  },
   draw_dot : 1,
   add0: function(i) {
     if (i > 9) {
@@ -739,21 +753,21 @@ function draw() {
     }
     let pr = o.seaLevelPressure;
     if (pr)
-      msg += pr.toFixed(1) + "hPa";
+      msg += fmt.fmtPress(pr);
     else
       msg += "emu?";
   } else {
     msg += fmt.fmtAlt(cur_altitude);
   }
 
-  msg = msg + " " + cur_temperature.toFixed(1)+fmt.icon_c + "\n";
+  msg = msg + " " + fmt.fmtTemp(cur_temperature) + "\n";
 
   {
     let o = Bangle.getOptions();
     let pr = o.seaLevelPressure;
 
     if (pr)
-      msg += pr.toFixed(1) + "hPa\n";
+      msg += fmt.fmtPress(pr) + "\n";
   }
   g.setFontAlign(-1, -1);
   g.drawString(msg, 10, 85);
