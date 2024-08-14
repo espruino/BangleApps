@@ -294,7 +294,7 @@ function gpsHandleFix(fix) {
     debug2 = "te "+(n2-n1)+"s";
   }
   loggps(fix);
-  let d = calcDistance(fix, state.prev_fix);
+  let d = fmt.distance(fix, state.prev_fix);
   if (d > 30) {
     state.prev_fix = fix;
     state.gps_dist += d/1000;
@@ -316,11 +316,13 @@ function gpsHandle() {
         gpsRestart();
       }
     } else {
-      let fix = Bangle.getGPSFix();
+      let fix = gps.getGPSFix();
       if (fix && fix.fix && fix.lat) {
         gpsHandleFix(fix);
-        msg = fmt.fmtSpeed(fix.speed);
-        print("GPS FIX", msg);
+        msg = "";
+        if (Math.abs(fix.alt - cur_altitude) > 20)
+          msg += "!";
+        msg += fmt.fmtSpeed(fix.speed);
 
         if (!last_fstart)
           last_fstart = getTime();
