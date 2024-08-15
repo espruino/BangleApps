@@ -719,15 +719,14 @@ function walkHandle() {
       || step - this_step > 100) {
     msg += fmt.fmtSteps((this_step - prev_step) * 12);
 
-    let dir = cur > base_alt; /* 1.. climb */
+    let dir = ext_alt > base_alt; /* 1.. climb */
     if (!dir) dir = -1;
     let hyst = 2;
-    // This is not fully correct; it fails
-    // to add totals for sequence such as 100, 200, 100, 200.
     if (Math.abs(cur - base_alt) > hyst) {
       if (cur*dir > ext_alt*dir) {
         ext_alt = cur;
       }
+    }
       if (cur*dir < (ext_alt - hyst*dir)*dir) {
         let diff = ext_alt - base_alt;
         if (1 == dir) {
@@ -737,9 +736,9 @@ function walkHandle() {
           tot_down += -diff; 
         }
         base_alt = ext_alt;
-        ext_alt = ext_alt;
+        ext_alt = cur;
       }
-    }
+    
     msg += fmt.fmtAlt(cur-base_alt) + fmt.fmtAlt(tot_down) + fmt.fmtAlt(tot_up);
 
     return msg + "\n";
