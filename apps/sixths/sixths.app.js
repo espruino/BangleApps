@@ -772,7 +772,7 @@ function draw() {
     let o = Bangle.getOptions();
     let pr = o.seaLevelPressure;
 
-    if (now.hour < 6)
+    if (now.getHours() < 10)
       night_pressure = pr;
     if (night_pressure)
       msg += (pr-night_pressure).toFixed(1) + fmt.icon_hpa + " ";

@@ -83,8 +83,6 @@ Todo:
 
 *) "myprofile" to read step length
 
-*) +-3.5hPa 1012hPa
-
 ?) display gps alt + offset to baro
 
 ?) start logging baro pressure
