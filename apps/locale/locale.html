@@ -241,6 +241,7 @@ exports = {
   date: (d,short) => short ? \`${dateS}\` : \`${dateN}\`,
   time: (d,short) => short ? \`${timeS}\` : \`${timeN}\`,
   meridian: d => is12Hours() ? d.getHours() < 12 ? ${js(locale.ampm[0])}:${js(locale.ampm[1])} : "",
+  is12Hours,
 };
 `.trim()
         };
