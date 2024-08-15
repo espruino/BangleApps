@@ -195,7 +195,7 @@ var buzz = "",      /* Set this to transmit morse via vibrations */
     inm = "", l = "", /* For incoming morse handling */
     in_str = "",
     note = "",
-    debug = "v0.6.0", debug2 = "(otherdb)", debug3 = "(short)";
+    debug = "v0.5.10", debug2 = "(otherdb)", debug3 = "(short)";
 var note_limit = 0;
 var mode = 0, mode_time = 0; // 0 .. normal, 1 .. note, 2.. mark name
 var disp_mode = 0;  // 0 .. normal, 1 .. small time
@@ -721,7 +721,7 @@ function walkHandle() {
 
     let dir = cur > base_alt; /* 1.. climb */
     if (!dir) dir = -1;
-    let hyst = 6;
+    let hyst = 2;
     if (Math.abs(cur - base_alt) > hyst) {
       if (cur > ext_alt) { //f
         ext_alt = cur;
@@ -817,7 +817,7 @@ function draw() {
     let o = Bangle.getOptions();
     let pr = o.seaLevelPressure;
 
-    if (now.getHours() < 10) // FIXME
+    if (now.getHours() < 12) // FIXME
       night_pressure = pr;
     if (night_pressure)
       msg += (pr-night_pressure).toFixed(1) + fmt.icon_hpa + " ";
