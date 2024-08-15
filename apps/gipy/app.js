@@ -660,11 +660,11 @@ class Status {
       towards = next_point;
     }
     let diff = towards.minus(this.projected_point);
-    direction = Math.atan2(diff.lat, diff.lon);
+    const direction = Math.atan2(diff.lat, diff.lon);
 
     let full_angle = direction - this.angle;
 
-    c = this.projected_point.coordinates(
+    const c = this.projected_point.coordinates(
       this.displayed_position,
       this.adjusted_cos_direction,
       this.adjusted_sin_direction,
@@ -1394,7 +1394,7 @@ function ask_options(fn) {
   g.flip();
 
   function options_select(b, xy) {
-    end = false;
+    let end = false;
     if (xy.y < height / 2 - 10) {
       g.setColor(0, 0, 0).fillRect(10, 10, width - 10, height / 2 - 10);
       g.setColor(1, 1, 1).setFont("Vector:30").setFontAlign(0,0).drawString("Forward", width/2, height/4);
