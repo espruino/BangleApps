@@ -722,17 +722,22 @@ function walkHandle() {
     let dir = cur > base_alt; /* 1.. climb */
     if (!dir) dir = -1;
     let hyst = 2;
+    // This is not fully correct; it fails
+    // to add totals for sequence such as 100, 200, 100, 200.
     if (Math.abs(cur - base_alt) > hyst) {
-      if (cur > ext_alt) { //f
+      if (cur*dir > ext_alt*dir) {
         ext_alt = cur;
       }
-      if (cur < ext_alt - hyst) { //f
+      if (cur*dir < (ext_alt - hyst*dir)*dir) {
         let diff = ext_alt - base_alt;
-        if (1) {
+        if (1 == dir) {
           tot_up += diff; 
         }
-        base_alt = cur;
-        ext_alt = cur;
+        if (-1 == dir) {
+          tot_down += -diff; 
+        }
+        base_alt = ext_alt;
+        ext_alt = ext_alt;
       }
     }
     msg += fmt.fmtAlt(cur-base_alt) + fmt.fmtAlt(tot_down) + fmt.fmtAlt(tot_up);
