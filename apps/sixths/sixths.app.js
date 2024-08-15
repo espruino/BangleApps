@@ -226,7 +226,7 @@ var draw_dot = false;
 var is_level = false;
 
 // For altitude handling.
-var cur_altitude = 0;
+var cur_altitude = -1;
 var cur_temperature = 0;
 var night_pressure = 0;
 
@@ -608,6 +608,9 @@ function showMsg(msg, timeout) {
   note_limit = getTime() + timeout;
   note = msg;
 }
+
+var prev_step = -1, this_step = -1;
+
 function fivemin() {
   print("fivemin");
   let s = ' B';
@@ -618,7 +621,8 @@ function fivemin() {
   } catch (e) {
     print("Altimeter error", e);
   }
-
+  prev_step = this_step;
+  this_step = Bangle.getStepCount();
 }
 function every(now) {
   if ((mode > 0) && (getTime() - mode_time > 10)) {
@@ -699,6 +703,45 @@ function drawTime(now) {
     dot = ".";
   g.drawString(now.getHours() + dot + fmt.add0(now.getMinutes()), W, 90);
 }
+
+var base_alt = -1, ext_alt = -1, tot_down = 0, tot_up = 0;
+
+function walkHandle() {
+  let msg = "";
+  let step = Bangle.getStepCount();
+  let cur = cur_altitude;
+  if (base_alt == -1) {
+    base_alt = cur;
+    ext_alt = cur;
+  }
+  if (this_step - prev_step > 100
+      || 1
+      || step - this_step > 100) {
+    msg += fmt.fmtSteps((this_step - prev_step) * 12);
+
+    let dir = cur > base_alt; /* 1.. climb */
+    if (!dir) dir = -1;
+    let hyst = 6;
+    if (Math.abs(cur - base_alt) > hyst) {
+      if (cur > ext_alt) { //f
+        ext_alt = cur;
+      }
+      if (cur < ext_alt - hyst) { //f
+        let diff = ext_alt - base_alt;
+        if (1) {
+          tot_up += diff; 
+        }
+        base_alt = cur;
+        ext_alt = cur;
+      }
+    }
+    msg += fmt.fmtAlt(cur-base_alt) + fmt.fmtAlt(tot_down) + fmt.fmtAlt(tot_up);
+
+    return msg + "\n";
+  }
+  return "";
+}
+
 function draw() {
   if (disp_mode == 2) {
     draw_all();
@@ -743,6 +786,8 @@ function draw() {
     else
       msg += note + "\n";
   }
+  
+  msg += walkHandle();
 
   if (getTime() - last_active > 15*60) {
     let alt_adjust = cur_altitude - location.alt;
@@ -772,7 +817,7 @@ function draw() {
     let o = Bangle.getOptions();
     let pr = o.seaLevelPressure;
 
-    if (now.getHours() < 10)
+    if (now.getHours() < 10) // FIXME
       night_pressure = pr;
     if (night_pressure)
       msg += (pr-night_pressure).toFixed(1) + fmt.icon_hpa + " ";
