@@ -323,6 +323,10 @@ function gpsHandle() {
         msg = "";
         if (Math.abs(fix.alt - cur_altitude) > 20)
           msg += "!";
+        if (Math.abs(fix.alt - cur_altitude) > 80)
+          msg += "!";
+        if (Math.abs(fix.alt - cur_altitude) > 320)
+          msg += "!";
         msg += fmt.fmtSpeed(fix.speed);
 
         if (!last_fstart)
@@ -738,8 +742,8 @@ function walkHandle() {
         base_alt = ext_alt;
         ext_alt = cur;
       }
-    
-    msg += fmt.fmtAlt(cur-base_alt) + fmt.fmtAlt(tot_down) + fmt.fmtAlt(tot_up);
+
+    msg += " " + fmt.fmtAlt(tot_down-cur+base_alt) + " " + fmt.fmtAlt(tot_up+cur-base_alt);
 
     return msg + "\n";
   }
