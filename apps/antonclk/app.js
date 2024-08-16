@@ -15,6 +15,7 @@ let draw = function() {
   g.reset().clearRect(Bangle.appRect); // clear whole background (w/o widgets)
   var date = new Date();
   var timeStr = require("locale").time(date, 1); // Hour and minute
+  timeStr = timeStr.replace(/ *h */i, ":"); // Don't use French time format, it is not supported by the Anton font
   g.setFontAlign(0, 0).setFont("Anton").drawString(timeStr, x, y);
   // Show date and day of week
   var dateStr = require("locale").date(date, 0).toUpperCase()+"\n"+
