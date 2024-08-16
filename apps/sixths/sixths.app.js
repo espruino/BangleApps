@@ -721,7 +721,7 @@ function walkHandle() {
   if (this_step - prev_step > 100
       || 1
       || step - this_step > 100) {
-    msg += fmt.fmtSteps((this_step - prev_step) * 12);
+    //msg += fmt.fmtSteps((this_step - prev_step) * 12);
 
     let dir = ext_alt > base_alt; /* 1.. climb */
     if (!dir) dir = -1;
@@ -731,8 +731,8 @@ function walkHandle() {
         ext_alt = cur;
       }
     }
+    let diff = ext_alt - base_alt;
       if (cur*dir < (ext_alt - hyst*dir)*dir) {
-        let diff = ext_alt - base_alt;
         if (1 == dir) {
           tot_up += diff; 
         }
@@ -742,8 +742,15 @@ function walkHandle() {
         base_alt = ext_alt;
         ext_alt = cur;
       }
+    let tmp_down = tot_down, tmp_up = tot_up;
+        if (1 == dir) {
+          tmp_up += diff; 
+        }
+        if (-1 == dir) {
+          tmp_down += -diff; 
+        }
 
-    msg += " " + fmt.fmtAlt(tot_down-cur+base_alt) + " " + fmt.fmtAlt(tot_up+cur-base_alt);
+    msg += " " + fmt.fmtAlt(tmp_down) + " " + fmt.fmtAlt(tmp_up);
 
     return msg + "\n";
   }
