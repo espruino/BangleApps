@@ -1,5 +1,5 @@
 { // must be inside our own scope here so that when we are unloaded everything disappears
-  // we also define functions using 'let fn = function() {..}' for the same reason. function decls are globalj
+  // we also define functions using 'let fn = function() {..}' for the same reason. function decls are global
 let removeHasNotRun = true;
 let drawTimeout;
 
@@ -37,19 +37,19 @@ let drawSplashScreen = function (frame, total) {
 
 // for fast startup-feeling, draw the splash screen once directly once
 g.clear()
-drawSplashScreen(0, 20);
+drawSplashScreen(0, 15);
 
 let splashScreen = function () {
   g.clearRect(R.x,R.y, R.x2, R.y2);
   return new Promise((resolve, reject) => {
     let frame = 0;
     function tick() {
-      if (removeHasNotRun) drawSplashScreen(frame, 20);
+      if (removeHasNotRun) drawSplashScreen(frame, 15);
       frame += 1;
       if (!removeHasNotRun) {
         reject();
-      } else if (frame < 20) {
-        setTimeout(tick, 50);
+      } else if (frame < 15) {
+        setTimeout(tick, 30);
       } else {
         resolve();
       }
@@ -62,13 +62,13 @@ let splashScreen = function () {
 Graphics.prototype.setFontPlayfairDisplay = function() {
   // https://www.espruino.com/Font+Converter
   // <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
-  // 60pt, 2bpp, Numeric
-  // Actual height 62 (67 - 6)
+  // Actual height 58 (61 - 4)
+  // 1 BPP
   return this.setFontCustom(
-    E.toString(require('heatshrink').decompress(atob('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'))),
+    E.toString(require('heatshrink').decompress(atob('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'))),
     46,
-    atob("ExouGyYjJiEoISgoFQ=="),
-    70|65536
+    atob("EBYpGCEfIh4lHyQjEQ=="),
+    65|65536
   );
 }
 
@@ -95,11 +95,10 @@ let draw = function() {
   g.setColor(g.theme.fg)
   // Time
   const yt =  R.y + 92 - 20 - 30 + 6 + 10;
-  const xt = R.w/2 - 5;
+  const xt = R.w/2;
   let hours = date.getHours()+'';
-  g.setFontAlign(1, 0).setFontPlayfairDisplay().drawString(hours, xt - 8, yt);
-  g.setFontAlign(0, 0).setFontPlayfairDisplay().drawString(':', xt, yt);
-  g.setFontAlign(-1, 0).setFontPlayfairDisplay().drawString(minutes, xt + 8, yt);
+
+  g.setFontAlign(0, 0).setFontPlayfairDisplay().drawString(hours + ':' + minutes, xt, yt);
   // logo
   g.drawImage(supaClockImg, R.x2 - supaClockImg.width - 2, R.y + 2);
   // dow + date
@@ -174,16 +173,15 @@ splashScreen().then(() => {
   draw();
   Bangle.drawWidgets();
   // Allocate and draw clockinfos
-  g.setFontAlign(1, 1).setFont('6x8').drawString('Loading Clock Info Modules...', R.x + 10, upperCI);
   setTimeout(() => {
     // delay loading of clock info, so that the clock face appears quicker
     g.clearRect(R.x, upperCI, R.x2, upperCI+10);  // clear loading text
     try {
       clockInfoItems = require("clock_info").load();
-      clockInfoMenu1 = require("clock_info").addInteractive(clockInfoItems,  { app:"lcdclock", x:R.x+1,  y:upperCI,   w:midX-2, h:28, draw : clockInfoDraw});
-      clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, { app:"lcdclock", x:midX+1, y:upperCI,   w:midX-2, h:28, draw : clockInfoDrawR});
-      clockInfoMenu3 = require("clock_info").addInteractive(clockInfoItems, { app:"lcdclock", x:R.x+1,  y:lowerCI,   w:midX-2, h:28, draw : clockInfoDraw});
-      clockInfoMenu4 = require("clock_info").addInteractive(clockInfoItems, { app:"lcdclock", x:midX+1, y:lowerCI,   w:midX-2, h:28, draw : clockInfoDrawR});
+      clockInfoMenu1 = require("clock_info").addInteractive(clockInfoItems,  { app:"supaclk", x:R.x+1,  y:upperCI,   w:midX-2, h:28, draw : clockInfoDraw});
+      clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, { app:"supaclk", x:midX+1, y:upperCI,   w:midX-2, h:28, draw : clockInfoDrawR});
+      clockInfoMenu3 = require("clock_info").addInteractive(clockInfoItems, { app:"supaclk", x:R.x+1,  y:lowerCI,   w:midX-2, h:28, draw : clockInfoDraw});
+      clockInfoMenu4 = require("clock_info").addInteractive(clockInfoItems, { app:"supaclk", x:midX+1, y:lowerCI,   w:midX-2, h:28, draw : clockInfoDrawR});
     } catch(err) {
       if ((err + '').includes('Module "clock_info" not found' )) {
         g.setFont('6x8').drawString('Please install\nclockinfo module!', R.x + 10, upperCI);
