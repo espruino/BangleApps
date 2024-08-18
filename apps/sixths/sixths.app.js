@@ -31,10 +31,10 @@ let fmt = {
       return p.toFixed(0) + this.icon_hpa; 
     if (p < 1000) {
       p -= 900;
-      return this.icon_9 + p.toFixed(0) + this.icon_hpa;
+      return this.icon_9 + this.add0(p.toFixed(0)) + this.icon_hpa;
     }
     p -= 1000;
-    return this.icon_10 + p.toFixed(0) + this.icon_hpa;
+    return this.icon_10 + this.add0(p.toFixed(0)) + this.icon_hpa;
   },
   draw_dot : 1,
   add0: function(i) {
