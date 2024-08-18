@@ -700,12 +700,12 @@ function drawTime(now) {
     g.setFont('Vector', 60);
   else
     g.setFont('Vector', 26);
-  g.setFontAlign(1, 1);
+  g.setFontAlign(1, -1);
   draw_dot = !draw_dot;
   let dot = ":";
   if (!draw_dot)
     dot = ".";
-  g.drawString(now.getHours() + dot + fmt.add0(now.getMinutes()), W, 90);
+  g.drawString(now.getHours() + dot + fmt.add0(now.getMinutes()), W, 28);
 }
 
 var base_alt = -1, ext_alt = -1, tot_down = 0, tot_up = 0;
@@ -840,9 +840,12 @@ function draw() {
       msg += fmt.fmtPress(pr) + "\n";
   }
   g.setFontAlign(-1, -1);
-  g.drawString(msg, 10, 85);
+  if (disp_mode == 0)
+    g.drawString(msg, 10, 85);
+  else
+    g.drawString(msg, 10, 60);
 
-  if (disp_mode == 1) {
+  if (0 && disp_mode == 1) {
     g.setFont('Vector', 21);
     g.drawString(debug + "\n" + debug2 + "\n" + debug3, 10, 20);
   }
