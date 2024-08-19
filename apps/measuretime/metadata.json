@@ -1,7 +1,7 @@
 {
   "id": "measuretime",
   "name": "Measure Time",
-  "version": "0.2",
+  "version": "0.3",
   "description": "Measure Time in a fancy way.",
   "icon": "measuretime_icon.png",
   "screenshots": [

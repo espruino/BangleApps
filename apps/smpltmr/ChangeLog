@@ -7,3 +7,4 @@
 0.07: Update clock_info to avoid a redraw
 0.08: Timer ClockInfo now updates once a minute
 0.09: Timer ClockInfo resets to timer menu when blurred
+0.10: Timer ClockInfo now uses +- icons, and changes timer from 'T-5 min' to just '5 min' to aid readability

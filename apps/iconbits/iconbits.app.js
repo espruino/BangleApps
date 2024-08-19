@@ -10,14 +10,16 @@
   let kule = [0, 0, 0]; // R, G, B
   var font_height = 22, font_width = 8;
   var zoom_x = 64, zoom_y = 24, zoom_f = 6;
+  var color = true;
   let oldLock = false;
   let sg = null;
+  const top_bar = 20;
   
   function clear(m) {
     sg.setColor(1,1,1).fillRect(0,0, font_width, font_height);
   }
 
-  function setup(m) {
+  function __setup(m) {
     mode = m;
     switch (m) {
       case 'font':
@@ -37,8 +39,21 @@
         zoom_f = 2;
         break;
     }
+  }
+  function setup(m) {
+    __setup(m);
     sg = Graphics.createArrayBuffer(font_width, font_height, 8, {});
     clear();
+  }
+
+  function icon_big() {
+    zoom_x = 16;
+    zoom_y = 25;
+    zoom_f = 3;
+  }
+
+  function icon_small() {
+    __setup("icon");
   }
 
   function updateLock() {
@@ -47,9 +62,9 @@
       }
       g.setColor('#fff');
       g.fillRect(0, 0, g.getWidth(), 20);
-      g.setFont('6x8', 2);
+      g.setFont('Vector', 22);
       g.setColor('#000');
-      g.drawString('PLEASE UNLOCK', 10, 2);
+      g.drawString('PLEASE\nUNLOCK', 10, 2);
       oldLock = true;
   }
 Bangle.on("lock", function() {
@@ -60,17 +75,20 @@ Bangle.on("lock", function() {
       drawUtil();
     }
 });
-  function nextColor () {
+  function nextColor() {
     kule[0] = Math.random();
     kule[1] = Math.random();
     kule[2] = Math.random();
   }
-  function selectColor (x) {
-    let c;
+  function selectColor(x) {
+    if (color) {
+      let i = Math.floor((x - 32) / 4);
+      kule = toColor(i);
+      return;
+    }
+    let c = 255;
     if (x < g.getWidth()/2) {
       c = 0;
-    } else {
-      c = 255;
     }
     kule[0] = c;
     kule[1] = c;
@@ -79,8 +97,8 @@ Bangle.on("lock", function() {
   function nextPen () {
     switch (pen) {
       case 'circle': pen = 'pixel'; break;
-      case 'pixel': pen = 'crayon'; break;
-      case 'crayon': pen = 'square'; break;
+      case 'pixel': pen = 'line'; break;
+      case 'line': pen = 'square'; break;
       case 'square': pen = 'circle'; break;
       default: pen = 'pixel'; break;
     }
@@ -89,8 +107,8 @@ Bangle.on("lock", function() {
     discard = setTimeout(function () { oldX = -1; oldY = -1; console.log('timeout'); discard = null; }, 500);
   }
 
-  var oldX = -1;
-  var oldY = -1;
+  var oldX = -1, oldY = -1;
+  var line_from = null;
 
   function drawBrushIcon () {
     const w = g.getWidth();
@@ -110,13 +128,17 @@ Bangle.on("lock", function() {
         g.drawLine(w - 14, 6, w - 10, 12);
         g.drawLine(w - 6, 6, w - 10, 12);
         break;
+      case 'line':
+        g.drawLine(w - 5, 5, w - 15, 15);
+        break;
     }
   }
   
-  function drawArea () {
+  function drawArea() {
     g.clear();
     if (mode == "draw")
       return;
+    const w = g.getWidth;
     g.setColor(0, 0, 0.5);
     g.fillRect(0, 0, g.getWidth(), g.getHeight());
     g.setColor(1, 1, 1);
@@ -129,13 +151,28 @@ Bangle.on("lock", function() {
     update();
   }
 
-  function drawUtil () {
+  function toColor(i) {
+    let r = [0, 0, 0];
+    r[0] = (i % 3) / 2;
+    i = Math.floor(i / 3);
+    r[1] = (i % 3) / 2;
+    i = Math.floor(i / 3);
+    r[2] = (i % 3) / 2;
+    return r;
+  }
+
+  function drawUtil() {
     if (Bangle.isLocked()) {
       updateLock();
     }
     // titlebar
     g.setColor(kule[0], kule[1], kule[2]);
-    g.fillRect(0, 0, g.getWidth(), 20);
+    g.fillRect(0, 0, g.getWidth(), top_bar);
+    for (let i = 0; i < 3*3*3; i++) {
+      let r = toColor(i);
+      g.setColor(r[0], r[1], r[2]);
+      g.fillRect(32+4*i, 12, 32+4*i+3, top_bar);
+    }
     // clear button
     g.setColor('#000'); // black
     g.fillCircle(10, 10, 8, 8);
@@ -149,7 +186,7 @@ Bangle.on("lock", function() {
     drawBrushIcon();
   }
   
-  function transform (p) {
+  function transform(p) {
     if (p.x < zoom_x || p.y < zoom_y)
       return p;
     p.x = ((p.x - zoom_x) / zoom_f);
@@ -159,8 +196,12 @@ Bangle.on("lock", function() {
     return p;
   }
   
-  function __draw (g, from, to) {
+  function __draw(g, from, to) {
+    let XS = (to.x - from.x) / 32;
+    let YS = (to.y - from.y) / 32;
+
     switch (pen) {
+      case 'line':
       case 'pixel':
         g.drawLine(from.x, from.y, to.x, to.y);
         break;
@@ -170,27 +211,25 @@ Bangle.on("lock", function() {
         g.drawLine(from.x + 2, from.y + 2, to.x, to.y + 2);
         break;
       case 'circle':
-        var XS = (to.x - from.x) / 32;
-        var YS = (to.y - from.y) / 32;
         for (let i = 0; i < 32; i++) {
-          g.fillCircle(from.x + (i * XS), from.y + (i * YS), 4, 4);
+          g.fillCircle(from.x + (i * XS), from.y + (i * YS), 2, 2);
         }
         break;
       case 'square':
-        var XS = (to.x - from.x) / 32;
-        var YS = (to.y - from.y) / 32;
         for (let i = 0; i < 32; i++) {
           const posX = from.x + (i * XS);
           const posY = from.y + (i * YS);
-          g.fillRect(posX - 10, posY - 10, posX + 10, posY + 10);
+          g.fillRect(posX - 4, posY - 4, posX + 4, posY + 4);
         }
         break;
+      default:
+        print("Unkown pen ", pen);
     }
-
   }
   
   function update() {
-    g.drawImage(sg, 0, 64, {});
+    if (zoom_f < 3)
+      g.drawImage(sg, 4, 64, {});
     g.drawImage(sg, zoom_x, zoom_y, { scale: zoom_f });
   }
     
@@ -227,7 +266,7 @@ Bangle.on("lock", function() {
     }, 100);
 
     // tap and hold the clear button
-    if (tap.x < 32 && tap.y < 32) {
+    if (tap.x < 32 && tap.y < top_bar) {
       if (tap.b === 1) {
         if (tapTimer === null) {
           tapTimer = setTimeout(function () {
@@ -244,7 +283,7 @@ Bangle.on("lock", function() {
       }
       return;
     }
-    if (tap.x > g.getWidth() - 32 && tap.y < 32) {
+    if (tap.x > g.getWidth() - 32 && tap.y < top_bar) {
       if (tap.b === 1) {
         if (tapTimer === null) {
           tapTimer = setTimeout(function () {
@@ -264,7 +303,7 @@ Bangle.on("lock", function() {
       }
       drawUtil();
       return;
-    } else if (tap.y < 32) {
+    } else if (tap.y < top_bar) {
       if (mode == "draw")
         nextColor();
       else
@@ -272,20 +311,31 @@ Bangle.on("lock", function() {
       drawUtil();
       return;
     }
-    oldX = to.x;
-    oldY = to.y;
     sg.setColor(kule[0], kule[1], kule[2]);
     g.setColor(kule[0], kule[1], kule[2]);
+    oldX = to.x;
+    oldY = to.y;
 
-    do_draw(from, to);
+    if (pen != "line") {
+      do_draw(from, to);
+    } else {
+      if (tap.b == 1) {
+      print(line_from);
+      if (!line_from) {
+        line_from = to;
+      } else {
+        do_draw(line_from, to);
+        line_from = null;
+      }
+      }
+    }
     drawUtil();
   }
-  function on_btn(n) {
+
+function dump(n) {
     function f(i) {
       return "\\x" + i.toString(16).padStart(2, '0');
     }
-    print("on_btn", n);
-    print(g.getPixel(0, 0));
     let s = f(0) + f(font_width) + f(font_height) + f(1);
     // 0..black, 65535..white
     for (let y = 0; y < font_height; y++) {
@@ -296,41 +346,55 @@ Bangle.on("lock", function() {
       }
       s += f(v);
     }
-    print("Manual bitmap\n");
-    print('ft("' + s + '");');
-    if (1) {
-      s = "";
-      var im = sg.asImage("string");
-      for (var v of im) {
-        //print("val", v, typeof v);
-        s += f(v);
-      }
-      //print("wh", im, typeof im, im[0], typeof im[0]);
-      //print("Image:", im.length, s);
-      print('fi("'+btoa(im)+'");');
-    }
-
-
+    if (mode == "font")
+      print('show_font("' + s + '");');
+    var im = sg.asImage("string");
+    //print('show_unc_icon("'+btoa(im)+'");');
+    print('show_icon("'+btoa(require('heatshrink').compress(im))+'");');
   }
 
-  setup("icon");
-  drawArea();
-  Bangle.setUI({
+setup("icon");
+drawArea();
+Bangle.setUI({
       "mode": "custom",
       "drag": on_drag,
-      "btn": on_btn,
-  });
-  drawUtil();
+      "btn": dump,
+});
+drawUtil();
 
-
-function ft(icon) {
+function show_font(icon) {
   g.reset().clear();
   g.setFont("Vector", 26).drawString("Hellord" + icon, 0, 0);
 }
 
-function fi(icon) {
+function show_bin_icon(icon) {
   g.reset().clear();
-  g.drawImage(atob(icon), 40, 40);
+  g.drawImage(icon, 40, 40);
 }
 
-//ft(icon_10 + "23.1" + icon_hpa);
+function show_unc_icon(icon) {
+  show_bin_icon(atob(icon));
+}
+
+function show_icon(icon) {
+  let unc = require("heatshrink").decompress(atob(icon));
+  show_bin_icon(unc);
+}
+
+function load_bin_icon(i) {
+  sg.reset().clear();
+  sg.drawImage(i, 0, 0);
+  drawArea();
+}
+
+function load_icon(icon) {
+  let unc = require("heatshrink").decompress(atob(icon));
+  load_bin_icon(unc);
+}
+
+function for_screen() {
+  g.reset().clear();
+  icon_big();
+  update();
+}
+

@@ -11,3 +11,4 @@
       Stop ClockInfo text drawing outside the allocated area
 0.09: Use clock_info module as an app
 0.10: Option to hide widgets, tweak top widget width to avoid overlap with hour text at 9am
+0.11: Avoid rendering clkinfo in the same colour as the background
