@@ -1,6 +1,6 @@
 { "id": "supaclk",
   "name": "SUPACLOCK Pro ULTRA",
-  "version": "0.01",
+  "version": "0.02",
   "description": "SUPACLOCK Pro ULTRA, with four ClockInfo areas at the bottom. Tap them and swipe up/down and left/right to toggle between different information.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"},{"url":"screenshot2.png"}],
