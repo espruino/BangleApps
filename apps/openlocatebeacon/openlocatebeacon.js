@@ -107,11 +107,11 @@ Bangle.on('GPS', (newGps) => {
   mainMenu.HDOP.value = (gps.hdop * 5).toFixed(1) + 'm';
   E.showMenu(mainMenu);
 
-  if(Number.isFinite(gps.lat) && Number.isFinite(gps.lon)) {
+  if(!isNaN(gps.lat) && !isNaN(gps.lon)) {
     NRF.setAdvertising(encodeGeoLocationElement(), ADVERTISING_OPTIONS);
   }
   else {
-    NRF.setAdvertising({}, { name:"Bangle.js" });
+    NRF.setAdvertising({}, { name: "Bangle.js" });
   }
 });
 
