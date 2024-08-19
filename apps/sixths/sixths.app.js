@@ -185,6 +185,8 @@ let gps = {
 /* sun version 0.0.1 */
 let sun	= {
   SunCalc: null,
+  lat: 50,
+  lon: 14,
   init: function() {  
     try {
       this.SunCalc = require("suncalc"); // from modules folder
@@ -193,10 +195,24 @@ let sun	= {
     }
 
     print("Have suncalc: ", this.SunCalc);
-  }
+  },
+  get_sun_pos: function() {
+    let d = new Date();
+    let sun = this.SunCalc.getPosition(d, this.lat, this.lon);
+    print(sun.azimuth, sun.altitude);
+    return sun;
+  },
+  get_sun_time: function() {
+    let d = new Date();
+    let sun = this.SunCalc.getTimes(d, this.lat, this.lon);
+    print(sun.sunrise, sun.sunrise.getHour());
+    return sun;
+  },
 };
 
 sun.init();
+sun.get_sun_pos();
+sun.get_sun_time();
 fmt.init();
 gps.init();
 
