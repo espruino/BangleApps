@@ -226,7 +226,7 @@ var buzz = "",      /* Set this to transmit morse via vibrations */
     inm = "", l = "", /* For incoming morse handling */
     in_str = "",
     note = "",
-    debug = "v0.5.10", debug2 = "(otherdb)", debug3 = "(short)";
+    debug = "v0.5.11", debug2 = "(otherdb)", debug3 = "(short)";
 var note_limit = 0;
 var mode = 0, mode_time = 0; // 0 .. normal, 1 .. note, 2.. mark name
 var disp_mode = 0;  // 0 .. normal, 1 .. small time
@@ -736,7 +736,10 @@ function drawTime(now) {
   let dot = ":";
   if (!draw_dot)
     dot = ".";
-  g.drawString(now.getHours() + dot + fmt.add0(now.getMinutes()), W, 28);
+  let s = "";
+  if (disp_mode == 1)
+    s = debug;
+  g.drawString(s + now.getHours() + dot + fmt.add0(now.getMinutes()), W, 28);
 }
 
 var base_alt = -1, ext_alt = -1, tot_down = 0, tot_up = 0;
