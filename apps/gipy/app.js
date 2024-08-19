@@ -660,11 +660,11 @@ class Status {
       towards = next_point;
     }
     let diff = towards.minus(this.projected_point);
-    direction = Math.atan2(diff.lat, diff.lon);
+    const direction = Math.atan2(diff.lat, diff.lon);
 
     let full_angle = direction - this.angle;
 
-    c = this.projected_point.coordinates(
+    const c = this.projected_point.coordinates(
       this.displayed_position,
       this.adjusted_cos_direction,
       this.adjusted_sin_direction,
@@ -1394,7 +1394,7 @@ function ask_options(fn) {
   g.flip();
 
   function options_select(b, xy) {
-    end = false;
+    let end = false;
     if (xy.y < height / 2 - 10) {
       g.setColor(0, 0, 0).fillRect(10, 10, width - 10, height / 2 - 10);
       g.setColor(1, 1, 1).setFont("Vector:30").setFontAlign(0,0).drawString("Forward", width/2, height/4);
@@ -1474,6 +1474,98 @@ function start_gipy(path, maps, interests, heights) {
           }
         },
       };
+      try {
+        // plot openstmap option if installed
+        const osm = require("openstmap");
+        menu[/*LANG*/"Plot OpenStMap"] = function() {
+          E.showMenu(); // remove menu
+
+          // compute min/max coordinates
+          const fix = Bangle.getGPSFix();
+          let minLat = fix.lat ? fix.lat : 90;
+          let maxLat = fix.lat ? fix.lat : -90;
+          let minLong = fix.lon ? fix.lon : 180;
+          let maxLong = fix.lon ? fix.lon : -180;
+          for(let i=0; i<path.len; i++) {
+            const point = path.point(i);
+            if(point.lat>maxLat) maxLat=point.lat; if(point.lat<minLat) minLat=point.lat;
+            if(point.lon>maxLong) maxLong=point.lon; if(point.lon<minLong) minLong=point.lon;
+          }
+          const max = Bangle.project({lat: maxLat, lon: maxLong});
+          const min = Bangle.project({lat: minLat, lon: minLong});
+          const scaleX = (max.x-min.x)/Bangle.appRect.w;
+          const scaleY = (max.y-min.y)/Bangle.appRect.h;
+
+          // openstmap initialization
+          osm.scale = Math.ceil((scaleX > scaleY ? scaleX : scaleY)*1.1); // add 10% margin
+          osm.lat = (minLat+maxLat)/2.0;
+          osm.lon = (minLong+maxLong)/2.0;
+
+          const drawOpenStmap = () => {
+            g.clearRect(Bangle.appRect);
+            osm.draw();
+
+            // draw track
+            g.setColor("#f09");
+            for(let i=0; i<path.len; i++) {
+              const point = path.point(i);
+              const mp = osm.latLonToXY(point.lat, point.lon);
+              if (i == 0) {
+                g.moveTo(mp.x,mp.y);
+              } else {
+                g.lineTo(mp.x,mp.y);
+              }
+              g.fillCircle(mp.x,mp.y,2); // make the track more visible
+            }
+
+            // draw current position
+            g.setColor("#000");
+            if (fix.lat && fix.lon) {
+              const icon = require("heatshrink").decompress(atob("jEYwYPMyVJkgHEkgICyAHCgIIDyQIChIIEoAIDC4IIEBwOAgEEyVIBAY4DBD4sGHxBQIMRAIIPpAyCHAYILUJEAiVJkAIFgVJXo5fCABQA==")); // 24x24px
+              const mp = osm.latLonToXY(fix.lat, fix.lon);
+              g.drawImage(icon, mp.x, mp.y);
+            }
+
+            // labels
+            g.setFont("6x8",2);
+            g.setFontAlign(0,0,3);
+            g.drawString(/*LANG*/"Back", g.getWidth() - 10, g.getHeight()/2);
+            g.drawString("+", g.getWidth() - 10, g.getHeight()/4);
+            g.drawString("-", g.getWidth() - 10, g.getHeight()/4*3);
+          };
+          drawOpenStmap();
+
+          let startDrag = 0;
+          Bangle.setUI({
+            mode: "custom",
+            btn: (n) => { // back handling
+              g.clearRect(0, 0, g.getWidth(), g.getHeight());
+              E.showMenu(menu);
+            },
+            drag: (ev) => { // zoom, move
+              if (ev.b) {
+                osm.scroll(ev.dx, ev.dy);
+                if (!startDrag) {
+                  startDrag = getTime();
+                }
+              } else {
+                if (getTime() - startDrag < 0.2) {
+                  // tap
+                  if (ev.y > g.getHeight() / 2) {
+                    osm.scale *= 2;
+                  } else {
+                    osm.scale /= 2;
+                  }
+                }
+                startDrag = 0;
+                drawOpenStmap();
+              }
+            },
+          });
+        };
+      } catch (ex) {
+        // openstmap not available.
+      }
       E.showMenu(menu);
     },
     BTN1,

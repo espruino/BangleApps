@@ -1015,12 +1015,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/gipy/app.js": {
-    "hash": "41f342e8ef6f2a87b3aea19b75ee45cfdfeff723b94281049e3ae0ec89cddba5",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/geissclk/precompute.js": {
     "hash": "2317812a9e348e7883e93a4be9e294ad7accd4dc3f0e31ee00343e2412030f98",
     "rules": [
