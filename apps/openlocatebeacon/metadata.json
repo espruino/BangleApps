@@ -1,7 +1,7 @@
 {
   "id": "openlocatebeacon",
   "name": "OpenLocate Beacon",
-  "shortName": "OpenLocale Beacon",
+  "shortName": "OpenLocate Beacon",
   "version": "0.01",
   "description": "Advertise GPS geolocation date using the OpenLocate Beacon packet specification.",
   "icon": "openlocatebeacon.png",
