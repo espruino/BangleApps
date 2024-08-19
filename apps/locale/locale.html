@@ -1,10 +1,12 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../../css/spectre.min.css">
     <style>
-      table { width:100%;}
-      .table_t {font-weight:bold;width:40%;};
+      table {width:100%;margin-top:3%;}
+      .table_t {font-weight:bold;width:40%;}
+      .form-group > * {display:block;}
     </style>
   </head>
   <body>
@@ -15,18 +17,20 @@
     </select>
     </div>
     <div class="form-group">
-      <input id="translations" type="checkbox" /> <label for="translations">Add common language translations like "Yes", "No", "On", "Off"<br/><i>(Not recommended. For translations use the option under <code>More...</code> in the app loader.</i></label>
+      <label><input id="translations" type="checkbox" /> Add common language translations like "Yes", "No", "On", "Off"<br/><i>(Not recommended. For translations use the option under <code>More...</code> in the app loader.</i></label>
+      <label><input id="customize" type="checkbox" /> Advanced: Customize the date and time formats.</label>
     </div>
     <p>
-      <table id="examples">
+      <span id="customize-warning"></span>
+      <table id="examples-short-long"></table>
+      <table id="examples"></table>
     </p>
 
-    </table>
     <p>Then click <button id="upload" class="btn btn-primary">Upload</button></p>
 
     <script src="../../core/lib/customize.js"></script>
     <script src="../../core/js/utils.js"></script>
-    <script src="locales.js" charset="utf-8"></script>
+    <script src="locales.js"></script>
 
     <script>
 /*
@@ -125,15 +129,14 @@ exports = { name : "system", currencySym:"£",
       });
 
 
-      function createLocaleModule(lang) {
+      function createLocaleModule() {
         console.log(`Language ${lang}`);
 
         const translations = document.getElementById('translations').checked;
         console.log(`Translations: ${translations}`);
 
-        const locale = locales[lang];
         if (!locale) {
-          alert(`Language ${lang} not found!`);
+          alert(`Locale not set for language ${lang}!`);
           return;
         }
 
@@ -185,16 +188,10 @@ exports = { name : "system", currencySym:"£",
           "%P":  `d.getHours()<12?${js(locale.ampm[0].toLowerCase())}:${js(locale.ampm[1].toLowerCase())}`
         };
 
-        var timeN = locale.timePattern[0];
-        var timeS = locale.timePattern[1];
-        var dateN = locale.datePattern[0];
-        var dateS = locale.datePattern[1];
-        Object.keys(replaceList).forEach(e => {
-          timeN = timeN.replace(e,"${"+replaceList[e]+"}");
-          timeS = timeS.replace(e,"${"+replaceList[e]+"}");
-          dateN = dateN.replace(e,"${"+replaceList[e]+"}");
-          dateS = dateS.replace(e,"${"+replaceList[e]+"}");
-        });
+        var timeN = patternToCode(locale.timePattern[0]);
+        var timeS = patternToCode(locale.timePattern[1]);
+        var dateN = patternToCode(locale.datePattern[0]);
+        var dateS = patternToCode(locale.datePattern[1]);
         var temperature = locale.temperature=='°F' ? '(t*9/5)+32' : 't';
 
         function getLocaleModule(isLocal) {
@@ -246,46 +243,200 @@ exports = {
         eval(getLocaleModule(true));
         console.log("exports:",exports);
 
+        function patternToCode(pattern){
+          for(const symbol of Object.keys(replaceList)){
+            pattern = pattern.replaceAll(symbol,"${"+replaceList[symbol]+"}");
+          }
+          return pattern;
+        }
+        function patternToOutput(pattern){
+          const code = patternToCode(pattern);
+          const result = eval(`let d = new Date();\`${code}\``);
+          return result;
+        }
+        function dataList(id, options, formatter){
+          let output = `<datalist id="${id}">`;
+          for(const option of options){
+            const formatted = formatter?.(option) || option;
+            output+=`\n<option value="${option}">${formatted}</option>`
+          }
+          output += "\n</datalist>";
+          return output;
+        }
+
         var date = new Date();
-        document.getElementById("examples").innerHTML = `
+        // TODO: This warning should have a link to an article explaining how the formats work, and how long they are allowed to be
+        document.getElementById("customize-warning").innerText = customizeLocale ? "⚠️ If you make the formats too long, some apps will not work!" : "";
+        document.getElementById("examples-short-long").innerHTML = `
 <tr><td class="table_t"></td><td style="font-weight:bold">Short</td><td style="font-weight:bold">Long</td></tr>
 <tr><td class="table_t">Day</td><td>${exports.dow(date,1)}</td><td>${exports.dow(date,0)}</td></tr>
 <tr><td class="table_t">Month</td><td>${exports.month(date,1)}</td><td>${exports.month(date,0)}</td></tr>
-<tr><td class="table_t">Date</td><td>${exports.date(date,1)}</td><td>${exports.date(date,0)}</td></tr>
-<tr><td class="table_t">Time</td><td>${exports.time(date,1)}</td><td>${exports.time(date,0)}</td></tr>
-<tr><td class="table_t">Number</td><td>${exports.number(12.3456789)}</td><td>${exports.number(12.3456789,4)}</td></tr>
-<tr><td class="table_t">Distance</td><td>${exports.distance(12.34,0)}</td><td>${exports.distance(12345.6,1)}</td></tr>
-<tr><td class="table_t">Speed</td><td></td><td>${exports.speed(123)}</td></tr>
-<tr><td class="table_t">Temperature</td><td></td><td>${exports.temp(12,0)}</td></tr>
+<tr><td class="table_t">Date</td>
+  <td id="short-date-pattern-output">${exports.date(date,1)}</td>
+  <td id="long-date-pattern-output">${exports.date(date,0)}</td>
+</tr>
+${customizeLocale ? `<tr><td class="table_t">Date format</td>
+    <td>
+      <input type=text id="short-date-pattern" list="short-date-patterns" value="${locale?.datePattern["1"]}"/>
+      ${dataList("short-date-patterns", [locale?.datePattern["1"], "%-d.%-m.%y", "%-d/%-m/%y", "%d/%m/%Y"], patternToOutput)}
+    </td>
+    <td>
+      <input type=text id="long-date-pattern" list="long-date-patterns" value="${locale?.datePattern["0"]}"/>
+      ${dataList("long-date-patterns", [locale?.datePattern["0"], "%-d. %b %Y", "%b %d, %Y"], patternToOutput)}
+    </td>
+    </td>`
+  : ""}
+<tr><td class="table_t">Time</td>
+  <td id="short-time-pattern-output">${exports.time(date,1)}</td>
+  <td id="long-time-pattern-output">${exports.time(date,0)}</td>
+</tr>
+${customizeLocale ? `<tr><td class="table_t">Time format</td>
+    <td>
+      <input type=text id="short-time-pattern" list="short-time-patterns" value="${locale?.timePattern["1"]}"/>
+      ${dataList("short-time-patterns", [ "%HH.%MM", "%HH:%MM"], patternToOutput)}
+    </td>
+    <td>
+      <input type=text id="long-time-pattern" list="long-time-patterns" value="${locale?.timePattern["0"]}"/>
+      ${dataList("long-time-patterns", [locale?.timePattern["0"], "%HH.%MM.%SS", "%HH:%MM:%SS"], patternToOutput)}
+    </td>
+    </td>`
+  : ""}
+  <tr><td class="table_t">Number</td><td>${exports.number(12.3456789)}</td><td>${exports.number(12.3456789,4)}</td></tr>
+  <tr><td class="table_t">Distance</td><td>${exports.distance(12.34,0)}</td><td>${exports.distance(12345.6,1)}</td></tr>
 `;
+document.getElementById("examples").innerHTML = `
+<tr><td class="table_t">Meridian</td><td>
+  <span id="meridian-am-output">${exports.meridian(new Date(0))}</span> /
+  <span id="meridian-pm-output">${exports.meridian(new Date(43200000))}</span>
+</td></tr>
+${customizeLocale ? `<tr><td class="table_t">Meridian names</td>
+    <td>
+      <input type=text id="meridian-am" list="meridian-ams" value="${locale?.ampm["0"]}"/>
+      ${dataList("meridian-ams", [locale?.ampm["0"], "AM"])}
+    </td>
+    <td>
+      <input type=text id="meridian-pm" list="meridian-pms" value="${locale?.ampm["1"]}"/>
+      ${dataList("meridian-pms", [locale?.ampm["1"], "PM"])}
+    </td>
+    </tr>`
+  : ""}
+<tr><td class="table_t">Speed</td><td>${exports.speed(123)}</td></tr>
+<tr><td class="table_t">Temperature</td><td>${exports.temp(12,0)}</td></tr>
+`;
+
+        if(customizeLocale){
+          document.querySelector("input#short-date-pattern").addEventListener("input", event => {
+            locale.datePattern["1"] = event.target.value;
+            document.querySelector("td#short-date-pattern-output").innerText = patternToOutput(event.target.value);
+          });
+          document.querySelector("input#long-date-pattern").addEventListener("input", event => {
+            locale.datePattern["0"] = event.target.value;
+            document.querySelector("td#long-date-pattern-output").innerText = patternToOutput(event.target.value);
+          });
+          document.querySelector("input#short-time-pattern").addEventListener("input", event => {
+            locale.timePattern["1"] = event.target.value;
+            document.querySelector("td#short-time-pattern-output").innerText = patternToOutput(event.target.value);
+          });
+          document.querySelector("input#long-time-pattern").addEventListener("input", event => {
+            locale.timePattern["0"] = event.target.value;
+            document.querySelector("td#long-time-pattern-output").innerText = patternToOutput(event.target.value);
+          });
+          document.querySelector("input#meridian-am").addEventListener("input", event => {
+            locale.ampm["0"] = event.target.value;
+            document.querySelector("span#meridian-am-output").innerText = event.target.value;
+          });
+          document.querySelector("input#meridian-pm").addEventListener("input", event => {
+            locale.ampm["1"] = event.target.value;
+            document.querySelector("span#meridian-pm-output").innerText = event.target.value;
+          });
+        }
         return getLocaleModule(false);
       }
 
+      const lastUploadedLocaleID = "last-uploaded-locale";
+      let lastUploadedLocale;
+      try{
+        lastUploadedLocale = JSON.parse(localStorage?.getItem(lastUploadedLocaleID));
+      }catch(error){
+        console.warn("Unable to load last uploaded locale", error);
+      }
+      if(lastUploadedLocale){
+        if(!lastUploadedLocale.lang){
+          lastUploadedLocale = undefined;
+          console.warn("Unable to load last uploaded locale, it is missing the lang entry");
+        }else if(lastUploadedLocale.custom){
+          // Make sure to add any missing data from the original lang
+          // We don't know if fx a new entry has been added after the locale was last saved
+          const originalLocale = structuredClone(locales[lastUploadedLocale.lang]);
+          lastUploadedLocale = {...originalLocale, ...lastUploadedLocale};
+
+          // Add a special entry for the custom locale, put it first in the list
+          locales = {[lastUploadedLocaleID]: lastUploadedLocale, ...locales};
+        }
+      }
+
+      var lang;
+      var locale;
+      var customizeLocale = false;
       var languageSelector = document.getElementById("languages");
+      var customizeSelector = document.getElementById('customize');
       languageSelector.innerHTML = Object.keys(locales).map(l=>{
         var locale = locales[l];
-        var localeParts = l.split("_"); // en_GB -> ["en","GB"]
+        var name = l === lastUploadedLocaleID ? `Custom locale based on ${locale.lang}` : locale.lang;
+        var localeParts = locale.lang.split("_"); // en_GB -> ["en","GB"]
         var icon = "";
         // If we have a 2 char ISO country code, use it to get the unicode flag
         if (locale.icon)
           icon = locale.icon+" ";
         else if (localeParts[1] && localeParts[1].length==2)
           icon = localeParts[1].toUpperCase().replace(/./g, char => String.fromCodePoint(char.charCodeAt(0)+127397) )+" ";
-        return `<option value="${l}">${icon}${l}${locale.notes?" - "+locale.notes:""}</option>`
+        return `<option value="${l}">${icon}${name}${locale.notes?" - "+locale.notes:""}</option>`
       }).join("\n");
-      languageSelector.addEventListener('change', function() {
-        const lang = languageSelector.options[languageSelector.selectedIndex].value;
-        createLocaleModule(lang);
-      });
-      // initial value
-      createLocaleModule(languageSelector.options[languageSelector.selectedIndex].value);
+      if(lastUploadedLocale){
+        if(lastUploadedLocale.custom){
+          // If the last uploaded locale was customized, choose the custom locale as default value
+          languageSelector.value = lastUploadedLocaleID;
+        }else{
+          // If the last uploaded locale was not customized, choose the existing locale in the list as the default value
+          languageSelector.value = lastUploadedLocale.lang;
+        }
+      }
+      languageSelector.addEventListener('change', handleLanguageChange);
+      function handleLanguageChange(){
+        lang = languageSelector.value;
+        locale = structuredClone(locales[lang]);
+        // If the locale is customized, make sure the customization option is activated. If not, disable it.
+        if(Boolean(customizeSelector.checked) !== Boolean(locale.custom)){
+          customizeSelector.checked = Boolean(locale.custom);
+          handleCustomizeChange();
+        }else{
+          createLocaleModule();
+        }
+      }
+      customizeSelector.addEventListener('change', handleCustomizeChange);
+      function handleCustomizeChange(){
+        customizeLocale = customizeSelector.checked;
+        // If the user no longer wants to customize, make sure to return to the default lang entry
+        if(!customizeLocale){
+          languageSelector.value = locales[lang].lang;
+          handleLanguageChange();
+        }else{
+          createLocaleModule();
+        }
+      }
+      // set initial values
+      handleLanguageChange();
 
 
 
       document.getElementById("upload").addEventListener("click", function() {
 
-        const lang = languageSelector.options[languageSelector.selectedIndex].value;
-        var localeModule = createLocaleModule(lang);
+        var localeModule = createLocaleModule();
+
+        // Save the locale data to make it easier to upload the same locale next time.
+        // If the locale is not customized, only save the lang. The rest of the data will be added when the page loads next time.
+        const savedLocaleData = customizeLocale ? {...locale, custom: true} : {lang: locale.lang};
+        localStorage?.setItem(lastUploadedLocaleID, JSON.stringify(savedLocaleData));
 
         console.log("Locale Module is:",localeModule);
         sendCustomizedApp({
