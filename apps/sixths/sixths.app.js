@@ -182,6 +182,21 @@ let gps = {
   },
 };
 
+/* sun version 0.0.1 */
+let sun	= {
+  SunCalc: null,
+  init: function() {  
+    try {
+      this.SunCalc = require("suncalc"); // from modules folder
+    } catch (e) {
+      print("Require error", e);
+    }
+
+    print("Have suncalc: ", this.SunCalc);
+  }
+};
+
+sun.init();
 fmt.init();
 gps.init();
 
