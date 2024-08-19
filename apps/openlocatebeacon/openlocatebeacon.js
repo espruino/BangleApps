@@ -31,7 +31,7 @@ function encodeGeoLocationElement() {
   let seqFrag = ((sequenceNumber++ & 0x0f) << 4) + 0x01;
   let rfc6225lat = toRfc6225Coordinate(gps.lat);
   let rfc6225lon = toRfc6225Coordinate(gps.lon);
-  let rfc6225alt = toRfc6225Coordinate(bar.altitude);
+  let rfc6225alt = toRfc6225Altitude(bar.altitude);
   lci[0] = rfc6225lat.integer >> 7;
   lci[1] = ((rfc6225lat.integer & 0xff) << 1) + (rfc6225lat.fraction >> 24);
   lci[2] = (rfc6225lat.fraction >> 16) & 0xff;
@@ -105,7 +105,7 @@ Bangle.on('GPS', (newGps) => {
   mainMenu.Lon.value = gps.lon.toFixed(4);
   mainMenu.Satellites.value = gps.satellites;
   mainMenu.HDOP.value = (gps.hdop * 5).toFixed(1) + 'm';
-  E.showMenu(gpsMenu);
+  E.showMenu(mainMenu);
 
   if(Number.isFinite(gps.lat) && Number.isFinite(gps.lon)) {
     NRF.setAdvertising(encodeGeoLocationElement(), ADVERTISING_OPTIONS);
