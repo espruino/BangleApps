@@ -42,7 +42,7 @@ function encodeGeoLocationElement() {
   lci[7] = (rfc6225lon.fraction >> 16) & 0xff;
   lci[8] = (rfc6225lon.fraction >> 8) & 0xff;
   lci[9] = rfc6225lon.fraction & 0xff;
-  lci[10] = Number.isFinite(bar.altitude) ? 0x10 : 0x00;
+  lci[10] = bar.altitude ? 0x10 : 0x00;
   lci[11] = (rfc6225alt.integer >> 16) & 0xff;
   lci[12] = (rfc6225alt.integer >> 8) & 0xff;
   lci[13] = rfc6225alt.integer & 0xff;
@@ -73,7 +73,7 @@ function toRfc6225Coordinate(coordinate) {
 
 // Convert altitude to RFC6225
 function toRfc6225Altitude(altitude) {
-  if(!Number.isFinite(altitude)) {
+  if(!altitude) {
     return { integer: 0, fraction: 0 };
   }
 
