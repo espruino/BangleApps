@@ -205,7 +205,7 @@ let sun	= {
   get_sun_time: function() {
     let d = new Date();
     let sun = this.SunCalc.getTimes(d, this.lat, this.lon);
-    print(sun.sunrise, sun.sunrise.getHour());
+    print(sun.sunrise, sun.sunset);
     return sun;
   },
 };
