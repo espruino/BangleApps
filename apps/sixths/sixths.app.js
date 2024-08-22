@@ -675,11 +675,10 @@ function every(now) {
     lastHour = now.getHours();
     hourly();
   }
-  if (lastMin / 5 != now.getMinutes() / 5) {
+  if (lastMin / 5 != now.getMinutes() / 5) { // fixme, trunc?
     lastMin = now.getMinutes();
     fivemin();
   }
-
 }
 
 function testBearing() {
