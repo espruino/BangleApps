@@ -11,7 +11,7 @@
     var x_rgt = g.getWidth();
     var y_bot = g.getHeight();
     var x_cntr = x_rgt / 2;
-    var y_cntr = y_bot / 18*7; // nicht zu hoch wg. Widget-Leiste (1/3 ist zu hoch)
+    var y_cntr = y_bot / 18*7; // not to high because of widget-field (1/3 is to high)
     g.reset().clearRect(Bangle.appRect); // clear whole background (w/o widgets)
  
     let weiss = [1,1,1];
@@ -25,24 +25,25 @@
     let bord_col = weiss;
     let col_off = schwarz;
 
-    var col = new Array(rot, gruen, gelb, gelb);  // je [R,G,B]
+    var col = new Array(rot, gruen, gelb, gelb);  // [R,G,B]
 
-    let pot_2 = [1, 2, 4, 8, 16, 32];    // Array mit 2er-Potenzen, da Potenzop. '**'
-                                       // nicht funzt -> vmtl. auch schneller
+    let pot_2 = [1, 2, 4, 8, 16, 32];  // array with powers of two, because power-op (**)
+                                       // doesn't work -> maybe also faster
   
     
-    var nr_lines = 4;  // 4 Zeilen: Std, Min, Tag, Mon
+    var nr_lines = 4;  // 4 rows: hour (std), minute (min), day (tag), month (mon)
     var nr_std = 5;  
     var nr_min = 6;
     var nr_tag = 5;
     var nr_mon = 4; 
     
-    // Arrays: [Std, Min, Tag, Mon]
-    let msbits = [nr_std-1, nr_min-1, nr_tag-1, nr_mon-1];  // MSB = Anzahl Bits - 1
-    let rad = [12, 12, 8, 8];                    // Radien 
+    // Arrays: [hr, min, day, mon]
+    let msbits = [nr_std-1, nr_min-1, nr_tag-1, nr_mon-1];  // MSB = No bits - 1
+    let rad = [12, 12, 8, 8];                    // radiuses for each row
     var x_dist = 28;
-    let y_dist = [0, 30, 60, 85];               // y-Position von oben -- nicht wie x automat. berechnen, da unterschiedliche Abstände
-    var x_offs_rgt = 16;  // Abstand zum rechten Rand
+    let y_dist = [0, 30, 60, 85];    // y-position from y_centr for each row from top
+                                     // don't calc. automatic as for x, because of different spaces
+    var x_offs_rgt = 16;             // distance from right border (layout)
 
     // Date-Time-Array: 4x6 Bit
     var idx_std = 0;
@@ -61,7 +62,7 @@
     
 
 ////////////////////////////////////////
-// Zeit/Datum in Bitmuster umwandeln + LEDs zeichnen
+// compute bit-pattern from time/date and draw leds
 ////////////////////////////////////////  
     var line_cnt = 0;
     var cnt = 0;
@@ -71,14 +72,12 @@
       {
         
         ////////////////////////////////////////
-        // Bitmuster berechnen
+        // compute bit-pattern
         bit_cnt = msbits[line_cnt];
 
         while (bit_cnt >= 0)
         {
-          //Terminal.print(dt_array[line_cnt] + ' -> ');     // Debug
-          if (dt_array[line_cnt] >= pot_2[bit_cnt])  // Potenzoperator '**' funzt nicht
-                                      // -> auf Array zurueckgreifen, vmtl. auch schneller
+          if (dt_array[line_cnt] >= pot_2[bit_cnt])
           {
             dt_array[line_cnt] -= pot_2[bit_cnt];
             dt_bit_arr[line_cnt][bit_cnt] = 1;
@@ -91,13 +90,12 @@
         }
         
         ////////////////////////////////////////
-        // Bitmuster zeichnen
+        // draw leds (first white border for black screen, then led itself)
         cnt = 0;
 
         while (cnt <= msbits[line_cnt])
         {
           g.setColor(bord_col[0], bord_col[1], bord_col[2]);
-          //g.drawCircle(x_rgt-x_offs_rgt-cnt*x_dist, y_cntr-20+line_cnt*y_dist, rad[line_cnt]);
           g.drawCircle(x_rgt-x_offs_rgt-cnt*x_dist, y_cntr-20+y_dist[line_cnt], rad[line_cnt]);
           
           if (dt_bit_arr[line_cnt][cnt] == 1)
@@ -108,16 +106,11 @@
           {
             g.setColor(col_off[0], col_off[1], col_off[2]);
           }
-          //g.fillCircle(x_rgt-x_offs_rgt-cnt*x_dist, y_cntr-20+line_cnt*y_dist, rad[line_cnt]-1);
           g.fillCircle(x_rgt-x_offs_rgt-cnt*x_dist, y_cntr-20+y_dist[line_cnt], rad[line_cnt]-1);
           cnt++;
         }
         line_cnt++;
       }
-
-    //var min1 = g.drawCircleAA(x_cntr, y_cntr, 10);
-    //var min2 = g.fillCircle(x_cntr+30, y_cntr+30, 5);
-
 
     // queue next draw
     if (drawTimeout) clearTimeout(drawTimeout);
