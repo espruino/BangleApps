@@ -10,6 +10,7 @@
     "BANGLEJS",
     "BANGLEJS2"
   ],
+  "readme": "README.md",
   "storage": [
     {
       "name": "pomoplus.app.js",
