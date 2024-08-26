@@ -2,7 +2,7 @@
   "id": "openlocatebeacon",
   "name": "OpenLocate Beacon",
   "shortName": "OpenLocate Beacon",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Advertise GPS geolocation data using the OpenLocate Beacon packet specification.",
   "icon": "openlocatebeacon.png",
   "screenshots": [],
