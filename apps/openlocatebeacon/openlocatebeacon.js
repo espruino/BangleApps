@@ -20,8 +20,7 @@ let mainMenu = {
   "Lat": { value: null },
   "Lon": { value: null },
   "Altitude": { value: null },
-  "Satellites": { value: null },
-  "HDOP": { value: null }
+  "Satellites": { value: null }
 };
 
 
@@ -104,7 +103,6 @@ Bangle.on('GPS', (newGps) => {
   mainMenu.Lat.value = gps.lat.toFixed(4);
   mainMenu.Lon.value = gps.lon.toFixed(4);
   mainMenu.Satellites.value = gps.satellites;
-  mainMenu.HDOP.value = (gps.hdop * 5).toFixed(1) + 'm';
   E.showMenu(mainMenu);
 
   if(!isNaN(gps.lat) && !isNaN(gps.lon)) {
