@@ -5,6 +5,8 @@
 
 // Icons from https://fonts.google.com/icons
 
+/* eslint-env node */
+
 var imageconverter = require("../../../webtools/imageconverter.js").imageconverter;
 var icons = JSON.parse(require("fs").readFileSync(__dirname+"/icon_names.json"));
 const imgOptions = {
@@ -16,7 +18,7 @@ const imgOptions = {
 var PNG = require('png-js');
 var IMAGE_BYTES = 76;
 
-var iconTests = [];
+//var iconTests = [];
 
 var promises = [];
 

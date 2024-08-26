@@ -2,7 +2,7 @@
   "id": "flightdash",
   "name": "Flight Dashboard",
   "shortName":"Flight-Dash",
-  "version":"1.00",
+  "version": "1.01",
   "description": "Basic flight and navigation instruments",
   "icon": "flightdash.png",
   "screenshots": [{ "url": "screenshot.png" }],

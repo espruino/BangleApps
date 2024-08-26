@@ -124,44 +124,9 @@ E.on('notify',msg=>{
     "tv.twitch": "Twitch",
     // could also use NRF.ancsGetAppInfo(msg.appId) here
   };
-  var unicodeRemap = {
-    '2019':"'",
-    '260':"A",
-    '261':"a",
-    '262':"C",
-    '263':"c",
-    '268':"C",
-    '269':"c",
-    '270':"D",
-    '271':"d",
-    '280':"E",
-    '281':"e",
-    '282':"E",
-    '283':"e",
-    '321':"L",
-    '322':"l",
-    '323':"N",
-    '324':"n",
-    '327':"N",
-    '328':"n",
-    '344':"R",
-    '345':"r",
-    '346':"S",
-    '347':"s",
-    '352':"S",
-    '353':"s",
-    '356':"T",
-    '357':"t",
-    '377':"Z",
-    '378':"z",
-    '379':"Z",
-    '380':"z",
-    '381':"Z",
-    '382':"z",
-  };
-  var replacer = ""; //(n)=>print('Unknown unicode '+n.toString(16));
+
   //if (appNames[msg.appId]) msg.a
-  if (msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer) === "BangleDumpCalendar") {
+  if (msg.title === "BangleDumpCalendar") {
     // parse the message body into json:
     const d = JSON.parse(msg.message);
     /* Example:
@@ -178,7 +143,7 @@ E.on('notify',msg=>{
     {t:"calendar", id:int, type:int, timestamp:seconds, durationInSeconds, title:string, description:string,location:string,calName:string.color:int,allDay:bool
     for gadgetbridge
      */
-    calEvent = {
+    let calEvent = {
       t: "calendar",
       id: parseInt(d.id),
       type: 0,
@@ -205,14 +170,14 @@ E.on('notify',msg=>{
     NRF.ancsAction(msg.uid, false);
     return;
   }
-  if (msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer) === "BangleDumpWeather") {
+  if (msg.title === "BangleDumpWeather") {
     const d = JSON.parse(msg.message);
     /* Example:
     {"temp":"291.07","hi":"293.02","lo":"288.18","hum":"49","rain":"0","uv":"0","wind":"1.54","code":"01d","txt":"Mostly Sunny","wdir":"303","loc":"Berlin"}
     what we want:
     t:"weather", temp,hi,lo,hum,rain,uv,code,txt,wind,wdir,loc
      */
-    weatherEvent = {
+    let weatherEvent = {
         t: "weather",
         temp: d.temp,
         hi: d.hi,
@@ -236,9 +201,9 @@ E.on('notify',msg=>{
     id : msg.uid,
     src : appNames[msg.appId] || msg.appId,
     new : msg.new,
-    title : msg.title&&E.decodeUTF8(msg.title, unicodeRemap, replacer),
-    subject : msg.subtitle&&E.decodeUTF8(msg.subtitle, unicodeRemap, replacer),
-    body : msg.message&&E.decodeUTF8(msg.message, unicodeRemap, replacer) || "Cannot display",
+    title : msg.title&&Bangle.ancsConvertUTF8(msg.title),
+    subject : msg.subtitle&&Bangle.ancsConvertUTF8(msg.subtitle),
+    body : msg.message&&Bangle.ancsConvertUTF8(msg.message) || "Cannot display",
     positive : msg.positive,
     negative : msg.negative
   });
@@ -332,5 +297,47 @@ E.emit("ANCS", {
     if (NRF.ctsIsActive())
       NRF.ctsGetTime().then(ctsUpdate, function(){ /* */ })
     E.on('CTS',ctsUpdate);
+  }
+  if (settings.no_utf8 || !require("Storage").read("font")) {
+    // if UTF8 disabled or there is no fonts lib, convert UTF8 to ISO8859-1
+    let unicodeRemap = {
+      '2019':"'",
+      '260':"A",
+      '261':"a",
+      '262':"C",
+      '263':"c",
+      '268':"C",
+      '269':"c",
+      '270':"D",
+      '271':"d",
+      '280':"E",
+      '281':"e",
+      '282':"E",
+      '283':"e",
+      '321':"L",
+      '322':"l",
+      '323':"N",
+      '324':"n",
+      '327':"N",
+      '328':"n",
+      '344':"R",
+      '345':"r",
+      '346':"S",
+      '347':"s",
+      '352':"S",
+      '353':"s",
+      '356':"T",
+      '357':"t",
+      '377':"Z",
+      '378':"z",
+      '379':"Z",
+      '380':"z",
+      '381':"Z",
+      '382':"z",
+    };
+    let replacer = ""; //(n)=>print('Unknown unicode '+n.toString(16));
+    Bangle.ancsConvertUTF8 = text => E.decodeUTF8(text, unicodeRemap, replacer);
+  } else {
+    Bangle.ancsConvertUTF8 = E.asUTF8;
   }
 }

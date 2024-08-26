@@ -2,7 +2,7 @@
   "id": "diract",
   "name": "DirAct",
   "shortName": "DirAct",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Proximity interaction detection.",
   "icon": "diract.png",
   "type": "app",

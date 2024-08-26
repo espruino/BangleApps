@@ -35,3 +35,4 @@
 0.28: Fix rounding errors
 0.29: Keep exit at bottom of menu
       Speed up latLonToXY for track rendering
+0.30: Minor code improvements

@@ -30,16 +30,24 @@
 
     <script>
 /*
-eg. the built-in en_GB is:
+eg. the built-in en_GB at https://github.com/espruino/Espruino/blob/master/libs/js/banglejs/locale.js is:
 
-exports = { name : "en_GB", currencySym:"£",
+function round(n, dp) {
+  if (dp===undefined) dp=1;
+  var p = Math.min(dp,dp - Math.floor(Math.log(n)/Math.log(10)));
+  return n.toFixed(p);
+}
+exports = { name : "system", currencySym:"£",
   translate : str=>str, // as-is
   date : (d,short) => short?("0"+d.getDate()).substr(-2)+"/"+("0"+(d.getMonth()+1)).substr(-2)+"/"+d.getFullYear():d.toString().substr(4,11), // Date to "Feb 28 2020" or "28/02/2020"(short)
   time : (d,short) => { // Date to  "4:15.28 pm" or "15:42"(short)
+	  var h = d.getHours(), m = d.getMinutes()
+    if ((require('Storage').readJSON('setting.json',1)||{})["12hour"])
+      h = (h%12==0) ? 12 : h%12; // 12 hour
     if (short)
-      return d.toString().substr(16,5);
+      return (" "+h).substr(-2)+":"+("0"+m).substr(-2);
     else {
-      var h = d.getHours(), m = d.getMinutes(), r = "am";
+      var r = "am";
       if (h==0) { h=12; }
       else if (h>=12) {
         if (h>12) h-=12;
@@ -48,15 +56,29 @@ exports = { name : "en_GB", currencySym:"£",
       return (" "+h).substr(-2)+":"+("0"+m).substr(-2)+"."+("0"+d.getSeconds()).substr(-2)+" "+r;
     }
   },
-  dow : (d,short) => short?d.toString().substr(0,3):"Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday".split(",")[d.getDay()], // Date to "Monday" or "Mon"(short)
-  month : (d,short) => short?d.toString().substr(4,3):"January,February,March,April,May,June,July,August,September,October,November,December".split(",")[d.getMonth()], // Date to "February" or "Feb"(short)
-  number : n => n.toString(), // more fancy?
-  currency : n => "£"+n.toFixed(2), // number to "£1.00"
-  distance : m => (m<1000)?Math.round(m)+"m":Math.round(m/160.934)/10+"mi", // meters to "123m" or "1.2mi" depending on size
-  speed : s => Math.round(s*0.621371)+"mph",// kph to "123mph"
-  temp : t => Math.round(t)+"'C" // degrees C to degrees C
-  meridian: d => (d.getHours() <= 12) ? "am":"pm",
+  dow : (d,short) => "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday".split(",")[d.getDay()].substr(0, short ? 3 : 10), // Date to "Monday" or "Mon"(short)
+  month : (d,short) => "January,February,March,April,May,June,July,August,September,October,November,December".split(",")[d.getMonth()].substr(0, short ? 3 : 10), // Date to "February" or "Feb"(short)
+  number: (n, dec) => {
+    if (dec == null) dec = 2;
+    var w = n.toFixed(dec),
+        k = w|0,
+        b = n < 0 ? 1 : 0,
+        u = Math.abs(w-k),
+        d = (''+u.toFixed(dec)).substr(2, dec),
+        s = ''+k,
+        i = s.length,
+        r = '';
+    while ((i-=3) > b)
+      r = ',' + s.substr(i, 3) + r;
+    return s.substr(0, i + 3) + r + (d ? '.' + d: '');
+  },
+  currency : n => {console.log("Warning: Currency information is deprecated");return "£"+n.toFixed(2)}, // number to "£1.00"
+  distance : (m,dp) => (m<1000)?round(m,dp)+"m":round(m/1000,dp)+"km", // meters to "123m" or "1.2km" depending on size
+  speed : (s,dp) => round(s/1.60934,dp)+"mph",// kph to "123mph"
+  temp : (t,dp) => round(t,dp)+"'C", // degrees C to degrees C
+  meridian: d => (d.getHours() <= 12) ? "am":"pm" // Date to am/pm
 };
+
 
 */
       function codePageLookup(lang, codePage, ch) {
@@ -173,9 +195,6 @@ exports = { name : "en_GB", currencySym:"£",
           dateN = dateN.replace(e,"${"+replaceList[e]+"}");
           dateS = dateS.replace(e,"${"+replaceList[e]+"}");
         });
-        var currency = locale.currency_first ?
-          `${js(locale.currency_symbol)} + exports.number(n)`:
-          `exports.number(n) + ${js(locale.currency_symbol)}`;
         var temperature = locale.temperature=='°F' ? '(t*9/5)+32' : 't';
 
         function getLocaleModule(isLocal) {
@@ -194,7 +213,7 @@ function getHours(d) {
 }
 exports = {
   name: ${js(locale.lang)},
-  currencySym: ${js(locale.currency_symbol)},
+  currencySym: ${js("£")},
   dow: (d,short) => ${js(locale.day + ',' + locale.abday)}.split(',')[d.getDay() + (short ? 7 : 0)],
   month: (d,short) => ${js(locale.month + ',' + locale.abmonth)}.split(',')[d.getMonth() + (short ? 12 : 0)],
   number: (n, dec) => {
@@ -207,12 +226,11 @@ exports = {
         s = ''+k,
         i = s.length,
         r = '';
-    while ((i-=3) > b) {
+    while ((i-=3) > b)
       r = '${locale.thousands_sep}' + s.substr(i, 3) + r;
-    }
     return s.substr(0, i + 3) + r + (d ? '${locale.decimal_point}' + d: '');
   },
-  currency: n => ${currency},
+  currency: n => {console.log("Warning: Currency information is deprecated, see https://github.com/espruino/BangleApps/issues/3269");return ${js("£")}+exports.number(n)},
   distance: (n,dp) => n < ${distanceUnits[locale.distance[1]]} ? round(${unitConv(distanceUnits[locale.distance[0]])},dp) + ${js(locale.distance[0])} : round(${unitConv(distanceUnits[locale.distance[1]])},dp) + ${js(locale.distance[1])},
   speed: (n,dp) => round(${unitConv(speedUnits[locale.speed])},dp) + ${js(locale.speed)},
   temp: (t,dp) => round(${temperature},dp) + ${js(locale.temperature)},
@@ -236,7 +254,6 @@ exports = {
 <tr><td class="table_t">Date</td><td>${exports.date(date,1)}</td><td>${exports.date(date,0)}</td></tr>
 <tr><td class="table_t">Time</td><td>${exports.time(date,1)}</td><td>${exports.time(date,0)}</td></tr>
 <tr><td class="table_t">Number</td><td>${exports.number(12.3456789)}</td><td>${exports.number(12.3456789,4)}</td></tr>
-<tr><td class="table_t">Currency</td><td></td><td>${exports.currency(12.34)}</td></tr>
 <tr><td class="table_t">Distance</td><td>${exports.distance(12.34,0)}</td><td>${exports.distance(12345.6,1)}</td></tr>
 <tr><td class="table_t">Speed</td><td></td><td>${exports.speed(123)}</td></tr>
 <tr><td class="table_t">Temperature</td><td></td><td>${exports.temp(12,0)}</td></tr>

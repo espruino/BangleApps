@@ -34,3 +34,7 @@ Swiping up and down will scroll. Swiping from the left, using the back button, o
     * One menu entry for each subfolder, which opens the folder management menu for that subfolder.
     * View apps: Only present if this folder contains apps, Display a menu of all apps in the folder. This is for information only, tapping the apps does nothing.
     * Delete folder: Only present if not viewing the root folder. Delete the current folder and move all apps into the parent folder.
+
+## Web interface
+
+Limited editing is possible from the web interface. You can add folders and move applications between folders.

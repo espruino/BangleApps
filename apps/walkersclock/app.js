@@ -8,7 +8,7 @@
  *    - two function menus at present
  *      GPS Power   = On/Off
  *      GPS Display = Grid | Speed Alt
- *      when the modeline in CYAN use button BTN1 to switch between options 
+ *      when the modeline in CYAN use button BTN1 to switch between options
  *  - display the current steps if one of the steps widgets is installed
  *  - ensures that BTN2 requires a 1.5 second press in order to switch to the launcher
  *    this is so you dont accidently switch out of the GPS/watch display with you coat sleeve
@@ -49,7 +49,6 @@ let infoMode = INFO_NONE;
 let functionMode = FN_MODE_OFF;
 let gpsDisplay = GDISP_OS;
 let prevInfoStr = "clear";
-let prevActivityStr = "clear";
 let prevSteps = "clear";
 let clearActivityArea = true;
 
@@ -66,14 +65,14 @@ let last_fix = {
   satellites: 0
 };
 
-function drawTime() {  
+function drawTime() {
   var d = new Date();
   var da = d.toString().split(" ");
   var time = da[4].substr(0,5);
 
   g.reset();
   g.clearRect(0,Y_TIME, 239, Y_ACTIVITY - 1);
-  
+
   g.setColor(1,1,1);  // white
   g.setFontAlign(0, -1);
 
@@ -84,7 +83,7 @@ function drawTime() {
   } else {
     g.setFont("Vector", 80);
   }
-  
+
   g.drawString(time, g.getWidth()/2, Y_TIME);
 }
 
@@ -94,19 +93,19 @@ function drawActivity() {
     clearActivityArea = true;
 
   prevSteps = steps;
-  
+
   if (clearActivityArea) {
     g.clearRect(0, Y_ACTIVITY, 239, Y_MODELINE - 1);
     clearActivityArea = false;
   }
-  
+
   if (!gpsPowerState) {
     g.setColor(0,255,0);  // green
     g.setFont("Vector", 60);
     g.drawString(getSteps(), g.getWidth()/2, Y_ACTIVITY);
     return;
   }
-  
+
   g.setFont("6x8", 3);
   g.setColor(1,1,1);
   g.setFontAlign(0, -1);
@@ -131,10 +130,10 @@ function drawActivity() {
     let ref = to_map_ref(6, os.easting, os.northing);
     let speed;
     let activityStr = "";
-    
+
     if (age < 0) age = 0;
     g.setFontVector(40);
-    g.setColor(0xFFC0); 
+    g.setColor(0xFFC0);
 
     switch(gpsDisplay) {
     case GDISP_OS:
@@ -147,7 +146,7 @@ function drawActivity() {
     case GDISP_SPEED:
       speed = last_fix.speed;
       speed = speed.toFixed(1);
-      activityStr = speed + "kph"; 
+      activityStr = speed + "kph";
       break;
     case GDISP_ALT:
       activityStr = last_fix.alt + "m";
@@ -160,7 +159,7 @@ function drawActivity() {
     g.clearRect(0, Y_ACTIVITY, 239, Y_MODELINE - 1);
     g.drawString(activityStr, 120, Y_ACTIVITY);
     g.setFont("6x8",2);
-    g.setColor(1,1,1); 
+    g.setColor(1,1,1);
     g.drawString(age, 120, Y_ACTIVITY + 46);
   }
 }
@@ -168,7 +167,7 @@ function drawActivity() {
 function onTick() {
   if (!Bangle.isLCDOn())
     return;
-  
+
   if (gpsPowerState) {
     drawAll();
     return;
@@ -194,7 +193,6 @@ function drawAll(){
 }
 
 function drawInfo() {
-  let val;
   let str = "";
   let col = 0x07E0; // green
 
@@ -228,7 +226,7 @@ function drawInfo() {
     drawModeLine(str,col);
     return;
   }
-  
+
   switch(infoMode) {
   case INFO_NONE:
     col = 0x0000;
@@ -241,7 +239,7 @@ function drawInfo() {
   default:
     str = "Battery: " + E.getBattery() + "%";
   }
-  
+
   drawModeLine(str,col);
 }
 
@@ -285,7 +283,7 @@ function changeInfoMode() {
     infoMode = INFO_NONE;
     clearActivityArea = true;
     return;
-    
+
   case FN_MODE_GDISP:
     switch (gpsDisplay) {
     case GDISP_OS:
@@ -306,7 +304,7 @@ function changeInfoMode() {
       break;
     }
   }
-  
+
   switch(infoMode) {
   case INFO_NONE:
     if (stepsWidget() !== undefined)
@@ -321,7 +319,7 @@ function changeInfoMode() {
   default:
     infoMode = INFO_NONE;
   }
-  
+
   clearActivityArea = true;
 }
 
@@ -353,7 +351,7 @@ function changeFunctionMode() {
       break;
     }
   }
-  
+
   infoMode = INFO_NONE; // function mode overrides info mode
 }
 
@@ -376,7 +374,7 @@ function processFix(fix) {
     gpsState = GPS_SATS;
     clearActivityArea = true;
   }
-  
+
   if (fix.fix) {
     if (!last_fix.fix) {
       if (!(require('Storage').readJSON('setting.json',1)||{}).quiet) {
@@ -403,7 +401,7 @@ function stepsWidget() {
   }
   return undefined;
 }
-  
+
 
 /*************     GPS  / OSREF Code **************************/
 
@@ -415,10 +413,10 @@ function formatTime(now) {
 function timeSince(t) {
   var hms = t.split(":");
   var now = new Date();
-  
+
   var sn = 3600*(now.getHours()) + 60*(now.getMinutes()) + 1*(now.getSeconds());
   var st = 3600*(hms[0]) + 60*(hms[1]) + 1*(hms[2]);
-  
+
   return (sn - st);
 }
 
@@ -485,7 +483,7 @@ OsGridRef.latLongToOsGrid = function(point) {
  *
  */
 function to_map_ref(digits, easting, northing) {
-  if (![ 0,2,4,6,8,10,12,14,16 ].includes(Number(digits))) throw new RangeError(`invalid precision '${digits}'`); // eslint-disable-line comma-spacing
+  if (![ 0,2,4,6,8,10,12,14,16 ].includes(Number(digits))) throw new RangeError(`invalid precision '${digits}'`);
 
   let e = easting;
   let n = northing;
@@ -565,7 +563,7 @@ Bangle.on('lcdPower',function(on) {
   }
 });
 
-var click = setInterval(onTick, 5000);
+setInterval(onTick, 5000);
 
 setWatch(() => { changeInfoMode(); drawAll(); }, BTN1, {repeat: true});
 setWatch(() => { changeFunctionMode(); drawAll(); }, BTN3, {repeat: true});

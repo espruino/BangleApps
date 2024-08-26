@@ -33,7 +33,6 @@ const timeutils = require("time_utils");
 let startOnSun = ((require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0) === 0;
 let events;
 const dowLbls = function() {
-  const locale = require('locale').name;
   const days = startOnSun ? [0, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6, 0];
   const d = new Date();
   return days.map(i => {
@@ -123,7 +122,6 @@ const calcDays = (month, monthMaxDayMap, dowNorm) => {
   const days = [];
   let nextMonthDay = 1;
   let thisMonthDay = 51;
-  const month2 = month;
   let prevMonthDay = monthMaxDayMap[month > 0 ? month - 1 : 11] - dowNorm + 1;
 
   for (let i = 0; i < maxDay; i++) {

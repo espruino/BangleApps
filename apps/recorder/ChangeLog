@@ -46,3 +46,10 @@
 0.37: 1 second periods + gps log => log when gps event is received, not with
 	setInterval.
 0.38: Tweaks to speed up track rendering
+0.39: Minor code improvements
+0.40: Fix reference error from missing `settings` object in widget on 1 sec	recordings with gps.
+      Fix HRM source never being set in output data
+0.41: Fix exit from plots and graphs would easily react twice, going back two
+	levels instead of one.
+0.42: Minor code improvements
+0.43: Fix interaction on clocks without widgets

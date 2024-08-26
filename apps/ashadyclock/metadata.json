@@ -1,0 +1,27 @@
+{ "id": "ashadyclock",
+  "name": "A Shady Clock",
+  "shortName":"Shady Clk",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "A nice clock with drop shadow. Hours and minutes. Configure color and widgets in settings. Create any color combination with the existing images by changing only the app color values.",
+  "type": "clock",
+  "tags": "clock",
+  "screenshots": [{"url":"screenshot-1.png"},{"url":"screenshot.png"}],  
+  "supports": ["BANGLEJS","BANGLEJS2"],
+    "storage": [
+      {"name":"ashadyclock.app.js","url":"app.js"},
+      {"name":"ashadyclock.img","url":"app-icon.js","evaluate":true},
+      {"name":"ashadyclock.0.bin","url":"0.bin"},
+      {"name":"ashadyclock.1.bin","url":"1.bin"},
+      {"name":"ashadyclock.2.bin","url":"2.bin"},
+      {"name":"ashadyclock.3.bin","url":"3.bin"},
+      {"name":"ashadyclock.4.bin","url":"4.bin"},
+      {"name":"ashadyclock.5.bin","url":"5.bin"},
+      {"name":"ashadyclock.6.bin","url":"6.bin"},
+      {"name":"ashadyclock.7.bin","url":"7.bin"},
+      {"name":"ashadyclock.8.bin","url":"8.bin"},
+      {"name":"ashadyclock.9.bin","url":"9.bin"},
+      {"name":"ashadyclock.settings.js","url":"settings.js"}
+    ],
+  "data": [{"name":"ashadyclock.json"}]
+}

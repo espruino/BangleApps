@@ -3,3 +3,4 @@
 0.03: Remove app from 'tool' when it has at least one other known tag
       Add tag 'health' for apps like Heart Rate Monitor
 0.04: Fix remove handler
+0.05: Make the "App source not found" warning less buggy

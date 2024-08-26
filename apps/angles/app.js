@@ -4,8 +4,6 @@ var avrAngle = undefined;
 var history = [];
 
 var R = Bangle.appRect;
-var W = g.getWidth();
-var H = g.getHeight();
 var relativeTo = undefined;
 
 function draw(v) {

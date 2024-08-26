@@ -2,7 +2,7 @@
   "id": "hamloc",
   "name": "QTH Locator / Maidenhead Locator System",
   "shortName": "QTH Locator",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Convert your current GPS location to the Maidenhead locator system used by HAM amateur radio operators",
   "icon": "app.png",
   "tags": "tool,outdoors,gps",

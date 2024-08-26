@@ -3,7 +3,7 @@
   "name": "Happy Clock",
   "shortName":"Happy Clock",
   "icon": "happyclk.png",
-  "version":"0.02",
+  "version": "0.03",
   "readme": "README.md",
   "supports": ["BANGLEJS2"],
   "description": "A happy clock :)",

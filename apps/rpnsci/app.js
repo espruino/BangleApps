@@ -303,7 +303,7 @@ let y = 0;
 let z = 0;
 let t = 0;
 let memJSON = storage.readJSON(MEMORY_FILE);
-if (memJSON) {
+if (memJSON) { // TODO: `memory` should probably be declared outside the if blocks?
     let memory = memJSON;
 } else {
     let memory = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];

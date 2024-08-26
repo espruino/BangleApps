@@ -80,7 +80,7 @@ function refreshBattery() {
 }
 
 // Only update displayed battery level every minute as it fluctuates a lot
-var batteryInterval = setInterval(refreshBattery, 60000);
+setInterval(refreshBattery, 60000);
 
 Bangle.setUI("clock");
 Bangle.setLocked(false);

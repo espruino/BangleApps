@@ -16,7 +16,7 @@
       name : "BT HR",
       fields : ["BT Heartrate", "BT Battery", "Energy expended", "Contact", "RR"],
       getValues : () => {
-        result = [bpm,bat,energy,contact,rr];
+        const result = [bpm,bat,energy,contact,rr];
         bpm = "";
         rr = "";
         bat = "";
@@ -26,11 +26,11 @@
       },
       start : () => {
         Bangle.on('BTHRM', onHRM);
-        if (Bangle.setBTRHMPower) Bangle.setBTHRMPower(1,"recorder");
+        if (Bangle.setBTHRMPower) Bangle.setBTHRMPower(1,"recorder");
       },
       stop : () => {
         Bangle.removeListener('BTHRM', onHRM);
-        if (Bangle.setBTRHMPower) Bangle.setBTHRMPower(0,"recorder");
+        if (Bangle.setBTHRMPower) Bangle.setBTHRMPower(0,"recorder");
       },
       draw : (x,y) => g.setColor((Bangle.isBTHRMActive && Bangle.isBTHRMActive())?"#00f":"#88f").drawImage(atob("DAwBAAAAMMeef+f+f+P8H4DwBgAA"),x,y)
     };

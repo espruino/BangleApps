@@ -5,7 +5,7 @@ var MYIMG = {
 
 //var IMAGEWIDTH = 176;
 //var IMAGEHEIGHT = 109;
-var IMAGEWIDTH = 176;
+//var IMAGEWIDTH = 176;
 var IMAGEHEIGHT = 176;
 
 Graphics.prototype.setFontcustom = function() {

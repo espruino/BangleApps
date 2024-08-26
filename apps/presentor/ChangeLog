@@ -12,3 +12,4 @@
 0.12: Added support for mouse dragging action (click then drag).
 0.13: Removed mouse dragging (too buggy/unuseful).
 0.14: Bugfix and add pointer mode. Also added default screen when no parts are there.
+0.15: Minor code improvements

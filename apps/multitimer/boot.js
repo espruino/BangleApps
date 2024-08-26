@@ -1,6 +1,6 @@
 {
   const resetTimer = alarm => {
-    if (alarm.timer) alarm.timer = alarm.data.ot;
+    if (alarm.timer && "ot" in alarm.data) alarm.timer = alarm.data.ot;
   };
 
   Bangle.on("alarmSnooze", resetTimer);

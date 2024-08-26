@@ -64,7 +64,7 @@
         })
       }
     };
-    let menu = E.showMenu(filterMenu);
+    E.showMenu(filterMenu);
   }
 
   // show widget menu
@@ -105,7 +105,7 @@
         }
       }
     };
-    let menu = E.showMenu(widgetMenu);
+    E.showMenu(widgetMenu);
   }
 
   // show main menu
@@ -184,7 +184,7 @@
         }
       }
     };
-    let menu = E.showMenu(mainMenu);
+    E.showMenu(mainMenu);
   }
 
   // draw main menu

@@ -4,3 +4,4 @@
       Use 'locale' to get internationalised speed
 0.04: Start GPS after loading app, just in case widgets affect it (#449)
 0.05: Use Layout lib for Bangle.js 2 compatibility
+0.06: Minor code improvements

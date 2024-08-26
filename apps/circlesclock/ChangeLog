@@ -42,3 +42,4 @@
 0.23: Setting circles colours per clkinfo and not position
 0.24: Using suggested color from clock_info if set as default and available
 0.25: Use clock_info module as an app
+0.26: Minor code improvements

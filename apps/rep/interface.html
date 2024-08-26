@@ -101,7 +101,8 @@ function getData() {
   uploadBtn.disabled = true;
 
   Util.showModal("Loading...");
-  Util.readStorageJSON(repJson, reps => {
+  Util.readStorageJSON(repJson, reps_ => {
+    reps = reps_;
     Util.hideModal();
     for(const rep of reps){
       renderRep(rep);

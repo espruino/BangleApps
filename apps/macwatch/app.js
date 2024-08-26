@@ -4,6 +4,7 @@ function draw() {
   g.reset();
   g.setFontCustom(font, 48, 8, 1801);
   g.setFontAlign(0, -1, 0);
+  let line1, line2;
   if (showDate) {
     if (g.theme.dark) {
       g.setColor("#00ffff"); // cyan date numbers for dark mode

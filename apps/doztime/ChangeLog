@@ -5,3 +5,5 @@
 0.05: extraneous comments and code removed
       display improved
       now supports Adjust Clock widget, if installed
+0.06: Minor code improvements
+0.07: Bangle2: Shift the position of one line on the screen

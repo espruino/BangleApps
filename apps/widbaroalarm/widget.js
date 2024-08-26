@@ -219,7 +219,7 @@ function barometerPressureHandler(e) {
   const pressure = e.pressure;
   if (isValidPressureValue(pressure)) {
     currentPressures.unshift(pressure);
-    median = currentPressures.slice().sort();
+    let median = currentPressures.slice().sort();
 
     if (median.length > 10) {
       var mid = median.length >> 1;

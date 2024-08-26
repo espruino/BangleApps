@@ -145,7 +145,7 @@ Bangle.setCompassPower(1);
 Bangle.setGPSPower(1);
 g.clear();
 process_GPS();
-var poll_GPS = setInterval(process_GPS, 9000);
+/*var poll_GPS =*/ setInterval(process_GPS, 9000);
 
 setWatch(function () {
     if (!button_lock) {

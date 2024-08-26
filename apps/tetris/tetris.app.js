@@ -413,7 +413,7 @@ function startGame() {
   calculateSpeed();
   state = 1;
   drawGame();
-  var gi = setInterval(gameStep, 20);
+  setInterval(gameStep, 20);
 }
 
 function drawGame() {

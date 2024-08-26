@@ -2,7 +2,7 @@
   "id": "lifeclk",
   "name": "Game of Life Clock",
   "shortName": "Conway's Clock",
-  "version": "0.06",
+  "version": "0.07",
   "description": "Modification and clockification of Conway's Game of Life",
   "icon": "app.png",
   "type": "clock",

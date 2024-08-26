@@ -1,7 +1,7 @@
 {
   "id": "gpsnav",
   "name": "GPS Navigation",
-  "version": "0.08",
+  "version": "0.09",
   "description": "Displays GPS Course and Speed, + Directions to waypoint and waypoint recording, now with waypoint editor",
   "screenshots": [{"url":"screenshot-b2.png"}],
   "icon": "icon.png",

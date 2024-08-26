@@ -137,7 +137,7 @@ const CONTROLS = {
 
 E.showMenu({ "" : {title:"LEGO Remote", back:()=>load()},
   "Linear" : () => startLegoLinear(),
-  "Normal" : () => startLego(CONTROLS.normal),
+  "Normal" : () => startLego(CONTROLS.normal), // TODO: Should `startLego` have been called `startLegoButtons` ?
   "Tank" : () => startLego(CONTROLS.tank),
   "Marged" : () => startLego(CONTROLS.merged),
 });

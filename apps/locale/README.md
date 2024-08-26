@@ -10,7 +10,6 @@ other applications or widgets to provide locale-friendly
 - Time (12h/24h)
 - Days of the Week
 - Months
-- Currency values
 - Distances/Lengths/Speed (metric/imperial)
 - Temperature (°C/°F)
 

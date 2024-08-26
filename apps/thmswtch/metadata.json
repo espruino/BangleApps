@@ -1,0 +1,15 @@
+{ "id": "thmswtch",
+  "name": "Theme Switcher",
+  "shortName":"Theme Switcher",
+  "version":"0.01",
+  "description": "change theme based on time or sunset/sunrise",
+  "icon": "app.png",
+  "tags": "tool",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"thmswtch.app.js","url":"app.js"},
+    {"name":"thmswtch.boot.js","url":"boot.js"},
+    {"name":"thmswtch.img","url":"app-icon.js","evaluate":true}   
+  ]
+}

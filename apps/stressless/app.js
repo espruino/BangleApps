@@ -16,11 +16,10 @@ var csv = [
           ];
 logfile.write(csv.join(",")+"\n");
 
-var debugging = true;
 var samples = 0; // how many samples have we connected?
 var collectData = false; // are we currently collecting data?
 
-var BPM_array = [];
+//var BPM_array = [];
 var raw_HR_array = new Float32Array(1536);
 var alternate_array = new Float32Array(3072);
 var pulse_array = [];
@@ -136,7 +135,6 @@ function find_peaks() { "ram"
     var previous_slope = 0;
     var slope;
     var gap_size = 0;
-    var temp_array = [];
 
     for (let i = 0; i < alternate_array.length; i++) {
         if (previous == null)
@@ -235,7 +233,7 @@ function btn3Pressed() {
 }
 
 function turn_on() {
-  BPM_array = [];
+  //BPM_array = [];
   pulse_array = [];
   samples = 0;
   if (accel) clearInterval(accel);

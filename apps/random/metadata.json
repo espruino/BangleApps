@@ -1,7 +1,7 @@
 {
   "id": "random",
   "name": "Random",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Flip coins, roll dice, draw a card, or choose random numbers",
   "icon": "icon.png",
   "tags": "tool",

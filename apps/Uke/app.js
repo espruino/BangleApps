@@ -176,8 +176,6 @@ const b7 = [
 
 
 
-var index = 0;
-var chords = [];
 var menu = {
   "" : { "title" : "Uke Chords" },
   "C" : function() { draw(cc); },

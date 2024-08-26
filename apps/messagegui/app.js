@@ -22,12 +22,27 @@ GB({t:"nav",src:"maps",title:"Navigation",instr:"Main St / I-29 ALT / Centerpoin
 require("messages").pushMessage({"t":"add","id":"call","src":"Phone","title":"Bob","body":"12421312",positive:true,negative:true})
 */
 var Layout = require("Layout");
+var layout; // global var containing the layout for the currently displayed message
 var settings = require('Storage').readJSON("messages.settings.json", true) || {};
 var fontSmall = "6x8";
 var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
 var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
 var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
 var fontVLarge = g.getFonts().includes("6x15")?"12x20:2":"6x8:5";
+
+// If a font library is installed, just switch to using that for everything in messages
+if (Graphics.prototype.setFontIntl) {
+  fontSmall = "Intl";
+  fontMedium = "Intl";
+  fontBig = "Intl";
+  /* 2v21 and before have a bug where the scale factor for PBF fonts wasn't
+  taken into account in metrics, so we can't have big fonts on those firmwares.
+  Having 'PBF' listed as a font was a bug fixed at the same time so we check for that. */
+  let noScale = g.getFonts().includes("PBF");
+  fontLarge = noScale?"Intl":"Intl:2";
+  fontVLarge = noScale?"Intl":"Intl:3";
+}
+
 var active; // active screen (undefined/"list"/"music"/"map"/"message"/"scroller"/"settings")
 var openMusic = false; // go back to music screen after we handle something else?
 // hack for 2v10 firmware's lack of ':size' font handling
@@ -72,7 +87,7 @@ var onMessagesModified = function(type,msg) {
   }
   if (msg && msg.id=="nav" && msg.t=="modify" && active!="map")
     return; // don't show an updated nav message if we're just in the menu
-  showMessage(msg&&msg.id);
+  showMessage(msg&&msg.id, false);
 };
 Bangle.on("message", onMessagesModified);
 
@@ -218,6 +233,7 @@ function showMusicMessage(msg) {
 }
 
 function showMessageScroller(msg) {
+  cancelReloadTimeout();
   active = "scroller";
   var bodyFont = fontBig;
   g.setFont(bodyFont);
@@ -238,16 +254,16 @@ function showMessageScroller(msg) {
       g.setFont(bodyFont).setFontAlign(0,-1).drawString(lines[idx], r.x+r.w/2, r.y);
     }, select : function(idx) {
       if (idx>=lines.length-2)
-        showMessage(msg.id);
+        showMessage(msg.id, true);
     },
-    back : () => showMessage(msg.id)
+    back : () => showMessage(msg.id, true)
   });
 }
 
 function showMessageSettings(msg) {
   active = "settings";
   var menu = {"":{"title":/*LANG*/"Message"},
-    "< Back" : () => showMessage(msg.id),
+    "< Back" : () => showMessage(msg.id, true),
     /*LANG*/"View Message" : () => {
       showMessageScroller(msg);
     },
@@ -288,8 +304,10 @@ function showMessageSettings(msg) {
   E.showMenu(menu);
 }
 
-function showMessage(msgid) {
-  var msg = MESSAGES.find(m=>m.id==msgid);
+function showMessage(msgid, persist) {
+  if(!persist) resetReloadTimeout();
+  let idx = MESSAGES.findIndex(m=>m.id==msgid);
+  var msg = MESSAGES[idx];
   if (updateLabelsInterval) {
     clearInterval(updateLabelsInterval);
     updateLabelsInterval=undefined;
@@ -389,9 +407,11 @@ function showMessage(msgid) {
     {type:"h",fillx:1, c: footer}
   ]},{back:goBack});
 
-  Bangle.swipeHandler = lr => {
+  Bangle.swipeHandler = (lr,ud) => {
     if (lr>0 && posHandler) posHandler();
     if (lr<0 && negHandler) negHandler();
+    if (ud>0 && idx<MESSAGES.length-1) showMessage(MESSAGES[idx+1].id, true);
+    if (ud<0 && idx>0) showMessage(MESSAGES[idx-1].id, true);
   };
   Bangle.on("swipe", Bangle.swipeHandler);
   g.reset().clearRect(Bangle.appRect);
@@ -428,7 +448,7 @@ function checkMessages(options) {
   // If we have a new message, show it
   if (options.showMsgIfUnread && newMessages.length) {
     delete newMessages[0].show; // stop us getting stuck here if we're called a second time
-    showMessage(newMessages[0].id);
+    showMessage(newMessages[0].id, false);
     // buzz after showMessage, so being busy during layout doesn't affect the buzz pattern
     if (global.BUZZ_ON_NEW_MESSAGE) {
       // this is set if we entered the messages app by loading `messagegui.new.js`
@@ -441,7 +461,7 @@ function checkMessages(options) {
   }
   // no new messages: show playing music? Only if we have playing music, or state=="show" (set by messagesmusic)
   if (options.openMusic && MESSAGES.some(m=>m.id=="music" && ((m.track && m.state=="play") || m.state=="show")))
-    return showMessage('music');
+    return showMessage('music', true);
   // no new messages - go to clock?
   if (options.clockIfAllRead && newMessages.length==0)
     return load();
@@ -472,9 +492,9 @@ function checkMessages(options) {
       if (title) g.setFontAlign(-1,-1).setFont(fontBig).drawString(title, x,r.y+2);
       var longBody = false;
       if (body) {
-        g.setFontAlign(-1,-1).setFont("6x8");
+        g.setFontAlign(-1,-1).setFont(fontSmall);
         // if the body includes an image, it probably won't be small enough to allow>1 line
-        let maxLines = 3, pady = 0;
+        let maxLines = Math.floor(34/g.getFontHeight()), pady = 0;
         if (body.includes("\0")) { maxLines=1; pady=4; }
         var l = g.wrapString(body, r.w-(x+14));
         if (l.length>maxLines) {
@@ -490,7 +510,7 @@ function checkMessages(options) {
     },
     select : idx => {
       if (idx < MESSAGES.length)
-        showMessage(MESSAGES[idx].id);
+        showMessage(MESSAGES[idx].id, true);
     },
     back : () => load()
   });
@@ -503,6 +523,13 @@ function cancelReloadTimeout() {
   unreadTimeout = undefined;
 }
 
+function resetReloadTimeout(){
+  cancelReloadTimeout();
+  if (!isFinite(settings.unreadTimeout)) settings.unreadTimeout=60;
+  if (settings.unreadTimeout)
+    unreadTimeout = setTimeout(load, settings.unreadTimeout*1000);
+}
+
 g.clear();
 
 Bangle.loadWidgets();
@@ -510,9 +537,6 @@ require("messages").toggleWidget(false);
 Bangle.drawWidgets();
 
 setTimeout(() => {
-  if (!isFinite(settings.unreadTimeout)) settings.unreadTimeout=60;
-  if (settings.unreadTimeout)
-    unreadTimeout = setTimeout(load, settings.unreadTimeout*1000);
   // only openMusic on launch if music is new, or state=="show" (set by messagesmusic)
   var musicMsg = MESSAGES.find(m => m.id === "music");
   checkMessages({

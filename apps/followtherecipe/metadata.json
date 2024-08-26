@@ -3,7 +3,7 @@
   "name": "Follow The Recipe",
   "shortName":"FTR",
   "icon": "icon.png",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Follow The Recipe (FTR) is a bangle.js app to follow a recipe step by step",
   "type": "app",
   "tags": "tool, tools, cook",

@@ -1,6 +1,8 @@
 Bangle.on("lock", () => Bangle.drawWidgets());
 
 Bangle.on('touch', (_btn, xy) => {
+  if (WIDGETS["back"]) return;
+
   const oversize = 5;
 
   const w = WIDGETS.lockunlock;
@@ -11,6 +13,8 @@ Bangle.on('touch', (_btn, xy) => {
   if(w.x - oversize <= x && x < w.x + 14 + oversize
   && w.y - oversize <= y && y < w.y + 24 + oversize)
   {
+    E.stopEventPropagation && E.stopEventPropagation();
+
     Bangle.setLocked(true);
 
     const backlightTimeout = Bangle.getOptions().backlightTimeout; // ms

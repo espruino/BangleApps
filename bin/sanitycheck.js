@@ -19,6 +19,7 @@ try {
 var BASEDIR = __dirname+"/../";
 var APPSDIR_RELATIVE = "apps/";
 var APPSDIR = BASEDIR + APPSDIR_RELATIVE;
+var knownWarningCount = 0;
 var warningCount = 0;
 var errorCount = 0;
 function ERROR(msg, opt) {
@@ -32,10 +33,11 @@ function WARN(msg, opt) {
   opt = opt||{};
   if (KNOWN_WARNINGS.includes(msg)) {
     console.log(`Known warning : ${msg}`);
+    knownWarningCount++;
   } else {
     console.log(`::warning${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
+    warningCount++;
   }
-  warningCount++;
 }
 
 var apps = [];
@@ -150,10 +152,13 @@ apps.forEach((app,appIdx) => {
     } else {
       var changeLog = fs.readFileSync(appDir+"ChangeLog").toString();
       var versions = changeLog.match(/\d+\.\d+:/g);
-      if (!versions) ERROR(`No versions found in ${app.id} ChangeLog (${appDir}ChangeLog)`, {file:metadataFile});
-      var lastChangeLog = versions.pop().slice(0,-1);
-      if (lastChangeLog != app.version)
-        ERROR(`App ${app.id} app version (${app.version}) and ChangeLog (${lastChangeLog}) don't agree`, {file:appDirRelative+"ChangeLog", line:changeLog.split("\n").length-1});
+      if (!versions) {
+        ERROR(`No versions found in ${app.id} ChangeLog (${appDir}ChangeLog)`, {file:metadataFile});
+      } else {
+        var lastChangeLog = versions.pop().slice(0,-1);
+        if (lastChangeLog != app.version)
+          ERROR(`App ${app.id} app version (${app.version}) and ChangeLog (${lastChangeLog}) don't agree`, {file:appDirRelative+"ChangeLog", line:changeLog.split("\n").length-1});
+      }
     }
   }
   if (!app.description) ERROR(`App ${app.id} has no description`, {file:metadataFile});
@@ -393,8 +398,11 @@ while(fileA=allFiles.pop()) {
 }
 
 console.log("==================================");
-console.log(`${errorCount} errors, ${warningCount} warnings`);
+console.log(`${errorCount} errors, ${warningCount} warnings (and ${knownWarningCount} known warnings)`);
 console.log("==================================");
 if (errorCount)  {
+  process.exit(1);
+} else if ("CI" in process.env && warningCount) {
+  console.log("Running in CI, raising an error from warnings");
   process.exit(1);
 }

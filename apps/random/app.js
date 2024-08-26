@@ -110,8 +110,8 @@ function showCardMenu() {
     },
     'Go': () => {
       n = Math.min(n, 52);
-      SUITS = ['Spades', 'Diamonds', 'Clubs', 'Hearts'];
-      RANKS = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'];
+      const SUITS = ['Spades', 'Diamonds', 'Clubs', 'Hearts'];
+      const RANKS = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'];
       class Card {
         constructor(suit, rank) {
           this.suit = suit;

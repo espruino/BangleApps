@@ -93,7 +93,7 @@ const drawTimeExact = () => {
   var dateTime = Date();
   var hours = dateTime.getHours();
   var minutes = dateTime.getMinutes().toString().padStart(2,0);
-  var day = dateTime.getDay();
+  //var day = dateTime.getDay();
   var date = dateTime.getDate();
   var month = dateTime.getMonth();
   var year = dateTime.getFullYear();

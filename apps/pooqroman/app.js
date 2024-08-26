@@ -347,7 +347,7 @@ const events = {
     },
 
     scan: function(now, from, to, f) {
-        result = Infinity;
+        let result = Infinity;
         let o = now.getTimezoneOffset() * 60000;
         let t = now.getTime() - o;
         let c, p, i, l = from - o, h = to - o;
@@ -781,4 +781,4 @@ class Clock {
 //////////////////////////////////////////////////////////////////////////////
 /*                                 Main                                     */
 
-const clock = new Clock(new Roman(g, events)).start();
+new Clock(new Roman(g, events)).start();

@@ -2,7 +2,7 @@
   "id": "launch",
   "name": "Launcher",
   "shortName": "Launcher",
-  "version": "0.20",
+  "version": "0.21",
   "description": "This is needed to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
   "readme": "README.md",
   "icon": "app.png",

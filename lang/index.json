@@ -14,7 +14,7 @@
   {"code":"pt_PT","name":"Portuguese","url":"pt_PT.json"},
   {"code":"pt_BR","name":"Portuguese Brasil","url":"pt_BR.json"},
   {"code":"bg_BG","name":"Bulgarian","url":"bg_BG.json", "disabled":"Characters not in ISO Latin codepage"},
-  {"code":"da_DA","name":"Danish","url":"da_DA.json"},
+  {"code":"da_DK","name":"Danish","url":"da_DK.json"},
   {"code":"el_EL","name":"Greek","url":"el_EL.json", "disabled":"Characters not in ISO Latin codepage"},
   {"code":"et_ET","name":"Estonian","url":"et_ET.json"},
   {"code":"lt_LT","name":"Lithuanian","url":"lt_LT.json"},

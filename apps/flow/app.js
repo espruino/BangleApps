@@ -193,7 +193,7 @@ let intervalId;
 
 if (BTN.read()) {
   for (let i = 0; i < 10; i++) {
-    color = getColor(i);
+    const color = getColor(i);
     g.setColor(color[0], color[1], color[2]);
     g.fillRect((i / 10) * h, 0, ((i + 1) / 10) * h, h);
   }

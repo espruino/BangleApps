@@ -1,7 +1,7 @@
 { "id": "f9lander",
   "name": "Falcon9 Lander",
   "shortName":"F9lander",
-  "version":"0.03",
+  "version": "0.04",
   "description": "Land a rocket booster",
   "icon": "f9lander.png",
   "screenshots" : [ { "url":"f9lander_screenshot1.png" }, { "url":"f9lander_screenshot2.png" }, { "url":"f9lander_screenshot3.png" }],

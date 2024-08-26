@@ -3,8 +3,8 @@ require("Font7x11Numeric7Seg").add(Graphics);
 function draw() {
   var d = new Date();
   var size = Math.floor(g.getWidth()/(7*6));
-  var x = (g.getWidth()/2) - size*6,
-    y = (g.getHeight()/2) - size*7 - 0;
+  //var x = (g.getWidth()/2) - size*6;
+  var y = (g.getHeight()/2) - size*7 - 0;
   // y variable for ':'
   var y_dop = 70 - 0;
   g.reset().clearRect(0,y,g.getWidth(),y+size*28);

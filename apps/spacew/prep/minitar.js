@@ -8,8 +8,6 @@ const hs = require('./heatshrink.js');
 if (pc) {
     fs = require('fs');
     var print=console.log;
-} else {
-  
 }
 
 function writeDir(json) {

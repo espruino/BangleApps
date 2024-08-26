@@ -1,0 +1,17 @@
+{ "id": "autoreset",
+  "name": "Auto Reset",
+  "version":"0.02",
+  "description": "Sets a timeout to load the clock face. The timeout is stopped and started again upon user input.",
+  "icon": "app.png",
+  "type": "bootloader",
+  "tags": "system",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"autoreset.boot.js","url":"boot.js"},
+    {"name":"autoreset.settings.js","url":"settings.js"}
+  ],
+  "data":[
+    {"name":"autoreset.json"}
+  ]
+}
