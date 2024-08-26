@@ -16,7 +16,7 @@ let sequenceNumber = 0;
 
 // Menus
 let mainMenu = {
-  "": { "title": "OpenLocateBeacon" },
+  "": { "title": "OpenLocateBcn" },
   "Lat": { value: null },
   "Lon": { value: null },
   "Altitude": { value: null },
