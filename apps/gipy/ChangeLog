@@ -138,4 +138,6 @@
 
 0.25: Minor code improvements
 
-0.26: Support for large paths (grid sizes > 65k)
+0.26: Add option to plot openstmap if installed
+
+0.27: Support for large paths (grid sizes > 65k)

@@ -8,3 +8,4 @@
 0.05: Fix display of final menu item when no options are given and
       handling of E.showMenu() with no arguments
 0.06: Fix lower bounding of numeric values
+0.07: Fix bug with alarms app (scroller) and correctly show images

@@ -28,6 +28,9 @@ E.showMenu = function (items) {
         y += 22;
     var lastIdx = 0;
     var selectEdit = undefined;
+    var scroller = {
+        scroll: selected,
+    };
     var l = {
         draw: function (rowmin, rowmax) {
             var rows = 0 | Math.min((y2 - y) / fontHeight, menuItems.length);
@@ -76,10 +79,11 @@ E.showMenu = function (items) {
                     v = "";
                 }
                 {
-                    if (name.length >= 17 - v.length && typeof item === "object") {
+                    var vplain = v.indexOf("\0") < 0;
+                    if (vplain && name.length >= 17 - v.length && typeof item === "object") {
                         g.drawString(name.substring(0, 12 - v.length) + "...", x + 3.7, iy + 2.7);
                     }
-                    else if (name.length >= 15) {
+                    else if (vplain && name.length >= 15) {
                         g.drawString(name.substring(0, 15) + "...", x + 3.7, iy + 2.7);
                     }
                     else {
@@ -138,9 +142,11 @@ E.showMenu = function (items) {
             else {
                 var lastSelected = selected;
                 selected = (selected + dir + menuItems.length) % menuItems.length;
+                scroller.scroll = selected;
                 l.draw(Math.min(lastSelected, selected), Math.max(lastSelected, selected));
             }
         },
+        scroller: scroller,
     };
     l.draw();
     var back = options.back;

@@ -4,3 +4,4 @@
       Also avoid polluting global scope.
 0.04: Enhance menu: enable bluetooth, visit settings & visit recovery
 0.05: Enhance menu: permit toggling bluetooth
+0.06: Display clock in green when charging, with "charging" text

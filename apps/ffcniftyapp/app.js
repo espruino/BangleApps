@@ -1,5 +1,5 @@
 const w = require("weather");
-//const locale = require("locale");
+const locale = require("locale");
 
 // Weather icons from https://icons8.com/icon/set/weather/color
 function getSun() {
@@ -67,6 +67,33 @@ function chooseIcon(condition) {
     return getPartSun;
   } else return getErr;
 }
+
+/*
+* Choose weather icon to display based on weather conditition code
+* https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2
+*/
+function chooseIconByCode(code) {
+  const codeGroup = Math.round(code / 100);
+  switch (codeGroup) {
+    case 2: return getStorm;
+    case 3: return getRain;
+    case 5: 
+      switch (code) {
+          case 511: return getSnow;
+          default: return getRain;
+      }
+    case 6: return getSnow;
+    case 7: return getPartSun;
+    case 8:
+      switch (code) {
+        case 800: return getSun;
+        case 804: return getCloud;
+        default: return getPartSun;
+      }
+    default: return getCloud;
+  }
+}
+
 /*function condenseWeather(condition) {
   condition = condition.toLowerCase();
   if (condition.includes("thunderstorm") ||
@@ -143,8 +170,17 @@ const clock = new ClockFace({
     //let cWea =(curr === "no data" ?  "no data" : curr.txt);
     let cTemp= (curr === "no data" ? 273 : curr.temp);
     // const temp = locale.temp(curr.temp - 273.15).match(/^(\D*\d*)(.*)$/);
-    let w_icon = chooseIcon(curr.txt === undefined ? "no data" : curr.txt );
-    //let w_icon = chooseIcon(curr.txt);
+
+    let w_icon = getErr;
+    if (locale.name === "en" || locale.name === "en_GB" || locale.name === "en_US") {
+      w_icon = chooseIcon(curr.txt === undefined ? "no data" : curr.txt);
+    } else {
+    // cannot use condition string to determine icon if language is not English; use weather code instead
+      const code = curr.code || -1;
+        if (code > 0) {
+          w_icon = chooseIconByCode(curr.code);
+        }
+    }
 
     g.setFontAlign(1, 0).setFont("Vector", 90 * this.scale);
     g.drawString(format(hour), this.centerTimeScaleX, this.center.y - 31 * this.scale);
