@@ -16,30 +16,30 @@ if (
 
 const W = g.getWidth();
 const H = g.getHeight();
-const SCALING = W/176; // The UI was tweaked to look good on a Bangle.js 2 (176x176 px). SCALING is used to adapt with the resolution of whatever device the app is running on.
+const SCALING = W/176; // The UI was tweaked to look good on a Bangle.js 2 (176x176 px). SCALING automatically adapts so elements have the same proportions relative to the screen size on devices with other resolutions.
 const BUTTON_HEIGHT = 56 * SCALING;
 
 function drawButtons() {
   //Draw the backdrop
   const BUTTON_TOP = H - BUTTON_HEIGHT;
-  const IMG_SIZE = 24;
-  const IMG_ANCHOR_Y = BUTTON_TOP + BUTTON_HEIGHT / 2 - IMG_SIZE / 2;
+  const ICONS_SIZE = 24;
+  const ICONS_ANCHOR_Y = BUTTON_TOP + BUTTON_HEIGHT / 2 - ICONS_SIZE / 2;
   g.setColor(0, 0, 1)
-    .fillRect({x:0, y:BUTTON_TOP, x2:W-1, y2:H-1,r:15})
+    .fillRect({x:0, y:BUTTON_TOP, x2:W-1, y2:H-1,r:15*SCALING})
     .setColor(1, 1, 1);
 
   if (!common.state.wasRunning) {  //If the timer was never started, only show a play button
-    g.drawImage(common.BUTTON_ICONS.play, W / 2 - IMG_SIZE / 2, IMG_ANCHOR_Y);
+    g.drawImage(common.BUTTON_ICONS.play, W / 2 - ICONS_SIZE / 2, ICONS_ANCHOR_Y);
   } else {
     g.setColor(g.theme.bg)
       .fillRect(W / 2 - 2, BUTTON_TOP, W / 2 + 2, H)
       .setColor(1,1,1);
     if (common.state.running) {
-      g.drawImage(common.BUTTON_ICONS.pause, W / 4 - IMG_SIZE / 2, IMG_ANCHOR_Y)
-        .drawImage(common.BUTTON_ICONS.skip, W * 3 / 4 - IMG_SIZE / 2, IMG_ANCHOR_Y);
+      g.drawImage(common.BUTTON_ICONS.pause, W / 4 - ICONS_SIZE / 2, ICONS_ANCHOR_Y)
+        .drawImage(common.BUTTON_ICONS.skip, W * 3 / 4 - ICONS_SIZE / 2, ICONS_ANCHOR_Y);
     } else {
-      g.drawImage(common.BUTTON_ICONS.reset, W / 4 - IMG_SIZE / 2, IMG_ANCHOR_Y)
-        .drawImage(common.BUTTON_ICONS.play, W * 3 / 4 - IMG_SIZE / 2, IMG_ANCHOR_Y);
+      g.drawImage(common.BUTTON_ICONS.reset, W / 4 - ICONS_SIZE / 2, ICONS_ANCHOR_Y)
+        .drawImage(common.BUTTON_ICONS.play, W * 3 / 4 - ICONS_SIZE / 2, ICONS_ANCHOR_Y);
     }
   }
 }
