@@ -237,7 +237,7 @@ exports = {
   translate: s => ${locale.trans?`{var t=${js(locale.trans)};s=''+s;return t[s]||t[s.toLowerCase()]||s;}`:`s`},
   date: (d,short) => short ? \`${dateS}\` : \`${dateN}\`,
   time: (d,short) => short ? \`${timeS}\` : \`${timeN}\`,
-  meridian: d => is12Hours() ? d.getHours() < 12 ? ${js(locale.ampm[0])}:${js(locale.ampm[1])} : "",
+  meridian: (d,force) => (force||is12Hours()) ? d.getHours() < 12 ? ${js(locale.ampm[0])}:${js(locale.ampm[1])} : "",
   is12Hours,
 };
 `.trim()
@@ -310,8 +310,8 @@ ${customizeLocale ? `<tr><td class="table_t">Time format</td>
 `;
 document.getElementById("examples").innerHTML = `
 <tr><td class="table_t">Meridian</td><td>
-  <span id="meridian-am-output">${exports.meridian(new Date(0))}</span> /
-  <span id="meridian-pm-output">${exports.meridian(new Date(43200000))}</span>
+  <span id="meridian-am-output">${exports.meridian(new Date(0), true)}</span> /
+  <span id="meridian-pm-output">${exports.meridian(new Date(43200000), true)}</span>
 </td></tr>
 ${customizeLocale ? `<tr><td class="table_t">Meridian names</td>
     <td>
