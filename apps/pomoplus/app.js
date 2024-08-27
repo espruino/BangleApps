@@ -4,6 +4,7 @@ Bangle.POMOPLUS_ACTIVE = true;  //Prevent the boot code from running. To avoid h
 
 const storage = require("Storage");
 const common = require("pomoplus-com.js");
+const wu = require("widget_utils");
 
 //Expire the state if necessary
 if (
@@ -18,10 +19,10 @@ const W = g.getWidth();
 const H = g.getHeight();
 const SCALING = W/176; // The UI was tweaked to look good on a Bangle.js 2 (176x176 px). SCALING automatically adapts so elements have the same proportions relative to the screen size on devices with other resolutions.
 const BUTTON_HEIGHT = 56 * SCALING;
+const BUTTON_TOP = H - BUTTON_HEIGHT;
 
 function drawButtons() {
   //Draw the backdrop
-  const BUTTON_TOP = H - BUTTON_HEIGHT;
   const ICONS_SIZE = 24;
   const ICONS_ANCHOR_Y = BUTTON_TOP + BUTTON_HEIGHT / 2 - ICONS_SIZE / 2;
   g.setColor(0, 0, 1)
@@ -85,7 +86,8 @@ function drawTimerAndMessage() {
   }
 }
 
-drawButtons();
+if (!Bangle.isLocked()) drawButtons();
+
 Bangle.on("touch", (button, xy) => {
   //If we support full touch and we're not touching the keys, ignore.
   //If we don't support full touch, we can't tell so just assume we are.
@@ -164,6 +166,17 @@ if (common.state.running) {
   setupTimerInterval();
 }
 
+Bangle.on('lock', (on, reason) => {
+  if (on) {
+    g.clearRect(0,BUTTON_TOP,W-1,H-1);
+    wu.hide();
+  }
+  if (!on) {
+    drawButtons();
+    wu.show();
+  }
+});
+
 //Save our state when the app is closed
 E.on('kill', () => {
   storage.writeJSON(common.STATE_PATH, common.state);
@@ -171,3 +184,4 @@ E.on('kill', () => {
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+if (Bangle.isLocked()) wu.hide();
