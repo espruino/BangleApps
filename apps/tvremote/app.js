@@ -348,7 +348,7 @@ const appMenu = () => {
 
     back: main => {
       E.showScroller();
-      mainMenu();
+      powerScreen();
     },
   });
   g.flip(); // force a render before widgets have finished drawing
