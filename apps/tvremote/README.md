@@ -23,3 +23,40 @@ You will need to upload the below JSON file to your BangleJS, which will be used
       "username": "",
       "password": ""
     });
+
+# Usage
+Main Menu
+* Select TV type (panasonic is currently the only one supported)
+* Settings takes you to the settings menu, that allows you to manually assign ports and IP's.
+
+Settings Menu
+* Device Select sends a http request to the webserver for a scrollable list devices to select.
+* Manual IP takes standard number inputs and swipping up will provide a `.` for IP's.
+
+Power Screen
+* Press button - on/off.
+* Swipe left - `App Menu`.
+* Swipe Right - Main Menu
+
+App Menu
+* Scroll and select to send App menu input.
+* Swipe left -  Selection menu.
+* Swipe right - Power Screen.
+
+Selection Menu
+* ^ - up
+* ! - down
+* < - left
+* > - right
+* Swipe right - back
+* Swipe left - select
+* Swipe Down - Number Menu ( used for inputting key passwords).
+* Swipe Up - Vol Commands
+
+Vol Commands
+* Swipe Down - Selection Menu
+* Swipe right - rewind
+* Swipe left - fast forward
+* Swipe Up - Play/Pause
+
+Back Button - Should take you back to the previous menu screen.
