@@ -47,7 +47,7 @@ Selection Menu
 * ^ - up
 * ! - down
 * < - left
-* > - right
+* `>` - right
 * Swipe right - back
 * Swipe left - select
 * Swipe Down - Number Menu ( used for inputting key passwords).
