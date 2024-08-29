@@ -333,7 +333,7 @@ function angleDifference(angle1, angle2) {
   return difference;
 }
 
-function drawThickLine(x1, y1, x2, y2, thickness) {
+function drawThickLine(gg, x1, y1, x2, y2, thickness) {
   // Calculate the perpendicular offset for the line thickness
   const dx = x2 - x1;
   const dy = y2 - y1;
@@ -343,7 +343,7 @@ function drawThickLine(x1, y1, x2, y2, thickness) {
 
   // Draw multiple lines to simulate thickness
   for (let i = -thickness / 2; i <= thickness / 2; i++) {
-    g.drawLine(
+    gg.drawLine(
       x1 + offsetX * i,
       y1 - offsetY * i,
       x2 + offsetX * i,
@@ -367,10 +367,17 @@ function toxy(pp, p) {
 function paint(pp, p1, p2, thick) {
   let d1 = toxy(pp, p1);
   let d2 = toxy(pp, p2);
-  drawThickLine(d1.x, d1.y, d2.x, d2.y, thick);
+  //print(d1, d2);
+  drawThickLine(pp.g, d1.x, d1.y, d2.x, d2.y, thick);
 }
 
 var destination = {}, num = 0, dist = 0;
+
+//{ rotate: Math.PI / 4 + i/100, scale: 1-i/100 }
+function flip(pp) {
+  // pp.g.flip();
+  g.drawImage(g_over, 0, 0, {});
+}
 
 function read(pp, n) {
   g.reset().clear();
@@ -378,26 +385,35 @@ function read(pp, n) {
   let l = f.readLine();
   let prev = 0;
   while (l!==undefined) {
-    num++;
     l = ""+l;
-    //print(l);
     let p = egt.parse(l);
     if (p.lat) {
       if (prev) {
         dist += fmt.distance(prev, p);
-        //paint(pp, prev, p);
+        if (pp.g)
+          paint(pp, prev, p, 1);
+      } else {
+        pp.lat = p.lat;
+        pp.lon = p.lon;
       }
       prev = p;
     }
     l = f.readLine();
-    if (!(num % 100)) {
-      ui.drawMsg(num + "\n" + fmt.fmtDist(dist / 1000));
+    if (!(num % 30)) {
+      if (!pp.g)
+        ui.drawMsg(num + "\n" + fmt.fmtDist(dist / 1000));
+      else
+        flip(pp)
       print(num, "points");
     }
+    num++;
   }
-  ui.drawMsg(num + "\n" + fmt.fmtDist(dist / 1000));
+  if (!pp.g)
+    ui.drawMsg(num + "\n" + fmt.fmtDist(dist / 1000));
   destination = prev;
 }
+
+var g_over = Graphics.createArrayBuffer(176, 176, 2, { msb: true });
 
 function time_read(n) {
   print("Converting...");
@@ -405,16 +421,20 @@ function time_read(n) {
   print("Running...");
   let v1 = getTime();
   let pp = {};
-  pp.lat = 50;
-  pp.lon = 14.75;
-  pp.ppm = 0.08; /* Pixels per meter */
-  pp.course = 270;
+  pp.ppm = 0.0008 * 5; /* Pixels per meter */
+  pp.course = 0;
+  pp.x = 176/2;
+  pp.y = 176/2;
+  pp.g = g_over;
   read(pp, n);
+  // { rotate: Math.PI / 4 + i/100, scale: 1-i/100 }
+  flip(pp);
+
   let v2 = getTime();
   print("Read took", (v2-v1), "seconds");
   step_init();
   print(num, "points", dist, "distance");
-  setTimeout(step, 1000);
+  setTimeout(step, 5000);
 }
 
 var track_name = "", inf, point_num, track = [], track_points = 30, north = {};
@@ -527,6 +547,7 @@ function step() {
   
   let pp = fix;
   pp.ppm = 0.08 * 3; /* Pixels per meter */
+  pp.g = g;
 
   if (!fix.fix) {
     let i = 2;
