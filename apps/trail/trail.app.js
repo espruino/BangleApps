@@ -455,7 +455,7 @@ function paint_all(pp) {
 
   g.setColor(1, 0, 0);
   for (let i = 1; i < track.length; i++) {
-    p = track[i];
+    let p = track[i];
     prev = track[i-1];
     if (0 && fmt.distance(p, pp) < 100)
       p.passed = 1;
@@ -521,7 +521,7 @@ function step() {
   let v1 = getTime();
   g.reset().clear();
 
-  fix = gps.getGPSFix();
+  let fix = gps.getGPSFix();
 
   load_next();
   
@@ -540,7 +540,7 @@ function step() {
   if (!fast) {
     g.setFont("Vector", 31);
     g.setFontAlign(-1, -1);
-    msg = "\noff " + fmt.fmtDist(quiet.offtrack/1000);
+    let msg = "\noff " + fmt.fmtDist(quiet.offtrack/1000);
     g.drawString(fmt.fmtFix(fix, getTime()-gps.gps_start) + msg, 3, 3);
   }
   if (!fast) {
@@ -565,7 +565,7 @@ function step() {
 function recover() {
   ui.drawMsg("Recover...");
   step_init();
-  fix = gps.getGPSFix();
+  let fix = gps.getGPSFix();
   let pp = fix;
   pp.ppm = 0.08 * 3; /* Pixels per meter */
   if (!fix.fix) {
