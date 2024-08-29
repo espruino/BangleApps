@@ -19,10 +19,10 @@ let panaIp = "tvIp" in serverData ? serverData.tvIp : 'undefined';
 let settingsPort = "port" in serverData ? serverData.port : 'undefined';
 
 let counter;
+let IPASSIGN;
+let samsIp;
 let countdownTimer = null;
-let drawTimeout;
 let currNumber = null;
-let prevNumber = null;
 let selected = "NONE";
 let currentScreen = "power";
 let font = 'Vector';
@@ -298,7 +298,7 @@ function buttonPress(val, screenValue) {
     displayOutput(currNumber, screenValue);
   }
 
-  checkValue = appData.some(app => app.name === screenValue);  // check app data
+  let checkValue = appData.some(app => app.name === screenValue);  // check app data
 
   if (checkValue) sendPost(val);  // app values
 
@@ -383,10 +383,6 @@ let tvSelector = {
   }
 };
 
-function samsungmenu() {
-  //E.showMessage("It's on my list to do", "Error");
-}
-
 function mainMenu() {
   assignScreen("mainmenu");
   E.showMenu(tvSelector);
@@ -467,7 +463,7 @@ function subMenu() {
     settingssub[panaheader] = function() { 
       IPASSIGN = "pana"; 
       E.showMenu(deviceSelect);
-      deviceFile = require("Storage").readJSON("tvdevicelist.json", true);
+      devicefile = require("Storage").readJSON("tvdevicelist.json", true);
 console.log(devicefile);
     };
   } else {
@@ -498,7 +494,7 @@ let parsedResp = JSON.parse(devicefile.resp);
 
     select: i => {
       let sourceOption = parsedResp[i];
-      let devicePressed = sourceOption.name;
+      //let devicePressed = sourceOption.name;
       let deviceIp = sourceOption.ip;
 
       assignScreen("deviceSearch");
