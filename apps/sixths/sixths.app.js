@@ -244,7 +244,7 @@ var state = {
 // GPS handling
 var gps_on = 0, // time GPS was turned on
     last_fix = 0, // time of last fix
-    last_restart = 0, last_pause = 0; // utime
+    last_restart = 0, last_pause = 0, // utime
     last_fstart = 0; // utime, time of start of last fix
 var gps_needed = 0, // how long to wait for a fix
     keep_fix_for = 30;
@@ -817,7 +817,7 @@ function draw() {
 
   const weekday = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-  msg = weekday[now.getDay()] + "" + now.getDate() + ". "
+  let msg = weekday[now.getDay()] + "" + now.getDate() + ". "
         + fmt.fmtSteps(Bangle.getHealthStatus("day").steps) + "\n";
 
   if (gps_on) {
