@@ -184,8 +184,8 @@ function assignScreen (screen) {
 }
 
 function sendPost(keyPress) {
-  let serverPort = settingsPort;
-  let tvIp = panaIp;
+  serverPort = settingsPort;
+  tvIp = panaIp;
   let credentials = btoa(`${username}:${password}`);
   let serverUrl = `https://${serverDns}:${serverPort}`;
 
@@ -211,7 +211,7 @@ function sendPost(keyPress) {
 }
 
 function receiveDevices() {
-  let serverPort = settingsPort;
+  serverPort = settingsPort;
   let credentials = btoa(`${username}:${password}`);
   let serverUrl = `https://${serverDns}:${serverPort}/ssdp-devices.json`;
   return Bangle.http(
