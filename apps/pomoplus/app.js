@@ -93,7 +93,7 @@ let hideButtons = ()=>{
 }
 
 let graphicState = 0; // 0 - all is visible, 1 - widgets are hidden, 2 - widgets and buttons are hidden.
-let switchGraphicsOnButton = (n)=>{
+let onButtonSwitchGraphics = (n)=>{
   if (process.env.HWVERSION == 2) n=2; // Translate Bangle.js 2 button to Bangle.js 1 middle button.
   if (n == 2) {
     if (graphicState == 0) {
@@ -106,12 +106,11 @@ let switchGraphicsOnButton = (n)=>{
       wu.show();
       drawButtons();
     }
-
     graphicState = (graphicState+1) % 3;
   }
 }
 
-let touchHandler = (button, xy) => {
+let onTouchSoftwareButtons = (button, xy) => {
   //If we support full touch and we're not touching the keys, ignore.
   //If we don't support full touch, we can't tell so just assume we are.
   let isOutsideButtonArea = xy !== undefined && xy.y <= g.getHeight() - BUTTON_HEIGHT;
@@ -175,9 +174,8 @@ let touchHandler = (button, xy) => {
 
 Bangle.setUI({
   mode: "custom",
-  touch: touchHandler,
-  btn: switchGraphicsOnButton
-
+  touch: onTouchSoftwareButtons,
+  btn: onButtonSwitchGraphics
 })
 
 let timerInterval;
