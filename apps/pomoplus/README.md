@@ -18,7 +18,7 @@
 - Click the play button to start a pomodoro and get to work!
 - Click the pause button if you're interrupted with something urgent.
 - Click the cross button if you need to end your work session.
-- Click the skip button if you forgot to start the pomodori after the urgent interruption and ended up working for a long time! (Good on ya'!)
+- Click the skip button if you forgot to start the pomodoro after the urgent interruption and ended up working for a long time! (Good on ya'!)
 - Press the (middle) hardware button to toggle visibility of widgets and software buttons. 
 
 Configure the pomodori and break times in the settings.
