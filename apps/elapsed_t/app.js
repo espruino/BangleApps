@@ -121,10 +121,6 @@ function formatHourToAMPM(h) {
   return `${h_ampm}\n${ampm}`;
 }
 
-function howManyDaysInMonth(month, year) {
-  return new Date(year, month, 0).getDate();
-}
-
 function getDatePickerObject() {
   switch (settings.dateFormat) {
     case 0:
