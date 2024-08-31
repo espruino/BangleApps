@@ -88,10 +88,34 @@ function drawTimerAndMessage() {
 
 if (!Bangle.isLocked()) drawButtons();
 
-Bangle.on("touch", (button, xy) => {
+let hideButtons = ()=>{
+    g.clearRect(0,BUTTON_TOP,W-1,H-1);
+}
+
+let graphicState = 0; // 0 - all is visible, 1 - widgets are hidden, 2 - widgets and buttons are hidden.
+let switchGraphicsOnButton = (n)=>{
+  if (process.env.HWVERSION == 2) n=2; // Translate Bangle.js 2 button to Bangle.js 1 middle button.
+  if (n == 2) {
+    if (graphicState == 0) {
+      wu.hide();
+    }
+    if (graphicState == 1) {
+      hideButtons();
+    }
+    if (graphicState == 2) {
+      wu.show();
+      drawButtons();
+    }
+
+    graphicState = (graphicState+1) % 3;
+  }
+}
+
+let touchHandler = (button, xy) => {
   //If we support full touch and we're not touching the keys, ignore.
   //If we don't support full touch, we can't tell so just assume we are.
-  if (xy !== undefined && xy.y <= g.getHeight() - BUTTON_HEIGHT) return;
+  let isOutsideButtonArea = xy !== undefined && xy.y <= g.getHeight() - BUTTON_HEIGHT;
+  if (isOutsideButtonArea || graphicState == 2) return;
 
   if (!common.state.wasRunning) {
     //If we were never running, there is only one button: the start button
@@ -147,7 +171,14 @@ Bangle.on("touch", (button, xy) => {
       if (common.settings.showClock) Bangle.showClock();
     }
   }
-});
+};
+
+Bangle.setUI({
+  mode: "custom",
+  touch: touchHandler,
+  btn: switchGraphicsOnButton
+
+})
 
 let timerInterval;
 
@@ -168,7 +199,7 @@ if (common.state.running) {
 
 Bangle.on('lock', (on, reason) => {
   if (on) {
-    g.clearRect(0,BUTTON_TOP,W-1,H-1);
+    hideButtons();
     wu.hide();
   }
   if (!on) {
