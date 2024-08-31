@@ -196,13 +196,14 @@ if (common.state.running) {
 }
 
 Bangle.on('lock', (on, reason) => {
+  if (graphicState==2) return;
   if (on) {
     hideButtons();
     wu.hide();
   }
   if (!on) {
     drawButtons();
-    wu.show();
+    if (graphicState==0) wu.show();
   }
 });
 
