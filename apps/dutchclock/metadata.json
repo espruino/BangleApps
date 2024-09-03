@@ -3,12 +3,17 @@
   "name": "Dutch Clock",
   "shortName":"Dutch Clock",
   "icon": "app.png",
-  "version":"0.03",
+  "version":"0.04",
   "description": "A clock that displays the time the way a Dutch person would respond when asked what time it is.",
   "type": "clock",
   "tags": "clock,dutch,text",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "allow_emulator": true,
+  "screenshots": [
+    {"url":"screenshotbangle2.png"},
+    {"url":"screenshotbangle1.png"},
+    {"url":"screenshotbangle1-2.png"}
+  ],
   "storage": [
     {"name":"dutchclock.app.js","url":"app.js"},
     {"name":"dutchclock.settings.js","url":"settings.js"},
