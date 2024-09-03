@@ -7,8 +7,9 @@ const SCREEN_HEIGHT = g.getHeight();
 const TOP_SPACING = 5;
 const WIDGETS_HEIGHT = 20;
 const DATETIME_SPACING_HEIGHT = 5;
-const DATE_HEIGHT = 10;
 const TIME_HEIGHT = 10;
+const DATE_HEIGHT = 10;
+const BOTTOM_SPACING = 5;
 
 const TEXT_WIDTH = SCREEN_WIDTH - 2;
 
@@ -84,18 +85,19 @@ function draw() {
 
   // Reset the state of the graphics library
   g.clear(true);
+
   // draw the current time (4x size 7 segment)
   setFont(timeLines);
 
   g.setFontAlign(0,0); // align center top
-  g.drawString(timeLines.join("\n"), X, Y, true /*clear background*/);
+  g.drawString(timeLines.join("\n"), X, Y, false);
 
   if (bottomLines.length) {  
     // draw the time and/or date, in a normal font
     g.setFont("6x8");
     g.setFontAlign(0,1); // align center bottom
     // pad the date - this clears the background if the date were to change length
-    g.drawString(bottomLines.join('\n'), SCREEN_WIDTH/2, SCREEN_HEIGHT - 5, true /*clear background*/);
+    g.drawString(bottomLines.join('\n'), SCREEN_WIDTH/2, SCREEN_HEIGHT - BOTTOM_SPACING, false);
   }
 
   /* Show launcher when middle button pressed
@@ -130,13 +132,13 @@ function getBottomLines() {
     }
   
     if (settings.showDate) {
-        lines.push(locale.date(date, 1));
+        lines.push(locale.date(date));
     }
   
     return lines;
   }
   
-  function getTimeLines(m) {
+function getTimeLines(m) {
   switch (settings.variant) {
     case VARIANT_EXACT:
       return getExactTimeLines(m);
@@ -153,6 +155,10 @@ function getBottomLines() {
 }
 
 function getExactTimeLines(m) {
+  if (m === 0) {
+    return ['middernacht'];
+  }
+
   const hour = getHour(m);
   const minutes = getMinutes(hour.offset);
 
@@ -166,15 +172,8 @@ function getExactTimeLines(m) {
 
 function getApproximateTimeLines(m) {
   const roundMinutes = getRoundMinutes(m);
-  const hour = getHour(roundMinutes.minutes);
 
-  const minutes = getMinutes(hour.offset);
-
-  const lines = minutes.concat(hour.lines);
-
-  if (lines.length === 1) {
-    lines.push('uur');
-  }
+  const lines = getExactTimeLines(roundMinutes.minutes);
 
   return addApproximateDescription(lines, roundMinutes.offset);
 }
@@ -222,7 +221,7 @@ function addApproximateDescription(lines, offset) {
     return lines;
   }
 
-  if (lines[1] === 'uur') {
+  if (lines.length === 1 || lines[1] === 'uur') {
     const singular = lines[0];
     const plural = getPlural(singular);
     return {
@@ -243,6 +242,7 @@ function addApproximateDescription(lines, offset) {
 
 function getPlural(h) {
   return {
+    middernacht: 'middernacht',
     een: 'enen',
     twee: 'tweeën',
     drie: 'drieën',
