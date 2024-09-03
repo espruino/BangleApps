@@ -46,11 +46,20 @@ exports.reply = function (options) {
         options.fileOverride || "replies.json",
         true
       ) || [];
+
     replies.forEach((reply) => {
-      menu = Object.defineProperty(menu, reply.text, {
+      var displayString = reply.disp ?? reply.text;
+      var truncatedDisplayString = g.wrapString(displayString, 120);
+      // Generally handles truncating nicely, but falls down in long runs of emoji since they count as one image
+      if (truncatedDisplayString.length > 1) {
+        truncatedDisplayString = truncatedDisplayString.slice(0,1);
+        truncatedDisplayString[truncatedDisplayString.length-1] += "...";
+      }
+      menu = Object.defineProperty(menu, truncatedDisplayString, {
         value: () => constructReply(options.msg ?? {}, reply.text, resolve, reject),
       });
     });
+
     if (!keyboard) delete menu[/*LANG*/ "Compose"];
 
     if (replies.length == 0) {
