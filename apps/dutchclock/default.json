@@ -1,6 +1,6 @@
 {
     "variant": "approximate",
     "showWidgets": true,
-    "showTimeLine": false,
-    "showDateLine": true
+    "showTime": false,
+    "showDate": true
 }
