@@ -3,8 +3,9 @@ const storage = require("Storage");
 const SCREEN_WIDTH = g.getWidth();
 const SCREEN_HEIGHT = g.getHeight();
 
-const WIDGETS_HEIGHT = 25;
-const DATETIME_SPACING_HEIGHT = 10;
+const TOP_SPACING = 5;
+const WIDGETS_HEIGHT = 20;
+const DATETIME_SPACING_HEIGHT = 5;
 const DATE_HEIGHT = 10;
 const TIME_HEIGHT = 10;
 
@@ -26,6 +27,7 @@ const settings = Object.assign(
 );
 
 const maxFontSize = SCREEN_HEIGHT 
+  - TOP_SPACING
   - (settings.showWidgets ? WIDGETS_HEIGHT : 0)
   - (settings.showDate || settings.showTime ? DATETIME_SPACING_HEIGHT : 0)
   - (settings.showDate ? DATE_HEIGHT : 0)
@@ -33,6 +35,7 @@ const maxFontSize = SCREEN_HEIGHT
 
 const X = SCREEN_WIDTH / 2;
 const Y = SCREEN_HEIGHT / 2
+  + TOP_SPACING / 2
   + (settings.showWidgets ? WIDGETS_HEIGHT / 2 : 0)
   - (settings.showDate || settings.showTime ? DATETIME_SPACING_HEIGHT / 2 : 0)
   - (settings.showDate ? DATE_HEIGHT / 2 : 0)
@@ -121,11 +124,11 @@ function setFont(timeLines) {
 function getBottomLines() {
     const lines = [];
   
-    if (settings.showTimeLine) {
+    if (settings.showTime) {
       lines.push(require("locale").time(date));
     }
   
-    if (settings.showDateLine) {
+    if (settings.showDate) {
       lines.push(`${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`);
     }
   
