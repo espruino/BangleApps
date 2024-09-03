@@ -46,8 +46,18 @@
         getOption('Hybrid', 'variant', VARIANT_HYBRID),
         {
           title: 'Show widgets?',
-          value: settings.showWidgets ?? true,
+          value: settings.showWidgets,
           onchange: v => writeSetting('showWidgets', v)
+        },
+        {
+          title: 'Show time?',
+          value: settings.showTime,
+          onchange: v => writeSetting('showTime', v)
+        },
+        {
+          title: 'Show date?',
+          value: settings.showDate,
+          onchange: v => writeSetting('showDate', v)
         }
       ];
   
