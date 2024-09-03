@@ -21,7 +21,7 @@ const SETTINGS_FILE = "dutchclock.json";
 
 // Load settings
 const settings = Object.assign(
-    storage.readJSON(DEFAULTS_FILE, true)?.settings || {},
+    storage.readJSON(DEFAULTS_FILE, true) || {},
     storage.readJSON(SETTINGS_FILE, true) || {}
 );
 
