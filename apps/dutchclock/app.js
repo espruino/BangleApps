@@ -1,29 +1,42 @@
 const SCREEN_WIDTH = g.getWidth();
 const SCREEN_HEIGHT = g.getHeight();
+
+const WIDGETS_HEIGHT = 25;
+const DATETIME_SPACING_HEIGHT = 10;
+const DATE_HEIGHT = 10;
+const TIME_HEIGHT = 10;
+
+const TEXT_WIDTH = SCREEN_WIDTH - 2;
+
 const MINS_IN_HOUR = 60;
 
 const VARIANT_EXACT = 'exact';
 const VARIANT_APPROXIMATE = 'approximate';
 const VARIANT_HYBRID = 'hybrid';
 
+const DEFAULTS_FILE = "dutchclock.default.json"; 
 const SETTINGS_FILE = "dutchclock.json";
 
-let date, mins;
-
-var settings = Object.assign({
-  // default values
-  variant: VARIANT_APPROXIMATE,
-  showWidgets: true
-}, require('Storage').readJSON(SETTINGS_FILE, true) || {});
+// Load settings
+const settings = Object.assign(
+    storage.readJSON(DEFAULTS_FILE, true)?.settings || {},
+    storage.readJSON(SETTINGS_FILE, true) || {}
+);
 
 const maxFontSize = SCREEN_HEIGHT 
-  - 20 // For the date
-  - (settings.showWidgets ? 25 : 0);
+  - (settings.showWidgets ? WIDGETS_HEIGHT : 0)
+  - (settings.showDate || settings.showTime ? DATETIME_SPACING_HEIGHT : 0)
+  - (settings.showDate ? DATE_HEIGHT : 0)
+  - (settings.showTime ? TIME_HEIGHT : 0);
 
 const X = SCREEN_WIDTH / 2;
 const Y = SCREEN_HEIGHT / 2
-  + (settings.showWidgets ? 5 : -5);
-
+  + (settings.showWidgets ? WIDGETS_HEIGHT / 2 : 0)
+  - (settings.showDate || settings.showTime ? DATETIME_SPACING_HEIGHT / 2 : 0)
+  - (settings.showDate ? DATE_HEIGHT / 2 : 0)
+  - (settings.showTime ? TIME_HEIGHT / 2 : 0);
+  
+let date, mins;
 
 function initialize() {
   // draw immediately at first
@@ -75,7 +88,7 @@ function draw() {
   g.setFontAlign(0,1); // align center bottom
   // pad the date - this clears the background if the date were to change length
   var dateStr = "    "+require("locale").date(date)+"    ";
-  g.drawString(dateStr, SCREEN_WIDTH/2, SCREEN_HEIGHT - 5, true /*clear background*/);
+  g.drawString(dateStr, SCREEN_WIDTH / 2, SCREEN_HEIGHT - 5, true /*clear background*/);
 
   /* Show launcher when middle button pressed
   This should be done *before* Bangle.loadWidgets so that
@@ -96,8 +109,8 @@ function setFont(timeLines) {
 
   let width = g.stringWidth(timeLines.join('\n'));
 
-  if (width > SCREEN_WIDTH) {
-    g.setFont("Vector", Math.floor(size * (SCREEN_WIDTH / width)));
+  if (width > TEXT_WIDTH) {
+    g.setFont("Vector", Math.floor(size * (TEXT_WIDTH / width)));
   }
 }
 

@@ -3,14 +3,14 @@
     const VARIANT_APPROXIMATE = 'approximate';
     const VARIANT_HYBRID = 'hybrid';
   
+    const DEFAULTS_FILE = "dutchclock.default.json"; 
     const SETTINGS_FILE = "dutchclock.json";
   
     // Load settings
-    var settings = Object.assign({
-      // default values
-      variant: VARIANT_APPROXIMATE,
-      showWidgets: true
-    }, require('Storage').readJSON(SETTINGS_FILE, true) || {});
+    const settings = Object.assign(
+        storage.readJSON(DEFAULTS_FILE, true)?.settings || {},
+        storage.readJSON(SETTINGS_FILE, true) || {}
+    );
   
     function writeSettings() {
       require('Storage').writeJSON(SETTINGS_FILE, settings);
