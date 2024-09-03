@@ -1,4 +1,5 @@
 const storage = require("Storage");
+const locale = require('locale');
 
 const SCREEN_WIDTH = g.getWidth();
 const SCREEN_HEIGHT = g.getHeight();
@@ -125,11 +126,11 @@ function getBottomLines() {
     const lines = [];
   
     if (settings.showTime) {
-      lines.push(require("locale").time(date));
+        lines.push(locale.time(date, 1));
     }
   
     if (settings.showDate) {
-      lines.push(`${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`);
+        lines.push(locale.date(date, 1));
     }
   
     return lines;
