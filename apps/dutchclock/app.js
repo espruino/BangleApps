@@ -1,3 +1,5 @@
+const storage = require("Storage");
+
 const SCREEN_WIDTH = g.getWidth();
 const SCREEN_HEIGHT = g.getHeight();
 

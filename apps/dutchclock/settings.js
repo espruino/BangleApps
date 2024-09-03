@@ -1,4 +1,6 @@
 (function(back) {
+    const storage = require("Storage");
+
     const VARIANT_EXACT = 'exact';
     const VARIANT_APPROXIMATE = 'approximate';
     const VARIANT_HYBRID = 'hybrid';
