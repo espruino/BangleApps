@@ -226,10 +226,11 @@
       date = new Date();
       g.clear();
 
-      // Always draw background for full screen
-      if (bgImage) {
+      // Always draw backgrounds full screen
+
+      if (bgImage) { // Check for bg in boxclk config
         g.drawImage(bgImage, 0, 0);
-      } else {
+      } else { // Otherwise use clockbg module
         background.fillRect(0, 0, g.getWidth(), g.getHeight());
       }
       
