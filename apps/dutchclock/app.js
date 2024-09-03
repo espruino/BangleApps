@@ -76,6 +76,7 @@ function tick() {
 function draw() {
   // work out how to display the current time
   const timeLines = getTimeLines(mins);
+  const bottomLines = getBottomLines();
 
   // Reset the state of the graphics library
   g.clear(true);
@@ -85,12 +86,13 @@ function draw() {
   g.setFontAlign(0,0); // align center top
   g.drawString(timeLines.join("\n"), X, Y, true /*clear background*/);
 
-  // draw the date, in a normal font
-  g.setFont("6x8");
-  g.setFontAlign(0,1); // align center bottom
-  // pad the date - this clears the background if the date were to change length
-  var dateStr = "    "+require("locale").date(date)+"    ";
-  g.drawString(dateStr, SCREEN_WIDTH / 2, SCREEN_HEIGHT - 5, true /*clear background*/);
+  if (bottomLines.length) {  
+    // draw the time and/or date, in a normal font
+    g.setFont("6x8");
+    g.setFontAlign(0,1); // align center bottom
+    // pad the date - this clears the background if the date were to change length
+    g.drawString(bottomLines.join('\n'), SCREEN_WIDTH/2, SCREEN_HEIGHT - 5, true /*clear background*/);
+  }
 
   /* Show launcher when middle button pressed
   This should be done *before* Bangle.loadWidgets so that
@@ -116,7 +118,21 @@ function setFont(timeLines) {
   }
 }
 
-function getTimeLines(m) {
+function getBottomLines() {
+    const lines = [];
+  
+    if (settings.showTimeLine) {
+      lines.push(require("locale").time(date));
+    }
+  
+    if (settings.showDateLine) {
+      lines.push(`${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`);
+    }
+  
+    return lines;
+  }
+  
+  function getTimeLines(m) {
   switch (settings.variant) {
     case VARIANT_EXACT:
       return getExactTimeLines(m);
