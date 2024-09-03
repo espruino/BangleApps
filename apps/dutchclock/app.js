@@ -222,10 +222,11 @@ function addApproximateDescription(lines, offset) {
   }
 
   if (lines[1] === 'uur') {
-    const plural = getPlural(lines[0]);
+    const singular = lines[0];
+    const plural = getPlural(singular);
     return {
       '-2': ['tegen', plural],
-      '-1': ['iets voor', plural],
+      '-1': ['iets voor', singular],
        '1': ['iets na', plural],
        '2': ['even na', plural]
     }[`${offset}`];
