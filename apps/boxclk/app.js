@@ -10,6 +10,7 @@
   let locale = require("locale");
   let widgets = require("widget_utils");
   let date = new Date();
+  let bgImage;
   let configNumber = (storage.readJSON("boxclk.json", 1) || {}).selectedConfig || 0;
   let fileName = 'boxclk' + (configNumber > 0 ? `-${configNumber}` : '') + '.json';
   // Add a condition to check if the file exists, if it does not, default to 'boxclk.json'
@@ -70,6 +71,14 @@
   * 5. Initial settings of boxes and their positions
   * ---------------------------------------------------------------
   */
+
+  for (let key in boxesConfig) {
+    if (key === 'bg' && boxesConfig[key].img) {
+      bgImage = storage.read(boxesConfig[key].img);
+    } else if (key !== 'selectedConfig') {
+      boxes[key] = Object.assign({}, boxesConfig[key]);
+    }
+  }
 
   let boxKeys = Object.keys(boxes);
 
@@ -211,14 +220,22 @@
   */
 
   let draw = (function() {
-    let updatePerMinute = true; // variable to track the state of time display
+    let updatePerMinute = true;
 
     return function(boxes) {
       date = new Date();
       g.clear();
-      background.fillRect(Bangle.appRect);
+
+      // Always draw backgrounds full screen
+
+      if (bgImage) { // Check for bg in boxclk config
+        g.drawImage(bgImage, 0, 0);
+      } else { // Otherwise use clockbg module
+        background.fillRect(0, 0, g.getWidth(), g.getHeight());
+      }
+      
       if (boxes.time) {
-        boxes.time.string = modString(boxes.time, locale.time(date, isBool(boxes.time.short, true) ? 1 : 0));
+        boxes.time.string = modString(boxes.time, locale.time(date, isBool(boxes.time.short, true) ? 1 : 0).trim());
         updatePerMinute = isBool(boxes.time.short, true);
       }
       if (boxes.meridian) {
