@@ -78,6 +78,19 @@
     return lineEndFull - 5;
   };
 
+  let drawHourString = function(hour, yLines) {
+    var hourForDrawing = 0;
+    if (hour < 0) {
+      // a negative hour => (+ and - = -)
+      hourForDrawing = 24 + hour;
+    } else if (hour >= 24) {
+      hourForDrawing = hour - 24;
+    } else {
+      hourForDrawing = hour;
+    }
+    g.drawString(hourForDrawing, hourStringXOffset(hourForDrawing), yLines, true);
+  };
+
   let drawTime = function () {
     g.clear();
     var d = new Date();
@@ -101,12 +114,12 @@
       switch (yTopLines - 88 + mins) {
         case -60:
           lineEnd = lineEndFull;
-          g.drawString(d.getHours()-1, hourStringXOffset(d.getHours()-1), yTopLines, true);
+          drawHourString(d.getHours() - 1, yTopLines);
           break;
         case 0:
         case 60:
           lineEnd = lineEndFull;
-          g.drawString(d.getHours(), hourStringXOffset(d.getHours()), yTopLines, true);
+          drawHourString(d.getHours(), yTopLines);
           break;
         case 45:
         case -45:
@@ -136,11 +149,11 @@
         case 0:
         case 60:
           lineEnd = lineEndFull;
-          g.drawString(d.getHours() + 1,  hourStringXOffset(d.getHours()+1), yBottomLines, true);
+          drawHourString(d.getHours() + 1, yBottomLines);
           break;
         case 120:
           lineEnd = lineEndFull;
-          g.drawString(d.getHours() + 2,  hourStringXOffset(d.getHours()+2), yBottomLines, true);
+          drawHourString(d.getHours() + 2, yBottomLines);
           break;
         case 15:
         case 75:

@@ -37,14 +37,19 @@ var draw = function () {
         require("locale").dow(date, 0).toUpperCase();
     var x2 = x + 6;
     var y2 = y + 66;
+    var charging = Bangle.isCharging();
     g.reset()
         .clearRect(Bangle.appRect)
         .setFont("Vector", 55)
         .setFontAlign(0, 0)
+        .setColor(charging ? "#0f0" : g.theme.fg)
         .drawString(timeStr, x, y)
         .setFont("Vector", 24)
-        .drawString(dateStr, x2, y2)
-        .drawString("".concat(E.getBattery(), "%"), x2, y2 + 48);
+        .drawString(dateStr, x2, y2);
+    if (charging)
+        g.drawString("charging: ".concat(E.getBattery(), "%"), x2, y2 + 48);
+    else
+        g.drawString("".concat(E.getBattery(), "%"), x2, y2 + 48);
     if (nextDraw)
         clearTimeout(nextDraw);
     nextDraw = setTimeout(function () {
@@ -96,8 +101,10 @@ function drainedRestore() {
     load();
 }
 var checkCharge = function () {
-    if (E.getBattery() < restore)
+    if (E.getBattery() < restore) {
+        draw();
         return;
+    }
     drainedRestore();
 };
 if (Bangle.isCharging())

@@ -2,7 +2,7 @@
   "id": "gipy",
   "name": "Gipy",
   "shortName": "Gipy",
-  "version": "0.25",
+  "version": "0.27",
   "description": "Follow gpx files using the gps. Don't get lost in your bike trips and hikes.",
   "allow_emulator":false,
   "icon": "gipy.png",

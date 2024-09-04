@@ -35,6 +35,10 @@ E.showMenu = (items?: Menu): MenuInstance => {
   let lastIdx = 0;
   let selectEdit: undefined | ActualMenuItem = undefined;
 
+  const scroller = {
+    scroll: selected,
+  };
+
   const l = {
     draw: (rowmin?: number, rowmax?: number) => {
       let rows = 0|Math.min((y2 - y) / fontHeight, menuItems.length);
@@ -83,9 +87,10 @@ E.showMenu = (items?: Menu): MenuInstance => {
         }
 
         /*???*/{
-          if(name.length >= 17 - v.length && typeof item === "object"){
+          const vplain = v.indexOf("\0") < 0;
+          if(vplain && name.length >= 17 - v.length && typeof item === "object"){
             g.drawString(name.substring(0, 12 - v.length) + "...", x + 3.7, iy + 2.7);
-          }else if(name.length >= 15){
+          }else if(vplain && name.length >= 15){
             g.drawString(name.substring(0, 15) + "...", x + 3.7, iy + 2.7);
           }else{
             g.drawString(name, x + 3.7, iy + 2.7);
@@ -156,9 +161,11 @@ E.showMenu = (items?: Menu): MenuInstance => {
       } else {
         const lastSelected = selected;
         selected = (selected + dir + /*keep +ve*/menuItems.length) % menuItems.length;
+        scroller.scroll = selected;
         l.draw(Math.min(lastSelected, selected), Math.max(lastSelected, selected));
       }
     },
+    scroller,
   };
 
   l.draw();

@@ -1,6 +1,6 @@
 { "id": "skyspy",
   "name": "Sky Spy",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Application for debugging GPS problems",
   "icon": "app.png",
   "readme": "README.md",

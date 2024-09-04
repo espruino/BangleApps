@@ -54,15 +54,21 @@ const draw = () => {
     require("locale").dow(date, 0).toUpperCase();
   const x2 = x + 6;
   const y2 = y + 66;
+  const charging = Bangle.isCharging();
 
   g.reset()
     .clearRect(Bangle.appRect)
     .setFont("Vector", 55)
     .setFontAlign(0, 0)
+    .setColor(charging ? "#0f0" : g.theme.fg)
     .drawString(timeStr, x, y)
     .setFont("Vector", 24)
-    .drawString(dateStr, x2, y2)
-    .drawString(`${E.getBattery()}%`, x2, y2 + 48);
+    .drawString(dateStr, x2, y2);
+
+  if(charging)
+    g.drawString(`charging: ${E.getBattery()}%`, x2, y2 + 48);
+  else
+    g.drawString(`${E.getBattery()}%`, x2, y2 + 48);
 
   if(nextDraw) clearTimeout(nextDraw);
   nextDraw = setTimeout(() => {
@@ -125,7 +131,10 @@ function drainedRestore() { // "public", to allow users to call
 }
 
 const checkCharge = () => {
-  if(E.getBattery() < restore) return;
+  if(E.getBattery() < restore) {
+    draw();
+    return;
+  }
   drainedRestore();
 };
 

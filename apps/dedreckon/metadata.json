@@ -1,0 +1,13 @@
+{ "id": "dedreckon",
+  "name": "Ded Reckon",
+  "version": "0.01",
+  "description": "Dead Reckoning using compass and step counter",
+  "icon": "app.png",
+  "readme": "README.md",
+  "supports" : ["BANGLEJS2"],
+  "tags": "outdoors",
+  "storage": [
+      {"name":"dedreckon.app.js","url":"dedreckon.app.js"},
+      {"name":"dedreckon.img","url":"app-icon.js","evaluate":true}
+  ]
+}
