@@ -1,7 +1,7 @@
 # Dutch Clock
-This clock shows the time, in words, the way a Dutch person would tell you what time it is. Useful when learning Dutch.
+This clock shows the time, in words, the way a Dutch person would tell you what time it is. Useful when learning Dutch or pretending to know Dutch.
 
-It was inspired by my wife, who sometimes insists I tell her exactly what time it says on the watch and not just an approximation.
+Dedicated my wife, who will sometimes insist I tell her exactly what time it says on the watch and not just an approximation.
 
 ## Options
 - Three modes: 
