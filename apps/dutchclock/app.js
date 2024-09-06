@@ -215,7 +215,7 @@ function getRoundMinutes(m) {
   const nearest = roundTo(5)(m);
 
   return {
-    minutes: nearest,
+    minutes: nearest % MINS_IN_DAY,
     offset: m - nearest
   };
 }
