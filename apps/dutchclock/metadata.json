@@ -3,7 +3,7 @@
   "name": "Dutch Clock",
   "shortName":"Dutch Clock",
   "icon": "app.png",
-  "version":"0.17",
+  "version":"0.18",
   "description": "A clock that displays the time the way a Dutch person would respond when asked what time it is.",
   "type": "clock",
   "tags": "clock,dutch,text",

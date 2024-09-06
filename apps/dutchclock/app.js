@@ -48,6 +48,11 @@ const Y = SCREEN_HEIGHT / 2
 let date, mins;
 
 function initialize() {
+  // Tell Bangle this is a clock
+  Bangle.setUI("clock");
+  // Load widgets
+  Bangle.loadWidgets();
+
   // draw immediately at first
   tick();
 
@@ -101,12 +106,6 @@ function draw() {
     g.drawString(bottomLines.join('\n'), SCREEN_WIDTH/2, SCREEN_HEIGHT - BOTTOM_SPACING, false);
   }
 
-  /* Show launcher when middle button pressed
-  This should be done *before* Bangle.loadWidgets so that
-  widgets know if they're being loaded into a clock app or not */
-  Bangle.setUI("clock");
-  // Load widgets
-  Bangle.loadWidgets();
 
   if (settings.showWidgets) {
     Bangle.drawWidgets();
