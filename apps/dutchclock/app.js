@@ -15,6 +15,7 @@ const BOTTOM_SPACING = 5;
 const TEXT_WIDTH = SCREEN_WIDTH - 2;
 
 const MINS_IN_HOUR = 60;
+const MINS_IN_DAY = 24 * MINS_IN_HOUR;
 
 const VARIANT_EXACT = 'exact';
 const VARIANT_APPROXIMATE = 'approximate';
@@ -69,7 +70,7 @@ function initialize() {
 
 function tick() {
   date = new Date();
-  const m = date.getHours() * MINS_IN_HOUR + date.getMinutes();
+  const m = (date.getHours() * MINS_IN_HOUR + date.getMinutes()) % MINS_IN_DAY;
 
   if (m !== mins) {
     mins = m;
@@ -214,7 +215,7 @@ function getRoundMinutes(m) {
   const nearest = roundTo(5)(m);
 
   return {
-    minutes: nearest % 60,
+    minutes: nearest,
     offset: m - nearest
   };
 }
