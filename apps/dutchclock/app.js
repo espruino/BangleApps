@@ -1,5 +1,6 @@
 const storage = require("Storage");
 const locale = require('locale');
+const widget_utils = require('widget_utils');
 
 const SCREEN_WIDTH = g.getWidth();
 const SCREEN_HEIGHT = g.getHeight();
@@ -46,13 +47,11 @@ const Y = SCREEN_HEIGHT / 2
 let date, mins;
 
 function initialize() {
+  // Load widgets
+  Bangle.loadWidgets();
+
   // draw immediately at first
   tick();
-
-//  for (let mm = 0; mm < 60; mm++) {
-//    console.log(23, mm);
-//    console.log(getTimeLines(23 * 60 + mm));
-//  }
 
   // now check every second
   let secondInterval = setInterval(tick, 1000);
@@ -75,6 +74,10 @@ function tick() {
   if (m !== mins) {
     mins = m;
     draw();
+  }
+
+  if (!settings.showWidgets) {
+    widget_utils.hide();
   }
 }
 
@@ -106,9 +109,9 @@ function draw() {
   Bangle.setUI("clock");
 
   if (settings.showWidgets) {
-    // Load widgets
-    Bangle.loadWidgets();
     Bangle.drawWidgets();
+  } else {
+    widget_utils.hide();
   }
 }
 
