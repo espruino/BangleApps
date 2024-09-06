@@ -44,13 +44,8 @@
       
       if (isDragging) {
         widgets.hide();
-        // Stop propagation of the touch event to prevent other handlers
-        E.stopEventPropagation();
       } else {
-        widgets.show();
-        widgets.swipeOn();
-        // Call updateBoxData when transitioning from dragging to not dragging
-        updateBoxData();
+        deselectAllBoxes();
       }
     } else {
       // If tapped outside any box, deselect all boxes
