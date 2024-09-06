@@ -139,8 +139,6 @@
     }
   }
 
-  let boxKeys = Object.keys(boxes);
-
   // 6. Text and drawing functions
 
   /*
