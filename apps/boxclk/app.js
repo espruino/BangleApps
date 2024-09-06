@@ -28,19 +28,20 @@
     let boxTouched = false;
     let touchedBox = null;
   
-    boxKeys.forEach((boxKey) => {
-      if (touchInText(e, boxes[boxKey], boxKey)) {
+    for (let boxKey in boxes) {
+      if (touchInText(e, boxes[boxKey])) {
         touchedBox = boxKey;
         boxTouched = true;
+        break;
       }
-    });
+    }
   
     if (boxTouched) {
       // Toggle the selected state of the touched box
       boxes[touchedBox].selected = !boxes[touchedBox].selected;
       
       // Update isDragging based on whether any box is selected
-      isDragging = boxKeys.some(key => boxes[key].selected);
+      isDragging = Object.values(boxes).some(box => box.selected);
       
       if (isDragging) {
         widgets.hide();
@@ -60,10 +61,10 @@
       if (doubleTapTimer) {
         clearTimeout(doubleTapTimer);
         doubleTapTimer = null;
-        Object.keys(boxes).forEach((boxKey) => {
+        for (let boxKey in boxes) {
           boxesConfig[boxKey].boxPos.x = (boxes[boxKey].pos.x / w).toFixed(3);
           boxesConfig[boxKey].boxPos.y = (boxes[boxKey].pos.y / h).toFixed(3);
-        });
+        }
         storage.write(fileName, JSON.stringify(boxesConfig));
         displaySaveIcon();
         return;
@@ -76,30 +77,30 @@
   };
   
   let dragHandler = function(e) {
-      // Check if any box is being dragged
-      if (!isDragging) return;
-
-      // Stop propagation of the drag event to prevent other handlers
-      E.stopEventPropagation();
+    // Check if any box is being dragged
+    if (!isDragging) return;
   
-      boxKeys.forEach(key => {
-          if (boxes[key].selected) {
-              let boxItem = boxes[key];
-              calcBoxSize(boxItem);
-              let newX = boxItem.pos.x + e.dx;
-              let newY = boxItem.pos.y + e.dy;
+    // Stop propagation of the drag event to prevent other handlers
+    E.stopEventPropagation();
   
-              if (newX - boxItem.cachedSize.width / 2 >= 0 &&
-                  newX + boxItem.cachedSize.width / 2 <= w &&
-                  newY - boxItem.cachedSize.height / 2 >= 0 &&
-                  newY + boxItem.cachedSize.height / 2 <= h) {
-                  boxItem.pos.x = newX;
-                  boxItem.pos.y = newY;
-              }
-          }
-      });
+    for (let key in boxes) {
+      if (boxes[key].selected) {
+        let boxItem = boxes[key];
+        calcBoxSize(boxItem);
+        let newX = boxItem.pos.x + e.dx;
+        let newY = boxItem.pos.y + e.dy;
   
-      draw();
+        if (newX - boxItem.cachedSize.width / 2 >= 0 &&
+            newX + boxItem.cachedSize.width / 2 <= w &&
+            newY - boxItem.cachedSize.height / 2 >= 0 &&
+            newY + boxItem.cachedSize.height / 2 <= h) {
+          boxItem.pos.x = newX;
+          boxItem.pos.y = newY;
+        }
+      }
+    }
+  
+    draw();
   };
 
   // 4. Font loading function
@@ -299,42 +300,42 @@
 
   let draw = function() {
     g.clear();
-
+  
     // Always draw backgrounds full screen
     if (bgImage) { // Check for bg in boxclk config
       g.drawImage(bgImage, 0, 0);
     } else { // Otherwise use clockbg module
       background.fillRect(0, 0, g.getWidth(), g.getHeight());
     }
-
+  
     if (!isDragging) {
       updateBoxData();
     }
-
-    boxKeys.forEach((boxKey) => {
+  
+    for (let boxKey in boxes) {
       let boxItem = boxes[boxKey];
-
+  
       // Set font and alignment for each box individually
       g.setFont(boxItem.font, boxItem.fontSize);
       g.setFontAlign(0, 0);
-
+  
       calcBoxSize(boxItem);
-
+  
       const pos = calcBoxPos(boxItem);
-
+  
       if (boxItem.selected) {
         g.setColor(boxItem.border);
         g.drawRect(pos.x1, pos.y1, pos.x2, pos.y2);
       }
-
+  
       g.drawString(
         boxItem,
         boxItem.string,
         boxItem.pos.x + boxItem.xOffset,
         boxItem.pos.y + boxItem.yOffset
       );
-    });
-
+    }
+  
     if (!isDragging) {
       if (drawTimeout) clearTimeout(drawTimeout);
       let updateInterval = boxes.time && !isBool(boxes.time.short, true) ? 1000 : 60000 - (Date.now() % 60000);
@@ -375,7 +376,7 @@
     return boxItem.cachedSize;
   };
 
-  let touchInText = function(e, boxItem, boxKey) {
+  let touchInText = function(e, boxItem) {
     calcBoxSize(boxItem);
     const pos = calcBoxPos(boxItem);
     return e.x >= pos.x1 &&
@@ -386,9 +387,9 @@
 
   let deselectAllBoxes = function() {
     isDragging = false;
-    boxKeys.forEach((boxKey) => {
+    for (let boxKey in boxes) {
       boxes[boxKey].selected = false;
-    });
+    }
     restoreSetColor();
     widgets.show();
     widgets.swipeOn();
