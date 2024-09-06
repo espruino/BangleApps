@@ -85,9 +85,7 @@
       boxKeys.forEach(key => {
           if (boxes[key].selected) {
               let boxItem = boxes[key];
-              if (!boxItem.cachedSize) {
-                  calcBoxSize(boxItem);
-              }
+              calcBoxSize(boxItem);
               let newX = boxItem.pos.x + e.dx;
               let newY = boxItem.pos.y + e.dy;
   
@@ -320,17 +318,9 @@
       g.setFont(boxItem.font, boxItem.fontSize);
       g.setFontAlign(0, 0);
 
-      // Use cached size if available, otherwise calculate and cache
-      if (!boxItem.cachedSize) {
-        calcBoxSize(boxItem);
-      }
+      calcBoxSize(boxItem);
 
-      const pos = {
-        x1: boxItem.pos.x - boxItem.cachedSize.width / 2,
-        y1: boxItem.pos.y - boxItem.cachedSize.height / 2,
-        x2: boxItem.pos.x + boxItem.cachedSize.width / 2,
-        y2: boxItem.pos.y + boxItem.cachedSize.height / 2
-      };
+      const pos = calcBoxPos(boxItem);
 
       if (boxItem.selected) {
         g.setColor(boxItem.border);
@@ -353,31 +343,41 @@
   };
 
   // 9. Helper function for touch event
-  let calcBoxSize = function(boxItem) {
-    g.setFont(boxItem.font, boxItem.fontSize);
-    g.setFontAlign(0, 0);
-
-    let strWidth = g.stringWidth(boxItem.string) + 2 * boxItem.outline;
-    let fontHeight = g.getFontHeight() + 2 * boxItem.outline;
-    let totalWidth = strWidth + 2 * boxItem.xPadding;
-    let totalHeight = fontHeight + 2 * boxItem.yPadding;
-
-    boxItem.cachedSize = {
-      width: totalWidth,
-      height: totalHeight
-    };
-  };
-
-  let touchInText = function(e, boxItem, boxKey) {
-    if (!boxItem.cachedSize) {
-      calcBoxSize(boxItem);
-    }
-    const pos = {
+  let calcBoxPos = function(boxItem) {
+    calcBoxSize(boxItem);
+    return {
       x1: boxItem.pos.x - boxItem.cachedSize.width / 2,
       y1: boxItem.pos.y - boxItem.cachedSize.height / 2,
       x2: boxItem.pos.x + boxItem.cachedSize.width / 2,
       y2: boxItem.pos.y + boxItem.cachedSize.height / 2
     };
+  };
+
+  // Use cached size if available, otherwise calculate and cache
+  let calcBoxSize = function(boxItem) {
+    if (boxItem.cachedSize) {
+      return boxItem.cachedSize;
+    }
+  
+    g.setFont(boxItem.font, boxItem.fontSize);
+    g.setFontAlign(0, 0);
+  
+    let strWidth = g.stringWidth(boxItem.string) + 2 * boxItem.outline;
+    let fontHeight = g.getFontHeight() + 2 * boxItem.outline;
+    let totalWidth = strWidth + 2 * boxItem.xPadding;
+    let totalHeight = fontHeight + 2 * boxItem.yPadding;
+  
+    boxItem.cachedSize = {
+      width: totalWidth,
+      height: totalHeight
+    };
+  
+    return boxItem.cachedSize;
+  };
+
+  let touchInText = function(e, boxItem, boxKey) {
+    calcBoxSize(boxItem);
+    const pos = calcBoxPos(boxItem);
     return e.x >= pos.x1 &&
       e.x <= pos.x2 &&
       e.y >= pos.y1 &&
