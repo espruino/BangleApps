@@ -12,3 +12,4 @@
 - [+] Fixed optional seconds not displaying in time
 - [+] Fixed drag handler by adding E.stopEventPropagation()
 - [+] General code optimization and cleanup
+0.09: Revised event handler code
