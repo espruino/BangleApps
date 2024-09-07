@@ -6,3 +6,4 @@
 0.17: Get loadWidgets back in the right place
 0.18: Move setUI and loadWidgets to initialize function
 0.19: Make compatible with top and bottom widgets
+0.20: Remove unused constant

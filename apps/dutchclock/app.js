@@ -4,7 +4,6 @@ const locale = require('locale');
 const widget_utils = require('widget_utils');
 
 // Define constants
-const WIDGETS_HEIGHT = 20;
 const DATETIME_SPACING_HEIGHT = 5;
 const TIME_HEIGHT = 8;
 const DATE_HEIGHT = 8;
