@@ -24,98 +24,96 @@
   let drawTimeout;
 
   // 3. Event handlers
-  let eventHandlers = {
-    touchHandler: function(zone, e) {
-      let boxTouched = false;
-      let touchedBox = null;
-    
-      for (let boxKey in boxes) {
-        if (touchInText(e, boxes[boxKey])) {
-          touchedBox = boxKey;
-          boxTouched = true;
-          break;
-        }
+  let touchHandler = function(zone, e) {
+    let boxTouched = false;
+    let touchedBox = null;
+  
+    for (let boxKey in boxes) {
+      if (touchInText(e, boxes[boxKey])) {
+        touchedBox = boxKey;
+        boxTouched = true;
+        break;
       }
-    
-      if (boxTouched) {
+    }
+  
+    if (boxTouched) {
       // Toggle the selected state of the touched box
-        boxes[touchedBox].selected = !boxes[touchedBox].selected;
+      boxes[touchedBox].selected = !boxes[touchedBox].selected;
       
       // Update isDragging based on whether any box is selected
-        isDragging = Object.values(boxes).some(box => box.selected);
-        
-        if (isDragging) {
-          widgets.hide();
-        } else {
-          deselectAllBoxes();
-        }
+      isDragging = Object.values(boxes).some(box => box.selected);
+      
+      if (isDragging) {
+        widgets.hide();
       } else {
-      // If tapped outside any box, deselect all boxes
         deselectAllBoxes();
       }
-    
+    } else {
+      // If tapped outside any box, deselect all boxes
+      deselectAllBoxes();
+    }
+  
     // Always redraw after a touch event
-      draw();
-    
+    draw();
+  
     // Handle double tap for saving
-      if (!boxTouched && !isDragging) {
-        if (doubleTapTimer) {
-          clearTimeout(doubleTapTimer);
-          doubleTapTimer = null;
-          for (let boxKey in boxes) {
-            boxesConfig[boxKey].boxPos.x = (boxes[boxKey].pos.x / w).toFixed(3);
-            boxesConfig[boxKey].boxPos.y = (boxes[boxKey].pos.y / h).toFixed(3);
-          }
-          storage.write(fileName, JSON.stringify(boxesConfig));
-          displaySaveIcon();
-          return;
+    if (!boxTouched && !isDragging) {
+      if (doubleTapTimer) {
+        clearTimeout(doubleTapTimer);
+        doubleTapTimer = null;
+        for (let boxKey in boxes) {
+          boxesConfig[boxKey].boxPos.x = (boxes[boxKey].pos.x / w).toFixed(3);
+          boxesConfig[boxKey].boxPos.y = (boxes[boxKey].pos.y / h).toFixed(3);
         }
-    
-        doubleTapTimer = setTimeout(() => {
-          doubleTapTimer = null;
-        }, 500);
+        storage.write(fileName, JSON.stringify(boxesConfig));
+        displaySaveIcon();
+        return;
       }
-    },
-
-    dragHandler: function(e) {
-      if (!isDragging) return;
+  
+      doubleTapTimer = setTimeout(() => {
+        doubleTapTimer = null;
+      }, 500);
+    }
+  };
+  
+  let dragHandler = function(e) {
+    if (!isDragging) return;
   
     // Stop propagation of the drag event to prevent other handlers
-      E.stopEventPropagation();
-    
-      for (let key in boxes) {
-        if (boxes[key].selected) {
-          let boxItem = boxes[key];
-          calcBoxSize(boxItem);
-          let newX = boxItem.pos.x + e.dx;
-          let newY = boxItem.pos.y + e.dy;
-    
-          if (newX - boxItem.cachedSize.width / 2 >= 0 &&
-              newX + boxItem.cachedSize.width / 2 <= w &&
-              newY - boxItem.cachedSize.height / 2 >= 0 &&
-              newY + boxItem.cachedSize.height / 2 <= h) {
-            boxItem.pos.x = newX;
-            boxItem.pos.y = newY;
-          }
+    E.stopEventPropagation();
+  
+    for (let key in boxes) {
+      if (boxes[key].selected) {
+        let boxItem = boxes[key];
+        calcBoxSize(boxItem);
+        let newX = boxItem.pos.x + e.dx;
+        let newY = boxItem.pos.y + e.dy;
+  
+        if (newX - boxItem.cachedSize.width / 2 >= 0 &&
+            newX + boxItem.cachedSize.width / 2 <= w &&
+            newY - boxItem.cachedSize.height / 2 >= 0 &&
+            newY + boxItem.cachedSize.height / 2 <= h) {
+          boxItem.pos.x = newX;
+          boxItem.pos.y = newY;
         }
       }
-    
+    }
+  
+    draw();
+  };
+  
+  let stepHandler = function(up) {
+    if (boxes.step && !isDragging) {
+      boxes.step.string = formatStr(boxes.step, Bangle.getHealthStatus("day").steps);
+      boxes.step.cachedSize = null;
       draw();
-    },
-
-    stepHandler: function(up) {
-      if (boxes.step && !isDragging) {
-        boxes.step.string = formatStr(boxes.step, Bangle.getHealthStatus("day").steps);
-        boxes.step.cachedSize = null;
-        draw();
-      }
-    },
-
-    lockHandler: function(isLocked) {
-      if (isLocked) {
-        deselectAllBoxes();
-        draw();
-      }
+    }
+  };
+  
+  let lockHandler = function(isLocked) {
+    if (isLocked) {
+      deselectAllBoxes();
+      draw();
     }
   };
 
@@ -412,13 +410,13 @@
 
   // 10. Setup function to configure event handlers
   let setup = function() {
-    Bangle.on('lock', eventHandlers.lockHandler);
-    Bangle.on('touch', eventHandlers.touchHandler);
-    Bangle.on('drag', eventHandlers.dragHandler);
+    Bangle.on('lock', lockHandler);
+    Bangle.on('touch', touchHandler);
+    Bangle.on('drag', dragHandler);
   
     if (boxes.step) {
       boxes.step.string = formatStr(boxes.step, Bangle.getHealthStatus("day").steps);
-      Bangle.on('step', eventHandlers.stepHandler);
+      Bangle.on('step', stepHandler);
     }
   
     if (boxes.batt) {
@@ -431,11 +429,11 @@
       mode: "clock",
       remove: function() {
         // Remove event handlers, stop draw timer, remove custom font
-        Bangle.removeListener('touch', eventHandlers.touchHandler);
-        Bangle.removeListener('drag', eventHandlers.dragHandler);
-        Bangle.removeListener('lock', eventHandlers.lockHandler);
+        Bangle.removeListener('touch', touchHandler);
+        Bangle.removeListener('drag', dragHandler);
+        Bangle.removeListener('lock', lockHandler);
         if (boxes.step) {
-          Bangle.removeListener('step', eventHandlers.stepHandler);
+          Bangle.removeListener('step', stepHandler);
         }
         if (drawTimeout) clearTimeout(drawTimeout);
         drawTimeout = undefined;
