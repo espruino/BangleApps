@@ -23,84 +23,100 @@
   let h = g.getHeight();
   let drawTimeout;
 
-  // 3. Touch and drag handlers
-  let touchHandler = function(zone, e) {
-    let boxTouched = false;
-    let touchedBox = null;
-  
-    for (let boxKey in boxes) {
-      if (touchInText(e, boxes[boxKey])) {
-        touchedBox = boxKey;
-        boxTouched = true;
-        break;
+  // 3. Event handlers
+  let eventHandlers = {
+    touchHandler: function(zone, e) {
+      let boxTouched = false;
+      let touchedBox = null;
+    
+      for (let boxKey in boxes) {
+        if (touchInText(e, boxes[boxKey])) {
+          touchedBox = boxKey;
+          boxTouched = true;
+          break;
+        }
       }
-    }
-  
-    if (boxTouched) {
+    
+      if (boxTouched) {
       // Toggle the selected state of the touched box
-      boxes[touchedBox].selected = !boxes[touchedBox].selected;
+        boxes[touchedBox].selected = !boxes[touchedBox].selected;
       
       // Update isDragging based on whether any box is selected
-      isDragging = Object.values(boxes).some(box => box.selected);
-      
-      if (isDragging) {
-        widgets.hide();
+        isDragging = Object.values(boxes).some(box => box.selected);
+        
+        if (isDragging) {
+          widgets.hide();
+        } else {
+          deselectAllBoxes();
+        }
       } else {
+      // If tapped outside any box, deselect all boxes
         deselectAllBoxes();
       }
-    } else {
-      // If tapped outside any box, deselect all boxes
-      deselectAllBoxes();
-    }
-  
+    
     // Always redraw after a touch event
-    draw();
-  
+      draw();
+    
     // Handle double tap for saving
-    if (!boxTouched && !isDragging) {
-      if (doubleTapTimer) {
-        clearTimeout(doubleTapTimer);
-        doubleTapTimer = null;
-        for (let boxKey in boxes) {
-          boxesConfig[boxKey].boxPos.x = (boxes[boxKey].pos.x / w).toFixed(3);
-          boxesConfig[boxKey].boxPos.y = (boxes[boxKey].pos.y / h).toFixed(3);
+      if (!boxTouched && !isDragging) {
+        if (doubleTapTimer) {
+          clearTimeout(doubleTapTimer);
+          doubleTapTimer = null;
+          for (let boxKey in boxes) {
+            boxesConfig[boxKey].boxPos.x = (boxes[boxKey].pos.x / w).toFixed(3);
+            boxesConfig[boxKey].boxPos.y = (boxes[boxKey].pos.y / h).toFixed(3);
+          }
+          storage.write(fileName, JSON.stringify(boxesConfig));
+          displaySaveIcon();
+          return;
         }
-        storage.write(fileName, JSON.stringify(boxesConfig));
-        displaySaveIcon();
-        return;
+    
+        doubleTapTimer = setTimeout(() => {
+          doubleTapTimer = null;
+        }, 500);
       }
-  
-      doubleTapTimer = setTimeout(() => {
-        doubleTapTimer = null;
-      }, 500);
-    }
-  };
-  
-  let dragHandler = function(e) {
-    // Check if any box is being dragged
-    if (!isDragging) return;
+    },
+
+    dragHandler: function(e) {
+      if (!isDragging) return;
   
     // Stop propagation of the drag event to prevent other handlers
-    E.stopEventPropagation();
-  
-    for (let key in boxes) {
-      if (boxes[key].selected) {
-        let boxItem = boxes[key];
-        calcBoxSize(boxItem);
-        let newX = boxItem.pos.x + e.dx;
-        let newY = boxItem.pos.y + e.dy;
-  
-        if (newX - boxItem.cachedSize.width / 2 >= 0 &&
-            newX + boxItem.cachedSize.width / 2 <= w &&
-            newY - boxItem.cachedSize.height / 2 >= 0 &&
-            newY + boxItem.cachedSize.height / 2 <= h) {
-          boxItem.pos.x = newX;
-          boxItem.pos.y = newY;
+      E.stopEventPropagation();
+    
+      for (let key in boxes) {
+        if (boxes[key].selected) {
+          let boxItem = boxes[key];
+          calcBoxSize(boxItem);
+          let newX = boxItem.pos.x + e.dx;
+          let newY = boxItem.pos.y + e.dy;
+    
+          if (newX - boxItem.cachedSize.width / 2 >= 0 &&
+              newX + boxItem.cachedSize.width / 2 <= w &&
+              newY - boxItem.cachedSize.height / 2 >= 0 &&
+              newY + boxItem.cachedSize.height / 2 <= h) {
+            boxItem.pos.x = newX;
+            boxItem.pos.y = newY;
+          }
         }
       }
+    
+      draw();
+    },
+
+    stepHandler: function(up) {
+      if (boxes.step && !isDragging) {
+        boxes.step.string = formatStr(boxes.step, Bangle.getHealthStatus("day").steps);
+        boxes.step.cachedSize = null;
+        draw();
+      }
+    },
+
+    lockHandler: function(isLocked) {
+      if (isLocked) {
+        deselectAllBoxes();
+        draw();
+      }
     }
-  
-    draw();
   };
 
   // 4. Font loading function
@@ -396,35 +412,31 @@
 
   // 10. Setup function to configure event handlers
   let setup = function() {
-    Bangle.on('lock', function(isLocked) {
-      if (isLocked) {
-        // Screen is about to lock, deselect all boxes
-        deselectAllBoxes();
-        // Redraw to reflect changes
-        draw();
-      }
-    });
-
-    Bangle.on('touch', touchHandler);
-    Bangle.on('drag', dragHandler);
-
+    Bangle.on('lock', eventHandlers.lockHandler);
+    Bangle.on('touch', eventHandlers.touchHandler);
+    Bangle.on('drag', eventHandlers.dragHandler);
+  
     if (boxes.step) {
       boxes.step.string = formatStr(boxes.step, Bangle.getHealthStatus("day").steps);
+      Bangle.on('step', eventHandlers.stepHandler);
     }
+  
     if (boxes.batt) {
       boxes.batt.lastLevel = E.getBattery();
       boxes.batt.string = formatStr(boxes.batt, boxes.batt.lastLevel);
       boxes.batt.lastUpdate = Date.now();
     }
-
+  
     Bangle.setUI({
       mode: "clock",
       remove: function() {
         // Remove event handlers, stop draw timer, remove custom font
-        Bangle.removeListener('touch', touchHandler);
-        Bangle.removeListener('drag', dragHandler);
-        Bangle.removeListener('step');
-        Bangle.removeAllListeners('lock');
+        Bangle.removeListener('touch', eventHandlers.touchHandler);
+        Bangle.removeListener('drag', eventHandlers.dragHandler);
+        Bangle.removeListener('lock', eventHandlers.lockHandler);
+        if (boxes.step) {
+          Bangle.removeListener('step', eventHandlers.stepHandler);
+        }
         if (drawTimeout) clearTimeout(drawTimeout);
         drawTimeout = undefined;
         delete Graphics.prototype.setFontBrunoAce;
@@ -434,6 +446,7 @@
         widgets.show();
       }
     });
+  
     loadCustomFont();
     draw();
   };
@@ -443,13 +456,4 @@
   widgets.swipeOn();
   modSetColor();
   setup();
-
-  // Event listener for real-time step updates
-  Bangle.on('step', function(up) {
-    if (boxes.step && !isDragging) {
-      boxes.step.string = formatStr(boxes.step, Bangle.getHealthStatus("day").steps);
-      boxes.step.cachedSize = null;
-      draw();
-    }
-  });
 }
