@@ -2,7 +2,7 @@
   "id": "aviatorclk",
   "name": "Aviator Clock",
   "shortName":"AV8R Clock",
-  "version":"1.01",
+  "version":"1.02",
   "description": "A clock for aviators, with local time and UTC - and the latest METAR for the nearest airport",
   "icon": "aviatorclk.png",
   "screenshots": [{ "url": "screenshot.png" }, { "url": "screenshot2.png" }],
