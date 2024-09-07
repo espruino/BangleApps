@@ -1,7 +1,7 @@
 {
   "id": "pomoplus",
   "name": "Pomodoro Plus",
-  "version": "0.06",
+  "version": "0.07",
   "description": "A configurable pomodoro timer that runs in the background.",
   "icon": "icon.png",
   "type": "app",
@@ -10,6 +10,7 @@
     "BANGLEJS",
     "BANGLEJS2"
   ],
+  "readme": "README.md",
   "storage": [
     {
       "name": "pomoplus.app.js",
