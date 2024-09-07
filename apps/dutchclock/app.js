@@ -63,8 +63,8 @@ function initialize() {
 
   // now check every second
   let secondInterval = setInterval(tick, 1000);
-  // Stop updates when LCD is off, restart when on
 
+  // Stop updates when LCD is off, restart when on
   Bangle.on('lcdPower',on=>{
     if (secondInterval) clearInterval(secondInterval);
     secondInterval = undefined;

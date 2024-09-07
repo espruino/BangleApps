@@ -1,9 +1,1 @@
-0.12: First release
-0.13: Fix widgets reappearing
-0.14: Fix midnight
-0.15: Fix midnight better
-0.16: Fix midnight decisively
-0.17: Get loadWidgets back in the right place
-0.18: Move setUI and loadWidgets to initialize function
-0.19: Make compatible with top and bottom widgets
-0.20: Remove unused constant
+0.20: First release
