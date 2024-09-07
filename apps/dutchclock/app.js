@@ -1,18 +1,14 @@
+// Load libraries
 const storage = require("Storage");
 const locale = require('locale');
 const widget_utils = require('widget_utils');
 
-const SCREEN_WIDTH = g.getWidth();
-const SCREEN_HEIGHT = g.getHeight();
-
-const TOP_SPACING = 5;
+// Define constants
 const WIDGETS_HEIGHT = 20;
 const DATETIME_SPACING_HEIGHT = 5;
-const TIME_HEIGHT = 10;
-const DATE_HEIGHT = 10;
-const BOTTOM_SPACING = 5;
-
-const TEXT_WIDTH = SCREEN_WIDTH - 2;
+const TIME_HEIGHT = 8;
+const DATE_HEIGHT = 8;
+const BOTTOM_SPACING = 2;
 
 const MINS_IN_HOUR = 60;
 const MINS_IN_DAY = 24 * MINS_IN_HOUR;
@@ -30,28 +26,38 @@ const settings = Object.assign(
     storage.readJSON(SETTINGS_FILE, true) || {}
 );
 
-const maxFontSize = SCREEN_HEIGHT 
-  - TOP_SPACING
-  - (settings.showWidgets ? WIDGETS_HEIGHT : 0)
-  - (settings.showDate || settings.showTime ? DATETIME_SPACING_HEIGHT : 0)
-  - (settings.showDate ? DATE_HEIGHT : 0)
-  - (settings.showTime ? TIME_HEIGHT : 0);
-
-const X = SCREEN_WIDTH / 2;
-const Y = SCREEN_HEIGHT / 2
-  + TOP_SPACING / 2
-  + (settings.showWidgets ? WIDGETS_HEIGHT / 2 : 0)
-  - (settings.showDate || settings.showTime ? DATETIME_SPACING_HEIGHT / 2 : 0)
-  - (settings.showDate ? DATE_HEIGHT / 2 : 0)
-  - (settings.showTime ? TIME_HEIGHT / 2 : 0);
-  
+// Define global variables
+const textBox = {};
 let date, mins;
 
+// Define functions
 function initialize() {
+  // Reset the state of the graphics library
+  g.clear(true);
+
   // Tell Bangle this is a clock
   Bangle.setUI("clock");
+
   // Load widgets
   Bangle.loadWidgets();
+
+  // Show widgets, or not
+  if (settings.showWidgets) {
+    Bangle.drawWidgets();
+  } else {
+    widget_utils.swipeOn();
+  }
+
+  const dateTimeHeight = (settings.showDate || settings.showTime ? DATETIME_SPACING_HEIGHT : 0)
+    + (settings.showDate ? DATE_HEIGHT : 0)
+    + (settings.showTime ? TIME_HEIGHT : 0);
+
+  Object.assign(textBox, {
+    x: Bangle.appRect.x + Bangle.appRect.w / 2,
+    y: Bangle.appRect.y + (Bangle.appRect.h - dateTimeHeight) / 2,
+    w: Bangle.appRect.w - 2,
+    h: Bangle.appRect.h - dateTimeHeight
+  });
 
   // draw immediately at first
   tick();
@@ -78,10 +84,6 @@ function tick() {
     mins = m;
     draw();
   }
-
-  if (!settings.showWidgets) {
-    widget_utils.hide();
-  }
 }
 
 function draw() {
@@ -89,40 +91,32 @@ function draw() {
   const timeLines = getTimeLines(mins);
   const bottomLines = getBottomLines();
 
-  // Reset the state of the graphics library
-  g.clear(true);
+  g.reset().clearRect(Bangle.appRect);
 
   // draw the current time (4x size 7 segment)
   setFont(timeLines);
 
   g.setFontAlign(0,0); // align center top
-  g.drawString(timeLines.join("\n"), X, Y, false);
+  g.drawString(timeLines.join("\n"), textBox.x, textBox.y, false);
 
   if (bottomLines.length) {  
     // draw the time and/or date, in a normal font
     g.setFont("6x8");
     g.setFontAlign(0,1); // align center bottom
     // pad the date - this clears the background if the date were to change length
-    g.drawString(bottomLines.join('\n'), SCREEN_WIDTH/2, SCREEN_HEIGHT - BOTTOM_SPACING, false);
-  }
-
-
-  if (settings.showWidgets) {
-    Bangle.drawWidgets();
-  } else {
-    widget_utils.hide();
+    g.drawString(bottomLines.join('\n'), Bangle.appRect.w / 2, Bangle.appRect.y2 - BOTTOM_SPACING, false);
   }
 }
 
 function setFont(timeLines) {
-  const size = maxFontSize / timeLines.length;
+  const size = textBox.h / timeLines.length;
 
   g.setFont("Vector", size);
 
   let width = g.stringWidth(timeLines.join('\n'));
 
-  if (width > TEXT_WIDTH) {
-    g.setFont("Vector", Math.floor(size * (TEXT_WIDTH / width)));
+  if (width > textBox.w) {
+    g.setFont("Vector", Math.floor(size * (textBox.w / width)));
   }
 }
 
@@ -263,4 +257,5 @@ function roundTo(x) {
   return n => Math.round(n / x) * x;
 }
 
+// Let's go
 initialize();
