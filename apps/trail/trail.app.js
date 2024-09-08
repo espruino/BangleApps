@@ -631,7 +631,7 @@ gps.start_gps();
 
 const st = require('Storage');
 
-let l = /^t\..*\.egt$/;
+let l = /^[tr]\..*\.egt$/;
 l = st.list(l, {sf:false});
 
 print(l);
