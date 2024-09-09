@@ -1,0 +1,14 @@
+{
+	"id": "pace",
+	"name": "Pace",
+	"version": "0.01",
+	"description": "Show pace and time running splits",
+	"icon": "app.png",
+	"tags": "run,running,fitness,outdoors",
+	"supports" : ["BANGLEJS2"],
+	"readme": "README.md",
+	"storage": [
+		{ "name": "pace.app.js","url": "app.js" },
+		{ "name": "pace.img","url": "app-icon.js","evaluate": true }
+	]
+}
