@@ -233,7 +233,7 @@ function displayOutput(num) {
     num = num.replace("-","- "); // fix padding for '-'
     g.setFont('7x11Numeric7Seg', 2);
     if (num.length > RESULT_MAX_LEN) {
-      num = num.substr(0, RESULT_MAX_LEN - 1)+'-';
+      num = num.substr(0, RESULT_MAX_LEN - 1)+'...';
     }
   }
   g.setFontAlign(1,0);
