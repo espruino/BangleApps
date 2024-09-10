@@ -13,6 +13,7 @@ require("Font7x11Numeric7Seg").add(Graphics);
 var DEFAULT_SELECTION_NUMBERS = '5', DEFAULT_SELECTION_OPERATORS = '=', DEFAULT_SELECTION_SPECIALS = 'R';
 var RIGHT_MARGIN = 20;
 var RESULT_HEIGHT = 40;
+var RESULT_MAX_LEN = Math.floor((g.getWidth() - 20) / 14);
 var COLORS = {
   // [normal, selected]
   DEFAULT: ['#7F8183', '#A6A6A7'],
@@ -261,6 +262,9 @@ function displayOutput(num) {
     num = num.toString();
     num = num.replace("-","- "); // fix padding for '-'
     g.setFont('7x11Numeric7Seg', 2);
+    if (num.length > RESULT_MAX_LEN) {
+      num = num.substr(0, RESULT_MAX_LEN - 1)+'-';
+    }
   }
   g.setFontAlign(1,0);
   g.drawString(num, g.getWidth()-20, RESULT_HEIGHT/2);
