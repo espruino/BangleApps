@@ -10,8 +10,7 @@
 g.clear();
 require("Font7x11Numeric7Seg").add(Graphics);
 
-var DEFAULT_SELECTION_NUMBERS = '5', DEFAULT_SELECTION_OPERATORS = '=', DEFAULT_SELECTION_SPECIALS = 'R';
-var RIGHT_MARGIN = 20;
+var DEFAULT_SELECTION_NUMBERS = '5';
 var RESULT_HEIGHT = 40;
 var RESULT_MAX_LEN = Math.floor((g.getWidth() - 20) / 14);
 var COLORS = {
