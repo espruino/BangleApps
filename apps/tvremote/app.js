@@ -647,7 +647,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 if (serverData === undefined) {
-  E.showAlert(`${serverDataFile}.json missing.\nSee READ.me`, "Config Error").then(function() {
+  E.showAlert(`No settings.\nSee READ.me`, "Config Error").then(function() {
     mainMenu();
   });
 } else {
