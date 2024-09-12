@@ -3,8 +3,7 @@
  */
 (function(back) {
   const SETTINGS_FILE = "gbmusic.json",
-    storage = require("Storage"),
-    translate = require("locale").translate;
+    storage = require("Storage");
 
   // initialize with default settings...
   let s = {
@@ -28,12 +27,12 @@
   let menu = {
     "": {"title": "Music Control"},
   };
-  menu[translate("< Back")] = back;
-  menu[translate("Auto start")] = {
+  menu["< Back"] = back;
+  menu[/*LANG*/"Auto start"] = {
     value: !!s.autoStart,
     onchange: save("autoStart"),
   };
-  menu[translate("Simple button")] = {
+  menu[/*LANG*/"Simple button"] = {
     value: !!s.simpleButton,
     onchange: save("simpleButton"),
   };

@@ -1,0 +1,15 @@
+{ "id": "tvremote",
+  "name": "TV Remote",
+  "shortName":"TV Remote",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "remote for controlling your tv, using a webserver and the bangle Gadget Bridge (https://www.espruino.com/Gadgetbridge).",
+  "icon": "app.png",
+  "tags": "remote",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"tvremote.app.js","url":"app.js"},
+    {"name":"tvremote.img","url":"app-icon.js","evaluate":true}
+  ]
+}

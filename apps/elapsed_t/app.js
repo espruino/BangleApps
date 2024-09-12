@@ -24,13 +24,20 @@ var now = new Date();
 
 var settings = Object.assign({
   // default values
-  displaySeconds: true,
+  displaySeconds: 1,
   displayMonthsYears: true,
   dateFormat: 0,
   time24: true
 }, require('Storage').readJSON(APP_NAME + ".settings.json", true) || {});
 
-var temp_displaySeconds = settings.displaySeconds;
+function writeSettings() {
+  require('Storage').writeJSON(APP_NAME + ".settings.json", settings);
+}
+
+if (typeof settings.displaySeconds === 'boolean') {
+  settings.displaySeconds = 1;
+  writeSettings();
+}
 
 var data = Object.assign({
   // default values
@@ -49,17 +56,12 @@ function writeData() {
   require('Storage').writeJSON(APP_NAME + ".data.json", data);
 }
 
-function writeSettings() {
-  require('Storage').writeJSON(APP_NAME + ".settings.json", settings);
-  temp_displaySeconds = settings.temp_displaySeconds;
-}
-
 let inMenu = false;
 
 Bangle.on('touch', function (zone, e) {
   if (!inMenu && e.y > 24) {
     if (drawTimeout) clearTimeout(drawTimeout);
-    E.showMenu(menu);
+    showMainMenu();
     inMenu = true;
   }
 });
@@ -112,115 +114,151 @@ function formatDateTime(date, dateFormat, time24, showSeconds) {
   return formattedDateTime;
 }
 
-function formatHourToAMPM(h){
+function formatHourToAMPM(h) {
   var ampm = (h >= 12 ? 'PM' : 'AM');
   var h_ampm = h % 12;
   h_ampm = (h_ampm == 0 ? 12 : h_ampm);
-  return `${h_ampm} ${ampm}`
+  return `${h_ampm}\n${ampm}`;
 }
 
-function howManyDaysInMonth(month, year) {
-  return new Date(year, month, 0).getDate();
-}
+function getDatePickerObject() {
+  switch (settings.dateFormat) {
+    case 0:
+      return {
+        back: showMainMenu,
+        title: "Date",
+        separator_1: "/",
+        separator_2: "/",
 
-function handleExceedingDay() {
-  var maxDays = howManyDaysInMonth(data.target.M, data.target.Y);
-  menu.Day.max = maxDays;
-  if (data.target.D > maxDays) {
-    menu.Day.value = maxDays;
-    data.target.D = maxDays;
+        value_1: data.target.D,
+        min_1: 1, max_1: 31, step_1: 1, wrap_1: true,
+
+        value_2: data.target.M,
+        min_2: 1, max_2: 12, step_2: 1, wrap_2: true,
+
+        value_3: data.target.Y,
+        min_3: 1900, max_3: 2100, step_3: 1, wrap_3: true,
+
+        format_1: function (v_1) { return (pad2(v_1)); },
+        format_2: function (v_2) { return (pad2(v_2)); },
+        onchange: function (v_1, v_2, v_3) { data.target.D = v_1; data.target.M = v_2; data.target.Y = v_3; setTarget(true); }
+      };
+
+    case 1:
+      return {
+        back: showMainMenu,
+        title: "Date",
+        separator_1: "/",
+        separator_2: "/",
+
+        value_1: data.target.M,
+        min_1: 1, max_1: 12, step_1: 1, wrap_1: true,
+
+        value_2: data.target.D,
+        min_2: 1, max_2: 31, step_2: 1, wrap_2: true,
+
+        value_3: data.target.Y,
+        min_3: 1900, max_3: 2100, step_3: 1, wrap_3: true,
+
+        format_1: function (v_1) { return (pad2(v_1)); },
+        format_2: function (v_2) { return (pad2(v_2)); },
+        onchange: function (v_1, v_2, v_3) { data.target.M = v_1; data.target.D = v_2; data.target.Y = v_3; setTarget(true); }
+      };
+
+    case 2:
+      return {
+        back: showMainMenu,
+        title: "Date",
+        separator_1: "-",
+        separator_2: "-",
+
+        value_1: data.target.Y,
+        min_1: 1900, max_1: 2100, step_1: 1, wrap_1: true,
+
+        value_2: data.target.M,
+        min_2: 1, max_2: 12, step_2: 1, wrap_2: true,
+
+        value_3: data.target.D,
+        min_3: 1, max_3: 31, step_3: 1, wrap_3: true,
+
+        format_1: function (v_1) { return (pad2(v_1)); },
+        format_2: function (v_2) { return (pad2(v_2)); },
+        onchange: function (v_1, v_2, v_3) { data.target.Y = v_1; data.target.M = v_2; data.target.D = v_3; setTarget(true); }
+      };
   }
 }
 
-var menu = {
-  "": {
-    "title": "Set target",
-    back: function () {
-      E.showMenu();
-      Bangle.setUI("clock");
-      inMenu = false;
-      draw();
-    }
-  },
-  'Day': {
-    value: data.target.D,
-    min: 1, max: 31, wrap: true,
-    onchange: v => {
-      data.target.D = v;
-    }
-  },
-  'Month': {
-    value: data.target.M,
-    min: 1, max: 12, noList: true, wrap: true,
-    onchange: v => {
-      data.target.M = v;
-      handleExceedingDay();
-    }
-  },
-  'Year': {
-    value: data.target.Y,
-    min: 1900, max: 2100,
-    onchange: v => {
-      data.target.Y = v;
-      handleExceedingDay();
-    }
-  },
-  'Hours': {
-    value: data.target.h,
-    min: 0, max: 23, wrap: true,
-    onchange: v => {
-      data.target.h = v;
-    },
-    format: function (v) {return(settings.time24 ? pad2(v) : formatHourToAMPM(v))}
-  },
-  'Minutes': {
-    value: data.target.m,
-    min: 0, max: 59, wrap: true,
-    onchange: v => {
-      data.target.m = v;
-    },
-    format: function (v) { return pad2(v); }
-  },
-  'Seconds': {
-    value: data.target.s,
-    min: 0, max: 59, wrap: true,
-    onchange: v => {
-      data.target.s = v;
-    },
-    format: function (v) { return pad2(v); }
-  },
-  'Save': function () {
-    E.showMenu();
-    inMenu = false;
-    Bangle.setUI("clock");
-    setTarget(true);
-    writeSettings();
-    temp_displaySeconds = settings.displaySeconds;
-    updateQueueMillis(settings.displaySeconds);
-    draw();
-  },
-  'Reset': function () {
-    E.showMenu();
-    inMenu = false;
-    Bangle.setUI("clock");
-    setTarget(false);
-    updateQueueMillis(settings.displaySeconds);
-    draw();
-  },
-  'Set clock as default': function () {
-    setClockAsDefault();
-    E.showAlert("Elapsed Time was set as default").then(function() {
-      E.showMenu();
-      inMenu = false;
-      Bangle.setUI("clock");
-      draw();
-    });
-  }
-};
+function getTimePickerObject() {
+  var timePickerObject = {
+    back: showMainMenu,
+    title: "Time",
+    separator_1: ":",
+    separator_2: ":",
 
-function setClockAsDefault(){
+    value_1: data.target.h,
+    min_1: 0, max_1: 23, step_1: 1, wrap_1: true,
+
+    value_2: data.target.m,
+    min_2: 0, max_2: 59, step_2: 1, wrap_2: true,
+
+    value_3: data.target.s,
+    min_3: 0, max_3: 59, step_3: 1, wrap_3: true,
+
+    format_2: function (v_2) { return (pad2(v_2)); },
+    format_3: function (v_3) { return (pad2(v_3)); },
+    onchange: function (v_1, v_2, v_3) { data.target.h = v_1; data.target.m = v_2; data.target.s = v_3; setTarget(true); },
+  };
+
+  if (settings.time24) {
+    timePickerObject.format_1 = function (v_1) { return (pad2(v_1)); };
+  } else {
+    timePickerObject.format_1 = function (v_1) { return (formatHourToAMPM(v_1)); };
+  }
+
+  return timePickerObject;
+}
+
+function showMainMenu() {
+  E.showMenu({
+    "": {
+      "title": "Set target",
+      back: function () {
+        E.showMenu();
+        Bangle.setUI("clock");
+        inMenu = false;
+        draw();
+      }
+    },
+    'Date': {
+      value: formatDateTime(target, settings.dateFormat, settings.time24, true).date,
+      onchange: function () { require("more_pickers").triplePicker(getDatePickerObject()); }
+    },
+    'Time': {
+      value: formatDateTime(target, settings.dateFormat, settings.time24, true).time,
+      onchange: function () { require("more_pickers").triplePicker(getTimePickerObject()); }
+    },
+    'Reset': function () {
+      E.showMenu();
+      inMenu = false;
+      Bangle.setUI("clock");
+      setTarget(false);
+      draw();
+    },
+    'Set clock as default': function () {
+      setClockAsDefault();
+      E.showAlert("Elapsed Time was set as default").then(function () {
+        E.showMenu();
+        inMenu = false;
+        Bangle.setUI("clock");
+        draw();
+      });
+    }
+  });
+}
+
+function setClockAsDefault() {
   let storage = require('Storage');
-  let settings = storage.readJSON('setting.json',true)||{clock:null};
+  let settings = storage.readJSON('setting.json', true) || { clock: null };
   settings.clock = "elapsed_t.app.js";
   storage.writeJSON('setting.json', settings);
 }
@@ -238,26 +276,21 @@ function setTarget(set) {
     data.target.isSet = true;
   } else {
     target = new Date();
+    target.setSeconds(0);
     Object.assign(
       data,
       {
         target: {
           isSet: false,
-          Y: now.getFullYear(),
-          M: now.getMonth() + 1, // Month is zero-based, so add 1
-          D: now.getDate(),
-          h: now.getHours(),
-          m: now.getMinutes(),
+          Y: target.getFullYear(),
+          M: target.getMonth() + 1, // Month is zero-based, so add 1
+          D: target.getDate(),
+          h: target.getHours(),
+          m: target.getMinutes(),
           s: 0
         }
       }
     );
-    menu.Day.value = data.target.D;
-    menu.Month.value = data.target.M;
-    menu.Year.value = data.target.Y;
-    menu.Hours.value = data.target.h;
-    menu.Minutes.value = data.target.m;
-    menu.Seconds.value = 0;
   }
 
   writeData();
@@ -267,8 +300,8 @@ var target;
 setTarget(data.target.isSet);
 
 var drawTimeout;
-var queueMillis = 1000;
-
+var temp_displaySeconds;
+var queueMillis;
 
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
@@ -283,27 +316,25 @@ function queueDraw() {
   }, delay);
 }
 
-function updateQueueMillis(displaySeconds) {
+function updateQueueMillisAndDraw(displaySeconds) {
+  temp_displaySeconds = displaySeconds;
   if (displaySeconds) {
     queueMillis = 1000;
   } else {
     queueMillis = 60000;
   }
+  draw();
 }
 
 Bangle.on('lock', function (on, reason) {
-  if (inMenu) { // if already in a menu, nothing to do
+  if (inMenu || settings.displaySeconds == 0 || settings.displaySeconds == 2) { // if already in a menu, or always/never show seconds, nothing to do
     return;
   }
 
   if (on) { // screen is locked
-    temp_displaySeconds = false;
-    updateQueueMillis(false);
-    draw();
+    updateQueueMillisAndDraw(false);
   } else { // screen is unlocked
-    temp_displaySeconds = settings.displaySeconds;
-    updateQueueMillis(temp_displaySeconds);
-    draw();
+    updateQueueMillisAndDraw(true);
   }
 });
 
@@ -335,18 +366,21 @@ function diffToTarget() {
     var end;
 
     if (now > target) {
-      start = target;
-      end = now;
+      start = new Date(target.getTime());
+      end = new Date(now.getTime());
     } else {
-      start = now;
-      end = target;
+      start = new Date(now.getTime());
+      end = new Date(target.getTime());
     }
+
+    // Adjust for DST
+    end.setMinutes(end.getMinutes() + end.getTimezoneOffset() - start.getTimezoneOffset());
 
     diff.Y = end.getFullYear() - start.getFullYear();
     diff.M = end.getMonth() - start.getMonth();
     diff.D = end.getDate() - start.getDate();
     diff.hh = end.getHours() - start.getHours();
-    diff.mm = end.getMinutes() - start.getMinutes() + end.getTimezoneOffset() - start.getTimezoneOffset();
+    diff.mm = end.getMinutes() - start.getMinutes();
     diff.ss = end.getSeconds() - start.getSeconds();
 
     // Adjust negative differences
@@ -371,7 +405,6 @@ function diffToTarget() {
       diff.M += 12;
       diff.Y--;
     }
-
 
   } else {
     var timeDifference = target - now;
@@ -491,4 +524,14 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.setUI("clock");
 
-draw();
+switch (settings.displaySeconds) {
+  case 0: // never
+    updateQueueMillisAndDraw(false);
+    break;
+  case 1: // unlocked
+    updateQueueMillisAndDraw(Bangle.isBacklightOn());
+    break;
+  case 2: // always
+    updateQueueMillisAndDraw(true);
+    break;
+}

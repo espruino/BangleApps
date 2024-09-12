@@ -1,0 +1,13 @@
+{ "id": "trail",
+  "name": "Trail Rail",
+  "version":"0.01",
+  "description": "Follow a GPX track in car or on bike",
+  "icon": "app.png",
+  "readme": "README.md",
+  "supports" : ["BANGLEJS2"],
+  "tags": "outdoors,gps,osm",
+  "storage": [
+      {"name":"trail.app.js","url":"trail.app.js"},
+      {"name":"trail.img","url":"app-icon.js","evaluate":true}
+  ]
+}

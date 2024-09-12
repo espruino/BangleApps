@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: Handle AM/PM time in the "set target" menu. Add yesterday/today/tomorrow when showing target date to improve readability.
 0.03: Add option to set clock as default, handle DST in day/month/year mode
+0.04: Use new pickers from the more_pickers library, add settings to display seconds never/unlocked/always

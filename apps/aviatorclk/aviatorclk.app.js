@@ -19,6 +19,7 @@ const APP_NAME = 'aviatorclk';
 const horizontalCenter = g.getWidth()/2;
 const mainTimeHeight = 38;
 const secondaryFontHeight = 22;
+require("Font8x16").add(Graphics); // tertiary font
 const dateColour = ( g.theme.dark ? COLOUR_YELLOW : COLOUR_BLUE );
 const UTCColour = ( g.theme.dark ? COLOUR_LIGHT_CYAN : COLOUR_DARK_CYAN );
 const separatorColour = ( g.theme.dark ? COLOUR_LIGHT_GREY : COLOUR_DARK_GREY );
@@ -37,6 +38,7 @@ var settings = Object.assign({
 var drawTimeout;
 var secondsInterval;
 var avwxTimeout;
+var gpsTimeout;
 
 var AVWXrequest;
 var METAR = '';
@@ -92,16 +94,51 @@ function drawAVWX() {
   if (! avwxTimeout) { avwxTimeout = setTimeout(updateAVWX, 5 * 60000); }
 }
 
+// show AVWX update status
+function showUpdateAVWXstatus(status) {
+  let y = Bangle.appRect.y + 10;
+  g.setBgColor(g.theme.bg);
+  g.clearRect(0, y, horizontalCenter - 54, y + 16);
+  if (status) {
+    g.setFontAlign(0, -1).setFont("8x16").setColor( g.theme.dark ? COLOUR_ORANGE : COLOUR_DARK_YELLOW );
+    g.drawString(status, horizontalCenter - 71, y, true);
+  }
+}
+
+// re-try if the GPS doesn't return a fix in time
+function GPStookTooLong() {
+  Bangle.setGPSPower(false, APP_NAME);
+  if (gpsTimeout) clearTimeout(gpsTimeout);
+  gpsTimeout = undefined;
+
+  showUpdateAVWXstatus('X');
+
+  if (! avwxTimeout) { avwxTimeout = setTimeout(updateAVWX, 5 * 60000); }
+}
+
 // update the METAR info
 function updateAVWX() {
   if (avwxTimeout) clearTimeout(avwxTimeout);
   avwxTimeout = undefined;
+  if (gpsTimeout) clearTimeout(gpsTimeout);
+  gpsTimeout = undefined;
 
-  METAR = '\nGetting GPS fix';
-  METARlinesCount = 0; METARscollLines = 0;
-  METARts = undefined;
+  if (! NRF.getSecurityStatus().connected) {
+    // if Bluetooth is NOT connected, try again in 5min
+    showUpdateAVWXstatus('X');
+    avwxTimeout = setTimeout(updateAVWX, 5 * 60000);
+    return;
+  }
+
+  showUpdateAVWXstatus('GPS');
+  if (! METAR) {
+    METAR = '\nUpdating METAR';
+    METARlinesCount = 0; METARscollLines = 0;
+    METARts = undefined;
+  }
   drawAVWX();
 
+  gpsTimeout = setTimeout(GPStookTooLong, 30 * 60000);
   Bangle.setGPSPower(true, APP_NAME);
   Bangle.on('GPS', fix => {
     // prevent multiple, simultaneous requests
@@ -109,12 +146,18 @@ function updateAVWX() {
 
     if ('fix' in fix && fix.fix != 0 && fix.satellites >= 4) {
       Bangle.setGPSPower(false, APP_NAME);
+      if (gpsTimeout) clearTimeout(gpsTimeout);
+      gpsTimeout = undefined;
+
       let lat = fix.lat;
       let lon = fix.lon;
 
-      METAR = '\nRequesting METAR';
-      METARlinesCount = 0; METARscollLines = 0;
-      METARts = undefined;
+      showUpdateAVWXstatus('AVWX');
+      if (! METAR) {
+        METAR = '\nUpdating METAR';
+        METARlinesCount = 0; METARscollLines = 0;
+        METARts = undefined;
+      }
       drawAVWX();
 
       // get latest METAR from nearest airport (via AVWX API)
@@ -146,6 +189,7 @@ function updateAVWX() {
           METARts = undefined;
         }
 
+        showUpdateAVWXstatus('');
         drawAVWX();
         AVWXrequest = undefined;
 
@@ -155,6 +199,7 @@ function updateAVWX() {
         METAR = 'ERR: ' + error;
         METARlinesCount = 0; METARscollLines = 0;
         METARts = undefined;
+        showUpdateAVWXstatus('');
         drawAVWX();
         AVWXrequest = undefined;
       });
@@ -268,10 +313,10 @@ Bangle.on('tap', data => {
     case 'bottom':
       scrollAVWX(1);
       break;
-    case 'left':
-    case 'right':
-      // toggle seconds display on double taps left or right
-      if (data.double) {
+    case 'front':
+      // toggle seconds display on double tap on front/watch-face
+      // (if watch is un-locked)
+      if (data.double && ! Bangle.isLocked()) {
         if (settings.showSeconds) {
           clearInterval(secondsInterval);
           let y = Bangle.appRect.y + mainTimeHeight - 3;
@@ -295,7 +340,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 // draw static separator line
-y = Bangle.appRect.y + mainTimeHeight + secondaryFontHeight;
+let y = Bangle.appRect.y + mainTimeHeight + secondaryFontHeight;
 g.setColor(separatorColour);
 g.drawLine(0, y, g.getWidth(), y);
 
