@@ -11,14 +11,14 @@
     "xOffset": 3,
     "yOffset": 0,
     "boxPos": {
-      "x": "0.494",
+      "x": "0.5",
       "y": "0.739"
     }
   },
   "dow": {
     "font": "6x8",
     "fontSize": 3,
-    "outline": 1,
+    "outline": 2,
     "color": "bgH",
     "outlineColor": "fg",
     "border": "#f0f",
@@ -27,7 +27,7 @@
     "xOffset": 2,
     "yOffset": 0,
     "boxPos": {
-      "x": "0.421",
+      "x": "0.5",
       "y": "0.201"
     },
     "short": false
@@ -35,7 +35,7 @@
   "date": {
     "font": "6x8",
     "fontSize": 2,
-    "outline": 1,
+    "outline": 2,
     "color": "bgH",
     "outlineColor": "fg",
     "border": "#f0f",
@@ -44,7 +44,7 @@
     "xOffset": 1,
     "yOffset": 0,
     "boxPos": {
-      "x": "0.454",
+      "x": "0.5",
       "y": "0.074"
     },
     "shortMonth": false,
@@ -62,7 +62,7 @@
     "xOffset": 2,
     "yOffset": 1,
     "boxPos": {
-      "x": "0.494",
+      "x": "0.5",
       "y": "0.926"
     },
     "prefix": "Steps: "
@@ -79,7 +79,7 @@
     "xOffset": 2,
     "yOffset": 2,
     "boxPos": {
-      "x": "0.805",
+      "x": "0.8",
       "y": "0.427"
     },
     "suffix": "%"

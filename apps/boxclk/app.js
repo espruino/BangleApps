@@ -208,12 +208,23 @@
   // 7. String forming helper functions
   let getDate = function(short, shortMonth, disableSuffix) {
     const date = new Date();
-    const dayOfMonth = date.getDate();
+    const day = date.getDate();
     const month = shortMonth ? locale.month(date, 1) : locale.month(date, 0);
     const year = date.getFullYear();
-    let suffix = ["st", "nd", "rd"][(dayOfMonth - 1) % 10] || "th";
-    let dayOfMonthStr = disableSuffix ? dayOfMonth : `${dayOfMonth}${suffix}`;
-    return `${month} ${dayOfMonthStr}${short ? '' : `, ${year}`}`;
+  
+    const getSuffix = (day) => {
+      if (day >= 11 && day <= 13) return 'th';
+      const lastDigit = day % 10;
+      switch (lastDigit) {
+        case 1: return 'st';
+        case 2: return 'nd';
+        case 3: return 'rd';
+        default: return 'th';
+      }
+    };
+  
+    const dayStr = disableSuffix ? day : `${day}${getSuffix(day)}`;
+    return `${month} ${dayStr}${short ? '' : `, ${year}`}`; // not including year for short version
   };
 
   let getDayOfWeek = function(date, short) {
