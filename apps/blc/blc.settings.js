@@ -62,10 +62,10 @@
 	// Show submenues
 	//var submenu1 = {
 	//"": {
-    //  "title": "Show sub1..."
-    //},
-    //"< Back": () => E.showMenu(mainmenu),
-    //"ItemName": stringInSettings("settingsVar", ["Yes", "No", "DontCare"]),
+	//  "title": "Show sub1..."
+	//},
+	//"< Back": () => E.showMenu(mainmenu),
+	//"ItemName": stringInSettings("settingsVar", ["Yes", "No", "DontCare"]),
 	//};
 	
 	E.showMenu(mainmenu);
