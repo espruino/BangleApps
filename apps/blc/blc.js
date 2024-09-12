@@ -34,30 +34,7 @@
 		delete settings;	// settings in local var -> no more required
 	}
 
-  
-	function getTemperature()
-	{
-		try
-		{
-			var temperature = E.getTemperature();
-			var formatted = require("locale").temp(temperature).replace(/[^\d-]/g, '');
-			return formatted;
-		}
-		catch(ex)
-		{
-			print(ex);
-			return "?";
-		}
-	}
-
-	function getSteps() 
-	{
-		  var steps = Bangle.getHealthStatus("day").steps;
-		  return steps;	  
-	}  
-  
-
-	let drawTimeout;
+ 	let drawTimeout;
 
 	// actually draw the watch face
 	let draw = function()
@@ -65,7 +42,7 @@
 		// Bangle.js2 -> 176x176
 		var x_rgt = g.getWidth();
 		var y_bot = g.getHeight();
-		var x_cntr = x_rgt / 2;
+		//var x_cntr = x_rgt / 2;
 		var y_cntr = y_bot / 18*7; 		
 		g.reset().clearRect(Bangle.appRect); // clear whole background (w/o widgets)
 
@@ -110,10 +87,10 @@
 		////////////////////////////////////////
 
 		// date-time-array: 4x6 bit
-		var idx_hour = 0;
-		var idx_min = 1;
-		var idx_day = 2;
-		var idx_mon = 3;
+		//var idx_hour = 0;
+		//var idx_min = 1;
+		//var idx_day = 2;
+		//var idx_mon = 3;
 		var dt_bit_arr = [[0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0]];
 
 		var date_time = new Date();
