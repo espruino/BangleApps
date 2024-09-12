@@ -2,7 +2,7 @@
   "id": "calculator",
   "name": "Calculator",
   "shortName": "Calculator",
-  "version": "0.07",
+  "version": "0.08",
   "description": "Basic calculator reminiscent of MacOs's one. Handy for small calculus.",
   "icon": "calculator.png",
   "screenshots": [{"url":"screenshot_calculator.png"}],
