@@ -81,7 +81,10 @@ a.btn.btn-link.dropdown-toggle {
   min-height: 8em;
 }
 
-.tile-content { position: relative; }
+.tile-content { 
+  position: relative; 
+  overflow-wrap: anywhere; /* stop long text like links pushing the width out too far*/
+}
 .link-github {
   position:absolute;
   top: 36px;
