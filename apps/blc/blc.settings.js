@@ -43,7 +43,7 @@
     // Show the menu
     var mainmenu = {
         "" : {
-             "title" : "BinaryCLK" 
+             "title" : "BinaryCLK"
         },
         "< Back" : () => back(),
         'Color Hour.:': stringInSettings("HourCol", LED_ColorNames),
