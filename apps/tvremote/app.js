@@ -9,13 +9,15 @@ let devicefile = require("Storage").readJSON(deviceFileName, true);
 //console.log(devicefile);
 
 
-let serverDns = serverData.webServerDns;
-let serverPort = serverData.port;
-let tvIp = serverData.tvIp;
-let username = serverData.username;
-let password = serverData.password;
+let serverDns = "webServerDns" in serverData ? serverData.webServerDns : 'undefined';
 
-let panaIp = "tvIp" in serverData ? serverData.tvIp : 'undefined';
+let serverPort = "port" in serverData ? serverData.port : 'undefined';
+let tvIp = "tvIp" in serverData ? serverData.tvIp : 'undefined';
+let username = "username" in serverData ? serverData.username : 'undefined';
+let password = "password" in serverData ? serverData.password : 'undefined';
+
+let panaIp = tvIp;
+//"tvIp" in serverData ? serverData.tvIp : 'undefined';
 let settingsPort = "port" in serverData ? serverData.port : 'undefined';
 
 let counter;
@@ -31,7 +33,12 @@ let RIGHT_MARGIN = 15;
 let midpoint = (g.getWidth() / 2);
 let IP_AREA = [0, RESULT_HEIGHT, g.getWidth(), g.getHeight()]; // values used for key buttons
 let KEY_AREA = [0, 24, g.getWidth(), g.getHeight()];
-let COLORS = {DEFAULT: ['#FF0000'], BLACK: ['#000000'], WHITE: ['#FFFFFF'], GREY: ['#808080', '#222222']}; // background
+let COLORS = {
+  DEFAULT: ['#FF0000'],
+  BLACK: ['#000000'],
+  WHITE: ['#FFFFFF'],
+  GREY: ['#808080', '#222222']
+}; // background
 
 let sourceApps = {
   "selection": {
@@ -178,7 +185,7 @@ let volume = sourceApps.volume;
 let selection = sourceApps.selection;
 let numbers = sourceApps.numbers;
 
-function assignScreen (screen) {
+function assignScreen(screen) {
   currentScreen = screen;
   console.log(currentScreen);
 }
@@ -195,14 +202,13 @@ function sendPost(keyPress) {
   };
 
   Bangle.http(
-    serverUrl,
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${credentials}`,
-      },
-      body: JSON.stringify(keyJson)
-    })
+      serverUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${credentials}`,
+        },
+        body: JSON.stringify(keyJson)
+      })
     .then(response => {
       console.log("Response received:", response);
     }).catch(error => {
@@ -211,19 +217,18 @@ function sendPost(keyPress) {
 }
 
 function receiveDevices() {
-  serverPort = settingsPort;
+  let serverPort = settingsPort;
   let credentials = btoa(`${username}:${password}`);
   let serverUrl = `https://${serverDns}:${serverPort}/ssdp-devices.json`;
   return Bangle.http(
-    serverUrl,
-    {
+    serverUrl, {
       method: 'GET',
       headers: {
         'Authorization': `Basic ${credentials}`
       },
     }).then(data => {
-      require("Storage").write(deviceFileName, data);
-      devicefile = require("Storage").readJSON(deviceFileName, true);
+    require("Storage").write(deviceFileName, data);
+    devicefile = require("Storage").readJSON(deviceFileName, true);
   });
 }
 
@@ -277,7 +282,7 @@ function drawKeys(area, buttons) {
 
 function displayOutput(num, screenValue) { // top block
   num = num.toString();
-  g.setFont('Vector', 18);  //'7x11Numeric7Seg'
+  g.setFont('Vector', 18); //'7x11Numeric7Seg'
   g.setFontAlign(1, 0);
   g.setBgColor(0).clearRect(0, 0, g.getWidth(), RESULT_HEIGHT - 1);
   g.setColor(-1); // value
@@ -288,27 +293,25 @@ function displayOutput(num, screenValue) { // top block
 function buttonPress(val, screenValue) {
 
   if (screenValue === "ip") {
-    if (val === "<") currNumber = currNumber.slice(0,-1);
+    if (val === "<") currNumber = currNumber.slice(0, -1);
     else if (val === ".") currNumber = currNumber + ".";
     else currNumber = currNumber == null ? val : currNumber + val; // currNumber is null if no value pressed
 
     let ipcount = (currNumber.match(/\./g) || []).length;
-    if (ipcount > 3 || currNumber.length > 15) currNumber = currNumber.slice(0,-1);
+    if (ipcount > 3 || currNumber.length > 15) currNumber = currNumber.slice(0, -1);
 
     displayOutput(currNumber, screenValue);
   }
 
-  let checkValue = appData.some(app => app.name === screenValue);  // check app data
+  let checkValue = appData.some(app => app.name === screenValue); // check app data
 
-  if (checkValue) sendPost(val);  // app values
+  if (checkValue) sendPost(val); // app values
 
   if (screenValue === "numbers") {
     if (val === '<') sendPost('back');
     else if (val === 'ok') sendPost('enter');
-    else sendPost("num_"+val);
-  }
-
-  else if (screenValue === "selection") sendPost(selection[val].key);
+    else sendPost("num_" + val);
+  } else if (screenValue === "selection") sendPost(selection[val].key);
   else if (screenValue === "volume") sendPost(volume[val].key);
 }
 
@@ -327,7 +330,7 @@ const powerScreen = () => {
 };
 
 const appMenu = () => {
-  
+
   assignScreen("apps");
   E.showScroller({
     h: 54,
@@ -367,7 +370,7 @@ let tvSelector = {
   "": {
     title: "TV Selector",
     back: function() {
-      load();//E.showMenu(tvSelector);
+      load(); //E.showMenu(tvSelector);
     }
   },
   "Panasonic": function() {
@@ -398,7 +401,7 @@ function clearCountdown() {
 function countDown(callback) {
   require("widget_utils").show();
   if (counter === 0) {
-    callback();  // Call the callback function when countdown reaches 0
+    callback(); // Call the callback function when countdown reaches 0
     return;
   }
   E.showMessage(`Searching for devices...\n${counter}`, "Device Search");
@@ -453,36 +456,51 @@ function subMenu() {
 
   if (typeof settingsPort !== 'undefined' && settingsPort !== 'undefined') {
     let portHeader = `Port: ${settingsPort}`;
-    settingssub[portHeader] = function() { IPASSIGN = "port"; ipScreen();};
+    settingssub[portHeader] = function() {
+      IPASSIGN = "port";
+      ipScreen();
+    };
   } else {
-    settingssub["Set DNS Port"] = function() { IPASSIGN = "port"; ipScreen();};
+    settingssub["Set DNS Port"] = function() {
+      IPASSIGN = "port";
+      ipScreen();
+    };
   }
 
   if (typeof panaIp !== 'undefined' && panaIp !== 'undefined') {
     let panaheader = `Pana IP: ${panaIp}`;
-    settingssub[panaheader] = function() { 
-      IPASSIGN = "pana"; 
+    settingssub[panaheader] = function() {
+      IPASSIGN = "pana";
       E.showMenu(deviceSelect);
       devicefile = require("Storage").readJSON("tvdevicelist.json", true);
-console.log(devicefile);
+      console.log(devicefile);
     };
   } else {
-      settingssub["Set Pana IP"] = function() { IPASSIGN = "pana"; ipScreen();};
+    settingssub["Set Pana IP"] = function() {
+      IPASSIGN = "pana";
+      ipScreen();
+    };
   }
 
   if (typeof samsIp !== 'undefined' && panaIp !== 'undefined') {
     let samsheader = `Sams IP: ${samsIp}`;
-    settingssub[samsheader] = function() { IPASSIGN = "sams"; ipScreen();};
+    settingssub[samsheader] = function() {
+      IPASSIGN = "sams";
+      ipScreen();
+    };
   } else {
-    settingssub["Set Sams IP"] = function() { IPASSIGN = "sams"; ipScreen();};
+    settingssub["Set Sams IP"] = function() {
+      IPASSIGN = "sams";
+      ipScreen();
+    };
   }
 
   E.showMenu(settingssub);
 }
 
 const deviceMenu = () => {
-let parsedResp = JSON.parse(devicefile.resp);
- E.showScroller({
+  let parsedResp = JSON.parse(devicefile.resp);
+  E.showScroller({
     h: 54,
     c: parsedResp.length,
     draw: (i, r) => {
@@ -515,13 +533,16 @@ let parsedResp = JSON.parse(devicefile.resp);
 
 
 let deviceSelect = {
-  "" : { title : "Device Select",
-         back : function() { subMenu(); }
-      },
-  "Manual IP Assign" : function() {
+  "": {
+    title: "Device Select",
+    back: function() {
+      subMenu();
+    }
+  },
+  "Manual IP Assign": function() {
     ipScreen();
   },
-  "Device Select" : function() {
+  "Device Select": function() {
     receiveDevices();
     counter = 5;
     countDown(deviceMenu);
@@ -549,7 +570,7 @@ function swipeHandler(LR, UD) {
       sendPost("enter");
     }
   }
-  if (LR == 1) {  // swipe right
+  if (LR == 1) { // swipe right
     if (currentScreen === "apps") {
       assignScreen("power");
       E.showScroller();
@@ -560,13 +581,13 @@ function swipeHandler(LR, UD) {
       sendPost("back");
     }
   }
-  if (UD == -1) {  // swipe up
+  if (UD == -1) { // swipe up
     if (currentScreen === "selection") {
       assignScreen("volume");
       prepareScreen(volume, volumeGrid, COLORS.DEFAULT, KEY_AREA);
       drawKeys(KEY_AREA, volume);
     } else if (currentScreen === "volume") {
-        sendPost("enter");
+      sendPost("enter");
     } else if (currentScreen === "ip") {
       buttonPress(".", "ip");
     } else if (currentScreen == "numbers") {
@@ -575,15 +596,15 @@ function swipeHandler(LR, UD) {
       drawKeys(KEY_AREA, selection);
     }
   }
-  if (UD == 1) {  // swipe down
-      if (currentScreen === "volume") {
-        assignScreen("selection");
-        prepareScreen(selection, selectionGrid, COLORS.DEFAULT, KEY_AREA);
-        drawKeys(KEY_AREA, selection);
-      } else if (currentScreen === "selection") {
-        assignScreen("numbers");
-        prepareScreen(numbers, numbersGrid, COLORS.DEFAULT, KEY_AREA);
-        drawKeys(KEY_AREA, numbers);
+  if (UD == 1) { // swipe down
+    if (currentScreen === "volume") {
+      assignScreen("selection");
+      prepareScreen(selection, selectionGrid, COLORS.DEFAULT, KEY_AREA);
+      drawKeys(KEY_AREA, selection);
+    } else if (currentScreen === "selection") {
+      assignScreen("numbers");
+      prepareScreen(numbers, numbersGrid, COLORS.DEFAULT, KEY_AREA);
+      drawKeys(KEY_AREA, numbers);
     }
   }
 }
@@ -624,4 +645,11 @@ Bangle.on('touch', touchHandler);
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-mainMenu();
+
+if (serverData === undefined) {
+  E.showAlert(`${serverDataFile}.json missing.\nSee READ.me`, "Config Error").then(function() {
+    mainMenu();
+  });
+} else {
+  mainMenu();
+}
