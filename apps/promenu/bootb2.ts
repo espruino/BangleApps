@@ -38,6 +38,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
   const scroller = {
     scroll: selected,
   };
+  let nameScroller: IntervalId | null = null;
 
   const drawLine = (
     name: string,
@@ -46,6 +47,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
     idx: number,
     x: number,
     y: number,
+    nameScroll: number = 0,
   ) => {
     const hl = (idx === selected && !selectEdit);
     if(g.theme.dark){
@@ -59,12 +61,14 @@ E.showMenu = (items?: Menu): MenuInstance => {
       .setFontAlign(-1, -1);
 
     const vplain = v.indexOf("\0") < 0;
+    let truncated = true;
     if(vplain && name.length >= 17 - v.length && typeof item === "object"){
-      g.drawString(name.substring(0, 12 - v.length) + "...", x + 3.7, y + 2.7);
+      g.drawString(name.substring(nameScroll, nameScroll + 12 - v.length) + "...", x + 3.7, y + 2.7);
     }else if(vplain && name.length >= 15){
-      g.drawString(name.substring(0, 15) + "...", x + 3.7, y + 2.7);
+      g.drawString(name.substring(nameScroll, nameScroll + 15) + "...", x + 3.7, y + 2.7);
     }else{
       g.drawString(name, x + 3.7, y + 2.7);
+      truncated = false;
     }
 
     let xo = x2;
@@ -80,10 +84,13 @@ E.showMenu = (items?: Menu): MenuInstance => {
     }
     g.setFontAlign(1, -1);
     g.drawString(v, xo - 2, y + 1);
+
+    return truncated;
   };
 
   const l = {
     draw: (rowmin?: number, rowmax?: number) => {
+      if (nameScroller) clearInterval(nameScroller), nameScroller = null;
       let rows = 0|Math.min((y2 - y) / fontHeight, menuItems.length);
       let idx = E.clip(selected - (rows>>1), 0, menuItems.length - rows);
 
@@ -119,7 +126,22 @@ E.showMenu = (items?: Menu): MenuInstance => {
           v = "";
         }
 
-        drawLine(name, v, item, idx, x, iy);
+        const truncated = drawLine(name, v, item, idx, x, iy, 0);
+        if (truncated && idx === selected){
+          let nameScroll = 0;
+          nameScroller = setInterval((
+            name: string,
+            v: string,
+            item: ActualMenuItem,
+            idx: number,
+            x: number,
+            iy: number,
+          ) => {
+            drawLine(name, v, item, idx, x, iy, nameScroll);
+            nameScroll += 1;
+            if (nameScroll >= name.length - 5) nameScroll = 0;
+          }, 300, name, v, item, idx, x, iy);
+        }
 
         g.setColor(g.theme.fg);
         iy += fontHeight;
@@ -201,6 +223,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
     mode: "updown",
     back,
     remove: () => {
+      if (nameScroller) clearInterval(nameScroller);
       Bangle.removeListener("swipe", onSwipe);
     },
   } as SetUIArg<"updown">,
