@@ -201,11 +201,14 @@ function round(n, dp) {
   var p = Math.max(0,Math.min(dp,dp - Math.floor(Math.log(n)/Math.log(10))));
   return n.toFixed(p);
 }
-var is12;
+var _is12Hours;
+function is12Hours() {
+  if (_is12Hours === undefined) _is12Hours = ${isLocal ? "false" : `(require('Storage').readJSON('setting.json', 1) || {})["12hour"]`};
+  return _is12Hours;
+}
 function getHours(d) {
   var h = d.getHours();
-  if (is12 === undefined) is12 = ${isLocal ? "false" : `(require('Storage').readJSON('setting.json', 1) || {})["12hour"]`};
-  if (!is12) return ('0' + h).slice(-2);
+  if (!is12Hours()) return ('0' + h).slice(-2);
   return ((h % 12 == 0) ? 12 : h % 12).toString();
 }
 exports = {
@@ -234,7 +237,8 @@ exports = {
   translate: s => ${locale.trans?`{var t=${js(locale.trans)};s=''+s;return t[s]||t[s.toLowerCase()]||s;}`:`s`},
   date: (d,short) => short ? \`${dateS}\` : \`${dateN}\`,
   time: (d,short) => short ? \`${timeS}\` : \`${timeN}\`,
-  meridian: d => d.getHours() < 12 ? ${js(locale.ampm[0])}:${js(locale.ampm[1])},
+  meridian: (d,force) => (force||is12Hours()) ? d.getHours() < 12 ? ${js(locale.ampm[0])}:${js(locale.ampm[1])} : "",
+  is12Hours,
 };
 `.trim()
         };
@@ -306,8 +310,8 @@ ${customizeLocale ? `<tr><td class="table_t">Time format</td>
 `;
 document.getElementById("examples").innerHTML = `
 <tr><td class="table_t">Meridian</td><td>
-  <span id="meridian-am-output">${exports.meridian(new Date(0))}</span> /
-  <span id="meridian-pm-output">${exports.meridian(new Date(43200000))}</span>
+  <span id="meridian-am-output">${exports.meridian(new Date(0), true)}</span> /
+  <span id="meridian-pm-output">${exports.meridian(new Date(43200000), true)}</span>
 </td></tr>
 ${customizeLocale ? `<tr><td class="table_t">Meridian names</td>
     <td>

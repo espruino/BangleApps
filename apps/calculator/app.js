@@ -10,9 +10,9 @@
 g.clear();
 require("Font7x11Numeric7Seg").add(Graphics);
 
-var DEFAULT_SELECTION_NUMBERS = '5', DEFAULT_SELECTION_OPERATORS = '=', DEFAULT_SELECTION_SPECIALS = 'R';
-var RIGHT_MARGIN = 20;
+var DEFAULT_SELECTION_NUMBERS = '5';
 var RESULT_HEIGHT = 40;
+var RESULT_MAX_LEN = Math.floor((g.getWidth() - 20) / 14);
 var COLORS = {
   // [normal, selected]
   DEFAULT: ['#7F8183', '#A6A6A7'],
@@ -88,28 +88,11 @@ function prepareScreen(screen, grid, defaultColor) {
 }
 
 function drawKey(name, k, selected) {
-  var rMargin = 0;
-  var bMargin = 0;
   var color = k.color || COLORS.DEFAULT;
   g.setColor(color[selected ? 1 : 0]);
   g.setFont('Vector', 20).setFontAlign(0,0);
   g.fillRect(k.xy[0], k.xy[1], k.xy[2], k.xy[3]);
   g.setColor(-1);
-  // correct margins to center the texts
-  if (name == '0') {
-    rMargin = (RIGHT_MARGIN * 2) - 7;
-  } else if (name === '/') {
-    rMargin = 5;
-  } else if (name === '*') {
-    bMargin = 5;
-    rMargin = 3;
-  } else if (name === '-') {
-    rMargin = 3;
-  } else if (name === 'R' || name === 'N') {
-    rMargin = k.val === 'C' ? 0 : -9;
-  } else if (name === '%') {
-    rMargin = -3;
-  }
   g.drawString(k.val || name, (k.xy[0] + k.xy[2])/2, (k.xy[1] + k.xy[3])/2);
 }
 
@@ -138,29 +121,21 @@ function drawGlobal() {
     screen[k] = specials[k];
   }
   drawKeys();
-  var selected = DEFAULT_SELECTION_NUMBERS;
-  var prevSelected = DEFAULT_SELECTION_NUMBERS;
 }
 function drawNumbers() {
   screen = numbers;
   screenColor = COLORS.DEFAULT;
   drawKeys();
-  var selected = DEFAULT_SELECTION_NUMBERS;
-  var prevSelected = DEFAULT_SELECTION_NUMBERS;
 }
 function drawOperators() {
   screen = operators;
   screenColor =COLORS.OPERATOR;
   drawKeys();
-  var selected = DEFAULT_SELECTION_OPERATORS;
-  var prevSelected = DEFAULT_SELECTION_OPERATORS;
 }
 function drawSpecials() {
   screen = specials;
   screenColor = COLORS.SPECIAL;
   drawKeys();
-  var selected = DEFAULT_SELECTION_SPECIALS;
-  var prevSelected = DEFAULT_SELECTION_SPECIALS;
 }
 
 function getIntWithPrecision(x) {
@@ -218,8 +193,6 @@ function doMath(x, y, operator) {
 }
 
 function displayOutput(num) {
-  var len;
-  var minusMarge = 0;
   g.setBgColor(0).clearRect(0, 0, g.getWidth(), RESULT_HEIGHT-1);
   g.setColor(-1);
   if (num === Infinity || num === -Infinity || isNaN(num)) {
@@ -230,9 +203,7 @@ function displayOutput(num) {
       num = '-INFINITY';
     } else {
       num = 'NOT A NUMBER';
-      minusMarge = -25;
     }
-    len = (num + '').length;
     currNumber = null;
     results = null;
     isDecimal = false;
@@ -261,6 +232,9 @@ function displayOutput(num) {
     num = num.toString();
     num = num.replace("-","- "); // fix padding for '-'
     g.setFont('7x11Numeric7Seg', 2);
+    if (num.length > RESULT_MAX_LEN) {
+      num = num.substr(0, RESULT_MAX_LEN - 1)+'...';
+    }
   }
   g.setFontAlign(1,0);
   g.drawString(num, g.getWidth()-20, RESULT_HEIGHT/2);

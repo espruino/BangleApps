@@ -53,7 +53,12 @@ function bangleDownload() {
   }).then(content => {
     Progress.hide({ sticky: true });
     showToast('Backup complete!', 'success');
-    Espruino.Core.Utils.fileSaveDialog(content, "Banglejs backup.zip");
+    if (typeof Android !== "undefined" && typeof Android.saveFile === 'function') {
+      // Recent Gadgetbridge version that provides the saveFile interface
+      Android.saveFile("Banglejs backup.zip", "application/zip", btoa(content));
+    } else {
+      Espruino.Core.Utils.fileSaveDialog(content, "Banglejs backup.zip");
+    }
   }).catch(err => {
     Progress.hide({ sticky: true });
     showToast('Backup failed, ' + err, 'error');

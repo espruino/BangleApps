@@ -26,16 +26,17 @@ Useful gestures:
 
  B -- "Battery", show/buzz battery info
 D -- "Down", previous waypoint
-F -- "oFf", disable GPS.
-G -- "Gps", enable GPS for 4 hours in low power mode.
+F -- "turn oFf gps", disable GPS.
+T -- "Turn on gps", enable GPS for 4 hours in low power mode.
 I -- "Info", toggle info display
  L -- "aLtimeter", load altimeter app
 M -- "Mark", create mark from current position
 N -- "Note", take a note and write it to the log.
  O -- "Orloj", run orloj app
- R -- "Run", run "runplus" app
+ P -- "runPlus", run "runplus" app
+R -- "Reset" daily statistics
 S -- "Speed", enable GPS for 30 minutes in high power mode.
- T -- "Time", buzz current time
+ G -- "Get time", buzz current time
 U -- "Up", next waypoint
 Y -- "compass", reset compass
 
@@ -44,6 +45,7 @@ to communicate back to the user.
 
 B -- battery low.
 E -- acknowledge, gesture understood.
+I -- unknown gesture.
 T -- start of new hour.
 
 Three colored dots may appear on display. North is on the 12 o'clock
@@ -73,27 +75,18 @@ Todo:
 
 *) only turn on compass when needed
 
-*) only warn about battery low when it crosses thresholds, update
-battery low message
-
-*) rename "show" to something else -- it collides with built-in
-
-*) adjust clock according to GPS
-
-*) show something more reasonable than (NOTEHERE).
-
-*) hide messages after timeout.
-
-*) show route lengths after the fact
-
 *) implement longer recording than "G".
-
-*) Probably T should be G.
-
-*) sum gps distances for a day
 
 *) allow setting up home altitude, or at least disable auto-calibration
 
 *) show time-to-sunset / sunrise?
 
-*) one-second updates when gps is active
+*) "myprofile" to read step length
+
+?) display gps alt + offset to baro
+
+?) start logging baro pressure
+
+*) compute climb/descent
+
+*) switch to compensated compass
