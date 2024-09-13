@@ -1,3 +1,11 @@
+/******************************************************************
+* Creator Guptilious (https://github.com/Guptilious)
+* Future Features:
+*  Samsung TV Support
+*  customiser page so config can be created prior to install.
+*  
+*****************************************************************/
+
 require("Font7x11Numeric7Seg").add(Graphics);
 
 let deviceFileName = "tvdevicelist.json";
