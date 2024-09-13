@@ -591,13 +591,7 @@ function paint_all(pp) {
 }
 
 function step_to(pp, pass_all) {
-  pp.x = ui.w/2;
-  pp.y = ui.h*0.66;
-  
-  g.setColor(0.5, 0.5, 1);
-  let sc = 2.5;
-  g.fillPoly([ pp.x, pp.y, pp.x - 5*sc, pp.y + 12*sc, pp.x + 5*sc, pp.y + 12*sc ]);
-  
+    
   if (0) {
     g.setColor(0.5, 0.5, 1);
     paint(pp, pp, destination, 1);
@@ -605,7 +599,7 @@ function step_to(pp, pass_all) {
     g.setColor(1, 0.5, 0.5);
     paint(pp, pp, north, 1);
   }
-  
+
   let quiet = paint_all(pp);
   
   if ((pass_all || track[0].passed)
@@ -641,9 +635,21 @@ function step() {
 
   let quiet = step_to(pp, 1);
   if (1) {
+    g.setColor(0, 0, 0);
     zoom.geoPaint(pp, -pp.course, 500);
   }
+  
+  {
+  pp.x = ui.w/2;
+  pp.y = ui.h*0.5;
 
+  g.setColor(0.5, 0.5, 1);
+  let sc = 2.5;
+  g.fillPoly([ pp.x, pp.y, pp.x - 5*sc, pp.y + 12*sc, pp.x + 5*sc, pp.y + 12*sc ]);
+
+  }
+  
+  g.setColor(0, 0, 0);
   if (!fast) {
     g.setFont("Vector", 31);
     g.setFontAlign(-1, -1);
