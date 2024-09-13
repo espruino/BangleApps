@@ -128,12 +128,13 @@ let fmt = {
   },
 };
 
-/* gps library v0.1.2 */
+/* gps library v0.1.3 */
 let gps = {
   emulator: -1,
   init: function(x) {
     this.emulator = (process.env.BOARD=="EMSCRIPTEN" 
                      || process.env.BOARD=="EMSCRIPTEN2")?1:0;
+    this.emulator = 1; // FIXME
   },
   state: {},
   on_gps: function(f) {
@@ -161,8 +162,8 @@ let gps = {
       return Bangle.getGPSFix();
     let fix = {};
     fix.fix = 1;
-    fix.lat = 50;
-    fix.lon = 14-(getTime()-this.gps_start) / 1000; /* Go West! */
+    fix.lat = 50.010507;
+    fix.lon = 14.765840-(getTime()-this.gps_start) / 10000; /* Go West! */
     fix.alt = 200;
     fix.speed = 5;
     fix.course = 30;
@@ -604,6 +605,11 @@ function paint_all(pp) {
   return { quiet: quiet, offtrack: mDist };
 }
 
+function drop_last() {
+    print("Dropping ", track[0].point_num);
+    track.shift();
+}
+
 function step_to(pp, pass_all) {    
   if (0) {
     g.setColor(0.5, 0.5, 1);
@@ -615,15 +621,14 @@ function step_to(pp, pass_all) {
 
   let quiet = paint_all(pp);
   
-  if (distSegment(track[0], track[1], pp) > 150
-      && track.length > 10) {
-    print("Dropping ", track[0].point_num);
-    track.shift();
+  while (distSegment(track[0], track[1], pp) > 150 &&
+         track.length > 10) {
+    drop_last();
   }
   return quiet;
 }
 
-var demo_mode = 1; //fixme
+var demo_mode = 0; //fixme
 
 function step() {
   const fast = 0;
@@ -684,7 +689,7 @@ function step() {
     Bangle.setLCDPower(1);
 
   if (demo_mode)
-    track.shift();
+    drop_last();
   let v2 = getTime();
   print("Step took", (v2-v1), "seconds");
   setTimeout(step, 10); /* FIXME! */
@@ -698,10 +703,9 @@ function recover() {
   pp.ppm = 0.08 * 3; /* Pixels per meter */
   if (!fix.fix) {
     print("Can't recover with no fix\n");
-    fix.lat = 50.0122;
-    fix.lon = 14.7780;
+    fix.lat = 50.010507;
+    fix.lon = 14.765840;
   }
-  load_next();
   load_next();
   while(1) {
     let d = distSegment(track[0], track[1], pp);
@@ -711,7 +715,8 @@ function recover() {
     track.shift();
     if (0)
       step_to(pp, 1);
-    load_next();
+    if (!load_next())
+      break;
     ui.drawMsg("Recover\n" + fmt.fmtDist(d / 1000));
   }
 }
