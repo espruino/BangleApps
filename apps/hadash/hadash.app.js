@@ -114,8 +114,8 @@ function getServiceInputData(entry, level) {
       if (idx == -1) {
         idx = entry.input[key].options.push(entry.input[key].value) - 1;
       }
-      // the setTimeout method can not be used for the "format" CB since it expects a return value - using eval instead:
-      eval('CBs["'+key+'_format"] = function(v) { return entry.input["'+key+'"].options[v]; }');
+      // the setTimeout method can not be used for the "format" CB since it expects a return value:
+      CBs[`${key}_format`] = ((key) => function(v) { return entry.input[key].options[v]; })(key);
       serviceInputMenu[label] = {
         value: parseInt(idx),
         min: 0,
