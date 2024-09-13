@@ -296,8 +296,11 @@ var zoom = {
   clear : function() {
     this.buf.reset().clear();
   },
+  /* Origin in lat/lon */
+  origin : 0,
   geoNew : function(p, is) {
     this.clear();
+    this.origin = p;
     let i = Bangle.project(p);
     this.x1 = i.x - is;
     this.x2 = i.x + is;
@@ -447,22 +450,16 @@ function toxy(pp, p) {
   return r;
 }
 
-function paint(pp, p1, p2, thick) {
-  if (0) {
-   let d1 = toxy(pp, p1);
-   let d2 = toxy(pp, p2);
-   //print(d1, d2);
-   drawThickLine(pp.g, d1.x, d1.y, d2.x, d2.y, thick);
-  } else
-    zoom.geoLine(p1, p2);
-}
-
-var destination = {}, num = 0, dist = 0;
+var start = {}, destination = {}, num = 0, dist = 0;
 
 function read(pp, n) {
   let f = require("Storage").open(n+".st", "r");
   let l = f.readLine();
   let prev = 0;
+
+  g.setColor(0, 0, 0);
+  g.setFont("Vector", 31);
+  
   while (l!==undefined) {
     l = ""+l;
     let p = egt.parse(l);
@@ -473,6 +470,7 @@ function read(pp, n) {
           paint(pp, prev, p, 1);
       } else {
         zoom.geoNew(p, 3000);
+        start = p;
         pp.lat = p.lat;
         pp.lon = p.lon;
       }
@@ -480,22 +478,20 @@ function read(pp, n) {
     }
     l = f.readLine();
     if (!(num % 30)) {
-      if (!pp.g)
-        ui.drawMsg(num + "\n" + fmt.fmtDist(dist / 1000));
-      else {
-        zoom.geoPaint(prev, 0, 1500);
-        g.flip();
-      }
+      g.clear();
+      zoom.geoPaint(prev, 0, 1500);
+      g.drawString(num + "\n" + fmt.fmtDist(dist / 1000), 3, 3);
+      g.flip();
       print(num, "points");
+      if (!(num % 300)) {
+        zoom.geoNew(prev, 3000);
+      }
     }
     num++;
   }
-  if (!pp.g)
-    ui.drawMsg(num + "\n" + fmt.fmtDist(dist / 1000));
+  ui.drawMsg(num + "\n" + fmt.fmtDist(dist / 1000));
   destination = prev;
 }
-
-zoom.init(176);
 
 function time_read(n) {
   print("Converting...");
@@ -518,7 +514,7 @@ function time_read(n) {
   setTimeout(step, 100);
 }
 
-var track_name = "", inf, point_num, track = [], track_points = 30, north = {};
+var track_name = "", inf, point_num, track = [], track_points = 30, north = {}, point_drawn;
 
 function step_init() {
   inf = require("Storage").open(track_name + ".st", "r");
@@ -526,7 +522,9 @@ function step_init() {
   north.lat = 89.9;
   north.lon = 0;
   point_num = 0;
+  point_drawn = 0;
   track = [];
+  zoom.geoNew(start, 3000);
 }
 
 function load_next() {
@@ -542,38 +540,53 @@ function load_next() {
       continue;
     }
     p.point_num = point_num++;
-    p.passed = 0;
     print("Loading ", p.point_num);
     track.push(p);
   }
   return 1;
 }
 
+function paint(pp, p1, p2, thick) {
+  zoom.geoLine(p1, p2);
+}
+
 function paint_all(pp) {
   let prev = 0;
   let mDist = 99999999999, m = 0;
   const fast = 0;
+  let new_drawn = -1;
 
   g.setColor(1, 0, 0);
+  for (let i = track.length-1; i > 1; i--) {
+    let p = track[i];
+    if (point_drawn >= p.point_num)
+      break;
+    prev = track[i-1];
+    paint(pp, prev, p, 3);
+    if (new_drawn == -1)
+      new_drawn = p.point_num;
+  }
+  if (new_drawn != -1)
+    point_drawn = new_drawn;
   for (let i = 1; i < track.length; i++) {
     let p = track[i];
     prev = track[i-1];
-    if (0 && fmt.distance(p, pp) < 100)
-      p.passed = 1;
     if (!fast) {
       let d = distSegment(prev, p, pp);
       if (d < mDist) {
         mDist = d;
         m = i;
-      } else {
-        g.setColor(0, 0, 0);
-      }
+      } else if (mDist < 10 && d > 100)
+        break;
     }
-    paint(pp, prev, p, 3);
   }
   if (fast)
     return { quiet: 0, offtrack : 0 };
   print("Best segment was", m, "dist", mDist);
+  if (fmt.distance(track[m], zoom.origin) > 1500) {
+    zoom.geoNew(track[m], 3000); // FIXME: this will flicker
+    point_drawn = 0;
+  }
   let ahead = 0, a = fmt.bearing(track[m-1], track[m]), quiet = -1;
   for (let i = m+1; i < track.length; i++) {
     let a2 = fmt.bearing(track[i-1], track[i]);
@@ -583,6 +596,7 @@ function paint_all(pp) {
         quiet = ahead + fmt.distance(pp, track[i-1]);
       print("...straight", ahead);
       a = a2;
+      break;
     }
     ahead += fmt.distance(track[i-1], track[i]);
   }
@@ -590,8 +604,7 @@ function paint_all(pp) {
   return { quiet: quiet, offtrack: mDist };
 }
 
-function step_to(pp, pass_all) {
-    
+function step_to(pp, pass_all) {    
   if (0) {
     g.setColor(0.5, 0.5, 1);
     paint(pp, pp, destination, 1);
@@ -602,8 +615,7 @@ function step_to(pp, pass_all) {
 
   let quiet = paint_all(pp);
   
-  if ((pass_all || track[0].passed)
-      && distSegment(track[0], track[1], pp) > 150
+  if (distSegment(track[0], track[1], pp) > 150
       && track.length > 10) {
     print("Dropping ", track[0].point_num);
     track.shift();
@@ -643,9 +655,9 @@ function step() {
   pp.x = ui.w/2;
   pp.y = ui.h*0.5;
 
-  g.setColor(0.5, 0.5, 1);
+  g.setColor(0, 0, 1);
   let sc = 2.5;
-  g.fillPoly([ pp.x, pp.y, pp.x - 5*sc, pp.y + 12*sc, pp.x + 5*sc, pp.y + 12*sc ]);
+  g.drawPoly([ pp.x, pp.y, pp.x - 5*sc, pp.y + 12*sc, pp.x + 5*sc, pp.y + 12*sc ], true);
 
   }
   
@@ -675,7 +687,7 @@ function step() {
     track.shift();
   let v2 = getTime();
   print("Step took", (v2-v1), "seconds");
-  setTimeout(step, 1000);
+  setTimeout(step, 10); /* FIXME! */
 }
 
 function recover() {
@@ -723,6 +735,7 @@ fmt.init();
 egt.init();
 gps.init();
 gps.start_gps();
+zoom.init(176);
 
 const st = require('Storage');
 
@@ -732,13 +745,8 @@ l = st.list(l, {sf:false});
 print(l);
 
 function load_track(x) {
-  print("Loading", x);
-  Bangle.buzz(50, 1); // Won't happen because load() is quicker
-  g.reset().clear()
-    .setFont("Vector", 40)
-    .drawString("Loading", 0, 30)
-    .drawString(x, 0, 80);
-  g.flip();
+  Bangle.buzz(50, 1);
+  ui.drawMsg("Loading\n"+x);
   track_name = x;
   time_read(x);
   
