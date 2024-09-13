@@ -60,3 +60,12 @@ Vol Commands
 * Swipe Up - Play/Pause
 
 Back Button - Should take you back to the previous menu screen.
+
+# Requests
+If you have any issues or suggestions for improvements, please feel free to message [me](https://github.com/Guptilious). 
+
+
+
+
+# Creator
+[Guptilious](https://github.com/Guptilious)
