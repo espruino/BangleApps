@@ -296,6 +296,14 @@ var zoom = {
   clear : function() {
     this.buf.reset().clear();
   },
+  geoNew : function(p, is) {
+    this.clear();
+    let i = Bangle.project(p);
+    this.x1 = i.x - is;
+    this.x2 = i.x + is;
+    this.y1 = i.y - is;
+    this.y2 = i.y + is;
+  },
   /* output: 0..1 */
   xrel : function(i)  {
     let r = {};
@@ -319,7 +327,7 @@ var zoom = {
   drawLine : function(i1, i2) {
     let p1 = this.xform(i1);
     let p2 = this.xform(i2);
-    print("line", p1, p2);
+    //print("line", p1, p2);
     this.buf.drawLine(p1.x, p1.y, p2.x, p2.y);
   },
   geoPaint : function(i, head, z) {
@@ -451,14 +459,7 @@ function paint(pp, p1, p2, thick) {
 
 var destination = {}, num = 0, dist = 0;
 
-//{ rotate: Math.PI / 4 + i/100, scale: 1-i/100 }
-function flip(pp) {
-  // pp.g.flip();
-  //g.flip();
-}
-
 function read(pp, n) {
-  zoom.buf.reset().clear();
   let f = require("Storage").open(n+".st", "r");
   let l = f.readLine();
   let prev = 0;
@@ -471,12 +472,7 @@ function read(pp, n) {
         if (pp.g)
           paint(pp, prev, p, 1);
       } else {
-        let i = Bangle.project(p);
-        let is = 1000; /* meters */
-        zoom.x1 = i.x - is;
-        zoom.x2 = i.x + is;
-        zoom.y1 = i.y - is;
-        zoom.y2 = i.y + is;
+        zoom.geoNew(p, 3000);
         pp.lat = p.lat;
         pp.lon = p.lon;
       }
@@ -486,8 +482,10 @@ function read(pp, n) {
     if (!(num % 30)) {
       if (!pp.g)
         ui.drawMsg(num + "\n" + fmt.fmtDist(dist / 1000));
-      else
-        flip(pp)
+      else {
+        zoom.geoPaint(prev, 0, 1500);
+        g.flip();
+      }
       print(num, "points");
     }
     num++;
@@ -512,7 +510,6 @@ function time_read(n) {
   pp.g = zoom.buf;
   read(pp, n);
   // { rotate: Math.PI / 4 + i/100, scale: 1-i/100 }
-  flip(pp);
 
   let v2 = getTime();
   print("Read took", (v2-v1), "seconds");
