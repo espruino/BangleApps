@@ -160,8 +160,6 @@ exports = { name : "system", currencySym:"£",
           "%a":  `${js(locale.abday)}.split(',')[d.getDay()]`,
           "%B":  `${js(locale.month)}.split(',')[d.getMonth()]`,
           "%b":  `${js(locale.abmonth)}.split(',')[d.getMonth()]`,
-          "%p":  `d.getHours()<12?${js(locale.ampm[0].toUpperCase())}:${js(locale.ampm[1].toUpperCase())}`,
-          "%P":  `d.getHours()<12?${js(locale.ampm[0].toLowerCase())}:${js(locale.ampm[1].toLowerCase())}`
         };
 
         var timeN = patternToCode(locale.timePattern[0]);

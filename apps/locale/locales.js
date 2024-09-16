@@ -61,8 +61,6 @@ timePattern / datePattern:
     %H	hour (00..23)
     %M	minute (00..59)
     %S	second (00..60)
-    %p	locale's equivalent of either AM or PM; blank if not known
-    %P  like %p, but lower case
     
     
 in locales:
