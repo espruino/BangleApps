@@ -96,12 +96,13 @@
   }
 
   var img = iconAlarmOn;
+  var all = alarm.getAlarms();
   //get only alarms not created by other apps
   var alarmItems = {
     name: /*LANG*/"Alarms",
     img: img,
     dynamic: true,
-    items: alarm.getAlarms().filter(a=>!a.appid)
+    items: all.filter(a=>!a.appid)
     //.sort((a,b)=>alarm.getTimeToAlarm(a)-alarm.getTimeToAlarm(b))
     .sort((a,b)=>getAlarmOrder(a)-getAlarmOrder(b))
       .map((a, i)=>({
@@ -123,7 +124,12 @@
           this.interval = undefined;
           this.switchTimeout = undefined;
         },
-        run: function() { }
+        run: function() {
+          a.on = !a.on;
+          this.emit("redraw");
+          alarm.setAlarms(all);
+          alarm.reload();
+        }
       })),
   };
 
