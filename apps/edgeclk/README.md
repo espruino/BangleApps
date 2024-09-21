@@ -20,8 +20,9 @@ The appearance is highly configurable. In the settings menu you can:
 - Set the daily step goal.
 - En- or disable the individual progress bars.
 - Set if your week should start with Monday or Sunday (for week progress bar).
+- Toggle live step count updates.*
 
-*) Hiding seconds should further reduce power consumption as the draw interval is prolonged as well.
+*) Hiding seconds and leaving live steps off should further reduce power consumption as the draw interval is prolonged as well.
 
 The clock implements Fast Loading for faster switching to and fro.
 

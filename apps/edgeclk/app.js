@@ -14,6 +14,7 @@
     weekBar: true,
     mondayFirst: true,
     dayBar: true,
+    liveSteps: false,
   }, require('Storage').readJSON('edgeclk.settings.json', true) || {});
 
   /* Runtime Variables
@@ -279,6 +280,10 @@
     drawLower();
   };
 
+  const onStep = function () {
+    if (settings.redrawOnStep) drawSteps();
+  }
+
 
   /* Lifecycle Functions
   ------------------------------------------------------------------------------*/
@@ -298,6 +303,9 @@
 
     // Charging event signals when charging status changes:
     Bangle.on('charging', onCharging);
+
+    // Continously update step count when they happen:
+    Bangle.on('step', onStep);
   };
 
   const deregisterEvents = function () {
@@ -306,6 +314,7 @@
     Bangle.removeListener('health', onHealth);
     Bangle.removeListener('lock', onLock);
     Bangle.removeListener('charging', onCharging);
+    Bangle.removeListener('step', onStep);
   };
 
   const startTimers = function () {
