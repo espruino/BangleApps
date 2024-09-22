@@ -125,6 +125,7 @@
           this.switchTimeout = undefined;
         },
         run: function() {
+          if (a.date) return; // ignore events
           a.on = !a.on;
           this.emit("redraw");
           alarm.setAlarms(all);
