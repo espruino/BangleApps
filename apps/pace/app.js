@@ -1,6 +1,7 @@
 {
     var Layout_1 = require("Layout");
-    var exs_1 = require("exstats").getStats(["time", "dist", "pacec"], {
+    var time_utils_1 = require("time_utils");
+    var exs_1 = require("exstats").getStats(["dist", "pacec"], {
         notify: {
             dist: {
                 increment: 1000,
@@ -69,7 +70,8 @@
         else {
             pace = "No GPS";
         }
-        layout_1["time"].label = exs_1.stats.time.getString();
+        var tm = time_utils_1.decodeTime(exs_1.state.duration);
+        layout_1["time"].label = tm.d ? time_utils_1.formatDuration(tm) : time_utils_1.formatTime(tm);
         layout_1["pace"].label = pace;
         layout_1.render();
         if (now - lastUnlazy_1 > 30000)
@@ -99,7 +101,7 @@
             g.setColor("#fff").drawString("".concat(i + 1 + splitOffset_1, " @ ").concat(splitPace.toFixed(2)), 0, y);
         }
         var pace = exs_1.stats.pacec.getString();
-        var splitTime = exs_1.stats.time.getValue() - totalTime;
+        var splitTime = exs_1.state.duration - totalTime;
         g.setColor("#fff").drawString("".concat(i + 1 + splitOffset_1, " @ ").concat(pace, " (").concat((splitTime / 1000).toFixed(2), ")"), 0, Bangle.appRect.y + i * (barSize + barSpacing) + barSpacing / 2);
     };
     var pauseRun_1 = function () {
@@ -125,7 +127,7 @@
         var totalDist = dist.getValue();
         var thisSplit = totalDist - prev;
         var prevTime = splits_1.reduce(function (a, b) { return a + b; }, 0);
-        var time = exs_1.stats.time.getValue() - prevTime;
+        var time = exs_1.state.duration - prevTime;
         while (thisSplit > 0) {
             splits_1.push(time);
             time = 0;

@@ -1,7 +1,8 @@
 {
 const Layout = require("Layout");
+const time_utils = require("time_utils");
 const exs = require("exstats").getStats(
-  ["time", "dist", "pacec"],
+  ["dist", "pacec"],
   {
    notify: {
       dist: {
@@ -81,7 +82,8 @@ const draw = () => {
     pace = "No GPS";
   }
 
-  layout["time"]!.label = exs.stats.time.getString();
+  const tm = time_utils.decodeTime(exs.state.duration);
+  layout["time"]!.label = tm.d ? time_utils.formatDuration(tm) : time_utils.formatTime(tm); // formatTime throws if tm.d > 0
   layout["pace"]!.label = pace;
   layout.render();
 
@@ -120,7 +122,7 @@ const drawSplits = () => {
   }
 
   const pace = exs.stats.pacec.getString();
-  const splitTime = exs.stats.time.getValue() - totalTime;
+  const splitTime = exs.state.duration - totalTime;
 
   g.setColor("#fff").drawString(
     `${i + 1 + splitOffset} @ ${pace} (${(splitTime / 1000).toFixed(2)})`,
@@ -156,7 +158,7 @@ exs.stats.dist.on("notify", (dist) => {
   const totalDist = dist.getValue();
   let thisSplit = totalDist - prev;
   const prevTime = splits.reduce((a, b) => a + b, 0);
-  let time = exs.stats.time.getValue() - prevTime;
+  let time = exs.state.duration - prevTime;
 
   while(thisSplit > 0) {
     splits.push(time);
