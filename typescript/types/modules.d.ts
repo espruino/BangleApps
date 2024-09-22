@@ -7,3 +7,4 @@ declare function require(moduleName: "clock_info"): typeof ClockInfo;
 declare function require(moduleName: "Layout"): typeof Layout.Layout;
 declare function require(moduleName: "power_usage"): PowerUsageModule;
 declare function require(moduleName: "exstats"): typeof ExStats;
+declare function require(moduleName: "time_utils"): typeof TimeUtils;
