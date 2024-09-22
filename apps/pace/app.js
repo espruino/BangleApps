@@ -1,15 +1,16 @@
 {
     var Layout_1 = require("Layout");
-    var state_1 = 1;
+    var exs_1 = require("exstats").getStats(["time", "dist", "pacec"], {
+        notify: {
+            dist: {
+                increment: 1000,
+            },
+        },
+    });
     var drawTimeout_1;
     var lastUnlazy_1 = 0;
-    var lastResumeTime_1 = Date.now();
-    var splitTime_1 = 0;
-    var totalTime_1 = 0;
     var splits_1 = [];
-    var splitDist_1 = 0;
     var splitOffset_1 = 0, splitOffsetPx_1 = 0;
-    var lastGPS_1 = 0;
     var GPS_TIMEOUT_MS_1 = 30000;
     var layout_1 = new Layout_1({
         type: "v",
@@ -46,19 +47,13 @@
     }, {
         lazy: true
     });
-    var formatTime_1 = function (ms) {
-        var totalSeconds = Math.floor(ms / 1000);
-        var minutes = Math.floor(totalSeconds / 60);
-        var seconds = totalSeconds % 60;
-        return "".concat(minutes, ":").concat(seconds < 10 ? '0' : '').concat(seconds);
-    };
     var calculatePace_1 = function (time, dist) {
         if (dist === 0)
             return 0;
         return time / dist / 1000 / 60;
     };
     var draw_1 = function () {
-        if (state_1 === 1) {
+        if (!exs_1.state.active) {
             drawSplits_1();
             return;
         }
@@ -66,15 +61,15 @@
             clearTimeout(drawTimeout_1);
         drawTimeout_1 = setTimeout(draw_1, 1000);
         var now = Date.now();
-        var elapsedTime = formatTime_1(totalTime_1 + (state_1 === 0 ? now - lastResumeTime_1 : 0));
         var pace;
-        if (now - lastGPS_1 <= GPS_TIMEOUT_MS_1) {
-            pace = calculatePace_1(thisSplitTime_1(), splitDist_1).toFixed(2);
+        if ("time" in exs_1.state.thisGPS
+            && now - exs_1.state.thisGPS.time < GPS_TIMEOUT_MS_1) {
+            pace = exs_1.stats.pacec.getString();
         }
         else {
             pace = "No GPS";
         }
-        layout_1["time"].label = elapsedTime;
+        layout_1["time"].label = exs_1.stats.time.getString();
         layout_1["pace"].label = pace;
         layout_1.render();
         if (now - lastUnlazy_1 > 30000)
@@ -89,10 +84,12 @@
         var max = splits_1.reduce(function (a, x) { return Math.max(a, x); }, 0);
         g.setFont("6x8", 2).setFontAlign(-1, -1);
         var i = 0;
+        var totalTime = 0;
         for (;; i++) {
             var split = splits_1[i + splitOffset_1];
             if (split == null)
                 break;
+            totalTime += split;
             var y = Bangle.appRect.y + i * (barSize + barSpacing) + barSpacing / 2;
             if (y > h)
                 break;
@@ -101,63 +98,47 @@
             var splitPace = calculatePace_1(split, 1);
             g.setColor("#fff").drawString("".concat(i + 1 + splitOffset_1, " @ ").concat(splitPace.toFixed(2)), 0, y);
         }
-        var splitTime = thisSplitTime_1();
-        var pace = calculatePace_1(splitTime, splitDist_1);
+        var pace = exs_1.stats.pacec.getString();
+        var splitTime = exs_1.stats.time.getValue() - totalTime;
         g.setColor("#fff").drawString("".concat(i + 1 + splitOffset_1, " @ ").concat(pace, " (").concat((splitTime / 1000).toFixed(2), ")"), 0, Bangle.appRect.y + i * (barSize + barSpacing) + barSpacing / 2);
     };
-    var thisSplitTime_1 = function () {
-        if (state_1 === 1)
-            return splitTime_1;
-        return Date.now() - lastResumeTime_1 + splitTime_1;
-    };
     var pauseRun_1 = function () {
-        state_1 = 1;
-        var now = Date.now();
-        totalTime_1 += now - lastResumeTime_1;
-        splitTime_1 += now - lastResumeTime_1;
+        exs_1.stop();
         Bangle.setGPSPower(0, "pace");
-        Bangle.removeListener('GPS', onGPS_1);
         draw_1();
     };
     var resumeRun_1 = function () {
-        state_1 = 0;
-        lastResumeTime_1 = Date.now();
+        exs_1.start();
         Bangle.setGPSPower(1, "pace");
-        Bangle.on('GPS', onGPS_1);
         g.clearRect(Bangle.appRect);
         layout_1.forgetLazyState();
         draw_1();
     };
-    var onGPS_1 = function (fix) {
-        if (fix && fix.speed && state_1 === 0) {
-            var now = Date.now();
-            var elapsedTime = now - lastGPS_1;
-            splitDist_1 += fix.speed * elapsedTime / 3600000;
-            while (splitDist_1 >= 1) {
-                splits_1.push(thisSplitTime_1());
-                splitDist_1 -= 1;
-                splitTime_1 = 0;
-            }
-            lastGPS_1 = now;
-        }
-    };
     var onButton_1 = function () {
-        switch (state_1) {
-            case 0:
-                pauseRun_1();
-                break;
-            case 1:
-                resumeRun_1();
-                break;
-        }
+        if (exs_1.state.active)
+            pauseRun_1();
+        else
+            resumeRun_1();
     };
+    exs_1.stats.dist.on("notify", function (dist) {
+        var prev = splits_1[splits_1.length - 1] || 0;
+        var totalDist = dist.getValue();
+        var thisSplit = totalDist - prev;
+        var prevTime = splits_1.reduce(function (a, b) { return a + b; }, 0);
+        var time = exs_1.stats.time.getValue() - prevTime;
+        while (thisSplit > 0) {
+            splits_1.push(time);
+            time = 0;
+            thisSplit -= 1000;
+        }
+    });
     Bangle.on('lock', function (locked) {
-        if (!locked && state_1 == 0)
+        if (!locked && exs_1.state.active)
             onButton_1();
     });
     setWatch(function () { return onButton_1(); }, BTN1, { repeat: true });
     Bangle.on('drag', function (e) {
-        if (state_1 !== 1 || e.b === 0)
+        if (exs_1.state.active || e.b === 0)
             return;
         splitOffsetPx_1 -= e.dy;
         if (splitOffsetPx_1 > 20) {
