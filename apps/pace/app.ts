@@ -136,7 +136,7 @@ const pauseRun = () => {
 };
 
 const resumeRun = () => {
-  exs.start();
+  exs.resume();
   Bangle.setGPSPower(1, "pace");
 
   g.clearRect(Bangle.appRect); // splits -> layout, clear. layout -> splits, fine

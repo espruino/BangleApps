@@ -108,7 +108,7 @@
         draw_1();
     };
     var resumeRun_1 = function () {
-        exs_1.start();
+        exs_1.resume();
         Bangle.setGPSPower(1, "pace");
         g.clearRect(Bangle.appRect);
         layout_1.forgetLazyState();
