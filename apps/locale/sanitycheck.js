@@ -91,7 +91,7 @@ function checkLocale(locale, {speedUnits, distanceUnits, codePages, CODEPAGE_CON
 	const speeds = Object.keys(speedUnits);
 	const distances = Object.keys(distanceUnits);
 
-	checkLength("lang", locale.lang, 5, undefined);
+	checkLength("lang", locale.lang, 4, undefined);
 	checkLength("decimal point", locale.decimal_point, 1, 1);
 	checkLength("thousands separator", locale.thousands_sep, 1, 1);
 	checkLength("speed", locale.speed, 2, 4);

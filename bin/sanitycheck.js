@@ -109,7 +109,9 @@ var KNOWN_WARNINGS = [
   `In locale it_CH, long time format might not work in some apps if it is not "%HH:%MM:%SS"`,
   `In locale it_IT, long time format might not work in some apps if it is not "%HH:%MM:%SS"`,
   `In locale wae_CH, long time format might not work in some apps if it is not "%HH:%MM:%SS"`,
+  `In locale test, long time format might not work in some apps if it is not "%HH:%MM:%SS"`,
   `In locale wae_CH, short time format might not work in some apps if it is not "%HH:%MM"`,
+  `In locale test, short time format might not work in some apps if it is not "%HH:%MM"`,
 ];
 
 var apps = [];
