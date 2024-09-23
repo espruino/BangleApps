@@ -281,9 +281,8 @@
   };
 
   const onStep = function () {
-    if (settings.redrawOnStep) drawSteps();
+    drawSteps();
   }
-
 
   /* Lifecycle Functions
   ------------------------------------------------------------------------------*/
@@ -305,7 +304,7 @@
     Bangle.on('charging', onCharging);
 
     // Continously update step count when they happen:
-    Bangle.on('step', onStep);
+    if (settings.redrawOnStep) Bangle.on('step', onStep);
   };
 
   const deregisterEvents = function () {
@@ -314,7 +313,7 @@
     Bangle.removeListener('health', onHealth);
     Bangle.removeListener('lock', onLock);
     Bangle.removeListener('charging', onCharging);
-    Bangle.removeListener('step', onStep);
+    if (settings.redrawOnStep) Bangle.removeListener('step', onStep);
   };
 
   const startTimers = function () {
