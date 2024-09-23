@@ -64,15 +64,27 @@ E.showMenu = (items?: Menu): MenuInstance => {
       .setFontAlign(-1, -1);
 
     const vplain = v.indexOf("\0") < 0;
-    let truncated = true;
-    if(vplain && name.length >= 17 - v.length && typeof item === "object"){
-      g.drawString(name.substring(nameScroll, nameScroll + 12 - v.length) + "...", x + 3.7, y + 2.7);
-    }else if(vplain && name.length >= 15){
-      g.drawString(name.substring(nameScroll, nameScroll + 15) + "...", x + 3.7, y + 2.7);
-    }else{
-      g.drawString(name, x + 3.7, y + 2.7);
-      truncated = false;
+    let truncated = false;
+    let drawn = false;
+    if(vplain){
+      const isFunc = typeof item === "function";
+      const lim = isFunc ? 15 : 17 - v.length;
+
+      if(name.length >= lim){
+        const len = isFunc ? 15 : 12 - v.length;
+        const dots = name.length - nameScroll > len ? "..." : "";
+
+        g.drawString(
+          name.substring(nameScroll, nameScroll + len) + dots,
+          x + 3.7,
+          y + 2.7
+        );
+        drawn = true;
+        truncated = true;
+      }
     }
+    if(!drawn)
+      g.drawString(name, x + 3.7, y + 2.7);
 
     let xo = x2;
     if (selectEdit && idx === selected) {
