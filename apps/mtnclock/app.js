@@ -331,24 +331,36 @@ function readWeather() {
   var weatherJson = require("Storage").readJSON('weather.json', 1);
   // save updated weather data if available and it has been an hour since last updated
   if (weatherJson && weatherJson.weather && weatherJson.weather.time && (data.time === undefined || (data.time + 3600000) < weatherJson.weather.time)) {
-    data = {
+    const newSettings = {
       time: weatherJson.weather.time,
       temp: weatherJson.weather.temp,
       code: weatherJson.weather.code
     };
-    require("Storage").writeJSON('mtnclock.json', data);
+    require("Storage").writeJSON(
+      'mtnclock.json', 
+      Object.assign(
+	require("Storage").readJSON('mtnclock.json', 1),
+	newSettings
+      )
+    );
   }
 }
 
 const _GB = global.GB;
 global.GB = (event) => {
   if (event.t==="weather") {
-    data = {
+    const newSettings = {
       temp: event.temp,
       code: event.code,
       time: Date.now()
     };
-    require("Storage").writeJSON('mtnclock.json', data);
+    require("Storage").writeJSON(
+      'mtnclock.json', 
+      Object.assign(
+	require("Storage").readJSON('mtnclock.json', 1),
+	newSettings
+      )
+    );
     setWeather();
   }
   if (_GB) setTimeout(_GB, 0, event);
