@@ -11,7 +11,7 @@
 			{
 				name: "Toggle",
 				get: () => {
-					const w = WIDGETS && WIDGETS["recorder"];
+					const w = typeof WIDGETS !== "undefined" && WIDGETS["recorder"];
 
 					return w && w.isRecording() ? {
 						text: "Recording",
@@ -24,7 +24,7 @@
 					};
 				},
 				run: () => {
-					const w = WIDGETS && WIDGETS["recorder"];
+					const w = typeof WIDGETS !== "undefined" && WIDGETS["recorder"];
 					if(w){
 						Bangle.buzz();
 						w.setRecording(!w.isRecording(), { force: "append" });

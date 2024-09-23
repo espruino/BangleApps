@@ -124,7 +124,6 @@ Bangle.on('swipe',(swiperight, swipedown)=>{
   }
 });
 
-var drawTimeout;
 var showInstructions = true;
 
 function draw() {

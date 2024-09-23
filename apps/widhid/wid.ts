@@ -4,7 +4,7 @@
 		console.log("widhid: can't enable, HID setting isn't \"kbmedia\"");
 		return;
 	}
-	// @ts-ignore
+	// @ts-expect-error espruino-specific delete
 	delete settings;
 
 	let anchor = {x:0,y:0};
@@ -128,7 +128,7 @@
 
 	if(connected)
 		Bangle.on("swipe", onSwipe);
-	// @ts-ignore
+	// @ts-expect-error espruino-specific delete
 	delete connected;
 
 	NRF.on("connect", () => {

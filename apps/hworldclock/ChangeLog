@@ -17,3 +17,7 @@
 0.31: Tweaking the swipe option; Added mylocation as a dependency.
       Remove calls to Bangle.loadWidgets as they are not needed and create warnings
 0.32: Added setting to show single timezone small, like where multiple ones are configured
+0.33: Tidy up and fix clearInterval(undefined) errors
+0.34: Fix 'fast load' so clock doesn't always redraw when screen unlocked/locked
+0.35: Minor code improvements
+0.36: Minor code improvements

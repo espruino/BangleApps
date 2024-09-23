@@ -12,6 +12,13 @@
         settings.timeSync = v;
         updateSettings();
       }
+    },
+    /*LANG*/"Disable UTF8" : {
+      value : !!settings.no_utf8,
+      onchange: v => {
+        settings.no_utf8 = v;
+        updateSettings();
+      }
     }
   };
   E.showMenu(mainmenu);

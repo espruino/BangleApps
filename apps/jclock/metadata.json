@@ -1,0 +1,16 @@
+{ "id":"jclock",
+  "name":"jclock",
+  "shortName":"jclock",
+  "icon":"app.png",
+  "version":"0.03",
+  "description":"Similar layout to Rebble clock, but much simpler features with switched time and the feature window. The time is on the right side. This is my first Bangle app.",
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],
+  "screenshots": [{"url":"screenshot_noBT.png"},{"url":"screenshot_BT.png"}],
+  "storage": [
+    {"name":"jclock.app.js","url":"app.js"},
+    {"name":"jclock.img","url":"app-icon.js","evaluate":true}
+  ],
+  "readme":"README.md"
+}

@@ -1,8 +1,8 @@
 {
   let storageFile; // file for GPS track
-  let entriesWritten = 0;
   let activeRecorders = [];
-  let writeInterval;
+  let writeSetup; // the interval for writing, or 'true' if using GPS
+  let writeSubSecs; // true if we should write .1s for time, otherwise round to nearest second
 
   let loadSettings = function() {
     var settings = require("Storage").readJSON("recorder.json",1)||{};
@@ -63,7 +63,7 @@
         function onHRM(h) {
           bpmConfidence = h.confidence;
           bpm = h.bpm;
-          srv = h.src;
+          src = h.src;
         }
         return {
           name : "HR",
@@ -177,10 +177,9 @@
   let getCSVHeaders = activeRecorders => ["Time"].concat(activeRecorders.map(r=>r.fields));
 
   let writeLog = function() {
-    entriesWritten++;
     WIDGETS["recorder"].draw();
     try {
-      var fields = [Math.round(getTime())];
+      var fields = [writeSubSecs?getTime().toFixed(1):Math.round(getTime())];
       activeRecorders.forEach(recorder => fields.push.apply(fields,recorder.getValues()));
       if (storageFile) storageFile.write(fields.join(",")+"\n");
     } catch(e) {
@@ -197,12 +196,12 @@
   // Called by the GPS app to reload settings and decide what to do
   let reload = function() {
     var settings = loadSettings();
-    if (writeInterval) clearInterval(writeInterval);
-    writeInterval = undefined;
+    if (typeof writeSetup === "number") clearInterval(writeSetup);
+    writeSetup = undefined;
+    Bangle.removeListener('GPS', writeLog);
 
     activeRecorders.forEach(rec => rec.stop());
     activeRecorders = [];
-    entriesWritten = 0;
 
     if (settings.recording) {
       // set up recorders
@@ -222,7 +221,13 @@
       }
       // start recording...
       WIDGETS["recorder"].draw();
-      writeInterval = setInterval(writeLog, settings.period*1000);
+      writeSubSecs = settings.period===1;
+      if (settings.period===1 && settings.record.includes("gps")) {
+        Bangle.on('GPS', writeLog);
+        writeSetup = true;
+      } else {
+        writeSetup = setInterval(writeLog, settings.period*1000, settings.period);
+      }
     } else {
       WIDGETS["recorder"].width = 0;
       storageFile = undefined;
@@ -230,7 +235,7 @@
   }
   // add the widget
   WIDGETS["recorder"]={area:"tl",width:0,draw:function() {
-    if (!writeInterval) return;
+    if (!writeSetup) return;
     g.reset().drawImage(atob("DRSBAAGAHgDwAwAAA8B/D/hvx38zzh4w8A+AbgMwGYDMDGBjAA=="),this.x+1,this.y+2);
     activeRecorders.forEach((recorder,i)=>{
       recorder.draw(this.x+15+(i>>1)*12, this.y+(i&1)*12);
@@ -239,7 +244,7 @@
     reload();
     Bangle.drawWidgets(); // relayout all widgets
   },isRecording:function() {
-    return !!writeInterval;
+    return !!writeSetup;
   },setRecording:function(isOn, options) {
     /* options = {
       force : [optional] "append"/"new"/"overwrite" - don't ask, just do what's requested

@@ -6,11 +6,11 @@
 
   // https://github.com/deirdreobyrne/LunarPhase
   function moonPhase(sec) {
-    d = (4.847408287988257 + sec/406074.7465115577) % (2.0*Math.PI);
-    m = (6.245333801867877 + sec/5022682.784840698) % (2.0*Math.PI);
-    l = (4.456038755040014 + sec/378902.2499653011) % (2.0*Math.PI);
-    t = d+1.089809730923715e-01 * Math.sin(l)-3.614132757006379e-02 * Math.sin(m)+2.228248661252023e-02 * Math.sin(d+d-l)+1.353592753655652e-02 * Math.sin(d+d)+4.238560208195022e-03 * Math.sin(l+l)+1.961408105275610e-03 * Math.sin(d);
-    k = (1.0 - Math.cos(t))/2.0;
+    let d = (4.847408287988257 + sec/406074.7465115577) % (2.0*Math.PI);
+    let m = (6.245333801867877 + sec/5022682.784840698) % (2.0*Math.PI);
+    let l = (4.456038755040014 + sec/378902.2499653011) % (2.0*Math.PI);
+    let t = d+1.089809730923715e-01 * Math.sin(l)-3.614132757006379e-02 * Math.sin(m)+2.228248661252023e-02 * Math.sin(d+d-l)+1.353592753655652e-02 * Math.sin(d+d)+4.238560208195022e-03 * Math.sin(l+l)+1.961408105275610e-03 * Math.sin(d);
+    let k = (1.0 - Math.cos(t))/2.0;
     if ((t >= Math.PI) && (t < 2.0*Math.PI)) {
       k = -k;
     }
@@ -19,7 +19,7 @@
 
   function loadLocation() {
     // "mylocation.json" is created by the "My Location" app
-    location = require("Storage").readJSON("mylocation.json",1)||{"lat":50.1236,"lon":8.6553,"location":"Frankfurt"};
+    let location = require("Storage").readJSON("mylocation.json",1)||{"lat":50.1236,"lon":8.6553,"location":"Frankfurt"};
     southernHemisphere = (location.lat < 0);
   }
 
@@ -63,12 +63,13 @@
 
   function draw() {
     const CenterX = this.x + 12, CenterY = this.y + 12, Radius = 11;
+    let leftFactor, rightFactor;
 
     loadLocation();
     g.reset().setColor(g.theme.bg);
     g.fillRect(CenterX - Radius, CenterY - Radius, CenterX + Radius, CenterY + Radius);
 
-    millis = (new Date()).getTime();
+    let millis = (new Date()).getTime();
     if ((millis - lastCalculated) >= 7000000) { // if it's more than 7,000 sec since last calculation, re-calculate!
       phase = moonPhase(millis/1000);
       lastCalculated = millis;

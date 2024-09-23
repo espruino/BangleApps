@@ -19,7 +19,7 @@
       // Only update the file if the clock really changed to be nice to the FLASH mem
       if (clockApps[clockIndex].src != currentClock) {
         currentClock = clockApps[clockIndex].src;
-        settings = require("Storage").readJSON('setting.json', 1);
+        const settings = require("Storage").readJSON('setting.json', 1);
         settings.clock = clockApps[clockIndex].src;
         require("Storage").write('setting.json', settings);
         

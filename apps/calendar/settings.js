@@ -27,7 +27,7 @@
   const editdate = (i) => {
     const holiday = holidays[i];
     const date = new Date(holiday.date);
-    const dateStr = require("locale").date(date, 1);
+    //const dateStr = require("locale").date(date, 1);
     const menu = {
       "": { "title" : holiday.name},
       "< Back": () => {

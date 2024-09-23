@@ -2,7 +2,7 @@
   "id": "bowserWF",
   "name": "Bowser Watchface",
   "shortName": "Bowser Watchface",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Let bowser show you the time",
   "icon": "app.png",
   "type": "clock",

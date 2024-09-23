@@ -57,11 +57,10 @@ function updateScale(){
 
 var rawMax = 0;
 var scale = 2000;
-var MID = (g.getHeight()+80)/2;
+//var MID = (g.getHeight()+80)/2;
 /* On newer (2v10) firmwares we can subscribe to get
 HRM events as they happen */
 Bangle.on('HRM-raw', function(v) {
-  h=v;
   hrmOffset++;
   if (hrmOffset>g.getWidth()) {
     let thousands = Math.round(rawMax / 1000) * 1000;
@@ -76,7 +75,7 @@ Bangle.on('HRM-raw', function(v) {
   if (rawMax < v.raw) {
     rawMax = v.raw;
   }
-  y = E.clip(btm-(8+v.filt/3000),btm-24,btm);
+  let y = E.clip(btm-(8+v.filt/3000),btm-24,btm);
   g.setColor(1,0,0).fillRect(hrmOffset,btm, hrmOffset, y);
   y = E.clip(btm - (v.raw/scale*84),84,btm);
   g.setColor(g.theme.fg).drawLine(lastHrmPt[0],lastHrmPt[1],hrmOffset, y);
@@ -105,9 +104,9 @@ g.drawString(/*LANG*/"Please wait...",g.getWidth()/2,g.getHeight()/2 - 16);
 countDown();
 
 
-var wasHigh = 0, wasLow = 0;
-var lastHigh = getTime();
-var hrmList = [];
+//var wasHigh = 0, wasLow = 0;
+//var lastHigh = getTime();
+//var hrmList = [];
 var hrmInfo;
 
 function readHRM() {
@@ -120,7 +119,7 @@ function readHRM() {
   for (var i=0;i<2;i++) {
     var a = hrmInfo.raw[hrmOffset];
     hrmOffset++;
-    y = E.clip(170 - (a*2),100,230);
+    let y = E.clip(170 - (a*2),100,230);
     g.setColor(g.theme.fg).drawLine(lastHrmPt[0],lastHrmPt[1],hrmOffset, y);
     lastHrmPt = [hrmOffset, y];
   }

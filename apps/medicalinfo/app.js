@@ -1,8 +1,7 @@
 const medicalinfo = require('medicalinfo').load();
+const myprofile = require("Storage").readJSON("myprofile.json",1)||{};
 // const medicalinfo = {
 //   bloodType: "O+",
-//   height: "166cm",
-//   weight: "73kg"
 // };
 
 function hasAlert(info) {
@@ -12,7 +11,7 @@ function hasAlert(info) {
 // No space for widgets!
 // TODO: no padlock widget visible so prevent screen locking?
 
-g.clear();
+g.reset().clear();
 const bodyFont = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
 g.setFont(bodyFont);
 
@@ -33,10 +32,14 @@ if (hasAlert(medicalinfo)) {
 if (medicalinfo.bloodType) {
   lines = lines.concat(g.wrapString("Blood group: " + medicalinfo.bloodType, g.getWidth() - 10));
 }
-if (medicalinfo.height) {
+if (myprofile.height) { // Prefer height from myprofile if set
+  lines = lines.concat(g.wrapString("Height: " + require("locale").distance(myprofile.height, 2), g.getWidth() - 10));
+} else if (medicalinfo.height) { // read height from own settings if previously stored here
   lines = lines.concat(g.wrapString("Height: " + medicalinfo.height, g.getWidth() - 10));
 }
-if (medicalinfo.weight) {
+if (myprofile.weight) { // Prefer weight from myprofile if set
+  lines = lines.concat(g.wrapString("Weight: " + myprofile.weight + "kg", g.getWidth() - 10));
+} else if (medicalinfo.weight) { // read weight from own settings if previously stored here
   lines = lines.concat(g.wrapString("Weight: " + medicalinfo.weight, g.getWidth() - 10));
 }
 

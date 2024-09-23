@@ -2,6 +2,10 @@
 /* eslint-disable */
 /**
 * @param {Gps} gps
+*/
+export function disable_elevation(gps: Gps): void;
+/**
+* @param {Gps} gps
 * @returns {string}
 */
 export function get_gps_map_svg(gps: Gps): string;
@@ -40,17 +44,19 @@ export function get_gps_content(gps: Gps): Uint8Array;
 export function request_map(gps: Gps, key1: string, value1: string, key2: string, value2: string, key3: string, value3: string, key4: string, value4: string): Promise<void>;
 /**
 * @param {string} input
+* @param {boolean} autodetect_waypoints
 * @returns {Gps}
 */
-export function load_gps_from_string(input: string): Gps;
+export function load_gps_from_string(input: string, autodetect_waypoints: boolean): Gps;
 /**
 * @param {number} xmin
 * @param {number} ymin
 * @param {number} xmax
 * @param {number} ymax
+* @param {boolean} ski
 * @returns {Gps}
 */
-export function gps_from_area(xmin: number, ymin: number, xmax: number, ymax: number): Gps;
+export function gps_from_area(xmin: number, ymin: number, xmax: number, ymax: number, ski: boolean): Gps;
 /**
 */
 export class Gps {
@@ -62,22 +68,23 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly __wbg_gps_free: (a: number) => void;
+  readonly disable_elevation: (a: number) => void;
   readonly get_gps_map_svg: (a: number, b: number) => void;
   readonly get_polygon: (a: number, b: number) => void;
   readonly has_heights: (a: number) => number;
   readonly get_polyline: (a: number, b: number) => void;
   readonly get_gps_content: (a: number, b: number) => void;
   readonly request_map: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number) => number;
-  readonly load_gps_from_string: (a: number, b: number) => number;
-  readonly gps_from_area: (a: number, b: number, c: number, d: number) => number;
+  readonly load_gps_from_string: (a: number, b: number, c: number) => number;
+  readonly gps_from_area: (a: number, b: number, c: number, d: number, e: number) => number;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
   readonly __wbindgen_export_2: WebAssembly.Table;
-  readonly _dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h9f56e5d7ebbfdb61: (a: number, b: number, c: number) => void;
+  readonly wasm_bindgen__convert__closures__invoke1_mut__h175ee3b9ff4e5b4c: (a: number, b: number, c: number) => void;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
   readonly __wbindgen_free: (a: number, b: number) => void;
   readonly __wbindgen_exn_store: (a: number) => void;
-  readonly wasm_bindgen__convert__closures__invoke2_mut__h193105c6f054446a: (a: number, b: number, c: number, d: number) => void;
+  readonly wasm_bindgen__convert__closures__invoke2_mut__h41622a4cb7018e76: (a: number, b: number, c: number, d: number) => void;
 }
 
 export type SyncInitInput = BufferSource | WebAssembly.Module;

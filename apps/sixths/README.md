@@ -24,16 +24,36 @@ minutes, real distance will be usually higher than approximation.
 
 Useful gestures:
 
-F -- disable GPS.
-G -- enable GPS for 4 hours in low power mode.
-N -- take a note and write it to the log.
-S -- enable GPS for 30 minutes in high power mode.
+ B -- "Battery", show/buzz battery info
+D -- "Down", previous waypoint
+F -- "turn oFf gps", disable GPS.
+T -- "Turn on gps", enable GPS for 4 hours in low power mode.
+I -- "Info", toggle info display
+ L -- "aLtimeter", load altimeter app
+M -- "Mark", create mark from current position
+N -- "Note", take a note and write it to the log.
+ O -- "Orloj", run orloj app
+ P -- "runPlus", run "runplus" app
+R -- "Reset" daily statistics
+S -- "Speed", enable GPS for 30 minutes in high power mode.
+ G -- "Get time", buzz current time
+U -- "Up", next waypoint
+Y -- "compass", reset compass
 
 When application detects watch is being worn, it will use vibrations
 to communicate back to the user.
 
+B -- battery low.
 E -- acknowledge, gesture understood.
+I -- unknown gesture.
 T -- start of new hour.
+
+Three colored dots may appear on display. North is on the 12 o'clock
+position (top of the display).
+
+red: this is direction to the waypoint.
+green: this is direction you are moving into, according to GPS.
+blue: this is direction top of watch faces, according to the compass.
 
 Written by: [Pavel Machek](https://github.com/pavelmachek)
 
@@ -55,4 +75,18 @@ Todo:
 
 *) only turn on compass when needed
 
-*) adjust draw timeouts to save power
+*) implement longer recording than "G".
+
+*) allow setting up home altitude, or at least disable auto-calibration
+
+*) show time-to-sunset / sunrise?
+
+*) "myprofile" to read step length
+
+?) display gps alt + offset to baro
+
+?) start logging baro pressure
+
+*) compute climb/descent
+
+*) switch to compensated compass

@@ -196,7 +196,7 @@ const layout = new L({
 			]
 		}
 	]
-}, {lazy: true});
+} as const, {lazy: true});
 
 class State {
 	paused: boolean = true;
@@ -248,7 +248,7 @@ class State {
 	}
 }
 
-const repToLabel = (i: number, id: string) => {
+const repToLabel = (i: number, id: "cur" | "next") => {
 	const rep = reps[i];
 	if(rep)
 		layout[`${id}_name`]!.label = `${rep.label} / ${msToMinSec(rep.dur)}`;
@@ -256,7 +256,7 @@ const repToLabel = (i: number, id: string) => {
 		emptyLabel(id);
 };
 
-const emptyLabel = (id: string) => {
+const emptyLabel = (id: "cur" | "next") => {
 	layout[`${id}_name`]!.label = "<none> / 0m";
 };
 

@@ -45,15 +45,15 @@ const drawBanner = (h) =>{
 
 const updateTimeBanner = (h,m)=>{
     m = (m<10?'0':'')+m;
-	h = (h<10?'0':'')+h;
-	bx1=g.getWidth()/2-90;
-    by1=50+10;
-    bx2=g.getWidth()/2+90;
-    by2=50+62;
+    h = (h<10?'0':'')+h;
+    const bx1=g.getWidth()/2-90;
+    const by1=50+10;
+    const bx2=g.getWidth()/2+90;
+    const by2=50+62;
   
-	g.setFontCustom(eval(s.read("supmario30x24.bin")), 48, eval(s.read("supmario30x24.wdt")), 24);
-	g.setClipRect(bx1,by1,bx2,by2).clearRect(bx1,by1,bx2,by2);
-	g.drawString(h,bx1+35,75).drawString(":",g.getWidth()/2,75).drawString(m,bx1+110,75).flip();
+    g.setFontCustom(eval(s.read("supmario30x24.bin")), 48, eval(s.read("supmario30x24.wdt")), 24);
+    g.setClipRect(bx1,by1,bx2,by2).clearRect(bx1,by1,bx2,by2);
+    g.drawString(h,bx1+35,75).drawString(":",g.getWidth()/2,75).drawString(m,bx1+110,75).flip();
 };
 let om = 0;
 const onHalfSecond =()=>{

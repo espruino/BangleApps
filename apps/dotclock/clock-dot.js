@@ -1,6 +1,5 @@
 const big = g.getWidth()>200;
 const locale = require('locale');
-const p = Math.PI / 2;
 const pRad = Math.PI / 180;
 let timer = null;
 let currentDate = new Date();

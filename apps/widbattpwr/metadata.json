@@ -1,0 +1,19 @@
+{
+  "id": "widbattpwr",
+  "name": "Battery power and percentage widget",
+  "shortName": "Batt Pwr",
+  "icon": "widget.png",
+  "version": "0.03",
+  "type": "widget",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "description": "A battery widget showing percentage (via shading) and time remaining at current power consumption",
+  "tags": "widget,battery",
+  "provides_widgets": ["battery"],
+  "storage": [
+    {
+      "name": "widbattpwr.wid.js",
+      "url": "widget.js"
+    }
+  ]
+}

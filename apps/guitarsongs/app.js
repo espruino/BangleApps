@@ -116,7 +116,7 @@ function drawChordCached(chord, x, y, options) {
   if (chordCache[chord[0]]) {
     image = chordCache[chord[0]]
   } else {
-    arrbuff = Graphics.createArrayBuffer(chordWidth,chordHeight,1,{msb:true});
+    let arrbuff = Graphics.createArrayBuffer(chordWidth,chordHeight,1,{msb:true});
     drawChord(arrbuff, chord, 0, 0, options);
     image = {width: arrbuff.getWidth(), height: arrbuff.getHeight(), bpp:arrbuff.getBPP(), buffer: arrbuff.buffer, transparent:0}
     chordCache[chord[0]] = image;
@@ -203,8 +203,8 @@ function drawApp(lyricsLines, chordsDraw, scrollY, chordScrollX) {
 
 let currentScrollY = 0;
 let chordScrollX = 0;
-let currentChordScroll = 0;
-let lyricsHeight = 0;
+//let currentChordScroll = 0;
+//let lyricsHeight = 0;
 
 function main(song) {
   const lyrics = song.lyrics;
@@ -214,7 +214,7 @@ function main(song) {
   const R = Bangle.appRect;
   g.clear();
   drawApp(lyricsLines, chordsDraw, currentScrollY, chordScrollX);
-  lyricsHeight = g.stringMetrics(lyrics).height;
+  /*lyricsHeight =*/ g.stringMetrics(lyrics).height;
   Bangle.on('drag', (event) => {
     currentScrollY = Math.min(0, currentScrollY + event.dy);
     chordScrollX = Math.max(Math.min(0, chordScrollX + event.dx), -(song.chords.length*chordWidth - R.x2));

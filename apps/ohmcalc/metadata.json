@@ -2,7 +2,7 @@
   "id": "ohmcalc",
   "name": "Ohm's Law Calculator",
   "shortName": "Ohm's Law Calc",
-  "version": "0.04",
+  "version": "0.05",
   "description": "A smart and simple calculator for Ohm's Law calculations, designed specifically for Bangle.js 2 smartwatches. Handles voltage, current, resistance, and power calculations with smart logic to prevent invalid inputs.",
   "icon": "app.png",
   "type": "app",

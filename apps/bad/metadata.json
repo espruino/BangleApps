@@ -1,0 +1,16 @@
+{ "id": "bad",
+  "name": "Bad Apple",
+  "version":"0.01",
+  "description": "Bad Apple demo",
+  "icon": "app.png",
+  "readme": "README.md",
+  "supports" : ["BANGLEJS2"],
+  "allow_emulator": false,
+  "tags": "game",
+  "storage": [
+      {"name":"bad.app.js","url":"bad.app.js"},
+      {"name":"bad.vraw","url":"bad.vraw"},
+      {"name":"bad.araw","url":"bad.araw"},
+      {"name":"bad.img","url":"app-icon.js","evaluate":true}
+  ]
+}

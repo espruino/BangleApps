@@ -1,7 +1,7 @@
 const app = "drained";
 
 // from boot.js
-declare var drainedInterval: IntervalId | undefined;
+declare let drainedInterval: IntervalId | undefined;
 if(typeof drainedInterval !== "undefined")
   drainedInterval = clearInterval(drainedInterval) as undefined;
 
@@ -54,15 +54,21 @@ const draw = () => {
     require("locale").dow(date, 0).toUpperCase();
   const x2 = x + 6;
   const y2 = y + 66;
+  const charging = Bangle.isCharging();
 
   g.reset()
     .clearRect(Bangle.appRect)
     .setFont("Vector", 55)
     .setFontAlign(0, 0)
+    .setColor(charging ? "#0f0" : g.theme.fg)
     .drawString(timeStr, x, y)
     .setFont("Vector", 24)
-    .drawString(dateStr, x2, y2)
-    .drawString(`${E.getBattery()}%`, x2, y2 + 48);
+    .drawString(dateStr, x2, y2);
+
+  if(charging)
+    g.drawString(`charging: ${E.getBattery()}%`, x2, y2 + 48);
+  else
+    g.drawString(`${E.getBattery()}%`, x2, y2 + 48);
 
   if(nextDraw) clearTimeout(nextDraw);
   nextDraw = setTimeout(() => {
@@ -72,21 +78,31 @@ const draw = () => {
 };
 
 const reload = () => {
+  const showMenu = () => {
+    const menu: { [k: string]: () => void } = {
+      "Restore to full power": drainedRestore,
+    };
+
+    if (NRF.getSecurityStatus().advertising)
+      menu["Disable BLE"] = () => { NRF.sleep(); showMenu(); };
+    else
+      menu["Enable BLE"] = () => { NRF.wake(); showMenu(); };
+
+    menu["Settings"] = () => load("setting.app.js");
+    menu["Recovery"] = () => Bangle.showRecoveryMenu();
+    menu["Exit menu"] = reload;
+
+    if(nextDraw) clearTimeout(nextDraw);
+    E.showMenu(menu);
+  };
+
   Bangle.setUI({
     mode: "custom",
     remove: () => {
       if (nextDraw) clearTimeout(nextDraw);
       nextDraw = undefined;
     },
-    btn: () => {
-      E.showPrompt("Restore watch to full power?").then(v => {
-        if(v){
-          drainedRestore();
-        }else{
-          reload();
-        }
-      })
-    }
+    btn: showMenu
   });
   Bangle.CLOCK=1;
 
@@ -115,7 +131,10 @@ function drainedRestore() { // "public", to allow users to call
 }
 
 const checkCharge = () => {
-  if(E.getBattery() < restore) return;
+  if(E.getBattery() < restore) {
+    draw();
+    return;
+  }
   drainedRestore();
 };
 

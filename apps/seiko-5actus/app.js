@@ -120,7 +120,7 @@ function drawHands() {
   else {g.setColor(g.theme.bg);}
   g.drawString(weekDay[0].toUpperCase(), 137, 90);
 
-  handLayers = [
+  const handLayers = [
     {x:cx,
      y:cy,
      image:imgHour,
@@ -148,7 +148,7 @@ function drawBackground() {
   g.clear(1);
   g.setBgColor(g.theme.bg);
   g.setColor(g.theme.fg);
-  bgLayer = [
+  const bgLayer = [
     {x:cx,
      y:cy,
      image:imgBg,

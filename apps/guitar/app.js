@@ -249,8 +249,6 @@ var a9 = [
 
 
 
-var index = 0;
-var chords = [];
 var menu = {
     "" : {
         "title" : "Guitar Chords"

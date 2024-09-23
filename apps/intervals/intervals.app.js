@@ -149,9 +149,9 @@ function showMenu()
   "START" : function() { startSession(); },
   "Sets" : { value : settings.sets,min:0,max:20,step:1,onchange : v => { settings.sets=v; } },
   "Work minutes" : { value : settings.workmin,min:0,max:59,step:1,onchange : v => { settings.workmin=v; } },
-  "Work seconds" : { value : settings.workseg,min:0,max:59,step:5,onchange : v => { settings.workseg=v; } },
+  "Work seconds" : { value : settings.workseg,min:0,max:59,step:1,onchange : v => { settings.workseg=v; } },
   "Rest minutes" : { value : settings.restmin,min:0,max:59,step:1,onchange : v => { settings.restmin=v; } },
-  "Rest seconds" : { value : settings.restseg,min:0,max:59,step:5,onchange : v => { settings.restseg=v; } },
+  "Rest seconds" : { value : settings.restseg,min:0,max:59,step:1,onchange : v => { settings.restseg=v; } },
   "Signal type" :  { value : settings.buzz,format : v => v?"Buzz":"Beep",onchange : v => { settings.buzz=v; }}
   };
   

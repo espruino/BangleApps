@@ -8,3 +8,4 @@
 0.08: Catch and discard swipe events on fw2v19 and up (as well as some cutting
 	edge 2v18 ones), allowing compatability with the Back Swipe app.
 0.09: Fix colors settings, where color was stored as string instead of the expected int.
+0.10: Fix touch region for letters

@@ -51,7 +51,7 @@ function setFromGPS() {
 }
 
 function setFromWaypoint() {
-  wpmenu = {
+  const wpmenu = {
     '': { 'title': /*LANG*/'Waypoint' },
     '< Back': ()=>{ showMainMenu(); },
   };

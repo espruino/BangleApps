@@ -1,0 +1,17 @@
+{ "id": "fontext",
+  "name": "Fonts (150+ languages)",
+  "version":"0.03",
+  "description": "Installs a font containing 1000 Unifont characters, which should handle the majority of non-Chinese/Japanese/Korean languages (only 20kb)",
+  "icon": "app.png",
+  "tags": "font,fonts,language",
+  "type": "module",
+  "provides_modules" : ["font"],
+  "default" : true,
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"font","url":"lib.js"},
+    {"name":"fontext.boot.js","url":"boot.js"},
+    {"name":"fontext.pbf","url":"font.pbf"}
+  ]
+}

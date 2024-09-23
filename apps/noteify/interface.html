@@ -26,8 +26,8 @@ function disableFormInput() {
 function getData() {
   // show loading window
   Util.showModal("Loading...");
-  Util.readStorage(`noteify.json`,data=>{
-    notes = JSON.parse(data || "[]");
+  Util.readStorageJSON(`noteify.json`,data=>{
+    notes = data || [];
 
     // remove window
     Util.hideModal();

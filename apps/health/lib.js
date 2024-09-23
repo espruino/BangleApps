@@ -1,9 +1,9 @@
 const DB_RECORD_LEN = 4;
 const DB_RECORDS_PER_HR = 6;
 const DB_RECORDS_PER_DAY = DB_RECORDS_PER_HR*24 + 1/*summary*/;
-const DB_RECORDS_PER_MONTH = DB_RECORDS_PER_DAY*31;
+//const DB_RECORDS_PER_MONTH = DB_RECORDS_PER_DAY*31;
 const DB_HEADER_LEN = 8;
-const DB_FILE_LEN = DB_HEADER_LEN + DB_RECORDS_PER_MONTH*DB_RECORD_LEN;
+//const DB_FILE_LEN = DB_HEADER_LEN + DB_RECORDS_PER_MONTH*DB_RECORD_LEN;
 
 function getRecordFN(d) {
   return "health-"+d.getFullYear()+"-"+(d.getMonth()+1)+".raw";
@@ -70,7 +70,7 @@ exports.readAllRecordsSince = function(d, cb) {
 
 // Read daily summaries from the given month
 exports.readDailySummaries = function(d, cb) {
-  var rec = getRecordIdx(d);
+  /*var rec =*/ getRecordIdx(d);
   var fn = getRecordFN(d);
   var f = require("Storage").read(fn);
   if (f===undefined) return;
@@ -91,7 +91,7 @@ exports.readDailySummaries = function(d, cb) {
 
 // Read all records from the given day
 exports.readDay = function(d, cb) {
-  var rec = getRecordIdx(d);
+  /*var rec =*/ getRecordIdx(d);
   var fn = getRecordFN(d);
   var f = require("Storage").read(fn);
   if (f===undefined) return;

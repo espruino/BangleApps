@@ -89,7 +89,7 @@ function onStartStop() {
     }
   }
 
-  promise = promise.then(() => {
+  promise.then(() => {
     if (running) {
       if (shouldResume)
         exs.resume()

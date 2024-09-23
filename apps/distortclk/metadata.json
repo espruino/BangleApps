@@ -2,7 +2,7 @@
     "id": "distortclk",
     "name": "Distort Clock",
     "shortName":"Distort Clock",
-    "version": "0.02",
+    "version": "0.03",
     "description": "A clockface",
     "icon": "app.png",
     "type": "clock",

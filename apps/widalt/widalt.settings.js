@@ -2,7 +2,7 @@
   var settings = Object.assign({
     interval: 5000,
   }, require('Storage').readJSON("widalt.json", true) || {});
-  o=Bangle.getOptions();
+  const o=Bangle.getOptions();
   Bangle.getPressure().then((p)=>{
     E.showMenu({
       "" : { "title" : "Altimeter Widget" },

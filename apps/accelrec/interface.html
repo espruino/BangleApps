@@ -37,7 +37,7 @@ function getData() {
 </div>`;
         promise = promise.then(function() {
           document.querySelector(`.btn[fn='${fn}'][act='save']`).addEventListener("click", function() {
-            Util.saveCSV(fn.slice(0,-4), "X,Y,Z\n"+fileData[fn]);
+            Util.saveCSV(fn.slice(0,-4), "Time,X,Y,Z\n"+fileData[fn]);
           });
           document.querySelector(`.btn[fn='${fn}'][act='delete']`).addEventListener("click", function() {
             Util.showModal("Deleting...");

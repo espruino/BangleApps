@@ -88,9 +88,9 @@ function drawRocket() {
 
 function getTemperature(){
   try {
-    var weatherJson = storage.readJSON('weather.json');
-    var weather = weatherJson.weather;
-    return Math.round(weather.temp-273.15);
+    var temperature = E.getTemperature()
+    var formatted = require("locale").temp(temperature).replace(/[^\d-]/g, '');
+    return formatted;
 
   } catch(ex) {
     print(ex)

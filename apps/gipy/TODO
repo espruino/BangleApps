@@ -1,3 +1,12 @@
+
+- is path projection wrong for high res ?
+
+medium TODO:
+
+- prefetch tiles ?
+- update documentation to reflect new display ?
+- add an image for the arrow ?
+
 *** thoughts on lcd power ***
 
 so, i tried experimenting with turning the lcd off in order to save power.

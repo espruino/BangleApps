@@ -13,6 +13,7 @@ var path = require('path');
 var fs = require("fs");
 var ROOTDIR = path.join(__dirname, '..');
 var OUTFILE, APPS;
+var JSUTILS = path.join(ROOTDIR, '../Espruino/src/jsutils.h');
 
 if (DEVICEID=="BANGLEJS") {
   var OUTFILE = path.join(ROOTDIR, '../Espruino/libs/banglejs/banglejs1_storage_default.c');
@@ -34,9 +35,18 @@ if (DEVICEID=="BANGLEJS") {
 }
 console.log("Device = ",DEVICEID);
 
+// Search for version String
+var VERSION = "2v10";
+var m = require("fs").readFileSync(JSUTILS).toString().match(/#define\s*JS_VERSION\s*([^\n]*)/);
+if (m) {
+  VERSION = JSON.parse(m[1]);
+}
+console.log("Using version "+VERSION);
+
 var apploader = require("../core/lib/apploader.js");
 apploader.init({
-  DEVICEID : DEVICEID
+  DEVICEID : DEVICEID,
+  VERSION : VERSION,
 });
 
 
@@ -79,11 +89,13 @@ var appfiles = [];
 
 // If file should be evaluated, try and do it...
 function evaluateFile(file) {
+  var content = file.content.trim();
   var hsStart = 'require("heatshrink").decompress(atob("';
   var hsEnd = '"))';
-  if (file.content.startsWith(hsStart) && file.content.endsWith(hsEnd)) {
+  if (content.startsWith(hsStart) && content.endsWith(hsEnd)) {
+    console.log("heatshrink");
     var heatshrink = require(ROOTDIR+"/webtools/heatshrink.js");
-    var b64 = file.content.slice(hsStart.length, -hsEnd.length);
+    var b64 = content.slice(hsStart.length, -hsEnd.length);
     var decompressed = heatshrink.decompress(atob(b64));
     file.content = "";
     for (var i=0;i<decompressed.length;i++)
@@ -95,6 +107,8 @@ function evaluateFile(file) {
     return;
   }
   // else... uh-oh
+  console.log("=========================================");
+  console.log("Unable to evaluate "+file.name);
   console.log(file);
   throw new Error("Unable to evaluate "+file.name);
 }
@@ -106,8 +120,13 @@ Promise.all(APPS.map(appid => {
     files.forEach(f => {
       var existing = appfiles.find(a=> a.name==f.name);
       if (existing) {
-        if (existing.content !== f.content)
+        if (existing.content !== f.content) {
+          console.log("=========================================");
+          console.log(`Duplicate file ${f.name} is different`);
+          console.log("EXISTING", existing.content);
+          console.log("NEW", f.content);          
           throw new Error(`Duplicate file ${f.name} is different`)
+        }
       } else {
         appfiles.push(f);
       }

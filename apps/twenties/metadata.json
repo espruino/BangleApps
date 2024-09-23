@@ -6,7 +6,7 @@
   "description": "Buzzes every 20m to stand / sit and look 20ft away for 20s.",
   "icon": "app.png",
   "type": "bootloader",
-  "tags": "alarm,tool",
+  "tags": "alarm,tool,health",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
   "storage": [{ "name": "twenties.boot.js", "url": "boot.js" }]

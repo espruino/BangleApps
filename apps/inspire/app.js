@@ -5,13 +5,13 @@ var h = g.getHeight();
 var w2 = w/2;
 var h2 = h/ 2;
 var fs = 24;
-var tx = (w/3)-10;
+//var tx = (w/3)-10;
 var ty = (h)-fs;
 var radius = (w/2)-6;
 var breathing = false;
 var count = 0;
 var mode = 0;
-var sin = 0;
+//var sin = 0;
 var dragged = 0;
 var lastTime = Date.now();
 

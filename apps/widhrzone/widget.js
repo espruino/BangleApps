@@ -1,20 +1,18 @@
 (() => {
-  const config = Object.assign({
-    maxHrm: 200,
-  }, require("Storage").readJSON("widhrzone.json",1) || {});
+  const myprofile = require("Storage").readJSON("myprofile.json",1)||{};
 
   require("FontTeletext5x9Ascii").add(Graphics);
 
   const calczone = (bpm) => {
-    if (bpm <= config.maxHrm*0.5) {
+    if (bpm <= myprofile.maxHrm*0.5) {
       return 0;
-    } else if (bpm <= config.maxHrm*0.60) {
+    } else if (bpm <= myprofile.maxHrm*0.60) {
       return 1;
-    } else if (bpm <= config.maxHrm*0.70) {
+    } else if (bpm <= myprofile.maxHrm*0.70) {
       return 2;
-    } else if (bpm <= config.maxHrm*0.80) {
+    } else if (bpm <= myprofile.maxHrm*0.80) {
       return 3;
-    } else if (bpm <= config.maxHrm*0.90) {
+    } else if (bpm <= myprofile.maxHrm*0.90) {
       return 4;
     } else { // > 0.9
       return 5;

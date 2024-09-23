@@ -1,7 +1,7 @@
 {
   "id": "spotrem",
   "name": "Remote for Spotify",
-  "version": "0.09",
+  "version": "0.11",
   "description": "Control spotify on your android device.",
   "readme": "README.md",
   "type": "app",

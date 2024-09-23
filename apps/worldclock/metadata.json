@@ -2,7 +2,7 @@
   "id": "worldclock",
   "name": "World Clock - 4 time zones",
   "shortName": "World Clock",
-  "version": "0.05",
+  "version": "0.08",
   "description": "Current time zone plus up to four others",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot_world.png"}],

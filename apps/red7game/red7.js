@@ -486,8 +486,7 @@ function canPlay(hand, palette, otherPalette) {
       } else {
         //Check if any palette play can win with rule.
         for(let h of hand.handCards) {
-          if(h === c) {}
-          else {
+          if(h !== c) {
             clonePalette.addCard(c);
             if(isWinningCombo(c, clonePalette, otherPalette)) {
               return true;
@@ -531,8 +530,7 @@ class AI {
       } else {
         //Check if any palette play can win with rule.
         for(let h of this.hand.handCards) {
-          if(h === c) {}
-          else {
+          if(h !== c) {
             clonePalette.addCard(h);
             if(isWinningCombo(c, clonePalette, otherPalette)) {
               ruleStack.addCard(c);
@@ -556,7 +554,7 @@ function shuffleDeck(deckArray) {
 }
 
 var deck = [];
-var screen = 1;
+//var screen = 1;
 var startedGame = false;
 var playerHand = new Hand();
 var playerPalette = new Hand();
@@ -621,10 +619,10 @@ function drawScreen1() {
   Bangle.on('swipe', function(direction){
     if(direction === -1) {
       drawScreen2();
-      screen = 2;
+      //screen = 2;
     } else if(direction === 1) {
       drawScreen1();
-      screen = 1;
+      //screen = 1;
     }
   });
   g.setBgColor(0,0,0);

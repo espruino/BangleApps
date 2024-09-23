@@ -190,7 +190,6 @@ function plotTrack(info) {
   E.showMessage("Drawing...","GPS Track "+info.fn);
   g.flip(); // on buffered screens, draw a not saying we're busy
   g.clear(1);
-  var s = require("Storage");
   var cx = g.getWidth()/2;
   var cy = 24 + (g.getHeight()-24)/2;
   g.setColor(1,0.5,0.5);
@@ -267,7 +266,6 @@ function plotGraph(info, style) {
   var infc = new Uint16Array(80);
   var title;
   var lt = 0; // last time
-  var tn = 0; // count for each time period
   var strt, dur = info.duration;
   var f = require("Storage").open(filename,"r");
   if (f===undefined) return;

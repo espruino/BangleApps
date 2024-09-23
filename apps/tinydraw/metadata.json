@@ -1,7 +1,7 @@
 { "id": "tinydraw",
   "name": "TinyDraw",
   "shortName":"TinyDraw",
-  "version":"0.03",
+  "version": "0.04",
   "type": "app",
   "description": "Draw stuff in your wrist",
   "icon": "app.png",

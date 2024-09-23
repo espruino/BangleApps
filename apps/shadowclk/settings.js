@@ -130,7 +130,6 @@
       },
       'Date Suffix:': {
         value: appSettings.enableSuffix,
-        format: v => v ? 'Yes' : 'No',
         onchange: v => {
           appSettings.enableSuffix = v;
           writeSettings();
@@ -138,7 +137,6 @@
       },
       'Lead Zero:': {
         value: appSettings.enableLeadingZero,
-        format: v => v ? 'Yes' : 'No',
         onchange: v => {
           appSettings.enableLeadingZero = v;
           writeSettings();

@@ -12,3 +12,4 @@
 0.08: Selectable font. Allow to disable hour padding.
 0.09: Match draw() API e.g. to allow wid_edit to alter this widget
 0.10: Change 4x5 font to 6x8, teletext is now default font
+0.11: Bugfix: handle changes in alarms (e.g. done without a load, such as via fastload)

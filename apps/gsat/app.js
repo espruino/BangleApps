@@ -21,7 +21,7 @@ function drawTime() {
     Bangle.buzz();
     return;
   }
-  min = seconds / secsinmin;
+  const min = seconds / secsinmin;
   if (seconds < quickfixperiod) {
     g.setFont('Vector', 20); 
     g.drawString('Quick Fix', 125, 50);

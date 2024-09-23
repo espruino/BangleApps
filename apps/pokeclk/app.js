@@ -1,9 +1,7 @@
 Modules.addCached("Font4x5",function(){exports.add=function(a){a.prototype.setFont4x5=function(){this.setFontCustom(atob("AAAAdBgGAfV8CfyBIiQKrcAMAA6IARcAFXVARxAAwABCEAAIAAGTAPx+BHwAvXoK1+DhPg7W4P1uCEPg/X4O1+ACgACoAIqIBSlAIqIIVQC9VAfR4P1UB0VA/FwP1qD9KAdGYPk+AHwAEHwPk2D4Qg+j4PweB0XA/RAHTeD9FgTWQIfgD4fg8HwPi+DZNgwfAJ1yD8QAwQYI/ABEEACEIIIAB9Hg/VQHRUD8XA/WoP0oB0Zg+T4AfAAQfA+TYPhCD6Pg/B4HRcD9EAdN4P0WBNZAh+APh+DwfA+L4Nk2DB8AnXICfiAGwAj8gIYQAA=="),32,4,5)}}});
 
-const offset = 25;
 const width = g.getWidth();
 const height = g.getHeight();
-const font = "Vector:12";
 
 var drawTimeout;
 
@@ -41,7 +39,6 @@ function time() {
   var d = new Date();
   var day = d.getDate();
   var time = require("locale").time(d,1);
-  var date = require("locale").date(d);
   var mo = require("date_utils").month(d.getMonth()+1,1);
   
   require("Font4x5").add(Graphics); // time

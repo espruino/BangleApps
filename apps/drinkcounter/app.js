@@ -22,7 +22,7 @@ const maxDrinks = 2; // 3 drinks
 var firstDrinkTime = null;
 var firstDrinkTimeTime = null;
 
-var confBeerSize;
+//var confBeerSize;
 var confSex;
 var confWeight;
 var confWeightUnit;
@@ -97,7 +97,7 @@ function loadMySettings() {
 	function def (value, def) {return value !== undefined ? value : def;}
 
 	var settings = require('Storage').readJSON(SETTINGSFILE, true) || {};
-	confBeerSize = def(settings.beerSize, "0.3L");
+	//confBeerSize = def(settings.beerSize, "0.3L");
 	confSex = def(settings.sex, "male");
 	confWeight = def(settings.weight, 80);
 	confWeightUnit = def(settings.weightUnit, "Kilo");

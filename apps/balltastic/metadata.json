@@ -1,7 +1,7 @@
 {
   "id": "balltastic",
   "name": "Balltastic",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Simple but fun ball eats dots game.",
   "icon": "app.png",
   "screenshots": [{"url":"bangle2-balltastic-screenshot.png"}],
