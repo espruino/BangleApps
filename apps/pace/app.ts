@@ -13,7 +13,7 @@ const exs = require("exstats").getStats(
 );
 
 let drawTimeout: TimeoutId | undefined;
-let lastUnlazy = 0;
+// let lastUnlazy = 0;
 
 const splits: number[] = []; // times
 let splitOffset = 0, splitOffsetPx = 0;
@@ -52,9 +52,9 @@ const layout = new Layout({
       halign: 0
     },
   ]
-}, {
+}, /*{
   lazy: true
-});
+}*/);
 
 const calculatePace = (time: number, dist: number) => {
   if (dist === 0) return 0;
@@ -82,13 +82,22 @@ const draw = () => {
     pace = "No GPS";
   }
 
-  const tm = time_utils.decodeTime(exs.state.duration);
-  layout["time"]!.label = tm.d ? time_utils.formatDuration(tm) : time_utils.formatTime(tm); // formatTime throws if tm.d > 0
+  layout["time"]!.label = formatDuration(exs.state.duration);
   layout["pace"]!.label = pace;
+  g.clearRect(Bangle.appRect);
   layout.render();
 
-  if (now - lastUnlazy > 30000)
-    layout.forgetLazyState(), lastUnlazy = now;
+  // if (now - lastUnlazy > 30000)
+  //   layout.forgetLazyState(), lastUnlazy = now;
+};
+
+const pad2 = (n: number) => `0${n}`.substr(-2);
+
+const formatDuration = (ms: number) => {
+  const tm = time_utils.decodeTime(ms);
+  if(tm.h)
+    return `${tm.h}:${pad2(tm.m)}:${pad2(tm.s)}`;
+  return `${pad2(tm.m)}:${pad2(tm.s)}`;
 };
 
 const drawSplits = () => {
@@ -104,12 +113,12 @@ const drawSplits = () => {
   g.setFont("6x8", 2).setFontAlign(-1, -1);
 
   let i = 0;
-  let totalTime = 0;
+  // let totalTime = 0;
   for(; ; i++) {
     const split = splits[i + splitOffset];
     if (split == null) break;
 
-    totalTime += split;
+    // totalTime += split;
 
     const y = Bangle.appRect.y + i * (barSize + barSpacing) + barSpacing / 2;
     if (y > h) break;
@@ -118,17 +127,24 @@ const drawSplits = () => {
     g.setColor("#00f").fillRect(0, y, size, y + barSize);
 
     const splitPace = calculatePace(split, 1); // Pace per km
-    g.setColor("#fff").drawString(`${i + 1 + splitOffset} @ ${splitPace.toFixed(2)}`, 0, y);
+    drawSplit(i, y, splitPace);
   }
 
   const pace = exs.stats.pacec.getString();
-  const splitTime = exs.state.duration - totalTime;
+  // const splitTime = exs.state.duration - totalTime;
 
-  g.setColor("#fff").drawString(
-    `${i + 1 + splitOffset} @ ${pace} (${(splitTime / 1000).toFixed(2)})`,
-    0,
-    Bangle.appRect.y + i * (barSize + barSpacing) + barSpacing / 2,
-  );
+  const y = Bangle.appRect.y + i * (barSize + barSpacing) + barSpacing / 2;
+  drawSplit(i, y, pace);
+};
+
+const drawSplit = (i: number, y: number, pace: number | string) => {
+  g
+    .setColor("#fff")
+    .drawString(
+      `${i + 1 + splitOffset} ${typeof pace === "number" ? pace.toFixed(2) : pace}`,
+      0,
+      y
+    );
 };
 
 const pauseRun = () => {
@@ -152,6 +168,8 @@ const onButton = () => {
   else
     resumeRun();
 };
+
+exs.start(); // aka reset
 
 exs.stats.dist.on("notify", (dist) => {
   const prev = splits[splits.length - 1] || 0;

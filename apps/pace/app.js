@@ -9,7 +9,6 @@
         },
     });
     var drawTimeout_1;
-    var lastUnlazy_1 = 0;
     var splits_1 = [];
     var splitOffset_1 = 0, splitOffsetPx_1 = 0;
     var GPS_TIMEOUT_MS_1 = 30000;
@@ -45,8 +44,6 @@
                 halign: 0
             },
         ]
-    }, {
-        lazy: true
     });
     var calculatePace_1 = function (time, dist) {
         if (dist === 0)
@@ -70,12 +67,17 @@
         else {
             pace = "No GPS";
         }
-        var tm = time_utils_1.decodeTime(exs_1.state.duration);
-        layout_1["time"].label = tm.d ? time_utils_1.formatDuration(tm) : time_utils_1.formatTime(tm);
+        layout_1["time"].label = formatDuration_1(exs_1.state.duration);
         layout_1["pace"].label = pace;
+        g.clearRect(Bangle.appRect);
         layout_1.render();
-        if (now - lastUnlazy_1 > 30000)
-            layout_1.forgetLazyState(), lastUnlazy_1 = now;
+    };
+    var pad2_1 = function (n) { return "0".concat(n).substr(-2); };
+    var formatDuration_1 = function (ms) {
+        var tm = time_utils_1.decodeTime(ms);
+        if (tm.h)
+            return "".concat(tm.h, ":").concat(pad2_1(tm.m), ":").concat(pad2_1(tm.s));
+        return "".concat(pad2_1(tm.m), ":").concat(pad2_1(tm.s));
     };
     var drawSplits_1 = function () {
         g.clearRect(Bangle.appRect);
@@ -86,23 +88,26 @@
         var max = splits_1.reduce(function (a, x) { return Math.max(a, x); }, 0);
         g.setFont("6x8", 2).setFontAlign(-1, -1);
         var i = 0;
-        var totalTime = 0;
         for (;; i++) {
             var split = splits_1[i + splitOffset_1];
             if (split == null)
                 break;
-            totalTime += split;
-            var y = Bangle.appRect.y + i * (barSize + barSpacing) + barSpacing / 2;
-            if (y > h)
+            var y_1 = Bangle.appRect.y + i * (barSize + barSpacing) + barSpacing / 2;
+            if (y_1 > h)
                 break;
             var size = w * split / max;
-            g.setColor("#00f").fillRect(0, y, size, y + barSize);
+            g.setColor("#00f").fillRect(0, y_1, size, y_1 + barSize);
             var splitPace = calculatePace_1(split, 1);
-            g.setColor("#fff").drawString("".concat(i + 1 + splitOffset_1, " @ ").concat(splitPace.toFixed(2)), 0, y);
+            drawSplit_1(i, y_1, splitPace);
         }
         var pace = exs_1.stats.pacec.getString();
-        var splitTime = exs_1.state.duration - totalTime;
-        g.setColor("#fff").drawString("".concat(i + 1 + splitOffset_1, " @ ").concat(pace, " (").concat((splitTime / 1000).toFixed(2), ")"), 0, Bangle.appRect.y + i * (barSize + barSpacing) + barSpacing / 2);
+        var y = Bangle.appRect.y + i * (barSize + barSpacing) + barSpacing / 2;
+        drawSplit_1(i, y, pace);
+    };
+    var drawSplit_1 = function (i, y, pace) {
+        g
+            .setColor("#fff")
+            .drawString("".concat(i + 1 + splitOffset_1, " ").concat(typeof pace === "number" ? pace.toFixed(2) : pace), 0, y);
     };
     var pauseRun_1 = function () {
         exs_1.stop();
@@ -122,6 +127,7 @@
         else
             resumeRun_1();
     };
+    exs_1.start();
     exs_1.stats.dist.on("notify", function (dist) {
         var prev = splits_1[splits_1.length - 1] || 0;
         var totalDist = dist.getValue();
