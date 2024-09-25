@@ -7,3 +7,5 @@
 0.07: Added settings to be able to hide line1 and line2 so there is no visible widget
 0.08: Fixed zero steps issue caused by 0.07
 0.09: Prettied up user interface, decluttered graphs
+0.10: Minor code improvements
+0.11: Minor code improvements

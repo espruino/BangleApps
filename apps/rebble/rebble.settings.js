@@ -2,7 +2,7 @@
   const SETTINGS_FILE = "rebble.json";
 
   // initialize with default settings...
-  let localSettings = {'bg': '#0f0', 'color': 'Green', 'autoCycle': true, 'sideTap':0};
+  let localSettings = {'bg': '#0f0', 'color': 'Green', 'autoCycle': true, 'fullScreen': true, 'sideTap':0};
   //sideTap 0 = on| 1= sideBar1 | 2 = ...
 
   // ...and overwrite them with any saved values
@@ -37,6 +37,14 @@
           localSettings.bg = bg_code[v];
           save();
         },
+      },
+       'Fullscreen': {
+        value: localSettings.fullScreen,
+        onchange: (v) => {
+          localSettings.fullScreen = v;
+          save();
+          showMenu();
+        }
       },
       'Auto Cycle': {
         value: localSettings.autoCycle,

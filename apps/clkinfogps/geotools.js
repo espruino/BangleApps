@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * A module of Geo functions for use with gps fixes
  *
  * let geo = require("geotools");
@@ -71,7 +71,7 @@ OsGridRef.latLongToOsGrid = function(point) {
  *
  */
 function to_map_ref(digits, easting, northing) {
-  if (![ 0,2,4,6,8,10,12,14,16 ].includes(Number(digits))) throw new RangeError(`invalid precision '${digits}'`); // eslint-disable-line comma-spacing
+  if (![ 0,2,4,6,8,10,12,14,16 ].includes(Number(digits))) throw new RangeError(`invalid precision '${digits}'`);
 
   let e = easting;
   let n = northing;
@@ -108,7 +108,7 @@ function to_map_ref(digits, easting, northing) {
 }
 
 /**
- * 
+ *
  * Module exports section, example code below
  *
  * let geo = require("geotools");

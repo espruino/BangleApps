@@ -1,7 +1,7 @@
 {
   "id": "magnav",
   "name": "Navigation Compass",
-  "version": "0.06",
+  "version": "0.07",
   "description": "Compass with linear display as for GPSNAV. Has Tilt compensation and remembers calibration.",
   "screenshots": [{"url":"screenshot-b2.png"},{"url":"screenshot-light-b2.png"}],
   "icon": "magnav.png",

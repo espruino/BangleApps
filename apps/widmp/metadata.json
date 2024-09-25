@@ -1,7 +1,7 @@
 {
   "id": "widmp",
   "name": "Moon Phase",
-  "version": "0.08",
+  "version": "0.09",
   "description": "Display the current moon phase in blueish (in light mode) or white (in dark mode) for both hemispheres. In the southern hemisphere the 'My Location' app is needed.",
   "icon": "widget.png",
   "type": "widget",

@@ -118,7 +118,7 @@
       /*LANG*/"Edit List": () => editlist(),
       /*LANG*/"Add item": () => {
         settings.products.push({
-          "name":/*LANG*/"New item",
+          "name":/*LANG*/"New",
           "quantity":1,
           "ok":false
         });

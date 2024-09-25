@@ -6,6 +6,8 @@ shows distance, time, steps, cadence, pace and more.
 To use it, start the app and press the middle button so that
 the red `STOP` in the bottom right turns to a green `RUN`.
 
+The separate **Run+** app for Bangle.js 2 provides additional features.
+
 ## Display
 
 * `DIST` - the distance travelled based on the GPS (if you have a GPS lock).

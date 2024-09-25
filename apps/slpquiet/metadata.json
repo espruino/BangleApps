@@ -1,0 +1,17 @@
+{ "id": "slpquiet",
+  "name": "Sleep Quiet (activate quiet mode when asleep)",
+  "shortName":"Sleep Quiet",
+  "version":"0.02",
+  "description": "Set Quiet mode (or alarms only mode), when the sleep tracking app detects sleep (each 10 min evaluated)",
+  "icon": "app.png",
+  "tags": "tool,widget",
+  "dependencies": {"sleeplog":"app"},
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"slpquiet.app.js","url":"app.js"},
+    {"name":"slpquiet.boot.js","url":"boot.js"},
+    {"name":"slpquiet.img","url":"app-icon.js","evaluate":true},
+    {"name":"slpquiet.wid.js","url":"widget.js"}
+  ]
+}

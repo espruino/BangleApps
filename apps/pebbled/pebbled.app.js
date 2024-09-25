@@ -37,6 +37,13 @@ const h3 = 7*h/8 - 10;
 let batteryWarning = false;
 
 let draw = function() {
+  // queue next draw
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, 60000 - (Date.now() % 60000));
+
   let date = new Date();
   let da = date.toString().split(" ");
   let timeStr = settings.localization === "US" ? tConv24(da[4].substr(0,5)) : da[4].substr(0,5);
@@ -101,13 +108,6 @@ let draw = function() {
   else
     g.setColor('#000'); // otherwise black regardless of theme
   g.drawString(distanceStr, w/2, ha + 107);
-
-  // queue next draw
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
-    draw();
-  }, 60000 - (Date.now() % 60000));
 };
 
 // at x,y width:wi thicknes:th

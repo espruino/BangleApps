@@ -136,7 +136,7 @@
   function drawMenu() {
     var x = 100;
     var y = 24;
-    var stps ="-";
+    //var stps ="-";
     var y_inc = 25;
     
     g.clear();

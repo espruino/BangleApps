@@ -4,3 +4,4 @@
 0.04: Add options for units in locale and recording GPS
 0.05: Allow toggling of "max" values (screen tap) and recording (button press)
 0.06: Fix local unit setting
+0.07: Minor code improvements

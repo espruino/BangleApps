@@ -1,14 +1,14 @@
 {
   "id": "gpsnav",
   "name": "GPS Navigation",
-  "version": "0.08",
+  "version": "0.09",
   "description": "Displays GPS Course and Speed, + Directions to waypoint and waypoint recording, now with waypoint editor",
   "screenshots": [{"url":"screenshot-b2.png"}],
   "icon": "icon.png",
   "tags": "tool,outdoors,gps",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
-  "dependencies" : { "waypoints":"type" },
+  "dependencies" : { "waypoints":"app" },
   "storage": [
     {"name":"gpsnav.app.js","url":"app.min.js","supports":["BANGLEJS"]},
     {"name":"gpsnav.app.js","url":"app_b2.js","supports":["BANGLEJS2"]},

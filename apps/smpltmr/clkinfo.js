@@ -28,7 +28,7 @@
     var min = getAlarmMinutes();
     if(min < 0)
       return "OFF";
-    return "T-" + String(min)+ " min";
+    return min + " min";
   }
 
   function increaseAlarm(t){
@@ -71,13 +71,19 @@
     ]
   };
 
+  const restoreMainItem = function(clkinfo) {
+    clkinfo.menuB = 0;
+    // clock info redraws after this
+  };
+
   var offsets = [+5,-5];
   offsets.forEach((o, i) => {
     smpltmrItems.items = smpltmrItems.items.concat({
       name: null,
-      get: () => ({ text: (o > 0 ? "+" : "") + o + " min.", img: smpltmrItems.img }),
+      get: () => ({ text: (o > 0 ? "+" : "") + o + " min", img: (o>0)?atob("GBiBAAB+AAB+AAAYAAAYAAB+AA3/sA+B8A4AcAwAMBgYGBgYGDAYDDAYDDH/jDH/jDAYDDAYDBgYGBgYGAwAMA4AcAeB4AH/gAB+AA=="):atob("GBiBAAB+AAB+AAAYAAAYAAB+AA3/sA+B8A4AcAwAMBgAGBgAGDAADDAADDH/jDH/jDAADDAADBgAGBgAGAwAMA4AcAeB4AH/gAB+AA==") }),
       show: function() { },
-      hide: function () { },
+      hide: function() { },
+      blur: restoreMainItem,
       run: function() {
         if(o > 0) increaseAlarm(o);
         else decreaseAlarm(Math.abs(o));

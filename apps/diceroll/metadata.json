@@ -2,7 +2,7 @@
     "name": "Dice-n-Roll",
     "shortName":"Dice-n-Roll",
     "icon": "app.png",
-    "version":"0.01",
+    "version": "0.02",
     "description": "A dice app with a few different dice.",
     "screenshots": [{"url":"diceroll_screenshot.png"}],
     "tags": "game",

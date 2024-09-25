@@ -1,7 +1,7 @@
 {
   "id": "messages",
   "name": "Messages",
-  "version": "0.60",
+  "version": "0.62",
   "description": "Library to handle, load and store message events received from Android/iOS",
   "icon": "app.png",
   "type": "module",

@@ -248,7 +248,7 @@ function handleState(fastUpdate){
      */
     var minutes = state.currentDate.getMinutes();
     var hours = state.currentDate.getHours();
-    if(!isAlarmEnabled() && fastUpdate && hours == 00 && minutes == 01){
+    if(!isAlarmEnabled() && fastUpdate && hours == 0 && minutes == 1){
         state.sleep = true;
         return;
     }
@@ -274,7 +274,7 @@ function handleState(fastUpdate){
     // Set weather
     state.has_weather = true;
     try {
-        weather = require('weather').get();
+        const weather = require('weather').get();
         if (weather === undefined){
             state.has_weather = false;
             state.temp = "-";

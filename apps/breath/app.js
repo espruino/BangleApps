@@ -4,7 +4,7 @@ var max_radius = 70;
 var direction = 1;
 var display_HR = "--";
 var first_signal = true;
-var interval;
+//var interval;
 var timeout;
 var settings;
 var status = 0;
@@ -51,9 +51,9 @@ g.setFont("6x8", 2);
 function circle() {
 
     g.clear();
-    adjusted_radius = max_radius * Math.abs(origin);
+    const adjusted_radius = max_radius * Math.abs(origin);
     g.drawCircle(120, 120, adjusted_radius);
-    radius = Math.abs(Math.sin(origin));
+    //const radius = Math.abs(Math.sin(origin));
     angle += 2;
     origin = angle * (Math.PI / 180);
     if (angle >= 0 && angle < 90) {
@@ -63,7 +63,7 @@ function circle() {
             g.drawString("<<", 220, 40);
             status = 7;
             timeout = setTimeout(function () {
-                interval = restart_interval();
+                /*interval =*/ restart_interval();
             }, settings.exhale_pause * 1000);
         }
         direction = 0;
@@ -77,7 +77,7 @@ function circle() {
             g.drawString("<<", 220, 40);
             status = 7;
             timeout = setTimeout(function () {
-                interval = restart_interval();
+                /*interval =*/ restart_interval();
             }, settings.inhale_pause * 1000);
         }
         direction = 1;
@@ -100,7 +100,7 @@ function restart_interval() {
     if(direction == 1 && settings.ex_in_ratio == "5:6"){
       calc -= calc*0.2;
     }
-    interval = setInterval(circle, calc);
+    /*interval =*/ setInterval(circle, calc);
 }
 
 function update_menu() {

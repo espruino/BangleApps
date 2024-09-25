@@ -1,7 +1,7 @@
 {
   "id": "lunaclock",
   "name": "Luna Clock",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Simple clock face inspired by the moon.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

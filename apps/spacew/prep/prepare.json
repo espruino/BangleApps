@@ -14,5 +14,5 @@
     "linear_tags":  true,
     "area_tags":    false,
     "exclude_tags": [],
-    "include_tags": [ "place", "name", "landuse", "highway" ]
+    "include_tags": [ "place", "name", "landuse", "highway", "natural" ]
 }

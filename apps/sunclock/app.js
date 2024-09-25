@@ -3,10 +3,10 @@ Peter Bernschneider 30.12.2021
 Update current latitude and longitude in My Location app
 Update current Timezone in Settings app, menu item "System"
 Update for summer time by incrementing Timezone += 1 */
-setting = require("Storage").readJSON("setting.json",1);
+const setting = require("Storage").readJSON("setting.json",1);
 E.setTimeZone(setting.timezone); // timezone = 1 for MEZ, = 2 for MESZ
-SunCalc = require("suncalc.js");
-loc = require('locale');
+const SunCalc = require("suncalc.js");
+const loc = require('locale');
 const LOCATION_FILE = "mylocation.json";
 const xyCenter = g.getWidth() / 2 + 3;
 const yposTime =  60;
@@ -28,9 +28,9 @@ function updatePos() {
         altitude: Math.round( pos.altitude / rad)
     };
   }
-  coord = require("Storage").readJSON(LOCATION_FILE,1)|| {"lat":53.3,"lon":10.1,"location":"Pattensen"};
+  const coord = require("Storage").readJSON(LOCATION_FILE,1)|| {"lat":53.3,"lon":10.1,"location":"Pattensen"};
   pos = radToDeg(SunCalc.getPosition(Date.now(), coord.lat, coord.lon));
-  times = SunCalc.getTimes(Date.now(), coord.lat, coord.lon);
+  const times = SunCalc.getTimes(Date.now(), coord.lat, coord.lon);
   rise = times.sunrise.toString().split(" ")[4].substr(0,5);
   set  = times.sunset.toString().split(" ")[4].substr(0,5);
   noonpos = radToDeg(SunCalc.getPosition(times.solarNoon, coord.lat, coord.lon));

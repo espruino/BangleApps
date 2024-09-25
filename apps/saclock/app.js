@@ -30,11 +30,15 @@ function move(points, x, y) {
 let clock = new (require("ClockFace"))({
   settingsFile: "saclock.settings.json",
   init: function() {
+    if (process.env.HWVERSION<2) this.multicol = false; // colored buffer won't fit in Bangle.js 1 memory :-(
     // create a graphics buffer, and pre-draw the outer ring
     const bs = Math.min(Bangle.appRect.w, Bangle.appRect.h); // buffer size
-    this.r = Math.min(Bangle.appRect.w, Bangle.appRect.h)/2; // outer radius
-    this.buffer = Graphics.createArrayBuffer(bs, bs, 1, {msb: true});
+    this.r = Math.min(Bangle.appRect.w, Bangle.appRect.h)/2 - 1; // outer radius
+    this.bits = this.multicol ? 16 : 1;
+    this.buffer = Graphics.createArrayBuffer(bs, bs, this.bits, {msb: true});
     let buf = this.buffer;
+    buf.setColor(g.theme.bg).fillRect(0,0, bs,bs);
+    buf.setColor(this.multicol ? g.theme.bgH : g.theme.fg);
     buf.fillCircle(this.r, this.r, this.r); // only fill this once: we only draw inside the inner ring
   },
   update: function(time) {
@@ -48,8 +52,8 @@ let clock = new (require("ClockFace"))({
       hr = ((time.getHours()%12)+(time.getMinutes()/60))/12*Math.TAU, // hour hand rotation
       ml = 0.8*r2, // minute hand length
       mr = time.getMinutes()/60*Math.TAU, // minute hand rotation
-      x = Math.floor((Bangle.appRect.x+Bangle.appRect.x2)/2), // "real" clock center, only
-      y = Math.floor((Bangle.appRect.y+Bangle.appRect.y2)/2); // used for drawing buffer
+      x = Math.ceil((Bangle.appRect.x+Bangle.appRect.x2)/2), // "real" clock center, only
+      y = Math.ceil((Bangle.appRect.y+Bangle.appRect.y2)/2); // used for drawing buffer
     let buf = this.buffer;
 
     function drawHand(length, radians) {
@@ -67,13 +71,18 @@ let clock = new (require("ClockFace"))({
     }
 
     buf.setColor(g.theme.bg).fillCircle(c, c, r2); // clear inside
-    buf.setColor(g.theme.fg);
+    buf.setColor(this.multicol ? g.theme.fg2 : g.theme.fg);
     drawHand(hl, hr); // hour hand
+    buf.setColor(g.theme.fg);
     drawHand(ml, mr); // minute hand
     buf.fillCircle(c, c, Math.floor(hw)); // hands joiner
+    if (!this.multicol && !g.theme.dark) {
+        // apparently 1-bit g.drawImage swaps fg/bg colors for light themes?
+        g.setColor(g.theme.bg).setBgColor(g.theme.fg);
+    }
     g.drawImage({
       width: buf.getWidth(), height: buf.getHeight(),
-      buffer: buf.buffer
+      buffer: buf.buffer, bpp: this.bits,
     }, x, y, {rotate: 0}); // setting `rotate` centers the image on x,y
   },
 });

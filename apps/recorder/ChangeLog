@@ -36,3 +36,20 @@
 0.28: Automatically create new track if the filename is different
 0.29: When plotting with OpenStMap scale map to track width & height
 0.30: Add clock info for showing and toggling recording state
+0.31: Ensure that background-drawn tracks can get cancelled, and draw less at a time to make updates smoother
+      plotTrack now draws the current track even if you're not actively recording
+0.32: Add cadence data to output files
+0.33: Ensure that a new file is always created if the stuff that's being recorded has changed (fix #3081)
+0.34: Avoid prompting when creating a new file (#3081)
+0.35: Handle loading without a settings file (default record setting)
+0.36: When recording with 1 second periods, log time with one decimal.
+0.37: 1 second periods + gps log => log when gps event is received, not with
+	setInterval.
+0.38: Tweaks to speed up track rendering
+0.39: Minor code improvements
+0.40: Fix reference error from missing `settings` object in widget on 1 sec	recordings with gps.
+      Fix HRM source never being set in output data
+0.41: Fix exit from plots and graphs would easily react twice, going back two
+	levels instead of one.
+0.42: Minor code improvements
+0.43: Fix interaction on clocks without widgets

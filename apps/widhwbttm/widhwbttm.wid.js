@@ -1,5 +1,5 @@
 (function() {
-    let intervalRef = null;
+    //let intervalRef = null;
     var v_count; // show stats
     var v_str_hw=new String();
     //if (process.env.BOARD=='BANGLEJS'||process.env.BOARD=='EMSCRIPTEN')    var v_bfont_size=2;     
@@ -26,7 +26,7 @@
          }
        else {
             // text prefix has to be 4char
-            stor=require("Storage").getStats();        
+            const stor=require("Storage").getStats();        
             if (v_count==4) { 
               v_str_hw="Fre "+process.memory().free;
               //+"/"+process.memory().total;
@@ -55,5 +55,5 @@
     } //end draw
 
 WIDGETS["wdhwbttm"]={area:"bl",width:100,draw:draw};
-if (Bangle.isLCDOn) intervalRef = setInterval(()=>WIDGETS["wdhwbttm"].draw(), 10*1000);
+if (Bangle.isLCDOn) /*intervalRef =*/ setInterval(()=>WIDGETS["wdhwbttm"].draw(), 10*1000);
 })()

@@ -1,0 +1,7 @@
+0.10: (2024-02-23) initial alpha upload
+0.20: (2024-02-23) fixed minor issues with settings
+0.30: (2024-03-01) advanced settings, rearanged ui elements, fixed rendering problems
+0.31: (2024-03-06) fixed typos in readme, removed some unnecessary code
+0.32: replaced icons with "Graphics.createImage"
+0.40: Fixing lint warnings for unused vars
+0.41: removed no longer required import of "heatshrink"

@@ -1,24 +1,27 @@
-(function() {
-  function gbSend(message) {
+/* global GB */
+{
+  let gbSend = function(message) {
     Bluetooth.println("");
     Bluetooth.println(JSON.stringify(message));
   }
-  var lastMsg; // for music messages - may not be needed now...
-  var actInterval; // Realtime activity reporting interval when `act` is true
-  var actHRMHandler; // For Realtime activity reporting
-  var gpsState = {}; // keep information on GPS via Gadgetbridge
+  let lastMsg; // for music messages - may not be needed now...
+  let actInterval; // Realtime activity reporting interval when `act` is true
+  let actHRMHandler; // For Realtime activity reporting
+  let gpsState = {}; // keep information on GPS via Gadgetbridge
 
   // this settings var is deleted after this executes to save memory
-  var settings = require("Storage").readJSON("android.settings.json",1)||{};
+  let settings = require("Storage").readJSON("android.settings.json",1)||{};
   //default alarm settings
   if (settings.rp == undefined) settings.rp = true;
   if (settings.as == undefined) settings.as = true;
   if (settings.vibrate == undefined) settings.vibrate = "..";
   require('Storage').writeJSON("android.settings.json", settings);
-  var _GB = global.GB;
+  let _GB = global.GB;
+  let fetchRecInterval;
   global.GB = (event) => {
     // feed a copy to other handlers if there were any
     if (_GB) setTimeout(_GB,0,Object.assign({},event));
+
 
     /* TODO: Call handling, fitness */
     var HANDLERS = {
@@ -81,7 +84,12 @@
         for (var j = 0; j < event.d.length; j++) {
           // prevents all alarms from going off at once??
           var dow = event.d[j].rep;
-          if (!dow) dow = 127; //if no DOW selected, set alarm to all DOW
+          var rp = false;
+          if (!dow) {
+            dow = 127; //if no DOW selected, set alarm to all DOW
+          } else {
+            rp = true;
+          }
           var last = (event.d[j].h * 3600000 + event.d[j].m * 60000 < currentTime) ? (new Date()).getDate() : 0;
           var a = require("sched").newDefaultAlarm();
           a.id = "gb"+j;
@@ -89,6 +97,7 @@
           a.on = event.d[j].on !== undefined ? event.d[j].on : true;
           a.t = event.d[j].h * 3600000 + event.d[j].m * 60000;
           a.dow = ((dow&63)<<1) | (dow>>6); // Gadgetbridge sends DOW in a different format
+          a.rp = rp;
           a.last = last;
           alarms.push(a);
         }
@@ -113,7 +122,10 @@
         var cal = require("Storage").readJSON("android.calendar.json",true);
         //if any of those happen we are out of sync!
         if (!cal || !Array.isArray(cal)) cal = [];
-        cal = cal.filter(e=>e.id!=event.id);
+        if (Array.isArray(event.id))
+          cal = cal.filter(e=>!event.id.includes(e.id));
+        else
+          cal = cal.filter(e=>e.id!=event.id);
         require("Storage").writeJSON("android.calendar.json", cal);
       },
       //triggered by GB, send all ids
@@ -224,6 +236,49 @@
         }
         gbSend({t: "actfetch", state: "end", count: actCount});
       },
+      //{t:"listRecs", id:"20230616a"}
+      "listRecs": function() {
+        let recs = require("Storage").list(/^recorder\.log.*\.csv$/,{sf:true}).map(s => s.slice(12, 21));
+        if (event.id.length > 2) { // Handle if there was no id supplied. Then we send a list all available recorder logs back.
+          let firstNonsyncedIdx = recs.findIndex((logId) => logId > event.id);
+          if (-1 == firstNonsyncedIdx) {
+            recs = []
+          } else {
+            recs = recs.slice(firstNonsyncedIdx);
+          }
+        }
+        gbSend({t:"actTrksList", list: recs}); // TODO: split up in multiple transmissions?
+      },
+      //{t:"fetchRec", id:"20230616a"}
+      "fetchRec": function() {
+        // TODO: Decide on what names keys should have.
+        if (fetchRecInterval) {
+          clearInterval(fetchRecInterval);
+          fetchRecInterval = undefined;
+        }
+        if (event.id=="stop") {
+          return
+        } else {
+          let log = require("Storage").open("recorder.log"+event.id+".csv","r");
+          let lines = "init";// = log.readLine();
+          let pkgcnt = 0;
+          gbSend({t:"actTrk", log:event.id, lines:"erase", cnt:pkgcnt}); // "erase" will prompt Gadgetbridge to erase the contents of a already fetched log so we can rewrite it without keeping lines from the previous (probably failed) fetch.
+          let sendlines = ()=>{
+            lines = log.readLine();
+            for (var i = 0; i < 3; i++) {
+              let line = log.readLine();
+              if (line) lines += line;
+            }
+            pkgcnt++;
+            gbSend({t:"actTrk", log:event.id, lines:lines, cnt:pkgcnt});
+            if (!lines && fetchRecInterval) {
+              clearInterval(fetchRecInterval);
+              fetchRecInterval = undefined;
+            }
+          }
+          fetchRecInterval = setInterval(sendlines, 50)
+        }
+      },
       "nav": function() {
         event.id="nav";
         if (event.instr) {
@@ -236,6 +291,15 @@
           event.t="remove";
         }
         require("messages").pushMessage(event);
+      },
+      "cards" : function() {
+        // we receive all, just override what we have
+        if (Array.isArray(event.d))
+          require("Storage").writeJSON("android.cards.json", event.d);
+      },
+      "accelsender": function () {
+        require("Storage").writeJSON("accelsender.json", {enabled: event.enable, interval: event.interval});
+        load();
       }
     };
     var h = HANDLERS[event.t];
@@ -276,7 +340,7 @@
   };
 
   // Battery monitor
-  function sendBattery() { gbSend({ t: "status", bat: E.getBattery(), chg: Bangle.isCharging()?1:0 }); }
+  let sendBattery = function() { gbSend({ t: "status", bat: E.getBattery(), chg: Bangle.isCharging()?1:0 }); }
   Bangle.on("charging", sendBattery);
   NRF.on("connect", () => setTimeout(function() {
     sendBattery();
@@ -371,4 +435,4 @@
 
   // remove settings object so it's not taking up RAM
   delete settings;
-})();
+}

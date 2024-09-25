@@ -8,3 +8,4 @@
 0.14: Fix BTN1 (fix #853)
       Add light/dark theme support
 0.15: Load widgets after Bangle.setUI to ensure widgets know if they're on a clock or not (fix #970)
+0.16: Minor code improvements

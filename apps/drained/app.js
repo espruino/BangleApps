@@ -37,14 +37,19 @@ var draw = function () {
         require("locale").dow(date, 0).toUpperCase();
     var x2 = x + 6;
     var y2 = y + 66;
+    var charging = Bangle.isCharging();
     g.reset()
         .clearRect(Bangle.appRect)
         .setFont("Vector", 55)
         .setFontAlign(0, 0)
+        .setColor(charging ? "#0f0" : g.theme.fg)
         .drawString(timeStr, x, y)
         .setFont("Vector", 24)
-        .drawString(dateStr, x2, y2)
-        .drawString("".concat(E.getBattery(), "%"), x2, y2 + 48);
+        .drawString(dateStr, x2, y2);
+    if (charging)
+        g.drawString("charging: ".concat(E.getBattery(), "%"), x2, y2 + 48);
+    else
+        g.drawString("".concat(E.getBattery(), "%"), x2, y2 + 48);
     if (nextDraw)
         clearTimeout(nextDraw);
     nextDraw = setTimeout(function () {
@@ -53,6 +58,21 @@ var draw = function () {
     }, 60000 - (date.getTime() % 60000));
 };
 var reload = function () {
+    var showMenu = function () {
+        var menu = {
+            "Restore to full power": drainedRestore,
+        };
+        if (NRF.getSecurityStatus().advertising)
+            menu["Disable BLE"] = function () { NRF.sleep(); showMenu(); };
+        else
+            menu["Enable BLE"] = function () { NRF.wake(); showMenu(); };
+        menu["Settings"] = function () { return load("setting.app.js"); };
+        menu["Recovery"] = function () { return Bangle.showRecoveryMenu(); };
+        menu["Exit menu"] = reload;
+        if (nextDraw)
+            clearTimeout(nextDraw);
+        E.showMenu(menu);
+    };
     Bangle.setUI({
         mode: "custom",
         remove: function () {
@@ -60,16 +80,7 @@ var reload = function () {
                 clearTimeout(nextDraw);
             nextDraw = undefined;
         },
-        btn: function () {
-            E.showPrompt("Restore watch to full power?").then(function (v) {
-                if (v) {
-                    drainedRestore();
-                }
-                else {
-                    reload();
-                }
-            });
-        }
+        btn: showMenu
     });
     Bangle.CLOCK = 1;
     g.clear();
@@ -90,8 +101,10 @@ function drainedRestore() {
     load();
 }
 var checkCharge = function () {
-    if (E.getBattery() < restore)
+    if (E.getBattery() < restore) {
+        draw();
         return;
+    }
     drainedRestore();
 };
 if (Bangle.isCharging())

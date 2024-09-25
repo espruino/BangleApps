@@ -19,3 +19,4 @@
 0.11: Adds configuration
       Draws direction arrows on route
       Turn of compass when GPS fix is available
+0.12: Minor code improvements

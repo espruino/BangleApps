@@ -386,7 +386,7 @@ function emptyMap() {
       m.scale = 2;
       g.reset().clearRect(R);
       redraw(18);
-      print("Benchmark done (31 sec)");
+      print("Benchmark done");
     }
     };
     if (fix.fix) menu[/*LANG*/"Center GPS"]=() =>{
@@ -400,36 +400,52 @@ function emptyMap() {
 
 var gjson = null;
 
+function stringFromArray(data) {
+  var count = data.length;
+  var str = "";
+
+  for(var index = 0; index < count; index += 1)
+    str += String.fromCharCode(data[index]);
+
+  return str;
+}
+
+const st = require('Storage');
+const hs = require('heatshrink');
+
 function readTarFile(tar, f) {
-  const st = require('Storage');
-  json_off = st.read(tar, 0, 16) * 1;
+  let json_off = st.read(tar, 0, 16) * 1;
   if (isNaN(json_off)) {
     print("Don't have archive", tar);
     return undefined;
   }
   while (1) {
-    json_len = st.read(tar, json_off, 6) * 1;
+    let json_len = st.read(tar, json_off, 6) * 1;
     if (json_len == -1)
       break;
     json_off += 6;
-    json = st.read(tar, json_off, json_len);
+    let json = st.read(tar, json_off, json_len);
     //print("Have directory, ", json.length, "bytes");
-  //print(json);
-    files = JSON.parse(json);
-  //print(files);
-    rec = files[f];
-    if (rec)
-      return st.read(tar, rec.st, rec.si);
+    let files = JSON.parse(json);
+    let rec = files[f];
+    if (rec) {
+      let cs = st.read(tar, rec.st, rec.si);
+      if (rec.comp == "hs") {
+        let d = stringFromArray(hs.decompress(cs));
+        //print("Decompressed", d);
+        return d;
+      }
+      return cs;
+    }
     json_off += json_len;
   }
   return undefined;
 }
-
 function loadVector(name) {
   var t1 = getTime();
   print(".. Read", name);
     //s = require("Storage").read(name);
-  var s = readTarFile("delme.mtar", name);
+  var s = readTarFile("world.mtar", name);
   if (s == undefined) {
     print("Don't have file", name);
     return null;
@@ -438,8 +454,7 @@ function loadVector(name) {
   print(".... Read and parse took ", getTime()-t1);
   return r;
 }
-
-function drawPoint(a) {  
+function drawPoint(a) {   /* FIXME: let... */
   lon = a.geometry.coordinates[0];
   lat = a.geometry.coordinates[1];
   
@@ -459,7 +474,6 @@ function drawPoint(a) {
   g.drawString(a.properties.name, p.x, p.y);
   points ++;
 }
-
 function drawLine(a, qual) {
   lon = a.geometry.coordinates[0][0];
   lat = a.geometry.coordinates[0][1];
@@ -485,38 +499,196 @@ function drawLine(a, qual) {
       i = len-1;
     points ++;
     p1 = p2;
-    g.flip();
   }
 }
+function drawPolygon(a, qual) {
+  lon = a.geometry.coordinates[0][0];
+  lat = a.geometry.coordinates[0][1];
+  i = 1;
+  step = 1;
+  len = a.geometry.coordinates.length;
+  if (len > 62) {
+    step = log2(len) - 5;
+    step = 1<<step;
+  }
+  step = step * qual;
+  var p1 = m.latLonToXY(lat, lon);
+  let pol = [p1.x, p1.y];
+  while (i < len) {  
+    lon = a.geometry.coordinates[i][0];
+    lat = a.geometry.coordinates[i][1];
+    var p2 = m.latLonToXY(lat, lon);
 
-function drawVector(gjson, qual) {
+    pol.push(p2.x, p2.y);
+    if (i == len-1)
+      break;
+    i = i + step;
+    if (i>len)
+      i = len-1;
+    points ++;
+  }
+  if (a.properties.fill) {
+    g.setColor(a.properties.fill);
+  } else {
+    g.setColor(.75, .75, 1);
+  }
+  g.fillPoly(pol, true);
+  if (a.properties.stroke) {
+    g.setColor(a.properties.stroke);
+  } else {
+    g.setColor(0,0,0)
+  }
+  g.drawPoly(pol, true);
+}
+
+function toScreen(tile, xy) {
+//  w, s, e, n, (x,y in 0..4096 range)
+  let x = xy[0];
+  let y = xy[1];
+  let r = {};
+  r.x = ((x/4096) * (tile[2]-tile[0])) + tile[0];
+  r.y = ((1-(y/4096)) * (tile[3]-tile[1])) + tile[1];
+  return r;
+}
+var d_off = 1;
+function getBin(bin, i, prev) {
+  let x = bin[i*3 + d_off  ]<<4;
+  let y = bin[i*3 + d_off+1]<<4;
+  //print("Point", x, y, bin);
+  return [x, y];
+}
+function getBinLength(bin) {
+  return (bin.length-d_off) / 3;
+}
+function newPoint(tile, a, rec, bin) {  
+  var p = toScreen(tile, getBin(bin, 0, null));
+  var sz = 2;
+  if (a.properties) {
+    if (a.properties["marker-color"]) {
+      g.setColor(a.properties["marker-color"]);
+    }
+    if (a.properties.marker_size == "small")
+      sz = 1;
+    if (a.properties.marker_size == "large")
+      sz = 4;
+  }
+  
+  g.fillRect(p.x-sz, p.y-sz, p.x+sz, p.y+sz);
+  if (rec.tags) {
+    g.setColor(0,0,0);
+    g.setFont("Vector", 18).setFontAlign(-1,-1);
+    g.drawString(rec.tags.name, p.x, p.y);
+  }
+  points ++;
+}
+function newLine(tile, a, bin) {
+  let xy = getBin(bin, 0, null);
+  let i = 1;
+  let step = 1;
+  let len = getBinLength(bin);
+  let p1 = toScreen(tile, xy);
+  if (a.properties && a.properties.stroke) {
+    g.setColor(a.properties.stroke);
+  }
+  while (i < len) {  
+    xy = getBin(bin, i, xy);
+    var p2 = toScreen(tile, xy);
+
+    //print(p1.x, p1.y, p2.x, p2.y);
+    g.drawLine(p1.x, p1.y, p2.x, p2.y);
+    if (i == len-1)
+      break;
+    i = i + step;
+    if (i>len)
+      i = len-1;
+    points ++;
+    p1 = p2;
+  }
+}
+function newPolygon(tile, a, bin) {
+  let xy = getBin(bin, 0, null);
+  i = 1;
+  step = 1;
+  len = getBinLength(bin);
+  if (len > 62) {
+    step = log2(len) - 5;
+    step = 1<<step;
+  }
+  var p1 = toScreen(tile, xy);
+  let pol = [p1.x, p1.y];
+  while (i < len) {  
+    xy = getBin(bin, i, xy); // FIXME... when skipping
+    var p2 = toScreen(tile, xy);
+
+    pol.push(p2.x, p2.y);
+    if (i == len-1)
+      break;
+    i = i + step;
+    if (i>len)
+      i = len-1;
+    points ++;
+  }
+  if (a.properties && a.properties.fill) {
+    g.setColor(a.properties.fill);
+  } else {
+    g.setColor(.75, .75, 1);
+  }
+  g.fillPoly(pol, true);
+  if (a.properties && a.properties.stroke) {
+    g.setColor(a.properties.stroke);
+  } else {
+    g.setColor(0,0,0)
+  }
+  g.drawPoly(pol, true);
+}
+function newVector(tile, rec) {
+  let bin = E.toUint8Array(atob(rec.b));
+  a = meta.attrs[bin[0]];  
+  if (a.type == 1) {
+    newPoint(tile, a, rec, bin);
+  } else if (a.type == 2) {
+    newLine(tile, a, bin);
+  } else if (a.type == 3) {
+    newPolygon(tile, a, bin);
+  } else print("Unknown record", a);
+  g.flip();
+}
+function drawVector(gjson, tile, qual) {
   var d = gjson;
   points = 0;
   var t1 = getTime();
   
-  for (var a of d.features) {
-    if (a.type != "Feature")
-        print("Expecting feature");
+  let xy1 = m.latLonToXY(tile[1], tile[0]);
+  let xy2 = m.latLonToXY(tile[3], tile[2]);
+  let t2 = [ xy1.x, xy1.y, xy2.x, xy2.y ];
+  print(t2);
+  
+  for (var a of d) { // d.features for geojson
     g.setColor(0,0,0);
+    if (a.type != "Feature") {
+      newVector(t2, a);
+      continue;
+    }
     // marker-size, marker-color, stroke
     if (qual < 32 && a.geometry.type == "Point")
       drawPoint(a);
     if (qual < 8 && a.geometry.type == "LineString")
       drawLine(a, qual);
+    if (qual < 8 && a.geometry.type == "Polygon")
+      drawPolygon(a, qual);    
   }
   print("....", points, "painted in", getTime()-t1, "sec");
 }
-
 function fname(lon, lat, zoom) {
     var bbox = [lon, lat, lon, lat];
     var r = xyz(bbox, 13, false, "WGS84");
     //console.log('fname', r);
     return 'z'+zoom+'-'+r.minX+'-'+r.minY+'.json';
 }
-
 function fnames(zoom) {
     var bb = [m.lon, m.lat, m.lon, m.lat];
     var r = xyz(bb, zoom, false, "WGS84");
+    let maxt = 16;
     while (1) {
       var bb2 = bbox(r.minX, r.minY, zoom, false, "WGS84");
       var os = m.latLonToXY(bb2[3], bb2[0]);
@@ -525,6 +697,9 @@ function fnames(zoom) {
       else if (os.y >= 0)
         r.minY -= 1;
       else break;
+      if (!maxt)
+        break;
+      maxt--;
     }
     while (1) {
       var bb2 = bbox(r.maxX, r.maxY, zoom, false, "WGS84");
@@ -534,13 +709,16 @@ function fnames(zoom) {
       else if (os.y <= g.getHeight())
         r.maxY += 1;
       else break;
+      if (!maxt)
+        break;
+      maxt--;
     }
+  if (!maxt)
+    print("!!! Too many tiles, not painting some");
   print(".. paint range", r);
   return r;
 }
-
 function log2(x) { return Math.log(x) / Math.log(2); }
-
 function getZoom(qual) {
   var z = 16-Math.round(log2(m.scale));
   z += qual;
@@ -551,7 +729,6 @@ function getZoom(qual) {
     return meta.max_zoom;
   return z;
 }
-
 function drawDebug(text, perc) {
   g.setClipRect(0,0,R.x2,R.y);
   g.reset();
@@ -564,7 +741,6 @@ function drawDebug(text, perc) {
   g.setClipRect(R.x,R.y,R.x2,R.y2);
   g.flip();
 }
-
 function drawAll(qual) {
   var zoom = getZoom(qual);
   var t1 = getTime();
@@ -583,7 +759,7 @@ function drawAll(qual) {
       var n ='z'+zoom+'-'+x+'-'+y+'-'+cnt+'.json';
       var gjson = loadVector(n);
       if (!gjson) break;
-      drawVector(gjson, 1);
+      drawVector(gjson, bbox(x, y, zoom, false, "WGS84"), 1);
     }
     num++;
     drawDebug("Zoom "+zoom+" tiles "+num+"/"+tiles, num/tiles);
@@ -611,7 +787,7 @@ function introScreen() {
 }
 
 
-m.scale = 76;
+m.scale = 76000;
 m.lat = 50.001;
 m.lon = 14.759;
 

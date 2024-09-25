@@ -186,14 +186,15 @@ Layout.prototype.render = function (l) {
         x+4,y+h-1,
         x,y+h-5,
         x,y+4
-      ], bg = l.bgCol!==undefined?l.bgCol:gfx.theme.bg2,
-      btnborder = l.btnBorder!==undefined?l.btnBorder:gfx.theme.fg2;
+      ],
+      btnborder = l.btnBorderCol!==undefined?l.btnBorderCol:gfx.theme.fg2,
+      btnface = l.btnFaceCol!==undefined?l.btnFaceCol:gfx.theme.bg2;
     if(l.selected){
-      bg = gfx.theme.bgH, btnborder = gfx.theme.fgH;
+      btnface = gfx.theme.bgH, btnborder = gfx.theme.fgH;
     }
-    gfx.setColor(bg).fillPoly(poly).setColor(btnborder).drawPoly(poly);   
+    gfx.setColor(btnface).fillPoly(poly).setColor(btnborder).drawPoly(poly);
     if (l.col!==undefined) gfx.setColor(l.col);
-    if (l.src) gfx.setBgColor(bg).drawImage(
+    if (l.src) gfx.setBgColor(btnface).drawImage(
       "function"==typeof l.src?l.src():l.src,
       l.x + l.w/2,
       l.y + l.h/2,

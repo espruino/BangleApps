@@ -1,0 +1,13 @@
+{ "id": "widminbate",
+  "name": "Extra Minimal Battery",
+  "shortName":"ExtraMinBat",
+  "version":"0.05",
+  "description": "An extra minimal (only use system theme foreground colour) version of the battery widget that only appears if the battery is running low (below 30%)",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,battery,minimal,monochrome",
+  "supports" : ["BANGLEJS2", "BANGLEJS"],
+  "storage": [
+    {"name":"widminbate.wid.js","url":"widget.js"}
+  ]
+}

@@ -1,7 +1,6 @@
 { // must be inside our own scope here so that when we are unloaded everything disappears
 g.clear();
 
-let confirmed = false;
 // Helper function default setting
 let def = function(value, def) {
 	return value !== undefined ? value : def;

@@ -1,0 +1,16 @@
+[
+  {"name":"home"},
+  {"name":"bike"},
+  {"name":"car"},
+  {"name":"fan"},
+  {"name":"light"},
+  {"name":"plug"},
+  {"name":"rocket"},
+  {"name":"switch"},
+  {"name":"sync"},
+  {"name":"up"},
+  {"name":"down"},
+  {"name":"left"},
+  {"name":"right"},
+  {"name":"close"}
+]

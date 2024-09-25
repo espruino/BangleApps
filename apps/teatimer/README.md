@@ -1,6 +1,6 @@
 # Tea Timer app
 
-A simple timer. You can easyly set up the time. The initial time is 2:30
+A simple timer. You can easily set up the time. The initial time is 2:30
 
 On the first screen, you can
 - tap to get help

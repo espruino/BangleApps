@@ -1,6 +1,6 @@
 # Calendar
 
-Basic calendar
+Monthly calendar, displays holidays uploaded from the web interface and scheduled events.
 
 ## Usage
 
@@ -14,4 +14,4 @@ Basic calendar
 
 ## Settings
 
-- B2 Colors: use non-dithering colors (default, recommended for Bangle 2) or the original color scheme.
+B2 Colors: use non-dithering colors (default, recommended for Bangle 2) or the original color scheme.

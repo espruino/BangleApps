@@ -137,7 +137,7 @@ const loc = require("locale");
 
 let matchFontSize = function(graphics, text, height, width){
   graphics.setFontVector(height);
-  let metrics;
+  //let metrics;
   let size = 1;
   while (graphics.stringMetrics(text).width > 0.90 * width){
     size -= 0.05;
@@ -671,8 +671,8 @@ let getCompassSlice = function(){
     }
   };
   let lastDrawnValue = 0;
-  const buffers = 4;
-  let buf = [];
+  //const buffers = 4;
+  //let buf = [];
   return {
     refresh: function(){
       return Math.abs(lastDrawnValue - compassDataSource.getCourse()) > SETTINGS.minCourseChange;

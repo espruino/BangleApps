@@ -120,7 +120,6 @@
 
   let twoPi  = 2*Math.PI;
   let Pi     = Math.PI;
-  let halfPi = Math.PI/2;
 
   let sin = Math.sin, cos = Math.cos;
 

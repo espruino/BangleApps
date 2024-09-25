@@ -29,16 +29,13 @@ exports.loadData = function () {
     dismissDate: new Date(1970),
     pauseDate: new Date(1970),
   },
-    require("Storage").readJSON("activityreminder.data.json") || {});
+  
+  require("Storage").readJSON("activityreminder.data.json") || {});
 
-  if (typeof (data.stepsDate) == "string")
-    data.stepsDate = new Date(data.stepsDate);
-  if (typeof (data.okDate) == "string")
-    data.okDate = new Date(data.okDate);
-  if (typeof (data.dismissDate) == "string")
-    data.dismissDate = new Date(data.dismissDate);
-  if (typeof (data.pauseDate) == "string")
-    data.pauseDate = new Date(data.pauseDate);
+  data.stepsDate = new Date(typeof data.stepsDate === 'string' ? data.stepsDate : data.stepsDate.ms);
+  data.okDate = new Date(typeof data.okDate === 'string' ? data.okDate : data.okDate.ms);
+  data.dismissDate = new Date(typeof data.dismissDate === 'string' ? data.dismissDate : data.dismissDate.ms);
+  data.pauseDate = new Date(typeof data.pauseDate === 'string' ? data.pauseDate : data.pauseDate.ms);
 
   return data;
 };

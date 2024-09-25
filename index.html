@@ -22,7 +22,7 @@
   <body>
     <header class="navbar-primary navbar">
       <section class="navbar-section" >
-        <a href="https://banglejs.com" target="_blank" class="navbar-brand mr-2" ><img src="img/banglejs-logo-sml.png" alt="Bangle.js">
+        <a href="https://banglejs.com" target="_blank" class="navbar-brand mr-2"><img src="img/banglejs-logo-small.svg" alt="Bangle.js">
         <div>App Loader</div></a>
         <!-- <a href="#" class="btn btn-link">...</a> -->
       </section>
@@ -84,6 +84,7 @@
           <label class="chip tooltip" filterid="outdoors" data-tooltip="For outdoor use">Outdoors</label>
           <label class="chip tooltip" filterid="ram" data-tooltip="Apps that don't save anything to flash memory">Online</label>
           <label class="chip tooltip" filterid="clkinfo" data-tooltip="Info displayed on clocks, or clocks with info">Clock Info</label>
+          <label class="chip tooltip" filterid="health" data-tooltip="Apps for your health">Health</label>
           <label class="chip tooltip" filterid="favourites" data-tooltip="Apps that you've liked ❤️">Favourites</label>
         </div>
         <div class="sort-nav hidden">
@@ -179,9 +180,13 @@
             </label>
             <label class="form-switch">
               <input type="checkbox" id="settings-alwaysAllowUpdate">
-              <i class="form-icon"></i> Always allow to reinstall apps in place regardless of the version
+              <i class="form-icon"></i> Always show "reinstall app" button <i class="icon icon-refresh"></i> regardless of the version
             </label>
-            <button class="btn" id="defaultsettings">Reset to default App Loader settings</button>
+            <label class="form-switch">
+              <input type="checkbox" id="settings-autoReload">
+              <i class="form-icon"></i> Automatically reload watch after app App Loader actions (removes "Hold button" prompt)
+            </label>
+            <button class="btn" id="defaultsettings">Reset App Loader settings to defaults</button>
           </details>
         </div>
         <div id="more-deviceinfo" style="display:none">

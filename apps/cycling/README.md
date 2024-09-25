@@ -1,4 +1,5 @@
 # Cycling
+
 > Displays data from a BLE Cycling Speed and Cadence sensor.
 
 *This is a fork of the CSCSensor app using the layout library and separate module for CSC functionality. It also drops persistence of total distance on the Bangle, as this information is also persisted on the sensor itself. Further, it allows configuration of display units (metric/imperial) independent of chosen locale. Finally, multiple sensors can be used and wheel circumference can be configured for each sensor individually.*
@@ -27,8 +28,5 @@ Inside the Cycling app, use button / tap screen to:
 ## TODO
 * Sensor battery status
 * Implement crank events / show cadence
-* Bangle.js 1 compatibility
 * Allow setting CWR on the sensor (this is a feature intended by the BLE CSC spec, in case the sensor is replaced or transferred to a different bike)
 
-## Development
-There is a "mock" version of the `blecsc` module, which can be used to test features in the emulator. Check `blecsc-emu.js` for usage.

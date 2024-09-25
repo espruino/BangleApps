@@ -60,7 +60,11 @@ function onStartStop() {
         isMenuDisplayed = true;
         return E.showPrompt("Resume run?",{title:"Run"});
       }).then(r => {
-        isMenuDisplayed=false;shouldResume=r;
+        isMenuDisplayed = false;
+        layout.setUI(); // grab our input handling again
+        layout.forgetLazyState();
+        layout.render();
+        shouldResume = r;
       });
   }
 
@@ -85,7 +89,7 @@ function onStartStop() {
     }
   }
 
-  promise = promise.then(() => {
+  promise.then(() => {
     if (running) {
       if (shouldResume)
         exs.resume()

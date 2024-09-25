@@ -15,3 +15,6 @@
 0.14: Fix Bangle.js 1 issue where after the 'overwrite track' menu, the start/stop button stopped working
 0.15: Keep run state between runs (allowing you to exit and restart the app)
 0.16: Added ability to resume a run that was stopped previously (fix #1907)
+0.17: Ensure screen redraws after "Resume run?" menu (#3044)
+0.18: Minor code improvements
+0.19: Fix step count bug when runs are resumed after a long time

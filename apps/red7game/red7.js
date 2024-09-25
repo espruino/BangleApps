@@ -17,6 +17,9 @@ class Card {
     //this.rect = {};
     this.clippedRect = {};
   }
+  get description() {
+    return this.cardColor+" "+this.cardNum;
+  }
   get number() {
     return this.cardNum;
   }
@@ -483,8 +486,7 @@ function canPlay(hand, palette, otherPalette) {
       } else {
         //Check if any palette play can win with rule.
         for(let h of hand.handCards) {
-          if(h === c) {}
-          else {
+          if(h !== c) {
             clonePalette.addCard(c);
             if(isWinningCombo(c, clonePalette, otherPalette)) {
               return true;
@@ -514,7 +516,7 @@ class AI {
         //Play card that wins
         this.palette.addCard(c);
         this.hand.removeCard(c);
-        return true;
+        return { winning: true, paletteAdded: c };
       }
       clonePalette.removeCard(c);
     }
@@ -524,26 +526,25 @@ class AI {
         //Play rule card that wins
         ruleStack.addCard(c);
         this.hand.removeCard(c);
-        return true;
+        return { winning: true, ruleAdded: c };
       } else {
         //Check if any palette play can win with rule.
         for(let h of this.hand.handCards) {
-          if(h === c) {}
-          else {
-            clonePalette.addCard(c);
+          if(h !== c) {
+            clonePalette.addCard(h);
             if(isWinningCombo(c, clonePalette, otherPalette)) {
               ruleStack.addCard(c);
               this.hand.removeCard(c);
               this.palette.addCard(h);
               this.hand.removeCard(h);
-              return true;
+              return { winning: true, ruleAdded: c, paletteAdded: h };
             }
-            clonePalette.removeCard(c);
+            clonePalette.removeCard(h);
           }
         }
       }
     }
-    return false;
+    return { winning: false };
   }
 }
 
@@ -553,7 +554,7 @@ function shuffleDeck(deckArray) {
 }
 
 var deck = [];
-var screen = 1;
+//var screen = 1;
 var startedGame = false;
 var playerHand = new Hand();
 var playerPalette = new Hand();
@@ -618,10 +619,10 @@ function drawScreen1() {
   Bangle.on('swipe', function(direction){
     if(direction === -1) {
       drawScreen2();
-      screen = 2;
+      //screen = 2;
     } else if(direction === 1) {
       drawScreen1();
-      screen = 1;
+      //screen = 1;
     }
   });
   g.setBgColor(0,0,0);
@@ -726,18 +727,20 @@ function finishTurn() {
   if(AIhand.handCards.length === 0) {
     drawGameOver(true);
   } else {
-    var takenTurn = aiPlayer.takeTurn(ruleCards, playerPalette);
-    //Check if game over conditions met.
-    if(!takenTurn) {
-      drawGameOver(true);
-    } else if(playerHand.handCards.length === 0) {
-      drawGameOver(false);
-    } else if(!canPlay(playerHand, playerPalette, AIPalette)) {
-      drawGameOver(false);
-    } else {
-      E.showMenu();
-      drawScreen1();
-    }
+    var aiResult = aiPlayer.takeTurn(ruleCards, playerPalette);
+    E.showPrompt("AI played: " + ("paletteAdded" in aiResult ? aiResult["paletteAdded"].description+" to pallete. ":"") + ("ruleAdded" in aiResult ? aiResult["ruleAdded"].description+" to rules.":""),{buttons: {"Ok":0}}).then(function(){
+      //Check if game over conditions met.
+      if(!aiResult["winning"]) {
+        drawGameOver(true);
+      } else if(playerHand.handCards.length === 0) {
+        drawGameOver(false);
+      } else if(!canPlay(playerHand, playerPalette, AIPalette)) {
+        drawGameOver(false);
+      } else {
+        E.showMenu();
+        drawScreen1();
+      }
+    });
   }
 }
 
@@ -843,4 +846,3 @@ drawMainMenu();
 setWatch(function(){
   drawMainMenu(); 
 },BTN, {edge: "rising", debounce: 50, repeat: true});
-

@@ -16,21 +16,20 @@
     }
   }
 
-  // @ts-ignore
-  WIDGETS.chargingStatus = {
+  WIDGETS["chargingStatus"] = {
     area: 'tr',
     width: Bangle.isCharging() ? iconWidth : 0,
     draw: draw,
   };
 
   Bangle.on('charging', (charging) => {
-    // @ts-ignore
-    const widget = WIDGETS.chargingStatus;
+    const widget = WIDGETS["chargingStatus"];
     if (widget) {
       if (charging) {
         Bangle.buzz();
         widget.width = iconWidth;
       } else {
+        Promise.resolve().then(() => require("buzz").pattern("..;"));
         widget.width = 0;
       }
       Bangle.drawWidgets(); // re-layout widgets

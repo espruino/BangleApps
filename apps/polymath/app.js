@@ -53,10 +53,9 @@ g.setColor(g.theme.fg); // draw battery
 g.drawLine(0,2,E.getBattery()*1.75,2);
   // draw line for 24 h clock
   var x = g.getWidth() / 2;
-  var y = g.getHeight() / 2;
+  //var y = g.getHeight() / 2;
   var ix;
   var shade;
-  var w ;
   var date = new Date();
   for ( ix = 0; ix < 176; ix=ix+4){
     shade = 2*Math.PI * ((date.getHours()-6)/24);

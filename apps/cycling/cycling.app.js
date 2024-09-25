@@ -23,7 +23,6 @@ class CSCSensor {
     // CSC runtime variables
     this.movingTime = 0;              // unit: s
     this.lastBangleTime = Date.now(); // unit: ms
-    this.lwet = 0;                    // last wheel event time (unit: s/1024)
     this.cwr = -1;                    // cumulative wheel revolutions
     this.cwrTrip = 0;                 // wheel revolutions since trip start
     this.speed = 0;                   // unit: m/s
@@ -84,7 +83,7 @@ class CSCSensor {
     console.log("Trying to connect to BLE CSC");
 
     // Hook up events
-    this.blecsc.on('wheelEvent', this.onWheelEvent.bind(this));
+    this.blecsc.on('data', this.onWheelEvent.bind(this));
     this.blecsc.on('disconnect', this.onDisconnect.bind(this));
 
     // Scan for BLE device and connect
@@ -171,20 +170,11 @@ class CSCSensor {
     // Increment the trip revolutions counter
     this.cwrTrip += dRevs;
 
-    // Calculate time delta since last wheel event
-    var dT = (event.lwet - this.lwet)/1024;
-    var now = Date.now();
-    var dBT = (now-this.lastBangleTime)/1000;
-    this.lastBangleTime = now;
-    if (dT<0) dT+=64;  // wheel event time wraps every 64s
-    if (Math.abs(dT-dBT)>3) dT = dBT;  // not sure about the reason for this
-    this.lwet = event.lwet;
-
     // Recalculate current speed
-    if (dRevs>0 && dT>0) {
-      this.speed = dRevs * this.wheelCirc / dT;
+    if (dRevs>0 ) {
+      this.speed = event.wrps * this.wheelCirc;
       this.speedFailed = 0;
-      this.movingTime += dT;
+      this.movingTime += event.wdt;
     } else {
       this.speedFailed++;
       if (this.speedFailed>3) {
@@ -429,15 +419,7 @@ class CSCDisplay {
   }
 }
 
-var BLECSC;
-if (process.env.BOARD === "EMSCRIPTEN" || process.env.BOARD === "EMSCRIPTEN2") {
-  // Emulator
-  BLECSC = require("blecsc-emu");
-} else {
-  // Actual hardware
-  BLECSC = require("blecsc");
-}
-var blecsc = new BLECSC();
+var blecsc = require("blecsc").getInstance();
 var display = new CSCDisplay();
 var sensor = new CSCSensor(blecsc, display);
 

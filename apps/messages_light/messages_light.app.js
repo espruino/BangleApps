@@ -41,7 +41,7 @@ let EventQueue=[];    //in posizione 0, c'è quello attualmente visualizzato
 let callInProgress=false;
 
 
-let justOpened=true;
+//let justOpened=true;
 
 
 
@@ -87,6 +87,8 @@ var manageEvent = function(event) {
           showMessage(event);
     }
     else if(event.t=="remove"){       
+      
+
         //se non c'è niente nella queue e non c'è una chiamata in corso
         if( EventQueue.length==0 && !callInProgress)
           next();
@@ -104,7 +106,8 @@ var manageEvent = function(event) {
           });
 
           //non sovrascrivo, cosi uso lo stesso oggetto in memoria e dovrei avere meno problemi di memory leak
-          EventQueue.length=0;
+          //EventQueue.length=0; // non più funzionante!
+          EventQueue.splice(0,EventQueue.length);
           newEventQueue.forEach(element => {
             EventQueue.push(element);
           });
@@ -503,7 +506,7 @@ let main = function(){
     LOG("file event not found! -> ?? open debug text");
     setTimeout(_=>{      GB({"t":"notify","id":15754117198411,"src":"Hangouts","title":"A Name","body":"Debug notification \nmessage contents  demo demo demo demo"})    },0);
   }
-  justOpened=false;
+  //justOpened=false;
 
 };
 

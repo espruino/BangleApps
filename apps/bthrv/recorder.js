@@ -31,7 +31,7 @@
             }
           }
         }
-        result = [hrv];
+        const result = [hrv];
         hrv = "";
         rrHistory = [];
         return result;

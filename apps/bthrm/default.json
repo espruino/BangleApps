@@ -15,8 +15,7 @@
   "custom_fallbackTimeout": 10,
   "gracePeriodNotification": 0,
   "gracePeriodConnect": 0,
-  "gracePeriodService": 0,
   "gracePeriodRequest": 0,
   "bonding": false,
-  "active": true
+  "active": false
 }

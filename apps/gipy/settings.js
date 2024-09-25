@@ -6,9 +6,11 @@
             wake_up_speed: 13,
             active_time: 10,
             buzz_on_turns: false,
-            disable_bluetooth: true,
+            disable_bluetooth: false,
             brightness: 0.5,
             power_lcd_off: false,
+            powersave_by_default: false,
+            sleep_between_waypoints: false,
         },
         require("Storage").readJSON(FILE, true) || {}
     );
@@ -82,5 +84,19 @@
                 writeSettings();
             }
         },
+        "powersave by default": {
+            value: settings.powersave_by_default == true,
+            onchange: (v) => {
+                settings.powersave_by_default = v;
+                writeSettings();
+            }
+        },
+        "sleep between waypoints": {
+            value: settings.sleep_between_waypoints == true,
+            onchange: (v) => {
+                settings.sleep_between_waypoints = v;
+                writeSettings();
+            }
+        }
     });
 });

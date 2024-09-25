@@ -8,3 +8,4 @@
 0.09: Misc speed/memory tweaks
 0.10: Color changes due to the battery level
 0.11: Change level for medium charge (50% -> 40%), and darken color on light themes as yellow was almost invisible
+0.12: Use black flash instead of green fork to indicate charging

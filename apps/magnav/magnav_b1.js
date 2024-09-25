@@ -59,7 +59,7 @@ function newHeading(m,h){
     return hd;
 }
 
-var candraw = false;
+//var candraw = false;
 var CALIBDATA = require("Storage").readJSON("magnav.json",1)||null;
 const tiltfixread = require("magnav").tiltfixread;
 
@@ -123,12 +123,12 @@ function startdraw(){
   g.fillPoly([120,Yoff+60,110,Yoff+80,130,Yoff+80]);
   g.setColor(1,1,1);
   Bangle.drawWidgets();
-  candraw = true;
+  //candraw = true;
   intervalRef = setInterval(reading,200);
 }
 
 function stopdraw() {
-  candraw=false;
+  //candraw=false;
   if(intervalRef) {clearInterval(intervalRef);}
 }
 

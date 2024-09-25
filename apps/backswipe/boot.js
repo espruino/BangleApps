@@ -26,7 +26,7 @@
     if (Bangle["#on"+eventType] === undefined) {
       return 0;
     } else if (Bangle["#on"+eventType] instanceof Array) {
-      return Bangle["#on"+eventType].length;
+      return Bangle["#on"+eventType].filter(x=>x).length;
     } else if (Bangle["#on"+eventType] !== undefined) {
       return 1;
     }
@@ -47,9 +47,9 @@
   function enabledForApp(app) {
     if (!settings) return true;
     if (settings.mode === 0) {
-      return !(settings.apps.filter((a) => a.src === app).length > 0);
+      return !(settings.apps.filter((a) => (a.src===app)||(a.files&&a.files.includes(app))).length > 0); // The `a.src===app` and `a.files&&...` checks are for backwards compatibility. Otherwise only `a.files.includes(app)` is needed.
     } else if (settings.mode === 1) {
-      return settings.apps.filter((a) => a.src === app).length > 0;
+      return settings.apps.filter((a) => (a.src===app)||(a.files&&a.files.includes(app))).length > 0;
     } else {
       return settings.mode === 2 ? true : false;
     }

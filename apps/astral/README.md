@@ -1,29 +1,29 @@
 Astral Clock
 ============
+NOTE FOR THE BANGLE 2 THIS APP ONLY SUPPORTS USING THE BLACK BACKGROUND CURRENTLY
+
 Clock that calculates and displays Alt Az positions of all planets, Sun as well as several other astronomy targets (customizable) and current Moon phase. Coordinates are calculated by GPS & time and onscreen compass assists orienting.
 
 ![screenshot](./Example.PNG)  
 <sup>(The clock does have Pluto now - felt bad for leaving it out)</sup>
 
 Functions
----------
-**BTN1**: Refreshes Alt/Az readings. The coordinates are NOT continually updated, this is to save resources and battery usage plus it avoids you having to wait for calculations to finish before you can do anything else on the watch - it doesn't take long but it could still be annoying.  
-**BTN2**: Load side-menu as standard for clocks.  
-**BTN3**: Changes between planet mode and extra/other targets - discussed below (will still need to press button 1 after switching to update calcs).  
-**BTN4**: This is the left touchscreen, and when the LCD is on you can use this to change the font between red/white. This will only work after the GPS location has been set initially.  
+--------- 
+**BTN2**: Load side-menu as standard for clocks.
+Swiping left or right will alternate between planets and other astronomy targets, see below for how to change these addtional ones.
 
-The text will turn blue during calculation and then back again once complete.
+The data is refreshed automatically every 2 minutes. You can force a refresh as well by swiping up or, on Bangle 1, pressing Button 3.
 
-When you first install it, all positions will be estimated from UK as the default location and all the text will be white; from the moment you get your first GPS lock with the clock, it will save your location, recalculate accordingly and change the text to red, ideal for maintaining night vision, the calculations will also now be relevant to your location and time. If you have not used the GPS yet, I suggest using it outside briefly to get your first fix as the initial one can take a bit longer, although it should still just be a minute or 2 max normally.   
+Swiping down will disable/enable the compass and GPS.
+
+When you first install it, all positions will be estimated from UK as the default location and all the text will be white; from the moment you get your first GPS lock with the clock, it will save your location, recalculate accordingly and change the text to red, ideal for maintaining night vision. One the Bangle.JS 2, the colour will be a light blue rather than red because the colours are not as vibrant. The calculations will also now be relevant to your location and time. If you have not used the GPS yet, I suggest using it outside briefly to get your first fix as the initial one can take a bit longer, although it should still just be a minute or 2 max normally.   
 Lat and Lon are saved in a file called **astral.config**. You can review this file if you want to confirm current coordinates or even hard set different values \- although be careful doing the latter as there is no error handling to manage bad values here so you would have to delete the file and have the app generate a new one if that happens, also the GPS functionality will overwrite anything you put in here once it picks up your location.
-
-There can currently be a slight error mainly to the Az at times due to a firmware issue for acos (arccosine) that affect spherical calculations but I have used an estimator function that gives a good enough accuracy for general observation so shouldn't noticeably be too far off. I\'ll be implementing acos for better accuracy when the fix is in a standard release and the update will still include the current estimate function to support a level of backward compatibility.
 
 The moon phases are split into the 8 phases with an image for each - new moon would show no image.
 
-The compass is displayed above the minute digits, if you get strange values or dashes the compass needs calibration but you just need to move the watch around a bit for this each time - ideally 360 degrees around itself, which involves taking the watch off. If you don't want to do that you can also just wave your hand around for a few seconds like you're at a rave or doing Wing Chun Kuen.
+The compass is displayed on the left.
 
-Also the compass isn\’t tilt compensated so try and keep the face parallel when taking a reading.
+Also the compass isn\’t tilt compensated so try and keep the face parallel when taking a reading. It's more of an indicator, for a more accurate compass reading, you can use one of the many great apps in the apploader that compensated for movement and angles of the watch etc.
 
 Additional Astronomy Targets
 ----------------------------
@@ -37,7 +37,7 @@ The type property is not utilised as yet but relates to whether the object is (i
 
 Updates & Feedback
 ------------------
-Put together, initially at least, by \"Ben Jabituya\", https://jabituyaben.wixsite.com/majorinput, jabituyaben@gmail.com. Feel free to get in touch for any feature request. Also I\'m not precious at all - if you know of efficiencies or improvements you could make, just put the changes in. One thing that would probably be ideal is to change some of the functions to inline C to make it faster.
+Put together, initially at least, by \"Ben Jabituya\", https://majorinput.co.uk, jabituyaben@gmail.com.
 
 Credit to various sources from which I have literally taken source code and shoehorned to fit on the Bangle:
 

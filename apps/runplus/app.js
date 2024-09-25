@@ -1,23 +1,20 @@
-// Use widget utils to show/hide widgets
-let wu = require("widget_utils");
-
 let runInterval;
-let karvonenActive = false;
+let screen = "main"; // main | karvonen | menu | zoom
 // Run interface wrapped in a function
-let ExStats = require("exstats");
+const ExStats = require("exstats");
 let B2 = process.env.HWVERSION===2;
 let Layout = require("Layout");
 let locale = require("locale");
 let fontHeading = "6x8:2";
 let fontValue = B2 ? "6x15:2" : "6x8:3";
+let zoomFont = "12x20:3";
+let zoomFontSmall = "12x20:2";
 let headingCol = "#888";
 let fixCount = 0;
-let isMenuDisplayed = false;
+const wu = require("widget_utils");
 
 g.reset().clear();
 Bangle.loadWidgets();
-Bangle.drawWidgets();
-wu.show();
 
 // ---------------------------
 let settings = Object.assign({
@@ -29,6 +26,7 @@ let settings = Object.assign({
   B5: "step",
   B6: "caden",
   paceLength: 1000,
+  alwaysResume: false,
   notify: {
     dist: {
       value: 0,
@@ -56,22 +54,31 @@ function setStatus(running) {
   layout.button.label = running ? "STOP" : "START";
   layout.status.label = running ? "RUN" : "STOP";
   layout.status.bgCol = running ? "#0f0" : "#f00";
-  layout.render();
+  if (screen === "main") layout.render();
 }
 
 // Called to start/stop running
 function onStartStop() {
+  if (screen === "karvonen") {
+    // start/stop on the karvonen screen reverts us to the main screen
+    setScreen("main");
+  }
+
   var running = !exs.state.active;
-  var shouldResume = false;
+  var shouldResume = settings.alwaysResume;
   var promise = Promise.resolve();
 
-  if (running && exs.state.duration > 10000) { // if more than 10 seconds of duration, ask if we should resume?
+  if (!shouldResume && running && exs.state.duration > 10000) { // if more than 10 seconds of duration, ask if we should resume?
     promise = promise.
       then(() => {
-        isMenuDisplayed = true;
+        screen = "menu";
         return E.showPrompt("Resume run?",{title:"Run"});
       }).then(r => {
-        isMenuDisplayed=false;shouldResume=r;
+        screen = "main";
+        layout.setUI(); // grab our input handling again
+        layout.forgetLazyState();
+        layout.render();
+        shouldResume=r;
       });
   }
 
@@ -80,11 +87,11 @@ function onStartStop() {
   // an overwrite before we start tracking exstats
   if (settings.record && WIDGETS["recorder"]) {
     if (running) {
-      isMenuDisplayed = true;
+      screen = "menu";
       promise = promise.
         then(() => WIDGETS["recorder"].setRecording(true, { force : shouldResume?"append":undefined })).
         then(() => {
-          isMenuDisplayed = false;
+          screen = "main";
           layout.setUI(); // grab our input handling again
           layout.forgetLazyState();
           layout.render();
@@ -96,10 +103,10 @@ function onStartStop() {
     }
   }
 
-  promise = promise.then(() => {
+  promise.then(() => {
     if (running) {
       if (shouldResume)
-        exs.resume()
+        exs.resume();
       else
         exs.start();
     } else {
@@ -111,23 +118,68 @@ function onStartStop() {
   });
 }
 
+function zoom(statID) {
+  if (screen !== "main") return;
+
+  setScreen("zoom");
+
+  const onTouch = () => {
+    Bangle.removeListener("touch", onTouch);
+    Bangle.removeListener("twist", onTwist);
+    stat.removeListener("changed", draw);
+    setScreen("main");
+  };
+  Bangle.on("touch", onTouch); // queued after layout's touchHandler (otherwise we'd be removed then instantly re-zoomed)
+
+  const onTwist = () => {
+    Bangle.setLCDPower(1);
+  };
+  Bangle.on("twist", onTwist);
+
+  const draw = stat => {
+    const R = Bangle.appRect;
+
+    g.reset()
+      .clearRect(R)
+      .setFontAlign(0, 0);
+
+    layout.render(layout.bottom);
+
+    const value = exs.state.active ? stat.getString() : "____";
+
+    g
+      .setFont(stat.title.length > 5 ? zoomFontSmall : zoomFont)
+      .setColor(headingCol)
+      .drawString(stat.title.toUpperCase(), R.x+R.w/2, R.y+R.h/3)
+      .setColor(g.theme.fg)
+      .drawString(value, R.x+R.w/2, R.y+R.h*2/3);
+  };
+  layout.lazy = false; // restored when we go back to "main"
+
+  const stat = exs.stats[statID];
+  stat.on("changed", draw);
+  draw(stat);
+}
+
 let lc = [];
 // Load stats in pair by pair
 for (let i=0;i<statIDs.length;i+=2) {
   let sa = exs.stats[statIDs[i+0]];
   let sb = exs.stats[statIDs[i+1]];
+  let cba = zoom.bind(null, statIDs[i]);
+  let cbb = zoom.bind(null, statIDs[i+1]);
   lc.push({ type:"h", filly:1, c:[
-    sa?{type:"txt", font:fontHeading, label:sa.title.toUpperCase(), fillx:1, col:headingCol }:{},
-    sb?{type:"txt", font:fontHeading, label:sb.title.toUpperCase(), fillx:1, col:headingCol }:{}
+    sa?{type:"txt", font:fontHeading, label:sa.title.toUpperCase(), fillx:1, col:headingCol, cb: cba }:{},
+    sb?{type:"txt", font:fontHeading, label:sb.title.toUpperCase(), fillx:1, col:headingCol, cb: cbb }:{}
   ]}, { type:"h", filly:1, c:[
-    sa?{type:"txt", font:fontValue, label:sa.getString(), id:sa.id, fillx:1 }:{},
-    sb?{type:"txt", font:fontValue, label:sb.getString(), id:sb.id, fillx:1 }:{}
+    sa?{type:"txt", font:fontValue, label:sa.getString(), id:sa.id, fillx:1, cb: cba }:{},
+    sb?{type:"txt", font:fontValue, label:sb.getString(), id:sb.id, fillx:1, cb: cbb }:{}
   ]});
   if (sa) sa.on('changed', e=>layout[e.id].label = e.getString());
   if (sb) sb.on('changed', e=>layout[e.id].label = e.getString());
 }
 // At the bottom put time/GPS state/etc
-lc.push({ type:"h", filly:1, c:[
+lc.push({ type:"h", id:"bottom", filly:1, c:[
   {type:"txt", font:fontHeading, label:"GPS", id:"gps", fillx:1, bgCol:"#f00" },
   {type:"txt", font:fontHeading, label:"00:00", id:"clock", fillx:1, bgCol:g.theme.fg, col:g.theme.bg },
   {type:"txt", font:fontHeading, label:"---", id:"status", fillx:1 }
@@ -135,7 +187,7 @@ lc.push({ type:"h", filly:1, c:[
 // Now calculate the layout
 let layout = new Layout( {
   type:"v", c: lc
-},{lazy:true, btns:[{ label:"---", cb: (()=>{if (karvonenActive) {stopKarvonenUI();run();} onStartStop();}), id:"button"}]});
+},{lazy:true, btns:[{ label:"---", cb: onStartStop, id:"button"}]});
 delete lc;
 setStatus(exs.state.active);
 layout.render();
@@ -165,45 +217,49 @@ Bangle.on("GPS", function(fix) {
   }
 });
 
-// run() function used to switch between traditional run UI and karvonen UI
-function run() {
-  wu.show();
-  layout.lazy = false;
-  layout.render();
-  layout.lazy = true;
-  // We always call ourselves once a second to update
-  if (!runInterval){
-    runInterval = setInterval(function() {
-      layout.clock.label = locale.time(new Date(),1);
-      if (!isMenuDisplayed && !karvonenActive) layout.render();
-    }, 1000);
+function setScreen(to) {
+  if (screen === "karvonen") {
+    require("runplus_karvonen").stop();
+    wu.show();
+    Bangle.drawWidgets();
+  }
+
+  if (runInterval) clearInterval(runInterval);
+  runInterval = undefined;
+  g.reset().clearRect(Bangle.appRect);
+
+  screen = to;
+  switch (screen) {
+    case "main":
+      layout.lazy = false;
+      layout.render();
+      layout.lazy = true;
+      // We always call ourselves once a second to update
+      if (!runInterval){
+        runInterval = setInterval(function() {
+          layout.clock.label = locale.time(new Date(),1);
+          if (screen !== "menu") layout.render();
+        }, 1000);
+      }
+      break;
+
+    case "karvonen":
+      require("runplus_karvonen").start(settings.HRM, exs.stats.bpm);
+      break;
   }
 }
-run();
 
-///////////////////////////////////////////////
-//                Karvonen
-///////////////////////////////////////////////
-
-function stopRunUI() {
-  // stop updating and drawing the traditional run app UI
-  clearInterval(runInterval);
-  runInterval = undefined;
-  karvonenActive = true;
-}
-
-function stopKarvonenUI() {
-  g.reset().clear();
-  clearInterval(karvonenInterval);
-  karvonenInterval = undefined;
-  karvonenActive = false;
-}
-
-let karvonenInterval;
 // Define the function to go back and forth between the different UI's
 function swipeHandler(LR,_) {
-  if (LR==-1 && karvonenActive && !isMenuDisplayed) {stopKarvonenUI(); run();}
-  if (LR==1 && !karvonenActive && !isMenuDisplayed) {stopRunUI(); karvonenInterval = eval(require("Storage").read("runplus_karvonen"))(settings.HRM, exs.stats.bpm);}
+  if (screen !== "menu"){
+    if (LR < 0 && screen == "karvonen")
+      setScreen("main");
+    if (LR > 0 && screen !== "karvonen")
+      setScreen("karvonen"); // stop updating and drawing the traditional run app UI
+  }
 }
+
+setScreen("main");
+
 // Listen for swipes with the swipeHandler
 Bangle.on("swipe", swipeHandler);

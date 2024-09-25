@@ -1,7 +1,7 @@
 {
   "id": "multiclock",
   "name": "Multi Clock",
-  "version": "0.09",
+  "version": "0.12",
   "description": "Clock with multiple faces.  Switch between faces with BTN1 & BTN3 (Bangle 2 touch top-right, bottom right). For best display set theme Background 2 to cyan or some other bright colour in settings.",
   "screenshots": [{"url":"screen-ana.png"},{"url":"screen-big.png"},{"url":"screen-td.png"},{"url":"screen-nifty.png"},{"url":"screen-word.png"},{"url":"screen-sec.png"}],
   "icon": "multiclock.png",

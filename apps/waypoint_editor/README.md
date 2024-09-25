@@ -1,3 +1,0 @@
-# Waypoints
-
-Simple waypoint editor.

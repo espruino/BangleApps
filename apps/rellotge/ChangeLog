@@ -1,0 +1,10 @@
+0.10: Llançament inicial
+0.20: Esmenat problema amb les hores passada l'hora en punt (apareixia l'hora anterior)
+0.30: Redisseny de l'aplicatiu, text alineat a l'esquerra, font canviada, treiem dades innecessàries
+0.40: Afegits suggeriments de l'usuari @bobrippling al codi
+0.50: Fixing lint warnings for unused vars
+0.60: Fixes typos, BTN1 to show launcher and show app icon
+0.61: Minor code improvements
+0.70: Better wrapping of the text base (dynamic instead of hardcoded)
+0.80: Add analog watch, steps and date
+0.85: remapping of the minute intervals, to add accuracy.

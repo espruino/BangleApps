@@ -2,7 +2,7 @@
   "id": "neonx",
   "name": "Neon X & IO X Clock",
   "shortName": "Neon X Clock",
-  "version": "0.07",
+  "version": "0.08",
   "description": "Pebble Neon X & Neon IO X for Bangle.js",
   "icon": "neonx.png",
   "type": "clock",

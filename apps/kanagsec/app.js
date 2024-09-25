@@ -40,8 +40,8 @@ function getTemperature() {
 const storage = require('Storage');
 require("Font8x16").add(Graphics);
 
-var IMAGEWIDTH = 176;
-var IMAGEHEIGHT = 176;
+//var IMAGEWIDTH = 176;
+//var IMAGEHEIGHT = 176;
 var energySave = false;
 var batteryLvl = E.getBattery() + "%";
 var temperature = getTemperature();

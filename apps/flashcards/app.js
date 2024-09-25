@@ -39,7 +39,7 @@
     while (str.length > maxLength) {
       let found = false;
       // Inserts new line at first whitespace of the line
-      for (i = maxLength - 1; i > 0; i--) {
+      for (let i = maxLength - 1; i > 0; i--) {
         if (str.charAt(i)==' ') {
           res = res + [str.slice(0, i), "\n"].join('');
           str = str.slice(i + 1);

@@ -2,7 +2,6 @@
 // sunrise/sunset script by Matt Kane from https://github.com/Triggertrap/sun-js
 
 const LOCATION_FILE = 'mylocation.json';
-let location;
 
 Bangle.setUI('clock');
 Bangle.loadWidgets();
@@ -14,9 +13,6 @@ function loadLocation () {
     return { lat: 41.38, lon: 2.168 };
   }
 }
-let frames = 0; // amount of pending frames to render (0 if none)
-let curPos = 0; // x position of the sun
-let realPos = 0; // x position of the sun depending on currentime
 const latlon = loadLocation() || {};
 const lat = latlon.lat || 41.38;
 const lon = latlon.lon || 2.168;
@@ -92,7 +88,7 @@ Date.prototype.sunriseSet = function (latitude, longitude, sunrise, zenith) {
 
   sinDec = 0.39782 * Math.sinDeg(sunTrueLongitude);
   cosDec = Math.cosDeg(Math.asinDeg(sinDec));
-  cosLocalHourAngle = ((Math.cosDeg(zenith)) - (sinDec * (Math.sinDeg(latitude)))) / (cosDec * (Math.cosDeg(latitude)));
+  const cosLocalHourAngle = ((Math.cosDeg(zenith)) - (sinDec * (Math.sinDeg(latitude)))) / (cosDec * (Math.cosDeg(latitude)));
 
   localHourAngle = Math.acosDeg(cosLocalHourAngle);
 
@@ -162,13 +158,8 @@ Math.mod = function (a, b) {
   return result;
 };
 
-const delta = 2;
 const sunrise = new Date().sunrise(lat, lon);
-const sr = sunrise.getHours() + ':' + sunrise.getMinutes();
-console.log('sunrise', sunrise);
 const sunset = new Date().sunset(lat, lon);
-const ss = sunset.getHours() + ':' + sunset.getMinutes();
-console.log('sunset', sunset);
 
 const w = g.getWidth();
 const h = g.getHeight();
@@ -176,37 +167,42 @@ const oy = h / 1.7;
 
 let sunRiseX = 0;
 let sunSetX = 0;
-const sinStep = 12;
+const sinStep = 13;
+
+let pos = 0;
+let realTime = true;
+const r = 10;
+
+let frames = 0; // amount of pending frames to render (0 if none)
+// set to 1 because pos 0 is displayed as 0-1:59
+let curPos = 1; // x position of the sun
+let realPos = 0; // x position of the sun depending on currentime
+
+
+function formatAsTime (hour, minute) {
+  return '' + ((hour < 10) ? '0' : '') + (0 | hour) +
+         ':' + ((minute < 10) ? '0' : '') + (0 | minute);
+}
 
 function drawSinuses () {
   let x = 0;
 
-  g.setColor(0, 0, 0);
-  // g.fillRect(0,oy,w, h);
   g.setColor(1, 1, 1);
-  let y = oy;
-  for (i = 0; i < w; i++) {
-    x = i;
-    x2 = x + sinStep + 1;
-    y2 = ypos(i);
-    if (x == 0) {
-      y = y2;
-    }
-    g.drawLine(x, y, x2, y2);
+  let y = ypos(x);
+  while (x < w) {
+    const y2 = ypos(x + sinStep);
+    g.drawLine(x, y, x + sinStep, y2);
     y = y2;
-    i += sinStep; // no need to draw all steps
+    x += sinStep; // no need to draw all steps
   }
 
   // sea level line
-  const hh0 = sunrise.getHours();
-  const hh1 = sunset.getHours();
-  const sl0 = seaLevel(hh0);
-  const sl1 = seaLevel(hh1);
-  sunRiseX = xfromTime(hh0) + (r / 2);
-  sunSetX = xfromTime(hh1) + (r / 2);
+  const sl0 = seaLevel(sunrise.getHours());
+  const sl1 = seaLevel(sunset.getHours());
+  sunRiseX = xfromTime(sunrise.getHours() + sunrise.getMinutes() / 60);
+  sunSetX = xfromTime(sunset.getHours() + sunset.getMinutes() / 60);
   g.setColor(0, 0.5, 1);
   g.drawLine(0, sl0, w, sl1);
-  g.setColor(0, 0.5, 1);
   g.drawLine(0, sl0 + 1, w, sl1 + 1);
   /*
   g.setColor(0, 0, 1);
@@ -219,30 +215,23 @@ function drawSinuses () {
 function drawTimes () {
   g.setColor(1, 1, 1);
   g.setFont('6x8', 2);
-  g.drawString(sr, 10, h - 20);
-  g.drawString(ss, w - 60, h - 20);
+  g.drawString(formatAsTime(sunrise.getHours(), sunrise.getMinutes()), 10, h - 20);
+  g.drawString(formatAsTime(sunset.getHours(), sunset.getMinutes()), w - 60, h - 20);
 }
-
-let pos = 0;
-let realTime = true;
-const r = 10;
 
 function drawGlow () {
   const now = new Date();
   if (frames < 1 && realTime) {
-    pos = xfromTime(now.getHours());
+    pos = xfromTime(now.getHours() + now.getMinutes() / 60);
   }
-  const rh = r / 2;
   const x = pos;
-  const y = ypos(x - r);
-  const r2 = 0;
+  const y = ypos(x);
+
+  g.setColor(0.2, 0.2, 0);
+  // wide glow
   if (x > sunRiseX && x < sunSetX) {
-    g.setColor(0.2, 0.2, 0);
     g.fillCircle(x, y, r + 20);
     g.setColor(0.5, 0.5, 0);
-    // wide glow
-  } else {
-    g.setColor(0.2, 0.2, 0);
   }
   // smol glow
   g.fillCircle(x, y, r + 8);
@@ -255,8 +244,8 @@ function seaLevel (hour) {
 }
 
 function ypos (x) {
-  const pc = (x * 100 / w);
-  return oy + (32 * Math.sin(1.7 + (pc / 16)));
+  // offset, resulting in zenith being at the correct time
+  return oy + (32 * Math.sin(((x + sunRiseX - 12) / w) * 6.28 ));
 }
 
 function xfromTime (t) {
@@ -264,20 +253,19 @@ function xfromTime (t) {
 }
 
 function drawBall () {
-  let x = pos;
   const now = new Date();
   if (frames < 1 && realTime) {
-    x = xfromTime(now.getHours());
+    pos = xfromTime(now.getHours() + now.getMinutes() / 60);
   }
-  const y = ypos(x - r);
+  const x = pos;
+  const y = ypos(x);
 
   // glow
-  if (x < sunRiseX || x > sunSetX) {
-    g.setColor(0.5, 0.5, 0);
-  } else {
+  if (x > sunRiseX && x < sunSetX) {
     g.setColor(1, 1, 1);
+  } else {
+    g.setColor(0.5, 0.5, 0);
   }
-  const rh = r / 2;
   g.fillCircle(x, y, r);
   g.setColor(1, 1, 0);
   g.drawCircle(x, y, r);
@@ -285,52 +273,39 @@ function drawBall () {
 function drawClock () {
   const now = new Date();
 
-  let curTime = '';
-  let fhours = 0.0;
-  let fmins = 0.0;
-  let ypos = 32;
+  let hours = 0.0;
+  let mins = 0.0;
   if (realTime) {
-    fhours = now.getHours();
-    fmins = now.getMinutes();
+    hours = now.getHours();
+    mins = now.getMinutes();
   } else {
-    ypos = 32;
-    fhours = 24 * (pos / w);
-    if (fhours > 23) {
-      fhours = 0;
-    }
+    hours = 24 * (pos / w);
     const nexth = 24 * 60 * (pos / w);
-    fmins = 59 - ((24 * 60) - nexth) % 60;
-    if (fmins < 0) {
-      fmins = 0;
+    mins = 59 - ((24 * 60) - nexth) % 60;
+
+    // this prevents the displayed time to jump from 11:50 to 12:59 to 12:07
+    if (mins == 59) {
+      hours--;
     }
   }
-  if (fmins > 59) {
-    fmins = 59;
-  }
-  const hours = ((fhours < 10) ? '0' : '') + (0 | fhours);
-  const mins = ((fmins < 10) ? '0' : '') + (0 | fmins);
-  curTime = hours + ':' + mins;
+
   g.setFont('Vector', 30);
-  if (realTime) {
-    g.setColor(1, 1, 1);
-  } else {
-    g.setColor(0, 1, 1);
-  }
-  g.drawString(curTime, w / 1.9, ypos);
+  g.setColor(realTime, 1, 1);
+  g.drawString(formatAsTime(hours, mins), w / 1.9, 32);
   // day-month
   if (realTime) {
     const mo = now.getMonth() + 1;
     const da = now.getDate();
-    const daymonth = '' + da + '/' + mo;
     g.setFont('6x8', 2);
-    g.drawString(daymonth, 5, 30);
+    g.drawString('' + da + '/' + mo, 5, 30);
   }
 }
 
 function renderScreen () {
+  const now = new Date();
   g.setColor(0, 0, 0);
   g.fillRect(0, 30, w, h);
-  realPos = xfromTime((new Date()).getHours());
+  realPos = xfromTime(now.getHours() + now.getMinutes() / 60);
   g.setFontAlign(-1, -1, 0);
 
   Bangle.drawWidgets();
@@ -347,7 +322,7 @@ Bangle.on('drag', function (tap, top) {
     curPos = pos;
     initialAnimation();
   } else {
-    pos = tap.x - 5;
+    pos = tap.x;
     realTime = false;
   }
   renderScreen();
@@ -359,23 +334,13 @@ Bangle.on('lock', () => {
   renderScreen();
 });
 
-renderScreen();
-
-realPos = xfromTime((new Date()).getHours());
-
 function initialAnimationFrame () {
-  let distance = (realPos - curPos) / 4;
-  if (distance > 20) {
-    distance = 20;
-  }
-  curPos += distance;
-  pos = curPos;
-  renderScreen();
-  if (curPos >= realPos) {
-    frame = 0;
-  }
-  frames--;
-  if (frames-- > 0) {
+  if (frames > 0) {
+    let distance = (realPos - curPos) / frames;
+    pos = curPos;
+    curPos += distance;
+    renderScreen();
+    frames--;
     setTimeout(initialAnimationFrame, 50);
   } else {
     realTime = true;
@@ -384,17 +349,26 @@ function initialAnimationFrame () {
 }
 
 function initialAnimation () {
+  const now = new Date();
+  realPos = xfromTime(now.getHours() + now.getMinutes() / 60);
   const distance = Math.abs(realPos - pos);
-  frames = distance / 4;
+  frames = distance / 16;
   realTime = false;
   initialAnimationFrame();
 }
 
+function renderAndQueue() {
+  setTimeout(renderAndQueue, 60000 - (Date.now() % 60000));
+  renderScreen();
+}
+
 function main () {
+  sunRiseX = xfromTime(sunrise.getHours() + sunrise.getMinutes() / 60);
+  sunSetX = xfromTime(sunset.getHours() + sunset.getMinutes() / 60);
+  
   g.setBgColor(0, 0, 0);
   g.clear();
-  setInterval(renderScreen, 60 * 1000);
-  pos = 0;
+  renderAndQueue();
   initialAnimation();
 }
 

@@ -25,5 +25,5 @@ BUF.prototype.flip_red = function(x,y) {
   this.buf.clear();
 }
 
-let bufObj = new BUF();
+/*let bufObj =*/ new BUF();
 

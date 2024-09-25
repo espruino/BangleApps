@@ -1,7 +1,7 @@
 {
   "id": "widhrt",
   "name": "HRM Widget",
-  "version": "0.03",
+  "version": "0.06",
   "description": "Tiny widget to show the power on/off status of the Heart Rate Monitor",
   "icon": "widget.png",
   "type": "widget",

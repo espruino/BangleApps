@@ -2,7 +2,7 @@
   "id": "BLEcontroller",
   "name": "BLE Customisable Controller with Joystick",
   "shortName": "BLE Controller",
-  "version": "0.01",
+  "version": "0.02",
   "description": "A configurable controller for BLE devices and robots, with a basic four direction joystick. Designed to be easy to customise so you can add your own menus.",
   "icon": "BLEcontroller.png",
   "tags": "tool,bluetooth",

@@ -5,7 +5,6 @@
     '': { 'title': 'Welcome App' },
     'Run next boot': {
       value: !settings.welcomed,
-      format: v => v ? 'Yes' : 'No',
       onchange: v => require('Storage').write('mywelcome.json', {welcomed: !v}),
     },
     'Run Now': () => load('mywelcome.app.js'),

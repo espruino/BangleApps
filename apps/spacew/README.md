@@ -38,6 +38,8 @@ Directories at the end of .mtar should be hashed, not linear searched.
 
 Geojson is not really suitable as it takes a lot of storage.
 
-It would be nice to support polygons.
-
 Web-based tool for preparing maps would be nice.
+
+Storing 12bit coordinates, but only using 8bits.
+
+Polygons should go first to get proper z-order. 

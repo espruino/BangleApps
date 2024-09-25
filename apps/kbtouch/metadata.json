@@ -4,6 +4,7 @@
   "description": "A library for text input via onscreen keyboard",
   "icon": "app.png",
   "type":"textinput",
+  "default": true,
   "tags": "keyboard",
   "supports" : ["BANGLEJS2"],
   "screenshots": [{"url":"screenshot.png"}],
