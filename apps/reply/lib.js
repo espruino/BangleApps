@@ -49,13 +49,12 @@ exports.reply = function (options) {
 
     replies.forEach((reply) => {
       var displayString = reply.disp ?? reply.text;
-      var truncatedDisplayString = g.wrapString(displayString, 120);
+      var wrappedDisplayString = g.wrapString(displayString, 120);
       // Generally handles truncating nicely, but falls down in long runs of emoji since they count as one image
-      if (truncatedDisplayString.length > 1) {
-        truncatedDisplayString = truncatedDisplayString.slice(0,1);
-        truncatedDisplayString[truncatedDisplayString.length-1] += "...";
+      if (wrappedDisplayString.length > 1) {
+        displayString = wrappedDisplayString[0]+"...";
       }
-      menu = Object.defineProperty(menu, truncatedDisplayString, {
+      menu = Object.defineProperty(menu, displayString, {
         value: () => constructReply(options.msg ?? {}, reply.text, resolve, reject),
       });
     });
