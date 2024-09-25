@@ -202,8 +202,6 @@ g.clear();
   }
 }
 
-var i = 0;
-
 function setWeather() {
   var a = {};
   //clear day/night is default weather
@@ -270,7 +268,7 @@ function setWeather() {
       //night-drizzle
       if ((data.code >= 300 && data.code < 600) || (data.code >= 200 && data.code <= 202) || (data.code >= 230 && data.code <= 232)) a.rain1 = 0xC618;
       //night-rain
-      if ((data.code >= 500 && data.code < 600) || (data.code >= 200 && data.code <= 202)) rain2 = 1;
+      if ((data.code >= 500 && data.code < 600) || (data.code >= 200 && data.code <= 202)) a.rain2 = 1;
     }
   }
   else if ((data.code >= 700) && (data.code < 800)) {
