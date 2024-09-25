@@ -2,7 +2,6 @@ let isMeasuring = false;
 let currentHR = null;
 let lcdTimeout;
 let logData = [];
-let bpmValues = [];
 
 function startMeasure() {
     logData = [];
@@ -14,11 +13,11 @@ function startMeasure() {
 
     setTimeout(() => {
         Bangle.setHRMPower(1); // starts HRM
-        Bangle.on('HRM', handleHeartRate);
+        Bangle.on('HRM', handleHeartRate); // Use function handleHeartRate 
         Bangle.buzz(200, 10); // Buzz to indicate measurement start
         drawScreen();
     }, 500);
-}
+} // startMeasure
 
 function stopMeasure() {
     isMeasuring = false;
@@ -29,50 +28,26 @@ function stopMeasure() {
     saveDataToCSV(); // Save data to CSV when measurement stops
     Bangle.buzz(200, 10); // Buzz to indicate measurement stop
     drawScreen();
-}
+} //stopMeasure
 
 function handleHeartRate(hrm) {
     if (isMeasuring && hrm.confidence > 90) {
+        // Build the timestamp
         let date = new Date();
         let dateStr = require("locale").date(date);
         let timeStr = require("locale").time(date, 1);
         let seconds = date.getSeconds();
-        let timestamp = `${dateStr} ${timeStr}:${seconds}`; // Concatenate date, time, and seconds
+        let milliseconds = date.getMilliseconds(); 
+
+        // Concatenate date, time, seconds, & milliseconds
+        let timestamp = `${dateStr} ${timeStr}:${seconds}.${milliseconds}`; 
         currentHR = hrm.bpm;
 
         logData.push({ timestamp: timestamp, heartRate: currentHR });
-        bpmValues.push(currentHR); // Store heart rate for HRV calculation
-        if (bpmValues.length > 30) bpmValues.shift(); // Keep last 30 heart rate values
-        // Calculate and add SDNN (standard deviation of NN intervals) to the last log entry
-        logData[logData.length - 1].hrv = calcSDNN();
+
         drawScreen();
-
-    }
-}
-
-function calcSDNN() {
-    if (bpmValues.length < 5) return 0; // No calculation if insufficient data
-
-    // Calculate differences between adjacent heart rate values
-    const differences = [];
-    for (let i = 1; i < bpmValues.length; i++) {
-        differences.push(Math.abs(bpmValues[i] - bpmValues[i - 1]));
-    }
-
-    // Calculate mean difference
-    const meanDifference = differences.reduce((acc, val) => acc + val, 0) / differences.length;
-
-    // Calculate squared differences from mean difference
-    const squaredDifferences = differences.map(diff => Math.pow(diff - meanDifference, 2));
-
-    // Calculate mean squared difference
-    const meanSquaredDifference = squaredDifferences.reduce((acc, val) => acc + val, 0) / squaredDifferences.length;
-
-    // Calculate SDNN (standard deviation of NN intervals)
-    const sdnn = Math.sqrt(meanSquaredDifference);
-
-    return sdnn;
-}
+    } // if
+} // handleHeartRate
 
 function drawScreen(message) {
     g.clear(); // Clear the display
@@ -121,13 +96,13 @@ function drawScreen(message) {
             g.drawString('No data', g.getWidth() / 2, g.getHeight() / 2 + 5);
             g.setFont('6x8', 1);
             g.drawString(message || 'Press button to start', g.getWidth() / 2, g.getHeight() / 2 + 30);
-        }
-    }
+        } // if
+    } // if
 
     // Update the display
     g.flip();
-}
-
+} // drawScreen
+ 
 function saveDataToCSV() {
     let fileName = "phystrax_hrm.csv";
     let file = require("Storage").open(fileName, "a"); // Open the file for appending
@@ -135,13 +110,12 @@ function saveDataToCSV() {
     // Check if the file is empty (i.e., newly created)
     if (file.getLength() === 0) {
         // Write the header if the file is empty
-        file.write("Timestamp,Heart Rate(bpm),HRV(ms)\n");
-    }
+        file.write("Timestamp,Heart Rate(bpm)\n");
+    } // if
 
     // Append the data
     logData.forEach(entry => {
-        let scaledHRV = entry.hrv * 13.61;
-        file.write(`${entry.timestamp},${entry.heartRate},${scaledHRV}\n`);
+        file.write(`${entry.timestamp},${entry.heartRate}\n`);
     });
 
 }
@@ -151,7 +125,7 @@ setWatch(function() {
         startMeasure();
     } else {
         stopMeasure();
-    }
-}, BTN1, { repeat: true, edge: 'rising' });
+    } // if
+}, BTN1, { repeat: true, edge: 'rising' }); // setWatch
 
 drawScreen();
