@@ -11,7 +11,6 @@
     //some other app is using the barometer - ignore new readings until our interval is up 
     if (Math.floor(p.altitude) != lastAlt) {
       lastAlt = Math.floor(p.altitude);
-      nextUpdate = Date.now() + settings.interval;
       alt = p.altitude.toFixed(0);
       WIDGETS.widalt.draw();
     }
