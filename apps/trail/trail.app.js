@@ -267,6 +267,9 @@ let egt = {
     if (s[1].split('=')[1] === undefined) {
       r.lat = 1 * s[0];
       r.lon = 1 * s[1];
+      if (!r.lat || !r.lon) {
+        print("Parse error at ", l);
+      }
     }
 
     for (let fi of s) {
@@ -378,19 +381,22 @@ function toCartesian(v) {
 }
 
 function distSegment(x1, x2, xP) {
-  // Převod zeměpisných souřadnic na kartézské souřadnice
+  // Translate geo to cartesian
   const p1 = toCartesian(x1);
   const p2 = toCartesian(x2);
   const p = toCartesian(xP);
 
-  // Vektor p1p2
   const dx = p2.x - p1.x;
   const dy = p2.y - p1.y;
+  
+  const div = (dx * dx + dy * dy);
 
-  // Projekce bodu p na přímku definovanou body p1 a p2
-  const dot = ((p.x - p1.x) * dx + (p.y - p1.y) * dy) / (dx * dx + dy * dy);
+  // Project point p to line defined by p1 / p2.
+  let dot = 2;
+  if (div)
+    dot = ((p.x - p1.x) * dx + (p.y - p1.y) * dy) / div;
 
-  // Určení bodu na přímce, kde leží projekce
+  // Compute closest point to projection
   let closestX, closestY;
   if (dot < 0) {
     closestX = p1.x;
@@ -403,7 +409,6 @@ function distSegment(x1, x2, xP) {
     closestY = p1.y + dot * dy;
   }
 
-  // Vzdálenost mezi bodem p a nejbližším bodem na úsečce
   const distance = Math.sqrt((p.x - closestX) * (p.x - closestX) + (p.y - closestY) * (p.y - closestY));
 
   return distance * 1000;
@@ -709,7 +714,10 @@ function recover() {
   load_next();
   while(1) {
     let d = distSegment(track[0], track[1], pp);
-    print("Recover, d", d);
+    if (d === undefined) {
+      print("Distance wrong?");
+    }
+    print("Recover, d", d, track[0], track[1]);
     if (d < 400)
       break;
     track.shift();
