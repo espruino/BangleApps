@@ -12,3 +12,4 @@
 0.30: Added options to show widgets and date on twist and tap. New fonts.
 0.31: Bugfix, no more freeze.
 0.32: Minor code improvements
+0.33: Messages would sometimes halt the clock. This should be fixed now.
