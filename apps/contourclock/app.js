@@ -16,7 +16,7 @@
     require('Storage').writeJSON("contourclock.json", settings);
   }
   require("FontTeletext10x18Ascii").add(Graphics);
-  let extrasShown = (!settings.hidewhenlocked) || (!Bangle.isLocked());
+  let extrasShown = (!settings.hidewhenlocked) && (!Bangle.isLocked());
   let installedFonts = require('Storage').readJSON("contourclock-install.json") || {};
   if (installedFonts.n > 0) { //New install - check for unused font files
     settings.fontIndex = E.clip(settings.fontIndex, -installedFonts.n + 1, installedFonts.n - 1);
