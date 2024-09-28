@@ -1,0 +1,10 @@
+{ "id": "exactwords",
+  "name": "Exect Words Clock",
+  "shortName":"Exect Words",
+  "version":"0.1",
+  "description": "Each minute of the day has a different phrase. ",
+  "icon": "app.png",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md"
+}
