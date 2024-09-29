@@ -12,6 +12,7 @@
                     { "url":"2020.png" },
                     { "url":"2358.png" } ],
   "tags": "clock",
+  "type": "clock",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
