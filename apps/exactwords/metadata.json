@@ -6,5 +6,9 @@
   "icon": "app.png",
   "tags": "clock",
   "supports" : ["BANGLEJS2"],
-  "readme": "README.md"
+  "readme": "README.md",
+  "storage": [
+    {"name":"ExactWords.app.js","url":"app.js"},
+    {"name":"Exactwords.img","url":"app-icon.js","evaluate":true}
+  ]
 }
