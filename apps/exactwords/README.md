@@ -17,8 +17,11 @@ Screenshots best demonstrate
 
 
 "just gone " - as in Just gone quarter past four is 16:16
+
 "a little after ", as in A little after quarter past three is 15:17 
+
 "coming up to ", as in Coming up to midnight is 23:58
+
 "almost " as in Almost twenty-five to seven is 06:34
 
 ## To Do
