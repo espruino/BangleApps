@@ -16,7 +16,7 @@
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name":"ExactWords.app.js","url":"app.js"},
+    {"name":"ExactWords.app.js","url":"ExactWords.app.js"},
     {"name":"Exactwords.img","url":"app-icon.js","evaluate":true}
   ]
 }
