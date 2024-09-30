@@ -2,7 +2,7 @@
 {
     "id": "widalt",
     "name": "Altimeter widget",
-    "version": "0.02",
+    "version": "0.03",
     "description": "Displays barometric altitude",
     "readme": "README.md",
     "icon": "widalt.png",
