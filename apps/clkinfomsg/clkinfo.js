@@ -14,10 +14,10 @@
   var msgAll;
   var msgs = require("messages");
 
-  var getAllMGS = function() {
+  var getAllMSGs = function() {
     if (msgAll === undefined) {
       debug("msgAll is undefined");
-      msgAll = msgs.getMessages().filter(m => !['call', 'map', 'music'].includes(m.id)).map(m => m.src).length;
+      msgAll = msgs.getMessages().filter(m => !['call', 'map', 'music'].includes(m.id)).length;
     }
     return msgAll; 
   }
@@ -26,22 +26,18 @@
   var getUnreadMGS = function() {
     if (msgUnread === undefined) {
       debug("msgUnread is undefined");
-      msgUnread = msgs.getMessages().filter(m => m.new && !['call', 'map', 'music'].includes(m.id)).map(m => m.src).length;
+      msgUnread = msgs.getMessages().filter(m => m.new && !['call', 'map', 'music'].includes(m.id)).length;
     }
     return msgUnread; 
   }
 
   var msgCounter = function(type, msg) {
     var msgsNow = msgs.getMessages(msg);
-    msgUnread = msgsNow.filter(m => m.new && !['call', 'map', 'music'].includes(m.id)).map(m => m.src).length; 
-    if (msgUnread === undefined) {
-      msgUnread = "?";
-    }
-    msgAll = msgsNow.filter(m => !['call', 'map', 'music'].includes(m.id)).map(m => m.src).length; 
-    if (msgAll === undefined) {
-      msgAll = "?";
-    }
+    msgUnread = msgsNow.filter(m => m.new && !['call', 'map', 'music'].includes(m.id)).length; 
+    msgAll = msgsNow.filter(m => !['call', 'map', 'music'].includes(m.id)).length;
+    //TODO find nicer way to redraw current shown CI counter
     info.items[0].emit("redraw");
+    info.items[1].emit("redraw");
   }
 
   var info = {
@@ -68,8 +64,8 @@
       { name : "All",
         get : () => {
           return {
-            text : getAllMGS(),
-            img : allImg() // TODO This is omited if category image is not set
+            text : getAllMSGs(),
+            img : allImg()
           };
         },
         show : function() {
