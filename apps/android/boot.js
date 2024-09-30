@@ -67,6 +67,9 @@
           title:event.name||/*LANG*/"Call", body:/*LANG*/"Incoming call\n"+event.number});
         require("messages").pushMessage(event);
       },
+      "canned_responses_sync" : function() {
+        require("Storage").writeJSON("replies.json", event.d);
+      },
       // {"t":"alarm", "d":[{h:int,m:int,rep:int},... }
       "alarm" : function() {
         //wipe existing GB alarms

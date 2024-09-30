@@ -1,6 +1,6 @@
 { "id": "reply",
   "name": "Reply Library",
-  "version": "0.02",
+  "version": "0.03",
   "description": "A library for replying to text messages via predefined responses or keyboard",
   "icon": "app.png",
   "type": "module",
