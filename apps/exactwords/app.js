@@ -92,7 +92,7 @@ function wordsFromTime(h, m)
   const MINUTES_ACCURATE_ARRAY = ["", "just gone ", "a little after ", "coming up to ", "almost "];
 
   var hourAdjusted = h;
-  var words = " ", hourWord = " ", partDayWord = " ", minutesRough = " ", minutesAccurate = " ", days = " ";
+  var words = " ", hourWord = " ", partDayWord = " ", minutesRough = " ", minutesAccurate = " ";
 
   // At 33 past the hours we start referign to the next hour
   if (m > 32) {
