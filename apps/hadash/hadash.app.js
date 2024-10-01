@@ -4,6 +4,8 @@
 
 const APP_NAME = 'hadash';
 
+var scroller;
+
 // Load settings
 var settings = Object.assign({
   menu: [
@@ -13,7 +15,7 @@ var settings = Object.assign({
     { type: 'menu', title: 'Sub-menu', data:
       [
         { type: 'state', title: 'Check for Supervisor updates', id: 'update.home_assistant_supervisor_update' },
-        { type: 'service', title: 'Restart HA', domain: 'homeassistant', service: 'restart', data: {} }
+        { type: 'service', title: 'Restart HA', domain: 'homeassistant', service: 'restart', silent: true, data: {} }
       ]
     },
     { type: 'service', title: 'Custom Notification', domain: 'persistent_notification', service: 'create',
@@ -28,6 +30,7 @@ var settings = Object.assign({
 
 // query an entity state
 function queryState(title, id, level) {
+  menus[level][''].scroll = scroller.scroll;
   E.showMessage('Fetching entity state from HA', { title: title });
   Bangle.http(settings.HAbaseUrl+'/states/'+id, {
     headers: {
@@ -45,16 +48,17 @@ function queryState(title, id, level) {
       if ('unit_of_measurement' in HAresp.attributes)
         msg += HAresp.attributes.unit_of_measurement;
     }
-    E.showPrompt(msg, { title: title4prompt, buttons: {OK: true} }).then((v) => { E.showMenu(menus[level]); });
+    E.showPrompt(msg, { title: title4prompt, buttons: {OK: true} }).then((v) => { scroller = E.showMenu(menus[level]).scroller; });
   }).catch( error => {
     console.log(error);
-    E.showPrompt('Error querying state!', { title: title, buttons: {OK: true} }).then((v) => { E.showMenu(menus[level]); });
+    E.showPrompt('Error querying state!', { title: title, buttons: {OK: true} }).then((v) => { scroller = E.showMenu(menus[level]).scroller; });
   });
 }
 
 
 // call a service
-function callService(title, domain, service, data, level) {
+function callService(title, domain, service, data, level, silent) {
+  menus[level][''].scroll = scroller.scroll;
   E.showMessage('Calling HA service', { title: title });
   Bangle.http(settings.HAbaseUrl+'/services/'+domain+'/'+service, {
     method: 'POST',
@@ -65,10 +69,14 @@ function callService(title, domain, service, data, level) {
     },
   }).then(data => {
     //console.log(data);
-    E.showPrompt('Service called successfully', { title: title, buttons: {OK: true} }).then((v) => { E.showMenu(menus[level]); });
+    if (silent) {
+      scroller = E.showMenu(menus[level]).scroller;
+    } else {
+      E.showPrompt('Service called successfully', { title: title, buttons: {OK: true} }).then((v) => { scroller = E.showMenu(menus[level]).scroller; });
+    }
   }).catch( error => {
     console.log(error);
-    E.showPrompt('Error calling service!', { title: title, buttons: {OK: true} }).then((v) => { E.showMenu(menus[level]); });
+    E.showPrompt('Error calling service!', { title: title, buttons: {OK: true} }).then((v) => { scroller = E.showMenu(menus[level]).scroller; });
   });
 }
 
@@ -88,10 +96,11 @@ function serviceInputFreeform(key, entry, level) {
 
 // get input data before calling a service
 function getServiceInputData(entry, level) {
+  menus[level][''].scroll = scroller.scroll;
   let serviceInputMenu = {
     '': {
       'title': entry.title,
-      'back': () => E.showMenu(menus[level])
+      'back': () => scroller = E.showMenu(menus[level]).scroller
     },
   };
   let CBs = {};
@@ -130,7 +139,7 @@ function getServiceInputData(entry, level) {
     }
   }
   // menu entry to actually call the service:
-  serviceInputMenu['Call service'] = function() { callService(entry.title, entry.domain, entry.service, entry.data, level); };
+  serviceInputMenu['Call service'] = function() { callService(entry.title, entry.domain, entry.service, entry.data, level, entry.silent); };
   E.showMenu(serviceInputMenu);
 }
 
@@ -163,6 +172,8 @@ function addMenuEntries(level, entries) {
         /*
          * call HA service
          */
+        if (! ('silent' in entry))
+          entry.silent = false;
         if ('domain' in entry && entry.domain && 'service' in entry && entry.service) {
           if (! ('data' in entry))
             entry.data = {};
@@ -171,7 +182,7 @@ function addMenuEntries(level, entries) {
             entryCB = () => setTimeout(getServiceInputData, 10, entry, level);
           } else {
             // call service straight away
-            entryCB = () => setTimeout(callService, 10, entry.title, entry.domain, entry.service, entry.data, level);
+            entryCB = () => setTimeout(callService, 10, entry.title, entry.domain, entry.service, entry.data, level, entry.silent);
           }
         }
         break;
@@ -196,14 +207,15 @@ function addMenuEntries(level, entries) {
 
 // create and show a sub menu
 function showSubMenu(level, title, entries) {
+  menus[level - 1][''].scroll = scroller.scroll;
   menus[level] = {
     '': {
       'title': title,
-      'back': () => E.showMenu(menus[level - 1])
+      'back': () => scroller = E.showMenu(menus[level - 1]).scroller
     },
   };
   addMenuEntries(level, entries);
-  E.showMenu(menus[level]);
+  scroller = E.showMenu(menus[level]).scroller;
 }
 
 
@@ -220,8 +232,8 @@ addMenuEntries(0, settings.menu);
 
 // check required configuration
 if (! settings.HAbaseUrl || ! settings.HAtoken) {
-  E.showAlert('The app is not yet configured!', 'HA-Dash').then(() => E.showMenu(menus[0]));
+  E.showAlert('The app is not yet configured!', 'HA-Dash').then(() => scroller = E.showMenu(menus[0]).scroller);
 } else {
-  E.showMenu(menus[0]);
+  scroller = E.showMenu(menus[0]).scroller;
 }
 
