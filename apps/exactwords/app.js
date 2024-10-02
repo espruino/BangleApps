@@ -191,9 +191,8 @@ function draw() {
   var dateStr = wordsFromDayMonth(day, date, month);
   
   // draw time
-  // TO DO: Set Theme
-  g.setBgColor("#000000");
-  g.setColor("#ffffff");
+  g.setBgColor(g.theme.bg);
+  g.setColor(g.theme.fg);
   g.clear();
   g.setFontAlign(0,0).setFont("Vector",24);
   g.drawString(g.wrapString(timeStr, g.getWidth()).join("\n"),x,y-24*0);
