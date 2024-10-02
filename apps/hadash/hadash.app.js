@@ -28,6 +28,14 @@ var settings = Object.assign({
 }, require('Storage').readJSON(APP_NAME+'.json', true) || {});
 
 
+// wrapper to show a menu (preserving scroll position)
+function showScrollerMenu(menu) {
+  const r = E.showMenu(menu).scroller;
+  scroller = r;
+  return r;
+}
+
+
 // query an entity state
 function queryState(title, id, level) {
   menus[level][''].scroll = scroller.scroll;
@@ -48,10 +56,10 @@ function queryState(title, id, level) {
       if ('unit_of_measurement' in HAresp.attributes)
         msg += HAresp.attributes.unit_of_measurement;
     }
-    E.showPrompt(msg, { title: title4prompt, buttons: {OK: true} }).then((v) => { scroller = E.showMenu(menus[level]).scroller; });
+    E.showPrompt(msg, { title: title4prompt, buttons: {OK: true} }).then((v) => { showScrollerMenu(menus[level]); });
   }).catch( error => {
     console.log(error);
-    E.showPrompt('Error querying state!', { title: title, buttons: {OK: true} }).then((v) => { scroller = E.showMenu(menus[level]).scroller; });
+    E.showPrompt('Error querying state!', { title: title, buttons: {OK: true} }).then((v) => { showScrollerMenu(menus[level]); });
   });
 }
 
@@ -69,14 +77,14 @@ function callService(title, domain, service, data, level, silent) {
     },
   }).then(data => {
     //console.log(data);
-    if (silent) {
-      scroller = E.showMenu(menus[level]).scroller;
-    } else {
-      E.showPrompt('Service called successfully', { title: title, buttons: {OK: true} }).then((v) => { scroller = E.showMenu(menus[level]).scroller; });
+    if (! silent) {
+      return E.showPrompt('Service called successfully', { title: title, buttons: {OK: true} });
     }
+  }).then(() => {
+    showScrollerMenu(menus[level]);
   }).catch( error => {
     console.log(error);
-    E.showPrompt('Error calling service!', { title: title, buttons: {OK: true} }).then((v) => { scroller = E.showMenu(menus[level]).scroller; });
+    E.showPrompt('Error calling service!', { title: title, buttons: {OK: true} }).then((v) => { showScrollerMenu(menus[level]); });
   });
 }
 
@@ -100,7 +108,7 @@ function getServiceInputData(entry, level) {
   let serviceInputMenu = {
     '': {
       'title': entry.title,
-      'back': () => scroller = E.showMenu(menus[level]).scroller
+      'back': () => showScrollerMenu(menus[level])
     },
   };
   let CBs = {};
@@ -211,11 +219,11 @@ function showSubMenu(level, title, entries) {
   menus[level] = {
     '': {
       'title': title,
-      'back': () => scroller = E.showMenu(menus[level - 1]).scroller
+      'back': () => showScrollerMenu(menus[level - 1])
     },
   };
   addMenuEntries(level, entries);
-  scroller = E.showMenu(menus[level]).scroller;
+  showScrollerMenu(menus[level]);
 }
 
 
@@ -232,8 +240,8 @@ addMenuEntries(0, settings.menu);
 
 // check required configuration
 if (! settings.HAbaseUrl || ! settings.HAtoken) {
-  E.showAlert('The app is not yet configured!', 'HA-Dash').then(() => scroller = E.showMenu(menus[0]).scroller);
+  E.showAlert('The app is not yet configured!', 'HA-Dash').then(() => showScrollerMenu(menus[0]));
 } else {
-  scroller = E.showMenu(menus[0]).scroller;
+  showScrollerMenu(menus[0]);
 }
 
