@@ -2,7 +2,7 @@
   "id": "hadash",
   "name": "Home-Assistant Dashboard",
   "shortName":"HA-Dash",
-  "version":"1.00",
+  "version":"1.01",
   "description": "Interact with Home-Assistant (query states, call services)",
   "icon": "hadash.png",
   "screenshots": [{ "url": "screenshot.png" }],

@@ -55,6 +55,7 @@
   "title": "Menu entry title",
   "domain": "HA Domain",
   "service": "HA Service",
+  "silent": (true|false),
   "data": {
     "key": "value"
   }
@@ -64,8 +65,10 @@
         under the Developer tools -&gt; Services. Use the "Go to YAML Mode"
         function to see the actual names and values. The domain and service
         parts are the 2 parts of the service name which are separated by a dot.
-        Any (optional) data key/value pairs can be added under the "data"
-        field. For example, here's a service call YAML:
+        If the optional "silent" boolean is set to true (false is default),
+        there will be no message in case of a successful call. Any (optional)
+        data key/value pairs can be added under the "data" field. For example,
+        here's a service call YAML:
         <pre class="code" data-lang="YAML">
 service: persistent_notification.create
 data:
@@ -207,7 +210,7 @@ target:
           { type: 'menu', title: 'Sub-menu', data:
             [
               { type: 'state', title: 'Check for Supervisor updates', id: 'update.home_assistant_supervisor_update' },
-              { type: 'service', title: 'Restart HA', domain: 'homeassistant', service: 'restart', data: {} }
+              { type: 'service', title: 'Restart HA', domain: 'homeassistant', service: 'restart', silent: true, data: {} }
             ]
           },
           { type: 'service', title: 'Custom Notification', domain: 'persistent_notification', service: 'create',

@@ -58,8 +58,6 @@ that token in case your watch is stolen or lost.
 ## To-Do
 
 - A better way to configure the menu structure would be useful, something like a custom editor (replacing the jsoneditor).
-- After showing a state or call a service, return to the same point in the menu.
-- Config option for service calls to not show a "successful" prompt
 
 
 ## Author
