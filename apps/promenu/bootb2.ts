@@ -15,8 +15,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
     g.setColor(255, 255, 255);
   };
   let options = items && items[""] || {};
-  if (items) delete items[""];
-  const menuItems = Object.keys(items);
+  const menuItems = Object.keys(items).filter(x => x.length);
 
   const fontHeight = options.fontHeight||25;
 

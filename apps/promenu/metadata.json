@@ -1,7 +1,7 @@
 {
   "id": "promenu",
   "name": "Pro Menu",
-  "version": "0.07",
+  "version": "0.08",
   "description": "Replace the built in menu function. Supports Bangle.js 1 and Bangle.js 2.",
   "icon": "icon.png",
   "type": "bootloader",
