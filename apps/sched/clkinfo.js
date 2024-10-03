@@ -127,12 +127,8 @@
         run: function() {
           if (a.date) return; // ignore events
           a.on = !a.on;
-          if (a.on) {
-            // use sched to start the alarm,
-            // so it takes care of timers etc
-            alarm.setAlarm(a.id, a);
-          }
           this.emit("redraw");
+          alarm.setAlarms(all);
           alarm.reload(); // schedule/unschedule the alarm
         }
       })),
