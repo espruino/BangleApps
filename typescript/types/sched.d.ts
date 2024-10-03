@@ -103,6 +103,8 @@ declare module Sched {
 
   function setAlarm(id: string, alarm?: NewSched): void;
 
+  function resetTimer(alarm: Sched, time?: Date): void;
+
   function getTimeToAlarm(alarm: Sched | undefined | null, time?: Date): number | undefined;
   function getTimeToAlarm(alarm?: undefined | null, time?: Date): undefined;
 
