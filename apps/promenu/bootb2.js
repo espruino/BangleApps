@@ -13,9 +13,7 @@ E.showMenu = function (items) {
         g.setColor(255, 255, 255);
     };
     var options = items && items[""] || {};
-    if (items)
-        delete items[""];
-    var menuItems = Object.keys(items);
+    var menuItems = Object.keys(items).filter(function (x) { return x.length; });
     var fontHeight = options.fontHeight || 25;
     var selected = options.scroll || options.selected || 0;
     var ar = Bangle.appRect;

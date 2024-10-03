@@ -9,3 +9,4 @@
       handling of E.showMenu() with no arguments
 0.06: Fix lower bounding of numeric values
 0.07: Fix bug with alarms app (scroller) and correctly show images
+0.08: Fix bug with modifying menu - allows hadash to save scroll positions
