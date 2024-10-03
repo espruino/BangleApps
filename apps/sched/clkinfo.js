@@ -127,6 +127,7 @@
         run: function() {
           if (a.date) return; // ignore events
           a.on = !a.on;
+          if(a.on && a.timer) alarm.resetTimer(a);
           this.emit("redraw");
           alarm.setAlarms(all);
           alarm.reload(); // schedule/unschedule the alarm
