@@ -1,4 +1,4 @@
-(function(options) {
+E.showScroller = (function(options) {
   /* options = {
     h = height
     c = # of items

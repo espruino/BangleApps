@@ -1,4 +1,4 @@
-(function(menu) {
+E.showMenu = (function(menu) {
   const H = 40;
   if (menu===undefined) {
     g.clearRect(Bangle.appRect);
