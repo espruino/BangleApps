@@ -41,6 +41,10 @@
         time += "m";
       return time;
     }
+    if(a.date){
+      const d = new Date(a.date);
+      return `${d.getDate()} ${require("locale").month(d, 1)}`;
+    }
     return require("time_utils").formatTime(a.t);
   }
 
