@@ -4,7 +4,7 @@
   const iconAlarmOff = atob("GBiBAAAAAAAAAAYAYA4AcBx+ODn/nAP/wAf/4A/n8A/n8B/n+B/n+B/nAB/mAB/geB/5/g/5tg/zAwfzhwPzhwHzAwB5tgAB/gAAeA==");
   const iconTimerOn = atob("GBiBAAAAAAAAAAAAAAf/4Af/4AGBgAGBgAGBgAD/AAD/AAB+AAA8AAA8AAB+AADnAADDAAGBgAGBgAGBgAf/4Af/4AAAAAAAAAAAAA==");
   const iconTimerOff = atob("GBiBAAAAAAAAAAAAAAf/4Af/4AGBgAGBgAGBgAD/AAD/AAB+AAA8AAA8AAB+AADkeADB/gGBtgGDAwGDhwfzhwfzAwABtgAB/gAAeA==");
-  const iconEvent = atob("Hh6BAf////////////////////gAAH/AAAD/P//z/P//z/P//z/P//z/AAAD/AAAD/AAAD/AAAD/AAMD/AAcD/AA4D/AxwD/A7gD/AfAD/AOAD/AAAD/AAAD/AAAD/AAAD/gAAH////////////////////w");
+  const iconEvent = atob("GBiBAAAAAAAAAAAAAA//8B//+BgAGBgAGBgAGB//+B//+B//+B/++B/8+B/5+B8z+B+H+B/P+B//+B//+B//+A//8AAAAAAAAAAAAA==");
 
   //from 0 to max, the higher the closer to fire (as in a progress bar)
   function getAlarmValue(a){
