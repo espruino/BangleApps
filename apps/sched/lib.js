@@ -34,13 +34,17 @@ exports.setAlarm = function(id, alarm) {
     if (alarm.dow===undefined) alarm.dow = 0b1111111;
     if (alarm.on!==false) alarm.on=true;
     if (alarm.timer) { // if it's a timer, set the start time as a time from *now*
-      var time = new Date();
-      var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
-      alarm.t = (currentTime + alarm.timer) % 86400000;
+      exports.resetTimer(alarm);
     }
     alarms.push(alarm);
   }
   exports.setAlarms(alarms);
+};
+/// Set a timer's firing time based off the timer's `timer` property + the given time (or now)
+exports.resetTimer = function(alarm, time) {
+  time = time || new Date();
+  var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
+  alarm.t = (currentTime + alarm.timer) % 86400000;
 };
 /// Get time until the given alarm (object). Return undefined if alarm not enabled, or if 86400000 or more, alarm could be *more* than a day in the future
 exports.getTimeToAlarm = function(alarm, time) {

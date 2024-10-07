@@ -4,6 +4,7 @@
   const iconAlarmOff = atob("GBiBAAAAAAAAAAYAYA4AcBx+ODn/nAP/wAf/4A/n8A/n8B/n+B/n+B/nAB/mAB/geB/5/g/5tg/zAwfzhwPzhwHzAwB5tgAB/gAAeA==");
   const iconTimerOn = atob("GBiBAAAAAAAAAAAAAAf/4Af/4AGBgAGBgAGBgAD/AAD/AAB+AAA8AAA8AAB+AADnAADDAAGBgAGBgAGBgAf/4Af/4AAAAAAAAAAAAA==");
   const iconTimerOff = atob("GBiBAAAAAAAAAAAAAAf/4Af/4AGBgAGBgAGBgAD/AAD/AAB+AAA8AAA8AAB+AADkeADB/gGBtgGDAwGDhwfzhwfzAwABtgAB/gAAeA==");
+  const iconEvent = atob("GBiBAAAAAAAAAAAAAA//8B//+BgAGBgAGBgAGB//+B//+B//+B/++B/8+B/5+B8z+B+H+B/P+B//+B//+B//+A//8AAAAAAAAAAAAA==");
 
   //from 0 to max, the higher the closer to fire (as in a progress bar)
   function getAlarmValue(a){
@@ -20,6 +21,7 @@
   }
 
   function getAlarmIcon(a) {
+    if(a.date) return iconEvent;
     if(a.on) {
       if(a.timer) return iconTimerOn;
       return iconAlarmOn;
@@ -38,6 +40,10 @@
       else
         time += "m";
       return time;
+    }
+    if(a.date){
+      const d = new Date(a.date);
+      return `${d.getDate()} ${require("locale").month(d, 1)}`;
     }
     return require("time_utils").formatTime(a.t);
   }
@@ -96,12 +102,13 @@
   }
 
   var img = iconAlarmOn;
+  var all = alarm.getAlarms();
   //get only alarms not created by other apps
   var alarmItems = {
     name: /*LANG*/"Alarms",
     img: img,
     dynamic: true,
-    items: alarm.getAlarms().filter(a=>!a.appid)
+    items: all.filter(a=>!a.appid)
     //.sort((a,b)=>alarm.getTimeToAlarm(a)-alarm.getTimeToAlarm(b))
     .sort((a,b)=>getAlarmOrder(a)-getAlarmOrder(b))
       .map((a, i)=>({
@@ -123,7 +130,14 @@
           this.interval = undefined;
           this.switchTimeout = undefined;
         },
-        run: function() { }
+        run: function() {
+          if (a.date) return; // ignore events
+          a.on = !a.on;
+          if(a.on && a.timer) alarm.resetTimer(a);
+          this.emit("redraw");
+          alarm.setAlarms(all);
+          alarm.reload(); // schedule/unschedule the alarm
+        }
       })),
   };
 
