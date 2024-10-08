@@ -107,3 +107,6 @@
 0.78: Fix: When user taps on a new message, clear the unread timeout
 0.79: Fix: Reset the unread timeout each time a new message is shown. When the message is read from user input, do not set an unread timeout.
 0.80: Add ability to reply to messages if a reply library is installed and the message can be replied to
+0.81: Fix issue stopping Music message for being marked as read
+      Make sure play button image is transparent
+      Add top-right menu to music playback to allow message to be deleted
