@@ -42,7 +42,7 @@ E.showMenu = (function(menu) {
           if (idx<0) return; // TITLE
           Bangle.buzz(20);
           item.value = item.min + idx*step;
-          if (item.onchange) item.onchange(item.value);
+          if (item.onchange) item.onchange(item.value, touch);
           scr.scroll = l.scroller.scroll; // set scroll to prev position
           show(); // redraw original menu
         }
@@ -139,13 +139,13 @@ E.showMenu = (function(menu) {
       Bangle.buzz(20);
       if ("function" == typeof item) item(l, touch);
       else if ("object" == typeof item) {
-        // if a bool, just toggle it
         if ("number" == typeof item.value) {
           showSubMenu(item, keys[idx]);
         } else {
+          // if a bool, just toggle it
           if ("boolean"==typeof item.value)
             item.value=!item.value;
-          if (item.onchange) item.onchange(item.value, touch);
+          if (item.onchange) item.onchange(item.value, l, touch);
           if (l.scroller.isActive()) l.scroller.drawItem(idx);
         }
       }
@@ -157,3 +157,4 @@ E.showMenu = (function(menu) {
   show();
   return l;
 })
+

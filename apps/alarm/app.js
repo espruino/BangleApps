@@ -87,24 +87,24 @@ function showMainMenu(scroll, group, scrollback) {
   };
   const getGroups = settings.showGroup && !group;
   const groups = getGroups ? {} : undefined;
-  const getIcon = (e)=>{return e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff)};
   var showAlarm;
+  const getIcon = (e)=>{return e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff);};
 
   alarms.forEach((e, index) => {
     showAlarm = !settings.showGroup || (group ? e.group === group : !e.group);
     if(showAlarm) {
       const label = trimLabel(getLabel(e),40);
       menu[label] = {
-        value: getIcon(e),
-        onchange: (v, touch) => {
+        value: e.on,
+        onchange: (v, scroller, touch) => {
           if (touch && (2==touch.type || 145<touch.x)) { // Long touch or touched icon.
-            e.on = !e.on;
-            menu[label].value = getIcon(e);
+            e.on = v;
             saveAndReload();
           } else {
-            setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index, undefined, scroller?scroller.scroll:undefined, group)
+            setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index, undefined, scroller?scroller.scroll:undefined, group);
           }
-        }
+        },
+        format: v=>getIcon(e)
       };
     } else if (getGroups) {
       groups[e.group] = undefined;
