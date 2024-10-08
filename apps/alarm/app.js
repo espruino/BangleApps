@@ -94,7 +94,7 @@ function showMainMenu(scroll, group, scrollback) {
     if(showAlarm) {
       menu[trimLabel(getLabel(e),40)] = {
         value: e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff),
-        onchange: () => setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index, undefined, scroller.scroll, group)
+        onchange: () => setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index, undefined, scroller?scroller.scroll:undefined, group)
       };
     } else if (getGroups) {
       groups[e.group] = undefined;
@@ -102,7 +102,7 @@ function showMainMenu(scroll, group, scrollback) {
   });
 
   if (!group) {
-    Object.keys(groups).sort().forEach(g => menu[g] = () => showMainMenu(null, g, scroller.scroll));
+    Object.keys(groups).sort().forEach(g => menu[g] = () => showMainMenu(null, g, scroller?scroller.scroll:undefined));
     menu[/*LANG*/"Advanced"] = () => showAdvancedMenu();
   }
 
