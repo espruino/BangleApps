@@ -4,33 +4,45 @@
   let writeSetup; // the interval for writing
   let writeSubSecs; // true if we should write .1s for time, otherwise round to nearest second
 
-  const loadSettings = () => {
-    const settings = require("Storage").readJSON("clinikali.json", 1) || {};
-    settings.period = settings.period || 10;
-    if (!settings.file || !settings.file.startsWith("clinikali.log"))
-      settings.recording = false;
-    return settings;
+  const loadAppSettings = () => {
+    const appSettings = require("Storage").readJSON("clinikali.json", 1) || {};
+
+    appSettings.period = appSettings.period || 10;
+
+    if (!appSettings.file || !appSettings.file.startsWith("clinikali.log")) {
+      appSettings.recording = false;
+    }
+
+    return appSettings;
   };
 
-  const updateSettings = (settings) => {
-    require("Storage").writeJSON("clinikali.json", settings);
-    if (WIDGETS.recorder) WIDGETS.recorder.reload();
+  const updateAppSettings = (appSettings) => {
+    require("Storage").writeJSON("clinikali.json", appSettings);
+
+    if (WIDGETS.recorder) {
+      WIDGETS.recorder.reload();
+    }
   };
 
   const getRecorders = () => {
     const recorders = {
       accel: () => {
-        let activity = "";
-        function onAccel(h) {
-          activity = h.x * h.x + h.y * h.y + h.z * h.z;
+        let activityValue = "";
+
+        function onAccel(acceleration) {
+          activityValue =
+            acceleration.x * acceleration.x +
+            acceleration.y * acceleration.y +
+            acceleration.z * acceleration.z;
         }
+
         return {
           name: "Accel",
           fields: ["Activity"],
           getValues: () => {
-            const r = [activity];
-            activity = "";
-            return r;
+            const result = [activityValue];
+            activityValue = "";
+            return result;
           },
           start: () => {
             Bangle.on("accel", onAccel);
@@ -45,17 +57,19 @@
         };
       },
       hrm: () => {
-        let bpm = "";
-        function onHRM(h) {
-          bpm = h.bpm;
+        let heartRate = "";
+
+        function onHRM(heartRateData) {
+          heartRate = heartRateData.bpm;
         }
+
         return {
           name: "HR",
           fields: ["Heartrate"],
           getValues: () => {
-            const r = [bpm];
-            bpm = "";
-            return r;
+            const result = [heartRate];
+            heartRate = "";
+            return result;
           },
           start: () => {
             Bangle.on("HRM", onHRM);
@@ -72,27 +86,30 @@
         };
       },
     };
+
     if (Bangle.getPressure) {
       recorders.baro = () => {
-        let temp = "";
-        function onPress(c) {
-          temp = c.temperature;
+        let temperature = "";
+
+        function onPressure(pressureData) {
+          temperature = pressureData.temperature;
         }
+
         return {
           name: "Baro",
           fields: ["Barometer Temperature"],
           getValues: () => {
-            const r = [temp];
-            temp = "";
-            return r;
+            const result = [temperature];
+            temperature = "";
+            return result;
           },
           start: () => {
             Bangle.setBarometerPower(1, "recorder");
-            Bangle.on("pressure", onPress);
+            Bangle.on("pressure", onPressure);
           },
           stop: () => {
             Bangle.setBarometerPower(0, "recorder");
-            Bangle.removeListener("pressure", onPress);
+            Bangle.removeListener("pressure", onPressure);
           },
           draw: (x, y) =>
             g
@@ -104,63 +121,82 @@
 
     require("Storage")
       .list(/^.*\.clinikali\.js$/)
-      .forEach((fn) => eval(require("Storage").read(fn))(recorders));
+      .forEach((filename) =>
+        eval(require("Storage").read(filename))(recorders),
+      );
+
     return recorders;
   };
 
   const getActiveRecorders = () => {
     const recorders = getRecorders();
-    return ["accel", "hrm", "baro"].map((r) => recorders[r]());
+
+    return ["accel", "hrm", "baro"].map((recorderName) =>
+      recorders[recorderName](),
+    );
   };
 
   const getCSVHeaders = (activeRecorders) =>
-    ["Time"].concat(activeRecorders.map((r) => r.fields));
+    ["Time"].concat(activeRecorders.map((recorder) => recorder.fields));
 
   const writeLog = () => {
     WIDGETS.recorder.draw();
+
     try {
       const fields = [
         writeSubSecs ? getTime().toFixed(1) : Math.round(getTime()),
       ];
+
       activeRecorders.forEach((recorder) =>
         fields.push.apply(fields, recorder.getValues()),
       );
-      if (storageFile) storageFile.write(`${fields.join(",")}\n`);
-    } catch (e) {
-      console.log("recorder: error", e);
-      const settings = loadSettings();
-      settings.recording = false;
-      require("Storage").write("clinikali.json", settings);
+
+      if (storageFile) {
+        storageFile.write(`${fields.join(",")}\n`);
+      }
+    } catch (error) {
+      console.log("recorder: error", error);
+      const appSettings = loadAppSettings();
+
+      appSettings.recording = false;
+
+      require("Storage").write("clinikali.json", appSettings);
       reload();
     }
   };
 
   const reload = () => {
-    const settings = loadSettings();
-    if (typeof writeSetup === "number") clearInterval(writeSetup);
-    writeSetup = undefined;
+    const appSettings = loadAppSettings();
 
-    activeRecorders.forEach((rec) => rec.stop());
+    if (typeof writeSetup === "number") {
+      clearInterval(writeSetup);
+    }
+
+    writeSetup = undefined;
+    activeRecorders.forEach((recorder) => recorder.stop());
     activeRecorders = [];
 
-    if (settings.recording) {
+    if (appSettings.recording) {
       activeRecorders = getActiveRecorders();
       activeRecorders.forEach((activeRecorder) => {
         activeRecorder.start();
       });
+
       WIDGETS.recorder.width = 15 + ((activeRecorders.length + 1) >> 1) * 12; // 12px per recorder
-      if (require("Storage").list(settings.file).length) {
-        storageFile = require("Storage").open(settings.file, "a");
+
+      if (require("Storage").list(appSettings.file).length) {
+        storageFile = require("Storage").open(appSettings.file, "a");
       } else {
-        storageFile = require("Storage").open(settings.file, "w");
+        storageFile = require("Storage").open(appSettings.file, "w");
         storageFile.write(`${getCSVHeaders(activeRecorders).join(",")}\n`);
       }
+
       WIDGETS.recorder.draw();
-      writeSubSecs = settings.period === 1;
+      writeSubSecs = appSettings.period === 1;
       writeSetup = setInterval(
         writeLog,
-        settings.period * 1000,
-        settings.period,
+        appSettings.period * 1000,
+        appSettings.period,
       );
     } else {
       WIDGETS.recorder.width = 0;
@@ -172,14 +208,20 @@
     area: "tl",
     width: 0,
     draw: function () {
-      if (!writeSetup) return;
+      if (!writeSetup) {
+        return;
+      }
+
       g.reset().drawImage(
         atob("DRSBAAGAHgDwAwAAA8B/D/hvx38zzh4w8A+AbgMwGYDMDGBjAA=="),
         this.x + 1,
         this.y + 2,
       );
-      activeRecorders.forEach((recorder, i) => {
-        recorder.draw(this.x + 15 + (i >> 1) * 12, this.y + (i & 1) * 12);
+      activeRecorders.forEach((recorder, index) => {
+        recorder.draw(
+          this.x + 15 + (index >> 1) * 12,
+          this.y + (index & 1) * 12,
+        );
       });
     },
     getRecorders: getRecorders,
@@ -189,33 +231,45 @@
     },
     isRecording: () => !!writeSetup,
     setRecording: (isOn, options) => {
-      const settings = loadSettings();
+      const appSettings = loadAppSettings();
+
       options = options || {};
-      if (isOn && !settings.recording) {
-        const date = new Date().toISOString().substr(0, 10).replace(/-/g, "");
-        let trackNo = 10;
-        function getTrackFilename() {
-          return `clinikali.log${date}${trackNo.toString(36)}.csv`;
+
+      if (isOn && !appSettings.recording) {
+        const currentDate = new Date()
+          .toISOString()
+          .substr(0, 10)
+          .replace(/-/g, "");
+        let trackNumber = 10;
+
+        function generateTrackFilename() {
+          return `clinikali.log${currentDate}${trackNumber.toString(36)}.csv`;
         }
+
         if (
-          !settings.file ||
-          !settings.file.startsWith(`clinikali.log${date}`)
+          !appSettings.file ||
+          !appSettings.file.startsWith(`clinikali.log${currentDate}`)
         ) {
-          settings.file = getTrackFilename();
+          appSettings.file = generateTrackFilename();
         }
-        const headers = require("Storage").open(settings.file, "r").readLine();
-        if (headers) {
+
+        const existingHeaders = require("Storage")
+          .open(appSettings.file, "r")
+          .readLine();
+
+        if (existingHeaders) {
           if (
-            headers.trim() !==
-            getCSVHeaders(getActiveRecorders(settings)).join(",")
+            existingHeaders.trim() !==
+            getCSVHeaders(getActiveRecorders(appSettings)).join(",")
           ) {
             options.force = "new";
           }
+
           if (!options.force) {
             g.reset();
             return E.showPrompt(
               `Overwrite\nLog ${
-                settings.file.match(/^clinikali\.log(.*)\.csv$/)[1]
+                appSettings.file.match(/^clinikali\.log(.*)\.csv$/)[1]
               }?`,
               {
                 title: "Recorder",
@@ -227,34 +281,45 @@
                 },
               },
             ).then((selection) => {
-              if (selection === "cancel") return false;
-              if (selection === "overwrite")
+              if (selection === "cancel") {
+                return false;
+              }
+              if (selection === "overwrite") {
                 return WIDGETS.recorder.setRecording(1, { force: "overwrite" });
-              if (selection === "new")
+              }
+              if (selection === "new") {
                 return WIDGETS.recorder.setRecording(1, { force: "new" });
-              if (selection === "append")
+              }
+              if (selection === "append") {
                 return WIDGETS.recorder.setRecording(1, { force: "append" });
+              }
               throw new Error("Unknown response!");
             });
           }
+
           if (options.force === "append") {
             // do nothing, filename is the same - we are good
           } else if (options.force === "overwrite") {
-            require("Storage").open(settings.file, "r").erase();
+            require("Storage").open(appSettings.file, "r").erase();
           } else if (options.force === "new") {
             let newFileName;
+
             do {
-              newFileName = getTrackFilename();
-              trackNo++;
+              newFileName = generateTrackFilename();
+              trackNumber++;
             } while (require("Storage").list(newFileName).length);
-            settings.file = newFileName;
-          } else throw new Error(`Unknown options.force, ${options.force}`);
+
+            appSettings.file = newFileName;
+          } else {
+            throw new Error(`Unknown options.force, ${options.force}`);
+          }
         }
       }
-      settings.recording = isOn;
-      updateSettings(settings);
+
+      appSettings.recording = isOn;
+      updateAppSettings(appSettings);
       WIDGETS.recorder.reload();
-      return Promise.resolve(settings.recording);
+      return Promise.resolve(appSettings.recording);
     },
   };
 

@@ -32,6 +32,7 @@
             },
             run: () => {
               const w = typeof WIDGETS !== "undefined" && WIDGETS.recorder;
+
               if (w) {
                 Bangle.buzz();
                 w.setRecording(!w.isRecording(), { force: "append" });
