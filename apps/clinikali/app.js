@@ -26,17 +26,6 @@ function getTrackNumber(filename) {
 }
 
 function showMainMenu() {
-  function menuRecord(id) {
-    return {
-      value: settings.record.includes(id),
-      onchange: (v) => {
-        settings.recording = false; // stop recording if we change anything
-        settings.record = settings.record.filter((r) => r !== id);
-        if (v) settings.record.push(id);
-        updateSettings();
-      },
-    };
-  }
   const mainmenu = {
     "": { title: "Recorder" },
     "< Back": () => {
@@ -48,9 +37,7 @@ function showMainMenu() {
         setTimeout(() => {
           E.showMenu();
           WIDGETS.recorder.setRecording(v).then(() => {
-            //print("Record start Complete");
             loadSettings();
-            //print("Recording: "+settings.recording);
             showMainMenu();
           });
         }, 1);
@@ -73,11 +60,6 @@ function showMainMenu() {
       },
     },
   };
-  const recorders = WIDGETS.recorder.getRecorders();
-  Object.keys(recorders).forEach((id) => {
-    mainmenu[`Log ${recorders[id]().name}`] = menuRecord(id);
-  });
-  delete recorders;
   return E.showMenu(mainmenu);
 }
 
@@ -104,26 +86,30 @@ function getTrackInfo(filename) {
   "ram";
   let starttime;
   let duration = 0;
+
   const f = require("Storage").open(filename, "r");
+
   if (f === undefined) return;
+
   let l = f.readLine(f);
-  let fields;
   let timeIdx;
   let c;
+
   if (l !== undefined) {
-    fields = l.trim().split(",");
+    const fields = l.trim().split(",");
     timeIdx = fields.indexOf("Time");
     l = f.readLine(f);
   }
+
   if (l !== undefined) {
     c = l.split(",");
     starttime = Number.parseInt(c[timeIdx]);
   }
 
   if (c) duration = Number.parseInt(c[timeIdx]) - starttime;
+
   return {
     fn: getTrackNumber(filename),
-    fields: fields,
     filename: filename,
     time: new Date(starttime * 1000),
     duration: Math.round(duration),

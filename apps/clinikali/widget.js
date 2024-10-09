@@ -9,7 +9,6 @@
     settings.period = settings.period || 10;
     if (!settings.file || !settings.file.startsWith("clinikali.log"))
       settings.recording = false;
-    if (!settings.record) settings.record = ["accel", "hrm", "baro"];
     return settings;
   };
 
@@ -109,19 +108,11 @@
     return recorders;
   };
 
-  const getActiveRecorders = (settings) => {
-    const activeRecorders = [];
+  const getActiveRecorders = () => {
     const recorders = getRecorders();
-    settings.record.forEach((r) => {
-      const recorder = recorders[r];
-      if (!recorder) {
-        console.log(`Recorder for ${E.toJS(r)}+not found`);
-        return;
-      }
-      activeRecorders.push(recorder());
-    });
-    return activeRecorders;
+    return ["accel", "hrm", "baro"].map((r) => recorders[r]());
   };
+
   const getCSVHeaders = (activeRecorders) =>
     ["Time"].concat(activeRecorders.map((r) => r.fields));
 
@@ -153,7 +144,7 @@
     activeRecorders = [];
 
     if (settings.recording) {
-      activeRecorders = getActiveRecorders(settings);
+      activeRecorders = getActiveRecorders();
       activeRecorders.forEach((activeRecorder) => {
         activeRecorder.start();
       });
@@ -223,7 +214,9 @@
           if (!options.force) {
             g.reset();
             return E.showPrompt(
-              `Overwrite\nLog ${settings.file.match(/^clinikali\.log(.*)\.csv$/)[1]}?`,
+              `Overwrite\nLog ${
+                settings.file.match(/^clinikali\.log(.*)\.csv$/)[1]
+              }?`,
               {
                 title: "Recorder",
                 buttons: {
