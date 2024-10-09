@@ -1,4 +1,5 @@
 {
-  "period": 1000,
-  "recording": false
+	"period": 1000,
+	"recording": false,
+	"record": []
 }
