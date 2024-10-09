@@ -160,15 +160,15 @@ function formatDuration(durationInSeconds) {
 }
 
 function viewTrack(filename, trackInfo) {
-  if (!trackInfo) {
+  /* if (!trackInfo) {
     E.showMessage("Loading...", `Track ${extractTrackNumber(filename)}`);
     trackInfo = getTrackInfo(filename);
-  }
+  } */
 
   const trackMenu = {
     "": { title: `Track ${trackInfo.trackNumber}` },
   };
-
+  /* 
   if (trackInfo.time) {
     trackMenu[trackInfo.time.toISOString().substr(0, 16).replace("T", " ")] =
       {};
@@ -180,7 +180,7 @@ function viewTrack(filename, trackInfo) {
 
   if (trackInfo.records !== undefined) {
     trackMenu.Records = { value: trackInfo.records.toString() };
-  }
+  } */
 
   trackMenu.Erase = () => {
     E.showPrompt("Delete Track?").then((shouldDelete) => {
