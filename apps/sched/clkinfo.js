@@ -111,7 +111,7 @@
     items: all.filter(a=>!a.appid)
     //.sort((a,b)=>alarm.getTimeToAlarm(a)-alarm.getTimeToAlarm(b))
     .sort((a,b)=>getAlarmOrder(a)-getAlarmOrder(b))
-      .map((a, i)=>({
+      .map(a => ({
         name: null,
         hasRange: true,
         get: () => ({ text: getAlarmText(a), img: getAlarmIcon(a),
