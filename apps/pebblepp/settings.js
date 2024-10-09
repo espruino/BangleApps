@@ -2,19 +2,13 @@
   const SETTINGS_FILE = "pebblepp.json";
 
   // Initialize with default settings...
-  let s = {'theme':'System', 'showlock':false}
-
+  let settings = {'theme':'System', 'showdate':true, 'clkinfoborder':false}
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
   const storage = require('Storage');
-  let settings = storage.readJSON(SETTINGS_FILE, 1) || s;
-  const saved = settings || {};
-  for (const key in saved) {
-    s[key] = saved[key]
-  }
+  settings = Object.assign(settings, storage.readJSON(SETTINGS_FILE, 1)||{});
 
   function save() {
-    settings = s;
     storage.write(SETTINGS_FILE, settings);
   }
 
@@ -24,13 +18,27 @@
     '': { 'title': 'Pebble++ Clock' },
     /*LANG*/'< Back': back,
     /*LANG*/'Theme': {
-      value: 0 | theme_options.indexOf(s.theme),
+      value: 0 | theme_options.indexOf(settings.theme),
       min: 0, max: theme_options.length - 1,
       format: v => theme_options[v],
       onchange: v => {
-        s.theme = theme_options[v];
+        settings.theme = theme_options[v];
+        save();
+      }
+    },
+    /*LANG*/'Show Date': {
+      value: !!settings.showdate,
+      onchange: v => {
+        settings.showdate = v;
+        save();
+      }
+    },
+    /*LANG*/'ClockInfo border': {
+      value: !!settings.clkinfoborder,
+      onchange: v => {
+        settings.clkinfoborder = v;
         save();
       }
     }
   });
-});
+})
