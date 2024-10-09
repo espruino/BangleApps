@@ -4,3 +4,4 @@
 0.04: More options for different background colors
       'Plasma' generative background
       Add a 'view' option in settings menu to view the current background
+0.05: Random square+plasma speed improvements (~2x faster)

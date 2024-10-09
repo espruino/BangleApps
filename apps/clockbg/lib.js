@@ -12,20 +12,23 @@ exports.reload = function() {
     let n = (0|(Math.random()*settings.colors.length)) % settings.colors.length;
     settings.color = settings.colors[n];
     delete settings.colors;
-  } else if (settings.style=="squares") { // 50ms
+  } else if (settings.style=="squares") { // 32ms
     settings.style = "image";
     let bpp = (settings.colors.length>4)?4:2;
     let bg = Graphics.createArrayBuffer(11,11,bpp,{msb:true});
-    E.mapInPlace(bg.buffer, bg.buffer, ()=>Math.random()*256); // random pixels
+    let u32 = new Uint32Array(bg.buffer); // faster to do 1/4 of the ops of E.mapInPlace(bg.buffer, bg.buffer, ()=>Math.random()*256);
+    E.mapInPlace(u32, u32, function(r,n){"ram";return r()*n}.bind(null,Math.random,0x100000000)); // random pixels
+    bg.buffer[bg.buffer.length-1]=Math.random()*256; // 11x11 isn't a multiple of 4 bytes - we need to set the last one!
     bg.palette = new Uint16Array(1<<bpp);
     bg.palette.set(settings.colors.map(c=>g.toColor(c)));
-    settings.img = bg.asImage("string");
+    settings.img = bg;
     settings.imgOpt = {scale:16};
     delete settings.colors;
-  } else if (settings.style=="plasma") { // ~100ms
+  } else if (settings.style=="plasma") { // ~47ms
     settings.style = "image";
     let bg = Graphics.createArrayBuffer(16,16,4,{msb:true});
-    E.mapInPlace(bg.buffer, bg.buffer, ()=>Math.random()*256); // random pixels
+    let u32 = new Uint32Array(bg.buffer); // faster to do 1/4 of the ops of E.mapInPlace(bg.buffer, bg.buffer, ()=>Math.random()*256);
+    E.mapInPlace(u32, u32, function(r,n){"ram";return r()*n}.bind(null,Math.random,0x100000000)); // random pixels
     bg.filter([ // a gaussian filter to smooth out
         1, 4, 7, 4, 1,
         4,16,26,16, 4,
@@ -35,7 +38,7 @@ exports.reload = function() {
     ], { w:5, h:5, div:120, offset:-800 });
     bg.palette = new Uint16Array(16);
     bg.palette.set(settings.colors.map(c=>g.toColor(c)));
-    settings.img = bg.asImage("string");
+    settings.img = bg;
     settings.imgOpt = {scale:11};
     delete settings.colors;
   }
