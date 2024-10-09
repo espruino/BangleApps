@@ -1,1 +1,4 @@
 0.01: New App.
+0.02: 
+- Removed HRV functionality
+- Added milliseconds to the timestamps
