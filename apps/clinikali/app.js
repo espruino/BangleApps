@@ -105,82 +105,80 @@ function viewTracks() {
   return E.showMenu(trackMenu);
 }
 
-function getTrackInfo(filename) {
-  "ram";
-  let startTime;
-  let endTime;
-  let recordCount = 0;
-
-  const fileHandle = require("Storage").open(filename, "r");
-
-  if (fileHandle === undefined) {
-    return;
-  }
-
-  let line = fileHandle.readLine();
-  let timeIndex;
-
-  if (line !== undefined) {
-    const fields = line.trim().split(",");
-
-    timeIndex = fields.indexOf("Time");
-    line = fileHandle.readLine();
-  }
-
-  if (line !== undefined) {
-    let columns = line.split(",");
-
-    startTime = Number.parseInt(columns[timeIndex]);
-    recordCount++;
-
-    // Read through the file to get the last time and count records
-    while ((line = fileHandle.readLine()) !== undefined) {
-      columns = line.split(",");
-      endTime = Number.parseInt(columns[timeIndex]);
-      recordCount++;
-    }
-  }
-
-  const duration = endTime ? endTime - startTime : 0;
-
-  return {
-    trackNumber: extractTrackNumber(filename),
-    filename: filename,
-    time: new Date(startTime * 1000),
-    duration: Math.round(duration),
-    records: recordCount,
-  };
-}
-
-function formatDuration(durationInSeconds) {
-  const minutes = Math.floor(durationInSeconds / 60);
-  const seconds = durationInSeconds - minutes * 60;
-
-  return `${minutes.toString()}m ${seconds.toString()}s`;
-}
-
-function viewTrack(filename, trackInfo) {
-  /* if (!trackInfo) {
-    E.showMessage("Loading...", `Track ${extractTrackNumber(filename)}`);
-    trackInfo = getTrackInfo(filename);
-  } */
-
+function viewTrack(filename) {
   const trackMenu = {
-    "": { title: `Track ${trackInfo.trackNumber}` },
+    "": { title: `Track ${extractTrackNumber(filename)}` },
   };
-  /* 
-  if (trackInfo.time) {
-    trackMenu[trackInfo.time.toISOString().substr(0, 16).replace("T", " ")] =
-      {};
-  }
 
-  if (trackInfo.duration !== undefined) {
-    trackMenu.Duration = { value: formatDuration(trackInfo.duration) };
-  }
+  trackMenu["Send via BT"] = () => {
+    E.showMessage("Preparing...", "Bluetooth");
 
-  if (trackInfo.records !== undefined) {
-    trackMenu.Records = { value: trackInfo.records.toString() };
-  } */
+    // Set up Nordic UART Service
+    NRF.setServices(
+      {
+        "6e400001-b5a3-f393-e0a9-e50e24dcca9e": {
+          "6e400002-b5a3-f393-e0a9-e50e24dcca9e": {
+            write: function (value) {
+              // This function will be called when data is received
+              console.log("Received from phone: " + E.toString(value));
+            },
+          },
+          "6e400003-b5a3-f393-e0a9-e50e24dcca9e": {
+            notify: true,
+          },
+        },
+      },
+      { advertise: ["6e400001-b5a3-f393-e0a9-e50e24dcca9e"] },
+    );
+
+    // Start advertising
+    NRF.setAdvertising({}, { name: "Bangle.js Recorder" });
+
+    function sendFile() {
+      E.showMessage("Sending...", "Bluetooth");
+      let file = require("Storage").open(filename, "r");
+      let line;
+      let characteristic = NRF.getCharacteristic(
+        "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
+        "6e400003-b5a3-f393-e0a9-e50e24dcca9e",
+      );
+
+      function sendNextChunk() {
+        line = file.readLine();
+        if (line !== undefined) {
+          characteristic
+            .notify(line + "\n")
+            .then(() => {
+              setTimeout(sendNextChunk, 50); // Add a small delay between chunks
+            })
+            .catch((err) => {
+              E.showAlert("Send Failed: " + err).then(() => {
+                viewTrack(filename);
+              });
+            });
+        } else {
+          E.showAlert("File Sent").then(() => {
+            viewTrack(filename);
+          });
+        }
+      }
+
+      sendNextChunk();
+    }
+
+    // Wait for connection
+    NRF.on("connect", function () {
+      E.showMessage("Connected", "Bluetooth");
+      setTimeout(sendFile, 1000); // Wait a bit before sending
+    });
+
+    // Show message to connect
+    E.showAlert("Connect to\nBangle.js Recorder\non your device").then(() => {
+      // If user cancels, stop advertising
+      NRF.setAdvertising({});
+      viewTrack(filename);
+    });
+  };
 
   trackMenu.Erase = () => {
     E.showPrompt("Delete Track?").then((shouldDelete) => {
@@ -191,7 +189,7 @@ function viewTrack(filename, trackInfo) {
         fileToErase.erase();
         viewTracks();
       } else {
-        viewTrack(filename, trackInfo);
+        viewTrack(filename);
       }
     });
   };
