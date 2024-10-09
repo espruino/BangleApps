@@ -86,7 +86,7 @@ function viewTracks() {
     '': { 'title': 'Tracks' }
   };
   let found = false;
-  require("Storage").list(/^recorder\.log.*\.csv$/,{sf:true}).reverse().forEach(filename=>{
+  require("Storage").list(/^clinikali\.log.*\.csv$/,{sf:true}).reverse().forEach(filename=>{
     found = true;
     menu[getTrackNumber(filename)] = ()=>viewTrack(filename,false);
   });

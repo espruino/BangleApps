@@ -20,6 +20,31 @@
 
 	const getRecorders = () => {
 		const recorders = {
+      accel: () => {
+        let activity = "";
+        function onAccel(h) {
+          activity = h.x * h.x + h.y * h.y + h.z * h.z;
+        }
+        return {
+          name: "Accel",
+          fields: ["Activity"],
+          getValues: () => {
+            const r = [activity];
+            activity = "";
+            return r;
+          },
+          start: () => {
+            Bangle.on("accel", onAccel);
+          },
+          stop: () => {
+            Bangle.removeListener("accel", onAccel);
+          },
+          draw: (x, y) =>
+            g
+              .setColor("#00f")
+              .drawImage(atob("DAwBAAH4EIHIEIHIEIHIEIEIH4AA"), x, y),
+        };
+      },
 			hrm: () => {
 				let bpm = "";
 				function onHRM(h) {
@@ -79,7 +104,7 @@
 		}
 
 		require("Storage")
-			.list(/^.*\.recorder\.js$/)
+			.list(/^.*\.clinikali\.js$/)
 			.forEach((fn) => eval(require("Storage").read(fn))(recorders));
 		return recorders;
 	};
@@ -198,7 +223,7 @@
 					if (!options.force) {
 						g.reset();
 						return E.showPrompt(
-							`Overwrite\nLog ${settings.file.match(/^recorder\.log(.*)\.csv$/)[1]}?`,
+							`Overwrite\nLog ${settings.file.match(/^clinikali\.log(.*)\.csv$/)[1]}?`,
 							{
 								title: "Recorder",
 								buttons: {
