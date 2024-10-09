@@ -1,0 +1,23 @@
+{
+  "id": "clinikali",
+  "name": "clinikali",
+  "shortName": "clinikali",
+  "version": "0.1",
+  "description": "Record heart rate and more in the background, then download to your PC.",
+  "icon": "app.png",
+  "tags": "tool,outdoors,gps,widget,clkinfo",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "storage": [
+    {"name":"clinikali.app.js","url":"app.js"},
+    {"name":"clinikali.img","url":"app-icon.js","evaluate":true},
+    {"name":"clinikali.wid.js","url":"widget.js"},
+    {"name":"clinikali.clkinfo.js","url":"clkinfo.js"},
+    {"name":"clinikali.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"clinikali.json","url":"app-settings.json"},
+    {"wildcard":"clinikali.log?.csv","storageFile":true}
+  ]
+}
