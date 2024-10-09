@@ -1,0 +1,16 @@
+{ "id": "textfacts",
+  "name": "List of Facts",
+  "shortName":"Facts",
+  "version":"0.01",
+  "description": "A list of hundreds of 'facts' from Google Gemini. Provides a `textsource` module that apps can use to query a random fact.",
+  "icon": "icon.png",
+  "type": "module",
+  "tags": "",
+  "provides_modules" : ["textsource"],
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"textsource.txt","url":"facts.txt"},
+    {"name":"textsource","url":"lib.js"}
+  ]
+}
