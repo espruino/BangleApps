@@ -1,25 +1,46 @@
-let settings = Object.assign({
-  style : "randomcolor",
-  colors : ["#F00","#0F0","#00F"]
-},require("Storage").readJSON("clockbg.json")||{});
-if (settings.style=="image")
-  settings.img = require("Storage").read(settings.fn);
-else if (settings.style=="randomcolor") {
-  settings.style = "color";
-  let n = (0|(Math.random()*settings.colors.length)) % settings.colors.length;
-  settings.color = settings.colors[n];
-  delete settings.colors;
-} else if (settings.style=="squares") {
-  settings.style = "image";
-  let bpp = (settings.colors.length>4)?4:2;
-  let bg = Graphics.createArrayBuffer(11,11,bpp,{msb:true});
-  E.mapInPlace(bg.buffer, bg.buffer, ()=>Math.random()*256); // random pixels
-  bg.palette = new Uint16Array(1<<bpp);
-  bg.palette.set(settings.colors.map(c=>g.toColor(c)));
-  settings.img = bg.asImage("string");
-  settings.imgOpt = {scale:16};
-  delete settings.colors;
-}
+let settings;
+
+exports.reload = function() {
+  settings = Object.assign({
+    style : "randomcolor",
+    colors : ["#F00","#0F0","#00F"]
+  },require("Storage").readJSON("clockbg.json")||{});
+  if (settings.style=="image")
+    settings.img = require("Storage").read(settings.fn);
+  else if (settings.style=="randomcolor") {
+    settings.style = "color";
+    let n = (0|(Math.random()*settings.colors.length)) % settings.colors.length;
+    settings.color = settings.colors[n];
+    delete settings.colors;
+  } else if (settings.style=="squares") { // 50ms
+    settings.style = "image";
+    let bpp = (settings.colors.length>4)?4:2;
+    let bg = Graphics.createArrayBuffer(11,11,bpp,{msb:true});
+    E.mapInPlace(bg.buffer, bg.buffer, ()=>Math.random()*256); // random pixels
+    bg.palette = new Uint16Array(1<<bpp);
+    bg.palette.set(settings.colors.map(c=>g.toColor(c)));
+    settings.img = bg.asImage("string");
+    settings.imgOpt = {scale:16};
+    delete settings.colors;
+  } else if (settings.style=="plasma") { // ~100ms
+    settings.style = "image";
+    let bg = Graphics.createArrayBuffer(16,16,4,{msb:true});
+    E.mapInPlace(bg.buffer, bg.buffer, ()=>Math.random()*256); // random pixels
+    bg.filter([ // a gaussian filter to smooth out
+        1, 4, 7, 4, 1,
+        4,16,26,16, 4,
+        7,26,41,26, 7,
+        4,16,26,16, 4,
+        1, 4, 7, 4, 1
+    ], { w:5, h:5, div:120, offset:-800 });
+    bg.palette = new Uint16Array(16);
+    bg.palette.set(settings.colors.map(c=>g.toColor(c)));
+    settings.img = bg.asImage("string");
+    settings.imgOpt = {scale:11};
+    delete settings.colors;
+  }
+};
+exports.reload();
 
 // Fill a rectangle with the current background style, rect = {x,y,w,h}
 // eg require("clockbg").fillRect({x:10,y:10,w:50,h:50})
