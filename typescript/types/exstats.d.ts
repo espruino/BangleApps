@@ -10,15 +10,23 @@ declare module ExStats {
 
 	type Options<Ids> = {
 		paceLength?: number,
-		notify?: Notify<Ids>,
+		notify?: NotifyInput<Ids>,
 	};
 
 	type Notify<Ids> = {
-		[key in Ids & ("dist" | "step" | "time")]?: {
-			//             optional when passed in ^
-			increment?: number,
-			next?: number,
+		[key in Ids & ("dist" | "step" | "time")]: {
+			increment: number,
+			next: number,
 		}
+	};
+
+	type NotifyInput<Ids> = {
+		[K in keyof Notify<Ids>]?:
+			Omit<
+				Notify<Ids>[K], "next"
+			> & {
+				next?: number,
+			};
 	};
 
 	type StatsInst<Ids extends StatsId> = {
