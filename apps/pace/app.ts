@@ -14,7 +14,15 @@ const exs = require("exstats").getStats(
 
 let drawTimeout: TimeoutId | undefined;
 
-const splits: number[] = []; // times
+type Dist = number & { brand: 'dist' };
+type Time = number & { brand: 'time' };
+
+type Split = {
+  dist: Dist,
+  time: Time,
+};
+
+const splits: Split[] = []; // times
 let splitOffset = 0, splitOffsetPx = 0;
 
 const GPS_TIMEOUT_MS = 30000;
@@ -55,9 +63,9 @@ const layout = new Layout({
   lazy: true
 });
 
-const calculatePace = (time: number, dist: number) => {
-  if (dist === 0) return 0;
-  return time / dist / 1000 / 60;
+const calculatePace = (split: Split) => {
+  if (split.dist === 0) return 0;
+  return split.time / split.dist / 1000 / 60;
 };
 
 const draw = () => {
@@ -103,7 +111,7 @@ const drawSplits = () => {
   const w = g.getWidth();
   const h = g.getHeight();
 
-  const max = splits.reduce((a, x) => Math.max(a, x), 0);
+  const max = splits.reduce((a, s) => Math.max(a, s.time), 0);
 
   g.setFont("6x8", 2).setFontAlign(-1, -1);
 
@@ -115,10 +123,10 @@ const drawSplits = () => {
     const y = Bangle.appRect.y + i * (barSize + barSpacing) + barSpacing / 2;
     if (y > h) break;
 
-    const size = w * split / max; // Scale bar height based on pace
+    const size = w * split.time / max; // Scale bar height based on pace
     g.setColor("#00f").fillRect(0, y, size, y + barSize);
 
-    const splitPace = calculatePace(split, 1); // Pace per km
+    const splitPace = calculatePace(split); // Pace per km
     drawSplit(i, y, splitPace);
   }
 
@@ -163,15 +171,15 @@ const onButton = () => {
 exs.start(); // aka reset
 
 exs.stats.dist.on("notify", (dist) => {
-  const prev = splits[splits.length - 1] || 0;
+  const prevDist = splits[splits.length - 1]?.dist ?? 0;
   const totalDist = dist.getValue();
-  let thisSplit = totalDist - prev;
-  const prevTime = splits.reduce((a, b) => a + b, 0);
-  let time = exs.state.duration - prevTime;
+  let thisSplit = totalDist - prevDist;
+  const prevTime = splits.reduce((t, s) => t + s.time, 0);
+  let thisTime = exs.state.duration - prevTime;
 
-  while(thisSplit > 0) {
-    splits.push(time);
-    time = 0; // if we've jumped more than 1k, credit the time to the first split
+  while(thisSplit > 1000) {
+    splits.push({ dist: thisSplit as Dist, time: thisTime as Time });
+    thisTime = 0; // if we've jumped more than 1k, credit the time to the first split
     thisSplit -= 1000;
   }
 });
