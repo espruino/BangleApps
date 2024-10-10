@@ -182,6 +182,9 @@ exs.stats.dist.on("notify", (dist) => {
     thisTime = 0; // if we've jumped more than 1k, credit the time to the first split
     thisSplit -= 1000;
   }
+
+  // subtract <how much we're over> off the next split notify
+  exs.state.notify.dist.next -= thisSplit;
 });
 
 Bangle.on('lock', locked => {
