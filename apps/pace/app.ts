@@ -164,6 +164,8 @@ const onButton = () => {
     resumeRun();
 };
 
+exs.start(); // aka reset
+
 exs.stats.dist.on("notify", (dist) => {
   const prev = splits[splits.length - 1] || 0;
   const totalDist = dist.getValue();
