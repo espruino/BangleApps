@@ -104,12 +104,9 @@ const drawSplits = () => {
   g.setFont("6x8", 2).setFontAlign(-1, -1);
 
   let i = 0;
-  let totalTime = 0;
   for(; ; i++) {
     const split = splits[i + splitOffset];
     if (split == null) break;
-
-    totalTime += split;
 
     const y = Bangle.appRect.y + i * (barSize + barSpacing) + barSpacing / 2;
     if (y > h) break;
@@ -118,17 +115,23 @@ const drawSplits = () => {
     g.setColor("#00f").fillRect(0, y, size, y + barSize);
 
     const splitPace = calculatePace(split, 1); // Pace per km
-    g.setColor("#fff").drawString(`${i + 1 + splitOffset} @ ${splitPace.toFixed(2)}`, 0, y);
+    drawSplit(i, y, splitPace);
   }
 
   const pace = exs.stats.pacec.getString();
-  const splitTime = exs.state.duration - totalTime;
 
-  g.setColor("#fff").drawString(
-    `${i + 1 + splitOffset} @ ${pace} (${(splitTime / 1000).toFixed(2)})`,
-    0,
-    Bangle.appRect.y + i * (barSize + barSpacing) + barSpacing / 2,
-  );
+  const y = Bangle.appRect.y + i * (barSize + barSpacing) + barSpacing / 2;
+  drawSplit(i, y, pace);
+};
+
+const drawSplit = (i: number, y: number, pace: number | string) => {
+  g
+    .setColor("#fff")
+    .drawString(
+      `${i + 1 + splitOffset} ${typeof pace === "number" ? pace.toFixed(2) : pace}`,
+      0,
+      y
+    );
 };
 
 const pauseRun = () => {
