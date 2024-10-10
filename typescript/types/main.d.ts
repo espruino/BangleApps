@@ -10229,7 +10229,7 @@ interface Array<T> {
    * @returns {any} The value returned by the last function called
    * @url http://www.espruino.com/Reference#l_Array_reduce
    */
-  reduce(callback: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T, initialValue?: T): T;
+  reduce<O>(callback: (previousValue: O, currentValue: T, currentIndex: number, array: T[]) => O, initialValue?: O): O;
 
   /**
    * Both remove and add items to an array
