@@ -172,11 +172,15 @@ const onButton = () => {
 exs.start(); // aka reset
 
 exs.stats.dist.on("notify", (dist) => {
-  const prevDist = splits[splits.length - 1]?.dist ?? 0;
+  const prev = { time: 0, dist: 0 };
+  for(const s of splits){
+    prev.time += s.time;
+    prev.dist += s.dist;
+  }
+
   const totalDist = dist.getValue();
-  let thisSplit = totalDist - prevDist;
-  const prevTime = splits.reduce((t, s) => t + s.time, 0);
-  let thisTime = exs.state.duration - prevTime;
+  let thisSplit = totalDist - prev.dist;
+  let thisTime = exs.state.duration - prev.time;
 
   while(thisSplit > 1000) {
     splits.push({ dist: thisSplit as Dist, time: thisTime as Time });
