@@ -82,13 +82,21 @@ const draw = () => {
     pace = "No GPS";
   }
 
-  const tm = time_utils.decodeTime(exs.state.duration);
-  layout["time"]!.label = tm.d ? time_utils.formatDuration(tm) : time_utils.formatTime(tm); // formatTime throws if tm.d > 0
+  layout["time"]!.label = formatDuration(exs.state.duration);
   layout["pace"]!.label = pace;
   layout.render();
 
   if (now - lastUnlazy > 30000)
     layout.forgetLazyState(), lastUnlazy = now;
+};
+
+const pad2 = (n: number) => `0${n}`.substr(-2);
+
+const formatDuration = (ms: number) => {
+  const tm = time_utils.decodeTime(ms);
+  if(tm.h)
+    return `${tm.h}:${pad2(tm.m)}:${pad2(tm.s)}`;
+  return `${pad2(tm.m)}:${pad2(tm.s)}`;
 };
 
 const drawSplits = () => {
