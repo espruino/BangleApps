@@ -215,6 +215,10 @@ Bangle.on('drag', e => {
   draw();
 });
 
+Bangle.on('twist', () => {
+  Bangle.setBacklight(1);
+});
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
