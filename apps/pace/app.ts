@@ -13,7 +13,6 @@ const exs = require("exstats").getStats(
 );
 
 let drawTimeout: TimeoutId | undefined;
-let lastUnlazy = 0;
 
 const splits: number[] = []; // times
 let splitOffset = 0, splitOffsetPx = 0;
@@ -85,9 +84,6 @@ const draw = () => {
   layout["time"]!.label = formatDuration(exs.state.duration);
   layout["pace"]!.label = pace;
   layout.render();
-
-  if (now - lastUnlazy > 30000)
-    layout.forgetLazyState(), lastUnlazy = now;
 };
 
 const pad2 = (n: number) => `0${n}`.substr(-2);
