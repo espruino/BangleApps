@@ -11,6 +11,7 @@ const exs = require("exstats").getStats(
     },
   },
 );
+const S = require("Storage");
 
 let drawTimeout: TimeoutId | undefined;
 
@@ -185,6 +186,8 @@ exs.stats.dist.on("notify", (dist) => {
 
   // subtract <how much we're over> off the next split notify
   exs.state.notify.dist.next -= thisSplit;
+
+  S.writeJSON("pace.json", { splits });
 });
 
 Bangle.on('lock', locked => {
