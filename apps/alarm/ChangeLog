@@ -53,3 +53,5 @@
 0.48: Use datetimeinput for Events, if available. Scroll back when getting out of group.  Menu date format setting for shorter dates on current year.
 0.49: fix uncaught error if no scroller (Bangle 1). Would happen when trying
 	to select an alarm in the main menu.
+0.50: Bangle.js 2: Long touch of alarm in main menu toggle it on/off. Touching the icon on
+	the right will do the same.
