@@ -1272,7 +1272,7 @@ module.exports = {
     ]
   },
   "apps/kineticscroll/boot.min.js": {
-    "hash": "1345b3c556f1a268a81c3a57825d096d9bbce9740217339aa6d79223d9daad4d",
+    "hash": "0814125a19aff5c608b9357926cd4a4c038334e31b0d07a70deefaf2c77959b9",
     "rules": [
       "no-cond-assign"
     ]
