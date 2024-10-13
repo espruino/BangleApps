@@ -224,7 +224,10 @@ let sun	= {
       let t = this.sunTime();
       this.rise = t.sunrise.getTime() / 1000;
       this.set  = t.sunset.getTime() / 1000;
+      return;
     }
+    this.rise = getTime() - 4*3600;
+    this.set = getTime() + 4*3600;
   },
   // < 0 : next is sunrise, in abs(ret) seconds
   // > 0 
@@ -859,7 +862,7 @@ function draw() {
   
   {
     let set = sun.getNext();
-    if (true || (set > -8*60*60 && set < 2*60*60)) {
+    if ((set > -12*60*60 && set < 4*60*60)) {
       if (set < 0) {
         msg += "^";
         set = -set;
