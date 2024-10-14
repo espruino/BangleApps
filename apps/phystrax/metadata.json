@@ -2,7 +2,7 @@
   "name": "PhysTrax",
   "shortName":"PhysTrax",
   "icon": "app.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Tracking physiological measurements to support active learning in classrooms",
   "tags": "health",
   "interface": "interface.html",
