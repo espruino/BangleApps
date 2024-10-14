@@ -8,3 +8,6 @@
 0.07: Fix automatic coloring of middle of clockinfo images if clockinfo image goes right to the top or left
 0.08: Use new clockinfo lib with function to render images wirh borders
 0.09: Add date on the bottom
+0.10: Fix size of bottom bar after 0.09
+      Make date toggleable with settings
+      Optional border around clockinfos (available from settings)

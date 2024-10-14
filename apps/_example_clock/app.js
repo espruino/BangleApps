@@ -24,10 +24,10 @@
     var dateStr = require("locale").date(date);
     // draw time
     g.setFontAlign(0,0).setFont("Vector",48);
-    g.clearRect(0,y-15,g.getWidth(),y+25); // clear the background
+    g.clearRect(0,y-20,g.getWidth(),y+25); // clear the background
     g.drawString(timeStr,x,y);
     // draw date
-    y += 35;
+    y += 30;
     g.setFontAlign(0,0).setFont("6x8");
     g.clearRect(0,y-4,g.getWidth(),y+4); // clear the background
     g.drawString(dateStr,x,y);
@@ -41,6 +41,8 @@
   // Show launcher when middle button pressed
   Bangle.setUI({mode:"clock", remove:function() {
     // free any memory we allocated to allow fast loading
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
   }});
   // Load widgets
   Bangle.loadWidgets();

@@ -1,0 +1,13 @@
+{ "id": "gbdiscon",
+  "name": "Disconnect from Gadgetbridge",
+  "shortName":"Disconnect Gadgetbridge",
+  "version":"0.01",
+  "description": "Disconnect from your android device by running this app. The app will forward you to your clock face immediately after triggering the command. (Gadgetbridge nightly required until version 82 is released)",
+  "icon": "app.png",
+  "tags": "android, gadgetbridge, bluetooth, bt",
+  "supports" : ["BANGLEJS", "BANGLEJS2"],
+  "storage": [
+    {"name":"gbdiscon.app.js","url":"app.js"},
+    {"name":"gbdiscon.img","url":"app-icon.js","evaluate":true}
+  ]
+}

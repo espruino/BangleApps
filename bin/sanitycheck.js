@@ -3,6 +3,7 @@
 */
 
 var fs = require("fs");
+var vm = require("vm");
 var heatshrink = require("../webtools/heatshrink");
 var acorn;
 try {
@@ -20,13 +21,19 @@ var BASEDIR = __dirname+"/../";
 var APPSDIR_RELATIVE = "apps/";
 var APPSDIR = BASEDIR + APPSDIR_RELATIVE;
 var knownWarningCount = 0;
+var knownErrorCount = 0;
 var warningCount = 0;
 var errorCount = 0;
 function ERROR(msg, opt) {
   // file=app.js,line=1,col=5,endColumn=7
   opt = opt||{};
-  console.log(`::error${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
-  errorCount++;
+  if (KNOWN_ERRORS.includes(msg)) {
+    console.log(`Known error : ${msg}`);
+    knownErrorCount++;
+  } else {
+    console.log(`::error${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
+    errorCount++;
+  }
 }
 function WARN(msg, opt) {
   // file=app.js,line=1,col=5,endColumn=7
@@ -39,6 +46,73 @@ function WARN(msg, opt) {
     warningCount++;
   }
 }
+/* These are errors that we temporarily allow */
+var KNOWN_ERRORS = [
+  "In locale en_CA, long date output must be shorter than 15 characters",
+  "In locale fr_FR, long date output must be shorter than 15 characters",
+  "In locale en_SE, long date output must be shorter than 15 characters",
+  "In locale en_NZ, long date output must be shorter than 15 characters",
+  "In locale en_AU, long date output must be shorter than 15 characters",
+  "In locale de_AT, long date output must be shorter than 15 characters",
+  "In locale en_IL, long date output must be shorter than 15 characters",
+  "In locale es_ES, long date output must be shorter than 15 characters",
+  "In locale fr_BE, long date output must be shorter than 15 characters",
+  "In locale fi_FI, long date output must be shorter than 15 characters",
+  "In locale de_CH, long date output must be shorter than 15 characters",
+  "In locale fr_CH, long date output must be shorter than 15 characters",
+  "In locale wae_CH, long date output must be shorter than 15 characters",
+  "In locale tr_TR, long date output must be shorter than 15 characters",
+  "In locale hu_HU, long date output must be shorter than 15 characters",
+  "In locale oc_FR, long date output must be shorter than 15 characters",
+  "In locale ca_ES, long date output must be shorter than 15 characters",
+  "In locale fr_BE, short month must be shorter than 5 characters",
+  "In locale fi_FI, short month must be shorter than 5 characters",
+  "In locale fr_CH, short month must be shorter than 5 characters",
+  "In locale oc_FR, short month must be shorter than 5 characters",
+  "In locale hr_HR, short month must be shorter than 5 characters",
+  "In locale ca_ES, short month must be shorter than 5 characters",
+  "In locale de_DE, meridian must be longer than 0 characters",
+  "In locale en_JP, meridian must be longer than 0 characters",
+  "In locale nl_NL, meridian must be longer than 0 characters",
+  "In locale fr_FR, meridian must be longer than 0 characters",
+  "In locale se_SE, meridian must be longer than 0 characters",
+  "In locale en_SE, meridian must be longer than 0 characters",
+  "In locale da_DK, meridian must be longer than 0 characters",
+  "In locale en_DK, meridian must be longer than 0 characters",
+  "In locale de_AT, meridian must be longer than 0 characters",
+  "In locale es_ES, meridian must be longer than 0 characters",
+  "In locale fr_BE, meridian must be longer than 0 characters",
+  "In locale it_CH, meridian must be longer than 0 characters",
+  "In locale it_IT, meridian must be longer than 0 characters",
+  "In locale wae_CH, meridian must be longer than 0 characters",
+  "In locale oc_FR, meridian must be longer than 0 characters",
+  "In locale pl_PL, meridian must be longer than 0 characters",
+  "In locale lv_LV, meridian must be longer than 0 characters",
+  "In locale nn_NO, meridian must be longer than 0 characters",
+  "In locale nb_NO, meridian must be longer than 0 characters",
+  "In locale ca_ES, meridian must be longer than 0 characters",
+  "In locale de_CH, meridian must be shorter than 4 characters",
+  "In locale hr_HR, meridian must be shorter than 4 characters",
+  "In locale sl_SI, meridian must be shorter than 4 characters",
+  "In locale fr_FR, short month must be shorter than 5 characters",
+  "In locale sv_SE, speed must be shorter than 5 characters",
+];
+/* These are warnings we know about but don't want in our output */
+var KNOWN_WARNINGS = [
+  "App gpsrec data file wildcard .gpsrc? does not include app ID",
+  "App owmweather data file weather.json is also listed as data file for app weather",
+  "App messagegui storage file messagegui is also listed as storage file for app messagelist",
+  "App carcrazy has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"carcrazy.settings.json\"}]`)",
+  "App loadingscreen has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"loadingscreen.settings.json\"}]`)",
+  "App trex has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"trex.settings.json\"}]`)",
+  "widhwt isn't an app (widget) but has an app.js file (widhwtapp.js)",
+  `In locale it_CH, long time format might not work in some apps if it is not "%HH:%MM:%SS"`,
+  `In locale it_IT, long time format might not work in some apps if it is not "%HH:%MM:%SS"`,
+  `In locale wae_CH, long time format might not work in some apps if it is not "%HH:%MM:%SS"`,
+  `In locale test, long time format might not work in some apps if it is not "%HH:%MM:%SS"`,
+  `In locale wae_CH, short time format might not work in some apps if it is not "%HH:%MM"`,
+  `In locale test, short time format might not work in some apps if it is not "%HH:%MM"`,
+];
 
 var apps = [];
 var dirs = fs.readdirSync(APPSDIR, {withFileTypes: true});
@@ -91,16 +165,6 @@ const INTERNAL_FILES_IN_APP_TYPE = { // list of app types and files they SHOULD 
   'textinput' : ['textinput'],
   // notify?
 };
-/* These are warnings we know about but don't want in our output */
-var KNOWN_WARNINGS = [
-  "App gpsrec data file wildcard .gpsrc? does not include app ID",
-  "App owmweather data file weather.json is also listed as data file for app weather",
-  "App messagegui storage file messagegui is also listed as storage file for app messagelist",
-  "App carcrazy has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"carcrazy.settings.json\"}]`)",
-  "App loadingscreen has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"loadingscreen.settings.json\"}]`)",
-  "App trex has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"trex.settings.json\"}]`)",
-  "widhwt isn't an app (widget) but has an app.js file (widhwtapp.js)",
-];
 
 function globToRegex(pattern) {
   const ESCAPE = '.*+-?^${}()|[]\\';
@@ -397,8 +461,28 @@ while(fileA=allFiles.pop()) {
   })
 }
 
+// Check each locale in the `locale` app.
+sanityCheckLocales();
+function sanityCheckLocales(){
+  const { CODEPAGE_CONVERSIONS } = require("../core/js/utils");
+  const { checkLocales } = require("../apps/locale/sanitycheck");
+  const localesCode = fs.readFileSync(__dirname+'/../apps/locale/locales.js', 'utf-8');
+  vm.runInThisContext(localesCode);
+  /* global locales, speedUnits, distanceUnits, codePages */
+
+  const {errors, warnings} = checkLocales(locales, {speedUnits, distanceUnits, codePages, CODEPAGE_CONVERSIONS});
+
+  const file = "locale/locales.js";
+  for(const w of warnings){
+    WARN(`In locale ${w.lang}, ${w.name} ${w.error}`, {file, value: w.value});
+  }
+  for(const e of errors){
+    ERROR(`In locale ${e.lang}, ${e.name} ${e.error}`, {file, value: e.value});
+  }
+}
+
 console.log("==================================");
-console.log(`${errorCount} errors, ${warningCount} warnings (and ${knownWarningCount} known warnings)`);
+console.log(`${errorCount} errors, ${warningCount} warnings (and ${knownErrorCount} known errors, ${knownWarningCount} known warnings)`);
 console.log("==================================");
 if (errorCount)  {
   process.exit(1);

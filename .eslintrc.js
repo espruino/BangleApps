@@ -112,6 +112,7 @@ module.exports = {
         "getSerial": "readonly",
         "getTime": "readonly",
         "global": "readonly",
+        "globalThis": "readonly",
         "HIGH": "readonly",
         "I2C1": "readonly",
         "Infinity": "readonly",

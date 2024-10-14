@@ -1,10 +1,10 @@
 {
   "id":"blc",
   "name":"Binary LED Clock",
-  "version": "0.10",
-  "description": "Binary LED Clock with date",
+  "version": "0.40",
+  "description": "a binary LED-Clock with time and date and customizable LED-colors",
   "icon":"blc-icon.png",
-  "screenshots": [{"url":"screenshot_blc.bmp"}],
+  "screenshots": [{"url":"screenshot_blc_1.bmp"},{"url":"screenshot_blc_2.bmp"}],
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS2"],
@@ -12,6 +12,8 @@
   "readme": "README.md",
   "storage": [
     {"name":"blc.app.js","url":"blc.js"},
+    {"name":"blc.settings.js","url":"blc.settings.js"},
     {"name":"blc.img","url":"blc-icon.js","evaluate":true}
-  ]
+  ],
+  "data": [{"name":"blc.settings.json"}]
 }

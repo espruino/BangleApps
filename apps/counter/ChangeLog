@@ -2,3 +2,4 @@
 0.02: Added decrement and touch functions
 0.03: Set color - ensures widgets don't end up coloring the counter's text
 0.04: Adopted for BangleJS 2
+0.05: Support translations

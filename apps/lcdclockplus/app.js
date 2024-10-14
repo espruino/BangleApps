@@ -51,7 +51,7 @@ let clockInfoDraw = (itm, info, options) => {
   if (info.img) {
     g.drawImage(info.img, options.x+1,options.y+2);
   }
-  var text = info.text.toString().toUpperCase();
+  var text = info.text.toString().toUpperCase().replace(/[^A-Z0-9]/g, "");
   if (g.setFont("7Seg:2").stringWidth(text)+24-2>options.w) g.setFont("7Seg");
   g.setFontAlign(0,-1).drawString(text, options.x+options.w/2+13, options.y+6);
 };

@@ -1,0 +1,15 @@
+{ "id": "clkinfomsg",
+  "name": "Messages Clockinfo",
+  "version":"0.01",
+  "description": "For clocks that display 'clockinfo', this displays the messages count",
+  "icon": "app.png",
+  "type": "clkinfo",
+  "screenshots": [{"url":"screenshot.png"}],
+  "readme":"README.md",
+  "tags": "clkinfo",
+  "supports" : ["BANGLEJS2"],
+  "dependencies" : { "messages":"app" },
+  "storage": [
+    {"name":"clkinfomsg.clkinfo.js","url":"clkinfo.js"}
+  ]
+}

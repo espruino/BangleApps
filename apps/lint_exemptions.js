@@ -91,13 +91,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "apps/mtnclock/app.js": {
-    "hash": "c48e3ed1a605e6a131e5947718e26cc9481c6eeab36c5670bb74f0c58cb96cd8",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "apps/mmonday/manic-monday.js": {
     "hash": "2eff38d4d1cde2b9f17800a554da58300a6250de3e014995a6958a11bcb5b76a",
     "rules": [
@@ -187,13 +180,6 @@ module.exports = {
     "hash": "0340a957d78e772467e50874f52817e27be9c52a1257ca38dab5892df15a8e3c",
     "rules": [
       "no-unused-vars"
-    ]
-  },
-  "apps/skyspy/skyspy.app.js": {
-    "hash": "49a727a4c052e8c6322a502750ca036b0d58896f476b1cffebe9c53e426c8bcc",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
     ]
   },
   "apps/scribble/app.js": {
@@ -463,12 +449,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/calculator/app.js": {
-    "hash": "fcb7c7b6c4ec5ce0f425d2a690baab8da235a12e685fe2680cbd4cf2cfdef0b0",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "apps/bowserWF/app.js": {
     "hash": "83feae92eda4c25028892b5b8b7d1b04f7ec3bb45f51eeba517a80b3ab2053cf",
     "rules": [
@@ -669,12 +649,6 @@ module.exports = {
   },
   "apps/snek/snek.js": {
     "hash": "b278a2b65b84d30c556abc5110bf7b3217d1f2fd5df3fccdb98dbc5a0e31eb38",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/slopeclockpp/app.js": {
-    "hash": "f6e3f6723ed4fc71a3cacb3d24ec4fb47447a65d495adccb9d86333c19d4d0bd",
     "rules": [
       "no-undef"
     ]
@@ -1195,12 +1169,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/aviatorclk/aviatorclk.app.js": {
-    "hash": "5bc629c86eada72533fc664e01a47e05f207baeeae2092323ae4d04bd1c9fe9a",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/authentiwatch/app.js": {
     "hash": "02aafe5b6f3f3dce979d5b04f4660f90261e0c893cb39e9eeb2cf0bdb2c256b8",
     "rules": [
@@ -1304,7 +1272,7 @@ module.exports = {
     ]
   },
   "apps/kineticscroll/boot.min.js": {
-    "hash": "1345b3c556f1a268a81c3a57825d096d9bbce9740217339aa6d79223d9daad4d",
+    "hash": "0814125a19aff5c608b9357926cd4a4c038334e31b0d07a70deefaf2c77959b9",
     "rules": [
       "no-cond-assign"
     ]

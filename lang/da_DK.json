@@ -186,5 +186,10 @@
         "quarter to *$2": "kvart i *$2",
         "ten to *$2": "ti i *$2",
         "five to *$2": "fem i *$2"
+    },
+    "counter": {
+        "Swipe up to increase": "Swipe op for at tilføje",
+        "Swipe down to decrease": "Swipe ned for at fjerne",
+        "Press button to reset": "Tryk knap for at nulstille"
     }
 }

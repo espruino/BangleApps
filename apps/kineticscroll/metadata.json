@@ -1,12 +1,12 @@
 { "id": "kineticscroll",
   "name": "Kinetic Scroll",
   "shortName":"Kinetic Scroll",
-  "version": "0.04",
+  "version": "0.05",
   "description": "Replacement for the system scroller with kinetic scrolling.",
   "icon": "app.png",
   "type": "bootloader",
   "tags": "system",
-  "supports" : ["BANGLEJS2"],  
+  "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"kineticscroll.boot.js","url":"boot.min.js"}

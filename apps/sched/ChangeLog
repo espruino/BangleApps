@@ -27,3 +27,5 @@
 0.24: Emit alarmReload when alarms change (used by widalarm)
 0.25: Fix wrap around when snoozed through midnight
 0.26: Fix hitting snooze on an alarm after when the snooze would've fired
+0.27: Tapping clkinfo enables/disables the selected alarm
+0.28: Added an icon for disabled events

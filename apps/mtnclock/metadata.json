@@ -2,7 +2,7 @@
   "id": "mtnclock",
   "name": "Mountain Pass Clock",
   "shortName": "Mtn Clock",
-  "version": "0.04",
+  "version": "0.05",
   "description": "A clock that changes scenery based on time and weather.",
   "readme":"README.md",
   "icon": "app.png",

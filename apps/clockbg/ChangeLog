@@ -1,3 +1,7 @@
 0.01: New App!
 0.02: Moved settings into 'Settings->Apps'
 0.03: Add 'Squares' option for random squares background
+0.04: More options for different background colors
+      'Plasma' generative background
+      Add a 'view' option in settings menu to view the current background
+0.05: Random square+plasma speed improvements (~2x faster)

@@ -165,7 +165,9 @@ let updateLabelsInterval;
 function showMusicMessage(msg) {
   active = "music";
   // defaults, so e.g. msg.xyz.length doesn't error. `msg` should contain up to date info
-  msg = Object.assign({artist: "", album: "", track: "Music"}, msg);
+  msg.artist = msg.artist||"";
+  msg.album = msg.album||"";
+  msg.track = msg.track||"Music";
   openMusic = msg.state=="play";
   var trackScrollOffset = 0;
   var artistScrollOffset = 0;
@@ -183,9 +185,12 @@ function showMusicMessage(msg) {
     var sliceLength = offset + maxLen > text.length ? text.length - offset : maxLen;
     return text.substr(offset, sliceLength).padEnd(maxLen, " ");
   }
-  function back() {
+  function unload() {
     clearInterval(updateLabelsInterval);
     updateLabelsInterval = undefined;
+  }
+  function back() {
+    unload();
     openMusic = false;
     var wasNew = msg.new;
     msg.new = false;
@@ -213,13 +218,19 @@ function showMusicMessage(msg) {
       { type:"v", fillx:1, c: [
         { type:"txt", font:fontMedium, bgCol:g.theme.bg2, label:artistName, pad:2, id:"artist" },
         { type:"txt", font:fontMedium, bgCol:g.theme.bg2, label:albumName, pad:2, id:"album" }
-      ]}
+      ]},
+      { type:"img", pad:4, src:require("messageicons").getImage(msg),
+        cb:()=>{
+          unload();
+          showMessageSettings(msg);
+        }
+      }
     ]},
     {type:"txt", font:fontLarge, bgCol:g.theme.bg, label:trackName, fillx:1, filly:1, pad:2, id:"track" },
     Bangle.musicControl?{type:"h",fillx:1, c: [
-      {type:"btn", pad:8, label:"\0"+atob("FhgBwAADwAAPwAA/wAD/gAP/gA//gD//gP//g///j///P//////////P//4//+D//gP/4A/+AD/gAP8AA/AADwAAMAAA"), cb:()=>Bangle.musicControl("play")}, // play
-      {type:"btn", pad:8, label:"\0"+atob("EhaBAHgHvwP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP3gHg"), cb:()=>Bangle.musicControl("pause")}, // pause
-      {type:"btn", pad:8, label:"\0"+atob("EhKBAMAB+AB/gB/wB/8B/+B//B//x//5//5//x//B/+B/8B/wB/gB+AB8ABw"), cb:()=>Bangle.musicControl("next")}, // next
+      {type:"btn", pad:8, label:atob("ABYYgQDAAAPAAA/AAD/AAP+AA/+AD/+AP/+A//+D//+P//8//////////8///j//4P/+A//gD/4AP+AA/wAD8AAPAAAwAAA="), cb:()=>Bangle.musicControl("play")}, // play
+      {type:"btn", pad:8, label:atob("ABIWgQB4B78D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D94B4A=="), cb:()=>Bangle.musicControl("pause")}, // pause
+      {type:"btn", pad:8, label:atob("ABISgQDAAfgAf4Af8Af/Af/gf/wf/8f/+f/+f/8f/wf/gf/Af8Af4AfgAfAAcA=="), cb:()=>Bangle.musicControl("next")}, // next
     ]}:{},
     {type:"txt", font:"6x8:2", label:msg.dur?fmtTime(msg.dur):"--:--" }
   ]}, { back : back });
@@ -265,12 +276,14 @@ function showMessageScroller(msg) {
 
 function showMessageSettings(msg) {
   active = "settings";
-  var menu = {"":{"title":/*LANG*/"Message"},
-    "< Back" : () => showMessage(msg.id, true),
-    /*LANG*/"View Message" : () => {
-      showMessageScroller(msg);
+  var menu = {"":{
+      "title":/*LANG*/"Message",
+      back:() => showMessage(msg.id, true)
     },
   };
+
+  if (msg.id!="music")
+    msg[/*LANG*/"View Message"] = () => showMessageScroller(msg);
 
   if (msg.reply && reply) {
     menu[/*LANG*/"Reply"] = () => {

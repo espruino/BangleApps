@@ -15,8 +15,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
     g.setColor(255, 255, 255);
   };
   let options = items && items[""] || {};
-  if (items) delete items[""];
-  const menuItems = Object.keys(items);
+  const menuItems = Object.keys(items).filter(x => x.length);
 
   const fontHeight = options.fontHeight||25;
 
@@ -38,9 +37,59 @@ E.showMenu = (items?: Menu): MenuInstance => {
   const scroller = {
     scroll: selected,
   };
+  let nameScroller: IntervalId | null = null;
+
+  const drawLine = (
+    name: string,
+    v: string,
+    item: ActualMenuItem,
+    idx: number,
+    x: number,
+    y: number,
+    nameScroll: number = 0,
+  ) => {
+    const hl = (idx === selected && !selectEdit);
+    if(g.theme.dark){
+      fillRectRnd(x, y, x2, y + fontHeight - 3, 7, hl ? g.theme.bgH : g.theme.bg + 40);
+    }else{
+      fillRectRnd(x, y, x2, y + fontHeight - 3, 7, hl ? g.theme.bgH : g.theme.bg - 20);
+    }
+
+    g.setFont12x20()
+      .setColor(hl ? g.theme.fgH : g.theme.fg)
+      .setFontAlign(-1, -1);
+
+    const vplain = v.indexOf("\0") < 0;
+    let truncated = true;
+    if(vplain && name.length >= 17 - v.length && typeof item === "object"){
+      g.drawString(name.substring(nameScroll, nameScroll + 12 - v.length) + "...", x + 3.7, y + 2.7);
+    }else if(vplain && name.length >= 15){
+      g.drawString(name.substring(nameScroll, nameScroll + 15) + "...", x + 3.7, y + 2.7);
+    }else{
+      g.drawString(name, x + 3.7, y + 2.7);
+      truncated = false;
+    }
+
+    let xo = x2;
+    if (selectEdit && idx === selected) {
+      xo -= 24 + 1;
+      g.setColor(g.theme.fgH)
+        .drawImage(
+          "\x0c\x05\x81\x00 \x07\x00\xF9\xF0\x0E\x00@",
+          xo,
+          y + (fontHeight - 10) / 2,
+          {scale:2},
+        );
+    }
+    g.setFontAlign(1, -1);
+    g.drawString(v, xo - 2, y + 1);
+
+    return truncated;
+  };
 
   const l = {
     draw: (rowmin?: number, rowmax?: number) => {
+      if (nameScroller) clearInterval(nameScroller), nameScroller = null;
       let rows = 0|Math.min((y2 - y) / fontHeight, menuItems.length);
       let idx = E.clip(selected - (rows>>1), 0, menuItems.length - rows);
 
@@ -66,17 +115,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
         const name = menuItems[idx];
         const item = items![name]! as ActualMenuItem;
 
-        const hl = (idx === selected && !selectEdit);
-        if(g.theme.dark){
-          fillRectRnd(x, iy, x2, iy + fontHeight - 3, 7, hl ? g.theme.bgH : g.theme.bg + 40);
-        }else{
-          fillRectRnd(x, iy, x2, iy + fontHeight - 3, 7, hl ? g.theme.bgH : g.theme.bg - 20);
-        }
-
-        g.setColor(hl ? g.theme.fgH : g.theme.fg);
-        g.setFontAlign( - 1, -1);
-
-        let v;
+        let v: string;
         if (typeof item === "object") {
           v = "format" in item
             ? (item.format as any)(item.value) // <T>format(), value: T
@@ -86,29 +125,21 @@ E.showMenu = (items?: Menu): MenuInstance => {
           v = "";
         }
 
-        /*???*/{
-          const vplain = v.indexOf("\0") < 0;
-          if(vplain && name.length >= 17 - v.length && typeof item === "object"){
-            g.drawString(name.substring(0, 12 - v.length) + "...", x + 3.7, iy + 2.7);
-          }else if(vplain && name.length >= 15){
-            g.drawString(name.substring(0, 15) + "...", x + 3.7, iy + 2.7);
-          }else{
-            g.drawString(name, x + 3.7, iy + 2.7);
-          }
-
-          let xo = x2;
-          if (selectEdit && idx === selected) {
-            xo -= 24 + 1;
-            g.setColor(g.theme.fgH)
-              .drawImage(
-                "\x0c\x05\x81\x00 \x07\x00\xF9\xF0\x0E\x00@",
-                xo,
-                iy + (fontHeight - 10) / 2,
-                {scale:2},
-              );
-          }
-          g.setFontAlign(1, -1);
-          g.drawString(v, xo - 2, iy + 1);
+        const truncated = drawLine(name, v, item, idx, x, iy, 0);
+        if (truncated && idx === selected){
+          let nameScroll = 0;
+          nameScroller = setInterval((
+            name: string,
+            v: string,
+            item: ActualMenuItem,
+            idx: number,
+            x: number,
+            iy: number,
+          ) => {
+            drawLine(name, v, item, idx, x, iy, nameScroll);
+            nameScroll += 1;
+            if (nameScroll >= name.length - 5) nameScroll = 0;
+          }, 300, name, v, item, idx, x, iy);
         }
 
         g.setColor(g.theme.fg);
@@ -191,6 +222,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
     mode: "updown",
     back,
     remove: () => {
+      if (nameScroller) clearInterval(nameScroller);
       Bangle.removeListener("swipe", onSwipe);
     },
   } as SetUIArg<"updown">,

@@ -10,18 +10,14 @@
   let gpsState = {}; // keep information on GPS via Gadgetbridge
 
   // this settings var is deleted after this executes to save memory
-  let settings = require("Storage").readJSON("android.settings.json",1)||{};
-  //default alarm settings
-  if (settings.rp == undefined) settings.rp = true;
-  if (settings.as == undefined) settings.as = true;
-  if (settings.vibrate == undefined) settings.vibrate = "..";
-  require('Storage').writeJSON("android.settings.json", settings);
+  let settings = Object.assign({rp:true,as:true,vibrate:".."},
+    require("Storage").readJSON("android.settings.json",1)||{}
+  );
   let _GB = global.GB;
   let fetchRecInterval;
   global.GB = (event) => {
     // feed a copy to other handlers if there were any
     if (_GB) setTimeout(_GB,0,Object.assign({},event));
-
 
     /* TODO: Call handling, fitness */
     var HANDLERS = {
@@ -66,6 +62,9 @@
           positive:true, negative:true,
           title:event.name||/*LANG*/"Call", body:/*LANG*/"Incoming call\n"+event.number});
         require("messages").pushMessage(event);
+      },
+      "canned_responses_sync" : function() {
+        require("Storage").writeJSON("replies.json", event.d);
       },
       // {"t":"alarm", "d":[{h:int,m:int,rep:int},... }
       "alarm" : function() {

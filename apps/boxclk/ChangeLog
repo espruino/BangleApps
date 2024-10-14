@@ -13,3 +13,4 @@
 - [+] Fixed drag handler by adding E.stopEventPropagation()
 - [+] General code optimization and cleanup
 0.09: Revised event handler code
+0.10: Revised suffix formatting in getDate function

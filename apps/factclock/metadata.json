@@ -1,0 +1,17 @@
+{ "id": "factclock",
+  "name": "Fact Clock",
+  "shortName":"Facts",
+  "version":"0.01",
+  "description": "A clock that displays a random fact alongside the time",
+  "icon": "icon.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],
+  "dependencies" : { "textsource":"module", "clockbg":"module" },
+  "readme": "README.md",
+  "storage": [
+    {"name":"factclock.app.js","url":"app.js"},
+    {"name":"factclock.img","url":"app-icon.js","evaluate":true}
+  ]
+}

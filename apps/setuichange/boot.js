@@ -39,6 +39,7 @@ Bangle.setUI = (function(mode, cb) {
     try{Bangle.buzz(30);}catch(e){}
   }
   if (mode=="updown") {
+    if (options.drag) throw new Error("Custom drag handler not supported in mode updown!")
     var dy = 0;
     Bangle.dragHandler = e=>{
       dy += e.dy;
@@ -55,6 +56,7 @@ Bangle.setUI = (function(mode, cb) {
       setWatch(function() { b();cb(); }, BTN1, {repeat:1, edge:"rising"}),
     ];
   } else if (mode=="leftright") {
+    if (options.drag) throw new Error("Custom drag handler not supported in mode leftright!")
     var dx = 0;
     Bangle.dragHandler = e=>{
       dx += e.dx;

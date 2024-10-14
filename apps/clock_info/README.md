@@ -50,7 +50,7 @@ extensions).
 `load()` returns an array of menu objects, where each object contains a list of menu items:
 * `name` : text to display and identify menu object (e.g. weather)
 * `img` : a 24x24px image
-* `dynamic` : if `true`, items are not constant but are sorted (e.g. calendar events sorted by date)
+* `dynamic` : if `true`, items are not constant but are sorted (e.g. calendar events sorted by date). This is only used by a few clocks, for example `circlesclock`
 * `items` : menu items such as temperature, humidity, wind etc.
 
 Note that each item is an object with:
