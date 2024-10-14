@@ -90,12 +90,12 @@
     g.setColor(1, 1, 1);
     g.setFontAlign(0, 0);
     g.setFont("6x8:2");
-    c = featureColour.split('Colour')[0];
+    let c = featureColour.split('Colour')[0];
     g.drawString(c[0].toUpperCase() + c.slice(1), 132, 132);
 
     if (index !== undefined) { // If a colour has been selected draw it in a larger box
-      x = (index % colorW) * colorScale;
-      y = Math.floor((index / colorW)) * colorScale;
+      let x = (index % colorW) * colorScale;
+      let y = Math.floor((index / colorW)) * colorScale;
       g.setColor(0, 0, 0);
       g.fillRect(x-(colorScale/2), y-(colorScale/2), x+(colorScale/2)+colorScale, y+(colorScale/2)+colorScale);
       g.setColor(colours[index]);
