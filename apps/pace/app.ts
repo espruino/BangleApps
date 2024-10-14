@@ -64,11 +64,6 @@ const layout = new Layout({
   lazy: true
 });
 
-const calculatePace = (split: Split) => {
-  if (split.dist === 0) return 0;
-  return split.time / split.dist / 1000 / 60;
-};
-
 const draw = () => {
   if (!exs.state.active) {
     // no draw-timeout here, only on user interaction
@@ -103,6 +98,9 @@ const formatDuration = (ms: number) => {
     return `${tm.h}:${pad2(tm.m)}:${pad2(tm.s)}`;
   return `${pad2(tm.m)}:${pad2(tm.s)}`;
 };
+
+// divide by actual distance, scale to milliseconds
+const calculatePace = (split: Split) => formatDuration(split.time / split.dist * 1000);
 
 const drawSplits = () => {
   g.clearRect(Bangle.appRect);
