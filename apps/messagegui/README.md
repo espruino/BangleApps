@@ -47,9 +47,13 @@ When a message is shown, you'll see a screen showing the message title and text.
    * **iOS** responds negatively to the notification (dismiss call/etc)
 
 ## Images
-_1. Screenshot of a notification_
+_1. Screenshot of a message notification_
 
 ![](screenshot.png)
+
+_2. Screenshot of a navigation notification_
+
+![](screenshot1.png)
 
 
 ## Requests
