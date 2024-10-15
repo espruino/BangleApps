@@ -155,7 +155,7 @@ function showMapMessage(msg) {
   function back() { // mark as not new and return to menu
     msg.new = false;
     layout = undefined;
-    checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:0});
+    checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:settings.showMsgIfUnread,openMusic:0});
   }
   Bangle.setUI({mode:"updown", back: back}, back); // any input takes us back
 }
@@ -407,7 +407,7 @@ function showMessage(msgid, persist) {
       msg.new = false;
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,false);
-      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:openMusic});
+      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:settings.showMsgIfUnread,openMusic:openMusic});
     }; footer.push({type:"img",src:atob("PhAB4A8AAAAAAAPAfAMAAAAAD4PwHAAAAAA/H4DwAAAAAH78B8AAAAAA/+A/AAAAAAH/Af//////w/gP//////8P4D///////H/Af//////z/4D8AAAAAB+/AfAAAAAA/H4DwAAAAAPg/AcAAAAADwHwDAAAAAA4A8AAAAAAAA=="),col:"#f00",cb:negHandler});
   }
   footer.push({fillx:1}); // push images to left/right
@@ -421,7 +421,7 @@ function showMessage(msgid, persist) {
           Bluetooth.println(JSON.stringify(result));
           replying = false;
           layout.render();
-          checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:openMusic});
+          checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:settings.showMsgIfUnread,openMusic:openMusic});
         })
         .catch(() => {
           replying = false;
@@ -435,7 +435,7 @@ function showMessage(msgid, persist) {
       msg.new = false;
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,true);
-      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:openMusic});
+      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:settings.showMsgIfUnread,openMusic:openMusic});
     }; footer.push({type:"img",src:atob("QRABAAAAAAAAAAOAAAAABgAAA8AAAAADgAAD4AAAAAHgAAPgAAAAAPgAA+AAAAAAfgAD4///////gAPh///////gA+D///////AD4H//////8cPgAAAAAAPw8+AAAAAAAfB/4AAAAAAA8B/gAAAAAABwB+AAAAAAADAB4AAAAAAAAABgAA=="),col:"#0f0",cb:posHandler});
   }
 
@@ -447,7 +447,7 @@ function showMessage(msgid, persist) {
       ]},
       { type:"btn",
         src:require("messageicons").getImage(msg),
-        col:require("messageicons").getColor(msg, {settings:settings, default:g.theme.fg2}),
+        col:require("messageicons").getColor(msg, {settings, default:g.theme.fg2}),
         pad: 3, cb:()=>{
           cancelReloadTimeout(); // don't auto-reload to clock now
           showMessageSettings(msg);
@@ -538,7 +538,7 @@ function checkMessages(options) {
       }
       if (img) {
         var fg = g.getColor(),
-            col = require("messageicons").getColor(msg, {settings:settings, default:fg});
+            col = require("messageicons").getColor(msg, {settings, default:fg});
         g.setColor(col).drawImage(img, x+24, r.y+24, {rotate:0}) // force centering
          .setColor(fg); // only color the icon
         x += 50;
@@ -594,7 +594,7 @@ setTimeout(() => {
   // only openMusic on launch if music is new, or state=="show" (set by messagesmusic)
   var musicMsg = MESSAGES.find(m => m.id === "music");
   checkMessages({
-    clockIfNoMsg: 0, clockIfAllRead: 0, showMsgIfUnread: 1,
+    clockIfNoMsg: 0, clockIfAllRead: 0, showMsgIfUnread: settings.showMsgIfUnread,
     openMusic: ((musicMsg&&musicMsg.new) && settings.openMusic) || (musicMsg&&musicMsg.state=="show"),
     dontStopBuzz: 1 });
 }, 10); // if checkMessages wants to 'load', do that
