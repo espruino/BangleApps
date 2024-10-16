@@ -104,7 +104,7 @@
     };
     var drawSplit_1 = function (i, y, pace) {
         g
-            .setColor("#fff")
+            .setColor(g.theme.fg)
             .drawString("".concat(i + 1 + splitOffset_1, " ").concat(typeof pace === "number" ? pace.toFixed(2) : pace), 0, y);
     };
     var pauseRun_1 = function () {

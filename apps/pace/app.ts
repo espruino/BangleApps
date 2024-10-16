@@ -137,7 +137,7 @@ const drawSplits = () => {
 
 const drawSplit = (i: number, y: number, pace: number | string) => {
   g
-    .setColor("#fff")
+    .setColor(g.theme.fg)
     .drawString(
       `${i + 1 + splitOffset} ${typeof pace === "number" ? pace.toFixed(2) : pace}`,
       0,
