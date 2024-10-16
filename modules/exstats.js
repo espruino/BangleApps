@@ -158,8 +158,8 @@ Bangle.on("GPS", function(fix) {
   if (stats["pacea"]) stats["pacea"].emit("changed",stats["pacea"]);
   if (stats["pacec"]) stats["pacec"].emit("changed",stats["pacec"]);
   if (state.notify.dist.increment > 0 && state.notify.dist.next <= state.distance) {
-    stats["dist"].emit("notify",stats["dist"]);
     state.notify.dist.next = state.notify.dist.next + state.notify.dist.increment;
+    stats["dist"].emit("notify",stats["dist"]);
   }
 });
 
@@ -169,8 +169,8 @@ Bangle.on("step", function(steps) {
   state.stepHistory[0] += steps-state.lastSteps;
   state.lastSteps = steps;
   if (state.notify.step.increment > 0 && state.notify.step.next <= steps) {
-    stats["step"].emit("notify",stats["step"]);
     state.notify.step.next = state.notify.step.next + state.notify.step.increment;
+    stats["step"].emit("notify",stats["step"]);
   }
 });
 Bangle.on("HRM", function(h) {
@@ -336,8 +336,8 @@ exports.getStats = function(statIDs, options) {
       if (stats["bpm"]) stats["bpm"].emit("changed",stats["bpm"]);
     }
     if (state.notify.time.increment > 0 && state.notify.time.next <= now) {
-      stats["time"].emit("notify",stats["time"]);
       state.notify.time.next = state.notify.time.next + state.notify.time.increment;
+      stats["time"].emit("notify",stats["time"]);
     }
   }, 1000);
   function reset() {

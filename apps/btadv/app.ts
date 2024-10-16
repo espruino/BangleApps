@@ -720,7 +720,7 @@ const hook = (enable: boolean) => {
 // --- intervals ---
 
 const setIntervals = (
-  locked: boolean = Bangle.isLocked(),
+  locked: ShortBoolean = Bangle.isLocked(),
   connected: boolean = NRF.getSecurityStatus().connected,
 ) => {
   changeInterval(
