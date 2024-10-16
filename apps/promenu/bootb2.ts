@@ -1,5 +1,9 @@
 type ActualMenuItem = Exclude<Menu["..."], MenuOptions | undefined>;
 
+const enum Consts {
+  NAME_SCROLL_PAD = 5,
+}
+
 E.showMenu = (items?: Menu): MenuInstance => {
   const RectRnd = (x1: number, y1: number, x2: number, y2: number, r: number) => {
     const pp = [];
@@ -138,7 +142,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
           ) => {
             drawLine(name, v, item, idx, x, iy, nameScroll);
             nameScroll += 1;
-            if (nameScroll >= name.length - 5) nameScroll = 0;
+            if (nameScroll >= name.length - Consts.NAME_SCROLL_PAD) nameScroll = 0;
           }, 300, name, v, item, idx, x, iy);
         }
 
