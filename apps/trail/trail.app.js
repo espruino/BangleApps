@@ -425,37 +425,6 @@ function angleDifference(angle1, angle2) {
   return difference;
 }
 
-function drawThickLine(gg, x1, y1, x2, y2, thickness) {
-  // Calculate the perpendicular offset for the line thickness
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const length = Math.sqrt(dx * dx + dy * dy);
-  const offsetX = (dy / length) * (thickness / 2);
-  const offsetY = (dx / length) * (thickness / 2);
-
-  // Draw multiple lines to simulate thickness
-  for (let i = -thickness / 2; i <= thickness / 2; i++) {
-    gg.drawLine(
-      x1 + offsetX * i,
-      y1 - offsetY * i,
-      x2 + offsetX * i,
-      y2 - offsetY * i
-    );
-  }
-}
-
-function toxy(pp, p) {
-  let r = {};
-  let d = fmt.distance(pp, p);
-  let h = fmt.radians(fmt.bearing(pp, p) - pp.course);
-  let x = pp.x, y = pp.y;
-  x += d * pp.ppm * Math.sin(h);
-  y -= d * pp.ppm * Math.cos(h);
-  r.x = x;
-  r.y = y;
-  return r;
-}
-
 var start = {}, destination = {}, num = 0, dist = 0;
 
 function read(pp, n) {
