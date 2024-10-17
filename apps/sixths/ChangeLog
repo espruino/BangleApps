@@ -10,4 +10,4 @@
 	display	pressure trend
 	adjust GPS on/off algorithm for more reliable fix
 	display	warnings when GPS altitude does	not match baro
-
+0.11: implement sunrise/sunset times

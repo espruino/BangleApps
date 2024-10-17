@@ -182,37 +182,68 @@ let gps = {
   },
 };
 
-/* sun version 0.0.1 */
+/* sun version 0.0.2 */
 let sun	= {
   SunCalc: null,
   lat: 50,
   lon: 14,
+  rise: 0,  /* Unix time of sunrise/sunset */
+  set: 0,
   init: function() {  
     try {
       this.SunCalc = require("suncalc"); // from modules folder
     } catch (e) {
       print("Require error", e);
     }
-
     print("Have suncalc: ", this.SunCalc);
   },
-  get_sun_pos: function() {
+  sunPos: function() {
     let d = new Date();
     let sun = this.SunCalc.getPosition(d, this.lat, this.lon);
     print(sun.azimuth, sun.altitude);
     return sun;
   },
-  get_sun_time: function() {
+  sunTime: function() {
     let d = new Date();
     let sun = this.SunCalc.getTimes(d, this.lat, this.lon);
-    print(sun.sunrise, sun.sunset);
     return sun;
+  },
+  adj: function (x) {
+    if (x < 0)
+      return x + 24*60*60;
+    return x;
+  },
+  toSunrise: function () {
+    return this.adj(this.rise - getTime());
+  },
+  toSunset: function () {
+    return this.adj(this.set - getTime());
+  },
+  update: function () {
+    if (this.SunCalc) {
+      let t = this.sunTime();
+      this.rise = t.sunrise.getTime() / 1000;
+      this.set  = t.sunset.getTime() / 1000;
+      return;
+    }
+    this.rise = getTime() - 4*3600;
+    this.set = getTime() + 4*3600;
+  },
+  // < 0 : next is sunrise, in abs(ret) seconds
+  // > 0 
+  getNext: function () {
+    let rise = this.toSunrise();
+    let set = this.toSunset();
+    if (rise < set) {
+      return -rise;
+    }
+    return set;
+ //   set = set / 60;
+ //   return s + (set / 60).toFixed(0) + ":" + (set % 60).toFixed(0);
   },
 };
 
 sun.init();
-sun.get_sun_pos();
-sun.get_sun_time();
 fmt.init();
 gps.init();
 
@@ -226,7 +257,7 @@ var buzz = "",      /* Set this to transmit morse via vibrations */
     inm = "", l = "", /* For incoming morse handling */
     in_str = "",
     note = "",
-    debug = "v0.5.11", debug2 = "(otherdb)", debug3 = "(short)";
+    debug = "v0.10.2", debug2 = "(otherdb)", debug3 = "(short)";
 var note_limit = 0;
 var mode = 0, mode_time = 0; // 0 .. normal, 1 .. note, 2.. mark name
 var disp_mode = 0;  // 0 .. normal, 1 .. small time
@@ -637,6 +668,7 @@ function hourly() {
   }
   if (is_active)
     doBuzz(toMorse(s));
+  sun.update();
   //logstamp("");
 }
 function showMsg(msg, timeout) {
@@ -826,6 +858,19 @@ function draw() {
 
   if (state.cur_mark) {
     msg += markHandle() + "\n";
+  }
+  
+  {
+    let set = sun.getNext();
+    if ((set > -12*60*60 && set < 4*60*60)) {
+      if (set < 0) {
+        msg += "^";
+        set = -set;
+      } else msg += "v";
+      set = Math.floor(set / 60);
+      msg += (set / 60).toFixed(0) + ":" + fmt.add0(set % 60);
+      msg += "\n";
+    }
   }
 
   if (note != "") {
