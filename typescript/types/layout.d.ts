@@ -7,7 +7,16 @@ type ExtractIds<T extends Layout.Hierarchy, Depth extends Prev[number] = 9> =
   [Depth] extends [never]
   ? never
   : (T extends { id?: infer Id extends string }
-    ? { [k in Id]: { -readonly [P in keyof T]: T[P] extends string ? string : T[P] }  }
+    ? {
+      [k in Id]: {
+        -readonly [P in keyof T]:
+          T[P] extends string
+            ? string
+            : T[P] extends number
+            ? number | undefined
+            : T[P]
+      }
+    }
     : never)
   |
   (
