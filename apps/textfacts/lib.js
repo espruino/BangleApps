@@ -1,6 +1,6 @@
 exports = {};
 exports.getCount = function() {
-  return 288;
+  return 162;
 };
 exports.getText = function(n) {
   /*var s = require("Storage").read("textsource.txt");
@@ -17,7 +17,7 @@ exports.getText = function(n) {
   }
   print(`Count = ${lengths.length}`);
   print(`var idxs = E.toUint8Array(atob("${btoa(lengths)}"));`);*/
-  var idxs = E.toUint8Array(atob("PUovVCpNWElbLi0uKkEsPydJTVhkKSBVNDFNO1EsTz5ELjIvMTwyKiowRl8mMj4/MCczSjczKEFRLCxKGE4rLyxdY1YdMURdX1I5V0oePEJQMiZHQEo4NVQyWVNSPUNCMS1PLS5GZhlHNUI2TVFDRkU+O2Q8YTEwNTtAKzxYGiQxSDM1RXAyMRlpIzFFO0I8MjE/KDRJNz07PVNBRUA4UzIuP0E6VFBDNEMqO0gyMjExUFA4KlQxR0Y/TChWTBouODI4NVJIQkAeLEFENi8vPi5EKx0mQCouMTUcTlBWM0VOYi81MztIRC8sRDI1PzwqLSk5LzwvPTkzQEgwSk4xPTtCLFNFHSJINkFNJjg1RipGNUlAHks5OShIQDgbME0q"));
+  var idxs = E.toUint8Array(atob("PVguLS4qQScgVTtRLC4vMTwyKiowJjI+PzAnSigsLCssHTFSOkRCMiZHSjhUWVNSPUNCLU8uRzVCNk1RQ0Y7ZDwxMDU7QFgkMTM1RTJpIzFFO0I8KDRJPVNBQDIuPzsyMjFQOEdGPyguODI4LkhCQB5BNi8uRCsqMTVOVjNFTmI1O0QyPyk5PC89M0gwTjE7QixTRSI2QSY1RkY1SUs5OBsw"));
   if (n<0 || n>=idxs.length) return;
   var idx = n ? E.sum(new Uint8Array(idxs.buffer,0,n))+1 : 0;
   var len = idxs[n]-1;
