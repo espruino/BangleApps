@@ -16,3 +16,5 @@ them (actually uses openstreetmap data for most of the world).
 "gpx2egt.sh < file.gpx > t.name.egt" can be used to prepare data, then
 upload it to watch.
 
+# [rt].*.egt
+# deal with "end of trail"
