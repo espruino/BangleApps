@@ -7,6 +7,8 @@ exports.input = function(options) {
   let chartX = 0;
   let chartY = 0;
 
+  let shouldShowWidgetBar = Bangle.appRect.y > 0;
+
   options = options||{};
   let text = options.text;
   if ('string' != typeof text) text='';
@@ -216,6 +218,7 @@ exports.input = function(options) {
   };
 
   // Draw initial string
+  require("widget_utils").hide();
   g.setBgColor(g.theme.bg);
   draw();
 
@@ -237,6 +240,9 @@ exports.input = function(options) {
           draw();
         } else {
           // Exit and return text on button
+          if (shouldShowWidgetBar) {
+            require("widget_utils").show();
+          }
           Bangle.setUI();
           g.clearRect(Bangle.appRect);
           resolve(text);
