@@ -349,7 +349,7 @@ function showMessage(msgid, persist) {
     clearInterval(updateLabelsInterval);
     updateLabelsInterval=undefined;
   }
-  if (!msg) return checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0,openMusic:openMusic}); // go home if no message found
+  if (!msg) return checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0,openMusic}); // go home if no message found
   if (msg.id=="music") {
     cancelReloadTimeout(); // don't auto-reload to clock now
     return showMusicMessage(msg);
@@ -399,7 +399,7 @@ function showMessage(msgid, persist) {
     layout = undefined;
     msg.new = false; // read mail
     cancelReloadTimeout(); // don't auto-reload to clock now
-    checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0,openMusic:openMusic});
+    checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0,openMusic});
   }
   var negHandler,posHandler,footer = [ ];
   if (msg.negative) {
@@ -407,7 +407,7 @@ function showMessage(msgid, persist) {
       msg.new = false;
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,false);
-      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:settings.showMsgIfUnread,openMusic:openMusic});
+      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:settings.showMsgIfUnread,openMusic});
     }; footer.push({type:"img",src:atob("PhAB4A8AAAAAAAPAfAMAAAAAD4PwHAAAAAA/H4DwAAAAAH78B8AAAAAA/+A/AAAAAAH/Af//////w/gP//////8P4D///////H/Af//////z/4D8AAAAAB+/AfAAAAAA/H4DwAAAAAPg/AcAAAAADwHwDAAAAAA4A8AAAAAAAA=="),col:"#f00",cb:negHandler});
   }
   footer.push({fillx:1}); // push images to left/right
@@ -421,7 +421,7 @@ function showMessage(msgid, persist) {
           Bluetooth.println(JSON.stringify(result));
           replying = false;
           layout.render();
-          checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:settings.showMsgIfUnread,openMusic:openMusic});
+          checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:settings.showMsgIfUnread,openMusic});
         })
         .catch(() => {
           replying = false;
@@ -435,7 +435,7 @@ function showMessage(msgid, persist) {
       msg.new = false;
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,true);
-      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:settings.showMsgIfUnread,openMusic:openMusic});
+      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:settings.showMsgIfUnread,openMusic});
     }; footer.push({type:"img",src:atob("QRABAAAAAAAAAAOAAAAABgAAA8AAAAADgAAD4AAAAAHgAAPgAAAAAPgAA+AAAAAAfgAD4///////gAPh///////gA+D///////AD4H//////8cPgAAAAAAPw8+AAAAAAAfB/4AAAAAAA8B/gAAAAAABwB+AAAAAAADAB4AAAAAAAAABgAA=="),col:"#0f0",cb:posHandler});
   }
 
