@@ -54,7 +54,9 @@ function setupInputWatchers(init) {
     }
   });
   if (init) {
-    setWatch(() => handleInput(2), isBangle1 ? BTN2 : BTN, { repeat: true });
+    if (isBangle1) {
+      setWatch(() => handleInput(2), BTN2, { repeat: true });
+    }
     Bangle.on('touch', (b, e) => {
       if (isBangle1) {
         if (b === 1) {
@@ -63,10 +65,14 @@ function setupInputWatchers(init) {
           handleInput(4);
         }
       } else {
-        if (e.x < getXCoord(w => w/2)) {
-          handleInput(0);
+        if (e.y > 18) {
+          if (e.x < getXCoord(w => w/2)) {
+            handleInput(0);
+          } else {
+            handleInput(1);
+          }
         } else {
-          handleInput(1);
+          handleInput(2);
         }
       }
     });
