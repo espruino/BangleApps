@@ -19,7 +19,7 @@ let correctionMode = false;
 let w = g.getWidth();
 let h = g.getHeight();
 
-let isBangle1 = process.env.BOARD === 'BANGLEJS';
+let isBangle1 = process.env.BOARD === 'BANGLEJS' || process.env.BOARD === 'EMSCRIPTEN';
 
 function getXCoord(func) {
   let offset = 40;
