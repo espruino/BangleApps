@@ -96,27 +96,32 @@ function setupMatch() {
 
 function showSettingsMenu() {
   settingsMenuOpened = getSecondsTime();
-  settingsMenu(function (s, reset) {
-    E.showMenu();
+  settingsMenu(function (s, reset, back) {
+    // console.log('reset:', reset, 'back:', back);
+    if (isBangle1) {
+      E.showMenu();
+    }
 
     settings = s;
 
     if (reset) {
       setupMatch();
-    } else if (getSecondsTime() - settingsMenuOpened < 500 || correctionMode) {
-      correctionMode = !correctionMode;
     }
+    if (isBangle1 || (!isBangle1 && back)) {
+      settingsMenuOpened = null;
 
-    settingsMenuOpened = null;
+      draw();
 
-    draw();
-
-    setupDisplay();
-    setupInputWatchers();
+      setupDisplay();
+      setupInputWatchers();
+    }
   }, function (msg) {
     switch (msg) {
       case 'end_set':
         updateCurrentSet(1);
+        break;
+      case 'correct_mode':
+        correctionMode = !correctionMode;
         break;
     }
   });
@@ -304,7 +309,22 @@ function score(player) {
 }
 
 function handleInput(button) {
+  // console.log('button:', button);
   if (settingsMenuOpened) {
+    
+    if (!isBangle1 && button == 2) {
+      E.showMenu();
+
+      settingsMenuOpened = null;
+
+      draw();
+
+      setupDisplay();
+      setupInputWatchers();
+      
+    
+      
+    }
     return;
   }
 
