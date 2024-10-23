@@ -173,7 +173,7 @@ function renderAlarm(alarm, exists) {
       };
     }
   }
-  tdType.textContent = type;
+  tdType.textContent = type + (alarm.appid ? `\n(${alarm.appid})` : "");
   if (!exists) {
     const asterisk = document.createElement('sup');
     asterisk.textContent = '*';
