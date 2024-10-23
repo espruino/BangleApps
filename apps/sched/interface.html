@@ -331,6 +331,10 @@ function getData() {
       alarms.sort((a, b) => {
         let x;
 
+        // move app specific alarms to the bottom
+        x = !!a.appid - !!b.appid;
+        if(x) return x;
+
         x = !!b.date - !!a.date;
         if(x) return x;
 
