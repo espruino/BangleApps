@@ -133,7 +133,7 @@ let outputFile = (dst,src,pre,post) => {"ram";
   if (src.endsWith("clkinfo.js") && f[0]!="(") {
     /* we shouldn't have to do this but it seems sometimes (sched 0.28) folks have
     used libraries which get added into the clockinfo, and we can't use them directly
-    to we have to rever back to eval. */
+    to we have to revert back to eval */
     f = `eval(require('Storage').read(${E.toJS(src)}))`;
   }
   if (dst) {
@@ -195,7 +195,7 @@ let ciFiles = require("Storage").list(/\.clkinfo\.js$/);
 let ci = `// Made by bootupdate.js\n`;
 if (DEBUG) ci+="var _tm=Date.now();";
 outputFileComplete = (dst,fn) => {
-  outputFile(dst,fn,"try{let a=",`(),b=menu.find(x=>x.name===a.name);if(b)b.items=b.items.concat(a.items)else menu=menu.concat(a);}catch(e){print(${E.toJS(fn)},e,e.stack)}\n`);
+  outputFile(dst,fn,"try{let fn=",`;let a=fn(),b=menu.find(x=>x.name===a.name);if(b)b.items=b.items.concat(a.items)else menu=menu.concat(a);}catch(e){print(${E.toJS(fn)},e,e.stack)}\n`);
 };  
 fileOffset = ci.length;
 ciFiles.forEach(fn=>outputFileComplete(undefined,fn)); // just get sizes
