@@ -14,6 +14,8 @@ if (stepGoal == undefined) {
 exports.loadCount = 0;
 /// A list of all the instances returned by addInteractive
 exports.clockInfos = [];
+/// A list of loaded clockInfos
+exports.clockInfoMenus = undefined;
 
 /// Load the settings, with defaults
 exports.loadSettings = function() {
@@ -29,6 +31,8 @@ exports.loadSettings = function() {
 
 /// Load a list of ClockInfos - this does not cache and reloads each time
 exports.load = function() {
+  if (exports.clockInfoMenus)
+    return exports.clockInfoMenus;
   var settings = exports.loadSettings();
   delete settings.apps; // keep just the basic settings in memory
   // info used for drawing...
@@ -146,6 +150,7 @@ exports.load = function() {
   });
 
   // return it all!
+  exports.clockInfoMenus = menu;
   return menu;
 };
 
@@ -345,6 +350,9 @@ exports.addInteractive = function(menu, options) {
     menuHideItem(menu[options.menuA].items[options.menuB]);
     exports.loadCount--;
     delete exports.clockInfos[options.index];
+    // If nothing loaded now, clear our list of loaded menus
+    if (exports.loadCount==0)
+      exports.clockInfoMenus = undefined;
   };
   options.redraw = function() {
     drawItem(menu[options.menuA].items[options.menuB]);
