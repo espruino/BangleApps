@@ -135,10 +135,14 @@ exports.load = function() {
       hide : function() { clearInterval(this.interval); delete this.interval; },
     });
   }
-
+  var clkInfoCache = require('Storage').read('.clkinfocache');
+  if (clkInfoCache!==undefined) {
+    // note: code below is included in clkinfocache by bootupdate.js
+    // we use clkinfocache if it exists as it's faster
+    eval(clkInfoCache);
+  } else require("Storage").list(/clkinfo.js$/).forEach(fn => {
   // In case there exists already a menu object b with the same name as the next
   // object a, we append the items. Otherwise we add the new object a to the list.
-  require("Storage").list(/clkinfo.js$/).forEach(fn => {
     try{
       var a = eval(require("Storage").read(fn))();
       var b = menu.find(x => x.name === a.name);
