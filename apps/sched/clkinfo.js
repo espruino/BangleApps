@@ -135,6 +135,7 @@
         run: function() {
           if (a.date) return; // ignore events
           a.on = !a.on;
+          a.last = 0;
           if(a.on && a.timer) alarm.resetTimer(a);
           this.emit("redraw");
           alarm.setAlarms(all);
