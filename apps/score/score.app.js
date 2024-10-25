@@ -155,6 +155,7 @@ function currentSet() {
 
 function shouldTiebreak() {
   return settings.enableMaxScoreTiebreak &&
+    scores[cSet][0] === scores[cSet][1] &&
     scores[cSet][0] + scores[cSet][1] === (maxScore() - 1) * 2;
 }
 
