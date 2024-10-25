@@ -65,7 +65,7 @@ if ((require("Storage").readJSON("messages.settings.json", true) || {}).maxMessa
       this.onMsg("show", {}); // reload messages+redraw
     }
   };
-
   Bangle.on("message", WIDGETS["messages"].onMsg.bind(WIDGETS["messages"]));
-  WIDGETS["messages"].onMsg("init", {}); // abuse type="init" to prevent Bangle.drawWidgets();
+  if (require("Storage").read("messages.json")!==undefined) // only call init if we've got messages - otherwise we can avoid loading messages lib (saves 30ms)
+    WIDGETS["messages"].onMsg("init", {}); // abuse type="init" to prevent Bangle.drawWidgets();
 }
