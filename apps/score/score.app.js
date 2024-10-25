@@ -22,7 +22,7 @@ let h = g.getHeight();
 let isBangle1 = process.env.BOARD === 'BANGLEJS' || process.env.BOARD === 'EMSCRIPTEN';
 
 function getXCoord(func) {
-  let offset = 40;
+  let offset = 20;
   return func(w-offset)+offset;
 }
 
@@ -72,7 +72,29 @@ function setupInputWatchers(init) {
             handleInput(1);
           }
         } else {
-          handleInput(2);
+          // long press except if we have the menu opened or we are in the emulator (that doesn't 
+          // seem to support long press events)
+          if (e.type === 2 || settingsMenuOpened || process.env.BOARD === 'EMSCRIPTEN2') {
+            handleInput(2);
+          } else {
+            let p = null;
+            
+            if (matchWon(0)) p = 0;
+            else if (matchWon(1)) p = 1;
+            
+            // display full instructions if there is space available, or brief ones otherwise
+            if (p === null) {
+              drawInitialMsg();
+            } else {
+              g.setFontAlign(0,0);
+              g.setFont('Teletext5x9Ascii',1);
+              g.drawString(
+                "-Long press-",
+                getXCoord(w => p === 0 ? w/4*3: (w/4) + 20),
+                15
+              );
+            }
+          }
         }
       }
     });
@@ -286,7 +308,7 @@ function score(player) {
     }
   } else {
     if (matchEnded()) return;
-
+  
     if (shouldTiebreak()) {
       scores[cSet][3+player]++;
     } else if (settings.enableTennisScoring) {
@@ -318,7 +340,7 @@ function score(player) {
 function handleInput(button) {
   // console.log('button:', button);
   if (settingsMenuOpened) {
-    
+
     if (!isBangle1 && button == 2) {
       E.showMenu();
 
@@ -328,8 +350,6 @@ function handleInput(button) {
 
       setupDisplay();
       setupInputWatchers();
-      
-    
       
     }
     return;
@@ -367,8 +387,8 @@ function draw() {
       g.setFontAlign(0,0);
       g.setFont('Teletext5x9Ascii',2);
       g.drawString(
-        "WINNER",
-        getXCoord(w => p === 0 ? w/4 : w/4*3),
+        "WINS",
+        getXCoord(w => p === 0 ? w/4 + 7 : w/4*3 + 7),
         15
       );
     } else if (matchEnded()) {
@@ -403,7 +423,7 @@ function draw() {
       g.setFont('7x11Numeric7Seg',2);
       g.drawString(
         formatNumber(matchScore(p), 3),
-        getXCoord(w => p === 0 ? w/2 - 3 : w/2 + 6),
+        getXCoord(w => p === 0 ? w/2 - 6 : w/2 + 9),
         h-5
       );
     }
@@ -414,7 +434,7 @@ function draw() {
     g.setFont('Teletext5x9Ascii',2);
     g.drawString(
       "R",
-      getXCoord(w => w/2),
+      getXCoord(w => w/2) + 1,
       h-10
     );
   }
@@ -438,13 +458,13 @@ function draw() {
     g.drawString(set+1, 5, y-10);
     if (scores[set+1][2] != null) {
       let dur2 = formatDuration(scores[set+1][2] - scores[set][2]);
-      g.drawString(dur2, 5, y+10);
+      g.drawString(dur2, 2, y+10);
     }
 
     for (let p = 0; p < 2; p++) {
       if (!setWon(set, p === 0 ? 1 : 0) || matchEnded()) {
-        let bigNumX = getXCoord(w => p === 0 ? w/4-12 : w/4*3+15);
-        let smallNumX = getXCoord(w => p === 0 ? w/2-2 : w/2+3);
+        let bigNumX = getXCoord(w => p === 0 ? w/4-2 : w/4*3+5);
+        let smallNumX = getXCoord(w => p === 0 ? w/2-1 : w/2+2);
 
         if (settings.enableTennisScoring && set === cSet && !shouldTiebreak()) {
           g.setFontAlign(0,0);
@@ -459,7 +479,7 @@ function draw() {
           g.setFont('7x11Numeric7Seg',3);
           g.drawString(
             formatNumber(scores[set][3+p], 3),
-            bigNumX,
+            bigNumX + (p === 0 ? -5 : 5),
             y
           );
         } else {
@@ -499,7 +519,20 @@ function draw() {
   g.flip();
 }
 
+function drawInitialMsg() {
+  if (!isBangle1) {
+    g.setFontAlign(0,0);
+    g.setFont('Teletext5x9Ascii',1);
+    g.drawString(
+      "-Long press here for menu-",
+      90,
+      15
+    );
+  }
+}
+
 setupDisplay();
 setupInputWatchers(true);
 setupMatch();
 draw();
+drawInitialMsg();
