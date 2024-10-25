@@ -66,12 +66,12 @@ if (s.ble===false) boot += `if (!NRF.getSecurityStatus().connected) NRF.sleep();
 if (s.timeout!==undefined) boot += `Bangle.setLCDTimeout(${s.timeout});\n`;
 if (!s.timeout) boot += `Bangle.setLCDPower(1);\n`;
 boot += `E.setTimeZone(${s.timezone});`;
-// Draw out of memory errors onto the screen
-boot += `E.on('errorFlag', function(errorFlags) {
+// Draw out of memory errors onto the screen if logging enabled
+if (s.log) boot += `E.on('errorFlag', function(errorFlags) {
   g.reset(1).setColor("#ff0000").setFont("6x8").setFontAlign(0,1).drawString(errorFlags,g.getWidth()/2,g.getHeight()-1).flip();
   print("Interpreter error:", errorFlags);
-  E.getErrorFlags(); // clear flags so we get called next time
-});\n`;
+  E.getErrorFlags();
+});\n`;// E.getErrorFlags() -> clear flags so we get called next time
 // stop users doing bad things!
 if (global.save) boot += `global.save = function() { throw new Error("You can't use save() on Bangle.js without overwriting the bootloader!"); }\n`;
 // Apply any settings-specific stuff
@@ -93,7 +93,6 @@ delete Bangle.showClock;
 if (!Bangle.showClock) boot += `Bangle.showClock = ()=>{load(".bootcde")};\n`;
 delete Bangle.load;
 if (!Bangle.load) boot += `Bangle.load = load;\n`;
-let date = new Date();
 
 // show timings
 if (DEBUG) boot += `print(".boot0",0|(Date.now()-_tm),"ms");_tm=Date.now();\n`
@@ -118,7 +117,7 @@ let bootFiles = require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
 bootPost += "}";
 let fileOffset,fileSize;
 /* code to output a file, plus preable and postable
-when called with dst==undefined it just increments 
+when called with dst==undefined it just increments
 fileOffset so we can see ho wbig the file has to be */
 let outputFile = (dst,src,pre,post) => {"ram";
   if (DEBUG) {
@@ -163,14 +162,14 @@ let outputFileComplete = (dst,fn) => {
   // we write:
   // "//"+bootFile+"\n"+require('Storage').read(bootFile)+";\n";
   // but we need to do this without ever loading everything into RAM as some
-  // boot files seem to be getting pretty big now.  
+  // boot files seem to be getting pretty big now.
   outputFile(dst,fn,"",";\n");
 };
 fileOffset = boot.length + bootPost.length;
 bootFiles.forEach(fn=>outputFileComplete(undefined,fn)); // just get sizes
 fileSize = fileOffset;
 require('Storage').write('.boot0',boot,0,fileSize);
-fileOffset = boot.length;  
+fileOffset = boot.length;
 bootFiles.forEach(fn=>outputFileComplete('.boot0',fn));
 require('Storage').write('.boot0',bootPost,fileOffset);
 delete boot,bootPost,bootFiles;
@@ -186,7 +185,7 @@ fileOffset = widget.length + widgetPost.length;
 widgetFiles.forEach(fn=>outputFileComplete(undefined,fn)); // just get sizes
 fileSize = fileOffset;
 require('Storage').write('.widcache',widget,0,fileSize);
-fileOffset = widget.length;  
+fileOffset = widget.length;
 widgetFiles.forEach(fn=>outputFileComplete('.widcache',fn));
 require('Storage').write('.widcache',widgetPost,fileOffset);
 delete widget,widgetPost,widgetFiles;
@@ -196,12 +195,12 @@ let ci = `// Made by bootupdate.js\n`;
 if (DEBUG) ci+="var _tm=Date.now();";
 outputFileComplete = (dst,fn) => {
   outputFile(dst,fn,"try{let fn=",`;let a=fn(),b=menu.find(x=>x.name===a.name);if(b)b.items=b.items.concat(a.items)else menu=menu.concat(a);}catch(e){print(${E.toJS(fn)},e,e.stack)}\n`);
-};  
+};
 fileOffset = ci.length;
 ciFiles.forEach(fn=>outputFileComplete(undefined,fn)); // just get sizes
 fileSize = fileOffset;
 require('Storage').write('.clkinfocache',ci,0,fileSize);
-fileOffset = ci.length;  
+fileOffset = ci.length;
 ciFiles.forEach(fn=>outputFileComplete('.clkinfocache',fn));
 delete ci,ciFiles;
 // test with require("clock_info").load()
@@ -211,10 +210,3 @@ E.showMessage(/*LANG*/"Reloading...");
 // .bootcde should be run automatically after if required, since
 // we normally get called automatically from '.boot0'
 eval(require('Storage').read('.boot0'));
-/*
-f = require("Storage").read("sched.clkinfo.js")
-if (f.startsWith("Modules.addCached")) {
-  
-}
-
-*/

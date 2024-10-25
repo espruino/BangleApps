@@ -75,3 +75,4 @@
 0.64: Automatically create .widcache and .clkinfocache to speed up loads
       Bangle.loadWidgets overwritten with fast version on success
       Refuse to work on firmware  <2v16 and remove old polyfills
+0.65: Only display interpreter errors if log is nonzero
