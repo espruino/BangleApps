@@ -134,7 +134,6 @@ let gps = {
   init: function(x) {
     this.emulator = (process.env.BOARD=="EMSCRIPTEN" 
                      || process.env.BOARD=="EMSCRIPTEN2")?1:0;
-    this.emulator = 1; // FIXME
   },
   state: {},
   on_gps: function(f) {
@@ -602,7 +601,7 @@ function step_to(pp, pass_all) {
   return quiet;
 }
 
-var demo_mode = 0; //fixme
+var demo_mode = 0;
 
 function step() {
   const fast = 0;
@@ -666,7 +665,7 @@ function step() {
     drop_last();
   let v2 = getTime();
   print("Step took", (v2-v1), "seconds");
-  setTimeout(step, 10); /* FIXME! */
+  setTimeout(step, 1000);
 }
 
 function recover() {
