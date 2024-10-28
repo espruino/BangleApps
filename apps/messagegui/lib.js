@@ -18,6 +18,10 @@ exports.listener = function(type, msg) {
     clearTimeout(exports.messageTimeout);
     delete exports.messageTimeout;
   }
+  if (type==="clearAll") {
+    require("messages").stopBuzz();
+    return;
+  }
   if (msg.t==="remove") {
     // we won't open the UI for removed messages, so make sure to delete it from flash
     if (Bangle.MESSAGES) {
