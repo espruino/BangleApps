@@ -79,4 +79,4 @@
   
   E.showMenu(appMenu);
 
-});
+})

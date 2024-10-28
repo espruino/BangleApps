@@ -74,4 +74,4 @@
             }
         ]
     };
-});
+}); // FIXME: semi-colon added automatically when Typescript generates Javascript file?

@@ -45,6 +45,6 @@
   // Actually display the menu
   E.showMenu(mainmenu);
 
-});
+})
 
 // end of file

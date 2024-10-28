@@ -23,5 +23,4 @@
       },
     };
     E.showMenu(mainmenu);
-  });
-  
+  })

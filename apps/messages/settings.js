@@ -97,4 +97,4 @@
     },
   };
   E.showMenu(mainmenu);
-});
+})

@@ -23,4 +23,4 @@
   };
   E.showMenu(mainmenu);
 
-});
+})

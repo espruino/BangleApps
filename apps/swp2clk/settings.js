@@ -180,4 +180,4 @@
 
   settings = readSettings();
   showMainMenu();
-});
+})
