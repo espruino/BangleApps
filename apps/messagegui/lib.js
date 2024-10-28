@@ -25,6 +25,8 @@ exports.listener = function(type, msg) {
       require("messages").apply(msg, Bangle.MESSAGES);
       if (!Bangle.MESSAGES.length) delete Bangle.MESSAGES;
     }
+    if(type!=="music")
+      require("messages").stopBuzz();
     return require("messages").save(msg); // always write removal to flash
   }
 

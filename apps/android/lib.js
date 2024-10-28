@@ -44,7 +44,7 @@ exports.gbHandler = (event) => {
     "musicinfo" : function() {
       require("messages").pushMessage(Object.assign(event, {t:"modify",id:"music",title:"Music"}));
     },
-    // {"t":"call","cmd":"incoming/end","name":"Bob","number":"12421312"})
+    // {"t":"call","cmd":"incoming/end/start/outgoing","name":"Bob","number":"12421312"})
     "call" : function() {
       Object.assign(event, {
         t:event.cmd=="incoming"?"add":"remove",
