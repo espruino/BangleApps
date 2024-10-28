@@ -115,7 +115,7 @@ reload();
 Bangle.emit("drained", E.getBattery());
 
 // restore normal boot on charge
-const { keepStartup = true, restore = 20, exceptions = ["widdst.0"] }: DrainedSettings
+const { keepStartup = true, restore = 20, exceptions = ["widdst.0"], interval = 10 }: DrainedSettings
   = require("Storage").readJSON(`${app}.setting.json`, true) || {};
 
 // re-enable normal boot code when we're above a threshold:
@@ -131,19 +131,15 @@ function drainedRestore() { // "public", to allow users to call
 }
 
 const checkCharge = () => {
-  if(E.getBattery() < restore) {
+  if(!Bangle.isCharging() || E.getBattery() < restore) {
     draw();
     return;
   }
   drainedRestore();
 };
 
-if (Bangle.isCharging())
-  checkCharge();
-
-Bangle.on("charging", charging => {
-  if(charging) checkCharge();
-});
+checkCharge();
+drainedInterval = setInterval(checkCharge, interval * 60 * 1000);
 
 if(!keepStartup){
   const storage = require("Storage");
