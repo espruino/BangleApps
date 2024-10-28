@@ -1,4 +1,5 @@
 {
+setTimeout(() => { // wrap in zero ms timeout so the foreground app loads first.
   const storage = require("Storage");
   let settings = storage.readJSON("quicklaunch.json", true) || {};
 
@@ -40,4 +41,5 @@
     if (ud == 1) trace = leaveTrace("d"); // d=down.
     launchApp(trace);
   });
+}, 0);
 }
