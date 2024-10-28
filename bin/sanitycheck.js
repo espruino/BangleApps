@@ -348,10 +348,16 @@ apps.forEach((app,appIdx) => {
         }
       }
       // something that needs to be evaluated with 'eval(require("Storage").read(fn))'
-      if (/\.clkinfo?\.js$/.test(file.name) ||
-          /\.settings?\.js$/.test(file.name)) {
+      if (/\.clkinfo\.js$/.test(file.name) ||
+          /\.settings\.js$/.test(file.name)) {
         if (!fileContents.trim().endsWith(")"))
           WARN(`App ${app.id} file ${file.name} should be evaluated as a function but doesn't end in ')'`, {file:appDirRelative+file.url});
+      }
+        if (/\.clkinfo\.js$/.test(file.name) ||
+            /\.wid\.js$/.test(file.name)) {
+        if (fileContents.indexOf("g.clear(")>=0 ||
+            fileContents.indexOf("g.reset().clear()")>=0)
+          ERROR(`App ${app.id} widget/clkinfo ${file.name} should never totally clear the screen`, {file:appDirRelative+file.url});
       }
     }
     for (const key in file) {
