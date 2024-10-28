@@ -5,6 +5,12 @@
 var fs = require("fs");
 var vm = require("vm");
 var heatshrink = require("../webtools/heatshrink");
+/*var apploader = require("../core/lib/apploader.js");
+apploader.init({
+  DEVICEID : "BANGLEJS2"
+});*/
+
+
 var acorn;
 try {
   acorn = require("acorn");
@@ -181,6 +187,7 @@ const isGlob = f => /[?*]/.test(f)
 // All storage+data files in all apps: {app:<appid>,[file:<storage.name> | data:<data.name|data.wildcard>]}
 let allFiles = [];
 let existingApps = [];
+let promise = Promise.resolve();
 apps.forEach((app,appIdx) => {
   if (!app.id) ERROR(`App ${appIdx} has no id`);
   var appDirRelative = APPSDIR_RELATIVE+app.id+"/";
@@ -306,8 +313,9 @@ apps.forEach((app,appIdx) => {
     }
     if (file.name.endsWith(".js")) {
       // TODO: actual lint?
+      var ast;
       try {
-        acorn.parse(fileContents);
+        ast = acorn.parse(fileContents);
       } catch(e) {
         console.log("=====================================================");
         console.log("  PARSE OF "+appDir+file.url+" failed.");
@@ -336,6 +344,12 @@ apps.forEach((app,appIdx) => {
         if (m) {
           WARN(`Settings for ${app.id} has a boolean formatter - this is handled automatically, the line can be removed`, {file:appDirRelative+file.url, line: fileContents.substr(0, m.index).split("\n").length});
         }
+      }
+      // something that needs to be evaluated with 'eval(require("Storage").read(fn))'
+      if (/\.clkinfo?\.js$/.test(file.name) ||
+          /\.settings?\.js$/.test(file.name)) {
+        if (!fileContents.trim().endsWith(")"))
+          WARN(`App ${app.id} file ${file.name} should be evaluated as a function but doesn't end in ')'`, {file:appDirRelative+file.url});
       }
     }
     for (const key in file) {
@@ -436,6 +450,18 @@ apps.forEach((app,appIdx) => {
         ERROR(`App ${app.id} has provides_modules ${modulename} but it doesn't provide that filename`, {file:metadataFile});
     });
   }
+  /*
+  // We could try to create the files we need to upload for this app to check it all works ok...
+  promise = promise.then(() => apploader.getAppFiles(app).then(files => {
+    files.forEach(file => {
+      if (/\.clkinfo?\.js$/.test(file.name) ||
+          /\.settings?\.js$/.test(file.name)) {
+        if (!file.content.startsWith("(")) {
+          ERROR(`App ${app.id} file ${file.name} should evaluate to a simple fn and doesn't (starts: ${JSON.stringify(file.content.substr(0,30))})`, {file:appDirRelative+file.url});
+        }
+      }
+    });
+  }));*/
 });
 
 
@@ -481,12 +507,14 @@ function sanityCheckLocales(){
   }
 }
 
-console.log("==================================");
-console.log(`${errorCount} errors, ${warningCount} warnings (and ${knownErrorCount} known errors, ${knownWarningCount} known warnings)`);
-console.log("==================================");
-if (errorCount)  {
-  process.exit(1);
-} else if ("CI" in process.env && warningCount) {
-  console.log("Running in CI, raising an error from warnings");
-  process.exit(1);
-}
+promise.then(function() {
+  console.log("==================================");
+  console.log(`${errorCount} errors, ${warningCount} warnings (and ${knownErrorCount} known errors, ${knownWarningCount} known warnings)`);
+  console.log("==================================");
+  if (errorCount)  {
+    process.exit(1);
+  } else if ("CI" in process.env && warningCount) {
+    console.log("Running in CI, raising an error from warnings");
+    process.exit(1);
+  }
+});
