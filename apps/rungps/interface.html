@@ -1,51 +1,154 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <link rel="stylesheet" href="../../css/spectre.min.css">
+    <meta charset="UTF-8">
+    <title>Home rungps loader</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.5/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="Home.css">
 </head>
 <body>
-<div id="data"></div>
-<button class="btn btn-default" id="btnSave">Save</button>
+<script src="calculations.js"></script>
 
-<script src="../../core/lib/interface.js"></script>
+<div id="map"></div>
+<div id="charts">
+    <canvas id="heart_rateChart" class="Chart"></canvas>
+    <canvas id="speedChart" class="Chart"></canvas>
+    <canvas id="altitudeChart" class="Chart"></canvas>
+</div>
+<div class="data" id="tooltip">
+    <p id="heart_rate">heart rate: 0 bpm</p>
+    <p id="speed">speed: 0:0 min/km</p>
+    <p id="altitude">altitude: 0m</p>
+    <p id="time">time: 0:00:00</p>
+</div>
+<div class="data">
+    <p id="distance">0km</p>
+    <p id="averageSpeed">0:0min/km</p>
+</div>
+<div id="inputDiv">
+    <button id="Read">Read</button>
+    <label for="input"></label><input id="input" placeholder="gpspoilog.csv">
+</div>
+
 <script>
-  var dataElement = document.getElementById("data");
-  var csvData = "";
+let text = "";
+let points = [];
+let place;
+let xTime;
+const groep = new L.featureGroup();
 
-  function getData() {
-    dataElement.innerHTML = "";
-    Puck.eval(`require("Storage").list(/rungps\\..+\\.csv$/, {sf: true});`, list => {
-      dataElement.innerHTML = "<ul>";
-      console.log(list);
-      for (let file of list) {
-        dataElement.innerHTML += "<li><button onClick=\"selectFile("+file+")\">"+file+"</button></li>";
-      }
+const heart_rateData = document.getElementById("heart_rate");
+const speedData = document.getElementById("speed");
+const altData = document.getElementById("altitude");
+const timeData = document.getElementById("time");
+
+// --- Initialize Map ---
+let map = L.map('map').setView([0, 0], 0);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+
+// --- Initialize Charts ---
+function createChart(canvasId, color, labelText) {
+    return new Chart(document.getElementById(canvasId).getContext("2d"), {
+        type: "line",
+        data: { labels: [], datasets: [{ borderColor: color, data: [], label: labelText, pointBackgroundColor: [], pointRadius: [] }] },
+        options: {
+            animation: false,
+            plugins: {
+                title: { display: true, text: labelText },
+                tooltip: { intersect: false, mode: "index" }
+            }
+        }
     });
-  }
+}
 
-  function selectFile(fileName) {
-    Util.showModal("Loading...");
-    // get the data
-    dataElement.innerHTML = "";
-    Util.readStorageFile(fileName, data=> {
-      csvData = data.trim();
-      // remove window
-      Util.hideModal();
-      // If no data, report it and exit
-      if (data.length === 0) {
-        dataElement.innerHTML = "<b>No data found</b>";
-        return;
-      }
-      dataElement.innerHTML = "<b>"+fileName+"</b>"
+const heart_rateChart = createChart("heart_rateChart", "rgb(255,0,0)", "Heart rate");
+const speedChart = createChart("speedChart", "rgb(0,0,255)", "Speed");
+const altChart = createChart("altitudeChart", "rgb(112,112,112)", "Altitude");
+
+// --- Display points & update charts ---
+function show(map, heart_rateChart, speedChart, altChart) {
+    points = window.calculations.translateData(text);
+    let vorig = points[0];
+
+    // start and end points
+    L.circle([vorig.lat, vorig.long], { color: 'green', fillColor: '#00ff00', fillOpacity: 1, radius: 2 }).addTo(map);
+    L.circle([points[points.length-1].lat, points[points.length-1].long], { color: 'purple', fillColor: '#7300ff', fillOpacity: 1, radius: 2 }).addTo(map);
+
+    for (let i = 1; i < points.length; i++) {
+        const point = points[i];
+        const line = new L.Polyline([ [vorig.lat, vorig.long], [point.lat, point.long] ], { color: 'red', weight: 3, opacity: 0.5 });
+        groep.addLayer(line);
+        map.addLayer(line);
+
+        const time = window.calculations.convertSecondstoTime(point.time);
+
+        if (point.heart_rate) {
+            heart_rateChart.data.datasets[0].pointBackgroundColor.push("red");
+            heart_rateChart.data.datasets[0].pointRadius.push(1);
+            heart_rateChart.data.datasets[0].data.push(point.heart_rate);
+            heart_rateChart.data.labels.push(time);
+            heart_rateChart.update();
+        }
+        if (point.speed !== 0) {
+            speedChart.data.datasets[0].pointBackgroundColor.push("blue");
+            speedChart.data.datasets[0].pointRadius.push(1);
+            speedChart.data.datasets[0].data.push(60 / point.speed);
+            speedChart.data.labels.push(time);
+            speedChart.update();
+        }
+        if (point.alt) {
+            altChart.data.datasets[0].pointBackgroundColor.push("grey");
+            altChart.data.datasets[0].pointRadius.push(1);
+            altChart.data.datasets[0].data.push(point.alt);
+            altChart.data.labels.push(time);
+            altChart.update();
+        }
+
+        vorig = point;
+    }
+
+    map.fitBounds(groep.getBounds());
+    [document.getElementById("averageSpeed").innerText, document.getElementById("distance").innerText] = window.calculations.getAverageSpeedAndDistance(points);
+}
+
+// --- Tooltip update ---
+function labelMaker(tooltipData, chart) {
+    const values = tooltipData.dataset.data[tooltipData.dataIndex];
+    const xLabel = tooltipData.label.toString();
+    const index = window.calculations.getIndexByTime(xLabel, points);
+    const point = points[index];
+
+    heart_rateData.innerText = "heart rate: "+point.heart_rate+" bpm";
+    speedData.innerText = "speed: "+Math.floor(60 / point.speed)+":"+Math.floor(60 / point.speed * 60 % 60)+" min/km";
+    altData.innerText = "altitude: "+point.alt+"m";
+    timeData.innerText = "time: "+window.calculations.convertSecondstoTime(point.time);
+
+    if (place) place.removeFrom(map);
+    place = L.circle([point.lat, point.long], { color: 'blue', fillColor: '#0000ff', fillOpacity: 1, radius: 1 }).addTo(map);
+
+    return [values, tooltipData.dataset.label];
+}
+
+// --- Read GPS file ---
+document.getElementById("Read").addEventListener("click", () => {
+    const fileName = "rungps."+document.getElementById("input").value+".csv" || "gpspoilog.csv";
+    Util.readStorageFile(fileName, data => {
+        if (!data) return console.log("File empty or not found:", fileName);
+        text = data;
+        show(map, heart_rateChart, speedChart, altChart);
     });
-  }
-
-  document.getElementById("btnSave").addEventListener("click", function() {
-    Util.saveCSV("gpsdata", csvData);
-  });
-
-  function onInit() {
-    getData();
-  }
+});
 </script>
 </body>
 </html>
