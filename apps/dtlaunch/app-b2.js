@@ -33,10 +33,10 @@
     s.writeJSON("launch.cache.json", launchCache);
   }
   let apps = launchCache.apps;
-  apps.forEach(app=>{
-    if (app.icon)
-      app.icon = s.read(app.icon); // should just be a link to a memory area
-  });
+  for (let i = 0; i < 4; i++) { // Initially only load icons for the current page.
+    if (apps[i].icon)
+      apps[i].icon = s.read(apps[i].icon); // should just be a link to a memory area
+  }
 
   let Napps = apps.length;
   let Npages = Math.ceil(Napps/4);
@@ -100,6 +100,11 @@
   Bangle.drawWidgets(); // To immediately update widget field to follow current theme - remove leftovers if previous app set custom theme.
   Bangle.loadWidgets();
   drawPage(0);
+
+  for (let i = 4; i < apps.length; i++) { // Load the rest of the app icons that were not initially.
+    if (apps[i].icon)
+      apps[i].icon = s.read(apps[i].icon); // should just be a link to a memory area
+  }
 
   let swipeListenerDt = function(dirLeftRight, dirUpDown){
     updateTimeoutToClock();

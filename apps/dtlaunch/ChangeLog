@@ -30,3 +30,4 @@ when moving pages. Add caching for faster startups.
 0.23: Bangle 1: Fix issue with missing icons, added touch screen interactions
 0.24: Add buzz-on-interaction setting
 0.25: Minor code improvements
+0.26: Bangle 2: Postpone loading icons that are not needed initially.
