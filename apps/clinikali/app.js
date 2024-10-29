@@ -84,6 +84,62 @@ function showMainMenu() {
   return E.showMenu(mainMenu);
 }
 
+function viewFile(filename) {
+  const trackMenu = {
+    "": { title: `File ${extractFileNumber(filename)}` },
+    "Send Data": () => {
+      E.showMessage("Preparing to send...");
+
+      // Function to send data via Bluetooth
+      function sendFileData() {
+        let file = require("Storage").read(filename);
+        if (!file) {
+          E.showMessage("File not found!");
+          setTimeout(viewTrack, 2000, filename);
+          return;
+        }
+
+        const lines = file.split("\n");
+        E.showMessage("Sending data...");
+
+        // Send data line by line with markers
+        for (let i = 0; i < lines.length; i++) {
+          if (lines[i].trim()) {
+            // Only send non-empty lines
+            Bluetooth.println("<data>");
+            Bluetooth.println(lines[i]);
+            Bluetooth.println("</data>");
+          }
+        }
+
+        // Send end marker
+        Bluetooth.println("<end>");
+
+        E.showMessage("Data sent!");
+        setTimeout(viewTrack, 2000, filename);
+      }
+
+      // Start sending data
+      sendFileData();
+    },
+    Delete: () => {
+      E.showPrompt("Delete File?").then((shouldDelete) => {
+        if (shouldDelete) {
+          require("Storage").erase(filename);
+          viewFiles();
+        } else {
+          viewTrack(filename);
+        }
+      });
+    },
+    "< Back": () => {
+      viewFiles();
+    },
+  };
+
+  return E.showMenu(trackMenu);
+}
+
 function viewFiles() {
   const fileMenu = {
     "": { title: "Files" },
@@ -96,7 +152,7 @@ function viewFiles() {
     .reverse()
     .forEach((filename) => {
       filesFound = true;
-      fileMenu[extractFileNumber(filename)] = () => viewTrack(filename, false);
+      fileMenu[extractFileNumber(filename)] = () => viewFile(filename);
     });
 
   if (!filesFound) {
