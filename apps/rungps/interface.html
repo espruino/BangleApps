@@ -1,0 +1,50 @@
+<html>
+<head>
+  <link rel="stylesheet" href="../../css/spectre.min.css">
+</head>
+<body>
+<div id="data"></div>
+<button class="btn btn-default" id="btnSave">Save</button>
+
+<script src="../../core/lib/interface.js"></script>
+<script>
+  var dataElement = document.getElementById("data");
+  var csvData = "";
+
+  function getData() {
+    dataElement.innerHTML = "";
+    Puck.eval("require(Storage).list(/rungps\\..+\\.csv$/, {sf: true});", list=> {
+      dataElement.innerHTML = "<ul>";
+      for (let file of list) {
+        dataElement.innerHTML += "<li><button onClick=\"selectFile("+file+")\">"+file+"</button></li>";
+      }
+    });
+  }
+
+  function selectFile(fileName) {
+    Util.showModal("Loading...");
+    // get the data
+    dataElement.innerHTML = "";
+    Util.readStorageFile(fileName, data=> {
+      csvData = data.trim();
+      // remove window
+      Util.hideModal();
+      // If no data, report it and exit
+      if (data.length === 0) {
+        dataElement.innerHTML = "<b>No data found</b>";
+        return;
+      }
+      dataElement.innerHTML = "<b>"+fileName+"</b>"
+    });
+  }
+
+  document.getElementById("btnSave").addEventListener("click", function() {
+    Util.saveCSV("gpsdata", csvData);
+  });
+
+  function onInit() {
+    getData();
+  }
+</script>
+</body>
+</html>
