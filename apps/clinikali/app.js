@@ -84,27 +84,31 @@ function showMainMenu() {
   return E.showMenu(mainMenu);
 }
 
-function viewFile(filename) {
+function viewTrack(filename) {
   E.showMenu({
     "": { title: `File ${extractFileNumber(filename)}` },
     "Send Data": () => {
       E.showMessage("Preparing to send...");
 
       function sendFileData() {
-        let file = require("Storage").read(filename);
+        // Remove (StorageFile) if present in the filename
+        const cleanFilename = filename.replace(" (StorageFile)", "");
+        let file = require("Storage").open(cleanFilename, "r");
+
         if (!file) {
           E.showMessage("File not found!");
           setTimeout(() => viewTrack(filename), 2000);
           return;
         }
 
-        const lines = file.split("\n");
         E.showMessage("Sending data...");
+        let line;
 
-        for (let i = 0; i < lines.length; i++) {
-          if (lines[i].trim()) {
+        // Read file line by line
+        while ((line = file.readLine()) !== undefined) {
+          if (line.trim()) {
             Bluetooth.println("<data>");
-            Bluetooth.println(lines[i]);
+            Bluetooth.println(line);
             Bluetooth.println("</data>");
           }
         }

@@ -144,7 +144,7 @@
 
     try {
       const fields = [
-        writeSubSecs ? getTime().toFixed(1) : Math.round(getTime()),
+        new Date().toISOString().replace("T", " ").replace("Z", ""),
       ];
 
       activeRecorders.forEach((recorder) =>
