@@ -84,7 +84,7 @@ function showMainMenu() {
   return E.showMenu(mainMenu);
 }
 
-function viewTrack(filename) {
+function viewFile(filename) {
   E.showMenu({
     "": { title: `File ${extractFileNumber(filename)}` },
     "Send Data": () => {
