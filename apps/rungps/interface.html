@@ -13,8 +13,9 @@
 
   function getData() {
     dataElement.innerHTML = "";
-    Puck.eval("require(Storage).list(/rungps\\..+\\.csv$/, {sf: true});", list=> {
+    Puck.eval(`require("Storage").list(/rungps\\..+\\.csv$/, {sf: true});`, list => {
       dataElement.innerHTML = "<ul>";
+      console.log(list);
       for (let file of list) {
         dataElement.innerHTML += "<li><button onClick=\"selectFile("+file+")\">"+file+"</button></li>";
       }
