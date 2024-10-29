@@ -140,7 +140,7 @@ exports.load = function() {
     // note: code below is included in clkinfocache by bootupdate.js
     // we use clkinfocache if it exists as it's faster
     eval(clkInfoCache);
-  } else require("Storage").list(/clkinfo.js$/).forEach(fn => {
+  } else require("Storage").list(/clkinfo\.js$/).forEach(fn => {
   // In case there exists already a menu object b with the same name as the next
   // object a, we append the items. Otherwise we add the new object a to the list.
     try{
