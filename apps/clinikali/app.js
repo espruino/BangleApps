@@ -85,41 +85,36 @@ function showMainMenu() {
 }
 
 function viewFile(filename) {
-  const trackMenu = {
+  E.showMenu({
     "": { title: `File ${extractFileNumber(filename)}` },
     "Send Data": () => {
       E.showMessage("Preparing to send...");
 
-      // Function to send data via Bluetooth
       function sendFileData() {
         let file = require("Storage").read(filename);
         if (!file) {
           E.showMessage("File not found!");
-          setTimeout(viewTrack, 2000, filename);
+          setTimeout(() => viewTrack(filename), 2000);
           return;
         }
 
         const lines = file.split("\n");
         E.showMessage("Sending data...");
 
-        // Send data line by line with markers
         for (let i = 0; i < lines.length; i++) {
           if (lines[i].trim()) {
-            // Only send non-empty lines
             Bluetooth.println("<data>");
             Bluetooth.println(lines[i]);
             Bluetooth.println("</data>");
           }
         }
 
-        // Send end marker
         Bluetooth.println("<end>");
 
         E.showMessage("Data sent!");
-        setTimeout(viewTrack, 2000, filename);
+        setTimeout(() => viewTrack(filename), 2000);
       }
 
-      // Start sending data
       sendFileData();
     },
     Delete: () => {
@@ -135,9 +130,7 @@ function viewFile(filename) {
     "< Back": () => {
       viewFiles();
     },
-  };
-
-  return E.showMenu(trackMenu);
+  });
 }
 
 function viewFiles() {
@@ -152,7 +145,9 @@ function viewFiles() {
     .reverse()
     .forEach((filename) => {
       filesFound = true;
-      fileMenu[extractFileNumber(filename)] = () => viewFile(filename);
+      fileMenu[extractFileNumber(filename)] = () => {
+        viewFile(filename);
+      };
     });
 
   if (!filesFound) {
