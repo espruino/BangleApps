@@ -101,14 +101,20 @@ function drainedRestore() {
     load();
 }
 var checkCharge = function () {
-    if (!Bangle.isCharging() || E.getBattery() < restore) {
+    if (E.getBattery() < restore) {
         draw();
         return;
     }
     drainedRestore();
 };
-checkCharge();
-drainedInterval = setInterval(checkCharge, interval * 60 * 1000);
+if (Bangle.isCharging())
+    checkCharge();
+Bangle.on("charging", function (charging) {
+    if (drainedInterval)
+        drainedInterval = clearInterval(drainedInterval);
+    if (charging)
+        drainedInterval = setInterval(checkCharge, interval * 60 * 1000);
+});
 if (!keepStartup) {
     var storage = require("Storage");
     for (var _i = 0, exceptions_1 = exceptions; _i < exceptions_1.length; _i++) {

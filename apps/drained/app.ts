@@ -131,15 +131,22 @@ function drainedRestore() { // "public", to allow users to call
 }
 
 const checkCharge = () => {
-  if(!Bangle.isCharging() || E.getBattery() < restore) {
+  if(E.getBattery() < restore) {
     draw();
     return;
   }
   drainedRestore();
 };
 
-checkCharge();
-drainedInterval = setInterval(checkCharge, interval * 60 * 1000);
+if (Bangle.isCharging())
+  checkCharge();
+
+Bangle.on("charging", charging => {
+  if(drainedInterval)
+    drainedInterval = clearInterval(drainedInterval) as undefined;
+  if(charging)
+    drainedInterval = setInterval(checkCharge, interval * 60 * 1000);
+});
 
 if(!keepStartup){
   const storage = require("Storage");
