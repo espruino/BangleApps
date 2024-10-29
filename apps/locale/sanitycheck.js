@@ -4,15 +4,15 @@
  */
 const datetime_length_map = {
 	// %A, %a, %B, %b vary depending on the locale, so they are calculated later
-	"%Y": [4, 4],
-	"%y": [2, 2],
-	"%m": [2, 2],
-	"%-m": [1, 2],
-	"%d": [2, 2],
-	"%-d": [1, 2],
-	"%HH": [2, 2],
-	"%MM": [2, 2],
-	"%SS": [2, 2],
+	"%Y": [4, 4, "2024", "2024"],
+	"%y": [2, 2, "24", "24"],
+	"%m": [2, 2, "10", "10"],
+	"%-m": [1, 2, "1", "10"],
+	"%d": [2, 2, "10", "10"],
+	"%-d": [1, 2, "1", "10"],
+	"%HH": [2, 2, "10", "10"],
+	"%MM": [2, 2, "10", "10"],
+	"%SS": [2, 2, "10", "10"],
 };
 
 /**
@@ -30,20 +30,21 @@ function getLengthOfDatetimeFormat(name, datetimeEspruino, locale, errors) {
 		["%a", locale.abday],
 		["%B", locale.month],
 		["%b", locale.abmonth],
-	]){
+	]) {
 		const length = [Infinity, 0];
 		for(const value of values.split(",")){
-			if(length[0] > value.length) length[0] = value.length;
-			if(length[1] < value.length) length[1] = value.length;
+			if(length[0] > value.length) { length[0] = value.length; length[2] = value; }
+			if(length[1] < value.length) { length[1] = value.length; length[3] = value; }
 		}
 		length_map[symbol] = length;
 	}
 
 	// Find the length of the output
-	let formatLength = [0, 0];
+	let formatLength = [0, 0, "", ""];
 	let i = 0;
 	while (i < datetimeEspruino.length) {
-		if (datetimeEspruino[i] === "%") {
+        let ch = datetimeEspruino[i];
+		if (ch === "%") {
 			let match;
 			for(const symbolLength of [2, 3]){
 				const length = length_map[datetimeEspruino.substring(i, i+symbolLength)];
@@ -57,16 +58,22 @@ function getLengthOfDatetimeFormat(name, datetimeEspruino, locale, errors) {
 			if(match){
 				formatLength[0] += match.length[0];
 				formatLength[1] += match.length[1];
+                formatLength[2] += match.length[2];
+                formatLength[3] += match.length[3];
 				i += match.symbolLength;
 			}else{
 				errors.push({name, value: datetimeEspruino, lang: locale.lang, error: `uses an unsupported format symbol: ${datetimeEspruino.substring(i, i+3)}`});
 				formatLength[0]++;
 				formatLength[1]++;
+				formatLength[2]+=" ";
+				formatLength[3]+=" ";
 				i++;
 			}
 		} else {
 			formatLength[0]++;
 			formatLength[1]++;
+			formatLength[2]+=ch;
+			formatLength[3]+=ch;
 			i++;
 		}
 	}
@@ -154,10 +161,10 @@ function checkLocale(locale, {speedUnits, distanceUnits, codePages, CODEPAGE_CON
 	function checkFormatLength(name, value, min, max) {
 		const length = getLengthOfDatetimeFormat(name, value, locale, errors);
 		if (min && length[0] < min) {
-			errors.push({name, value, lang: locale.lang, error: `output must be longer than ${min-1} characters`});
+			errors.push({name, value, lang: locale.lang, error: `output must be longer than ${min-1} characters (${length[2]} -> ${length[0]})`});
 		}
 		if (max && length[1] > max) {
-			errors.push({name, value, lang: locale.lang, error: `output must be shorter than ${max+1} characters`});
+			errors.push({name, value, lang: locale.lang, error: `output must be shorter than ${max+1} characters (${length[3]} -> ${length[1]})`});
 		}
 	}
 	function checkIsIn(name, value, listName, list) {

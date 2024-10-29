@@ -1,5 +1,6 @@
 // Return an array of all alarms
 exports.getAlarms = function() {
+  // we do this direct in clkinfo.js to avoid loading the library
   return require("Storage").readJSON("sched.json",1)||[];
 };
 // Write a list of alarms back to storage

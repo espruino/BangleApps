@@ -1,7 +1,7 @@
 {
   "id": "boot",
   "name": "Bootloader",
-  "version": "0.63",
+  "version": "0.65",
   "description": "This is needed by Bangle.js to automatically load the clock, menu, widgets and settings",
   "icon": "bootloader.png",
   "type": "bootloader",
@@ -11,6 +11,9 @@
     {"name":".boot0","url":"boot0.js"},
     {"name":".bootcde","url":"bootloader.js"},
     {"name":"bootupdate.js","url":"bootupdate.js"}
+  ],"data": [
+    {"name":".widcache"},
+    {"name":".clkinfocache"}
   ],
   "sortorder": -10
 }

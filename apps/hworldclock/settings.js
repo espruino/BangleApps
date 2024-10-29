@@ -2,6 +2,7 @@
   var FILE = "hworldclock.json";
   var settings = Object.assign({
     secondsOnUnlock: false,
+    rotationTarget: "90",
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
@@ -55,4 +56,4 @@
 
   E.showMenu(mainmenu);
 
-});
+})

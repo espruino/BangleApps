@@ -72,3 +72,7 @@
 0.61: Instead of breaking execution with an Exception when updating boot, just use if..else (fix 'Uncaught undefined')
 0.62: Handle setting for configuring BLE privacy
 0.63: Only set BLE `display:1` if we have a passkey
+0.64: Automatically create .widcache and .clkinfocache to speed up loads
+      Bangle.loadWidgets overwritten with fast version on success
+      Refuse to work on firmware  <2v16 and remove old polyfills
+0.65: Only display interpreter errors if log is nonzero

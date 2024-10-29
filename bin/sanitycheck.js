@@ -5,6 +5,12 @@
 var fs = require("fs");
 var vm = require("vm");
 var heatshrink = require("../webtools/heatshrink");
+/*var apploader = require("../core/lib/apploader.js");
+apploader.init({
+  DEVICEID : "BANGLEJS2"
+});*/
+
+
 var acorn;
 try {
   acorn = require("acorn");
@@ -48,54 +54,56 @@ function WARN(msg, opt) {
 }
 /* These are errors that we temporarily allow */
 var KNOWN_ERRORS = [
-  "In locale en_CA, long date output must be shorter than 15 characters",
-  "In locale fr_FR, long date output must be shorter than 15 characters",
-  "In locale en_SE, long date output must be shorter than 15 characters",
-  "In locale en_NZ, long date output must be shorter than 15 characters",
-  "In locale en_AU, long date output must be shorter than 15 characters",
-  "In locale de_AT, long date output must be shorter than 15 characters",
-  "In locale en_IL, long date output must be shorter than 15 characters",
-  "In locale es_ES, long date output must be shorter than 15 characters",
-  "In locale fr_BE, long date output must be shorter than 15 characters",
-  "In locale fi_FI, long date output must be shorter than 15 characters",
-  "In locale de_CH, long date output must be shorter than 15 characters",
-  "In locale fr_CH, long date output must be shorter than 15 characters",
-  "In locale wae_CH, long date output must be shorter than 15 characters",
-  "In locale tr_TR, long date output must be shorter than 15 characters",
-  "In locale hu_HU, long date output must be shorter than 15 characters",
-  "In locale oc_FR, long date output must be shorter than 15 characters",
-  "In locale ca_ES, long date output must be shorter than 15 characters",
-  "In locale fr_BE, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fr_CH, short month must be shorter than 5 characters",
-  "In locale oc_FR, short month must be shorter than 5 characters",
-  "In locale hr_HR, short month must be shorter than 5 characters",
-  "In locale ca_ES, short month must be shorter than 5 characters",
-  "In locale de_DE, meridian must be longer than 0 characters",
-  "In locale en_JP, meridian must be longer than 0 characters",
-  "In locale nl_NL, meridian must be longer than 0 characters",
-  "In locale fr_FR, meridian must be longer than 0 characters",
-  "In locale se_SE, meridian must be longer than 0 characters",
-  "In locale en_SE, meridian must be longer than 0 characters",
-  "In locale da_DK, meridian must be longer than 0 characters",
-  "In locale en_DK, meridian must be longer than 0 characters",
-  "In locale de_AT, meridian must be longer than 0 characters",
-  "In locale es_ES, meridian must be longer than 0 characters",
-  "In locale fr_BE, meridian must be longer than 0 characters",
-  "In locale it_CH, meridian must be longer than 0 characters",
-  "In locale it_IT, meridian must be longer than 0 characters",
-  "In locale wae_CH, meridian must be longer than 0 characters",
-  "In locale oc_FR, meridian must be longer than 0 characters",
-  "In locale pl_PL, meridian must be longer than 0 characters",
-  "In locale lv_LV, meridian must be longer than 0 characters",
-  "In locale nn_NO, meridian must be longer than 0 characters",
-  "In locale nb_NO, meridian must be longer than 0 characters",
-  "In locale ca_ES, meridian must be longer than 0 characters",
-  "In locale de_CH, meridian must be shorter than 4 characters",
-  "In locale hr_HR, meridian must be shorter than 4 characters",
-  "In locale sl_SI, meridian must be shorter than 4 characters",
+  "In locale en_CA, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
+  "In locale fr_FR, long date output must be shorter than 15 characters (10 septembre 2024 -> 17)",
   "In locale fr_FR, short month must be shorter than 5 characters",
   "In locale sv_SE, speed must be shorter than 5 characters",
+  "In locale en_SE, long date output must be shorter than 15 characters (September 10 2024 -> 17)",
+  "In locale en_NZ, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
+  "In locale en_AU, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
+  "In locale de_AT, long date output must be shorter than 15 characters (Donnerstag, 10. September 2024 -> 30)",
+  "In locale en_IL, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
+  "In locale es_ES, long date output must be shorter than 15 characters (miércoles, 10 de septiembre de 2024 -> 35)",
+  "In locale fr_BE, long date output must be shorter than 15 characters (dimanche septembre 10 2024 -> 26)",
+  "In locale fr_BE, short month must be shorter than 5 characters",
+  "In locale fr_BE, short month must be shorter than 5 characters",
+  "In locale fr_BE, short month must be shorter than 5 characters",
+  "In locale fr_BE, short month must be shorter than 5 characters",
+  "In locale fr_BE, short month must be shorter than 5 characters",
+  "In locale fi_FI, long date output must be shorter than 15 characters (keskiviikkona 10. maaliskuuta 2024 -> 34)",
+  "In locale fi_FI, short month must be shorter than 5 characters",
+  "In locale fi_FI, short month must be shorter than 5 characters",
+  "In locale fi_FI, short month must be shorter than 5 characters",
+  "In locale fi_FI, short month must be shorter than 5 characters",
+  "In locale fi_FI, short month must be shorter than 5 characters",
+  "In locale fi_FI, short month must be shorter than 5 characters",
+  "In locale fi_FI, short month must be shorter than 5 characters",
+  "In locale fi_FI, short month must be shorter than 5 characters",
+  "In locale fi_FI, short month must be shorter than 5 characters",
+  "In locale fi_FI, short month must be shorter than 5 characters",
+  "In locale fi_FI, short month must be shorter than 5 characters",
+  "In locale de_CH, meridian must be shorter than 4 characters",
+  "In locale de_CH, meridian must be shorter than 4 characters",
+  "In locale de_CH, long date output must be shorter than 15 characters (Donnerstag, 10. September 2024 -> 30)",
+  "In locale fr_CH, long date output must be shorter than 15 characters (dimanche 10 septembre 2024 -> 26)",
+  "In locale fr_CH, short month must be shorter than 5 characters",
+  "In locale fr_CH, short month must be shorter than 5 characters",
+  "In locale fr_CH, short month must be shorter than 5 characters",
+  "In locale fr_CH, short month must be shorter than 5 characters",
+  "In locale fr_CH, short month must be shorter than 5 characters",
+  "In locale wae_CH, long date output must be shorter than 15 characters (Sunntag, 10. Herbštmánet 2024 -> 29)",
+  "In locale tr_TR, long date output must be shorter than 15 characters (10 Haziran 2024 Pazartesi -> 25)",
+  "In locale hu_HU, long date output must be shorter than 15 characters (2024 Szep 10, Csütörtök -> 23)",
+  "In locale oc_FR, long date output must be shorter than 15 characters (divendres 10 setembre de 2024 -> 29)",
+  "In locale oc_FR, short month must be shorter than 5 characters",
+  "In locale oc_FR, short month must be shorter than 5 characters",
+  "In locale hr_HR, meridian must be shorter than 4 characters",
+  "In locale hr_HR, meridian must be shorter than 4 characters",
+  "In locale hr_HR, short month must be shorter than 5 characters",
+  "In locale sl_SI, meridian must be shorter than 4 characters",
+  "In locale sl_SI, meridian must be shorter than 4 characters",
+  "In locale ca_ES, long date output must be shorter than 15 characters (10 setembre 2024 -> 16)",
+  "In locale ca_ES, short month must be shorter than 5 characters",
 ];
 /* These are warnings we know about but don't want in our output */
 var KNOWN_WARNINGS = [
@@ -112,6 +120,104 @@ var KNOWN_WARNINGS = [
   `In locale test, long time format might not work in some apps if it is not "%HH:%MM:%SS"`,
   `In locale wae_CH, short time format might not work in some apps if it is not "%HH:%MM"`,
   `In locale test, short time format might not work in some apps if it is not "%HH:%MM"`,
+  "App a_dndtoggle file a_dndtoggle.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App activepedom file activepedom.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App agpsdata file agpsdata.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App alarm file alarm.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App andark file andark.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App antonclkplus file antonclkplus.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App banglexercise file banglexercise.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App barclock file barclock.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App berlinc file berlinc.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App bikespeedo file bikespeedo.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App blc file blc.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App boxclk file boxclk.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App bthome file bthome.clkinfo.js should be evaluated as a function but doesn't end in ')'",
+  "App bthrm file bthrm.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App carcrazy file carcrazy.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App chimer file chimer.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App circlesclock file circlesclock.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App clicompleteclk file clicompleteclk.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App clkinfocal file clkinfocal.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App clkinfogps file gps.clkinfo.js should be evaluated as a function but doesn't end in ')'",
+  "App clkinfogpsspeed file clkinfogpsspeed.clkinfo.js should be evaluated as a function but doesn't end in ')'",
+  "App clkinfom file ram.clkinfo.js should be evaluated as a function but doesn't end in ')'",
+  "App clkinfomag file clkinfomag.clkinfo.js should be evaluated as a function but doesn't end in ')'",
+  "App clkinfostopw file stopw.clkinfo.js should be evaluated as a function but doesn't end in ')'",
+  "App clockcal file clockcal.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App cogclock file cogclock.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App counter2 file counter2.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App cprassist file cprassist.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App dane_tcr file dane_tcr.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App dragboard file dragboard.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App draguboard file draguboard.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App drained file drained.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App drinkcounter file drinkcounter.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App dtlaunch file dtlaunch.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App ffcniftyb file ffcniftyb.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App folderlaunch file folderlaunch.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App gassist file gassist.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App gbmusic file gbmusic.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App getup file getup.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App gipy file gipy.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App gpsrec file gpsrec.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App gpssetup file gpssetup.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App iconlaunch file iconlaunch.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App infoclk file infoclk.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App largeclock file largeclock.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App launch file launch.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App messagelist file messagelist.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App messages file messages.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App messages_light file messages_light.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App messagesoverlay file messagesoverlay.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App metronome file metronome.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App multitimer file multitimer.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App nesclock file nesclock.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App nightwatch file nightwatch.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App owmweather file owmweather.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App pebble file pebble.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App pebbled file pebbled.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App pongclock file pongclock.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App popconlaunch file popcon.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App poweroff file poweroff.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App puzzle15 file puzzle15.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App qcenter file qcenter.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App rebbleagenda file rebbleagenda.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App recorder file recorder.clkinfo.js should be evaluated as a function but doesn't end in ')'",
+  "App rep file rep.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App saclock file saclock.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App sched file sched.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App score file score.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App sensortools file sensortools.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App shadowclk file shadowclk.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App shortcuts file shortcuts.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App simplebgclock file simplebgclock.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App slomoclock file slomoclock.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App slopeclockpp file slopeclockpp.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App smclock file smclock.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App speedalt file speedalt.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App speedalt2 file speedalt2.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App swp2clk file swp2clk.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App taglaunch file taglaunch.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App thunder file thunder.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App timecal file timecal.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App timerclk file timerclk.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App timestamplog file timestamplog.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App toucher file toucher.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App touchtimer file touchtimer.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App trex file trex.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App usgs file usgs.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App weatherClock file weatherClock.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App wid_edit file wid_edit.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App widalarmeta file widalarmeta.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App widbaroalarm file widbaroalarm.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App widbatwarn file widbatwarn.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App widbgjs file widbgjs.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App widdst file widdst.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App widgps file widgps.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App widhrm file widhrm.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App widmp file widmp.settings.js should be evaluated as a function but doesn't end in ')'",
+  "App widsleepstatus file widsleepstatus.settings.js should be evaluated as a function but doesn't end in ')'",
 ];
 
 var apps = [];
@@ -181,6 +287,7 @@ const isGlob = f => /[?*]/.test(f)
 // All storage+data files in all apps: {app:<appid>,[file:<storage.name> | data:<data.name|data.wildcard>]}
 let allFiles = [];
 let existingApps = [];
+let promise = Promise.resolve();
 apps.forEach((app,appIdx) => {
   if (!app.id) ERROR(`App ${appIdx} has no id`);
   var appDirRelative = APPSDIR_RELATIVE+app.id+"/";
@@ -306,8 +413,9 @@ apps.forEach((app,appIdx) => {
     }
     if (file.name.endsWith(".js")) {
       // TODO: actual lint?
+      var ast;
       try {
-        acorn.parse(fileContents);
+        ast = acorn.parse(fileContents);
       } catch(e) {
         console.log("=====================================================");
         console.log("  PARSE OF "+appDir+file.url+" failed.");
@@ -336,6 +444,18 @@ apps.forEach((app,appIdx) => {
         if (m) {
           WARN(`Settings for ${app.id} has a boolean formatter - this is handled automatically, the line can be removed`, {file:appDirRelative+file.url, line: fileContents.substr(0, m.index).split("\n").length});
         }
+      }
+      // something that needs to be evaluated with 'eval(require("Storage").read(fn))'
+      if (/\.clkinfo\.js$/.test(file.name) ||
+          /\.settings\.js$/.test(file.name)) {
+        if (!fileContents.trim().endsWith(")"))
+          WARN(`App ${app.id} file ${file.name} should be evaluated as a function but doesn't end in ')'`, {file:appDirRelative+file.url});
+      }
+        if (/\.clkinfo\.js$/.test(file.name) ||
+            /\.wid\.js$/.test(file.name)) {
+        if (fileContents.indexOf("g.clear(")>=0 ||
+            fileContents.indexOf("g.reset().clear()")>=0)
+          ERROR(`App ${app.id} widget/clkinfo ${file.name} should never totally clear the screen`, {file:appDirRelative+file.url});
       }
     }
     for (const key in file) {
@@ -436,6 +556,18 @@ apps.forEach((app,appIdx) => {
         ERROR(`App ${app.id} has provides_modules ${modulename} but it doesn't provide that filename`, {file:metadataFile});
     });
   }
+  /*
+  // We could try to create the files we need to upload for this app to check it all works ok...
+  promise = promise.then(() => apploader.getAppFiles(app).then(files => {
+    files.forEach(file => {
+      if (/\.clkinfo?\.js$/.test(file.name) ||
+          /\.settings?\.js$/.test(file.name)) {
+        if (!file.content.startsWith("(")) {
+          ERROR(`App ${app.id} file ${file.name} should evaluate to a simple fn and doesn't (starts: ${JSON.stringify(file.content.substr(0,30))})`, {file:appDirRelative+file.url});
+        }
+      }
+    });
+  }));*/
 });
 
 
@@ -481,12 +613,14 @@ function sanityCheckLocales(){
   }
 }
 
-console.log("==================================");
-console.log(`${errorCount} errors, ${warningCount} warnings (and ${knownErrorCount} known errors, ${knownWarningCount} known warnings)`);
-console.log("==================================");
-if (errorCount)  {
-  process.exit(1);
-} else if ("CI" in process.env && warningCount) {
-  console.log("Running in CI, raising an error from warnings");
-  process.exit(1);
-}
+promise.then(function() {
+  console.log("==================================");
+  console.log(`${errorCount} errors, ${warningCount} warnings (and ${knownErrorCount} known errors, ${knownWarningCount} known warnings)`);
+  console.log("==================================");
+  if (errorCount)  {
+    process.exit(1);
+  } else if ("CI" in process.env && warningCount) {
+    console.log("Running in CI, raising an error from warnings");
+    process.exit(1);
+  }
+});

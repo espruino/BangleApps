@@ -11,3 +11,5 @@
 0.10: Fix focus bug when changing focus between two clock infos
 0.11: Prepend swipe listener if possible
 0.12: Add drawFilledImage to allow drawing icons with a separately coloured middle
+0.13: Cache loaded ClockInfos so if we have clockInfoWidget and a clock, we don't load them twice (saves ~300ms)
+0.14: Check for .clkinfocache and use that if exists (from boot 0.64)

@@ -1,6 +1,7 @@
 let settings;
 
 exports.reload = function() {
+  //let t = Date.now();
   settings = Object.assign({
     style : "randomcolor",
     colors : ["#F00","#0F0","#00F"]
@@ -17,7 +18,8 @@ exports.reload = function() {
     let bpp = (settings.colors.length>4)?4:2;
     let bg = Graphics.createArrayBuffer(11,11,bpp,{msb:true});
     let u32 = new Uint32Array(bg.buffer); // faster to do 1/4 of the ops of E.mapInPlace(bg.buffer, bg.buffer, ()=>Math.random()*256);
-    E.mapInPlace(u32, u32, function(r,n){"ram";return r()*n}.bind(null,Math.random,0x100000000)); // random pixels
+    if (Math.randInt) E.mapInPlace(u32, u32, Math.randInt); // random pixels
+    else E.mapInPlace(u32, u32, function(r,n){"ram";return r()*n}.bind(null,Math.random,0x100000000)); // random pixels
     bg.buffer[bg.buffer.length-1]=Math.random()*256; // 11x11 isn't a multiple of 4 bytes - we need to set the last one!
     bg.palette = new Uint16Array(1<<bpp);
     bg.palette.set(settings.colors.map(c=>g.toColor(c)));
@@ -28,7 +30,8 @@ exports.reload = function() {
     settings.style = "image";
     let bg = Graphics.createArrayBuffer(16,16,4,{msb:true});
     let u32 = new Uint32Array(bg.buffer); // faster to do 1/4 of the ops of E.mapInPlace(bg.buffer, bg.buffer, ()=>Math.random()*256);
-    E.mapInPlace(u32, u32, function(r,n){"ram";return r()*n}.bind(null,Math.random,0x100000000)); // random pixels
+    if (Math.randInt) E.mapInPlace(u32, u32, Math.randInt); // random pixels
+    else E.mapInPlace(u32, u32, function(r,n){"ram";return r()*n}.bind(null,Math.random,0x100000000)); // random pixels
     bg.filter([ // a gaussian filter to smooth out
         1, 4, 7, 4, 1,
         4,16,26,16, 4,
@@ -42,6 +45,7 @@ exports.reload = function() {
     settings.imgOpt = {scale:11};
     delete settings.colors;
   }
+  //console.log("bg",Date.now()-t);
 };
 exports.reload();
 
