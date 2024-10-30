@@ -274,11 +274,11 @@ function showThemeMenu() {
       let newTheme = storage.readJSON(n);
       themesMenu[newTheme.name ? newTheme.name : n] = () => {
         upd({
-        fg:cl(newTheme.fg), bg:cl(newTheme.bg),
-        fg2:cl(newTheme.fg2), bg2:cl(newTheme.bg2),
-        fgH:cl(newTheme.fgH), bgH:cl(newTheme.bgH),
-        dark:newTheme.dark
-      });
+          fg:cl(newTheme.fg), bg:cl(newTheme.bg),
+          fg2:cl(newTheme.fg2), bg2:cl(newTheme.bg2),
+          fgH:cl(newTheme.fgH), bgH:cl(newTheme.bgH),
+          dark:newTheme.dark
+        });
       };
     }
   );
