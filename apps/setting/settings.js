@@ -341,7 +341,6 @@ function showThemeMenu() {
           },
         };
     });
-    menu["< Back"] = () => showThemeMenu();
     m = E.showMenu(menu);
   }
 }
