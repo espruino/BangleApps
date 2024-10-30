@@ -111,7 +111,7 @@ function systemMenu() {
   const mainmenu = {
     '': { 'title': /*LANG*/'System' },
     '< Back': ()=>popMenu(mainMenu()),
-    /*LANG*/'Theme': ()=>pushMenu(themeMenu()),
+    /*LANG*/'Theme': ()=>showThemeMenu(),
     /*LANG*/'LCD': ()=>pushMenu(LCDMenu()),
     /*LANG*/'Locale': ()=>pushMenu(localeMenu()),
     /*LANG*/'Clock': ()=>pushMenu(clockMenu()),
@@ -259,7 +259,7 @@ function BLEMenu() {
   };
 }
 
-function themeMenu() {
+function showThemeMenu(pop) {
   function cl(x) { return g.setColor(x).getColor(); }
   function upd(th) {
     g.theme = th;
@@ -309,11 +309,11 @@ function themeMenu() {
     }
   );
 
-  themesMenu[/*LANG*/'Customize'] = () => pushMenu(customThemeMenu());
+  themesMenu[/*LANG*/'Customize'] = () => showCustomThemeMenu();
 
-  var m = pushMenu(themesMenu);
+  var m = (pop ? popMenu : pushMenu)(themesMenu);
 
-  function customThemeMenu() {
+  function showCustomThemeMenu() {
     function setT(t, v) {
       let th = g.theme;
       th[t] = v;
@@ -344,7 +344,7 @@ function themeMenu() {
     }
     let menu = {
       '':{title:/*LANG*/'Custom Theme'},
-      "< Back": () => popMenu(themeMenu())
+      "< Back": () => showThemeMenu(1)
     };
     const labels = {
       fg: /*LANG*/'Foreground', bg: /*LANG*/'Background',
