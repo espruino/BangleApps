@@ -97,7 +97,7 @@ function viewFile(filename) {
 
         if (!file) {
           E.showMessage("File not found!");
-          setTimeout(() => viewTrack(filename), 2000);
+          setTimeout(() => viewFile(filename), 2000);
           return;
         }
 
@@ -116,7 +116,7 @@ function viewFile(filename) {
         Bluetooth.println("<end>");
 
         E.showMessage("Data sent!");
-        setTimeout(() => viewTrack(filename), 2000);
+        setTimeout(() => viewFile(filename), 2000);
       }
 
       sendFileData();
@@ -127,7 +127,7 @@ function viewFile(filename) {
           require("Storage").erase(filename);
           viewFiles();
         } else {
-          viewTrack(filename);
+          viewFile(filename);
         }
       });
     },
