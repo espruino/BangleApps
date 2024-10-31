@@ -2,7 +2,7 @@
   let storageFile; // file for recording
   let activeRecorders = [];
   let writeSetup; // the interval for writing
-  let writeSubSecs; // true if we should write .1s for time, otherwise round to nearest second
+  // let writeSubSecs; // true if we should write .1s for time, otherwise round to nearest second
 
   const loadAppSettings = () => {
     const appSettings = require("Storage").readJSON("clinikali.json", 1) || {};
@@ -129,11 +129,18 @@
   };
 
   const getActiveRecorders = () => {
+    const appSettings = loadAppSettings();
     const recorders = getRecorders();
 
-    return ["accel", "hrm", "baro"].map((recorderName) =>
-      recorders[recorderName](),
-    );
+    // If no sensors are selected, return empty array
+    if (!appSettings.record || appSettings.record.length === 0) {
+      return [];
+    }
+
+    // Only return recorders that are in the appSettings.record array
+    return appSettings.record
+      .filter(name => recorders[name]) // Make sure recorder exists
+      .map(name => recorders[name]());
   };
 
   const getCSVHeaders = (activeRecorders) =>
@@ -192,7 +199,7 @@
       }
 
       WIDGETS.recorder.draw();
-      writeSubSecs = appSettings.period === 1;
+      // writeSubSecs = appSettings.period === 1;
       writeSetup = setInterval(
         writeLog,
         appSettings.period * 1000,

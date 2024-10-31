@@ -44,6 +44,63 @@ function extractFileNumber(filename) {
   return 0;
 }
 
+function toggleRecorder(name) {
+  const appSettings = loadAppSettings();
+
+  // Initialize record array if it doesn't exist
+  if (!appSettings.record) {
+    appSettings.record = ["accel", "hrm", "baro"];
+  }
+
+  const index = appSettings.record.indexOf(name);
+  if (index === -1) {
+    // Add recorder
+    appSettings.record.push(name);
+  } else {
+    // Remove recorder
+    appSettings.record.splice(index, 1);
+  }
+
+  updateAppSettings(appSettings);
+  showSensorMenu();
+}
+
+function showSensorMenu() {
+  const appSettings = loadAppSettings();
+  if (!appSettings.record) {
+    appSettings.record = ["accel", "hrm", "baro"];
+    updateAppSettings(appSettings);
+  }
+
+  const sensorMenu = {
+    "": { title: "Sensors" },
+  };
+
+  // Add checkbox menu items for each sensor
+  sensorMenu["Accelerometer"] = {
+    value: appSettings.record.includes("accel"),
+    onchange: () => toggleRecorder("accel")
+  };
+
+  sensorMenu["Heart Rate"] = {
+    value: appSettings.record.includes("hrm"),
+    onchange: () => toggleRecorder("hrm")
+  };
+
+  if (Bangle.getPressure) {
+    sensorMenu["Temperature"] = {
+      value: appSettings.record.includes("baro"),
+      onchange: () => toggleRecorder("baro")
+    };
+  }
+
+  sensorMenu["< Back"] = () => {
+    showMainMenu();
+  };
+
+  return E.showMenu(sensorMenu);
+}
+
 function showMainMenu() {
   const mainMenu = {
     "": { title: "Recorder" },
@@ -66,6 +123,9 @@ function showMainMenu() {
     File: { value: extractFileNumber(appSettings.file) },
     "View Files": () => {
       viewFiles();
+    },
+    "Sensors": () => {
+      showSensorMenu();
     },
     "Time Period": {
       value: appSettings.period || 10,
