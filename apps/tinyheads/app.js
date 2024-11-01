@@ -22,7 +22,8 @@
   let helpShown = false;
   let tapCount = 0;
   let centerX, centerY, minuteHandLength, hourHandLength, handOutline;
-
+  let originalTheme = Object.assign({}, g.theme);
+  
   // Open the eyes and schedule the next blink
   let blinkOpen = function blinkOpen() {
     if (blinkTimeout) clearTimeout(blinkTimeout);
@@ -229,13 +230,14 @@
       activeEyesNum = disconnectedEyes;
     }
 
-    Bangle.setUI("clock", {
+    Bangle.setUI({
       mode:"custom",
       clock: true,
       touch: (button, xy) => {
         // Go direct to feature select in settings on long screen press
         if (xy.type == 2) {
           eval(require("Storage").read("tinyheads.settings.js"))(()=> {
+            g.setTheme(originalTheme);
             E.showMenu();
             init();
           }, true, helpShown);
@@ -253,6 +255,7 @@
         }
       },
       remove: function() {
+        g.setTheme(originalTheme);
         // Clear timeouts and listeners for fast loading
         if (drawTimeout) clearTimeout(drawTimeout);
         if (blinkTimeout) clearTimeout(blinkTimeout);
