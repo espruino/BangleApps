@@ -214,6 +214,8 @@
   };
 
   let init = function init() {
+    g.setTheme({bg:lib.settings.hairColour,fg:lib.settings.faceColour,dark:true}).clear();
+
     Bangle.on('lock', lockHandler);
     Bangle.on('charging', chargingHandler);
     if (lib.settings.btStatusEyes) {
@@ -227,7 +229,7 @@
       activeEyesNum = disconnectedEyes;
     }
 
-    Bangle.setUI({
+    Bangle.setUI("clock", {
       mode:"custom",
       clock: true,
       touch: (button, xy) => {
