@@ -135,7 +135,7 @@ exports.drawFace = function(scale, eyesNum, mouthNum, peek, offset) {
   // Draw face
   let xOffset = (g.getWidth() - (exports.faceW * scale)) / 2;
   let yOffset = (offset ? offset : 0) + ((g.getHeight() - (exports.faceH * scale)) / 2);
-  g.setBgColor(settings.hairColour);
+  g.setBgColor(exports.settings.hairColour);
   g.clearRect(Bangle.appRect);
   g.setClipRect(Bangle.appRect.x, Bangle.appRect.y, Bangle.appRect.x2, Bangle.appRect.y2);
 
