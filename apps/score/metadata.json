@@ -8,6 +8,7 @@
   "type": "app",
   "tags": "",
   "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
   "readme": "README.md",
   "storage": [
     {"name":"score.app.js","url":"score.app.js"},
