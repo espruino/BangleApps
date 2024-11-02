@@ -17,3 +17,4 @@
       Add option to disable vibration when charger connects
 0.18: Only redraw when values change
 0.19: Match draw() API e.g. to allow wid_edit to alter this widget
+0.20: Remove clear of the screen on reload (will break currently running app)

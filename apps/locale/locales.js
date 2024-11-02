@@ -177,7 +177,7 @@ var locales = {
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%d. %b %Y", "1": "%d.%m.%Y" }, // 1. Mär 2020 // 01.03.20
     abmonth: "Jan,Feb,Mär,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Dez",
@@ -194,7 +194,7 @@ var locales = {
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%Y/%m/%d", 1: "%y/%m/%d" },
     abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
@@ -210,7 +210,7 @@ var locales = {
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%d %b %Y", 1: "%d-%m-%Y" }, // 28 feb 2020  // 28-02-2020
     abday: "zo,ma,di,wo,do,vr,za",
@@ -258,7 +258,7 @@ var locales = {
     speed: "km/h",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%d %B %Y", "1": "%d/%m/%Y" }, // 1 mars 2020 //  01/03/2020
     abmonth: "janv,févr,mars,avril,mai,juin,juil,août,sept,oct,nov,déc",
@@ -290,7 +290,7 @@ var locales = {
     speed: 'km/h',
     distance: { "0": "m", "1": "km" },
     temperature: '°C',
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%B %d %Y", "1": "%Y-%m-%d" }, // March 1 2020 //  2020-03-01
     abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
@@ -306,7 +306,7 @@ var locales = {
     speed: "km/t",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%d. %b. %Y", 1: "%d/%m %Y" }, // 1. feb. 2020 // 01/02 2020 // a better short ver. is 1/2 2020 but its not supported
     abmonth: "jan,feb,mar,apr,maj,jun,jul,aug,sep,okt,nov,dec",
@@ -322,7 +322,7 @@ var locales = {
     speed: "km/h",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%d. %b. %Y", 1: "%d/%m %Y" }, // 1. feb. 2020 // 01/02 2020 // a better short ver. is 1/2 2020 but its not supported
     abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
@@ -370,7 +370,7 @@ var locales = {
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%A, %d. %B %Y", "1": "%d.%m.%y" }, // Sonntag, 1. März 2020 // 01.03.20
     abmonth: "Jän,Feb,März,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Dez",
@@ -403,7 +403,7 @@ var locales = {
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%A, %d de %B de %Y", "1": "%d/%m/%y" }, //  domingo, 1 de marzo de 2020  // 01/03/20
     abmonth: "ene,feb,mar,abr,may,jun,jul,ago,sept,oct,nov,dic",
@@ -420,7 +420,7 @@ var locales = {
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%A %B %d %Y", "1": "%d/%m/%y" }, // dimanche 1 mars 2020 // 01/03/20
     abmonth: "janv.,févr.,mars,avril,mai,juin,juil.,août,sept.,oct.,nov.,déc.",
@@ -484,7 +484,7 @@ var locales = {
     speed: 'kmh',
     distance: { "0": "m", "1": "km" },
     temperature: '°C',
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM.%SS", 1: "%HH:%MM" }, // 17:00.00 // 17:00
     datePattern: { 0: "%d %b %Y", "1": "%d/%m/%Y" }, // 1 marzo 2020 // 01/03/2020
     abmonth: "gen,feb,mar,apr,mag,giu,lug,ago,set,ott,nov,dic",
@@ -500,7 +500,7 @@ var locales = {
     speed: 'kmh',
     distance: { "0": "m", "1": "km" },
     temperature: '°C',
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM.%SS", 1: "%HH:%MM" }, // 17:00.00 // 17:00
     datePattern: { 0: "%d %b %Y", "1": "%d/%m/%Y" }, // 1 marzo 2020 // 01/03/2020
     abmonth: "gen,feb,mar,apr,mag,giu,lug,ago,set,ott,nov,dic",
@@ -516,7 +516,7 @@ var locales = {
     speed: 'kmh',
     distance: { "0": "m", "1": "km" },
     temperature: '°C',
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH.%MM.%SS", 1: "%HH.%MM" }, // 17.00.00  // 17.00
     datePattern: { 0: "%A, %d. %B %Y", "1": "%Y-%m-%d" }, // Sunntag, 1. Märze 2020 //  2020-03-01
     abmonth: "Jen,Hor,Mär,Abr,Mei,Brá,Hei,Öig,Her,Wím,Win,Chr",
@@ -564,7 +564,7 @@ var locales = {
     speed: "km/h",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%A %d %B de %Y", "1": "%d/%m/%Y" }, // dimenge 1 de març de 2020 //  01/03/2020
     abmonth: "gen.,febr.,març,abril,mai,junh,julh,ago.,set.,oct.,nov.,dec.",
@@ -660,7 +660,7 @@ var locales = {
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%d. %b %Y", "1": "%d.%m.%Y" }, // 1. Mar 2021 // 01.03.2021
     abmonth: "Sty,Lut,Mar,Kwi,Maj,Cze,Lip,Sie,Wrz,Paź,Lis,Gru",
@@ -676,7 +676,7 @@ var locales = {
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%d. %b %Y", "1": "%d.%m.%Y" }, // 1. Mar 2020 // 01.03.20
     abmonth: "Jan,Feb,Mar,Apr,Mai,Jūn,Jūl,Aug,Sep,Okt,Nov,Dec",
@@ -692,7 +692,7 @@ var locales = {
     speed: "kmt",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%d. %b %Y", "1": "%d.%m.%Y" }, // 1. Mar 2020 // 01.03.20
     abmonth: "Jan,Feb,Mar,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Des",
@@ -708,7 +708,7 @@ var locales = {
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%d. %b %Y", "1": "%d.%m.%Y" }, // 1. Mar 2020 // 01.03.20
     abmonth: "Jan,Feb,Mar,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Des",
@@ -725,7 +725,7 @@ var locales = {
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "", 1: "" },
+    ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%d %B %Y", "1": "%d/%m/%y" },
     abmonth: "gen.,febr.,març,abr.,maig,juny,jul.,ag.,set.,oct.,nov.,des.",

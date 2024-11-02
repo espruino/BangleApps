@@ -2,7 +2,7 @@
   "id": "widbatpc",
   "name": "Battery Level Widget (with percentage)",
   "shortName": "Battery Widget",
-  "version": "0.19",
+  "version": "0.20",
   "description": "Show the current battery level and charging status in the top right of the clock, with charge percentage",
   "icon": "widget.png",
   "type": "widget",

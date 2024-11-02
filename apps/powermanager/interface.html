@@ -148,7 +148,7 @@ function viewDeferredTable(filename) {
 
           //try finding possible sources for the given function, currently does not work because function.toString() not being identical to code in the *.js files.
 
-          /*Puck.eval(`require("Storage").list(/.*.js$/)`, (f)=>{
+          /*Puck.eval(`require("Storage").list(/.*\.js$/)`, (f)=>{
             console.log("Found files:", f, rows[1].func);
             for (let file of f){
               let query = `require("Storage").read('${file}').includes('${rows[1].func}')`;

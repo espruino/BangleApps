@@ -12,7 +12,14 @@ To display the in app character chart, long press the screen; you can scroll thr
 
 For a full character chart see [EwChart.pdf](EwChart.pdf)
 
-**Supported:** Letters (including capitals), numbers, backspace, word backspace, space, punctuation, new line, and some cursor controls (left, right, word left/right, home, end).
+**Supported:** Letters (including capitals), numbers, backspace, word backspace, space, punctuation, new line, accents, extended mode (if characters are supported by the vector font), and some cursor controls (left, right, word left/right, home, end).
 
-**Unsupported:** Extended mode, accents, and word-level stroking.
+**Unsupported:** Word-level stroking.
 
+## Settings
+
+Font size can be selected in Settings app > "Apps" > "EdgeWrite Keyboard"
+
+## Author
+
+Woogal [github](https://github.com/retcurve)

@@ -21,3 +21,4 @@
 0.34: Fix 'fast load' so clock doesn't always redraw when screen unlocked/locked
 0.35: Minor code improvements
 0.36: Minor code improvements
+0.37: Fix settings (show default as '90' not 'off')
