@@ -10,6 +10,7 @@ let tennisScores = ['00','15','30','40','DC','AD'];
 let scores = null;
 let tScores = null;
 let cSet = null;
+let matchEnd = null;
 
 let firstShownSet = null;
 
@@ -102,6 +103,7 @@ function setupInputWatchers(init) {
 }
 
 function setupMatch() {
+  matchEnd = null;
   scores = [];
   for (let s = 0; s < sets(); s++) {
     scores.push([0,0,null,0,0]);
@@ -210,27 +212,21 @@ function tiebreakWon(set, player) {
   let pScore = scores[set][3+player];
   let p2Score = scores[set][3+~~!player];
 
-  let winScoreReached = pScore >= settings.maxScoreTiebreakWinScore;
-  let isTwoAhead = !settings.maxScoreTiebreakEnableTwoAhead || pScore - p2Score >= 2;
-  let reachedMaxScore = settings.maxScoreTiebreakEnableMaxScore && pScore >= tiebreakMaxScore();
-
-  return reachedMaxScore || (winScoreReached && isTwoAhead);
+  // reachedMaxScore || (winScoreReached && isTwoAhead);
+  return (settings.maxScoreTiebreakEnableMaxScore && pScore >= tiebreakMaxScore()) || 
+    ((pScore >= settings.maxScoreTiebreakWinScore) && 
+     (!settings.maxScoreTiebreakEnableTwoAhead || pScore - p2Score >= 2));
 }
 
 function setWon(set, player) {
   let pScore = scores[set][player];
   let p2Score = scores[set][~~!player];
 
-  let winScoreReached = pScore >= settings.winScore;
-  let isTwoAhead = !settings.enableTwoAhead || pScore - p2Score >= 2;
-  let tiebreakW = tiebreakWon(set, player);
-  let reachedMaxScore = settings.enableMaxScore && pScore >= maxScore();
-  let manuallyEndedWon = cSet > set ? pScore > p2Score : false;
-
+  // (tiebreak won / max score) || (winScoreReached && isTwoAhead) || manuallyEndedWon
   return (
-    (settings.enableMaxScoreTiebreak ? tiebreakW : reachedMaxScore) ||
-      (winScoreReached && isTwoAhead) ||
-      manuallyEndedWon
+    (settings.enableMaxScoreTiebreak ? tiebreakWon(set, player) : settings.enableMaxScore && pScore >= maxScore()) || 
+      (pScore >= settings.winScore && (!settings.enableTwoAhead || pScore - p2Score >= 2)) || 
+      (cSet > set ? pScore > p2Score : false)
   );
 }
 
@@ -239,7 +235,7 @@ function setEnded(set) {
 }
 
 function setsWon(player) {
-  return Array(sets()).fill(0).map((_, s) => ~~setWon(s, player)).reduce((a,v) => a+v, 0);
+  return Uint16Array(sets()).fill(0).map((_, s) => ~~setWon(s, player)).reduce((a,v) => a+v, 0);
 }
 
 function matchWon(player) {
@@ -247,7 +243,14 @@ function matchWon(player) {
 }
 
 function matchEnded() {
-  return (matchWon(0) || matchWon(1)) && cSet > (setsWon(0) + setsWon(1) - 1);
+  // query if the match is ended only if: the value is not already saved or the set changed
+  if (matchEnd == null || matchEnd.set != cSet) {
+    matchEnd = {
+      ended: (matchWon(0) || matchWon(1)) && cSet > (setsWon(0) + setsWon(1) - 1),
+      set: cSet,
+    }
+  }
+  return matchEnd.ended
 }
 
 function matchScore(player) {
@@ -308,7 +311,7 @@ function score(player) {
     }
   } else {
     if (matchEnded()) return;
-  
+
     if (shouldTiebreak()) {
       scores[cSet][3+player]++;
     } else if (settings.enableTennisScoring) {
@@ -474,7 +477,7 @@ function draw() {
             bigNumX,
             y
           );
-        } else if (shouldTiebreak() && set === cSet) {
+        } else if (set === cSet && shouldTiebreak()) {
           g.setFontAlign(0,0);
           g.setFont('7x11Numeric7Seg',3);
           g.drawString(
@@ -492,7 +495,7 @@ function draw() {
           );
         }
 
-        if ((shouldTiebreak() || settings.enableTennisScoring) && set === cSet) {
+        if (set === cSet && (shouldTiebreak() || settings.enableTennisScoring)) {
           g.setFontAlign(p === 0 ? 1 : -1,0);
           g.setFont('7x11Numeric7Seg',1);
           g.drawString(
