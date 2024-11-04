@@ -29,5 +29,4 @@
     }
   
     E.showMenu(buildMainMenu());
-  });
-  
+  })

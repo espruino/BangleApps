@@ -29,4 +29,4 @@
   }
   // Initially show the menu
   showMenu();
-});
+})

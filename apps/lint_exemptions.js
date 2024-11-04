@@ -528,7 +528,7 @@ module.exports = {
     ]
   },
   "apps/usgs/settings.js": {
-    "hash": "af1b7bc7e041c1e6988b407b6c8ee66dbd6a0e181a20caf102d2abdb6dbd5ac0",
+    "hash": "00ee672a6920f5667bfbd2988fd2853cfd579895a843ae036a00028dcb13878d",
     "rules": [
       "no-undef"
     ]

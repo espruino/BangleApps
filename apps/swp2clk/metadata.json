@@ -2,7 +2,7 @@
   "id": "swp2clk",
   "name": "Swipe back to the Clock",
   "shortName": "Swipe to Clock",
-  "version": "0.04",
+  "version": "0.05",
   "description": "Let's you swipe from left to right on any app to return back to the clock face. Please configure in the settings app after installing to activate, since its disabled by default.",
   "icon": "app.png",
   "type": "bootloader",

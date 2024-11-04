@@ -371,4 +371,4 @@
   };
 
   E.showMenu(buildMainMenu());
-});
+})

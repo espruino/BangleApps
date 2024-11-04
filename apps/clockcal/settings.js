@@ -114,4 +114,4 @@
     };
     // Show the menu
     E.showMenu(menu);
-});
+})

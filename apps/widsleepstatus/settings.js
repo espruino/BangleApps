@@ -29,4 +29,4 @@
     },
   };
   E.showMenu(menu);
-});
+})

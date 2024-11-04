@@ -48,4 +48,4 @@
   };
 
   E.showMenu(appMenu);
-});
+})

@@ -194,4 +194,4 @@
     E.showMenu(menu);
   }
   mainMenu();
-});
+})

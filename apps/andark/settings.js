@@ -25,4 +25,4 @@
   };
 
   E.showMenu(appMenu);
-});
+})
