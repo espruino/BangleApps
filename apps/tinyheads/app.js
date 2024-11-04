@@ -5,8 +5,7 @@
   // Read 12/24 from system settings
   const is12Hour=(require("Storage").readJSON("setting.json",1)||{})["12hour"] || false;
 
-  // Tinyhead features are stored at a resolution of 18x21, this scales them to the best fit for the Banglejs2 screen
-  const scale=9;
+  const scale=lib.appScale;
 
   const closedEyes = 25;
   const scaredEyes = 26;
@@ -215,6 +214,7 @@
   };
 
   let init = function init() {
+    // change the system theme, so that the widget bar blends in with the clock face
     g.setTheme({bg:lib.settings.hairColour,fg:lib.settings.faceColour,dark:true}).clear();
 
     Bangle.on('lock', lockHandler);
