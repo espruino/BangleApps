@@ -33,7 +33,8 @@
     s.writeJSON("launch.cache.json", launchCache);
   }
   let apps = launchCache.apps;
-  for (let i = 0; i < 4; i++) { // Initially only load icons for the current page.
+  let page = (Bangle.dtHandlePagePersist&&Bangle.dtHandlePagePersist()) ?? (parseInt(s.read("dtlaunch.page")) ?? 0);
+  for (let i = page*4; i < Math.min(page*4+4, apps.length); i++) { // Initially only load icons for the current page.
     if (apps[i].icon)
       apps[i].icon = s.read(apps[i].icon); // should just be a link to a memory area
   }
@@ -43,7 +44,6 @@
   let maxPage = Npages-1;
   let selected = -1;
   //let oldselected = -1;
-  let page = 0;
   const XOFF = 24;
   const YOFF = 30;
 
@@ -99,11 +99,29 @@
 
   Bangle.drawWidgets(); // To immediately update widget field to follow current theme - remove leftovers if previous app set custom theme.
   Bangle.loadWidgets();
-  drawPage(0);
+  drawPage(page);
 
-  for (let i = 4; i < apps.length; i++) { // Load the rest of the app icons that were not initially.
+  for (let i = 0; i < apps.length; i++) { // Load the rest of the app icons that were not initially.
+    if (i >= page*4 && i < Math.min(page*4+4, apps.length)) continue;
     if (apps[i].icon)
       apps[i].icon = s.read(apps[i].icon); // should just be a link to a memory area
+  }
+
+  if (!Bangle.dtHandlePagePersist) {
+    Bangle.dtHandlePagePersist = (page) => {
+      // Function for persisting the active page when leaving dtlaunch.
+      if (page===undefined) {return this.page||0;}
+
+      if (!this.killHandler) { // Only register kill listener once.
+        this.killHandler = () => {
+          s.write("dtlaunch.page", this.page.toString());
+        };
+        E.on("kill", this.killHandler); // This is intentionally left around after fastloading into other apps. I.e. not removed in uiRemove.
+      }
+
+      this.page = page;
+    };
+    Bangle.dtHandlePagePersist(page);
   }
 
   let swipeListenerDt = function(dirLeftRight, dirUpDown){
@@ -142,6 +160,7 @@
               drawIcon(page,selected,false);
             } else {
               buzzLong();
+              Bangle.dtHandlePagePersist(page);
               load(apps[page*4+i].src);
             }
           }
@@ -162,7 +181,10 @@
     back : Bangle.showClock,
     swipe : swipeListenerDt,
     touch : touchListenerDt,
-    remove : ()=>{if (timeoutToClock) clearTimeout(timeoutToClock);}
+    remove : ()=>{
+      if (timeoutToClock) {clearTimeout(timeoutToClock);}
+      Bangle.dtHandlePagePersist(page);
+    }
   });
 
   // taken from Icon Launcher with minor alterations
@@ -177,4 +199,3 @@
   updateTimeoutToClock();
 
 } // end of app scope
-
