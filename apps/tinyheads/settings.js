@@ -6,7 +6,7 @@
   let featureColour = 'faceColour';
   let colourSelectTimeout;
 
-  let scale = 6; // Smaller scale than on the clock itself, so that selection arrows can be shown down the sides
+  const scale = lib.settingsScale;
 
   // 27 colours
   let colours = [

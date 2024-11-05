@@ -5,8 +5,7 @@
   // Read 12/24 from system settings
   const is12Hour=(require("Storage").readJSON("setting.json",1)||{})["12hour"] || false;
 
-  // Tinyhead features are stored at a resolution of 18x21, this scales them to the best fit for the Banglejs2 screen
-  const scale=9;
+  const scale=lib.appScale;
 
   const closedEyes = 25;
   const scaredEyes = 26;
@@ -22,7 +21,8 @@
   let helpShown = false;
   let tapCount = 0;
   let centerX, centerY, minuteHandLength, hourHandLength, handOutline;
-
+  let originalTheme = Object.assign({}, g.theme);
+  
   // Open the eyes and schedule the next blink
   let blinkOpen = function blinkOpen() {
     if (blinkTimeout) clearTimeout(blinkTimeout);
@@ -214,6 +214,9 @@
   };
 
   let init = function init() {
+    // change the system theme, so that the widget bar blends in with the clock face
+    g.setTheme({bg:lib.settings.hairColour,fg:lib.settings.faceColour,dark:true}).clear();
+
     Bangle.on('lock', lockHandler);
     Bangle.on('charging', chargingHandler);
     if (lib.settings.btStatusEyes) {
@@ -234,6 +237,7 @@
         // Go direct to feature select in settings on long screen press
         if (xy.type == 2) {
           eval(require("Storage").read("tinyheads.settings.js"))(()=> {
+            g.setTheme(originalTheme);
             E.showMenu();
             init();
           }, true, helpShown);
@@ -251,6 +255,7 @@
         }
       },
       remove: function() {
+        g.setTheme(originalTheme);
         // Clear timeouts and listeners for fast loading
         if (drawTimeout) clearTimeout(drawTimeout);
         if (blinkTimeout) clearTimeout(blinkTimeout);
