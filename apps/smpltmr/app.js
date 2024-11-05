@@ -177,7 +177,7 @@ Bangle.setUI({
   mode : "custom",
   touch : function(n,e) {onTouch(n,e);},
   drag : function(e) {onDrag(e);},
-  btn : function(n) {onButton();},
+  btnRelease : function(n) {onButton();},
 });
 
 g.clearRect(Bangle.appRect);
