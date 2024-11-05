@@ -1,6 +1,6 @@
 { "id": "kbedgewrite",
   "name": "EdgeWrite keyboard",
-  "version":"0.02",
+  "version":"0.03",
   "description": "A library for text input via EdgeWrite swipe gestures",
   "icon": "app.png",
   "type":"textinput",
