@@ -1,5 +1,4 @@
 0.01: New App!
-0.02: Fix case where we tried to push to Bangle.btnWatches but it wasn't
-	defined.
-0.03: Throw exception if trying to add custom drag handler on mode updown and
-	leftright.
+0.02: Fix case where we tried to push to Bangle.btnWatches but it wasn't defined.
+0.03: Throw exception if trying to add custom drag handler on mode updown and leftright.
+0.04: Bangle.js 1 support. No change to Bangle.js 2.
