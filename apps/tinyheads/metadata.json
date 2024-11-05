@@ -4,7 +4,7 @@
   "shortName":"Tinyheads",
   "icon": "app.png",
   "screenshots" : [ { "url":"tinyhead1.png" }, {"url":"tinyhead2.png"}, {"url":"tinyhead3.png"}, {"url":"tinyhead4.png"}, {"url":"editing.png"} ],
-  "version":"0.01",
+  "version":"0.02",
   "description": "Choose from a variety of hairstyles, eyes, noses, and mouths to customize your pixel art style Tinyhead.",
   "readme":"README.md",
   "type": "clock",
