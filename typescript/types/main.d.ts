@@ -69,6 +69,14 @@ type MenuInstance = {
   draw: () => void;
   move: (n: number) => void;
   select: () => void;
+  scroller?: MenuScroller; // BangleJS 2
+};
+
+/**
+ * Menu scroller.
+ */
+type MenuScroller = {
+  scroll: number;
 };
 
 declare const BTN1: Pin;
