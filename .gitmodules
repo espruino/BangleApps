@@ -4,3 +4,6 @@
 [submodule "webtools"]
 	path = webtools
 	url = https://github.com/espruino/EspruinoWebTools.git
+[submodule "apps/pokertimer"]
+	path = apps/pokertimer
+	url = https://gitea.gf4.pw/ki9/pokertimer.git
