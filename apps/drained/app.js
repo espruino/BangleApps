@@ -58,6 +58,7 @@ var draw = function () {
     }, 60000 - (date.getTime() % 60000));
 };
 var reload = function () {
+    var scroller;
     var showMenu = function () {
         var menu = {
             "Restore to full power": drainedRestore,
@@ -69,9 +70,12 @@ var reload = function () {
         menu["Settings"] = function () { return load("setting.app.js"); };
         menu["Recovery"] = function () { return Bangle.showRecoveryMenu(); };
         menu["Exit menu"] = reload;
+        if (scroller) {
+            menu[""] = { selected: scroller.scroll };
+        }
         if (nextDraw)
             clearTimeout(nextDraw);
-        E.showMenu(menu);
+        (scroller = E.showMenu(menu).scroller);
     };
     Bangle.setUI({
         mode: "custom",
