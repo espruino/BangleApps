@@ -79,7 +79,7 @@ const draw = () => {
 
 const reload = () => {
   const showMenu = () => {
-    const menu: { [k: string]: () => void } = {
+    const menu: Menu = {
       "Restore to full power": drainedRestore,
     };
 
