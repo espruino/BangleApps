@@ -1,7 +1,6 @@
 require("Font8x16").add(Graphics);
 require("Font7x11Numeric7Seg").add(Graphics);
 require("Font5x7Numeric7Seg").add(Graphics);
-require("Font5x9Numeric7Seg").add(Graphics);
 require("Font4x5").add(Graphics);
 
 
@@ -140,7 +139,6 @@ function draw(){
   g.setBgColor(1,0,0);
   g.setColor(1,1,1);
   //Draw text
-  //g.drawRect(x1, y1, x2, y2);
   g.setFont("8x16");
   g.drawString('HOUR', 51, timeTextY+1);
   g.drawString('MIN', 96, timeTextY+1);
@@ -217,7 +215,7 @@ function draw(){
 g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
 //draw();
 
-//the following section is also from waveclk
+//the following section is from waveclk
 Bangle.on('lcdPower',on=>{
   if (on) {
     draw(); // draw immediately, queue redraw
