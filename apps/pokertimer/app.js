@@ -1,5 +1,5 @@
-const BLIND_INTERVAL = 600; // 10 minutes
-const BLINDSUP_ALERT_DURATION = 5000; // 30 seconds
+const BLIND_INTERVAL = 600; // 10 minutes in seconds
+const BLINDSUP_ALERT_DURATION = 10000; // 10 seconds in ms
 
 // Convert seconds to mm:ss
 const secondsToMinutes = (s) => {
@@ -32,7 +32,13 @@ const stopTimer = () => {
   timer_running = false;
 };
 const pauseResume = () => {
-  if (timer_running) stopTimer();
+  if (is_alerting) return;
+  if (timer_running) {
+    stopTimer();
+    g.setFont('Vector',15);
+    g.drawString('(PAUSED)',
+      g.getWidth()/2, g.getHeight()*7/8);
+  }
   else startTimer();
 };
 
@@ -48,6 +54,7 @@ const getBlinds = (i) => {
 
 // Sound the alarm
 const blindsUp = () => {
+  is_alerting = true;
   // Display message
   const showMessage = () => {
     g.clear();
@@ -66,7 +73,7 @@ const blindsUp = () => {
   console.log(`Blinds for round ${b} are ${blinds[0]} / ${blinds[1]}`);
   // Buzz and light up every second
   const buzzInterval = setInterval(() => {
-    Bangle.buzz();
+    Bangle.buzz(500);
     Bangle.setLCDPower(1);
   }, 1000);
   // Invert colors every second
@@ -82,6 +89,7 @@ const blindsUp = () => {
   }, 500);
   // Restart timer
   setTimeout(() => {
+    is_alerting = false;
     fmtDark(); tick();
     clearInterval(buzzInterval);
     clearInterval(flashInterval);
@@ -94,6 +102,13 @@ const blindsUp = () => {
 const tick = () => {
   if (!timer_running) return;
   time_left--;
+  // 20-second warning buzz
+  if (time_left==20) {
+    const buzzInterval = setInterval(Bangle.buzz, 500);
+    setTimeout(() => {
+      clearInterval(buzzInterval);
+    }, 5000);
+  }
   if (time_left<=0) blindsUp();
   else {
     g.clear();
@@ -120,5 +135,8 @@ let time_left = BLIND_INTERVAL + 1;
 let b = 0;
 let blinds = getBlinds(b);
 let timer_running = true;
+let is_alerting = false;
 let timer = setInterval(tick, 1000);
 tick();
+// Start paused
+pauseResume();
