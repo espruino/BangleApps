@@ -7,10 +7,20 @@ exports.input = function(options) {
   let chartX = 0;
   let chartY = 0;
 
+  let settings = Object.assign({
+    fontSize: 32,
+  }, require('Storage').readJSON("kbedgewrite.json", true));
+
   let shouldShowWidgetBar = Bangle.appRect.y > 0;
 
   options = options||{};
   let text = options.text;
+  // Substring doesn't play well with UTF8
+  if (E.isUTF8(text)) {
+    text = E.decodeUTF8(text);
+  }
+  let wrappedText = '';
+
   if ('string' != typeof text) text='';
 
   // Colours for number of corner occurrences
@@ -18,40 +28,140 @@ exports.input = function(options) {
 
   const cornerSize = g.getWidth() / 3;
   let punctuationMode = false;
+  let extendedMode = false;
   let path = '';
   let cursorPos = text.length;
   let chartShown = false;
 
   let characterSet = Object.assign({}, require('Storage').readJSON('kbedgewrite.charset.json', true) || {});
 
-  function draw() {
-    g.clearRect(Bangle.appRect).setClipRect(Bangle.appRect.x, Bangle.appRect.y, Bangle.appRect.x2, Bangle.appRect.y2);
+  const accentedCharacters = {
+    '#grave': {
+      'a': String.fromCharCode(0xE0),
+      'A': String.fromCharCode(0xC0),
+      'e': String.fromCharCode(0xE8),
+      'E': String.fromCharCode(0xC8),
+      'i': String.fromCharCode(0xEC),
+      'I': String.fromCharCode(0xCC),
+      'o': String.fromCharCode(0xF2),
+      'O': String.fromCharCode(0xD2),
+      'u': String.fromCharCode(0xF9),
+      'U': String.fromCharCode(0xD9)
+    },
+    '#acute': {
+      'a': String.fromCharCode(0xE1),
+      'A': String.fromCharCode(0xC1),
+      'e': String.fromCharCode(0xE9),
+      'E': String.fromCharCode(0xC9),
+      'i': String.fromCharCode(0xED),
+      'I': String.fromCharCode(0xCD),
+      'o': String.fromCharCode(0xF3),
+      'O': String.fromCharCode(0xD3),
+      'u': String.fromCharCode(0xFA),
+      'U': String.fromCharCode(0xDA),
+      'y': String.fromCharCode(0xFD),
+      'Y': String.fromCharCode(0xDD)
+    },
+    '#circumflex': {
+      'a': String.fromCharCode(0xE2),
+      'A': String.fromCharCode(0xC2),
+      'e': String.fromCharCode(0xEA),
+      'E': String.fromCharCode(0xCA),
+      'i': String.fromCharCode(0xEE),
+      'I': String.fromCharCode(0xCE),
+      'o': String.fromCharCode(0xF4),
+      'O': String.fromCharCode(0xD4),
+      'u': String.fromCharCode(0xFB),
+      'U': String.fromCharCode(0xDB)
+    },
+    '#umlaut': {
+      'a': String.fromCharCode(0xE4),
+      'A': String.fromCharCode(0xC4),
+      'e': String.fromCharCode(0xEB),
+      'E': String.fromCharCode(0xCB),
+      'i': String.fromCharCode(0xEF),
+      'I': String.fromCharCode(0xCF),
+      'o': String.fromCharCode(0xF6),
+      'O': String.fromCharCode(0xD6),
+      'u': String.fromCharCode(0xFC),
+      'U': String.fromCharCode(0xDC),
+      'y': String.fromCharCode(0xFF)
+    },
+    '#tilde': {
+      'a': String.fromCharCode(0xE3),
+      'A': String.fromCharCode(0xC3),
+      'n': String.fromCharCode(0xF1),
+      'N': String.fromCharCode(0xD1),
+      'o': String.fromCharCode(0xF5),
+      'O': String.fromCharCode(0xD5)
+    },
+    '#ring': {
+      'a': String.fromCharCode(0xE5),
+      'A': String.fromCharCode(0xC5)
+    },
+    '#cedilla': {
+      'c': String.fromCharCode(0xE7),
+      'C': String.fromCharCode(0xC7)
+    },
 
-    // Draw the text string
-    let l = g.setFont('6x8:4').wrapString(text.substring(0, cursorPos) + '_' + text.substring(cursorPos), g.getWidth());
-    if (!l) l = [];
-    if (l.length>5) {
+  };
+
+  function wrapText() {
+    let stringToWrap = text.substring(0, cursorPos) + '_' + text.substring(cursorPos);
+    let l = [];
+    let startPos = 0;
+
+    g.setFont("Vector", settings.fontSize); // set the font so we can calculate a string width
+
+    // Wrap the string into array of lines that will fit the screen width
+    for (let i = 0; i < stringToWrap.length; i++) {
+      // wrap if string is too long or we hit a line break
+      if (stringToWrap.charCodeAt(i) == 10 || g.stringWidth(stringToWrap.substring(startPos, i+1)) > 176) {
+        l.push(stringToWrap.substring(startPos, i));
+        // skip the line break
+        if (stringToWrap.charCodeAt(i) == 10) {
+          i++;
+        }
+        startPos = i;
+      }
+    }
+    // Add the final line
+    l.push(stringToWrap.substring(startPos));
+
+    // Number of lines that can fit on the screen
+    let numLines = Math.floor(g.getHeight() / g.getFontHeight());
+
+    // If too many lines, reposition so the cursor can be seen
+    if (l.length > numLines) {
       let textPos = 0;
       let lineNum;
       for (lineNum = 0; lineNum < l.length; lineNum++) {
-        textPos = textPos + l[lineNum].length - 1;
+        textPos = textPos + l[lineNum].length;
         if (textPos >= cursorPos) break;
       }
-      l=l.slice(lineNum - l.length - 5);
+      l=l.slice(lineNum - l.length - numLines + 1);
     }
-    g.setColor(g.theme.fg);
-    g.setFontAlign(-1, -1, 0);
-    g.drawString(l.join('\n'), Bangle.appRect.x, Bangle.appRect.y);
 
-    // Draw punctuation flag
-    if (punctuationMode > 0) {
+    wrappedText = l.join('\n');
+  }
+
+  function draw() {
+    g.clearRect(Bangle.appRect).setClipRect(Bangle.appRect.x, Bangle.appRect.y, Bangle.appRect.x2, Bangle.appRect.y2);
+
+    g.setColor(g.theme.fg);
+    g.setFont("Vector", settings.fontSize);
+    g.setFontAlign(-1, -1, 0);
+    g.drawString(wrappedText, Bangle.appRect.x, Bangle.appRect.y);
+
+    // Draw punctuation or extended flags
+    if (punctuationMode || extendedMode) {
       let x = (g.getWidth() / 2) - 12;
       let y = g.getHeight() - 32;
-      g.setColor('#F00');
+      g.setColor(punctuationMode ? '#F00' : '#0F0');
       g.fillRect(x,y,x+24,y+32);
       g.setColor('#FFF');
       g.setFont('6x8:4');
-      g.drawString('P', x+4, y+4, false);
+      g.drawString(punctuationMode ? 'P' : 'E', x+4, y+4, false);
     }
 
     // Draw corners
@@ -69,30 +179,27 @@ exports.input = function(options) {
   }
 
   function processPath() {
-    let capital = false;
-
     // Punctuation paths end in 5
     if (punctuationMode) {
       path = path + '5';
     }
-
-    // Capital letters end in 2, remove that and set a capital flag
-    // but only if the path isn't 232 (cursor right)
-    if (path != '232' && path.length > 2 && path.slice(-1) == '2') {
-      path = path.slice(0,-1);
-      capital = true;
+    // Extended paths end in 6
+    if (extendedMode) {
+      path = path + '6';
     }
 
     // Find character from path
     let char = characterSet[path];
 
-    // Handle capitals
-    if (capital && char != 'undefined') {
-      if (char.charCodeAt(0)>96 && char.charCodeAt(0)<123) {
-      char = char.toUpperCase();
-      } else {
-        // Anything that can't be capitalised is an invalid path
-        char = undefined;
+    // Unknown character, but ends in a 2 so may be a capital letter
+    if (char == 'undefined' && path.slice(-1) == '2') {
+      // Remove the 2 and look for a letter
+      char = characterSet[path.slice(0,-1)];
+      // Handle capitals
+      if (char != 'undefined') {
+        if (char.charCodeAt(0)>96 && char.charCodeAt(0)<123) {
+        char = char.toUpperCase();
+        }
       }
     }
 
@@ -129,6 +236,17 @@ exports.input = function(options) {
           punctuationMode = false;
           break;
         }
+        // Enable extended mode
+        case '#ex-on': {
+          extendedMode = true;
+          break;
+        }
+        // Disable extended mode
+        case '#ex-off': {
+          extendedMode = false;
+          break;
+        }
+        // Cursor controls
         case '#cur-left': {
           if (cursorPos > 0) {
             cursorPos--;
@@ -168,6 +286,22 @@ exports.input = function(options) {
           cursorPos = text.length;
           break;
         }
+        // Accents
+        case '#grave':
+        case '#acute':
+        case '#circumflex':
+        case '#umlaut':
+        case '#tilde':
+        case '#ring':
+        case '#cedilla':
+          // If the previous character can be accented, replace it with the accented version
+          if (cursorPos > 0) {
+            char = accentedCharacters[char][text.substring(cursorPos-1, cursorPos)];
+            if (char != 'undefined') {
+              text = text.substring(0, cursorPos-1) + char + text.substring(cursorPos);
+            }
+          }
+          break;
         // Append character
         default: {
           text = text.substring(0, cursorPos) + char + text.substring(cursorPos);
@@ -184,6 +318,7 @@ exports.input = function(options) {
     if (!chartShown) {
       if (e.b == 0) { // Finger lifted, process completed path
         processPath();
+        wrapText();
         draw();
       } else {
         let corner = 0;
@@ -217,10 +352,6 @@ exports.input = function(options) {
     }
   };
 
-  // Draw initial string
-  require("widget_utils").hide();
-  g.setBgColor(g.theme.bg);
-  draw();
 
   return new Promise((resolve,reject) => {
     Bangle.setUI({
@@ -249,6 +380,13 @@ exports.input = function(options) {
         }
       }
     });
+
+    // Draw initial string
+    require("widget_utils").hide();
+    g.setBgColor(g.theme.bg);
+    wrapText();
+    draw();
+
   });
 
 

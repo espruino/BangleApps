@@ -5,6 +5,14 @@ exports.maxEyes = 25;
 exports.faceW = 18;
 exports.faceH = 21;
 
+// Scale used when showing the main clock screen.
+// Tinyhead features are stored at a resolution of 18x21, this scales them to the best fit for the Banglejs2 screen
+exports.appScale=9;
+
+// Scale used when showing the face on the settings page. 
+// It's smaller than on the clock itself, so that selection arrows can be shown down the sides
+exports.settingsScale=6;
+
 exports.settingsFile = 'tinyheads.json';
 
 let faceCanvas;
@@ -135,7 +143,14 @@ exports.drawFace = function(scale, eyesNum, mouthNum, peek, offset) {
   // Draw face
   let xOffset = (g.getWidth() - (exports.faceW * scale)) / 2;
   let yOffset = (offset ? offset : 0) + ((g.getHeight() - (exports.faceH * scale)) / 2);
-  g.setBgColor(0, 0, 0);
+  
+    // On the main screen, if the widgets are displayed, the background color matches the color of the hair and widget bar
+    if (scale == exports.appScale && (exports.settings.showWidgets == 'on' || (exports.settings.showWidgets == 'unlock' && !Bangle.isLocked()))) {
+    g.setBgColor(exports.settings.hairColour);
+  } else {
+    g.setBgColor(0, 0, 0);
+  }
+  
   g.clearRect(Bangle.appRect);
   g.setClipRect(Bangle.appRect.x, Bangle.appRect.y, Bangle.appRect.x2, Bangle.appRect.y2);
 

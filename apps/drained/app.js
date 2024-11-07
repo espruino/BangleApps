@@ -88,7 +88,7 @@ var reload = function () {
 };
 reload();
 Bangle.emit("drained", E.getBattery());
-var _a = require("Storage").readJSON("".concat(app, ".setting.json"), true) || {}, _b = _a.keepStartup, keepStartup = _b === void 0 ? true : _b, _c = _a.restore, restore = _c === void 0 ? 20 : _c, _d = _a.exceptions, exceptions = _d === void 0 ? ["widdst.0"] : _d;
+var _a = require("Storage").readJSON("".concat(app, ".setting.json"), true) || {}, _b = _a.keepStartup, keepStartup = _b === void 0 ? true : _b, _c = _a.restore, restore = _c === void 0 ? 20 : _c, _d = _a.exceptions, exceptions = _d === void 0 ? ["widdst.0"] : _d, _e = _a.interval, interval = _e === void 0 ? 10 : _e;
 function drainedRestore() {
     if (!keepStartup) {
         try {
@@ -110,8 +110,10 @@ var checkCharge = function () {
 if (Bangle.isCharging())
     checkCharge();
 Bangle.on("charging", function (charging) {
+    if (drainedInterval)
+        drainedInterval = clearInterval(drainedInterval);
     if (charging)
-        checkCharge();
+        drainedInterval = setInterval(checkCharge, interval * 60 * 1000);
 });
 if (!keepStartup) {
     var storage = require("Storage");

@@ -515,12 +515,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/widbt_notify/widget.js": {
-    "hash": "16372ffcbc6bd1419ca326c7da40c2195f82a4bfceb6f123c15872624c4f0adf",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/widbgjs/widget.js": {
     "hash": "9852ce9aafb0a1ca3029d497282c8cdf07438ea36a3323313bad5b7569b1081b",
     "rules": [
@@ -534,7 +528,7 @@ module.exports = {
     ]
   },
   "apps/usgs/settings.js": {
-    "hash": "af1b7bc7e041c1e6988b407b6c8ee66dbd6a0e181a20caf102d2abdb6dbd5ac0",
+    "hash": "00ee672a6920f5667bfbd2988fd2853cfd579895a843ae036a00028dcb13878d",
     "rules": [
       "no-undef"
     ]
@@ -1153,12 +1147,6 @@ module.exports = {
   },
   "apps/bee/bee.app.js": {
     "hash": "684ed07883a14d7f277e8fa16bf739e0a0edb564339a74210ae5ca60707fe780",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/banglebridge/widget.js": {
-    "hash": "4ee8d6749e1d0e28c58ad871fd9f6ccbca2d716bb4fbd3511ba4c34a6a5897e1",
     "rules": [
       "no-undef"
     ]

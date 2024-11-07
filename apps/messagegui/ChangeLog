@@ -110,4 +110,5 @@
 0.81: Fix issue stopping Music message for being marked as read
       Make sure play button image is transparent
       Add top-right menu to music playback to allow message to be deleted
-0.82: Add option to not open the first unread message
+0.82: Stop buzzing when a message is removed (e.g. call answered)
+0.83: Add option to not open the first unread message

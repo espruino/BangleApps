@@ -312,4 +312,4 @@
     }
   };
   E.showMenu(mainMenu);
-});
+})

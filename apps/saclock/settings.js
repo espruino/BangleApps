@@ -20,4 +20,4 @@
     hideWidgets: settings.hideWidgets,
   });
   E.showMenu(menu);
-});
+})

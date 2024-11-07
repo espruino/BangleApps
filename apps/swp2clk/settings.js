@@ -150,10 +150,10 @@
   };
 
   var getAppList = () => {
-    var appList = storage
+    var appList = require("Storage")
       .list(/\.info$/)
       .map((appInfoFileName) => {
-        var appInfo = storage.readJSON(appInfoFileName, 1);
+        var appInfo = require("Storage").readJSON(appInfoFileName, 1);
         return (
           appInfo && {
             name: appInfo.name,
@@ -180,4 +180,4 @@
 
   settings = readSettings();
   showMainMenu();
-});
+})

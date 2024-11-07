@@ -235,7 +235,7 @@ Layout.prototype.forgetLazyState = function () {
 
 Layout.prototype.layout = function (l) {
   // l = current layout element
-  var cb = {
+  var floor = Math.floor, cb = {
     "h" : function(l) {"ram";
       var acc_w = l.x + (0|l.pad),
           accfillx = 0,
@@ -246,7 +246,7 @@ Layout.prototype.layout = function (l) {
         c.x = 0|x;
         acc_w += c._w;
         accfillx += 0|c.fillx;
-        x = acc_w + 0|(accfillx*(l.w-l._w)/fillx);
+        x = acc_w + floor(accfillx*(l.w-l._w)/fillx);
         c.w = 0|(x - c.x);
         c.h = 0|(c.filly ? l.h - (l.pad<<1) : c._h);
         c.y = 0|(l.y + (0|l.pad) + ((1+(0|c.valign))*(l.h-(l.pad<<1)-c.h)>>1));
@@ -263,7 +263,7 @@ Layout.prototype.layout = function (l) {
         c.y = 0|y;
         acc_h += c._h;
         accfilly += 0|c.filly;
-        y = acc_h + 0|(accfilly*(l.h-l._h)/filly);
+        y = acc_h + floor(accfilly*(l.h-l._h)/filly);
         c.h = 0|(y - c.y);
         c.w = 0|(c.fillx ? l.w - (l.pad<<1) : c._w);
         c.x = 0|(l.x + (0|l.pad) + ((1+(0|c.halign))*(l.w-(l.pad<<1)-c.w)>>1));

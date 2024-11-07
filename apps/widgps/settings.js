@@ -29,4 +29,4 @@ var mainmenu = {
       },
 };
 E.showMenu(mainmenu);
-});
+})

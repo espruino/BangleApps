@@ -39,3 +39,4 @@
       Allow `calendar-` to take an array of items to remove
 0.37: Support Gadgetbridge canned responses
 0.38: Don't rewrite settings file on every boot!
+0.39: Move GB message handling into a library to reduce boot time from 40ms->13ms

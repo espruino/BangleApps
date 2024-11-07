@@ -1,13 +1,14 @@
 { "id": "setuichange",
   "name": "SetUI Proposals preview",
-  "version":"0.03",
+  "version":"0.04",
   "description": "Try out potential future changes to `Bangle.setUI`. Makes hardware button interaction snappier. Makes it possible to set custom event handlers on any type/mode, not just `\"custom\"`. Please provide feedback - see `Read more...` below.",
   "icon": "app.png",
   "tags": "",
   "type": "bootloader",
-  "supports" : ["BANGLEJS2"],
+  "supports" : ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name":"setuichange.0.boot.js","url":"boot.js"}
+    {"name":"setuichange.0.boot.js","url":"boot-b1.js", "supports": ["BANGLEJS"]},
+    {"name":"setuichange.0.boot.js","url":"boot-b2.js", "supports": ["BANGLEJS2"]}
   ]
 }
