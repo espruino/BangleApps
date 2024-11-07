@@ -155,7 +155,7 @@ function showMapMessage(msg) {
   function back() { // mark as not new and return to menu
     msg.new = false;
     layout = undefined;
-    checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:settings.showMsgIfUnread,openMusic:0});
+    checkMessages({clockIfNoMsg:1,clockIfAllRead:1,ignoreUnread:settings.ignoreUnread,openMusic:0});
   }
   Bangle.setUI({mode:"updown", back: back}, back); // any input takes us back
 }
@@ -195,7 +195,7 @@ function showMusicMessage(msg) {
     var wasNew = msg.new;
     msg.new = false;
     layout = undefined;
-    if (wasNew) checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:0,openMusic:0});
+    if (wasNew) checkMessages({clockIfNoMsg:1,clockIfAllRead:1,ignoreUnread:1,openMusic:0});
     else returnToMain();
   }
   function updateLabels() {
@@ -476,7 +476,7 @@ function showMessage(msgid, persist) {
 /* options = {
   clockIfNoMsg : bool
   clockIfAllRead : bool
-  showMsgIfUnread : bool
+  ignoreUnread : bool   // don't automatically navigate to the first unread message
   openMusic : bool      // open music if it's playing
   dontStopBuzz : bool   // don't stuf buzzing (any time other than the first this is undefined/false)
 }
@@ -500,7 +500,7 @@ function checkMessages(options) {
   // we have >0 messages
   var newMessages = MESSAGES.filter(m=>m.new&&m.id!="music");
   // If we have a new message, show it
-  if (options.showMsgIfUnread && newMessages.length) {
+  if (!options.ignoreUnread && newMessages.length) {
     delete newMessages[0].show; // stop us getting stuck here if we're called a second time
     showMessage(newMessages[0].id, false);
     // buzz after showMessage, so being busy during layout doesn't affect the buzz pattern
@@ -571,15 +571,15 @@ function checkMessages(options) {
 }
 
 function returnToCheckMessages(clock) {
-  checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:settings.showMsgIfUnread,openMusic});
+  checkMessages({clockIfNoMsg:1,clockIfAllRead:1,ignoreUnread:settings.ignoreUnread,openMusic});
 }
 
 function returnToMain() {
-  checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
+  checkMessages({clockIfNoMsg:0,clockIfAllRead:0,ignoreUnread:1,openMusic:0});
 }
 
 function returnToClockIfEmpty() {
-  checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0,openMusic});
+  checkMessages({clockIfNoMsg:1,clockIfAllRead:0,ignoreUnread:1,openMusic});
 }
 
 function cancelReloadTimeout() {
@@ -605,7 +605,7 @@ setTimeout(() => {
   // only openMusic on launch if music is new, or state=="show" (set by messagesmusic)
   var musicMsg = MESSAGES.find(m => m.id === "music");
   checkMessages({
-    clockIfNoMsg: 0, clockIfAllRead: 0, showMsgIfUnread: settings.showMsgIfUnread,
+    clockIfNoMsg: 0, clockIfAllRead: 0, ignoreUnread: settings.ignoreUnread,
     openMusic: ((musicMsg&&musicMsg.new) && settings.openMusic) || (musicMsg&&musicMsg.state=="show"),
     dontStopBuzz: 1 });
 }, 10); // if checkMessages wants to 'load', do that

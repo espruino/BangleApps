@@ -11,7 +11,7 @@
     if (settings.unreadTimeout===undefined) settings.unreadTimeout=60;
     if (settings.maxMessages===undefined) settings.maxMessages=3;
     if (settings.iconColorMode === undefined) settings.iconColorMode = iconColorModes[0];
-    if (settings.showMsgIfUnread === undefined) settings.showMsgIfUnread = 1;
+    if (settings.ignoreUnread === undefined) settings.ignoreUnread = 0;
     settings.unlockWatch=!!settings.unlockWatch;
     settings.openMusic=!!settings.openMusic;
     settings.maxUnreadTimeout=240;
@@ -60,8 +60,8 @@
       onchange: v => updateSetting("fontSize", v)
     },
     /*LANG*/'Auto-Open Unread Msg': {
-      value: !!settings().showMsgIfUnread,
-      onchange: v => updateSetting("showMsgIfUnread", v)
+      value: !!settings().ignoreUnread,
+      onchange: v => updateSetting("ignoreUnread", v)
     },
     /*LANG*/'Auto-Open Music': {
       value: !!settings().openMusic,
