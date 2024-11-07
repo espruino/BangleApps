@@ -2,7 +2,7 @@
   "id": "podadrem",
   "name": "Podcast Addict Remote",
   "shortName": "PA Remote",
-  "version": "0.10",
+  "version": "0.11",
   "description": "Control Podcast Addict on your android device.",
   "readme": "README.md",
   "type": "app",
