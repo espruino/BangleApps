@@ -33,8 +33,12 @@
     s.writeJSON("launch.cache.json", launchCache);
   }
   let apps = launchCache.apps;
-  let page = (Bangle.dtHandlePagePersist&&Bangle.dtHandlePagePersist()) ?? (parseInt(s.read("dtlaunch.page")) ?? 0);
-  for (let i = page*4; i < Math.min(page*4+4, apps.length); i++) { // Initially only load icons for the current page.
+  let page = (global.dtlaunch&&dtlaunch.handlePagePersist()) ??
+    (parseInt(s.read("dtlaunch.page")) ?? 0);
+
+  const INIT_PAGE_APP_ZEROTH = page*4;
+  const INIT_PAGE_APP_LAST = Math.min(page*4+3, apps.length-1);
+  for (let i = INIT_PAGE_APP_ZEROTH; i <= INIT_PAGE_APP_LAST; i++) { // Initially only load icons for the current page.
     if (apps[i].icon)
       apps[i].icon = s.read(apps[i].icon); // should just be a link to a memory area
   }
@@ -48,7 +52,7 @@
   const YOFF = 30;
 
   let drawIcon= function(p,n,selected) {
-    let x = (n%2)*72+XOFF; 
+    let x = (n%2)*72+XOFF;
     let y = n>1?72+YOFF:YOFF;
     (selected?g.setColor(g.theme.fgH):g.setColor(g.theme.bg)).fillRect(x+11,y+3,x+60,y+52);
     g.clearRect(x+12,y+4,x+59,y+51);
@@ -102,13 +106,14 @@
   drawPage(page);
 
   for (let i = 0; i < apps.length; i++) { // Load the rest of the app icons that were not initially.
-    if (i >= page*4 && i < Math.min(page*4+4, apps.length)) continue;
+    if (i >= INIT_PAGE_APP_ZEROTH && i <= INIT_PAGE_APP_LAST) continue;
     if (apps[i].icon)
       apps[i].icon = s.read(apps[i].icon); // should just be a link to a memory area
   }
 
-  if (!Bangle.dtHandlePagePersist) {
-    Bangle.dtHandlePagePersist = (page) => {
+  if (!global.dtlaunch) {
+    global.dtlaunch = {};
+    dtlaunch.handlePagePersist = function(page) {
       // Function for persisting the active page when leaving dtlaunch.
       if (page===undefined) {return this.page||0;}
 
@@ -121,7 +126,7 @@
 
       this.page = page;
     };
-    Bangle.dtHandlePagePersist(page);
+    dtlaunch.handlePagePersist(page);
   }
 
   let swipeListenerDt = function(dirLeftRight, dirUpDown){
@@ -160,7 +165,7 @@
               drawIcon(page,selected,false);
             } else {
               buzzLong();
-              Bangle.dtHandlePagePersist(page);
+              dtlaunch.handlePagePersist(page);
               load(apps[page*4+i].src);
             }
           }
@@ -183,7 +188,7 @@
     touch : touchListenerDt,
     remove : ()=>{
       if (timeoutToClock) {clearTimeout(timeoutToClock);}
-      Bangle.dtHandlePagePersist(page);
+      dtlaunch.handlePagePersist(page);
     }
   });
 
@@ -193,7 +198,7 @@
     if (settings.timeOut!="Off"){
       let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
       if (timeoutToClock) clearTimeout(timeoutToClock);
-      timeoutToClock = setTimeout(Bangle.showClock,time*1000);  
+      timeoutToClock = setTimeout(Bangle.showClock,time*1000);
     }
   };
   updateTimeoutToClock();
