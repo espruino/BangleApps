@@ -1,6 +1,5 @@
 # Back to the future Clock
 
-<img src="https://user-images.githubusercontent.com/2981891/175355586-1dfc0d66-6555-4385-b124-1605fdb71a11.jpg" width="250" />
 
 A watchface inspierd by <a target="_blank" href="https://apps.garmin.com/apps/d181bcf9-5421-42a5-b460-863e5e76d798">this garmin watchface</a>.<br/>
 
