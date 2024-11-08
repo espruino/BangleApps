@@ -3,9 +3,6 @@ require("Font7x11Numeric7Seg").add(Graphics);
 require("Font5x7Numeric7Seg").add(Graphics);
 require("Font4x5").add(Graphics);
 
-
-const width = g.getWidth();
-const height = g.getHeight();
 const timeTextY = 4;
 const timeDataY = timeTextY+19;
 const DateTextY = 48;
@@ -120,7 +117,7 @@ function draw(){
   drawGoal();
   var date = new Date();
   var h = date.getHours(), m = date.getMinutes(), s = date.getSeconds();
-  var d = date.getDate(), w = date.getDay(), y = date.getFullYear();
+  var d = date.getDate(), y = date.getFullYear();//, w = date.getDay();
 
   if (h<10) {
     h = ("0"+h).substr(-2);
