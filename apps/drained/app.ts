@@ -78,8 +78,9 @@ const draw = () => {
 };
 
 const reload = () => {
+  let scroller: MenuInstance["scroller"] | undefined;
   const showMenu = () => {
-    const menu: { [k: string]: () => void } = {
+    const menu: Menu = {
       "Restore to full power": drainedRestore,
     };
 
@@ -92,8 +93,12 @@ const reload = () => {
     menu["Recovery"] = () => Bangle.showRecoveryMenu();
     menu["Exit menu"] = reload;
 
+    if(scroller){
+      menu[""] = { selected: scroller.scroll };
+    }
+
     if(nextDraw) clearTimeout(nextDraw);
-    E.showMenu(menu);
+    ({ scroller } = E.showMenu(menu));
   };
 
   Bangle.setUI({
