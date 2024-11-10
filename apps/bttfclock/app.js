@@ -199,7 +199,7 @@ function draw(){
   if (alarmStatus){
     g.drawImage(alarmIcon, 78, statusDataY-1);
   }
-  if (require("Storage").read("messages.json")!==undefined){
+  if ((require('Storage').readJSON('messages.json',1)||[]).some(messag=>messag.new==true)){
     g.drawImage(notificationIcon, 94, statusDataY-1);
   }
 
