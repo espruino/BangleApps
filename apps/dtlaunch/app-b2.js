@@ -37,14 +37,14 @@
     (parseInt(s.read("dtlaunch.page")) ?? 0);
 
   const INIT_PAGE_APP_ZEROTH = page*4;
-  const INIT_PAGE_APP_LAST = Math.min(page*4+3, apps.length-1);
+  const INIT_PAGE_APP_LAST = (page*4+3<apps.length-1)?page*4+3:apps.length-1;//Math.min(page*4+3, apps.length-1); // FIXME:What is fastest?
   for (let i = INIT_PAGE_APP_ZEROTH; i <= INIT_PAGE_APP_LAST; i++) { // Initially only load icons for the current page.
     if (apps[i].icon)
       apps[i].icon = s.read(apps[i].icon); // should just be a link to a memory area
   }
 
   let Napps = apps.length;
-  let Npages = Math.ceil(Napps/4);
+  let Npages = parseInt(Napps/4+1); //Math.ceil(Napps/4); // FIXME: What is fastest?
   let maxPage = Npages-1;
   let selected = -1;
   //let oldselected = -1;
