@@ -9,7 +9,7 @@
   "readme": "README.md",
   "dependencies" : {
     "sched":"app",
-    "kbmulti":"app",
+    "kbedgewrite":"app",
     "messageicons":"app",
     "widmsggrid":"app",
     "msgwakefup":"app",
@@ -43,8 +43,7 @@
     "setting":"app",
     "fastload":"app",
     "boot":"app",
-    "delaylock":"app",
-    "setuichange":"app"
+    "delaylock":"app"
   },
   "storage": [
     {"name":"backswipe.json",
