@@ -66,6 +66,8 @@
     {"name":"edgeclk.settings.json",
      "url":"edgeclk.settings.json"},
     {"name":"setting.json",
-     "url":"setting.json"}
+     "url":"setting.json"},
+    {"name":"mysetup.boot.js",
+     "url":"boot.js"}
   ]
 }
