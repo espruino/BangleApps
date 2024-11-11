@@ -11,6 +11,7 @@
     swipeExit: false,
     timeOut: "Off",
     interactionBuzz: false,
+    rememberPage: false,
   }, require('Storage').readJSON("dtlaunch.json", true) || {});
 
   let s = require("Storage");
@@ -33,12 +34,17 @@
     s.writeJSON("launch.cache.json", launchCache);
   }
   let apps = launchCache.apps;
-  let page = (global.dtlaunch&&dtlaunch.handlePagePersist()) ??
-    (parseInt(s.read("dtlaunch.page")) ?? 0);
+  let page = 0;
+  let initPageAppZeroth = 0;
+  let initPageAppLast = 3;
+  if (settings.rememberPage) {
+    page = (global.dtlaunch&&dtlaunch.handlePagePersist()) ??
+      (parseInt(s.read("dtlaunch.page")) ?? 0);
+    initPageAppZeroth = page*4;
+    initPageAppLast = (page*4+3<apps.length-1)?page*4+3:apps.length-1;//Math.min(page*4+3, apps.length-1); // FIXME:What is fastest?
+  }
 
-  const INIT_PAGE_APP_ZEROTH = page*4;
-  const INIT_PAGE_APP_LAST = (page*4+3<apps.length-1)?page*4+3:apps.length-1;//Math.min(page*4+3, apps.length-1); // FIXME:What is fastest?
-  for (let i = INIT_PAGE_APP_ZEROTH; i <= INIT_PAGE_APP_LAST; i++) { // Initially only load icons for the current page.
+  for (let i = initPageAppZeroth; i <= initPageAppLast; i++) { // Initially only load icons for the current page.
     if (apps[i].icon)
       apps[i].icon = s.read(apps[i].icon); // should just be a link to a memory area
   }
@@ -106,7 +112,7 @@
   drawPage(page);
 
   for (let i = 0; i < apps.length; i++) { // Load the rest of the app icons that were not initially.
-    if (i >= INIT_PAGE_APP_ZEROTH && i <= INIT_PAGE_APP_LAST) continue;
+    if (i >= initPageAppZeroth && i <= initPageAppLast) continue;
     if (apps[i].icon)
       apps[i].icon = s.read(apps[i].icon); // should just be a link to a memory area
   }
