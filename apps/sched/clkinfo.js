@@ -127,6 +127,7 @@
         run: function() {
           if (a.date) return; // ignore events
           a.on = !a.on;
+          a.last = 0;
           if(a.on && a.timer) require('sched').resetTimer(a);
           this.emit("redraw");
           require('sched').setAlarms(all);
