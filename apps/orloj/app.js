@@ -140,7 +140,7 @@ function setColor() {
 
 function drawText(d) {
   g.setFont("Vector",20);
-   let dateStr = require("locale").date(d);
+  //let dateStr = require("locale").date(d);
   //g.drawString(dateStr, c.x, c.y+20, true);
   let bat = E.getBattery();
   let batStr = Math.round(bat/5)*5+"%";
