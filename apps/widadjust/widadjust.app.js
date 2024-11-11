@@ -219,9 +219,6 @@ var cancel_gps = 0;
 function on_gps(fix) {
   // Do this first so that we don't get extra jitter
   let now = getTime();
-  let have = false, lat = "lat ", alt = "?",
-      speed = "speed ", hdop = "?", adelta = "adelta ",
-      tdelta = "tdelta ";
 
   if (cancel_gps)
     return;
@@ -242,11 +239,6 @@ function on_gps(fix) {
     .fillRect(0, 24, 176, 100)
     .setColor(0,0,0)
     .drawString(msg, 3, 25);
-}
-
-function stopGps() {
-  cancel_gps=true;
-  gps.stop_gps();
 }
 
 fmt.init();
