@@ -1,12 +1,14 @@
 /* Widadjust auto adjuster */
-
-/* fmt library v0.1.2 */
+/* fmt library v0.2.2 */
 let fmt = {
   icon_alt : "\0\x08\x1a\1\x00\x00\x00\x20\x30\x78\x7C\xFE\xFF\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00",
   icon_m : "\0\x08\x1a\1\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00",
   icon_km : "\0\x08\x1a\1\xC3\xC6\xCC\xD8\xF0\xD8\xCC\xC6\xC3\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00",
   icon_kph : "\0\x08\x1a\1\xC3\xC6\xCC\xD8\xF0\xD8\xCC\xC6\xC3\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\xFF\x00\xC3\xC3\xFF\xC3\xC3",
   icon_c : "\0\x08\x1a\1\x00\x00\x60\x90\x90\x60\x00\x7F\xFF\xC0\xC0\xC0\xC0\xC0\xFF\x7F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
+  icon_hpa : "\x00\x08\x16\x01\x00\x80\xb0\xc8\x88\x88\x88\x00\xf0\x88\x84\x84\x88\xf0\x80\x8c\x92\x22\x25\x19\x00\x00",
+  icon_9 : "\x00\x08\x16\x01\x00\x00\x00\x00\x38\x44\x44\x4c\x34\x04\x04\x38\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
+  icon_10 : "\x00\x08\x16\x01\x00\x08\x18\x28\x08\x08\x08\x00\x00\x18\x24\x24\x24\x24\x18\x00\x00\x00\x00\x00\x00\x00",
 
   /* 0 .. DD.ddddd
      1 .. DD MM.mmm'
@@ -15,9 +17,23 @@ let fmt = {
   geo_mode : 1,
 
   init: function() {},
-  fmtDist: function(km) { return km.toFixed(1) + this.icon_km; },
-  fmtSteps: function(n) { return fmtDist(0.001 * 0.719 * n); },
+  fmtDist: function(km) {
+    if (km >= 1.0) return km.toFixed(1) + this.icon_km;
+    return (km*1000).toFixed(0) + this.icon_m;
+  },
+  fmtSteps: function(n) { return this.fmtDist(0.001 * 0.719 * n); },
   fmtAlt: function(m) { return m.toFixed(0) + this.icon_alt; },
+  fmtTemp: function(c) { return c.toFixed(1) + this.icon_c; },
+  fmtPress: function(p) { 
+    if (p < 900 || p > 1100)
+      return p.toFixed(0) + this.icon_hpa; 
+    if (p < 1000) {
+      p -= 900;
+      return this.icon_9 + this.add0(p.toFixed(0)) + this.icon_hpa;
+    }
+    p -= 1000;
+    return this.icon_10 + this.add0(p.toFixed(0)) + this.icon_hpa;
+  },
   draw_dot : 1,
   add0: function(i) {
     if (i > 9) {
@@ -77,14 +93,46 @@ let fmt = {
     }
     return s + c + this.fmtAngle(x);
   },
+  fmtFix: function(fix, t) {
+    if (fix && fix.fix && fix.lat) {
+      return this.fmtSpeed(fix.speed) + " " +
+        this.fmtAlt(fix.alt);
+    } else {
+      return "N/FIX " + this.fmtTimeDiff(t);
+    }
+  },
+  fmtSpeed: function(kph) {
+    return kph.toFixed(1) + this.icon_kph;
+  },
+  radians: function(a) { return a*Math.PI/180; },
+  degrees: function(a) { return a*180/Math.PI; },
+  // distance between 2 lat and lons, in meters, Mean Earth Radius = 6371km
+  // https://www.movable-type.co.uk/scripts/latlong.html
+  // (Equirectangular approximation)
+  // returns value in meters
+  distance: function(a,b) {
+    var x = this.radians(b.lon-a.lon) * Math.cos(this.radians((a.lat+b.lat)/2));
+    var y = this.radians(b.lat-a.lat);
+    return Math.sqrt(x*x + y*y) * 6371000;
+  },
+  // thanks to waypointer
+  bearing: function(a,b) {
+    var delta = this.radians(b.lon-a.lon);
+    var alat = this.radians(a.lat);
+    var blat = this.radians(b.lat);
+    var y = Math.sin(delta) * Math.cos(blat);
+    var x = Math.cos(alat) * Math.sin(blat) -
+        Math.sin(alat)*Math.cos(blat)*Math.cos(delta);
+    return Math.round(this.degrees(Math.atan2(y, x)));
+  },
 };
 
-/* gps library v0.1.1 */
+/* gps library v0.1.4 */
 let gps = {
   emulator: -1,
   init: function(x) {
-    this.emulator = (process.env.BOARD=="EMSCRIPTEN"
-		     || process.env.BOARD=="EMSCRIPTEN2")?1:0;
+    this.emulator = (process.env.BOARD=="EMSCRIPTEN" 
+                     || process.env.BOARD=="EMSCRIPTEN2")?1:0;
   },
   state: {},
   on_gps: function(f) {
@@ -105,7 +153,7 @@ let gps = {
     this.state.timeout = setTimeout(this.on_gps, 1000, f);
   },
   off_gps: function() {
-    clearTimeout(gps_state.timeout);
+    clearTimeout(this.state.timeout);
   },
   getGPSFix: function() {
     if (!this.emulator)
@@ -113,7 +161,7 @@ let gps = {
     let fix = {};
     fix.fix = 1;
     fix.lat = 50;
-    fix.lon = 14;
+    fix.lon = 14-(getTime()-this.gps_start) / 1000; /* Go West! */
     fix.alt = 200;
     fix.speed = 5;
     fix.course = 30;
@@ -131,6 +179,7 @@ let gps = {
     Bangle.setGPSPower(0, "libgps");
   },
 };
+
 
 var start_time = -5, start_delta;
 
