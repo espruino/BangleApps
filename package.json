@@ -27,6 +27,7 @@
     "update-local-apps": "apps/*/metadata.json"
   },
   "dependencies": {
-    "acorn": "^7.2.0"
+    "acorn": "^7.2.0",
+    "acorn-stage3": "^4.0.0"
   }
 }
