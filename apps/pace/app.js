@@ -85,26 +85,30 @@
         var h = g.getHeight();
         var max = splits_1.reduce(function (a, s) { return Math.max(a, s.time); }, 0);
         g.setFont("6x8", 2).setFontAlign(-1, -1);
+        var y = Bangle.appRect.y + barSpacing / 2;
+        g
+            .setColor(g.theme.fg)
+            .drawString(formatDuration_1(exs_1.state.duration), 0, y);
         var i = 0;
         for (;; i++) {
             var split = splits_1[i + splitOffset_1];
             if (split == null)
                 break;
-            var y_1 = Bangle.appRect.y + i * (barSize + barSpacing) + barSpacing / 2;
+            var y_1 = Bangle.appRect.y + (i + 1) * (barSize + barSpacing) + barSpacing / 2;
             if (y_1 > h)
                 break;
             var size = w * split.time / max;
             g.setColor("#00f").fillRect(0, y_1, size, y_1 + barSize);
             var splitPace = calculatePace_1(split);
+            g.setColor(g.theme.fg);
             drawSplit_1(i, y_1, splitPace);
         }
         var pace = exs_1.stats.pacec.getString();
-        var y = Bangle.appRect.y + i * (barSize + barSpacing) + barSpacing / 2;
+        y = Bangle.appRect.y + (i + 1) * (barSize + barSpacing) + barSpacing / 2;
         drawSplit_1(i, y, pace);
     };
     var drawSplit_1 = function (i, y, pace) {
-        g
-            .setColor(g.theme.fg)
+        return g
             .drawString("".concat(i + 1 + splitOffset_1, " ").concat(typeof pace === "number" ? pace.toFixed(2) : pace), 0, y);
     };
     var pauseRun_1 = function () {
