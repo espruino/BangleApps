@@ -13,13 +13,13 @@ let fmt = {
      2 .. DD MM'ss"
   */
   geo_mode : 1,
-  
+
   init: function() {},
   fmtDist: function(km) { return km.toFixed(1) + this.icon_km; },
   fmtSteps: function(n) { return fmtDist(0.001 * 0.719 * n); },
   fmtAlt: function(m) { return m.toFixed(0) + this.icon_alt; },
   draw_dot : 1,
-  add0: function(i) {  
+  add0: function(i) {
     if (i > 9) {
       return ""+i;
     } else {
@@ -83,7 +83,7 @@ let fmt = {
 let gps = {
   emulator: -1,
   init: function(x) {
-    this.emulator = (process.env.BOARD=="EMSCRIPTEN" 
+    this.emulator = (process.env.BOARD=="EMSCRIPTEN"
 		     || process.env.BOARD=="EMSCRIPTEN2")?1:0;
   },
   state: {},
@@ -141,10 +141,10 @@ function updateTime(fix, now) {
 
   let delta = (now - fix.time.getTime()/1000);
   let tdelta = "" + delta.toFixed(4);
-  
+
   let is_fix = 1;
   // = fix.fix
-  
+
   if (start_time < -1) {
     start_time ++;
   }
@@ -183,9 +183,9 @@ function on_gps(fix) {
       fix.alt.toFixed(0) + "m";
   } else {
     msg = "N/FIX "
-      + (getTime() - gps.gps_start).toFixed(0) + "s"; 
+      + (getTime() - gps.gps_start).toFixed(0) + "s";
   }
-  
+
   msg += "\n" + updateTime(fix, now);
 
   g.reset().clear().setFont("Vector", 31)
