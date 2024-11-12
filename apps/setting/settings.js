@@ -771,7 +771,7 @@ function makeConnectable() {
     }
     if (!r) try { NRF.sleep(); } catch (e) { }
     delete NRF.ignoreWhitelist;
-    popMenu(mainMenu());
+    restoreMenu(BLEMenu());
   });
 }
 function clockMenu() {
