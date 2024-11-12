@@ -34,7 +34,9 @@ function restoreMenu(menu) {
 function popMenu(menu) {
   if(!menu[""]) menu[""] = {};
   menu[""].scroll = scrolls.pop() | 0;
-  menuScroller = E.showMenu(menu).scroller;
+  const m = E.showMenu(menu);
+  menuScroller = m.scroller;
+  return m;
 }
 
 function updateOptions() {
