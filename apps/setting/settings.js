@@ -997,7 +997,7 @@ function showTouchscreenCalibration() {
       g.setFont("6x8:2").setFontAlign(0,0).drawString(/*LANG*/"Calibrated!", g.getWidth()/2, g.getHeight()/2);
     }
     // now load the main menu again
-    setTimeout(() => restoreMenu(LCDMenu), 500);
+    setTimeout(() => restoreMenu(LCDMenu()), 500);
   }
 
   function touchHandler(_,e) {
