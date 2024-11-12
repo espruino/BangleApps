@@ -27,7 +27,7 @@ function pushMenu(menu) {
 
 function restoreMenu(menu) {
   if(!menu[""]) menu[""] = {};
-  menu[""].scroll = scrolls[scrolls.length - 1] | 0;
+  menu[""].scroll = menuScroller.scroll;
   menuScroller = E.showMenu(menu).scroller;
 }
 
