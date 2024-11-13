@@ -1,7 +1,6 @@
 /* Thanks to pinsafe from BangleApps repository */
 
 var Layout = require("Layout");
-const BANGLEJS2 = process.env.HWVERSION == 2; // check for bangle 2
 
 /* fmt library v0.2.2 */
 let fmt = {
@@ -28,9 +27,9 @@ let fmt = {
   fmtSteps: function(n) { return this.fmtDist(0.001 * 0.719 * n); },
   fmtAlt: function(m) { return m.toFixed(0) + this.icon_alt; },
   fmtTemp: function(c) { return c.toFixed(1) + this.icon_c; },
-  fmtPress: function(p) { 
+  fmtPress: function(p) {
     if (p < 900 || p > 1100)
-      return p.toFixed(0) + this.icon_hpa; 
+      return p.toFixed(0) + this.icon_hpa;
     if (p < 1000) {
       p -= 900;
       return this.icon_9 + this.add0(p.toFixed(0)) + this.icon_hpa;
@@ -135,7 +134,7 @@ let fmt = {
 let gps = {
   emulator: -1,
   init: function(x) {
-    this.emulator = (process.env.BOARD=="EMSCRIPTEN" 
+    this.emulator = (process.env.BOARD=="EMSCRIPTEN"
                      || process.env.BOARD=="EMSCRIPTEN2")?1:0;
   },
   state: {},
@@ -191,7 +190,7 @@ let arrow = {
     this.waypoint.lat = lat;
     this.waypoint.lon = lon;
   },
-  
+
   // Calculate the bearing to the waypoint
   bearingToWaypoint: function(currentPos) {
     return fmt.bearing(currentPos, this.waypoint);
@@ -210,7 +209,7 @@ let arrow = {
   // Display function to show arrows for waypoint, north, and sun
   displayNavigation: function(currentPos, currentHeading) {
     g.clear().setFont("Vector", 22).setFontAlign(0, 0);
-    
+
     // Calculate bearings
     let waypointBearing = this.bearingToWaypoint(currentPos);
     let distance = this.distanceToWaypoint(currentPos);
@@ -228,7 +227,7 @@ let arrow = {
       this.drawArrow(waypointBearing, `${distStr}`, 3);
 
     let s;
-    
+
     s = sun.sunPos();
     // Draw sun arrow if sun is visible
     if (s.altitude > 0) {
@@ -249,7 +248,7 @@ let arrow = {
     let centerX = 88;
     let centerY = 88;
     let length = 60; // Arrow length
-    
+
     g.drawCircle(centerX, centerY, length);
 
     // Calculate the rectangle's corner points for the rotated arrow
@@ -319,47 +318,45 @@ function mainMenu() {
   var menu = {
     "< Back" : () => load()
   };
-  if (textInputInstalled && BANGLEJS2) {
-    menu["Add"]=addCard;
-  }
   menu["Show"]=showCard;
-  menu["Remove"]=removeCard;
-  menu["Format"]=setFormat;
-  if (textInputInstalled && BANGLEJS2) {
+  if (textInputInstalled) {
+    menu["Add"]=addCard;
     menu["Mark GPS"]=markGps;
   }
+  menu["Remove"]=removeCard;
+  menu["Format"]=setFormat;
   g.clear();
   E.showMenu(menu);
 }
 
 function updateGps() {
-    let have = false, lat = "lat ", alt = "?",
-	speed = "speed ", hdop = "?", adelta = "adelta ",
-	tdelta = "tdelta ";
+  let have = false, lat = "lat ", alt = "?",
+      speed = "speed ", hdop = "?", adelta = "adelta ",
+      tdelta = "tdelta ";
 
-    if (cancel_gps)
-	return;
-    fix = gps.getGPSFix();
+  if (cancel_gps)
+    return;
+  fix = gps.getGPSFix();
 
-    if (fix && fix.fix && fix.lat) {
-	lat = "" + fmt.fmtPos(fix);
-	alt = "" + fix.alt.toFixed(0);
-	speed = "" + fix.speed.toFixed(1);
-	hdop = "" + fix.hdop.toFixed(0);
-	have = true;
-    } else {
-	lat = "NO FIX\n"
-	    + "" + (getTime() - gps_start).toFixed(0) + "s "; 
-    }
+  if (fix && fix.fix && fix.lat) {
+    lat = "" + fmt.fmtPos(fix);
+    alt = "" + fix.alt.toFixed(0);
+    speed = "" + fix.speed.toFixed(1);
+    hdop = "" + fix.hdop.toFixed(0);
+    have = true;
+  } else {
+    lat = "NO FIX\n"
+      + "" + (getTime() - gps_start).toFixed(0) + "s ";
+  }
 
-    let msg = "";
-    msg = lat + "\n"+ alt + "m";
-    g.reset().setFont("Vector", 31)
-	.setColor(1,1,1)
-	.fillRect(0, 24, 176, 100)
-	.setColor(0,0,0)
-	.drawString(msg, 3, 25);
-    setTimeout(updateGps, 1000);
+  let msg = "";
+  msg = lat + "\n"+ alt + "m";
+  g.reset().setFont("Vector", 31)
+    .setColor(1,1,1)
+    .fillRect(0, 24, 176, 100)
+    .setColor(0,0,0)
+    .drawString(msg, 3, 25);
+  setTimeout(updateGps, 1000);
 }
 
 function stopGps() {
@@ -368,22 +365,22 @@ function stopGps() {
 }
 
 function confirmGps(s) {
-    key = s;
-    var la = new Layout (
-	{type:"v", c: [
-	    {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
-	    {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
-	    {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
-	    {type:"h", c: [
-		{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "YES", cb:l=>{
-		  print("should mark", key, fix); createWP(fix.lat, fix.lon, fix.alt, key); cancel_gps=true; mainMenu();
-		}},
-		{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " NO", cb:l=>{ cancel_gps=true; mainMenu(); }}
-	    ]}
-	], lazy:true});
-    g.clear();
-    la.render();
-    updateGps();
+  key = s;
+  var la = new Layout (
+    {type:"v", c: [
+      {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
+      {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
+      {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
+      {type:"h", c: [
+	{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "YES", cb:l=>{
+	  print("should mark", key, fix); createWP(fix.lat, fix.lon, fix.alt, key); cancel_gps=true; mainMenu();
+	}},
+	{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " NO", cb:l=>{ cancel_gps=true; mainMenu(); }}
+      ]}
+    ], lazy:true});
+  g.clear();
+  la.render();
+  updateGps();
 }
 
 function markGps() {
@@ -459,68 +456,68 @@ function showNumpad(text, key_, callback) {
         ]}
       ], lazy:true});
   g.clear();
-  numPad.render();  
+  numPad.render();
   update();
 }
 
 function show(pin) {
-    var i = wp[pin];
-    var l = fmt.fmtPos(i);
-    E.showPrompt(l,{
-	title:i["name"],
-	buttons : {"Ok":true}
-    }).then(function(v) {
-	mainMenu();
-    });
+  var i = wp[pin];
+  var l = fmt.fmtPos(i);
+  E.showPrompt(l,{
+    title:i["name"],
+    buttons : {"Ok":true}
+  }).then(function(v) {
+    mainMenu();
+  });
 }
 
 function showCard() {
-    var menu = {
-	"" : {title : "Select WP"},
-	"< Back" : mainMenu
-    };
-    if (Object.keys(wp).length==0) Object.assign(menu, {"No WPs":""});
-    else {
-	wp.forEach((val, card) => {
-	    const name = wp[card].name;
-	    menu[name]= () => show(card);
-	});
-    }
-    E.showMenu(menu);
+  var menu = {
+    "" : {title : "Select WP"},
+    "< Back" : mainMenu
+  };
+  if (Object.keys(wp).length==0) Object.assign(menu, {"No WPs":""});
+  else {
+    wp.forEach((val, card) => {
+      const name = wp[card].name;
+      menu[name]= () => show(card);
+    });
+  }
+  E.showMenu(menu);
 }
 
 function remove(pin)
 {
-    let card = wp[pin];
-    let name = card["name"];
-    print("Remove?", card, name);
+  let card = wp[pin];
+  let name = card["name"];
+  print("Remove?", card, name);
 
-    E.showPrompt(name,{
-        title:"Delete",
-    }).then(function(v) {
-        if (v) {
-            wp.splice(pin, 1);
-            writeWP();
-            mainMenu();
-        } else {
-            mainMenu();
-        }
-    });
+  E.showPrompt(name,{
+    title:"Delete",
+  }).then(function(v) {
+    if (v) {
+      wp.splice(pin, 1);
+      writeWP();
+      mainMenu();
+    } else {
+      mainMenu();
+    }
+  });
 }
 
 function removeCard() {
-    var menu = {
-	"" : {title : "Select WP"},
-	"< Back" : mainMenu
-    };
-    if (Object.keys(wp).length==0) Object.assign(menu, {"No WPs":""});
-    else {
-	wp.forEach((val, card) => {
-	    const name = wp[card].name;
-	    menu[name]=()=> remove(card);
-	});
-    }
-    E.showMenu(menu);
+  var menu = {
+    "" : {title : "Select WP"},
+    "< Back" : mainMenu
+  };
+  if (Object.keys(wp).length==0) Object.assign(menu, {"No WPs":""});
+  else {
+    wp.forEach((val, card) => {
+      const name = wp[card].name;
+      menu[name]=()=> remove(card);
+    });
+  }
+  E.showMenu(menu);
 }
 
 function ask01(t, cb) {
@@ -598,18 +595,18 @@ function addCard() {
   require("textinput").input({text:"wp"}).then(key => {
     result = key;
     if (wp[result]!=undefined) {
-            E.showMenu();
-            var alreadyExists = new Layout (
-              {type:"v", c: [
-                {type:"txt", font:Math.min(15,100/result.length)+"%", pad:1, fillx:1, filly:1, label:result},
-                {type:"txt", font:"12%", pad:1, fillx:1, filly:1, label:"already exists."},
-                {type:"h", c: [
-                  {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "REPLACE", cb:l=>{addCardName(result);}},
-                  {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "CANCEL", cb:l=>{mainMenu();}}
-                ]}
-              ], lazy:true});
-            g.clear();
-            alreadyExists.render();
+      E.showMenu();
+      var alreadyExists = new Layout (
+        {type:"v", c: [
+          {type:"txt", font:Math.min(15,100/result.length)+"%", pad:1, fillx:1, filly:1, label:result},
+          {type:"txt", font:"12%", pad:1, fillx:1, filly:1, label:"already exists."},
+          {type:"h", c: [
+            {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "REPLACE", cb:l=>{addCardName(result);}},
+            {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "CANCEL", cb:l=>{mainMenu();}}
+          ]}
+        ], lazy:true});
+      g.clear();
+      alreadyExists.render();
     }
     addCardName(result);
   });
