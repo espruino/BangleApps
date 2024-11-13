@@ -2,7 +2,7 @@
 
 var Layout = require("Layout");
 
-/* fmt library v0.2.2 */
+/* fmt library v0.2.3 */
 let fmt = {
   icon_alt : "\0\x08\x1a\1\x00\x00\x00\x20\x30\x78\x7C\xFE\xFF\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00",
   icon_m : "\0\x08\x1a\1\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00",
@@ -89,6 +89,7 @@ let fmt = {
       x = -x;
     }
     let s = c+this.fmtAngle(x) + "\n";
+    x = pos.lon;
     c = "E";
     if (x<0) {
       c = "W";
@@ -183,8 +184,9 @@ let gps = {
   },
 };
 
-/* arrow library v0.0.1 */
+/* arrow library v0.0.2 */
 let arrow = {
+  name: "(unset)",
   waypoint: { lat: 0, lon: 0 },
   updateWaypoint: function(lat, lon) {
     this.waypoint.lat = lat;
@@ -207,7 +209,7 @@ let arrow = {
   },
 
   // Display function to show arrows for waypoint, north, and sun
-  displayNavigation: function(currentPos, currentHeading) {
+  draw: function(currentPos, currentHeading) {
     g.clear().setFont("Vector", 22).setFontAlign(0, 0);
 
     // Calculate bearings
@@ -218,7 +220,7 @@ let arrow = {
     // Format distance
     let distStr = fmt.fmtDist(distance/1000);
 
-    northHeading = 45;
+    northHeading = 0;
     // Draw compass arrow for north
     this.drawArrow(northHeading, "N", 1);
 
@@ -226,17 +228,18 @@ let arrow = {
     if (1)
       this.drawArrow(waypointBearing, `${distStr}`, 3);
 
-    let s;
-
-    s = sun.sunPos();
-    // Draw sun arrow if sun is visible
-    if (s.altitude > 0) {
-      this.drawArrow(s.azimuth, "Sun", 1);
-    }
-    s = sun.moonPos();
-    // Draw sun arrow if sun is visible
-    if (s.altitude > 0) {
-      this.drawArrow(s.azimuth, "Moon", 1);
+    if (0) {
+      let s;
+      s = sun.sunPos();
+      // Draw sun arrow if sun is visible
+      if (s.altitude > 0) {
+        this.drawArrow(s.azimuth, "Sun", 1);
+      }
+      s = sun.moonPos();
+      // Draw sun arrow if sun is visible
+      if (s.altitude > 0) {
+        this.drawArrow(s.azimuth, "Moon", 1);
+      }
     }
   },
 
@@ -359,6 +362,40 @@ function updateGps() {
   setTimeout(updateGps, 1000);
 }
 
+function updateGoto() {
+  let have = false, lat = "lat ", alt = "?",
+      speed = "speed ", hdop = "?", adelta = "adelta ",
+      tdelta = "tdelta ";
+
+  if (cancel_gps)
+    return;
+  fix = gps.getGPSFix();
+
+  if (fix && fix.fix && fix.lat) {
+    lat = "" + fmt.fmtPos(fix);
+    alt = "" + fix.alt.toFixed(0);
+    speed = "" + fix.speed.toFixed(1);
+    hdop = "" + fix.hdop.toFixed(0);
+    have = true;
+  } else {
+    lat = "NO FIX\n"
+      + "" + (getTime() - gps_start).toFixed(0) + "s ";
+  }
+
+  let msg = arrow.name + "\n";
+  msg = lat + "\n"+ alt + "m";
+  if (!have) {
+    g.reset().setFont("Vector", 31)
+      .setColor(1,1,1)
+      .fillRect(0, 24, 176, 100)
+      .setColor(0,0,0)
+      .drawString(msg, 3, 25);
+  } else {
+    arrow.draw(fix, fix.course);
+  }
+  setTimeout(updateGoto, 1000);
+}
+
 function stopGps() {
   cancel_gps=true;
   Bangle.setGPSPower(0, "waypoints");
@@ -372,10 +409,10 @@ function confirmGps(s) {
       {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
       {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
       {type:"h", c: [
-	{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "YES", cb:l=>{
+	{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "Yes", cb:l=>{
 	  print("should mark", key, fix); createWP(fix.lat, fix.lon, fix.alt, key); cancel_gps=true; mainMenu();
 	}},
-	{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " NO", cb:l=>{ cancel_gps=true; mainMenu(); }}
+	{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " No", cb:l=>{ cancel_gps=true; mainMenu(); }}
       ]}
     ], lazy:true});
   g.clear();
@@ -460,15 +497,46 @@ function showNumpad(text, key_, callback) {
   update();
 }
 
+function goTo() {
+  cancel_gps = false;
+  Bangle.setGPSPower(1, "waypoints");
+  gps.gps_start = getTime();
+  gps_start = getTime();
+  
+  var la = new Layout (
+    {type:"v", c: [
+      {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
+      {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
+      {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
+      {type:"h", c: [
+	{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " Done", cb:l=>{ cancel_gps=true; mainMenu(); }}
+      ]}
+    ], lazy:true});
+  g.clear();
+  la.render();
+
+  
+  updateGoto();
+}
+
 function show(pin) {
   var i = wp[pin];
   var l = fmt.fmtPos(i);
-  E.showPrompt(l,{
-    title:i["name"],
-    buttons : {"Ok":true}
-  }).then(function(v) {
-    mainMenu();
-  });
+  arrow.name = i.name;
+  arrow.waypoint = i;
+  
+  var la = new Layout (
+    {type:"v", c: [
+      {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:arrow.name },
+      {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:l },
+      {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
+      {type:"h", c: [
+	{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "Go", cb:l=>{ goTo();	}},
+	{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "Ok", cb:l=>{ mainMenu(); }}
+      ]}
+    ], lazy:true});
+  g.clear();
+  la.render();
 }
 
 function showCard() {
