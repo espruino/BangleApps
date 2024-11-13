@@ -2,7 +2,7 @@
   "id": "harrywixquotes",
   "name": "Harry's Hacked Watch Quotes",
   "shortName": "HQuotes",
-  "version": "0.1",
+  "version": "0.01",
   "description": "Shows an array of different quotes alongside a nice rotating cube",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot_harrywixquotes.png"}],
