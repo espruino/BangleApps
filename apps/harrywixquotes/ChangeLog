@@ -1,0 +1,18 @@
+0.01: New App!
+0.02: Animate balloon intro
+0.03: BTN3 now won't restart when at the end
+0.04: Fix regression after tweaks to Storage.readJSON
+0.05: Move configuration into App/widget settings
+0.06: Move loader into welcome.boot.js
+0.07: Run again when updated
+      Don't run again when settings app is updated (or absent)
+      Add "Run Now" option to settings
+0.08: Don't overwrite existing settings on app update
+0.09: Allow welcome to run after a fresh install
+      More useful app menu
+      BTN2 now goes to menu on release
+0.10: Tweaks to reduce memory usage
+0.11: Fix initial screen fill colour
+0.12: Fix swipe direction (#800)
+0.13: Mods for Bangle.js 2
+0.14: Turn off and run later to use softOff to time is set right

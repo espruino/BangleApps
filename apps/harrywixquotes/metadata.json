@@ -1,0 +1,17 @@
+{
+  "id": "harrywixquotes",
+  "name": "Harry's Hacked Watch Quotes",
+  "shortName": "HQuotes",
+  "version": "0.1",
+  "description": "Shows an array of different quotes alongside a nice rotating cube",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot_harrywixquotes.png"}],
+  "tags": "harrywixquotes",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"harrywixquotes.app.js","url":"app.js","supports": ["BANGLEJS2"]},
+    {"name":"harrywixquotes.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"harrywixquotes.json"}]
+}
