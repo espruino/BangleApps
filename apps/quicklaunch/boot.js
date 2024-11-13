@@ -1,15 +1,18 @@
 {
-setTimeout(() => { // wrap in zero ms timeout so the foreground app loads first.
   const storage = require("Storage");
-  let settings = storage.readJSON("quicklaunch.json", true) || {};
+  let settings;
 
   let leaveTrace = function(trace) {
+    if (!settings) settings = storage.readJSON("quicklaunch.json", true) || {};
+
     settings.trace = trace;
     storage.writeJSON("quicklaunch.json", settings);
     return trace;
   };
 
   let launchApp = function(trace) {
+    if (!settings) settings = storage.readJSON("quicklaunch.json", true) || {};
+
     if (settings[trace+"app"].src){
       if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher();
         else if (!storage.read(settings[trace+"app"].src)) {
@@ -41,5 +44,4 @@ setTimeout(() => { // wrap in zero ms timeout so the foreground app loads first.
     if (ud == 1) trace = leaveTrace("d"); // d=down.
     launchApp(trace);
   });
-}, 0);
 }
