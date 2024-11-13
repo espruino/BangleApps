@@ -184,6 +184,8 @@ let gps = {
   },
 };
 
+let sun = {}; /* To get rid of warnings */
+
 /* arrow library v0.0.2 */
 let arrow = {
   name: "(unset)",
@@ -333,9 +335,7 @@ function mainMenu() {
 }
 
 function updateGps() {
-  let have = false, lat = "lat ", alt = "?",
-      speed = "speed ", hdop = "?", adelta = "adelta ",
-      tdelta = "tdelta ";
+  let lat = "lat ", alt = "?";
 
   if (cancel_gps)
     return;
@@ -344,9 +344,8 @@ function updateGps() {
   if (fix && fix.fix && fix.lat) {
     lat = "" + fmt.fmtPos(fix);
     alt = "" + fix.alt.toFixed(0);
-    speed = "" + fix.speed.toFixed(1);
-    hdop = "" + fix.hdop.toFixed(0);
-    have = true;
+    // speed = "" + fix.speed.toFixed(1);
+    // hdop = "" + fix.hdop.toFixed(0);
   } else {
     lat = "NO FIX\n"
       + "" + (getTime() - gps_start).toFixed(0) + "s ";
@@ -363,9 +362,7 @@ function updateGps() {
 }
 
 function updateGoto() {
-  let have = false, lat = "lat ", alt = "?",
-      speed = "speed ", hdop = "?", adelta = "adelta ",
-      tdelta = "tdelta ";
+  let have = false, lat = "lat ", alt = "?";
 
   if (cancel_gps)
     return;
@@ -374,8 +371,8 @@ function updateGoto() {
   if (fix && fix.fix && fix.lat) {
     lat = "" + fmt.fmtPos(fix);
     alt = "" + fix.alt.toFixed(0);
-    speed = "" + fix.speed.toFixed(1);
-    hdop = "" + fix.hdop.toFixed(0);
+    // speed = "" + fix.speed.toFixed(1);
+    // hdop = "" + fix.hdop.toFixed(0);
     have = true;
   } else {
     lat = "NO FIX\n"
@@ -409,10 +406,10 @@ function confirmGps(s) {
       {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
       {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
       {type:"h", c: [
-	{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "Yes", cb:l=>{
-	  print("should mark", key, fix); createWP(fix.lat, fix.lon, fix.alt, key); cancel_gps=true; mainMenu();
-	}},
-	{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " No", cb:l=>{ cancel_gps=true; mainMenu(); }}
+        {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "Yes", cb:l=>{
+          print("should mark", key, fix); createWP(fix.lat, fix.lon, fix.alt, key); stopGps(); mainMenu();
+        }},
+        {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " No", cb:l=>{ stopGps(); mainMenu(); }}
       ]}
     ], lazy:true});
   g.clear();
@@ -447,7 +444,7 @@ function showNumpad(text, key_, callback) {
   function addDigit(digit) {
     key+=digit;
     if (1) {
-      l = text[key.length];
+      let l = text[key.length];
       switch (l) {
         case '.': case ' ': case "'":
           key+=l;
@@ -462,10 +459,10 @@ function showNumpad(text, key_, callback) {
   function update() {
     g.reset();
     g.clearRect(0,0,g.getWidth(),23);
-    s = key + text.substr(key.length, 999);
+    let s = key + text.substr(key.length, 999);
     g.setFont("Vector:24").setFontAlign(1,0).drawString(s,g.getWidth(),12);
   }
-  ds="12%";
+  let ds="12%";
   var numPad = new Layout ({
       type:"v", c: [{
         type:"v", c: [
@@ -509,7 +506,7 @@ function goTo() {
       {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
       {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
       {type:"h", c: [
-	{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " Done", cb:l=>{ cancel_gps=true; mainMenu(); }}
+        {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " Done", cb:l=>{ stopGps(); mainMenu(); }}
       ]}
     ], lazy:true});
   g.clear();
@@ -530,8 +527,8 @@ function show(pin) {
       {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:l },
       {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
       {type:"h", c: [
-	{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "Go", cb:l=>{ goTo();	}},
-	{type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "Ok", cb:l=>{ mainMenu(); }}
+        {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "Go", cb:l=>{ goTo(); }},
+        {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "Ok", cb:l=>{ mainMenu(); }}
       ]}
     ], lazy:true});
   g.clear();
@@ -598,29 +595,32 @@ function ask01(t, cb) {
   la.render();
 }
 
+var res;
+
 function askCoordinate(t1, t2, callback) {
   //let sign = 1;
   ask01(t1, function(sign) {
+    let d, m, s;
+    switch (fmt.geo_mode) {
+    case 0: s = "DDD.dddd"; break;
+    case 1: s = "DDD MM.mmm"; break;
+    case 2: s = "DDD MM'ss"+'"'; break;
+    }
+    showNumpad(s, t2, function() {
       switch (fmt.geo_mode) {
-        case 0: s = "DDD.dddd"; break;
-        case 1: s = "DDD MM.mmm"; break;
-        case 2: s = "DDD MM'ss"+'"'; break;
-      }
-      showNumpad(s, t2, function() {
-      switch (fmt.geo_mode) {
-        case 0:
-          res = parseFloat(key);
-          break;
-        case 1:
-          d = parseInt(key.substr(0, 3));
-          m = parseFloat(key.substr(3,99));
-          res = d + m/60.0;
-          break;
-        case 2:
-          d = parseInt(key.substr(0, 3));
-          m = parseInt(key.substr(4, 2));
-          s = parseInt(key.substr(7, 2));
-          res = d + m/60.0 + s/3600.0;
+      case 0:
+        res = parseFloat(key);
+        break;
+      case 1:
+        d = parseInt(key.substr(0, 3));
+        m = parseFloat(key.substr(3,99));
+        res = d + m/60.0;
+        break;
+      case 2:
+        d = parseInt(key.substr(0, 3));
+        m = parseInt(key.substr(4, 2));
+        s = parseInt(key.substr(7, 2));
+        res = d + m/60.0 + s/3600.0;
       }
       res = sign * res;
       print("Coordinate", res);
@@ -648,6 +648,8 @@ function createWP(lat, lon, alt, name) {
   print("add -- waypoints", wp);
   writeWP();
 }
+
+var result;
 
 function addCardName(name) {
   g.clear();
