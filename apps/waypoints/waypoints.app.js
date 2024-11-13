@@ -502,7 +502,7 @@ function goTo() {
   Bangle.setGPSPower(1, "waypoints");
   gps.gps_start = getTime();
   gps_start = getTime();
-  
+
   var la = new Layout (
     {type:"v", c: [
       {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:""},
@@ -515,7 +515,6 @@ function goTo() {
   g.clear();
   la.render();
 
-  
   updateGoto();
 }
 
@@ -524,7 +523,7 @@ function show(pin) {
   var l = fmt.fmtPos(i);
   arrow.name = i.name;
   arrow.waypoint = i;
-  
+
   var la = new Layout (
     {type:"v", c: [
       {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:arrow.name },
