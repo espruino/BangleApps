@@ -258,7 +258,7 @@ const APP_KEYS = [
   'id', 'name', 'shortName', 'version', 'icon', 'screenshots', 'description', 'tags', 'type',
   'sortorder', 'readme', 'custom', 'customConnect', 'interface', 'storage', 'data',
   'supports', 'allow_emulator',
-  'dependencies', 'provides_modules', 'provides_widgets', "default"
+  'dependencies', 'provides_modules', 'provides_widgets', 'provides_features', "default"
 ];
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports', 'noOverwrite'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
