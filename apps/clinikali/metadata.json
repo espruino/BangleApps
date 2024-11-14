@@ -7,6 +7,7 @@
   "icon": "app.png",
   "tags": "tool,outdoors,widget,clkinfo",
   "supports": ["BANGLEJS2"],
+  "interface": "clinikali.html",
   "storage": [
     { "name": "clinikali.app.js", "url": "app.js" },
     { "name": "clinikali.img", "url": "app-icon.js", "evaluate": true },

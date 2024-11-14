@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Clinikali Data Download</title>
+    <link rel="stylesheet" href="../../css/spectre.min.css" />
+  </head>
+  <body>
+    <div id="files"></div>
+    <div class="container" id="toastcontainer"></div>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script src="../../core/js/ui.js"></script>
+    <script src="../../core/js/utils.js"></script>
+    <script>
+      var domFiles = document.getElementById("files");
+
+      function downloadFile(filename, callback) {
+        Util.showModal(`Downloading ${filename}...`);
+        Util.readStorageFile(filename, (data) => {
+          Util.hideModal();
+          callback(data);
+        });
+      }
+
+      function saveCSV(data, title) {
+        Util.saveFile(title + ".csv", "text/csv", data);
+        showToast("Download finished.", "success");
+      }
+
+      function getFileList() {
+        Util.showModal("Loading File List...");
+        domFiles.innerHTML = "";
+
+        // List all clinikali files
+        Puck.eval(
+          `require("Storage").list(/^clinikali\\.log.*\\.csv$/,{sf:1})`,
+          (files) => {
+            var html = `
+        <div class="container">
+          <h2>Files</h2>
+          <div class="columns">`;
+
+            files.forEach((filename) => {
+              const fileNumber = filename.match(/^clinikali\.log(.*)\.csv$/)[1];
+              html += `
+            <div class="column col-12">
+              <div class="card">
+                <div class="card-header">
+                  <div class="card-title h5">File ${fileNumber}</div>
+                </div>
+                <div class="card-footer">
+                  <button class="btn btn-primary" filename="${filename}" task="download">Download CSV</button>
+                  <button class="btn btn-default" filename="${filename}" task="delete">Delete</button>
+                </div>
+              </div>
+            </div>`;
+            });
+
+            if (files.length === 0) {
+              html += `
+            <div class="column col-12">
+              <div class="card-header">
+                <div class="card-title h5">No files</div>
+                <div class="card-subtitle text-gray">No recorded data found</div>
+              </div>
+            </div>`;
+            }
+
+            html += `
+          </div>
+        </div>`;
+
+            domFiles.innerHTML = html;
+            Util.hideModal();
+
+            // Add button handlers
+            var buttons = domFiles.querySelectorAll("button");
+            for (var i = 0; i < buttons.length; i++) {
+              buttons[i].addEventListener("click", (event) => {
+                var button = event.currentTarget;
+                var filename = button.getAttribute("filename");
+                var task = button.getAttribute("task");
+
+                switch (task) {
+                  case "download":
+                    downloadFile(filename, (data) => saveCSV(data, filename));
+                    break;
+
+                  case "delete":
+                    Util.showModal(`Deleting ${filename}...`);
+                    Util.eraseStorageFile(filename, () => {
+                      Util.hideModal();
+                      getFileList();
+                    });
+                    break;
+                }
+              });
+            }
+          },
+        );
+      }
+
+      // Initialize when page loads
+      function onInit() {
+        getFileList();
+      }
+    </script>
+  </body>
+</html>
