@@ -289,6 +289,7 @@ and which gives information about the app for the Launcher.
   "dependencies" : { "message":"widget" } // optional, depend on a specific type of widget - see provides_widgets
   "provides_modules" : ["messageicons"] // optional, this app provides a module that can be used with 'require'
   "provides_widgets" : ["battery"] // optional, this app provides a type of widget - 'alarm/battery/bluetooth/pedometer/message'
+  "provides_features" : ["welcome"] // optional, this app provides some feature, used to ensure two aren't installed at once. Currently just 'welcome'
   "default" : true,           // set if an app is the default implementer of something (a widget/module/etc)
   "readme": "README.md",      // if supplied, a link to a markdown-style text file
                               // that contains more information about this app (usage, etc)
