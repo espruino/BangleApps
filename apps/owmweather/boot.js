@@ -7,11 +7,7 @@
   );
 
   let refreshMillis = function () {
-    return settings.refresh * 1000 * 60
-  }
-
-  let nextDueDate = function () {
-    return settings.updated + refreshMillis() + 1
+    return settings.refresh * 1000 * 60 + 1  // +1 <- leave some slack
   }
 
   let onCompleted = function () {
@@ -19,7 +15,7 @@
     settings.updated = Date.now();
     require('Storage').writeJSON("owmweather.json", settings);
     if (timeoutRef) clearTimeout(timeoutRef);
-    timeoutRef = setTimeout(loadIfDueAndReschedule, refreshMillis() + 1);
+    timeoutRef = setTimeout(loadIfDueAndReschedule, refreshMillis());
   }
 
   let loadIfDueAndReschedule = function () {
@@ -30,7 +26,7 @@
       settings.updated = lastWeatherUpdate;
     }
 
-    let MillisUntilDue = nextDueDate() - Date.now();
+    let MillisUntilDue = settings.updated + refreshMillis() - Date.now();
     if (MillisUntilDue <= 0) {
       if (!loading) {
         loading = true;
