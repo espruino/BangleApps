@@ -1,1 +1,2 @@
 0.01: First Release
+0.02: Use built-in rounded-rect draw function, faster UI
