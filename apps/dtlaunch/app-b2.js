@@ -41,7 +41,7 @@
     page = (global.dtlaunch&&dtlaunch.handlePagePersist()) ??
       (parseInt(s.read("dtlaunch.page")) ?? 0);
     initPageAppZeroth = page*4;
-    initPageAppLast = (page*4+3<apps.length-1)?page*4+3:apps.length-1;//Math.min(page*4+3, apps.length-1); // FIXME:What is fastest?
+    initPageAppLast = Math.min(page*4+3, apps.length-1);
   }
 
   for (let i = initPageAppZeroth; i <= initPageAppLast; i++) { // Initially only load icons for the current page.
@@ -50,7 +50,7 @@
   }
 
   let Napps = apps.length;
-  let Npages = parseInt(Napps/4+1); //Math.ceil(Napps/4); // FIXME: What is fastest?
+  let Npages = Math.ceil(Napps/4);
   let maxPage = Npages-1;
   let selected = -1;
   //let oldselected = -1;
