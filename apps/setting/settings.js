@@ -710,7 +710,7 @@ function utilMenu() {
         if (v) {
           E.showMessage(/*LANG*/'Resetting');
           resetSettings();
-          setTimeout(() => popMenu(mainMenu), 50);
+          setTimeout(() => popMenu(mainMenu()), 50);
         } else restoreMenu(utilMenu());
       });
     };
