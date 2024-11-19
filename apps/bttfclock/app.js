@@ -11,14 +11,18 @@ const stepGoalBatTextY = 100;
 const stepGoalBatdataY = stepGoalBatTextY+19;
 const statusTextY = 140;
 const statusDataY = statusTextY+19;
-let stepGoal = 7000;
+let stepGoal = (require("Storage").readJSON("health.json",1)||10000).stepGoal;
 let steps = 0;
+let alarmStatus = (require('Storage').readJSON('sched.json',1)||[]).some(alarm=>alarm.on);
 
 
-let bOn = require("heatshrink").decompress(atob("iEQwYROg3AAokYAgUMg0DAoUBwwFDgE2CIYdHAogREDoopFGoodGABI="));
+const bluetoothOnIcon = require("heatshrink").decompress(atob("iEQwYROg3AAokYAgUMg0DAoUBwwFDgE2CIYdHAogREDoopFGoodGABI="));
 
-let bOff = require("heatshrink").decompress(atob("iEQwYLIgwFF4ADBgYFBjAKCsEGBAIABhgFEgOA7AdDmApKmwpCC4OGFIYjFGoVgIIkMEZAAD"));
+const bluetoothOffIcon = require("heatshrink").decompress(atob("iEQwYLIgwFF4ADBgYFBjAKCsEGBAIABhgFEgOA7AdDmApKmwpCC4OGFIYjFGoVgIIkMEZAAD"));
 
+const alarmIcon = require("heatshrink").decompress(atob("iEQyBC/AA3/8ABBB7INHA4YLLDqIHVApJRJCZodNCJ4dPHqqPJGp4RLOaozZT8btLF64hJFJpFbAEYA="));
+
+const notificationIcon = require("heatshrink").decompress(atob("iEQyBC/AB3/8ABBD+4bHEa4VJD6YTNEKIf/D/rTDAJ7jTADo5hK+IA=="));
 
 
 //the following 2 sections are used from waveclk to schedule minutely updates
@@ -187,12 +191,17 @@ function draw(){
   g.drawString(bat, batDrawX, stepGoalBatdataY);
 
   //status
-  var b = bOff;
+  var b = bluetoothOffIcon;
   if (NRF.getSecurityStatus().connected){
-    b = bOn;
+    b = bluetoothOnIcon;
   }
-  g.drawImage(b, 64, statusDataY);
-
+  g.drawImage(b, 62, statusDataY-1);
+  if (alarmStatus){
+    g.drawImage(alarmIcon, 78, statusDataY-1);
+  }
+  if ((require('Storage').readJSON('messages.json',1)||[]).some(messag=>messag.new==true)){
+    g.drawImage(notificationIcon, 94, statusDataY-1);
+  }
 
   g.reset();
   g.setBgColor(0,0,0);
@@ -211,7 +220,6 @@ function draw(){
  */
 g.setTheme({bg:"#000",fg:"#fff",dark:true}).clear();
 //draw();
-
 //the following section is from waveclk
 Bangle.on('lcdPower',on=>{
   if (on) {
@@ -221,6 +229,8 @@ Bangle.on('lcdPower',on=>{
     drawTimeout = undefined;
   }
 });
+
+
 Bangle.setUI("clock");
 // Load widgets, but don't show them
 Bangle.loadWidgets();
