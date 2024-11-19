@@ -426,14 +426,14 @@ function whitelistMenu() {
           settings.whitelist.splice(settings.whitelist.indexOf(d),1);
           updateSettings();
         }
-        setTimeout(() => pushMenu(whitelistMenu()), 50);
+        setTimeout(() => restoreMenu(whitelistMenu()), 50);
       });
     }
   });
   menu[/*LANG*/'Add Device']=function() {
     E.showAlert(/*LANG*/"Connect device\nto add to\nwhitelist",/*LANG*/"Whitelist").then(function() {
       NRF.removeAllListeners('connect');
-      pushMenu(whitelistMenu());
+      restoreMenu(whitelistMenu());
     });
     NRF.removeAllListeners('connect');
     NRF.on('connect', function(addr) {
@@ -448,7 +448,7 @@ function whitelistMenu() {
       settings.whitelist.push(addr);
       updateSettings();
       NRF.removeAllListeners('connect');
-      pushMenu(whitelistMenu());
+      restoreMenu(whitelistMenu());
     });
   };
   return menu;
