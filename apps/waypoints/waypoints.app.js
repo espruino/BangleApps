@@ -550,13 +550,12 @@ function showCard() {
 function remove(c) {
   let card = wp[c];
   let name = card["name"];
-  print("Remove?", card, name);
 
   E.showPrompt(name,{
     title:"Delete",
   }).then(function(v) {
     if (v) {
-      wp.splice(card, 1);
+      wp.splice(c, 1);
       writeWP();
       mainMenu();
     } else {
