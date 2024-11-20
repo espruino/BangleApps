@@ -394,7 +394,7 @@ function updateGoto() {
 
 function stopGps() {
   cancel_gps = true;
-  Bangle.setGPSPower(0, "waypoints");
+  gps.stop_gps();
 }
 
 function confirmGps(s) {
@@ -418,7 +418,7 @@ function confirmGps(s) {
 
 function markGps() {
   cancel_gps = false;
-  Bangle.setGPSPower(1, "waypoints");
+  gps.start_gps();
   require("textinput").input({text:"wp"}).then(key => {
     confirmGps(key);
   });
@@ -494,8 +494,7 @@ function showNumpad(text, key_, callback) {
 
 function goTo() {
   cancel_gps = false;
-  Bangle.setGPSPower(1, "waypoints");
-  gps.gps_start = getTime();
+  gps.start_gps();
 
   var la = new Layout (
     {type:"v", c: [
@@ -557,10 +556,8 @@ function remove(c) {
     if (v) {
       wp.splice(c, 1);
       writeWP();
-      mainMenu();
-    } else {
-      mainMenu();
     }
+    mainMenu();
   });
 }
 
@@ -590,10 +587,7 @@ function ask01(t, cb) {
   la.render();
 }
 
-var res;
-
 function askCoordinate(t1, t2, callback) {
-  //let sign = 1;
   ask01(t1, function(sign) {
     let d, m, s;
     switch (fmt.geo_mode) {
@@ -602,6 +596,7 @@ function askCoordinate(t1, t2, callback) {
     case 2: s = "DDD MM'ss"+'"'; break;
     }
     showNumpad(s, t2, function() {
+      let res = 0;
       switch (fmt.geo_mode) {
       case 0:
         res = parseFloat(key);
