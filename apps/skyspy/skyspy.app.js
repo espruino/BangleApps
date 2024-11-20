@@ -249,9 +249,7 @@ let ui = {
 };
 
 
-var display = 0;
 var debug = 0;
-var gps_start;
 var cur_altitude;
 var wi = 24;
 var h = 176-wi, w = 176;
@@ -346,8 +344,8 @@ let gps_display = {
       speed = "" + fix.speed.toFixed(1);
       hdop = "" + fix.hdop.toFixed(0);
     } else {
-      lat = "NO FIX\n" + (getTime() - gps_start).toFixed(0) + "s " 
-            + sats_used + "/" + snum;
+      lat = "NO FIX\n" + (getTime() - gps.gps_start).toFixed(0) + "s " 
+            + sky.sats_used + "/" + sky.snum;
       if (cur_altitude) adelta = "" + cur_altitude.toFixed(0);
     }
 
@@ -383,6 +381,10 @@ let gps_display = {
 
 /* sky library v0.0.1 */
 let sky = {
+  sats: [],
+  snum: 0,
+  sats_used: 0,
+
   drawGrid: function() {
     g.setColor(0,0,0);
     this.radLine(0, 1, 0.5, 1);
@@ -433,37 +435,30 @@ let sky = {
     if (s[0] !== "$GPGSV") return;
 
     if (s[2] === "1") {
-      snum = 0;
-      sats = [];
-      sats_used = 0;
+      this.snum = 0;
+      this.sats = [];
+      this.sats_used = 0;
     }
 
     let view = 1 * s[3];
-    let k = Math.min(4, view - snum);
+    let k = Math.min(4, view - this.snum);
     for (let i = 4, j = 0; j < k; j++) {
       let sat = { id: s[i++], ele: 1 * s[i++], azi: 1 * s[i++], snr: s[i++] };
-      if (sat.snr !== "") sats_used++;
-      sats[snum++] = sat;
+      if (sat.snr !== "") this.sats_used++;
+      this.sats[this.snum++] = sat;
     }
 
-    if (s[1] === s[2]) sky.drawSats(sats);
+    if (s[1] === s[2]) sky.drawSats(this.sats);
   }
 };
 
-// Main GPS Marking Function
 function markGps() {
-  Bangle.setGPSPower(1, "skyspy");
+  gps.start_gps();
   Bangle.on('GPS-raw', sky.parseRaw);
-  gps_start = getTime();
   gps_display.updateGps();
 }
 
 gps_quality.resetAlt();
-
-
-var sats = [];
-var snum = 0;
-var sats_used = 0;
 
 ui.init();
 ui.numScreens = 3;
@@ -495,6 +490,7 @@ function touchHandler(d) {
         ui.nextScreen();
 }
 
+ui.init();
 gps.init();
 fmt.init();
 
