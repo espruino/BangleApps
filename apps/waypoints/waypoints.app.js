@@ -305,9 +305,8 @@ var wp = require('Storage').readJSON("waypoints.json", true) || [];
 // Use this with corrupted waypoints
 //var wp = [];
 var key; /* Shared between functions, typically wp name */
-var fix; /* GPS fix */
-var cancel_gps;
-var gps_start;
+var fix; /* GPS fix, shared between updateGps / updateGoto functions and confirmGps */
+var cancel_gps; /* Shared between updateGps / updateGoto functions */
 
 function writeWP() {
   require('Storage').writeJSON("waypoints.json", wp);
@@ -316,7 +315,7 @@ function writeWP() {
 function mainMenu() {
   let textInputInstalled = true;
   try {
-    require("textinput")
+    require("textinput");
   } catch(err) {
     textInputInstalled = false;
   }
@@ -348,7 +347,7 @@ function updateGps() {
     // hdop = "" + fix.hdop.toFixed(0);
   } else {
     lat = "NO FIX\n"
-      + "" + (getTime() - gps_start).toFixed(0) + "s ";
+      + "" + (getTime() - gps.gps_start).toFixed(0) + "s ";
   }
 
   let msg = "";
@@ -376,7 +375,7 @@ function updateGoto() {
     have = true;
   } else {
     lat = "NO FIX\n"
-      + "" + (getTime() - gps_start).toFixed(0) + "s ";
+      + "" + (getTime() - gps.gps_start).toFixed(0) + "s ";
   }
 
   let msg = arrow.name + "\n";
@@ -394,7 +393,7 @@ function updateGoto() {
 }
 
 function stopGps() {
-  cancel_gps=true;
+  cancel_gps = true;
   Bangle.setGPSPower(0, "waypoints");
 }
 
@@ -420,7 +419,6 @@ function confirmGps(s) {
 function markGps() {
   cancel_gps = false;
   Bangle.setGPSPower(1, "waypoints");
-  gps_start = getTime();
   require("textinput").input({text:"wp"}).then(key => {
     confirmGps(key);
   });
@@ -498,7 +496,6 @@ function goTo() {
   cancel_gps = false;
   Bangle.setGPSPower(1, "waypoints");
   gps.gps_start = getTime();
-  gps_start = getTime();
 
   var la = new Layout (
     {type:"v", c: [
@@ -515,8 +512,8 @@ function goTo() {
   updateGoto();
 }
 
-function show(pin) {
-  var i = wp[pin];
+function show(card) {
+  var i = wp[card];
   var l = fmt.fmtPos(i);
   arrow.name = i.name;
   arrow.waypoint = i;
@@ -550,9 +547,8 @@ function showCard() {
   E.showMenu(menu);
 }
 
-function remove(pin)
-{
-  let card = wp[pin];
+function remove(c) {
+  let card = wp[c];
   let name = card["name"];
   print("Remove?", card, name);
 
@@ -560,7 +556,7 @@ function remove(pin)
     title:"Delete",
   }).then(function(v) {
     if (v) {
-      wp.splice(pin, 1);
+      wp.splice(card, 1);
       writeWP();
       mainMenu();
     } else {
@@ -649,20 +645,18 @@ function createWP(lat, lon, alt, name) {
   writeWP();
 }
 
-var result;
-
 function addCardName(name) {
   g.clear();
   askPosition(function(lat, lon) {
     print("position -- ", lat, lon);
-    createWP(lat, lon, -9999, result);
+    createWP(lat, lon, -9999, name);
     mainMenu();
   });
 }
 
 function addCard() {
   require("textinput").input({text:"wp"}).then(key => {
-    result = key;
+    let result = key;
     if (wp[result]!=undefined) {
       E.showMenu();
       var alreadyExists = new Layout (
