@@ -540,10 +540,10 @@ function showCard() {
     "" : {title : "Select WP"},
     "< Back" : mainMenu
   };
-  if (Object.keys(wp).length==0) Object.assign(menu, {"No WPs":""});
+  if (wp.length==0) Object.assign(menu, {"No WPs":""});
   else {
     wp.forEach((val, card) => {
-      const name = wp[card].name;
+      const name = val.name;
       menu[name]= () => show(card);
     });
   }
@@ -574,10 +574,10 @@ function removeCard() {
     "" : {title : "Select WP"},
     "< Back" : mainMenu
   };
-  if (Object.keys(wp).length==0) Object.assign(menu, {"No WPs":""});
+  if (wp.length==0) Object.assign(menu, {"No WPs":""});
   else {
     wp.forEach((val, card) => {
-      const name = wp[card].name;
+      const name = val.name;
       menu[name]=()=> remove(card);
     });
   }
