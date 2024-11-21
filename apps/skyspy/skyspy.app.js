@@ -186,9 +186,9 @@ let ui = {
   numScreens: 2,
   drawMsg: function(msg) {
     g.reset().setFont("Vector", 35)
-      .setColor(1,1,1)
-      .fillRect(0, this.wi, 176, 176)
-      .setColor(0,0,0)
+      .setColor(1, 1, 1)
+      .fillRect(0, this.wi, this.w, this.y2)
+      .setColor(0, 0, 0)
       .drawString(msg, 5, 30)
       .flip();
   },
@@ -245,8 +245,8 @@ let ui = {
     }
   },
   init: function() {
-    this.drawBusy();
     this.h = this.y2 - this.wi;
+    this.drawBusy();
   }
 };
 
@@ -256,12 +256,16 @@ var cur_altitude;
 var fix;
 var adj_time = 0, adj_alt = 0;
 
+/* radial angle -- convert 0..1 to 0..2pi */
 function radA(p) { return p*(Math.PI*2); }
+/* radial distance -- convert 0..1 to something that fits on screen */
 function radD(d) { return d*(ui.h/2); }
+/* given angle/distance, get X coordinate */
 function radX(p, d) {
   let a = radA(p);
   return ui.w/2 + Math.sin(a)*radD(d);
 }
+/* given angle/distance, get Y coordinate */
 function radY(p, d) {
   let a = radA(p);
   return ui.h/2 - Math.cos(a)*radD(d) + ui.wi;
@@ -398,6 +402,7 @@ let sky = {
   },
 
   radCircle: function(d) {
+    /* FIXME: .. should do real circle */
     let step = 0.05;
     for (let i = 0; i < 1; i += 0.05) {
       this.radLine(i - step, d, i, d);
@@ -417,14 +422,18 @@ let sky = {
   // Should correspond to view from below.
   // https://in-the-sky.org//satmap_radar.php?year=2023&month=10&day=24&skin=1
   drawSats: function(sats) {
-    g.reset().setFont("Vector", 20).setColor(1,1,1)
-      .fillRect(0, ui.wi, ui.w, ui.y2);
+    g.reset()
+      .setColor(1, 1, 1)
+      .fillRect(0, ui.wi, ui.w, ui.y2)
+      .setFont("Vector", 20)
+      .setFontAlign(0, 0);
     this.drawGrid();
     sats.forEach(s => this.drawSat(s));
 
     if (fix && fix.fix && fix.lat) {
-      g.setColor(0, 0, 0);
-      g.drawString(fix.satellites + "/" + fix.hdop, 10, 150);
+      g.setColor(0, 0, 0)
+       .setFontAlign(-1, 1);
+      g.drawString(fix.satellites + "/" + fix.hdop, 5, ui.y2);
     }
   },
   parseRaw: function(msg, lost) {
