@@ -9,6 +9,6 @@
   "readme": "README.md",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
-    {"name":"openhaystack.boot.js", "url":"openhaystack.boot.js" }
+    {"name":"openhaystack.boot.js" }
   ]
 }
