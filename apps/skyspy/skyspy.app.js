@@ -180,7 +180,7 @@ let gps = {
   },
 };
 
-/* ui library 0.1.2 */
+/* ui library 0.1.3 */
 let ui = {
   display: 0,
   numScreens: 2,
@@ -212,9 +212,10 @@ let ui = {
   onSwipe: function(dir) {
     this.nextScreen();
   },
-  h: 176,
+  wi: 24,
+  y2: 176,
+  h: 152,
   w: 176,
-  wi: 32,
   last_b: 0,
   touchHandler: function(d) {
     let x = Math.floor(d.x);
@@ -245,26 +246,25 @@ let ui = {
   },
   init: function() {
     this.drawBusy();
+    this.h = this.y2 - this.wi;
   }
 };
 
 
 var debug = 0;
 var cur_altitude;
-var wi = 24;
-var h = 176-wi, w = 176;
 var fix;
 var adj_time = 0, adj_alt = 0;
 
 function radA(p) { return p*(Math.PI*2); }
-function radD(d) { return d*(h/2); }
+function radD(d) { return d*(ui.h/2); }
 function radX(p, d) {
   let a = radA(p);
-  return w/2 + Math.sin(a)*radD(d);
+  return ui.w/2 + Math.sin(a)*radD(d);
 }
 function radY(p, d) {
   let a = radA(p);
-  return h/2 - Math.cos(a)*radD(d) + wi;
+  return ui.h/2 - Math.cos(a)*radD(d) + ui.wi;
 }
 
 let gps_quality = {
@@ -354,7 +354,7 @@ let gps_display = {
 
     if (ui.display > 0) {
       g.reset().setFont("Vector", 31)
-        .setColor(1,1,1).fillRect(0, wi, 176, 176)
+        .setColor(1,1,1).fillRect(0, ui.wi, ui.w, ui.y2)
         .setColor(0,0,0).drawString(msg, 3, 25);
     }
     if (debug > 0) print(fix);
@@ -418,7 +418,7 @@ let sky = {
   // https://in-the-sky.org//satmap_radar.php?year=2023&month=10&day=24&skin=1
   drawSats: function(sats) {
     g.reset().setFont("Vector", 20).setColor(1,1,1)
-      .fillRect(0, 30, 176, 176);
+      .fillRect(0, ui.wi, ui.w, ui.y2);
     this.drawGrid();
     sats.forEach(s => this.drawSat(s));
 
@@ -475,18 +475,18 @@ function touchHandler(d) {
     }
     last_b = d.b;
 
-    if ((x<h/2) && (y<w/2)) {
+    if ((x<ui.y2/2) && (y<ui.w/2)) {
         ui.drawMsg("Clock\nadjust");
         adj_time = 1;
     }
-    if ((x>h/2) && (y<w/2)) {
+    if ((x>ui.y2/2) && (y<ui.w/2)) {
         ui.drawMsg("Alt\nadjust");
         adj_alt = 1;
     }
 
-    if ((x<h/2) && (y>w/2))
+    if ((x<ui.y2/2) && (y>ui.w/2))
         ui.prevScreen();
-    if ((x>h/2) && (y>w/2))
+    if ((x>ui.y2/2) && (y>ui.w/2))
         ui.nextScreen();
 }
 
