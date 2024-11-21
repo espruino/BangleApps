@@ -1,5 +1,6 @@
 /* Sky spy */
 
+/* FIXME: need to switch to latest fmt library */
 let fmt = {
   icon_alt : "\0\x08\x1a\1\x00\x00\x00\x20\x30\x78\x7C\xFE\xFF\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00",
   icon_m : "\0\x08\x1a\1\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00",
@@ -290,6 +291,8 @@ let gps_quality = {
   }
 };
 
+var qalt = 9999; /* global, altitude quality */
+
 let gps_display = {
   updateGps: function() {
     let lat = "lat ", alt = "?", speed = "speed ", hdop = "?",
@@ -403,6 +406,9 @@ let sky = {
 
   radCircle: function(d) {
     /* FIXME: .. should do real circle */
+    g.drawCircle(radX(0, 0), radY(0, 0), radD(d));
+    if (1)
+      return;
     let step = 0.05;
     for (let i = 0; i < 1; i += 0.05) {
       this.radLine(i - step, d, i, d);
