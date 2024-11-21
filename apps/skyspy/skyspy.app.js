@@ -218,6 +218,8 @@ let ui = {
   h: 152,
   w: 176,
   last_b: 0,
+  topLeft: function() { this.drawMsg("Unimpl"); },
+  topRight: function() { this.drawMsg("Unimpl"); },
   touchHandler: function(d) {
     let x = Math.floor(d.x);
     let y = Math.floor(d.y);
@@ -229,18 +231,15 @@ let ui = {
     
     print("touch", x, y, this.h, this.w);
 
-    /*
-      if ((x<this.h/2) && (y<this.w/2)) {
-      }
-      if ((x>this.h/2) && (y<this.w/2)) {
-      }
-    */
-
-    if ((x<this.h/2) && (y>this.w/2)) {
+    if ((x<this.w/2) && (y<this.y2/2))
+      this.topLeft();
+    if ((x>this.w/2) && (y<this.y2/2))
+      this.topRight();
+    if ((x<this.w/2) && (y>this.y2/2)) {
       print("prev");
       this.prevScreen();
     }
-    if ((x>this.h/2) && (y>this.w/2)) {
+    if ((x>this.w/2) && (y>this.y2/2)) {
       print("next");
       this.nextScreen();
     }
@@ -473,46 +472,18 @@ function markGps() {
   gps_display.updateGps();
 }
 
-gps_quality.resetAlt();
-
 ui.init();
 ui.numScreens = 3;
-ui.drawBusy();
-
-var last_b = 0;
-function touchHandler(d) {
-    let x = Math.floor(d.x);
-    let y = Math.floor(d.y);
-    
-    if (d.b != 1 || last_b != 0) {
-        last_b = d.b;
-        return;
-    }
-    last_b = d.b;
-
-    if ((x<ui.y2/2) && (y<ui.w/2)) {
-        ui.drawMsg("Clock\nadjust");
-        adj_time = 1;
-    }
-    if ((x>ui.y2/2) && (y<ui.w/2)) {
-        ui.drawMsg("Alt\nadjust");
-        adj_alt = 1;
-    }
-
-    if ((x<ui.y2/2) && (y>ui.w/2))
-        ui.prevScreen();
-    if ((x>ui.y2/2) && (y>ui.w/2))
-        ui.nextScreen();
-}
-
-ui.init();
 gps.init();
+gps_quality.resetAlt();
 fmt.init();
 
-Bangle.on("drag", touchHandler);
+ui.topLeft = () => { ui.drawMsg("Clock\nadjust"); adj_time = 1; };
+ui.topRight = () => { ui.drawMsg("Alt\nadjust"); adj_alt = 1; };
+
+Bangle.on("drag", (b) => ui.touchHandler(b));
 Bangle.setUI({
   mode : "custom",
-  swipe : ui.onSwipe,
   clock : 0
 });
 
