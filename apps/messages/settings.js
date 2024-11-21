@@ -60,7 +60,7 @@
       onchange: v => updateSetting("fontSize", v)
     },
     /*LANG*/'Auto-Open Unread Msg': {
-      value: !!settings().ignoreUnread,
+      value: !!settings.ignoreUnread,
       onchange: v => updateSetting("ignoreUnread", v)
     },
     /*LANG*/'Auto-Open Music': {
