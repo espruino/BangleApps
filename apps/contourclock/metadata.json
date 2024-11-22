@@ -8,6 +8,7 @@
   "screenshots" : [{"url":"cc-screenshot-1.png"},{"url":"cc-screenshot-2.png"}],
   "tags": "clock",
   "custom": "custom.html",
+  "customConnect": true,
   "supports" : ["BANGLEJS2"],
   "type": "clock",
   "storage": [
