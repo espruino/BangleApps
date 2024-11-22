@@ -137,6 +137,7 @@ let gps = {
   init: function(x) {
     this.emulator = (process.env.BOARD=="EMSCRIPTEN"
                      || process.env.BOARD=="EMSCRIPTEN2")?1:0;
+    this.emulator = 1; // FIXME
   },
   state: {},
   on_gps: function(f) {
@@ -168,7 +169,7 @@ let gps = {
     fix.lon = 14-(getTime()-this.gps_start) / 1000; /* Go West! */
     fix.alt = 200;
     fix.speed = 5;
-    fix.course = 30;
+    fix.course = 195;
     fix.time = Date();
     fix.satellites = 5;
     fix.hdop = 12;
@@ -205,11 +206,6 @@ let arrow = {
     return fmt.distance(currentPos, this.waypoint);
   },
 
-  // Calculate compass heading from current GPS data
-  compassHeading: function(currentHeading) {
-    return currentHeading || Bangle.getCompass().heading;
-  },
-
   // Display function to show arrows for waypoint, north, and sun
   draw: function(currentPos) {
     let currentHeading = currentPos.course;
@@ -218,7 +214,6 @@ let arrow = {
     // Calculate bearings
     let waypointBearing = this.bearingToWaypoint(currentPos);
     let distance = this.distanceToWaypoint(currentPos);
-    let northHeading = this.compassHeading(currentHeading);
 
 
     northHeading = 0;
@@ -228,12 +223,19 @@ let arrow = {
     let s = fmt.fmtDist(distance/1000);
     // Draw arrow towards waypoint
     if (1) {
-      this.drawArrow(waypointBearing, s, 3);
+      this.drawArrow(waypointBearing, "", 3);
     }
 
     if (1) {
       let s = fmt.fmtSpeed(fix.speed);
       this.drawArrow(currentHeading, s, 1);
+    }
+    
+    let compass = Bangle.getCompass();
+    if (compass) {
+      let c = compass.heading;
+      print("Compass:", c);
+      this.drawArrow(c, "C", 1);
     }
 
     if (0) {
@@ -684,9 +686,12 @@ fmt.init();
 gps.init();
 
 function testArrow() {
+  //Bangle.resetCompass(); // FIXME
+  Bangle.setCompassPower(1, "waypoints");
+  
   arrow.name = "test";
-  arrow.waypoint.lat = 50;
-  arrow.waypoint.lon = 15;
+  arrow.waypoint.lat = 49;
+  arrow.waypoint.lon = 12;
   goTo();
 }
 
