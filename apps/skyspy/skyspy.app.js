@@ -1,6 +1,6 @@
 /* Sky spy */
 
-/* FIXME: need to switch to latest fmt library */
+/* fmt library v0.2.3 */
 let fmt = {
   icon_alt : "\0\x08\x1a\1\x00\x00\x00\x20\x30\x78\x7C\xFE\xFF\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00",
   icon_m : "\0\x08\x1a\1\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00",
@@ -25,9 +25,9 @@ let fmt = {
   fmtSteps: function(n) { return this.fmtDist(0.001 * 0.719 * n); },
   fmtAlt: function(m) { return m.toFixed(0) + this.icon_alt; },
   fmtTemp: function(c) { return c.toFixed(1) + this.icon_c; },
-  fmtPress: function(p) { 
+  fmtPress: function(p) {
     if (p < 900 || p > 1100)
-      return p.toFixed(0) + this.icon_hpa; 
+      return p.toFixed(0) + this.icon_hpa;
     if (p < 1000) {
       p -= 900;
       return this.icon_9 + this.add0(p.toFixed(0)) + this.icon_hpa;
@@ -87,6 +87,7 @@ let fmt = {
       x = -x;
     }
     let s = c+this.fmtAngle(x) + "\n";
+    x = pos.lon;
     c = "E";
     if (x<0) {
       c = "W";
