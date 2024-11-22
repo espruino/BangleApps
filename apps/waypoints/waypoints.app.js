@@ -136,7 +136,7 @@ let gps = {
   emulator: -1,
   init: function(x) {
     this.emulator = (process.env.BOARD=="EMSCRIPTEN"
-                     || process.env.BOARD=="EMSCRIPTEN2")?1:1;
+                     || process.env.BOARD=="EMSCRIPTEN2")?1:0;
   },
   state: {},
   on_gps: function(f) {
@@ -186,7 +186,7 @@ let gps = {
 
 let sun = {}; /* To get rid of warnings */
 
-/* arrow library v0.0.2 */
+/* arrow library v0.0.3 */
 let arrow = {
   name: "(unset)",
   waypoint: { lat: 0, lon: 0 },
@@ -231,8 +231,10 @@ let arrow = {
     if (1)
       this.drawArrow(waypointBearing, `${distStr}`, 3);
     
-    if (1)
-      this.drawArrow(currentHeading, 'g', 1);
+    if (1) {
+      let s = fmt.fmtSpeed(fix.speed);
+      this.drawArrow(currentHeading, s, 1);
+    }
 
     if (0) {
       let s;
