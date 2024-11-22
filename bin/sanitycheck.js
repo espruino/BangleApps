@@ -11,10 +11,9 @@ apploader.init({
 });*/
 
 var jsparse = (() => {
-  var acorn, stage3;
+  var acorn;
   try {
     acorn = require("acorn");
-    stage3 = require("acorn-stage3");
   } catch (e) {
     console.log("=====================================================");
     console.log("  ACORN NOT FOUND");
@@ -25,8 +24,7 @@ var jsparse = (() => {
     return str => {throw new Error("no acorn")};
   }
 
-  var parser = acorn.Parser.extend(stage3)
-  return str => parser.parse(str, { ecmaVersion: 2020 });
+  return str => acorn.parse(str, { ecmaVersion: 2020 });
 })();
 
 var BASEDIR = __dirname+"/../";
