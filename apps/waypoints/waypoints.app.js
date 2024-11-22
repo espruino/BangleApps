@@ -136,7 +136,7 @@ let gps = {
   emulator: -1,
   init: function(x) {
     this.emulator = (process.env.BOARD=="EMSCRIPTEN"
-                     || process.env.BOARD=="EMSCRIPTEN2")?1:0;
+                     || process.env.BOARD=="EMSCRIPTEN2")?1:1;
   },
   state: {},
   on_gps: function(f) {
@@ -672,5 +672,15 @@ function addCard() {
 fmt.init();
 gps.init();
 
+function testArrow() {
+  arrow.name = "test";
+  arrow.waypoint.lat = 50;
+  arrow.waypoint.lon = 17;
+  goTo();
+}
+
 g.reset();
-mainMenu();
+if (0)
+  mainMenu();
+else
+  testArrow();
