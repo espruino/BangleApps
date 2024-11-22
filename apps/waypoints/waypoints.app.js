@@ -220,17 +220,17 @@ let arrow = {
     let distance = this.distanceToWaypoint(currentPos);
     let northHeading = this.compassHeading(currentHeading);
 
-    // Format distance
-    let distStr = fmt.fmtDist(distance/1000);
 
     northHeading = 0;
     // Draw compass arrow for north
     this.drawArrow(northHeading, "N", 1);
 
+    let s = fmt.fmtDist(distance/1000);
     // Draw arrow towards waypoint
-    if (1)
-      this.drawArrow(waypointBearing, `${distStr}`, 3);
-    
+    if (1) {
+      this.drawArrow(waypointBearing, s, 3);
+    }
+
     if (1) {
       let s = fmt.fmtSpeed(fix.speed);
       this.drawArrow(currentHeading, s, 1);
@@ -249,6 +249,11 @@ let arrow = {
         this.drawArrow(s.azimuth, "Moon", 1);
       }
     }
+    
+    g.setFont("Vector", 30).setFontAlign(-1, 1)
+      .drawString(s, 0, 176)
+      .setFontAlign(1, 1)
+      .drawString(this.name, 176, 176);
   },
 
   drawArrow: function(angle, label, width) {
@@ -258,7 +263,7 @@ let arrow = {
     // Arrow parameters
     let centerX = 88;
     let centerY = 88;
-    let length = 60; // Arrow length
+    let length = 55; // Arrow length
 
     g.drawCircle(centerX, centerY, length);
 
