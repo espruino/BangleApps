@@ -419,7 +419,7 @@ function confirmGps(s) {
 function markGps() {
   cancel_gps = false;
   gps.start_gps();
-  require("textinput").input({text:"wp"}).then(key => {
+  require("textinput").input({text:"mk"}).then(key => {
     confirmGps(key);
   });
 }
