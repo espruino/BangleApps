@@ -211,7 +211,8 @@ let arrow = {
   },
 
   // Display function to show arrows for waypoint, north, and sun
-  draw: function(currentPos, currentHeading) {
+  draw: function(currentPos) {
+    let currentHeading = currentPos.course;
     g.clear().setFont("Vector", 22).setFontAlign(0, 0);
 
     // Calculate bearings
@@ -229,6 +230,9 @@ let arrow = {
     // Draw arrow towards waypoint
     if (1)
       this.drawArrow(waypointBearing, `${distStr}`, 3);
+    
+    if (1)
+      this.drawArrow(currentHeading, 'g', 1);
 
     if (0) {
       let s;
@@ -387,7 +391,7 @@ function updateGoto() {
       .setColor(0,0,0)
       .drawString(msg, 3, 25);
   } else {
-    arrow.draw(fix, fix.course);
+    arrow.draw(fix);
   }
   setTimeout(updateGoto, 1000);
 }
@@ -658,8 +662,8 @@ function addCard() {
           {type:"txt", font:Math.min(15,100/result.length)+"%", pad:1, fillx:1, filly:1, label:result},
           {type:"txt", font:"12%", pad:1, fillx:1, filly:1, label:"already exists."},
           {type:"h", c: [
-            {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "REPLACE", cb:l=>{addCardName(result);}},
-            {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "CANCEL", cb:l=>{mainMenu();}}
+            {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "Replace", cb:l=>{addCardName(result);}},
+            {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "Cancel", cb:l=>{mainMenu();}}
           ]}
         ], lazy:true});
       g.clear();
@@ -675,7 +679,7 @@ gps.init();
 function testArrow() {
   arrow.name = "test";
   arrow.waypoint.lat = 50;
-  arrow.waypoint.lon = 17;
+  arrow.waypoint.lon = 15;
   goTo();
 }
 
