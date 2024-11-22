@@ -102,4 +102,4 @@
   }
 
   E.showMenu(buildMainMenu());
-});
+})

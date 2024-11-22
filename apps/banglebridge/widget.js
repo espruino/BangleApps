@@ -1,10 +1,10 @@
 (() => {
     /**
      * Widget measurements
-     * Description: 
+     * Description:
      * name: connection.wid.js
      *icon: conectionIcon.icon
-     * 
+     *
      */
 
     //Font
@@ -24,7 +24,7 @@
 
     //Sensors code
     /**
-     * 
+     *
      * @author Jorge
      */
     function accel() {
@@ -35,8 +35,7 @@
         });
 
         setInterval(function () {
-
-            acclS = accelN.x + "##" + accelN.y + "##" + accelN.z + "\n" + accelN.diff + "##" + accelN.mag;
+            //acclS = accelN.x + "##" + accelN.y + "##" + accelN.z + "\n" + accelN.diff + "##" + accelN.mag;
             data[3] = accelN;
         }, 2 * 1000);
 
@@ -45,8 +44,7 @@
     function btt() {
 
         setInterval(function () {
-
-            bttS = E.getBattery(); //return String
+            //bttS = E.getBattery(); //return String
             data[2] = E.getBattery();
         }, 15 * 1000);
 
@@ -65,9 +63,9 @@
 
         setInterval(function () {
 
-            compssS = "A: " + compssN.x + " ## " + compssN.y + " ## " + compssN.z + "\n" +
+            /*compssS = "A: " + compssN.x + " ## " + compssN.y + " ## " + compssN.z + "\n" +
                 "B: " + compssN.dx + " ## " + compssN.dy + " ## " + compssN.dz + " ## " + "\n" +
-                "C: " + compssN.heading; //return String
+                "C: " + compssN.heading; *///return String
             data[4] = compssN;
         }, 2 * 1000);
 
@@ -86,8 +84,8 @@
 
         setInterval(function () {
 
-            gpsS = "A: " + gpsN.lat + " ## " + gpsN.lon + " ## " + gpsN.alt + "\n" + "B: " + gpsN.speed + " ## " + gpsN.course + " ## " + gpsN.time + "\n" +
-                "C: " + gpsN.satellites + " ## " + gpsN.fix; //return String
+            /*gpsS = "A: " + gpsN.lat + " ## " + gpsN.lon + " ## " + gpsN.alt + "\n" + "B: " + gpsN.speed + " ## " + gpsN.course + " ## " + gpsN.time + "\n" +
+                "C: " + gpsN.satellites + " ## " + gpsN.fix; *///return String
             // work out how to display the current time
             var d = new Date();
             var year = d.getFullYear();
@@ -150,7 +148,7 @@
             //console.log("Index ==> "+ index);
             msr[indexFinal] = nueva;
 
-            item = nueva;
+            //item = nueva;
             lastInsert = indexFinal;
 
         }
@@ -180,7 +178,7 @@
 
                 hrmN = normalize(hrmN);
                 var roundedRate = parseFloat(hrmN).toFixed(2);
-                hrmS = String.valueOf(roundedRate); //return String
+                //hrmS = String.valueOf(roundedRate); //return String
                 //console.log("array----->" + msr);
                 data[0] = roundedRate;
 
@@ -205,7 +203,7 @@
 
         setInterval(function () {
 
-            stepS = String.valueOf(stepN); //return String
+            //stepS = String.valueOf(stepN); //return String
             data[1] = stepN;
         }, 2 * 1000);
 
@@ -240,12 +238,11 @@
          g.setFont("Vector", 45);
          g.drawString(prueba,100,200);*/
         if (flip == 1) { //when off
-           
+
             flip = 0;
             //Bangle.buzz(1000);
-            g.clear();
         } else { //when on
-           
+
             flip = 1;
             g.setFont("Vector", 30);
             g.drawString(data[0], 65, 180);
@@ -283,7 +280,7 @@
             com: data[4],
             gps: data[5]
         };
-        /* g.clear();
+        /*
             g.drawString(compssS,100,200);
           */
 
@@ -293,7 +290,7 @@
         //draw();
 
     }, 5 * 1000);
-  
+
       WIDGETS["banglebridge"]={
         area: "tl",
         width: 10,

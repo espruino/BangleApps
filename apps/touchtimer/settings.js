@@ -81,4 +81,4 @@
 
   settings = readSettings();
   showMainMenu();
-});
+})

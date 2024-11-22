@@ -11,3 +11,4 @@
       Remove date+time
 0.11: Use default Bangle formatter for booleans
 0.12: Issue newline before GB commands (solves issue with console.log and ignored commands)
+0.13: Upgrade to new translation system

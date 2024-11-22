@@ -1,6 +1,6 @@
 ## gpsnav - navigate to waypoints
 
-The app is aimed at small boat navigation although it can also be used to mark the location of your car, bicycle etc and then get directions back to it. Please note that it would be foolish in the extreme to rely on this as your only boat navigation aid!
+The app is aimed at small boat navigation, although it can also be used to mark the location of your car, bicycle etc and then get directions back to it. Please note that it would be foolish in the extreme to rely on this as your only boat navigation aid!
 
 The app displays direction of travel (course), speed, direction to waypoint (bearing) and distance to waypoint. The screen shot below is before the app has got a GPS fix.
 
@@ -13,11 +13,11 @@ The large digits are the course and speed. The top of the display is a linear co
 
 ![](waypoint_screen.jpg)
 
-The display shows that Stone Henge is 108.75Km from the location where I made the screenshot and the direction is 255 degrees - approximately west. The display shows that I am currently moving approximately north - albeit slowly!. The position of the blue circle indicates that I need to turn left to get on course to Stone Henge. When the circle and red triangle line up you are on course and course will equal bearing.
+The display shows that Stone Henge is 108.75km from the location where I made the screenshot and the direction is 255 degrees - approximately west. The display shows that I am currently moving approximately north - albeit slowly! The position of the blue circle indicates that I need to turn left to get on course to Stone Henge. When the circle and red triangle line up you are on course and course will equal bearing.
 
 ### Marking Waypoints
 
-The app lets you mark your current location as follows. There are vacant slots in the waypoint file which can be allocated a location. In the distributed waypoint file these are labelled WP0 to WP4. Select one of these - WP2 is shown below.
+The app lets you mark your current location as follows. There are vacant slots in the waypoint file which can be allocated a location. In the distributed waypoint file, these are labelled WP0 to WP4. Select one of these - WP2 is shown below.
 
 ![](select_screen.jpg)
 
@@ -25,7 +25,7 @@ Bearing and distance are both zero as WP1 has currently no GPS location associat
 
 ![](marked_screen.jpg)
 
-The app indicates that WP2 is now marked by adding the prefix @ to it's name. The distance should be small as shown in the screen shot as you have just marked your current location.
+The app indicates that WP2 is now marked by adding the prefix @ to it's name. The distance should be small as shown in the screen shot, as you have just marked your current location.
 
 ### Waypoint JSON file
 
@@ -60,6 +60,6 @@ You add and delete entries using the Web IDE to load and then save the file from
 
 ### Waypoint Editor
 
-Clicking on the download icon of gpsnav in the app loader invokes the waypoint editor.  The editor downloads and displays the current `waypoints.json` file. Clicking the `Edit` button beside an entry causes the entry to be deleted from the list and displayed in the edit boxes. It can be restored -  by clicking the `Add waypoint` button. A new markable entry is created by using the `Add name` button. The edited `waypoints.json` file is uploaded to the Bangle by clicking the `Upload` button. 
+Clicking on the download icon of gpsnav in the app loader invokes the waypoint editor. The editor downloads and displays the current `waypoints.json` file. Clicking the `Edit` button beside an entry causes the entry to be deleted from the list and displayed in the edit boxes. It can be restored -  by clicking the `Add waypoint` button. A new markable entry is created by using the `Add name` button. The edited `waypoints.json` file is uploaded to the Bangle by clicking the `Upload` button. 
 
 *Please report bugs etc. by raising an issue [here](https://github.com/jeffmer/JeffsBangleAppsDev). *

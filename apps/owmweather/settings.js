@@ -81,4 +81,4 @@
   }
 
   E.showMenu(buildMainMenu());
-});
+})

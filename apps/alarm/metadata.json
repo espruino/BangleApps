@@ -2,7 +2,7 @@
   "id": "alarm",
   "name": "Alarms & Timers",
   "shortName": "Alarms",
-  "version": "0.48",
+  "version": "0.50",
   "description": "Set alarms and timers on your Bangle",
   "icon": "app.png",
   "tags": "tool,alarm",

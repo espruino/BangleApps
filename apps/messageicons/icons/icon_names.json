@@ -1,6 +1,7 @@
 [
   { "app":"default", "icon":"default.png" },
   { "app":"airbnb", "icon":"airbnb.png" },
+  { "app":"agenda", "icon":"agenda.png" },
   { "app":"alarm", "icon":"alarm.png" },
 	{ "app":"alarmclockreceiver", "icon":"alarm.png" },
   { "app":"amazon shopping", "icon":"amazon.png" },
@@ -36,6 +37,7 @@
 	{ "app":"aurora droid", "icon":"security.png" },
   { "app":"github", "icon":"github.png" },
   { "app":"gitlab", "icon":"gitlab.png" },
+  { "app":"gmail", "icon":"gmail.png" },
   { "app":"gmx", "icon":"gmx.png" },
   { "app":"google", "icon":"google.png" },
   { "app":"google home", "icon":"google home.png" },
@@ -45,6 +47,7 @@
   { "app":"jira", "icon":"jira.png" },
   { "app":"kalender", "icon":"kalender.png" },
   { "app":"keep notes", "icon":"google keep.png" },
+  { "app":"leboncoin", "icon":"leboncoin.png" },
   { "app":"lieferando", "icon":"lieferando.png" },
   { "app":"linkedin", "icon":"linkedin.png" },
   { "app":"maps", "icon":"map.png" },
@@ -55,6 +58,7 @@
 	{ "app":"tooot", "icon":"mastodon.png" },
 	{ "app":"tusky", "icon":"mastodon.png" },
   { "app":"mattermost", "icon":"mattermost.png" },
+  { "app":"messages", "icon":"messages.png" },
   { "app":"n26", "icon":"n26.png" },
   { "app":"netflix", "icon":"netflix.png" },
   { "app":"news", "icon":"news.png" },
@@ -110,6 +114,5 @@
 	{ "app":"meet", "icon":"videoconf.png" },
   { "app":"music", "icon":"music.png" },
   { "app":"sms message", "icon":"default.png" },
-	{ "app":"mail", "icon":"default.png" },
-	{ "app":"gmail", "icon":"default.png" }
+	{ "app":"mail", "icon":"default.png" }
 ]

@@ -1,7 +1,7 @@
 {
   "id": "messageicons",
   "name": "Message Icons",
-  "version": "0.07",
+  "version": "0.08",
   "description": "Library containing a list of icons and colors for apps",
   "icon": "app.png",
   "type": "module",

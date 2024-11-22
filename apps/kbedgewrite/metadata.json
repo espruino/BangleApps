@@ -1,0 +1,19 @@
+{ "id": "kbedgewrite",
+  "name": "EdgeWrite keyboard",
+  "version":"0.03",
+  "description": "A library for text input via EdgeWrite swipe gestures",
+  "icon": "app.png",
+  "type":"textinput",
+  "tags": "keyboard",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "screenshots" : [ { "url":"screenshot.png" } ],
+  "storage": [
+    {"name":"textinput","url":"lib.js"},
+    {"name":"kbedgewrite.charset.json","url":"characterset.json"},
+    {"name":"kbedgewrite.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"kbedgewrite.json"}
+  ]
+}

@@ -13,18 +13,13 @@
 // Note that if a field is undefined then its value is zero.
 //
 
-const ONE_SECOND = 1000;
-const ONE_MINUTE = 60 * ONE_SECOND;
-const ONE_HOUR = 60 * ONE_MINUTE;
-const ONE_DAY = 24 * ONE_HOUR;
-
 /**
  * @param {object} time {d, h, m, s}
  * @returns the milliseconds contained in the passed time object
  */
 exports.encodeTime = (time) => {
   time = safeTime(time);
-  return time.d * ONE_DAY + time.h * ONE_HOUR + time.m * ONE_MINUTE + time.s * ONE_SECOND;
+  return time.d * 86400000 + time.h * 3600000 + time.m * 60000 + time.s * 1000;
 }
 
 // internal use, set to zero all the undefined fields
@@ -38,26 +33,26 @@ function safeTime(time) {
  */
 exports.decodeTime = (millis) => {
   if (typeof millis !== "number") throw "Only a number can be decoded";
-  var d = Math.floor(millis / ONE_DAY);
-  millis -= d * ONE_DAY;
-  var h = Math.floor(millis / ONE_HOUR);
-  millis -= h * ONE_HOUR;
-  var m = Math.floor(millis / ONE_MINUTE);
-  millis -= m * ONE_MINUTE;
-  var s = Math.floor(millis / ONE_SECOND);
+  var d = Math.floor(millis / 86400000);
+  millis -= d * 86400000;
+  var h = Math.floor(millis / 3600000);
+  millis -= h * 3600000;
+  var m = Math.floor(millis / 60000);
+  millis -= m * 60000;
+  var s = Math.floor(millis / 1000);
   return { d: d, h: h, m: m, s: s };
 }
 
-/** 
+/**
  * @param {object|int} value {h, m} object or milliseconds
  * @returns an human-readable time string like "10:25"
  * @throws an exception if d != 0 or h > 23 or m > 59
  */
 exports.formatTime = (value) => {
   var time = safeTime(typeof value === "object" ? value : exports.decodeTime(value));
-  if (time.d != 0) throw "days not supported here";
-  if (time.h < 0 || time.h > 23) throw "Invalid value: must be 0 <= h <= 23";
-  if (time.m < 0 || time.m > 59) throw "Invalid value: must be 0 <= m <= 59";
+  time.h += time.d*24;
+  /*if (time.h < 0 || time.h > 23) throw "Invalid value: must be 0 <= h <= 23";
+  if (time.m < 0 || time.m > 59) throw "Invalid value: must be 0 <= m <= 59";*/
   return time.h + ":" + ("0" + time.m).substr(-2);
 }
 

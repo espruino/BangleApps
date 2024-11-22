@@ -1,6 +1,6 @@
 (function(back) {
   var settings = Object.assign({
-    interval: 5000,
+    interval: 60000,
   }, require('Storage').readJSON("widalt.json", true) || {});
   const o=Bangle.getOptions();
   Bangle.getPressure().then((p)=>{

@@ -1,0 +1,4 @@
+0.01: New App!
+0.02: Corrected NaN test for GPS
+0.03: Removed remaining invalid references to Number.isFinite
+0.04: Improved menu/display interaction

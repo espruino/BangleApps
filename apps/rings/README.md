@@ -4,7 +4,7 @@ Ring based watchface, read from the outside in. When the watch is unlocked the c
 Contributors: Amos Blanton, pinq-. Inspired by Rinkulainen by Julio Kallio.
 
 ![](screenshot1.png) 
-View when watch is locked. 
+View when watch is locked. From outside: Hours, minutes, battery.
 
 ![](screenshot5.png) 
 View when watch is locked with numbers and bubble settings on

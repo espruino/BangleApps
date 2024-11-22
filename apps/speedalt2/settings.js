@@ -99,4 +99,4 @@
   
   E.showMenu(appMenu);
 
-});
+})

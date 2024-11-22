@@ -76,4 +76,4 @@
       require("sched").setSettings(settings);
     })
   });
-});
+})

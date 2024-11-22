@@ -127,7 +127,7 @@ The functions for interacting with Android and the Podcast Addict app
 let pkg = "com.bambuna.podcastaddict";
 let standardCls = pkg + ".receiver.PodcastAddictPlayerReceiver";
 let updateCls = pkg + ".receiver.PodcastAddictBroadcastReceiver";
-let speed = 1.0;
+//let speed = 1.0;
 
 let simpleSearch = "";
 
@@ -269,15 +269,15 @@ let speedMenu = {
                 }
   },
   "Regular Speed": () => {
-    speed = 1.0;
+    //speed = 1.0;
     btMsg("service", standardCls, "player.1xspeed");
   },
   "1.5x Regular Speed": () => {
-    speed = 1.5;
+    //speed = 1.5;
     btMsg("service", standardCls, "player.1.5xspeed");
   },
   "2x Regular Speed": () => {
-    speed = 2.0;
+    //speed = 2.0;
     btMsg("service", standardCls, "player.2xspeed");
   },
   //"Faster" : ()=>{speed+=0.1; speed=((speed>5.0)?5.0:speed); btMsg("service",standardCls,"player.customspeed",{arg1:speed});},

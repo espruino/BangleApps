@@ -20,6 +20,8 @@ It uses the [`sched` library](https://github.com/espruino/BangleApps/blob/master
   - `Disable All` &rarr; Disable _all_ enabled alarms & timers
   - `Delete All` &rarr; Delete _all_ alarms & timers
 
+On Bangle.js 2 it's possible to toggle alarms, timers and events from the main menu. This is done by clicking the indicator icons of corresponding entries. Or long pressing anywhere on them.
+
 ## Creator
 
 - [Gordon Williams](https://github.com/gfwilliams)
@@ -29,6 +31,7 @@ It uses the [`sched` library](https://github.com/espruino/BangleApps/blob/master
 - [Alessandro Cocco](https://github.com/alessandrococco) - New UI, full rewrite, new features
 - [Sabin Iacob](https://github.com/m0n5t3r) - Auto snooze support
 - [storm64](https://github.com/storm64) - Fix redrawing in submenus
+- [thyttan](https://github.com/thyttan) - Toggle alarms directly from main menu.
 
 ## Attributions
 

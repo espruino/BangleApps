@@ -1,13 +1,14 @@
 {
   "id": "widbt_notify",
   "name": "Bluetooth Widget with Notification",
-  "version": "0.17",
+  "version": "0.18",
   "description": "Show the current Bluetooth connection status with some optional features: show message, buzz on connect/loss, hide always/if connected.",
   "icon": "widget.png",
   "type": "widget",
   "tags": "widget,bluetooth",
   "provides_widgets" : ["bluetooth"],
   "supports": ["BANGLEJS","BANGLEJS2"],
+  "dependencies" : { "notify":"module" },
   "storage": [
     {"name":"widbt_notify.wid.js","url":"widget.js"},
     {"name":"widbt_notify.settings.js","url":"settings.js"}
