@@ -191,6 +191,7 @@ let sun = {}; /* To get rid of warnings */
 let arrow = {
   name: "(unset)",
   waypoint: { lat: 0, lon: 0 },
+  north: 0,
   updateWaypoint: function(lat, lon) {
     this.waypoint.lat = lat;
     this.waypoint.lon = lon;
@@ -203,11 +204,18 @@ let arrow = {
 
     let waypointBearing = fmt.bearing(currentPos, this.waypoint);
     let distance = fmt.distance(currentPos, this.waypoint);
+    
+    this.north = 0;
+    let compass = Bangle.getCompass();
+    if (compass) {
+      let c = compass.heading;
+      this.north = c;
+      print("Compass:", c);
+      this.drawArrow(c, "Up", 1);
+    }
 
-
-    northHeading = 0;
     // Draw compass arrow for north
-    this.drawArrow(northHeading, "N", 1);
+    this.drawArrow(0, "N", 1);
 
     let s = fmt.fmtDist(distance/1000);
     // Draw arrow towards waypoint
@@ -220,13 +228,6 @@ let arrow = {
       this.drawArrow(currentHeading, s, 1);
     }
     
-    let compass = Bangle.getCompass();
-    if (compass) {
-      let c = compass.heading;
-      print("Compass:", c);
-      this.drawArrow(c, "C", 1);
-    }
-
     if (0) {
       let s;
       s = sun.sunPos();
@@ -249,7 +250,7 @@ let arrow = {
 
   drawArrow: function(angle, label, width) {
     // Convert angle to radians
-    let rad = angle * Math.PI / 180;
+    let rad = (angle - this.north) * Math.PI / 180;
 
     // Arrow parameters
     let centerX = 88;
