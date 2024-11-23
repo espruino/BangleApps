@@ -1,3 +1,4 @@
+{
 const defaultSettings = {
   loadWidgets    : false,
   textAboveHands : false,
@@ -26,15 +27,15 @@ const zahlpos=(function() {
 })();
 
 
-function zeiger(len,dia,tim){
+let zeiger = function(len,dia,tim){
   const x=c.x+ Math.cos(tim)*len/2,
         y=c.y + Math.sin(tim)*len/2,
         d={"d":3,"x":dia/2*Math.cos(tim+Math.PI/2),"y":dia/2*Math.sin(tim+Math.PI/2)},
         pol=[c.x-d.x,c.y-d.y,c.x+d.x,c.y+d.y,x+d.x,y+d.y,x-d.x,y-d.y];
   return pol;
-}
+};
 
-function drawHands(d) {
+let drawHands = function(d) {
   let m=d.getMinutes(), h=d.getHours(), s=d.getSeconds();
   g.setColor(1,1,1);
 
@@ -59,9 +60,9 @@ function drawHands(d) {
     g.fillPoly(sekz,true);
   }
   g.fillCircle(c.x,c.y,4);
-}
+};
 
-function drawText(d) {
+let drawText = function(d) {
   g.setFont("Vector",10);
   g.setBgColor(0,0,0);
   g.setColor(1,1,1);
@@ -72,9 +73,9 @@ function drawText(d) {
     g.setBgColor(1,0,0);
   }
   g.drawString(batStr, c.x, c.y+40, true);
-}
+};
 
-function drawNumbers() {
+let drawNumbers = function() {
   //draws the numbers on the screen
   g.setFont("Vector",20);
   g.setColor(1,1,1);
@@ -82,7 +83,7 @@ function drawNumbers() {
   for(let i = 0;i<12;i++){
      g.drawString(zahlpos[i][0],zahlpos[i][1],zahlpos[i][2],true);
   }
-}
+};
 
 let drawTimeout;
 let queueMillis = 1000;
@@ -95,7 +96,7 @@ let queueDraw = function() {
   }, queueMillis - (Date.now() % queueMillis));
 };
 
-function draw(){
+let draw = function(){
   // draw black rectangle in the middle to clear screen from scale and hands
   g.setColor(0,0,0);
   g.fillRect(10,10,2*c.x-10,2*c.x-10);
@@ -110,10 +111,10 @@ function draw(){
     drawText(d); drawHands(d);
   }
   queueDraw();
-}
+};
 
 //draws the scale once the app is startet
-function drawScale(){
+let drawScale = function(){
   // clear the screen
   g.setBgColor(0,0,0);
   g.clear();
@@ -127,18 +128,25 @@ function drawScale(){
     g.fillRect(10,10,2*c.x-10,2*c.x-10);
     g.setColor(1,1,1);
   }
-}
+};
 
 //// main running sequence ////
 
 // Show launcher when middle button pressed, and widgets that we're clock
-Bangle.setUI("clock");
+Bangle.setUI({
+  mode: "clock",
+  remove: function() {
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+    Bangle.removeListener('lcdPower', updateState);
+    Bangle.removeListener('lock', updateState);
+    require("widget_utils").show();
+}});
 // Load widgets if needed, and make them show swipeable
 if (settings.loadWidgets) {
   Bangle.loadWidgets();
   require("widget_utils").swipeOn();
 } else if (global.WIDGETS) require("widget_utils").hide();
-
 
 let updateState = function() {
    if (Bangle.isLCDOn()) {
@@ -165,3 +173,4 @@ let unlock = true;
 updateState();
 drawScale();
 draw();
+}
