@@ -25,7 +25,6 @@ const zahlpos=(function() {
   return z;
 })();
 
-let unlock = false;
 
 function zeiger(len,dia,tim){
   const x=c.x+ Math.cos(tim)*len/2,
@@ -33,7 +32,6 @@ function zeiger(len,dia,tim){
         d={"d":3,"x":dia/2*Math.cos(tim+Math.PI/2),"y":dia/2*Math.sin(tim+Math.PI/2)},
         pol=[c.x-d.x,c.y-d.y,c.x+d.x,c.y+d.y,x+d.x,y+d.y,x-d.x,y-d.y];
   return pol;
-
 }
 
 function drawHands(d) {
@@ -86,6 +84,17 @@ function drawNumbers() {
   }
 }
 
+let drawTimeout;
+let queueMillis = 1000;
+
+let queueDraw = function() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, queueMillis - (Date.now() % queueMillis));
+};
+
 function draw(){
   // draw black rectangle in the middle to clear screen from scale and hands
   g.setColor(0,0,0);
@@ -100,6 +109,7 @@ function draw(){
   } else {
     drawText(d); drawHands(d);
   }
+  queueDraw();
 }
 
 //draws the scale once the app is startet
@@ -128,25 +138,30 @@ if (settings.loadWidgets) {
   Bangle.loadWidgets();
   require("widget_utils").swipeOn();
 } else if (global.WIDGETS) require("widget_utils").hide();
-// Clear the screen once, at startup
-drawScale();
-draw();
 
-let secondInterval = setInterval(draw, 1000);
+
+let updateState = function() {
+   if (Bangle.isLCDOn()) {
+     if (!Bangle.isLocked()) {
+       queueMillis = 1000;
+       unlock = true;
+     } else {
+       queueMillis = 60000;
+       unlock = false;
+   }
+     draw();
+   } else {
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+   }
+};
 
 // Stop updates when LCD is off, restart when on
-Bangle.on('lcdPower',on=>{
-  if (secondInterval) clearInterval(secondInterval);
-  secondInterval = undefined;
-  if (on) {
-    secondInterval = setInterval(draw, 1000);
-    draw(); // draw immediately
-  }
-});
-Bangle.on('lock',on=>{
-  unlock = !on;
-  if (secondInterval) clearInterval(secondInterval);
-  secondInterval = setInterval(draw, unlock ? 1000 : 60000);
-  draw(); // draw immediately
-});
-Bangle.on('charging',on=>{draw();});
+Bangle.on('lcdPower', updateState);
+
+Bangle.on('lock', updateState);
+
+let unlock = true;
+updateState();
+drawScale();
+draw();
