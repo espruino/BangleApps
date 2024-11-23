@@ -196,24 +196,13 @@ let arrow = {
     this.waypoint.lon = lon;
   },
 
-  // Calculate the bearing to the waypoint
-  bearingToWaypoint: function(currentPos) {
-    return fmt.bearing(currentPos, this.waypoint);
-  },
-
-  // Calculate distance to the waypoint
-  distanceToWaypoint: function(currentPos) {
-    return fmt.distance(currentPos, this.waypoint);
-  },
-
   // Display function to show arrows for waypoint, north, and sun
   draw: function(currentPos) {
     let currentHeading = currentPos.course;
     g.clear().setFont("Vector", 22).setFontAlign(0, 0);
 
-    // Calculate bearings
-    let waypointBearing = this.bearingToWaypoint(currentPos);
-    let distance = this.distanceToWaypoint(currentPos);
+    let waypointBearing = fmt.bearing(currentPos, this.waypoint);
+    let distance = fmt.distance(currentPos, this.waypoint);
 
 
     northHeading = 0;
