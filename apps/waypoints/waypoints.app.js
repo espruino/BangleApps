@@ -137,7 +137,7 @@ let gps = {
   init: function(x) {
     this.emulator = (process.env.BOARD=="EMSCRIPTEN"
                      || process.env.BOARD=="EMSCRIPTEN2")?1:0;
-    this.emulator = 1; // FIXME
+    //this.emulator = 1; // FIXME
   },
   state: {},
   on_gps: function(f) {
@@ -199,6 +199,7 @@ let arrow = {
 
   // Display function to show arrows for waypoint, north, and sun
   draw: function(currentPos) {
+    let fix = currentPos;
     let currentHeading = currentPos.course;
     g.clear().setFont("Vector", 22).setFontAlign(0, 0);
 
@@ -213,6 +214,9 @@ let arrow = {
       print("Compass:", c);
       this.drawArrow(c, "Up", 1);
     }
+    
+    if (fix.speed && fix.speed > 3)
+      this.north = fix.course;
 
     // Draw compass arrow for north
     this.drawArrow(0, "N", 1);
@@ -680,8 +684,8 @@ function testArrow() {
   Bangle.setCompassPower(1, "waypoints");
   
   arrow.name = "test";
-  arrow.waypoint.lat = 49;
-  arrow.waypoint.lon = 12;
+  arrow.waypoint.lat = 50;
+  arrow.waypoint.lon = 14.75;
   goTo();
 }
 
