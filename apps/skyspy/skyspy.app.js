@@ -374,6 +374,7 @@ let quality = {
   min_dalt: 9999,
   max_dalt: -9999,
   step: 0,
+  dalt: 0,
 
   resetAlt: function() {
     this.min_dalt = 9999;
@@ -383,6 +384,7 @@ let quality = {
 
   calcAlt: function(alt, cur_altitude) {
     let dalt = alt - cur_altitude;
+    this.dalt = dalt;
     if (this.min_dalt > dalt) this.min_dalt = dalt;
     if (this.max_dalt < dalt) this.max_dalt = dalt;
     return this.max_dalt - this.min_dalt;
@@ -579,7 +581,7 @@ fmt.init();
 
 sky.decorate = () => { 
   let p = 15;
-  pie.twoPie(p, p+ui.wi, p, 400, 10);
+  pie.twoPie(p, p+ui.wi, p, quality.dalt, qalt);
 };
 ui.topLeft = () => { ui.drawMsg("Clock\nadjust"); adj_time = 1; };
 ui.topRight = () => { ui.drawMsg("Alt\nadjust"); adj_alt = 1; };
