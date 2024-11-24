@@ -267,6 +267,88 @@ let ui = {
   }
 };
 
+function log2(x) {
+  return Math.log(x) / Math.log(2);
+}
+
+/* pie library v0.0.1 */
+pie = {
+  radians: function(a) { return a*Math.PI/180; },
+
+  // Function to draw a filled arc (pie slice)
+  fillArc: function(g, centerX, centerY, radius, startAngle, endAngle) {
+    const points = [];
+    points.push(centerX, centerY); // Start at the center
+    
+    // Step through angles to create points on the arc
+    for (let angle = startAngle; angle <= endAngle; angle += 5) {
+      const x = centerX + Math.cos(this.radians(angle)) * radius;
+      const y = centerY + Math.sin(this.radians(angle)) * radius;
+      points.push(x, y);
+    }
+    
+    // Add the final point at the end angle
+    points.push(centerX + Math.cos(this.radians(endAngle)) * radius);
+    points.push(centerY + Math.sin(this.radians(endAngle)) * radius);
+    
+    g.fillPoly(points); // Draw the arc as a polygon
+  },
+
+  // Function to draw the pie chart
+  drawPieChart1: function(g, centerX, centerY, radius, data, colors) {
+    let startAngle = 0;
+    
+    // Loop through the data to draw each segment
+    for (let i = 0; i < data.length; i++) {
+      const angle = data[i];         // Get the angle for the current section
+      const endAngle = startAngle + angle; // Calculate the end angle
+      
+      g.setColor(colors[i]);  // Set the fill color
+      this.fillArc(g, centerX, centerY, radius, startAngle, endAngle, colors[i]); // Draw the arc
+      startAngle = endAngle; // Update the start angle for the next segment
+    }
+
+    g.flip(); // Update the screen
+  },
+  twoPie: function(centerX, centerY, radius, altitude, altChange) {
+    // Altitude range and mapping to a logarithmic scale
+    const altitudeMin = -1000, altitudeMax = 1000;
+    const altitudeLog = log2(Math.abs(altitude) + 1) * Math.sign(altitude); // Logarithmic scaling
+    const altitudeAngle = E.clip((altitudeLog - log2(1)) / (log2(1001) - log2(1)), -1, 1) * 180;
+
+    // Altitude Change (linear scale)
+    const altChangeMin = -30, altChangeMax = 30;
+    const altChangeAngle = E.clip((altChange - altChangeMin) / (altChangeMax - altChangeMin), 0, 1) * 360;
+
+    // Outer Ring (Altitude Change) - Full circle segment
+    g.setColor(1, 0.5, 0.1);
+    // Outer Ring (Altitude Change) - Draw a segment based on altitude change
+
+    g.setColor(0, 0.25, 0); // Set a color for the outer ring
+    this.fillArc(g,
+                 centerX, centerY,
+                 radius, // Define the thickness of the outer ring
+                 0, altChangeAngle // Draw based on altitude change
+                );
+    
+    // Inner Ring (Altitude) - Draw a segment based on altitude angle
+    const innerRadius = radius * 0.6; // Inner ring size
+    g.setColor(0, 0, 0.25); // Set a color for the inner ring
+    this.fillArc(g,
+                 centerX, centerY,
+                 innerRadius, // Define thickness of inner ring
+                 0, altitudeAngle // Draw based on altitude
+                );
+
+    // Draw the baseline circle for reference
+    g.setColor(0, 0, 0); // Gray for baseline
+    g.drawCircle(centerX, centerY, innerRadius); // Inner circle (reference)
+    g.drawCircle(centerX, centerY, radius); // Outer circle (reference)
+
+    // Render the chart
+    g.flip();
+  }
+};
 
 var debug = 0;
 var cur_altitude;
@@ -288,7 +370,7 @@ function radY(p, d) {
   return ui.h/2 - Math.cos(a)*radD(d) + ui.wi;
 }
 
-let gps_quality = {
+let quality = {
   min_dalt: 9999,
   max_dalt: -9999,
   step: 0,
@@ -304,12 +386,8 @@ let gps_quality = {
     if (this.min_dalt > dalt) this.min_dalt = dalt;
     if (this.max_dalt < dalt) this.max_dalt = dalt;
     return this.max_dalt - this.min_dalt;
-  }
-};
+  },
 
-var qalt = 9999; /* global, altitude quality */
-
-let gps_display = {
   updateGps: function() {
     let lat = "lat ", alt = "?", speed = "speed ", hdop = "?",
         adelta = "adelta ", tdelta = "tdelta ";
@@ -322,13 +400,13 @@ let gps_display = {
     }
     if (adj_alt) {
       print("Adjust altitude");
-      gps_display.adjustAltitude();
+      quality.adjustAltitude();
     }
 
-    gps_display.updateAltitude();
-    gps_display.displayData(lat, alt, speed, hdop, adelta, tdelta);
+    quality.updateAltitude();
+    quality.displayData(lat, alt, speed, hdop, adelta, tdelta);
 
-    setTimeout(gps_display.updateGps, 1000);
+    setTimeout(quality.updateGps, 1000);
   },
 
   adjustAltitude: function() {
@@ -372,7 +450,7 @@ let gps_display = {
       if (cur_altitude) adelta = "" + cur_altitude.toFixed(0);
     }
 
-    let ddalt = gps_quality.calcAlt(alt, cur_altitude);
+    let ddalt = quality.calcAlt(alt, cur_altitude);
     let msg = this.formatDisplayMessage(lat, alt, speed, hdop, adelta, ddalt, tdelta);
 
     if (ui.display > 0) {
@@ -390,17 +468,19 @@ let gps_display = {
             speed + "km/h\n" + alt + "m+" + adelta + "\nmsghere";
     } else if (ui.display == 2) {
       msg = speed + "km/h\n" + "e" + hdop + "m" + "\ndd " +
-            qalt.toFixed(0) + "\n(" + gps_quality.step + "/" + 
+            qalt.toFixed(0) + "\n(" + quality.step + "/" + 
             ddalt.toFixed(0) + ")" + "\n" + alt + "m+" + adelta;
     }
-    gps_quality.step++;
-    if (gps_quality.step == 10) {
-      qalt = gps_quality.max_dalt - gps_quality.min_dalt;
-      gps_quality.resetAlt();
+    quality.step++;
+    if (quality.step == 10) {
+      qalt = quality.max_dalt - quality.min_dalt;
+      quality.resetAlt();
     }
     return msg;
   }
 };
+
+var qalt = 9999; /* global, altitude quality */
 
 /* sky library v0.0.1 */
 let sky = {
@@ -457,6 +537,9 @@ let sky = {
        .setFontAlign(-1, 1);
       g.drawString(fix.satellites + "/" + fix.hdop, 5, ui.y2);
     }
+
+    let p = 15;
+    pie.twoPie(p, p+ui.wi, p, 400, 10);
   },
   parseRaw: function(msg, lost) {
     if (ui.display != 0)
@@ -486,13 +569,13 @@ let sky = {
 function markGps() {
   gps.start_gps();
   Bangle.on('GPS-raw', sky.parseRaw);
-  gps_display.updateGps();
+  quality.updateGps();
 }
 
 ui.init();
 ui.numScreens = 3;
 gps.init();
-gps_quality.resetAlt();
+quality.resetAlt();
 fmt.init();
 
 ui.topLeft = () => { ui.drawMsg("Clock\nadjust"); adj_time = 1; };
