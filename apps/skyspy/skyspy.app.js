@@ -145,7 +145,7 @@ let fmt = {
   },
 };
 
-/* gps library v0.1.4 */
+/* gps library v0.1.4 (bad changes, revert!) */
 let gps = {
   emulator: -1,
   init: function(x) {
@@ -154,7 +154,7 @@ let gps = {
   },
   state: {},
   on_gps: function(f) {
-    let fix = this.getGPSFix();
+    let fix = this.getGPSFix();      
     f(fix);
 
     /*
@@ -189,6 +189,7 @@ let gps = {
     return fix;
   },
   gps_start : -1,
+  fix_start : -1,
   start_gps: function() {
     Bangle.setGPSPower(1, "libgps");
     this.gps_start = getTime();
@@ -377,6 +378,8 @@ let quality = {
   max_dalt: -9999,
   step: 0,
   dalt: 0,
+  fix_start: -1,
+  f3d_start: -1,
 
   resetAlt: function() {
     this.min_dalt = 9999;
@@ -397,6 +400,11 @@ let quality = {
         adelta = "adelta ", tdelta = "tdelta ";
 
     fix = gps.getGPSFix();
+    if (!fix || !fix.fix || !fix.lat)
+      this.fix_start = getTime();
+    if (qalt > 10)
+      this.f3d_start = getTime();
+
     if (adj_time) {
       print("Adjusting time");
       setTime(fix.time.getTime()/1000);
@@ -474,6 +482,12 @@ let quality = {
       msg = speed + "km/h\n" + "e" + hdop + "m" + "\ndd " +
             qalt.toFixed(0) + "\n(" + quality.step + "/" + 
             ddalt.toFixed(0) + ")" + "\n" + alt + "m+" + adelta;
+    } else {
+      let t = getTime();
+      msg = "St: " + fmt.fmtTimeDiff(t-gps.gps_start) + "\n";
+      msg += "Sky: " + fmt.fmtTimeDiff(t-gps.gps_start) + "\n";
+      msg += "2D: " + fmt.fmtTimeDiff(t-this.fix_start) + "\n";
+      msg += "3D: " + fmt.fmtTimeDiff(t-this.f3d_start) + "\n";
     }
     quality.step++;
     if (quality.step == 10) {
@@ -491,6 +505,8 @@ let sky = {
   sats: [],
   snum: 0,
   sats_used: 0,
+  sky_start: -1,
+  this_usable: 0,
 
   drawGrid: function() {
     g.setColor(0,0,0);
@@ -505,7 +521,6 @@ let sky = {
   },
 
   radCircle: function(d) {
-    /* FIXME: .. should do real circle */
     g.drawCircle(radX(0, 0), radY(0, 0), radD(d));
     if (1)
       return;
@@ -521,7 +536,12 @@ let sky = {
     let x = radX(a, e);
     let y = radY(a, e);
 
-    g.setColor(s.snr === "" ? 1 : 0, s.snr === "" ? 0.25 : 0, s.snr === "" ? 0.25 : 0);
+    if (s.snr === "")
+      g.setColor(1, 0.25, 0.25);  
+    else {
+      g.setColor(0, 0, 0);
+      this.usable ++;
+    }
     g.drawString(s.id, x, y);
   },
 
@@ -535,7 +555,10 @@ let sky = {
       .setFont("Vector", 20)
       .setFontAlign(0, 0);
     this.drawGrid();
+    this.usable = 0;
     sats.forEach(s => this.drawSat(s));
+    if (this.usable < 5)
+      this.sky_start = getTime();
 
     if (fix && fix.fix && fix.lat) {
       g.setColor(0, 0, 0)
@@ -576,13 +599,14 @@ function markGps() {
 }
 
 ui.init();
-ui.numScreens = 3;
+ui.numScreens = 4;
 gps.init();
 quality.resetAlt();
 fmt.init();
 
 sky.decorate = () => { 
   let p = 15;
+  return;
   pie.twoPie(p, p+ui.wi, p, quality.dalt, qalt);
 };
 ui.topLeft = () => { ui.drawMsg("Clock\nadjust"); adj_time = 1; };
