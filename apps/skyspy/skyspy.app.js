@@ -310,7 +310,7 @@ pie = {
 
     g.flip(); // Update the screen
   },
-  twoPie: function(centerX, centerY, radius, altitude, altChange) {
+  altDelta: function(centerX, centerY, radius, altitude, altChange) {
     // Altitude range and mapping to a logarithmic scale
     const altitudeMin = -1000, altitudeMax = 1000;
     const altitudeLog = log2(Math.abs(altitude) + 1) * Math.sign(altitude); // Logarithmic scaling
@@ -319,9 +319,11 @@ pie = {
     // Altitude Change (linear scale)
     const altChangeMin = -30, altChangeMax = 30;
     const altChangeAngle = E.clip((altChange - altChangeMin) / (altChangeMax - altChangeMin), 0, 1) * 360;
-
-    // Outer Ring (Altitude Change) - Full circle segment
-    g.setColor(1, 0.5, 0.1);
+    
+    this.twoPie(centerX, centerY, radius, altitudeAngle, altChangeAngle);
+  },
+  
+  twoPie: function(centerX, centerY, radius, altitudeAngle, altChangeAngle) {
     // Outer Ring (Altitude Change) - Draw a segment based on altitude change
 
     g.setColor(0, 0, 0.5); // Set a color for the outer ring
@@ -333,7 +335,7 @@ pie = {
     
     // Inner Ring (Altitude) - Draw a segment based on altitude angle
     const innerRadius = radius * 0.6; // Inner ring size
-    g.setColor(0, 0, 0); // Set a color for the inner ring
+    g.setColor(0, 0.5, 0); // Set a color for the inner ring
     this.fillArc(g,
                  centerX, centerY,
                  innerRadius, // Define thickness of inner ring
