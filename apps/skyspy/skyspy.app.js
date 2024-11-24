@@ -324,7 +324,7 @@ pie = {
     g.setColor(1, 0.5, 0.1);
     // Outer Ring (Altitude Change) - Draw a segment based on altitude change
 
-    g.setColor(0, 0.25, 0); // Set a color for the outer ring
+    g.setColor(0, 0, 0.5); // Set a color for the outer ring
     this.fillArc(g,
                  centerX, centerY,
                  radius, // Define the thickness of the outer ring
@@ -333,7 +333,7 @@ pie = {
     
     // Inner Ring (Altitude) - Draw a segment based on altitude angle
     const innerRadius = radius * 0.6; // Inner ring size
-    g.setColor(0, 0, 0.25); // Set a color for the inner ring
+    g.setColor(0, 0, 0); // Set a color for the inner ring
     this.fillArc(g,
                  centerX, centerY,
                  innerRadius, // Define thickness of inner ring
