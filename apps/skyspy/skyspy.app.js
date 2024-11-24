@@ -1,5 +1,21 @@
 /* Sky spy */
 
+/*
+   Four phases of GPS acquision:
+
+   search for sky -- not enough sattelites
+   wait for signal -- have 5 sattelites with good SNR
+   2D fix
+   3D fix
+
+   How to tell good signal
+   # satelites
+   hdop
+   diff to barometer altitude
+   variations in diff to barometer altitude
+
+*/
+
 /* fmt library v0.2.3 */
 let fmt = {
   icon_alt : "\0\x08\x1a\1\x00\x00\x00\x20\x30\x78\x7C\xFE\xFF\x00\xC3\xE7\xFF\xDB\xC3\xC3\xC3\xC3\x00\x00\x00\x00\x00\x00\x00\x00",
