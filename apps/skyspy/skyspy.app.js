@@ -523,6 +523,7 @@ let sky = {
 
   // Should correspond to view from below.
   // https://in-the-sky.org//satmap_radar.php?year=2023&month=10&day=24&skin=1
+  decorate: function() {},
   drawSats: function(sats) {
     g.reset()
       .setColor(1, 1, 1)
@@ -537,9 +538,7 @@ let sky = {
        .setFontAlign(-1, 1);
       g.drawString(fix.satellites + "/" + fix.hdop, 5, ui.y2);
     }
-
-    let p = 15;
-    pie.twoPie(p, p+ui.wi, p, 400, 10);
+    this.decorate();
   },
   parseRaw: function(msg, lost) {
     if (ui.display != 0)
@@ -578,6 +577,10 @@ gps.init();
 quality.resetAlt();
 fmt.init();
 
+sky.decorate = () => { 
+  let p = 15;
+  pie.twoPie(p, p+ui.wi, p, 400, 10);
+};
 ui.topLeft = () => { ui.drawMsg("Clock\nadjust"); adj_time = 1; };
 ui.topRight = () => { ui.drawMsg("Alt\nadjust"); adj_alt = 1; };
 
