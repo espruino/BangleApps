@@ -400,10 +400,14 @@ let quality = {
         adelta = "adelta ", tdelta = "tdelta ";
 
     fix = gps.getGPSFix();
-    if (!fix || !fix.fix || !fix.lat)
-      this.fix_start = getTime();
-    if (qalt > 10)
-      this.f3d_start = getTime();
+    if (!fix.fix || !fix.lat) {
+      print("...no fix\n");
+      quality.fix_start = getTime();
+    }
+    print("fix: ", fix);
+    print("qalt: ", qalt);
+    if (qalt < 0 || qalt > 10)
+      quality.f3d_start = getTime();
 
     if (adj_time) {
       print("Adjusting time");
@@ -418,7 +422,7 @@ let quality = {
     quality.updateAltitude();
     quality.displayData(lat, alt, speed, hdop, adelta, tdelta);
 
-    setTimeout(quality.updateGps, 1000);
+    setTimeout(quality.updateGps, 1000); // FIXME: this is likely a problem
   },
 
   adjustAltitude: function() {
@@ -484,10 +488,11 @@ let quality = {
             ddalt.toFixed(0) + ")" + "\n" + alt + "m+" + adelta;
     } else {
       let t = getTime();
+      print(t, this.fix_start);
       msg = "St: " + fmt.fmtTimeDiff(t-gps.gps_start) + "\n";
-      msg += "Sky: " + fmt.fmtTimeDiff(t-gps.gps_start) + "\n";
-      msg += "2D: " + fmt.fmtTimeDiff(t-this.fix_start) + "\n";
-      msg += "3D: " + fmt.fmtTimeDiff(t-this.f3d_start) + "\n";
+      msg += "Sky: " + fmt.fmtTimeDiff(t-sky.sky_start) + "\n";
+      msg += "2D: " + fmt.fmtTimeDiff(t-quality.fix_start) + "\n";
+      msg += "3D: " + fmt.fmtTimeDiff(t-quality.f3d_start) + "\n";
     }
     quality.step++;
     if (quality.step == 10) {
