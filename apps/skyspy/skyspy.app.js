@@ -543,10 +543,8 @@ let sky = {
 
     if (s.snr === "")
       g.setColor(1, 0.25, 0.25);  
-    else {
+    else
       g.setColor(0, 0, 0);
-      this.usable ++;
-    }
     g.drawString(s.id, x, y);
   },
 
@@ -554,16 +552,15 @@ let sky = {
   // https://in-the-sky.org//satmap_radar.php?year=2023&month=10&day=24&skin=1
   decorate: function() {},
   drawSats: function(sats) {
+    if (ui.display != 0)
+      return;
     g.reset()
       .setColor(1, 1, 1)
       .fillRect(0, ui.wi, ui.w, ui.y2)
       .setFont("Vector", 20)
       .setFontAlign(0, 0);
     this.drawGrid();
-    this.usable = 0;
     sats.forEach(s => this.drawSat(s));
-    if (this.usable < 5)
-      this.sky_start = getTime();
 
     if (fix && fix.fix && fix.lat) {
       g.setColor(0, 0, 0)
@@ -573,8 +570,6 @@ let sky = {
     this.decorate();
   },
   parseRaw: function(msg, lost) {
-    if (ui.display != 0)
-      return;
     if (lost) print("## data lost");
     let s = msg.split(",");
     if (s[0] !== "$GPGSV") return;
@@ -593,13 +588,18 @@ let sky = {
       this.sats[this.snum++] = sat;
     }
 
-    if (s[1] === s[2]) sky.drawSats(this.sats);
+    if (s[1] === s[2]) {
+      sky.drawSats(this.sats);
+      print("used: ", this.sats_used);
+      if (this.sats_used < 5)
+        this.sky_start = getTime();
+    }
   }
 };
 
 function markGps() {
   gps.start_gps();
-  Bangle.on('GPS-raw', sky.parseRaw);
+  Bangle.on('GPS-raw', (msg, lost) => sky.parseRaw(msg, lost));
   quality.updateGps();
 }
 
