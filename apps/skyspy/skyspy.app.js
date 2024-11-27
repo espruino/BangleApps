@@ -404,8 +404,8 @@ let quality = {
       print("...no fix\n");
       quality.fix_start = getTime();
     }
-    print("fix: ", fix);
-    print("qalt: ", qalt);
+    //print("fix: ", fix);
+    //print("qalt: ", qalt);
     if (qalt < 0 || qalt > 10)
       quality.f3d_start = getTime();
 
@@ -488,7 +488,7 @@ let quality = {
             ddalt.toFixed(0) + ")" + "\n" + alt + "m+" + adelta;
     } else {
       let t = getTime();
-      print(t, this.fix_start);
+      //print(t, this.fix_start);
       msg = "St: " + fmt.fmtTimeDiff(t-gps.gps_start) + "\n";
       msg += "Sky: " + fmt.fmtTimeDiff(t-sky.sky_start) + "\n";
       msg += "2D: " + fmt.fmtTimeDiff(t-quality.fix_start) + "\n";
@@ -505,7 +505,7 @@ let quality = {
 
 var qalt = 9999; /* global, altitude quality */
 
-/* sky library v0.0.1 */
+/* sky library v0.0.2 */
 let sky = {
   sats: [],
   snum: 0,
@@ -569,17 +569,7 @@ let sky = {
     }
     this.decorate();
   },
-  parseRaw: function(msg, lost) {
-    if (lost) print("## data lost");
-    let s = msg.split(",");
-    if (s[0] !== "$GPGSV") return;
-
-    if (s[2] === "1") {
-      this.snum = 0;
-      this.sats = [];
-      this.sats_used = 0;
-    }
-
+  parseSats: function(s) {
     let view = 1 * s[3];
     let k = Math.min(4, view - this.snum);
     for (let i = 4, j = 0; j < k; j++) {
@@ -587,13 +577,22 @@ let sky = {
       if (sat.snr !== "") this.sats_used++;
       this.sats[this.snum++] = sat;
     }
-
-    if (s[1] === s[2]) {
-      sky.drawSats(this.sats);
-      print("used: ", this.sats_used);
+  },
+  parseRaw: function(msg, lost) {
+    if (lost) print("## data lost");
+    let s = msg.split(",");
+    if (s[0] === "$GNGGA") {
+      this.drawSats(this.sats);
       if (this.sats_used < 5)
         this.sky_start = getTime();
+      this.snum = 0;
+      this.sats = [];
+      this.sats_used = 0;
+      return;
     }
+    if (s[0] === "$GPGSV") { this.parseSats(s); return; }
+    if (s[0] === "$GLGSV") { this.parseSats(s); return; }
+    if (s[0] === "$BDGSV") { this.parseSats(s); return; }
   }
 };
 
