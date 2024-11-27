@@ -183,7 +183,7 @@ let graw = {
     this.sys += 1;
     if (this.sys == 4)
       this.sys = 0;
-    val = 7;
+    let val = 7;
     if (this.sys)
       val = 1 << (this.sys - 1);
     this.casic_cmd("$PCAS04,"+val);
