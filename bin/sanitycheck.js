@@ -10,18 +10,22 @@ apploader.init({
   DEVICEID : "BANGLEJS2"
 });*/
 
+var jsparse = (() => {
+  var acorn;
+  try {
+    acorn = require("acorn");
+  } catch (e) {
+    console.log("=====================================================");
+    console.log("  ACORN NOT FOUND");
+    console.log("  ---------------");
+    console.log("");
+    console.log("  This means we won't sanity-check uploaded JSON");
+    console.log("=====================================================");
+    return str => {throw new Error("no acorn")};
+  }
 
-var acorn;
-try {
-  acorn = require("acorn");
-} catch (e) {
-  console.log("=====================================================");
-  console.log("  ACORN NOT FOUND");
-  console.log("  ---------------");
-  console.log("");
-  console.log("  This means we won't sanity-check uploaded JSON");
-  console.log("=====================================================");
-}
+  return str => acorn.parse(str, { ecmaVersion: 2020 });
+})();
 
 var BASEDIR = __dirname+"/../";
 var APPSDIR_RELATIVE = "apps/";
@@ -399,7 +403,7 @@ apps.forEach((app,appIdx) => {
     if (file.supports && !Array.isArray(file.supports)) ERROR(`App ${app.id} file ${file.name} supports field is not an array`, {file:metadataFile});
     if (file.evaluate) {
       try {
-        acorn.parse("("+fileContents+")");
+        jsparse("("+fileContents+")");
       } catch(e) {
         console.log("=====================================================");
         console.log("  PARSE OF "+appDir+file.url+" failed.");
@@ -415,7 +419,7 @@ apps.forEach((app,appIdx) => {
       // TODO: actual lint?
       var ast;
       try {
-        ast = acorn.parse(fileContents);
+        ast = jsparse(fileContents);
       } catch(e) {
         console.log("=====================================================");
         console.log("  PARSE OF "+appDir+file.url+" failed.");
