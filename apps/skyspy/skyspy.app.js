@@ -199,7 +199,7 @@ let gps = {
   },
 };
 
-/* ui library 0.1.3 */
+/* ui library 0.1.4 */
 let ui = {
   display: 0,
   numScreens: 2,
@@ -265,7 +265,34 @@ let ui = {
   init: function() {
     this.h = this.y2 - this.wi;
     this.drawBusy();
-  }
+  },
+  /* radial angle -- convert 0..1 to 0..2pi */
+  radA: function(p) { return p*(Math.PI*2); },
+  /* radial distance -- convert 0..1 to something that fits on screen */
+  radD: function(d) { return d*(ui.h/2); },
+
+  /* given angle/distance, get X coordinate */
+  radX: function(p, d) {
+    let a = this.radA(p);
+    return this.w/2 + Math.sin(a)*this.radD(d);
+  },
+  /* given angle/distance, get Y coordinate */
+  radY: function(p, d) {
+    let a = this.radA(p);
+    return this.h/2 - Math.cos(a)*this.radD(d) + this.wi;
+  },
+  radLine: function(a1, d1, a2, d2) {
+    g.drawLine(this.radX(a1, d1), this.radY(a1, d1), this.radX(a2, d2), this.radY(a2, d2));
+  },
+  radCircle: function(d) {
+    g.drawCircle(this.radX(0, 0), this.radY(0, 0), this.radD(d));
+    if (1)
+      return;
+    let step = 0.05;
+    for (let i = 0; i < 1; i += 0.05) {
+      this.radLine(i - step, d, i, d);
+    }
+  },
 };
 
 function log2(x) {
@@ -355,7 +382,6 @@ pie = {
 
 var debug = 0;
 var cur_altitude;
-var fix;
 var adj_time = 0, adj_alt = 0;
 
 /* radial angle -- convert 0..1 to 0..2pi */
@@ -505,7 +531,9 @@ let quality = {
 
 var qalt = 9999; /* global, altitude quality */
 
-/* sky library v0.0.2 */
+let fix = {}; /* Global for sky library */
+
+/* sky library v0.1.0 */
 let sky = {
   sats: [],
   snum: 0,
@@ -515,34 +543,23 @@ let sky = {
 
   drawGrid: function() {
     g.setColor(0,0,0);
-    this.radLine(0, 1, 0.5, 1);
-    this.radLine(0.25, 1, 0.75, 1);
-    this.radCircle(0.5);
-    this.radCircle(1.0);
+    ui.radLine(0, 1, 0.5, 1);
+    ui.radLine(0.25, 1, 0.75, 1);
+    ui.radCircle(0.5);
+    ui.radCircle(1.0);
   },
 
-  radLine: function(a1, d1, a2, d2) {
-    g.drawLine(radX(a1, d1), radY(a1, d1), radX(a2, d2), radY(a2, d2));
-  },
-
-  radCircle: function(d) {
-    g.drawCircle(radX(0, 0), radY(0, 0), radD(d));
-    if (1)
-      return;
-    let step = 0.05;
-    for (let i = 0; i < 1; i += 0.05) {
-      this.radLine(i - step, d, i, d);
-    }
-  },
-
+  snrLim: 28,
   drawSat: function(s) {
     let a = s.azi / 360;
     let e = ((90 - s.ele) / 90);
-    let x = radX(a, e);
-    let y = radY(a, e);
+    let x = ui.radX(a, e);
+    let y = ui.radY(a, e);
 
-    if (s.snr === "")
+    if (s.snr == 0)
       g.setColor(1, 0.25, 0.25);  
+    else if (s.snr < this.snrLim)
+      g.setColor(0.25, 0.5, 0.25);
     else
       g.setColor(0, 0, 0);
     g.drawString(s.id, x, y);
@@ -569,19 +586,61 @@ let sky = {
     }
     this.decorate();
   },
+
   parseSats: function(s) {
     let view = 1 * s[3];
     let k = Math.min(4, view - this.snum);
     for (let i = 4, j = 0; j < k; j++) {
       let sat = { id: s[i++], ele: 1 * s[i++], azi: 1 * s[i++], snr: s[i++] };
-      if (sat.snr !== "") this.sats_used++;
+      if (sat.snr === "")
+        sat.snr = 0;
+      if (sat.snr >= this.snrLim) {
+        this.sats_used++;
+        print(sat.id, sat.snr);
+      }
       this.sats[this.snum++] = sat;
     }
+  },
+
+  old_msg: {},
+  msg: {},
+  tof: function(v) { let i = (1*v); return i.toFixed(0); },
+  fmtSys: function(sys) {
+    return sys.sent + "." + sys.d23 + "D "+ this.tof(sys.pdop) + " " + this.tof(sys.vdop) + "\n";
+  },
+  display: function() {
+    if (ui.display != 1)
+      return;
+    let m = this.old_msg;
+    let msg = "" + this.tof(m.time) + "\n" + 
+        "q" + m.quality + " " + m.in_view + " " + m.hdop + "\n" +
+        "gp"+ this.fmtSys(m.gp) +
+        "bd" + this.fmtSys(m.bd)  +
+        "gl" + this.fmtSys(m.gl);
+    if (this.msg.finished != 1)
+      msg += "!";
+    g.reset().clear().setFont("Vector", 30)
+      .setColor(0, 0, 0)
+      .setFontAlign(-1, -1)
+      .drawString(msg, 0, 0);
   },
   parseRaw: function(msg, lost) {
     if (lost) print("## data lost");
     let s = msg.split(",");
-    if (s[0] === "$GNGGA") {
+    let cmd = s[0].slice(3);
+    //print("cmd", cmd);
+    if (cmd === "GGA") {
+      this.old_msg = this.msg;
+      this.msg = {};
+      this.msg.time = s[1];
+      this.msg.quality = s[6];
+      this.msg.in_view = s[7];
+      this.msg.hdop = s[8];
+      this.msg.gp = {};
+      this.msg.bd = {};
+      this.msg.gl = {};
+      print("-----------------------------------------------");
+      print("GGA Time", s[1], "fix quality", s[4], "sats in view ", s[5]);
       this.drawSats(this.sats);
       if (this.sats_used < 5)
         this.sky_start = getTime();
@@ -590,9 +649,72 @@ let sky = {
       this.sats_used = 0;
       return;
     }
-    if (s[0] === "$GPGSV") { this.parseSats(s); return; }
-    if (s[0] === "$GLGSV") { this.parseSats(s); return; }
-    if (s[0] === "$BDGSV") { this.parseSats(s); return; }
+    if (cmd === "GLL") return; /* Position lat/lon */
+    if (cmd === "GSA") {
+      /*
+         $GNGSA,A,1,,,,,,,,,,,,,25.5,25.5,25.5,4*04
+        0      1 2             15   16   17   18     
+        */
+      /* Satelites used, fix type! INTERESTING */
+      let sys = s[18];
+      let add = {};
+      add.d23 = s[2];
+      add.pdop = s[15];
+      add.hdop = s[16];
+      add.vdop = s[17];
+      /* FIXME -- should really add to the sentence */
+      if (sys == 1) { this.msg.gp = add; }
+      else if (sys == 2) { this.msg.gl = add; }
+      else if (sys == 4) { this.msg.bd = add; }
+      else print("GSA Unknown system\n");
+      
+      print(msg);
+      return;
+    }
+    if (s[0] === "$GPGSV") {
+      print("Have gps sentences", s[1], "/", s[2]);
+      this.parseSats(s);
+      this.msg.gp.sent = ""+s[2];
+      return;
+    }
+    if (s[0] === "$BDGSV") {
+      print("Have baidu sentences", s[1], "/", s[2]);
+      this.parseSats(s);
+      this.msg.bd.sent = ""+s[2];
+      return;
+    }
+    if (s[0] === "$GLGSV") {
+      print("Have glonass sentences", s[1], "/", s[2]);
+      this.parseSats(s);
+      this.msg.gl.sent = ""+s[2];
+      return;
+    }
+    if (cmd === "RMC") return; /* Repeat of position/speed/course */
+    if (cmd === "VTG") return; /* Speeds in knots/kph */
+    if (cmd === "ZDA") return; /* Time + timezone */
+    if (cmd === "TXT") {
+      this.msg.finished = 1;
+      return; /* Misc text? antena open */    
+    }
+
+    print(msg);
+  },
+  casic_cmd: function (cmd) {
+    var cs = 0;
+    for (var i=1;i<cmd.length;i++)
+      cs = cs ^ cmd.charCodeAt(i);
+    Serial1.println(cmd+"*"+cs.toString(16).toUpperCase().padStart(2, '0'));
+  },
+  sys: 3,
+  selectSpace: function () {
+    this.sys += 1;
+    if (this.sys == 4)
+      this.sys = 0;
+    val = 7;
+    if (this.sys)
+      val = 1 << (this.sys - 1);
+    this.casic_cmd("$PCAS04,"+val);
+    ui.drawMsg("Sys "+val);
   }
 };
 
