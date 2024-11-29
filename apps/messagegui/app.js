@@ -283,7 +283,7 @@ function showMessageSettings(msg) {
   };
 
   if (msg.id!="music")
-    msg[/*LANG*/"View Message"] = () => showMessageScroller(msg);
+    menu[/*LANG*/"View Message"] = () => showMessageScroller(msg);
 
   if (msg.reply && reply) {
     menu[/*LANG*/"Reply"] = () => {
