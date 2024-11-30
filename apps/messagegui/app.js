@@ -274,6 +274,53 @@ function showMessageScroller(msg) {
   });
 }
 
+function showMessagesScroller(messages, offsetToMessageNumber) {
+  print(messages);
+  cancelReloadTimeout();
+  active = "scroller";
+  var bodyFont = fontBig;
+  g.setFont(bodyFont);
+  var allLines = [];
+  var titleLines = [];
+  var j = messages.length-1;
+  var initScroll = 0;
+  messages.forEach(msg => {
+    if (j == offsetToMessageNumber) initScroll = allLines.length;
+    var lines = [];
+    if (msg.title) {
+      lines = g.wrapString(msg.title, g.getWidth()-10);
+      for (let i=0; i<lines.length; i++) {
+        titleLines = titleLines.concat(allLines.length + i)
+      }
+    }
+    var titleCnt = lines.length;
+    if (titleCnt) lines.push(""); // add blank line after title
+    lines = lines.concat(g.wrapString(msg.body, g.getWidth()-10), [ "------" ]);
+    print(lines);
+    allLines = allLines.concat(lines);
+    print(allLines);
+    j--;
+  });
+  E.showScroller({
+    scroll : initScroll*g.getFontHeight(),
+    h : g.getFontHeight(), // height of each menu item in pixels
+    c : allLines.length, // number of menu items
+    // a function to draw a menu item
+    draw : function(idx, r) {
+      print(idx); // FIXME: Remove this print.
+      // FIXME: in 2v13 onwards, clearRect(r) will work fine. There's a bug in 2v12
+      g.setBgColor(titleLines.find((e)=>e==idx)!==undefined ? g.theme.bg2 : g.theme.bg).
+        setColor(titleLines.find((e)=>e==idx)!==undefined ? g.theme.fg2 : g.theme.fg).
+        clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
+      g.setFont(bodyFont).setFontAlign(0,-1).drawString(allLines[idx], r.x+r.w/2, r.y);
+    }, select : function(idx) {
+      if (idx>=allLines.length-2)
+        showMessage(msg.id, true);
+    },
+    back : () => showMessage(msg.id, true)
+  });
+}
+
 function showMessageSettings(msg) {
   active = "settings";
   var menu = {"":{
@@ -616,3 +663,7 @@ Bangle.on('lock',locked => {
   if (!locked)
     require("messages").stopBuzz();
 });
+
+setTimeout(() => {
+  showMessagesScroller(MESSAGES);
+}, 11);
