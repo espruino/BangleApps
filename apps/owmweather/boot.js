@@ -7,8 +7,8 @@
   );
 
   let refreshMillis = function () {
-    return settings.refresh * 1000 * 60 + 1  // +1 <- leave some slack
-  }
+    return settings.refresh * 1000 * 60 + 1;  // +1 <- leave some slack
+  };
 
   let onCompleted = function () {
     loading = false;
@@ -16,7 +16,7 @@
     require('Storage').writeJSON("owmweather.json", settings);
     if (timeoutRef) clearTimeout(timeoutRef);
     timeoutRef = setTimeout(loadIfDueAndReschedule, refreshMillis());
-  }
+  };
 
   let loadIfDueAndReschedule = function () {
     // also check if the weather.json file has been updated (e.g. force refresh)
@@ -27,18 +27,18 @@
     }
 
     let MillisUntilDue = settings.updated + refreshMillis() - Date.now();
-    if (MillisUntilDue <= 0) {
+    if (!MillisUntilDue || MillisUntilDue <= 0) {
       if (!loading) {
         loading = true;
         require("owmweather").pull(onCompleted);
       }
     } else {
       // called to early, reschedule
-      // console.log('Weather data is not due yet, rescheduling in ' + MillisUntilDue|0 + 'ms');
+      // console.log('Weather data is not due yet, rescheduling in ' + (MillisUntilDue || 0) + 'ms');
       if (timeoutRef) clearTimeout(timeoutRef);
       timeoutRef = setTimeout(loadIfDueAndReschedule, MillisUntilDue + 1);
     }
-  }
+  };
 
   if (settings.enabled) {
     setTimeout(loadIfDueAndReschedule, 5000);  // run 5 seconds after boot
