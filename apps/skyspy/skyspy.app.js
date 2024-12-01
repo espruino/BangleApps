@@ -5,6 +5,7 @@
 
    search for sky -- not enough sattelites
    wait for signal -- have 5 sattelites with good SNR
+     .. good snr is like 26, with maybe 24 time goes up twice, maybe 22 for three times, less than that and many times more
    2D fix
    3D fix
 
@@ -625,17 +626,32 @@ let sky = {
       .setFontAlign(-1, -1)
       .drawString(msg, 0, 0);
   },
-  getSatSNR: function(n) {
+  snrSort: function() {
+    return this.sats.slice(0, this.snum).sort((a, b) => b.snr - a.snr);
+  },
+  getSatSNR: function(n) { /* Get n-th strongest sat */
   if (n <= 0 || n > this.sats.length) {
     throw new Error("Invalid value for n");
   }
 
   // Sort the satellites by snr in descending order
-  let sortedSats = this.sats.slice(0, this.snum).sort((a, b) => b.snr - a.snr);
+  let sortedSats = this.snrSort();
 
   // Return the SNR of the n-th strongest satellite
   return sortedSats[n - 1].snr;
 },
+  qualest: function() {
+    // Sort the satellites by snr in descending order
+    let sortedSats = this.snrSort();
+    if (sortedSats[4].snr) {
+      return "" + sortedSats[4].snr + "dB";
+    }
+    for (i=4; i>=0; i--) {
+      if (sortedSats[i].snr)
+        return "S" + (i+1);
+    }
+    return "nil";
+  },
   messageEnd: function() {
           this.old_msg = this.msg;
       this.msg = {};
@@ -643,7 +659,9 @@ let sky = {
       this.msg.bd = {};
       this.msg.gl = {};
       this.drawSats(this.sats);
-      print("SNR/5: ", this.getSatSNR(5), this.getSatSNR(3), this.getSatSNR(1));
+      let r = this.qualest();
+      print(r);
+    ui.drawMsg(r);
       //print(this.sats);
       if (this.sats_used < 5)
         this.sky_start = getTime();
