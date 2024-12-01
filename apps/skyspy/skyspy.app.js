@@ -625,6 +625,17 @@ let sky = {
       .setFontAlign(-1, -1)
       .drawString(msg, 0, 0);
   },
+  getSatSNR: function(n) {
+  if (n <= 0 || n > this.sats.length) {
+    throw new Error("Invalid value for n");
+  }
+
+  // Sort the satellites by snr in descending order
+  let sortedSats = this.sats.slice(0, this.snum).sort((a, b) => b.snr - a.snr);
+
+  // Return the SNR of the n-th strongest satellite
+  return sortedSats[n - 1].snr;
+},
   messageEnd: function() {
           this.old_msg = this.msg;
       this.msg = {};
@@ -632,6 +643,8 @@ let sky = {
       this.msg.bd = {};
       this.msg.gl = {};
       this.drawSats(this.sats);
+      print("SNR/5: ", this.getSatSNR(5), this.getSatSNR(3), this.getSatSNR(1));
+      //print(this.sats);
       if (this.sats_used < 5)
         this.sky_start = getTime();
       this.snum = 0;
