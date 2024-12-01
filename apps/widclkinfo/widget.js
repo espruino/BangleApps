@@ -61,9 +61,8 @@ if (!require("clock_info").loadCount) { // don't load if a clock_info was alread
   widget_utils.on("hidden", () => {
     console.log("hidden");
     clockInfoMenu.y = -24;
-    clockInfoMenu.force_blur(); // needs to be here so it doesn't stay the focused color
     if (clockInfoMenu.focus) {
-      //clockInfoMenu.force_blur();
+      clockInfoMenu.force_blur();
       console.log("Forced blur bc hidden");
     }
   });

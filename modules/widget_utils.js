@@ -11,6 +11,7 @@ exports.hide = function() {
     w.area = "";
     if (w.x!=undefined) g.clearRect(w.x,w.y,w.x+w.width-1,w.y+23);
   }
+  // TODO: do we need to emit event here too?
 };
 
 /// Show any hidden widgets
@@ -134,11 +135,11 @@ exports.swipeOn = function(autohide) {
       if (dir>0 && exports.offset>=0) { // fully down
         stop = true;
         exports.offset = 0;
-        exports.emit("shown");
+        Bangle.emit("widgets-shown");
       } else if (dir<0 && exports.offset<-23) { // fully up
         stop = true;
         exports.offset = -24;
-        exports.emit("hidden");
+        Bangle.emit("widgets-hidden");
       }
       if (stop) {
         clearInterval(exports.animInterval);
@@ -160,8 +161,14 @@ exports.swipeOn = function(autohide) {
         anim(-4);
       }, exports.autohide);
     };
-    if (ud>0 && exports.offset<0) anim(4, cb);
-    if (ud<0 && exports.offset>-24) anim(-4);
+    if (ud>0 && exports.offset<0) {
+      Bangle.emit("widgets-start-show");
+      anim(4, cb);
+    }
+    if (ud<0 && exports.offset>-24) {
+      Bangle.emit("widgets-start-hide");
+      anim(-4);
+    }
   };
   Bangle.on("swipe", exports.swipeHandler);
   Bangle.drawWidgets();
