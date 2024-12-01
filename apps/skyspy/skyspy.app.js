@@ -652,6 +652,45 @@ let sky = {
     }
     return "nil";
   },
+  satVisibility: [],
+  trackSatelliteVisibility: function() {
+  const threshold = this.snrLim; // SNR threshold
+  const now = getTime();
+  let newVisibility = [];
+  //this.satVisibility = [];
+  for (let i = 0; i < this.snum; i++) {
+    let sat = this.sats[i];
+    let existingSat = this.satVisibility[sat.id];
+    if (sat.snr >= threshold) {
+      if (!existingSat) {
+        // New satellite starts visibility
+        newVisibility[sat.id] = { start: now, visible: true };
+      } else 
+        newVisibility[sat.id] = this.satVisibility[sat.id];
+    }
+  }
+  this.satVisibility = newVisibility;
+},
+  getnthLowestStartTimeSat: function(n) {
+  // Collect all satellites from visibility
+  let satellites = Object.values(this.satVisibility);
+
+  // Ensure we have at least 5 satellites
+  if (satellites.length < n) {
+    throw new Error("Not enough satellites to find the 5th lowest start time.");
+  }
+
+  // Sort satellites by start time in ascending order
+  satellites.sort((a, b) => a.start - b.start);
+
+  // Return the satellite with the 5th lowest start time
+  return satellites[n-1]; // 0-based index, so 5th is index 4
+},
+  goodest: function () {
+    let s = this.getnthLowestStartTimeSat();
+    let t = getTime() - s;
+    return "" + t;
+  },
   messageEnd: function() {
           this.old_msg = this.msg;
       this.msg = {};
@@ -660,8 +699,10 @@ let sky = {
       this.msg.gl = {};
       this.drawSats(this.sats);
       let r = this.qualest();
-      print(r);
-    ui.drawMsg(r);
+      let r1 = this.goodest();
+      print(r, r1);
+    ui.drawMsg(r + "\n" + r1);
+    this.trackSatelliteVisibility();
       //print(this.sats);
       if (this.sats_used < 5)
         this.sky_start = getTime();
