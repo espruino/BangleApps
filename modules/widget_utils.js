@@ -134,9 +134,11 @@ exports.swipeOn = function(autohide) {
       if (dir>0 && exports.offset>=0) { // fully down
         stop = true;
         exports.offset = 0;
+        exports.emit("shown");
       } else if (dir<0 && exports.offset<-23) { // fully up
         stop = true;
         exports.offset = -24;
+        exports.emit("hidden");
       }
       if (stop) {
         clearInterval(exports.animInterval);
