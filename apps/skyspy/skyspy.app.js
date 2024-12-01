@@ -624,29 +624,39 @@ let sky = {
       .setFontAlign(-1, -1)
       .drawString(msg, 0, 0);
   },
-  parseRaw: function(msg, lost) {
-    if (lost) print("## data lost");
-    let s = msg.split(",");
-    let cmd = s[0].slice(3);
-    //print("cmd", cmd);
-    if (cmd === "GGA") {
-      this.old_msg = this.msg;
+  messageEnd: function() {
+          this.old_msg = this.msg;
       this.msg = {};
-      this.msg.time = s[1];
-      this.msg.quality = s[6];
-      this.msg.in_view = s[7];
-      this.msg.hdop = s[8];
       this.msg.gp = {};
       this.msg.bd = {};
       this.msg.gl = {};
-      print("-----------------------------------------------");
-      print("GGA Time", s[1], "fix quality", s[4], "sats in view ", s[5]);
       this.drawSats(this.sats);
       if (this.sats_used < 5)
         this.sky_start = getTime();
       this.snum = 0;
       this.sats = [];
       this.sats_used = 0;
+
+  },
+  parseRaw: function(msg, lost) {
+    if (lost) print("## data lost");
+    let s = msg.split(",");
+    //    print(getTime(), s[0]);
+    //return;
+    let cmd = s[0].slice(3);
+    //print("cmd", cmd);
+    if (cmd === "TXT") {
+      this.messageEnd();
+      return;
+    }
+    if (cmd === "GGA") {
+          this.msg.time = s[1];
+      this.msg.quality = s[6];
+      this.msg.in_view = s[7];
+      this.msg.hdop = s[8];
+
+      print("-----------------------------------------------");
+      print("GGA Time", s[1], "fix quality", s[4], "sats in view ", s[5]);
       return;
     }
     if (cmd === "GLL") return; /* Position lat/lon */
