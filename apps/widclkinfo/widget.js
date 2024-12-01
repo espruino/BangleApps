@@ -1,20 +1,30 @@
 if (!require("clock_info").loadCount) { // don't load if a clock_info was already loaded
   // Load the clock infos
-  let clockInfoItems = require("clock_info").load();
-  // Add the
-  let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {
-    app : "widclkinfo",
+  let clockInfoItems = clock_info.load();
+
+  // TODO only do checks if widget_utils.swipeOn is being used
+  let wuo = widget_utils.offset;
+
+  let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
+    app: "widclkinfo",
     // Add the dimensions we're rendering to here - these are used to detect taps on the clock info area
-    x : 0, y: 0, w: 72, h:24,
+    x: 0,
+    y: 0, // maybe set offset to initial offset
+    w: 72,
+    h: 24,
     // You can add other information here you want to be passed into 'options' in 'draw'
     // This function draws the info
-    draw : (itm, info, options) => {
+    draw: (itm, info, options) => {
       // itm: the item containing name/hasRange/etc
       // info: data returned from itm.get() containing text/img/etc
       // options: options passed into addInteractive
       clockInfoInfo = info;
-      if (WIDGETS["clkinfo"])
+      wuo = 0 | widget_utils.offset;
+      clockInfoMenu.y = options.y + wuo;
+      if (WIDGETS["clkinfo"]) {
         WIDGETS["clkinfo"].draw(WIDGETS["clkinfo"]);
+        console.log("Clock Info was updated, thus drawing widget.");
+      }
     }
   });
   let clockInfoInfo; // when clockInfoMenu.draw is called we set this up
@@ -25,12 +35,12 @@ if (!require("clock_info").loadCount) { // don't load if a clock_info was alread
     width: clockInfoMenu.w,
     draw:function(e) {
       clockInfoMenu.x = e.x;
-      clockInfoMenu.y = e.y;
+      wuo = 0 | widget_utils.offset;
+      clockInfoMenu.y = e.y + wuo;
       var o = clockInfoMenu;
       // Clear the background
       g.reset();
-      // indicate focus - make background reddish
-      //if (clockInfoMenu.focus) g.setBgColor(g.blendColor(g.theme.bg, "#f00", 0.25));
+      // indicate focus
       if (clockInfoMenu.focus) g.setColor("#f00");
       g.clearRect(o.x, o.y, o.x+o.w-1, o.y+o.h-1);
       if (clockInfoInfo) {
@@ -47,4 +57,21 @@ if (!require("clock_info").loadCount) { // don't load if a clock_info was alread
       }
     }
   };
-}
+
+  widget_utils.on("hidden", () => {
+    console.log("hidden");
+    clockInfoMenu.y = -24;
+    clockInfoMenu.force_blur(); // needs to be here so it doesn't stay the focused color
+    if (clockInfoMenu.focus) {
+      //clockInfoMenu.force_blur();
+      console.log("Forced blur bc hidden");
+    }
+  });
+
+  widget_utils.on("shown", () => {
+    clockInfoMenu.y = 0;
+    console.log("shown");
+    if (WIDGETS["clkinfo"]) {
+      WIDGETS["clkinfo"].draw(WIDGETS["clkinfo"]);
+    }
+  });
