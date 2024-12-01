@@ -430,6 +430,7 @@ let quality = {
       print("...no fix\n");
       quality.fix_start = getTime();
     }
+    return;
     //print("fix: ", fix);
     //print("qalt: ", qalt);
     if (qalt < 0 || qalt > 10)
@@ -655,8 +656,10 @@ let sky = {
       this.msg.in_view = s[7];
       this.msg.hdop = s[8];
 
+      if (debug > 0) {
       print("-----------------------------------------------");
       print("GGA Time", s[1], "fix quality", s[4], "sats in view ", s[5]);
+      }
       return;
     }
     if (cmd === "GLL") return; /* Position lat/lon */
@@ -678,22 +681,25 @@ let sky = {
       else if (sys == 4) { this.msg.bd = add; }
       else print("GSA Unknown system\n");
       
-      print(msg);
+      //print(msg);
       return;
     }
     if (s[0] === "$GPGSV") {
+      if (debug > 0)
       print("Have gps sentences", s[1], "/", s[2]);
       this.parseSats(s);
       this.msg.gp.sent = ""+s[2];
       return;
     }
     if (s[0] === "$BDGSV") {
+            if (debug > 0)
       print("Have baidu sentences", s[1], "/", s[2]);
       this.parseSats(s);
       this.msg.bd.sent = ""+s[2];
       return;
     }
     if (s[0] === "$GLGSV") {
+            if (debug > 0)
       print("Have glonass sentences", s[1], "/", s[2]);
       this.parseSats(s);
       this.msg.gl.sent = ""+s[2];
