@@ -58,7 +58,7 @@ if (!require("clock_info").loadCount) { // don't load if a clock_info was alread
     }
   };
 
-  widget_utils.on("hidden", () => {
+  Bangle.on("hidden", () => {
     console.log("hidden");
     clockInfoMenu.y = -24;
     if (clockInfoMenu.focus) {
@@ -67,7 +67,7 @@ if (!require("clock_info").loadCount) { // don't load if a clock_info was alread
     }
   });
 
-  widget_utils.on("shown", () => {
+  Bangle.on("shown", () => {
     clockInfoMenu.y = 0;
     console.log("shown");
     if (WIDGETS["clkinfo"]) {
