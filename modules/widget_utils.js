@@ -158,6 +158,7 @@ exports.swipeOn = function(autohide) {
     let cb;
     if (exports.autohide > 0) cb = function() {
       exports.hideTimeout = setTimeout(function() {
+        Bangle.emit("widgets-start-hide");
         anim(-4);
       }, exports.autohide);
     };
