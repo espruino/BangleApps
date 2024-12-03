@@ -53,10 +53,42 @@ function sendSteps() {
     });
 }
 
+/**
+ * Sends pressure *and temperature*
+ */
+function sendPressure() {
+    if (!Bangle.getPressure) return; // not a Bangle 2
+    const promise = Bangle.getPressure();
+    if (!promise) return; // emulator?
+    promise.then(values=>{
+        post("pressure", {
+            state: Math.round(values.pressure*10)/10,
+            attributes: {
+                friendly_name: "{name} Pressure",
+                unit_of_measurement: "hPa",
+                device_class: "atmospheric pressure",
+                state_class: "measurement",
+                icon: "mdi:gauge",
+            }
+        });
+        post("temperature", {
+            state: Math.round(values.temperature*10)/10,
+            attributes: {
+                friendly_name: "{name} Temperature",
+                unit_of_measurement: "°C",
+                device_class: "temperature",
+                state_class: "measurement",
+                icon: "mdi:thermometer",
+            }
+        });
+    });
+}
+
 exports.sendUpdate = function() {
     if (!NRF.getSecurityStatus().connected) return;
     sendBattery();
     sendSteps();
+    sendPressure();
 }
 
 

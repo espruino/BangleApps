@@ -24,3 +24,5 @@ Currently creates these sensors:
 * `<sensor id>_battery_state`: `charging` or `discharging`
 * `<sensor id>_hrm`: Heart rate (only if measured: this app doesn't enable/disable the sensor)
 * `<sensor id>_steps`: Step Count
+* `<sensor id>_pressure`: Pressure
+* `<sensor id>_temperature`: Temperature
