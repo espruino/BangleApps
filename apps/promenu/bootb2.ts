@@ -240,6 +240,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
     remove: () => {
       if (nameScroller) clearInterval(nameScroller);
       Bangle.removeListener("swipe", onSwipe);
+      options.remove?.();
     },
   } as SetUIArg<"updown">,
   dir => {

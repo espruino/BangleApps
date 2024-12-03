@@ -193,9 +193,11 @@ E.showMenu = function (items) {
         mode: "updown",
         back: back,
         remove: function () {
+            var _a;
             if (nameScroller)
                 clearInterval(nameScroller);
             Bangle.removeListener("swipe", onSwipe);
+            (_a = options.remove) === null || _a === void 0 ? void 0 : _a.call(options);
         },
     }, function (dir) {
         if (dir)
