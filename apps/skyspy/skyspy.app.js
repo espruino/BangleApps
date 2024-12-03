@@ -551,7 +551,7 @@ let sky = {
     ui.radCircle(1.0);
   },
 
-  snrLim: 28,
+  snrLim: 18,
   drawSat: function(s) {
     let a = s.azi / 360;
     let e = ((90 - s.ele) / 90);
@@ -630,10 +630,9 @@ let sky = {
     return this.sats.slice(0, this.snum).sort((a, b) => b.snr - a.snr);
   },
   getSatSNR: function(n) { /* Get n-th strongest sat */
-  if (n <= 0 || n > this.sats.length) {
-    throw new Error("Invalid value for n");
-  }
-
+  if (n <= 0 || n > this.sats.length)
+    return -1;
+    
   // Sort the satellites by snr in descending order
   let sortedSats = this.snrSort();
 
@@ -676,9 +675,8 @@ let sky = {
   let satellites = Object.values(this.satVisibility);
 
   // Ensure we have at least 5 satellites
-  if (satellites.length < n) {
-    throw new Error("Not enough satellites to find the 5th lowest start time.");
-  }
+  if (satellites.length < n)
+    return -1;
 
   // Sort satellites by start time in ascending order
   satellites.sort((a, b) => a.start - b.start);
@@ -687,7 +685,7 @@ let sky = {
   return satellites[n-1]; // 0-based index, so 5th is index 4
 },
   goodest: function () {
-    let s = this.getnthLowestStartTimeSat();
+    let s = this.getnthLowestStartTimeSat(5);
     let t = getTime() - s;
     return "" + t;
   },
