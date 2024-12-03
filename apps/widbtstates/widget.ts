@@ -48,7 +48,7 @@
 
 			g.reset();
 
-			g.setColor(colours[state][`${g.theme.dark}`]);
+			g.setColor(colours[state][g.theme.dark as unknown as `${boolean}`]);
 
 			g.drawImage(
 				atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="),
