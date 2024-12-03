@@ -274,6 +274,93 @@ function showMessageScroller(msg) {
   });
 }
 
+function showMessageScroller2(msg, initAtEndOfMsg) {
+
+  cancelReloadTimeout();
+
+  let msgIdx = MESSAGES.findIndex((m) =>  m.id == msg.id)
+  //print("msgIdx",msgIdx);
+
+  let startIdx = Math.max(msgIdx-1, 0);
+  let endIdx = Math.min(msgIdx+2, MESSAGES.length);
+
+  active = "scroller";
+  var bodyFont = fontBig;
+  g.setFont(bodyFont);
+  var allLines = [];
+  var titleLines = [];
+  var j = MESSAGES.length-1;
+  var initScroll = 0;
+  var messagesWrapped = [];
+  for (let j=startIdx; j<endIdx; j++) {
+    let msgLocal = MESSAGES[j];
+    var lines = [];
+    if (msgLocal.title) {
+      lines = g.wrapString(msgLocal.title, g.getWidth()-10);
+      for (let i=0; i<lines.length; i++) {
+        titleLines.push(i + (messagesWrapped[0]?messagesWrapped[0].length:0) + (messagesWrapped[1]?messagesWrapped[1].length:0));
+      }
+    }
+    var titleCnt = lines.length;
+    if (titleCnt) lines.push(""); // add blank line after title
+    lines = lines.concat(g.wrapString(msgLocal.body, g.getWidth()-10), [ "------" ]);
+    messagesWrapped.push(lines);
+    //print(lines);
+  //  allLines = allLines.concat(lines);
+  };
+  allLines.push("");
+  allLines.push("");
+  let allLines2 = [];
+  for (let i=0;i<messagesWrapped.length;i++) {
+    allLines2 = allLines2.concat(messagesWrapped[i]);
+  }
+  initScroll = messagesWrapped[0].length;
+  if (msgIdx==0) initScroll = 0;
+  if (!!initAtEndOfMsg) {
+    let i = msgIdx==0?0:1;
+    initScroll += messagesWrapped[i].length>8?messagesWrapped[i].length-8:0;
+  }
+
+  //print(allLines);
+  //print("titleLines:\n", titleLines);
+  //print("allLines2:\n",allLines2);
+  //print("messagesWrapped:\n",messagesWrapped);
+
+  E.showScroller({
+    scroll : initScroll*g.getFontHeight(),
+    h : g.getFontHeight(), // height of each menu item in pixels
+    c : allLines2.length, // number of menu items
+    // a function to draw a menu item
+    draw : function(idx, r) {
+      //print(idx); // FIXME: Remove this print.
+      // FIXME: in 2v13 onwards, clearRect(r) will work fine. There's a bug in 2v12
+      g.setBgColor(titleLines.find((e)=>e==idx)!==undefined ? g.theme.bg2 : g.theme.bg).
+        setColor(titleLines.find((e)=>e==idx)!==undefined ? g.theme.fg2 : g.theme.fg).
+        clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
+      g.setFont(bodyFont).setFontAlign(0,-1).drawString(allLines2[idx], r.x+r.w/2, r.y);
+      if (idx>=allLines2.length-1 && msgIdx<MESSAGES.length-1) {
+        setTimeout(()=>{
+          showMessageScroller2(MESSAGES[msgIdx+1], true);
+        }, 50)
+      }
+      if (idx==0 && msgIdx>0) {
+        setTimeout(()=>{
+          showMessageScroller2(MESSAGES[msgIdx-1], false);
+        }, 50)
+      }
+    }, select : function(idx, touch) {
+      if (touch.type == 0) {
+        showMessage(msg.id, true)
+      }
+      if (touch.type == 2) {
+        showMessageSettings(msg)
+      }
+        //showMessage(msg.id, true);
+    },
+    back : () => showMessage(messages[idx].id, true)
+  });
+}
+
 function showMessagesScroller(messages, offsetToMessageNumber) {
   print(messages);
   cancelReloadTimeout();
@@ -330,7 +417,7 @@ function showMessageSettings(msg) {
   };
 
   if (msg.id!="music")
-    menu[/*LANG*/"View Message"] = () => showMessageScroller(msg);
+    menu[/*LANG*/"View Message"] = () => showMessageScroller2(msg);
 
   if (msg.reply && reply) {
     menu[/*LANG*/"Reply"] = () => {
@@ -503,7 +590,7 @@ function showMessage(msgid, persist) {
     ]},
     {type:"txt", font:bodyFont, label:body, fillx:1, filly:1, pad:2, cb:()=>{
       // allow tapping to show a larger version
-      showMessageScroller(msg);
+      showMessageScroller2(msg);
     } },
     {type:"h",fillx:1, c: footer}
   ]},{back:goBack});
@@ -549,7 +636,8 @@ function checkMessages(options) {
   // If we have a new message, show it
   if (!options.ignoreUnread && newMessages.length) {
     delete newMessages[0].show; // stop us getting stuck here if we're called a second time
-    showMessage(newMessages[0].id, false);
+    //showMessage(newMessages[0].id, false);
+    showMessageScroller2(MESSAGES[2], false);
     // buzz after showMessage, so being busy during layout doesn't affect the buzz pattern
     if (global.BUZZ_ON_NEW_MESSAGE) {
       // this is set if we entered the messages app by loading `messagegui.new.js`
@@ -664,6 +752,6 @@ Bangle.on('lock',locked => {
     require("messages").stopBuzz();
 });
 
-setTimeout(() => {
-  showMessagesScroller(MESSAGES);
-}, 11);
+//setTimeout(() => {
+//  showMessageScroller2(MESSAGES[2], false);
+//}, 11);
