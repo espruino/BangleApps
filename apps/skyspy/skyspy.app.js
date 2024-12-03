@@ -701,7 +701,8 @@ let sky = {
     let r = this.qualest();
     let r1 = this.goodest();
     print(r, r1, this.old_msg.hdop, this.old_msg.quality);
-    ui.drawMsg(r + "\n" + r1 + "\n" + this.old_msg.hdop + "\n" + this.old_msg.quality);
+    if (ui.display == 4)
+      ui.drawMsg(r + "\n" + r1 + "\n" + this.old_msg.hdop + "-" + this.old_msg.quality + "d\n" + (getTime() - this.sky_start));
     this.trackSatelliteVisibility();
     //print(this.sats);
     if (this.sats_used < 5)
@@ -813,7 +814,7 @@ function markGps() {
 }
 
 ui.init();
-ui.numScreens = 4;
+ui.numScreens = 5;
 gps.init();
 quality.resetAlt();
 fmt.init();
