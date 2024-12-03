@@ -184,10 +184,15 @@ exs.stats.dist.on("notify", (dist) => {
   let thisSplit = totalDist - prev.dist;
   let thisTime = exs.state.duration - prev.time;
 
-  while(thisSplit > 1000) {
-    splits.push({ dist: thisSplit as Dist, time: thisTime as Time });
-    thisTime = 0; // if we've jumped more than 1k, credit the time to the first split
-    thisSplit -= 1000;
+  if (thisSplit > 1000) {
+    if (thisTime > 0) {
+      // if we have splits, or time isn't ridiculous, store the split
+      // (otherwise we're initialising GPS and it's inaccurate)
+      if (splits.length || thisTime > 1000 * 60)
+        splits.push({ dist: thisSplit as Dist, time: thisTime as Time });
+    }
+
+    thisSplit %= 1000;
   }
 
   // subtract <how much we're over> off the next split notify
