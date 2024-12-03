@@ -630,15 +630,15 @@ let sky = {
     return this.sats.slice(0, this.snum).sort((a, b) => b.snr - a.snr);
   },
   getSatSNR: function(n) { /* Get n-th strongest sat */
-  if (n <= 0 || n > this.sats.length)
-    return -1;
+    if (n <= 0 || n > this.sats.length)
+      return -1;
     
-  // Sort the satellites by snr in descending order
-  let sortedSats = this.snrSort();
+    // Sort the satellites by snr in descending order
+    let sortedSats = this.snrSort();
 
-  // Return the SNR of the n-th strongest satellite
-  return sortedSats[n - 1].snr;
-},
+    // Return the SNR of the n-th strongest satellite
+    return sortedSats[n - 1].snr;
+  },
   qualest: function() {
     // Sort the satellites by snr in descending order
     let sortedSats = this.snrSort();
@@ -653,60 +653,62 @@ let sky = {
   },
   satVisibility: [],
   trackSatelliteVisibility: function() {
-  const threshold = this.snrLim; // SNR threshold
-  const now = getTime();
-  let newVisibility = [];
-  //this.satVisibility = [];
-  for (let i = 0; i < this.snum; i++) {
-    let sat = this.sats[i];
-    let existingSat = this.satVisibility[sat.id];
-    if (sat.snr >= threshold) {
-      if (!existingSat) {
-        // New satellite starts visibility
-        newVisibility[sat.id] = { start: now, visible: true };
-      } else 
-        newVisibility[sat.id] = this.satVisibility[sat.id];
+    const threshold = this.snrLim; // SNR threshold
+    const now = getTime();
+    let newVisibility = [];
+    //this.satVisibility = [];
+    for (let i = 0; i < this.snum; i++) {
+      let sat = this.sats[i];
+      let existingSat = this.satVisibility[sat.id];
+      if (sat.snr >= threshold) {
+        if (!existingSat) {
+          // New satellite starts visibility
+          newVisibility[sat.id] = { start: now, visible: true };
+        } else 
+          newVisibility[sat.id] = this.satVisibility[sat.id];
+      }
     }
-  }
-  this.satVisibility = newVisibility;
-},
+    this.satVisibility = newVisibility;
+  },
   getnthLowestStartTimeSat: function(n) {
-  // Collect all satellites from visibility
-  let satellites = Object.values(this.satVisibility);
+    // Collect all satellites from visibility
+    let satellites = Object.values(this.satVisibility);
 
-  // Ensure we have at least 5 satellites
-  if (satellites.length < n)
-    return -1;
+    // Ensure we have at least 5 satellites
+    if (satellites.length < n)
+      return -1;
 
-  // Sort satellites by start time in ascending order
-  satellites.sort((a, b) => a.start - b.start);
+    // Sort satellites by start time in ascending order
+    satellites.sort((a, b) => a.start - b.start);
 
-  // Return the satellite with the 5th lowest start time
-  return satellites[n-1]; // 0-based index, so 5th is index 4
-},
+    // Return the satellite with the 5th lowest start time
+    return satellites[n-1]; // 0-based index, so 5th is index 4
+  },
   goodest: function () {
     let s = this.getnthLowestStartTimeSat(5);
-    let t = getTime() - s;
+    if (s==-1)
+      return "none";
+    let t = getTime() - s.start;
     return "" + t;
   },
   messageEnd: function() {
-          this.old_msg = this.msg;
-      this.msg = {};
-      this.msg.gp = {};
-      this.msg.bd = {};
-      this.msg.gl = {};
-      this.drawSats(this.sats);
-      let r = this.qualest();
-      let r1 = this.goodest();
-      print(r, r1, this.old_msg.hdop, this.old_msg.quality);
+    this.old_msg = this.msg;
+    this.msg = {};
+    this.msg.gp = {};
+    this.msg.bd = {};
+    this.msg.gl = {};
+    this.drawSats(this.sats);
+    let r = this.qualest();
+    let r1 = this.goodest();
+    print(r, r1, this.old_msg.hdop, this.old_msg.quality);
     ui.drawMsg(r + "\n" + r1 + "\n" + this.old_msg.hdop + "\n" + this.old_msg.quality);
     this.trackSatelliteVisibility();
-      //print(this.sats);
-      if (this.sats_used < 5)
-        this.sky_start = getTime();
-      this.snum = 0;
-      this.sats = [];
-      this.sats_used = 0;
+    //print(this.sats);
+    if (this.sats_used < 5)
+      this.sky_start = getTime();
+    this.snum = 0;
+    this.sats = [];
+    this.sats_used = 0;
 
   },
   parseRaw: function(msg, lost) {
