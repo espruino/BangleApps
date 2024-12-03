@@ -431,7 +431,6 @@ let quality = {
       print("...no fix\n");
       quality.fix_start = getTime();
     }
-    return;
     //print("fix: ", fix);
     //print("qalt: ", qalt);
     if (qalt < 0 || qalt > 10)
@@ -449,8 +448,6 @@ let quality = {
 
     quality.updateAltitude();
     quality.displayData(lat, alt, speed, hdop, adelta, tdelta);
-
-    setTimeout(quality.updateGps, 1000); // FIXME: this is likely a problem
   },
 
   adjustAltitude: function() {
@@ -497,7 +494,7 @@ let quality = {
     let ddalt = quality.calcAlt(alt, cur_altitude);
     let msg = this.formatDisplayMessage(lat, alt, speed, hdop, adelta, ddalt, tdelta);
 
-    if (ui.display > 0) {
+    if (msg != "") {
       g.reset().setFont("Vector", 31)
         .setColor(1,1,1).fillRect(0, ui.wi, ui.w, ui.y2)
         .setColor(0,0,0).drawString(msg, 3, 25);
@@ -514,7 +511,7 @@ let quality = {
       msg = speed + "km/h\n" + "e" + hdop + "m" + "\ndd " +
             qalt.toFixed(0) + "\n(" + quality.step + "/" + 
             ddalt.toFixed(0) + ")" + "\n" + alt + "m+" + adelta;
-    } else {
+    } else if (ui.display == 3) {
       let t = getTime();
       //print(t, this.fix_start);
       msg = "St: " + fmt.fmtTimeDiff(t-gps.gps_start) + "\n";
@@ -611,7 +608,8 @@ let sky = {
     return sys.sent + "." + sys.d23 + "D "+ this.tof(sys.pdop) + " " + this.tof(sys.vdop) + "\n";
   },
   display: function() {
-    if (ui.display != 1)
+    /* unused on skyspy */
+    if (ui.display == 1)
       return;
     let m = this.old_msg;
     let msg = "" + this.tof(m.time) + "\n" + 
@@ -710,7 +708,7 @@ let sky = {
     this.snum = 0;
     this.sats = [];
     this.sats_used = 0;
-
+    quality.updateGps(); /* FIXME */
   },
   parseRaw: function(msg, lost) {
     if (lost) print("## data lost");
@@ -810,11 +808,16 @@ let sky = {
 function markGps() {
   gps.start_gps();
   Bangle.on('GPS-raw', (msg, lost) => sky.parseRaw(msg, lost));
-  quality.updateGps();
 }
 
 ui.init();
 ui.numScreens = 5;
+/* 0.. sat drawing
+   1.. position, basic data
+   2.. fix quality esitmation
+   3.. times from ...
+   4.. time to fix experiment
+*/
 gps.init();
 quality.resetAlt();
 fmt.init();
