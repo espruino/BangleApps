@@ -1,2 +1,3 @@
 0.01: New app!
 0.02: Show elapsed time on pause screen
+0.03: Avoid initial GPS skew and allow reset of time/splits
