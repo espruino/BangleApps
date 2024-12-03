@@ -33,6 +33,7 @@ type MenuNumberItem = {
 type MenuOptions = {
   title?: string;
   back?: () => void;
+  remove?: () => void;
   selected?: number;
   fontHeight?: number;
   scroll?: number;
@@ -78,6 +79,7 @@ type MenuInstance = {
 type MenuScroller = {
   scroll: number;
 };
+
 
 declare const BTN1: Pin;
 declare const BTN2: Pin;
@@ -934,7 +936,7 @@ declare class NRF {
    * See Nordic's `ble_gap_evt_auth_status_t` structure for more information.
    * @param {string} event - The event to listen to.
    * @param {(status: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `status` An object containing `{auth_status,bonded,lv4,kdist_own,kdist_peer}
+   * * `status` An object containing `{auth_status,bonded,lv4,kdist_own,kdist_peer}`
    * @url http://www.espruino.com/Reference#l_NRF_security
    */
   static on(event: "security", callback: (status: any) => void): void;
@@ -1637,7 +1639,7 @@ declare class NRF {
 
   /**
    * **THIS IS DEPRECATED** - please use `NRF.setConnectionInterval` for peripheral
-   * and `NRF.connect(addr, options)`/`BluetoothRemoteGATTServer.connect(options)`
+   * and `NRF.connect(address, options)`/`BluetoothRemoteGATTServer.connect(options)`
    * for central connections.
    * This sets the connection parameters - these affect the transfer speed and power
    * usage when the device is connected.
@@ -2307,9 +2309,9 @@ declare class AES {
   /**
    *
    * @param {any} passphrase - Message to encrypt
-   * @param {any} key - Key to encrypt message - must be an ArrayBuffer of 128, 192, or 256 BITS
+   * @param {any} key - Key to encrypt message - must be an `ArrayBuffer` of 128, 192, or 256 BITS
    * @param {any} [options] - [optional] An object, may specify `{ iv : new Uint8Array(16), mode : 'CBC|CFB|CTR|OFB|ECB' }`
-   * @returns {any} Returns an ArrayBuffer
+   * @returns {any} Returns an `ArrayBuffer`
    * @url http://www.espruino.com/Reference#l_AES_encrypt
    */
   static encrypt(passphrase: any, key: any, options?: any): ArrayBuffer;
@@ -2317,9 +2319,9 @@ declare class AES {
   /**
    *
    * @param {any} passphrase - Message to decrypt
-   * @param {any} key - Key to encrypt message - must be an ArrayBuffer of 128, 192, or 256 BITS
+   * @param {any} key - Key to encrypt message - must be an `ArrayBuffer` of 128, 192, or 256 BITS
    * @param {any} [options] - [optional] An object, may specify `{ iv : new Uint8Array(16), mode : 'CBC|CFB|CTR|OFB|ECB' }`
-   * @returns {any} Returns an ArrayBuffer
+   * @returns {any} Returns an `ArrayBuffer`
    * @url http://www.espruino.com/Reference#l_AES_decrypt
    */
   static decrypt(passphrase: any, key: any, options?: any): ArrayBuffer;
@@ -2649,7 +2651,7 @@ declare class Socket {
 declare class dgramSocket {
   /**
    * The 'message' event is called when a datagram message is received. If a handler
-   * is defined with `X.on('message', function(msg) { ... })` then it will be called`
+   * is defined with `X.on('message', function(msg) { ... })` then it will be called
    * @param {string} event - The event to listen to.
    * @param {(msg: any, rinfo: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
    * * `msg` A string containing the received message
@@ -3745,6 +3747,201 @@ declare class Qwiic {
    * @url http://www.espruino.com/Reference#l_Qwiic_i2c
    */
   i2c: any;
+}
+
+/**
+ * @url http://www.espruino.com/Reference#Pip
+ */
+declare class Pip {
+  /**
+   * The video had started
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @url http://www.espruino.com/Reference#l_Pip_streamStarted
+   */
+  static on(event: "streamStarted", callback: () => void): void;
+
+  /**
+   * The video had ended
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @url http://www.espruino.com/Reference#l_Pip_streamStopped
+   */
+  static on(event: "streamStopped", callback: () => void): void;
+
+  /**
+   * The video had looped
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @url http://www.espruino.com/Reference#l_Pip_streamLooped
+   */
+  static on(event: "streamLooped", callback: () => void): void;
+
+  /**
+   *
+   * @param {any} fn - Filename
+   * @param {any} options - [Optional] object `{x:0, y:0, debug:false, repeat:false}`
+   * @url http://www.espruino.com/Reference#l_Pip_videoStart
+   */
+  static videoStart(fn: any, options: any): void;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_Pip_videoStop
+   */
+  static videoStop(): void;
+
+  /**
+   *
+   * @param {any} fn - Filename
+   * @param {any} options - [Optional] object `{debug:false, repeat:false}`
+   * @url http://www.espruino.com/Reference#l_Pip_audioStart
+   */
+  static audioStart(fn: any, options: any): void;
+
+  /**
+   * Read the given WAV file into RAM
+   *
+   * @param {any} fn - Filename
+   * @returns {any} The raw sound data as a flat string
+   * @url http://www.espruino.com/Reference#l_Pip_audioRead
+   */
+  static audioRead(fn: any): any;
+
+  /**
+   * Return the builtin sound
+   *
+   * @param {any} id - OK/NEXT/COLUMN
+   * @returns {any} The sound as a native string
+   * @url http://www.espruino.com/Reference#l_Pip_audioBuiltin
+   */
+  static audioBuiltin(id: any): any;
+
+  /**
+   * Return how many samples are free in the ring buffer
+   * @returns {number} How many samples are left free in the ring buffer
+   * @url http://www.espruino.com/Reference#l_Pip_audioGetFree
+   */
+  static audioGetFree(): number;
+
+  /**
+   * Play audio straight from a variable of raw WAV data - this adds everything to the buffer at once so blocks
+   *
+   * @param {any} wav - Raw 16 bit sound data
+   * @param {any} options - [Optional] object
+   * @url http://www.espruino.com/Reference#l_Pip_audioStartVar
+   */
+  static audioStartVar(wav: any, options: any): void;
+
+  /**
+   *
+   * @param {number} vol
+   * @url http://www.espruino.com/Reference#l_Pip_setVol
+   */
+  static setVol(vol: number): void;
+
+  /**
+   * Writes a DAC register with a value
+   *
+   * @param {number} reg
+   * @param {number} value
+   * @url http://www.espruino.com/Reference#l_Pip_writeDACReg
+   */
+  static writeDACReg(reg: number, value: number): void;
+
+  /**
+   * Returns the current value of a DAC register
+   *
+   * @param {number} reg
+   * @returns {number} The current register value
+   * @url http://www.espruino.com/Reference#l_Pip_readDACReg
+   */
+  static readDACReg(reg: number): number;
+
+  /**
+   * Enable/disabled the DAC power supply (which also powers the audio amp and SD card)
+   *
+   * @param {boolean} isOn
+   * @url http://www.espruino.com/Reference#l_Pip_setDACPower
+   */
+  static setDACPower(isOn: ShortBoolean): void;
+
+  /**
+   * Initialise the ES8388 audio codec IC
+   * @url http://www.espruino.com/Reference#l_Pip_initDAC
+   */
+  static initDAC(): void;
+
+  /**
+   * * 'off'/undefined -> off
+   * * 'out' -> output
+   *
+   * @param {any} mode - Mode string - see below
+   * @url http://www.espruino.com/Reference#l_Pip_setDACMode
+   */
+  static setDACMode(mode: any): void;
+
+  /**
+   *
+   * @param {boolean} isOn
+   * @url http://www.espruino.com/Reference#l_Pip_setLCDPower
+   */
+  static setLCDPower(isOn: ShortBoolean): void;
+
+  /**
+   * Enter standby mode - can only be started by pressing the power button (PA0).
+   * @url http://www.espruino.com/Reference#l_Pip_off
+   */
+  static off(): void;
+
+  /**
+   * Enter sleep mode - JS is still executed
+   * @url http://www.espruino.com/Reference#l_Pip_sleep
+   */
+  static sleep(): void;
+
+  /**
+   * Wake up the pipboy
+   * @url http://www.espruino.com/Reference#l_Pip_wake
+   */
+  static wake(): void;
+
+  /**
+   * If `height` isn't specified the image height is used, otherwise only part of the image can be rendered.
+   *
+   * @param {any} img
+   * @param {number} x
+   * @param {number} y
+   * @param {any} options - scale(int) or { scale:int, noScanEffect:bool, height:int }
+   * @url http://www.espruino.com/Reference#l_Pip_blitImage
+   */
+  static blitImage(img: any, x: number, y: number, options: any): void;
+
+  /**
+   * This copies the contents of the current I2S audio buffer out to an array
+   * that can be rendered to the screen with drawPoly.
+   * Because the array is meant to be `x,y,x,y,x,y` only the second elements are
+   * touched.
+   *
+   * @param {any} dst
+   * @param {number} y1
+   * @param {number} y2
+   * @url http://www.espruino.com/Reference#l_Pip_getAudioWaveform
+   */
+  static getAudioWaveform(dst: any, y1: number, y2: number): void;
+
+  /**
+   * @returns {boolean} True if audio is currently playing
+   * @url http://www.espruino.com/Reference#l_Pip_audioIsPlaying
+   */
+  static audioIsPlaying(): boolean;
+
+  /**
+   * @returns {any} Returns `'video'` if a video is playing, or `'audio'` if audio is playing, `undefined` otherwise.
+   * @url http://www.espruino.com/Reference#l_Pip_streamPlaying
+   */
+  static streamPlaying(): any;
+
+
 }
 
 /**
@@ -4987,7 +5184,7 @@ declare class Badge {
 
 /**
  * A Web Bluetooth-style device - you can request one using
- * `NRF.requestDevice(address)`
+ * `NRF.requestDevice(options)`
  * For example:
  * ```
  * var gatt;
@@ -5454,8 +5651,8 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
   static getInstance(): Graphics | undefined
 
   /**
-   * Create a Graphics object that renders to an Array Buffer. This will have a field
-   * called 'buffer' that can get used to get at the buffer itself
+   * Create a `Graphics` object that renders to an `ArrayBuffer`. This will have a field
+   * called `'buffer'` that can get used to get at the buffer itself
    *
    * @param {number} width - Pixels wide
    * @param {number} height - Pixels high
@@ -5468,31 +5665,31 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * `interleavex` = Pixels 0,2,4,etc are from the top half of the image, 1,3,5,etc from the bottom half. Used for P3 LED panels.
    * `color_order` = re-orders the colour values that are supplied via setColor
    * `buffer` = if specified, createArrayBuffer won't create a new buffer but will use the given one
-   * @returns {any} The new Graphics object
+   * @returns {any} The new `Graphics` object
    * @url http://www.espruino.com/Reference#l_Graphics_createArrayBuffer
    */
   static createArrayBuffer(width: number, height: number, bpp: number, options?: { zigzag?: boolean, vertical_byte?: boolean, msb?: boolean, color_order?: "rgb" | "rbg" | "brg" | "bgr" | "grb" | "gbr" }): Graphics<true>;
 
   /**
-   * Create a Graphics object that renders by calling a JavaScript callback function
+   * Create a `Graphics` object that renders by calling a JavaScript callback function
    * to draw pixels
    *
    * @param {number} width - Pixels wide
    * @param {number} height - Pixels high
    * @param {number} bpp - Number of bits per pixel
    * @param {any} callback - A function of the form ```function(x,y,col)``` that is called whenever a pixel needs to be drawn, or an object with: ```{setPixel:function(x,y,col),fillRect:function(x1,y1,x2,y2,col)}```. All arguments are already bounds checked.
-   * @returns {any} The new Graphics object
+   * @returns {any} The new `Graphics` object
    * @url http://www.espruino.com/Reference#l_Graphics_createCallback
    */
   static createCallback(width: number, height: number, bpp: number, callback: ((x: number, y: number, col: number) => void) | { setPixel: (x: number, y: number, col: number) => void; fillRect: (x1: number, y1: number, x2: number, y2: number, col: number) => void }): Graphics<false>;
 
   /**
-   * Create a Graphics object that renders to SDL window (Linux-based devices only)
+   * Create a `Graphics` object that renders to SDL window (Linux-based devices only)
    *
    * @param {number} width - Pixels wide
    * @param {number} height - Pixels high
    * @param {number} bpp - Bits per pixel (8,16,24 or 32 supported)
-   * @returns {any} The new Graphics object
+   * @returns {any} The new `Graphics` object
    * @url http://www.espruino.com/Reference#l_Graphics_createSDL
    */
   static createSDL(width: number, height: number, bpp: number): Graphics;
@@ -5563,6 +5760,69 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
   drawSeg(a: number, ar: number, r: number): Graphics;
 
   /**
+   * Set the current font to Monofonto 23 (2 bpp, cap height = 22 px, total height = 27 px)
+   *
+   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto23
+   */
+  setFontMonofonto23(scale?: number): Graphics;
+
+  /**
+   * Set the current font to Monofonto 16 (4 bpp, cap height = 16 px)
+   *
+   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto16
+   */
+  setFontMonofonto16(scale?: number): Graphics;
+
+  /**
+   * Set the current font to Monofonto 18 (2 bpp, cap height = 17 px, total height = 21 px)
+   *
+   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto18
+   */
+  setFontMonofonto18(scale?: number): Graphics;
+
+  /**
+   * Set the current font to Monofonto 96 (digits and colon only, 2 bpp, cap height = 96 px)
+   *
+   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto96
+   */
+  setFontMonofonto96(scale?: number): Graphics;
+
+  /**
+   * Set the current font to Monofonto 28 (2 bpp, cap height = 26 px, total height = 33 px)
+   *
+   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto28
+   */
+  setFontMonofonto28(scale?: number): Graphics;
+
+  /**
+   * Set the current font to Monofonto 120 (digits and colon only, 2 bpp, cap height = 120 px)
+   *
+   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto120
+   */
+  setFontMonofonto120(scale?: number): Graphics;
+
+  /**
+   * Set the current font to Monofonto 36 (2 bpp, cap height = 34 px, total height = 43 px)
+   *
+   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto36
+   */
+  setFontMonofonto36(scale?: number): Graphics;
+
+  /**
    * Set the current font
    *
    * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
@@ -5601,7 +5861,7 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
   flip(all?: ShortBoolean): void;
 
   /**
-   * On Graphics instances with an offscreen buffer, this is an `ArrayBuffer` that
+   * On `Graphics` instances with an offscreen buffer, this is an `ArrayBuffer` that
    * provides access to the underlying pixel data.
    * ```
    * g=Graphics.createArrayBuffer(8,8,8)
@@ -5617,32 +5877,32 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * 0, 0, 0, 0, 0, 0, 255, 0,
    * 0, 0, 0, 0, 0, 0, 0, 255])
    * ```
-   * @returns {any} An ArrayBuffer (or not defined on Graphics instances not created with `Graphics.createArrayBuffer`)
+   * @returns {any} An ArrayBuffer (or not defined on `Graphics` instances not created with `Graphics.createArrayBuffer`)
    * @url http://www.espruino.com/Reference#l_Graphics_buffer
    */
   buffer: IsBuffer extends true ? ArrayBuffer : undefined
 
   /**
-   * The width of this Graphics instance
-   * @returns {number} The width of this Graphics instance
+   * The width of this `Graphics` instance
+   * @returns {number} The width of this `Graphics` instance
    * @url http://www.espruino.com/Reference#l_Graphics_getWidth
    */
   getWidth(): number;
 
   /**
-   * The height of this Graphics instance
-   * @returns {number} The height of this Graphics instance
+   * The height of this `Graphics` instance
+   * @returns {number} The height of this `Graphics` instance
    * @url http://www.espruino.com/Reference#l_Graphics_getHeight
    */
   getHeight(): number;
 
   /**
-   * The number of bits per pixel of this Graphics instance
+   * The number of bits per pixel of this `Graphics` instance
    * **Note:** Bangle.js 2 behaves a little differently here. The display is 3 bit,
    * so `getBPP` returns 3 and `asBMP`/`asImage`/etc return 3 bit images. However in
    * order to allow dithering, the colors returned by `Graphics.getColor` and
    * `Graphics.theme` are actually 16 bits.
-   * @returns {number} The bits per pixel of this Graphics instance
+   * @returns {number} The bits per pixel of this `Graphics` instance
    * @url http://www.espruino.com/Reference#l_Graphics_getBPP
    */
   getBPP(): number;
@@ -5807,7 +6067,7 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * g.toColor(1,0,0) => 0xF800
    * ```
    *
-   * @param {any} r - Red (between 0 and 1) **OR** an integer representing the color in the current bit depth and color order **OR** a hexidecimal color string of the form `'#rrggbb' or `'#rgb'`
+   * @param {any} r - Red (between 0 and 1) **OR** an integer representing the color in the current bit depth and color order **OR** a hexidecimal color string of the form `'#rrggbb'` or `'#rgb'`
    * @param {any} g - Green (between 0 and 1)
    * @param {any} b - Blue (between 0 and 1)
    * @returns {number} The color index represented by the arguments
@@ -6263,8 +6523,8 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * * A String where the the first few bytes are:
    *   `width,height,bpp,[transparent,]image_bytes...`. If a transparent colour is
    *   specified the top bit of `bpp` should be set.
-   * * An ArrayBuffer Graphics object (if `bpp<8`, `msb:true` must be set) - this is
-   *   disabled on devices without much flash memory available. If a Graphics object
+   * * An ArrayBuffer `Graphics` object (if `bpp<8`, `msb:true` must be set) - this is
+   *   disabled on devices without much flash memory available. If a `Graphics` object
    *   is supplied, it can also contain transparent/palette fields as if it were
    *   an image.
    * See https://www.espruino.com/Graphics#images-bitmaps for more information about
@@ -6341,14 +6601,14 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
   drawImages(layers: { x: number, y: number, image: Image, scale?: number, rotate?: number, center?: boolean, repeat?: boolean, nobounds?: boolean }[], options?: { x: number, y: number, width: number, height: number }): Graphics;
 
   /**
-   * Return this Graphics object as an Image that can be used with
+   * Return this `Graphics` object as an Image that can be used with
    * `Graphics.drawImage`. Check out [the Graphics reference
    * page](http://www.espruino.com/Graphics#images-bitmaps) for more information on
    * images.
    * Will return undefined if data can't be allocated for the image.
    * The image data itself will be referenced rather than copied if:
    * * An image `object` was requested (not `string`)
-   * * The Graphics instance was created with `Graphics.createArrayBuffer`
+   * * The `Graphics` instance was created with `Graphics.createArrayBuffer`
    * * Is 8 bpp *OR* the `{msb:true}` option was given
    * * No other format options (zigzag/etc) were given
    * Otherwise data will be copied, which takes up more space and may be quite slow.
@@ -6414,7 +6674,7 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
   blit(options: { x1: number, y1: number, x2: number, y2: number, w: number, h: number, setModified?: boolean }): Graphics;
 
   /**
-   * Create a Windows BMP file from this Graphics instance, and return it as a
+   * Create a Windows BMP file from this `Graphics` instance, and return it as a
    * String.
    * @returns {any} A String representing the Graphics as a Windows BMP file (or 'undefined' if not possible)
    * @url http://www.espruino.com/Reference#l_Graphics_asBMP
@@ -6437,9 +6697,9 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * inline automatically.
    * This is identical to `console.log(g.asURL())` - it is just a convenient function
    * for easy debugging and producing screenshots of what is currently in the
-   * Graphics instance.
-   * **Note:** This may not work on some bit depths of Graphics instances. It will
-   * also not work for the main Graphics instance of Bangle.js 1 as the graphics on
+   * `Graphics` instance.
+   * **Note:** This may not work on some bit depths of `Graphics` instances. It will
+   * also not work for the main `Graphics` instance of Bangle.js 1 as the graphics on
    * Bangle.js 1 are stored in write-only memory.
    * @url http://www.espruino.com/Reference#l_Graphics_dump
    */
@@ -6491,8 +6751,8 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
   transformVertices(arr: number[], transformation: { x?: number, y?: number, scale?: number, rotate?: number } | [number, number, number, number, number, number]): number[];
 
   /**
-   * Flood fills the given Graphics instance out from a particular point.
-   * **Note:** This only works on Graphics instances that support readback with `getPixel`. It
+   * Flood fills the given `Graphics` instance out from a particular point.
+   * **Note:** This only works on `Graphics` instances that support readback with `getPixel`. It
    * is also not capable of filling over dithered patterns (eg non-solid colours on Bangle.js 2)
    *
    * @param {number} x - X coordinate to start from
@@ -6517,7 +6777,7 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * }
    * ```
    * These values can then be passed to `g.setColor`/`g.setBgColor` for example
-   * `g.setColor(g.theme.fg2)`. When the Graphics instance is reset, the background
+   * `g.setColor(g.theme.fg2)`. When the `Graphics` instance is reset, the background
    * color is automatically set to `g.theme.bg` and foreground is set to
    * `g.theme.fg`.
    * On Bangle.js these values can be changed by writing updated values to `theme` in
@@ -6544,8 +6804,8 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
   setTheme(theme: { [key in keyof Theme]?: Theme[key] extends number ? ColorResolvable : Theme[key] }): Graphics;
 
   /**
-   * Perform a filter on the current Graphics instance. Requires the Graphics
-   * instance to support readback (eg `getPixel` should work), and only uses
+   * Perform a filter on the current `Graphics` instance. Requires the Graphics
+   * instance to support readback (eg `.getPixel` should work), and only uses
    * 8 bit values for buffer and filter.
    * ```
    * g.filter([ // a gaussian filter
@@ -6692,6 +6952,8 @@ declare class Waveform {
    * analogWrite(H0, 0.5, {freq:80000}); // set up H0 to output an analog value by PWM
    * w.on("finish", () => print("Done!"))
    * w.startOutput(H0,8000); // start playback
+   * ```
+   * ```JS
    * // On 2v25, from Storage
    * var f = require("Storage").read("sound.pcm");
    * var w = new Waveform(E.toArrayBuffer(f));
@@ -7342,8 +7604,8 @@ interface Uint8ArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Uint8Array_Uint8Array
    */
@@ -7367,8 +7629,8 @@ interface Uint8ClampedArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Uint8ClampedArray_Uint8ClampedArray
    */
@@ -7390,8 +7652,8 @@ interface Int8ArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Int8Array_Int8Array
    */
@@ -7413,8 +7675,8 @@ interface Uint16ArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Uint16Array_Uint16Array
    */
@@ -7436,8 +7698,8 @@ interface Int16ArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Int16Array_Int16Array
    */
@@ -7468,8 +7730,8 @@ declare class Uint24Array {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Uint24Array_Uint24Array
    */
@@ -7489,8 +7751,8 @@ interface Uint32ArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Uint32Array_Uint32Array
    */
@@ -7512,8 +7774,8 @@ interface Int32ArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Int32Array_Int32Array
    */
@@ -7535,8 +7797,8 @@ interface Float32ArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Float32Array_Float32Array
    */
@@ -7558,8 +7820,8 @@ interface Float64ArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer). Maximum 65535.
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`). Maximum 65535.
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Float64Array_Float64Array
    */
@@ -8828,6 +9090,35 @@ declare class E {
   static kickWatchdog(): void;
 
   /**
+   * Called when a bit rises or falls above a set level. See `E.setComparator` for setup.
+   * @param {string} event - The event to listen to.
+   * @param {(dir: number) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `dir` The direction of the pin's state change
+   * @url http://www.espruino.com/Reference#l_E_comparator
+   */
+  static on(event: "comparator", callback: (dir: number) => void): void;
+
+  /**
+   * (Added 2v25) Enable the nRF52 chip's `LPCOMP` hardware. When enabled, it creates an `E.on("comparator", ...)`
+   * event whenever the pin supplied rises or falls past the setpoint given (with 50mv hysteresis).
+   * ```JS
+   * E.setComparator(D28, 8/16); // compare with VDD/2
+   * E.on("comparator", e => {
+   *   print(e); // 1 for up, or -1 for down
+   * });
+   * ```
+   * **Note:** There is just one LPCOMP, so you can only enable the comparator on one pin.
+   * **On [Jolt.js](https://www.espruino.com/Jolt.js):** when using `E.setComparator` on the analog pins on the
+   * Terminal block (`H0`/`H2`/`H4`/`H8`), the `level` you give needs to be in volts. Because the comparator only
+   * works in 16 steps, you can only detect multiples of 1.37v (1.37/2.74/4.11/etc)
+   *
+   * @param {Pin} pin - The `Pin` to enable the comparator on
+   * @param {number} level - The level to trigger on, or `undefined` to disable. (see below for [Jolt.js](https://www.espruino.com/Jolt.js))
+   * @url http://www.espruino.com/Reference#l_E_setComparator
+   */
+  static setComparator(pin: Pin, level: number): void;
+
+  /**
    * Get and reset the error flags. Returns an array that can contain:
    * `'FIFO_FULL'`: The receive FIFO filled up and data was lost. This could be state
    * transitions for setWatch, or received characters.
@@ -8915,7 +9206,7 @@ declare class E {
    * Note that this is an ArrayBuffer, not a Uint8Array. To get one of those, do:
    * `new Uint8Array(E.toArrayBuffer('....'))`.
    *
-   * @param {any} str - The string to convert to an ArrayBuffer
+   * @param {any} str - The string to convert to an `ArrayBuffer`
    * @returns {any} An ArrayBuffer that uses the given string
    * @url http://www.espruino.com/Reference#l_E_toArrayBuffer
    */
@@ -8932,12 +9223,16 @@ declare class E {
    * flat string of the same length, the backing string will be returned without
    * doing a copy or other allocation. The same applies if there's a single argument
    * which is itself a flat string.
-   * ```JS
+   * ```
    * E.toString(0,1,2,"Hi",3)
    * "\0\1\2Hi\3"
+   * ```
+   * ```
    * E.toString(1,2,{data:[3,4], count:4},5,6)
    * "\1\2\3\4\3\4\3\4\3\4\5\6"
-   * >E.toString(1,2,{callback : () => "Hello World"},5,6)
+   * ```
+   * ```
+   * E.toString(1,2,{callback : () => "Hello World"},5,6)
    * ="\1\2Hello World\5\6"
    * ```
    * **Note:** Prior to Espruino 2v18 `E.toString` would always return a flat string,
@@ -9014,7 +9309,7 @@ declare class E {
   static isUTF8(str: any): boolean;
 
   /**
-   * This creates a Uint8Array from the given arguments. These are handled as
+   * This creates a `Uint8Array` from the given arguments. These are handled as
    * follows:
    *  * `Number` -> read as an integer, using the lowest 8 bits
    *  * `String` -> use each character's numeric value (e.g.
@@ -9038,7 +9333,7 @@ declare class E {
    * =new Uint8Array([104, 105, 1, 2, 3])
    * ```
    *
-   * @param {any} args - The arguments to convert to a Uint8Array
+   * @param {any} args - The arguments to convert to a `Uint8Array`
    * @returns {any} A Uint8Array
    * @url http://www.espruino.com/Reference#l_E_toUint8Array
    */
@@ -9541,6 +9836,13 @@ declare class E {
   static reboot(): void;
 
   /**
+   * Forces a hard reboot of the microcontroller into the ST DFU mode
+   * **Note:** The device will stay in DFU mode until it is power-cycled or reset
+   * @url http://www.espruino.com/Reference#l_E_rebootToDFU
+   */
+  static rebootToDFU(): void;
+
+  /**
    * USB HID will only take effect next time you unplug and re-plug your Espruino. If
    * you're disconnecting it from power you'll have to make sure you have `save()`d
    * after calling this function.
@@ -9749,7 +10051,7 @@ declare class OneWire {
    * Read a byte
    *
    * @param {any} [count] - [optional] The amount of bytes to read
-   * @returns {any} The byte that was read, or a Uint8Array if count was specified and >=0
+   * @returns {any} The byte that was read, or a `Uint8Array` if count was specified and >=0
    * @url http://www.espruino.com/Reference#l_OneWire_read
    */
   read(count?: any): any;
@@ -10642,19 +10944,19 @@ declare class I2C {
   writeTo(address: any, ...data: any[]): void;
 
   /**
-   * Request bytes from the given slave device, and return them as a Uint8Array
+   * Request bytes from the given slave device, and return them as a `Uint8Array`
    * (packed array of bytes). This is like using Arduino Wire's requestFrom,
    * available and read functions. Sends a STOP unless `{address:X, stop:false}` is used.
    *
    * @param {any} address - The 7 bit address of the device to request bytes from, or an object of the form `{address:12, stop:false}` to send this data without a STOP signal.
    * @param {number} quantity - The number of bytes to request
-   * @returns {any} The data that was returned - as a Uint8Array
+   * @returns {any} The data that was returned - as a `Uint8Array`
    * @url http://www.espruino.com/Reference#l_I2C_readFrom
    */
   readFrom(address: any, quantity: number): Uint8Array;
 
   /**
-   * Request bytes from a register on the given I2C slave device, and return them as a Uint8Array
+   * Request bytes from a register on the given I2C slave device, and return them as a `Uint8Array`
    * (packed array of bytes).
    * This is the same as calling `I2C.writeTo` and `I2C.readFrom`:
    * ```
@@ -10667,7 +10969,7 @@ declare class I2C {
    * @param {number} address - The 7 bit address of the device to request bytes from
    * @param {number} reg - The register on the device to read bytes from
    * @param {number} quantity - The number of bytes to request
-   * @returns {any} The data that was returned - as a Uint8Array
+   * @returns {any} The data that was returned - as a `Uint8Array`
    * @url http://www.espruino.com/Reference#l_I2C_readReg
    */
   readReg(address: number, reg: number, quantity: number): Uint8Array;
@@ -11112,7 +11414,7 @@ declare class Serial {
   /**
    * Print a line to the serial port with a newline (`\r\n`) at the end of it.
    *  **Note:** This function converts data to a string first, e.g.
-   *  `Serial.print([1,2,3])` is equivalent to `Serial.print("1,2,3"). If you'd like
+   *  `Serial.print([1,2,3])` is equivalent to `Serial.print("1,2,3")`. If you'd like
    *  to write raw bytes, use `Serial.write`.
    *
    * @param {any} string - A String to print
@@ -11182,6 +11484,16 @@ declare class Serial {
    * @url http://www.espruino.com/Reference#l_Serial_flush
    */
   flush(): void;
+
+  /**
+   * (Added 2v25) Is the given Serial device connected?
+   * * USB/Bluetooth/Telnet/etc: Is this connected?
+   * * Serial1/etc: Has the device been initialised?
+   * * LoopbackA/LoopbackB/Terminal: always return true
+   * @returns {boolean} `true` if connected/initialised, false otherwise
+   * @url http://www.espruino.com/Reference#l_Serial_isConnected
+   */
+  isConnected(): boolean;
 }
 
 /**
@@ -12460,7 +12772,7 @@ declare function changeInterval(id: IntervalId, time: number): void;
  * Read 8 bits of memory at the given location - DANGEROUS!
  *
  * @param {number} addr - The address in memory to read
- * @param {number} [count] - [optional] the number of items to read. If >1 a Uint8Array will be returned.
+ * @param {number} [count] - [optional] the number of items to read. If >1 a `Uint8Array` will be returned.
  * @returns {any} The value of memory at the given location
  * @url http://www.espruino.com/Reference#l__global_peek8
  */
@@ -12480,7 +12792,7 @@ declare function poke8(addr: number, value: number | number[]): void;
  * Read 16 bits of memory at the given location - DANGEROUS!
  *
  * @param {number} addr - The address in memory to read
- * @param {number} [count] - [optional] the number of items to read. If >1 a Uint16Array will be returned.
+ * @param {number} [count] - [optional] the number of items to read. If >1 a `Uint16Array` will be returned.
  * @returns {any} The value of memory at the given location
  * @url http://www.espruino.com/Reference#l__global_peek16
  */
@@ -12500,7 +12812,7 @@ declare function poke16(addr: number, value: number | number[]): void;
  * Read 32 bits of memory at the given location - DANGEROUS!
  *
  * @param {number} addr - The address in memory to read
- * @param {number} [count] - [optional] the number of items to read. If >1 a Uint32Array will be returned.
+ * @param {number} [count] - [optional] the number of items to read. If >1 a `Uint32Array` will be returned.
  * @returns {any} The value of memory at the given location
  * @url http://www.espruino.com/Reference#l__global_peek32
  */
@@ -13267,10 +13579,9 @@ declare module "ESP8266" {
    * * `cpuFrequency` - CPU operating frequency in Mhz.
    * * `freeHeap` - Amount of free heap in bytes.
    * * `maxCon` - Maximum number of concurrent connections.
-   * * `flashMap` - Configured flash size&map: '512KB:256/256' .. '4MB:512/512'
+   * * `flashMap` - Configured flash size&map: '512KB:256/256' .. `'4MB:512/512'`
    * * `flashKB` - Configured flash size in KB as integer
-   * * `flashChip` - Type of flash chip as string with manufacturer & chip, ex: '0xEF
-   *   0x4016`
+   * * `flashChip` - Type of flash chip as string with manufacturer & chip, ex: `'0xEF 0x4016'`
    * @returns {any} The state of the ESP8266
    * @url http://www.espruino.com/Reference#l_ESP8266_getState
    */
@@ -13404,7 +13715,7 @@ declare module "crypto" {
    * @param {any} passphrase - Passphrase
    * @param {any} salt - Salt for turning passphrase into a key
    * @param {any} options - Object of Options, `{ keySize: 8 (in 32 bit words), iterations: 10, hasher: 'SHA1'/'SHA224'/'SHA256'/'SHA384'/'SHA512' }`
-   * @returns {any} Returns an ArrayBuffer
+   * @returns {any} Returns an `ArrayBuffer`
    * @url http://www.espruino.com/Reference#l_crypto_PBKDF2
    */
   function PBKDF2(passphrase: any, salt: any, options: any): ArrayBuffer;
@@ -13547,7 +13858,7 @@ declare module "tls" {
    * * Just specify the filename (<=100 characters) and it will be loaded and parsed
    *   if you have an SD card connected. For instance `options.key = "key.pem";`
    * * Specify a function, which will be called to retrieve the data. For instance
-   *   `options.key = function() { eeprom.load_my_info(); };
+   *   `options.key = function() { eeprom.load_my_info(); };`
    * For more information about generating and using certificates, see:
    * https://engineering.circle.com/https-authorized-certs-with-node-js/
    * (You'll need to use 2048 bit certificates as opposed to 4096 bit shown above)
@@ -14152,8 +14463,7 @@ declare module "http" {
    *   });
    * });
    * ```
-   * See `http.request()` and [the Internet page](/Internet) and ` for more usage
-   * examples.
+   * See `http.request()` and [the Internet page](/Internet) for more usage examples.
    *
    * @param {any} options - A simple URL, or an object containing host,port,path,method fields
    * @param {any} callback - A function(res) that will be called when a connection is made. You can then call `res.on('data', function(data) { ... })` and `res.on('close', function() { ... })` to deal with the response.
@@ -14465,14 +14775,14 @@ declare module "tensorflow" {
  */
 declare module "heatshrink" {
   /**
-   * Compress the data supplied as input, and return heatshrink encoded data as an ArrayBuffer.
+   * Compress the data supplied as input, and return heatshrink encoded data as an `ArrayBuffer`.
    * No type information is stored, and the `data` argument is treated as an array of bytes
    * (whether it is a `String`/`Uint8Array` or even `Uint16Array`), so the result of
-   * decompressing any compressed data will always be an ArrayBuffer.
+   * decompressing any compressed data will always be an `ArrayBuffer`.
    * If you'd like a way to perform compression/decompression on desktop, check out https://github.com/espruino/EspruinoWebTools#heatshrinkjs
    *
    * @param {any} data - The data to compress
-   * @returns {any} Returns the result as an ArrayBuffer
+   * @returns {any} Returns the result as an `ArrayBuffer`
    * @url http://www.espruino.com/Reference#l_heatshrink_compress
    */
   function compress(data: any): ArrayBuffer;
