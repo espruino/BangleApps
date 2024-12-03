@@ -12,8 +12,7 @@ function post(sensor, data) {
     });
 }
 
-exports.sendBattery = function () {
-    if (!NRF.getSecurityStatus().connected) return;
+function sendBattery() {
     const b = E.getBattery(),
         c = Bangle.isCharging();
     let i = "mdi:battery";
@@ -40,7 +39,26 @@ exports.sendBattery = function () {
             icon: i,
         }
     });
-};
+}
+
+function sendSteps() {
+    post("steps", {
+        state: Bangle.getStepCount(),
+        attributes: {
+            friendly_name: "{name} Step Count",
+            unit_of_measurement: "steps",
+            state_class: "total",
+            icon: "mdi:shoe-print",
+        }
+    });
+}
+
+exports.sendUpdate = function() {
+    if (!NRF.getSecurityStatus().connected) return;
+    sendBattery();
+    sendSteps();
+}
+
 
 let hrm_last = 0;
 const HRM_INTERVAL = 10*60*1000;
