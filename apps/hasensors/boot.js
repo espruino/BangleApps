@@ -3,4 +3,5 @@
     Bangle.on("charging", sb);
     NRF.on("connect", () => setTimeout(sb, 2000));
     setInterval(sb, 10 * 60 * 1000);
+    Bangle.on('HRM', h=>require("hasensors").sendHRM(h));
 })();

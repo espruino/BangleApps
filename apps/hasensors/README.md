@@ -22,3 +22,4 @@ You need to fill out these fields:
 Currently creates these sensors:
 * `<sensor id>_battery_level`: Your watch battery level as percentage
 * `<sensor id>_battery_state`: `charging` or `discharging`
+* `<sensor id>_hrm`: Heart rate (only if measured: this app doesn't enable/disable the sensor)

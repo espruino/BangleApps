@@ -14,7 +14,7 @@ function post(sensor, data) {
 
 exports.sendBattery = function () {
     if (!NRF.getSecurityStatus().connected) return;
-    const b = E.getBattery(), 
+    const b = E.getBattery(),
         c = Bangle.isCharging();
     let i = "mdi:battery";
     if (c) i += "-charging";
@@ -40,4 +40,24 @@ exports.sendBattery = function () {
             icon: i,
         }
     });
-}
+};
+
+let hrm_last = 0;
+const HRM_INTERVAL = 10*60*1000;
+exports.sendHRM = function (hrm) {
+    if (!NRF.getSecurityStatus().connected) return;
+    const now = (new Date).getTime();
+    if (hrm_last > now-HRM_INTERVAL) return;
+    post("hrm", {
+        state: hrm.bpm,
+            attributes: {
+            confidence: hrm.confidence,
+            raw: hrm.raw,
+            friendly_name: "{name} Heart Rate",
+            icon: "mdi:heart",
+            unit_of_measurement: "bpm",
+            state_class: "measurement",
+        }
+    });
+    hrm_last = now;
+};
