@@ -226,6 +226,32 @@ Bangle.on('twist', () => {
   Bangle.setBacklight(1);
 });
 
+Bangle.on('tap', _e => {
+  if(exs.state.active) return;
+
+  const menu: Menu = {
+    "": {
+      remove: () => {
+        draw();
+      },
+    },
+    "< Back": () => {
+      Bangle.setUI(); // calls `remove`, which handles redrawing
+    },
+    "Zero time": () => {
+      exs.start(); // calls reset
+      exs.stop(); // re-pauses
+      Bangle.setUI();
+    },
+    "Clear splits": () => {
+      splits.splice(0, splits.length);
+      Bangle.setUI();
+    },
+  };
+
+  E.showMenu(menu);
+});
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
