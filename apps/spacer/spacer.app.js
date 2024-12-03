@@ -197,7 +197,10 @@ let sky = {
   msg: {},
   tof: function(v) { let i = (1*v); return i.toFixed(0); },
   fmtSys: function(sys) {
-    return sys.sent + "." + sys.d23 + "D "+ this.tof(sys.pdop) + " " + this.tof(sys.vdop) + "\n";
+    if (sys.sent !== undefined && sys.d23 !== undefined)
+      return sys.sent + "." + sys.d23 + "D "+ this.tof(sys.pdop) + " " + this.tof(sys.vdop) + "\n";
+    else
+      return "(no data)\n";
   },
   display: function() {
     if (ui.display != 1)
