@@ -207,12 +207,14 @@ let arrow = {
     let distance = fmt.distance(currentPos, this.waypoint);
 
     this.north = 0;
-    let compass = Bangle.getCompass();
-    if (compass) {
-      let c = compass.heading;
-      this.north = c;
-      print("Compass:", c);
-      this.drawArrow(c, "Up", 1);
+    if (0) {
+      let compass = Bangle.getCompass();
+      if (compass) {
+        let c = compass.heading;
+        this.north = c;
+        print("Compass:", c);
+        this.drawArrow(c, "Up", 1);
+      }
     }
 
     if (fix.speed && fix.speed > 3)
