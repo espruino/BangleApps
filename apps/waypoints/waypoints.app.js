@@ -690,7 +690,7 @@ function testArrow() {
 }
 
 g.reset();
-if (0)
+if (1)
   mainMenu();
 else
   testArrow();
