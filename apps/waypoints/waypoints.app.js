@@ -205,7 +205,7 @@ let arrow = {
 
     let waypointBearing = fmt.bearing(currentPos, this.waypoint);
     let distance = fmt.distance(currentPos, this.waypoint);
-    
+
     this.north = 0;
     let compass = Bangle.getCompass();
     if (compass) {
@@ -214,7 +214,7 @@ let arrow = {
       print("Compass:", c);
       this.drawArrow(c, "Up", 1);
     }
-    
+
     if (fix.speed && fix.speed > 3)
       this.north = fix.course;
 
@@ -231,7 +231,7 @@ let arrow = {
       let s = fmt.fmtSpeed(fix.speed);
       this.drawArrow(currentHeading, s, 1);
     }
-    
+
     if (0) {
       let s;
       s = sun.sunPos();
@@ -245,7 +245,7 @@ let arrow = {
         this.drawArrow(s.azimuth, "Moon", 1);
       }
     }
-    
+
     g.setFont("Vector", 30).setFontAlign(-1, 1)
       .drawString(s, 0, 176)
       .setFontAlign(1, 1)
@@ -682,7 +682,7 @@ gps.init();
 function testArrow() {
   //Bangle.resetCompass(); // FIXME
   Bangle.setCompassPower(1, "waypoints");
-  
+
   arrow.name = "test";
   arrow.waypoint.lat = 50;
   arrow.waypoint.lon = 14.75;
