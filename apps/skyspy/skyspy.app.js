@@ -548,7 +548,8 @@ let sky = {
     ui.radCircle(1.0);
   },
 
-  snrLim: 18,
+  /* 18.. don't get reliable fix in 40s */
+  snrLim: 22,
   drawSat: function(s) {
     let a = s.azi / 360;
     let e = ((90 - s.ele) / 90);
