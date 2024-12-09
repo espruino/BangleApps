@@ -25,7 +25,7 @@
         </ul>
         <p>To update, click a link above and then click the 'Upload' button that appears.</p>
       </div>
-      
+
 
       <p><a href="#" id="info-btn">What is DFU? ▼</a></p>
       <div id="info-div" style="display:none">
@@ -53,7 +53,7 @@
         potentially overwrite your DFU with the wrong binary and brick your Bangle.</p>
         <input class="form-input" type="file" id="fileLoader" accept=".hex,.app_hex,.zip"/><br>
       </div>
-      
+
     </div>
 
 
@@ -109,7 +109,7 @@ function onInit(device) {
     else if (crcs[0] == 3329616485) version = "2v22";
     else if (crcs[0] == 1569433504) version = "2v23";
     else if (crcs[0] == 680675961) version = "2v24";
-    else if (crcs[0] == 4148062987 || crcs[0] == 3675049818) version = "2v25";        
+    else if (crcs[0] == 4148062987 || crcs[0] == 3675049818) version = "2v25";
     else { // for other versions all 7 pages are used, check those
       var crc = crcs[1];
       if (crc==1339551013) { version = "2v10.219"; ok = false; }
@@ -388,6 +388,7 @@ function createJS_bootloader(binary, startAddress, endAddress) {
   for (var i=startAddress;i<endAddress;i+=4096)
     hexJS += 'f.erasePage(0x'+i.toString(16)+');\n';
   hexJS += `f.write(_fw,${startAddress});\n`;
+  hexJS += 'E.showMessage("Update Complete.")\n';
   hexJS += `})()\n`;
   log("DFU ready for upload");
 }
