@@ -197,7 +197,7 @@ let sky = {
   msg: {},
   tof: function(v) { let i = (1*v); return i.toFixed(0); },
   fmtSys: function(sys) {
-    if (sys.sent !== undefined && sys.d23 !== undefined)
+    if (sys && sys.sent !== undefined && sys.d23 !== undefined)
       return sys.sent + "." + sys.d23 + "D "+ this.tof(sys.pdop) + " " + this.tof(sys.vdop) + "\n";
     else
       return "(no data)\n";
