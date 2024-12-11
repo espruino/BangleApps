@@ -139,6 +139,7 @@ Bangle.setUI({
     drawTimeout = undefined;
     Bangle.removeListener('lcdPower', updateState);
     Bangle.removeListener('lock', updateState);
+    Bangle.removeListener('charging', draw);
     require("widget_utils").show();
   }
 });
@@ -167,6 +168,7 @@ let updateState = function() {
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower', updateState);
 Bangle.on('lock', updateState);
+Bangle.on('charging', draw); // Immediately redraw when charger (dis)connected
 
 let unlock = true;
 updateState();
