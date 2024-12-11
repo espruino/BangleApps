@@ -88,6 +88,22 @@ let drawTimeout;
 let queueMillis = 1000;
 let unlock = true;
 
+const updateState = function() {
+  if (Bangle.isLCDOn()) {
+    if (!Bangle.isLocked()) {
+      queueMillis = 1000;
+      unlock = true;
+    } else {
+      queueMillis = 60000;
+      unlock = false;
+    }
+    draw();
+  } else {
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+  }
+};
+
 const queueDraw = function() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
@@ -150,22 +166,6 @@ if (settings.loadWidgets) {
   Bangle.loadWidgets();
   require("widget_utils").swipeOn();
 } else if (global.WIDGETS) require("widget_utils").hide();
-
-const updateState = function() {
-  if (Bangle.isLCDOn()) {
-    if (!Bangle.isLocked()) {
-      queueMillis = 1000;
-      unlock = true;
-    } else {
-      queueMillis = 60000;
-      unlock = false;
-    }
-    draw();
-  } else {
-    if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = undefined;
-  }
-};
 
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower', updateState);
