@@ -26,7 +26,7 @@ const zahlpos=(function() {
   return z;
 })();
 
-let zeiger = function(len,dia,tim) {
+const zeiger = function(len,dia,tim) {
   const x=c.x+ Math.cos(tim)*len/2,
         y=c.y + Math.sin(tim)*len/2,
         d={"d":3,"x":dia/2*Math.cos(tim+Math.PI/2),"y":dia/2*Math.sin(tim+Math.PI/2)},
@@ -34,7 +34,7 @@ let zeiger = function(len,dia,tim) {
   return pol;
 };
 
-let drawHands = function(d) {
+const drawHands = function(d) {
   let m=d.getMinutes(), h=d.getHours(), s=d.getSeconds();
   g.setColor(1,1,1);
 
@@ -61,20 +61,20 @@ let drawHands = function(d) {
   g.fillCircle(c.x,c.y,4);
 };
 
-let drawText = function(d) {
+const drawText = function(d) {
   g.setFont("Vector",10);
   g.setBgColor(0,0,0);
   g.setColor(1,1,1);
-  let dateStr = require("locale").date(d);
+  const dateStr = require("locale").date(d);
   g.drawString(dateStr, c.x, c.y+20, true);
-  let batStr = Math.round(E.getBattery()/5)*5+"%";
+  const batStr = Math.round(E.getBattery()/5)*5+"%";
   if (Bangle.isCharging()) {
     g.setBgColor(1,0,0);
   }
   g.drawString(batStr, c.x, c.y+40, true);
 };
 
-let drawNumbers = function() {
+const drawNumbers = function() {
   //draws the numbers on the screen
   g.setFont("Vector",20);
   g.setColor(1,1,1);
@@ -86,8 +86,9 @@ let drawNumbers = function() {
 
 let drawTimeout;
 let queueMillis = 1000;
+let unlock = true;
 
-let queueDraw = function() {
+const queueDraw = function() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
@@ -95,7 +96,7 @@ let queueDraw = function() {
   }, queueMillis - (Date.now() % queueMillis));
 };
 
-let draw = function() {
+const draw = function() {
   // draw black rectangle in the middle to clear screen from scale and hands
   g.setColor(0,0,0);
   g.fillRect(10,10,2*c.x-10,2*c.x-10);
@@ -113,7 +114,7 @@ let draw = function() {
 };
 
 //draws the scale once the app is startet
-let drawScale = function() {
+const drawScale = function() {
   // clear the screen
   g.setBgColor(0,0,0);
   g.clear();
@@ -150,7 +151,7 @@ if (settings.loadWidgets) {
   require("widget_utils").swipeOn();
 } else if (global.WIDGETS) require("widget_utils").hide();
 
-let updateState = function() {
+const updateState = function() {
   if (Bangle.isLCDOn()) {
     if (!Bangle.isLocked()) {
       queueMillis = 1000;
@@ -171,7 +172,6 @@ Bangle.on('lcdPower', updateState);
 Bangle.on('lock', updateState);
 Bangle.on('charging', draw); // Immediately redraw when charger (dis)connected
 
-let unlock = true;
 updateState();
 drawScale();
 draw();
