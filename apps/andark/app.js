@@ -135,11 +135,12 @@ let drawScale = function() {
 Bangle.setUI({
   mode: "clock",
   remove: function() {
-    if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = undefined;
     Bangle.removeListener('lcdPower', updateState);
     Bangle.removeListener('lock', updateState);
     Bangle.removeListener('charging', draw);
+    // We clear drawTimout after removing all listeners, because they can add one again
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
     require("widget_utils").show();
   }
 });
