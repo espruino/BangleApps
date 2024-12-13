@@ -24,33 +24,36 @@ if (!require("clock_info").loadCount) { // don't load if a clock_info was alread
     }
   });
   let clockInfoInfo; // when clockInfoMenu.draw is called we set this up
+  let draw = function(e) {
+    clockInfoMenu.x = e.x;
+    var o = clockInfoMenu;
+    // Clear the background
+    g.reset();
+    // indicate focus
+    if (clockInfoMenu.focus) {
+      g.setColor("#f00");
+    }
+    g.clearRect(o.x, o.y, o.x + o.w - 1, o.y + o.h - 1);
+
+    if (clockInfoInfo) {
+      var x = o.x;
+      if (clockInfoInfo.img) {
+        g.drawImage(clockInfoInfo.img, x, o.y); // draw the image
+        x += 24;
+      }
+      var availableWidth = o.x + clockInfoMenu.w - (x + 2);
+      g.setFont("6x8:2").setFontAlign(-1, 0);
+      if (g.stringWidth(clockInfoInfo.text) > availableWidth)
+        g.setFont("6x8:1x2");
+      g.drawString(clockInfoInfo.text, x + 2, o.y + 12); // draw the text
+    }
+  };
 
   // The actual widget we're displaying
   WIDGETS["clkinfo"] = {
-    area:"tl",
+    area: "tl",
     width: clockInfoMenu.w,
-    draw:function(e) {
-      clockInfoMenu.x = e.x;
-      clockInfoMenu.y = e.y;
-      var o = clockInfoMenu;
-      // Clear the background
-      g.reset();
-      // indicate focus
-      if (clockInfoMenu.focus) g.setColor("#f00");
-      g.clearRect(o.x, o.y, o.x+o.w-1, o.y+o.h-1);
-      if (clockInfoInfo) {
-        var x = o.x;
-        if (clockInfoInfo.img) {
-          g.drawImage(clockInfoInfo.img, x,o.y); // draw the image
-          x+=24;
-        }
-        var availableWidth = o.x+clockInfoMenu.w - (x+2);
-        g.setFont("6x8:2").setFontAlign(-1,0);
-        if (g.stringWidth(clockInfoInfo.text) > availableWidth)
-          g.setFont("6x8:1x2");
-        g.drawString(clockInfoInfo.text, x+2,o.y+12); // draw the text
-      }
-    }
+    draw: draw
   };
 
   Bangle.on("widgets-start-show", () => {
