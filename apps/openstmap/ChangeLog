@@ -36,3 +36,4 @@
 0.29: Keep exit at bottom of menu
       Speed up latLonToXY for track rendering
 0.30: Minor code improvements
+0.31: Reset draw colours before rendering (to allow black and white maps)

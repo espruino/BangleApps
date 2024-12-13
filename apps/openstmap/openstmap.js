@@ -73,6 +73,7 @@ exports.draw = function() {
     }
     var mx = g.getWidth();
     var my = g.getHeight();
+    g.setColor(g.theme.fg).setBgColor(g.theme.bg); // reset draw colours
     for (var x=ox,ttx=tx; x<mx && ttx<map.w; x+=s,ttx++) {
       for (var y=oy,tty=ty;y<my && tty<map.h;y+=s,tty++) {
         o.frame = ttx+(tty*map.w);
