@@ -11,7 +11,7 @@ exports.hide = function() {
     w.area = "";
     if (w.x!=undefined) g.clearRect(w.x,w.y,w.x+w.width-1,w.y+23);
   }
-  // TODO: do we need to emit event here too?
+  Bangle.emit("widgets-hidden");
 };
 
 /// Show any hidden widgets
@@ -26,6 +26,7 @@ exports.show = function() {
     delete w._area;
     w.draw(w);
   }
+  Bangle.emit("widgets-shown");
 };
 
 /// Remove anything not needed if the overlay was removed
