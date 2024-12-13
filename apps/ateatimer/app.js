@@ -1,13 +1,12 @@
-// Tea Timer Application for Bangle.js 2
+// Tea Timer Application for Bangle.js 2 using sched library
+
 let timerDuration = (() => {
   let file = require("Storage").open("ateatimer.data", "r");
   let data = file.read(4); // Assuming 4 bytes for storage
   return data ? parseInt(data, 10) : 4 * 60; // Default to 4 minutes
-})(); 
+})();
 let timeRemaining = timerDuration;
 let timerRunning = false;
-let buzzInterval = null; // Interval for buzzing when timer reaches 0
-let timerInterval = null; // Interval for timer countdown
 
 function saveDefaultDuration() {
   let file = require("Storage").open("ateatimer.data", "w");
@@ -51,42 +50,53 @@ function startTimer() {
   timerDuration = timeRemaining;
   saveDefaultDuration();
 
-  timerInterval = setInterval(() => {
-    timeRemaining--;
-    drawTime();
+  // Schedule a new timer using the sched library
+  require("sched").setAlarm("mytimer", {
+    msg: "Tea is ready!",
+    timer: timeRemaining * 1000, // Convert to milliseconds
+    vibrate: ".." // Default vibration pattern
+  });
 
-    if (timeRemaining === 0 && !buzzInterval) {
-      // Start continuous vibration when timer reaches 0
-      buzzInterval = setInterval(() => Bangle.buzz(500), 1000);
-    }
-  }, 1000);
+  // Ensure the scheduler updates
+  require("sched").reload();
+
+  // Start the secondary timer to update the display
+  setInterval(updateDisplay, 1000);
 }
 
 function resetTimer() {
-  if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
-  }
+  // Cancel the existing timer
+  require("sched").setAlarm("mytimer", undefined);
+  require("sched").reload();
+
   timerRunning = false;
   timeRemaining = timerDuration;
-  stopBuzzing();
   drawTime();
 }
 
-function stopBuzzing() {
-  if (buzzInterval) {
-    clearInterval(buzzInterval);
-    buzzInterval = null;
-  }
-}
-
 function adjustTime(amount) {
-  if (!timerRunning) {
-    timeRemaining += amount;
-    timeRemaining = Math.floor(timeRemaining / 60) * 60; // Round to full minutes
-  } else {
-    timeRemaining += amount; // Allow adjustments during running
+  timeRemaining += amount;
+  timeRemaining = Math.max(1, timeRemaining); // Ensure time doesn't go negative
+  print(timeRemaining);
+  if (timerRunning) {
+    // Update the existing timer with the new remaining time
+    let alarm = require("sched").getAlarm("mytimer");
+    if (alarm) {
+      // Cancel the current alarm
+      require("sched").setAlarm("mytimer", undefined);
+      
+      // Set a new alarm with the updated time
+      require("sched").setAlarm("mytimer", {
+        msg: "Tea is ready!",
+        timer: timeRemaining * 1000, // Convert to milliseconds
+        vibrate: ".." // Default vibration pattern
+      });
+
+      // Reload the scheduler to apply changes
+      require("sched").reload();
+    }
   }
+
   drawTime();
 }
 
@@ -107,6 +117,22 @@ function handleTouch(x, y) {
   }
 }
 
+// Function to update the display every second
+function updateDisplay() {
+  if (timerRunning) {
+    let alarm = require("sched").getAlarm("mytimer");
+    if (alarm) {
+      timeRemaining = Math.ceil(require("sched").getTimeToAlarm(alarm) / 1000);
+    }
+    drawTime();
+    if (timeRemaining <= 0) {
+      timeRemaining = 0
+      clearInterval(updateDisplay);
+      timerRunning = false;
+    }
+  }
+}
+
 // Handle physical button press for resetting timer
 setWatch(() => {
   resetTimer();
@@ -119,4 +145,3 @@ Bangle.on("touch", (zone, xy) => {
 
 // Draw the initial timer display
 drawTime();
-

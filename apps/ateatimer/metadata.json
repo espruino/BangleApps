@@ -9,5 +9,6 @@
   "storage": [
     {"name":"ateatimer.app.js","url":"app.js"},
     {"name":"ateatimer.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "dependencies": {"scheduler":"type"}
 }
