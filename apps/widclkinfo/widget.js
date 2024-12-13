@@ -2,9 +2,6 @@ if (!require("clock_info").loadCount) { // don't load if a clock_info was alread
   // Load the clock infos
   let clockInfoItems = clock_info.load();
 
-  // TODO only do checks if widget_utils.swipeOn is being used
-  let wuo = widget_utils.offset;
-
   let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
     app: "widclkinfo",
     // Add the dimensions we're rendering to here - these are used to detect taps on the clock info area
@@ -19,9 +16,8 @@ if (!require("clock_info").loadCount) { // don't load if a clock_info was alread
       // info: data returned from itm.get() containing text/img/etc
       // options: options passed into addInteractive
       clockInfoInfo = info;
-      wuo = 0 | widget_utils.offset;
-      clockInfoMenu.y = options.y + wuo;
       if (WIDGETS["clkinfo"]) {
+      clockInfoMenu.y = options.y;
         WIDGETS["clkinfo"].draw(WIDGETS["clkinfo"]);
         console.log("Clock Info was updated, thus drawing widget.");
       }
@@ -35,8 +31,7 @@ if (!require("clock_info").loadCount) { // don't load if a clock_info was alread
     width: clockInfoMenu.w,
     draw:function(e) {
       clockInfoMenu.x = e.x;
-      wuo = 0 | widget_utils.offset;
-      clockInfoMenu.y = e.y + wuo;
+      clockInfoMenu.y = e.y;
       var o = clockInfoMenu;
       // Clear the background
       g.reset();
