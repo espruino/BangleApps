@@ -6,7 +6,7 @@ if (!require("clock_info").loadCount) { // don't load if a clock_info was alread
     app: "widclkinfo",
     // Add the dimensions we're rendering to here - these are used to detect taps on the clock info area
     x: 0,
-    y: 0, // maybe set offset to initial offset
+    y: -24, // TODO how know if offscreen to start?
     w: 72,
     h: 24,
     // You can add other information here you want to be passed into 'options' in 'draw'
@@ -16,13 +16,13 @@ if (!require("clock_info").loadCount) { // don't load if a clock_info was alread
       // info: data returned from itm.get() containing text/img/etc
       // options: options passed into addInteractive
       clockInfoInfo = info;
-      if (WIDGETS["clkinfo"]) {
       clockInfoMenu.y = options.y;
+      if (WIDGETS["clkinfo"] && clockInfoMenu.y > -24) {
         WIDGETS["clkinfo"].draw(WIDGETS["clkinfo"]);
-        console.log("Clock Info was updated, thus drawing widget.");
       }
     }
   });
+
   let clockInfoInfo; // when clockInfoMenu.draw is called we set this up
   let draw = function(e) {
     clockInfoMenu.x = e.x;
