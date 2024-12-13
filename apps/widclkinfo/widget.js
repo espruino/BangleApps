@@ -53,19 +53,37 @@ if (!require("clock_info").loadCount) { // don't load if a clock_info was alread
     }
   };
 
-  Bangle.on("hidden", () => {
-    console.log("hidden");
-    clockInfoMenu.y = -24;
-    if (clockInfoMenu.focus) {
-      clockInfoMenu.force_blur();
-      console.log("Forced blur bc hidden");
+  Bangle.on("widgets-start-show", () => {
+    clockInfoMenu.y = 0;
+    if (WIDGETS["clkinfo"]) {
+      WIDGETS["clkinfo"].draw(WIDGETS["clkinfo"]);
+    }
+  })
+
+  Bangle.on("widgets-shown", () => {
+    clockInfoMenu.y = 0;
+    if (WIDGETS["clkinfo"]) {
+      WIDGETS["clkinfo"].draw(WIDGETS["clkinfo"]);
     }
   });
 
-  Bangle.on("shown", () => {
-    clockInfoMenu.y = 0;
-    console.log("shown");
+  Bangle.on("widgets-start-hide", () => {
+    clockInfoMenu.y = -24;
     if (WIDGETS["clkinfo"]) {
       WIDGETS["clkinfo"].draw(WIDGETS["clkinfo"]);
+    }
+    if (clockInfoMenu.focus) {
+      clockInfoMenu.blur();
+    }
+  });
+
+  Bangle.on("widgets-hidden", () => {
+    clockInfoMenu.y = -24;
+    if (WIDGETS["clkinfo"]) {
+      WIDGETS["clkinfo"].draw(WIDGETS["clkinfo"]);
+    }
+    // check here too in case widget_utils.hide() is called
+    if (clockInfoMenu.focus) {
+      clockInfoMenu.blur();
     }
   });
