@@ -90,3 +90,4 @@ if (!require("clock_info").loadCount) { // don't load if a clock_info was alread
       clockInfoMenu.blur();
     }
   });
+}
