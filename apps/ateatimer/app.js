@@ -44,14 +44,21 @@ function drawTime() {
 
 function startTimer() {
   if (timerRunning) return;
+  if (timeRemaining == 0) return;
   timerRunning = true;
 
   // Save the default duration on timer start
   timerDuration = timeRemaining;
   saveDefaultDuration();
+  scheduleTimer();
 
+  // Start the secondary timer to update the display
+  setInterval(updateDisplay, 1000);
+}
+
+function scheduleTimer() {
   // Schedule a new timer using the sched library
-  require("sched").setAlarm("mytimer", {
+  require("sched").setAlarm("ateatimer", {
     msg: "Tea is ready!",
     timer: timeRemaining * 1000, // Convert to milliseconds
     vibrate: ".." // Default vibration pattern
@@ -59,14 +66,11 @@ function startTimer() {
 
   // Ensure the scheduler updates
   require("sched").reload();
-
-  // Start the secondary timer to update the display
-  setInterval(updateDisplay, 1000);
 }
 
 function resetTimer() {
   // Cancel the existing timer
-  require("sched").setAlarm("mytimer", undefined);
+  require("sched").setAlarm("ateatimer", undefined);
   require("sched").reload();
 
   timerRunning = false;
@@ -75,25 +79,21 @@ function resetTimer() {
 }
 
 function adjustTime(amount) {
+  if (-amount > timeRemaining) {
+    // Return if result will be negative
+    return;
+  }
   timeRemaining += amount;
-  timeRemaining = Math.max(1, timeRemaining); // Ensure time doesn't go negative
-  print(timeRemaining);
+  timeRemaining = Math.max(0, timeRemaining); // Ensure time doesn't go negative
   if (timerRunning) {
     // Update the existing timer with the new remaining time
-    let alarm = require("sched").getAlarm("mytimer");
+    let alarm = require("sched").getAlarm("ateatimer");
     if (alarm) {
       // Cancel the current alarm
-      require("sched").setAlarm("mytimer", undefined);
+      require("sched").setAlarm("ateatimer", undefined);
       
       // Set a new alarm with the updated time
-      require("sched").setAlarm("mytimer", {
-        msg: "Tea is ready!",
-        timer: timeRemaining * 1000, // Convert to milliseconds
-        vibrate: ".." // Default vibration pattern
-      });
-
-      // Reload the scheduler to apply changes
-      require("sched").reload();
+      scheduleTimer();
     }
   }
 
@@ -120,13 +120,11 @@ function handleTouch(x, y) {
 // Function to update the display every second
 function updateDisplay() {
   if (timerRunning) {
-    let alarm = require("sched").getAlarm("mytimer");
-    if (alarm) {
-      timeRemaining = Math.ceil(require("sched").getTimeToAlarm(alarm) / 1000);
-    }
+    let alarm = require("sched").getAlarm("ateatimer");
+    timeRemaining = Math.floor(require("sched").getTimeToAlarm(alarm) / 1000);
     drawTime();
     if (timeRemaining <= 0) {
-      timeRemaining = 0
+      timeRemaining = 0;
       clearInterval(updateDisplay);
       timerRunning = false;
     }
@@ -135,7 +133,11 @@ function updateDisplay() {
 
 // Handle physical button press for resetting timer
 setWatch(() => {
-  resetTimer();
+  if (timerRunning) {
+    resetTimer();
+  } else {
+    startTimer();
+  }
 }, BTN1, { repeat: true, edge: "falling" });
 
 // Handle touch
@@ -143,5 +145,12 @@ Bangle.on("touch", (zone, xy) => {
   handleTouch(xy.x, xy.y, false);
 });
 
-// Draw the initial timer display
-drawTime();
+let isRunning = require("sched").getAlarm("ateatimer");
+if (isRunning) {
+  timerRunning = true;
+  // Start the timer to update the display
+  setInterval(updateDisplay, 1000);
+} else {
+  // Draw the initial timer display
+  drawTime();
+}

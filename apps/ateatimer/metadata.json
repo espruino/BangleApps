@@ -2,8 +2,8 @@
   "name": "A Tea Timer",
   "shortName":"A Tea Timer",
   "icon": "app.png",
-  "version":"0.01",
-  "description": "Simple app for setting countdown timers for tea. Press up and down to change time, and touch time to start counting. Button will stop countdown and reset counter to last used value.",
+  "version":"0.02",
+  "description": "Simple app for setting timers for tea. Touch up and down to change time, and time or button to start counting. When timer is running, button will stop timer and reset counter to last used value.",
   "tags": "timer",
   "supports": ["BANGLEJS2"],
   "storage": [
