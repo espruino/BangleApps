@@ -39,6 +39,14 @@
                 writeSettings();
             }
         },
+		'#Cal Rows Prior': {
+            value: settings.CAL_ROWS_PRIOR,
+            min: 0, max: 2,
+            onchange: v => {
+                settings.CAL_ROWS_PRIOR = v;
+                writeSettings();
+            }
+        },
         'Clock mode': {
             value: settings.MODE24,
             format: v => v ? "24h" : "12h",
