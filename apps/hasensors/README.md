@@ -22,3 +22,29 @@ You need to fill out these fields:
 Currently creates these sensors:
 * `<sensor id>_battery_level`: Your watch battery level as percentage
 * `<sensor id>_battery_state`: `charging` or `discharging`
+* `<sensor id>_hrm`: Heart rate (only if measured: this app doesn't enable/disable the sensor)
+* `<sensor id>_steps`: Step Count
+* `<sensor id>_pressure`: Pressure
+* `<sensor id>_temperature`: Temperature
+
+## Home Assistant `unique ID` workaround
+
+If you try to customize the created entities, Home Assistant will complain that
+> This entity ('sensor.…') does not have a unique ID, therefore its settings 
+> cannot be managed from the UI.
+
+The problem is that these sensors are created "dynamically", and there is no way
+to supply a `unique ID`.
+There is a workaround though: 
+1. Make note of the sensor name you want to customize (e.g. `banglejs_battery_state`).
+2. Disconnect your Bangle.js from your phone, so it doesn't send updates.
+3. Restart Home Assistant, the sensor is now gone.
+4. <a href="https://my.home-assistant.io/redirect/config_flow_start?domain=template" target="_blank">Create a template sensor</a>: choose "Template a sensor".
+  - Use the name from step 1 (without `sensor.` prefix).
+  - Set the state template to `unknown`.
+5. Reconnect your Bangle.js: it will now update the new template sensor, which 
+   *does* have a `unique ID`.
+
+**Warning:** Do not customize the `Entity ID`: the app sends values by sensor 
+ID, so you end up with both a non-updating template sensor and "dynamic" sensor 
+without `unique ID`.
