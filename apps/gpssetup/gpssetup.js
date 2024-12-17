@@ -126,10 +126,11 @@ function setupSuperE() {
         */
         return delay(20);
       });
+      break;
     case(2):
       //nothing more to do.
       return;
-    break;
+      break;
   }
   
 }
@@ -159,6 +160,7 @@ function setupPSMOO(settings) {
         */
         return delay(20);
       });
+      break;
     case(2):
       let gpsTimeout = null;
       let gpsActive = false;
@@ -192,7 +194,7 @@ function setupPSMOO(settings) {
         }, settings.search * 1000);
       }
       turnOnGPS();
-    break;
+      break;
   }
 }
 
