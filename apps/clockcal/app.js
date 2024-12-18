@@ -188,7 +188,7 @@ function drawWatch() {
             bottomrightY = y * CELL_H + CAL_Y;
             g.setFont("Vector", 16);
             var fg = ((s.REDSUN && rD.getDay() == 0) || (s.REDSAT && rD.getDay() == 6)) ? '#f00' : '#fff';
-            if (y == 1 && today == rDate) {
+            if (y == s.CAL_ROWS_PRIOR + 1 && today == rDate) {
                 g.setColor('#0f0');
                 g.fillRect(bottomrightX - CELL_W + 1, bottomrightY - CELL_H - 1, bottomrightX, bottomrightY - 2);
                 g.setColor('#000');
