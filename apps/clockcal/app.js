@@ -2,7 +2,8 @@ Bangle.setUI("clock");
 Bangle.loadWidgets();
 
 var s = Object.assign({
-    CAL_ROWS: 4, //number of calendar rows.(weeks) Shouldn't exceed 5 when using widgets.
+    CAL_ROWS: 4, //total number of calendar rows.(weeks) Shouldn't exceed 5 when using widgets.
+    CAL_ROWS_PRIOR: 0, //number of calendar rows.(weeks) that show above the current week
     BUZZ_ON_BT: true, //2x slow buzz on disconnect, 2x fast buzz on connect. Will be extra widget eventually
     MODE24: true, //24h mode vs 12h mode
     FIRSTDAY: 6, //First day of the week: mo, tu, we, th, fr, sa, su
@@ -178,7 +179,7 @@ function drawWatch() {
     const dow = (s.FIRSTDAY + d.getDay()) % 7; //MO=0, SU=6
     const today = d.getDate();
     var rD = new Date(d.getTime());
-    rD.setDate(rD.getDate() - dow);
+    rD.setDate(rD.getDate() - dow - s.CAL_ROWS_PRIOR * 7);
     var rDate = rD.getDate();
     g.setFontAlign(1, 1);
     for (var y = 1; y <= s.CAL_ROWS; y++) {
