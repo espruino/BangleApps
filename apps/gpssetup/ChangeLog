@@ -1,2 +1,3 @@
 0.01: First version of GPS Setup app
 0.02: Created gppsetup module
+0.03: Added support for Bangle.js2

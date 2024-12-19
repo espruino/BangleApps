@@ -48,12 +48,16 @@ used. These settings will remain for all apps that use the GPS.
    the interval the more time the GPS will spend sleeping in low
    power mode (7mA) between obtaining fixes (35mA).  For walking in
    open country an update once every 60 seconds is adequate to put
-   you within a 6 digit grid refernce sqaure.
+   you within a 6 digit grid refernce sqaure. 
+   
+      **Note:** For the Bangle.js2, the GPS module does not have a PSMOO mode, and thus this is emulated using on/off timeouts specified using the update and search options.
 
 - update - the time between two position fix attempts.
 
 - search - the time between two acquisition attempts if the receiver
   is unable to get a position fix.
+
+- fix_req (Bangle.js2 only) - the number of fixes required before the GPS turns off until next search for GPS signal. default is 1.
 
 ## Module
 

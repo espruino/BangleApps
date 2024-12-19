@@ -1,5 +1,5 @@
 const SETTINGS_FILE = "gpssetup.settings.json";
-
+const BANGLE_VER = process.env.HWVERSION; //BangleJS2 support
 function log_debug(o) {
   //let timestamp = new Date().getTime();
   //console.log(timestamp + " : " + o);
@@ -106,49 +106,97 @@ function delay(ms) {
 
 function setupSuperE() {
   log_debug("setupGPS() Super-E");
-  return Promise.resolve().then(function() {
-    UBX_CFG_RESET();
-    return delay(100);
-  }).then(function() {
-    UBX_CFG_PMS();
-    return delay(20);
-  }).then(function() {
-    UBX_CFG_SAVE();
-    return delay(20);
-  }).then(function() {
-    log_debug("Powering GPS Off");
-    /*
-     * must be part of the promise chain to ensure that
-     * setup does not return and powerOff before config functions
-     * have run
-     */
-    return delay(20);
-  });
+  switch(BANGLE_VER){
+    case(1): {
+      return Promise.resolve().then(function() {
+        UBX_CFG_RESET();
+        return delay(100);
+      }).then(function() {
+        UBX_CFG_PMS();
+        return delay(20);
+      }).then(function() {
+        UBX_CFG_SAVE();
+        return delay(20);
+      }).then(function() {
+        log_debug("Powering GPS Off");
+        /*
+        * must be part of the promise chain to ensure that
+        * setup does not return and powerOff before config functions
+        * have run
+        */
+        return delay(20);
+      });
+    }
+    case(2):{
+      //nothing more to do.
+      return;
+    }
+  }
+  
 }
 
 function setupPSMOO(settings) {
   log_debug("setupGPS() PSMOO");
-  return Promise.resolve().then(function() {
-    UBX_CFG_RESET();
-    return delay(100);
-  }).then(function() {
-    UBX_CFG_PM2(settings.update, settings.search);
-    return delay(20);
-  }).then(function() {
-    UBX_CFG_RXM();
-    return delay(20);
-  }).then(function() {
-    UBX_CFG_SAVE();
-    return delay(20);
-  }).then(function() {
-    log_debug("Powering GPS Off");
-    /*
-     * must be part of the promise chain to ensure that
-     * setup does not return and powerOff before config functions
-     * have run
-     */
-    return delay(20);
-  });
+  switch(BANGLE_VER){
+    case(1):{
+      return Promise.resolve().then(function() {
+        UBX_CFG_RESET();
+        return delay(100);
+      }).then(function() {
+        UBX_CFG_PM2(settings.update, settings.search);
+        return delay(20);
+      }).then(function() {
+        UBX_CFG_RXM();
+        return delay(20);
+      }).then(function() {
+        UBX_CFG_SAVE();
+        return delay(20);
+      }).then(function() {
+        log_debug("Powering GPS Off");
+        /*
+        * must be part of the promise chain to ensure that
+        * setup does not return and powerOff before config functions
+        * have run
+        */
+        return delay(20);
+      });
+    }
+    case(2): {
+      var gpsTimeout = null;
+      var gpsActive = false;
+      var fix = 0;
+      function cb(f){
+        if(parseInt(f.fix) === 1){ 
+          fix++;
+          if(fix >= settings.fix_req){
+            fix = 0;
+            turnOffGPS();
+          }
+        }
+      }
+      function turnOffGPS() {
+        if (!gpsActive) return;
+        gpsActive = false;
+        clearTimeout(gpsTimeout);
+        Bangle.setGPSPower(0,settings.appName);
+        Bangle.removeListener('GPS', cb); // cleaning it up
+        gpsTimeout = setTimeout(() => {
+          turnOnGPS();
+        }, settings.update * 1000);
+      }
+      function turnOnGPS(){
+        if (gpsActive) return;
+        if(!Bangle.isGPSOn()) Bangle.setGPSPower(1,settings.appName);
+        Bangle.on('GPS',cb);
+        gpsActive = true;
+        gpsTimeout = setTimeout(() => {
+          turnOffGPS();
+        }, settings.search * 1000);
+      }
+      turnOnGPS();
+      break;
+    }
+  }
 }
 
 /** Set GPS power mode (assumes GPS on), returns a promise.
@@ -161,16 +209,21 @@ require("gpssetup").setPowerMode({power_mode:"SuperE"}) // <-- Super E mode
 See the README for more information
  */
 exports.setPowerMode = function(options) {
-  settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
+  var settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
   if (options) {
     if (options.update) settings.update = options.update;
     if (options.search) settings.search = options.search;
+    if (options.fix_req) settings.fix_req = options.fix_req;
     if (options.power_mode) settings.power_mode = options.power_mode;
+    if (options.appName) settings.appName = options.appName;
   }
   settings.update = settings.update||120;
   settings.search = settings.search||5;
+  settings.fix_req = settings.fix_req||1; //default to just one fix and will turn off 
   settings.power_mode = settings.power_mode||"SuperE";
+  settings.appName = settings.appName || "gpssetup";
   if (options) require("Storage").write(SETTINGS_FILE, settings);
+  if(!Bangle.isGPSOn()) Bangle.setGPSPower(1,settings.appName); //always know its on - no point calling this otherwise!!!
   if (settings.power_mode === "PSMOO") {
     return setupPSMOO(settings);
   } else {
