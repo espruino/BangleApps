@@ -126,12 +126,10 @@ function setupSuperE() {
         */
         return delay(20);
       });
-      break;
     }
     case(2):{
       //nothing more to do.
       return;
-      break;
     }
   }
   
@@ -162,7 +160,6 @@ function setupPSMOO(settings) {
         */
         return delay(20);
       });
-      break;
     }
     case(2): {
       var gpsTimeout = null;
@@ -212,7 +209,7 @@ require("gpssetup").setPowerMode({power_mode:"SuperE"}) // <-- Super E mode
 See the README for more information
  */
 exports.setPowerMode = function(options) {
-  settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
+  var settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
   if (options) {
     if (options.update) settings.update = options.update;
     if (options.search) settings.search = options.search;
