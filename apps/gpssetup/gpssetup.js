@@ -162,9 +162,9 @@ function setupPSMOO(settings) {
       });
       break;
     case(2):
-      let gpsTimeout = null;
-      let gpsActive = false;
-      let fix = 0;
+      var gpsTimeout = null;
+      var gpsActive = false;
+      var fix = 0;
       function cb(f){
         if(parseInt(f.fix) === 1){ 
           fix++;
