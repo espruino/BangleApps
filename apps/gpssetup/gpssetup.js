@@ -107,7 +107,7 @@ function delay(ms) {
 function setupSuperE() {
   log_debug("setupGPS() Super-E");
   switch(BANGLE_VER){
-    case(1):
+    case(1): {
       return Promise.resolve().then(function() {
         UBX_CFG_RESET();
         return delay(100);
@@ -127,10 +127,12 @@ function setupSuperE() {
         return delay(20);
       });
       break;
-    case(2):
+    }
+    case(2):{
       //nothing more to do.
       return;
       break;
+    }
   }
   
 }
@@ -138,7 +140,7 @@ function setupSuperE() {
 function setupPSMOO(settings) {
   log_debug("setupGPS() PSMOO");
   switch(BANGLE_VER){
-    case(1):
+    case(1):{
       return Promise.resolve().then(function() {
         UBX_CFG_RESET();
         return delay(100);
@@ -161,7 +163,8 @@ function setupPSMOO(settings) {
         return delay(20);
       });
       break;
-    case(2):
+    }
+    case(2): {
       var gpsTimeout = null;
       var gpsActive = false;
       var fix = 0;
@@ -195,6 +198,7 @@ function setupPSMOO(settings) {
       }
       turnOnGPS();
       break;
+    }
   }
 }
 
