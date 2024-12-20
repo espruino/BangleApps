@@ -2,11 +2,11 @@
   "id": "gpssetup",
   "name": "GPS Setup",
   "shortName": "GPS Setup",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Configure the GPS power options and store them in the GPS nvram",
   "icon": "gpssetup.png",
   "tags": "gps,tools,outdoors",
-  "supports": ["BANGLEJS"],
+  "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"gpssetup","url":"gpssetup.js"},
