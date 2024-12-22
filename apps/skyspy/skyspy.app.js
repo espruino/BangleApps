@@ -831,6 +831,9 @@ sky.decorate = () => {
 ui.topLeft = () => { ui.drawMsg("Clock\nadjust"); adj_time = 1; };
 ui.topRight = () => { ui.drawMsg("Alt\nadjust"); adj_alt = 1; };
 
+setTimeout(() => sky.casic_cmd("$PCAS04,7"), 1000); /* Enable gps + beidou + glonass */
+setTimeout(() => sky.casic_cmd("$PCAS03,1,1,1,1,1,1,1,1"), 1000); 
+
 Bangle.on("drag", (b) => ui.touchHandler(b));
 Bangle.setUI({
   mode : "custom",
