@@ -35,8 +35,8 @@
     </div>
     <div id="controls">
       <span id="select-hint">Click the map to select a location</span>
-      <button id="locate" class="btn" title="Center on your location"><i class="icon icon-location"></i></button>
-      <button id="find-marker" class="btn" style="display:none" title="Center on your marker"><i class="icon icon-flag"></i></button>
+      <button id="locate" class="btn" title="Locate me">&#x26ef;</button>
+      <button id="find-marker" class="btn" style="display:none" title="Locate marker"><i class="icon icon-location"></i></button>
       <button id="select" class="btn btn-primary" style="display:none">Save</button><br/>
     </div>
 
@@ -100,7 +100,7 @@
       document.getElementById("locate").addEventListener("click", function() {
         map.locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
       });
-      
+
       document.getElementById("find-marker").addEventListener("click", function() {
         if(latlon && latlon.lng && latlon.lat) {
           map.setView(latlon);
