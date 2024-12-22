@@ -76,6 +76,8 @@
           map.removeLayer(marker);
         }
         marker = new L.marker(latlon).addTo(map);
+        map.setView(latlon); // center on the marker
+
         document.getElementById("select-hint").style.display="none";
         document.getElementById("select").style.display="";
       }
@@ -84,10 +86,16 @@
         setPosition(e.latlng);
       });
 
-      document.getElementById("select").addEventListener("click", function() {
-        let settings = {}; // {"lat":48.8566,"lon":2.3522,"location":"Paris"}
-        settings.lat = latlon.lat;
-        settings.lon = latlon.lng;
+      function convertMapToFile(map) {
+        return {lat: map.lat, lon: map.lng};
+      }
+
+      function convertFileToMap(file) {
+        return {lat: file.lat, lng: file.lon};
+      }
+
+      document.getElementById("select").addEventListener("click", function(e) {
+        let settings = convertMapToFile(latlon); // {"lat":48.8566,"lon":2.3522,"location":"Paris"}
         settings.location = "custom";
         Util.showModal("Saving...");
         Util.writeStorage("mylocation.json", JSON.stringify(settings), ()=>{
@@ -101,7 +109,7 @@
         Util.readStorageJSON("mylocation.json", function(data) {
           if (data===undefined) return; // no file
           try {
-            setPosition(data);
+            setPosition(convertFileToMap(data));
           } catch (e) {
             console.error(e);
           }
