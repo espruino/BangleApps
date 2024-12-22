@@ -2,6 +2,7 @@
   <head>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
     <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.6.0/dist/geosearch.css"/>
   </head>
     <style>
@@ -34,6 +35,8 @@
     </div>
     <div id="controls">
       <span id="select-hint">Click the map to select a location</span>
+      <button id="locate" class="btn" title="Center on your location"><i class="icon icon-location"></i></button>
+      <button id="find-marker" class="btn" style="display:none" title="Center on your marker"><i class="icon icon-flag"></i></button>
       <button id="select" class="btn btn-primary" style="display:none">Save</button><br/>
     </div>
 
@@ -76,10 +79,10 @@
           map.removeLayer(marker);
         }
         marker = new L.marker(latlon).addTo(map);
-        map.setView(latlon); // center on the marker
 
         document.getElementById("select-hint").style.display="none";
         document.getElementById("select").style.display="";
+        document.getElementById("find-marker").style.display="";
       }
 
       map.on('click', function(e){
@@ -94,7 +97,17 @@
         return {lat: file.lat, lng: file.lon};
       }
 
-      document.getElementById("select").addEventListener("click", function(e) {
+      document.getElementById("locate").addEventListener("click", function() {
+        map.locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
+      });
+      
+      document.getElementById("find-marker").addEventListener("click", function() {
+        if(latlon && latlon.lng && latlon.lat) {
+          map.setView(latlon);
+        }
+      });
+
+      document.getElementById("select").addEventListener("click", function() {
         let settings = convertMapToFile(latlon); // {"lat":48.8566,"lon":2.3522,"location":"Paris"}
         settings.location = "custom";
         Util.showModal("Saving...");
