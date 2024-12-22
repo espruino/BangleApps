@@ -35,9 +35,9 @@
     </div>
     <div id="controls">
       <span id="select-hint">Click the map to select a location</span>
-      <button id="locate" class="btn" title="Locate me">&#x26ef;</button>
-      <button id="find-marker" class="btn" style="display:none" title="Locate marker"><i class="icon icon-location"></i></button>
-      <button id="select" class="btn btn-primary" style="display:none">Save</button><br/>
+      <button id="locate-me" class="btn" title="Locate me">&#x26ef;</button>
+      <button id="locate-marker" class="btn" style="display:none" title="Locate marker"><i class="icon icon-location"></i></button>
+      <button id="select" class="btn btn-primary" style="display:none" title="Save to device">Save</button><br/>
     </div>
 
     <script src="../../core/lib/interface.js"></script>
@@ -82,7 +82,7 @@
 
         document.getElementById("select-hint").style.display="none";
         document.getElementById("select").style.display="";
-        document.getElementById("find-marker").style.display="";
+        document.getElementById("locate-marker").style.display="";
       }
 
       map.on('click', function(e){
@@ -97,12 +97,12 @@
         return {lat: file.lat, lng: file.lon};
       }
 
-      document.getElementById("locate").addEventListener("click", function() {
+      document.getElementById("locate-me").addEventListener("click", function() {
         map.locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
       });
 
-      document.getElementById("find-marker").addEventListener("click", function() {
-        if(latlon && latlon.lng && latlon.lat) {
+      document.getElementById("locate-marker").addEventListener("click", function() {
+        if (latlon && latlon.lng != null && latlon.lat != null) {
           map.setView(latlon);
         }
       });
