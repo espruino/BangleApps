@@ -62,10 +62,14 @@ layout.update();
 function getdatetime(){
   var datetime = [];
   var d = new Date();
+  var offsets = require("Storage").readJSON("worldclock.settings.json") || [];
 //  var meridian = require("locale").meridian(d);
   datetime.clock = require("locale").time(d, 1);
   datetime.month = d.getMonth()+1;
   datetime.day = d.getDate();
+  datetime.localtime=String(String(d.getHours()).padStart(2,'0')+String(d.getMinutes()).padStart(2,'0')).padStart(5,'0');
+  utchour=((d.getHours()+(Math.round(d.getTimezoneOffset()/60))) % 24);
+  datetime.utctime=String(String(utchour).padStart(2,'0')+String(d.getMinutes()).padStart(2,'0')).padStart(5,'0');
   return datetime;
 }
 
@@ -93,24 +97,24 @@ function isMessagesNotify(){
     return false;
   }
 }
-  
-function getTemperature(){
-    var temperature = E.getTemperature();
-    temperature = typeof temperature !== 'undefined' ? temperature:99999;
-    return Math.round(temperature);
-}
 
-function getHRM(){
-  hrm=Bangle.getHealthStatus('10min').bpm;
-  hrm = typeof hrm !== 'undefined' ? hrm:0;
-  return hrm;
-}
+//function getTemperature(){
+//    var temperature = E.getTemperature();
+//    temperature = typeof temperature !== 'undefined' ? temperature:99999;
+//    return Math.round(temperature);
+//}
 
-function getGPS(){
-  GPS=Bangle.getPressure();
-  GPS = typeof GPS !== 'undefined' ? GPS:{temperature:0,pressure:0,altitude:0};
-  return GPS;
-}
+//function getHRM(){
+//  hrm=Bangle.getHealthStatus('10min').bpm;
+//  hrm = typeof hrm !== 'undefined' ? hrm:0;
+//  return hrm;
+//}
+
+//function getGPS(){
+//  GPS=Bangle.getPressure();
+//  GPS = typeof GPS !== 'undefined' ? GPS:{temperature:0,pressure:0,altitude:0};
+//  return GPS;
+//}
 
 function isBTConnected(){
   return NRF.getSecurityStatus().connected;
@@ -160,14 +164,9 @@ function draw_bg(){
 // actual display
 function draw(){
   datetime=getdatetime();
-  var ds=new Date();
-  datestring=String(String(ds.getHours()).padStart(2,'0')+String(ds.getMinutes()).padStart(2,'0')).padStart(5,'0');
-  var offsets = require("Storage").readJSON("worldclock.settings.json") || [];
-  utchour=((ds.getHours()+(Math.round(ds.getTimezoneOffset()/60))) % 24);
-  utcstring=String(String(utchour).padStart(2,'0')+String(ds.getMinutes()).padStart(2,'0')).padStart(5,'0');
   
-  layout.R1.label=datestring;
-  layout.R2.label=utcstring;
+  layout.R1.label=datetime.localtime;
+  layout.R2.label=datetime.utctime;
   layout.R3.label=String(getSteps()).padStart(5,'0');
   
   layout.PROG.label=String(getBattery()).padStart(2,'0');
