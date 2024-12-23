@@ -6,3 +6,6 @@
 0.60: Bump version to allow new buzz.js module to be loaded - fixes memory/performance hog when buzz called
 0.61: Add repeatCalls option to allow different repeat settings for messages vs calls
 0.62: Add option for driving on left (affects roundabout icons in navigation)
+0.63: Add option to not open the first unread message
+0.64: Only load from storage once in settings
+0.65: Fix settings error introduced by two conflicting changes

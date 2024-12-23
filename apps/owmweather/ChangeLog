@@ -4,3 +4,6 @@
 0.04: Minor code improvements
 0.05: Upgrade OWM to One Call API 3.0. Add pressure to weather.json
 0.06: Fix One Call API 3.0 not returning city names, which are required by the weather app
+0.07: Update weather after reconnecting bluetooth if update is due, refactor code
+0.08: Undo change to One Call API 3.0
+0.09: Fix infinite loop when settings.updated is not defined

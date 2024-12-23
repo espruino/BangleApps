@@ -31,3 +31,4 @@ when moving pages. Add caching for faster startups.
 0.24: Add buzz-on-interaction setting
 0.25: Minor code improvements
 0.26: Bangle 2: Postpone loading icons that are not needed initially.
+0.27: Bangle 2: Add setting to remember and present the last open page between instances of dtlaunch.

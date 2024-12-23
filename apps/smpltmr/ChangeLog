@@ -8,3 +8,4 @@
 0.08: Timer ClockInfo now updates once a minute
 0.09: Timer ClockInfo resets to timer menu when blurred
 0.10: Timer ClockInfo now uses +- icons, and changes timer from 'T-5 min' to just '5 min' to aid readability
+0.11: Fix to handle updated firmware on fw 2v25 (or cutting edge >2v24.164), btn -> btnRelease. The timer would fire on long press before the watch reset.

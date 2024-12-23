@@ -67,3 +67,13 @@ The exact effects depend on the app.  In general the watch will not wake up by i
 * **Reset Settings** Reset the settings (as set in this app) to defaults. Does not reset settings for other apps.
 * **Factory Reset** (not available on Bangle.js 1) - wipe **everything** and return to a factory state
 * **Turn Off** Turn Bangle.js off
+
+# Development
+
+The settings code uses `push/pop/restoreMenu` to navigate different levels of menus. These functions are used as follows:
+
+- `pushMenu`: enter a new level of menu, one deeper than the current (e.g. a submenu)
+- `popMenu`: return to the previous menu level, one more shallow than the current (e.g. returning from a submenu)
+- `restoreMenu`: redraw the current menu (e.g. after an alert)
+
+These functions will keep track of outer menu's scroll positions, to avoid the user being returned to the very first entry as they navigate.

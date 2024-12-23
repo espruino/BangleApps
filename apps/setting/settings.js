@@ -5,10 +5,39 @@ Bangle.drawWidgets();
 const BANGLEJS2 = process.env.HWVERSION==2;
 const storage = require('Storage');
 let settings;
+const scrolls = [];
+let menuScroller;
 
 function updateSettings() {
   //storage.erase('setting.json'); // - not needed, just causes extra writes if settings were the same
   storage.write('setting.json', settings);
+}
+
+function pushMenu(menu) {
+  if(menuScroller) scrolls.push(menuScroller.scroll);
+
+  // if !menu, we're just pushing and something else takes
+  // care of E.showMenu()
+  if(menu) {
+    const m = E.showMenu(menu);
+    menuScroller = m.scroller;
+    return m;
+  }
+}
+
+function restoreMenu(menu) {
+  // equivalent to pushMenu(null); popMenu(menu);
+  if(!menu[""]) menu[""] = {};
+  menu[""].scroll = menuScroller.scroll;
+  menuScroller = E.showMenu(menu).scroller;
+}
+
+function popMenu(menu) {
+  if(!menu[""]) menu[""] = {};
+  menu[""].scroll = scrolls.pop() | 0;
+  const m = E.showMenu(menu);
+  menuScroller = m.scroller;
+  return m;
 }
 
 function updateOptions() {
@@ -65,38 +94,38 @@ if (("object" != typeof settings) ||
     ("object" != typeof settings.options))
   resetSettings();
 
-function showMainMenu() {
+function mainMenu() {
 
   const mainmenu = {
     '': { 'title': /*LANG*/'Settings' },
     '< Back': ()=>load(),
-    /*LANG*/'Apps': ()=>showAppSettingsMenu(),
-    /*LANG*/'System': ()=>showSystemMenu(),
-    /*LANG*/'Bluetooth': ()=>showBLEMenu(),
-    /*LANG*/'Alerts': ()=>showAlertsMenu(),
-    /*LANG*/'Utils': ()=>showUtilMenu()
+    /*LANG*/'Apps': ()=>pushMenu(appSettingsMenu()),
+    /*LANG*/'System': ()=>pushMenu(systemMenu()),
+    /*LANG*/'Bluetooth': ()=>pushMenu(BLEMenu()),
+    /*LANG*/'Alerts': ()=>pushMenu(alertsMenu()),
+    /*LANG*/'Utils': ()=>pushMenu(utilMenu())
   };
 
-  return E.showMenu(mainmenu);
+  return mainmenu;
 }
 
-function showSystemMenu() {
+function systemMenu() {
 
   const mainmenu = {
     '': { 'title': /*LANG*/'System' },
-    '< Back': ()=>showMainMenu(),
+    '< Back': ()=>popMenu(mainMenu()),
     /*LANG*/'Theme': ()=>showThemeMenu(),
-    /*LANG*/'LCD': ()=>showLCDMenu(),
-    /*LANG*/'Locale': ()=>showLocaleMenu(),
-    /*LANG*/'Clock': ()=>showClockMenu(),
-    /*LANG*/'Launcher': ()=>showLauncherMenu(),
-    /*LANG*/'Date & Time': ()=>showSetTimeMenu()
+    /*LANG*/'LCD': ()=>pushMenu(LCDMenu()),
+    /*LANG*/'Locale': ()=>pushMenu(localeMenu()),
+    /*LANG*/'Clock': ()=>pushMenu(clockMenu()),
+    /*LANG*/'Launcher': ()=>pushMenu(launcherMenu()),
+    /*LANG*/'Date & Time': ()=>pushMenu(setTimeMenu())
   };
 
-  return E.showMenu(mainmenu);
+  return mainmenu;
 }
 
-function showAlertsMenu() {
+function alertsMenu() {
   var beepMenuItem;
   if (BANGLEJS2) {
     beepMenuItem = {
@@ -128,7 +157,7 @@ function showAlertsMenu() {
 
   const mainmenu = {
     '': { 'title': /*LANG*/'Alerts' },
-    '< Back': ()=>showMainMenu(),
+    '< Back': ()=>popMenu(mainMenu()),
     /*LANG*/'Beep': beepMenuItem,
     /*LANG*/'Vibration': {
       value: settings.vibrate,
@@ -153,18 +182,18 @@ function showAlertsMenu() {
     }
   };
 
-  return E.showMenu(mainmenu);
+  return mainmenu;
 }
 
 
-function showBLEMenu() {
+function BLEMenu() {
   var hidV = [false, "kbmedia", "kb", "com", "joy"];
   var hidN = [/*LANG*/"Off", /*LANG*/"Kbrd & Media", /*LANG*/"Kbrd", /*LANG*/"Kbrd & Mouse", /*LANG*/"Joystick"];
   var privacy = [/*LANG*/"Off", /*LANG*/"Show name", /*LANG*/"Hide name"];
 
-  E.showMenu({
+  return {
     '': { 'title': /*LANG*/'Bluetooth' },
-    '< Back': ()=>showMainMenu(),
+    '< Back': ()=>popMenu(mainMenu()),
     /*LANG*/'Make Connectable': ()=>makeConnectable(),
     /*LANG*/'BLE': {
       value: settings.ble,
@@ -217,7 +246,7 @@ function showBLEMenu() {
     },
     /*LANG*/'Passkey': {
       value: settings.passkey?settings.passkey:/*LANG*/"none",
-      onchange: () => setTimeout(showPasskeyMenu) // graphical_menu redraws after the call
+      onchange: () => setTimeout(() => pushMenu(passkeyMenu())) // graphical_menu redraws after the call
     },
     /*LANG*/'Whitelist': {
       value:
@@ -228,12 +257,12 @@ function showBLEMenu() {
           ? " (" + settings.whitelist.length + ")"
           : ""
         ),
-      onchange: () => setTimeout(showWhitelistMenu) // graphical_menu redraws after the call
+      onchange: () => setTimeout(() => pushMenu(whitelistMenu())) // graphical_menu redraws after the call
     }
-  });
+  };
 }
 
-function showThemeMenu() {
+function showThemeMenu(pop) {
   function cl(x) { return g.setColor(x).getColor(); }
   function upd(th) {
     g.theme = th;
@@ -250,7 +279,7 @@ function showThemeMenu() {
 
   var themesMenu = {
     '':{title:/*LANG*/'Theme'},
-    '< Back': ()=>showSystemMenu(),
+    '< Back': ()=>popMenu(systemMenu()),
     /*LANG*/'Dark BW': ()=>{
       upd({
         fg:cl("#fff"), bg:cl("#000"),
@@ -274,18 +303,18 @@ function showThemeMenu() {
       let newTheme = storage.readJSON(n);
       themesMenu[newTheme.name ? newTheme.name : n] = () => {
         upd({
-        fg:cl(newTheme.fg), bg:cl(newTheme.bg),
-        fg2:cl(newTheme.fg2), bg2:cl(newTheme.bg2),
-        fgH:cl(newTheme.fgH), bgH:cl(newTheme.bgH),
-        dark:newTheme.dark
-      });
+          fg:cl(newTheme.fg), bg:cl(newTheme.bg),
+          fg2:cl(newTheme.fg2), bg2:cl(newTheme.bg2),
+          fgH:cl(newTheme.fgH), bgH:cl(newTheme.bgH),
+          dark:newTheme.dark
+        });
       };
     }
   );
 
   themesMenu[/*LANG*/'Customize'] = () => showCustomThemeMenu();
 
-  var m = E.showMenu(themesMenu);
+  var m = (pop ? popMenu : pushMenu)(themesMenu);
 
   function showCustomThemeMenu() {
     function setT(t, v) {
@@ -318,7 +347,7 @@ function showThemeMenu() {
     }
     let menu = {
       '':{title:/*LANG*/'Custom Theme'},
-      "< Back": () => showThemeMenu()
+      "< Back": () => showThemeMenu(1)
     };
     const labels = {
       fg: /*LANG*/'Foreground', bg: /*LANG*/'Background',
@@ -341,18 +370,17 @@ function showThemeMenu() {
           },
         };
     });
-    menu["< Back"] = () => showThemeMenu();
-    m = E.showMenu(menu);
+    m = pushMenu(menu);
   }
 }
 
-function showPasskeyMenu() {
+function passkeyMenu() {
   var menu = {
-    "< Back" : ()=>showBLEMenu(),
+    "< Back" : ()=>popMenu(BLEMenu()),
     /*LANG*/"Disable" : () => {
       settings.passkey = undefined;
       updateSettings();
-      showBLEMenu();
+      popMenu(BLEMenu());
     }
   };
   if (!settings.passkey || settings.passkey.length!=6) {
@@ -371,24 +399,24 @@ function showPasskeyMenu() {
       }
     };
   })(i);
-  E.showMenu(menu);
+  return menu;
 }
 
-function showWhitelistMenu() {
+function whitelistMenu() {
   var menu = {
-    "< Back" : ()=>showBLEMenu(),
+    "< Back" : ()=>popMenu(BLEMenu()),
   };
   if (settings.whitelist_disabled) {
     menu[/*LANG*/"Enable"] = () => {
       delete settings.whitelist_disabled;
       updateSettings();
-      showBLEMenu();
+      popMenu(BLEMenu());
     };
   } else {
     menu[/*LANG*/"Disable"] = () => {
       settings.whitelist_disabled = true;
       updateSettings();
-      showBLEMenu();
+      popMenu(BLEMenu());
     };
   }
 
@@ -399,14 +427,14 @@ function showWhitelistMenu() {
           settings.whitelist.splice(settings.whitelist.indexOf(d),1);
           updateSettings();
         }
-        setTimeout(showWhitelistMenu, 50);
+        setTimeout(() => restoreMenu(whitelistMenu()), 50);
       });
     }
   });
   menu[/*LANG*/'Add Device']=function() {
     E.showAlert(/*LANG*/"Connect device\nto add to\nwhitelist",/*LANG*/"Whitelist").then(function() {
       NRF.removeAllListeners('connect');
-      showWhitelistMenu();
+      restoreMenu(whitelistMenu());
     });
     NRF.removeAllListeners('connect');
     NRF.on('connect', function(addr) {
@@ -421,13 +449,13 @@ function showWhitelistMenu() {
       settings.whitelist.push(addr);
       updateSettings();
       NRF.removeAllListeners('connect');
-      showWhitelistMenu();
+      restoreMenu(whitelistMenu());
     });
   };
-  E.showMenu(menu);
+  return menu;
 }
 
-function showLCDMenu() {
+function LCDMenu() {
   // converts g to Espruino internal unit
   function gToInternal(g) { return g * 8192; }
   // converts Espruino internal unit to g
@@ -437,7 +465,7 @@ function showLCDMenu() {
 
   const lcdMenu = {
     '': { 'title': 'LCD' },
-    '< Back': ()=>showSystemMenu(),
+    '< Back': ()=>popMenu(systemMenu()),
   };
   if (BANGLEJS2)
     Object.assign(lcdMenu, {
@@ -584,13 +612,13 @@ function showLCDMenu() {
     }
   });
 
-  return E.showMenu(lcdMenu)
+  return lcdMenu
 }
 
-function showLocaleMenu() {
+function localeMenu() {
   const localemenu = {
     '': { 'title': /*LANG*/'Locale' },
-    '< Back': ()=>showSystemMenu(),
+    '< Back': ()=>popMenu(systemMenu()),
     /*LANG*/'Time Zone': {
       value: settings.timezone,
       format: v => (v > 0 ? "+" : "") + v,
@@ -621,13 +649,13 @@ function showLocaleMenu() {
       },
     }
   };
-  return E.showMenu(localemenu);
+  return localemenu;
 }
 
-function showUtilMenu() {
+function utilMenu() {
   var menu = {
     '': { 'title': /*LANG*/'Utilities' },
-    '< Back': ()=>showMainMenu(),
+    '< Back': ()=>popMenu(mainMenu()),
     /*LANG*/'Debug': {
       value: E.clip(0|settings.log,0,3),
       min: 0,
@@ -641,7 +669,7 @@ function showUtilMenu() {
     /*LANG*/'Compact Storage': () => {
       E.showMessage(/*LANG*/"Compacting...\nTakes approx\n1 minute",{title:/*LANG*/"Storage"});
       storage.compact();
-      showUtilMenu();
+      restoreMenu(utilMenu());
     },
     /*LANG*/'Rewrite Settings': () => {
       storage.write(".boot0","eval(require('Storage').read('bootupdate.js'));");
@@ -661,31 +689,35 @@ function showUtilMenu() {
       }, 1);
     }
   };
+  const back = () => {
+    restoreMenu(utilMenu());
+  };
+
   if (BANGLEJS2)
     menu[/*LANG*/'Calibrate Battery'] = () => {
-      E.showPrompt(/*LANG*/"Is the battery fully charged?",{title:/*LANG*/"Calibrate",back:showUtilMenu}).then(ok => {
+      E.showPrompt(/*LANG*/"Is the battery fully charged?",{title:/*LANG*/"Calibrate",back}).then(ok => {
         if (ok) {
           var s=storage.readJSON("setting.json");
           s.batFullVoltage = (analogRead(D3)+analogRead(D3)+analogRead(D3)+analogRead(D3))/4;
           storage.writeJSON("setting.json",s);
           E.showAlert(/*LANG*/"Calibrated!").then(() => load("setting.app.js"));
         } else {
-          E.showAlert(/*LANG*/"Please charge Bangle.js for 3 hours and try again").then(() => load("setting.app.js"));
+          E.showAlert(/*LANG*/"Please charge Bangle.js for 3 hours and try again").then(back);
         }
       });
     };
   menu[/*LANG*/'Reset Settings'] = () => {
-      E.showPrompt(/*LANG*/'Reset to Defaults?',{title:/*LANG*/"Settings",back:showUtilMenu}).then((v) => {
+      E.showPrompt(/*LANG*/'Reset to Defaults?',{title:/*LANG*/"Settings",back}).then((v) => {
         if (v) {
           E.showMessage(/*LANG*/'Resetting');
           resetSettings();
-          setTimeout(showMainMenu, 50);
-        } else showUtilMenu();
+          setTimeout(() => popMenu(mainMenu()), 50);
+        } else restoreMenu(utilMenu());
       });
     };
   menu[/*LANG*/"Turn Off"] = () => {
     E.showPrompt(/*LANG*/"Are you sure? Alarms and timers won't fire", {
-      title:/*LANG*/"Turn Off",back:showUtilMenu
+      title:/*LANG*/"Turn Off",back
     }).then((confirmed) => {
       if (confirmed) {
         E.showMessage(/*LANG*/"See you\nlater!", /*LANG*/"Goodbye");
@@ -698,34 +730,34 @@ function showUtilMenu() {
           Bangle.softOff ? Bangle.softOff() : Bangle.off();
         }, 2500);
       } else {
-        showUtilMenu();
+        restoreMenu(utilMenu());
       }
     });
   };
   if (Bangle.factoryReset) {
     menu[/*LANG*/'Factory Reset'] = ()=>{
-      E.showPrompt(/*LANG*/'This will remove everything!',{title:/*LANG*/"Factory Reset",back:showUtilMenu}).then((v) => {
+      E.showPrompt(/*LANG*/'This will remove everything!',{title:/*LANG*/"Factory Reset",back}).then((v) => {
         if (v) {
           var n = ((Math.random()*4)&3) + 1;
           E.showPrompt(/*LANG*/"To confirm, please press "+n,{
             title:/*LANG*/"Factory Reset",
             buttons : {"1":1,"2":2,"3":3,"4":4},
-            back:showUtilMenu
+            back
           }).then(function(v) {
             if (v==n) {
               E.showMessage();
               Terminal.setConsole();
               Bangle.factoryReset();
             } else {
-              showUtilMenu();
+              back();
             }
           });
-        } else showUtilMenu();
+        } else back();
       });
     }
   }
 
-  return E.showMenu(menu);
+  return menu;
 }
 
 function makeConnectable() {
@@ -740,19 +772,20 @@ function makeConnectable() {
     }
     if (!r) try { NRF.sleep(); } catch (e) { }
     delete NRF.ignoreWhitelist;
-    showMainMenu();
+    restoreMenu(BLEMenu());
   });
 }
-function showClockMenu() {
+function clockMenu() {
   var clockApps = storage.list(/\.info$/)
     .map(app => {var a=storage.readJSON(app, 1);return (a&&a.type == "clock")?a:undefined})
     .filter(app => app) // filter out any undefined apps
     .sort((a, b) => a.sortorder - b.sortorder);
+  const back = ()=>popMenu(systemMenu());
   const clockMenu = {
     '': {
       'title': /*LANG*/'Select Clock',
     },
-    '< Back': ()=>showSystemMenu(),
+    '< Back': back,
   };
   clockApps.forEach((app, index) => {
     var label = app.name;
@@ -763,24 +796,25 @@ function showClockMenu() {
       settings.clock = app.src;
       settings.clockHasWidgets = storage.read(app.src).includes("Bangle.loadWidgets");
       updateSettings();
-      showMainMenu();
+      back();
     };
   });
   if (clockApps.length === 0) {
     clockMenu[/*LANG*/"No Clocks Found"] = () => { };
   }
-  return E.showMenu(clockMenu);
+  return clockMenu;
 }
-function showLauncherMenu() {
+function launcherMenu() {
   var launcherApps = storage.list(/\.info$/)
     .map(app => {var a=storage.readJSON(app, 1);return (a&&a.type == "launch")?a:undefined})
     .filter(app => app) // filter out any undefined apps
     .sort((a, b) => a.sortorder - b.sortorder);
+  const back = ()=>popMenu(systemMenu());
   const launcherMenu = {
     '': {
       'title': /*LANG*/'Select Launcher',
     },
-    '< Back': ()=>showSystemMenu(),
+    '< Back': back,
   };
   launcherApps.forEach((app, index) => {
     var label = app.name;
@@ -790,22 +824,22 @@ function showLauncherMenu() {
     launcherMenu[label] = () => {
       settings.launcher = app.src;
       updateSettings();
-      showMainMenu();
+      back();
     };
   });
   if (launcherApps.length === 0) {
     launcherMenu[/*LANG*/"No Launchers Found"] = () => { };
   }
-  return E.showMenu(launcherMenu);
+  return launcherMenu;
 }
 
-function showSetTimeMenu() {
+function setTimeMenu() {
   let d = new Date();
   const timemenu = {
     '': { 'title': /*LANG*/'Date & Time' },
     '< Back': function () {
       setTime(d.getTime() / 1000);
-      showSystemMenu();
+      popMenu(systemMenu());
     },
     /*LANG*/'Day': {
       value: d.getDate(),
@@ -852,13 +886,13 @@ function showSetTimeMenu() {
       }
     }
   };
-  return E.showMenu(timemenu);
+  return timemenu;
 }
 
-function showAppSettingsMenu() {
+function appSettingsMenu() {
   let appmenu = {
     '': { 'title': /*LANG*/'App Settings' },
-    '< Back': ()=>showMainMenu(),
+    '< Back': ()=>popMenu(mainMenu()),
   }
   const apps = storage.list(/\.settings\.js$/)
     .map(s => s.substr(0, s.length-12))
@@ -879,12 +913,13 @@ function showAppSettingsMenu() {
   apps.forEach(function (app) {
     appmenu[app.name] = () => { showAppSettings(app) };
   })
-  E.showMenu(appmenu)
+  return appmenu;
 }
 function showAppSettings(app) {
+  const back = () => popMenu(appSettingsMenu());
   const showError = msg => {
     E.showMessage(`${app.name}:\n${msg}!\n\nBTN1 to go back`);
-    setWatch(showAppSettingsMenu, BTN1, { repeat: false });
+    setWatch(back, BTN1, { repeat: false });
   }
   let appSettings = storage.read(app.id+'.settings.js');
   try {
@@ -897,8 +932,9 @@ function showAppSettings(app) {
     return showError(/*LANG*/'Invalid settings');
   }
   try {
-    // pass showAppSettingsMenu as "back" argument
-    appSettings(()=>showAppSettingsMenu());
+    // pass appSettingsMenu as "back" argument
+    pushMenu();
+    appSettings(back);
   } catch (e) {
     console.log(`${app.name} settings error:`, e);
     return showError(/*LANG*/'Error in settings');
@@ -961,8 +997,8 @@ function showTouchscreenCalibration() {
       storage.writeJSON("setting.json",s);
       g.setFont("6x8:2").setFontAlign(0,0).drawString(/*LANG*/"Calibrated!", g.getWidth()/2, g.getHeight()/2);
     }
-    // now load the main menu again
-    setTimeout(showLCDMenu, 500);
+    // now load the menu again
+    setTimeout(() => restoreMenu(LCDMenu()), 500);
   }
 
   function touchHandler(_,e) {
@@ -994,5 +1030,5 @@ function showTouchscreenCalibration() {
   showTapSpot();
 }
 
-showMainMenu();
+pushMenu(mainMenu());
 }

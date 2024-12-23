@@ -1,24 +1,29 @@
 {
   const storage = require("Storage");
-  let settings = storage.readJSON("quicklaunch.json", true) || {};
-
-  let reset = function(name){
-    if (!settings[name]) settings[name] = {"name":"(none)"};
-    if (!storage.read(settings[name].src)) settings[name] = {"name":"(none)"};
-    storage.write("quicklaunch.json", settings);
-  };
+  let settings;
 
   let leaveTrace = function(trace) {
+    if (!settings) settings = storage.readJSON("quicklaunch.json", true) || {};
+
     settings.trace = trace;
     storage.writeJSON("quicklaunch.json", settings);
     return trace;
   };
 
   let launchApp = function(trace) {
-    if (settings[trace+"app"].src){ 
-      if (settings[trace+"app"].name == "Show Launcher") Bangle.showLauncher(); else if (!storage.read(settings[trace+"app"].src)) reset(trace+"app"); else load(settings[trace+"app"].src); 
+    if (!settings) settings = storage.readJSON("quicklaunch.json", true) || {};
+
+    if (settings[trace+"app"].src) {
+      if (settings[trace+"app"].name == "Show Launcher") {
+        Bangle.showLauncher();
+      } else if (!storage.read(settings[trace+"app"].src)) {
+        E.showMessage(settings[trace+"app"].src+"\n"+/*LANG*/"was not found"+".", "Quick Launch");
+        settings[trace+"app"] = {"name":"(none)"}; // reset entry.
+        storage.write("quicklaunch.json", settings);
+        setTimeout(load, 2000);
+      } else {load(settings[trace+"app"].src);}
     }
-  }
+  };
 
   let trace;
 

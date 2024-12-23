@@ -13,7 +13,7 @@ let dark = g.theme.dark; // bool
 let gfx = function() {
   widgetUtils.hide();
   R = Bangle.appRect;
-  marigin = 8;
+  const MARIGIN = 8;
   // g.drawString(str, x, y, solid)
   g.clearRect(R);
   g.reset();
@@ -21,38 +21,38 @@ let gfx = function() {
   if (dark) {g.setColor(0x07E0);} else {g.setColor(0x03E0);} // Green on dark theme, DarkGreen on light theme.
   g.setFont("4x6:2");
   g.setFontAlign(1, 0, 0);
-  g.drawString("->", R.x2 - marigin, R.y + R.h/2);
+  g.drawString("->", R.x2 - MARIGIN, R.y + R.h/2);
 
   g.setFontAlign(-1, 0, 0);
-  g.drawString("<-", R.x + marigin, R.y + R.h/2);
+  g.drawString("<-", R.x + MARIGIN, R.y + R.h/2);
 
   g.setFontAlign(-1, 0, 1);
-  g.drawString("<-", R.x + R.w/2, R.y + marigin);
+  g.drawString("<-", R.x + R.w/2, R.y + MARIGIN);
 
   g.setFontAlign(1, 0, 1);
-  g.drawString("->", R.x + R.w/2, R.y2 - marigin);
+  g.drawString("->", R.x + R.w/2, R.y2 - MARIGIN);
 
   g.setFontAlign(0, 0, 0);
   g.drawString("Play\nPause", R.x + R.w/2, R.y + R.h/2);
 
   g.setFontAlign(-1, -1, 0);
-  g.drawString("Menu", R.x + 2*marigin, R.y + 2*marigin);
+  g.drawString("Menu", R.x + 2*MARIGIN, R.y + 2*MARIGIN);
 
   g.setFontAlign(-1, 1, 0);
-  g.drawString("Wake", R.x + 2*marigin, R.y + R.h - 2*marigin);
+  g.drawString("Wake", R.x + 2*MARIGIN, R.y + R.h - 2*MARIGIN);
 
   g.setFontAlign(1, -1, 0);
-  g.drawString("Srch", R.x + R.w - 2*marigin, R.y + 2*marigin);
+  g.drawString("Srch", R.x + R.w - 2*MARIGIN, R.y + 2*MARIGIN);
 
   g.setFontAlign(1, 1, 0);
-  g.drawString("Saved", R.x + R.w - 2*marigin, R.y + R.h - 2*marigin);
+  g.drawString("Saved", R.x + R.w - 2*MARIGIN, R.y + R.h - 2*MARIGIN);
 };
 
 // Touch handler for main layout
 let touchHandler = function(_, xy) {
-  x = xy.x;
-  y = xy.y;
-  len = (R.w<R.h+1)?(R.w/3):(R.h/3);
+  let x = xy.x;
+  let y = xy.y;
+  let len = (R.w<R.h+1)?(R.w/3):(R.h/3);
 
   // doing a<b+1 seemed faster than a<=b, also using a>b-1 instead of a>b.
   if ((R.x-1<x && x<R.x+len) && (R.y-1<y && y<R.y+len)) {
@@ -82,7 +82,7 @@ let touchHandler = function(_, xy) {
     spotifyWidget("NEXT");
   } else if ((R.x-1<x && x<R.x2+1) && (R.y-1<y && y<R.y2+1)){
     //play/pause
-    playPause = isPaused?"play":"pause";
+    let playPause = isPaused?"play":"pause";
     Bangle.musicControl(playPause);
     isPaused = !isPaused;
   }

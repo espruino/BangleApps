@@ -17,7 +17,9 @@ Bangle 2:
 ![shot3](https://user-images.githubusercontent.com/89286474/146471760-5497fd1b-8e82-4fd5-a4e3-4734701a7dbd.png)
 
 
-## Controls- Bangle
+## Controls
+
+### Bangle 1
 
 **BTN1** - move backward through app icons on a page
 
@@ -35,10 +37,28 @@ Bangle 2:
 
 **Touch Middle(1+2) area** - run the selected app
 
-## Controls- Bangle 2
+### Bangle 2
 
 **Touch** - icon to select, second touch launches app
 
 **Swipe Left/Up** -  move to next page of app icons
 
 **Swipe Right/Down** - move to previous page of app icons
+
+## Settings
+
+**Show clocks**
+
+**Show launchers**
+
+### Only Bangle 2
+
+**Direct launch** - launch on first touch.
+
+**Swipe Exit** - Swipe left to exit.
+
+**Time Out** - Return to clock after a short while.
+
+**Interaction buzz**
+
+**Remember Page** - Remember page when leaving and coming back to the launcher.

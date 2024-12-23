@@ -352,11 +352,6 @@ exports.input = function(options) {
     }
   };
 
-  // Draw initial string
-  require("widget_utils").hide();
-  g.setBgColor(g.theme.bg);
-  wrapText();
-  draw();
 
   return new Promise((resolve,reject) => {
     Bangle.setUI({
@@ -385,6 +380,13 @@ exports.input = function(options) {
         }
       }
     });
+
+    // Draw initial string
+    require("widget_utils").hide();
+    g.setBgColor(g.theme.bg);
+    wrapText();
+    draw();
+
   });
 
 
