@@ -1,6 +1,5 @@
 { "id": "dsky_clock",
     "name": "DSKY Clock",
-    "shortName":"dsky_clock",
     "icon": "dsky_clock.img",
     "screenshots": [{"url":"screenshot1.png"}],
     "version": "0.01",
