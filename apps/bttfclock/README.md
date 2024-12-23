@@ -22,9 +22,9 @@ A watchface inspierd by <a target="_blank" href="https://apps.garmin.com/apps/d1
 
 ## Screenshots
 Clock:<br/>
-
+![](screenshot.png)
 Clock when charging:<br/>
-
+![](screenshotCharging.png)
 
 ## Usage
 Install it and enjoy
