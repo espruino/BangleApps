@@ -250,12 +250,12 @@ function drawAlt(mode) {
       mode_HRM();
       break;
     case 2:
-      setLight('L6','GPS',true);
-      mode_GPS();
-      break;
-    case 3:
       setLight('L6','TEMP',true);
       mode_weather();
+      break;
+    case 3:
+      setLight('L6','GPS',true);
+      mode_GPS();
       break;
     case 4:
       setLight('L6','ACCEL',true);
