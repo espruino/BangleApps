@@ -351,7 +351,9 @@ Bangle.setUI({
   mode : "clock",
   remove : function() {
     if (drawTimeout) clearTimeout(drawTimeout);
+    if (AltDrawTimer) clearTimeout(AltDrawTimer);
     drawTimeout = undefined;
+    AltDrawTimer = undefined;
     require("widget_utils").show(); // re-show widgets
   }});
 Bangle.loadWidgets();
