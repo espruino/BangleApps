@@ -372,10 +372,10 @@ NRF.on('disconnect',function() { setLight('L3','BT',!isBTConnected(),Light_warn)
 
 Bangle.on('swipe', function(directionLR) {
   if (directionLR == 1) {
-    mode=mode+1;
+    mode=mode-1;
   }
   if (directionLR == -1) {
-    mode=mode-1;
+    mode=mode+1;
   }
   if (mode < 0 ) { mode=5; }
   mode=(mode % 6);
