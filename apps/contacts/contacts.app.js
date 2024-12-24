@@ -58,7 +58,7 @@ function showContact(idx) {
       {type:"txt", font:longName ? "6x8" : "6x8:2", pad:1, fillx:2, filly:3, label: longName ? name.slice(0, name.length/2) + '\n' + name.slice(name.length/2) : name},
       {type:"txt", font: "6x8:2", pad:1, fillx:2, filly:3, label: longNumber ? number.slice(0, number.length/2) + '\n' + number.slice(number.length/2) : number},
       {type: 'h', filly: 3, fillx:1, c: [
-          {type:"btn", pad:1, fillx:1, filly:3, src:atob("GBiBAAAAAAAAAAAAAB8AAB+AAB+AAB+AAB+AAA+AAA8AAA4AAAYAAAcAAAMAAAGAAAHB8ADz+AA/+AAf+AAH+AAA+AAAAAAAAAAAAA=="), cb: l => callNumber(i['number'])},
+          {type:"btn", pad:1, fillx:1, filly:3, src:atob("GBiBAAAAAAAAAAAAAB8AAB+AAB+AAB+AAB+AAA+AAA8AAA4AAAYAAAcAAAMAAAGAAAHB8ADz+AA/+AAf+AAH+AAA+AAAAAAAAAAAAA=="), cb: l => callNumber(number)},
         ]},
     ],
     lazy:true
