@@ -222,7 +222,8 @@ function drawMain(){
   setLight('L5','ALARM',isAlarmSet(),Light_warn);
   setLight('L6','STEP',(getSteps()>=getStepGoal()),'#0a0');
 
-  // layout.forgetLazyState();
+  layout.setUI();
+  layout.forgetLazyState();
   layout.render();
   queueDraw();
 }
