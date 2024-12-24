@@ -29,7 +29,7 @@ function mainMenu() {
   if (!contacts.length) {
     menu['No Contacts'] = () => {};
   }
-  contacts.map((e, idx) => {
+  contacts.forEach((e, idx) => {
     menu[e.name] = () => showContact(idx)
   })
   menu["Add Contact"] = addContact;
