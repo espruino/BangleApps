@@ -49,9 +49,9 @@ var layout = new Layout(
           {type:"txt", font:DataFont, col:"#0F0", bgCol:"#000", label:"00", id:"NOUN", fillx:1, height:EL7_height}, 
       ]},
       { type:"",bgCol:'#070', width:80, height:2 },
-        {type:"txt", font:DataFont, col:"#0F0", bgCol:"#000", label:"00000", id:"R1", fillx:1, height:EL7_height},
-        {type:"txt", font:DataFont, col:"#0F0", bgCol:"#000", label:"00000", id:"R2", fillx:1, height:EL7_height},
-        {type:"txt", font:DataFont, col:"#0F0", bgCol:"#000", label:"00000", id:"R3", fillx:1, height:EL7_height},
+        {type:"txt", font:DataFont, col:"#0F0", bgCol:"#000", label:"00000", id:"R1", halign:1, fillx:1, height:EL7_height},
+        {type:"txt", font:DataFont, col:"#0F0", bgCol:"#000", label:"00000", id:"R2", halign:1, fillx:1, height:EL7_height},
+        {type:"txt", font:DataFont, col:"#0F0", bgCol:"#000", label:"00000", id:"R3", halign:1, fillx:1, height:EL7_height},
       ]},
     {type:"",width:5},
   ],
@@ -61,25 +61,7 @@ layout.update();
 //support functions
 
 function getWeather() {
-  try { 
-    var weatherLib = require("weather");
-    weather = weatherLib.get();
-  } catch(e) {
-    console.log("Weather lib not found." );
-  }
-  if (weather) {
-    weather.temp = Math.round(require("locale").temp(weather.temp-273.15));
-    weather.hum = weather.hum;
-    weather.wind = Math.round(require("locale").speed(weather.wind).match(/^(\D*\d*)(.*)$/));
-    weather.wind = Math.round(weather.wind[1]);
-  } else {
-    weather = {
-      temp: "-----",
-      hum: "-----",
-      wind: "-----",
-      txt: "-----",
-    };
-  }
+  weather = require("Storage").readJSON('weather.json', 1).weather;
   return weather;
 }
 
@@ -173,13 +155,20 @@ function setLight(id,label,check,onColour,offColour){
   layout.render(layout[id]);
 }
 
-function setDATA(id,label){
+function setDATA(id,label) {
   layout.clear(layout[id]);
   try {
     if (isNaN(label)) {
       data='-----';
     } else {
+      if (label < 0) {
+        label=Math.abs(label);
+        sign='-';
+      } else {
+        sign='';
+      }
       data=String(String(label).toString(16)).toUpperCase().padStart(5,'0').substring(0,5);
+      data=sign+data;
     }
   } catch(e) {
     data='-----';
@@ -215,7 +204,6 @@ function draw_bg(){
 
 // actual display
 function drawMain(){
-  remove_alt_events();
   datetime=getdatetime();
 
   setDATA('R1',datetime.localtime);
@@ -236,24 +224,15 @@ function drawMain(){
 
   // layout.forgetLazyState();
   layout.render();
-}
-
-var drawTimeout;
-// schedule a draw for the next minute
-function queueDraw() {
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
-    let mode = 0;
-    remove_alt_events();
-    drawMain();
-  }, 60000 - (Date.now() % 60000));
+  queueDraw();
 }
 
 ////// ALT modes /////
+var AltDrawTimer;
 function drawAlt(mode) {
-  remove_alt_events();
+  if (AltDrawTimer) clearTimeout(AltDrawTimer); 
   mode = typeof mode !== 'undefined' ? mode:0;
+  mode=Math.abs(mode);
   // print('drawAlt: ', mode);  // debug
   // Show mode in PROG
   setWORD('PROG',mode);
@@ -261,6 +240,9 @@ function drawAlt(mode) {
   setWORD('VERB','');
   // Disable Battery warning light in to show PROG no longer shows battery level
   setLight('L4','BATT',false);
+  setDATA('R1');
+  setDATA('R2');
+  setDATA('R3');
   switch (mode) {
     case 1:
       setLight('L6','HRM',true);
@@ -288,77 +270,81 @@ function drawAlt(mode) {
   layout.render();
 }
 
+function mode_HRM() {
+  setLight('COMPACTY','',true,Light_COMPACTY);
+  AltDrawTimer = setTimeout( function() {
+    Bangle.setHRMPower(true, 'dsky_clock');
+    hrm=getHRM();
+    setDATA('R1',hrm.bpm);
+    setDATA('R2',hrm.bpmConfidence);
+    setDATA('R3',getSteps());
+    mode_HRM();
+  }, 5000);
+  Bangle.setHRMPower(false);
+}
 
 function mode_weather() {
   weather=getWeather();
+  weather.temp = Math.round(weather.temp-273.15);
   setDATA('R1',weather.temp);
   setDATA('R2',weather.hum);
-  setDATA('R3',weather.wind);
+  setDATA('R3',weather.code);
+  setWORD('NOUN',weather.hum);
+  setWORD('VERB',weather.rain);
 }
 
 function mode_compass() {
-  Bangle.setCompassPower(1);
-  Bangle.on('mag', show_compass);
-}
-function mode_accel() {
-  Bangle.on('accel', show_accel);
-}
-function mode_GPS() {
-  Bangle.setGPSPower(1,'dsky_clock');
-  Bangle.on('GPS', show_GPS);
-}
-
-function mode_HRM() {
-  Bangle.setHRMPower(true, 'dsky_clock');  
-  Bangle.on('HRM', show_HRM);
-}
-function show_HRM() {
-  setLight('COMPACTY','',isActive(),Light_COMPACTY);
-  hrm=getHRM();
-  setDATA('R1',hrm.bpm);
-  setDATA('R2',hrm.bpmConfidence);
-//  setDATA('R3',hrm.steps);
-}
-
-function show_GPS() {
-  setLight('COMPACTY','',isActive(),Light_COMPACTY);
-  gps=Bangle.getGPSFix();
-  setWORD('NOUN',gps.fix);
-  setWORD('VERB',gps.satellites);
-  setDATA('R1',gps.lat);
-  setDATA('R2',gps.lon);
-  setDATA('R3',gps.speed);
-}
-
-function show_compass() {
-  setLight('COMPACTY','',isActive(),Light_COMPACTY);
-  compass=Bangle.getCompass();
-  setDATA('R1',compass.heading);
-  setDATA('R2');
-  setDATA('R3');
-}
-
-function show_accel() {
-  setLight('COMPACTY','',isActive(),Light_COMPACTY);
-  accel=Bangle.getAccel();
-  setDATA('R1',accel.x);
-  setDATA('R2',accel.y);
-  setDATA('R3',accel.z);
-}
-
-
-function remove_alt_events() {
-  Bangle.removeListener('accel', show_accel);
-  Bangle.removeListener('mag', show_compass);
+  AltDrawTimer = setTimeout ( function() {
+    setLight('COMPACTY','',true,Light_COMPACTY); //isCompassOn seems to be incorrect?
+    Bangle.setCompassPower(1);
+    compass=Bangle.getCompass();
+    setDATA('R1',compass.heading);
+    setDATA('R2');
+    setDATA('R3');
+    mode_compass();
+  }, 200);
   Bangle.setCompassPower(0);
-  Bangle.removeListener('GPS', show_GPS);
+}
+
+function mode_GPS() {
+  setLight('COMPACTY','',true,Light_COMPACTY);
+  AltDrawTimer = setTimeout( function() {
+    Bangle.setGPSPower(1,'dsky_clock');
+    gps=Bangle.getGPSFix();
+    setWORD('NOUN',gps.fix);
+    setWORD('VERB',gps.satellites);
+    setDATA('R1',gps.lat);
+    setDATA('R2',gps.lon);
+    setDATA('R3',gps.speed);
+    mode_GPS();
+  }, 5000);
   Bangle.setGPSPower(0);
-  Bangle.removeListener('HRM', show_HRM);
-  Bangle.setHRMPower(0);
-  setLight('COMPACTY','',isActive(),Light_COMPACTY);
+}
+
+function mode_accel() {
+  AltDrawTimer = setTimeout( function() {
+    setLight('COMPACTY','',isActive(),Light_COMPACTY);
+    accel=Bangle.getAccel();
+    setDATA('R1',accel.x);
+    setDATA('R2',accel.y);
+    setDATA('R3',accel.z);
+    mode_accel();
+  }, 100);
 }
 
 //////////// Main
+
+var drawTimeout;
+// schedule a draw for the next minute
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    mode = 0;
+    if (AltDrawTimer) clearTimeout(AltDrawTimer);
+    drawMain();
+  }, 60000 - (Date.now() % 60000));
+}
 
 // Show launcher when middle button pressed
 Bangle.setUI({
@@ -373,26 +359,26 @@ require("widget_utils").swipeOn(); // hide widgets, make them visible with a swi
 
 Bangle.on('lock',on=>{
   mode = 0;
-  remove_alt_events();
   drawMain(); // draw immediately
   });
-Bangle.on('HRM',function() { setLight('COMPACTY','',isActive(),Light_COMPACTY);});
+//Bangle.on('HRM',function() { setLight('COMPACTY','',isActive(),Light_COMPACTY);});
 Bangle.on("message",function() { setLight('COMPACTY','',isActive(),Light_COMPACTY);});
 Bangle.on('charging',drawMain);
-NRF.on('connect',function() {   setLight('L3','BT',!isBTConnected(),Light_warn); });
-NRF.on('disconnect',function() {   setLight('L3','BT',!isBTConnected(),Light_warn); });
-Bangle.on('tap', function(data) {
-  if (!Bangle.isLocked() && data.double) {
-    if (mode > 5 ) {
-      mode = 0;
-    } else {
-      mode=mode+1;
-    }
+NRF.on('connect',function() { setLight('L3','BT',!isBTConnected(),Light_warn); });
+NRF.on('disconnect',function() { setLight('L3','BT',!isBTConnected(),Light_warn); });
+
+Bangle.on('swipe', function(directionLR) {
+  if (directionLR == 1) {
+    mode=mode+1;
   }
+  if (directionLR == -1) {
+    mode=mode-1;
+  }
+  if (mode < 0 ) { mode=5; }
+  mode=(mode % 6);
   drawAlt(mode);
 });
 
 g.clear();
 draw_bg();
 drawMain();
-queueDraw();
