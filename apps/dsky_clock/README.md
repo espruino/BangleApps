@@ -20,6 +20,18 @@ Indicator lights are:
 - STEP (Reached STEP goal))
 
 ----
+## Alt Modes
+Swipe left/right to switch between different PROGRAM modes.
+
+- HRM (BPM/Confidence)
+- GPS (Latitude/Longitude/Speed)
+- Weather (Humidity/Rain/Temperature/Wind/Condition Code)
+- Accelerometer (X/Y/Z)
+- Compass (HEADING)
+
+In the interests of usability these change the "LIGHT" on the left side to show the current mode.
+
+----
 This is my first watch face, may add features and customization later.
 
 ## Creator
