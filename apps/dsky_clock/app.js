@@ -74,7 +74,7 @@ function getdatetime(){
   datetime.month = d.getMonth()+1;
   datetime.day = d.getDate();
   datetime.localtime=String(d.getHours()).padStart(2,'0')+String(d.getMinutes()).padStart(2,'0');
-  utchour=((d.getHours()+(Math.round(d.getTimezoneOffset()/60))) % 24);
+  let utchour=((d.getHours()+(Math.round(d.getTimezoneOffset()/60))) % 24);
   datetime.utctime=String(utchour).padStart(2,'0')+String(d.getMinutes()).padStart(2,'0');
   return datetime;
 }
@@ -158,13 +158,12 @@ function setLight(id,label,check,onColour,offColour){
 function setDATA(id,label) {
   layout.clear(layout[id]);
   let data='-----';
+  let sign='';
   try {
     if (!isNaN(label)) {
       if (label < 0) {
         label=Math.abs(label);
         sign='-';
-      } else {
-        sign='';
       }
       data=String(String(label).toString(16)).toUpperCase().padStart(5,'0').substring(0,5);
       data=sign+data;
@@ -179,13 +178,12 @@ function setDATA(id,label) {
 function setWORD(id,label){
   layout.clear(layout[id]);
   try {
-    if (isNaN(label)) {
-      data='--';
-    } else {
+    let data='--';
+    if (!isNaN(label)) {
       data=String(String(label).toString(16)).toUpperCase().padStart(2,'0').substring(0,2);
     }
   } catch(e) {
-    data='--';
+    let data='--';
   }
 //  print(id, data); //debug
   layout[id].label=data;
@@ -274,7 +272,7 @@ function mode_HRM() {
   setLight('COMPACTY','',true,Light_COMPACTY);
   AltDrawTimer = setTimeout( function() {
     Bangle.setHRMPower(true, 'dsky_clock');
-    hrm=getHRM();
+    let hrm=getHRM();
     setDATA('R1',hrm.bpm);
     setDATA('R2',hrm.bpmConfidence);
     setDATA('R3',getSteps());
@@ -297,7 +295,7 @@ function mode_compass() {
   AltDrawTimer = setTimeout ( function() {
     setLight('COMPACTY','',true,Light_COMPACTY); //isCompassOn seems to be incorrect?
     Bangle.setCompassPower(1);
-    compass=Bangle.getCompass();
+    let compass=Bangle.getCompass();
     setDATA('R1',compass.heading);
     setDATA('R2');
     setDATA('R3');
@@ -310,7 +308,7 @@ function mode_GPS() {
   setLight('COMPACTY','',true,Light_COMPACTY);
   AltDrawTimer = setTimeout( function() {
     Bangle.setGPSPower(1,'dsky_clock');
-    gps=Bangle.getGPSFix();
+    let gps=Bangle.getGPSFix();
     setWORD('NOUN',gps.fix);
     setWORD('VERB',gps.satellites);
     setDATA('R1',gps.lat);
@@ -324,7 +322,7 @@ function mode_GPS() {
 function mode_accel() {
   AltDrawTimer = setTimeout( function() {
     setLight('COMPACTY','',isActive(),Light_COMPACTY);
-    accel=Bangle.getAccel();
+    let accel=Bangle.getAccel();
     setDATA('R1',accel.x);
     setDATA('R2',accel.y);
     setDATA('R3',accel.z);
