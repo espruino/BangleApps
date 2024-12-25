@@ -347,24 +347,10 @@ function queueDraw() {
   }, 60000 - (Date.now() % 60000));
 }
 
-// Show launcher when middle button pressed
-Bangle.setUI({
-  mode : "clock",
-  remove : function() {
-    if (drawTimeout) clearTimeout(drawTimeout);
-    if (AltDrawTimer) clearTimeout(AltDrawTimer);
-    drawTimeout = undefined;
-    AltDrawTimer = undefined;
-    require("widget_utils").show(); // re-show widgets
-  }});
-Bangle.loadWidgets();
-require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
-
 Bangle.on('lock',on=>{
   mode = 0;
   drawMain(); // draw immediately
   });
-//Bangle.on('HRM',function() { setLight('COMPACTY','',isActive(),Light_COMPACTY);});
 Bangle.on("message",function() { setLight('COMPACTY','',isActive(),Light_COMPACTY);});
 Bangle.on('charging',drawMain);
 NRF.on('connect',function() { setLight('L3','BT',!isBTConnected(),Light_warn); });
@@ -384,4 +370,18 @@ Bangle.on('swipe', function(directionLR) {
 
 g.clear();
 draw_bg();
+
+// Show launcher when middle button pressed
+Bangle.setUI({
+  mode : "clock",
+  remove : function() {
+    if (drawTimeout) clearTimeout(drawTimeout);
+    if (AltDrawTimer) clearTimeout(AltDrawTimer);
+    drawTimeout = undefined;
+    AltDrawTimer = undefined;
+    require("widget_utils").show(); // re-show widgets
+  }});
+Bangle.loadWidgets();
+require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
+
 drawMain();
