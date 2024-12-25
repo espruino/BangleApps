@@ -3,17 +3,17 @@ var Layout = require("Layout");
 require("Font7x11Numeric7Seg").add(Graphics);
 require("FontTeletext5x9Ascii").add(Graphics);
 
-borders = 1;
-Light_on='#fff';
-Light_off='#554';
-Light_warn='#f90';
-Light_COMPACTY='#0F0';
-Light_width=43;
-Light_height=25;
-EL7_height=30;
-LightFont='Teletext5x9Ascii';
-DataFont='7x11Numeric7Seg:2';
-mode = 0;
+const borders = 1;
+const Light_on='#fff';
+const Light_off='#554';
+const Light_warn='#f90';
+const Light_COMPACTY='#0F0';
+const Light_width=43;
+const Light_height=25;
+const EL7_height=30;
+const LightFont='Teletext5x9Ascii';
+const DataFont='7x11Numeric7Seg:2';
+var mode = 0;
 
 var layout = new Layout(
   {type:"h", c:[
@@ -61,7 +61,7 @@ layout.update();
 //support functions
 
 function getWeather() {
-  weather = require("Storage").readJSON('weather.json', 1).weather;
+  var weather = require("Storage").readJSON('weather.json', 1).weather;
   return weather;
 }
 
@@ -80,7 +80,7 @@ function getdatetime(){
 }
 
 function getSteps(){
-  steps=Bangle.getHealthStatus("day").steps;
+  let steps=Bangle.getHealthStatus("day").steps;
   steps = typeof steps !== 'undefined' ? steps:0;
   return steps;
 }
@@ -111,7 +111,7 @@ function getTemperature(){
 }
 
 function getHRM(){
- hrm=Bangle.getHealthStatus('last');
+ let hrm=Bangle.getHealthStatus('last');
  hrm = typeof hrm !== 'undefined' ? hrm:0;
  return hrm;
 }
@@ -121,7 +121,7 @@ function isBTConnected(){
 }
 
 function getBattery(){
-  battlevel = E.getBattery();
+  let battlevel = E.getBattery();
   if (Bangle.isCharging()) {
     battlevel = -1;
   } else if (battlevel >= 100) {
@@ -157,10 +157,9 @@ function setLight(id,label,check,onColour,offColour){
 
 function setDATA(id,label) {
   layout.clear(layout[id]);
+  let data='-----';
   try {
-    if (isNaN(label)) {
-      data='-----';
-    } else {
+    if (!isNaN(label)) {
       if (label < 0) {
         label=Math.abs(label);
         sign='-';
@@ -204,7 +203,7 @@ function draw_bg(){
 
 // actual display
 function drawMain(){
-  datetime=getdatetime();
+  let datetime=getdatetime();
 
   setDATA('R1',datetime.localtime);
   setDATA('R2',datetime.utctime);
@@ -285,7 +284,7 @@ function mode_HRM() {
 }
 
 function mode_weather() {
-  weather=getWeather();
+  let weather=getWeather();
   weather.temp = Math.round(weather.temp-273.15);
   setDATA('R1',weather.temp);
   setDATA('R2',weather.hum);
