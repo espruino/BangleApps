@@ -172,7 +172,7 @@ function setWORD(id,label){
   layout.clear(layout[id]);
   let data='--';
   if (!isNaN(label)) {
-    let data=String(String(label).toString(16)).toUpperCase().padStart(2,'0').substring(0,2);
+    data=String(String(label).toString(16)).toUpperCase().padStart(2,'0').substring(0,2);
   }
   //  print(id, data); //debug
   layout[id].label=data;
