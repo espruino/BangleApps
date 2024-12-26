@@ -3,7 +3,6 @@ var Layout = require("Layout");
 require("Font7x11Numeric7Seg").add(Graphics);
 require("FontTeletext5x9Ascii").add(Graphics);
 
-const borders = 1;
 const Light_on='#fff';
 const Light_off='#554';
 const Light_warn='#f90';
@@ -68,7 +67,7 @@ function getWeather() {
 function getdatetime(){
   var datetime = [];
   var d = new Date();
-  var offsets = require("Storage").readJSON("worldclock.settings.json") || [];
+//  var offsets = require("Storage").readJSON("worldclock.settings.json") || [];
 //  var meridian = require("locale").meridian(d);
   datetime.clock = require("locale").time(d, 1);
   datetime.month = d.getMonth()+1;
@@ -102,12 +101,6 @@ function isMessagesNotify(){
   } else {
     return false;
   }
-}
-
-function getTemperature(){
-   var temperature = E.getTemperature();
-   temperature = typeof temperature !== 'undefined' ? temperature:99999;
-   return Math.round(temperature);
 }
 
 function getHRM(){
@@ -177,15 +170,11 @@ function setDATA(id,label) {
 
 function setWORD(id,label){
   layout.clear(layout[id]);
-  try {
-    let data='--';
-    if (!isNaN(label)) {
-      data=String(String(label).toString(16)).toUpperCase().padStart(2,'0').substring(0,2);
-    }
-  } catch(e) {
-    let data='--';
+  let data='--';
+  if (!isNaN(label)) {
+    let data=String(String(label).toString(16)).toUpperCase().padStart(2,'0').substring(0,2);
   }
-//  print(id, data); //debug
+  //  print(id, data); //debug
   layout[id].label=data;
   layout.render(layout[id]);
 }
