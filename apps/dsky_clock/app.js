@@ -125,7 +125,7 @@ function getBattery(){
 }
 
 function isActive(){
-  if (Bangle.isCompassOn() || Bangle.isGPSOn() || Bangle.isHRMOn() | Bangle.isBarometerOn() ) {
+  if (Bangle.isCompassOn() || Bangle.isGPSOn() || Bangle.isHRMOn() || Bangle.isBarometerOn() ) {
     return true;
   } else {
     return false;
