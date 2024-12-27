@@ -57,7 +57,7 @@ var layout = new Layout(
   lazy:true});
 layout.update();
 
-//support functions
+//support functioe_ns
 
 function getWeather() {
   var weather = {};
@@ -213,7 +213,7 @@ function drawMain(){
   setLight('L5','ALARM',isAlarmSet(),Light_warn);
   setLight('L6','STEP',(getSteps()>=getStepGoal()),'#0a0');
 
-  layout.setUI();
+//  layout.setUI();
   layout.forgetLazyState();
   layout.render();
   queueDraw();
@@ -277,12 +277,20 @@ function mode_HRM() {
 
 function mode_weather() {
   let weather=getWeather();
-  weather.temp = Math.round(weather.temp-273.15);
-  setDATA('R1',weather.temp);
-  setDATA('R2',weather.hum);
-  setDATA('R3',weather.code);
-  setWORD('NOUN',weather.hum);
-  setWORD('VERB',weather.rain);
+  try {
+    weather.temp = Math.round(weather.temp-273.15);
+    setDATA('R1',weather.temp);
+    setDATA('R2',weather.hum);
+    setDATA('R3',weather.code);
+    setWORD('NOUN',weather.hum);
+    setWORD('VERB',weather.rain);
+  } catch(e) {
+    setDATA('R1','-----');
+    setDATA('R2','-----');
+    setDATA('R3','-----');
+    setDATA('R1','--');
+    setDATA('R1','--');
+  }
 }
 
 function mode_compass() {
@@ -338,6 +346,12 @@ function queueDraw() {
   }, 60000 - (Date.now() % 60000));
 }
 
+// Show launcher when middle button pressed
+Bangle.setUI("clock");
+
+Bangle.loadWidgets();
+require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
+
 Bangle.on('lock',on=>{
   mode = 0;
   drawMain(); // draw immediately
@@ -361,18 +375,4 @@ Bangle.on('swipe', function(directionLR) {
 
 g.clear();
 draw_bg();
-
-// Show launcher when middle button pressed
-Bangle.setUI({
-  mode : "clock",
-  remove : function() {
-    if (drawTimeout) clearTimeout(drawTimeout);
-    if (AltDrawTimer) clearTimeout(AltDrawTimer);
-    drawTimeout = undefined;
-    AltDrawTimer = undefined;
-    require("widget_utils").show(); // re-show widgets
-  }});
-Bangle.loadWidgets();
-require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
-
 drawMain();
