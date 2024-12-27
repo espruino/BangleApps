@@ -60,7 +60,12 @@ layout.update();
 //support functions
 
 function getWeather() {
-  var weather = require("Storage").readJSON('weather.json', 1).weather;
+  var weather = {};
+  try {
+    weather = require("Storage").readJSON('weather.json', 1).weather;
+  } catch(e) {
+    return {};
+  }
   return weather;
 }
 
