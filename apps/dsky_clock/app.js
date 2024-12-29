@@ -14,6 +14,8 @@ const LightFont='Teletext5x9Ascii';
 const DataFont='7x11Numeric7Seg:2';
 var mode = 0;
 
+if (global.WIDGETS) {require("widget_utils").swipeOn();} // If `dsky_clock` was fast loaded into we seemingly need to hide the widgets before setting the layout so elements are not moved down.
+
 var layout = new Layout(
   {type:"h", c:[
     {type:"",width:6},
@@ -54,7 +56,10 @@ var layout = new Layout(
       ]},
     {type:"",width:5},
   ],
-  lazy:true});
+    lazy:true}, 
+  {btns:[
+    {label:"", cb: Bangle.showLauncher}
+  ], lazy:true});
 layout.update();
 
 //support functioe_ns
@@ -346,12 +351,6 @@ function queueDraw() {
   }, 60000 - (Date.now() % 60000));
 }
 
-// Show launcher when middle button pressed
-Bangle.setUI("clock");
-
-Bangle.loadWidgets();
-require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
-
 Bangle.on('lock',on=>{
   mode = 0;
   drawMain(); // draw immediately
@@ -376,3 +375,7 @@ Bangle.on('swipe', function(directionLR) {
 g.clear();
 draw_bg();
 drawMain();
+
+Bangle.CLOCK = 1;
+Bangle.loadWidgets(); // loading widgets after drawing the layout in `drawMain()` to display the app UI ASAP.
+require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
