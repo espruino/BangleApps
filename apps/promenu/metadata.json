@@ -14,5 +14,6 @@
     {"name":"promenu.boot.js","url":"bootb2.js","supports": ["BANGLEJS2"]},
     {"name":"promenu.img","url":"promenuIcon.js","evaluate":true},
     {"name":"promenu.settings.js","url":"settings.js"}
-  ]
+  ],
+  "data": [{"name":"promenu.settings.json"}]
 }
