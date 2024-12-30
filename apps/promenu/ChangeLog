@@ -12,3 +12,4 @@
 0.08: Fix bug with modifying menu - allows hadash to save scroll positions
 0.09: Don't show "..." if a string isn't truncated (i.e. scrolled)
 0.10: Trigger `remove` callbacks when ending the menu
+0.11: Add options for natural scroll and disabling wrap-around

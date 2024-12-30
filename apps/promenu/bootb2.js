@@ -1,3 +1,7 @@
+var _a, _b;
+var settings = (require("Storage").readJSON("promenu.settings.json", true) || {});
+(_a = settings.naturalScroll) !== null && _a !== void 0 ? _a : (settings.naturalScroll = false);
+(_b = settings.wrapAround) !== null && _b !== void 0 ? _b : (settings.wrapAround = true);
 E.showMenu = function (items) {
     var RectRnd = function (x1, y1, x2, y2, r) {
         var pp = [];
@@ -164,7 +168,12 @@ E.showMenu = function (items) {
             }
             else {
                 var lastSelected = selected;
-                selected = (selected + dir + menuItems.length) % menuItems.length;
+                if (settings.wrapAround) {
+                    selected = (selected + dir + menuItems.length) % menuItems.length;
+                }
+                else {
+                    selected = E.clip(selected + dir, 0, menuItems.length - 1);
+                }
                 scroller.scroll = selected;
                 l.draw(Math.min(lastSelected, selected), Math.max(lastSelected, selected));
             }
@@ -201,7 +210,7 @@ E.showMenu = function (items) {
         },
     }, function (dir) {
         if (dir)
-            l.move(dir);
+            l.move(settings.naturalScroll ? -dir : dir);
         else
             l.select();
     });
