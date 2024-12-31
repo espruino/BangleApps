@@ -3,9 +3,9 @@
     loadWidgets    : false,
     textAboveHands : false,
     shortHrHand    : false,
-    show24HourMode : true
+    show24HourMode : false
   }
-  let settings = Object.assign(defaultSettings, require('Storage').readJSON('cc_clock24.json',1)||{});
+  let settings = Object.assign(defaultSettings, require('Storage').readJSON('cc_clock24.json',1) || {});
 
   const save = () => require('Storage').write('cc_clock24.json', settings);
 
