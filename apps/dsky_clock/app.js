@@ -27,7 +27,7 @@ var layout = new Layout(
         {type:"txt", font:LightFont, col:"#000", bgCol:"#555", id:'L5', label:"PROG", width:Light_width, height:Light_height },
         {type:"txt", font:LightFont, col:"#000", bgCol:"#eee", id:'L6', label:"OPR ERR", width:Light_width, height:Light_height },
     ]},
-    { type:"", width:20},
+    { type:"", width:25},
     { type:"v", c: [
       {type:"",height:2},
       {type:"h", c: [
