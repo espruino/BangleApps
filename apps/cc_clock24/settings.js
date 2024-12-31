@@ -2,7 +2,8 @@
   const defaultSettings = {
     loadWidgets    : false,
     textAboveHands : false,
-    shortHrHand    : false
+    shortHrHand    : false,
+    show24HourMode : true
   }
   let settings = Object.assign(defaultSettings, require('Storage').readJSON('cc_clock24.json',1)||{});
 
@@ -21,6 +22,10 @@
     /*LANG*/'Short hour hand': {
       value : !!settings.shortHrHand,
       onchange : v => { settings.shortHrHand=v; save();}
+    },
+    /*LANG*/'Show 24 hour mode': {
+      value : !!settings.show24HourMode,
+      onchange : v => { settings.show24HourMode=v; save();}
     },
   };
 

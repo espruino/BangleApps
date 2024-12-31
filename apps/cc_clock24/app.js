@@ -2,7 +2,8 @@
 const defaultSettings = {
   loadWidgets    : false,
   textAboveHands : false,
-  shortHrHand    : false
+  shortHrHand    : false,
+  show24HourMode : true
 };
 const settings = Object.assign(defaultSettings, require('Storage').readJSON('cc_clock24.json',1)||{});
 
@@ -37,12 +38,15 @@ const zeiger = function(len,dia,tim) {
 const drawHands = function(d) {
   let m=d.getMinutes(), h=d.getHours(), s=d.getSeconds();
   g.setColor(1,1,1);
-
-  if(h>12){
-    h=h-12;
+  
+  let numHoursForHourHand = settings.show24HourMode? 24 : 12;
+  
+  if(h>numHoursForHourHand){
+    h=h-numHoursForHourHand;
   }
+  
   //calculates the position of the minute, second and hour hand
-  h=2*Math.PI/12*(h+m/60)-Math.PI/2;
+  h=2*Math.PI/numHoursForHourHand*(h+m/60)-Math.PI/2;
   //more accurate
   //m=2*Math.PI/60*(m+s/60)-Math.PI/2;
   m=2*Math.PI/60*(m)-Math.PI/2;
@@ -80,7 +84,11 @@ const drawNumbers = function() {
   g.setColor(1,1,1);
   g.setBgColor(0,0,0);
   for(let i = 0;i<12;i++){
-    g.drawString(zahlpos[i][0],zahlpos[i][1],zahlpos[i][2],true);
+    hour = zahlpos[i][0]
+    if (settings.show24HourMode){
+      hour *= 2;
+    }
+    g.drawString(hour,zahlpos[i][1],zahlpos[i][2],true);
   }
 };
 
