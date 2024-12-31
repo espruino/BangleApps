@@ -24,4 +24,4 @@
     ]
   };
   return ci;
-}) // must not have a semi-colon!
+})
