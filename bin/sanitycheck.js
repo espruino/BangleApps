@@ -184,7 +184,6 @@ var KNOWN_WARNINGS = [
   "App pongclock file pongclock.settings.js should be evaluated as a function but doesn't end in ')'",
   "App popconlaunch file popcon.settings.js should be evaluated as a function but doesn't end in ')'",
   "App poweroff file poweroff.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App promenu file promenu.settings.js should be evaluated as a function but doesn't end in ')'",
   "App puzzle15 file puzzle15.settings.js should be evaluated as a function but doesn't end in ')'",
   "App qcenter file qcenter.settings.js should be evaluated as a function but doesn't end in ')'",
   "App rebbleagenda file rebbleagenda.settings.js should be evaluated as a function but doesn't end in ')'",
