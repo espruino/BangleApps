@@ -1,4 +1,4 @@
-Launcher
+Tag Launcher
 ========
 
 Based on the default launcher but puts all applications in a submenu by their tag.
