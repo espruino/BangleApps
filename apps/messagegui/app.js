@@ -90,7 +90,7 @@ var onMessagesModified = function(type,msg) {
   }
   if (msg && msg.id=="nav" && msg.t=="modify" && active!="map")
     return; // don't show an updated nav message if we're just in the menu
-  showMessage(msg&&msg.id, false);
+  showMessagesScroller(msg, false)
 };
 Bangle.on("message", onMessagesModified);
 
@@ -246,32 +246,169 @@ function showMusicMessage(msg) {
   }, 400);
 }
 
-function showMessageScroller(msg) {
-  cancelReloadTimeout();
+function showMessagesScroller(msg, persist, alreadyProcessed) {
+  if (persist===undefined) {persist = true;}
+  const MSG_IDX = msg ? MESSAGES.findIndex((m)=>m.id==msg.id) : 0;
+  const INITIATED_FROM = (
+    alreadyProcessed===undefined ? "other function" :
+      (MSG_IDX<=alreadyProcessed.idxSpan.start ? "scrolling up" :
+        (MSG_IDX >= alreadyProcessed.idxSpan.stop-1 ? "scrolling down" :
+          undefined))
+  );
+  if (!alreadyProcessed) {alreadyProcessed = {idxSpan:{}};} // So `alreadyProcessed.idxSpan.start/stop` can be looked for on first run.
+
+  const WU = require("widget_utils");
+  WU.hide();
+
+  if (replying) { return; }
+  if (persist) {cancelReloadTimeout();} else {resetReloadTimeout();}
+
+  let idxSpan = (
+    INITIATED_FROM==="other function" ?
+      {start : Math.max(MSG_IDX-1, 0), stop : Math.min(MSG_IDX+2, MESSAGES.length)} :
+      (INITIATED_FROM==="scrolling up" ?
+        {start : MSG_IDX, stop : alreadyProcessed.idxSpan.start } :
+        (INITIATED_FROM==="scrolling down" ?
+          { start : alreadyProcessed.idxSpan.stop, stop : Math.min(MSG_IDX+1, MESSAGES.length) } :
+          undefined))
+  );
+
   active = "scroller";
   var bodyFont = fontBig;
   g.setFont(bodyFont);
-  var lines = [];
-  if (msg.title) lines = g.wrapString(msg.title, g.getWidth()-10);
-  var titleCnt = lines.length;
-  if (titleCnt) lines.push(""); // add blank line after title
-  lines = lines.concat(g.wrapString(msg.body, g.getWidth()-10),["",/*LANG*/"< Back"]);
+  var titleLines = [];
+  var messagesWrapped = [];
+  for (let i=idxSpan.start ; i<idxSpan.stop ; i++) {
+    let msgLocal = MESSAGES[i];
+    msgLocal.new = false;
+
+    if (msgLocal.id=="music" || msgLocal.source=="maps" || msgLocal.id =="call") {
+      idxSpan.stop++
+      if (idxSpan.stop>=MESSAGES.length) {break;}
+      continue;
+    }
+
+    var lines = [];
+    const TITLE_STRING = msgLocal.title||msgLocal.sender||msgLocal.subject||msgLocal.src||"No Title";
+    //const TITLE_STRING = "".concat(msgLocal.title, msgLocal.title&&"\n",
+    //  msgLocal.sender, msgLocal.sender&&"\n",
+    //  msgLocal.subject, msgLocal.subject&&"\n", msgLocal.src) || "No Title";
+    lines = g.wrapString(TITLE_STRING, g.getWidth()-10);
+    for (let i=0; i<lines.length; i++) {
+      titleLines.push(i + (messagesWrapped[0]?messagesWrapped[0].length:0) +
+        (messagesWrapped[1]?messagesWrapped[1].length:0));
+    }
+    lines = lines.concat(g.wrapString(msgLocal.body, g.getWidth()-10),
+      ["-".repeat(12)]);
+    messagesWrapped.push(lines);
+  }
+
+  let allLines = [];
+  for (let i=0 ; i<messagesWrapped.length ; i++) {
+    allLines = allLines.concat(messagesWrapped[i]);
+  }
+
+  var initScroll = messagesWrapped[0].length;
+  if (INITIATED_FROM === "other function") {
+    if (MSG_IDX==0) {initScroll = 0;}
+  } else if (INITIATED_FROM === "scrolling up") {
+    titleLines = titleLines.concat(alreadyProcessed.titleLines.
+      map((x) => x + allLines.length));
+    allLines = allLines.concat(alreadyProcessed.lines);
+  } else if (INITIATED_FROM === "scrolling down") {
+    initScroll = alreadyProcessed.lines.length-(g.getHeight()/g.getFontHeight());
+    titleLines = alreadyProcessed.titleLines.concat(titleLines.
+      map((x) => x + alreadyProcessed.lines.length));
+    allLines = alreadyProcessed.lines.concat(allLines);
+  }
+
+  if (allLines.length == 0 && alreadyProcessed.lines.length == 0) {
+    cancelReloadTimeout();
+    returnToClockIfEmpty();
+  }
+
+  alreadyProcessed = { // Update with the newly processed messages.
+    lines : allLines,
+    titleLines : titleLines,
+    idxSpan: {
+      start : Math.min(idxSpan.start,
+        (alreadyProcessed.idxSpan.start===undefined) ?
+          MESSAGES.length : alreadyProcessed.idxSpan.start),
+      stop : Math.max(idxSpan.stop, alreadyProcessed.idxSpan.stop||0)}
+  };
+
+  function identifyDisplayedMsg(scrollIdx) {
+    let firstTitleLinePerMsg = [titleLines[0]];
+    for (let i=1; i<titleLines.length; i++) {
+      if (titleLines[i]-titleLines[i-1] === 1) {continue;}
+      firstTitleLinePerMsg.push(titleLines[i]);
+    }
+    for (let i=titleLines.length-1; i>=0 ; i--) {
+      if (scrollIdx>=firstTitleLinePerMsg[i]) {
+        return MESSAGES[i + alreadyProcessed.idxSpan.start];
+      }
+    }
+  }
+
+  let prevScrollIdx; // Used for stopping repeated triggering of next message by the scroller.
+  let prevPrevScrollIdx; // Used to choose how to identify displayed message when selecting with button.
+
   E.showScroller({
+    scroll : initScroll*g.getFontHeight(),
     h : g.getFontHeight(), // height of each menu item in pixels
-    c : lines.length, // number of menu items
+    c : allLines.length, // number of menu items
     // a function to draw a menu item
-    draw : function(idx, r) {
-      // FIXME: in 2v13 onwards, clearRect(r) will work fine. There's a bug in 2v12
-      g.setBgColor(idx<titleCnt ? g.theme.bg2 : g.theme.bg).
-        setColor(idx<titleCnt ? g.theme.fg2 : g.theme.fg).
-        clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
-      g.setFont(bodyFont).setFontAlign(0,-1).drawString(lines[idx], r.x+r.w/2, r.y);
-    }, select : function(idx) {
-      if (idx>=lines.length-2)
-        showMessage(msg.id, true);
+    draw : function(scrollIdx, r) {
+      "ram";
+      g.setBgColor(titleLines.find(e=>e==scrollIdx)!==undefined ? g.theme.bg2 : g.theme.bg).
+        setColor(titleLines.find(e=>e==scrollIdx)!==undefined ? g.theme.fg2 : g.theme.fg).
+        clearRect(r);
+      g.setFont(bodyFont).setFontAlign(0,-1).drawString(allLines[scrollIdx], r.x+r.w/2, r.y);
+      // Load in next/previous message on demand by reinitializing showMessagesScroller while passing on the processed messages.
+      if (scrollIdx>=allLines.length-1 && scrollIdx!=prevScrollIdx &&
+        alreadyProcessed.idxSpan.stop<MESSAGES.length) {
+        setTimeout(() => {
+          E.showScroller();
+          if (BTN_WATCH) {clearWatch(BTN_WATCH);}
+          showMessagesScroller(MESSAGES[alreadyProcessed.idxSpan.stop],
+            true, alreadyProcessed);
+        }, 40);
+      }
+      if (scrollIdx==0 && scrollIdx!=prevScrollIdx && alreadyProcessed.idxSpan.start>0) {
+        setTimeout(() => {
+          E.showScroller();
+          if (BTN_WATCH) {clearWatch(BTN_WATCH);}
+          showMessagesScroller(MESSAGES[alreadyProcessed.idxSpan.start-1],
+            true, alreadyProcessed);
+        }, 40);
+      }
+      if (prevPrevScrollIdx!==prevScrollIdx) {prevPrevScrollIdx = prevScrollIdx;}
+      prevScrollIdx = scrollIdx;
     },
-    back : () => showMessage(msg.id, true)
+    select : function(scrollIdx, touch) {
+      const MSG_SELECT = identifyDisplayedMsg(scrollIdx);
+      if (touch.type == 0) {
+        WU.show();
+        if (BTN_WATCH) {clearWatch(BTN_WATCH);}
+        showMessage(MSG_SELECT.id, true);
+      }
+      if (touch.type == 2) {
+        WU.show();
+        if (BTN_WATCH) {clearWatch(BTN_WATCH);}
+        showMessageSettings(MSG_SELECT);
+      }
+    }
   });
+
+  const BTN_WATCH = setWatch(()=>{
+    Bangle.emit("drag", {dy:0}); // Compatibility with `kineticscroll`, stopping the scroller so it doesn't continue scrolling when the `showMessage` screen is loaded.
+    // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
+    setTimeout(()=>{const SCROLL_IDX_CENTER_SCREEN = prevScrollIdx>prevPrevScrollIdx ?
+      prevScrollIdx-5 : prevScrollIdx+5; // FIXME: `±5` should depend on screen height and font height.
+      WU.show();
+      showMessage(identifyDisplayedMsg(SCROLL_IDX_CENTER_SCREEN).id, true);
+    },0)
+  }, BTN, {edge:'rising'});
 }
 
 function showMessageSettings(msg) {
@@ -283,7 +420,7 @@ function showMessageSettings(msg) {
   };
 
   if (msg.id!="music")
-    menu[/*LANG*/"View Message"] = () => showMessageScroller(msg);
+    menu[/*LANG*/"View Message"] = () => showMessagesScroller(msg);
 
   if (msg.reply && reply) {
     menu[/*LANG*/"Reply"] = () => {
@@ -456,7 +593,7 @@ function showMessage(msgid, persist) {
     ]},
     {type:"txt", font:bodyFont, label:body, fillx:1, filly:1, pad:2, cb:()=>{
       // allow tapping to show a larger version
-      showMessageScroller(msg);
+      showMessagesScroller(msg);
     } },
     {type:"h",fillx:1, c: footer}
   ]},{back:goBack});
@@ -502,7 +639,7 @@ function checkMessages(options) {
   // If we have a new message, show it
   if (!options.ignoreUnread && newMessages.length) {
     delete newMessages[0].show; // stop us getting stuck here if we're called a second time
-    showMessage(newMessages[0].id, false);
+    showMessagesScroller(newMessages[0], false);
     // buzz after showMessage, so being busy during layout doesn't affect the buzz pattern
     if (global.BUZZ_ON_NEW_MESSAGE) {
       // this is set if we entered the messages app by loading `messagegui.new.js`
