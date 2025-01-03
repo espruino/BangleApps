@@ -7,3 +7,4 @@
       now supports Adjust Clock widget, if installed
 0.06: Minor code improvements
 0.07: Bangle2: Shift the position of one line on the screen
+0.08: Bangle1: fix scoping of variables `time` and `wait`
