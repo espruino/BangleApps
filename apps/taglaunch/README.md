@@ -1,4 +1,4 @@
-Launcher
+Tag Launcher
 ========
 
 Based on the default launcher but puts all applications in a submenu by their tag.
@@ -13,3 +13,18 @@ Settings
 - `Vector Font Size` - The size of the font if `Font` is set to `Vector`. Default `10`.
 - `Show Clocks` -  If set to `No` then clocks won't appear in the app list. Default `Yes`.
 - `Fullscreen` - If set to `Yes` then widgets won't be loaded. Default `No`.
+
+
+Acknowledgements
+========
+
+Creator
+--------
+
+[nxdefiant](https://github.com/nxdefiant)
+
+Contributors
+--------
+
+- [atjn](https://github.com/atjn)
+- [BlueFox4](https://github.com/BlueFox4)
