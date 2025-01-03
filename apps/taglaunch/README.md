@@ -26,5 +26,5 @@ Creator
 Contributors
 --------
 
-[atjn](https://github.com/atjn)
-[BlueFox4](https://github.com/BlueFox4)
+- [atjn](https://github.com/atjn)
+- [BlueFox4](https://github.com/BlueFox4)
