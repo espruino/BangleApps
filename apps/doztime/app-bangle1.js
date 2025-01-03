@@ -28,6 +28,7 @@ let addTimeDigit = false;
 let dateFormat = false;
 let lastX = 999999999;
 let res = {};
+let calenDef;
 //var last_time_log = 0;
 
 var drawtime_timeout;
@@ -60,7 +61,7 @@ g.flip = function()
 
 setWatch(function(){ modeTime(); }, BTN1, {repeat:true} );
 setWatch(function(){ Bangle.showLauncher(); }, BTN2, { repeat: false, edge: "falling" });
-setWatch(function(){ modeWeather(); }, BTN3, {repeat:true});
+//setWatch(function(){ modeWeather(); }, BTN3, {repeat:true}); // TODO: `modeWeather` is not yet implemented.
 setWatch(function(){ toggleTimeDigits(); }, BTN4, {repeat:true});
 setWatch(function(){ toggleDateFormat(); }, BTN5, {repeat:true});
 
@@ -122,7 +123,7 @@ function formatDate(res,dateFormat){
 }
 
 function writeDozTime(text,def){
-	let pts = def.pts;
+	//let pts = def.pts;
 	let x=def.pt0[0];
 	let y=def.pt0[1];
 	g_t.clear();
@@ -138,7 +139,7 @@ function writeDozTime(text,def){
 function writeDozDate(text,def,colour){
 	
 	dateColour = colour;
-	let pts = def.pts;
+	//let pts = def.pts;
 	let x=def.pt0[0];
 	let y=def.pt0[1];
 	g_d.clear();
