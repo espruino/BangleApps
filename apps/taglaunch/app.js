@@ -48,15 +48,20 @@ if (launchCache.hash!=launchHash) {
     .filter(app=>app && app.type=="app" || app.type=="clock" || !app.type)
     .sort((a,b)=>sort(a,b))
     .forEach(app => {
-      let appTags = app.tags.split(",")
-        .map(tag => tag.trim())
-        .map(tag => tag === "tools" ? "tool" : tag) // tool = tools
-        .filter(tag => Object.keys(tags).includes(tag));
-      if (appTags.length === 0) {
+      let appTags = [];
+      if (!app.tags) {
         appTags.push("misc");
-      } else if (appTags.length > 1 && appTags.indexOf("tool") >= 0) {
-        // everything has tag 'tool', unregister when at least one other known tag
-        appTags.splice(appTags.indexOf("tool"), 1);
+      } else {
+        appTags = app.tags.split(",")
+          .map(tag => tag.trim())
+          .map(tag => tag === "tools" ? "tool" : tag) // tool = tools
+          .filter(tag => Object.keys(tags).includes(tag));
+        if (appTags.length === 0) {
+          appTags.push("misc");
+        } else if (appTags.length > 1 && appTags.indexOf("tool") >= 0) {
+          // everything has tag 'tool', unregister when at least one other known tag
+          appTags.splice(appTags.indexOf("tool"), 1);
+        }
       }
       appTags.forEach(tag => appsByTag[tag].push(app));
     });
