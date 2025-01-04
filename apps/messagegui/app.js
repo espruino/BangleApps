@@ -364,7 +364,7 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
   function reinitAdding(idx) {
     setTimeout(() => {
       E.showScroller();
-      if (BTN_WATCH) {clearWatch(BTN_WATCH);}
+      if (BTN_EXT_SELECT) {clearWatch(BTN_EXT_SELECT);}
       showMessagesScroller(MESSAGES[idx],
         true, alreadyProcessed);
     }, 40);
@@ -388,30 +388,26 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
       prevScrollIdxs[0] = scrollIdx;
     },
     select : function(scrollIdx, touch) {
+      WU.show();
       const MSG_SELECT = identifyDisplayedMsg(scrollIdx);
-      if (touch.type == 0) {
-        WU.show();
-        if (BTN_WATCH) {clearWatch(BTN_WATCH);}
-        showMessage(MSG_SELECT.id, true);
-      }
-      if (touch.type == 2) {
-        WU.show();
-        if (BTN_WATCH) {clearWatch(BTN_WATCH);}
-        showMessageSettings(MSG_SELECT);
-      }
+      if (BTN_EXT_SELECT) {clearWatch(BTN_EXT_SELECT);}
+      if (!touch) {showMessage(MSG_SELECT.id,true); return}
+      if (touch.type == 0) {showMessage(MSG_SELECT.id,true);}
+      if (touch.type == 2) {showMessageSettings(MSG_SELECT);}
     }
   });
 
-  const BTN_WATCH = setWatch(()=>{
+  // If Bangle.js 2 add an external select hw button handler.
+  const BTN_EXT_SELECT = ((2===process.env.HWVERSION) && (setWatch(()=>{
     Bangle.emit("drag", {dy:0}); // Compatibility with `kineticscroll`, stopping the scroller so it doesn't continue scrolling when the `showMessage` screen is loaded.
     // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
     setTimeout(()=>{
       const SCROLL_IDX_CENTER_SCREEN = prevScrollIdxs[0]>prevScrollIdxs[1] ?
-      prevScrollIdxs[0]-LINES_PER_SCREEN/2:prevScrollIdxs[0]+LINES_PER_SCREEN/2;
+        prevScrollIdxs[0]-LINES_PER_SCREEN/2:prevScrollIdxs[0]+LINES_PER_SCREEN/2;
       WU.show();
       showMessage(identifyDisplayedMsg(SCROLL_IDX_CENTER_SCREEN).id, true);
     },0)
-  }, BTN, {edge:'rising'});
+  }, BTN, {edge:'rising'})));
 }
 
 function showMessageSettings(msg) {
