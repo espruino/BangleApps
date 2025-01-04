@@ -357,6 +357,19 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
   // to choose how to identify displayed message when selecting with hw button.
   let prevScrollIdxs = [undefined, undefined]; // [prevIdx, prevPrevIdx]
 
+  function shouldAddNext(scrollIdx) {"ram"; return (scrollIdx>=allLines.length-1 &&
+    scrollIdx!=prevScrollIdxs[0] && alreadyProcessed.idxSpan.stop<MESSAGES.length)}
+  function shouldAddPrev(scrollIdx) {"ram"; return (scrollIdx==0 &&
+    scrollIdx!=prevScrollIdxs[0] && alreadyProcessed.idxSpan.start>0)}
+  function reinitAdding(idx) {
+    setTimeout(() => {
+      E.showScroller();
+      if (BTN_WATCH) {clearWatch(BTN_WATCH);}
+      showMessagesScroller(MESSAGES[idx],
+        true, alreadyProcessed);
+    }, 40);
+  }
+
   E.showScroller({
     scroll : initScroll*FONT_HEIGHT,
     h : FONT_HEIGHT, // height of each menu item in pixels
@@ -369,23 +382,8 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
         clearRect(r);
       g.setFont(bodyFont).setFontAlign(0,-1).drawString(allLines[scrollIdx], r.x+r.w/2, r.y);
       // Load in next/previous message on demand by reinitializing showMessagesScroller while passing on the processed messages.
-      if (scrollIdx>=allLines.length-1 && scrollIdx!=prevScrollIdxs[0] &&
-        alreadyProcessed.idxSpan.stop<MESSAGES.length) {
-        setTimeout(() => {
-          E.showScroller();
-          if (BTN_WATCH) {clearWatch(BTN_WATCH);}
-          showMessagesScroller(MESSAGES[alreadyProcessed.idxSpan.stop],
-            true, alreadyProcessed);
-        }, 40);
-      }
-      if (scrollIdx==0 && scrollIdx!=prevScrollIdxs[0] && alreadyProcessed.idxSpan.start>0) {
-        setTimeout(() => {
-          E.showScroller();
-          if (BTN_WATCH) {clearWatch(BTN_WATCH);}
-          showMessagesScroller(MESSAGES[alreadyProcessed.idxSpan.start-1],
-            true, alreadyProcessed);
-        }, 40);
-      }
+      if (shouldAddNext(scrollIdx)) {reinitAdding(alreadyProcessed.idxSpan.stop);}
+      if (shouldAddPrev(scrollIdx)) {reinitAdding(alreadyProcessed.idxSpan.start-1);}
       if (prevScrollIdxs[1]!==prevScrollIdxs[0]) {prevScrollIdxs[1] = prevScrollIdxs[0];}
       prevScrollIdxs[0] = scrollIdx;
     },
