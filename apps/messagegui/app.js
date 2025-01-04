@@ -257,10 +257,8 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
   );
   if (!alreadyProcessed) {alreadyProcessed = {idxSpan:{}};} // So `alreadyProcessed.idxSpan.start/stop` can be looked for on first run.
 
-  const WU = require("widget_utils");
-  WU.hide();
-
   if (replying) { return; }
+  active = "scroller";
   if (persist) {cancelReloadTimeout();} else {resetReloadTimeout();}
 
   let idxSpan = (
@@ -273,9 +271,14 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
           undefined))
   );
 
-  active = "scroller";
+  const WU = require("widget_utils");
+  WU.hide();
+  const APP_RECT = Bangle.appRect;
+
   var bodyFont = fontBig;
   g.setFont(bodyFont);
+  const FONT_HEIGHT = g.getFontHeight();
+  const LINES_PER_SCREEN = APP_RECT.h/FONT_HEIGHT;
   var titleLines = [];
   var messagesWrapped = [];
   for (let i=idxSpan.start ; i<idxSpan.stop ; i++) {
@@ -293,12 +296,12 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
     //const TITLE_STRING = "".concat(MSG_ITER.title, MSG_ITER.title&&"\n",
     //  MSG_ITER.sender, MSG_ITER.sender&&"\n",
     //  MSG_ITER.subject, MSG_ITER.subject&&"\n", MSG_ITER.src) || "No Title";
-    lines = g.wrapString(TITLE_STRING, g.getWidth()-10);
+    lines = g.wrapString(TITLE_STRING, APP_RECT.w-10);
     for (let i=0; i<lines.length; i++) {
       titleLines.push(i + (messagesWrapped[0]?messagesWrapped[0].length:0) +
         (messagesWrapped[1]?messagesWrapped[1].length:0));
     }
-    lines = lines.concat(g.wrapString(MSG_ITER.body, g.getWidth()-10),
+    lines = lines.concat(g.wrapString(MSG_ITER.body, APP_RECT.w-10),
       ["-".repeat(12)]);
     messagesWrapped.push(lines);
   }
@@ -316,7 +319,7 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
       map((x) => x + allLines.length));
     allLines = allLines.concat(alreadyProcessed.lines);
   } else if (INITIATED_FROM === "scrolling down") {
-    initScroll = alreadyProcessed.lines.length-(g.getHeight()/g.getFontHeight());
+    initScroll = alreadyProcessed.lines.length-(LINES_PER_SCREEN);
     titleLines = alreadyProcessed.titleLines.concat(titleLines.
       map((x) => x + alreadyProcessed.lines.length));
     allLines = alreadyProcessed.lines.concat(allLines);
@@ -350,12 +353,13 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
     }
   }
 
-  let prevScrollIdx; // Used for stopping repeated triggering of next message by the scroller.
-  let prevPrevScrollIdx; // Used to choose how to identify displayed message when selecting with button.
+  // Used for stopping repeated triggering of next message by the scroller and
+  // to choose how to identify displayed message when selecting with hw button.
+  let prevScrollIdxs = [undefined, undefined]; // [prevIdx, prevPrevIdx]
 
   E.showScroller({
-    scroll : initScroll*g.getFontHeight(),
-    h : g.getFontHeight(), // height of each menu item in pixels
+    scroll : initScroll*FONT_HEIGHT,
+    h : FONT_HEIGHT, // height of each menu item in pixels
     c : allLines.length, // number of menu items
     // a function to draw a menu item
     draw : function(scrollIdx, r) {
@@ -365,7 +369,7 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
         clearRect(r);
       g.setFont(bodyFont).setFontAlign(0,-1).drawString(allLines[scrollIdx], r.x+r.w/2, r.y);
       // Load in next/previous message on demand by reinitializing showMessagesScroller while passing on the processed messages.
-      if (scrollIdx>=allLines.length-1 && scrollIdx!=prevScrollIdx &&
+      if (scrollIdx>=allLines.length-1 && scrollIdx!=prevScrollIdxs[0] &&
         alreadyProcessed.idxSpan.stop<MESSAGES.length) {
         setTimeout(() => {
           E.showScroller();
@@ -374,7 +378,7 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
             true, alreadyProcessed);
         }, 40);
       }
-      if (scrollIdx==0 && scrollIdx!=prevScrollIdx && alreadyProcessed.idxSpan.start>0) {
+      if (scrollIdx==0 && scrollIdx!=prevScrollIdxs[0] && alreadyProcessed.idxSpan.start>0) {
         setTimeout(() => {
           E.showScroller();
           if (BTN_WATCH) {clearWatch(BTN_WATCH);}
@@ -382,8 +386,8 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
             true, alreadyProcessed);
         }, 40);
       }
-      if (prevPrevScrollIdx!==prevScrollIdx) {prevPrevScrollIdx = prevScrollIdx;}
-      prevScrollIdx = scrollIdx;
+      if (prevScrollIdxs[1]!==prevScrollIdxs[0]) {prevScrollIdxs[1] = prevScrollIdxs[0];}
+      prevScrollIdxs[0] = scrollIdx;
     },
     select : function(scrollIdx, touch) {
       const MSG_SELECT = identifyDisplayedMsg(scrollIdx);
@@ -403,9 +407,8 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
   const BTN_WATCH = setWatch(()=>{
     Bangle.emit("drag", {dy:0}); // Compatibility with `kineticscroll`, stopping the scroller so it doesn't continue scrolling when the `showMessage` screen is loaded.
     // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
-    const ENTRIES_PER_HALF_SCREEN = (g.getHeight()/g.getFontHeight()) / 2;
     setTimeout(()=>{const SCROLL_IDX_CENTER_SCREEN = prevScrollIdx>prevPrevScrollIdx ?
-      prevScrollIdx-ENTRIES_PER_HALF_SCREEN : prevScrollIdx+ENTRIES_PER_HALF_SCREEN;
+      prevScrollIdx-LINES_PER_SCREEN/2 : prevScrollIdx+LINES_PER_SCREEN;
       WU.show();
       showMessage(identifyDisplayedMsg(SCROLL_IDX_CENTER_SCREEN).id, true);
     },0)
