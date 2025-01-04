@@ -532,7 +532,7 @@ var qalt = 9999; /* global, altitude quality */
 
 let fix = {}; /* Global for sky library */
 
-/* sky library v0.1.0 */
+/* sky library v0.2.0 */
 let sky = {
   sats: [],
   snum: 0,
