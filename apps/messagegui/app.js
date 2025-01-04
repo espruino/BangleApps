@@ -279,26 +279,26 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
   var titleLines = [];
   var messagesWrapped = [];
   for (let i=idxSpan.start ; i<idxSpan.stop ; i++) {
-    let msgLocal = MESSAGES[i];
-    msgLocal.new = false;
+    let MSG_ITER = MESSAGES[i];
+    MSG_ITER.new = false;
 
-    if (msgLocal.id=="music" || msgLocal.source=="maps" || msgLocal.id =="call") {
+    if (MSG_ITER.id=="music" || MSG_ITER.source=="maps" || MSG_ITER.id =="call") {
       idxSpan.stop++
       if (idxSpan.stop>=MESSAGES.length) {break;}
       continue;
     }
 
     var lines = [];
-    const TITLE_STRING = msgLocal.title||msgLocal.sender||msgLocal.subject||msgLocal.src||"No Title";
-    //const TITLE_STRING = "".concat(msgLocal.title, msgLocal.title&&"\n",
-    //  msgLocal.sender, msgLocal.sender&&"\n",
-    //  msgLocal.subject, msgLocal.subject&&"\n", msgLocal.src) || "No Title";
+    const TITLE_STRING = MSG_ITER.title||MSG_ITER.sender||MSG_ITER.subject||MSG_ITER.src||"No Title";
+    //const TITLE_STRING = "".concat(MSG_ITER.title, MSG_ITER.title&&"\n",
+    //  MSG_ITER.sender, MSG_ITER.sender&&"\n",
+    //  MSG_ITER.subject, MSG_ITER.subject&&"\n", MSG_ITER.src) || "No Title";
     lines = g.wrapString(TITLE_STRING, g.getWidth()-10);
     for (let i=0; i<lines.length; i++) {
       titleLines.push(i + (messagesWrapped[0]?messagesWrapped[0].length:0) +
         (messagesWrapped[1]?messagesWrapped[1].length:0));
     }
-    lines = lines.concat(g.wrapString(msgLocal.body, g.getWidth()-10),
+    lines = lines.concat(g.wrapString(MSG_ITER.body, g.getWidth()-10),
       ["-".repeat(12)]);
     messagesWrapped.push(lines);
   }
