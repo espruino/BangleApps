@@ -407,8 +407,9 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
   const BTN_WATCH = setWatch(()=>{
     Bangle.emit("drag", {dy:0}); // Compatibility with `kineticscroll`, stopping the scroller so it doesn't continue scrolling when the `showMessage` screen is loaded.
     // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
-    setTimeout(()=>{const SCROLL_IDX_CENTER_SCREEN = prevScrollIdx>prevPrevScrollIdx ?
-      prevScrollIdx-LINES_PER_SCREEN/2 : prevScrollIdx+LINES_PER_SCREEN;
+    setTimeout(()=>{
+      const SCROLL_IDX_CENTER_SCREEN = prevScrollIdxs[0]>prevScrollIdxs[1] ?
+      prevScrollIdxs[0]-LINES_PER_SCREEN/2:prevScrollIdxs[0]+LINES_PER_SCREEN/2;
       WU.show();
       showMessage(identifyDisplayedMsg(SCROLL_IDX_CENTER_SCREEN).id, true);
     },0)
