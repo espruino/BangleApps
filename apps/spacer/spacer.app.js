@@ -124,13 +124,14 @@ let ui = {
 
 let fix = {}; /* Global for sky library */
 
-/* sky library v0.1.0 */
+/* sky library v0.2.2 */
 let sky = {
   sats: [],
   snum: 0,
   sats_used: 0,
   sky_start: -1,
   this_usable: 0,
+  debug: 0,
 
   drawGrid: function() {
     g.setColor(0,0,0);
@@ -140,7 +141,8 @@ let sky = {
     ui.radCircle(1.0);
   },
 
-  snrLim: 28,
+  /* 18.. don't get reliable fix in 40s */
+  snrLim: 22,
   drawSat: function(s) {
     let a = s.azi / 360;
     let e = ((90 - s.ele) / 90);
@@ -172,7 +174,7 @@ let sky = {
 
     if (fix && fix.fix && fix.lat) {
       g.setColor(0, 0, 0)
-       .setFontAlign(-1, 1);
+        .setFontAlign(-1, 1);
       g.drawString(fix.satellites + "/" + fix.hdop, 5, ui.y2);
     }
     this.decorate();
@@ -197,13 +199,11 @@ let sky = {
   msg: {},
   tof: function(v) { let i = (1*v); return i.toFixed(0); },
   fmtSys: function(sys) {
-    if (sys && sys.sent !== undefined && sys.d23 !== undefined)
-      return sys.sent + "." + sys.d23 + "D "+ this.tof(sys.pdop) + " " + this.tof(sys.vdop) + "\n";
-    else
-      return "(no data)\n";
+    return sys.sent + "." + sys.d23 + "D "+ this.tof(sys.pdop) + " " + this.tof(sys.vdop) + "\n";
   },
   display: function() {
-    if (ui.display != 1)
+    /* unused on skyspy */
+    if (ui.display == 1)
       return;
     let m = this.old_msg;
     let msg = "" + this.tof(m.time) + "\n" + 
@@ -218,37 +218,122 @@ let sky = {
       .setFontAlign(-1, -1)
       .drawString(msg, 0, 0);
   },
+  snrSort: function() {
+    return this.sats.slice(0, this.snum).sort((a, b) => b.snr - a.snr);
+  },
+  getSatSNR: function(n) { /* Get n-th strongest sat */
+    if (n <= 0 || n > this.sats.length)
+      return -1;
+    
+    // Sort the satellites by snr in descending order
+    let sortedSats = this.snrSort();
+
+    // Return the SNR of the n-th strongest satellite
+    return sortedSats[n - 1].snr;
+  },
+  qualest: function() {
+    // Sort the satellites by snr in descending order
+    let sortedSats = this.snrSort();
+    if (sortedSats[4] && sortedSats[4].snr) {
+      return "" + sortedSats[4].snr + "dB";
+    }
+    for (i=4; i>=0; i--) {
+      if (sortedSats[i] && sortedSats[i].snr)
+        return "S" + (i+1);
+    }
+    return "nil";
+  },
+  satVisibility: [],
+  trackSatelliteVisibility: function() {
+    const threshold = this.snrLim; // SNR threshold
+    const now = getTime();
+    let newVisibility = [];
+    //this.satVisibility = [];
+    for (let i = 0; i < this.snum; i++) {
+      let sat = this.sats[i];
+      let existingSat = this.satVisibility[sat.id];
+      if (sat.snr >= threshold) {
+        if (!existingSat) {
+          // New satellite starts visibility
+          newVisibility[sat.id] = { start: now, visible: true };
+        } else 
+          newVisibility[sat.id] = this.satVisibility[sat.id];
+      }
+    }
+    this.satVisibility = newVisibility;
+  },
+  getnthLowestStartTimeSat: function(n) {
+    // Collect all satellites from visibility
+    let satellites = Object.values(this.satVisibility);
+
+    // Ensure we have at least 5 satellites
+    if (satellites.length < n)
+      return -1;
+
+    // Sort satellites by start time in ascending order
+    satellites.sort((a, b) => a.start - b.start);
+
+    // Return the satellite with the 5th lowest start time
+    return satellites[n-1]; // 0-based index, so 5th is index 4
+  },
+  goodest: function () {
+    let s = this.getnthLowestStartTimeSat(5);
+    if (s==-1)
+      return "none";
+    let t = getTime() - s.start;
+    return "" + t;
+  },
+  onMessageEnd: function() { /*    quality.updateGps(); /* FIXME -- for skyspy */},
+  messageEnd: function() {
+    this.old_msg = this.msg;
+    this.msg = {};
+    this.msg.gp = {};
+    this.msg.bd = {};
+    this.msg.gl = {};
+    this.drawSats(this.sats);
+    let r = this.qualest();
+    let r1 = this.goodest();
+    print(r, r1, this.old_msg.hdop, this.old_msg.quality);
+    if (ui.display == 4)
+      ui.drawMsg(r + "\n" + r1 + "\n" + this.old_msg.hdop + "-" + this.old_msg.quality + "d\n" + (getTime() - this.sky_start));
+    this.trackSatelliteVisibility();
+    //print(this.sats);
+    if (this.sats_used < 5)
+      this.sky_start = getTime();
+    this.snum = 0;
+    this.sats = [];
+    this.sats_used = 0;
+    this.onMessageEnd();
+  },
   parseRaw: function(msg, lost) {
     if (lost) print("## data lost");
     let s = msg.split(",");
+    //    print(getTime(), s[0]);
+    //return;
     let cmd = s[0].slice(3);
     //print("cmd", cmd);
+    if (cmd === "TXT") {
+      this.messageEnd();
+      return;
+    }
     if (cmd === "GGA") {
-      this.old_msg = this.msg;
-      this.msg = {};
       this.msg.time = s[1];
       this.msg.quality = s[6];
       this.msg.in_view = s[7];
       this.msg.hdop = s[8];
-      this.msg.gp = {};
-      this.msg.bd = {};
-      this.msg.gl = {};
-      print("-----------------------------------------------");
-      print("GGA Time", s[1], "fix quality", s[4], "sats in view ", s[5]);
-      this.drawSats(this.sats);
-      if (this.sats_used < 5)
-        this.sky_start = getTime();
-      this.snum = 0;
-      this.sats = [];
-      this.sats_used = 0;
+
+      if (this.debug > 0) {
+        print("-----------------------------------------------");
+        print("GGA Time", s[1], "fix quality", s[4], "sats in view ", s[5]);
+      }
       return;
     }
     if (cmd === "GLL") return; /* Position lat/lon */
     if (cmd === "GSA") {
       /*
-         $GNGSA,A,1,,,,,,,,,,,,,25.5,25.5,25.5,4*04
+        $GNGSA,A,1,,,,,,,,,,,,,25.5,25.5,25.5,4*04
         0      1 2             15   16   17   18     
-        */
+      */
       /* Satelites used, fix type! INTERESTING */
       let sys = s[18];
       let add = {};
@@ -256,29 +341,34 @@ let sky = {
       add.pdop = s[15];
       add.hdop = s[16];
       add.vdop = s[17];
+      sys = sys[0];
       /* FIXME -- should really add to the sentence */
       if (sys == 1) { this.msg.gp = add; }
       else if (sys == 2) { this.msg.gl = add; }
       else if (sys == 4) { this.msg.bd = add; }
-      else print("GSA Unknown system\n");
-      
-      print(msg);
+      else {
+        print("GSA Unknown system -- ", sys, "\n");
+        print(msg);
+      }
       return;
     }
     if (s[0] === "$GPGSV") {
-      print("Have gps sentences", s[1], "/", s[2]);
+      if (this.debug > 0)
+        print("Have gps sentences", s[1], "/", s[2]);
       this.parseSats(s);
       this.msg.gp.sent = ""+s[2];
       return;
     }
     if (s[0] === "$BDGSV") {
-      print("Have baidu sentences", s[1], "/", s[2]);
+      if (this.debug > 0)
+        print("Have baidu sentences", s[1], "/", s[2]);
       this.parseSats(s);
       this.msg.bd.sent = ""+s[2];
       return;
     }
     if (s[0] === "$GLGSV") {
-      print("Have glonass sentences", s[1], "/", s[2]);
+      if (this.debug > 0)
+        print("Have glonass sentences", s[1], "/", s[2]);
       this.parseSats(s);
       this.msg.gl.sent = ""+s[2];
       return;
@@ -304,7 +394,7 @@ let sky = {
     this.sys += 1;
     if (this.sys == 4)
       this.sys = 0;
-    let val = 7;
+    val = 7;
     if (this.sys)
       val = 1 << (this.sys - 1);
     this.casic_cmd("$PCAS04,"+val);
@@ -323,7 +413,7 @@ function start() {
 
 // CASIC_CMD("$PCAS06,0"); /* Query product information */
 setTimeout(() => sky.casic_cmd("$PCAS04,7"), 1000); /* Enable gps + beidou + glonass */
-setTimeout(() => sky.casic_cmd("$PCAS03,1,1,1,1,1,1,1,1"), 1000); /* Enable gps + beidou + glonass */
+setTimeout(() => sky.casic_cmd("$PCAS03,1,1,1,1,1,1,1,1"), 1500); /* Enable all messages */
 
 //setTimeout(() => sky.casic_cmd("$PCAS10,2"), 1200); /* 2: cold start, 1 warm start, 0: hot start */
 
