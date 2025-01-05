@@ -1,6 +1,6 @@
 /* Space race */
 
-/* 
+/*
 gsa mi rika 2d/3d fix, a taky pdop/vdop/hdop
 
 CFG-NAVX z CASIC_en -- umoznuje nastavit chodec / auto / letadlo
@@ -54,12 +54,12 @@ let ui = {
   touchHandler: function(d) {
     let x = Math.floor(d.x);
     let y = Math.floor(d.y);
-    
+
     if (d.b != 1 || this.last_b != 0) {
       this.last_b = d.b;
       return;
     }
-    
+
     print("touch", x, y, this.h, this.w);
 
     if ((x<this.w/2) && (y<this.y2/2))
@@ -136,7 +136,7 @@ let sky = {
     let y = ui.radY(a, e);
 
     if (s.snr == 0)
-      g.setColor(1, 0.25, 0.25);  
+      g.setColor(1, 0.25, 0.25);
     else if (s.snr < this.snrLim)
       g.setColor(0.25, 0.5, 0.25);
     else
@@ -187,7 +187,7 @@ let sky = {
   },
   drawRace: function() {
     let m = this.old_msg;
-    let msg = "" + this.tof(m.time) + "\n" + 
+    let msg = "" + this.tof(m.time) + "\n" +
         "q" + m.quality + " " + m.in_view + " " + m.hdop + "\n" +
         "gp"+ this.fmtSys(m.gp) +
         "bd" + this.fmtSys(m.bd)  +
@@ -205,7 +205,7 @@ let sky = {
   getSatSNR: function(n) { /* Get n-th strongest sat */
     if (n <= 0 || n > this.sats.length)
       return -1;
-    
+
     // Sort the satellites by snr in descending order
     let sortedSats = this.snrSort();
 
@@ -237,7 +237,7 @@ let sky = {
         if (!existingSat) {
           // New satellite starts visibility
           newVisibility[sat.id] = { start: now, visible: true };
-        } else 
+        } else
           newVisibility[sat.id] = this.satVisibility[sat.id];
       }
     }
@@ -265,7 +265,7 @@ let sky = {
     return "" + t;
   },
   drawEstimates: function() {
-    /* 
+    /*
        Performance Assessment of GNSS Signals in terms of Time to
        First Fix for Cold, Warm and Hot Start Matteo Paonni, Marco Anghileri,
        Stefan Wallner, José-Ángel Ávila-Rodríguez, Bernd Eissfeller Institute
@@ -330,7 +330,7 @@ let sky = {
     if (cmd === "GSA") {
       /*
         $GNGSA,A,1,,,,,,,,,,,,,25.5,25.5,25.5,4*04
-        0      1 2             15   16   17   18     
+        0      1 2             15   16   17   18
       */
       /* Satelites used, fix type! INTERESTING */
       let sys = s[18];
@@ -376,7 +376,7 @@ let sky = {
     if (cmd === "ZDA") return; /* Time + timezone */
     if (cmd === "TXT") {
       this.msg.finished = 1;
-      return; /* Misc text? antena open */    
+      return; /* Misc text? antena open */
     }
 
     print(msg);
