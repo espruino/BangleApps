@@ -162,8 +162,6 @@ let sky = {
   // https://in-the-sky.org//satmap_radar.php?year=2023&month=10&day=24&skin=1
   decorate: function() {},
   drawSats: function(sats) {
-    if (ui.display != 0)
-      return;
     g.reset()
       .setColor(1, 1, 1)
       .fillRect(0, ui.wi, ui.w, ui.y2)
@@ -201,10 +199,7 @@ let sky = {
   fmtSys: function(sys) {
     return sys.sent + "." + sys.d23 + "D "+ this.tof(sys.pdop) + " " + this.tof(sys.vdop) + "\n";
   },
-  display: function() {
-    /* unused on skyspy */
-    if (ui.display == 1)
-      return;
+  drawRace: function() {
     let m = this.old_msg;
     let msg = "" + this.tof(m.time) + "\n" + 
         "q" + m.quality + " " + m.in_view + " " + m.hdop + "\n" +
@@ -283,19 +278,31 @@ let sky = {
     let t = getTime() - s.start;
     return "" + t;
   },
-  onMessageEnd: function() { /*    quality.updateGps(); /* FIXME -- for skyspy */},
+  drawEstimates: function() {
+    let r = this.qualest();
+    let r1 = this.goodest();
+    print(r, r1, this.old_msg.hdop, this.old_msg.quality);
+    /* FIXME: -- for skyspy
+    if (ui.display == 4)
+      ui.drawMsg(r + "\n" + r1 + "\n" + this.old_msg.hdop + "-" + this.old_msg.quality + "d\n" + (getTime() - this.sky_start));
+    */
+  },
+  onMessageEnd: function() {
+    /* quality.updateGps(); /* FIXME -- for skyspy */
+    if (ui.display == 0)
+      this.drawSats(this.sats);
+    if (ui.display == 1)
+      this.drawRace();
+    if (ui.display == 4)
+      this.drawEstimates();
+  },
   messageEnd: function() {
     this.old_msg = this.msg;
     this.msg = {};
     this.msg.gp = {};
     this.msg.bd = {};
     this.msg.gl = {};
-    this.drawSats(this.sats);
-    let r = this.qualest();
-    let r1 = this.goodest();
-    print(r, r1, this.old_msg.hdop, this.old_msg.quality);
-    if (ui.display == 4)
-      ui.drawMsg(r + "\n" + r1 + "\n" + this.old_msg.hdop + "-" + this.old_msg.quality + "d\n" + (getTime() - this.sky_start));
+    this.onMessageEnd();
     this.trackSatelliteVisibility();
     //print(this.sats);
     if (this.sats_used < 5)
@@ -303,7 +310,6 @@ let sky = {
     this.snum = 0;
     this.sats = [];
     this.sats_used = 0;
-    this.onMessageEnd();
   },
   parseRaw: function(msg, lost) {
     if (lost) print("## data lost");
@@ -312,7 +318,7 @@ let sky = {
     //return;
     let cmd = s[0].slice(3);
     //print("cmd", cmd);
-    if (cmd === "TXT") {
+    if (cmd === "TXT") { // FIXME: we want to end on some more common message */
       this.messageEnd();
       return;
     }
@@ -408,7 +414,6 @@ function start() {
   setTimeout(function() {
     Bangle.removeAllListeners('GPS-raw');
   }, 1000000);
-  setInterval(function() { sky.display(); }, 1000);
 }
 
 // CASIC_CMD("$PCAS06,0"); /* Query product information */
