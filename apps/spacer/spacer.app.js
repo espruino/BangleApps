@@ -279,15 +279,7 @@ let sky = {
     print(r, r1, this.old_msg.hdop, this.old_msg.quality);
     ui.drawMsg(r + "\n" + r1 + "\n" + this.old_msg.hdop + "-" + this.old_msg.quality + "d\n" + (getTime() - this.sky_start));
   },
-  onMessageEnd: function() {
-    /* quality.updateGps(); /* FIXME -- for skyspy */
-    if (ui.display == 0)
-      this.drawSats(this.sats);
-    if (ui.display == 1)
-      this.drawRace();
-    if (ui.display == 4)
-      this.drawEstimates();
-  },
+  onMessageEnd: function() {},
   messageEnd: function() {
     this.old_msg = this.msg;
     this.msg = {};
@@ -408,6 +400,17 @@ function start() {
   }, 1000000);
 }
 
+function onMessage() {
+  /* quality.updateGps(); /* FIXME -- for skyspy
+  if (ui.display == 4)
+  sky.drawEstimates();
+  */
+  if (ui.display == 0)
+    sky.drawSats(sky.sats);
+  if (ui.display == 1)
+    sky.drawRace();
+}
+
 // CASIC_CMD("$PCAS06,0"); /* Query product information */
 setTimeout(() => sky.casic_cmd("$PCAS04,7"), 1000); /* Enable gps + beidou + glonass */
 setTimeout(() => sky.casic_cmd("$PCAS03,1,1,1,1,1,1,1,1"), 1500); /* Enable all messages */
@@ -417,4 +420,5 @@ setTimeout(() => sky.casic_cmd("$PCAS03,1,1,1,1,1,1,1,1"), 1500); /* Enable all 
 ui.init();
 ui.topLeft = () => sky.selectSpace();
 Bangle.on("drag", (b) => ui.touchHandler(b));
+sky.onMessageEnd = onMessage;
 start();
