@@ -117,7 +117,12 @@ let skys = {
   sats: [],
   snum: 0,
   sats_used: 0,
-  
+
+  reset: function() {
+    this.snum = 0;
+    this.sats = [];
+    this.sats_used = 0;
+  },
   parseSats: function(s) {
     let view = 1 * s[3];
     let k = Math.min(4, view - this.snum);
@@ -298,9 +303,7 @@ let sky = {
     //print(this.sats);
     if (this.all.sats_used < 5)
       this.sky_start = getTime();
-    this.all.snum = 0;
-    this.all.sats = [];
-    this.all.sats_used = 0;
+    this.all.reset();
   },
   parseRaw: function(msg, lost) {
     //print(msg);
