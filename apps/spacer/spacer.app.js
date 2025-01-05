@@ -258,14 +258,17 @@ let sky = {
 
   old_msg: {},
   msg: {},
-  tof: function(v) { let i = (1*v); return i.toFixed(0); },
+  tof: function(v, n) { let i = (1*v); return i.toFixed(n); },
+  tof0: function(v) { return this.tof(v, 0); },
+  tof1: function(v) { return this.tof(v, 1); },
   fmtSys: function(sys) {
-    return sys.sent + "." + sys.d23 + "D "+ this.tof(sys.pdop) + " " + this.tof(sys.vdop) + "\n";
+    return sys.sent + "." + sys.d23 + "D "+ this.tof(sys.pdop) + " " + this.tof0(sys.vdop) + "\n";
   },
   drawRace: function() {
     let m = this.old_msg;
-    let msg = "gmt " + this.tof(m.time) + "\n" +
-        "q" + m.quality + " S" + m.in_view + " h" + (1*m.hdop).toFixed(1) + "m\n" +
+    let msg = "gmt" + this.tof0(m.time) + "\n" +
+        "q" + m.quality + " S" + m.in_view + " h" + this.tof0(m.hdop) + "m\n" +
+/*        "v" + this.tof0(m.vdop) + "m " + "p" + this.tof0(m.pdop) + "m\n" +  */
         "gp"+ this.fmtSys(m.gp) +
         "bd" + this.fmtSys(m.bd)  +
         "gl" + this.fmtSys(m.gl);
