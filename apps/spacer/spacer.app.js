@@ -402,7 +402,7 @@ let sky = {
 
 function start() {
   Bangle.setGPSPower(1);
-  Bangle.on('GPS-raw', function(a, b) { sky.parseRaw(a, b); });
+  Bangle.on('GPS-raw', (a, b) => sky.parseRaw(a, b));
   setTimeout(function() {
     Bangle.removeAllListeners('GPS-raw');
   }, 1000000);
