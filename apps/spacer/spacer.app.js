@@ -1,20 +1,6 @@
 /* Space race */
 
 /* 
-
-Performance Assessment of GNSS Signals in
-terms of Time to First Fix for
-Cold, Warm and Hot Start
-Matteo Paonni, Marco Anghileri, Stefan Wallner, José-Ángel Ávila-Rodríguez, Bernd Eissfeller
-Institute of Geodesy and Navigation, University FAF Munich, Germany
-
-=> 22 to 26 dB -- long time / no fix / ...
-=> 26db + -- basically strength no longer matters
-
-apps/assistedgps/custom.html
-
-https://github.com/espruino/EspruinoDocs/blob/master/info/Bangle.js2%20Technical.md#gps
-
 gsa mi rika 2d/3d fix, a taky pdop/vdop/hdop
 
 CFG-NAVX z CASIC_en -- umoznuje nastavit chodec / auto / letadlo
@@ -279,13 +265,19 @@ let sky = {
     return "" + t;
   },
   drawEstimates: function() {
+    /* 
+       Performance Assessment of GNSS Signals in terms of Time to
+       First Fix for Cold, Warm and Hot Start Matteo Paonni, Marco Anghileri,
+       Stefan Wallner, José-Ángel Ávila-Rodríguez, Bernd Eissfeller Institute
+       of Geodesy and Navigation, University FAF Munich, Germany
+
+       => 22 to 26 dB -- long time / no fix / ...
+       => 26db + -- basically strength no longer matters
+    */
     let r = this.qualest();
     let r1 = this.goodest();
     print(r, r1, this.old_msg.hdop, this.old_msg.quality);
-    /* FIXME: -- for skyspy
-    if (ui.display == 4)
-      ui.drawMsg(r + "\n" + r1 + "\n" + this.old_msg.hdop + "-" + this.old_msg.quality + "d\n" + (getTime() - this.sky_start));
-    */
+    ui.drawMsg(r + "\n" + r1 + "\n" + this.old_msg.hdop + "-" + this.old_msg.quality + "d\n" + (getTime() - this.sky_start));
   },
   onMessageEnd: function() {
     /* quality.updateGps(); /* FIXME -- for skyspy */
