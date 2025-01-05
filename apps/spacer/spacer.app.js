@@ -108,62 +108,16 @@ let ui = {
   },
 };
 
+/* sky library v0.2.3
+   needs ui */
+
 let fix = {}; /* Global for sky library */
 
-/* sky library v0.2.2 */
-let sky = {
+let skys = {
   sats: [],
   snum: 0,
   sats_used: 0,
-  sky_start: -1,
-  this_usable: 0,
-  debug: 0,
-
-  drawGrid: function() {
-    g.setColor(0,0,0);
-    ui.radLine(0, 1, 0.5, 1);
-    ui.radLine(0.25, 1, 0.75, 1);
-    ui.radCircle(0.5);
-    ui.radCircle(1.0);
-  },
-
-  /* 18.. don't get reliable fix in 40s */
-  snrLim: 22,
-  drawSat: function(s) {
-    let a = s.azi / 360;
-    let e = ((90 - s.ele) / 90);
-    let x = ui.radX(a, e);
-    let y = ui.radY(a, e);
-
-    if (s.snr == 0)
-      g.setColor(1, 0.25, 0.25);
-    else if (s.snr < this.snrLim)
-      g.setColor(0.25, 0.5, 0.25);
-    else
-      g.setColor(0, 0, 0);
-    g.drawString(s.id, x, y);
-  },
-
-  // Should correspond to view from below.
-  // https://in-the-sky.org//satmap_radar.php?year=2023&month=10&day=24&skin=1
-  decorate: function() {},
-  drawSats: function(sats) {
-    g.reset()
-      .setColor(1, 1, 1)
-      .fillRect(0, ui.wi, ui.w, ui.y2)
-      .setFont("Vector", 20)
-      .setFontAlign(0, 0);
-    this.drawGrid();
-    sats.forEach(s => this.drawSat(s));
-
-    if (fix && fix.fix && fix.lat) {
-      g.setColor(0, 0, 0)
-        .setFontAlign(-1, 1);
-      g.drawString(fix.satellites + "/" + fix.hdop, 5, ui.y2);
-    }
-    this.decorate();
-  },
-
+  
   parseSats: function(s) {
     let view = 1 * s[3];
     let k = Math.min(4, view - this.snum);
@@ -179,26 +133,6 @@ let sky = {
     }
   },
 
-  old_msg: {},
-  msg: {},
-  tof: function(v) { let i = (1*v); return i.toFixed(0); },
-  fmtSys: function(sys) {
-    return sys.sent + "." + sys.d23 + "D "+ this.tof(sys.pdop) + " " + this.tof(sys.vdop) + "\n";
-  },
-  drawRace: function() {
-    let m = this.old_msg;
-    let msg = "" + this.tof(m.time) + "\n" +
-        "q" + m.quality + " " + m.in_view + " " + m.hdop + "\n" +
-        "gp"+ this.fmtSys(m.gp) +
-        "bd" + this.fmtSys(m.bd)  +
-        "gl" + this.fmtSys(m.gl);
-    if (this.msg.finished != 1)
-      msg += "!";
-    g.reset().clear().setFont("Vector", 30)
-      .setColor(0, 0, 0)
-      .setFontAlign(-1, -1)
-      .drawString(msg, 0, 0);
-  },
   snrSort: function() {
     return this.sats.slice(0, this.snum).sort((a, b) => b.snr - a.snr);
   },
@@ -264,6 +198,79 @@ let sky = {
     let t = getTime() - s.start;
     return "" + t;
   },
+};
+
+let sky = {
+  sky_start: -1,
+  this_usable: 0,
+  debug: 0,
+  all: skys,  /* Sattelites from all systems */
+
+  drawGrid: function() {
+    g.setColor(0,0,0);
+    ui.radLine(0, 1, 0.5, 1);
+    ui.radLine(0.25, 1, 0.75, 1);
+    ui.radCircle(0.5);
+    ui.radCircle(1.0);
+  },
+
+  /* 18.. don't get reliable fix in 40s */
+  snrLim: 22,
+  drawSat: function(s) {
+    let a = s.azi / 360;
+    let e = ((90 - s.ele) / 90);
+    let x = ui.radX(a, e);
+    let y = ui.radY(a, e);
+
+    if (s.snr == 0)
+      g.setColor(1, 0.25, 0.25);
+    else if (s.snr < this.snrLim)
+      g.setColor(0.25, 0.5, 0.25);
+    else
+      g.setColor(0, 0, 0);
+    g.drawString(s.id, x, y);
+  },
+
+  // Should correspond to view from below.
+  // https://in-the-sky.org//satmap_radar.php?year=2023&month=10&day=24&skin=1
+  decorate: function() {},
+  drawSats: function(sats) {
+    g.reset()
+      .setColor(1, 1, 1)
+      .fillRect(0, ui.wi, ui.w, ui.y2)
+      .setFont("Vector", 20)
+      .setFontAlign(0, 0);
+    this.drawGrid();
+    sats.forEach(s => this.drawSat(s));
+
+    if (fix && fix.fix && fix.lat) {
+      g.setColor(0, 0, 0)
+        .setFontAlign(-1, 1);
+      g.drawString(fix.satellites + "/" + fix.hdop, 5, ui.y2);
+    }
+    this.decorate();
+  },
+
+  old_msg: {},
+  msg: {},
+  tof: function(v) { let i = (1*v); return i.toFixed(0); },
+  fmtSys: function(sys) {
+    return sys.sent + "." + sys.d23 + "D "+ this.tof(sys.pdop) + " " + this.tof(sys.vdop) + "\n";
+  },
+  drawRace: function() {
+    let m = this.old_msg;
+    let msg = "gmt " + this.tof(m.time) + "\n" +
+        "q" + m.quality + " S" + m.in_view + " h" + (1*m.hdop).toFixed(1) + "m\n" +
+        "gp"+ this.fmtSys(m.gp) +
+        "bd" + this.fmtSys(m.bd)  +
+        "gl" + this.fmtSys(m.gl);
+    if (this.msg.finished != 1)
+      msg += "!";
+    g.reset().clear().setFont("Vector", 30)
+      .setColor(0, 0, 0)
+      .setFontAlign(-1, -1)
+      .drawString(msg, 0, 0);
+  },
   drawEstimates: function() {
     /*
        Performance Assessment of GNSS Signals in terms of Time to
@@ -274,8 +281,8 @@ let sky = {
        => 22 to 26 dB -- long time / no fix / ...
        => 26db + -- basically strength no longer matters
     */
-    let r = this.qualest();
-    let r1 = this.goodest();
+    let r = this.all.qualest();
+    let r1 = this.all.goodest();
     print(r, r1, this.old_msg.hdop, this.old_msg.quality);
     ui.drawMsg(r + "\n" + r1 + "\n" + this.old_msg.hdop + "-" + this.old_msg.quality + "d\n" + (getTime() - this.sky_start));
   },
@@ -287,22 +294,24 @@ let sky = {
     this.msg.bd = {};
     this.msg.gl = {};
     this.onMessageEnd();
-    this.trackSatelliteVisibility();
+    this.all.trackSatelliteVisibility();
     //print(this.sats);
-    if (this.sats_used < 5)
+    if (this.all.sats_used < 5)
       this.sky_start = getTime();
-    this.snum = 0;
-    this.sats = [];
-    this.sats_used = 0;
+    this.all.snum = 0;
+    this.all.sats = [];
+    this.all.sats_used = 0;
   },
   parseRaw: function(msg, lost) {
+    //print(msg);
     if (lost) print("## data lost");
     let s = msg.split(",");
     //    print(getTime(), s[0]);
     //return;
     let cmd = s[0].slice(3);
     //print("cmd", cmd);
-    if (cmd === "TXT") { // FIXME: we want to end on some more common message */
+    if (cmd === "RMC") {
+      /* Repeat of position/speed/course */
       this.messageEnd();
       return;
     }
@@ -345,32 +354,28 @@ let sky = {
     if (s[0] === "$GPGSV") {
       if (this.debug > 0)
         print("Have gps sentences", s[1], "/", s[2]);
-      this.parseSats(s);
+      this.all.parseSats(s);
       this.msg.gp.sent = ""+s[2];
       return;
     }
     if (s[0] === "$BDGSV") {
       if (this.debug > 0)
         print("Have baidu sentences", s[1], "/", s[2]);
-      this.parseSats(s);
+      this.all.parseSats(s);
       this.msg.bd.sent = ""+s[2];
       return;
     }
     if (s[0] === "$GLGSV") {
       if (this.debug > 0)
         print("Have glonass sentences", s[1], "/", s[2]);
-      this.parseSats(s);
+      this.all.parseSats(s);
       this.msg.gl.sent = ""+s[2];
       return;
     }
-    if (cmd === "RMC") return; /* Repeat of position/speed/course */
+      
     if (cmd === "VTG") return; /* Speeds in knots/kph */
     if (cmd === "ZDA") return; /* Time + timezone */
-    if (cmd === "TXT") {
-      this.msg.finished = 1;
-      return; /* Misc text? antena open */
-    }
-
+    if (cmd === "TXT") return; /* Misc text? antena open */
     print(msg);
   },
   casic_cmd: function (cmd) {
@@ -406,7 +411,7 @@ function onMessage() {
   sky.drawEstimates();
   */
   if (ui.display == 0)
-    sky.drawSats(sky.sats);
+    sky.drawSats(sky.all.sats);
   if (ui.display == 1)
     sky.drawRace();
 }
