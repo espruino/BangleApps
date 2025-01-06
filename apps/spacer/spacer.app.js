@@ -117,6 +117,7 @@ let skys = {
   sats: [],
   snum: 0,
   sats_used: 0,
+  sky_start: -1,
 
   reset: function() {
     this.snum = 0;
@@ -203,10 +204,14 @@ let skys = {
     let t = getTime() - s.start;
     return "" + t;
   },
+  onEnd: function () {
+    if (this.sats_used < 5)
+      this.sky_start = getTime();
+    this.reset();
+  },
 };
 
 let sky = {
-  sky_start: -1,
   this_usable: 0,
   debug: 0,
   all: skys,  /* Sattelites from all systems */
@@ -292,7 +297,7 @@ let sky = {
     let r = this.all.qualest();
     let r1 = this.all.goodest();
     print(r, r1, this.old_msg.hdop, this.old_msg.quality);
-    ui.drawMsg(r + "\n" + r1 + "\n" + this.old_msg.hdop + "-" + this.old_msg.quality + "d\n" + (getTime() - this.sky_start));
+    ui.drawMsg(r + "\n" + r1 + "\n" + this.old_msg.hdop + "-" + this.old_msg.quality + "d\n" + (getTime() - this.all.sky_start));
   },
   onMessageEnd: function() {},
   messageEnd: function() {
@@ -304,9 +309,7 @@ let sky = {
     this.onMessageEnd();
     this.all.trackSatelliteVisibility();
     //print(this.sats);
-    if (this.all.sats_used < 5)
-      this.sky_start = getTime();
-    this.all.reset();
+    this.all.onEnd();
   },
   parseRaw: function(msg, lost) {
     //print(msg);
