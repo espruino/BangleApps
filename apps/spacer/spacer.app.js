@@ -200,9 +200,15 @@ let skys = {
   goodest: function () {
     let s = this.getnthLowestStartTimeSat(5);
     if (s==-1)
-      return "none";
+      return "";
     let t = getTime() - s.start;
-    return "" + t;
+    return "" + t + "s";
+  },
+  summary: function () {
+    let s = this.goodest();
+    if (s != "")
+      return s;
+    return this.qualest();
   },
   onEnd: function () {
     if (this.sats_used < 5)
@@ -273,7 +279,8 @@ let sky = {
     let m = this.old_msg;
     let msg = "gmt" + this.tof0(m.time) + "\n" +
         "q" + m.quality + " S" + m.in_view + " h" + this.tof0(m.hdop) + "m\n" +
-/*        "v" + this.tof0(m.vdop) + "m " + "p" + this.tof0(m.pdop) + "m\n" +  */
+        /*        "v" + this.tof0(m.vdop) + "m " + "p" + this.tof0(m.pdop) + "m\n" +  */
+        this.all.summary() + "\n" +
         "gp"+ this.fmtSys(m.gp) +
         "bd" + this.fmtSys(m.bd)  +
         "gl" + this.fmtSys(m.gl);
