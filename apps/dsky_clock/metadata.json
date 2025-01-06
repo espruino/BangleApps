@@ -2,7 +2,7 @@
     "name": "DSKY Clock",
     "icon": "app-icon.png",
     "screenshots": [{"url":"screenshot1.png"}],
-    "version": "0.02",
+    "version": "0.03",
     "description": "A clockface inspired by the Apollo DSKY interface.",
     "tags": "clock",
     "type": "clock",
