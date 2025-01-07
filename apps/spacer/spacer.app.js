@@ -162,7 +162,7 @@ let skys = {
       if (sortedSats[i] && sortedSats[i].snr)
         return "S" + (i+1);
     }
-    return "nil";
+    return "U" + this.snum;
   },
   satVisibility: [],
   trackSatelliteVisibility: function() {
@@ -303,7 +303,8 @@ let sky = {
     let r = sys.sent + " ";
     // r+= sys.d23 + "D ";
     if (sats)
-      r +=  sats.sats_used + "/" + sats.snum;
+      //  r +=  sats.sats_used + "/" + sats.snum;
+      r += sats.summary();
     return r + "\n";
   },
   drawRace: function() {
