@@ -217,10 +217,37 @@ let skys = {
   },
 };
 
+function deepCopy(obj) {
+  if (obj === null || typeof obj !== "object") {
+    return obj; // Return primitive values as-is
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(deepCopy); // Handle arrays recursively
+  }
+
+  const copy = {};
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      copy[key] = deepCopy(obj[key]); // Recursively copy properties
+    }
+  }
+  return copy;
+}
+
 let sky = {
   this_usable: 0,
   debug: 0,
   all: skys,  /* Sattelites from all systems */
+  split: 1,
+
+  init: function () {
+    if (this.split) {
+      this.s_gp = deepCopy(skys);
+      this.s_gl = deepCopy(skys);
+      this.s_bd = deepCopy(skys);
+    }
+  },
 
   drawGrid: function() {
     g.setColor(0,0,0);
@@ -272,8 +299,12 @@ let sky = {
   tof: function(v, n) { let i = (1*v); return i.toFixed(n); },
   tof0: function(v) { return this.tof(v, 0); },
   tof1: function(v) { return this.tof(v, 1); },
-  fmtSys: function(sys) {
-    return sys.sent + "." + sys.d23 + "D "+ this.tof(sys.pdop) + " " + this.tof0(sys.vdop) + "\n";
+  fmtSys: function(sys, sats) {
+    let r = sys.sent + " ";
+    // r+= sys.d23 + "D ";
+    if (sats)
+      r +=  sats.sats_used + "/" + sats.snum;
+    return r + "\n";
   },
   drawRace: function() {
     let m = this.old_msg;
@@ -281,9 +312,9 @@ let sky = {
         "q" + m.quality + " S" + m.in_view + " h" + this.tof0(m.hdop) + "m\n" +
         /*        "v" + this.tof0(m.vdop) + "m " + "p" + this.tof0(m.pdop) + "m\n" +  */
         this.all.summary() + "\n" +
-        "gp"+ this.fmtSys(m.gp) +
-        "bd" + this.fmtSys(m.bd)  +
-        "gl" + this.fmtSys(m.gl);
+        "gp"+ this.fmtSys(m.gp, this.s_gp) +
+        "bd" + this.fmtSys(m.bd, this.s_bd)  +
+        "gl" + this.fmtSys(m.gl, this.s_gl);
     if (this.msg.finished != 1)
       msg += "!";
     g.reset().clear().setFont("Vector", 30)
@@ -371,6 +402,8 @@ let sky = {
       if (this.debug > 0)
         print("Have gps sentences", s[1], "/", s[2]);
       this.all.parseSats(s);
+      if (this.split)      
+        this.s_gp.parseSats(s);
       this.msg.gp.sent = ""+s[2];
       return;
     }
@@ -378,6 +411,8 @@ let sky = {
       if (this.debug > 0)
         print("Have baidu sentences", s[1], "/", s[2]);
       this.all.parseSats(s);
+      if (this.split)      
+        this.s_bd.parseSats(s);
       this.msg.bd.sent = ""+s[2];
       return;
     }
@@ -385,6 +420,8 @@ let sky = {
       if (this.debug > 0)
         print("Have glonass sentences", s[1], "/", s[2]);
       this.all.parseSats(s);
+      if (this.split)
+        this.s_gl.parseSats(s);
       this.msg.gl.sent = ""+s[2];
       return;
     }
@@ -442,4 +479,5 @@ ui.init();
 ui.topLeft = () => sky.selectSpace();
 Bangle.on("drag", (b) => ui.touchHandler(b));
 sky.onMessageEnd = onMessage;
+sky.init();
 start();
