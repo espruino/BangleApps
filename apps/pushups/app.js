@@ -400,8 +400,9 @@ function set_duration(config) {
   let duration = config.duration;
   let minutes = Math.floor(duration / 60);
   function display() {
+    g.setBgColor(g.theme.bg);
     g.clear();
-    g.setColor(0);
+    g.setColor(g.theme.fg);
     g.setFont("6x8:2")
      .setFontAlign(1, 0)
      .drawString("+1", w, h/2);
