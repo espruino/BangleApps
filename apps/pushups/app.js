@@ -113,8 +113,9 @@ class FitnessStatus {
   }
 
   display() {
+    g.setBgColor(g.theme.bg);
     g.clear();
-    g.setColor(0, 0, 0);
+    g.setColor(g.theme.fg);
     if (this.completed) {
       g.setFont("Vector:32")
         .setFontAlign(0, 0)
@@ -292,7 +293,7 @@ function edit_menu() {
   h : 60,
   c : routine.length+2,
   draw : function(idx, r) { 
-    g.setColor(1).drawRect(r.x, r.y, r.w, r.h);
+    g.setColor(g.theme.fg).drawRect(r.x, r.y, r.w, r.h);
     if (idx == routine.length + 1) {
       g.setFont("Vector:28").setFontAlign(0, 0).drawString("Ok", r.x+r.w/2, r.y+r.h/2);
     } else if (idx == routine.length) {
@@ -327,7 +328,7 @@ function add_activity() {
   h : 60,
   c : IMAGES.length,
   draw : function(idx, r) { 
-    g.setColor(1).drawRect(r.x, r.y, r.w, r.h);
+    g.setColor(g.theme.fg).drawRect(r.x, r.y, r.w, r.h);
     let img = IMAGES[idx];
     g.drawImage(img, r.x + r.w / 3, r.y + 10);
   },
@@ -392,8 +393,9 @@ function set_counter(index) {
 function main_menu() {
   let w = g.getWidth();
   let h = g.getHeight();
+  g.setBgColor(g.theme.bg);
   g.clear();
-  g.setColor(1);
+  g.setColor(g.theme.fg);
   g.drawRect(10, 10, w-10, h/2-10);
   g.drawRect(10, h/2+10, w-10, h-10);
   g.setFont("Vector:32")
@@ -403,16 +405,18 @@ function main_menu() {
   Bangle.setLocked(false);
   Bangle.on("touch", function(button, xy) {
     if (xy.y > h/2+10) {
+      g.setColor(g.theme.fg);
       g.fillRect(10, h/2+10, w-10, h-10);
-      g.setColor(1, 1, 1)
+      g.setColor(g.theme.bg)
        .setFont("Vector:32")
        .setFontAlign(0, 0)
        .drawString("Edit", w/2, 3*h/4);
       Bangle.removeAllListeners("touch");
       edit_menu();
     } else if (xy.y < h/2-10) {
+      g.setColor(g.theme.fg);
       g.fillRect(10, 10, w-10, h/2-10);
-      g.setColor(1, 1, 1)
+      g.setColor(g.theme.bg)
        .setFont("Vector:32")
        .setFontAlign(0, 0)
        .drawString("Start", w/2, h/4);
