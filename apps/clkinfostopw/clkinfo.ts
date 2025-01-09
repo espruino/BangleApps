@@ -80,4 +80,4 @@
       }
     ]
   };
-}) satisfies ClockInfoFunc
+}) satisfies ClockInfoFunc // FIXME: semi-colon added automatically when Typescript generates Javascript file?

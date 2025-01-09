@@ -35,4 +35,4 @@
 
   E.showMenu(appMenu);
 
-});
+})

@@ -116,7 +116,7 @@
       if (selected != null) {
         m[''].selected = selected;
       }
-      m['< Back'] = function () { back(settings, changed); };
+      m['< Back'] = function () { back(settings, changed, true); };
       m['Presets'] = function () { E.showMenu(presetMenu(back)); };
       if (isBangle1) {
         m['Mirror Buttons'] = {
@@ -198,9 +198,10 @@
     const inAppMenu = function () {
       let m = {
         '': {'title': 'Score Menu'},
-        '< Back': function () { back(settings, changed); },
-        'Reset match': function () { back(settings, true); },
-        'End current set': function () { inApp('end_set'); back(settings, changed); },
+        '< Back': function () { back(settings, changed, false); },
+        'Correct mode': function () { inApp('correct_mode'); back(settings, false, true); },
+        'Reset match': function () { back(settings, true, true); },
+        'End current set': function () { inApp('end_set'); back(settings, changed, true); },
         'Configuration': function () { E.showMenu(appMenu(function () {
           E.showMenu(inAppMenu());
         })); },
@@ -216,4 +217,4 @@
     }
 
   });
-})();
+})()

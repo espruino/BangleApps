@@ -1,0 +1,261 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+
+    <div class="form-group">
+      <label class="form-label" for="HAbaseUrl">Home-Assistant API Base URL:</label>
+      <input class="form-input" type="text" id="HAbaseUrl" placeholder="https://ha.example:8123/api" />
+      <div>
+        <small class="text-muted">Make sure to include "/api" as the URL path, but no slash at the end.</small>
+      </div>
+    <div class="form-group">
+      <label class="form-label" for="HAtoken">Long-lived access token:</label>
+      <input class="form-input" type="text" id="HAtoken" placeholder="Your Long-lived Access Token" />
+      <div>
+        <small class="text-muted">It's recommended to create a dedicated token for your Bangle.</small>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h4>Menu structure</h4>
+
+    <p>Use the editor below to configure the menu structure displayed in the
+    Bangle app. It is in the JSON format.</p>
+
+    <p>The main menu, and any sub-menus, are arrays. They can contain 3
+    different types of entries (objects) defined by the "type" attribute:</p>
+    <ul>
+      <li>
+        <b>Query an Entity State</b>
+        <pre class="code" data-lang="JSON">
+{
+  "type": "state",
+  "title": "Menu entry title",
+  "id": "HA Entity ID"
+}
+        </pre>
+        The required Entity ID can be looked up in HA under Settings -&gt;
+        Devices &amp; Services -&gt; Entities. For example:
+        <pre class="code" data-lang="JSON">
+{
+  "type": "state",
+  "title": "Check for updates",
+  "id": "update.home_assistant_core_update"
+}
+        </pre>
+      </li>
+      <li>
+        <b>Call a HA service</b>
+        <pre class="code" data-lang="JSON">
+{
+  "type": "service",
+  "title": "Menu entry title",
+  "domain": "HA Domain",
+  "service": "HA Service",
+  "silent": (true|false),
+  "data": {
+    "key": "value"
+  }
+}
+        </pre>
+        <p>The required information to call a HA service can be found in HA
+        under the Developer tools -&gt; Services. Use the "Go to YAML Mode"
+        function to see the actual names and values. The domain and service
+        parts are the 2 parts of the service name which are separated by a dot.
+        If the optional "silent" boolean is set to true (false is default),
+        there will be no message in case of a successful call. Any (optional)
+        data key/value pairs can be added under the "data" field. For example,
+        here's a service call YAML:
+        <pre class="code" data-lang="YAML">
+service: persistent_notification.create
+data:
+  message: test Notification
+  title: Test
+        </pre>
+        The resulting menu entry (JSON object) should be:
+        <pre class="code" data-lang="JSON">
+{
+  "type": "service",
+  "title": "Create Notification",
+  "domain": "persistent_notification",
+  "service": "create",
+  "data": {
+    "message": "test Notification",
+    "title": "Test"
+  }
+}
+        </pre>
+        If the service requires a target, include the
+        "entity_id"/"device_id"/etc. (listed under "target:") also as "data"
+        key/value pairs. For example, if the YAML also includes:
+        <pre class="code" data-lang="YAML">
+target:
+  device_id: abcd1234
+        </pre>
+        ... add another "data" key/value pair: <code>"device_id": "abcd1234"</code>.
+        If that doesn't work, list the device (or entity) ID in an array: 
+        <code>"device_id": [ "abcd1234" ]</code></p>
+
+        <p>Data fields can also have variable input on the Bangle. In that
+        case, don't add the key/value pair under "data", but create an "input"
+        object with entries per "data" key:
+        <pre class="code" data-lang="JSON">
+{
+  "key": {
+    "options": [],
+    "value": "",
+    "label": ""
+  }
+}
+        </pre>
+        If "options" is left empty, the preferred text-input (pick your
+        favourite app - I like the dragboard) is called to allow entering a
+        free-form value. Otherwise, list the allowed values in the "options"
+        array. The "value" is the pre-defined/default value. The "label" is
+        optional and can be used to override the label for this key (as
+        displayed on the Bangle). For example:
+        <pre class="code" data-lang="JSON">
+{
+  "type": "service",
+  "title": "Custom Notification",
+  "domain": "persistent_notification",
+  "service": "create",
+  "data": {
+    "title": "Fixed"
+  },
+  "input": {
+    "message": {
+      "options": [],
+      "value": "Pre-filled text"
+    },
+    "notification_id": {
+      "options": [
+        "123",
+        "456",
+        "136"
+      ],
+      "value": "999",
+      "label": "ID"
+    }
+  }
+}
+        </pre>
+        In the above example, the "data" will have 3 key/value pairs when the
+        service is called: the "title" is always the same, "message" can be
+        entered via the (free-form) text-input and "notification_id" can be
+        selected from a list of numbers (however, the prompt will be for "ID"
+        and not "notification_id"). If the default value is not listed in
+        "options" (like "999"), it will be added to that list.</p>
+      </li>
+      <li>
+        <b>Sub-menu</b>
+        <pre class="code" data-lang="JSON">
+{
+  "type": "menu",
+  "title": "Menu entry / sub-menu title",
+  "data": []
+}
+        </pre>
+        The "data" needs to be another array of menu entries. For example:
+        <pre class="code" data-lang="JSON">
+{
+  "type": "menu",
+  "title": "Sub-menu",
+  "data": [
+    {
+      "type": "state",
+      "title": "Check for Supervisor updates",
+      "id": "update.home_assistant_supervisor_update"
+    },
+    {
+      "type": "service",
+      "title": "Restart HA",
+      "domain": "homeassistant",
+      "service": "restart",
+      "data": {}
+    }
+  ]
+}
+        </pre>
+        Sub-menus can contain other sub-menus, so you can have multiple levels
+        of nested menus.
+      </li>
+    </ul>
+
+    <div id="jsoneditor"></div>
+
+    <div class="divider"></div>
+
+    <p><div id="status"></div></p>
+
+    <button id="upload" class="btn btn-primary">Configure / Upload to Bangle</button>
+
+
+    <script>
+      var JSONEditorInstance;
+      var JSONEditor_target = document.getElementById('jsoneditor');
+    </script>
+    <script src="jsoneditor.bundlejs"></script>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+      var settings = {
+        menu: [
+          { type: 'state', title: 'Check for updates', id: 'update.home_assistant_core_update' },
+          { type: 'service', title: 'Create Notification', domain: 'persistent_notification', service: 'create',
+              data: { 'message': 'test notification', 'title': 'Test'} },
+          { type: 'menu', title: 'Sub-menu', data:
+            [
+              { type: 'state', title: 'Check for Supervisor updates', id: 'update.home_assistant_supervisor_update' },
+              { type: 'service', title: 'Restart HA', domain: 'homeassistant', service: 'restart', silent: true, data: {} }
+            ]
+          },
+          { type: 'service', title: 'Custom Notification', domain: 'persistent_notification', service: 'create',
+              data: { 'title': 'Not via input'},
+              input: { 'message': { options: [], value: 'Pre-filled text' },
+                       'notification_id': { options: [ 123, 456, 136 ], value: 999, label: "ID" } } },
+        ]
+      };
+
+      function onInit() {
+        // read in existing settings from the Bangle
+        try {
+          Util.readStorageJSON('hadash.json', currentSettings => {
+            if (currentSettings) {
+              settings = currentSettings;
+              if ('HAbaseUrl' in settings)
+                document.getElementById('HAbaseUrl').value = settings.HAbaseUrl;
+              if ('HAtoken' in settings)
+                document.getElementById('HAtoken').value = settings.HAtoken;
+              if ('menu' in settings)
+                JSONEditorInstance.update({ text: undefined, json: settings.menu });
+            }
+          });
+        } catch (e) {
+          console.log("Failed to read existing settings: "+e);
+        }
+      }
+
+      document.getElementById("upload").addEventListener("click", function() {
+        if (JSONEditorInstance.get().json) {
+          settings.menu = JSONEditorInstance.get().json;
+        } else {
+          settings.menu = JSON.parse(JSONEditorInstance.get().text);
+        }
+        if (! settings.menu) {
+          document.getElementById("status").innerHTML = 'Generating the menu failed (or menu is empty) - upload aborted!';
+          return;
+        }
+        settings.HAbaseUrl = document.getElementById('HAbaseUrl').value;
+        settings.HAtoken = document.getElementById('HAtoken').value;
+        Util.writeStorage('hadash.json', JSON.stringify(settings), () => {
+          document.getElementById("status").innerHTML = 'HA-Dash configuration successfully uploaded to Bangle!';
+        });
+      });
+    </script>
+
+  </body>
+</html>

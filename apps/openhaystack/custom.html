@@ -46,7 +46,7 @@ require("ble_advert").push(adv, {whenConnected: true, interval: 1000}); // adver
         // send finished app
         sendCustomizedApp({
           storage:[
-            {name:"openhaystack.boot.js", content:appJS},
+            {name:"openhaystack.boot.js", content:appJS, url:"openhaystack.boot.js"/* not a real URL but this lets the App Loader know it's a JS file which should be parsed */},
           ]
         });
       });

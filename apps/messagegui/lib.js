@@ -18,6 +18,10 @@ exports.listener = function(type, msg) {
     clearTimeout(exports.messageTimeout);
     delete exports.messageTimeout;
   }
+  if (type==="clearAll") {
+    require("messages").stopBuzz();
+    return;
+  }
   if (msg.t==="remove") {
     // we won't open the UI for removed messages, so make sure to delete it from flash
     if (Bangle.MESSAGES) {
@@ -25,6 +29,8 @@ exports.listener = function(type, msg) {
       require("messages").apply(msg, Bangle.MESSAGES);
       if (!Bangle.MESSAGES.length) delete Bangle.MESSAGES;
     }
+    if(type!=="music")
+      require("messages").stopBuzz();
     return require("messages").save(msg); // always write removal to flash
   }
 

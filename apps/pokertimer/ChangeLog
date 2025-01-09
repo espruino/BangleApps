@@ -1,0 +1,6 @@
+0.01: Packaged app
+0.02: Fix alert buzz time, Indicate when paused
+0.03: Start app with paused timer
+0.04: Added 20-second warning buzz
+0.05: Added screenshots
+0.06: Fix bug when play/pause during alert

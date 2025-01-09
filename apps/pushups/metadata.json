@@ -9,6 +9,7 @@
   "type": "app",
   "tags": "health",
   "supports": ["BANGLEJS2"],
+  "screenshots": [{"url":"shot_pushups.png"}, {"url":"shot_squats.png"}, {"url":"shot_menu.png"}],
   "readme": "README.md",
   "storage": [
     {"name":"pushups.app.js","url":"app.js"},

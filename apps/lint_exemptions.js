@@ -91,13 +91,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "apps/mtnclock/app.js": {
-    "hash": "c48e3ed1a605e6a131e5947718e26cc9481c6eeab36c5670bb74f0c58cb96cd8",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "apps/mmonday/manic-monday.js": {
     "hash": "2eff38d4d1cde2b9f17800a554da58300a6250de3e014995a6958a11bcb5b76a",
     "rules": [
@@ -187,19 +180,6 @@ module.exports = {
     "hash": "0340a957d78e772467e50874f52817e27be9c52a1257ca38dab5892df15a8e3c",
     "rules": [
       "no-unused-vars"
-    ]
-  },
-  "apps/skyspy/skyspy.app.js": {
-    "hash": "49a727a4c052e8c6322a502750ca036b0d58896f476b1cffebe9c53e426c8bcc",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
-  "apps/sixths/sixths.app.js": {
-    "hash": "2a4676828bdf78df052df402de34e6f1abd1c847ebe0d193fc789cd6e9dd0e5c",
-    "rules": [
-      "no-undef"
     ]
   },
   "apps/scribble/app.js": {
@@ -469,12 +449,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/calculator/app.js": {
-    "hash": "fcb7c7b6c4ec5ce0f425d2a690baab8da235a12e685fe2680cbd4cf2cfdef0b0",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "apps/bowserWF/app.js": {
     "hash": "83feae92eda4c25028892b5b8b7d1b04f7ec3bb45f51eeba517a80b3ab2053cf",
     "rules": [
@@ -541,12 +515,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/widbt_notify/widget.js": {
-    "hash": "16372ffcbc6bd1419ca326c7da40c2195f82a4bfceb6f123c15872624c4f0adf",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/widbgjs/widget.js": {
     "hash": "9852ce9aafb0a1ca3029d497282c8cdf07438ea36a3323313bad5b7569b1081b",
     "rules": [
@@ -560,7 +528,7 @@ module.exports = {
     ]
   },
   "apps/usgs/settings.js": {
-    "hash": "af1b7bc7e041c1e6988b407b6c8ee66dbd6a0e181a20caf102d2abdb6dbd5ac0",
+    "hash": "00ee672a6920f5667bfbd2988fd2853cfd579895a843ae036a00028dcb13878d",
     "rules": [
       "no-undef"
     ]
@@ -675,12 +643,6 @@ module.exports = {
   },
   "apps/snek/snek.js": {
     "hash": "b278a2b65b84d30c556abc5110bf7b3217d1f2fd5df3fccdb98dbc5a0e31eb38",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/slopeclockpp/app.js": {
-    "hash": "f6e3f6723ed4fc71a3cacb3d24ec4fb47447a65d495adccb9d86333c19d4d0bd",
     "rules": [
       "no-undef"
     ]
@@ -1021,12 +983,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/gipy/app.js": {
-    "hash": "41f342e8ef6f2a87b3aea19b75ee45cfdfeff723b94281049e3ae0ec89cddba5",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/geissclk/precompute.js": {
     "hash": "2317812a9e348e7883e93a4be9e294ad7accd4dc3f0e31ee00343e2412030f98",
     "rules": [
@@ -1195,20 +1151,8 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/banglebridge/widget.js": {
-    "hash": "4ee8d6749e1d0e28c58ad871fd9f6ccbca2d716bb4fbd3511ba4c34a6a5897e1",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/bad/bad.app.js": {
     "hash": "d1354613102818190dd4e6e28fd715db7dc4d51b8e618cae61a3135529cc97eb",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/aviatorclk/aviatorclk.app.js": {
-    "hash": "5bc629c86eada72533fc664e01a47e05f207baeeae2092323ae4d04bd1c9fe9a",
     "rules": [
       "no-undef"
     ]
@@ -1245,12 +1189,6 @@ module.exports = {
   },
   "apps/activepedom/app.js": {
     "hash": "c57c787ac33834dce2291562af8106b7a9de1f7116cdeab2a4236004e723273a",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/accelrec/app.js": {
-    "hash": "b5369a60afc8f360f0b33f71080eb3f5d09a1bf3703acfcf07cd80dd19f1997d",
     "rules": [
       "no-undef"
     ]
@@ -1322,7 +1260,7 @@ module.exports = {
     ]
   },
   "apps/kineticscroll/boot.min.js": {
-    "hash": "1345b3c556f1a268a81c3a57825d096d9bbce9740217339aa6d79223d9daad4d",
+    "hash": "0814125a19aff5c608b9357926cd4a4c038334e31b0d07a70deefaf2c77959b9",
     "rules": [
       "no-cond-assign"
     ]

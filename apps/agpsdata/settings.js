@@ -68,4 +68,4 @@ function buildMainMenu() {
 }
 
 E.showMenu(buildMainMenu());
-});
+})

@@ -7,4 +7,4 @@
     "showDate", "hideWidgets"
   ]);
   E.showMenu(menu);
-});
+})

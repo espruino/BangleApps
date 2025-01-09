@@ -135,4 +135,9 @@
 	* Fix for files converted from maps2gpx : path was not reduced in size correctly
 	* Experimental ski mode : have a ski slopes map
 	* Fix for path projection display when lost and zoomed out
+
 0.25: Minor code improvements
+
+0.26: Add option to plot openstmap if installed
+
+0.27: Support for large paths (grid sizes > 65k)

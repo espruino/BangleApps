@@ -39,6 +39,14 @@ const IMAGES = [
 // number of movements or duration required for each activity
 const DEFAULTS = [7, 10, 10, 30, 15, 30];
 
+// detector sensitivity for each activity
+// (less is more reactive but more sensitive to noise)
+const COUNTS = [6, 10, 6, 6, 6, 5];
+
+function default_config() {
+  return {duration: 10*60, routine: default_routine()};
+}
+
 function default_routine() {
   let routine = [];
   DEFAULTS.forEach((d, i) => {
@@ -94,11 +102,8 @@ const DETECTORS = [
 ];
 
 class FitnessStatus {
-  constructor(duration) {
-    this.routine = require("Storage").readJSON("pushups.cfg", true);
-    if (this.routine === undefined) {
-      this.routine = default_routine();
-    }
+  constructor(config) {
+    this.routine = config.routine;
     this.routine_step = 0;
     this.current_status = 0;
     this.buzzing = false;
@@ -108,7 +113,7 @@ class FitnessStatus {
     this.remaining = this.routine[this.routine_step][1];
     this.activity_start = getTime();
     this.starting_time = this.activity_start;
-    this.duration = duration;
+    this.duration = config.duration;
     this.completed = false;
   }
 
@@ -203,6 +208,7 @@ class FitnessStatus {
     }
     let activity = this.routine[this.routine_step][0];
     let detector = DETECTORS[activity];
+    let status = this;
     if (detector === null) {
       // it's time based
       let activity_duration = getTime() - this.activity_start;
@@ -222,8 +228,7 @@ class FitnessStatus {
     if (new_status != this.current_status) {
       this.counts_in_opposite_status += 1;
 
-      // we consider 6 counts to smooth out noise
-      if (this.counts_in_opposite_status == 6) {
+      if (this.counts_in_opposite_status == COUNTS[activity]) {
         this.current_status = 1 - this.current_status;
         this.counts_in_opposite_status = 0;
         if (this.current_status == 0) {
@@ -244,11 +249,9 @@ class FitnessStatus {
   }
 }
 
-let status = new FitnessStatus(10 * 60);
-// status.display();
 
-
-function start_routine() {
+function start_routine(config) {
+  let status = new FitnessStatus(config);
 
   Bangle.accelWr(0x18,0b01110100); // off, +-8g // NOTE: this code is taken from 'accelrec' app
   Bangle.accelWr(0x1B,0x03 | 0x40); // 100hz output, ODR/2 filter
@@ -286,8 +289,8 @@ function start_routine() {
 }
 
 
-function edit_menu() {
-  let routine = status.routine;
+function edit_menu(config) {
+  let routine = config.routine;
 
   E.showScroller({
   h : 60,
@@ -309,21 +312,20 @@ function edit_menu() {
   select : function(idx) {
     if (idx == routine.length + 1) {
       E.showScroller();    
-      require("Storage").writeJSON("pushups.cfg", routine);
-      start_routine();
+      set_duration(config);
     } else if (idx == routine.length) {
       E.showScroller();    
-      add_activity();
+      add_activity(config);
     } else {
       E.showScroller();    
-      set_counter(idx);
+      set_counter(config, idx);
     }
   }
   });
 }
 
 
-function add_activity() {
+function add_activity(config) {
   E.showScroller({
   h : 60,
   c : IMAGES.length,
@@ -333,19 +335,19 @@ function add_activity() {
     g.drawImage(img, r.x + r.w / 3, r.y + 10);
   },
   select : function(idx) {
-    let new_index = status.routine.length;
-    status.routine.push([idx, 10]);
+    let new_index = config.routine.length;
+    config.routine.push([idx, 10]);
     E.showScroller();    
-    set_counter(new_index);
+    set_counter(config, new_index);
   }
   });
 }
 
 
-function set_counter(index) {
+function set_counter(config, index) {
   let w = g.getWidth();
   let h = g.getHeight();
-  let counter = status.routine[index][1];
+  let counter = config.routine[index][1];
   function display() {
     g.clear();
     g.setFont("6x8:2")
@@ -379,18 +381,69 @@ function set_counter(index) {
   });
   Bangle.on("touch", function(button, xy) {
     if (counter == 0) {
-      status.routine.splice(index, 1);
+      config.routine.splice(index, 1);
     } else {
-      status.routine[index][1] = counter;
+      config.routine[index][1] = counter;
     }
     Bangle.removeAllListeners("touch");
     Bangle.removeAllListeners("swipe");
-    edit_menu();
+    edit_menu(config);
   });
   
 }
 
-function main_menu() {
+
+//TODO: factorize code with set_counter
+function set_duration(config) {
+  let w = g.getWidth();
+  let h = g.getHeight();
+  let duration = config.duration;
+  let minutes = Math.floor(duration / 60);
+  function display() {
+    g.clear();
+    g.setColor(0);
+    g.setFont("6x8:2")
+     .setFontAlign(1, 0)
+     .drawString("+1", w, h/2);
+    g.setFontAlign(-1, 0)
+     .drawString("-1", 0, h/2);
+    g.setFontAlign(0, -1)
+     .drawString("+5", w/2, 0);
+    g.setFontAlign(0, 1)
+     .drawString("-5", w/2, h);
+    g.drawString("minutes", w/2, h-40);
+    g.setFont("Vector:64")
+     .setFontAlign(0, 0)
+     .drawString(""+minutes, w/2, h/2);
+  }
+  display();
+  Bangle.on("swipe", function (directionLR, directionUD) {
+    if (directionUD == -1) {
+      minutes += 5;
+    } else if (directionUD == 1) {
+      minutes -= 5;
+    } else if (directionLR == -1) {
+      minutes -= 1;
+    } else if (directionLR == 1) {
+      minutes += 1;
+    }
+    if (minutes < 1) {
+      minutes = 1;
+    }
+    display();
+  });
+  Bangle.on("touch", function(button, xy) {
+    Bangle.removeAllListeners("touch");
+    Bangle.removeAllListeners("swipe");
+    config.duration = minutes * 60;
+    //TODO: don't write if no change
+    require("Storage").writeJSON("pushups.cfg", config);
+    start_routine(config);
+  });
+  
+}
+
+function main_menu(config) {
   let w = g.getWidth();
   let h = g.getHeight();
   g.setBgColor(g.theme.bg);
@@ -412,7 +465,7 @@ function main_menu() {
        .setFontAlign(0, 0)
        .drawString("Edit", w/2, 3*h/4);
       Bangle.removeAllListeners("touch");
-      edit_menu();
+      edit_menu(config);
     } else if (xy.y < h/2-10) {
       g.setColor(g.theme.fg);
       g.fillRect(10, 10, w-10, h/2-10);
@@ -421,10 +474,16 @@ function main_menu() {
        .setFontAlign(0, 0)
        .drawString("Start", w/2, h/4);
       Bangle.removeAllListeners("touch");
-      start_routine();
+      set_duration(config);
     }
   })
 }
 
 
-main_menu();
+let config = require("Storage").readJSON("pushups.cfg", true);
+
+if (config === undefined) {
+  config = default_config();
+}
+
+main_menu(config);

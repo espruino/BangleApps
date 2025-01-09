@@ -6,7 +6,12 @@ exports.reply = function (options) {
     keyboard = null;
   }
 
-  function constructReply(msg, replyText, resolve) {
+  function constructReply(msg, replyText, resolve, reject) {
+    if (!replyText) { 
+      reject("");
+      return;
+    }
+
     var responseMessage = {msg: replyText};
     if (msg.id) {
       responseMessage = { t: "notify", id: msg.id, n: "REPLY", msg: replyText };
@@ -29,7 +34,10 @@ exports.reply = function (options) {
       }, // options
       /*LANG*/ "Compose": function () {
         keyboard.input().then((result) => {
-          constructReply(options.msg ?? {}, result, resolve);
+          if (result)
+            constructReply(options.msg ?? {}, result, resolve, reject);
+          else
+            E.showMenu(menu);
         });
       },
     };
@@ -38,11 +46,19 @@ exports.reply = function (options) {
         options.fileOverride || "replies.json",
         true
       ) || [];
+
     replies.forEach((reply) => {
-      menu = Object.defineProperty(menu, reply.text, {
-        value: () => constructReply(options.msg ?? {}, reply.text, resolve),
+      var displayString = reply.disp ?? reply.text;
+      var wrappedDisplayString = g.wrapString(displayString, 120);
+      // Generally handles truncating nicely, but falls down in long runs of emoji since they count as one image
+      if (wrappedDisplayString.length > 1) {
+        displayString = wrappedDisplayString[0]+"...";
+      }
+      menu = Object.defineProperty(menu, displayString, {
+        value: () => constructReply(options.msg ?? {}, reply.text, resolve, reject),
       });
     });
+
     if (!keyboard) delete menu[/*LANG*/ "Compose"];
 
     if (replies.length == 0) {
@@ -60,10 +76,11 @@ exports.reply = function (options) {
         );
       } else {
         keyboard.input().then((result) => {
-          constructReply(options.msg.id, result, resolve);
+          constructReply(options.msg, result, resolve, reject);
         });
       }
+    } else{
+      E.showMenu(menu);
     }
-    E.showMenu(menu);
   });
 };

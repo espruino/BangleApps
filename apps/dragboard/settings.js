@@ -45,4 +45,4 @@
   };
 
   E.showMenu(appMenu);
-});
+})

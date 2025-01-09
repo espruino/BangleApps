@@ -62,5 +62,4 @@
     "BTN3 app": () => showApps("BTN3")
   };
   E.showMenu(mainMenu);
-});
-  
+})

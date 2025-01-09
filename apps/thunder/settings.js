@@ -37,4 +37,4 @@
 
   loadSettings();
   showMenu();
-});
+})

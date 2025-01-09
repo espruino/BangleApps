@@ -1,7 +1,10 @@
 # Elapsed Time Clock
 A clock that calculates the time difference between now (in blue/cyan) and any given target date (in red/orange).
 
-The results is show in years, months, days, hours, minutes, seconds. To save battery life, the seconds are shown only when the watch is unlocked, or can be disabled entirely.
+The results is show in years, months, days, hours, minutes, seconds. The seconds can be shown:
+- always
+- when the watch is unlocked
+- never.
 
 The time difference is positive if the target date is in the past and negative if it is in the future.
 

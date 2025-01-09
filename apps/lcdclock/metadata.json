@@ -1,6 +1,6 @@
 { "id": "lcdclock",
   "name": "LCD Clock",
-  "version": "0.06",
+  "version": "0.07",
   "description": "A Casio-style clock, with ClockInfo areas at the top and bottom. Tap them and swipe up/down to toggle between different information",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

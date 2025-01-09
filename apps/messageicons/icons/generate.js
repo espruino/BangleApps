@@ -91,6 +91,7 @@ exports.getColor = function(msg,options) {
   const s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
   return {
     /* generic colors, using B2-safe colors */ ${ /* DO NOT USE BLACK OR WHITE HERE, just leave the declaration out and then the theme's fg color will be used */"" }
+    "agenda": "#206cd5",
     "airbnb": "#ff385c", // https://news.airbnb.com/media-assets/category/brand/
     "mail": "#ff0",
     "music": "#f0f",
@@ -111,8 +112,10 @@ exports.getColor = function(msg,options) {
 // "home assistant": "#41bdf5", // ha-blue is #41bdf5, but that's the background
     "instagram": "#ff0069", // https://about.instagram.com/brand/gradient
     "jira": "#0052cc", //https://atlassian.design/resources/logo-library
+    "leboncoin": "#fa7321",
     "lieferando": "#ff8000",
     "linkedin": "#0a66c2", // https://brand.linkedin.com/
+    "messages": "#0a5cce",
     "messenger": "#0078ff",
     "mastodon": "#563acc", // https://www.joinmastodon.org/branding
     "mattermost": "#00f",

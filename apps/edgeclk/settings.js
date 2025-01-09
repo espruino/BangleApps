@@ -14,6 +14,7 @@
     weekBar: true,
     mondayFirst: true,
     dayBar: true,
+    redrawOnStep: false,
   };
 
   const saved_settings = storage.readJSON(SETTINGS_FILE, true);
@@ -118,6 +119,13 @@
       value: settings.dayBar,
       onchange: () => {
         settings.dayBar = !settings.dayBar;
+        save();
+      },
+    },
+    'Live steps': {
+      value: settings.redrawOnStep,
+      onchange: () => {
+        settings.redrawOnStep = !settings.redrawOnStep;
         save();
       },
     },

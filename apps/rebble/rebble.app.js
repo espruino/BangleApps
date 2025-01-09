@@ -219,6 +219,8 @@ Graphics.prototype.setFontKdamThmor = function(scale) {
   }  
   
   let drawSideBar2Alt=function() {
+    setTextColor();
+    
     // steps
     g.drawImage(boot_img, 113, 59, { scale: 1 });
     setSmallFont();

@@ -1,6 +1,8 @@
 
 # Needs to be ignored because it uses ESM export/import
 apps/gipy/pkg/gps.js
+apps/gipy/pkg/gps.d.ts
+apps/gipy/pkg/gps_bg.wasm.d.ts
 
 # Needs to be ignored because it includes broken JS
 apps/health/chart.min.js

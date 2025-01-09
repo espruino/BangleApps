@@ -7,6 +7,7 @@
   "type": "app",
   "tags": "pomodoro,cooking,tools",
   "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
   "allow_emulator": true,
   "screenshots": [{"url":"bangle2-pomodoro-screenshot.png"}],
   "storage": [

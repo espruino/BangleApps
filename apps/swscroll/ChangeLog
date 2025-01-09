@@ -5,3 +5,4 @@
 0.05: Fix for the rebase in ver 0.04. Check boxes didn't behave but now they do.
 0.06: Minor code improvements
 0.07: Minor code improvements
+0.08: Bring in change from the firmware implementation forwarding the type of touch (short/long).

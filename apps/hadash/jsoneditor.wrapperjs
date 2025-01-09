@@ -1,0 +1,22 @@
+/*
+ * JSONEditor wrapper
+ *
+ * This script is bundled together with the actual JSONEditor (https://github.com/josdejong/svelte-jsoneditor)
+ * using ESBuild (see below).
+ *
+ * The following global variables need to be defined before including the jsoneditor-bundle.js:
+ *
+ *  JSONEditorInstance    will contain the new JSONEditor instance
+ *  JSONEditor_target     element ID of container (<div>) for the JSONEditor
+ *
+ * To build the bundle, run the following commands:
+ *    npm install esbuild
+ *    npm install vanilla-jsoneditor
+ *    ./node_modules/.bin/esbuild jsoneditor.wrapperjs --bundle --outfile=jsoneditor.bundlejs
+ *
+ */
+
+import { JSONEditor } from 'vanilla-jsoneditor/standalone.js'
+
+JSONEditorInstance = new JSONEditor({ target: JSONEditor_target, props: {} });
+

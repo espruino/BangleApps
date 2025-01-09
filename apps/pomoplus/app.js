@@ -4,6 +4,7 @@ Bangle.POMOPLUS_ACTIVE = true;  //Prevent the boot code from running. To avoid h
 
 const storage = require("Storage");
 const common = require("pomoplus-com.js");
+const wu = require("widget_utils");
 
 //Expire the state if necessary
 if (
@@ -14,37 +15,45 @@ if (
   common.state = common.STATE_DEFAULT;
 }
 
+const W = g.getWidth();
+const H = g.getHeight();
+const SCALING = W/176; // The UI was tweaked to look good on a Bangle.js 2 (176x176 px). SCALING automatically adapts so elements have the same proportions relative to the screen size on devices with other resolutions.
+const BUTTON_HEIGHT = 56 * SCALING;
+const BUTTON_TOP = H - BUTTON_HEIGHT;
+
 function drawButtons() {
-  let w = g.getWidth();
-  let h = g.getHeight();
   //Draw the backdrop
-  const BAR_TOP = h - 24;
-  g.setColor(0, 0, 1).setFontAlign(0, -1)
-    .clearRect(0, BAR_TOP, w, h)
-    .fillRect(0, BAR_TOP, w, h)
+  const ICONS_SIZE = 24;
+  const ICONS_ANCHOR_Y = BUTTON_TOP + BUTTON_HEIGHT / 2 - ICONS_SIZE / 2;
+  g.setColor(0, 0, 1)
+    .fillRect({x:0, y:BUTTON_TOP, x2:W-1, y2:H-1,r:15*SCALING})
     .setColor(1, 1, 1);
 
   if (!common.state.wasRunning) {  //If the timer was never started, only show a play button
-    g.drawImage(common.BUTTON_ICONS.play, w / 2, BAR_TOP);
+    g.drawImage(common.BUTTON_ICONS.play, W / 2 - ICONS_SIZE / 2, ICONS_ANCHOR_Y);
   } else {
-    g.drawLine(w / 2, BAR_TOP, w / 2, h);
+    g.setColor(g.theme.bg)
+      .fillRect(W / 2 - 2, BUTTON_TOP, W / 2 + 2, H)
+      .setColor(1,1,1);
     if (common.state.running) {
-      g.drawImage(common.BUTTON_ICONS.pause, w / 4, BAR_TOP)
-        .drawImage(common.BUTTON_ICONS.skip, w * 3 / 4, BAR_TOP);
+      g.drawImage(common.BUTTON_ICONS.pause, W / 4 - ICONS_SIZE / 2, ICONS_ANCHOR_Y)
+        .drawImage(common.BUTTON_ICONS.skip, W * 3 / 4 - ICONS_SIZE / 2, ICONS_ANCHOR_Y);
     } else {
-      g.drawImage(common.BUTTON_ICONS.reset, w / 4, BAR_TOP)
-        .drawImage(common.BUTTON_ICONS.play, w * 3 / 4, BAR_TOP);
+      g.drawImage(common.BUTTON_ICONS.reset, W / 4 - ICONS_SIZE / 2, ICONS_ANCHOR_Y)
+        .drawImage(common.BUTTON_ICONS.play, W * 3 / 4 - ICONS_SIZE / 2, ICONS_ANCHOR_Y);
     }
   }
 }
 
 function drawTimerAndMessage() {
-  let w = g.getWidth();
-  let h = g.getHeight();
+  const ANCHOR_X = W / 2;
+  const ANCHOR_Y = H * 3 / 8;
+  const TIME_SIZE = 48 * SCALING;
+  const LABEL_SIZE = 18 * SCALING;
   g.reset()
     .setFontAlign(0, 0)
-    .setFont("Vector", 36)
-    .clearRect(w / 2 - 60, h / 2 - 34, w / 2 + 60, h / 2 + 34)
+    .setFont("Vector", TIME_SIZE)
+    .clearRect(0, ANCHOR_Y - TIME_SIZE / 2, W-1, ANCHOR_Y + TIME_SIZE / 2 + 1.2 * LABEL_SIZE)
 
     //Draw the timer
     .drawString((() => {
@@ -59,17 +68,17 @@ function drawTimerAndMessage() {
 
       if (hours >= 1) return `${parseInt(hours)}:${pad(minutes)}:${pad(seconds)}`;
       else return `${parseInt(minutes)}:${pad(seconds)}`;
-    })(), w / 2, h / 2)
+    })(), ANCHOR_X, ANCHOR_Y)
 
     //Draw the phase label
-    .setFont("Vector", 12)
+    .setFont("Vector", LABEL_SIZE)
     .drawString(((currentPhase, numShortBreaks) => {
       if (!common.state.wasRunning) return "Not started";
       else if (currentPhase == common.PHASE_WORKING) return `Work ${numShortBreaks + 1}/${common.settings.numShortBreaks + 1}`
       else if (currentPhase == common.PHASE_SHORT_BREAK) return `Short break ${numShortBreaks + 1}/${common.settings.numShortBreaks}`;
       else return "Long break!";
     })(common.state.phase, common.state.numShortBreaks),
-      w / 2, h / 2 + 18);
+      ANCHOR_X, ANCHOR_Y + 2*LABEL_SIZE);
 
   //Update phase with vibation if needed
   if (common.getTimeLeft() <= 0) {
@@ -77,11 +86,35 @@ function drawTimerAndMessage() {
   }
 }
 
-drawButtons();
-Bangle.on("touch", (button, xy) => {
+if (!Bangle.isLocked()) drawButtons();
+
+let hideButtons = ()=>{
+    g.clearRect(0,BUTTON_TOP,W-1,H-1);
+}
+
+let graphicState = 0; // 0 - all is visible, 1 - widgets are hidden, 2 - widgets and buttons are hidden.
+let onButtonSwitchGraphics = (n)=>{
+  if (process.env.HWVERSION == 2) n=2; // Translate Bangle.js 2 button to Bangle.js 1 middle button.
+  if (n == 2) {
+    if (graphicState == 0) {
+      wu.hide();
+    }
+    if (graphicState == 1) {
+      hideButtons();
+    }
+    if (graphicState == 2) {
+      wu.show();
+      drawButtons();
+    }
+    graphicState = (graphicState+1) % 3;
+  }
+}
+
+let onTouchSoftwareButtons = (button, xy) => {
   //If we support full touch and we're not touching the keys, ignore.
   //If we don't support full touch, we can't tell so just assume we are.
-  if (xy !== undefined && xy.y <= g.getHeight() - 24) return;
+  let isOutsideButtonArea = xy !== undefined && xy.y <= g.getHeight() - BUTTON_HEIGHT;
+  if (isOutsideButtonArea || graphicState == 2) return;
 
   if (!common.state.wasRunning) {
     //If we were never running, there is only one button: the start button
@@ -137,7 +170,13 @@ Bangle.on("touch", (button, xy) => {
       if (common.settings.showClock) Bangle.showClock();
     }
   }
-});
+};
+
+Bangle.setUI({
+  mode: "custom",
+  touch: onTouchSoftwareButtons,
+  btn: onButtonSwitchGraphics
+})
 
 let timerInterval;
 
@@ -156,6 +195,18 @@ if (common.state.running) {
   setupTimerInterval();
 }
 
+Bangle.on('lock', (on, reason) => {
+  if (graphicState==2) return;
+  if (on) {
+    hideButtons();
+    wu.hide();
+  }
+  if (!on) {
+    drawButtons();
+    if (graphicState==0) wu.show();
+  }
+});
+
 //Save our state when the app is closed
 E.on('kill', () => {
   storage.writeJSON(common.STATE_PATH, common.state);
@@ -163,3 +214,4 @@ E.on('kill', () => {
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+if (Bangle.isLocked()) wu.hide();
