@@ -158,7 +158,7 @@ let skys = {
     if (sortedSats[4] && sortedSats[4].snr) {
       return "" + sortedSats[4].snr + "dB";
     }
-    for (i=4; i>=0; i--) {
+    for (let i=4; i>=0; i--) {
       if (sortedSats[i] && sortedSats[i].snr)
         return "S" + (i+1);
     }
@@ -450,7 +450,7 @@ let sky = {
     this.sys += 1;
     if (this.sys == 4)
       this.sys = 0;
-    val = 7;
+    let val = 7;
     if (this.sys)
       val = 1 << (this.sys - 1);
     this.casic_cmd("$PCAS04,"+val);
