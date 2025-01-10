@@ -301,6 +301,8 @@ let sky = {
   tof0: function(v) { return this.tof(v, 0); },
   tof1: function(v) { return this.tof(v, 1); },
   fmtSys: function(sys, sats) {
+    if (!sys.sent)
+      return " off\n";
     let r = sys.sent + " ";
     // r+= sys.d23 + "D ";
     if (sats)
