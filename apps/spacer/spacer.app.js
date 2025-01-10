@@ -211,6 +211,7 @@ let skys = {
     return this.qualest();
   },
   onEnd: function () {
+    this.trackSatelliteVisibility();
     if (this.sats_used < 5)
       this.sky_start = getTime();
     this.reset();
@@ -346,9 +347,13 @@ let sky = {
     this.msg.bd = {};
     this.msg.gl = {};
     this.onMessageEnd();
-    this.all.trackSatelliteVisibility();
     //print(this.sats);
     this.all.onEnd();
+    if (this.split) {
+      this.s_gp.onEnd();
+      this.s_gl.onEnd();
+      this.s_bd.onEnd();
+    }
   },
   parseRaw: function(msg, lost) {
     //print(msg);
