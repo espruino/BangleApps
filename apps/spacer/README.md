@@ -12,9 +12,9 @@ not doing a cold start. GNSS fix needs 4 or 5 satellites with
 reasonable signal strength, and then holding the same place for 40 or
 so seconds.
 
-nil -- no satellites visible
+Uxx -- satellites are known but not being received
 
 S1..S4 -- not enough satellites being decoded (5 needed)
 
-XXdB -- have enough satellites, but signal is not strong enough
+XXdB -- this is strength of 5th strongest satellite
 
