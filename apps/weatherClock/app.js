@@ -26,7 +26,7 @@ function getStorm() {
 }
 // err icon - https://icons8.com/icons/set/error
 function getErr() {
-  return require("heatshrink").decompress(atob("mEwwkBiIA/AH4AZUAIWUiAXBWqgXXdIYuVGCgXBgICCIyYXCJCQTDC6QrEMCQSEJCQRFC6ApGJCCiDDQSpQFAYXEJBqNGJCA/EC4ZIOEwgXFJBgNEAhKlNAgxIKBgoXEJBjsLC5TsIeRycMBhRrMMBKzQEozjOBxAgHGww+IA6wfSH4hnIC47OMSJqlRIJAXCACIXaGoQARPwwuTAH4A/ABw"));
+  return require("heatshrink").decompress(atob("mEw4UA///A4PgAYQA/ABkFqALJitUBatVqoKIgILBoALIq2VBZEFrWlJBALLitq1JIIqoLBJBFV1WqBY5GBBYJIHBYOlrQLHIwRIIioLDJAxSBBYJUHIwILBJA4LKKQQLCJAsFBYpIEKQILDKgpGBBYZIFBYQACBYqZCAAZIDdgILGJASlDAAZUDIwQ7DJAgLLIwYLDJAbsBBYxICIwxUDKQ5UDBYIAIBZgvBABBTCBQ7xGAH4AC"));
 }
 function getDummy() {
   return require("heatshrink").decompress(atob("gMBwMAwA"));
