@@ -1,0 +1,13 @@
+{ "id": "BLE_Connect",
+  "name": "BLUETooth SCAN & Connect",
+  "shortName":"BLE Conn",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "This will scan for any BLEs in the area then have the ability to connect to them",
+  "tags": "",
+  "supports": ["BANGLEJS"],
+  "storage": [
+    {"name":"Scan_Connect.js","url":"app.js"},
+    {"name":"Scan_Connect.img","url":"app-icon.js","evaluate":true}
+  ]
+}
