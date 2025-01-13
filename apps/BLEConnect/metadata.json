@@ -1,13 +1,21 @@
-{ "id": "BLE_Connect",
+{
+  "id": "BLEConnect",
   "name": "BT SCAN & Connect",
-  "shortName":"BLE Conn",
-  "icon": "app.png",
-  "version":"0.01",
+  "shortName": "BLE Conn",
+  "icon": "app-icon.png",
+  "version": "0.02",
   "description": "This will scan for any BLEs in the area then have the ability to connect to them",
-  "tags": "BLE", "Connect",
+  "tags": ["BLE", "Connect"],
   "supports": ["BANGLEJS"],
   "storage": [
-    {"name":"Scan_Connect.js","url":"app.js"},
-    {"name":"Scan_Connect.img","url":"app-icon.js","evaluate":true}
+    {
+      "name": "Scan_Connect.js",
+      "url": "app.js"
+    },
+    {
+      "name": "Scan_Connect.img",
+      "url": "app-icon.png",
+      "evaluate": true
+    }
   ]
 }
