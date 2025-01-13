@@ -1,13 +1,13 @@
 { "id": "BLE_Connect",
   "name": "BT Connect",
   "shortName":"BT_Conn",
-  "icon": "8ball.png",
+  "icon": "BTConnect_App.png",
   "version":"0.01",
   
   "allow_emulator": true,
-  "description": "A very sarcastic magic 8ball",
-  "tags": "game",
-  "supports": ["BANGLEJS2"],
+  "description": "BT Scanner & Connect",
+  "tags": "Connect",
+  "supports": ["BANGLEJS"],
   "storage": [
     {"name":"BLEConnect.app.js","url":"app.js"},
     {"name":"BTConnect_App.img","url":"app-icon.js","evaluate":true}
