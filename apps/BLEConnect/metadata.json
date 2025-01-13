@@ -1,13 +1,13 @@
 { "id": "BLE_Connect",
   "name": "BT Connect",
   "shortName":"BT_Conn",
-  "icon": "BTConnect_App.png",
+  "icon": "BTApp.png",
   "version":"0.01",
   
   "allow_emulator": true,
   "description": "BT Scanner & Connect",
-  "tags": "Connect",
-  "supports": ["BANGLEJS"],
+  "tags": "Connect", "BLE", "BT",
+  "supports": ["BANGLEJS"], ["BANGLEJS2"],
   "storage": [
     {"name":"BLEConnect.app.js","url":"app.js"},
     {"name":"BTConnect_App.img","url":"app-icon.js","evaluate":true}
