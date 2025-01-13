@@ -6,7 +6,7 @@
   
   "allow_emulator": true,
   "description": "BT Scanner & Connect",
-  "tags": "Connect", "BLE", "BT",
+  "tags": "Connect",
   "supports": ["BANGLEJS"], ["BANGLEJS2"],
   "storage": [
     {"name":"BLEConnect.app.js","url":"app.js"},
