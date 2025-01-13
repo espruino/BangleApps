@@ -1,6 +1,6 @@
 {
   "id": "BLE_Connect",
-  "name": "BT SCAN & Connect",
+  "name": "BLE Conn",
   "shortName": "BLE Conn",
   "icon": "app-icon.png",
   "version": "0.02",
