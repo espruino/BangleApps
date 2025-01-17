@@ -6,15 +6,17 @@ let reloader = (function () {
   let reload = function () {
     if (!Bangle.isLocked()) {
       console.log("Reloader: Device maybe in use. Waiting...");
-      setTimeout(reload, 60);
+      setTimeout(reload, 600000);
     }
     else {
     console.log("Reloader: Idle for to long reloading...");
     load();
     }
   };
-
+  
   if (settings.reload_delay_in_hours != 0) {
-    setInterval(reload, reload_delay_in_hours * 3600);
+    setInterval(reload, settings.reload_delay_in_hours * 3600000);
   }
 });
+
+reloader();

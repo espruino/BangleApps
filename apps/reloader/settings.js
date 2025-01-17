@@ -13,12 +13,12 @@
     /*LANG*/"< Back": () => back(),
 
     /*LANG*/"Reload Delay in Hours": {
-      value: settings.reminder_start_time,
+      value: settings.reload_delay_in_hours,
       min: 0,
       max: 24,
       step: 1,
       onchange: v => {
-        settings.reminder_start_time = v;
+        settings.reload_delay_in_hours = v;
         setSettings();
       }
     }
