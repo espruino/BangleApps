@@ -1,4 +1,4 @@
-# Message Scroll on Twist
+# Message Twist to Scroll
 
 Temporarily activate scroll on twist function when a new message triggers the message app. This way it's possible to scroll through a message in the message scroller hands free.
 

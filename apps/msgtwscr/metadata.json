@@ -1,5 +1,5 @@
 { "id": "msgtwscr",
-  "name": "Message Scroll on Twist",
+  "name": "Message Twist to Scroll",
   "version":"0.01",
   "description": "Temporarily activate scroll on twist function when a new message triggers the message app.",
   "icon": "app.png",
