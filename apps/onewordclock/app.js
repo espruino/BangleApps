@@ -24,41 +24,6 @@ function wordFromHour(h) {
 }
 
 function wordsFromDayMonth(day, date, month) {
-  // Tests
-
-  // Example 12:00 = Twelve
-  //  New Year's Day
-  //  date = 1;
-  //  month = 0;
-  //  on the Ides of March
-  //  date = 15;
-  //  month = 2;
-  // , ERROR C Nonsense in BASIC
-  //  date = 1;
-  //  month = 3;
-  //  - O'Canada
-  //  date = 1;
-  //  month = 6;
-  //  -  on Halloween
-  //  date = 31;
-  //  month = 9;
-  //  -  Christmas Eve
-  //  date = 24;
-  //  month = 11;
-  //  -  Christmas Day
-  //  date = 25;
-  //  month = 11;
-  //  -  Boxing day
-  //  date = 26;
-  //  month = 11;
-  //  New Year's eve
-  //  date = 31;
-  //  month = 11;
-  //  longest
-  //  date = 29;
-  //  month = 10;
-
-
   const DAY_WORD_ARRAY = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const DATE_WORD_ARRAY = ["zero", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth", "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth", "nineteenth", "twentieth", "twenty-first", "twenty-second", "twenty-third", "twenty-fourth", "twenty-fifth", "twenty-sixth", "twenty-seventh", "twenty-eighth", "twenty-ninth", "thirtieth", "thirty-first"];
   const MONTH_WORD_ARRAY = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
