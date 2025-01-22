@@ -2,7 +2,7 @@
   "id": "onewordclock",
   "name": "One Word Clock",
   "shortName": "One Word",
-  "version": "0.31",
+  "version": "0.4",
   "description": "A unique clock that displays a single evocative word for each hour of the day",
   "icon": "app.png",
   "tags": "clock",
