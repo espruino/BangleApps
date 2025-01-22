@@ -23,7 +23,7 @@ function wordFromHour(h) {
   return HOUR_WORDS[h];
 }
 
-function wordsFromDayMonth(day, date, month) {
+function wordsFromDayMonth(day) {
   const DAY_WORD_ARRAY = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   return DAY_WORD_ARRAY[day];
 }
@@ -41,7 +41,7 @@ function draw() {
   var month = d.getMonth();
 
   var timeStr = wordFromHour(h);
-  var dateStr = wordsFromDayMonth(day, date, month);
+  var dateStr = wordsFromDayMonth(day);
 
   // draw time
   g.setBgColor(g.theme.bg);
@@ -62,7 +62,7 @@ function draw() {
 
   // Draw the remaining portion
   if (coloredChars < timeStr.length) {
-    g.setColor(g.theme.fg);
+    g.setColor(g.theme.fg2);
     var remainingPart = timeStr.substring(coloredChars);
     var remainingWidth = g.stringWidth(remainingPart);
     g.drawString(remainingPart, x + (g.stringWidth(timeStr) / 2) - (remainingWidth / 2), y);
