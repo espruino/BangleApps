@@ -9,7 +9,6 @@ E.showMenu = function (items) {
     const ITEM_HEIGHT = 48;
     var m = {
         info: {
-            title: "Menu",
             cB: g.theme.bg,
             cF: g.theme.fg,
             cHB: g.theme.bgH,
@@ -22,15 +21,12 @@ E.showMenu = function (items) {
         scroll: 0,
         items: [],
         selected: -1,
-        showTitle: true,
-        titleTimeout: null,
         draw: () => {
             g.reset().setFont('12x20');
             m.info.predraw(g);
-            const menuStartY = m.showTitle ? ar.y + 20 : ar.y;
-            g.setColor(m.info.cB).fillRect(ar.x, menuStartY, ar.x2, ar.y2).setColor(m.info.cF);
+            g.setColor(m.info.cB).fillRect(ar.x, ar.y, ar.x2, ar.y2).setColor(m.info.cF);
             m.items.forEach((e, i) => {
-                const s = (i * ITEM_HEIGHT) - m.scroll + menuStartY;
+                const s = (i * ITEM_HEIGHT) - m.scroll + ar.y;
                 if (s < ar.y || s > ar.y2 - 10) {
                     return false;
                 }
@@ -54,22 +50,15 @@ E.showMenu = function (items) {
                     }
                 }
             });
-            if (m.showTitle) {
-                g.setColor(m.info.cAB).fillRect(ar.x, ar.y, ar.x2, ar.y + 20);
-                g.setColor(m.info.cAF)
-                    .setFontAlign(0, -1, 0)
-                    .drawString(m.info.title, ar.x + ((ar.x2 - ar.x) / 2), ar.y + 2);
-            }
             m.info.preflip(g, m.scroll > 0, m.scroll < (m.items.length - 1) * ITEM_HEIGHT);
         },
         select: (x, y) => {
-            const menuStartY = m.showTitle ? ar.y + 20 : ar.y;
-            if (m.selected == -1 || m.selected !== Math.max(Math.min(Math.floor((y + m.scroll - menuStartY) / ITEM_HEIGHT), m.items.length - 1), 0)) {
+            if (m.selected == -1 || m.selected !== Math.max(Math.min(Math.floor((y + m.scroll - ar.y) / ITEM_HEIGHT), m.items.length - 1), 0)) {
                 if (y) {
-                    if (y < menuStartY || y > ar.y2) {
+                    if (y < ar.y || y > ar.y2) {
                         return false;
                     } else {
-                        m.selected = Math.max(Math.min(Math.floor((y + m.scroll - menuStartY) / ITEM_HEIGHT), m.items.length - 1), 0);
+                        m.selected = Math.max(Math.min(Math.floor((y + m.scroll - ar.y) / ITEM_HEIGHT), m.items.length - 1), 0);
                     }
                 } else {
                     m.selected = Math.floor(m.scroll / ITEM_HEIGHT);
@@ -104,15 +93,8 @@ E.showMenu = function (items) {
         move: d => {
             m.scroll += (d * ITEM_HEIGHT);
             m.scroll = Math.min(Math.max(m.scroll, 0), (m.items.length - 1) * ITEM_HEIGHT);
-            const menuStartY = m.showTitle ? ar.y + 20 : ar.y;
-            m.selected = Math.max(Math.min(Math.floor((m.scroll - menuStartY) / ITEM_HEIGHT), m.items.length - 1), 0);
+            m.selected = Math.max(Math.min(Math.floor((m.scroll - ar.y) / ITEM_HEIGHT), m.items.length - 1), 0);
             m.draw();
-        },
-        hideTitle: () => {
-            if (m.showTitle) {
-                m.showTitle = false;
-                m.draw();
-            }
         }
     };
     Object.keys(items).forEach(i => {
@@ -132,14 +114,7 @@ E.showMenu = function (items) {
             }
         }
     });
-    m.info.title = loc.translate(m.info.title);
     m.draw();
-
-    // Set timeout to hide title permanently
-    m.titleTimeout = setTimeout(() => {
-        m.showTitle = false;
-        m.draw();
-    }, 2000);
 
     // Add BTN1 handler for back functionality
     if (m.back) {

@@ -1,7 +1,7 @@
 {
     "id": "smoothmenu",
     "name": "Smooth Menu",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Redesigned menu that focuses on minimalism and ease of use",
     "icon": "app.png",
     "type": "bootloader",
