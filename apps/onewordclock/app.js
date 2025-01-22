@@ -58,7 +58,7 @@ function draw() {
 
   var d = new Date();
   var h = d.getHours();
-  var m = d.getMinutes() + 36;
+  var m = d.getMinutes();
   var date = d.getDate();
   var day = d.getDay();
   var month = d.getMonth();
