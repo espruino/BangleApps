@@ -58,6 +58,7 @@ function draw() {
 
   var d = new Date();
   var h = d.getHours();
+  var m = d.getMinutes() + 36;
   var date = d.getDate();
   var day = d.getDay();
   var month = d.getMonth();
@@ -69,10 +70,29 @@ function draw() {
   g.setBgColor(g.theme.bg);
   g.setColor(g.theme.fg);
   g.clear();
-  g.setFontAlign(0, 0).setFont("Vector", 36);  // Made font bigger since we're showing one word
-  g.drawString(timeStr, x, y);
+  g.setFontAlign(0, 0).setFont("Vector", 36);
+
+  // Calculate how much of the word should be colored based on minutes
+  var coloredChars = Math.floor((timeStr.length * m) / 60);
+
+  // Draw the colored portion first
+  if (coloredChars > 0) {
+    g.setColor(g.theme.fg2);
+    var coloredPart = timeStr.substring(0, coloredChars);
+    var coloredWidth = g.stringWidth(coloredPart);
+    g.drawString(coloredPart, x - (g.stringWidth(timeStr) / 2) + (coloredWidth / 2), y);
+  }
+
+  // Draw the remaining portion
+  if (coloredChars < timeStr.length) {
+    g.setColor(g.theme.fg);
+    var remainingPart = timeStr.substring(coloredChars);
+    var remainingWidth = g.stringWidth(remainingPart);
+    g.drawString(remainingPart, x + (g.stringWidth(timeStr) / 2) - (remainingWidth / 2), y);
+  }
 
   // draw date at bottom of screen
+  g.setColor(g.theme.fg);
   g.setFontAlign(0, 0).setFont("Vector", 12);
   g.drawString(g.wrapString(dateStr, g.getWidth()).join("\n"), x, g.getHeight() - 24);
 
