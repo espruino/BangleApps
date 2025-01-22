@@ -62,7 +62,7 @@ function draw() {
 
   // Draw the remaining portion
   if (coloredChars < timeStr.length) {
-    g.setColor(g.theme.fg2);
+    g.setColor(g.theme.fg);
     var remainingPart = timeStr.substring(coloredChars);
     var remainingWidth = g.stringWidth(remainingPart);
     g.drawString(remainingPart, x + (g.stringWidth(timeStr) / 2) - (remainingWidth / 2), y);
