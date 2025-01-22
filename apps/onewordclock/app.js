@@ -70,11 +70,11 @@ function draw() {
   g.setColor(g.theme.fg);
   g.clear();
   g.setFontAlign(0, 0).setFont("Vector", 36);  // Made font bigger since we're showing one word
-  g.drawString(timeStr, x, y - 24);
+  g.drawString(timeStr, x, y);
 
-  // draw date
+  // draw date at bottom of screen
   g.setFontAlign(0, 0).setFont("Vector", 12);
-  g.drawString(g.wrapString(dateStr, g.getWidth()).join("\n"), x, y + 24);
+  g.drawString(g.wrapString(dateStr, g.getWidth()).join("\n"), x, g.getHeight() - 24);
 
   // queue draw in one minute
   queueDraw();
