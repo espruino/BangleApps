@@ -90,7 +90,7 @@ var onMessagesModified = function(type,msg) {
   }
   if (msg && msg.id=="nav" && msg.t=="modify" && active!="map")
     return; // don't show an updated nav message if we're just in the menu
-  showMessage(msg, "modified");
+  showMessageRouter(msg, "modified");
 };
 Bangle.on("message", onMessagesModified);
 
@@ -99,7 +99,7 @@ function saveMessages() {
 }
 E.on("kill", saveMessages);
 
-function showMessage(msg, calledFrom) {
+function showMessageRouter(msg, calledFrom) {
   ////var active; // active screen (undefined/"list"/"music"/"map"/"message"/"scroller"/"settings")
   //if (active==undefined) { } else if (active=="list") ... //and so on.
 
@@ -115,6 +115,9 @@ function showMessage(msg, calledFrom) {
     return showMessagesScroller(msg);
   }
   if (calledFrom=="scrollerSelect") {
+    return showMessageOverview(msg.id);
+  }
+  if (msg.id=="call") {
     return showMessageOverview(msg.id);
   }
   //if (false) {showMessageSettings(msg);}
@@ -304,23 +307,23 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
   var titleLines = [];
   var messagesWrapped = [];
   for (let i=idxSpan.start ; i<idxSpan.stop ; i++) {
-    let MSG_ITER = MESSAGES[i];
-    MSG_ITER.new = false;
+    let msgIter = MESSAGES[i];
+    msgIter.new = false;
 
-    //if (/*MSG_ITER.id=="music" ||*/ MSG_ITER.source=="maps" || MSG_ITER.id =="call") {
+    //if (/*msgIter.id=="music" ||*/ msgIter.source=="maps" || msgIter.id =="call") {
     //  idxSpan.stop++
     //  if (idxSpan.stop>=MESSAGES.length) {break;}
     //  continue;
     //}
 
     var lines = [];
-    const TITLE_STRING = MSG_ITER.title||MSG_ITER.sender||MSG_ITER.subject||MSG_ITER.src||/*LANG*/"No Title";
+    const TITLE_STRING = msgIter.title||msgIter.sender||msgIter.subject||msgIter.src||/*LANG*/"No Title";
     lines = g.wrapString(TITLE_STRING, APP_RECT.w-10);
     for (let i=0; i<lines.length; i++) {
       titleLines.push(i + (messagesWrapped[0]?messagesWrapped[0].length:0) +
         (messagesWrapped[1]?messagesWrapped[1].length:0));
     }
-    lines = lines.concat(g.wrapString(MSG_ITER.body, APP_RECT.w-10),
+    lines = lines.concat(g.wrapString(msgIter.body, APP_RECT.w-10),
       ["-".repeat(12)]);
     messagesWrapped.push(lines);
   }
@@ -343,6 +346,7 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
       map((x) => x + alreadyProcessed.lines.length));
     allLines = alreadyProcessed.lines.concat(allLines);
   }
+  initScroll = initScroll*FONT_HEIGHT;
 
   if (allLines.length == 0 && alreadyProcessed.lines.length == 0) {
     cancelReloadTimeout();
@@ -377,29 +381,28 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
   let prevScrollIdxs = [undefined, undefined]; // [prevIdx, prevPrevIdx]
 
   function shouldAddNext(scrollIdx) {"ram"; return (scrollIdx>=allLines.length-1 &&
-    scrollIdx!=prevScrollIdxs[0] && alreadyProcessed.idxSpan.stop<MESSAGES.length)}
+    scrollIdx!=prevScrollIdxs[0] && alreadyProcessed.idxSpan.stop<MESSAGES.length);}
   function shouldAddPrev(scrollIdx) {"ram"; return (scrollIdx==0 &&
-    scrollIdx!=prevScrollIdxs[0] && alreadyProcessed.idxSpan.start>0)}
+    scrollIdx!=prevScrollIdxs[0] && alreadyProcessed.idxSpan.start>0);}
   function reinitAdding(idx) {
     setTimeout(() => {
-      Bangle.emit("drag", {dy:0}); // Make sure scrolling doesn't continue after reinit.
+      Bangle.emit("drag", {dy:0}); // Make sure scrolling doesn't continue after reinit. FIXME: Is this a hack that begs for a bug being fixed elsewhere?
       // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
       setTimeout(()=>{
         E.showScroller();
         if (BTN_EXT_SELECT) {clearWatch(BTN_EXT_SELECT); delete BTN_EXT_SELECT;}
         showMessagesScroller(MESSAGES[idx],
           true, alreadyProcessed);
-      },0)
+      },0);
     }, 40);
   }
 
   E.showScroller({
-    scroll : initScroll*FONT_HEIGHT,
+    scroll : initScroll,
     h : FONT_HEIGHT, // height of each menu item in pixels
     c : allLines.length, // number of menu items
     // a function to draw a menu item
-    draw : function(scrollIdx, r) {
-      "ram";
+    draw : function(scrollIdx, r) {"ram";
       g.setBgColor(titleLines.find(e=>e==scrollIdx)!==undefined ? g.theme.bg2 : g.theme.bg).
         setColor(titleLines.find(e=>e==scrollIdx)!==undefined ? g.theme.fg2 : g.theme.fg).
         clearRect(r);
@@ -413,9 +416,9 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
     select : function(scrollIdx, touch) {
       WU.show();
       const MSG_SELECT = identifyDisplayedMsg(scrollIdx);
-      if (BTN_EXT_SELECT) {clearWatch(BTN_EXT_SELECT); delete BTN_EXT_SELECT}
-      if (!touch) {showMessage(MSG_SELECT, "scrollerSelect"); return}
-      if (touch.type == 0) {showMessage(MSG_SELECT,"scrollerSelect");}
+      if (BTN_EXT_SELECT) {clearWatch(BTN_EXT_SELECT); delete BTN_EXT_SELECT;}
+      if (!touch) {showMessageRouter(MSG_SELECT, "scrollerSelect"); return;}
+      if (touch.type == 0) {showMessageRouter(MSG_SELECT,"scrollerSelect");}
       if (touch.type == 2) {showMessageSettings(MSG_SELECT);}
     }
   });
@@ -429,7 +432,7 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
         prevScrollIdxs[0]-LINES_PER_SCREEN/2:prevScrollIdxs[0]+LINES_PER_SCREEN/2;
       WU.show();
       showMessageOverview(identifyDisplayedMsg(SCROLL_IDX_CENTER_SCREEN).id, true);
-    },0)
+    },0);
   }, BTN, {edge:'rising'})));
 }
 
@@ -675,7 +678,7 @@ function checkMessages(options) {
   E.showScroller({
     h : 48,
     c : Math.max(MESSAGES.length,3), // workaround for 2v10.219 firmware (min 3 not needed for 2v11)
-    draw : function(idx, r) {"ram"
+    draw : function(idx, r) {"ram";
       var msg = MESSAGES[idx];
       if (msg && msg.new) g.setBgColor(g.theme.bgH).setColor(g.theme.fgH);
       else g.setBgColor(g.theme.bg).setColor(g.theme.fg);
