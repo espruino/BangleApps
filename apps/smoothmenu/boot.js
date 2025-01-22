@@ -27,7 +27,7 @@ E.showMenu = function (items) {
             g.setColor(m.info.cB).fillRect(ar.x, ar.y, ar.x2, ar.y2).setColor(m.info.cF);
             m.items.forEach((e, i) => {
                 const s = (i * ITEM_HEIGHT) - m.scroll + ar.y;
-                if (s < ar.y || s > ar.y2 - 10) {
+                if (s + ITEM_HEIGHT < ar.y || s > ar.y2 - 10) {
                     return false;
                 }
                 if (i == m.selected) {
