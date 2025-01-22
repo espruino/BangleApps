@@ -77,7 +77,7 @@ function draw() {
 
   // Draw the colored portion first
   if (coloredChars > 0) {
-    g.setColor(g.theme.fg2);
+    g.setColor(g.theme.bg2);
     var coloredPart = timeStr.substring(0, coloredChars);
     var coloredWidth = g.stringWidth(coloredPart);
     g.drawString(coloredPart, x - (g.stringWidth(timeStr) / 2) + (coloredWidth / 2), y);
