@@ -25,30 +25,7 @@ function wordFromHour(h) {
 
 function wordsFromDayMonth(day, date, month) {
   const DAY_WORD_ARRAY = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const DATE_WORD_ARRAY = ["zero", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth", "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth", "nineteenth", "twentieth", "twenty-first", "twenty-second", "twenty-third", "twenty-fourth", "twenty-fifth", "twenty-sixth", "twenty-seventh", "twenty-eighth", "twenty-ninth", "thirtieth", "thirty-first"];
-  const MONTH_WORD_ARRAY = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  var words = " ";
-  words = DAY_WORD_ARRAY[day] + ", " + DATE_WORD_ARRAY[date] + " of " + MONTH_WORD_ARRAY[month];
-  if ((date == 1) && (month == 0)) {
-    words = "New Year's Day";
-  } else if ((date == 15) && (month == 2)) {
-    words = DAY_WORD_ARRAY[day] + " on the Ides of March";
-  } else if ((date == 1) && (month == 3)) {
-    words = DAY_WORD_ARRAY[day] + ", ERROR C Nonsense in BASIC";
-  } else if ((date == 1) && (month == 6)) {
-    words = DAY_WORD_ARRAY[day] + "  - O'Canada";
-  } else if ((date == 31) && (month == 9)) {
-    words = DAY_WORD_ARRAY[day] + " - on Halloween";
-  } else if ((date == 24) && (month == 11)) {
-    words = "Christmas Eve";
-  } else if ((date == 25) && (month == 11)) {
-    words = "Christmas Day";
-  } else if ((date == 26) && (month == 11)) {
-    words = "Boxing Day";
-  } else if ((date == 31) && (month == 11)) {
-    words = "New Year's eve";
-  }
-  return words;
+  return DAY_WORD_ARRAY[day];
 }
 
 function draw() {
@@ -92,9 +69,9 @@ function draw() {
   }
 
   // draw date at bottom of screen
-  g.setColor(g.theme.fg);
-  g.setFontAlign(0, 0).setFont("Vector", 12);
-  g.drawString(g.wrapString(dateStr, g.getWidth()).join("\n"), x, g.getHeight() - 24);
+  g.setColor(g.theme.fg2);
+  g.setFontAlign(0, 0).setFont("Vector", 20);
+  g.drawString(g.wrapString(dateStr, g.getWidth()).join("\n"), x, g.getHeight() - 30);
 
   // queue draw in one minute
   queueDraw();
