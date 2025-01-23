@@ -14,7 +14,7 @@ E.showMenu = (function (menu) {
         if ("object" != typeof item) return;
         if ("boolean" == typeof item.value &&
             !item.format)
-            item.format = v => "\0" + atob(v ? "EhKBAH//v/////////////5//x//j//H+eP+Mf/A//h//z//////////3//g" : "EhKBAH//v//8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA///3//g");
+            item.format = v => "\0" + atob(v ? "EhKBAH//v/////////////5//x//j//H+eP+Mf/A//h//z//////////3//g" : "EhKBAH//v//8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA8AA///3//g");
     });
     // Submenu for editing menu options...
     function showSubMenu(item, title) {
@@ -26,13 +26,11 @@ E.showMenu = (function (menu) {
             // show scrolling menu of options
             E.showScroller({
                 h: H, c: (item.max + step - item.min) / step,
-                back: show, // redraw original menu
                 remove: options.remove,
                 draw: (idx, r) => {
                     g.setColor(g.theme.bg2).fillRect({ x: r.x + 4, y: r.y + 2, w: r.w - 8, h: r.h - 4, r: 5 });
                     var v = idx * step + item.min;
                     g.setColor(g.theme.fg2).setFont("12x20").setFontAlign(-1, 0).drawString((item.format) ? item.format(v, 1) : v, r.x + 12, r.y + H / 2);
-                    g.drawImage(/* 20x20 */atob(v == item.value ? "FBSBAAH4AH/gHgeDgBww8MY/xmf+bH/jz/88//PP/zz/88f+Nn/mY/xjDww4AcHgeAf+AB+A" : "FBSBAAH4AH/gHgeDgBwwAMYABmAAbAADwAA8AAPAADwAA8AANgAGYABjAAw4AcHgeAf+AB+A"), r.x + r.w - 32, r.y + H / 2 - 10);
                 },
                 select: function (idx) {
                     Bangle.buzz(20);
@@ -73,7 +71,6 @@ E.showMenu = (function (menu) {
             var dy = 0;
             Bangle.setUI({
                 mode: "custom",
-                back: show,
                 remove: options.remove,
                 redraw: draw,
                 drag: e => {
@@ -101,29 +98,35 @@ E.showMenu = (function (menu) {
     var scr = {
         h: H, c: keys.length,
         scroll: options.scroll ?? 0,
-        back: back,
         remove: options.remove,
         draw: (idx, r) => {
             g.setColor(g.theme.bg2).fillRect({ x: r.x + 4, y: r.y + 2, w: r.w - 8, h: r.h - 4, r: 5 });
             g.setColor(g.theme.fg2).setFont("12x20");
-            var pad = 24;
             var item = menu[keys[idx]];
+            var title = (item && item.title) ?? keys[idx];
+
             if ("object" == typeof item) {
                 var v = item.value;
                 if (item.format) v = item.format(v);
-                if (g.stringMetrics(v).width > r.w / 2) // bodge for broken wrapString with image
-                    v = g.wrapString(v, r.w / 2).join("\n");
-                g.setFontAlign(1, 0).drawString(v, r.x + r.w - 8, r.y + H / 2);
-                pad += g.stringWidth(v);
-            } else if ("function" == typeof item) {
-                g.drawImage(/* 9x18 */atob("CRKBAGA4Hg8DwPB4HgcDg8PB4eHg8HAwAA=="), r.x + r.w - 21, r.y + H / 2 - 9);
-                pad += 16;
+                // Center both title and value
+                var valueStr = v.toString();
+                if (g.stringMetrics(valueStr).width > r.w / 3) // reduce width threshold for value
+                    valueStr = g.wrapString(valueStr, r.w / 3).join("\n");
+                var titleWidth = g.stringWidth(title);
+                var valueWidth = g.stringWidth(valueStr);
+                var totalWidth = titleWidth + valueWidth + 8; // 8px spacing between title and value
+                var startX = r.x + (r.w - totalWidth) / 2;
+
+                g.setFontAlign(-1, 0).drawString(title, startX, r.y + H / 2);
+                g.setFontAlign(-1, 0).drawString(valueStr, startX + titleWidth + 8, r.y + H / 2);
+            } else {
+                // Center single text item
+                g.setFontAlign(0, 0);
+                var l = g.wrapString(title, r.w - 24);
+                if (l.length > 1)
+                    l = g.setFont("6x15").wrapString(title, r.w - 24);
+                g.drawString(l.join("\n"), r.x + r.w / 2, r.y + H / 2);
             }
-            var title = (item && item.title) ?? keys[idx];
-            var l = g.wrapString(title, r.w - pad);
-            if (l.length > 1)
-                l = g.setFont("6x15").wrapString(title, r.w - pad);
-            g.setFontAlign(-1, 0).drawString(l.join("\n"), r.x + 12, r.y + H / 2);
         },
         select: function (idx, touch) {
             var item = menu[keys[idx]];
