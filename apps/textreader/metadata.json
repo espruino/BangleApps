@@ -2,7 +2,7 @@
     "id": "textreader",
     "name": "Text Reader",
     "shortName": "TextReader",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Read text files from your Bangle.js filesystem",
     "type": "app",
     "tags": "tool,files,reader",
