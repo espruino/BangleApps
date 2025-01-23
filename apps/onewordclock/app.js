@@ -2,14 +2,13 @@
 var drawTimeout;
 
 // https://www.espruino.com/Bangle.js+Locale
-
-// schedule a draw for the next minute
+// schedule a draw for the next 5 minutes
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function () {
     drawTimeout = undefined;
     draw();
-  }, 60000 - (Date.now() % 60000));
+  }, 300000 - (Date.now() % 300000));
 }
 
 function wordFromHour(h) {
