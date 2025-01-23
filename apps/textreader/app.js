@@ -43,6 +43,31 @@
         // Split content into words and remove empty strings
         const words = content.split(/\s+/).filter(word => word.length > 0);
         let currentWordIndex = 0;
+        let autoScrollInterval;
+        const SCROLL_SPEED = 200; // Time in ms between words during auto-scroll
+
+        let startAutoScroll = (direction) => {
+            if (autoScrollInterval) return; // Already scrolling
+            autoScrollInterval = setInterval(() => {
+                if (direction === 'prev' && currentWordIndex > 0) {
+                    currentWordIndex--;
+                    draw();
+                } else if (direction === 'next' && currentWordIndex < words.length - 1) {
+                    currentWordIndex++;
+                    draw();
+                } else {
+                    clearInterval(autoScrollInterval);
+                    autoScrollInterval = undefined;
+                }
+            }, SCROLL_SPEED);
+        };
+
+        let stopAutoScroll = () => {
+            if (autoScrollInterval) {
+                clearInterval(autoScrollInterval);
+                autoScrollInterval = undefined;
+            }
+        };
 
         let draw = () => {
             // Set theme colors
@@ -67,21 +92,34 @@
             mode: "custom",
             back: showFileBrowser,
             touch: (button, xy) => {
-                if (button == 1) {
-                    // Left side - previous word
-                    if (currentWordIndex > 0) {
-                        currentWordIndex--;
-                        draw();
+                if (xy.type === 2) { // Long press
+                    if (button === 1) {
+                        startAutoScroll('prev');
+                    } else {
+                        startAutoScroll('next');
                     }
-                } else {
-                    // Right side - next word
-                    if (currentWordIndex < words.length - 1) {
-                        currentWordIndex++;
-                        draw();
+                } else if (xy.type === 0) { // Quick touch
+                    stopAutoScroll();
+                    if (button === 1) {
+                        if (currentWordIndex > 0) {
+                            currentWordIndex--;
+                            draw();
+                        }
+                    } else {
+                        if (currentWordIndex < words.length - 1) {
+                            currentWordIndex++;
+                            draw();
+                        }
                     }
                 }
             }
         });
+
+        // Make sure to stop auto-scroll when exiting
+        let cleanup = () => {
+            stopAutoScroll();
+        };
+        Bangle.on('lock', cleanup);
 
         draw();
     };
