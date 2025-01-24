@@ -410,7 +410,10 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
       // Load in next/previous message on demand by reinitializing showMessagesScroller while passing on the processed messages.
       if (shouldAddNext(scrollIdx)) {reinitAdding(alreadyProcessed.idxSpan.stop);}
       if (shouldAddPrev(scrollIdx)) {reinitAdding(alreadyProcessed.idxSpan.start-1);}
-      if (prevScrollIdxs[1]!==prevScrollIdxs[0]) {prevScrollIdxs[1] = prevScrollIdxs[0];}
+      if (prevScrollIdxs[1]!==prevScrollIdxs[0]) {
+        prevScrollIdxs[1] = prevScrollIdxs[0];
+        if (!persist) {resetReloadTimeout();}
+      }
       prevScrollIdxs[0] = scrollIdx;
     },
     select : function(scrollIdx, touch) {
