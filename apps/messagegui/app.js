@@ -390,7 +390,7 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
       // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
       setTimeout(()=>{
         E.showScroller();
-        if (BTN_EXT_SELECT) {clearWatch(BTN_EXT_SELECT); delete BTN_EXT_SELECT;}
+        clearBtnHandler();
         showMessagesScroller(MESSAGES[idx],
           true, alreadyProcessed);
       },0);
@@ -416,18 +416,24 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
     select : function(scrollIdx, touch) {
       WU.show();
       const MSG_SELECT = identifyDisplayedMsg(scrollIdx);
-      if (BTN_EXT_SELECT) {clearWatch(BTN_EXT_SELECT); delete BTN_EXT_SELECT;}
+      clearBtnHandler();
       if (!touch) {showMessageRouter(MSG_SELECT, "scrollerSelect"); return;}
       if (touch.type == 0) {showMessageRouter(MSG_SELECT,"scrollerSelect");}
       if (touch.type == 2) {showMessageSettings(MSG_SELECT);}
     }
   });
 
+  function clearBtnHandler() {
+    if (Bangle.btnHandler) {clearWatch(Bangle.btnHandler); Bangle.btnHandler=undefined;}
+  }
+  clearBtnHandler();
+
   // If Bangle.js 2 add an external select hw button handler.
-  const BTN_EXT_SELECT = ((2===process.env.HWVERSION) && (setWatch(()=>{
+  Bangle.btnHandler = ((2===process.env.HWVERSION) && (setWatch(()=>{
     Bangle.emit("drag", {dy:0}); // Compatibility with `kineticscroll`, stopping the scroller so it doesn't continue scrolling when the `showMessageOverview` screen is loaded.
     // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
     setTimeout(()=>{
+      if ("messagegui.new.js"===global.__FILE__) {return load();}
       const SCROLL_IDX_CENTER_SCREEN = prevScrollIdxs[0]>prevScrollIdxs[1] ?
         prevScrollIdxs[0]-LINES_PER_SCREEN/2:prevScrollIdxs[0]+LINES_PER_SCREEN/2;
       WU.show();
