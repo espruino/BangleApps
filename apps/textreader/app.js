@@ -1,4 +1,5 @@
 {// Text Reader for Bangle.js 2
+    require("Font8x12").add(Graphics);
 
     // Get list of readable files
     let getFileList = () => {
@@ -80,11 +81,22 @@
 
             // Draw current word in center of screen
             if (words.length > 0) {
-                g.drawString(words[currentWordIndex], g.getWidth() / 2, g.getHeight() / 2);
+                let word = words[currentWordIndex];
+                let size = 32; // Start with large vector font size
+                g.setFont("Vector", size);
+
+                // Keep reducing font size until word fits
+                while (g.stringWidth(word) > g.getWidth() && size > 20) {
+                    size -= 5;
+                    g.setFont("Vector", size);
+                }
+
+                g.drawString(word, g.getWidth() / 2, g.getHeight() / 2);
             }
 
             // Draw word counter at bottom
-            g.setFont("6x8", 1);
+            g.setFont("6x8", 2);
+            // g.setFont("Vector", 14);
             g.drawString(`${currentWordIndex + 1}/${words.length}`, g.getWidth() / 2, g.getHeight() - 20);
         };
 
@@ -93,6 +105,7 @@
             back: showFileBrowser,
             touch: (button, xy) => {
                 if (xy.type === 2) { // Long press
+                    Bangle.buzz();
                     if (button === 1) {
                         startAutoScroll('prev');
                     } else {
