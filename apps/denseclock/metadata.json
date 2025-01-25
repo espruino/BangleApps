@@ -1,7 +1,7 @@
 { "id": "denseclock",
   "name": "Dense Clock",
   "shortName":"Dense Clock",
-  "version":"0.01",
+  "version":"0.02",
   "description": "A clockface dense with text-only information. Switches between showing seconds and minutes when unlocked/locked, in the interest of saving power.",
   "icon": "app.png",
   "type": "clock",
