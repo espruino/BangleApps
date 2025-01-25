@@ -104,6 +104,8 @@ function showMessageRouter(msg, persist, calledFrom) {
   ////var active; // active screen (undefined/"list"/"music"/"map"/"message"/"scroller"/"settings")
   //if (active==undefined) { } else if (active=="list") ... //and so on.
 
+  if (persist) {cancelReloadTimeout()}
+
   if (msg.id=="music") {
     cancelReloadTimeout(); // don't auto-reload to clock now
     return showMusicMessage(msg);
