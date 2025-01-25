@@ -10,5 +10,9 @@
   "storage": [
     {"name":"denseclock.app.js","url":"app.js"},
     {"name":"denseclock.img","url":"app-icon.js","evaluate":true}
+  ],
+  "screenshots": [
+    {"url":"screenshot_locked.png"},
+    {"url":"screenshot_unlocked.png"}
   ]
 }
