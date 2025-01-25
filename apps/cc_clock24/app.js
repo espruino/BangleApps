@@ -168,11 +168,11 @@ const drawScale = function() {
   // draw the ticks of the scale
   for (let i = -14; i < 47; i++){
     const alpha = i * 2 * Math.PI/60;
-    let d = 2;
+    let thickness = 2;
     if (i % 5 == 0) { 
-      d = 5;
+      thickness = 5;
     }
-    g.fillPoly(calcHandPolygon(300, d, alpha), true);
+    g.fillPoly(calcHandPolygon(300, thickness, alpha), true);
     g.setColor(0, 0, 0);
     g.fillRect(10, 10, 2 * center.x - 10, 2 * center.x - 10);
     g.setColor(1, 1, 1);
