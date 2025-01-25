@@ -90,7 +90,8 @@ var onMessagesModified = function(type,msg) {
   }
   if (msg && msg.id=="nav" && msg.t=="modify" && active!="map")
     return; // don't show an updated nav message if we're just in the menu
-  showMessageRouter(msg, true, "modified");
+  let persist = "messagegui.new.js"===global.__FILE__?false:true;
+  showMessageRouter(msg, persist, "modified");
 };
 Bangle.on("message", onMessagesModified);
 
