@@ -730,7 +730,7 @@ function checkMessages(options) {
     },
     select : idx => {
       if (idx < MESSAGES.length)
-        showMessageOverview(MESSAGES[idx].id, true);
+        showMessageRouter(MESSAGES[idx], true);
     },
     back : () => load()
   });
