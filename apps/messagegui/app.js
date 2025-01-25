@@ -90,7 +90,7 @@ var onMessagesModified = function(type,msg) {
   }
   if (msg && msg.id=="nav" && msg.t=="modify" && active!="map")
     return; // don't show an updated nav message if we're just in the menu
-  showMessageRouter(msg, "modified");
+  showMessageRouter(msg, true, "modified");
 };
 Bangle.on("message", onMessagesModified);
 
@@ -99,7 +99,7 @@ function saveMessages() {
 }
 E.on("kill", saveMessages);
 
-function showMessageRouter(msg, calledFrom) {
+function showMessageRouter(msg, persist, calledFrom) {
   ////var active; // active screen (undefined/"list"/"music"/"map"/"message"/"scroller"/"settings")
   //if (active==undefined) { } else if (active=="list") ... //and so on.
 
@@ -112,13 +112,13 @@ function showMessageRouter(msg, calledFrom) {
     return showMapMessage(msg);
   }
   if (calledFrom=="modified" && active=="scroller") { // reinit scroller with updated messages list.
-    return showMessagesScroller(msg);
+    return showMessagesScroller(msg, persist);
   }
   if (calledFrom=="scrollerSelect") {
-    return showMessageOverview(msg.id);
+    return showMessageOverview(msg.id, persist);
   }
   if (msg.id=="call") {
-    return showMessageOverview(msg.id);
+    return showMessageOverview(msg.id, persist);
   }
   //if (false) {showMessageSettings(msg);}
 }
@@ -420,8 +420,8 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
       WU.show();
       const MSG_SELECT = identifyDisplayedMsg(scrollIdx);
       clearBtnHandler();
-      if (!touch) {showMessageRouter(MSG_SELECT, "scrollerSelect"); return;}
-      if (touch.type == 0) {showMessageRouter(MSG_SELECT,"scrollerSelect");}
+      if (!touch) {showMessageRouter(MSG_SELECT, true, "scrollerSelect"); return;}
+      if (touch.type == 0) {showMessageRouter(MSG_SELECT, true, "scrollerSelect");}
       if (touch.type == 2) {showMessageSettings(MSG_SELECT);}
     }
   });
