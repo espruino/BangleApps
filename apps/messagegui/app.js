@@ -45,7 +45,7 @@ if (Graphics.prototype.setFontIntl) {
   fontVLarge = noScale?"Intl":"Intl:3";
 }
 
-var active; // active screen (undefined/"list"/"music"/"map"/"message"/"scroller"/"settings")
+var active; // active screen (undefined/"list"/"music"/"map"/"overview"/"scroller"/"settings")
 var openMusic = false; // go back to music screen after we handle something else?
 var replying = false; // If we're replying to a message, don't interrupt
 // hack for 2v10 firmware's lack of ':size' font handling
@@ -91,7 +91,7 @@ var onMessagesModified = function(type,msg) {
   if (msg && msg.id=="nav" && msg.t=="modify" && active!="map")
     return; // don't show an updated nav message if we're just in the menu
   let persist = "messagegui.new.js"===global.__FILE__?false:true;
-  showMessageRouter(msg, persist, "modified");
+  showMessageRouter(msg, persist, "dependsOnActive");
 };
 Bangle.on("message", onMessagesModified);
 
@@ -100,8 +100,10 @@ function saveMessages() {
 }
 E.on("kill", saveMessages);
 
-function showMessageRouter(msg, persist, calledFrom) {
-  ////var active; // active screen (undefined/"list"/"music"/"map"/"message"/"scroller"/"settings")
+function showMessageRouter(msg, persist, explicitDestnation) {
+  //explicitDestnation (undefined/"scroller"/"overview"/"dependsOnActive")
+
+  ////var active; // active screen (undefined/"list"/"music"/"map"/"overview"/"scroller"/"settings")
   //if (active==undefined) { } else if (active=="list") ... //and so on.
 
   if (persist) {cancelReloadTimeout()}
@@ -114,14 +116,19 @@ function showMessageRouter(msg, persist, calledFrom) {
     cancelReloadTimeout(); // don't auto-reload to clock now
     return showMapMessage(msg);
   }
-  if (calledFrom=="modified" && active=="scroller") { // reinit scroller with updated messages list.
-    return showMessagesScroller(msg, persist);
-  }
-  if (calledFrom=="scrollerSelect") {
-    return showMessageOverview(msg.id, persist);
-  }
   if (msg.id=="call") {
     return showMessageOverview(msg.id, persist);
+  }
+  if ("scroller"===explicitDestnation) {
+    return showMessagesScroller(msg, persist);
+  }
+  if ("overview"===explicitDestnation) {
+    return showMessageOverview(msg.id, persist);
+  }
+  if ("dependsOnActive"===explicitDestnation) {
+    if ("scroller"===active) {return showMessagesScroller(msg, persist);} // reinit scroller with updated messages list.
+    if ("list"===active) {return returnToMain();}
+    if ("settings"===active || "overview"===active) {return;}
   }
   //if (false) {showMessageSettings(msg);}
 }
@@ -423,8 +430,8 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
       WU.show();
       const MSG_SELECT = identifyDisplayedMsg(scrollIdx);
       clearBtnHandler();
-      if (!touch) {showMessageRouter(MSG_SELECT, true, "scrollerSelect"); return;}
-      if (touch.type == 0) {showMessageRouter(MSG_SELECT, true, "scrollerSelect");}
+      if (!touch) {showMessageRouter(MSG_SELECT, true, "overview"); return;}
+      if (touch.type == 0) {showMessageRouter(MSG_SELECT, true, "overview");}
       if (touch.type == 2) {showMessageSettings(MSG_SELECT);}
     }
   });
@@ -524,7 +531,7 @@ function showMessageOverview(msgid, persist) {
     updateLabelsInterval=undefined;
   }
   if (!msg) return returnToClockIfEmpty(); // go home if no message found
-  active = "message";
+  active = "overview";
   // Normal text message display
   var title=msg.title, titleFont = fontLarge, lines;
   var body=msg.body, bodyFont = fontLarge;
@@ -730,7 +737,7 @@ function checkMessages(options) {
     },
     select : idx => {
       if (idx < MESSAGES.length)
-        showMessageRouter(MESSAGES[idx], true);
+        showMessageRouter(MESSAGES[idx], true, "overview");
     },
     back : () => load()
   });
