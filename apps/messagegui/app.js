@@ -392,7 +392,7 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
         E.showScroller();
         clearBtnHandler();
         showMessagesScroller(MESSAGES[idx],
-          true, alreadyProcessed);
+          persist, alreadyProcessed);
       },0);
     }, 40);
   }
