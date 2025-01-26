@@ -19,6 +19,7 @@ config = config[0];
 if (!config.hass_url) showErrorAndQuit("No HASS URL!");
 if (!config.hass_token) showErrorAndQuit("No HASS token!");
 
+/* not used in v0.02.
 function hassGetState(entityId) {
     return Bangle.http(config.hass_url + "/states/" + entityId, {
             "method":"GET",
@@ -29,6 +30,7 @@ function hassGetState(entityId) {
         }
     );
 }
+*/
 
 function hassSetState(entityId, state) {
     Bangle.http(config.hass_url + "/states/" + entityId, {
@@ -69,7 +71,6 @@ config.entities.forEach((entity) => {
     }
 
     entity.actions.forEach((action) => {
-        let actionMenuItem = {}
 
         if (action.type == "button") {
 
