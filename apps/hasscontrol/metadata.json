@@ -1,7 +1,7 @@
 { "id": "hasscontrol",
   "name": "Home Assistant Control",
   "shortName":"HASS Control",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Control your Home Assistant instance from your Bangle. Uses GadgetBridge's HTTP capability to send API requests directly from your watch.",
   "icon": "app.png",
   "tags": "tool,bluetooth",
