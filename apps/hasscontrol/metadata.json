@@ -14,5 +14,10 @@
   ],
   "data": [
     {"name":"hass.json"}
+  ],
+  "screenshots": [
+	  {"url":"screenshot_mainlist.png"},
+	  {"url":"screenshot_light.png"},
+	  {"url":"screenshot_ac.png"}
   ]
 }
