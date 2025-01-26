@@ -24,7 +24,7 @@
             });
         }
 
-        function loadExampleConfig() {
+        async function loadExampleConfig() {
             // this doesnt look like the right way to grab a file but im not a web developer so
             var exampleConfigRequest = await fetch("../../apps/hasscontrol/hass.json");
             var exampleConfig = await exampleConfigRequest.json();
