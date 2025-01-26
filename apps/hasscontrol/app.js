@@ -30,7 +30,6 @@ function hassGetState(entityId) {
         }
     );
 }
-*/
 
 function hassSetState(entityId, state) {
     Bangle.http(config.hass_url + "/states/" + entityId, {
@@ -43,6 +42,7 @@ function hassSetState(entityId, state) {
         }
     );
 }
+*/
 
 function hassActivateService(service, data) {
     Bangle.http(config.hass_url + "/services/" + service.replace(".", "/"), {
