@@ -24,11 +24,9 @@
             });
         }
 
-        async function loadExampleConfig() {
+        function loadExampleConfig() {
             // this doesnt look like the right way to grab a file but im not a web developer so
-            var exampleConfigRequest = await fetch("../../apps/hasscontrol/hass.json");
-            var exampleConfig = await exampleConfigRequest.json();
-            configElement.value = JSON.stringify(exampleConfig);
+            fetch("./hass.json").then(response => response.text()).then(data => { configElement.value = data; });
         }
 
         document.getElementById("btnSave").addEventListener("click", function() {
