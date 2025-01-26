@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <textarea placeholder="Home Assistant Control config (JSON)" id="config"></textarea>
+    <button class="btn btn-default" id="btnSave">Save config to Bangle</button>
+    <button class="btn btn-default" id="btnLoad">Reload config from Bangle</button>
+    <button class="btn btn-default" id="btnLoadExample">Load example config</button>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+        // tyvm for the info https://www.espruino.com/Bangle.js+Storage
+
+        var configElement = document.getElementById("config");
+
+        function saveConfigToBangle() {
+            Util.writeStorage("hasscontrol.hass.json", configElement.value);
+        }
+
+        function loadConfigFromBangle() {
+            Util.readStorageFile("hasscontrol.hass.json", config => {
+                configElement.value = config;
+            });
+        }
+
+        function loadExampleConfig() {
+            // this doesnt look like the right way to grab a file but im not a web developer so
+            var exampleConfigRequest = await fetch("../../apps/hasscontrol/hass.json");
+            var exampleConfig = await exampleConfigRequest.json();
+            configElement.value = JSON.stringify(exampleConfig);
+        }
+
+        document.getElementById("btnSave").addEventListener("click", function() {
+            saveConfigToBangle();
+        });
+
+        document.getElementById("btnLoad").addEventListener("click", function() {
+            loadConfigFromBangle();
+        });
+
+        document.getElementById("btnLoadExample").addEventListener("click", function() {
+            loadExampleConfig();
+        });
+
+        loadConfigFromBangle();
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,83 @@
+[{
+    "hass_url":"",
+    "hass_token":"",
+    "entities": [
+        {
+            "entity_id": "light.example_light",
+            "name": "Example Light",
+            "actions": [
+                {
+                    "action": "light.toggle",
+                    "name": "Toggle",
+                    "type": "button"
+                },
+                {
+                    "action": "light.turn_on",
+                    "name": "Set brightness",
+                    "type": "number",
+                    "argument": "brightness_pct",
+                    "min": 0,
+                    "max": 100,
+                    "placeholder": 100
+                },
+                {
+                    "action": "light.turn_on",
+                    "name": "Turn on",
+                    "type": "button"
+                },
+                {
+                    "action": "light.turn_off",
+                    "name": "Turn off",
+                    "type": "button"
+                }
+            ]
+        },
+        {
+            "entity_id": "climate.example_ac",
+            "name": "Example AC",
+            "actions": [
+                {
+                    "action": "climate.set_hvac_mode",
+                    "name": "Mode",
+                    "type": "selector",
+                    "argument": "hvac_mode",
+                    "options": [
+                            "off",
+                            "cool",
+                            "heat",
+                            "auto",
+                            "dry",
+                            "fan_only",
+                            "heat_cool"
+                    ]
+                },
+                {
+                    "action": "climate.set_temperature",
+                    "name": "Temperature",
+                    "type": "number",
+                    "argument": "temperature",
+                    "min": 18,
+                    "max": 30,
+                    "placeholder": 20
+                }
+            ]
+        },
+        {
+            "entity_id": "lock.example_lock",
+            "name": "Example Lock",
+            "type": "button",
+            "actions": [
+                {
+                    "action": "lock.unlock",
+                    "name": "Unlock",
+                    "type": "button",
+                },
+                {
+                    "action": "lock.lock",
+                    "name": "Lock",
+                    "type": "button"
+                }
+            ]
+        }
+    ]
+}]
