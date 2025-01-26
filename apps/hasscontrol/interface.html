@@ -19,7 +19,7 @@
         }
 
         function loadConfigFromBangle() {
-            Util.readStorageFile("hasscontrol.hass.json", config => {
+            Util.readStorage("hasscontrol.hass.json", config => {
                 configElement.value = config;
             });
         }
