@@ -1,6 +1,6 @@
 [{
-    "hass_url":"",
-    "hass_token":"",
+    "hass_url":"https://homeassistant.yourdomain.com/api",
+    "hass_token":"nonsensenonsensenonsensenonsensenonsensenonsensenonsensenonsensenonsensenonsensenonsensenonsensenonsensenonsense",
     "entities": [
         {
             "entity_id": "light.example_light",
