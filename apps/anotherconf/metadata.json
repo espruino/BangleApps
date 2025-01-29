@@ -1,6 +1,6 @@
 { "id": "anotherconf",
   "name": "Another Default Config",
-  "version":"0.04",
+  "version":"0.05",
   "description": "A different default loadout of apps and configurations. Brings many quality of life improvements. Opinionated based on the creators taste. Read more below before installing.",
   "icon": "app.png",
   "type": "settings",
@@ -43,11 +43,7 @@
     "fastload":"app",
     "boot":"app",
     "ateatimer":"app",
-    "drained":"app",
-    "forge":"app",
-    "bthrm":"app",
-    "twenties":"app",
-    "gbdiscon":"app"
+    "drained":"app"
   },
   "storage": [
     {"name":"backswipe.json",
