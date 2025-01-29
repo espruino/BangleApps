@@ -60,6 +60,12 @@ const loadEvents = () => {
     date.setSeconds(time.s);
     return {date: date, msg: a.msg, type: "e"};
   }));
+  // all events synchronized from Gadgetbridge
+  events = events.concat((require("Storage").readJSON("android.calendar.json",1) || []).map(a => {
+    // timestamp is in seconds, Date requires milliseconds
+    const date = new Date(a.timestamp * 1000);
+    return {date: date, msg: a.title, type: "e"};
+  }));
 };
 
 const loadSettings = () => {
