@@ -17,6 +17,14 @@ Before installing do this:
 
 There will not be a trace of a "Another Default Config" app on your watch after installation. Only the apps it installed and the configurations.
 
+On the clock face:
+- Swipe right on the screen to open the launcher (Desktop Launcher) - or press the hardware button.
+- Swipe left to open a flashlight app.
+- Swipe up to open the messages.
+- Swipe down for quick access to music and podcast controls.
+  - (Do a subsequent left or right swipe to enter the listed apps)
+- (Check out the "Quick Launch" app readme for more info)
+
 ## Requests
 
 Add to the espruino/BangleApps issue tracker and mention @thyttan for bug reports and suggestions. Or do a pull request!
