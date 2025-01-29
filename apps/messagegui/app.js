@@ -743,7 +743,7 @@ function checkMessages(options) {
   });
 }
 
-function returnToCheckMessages(clock) {
+function returnToCheckMessages() {
   checkMessages({clockIfNoMsg:1,clockIfAllRead:1,ignoreUnread:settings.ignoreUnread,openMusic});
 }
 
