@@ -4,7 +4,7 @@ A widget that runs in the background and chimes on every (configurable*) fractio
 
 ## Usage
 
-Once installed, see the App Settings page for options.
+Once installed, see the App Settings page for options. *
 
 Defaults:
 - Twelve hour mode is ENABLED.
@@ -25,6 +25,8 @@ Drop me a message at @yogsoy on Discord if you need help / discover a bug that I
 
 Written by June B (yogsoy), inspired by aaronrolls' Chimer.
 
-## Notes
+## Todo
 
-\*  This is not implemented yet, sorry! Await v0.02.
+\*  App settings are not implemented yet, sorry! Await v0.02.
+
+A better icon would be nice. A 1-bit simplified grandfather clock.
