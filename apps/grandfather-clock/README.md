@@ -1,10 +1,10 @@
 # Grandfather Clock
 
-A widget that runs in the background and chimes on every (configurable) fraction of an hour, similar to Chimer, and counts out the fractions and the o'clock hour.
+A widget that runs in the background and chimes on every (configurable*) fraction of an hour, similar to Chimer, and counts out the fractions and the o'clock hour.
 
 ## Usage
 
-Once installed, see the App Settings page for options. ** This is not implemented yet. Await v0.02
+Once installed, see the App Settings page for options.
 
 Defaults:
 - Twelve hour mode is ENABLED.
@@ -24,3 +24,7 @@ Drop me a message at @yogsoy on Discord if you need help / discover a bug that I
 ## Creator
 
 Written by June B (yogsoy), inspired by aaronrolls' Chimer.
+
+## Notes
+
+\*  This is not implemented yet, sorry! Await v0.02.
