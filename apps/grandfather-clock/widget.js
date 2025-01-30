@@ -6,7 +6,7 @@
     const hour_attention_buzz_ms = 1000;
     const hour_count_buzz_ms = 250;
     const fraction_count_buzz_ms = 250;
-    const fractions_of_hour = 4; // 4 = 15min intervals
+    const fractions_of_hour = 4; // 4 = 15min intervals, 6 = 10min intervals
     const wait_ms = 500;
     const meridian_buzz_ms = 100;
     const meridian_buzz_wait_ms = 50;
