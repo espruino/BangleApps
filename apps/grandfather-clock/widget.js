@@ -12,7 +12,7 @@
     const meridian_buzz_wait_ms = 50;
 
     let date;
-    let fractionMs = 3600000 / fractions_of_hour
+    let fractionMs = 3600000 / fractions_of_hour;
 
     let chime = function () {
         date = new Date();
