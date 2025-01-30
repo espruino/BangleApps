@@ -1,5 +1,14 @@
 (() => {
 
+    WIDGETS["grandfather-clock"] = {
+        area: "tr",
+        width: 24,
+        draw: function() {
+            g.reset();
+            g.drawImage(atob("GBiBAAAYAAA8AAA8AAD/AAH/gAP/wAf/4Afn4Afn4Afn4Afn4Afn4Af/4Af/4Afn4Afn4A/n8A//8B//+D///AAAAAAAAAA8AAAYAA=="), this.x, this.y);
+        }
+    };
+
     // todo: all of these configurable through app settings menu.
     const twelve_hour = true;
     const swap_meridian = false;
