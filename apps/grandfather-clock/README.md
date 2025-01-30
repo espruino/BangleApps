@@ -12,10 +12,10 @@ Defaults:
 - The attention buzz for the hour chime is 1000ms long.
 - The buzz for each hour count is 250ms long.
 - The buzz for each fraction count is 250ms long.
-- The widget will count out 4 fractions of an hour (15 min interval).
+- The widget will count out 4 fractions of an hour (a 15 min interval).
 - The time between count buzzes is 500ms.
-- The meridian buzzes are 100ms long.
-- The time between meridian buzzes is 50ms long.
+- The meridian buzzes are 50ms long.
+- The time between meridian buzzes is 300ms.
 
 ## Requests
 
