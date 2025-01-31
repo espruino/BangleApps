@@ -280,31 +280,13 @@ function showMusicMessage(msg) {
   }, 400);
 }
 
-function showMessagesScroller(msg, persist, alreadyProcessed) {
+function showMessagesScroller(msg, persist) {
   if (persist===undefined) {persist = true;}
   const MSG_IDX = msg ? MESSAGES.findIndex((m)=>m.id==msg.id) : undefined;
-  const INITIATED_FROM = (
-    alreadyProcessed===undefined ? "other function" :
-      (MSG_IDX<=alreadyProcessed.idxSpan.start ? "scrolling up" :
-        (MSG_IDX >= alreadyProcessed.idxSpan.stop-1 ? "scrolling down" :
-          undefined))
-  );
 
   if (replying) { return; }
   active = "scroller";
   if (persist) {cancelReloadTimeout();} else {resetReloadTimeout();}
-
-  if (!alreadyProcessed) {alreadyProcessed = {idxSpan:{}};} // So `alreadyProcessed.idxSpan.start/stop` can be looked for on first run.
-
-  let idxSpan = (
-    INITIATED_FROM==="other function" ?
-      {start : Math.max(MSG_IDX-1, 0), stop : Math.min(MSG_IDX+2, MESSAGES.length)} :
-      (INITIATED_FROM==="scrolling up" ?
-        {start : MSG_IDX, stop : alreadyProcessed.idxSpan.start } :
-        (INITIATED_FROM==="scrolling down" ?
-          { start : alreadyProcessed.idxSpan.stop, stop : Math.min(MSG_IDX+1, MESSAGES.length) } :
-          undefined))
-  );
 
   const WU = require("widget_utils");
   WU.hide();
@@ -314,64 +296,29 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
   g.setFont(bodyFont);
   const FONT_HEIGHT = g.getFontHeight();
   const LINES_PER_SCREEN = APP_RECT.h/FONT_HEIGHT;
+  let initScroll;
   var titleLines = [];
-  var messagesWrapped = [];
-  for (let i=idxSpan.start ; i<idxSpan.stop ; i++) {
+  let allLines = [];
+  for (let i=0 ; i<MESSAGES.length ; i++) {
+    if (MSG_IDX === i) {initScroll = allLines.length*FONT_HEIGHT}
     let msgIter = MESSAGES[i];
     msgIter.new = false;
-
-    //if (/*msgIter.id=="music" ||*/ msgIter.source=="maps" || msgIter.id =="call") {
-    //  idxSpan.stop++
-    //  if (idxSpan.stop>=MESSAGES.length) {break;}
-    //  continue;
-    //}
 
     var lines = [];
     const TITLE_STRING = msgIter.title||msgIter.sender||msgIter.subject||msgIter.src||/*LANG*/"No Title";
     lines = g.wrapString(TITLE_STRING, APP_RECT.w-10);
     for (let i=0; i<lines.length; i++) {
-      titleLines.push(i + (messagesWrapped[0]?messagesWrapped[0].length:0) +
-        (messagesWrapped[1]?messagesWrapped[1].length:0));
+      titleLines.push(i + allLines.length);
     }
     lines = lines.concat(g.wrapString(msgIter.body, APP_RECT.w-10),
       ["-".repeat(12)]);
-    messagesWrapped.push(lines);
+    allLines = allLines.concat(lines);
   }
 
-  let allLines = [];
-  for (let i=0 ; i<messagesWrapped.length ; i++) {
-    allLines = allLines.concat(messagesWrapped[i]);
-  }
-
-  var initScroll = messagesWrapped[0].length;
-  if (INITIATED_FROM === "other function") {
-    if (MSG_IDX==0) {initScroll = 0;}
-  } else if (INITIATED_FROM === "scrolling up") {
-    titleLines = titleLines.concat(alreadyProcessed.titleLines.
-      map((x) => x + allLines.length));
-    allLines = allLines.concat(alreadyProcessed.lines);
-  } else if (INITIATED_FROM === "scrolling down") {
-    initScroll = alreadyProcessed.lines.length-(LINES_PER_SCREEN);
-    titleLines = alreadyProcessed.titleLines.concat(titleLines.
-      map((x) => x + alreadyProcessed.lines.length));
-    allLines = alreadyProcessed.lines.concat(allLines);
-  }
-  initScroll = initScroll*FONT_HEIGHT;
-
-  if (allLines.length == 0 && alreadyProcessed.lines.length == 0) {
+  if (allLines.length == 0) {
     cancelReloadTimeout();
     returnToClockIfEmpty();
   }
-
-  alreadyProcessed = { // Update with the newly processed messages.
-    lines : allLines,
-    titleLines : titleLines,
-    idxSpan: {
-      start : Math.min(idxSpan.start,
-        (alreadyProcessed.idxSpan.start===undefined) ?
-          MESSAGES.length : alreadyProcessed.idxSpan.start),
-      stop : Math.max(idxSpan.stop, alreadyProcessed.idxSpan.stop||0)}
-  };
 
   function identifyDisplayedMsg(scrollIdx) {
     let firstTitleLinePerMsg = [titleLines[0]];
@@ -381,31 +328,13 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
     }
     for (let i=titleLines.length-1; i>=0 ; i--) {
       if (scrollIdx>=firstTitleLinePerMsg[i]) {
-        return MESSAGES[i + alreadyProcessed.idxSpan.start];
+        return MESSAGES[i];
       }
     }
   }
 
-  // Used for stopping repeated triggering of next message by the scroller and
-  // to choose how to identify displayed message when selecting with hw button.
+  // Used to choose how to identify displayed message when selecting with hw button.
   let prevScrollIdxs = [undefined, undefined]; // [prevIdx, prevPrevIdx]
-
-  function shouldAddNext(scrollIdx) {"ram"; return (scrollIdx>=allLines.length-1 &&
-    scrollIdx!=prevScrollIdxs[0] && alreadyProcessed.idxSpan.stop<MESSAGES.length);}
-  function shouldAddPrev(scrollIdx) {"ram"; return (scrollIdx==0 &&
-    scrollIdx!=prevScrollIdxs[0] && alreadyProcessed.idxSpan.start>0);}
-  function reinitAdding(idx) {
-    setTimeout(() => {
-      Bangle.emit("drag", {dy:0}); // Make sure scrolling doesn't continue after reinit. FIXME: Is this a hack that begs for a bug being fixed elsewhere?
-      // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
-      setTimeout(()=>{
-        E.showScroller();
-        clearBtnHandler();
-        showMessagesScroller(MESSAGES[idx],
-          persist, alreadyProcessed);
-      },0);
-    }, 40);
-  }
 
   E.showScroller({
     scroll : initScroll,
@@ -417,9 +346,6 @@ function showMessagesScroller(msg, persist, alreadyProcessed) {
         setColor(titleLines.find(e=>e==scrollIdx)!==undefined ? g.theme.fg2 : g.theme.fg).
         clearRect(r);
       g.setFont(bodyFont).setFontAlign(0,-1).drawString(allLines[scrollIdx], r.x+r.w/2, r.y);
-      // Load in next/previous message on demand by reinitializing showMessagesScroller while passing on the processed messages.
-      if (shouldAddNext(scrollIdx)) {reinitAdding(alreadyProcessed.idxSpan.stop);}
-      if (shouldAddPrev(scrollIdx)) {reinitAdding(alreadyProcessed.idxSpan.start-1);}
       if (prevScrollIdxs[1]!==prevScrollIdxs[0]) {
         prevScrollIdxs[1] = prevScrollIdxs[0];
         if (!persist) {resetReloadTimeout();}
