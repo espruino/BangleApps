@@ -1,1 +1,5 @@
-Bangle.setBacklight (false);
+(function() {
+  Bangle.setBacklight (false);
+  Bangle.showClock();
+})();
+
