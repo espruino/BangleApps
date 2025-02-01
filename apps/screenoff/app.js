@@ -1,4 +1,4 @@
 (function () {
-  Bangle.setBacklight (false);
+  //Bangle.setBacklight (false);
   Bangle.showLauncher()
 })();
