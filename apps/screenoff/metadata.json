@@ -4,10 +4,12 @@
   "shortName":"screenoff",
   "version":"1.00",
   "description": "turns off screen & opens your watch",
+  "icon": "app.png",
   "tags": "tool",
   "supports" : ["BANGLEJS", "BANGLEJS2"],
   "allow_emulator": false,
   "storage": [
-    {"name":"screenoff.app.js","url":"app.js"}
+    {"name":"screenoff.app.js","url":"app.js"},
+    {"name":"screenoff.img","url":"app-icon.js","evaluate":true}
   ]
 }
