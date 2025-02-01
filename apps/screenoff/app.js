@@ -1,2 +1,2 @@
 Bangle.setBacklight (false);
-Bangle.load();
+Bangle.showClock();
