@@ -1,3 +1,3 @@
 (function () {
-  Bangle.showLauncher()
+  load();
 })();
