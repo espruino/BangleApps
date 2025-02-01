@@ -2,7 +2,7 @@
   "id": "screenoff",
   "name": "screen off",
   "shortName":"screenoff",
-  "version":"1.03",
+  "version":"1.04",
   "description": "turns off screen & opens your watch",
   "icon": "app.png",
   "tags": "tool",
