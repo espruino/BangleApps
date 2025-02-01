@@ -295,10 +295,10 @@ function showMessagesScroller(msg, persist) {
   var bodyFont = fontBig;
   g.setFont(bodyFont);
   const FONT_HEIGHT = g.getFontHeight();
-  const LINES_PER_SCREEN = APP_RECT.h/FONT_HEIGHT;
   let initScroll;
   var titleLines = [];
   let allLines = [];
+  let firstTitleLinePerMsg = [];
   for (let i=0 ; i<MESSAGES.length ; i++) {
     if (MSG_IDX === i) {initScroll = allLines.length*FONT_HEIGHT}
     let msgIter = MESSAGES[i];
@@ -309,6 +309,7 @@ function showMessagesScroller(msg, persist) {
     lines = g.wrapString(TITLE_STRING, APP_RECT.w-10);
     for (let i=0; i<lines.length; i++) {
       titleLines.push(i + allLines.length);
+      if (i==0) firstTitleLinePerMsg.push(i + allLines.length);
     }
     lines = lines.concat(g.wrapString(msgIter.body, APP_RECT.w-10),
       ["-".repeat(12)]);
@@ -320,22 +321,6 @@ function showMessagesScroller(msg, persist) {
     returnToClockIfEmpty();
   }
 
-  function identifyDisplayedMsg(scrollIdx) {
-    let firstTitleLinePerMsg = [titleLines[0]];
-    for (let i=1; i<titleLines.length; i++) {
-      if (titleLines[i]-titleLines[i-1] === 1) {continue;}
-      firstTitleLinePerMsg.push(titleLines[i]);
-    }
-    for (let i=titleLines.length-1; i>=0 ; i--) {
-      if (scrollIdx>=firstTitleLinePerMsg[i]) {
-        return MESSAGES[i];
-      }
-    }
-  }
-
-  // Used to choose how to identify displayed message when selecting with hw button.
-  let prevScrollIdxs = [undefined, undefined]; // [prevIdx, prevPrevIdx]
-
   E.showScroller({
     scroll : initScroll,
     h : FONT_HEIGHT, // height of each menu item in pixels
@@ -346,39 +331,35 @@ function showMessagesScroller(msg, persist) {
         setColor(titleLines.find(e=>e==scrollIdx)!==undefined ? g.theme.fg2 : g.theme.fg).
         clearRect(r);
       g.setFont(bodyFont).setFontAlign(0,-1).drawString(allLines[scrollIdx], r.x+r.w/2, r.y);
-      if (prevScrollIdxs[1]!==prevScrollIdxs[0]) {
-        prevScrollIdxs[1] = prevScrollIdxs[0];
-        if (!persist) {resetReloadTimeout();}
-      }
-      prevScrollIdxs[0] = scrollIdx;
+      if (!persist) {resetReloadTimeout();}
     },
     select : function(scrollIdx, touch) {
       WU.show();
-      const MSG_SELECT = identifyDisplayedMsg(scrollIdx);
       clearBtnHandler();
-      if (!touch) {showMessageRouter(MSG_SELECT, true, "overview"); return;}
-      if (touch.type == 0) {showMessageRouter(MSG_SELECT, true, "overview");}
-      if (touch.type == 2) {showMessageSettings(MSG_SELECT);}
+      for (let i=firstTitleLinePerMsg.length-1; i>=0 ; i--) {
+        if (scrollIdx>=firstTitleLinePerMsg[i]) {
+          if (!touch || touch.type===0) {showMessageRouter(MESSAGES[i], true,
+            "overview"); return;}
+          if (touch.type == 2) {showMessageSettings(MESSAGES[i]);}
+          break;
+        }
+      }
     }
   });
 
-  function clearBtnHandler() {
-    if (Bangle.btnHandler) {clearWatch(Bangle.btnHandler); Bangle.btnHandler=undefined;}
-  }
-  clearBtnHandler();
-
   // If Bangle.js 2 add an external select hw button handler.
-  Bangle.btnHandler = ((2===process.env.HWVERSION) && (setWatch(()=>{
+  let btnHandler = ((2===process.env.HWVERSION) && (setWatch(()=>{
     Bangle.emit("drag", {dy:0}); // Compatibility with `kineticscroll`, stopping the scroller so it doesn't continue scrolling when the `showMessageOverview` screen is loaded.
     // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
     setTimeout(()=>{
       if ("messagegui.new.js"===global.__FILE__) {return load();}
-      const SCROLL_IDX_CENTER_SCREEN = prevScrollIdxs[0]>prevScrollIdxs[1] ?
-        prevScrollIdxs[0]-LINES_PER_SCREEN/2:prevScrollIdxs[0]+LINES_PER_SCREEN/2;
-      WU.show();
-      showMessageOverview(identifyDisplayedMsg(SCROLL_IDX_CENTER_SCREEN).id, true);
+      Bangle.emit("touch", 1, {x:Bangle.appRect.x2/2, y:Bangle.appRect.y2/2, type:0});
     },0);
-  }, BTN, {edge:'rising'})));
+  }, BTN, {edge:'rising', repeat:true})));
+
+  function clearBtnHandler() {
+    if (btnHandler) {clearWatch(btnHandler); btnHandler=undefined;}
+  }
 }
 
 function showMessageSettings(msg) {
