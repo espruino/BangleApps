@@ -353,7 +353,7 @@ function showMessagesScroller(msg, persist) {
     // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
     setTimeout(()=>{
       if ("messagegui.new.js"===global.__FILE__) {return load();}
-      Bangle.emit("touch", 1, {x:Bangle.appRect.x2/2, y:Bangle.appRect.y2/2, type:0});
+      Bangle.emit("touch", 1, {x:APP_RECT.x2/2, y:APP_RECT.y2/2, type:0});
     },0);
   }, BTN, {edge:'rising', repeat:true})));
 
