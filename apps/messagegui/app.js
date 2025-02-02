@@ -302,7 +302,7 @@ function showMessagesScroller(msg, persist) {
   for (let i=0 ; i<MESSAGES.length ; i++) {
     if (MSG_IDX === i) {initScroll = allLines.length*FONT_HEIGHT}
     let msgIter = MESSAGES[i];
-    msgIter.new = false;
+    msgIter.new = false; // FIXME: Update "new" status in the scrollers draw method instead. A message should not be marked as read if it has not been displayed on screen.
 
     var lines = [];
     const TITLE_STRING = msgIter.title||msgIter.sender||msgIter.subject||msgIter.src||/*LANG*/"No Title";
