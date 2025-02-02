@@ -302,7 +302,6 @@ function showMessagesScroller(msg, persist) {
   for (let i=0 ; i<MESSAGES.length ; i++) {
     if (MSG_IDX === i) {initScroll = allLines.length*FONT_HEIGHT}
     let msgIter = MESSAGES[i];
-    msgIter.new = false; // FIXME: Update "new" status in the scrollers draw method instead. A message should not be marked as read if it has not been displayed on screen.
 
     var lines = [];
     const TITLE_STRING = msgIter.title||msgIter.sender||msgIter.subject||msgIter.src||/*LANG*/"No Title";
@@ -321,31 +320,41 @@ function showMessagesScroller(msg, persist) {
     returnToClockIfEmpty();
   }
 
+  let shownIdxFirst = allLines.length
+  let shownIdxLast = 0;
+
   E.showScroller({
     scroll : initScroll,
     h : FONT_HEIGHT, // height of each menu item in pixels
     c : allLines.length, // number of menu items
     // a function to draw a menu item
     draw : function(scrollIdx, r) {"ram";
+      //print(scrollIdx)
       g.setBgColor(titleLines.find(e=>e==scrollIdx)!==undefined ? g.theme.bg2 : g.theme.bg).
         setColor(titleLines.find(e=>e==scrollIdx)!==undefined ? g.theme.fg2 : g.theme.fg).
         clearRect(r);
       g.setFont(bodyFont).setFontAlign(0,-1).drawString(allLines[scrollIdx], r.x+r.w/2, r.y);
+      if (scrollIdx<shownIdxFirst) {shownIdxFirst = scrollIdx;}
+      if (scrollIdx>shownIdxLast) {shownIdxLast = scrollIdx;}
       if (!persist) {resetReloadTimeout();}
     },
     select : function(scrollIdx, touch) {
       WU.show();
-      clearBtnHandler();
       for (let i=firstTitleLinePerMsg.length-1; i>=0 ; i--) {
         if (scrollIdx>=firstTitleLinePerMsg[i]) {
-          if (!touch || touch.type===0) {showMessageRouter(MESSAGES[i], true,
-            "overview"); return;}
-          if (touch.type == 2) {showMessageSettings(MESSAGES[i]);}
+          if (!touch || touch.type===0) {
+            showMessageRouter(MESSAGES[i], true, "overview")
+          } else if (touch.type == 2) {
+            showMessageSettings(MESSAGES[i]);
+          }
           break;
         }
       }
+      clearBtnHandler();
+      updateReadMessages();
     }
   });
+
 
   // If Bangle.js 2 add an external select hw button handler.
   let btnHandler = ((2===process.env.HWVERSION) && (setWatch(()=>{
@@ -359,6 +368,35 @@ function showMessagesScroller(msg, persist) {
 
   function clearBtnHandler() {
     if (btnHandler) {clearWatch(btnHandler); btnHandler=undefined;}
+  }
+
+  function updateReadMessages() {
+    let shownMsgIdxFirst, shownMsgIdxLast;
+    const LINES_PER_SCREEN = APP_RECT.h/FONT_HEIGHT;
+    //print(firstTitleLinePerMsg)
+    //print(shownIdxFirst, shownIdxLast)
+
+    for (let i=0; i<firstTitleLinePerMsg.length-1 ; i++) {
+
+      if (shownIdxFirst<=firstTitleLinePerMsg[i] && shownIdxFirst+LINES_PER_SCREEN>firstTitleLinePerMsg[i]) {
+        shownMsgIdxFirst = i;
+      }
+
+      if (shownIdxLast>=firstTitleLinePerMsg[i+1] && shownIdxLast-LINES_PER_SCREEN<firstTitleLinePerMsg[i+1]) {
+        shownMsgIdxLast = i;
+        //print(i)
+      }
+
+    }
+    if (shownIdxLast===allLines.length-1) {shownMsgIdxLast = MESSAGES.length-1;}
+
+    //print(shownIdxFirst, shownIdxLast)
+    //print(shownMsgIdxFirst, shownMsgIdxLast)
+    //print(MESSAGES)
+    for (let i=shownMsgIdxFirst; i<shownMsgIdxLast+1; i++) {
+      MESSAGES[i].new = false;
+    }
+    //print(MESSAGES)
   }
 }
 
