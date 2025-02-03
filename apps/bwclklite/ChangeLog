@@ -36,3 +36,4 @@ clkinfo.addInteractive that would cause ReferenceError.
       Do an quick inital fillRect on theclock info area.
 0.33: Make the border of the clock_info box extend all the way to the right of the screen.
 0.34: Fix issue rendering ClockInfos with for fg+bg color set to the same (#2749)
+0.35: Support 12-hour time format
