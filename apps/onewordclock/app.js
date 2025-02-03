@@ -5,15 +5,15 @@
 
   // https://www.espruino.com/Bangle.js+Locale
   // schedule a draw for the next 3 minutes
-  function queueDraw() {
+  const queueDraw = () => {
     if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = setTimeout(function () {
+    drawTimeout = setTimeout(() => {
       drawTimeout = undefined;
       draw();
     }, 180000 - (Date.now() % 180000));
-  }
+  };
 
-  function wordFromHour(h) {
+  const wordFromHour = (h) => {
     const HOUR_WORDS = [
       'Midnight',
       'Early',
@@ -42,14 +42,14 @@
     ];
 
     return HOUR_WORDS[h];
-  }
+  };
 
-  function wordsFromDayMonth(day) {
+  const wordsFromDayMonth = (day) => {
     const DAY_WORD_ARRAY = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     return DAY_WORD_ARRAY[day];
-  }
+  };
 
-  function draw() {
+  const draw = () => {
     var x = g.getWidth() / 2;
     var y = g.getHeight() / 2;
     g.reset();
@@ -104,7 +104,7 @@
     g.drawString(g.wrapString(dateStr, g.getWidth()).join('\n'), x, g.getHeight() - 30);
 
     queueDraw();
-  }
+  };
 
   // Clear the screen once/, at startup
   g.clear();
