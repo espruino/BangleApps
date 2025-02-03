@@ -1,4 +1,4 @@
-# Another Default Config
+# Thyttan's Default Config
 
 A different default set of apps and configurations. Brings many quality of life improvements. Opinionated based on the creators taste. Read more below before installing.
 
@@ -15,7 +15,7 @@ Before installing do this:
 
 ## Features
 
-There will not be a trace of a "Another Default Config" app on your watch after installation. Only the apps it installed and the configurations.
+There will not be a trace of a "Thyttan's Default Config" app on your watch after installation. Only the apps it installed and the configurations.
 
 On the clock face:
 - Swipe right on the screen to open the launcher (Desktop Launcher) - or press the hardware button.
@@ -27,7 +27,7 @@ On the clock face:
 
 ## Requests
 
-Add to the espruino/BangleApps issue tracker and mention @thyttan for bug reports and suggestions. Or do a pull request!
+Add to the espruino/BangleApps issue tracker and mention @thyttan for bug reports and suggestions.
 
 ## Creator
 
