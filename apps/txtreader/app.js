@@ -1,5 +1,5 @@
 function showFileSelector() {
-  let files = Storage.list().filter(f => f.endsWith('.txt'));
+  let files = require("Storage").list().filter(f => f.endsWith('.txt'));
 
   let menuItems = {};
   files.forEach(file => {
