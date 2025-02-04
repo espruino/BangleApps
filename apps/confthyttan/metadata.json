@@ -3,8 +3,8 @@
   "version":"0.06",
   "description": "A different default set of apps and configurations. Brings many quality of life improvements. Opinionated based on the creators taste. Read more below before installing.",
   "icon": "app.png",
-  "type": "RAM",
-  "tags": "system, configuration, config, anotherconfig, thyttan",
+  "type": "defaultconfig",
+  "tags": "system,configuration,config,anotherconfig,thyttan",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "dependencies" : {
@@ -13,7 +13,6 @@
     "messageicons":"app",
     "widmsggrid":"app",
     "msgwakefup":"app",
-    "msgtwscr":"app",
     "delaylock":"app",
     "notify":"app",
     "health":"app",

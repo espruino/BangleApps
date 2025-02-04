@@ -7,11 +7,8 @@ A different default set of apps and configurations. Brings many quality of life 
 Before installing do this:
 
 1. Backup your current setup (via the "More..." tab of the App Loader) so you can restore it later if you want.
-2. Factory reset the watch.
-3. Remove all apps via the "More..." tab in the App Loader.
-4. Make sure minification is turned off on the App Loader.
-5. Then install.
-6. Try it out, switch out apps to your favorites and tweak to your liking!
+2. Install this app (you'll be prompted about all data being removed from your Bangle)
+3. Try it out, switch out apps to your favorites and tweak to your liking!
 
 ## Features
 
