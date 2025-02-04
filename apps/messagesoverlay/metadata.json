@@ -15,6 +15,6 @@
     {"name":"messagesoverlay.settings.js","url":"settings.js"},
     {"name":"messagesoverlay.default.json","url":"default.json"}
   ],
-  "data": [{"name":"bthrm.json"}],
+  "data":[{"name":"messagesoverlay.json"}],
   "screenshots": [{"url":"screen_call.png"} ,{"url":"screen_message.png"} ]
 }
