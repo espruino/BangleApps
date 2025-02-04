@@ -207,10 +207,10 @@ apps.forEach((app,appIdx) => {
   if (!app.name) ERROR(`App ${app.id} has no name`, {file:metadataFile});
   var isApp = !app.type || app.type=="app";
   var appTags = app.tags ? app.tags.split(",") : [];
-  /*if (appTags.some(tag => tag!=tag.trim()))
+  if (appTags.some(tag => tag!=tag.trim()))
     WARN(`App ${app.id} 'tag' list contains whitespace ("${app.tags}")`, {file:metadataFile});
   if (appTags.some(tag => tag!=tag.toLowerCase()))
-    WARN(`App ${app.id} 'tag' list contains uppercase ("${app.tags}")`, {file:metadataFile});*/
+    WARN(`App ${app.id} 'tag' list contains uppercase ("${app.tags}")`, {file:metadataFile});
   if (app.name.length>20 && !app.shortName && isApp) ERROR(`App ${app.id} has a long name, but no shortName`, {file:metadataFile});
   if (app.type && !METADATA_TYPES.includes(app.type))
     ERROR(`App ${app.id} 'type' is one one of `+METADATA_TYPES, {file:metadataFile});

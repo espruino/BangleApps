@@ -4,8 +4,8 @@
   "version": "0.04",
   "description": "Wrist mounted ukulele chords",
   "icon": "app.png",
-  "tags": "uke, chords",
-  "supports" : ["BANGLEJS2"],  
+  "tags": "uke,chords",
+  "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"Uke.app.js","url":"app.js"},

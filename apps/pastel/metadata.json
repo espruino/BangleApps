@@ -8,7 +8,7 @@
   "dependencies": {"mylocation":"app","weather":"app"},
   "screenshots": [{"url":"screenshot_pastel.png"}, {"url":"weather_icons.png"}],
   "type": "clock",
-  "tags": "clock, weather, tool",
+  "tags": "clock,weather,tool",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [
