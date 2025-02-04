@@ -30,7 +30,7 @@ Const.APP_DATES_CSV = "appdates.csv";
   let username = "espruino";
   let githubMatch = window.location.href.match(/\/([\w-]+)\.github\.io/);
   if (githubMatch) username = githubMatch[1];
-  Const.APP_SOURCECODE_URL = `https://github.com/${username}/BangleApps/tree/master/apps`;
+  Const.APP_SOURCECODE_URL = `https://github.com/${username}/BangleApps/tree/devolov/apps`;
 })();
 
 // When a device is found, filter the apps accordingly
