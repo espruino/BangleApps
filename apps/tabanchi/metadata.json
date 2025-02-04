@@ -7,7 +7,7 @@
   "description": "Tamagotchi WatchApp",
   "icon": "app.png",
   "allow_emulator": true,
-  "tags": "clock, watch, virtual pet",
+  "tags": "clock,watch,virtualpet",
   "supports": [
     "BANGLEJS2"
   ],

@@ -5,7 +5,7 @@
   "icon": "app.png",
   "version":"0.01",
   "description": "Interval Timer for workouts, HIIT, or whatever else.",
-  "tags": "timer, interval, hiit, workout",
+  "tags": "timer,interval,hiit,workout",
   "readme":"README.md",
   "supports":["BANGLEJS2"],
   "storage": [

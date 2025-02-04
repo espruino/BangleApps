@@ -5,7 +5,7 @@
   "description": "A simple way to initiate Google Assistant on Android. Intents must be enabled in  Gadgetbridge.",
   "icon": "app.png",
   "type": "app",
-  "tags": "tool, voice, tasker",
+  "tags": "tool,voice,tasker",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "allow_emulator": false,
   "storage": [
