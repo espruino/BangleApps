@@ -169,7 +169,7 @@ const APP_KEYS = [
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports', 'noOverwrite'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
 const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
-const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","textinput","module","clkinfo"]; // values allowed for "type" field
+const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","textinput","module","clkinfo","defaultconfig"]; // values allowed for "type" field - listed in README.md
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 const GRANDFATHERED_ICONS = ["s7clk",  "snek", "astral", "alpinenav", "slomoclock", "arrow", "pebble", "rebble"];
@@ -207,6 +207,10 @@ apps.forEach((app,appIdx) => {
   if (!app.name) ERROR(`App ${app.id} has no name`, {file:metadataFile});
   var isApp = !app.type || app.type=="app";
   var appTags = app.tags ? app.tags.split(",") : [];
+  /*if (appTags.some(tag => tag!=tag.trim()))
+    WARN(`App ${app.id} 'tag' list contains whitespace ("${app.tags}")`, {file:metadataFile});
+  if (appTags.some(tag => tag!=tag.toLowerCase()))
+    WARN(`App ${app.id} 'tag' list contains uppercase ("${app.tags}")`, {file:metadataFile});*/
   if (app.name.length>20 && !app.shortName && isApp) ERROR(`App ${app.id} has a long name, but no shortName`, {file:metadataFile});
   if (app.type && !METADATA_TYPES.includes(app.type))
     ERROR(`App ${app.id} 'type' is one one of `+METADATA_TYPES, {file:metadataFile});
@@ -296,7 +300,8 @@ apps.forEach((app,appIdx) => {
       if (INTERNAL_FILES_IN_APP_TYPE[app.type].includes(file.name))
         fileInternal = true;
     }
-    allFiles.push({app: app.id, file: file.name, internal:fileInternal});
+    if (!app.type=="defaultconfig")
+      allFiles.push({app: app.id, file: file.name, internal:fileInternal});
     if (file.url) if (!fs.existsSync(appDir+file.url)) ERROR(`App ${app.id} file ${file.url} doesn't exist`, {file:metadataFile});
     if (!file.url && !file.content && !app.custom) ERROR(`App ${app.id} file ${file.name} has no contents`, {file:metadataFile});
     var fileContents = "";
@@ -494,7 +499,7 @@ while(fileA=allFiles.pop()) {
       if (isGlob(nameA)||isGlob(nameB))
         ERROR(`App ${fileB.app} ${typeB} file ${nameB} matches app ${fileA.app} ${typeB} file ${nameA}`);
       else if (fileA.app != fileB.app && (!fileA.internal) && (!fileB.internal))
-        WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`);
+        WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`, {file:APPSDIR_RELATIVE+fileB.app+"/metadata.json"});
     }
   })
 }
