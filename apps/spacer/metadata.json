@@ -1,6 +1,6 @@
 { "id": "spacer",
   "name": "Space Race",
-  "version": "0.01",
+  "version": "0.10",
   "description": "Compare GPS with Baido and Glonass",
   "icon": "app.png",
   "readme": "README.md",

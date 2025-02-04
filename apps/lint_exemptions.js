@@ -79,12 +79,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/podadrem/app.js": {
-    "hash": "f7392e74974f69553aade2dcc07527b5d3b71a9b84e6dc5e0dd995e78dff8007",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "apps/openstmap/imagefilter.js": {
     "hash": "8a71e9a0ecfa94150379c41a5a915cfdac39f8b2e485e5cc1ce4629e85293acd",
     "rules": [
@@ -148,13 +142,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "apps/waypoints/waypoints.app.js": {
-    "hash": "ff02639eb8f81784c942093d57d254295e2c78918adb4bcffdf0d0284ebfac55",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "apps/timerclk/timer.js": {
     "hash": "3b70606f1742b34bf4769f6e8703144ff0c3ba401a3a21f97ddcab5432c94db5",
     "rules": [
@@ -195,21 +182,8 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "apps/poweroff/settings.js": {
-    "hash": "c197afe72c612a4b3825a3a12a628d0f4ed83823da3f28885bbf473037a02506",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "apps/oxofocus/app.js": {
     "hash": "cd29309373974ef038725e26d8a2ff2634a437c89cdffc3b12defd65a948db75",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
-  "apps/orloj/app.js": {
-    "hash": "fa43f035d759ba94f564392f410c0c6c485bb41a33c062f03d666738d517ccf3",
     "rules": [
       "no-unused-vars",
       "no-undef"
@@ -490,13 +464,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/doztime/app-bangle1.js": {
-    "hash": "1e9598c201175180ae77d1c3bc47e8138b339b72eb58782b5057fb7aefdc88a1",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "apps/carcrazy/app.js": {
     "hash": "fd9f98f4f9e24c63a8fa02918dceab4503edf88e06537922caf86e85884408f3",
     "rules": [
@@ -587,12 +554,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/swp2clk/settings.js": {
-    "hash": "2d9de7ffdf171f6e7b058741046c8a326cf9d5dba651f52fcdb523214b08d626",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/sunclock/app.js": {
     "hash": "54f49294816e06907003a71289a8b79641b1cd082044fb22bb4c4b80f6845459",
     "rules": [
@@ -613,12 +574,6 @@ module.exports = {
   },
   "apps/stepo/app.js": {
     "hash": "67f620970949011b962fb2a2a1bc9fe44cf2dee2e3342d9c6b3399318d6dbc17",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/spotrem/app.js": {
-    "hash": "35f3ee5371acde28427fd01e191ff58108d3d9e4db1a221dca081b7a7b9c3c77",
     "rules": [
       "no-undef"
     ]
@@ -757,12 +712,6 @@ module.exports = {
   },
   "apps/pastel/pastel.app.js": {
     "hash": "c5d2f1e179a7c0dec451e590659ff3080249d59d069b3b738c20dd6068ac98ce",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/owmweather/boot.js": {
-    "hash": "10fe98e871a7df3338fc764d62ac4db65c20c44774aad112f5faf26c7497f78e",
     "rules": [
       "no-undef"
     ]
@@ -917,12 +866,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/infoclk/settings.js": {
-    "hash": "56adc3eff3cbc04dd08238ed7e559416ebbc7736c872070c757d70bf5f31b440",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/infoclk/app.js": {
     "hash": "27cc368eb1be14658db7fd482e78c4bc7673e2a1c68bc3a1a5f7c7e29915ca88",
     "rules": [
@@ -967,12 +910,6 @@ module.exports = {
   },
   "apps/gpstouch/geotools.js": {
     "hash": "7e67733286f9d7708a54814f6f27d73ddffed2f433febc9604138f2f7a832cbf",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/gpssetup/gpssetup.js": {
-    "hash": "a63f670f4adf04895e6837270fcf19bd56f0a6d049cfb8e3ad8928c283d1bfd3",
     "rules": [
       "no-undef"
     ]

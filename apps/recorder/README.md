@@ -52,6 +52,23 @@ As long as widgets are loaded, you can:
 * Call `WIDGETS["recorder"].setRecording(true, {force:"new"/"append"/"overwrite")` to start recording (it returns a promise, and will not show a menu)
 * Call `WIDGETS["recorder"].setRecording(false)` to stop recording
 
+### Recording new items
+
+You can add new data items to record by creating a JS file on the Bangle named ending in `.recorder.js` that adds a new item
+to the supplied `recorders` array. For example `foobar.recorder.js` could contain:
+
+```
+(function(recorders) {
+  recorders.foobar = {
+    name : "Foobar",           // Name to appear in UIs
+    fields : ["foobar"],       // Column headings to appear as header in recorded CSV data
+    getValues : () => [123],   // Columns of data (length should match 'fields')
+    start : () => {},          // Called when recording starts - turn on any hardware/intervals you need
+    stop : () => {},           // Called when recording stops - turn off any hardware/intervals
+    draw (x,y) => {}           // draw 12x12px status image at x,y on g
+  }
+})
+```
 
 
 ## Tips

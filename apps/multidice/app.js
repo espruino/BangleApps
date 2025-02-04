@@ -1,12 +1,20 @@
-var menu = true; // default to have the selection menu open
+var settings = Object.assign({
+  vibrate: true,
+  shake: true,
+  screen: false,
+  shake_timeout: 200,
+  shake_duration: 100,
+}, require('Storage').readJSON("multidice.json", true) || {});
+
+var menu = true; // defaults to having the menu open
 const DICE_ARRAY = [0, 4, 6, 8, 10, 12, 20, 100]; // 0 means nothing selected
 const SELECTION_ARRAY = [6, 0, 0, 0, 0, 0, 0, 0]; // default to selecting a single d20
 
 // function to draw the selection menu
 function drawMenu() {
   
-  stringArr = new Array ("", "", "", "", "", "", "", "");
-  for (i = 0; i < 8; i++) {
+  var stringArr = new Array ("", "", "", "", "", "", "", "");
+  for (var i = 0; i < 8; i++) {
     
     if (SELECTION_ARRAY [i] != 0) {
       
@@ -41,6 +49,7 @@ function touchHandler (button, xy) {
     return;
   }
   
+  var selection;
   if (xy.x <= 87) { // left
     
     if (xy.y <= 43) { // first
@@ -84,15 +93,30 @@ function touchHandler (button, xy) {
   drawMenu();
 }
 
+var shaken = false;
+var last_shaken = null;
 function accelHandler (xyz) {
+  
+  // if the screen should be on *and* it isn't, return
+  if (settings.screen && ! Bangle.isBacklightOn()) {
+    
+    return;
+  }
   
   if (xyz.diff >= 0.3) {
     
-    menu = false;
-    mutex (rollDice).catch (() => {
+    shaken = true;
+    last_shaken = Date.now();
+  } else if (shaken && last_shaken !== null) {
+    
+    if (Date.now() - last_shaken > settings.shake_timeout) {
       
-      return; // not necessary, but prevents spamming the logs
-    });
+      last_shaken = null;
+      shaken = false;
+      menu = false;
+      
+      mutex (rollDice).catch (() => { return; });
+    }
   }
 }
 
@@ -123,8 +147,8 @@ function mutex (functionRef) {
 // function to roll all selected dice, and display them
 function rollDice() {
   
-  resultsArr = new Uint8Array (8);
-  for (i = 0; i < 8; i++) {
+  var resultsArr = new Uint8Array (8);
+  for (var i = 0; i < 8; i++) {
     
     if (SELECTION_ARRAY [i] != 0) {
       
@@ -135,7 +159,7 @@ function rollDice() {
   g.clear();
   g.setFont ("Vector", 40);
   
-  for (i = 0; i < 4; i++) {
+  for (var i = 0; i < 4; i++) {
     
     if (SELECTION_ARRAY [i] != 0) {
       
@@ -143,7 +167,7 @@ function rollDice() {
     }
   }
   
-  for (i = 4; i < 8; i++) {
+  for (var i = 4; i < 8; i++) {
     
     if (SELECTION_ARRAY [i] != 0) {
       
@@ -157,14 +181,19 @@ function rollDice() {
 // triggers the vibration, then pauses before returning
 function vibrate() {
   
+  if (! settings.vibrate) {
+    
+    return (Promise.resolve (0));
+  }
+  
   return new Promise ((resolve, reject) => {
     
-    return Bangle.buzz (50, 1).then ((value) => {
+    return Bangle.buzz (settings.shake_duration, 1).then ((value) => {
       
       setTimeout (() => {
         
         resolve (value);
-      }, 200);
+      }, 2 * settings.shake_duration + settings.shake_timeout);
     });
   });
 }
@@ -177,7 +206,7 @@ function random (max) {
 
 drawMenu();
 Bangle.on ('touch', touchHandler);
-Bangle.on ('accel', accelHandler);
+if (settings.shake) { Bangle.on ('accel', accelHandler); }
 setWatch (function() {
   
   menu = false;
