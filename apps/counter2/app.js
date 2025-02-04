@@ -1,10 +1,10 @@
 Bangle.loadWidgets();
 
 var s = Object.assign({
-  counter0:10,
-  counter1:20,
-  max0:15,
-  max1:25,
+  counter0:40,
+  counter1:0,
+  max0:40,
+  max1:0,
   buzz: true,
   colortext: true,
 }, require('Storage').readJSON("counter2.json", true) || {});

@@ -1,9 +1,9 @@
 (function (back) {
     var FILE = "counter2.json";
     const defaults={
-        counter0:12,
+        counter0:40,
         counter1:0,
-        max0:12,
+        max0:40,
         max1:0,
         buzz: true,
         colortext: true,
