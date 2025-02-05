@@ -2,6 +2,31 @@
 /* Checks for any obvious problems in apps.json
 */
 
+var BASEDIR = __dirname+"/../";
+var APPSDIR_RELATIVE = "apps/";
+var APPSDIR = BASEDIR + APPSDIR_RELATIVE;
+var showAllErrors = process.argv.includes("--show-all");
+
+if (process.argv.includes("--help")) {
+  console.log(`BangleApps Sanity Check
+------------------------
+
+Checks apps in this repository for common issues that might
+cause problems.
+
+USAGE:
+
+bin/sanitycheck.js
+  - default, runs all tests (hides known errors)
+bin/sanitycheck.js --show-all
+  - show all warnings/errors (including known ones)
+bin/sanitycheck.js --help
+  - show this message
+`);
+  process.exit(0);
+}
+
+
 var fs = require("fs");
 var vm = require("vm");
 var heatshrink = require("../webtools/heatshrink");
@@ -27,9 +52,7 @@ var jsparse = (() => {
   return str => acorn.parse(str, { ecmaVersion: 2020 });
 })();
 
-var BASEDIR = __dirname+"/../";
-var APPSDIR_RELATIVE = "apps/";
-var APPSDIR = BASEDIR + APPSDIR_RELATIVE;
+
 var knownWarningCount = 0;
 var knownErrorCount = 0;
 var warningCount = 0;
@@ -38,23 +61,23 @@ function ERROR(msg, opt) {
   // file=app.js,line=1,col=5,endColumn=7
   opt = opt||{};
   if (KNOWN_ERRORS.includes(msg)) {
-    console.log(`Known error : ${msg}`);
     knownErrorCount++;
-  } else {
-    console.log(`::error${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
-    errorCount++;
+    if (!showAllErrors) return;
+    msg += " (KNOWN)"
   }
+  console.log(`::error${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
+  errorCount++;
 }
 function WARN(msg, opt) {
   // file=app.js,line=1,col=5,endColumn=7
   opt = opt||{};
   if (KNOWN_WARNINGS.includes(msg)) {
-    console.log(`Known warning : ${msg}`);
     knownWarningCount++;
-  } else {
-    console.log(`::warning${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
-    warningCount++;
+    if (!showAllErrors) return;
+    msg += " (KNOWN)"
   }
+  console.log(`::warning${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
+  warningCount++;
 }
 /* These are errors that we temporarily allow */
 var KNOWN_ERRORS = [
@@ -526,7 +549,8 @@ function sanityCheckLocales(){
 
 promise.then(function() {
   console.log("==================================");
-  console.log(`${errorCount} errors, ${warningCount} warnings (and ${knownErrorCount} known errors, ${knownWarningCount} known warnings)`);
+  console.log(`${errorCount} errors, ${warningCount} warnings`);
+  console.log(`${knownErrorCount} known errors, ${knownWarningCount} known warnings${(knownErrorCount||knownWarningCount)?", run with --show-all to see them":""}`);
   console.log("==================================");
   if (errorCount)  {
     process.exit(1);
