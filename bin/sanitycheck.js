@@ -57,9 +57,13 @@ var knownWarningCount = 0;
 var knownErrorCount = 0;
 var warningCount = 0;
 var errorCount = 0;
+var warningList = [];
+var errorList = [];
+
 function ERROR(msg, opt) {
   // file=app.js,line=1,col=5,endColumn=7
   opt = opt||{};
+  errorList.push(msg);
   if (KNOWN_ERRORS.includes(msg)) {
     knownErrorCount++;
     if (!showAllErrors) return;
@@ -71,6 +75,7 @@ function ERROR(msg, opt) {
 function WARN(msg, opt) {
   // file=app.js,line=1,col=5,endColumn=7
   opt = opt||{};
+  warningList.push(msg);
   if (KNOWN_WARNINGS.includes(msg)) {
     knownWarningCount++;
     if (!showAllErrors) return;
@@ -136,7 +141,6 @@ var KNOWN_ERRORS = [
 var KNOWN_WARNINGS = [
   "App gpsrec data file wildcard .gpsrc? does not include app ID",
   "App owmweather data file weather.json is also listed as data file for app weather",
-  "App messagegui storage file messagegui is also listed as storage file for app messagelist",
   "App carcrazy has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"carcrazy.settings.json\"}]`)",
   "App loadingscreen has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"loadingscreen.settings.json\"}]`)",
   "App trex has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"trex.settings.json\"}]`)",
@@ -548,6 +552,14 @@ function sanityCheckLocales(){
 }
 
 promise.then(function() {
+  KNOWN_ERRORS.forEach(msg => {
+    if (!errorList.includes(msg))
+      WARN(`Known error '${msg}' no longer occurs`);
+  });
+  KNOWN_WARNINGS.forEach(msg => {
+    if (!warningList.includes(msg))
+      WARN(`Known warning '${msg}' no longer occurs`);
+  });
   console.log("==================================");
   console.log(`${errorCount} errors, ${warningCount} warnings`);
   console.log(`${knownErrorCount} known errors, ${knownWarningCount} known warnings${(knownErrorCount||knownWarningCount)?", run with --show-all to see them":""}`);
