@@ -14,72 +14,73 @@ function showFileSelector() {
     };
   });
 
-  menuItems['< Back'] = () => { load(); }; // Go back to the launcher or previous screen
+  menuItems['< Back'] = () => { load(); }; 
   E.showMenu(menuItems);
 }
 
 function onFileSelected(file) {
+  const fileSize = require("Storage").read(file, 0, 0).length;
+  const chunkSize = 1024; 
+  let currentOffset = 0;
+  let currentPage = 1;
+  let history = []; 
 
-  var text = require("Storage").read(file);
-
-  function displayText(text, startLine, pageNumber) {
+  function displayText(offset, pageNumber) {
     g.clear();
     g.setFont("6x8", 1);
     g.setColor(1);
     g.drawString("Page " + pageNumber, 10, 2);
-    g.drawString(file, g.getWidth()-file.length*6, 2);
+    //g.drawString("Offset " + offset, 60, 2);
+    g.drawString(file, g.getWidth() - file.length * 6, 2);
 
+    var text = require("Storage").read(file, offset, chunkSize);
     var lines = text.split("\n");
     var y = 15; // Text start, top row reserved for page number
-    var currentLine = startLine || 0;
-    var linesDisplayed = 0; //Per page
+    var linesDisplayed = 0; // Lines per page
+    var totalCharsDisplayed = 0; // Total characters per page
 
-    for (var i = currentLine; i < lines.length; i++) {
+    for (var i = 0; i < lines.length; i++) {
       var wrappedLines = g.wrapString(lines[i], g.getWidth() - 20);
       for (var j = 0; j < wrappedLines.length; j++) {
         g.drawString(wrappedLines[j], 10, y);
         y += 10; // Move down for the next line
         linesDisplayed++;
+        totalCharsDisplayed += wrappedLines[j].length + (j < wrappedLines.length - 1 ? 0 : 1); // Add newline character for the last wrapped line
         if (y >= g.getHeight() - 10) {
           // If we run out of space, stop drawing
-          return { nextStartLine: i , linesDisplayed: linesDisplayed };
+          return { nextOffset: offset + totalCharsDisplayed, linesDisplayed: linesDisplayed };
         }
       }
     }
     return null; // No more lines to display
   }
 
-  var currentStartLine = 0;
-  var currentPage = 1;
-  var history = []; // Track the start line and lines displayed for each page
-
   // Initial display
-  var result = displayText(text, currentStartLine, currentPage);
-  history.push({ startLine: currentStartLine, linesDisplayed: result.linesDisplayed });
+  var result = displayText(currentOffset, currentPage);
+  history.push({ offset: currentOffset, linesDisplayed: result.linesDisplayed });
 
   // Handle touch events
   Bangle.on('touch', function(button) {
     if (button === 2) { // Right side of the screen (next page)
-      var nextStartLine = displayText(text, currentStartLine, currentPage + 1);
-      if (nextStartLine !== null) {
-        currentStartLine = nextStartLine.nextStartLine;
+      var nextOffset = displayText(currentOffset, currentPage + 1);
+      if (nextOffset !== null) {
+        currentOffset = nextOffset.nextOffset;
         currentPage++;
-        history.push({ startLine: currentStartLine, linesDisplayed: nextStartLine.linesDisplayed });
-        displayText(text, currentStartLine, currentPage);
+        history.push({ offset: currentOffset, linesDisplayed: nextOffset.linesDisplayed });
+        displayText(currentOffset, currentPage);
       } else {
-        currentStartLine = 0;
+        currentOffset = 0;
         currentPage = 1;
-        history = [{ startLine: currentStartLine, linesDisplayed: result.linesDisplayed }];
-        displayText(text, currentStartLine, currentPage);
+        history = [{ offset: currentOffset, linesDisplayed: result.linesDisplayed }];
+        displayText(currentOffset, currentPage);
       }
     } else if (button === 1) { // Left side of the screen (previous page)
       if (currentPage > 1) {
-        // Go back to the previous page
-        history.pop(); // Remove the current page from history
+        history.pop(); // Remove current page from history
         var previousPage = history[history.length - 1];
-        currentStartLine = previousPage.startLine;
+        currentOffset = previousPage.offset;
         currentPage--;
-        displayText(text, currentStartLine, currentPage);
+        displayText(currentOffset, currentPage);
       }
     }
   });
