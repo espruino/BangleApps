@@ -3,9 +3,7 @@
         {
             showClocks: false,
             showLaunchers: false,
-            direct: false,
-            swipeExit: true,
-            timeOut: 'Off',
+            timeOut: 10,
         },
         require('Storage').readJSON('cutelauncher.json', true) || {}
     );
