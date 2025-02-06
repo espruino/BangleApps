@@ -19,7 +19,6 @@ function showFileSelector() {
 }
 
 function onFileSelected(file) {
-  const fileSize = require("Storage").read(file, 0, 0).length;
   const chunkSize = 1024; 
   let currentOffset = 0;
   let currentPage = 1;
