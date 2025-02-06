@@ -73,7 +73,13 @@
   widWidth = undefined;
 
   // setup bluetooth connection events
-  NRF.on('connect', (addr) => WIDGETS.bluetooth_notify.onNRF(addr));
-  NRF.on('disconnect', () => WIDGETS.bluetooth_notify.onNRF());
+  NRF.on('connect', (addr) => {
+    WIDGETS.bluetooth_notify.onNRF(addr);
+    WIDGETS.bluetooth_notify.draw();
+  });
+  NRF.on('disconnect', () => {
+    WIDGETS.bluetooth_notify.onNRF()
+    WIDGETS.bluetooth_notify.draw()
+  });
 
 }
