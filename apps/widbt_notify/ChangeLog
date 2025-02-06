@@ -15,3 +15,4 @@
 0.16: Simplify code, add option to disable displaying a message
 0.17: Minor display fix
 0.18: Use notify lib to stop this widget clearing the screen of the running clock/app
+0.19: redraw widget immediately on NRF dis-/connect
