@@ -5,3 +5,4 @@
 0.05: Improve energy efficiency
 0.06: Align with whole thirds of the hour.
 0.07: Fix TypeError on scheduling for the next day.
+0.08: Refactor to use the scheduling library.
