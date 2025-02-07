@@ -44,7 +44,7 @@
 
     const ITEM_HEIGHT = 88;
 
-    let scroller = E.showScroller({
+    E.showScroller({
         h: ITEM_HEIGHT,
         c: apps.length,
         draw: (idx, rect) => {
@@ -75,35 +75,14 @@
             load(apps[idx].src);
         },
         remove: () => {
-            if (timeoutToClock) clearTimeout(timeoutToClock);
+            // Remove button handler
+            setWatch(() => { }, BTN1);
+            // Remove lock handler
+            Bangle.removeListener('lock');
         }
     });
 
-    // Update timeout on user interaction
-    const originalDraw = scroller.draw;
-    scroller.draw = () => {
-        updateTimeoutToClock();
-        originalDraw();
-    };
-
-    // taken from Icon Launcher with minor alterations
-    let timeoutToClock;
-    const updateTimeoutToClock = function () {
-        if (settings.timeOut != 'Off') {
-            let time = parseInt(settings.timeOut); //the "s" will be trimmed by the parseInt
-            if (timeoutToClock) clearTimeout(timeoutToClock);
-            timeoutToClock = setTimeout(Bangle.showClock, time * 1000);
-        }
-    };
-    updateTimeoutToClock();
-
-    if (Bangle.backHandler) clearWatch(Bangle.backHandler);
-    Bangle.backHandler = setWatch(Bangle.showClock, BTN1, { debounce: 100 });
-} // end of app scope
-
-// setUI now also needs to clear up our back button touch handler
-Bangle.setUI = (old => function () {
-    if (Bangle.backHandler) clearWatch(Bangle.backHandler);
-    delete Bangle.backHandler;
-    return old.apply(this, arguments);
-})(Bangle.setUI);
+    setWatch(Bangle.showClock, BTN1, { debounce: 100 });
+    // Add lock handler to show clock when locked
+    Bangle.on('lock', (on) => { if (on) Bangle.showClock(); });
+}
