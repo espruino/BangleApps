@@ -11,5 +11,8 @@
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "allow_emulator": true,
   "readme": "README.md",
-  "storage": [{ "name": "twenties.boot.js", "url": "boot.js" }]
+  "storage": [
+    { "name": "twenties.boot.js", "url": "boot.js" },
+    { "name": "twenties", "url": "lib.js" }
+  ]
 }
