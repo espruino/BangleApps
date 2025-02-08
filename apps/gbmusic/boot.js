@@ -10,7 +10,7 @@ setTimeout( // make other boot code run first, so we override e.g. android.boot.
      * Only runs while other apps are loaded
      */
     function check() {
-      if (s!=="play" || !i || !a || !Bangle.CLOCK) return; // only launch app if we know which song we are playing, and autoLoad is enabled
+      if ((!s || s.state!=="play") || !i || !a || !Bangle.CLOCK) return; // only launch app if we know which song we are playing, and autoLoad is enabled
       delete (i.t);
       // store info and launch music app
       require("Storage").writeJSON("gbmusic.load.json", {
@@ -27,7 +27,7 @@ setTimeout( // make other boot code run first, so we override e.g. android.boot.
           i = e;
           return APP ? info(e) : check();
         case "musicstate":
-          s = e.state;
+          s = e;
           return APP ? state(e) : check();
         default:
           // pass on other events

@@ -91,8 +91,8 @@ function rScroller(l) {
   const w = g.stringWidth(l.label)+40,
     y = l.y+l.h/2;
   l.offset = l.offset%w;
-  g.setClipRect(l.x, l.y, l.x+l.w-1, l.y+l.h-1)
-    .setColor(l.col).setBgColor(l.bgCol) // need to set colors: iScroll calls this function outside Layout
+  //g.setClipRect(l.x, l.y, l.x+l.w-1, l.y+l.h-1)
+  g.setColor(l.col).setBgColor(l.bgCol) // need to set colors: iScroll calls this function outside Layout
     .setFontAlign(-1, 0) // left center
     .clearRect(l.x, l.y, l.x+l.w-1, l.y+l.h-1)
     .drawString(l.label, l.x-l.offset+40, y)
@@ -433,15 +433,21 @@ function sendCommand(command) {
   drawControls();
 }
 
+function handleTouch(btn, pos) {
+  if (pos === undefined || pos.y >= Bangle.appRect.y) {
+    togglePlay();
+  }
+}
+
 function togglePlay() {
-  sendCommand(stat==="play" ? "pause" : "play");
+  sendCommand(stat==="play" ? "pause" : "playpause");
 }
 
 /**
  * Setup touch+swipe for Bangle.js 1
  */
 function touch1() {
-  Bangle.on("touch", togglePlay);
+  Bangle.on("touch", handleTouch);
   Bangle.on("swipe", dir => {
     sendCommand(dir===1 ? "previous" : "next");
   });
@@ -450,7 +456,7 @@ function touch1() {
  * Setup touch+swipe for Bangle.js 2
  */
 function touch2() {
-  Bangle.on("touch", togglePlay);
+  Bangle.on("touch", handleTouch);
   // swiping
   let drag;
   Bangle.on("drag", e => {
