@@ -128,57 +128,60 @@ function rInfo(l) {
     .setFontAlign(0, -1) // center top
     .drawString(l.label, l.x+l.w/2, l.y);
 }
-/**
- * Render icon
- * @param l
- */
-function rIcon(l) {
-  const x2 = l.x+l.w-1,
-    y2 = l.y+l.h-1;
-  switch(l.icon) {
-    case "pause": {
-      const w13 = l.w/3;
-      g.drawRect(l.x, l.y, l.x+w13, y2);
-      g.drawRect(l.x+l.w-w13, l.y, x2, y2);
-      break;
-    }
-    case "play": {
-      g.drawPoly([
-        l.x, l.y,
-        x2, l.y+l.h/2,
-        l.x, y2,
-      ], true);
-      break;
-    }
-    case "previous": {
-      const w15 = l.w*1/5;
-      g.drawPoly([
-        x2, l.y,
-        l.x+w15, l.y+l.h/2,
-        x2, y2,
-      ], true);
-      g.drawRect(l.x, l.y, l.x+w15, y2);
-      break;
-    }
-    case "next": {
-      const w45 = l.w*4/5;
-      g.drawPoly([
-        l.x, l.y,
-        l.x+w45, l.y+l.h/2,
-        l.x, y2,
-      ], true);
-      g.drawRect(l.x+w45, l.y, x2, y2);
-      break;
-    }
-    default: { // red X
-      console.log(`Unknown icon: ${l.icon}`);
-      g.setColor("#f00")
-        .drawRect(l.x, l.y, x2, y2)
-        .drawLine(l.x, l.y, x2, y2)
-        .drawLine(l.x, y2, x2, l.y);
-    }
-  }
-}
+
+// *** Unused Function ***
+// // /**
+// //  * Render icon
+// //  * @param l
+// //  */
+// // function rIcon(l) {
+// //   const x2 = l.x+l.w-1,
+// //     y2 = l.y+l.h-1;
+// //   switch(l.icon) {
+// //     case "pause": {
+// //       const w13 = l.w/3;
+// //       g.drawRect(l.x, l.y, l.x+w13, y2);
+// //       g.drawRect(l.x+l.w-w13, l.y, x2, y2);
+// //       break;
+// //     }
+// //     case "play": {
+// //       g.drawPoly([
+// //         l.x, l.y,
+// //         x2, l.y+l.h/2,
+// //         l.x, y2,
+// //       ], true);
+// //       break;
+// //     }
+// //     case "previous": {
+// //       const w15 = l.w*1/5;
+// //       g.drawPoly([
+// //         x2, l.y,
+// //         l.x+w15, l.y+l.h/2,
+// //         x2, y2,
+// //       ], true);
+// //       g.drawRect(l.x, l.y, l.x+w15, y2);
+// //       break;
+// //     }
+// //     case "next": {
+// //       const w45 = l.w*4/5;
+// //       g.drawPoly([
+// //         l.x, l.y,
+// //         l.x+w45, l.y+l.h/2,
+// //         l.x, y2,
+// //       ], true);
+// //       g.drawRect(l.x+w45, l.y, x2, y2);
+// //       break;
+// //     }
+// //     default: { // red X
+// //       console.log(`Unknown icon: ${l.icon}`);
+// //       g.setColor("#f00")
+// //         .drawRect(l.x, l.y, x2, y2)
+// //         .drawLine(l.x, l.y, x2, y2)
+// //         .drawLine(l.x, y2, x2, l.y);
+// //     }
+// //   }
+// // }
+
 let layout;
 function makeUI() {
   Bangle.loadWidgets();
@@ -489,10 +492,10 @@ function startLCDWatch() {
   Bangle.on("lcdPower", (on) => {
     if (on) {
       // redraw and resume scrolling
-      tick();
+      //tick(); // Not sure what this function was; currently undefined
       layout.render();
       fadeOut();
-      if (offset.offset!==null) {
+      if (layout.title.offset!==null) { // Making an assumption about what offset.offset was supposed to be
         if (!iScroll) {
           iScroll = setInterval(scroll, 200);
         }
