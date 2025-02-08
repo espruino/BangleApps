@@ -1,6 +1,6 @@
 setTimeout( // make other boot code run first, so we override e.g. android.boot.js GB
   () => {
-    const APP = global.__FILE__==="gbmusic.app.js",
+    const APP = globalThis.__FILE__==="gbmusic.app.js",
       a = !!(require("Storage").readJSON("gbmusic.json", 1) || {}).autoStart;
 
     let s, i; // state, info
@@ -20,18 +20,19 @@ setTimeout( // make other boot code run first, so we override e.g. android.boot.
       load("gbmusic.app.js");
     }
 
-    global.GB = (_GB => e => {
+
+    globalThis.GB = (_GB => e => {
       // we eat music events!
       switch(e.t) {
         case "musicinfo":
           i = e;
-          return APP ? info(e) : check();
+          return APP ? globalThis.info(e) : check();
         case "musicstate":
           s = e;
-          return APP ? state(e) : check();
+          return APP ? globalThis.state(e) : check();
         default:
           // pass on other events
           if (_GB) setTimeout(_GB, 0, e);
       }
-    })(global.GB);
+    })(globalThis.GB);
   }, 1);
