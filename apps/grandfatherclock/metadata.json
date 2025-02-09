@@ -9,6 +9,10 @@
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name":"grandfatherclock.wid.js","url":"widget.js"}
+    {"name":"grandfatherclock.wid.js","url":"widget.js"},
+    {"name":"grandfatherclock.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"grandfatherclock.json"}
   ]
 }
