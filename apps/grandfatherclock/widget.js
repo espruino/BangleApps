@@ -16,13 +16,11 @@
 
     WIDGETS["grandfatherclock"] = {
         area: "tr",
-        width: config.draw_widget ? 16,
-        draw: function() {
-            if (config.draw_widget) {
-                g.reset();
-                g.drawImage(atob("EBiDASSTJJISSSSZJJJCSSTJ///ISSZP///5CTJ/////ITJ/////ITJ/+B//ITJ/+B//ITJ//+P/ITJ/////ISZP///5CSRJ///ICSQJJJJACSYBJJIBCSYABgABCSYABgABCSYAJAABCSYANgABCSYBtgABCSYNtsABCSYBtgABCSYAMAABCSYAAAABCSZJJJJJCQ=="), this.x, this.y);
-            }
-        }
+        width: config.draw_widget ? 16 : undefined,
+        draw: config.draw_widget ? function() {
+            g.reset();
+            g.drawImage(atob("EBiDASSTJJISSSSZJJJCSSTJ///ISSZP///5CTJ/////ITJ/////ITJ/+B//ITJ/+B//ITJ//+P/ITJ/////ISZP///5CSRJ///ICSQJJJJACSYBJJIBCSYABgABCSYABgABCSYAJAABCSYANgABCSYBtgABCSYNtsABCSYBtgABCSYAMAABCSYAAAABCSZJJJJJCQ=="), this.x, this.y);
+        } : undefined
     };
 
     let date;
