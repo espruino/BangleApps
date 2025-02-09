@@ -1,16 +1,8 @@
 (() => {
 
-    WIDGETS["grandfatherclock"] = {
-        area: "tr",
-        width: 16,
-        draw: function() {
-            g.reset();
-            g.drawImage(atob("EBiDASSTJJISSSSZJJJCSSTJ///ISSZP///5CTJ/////ITJ/////ITJ/+B//ITJ/+B//ITJ//+P/ITJ/////ISZP///5CSRJ///ICSQJJJJACSYBJJIBCSYABgABCSYABgABCSYAJAABCSYANgABCSYBtgABCSYNtsABCSYBtgABCSYAMAABCSYAAAABCSZJJJJJCQ=="), this.x, this.y);
-        }
-    };
-
     // sensible defaults
     let config = Object.assign({
+        draw_widget: true,
         twelve_hour: true,
         swap_meridian: false,
         hour_attention_buzz_ms: 1000,
@@ -21,6 +13,17 @@
         meridian_buzz_ms: 50,
         meridian_buzz_wait_ms: 300
     }, require('Storage').readJSON("grandfatherclock.json", true) || {}); // or, load the app settings file.
+
+    WIDGETS["grandfatherclock"] = {
+        area: "tr",
+        width: config.draw_widget ? 16,
+        draw: function() {
+            if (config.draw_widget) {
+                g.reset();
+                g.drawImage(atob("EBiDASSTJJISSSSZJJJCSSTJ///ISSZP///5CTJ/////ITJ/////ITJ/+B//ITJ/+B//ITJ//+P/ITJ/////ISZP///5CSRJ///ICSQJJJJACSYBJJIBCSYABgABCSYABgABCSYAJAABCSYANgABCSYBtgABCSYNtsABCSYBtgABCSYAMAABCSYAAAABCSZJJJJJCQ=="), this.x, this.y);
+            }
+        }
+    };
 
     let date;
     let fractionMs = 3600000 / config.fractions_of_hour;

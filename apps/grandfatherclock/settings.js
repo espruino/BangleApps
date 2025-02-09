@@ -3,6 +3,7 @@
     const configFile = "grandfatherclock.json";
 
     let config = Object.assign({
+        draw_widget: true,
         twelve_hour: true,
         swap_meridian: false,
         hour_attention_buzz_ms: 1000,
@@ -21,6 +22,13 @@
     E.showMenu({
         "": {"title" : "Grandfather Clock"},
         "< Back": () => back(),
+        "Draw widget": {
+            value: config.draw_widget,
+            onchange: v => {
+                config.draw_widget = v;
+                writeConfig();
+            }
+        },
         "12 hour": {
             value: config.twelve_hour,
             onchange: v => {
