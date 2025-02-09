@@ -21,16 +21,14 @@
     E.showMenu({
         "": {"title" : "Grandfather Clock"},
         "< Back": () => back(),
-        "12 / 24 hour": {
+        "12 hour": {
             value: config.twelve_hour,
-            format: v => v ? "12" : "24",
             onchange: v => {
                 config.twelve_hour = v;
                 writeConfig();
             }
         },"Swap meridian": {
             value: config.swap_meridian,
-            format: v => v ? "Yes" : "No",
             onchange: v => {
                 config.swap_meridian = v;
                 writeConfig();
