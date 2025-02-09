@@ -27,7 +27,7 @@ function onFileSelected(file) {
   function displayText(offset, pageNumber) {
     g.clear();
     g.setFont("6x8", 1);
-    g.setColor(1);
+    g.setColor(g.theme.fg);
     g.drawString("Page " + pageNumber, 10, 2);
     //g.drawString("Offset " + offset, 60, 2);
     g.drawString(file, g.getWidth() - file.length * 6, 2);
