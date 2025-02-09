@@ -1,4 +1,4 @@
-{ "id": "grandfather-clock",
+{ "id": "grandfatherclock",
   "name": "Grandfather Clock Widget",
   "shortName":"Grandfather Clock",
   "version":"0.01",
@@ -9,6 +9,6 @@
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name":"grandfather-clock.wid.js","url":"widget.js"}
+    {"name":"grandfatherclock.wid.js","url":"widget.js"}
   ]
 }

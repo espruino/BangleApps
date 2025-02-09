@@ -1,6 +1,6 @@
 (() => {
 
-    WIDGETS["grandfather-clock"] = {
+    WIDGETS["grandfatherclock"] = {
         area: "tr",
         width: 24,
         draw: function() {
