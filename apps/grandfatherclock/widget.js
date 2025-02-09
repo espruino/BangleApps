@@ -2,7 +2,6 @@
 
     WIDGETS["grandfatherclock"] = {
         area: "tr",
-        width: 24,
         draw: function() {
             g.reset();
             g.drawImage(atob("EBiDASSTJJISSSSZJJJCSSTJ///ISSZP///5CTJ/////ITJ/////ITJ/+B//ITJ/+B//ITJ//+P/ITJ/////ISZP///5CSRJ///ICSQJJJJACSYBJJIBCSYABgABCSYABgABCSYAJAABCSYANgABCSYBtgABCSYNtsABCSYBtgABCSYAMAABCSYAAAABCSZJJJJJCQ=="), this.x, this.y);
