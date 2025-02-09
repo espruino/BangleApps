@@ -5,7 +5,7 @@
         width: 24,
         draw: function() {
             g.reset();
-            g.drawImage(atob("GBiBAAAYAAA8AAA8AAD/AAH/gAP/wAf/4Afn4Afn4Afn4Afn4Afn4Af/4Af/4Afn4Afn4A/n8A//8B//+D///AAAAAAAAAA8AAAYAA=="), this.x, this.y);
+            g.drawImage(atob("EBiDASSTJJISSSSZJJJCSSTJ///ISSZP///5CTJ/////ITJ/////ITJ/+B//ITJ/+B//ITJ//+P/ITJ/////ISZP///5CSRJ///ICSQJJJJACSYBJJIBCSYABgABCSYABgABCSYAJAABCSYANgABCSYBtgABCSYNtsABCSYBtgABCSYAMAABCSYAAAABCSZJJJJJCQ=="), this.x, this.y);
         }
     };
 
