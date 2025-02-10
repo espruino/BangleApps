@@ -1,8 +1,7 @@
-{
-  "id": "daymoon",
+{ "id": "daymoon",
   "name": "Circadian Moon Clock",
   "version": "0.1",
-  "dependencies":  {"mylocation":"app"},
+  "dependencies": {"mylocation":"app"},
   "description": "A 24 hour clockface showing the Moon Phase and portion of the day that the Sun is up",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],
@@ -10,9 +9,9 @@
   "tags": "clock,moon,lunar",
   "supports": ["BANGLEJS2"],
   "allow_emulator": true,
-  "readme":"README.md"
+  "readme":"README.md",
   "storage": [
-    {"name":"fairbangle.app.js","url":"app.js"},
-    {"name":"fairbangle.img","url":"app-icon.js","evaluate":true}
+    {"name":"daymoon.app.js","url":"app.js"},
+    {"name":"daymoon.img","url":"app-icon.js","evaluate":true}
   ]
 }
