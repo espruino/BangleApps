@@ -200,15 +200,15 @@ let gps = {
   },
 };
 
-/* ui library 0.1.4 */
+/* ui library 0.1.5 */
 let ui = {
   display: 0,
   numScreens: 2,
   drawMsg: function(msg) {
     g.reset().setFont("Vector", 35)
-      .setColor(1, 1, 1)
+      .setColor(g.theme.bg)
       .fillRect(0, this.wi, this.w, this.y2)
-      .setColor(0, 0, 0)
+      .setColor(g.theme.fg)
       .drawString(msg, 5, 30)
       .flip();
   },
@@ -496,8 +496,8 @@ let quality = {
 
     if (msg != "") {
       g.reset().setFont("Vector", 31)
-        .setColor(1,1,1).fillRect(0, ui.wi, ui.w, ui.y2)
-        .setColor(0,0,0).drawString(msg, 3, 25);
+        .setColor(g.theme.bg).fillRect(0, ui.wi, ui.w, ui.y2)
+        .setColor(g.theme.fb).drawString(msg, 3, 25);
     }
     if (debug > 0) print(fix);
   },
@@ -673,7 +673,7 @@ let sky = {
   },
 
   drawGrid: function() {
-    g.setColor(0,0,0);
+    g.setColor(g.theme.fg);
     ui.radLine(0, 1, 0.5, 1);
     ui.radLine(0.25, 1, 0.75, 1);
     ui.radCircle(0.5);
@@ -702,7 +702,7 @@ let sky = {
   decorate: function() {},
   drawSats: function(sats) {
     g.reset()
-      .setColor(1, 1, 1)
+      .setColor(g.theme.bg)
       .fillRect(0, ui.wi, ui.w, ui.y2)
       .setFont("Vector", 20)
       .setFontAlign(0, 0);
@@ -710,7 +710,7 @@ let sky = {
     sats.forEach(s => this.drawSat(s));
 
     if (fix && fix.fix && fix.lat) {
-      g.setColor(0, 0, 0)
+      g.setColor(g.theme.fg)
         .setFontAlign(-1, 1);
       g.drawString(fix.satellites + "/" + fix.hdop, 5, ui.y2);
     }
@@ -744,7 +744,7 @@ let sky = {
     if (this.msg.finished != 1)
       msg += "!";
     g.reset().clear().setFont("Vector", 30)
-      .setColor(0, 0, 0)
+      .setColor(g.theme.fg)
       .setFontAlign(-1, -1)
       .drawString(msg, 0, 0);
   },
