@@ -3,7 +3,7 @@
   "version": "0.1",
   "dependencies": {"mylocation":"app"},
   "description": "A 24 hour clockface showing the Moon Phase and portion of the day that the Sun is up",
-  "icon": "app.png",
+  "icon": "icon.png",
   "screenshots": [{"url":"screenshot.png"}],
   "type": "clock",
   "tags": "clock,moon,lunar",
