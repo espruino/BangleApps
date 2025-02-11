@@ -3,19 +3,36 @@ let location;
 
 var Utils = require("graphics_utils");
 var SunCalc = require("suncalc");
-
-const TAU = 2.0*Math.PI,MX=g.getWidth()/2,MY=g.getHeight()/2-20,R=40,X=MX+55,Y=MY+98;
-const DAY_MILLIS = 86400000, DIAL=0.05;
-const dR1=R+2,dR2=R+23,dR3=R+26;
-var shadeCol=8196;
-const M_POS = {x:MX,y:MY,r:R};
-const moon_texture = {
-  width : 80, height : 80, bpp : 1,transparent:0,
-  buffer : require("heatshrink").decompress(atob("ABsRqAJHkEiBA0VqtVqgIEgIIBqNVBIkCkQACDg4ABGYku1Wu1GICYgSDqsVBIf71U73WigQ6FAAdABIMD/2K1YpBwATCgoTFHgUf/e7/ej1eiJw5vEn/+///9WqxAoCutVq4UEBIP//YTB3Uj0UgJw5QCgYRBE4Uq1BOCE4N3CZWq3e6UIJiGMgUPJwX/9wpBE4MXutXJ4oTBCQW71f/8R2C6onGqgTD/3v//oE4RNFKoNQl//3+//4nB/UikBOHE4ZQB/2vCYOq9FXEIImDAoNUE4O61e73e/ZQP6E5FVO4O+xxQDCYInDPAIFDE4IlCKQWj+QnJCYJPC1wTB/BPBO4TyCAoUrd4JMB1U/MgM6J5SeBJgOoPAPu1QkCAARPBKYMjE4LGB0UrFgJ3JqkLEwPv1WIwXqeIIjCd4tUkW7HgOqkUj0W/1EVE5EA1Z3B1WAwXo/+ICZWv/YnCgE6ncgCZFQgEv9wnCwGu12gCZMCUAP/0UikE63eggoTHoEAwYnB9GAgEq1GAgITJPAM70ECkEiKQITIgEAhRNBAgMAhADCBwRTDioJBlRMBAgMCCQUACANURIaKBBwImDAAhkBqMRCYNRRQITBJIInGKAxiBAAMoJ448BE4Y6CEYgCBKYQ8DYogAMHggMHKQYUGJoYAJA="))
+var RADII = {
+	moon:   40,
+	arcMin: 48,
+	arcMax: 63,
+	dots:   55,
+	needle: 54,
 };
-const dial = { width: 23, height: 9, bpp:1, transparent:0,
-  buffer: atob("///B///gAADgAADgAADgAAOAAA5///j//8A=")
+var COL ={
+	moon:  65535, // 
+	txture:33792, // 0.5 ,0.5,0
+	shadow: 8196, // .125,0,   .125
+	day:   40159, //0.6,  0.6,1
+	night:     6, //  0,  0,  0.2
+	ndots:  2047, //  0,  1,  1  cyan
+	ddots:     0,
+	needle:63488,  //  1,  0,  0  red
+	stime:  2047
+};
+const TAU = 2.0*Math.PI;
+const MX=g.getWidth()/2,MY=24+3+RADII.arcMax;
+const DAY_MILLIS = 86400000;
+const M_POS = {x:MX,y:MY,r:RADII.moon};
+// images
+const moon_texture = {  width : 80, height : 80, bpp : 1,transparent:0,
+  buffer : require("heatshrink").decompress(atob("ABsRqAJHkEiBA0N0uq1AIEgNVqtRqoJEgUiAAQJEioTBAAIzEl2q12oxATECQdVioJD/eqne60UCHQoADoAJBgf+xWrFIOACYUFCYo8Cj/73f70er0ROHAANUBIM//3///q1WIFAV1qtXCggJB//7CYO6keikBOHKAUDCIInClSgCgonBu4TK1W73ShBMQxkCh5OC//uFIInBi91q5PFCYISC3er//iOwXVE41UCYf+9//9AnCJopVBqEv/+/3//E4P6kUgJw4nDKAP+14TB1Xoq4hBEwYFBqgnB3Wr3e737KB/QnIqp3B32OKAYTBE4Z4BAoYnBEoRSC0fyE5ITBJ4WuCYP4J4J3CeQQFClbvBJgOqn5kBnRPKTwJMB1B4B92qEgQACJ4JTBkYnBYwOilYsBO5NUhYmB9+qxGC9TxBEYTvFqki3Y8B1Uikei3+oionIgGrO4OqwGC9H/xATK1/7E4UAnU7kATIqEAl/uE4WA12u0ATJgSgB/+ikUgnW70EFCY9AgGDE4PowEAlWowEBCZJ4BneggUgkRSBCZEAgEKJoIEBgEIAYQOCKYcVBIMqJgIEBgQSCgAQBqiJDRQIOBEwYAEMgNRiITBqKKBCYJJBE4xQGMQIABlBPHHgInDHQQjEAQJTCHgbFEABg8EBg5SDCgxNDABI="))
+};
+const needle = { width: 23, height: 11, bpp:1, transparent:0,
+  buffer: atob("///B///D///AAAPAAAHAAAHAAAcAADz///H//8P//wA=")
  };
+
 /* 
  now use SunCalc.getMoonIllumination()
  previously used these:
@@ -26,58 +43,78 @@ const dial = { width: 23, height: 9, bpp:1, transparent:0,
 
 // requires the myLocation app
 function loadLocation() {
-  location = require("Storage").readJSON(LOCATION_FILE,1)||{"lat":51.5072,"lon":0.1276,"location":"London"};
+  location = require("Storage").readJSON(LOCATION_FILE,1)||{"lat":45,"lon":-71.3,"location":"Nashua"};//{"lat":51.5072,"lon":0.1276,"location":"London"};
 }
 
-function drawMoon(shape){
-  g.setColor(0,0,0).fillCircle(MX,MY,R+30);
-  g.setColor(1,1,1).fillCircle(MX,MY,R-1);
-  g.setColor(1,1,0).drawImage(moon_texture,MX,MY,{rotate:0});
+function drawMoon(shadowShape){
+  g.setColor(0,0,0).fillCircle(MX,MY,RADII.arcMax+3);
+  g.setColor(COL.moon).fillCircle(MX,MY,RADII.moon);
+  g.setColor(COL.txture).drawImage(moon_texture,MX,MY,{rotate:0});
   //later can set the rotation here to the parallacticAngle from getMoonPosition
-  g.setColor(shadeCol).fillPoly(shape);
-  //later set rotation of the fillPoly? parallactic-mp.angle I think. use g.transformVertices 
+  g.setColor(COL.shadow).fillPoly(shadowShape);
+  //later set rotation of the fillPoly? parallactic-mp.angle I think. 
+  //Use g.transformVertices to do the rotation
 }
 
-function drawSunTime(times){
+function drawDayRing(times){
+  let r_ = RADII.arcMin;
+  let rm = RADII.arcMax;
+  let rd = RADII.dots;
   radT=[tToRad(times[0]),tToRad(times[1])];
   hhmm=[require("locale").time(times[0],1),require("locale").time(times[1],1)];
-  g.setColor(0.6,0.6,1);
-  Utils.fillArc(g,MX,MY,R+9,R+26,radT[0],radT[1]);
-  g.setColor(0,0,0.2);
-  Utils.fillArc(g,MX,MY,R+9,R+26,radT[1]-TAU,radT[0]);
-  g.setFont('6x8').setColor(0,1,1);
-  g.setFontAlign(-1,1,0).drawString(hhmm[0],MX-(R+26),MY+R+26);
-  g.setFontAlign(1,1,0).drawString(hhmm[1],MX+(R+26),MY+R+26);
-}
-
-function drawDial() {
-  let r=56;
-  let labels=['6P','12A','6A','12P'];
-  let offx=[-11,2,12,2];
-  let offy=[1,-11,1,14];
-  g.setFont('4x6').setFontAlign(0,0,0).setColor(0,1,1);
-  //draw dots & labels
-  let j =0;
+  g.setColor(COL.day);
+  Utils.fillArc(g,MX,MY,r_,rm,radT[0],radT[1]);
+  g.setColor(COL.night);
+  Utils.fillArc(g,MX,MY,r_,rm,radT[1]-TAU,radT[0]);
+  //write sunrise/sunset times
+  g.setFont('6x8').setColor(COL.stime);
+  g.setFontAlign(0,1,3).drawString(hhmm[0],MX-rm-2,MY);
+  g.setFontAlign(0,1,1).drawString(hhmm[1],MX+rm+2,MY);
+  //draw dots
+  let edges=[];
+  var isday=true;
+  let flag = false;
+  if (radT[1]>TAU){
+	  edges=[radT[1]-TAU,radT[0]];
+	  g.setColor(COL.ddots);
+	  isDay=true;
+  } else {
+	  edges=[radT[0],radT[1]];
+	  g.setColor(COL.ndots);
+	  isDay=false;
+  }
   for (var i=0;i<24;i++) {
     let a=i*TAU/24;
-    let ds = (i%3 == 0) ? 2 : 1;
-    let pX = MX+Math.cos(a)*r;
-    let pY = MY+Math.sin(a)*r;
-    g.fillCircle(pX,pY,ds);
-    if (i%6==0) {
-      //console.log(i,j);
-      g.drawString(labels[j],pX+offx[j],pY+offy[j]);
-      j++;
-    }
+	if (!flag && a>edges[0]){
+		//first cross
+		if (isDay){g.setColor(COL.ndots);}else{g.setColor(COL.ddots);}
+		flag = true;
+	} else if (flag && a>edges[1]){
+		//second cross
+		if (isDay){g.setColor(COL.ddots);}else{g.setColor(COL.ndots);}
+		flag = false;
+	}
+    let dotSize = (i%3 == 0) ? 2 : 1;
+    let pX = MX+Math.cos(a)*rd;
+    let pY = MY+Math.sin(a)*rd;
+    g.fillCircle(pX,pY,dotSize);
+  }
+  let labels=['6P','12A','6A','12P'];
+  let qX=[rd-9,2,11-rd,2];
+  let qY=[1,rd-10,1,12-rd];
+  g.setFont('4x6').setFontAlign(0,0,0).setColor(COL.ndots);
+  for (var j=0;j<4;j++){
+    g.drawString(labels[j],MX+qX[j],MY+qY[j]);	
   }
 }
+
 
 function drawHHMM(d) {
   var HM=require("locale").time(d, 1 /*omit seconds*/).split(":");
   //write digital time
-  g.setBgColor(0,0,0).setColor(1,1,1).setFontVector(46);
-  g.setFontAlign(1,1,0).drawString("    "+HM[0],MX,g.getHeight()+7,true);
-  g.setFontAlign(-1,1,0).drawString(HM[1]+"    ",MX+10,g.getHeight()+7,true);
+  g.setBgColor(0,0,0).setColor(1,1,1).setFontVector(45);
+  g.setFontAlign(1,1,0).drawString("    "+HM[0],MX-20,g.getHeight()+3);
+  g.setFontAlign(-1,1,0).drawString(HM[1]+"    ",MX+30,g.getHeight()+3);
   var meridian = require("locale").meridian(d);
 }
 
@@ -99,7 +136,6 @@ function moonShade(pos,mp) {
   s2 = isWaxing ? 1-2*k : 2*k-1;
   let tr =(pos.r+0.5);
   for (var i=0;i<pts;i++) {
-
     //down stroke on the outer shadow
     var t = i*Math.PI/(pts+1); //pts+1 so we leave the last point for the starting of going up
     let cirX = Math.sin(t)*tr;
@@ -124,13 +160,14 @@ function draw() {
   var shape = moonShade(M_POS,SunCalc.getMoonIllumination(d));
   var sTimes = SunCalc.getTimes(d,location.lat,location.lon);
   var daylight = [sTimes.sunrise,sTimes.sunset];
-  drawHHMM(d);
+  //clear time area
+  g.setColor(0).fillRect(0,176-45,176,176);
   drawMoon(shape);
-  drawSunTime(daylight);
-  drawDial();
+  drawDayRing(daylight);
+  drawHHMM(d);
   //draw pointer 
   //Maybe later make this an overlay that can be removed?? -avoid drawing so much every minute/second
-  g.setColor(1,0,0).drawImage(dial,MX+58*Math.cos(a),MY+58*Math.sin(a),{rotate:a});
+  g.setColor(COL.needle).drawImage(needle,MX+RADII.needle*Math.cos(a),MY+RADII.needle*Math.sin(a),{rotate:a});
 
 }
 
