@@ -118,6 +118,7 @@ Bangle.on("charging", function (charging) {
         drainedInterval = clearInterval(drainedInterval);
     if (charging)
         drainedInterval = setInterval(checkCharge, interval * 60 * 1000);
+    draw();
 });
 if (!keepStartup) {
     var storage = require("Storage");
