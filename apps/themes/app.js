@@ -138,10 +138,6 @@
         let settings = require("Storage").readJSON("setting.json", 1) || {};
         settings.theme = theme;
         require("Storage").write("setting.json", settings);
-
-        // Force screen redraw
-        g.clear();
-        Bangle.drawWidgets();
     };
 
     // Function to generate random color
@@ -163,23 +159,56 @@
         };
     };
 
-    // Create menu with theme options
-    const menu = {
-        '': { 'title': 'Themes' },
-    };
+    // Create array of theme entries for the scroller
+    const themeEntries = Object.keys(THEMES).map(name => [name, THEMES[name]]);
+    themeEntries.push(['Randomize', null]);
+    const ITEM_HEIGHT = 50; // Height for each theme item
 
-    // Add themes to menu
-    Object.keys(THEMES).forEach(themeName => {
-        menu[themeName] = () => {
-            setTheme(themeName);
-            E.showMenu(menu);
-        };
+    let scroller = E.showScroller({
+        h: ITEM_HEIGHT,
+        c: themeEntries.length,
+        draw: (idx, rect) => {
+            var entry = themeEntries[idx];
+            var name = entry[0];
+            var theme = entry[1];
+
+            // Draw theme name
+            g.setColor(g.theme.fg);
+            g.setFontAlign(-1, -1, 0);
+            g.setFont('12x20');
+            g.drawString(name, rect.x + 5, rect.y + 5);
+
+            // Draw color preview bars
+            const barWidth = 10;
+            const barHeight = 20;
+            const colors = theme ? [
+                theme.fg, theme.bg, theme.fg2,
+                theme.bg2, theme.fgH, theme.bgH
+            ] : ['#F00', '#FF0', '#0F0', '#0FF', '#00F', '#F0F'];
+
+            const totalWidth = barWidth * colors.length;
+            const startX = rect.x + rect.w - totalWidth - 10;
+            const startY = rect.y + (rect.h - barHeight) / 2;
+
+            colors.forEach((color, i) => {
+                g.setColor(theme ? color : cl(color));
+                g.fillRect(
+                    startX + (i * barWidth),
+                    startY,
+                    startX + ((i + 1) * barWidth),
+                    startY + barHeight
+                );
+            });
+        },
+        select: (idx) => {
+            var name = themeEntries[idx][0];
+            setTheme(name === 'Randomize' ? createRandomTheme() : name);
+
+            // Redraw the scroller to reflect the new theme
+            g.setBgColor(g.theme.bg);
+            g.setColor(g.theme.fg);
+            g.clear();
+            scroller.draw();
+        }
     });
-    menu['Randomize'] = () => {
-        setTheme(createRandomTheme());
-        E.showMenu(menu);
-    };
-
-    // Show the menu
-    E.showMenu(menu);
 }
