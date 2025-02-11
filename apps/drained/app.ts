@@ -151,6 +151,7 @@ Bangle.on("charging", charging => {
     drainedInterval = clearInterval(drainedInterval) as undefined;
   if(charging)
     drainedInterval = setInterval(checkCharge, interval * 60 * 1000);
+  draw(); // redraw to update charging status on screen
 });
 
 if(!keepStartup){
