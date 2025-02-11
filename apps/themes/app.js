@@ -151,20 +151,21 @@
         return {
             fg: cl("#000"), // black for readability
             bg: bgColor,
-            fg2: cl("#666"), // gray for contrast
-            bg2: randomColor(),
+            fg2: randomColor(), // random secondary foreground
+            bg2: randomColor(), // random secondary background
             fgH: cl("#FFF"), // white for highlights
-            bgH: randomColor(),
+            bgH: randomColor(), // random highlight background
             dark: false
         };
     };
 
     // Create array of theme entries for the scroller
     const themeEntries = Object.keys(THEMES).map(name => [name, THEMES[name]]);
+    let randomTheme = null;  // Store the current random theme
     themeEntries.push(['Randomize', null]);
     const ITEM_HEIGHT = 50; // Height for each theme item
 
-    E.showScroller({
+    let scroller = E.showScroller({
         h: ITEM_HEIGHT,
         c: themeEntries.length,
         draw: (idx, rect) => {
@@ -172,11 +173,17 @@
             var name = entry[0];
             var theme = entry[1];
 
-            // Fill background with theme color
-            if (theme) {
-                g.setColor(theme.bg);
-                g.fillRect(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h);
+            // For Randomize option, use the stored random theme if available
+            if (name === 'Randomize') {
+                if (!randomTheme) {
+                    randomTheme = createRandomTheme();
+                }
+                theme = randomTheme;
             }
+
+            // Fill background with theme color
+            g.setColor(theme ? theme.bg : g.theme.bg);
+            g.fillRect(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h);
 
             // Draw theme name with theme's foreground color
             g.setColor(theme ? theme.fg : g.theme.fg);
@@ -187,19 +194,19 @@
             // Draw color preview bars
             const barWidth = 16;
             const barHeight = 20;
-            const colors = theme ? [
+            const colors = [
                 theme.fg2,  // Secondary Foreground
                 theme.bg2,  // Secondary Background
                 theme.fgH,  // Highlight Foreground
                 theme.bgH   // Highlight Background
-            ] : ['#F00', '#FF0', '#0F0', '#0FF', '#00F', '#F0F'];
+            ];
 
             const totalWidth = barWidth * colors.length;
             const startX = rect.x + rect.w - totalWidth - 10;
             const startY = rect.y + (rect.h - barHeight) / 2;
 
             colors.forEach((color, i) => {
-                g.setColor(theme ? color : cl(color));
+                g.setColor(color);
                 g.fillRect(
                     startX + (i * barWidth),
                     startY,
@@ -210,10 +217,14 @@
         },
         select: (idx) => {
             var name = themeEntries[idx][0];
-            setTheme(name === 'Randomize' ? createRandomTheme() : name);
+            if (name === 'Randomize') {
+                randomTheme = createRandomTheme();
+                setTheme(randomTheme);
+            } else {
+                setTheme(name);
+            }
             // Force a redraw to update all theme colors
-            g.clear();
-            E.showScroller();
+            scroller.draw();
         }
     });
 }
