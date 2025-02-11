@@ -164,7 +164,7 @@
     themeEntries.push(['Randomize', null]);
     const ITEM_HEIGHT = 50; // Height for each theme item
 
-    let scroller = E.showScroller({
+    E.showScroller({
         h: ITEM_HEIGHT,
         c: themeEntries.length,
         draw: (idx, rect) => {
@@ -172,8 +172,14 @@
             var name = entry[0];
             var theme = entry[1];
 
-            // Draw theme name
-            g.setColor(g.theme.fg);
+            // Fill background with theme color
+            if (theme) {
+                g.setColor(theme.bg);
+                g.fillRect(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h);
+            }
+
+            // Draw theme name with theme's foreground color
+            g.setColor(theme ? theme.fg : g.theme.fg);
             g.setFontAlign(-1, -1, 0);
             g.setFont('12x20');
             g.drawString(name, rect.x + 5, rect.y + 5);
@@ -182,8 +188,10 @@
             const barWidth = 10;
             const barHeight = 20;
             const colors = theme ? [
-                theme.fg, theme.bg, theme.fg2,
-                theme.bg2, theme.fgH, theme.bgH
+                theme.fg2,  // Secondary Foreground
+                theme.bg2,  // Secondary Background
+                theme.fgH,  // Highlight Foreground
+                theme.bgH   // Highlight Background
             ] : ['#F00', '#FF0', '#0F0', '#0FF', '#00F', '#F0F'];
 
             const totalWidth = barWidth * colors.length;
@@ -203,12 +211,9 @@
         select: (idx) => {
             var name = themeEntries[idx][0];
             setTheme(name === 'Randomize' ? createRandomTheme() : name);
-
-            // Redraw the scroller to reflect the new theme
-            g.setBgColor(g.theme.bg);
-            g.setColor(g.theme.fg);
+            // Force a redraw to update all theme colors
             g.clear();
-            scroller.draw();
+            E.showScroller();
         }
     });
 }
