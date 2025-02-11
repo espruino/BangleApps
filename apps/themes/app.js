@@ -185,7 +185,7 @@
             g.drawString(name, rect.x + 5, rect.y + 5);
 
             // Draw color preview bars
-            const barWidth = 10;
+            const barWidth = 16;
             const barHeight = 20;
             const colors = theme ? [
                 theme.fg2,  // Secondary Foreground
