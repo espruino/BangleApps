@@ -181,12 +181,18 @@
                 theme = randomTheme;
             }
 
+            // Check if this is the currently selected theme
+            const isSelected = theme && (
+                theme === g.theme ||
+                (name === 'Randomize' && randomTheme === g.theme)
+            );
+
             // Fill background with theme color
-            g.setColor(theme ? theme.bg : g.theme.bg);
+            g.setColor(theme ? (isSelected ? theme.bgH : theme.bg) : g.theme.bg);
             g.fillRect(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h);
 
             // Draw theme name with theme's foreground color
-            g.setColor(theme ? theme.fg : g.theme.fg);
+            g.setColor(theme ? (isSelected ? theme.fgH : theme.fg) : g.theme.fg);
             g.setFontAlign(-1, -1, 0);
             g.setFont('12x20');
             g.drawString(name, rect.x + 5, rect.y + 5);
@@ -225,6 +231,7 @@
             }
             // Force a redraw to update all theme colors
             scroller.draw();
+            Bangle.buzz(50);
         }
     });
 }
