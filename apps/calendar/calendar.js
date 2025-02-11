@@ -60,6 +60,12 @@ const loadEvents = () => {
     date.setSeconds(time.s);
     return {date: date, msg: a.msg, type: "e"};
   }));
+  // all events synchronized from Gadgetbridge
+  events = events.concat((require("Storage").readJSON("android.calendar.json",1) || []).map(a => {
+    // timestamp is in seconds, Date requires milliseconds
+    const date = new Date(a.timestamp * 1000);
+    return {date: date, msg: a.title, type: "e"};
+  }));
 };
 
 const loadSettings = () => {
@@ -221,8 +227,8 @@ const drawCalendar = function(date) {
   }, []);
   let i = 0;
   g.setFont("8x12", fontSize);
-  for (y = 0; y < rowN - 1; y++) {
-    for (x = 0; x < colN; x++) {
+  for (let y = 0; y < rowN - 1; y++) {
+    for (let x = 0; x < colN; x++) {
       i++;
       const day = days[i];
       const curMonth = day < 15 ? month+1 : day < 50 ? month-1 : month;

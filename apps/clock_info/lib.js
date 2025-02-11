@@ -283,7 +283,7 @@ exports.addInteractive = function(menu, options) {
         //in the worst case we come back to 0
       } while(menu[options.menuA].items.length==0);
       // When we change, ensure we don't display the same thing as another clockinfo if we can avoid it
-      while ((options.menuB < menu[options.menuA].items.length) &&
+      while ((options.menuB < menu[options.menuA].items.length-1) &&
              exports.clockInfos.some(m => (m!=options) && m.menuA==options.menuA && m.menuB==options.menuB))
           options.menuB++;
     }
