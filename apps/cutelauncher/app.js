@@ -55,13 +55,13 @@
             let icon = apps[idx].icon;
             let iconWidth = icon.width || 48;
             let iconHeight = icon.height || 48;
-            let maxSize = 48;
+            let maxSize = 56;
             let scale = Math.min(maxSize / iconWidth, maxSize / iconHeight);
             let scaledHeight = Math.floor(iconHeight * scale);
 
             // Center the icon horizontally
-            let iconX = rect.x + (rect.w - iconWidth) / 2;
-            g.drawImage(icon, iconX, rect.y);
+            let iconX = rect.x + (rect.w - maxSize) / 2;
+            g.drawImage(icon, iconX, rect.y, { scale: scale });
 
             // Draw app name
             let text = g.wrapString(apps[idx].name, rect.w).join('\n');
