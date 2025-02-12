@@ -210,5 +210,5 @@ widgets know if they're being loaded into a clock app or not */
 Bangle.setUI("clock");
 // Load widgets
 Bangle.loadWidgets();
-g.setTheme({ bg: "#000" });
+g.setTheme({fg:"#fff", bg:"#000", fg2:"#fff", bg2:"#004", fgH:"#fff", bgH:"#00f", dark:true });
 Bangle.drawWidgets();
