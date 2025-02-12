@@ -1,0 +1,128 @@
+{
+    "Light": {
+        "fg": "#000",
+        "bg": "#FFF",
+        "fg2": "#555",
+        "bg2": "#AAA",
+        "fgH": "#FFF",
+        "bgH": "#000",
+        "dark": false
+    },
+    "Dark": {
+        "fg": "#FFF",
+        "bg": "#000",
+        "fg2": "#AAA",
+        "bg2": "#222",
+        "fgH": "#000",
+        "bgH": "#FFF",
+        "dark": true
+    },
+    "Ruby": {
+        "fg": "#000",
+        "bg": "#F00",
+        "fg2": "#800",
+        "bg2": "#F88",
+        "fgH": "#FFF",
+        "bgH": "#800",
+        "dark": false
+    },
+    "Ocean": {
+        "fg": "#FFF",
+        "bg": "#00F",
+        "fg2": "#99F",
+        "bg2": "#008",
+        "fgH": "#FFF",
+        "bgH": "#44F",
+        "dark": true
+    },
+    "Forest": {
+        "fg": "#000",
+        "bg": "#0F0",
+        "fg2": "#080",
+        "bg2": "#8F8",
+        "fgH": "#FFF",
+        "bgH": "#080",
+        "dark": false
+    },
+    "Royal": {
+        "fg": "#FFF",
+        "bg": "#808",
+        "fg2": "#F8F",
+        "bg2": "#404",
+        "fgH": "#FFF",
+        "bgH": "#C0C",
+        "dark": true
+    },
+    "Sunset": {
+        "fg": "#000",
+        "bg": "#F80",
+        "fg2": "#840",
+        "bg2": "#FC8",
+        "fgH": "#FFF",
+        "bgH": "#F60",
+        "dark": false
+    },
+    "Bubblegum": {
+        "fg": "#000",
+        "bg": "#F8C",
+        "fg2": "#C48",
+        "bg2": "#FAE",
+        "fgH": "#FFF",
+        "bgH": "#F68",
+        "dark": false
+    },
+    "Arctic": {
+        "fg": "#000",
+        "bg": "#0FF",
+        "fg2": "#088",
+        "bg2": "#8FF",
+        "fgH": "#FFF",
+        "bgH": "#0CC",
+        "dark": false
+    },
+    "Sunflower": {
+        "fg": "#000",
+        "bg": "#FF0",
+        "fg2": "#880",
+        "bg2": "#FF8",
+        "fgH": "#000",
+        "bgH": "#CC0",
+        "dark": false
+    },
+    "Smoke": {
+        "fg": "#000",
+        "bg": "#888",
+        "fg2": "#444",
+        "bg2": "#CCC",
+        "fgH": "#FFF",
+        "bgH": "#666",
+        "dark": false
+    },
+    "Espresso": {
+        "fg": "#FFF",
+        "bg": "#842",
+        "fg2": "#CA8",
+        "bg2": "#421",
+        "fgH": "#FFF",
+        "bgH": "#963",
+        "dark": true
+    },
+    "Matrix": {
+        "fg": "#0F0",
+        "bg": "#000",
+        "fg2": "#0A0",
+        "bg2": "#010",
+        "fgH": "#FFF",
+        "bgH": "#0F0",
+        "dark": true
+    },
+    "Peach": {
+        "fg": "#000",
+        "bg": "#E6A08F",
+        "fg2": "#B85F47",
+        "bg2": "#E6B3A3",
+        "fgH": "#FFF",
+        "bgH": "#E67F66",
+        "dark": false
+    }
+}

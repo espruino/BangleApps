@@ -1,133 +1,21 @@
 {// List of available themes
     let cl = (x) => { return g.setColor(x).getColor(); };
-    const THEMES = {
-        "Light": {
-            fg: cl("#000"), // black
-            bg: cl("#FFF"), // white
-            fg2: cl("#555"), // gray 
-            bg2: cl("#AAA"), // light gray
-            fgH: cl("#FFF"), // white
-            bgH: cl("#000"), // black
-            dark: false
-        },
-        "Dark": {
-            fg: cl("#FFF"), // white
-            bg: cl("#000"), // black
-            fg2: cl("#AAA"), // light gray
-            bg2: cl("#222"), // dark gray
-            fgH: cl("#000"), // black
-            bgH: cl("#FFF"), // white
-            dark: true
-        },
-        "Ruby": {
-            fg: cl("#000"), // black
-            bg: cl("#F00"), // red
-            fg2: cl("#800"), // dark red
-            bg2: cl("#F88"), // light red
-            fgH: cl("#FFF"), // white
-            bgH: cl("#800"), // dark red
-            dark: false
-        },
-        "Ocean": {
-            fg: cl("#FFF"), // white
-            bg: cl("#00F"), // blue
-            fg2: cl("#99F"), // light blue
-            bg2: cl("#008"), // dark blue
-            fgH: cl("#FFF"), // white
-            bgH: cl("#44F"), // medium blue
-            dark: true
-        },
-        "Forest": {
-            fg: cl("#000"), // black
-            bg: cl("#0F0"), // green
-            fg2: cl("#080"), // dark green
-            bg2: cl("#8F8"), // light green
-            fgH: cl("#FFF"), // white
-            bgH: cl("#080"), // dark green
-            dark: false
-        },
-        "Royal": {
-            fg: cl("#FFF"), // white
-            bg: cl("#808"), // purple
-            fg2: cl("#F8F"), // light purple
-            bg2: cl("#404"), // dark purple
-            fgH: cl("#FFF"), // white
-            bgH: cl("#C0C"), // bright purple
-            dark: true
-        },
-        "Sunset": {
-            fg: cl("#000"), // black
-            bg: cl("#F80"), // orange
-            fg2: cl("#840"), // dark orange
-            bg2: cl("#FC8"), // light orange
-            fgH: cl("#FFF"), // white
-            bgH: cl("#F60"), // bright orange
-            dark: false
-        },
-        "Bubblegum": {
-            fg: cl("#000"), // black
-            bg: cl("#F8C"), // pink
-            fg2: cl("#C48"), // dark pink
-            bg2: cl("#FAE"), // light pink
-            fgH: cl("#FFF"), // white
-            bgH: cl("#F68"), // bright pink
-            dark: false
-        },
-        "Arctic": {
-            fg: cl("#000"), // black
-            bg: cl("#0FF"), // cyan
-            fg2: cl("#088"), // dark cyan
-            bg2: cl("#8FF"), // light cyan
-            fgH: cl("#FFF"), // white
-            bgH: cl("#0CC"), // bright cyan
-            dark: false
-        },
-        "Sunflower": {
-            fg: cl("#000"), // black
-            bg: cl("#FF0"), // yellow
-            fg2: cl("#880"), // dark yellow
-            bg2: cl("#FF8"), // light yellow
-            fgH: cl("#000"), // black
-            bgH: cl("#CC0"), // bright yellow
-            dark: false
-        },
-        "Smoke": {
-            fg: cl("#000"), // black
-            bg: cl("#888"), // medium gray
-            fg2: cl("#444"), // dark gray
-            bg2: cl("#CCC"), // light gray
-            fgH: cl("#FFF"), // white
-            bgH: cl("#666"), // gray
-            dark: false
-        },
-        "Espresso": {
-            fg: cl("#FFF"), // white
-            bg: cl("#842"), // brown
-            fg2: cl("#CA8"), // light brown
-            bg2: cl("#421"), // dark brown
-            fgH: cl("#FFF"), // white
-            bgH: cl("#963"), // medium brown
-            dark: true
-        },
-        "Matrix": {
-            fg: cl("#0F0"), // bright green
-            bg: cl("#000"), // black
-            fg2: cl("#0A0"), // medium green
-            bg2: cl("#010"), // very dark green
-            fgH: cl("#FFF"), // white
-            bgH: cl("#0F0"), // bright green
-            dark: true
-        },
-        "Peach": {
-            fg: cl("#000"), // black
-            bg: cl("#E6A08F"), // darker soft peach
-            fg2: cl("#B85F47"), // darker peachy coral
-            bg2: cl("#E6B3A3"), // darker creamy peach
-            fgH: cl("#FFF"), // white
-            bgH: cl("#E67F66"), // darker coral peach
-            dark: false
-        }
-    };
+    const THEMES_DATA = require("Storage").readJSON("themes.json");
+
+    // Convert hex colors to graphics context colors
+    const THEMES = {};
+    Object.keys(THEMES_DATA).forEach(themeName => {
+        const theme = THEMES_DATA[themeName];
+        THEMES[themeName] = {
+            fg: cl(theme.fg),
+            bg: cl(theme.bg),
+            fg2: cl(theme.fg2),
+            bg2: cl(theme.bg2),
+            fgH: cl(theme.fgH),
+            bgH: cl(theme.bgH),
+            dark: theme.dark
+        };
+    });
 
     // Function to apply the selected theme
     let setTheme = (themeNameOrObject) => {
