@@ -134,7 +134,7 @@
         const theme = typeof themeNameOrObject === 'string' ? THEMES[themeNameOrObject] : themeNameOrObject;
         if (!theme) return;
 
-        g.theme = theme;
+        g.setTheme(theme);
         let settings = require("Storage").readJSON("setting.json", 1) || {};
         settings.theme = theme;
         require("Storage").write("setting.json", settings);
@@ -151,87 +151,31 @@
         return {
             fg: cl("#000"), // black for readability
             bg: bgColor,
-            fg2: randomColor(), // random secondary foreground
-            bg2: randomColor(), // random secondary background
+            fg2: cl("#666"), // gray for contrast
+            bg2: randomColor(),
             fgH: cl("#FFF"), // white for highlights
-            bgH: randomColor(), // random highlight background
+            bgH: randomColor(),
             dark: false
         };
     };
 
-    // Create array of theme entries for the scroller
-    const themeEntries = Object.keys(THEMES).map(name => [name, THEMES[name]]);
-    let randomTheme = null;  // Store the current random theme
-    themeEntries.push(['Randomize', null]);
-    const ITEM_HEIGHT = 50; // Height for each theme item
+    // Create menu with theme options
+    const menu = {
+        '': { 'title': 'Themes' },
+    };
 
-    let scroller = E.showScroller({
-        h: ITEM_HEIGHT,
-        c: themeEntries.length,
-        draw: (idx, rect) => {
-            var entry = themeEntries[idx];
-            var name = entry[0];
-            var theme = entry[1];
-
-            // For Randomize option, use the stored random theme if available
-            if (name === 'Randomize') {
-                if (!randomTheme) {
-                    randomTheme = createRandomTheme();
-                }
-                theme = randomTheme;
-            }
-
-            // Check if this is the currently selected theme
-            const isSelected = theme && (
-                theme === g.theme ||
-                (name === 'Randomize' && randomTheme === g.theme)
-            );
-
-            // Fill background with theme color
-            g.setColor(theme ? (isSelected ? theme.bgH : theme.bg) : g.theme.bg);
-            g.fillRect(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h);
-
-            // Draw theme name with theme's foreground color
-            g.setColor(theme ? (isSelected ? theme.fgH : theme.fg) : g.theme.fg);
-            g.setFontAlign(-1, -1, 0);
-            g.setFont('12x20');
-            g.drawString(name, rect.x + 5, rect.y + 5);
-
-            // Draw color preview bars
-            const barWidth = 16;
-            const barHeight = 20;
-            const colors = [
-                theme.fg2,  // Secondary Foreground
-                theme.bg2,  // Secondary Background
-                theme.fgH,  // Highlight Foreground
-                theme.bgH   // Highlight Background
-            ];
-
-            const totalWidth = barWidth * colors.length;
-            const startX = rect.x + rect.w - totalWidth - 10;
-            const startY = rect.y + (rect.h - barHeight) / 2;
-
-            colors.forEach((color, i) => {
-                g.setColor(color);
-                g.fillRect(
-                    startX + (i * barWidth),
-                    startY,
-                    startX + ((i + 1) * barWidth),
-                    startY + barHeight
-                );
-            });
-        },
-        select: (idx) => {
-            var name = themeEntries[idx][0];
-            if (name === 'Randomize') {
-                randomTheme = createRandomTheme();
-                setTheme(randomTheme);
-            } else {
-                setTheme(name);
-            }
-            // Force a redraw to update all theme colors
-            scroller.draw();
-            Bangle.buzz(50);
-        }
+    // Add themes to menu
+    Object.keys(THEMES).forEach(themeName => {
+        menu[themeName] = () => {
+            setTheme(themeName);
+            E.showMenu(menu);
+        };
     });
+    menu['Randomize'] = () => {
+        setTheme(createRandomTheme());
+        E.showMenu(menu);
+    };
+
+    // Show the menu
+    E.showMenu(menu);
 }
