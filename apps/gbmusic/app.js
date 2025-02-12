@@ -91,7 +91,6 @@ function rScroller(l) {
   const w = g.stringWidth(l.label)+40,
     y = l.y+l.h/2;
   l.offset = l.offset%w;
-  //g.setClipRect(l.x, l.y, l.x+l.w-1, l.y+l.h-1)
   g.setColor(l.col).setBgColor(l.bgCol) // need to set colors: iScroll calls this function outside Layout
     .setFontAlign(-1, 0) // left center
     .clearRect(l.x, l.y, l.x+l.w-1, l.y+l.h-1)
@@ -129,58 +128,6 @@ function rInfo(l) {
     .drawString(l.label, l.x+l.w/2, l.y);
 }
 
-// *** Unused Function ***
-// // /**
-// //  * Render icon
-// //  * @param l
-// //  */
-// // function rIcon(l) {
-// //   const x2 = l.x+l.w-1,
-// //     y2 = l.y+l.h-1;
-// //   switch(l.icon) {
-// //     case "pause": {
-// //       const w13 = l.w/3;
-// //       g.drawRect(l.x, l.y, l.x+w13, y2);
-// //       g.drawRect(l.x+l.w-w13, l.y, x2, y2);
-// //       break;
-// //     }
-// //     case "play": {
-// //       g.drawPoly([
-// //         l.x, l.y,
-// //         x2, l.y+l.h/2,
-// //         l.x, y2,
-// //       ], true);
-// //       break;
-// //     }
-// //     case "previous": {
-// //       const w15 = l.w*1/5;
-// //       g.drawPoly([
-// //         x2, l.y,
-// //         l.x+w15, l.y+l.h/2,
-// //         x2, y2,
-// //       ], true);
-// //       g.drawRect(l.x, l.y, l.x+w15, y2);
-// //       break;
-// //     }
-// //     case "next": {
-// //       const w45 = l.w*4/5;
-// //       g.drawPoly([
-// //         l.x, l.y,
-// //         l.x+w45, l.y+l.h/2,
-// //         l.x, y2,
-// //       ], true);
-// //       g.drawRect(l.x+w45, l.y, x2, y2);
-// //       break;
-// //     }
-// //     default: { // red X
-// //       console.log(`Unknown icon: ${l.icon}`);
-// //       g.setColor("#f00")
-// //         .drawRect(l.x, l.y, x2, y2)
-// //         .drawLine(l.x, l.y, x2, y2)
-// //         .drawLine(l.x, y2, x2, l.y);
-// //     }
-// //   }
-// // }
 
 let layout;
 function makeUI() {
@@ -492,7 +439,6 @@ function startLCDWatch() {
   Bangle.on("lcdPower", (on) => {
     if (on) {
       // redraw and resume scrolling
-      //tick(); // Not sure what this function was; currently undefined
       layout.render();
       fadeOut();
       if (layout.title.offset!==null) { // Making an assumption about what offset.offset was supposed to be
