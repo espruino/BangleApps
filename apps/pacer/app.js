@@ -46,12 +46,12 @@ var skip_max = 0;
 var force_write = true;
 var show_lap = false;
 var lcd_on = true;
+var drawSats = false;
 var dist = 0.0;
 var pdist = 0.0;
 var oldDist = 0.0;
 var oldLat = -1;
 var oldLon = -1;
-var oldTime = -1;
 var cadence = 0;
 var pace = 0;
 var ppace = 0;
@@ -176,12 +176,10 @@ function saveGPS(fix) {
         doPace(newTime,dist);
         oldLat = newLat;
         oldLon = newLon;
-        oldTime = newTime;
       }
     } else {
       oldLat = newLat;
       oldLon = newLon;
-      oldTime = newTime;
     }
     if (recording && cfg.record && (force_write || skip_ctr == 0)) {
       fp.write([gps.time.getTime(),gps.lat.toFixed(5),gps.lon.toFixed(5),gps.alt].join(",")+"\n");
@@ -540,7 +538,6 @@ function pause(e) {
   if (!show_lap)
     drawTime();
   drawStart();
-  oldTime = -1;
   if (!isNaN(gps.time) && !isNaN(gps.lat) && !isNaN(gps.lon) && !isNaN(gps.alt) && cfg.record && (last_time != gps.time))
     fp.write([gps.time.getTime(),gps.lat.toFixed(5),gps.lon.toFixed(5),gps.alt].join(",")+"\n");
   Bangle.buzz();
