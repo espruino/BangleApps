@@ -6,11 +6,13 @@ This uses the myLocation app to get your latitude and longitude for proper dayli
 
 ## Future Development
 Feature roadmap:
- - [x]0.01 Fix blocking widgets
- - [x]0.03 Day and Night different color markers
- - [ ]0.05 add Day of week and month display
- - [ ]0.06 Seconds display
- - [ ]0.07 Color Themes (and settings/options)
- - [ ]0.08 Moon display angle represents how it looks in the sky
- - [ ]0.10 custom/bigger/fitted time digits 
- - [ ]0.20 clockinfo support?
+ - [x] 0.01 Fix blocking widgets
+ - [x] 0.03 Day and Night different color markers
+ - [ ] 0.05 add Day of week and month display
+ - [ ] 0.06 Seconds display
+ - [ ] 0.07 Color Themes (and settings/options)
+ - [ ] 0.08 Moon display angle represents how it looks in the sky
+ - [ ] 0.10 custom/bigger/fitted time digits 
+ - [ ] 0.20 clockinfo support?
+ - [ ] 0.30 Tap/swipe actions?
+ 
