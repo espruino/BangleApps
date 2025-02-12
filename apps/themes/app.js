@@ -56,14 +56,14 @@
     Object.keys(THEMES).forEach(themeName => {
         menu[themeName] = () => {
             setTheme(themeName);
-            E.showMenu(menu);
+            menu_ui.draw();
         };
     });
     menu['Randomize'] = () => {
         setTheme(createRandomTheme());
-        E.showMenu(menu);
+        menu_ui.draw();
     };
 
     // Show the menu
-    E.showMenu(menu);
+    let menu_ui = E.showMenu(menu);
 }
