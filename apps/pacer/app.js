@@ -46,7 +46,7 @@ var skip_max = 0;
 var force_write = true;
 var show_lap = false;
 var lcd_on = true;
-var drawSats = false;
+var drawSats = true;
 var dist = 0.0;
 var pdist = 0.0;
 var oldDist = 0.0;
@@ -507,21 +507,22 @@ function mainLoop() {
 function restart(e) {
   if (bangle2 && (e.time - e.lastTime > 0.5)) {
     finish();
+  } else {
+    g.reset();
+    setColours();
+    paused_time += (Date.now() - begin_pause);
+    pace = 0;
+    drawPause();
+    oldDist = dist;
+    skip_ctr = 0;
+    force_write = true;
+    recording = true;
+    Bangle.buzz();
+    if (!bangle2)
+      setWatch(pause, BTN2);
+    else
+      setWatch(pause, BTN1, { edge: 'falling' });
   }
-  g.reset();
-  setColours();
-  paused_time += (Date.now() - begin_pause);
-  pace = 0;
-  drawPause();
-  oldDist = dist;
-  skip_ctr = 0;
-  force_write = true;
-  recording = true;
-  Bangle.buzz();
-  if (!bangle2)
-    setWatch(pause, BTN2);
-  else
-    setWatch(pause, BTN1, { edge: 'falling' });
 }
 
 function pause(e) {
