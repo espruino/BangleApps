@@ -4,22 +4,22 @@ let location;
 var Utils = require("graphics_utils");
 var SunCalc = require("suncalc");
 var RADII = {
-	moon:   40,
-	arcMin: 48,
-	arcMax: 63,
-	dots:   55,
-	needle: 54,
+    moon:   40,
+    arcMin: 48,
+    arcMax: 63,
+    dots:   55,
+    needle: 54,
 };
 var COL ={
-	moon:  65535, // 
-	txture:33792, // 0.5 ,0.5,0
-	shadow: 8196, // .125,0,   .125
-	day:   40159, //0.6,  0.6,1
-	night:     6, //  0,  0,  0.2
-	ndots:  2047, //  0,  1,  1  cyan
-	ddots:     0,
-	needle:63488,  //  1,  0,  0  red
-	stime:  2047
+    moon:  65535, // 
+    txture:33792, // 0.5 ,0.5,0
+    shadow: 8196, // .125,0,   .125
+    day:   40159, //0.6,  0.6,1
+    night:     6, //  0,  0,  0.2
+    ndots:  2047, //  0,  1,  1  cyan
+    ddots:     0,
+    needle:63488,  //  1,  0,  0  red
+    stime:  2047
 };
 const TAU = 2.0*Math.PI;
 const MX=g.getWidth()/2,MY=24+3+RADII.arcMax;
@@ -60,8 +60,8 @@ function drawDayRing(times){
   let r_ = RADII.arcMin;
   let rm = RADII.arcMax;
   let rd = RADII.dots;
-  radT=[tToRad(times[0]),tToRad(times[1])];
-  hhmm=[require("locale").time(times[0],1),require("locale").time(times[1],1)];
+  let radT=[tToRad(times[0]),tToRad(times[1])];
+  let hhmm=[require("locale").time(times[0],1),require("locale").time(times[1],1)];
   g.setColor(COL.day);
   Utils.fillArc(g,MX,MY,r_,rm,radT[0],radT[1]);
   g.setColor(COL.night);
@@ -72,28 +72,28 @@ function drawDayRing(times){
   g.setFontAlign(0,1,1).drawString(hhmm[1],MX+rm+2,MY);
   //draw dots
   let edges=[];
-  var isday=true;
+  boolean isDay;
   let flag = false;
   if (radT[1]>TAU){
-	  edges=[radT[1]-TAU,radT[0]];
-	  g.setColor(COL.ddots);
-	  isDay=true;
+      edges=[radT[1]-TAU,radT[0]];
+      g.setColor(COL.ddots);
+      isDay=true;
   } else {
-	  edges=[radT[0],radT[1]];
-	  g.setColor(COL.ndots);
-	  isDay=false;
+      edges=[radT[0],radT[1]];
+      g.setColor(COL.ndots);
+      isDay=false;
   }
   for (var i=0;i<24;i++) {
     let a=i*TAU/24;
-	if (!flag && a>edges[0]){
-		//first cross
-		if (isDay){g.setColor(COL.ndots);}else{g.setColor(COL.ddots);}
-		flag = true;
-	} else if (flag && a>edges[1]){
-		//second cross
-		if (isDay){g.setColor(COL.ddots);}else{g.setColor(COL.ndots);}
-		flag = false;
-	}
+    if (!flag && a>edges[0]){
+        //first cross
+        if (isDay){g.setColor(COL.ndots);}else{g.setColor(COL.ddots);}
+        flag = true;
+    } else if (flag && a>edges[1]){
+        //second cross
+        if (isDay){g.setColor(COL.ddots);}else{g.setColor(COL.ndots);}
+        flag = false;
+    }
     let dotSize = (i%3 == 0) ? 2 : 1;
     let pX = MX+Math.cos(a)*rd;
     let pY = MY+Math.sin(a)*rd;
@@ -104,7 +104,7 @@ function drawDayRing(times){
   let qY=[1,rd-10,1,12-rd];
   g.setFont('4x6').setFontAlign(0,0,0).setColor(COL.ndots);
   for (var j=0;j<4;j++){
-    g.drawString(labels[j],MX+qX[j],MY+qY[j]);	
+    g.drawString(labels[j],MX+qX[j],MY+qY[j]);  
   }
 }
 
@@ -115,7 +115,8 @@ function drawHHMM(d) {
   g.setBgColor(0,0,0).setColor(1,1,1).setFontVector(45);
   g.setFontAlign(1,1,0).drawString("    "+HM[0],MX-20,g.getHeight()+3);
   g.setFontAlign(-1,1,0).drawString(HM[1]+"    ",MX+30,g.getHeight()+3);
-  var meridian = require("locale").meridian(d);
+  // TODO: use the meridian text AM/PM or blank for 24 hr.
+  // var meridian = require("locale").meridian(d);
 }
 
 function moonShade(pos,mp) {
