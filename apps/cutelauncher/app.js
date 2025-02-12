@@ -42,7 +42,7 @@
     Bangle.drawWidgets = () => { };
     Bangle.loadWidgets = () => { };
 
-    const ITEM_HEIGHT = 120;
+    const ITEM_HEIGHT = 110;
 
     E.showScroller({
         h: ITEM_HEIGHT,
@@ -55,7 +55,7 @@
             let icon = apps[idx].icon;
             let iconWidth = icon.width || 48;
             let iconHeight = icon.height || 48;
-            let maxSize = 90;
+            let maxSize = 80;
             let scale = Math.min(maxSize / iconWidth, maxSize / iconHeight);
             let scaledHeight = Math.floor(iconHeight * scale);
 
