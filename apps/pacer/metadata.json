@@ -8,6 +8,7 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "interface": "interface.html",
+  "screenshots": [{"url":"screenshot.png"}],
   "storage": [
     {"name":"pacer.app.js","url":"app.js"},
     {"name":"pacer.img","url":"app-icon.js","evaluate":true}
