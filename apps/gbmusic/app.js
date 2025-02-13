@@ -367,7 +367,7 @@ function handleButton2Press() {
 let tCommand = {};
 /**
  * Send command and highlight corresponding control
- * @param {string} command - "play"/"pause"/"next"/"previous"/"volumeup"/"volumedown"
+ * @param {"play"|"pause"|"playpause"|"next"|"previous"|"volumeup"|"volumedown"} command
  */
 function sendCommand(command) {
   Bluetooth.println("");
