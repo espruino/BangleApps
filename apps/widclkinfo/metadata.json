@@ -1,0 +1,14 @@
+{ "id": "widclkinfo",
+  "name": "Clock Info Widget",
+  "version":"0.04",
+  "description": "Use 'Clock Info' in the Widget bar. Tap on the widget to select, then drag up/down/left/right to choose what information is displayed.",
+  "icon": "widget.png",
+  "screenshots" : [ { "url":"screenshot.png" }],
+  "type": "widget",
+  "tags": "widget,clkinfo",
+  "dependencies" : { "clock_info":"module" },
+  "supports" : ["BANGLEJS2"],
+  "storage": [
+    {"name":"widclkinfo.wid.js","url":"widget.js"}
+  ]
+}

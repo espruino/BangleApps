@@ -8,7 +8,7 @@
 // - 0/undefined --> Sunday
 // - 1           --> Monday
 // but you can start the week from any day if you need it.
-// 
+//
 // Some functions have an "abbreviated" parameter.
 // It supports the following 3 values:
 // - 0/undefined --> get the full value, without abbreviation (eg.: "Monday", "January", etc.)
@@ -22,19 +22,18 @@
  * @returns The localized name of the i-th day of the week
  */
 exports.dow = (i, abbreviated) => {
-  var dow = require("locale").dow(new Date(((i || 0) + 3.5) * 86400000), abbreviated).slice(0, (abbreviated == 2) ? 1 : 100);
+  var dow = require("locale").dow({getDay:()=>(i|0)%7}, abbreviated).slice(0, (abbreviated == 2) ? 1 : 100);
   return abbreviated == 2 ? dow.toUpperCase() : dow;
 }
 
 /**
- * @param {int} firstDayOfWeek 0/undefined -> Sunday,  
+ * @param {int} firstDayOfWeek 0/undefined -> Sunday,
  *                             1           -> Monday
  * @param {int} abbreviated
  * @returns All 7 days of the week (localized) as an array
  */
 exports.dows = (firstDayOfWeek, abbreviated) => {
   var dows = [];
-  var locale = require("locale");
   for (var i = 0; i < 7; i++) {
     dows.push(exports.dow(i + (firstDayOfWeek || 0), abbreviated))
   }
@@ -47,7 +46,7 @@ exports.dows = (firstDayOfWeek, abbreviated) => {
  * @returns The localized name of the i-th month
  */
 exports.month = (i, abbreviated) => {
-  var month = require("locale").month(new Date((i - 0.5) * 2628000000), abbreviated).slice(0, (abbreviated == 2) ? 1 : 100);
+  var month = require("locale").month({getMonth:()=>(11+(i|0))%12}, abbreviated).slice(0, (abbreviated == 2) ? 1 : 100);
   return abbreviated == 2 ? month.toUpperCase() : month;
 }
 
@@ -58,8 +57,7 @@ exports.month = (i, abbreviated) => {
 exports.months = (abbreviated) => {
   var months = [];
   var locale = require("locale");
-  for (var i = 1; i <= 12; i++) {
-    months.push(locale.month(new Date((i - 0.5) * 2628000000), abbreviated).slice(0, (abbreviated == 2) ? 1 : 100));
-  }
+  for (var i = 0; i < 12; i++)
+    months.push(locale.month({getMonth:()=>i}, abbreviated).slice(0, (abbreviated == 2) ? 1 : 100));
   return abbreviated == 2 ? months.map(month => month.toUpperCase()) : months;
 };

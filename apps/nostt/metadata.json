@@ -1,0 +1,17 @@
+{
+    "id":"nostt",
+    "name":"NOS Teletekst",
+    "shortName": "Teletekst",
+    "version": "1.00",
+    "description": "Dutch Teletekst using the NOS Teletekst api. Requires http access via BangleJS GadgetBridge.",
+    "type": "app",
+    "storage": [
+        {"name":"nostt.app.js","url":"nostt.app.js"},
+        {"name":"nostt.img","url":"nostt.icon.js","evaluate":true}
+    ],
+    "readme": "README.md",
+    "icon":"nostt_logo.png",
+    "supports": ["BANGLEJS2"],
+    "screenshots": [{"url": "nostt_screenshot_1.png"}, {"url": "nostt_screenshot_2.png"}],
+    "tags": "nos,teletext,teletekst,news,weather"
+}

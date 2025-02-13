@@ -1,6 +1,6 @@
 # Sleep Log Alarm
 
-This widget searches for active alarms and raises an own alarm event up to the defined time earlier, if in light sleep or awake phase. Optional the earlier alarm will only be triggered if comming from or in consecutive sleep. The settings of the earlier alarm can be adjusted and it is possible to filter the targeting alarms by time and message. By default the time of the targeting alarm is displayed inside the widget which can be adjusted, too.
+This widget searches for active alarms and raises an own alarm event up to the defined time earlier, if in light sleep or awake phase. Optional the earlier alarm will only be triggered if comming from or in consecutive sleep. The settings of the earlier alarm can be adjusted and it is possible to filter the targeting alarms by time and message. The widget is only displayed if an active alarm is detected. The time of the targeting alarm is displayed inside the widget, too. The time or the complete widget can be hidden in the options.
 
 _This widget does not detect sleep on its own and can not create alarms. It requires the [sleeplog](/apps/?id=sleeplog) app and any alarm app that uses [sched](/apps/?id=sched) to be installed._
 
@@ -30,7 +30,7 @@ _This widget does not detect sleep on its own and can not create alarms. It requ
     - __msg includes__ | include only alarms including this string in msg  
       __""__ / ...
   - __Widget__ submenu
-    - __hide__ | completely hide the widget  
+    - __hide always__ | completely hide the widget  
       _on_ / __off__
     - __show time__ | show the time of the targeting alarm  
       __on__ / _off_

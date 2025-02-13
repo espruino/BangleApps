@@ -1,9 +1,13 @@
+
+
+const board = process.env.BOARD;
+const isBangle2 = board === "BANGLEJS2" || board === "EMSCRIPTEN2";
 const GraphXZero = 40;
-const GraphYZero = 180;
-const GraphY100 = 80;
+const GraphYZero = isBangle2? g.getHeight() - (g.getHeight() * 0.1): 180;
+const GraphY100 = isBangle2? 50: 80;
+const MaxValueCount = g.getWidth() - (GraphXZero * 2); // 144
 
 const GraphMarkerOffset = 5;
-const MaxValueCount = 144;
 const GraphXMax = GraphXZero + MaxValueCount;
 
 const GraphLcdY = GraphYZero + 10;
@@ -12,9 +16,11 @@ const GraphBluetoothY = GraphYZero + 22;
 const GraphGpsY = GraphYZero + 28;
 const GraphHrmY = GraphYZero + 34;
 
+
 const Storage = require("Storage");
 
 function renderCoordinateSystem() {
+  g.setBgColor(0,0,0);
   g.setFont("6x8", 1);
   
   // Left Y axis (Battery)
@@ -36,7 +42,12 @@ function renderCoordinateSystem() {
   g.drawLine(GraphXZero - GraphMarkerOffset, GraphYZero, GraphXMax + GraphMarkerOffset, GraphYZero);
   
   // Right Y axis (Temperature)
-  g.setColor(0.4, 0.4, 1);
+  if (isBangle2) {
+    g.setColor(1, 0, 0);
+  } else {
+    g.setColor(0.4, 0.4, 1);
+  }
+
   g.drawLine(GraphXMax, GraphYZero + GraphMarkerOffset, GraphXMax, GraphY100);
   g.drawString("°C", GraphXMax + GraphMarkerOffset, GraphY100 - 10);
   g.setFontAlign(-1, -1, 0);
@@ -62,6 +73,10 @@ function loadData() {
   let logFileName = "bclog" + startingDay;
   
   let dataLines = loadLinesFromFile(MaxValueCount, logFileName);
+  if (!dataLines) {
+    console.log("Cannot load lines from file");
+    dataLines = [];
+  }
   
   // Top up to MaxValueCount from previous days as required
   let previousDay = decrementDay(startingDay);
@@ -86,6 +101,7 @@ function loadLinesFromFile(requestedLineCount, fileName) {
 
   var readFile = Storage.open(fileName, "r");
   
+  let nextLine;
   while ((nextLine = readFile.readLine())) {
     if(nextLine) {
       allLines.push(nextLine);
@@ -131,7 +147,7 @@ function renderData(dataArray) {
   const belowMinIndicatorValue = minTemperature - 1;
   const aboveMaxIndicatorValue = maxTemparature + 1;
   
-  var allConsumers = switchableConsumers.none | switchableConsumers.lcd | switchableConsumers.compass | switchableConsumers.bluetooth | switchableConsumers.gps | switchableConsumers.hrm;
+  //var allConsumers = switchableConsumers.none | switchableConsumers.lcd | switchableConsumers.compass | switchableConsumers.bluetooth | switchableConsumers.gps | switchableConsumers.hrm;
   
   for (let i = 0; i < dataArray.length; i++) {
     const element = dataArray[i];
@@ -235,8 +251,12 @@ Bangle.on('lcdPower', (on) => {
   }
 });
 
-setWatch(switchOffApp, BTN2, {edge:"falling", debounce:50, repeat:true});
-
+if (isBangle2) {
+  setWatch(switchOffApp, BTN1, {edge:"falling", debounce:50, repeat:true});
+  g.setBgColor(0,0,0);
+} else {
+  setWatch(switchOffApp, BTN2, {edge:"falling", debounce:50, repeat:true});
+}
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();

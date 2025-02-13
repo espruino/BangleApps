@@ -1,0 +1,15 @@
+{
+  "id": "bootgatthrm",
+  "name": "BLE GATT HRM Service",
+  "shortName": "BLE HRM Service",
+  "version": "0.04",
+  "description": "Adds the GATT HRM Service to advertise the measured HRM over Bluetooth.\n",
+  "icon": "bluetooth.png",
+  "type": "bootloader",
+  "tags": "hrm,health,ble,bluetooth,gatt",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"gatthrm.boot.js","url":"boot.js"}
+  ]
+}

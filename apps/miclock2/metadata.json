@@ -1,7 +1,7 @@
 {
   "id": "miclock2",
   "name": "Mixed Clock 2",
-  "version": "0.03",
+  "version": "0.05",
   "description": "White color variant of the Mixed Clock with thicker clock hands for better readability in the bright sunlight, extra space under the clock for widgets and seconds in the digital clock.",
   "icon": "clock-mixed.png",
   "type": "clock",

@@ -54,7 +54,7 @@ a.btn.btn-link.dropdown-toggle {
 #toastcontainer {
   position:fixed;
   bottom:8px;left:0px;right:0px;
-  z-index: 100;
+  z-index: 500;
 }
 .hero {
   padding-bottom: 1rem;
@@ -81,7 +81,10 @@ a.btn.btn-link.dropdown-toggle {
   min-height: 8em;
 }
 
-.tile-content { position: relative; }
+.tile-content {
+  position: relative;
+  overflow-wrap: anywhere; /* stop long text like links pushing the width out too far*/
+}
 .link-github {
   position:absolute;
   top: 36px;
@@ -113,7 +116,7 @@ a.btn.btn-link.dropdown-toggle {
   font-size: 50%;
   color : #F66;
   position:relative;
-  top:-0.7em;
+  top:-0.8em;
 }
 .icon.icon-favourite-active span {
   color : white;
@@ -124,4 +127,78 @@ a.btn.btn-link.dropdown-toggle {
   position: absolute; left: 50%; top: 70%;
   transform: translate(-50%,-50%);
   content: url("data:image/svg+xml,%3C%3Fxml version='1.0'%3F%3E%3Csvg fill='rgb(87, 85, 217)' xmlns='http://www.w3.org/2000/svg' viewBox='2 2 28 28' width='1.5em' height='1.5em'%3E%3Cpath d='M 6 4 C 4.895 4 4 4.895 4 6 L 4 24 C 4 25.105 4.895 26 6 26 L 24 26 C 25.105 26 26 25.105 26 24 L 26 8 L 22 4 L 20 4 L 20 10 C 20 10.552 19.552 11 19 11 L 10 11 C 9.448 11 9 10.552 9 10 L 9 4 L 6 4 z M 16 4 L 16 9 L 18 9 L 18 4 L 16 4 z M 10 16 L 20 16 C 21.105 16 22 16.895 22 18 L 22 24 L 8 24 L 8 18 C 8 16.895 8.895 16 10 16 z'/%3E%3C/svg%3E");
+}
+
+/* https://github.com/picturepan2/spectre/issues/595 */
+.chip.tooltip:hover {
+  overflow: visible;
+  overflow-y: unset;
+}
+
+/* Normally tooltips don't wrap, but if you enable it, then they wrap until they are really thin!
+Not sure how to get 'normal' wrap behaviour (eg fill up until max-width, then wrap) */
+/*.tooltip:hover::after {
+  white-space: normal;
+  min-width: 160px;
+}*/
+
+/* Terminal */
+/* ----------------------------------------------------- */
+.terminal
+{
+  font-size: 12px;
+  background-color: #222;
+  color: white;
+  display: block;
+  border: 0;
+  padding: 10px;
+  overflow: auto; /* adds scrollbar if needed */
+
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+
+  -o-user-select: text;
+  -moz-user-select: text;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.termLine {
+  font-family: Fixed, monospace;
+  tab-size: 4;
+  min-height: 1em;
+}
+
+.terminal.focus
+{
+  background-color: #333;
+}
+
+.terminal__focus
+{
+  position: absolute;
+  top: -100px;  /* hide it */
+}
+
+.terminal a
+{
+  color:#88F;
+}
+.terminal a:visited
+{
+  color:#88F;
+}
+
+.terminal--connected.focus .terminal__cursor
+{
+  animation: blink 1s step-end 0s infinite;
+}
+
+.terminal--webcam.focus .terminal__cursor
+{
+  text-shadow: none;
+  animation: blink_webcam 1s step-end 0s infinite;
 }

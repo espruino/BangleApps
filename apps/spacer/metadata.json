@@ -1,0 +1,13 @@
+{ "id": "spacer",
+  "name": "Space Race",
+  "version": "0.10",
+  "description": "Compare GPS with Baido and Glonass",
+  "icon": "app.png",
+  "readme": "README.md",
+  "supports" : ["BANGLEJS2"],
+  "tags": "tool",
+  "storage": [
+      {"name":"spacer.app.js","url":"spacer.app.js"},
+      {"name":"spacer.img","url":"app-icon.js","evaluate":true}
+  ]
+}

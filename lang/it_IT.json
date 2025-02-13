@@ -200,7 +200,15 @@
         "Green": "Verde",
         "Blue": "Blu",
         "Black": "Nero",
-        "Show Week Number": "Mostra numero settimana"
+        "Show Week Number": "Mostra numero settimana",
+        "Calendar": "Calendario",
+        "Start": "Inizio",
+        "End": "Fine",
+        "Location": "Posizione",
+        "No location": "Nessuna posizione",
+        "No events": "Nessun evento",
+        "Today": "Oggi",
+        "Tomorrow": "Domani"
     },
     "//2": "App-specific overrides",
     "alarm": {

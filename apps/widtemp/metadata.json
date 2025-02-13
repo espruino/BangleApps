@@ -1,0 +1,17 @@
+{
+    "id": "widtemp",
+    "name": "Temperature widget",
+    "version": "0.02",
+    "description": "A temperature widget, showing the current internal temperature",
+    "readme": "README.md",
+    "icon": "widtemp.png",
+    "screenshots": [{"url":"screenshot.jpg"}],
+    "type": "widget",
+    "tags": "widget,health",
+    "supports": ["BANGLEJS","BANGLEJS2"],
+    "dependencies" : {},
+    "allow_emulator":false,
+    "storage": [
+      {"name":"widtemp.wid.js","url":"widtemp.wid.js"}
+    ]
+  }

@@ -35,14 +35,19 @@ function showAlarm(alarm) {
       if (alarm.ot === undefined) {
         alarm.ot = alarm.t;
       }
-      alarm.t += settings.defaultSnoozeMillis;
+      let time = new Date();
+      let currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
+      alarm.t = currentTime + settings.defaultSnoozeMillis;
+      alarm.t %= 86400000;
       Bangle.emit("alarmSnooze", alarm);
     } else {
       let del = alarm.del === undefined ? settings.defaultDeleteExpiredTimers : alarm.del;
       if (del) {
         alarms.splice(alarmIndex, 1);
       } else {
-        if (!alarm.timer) {
+        if (alarm.date && alarm.rp) {
+          setNextRepeatDate(alarm);
+        } else if (!alarm.timer) {
           alarm.last = new Date().getDate();
         }
         if (alarm.ot !== undefined) {
@@ -69,13 +74,42 @@ function showAlarm(alarm) {
 
     const pattern = alarm.vibrate || (alarm.timer ? settings.defaultTimerPattern : settings.defaultAlarmPattern);
     require("buzz").pattern(pattern).then(() => {
-      if (buzzCount--) {
+      if (buzzCount == null || buzzCount--) {
         setTimeout(buzz, settings.buzzIntervalMillis);
       } else if (alarm.as) { // auto-snooze
         buzzCount = settings.buzzCount;
         setTimeout(buzz, settings.defaultSnoozeMillis);
       }
     });
+  }
+
+  function setNextRepeatDate(alarm) {
+    let date = new Date(alarm.date);
+    let rp = alarm.rp;
+    if (rp===true) { // fallback in case rp is set wrong
+      date.setDate(date.getDate() + 1);
+    } else switch(rp.interval) { // rp is an object
+      case "day":
+        date.setDate(date.getDate() + rp.num);
+        break;
+      case "week":
+        date.setDate(date.getDate() + (rp.num * 7));
+        break;
+      case "month":
+        if (!alarm.od) alarm.od = date.getDate();
+        date = new Date(date.getFullYear(), date.getMonth() + rp.num, alarm.od);
+        if (date.getDate() != alarm.od) date.setDate(0);
+        break;
+      case "year":
+        if (!alarm.od) alarm.od = date.getDate();
+        date = new Date(date.getFullYear() + rp.num, date.getMonth(), alarm.od);
+        if (date.getDate() != alarm.od) date.setDate(0);
+        break;
+      default:
+        console.log(`sched: unknown repeat '${JSON.stringify(rp)}'`);
+        break;
+    }
+    alarm.date = date.toLocalISOString().slice(0,10);
   }
 
   if ((require("Storage").readJSON("setting.json", 1) || {}).quiet > 1)

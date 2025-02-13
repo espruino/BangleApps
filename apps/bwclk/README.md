@@ -11,6 +11,7 @@ sub-items simply swipe up/down. To run an action (e.g. trigger home assistant), 
 
 ![](screenshot_3.png)
 
+Note: Check out the settings to change different themes.
 
 ## Settings
 - Screen: Normal (widgets shown), Dynamic (widgets shown if unlocked) or Full (widgets are hidden).

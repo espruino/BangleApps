@@ -1,0 +1,5 @@
+0.01: New widget - music control via a swipe
+0.02: Improve interactivity - avoid responding to swipes when a menu or
+      launcher is active.
+0.03: Handle errors when sending input over BLE and the special-case of
+      replacing a single handler

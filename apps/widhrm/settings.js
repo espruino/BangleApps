@@ -33,4 +33,4 @@
      },
   };
   E.showMenu(menu);
-});
+})

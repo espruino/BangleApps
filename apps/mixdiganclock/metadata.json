@@ -1,13 +1,13 @@
 {
   "id": "mixdiganclock",
   "name": "Mix Dig&Anal Clock",
-  "version": "0.03",
-  "description": "A dual Analog and Digital Clock, based in Mixed Clock, but with more compatibility, change of colors, thicker clock hands... ",
+  "version": "0.05",
+  "description": "A dual Analog, Digital Clock, that gives the user the power to improve the aspect on realtime. Too much sun and/or polarized sunglasses? Not be a problem anymore to see the time. Originally based in Mixed Clock ",
   "icon": "mixdiganclock.png",
   "type": "clock",
   "tags": "clock",
-  "screenshots": [{"url":"pic_mixdigan_bjs1.jpg"}],
-  "supports": ["BANGLEJS","BANGLEJS"],
+  "screenshots": [{"url":"ss_mixdigan_ems.png"}],
+  "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "allow_emulator": true,
   "storage": [

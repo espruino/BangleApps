@@ -2,12 +2,12 @@
   "id": "tabanchi",
   "name": "Tabanchi",
   "shortName": "Tabanchi",
-  "version": "0.03",
+  "version": "0.04",
   "type": "app",
   "description": "Tamagotchi WatchApp",
   "icon": "app.png",
   "allow_emulator": true,
-  "tags": "clock, watch, virtual pet",
+  "tags": "clock,watch,virtualpet",
   "supports": [
     "BANGLEJS2"
   ],

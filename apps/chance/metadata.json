@@ -1,0 +1,17 @@
+{ "id": "chance",
+  "name": "Chance",
+  "shortName":"Chance",
+  "version":"0.01",
+  "description": "Toss a coin or Roll the dice, chose your chance with this app.",
+  "icon": "chance.png",
+  "type":"app",
+  "tags": "tool",
+  "supports" : ["BANGLEJS2"],  
+  "allow_emulator": true,
+  "readme": "README.md",
+  "storage": [
+    {"name":"chance.app.js","url":"chance.app.js"},
+    {"name":"chance.img","url":"chance.img.js","evaluate":true}
+  ],
+  "screenshots": [{"url":"chance-coin.png"},{"url":"chance-dice.png"}]
+}

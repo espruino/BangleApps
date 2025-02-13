@@ -1,7 +1,7 @@
 { "id": "game1024",
     "name": "1024 Game",
     "shortName" : "1024 Game",
-    "version": "0.11",
+    "version": "0.12",
     "icon": "game1024.png",
     "screenshots": [ {"url":"screenshot.png" } ],
     "readme":"README.md",
@@ -14,5 +14,6 @@
       {"name":"game1024.app.js","url":"app.js"},
       {"name":"game1024.settings.js","url":"settings.js"},
       {"name":"game1024.img","url":"app-icon.js","evaluate":true}
-    ]
+    ],
+    "data":[{"name":"game1024.settings.json"}]
   }

@@ -5,7 +5,7 @@ identify device and dimensions
 max printable position max_x-1 i.e 239 
 */
 
- var colbackg='#111111';//black 
+ //var colbackg='#111111';//black 
  var colorange='#e56e06'; //RGB format rrggbb
  var v_color_lines=0xFFFF; //White hex format
  var v_color_b_area='#111111';
@@ -13,13 +13,13 @@ max printable position max_x-1 i.e 239
  var v_font1size=10; //out of quotes
  var v_font2size=12;
  var v_font_banner_size=30;
- var v_clicks=0;
+ //var v_clicks=0;
  //pend identify widget area dinamically
  var v_model=process.env.BOARD;
  console.log("device="+v_model);
   
  var x_max_screen=g.getWidth();//240;
- var y_max_screen=g.getHeight(); //240; 
+ //var y_max_screen=g.getHeight(); //240; 
  var y_wg_bottom=g.getHeight()-25;
  var y_wg_top=25; 
  if (v_model=='BANGLEJS') {

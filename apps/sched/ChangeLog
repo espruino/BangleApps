@@ -21,3 +21,13 @@
 0.18: Update clock_info to avoid a redraw
 0.19: Update clock_info to refresh periodically on active alarms/timers
 0.20: Alarm dismiss and snooze events
+0.21: Fix crash in clock_info
+0.22: Dated event repeat option
+0.23: Allow buzzing forever when an alarm fires
+0.24: Emit alarmReload when alarms change (used by widalarm)
+0.25: Fix wrap around when snoozed through midnight
+0.26: Fix hitting snooze on an alarm after when the snooze would've fired
+0.27: Tapping clkinfo enables/disables the selected alarm
+0.28: Added an icon for disabled events
+0.29: Improve clkinfo startup time by 10ms
+0.30: Fix possible bug in toggling an alarm to on, from clkinfo

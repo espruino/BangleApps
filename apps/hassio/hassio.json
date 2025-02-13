@@ -1,0 +1,13 @@
+{
+    "templates": [
+        {
+            "name":"Test Template",
+            "temp":"{% for state in states.weather -%}{%- if loop.first %}The {% elif loop.last %} and the {% else %}, the {% endif -%}{{ state.name | lower }} is {{state.state_with_unit}}{%- endfor %}."
+        }
+    ],
+    "interval": 180000,
+    "api_key":"api_key",
+    "host":"https://homeassistant:8123",
+    "id":"banglejs",
+    "friendly_name":"Banglejs Sensors"
+}

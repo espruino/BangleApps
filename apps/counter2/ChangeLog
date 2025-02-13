@@ -1,0 +1,5 @@
+0.01: New App!
+0.02: Added Settings & readme
+0.03: Fix lint warnings
+0.04: Fix lint warnings
+0.05: Fix on not reading counter defaults in Settings

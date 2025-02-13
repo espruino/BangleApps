@@ -3,7 +3,7 @@
   var startTimeStep = new Date(); //set start time
   var stopTimeStep = 0; //Time after one step
   var timerResetActive = 0; //timer to reset active
-  var timerStoreData = 0; //timer to store data
+  //var timerStoreData = 0; //timer to store data
   var steps = 0; //steps taken
   var stepsCounted = 0; //active steps counted
   var active = 0; //x steps in y seconds achieved
@@ -32,10 +32,10 @@
   }
 
   function storeData()  {
-    now = new Date();
-    month = now.getMonth() + 1; //month is 0-based
+    let now = new Date();
+    let month = now.getMonth() + 1; //month is 0-based
     if (month < 10) month = "0" + month; //leading 0
-    filename = filename = "activepedom" + now.getFullYear() + month + now.getDate() + ".data"; //new file for each day
+    let filename = "activepedom" + now.getFullYear() + month + now.getDate() + ".data"; //new file for each day
     dataFile = s.open(filename,"a");
     if (dataFile) { //check if filen already exists
       if (dataFile.getLength() == 0) {
@@ -222,19 +222,20 @@
     if (on) WIDGETS["activepedom"].draw();
   });
 
-  //Read data from file and set variables
-  let pedomData = s.readJSON(PEDOMFILE,1);
-  if (pedomData) {
-    if (pedomData.lastUpdate) lastUpdate = new Date(pedomData.lastUpdate);
-    stepsCounted = pedomData.stepsToday|0;
-    stepsTooShort = pedomData.stepsTooShort;
-    stepsTooLong = pedomData.stepsTooLong;
-    stepsOutsideTime = pedomData.stepsOutsideTime;
+  // Read data from file and set variables
+  { // new scope ensures pedomData gets freed
+    let pedomData = s.readJSON(PEDOMFILE,1);
+    if (pedomData) {
+      if (pedomData.lastUpdate) lastUpdate = new Date(pedomData.lastUpdate);
+      stepsCounted = pedomData.stepsToday|0;
+      stepsTooShort = pedomData.stepsTooShort;
+      stepsTooLong = pedomData.stepsTooLong;
+      stepsOutsideTime = pedomData.stepsOutsideTime;
+    }
   }
-  pedomdata = 0; //reset pedomdata to save memory
 
   setStepSensitivity(setting('stepSensitivity')); //set step sensitivity (80 is standard, 400 is muss less sensitive)
-  timerStoreData = setInterval(storeData, storeDataInterval); //store data regularly
+  /*timerStoreData =*/ setInterval(storeData, storeDataInterval); //store data regularly
   //Add widget, use: WIDGETS.activepedom.getSteps() inside another App to return todays step count
   WIDGETS["activepedom"]={area:"tl",width:width,draw:draw, getSteps:()=>stepsCounted};
 })();

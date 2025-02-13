@@ -110,12 +110,24 @@ let layout = new Layout({
 }, {
   remove: ()=>{
     Bangle.removeListener("swipe", onSwipe);
+    Bangle.removeListener("touch", updateTimeout);
+    if (timeout) clearTimeout(timeout);
     delete Graphics.prototype.setFont8x12;
   }
 });
 g.clear();
 layout.render();
 Bangle.drawWidgets();
+
+let timeout;
+const updateTimeout = function(){
+if (settings.timeout){
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(Bangle.showClock,settings.timeout*1000);
+  }
+};
+
+updateTimeout();
 
 // swipe event listener for exit gesture
 let onSwipe = function (lr, ud) {
@@ -126,4 +138,5 @@ let onSwipe = function (lr, ud) {
 }
 
 Bangle.on("swipe", onSwipe);
+Bangle.on("touch", updateTimeout);
 }

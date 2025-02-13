@@ -5,10 +5,13 @@ exports.input = function(options) {
   var text = options.text;
   if ("string"!=typeof text) text="";
 
-  var settings = require('Storage').readJSON("kbmulti.settings.json", true) || {};
-  if (settings.firstLaunch===undefined) { settings.firstLaunch = true; }
-  if (settings.charTimeout===undefined) { settings.charTimeout = 500; }
-  if (settings.showHelpBtn===undefined) { settings.showHelpBtn = true; }
+  var settings = Object.assign({
+    firstLaunch: true,
+    showHelpBtn: true,
+    charTimeout: 500,
+    autoLowercase: true,
+    vibrate: false,
+  }, require('Storage').readJSON("kbmulti.settings.json", true));
 
   var fontSize = "6x15";
   var Layout = require("Layout");
@@ -27,25 +30,25 @@ exports.input = function(options) {
   var caps = true;
   var layout;
   var btnWidth = g.getWidth()/3;
-  
+
   function getMoveChar(){
     return "\x00\x0B\x11\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00@\x1F\xE1\x00\x10\x00\x10\x01\x0F\xF0\x04\x01\x00";
   }
-  
+
   function getMoreChar(){
     return "\x00\x0B\x11\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xDB\x1B`\x00\x00\x00";
   }
 
-  
   function getCursorChar(){
-    return "\x00\x0B\x11\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\xAA\xAA\x80";  }
+    return "\x00\x0B\x11\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\xAA\xAA\x80";
+  }
 
   function displayText(hideMarker) {
     layout.clear(layout.text);
 
-    let charsBeforeCursor = textIndex;
+    //let charsBeforeCursor = textIndex;
     let charsAfterCursor = Math.min(text.length - textIndex, (textWidth)/2);
-    
+
 
     let start = textIndex - Math.ceil(textWidth - charsAfterCursor);
     let startMore = false;
@@ -75,7 +78,9 @@ exports.input = function(options) {
     deactivateTimeout(charTimeout);
     if (textIndex > -1){
       text = text.slice(0, textIndex) + text.slice(textIndex + 1);
-      if (textIndex > -1) textIndex --;
+      textIndex--;
+      if (textIndex == -1 && !caps)
+        setCaps()
       newCharacter();
     }
   }
@@ -89,38 +94,55 @@ exports.input = function(options) {
   }
 
   function newCharacter(ch) {
-    displayText();
+    displayText(false);
     if (ch && textIndex < text.length) textIndex ++;
     charCurrent = ch;
     charIndex = 0;
   }
 
+  function onInteract() {
+    if (settings.vibrate) Bangle.buzz(20);
+  }
+
   function onKeyPad(key) {
+    onInteract();
+    var retire = 0;
     deactivateTimeout(charTimeout);
     // work out which char was pressed
     if (key==charCurrent) {
       charIndex = (charIndex+1) % letters[charCurrent].length;
       text = text.slice(0, -1);
     } else {
+      retire = charCurrent !== undefined;
       newCharacter(key);
     }
     var newLetter = letters[charCurrent][charIndex];
     let pre = text.slice(0, textIndex);
     let post = text.slice(textIndex, text.length);
-    
+
     text = pre + (caps ? newLetter.toUpperCase() : newLetter.toLowerCase()) + post;
-    
+
+    if(retire)
+      retireCurrent();
+
     // set a timeout
     charTimeout = setTimeout(function() {
       charTimeout = undefined;
       newCharacter();
+      retireCurrent();
     }, settings.charTimeout);
-    displayText(charTimeout);
+    displayText(true);
+  }
+
+  function retireCurrent() {
+    if (caps && settings.autoLowercase)
+      setCaps();
   }
 
   var moveMode = false;
 
   function onSwipe(dirLeftRight, dirUpDown) {
+    onInteract();
     if (dirUpDown == -1) {
       moveMode = !moveMode;
       displayText(false);
@@ -142,6 +164,7 @@ exports.input = function(options) {
         displayText(false);
       }
     }
+    E.stopEventPropagation&&E.stopEventPropagation();
   }
 
   function onHelp(resolve,reject) {
@@ -149,7 +172,7 @@ exports.input = function(options) {
     E.showPrompt(
       helpMessage, {title: "Help", buttons : {"Ok":true}}
     ).then(function(v) {
-      Bangle.on('swipe', onSwipe);
+      if (Bangle.prependListener) {Bangle.prependListener('swipe', onSwipe);} else {Bangle.on('swipe', onSwipe);}
       generateLayout(resolve,reject);
       layout.render();
     });
@@ -196,7 +219,7 @@ exports.input = function(options) {
     } else {
       generateLayout(resolve,reject);
       displayText(false);
-      Bangle.on('swipe', onSwipe);
+      if (Bangle.prependListener) {Bangle.prependListener('swipe', onSwipe);} else {Bangle.on('swipe', onSwipe);}
       layout.render();
     }
   });

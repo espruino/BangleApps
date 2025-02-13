@@ -1,0 +1,153 @@
+<!-- TODO -->
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <script src="../../core/lib/interface.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/0.0.3/ical.min.js"></script>
+    <script>
+const repJson = "rep.json";
+let reps;
+
+function renderRep(rep) {
+  const tr = document.createElement("tr");
+
+  const tdLabel = document.createElement("td");
+  {
+    const inputLabel = document.createElement("input");
+    inputLabel.type = "text";
+    inputLabel.classList.add("form-input");
+    inputLabel.maxLength = 30;
+    inputLabel.value = rep.label;
+    inputLabel.onchange = e => {
+      rep.label = inputLabel.value;
+    };
+    tdLabel.appendChild(inputLabel);
+  }
+  tr.appendChild(tdLabel);
+
+  const tdDuration = document.createElement("td");
+  {
+    const [hours, mins, secs] = msToHMS(rep.dur);
+
+    const inputDuration = document.createElement('input');
+    inputDuration.type = "time";
+    inputDuration.step = 1; // display seconds
+    inputDuration.value = `${hours}:${mins}:${secs}`;
+
+    inputDuration.onchange = e => {
+      rep.dur = hmsToMs(inputDuration.value);
+    };
+
+    inputDuration.classList.add('form-input'); // ?
+
+    tdDuration.appendChild(inputDuration);
+  }
+  tr.appendChild(tdDuration);
+
+  const tdInfo = document.createElement("td");
+  {
+    const buttonDelete = document.createElement("button");
+    {
+      buttonDelete.classList.add("btn");
+      buttonDelete.classList.add("btn-action");
+
+      const iconDelete = document.createElement("i");
+      {
+        iconDelete.classList.add("icon");
+        iconDelete.classList.add("icon-delete");
+      }
+      buttonDelete.appendChild(iconDelete);
+      buttonDelete.onclick = (e => {
+        reps = reps.filter(a => a !== rep);
+        document.getElementById("repsTable").removeChild(tr);
+      });
+    }
+    tdInfo.appendChild(buttonDelete);
+  }
+  tr.appendChild(tdInfo);
+
+  document.querySelector("#repsTable").appendChild(tr);
+}
+
+function msToHMS(ms) {
+  let secs = Math.floor(ms / 1000) % 60;
+  let mins = Math.floor(ms / 1000 / 60) % 60;
+  let hours = Math.floor(ms / 1000 / 60 / 60);
+  if (secs < 10) secs = "0" + secs;
+  if (mins < 10) mins = "0" + mins;
+  if (hours < 10) hours = "0" + hours;
+  return [hours, mins, secs];
+}
+
+function hmsToMs(hms) {
+  let [hours, mins, secs] = hms.split(":");
+  hours = Number(hours);
+  mins = Number(mins);
+  secs = Number(secs);
+  return ((hours * 60 + mins) * 60 + secs) * 1000;
+}
+
+function addRep() {
+  const r = {
+    label: "Run",
+    dur: 60 * 1000,
+  };
+  reps.push(r);
+  renderRep(r);
+}
+
+function getData() {
+  uploadBtn.disabled = true;
+
+  Util.showModal("Loading...");
+  Util.readStorageJSON(repJson, reps_ => {
+    reps = reps_;
+    Util.hideModal();
+    for(const rep of reps){
+      renderRep(rep);
+    }
+
+    uploadBtn.disabled = false;
+  });
+}
+
+function upload() {
+  Util.showModal("Saving...");
+  Util.writeStorage(repJson, JSON.stringify(reps), () => {
+    location.reload(); // view current data
+  });
+}
+
+function onInit() {
+  getData();
+}
+    </script>
+  </head>
+  <body>
+    <h4>Reps</h4>
+
+    <div class="float-right">
+      <button class="btn" onclick="addRep()">
+        <i class="icon icon-plus"></i>
+      </button>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Duration</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="repsTable">
+      </tbody>
+    </table>
+
+    <div class="divider"></div>
+
+    <button id="uploadBtn" class="btn btn-primary" onClick="upload()">Upload</button>
+    <button id="reloadBtn" class="btn" onClick="location.reload()">Reload</button>
+  </body>
+</html>

@@ -1,7 +1,7 @@
 (() => {
   let recordingInterval = null;
   const Storage = require("Storage");
-  
+
   const switchableConsumers = {
     none: 0,
     lcd: 1,
@@ -11,10 +11,10 @@
     hrm: 16
   };
 
-  var batChartFile; // file for battery percentage recording
+  //var batChartFile; // file for battery percentage recording
   const recordingInterval10Min = 60 * 10 * 1000;
-  const recordingInterval1Min = 60 * 1000; //For testing
-  const recordingInterval10S = 10 * 1000; //For testing
+  //const recordingInterval1Min = 60 * 1000; //For testing
+  //const recordingInterval10S = 10 * 1000; //For testing
 
   var compassEventReceived = false;
   var gpsEventReceived = false;
@@ -96,15 +96,14 @@
       let logPercent = E.getBattery();
       let logTemperature = E.getTemperature();
       let logConsumers = getEnabledConsumersValue();
-      
+
       let logString = [logTime, logPercent, logTemperature, logConsumers].join(",");
-      
+
       bcLogFileA.write(logString + "\n");
     }
   }
 
   function reload() {
-    console.log("Reloading BatteryChart widget");
     WIDGETS["batchart"].width = 0;
 
     if (recordingInterval) {

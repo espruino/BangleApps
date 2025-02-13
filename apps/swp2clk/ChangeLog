@@ -2,3 +2,4 @@
 0.02: Fix deleting from white and black lists.
 0.03: Adapt to availability of Bangle.showClock and Bangle.load
 0.04: Fix 'Uncaught ReferenceError: "__FILE__" is not defined' error (fix #2326)
+0.05: Fix settings didn't call the Storage class correctly.

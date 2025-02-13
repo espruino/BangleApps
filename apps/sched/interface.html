@@ -1,0 +1,413 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <style>
+      .multi-select {
+        /* e.g. day <select> */
+        height: 100%;
+      }
+
+      td.single-row {
+        /* no border between single rowspans */
+        border-bottom: none;
+      }
+
+      .btn-center {
+        justify-content: center;
+        display: flex;
+      }
+
+      .event-summary {
+        text-align: center;
+      }
+    </style>
+    <script src="../../core/lib/interface.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ical.js/1.5.0/ical.min.js"></script>
+    <script>
+let dataElement = document.getElementById("data");
+let alarms;
+let schedSettings;
+
+function readFile(input) {
+  document.getElementById('upload').disabled = true;
+  const offsetMinutes = document.getElementById("offsetMinutes").value;
+
+  for(let i=0; i<input.files.length; i++) {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      const icalText = reader.result.substring(reader.result.indexOf("BEGIN:VCALENDAR")); // remove html before data
+      const jCalData = ICAL.parse(icalText);
+      const comp = new ICAL.Component(jCalData);
+      const vtz = comp.getFirstSubcomponent('vtimezone');
+      const tz = vtz != null ? new ICAL.Timezone(vtz) : null;
+
+      // Fetch the VEVENT part
+      comp.getAllSubcomponents('vevent').forEach(vevent => {
+        event = new ICAL.Event(vevent);
+        const exists = alarms.some(alarm => alarm.id === event.uid);
+
+        const alarm = eventToAlarm(event, tz, offsetMinutes*60*1000);
+        renderAlarm(alarm, exists);
+
+        if (exists) {
+          alarms = alarms.filter(alarm => alarm.id !== event.uid); // remove if already exists
+          const tr = document.querySelector(`.event-row[data-uid='${event.uid}']`);
+          document.getElementById('events').removeChild(tr);
+        }
+        alarms.push(alarm);
+      });
+    }, false);
+
+    reader.readAsText(input.files[i], "UTF-8");
+  }
+}
+
+function dateToMsSinceMidnight(date) {
+  const dateMidnight = new Date(date);
+  dateMidnight.setHours(0,0,0,0);
+  return date - dateMidnight;
+}
+
+function dateFromAlarm(alarm) {
+  const date = new Date(alarm.date);
+  return new Date(date.getTime() + alarm.t);
+}
+
+function formatDate(d) {
+  return d.getFullYear() + "-" + (d.getMonth() + 1).toString().padStart(2, '0') + "-" + d.getDate().toString().padStart(2, '0');
+}
+
+function getAlarmDefaults() {
+  const date = new Date();
+  return {
+    on: true,
+    t: dateToMsSinceMidnight(date),
+    dow: 127,
+    date: formatDate(date),
+    last: 0,
+    rp: "defaultRepeat" in schedSettings ? schedSettings.defaultRepeat : false,
+    vibrate: "defaultAlarmPattern" in schedSettings ? schedSettings.defaultAlarmPattern : "::",
+    as: false,
+  };
+}
+
+function eventToAlarm(event, tz, offsetMs) {
+  if (tz != null) {
+    event.startDate.zone = tz;
+  }
+  const dateOrig = event.startDate.toJSDate();
+  const date = offsetMs ? new Date(dateOrig - offsetMs) : dateOrig;
+
+  const alarm = {...getAlarmDefaults(), ...{
+    id: event.uid,
+    msg: event.summary,
+    t: dateToMsSinceMidnight(date),
+    date: formatDate(date),
+    data: {end: event.endDate.toJSDate().toISOString()}
+  }};
+  if (offsetMs) { // Alarm time is not real event time, so do a backup
+    alarm.data.time = dateOrig.toISOString();
+  }
+  return alarm;
+}
+
+function upload() {
+  // kick off all the (active) timers
+  const now = new Date();
+  const currentTime = now.getHours()*3600000
+    + now.getMinutes()*60000
+    + now.getSeconds()*1000;
+
+  for (const alarm of alarms)
+    if (alarm.timer != undefined && alarm.on)
+      alarm.t = currentTime + alarm.timer;
+
+  Util.showModal("Saving...");
+  Util.writeStorage("sched.json", JSON.stringify(alarms), () => {
+    Puck.write(`\x10require("sched").reload();\n`, () => {
+      location.reload(); // reload so we see current data
+    });
+  });
+}
+
+function renderAlarm(alarm, exists) {
+  const localDate = alarm.date ? dateFromAlarm(alarm) : null;
+
+  const tr = document.createElement('tr');
+  const tr2 = document.createElement('tr');
+  tr.classList.add('event-row');
+  tr.dataset.uid = alarm.id;
+
+  const tdType = document.createElement('td');
+  tdType.type = "text";
+  tdType.classList.add('event-summary');
+  const inputTime = document.createElement('input');
+  let type;
+  if (localDate) {
+    type = "Event";
+    inputTime.type = "datetime-local";
+    inputTime.value = localDate.toISOString().slice(0,16);
+    inputTime.onchange = (e => {
+      const date = new Date(inputTime.value);
+      alarm.t = dateToMsSinceMidnight(date);
+      alarm.date = formatDate(date);
+    });
+  } else {
+    const [hours, mins, secs] = msToHMS(alarm.timer || alarm.t);
+
+    inputTime.type = "time";
+    inputTime.step = 1; // display seconds
+    inputTime.value = `${hours}:${mins}:${secs}`;
+
+    if (alarm.timer) {
+      type = "Timer";
+      inputTime.onchange = e => {
+        alarm.timer = hmsToMs(inputTime.value);
+        // alarm.t is set on upload
+      };
+    } else {
+      type = "Alarm";
+      inputTime.onchange = e => {
+        alarm.t = hmsToMs(inputTime.value);
+      };
+    }
+  }
+  tdType.textContent = type + (alarm.appid ? `\n(${alarm.appid})` : "");
+  if (!exists) {
+    const asterisk = document.createElement('sup');
+    asterisk.textContent = '*';
+    tdType.appendChild(asterisk);
+  }
+  inputTime.classList.add('event-date');
+  inputTime.classList.add('form-input');
+  inputTime.dataset.uid = alarm.id;
+  const tdTime = document.createElement('td');
+  tdTime.appendChild(inputTime);
+
+  let tdDays;
+  if (type === "Alarm") {
+    tdDays = document.createElement('td');
+    const selectDays = document.createElement('select');
+    selectDays.multiple = true;
+    selectDays.classList.add('form-input', 'multi-select');
+    selectDays.dataset.uid = alarm.id;
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const options = days.map((day, i) => {
+      const option = document.createElement('option');
+      option.value = day;
+      option.text = day;
+      option.selected = alarm.dow & (1 << i);
+      if(day !== "Sun")
+        selectDays.appendChild(option);
+      return option;
+    });
+    selectDays.appendChild(options.find(o => o.text === "Sun"));
+    selectDays.onchange = (e => {
+      alarm.dow = options.reduce((bits, opt, i) => bits | (opt.selected ? 1 << i : 0), 0);
+    });
+    tdDays.appendChild(selectDays);
+  }
+
+  const tdSummary = document.createElement('td');
+  const inputSummary = document.createElement('input');
+  inputSummary.type = "text";
+  inputSummary.classList.add('event-summary');
+  inputSummary.classList.add('form-input');
+  inputSummary.dataset.uid = alarm.id;
+  inputSummary.maxLength=40;
+  const realHumanStartTime = alarm.data?.time ? ' ' + (new Date(alarm.data.time)).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+  const summary = (alarm.msg?.substring(0, inputSummary.maxLength) || "");
+  inputSummary.value = summary.endsWith(realHumanStartTime) ? summary : summary + realHumanStartTime;
+  inputSummary.onchange = (e => {
+    alarm.msg = inputSummary.value;
+  });
+  tdSummary.appendChild(inputSummary);
+  inputSummary.onchange();
+
+  const tdOptions = document.createElement('td');
+  const onOffCheck = document.createElement('input');
+  tdOptions.classList.add('btn-center');
+  onOffCheck.type = 'checkbox';
+  onOffCheck.checked = alarm.on;
+  onOffCheck.onchange = e => {
+    alarm.on = !alarm.on;
+    if (alarm.on) delete alarm.last;
+  };
+  const onOffIcon = document.createElement('i');
+  onOffIcon.classList.add('form-icon');
+  const onOff = document.createElement('label');
+  onOff.classList.add('form-switch');
+  onOff.appendChild(onOffCheck);
+  onOff.appendChild(onOffIcon);
+  tdOptions.appendChild(onOff);
+
+  const tdInfo = document.createElement('td');
+  const buttonDelete = document.createElement('button');
+  buttonDelete.classList.add('btn');
+  buttonDelete.classList.add('btn-action');
+  tdInfo.appendChild(buttonDelete);
+  const iconDelete = document.createElement('i');
+  iconDelete.classList.add('icon');
+  iconDelete.classList.add('icon-delete');
+  buttonDelete.appendChild(iconDelete);
+  buttonDelete.onclick = (e => {
+    alarms = alarms.filter(a => a !== alarm);
+    document.getElementById('events').removeChild(tr);
+    document.getElementById('events').removeChild(tr2);
+  });
+
+  tr.appendChild(tdTime); tdTime.colSpan = 3; tdTime.classList.add('single-row');
+  tr2.appendChild(tdType);
+  tr2.appendChild(tdOptions);
+  tr2.appendChild(tdInfo);
+  if (tdDays) {
+    tr.appendChild(tdDays); tdDays.rowSpan = 2;
+  } else {
+    tdSummary.colSpan = 2;
+  }
+  tr.appendChild(tdSummary); tdSummary.rowSpan = 2;
+
+  document.getElementById('events').appendChild(tr);
+  document.getElementById('events').appendChild(tr2);
+  document.getElementById('upload').disabled = false;
+}
+
+function msToHMS(ms) {
+  let secs = Math.floor(ms / 1000) % 60;
+  let mins = Math.floor(ms / 1000 / 60) % 60;
+  let hours = Math.floor(ms / 1000 / 60 / 60);
+  if (secs < 10) secs = "0" + secs;
+  if (mins < 10) mins = "0" + mins;
+  if (hours < 10) hours = "0" + hours;
+  return [hours, mins, secs];
+}
+
+function hmsToMs(hms) {
+  let [hours, mins, secs] = hms.split(":");
+  hours = Number(hours);
+  mins = Number(mins);
+  secs = Number(secs);
+  return ((hours * 60 + mins) * 60 + secs) * 1000;
+}
+
+function addEvent() {
+  const event = getAlarmDefaults();
+  renderAlarm(event);
+  alarms.push(event);
+}
+
+function addAlarm() {
+  const alarm = getAlarmDefaults();
+  delete alarm.date;
+  renderAlarm(alarm);
+  alarms.push(alarm);
+}
+
+function addTimer() {
+  const alarmDefaults = getAlarmDefaults();
+  const timer = {
+    timer: hmsToMs("00:00:30"),
+    t: 0,
+    on: alarmDefaults.on,
+    dow: alarmDefaults.dow,
+    last: alarmDefaults.last,
+    rp: alarmDefaults.rp,
+    vibrate: alarmDefaults.vibrate,
+    as: alarmDefaults.as,
+  };;
+  renderAlarm(timer);
+  alarms.push(timer);
+}
+
+function getData() {
+  Util.showModal("Loading...");
+  Util.readStorageJSON('sched.json',data=>{
+    alarms = data || [];
+
+    Util.readStorageJSON('sched.settings.json',data=>{
+      schedSettings = data || {};
+      Util.hideModal();
+      alarms.sort((a, b) => {
+        let x;
+
+        // move app specific alarms to the bottom
+        x = !!a.appid - !!b.appid;
+        if(x) return x;
+
+        x = !!b.date - !!a.date;
+        if(x) return x;
+
+        x = !!a.timer - !!b.timer;
+        if(x) return x;
+
+        return a.t - b.t;
+      });
+      alarms.forEach(alarm => {
+        renderAlarm(alarm, true);
+      });
+    });
+  });
+}
+
+// Called when app starts
+function onInit() {
+  getData();
+}
+    </script>
+  </head>
+  <body>
+    <h4>Manage dated events</h4>
+
+    <div class="float-right">
+      <button class="btn" onclick="addEvent()">
+        <i class="icon icon-plus"></i>
+        Event
+      </button>
+      <button class="btn" onclick="addAlarm()">
+        <i class="icon icon-plus"></i>
+        Alarm
+      </button>
+      <button class="btn" onclick="addTimer()">
+        <i class="icon icon-plus"></i>
+        Timer
+      </button>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th colspan="3">Time & Options</th>
+          <th>Days</th>
+          <th>Summary</th>
+        </tr>
+      </thead>
+      <tbody id="events">
+      </tbody>
+    </table>
+
+    <div class="divider"></div>
+    <div class="form-horizontal">
+      <div class="form-group">
+        <div class="col-5 col-xs-12">
+          <label class="form-label" for="fileinput">Add from iCalendar file</label>
+        </div>
+        <div class="col-7 col-xs-12">
+          <input id="fileinput" class="form-input" type="file" onchange="readFile(this)" accept=".ics,.ifb,.ical,.ifbf" multiple/>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-5 col-xs-12">
+          <label class="form-label" for="offsetMinutes">Minutes to alarm in advance</label>
+        </div>
+        <div class="col-7 col-xs-12">
+          <input id="offsetMinutes" class="form-input" type="number" value="0" min="0" step="5"/>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+
+    <button id="upload" class="btn btn-primary" onClick="upload()" disabled>Upload</button>
+    <button id="reload" class="btn" onClick="location.reload()">Reload</button>
+  </body>
+</html>

@@ -16,7 +16,7 @@ let dark = g.theme.dark; // bool
 let gfx = function() {
   widgetUtils.hide();
   R = Bangle.appRect;
-  marigin = 8;
+  const marigin = 8;
   // g.drawString(str, x, y, solid)
   g.clearRect(R);
   g.reset();
@@ -53,9 +53,9 @@ let gfx = function() {
 
 // Touch handler for main layout
 let touchHandler = function(_, xy) {
-  x = xy.x;
-  y = xy.y;
-  len = (R.w<R.h+1)?(R.w/3):(R.h/3);
+  let x = xy.x;
+  let y = xy.y;
+  let len = (R.w<R.h+1)?(R.w/3):(R.h/3);
   
   // doing a<b+1 seemed faster than a<=b, also using a>b-1 instead of a>=b.
   if ((R.x-1<x && x<R.x+len) && (R.y-1<y && y<R.y+len)) {
@@ -66,7 +66,6 @@ let touchHandler = function(_, xy) {
     E.showMenu(paMenu);
   } else if ((R.x-1<x && x<R.x+len) && (R.y2-len<y && y<R.y2+1)) {
     //Wake 
-    gadgetbridgeWake();
     gadgetbridgeWake();
   } else if ((R.x2-len<x && x<R.x2+1) && (R.y-1<y && y<R.y+len)) {
     //Srch
@@ -128,7 +127,7 @@ The functions for interacting with Android and the Podcast Addict app
 let pkg = "com.bambuna.podcastaddict";
 let standardCls = pkg + ".receiver.PodcastAddictPlayerReceiver";
 let updateCls = pkg + ".receiver.PodcastAddictBroadcastReceiver";
-let speed = 1.0;
+//let speed = 1.0;
 
 let simpleSearch = "";
 
@@ -143,7 +142,8 @@ let simpleSearchTerm = function() { // input a simple search term without tags, 
 };
 
 let searchPlayWOTags = function() { //make a search and play using entered terms
-  searchString = simpleSearch;
+  const searchString = simpleSearch;
+  Bluetooth.println("");
   Bluetooth.println(JSON.stringify({
     t: "intent",
     action: "android.media.action.MEDIA_PLAY_FROM_SEARCH",
@@ -157,6 +157,7 @@ let searchPlayWOTags = function() { //make a search and play using entered terms
 };
 
 let gadgetbridgeWake = function() {
+  Bluetooth.println("");
   Bluetooth.println(JSON.stringify({
     t: "intent",
     target: "activity",
@@ -174,6 +175,7 @@ let actFn = function(actName, activOrServ) {
 // Send the intent message to Gadgetbridge
 let btMsg = function(activOrServ, cls, actName, xtra) {
 
+  Bluetooth.println("");
   Bluetooth.println(JSON.stringify({
     t: "intent",
     action: actFn(actName, activOrServ),
@@ -267,15 +269,15 @@ let speedMenu = {
                 }
   },
   "Regular Speed": () => {
-    speed = 1.0;
+    //speed = 1.0;
     btMsg("service", standardCls, "player.1xspeed");
   },
   "1.5x Regular Speed": () => {
-    speed = 1.5;
+    //speed = 1.5;
     btMsg("service", standardCls, "player.1.5xspeed");
   },
   "2x Regular Speed": () => {
-    speed = 2.0;
+    //speed = 2.0;
     btMsg("service", standardCls, "player.2xspeed");
   },
   //"Faster" : ()=>{speed+=0.1; speed=((speed>5.0)?5.0:speed); btMsg("service",standardCls,"player.customspeed",{arg1:speed});},

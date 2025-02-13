@@ -8,3 +8,7 @@
 0.08: Fix for Home button in the app and README added.
 0.09: Fix failing dismissal of Gadgetbridge notifications, record (coarse) bluetooth state
 0.10: Remove widget icon and improve listener and setInterval handling for widget (might help with https://github.com/espruino/BangleApps/issues/381)
+0.11: Initial port to the BangleJS2
+0.12: Remove debug log
+0.13: Minor code improvements
+0.14: Minor code improvements

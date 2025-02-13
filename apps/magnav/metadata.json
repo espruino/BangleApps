@@ -1,7 +1,7 @@
 {
   "id": "magnav",
   "name": "Navigation Compass",
-  "version": "0.05",
+  "version": "0.07",
   "description": "Compass with linear display as for GPSNAV. Has Tilt compensation and remembers calibration.",
   "screenshots": [{"url":"screenshot-b2.png"},{"url":"screenshot-light-b2.png"}],
   "icon": "magnav.png",
@@ -11,6 +11,7 @@
   "storage": [
     {"name":"magnav.app.js","url":"magnav_b1.js","supports":["BANGLEJS"]},
     {"name":"magnav.app.js","url":"magnav_b2.js","supports":["BANGLEJS2"]},
+    {"name":"magnav","url":"lib.js"},
     {"name":"magnav.img","url":"magnav-icon.js","evaluate":true}
   ],
   "data": [{"name":"magnav.json"}]

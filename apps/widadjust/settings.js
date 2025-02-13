@@ -108,6 +108,11 @@
       value: settings.debugLog,
       onchange: v => settings.debugLog = v,
     },
+
+    'Hide Widget': {
+      value: settings.hide || false,
+      onchange: v => settings.hide = v,
+    },
   };
 
   E.showMenu(mainMenu);

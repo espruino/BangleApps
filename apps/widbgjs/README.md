@@ -11,7 +11,7 @@ For this widget to work and to get data from the phone, you need:
 ## How to use it
 Make sure you have all the prerequisites from above.
 
-The watch should automatically start displaying values, if there is an arrow visible behind the value, the value is within the not-expired-yet time range changeable in the settings standard is 15 minutes. (I will probably change this in the future, to strike through the text to make expired values clearer).
+The watch should automatically start displaying values. Old values are now written with strikethrough.
 
 ## Settings
 In the settings, you can:
@@ -26,4 +26,3 @@ Developed by Phil Roggenbuck (<a href="https://github.com/phrogg" target="_BLANK
 
 # Disclaimer
 As well as xdrip you should not use this app to make medical decisions!
-

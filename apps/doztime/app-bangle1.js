@@ -28,6 +28,7 @@ let addTimeDigit = false;
 let dateFormat = false;
 let lastX = 999999999;
 let res = {};
+let calenDef;
 //var last_time_log = 0;
 
 var drawtime_timeout;
@@ -60,7 +61,7 @@ g.flip = function()
 
 setWatch(function(){ modeTime(); }, BTN1, {repeat:true} );
 setWatch(function(){ Bangle.showLauncher(); }, BTN2, { repeat: false, edge: "falling" });
-setWatch(function(){ modeWeather(); }, BTN3, {repeat:true});
+//setWatch(function(){ modeWeather(); }, BTN3, {repeat:true}); // TODO: `modeWeather` is not yet implemented.
 setWatch(function(){ toggleTimeDigits(); }, BTN4, {repeat:true});
 setWatch(function(){ toggleDateFormat(); }, BTN5, {repeat:true});
 
@@ -122,7 +123,7 @@ function formatDate(res,dateFormat){
 }
 
 function writeDozTime(text,def){
-	let pts = def.pts;
+	//let pts = def.pts;
 	let x=def.pt0[0];
 	let y=def.pt0[1];
 	g_t.clear();
@@ -138,7 +139,7 @@ function writeDozTime(text,def){
 function writeDozDate(text,def,colour){
 	
 	dateColour = colour;
-	let pts = def.pts;
+	//let pts = def.pts;
 	let x=def.pt0[0];
 	let y=def.pt0[1];
 	g_d.clear();
@@ -159,20 +160,22 @@ function drawTime()
 	let date = "";
 	let timeDef;
 	let x = 0;
+	let time;
+	let wait;
 	dt.setDate(dt.getDate());
 	if(addTimeDigit){
 		x =
 		10368*dt.getHours()+172.8*dt.getMinutes()+2.88*dt.getSeconds()+0.00288*dt.getMilliseconds();
 		let msg = "00000"+Math.floor(x).toString(12);
-		let time = msg.substr(-5,3)+"."+msg.substr(-2);
-		let wait = 347*(1-(x%1));
+		time = msg.substr(-5,3)+"."+msg.substr(-2);
+		wait = 347*(1-(x%1));
 		timeDef = time6;
 	} else {
 		x =
 		864*dt.getHours()+14.4*dt.getMinutes()+0.24*dt.getSeconds()+0.00024*dt.getMilliseconds();
 		let msg = "0000"+Math.floor(x).toString(12);
-		let time = msg.substr(-4,3)+"."+msg.substr(-1);
-		let wait = 4167*(1-(x%1));
+		time = msg.substr(-4,3)+"."+msg.substr(-1);
+		wait = 4167*(1-(x%1));
 		timeDef = time5;
 	}
 	if(lastX > x){ res = getDate(dt); } // calculate date once at start-up and once when turning over to a new day
@@ -210,8 +213,8 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 // Functions for weather mode - TODO
-function drawWeather() {}
-function modeWeather() {}
+//function drawWeather() {}
+//function modeWeather() {}
 
 // Start time on twist
 Bangle.on('twist', function() {
@@ -223,9 +226,8 @@ function fixTime() {
 	Bangle.on("GPS",function cb(g) {
 		Bangle.setGPSPower(0,"time");
 		Bangle.removeListener("GPS",cb);
-		if (!g.time || (g.time.getFullYear()<2000) ||
-			(g.time.getFullYear()>2200)) {
-		} else {
+		if (g.time && (g.time.getFullYear()>=2000) &&
+			(g.time.getFullYear()<=2200)) {
 			// We have a GPS time. Set time
 			setTime(g.time.getTime()/1000);
 		}

@@ -1,0 +1,14 @@
+{ "id": "kbmatry",
+  "name": "Matryoshka Keyboard",
+  "version":"1.07",
+  "description": "A library for text input via onscreen keyboard. Easily enter characters with nested keyboards.",
+  "icon": "icon.png",
+  "type":"textinput",
+  "tags": "keyboard",
+  "supports" : ["BANGLEJS2"],
+  "screenshots": [{"url":"screenshot.png"},{"url":"screenshot6.png"},{"url":"screenshot2.png"},{"url":"screenshot3.png"},{"url":"screenshot4.png"},{"url":"screenshot5.png"},{"url": "help.png"}],
+  "readme": "README.md",
+  "storage": [
+    {"name":"textinput","url":"lib.js"}
+  ]
+}

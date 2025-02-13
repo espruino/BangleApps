@@ -161,8 +161,11 @@ function draw() {
     },back:()=>{
       clearInterval(flashInterval);
       Bangle.setUI();
+      Bangle.prependListener&&Bangle.removeListener('swipe', catchSwipe); // Remove swipe lister if it was added with `Bangle.prependListener()` (fw2v19 and up).
       g.clearRect(Bangle.appRect);
       resolve(text);
     }});
+    let catchSwipe = ()=>{E.stopEventPropagation&&E.stopEventPropagation();};
+    Bangle.prependListener&&Bangle.prependListener('swipe', catchSwipe); // Intercept swipes on fw2v19 and later. Should not break on older firmwares.
   });
 };

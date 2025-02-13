@@ -85,7 +85,7 @@ function render(){
   const visibleApps = APPS.filter(app => app.x >= STATE.offset-HALF && app.x <= STATE.offset+WIDTH-HALF );
 
   let cycle = 0;
-  let lastCycle = visibleApps.length;
+  //let lastCycle = visibleApps.length;
   
   visibleApps.forEach(app => {
     cycle++;

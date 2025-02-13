@@ -1,7 +1,7 @@
 // check if enabled in settings
 if ((require("Storage").readJSON("sleeplogalarm.settings.json", true) || {enabled: true}).enabled) {
   // read settings
-  settings = require("sleeplogalarm").getSettings(); // is undefined if used with var
+  let settings = require("sleeplogalarm").getSettings();
 
   // insert neccessary settings into widget
   WIDGETS.sleeplogalarm = {
@@ -10,10 +10,13 @@ if ((require("Storage").readJSON("sleeplogalarm.settings.json", true) || {enable
     time: 0,
     earlier: settings.earlier,
     draw: function () {
-      // draw zzz
-      g.reset().setColor(settings.wid.color).drawImage(atob("BwoBD8SSSP4EEEDg"), this.x + 1, this.y);
-      // call function to draw the time of alarm if a alarm is found
-      if (this.time) this.drawTime(this.time + 1);
+      // draw if width is set
+      if (this.width) {
+        // draw zzz
+        g.reset().setColor(settings.wid.color).drawImage(atob("BwoBD8SSSP4EEEDg"), this.x + 1, this.y);
+        // call function to draw the time of alarm if a alarm is found
+        if (this.time) this.drawTime(this.time + 1);
+      }
     },
     drawTime: () => {},
     reload: require("sleeplogalarm").widReload

@@ -1,5 +1,7 @@
 0.01: New App!
 0.02: Minor layout format tweak so it uses less memory and draws ok on Bangle.js 1 (#1012)
 0.03: Minor layout extra spaces.
-0.04: Layout now compatible with Bangle.js 2
-0.05: Use weather condition code for icon selection
+0.04: Layout now compatible with Bangle.js 2.
+0.05: Use weather condition code for icon selection.
+0.06: WeatherClock icons now reflect weather conditions better. Add settings menu to hide elements and to use weather icons of Weather app. Images placed into functions for performance.
+0.07: Add yellow to error icon to show up on dark theme.

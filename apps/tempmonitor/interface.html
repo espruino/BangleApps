@@ -32,7 +32,7 @@ function getData() {
       <th>Month</th>
       <th>Day</th>
       <th>Time HH:mm</th>
-      <th>temperature</th>      
+      <th>temperature</th>
     </tr>`+data.trim().split("\n").map(l=>{
       l = l.split(";");
       return `<tr>
@@ -47,7 +47,7 @@ function getData() {
 
 // You can call a utility function to save the data
 document.getElementById("btnSave").addEventListener("click", function() {
-  Util.saveCSV("temphistory.csv", csvData);
+  Util.saveCSV("temphistory", csvData);
 });
 // Or you can also delete the file
 document.getElementById("btnDelete").addEventListener("click", function() {

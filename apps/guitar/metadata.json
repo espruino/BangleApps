@@ -1,0 +1,14 @@
+{ "id": "guitar",
+  "name": "Guitar Chords",
+  "shortName":"Guitar",
+  "version": "0.03",
+  "description": "Wrist mounted guitar chords",
+  "icon": "app.png",
+  "tags": "guitar,chords",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"guitar.app.js","url":"app.js"},
+    {"name":"guitar.img","url":"app-icon.js","evaluate":true}
+  ]
+}

@@ -25,7 +25,7 @@ declare global variables for the toggle button
 statuses; if you add an additional toggle button
 you should declare it and initiase it here */
 
-var status_spk = {value: true};
+//var status_spk = {value: true};
 var status_face = {value: true};
 var status_iris_light = {value: false};
 var status_iris = {value: false};

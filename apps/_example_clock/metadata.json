@@ -1,0 +1,16 @@
+{ "id": "7chname",
+  "name": "My clock human readable name",
+  "shortName":"Short Name",
+  "version":"0.01",
+  "description": "A detailed description of my clock",
+  "icon": "icon.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"7chname.app.js","url":"app.js"},
+    {"name":"7chname.img","url":"app-icon.js","evaluate":true}
+  ]
+}

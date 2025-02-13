@@ -1,0 +1,18 @@
+{ "id": "approxclock",
+  "name": "Approximate Clock",
+  "shortName" : "Approx Clock",
+  "version": "0.04",
+  "icon": "app.png",
+  "description": "A really basic spelled out time display for people looking for the vague time at a glance.",
+  "readme": "readme.md",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"approxclock.app.js","url":"app.js"},
+    {"name":"approxclock.img","url":"app-icon.js","evaluate":true}
+  ],
+  "screenshots": [
+    {"url": "screenshot.png"}
+  ]
+}

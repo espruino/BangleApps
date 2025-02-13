@@ -2,7 +2,7 @@
   "id": "bikespeedo",
   "name": "Bike Speedometer (beta)",
   "shortName": "Bike Speedometer",
-  "version": "0.03",
+  "version": "0.07",
   "description": "Shows GPS speed, GPS heading, Compass heading, GPS altitude and Barometer altitude from internal sources",
   "icon": "app.png",
   "screenshots": [{"url":"Screenshot.png"}],

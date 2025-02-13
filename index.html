@@ -22,7 +22,7 @@
   <body>
     <header class="navbar-primary navbar">
       <section class="navbar-section" >
-        <a href="https://banglejs.com" target="_blank" class="navbar-brand mr-2" ><img src="img/banglejs-logo-sml.png" alt="Bangle.js">
+        <a href="https://banglejs.com" target="_blank" class="navbar-brand mr-2"><img src="img/banglejs-logo-small.svg" alt="Bangle.js">
         <div>App Loader</div></a>
         <!-- <a href="#" class="btn btn-link">...</a> -->
       </section>
@@ -73,25 +73,27 @@
           </ul>
         </div>
         <div class="filter-nav">
-          <label class="chip active" filterid="">Default</label>
-          <label class="chip" filterid="clock">Clocks</label>
-          <label class="chip" filterid="launch">Launchers</label>
-          <label class="chip" filterid="game">Games</label>
-          <label class="chip" filterid="tool">Tools</label>
-          <label class="chip" filterid="textinput">Keyboards</label>
-          <label class="chip" filterid="widget">Widgets</label>
-          <label class="chip" filterid="bluetooth">Bluetooth</label>
-          <label class="chip" filterid="outdoors">Outdoors</label>
-          <label class="chip" filterid="ram">Online</label>
-          <label class="chip" filterid="favourites">Favourites</label>
+          <label class="chip active" filterid="" data-tooltip="Show all apps">All</label>
+          <label class="chip tooltip" filterid="clock" data-tooltip="To tell the time!">Clocks</label>
+          <label class="chip tooltip" filterid="launch" data-tooltip="Choose which apps to launch">Launchers</label>
+          <label class="chip tooltip" filterid="game" data-tooltip="Have fun!">Games</label>
+          <label class="chip tooltip" filterid="tool" data-tooltip="Useful applications">Tools</label>
+          <label class="chip tooltip" filterid="textinput" data-tooltip="To allow you to enter text">Keyboards</label>
+          <label class="chip tooltip" filterid="widget" data-tooltip="Appear in the top bar of Bangle.js apps">Widgets</label>
+          <label class="chip tooltip" filterid="bluetooth" data-tooltip="Using Bluetooth Functionality">Bluetooth</label>
+          <label class="chip tooltip" filterid="outdoors" data-tooltip="For outdoor use">Outdoors</label>
+          <label class="chip tooltip" filterid="ram" data-tooltip="Apps that don't save anything to flash memory">Online</label>
+          <label class="chip tooltip" filterid="clkinfo" data-tooltip="Info displayed on clocks, or clocks with info">Clock Info</label>
+          <label class="chip tooltip" filterid="health" data-tooltip="Apps for your health">Health</label>
+          <label class="chip tooltip" filterid="favourites" data-tooltip="Apps that you've liked ❤️">Favourites</label>
         </div>
         <div class="sort-nav hidden">
           <span>Sort by:</span>
           <label class="chip active" sortid="">None</label>
-          <label class="chip hidden" sortid="created">New</label>
-          <label class="chip hidden" sortid="modified">Updated</label>
-          <label class="chip hidden" sortid="installs">Installed</label>
-          <label class="chip hidden" sortid="favourites">Favourited</label>
+          <label class="chip hidden tooltip" sortid="created"  data-tooltip="Most recent apps">New</label>
+          <label class="chip hidden tooltip" sortid="modified" data-tooltip="Most recently changed">Updated</label>
+          <label class="chip hidden tooltip" sortid="installs" data-tooltip="Most installed by users">Installed</label>
+          <label class="chip hidden tooltip" sortid="favourites" data-tooltip="Most liked by users">Favourited</label>
         </div>
       </div>
 
@@ -132,23 +134,25 @@
         <p>Using <a href="https://espruino.com/" target="_blank">Espruino</a>, Icons from <a href="https://icons8.com/" target="_blank">icons8.com</a></p>
 
         <h3>Utilities</h3>
-        <p><button class="btn" id="settime">Set Bangle.js Time</button>
-           <button class="btn" id="removeall" data-tooltip="Delete everything from your Bangle, leaving it blank">Remove all Apps</button>
-           <button class="btn" id="reinstallall" data-tooltip="Remove and re-install every app, leaving all other data intact">Reinstall apps</button>
-           <button class="btn" id="installdefault">Install default apps</button>
-           <button class="btn" id="installfavourite" data-tooltip="Delete everything, install apps you've marked as favourites">Install favourite apps</button>
-           <button class="btn" id="newGithubIssue" data-tooltip="Create a new issue on github">New issue on github</button></p>
-        <p><button class="btn tooltip tooltip-right" id="downloadallapps" data-tooltip="Download all Bangle.js files to a ZIP file">Backup</button>
-           <button class="btn tooltip tooltip-right" id="uploadallapps" data-tooltip="Restore Bangle.js from a ZIP file">Restore</button></p>
+        <p>
+           <button class="btn tooltip" id="settime" data-tooltip="Set the Bangle's time to your Browser's time">Set Bangle.js Time</button>
+           <button class="btn tooltip" id="screenshot" data-tooltip="Create screenshot">Screenshot</button>
+           <button class="btn tooltip" id="downloadallapps" data-tooltip="Download all Bangle.js files to a ZIP file">Backup</button>
+           <button class="btn tooltip" id="uploadallapps" data-tooltip="Restore Bangle.js from a ZIP file">Restore</button>
+        </p><p>
+           <button class="btn tooltip" id="removeall" data-tooltip="Delete everything, leave it blank">Remove all Apps</button>
+           <button class="btn tooltip" id="reinstallall" data-tooltip="Re-install every app, leave all data">Reinstall apps</button>
+           <button class="btn tooltip" id="installdefault" data-tooltip="Delete everything, install default apps">Install default apps</button>
+           <button class="btn tooltip" id="installfavourite" data-tooltip="Delete everything, install your favourites">Install favourite apps</button>
+           <button class="btn tooltip" id="defaultbanglesettings" data-tooltip="Reset your Bangle's settings to the defaults">Reset Settings</button>
+        </p><p>
+           <button class="btn tooltip" id="newGithubIssue" data-tooltip="Create a new issue on GitHub">New issue on GitHub</button>
+        </p>
         <h3>Settings</h3>
         <div class="form-group">
           <label class="form-switch">
             <input type="checkbox" id="settings-pretokenise">
             <i class="form-icon"></i> Pretokenise apps before upload (smaller, faster apps)
-          </label>
-          <label class="form-switch">
-            <input type="checkbox" id="settings-minify">
-            <i class="form-icon"></i> Minify apps before upload (smaller, faster apps - BETA)
           </label>
           <label class="form-switch">
             <input type="checkbox" id="settings-settime">
@@ -168,17 +172,36 @@
               <option value="">None (English)</option>
             </select>&nbsp;&nbsp;<span>Translations (<a href="https://github.com/espruino/BangleApps/issues/1311" target="_blank">BETA - more info</a>). Any apps that are uploaded to Bangle.js after changing this will have any text automatically translated.</span>
           </div>
-          <button class="btn" id="defaultsettings">Default settings</button>
+          <details>
+            <summary>Advanced Options</summary>
+            <label class="form-switch">
+              <input type="checkbox" id="settings-minify">
+              <i class="form-icon"></i> Minify apps before upload (⚠️DANGER⚠️: Not recommended. Uploads smaller, faster apps but this <b>will</b> break many apps)
+            </label>
+            <label class="form-switch">
+              <input type="checkbox" id="settings-alwaysAllowUpdate">
+              <i class="form-icon"></i> Always show "reinstall app" button <i class="icon icon-refresh"></i> regardless of the version
+            </label>
+            <label class="form-switch">
+              <input type="checkbox" id="settings-autoReload">
+              <i class="form-icon"></i> Automatically reload watch after app App Loader actions (removes "Hold button" prompt)
+            </label>
+            <button class="btn" id="defaultsettings">Reset App Loader settings to defaults</button>
+          </details>
         </div>
         <div id="more-deviceinfo" style="display:none">
-        <h3>Device info</h3>
-        <div id="more-deviceinfo-content"></div>
+          <h3>Device info</h3>
+          <div id="more-deviceinfo-content"></div>
+          <div class="editor--terminal">
+            <div class="editor__canvas" style="position:relative;height:20rem;display:none;"></div>
+            <button class="btn" id="terminalEnable">Enable Terminal</button>
+          </div>
         </div>
       </div>
     </div>
 
     <footer class="floating hidden">
-      <!-- Install button, hidden by default -->
+      <!-- PWA Install button, hidden by default -->
       <div id="installContainer" class="hidden">
         <button id="butInstall" type="button">
           Install
@@ -187,7 +210,7 @@
     </footer>
 
     <script src="webtools/puck.js"></script>
-    <script src="webtools/heatshrink.js"></script>    
+    <script src="webtools/heatshrink.js"></script>
     <script src="core/lib/marked.min.js"></script>
     <script src="core/lib/espruinotools.js"></script>
     <script src="core/js/utils.js"></script>

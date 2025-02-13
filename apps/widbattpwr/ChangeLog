@@ -1,0 +1,3 @@
+0.01: Initial fork from hwid_a_battery_widget
+0.02: Show battery percentage (instead of power) if charging
+0.03: Use `power_usage` module

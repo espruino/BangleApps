@@ -1,0 +1,15 @@
+{
+  "id": "angles",
+  "name": "Angles (Spirit Level)",
+  "shortName": "Angles",
+  "version": "0.02",
+  "description": "Shows Angle or Relative angle in degrees (Digital Protractor/Inclinometer). Place Bangle sideways against a surface with the button facing away for best readings.",
+  "icon": "icon.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "tags": "tool",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"angles.app.js","url":"app.js"},
+    {"name":"angles.img","url":"icon.js","evaluate":true}
+  ]
+}

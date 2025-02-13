@@ -1,0 +1,17 @@
+{ "id": "guitarsongs",
+  "name": "Guitar Songs",
+  "shortName":"Guitar Songs",
+  "version": "0.04",
+  "description": "Songs lyrics and guitar chords",
+  "icon": "app.png",
+  "screenshots": [{"url": "screenshot.png"}],
+  "tags": "guitar,song,lyrics,chords",
+  "supports" : ["BANGLEJS2"],
+  "interface": "manage_songs.html",
+  "readme": "README.md",
+  "storage": [
+    {"name":"guitarsongs.app.js","url":"app.js"},
+    {"name":"guitarsongs.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":  "guitar_songs.json"}]
+}

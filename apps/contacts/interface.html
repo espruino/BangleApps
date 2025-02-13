@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css">
+    <script type="module">
+      import vcf from 'https://cdn.jsdelivr.net/npm/vcf@2.1.1/+esm'
+      window.vcf = vcf;
+    </script>
+
+    <style type="text/css">
+        html, body { height: 100% }
+        .flex-col { display:flex; flex-direction:column; height:100% }
+        #map { width:100%; height:100% }
+        #tab-list { width:100%; height:100% }
+
+        /* https://stackoverflow.com/a/58686215 */
+        .arrow-icon {
+            width: 14px;
+            height: 14px;
+        }
+        .arrow-icon > div {
+            margin-left: -1px;
+            margin-top: -3px;
+            transform-origin: center center;
+            font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        }
+
+    </style>
+</head>
+<body>
+  <h1>Contacts</h1>
+    <div class="flex-col">
+        <div id="statusarea">
+            <button id="download" class="btn btn-error">Reload</button> <button id="upload" class="btn btn-primary">Upload</button>
+            <span id="status"></span>
+            <span id="routestatus"></span>
+        </div>
+        <div style="flex: 1">
+          <div id="tab-list">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Number</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="contacts">
+              </tbody>
+            </table>
+            <br>
+            <h4>Add a new contact</h4>
+            <form id="add_contact_form">
+              <div class="columns">
+                <div class="column col-3 col-xs-8">
+                  <input class="form-input input-sm" type="text" id="add_contact_name" placeholder="Name">
+                </div>
+                <div class="column col-3 col-xs-8">
+                  <input class="form-input input-sm" value="123456789" type="text" id="add_number" placeholder="Number">
+                </div>
+              </div>
+              <div class="columns">
+                <div class="column col-3 col-xs-8">
+                  <button id="add_contact_button" class="btn btn-primary btn-sm">Add Contact</button>
+                </div>
+              </div>
+            </form>
+            <div class="divider"></div>
+            <div class="form-horizontal">
+              <div class="form-group">
+                <div class="col-5 col-xs-12">
+                  <label class="form-label" for="fileinput">Add from vCard file</label>
+                </div>
+                <div class="col-7 col-xs-12">
+                  <input id="fileinput" class="form-input" type="file" onchange="readFile(this)" accept=".vcf" multiple/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="../../core/lib/interface.js"></script>
+
+    <script>
+        var contacts = [];
+
+	// ==========================================================================
+        /*** status ***/
+
+        function clean() {
+            $('#status').html('<i class="icon icon-check"></i> No pending changes.');
+        }
+
+        function dirty() {
+            $('#status').html('<b><i class="icon icon-edit"></i> Changes have not been sent to the watch.</b>');
+        }
+
+        /*** contacts ***/
+
+        function deleteContact(arr, i) {
+            arr.splice(i, 1);
+            renderAllContacts();
+            dirty();
+        }
+
+        function renameContact(arr, i) {
+            var name = prompt("Enter new name for the contact:", arr[i].name);
+            if (name == null || name == "" || name == arr[i].name)
+                return;
+            arr[i].name = name;
+            renderAllContacts();
+            dirty();
+        }
+
+        /*** util ***/
+
+        // https://stackoverflow.com/a/22706073
+        function escapeHTML(str){
+            return new Option(str).innerHTML;
+        }
+
+        /*** Bangle.js ***/
+
+        function gotStored(pts) {
+            contacts = pts;
+            renderAllContacts();
+        }
+
+      // ========================================================================== LIST
+
+      var $name = document.getElementById('add_contact_name')
+      var $form = document.getElementById('add_contact_form')
+      var $button = document.getElementById('add_contact_button')
+      var $number = document.getElementById('add_number')
+      var $list = document.getElementById('contacts')
+
+      function compare(a, b){
+            var x = a.name.toLowerCase();
+            var y = b.name.toLowerCase();
+            if (x=="none") {return -1};
+            if (y=="none") {return 1};
+            if (x < y) {return -1;}
+            if (x > y) {return 1;}
+            return 0;
+        }
+
+      $button.addEventListener('click', event => {
+        event.preventDefault()
+        var name = $name.value.trim()
+        if(!name) return;
+        var number = $number.value.trim();
+
+        contacts.push({
+          name, number,
+        });
+
+        contacts.sort(compare);
+
+        renderAllContacts()
+        $name.value = ''
+        $number.value = (0);
+
+	dirty();
+      });
+
+      function removeContact(index){
+        $name.value = contacts[index].name
+        $number.value = contacts[index].number
+        contacts = contacts.filter((p,i) => i!==index)
+        renderAllContacts()
+      }
+
+      function renderContactsList(){
+        $list.innerHTML = ''
+        contacts.forEach((contact,index) => {
+          var $contact = document.createElement('tr')
+	  if(contact.number==undefined){
+            $contact.innerHTML = `<td>${contact.name}</td><td>(no number)</td>`;
+          } else {
+            $contact.innerHTML = `<td>${contact.name}</td><td><a href="tel:${contact.number}">${contact.number}</a></td>`;
+          }
+          let buttons = `<button class="btn btn-action btn-error" onclick="removeContact(${index})"><i class="icon icon-delete"></i></button>`;
+          buttons += `<button class="btn btn-action" onclick="exportVcard(${index})" title="Export vCard"><i class="icon icon-download"></i></button>`;
+          $contact.innerHTML += `<td>${buttons}</td>`;
+          $list.appendChild($contact)
+        })
+        $name.focus()
+      }
+
+      function renderContacts() {
+        renderContactsList();
+      }
+
+      function renderAllContacts() {
+        renderContactsList();
+      }
+
+      function readFile(input) {
+        for(let i=0; i<input.files.length; i++) {
+          const reader = new FileReader();
+          reader.addEventListener("load", () => {
+            let vcards;
+            try {
+              vcards = vcf.parse(reader.result);
+            } catch (error) {
+              alert(error);
+              return;
+            }
+            vcards.forEach(vcard => {
+              const name = vcard.get('fn')?.valueOf() || vcard.get('n')?.valueOf();
+              const tels = Array.isArray(vcard.get('tel')) ? vcard.get('tel') : [vcard.get('tel')];
+              tels.forEach(tel => {
+                if (tel) {
+                  const number = tel.valueOf();
+                  contacts.push({name: name, number: number});
+                }
+              });
+            });
+            renderAllContacts();
+            dirty();
+          }, false);
+          reader.readAsText(input.files[i], "UTF-8");
+        }
+      }
+
+      function exportVcard(index){
+        const vCard = new vcf();
+        vCard.set('n', contacts[index].name);
+        vCard.set('tel', contacts[index].number);
+        Util.saveFile(contacts[index].name+".vcf", "text/vcard", vCard.toString());
+      }
+
+      // ========================================================================== UPLOAD/DOWNLOAD
+
+      function downloadJSONfile(fileid, callback) {
+        // TODO: use interface.js-provided stuff?
+          Puck.write(`\x10(function() {
+              var pts = require("Storage").readJSON("${fileid}")||[{name:"NONE"}];
+              Bluetooth.print(JSON.stringify(pts));
+          })()\n`, contents => {
+              if (contents=='[{name:"NONE"}]') contents="[]";
+              var storedpts = JSON.parse(contents);
+              callback(storedpts);
+              clean();
+          });
+      }
+
+      function uploadFile(fileid, contents) {
+        // TODO: use interface.js-provided stuff?
+          Puck.write(`\x10(function() {
+              require("Storage").write("${fileid}",'${contents}');
+              Bluetooth.print("OK");
+          })()\n`, ret => {
+              console.log("uploadFile", ret);
+              if (ret == "OK")
+                  clean();
+          });
+      }
+
+      function onInit() {
+          downloadJSONfile("contacts.json", gotStored);
+      }
+
+      $('#download').on('click', function() {
+          downloadJSONfile("contacts.json", gotStored);
+      });
+
+      $('#upload').click(function() {
+          var data =  JSON.stringify(contacts);
+          uploadFile("contacts.json",data);
+      });
+
+      // ========================================================================== FINALLY...
+      clean();
+      renderAllContacts();
+    </script>
+  </body>
+</html>

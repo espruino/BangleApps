@@ -1,0 +1,14 @@
+{ "id": "7chname",
+  "name": "My clock info's human readable name",
+  "shortName":"Short Name",
+  "version":"0.01",
+  "description": "A detailed description of my clock info",
+  "icon": "icon.png",
+  "type": "clkinfo",
+  "tags": "clkinfo",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"7chname.clkinfo.js","url":"clkinfo.js"}
+  ]
+}

@@ -46,7 +46,6 @@
 
       var $name = document.getElementById('add_product_name')
       var $form = document.getElementById('add_product_form')
-      var $button = document.getElementById('add_product_button')
       var $quantity = document.getElementById('add_product_quantity')
       var $list = document.getElementById('products')
       var $reset = document.getElementById('reset')
@@ -68,7 +67,8 @@
           ok: false
         })
 
-        renderProducts()
+        renderProducts();
+        window.scrollTo(0, document.body.scrollHeight);
         $name.value = ''
         $quantity.value = 1
       })
@@ -76,11 +76,11 @@
       function getData() {
         // show loading window
         Util.showModal("Loading...");
-        Util.readStorage('grocery_list.json', data=>{
+        Util.readStorageJSON('grocery_list.json', data=>{
           // remove window
           Util.hideModal();
 
-          settings = JSON.parse(data || "{products: []}");
+          settings = data || {"products": []};
           products = settings.products;
           renderProducts();
         });
@@ -89,7 +89,6 @@
       function save(){
         settings.products = products;
         Util.showModal("Saving...");
-        localStorage.setItem('grocery-product-list',JSON.stringify(products));
         Util.writeStorage("grocery_list.json", JSON.stringify(settings), () => {
           Util.hideModal();
         });

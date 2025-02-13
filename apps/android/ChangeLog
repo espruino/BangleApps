@@ -20,3 +20,23 @@
 0.19: Add automatic translation for a couple of strings.
 0.20: Fix wrong event used for forwarded GPS data from Gadgetbridge and add mapper to map longitude value correctly.
 0.21: Fix broken 'Messages' button in menu
+0.22: Handle connection events for GPS forwarding from phone
+0.23: Handle 'act' Gadgetbridge messages for realtime activity monitoring
+0.24: Handle new 'nav' event for navigation
+0.25: Added option to 'ignore' an app from the message
+0.26: Change handling of GPS status to depend on GPS events instead of connection events
+0.27: Issue newline before GB commands (solves issue with console.log and ignored commands)
+0.28: Navigation messages no longer launch the Maps view unless they're new
+0.29: Support for http request xpath return format
+0.30: Send firmware and hardware versions on connection
+      Allow alarm enable/disable
+0.31: Implement API for activity fetching
+0.32: Added support for loyalty cards from gadgetbridge
+0.33: Fix alarms created in Gadgetbridge not repeating
+0.34: Implement API for activity tracks fetching (Recorder app logs).
+0.35: Implement API to enable/disable acceleration data tracking.
+0.36: Move from wrapper function to {} and let - faster execution at boot
+      Allow `calendar-` to take an array of items to remove
+0.37: Support Gadgetbridge canned responses
+0.38: Don't rewrite settings file on every boot!
+0.39: Move GB message handling into a library to reduce boot time from 40ms->13ms

@@ -21,11 +21,11 @@ var screens = [
     name: "Hardware",
     items: [
       {name: "Battery", fun: () => E.getBattery() + "%"},
-      {name: "Charge?", fun: () => Bangle.isCharging() ? "Yes" : "No"},
+      {name: "Charge?", fun: () => Bangle.isCharging() ? /*LANG*/"Yes" : /*LANG*/"No"},
       {name: "TempInt.", fun: () => locale.temp(parseInt(E.getTemperature()))},
-      {name: "Bluetooth", fun:  () => NRF.getSecurityStatus().connected ? "Conn" : "NoConn"},
-      {name: "GPS", fun:  () => Bangle.isGPSOn() ? "On" : "Off"},
-      {name: "Compass", fun:  () => Bangle.isCompassOn() ? "On" : "Off"},
+      {name: "Bluetooth", fun:  () => NRF.getSecurityStatus().connected ? /*LANG*/"Conn" : /*LANG*/"NoConn"},
+      {name: "GPS", fun:  () => Bangle.isGPSOn() ? /*LANG*/"On" : /*LANG*/"Off"},
+      {name: "Compass", fun:  () => Bangle.isCompassOn() ? /*LANG*/"On" : /*LANG*/"Off"},
     ]
   },
   {

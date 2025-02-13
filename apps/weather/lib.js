@@ -36,11 +36,12 @@ function update(weatherEvent) {
     delete json.weather;
   }
 
+
   storage.write('weather.json', json);
   scheduleExpiry(json);
   exports.emit("update", json.weather);
 }
-
+exports.update = update;
 const _GB = global.GB;
 global.GB = (event) => {
   if (event.t==="weather") update(event);
@@ -155,14 +156,11 @@ exports.getColor = function(code) {
  * @param y Top
  * @param r Icon Size
  * @param ovr Graphics instance (or undefined for g)
+ * @param monochrome If true, produce a monochromatic icon
  */
-exports.drawIcon = function(cond, x, y, r, ovr) {
+exports.drawIcon = function(cond, x, y, r, ovr, monochrome) {
   var palette;
-  var monochrome=1;
-  if(!ovr) {
-    ovr = g;
-    monochrome=0;
-  }
+  if(!ovr) ovr = g;
 
   palette = getPalette(monochrome, ovr);
 

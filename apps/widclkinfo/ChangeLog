@@ -1,0 +1,4 @@
+0.01: New Widget!
+0.02: Now use an app ID (to avoid conflicts with clocks that also use ClockInfo)
+0.03: Fix widget clearing too far down
+0.04: If a small font is needed, use 6x8 but twice as high

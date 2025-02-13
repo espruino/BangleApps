@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="OsmAndRouterV2" xmlns="http://www.topografix.com/GPX/1/1" xmlns:osmand="https://osmand.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+	<metadata>
+		<name>1kmsquare</name>
+		<desc>Export from GpsPrune</desc>
+	</metadata>
+	<trk>
+		<name>1kmsquare</name>
+		<number>1</number>
+		<trkseg>
+			<trkpt lat="47.2577411" lon="11.9927442">
+				<ele>2273</ele>
+				<name>Lower left</name>
+			</trkpt>
+			<trkpt lat="47.266761" lon="11.9926673">
+				<ele>2166</ele>
+				<name>Top left</name>
+			</trkpt>
+			<trkpt lat="47.2667605" lon="12.0059511">
+				<ele>2245</ele>
+				<name>Top right</name>
+			</trkpt>
+			<trkpt lat="47.2577516" lon="12.0059925">
+				<ele>1994</ele>
+				<name>Lower right</name>
+			</trkpt>
+			<trkpt lat="47.2577412" lon="11.9927442">
+				<ele>2273</ele>
+				<name>Destination</name>
+			</trkpt>
+		</trkseg>
+	</trk>
+</gpx>

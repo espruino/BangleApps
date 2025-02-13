@@ -87,3 +87,29 @@
 0.62: Remove '.show' field, tidyup and fix .open if fast load not enabled
 0.63: Fix messages app loading on clock without fast load
 0.64: Ensure we don't get 'undefined' as the message body
+0.65: Make sure messages are saved if not in the clock app (fix #2460)
+0.66: Updated Navigation handling to work with new Gadgetbridge release
+0.67: Support for 'Ignore' for messages from Gadgetbridge
+      Message view is now taller, and we use swipe left/right to dismiss messages rather than buttons
+0.68: More navigation icons (for roundabouts)
+0.69: More navigation icons (keep/uturn left/right)
+      Nav messages with '/' now get split on newlines
+0.70: Handle nav messages from newer Gadgetbridge builds that output distance as a String
+      If we receive a 'music' message and we're in the messages app (but not showing a message) show music (#2814)
+0.71: Cancel buzzing when watch unlocked, or when different messages viewed
+      On 2v18.64+ firmware, 'No Messages' now has a 'back' button
+0.72: Nav message updastes don't automatically launch navigation menu unless they're new
+0.73: Add sharp left+right nav icons
+0.74: Add option for driving on left (affects roundabout icons in navigation)
+0.75: Handle text with images in messages list by just displaying the first line
+0.76: Swipe up/down on a shown message to show the next newer/older message.
+0.77: Messages can now use international fonts if they are installed
+0.78: Fix: When user taps on a new message, clear the unread timeout
+0.79: Fix: Reset the unread timeout each time a new message is shown. When the message is read from user input, do not set an unread timeout.
+0.80: Add ability to reply to messages if a reply library is installed and the message can be replied to
+0.81: Fix issue stopping Music message for being marked as read
+      Make sure play button image is transparent
+      Add top-right menu to music playback to allow message to be deleted
+0.82: Stop buzzing when a message is removed (e.g. call answered)
+0.83: Add option to not open the first unread message
+0.84: Fix: Assign show message entry to the settings menu and not the message itself.

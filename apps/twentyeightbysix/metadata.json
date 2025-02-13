@@ -1,0 +1,15 @@
+{ "id": "twentyeightbysix",
+  "name": "Twenty-Eight Hour Clock",
+  "shortName": "28x6",
+  "icon": "app.png",
+  "version":"0.04",
+  "description": "A 28 Hour, 6 Day Week Clock. Lines up with a 24 hour, 7 Day Week Clock every Monday.",
+  "tags": "clock",
+  "storage": [
+    {"name":"twentyeightbysix.app.js","url":"app.js"},
+    {"name":"twentyeightbysix.img","url":"app-icon.js","evaluate":true}
+  ],
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "screenshots": [{"url":"screenshot.png"},{"url":"screenshot2.png"},{"url":"screenshot3.png"}],
+  "readme": "README.md"
+}

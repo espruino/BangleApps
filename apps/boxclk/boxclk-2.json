@@ -1,0 +1,87 @@
+{
+  "time": {
+    "font": "6x8",
+    "fontSize": 5,
+    "outline": 3,
+    "color": "bgH",
+    "outlineColor": "fg",
+    "border": "#f0f",
+    "xPadding": -2,
+    "yPadding": -4.5,
+    "xOffset": 3,
+    "yOffset": 0,
+    "boxPos": {
+      "x": "0.5",
+      "y": "0.739"
+    }
+  },
+  "dow": {
+    "font": "6x8",
+    "fontSize": 3,
+    "outline": 2,
+    "color": "bgH",
+    "outlineColor": "fg",
+    "border": "#f0f",
+    "xPadding": -1,
+    "yPadding": 0.5,
+    "xOffset": 2,
+    "yOffset": 0,
+    "boxPos": {
+      "x": "0.5",
+      "y": "0.201"
+    },
+    "short": false
+  },
+  "date": {
+    "font": "6x8",
+    "fontSize": 2,
+    "outline": 2,
+    "color": "bgH",
+    "outlineColor": "fg",
+    "border": "#f0f",
+    "xPadding": -0.5,
+    "yPadding": 0.5,
+    "xOffset": 1,
+    "yOffset": 0,
+    "boxPos": {
+      "x": "0.5",
+      "y": "0.074"
+    },
+    "shortMonth": false,
+    "disableSuffix": true
+  },
+  "step": {
+    "font": "4x6",
+    "fontSize": 3,
+    "outline": 2,
+    "color": "bgH",
+    "outlineColor": "fg",
+    "border": "#f0f",
+    "xPadding": -1,
+    "yPadding": 0.5,
+    "xOffset": 2,
+    "yOffset": 1,
+    "boxPos": {
+      "x": "0.5",
+      "y": "0.926"
+    },
+    "prefix": "Steps: "
+  },
+  "batt": {
+    "font": "4x6",
+    "fontSize": 3,
+    "outline": 2,
+    "color": "bgH",
+    "outlineColor": "fg",
+    "border": "#f0f",
+    "xPadding": -1,
+    "yPadding": -1,
+    "xOffset": 2,
+    "yOffset": 2,
+    "boxPos": {
+      "x": "0.8",
+      "y": "0.427"
+    },
+    "suffix": "%"
+  }
+}

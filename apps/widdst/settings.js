@@ -23,7 +23,7 @@
       at: 2
     }
   }, require("Storage").readJSON("widdst.json", true) || {});
-  
+
   var dst_start_end = {
     is_start: true,
     day_offset: 0,
@@ -32,11 +32,14 @@
     month: 0,
     at: 0
   };
-  
+
+  var writtenSettings = false;
+
   function writeSettings() {
     require('Storage').writeJSON("widdst.json", settings);
+    writtenSettings = true;
   }
-  
+
   function writeSubMenuSettings() {
     if (dst_start_end.is_start) {
       settings.dst_start.day_offset = dst_start_end.day_offset;
@@ -53,11 +56,11 @@
     }
     writeSettings();
   }
-  
+
   function hoursToString(h) {
     return (h|0) + ':' + (((6*h)%6)|0) + (((60*h)%10)|0);
   }
-  
+
   function getDSTStartEndMenu(start) {
     dst_start_end.is_start = start;
     if (start) {
@@ -131,23 +134,29 @@
       }
     }
   }
-      
+
   var dstMenu = {
     "": {
       "Title": /*LANG*/"Daylight Saving"
     },
-    "< Back": () => back(),
+    "< Back": () => {
+      if(writtenSettings && global._load){
+        // disable fastload to ensure settings are applied
+        // when we exit the settings app
+        global.load = global._load;
+        delete global._load;
+      }
+      back();
+    },
     /*LANG*/"Enabled": {
-      value: settings.has_dst,
-      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
+      value: !!settings.has_dst,
       onchange: v => {
         settings.has_dst = v;
         writeSettings();
       }
     },
     /*LANG*/"Icon": {
-      value: settings.show_icon,
-      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
+      value: !!settings.show_icon,
       onchange: v => {
         settings.show_icon = v;
         writeSettings();
@@ -178,7 +187,7 @@
     /*LANG*/"DST Start": () => E.showMenu(getDSTStartEndMenu(true)),
     /*LANG*/"DST End": () => E.showMenu(getDSTStartEndMenu(false))
   };
-  
+
   E.showMenu(dstMenu);
 
-});
+})

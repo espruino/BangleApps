@@ -2,5 +2,6 @@
   "warnEnabled": false,
   "warn": 96,
   "forceMonoVoltage": false,
-  "forceMonoPercentage": false
+  "forceMonoPercentage": false,
+  "log": false
 }

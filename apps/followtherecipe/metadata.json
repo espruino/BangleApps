@@ -1,0 +1,30 @@
+{
+  "id": "followtherecipe",
+  "name": "Follow The Recipe",
+  "shortName":"FTR",
+  "icon": "icon.png",
+  "version": "0.02",
+  "description": "Follow The Recipe (FTR) is a bangle.js app to follow a recipe step by step",
+  "type": "app",
+  "tags": "tool,tools,cook",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "allow_emulator": true,
+  "interface": "interface.html",
+  "readme": "README.md",
+  "data": [
+    {"name":"followtherecipe.json"}
+  ],
+  "storage": [
+    {
+      "name": "followtherecipe.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "followtherecipe.img",
+      "url": "app-icon.js",
+      "evaluate": true
+    }
+  ]
+}

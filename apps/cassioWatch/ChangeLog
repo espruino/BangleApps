@@ -10,4 +10,5 @@
 0.9: Remove ESLint spaces
 0.10: Show daily steps, heartrate and the temperature if weather information is available.
 0.11: Tell clock widgets to hide.
-0.12: Swipe down to see widgets, step counter now just uses getHealthStatus 
+0.12: Swipe down to see widgets, step counter now just uses getHealthStatus
+0.13: Report latest HRM rather than HRM 10 minutes ago (fix #2395)

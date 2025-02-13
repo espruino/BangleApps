@@ -1,0 +1,320 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+
+    <style>
+      .table_wrapper{
+        display: block;
+        overflow-x: auto;
+        margin-right: 0.8rem;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="content"></div>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+
+var domContent = document.getElementById("content");
+
+function download(filename, callback) {
+  Util.showModal("Downloading power info...");
+  Util.readStorage(filename, data => {
+    Util.hideModal();
+    callback(data);
+  });
+}
+function show() {
+  Util.showModal("Loading...");
+  domContent.innerHTML = "";
+    var htmlOverview = `<table class="table table-striped table-hover">
+      <div>This needs "Logging" to be enabled in power manager settings. The deferred function calls table is only updated on the bangle on reloads.</div>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr>
+            <td>Deferred function calls</td>
+            <td>
+              <button class="btn btn-primary" filename="powermanager.def.json" task="deftable">Table</button>
+              <button class="btn btn-error" filename="powermanager.def.json" task="clear" style="float: right;margin-right: 5px;">Clear</button>
+            </td>
+          </tr>
+          <tr>
+            <td>Hardware</td>
+            <td>
+              <button class="btn btn-primary" filename="powermanager.hw.json" task="hardwaretable">Table</button>
+              <button class="btn btn-error" filename="powermanager.hw.json" task="clear" style="float: right;margin-right: 5px;">Clear</button>
+            </td>
+          </tr>
+          <tr>
+            <td>Details (Trace)</td>
+            <td>
+              <button class="btn btn-primary" filename="powermanager.log" task="detailstable">Table</button>
+              <button class="btn btn-error" filename="powermanager.log" task="detailsclear" style="float: right;margin-right: 5px;">Clear</button>
+            </td>
+          </tr>
+        </tbody>
+    </table>`;
+  domContent.innerHTML = htmlOverview;
+  Util.hideModal();
+  var buttons = domContent.querySelectorAll("button");
+  for (var i=0;i<buttons.length;i++) {
+    buttons[i].addEventListener("click",event => {
+      var button = event.currentTarget;
+      var filename = button.getAttribute("filename");
+      if (!filename) return;
+      var task = button.getAttribute("task");
+      if (task=="detailsclear") {
+        Util.showModal("Clearing...");
+        Util.eraseStorageFile(filename,()=>{
+          Util.hideModal();
+          show();
+        });
+      }
+      if (task=="clear") {
+        Util.showModal("Clearing...");
+        Util.eraseStorage(filename,()=>{
+          Util.hideModal();
+          show();
+        });
+      }
+      if (task=="deftable") {
+        viewDeferredTable(filename);
+      }
+      if (task=="hardwaretable") {
+        viewHardwareTable(filename);
+      }
+      if (task=="detailstable") {
+        viewDetailsTable(filename);
+      }
+    });
+  }
+}
+
+function viewDeferredTable(filename) {
+  Puck.eval(`require("Storage").list("powermanager.def.json").length > 0`, (f)=>{
+    if (f) {
+      Util.showModal("Reading summarized info...");
+      Util.readStorageJSON(
+        filename, parsed => {
+          Util.hideModal();
+          let sum = 0;
+          let rows = [];
+          for (var i in parsed.deferred) {
+            sum += parsed.deferred[i];
+            rows.push({func: i, time: parsed.deferred[i]});
+          }
+          rows.sort((a,b)=>{return b.time/sum - a.time/sum;});
+          let tableRows = "";
+          for (var i in rows) {
+            let c = rows[i];
+            tableRows += `<tr>
+            <td>${timeFormat(c.time)}</td>
+            <td>${(c.time/sum*100).toFixed(2)}%</td>
+            <td><pre>${c.func}</pre></td>`
+          }
+
+          let duration = parsed.saved - parsed.start;
+
+          var htmlOverview = `<h1>Deferred function calls</h1>
+            <button class="btn btn-primary" id="back" style="float: right;margin-right: 5px;margin-left: 10px;">Back</button>
+            <div>
+              This are functions used in timeouts and intervals and their accumulated execution times. Recorded in a time span of <b>${timeFormat(duration)}</b>. Timeouts/intervals have run for <b>${timeFormat(sum)} (${(sum/duration*100).toFixed(2)}%)</b>. Percentages are calculated from summarized timeout/interval running time.
+            </div>
+
+            <div class="table_wrapper">
+
+              <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Percentage</th>
+                  <th>Function</th>
+                </tr>
+              </thead>
+              <tbody>\n`;
+          htmlOverview += tableRows;
+          htmlOverview += `</tbody></table></div>`;
+          domContent.innerHTML = htmlOverview;
+          domContent.querySelector("#back").addEventListener("click",event => {
+            show();
+          });
+
+          //try finding possible sources for the given function, currently does not work because function.toString() not being identical to code in the *.js files.
+
+          /*Puck.eval(`require("Storage").list(/.*\.js$/)`, (f)=>{
+            console.log("Found files:", f, rows[1].func);
+            for (let file of f){
+              let query = `require("Storage").read('${file}').includes('${rows[1].func}')`;
+              console.log("Query: " + query);
+              Puck.eval(query, (r)=>{
+                if (r) domContent.querySelector("#row_1").innerHTML = file;
+                console.log("Found", file, r)
+              });
+            }
+          });*/
+        });
+      } else {
+        var htmlOverview = `<h1>Deferred function calls</h1>
+          <button class="btn btn-primary" id="back" style="float: right;margin-right: 5px;">Back</button>
+          <div>
+            No data available.
+          </div>`;
+        domContent.innerHTML = htmlOverview;
+        domContent.querySelector("#back").addEventListener("click",event => {
+          show();
+        });
+    }
+  });
+}
+
+
+function viewHardwareTable(filename) {
+  Puck.eval(`require("Storage").list("powermanager.hw.json").length > 0`, (f)=>{
+    if (f) {
+      Util.showModal("Reading hardware info...");
+      Util.readStorageJSON(
+        filename, parsed => {
+          Util.hideModal();
+          console.log("Hardware", parsed);
+          let duration = parsed.saved - parsed.start;
+
+          let rows = [];
+          for (var i in parsed.power) {
+            rows.push({func: i, time: parsed.power[i]});
+          }
+          rows.sort((a,b)=>{return b.time/duration - a.time/duration;});
+          let tableRows = "";
+          for (var i in rows) {
+            let c = rows[i];
+            tableRows += `<tr>
+            <td>${timeFormat(c.time)}</td>
+            <td>${(c.time/duration*100).toFixed(2)}%</td>
+            <td>${c.func}</td>`
+          }
+
+
+          var htmlOverview = `<h1>Hardware power</h1>
+            <button class="btn btn-primary" id="back" style="float: right;margin-right: 5px;margin-left: 10px;">Back</button>
+            <div>
+              Recorded in a time span of <b>${timeFormat(duration)}</b>. Percentages are calculated from recording time.
+            </div>
+            <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Percentage</th>
+                <th>Device</th>
+              </tr>
+            </thead>
+            <tbody>\n`;
+          htmlOverview += tableRows;
+          htmlOverview += `</tbody></table>`;
+          domContent.innerHTML = htmlOverview;
+          domContent.querySelector("#back").addEventListener("click",event => {
+            show();
+          });
+        });
+      } else {
+        var htmlOverview = `<h1>Hardware power</h1>
+          <button class="btn btn-primary" id="back" style="float: right;margin-right: 5px;">Back</button>
+          <div>
+            No data available.
+          </div>`;
+        domContent.innerHTML = htmlOverview;
+        domContent.querySelector("#back").addEventListener("click",event => {
+          show();
+        });
+    }
+  });
+}
+
+
+function viewDetailsTable(filename) {
+  Util.showModal("Reading details info...");
+  Util.readStorageFile(
+    filename, data => {
+      Util.hideModal();
+
+      var htmlOverview = `<h1>Detailed logging</h1>
+      <button class="btn btn-primary" id="back" style="float: right;margin-right: 5px;">Back</button>
+      <div>
+        This is a trace log of all logged entries. Power is logged with type, state transition (old &rarr; new) and calling app if available. Functions are logged with execution duration and source if available.
+      </div>
+      <div class="table_wrapper">
+
+        <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Type</th>
+            <th>Info</th>
+          </tr>
+        </thead>
+        <tbody>\n`;
+        let rows = data.trim().split("\n");
+        let firstTimestamp;
+        for (var row of rows) {
+          let cols = row.split(",");
+          let col = 0;
+          if (!firstTimestamp) firstTimestamp = cols[0];
+
+          if (cols[1] == "p"){
+            cols[1] = "Power";
+            htmlOverview += `<tr>
+            <td>${timeFormat(cols[col++]-firstTimestamp)}</td>
+            <td>${cols[col++]}</td>
+            <td>${cols[col++]}</br>${cols[col++]} &rarr; ${cols[col++]}</br>${cols[col++]}</td>
+            </tr>`
+          } else {
+            htmlOverview += `<tr>
+            <td>${timeFormat(cols[col++]-firstTimestamp)}</td>
+            <td>${cols[col++]=="t"?"Timeout":"Interval"}</td>
+            <td>${new Number(cols[col++]).toFixed(0)}ms</br><pre>${cols[col++]}</pre></td>
+            </tr>`
+          }
+      }
+      htmlOverview += `</tbody></table></div>`;
+
+
+      domContent.innerHTML = htmlOverview;
+      domContent.querySelector("#back").addEventListener("click",event => {
+         show();
+      });
+    });
+}
+
+function onInit() {
+  show();
+}
+
+function timeFormat(time) {
+  let secs = time / 1000;
+
+  if (secs < 60)
+    return secs.toFixed(2) + "s";
+
+  let mins = secs / 60;
+  secs %= 60;
+  if (mins < 60)
+    return mins.toFixed(0) + "m" + secs.toFixed(0) + "s";
+
+  let hrs = mins / 60;
+  mins %= 60;
+  if (hrs < 24)
+    return hrs.toFixed(0) + "h" + mins.toFixed(0) + "m" + secs.toFixed(0) + "s";
+
+  let days = hrs / 24;
+  hrs %= 24;
+  return days.toFixed(0) + "d" + hrs.toFixed(0) + "h" + mins.toFixed(0) + "m" + secs.toFixed(0) + "s";
+}
+
+    </script>
+  </body>
+</html>

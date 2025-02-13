@@ -10,3 +10,13 @@
 0.09: Fix scope of let variables
 0.10: Use default Bangle formatter for booleans
 0.11: Fix off-by-one-error on next year
+0.12: Mark dated events on a day
+0.13: Switch to swipe left/right for month and up/down for year selection
+      Display events for current month on touch
+0.14: Add support for holidays
+0.15: Edit holidays on device in settings
+0.16: Add menu to fast open settings to edit holidays
+      Display Widgets in menus
+0.17: Load holidays before events so the latter is not overpainted
+0.18: Minor code improvements
+0.19: Read events synchronized from Gadgetbridge

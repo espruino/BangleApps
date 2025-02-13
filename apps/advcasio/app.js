@@ -88,9 +88,9 @@ function drawRocket() {
 
 function getTemperature(){
   try {
-    var weatherJson = storage.readJSON('weather.json');
-    var weather = weatherJson.weather;
-    return Math.round(weather.temp-273.15);
+    var temperature = E.getTemperature()
+    var formatted = require("locale").temp(temperature).replace(/[^\d-]/g, '');
+    return formatted;
 
   } catch(ex) {
     print(ex)
@@ -122,7 +122,7 @@ function draw() {
   g.setFontAlign(0,-1);
   g.setFont("8x12", 2);
   g.drawString(getTemperature(), 155, 132);
-  g.drawString(Math.round(Bangle.getHealthStatus("last").bpm), 109, 98);
+  g.drawString(Math.round(Bangle.getHealthStatus().bpm||Bangle.getHealthStatus("last").bpm), 109, 98);
   g.drawString(getSteps(), 158, 98);
 
   g.setFontAlign(-1,-1);

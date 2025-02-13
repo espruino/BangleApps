@@ -1,0 +1,16 @@
+{
+  "id": "clkinfogps",
+  "name": "GPS Grid Ref Clockinfo",
+  "version":"0.02",
+  "description": "Clockinfo that displays the GPS OS Grid Reference",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot1.png"}],
+  "type": "clkinfo",
+  "tags": "clkinfo,gps",
+  "supports" : ["BANGLEJS2"],
+  "readme":"README.md",
+  "storage": [
+    {"name":"geotools","url":"geotools.js"},
+    {"name":"gps.clkinfo.js","url":"clkinfo.js"}
+  ]
+}

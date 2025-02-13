@@ -1,0 +1,14 @@
+{ "id": "chronlog",
+  "name": "Chrono Logger",
+  "version":"0.01",
+  "description": "Record time active on a task, course, work or anything really.",
+  "icon": "app.png",
+  "tags": "logging,record,work,tasks",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "screenshots" : [ { "url":"dump.png"}, { "url":"dump1.png" }, { "url":"dump2.png" }, { "url":"dump3.png" }, { "url":"dump4.png" }, { "url":"dump5.png" }, { "url":"dump6.png" } ],
+  "storage": [
+    {"name":"chronlog.app.js","url":"app.js"},
+    {"name":"chronlog.img","url":"app-icon.js","evaluate":true}
+  ]
+}

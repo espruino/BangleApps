@@ -1,5 +1,14 @@
+# MiTherm
+
+![](screenshot.png)
+
 Reads BLE advertisement data from Xiaomi temperature/humidity sensors running the
 `pvvx` custom firmware (https://github.com/pvvx/ATC_MiThermometer).
+
+NOTE: If you flash your Mi Temperature device to the `pvvx` firmware,
+please ensure you disconnect it from your bluetooth source before
+attempting to run the app on the Bangle.
+
 
 ## Features
 
@@ -20,3 +29,4 @@ Reads BLE advertisement data from Xiaomi temperature/humidity sensors running th
 * Configurable scan length (currently 30s)
 * Alerts when temperature outside defined limits (with a widget or bootcode to
   work when app is inactive)
+

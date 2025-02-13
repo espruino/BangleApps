@@ -1,0 +1,15 @@
+{
+  "id": "bootbthomebatt",
+  "name": "BLE BTHome Battery Service",
+  "shortName": "BTHome Battery Service",
+  "version": "0.01",
+  "description": "Broadcasts battery remaining over bluetooth using the BTHome protocol - makes for easy integration with Home Assistant.\n",
+  "icon": "bluetooth.png",
+  "type": "bootloader",
+  "tags": "battery,ble,bluetooth,bthome",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"bthomebat.boot.js","url":"boot.js"}
+  ]
+}

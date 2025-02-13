@@ -1,9 +1,13 @@
 { "id": "saclock",
   "name": "Simple analog clock",
   "shortName":"Analog clock",
-  "version":"0.02",
+  "version":"0.03", 
   "description": "A very basic analog clock",
-  "screenshots": [{"url":"screenshot.png"}],
+  "screenshots": [
+    {"url":"screenshot1.png"},
+    {"url":"screenshot2.png"},
+    {"url":"screenshot3.png"}
+  ],
   "icon": "icon.png",
   "type": "clock",
   "tags": "clock,analog",

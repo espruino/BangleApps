@@ -1,4 +1,4 @@
-exports.run = (settings, updateHrm) => {
+exports.run = (settings, updateHrm, isInternal) => {
   const SAMPLE_RATE = 12.5;
   const NUM_POINTS = 256; // fft size
   const ACC_PEAKS = 2; // remove this number of ACC peaks
@@ -147,7 +147,7 @@ exports.run = (settings, updateHrm) => {
   });
 
   Bangle.on('accel', (acc) => {
-    if (hrmdata !== undefined) {
+    if (hrmdata !== undefined && isInternal(hrmdata)) {
       hrmvalues[idx] = hrmdata.filt;
       accvalues[idx] = acc.x*1000 + acc.y*1000 + acc.z*1000;
       idx++;

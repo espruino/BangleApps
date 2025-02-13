@@ -1,0 +1,5 @@
+0.01: First version
+0.02: Support for Bangle.js 2
+0.03: Update storage usage and perform GC every minute
+0.04: Add ability to only redraw when a peripheral state changes
+0.05: Adjust default (of previous change) to preserve original behaviour

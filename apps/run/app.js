@@ -41,10 +41,32 @@ var statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,setti
 var exs = ExStats.getStats(statIDs, settings);
 // ---------------------------
 
+function setStatus(running) {
+  layout.button.label = running ? "STOP" : "START";
+  layout.status.label = running ? "RUN" : "STOP";
+  layout.status.bgCol = running ? "#0f0" : "#f00";
+  layout.render();
+}
+
 // Called to start/stop running
 function onStartStop() {
   var running = !exs.state.active;
-  var prepPromises = [];
+  var shouldResume = false;
+  var promise = Promise.resolve();
+
+  if (running && exs.state.duration > 10000) { // if more than 10 seconds of duration, ask if we should resume?
+    promise = promise.
+      then(() => {
+        isMenuDisplayed = true;
+        return E.showPrompt("Resume run?",{title:"Run"});
+      }).then(r => {
+        isMenuDisplayed = false;
+        layout.setUI(); // grab our input handling again
+        layout.forgetLazyState();
+        layout.render();
+        shouldResume = r;
+      });
+  }
 
   // start/stop recording
   // Do this first in case recorder needs to prompt for
@@ -52,38 +74,34 @@ function onStartStop() {
   if (settings.record && WIDGETS["recorder"]) {
     if (running) {
       isMenuDisplayed = true;
-      prepPromises.push(
-        WIDGETS["recorder"].setRecording(true).then(() => {
+      promise = promise.
+        then(() => WIDGETS["recorder"].setRecording(true, { force : shouldResume?"append":undefined })).
+        then(() => {
           isMenuDisplayed = false;
           layout.setUI(); // grab our input handling again
           layout.forgetLazyState();
           layout.render();
-        })
-      );
+        });
     } else {
-      prepPromises.push(
-        WIDGETS["recorder"].setRecording(false)
+      promise = promise.then(
+        () => WIDGETS["recorder"].setRecording(false)
       );
     }
   }
 
-  if (!prepPromises.length) // fix for Promise.all bug in 2v12
-    prepPromises.push(Promise.resolve());
-
-  Promise.all(prepPromises)
-    .then(() => {
-      if (running) {
+  promise.then(() => {
+    if (running) {
+      if (shouldResume)
+        exs.resume()
+      else
         exs.start();
-      } else {
-        exs.stop();
-      }
-      layout.button.label = running ? "STOP" : "START";
-      layout.status.label = running ? "RUN" : "STOP";
-      layout.status.bgCol = running ? "#0f0" : "#f00";
-      // if stopping running, don't clear state
-      // so we can at least refer to what we've done
-      layout.render();
-    });
+    } else {
+      exs.stop();
+    }
+    // if stopping running, don't clear state
+    // so we can at least refer to what we've done
+    setStatus(running);
+  });
 }
 
 var lc = [];
@@ -105,13 +123,14 @@ for (var i=0;i<statIDs.length;i+=2) {
 lc.push({ type:"h", filly:1, c:[
   {type:"txt", font:fontHeading, label:"GPS", id:"gps", fillx:1, bgCol:"#f00" },
   {type:"txt", font:fontHeading, label:"00:00", id:"clock", fillx:1, bgCol:g.theme.fg, col:g.theme.bg },
-  {type:"txt", font:fontHeading, label:"STOP", id:"status", fillx:1 }
+  {type:"txt", font:fontHeading, label:"---", id:"status", fillx:1 }
 ]});
 // Now calculate the layout
 var layout = new Layout( {
   type:"v", c: lc
-},{lazy:true, btns:[{ label:"START", cb: onStartStop, id:"button"}]});
+},{lazy:true, btns:[{ label:"---", cb: onStartStop, id:"button"}]});
 delete lc;
+setStatus(exs.state.active);
 layout.render();
 
 function configureNotification(stat) {

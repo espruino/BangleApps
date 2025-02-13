@@ -6,14 +6,19 @@
   "license": "MIT",
   "repository": "https://github.com/espruino/BangleApps",
   "devDependencies": {
-    "eslint": "^8.14.0",
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
+    "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-import": "^2.29.1",
+    "http-server": "^14.1.1",
     "npm-watch": "^0.11.0"
   },
   "scripts": {
-    "lint-apps": "eslint ./apps --ext .js",
-    "test": "node bin/sanitycheck.js && eslint ./apps --ext .js && eslint ./modules --ext .js",
+    "lint-apps": "node bin/sync-lint-exemptions.mjs && eslint --max-warnings 0 ./apps",
+    "lint-modules": "eslint --max-warnings 0 ./modules",
+    "test": "node bin/sanitycheck.js && npm run lint-apps && npm run lint-modules",
+    "fix": "eslint --fix ./apps ./modules",
     "update-local-apps": "./bin/create_apps_json.sh apps.local.json",
     "local": "npm-watch & npx http-server -a localhost -c-1",
     "start": "npx http-server -c-1"
@@ -22,6 +27,6 @@
     "update-local-apps": "apps/*/metadata.json"
   },
   "dependencies": {
-    "acorn": "^7.2.0"
+    "acorn": "^8.0.0"
   }
 }

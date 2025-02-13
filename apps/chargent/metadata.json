@@ -1,0 +1,17 @@
+{ "id": "chargent",
+  "name": "Charge Gently",
+  "version": "0.07",
+  "description": "When charging, reminds you to disconnect the watch to prolong battery life.",
+  "icon": "icon.png",
+  "type": "bootloader",
+  "tags": "battery",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "dependencies": {"notify": "type"},
+  "readme": "README.md",
+  "storage": [
+    {"name": "chargent.boot.js", "url": "boot.js"}
+  ],
+  "data": [
+    {"name": "chargent.json"}
+  ]
+}

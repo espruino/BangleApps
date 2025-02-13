@@ -14,6 +14,6 @@ Automatically turn Quiet Mode on or off at set times, and display a widget when 
 Switch to dark theme during Quiet Mode.
  * **NOTE**: This switches between the default "Dark BW" and "Light BW" themes, so custom theme settings will be lost.
 
-### LCD Settings:
+### Options:
 
-If set, these override the default LCD settings while Quiet Mode is active.
+If set, these override the default LCD and theme settings while Quiet Mode is active.

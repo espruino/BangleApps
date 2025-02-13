@@ -8,7 +8,7 @@ const BUTTON_ICONS = {
   reset: heatshrink.decompress(atob("jEYwMA/4BB/+BAQPDAQPnAQIAKv///0///8j///EP//wAQQICBwQUCEhgyCHAQ+CIgI="))
 };
 
-let state = storage.readJSON(STATE_PATH);
+let state = storage.readJSON(STATE_PATH, 1);
 const STATE_DEFAULT = {
   wasRunning: false,              //If the stopwatch was ever running since being reset
   sessionStart: 0,                //When the stopwatch was first started
@@ -157,7 +157,7 @@ function firstTimeStart(now, time) {
     elapsedTime: 0,
   };
   lapFile = 'stlap-' + state.sessionStart + '.json';
-  setupTimerInterval();
+  setupTimerIntervalFast();
   Bangle.buzz(200);
   drawButtons();
 }
@@ -201,13 +201,15 @@ function start(now, time) {
   state.elapsedTime += (state.pausedTime - state.startTime);
   state.startTime = now;
   state.running = true;
-  setupTimerInterval();
+  setupTimerIntervalFast();
   Bangle.buzz(200);
   drawTime();
   drawButtons();
 }
 
 Bangle.on("touch", (button, xy) => {
+  setupTimerIntervalFast();
+
   //In gesture mode, just turn on the light and then return
   if (gestureMode) {
     Bangle.setLCDPower(true);
@@ -242,6 +244,8 @@ Bangle.on("touch", (button, xy) => {
 });
 
 Bangle.on('swipe', direction => {
+  setupTimerIntervalFast();
+
   let now = (new Date()).getTime();
   let time = getTime();
 
@@ -272,12 +276,23 @@ setWatch(() => {
 }, BTN1, { repeat: true });
 
 let timerInterval;
+let userWatching = false;
+
+function setupTimerIntervalFast() {
+  userWatching = true;
+  setupTimerInterval();
+
+  setTimeout(() => {
+    userWatching = false;
+    setupTimerInterval();
+  }, 5000);
+}
 
 function setupTimerInterval() {
   if (timerInterval !== undefined) {
     clearInterval(timerInterval);
   }
-  timerInterval = setInterval(drawTime, 10);
+  timerInterval = setInterval(drawTime, userWatching ? 10 : 1000);
 }
 
 function stopTimerInterval() {
@@ -289,7 +304,7 @@ function stopTimerInterval() {
 
 drawTime();
 if (state.running) {
-  setupTimerInterval();
+  setupTimerIntervalFast();
 }
 
 //Save our state when the app is closed
@@ -299,6 +314,9 @@ E.on('kill', () => {
     storage.writeJSON(lapFile, lapHistory);
   }
 });
+
+// change interval depending of whether the user's looking
+Bangle.on("twist", setupTimerIntervalFast);
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();

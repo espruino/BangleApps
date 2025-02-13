@@ -1,0 +1,15 @@
+{
+  "id": "clkinfom",
+  "name": "RAM Clock Info",
+  "version":"0.01",
+  "description": "Clockinfo that displays % used memory",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clkinfo",
+  "tags": "clkinfo",
+  "supports" : ["BANGLEJS2"],
+  "readme":"README.md",
+  "storage": [
+    {"name":"ram.clkinfo.js","url":"clkinfo.js"}
+  ]
+}

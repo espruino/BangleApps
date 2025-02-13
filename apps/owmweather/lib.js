@@ -14,6 +14,7 @@ function parseWeather(response) {
     weather.wind = owmData.wind.speed;
     weather.loc = owmData.name;
     weather.txt = owmData.weather[0].main;
+    weather.hpa = owmData.main.pressure || 0;
 
     if (weather.wdir != null) {
       let deg = weather.wdir;
@@ -25,7 +26,7 @@ function parseWeather(response) {
 
     json.weather = weather;
     require("Storage").writeJSON('weather.json', json);
-    require("weather").emit("update", json.weather);
+    if (require("Storage").read("weather")!==undefined) require("weather").emit("update", json.weather);
     return undefined;
   } else {
     return /*LANG*/"Not OWM data";

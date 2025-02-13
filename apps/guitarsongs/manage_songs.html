@@ -1,0 +1,229 @@
+<html>
+<head>
+  <link rel="stylesheet" href="../../css/spectre.min.css">
+</head>
+<body>
+<script src="../../core/lib/interface.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+
+<div id="app">
+  <h4>List of Songs</h4>
+  <div v-if="songsState === 'loading'">
+    <button v-on:click="loadSongs">Load Songs</button>
+  </div>
+  <div v-else>
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Lyrics</th>
+        <th>chords</th>
+        <th>size</th>
+        <th></th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody id="songs">
+      <tr v-for="(song, index) in localSongs">
+        <td>{{song.name}}</td>
+        <td>{{song.lyrics.slice(0, 30)}}</td>
+        <td>{{song.chords.join(' ')}}</td>
+        <td>{{song.lyrics.length + song.name.length}}</td>
+        <td><button class="btn" v-on:click="setEditSong(song)">edit</button></td>
+        <td><button class="btn" v-on:click="deleteSong(index)">delete</button></td>
+      </tr>
+      <tr><th colspan="3">
+        <button v-on:click="addNewSong" class="btn">Add new song</button>
+      </th></tr>
+      </tbody>
+    </table>
+    <div v-if="editSong">
+      <div class="modal active" id="modal-id">
+        <a href="#close" class="modal-overlay" aria-label="Close"></a>
+        <div class="modal-container" style="max-height: 95vh;">
+          <div class="modal-header">
+            <div class="modal-title h5">Edit Song</div>
+          </div>
+          <div class="modal-body">
+            <div class="content">
+              <edit-song :song="editSong"></edit-song>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" v-on:click="setEditSong(null)">Done editing</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <br>
+
+    <div class="card">
+      <div class="card-body">
+        Size on Bangle Flash: {{watchSongsSize}} Bytes
+        <div v-if="watchSongsSize != localSongsSize">
+          New size: {{localSongsSize}} Bytes
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn" v-on:click="uploadSongs">Upload</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  Vue.component('edit-song', {
+    props: ['song'],
+    data: function () {
+      return {
+        newChord: '',
+        builtInChords: [
+          'A', 'B', 'Bb', 'C', 'C#', 'D', 'D#', 'E', 'Eb', 'F', 'F#', 'G', 'G#', 'C5', 'D5', 'D#5',
+          'C6', 'D6', 'E6', 'G6', 'A7', 'B7', 'C7', 'C#7', 'D7', 'E7', 'E7sus4', 'F7', 'F#7', 'G7',
+          'G#7', 'AM7', 'CM7', 'DM7', 'EM7', 'FM7', 'Cadd9', 'Fadd9', 'Dsus2', 'Asus2', 'Asus4',
+          'Dsus4', 'Esus4', 'A7sus4', 'G7sus4', 'G+', 'Am', 'Bm', 'Cm', 'C#m', 'Dm', 'Em', 'Fm',
+          'F#m', 'Gm', 'G#m', 'Am7', 'A#m7', 'Bm7', 'Cm7', 'C#m7', 'Dm7', 'Em7', 'Fm7', 'F#m7',
+          'Gm7', 'Am9', 'Bm11', 'F#m11', 'A/C#', 'A/E', 'A/F#', 'Bb/A', 'C/B', 'C/E', 'D/A', 'D/F#',
+          'F/A', 'G/B', 'C7/G', 'D7/F#', 'G7/F', 'D9/F#', 'Am/D', 'Am/G', 'A#m/D#', 'Dm/F', 'Gm/Bb',
+          'A7/G', 'G#dim', 'Adim', 'D#dim7', 'G#dim7', 'Daug', 'Aaug', 'Dadd11',
+        ]
+      }
+    },
+    computed: {
+      availableChords: function () {
+        const chords  = [...this.builtInChords];
+        for (const chord of this.song.chords) {
+          chords.splice(chords.indexOf(chord), 1)
+        }
+        return chords
+      }
+    },
+    methods: {
+      removeEmptyLines: function () {
+        this.song.lyrics = this.song.lyrics.replace(/\n\s*\n/g, '\n');
+      },
+      autoDetectChords: function () {
+        const regex = '((' + Object.values(this.builtInChords).join('|') + ')(\\n|\\s))';
+        console.log(regex)
+        const matches = this.song.lyrics.match(new RegExp(regex, 'g'));
+        const dedup = matches.reduce((accu, val) => { accu[val.slice(0, -1)]=true; return accu}, {});
+        console.log(dedup);
+        this.song.chords = Object.keys(dedup);
+      },
+      addChord: function (chord) {
+        this.song.chords.push(chord);
+      },
+      removeChord: function (idx) {
+        this.song.chords.splice(idx, 1);
+      }
+    },
+    template: `
+      <div id="add_song_form">
+      <div class="columns">
+        <div class="column col-4 col-xs-12">
+          <input v-model="song.name" class="form-input input-sm" type="text" placeholder="Name">
+        </div>
+        <div>
+          <h3>Chords in this Song</h3>
+          <span v-if="song.chords.length === 0" style="font-size: 80%">
+              Please add chords by clicking the bubbles below, or use the Auto-Detect Button after
+              having inserted the lyrics.
+            </span>
+          <span class="chip" v-for="(chord, idx) in song.chords">
+              {{chord}}
+            <span v-on:click="removeChord(idx)" class="badge" data-badge="x"></span>
+            </span>
+          <h3>Available Chords</h3>
+          <span class="chip" v-for="(chord, idx) in availableChords" v-on:click="addChord(chord)">
+              {{chord}}
+            </span>
+        </div>
+        <div class="column col-12 col-xs-12">
+            <span style="font-size: 80%">
+              Please paste the lyrics and chords in the box below. The width of the text area below is twice the width of the BangleJS2 screen. Everything in the gray area cannot be seen on the screen
+            </span>
+          <div style="width: 60ch;">
+            <textarea
+                    v-model="song.lyrics"
+                    class="form-input input-sm"
+                    aria-label="Song Text"
+                    ref="songText"
+                    style="
+                width: 60ch;
+                font-family: monospace;
+                min-height: 200px;
+                resize:none;
+                overflow-y: scroll;
+                background: rgb(255,255,255);
+                background: linear-gradient(90deg, rgba(255,255,255,1) 50%, rgba(0,0,0,0.20) 50%);
+              "></textarea>
+          </div>
+        </div>
+        <div class="column col-12 col-xs-12">
+          <span class="btn btn-sm" id="remove-empty-lines" v-on:click="removeEmptyLines">Remove empty lines</span>
+          <span class="btn btn-sm" id="remove-empty-lines" v-on:click="autoDetectChords">Auto Detect Chords</span>
+        </div>
+      </div>
+      <br><br>
+      </div>
+    `
+  });
+  var app = new Vue({
+    el: '#app',
+    data: {
+      songsState: 'loading',
+      localSongs: [],
+      watchSongs: [],
+      editSong: null,
+    },
+    computed: {
+      localSongsSize: function() {
+        return JSON.stringify(this.localSongs).length;
+      },
+      watchSongsSize: function() {
+        return JSON.stringify(this.watchSongs).length;
+      },
+    },
+    mounted: function () {
+      this.loadSongs();
+    },
+    methods: {
+      addNewSong: function () {
+        this.songsState = 'modified';
+        const newSong = {
+          name: '', lyrics: '', chords: [],
+        }
+        this.localSongs.push(newSong);
+        this.editSong = newSong;
+      },
+      uploadSongs: function () {
+        Util.writeStorage('guitar_songs.json', JSON.stringify(this.localSongs), () => {
+          this.watchSongs = JSON.parse(JSON.stringify(this.localSongs));
+          alert('Songs written!');
+        })
+      },
+      deleteSong: function (index) {
+        this.localSongs.splice(index, 1);
+      },
+      setEditSong: function (song) {
+        this.editSong = song;
+      },
+      loadSongs: function () {
+        Util.readStorageJSON('guitar_songs.json', (contents) => {
+          this.songsState = 'loaded';
+          this.localSongs = contents || [];
+          this.watchSongs = JSON.parse(JSON.stringify(this.localSongs));
+        });
+        window.setTimeout(() => {
+          if (!this.localSongs.length) {
+            this.songsState = 'loaded';
+          }
+        }, 2000);
+      }
+    }
+  })
+</script>
+</body>
+</html>

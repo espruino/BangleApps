@@ -14,9 +14,10 @@ var APPS = [ // IDs of apps to install
 var MINIFY = true;
 
 var fs = require("fs");
-var apploader = require("./lib/apploader.js");
+var apploader = require("../core/lib/apploader.js");
 apploader.init({
-  DEVICEID : DEVICEID
+  DEVICEID : DEVICEID,
+  //language : "lang/de_DE.json"
 });
 
 var appfiles = [];

@@ -1,8 +1,10 @@
+// This file is auto-generated - DO NOT MODIFY
+// If you want to add icons, change icons/icon_names.json and re-run icons/generate.js
 exports.getImage = function(msg) {
   if (msg.img) return atob(msg.img);
   let s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
   if (msg.id=="music") s="music";
-  let match = ",default|0,airbnb|1,alarm|2,alarmclockreceiver|2,amazon shopping|3,bibel|4,bitwarden|5,1password|5,lastpass|5,dashlane|5,bring|6,calendar|7,etar|7,chat|8,chrome|9,clock|2,corona-warn|10,bmo|11,desjardins|11,rbc mobile|11,nbc|11,rabobank|11,scotiabank|11,td (canada)|11,discord|12,drive|13,element|14,facebook|15,messenger|16,firefox|17,firefox beta|17,firefox nightly|17,f-droid|5,neo store|5,aurora droid|5,github|18,gitlab|19,gmx|20,google|21,google home|22,google play store|23,home assistant|24,instagram|25,kalender|26,keep notes|27,lieferando|28,linkedin|29,maps|30,organic maps|30,osmand|30,mastodon|31,fedilab|31,tooot|31,tusky|31,mattermost|32,n26|33,netflix|34,news|35,cbc news|35,rc info|35,reuters|35,ap news|35,la presse|35,nbc news|35,nextbike|36,nina|37,outlook mail|38,paypal|39,phone|40,plex|41,pocket|42,post & dhl|43,proton mail|44,reddit|45,sync pro|45,sync dev|45,boost|45,infinity|45,slide|45,signal|46,skype|47,slack|48,snapchat|49,starbucks|50,steam|51,teams|52,telegram|53,telegram foss|53,threema|54,tiktok|55,to do|56,opentasks|56,tasks|56,transit|57,twitch|58,twitter|59,uber|60,lyft|60,vlc|61,warnapp|62,whatsapp|63,wordfeud|64,youtube|65,newpipe|65,zoom|66,meet|66,music|67,sms message|0,mail|0,gmail|0,".match(new RegExp(`,${s}\\|(\\d+)`))
+  let match = ",default|0,airbnb|1,agenda|2,alarm|3,alarmclockreceiver|3,amazon shopping|4,bibel|5,bitwarden|6,1password|6,lastpass|6,dashlane|6,bring|7,calendar|8,etar|8,chat|9,chrome|10,clock|3,corona-warn|11,bmo|12,desjardins|12,rbc mobile|12,nbc|12,rabobank|12,scotiabank|12,td (canada)|12,discord|13,drive|14,element|15,facebook|16,messenger|17,firefox|18,firefox beta|18,firefox nightly|18,f-droid|6,neo store|6,aurora droid|6,github|19,gitlab|20,gmail|21,gmx|22,google|23,google home|24,google play store|25,home assistant|26,instagram|27,jira|28,kalender|29,keep notes|30,leboncoin|31,lieferando|32,linkedin|33,maps|34,organic maps|34,osmand|34,mastodon|35,fedilab|35,tooot|35,tusky|35,mattermost|36,messages|37,n26|38,netflix|39,news|40,cbc news|40,rc info|40,reuters|40,ap news|40,la presse|40,nbc news|40,nextbike|41,nina|42,outlook mail|43,paypal|44,phone|45,plex|46,pocket|47,post & dhl|48,proton mail|49,reddit|50,sync pro|50,sync dev|50,boost|50,infinity|50,slide|50,signal|51,molly|51,skype|52,slack|53,snapchat|54,starbucks|55,steam|56,teams|57,telegram|58,telegram foss|58,threema|59,threema libre|59,tiktok|60,to do|61,opentasks|61,tasks|61,transit|62,twitch|63,twitter|64,uber|65,lyft|65,vlc|66,warnapp|67,whatsapp|68,wordfeud|69,youtube|70,newpipe|70,zoom|71,meet|71,music|72,sms message|0,mail|0,".match(new RegExp(`,${s}\\|(\\d+)`))
   return require("Storage").read("messageicons.img", (match===null)?0:match[1]*76, 76);
 };
 
@@ -13,15 +15,13 @@ exports.getColor = function(msg,options) {
   if (st.iconColorMode == 'mono') return options.default;
   const s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
   return {
-    // generic colors, using B2-safe colors
-    // DO NOT USE BLACK OR WHITE HERE, just leave the declaration out and then the theme's fg color will be used
+    /* generic colors, using B2-safe colors */ 
+    "agenda": "#206cd5",
     "airbnb": "#ff385c", // https://news.airbnb.com/media-assets/category/brand/
     "mail": "#ff0",
     "music": "#f0f",
     "phone": "#0f0",
-    "sms message": "#0ff",
-    // brands, according to https://www.schemecolor.com/?s (picking one for multicolored logos)
-    // all dithered on B2, but we only use the color for the icons.  (Could maybe pick the closest 3-bit color for B2?)
+    "sms message": "#0ff", 
     "bibel": "#54342c",
     "bring": "#455a64",
     "discord": "#5865f2", // https://discord.com/branding
@@ -33,8 +33,11 @@ exports.getColor = function(msg,options) {
     "google home": "#fbbc05",
 // "home assistant": "#41bdf5", // ha-blue is #41bdf5, but that's the background
     "instagram": "#ff0069", // https://about.instagram.com/brand/gradient
+    "jira": "#0052cc", //https://atlassian.design/resources/logo-library
+    "leboncoin": "#fa7321",
     "lieferando": "#ff8000",
     "linkedin": "#0a66c2", // https://brand.linkedin.com/
+    "messages": "#0a5cce",
     "messenger": "#0078ff",
     "mastodon": "#563acc", // https://www.joinmastodon.org/branding
     "mattermost": "#00f",

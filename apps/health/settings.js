@@ -8,6 +8,7 @@
   function setSettings() {
     require("Storage").writeJSON("health.json", settings);
   }
+
   E.showMenu({
     "": { title: /*LANG*/"Health Tracking" },
 
@@ -39,13 +40,13 @@
         setSettings();
       }
     },
+
     /*LANG*/"Step Goal Notification": {
       value: "stepGoalNotification" in settings ? settings.stepGoalNotification : false,
-      format: () => (settings.stepGoalNotification ? 'Yes' : 'No'),
       onchange: () => {
         settings.stepGoalNotification = !settings.stepGoalNotification;
         setSettings();
       }
-    }
+    },
   });
 })

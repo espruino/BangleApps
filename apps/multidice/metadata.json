@@ -1,0 +1,17 @@
+{ "id": "multidice",
+  "name": "multiple dice roller",
+  "shortName":"multidice",
+  "version":"1.44",
+  "description": "roll anywhere from 1-8 dice at the same time",
+  "icon": "app.png",
+  "tags": "tool,game",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"multidice.app.js","url":"app.js"},
+    {"name":"multidice.settings.js","url":"settings.js"},
+    {"name":"multidice.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name": "multidice.json"}]
+}

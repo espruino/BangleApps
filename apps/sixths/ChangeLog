@@ -1,0 +1,13 @@
+0.01: attempt to import
+0.02: better GPS support, adding altitude and temperature support
+0.03: minor code improvements
+0.04: make height auto-calibration useful and slow ticks to save power
+0.05: add ability to navigate to waypoints, better documentation
+0.10: lots of updates
+	acknowledge commands by	vibration and message
+	ui tweaks -- bigger font, compressing uninteresting info
+	display	meters up/down
+	display	pressure trend
+	adjust GPS on/off algorithm for more reliable fix
+	display	warnings when GPS altitude does	not match baro
+0.11: implement sunrise/sunset times

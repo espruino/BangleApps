@@ -1,0 +1,6 @@
+1.00: Local cards data
+1.10: Download cards data from Trello public board
+1.20: Configuration instructions added and card layout optimized
+1.30: Font size can be changed in Settings
+1.31: Fix for fast-loading support
+1.32: Minor code improvements

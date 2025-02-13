@@ -9,7 +9,6 @@ let fullscreen = !!settings.fullscreen;
 
 let show_date = false;
 let show_time = false;
-let yy = 0;
 
 let rowlights = [];
 let time_digit = [];

@@ -8,13 +8,13 @@ function draw(color) {
 }
 
 function draw2Pattern() {
-  colors = ["ff0000", "8080ff", "00ff00",
+  const colors = ["ff0000", "8080ff", "00ff00",
             "ffffff"];
   drawPattern(2, colors);
 }
 
 function draw3Pattern() {
-  colors = ["ff0000", "00ff00", "0000ff",
+  const colors = ["ff0000", "00ff00", "0000ff",
             "ff00ff", "ffffff", "00ffff",
             "ffff00", "ff8000", "ff0080"];
   drawPattern(3, colors);

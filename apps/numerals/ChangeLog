@@ -8,3 +8,5 @@
 0.08: Add new draw styles, tidy up draw functionality
 0.09: Tweak for faster rendering
 0.10: Enhance for use with Bangle2, insert new draw mode 'thickfill'
+0.11: Convert Yes/No On/Off in settings to checkboxes
+0.12: Minor code improvements

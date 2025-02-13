@@ -193,6 +193,7 @@ function queueDraw() {
  */
 let clockInfoItems = clock_info.load();
 let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
+  app : "aiclock",
   x : 0,
   y: 0,
   w: W,

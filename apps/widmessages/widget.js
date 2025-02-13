@@ -1,17 +1,9 @@
-(() => {
-  if ((require("Storage").readJSON("messages.settings.json", true) || {}).maxMessages===0) return;
-
-  function filterMessages(msgs) {
-    return msgs.filter(msg => msg.new && msg.id != "music")
-      .map(m => m.src) // we only need this for icon/color
-      .filter((msg, i, arr) => arr.findIndex(nmsg => msg.src == nmsg.src) == i);
-  }
-
-  // NOTE when adding a custom "essages" widget:
+if ((require("Storage").readJSON("messages.settings.json", true) || {}).maxMessages!==0) {
+  // NOTE when adding a custom "messages" widget:
   // the name still needs to be "messages": the library calls WIDGETS["messages'].hide()/show()
   // see e.g. widmsggrid
   WIDGETS["messages"] = {
-    area: "tl", width: 0, srcs: [], draw: function(recall) {
+    area: "tl", width: 0, srcs: [], draw: function(_w, recall) {
       // If we had a setTimeout queued from the last time we were called, remove it
       if (WIDGETS["messages"].i) {
         clearTimeout(WIDGETS["messages"].i);
@@ -42,12 +34,15 @@
             this.x+12+i*24, this.y+12, {rotate: 0/*force centering*/});
         }
       }
-      WIDGETS["messages"].i = setTimeout(() => WIDGETS["messages"].draw(true), 1000);
+      WIDGETS["messages"].i = setTimeout(() => WIDGETS["messages"].draw(WIDGETS["messages"], true), 1000);
       if (process.env.HWVERSION>1) Bangle.on("touch", this.touch);
     }, onMsg: function(type, msg) {
       if (this.hidden) return;
       if (type==="music") return;
       if (msg.id && !msg.new && msg.t!=="remove") return;
+      let filterMessages = msgs => msgs.filter(msg => msg.new && msg.id != "music")
+        .filter((msg, i, arr) => arr.findIndex(nmsg => msg.src == nmsg.src) == i) // only include one of each type
+        .map(m => m.src); // we only need this for icon/color;
       this.srcs = filterMessages(require("messages").getMessages(msg));
       const settings =  Object.assign({maxMessages:3},require('Storage').readJSON("messages.settings.json", true) || {});
       this.width = 24 * E.clip(this.srcs.length, 0, settings.maxMessages);
@@ -66,11 +61,11 @@
         Bangle.drawWidgets();
       }
     }, show() {
-      delete this.hidden
+      delete this.hidden;
       this.onMsg("show", {}); // reload messages+redraw
     }
   };
-
   Bangle.on("message", WIDGETS["messages"].onMsg.bind(WIDGETS["messages"]));
-  WIDGETS["messages"].onMsg("init", {}); // abuse type="init" to prevent Bangle.drawWidgets();
-})();
+  if (require("Storage").read("messages.json")!==undefined) // only call init if we've got messages - otherwise we can avoid loading messages lib (saves 30ms)
+    WIDGETS["messages"].onMsg("init", {}); // abuse type="init" to prevent Bangle.drawWidgets();
+}

@@ -1,0 +1,20 @@
+{ "id": "simplebgclock",
+  "name": "Simple Background Clock",
+  "shortName":"Simple Bg Clk",
+  "version":"0.01",
+  "description": "A simple clock using 'Clock Backgrounds' to allow custom colour or image backgrounds. The date is in the widget bar which you can swipe down.",
+  "icon": "icon.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock,clkinfo,clockbg",
+  "supports" : ["BANGLEJS2"],
+  "dependencies" : { "clockbg":"module" },
+  "storage": [
+    {"name":"simplebgclock.app.js","url":"app.js"},
+    {"name":"simplebgclock.img","url":"app-icon.js","evaluate":true},
+    {"name":"simplebgclock.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"simplebgclock.json"}
+  ]
+}

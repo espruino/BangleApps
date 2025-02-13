@@ -68,7 +68,7 @@ g.clear(1);
 g.setFont("6x8").setFontAlign(0,0,3).drawString(/*LANG*/"RESET", g.getWidth()-5, g.getHeight()/2);
 setWatch(function() {
   Bangle.resetCompass();
-}, (process.env.HWVERSION==2) ? BTN1 : BTN2, {repeat:true});
+}, (process.env.HWVERSION==2) ? BTN1 : BTN2, {repeat:true, edge:"falling"});
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();

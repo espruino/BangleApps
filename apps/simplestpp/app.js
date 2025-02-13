@@ -5,7 +5,7 @@ function draw() {
   var timeStr = require("locale").time(date,1);
   var h = g.getHeight();
   var w = g.getWidth();
-  
+
   g.reset();
   g.setColor(g.theme.bg);
   g.fillRect(Bangle.appRect);
@@ -34,7 +34,7 @@ function queueDraw() {
 /**
  * clock_info_support
  * this is the callback function that get invoked by clockInfoMenu.redraw();
- * 
+ *
  * We will display the image and text on the same line and centre the combined
  * length of the image+text
  *
@@ -42,7 +42,7 @@ function queueDraw() {
 function clockInfoDraw(itm, info, options) {
 
   g.reset().setFont('Vector',24).setBgColor(options.bg).setColor(options.fg);
-  
+
   //use info.text.toString(), steps does not have length defined
   var text_w = g.stringWidth(info.text.toString());
   // gap between image and text
@@ -54,7 +54,7 @@ function clockInfoDraw(itm, info, options) {
 
   // clear the whole info line
   g.clearRect(0, options.y -1, g.getWidth(), options.y+24);
-  
+
   // draw the image if we have one
   if (info.img) {
     // image start
@@ -82,7 +82,7 @@ let clockInfoItems = require("clock_info").load();
  * selected after tapping on it
  *
  */
-let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { x:64, y:132, w:50, h:40, draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : "#0ff"} );
+let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { app:"simplestpp", x:64, y:132, w:50, h:40, draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : "#0ff"} );
 
 // Clear the screen once, at startup
 g.clear();

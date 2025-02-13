@@ -1,0 +1,4 @@
+0.01: first release
+0.02: Use clock_info module as an app
+0.03: clock_info now uses app name to maintain settings specifically for this clock face
+0.04: add optional date display, and a settings page to configure it

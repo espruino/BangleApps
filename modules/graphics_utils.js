@@ -1,6 +1,6 @@
 // draw an arc between radii minR and maxR, and between angles minAngle and maxAngle centered at X,Y. All angles are radians.
 exports.fillArc = function(graphics, X, Y, minR, maxR, minAngle, maxAngle, stepAngle) {
-  var step = stepAngle || 0.2;
+  var step = stepAngle || 0.21;
   var angle = minAngle;
   var inside = [];
   var outside = [];
@@ -31,5 +31,5 @@ exports.degreesToRadians = function(degrees){
 }
 
 exports.radiansToDegrees = function(radians){
-  return 180/Math.PI * degrees;
+  return 180/Math.PI * radians;
 }

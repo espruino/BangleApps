@@ -9,6 +9,7 @@
   "readme": "README.md",
   "description": "Simple and slim battery widget with charge status and percentage",
   "tags": "widget,battery",
+  "provides_widgets" : ["battery"],
   "storage": [
     {"name":"wid_a_battery_widget.wid.js","url":"widget.js"}
   ]

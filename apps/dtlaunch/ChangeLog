@@ -27,4 +27,8 @@ widgets would still be loaded when they weren't supposed to.
 immediately follows the correct theme.
 0.22: Bangle 2: Change to not automatically marking the first app on a page
 when moving pages. Add caching for faster startups.
-
+0.23: Bangle 1: Fix issue with missing icons, added touch screen interactions
+0.24: Add buzz-on-interaction setting
+0.25: Minor code improvements
+0.26: Bangle 2: Postpone loading icons that are not needed initially.
+0.27: Bangle 2: Add setting to remember and present the last open page between instances of dtlaunch.

@@ -2,7 +2,7 @@
     const SETTINGS_FILE = "pebbleDistance.json";
 
     // initialize with default settings...
-    let s = {'bg': '#0f0', 'color': 'Green', 'avStep': 0.75};
+    let s = {'bg': '#0f0', 'color': 'Green', 'avStep': 0.75, 'localization': 'World'};
 
     // ...and overwrite them with any saved values
     // This way saved values are preserved if a new version adds more settings
@@ -20,9 +20,10 @@
 
     var color_options = ['Green','Orange','Cyan','Purple','Red','Blue'];
     var bg_code = ['#0f0','#ff0','#0ff','#f0f','#f00','#00f'];
+    var local_options = ['World', 'US'];
 
     E.showMenu({
-        '': { 'title': 'Pebble Clock' },
+        '': { 'title': 'PebbleD Clock' },
         '< Back': back,
         'Color': {
             value: 0 | color_options.indexOf(s.color),
@@ -35,7 +36,7 @@
             },
         },
         'Step length': {
-            value: 0.75 || s.avStep,
+            value: s.avStep || 0.75,
             min: 0.2,
             max: 1.5,
             step: 0.01,
@@ -43,6 +44,15 @@
                 s.avStep = v;
                 save();
             }
+        },
+        'Localization': {
+            value: 0 | local_options.indexOf(s.localization),
+            min: 0, max: 1,
+            format: v => local_options[v],
+            onchange: v => {
+                s.localization = local_options[v];
+                save();
+            },
         }
     });
-});
+})

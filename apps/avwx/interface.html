@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+
+    <p>To use the <a href="https://account.avwx.rest/">AVWX</a> API, you need an account and generate an API token. The free "Hobby" plan is sufficient, but please consider supporting the AVWX project.</p>
+    <p>
+      <label class="form-label" for="AVWXtoken">AVWX API Token:</label>
+      <input class="form-input" type="text" id="AVWXtoken" placeholder="Your personal AVWX API Token" />
+    </p>
+    <p>
+      <button id="upload" class="btn btn-primary">Configure</button>
+    </p>
+
+    <p><div id="status"></div></p>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+      var AVWXsettings = {};
+
+      function onInit() {
+        // read in existing settings to preserve them during an update
+        try {
+          Util.readStorageJSON('avwx.json', currentSettings => {
+            if (currentSettings) {
+              AVWXsettings = currentSettings;
+              if ('AVWXtoken' in AVWXsettings) {
+                document.getElementById('AVWXtoken').value = AVWXsettings.AVWXtoken;
+              }
+            }
+          });
+        } catch (e) {
+          console.log("Failed to read existing settings: "+e);
+        }
+      }
+
+      document.getElementById("upload").addEventListener("click", function() {
+        AVWXsettings.AVWXtoken = document.getElementById('AVWXtoken').value;
+        Util.writeStorage('avwx.json', JSON.stringify(AVWXsettings), () => {
+          document.getElementById("status").innerHTML = 'AVWX configuration successfully uploaded to Bangle!';
+        });
+      });
+    </script>
+
+  </body>
+</html>

@@ -105,14 +105,13 @@ exports.nextPhase = function (vibrate) {
 
     if (vibrate) {
         if (exports.state.phase == exports.PHASE_WORKING) {
-            Bangle.buzz(750, 1);
+            Bangle.buzz(800, 1);
         } else if (exports.state.phase == exports.PHASE_SHORT_BREAK) {
             Bangle.buzz();
             setTimeout(Bangle.buzz, 400);
         } else {
             Bangle.buzz();
-            setTimeout(Bangle.buzz, 400);
-            setTimeout(Bangle.buzz, 600);
+            setTimeout(Bangle.buzz, 400, 400);
         }
     }
 }

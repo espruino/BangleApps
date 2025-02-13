@@ -128,38 +128,36 @@ LED.set();NRF.sleep();`);
   posteditor.on("change", editorChanged);
 
   document.getElementById("upload").addEventListener("click", function() {
-    if (!hasWarnings()) {
-      var precode = preeditor.getValue();
-      var jscode = jseditor.getValue();
-      var postcode = posteditor.getValue();
-      var namePrefix = document.getElementById("nameprefix").value;
-      localStorage.setItem(LS_PRECODE, precode);
-      localStorage.setItem(LS_JSCODE, jscode);
-      localStorage.setItem(LS_POSTCODE, postcode);
-      localStorage.setItem(LS_NAMEPREFIX, namePrefix);
+    var precode = preeditor.getValue();
+    var jscode = jseditor.getValue();
+    var postcode = posteditor.getValue();
+    var namePrefix = document.getElementById("nameprefix").value;
+    localStorage.setItem(LS_PRECODE, precode);
+    localStorage.setItem(LS_JSCODE, jscode);
+    localStorage.setItem(LS_POSTCODE, postcode);
+    localStorage.setItem(LS_NAMEPREFIX, namePrefix);
 
-      // force version - as long as we're above 1v96 we get the ability to upload to different storage files
-      var ENV = Espruino.Core.Env.getData();
-      ENV.VERSION_MAJOR = 2;
-      ENV.VERSION_MINOR = 0;
-      // Now compile
-      Espruino.transform(jscode, {
-        SET_TIME_ON_WRITE : false, // time would just be out of date
-        SAVE_ON_SEND : 1, // save to flash
-        LOAD_STORAGE_FILE : 0, // do not load from storage after saving
-        // PRETOKENISE : true,
-        // MINIFICATION_LEVEL : "ESPRIMA", // maybe?
-      }).then(content => {
-        sendCustomizedApp({
-          storage: [{ name: "espruinoprog.json", content: JSON.stringify({
-              namePrefix : namePrefix,
-              pre : Espruino.Core.CodeWriter.reformatCode(precode),
-              code : Espruino.Core.CodeWriter.reformatCode(content),
-              post : Espruino.Core.CodeWriter.reformatCode(postcode)
-          })}]
-        });
+    // force version - as long as we're above 1v96 we get the ability to upload to different storage files
+    var ENV = Espruino.Core.Env.getData();
+    ENV.VERSION_MAJOR = 2;
+    ENV.VERSION_MINOR = 0;
+    // Now compile
+    Espruino.transform(jscode, {
+      SET_TIME_ON_WRITE : false, // time would just be out of date
+      SAVE_ON_SEND : 1, // save to flash
+      LOAD_STORAGE_FILE : 0, // do not load from storage after saving
+      // PRETOKENISE : true,
+      // MINIFICATION_LEVEL : "ESPRIMA", // maybe?
+    }).then(content => {
+      sendCustomizedApp({
+        storage: [{ name: "espruinoprog.json", content: JSON.stringify({
+            namePrefix : namePrefix,
+            pre : Espruino.Core.CodeWriter.reformatCode(precode),
+            code : Espruino.Core.CodeWriter.reformatCode(content),
+            post : Espruino.Core.CodeWriter.reformatCode(postcode)
+        })}]
       });
-    }
+    });
   });
   document.getElementById("setdefault").addEventListener("click", function(e) {
     e.preventDefault();

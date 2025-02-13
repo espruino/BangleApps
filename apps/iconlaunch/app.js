@@ -18,9 +18,9 @@
   let launchCache = s.readJSON("iconlaunch.cache.json", true)||{};
   let launchHash = s.hash(/\.info/);
   if (launchCache.hash!=launchHash) {
-  launchCache = {
-    hash : launchHash,
-    apps : s.list(/\.info$/)
+    launchCache = {
+      hash : launchHash,
+      apps : s.list(/\.info$/)
       .map(app=>{let a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};})
       .filter(app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || !app.type))
       .sort((a,b)=>{
@@ -32,65 +32,79 @@
       }) };
     s.writeJSON("iconlaunch.cache.json", launchCache);
   }
-  let scroll = 0;
+
+  // cache items
+  const ICON_MISSING = s.read("iconlaunch.na.img");
+  let count = 0;
+
   let selectedItem = -1;
   const R = Bangle.appRect;
   const iconSize = 48;
   const appsN = Math.floor(R.w / iconSize);
-  const whitespace = (R.w - appsN * iconSize) / (appsN + 1);
+  const whitespace = Math.floor((R.w - appsN * iconSize) / (appsN + 1));
+  const iconYoffset = Math.floor(whitespace/4)-1;
   const itemSize = iconSize + whitespace;
+
+  launchCache.items = {};
+  for (let c of launchCache.apps){
+    let i = Math.floor(count/appsN);
+    if (!launchCache.items[i])
+      launchCache.items[i] = {};
+    launchCache.items[i][(count%3)] = c;
+    count++;
+  }
+
+  let texted;
   let drawItem = function(itemI, r) {
-    g.clearRect(r.x, r.y, r.x + r.w - 1, r.y + r.h - 1);
-    let x = 0;
-    for (let i = itemI * appsN; i < appsN * (itemI + 1); i++) {
-      if (!launchCache.apps[i]) break;
-      x += whitespace;
-      if (!launchCache.apps[i].icon) {
-        g.setFontAlign(0, 0, 0).setFont("12x20:2").drawString("?", x + r.x + iconSize / 2, r.y + iconSize / 2);
-      } else {
-        if (!launchCache.apps[i].icondata) launchCache.apps[i].icondata = s.read(launchCache.apps[i].icon);
-        g.drawImage(launchCache.apps[i].icondata, x + r.x, r.y);
-      }
-      if (selectedItem == i) {
-        g.drawRect(
-          x + r.x - 1,
-          r.y - 1,
-          x + r.x + iconSize + 1,
-          r.y + iconSize + 1
-        );
-      }
-      x += iconSize;
+    let x = whitespace;
+    let i = itemI * appsN - 1;
+    let selectedApp;
+    let c;
+    let selectedRect;
+    let item = launchCache.items[itemI];
+    if (texted == itemI){
+      g.clearRect(r.x, r.y, r.x + r.w - 1, r.y + r.h - 1);
+      texted = undefined;
     }
-    drawText(itemI);
+    for (c of item) {
+      i++;
+      let id = c.icondata || (c.iconData = (c.icon ? s.read(c.icon) : ICON_MISSING));
+      g.drawImage(id,x + r.x - 1, r.y + iconYoffset - 1, x + r.x + iconSize, r.y + iconYoffset + iconSize);
+      if (selectedItem == i) {
+        selectedApp = c;
+        selectedRect = [
+          x + r.x - 1,
+          r.y + iconYoffset - 1,
+          x + r.x + iconSize,
+          r.y + iconYoffset + iconSize
+        ];
+      }
+      x += iconSize + whitespace;
+    }
+    if (selectedRect) {
+      g.drawRect.apply(null, selectedRect);
+      drawText(itemI, r.y, selectedApp);
+      texted=itemI;
+    }
   };
-  let drawItemAuto = function(i) {
-    let y = idxToY(i);
-    g.reset().setClipRect(R.x, y, R.x2, y + itemSize);
-    drawItem(i, {
-      x: R.x,
-      y: y,
-      w: R.w,
-      h: itemSize
-    });
-    g.setClipRect(0, 0, g.getWidth() - 1, g.getHeight() - 1);
-  };
-  let lastIsDown = false;
-  let drawText = function(i) {
-    const selectedApp = launchCache.apps[selectedItem];
+
+  let drawText = function(i, appY, selectedApp) {
+    "jit";
     const idy = (selectedItem - (selectedItem % 3)) / 3;
-    if (!selectedApp || i != idy) return;
-    const appY = idxToY(idy) + iconSize / 2;
+    if (i != idy) return;
+    appY = appY + itemSize/2;
     g.setFontAlign(0, 0, 0);
     g.setFont("12x20");
     const rect = g.stringMetrics(selectedApp.name);
     g.clearRect(
-      R.w / 2 - rect.width / 2,
-      appY - rect.height / 2,
-      R.w / 2 + rect.width / 2,
-      appY + rect.height / 2
+      R.w / 2 - rect.width / 2 - 2,
+      appY - rect.height / 2 - 2,
+      R.w / 2 + rect.width / 2 + 1,
+      appY + rect.height / 2 + 1
     );
     g.drawString(selectedApp.name, R.w / 2, appY);
   };
+
   let selectItem = function(id, e) {
     const iconN = E.clip(Math.floor((e.x - R.x) / itemSize), 0, appsN - 1);
     const appId = id * appsN + iconN;
@@ -108,95 +122,46 @@
       }
     }
     selectedItem = appId;
-    drawItems();
+    if (scroller) scroller.draw();
   };
-  let idxToY = function(i) {
-    return i * itemSize + R.y - (scroll & ~1);
-  };
-  let YtoIdx = function(y) {
-    return Math.floor((y + (scroll & ~1) - R.y) / itemSize);
-  };
-  let drawItems = function() {
-    g.reset().clearRect(R.x, R.y, R.x2, R.y2);
-    g.setClipRect(R.x, R.y, R.x2, R.y2);
-    let a = YtoIdx(R.y);
-    let b = Math.min(YtoIdx(R.y2), 99);
-    for (let i = a; i <= b; i++)
-      drawItem(i, {
-      x: R.x,
-      y: idxToY(i),
-      w: R.w,
-      h: itemSize,
-    });
-    g.setClipRect(0, 0, g.getWidth() - 1, g.getHeight() - 1);
-  };
-  drawItems();
-  g.flip();
   const itemsN = Math.ceil(launchCache.apps.length / appsN);
-  let onDrag = function(e) {
-    updateTimeout();
-    g.setColor(g.theme.fg);
-    g.setBgColor(g.theme.bg);
-    let dy = e.dy;
-    if (scroll + R.h - dy > itemsN * itemSize) {
-      dy = scroll + R.h - itemsN * itemSize;
-    }
-    if (scroll - dy < 0) {
-      dy = scroll;
-    }
-    scroll -= dy;
-    scroll = E.clip(scroll, 0, itemSize * (itemsN - 1));
-    g.setClipRect(R.x, R.y, R.x2, R.y2);
-    g.scroll(0, dy);
-    if (dy < 0) {
-      g.setClipRect(R.x, R.y2 - (1 - dy), R.x2, R.y2);
-      let i = YtoIdx(R.y2 - (1 - dy));
-      let y = idxToY(i);
-      while (y < R.y2) {
-        drawItem(i, {
-          x: R.x,
-          y: y,
-          w: R.w,
-          h: itemSize,
-        });
-        i++;
-        y += itemSize;
-      }
-    } else {
-      g.setClipRect(R.x, R.y, R.x2, R.y + dy);
-      let i = YtoIdx(R.y + dy);
-      let y = idxToY(i);
-      while (y > R.y - itemSize) {
-        drawItem(i, {
-          x: R.x,
-          y: y,
-          w: R.w,
-          h: itemSize,
-        });
-        y -= itemSize;
-        i--;
-      }
-    }
-    g.setClipRect(0, 0, g.getWidth() - 1, g.getHeight() - 1);
-  };
-  let mode = {
-    mode: "custom",
-    drag: onDrag,
-    touch: (_, e) => {
-      if (e.y < R.y - 4) return;
-      updateTimeout();
-      let i = YtoIdx(e.y);
-      selectItem(i, e);
-    },
-    swipe: (h,_) => { if(settings.swipeExit && h==1) { Bangle.showClock(); } },
-    btn: _=> { if (settings.oneClickExit) Bangle.showClock(); },
+
+  let idWatch = null;
+  let options = {
+    h: itemSize,
+    c: itemsN,
+    draw: drawItem,
+    select: selectItem,
     remove: function() {
       if (timeout) clearTimeout(timeout);
+      Bangle.removeListener("drag", updateTimeout);
+      Bangle.removeListener("touch", updateTimeout);
+      Bangle.removeListener("swipe", swipeHandler);
       if (settings.fullscreen) { // for fast-load, if we hid widgets then we should show them again
         require("widget_utils").show();
       }
-    }
+      if(idWatch) clearWatch(idWatch);
+    },
+    btn:Bangle.showClock
   };
+
+  //work both the fullscreen and the oneClickExit
+  if( settings.fullscreen && settings.oneClickExit)
+  {
+      idWatch=setWatch(function(e) {
+        Bangle.showClock();
+      }, BTN, {repeat:false, edge:'rising' });
+
+  }
+  else if( settings.oneClickExit )
+  {
+      options.back=Bangle.showClock;
+  }
+
+
+
+
+  let scroller = E.showScroller(options);
 
   let timeout;
   const updateTimeout = function(){
@@ -207,7 +172,11 @@
     }
   };
 
-  updateTimeout();
+  let swipeHandler = (h,_) => { if(settings.swipeExit && h==1) { Bangle.showClock(); } };
 
-  Bangle.setUI(mode);
+  Bangle.on("swipe", swipeHandler)
+  Bangle.on("drag", updateTimeout);
+  Bangle.on("touch", updateTimeout);
+
+  updateTimeout();
 }

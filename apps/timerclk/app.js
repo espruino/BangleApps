@@ -148,23 +148,23 @@ if (process.env.HWVERSION==1) {
   setWatch(()=>load("timerclk.alarm.js"), BTN3);
   setWatch(()=>load("timerclk.alarm.js"), BTN1);
 } else {
-  var absY, lastX, lastY;
+  var absY, lastX=0, lastY=0;
   Bangle.on('drag', e=>{
     if (!e.b) {
-      if (lastX > 50) { // right
+      if (lastX > 5) { // right
         if (absY < dragBorder) { // drag over time
           load("timerclk.timer.js");
         }else { // drag over date/dow
           load("timerclk.alarm.js");
         }
-      } else if (lastX < -50) { // left
+      } else if (lastX < -5) { // left
         if (absY < dragBorder) { // drag over time
           load("timerclk.stopwatch.js");
         }else { // drag over date/dow
           load("timerclk.alarm.js");
         }
-      } else if (lastY > 50) { // down
-      } else if (lastY < -50) { // up
+      } else if (lastY > 5) { // down
+      } else if (lastY < -5) { // up
       }
       lastX = 0;
       lastY = 0;

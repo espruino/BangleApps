@@ -1,3 +1,13 @@
 0.01: Initial version
 0.02: Update for time_utils module
 0.03: Use default Bangle formatter for booleans
+0.04: Remove copied sched alarm.js & import newer features (oneshot alarms)
+0.05: Fix creating new alarms/timers in hardmode
+0.06: Support fastloading
+0.07: Fix fastloading support - ensure drag handler's restored after
+      menu display/fastload removes it
+0.08: Add setting for initial page to display
+0.09: Minor code improvements
+0.10: Handle missing alarm data, e.g. when our reset is fired from
+      non-multitimer alarms
+0.11: Preserve setUI removal callbacks, e.g. those of showMenu

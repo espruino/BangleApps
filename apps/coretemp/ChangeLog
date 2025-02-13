@@ -2,3 +2,4 @@
 0.02: Cleanup interface and add settings, widget, add skin temp reporting. 
 0.03: Move code for recording to this app
 0.04: Use default Bangle formatter for booleans
+0.05: Minor code improvements

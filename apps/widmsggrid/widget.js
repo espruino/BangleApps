@@ -52,7 +52,7 @@
       if (w.total > 1) {
         // show total number of messages in bottom-right corner
         g.reset();
-        if (w.total < 10) g.fillCircle(w.x + w.width - 5, w.y + 20, 4); // single digits get a round background, double digits fill their rectangle
+        if (w.total < 10) g.fillCircle(w.x + w.width - 5, w.y + 19, 4); // single digits get a round background, double digits fill their rectangle
         g.setColor(g.theme.bg).setBgColor(g.theme.fg)
           .setFont('6x8').setFontAlign(1, 1)
           .drawString(w.total, w.x + w.width - 1, w.y + 24, w.total > 9);
@@ -70,7 +70,6 @@
       w.total = w.srcs.length;
       w.srcs = w.srcs.filter((src, i, uniq) => uniq.indexOf(src) === i); // keep unique entries only
       Bangle.drawWidgets();
-      Bangle.setLCDPower(1); // turns screen on
     }, hide: function () {
       w.hidden = true;
       w.width = 0;

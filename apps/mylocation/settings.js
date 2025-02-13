@@ -13,7 +13,7 @@ let s = {
 function loadSettings() {
   settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {};
   for (const key in settings) {
-    s[key] = settings[key]
+    s[key] = settings[key];
   }
 }
 
@@ -31,7 +31,7 @@ function setFromGPS() {
     //console.log(".");
     if (gps.fix === 0) return;
     //console.log("fix from GPS");
-    s = {'lat': gps.lat, 'lon': gps.lon, 'location': '???' };
+    s = {'lat': gps.lat, 'lon': gps.lon, 'location': 'GPS' };
     Bangle.buzz(1500); // buzz on first position
     Bangle.setGPSPower(0, "mylocation");
     saveSettings();
@@ -50,6 +50,25 @@ function setFromGPS() {
   Bangle.setUI("updown", undefined);
 }
 
+function setFromWaypoint() {
+  const wpmenu = {
+    '': { 'title': /*LANG*/'Waypoint' },
+    '< Back': ()=>{ showMainMenu(); },
+  };
+  require("waypoints").load().forEach(wp => {
+    if (typeof(wp.lat) === 'number' && typeof(wp.lon) === 'number') {
+      wpmenu[wp.name] = ()=>{
+          s.location = wp.name;
+          s.lat = parseFloat(wp.lat);
+          s.lon = parseFloat(wp.lon);
+          saveSettings();
+          showMainMenu();
+      };
+    }
+  });
+  return E.showMenu(wpmenu);
+}
+
 function showMainMenu() {
   //console.log("showMainMenu");
   const mainmenu = {
@@ -58,7 +77,13 @@ function showMainMenu() {
     /*LANG*/'City': {
       value: 0 | locations.indexOf(s.location),
       min: 0, max: locations.length - 1,
-      format: v => locations[v],
+      format: v => {
+        if (v === -1) {
+          return s.location;
+        } else {
+          return locations[v];
+        }
+      },
       onchange: v => {
         if (locations[v] !== "???") {
           s.location = locations[v];
@@ -70,6 +95,12 @@ function showMainMenu() {
     },
     /*LANG*/'Set From GPS': ()=>{ setFromGPS(); }
   };
+  try {
+    require("waypoints");
+    mainmenu[/*LANG*/'Set From Waypoint'] = ()=>{ setFromWaypoint(); };
+  } catch(err) {
+    // waypoints not installed, thats ok
+  }
   return E.showMenu(mainmenu);
 }
 

@@ -10,8 +10,6 @@
  */
 
 const SunCalc = require("suncalc"); // from modules folder
-const storage = require("Storage");
-const BANGLEJS2 = process.env.HWVERSION == 2; // check for bangle 2
 
 function drawMoon(phase, x, y) {
   const moonImgFiles = [
@@ -25,7 +23,7 @@ function drawMoon(phase, x, y) {
     "waning-crescent",
   ];
 
-  img = require("Storage").read(`${moonImgFiles[phase]}.img`);
+  const img = require("Storage").read(`${moonImgFiles[phase]}.img`);
   // image width & height = 92px
   g.drawImage(img, x - parseInt(92 / 2), y);
 }
@@ -53,7 +51,7 @@ function drawTitle(key) {
   const x = 0;
   const x2 = g.getWidth() - 1;
   const y = fontHeight + 26;
-  const y2 = g.getHeight() - 1;
+  //const y2 = g.getHeight() - 1;
   const title = titlizeKey(key);
 
   g.setFont("6x8", 2);
@@ -110,7 +108,7 @@ function drawPoints() {
 }
 
 function drawData(title, obj, startX, startY) {
-  g.clear();
+  g.clearRect(Bangle.appRect);
   drawTitle(title);
 
   let xPos, yPos;
@@ -141,22 +139,21 @@ function drawData(title, obj, startX, startY) {
 function drawMoonPositionPage(gps, title) {
   const pos = SunCalc.getMoonPosition(new Date(), gps.lat, gps.lon);
   const moonColor = g.theme.dark ? {r: 1, g: 1, b: 1} : {r: 0, g: 0, b: 0};
+  const azimuth = pos.azimuth + Math.PI; // 0 is south, we want 0 to be north
 
   const pageData = {
-    Azimuth: pos.azimuth.toFixed(2),
-    Altitude: pos.altitude.toFixed(2),
+    Azimuth: parseInt(azimuth * 180 / Math.PI + 0.5) + '°',
+    Altitude: parseInt(pos.altitude * 180 / Math.PI + 0.5) + '°',
     Distance: `${pos.distance.toFixed(0)} km`,
-    "Parallactic Ang": pos.parallacticAngle.toFixed(2),
+    "Parallactic Ang": parseInt(pos.parallacticAngle * 180 / Math.PI + 0.5) + '°',
   };
-  const azimuthDegrees = parseInt(pos.azimuth * 180 / Math.PI);
+  const azimuthDegrees = parseInt(azimuth * 180 / Math.PI + 0.5);
 
   drawData(title, pageData, null, g.getHeight()/2 - Object.keys(pageData).length/2*20);
   drawPoints();
   drawPoint(azimuthDegrees, 8, moonColor);
 
-  let m = setWatch(() => {
-    let m = moonIndexPageMenu(gps);
-  }, BANGLEJS2 ? BTN : BTN3, {repeat: false, edge: "falling"});
+  Bangle.setUI({mode: "custom", back: () => moonIndexPageMenu(gps)});
 }
 
 function drawMoonIlluminationPage(gps, title) {
@@ -174,9 +171,7 @@ function drawMoonIlluminationPage(gps, title) {
   drawData(title, pageData, null, 35);
   drawMoon(phaseIdx, g.getWidth() / 2, g.getHeight() / 2);
 
-  let m = setWatch(() => {
-    let m = moonIndexPageMenu(gps);
-  }, BANGLEJS2 ? BTN : BTN3, {repease: false, edge: "falling"});
+  Bangle.setUI({mode: "custom", back: () => moonIndexPageMenu(gps)});
 }
 
 
@@ -185,8 +180,8 @@ function drawMoonTimesPage(gps, title) {
   const moonColor = g.theme.dark ? {r: 1, g: 1, b: 1} : {r: 0, g: 0, b: 0};
 
   const pageData = {
-    Rise: dateToTimeString(times.rise),
-    Set: dateToTimeString(times.set),
+    Rise: times.rise ? dateToTimeString(times.rise) : "Not today",
+    Set: times.set ? dateToTimeString(times.set) : "Not today",
   };
 
   drawData(title, pageData, null, g.getHeight()/2 - Object.keys(pageData).length/2*20 + 5);
@@ -194,17 +189,17 @@ function drawMoonTimesPage(gps, title) {
 
   // Draw the moon rise position
   const risePos = SunCalc.getMoonPosition(times.rise, gps.lat, gps.lon);
-  const riseAzimuthDegrees = parseInt(risePos.azimuth * 180 / Math.PI);
+  const riseAzimuth = risePos.azimuth + Math.PI; // 0 is south, we want 0 to be north
+  const riseAzimuthDegrees = parseInt(riseAzimuth * 180 / Math.PI);
   drawPoint(riseAzimuthDegrees, 8, moonColor);
 
   // Draw the moon set position
   const setPos = SunCalc.getMoonPosition(times.set, gps.lat, gps.lon);
-  const setAzimuthDegrees = parseInt(setPos.azimuth * 180 / Math.PI);
+  const setAzimuth = setPos.azimuth + Math.PI; // 0 is south, we want 0 to be north
+  const setAzimuthDegrees = parseInt(setAzimuth * 180 / Math.PI);
   drawPoint(setAzimuthDegrees, 8, moonColor);
 
-  let m = setWatch(() => {
-    let m = moonIndexPageMenu(gps);
-  }, BANGLEJS2 ? BTN : BTN3, {repease: false, edge: "falling"});
+  Bangle.setUI({mode: "custom", back: () => moonIndexPageMenu(gps)});
 }
 
 function drawSunShowPage(gps, key, date) {
@@ -214,16 +209,15 @@ function drawSunShowPage(gps, key, date) {
   const mins = ("0" + date.getMinutes()).substr(-2);
   const secs = ("0" + date.getMinutes()).substr(-2);
   const time = `${hrs}:${mins}:${secs}`;
+  const azimuth = pos.azimuth + Math.PI; // 0 is south, we want 0 to be north
 
-  const azimuth = Number(pos.azimuth.toFixed(2));
-  const azimuthDegrees = parseInt(pos.azimuth * 180 / Math.PI);
-  const altitude = Number(pos.altitude.toFixed(2));
+  const azimuthDegrees = parseInt(azimuth * 180 / Math.PI + 0.5) + '°';
+  const altitude = parseInt(pos.altitude * 180 / Math.PI + 0.5) + '°';
 
   const pageData = {
     Time: time,
     Altitude: altitude,
-    Azimumth: azimuth,
-    Degrees: azimuthDegrees
+    Azimuth: azimuthDegrees,
   };
 
   drawData(key, pageData, null, g.getHeight()/2 - Object.keys(pageData).length/2*20 + 5);
@@ -233,9 +227,7 @@ function drawSunShowPage(gps, key, date) {
   // Draw the suns position
   drawPoint(azimuthDegrees, 8, {r: 1, g: 1, b: 0});
 
-  m = setWatch(() => {
-    m = sunIndexPageMenu(gps);
-  }, BANGLEJS2 ? BTN : BTN3, {repeat: false, edge: "falling"});
+  Bangle.setUI({mode: "custom", back: () => sunIndexPageMenu(gps)});
 
   return null;
 }
@@ -248,7 +240,7 @@ function sunIndexPageMenu(gps) {
       "title": "-- Sun --",
     },
     "Current Pos": () => {
-      m = E.showMenu();
+      E.showMenu();
       drawSunShowPage(gps, "Current Pos", new Date());
     },
   };
@@ -256,13 +248,13 @@ function sunIndexPageMenu(gps) {
   Object.keys(sunTimes).sort().reduce((menu, key) => {
     const title = titlizeKey(key);
     menu[title] = () => {
-      m = E.showMenu();
+      E.showMenu();
       drawSunShowPage(gps, key, sunTimes[key]);
     };
     return menu;
   }, sunMenu);
 
-  sunMenu["< Back"] = () => m = indexPageMenu(gps);
+  sunMenu["< Back"] = () => indexPageMenu(gps);
 
   return E.showMenu(sunMenu);
 }
@@ -274,18 +266,18 @@ function moonIndexPageMenu(gps) {
       "title": "-- Moon --",
     },
     "Times": () => {
-      m = E.showMenu();
+      E.showMenu();
       drawMoonTimesPage(gps, /*LANG*/"Times");
     },
     "Position": () => {
-      m = E.showMenu();
+      E.showMenu();
       drawMoonPositionPage(gps, /*LANG*/"Position");
     },
     "Illumination": () => {
-      m = E.showMenu();
+      E.showMenu();
       drawMoonIlluminationPage(gps, /*LANG*/"Illumination");
     },
-    "< Back": () => m = indexPageMenu(gps),
+    "< Back": () => indexPageMenu(gps),
   };
 
   return E.showMenu(moonMenu);
@@ -297,10 +289,10 @@ function indexPageMenu(gps) {
       "title": /*LANG*/"Select",
     },
     /*LANG*/"Sun": () => {
-      m = sunIndexPageMenu(gps);
+      sunIndexPageMenu(gps);
     },
     /*LANG*/"Moon": () => {
-      m = moonIndexPageMenu(gps);
+      moonIndexPageMenu(gps);
     },
     "< Back": () => { load(); }
   };
@@ -308,14 +300,15 @@ function indexPageMenu(gps) {
   return E.showMenu(menu);
 }
 
-function getCenterStringX(str) {
-  return (g.getWidth() - g.stringWidth(str)) / 2;
-}
+//function getCenterStringX(str) {
+//  return (g.getWidth() - g.stringWidth(str)) / 2;
+//}
 
 function init() {
   let location = require("Storage").readJSON("mylocation.json",1)||{"lat":51.5072,"lon":0.1276,"location":"London"};
+  Bangle.loadWidgets();
   indexPageMenu(location);
+  Bangle.drawWidgets();
 }
 
-let m;
 init();

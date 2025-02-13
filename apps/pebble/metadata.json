@@ -15,5 +15,8 @@
     {"name":"pebble.app.js","url":"pebble.app.js"},
     {"name":"pebble.settings.js","url":"pebble.settings.js"},
     {"name":"pebble.img","url":"pebble.icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"pebble.settings.json"}
   ]
 }

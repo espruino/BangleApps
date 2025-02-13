@@ -34,7 +34,6 @@ class NumberButton {
     onclick() {
         if (common.state.inputString == '0') common.state.inputString = this.label;
         else common.state.inputString += this.label;
-        common.state.setTime = inputStringToTime(common.state.inputString);
         feedback(true);
         updateDisplay();
     }
@@ -44,7 +43,6 @@ let ClearButton = {
     label: 'Clr',
     onclick: () => {
         common.state.inputString = '0';
-        common.state.setTime = 0;
         updateDisplay();
         feedback(true);
     }
@@ -53,10 +51,7 @@ let ClearButton = {
 let StartButton = {
     label: 'Go',
     onclick: () => {
-        common.state.startTime = (new Date()).getTime();
-        common.state.elapsedTime = 0;
-        common.state.wasRunning = true;
-        common.state.running = true;
+        common.startTimer(inputStringToTime(common.state.inputString));
         feedback(true);
         require('keytimer-tview.js').show(common);
     }
@@ -100,7 +95,8 @@ function getFontSize(length) {
 
 function updateDisplay() {
     let displayString = inputStringToDisplayString(common.state.inputString);
-    g.clearRect(0, 24, 175, 43).setColor(storage.readJSON('setting.json').theme.fg2).setFontAlign(1, -1).setFont("Vector", getFontSize(displayString.length)).drawString(displayString, 176, 24);
+    let t = storage.readJSON('setting.json').theme;
+    g.setBgColor(t.bg2).clearRect(0, 24, 175, 43).setColor(t.fg2).setFontAlign(1, -1).setFont("Vector", getFontSize(displayString.length)).drawString(displayString, 176, 24);
 }
 
 exports.show = function (callerCommon) {

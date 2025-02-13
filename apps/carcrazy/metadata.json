@@ -2,7 +2,7 @@
   "id": "carcrazy",
   "name": "Car Crazy",
   "shortName": "Car Crazy",
-  "version": "0.03",
+  "version": "0.04",
   "description": "A simple car game where you try to avoid the other cars by tilting your wrist left and right. Hold down button 2 to start.",
   "icon": "carcrash.png",
   "tags": "game",

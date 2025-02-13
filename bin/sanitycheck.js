@@ -2,41 +2,128 @@
 /* Checks for any obvious problems in apps.json
 */
 
-var fs = require("fs");
-var heatshrink = require("../webtools/heatshrink");
-var acorn;
-try {
-  acorn = require("acorn");
-} catch (e) {
-  console.log("=====================================================");
-  console.log("  ACORN NOT FOUND");
-  console.log("  ---------------");
-  console.log("");
-  console.log("  This means we won't sanity-check uploaded JSON");
-  console.log("=====================================================");
-}
-
 var BASEDIR = __dirname+"/../";
 var APPSDIR_RELATIVE = "apps/";
 var APPSDIR = BASEDIR + APPSDIR_RELATIVE;
+var showAllErrors = process.argv.includes("--show-all");
+
+if (process.argv.includes("--help")) {
+  console.log(`BangleApps Sanity Check
+------------------------
+
+Checks apps in this repository for common issues that might
+cause problems.
+
+USAGE:
+
+bin/sanitycheck.js
+  - default, runs all tests (hides known errors)
+bin/sanitycheck.js --show-all
+  - show all warnings/errors (including known ones)
+bin/sanitycheck.js --help
+  - show this message
+`);
+  process.exit(0);
+}
+
+
+var fs = require("fs");
+var vm = require("vm");
+var heatshrink = require("../webtools/heatshrink");
+/*var apploader = require("../core/lib/apploader.js");
+apploader.init({
+  DEVICEID : "BANGLEJS2"
+});*/
+
+var jsparse = (() => {
+  var acorn;
+  try {
+    acorn = require("acorn");
+  } catch (e) {
+    console.log("=====================================================");
+    console.log("  ACORN NOT FOUND");
+    console.log("  ---------------");
+    console.log("");
+    console.log("  This means we won't sanity-check uploaded JSON");
+    console.log("=====================================================");
+    return str => {throw new Error("no acorn")};
+  }
+
+  return str => acorn.parse(str, { ecmaVersion: 2020 });
+})();
+
+
+var knownWarningCount = 0;
+var knownErrorCount = 0;
 var warningCount = 0;
 var errorCount = 0;
+var warningList = [];
+var errorList = [];
+
 function ERROR(msg, opt) {
   // file=app.js,line=1,col=5,endColumn=7
   opt = opt||{};
+  errorList.push(msg);
+  if (KNOWN_ERRORS.includes(msg)) {
+    knownErrorCount++;
+    if (!showAllErrors) return;
+    msg += " (KNOWN)"
+  }
   console.log(`::error${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
   errorCount++;
 }
 function WARN(msg, opt) {
   // file=app.js,line=1,col=5,endColumn=7
   opt = opt||{};
+  warningList.push(msg);
   if (KNOWN_WARNINGS.includes(msg)) {
-    console.log(`Known warning : ${msg}`);
-  } else {
-    console.log(`::warning${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
+    knownWarningCount++;
+    if (!showAllErrors) return;
+    msg += " (KNOWN)"
   }
+  console.log(`::warning${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
   warningCount++;
 }
+/* These are errors that we temporarily allow */
+var KNOWN_ERRORS = [
+  "In locale en_CA, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
+  "In locale fr_FR, long date output must be shorter than 15 characters (10 septembre 2024 -> 17)",
+  "In locale sv_SE, speed must be shorter than 5 characters",
+  "In locale en_SE, long date output must be shorter than 15 characters (September 10 2024 -> 17)",
+  "In locale en_NZ, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
+  "In locale en_AU, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
+  "In locale de_AT, long date output must be shorter than 15 characters (Donnerstag, 10. September 2024 -> 30)",
+  "In locale en_IL, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
+  "In locale es_ES, long date output must be shorter than 15 characters (miércoles, 10 de septiembre de 2024 -> 35)",
+  "In locale fr_BE, long date output must be shorter than 15 characters (dimanche septembre 10 2024 -> 26)",
+  "In locale fi_FI, long date output must be shorter than 15 characters (keskiviikkona 10. maaliskuuta 2024 -> 34)",
+  "In locale fi_FI, short month must be shorter than 5 characters",
+  "In locale de_CH, meridian must be shorter than 4 characters",
+  "In locale de_CH, meridian must be shorter than 4 characters",
+  "In locale de_CH, long date output must be shorter than 15 characters (Donnerstag, 10. September 2024 -> 30)",
+  "In locale fr_CH, long date output must be shorter than 15 characters (dimanche 10 septembre 2024 -> 26)",
+  "In locale wae_CH, long date output must be shorter than 15 characters (Sunntag, 10. Herbštmánet 2024 -> 29)",
+  "In locale tr_TR, long date output must be shorter than 15 characters (10 Haziran 2024 Pazartesi -> 25)",
+  "In locale hu_HU, long date output must be shorter than 15 characters (2024 Szep 10, Csütörtök -> 23)",
+  "In locale oc_FR, long date output must be shorter than 15 characters (divendres 10 setembre de 2024 -> 29)",
+  "In locale oc_FR, short month must be shorter than 5 characters",
+  "In locale ca_ES, long date output must be shorter than 15 characters (10 setembre 2024 -> 16)",
+];
+/* These are warnings we know about but don't want in our output */
+var KNOWN_WARNINGS = [
+  "App gpsrec data file wildcard .gpsrc? does not include app ID",
+  "App owmweather data file weather.json is also listed as data file for app weather",
+  "App carcrazy has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"carcrazy.settings.json\"}]`)",
+  "App loadingscreen has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"loadingscreen.settings.json\"}]`)",
+  "App trex has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"trex.settings.json\"}]`)",
+  "widhwt isn't an app (widget) but has an app.js file (widhwtapp.js)",
+  `In locale it_CH, long time format might not work in some apps if it is not "%HH:%MM:%SS"`,
+  `In locale it_IT, long time format might not work in some apps if it is not "%HH:%MM:%SS"`,
+  `In locale wae_CH, long time format might not work in some apps if it is not "%HH:%MM:%SS"`,
+  `In locale test, long time format might not work in some apps if it is not "%HH:%MM:%SS"`,
+  `In locale wae_CH, short time format might not work in some apps if it is not "%HH:%MM"`,
+  `In locale test, short time format might not work in some apps if it is not "%HH:%MM"`,
+];
 
 var apps = [];
 var dirs = fs.readdirSync(APPSDIR, {withFileTypes: true});
@@ -76,26 +163,19 @@ const APP_KEYS = [
   'id', 'name', 'shortName', 'version', 'icon', 'screenshots', 'description', 'tags', 'type',
   'sortorder', 'readme', 'custom', 'customConnect', 'interface', 'storage', 'data',
   'supports', 'allow_emulator',
-  'dependencies', 'provides_modules', 'provides_widgets', "default"
+  'dependencies', 'provides_modules', 'provides_widgets', 'provides_features', "default"
 ];
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports', 'noOverwrite'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
 const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
-const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","waypoints","textinput","module","clkinfo"]; // values allowed for "type" field
+const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","textinput","module","clkinfo","defaultconfig"]; // values allowed for "type" field - listed in README.md
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 const GRANDFATHERED_ICONS = ["s7clk",  "snek", "astral", "alpinenav", "slomoclock", "arrow", "pebble", "rebble"];
 const INTERNAL_FILES_IN_APP_TYPE = { // list of app types and files they SHOULD provide...
   'textinput' : ['textinput'],
-  'waypoints' : ['waypoints'],
   // notify?
 };
-/* These are warnings we know about but don't want in our output */
-var KNOWN_WARNINGS = [
-"App gpsrec data file wildcard .gpsrc? does not include app ID",
-"App owmweather data file weather.json is also listed as data file for app weather",
-  "App messagegui storage file messagegui is also listed as storage file for app messagelist",
-];
 
 function globToRegex(pattern) {
   const ESCAPE = '.*+-?^${}()|[]\\';
@@ -112,6 +192,7 @@ const isGlob = f => /[?*]/.test(f)
 // All storage+data files in all apps: {app:<appid>,[file:<storage.name> | data:<data.name|data.wildcard>]}
 let allFiles = [];
 let existingApps = [];
+let promise = Promise.resolve();
 apps.forEach((app,appIdx) => {
   if (!app.id) ERROR(`App ${appIdx} has no id`);
   var appDirRelative = APPSDIR_RELATIVE+app.id+"/";
@@ -124,6 +205,11 @@ apps.forEach((app,appIdx) => {
   if (!fs.existsSync(APPSDIR+app.id)) ERROR(`App ${app.id} has no directory`);
   if (!app.name) ERROR(`App ${app.id} has no name`, {file:metadataFile});
   var isApp = !app.type || app.type=="app";
+  var appTags = app.tags ? app.tags.split(",") : [];
+  if (appTags.some(tag => tag!=tag.trim()))
+    WARN(`App ${app.id} 'tag' list contains whitespace ("${app.tags}")`, {file:metadataFile});
+  if (appTags.some(tag => tag!=tag.toLowerCase()))
+    WARN(`App ${app.id} 'tag' list contains uppercase ("${app.tags}")`, {file:metadataFile});
   if (app.name.length>20 && !app.shortName && isApp) ERROR(`App ${app.id} has a long name, but no shortName`, {file:metadataFile});
   if (app.type && !METADATA_TYPES.includes(app.type))
     ERROR(`App ${app.id} 'type' is one one of `+METADATA_TYPES, {file:metadataFile});
@@ -146,10 +232,13 @@ apps.forEach((app,appIdx) => {
     } else {
       var changeLog = fs.readFileSync(appDir+"ChangeLog").toString();
       var versions = changeLog.match(/\d+\.\d+:/g);
-      if (!versions) ERROR(`No versions found in ${app.id} ChangeLog (${appDir}ChangeLog)`, {file:metadataFile});
-      var lastChangeLog = versions.pop().slice(0,-1);
-      if (lastChangeLog != app.version)
-        ERROR(`App ${app.id} app version (${app.version}) and ChangeLog (${lastChangeLog}) don't agree`, {file:appDirRelative+"ChangeLog", line:changeLog.split("\n").length-1});
+      if (!versions) {
+        ERROR(`No versions found in ${app.id} ChangeLog (${appDir}ChangeLog)`, {file:metadataFile});
+      } else {
+        var lastChangeLog = versions.pop().slice(0,-1);
+        if (lastChangeLog != app.version)
+          ERROR(`App ${app.id} app version (${app.version}) and ChangeLog (${lastChangeLog}) don't agree`, {file:appDirRelative+"ChangeLog", line:changeLog.split("\n").length-1});
+      }
     }
   }
   if (!app.description) ERROR(`App ${app.id} has no description`, {file:metadataFile});
@@ -162,11 +251,20 @@ apps.forEach((app,appIdx) => {
         ERROR(`App ${app.id} screenshot file ${screenshot.url} not found`, {file:metadataFile});
     });
   }
-  if (app.readme && !fs.existsSync(appDir+app.readme)) ERROR(`App ${app.id} README file doesn't exist`, {file:metadataFile});
+  if (app.readme) {
+    if (!fs.existsSync(appDir+app.readme))
+      ERROR(`App ${app.id} README file doesn't exist`, {file:metadataFile});
+  } else {
+    let readme = fs.readdirSync(appDir).find(f => f.toLowerCase().includes("readme"));
+    if (readme)
+      ERROR(`App ${app.id} has a README in the directory (${readme}) but it's not linked`, {file:metadataFile});
+  }
   if (app.custom && !fs.existsSync(appDir+app.custom)) ERROR(`App ${app.id} custom HTML doesn't exist`, {file:metadataFile});
   if (app.customConnect && !app.custom) ERROR(`App ${app.id} has customConnect but no customn HTML`, {file:metadataFile});
   if (app.interface && !fs.existsSync(appDir+app.interface)) ERROR(`App ${app.id} interface HTML doesn't exist`, {file:metadataFile});
   if (app.dependencies) {
+    if (app.dependencies.clock_info && !appTags.includes("clkinfo"))
+      WARN(`App ${app.id} uses clock_info but doesn't have clkinfo tag`, {file:metadataFile});
     if (("object"==typeof app.dependencies) && !Array.isArray(app.dependencies)) {
       Object.keys(app.dependencies).forEach(dependency => {
         if (!["type","app","module","widget"].includes(app.dependencies[dependency]))
@@ -178,6 +276,8 @@ apps.forEach((app,appIdx) => {
       ERROR(`App ${app.id} 'dependencies' must be an object`, {file:metadataFile});
   }
 
+  if (app.storage.find(f=>f.name.endsWith(".clkinfo.js")) && !appTags.includes("clkinfo"))
+    WARN(`App ${app.id} provides ...clkinfo.js but doesn't have clkinfo tag`, {file:metadataFile});
   var fileNames = [];
   app.storage.forEach((file) => {
     if (!file.name) ERROR(`App ${app.id} has a file with no name`, {file:metadataFile});
@@ -199,7 +299,8 @@ apps.forEach((app,appIdx) => {
       if (INTERNAL_FILES_IN_APP_TYPE[app.type].includes(file.name))
         fileInternal = true;
     }
-    allFiles.push({app: app.id, file: file.name, internal:fileInternal});
+    if (!app.type=="defaultconfig")
+      allFiles.push({app: app.id, file: file.name, internal:fileInternal});
     if (file.url) if (!fs.existsSync(appDir+file.url)) ERROR(`App ${app.id} file ${file.url} doesn't exist`, {file:metadataFile});
     if (!file.url && !file.content && !app.custom) ERROR(`App ${app.id} file ${file.name} has no contents`, {file:metadataFile});
     var fileContents = "";
@@ -208,7 +309,7 @@ apps.forEach((app,appIdx) => {
     if (file.supports && !Array.isArray(file.supports)) ERROR(`App ${app.id} file ${file.name} supports field is not an array`, {file:metadataFile});
     if (file.evaluate) {
       try {
-        acorn.parse("("+fileContents+")");
+        jsparse("("+fileContents+")");
       } catch(e) {
         console.log("=====================================================");
         console.log("  PARSE OF "+appDir+file.url+" failed.");
@@ -222,8 +323,9 @@ apps.forEach((app,appIdx) => {
     }
     if (file.name.endsWith(".js")) {
       // TODO: actual lint?
+      var ast;
       try {
-        acorn.parse(fileContents);
+        ast = jsparse(fileContents);
       } catch(e) {
         console.log("=====================================================");
         console.log("  PARSE OF "+appDir+file.url+" failed.");
@@ -240,6 +342,30 @@ apps.forEach((app,appIdx) => {
         var b = fileContents.indexOf("Bangle.setUI(");
         if (a>=0 && b>=0 && a<b)
           WARN(`Clock ${app.id} file calls loadWidgets before setUI (clock widget/etc won't be aware a clock app is running)`, {file:appDirRelative+file.url, line : fileContents.substr(0,a).split("\n").length});
+      }
+      // if settings
+      if (/\.settings?\.js$/.test(file.name)) {
+        // suggest adding to datafiles
+        if (!app.data || app.data.every(d => !d.name || !d.name.endsWith(".json"))) {
+          WARN(`App ${app.id} has a setting file but no corresponding data entry (add \`"data":[{"name":"${app.id}.settings.json"}]\`)`, {file:appDirRelative+file.url});
+        }
+        // check for manual boolean formatter
+        const m = fileContents.match(/format: *\(?\w*\)? *=>.*["'](yes|on)["']/i);
+        if (m) {
+          WARN(`Settings for ${app.id} has a boolean formatter - this is handled automatically, the line can be removed`, {file:appDirRelative+file.url, line: fileContents.substr(0, m.index).split("\n").length});
+        }
+      }
+      // something that needs to be evaluated with 'eval(require("Storage").read(fn))'
+      if (/\.clkinfo\.js$/.test(file.name) ||
+          /\.settings\.js$/.test(file.name)) {
+        if (!fileContents.trim().endsWith(")"))
+          WARN(`App ${app.id} file ${file.name} should be evaluated as a function but doesn't end in ')'`, {file:appDirRelative+file.url});
+      }
+        if (/\.clkinfo\.js$/.test(file.name) ||
+            /\.wid\.js$/.test(file.name)) {
+        if (fileContents.indexOf("g.clear(")>=0 ||
+            fileContents.indexOf("g.reset().clear()")>=0)
+          ERROR(`App ${app.id} widget/clkinfo ${file.name} should never totally clear the screen`, {file:appDirRelative+file.url});
       }
     }
     for (const key in file) {
@@ -315,7 +441,11 @@ apps.forEach((app,appIdx) => {
     })
   })
   //console.log(fileNames);
-  if (isApp && !fileNames.includes(app.id+".app.js")) ERROR(`App ${app.id} has no entrypoint`, {file:metadataFile});
+  const filenamesIncludesApp = fileNames.includes(app.id+".app.js");
+  if (isApp && !filenamesIncludesApp)
+    ERROR(`App ${app.id} has no entrypoint`, {file:metadataFile});
+  else if (!isApp && !["clock", "bootloader", "launch"].includes(app.type) && filenamesIncludesApp)
+    WARN(`${app.id} isn't an app (${app.type}) but has an app.js file (${app.id+"app.js"})`, {file:metadataFile});
   if (isApp && !fileNames.includes(app.id+".img")) ERROR(`App ${app.id} has no JS icon`, {file:metadataFile});
   if (app.type=="widget" && !fileNames.includes(app.id+".wid.js")) ERROR(`Widget ${app.id} has no entrypoint`, {file:metadataFile});
   for (const key in app) {
@@ -336,6 +466,18 @@ apps.forEach((app,appIdx) => {
         ERROR(`App ${app.id} has provides_modules ${modulename} but it doesn't provide that filename`, {file:metadataFile});
     });
   }
+  /*
+  // We could try to create the files we need to upload for this app to check it all works ok...
+  promise = promise.then(() => apploader.getAppFiles(app).then(files => {
+    files.forEach(file => {
+      if (/\.clkinfo?\.js$/.test(file.name) ||
+          /\.settings?\.js$/.test(file.name)) {
+        if (!file.content.startsWith("(")) {
+          ERROR(`App ${app.id} file ${file.name} should evaluate to a simple fn and doesn't (starts: ${JSON.stringify(file.content.substr(0,30))})`, {file:appDirRelative+file.url});
+        }
+      }
+    });
+  }));*/
 });
 
 
@@ -356,14 +498,48 @@ while(fileA=allFiles.pop()) {
       if (isGlob(nameA)||isGlob(nameB))
         ERROR(`App ${fileB.app} ${typeB} file ${nameB} matches app ${fileA.app} ${typeB} file ${nameA}`);
       else if (fileA.app != fileB.app && (!fileA.internal) && (!fileB.internal))
-        WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`);
+        WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`, {file:APPSDIR_RELATIVE+fileB.app+"/metadata.json"});
     }
   })
 }
 
-console.log("==================================");
-console.log(`${errorCount} errors, ${warningCount} warnings`);
-console.log("==================================");
-if (errorCount)  {
-  process.exit(1);
+// Check each locale in the `locale` app.
+sanityCheckLocales();
+function sanityCheckLocales(){
+  const { CODEPAGE_CONVERSIONS } = require("../core/js/utils");
+  const { checkLocales } = require("../apps/locale/sanitycheck");
+  const localesCode = fs.readFileSync(__dirname+'/../apps/locale/locales.js', 'utf-8');
+  vm.runInThisContext(localesCode);
+  /* global locales, speedUnits, distanceUnits, codePages */
+
+  const {errors, warnings} = checkLocales(locales, {speedUnits, distanceUnits, codePages, CODEPAGE_CONVERSIONS});
+
+  const file = "locale/locales.js";
+  for(const w of warnings){
+    WARN(`In locale ${w.lang}, ${w.name} ${w.error}`, {file, value: w.value});
+  }
+  for(const e of errors){
+    ERROR(`In locale ${e.lang}, ${e.name} ${e.error}`, {file, value: e.value});
+  }
 }
+
+promise.then(function() {
+  KNOWN_ERRORS.forEach(msg => {
+    if (!errorList.includes(msg))
+      WARN(`Known error '${msg}' no longer occurs`);
+  });
+  KNOWN_WARNINGS.forEach(msg => {
+    if (!warningList.includes(msg))
+      WARN(`Known warning '${msg}' no longer occurs`);
+  });
+  console.log("==================================");
+  console.log(`${errorCount} errors, ${warningCount} warnings`);
+  console.log(`${knownErrorCount} known errors, ${knownWarningCount} known warnings${(knownErrorCount||knownWarningCount)?", run with --show-all to see them":""}`);
+  console.log("==================================");
+  if (errorCount)  {
+    process.exit(1);
+  } else if ("CI" in process.env && warningCount) {
+    console.log("Running in CI, raising an error from warnings");
+    process.exit(1);
+  }
+});

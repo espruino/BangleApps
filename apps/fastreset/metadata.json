@@ -1,0 +1,14 @@
+{ "id": "fastreset",
+  "name": "Fast Reset",
+  "shortName":"Fast Reset",
+  "version":"0.03",
+  "description": "Reset the watch to the clock face by pressing the hardware button just a little bit longer than a click. If 'Fastload Utils' is installed this will typically be done with fastloading. A buzz acts as indicator.",
+  "icon": "app.png",
+  "type": "bootloader",
+  "tags": "system",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"fastreset.boot.js","url":"boot.js"}
+  ]
+}

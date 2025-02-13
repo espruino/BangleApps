@@ -9,3 +9,7 @@ interface IArguments {
 
 // Helper type
 type Exclude<T, U> = T extends U ? never : T;
+
+type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
+
+type NonNull<T> = Exclude<T, undefined | null>;

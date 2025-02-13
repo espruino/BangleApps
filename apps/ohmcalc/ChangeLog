@@ -1,0 +1,5 @@
+0.01: New App!
+0.02: New Results menu item to show the formula and values used.
+0.03: Adds haptics to Input screen and long press "C" to go back.
+0.04: Fix font size not resetting on subsequent values in results screen
+0.05: Minor code improvements

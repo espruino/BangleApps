@@ -1,28 +1,28 @@
-(function(){
-  var settings = require("Storage").readJSON("health.json",1)||{};
+(function() {
+  var settings = require("Storage").readJSON("health.json", 1) || {};
   var hrm = 0|settings.hrm;
   if (hrm == 1 || hrm == 2) {
-   function onHealth() {
-     Bangle.setHRMPower(1, "health");
-     setTimeout(()=>Bangle.setHRMPower(0, "health"),hrm*60000); // give it 1 minute detection time for 3 min setting and 2 minutes for 10 min setting
-     if (hrm == 1){
-       for (var i = 1; i <= 2; i++){
-         setTimeout(()=>{
-           Bangle.setHRMPower(1, "health");
-           setTimeout(()=>{
-             Bangle.setHRMPower(0, "health");
-           }, 60000);
-         }, (i * 200000));
-       }
-     }
-   }
-   Bangle.on("health", onHealth);
-   Bangle.on('HRM', h => {
-     if (h.confidence>80) Bangle.setHRMPower(0, "health");
-   });
-   if (Bangle.getHealthStatus().bpmConfidence) return;
-   onHealth();
-  } else Bangle.setHRMPower(hrm!=0, "health");
+    function onHealth() {
+      Bangle.setHRMPower(1, "health");
+      setTimeout(() => Bangle.setHRMPower(0, "health"), hrm * 60000); // give it 1 minute detection time for 3 min setting and 2 minutes for 10 min setting
+      if (hrm == 1) {
+        function startMeasurement() {
+          Bangle.setHRMPower(1, "health");
+          setTimeout(() => {
+            Bangle.setHRMPower(0, "health");
+          }, 60000);
+        }
+        setTimeout(startMeasurement, 200000);
+        setTimeout(startMeasurement, 400000);
+      }
+    }
+    Bangle.on("health", onHealth);
+    Bangle.on("HRM", (h) => {
+      if (h.confidence > 90 && Math.abs(Bangle.getHealthStatus().bpm - h.bpm) < 1) Bangle.setHRMPower(0, "health");
+    });
+    if (Bangle.getHealthStatus().bpmConfidence > 90) return;
+    onHealth();
+  } else Bangle.setHRMPower(!!hrm, "health");
 })();
 
 Bangle.on("health", health => {
@@ -52,7 +52,7 @@ Bangle.on("health", health => {
     return String.fromCharCode(
       health.steps>>8,health.steps&255, // 16 bit steps
       health.bpm, // 8 bit bpm
-      Math.min(health.movement / 8, 255)); // movement
+      Math.min(health.movement, 255)); // movement
   }
 
   var rec = getRecordIdx(d);
@@ -68,6 +68,12 @@ Bangle.on("health", health => {
     require("Storage").write(fn, "HEALTH1\0", 0, DB_FILE_LEN); // header
   }
   var recordPos = DB_HEADER_LEN+(rec*DB_RECORD_LEN);
+
+  // scale down reported movement value in order to fit it within a
+  // uint8 DB field
+  health = Object.assign({}, health);
+  health.movement /= 8;
+
   require("Storage").write(fn, getRecordData(health), recordPos, DB_FILE_LEN);
   if (rec%DB_RECORDS_PER_DAY != DB_RECORDS_PER_DAY-2) return;
   // we're at the end of the day. Read in all of the data for the day and sum it up
@@ -82,10 +88,10 @@ Bangle.on("health", health => {
     var dt = f.substr(recordPos, DB_RECORD_LEN);
     if (dt!="\xFF\xFF\xFF\xFF") {
       health.steps += (dt.charCodeAt(0)<<8)+dt.charCodeAt(1);
-      health.movement += dt.charCodeAt(2);
-      health.movCnt++;
       var bpm = dt.charCodeAt(2);
       health.bpm += bpm;
+      health.movement += dt.charCodeAt(3);
+      health.movCnt++;
       if (bpm) health.bpmCnt++;
     }
     recordPos -= DB_RECORD_LEN;

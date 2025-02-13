@@ -2,7 +2,6 @@
 /**
  * @param {function} back Use back() to return to settings menu
  */
-const boolFormat = v => v ? /*LANG*/"On" : /*LANG*/"Off";
 (function(back) {
   const SETTINGS_FILE = 'f9settings.json'
   // initialize with default settings...
@@ -27,8 +26,7 @@ const boolFormat = v => v ? /*LANG*/"On" : /*LANG*/"Off";
     '': { 'title': 'OpenWind' },
     '< Back': back,
     'Lightning': {
-      value: settings.lightning,
-      format: boolFormat,
+      value: !!settings.lightning,
       onchange: save('lightning'),
     }
   }

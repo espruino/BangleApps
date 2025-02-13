@@ -2,7 +2,7 @@
   "id": "devstopwatch",
   "name": "Dev Stopwatch",
   "shortName": "Dev Stopwatch",
-  "version": "0.04",
+  "version": "0.06",
   "description": "Stopwatch with 5 laps supported (cyclically replaced)",
   "icon": "app.png",
   "tags": "stopwatch,chrono,timer,chronometer",

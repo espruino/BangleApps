@@ -2,3 +2,4 @@
 0.02: Use ClockFace library, add settings
 0.03: Use ClockFace_menu.addSettingsFile
 0.04: Hide widgets instead of not loading them at all
+0.05: Support Bangle.js 2

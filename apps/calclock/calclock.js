@@ -117,6 +117,19 @@ function fullRedraw() {
   drawFutureEvents(y);
 }
 
+function buzzForEvents() {
+  let nextEvent = next[0]; if (!nextEvent) return;
+  // No buzz for all day events or events before 7am
+  // TODO: make this configurable
+  if (nextEvent.allDay || (new Date(nextEvent.timestamp * 1000)).getHours() < 7) return;
+  let minToEvent = Math.round((nextEvent.timestamp - getTime()) / 60.0);
+  switch (minToEvent) {
+    case 30: require("buzz").pattern(":"); break;
+    case 15: require("buzz").pattern(", ,"); break;
+    case 1: require("buzz").pattern(": : :"); break;
+  }
+}
+
 function redraw() {
   g.reset();
   if (current.find(e=>!isActive(e)) || next.find(isActive)) {
@@ -124,11 +137,13 @@ function redraw() {
   } else {
     drawCurrentEvents(30);
   }
+  buzzForEvents();
 }
 
 g.clear();
 fullRedraw();
-var minuteInterval = setInterval(redraw, 60 * 1000);
+buzzForEvents();
+/*var minuteInterval =*/ setInterval(redraw, 60 * 1000);
 
 Bangle.setUI("clock");
 Bangle.loadWidgets();

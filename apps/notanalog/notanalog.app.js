@@ -13,6 +13,9 @@ let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
     settings[key] = saved_settings[key]
 }
+const is12Hour = (require("Storage").readJSON("setting.json", 1) || {})[
+  "12hour"
+];
 
 /*
  * Set some important constants such as width, height and center
@@ -199,6 +202,9 @@ function drawTime(){
 
     // Hour
     var h = state.currentDate.getHours();
+    if (is12Hour && h > 12) {
+      h = h - 12;
+    }
     var h1 = parseInt(h / 10);
     var h2 = h < 10 ? h : h - h1*10;
     drawTextCleared(h1, cx, posY+8);
@@ -242,7 +248,7 @@ function handleState(fastUpdate){
      */
     var minutes = state.currentDate.getMinutes();
     var hours = state.currentDate.getHours();
-    if(!isAlarmEnabled() && fastUpdate && hours == 00 && minutes == 01){
+    if(!isAlarmEnabled() && fastUpdate && hours == 0 && minutes == 1){
         state.sleep = true;
         return;
     }
@@ -268,7 +274,7 @@ function handleState(fastUpdate){
     // Set weather
     state.has_weather = true;
     try {
-        weather = require('weather').get();
+        const weather = require('weather').get();
         if (weather === undefined){
             state.has_weather = false;
             state.temp = "-";

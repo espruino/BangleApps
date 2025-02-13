@@ -95,17 +95,7 @@
         Util.showModal("Downloading...");
         let medicalInfoJson = getEditableContent();
         if (isJsonString(medicalInfoJson)) {
-          var a = document.createElement("a"),
-            file = new Blob([medicalInfoJson], { type: "application/json" });
-          var url = URL.createObjectURL(file);
-          a.href = url;
-          a.download = medicalInfoFile;
-          document.body.appendChild(a);
-          a.click();
-          setTimeout(function () {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-          }, 0);
+          Util.saveFile(medicalInfoFile, "application/json", medicalInfoJson);
         } else {
           document.getElementById("info").innerHTML = errorFormat();
         }

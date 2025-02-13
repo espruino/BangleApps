@@ -10,7 +10,8 @@ const storage = require("Storage");
             longBreak: 900000,                  //15 minute long break
             numShortBreaks: 3,                  //3 short breaks for every long break
             pausedTimerExpireTime: 21600000,    //If the timer was left paused for >6 hours, reset it on next launch
-            widget: false                       //If a widget is added in the future, whether the user wants it
+            showClock: false,                   //Show clock after start/resume
+            widget: false,                      //If a widget is added in the future, whether the user wants it
         };
     }
 
@@ -88,6 +89,13 @@ const storage = require("Storage");
                 if (value == 0) return "Off"
                 else return `${Math.floor(value / 3600000)}h ${(value % 3600000) / 60000}m`
             }
+        },
+        'Show clock': {
+            value: settings.showClock,
+            onchange: function(value) {
+                settings.showClock = value;
+                save();
+            },
         },
     };
     E.showMenu(menu)

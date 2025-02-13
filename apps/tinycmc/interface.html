@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <h3>Set Coinmarketcap API key</h3>
+    <p><input id="apikey" onkeyup="checkInput()"  style="width:90%; margin: 3px"></input><button id="upload" class="btn btn-primary">Save key</button></p>
+
+    <h4>Where to get your personal API key?</h4>
+    <p>Go to <a href="https://coinmarketcap.com/api/">https://coinmarketcap.com/api/</a> and sign up for a free account.<br>
+    After registration you can login and obtain your personal API key.</p>
+
+
+    <script src="../../core/lib/interface.js"></script>
+
+    <script>
+
+       function checkInput() {
+        if(document.getElementById("apikey").value==="") {
+                document.getElementById('upload').disabled = true;
+            } else {
+                document.getElementById('upload').disabled = false;
+            }
+        }
+        checkInput();
+
+        var settings = {};
+        function onInit(){
+          console.log("Loading settings from BangleJs...");
+          try {
+            Util.readStorageJSON("tinycmc.json", data=>{
+              if(data){
+                settings = data;
+                console.log("Got settings", settings);
+                document.getElementById("apikey").value = settings.apikey;
+                console.log("Loaded apikey from BangleJs.");
+                checkInput();
+              }
+            });
+          } catch(ex) {
+              console.log("(Warning) Could not load apikey from BangleJs.");
+              console.log(ex);
+          }
+
+        }
+
+        document.getElementById("upload").addEventListener("click", function() {
+            try {
+              settings.apikey = document.getElementById("apikey").value;
+              Util.showModal("Saving...");
+              Util.writeStorage("tinycmc.json", JSON.stringify(settings), ()=>{
+                Util.hideModal();
+              });
+              console.log("Sent settings!");
+            } catch(ex) {
+                console.log("(Warning) Could not write settings to BangleJs.");
+                console.log(ex);
+            }
+        });
+
+    </script>
+  </body>
+</html>

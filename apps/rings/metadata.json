@@ -1,0 +1,36 @@
+{
+  "id": "rings",
+  "name": "Rings - an animated watchface",
+  "shortName": "Rings",
+  "version": "0.03",
+  "description": "Ring based watchface that animates to show the date when unlocked. Inspired by / remixed from Rinkulainen.",
+  "icon": "app.png",
+  "screenshots": [{
+    "url": "screenshot1.png"
+  }, {
+    "url": "screenshot2.png"
+  }, {
+    "url": "screenshot3.png"  
+  }],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [{
+      "name": "rings.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "rings.img",
+      "url": "app-icon.js",
+      "evaluate": true
+    },
+    {
+      "name": "rings.settings.js",
+      "url": "settings.js"
+    }
+  ],
+  "data": [{
+    "name": "rings.settings.json"
+  }]
+}

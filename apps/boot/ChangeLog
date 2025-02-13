@@ -64,3 +64,15 @@
 0.55: Add toLocalISOString polyfill for pre-2v15 firmwares
       Only add boot info comments if settings.bootDebug was set
       If settings.bootDebug is set, output timing for each section of .boot0
+0.56: Settings.log = 0,1,2,3 for off,display, log, both
+0.57: Handle the whitelist being disabled
+0.58: "Make Connectable" temporarily bypasses the whitelist
+0.59: Whitelist: Try to resolve peer addresses using NRF.resolveAddress() - for 2v19 or 2v18 cutting edge builds
+0.60: Minor code improvements
+0.61: Instead of breaking execution with an Exception when updating boot, just use if..else (fix 'Uncaught undefined')
+0.62: Handle setting for configuring BLE privacy
+0.63: Only set BLE `display:1` if we have a passkey
+0.64: Automatically create .widcache and .clkinfocache to speed up loads
+      Bangle.loadWidgets overwritten with fast version on success
+      Refuse to work on firmware  <2v16 and remove old polyfills
+0.65: Only display interpreter errors if log is nonzero

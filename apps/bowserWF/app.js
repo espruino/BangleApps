@@ -34,10 +34,10 @@ const background = {
 	),
 };
 
-numbersDims = {
+/*const numbersDims = {
 	width: 20,
 	height: 44,
-};
+};*/
 const numbers = [
 	require("heatshrink").decompress(
 		atob(
@@ -88,7 +88,7 @@ const numbers = [
 		)
 	),
 ];
-digitPositions = [
+const digitPositions = [
 	// relative to the box
 	{ x: 13, y: 6 },
 	{ x: 32, y: 6 },

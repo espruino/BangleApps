@@ -1,0 +1,37 @@
+0.90: got most of the features done, lacking some polish and real-hardware testing
+1.00: overhauled the whole app, made some margins larger to be easier to tap on
+1.01: fixed bug that caused rolled dice on the right of screen to be writ off-screen
+1.02: added vibration when dice is rolled
+1.03: vibration caused the accelerometer to never stop
+1.04: decreased vibration strength
+1.05: toggled the acceleration handler to prevent infinite buzz loop
+1.06: increased vibration again
+1.07: IDK how to use promises properly
+1.08: still trying to fix the lack of vibrations
+1.09: hopefully now it's fixed?
+1.10: not having web bluetooth to debug is a PAIN
+1.11: decreased vibration time, decreased accel requirement
+1.12: issue with app calling roll function too many times at startup
+1.13: added a delay after the buzzer stops to prevent multi-rolling
+1.14: made the delay needlessly long to see if it even does anything
+1.15: moved accel & vibration commands to the accelHandler function
+1.16: enabled button usage & temporarily disabled acceleration
+1.17: made changes to when accelHandler gets overwritten, temporarily disabled button usage
+1.18: decided to keep around the button even while testing, disabled all safety round the accelHandler self-triggering
+1.19: added longer delay before resetting accelHandler
+1.20: removed all traces of accel b/c I've given up
+1.21: added a drawWidgets command to see if I have the padding right
+1.22: ok the buzzing *might* work now
+1.23: forgot to resolve the promise
+1.24: fixed dumb errors
+1.25: god I hope this works
+1.26: trying to add timeout after it's done buzzing... again
+1.27: OH GOD IT FINALLY WORKS
+1.28: increased vibration strength, added some comments, & some QOL
+1.29: changed image
+1.30: changed image, again
+1.40: added various settings for controlling when & how to throw dice
+1.41: fixed dumb mistake
+1.42: okay maby I should've read the *whole* error log
+1.43: playing whackamole with ESLint
+1.44: fixed (?) settings app

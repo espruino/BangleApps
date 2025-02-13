@@ -109,7 +109,7 @@
   }
 
   function showUtilsMenu() {
-    let m = E.showMenu({
+    E.showMenu({
       "": {"title": /*LANG*/"Utilities"},
       "< Back": () => showMainMenu(),
       /*LANG*/"Delete all": () => {
@@ -136,4 +136,4 @@
   }
 
   showMainMenu();
-});
+})

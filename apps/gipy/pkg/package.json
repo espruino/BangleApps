@@ -1,12 +1,12 @@
 {
-  "name": "gpconv",
+  "name": "gps",
   "version": "0.1.0",
   "files": [
-    "gpconv_bg.wasm",
-    "gpconv.js",
-    "gpconv.d.ts"
+    "gps_bg.wasm",
+    "gps.js",
+    "gps.d.ts"
   ],
-  "module": "gpconv.js",
-  "types": "gpconv.d.ts",
+  "module": "gps.js",
+  "types": "gps.d.ts",
   "sideEffects": false
 }

@@ -1,7 +1,7 @@
 {
   "id": "marioclock",
   "name": "Mario Clock",
-  "version": "0.15",
+  "version": "0.16",
   "description": "Animated retro Mario clock, with Gameboy style 8-bit grey-scale graphics.",
   "icon": "marioclock.png",
   "type": "clock",

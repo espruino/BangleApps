@@ -1,0 +1,27 @@
+{
+  "id"            : "wrkmem",
+  "name"          : "Working Memory Helper",
+  "shortName"     : "Work Mem",
+  "version": "1.02",
+  "description"   : "Externalize your working memory to help stay on task.",
+  "dependencies"  : {"textinput": "type"},
+  "icon"          : "icon.png",
+  "type"          : "app",
+  "tags"          : "tool",
+  "supports"      : ["BANGLEJS2"],
+  "screenshots"   : [
+    {"url": "screenshot.png"},
+    {"url": "screenshot2.png"},
+    {"url": "screenshot3.png"},
+    {"url": "screenshot4.png"},
+    {"url": "screenshot5.png"},
+    {"url": "screenshot6.png"}
+  ],
+  "readme"        : "README.md",
+  "allow_emulator": false,
+  "storage"       : [
+    {"name": "wrkmem.app.js", "url": "app.js"},
+    {"name": "wrkmem.img", "url": "app-icon.js", "evaluate": true}
+  ],
+  "data"          : [{"name": "wrkmem.json"}]
+}

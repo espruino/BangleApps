@@ -1,0 +1,5 @@
+0.01: New App!
+0.02: Shorten the timeout before executing to 250 ms.
+0.03: Add inner timeout of 150 ms so user has more time to release the button
+	before clock ui is initialized and adds it's button watch for going to
+	launcher.

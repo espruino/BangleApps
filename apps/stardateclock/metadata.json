@@ -3,7 +3,7 @@
   "name":"Stardate Clock",
   "shortName":"Stardate Clock",
   "description": "A clock displaying a stardate along with a 'standard' digital/analog clock in LCARS design",
-  "version":"0.03",
+  "version": "0.04",
   "icon": "app.png",
   "type":"clock",
   "tags": "clock",

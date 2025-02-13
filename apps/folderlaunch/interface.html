@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css">
+    <script type="module">
+      import vcf from 'https://cdn.jsdelivr.net/npm/vcf@2.1.1/+esm'
+      window.vcf = vcf;
+    </script>
+
+    <style type="text/css">
+        html, body { height: 100% }
+        .flex-col { display:flex; flex-direction:column; height:100% }
+        #map { width:100%; height:100% }
+        #tab-list { width:100%; height:100% }
+
+        /* https://stackoverflow.com/a/58686215 */
+        .arrow-icon {
+            width: 14px;
+            height: 14px;
+        }
+        .arrow-icon > div {
+            margin-left: -1px;
+            margin-top: -3px;
+            transform-origin: center center;
+            font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        }
+
+    </style>
+</head>
+<body>
+  <h1>Folder Launcher</h1>
+    <div class="flex-col">
+        <div id="statusarea">
+            <button id="download" class="btn btn-error">Reload</button> <button id="upload" class="btn btn-primary">Upload</button>
+            <span id="status"></span>
+            <span id="routestatus"></span>
+        </div>
+        <div style="flex: 1">
+          <div id="tab-list">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>App</th>
+                  <th>Folder</th>
+                  <th>Move to</th>
+                </tr>
+              </thead>
+              <tbody id="list">
+              </tbody>
+            </table>
+            <br>
+            <h4>Add a new folder</h4>
+            <form id="add_folder_form">
+              <div class="columns">
+                <div class="column col-3 col-xs-8">
+                  <input class="form-input input-sm" type="text" id="add_folder_name" placeholder="Name">
+                </div>
+              </div>
+              <div class="columns">
+                <div class="column col-3 col-xs-8">
+                  <button id="add_folder_button" class="btn btn-primary btn-sm">Add Folder</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="../../core/lib/interface.js"></script>
+
+    <script>
+      var json = [];
+      var folders = [];
+      
+	// ==========================================================================
+        /*** status ***/
+
+        function clean() {
+            $('#status').html('<i class="icon icon-check"></i> No pending changes.');
+        }
+
+        function dirty() {
+            $('#status').html('<b><i class="icon icon-edit"></i> Changes have not been sent to the watch.</b>');
+        }
+
+        /*** util ***/
+
+        // https://stackoverflow.com/a/22706073
+        function escapeHTML(str){
+            return new Option(str).innerHTML;
+        }
+
+        /*** Bangle.js ***/
+
+        function gotStored(pts) {
+            json = pts;
+            renderAllApps();
+        }
+
+      // ========================================================================== LIST
+
+      var $name = document.getElementById('add_folder_name')
+      var $form = document.getElementById('add_folder_form')
+      var $add_folder_button = document.getElementById('add_folder_button')
+      var $list = document.getElementById('list')
+
+      $add_folder_button.addEventListener('click', event => {
+        event.preventDefault()
+        var name = $name.value.trim()
+        if(!name) return;
+
+	let n = {};
+	n.folders = {};
+	n.apps = [];
+	json.rootFolder.folders[name] = n;
+
+        renderAllApps()
+        $name.value = ''
+
+	dirty();
+      });
+
+      function moveTo(appId, dst){
+	  let config = json;
+	  let path = [];
+	  path.push(dst);
+	  console.log(`Move ${appId} to ${dst}`);
+
+          var folder = config.rootFolder;
+          for (var _i = 0, _a = config.apps[appId].folder; _i < _a.length; _i++) {
+              var folderName = _a[_i];
+              folder = folder.folders[folderName];
+          }
+	  console.log(`Move ${appId} from ${folder}`);
+          folder.apps = folder.apps.filter(function (item) { return item != appId; });
+          config.apps[appId].folder = path.slice();
+          folder = config.rootFolder;
+          for (var _b = 0, path_2 = path; _b < path_2.length; _b++) {
+              var folderName = path_2[_b];
+              folder = folder.folders[folderName];
+          }
+          folder.apps.push(appId);
+	  console.log(`Move done?`);
+	  renderAllApps();
+	  dirty();
+      }
+
+      function renderAppsList(){
+	folders = [];
+        $list.innerHTML = '';
+	Object.entries(json.rootFolder.folders).forEach(([name, params]) => {
+	    console.log('Folders:', name);
+	    folders.push(name);
+	});
+
+	Object.entries(json.apps).forEach(([name, params]) => {
+            let $contact = document.createElement('tr')
+	    let folder = params.folder;
+	    console.log('Foreach', name, folder);
+	    if (folder != '') {
+		$contact.innerHTML = `<td>${name}</td><td>${folder}</td>`;
+	    } else {
+		$contact.innerHTML = `<td>${name}</td><td>/</td>`;
+	    }
+	    let buttons = "";
+	    for (let f of folders) {
+		buttons += `<button class="btn" onclick="moveTo('${name}', '${f}')">${f}</button>`;
+	    }
+	    $contact.innerHTML += `<td>${buttons}</td>`;
+            $list.appendChild($contact)
+        });
+      }
+
+      function renderApps() {
+        renderAppsList();
+      }
+
+      function renderAllApps() {
+        renderAppsList();
+      }
+
+      // ========================================================================== UPLOAD/DOWNLOAD
+
+      function downloadJSONfile(fileid, callback) {
+        // TODO: use interface.js-provided stuff?
+          Puck.write(`\x10(function() {
+              var pts = require("Storage").readJSON("${fileid}")||[{name:"NONE"}];
+              Bluetooth.print(JSON.stringify(pts));
+          })()\n`, contents => {
+              if (contents=='[{name:"NONE"}]') contents="[]";
+              var storedpts = JSON.parse(contents);
+              callback(storedpts);
+              clean();
+          });
+      }
+
+      function uploadFile(fileid, contents) {
+        // TODO: use interface.js-provided stuff?
+          Puck.write(`\x10(function() {
+              require("Storage").write("${fileid}",'${contents}');
+              Bluetooth.print("OK");
+          })()\n`, ret => {
+              console.log("uploadFile", ret);
+              if (ret == "OK")
+                  clean();
+          });
+      }
+
+      function onInit() {
+          downloadJSONfile("folderlaunch.json", gotStored);
+      }
+
+      $('#download').on('click', function() {
+          downloadJSONfile("folderlaunch.json", gotStored);
+      });
+
+      $('#upload').click(function() {
+          var data =  JSON.stringify(json);
+          uploadFile("folderlaunch.json",data);
+      });
+
+      // ========================================================================== FINALLY...
+      clean();
+      renderAllApps();
+    </script>
+  </body>
+</html>

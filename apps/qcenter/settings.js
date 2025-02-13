@@ -49,6 +49,11 @@
       E.showMenu(exitGestureMenu);
     };
 
+    // Set Timeout
+    mainmenu["Timeout: " + (settings.timeout ? (settings.timeout+"s") : "Off")] = function () {
+      E.showMenu(timeoutMenu);
+    };
+
     //List all pinned apps, redirecting to menu with options to unpin and reorder
     pinnedApps.forEach((app, i) => {
       mainmenu[app.name] = function () {
@@ -129,5 +134,22 @@
     showMainMenu();
   };
 
+  // menu for setting timeout
+  var timeoutMenu = {
+    "": { title: "Timeout", back: showMainMenu }
+  };
+  timeoutMenu["Off"] = function () {
+    save("timeout", 0);
+    showMainMenu();
+  };
+  let timeoutvalues = [10,20,30,60];
+  for (const c in timeoutvalues){
+    let v = timeoutvalues[c];
+    timeoutMenu[v+"s"] = function () {
+      save("timeout", v);
+      showMainMenu();
+    };
+  }
+
   showMainMenu();
-});
+})

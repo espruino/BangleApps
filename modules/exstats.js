@@ -49,8 +49,26 @@ var menu = { ... };
 ExStats.appendMenuItems(menu, settings, saveSettingsFunction);
 E.showMenu(menu);
 
+'options' can also include:
+
+ options = {
+   paceLength : meters to measure pace over
+   notify: {
+    dist: {
+      increment: 0 to not notify on distance milestones, otherwise the number of meters to notify after, repeating
+    },
+    step: {
+      increment: 0 to not notify on step milestones, otherwise the number of steps to notify after, repeating
+    },
+    time: {
+      increment: 0 to not notify on time milestones, otherwise the number of milliseconds to notify after, repeating
+    }
+   }
+ }
+
+
 // Additionally, if your app makes use of the stat notifications, you can display additional menu
-// settings for configuring when to notify (note the added line in the example below)W
+// settings for configuring when to notify (note the added line in the example below)
 
 var menu = { ... };
 ExStats.appendMenuItems(menu, settings, saveSettingsFunction);
@@ -61,7 +79,9 @@ E.showMenu(menu);
 */
 var state = {
   active : false, // are we working or not?
-  // startTime, // time exercise started
+  // startTime, // time exercise started (in ms from 1970)
+  // lastTime, // time we had our last reading (in ms from 1970)
+  duration : 0, // the length of this exercise (in ms)
   lastGPS:{}, thisGPS:{}, // This & previous GPS readings
   // distance : 0, ///< distance in meters
   // avrSpeed : 0, ///< speed over whole run in m/sec
@@ -74,24 +94,21 @@ var state = {
   // BPM // beats per minute
   // BPMage // how many seconds was BPM set?
   // maxBPM // The highest BPM reached while active
-  // Notifies: 0 for disabled, otherwise how often to notify in meters, seconds, or steps
-  notify: {
-      dist: {
-        increment: 0,
-        next: 0,
-      },
-      steps: {
-        increment: 0,
-        next: 0,
-      },
-      time: {
-        increment: 0,
-        next: 0,
-      },
-    },
+  // notify: { }, // Notifies: 0 for disabled, otherwise how often to notify in meters, seconds, or steps
 };
 // list of active stats (indexed by ID)
 var stats = {};
+
+const DATA_FILE = "exstats.json";
+// Load the state from a saved file if there was one
+state = Object.assign(state, require("Storage").readJSON(DATA_FILE,1)||{});
+state.startSteps = Bangle.getStepCount()  - (state.lastSteps - state.startSteps);
+// force step history to a uint8array
+state.stepHistory = new Uint8Array(state.stepHistory);
+// when we exit, write the current state
+E.on('kill', function() {
+  require("Storage").writeJSON(DATA_FILE, state);
+});
 
 // distance between 2 lat and lons, in meters, Mean Earth Radius = 6371km
 // https://www.movable-type.co.uk/scripts/latlong.html
@@ -136,25 +153,24 @@ Bangle.on("GPS", function(fix) {
   if (state.lastGPS.fix)
     state.distance += calcDistance(state.lastGPS, fix);
   if (stats["dist"]) stats["dist"].emit("changed",stats["dist"]);
-  var duration = Date.now() - state.startTime; // in ms
-  state.avrSpeed = state.distance * 1000 / duration; // meters/sec
+  state.avrSpeed = state.distance * 1000 / state.duration; // meters/sec
   if (!isNaN(fix.speed)) state.curSpeed = state.curSpeed*0.8 + fix.speed*0.2/3.6; // meters/sec
   if (stats["pacea"]) stats["pacea"].emit("changed",stats["pacea"]);
   if (stats["pacec"]) stats["pacec"].emit("changed",stats["pacec"]);
   if (state.notify.dist.increment > 0 && state.notify.dist.next <= state.distance) {
-    stats["dist"].emit("notify",stats["dist"]);
     state.notify.dist.next = state.notify.dist.next + state.notify.dist.increment;
+    stats["dist"].emit("notify",stats["dist"]);
   }
 });
 
 Bangle.on("step", function(steps) {
   if (!state.active) return;
   if (stats["step"]) stats["step"].emit("changed",stats["step"]);
-  state.stepHistory[0] += steps-state.lastStepCount;
-  state.lastStepCount = steps;
+  state.stepHistory[0] += steps-state.lastSteps;
+  state.lastSteps = steps;
   if (state.notify.step.increment > 0 && state.notify.step.next <= steps) {
-    stats["step"].emit("notify",stats["step"]);
     state.notify.step.next = state.notify.step.next + state.notify.step.increment;
+    stats["step"].emit("notify",stats["step"]);
   }
 });
 Bangle.on("HRM", function(h) {
@@ -198,27 +214,16 @@ exports.getList = function() {
   return l;
 };
 /** Instantiate the given list of statistic IDs (see comments at top)
- options = {
-   paceLength : meters to measure pace over
-   notify: {
-    dist: {
-      increment: 0 to not notify on distance milestones, otherwise the number of meters to notify after, repeating
-    },
-    step: {
-      increment: 0 to not notify on step milestones, otherwise the number of steps to notify after, repeating
-    },
-    time: {
-      increment: 0 to not notify on time milestones, otherwise the number of milliseconds to notify after, repeating
-    }
-   }
- }
 */
 exports.getStats = function(statIDs, options) {
   options = options||{};
   options.paceLength = options.paceLength||1000;
-  options.notify.dist.increment = (options.notify && options.notify.dist && options.notify.dist.increment)||0;
-  options.notify.step.increment = (options.notify && options.notify.step && options.notify.step.increment)||0;
-  options.notify.time.increment = (options.notify && options.notify.time && options.notify.time.increment)||0;
+  if (!options.notify) options.notify = {};
+  ["dist","step","time"].forEach(stat => {
+    if (!options.notify[stat]) options.notify[stat] = {};
+    options.notify[stat].increment = options.notify[stat].increment||0;
+  });
+  state.notify = options.notify;
   var needGPS,needHRM,needBaro;
   // ======================
   if (statIDs.includes("time")) {
@@ -315,9 +320,10 @@ exports.getStats = function(statIDs, options) {
     if (!state.active) return;
     // called once a second
     var now = Date.now();
-    var duration = now - state.startTime; // in ms
+    state.duration += now - state.lastTime; // in ms
+    state.lastTime = now;
     // set cadence -> steps over last minute
-    state.stepsPerMin = Math.round(60000 * E.sum(state.stepHistory) / Math.min(duration,60000));
+    state.stepsPerMin = Math.round(60000 * E.sum(state.stepHistory) / Math.min(state.duration,60000));
     if (stats["caden"]) stats["caden"].emit("changed",stats["caden"]);
     // move step history onwards
     state.stepHistory.set(state.stepHistory,1);
@@ -330,14 +336,14 @@ exports.getStats = function(statIDs, options) {
       if (stats["bpm"]) stats["bpm"].emit("changed",stats["bpm"]);
     }
     if (state.notify.time.increment > 0 && state.notify.time.next <= now) {
-      stats["time"].emit("notify",stats["time"]);
       state.notify.time.next = state.notify.time.next + state.notify.time.increment;
+      stats["time"].emit("notify",stats["time"]);
     }
   }, 1000);
   function reset() {
-    state.startTime = Date.now();
+    state.startTime = state.lastTime = Date.now();
+    state.duration = 0;
     state.startSteps = state.lastSteps = Bangle.getStepCount();
-    state.lastSteps = 0;
     state.stepHistory.fill(0);
     state.stepsPerMin = 0;
     state.distance = 0;
@@ -349,26 +355,29 @@ exports.getStats = function(statIDs, options) {
     state.alt = undefined; // barometer altitude (meters)
     state.alti = 0; // integer ver of state.alt (to avoid repeated 'changed' notifications)
     state.notify = options.notify;
-    if (options.notify.dist.increment > 0) {
-      state.notify.dist.next = state.distance + options.notify.dist.increment;
-    }
-    if (options.notify.step.increment > 0) {
-      state.notify.step.next = state.startSteps + options.notify.step.increment;
-    }
-    if (options.notify.time.increment > 0) {
-      state.notify.time.next = state.startTime + options.notify.time.increment;
-    }
+    if (state.notify.dist.increment > 0)
+      state.notify.dist.next = state.distance + state.notify.dist.increment;
+    if (state.notify.step.increment > 0)
+      state.notify.step.next = state.startSteps + state.notify.step.increment;
+    if (state.notify.time.increment > 0)
+      state.notify.time.next = state.startTime + state.notify.time.increment;
   }
-  reset();
+  if (!state.active) reset(); // we might already be active
   return {
-    stats : stats, state : state,
+    stats : stats,
+    state : state,
     start : function() {
-      state.active = true;
       reset();
+      state.active = true;
     },
     stop : function() {
       state.active = false;
-    }
+    },
+    resume : function() {
+      state.lastTime = Date.now();
+      state.lastSteps = Bangle.getStepCount()
+      state.active = true;
+    },
   };
 };
 

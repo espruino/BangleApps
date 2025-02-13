@@ -6,7 +6,9 @@
     showLaunchers: true,
     direct: false,
     swipeExit: false,
-    timeOut: "Off"
+    timeOut: "Off",
+    interactionBuzz: false,
+    rememberPage: false,
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
@@ -55,6 +57,20 @@
         settings.timeOut = timeOutChoices[v];
         writeSettings();
       }
-    }
+    },
+    /*LANG*/'Interaction buzz': {
+      value: settings.interactionBuzz,
+      onchange: v => {
+        settings.interactionBuzz = v;
+        writeSettings();
+      }
+    },
+    /*LANG*/'Remember Page': {
+      value: settings.rememberPage,
+      onchange: v => {
+        settings.rememberPage = v;
+        writeSettings();
+      }
+    },
   });
-});
+})

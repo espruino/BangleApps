@@ -23,7 +23,7 @@ function onTemperature(p) {
   var temp100 = Math.round(avrTemp*100);
   var pressure100 = Math.round(avrPressure*100);
 
-  Bangle.bleAdvert[0xFCD2] = [ 0x40, /* BTHome Device Information
+  var advert = [ 0x40, /* BTHome Device Information
               bit 0: "Encryption flag"
               bit 1-4: "Reserved for future use"
               bit 5-7: "BTHome Version" */
@@ -37,7 +37,8 @@ function onTemperature(p) {
               0x04, // Pressure, 16 bit
               pressure100&255,(pressure100>>8)&255,pressure100>>16
   ];
-  NRF.setAdvertising(Bangle.bleAdvert);
+
+  require("ble_advert").set(0xFCD2, advert);
 }
 
 // Gets the temperature in the most accurate way with pressure sensor
@@ -45,7 +46,6 @@ function drawTemperature() {
   Bangle.getPressure().then(p =>{if (p) onTemperature(p);});
 }
 
-if (!Bangle.bleAdvert) Bangle.bleAdvert = {};
 setInterval(function() {
   drawTemperature();
 }, 10000); // update every 10s

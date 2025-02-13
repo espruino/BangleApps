@@ -2,7 +2,7 @@
   "id": "gbtwist",
   "name": "Gadgetbridge Twist Control",
   "shortName": "Twist Control",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Shake your wrist to control your music app via Gadgetbridge",
   "icon": "app.png",
   "type": "app",

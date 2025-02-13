@@ -1,0 +1,16 @@
+0.01: New App!
+0.02: New config options such as step, meridian, short/long formats, custom prefix/suffix
+0.03: Allows showing the month in short or long format by setting `"shortMonth"` to true or false
+0.04: Improves touchscreen drag handling for background apps such as Pattern Launcher
+0.05: Fixes step count not resetting after a new day starts
+0.06: Added clockbackground app functionality
+0.07: Allow custom backgrounds per boxclk config and from the clockbg module
+0.08: Improves performance, responsiveness, and bug fixes 
+- [+] Added box size caching to reduce calculations
+- [+] Improved step count with real-time updates
+- [+] Improved battery level update logic to reduce unnecessary refreshes
+- [+] Fixed optional seconds not displaying in time
+- [+] Fixed drag handler by adding E.stopEventPropagation()
+- [+] General code optimization and cleanup
+0.09: Revised event handler code
+0.10: Revised suffix formatting in getDate function

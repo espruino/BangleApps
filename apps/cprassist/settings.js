@@ -61,4 +61,4 @@
     }
   };
   E.showMenu(menu);
-});
+})

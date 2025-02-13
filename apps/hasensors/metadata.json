@@ -1,0 +1,18 @@
+{
+  "id": "hasensors",
+  "name": "Home Assistant Sensors",
+  "shortName": "HA sensors",
+  "version": "0.03",
+  "description": "Send sensor values to Home Assistant using Android Integration/Gadgetbridge",
+  "icon": "ha.png",
+  "type": "bootloader",
+  "tags": "tool,sensors",
+  "dependencies": {"android":"app"},
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "custom": "custom.html",
+  "storage": [
+    {"name":"hasensors","url":"lib.js"},
+    {"name":"hasensors.boot.js","url":"boot.js"}
+  ]
+}
