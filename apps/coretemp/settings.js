@@ -258,7 +258,61 @@
         return Promise.reject(error);
       });
   }
+  function scanUntilSynchronized(maxRetries, delay) {
+    let attempts = 0;
 
+    function checkHRMState() {
+      if (attempts >= maxRetries) {
+        log("Max scan attempts reached. HRM did not synchronize.");
+        return;
+      }
+
+      log(`Attempt ${attempts + 1}/${maxRetries}: Checking HRM state...`);
+
+      writeToControlPoint(0x05, [0]) // Check paired HRM state
+        .then(hrmResponse => {
+          log("Sent OpCode: 0x05, response: ", hrmResponse);
+          let byte1 = hrmResponse[3]; // LSB of ANT ID
+          let byte2 = hrmResponse[4]; // MSB of ANT ID
+          let txType = hrmResponse[5]; // Transmission Type
+          let hrmState = hrmResponse[6]; // HRM State
+
+          let retrievedAntId = (byte1) | (byte2 << 8) | (txType << 16);
+          let stateText = ["Closed", "Searching", "Synchronized", "Reserved"][hrmState & 0x03];
+
+          log(`🔗 HRM Status: ANT ID = ${retrievedAntId}, Tx-Type = ${txType}, State = ${stateText}`);
+
+          if (stateText === "Synchronized") {
+            log(`HRM ${retrievedAntId} is now synchronized!`);
+          } else {
+            log(`HRM ${retrievedAntId} is not yet synchronized. Scanning again...`);
+
+            // Start scan again
+            writeToControlPoint(0x0D)
+              .then(() => writeToControlPoint(0x0A, [0xFF]))
+              .then(() => {
+                attempts++;
+                setTimeout(checkHRMState, delay); // Wait and retry
+              })
+              .catch(error => {
+                log("Error restarting scan:", error);
+              });
+          }
+        })
+        .catch(error => {
+          log("Error checking HRM state:", error);
+        });
+    }
+
+    log("📡 Starting scan to synchronize HRM...");
+    writeToControlPoint(0x0A, [0xFF]) // Start initial scan
+      .then(() => {
+        setTimeout(checkHRMState, delay); // Wait and check state
+      })
+      .catch(error => {
+        log("Error starting initial scan:", error);
+      });
+  }
   function scanHRM_ANT() {
     E.showMenu();
     E.showMessage("Scanning for 10 seconds"); // Increased scan time
@@ -292,11 +346,11 @@
         }
         return Promise.all(promises).then(() => {
           if (hrmFound > 0) {
+            let submenu_scan = {
+              '< Back': function () { E.showMenu(buildMainMenu()); }
+            };
             hrmFound.forEach((hrm) => {
               let id = hrm.antId;
-              let submenu_scan = {
-                '< Back': function () { E.showMenu(buildMainMenu()); }
-              };
               submenu_scan[id] = function () {
                 E.showPrompt("Connect to\n" + id + "?", { title: "ANT+ Pairing" }).then((r) => {
                   if (r) {
@@ -324,13 +378,13 @@
       })
       .catch(e => log("ERROR:", e));
   }
-  
+
   function buildMainMenu() {
     let mainmenu = {
       '': { 'title': 'CORE Sensor' },
       '< Back': back,
       'Enable': {
-        value: !!s.enabled,
+        value: !!settings.enabled,
         onchange: v => {
           writeSettings("enabled", v);
           init();
@@ -372,8 +426,7 @@
       onchange: v => {
         writeSettings("debuglog", v);
       }
-    },
-    'Grace periods': function () { E.showMenu(submenu_grace); }
+    }
   };
   let submenu_HR = {
     '': { title: "HR Settings" },
@@ -388,8 +441,8 @@
       'Scan for ANT+': function () { scanHRM_ANT(); }
     }
     if (true) {
-      menu['Sync Check ANT+'] = function () { scanUntilSynchronized(10, 3000); },
-        menu['CLEAR ANT+'] = function () { clearPairedHRM_ANT(); }
+      menu['ANT+ Status'] = function () { scanUntilSynchronized(10, 3000); },
+        menu['Clear ANT+'] = function () { clearPairedHRM_ANT(); }
     }
     E.showMenu(menu);
   }
