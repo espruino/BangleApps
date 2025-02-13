@@ -1,8 +1,55 @@
 const Layout = require('Layout');
+const locale = require('locale');
 
-const tt = require('triangletimer');
+const tt = require('tevtimer');
+
 
 // UI //
+
+ROW_IDS = ['row1', 'row2', 'row3'];
+
+FONT = {
+  'row1': {
+    'start hh:mm:ss': '12x20',
+    'current hh:mm:ss': '12x20',
+    'time hh:mm:ss': '12x20',
+
+    'start hh:mm': '12x20',
+    'current hh:mm': '12x20',
+    'time hh:mm': '12x20',
+  },
+
+  'row2': {
+    'start hh:mm:ss': 'Vector:34x42',
+    'current hh:mm:ss': 'Vector:34x42',
+    'time hh:mm:ss': 'Vector:34x42',
+
+    'start hh:mm': 'Vector:56x42',
+    'current hh:mm': 'Vector:56x42',
+    'time hh:mm': 'Vector:56x42',
+  },
+
+  'row3': {
+    'start hh:mm:ss': 'Vector:34x56',
+    'current hh:mm:ss': 'Vector:34x56',
+    'time hh:mm:ss': 'Vector:34x56',
+
+    'start hh:mm': 'Vector:56x56',
+    'current hh:mm': 'Vector:56x56',
+    'time hh:mm': 'Vector:56x56',
+  }
+};
+
+
+function row_font(row_name, mode_name) {
+  font = FONT[row_name][mode_name];
+  if (font === undefined) {
+    console.error('Unknown font for row_font("' + row_name + '", "' + mode_name + '")');
+    return '12x20';
+  }
+  return font;
+}
+
 
 class TimerView {
   constructor(tri_timer) {
@@ -25,7 +72,7 @@ class TimerView {
 
     // Touch handler
     function touchHandler(button, xy) {
-      for (var id of ['row1', 'row2', 'row3']) {
+      for (var id of ROW_IDS) {
         const elem = this.layout[id];
         if (!xy.type &&
             elem.x <= xy.x && xy.x < elem.x + elem.w &&
@@ -69,22 +116,22 @@ class TimerView {
           {
             type: 'txt',
             id: 'row1',
-            label: '8888',
-            font: 'Vector:56x42',
+            label: '88:88:88',
+            font: row_font('row1', tt.SETTINGS.view_mode['row1']),
             fillx: 1,
           },
           {
             type: 'txt',
             id: 'row2',
-            label: '8888',
-            font: 'Vector:56x56',
+            label: '88:88:88',
+            font: row_font('row2', tt.SETTINGS.view_mode['row2']),
             fillx: 1,
           },
           {
             type: 'txt',
             id: 'row3',
             label: '',
-            font: '12x20',
+            font: row_font('row3', tt.SETTINGS.view_mode['row3']),
             fillx: 1,
           },
           {
@@ -116,62 +163,34 @@ class TimerView {
 
     if (!item || item == 'timer') {
 
-      let timer_as_linear = this.tri_timer.get();
-      if (timer_as_linear < 0) {
-        // Handle countdown timer expiration
-        timer_as_linear = 0;
-        setTimeout(() => { this.render('status'); }, 0);
-      }
-      const timer_as_tri = tt.as_triangle(
-        timer_as_linear, this.tri_timer.increment);
+      this._update_fonts();
 
-      var label1, label2, font1, font2;
-      if (tt.SETTINGS.view_mode == 0) {
-        label1 = timer_as_tri[0];
-        label2 = Math.ceil(timer_as_tri[1]);
-        font1 = 'Vector:56x42';
-        font2 = 'Vector:56x56';
-      } else if (tt.SETTINGS.view_mode == 1) {
-        label1 = timer_as_tri[0];
-        label2 = Math.ceil(timer_as_tri[0] - timer_as_tri[1]);
-        font1 = 'Vector:56x42';
-        font2 = 'Vector:56x56';
-      } else if (tt.SETTINGS.view_mode == 2) {
-        label1 = tt.format_triangle(this.tri_timer);
-        let ttna = this.tri_timer.time_to_next_event();
-        if (ttna !== null) {
-          label2 = tt.format_duration(ttna, true);
-        } else {
-          label2 = '--:--:--';
+      for (var id of ROW_IDS) {
+        const elem = this.layout[id];
+        let mode = tt.SETTINGS.view_mode[id];
+        if (mode == 'start hh:mm:ss') {
+          elem.label = tt.format_duration(this.tri_timer.origin / Math.abs(this.tri_timer.rate), true);
+        } else if (mode == 'current hh:mm:ss') {
+          elem.label = tt.format_duration(this.tri_timer.get() / Math.abs(this.tri_timer.rate), true);
+        } else if (mode == 'time hh:mm:ss') {
+          elem.label = locale.time(new Date()).trim();
+
+        } else if (mode == 'start hh:mm') {
+          elem.label = tt.format_duration(this.tri_timer.origin / Math.abs(this.tri_timer.rate), false);
+        } else if (mode == 'current hh:mm') {
+          elem.label = tt.format_duration(this.tri_timer.get() / Math.abs(this.tri_timer.rate), false);
+        } else if (mode == 'time hh:mm') {
+          elem.label = locale.time(new Date(), 1).trim();
+
+        } else if (mode == 'name') {
+          elem.label = this.tri_timer.display_name();
         }
-        font1 = 'Vector:30x42';
-        font2 = 'Vector:34x56';
-      } else if (tt.SETTINGS.view_mode == 3) {
-        label1 = timer_as_tri[0];
-        let ttna = this.tri_timer.time_to_next_event();
-        if (ttna !== null) {
-          label2 = tt.format_duration(ttna, false);
-        } else {
-          label2 = '--:--';
-        }
-        font1 = 'Vector:56x42';
-        font2 = 'Vector:48x56';
+        this.layout.clear(elem);
+        this.layout.render(elem);
       }
 
-      if (label1 !== this.layout.row1.label) {
-        this.layout.row1.label = label1;
-        this.layout.row1.font = font1;
-        this.layout.clear(this.layout.row1);
-        this.layout.render(this.layout.row1);
-      }
 
-      if (label2 !== this.layout.row2.label) {
-        this.layout.row2.label = label2;
-        this.layout.row2.font = font2;
-        this.layout.clear(this.layout.row2);
-        this.layout.render(this.layout.row2);
-      }
-
+      
     }
 
     if (!item || item == 'status') {
@@ -179,11 +198,11 @@ class TimerView {
         this.tri_timer.is_running() ? 'Pause' : 'Start';
       this.layout.render(this.layout.buttons);
 
-      this.layout.row3.label =
-        this.tri_timer.display_status()
-        + ' ' + this.tri_timer.provisional_name();
-      this.layout.clear(this.layout.row3);
-      this.layout.render(this.layout.row3);
+      // this.layout.row3.label =
+      //   this.tri_timer.display_status()
+      //   + ' ' + this.tri_timer.provisional_name();
+      // this.layout.clear(this.layout.row3);
+      // this.layout.render(this.layout.row3);
     }
 
     if (this.tri_timer.is_running() && this.tri_timer.get() > 0) {
@@ -215,6 +234,15 @@ class TimerView {
         () => { this.timer_timeout = null; this.render('timer'); },
         next_tick
       );
+    }
+  }
+
+  _update_fonts() {
+    for (var id of ROW_IDS) {
+      const elem = this.layout[id];
+      elem.font = row_font(id, tt.SETTINGS.view_mode[id]);
+      this.layout.clear(elem);
+      this.layout.render(elem);
     }
   }
 

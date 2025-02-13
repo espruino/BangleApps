@@ -297,8 +297,8 @@ function format_duration(msec, have_seconds) {
 
 // Persistent state //
 
-const TIMERS_FILENAME = 'triangletimer.timers.json';
-const SETTINGS_FILENAME = 'triangletimer.json';
+const TIMERS_FILENAME = 'tevtimer.timers.json';
+const SETTINGS_FILENAME = 'tevtimer.json';
 
 const SCHEDULED_SAVE_TIMEOUT = 15000;
 
@@ -357,8 +357,13 @@ function schedule_save_settings() {
   }
 }
 
+// Default settings
 const SETTINGS = Object.assign({
-  'view_mode': 0,
+  'view_mode': {
+    'row1': 'time hh:mm',
+    'row2': 'start hh:mm:ss',
+    'row3': 'current hh:mm:ss',
+  },
 }, Storage.readJSON(SETTINGS_FILENAME, true) || {});
 
 var TIMERS = load_timers();
@@ -417,7 +422,7 @@ function set_settings_dirty() {
 // Alarm handling //
 
 function delete_system_alarms() {
-  var alarms = Sched.getAlarms().filter(a => a.appid == 'triangletimer');
+  var alarms = Sched.getAlarms().filter(a => a.appid == 'tevtimer');
   for (let alarm of alarms) {
     console.debug('delete sched alarm ' + alarm.id);
     Sched.setAlarm(alarm.id, undefined);
@@ -433,10 +438,10 @@ function set_system_alarms() {
     if (time_to_next_alarm !== null) {
       console.debug('set sched alarm ' + idx + ' (' + time_to_next_alarm/1000 + ')');
       Sched.setAlarm(idx.toString(), {
-        appid: 'triangletimer',
+        appid: 'tevtimer',
         timer: time_to_next_alarm,
         msg: timer.display_name(),
-        js: "load('triangletimer.alarm.js');",
+        js: "load('tevtimer.alarm.js');",
         data: { idx: idx },
       });
     }
