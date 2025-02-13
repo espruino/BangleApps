@@ -3,6 +3,17 @@
   var drawTimeout;
   require('Font4x5Numeric').add(Graphics);
 
+  // Load settings
+  const SETTINGS_FILE = "onewordclock.setting.json";
+  let settings = {
+    mode: "Named",
+    smallNumeralClock: true
+  };
+  let stored = require('Storage').readJSON(SETTINGS_FILE, 1) || {};
+  for (const key in stored) {
+    settings[key] = stored[key];
+  }
+
   // https://www.espruino.com/Bangle.js+Locale
   // schedule a draw for the next 3 minutes
   const queueDraw = () => {
@@ -13,35 +24,62 @@
     }, 180000 - (Date.now() % 180000));
   };
 
-  const wordFromHour = (h) => {
-    const HOUR_WORDS = [
-      'Midnight',
-      'Early',
-      'Quiet',
-      'Still',
-      'Dawn',
-      'Earlybird',
-      'Sunrise',
-      'Morning',
-      'Bright',
-      'Active',
-      'Busy',
-      'Pre-noon',
-      'Noon',
-      'Post-noon',
-      'Afternoon',
-      'Siesta',
-      'Breezy',
-      'Evening',
-      'Twilight',
-      'Dinner',
-      'Cozy',
-      'Relax',
-      'Quietude',
-      'Night',
-    ];
+  const HOUR_WORDS = [
+    'Midnight',
+    'Early',
+    'Quiet',
+    'Still',
+    'Dawn',
+    'Earlybird',
+    'Sunrise',
+    'Morning',
+    'Bright',
+    'Active',
+    'Busy',
+    'Pre-noon',
+    'Noon',
+    'Post-noon',
+    'Afternoon',
+    'Siesta',
+    'Breezy',
+    'Evening',
+    'Twilight',
+    'Dinner',
+    'Cozy',
+    'Relax',
+    'Quietude',
+    'Night',
+  ];
 
-    return HOUR_WORDS[h];
+  const LITERAL_HOURS = [
+    'Twelve',
+    'One',
+    'Two',
+    'Three',
+    'Four',
+    'Five',
+    'Six',
+    'Seven',
+    'Eight',
+    'Nine',
+    'Ten',
+    'Eleven',
+    'Twelve',
+    'One',
+    'Two',
+    'Three',
+    'Four',
+    'Five',
+    'Six',
+    'Seven',
+    'Eight',
+    'Nine',
+    'Ten',
+    'Eleven'
+  ];
+
+  const wordFromHour = (h) => {
+    return settings.mode === "Named" ? HOUR_WORDS[h] : LITERAL_HOURS[h];
   };
 
   const wordsFromDayMonth = (day) => {
@@ -67,11 +105,13 @@
     g.setBgColor(g.theme.bg);
     g.clear();
 
-    // Draw military time at the top
-    g.setColor(g.theme.bg2);
-    g.setFontAlign(0, 0).setFont('4x5Numeric', 2);
-    var militaryTime = ('0' + h).slice(-2) + ('0' + m).slice(-2);
-    g.drawString(militaryTime, x, 20);
+    // Draw military time at the top only if smallNumeralClock is true
+    if (settings.smallNumeralClock) {
+      g.setColor(g.theme.bg2);
+      g.setFontAlign(0, 0).setFont('4x5Numeric', 1);
+      var militaryTime = ('0' + h).slice(-2) + ('0' + m).slice(-2);
+      g.drawString(militaryTime, x, 15);
+    }
 
     g.setFontAlign(-1, 0).setFont('Vector', 36);
 

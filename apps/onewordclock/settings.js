@@ -4,8 +4,8 @@
     // initialize with default settings...
     const storage = require('Storage');
     let settings = {
-        screen: "Named",
-        smallNumeralClock: false
+        mode: "Named",
+        smallNumeralClock: true
     };
     let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
     for (const key in saved_settings) {
@@ -20,12 +20,12 @@
     E.showMenu({
         '': { 'title': 'One Word Clock' },
         '< Back': back,
-        'Screen': {
-            value: 0 | screenOptions.indexOf(settings.screen),
+        'Mode': {
+            value: 0 | screenOptions.indexOf(settings.mode),
             min: 0, max: 1,
             format: v => screenOptions[v],
             onchange: v => {
-                settings.screen = screenOptions[v];
+                settings.mode = screenOptions[v];
                 save();
             },
         },
