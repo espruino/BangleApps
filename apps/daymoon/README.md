@@ -8,6 +8,7 @@ This uses the myLocation app to get your latitude and longitude for proper dayli
 Feature roadmap:
  - [x] 0.01 Fix blocking widgets
  - [x] 0.03 Day and Night different color markers
+ - [x] 0.04 Add to App Loader
  - [ ] 0.05 add Day of week and month display
  - [ ] 0.06 Seconds display
  - [ ] 0.07 Color Themes (and settings/options)
