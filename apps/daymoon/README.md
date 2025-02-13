@@ -9,10 +9,11 @@ Feature roadmap:
  - [x] 0.01 Fix blocking widgets
  - [x] 0.03 Day and Night different color markers
  - [x] 0.04 Add to App Loader
- - [ ] 0.05 add Day of week and month display
- - [ ] 0.06 Seconds display
- - [ ] 0.07 Color Themes (and settings/options)
- - [ ] 0.08 Moon display angle represents how it looks in the sky
+ - [x] 0.05 Add more screenshots with different moon phases
+ - [ ] 0.06 add Day of week and month display
+ - [ ] 0.07 Seconds display
+ - [ ] 0.08 Color Themes (and settings/options)
+ - [ ] 0.09 Moon display angle represents how it looks in the sky
  - [ ] 0.10 custom/bigger/fitted time digits 
  - [ ] 0.20 clockinfo support?
  - [ ] 0.30 Tap/swipe actions?
