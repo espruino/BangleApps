@@ -1,0 +1,20 @@
+{
+  "id": "pacer",
+  "name": "Pacer",
+  "version": "0.01",
+  "description": "Run with a virtual partner",
+  "icon": "app.png",
+  "tags": "run,running,fitness,outdoors,gps",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "screenshots": [{"url":"screenshot.png"}],
+  "storage": [
+    {"name":"pacer.app.js","url":"app.js"},
+    {"name":"pacer.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"pacer.json"},
+    {"wildcard":".pacer*.csv","storageFile":true}
+  ]
+}
