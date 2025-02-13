@@ -276,12 +276,9 @@
           let byte2 = hrmResponse[4]; // MSB of ANT ID
           let txType = hrmResponse[5]; // Transmission Type
           let hrmState = hrmResponse[6]; // HRM State
-
           let retrievedAntId = (byte1) | (byte2 << 8) | (txType << 16);
           let stateText = ["Closed", "Searching", "Synchronized", "Reserved"][hrmState & 0x03];
-
-          log(`🔗 HRM Status: ANT ID = ${retrievedAntId}, Tx-Type = ${txType}, State = ${stateText}`);
-
+          log(`HRM Status: ANT ID = ${retrievedAntId}, Tx-Type = ${txType}, State = ${stateText}`);
           if (stateText === "Synchronized") {
             log(`HRM ${retrievedAntId} is now synchronized!`);
           } else {
@@ -304,7 +301,7 @@
         });
     }
 
-    log("📡 Starting scan to synchronize HRM...");
+    log("Starting scan to synchronize HRM...");
     writeToControlPoint(0x0A, [0xFF]) // Start initial scan
       .then(() => {
         setTimeout(checkHRMState, delay); // Wait and check state
@@ -313,6 +310,7 @@
         log("Error starting initial scan:", error);
       });
   }
+
   function scanHRM_ANT() {
     E.showMenu();
     E.showMessage("Scanning for 10 seconds"); // Increased scan time
@@ -408,7 +406,7 @@
     } else {
       mainmenu["BLE Scan"] = () => createMenuFromScan();
     }
-    mainmenu.HRM = function () { E.showMenu(submenu_HR); };
+    mainmenu.HRM = function () { E.showMenu(HRM_MENU); };
     mainmenu.Debug = function () { E.showMenu(submenu_debug); };
     return mainmenu;
   }
@@ -428,19 +426,14 @@
       }
     }
   };
-  let submenu_HR = {
-    '': { title: "HR Settings" },
-    '< Back': function () { E.showMenu(buildMainMenu()); },
-    'ANT+ HR': function () { E.showMenu(HR_ANT_MENU()); },
-  };
 
-  function HR_ANT_MENU() {
+  function HRM_MENU() {
     let menu = {
       '': { 'title': 'CORE: ANT+ HR' },
-      '< Back': function () { E.showMenu(submenu_HR) },
+      '< Back': function () { E.showMenu(buildMainMenu()); },
       'Scan for ANT+': function () { scanHRM_ANT(); }
     }
-    if (true) {
+    if (settings.btname) {
       menu['ANT+ Status'] = function () { scanUntilSynchronized(10, 3000); },
         menu['Clear ANT+'] = function () { clearPairedHRM_ANT(); }
     }
@@ -474,7 +467,7 @@
                   }).then(() => {
                     writeSettings("btid", d.id);
                     writeSettings("btname", d.name); //Seems to only like to connect by name
-                    E.showMenu(buildMainMenu());
+                    E.showMenu(HRM_MENU());
                   });
                 };
                 const errorHandler = (e) => {
