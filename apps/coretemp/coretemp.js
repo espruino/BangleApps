@@ -1,4 +1,4 @@
-settings = require("Storage").readJSON("coretemp.json", 1) || {};
+var settings = require("Storage").readJSON("coretemp.json", 1) || {};
 // Simply listen for core events and show data
 //var btm = g.getHeight() - 1;
 var px = g.getWidth() / 2;

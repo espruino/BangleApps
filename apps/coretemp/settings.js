@@ -127,7 +127,7 @@
       // Temporary handler to capture the response
       function handleResponse(event) {
         let response = new Uint8Array(event.target.value.buffer);
-        let responseOpCode = response[0];
+        //let responseOpCode = response[0];
         let requestOpCode = response[1];  // Matches the sent OpCode
         let resultCode = response[2];     // 0x01 = Success
         controlPointChar.removeListener("characteristicvaluechanged", handleResponse);
@@ -206,6 +206,7 @@
       characteristicsToCache(characteristics);
     });
   }
+  /*
   function getPairedAntHRM() {
     writeToControlPoint(0x04) // Get paired HRMs
       .then(response => {
@@ -213,7 +214,6 @@
         log("📡 PAIRED ANT+:", totalHRMs);
         let promises = [];
         let hrmFound = [];
-
         for (let i = 0; i < totalHRMs; i++) {
           promises.push(
             writeToControlPoint(0x05, [i]) // Get HRM ID from paired list
@@ -225,18 +225,14 @@
                 let byte3 = hrmResponse[5]; // MSB
                 let txType = hrmResponse[5]; // Transmission Type
                 let hrmState = hrmResponse[6]; // Connection State
-
                 let pairedAntId = (byte1) | (byte2 << 8) | (byte3 << 16); // ✅ Corrected parsing
                 let stateText = ["Closed", "Searching", "Synchronized", "Reserved"][hrmState & 0x03];
-
                 log(`🔗 HRM ${i}: ANT ID = ${pairedAntId}, Tx-Type = ${txType}, State = ${stateText}`);
-
                 hrmFound.push({ index: i, antId: pairedAntId, txType: txType, stateText: stateText });
               })
               .catch(e => log(`❌ Error fetching HRM ${i} ID:`, e))
           );
         }
-
         return Promise.all(promises).then(() => hrmFound);
       })
       .then(allHRMs => {
@@ -244,6 +240,7 @@
         return  // Modified start scanning command
       })
   }
+      */
   function clearPairedHRM_ANT() {
     return writeToControlPoint(0x01) // Send OpCode 0x01 to clear list
       .then(response => {
@@ -265,7 +262,6 @@
   function scanHRM_ANT() {
     E.showMenu();
     E.showMessage("Scanning for 10 seconds"); // Increased scan time
-
     writeToControlPoint(0x0A, [0xFF])
       .then(response => {
         log("Received Response for 0x0A:", response);
@@ -328,16 +324,7 @@
       })
       .catch(e => log("ERROR:", e));
   }
-  const menu = {
-    '': { 'title': 'CoreTemp sensor' },
-    '< Back': back,
-    'Enable': {
-      value: !!s.enabled,
-      onchange: v => {
-        writeSettings("enabled", v);
-      }
-    }
-  }
+  
   function buildMainMenu() {
     let mainmenu = {
       '': { 'title': 'CORE Sensor' },
