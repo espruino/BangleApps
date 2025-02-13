@@ -1,7 +1,5 @@
 (function() {
-   var settings = Object.assign(
-      require('Storage').readJSON(SETTINGS_FILE, true) || {}
-    );
+   var settings = require("Storage").readJSON("coretemp.json", 1) || {};
 
   let log = () => { };
   if (settings.debuglog)

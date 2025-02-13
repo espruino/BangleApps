@@ -3,10 +3,9 @@
  * @param {function} back Use back() to return to settings menu
  */
 (function (back) {
-  settings = {};
+  var settings = {};
   const SETTINGS_FILE = 'coretemp.json'
   var CORECONNECTED = false;
-  const storage = require('Storage')
   // creates a function to safe a specific setting, e.g.  save('color')(1)
   function writeSettings(key, value) {
     let s = require('Storage').readJSON(SETTINGS_FILE, true) || {};
@@ -51,8 +50,7 @@
         "uuid": c.uuid,
         "notify": c.properties.notify,
         "read": c.properties.read,
-        "write": c.properties.write,
-        "notify": c.properties.notify
+        "write": c.properties.write
       };
     }
     writeSettings("cache", cache);
@@ -407,7 +405,7 @@
         menu['CLEAR ANT+'] = function () { clearPairedHRM_ANT(); }
     }
     E.showMenu(menu);
-  };
+  }
 
   function createMenuFromScan() {
     E.showMenu();

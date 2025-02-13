@@ -1,5 +1,5 @@
+settings = require("Storage").readJSON("coretemp.json", 1) || {};
 // Simply listen for core events and show data
-
 //var btm = g.getHeight() - 1;
 var px = g.getWidth() / 2;
 
@@ -53,8 +53,6 @@ function drawBackground(message) {
 }
 
 Bangle.on('CoreTemp', onCore);
-
-settings = require("Storage").readJSON("coretemp.json", 1) || {};
 
 if (!settings.enabled) {
   drawBackground("Sensor off\nBTN" +
