@@ -361,7 +361,7 @@
                       .then(() => {
                         log(`HRM ${id} added to paired list.`);
                         writeSettings("ANT_HRM", hrm);
-                        E.showMenu(submenu_HR);
+                        E.showMenu(HRM_MENU());
                       })
                       .catch(e => log(`Error adding HRM ${id} to paired list:`, e));
                   }
