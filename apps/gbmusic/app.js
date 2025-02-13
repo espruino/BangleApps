@@ -390,7 +390,7 @@ function handleTouch(btn, pos) {
 }
 
 function togglePlay() {
-  sendCommand(stat==="play" ? "pause" : "playpause");
+  sendCommand("playpause");
 }
 
 /**
