@@ -186,9 +186,7 @@ function tToRad(date) {
 }
 
 function draw(date) {
-  d = date !== undefined ? date : new Date();
-
-  //var d = new Date(),
+  var d = date !== undefined ? date : new Date();
   var a = tToRad(d),
     shape = moonShade(M_POS, SunCalc.getMoonIllumination(d)),
     sTimes = SunCalc.getTimes(d, location.lat, location.lon),
@@ -205,15 +203,16 @@ function draw(date) {
   });
 
 }
+/*
 const shotTimes = [1720626960000, 1729184400000, 1738298880000, 1717575420000];
-/*first quarter -2 days moon at 10:20 in the summer
+let desc =`first quarter -2 days moon at 10:20 in the summer
   jun 10 2024 10:56
 full moon at 12 noon near fall equinox
   Sep 17 2024 12:00
 new moon at 11pm in winter
  dec 30 2024 23:48
 3rd quarter  moon at 03:17 am
-  May 5 2024 03:17*/
+  May 5 2024 03:17`
 
 function screenshots(times) {
   let d = new Date();
@@ -223,7 +222,7 @@ function screenshots(times) {
     g.dump();
   }
 }
-
+*/
 // Clear the screen once, at startup
 g.reset();
 // requires the myLocation app
