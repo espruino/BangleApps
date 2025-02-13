@@ -51,7 +51,7 @@
     'Night',
   ];
 
-  const LITERAL_HOURS = [
+  const HOURS = [
     'Twelve',
     'One',
     'Two',
@@ -65,21 +65,21 @@
     'Ten',
     'Eleven',
     'Twelve',
-    'One',
-    'Two',
-    'Three',
-    'Four',
-    'Five',
-    'Six',
-    'Seven',
-    'Eight',
-    'Nine',
-    'Ten',
-    'Eleven'
+    'Thirteen',
+    'Fourteen',
+    'Fifteen',
+    'Sixteen',
+    'Seventeen',
+    'Eighteen',
+    'Nineteen',
+    'Twenty',
+    'Twentyone',
+    'Twentytwo',
+    'Twentythree'
   ];
 
   const wordFromHour = (h) => {
-    return settings.mode === "Named" ? HOUR_WORDS[h] : LITERAL_HOURS[h];
+    return settings.mode === "Named" ? HOUR_WORDS[h] : HOURS[h];
   };
 
   const wordsFromDayMonth = (day) => {
