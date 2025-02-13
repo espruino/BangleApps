@@ -108,9 +108,9 @@
     // Draw military time at the top only if smallNumeralClock is true
     if (settings.smallNumeralClock) {
       g.setColor(g.theme.bg2);
-      g.setFontAlign(0, 0).setFont('4x5Numeric', 1);
+      g.setFontAlign(0, 0).setFont('4x5Numeric', 2);
       var militaryTime = ('0' + h).slice(-2) + ('0' + m).slice(-2);
-      g.drawString(militaryTime, x, 15);
+      g.drawString(militaryTime, x, 20);
     }
 
     g.setFontAlign(-1, 0).setFont('Vector', 36);
