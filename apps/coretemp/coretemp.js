@@ -25,9 +25,10 @@ function onCore(c) {
   g.setFontAlign(0, 0);
   g.clearRect(0, 32 + 48, g.getWidth(), 32 + 48 + 24 * 4);
   g.setColor(g.theme.dark ? "#CCC" : "#333");  // gray
-  g.setFont("6x8", sz).drawString(
-      "Core: " + ((c.core < 327) ? (c.core + c.unit) : 'n/a'), px, 48 + 48);
+  g.setFont("6x8", sz).drawString("Core: " + ((c.core < 327) ? (c.core + c.unit) : 'n/a'), px, 48 + 48);
   g.setFont("6x8", sz).drawString("Skin: " + c.skin + c.unit, px, 48 + 48 + 24);
+  g.setFont("6x8", sz).drawString("Heart Rate: " + c.hr + " BPM", px, 48 + 48 + 24);
+  g.setFont("6x8", sz).drawString("Heat Strain: " + c.hsi+ " AU", px, 48 + 48 + 24);
 }
 
 // Background task will activate once settings are enabled.

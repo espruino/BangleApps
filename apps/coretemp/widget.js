@@ -14,7 +14,7 @@
     g.setFontAlign(0, 0);
     g.clearRect(this.x, this.y, this.x + 23, this.y + 23);
 
-    if (count & 1) {
+    if (count > 1) {
       g.setColor("#0f0"); // green
     } else {
       g.setColor(g.theme.dark ? "#333" : "#CCC"); // off = grey
@@ -40,9 +40,11 @@
   // Called by sensor app to update status
   function reload() {
     settings = require("Storage").readJSON("coretemp.json", 1) || {};
-
     Bangle.removeListener('CoreTemp', onTemp);
-
+    if(!settings.widget){
+      delete WIDGETS["coretemp"];
+      return;
+    }
     if (settings.enabled) {
       WIDGETS["coretemp"].width = 24;
       Bangle.on('CoreTemp', onTemp);

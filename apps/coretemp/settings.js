@@ -2,45 +2,490 @@
 /**
  * @param {function} back Use back() to return to settings menu
  */
-(function(back) {
+(function (back) {
+  settings = {};
   const SETTINGS_FILE = 'coretemp.json'
-  // initialize with default settings...
-  let s = {
-    'enabled': true,
-  }
-  // ...and overwrite them with any saved values
-  // This way saved values are preserved if a new version adds more settings
+  var CORECONNECTED = false;
   const storage = require('Storage')
-  const saved = storage.readJSON(SETTINGS_FILE, 1) || {}
-  for (const key in saved) {
-    s[key] = saved[key];
-  }
   // creates a function to safe a specific setting, e.g.  save('color')(1)
-  function save(key) {
-    return function (value) {
-      s[key] = value;
-      storage.write(SETTINGS_FILE, s);
-    }
+  function writeSettings(key, value) {
+    let s = require('Storage').readJSON(SETTINGS_FILE, true) || {};
+    s[key] = value;
+    require('Storage').writeJSON(SETTINGS_FILE, s);
+    readSettings();
   }
 
-  function updateSettings() {
-  require("Storage").write("coretemp.json", s);
-  if (WIDGETS["coretemp"])
-    WIDGETS["coretemp"].reload();
-  return;
-} 
+  function readSettings() {
+    settings = Object.assign(
+      require('Storage').readJSON(SETTINGS_FILE, true) || {}
+    );
+  }
 
-const menu = {
-  '' : {'title' : 'CoreTemp sensor'},
-  '< Back' : back,
-  'Enabled' : {
-    value : !!s.enabled,
-    onchange : v => {
-      s.enabled = v;
-      updateSettings();
+  readSettings();
+  let log = () => { };
+  if (settings.debuglog)
+    log = print;
+
+  let supportedServices = [
+    "00002100-5b1e-4347-b07c-97b514dae121", // Core Body Temperature Service
+    "0x180f", // Battery
+    "0x1809", // Health Thermometer Service
+  ];
+
+  let supportedCharacteristics = [
+    "00002101-5b1e-4347-b07c-97b514dae121", // Core Body Temperature Characteristic
+    "00002102-5b1e-4347-b07c-97b514dae121", //Core Temp Control Point (opCode for extra function)
+    "0x2a1c", //Thermometer
+    "0x2a1d", //Sensor Location (CORE)
+    "0x2a19", // Battery
+  ];
+
+  var characteristicsToCache = function (characteristics) {
+    log("Cache characteristics");
+    let cache = {};
+    if (!cache.characteristics) cache.characteristics = {};
+    for (var c of characteristics) {
+      log("Saving handle " + c.handle_value + " for characteristic: ", c.uuid);
+      cache.characteristics[c.uuid] = {
+        "handle": c.handle_value,
+        "uuid": c.uuid,
+        "notify": c.properties.notify,
+        "read": c.properties.read,
+        "write": c.properties.write,
+        "notify": c.properties.notify
+      };
+    }
+    writeSettings("cache", cache);
+  };
+
+  var controlPointChar;
+
+  let createCharacteristicPromise = function (newCharacteristic) {
+    log("Create characteristic promise", newCharacteristic.uuid);
+    if (newCharacteristic.uuid === "00002102-5b1e-4347-b07c-97b514dae121") {
+      log("Subscribing to CoreTemp Control Point Indications.");
+      controlPointChar = newCharacteristic;
+      return controlPointChar.writeValue(new Uint8Array([0x02]), {
+        type: "command",
+        handle: true
+      })
+        .then(() => {
+          log("Indications enabled! Listening for responses...");
+          return controlPointChar.startNotifications(); //now we can send opCodes 
+        })
+        .then(() => log("Finished handling CoreTemp Control Point."))
+        .catch(error => {
+          log("Error enabling indications:", error);
+        });
+    }
+    return Promise.resolve().then(() => log("Handled characteristic", newCharacteristic.uuid));
+  };
+
+  let attachCharacteristicPromise = function (promise, characteristic) {
+    return promise.then(() => {
+      log("Handling characteristic:", characteristic.uuid);
+      return createCharacteristicPromise(characteristic);
+    });
+  };
+
+  let characteristics;
+
+  let createCharacteristicsPromise = function (newCharacteristics) {
+    log("Create characteristics promise ", newCharacteristics.length);
+    let result = Promise.resolve();
+    for (let c of newCharacteristics) {
+      if (!supportedCharacteristics.includes(c.uuid)) continue;
+      log("Supporting characteristic", c.uuid);
+      characteristics.push(c);
+
+      result = attachCharacteristicPromise(result, c);
+    }
+    return result.then(() => log("Handled characteristics"));
+  };
+
+  let createServicePromise = function (service) {
+    log("Create service promise", service.uuid);
+    let result = Promise.resolve();
+    result = result.then(() => {
+      log("Handling service", service.uuid);
+      return service.getCharacteristics().then((c) => createCharacteristicsPromise(c));
+    });
+    return result.then(() => log("Handled service", service.uuid));
+  };
+
+  let attachServicePromise = function (promise, service) {
+    return promise.then(() => createServicePromise(service));
+  };
+
+  function writeToControlPoint(opCode, params) {
+    return new Promise((resolve, reject) => {
+      let data = new Uint8Array([opCode].concat(params));
+
+      if (!controlPointChar) {
+        log("Control Point characteristic not found! Reconnecting...");
+        return;
+      }
+
+      // Temporary handler to capture the response
+      function handleResponse(event) {
+        let response = new Uint8Array(event.target.value.buffer);
+        let responseOpCode = response[0];
+        let requestOpCode = response[1];  // Matches the sent OpCode
+        let resultCode = response[2];     // 0x01 = Success
+        controlPointChar.removeListener("characteristicvaluechanged", handleResponse);
+        if (requestOpCode === opCode) {
+          if (resultCode === 0x01) { //successful
+            resolve(response);
+          } else {
+            reject("Error Code: " + resultCode);
+          }
+        }
+      }
+
+      controlPointChar.on("characteristicvaluechanged", handleResponse);
+
+      controlPointChar.writeValue(data)
+        .then(() => log("Sent OpCode:", opCode.toString(16), "Params:", data))
+        .catch(error => {
+          log("Write error:", error);
+          reject(error);
+        });
+    });
+  }
+  function cacheDevice(deviceName) {
+    let promise;
+    let filters;
+    let gatt;
+    characteristics = [];
+    filters = [{ name: deviceName }];
+    log("Requesting device with filters", filters);
+    promise = NRF.requestDevice({ filters: filters, active: settings.active });
+    promise = promise.then((d) => {
+      E.showMessage("Found " + deviceName + "\nConnecting...");
+      log("Got device", d);
+      gatt = d.gatt;
+      log("Connecting...");
+      d.on('gattserverdisconnected', function () {
+        CORECONNECTED = false;
+        log("Disconnected! Attempting to reconnect...");
+        setTimeout(() => cacheDevice(deviceName), 5000);  // Retry in 5 seconds
+      });
+      return gatt.connect().then(function () {
+        log("Connected.");
+      });
+    });
+    promise = promise.then(() => {
+      log(JSON.stringify(gatt.getSecurityStatus()));
+      if (gatt.getSecurityStatus().bonded) {
+        log("Already bonded");
+        return Promise.resolve();
+      } else {
+        log("Start bonding");
+        return gatt.startBonding()
+          .then(() => log("Security status after bonding" + gatt.getSecurityStatus()));
+      }
+    });
+    promise = promise.then(() => {
+      log("Getting services");
+      return gatt.getPrimaryServices();
+    });
+
+    promise = promise.then((services) => {
+      log("Got services", services.length);
+      let result = Promise.resolve();
+      for (let service of services) {
+        if (!(supportedServices.includes(service.uuid))) continue;
+        log("Supporting service", service.uuid);
+        result = attachServicePromise(result, service);
+      }
+      return result;
+    });
+
+    return promise.then(() => {
+      log("Connection established, saving cache");
+      E.showMessage("Found " + deviceName + "\nConnected!");
+      CORECONNECTED = true;
+      characteristicsToCache(characteristics);
+    });
+  }
+  function getPairedAntHRM() {
+    writeToControlPoint(0x04) // Get paired HRMs
+      .then(response => {
+        let totalHRMs = response[3]; // HRM count at index 3
+        log("📡 PAIRED ANT+:", totalHRMs);
+        let promises = [];
+        let hrmFound = [];
+
+        for (let i = 0; i < totalHRMs; i++) {
+          promises.push(
+            writeToControlPoint(0x05, [i]) // Get HRM ID from paired list
+              .then(hrmResponse => {
+                log("🔍 Response 0x05:", hrmResponse);
+
+                let byte1 = hrmResponse[3]; // LSB
+                let byte2 = hrmResponse[4]; // Middle Byte
+                let byte3 = hrmResponse[5]; // MSB
+                let txType = hrmResponse[5]; // Transmission Type
+                let hrmState = hrmResponse[6]; // Connection State
+
+                let pairedAntId = (byte1) | (byte2 << 8) | (byte3 << 16); // ✅ Corrected parsing
+                let stateText = ["Closed", "Searching", "Synchronized", "Reserved"][hrmState & 0x03];
+
+                log(`🔗 HRM ${i}: ANT ID = ${pairedAntId}, Tx-Type = ${txType}, State = ${stateText}`);
+
+                hrmFound.push({ index: i, antId: pairedAntId, txType: txType, stateText: stateText });
+              })
+              .catch(e => log(`❌ Error fetching HRM ${i} ID:`, e))
+          );
+        }
+
+        return Promise.all(promises).then(() => hrmFound);
+      })
+      .then(allHRMs => {
+        log("✅ Retrieved all paired HRMs:", allHRMs);
+        return  // Modified start scanning command
+      })
+  }
+  function clearPairedHRM_ANT() {
+    return writeToControlPoint(0x01) // Send OpCode 0x01 to clear list
+      .then(response => {
+        let resultCode = response[2]; // Check the success flag
+        if (resultCode === 0x01) {
+          log("ANT+ HRM list cleared successfully.");
+          return Promise.resolve();
+        } else {
+          log("Failed to clear ANT+ HRM list. Error code:", resultCode);
+          return Promise.reject(new Error(`Error code: ${resultCode}`));
+        }
+      })
+      .catch(error => {
+        log("Error clearing ANT+ HRM list:", error);
+        return Promise.reject(error);
+      });
+  }
+
+  function scanHRM_ANT() {
+    E.showMenu();
+    E.showMessage("Scanning for 10 seconds"); // Increased scan time
+
+    writeToControlPoint(0x0A, [0xFF])
+      .then(response => {
+        log("Received Response for 0x0A:", response);
+        return new Promise(resolve => setTimeout(resolve, 10000)); // Extended scan time to 10 seconds
+      })
+      .then(() => {
+        return writeToControlPoint(0x0B); // Get HRM count
+      })
+      .then(response => {
+        let HRMCount = response[3];
+        log("HRM Count Response:", HRMCount);
+        let hrmFound = [];
+        let promises = [];
+        for (let i = 0; i < HRMCount; i++) {
+          promises.push(
+            writeToControlPoint(0x0C, [i]) // Get Scanned HRM IDs
+              .then(hrmResponse => {
+                log("🔍 Response 0x0C:", hrmResponse);
+                let byte1 = hrmResponse[3]; // LSB
+                let byte2 = hrmResponse[4]; // MSB
+                let txType = hrmResponse[5]; // Transmission Type
+                let scannedAntId = (byte1) | (byte2 << 8) | (txType << 16); //3 byte ANT+ ID
+                log(`HRM ${i} ID Response: ${scannedAntId}`);
+                hrmFound.push({ antId: scannedAntId });
+              })
+              .catch(e => log(`Error fetching HRM ${i} ID:`, e))
+          );
+        }
+        return Promise.all(promises).then(() => {
+          if (hrmFound > 0) {
+            hrmFound.forEach((hrm) => {
+              let id = hrm.antId;
+              let submenu_scan = {
+                '< Back': function () { E.showMenu(buildMainMenu()); }
+              };
+              submenu_scan[id] = function () {
+                E.showPrompt("Connect to\n" + id + "?", { title: "ANT+ Pairing" }).then((r) => {
+                  if (r) {
+                    E.showMessage("Connecting...");
+                    let byte1 = id & 0xFF; // LSB
+                    let byte2 = (id >> 8) & 0xFF; // Middle byte
+                    let byte3 = (id >> 16) & 0xFF; // Transmission Type
+                    return clearPairedHRM_ANT(). //FIRST CLEAR ALL ANT+ HRM
+                      then(() => { writeToControlPoint(0x02, [byte1, byte2, byte3]) }) // Pair the HRM
+                      .then(() => {
+                        log(`HRM ${id} added to paired list.`);
+                        writeSettings("ANT_HRM", hrm);
+                        E.showMenu(submenu_HR);
+                      })
+                      .catch(e => log(`Error adding HRM ${id} to paired list:`, e));
+                  }
+                });
+              };
+            });
+            E.showMenu(submenu_scan);
+          } else {
+            E.showMessage("No ANT+ HRM found.")
+          }
+        });
+      })
+      .catch(e => log("ERROR:", e));
+  }
+  const menu = {
+    '': { 'title': 'CoreTemp sensor' },
+    '< Back': back,
+    'Enable': {
+      value: !!s.enabled,
+      onchange: v => {
+        writeSettings("enabled", v);
+      }
     }
   }
-}
+  function buildMainMenu() {
+    let mainmenu = {
+      '': { 'title': 'CORE Sensor' },
+      '< Back': back,
+      'Enable': {
+        value: !!s.enabled,
+        onchange: v => {
+          writeSettings("enabled", v);
+          init();
+        },
+      }
+    };
 
-  E.showMenu(menu);
+    if (settings.btname || settings.btid && CORECONNECTED) {
+      let name = "Clear " + (settings.btname || settings.btid);
+      mainmenu[name] = function () {
+        E.showPrompt("Clear current device?").then((r) => {
+          if (r) {
+            writeSettings("btname", undefined);
+            writeSettings("btid", undefined);
+            writeSettings("cache", undefined);
+            clearPairedHRM_ANT();
+          }
+          E.showMenu(buildMainMenu());
+        });
+      };
+    } else {
+      mainmenu["BLE Scan"] = () => createMenuFromScan();
+    }
+    mainmenu.HRM = function () { E.showMenu(submenu_HR); };
+    mainmenu.Debug = function () { E.showMenu(submenu_debug); };
+    return mainmenu;
+  }
+  let submenu_debug = {
+    '': { title: "Debug" },
+    '< Back': function () { E.showMenu(buildMainMenu()); },
+    'Alert on disconnect': {
+      value: !!settings.warnDisconnect,
+      onchange: v => {
+        writeSettings("warnDisconnect", v);
+      }
+    },
+    'Debug log': {
+      value: !!settings.debuglog,
+      onchange: v => {
+        writeSettings("debuglog", v);
+      }
+    },
+    'Grace periods': function () { E.showMenu(submenu_grace); }
+  };
+  let submenu_HR = {
+    '': { title: "HR Settings" },
+    '< Back': function () { E.showMenu(buildMainMenu()); },
+    'ANT+ HR': function () { E.showMenu(HR_ANT_MENU()); },
+  };
+
+  function HR_ANT_MENU() {
+    let menu = {
+      '': { 'title': 'CORE: ANT+ HR' },
+      '< Back': function () { E.showMenu(submenu_HR) },
+      'Scan for ANT+': function () { scanHRM_ANT(); }
+    }
+    if (true) {
+      menu['Sync Check ANT+'] = function () { scanUntilSynchronized(10, 3000); },
+        menu['CLEAR ANT+'] = function () { clearPairedHRM_ANT(); }
+    }
+    E.showMenu(menu);
+  };
+
+  function createMenuFromScan() {
+    E.showMenu();
+    E.showMessage("Scanning for 5 seconds");
+    let submenu_scan = {
+      '< Back': function () { E.showMenu(buildMainMenu()); }
+    };
+    NRF.findDevices(function (devices) {
+      submenu_scan[''] = { title: `Scan (${devices.length} found)` };
+      if (devices.length === 0) {
+        E.showAlert("No devices found")
+          .then(() => E.showMenu(buildMainMenu()));
+        return;
+      } else {
+        devices.forEach((d) => {
+          log("Found device", d);
+          let shown = (d.name || d.id.substr(0, 17));
+          submenu_scan[shown] = function () {
+            E.showPrompt("Connect to\n" + shown + "?", { title: "Pairing" }).then((r) => {
+              if (r) {
+                E.showMessage("Connecting...");
+                let count = 0;
+                const successHandler = () => {
+                  E.showPrompt("Success!", {
+                    buttons: { "OK": true }
+                  }).then(() => {
+                    writeSettings("btid", d.id);
+                    writeSettings("btname", d.name); //Seems to only like to connect by name
+                    E.showMenu(buildMainMenu());
+                  });
+                };
+                const errorHandler = (e) => {
+                  count++;
+                  log("ERROR", e);
+                  if (count <= 10) {
+                    E.showMessage("Error during caching\nRetry " + count + "/10", e);
+                    return cacheDevice(d.name).then(successHandler).catch(errorHandler);
+                  } else {
+                    E.showAlert("Error during caching", e).then(() => {
+                      E.showMenu(buildMainMenu());
+                    });
+                  }
+                };
+                return cacheDevice(d.name).then(successHandler).catch(errorHandler);
+              }
+            });
+          };
+        });
+      }
+      E.showMenu(submenu_scan);
+    }, { timeout: 5000, active: true, filters: [{ services: ["00002100-5b1e-4347-b07c-97b514dae121"] }] });
+  }
+
+  function init() {
+    E.showMenu();
+    if (settings.btname) { //connect to device before loading screen....
+      E.showMessage("Connecting...");
+      let count = 0;
+      const successHandler = () => {
+        E.showMenu(buildMainMenu());
+        scanHRM_ANT();
+      };
+      const errorHandler = (e) => {
+        count++;
+        log("ERROR", e);
+        if (count <= 10) {
+          E.showMessage("Error during caching\nRetry " + count + "/10", e);
+          return cacheDevice(settings.btname).then(successHandler).catch(errorHandler);
+        } else {
+          E.showAlert("Error during caching", e).then(() => {
+            E.showMenu(buildMainMenu());
+          });
+        }
+      };
+      cacheDevice(settings.btname).then(successHandler).catch(errorHandler);
+    } else {
+      E.showMenu(buildMainMenu());
+    }
+  }
+  init();
 })
