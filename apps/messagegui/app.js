@@ -48,6 +48,8 @@ if (Graphics.prototype.setFontIntl) {
 var active; // active screen (undefined/"list"/"music"/"map"/"overview"/"scroller"/"settings")
 var openMusic = false; // go back to music screen after we handle something else?
 var replying = false; // If we're replying to a message, don't interrupt
+var persist = "messagegui.new.js"!==global.__FILE__;
+
 // hack for 2v10 firmware's lack of ':size' font handling
 try {
   g.setFont("6x8:2");
@@ -90,7 +92,6 @@ var onMessagesModified = function(type,msg) {
   }
   if (msg && msg.id=="nav" && msg.t=="modify" && active!="map")
     return; // don't show an updated nav message if we're just in the menu
-  let persist = "messagegui.new.js"===global.__FILE__?false:true;
   showMessageRouter(msg, persist, "dependsOnActive");
 };
 Bangle.on("message", onMessagesModified);
@@ -625,7 +626,7 @@ function checkMessages(options) {
   // If we have a new message, show it
   if (!options.ignoreUnread && newMessages.length) {
     delete newMessages[0].show; // stop us getting stuck here if we're called a second time
-    showMessagesScroller(newMessages[0], false);
+    showMessagesScroller(newMessages[0], persist);
     // buzz after showMessagesScroller, so being busy during scroller setup doesn't affect the buzz pattern
     if (global.BUZZ_ON_NEW_MESSAGE) {
       // this is set if we entered the messages app by loading `messagegui.new.js`
@@ -742,6 +743,6 @@ Bangle.on('lock',locked => {
     cancelReloadTimeout();
   }
   if (locked) {
-    if ("messagegui.new.js"===global.__FILE__) {resetReloadTimeout();}
+    if (!persist) {resetReloadTimeout();}
   }
 });
