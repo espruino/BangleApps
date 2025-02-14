@@ -515,7 +515,7 @@ let quality = {
       let t = getTime();
       //print(t, this.fix_start);
       msg = "St: " + fmt.fmtTimeDiff(t-gps.gps_start) + "\n";
-      msg += "Sky: " + fmt.fmtTimeDiff(t-sky.sky_start) + "\n";
+      msg += "Sky: " + fmt.fmtTimeDiff(t-sky.all.sky_start) + "\n";
       msg += "2D: " + fmt.fmtTimeDiff(t-quality.fix_start) + "\n";
       msg += "3D: " + fmt.fmtTimeDiff(t-quality.f3d_start) + "\n";
     }
