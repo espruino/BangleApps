@@ -42,7 +42,7 @@
     Bangle.drawWidgets = () => { };
     Bangle.loadWidgets = () => { };
 
-    const ITEM_HEIGHT = 110;
+    const ITEM_HEIGHT = 125;
 
     E.showScroller({
         h: ITEM_HEIGHT,
@@ -55,20 +55,67 @@
             let icon = apps[idx].icon;
             let iconWidth = icon.width || 48;
             let iconHeight = icon.height || 48;
-            let maxSize = 80;
+            let maxSize = 60;
             let scale = Math.min(maxSize / iconWidth, maxSize / iconHeight);
             let scaledHeight = Math.floor(iconHeight * scale);
 
             // Center the icon horizontally
             let iconX = rect.x + (rect.w - maxSize) / 2;
-            g.drawImage(icon, iconX, rect.y, { scale: scale });
 
-            // Draw app name
-            let text = g.wrapString(apps[idx].name, rect.w).join('\n');
+            // Define rectangle size (independent of icon size)
+            const rectSize = 90;
+            const rectX = rect.x + (rect.w - rectSize) / 2;
 
-            // Position text below icon with padding
-            let textY = rect.y + scaledHeight + 4;
-            g.drawString(text, rect.x + rect.w / 2, textY);
+            // Draw rounded rectangle background using polygon
+            g.setColor(g.theme.bg2);
+            const r = 10; // radius
+            const x1 = rectX - 5;
+            const y1 = rect.y + 10;
+            const x2 = rectX + rectSize + 5;
+            const y2 = rect.y + rectSize + 20;
+
+            // Create points for a rounded rectangle (approximating curves with 4 points per corner)
+            g.fillPoly([
+                x1 + r, y1,    // Top edge
+                x2 - r, y1,
+                x2 - r / 2, y1,
+                x2, y1 + r / 2,  // Top right corner
+                x2, y1 + r,
+                x2, y2 - r,    // Right edge
+                x2, y2 - r / 2,
+                x2 - r / 2, y2,  // Bottom right corner
+                x2 - r, y2,
+                x1 + r, y2,    // Bottom edge
+                x1 + r / 2, y2,
+                x1, y2 - r / 2,  // Bottom left corner
+                x1, y2 - r,
+                x1, y1 + r,    // Left edge
+                x1, y1 + r / 2,
+                x1 + r / 2, y1   // Top left corner
+            ]);
+            g.setColor(g.theme.fg);
+
+            // Draw icon centered in the top portion
+            let iconPadding = 12;
+            // Center icon within the rectangle
+            let iconXInRect = rectX + (rectSize - maxSize) / 2;
+            g.setBgColor(g.theme.bg2).drawImage(icon, iconXInRect, rect.y + iconPadding + 10, { scale: scale });
+
+            // Draw app name with ellipsis if too long
+            const maxWidth = rectSize - 10;
+            let text = apps[idx].name;
+            let textWidth = g.stringWidth(text);
+            if (textWidth > maxWidth) {
+                const ellipsis = "...";
+                const ellipsisWidth = g.stringWidth(ellipsis);
+                while (textWidth + ellipsisWidth > maxWidth && text.length > 0) {
+                    text = text.slice(0, -1);
+                    textWidth = g.stringWidth(text);
+                }
+                text = text + ellipsis;
+            }
+            let textY = rect.y + iconPadding + scaledHeight + 18;
+            g.drawString(text, rectX + rectSize / 2, textY);
         },
         select: (idx) => {
             // Launch the selected app
