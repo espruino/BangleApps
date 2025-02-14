@@ -320,8 +320,8 @@ function showMessagesScroller(msg, persist) {
     returnToClockIfEmpty();
   }
 
-  let shownIdxFirst = allLines.length
-  let shownIdxLast = 0;
+  let shownScrollIdxFirst = allLines.length
+  let shownScrollIdxLast = 0;
 
   E.showScroller({
     scroll : initScroll,
@@ -334,8 +334,8 @@ function showMessagesScroller(msg, persist) {
         setColor(titleLines.find(e=>e==scrollIdx)!==undefined ? g.theme.fg2 : g.theme.fg).
         clearRect(r);
       g.setFont(bodyFont).setFontAlign(0,-1).drawString(allLines[scrollIdx], r.x+r.w/2, r.y);
-      if (scrollIdx<shownIdxFirst) {shownIdxFirst = scrollIdx;}
-      if (scrollIdx>shownIdxLast) {shownIdxLast = scrollIdx;}
+      if (scrollIdx<shownScrollIdxFirst) {shownScrollIdxFirst = scrollIdx;}
+      if (scrollIdx>shownScrollIdxLast) {shownScrollIdxLast = scrollIdx;}
       if (!persist) {resetReloadTimeout();}
     },
     select : function(scrollIdx, touch) {
@@ -378,17 +378,17 @@ function showMessagesScroller(msg, persist) {
 
     for (let i=0; i<firstTitleLinePerMsg.length-1 ; i++) {
 
-      if (shownIdxFirst<=firstTitleLinePerMsg[i] && shownIdxFirst+LINES_PER_SCREEN>firstTitleLinePerMsg[i]) {
+      if (shownScrollIdxFirst<=firstTitleLinePerMsg[i] && shownScrollIdxFirst+LINES_PER_SCREEN>firstTitleLinePerMsg[i]) {
         shownMsgIdxFirst = i;
       }
 
-      if (shownIdxLast>=firstTitleLinePerMsg[i+1] && shownIdxLast-LINES_PER_SCREEN<firstTitleLinePerMsg[i+1]) {
+      if (shownScrollIdxLast>=firstTitleLinePerMsg[i+1] && shownScrollIdxLast-LINES_PER_SCREEN<firstTitleLinePerMsg[i+1]) {
         shownMsgIdxLast = i;
         //print(i)
       }
 
     }
-    if (shownIdxLast===allLines.length-1) {shownMsgIdxLast = MESSAGES.length-1;}
+    if (shownScrollIdxLast===allLines.length-1) {shownMsgIdxLast = MESSAGES.length-1;}
 
     //print(shownIdxFirst, shownIdxLast)
     //print(shownMsgIdxFirst, shownMsgIdxLast)
