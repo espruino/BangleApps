@@ -55,17 +55,18 @@
         let indicatorHeight = 35;  // Increased height
 
         // Add margins to the scrollable area
-        const margin = 2;  // margin at top and bottom
-        const scrollableHeight = overlayHeight - (margin * 2);
-        let indicatorY = margin + (scrollableHeight - indicatorHeight) * scrollPercent;
+        const marginY = 5;  // margin at top and bottom
+        const scrollableHeight = overlayHeight - (marginY * 2);
+        let indicatorY = marginY + (scrollableHeight - indicatorHeight) * scrollPercent;
 
         overlay.setBgColor(g.theme.bg).clear();
+        const marginX = 2;
 
         // Draw rounded rectangle for scroll thumb
         const r = 10;  // corner radius
         const x1 = 0;
         const y1 = indicatorY;
-        const x2 = overlayWidth - margin;
+        const x2 = overlayWidth - marginX;
         const y2 = indicatorY + indicatorHeight;
 
         overlay.setColor(g.theme.fg2).fillPoly([
