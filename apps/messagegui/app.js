@@ -349,24 +349,21 @@ function showMessagesScroller(msg, persist) {
           break;
         }
       }
-      clearBtnHandler();
       updateReadMessages();
     }
   });
 
-
   // If Bangle.js 2 add an external select hw button handler.
-  let btnHandler = ((2===process.env.HWVERSION) && (setWatch(()=>{
-    Bangle.emit("drag", {dy:0}); // Compatibility with `kineticscroll`, stopping the scroller so it doesn't continue scrolling when the `showMessageOverview` screen is loaded.
-    // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
-    setTimeout(()=>{
-      if ("messagegui.new.js"===global.__FILE__) {return load();}
-      Bangle.emit("touch", 1, {x:APP_RECT.x2/2, y:APP_RECT.y2/2, type:0});
-    },0);
-  }, BTN, {edge:'rising', repeat:true})));
-
-  function clearBtnHandler() {
-    if (btnHandler) {clearWatch(btnHandler); btnHandler=undefined;}
+  if (2===process.env.HWVERSION) {
+    setWatch(()=>{
+      if ("scroller"!==active) {return;}
+      Bangle.emit("drag", {dy:0}); // Compatibility with `kineticscroll`, stopping the scroller so it doesn't continue scrolling when the `showMessageOverview` screen is loaded.
+      // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
+      setTimeout(()=>{
+        if ("messagegui.new.js"===global.__FILE__) {return load();}
+        Bangle.emit("touch", 1, {x:APP_RECT.x2/2, y:APP_RECT.y2/2, type:0});
+      },0);
+    }, BTN)
   }
 
   function updateReadMessages() {
