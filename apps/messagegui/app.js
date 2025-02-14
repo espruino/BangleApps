@@ -306,9 +306,9 @@ function showMessagesScroller(msg, persist) {
     var lines = [];
     const TITLE_STRING = msgIter.title||msgIter.sender||msgIter.subject||msgIter.src||/*LANG*/"No Title";
     lines = g.wrapString(TITLE_STRING, APP_RECT.w-10);
+    firstTitleLinePerMsg.push(allLines.length);
     for (let i=0; i<lines.length; i++) {
       titleLines.push(i + allLines.length);
-      if (i==0) firstTitleLinePerMsg.push(i + allLines.length);
     }
     lines = lines.concat(g.wrapString(msgIter.body, APP_RECT.w-10),
       ["-".repeat(12)]);
