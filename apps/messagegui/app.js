@@ -106,7 +106,7 @@ function showMessageRouter(msg, persist, explicitDestnation) {
   ////var active; // active screen (undefined/"list"/"music"/"map"/"overview"/"scroller"/"settings")
   //if (active==undefined) { } else if (active=="list") ... //and so on.
 
-  if (persist) {cancelReloadTimeout()}
+  if (persist) {cancelReloadTimeout();}
 
   if (msg.id=="music") {
     cancelReloadTimeout(); // don't auto-reload to clock now
@@ -300,7 +300,7 @@ function showMessagesScroller(msg, persist) {
   let allLines = [];
   let firstTitleLinePerMsg = [];
   for (let i=0 ; i<MESSAGES.length ; i++) {
-    if (MSG_IDX === i) {initScroll = allLines.length*FONT_HEIGHT}
+    if (MSG_IDX === i) {initScroll = allLines.length*FONT_HEIGHT;}
     let msgIter = MESSAGES[i];
 
     var lines = [];
@@ -320,7 +320,7 @@ function showMessagesScroller(msg, persist) {
     returnToClockIfEmpty();
   }
 
-  let shownScrollIdxFirst = allLines.length
+  let shownScrollIdxFirst = allLines.length;
   let shownScrollIdxLast = 0;
 
   E.showScroller({
@@ -342,7 +342,7 @@ function showMessagesScroller(msg, persist) {
       for (let i=firstTitleLinePerMsg.length-1; i>=0 ; i--) {
         if (scrollIdx>=firstTitleLinePerMsg[i]) {
           if (!touch || touch.type===0) {
-            showMessageRouter(MESSAGES[i], true, "overview")
+            showMessageRouter(MESSAGES[i], true, "overview");
           } else if (touch.type == 2) {
             showMessageSettings(MESSAGES[i]);
           }
@@ -363,7 +363,7 @@ function showMessagesScroller(msg, persist) {
         if ("messagegui.new.js"===global.__FILE__) {return load();}
         Bangle.emit("touch", 1, {x:APP_RECT.x2/2, y:APP_RECT.y2/2, type:0});
       },0);
-    }, BTN)
+    }, BTN);
   }
 
   function updateReadMessages() {
