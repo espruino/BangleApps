@@ -63,35 +63,43 @@
             let iconX = rect.x + (rect.w - maxSize) / 2;
 
             // Define rectangle size (independent of icon size)
-            const rectSize = 90;
+            const rectSize = 100;
             const rectX = rect.x + (rect.w - rectSize) / 2;
 
             // Draw rounded rectangle background using polygon
             g.setColor(g.theme.bg2);
-            const r = 10; // radius
+            const r = 20; // increased radius from 10 to 20
             const x1 = rectX - 5;
-            const y1 = rect.y + 10;
+            const y1 = rect.y + 5;
             const x2 = rectX + rectSize + 5;
-            const y2 = rect.y + rectSize + 20;
+            const y2 = rect.y + rectSize + 15;
 
-            // Create points for a rounded rectangle (approximating curves with 4 points per corner)
+            // Create points for a rounded rectangle (approximating curves with more points per corner)
             g.fillPoly([
                 x1 + r, y1,    // Top edge
                 x2 - r, y1,
-                x2 - r / 2, y1,
-                x2, y1 + r / 2,  // Top right corner
+                x2 - r * 0.7, y1,
+                x2 - r * 0.4, y1 + r * 0.1,
+                x2 - r * 0.1, y1 + r * 0.4,  // Top right corner
+                x2, y1 + r * 0.7,
                 x2, y1 + r,
                 x2, y2 - r,    // Right edge
-                x2, y2 - r / 2,
-                x2 - r / 2, y2,  // Bottom right corner
+                x2, y2 - r * 0.7,
+                x2 - r * 0.1, y2 - r * 0.4,
+                x2 - r * 0.4, y2 - r * 0.1,  // Bottom right corner
+                x2 - r * 0.7, y2,
                 x2 - r, y2,
                 x1 + r, y2,    // Bottom edge
-                x1 + r / 2, y2,
-                x1, y2 - r / 2,  // Bottom left corner
+                x1 + r * 0.7, y2,
+                x1 + r * 0.4, y2 - r * 0.1,
+                x1 + r * 0.1, y2 - r * 0.4,  // Bottom left corner
+                x1, y2 - r * 0.7,
                 x1, y2 - r,
                 x1, y1 + r,    // Left edge
-                x1, y1 + r / 2,
-                x1 + r / 2, y1   // Top left corner
+                x1, y1 + r * 0.7,
+                x1 + r * 0.1, y1 + r * 0.4,
+                x1 + r * 0.4, y1 + r * 0.1,  // Top left corner
+                x1 + r * 0.7, y1
             ]);
             g.setColor(g.theme.fg);
 
