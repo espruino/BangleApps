@@ -68,7 +68,7 @@
       curPos++;
 
       ["L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9"].forEach(line => {
-        if (this[line]==='Date') drawDate(date, this.isoDate, curPos);
+        if (this[line]==='Date') drawDate(date, curPos);
         else if (this[line]==='HR') drawHRM(curPos);
         else if (this[line]==='Motion') drawMotion(curPos);
         else if (this[line]==='Alt') drawAltitude(curPos);
@@ -120,7 +120,7 @@
     drawLine(time, pos);
   };
 
-  let drawDate = function(now, isoDate, pos) {
+  let drawDate = function(now, pos) {
     let date;
     if (clock.isoDate) {
       let year = now.getFullYear();
