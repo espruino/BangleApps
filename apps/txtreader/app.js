@@ -125,10 +125,6 @@ function onFileSelected(file) {
     return null; // No more lines to display
   }
 
-  // Initial display
-  var result = displayText(currentOffset, currentPage);
-  history.push({ offset: currentOffset, linesDisplayed: result.linesDisplayed });
-
   function nextPage() {
     var nextOffset = displayText(currentOffset, currentPage + 1);
     if (nextOffset !== null) {
@@ -157,16 +153,26 @@ function onFileSelected(file) {
   function zoom() {
     g.clear();
     big = !big;
+    firstDraw();
   }
   
-  // Handle touch events
-  Bangle.on('touch', function(button) {
-    if (button === 2) { // Right side of the screen (next page)
-      nextPage();
-    } else if (button === 1) { // Left side of the screen (previous page)
-      prevPage();
-    }
-  });
+  function firstDraw() {
+    currentOffset = 0;
+    currentPage = 1;
+    history = []; 
+
+    // Initial display
+    var result = displayText(currentOffset, currentPage);
+    history.push({ offset: currentOffset, linesDisplayed: result.linesDisplayed });
+  }
+  
+  ui.init();
+  ui.prevScreen = prevPage;
+  ui.nextScreen = nextPage;
+  ui.topLeft = zoom;
+  firstDraw();
+  
+  Bangle.on("drag", (b) => ui.touchHandler(b));
 }
 
 showFileSelector();
