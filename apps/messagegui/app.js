@@ -336,7 +336,6 @@ function showMessagesScroller(msg, persist) {
       g.setFont(bodyFont).setFontAlign(0,-1).drawString(allLines[scrollIdx], r.x+r.w/2, r.y);
       if (scrollIdx<shownScrollIdxFirst) {shownScrollIdxFirst = scrollIdx;}
       if (scrollIdx>shownScrollIdxLast) {shownScrollIdxLast = scrollIdx;}
-      if (!persist) {resetReloadTimeout();}
     },
     select : function(scrollIdx, touch) {
       WU.show();
