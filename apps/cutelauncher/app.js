@@ -44,7 +44,24 @@
 
     const ITEM_HEIGHT = 100;
 
-    E.showScroller({
+    // Create scroll indicator overlay
+    const overlayWidth = 10;
+    const overlayHeight = g.getHeight();
+    const overlay = Graphics.createArrayBuffer(overlayWidth, overlayHeight, 8, { msb: true });
+
+    // Function to update scroll indicator
+    function updateScrollIndicator(scroll) {
+        let scrollPercent = scroll / ((apps.length * ITEM_HEIGHT) - g.getHeight());
+        let indicatorHeight = 30;
+        let indicatorY = (overlayHeight - indicatorHeight) * scrollPercent;
+
+        overlay.clear();
+        overlay.fillRect(0, indicatorY, overlayWidth - 1, indicatorY + indicatorHeight);
+
+        Bangle.setLCDOverlay(overlay, g.getWidth() - overlayWidth, 0, { id: "scrollIndicator" });
+    }
+
+    let scroller = E.showScroller({
         h: ITEM_HEIGHT,
         c: apps.length,
         draw: (idx, rect) => {
@@ -58,9 +75,6 @@
             let maxSize = 45;
             let scale = Math.min(maxSize / iconWidth, maxSize / iconHeight);
             let scaledHeight = Math.floor(iconHeight * scale);
-
-            // Center the icon horizontally
-            let iconX = rect.x + (rect.w - maxSize) / 2;
 
             // Define rectangle size (independent of icon size)
             const rectSize = 80;
@@ -134,8 +148,18 @@
             setWatch(() => { }, BTN1);
             // Remove lock handler
             Bangle.removeListener('lock');
+            // Clear the scroll overlay
+            Bangle.setLCDOverlay();
+            // Remove drag handler
+            Bangle.removeListener('drag', updateOnDrag);
         }
     });
+
+    // Update scroll indicator on drag
+    const updateOnDrag = () => updateScrollIndicator(scroller.scroll);
+    Bangle.on('drag', updateOnDrag);
+    // Initial update of scroll indicator
+    updateScrollIndicator(scroller.scroll);
 
     setWatch(Bangle.showClock, BTN1, { debounce: 100 });
     // Add lock handler to show clock when locked
