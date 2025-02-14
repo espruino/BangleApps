@@ -373,16 +373,25 @@ function showMessagesScroller(msg, persist) {
     //print(shownIdxFirst, shownIdxLast)
 
     for (let i=0; i<firstTitleLinePerMsg.length-1 ; i++) {
+      const FIRST_LINE_OF_MSG = firstTitleLinePerMsg[i];
+      const LAST_LINE_OF_MSG = firstTitleLinePerMsg[i+1]-1;
 
-      if (shownScrollIdxFirst<=firstTitleLinePerMsg[i] && shownScrollIdxFirst+LINES_PER_SCREEN>firstTitleLinePerMsg[i]) {
+      if (
+        shownScrollIdxFirst
+          <= FIRST_LINE_OF_MSG && FIRST_LINE_OF_MSG
+            < shownScrollIdxFirst+LINES_PER_SCREEN
+      ) {
         shownMsgIdxFirst = i;
       }
 
-      if (shownScrollIdxLast>=firstTitleLinePerMsg[i+1] && shownScrollIdxLast-LINES_PER_SCREEN<firstTitleLinePerMsg[i+1]) {
+      if (
+        shownScrollIdxLast-LINES_PER_SCREEN
+          < LAST_LINE_OF_MSG && LAST_LINE_OF_MSG
+            <= shownScrollIdxLast
+      ) {
         shownMsgIdxLast = i;
         //print(i)
       }
-
     }
     if (shownScrollIdxLast===allLines.length-1) {shownMsgIdxLast = MESSAGES.length-1;}
 
