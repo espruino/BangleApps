@@ -94,8 +94,8 @@ function onFileSelected(file) {
     } else {
       g.setFont("6x15", 2);
     }
-    char_h = g.stringWidth("w");
-    char_w = g.getFontHeight();
+    char_h = g.getFontHeight();
+    char_w = g.stringWidth("w");
     
     g.setColor(g.theme.fg);
     g.drawString("Page " + pageNumber, border, 2);
