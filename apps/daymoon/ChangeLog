@@ -1,0 +1,5 @@
+0.01: First functional release
+0.02: move moon down, rotate sunrise/sunset, shift Hours/minutes to corners
+0.03: Change day and night to have different dots
+0.04: Update ChangeLog, coerce dark theme
+0.05: Add more screenshots, fix bug in dot colors
