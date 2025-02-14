@@ -42,7 +42,7 @@
     Bangle.drawWidgets = () => { };
     Bangle.loadWidgets = () => { };
 
-    const ITEM_HEIGHT = 100;
+    const ITEM_HEIGHT = 95;
 
     // Create scroll indicator overlay
     const overlayWidth = 30;  // Increased width
