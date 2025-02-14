@@ -45,18 +45,48 @@
     const ITEM_HEIGHT = 100;
 
     // Create scroll indicator overlay
-    const overlayWidth = 10;
+    const overlayWidth = 30;  // Increased width
     const overlayHeight = g.getHeight();
-    const overlay = Graphics.createArrayBuffer(overlayWidth, overlayHeight, 8, { msb: true });
+    const overlay = Graphics.createArrayBuffer(overlayWidth, overlayHeight, 16, { msb: true });
 
     // Function to update scroll indicator
     function updateScrollIndicator(scroll) {
         let scrollPercent = scroll / ((apps.length * ITEM_HEIGHT) - g.getHeight());
-        let indicatorHeight = 30;
-        let indicatorY = (overlayHeight - indicatorHeight) * scrollPercent;
+        let indicatorHeight = 35;  // Increased height
 
-        overlay.clear();
-        overlay.fillRect(0, indicatorY, overlayWidth - 1, indicatorY + indicatorHeight);
+        // Add margins to the scrollable area
+        const margin = 2;  // margin at top and bottom
+        const scrollableHeight = overlayHeight - (margin * 2);
+        let indicatorY = margin + (scrollableHeight - indicatorHeight) * scrollPercent;
+
+        overlay.setBgColor(g.theme.bg).clear();
+
+        // Draw rounded rectangle for scroll thumb
+        const r = 10;  // corner radius
+        const x1 = 0;
+        const y1 = indicatorY;
+        const x2 = overlayWidth - margin;
+        const y2 = indicatorY + indicatorHeight;
+
+        overlay.setColor(g.theme.fg2).fillPoly([
+            x1 + r, y1,    // Top edge
+            x2 - r, y1,
+            x2 - r / 2, y1,
+            x2, y1 + r / 2,  // Top right corner
+            x2, y1 + r,
+            x2, y2 - r,    // Right edge
+            x2, y2 - r / 2,
+            x2 - r / 2, y2,  // Bottom right corner
+            x2 - r, y2,
+            x1 + r, y2,    // Bottom edge
+            x1 + r / 2, y2,
+            x1, y2 - r / 2,  // Bottom left corner
+            x1, y2 - r,
+            x1, y1 + r,    // Left edge
+            x1, y1 + r / 2,
+            x1 + r / 2, y1,  // Top left corner
+            x1 + r, y1
+        ]);
 
         Bangle.setLCDOverlay(overlay, g.getWidth() - overlayWidth, 0, { id: "scrollIndicator" });
     }
