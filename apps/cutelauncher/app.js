@@ -88,25 +88,26 @@
         // Add horizontal lines for scroll thumb aesthetic with outlines
         const lineY1 = overlayHeight / 3;
         const lineY2 = overlayHeight * 2 / 3;
-        const lineLeft = 6;
-        const lineRight = overlayWidth - 6;
+        const lineLeft = 9;
+        const lineRight = overlayWidth - 9;
 
         // // Draw outlines (increased from ±2 to ±3)
-        overlay.setColor(g.theme.bg);
-        overlay.fillRect(lineLeft, lineY1 - 2, lineRight, lineY1 + 2);
-        overlay.fillRect(lineLeft, lineY2 - 2, lineRight, lineY2 + 2);
+        // overlay.setColor(g.theme.bg);
 
         // Draw inner lines (increased from ±1 to ±2)
         overlay.setColor(g.theme.bg2);
-        overlay.fillRect(lineLeft + 2, lineY1 - 2, lineRight - 2, lineY1);
-        overlay.fillRect(lineLeft + 2, lineY2 - 2, lineRight - 2, lineY2);
+        overlay.fillRect(lineLeft - 2, lineY1 - 1, lineRight + 2, lineY1 + 1);
+        overlay.fillRect(lineLeft - 2, lineY2 - 1, lineRight + 2, lineY2 + 1);
+
+        overlay.fillRect(lineLeft, lineY1 - 2, lineRight, lineY1 + 2);
+        overlay.fillRect(lineLeft, lineY2 - 2, lineRight, lineY2 + 2);
     }
 
     // Function to update scroll indicator
     function updateScrollIndicator(scroll) {
         let scrollPercent = scroll / ((apps.length * ITEM_HEIGHT) - g.getHeight());
         // Add margins to the scrollable area
-        const marginX = 2;
+        const marginX = 1;
         const marginY = 5;
         const scrollableHeight = g.getHeight() - (marginY * 2) - overlayHeight;
         let indicatorY = marginY + scrollableHeight * scrollPercent;
