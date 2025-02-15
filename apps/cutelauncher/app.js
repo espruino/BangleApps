@@ -82,9 +82,12 @@
     // Update initScrollIndicator to use the new function
     function initScrollIndicator() {
         overlay.setBgColor(g.theme.bg).clear();
-        const r = 10;  // corner radius
-        const points = createRoundedRectPoints(0, 0, overlayWidth, overlayHeight, r);
+        const points = createRoundedRectPoints(0, 0, overlayWidth, overlayHeight, 10);
         overlay.setColor(g.theme.fg2).fillPoly(points);
+        // Add horizontal lines for scroll thumb aesthetic
+        overlay.setColor(g.theme.bg2);
+        overlay.fillRect(8, overlayHeight / 3 - 1, overlayWidth - 8, overlayHeight / 3 + 1);
+        overlay.fillRect(8, overlayHeight * 2 / 3 - 1, overlayWidth - 8, overlayHeight * 2 / 3 + 1);
     }
 
     // Function to update scroll indicator
