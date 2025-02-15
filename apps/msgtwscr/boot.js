@@ -19,6 +19,8 @@
   function onTwistEmitDrag() {
     Bangle.setOptions({twistThreshold:2500, twistMaxY:-800, twistTimeout:400});
     Bangle.on("twist", ()=>{
+      Bangle.setLocked(false);
+      Bangle.setLCDPower(true);
       let i = 25;
       const int = setInterval(() => {
         Bangle.emit("drag", {dy:-3})
