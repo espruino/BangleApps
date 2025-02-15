@@ -135,8 +135,8 @@ function onFileSelected(file) {
     } else {
       currentOffset = 0;
       currentPage = 1;
+      let result = displayText(currentOffset, currentPage);
       history = [{ offset: currentOffset, linesDisplayed: result.linesDisplayed }];
-      displayText(currentOffset, currentPage);
     }
   }
 
