@@ -139,4 +139,5 @@
 
     // Start the app
     showFileBrowser();
+    setWatch(Bangle.showClock, BTN1, { debounce: 100 });
 }
