@@ -361,7 +361,7 @@ function showMessagesScroller(msg, persist) {
       Bangle.emit("drag", {dy:0}); // Compatibility with `kineticscroll`, stopping the scroller so it doesn't continue scrolling when the `showMessageOverview` screen is loaded.
       // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
       setTimeout(()=>{
-        if ("messagegui.new.js"===globalThis.__FILE__) {return load();}
+        if (!persist) {return load();}
         Bangle.emit("touch", 1, {x:APP_RECT.x2/2, y:APP_RECT.y2/2, type:0});
       },0);
     }, BTN);
