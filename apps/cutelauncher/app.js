@@ -46,28 +46,18 @@
 
     // Create scroll indicator overlay
     const overlayWidth = 30;  // Increased width
-    const overlayHeight = g.getHeight();
+    const overlayHeight = 35;
     const overlay = Graphics.createArrayBuffer(overlayWidth, overlayHeight, 16, { msb: true });
 
-    // Function to update scroll indicator
-    function updateScrollIndicator(scroll) {
-        let scrollPercent = scroll / ((apps.length * ITEM_HEIGHT) - g.getHeight());
-        let indicatorHeight = 35;  // Increased height
-
-        // Add margins to the scrollable area
-        const marginY = 5;  // margin at top and bottom
-        const scrollableHeight = overlayHeight - (marginY * 2);
-        let indicatorY = marginY + (scrollableHeight - indicatorHeight) * scrollPercent;
-
+    // Initialize scroll indicator by drawing the thumb once
+    function initScrollIndicator() {
         overlay.setBgColor(g.theme.bg).clear();
-        const marginX = 2;
-
         // Draw rounded rectangle for scroll thumb
         const r = 10;  // corner radius
         const x1 = 0;
-        const y1 = indicatorY;
-        const x2 = overlayWidth - marginX;
-        const y2 = indicatorY + indicatorHeight;
+        const y1 = 0;  // Start at top, will be scrolled into position
+        const x2 = overlayWidth;
+        const y2 = overlayHeight;
 
         overlay.setColor(g.theme.fg2).fillPoly([
             x1 + r, y1,    // Top edge
@@ -88,8 +78,17 @@
             x1 + r / 2, y1,  // Top left corner
             x1 + r, y1
         ]);
+    }
 
-        Bangle.setLCDOverlay(overlay, g.getWidth() - overlayWidth, 0, { id: "scrollIndicator" });
+    // Function to update scroll indicator
+    function updateScrollIndicator(scroll) {
+        let scrollPercent = scroll / ((apps.length * ITEM_HEIGHT) - g.getHeight());
+        // Add margins to the scrollable area
+        const marginX = 2;
+        const marginY = 5;
+        const scrollableHeight = g.getHeight() - (marginY * 2) - overlayHeight;
+        let indicatorY = marginY + scrollableHeight * scrollPercent;
+        Bangle.setLCDOverlay(overlay, g.getWidth() - overlayWidth - marginX, indicatorY, { id: "scrollIndicator" });
     }
 
     let scroller = E.showScroller({
@@ -179,16 +178,18 @@
             setWatch(() => { }, BTN1);
             // Remove lock handler
             Bangle.removeListener('lock');
-            // Clear the scroll overlay
-            Bangle.setLCDOverlay();
             // Remove drag handler
             Bangle.removeListener('drag', updateOnDrag);
+            // Clear the scroll overlay
+            Bangle.setLCDOverlay();
         }
     });
 
     // Update scroll indicator on drag
     const updateOnDrag = () => updateScrollIndicator(scroller.scroll);
     Bangle.on('drag', updateOnDrag);
+    // Initialize the scroll indicator
+    initScrollIndicator();
     // Initial update of scroll indicator
     updateScrollIndicator(scroller.scroll);
 
