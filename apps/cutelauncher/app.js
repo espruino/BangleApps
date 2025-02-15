@@ -84,10 +84,22 @@
         overlay.setBgColor(g.theme.bg).clear();
         const points = createRoundedRectPoints(0, 0, overlayWidth, overlayHeight, 10);
         overlay.setColor(g.theme.fg2).fillPoly(points);
-        // Add horizontal lines for scroll thumb aesthetic
+
+        // Add horizontal lines for scroll thumb aesthetic with outlines
+        const lineY1 = overlayHeight / 3;
+        const lineY2 = overlayHeight * 2 / 3;
+        const lineLeft = 6;
+        const lineRight = overlayWidth - 6;
+
+        // // Draw outlines (increased from ±2 to ±3)
+        overlay.setColor(g.theme.bg);
+        overlay.fillRect(lineLeft, lineY1 - 2, lineRight, lineY1 + 2);
+        overlay.fillRect(lineLeft, lineY2 - 2, lineRight, lineY2 + 2);
+
+        // Draw inner lines (increased from ±1 to ±2)
         overlay.setColor(g.theme.bg2);
-        overlay.fillRect(8, overlayHeight / 3 - 1, overlayWidth - 8, overlayHeight / 3 + 1);
-        overlay.fillRect(8, overlayHeight * 2 / 3 - 1, overlayWidth - 8, overlayHeight * 2 / 3 + 1);
+        overlay.fillRect(lineLeft + 2, lineY1 - 2, lineRight - 2, lineY1);
+        overlay.fillRect(lineLeft + 2, lineY2 - 2, lineRight - 2, lineY2);
     }
 
     // Function to update scroll indicator
