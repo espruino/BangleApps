@@ -344,8 +344,6 @@ function showMessagesScroller(msg, persist) {
         if (scrollIdx>=firstTitleLinePerMsg[i]) {
           if (!touch || touch.type===0) {
             showMessageRouter(MESSAGES[i], true, "overview");
-          } else if (touch.type == 2) {
-            showMessageSettings(MESSAGES[i]);
           }
           break;
         }
