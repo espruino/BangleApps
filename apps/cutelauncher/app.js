@@ -49,35 +49,42 @@
     const overlayHeight = 35;
     const overlay = Graphics.createArrayBuffer(overlayWidth, overlayHeight, 16, { msb: true });
 
-    // Initialize scroll indicator by drawing the thumb once
-    function initScrollIndicator() {
-        overlay.setBgColor(g.theme.bg).clear();
-        // Draw rounded rectangle for scroll thumb
-        const r = 10;  // corner radius
-        const x1 = 0;
-        const y1 = 0;  // Start at top, will be scrolled into position
-        const x2 = overlayWidth;
-        const y2 = overlayHeight;
-
-        overlay.setColor(g.theme.fg2).fillPoly([
+    // New helper function for creating rounded rectangle points
+    function createRoundedRectPoints(x1, y1, x2, y2, r) {
+        return [
             x1 + r, y1,    // Top edge
             x2 - r, y1,
-            x2 - r / 2, y1,
-            x2, y1 + r / 2,  // Top right corner
+            x2 - r * 0.7, y1,
+            x2 - r * 0.4, y1 + r * 0.1,
+            x2 - r * 0.1, y1 + r * 0.4,  // Top right corner
+            x2, y1 + r * 0.7,
             x2, y1 + r,
             x2, y2 - r,    // Right edge
-            x2, y2 - r / 2,
-            x2 - r / 2, y2,  // Bottom right corner
+            x2, y2 - r * 0.7,
+            x2 - r * 0.1, y2 - r * 0.4,
+            x2 - r * 0.4, y2 - r * 0.1,  // Bottom right corner
+            x2 - r * 0.7, y2,
             x2 - r, y2,
             x1 + r, y2,    // Bottom edge
-            x1 + r / 2, y2,
-            x1, y2 - r / 2,  // Bottom left corner
+            x1 + r * 0.7, y2,
+            x1 + r * 0.4, y2 - r * 0.1,
+            x1 + r * 0.1, y2 - r * 0.4,  // Bottom left corner
+            x1, y2 - r * 0.7,
             x1, y2 - r,
             x1, y1 + r,    // Left edge
-            x1, y1 + r / 2,
-            x1 + r / 2, y1,  // Top left corner
-            x1 + r, y1
-        ]);
+            x1, y1 + r * 0.7,
+            x1 + r * 0.1, y1 + r * 0.4,
+            x1 + r * 0.4, y1 + r * 0.1,  // Top left corner
+            x1 + r * 0.7, y1
+        ];
+    }
+
+    // Update initScrollIndicator to use the new function
+    function initScrollIndicator() {
+        overlay.setBgColor(g.theme.bg).clear();
+        const r = 10;  // corner radius
+        const points = createRoundedRectPoints(0, 0, overlayWidth, overlayHeight, r);
+        overlay.setColor(g.theme.fg2).fillPoly(points);
     }
 
     // Function to update scroll indicator
@@ -110,7 +117,7 @@
             const rectSize = 80;
             const rectX = rect.x + (rect.w - rectSize) / 2;
 
-            // Draw rounded rectangle background using polygon
+            // Draw rounded rectangle background using the new function
             g.setColor(g.theme.bg2);
             const r = 15;
             const x1 = rectX - 5;
@@ -118,33 +125,8 @@
             const x2 = rectX + rectSize + 5;
             const y2 = rect.y + rectSize + 10;
 
-            // Create points for a rounded rectangle (approximating curves with more points per corner)
-            g.fillPoly([
-                x1 + r, y1,    // Top edge
-                x2 - r, y1,
-                x2 - r * 0.7, y1,
-                x2 - r * 0.4, y1 + r * 0.1,
-                x2 - r * 0.1, y1 + r * 0.4,  // Top right corner
-                x2, y1 + r * 0.7,
-                x2, y1 + r,
-                x2, y2 - r,    // Right edge
-                x2, y2 - r * 0.7,
-                x2 - r * 0.1, y2 - r * 0.4,
-                x2 - r * 0.4, y2 - r * 0.1,  // Bottom right corner
-                x2 - r * 0.7, y2,
-                x2 - r, y2,
-                x1 + r, y2,    // Bottom edge
-                x1 + r * 0.7, y2,
-                x1 + r * 0.4, y2 - r * 0.1,
-                x1 + r * 0.1, y2 - r * 0.4,  // Bottom left corner
-                x1, y2 - r * 0.7,
-                x1, y2 - r,
-                x1, y1 + r,    // Left edge
-                x1, y1 + r * 0.7,
-                x1 + r * 0.1, y1 + r * 0.4,
-                x1 + r * 0.4, y1 + r * 0.1,  // Top left corner
-                x1 + r * 0.7, y1
-            ]);
+            const points = createRoundedRectPoints(x1, y1, x2, y2, r);
+            g.fillPoly(points);
             g.setColor(g.theme.fg);
 
             // Draw icon centered in the top portion
