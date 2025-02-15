@@ -90,9 +90,9 @@ function onFileSelected(file) {
     let char_w = 6;
     g.clear();
     if (!big) {
-      g.setFont("6x8", 1);
+      g.setFont("6x15", 1);
     } else {
-      g.setFont("6x15", 2);
+      g.setFont("12x20", 1);
     }
     char_h = g.getFontHeight();
     char_w = g.stringWidth("w");
