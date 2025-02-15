@@ -107,7 +107,7 @@ function showMessageRouter(msg, persist, explicitDestnation) {
   ////var active; // active screen (undefined/"list"/"music"/"map"/"overview"/"scroller"/"settings")
   //if (active==undefined) { } else if (active=="list") ... //and so on.
 
-  if (persist) {cancelReloadTimeout();}
+  if (persist) {cancelReloadTimeout();} else if (Bangle.isLocked()) {resetReloadTimeout();}
 
   if (msg.id=="music") {
     cancelReloadTimeout(); // don't auto-reload to clock now
@@ -118,16 +118,16 @@ function showMessageRouter(msg, persist, explicitDestnation) {
     return showMapMessage(msg);
   }
   if (msg.id=="call") {
-    return showMessageOverview(msg.id, persist);
+    return showMessageOverview(msg.id);
   }
   if ("scroller"===explicitDestnation) {
-    return showMessagesScroller(msg, persist);
+    return showMessagesScroller(msg);
   }
   if ("overview"===explicitDestnation) {
-    return showMessageOverview(msg.id, persist);
+    return showMessageOverview(msg.id);
   }
   if ("dependsOnActive"===explicitDestnation) {
-    if ("scroller"===active) {return showMessagesScroller(msg, persist);} // reinit scroller with updated messages list.
+    if ("scroller"===active) {return showMessagesScroller(msg);} // reinit scroller with updated messages list.
     if ("list"===active) {return returnToMain();}
     if ("settings"===active || "overview"===active) {return;}
   }
@@ -281,13 +281,11 @@ function showMusicMessage(msg) {
   }, 400);
 }
 
-function showMessagesScroller(msg, persist) {
-  if (persist===undefined) {persist = true;}
+function showMessagesScroller(msg) {
   const MSG_IDX = msg ? MESSAGES.findIndex((m)=>m.id==msg.id) : undefined;
 
   if (replying) { return; }
   active = "scroller";
-  if (persist) {cancelReloadTimeout();} else {resetReloadTimeout();}
 
   const WU = require("widget_utils");
   WU.hide();
@@ -408,7 +406,7 @@ function showMessageSettings(msg) {
   active = "settings";
   var menu = {"":{
       "title":/*LANG*/"Message",
-      back:() => showMessageOverview(msg.id, true)
+      back:() => showMessageOverview(msg.id)
     },
   };
 
@@ -470,9 +468,8 @@ function showMessageSettings(msg) {
   E.showMenu(menu);
 }
 
-function showMessageOverview(msgid, persist) {
+function showMessageOverview(msgid) {
   if (replying) { return; }
-  if(!persist) resetReloadTimeout();
   let idx = MESSAGES.findIndex(m=>m.id==msgid);
   var msg = MESSAGES[idx];
   if (updateLabelsInterval) {
@@ -586,8 +583,8 @@ function showMessageOverview(msgid, persist) {
   Bangle.swipeHandler = (lr,ud) => {
     if (lr>0 && posHandler) posHandler();
     if (lr<0 && negHandler) negHandler();
-    if (ud>0 && idx<MESSAGES.length-1) showMessageOverview(MESSAGES[idx+1].id, true);
-    if (ud<0 && idx>0) showMessageOverview(MESSAGES[idx-1].id, true);
+    if (ud>0 && idx<MESSAGES.length-1) showMessageOverview(MESSAGES[idx+1].id);
+    if (ud<0 && idx>0) showMessageOverview(MESSAGES[idx-1].id);
   };
   Bangle.on("swipe", Bangle.swipeHandler);
   g.reset().clearRect(Bangle.appRect);
@@ -624,7 +621,7 @@ function checkMessages(options) {
   // If we have a new message, show it
   if (!options.ignoreUnread && newMessages.length) {
     delete newMessages[0].show; // stop us getting stuck here if we're called a second time
-    showMessagesScroller(newMessages[0], persist);
+    showMessagesScroller(newMessages[0]);
     // buzz after showMessagesScroller, so being busy during scroller setup doesn't affect the buzz pattern
     if (globalThis.BUZZ_ON_NEW_MESSAGE) {
       // this is set if we entered the messages app by loading `messagegui.new.js`
@@ -637,7 +634,7 @@ function checkMessages(options) {
   }
   // no new messages: show playing music? Only if we have playing music, or state=="show" (set by messagesmusic)
   if (options.openMusic && MESSAGES.some(m=>m.id=="music" && ((m.track && m.state=="play") || m.state=="show")))
-    return showMessageOverview('music', true);
+    return showMessageOverview('music');
   // no new messages - go to clock?
   if (options.clockIfAllRead && newMessages.length==0)
     return load();
