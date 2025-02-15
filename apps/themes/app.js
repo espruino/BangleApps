@@ -66,4 +66,5 @@
 
     // Show the menu
     let menu_ui = E.showMenu(menu);
+    setWatch(Bangle.showClock, BTN1, { debounce: 100 });
 }
