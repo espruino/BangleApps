@@ -313,7 +313,8 @@ function load_timers() {
     // Deserealize timer objects
     timers = timers.map(t => TriangleTimer.load(t));
   } else {
-    timers = [new TriangleTimer()];
+    timers = [new TriangleTimer(600, false, -0.001)];
+    timers[0].end_alarm = true;
   }
   return timers;
 }

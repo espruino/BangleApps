@@ -332,80 +332,25 @@ class TimerViewMenu {
         title: 'Edit: ' + this.tri_timer.display_name(),
         back: () => { this.top_menu(); },
       },
-      'Direction': {
-        value: this.tri_timer.rate >= 0,
-        format: v => (v ? 'Up' : 'Down'),
-        onchange: v => {
-          this.tri_timer.rate = -this.tri_timer.rate;
-          tt.set_timers_dirty();
-        }
-      },
-      'Start (Tri)': this.edit_start_tri_menu.bind(this),
-      'Start (HMS)': this.edit_start_hms_menu.bind(this),
-      'Increment': {
-        value: this.tri_timer.increment,
-        min: 1,
-        max: 9999,
+      'Start': this.edit_start_hms_menu.bind(this),
+      'Vibrate pattern': require("buzz_menu").pattern(
+        this.tri_timer.vibrate_pattern,
+        v => this.tri_timer.vibrate_pattern = v),
+      'Buzz count': {
+        value: this.tri_timer.buzz_count,
+        min: 0,
+        max: 15,
         step: 1,
         wrap: true,
+        format: v => v === 0 ? "Forever" : v,
         onchange: v => {
-          this.tri_timer.increment = v;
+          this.tri_timer.buzz_count = v;
           tt.set_timers_dirty();
         },
       },
-      'Events': this.edit_events_menu.bind(this),
     };
 
     E.showMenu(edit_menu);
-  }
-
-  edit_start_tri_menu() {
-    let origin_tri = tt.as_triangle(
-      this.tri_timer.origin, this.tri_timer.increment);
-
-    const edit_start_tri_menu = {
-      '': {
-        title: 'Start (Tri)',
-        back: this.edit_menu.bind(this),
-      },
-      'Outer': {
-        value: origin_tri[0],
-        min: 0,
-        max: Math.floor(9999 / this.tri_timer.increment)
-          * this.tri_timer.increment,
-        step: this.tri_timer.increment,
-        wrap: true,
-        noList: true,
-        onchange: v => {
-          origin_tri[0] = v;
-          edit_start_tri_menu.Inner.max = origin_tri[0];
-          origin_tri[1] = (this.tri_timer.rate >= 0) ?
-            1 : origin_tri[0];
-          edit_start_tri_menu.Inner.value = origin_tri[1];
-          this.tri_timer.origin = tt.as_linear(
-            origin_tri, this.tri_timer.increment
-          );
-          tt.set_timers_dirty();
-        }
-      },
-      'Inner': {
-        value: origin_tri[1],
-        min: 0,
-        max: origin_tri[0],
-        step: 1,
-        wrap: true,
-        noList: true,
-        onchange: v => {
-          origin_tri[1] = v;
-          this.tri_timer.origin = tt.as_linear(
-            origin_tri, this.tri_timer.increment
-          );
-          tt.set_timers_dirty();
-        }
-      },
-    };
-
-    E.showMenu(edit_start_tri_menu);
   }
 
   edit_start_hms_menu() {
@@ -462,58 +407,6 @@ class TimerViewMenu {
     };
 
     E.showMenu(edit_start_hms_menu);
-  }
-
-  edit_events_menu() {
-    const events_menu = {
-      '': {
-        title: 'Events',
-        back: () => { this.edit_menu(); }
-      },
-      'Outer alarm': {
-        value: this.tri_timer.outer_alarm,
-        format: v => (v ? 'On' : 'Off'),
-        onchange: v => {
-          this.tri_timer.outer_alarm = v;
-          tt.set_timers_dirty();
-        },
-      },
-      'Outer action': {
-        value: tt.ACTIONS.indexOf(this.tri_timer.outer_action),
-        min: 0,
-        max: tt.ACTIONS.length - 1,
-        format: v => tt.ACTIONS[v],
-        onchange: v => {
-          this.tri_timer.outer_action = tt.ACTIONS[v];
-          tt.set_timers_dirty();
-        },
-      },
-      'End alarm': {
-        value: this.tri_timer.end_alarm,
-        format: v => (v ? 'On' : 'Off'),
-        onchange: v => {
-          this.tri_timer.end_alarm = v;
-          tt.set_timers_dirty();
-        },
-      },
-      'Vibrate pattern': require("buzz_menu").pattern(
-        this.tri_timer.vibrate_pattern,
-        v => this.tri_timer.vibrate_pattern = v),
-      'Buzz count': {
-        value: this.tri_timer.buzz_count,
-        min: 0,
-        max: 15,
-        step: 1,
-        wrap: true,
-        format: v => v === 0 ? "Forever" : v,
-        onchange: v => {
-          this.tri_timer.buzz_count = v;
-          tt.set_timers_dirty();
-        },
-      },
-    };
-
-    E.showMenu(events_menu);
   }
 }
 
