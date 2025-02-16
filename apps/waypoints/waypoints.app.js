@@ -137,6 +137,7 @@ let gps = {
   init: function(x) {
     this.emulator = (process.env.BOARD=="EMSCRIPTEN"
                      || process.env.BOARD=="EMSCRIPTEN2")?1:0;
+    //this.emulator = 1; // FIXME
   },
   state: {},
   on_gps: function(f) {
@@ -168,7 +169,7 @@ let gps = {
     fix.lon = 14-(getTime()-this.gps_start) / 1000; /* Go West! */
     fix.alt = 200;
     fix.speed = 5;
-    fix.course = 30;
+    fix.course = 195;
     fix.time = Date();
     fix.satellites = 5;
     fix.hdop = 12;
@@ -186,49 +187,52 @@ let gps = {
 
 let sun = {}; /* To get rid of warnings */
 
-/* arrow library v0.0.2 */
+/* arrow library v0.0.3 */
 let arrow = {
   name: "(unset)",
   waypoint: { lat: 0, lon: 0 },
+  north: 0,
   updateWaypoint: function(lat, lon) {
     this.waypoint.lat = lat;
     this.waypoint.lon = lon;
   },
 
-  // Calculate the bearing to the waypoint
-  bearingToWaypoint: function(currentPos) {
-    return fmt.bearing(currentPos, this.waypoint);
-  },
-
-  // Calculate distance to the waypoint
-  distanceToWaypoint: function(currentPos) {
-    return fmt.distance(currentPos, this.waypoint);
-  },
-
-  // Calculate compass heading from current GPS data
-  compassHeading: function(currentHeading) {
-    return currentHeading || Bangle.getCompass().heading;
-  },
-
   // Display function to show arrows for waypoint, north, and sun
-  draw: function(currentPos, currentHeading) {
+  draw: function(currentPos) {
+    let fix = currentPos;
+    let currentHeading = currentPos.course;
     g.clear().setFont("Vector", 22).setFontAlign(0, 0);
 
-    // Calculate bearings
-    let waypointBearing = this.bearingToWaypoint(currentPos);
-    let distance = this.distanceToWaypoint(currentPos);
-    let northHeading = this.compassHeading(currentHeading);
+    let waypointBearing = fmt.bearing(currentPos, this.waypoint);
+    let distance = fmt.distance(currentPos, this.waypoint);
 
-    // Format distance
-    let distStr = fmt.fmtDist(distance/1000);
+    this.north = 0;
+    if (0) {
+      let compass = Bangle.getCompass();
+      if (compass) {
+        let c = compass.heading;
+        this.north = c;
+        print("Compass:", c);
+        this.drawArrow(c, "Up", 1);
+      }
+    }
 
-    northHeading = 0;
+    if (fix.speed && fix.speed > 3)
+      this.north = fix.course;
+
     // Draw compass arrow for north
-    this.drawArrow(northHeading, "N", 1);
+    this.drawArrow(0, "N", 1);
 
+    let s = fmt.fmtDist(distance/1000);
     // Draw arrow towards waypoint
-    if (1)
-      this.drawArrow(waypointBearing, `${distStr}`, 3);
+    if (1) {
+      this.drawArrow(waypointBearing, "", 3);
+    }
+
+    if (1) {
+      let s = fmt.fmtSpeed(fix.speed);
+      this.drawArrow(currentHeading, s, 1);
+    }
 
     if (0) {
       let s;
@@ -243,16 +247,21 @@ let arrow = {
         this.drawArrow(s.azimuth, "Moon", 1);
       }
     }
+
+    g.setFont("Vector", 30).setFontAlign(-1, 1)
+      .drawString(s, 0, 176)
+      .setFontAlign(1, 1)
+      .drawString(this.name, 176, 176);
   },
 
   drawArrow: function(angle, label, width) {
     // Convert angle to radians
-    let rad = angle * Math.PI / 180;
+    let rad = (angle - this.north) * Math.PI / 180;
 
     // Arrow parameters
     let centerX = 88;
     let centerY = 88;
-    let length = 60; // Arrow length
+    let length = 55; // Arrow length
 
     g.drawCircle(centerX, centerY, length);
 
@@ -387,7 +396,7 @@ function updateGoto() {
       .setColor(0,0,0)
       .drawString(msg, 3, 25);
   } else {
-    arrow.draw(fix, fix.course);
+    arrow.draw(fix);
   }
   setTimeout(updateGoto, 1000);
 }
@@ -419,7 +428,7 @@ function confirmGps(s) {
 function markGps() {
   cancel_gps = false;
   gps.start_gps();
-  require("textinput").input({text:"wp"}).then(key => {
+  require("textinput").input({text:"mk"}).then(key => {
     confirmGps(key);
   });
 }
@@ -658,8 +667,8 @@ function addCard() {
           {type:"txt", font:Math.min(15,100/result.length)+"%", pad:1, fillx:1, filly:1, label:result},
           {type:"txt", font:"12%", pad:1, fillx:1, filly:1, label:"already exists."},
           {type:"h", c: [
-            {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "REPLACE", cb:l=>{addCardName(result);}},
-            {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "CANCEL", cb:l=>{mainMenu();}}
+            {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "Replace", cb:l=>{addCardName(result);}},
+            {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "Cancel", cb:l=>{mainMenu();}}
           ]}
         ], lazy:true});
       g.clear();
@@ -672,5 +681,18 @@ function addCard() {
 fmt.init();
 gps.init();
 
+function testArrow() {
+  //Bangle.resetCompass(); // FIXME
+  Bangle.setCompassPower(1, "waypoints");
+
+  arrow.name = "test";
+  arrow.waypoint.lat = 50;
+  arrow.waypoint.lon = 14.75;
+  goTo();
+}
+
 g.reset();
-mainMenu();
+if (1)
+  mainMenu();
+else
+  testArrow();
