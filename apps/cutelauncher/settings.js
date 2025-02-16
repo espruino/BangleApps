@@ -1,5 +1,5 @@
 (function (back) {
-    const SETTINGS_FILE = "cutelauncher.setting.json";
+    const SETTINGS_FILE = "cutelauncher.settings.json";
 
     // initialize with default settings...
     const storage = require('Storage');

@@ -4,7 +4,7 @@
   require('Font4x5Numeric').add(Graphics);
 
   // Load settings
-  const SETTINGS_FILE = "onewordclock.setting.json";
+  const SETTINGS_FILE = "onewordclock.settings.json";
   let settings = {
     mode: "Named",
     smallNumeralClock: true

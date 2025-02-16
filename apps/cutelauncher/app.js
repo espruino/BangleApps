@@ -5,7 +5,7 @@
             showClocks: false,
             scrollbar: true
         },
-        s.readJSON('cutelauncher.setting.json', true) || {}
+        s.readJSON('cutelauncher.settings.json', true) || {}
     );
 
     // Borrowed caching from Icon Launcher, code by halemmerich.

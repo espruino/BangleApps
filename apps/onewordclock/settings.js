@@ -1,5 +1,5 @@
 (function (back) {
-    const SETTINGS_FILE = "onewordclock.setting.json";
+    const SETTINGS_FILE = "onewordclock.settings.json";
 
     // initialize with default settings...
     const storage = require('Storage');
