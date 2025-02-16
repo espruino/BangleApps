@@ -301,7 +301,7 @@ function log2(x) {
 }
 
 /* pie library v0.0.1 */
-pie = {
+let pie = {
   radians: function(a) { return a*Math.PI/180; },
 
   // Function to draw a filled arc (pie slice)
@@ -341,7 +341,7 @@ pie = {
   },
   altDelta: function(centerX, centerY, radius, altitude, altChange) {
     // Altitude range and mapping to a logarithmic scale
-    const altitudeMin = -1000, altitudeMax = 1000;
+    //const altitudeMin = -1000, altitudeMax = 1000;
     const altitudeLog = log2(Math.abs(altitude) + 1) * Math.sign(altitude); // Logarithmic scaling
     const altitudeAngle = E.clip((altitudeLog - log2(1)) / (log2(1001) - log2(1)), -1, 1) * 180;
 
@@ -389,16 +389,6 @@ var adj_time = 0, adj_alt = 0;
 function radA(p) { return p*(Math.PI*2); }
 /* radial distance -- convert 0..1 to something that fits on screen */
 function radD(d) { return d*(ui.h/2); }
-/* given angle/distance, get X coordinate */
-function radX(p, d) {
-  let a = radA(p);
-  return ui.w/2 + Math.sin(a)*radD(d);
-}
-/* given angle/distance, get Y coordinate */
-function radY(p, d) {
-  let a = radA(p);
-  return ui.h/2 - Math.cos(a)*radD(d) + ui.wi;
-}
 
 let quality = {
   min_dalt: 9999,
@@ -915,8 +905,7 @@ sky.init();
 
 sky.decorate = () => { 
   let p = 15;
-  return;
-  pie.twoPie(p, p+ui.wi, p, quality.dalt, qalt);
+//  pie.twoPie(p, p+ui.wi, p, quality.dalt, qalt);
 };
 ui.topLeft = () => { ui.drawMsg("Clock\nadjust"); adj_time = 1; };
 ui.topRight = () => { ui.drawMsg("Alt\nadjust"); adj_alt = 1; };
