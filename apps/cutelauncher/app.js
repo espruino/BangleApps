@@ -2,10 +2,9 @@
     let settings = Object.assign(
         {
             showClocks: false,
-            showLaunchers: false,
-            timeOut: 10,
+            scrollbar: true
         },
-        require('Storage').readJSON('cutelauncher.json', true) || {}
+        require('Storage').readJSON('cutelauncher.setting.json', true) || {}
     );
 
     let s = require('Storage');
@@ -183,13 +182,15 @@
         }
     });
 
-    // Update scroll indicator on drag
-    const updateOnDrag = () => updateScrollIndicator(scroller.scroll);
-    Bangle.on('drag', updateOnDrag);
-    // Initialize the scroll indicator
-    initScrollIndicator();
-    // Initial update of scroll indicator
-    updateScrollIndicator(scroller.scroll);
+    if (settings.scrollbar) {
+        // Update scroll indicator on drag
+        const updateOnDrag = () => updateScrollIndicator(scroller.scroll);
+        Bangle.on('drag', updateOnDrag);
+        // Initialize the scroll indicator
+        initScrollIndicator();
+        // Initial update of scroll indicator
+        updateScrollIndicator(scroller.scroll);
+    }
 
     setWatch(Bangle.showClock, BTN1, { debounce: 100 });
     // Add lock handler to show clock when locked

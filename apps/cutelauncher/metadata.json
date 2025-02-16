@@ -1,7 +1,7 @@
 {
     "id": "cutelauncher",
     "name": "Cute Launcher",
-    "version": "0.18",
+    "version": "0.19",
     "description": "A simple launcher app for Bangle.js 2 that makes use of the full touchscreen",
     "icon": "app.png",
     "type": "launch",
@@ -18,6 +18,10 @@
             "name": "cutelauncher.img",
             "url": "app-icon.js",
             "evaluate": true
+        },
+        {
+            "name": "cutelauncher.setting.json",
+            "url": "settings.js"
         }
     ]
 }
