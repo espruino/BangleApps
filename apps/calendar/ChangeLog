@@ -19,3 +19,5 @@
       Display Widgets in menus
 0.17: Load holidays before events so the latter is not overpainted
 0.18: Minor code improvements
+0.19: Read events synchronized from Gadgetbridge
+0.20: Correct start time of all-day events synchronized from Gadgetbridge

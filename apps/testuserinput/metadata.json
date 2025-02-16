@@ -5,7 +5,7 @@
   "version": "0.08",
   "description": "App to test the bangle.js input interface. It displays the user action in text, circle buttons or on/off switch UI elements.",
   "icon": "app.png",
-  "tags": "input,interface,buttons,touch,UI",
+  "tags": "input,interface,buttons,touch,ui",
   "supports": ["BANGLEJS"],
   "readme": "README.md",
   "storage": [

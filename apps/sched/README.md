@@ -49,7 +49,7 @@ Alarms are stored in an array in `sched.json`, and take the form:
                        // e.g. repeat every 2 months: { interval: "month", num: 2 }.
                        // Supported intervals: day, week, month, year
   vibrate : "...",     // OPTIONAL pattern of '.', '-' and ' ' to use for when buzzing out this alarm (defaults to '..' if not set)
-  hidden : false,      // OPTIONAL if false, the widget should not show an icon for this alarm
+  hidden : false,      // OPTIONAL if true, the widget should not show an icon for this alarm
   as : false,          // auto snooze
   timer : 5*60*1000,   // OPTIONAL - if set, this is a timer and it's the time in ms
   del : false,         // OPTIONAL - if true, delete the timer after expiration

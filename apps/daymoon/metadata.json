@@ -1,0 +1,17 @@
+{ "id": "daymoon",
+  "name": "DayMoon Circadian Clock",
+  "version": "0.05",
+  "dependencies":  {"mylocation":"app"},
+  "description": "A 24 hour clockface showing the Moon Phase and portion of the day that the Sun is up inspired by Matthew Clark's *Fair Circadian* Pebble watchface",
+  "icon": "daymoon.png",
+  "screenshots": [{"url":"s1.png"},{"url":"s2.png"},{"url":"s3.png"},{"url":"s4.png"}],
+  "type": "clock",
+  "tags": "clock,moon,lunar",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "readme":"README.md",
+  "storage": [
+    {"name":"daymoon.app.js","url":"app.js"},
+    {"name":"daymoon.img","url":"app-icon.js","evaluate":true}
+  ]
+}

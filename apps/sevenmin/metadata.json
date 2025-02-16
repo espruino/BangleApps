@@ -5,7 +5,7 @@
   "description": "A basic implementation of the famous consice workout",
   "icon": "icon.png",
   "type":"app",
-  "tags": "Training, Workout",
+  "tags": "training,workout",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "allow_emulator":true,

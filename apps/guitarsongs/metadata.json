@@ -5,7 +5,7 @@
   "description": "Songs lyrics and guitar chords",
   "icon": "app.png",
   "screenshots": [{"url": "screenshot.png"}],
-  "tags": "guitar, song, lyrics, chords",
+  "tags": "guitar,song,lyrics,chords",
   "supports" : ["BANGLEJS2"],
   "interface": "manage_songs.html",
   "readme": "README.md",

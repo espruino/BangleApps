@@ -199,11 +199,9 @@ let drawTime = function() {
   let y = y1;
   let date = new Date();
 
-  let hours = String(date.getHours());
-  let minutes = date.getMinutes();
-  minutes = minutes < 10 ? String("0") + minutes : minutes;
-  let colon = settings.hideColon ? "" : ":";
-  let timeStr = hours + colon + minutes;
+  var timeStr = locale.time(date, 1);
+  if (settings.hideColon)
+    timeStr = timeStr.replace(":", "");
 
   // Set y coordinates correctly
   y += parseInt((H - y)/2) + 5;
