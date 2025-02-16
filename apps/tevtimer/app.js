@@ -65,28 +65,6 @@ class TimerView {
     this.layout.clear();
     this.render();
     tt.set_last_viewed_timer(this.tri_timer);
-    let render_status = () => { this.render(); };
-    this.tri_timer.on('status', render_status);
-    this.tri_timer.on('auto-pause', tt.set_timers_dirty);
-    this.listeners.status = render_status;
-
-    // Touch handler
-    function touchHandler(button, xy) {
-      for (var id of ROW_IDS) {
-        const elem = this.layout[id];
-        if (!xy.type &&
-            elem.x <= xy.x && xy.x < elem.x + elem.w &&
-            elem.y <= xy.y && xy.y < elem.y + elem.h) {
-          Bangle.buzz(50, 0.5);
-          tt.SETTINGS.view_mode = (tt.SETTINGS.view_mode + 1) % 4;
-          tt.schedule_save_settings();
-          setTimeout(this.render.bind(this), 0);
-          break;
-        }
-      }
-    }
-    this.listeners.touch = touchHandler.bind(this);
-    Bangle.on('touch', this.listeners.touch);
 
     // Physical button handler
     this.listeners.button = setWatch(
@@ -101,8 +79,6 @@ class TimerView {
       clearTimeout(this.timer_timeout);
       this.timer_timeout = null;
     }
-    this.tri_timer.removeListener('status', this.listeners.status);
-    Bangle.removeListener('touch', this.listeners.touch);
     clearWatch(this.listeners.button);
     Bangle.setUI();
   }
@@ -155,7 +131,6 @@ class TimerView {
 
   render(item) {
     console.debug('render called: ' + item);
-    this.tri_timer.check_auto_pause();
 
     if (!item) {
       this.layout.update();
@@ -197,12 +172,6 @@ class TimerView {
       this.layout.start_btn.label =
         this.tri_timer.is_running() ? 'Pause' : 'Start';
       this.layout.render(this.layout.buttons);
-
-      // this.layout.row3.label =
-      //   this.tri_timer.display_status()
-      //   + ' ' + this.tri_timer.provisional_name();
-      // this.layout.clear(this.layout.row3);
-      // this.layout.render(this.layout.row3);
     }
 
     if (this.tri_timer.is_running() && this.tri_timer.get() > 0) {
@@ -253,6 +222,7 @@ class TimerView {
       this.tri_timer.start();
     }
     tt.set_timers_dirty();
+    this.render('status');
   }
 }
 

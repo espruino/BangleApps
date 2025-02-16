@@ -12,6 +12,9 @@ class PrimitiveTimer {
     this.rate = rate || 0.001;
     this.name = name || '';
 
+    this.vibrate_pattern = ';;;';
+    this.buzz_count = 4;
+
     this._start_time = Date.now();
     this._pause_time = is_running ? null : this._start_time;
   }
@@ -21,9 +24,11 @@ class PrimitiveTimer {
   }
 
   provisional_name() {
-    return (this.rate >= 0 ? 'U' : 'D')
-      + ' '
-      + Time_utils.formatDuration(this.origin / this.rate);
+    return (
+      Time_utils.formatDuration(this.origin / Math.abs(this.rate))
+      + ' / '
+      + Time_utils.formatDuration(Math.abs(this.get() / Math.abs(this.rate)))
+    );
   }
 
   display_status() {
@@ -88,7 +93,9 @@ class PrimitiveTimer {
       rate: this.rate,
       name: this.name,
       start_time: this._start_time,
-      pause_time: this._pause_time
+      pause_time: this._pause_time,
+      vibrate_pattern: this.vibrate_pattern,
+      buzz_count: this.buzz_count,
     };
   }
 
@@ -99,7 +106,42 @@ class PrimitiveTimer {
     let loaded = new this(data.origin, false, data.rate, data.name);
     loaded._start_time = data.start_time;
     loaded._pause_time = data.pause_time;
+    loaded.vibrate_pattern = data.vibrate_pattern;
+    loaded.buzz_count = data.buzz_count;
     return loaded;
+  }
+
+
+  ////// Temporary compatibility code //////
+  check_auto_pause() {
+    console.warn('check_auto_pause: not implemented');
+  }
+
+  time_to_next_alarm() {
+    console.warn('time_to_next_alarm: not implemented');
+
+    if (!this.is_running())
+      return null;
+
+    return this.get() / Math.abs(this.rate);
+  }
+
+  time_to_next_event() {
+    console.warn('time_to_next_event: not implemented');
+    return null;
+  }
+
+  time_to_next_outer_event() {
+    console.warn('time_to_next_outer_event: not implemented');
+    return null;
+  }
+
+  time_to_end_event() {
+    console.warn('time_to_end_event: not implemented');
+    if (this.rate <= 0 && this.get() > 0) {
+      return this.get() / Math.abs(this.rate);
+    }
+    return null;
   }
 }
 
@@ -311,9 +353,9 @@ function load_timers() {
   let timers = Storage.readJSON(TIMERS_FILENAME, true) || [];
   if (timers.length) {
     // Deserealize timer objects
-    timers = timers.map(t => TriangleTimer.load(t));
+    timers = timers.map(t => PrimitiveTimer.load(t));
   } else {
-    timers = [new TriangleTimer(600, false, -0.001)];
+    timers = [new PrimitiveTimer(600, false, -0.001)];
     timers[0].end_alarm = true;
   }
   return timers;
@@ -391,7 +433,7 @@ function delete_tri_timer(timers, tri_timer) {
 
 function add_tri_timer(timers, tri_timer) {
   // Create a copy of current timer object
-  const new_timer = TriangleTimer.load(tri_timer.dump());
+  const new_timer = PrimitiveTimer.load(tri_timer.dump());
   timers.unshift(new_timer);
   return new_timer;
 }
@@ -434,14 +476,13 @@ function delete_system_alarms() {
 function set_system_alarms() {
   for (let idx = 0; idx < TIMERS.length; idx++) {
     let timer = TIMERS[idx];
-    timer.check_auto_pause();
-    let time_to_next_alarm = timer.time_to_next_alarm();
-    if (time_to_next_alarm !== null) {
-      console.debug('set sched alarm ' + idx + ' (' + time_to_next_alarm/1000 + ')');
+    let time_to_next_alarm = timer.get() / Math.abs(timer.rate);
+    if (timer.is_running() && time_to_next_alarm > 0) {
+      console.debug('set sched alarm ' + idx + ' (' + time_to_next_alarm + ')');
       Sched.setAlarm(idx.toString(), {
         appid: 'tevtimer',
         timer: time_to_next_alarm,
-        msg: timer.display_name(),
+        msg: '',
         js: "load('tevtimer.alarm.js');",
         data: { idx: idx },
       });

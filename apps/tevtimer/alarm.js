@@ -1,33 +1,23 @@
-const tt = require('triangletimer');
+const tt = require('tevtimer');
 
 function showAlarm(alarm) {
   const settings = require("sched").getSettings();
-  const tri_timer = tt.TIMERS[alarm.data.idx];
-  const message =  tt.format_triangle(tri_timer) + '\n' + alarm.msg;
+  const timer = tt.TIMERS[alarm.data.idx];
+  const message =  timer.display_name() + '\n' + alarm.msg;
 
   Bangle.loadWidgets();
   Bangle.drawWidgets();
 
   // buzzCount should really be called buzzRepeat, so subtract 1
-  let buzzCount = tri_timer.buzz_count - 1;
-
-  tt.update_system_alarms();
+  let buzzCount = timer.buzz_count - 1;
 
   E.showPrompt(message, {
-    title: 'Triangle timer',
-    buttons: { "Goto": true, "OK": false }
+    title: 'Timer',
+    buttons: { "OK": true }
   }).then(function (go) {
     buzzCount = 0;
-
     Bangle.emit("alarmDismiss", alarm);
-
-    if (go) {
-      console.log('alarm ' + alarm.data.idx);
-      tt.set_last_viewed_timer(tri_timer);
-      load('triangletimer.app.js');
-    } else {
-      load();
-    }
+    load();
   });
 
   function buzz() {
@@ -35,7 +25,7 @@ function showAlarm(alarm) {
       Bangle.setLocked(false);
     }
 
-    const pattern = tri_timer.vibrate_pattern || settings.defaultTimerPattern;
+    const pattern = timer.vibrate_pattern || settings.defaultTimerPattern;
     console.log('buzz: ' + pattern);
     console.log('buzzCount: ' + buzzCount);
     require("buzz").pattern(pattern).then(() => {
@@ -43,7 +33,7 @@ function showAlarm(alarm) {
         setTimeout(buzz, settings.buzzIntervalMillis);
       } else if (alarm.as) { // auto-snooze
         // buzzCount should really be called buzzRepeat, so subtract 1
-        buzzCount = tri_timer.buzz_count - 1;
+        buzzCount = timer.buzz_count - 1;
         setTimeout(buzz, settings.defaultSnoozeMillis);
       }
     });
