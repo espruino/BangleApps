@@ -11,7 +11,6 @@
     // Borrowed caching from Icon Launcher, code by halemmerich.
     let launchCache = s.readJSON('launch.cache.json', true) || {};
     let launchHash = s.hash(/\.info/) + JSON.stringify(settings).length;
-    console.log(launchHash);
     if (launchCache.hash != launchHash) {
         launchCache = {
             hash: launchHash,
