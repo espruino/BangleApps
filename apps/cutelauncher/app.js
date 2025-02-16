@@ -1,16 +1,17 @@
 {
+    let s = require('Storage');
     let settings = Object.assign(
         {
             showClocks: false,
             scrollbar: true
         },
-        require('Storage').readJSON('cutelauncher.setting.json', true) || {}
+        s.readJSON('cutelauncher.setting.json', true) || {}
     );
 
-    let s = require('Storage');
     // Borrowed caching from Icon Launcher, code by halemmerich.
     let launchCache = s.readJSON('launch.cache.json', true) || {};
-    let launchHash = require('Storage').hash(/\.info/);
+    let launchHash = s.hash(/\.info/) + JSON.stringify(settings).length;
+    console.log(launchHash);
     if (launchCache.hash != launchHash) {
         launchCache = {
             hash: launchHash,
@@ -89,9 +90,6 @@
         const lineY2 = overlayHeight * 2 / 3;
         const lineLeft = 9;
         const lineRight = overlayWidth - 9;
-
-        // // Draw outlines (increased from ±2 to ±3)
-        // overlay.setColor(g.theme.bg);
 
         // Draw inner lines (increased from ±1 to ±2)
         overlay.setColor(g.theme.bg2);
@@ -176,9 +174,11 @@
             // Remove lock handler
             Bangle.removeListener('lock');
             // Remove drag handler
-            Bangle.removeListener('drag', updateOnDrag);
-            // Clear the scroll overlay
-            Bangle.setLCDOverlay();
+            if (settings.scrollbar) {
+                Bangle.removeListener('drag', updateOnDrag);
+                // Clear the scroll overlay
+                Bangle.setLCDOverlay();
+            }
         }
     });
 
