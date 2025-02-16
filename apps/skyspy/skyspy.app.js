@@ -385,11 +385,6 @@ var debug = 0;
 var cur_altitude;
 var adj_time = 0, adj_alt = 0;
 
-/* radial angle -- convert 0..1 to 0..2pi */
-function radA(p) { return p*(Math.PI*2); }
-/* radial distance -- convert 0..1 to something that fits on screen */
-function radD(d) { return d*(ui.h/2); }
-
 let quality = {
   min_dalt: 9999,
   max_dalt: -9999,
@@ -905,7 +900,8 @@ sky.init();
 
 sky.decorate = () => { 
   let p = 15;
-//  pie.twoPie(p, p+ui.wi, p, quality.dalt, qalt);
+  if (0)
+    pie.twoPie(p, p+ui.wi, p, quality.dalt, qalt);
 };
 ui.topLeft = () => { ui.drawMsg("Clock\nadjust"); adj_time = 1; };
 ui.topRight = () => { ui.drawMsg("Alt\nadjust"); adj_alt = 1; };
