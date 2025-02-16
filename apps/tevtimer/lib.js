@@ -327,6 +327,9 @@ function format_triangle(tri_timer) {
 
 
 function format_duration(msec, have_seconds) {
+  if (msec < 0) {
+    return '-' + format_duration(-msec, have_seconds);
+  }
   const time = Time_utils.decodeTime(msec);
   time.h += time.d * 24;
   let str = time.h + ":" + ("0" + time.m).substr(-2);

@@ -140,22 +140,30 @@ class TimerView {
 
       this._update_fonts();
 
+      let update_interval = Infinity;
+
       for (var id of ROW_IDS) {
         const elem = this.layout[id];
         let mode = tt.SETTINGS.view_mode[id];
         if (mode == 'start hh:mm:ss') {
           elem.label = tt.format_duration(this.tri_timer.origin / Math.abs(this.tri_timer.rate), true);
+          update_interval = Math.min(update_interval, 1);
         } else if (mode == 'current hh:mm:ss') {
           elem.label = tt.format_duration(this.tri_timer.get() / Math.abs(this.tri_timer.rate), true);
+          update_interval = Math.min(update_interval, 1);
         } else if (mode == 'time hh:mm:ss') {
           elem.label = locale.time(new Date()).trim();
+          update_interval = Math.min(update_interval, 1);
 
         } else if (mode == 'start hh:mm') {
           elem.label = tt.format_duration(this.tri_timer.origin / Math.abs(this.tri_timer.rate), false);
+          update_interval = Math.min(update_interval, 60);
         } else if (mode == 'current hh:mm') {
           elem.label = tt.format_duration(this.tri_timer.get() / Math.abs(this.tri_timer.rate), false);
+          update_interval = Math.min(update_interval, 60);
         } else if (mode == 'time hh:mm') {
           elem.label = locale.time(new Date(), 1).trim();
+          update_interval = Math.min(update_interval, 60);
 
         } else if (mode == 'name') {
           elem.label = this.tri_timer.display_name();
@@ -164,45 +172,37 @@ class TimerView {
         this.layout.render(elem);
       }
 
+      if (this.tri_timer.is_running()) {
+        if (this.timer_timeout) {
+          clearTimeout(this.timer_timeout);
+          this.timer_timeout = null;
+        }
 
-      
+        // Set up timeout to render timer again when needed
+        if (update_interval !== Infinity) {
+
+          // Calculate approximate time next render is needed.
+          let next_update = this.tri_timer.get() % update_interval;
+          if (next_update < 0) {
+            next_update = 1 + next_update;
+          }
+          // Convert next_update from seconds to milliseconds and add
+          // compensating factor of 50ms due to timeouts apparently
+          // sometimes triggering too early.
+          next_update = next_update / Math.abs(this.tri_timer.rate) + 50;
+          console.debug('Next render update scheduled in ' + next_update);
+          this.timer_timeout = setTimeout(
+            () => { this.timer_timeout = null; this.render('timer'); },
+            next_update
+          );
+        }
+      }
     }
 
     if (!item || item == 'status') {
       this.layout.start_btn.label =
         this.tri_timer.is_running() ? 'Pause' : 'Start';
       this.layout.render(this.layout.buttons);
-    }
-
-    if (this.tri_timer.is_running() && this.tri_timer.get() > 0) {
-      if (this.timer_timeout) {
-        clearTimeout(this.timer_timeout);
-        this.timer_timeout = null;
-      }
-
-      // Calculate approximate time next display update is needed.
-      // Usual case: update when numbers change once per second.
-      let next_tick = this.tri_timer.get() % 1;
-      if (this.tri_timer.rate > 0) {
-        next_tick = 1 - next_tick;
-      }
-      // Convert next_tick from seconds to milliseconds and add
-      // compensating factor of 50ms due to timeouts apparently
-      // sometimes triggering too early.
-      next_tick = next_tick / Math.abs(this.tri_timer.rate) + 50;
-
-      // For slow-update view mode, only update about every 60
-      // seconds instead of every second
-      if (tt.SETTINGS.view_mode == 3) {
-        console.debug(this.tri_timer.time_to_next_event());
-        next_tick = this.tri_timer.time_to_next_event() % 60000;
-      }
-
-      console.debug('Next render update scheduled in ' + next_tick);
-      this.timer_timeout = setTimeout(
-        () => { this.timer_timeout = null; this.render('timer'); },
-        next_tick
-      );
     }
   }
 
@@ -223,6 +223,7 @@ class TimerView {
     }
     tt.set_timers_dirty();
     this.render('status');
+    this.render('timer');
   }
 }
 
