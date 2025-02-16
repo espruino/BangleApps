@@ -20,14 +20,14 @@
         '': { 'title': 'Cutelauncher' },
         '< Back': back,
         'Show Clocks': {
-            value: settings.smallNumeralClock,
+            value: settings.showClocks,
             onchange: () => {
                 settings.showClocks = !settings.showClocks;
                 save();
             }
         },
         'Scrollbar': {
-            value: settings.smallNumeralClock,
+            value: settings.scrollbar,
             onchange: () => {
                 settings.scrollbar = !settings.scrollbar;
                 save();
