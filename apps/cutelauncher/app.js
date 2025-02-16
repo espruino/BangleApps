@@ -182,9 +182,10 @@
         }
     });
 
+    const updateOnDrag = () => updateScrollIndicator(scroller.scroll);
+
     if (settings.scrollbar) {
         // Update scroll indicator on drag
-        const updateOnDrag = () => updateScrollIndicator(scroller.scroll);
         Bangle.on('drag', updateOnDrag);
         // Initialize the scroll indicator
         initScrollIndicator();
