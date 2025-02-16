@@ -2,7 +2,7 @@
     "id": "themes",
     "name": "Themes",
     "shortName": "Themes",
-    "version": "0.11",
+    "version": "0.12",
     "description": "Color palettes at your disposal",
     "type": "app",
     "tags": "tool",
@@ -24,6 +24,14 @@
         {
             "name": "themes.json",
             "url": "themes.json"
+        },
+        {
+            "name": "themes.settings.js",
+            "url": "settings.js"
+        },
+        {
+            "name": "themes.boot.js",
+            "url": "boot.js"
         }
     ]
 }
