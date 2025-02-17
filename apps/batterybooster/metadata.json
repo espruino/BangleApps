@@ -5,7 +5,7 @@
     "version": "0.1",
     "description": "A bootloader app which adds scripts to boost battery life of your Bangle.js 2",
     "type": "bootloader",
-    "tags": "tools, system",
+    "tags": "tools,system",
     "readme": "README.md",
     "supports": [
         "BANGLEJS2"
