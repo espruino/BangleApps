@@ -27,10 +27,6 @@
             "evaluate": true
         },
         {
-            "name": "themes.json",
-            "url": "themes.json"
-        },
-        {
             "name": "themes.settings.js",
             "url": "settings.js"
         },
@@ -42,6 +38,10 @@
     "data": [
         {
             "name": "themes.settings.json"
+        },
+        {
+            "name": "themes.json",
+            "url": "themes.json"
         }
     ]
 }
