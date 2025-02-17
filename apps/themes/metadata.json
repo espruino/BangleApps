@@ -6,6 +6,11 @@
     "description": "Color palettes at your disposal",
     "type": "app",
     "tags": "tool",
+    "screenshots": [
+        {
+            "url": "screenshot.png"
+        }
+    ],
     "supports": [
         "BANGLEJS2"
     ],

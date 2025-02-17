@@ -6,6 +6,11 @@
     "description": "Read text files from your Bangle.js filesystem",
     "type": "app",
     "tags": "tool,files,reader",
+    "screenshots": [
+        {
+            "url": "screenshot.png"
+        }
+    ],
     "supports": [
         "BANGLEJS2"
     ],

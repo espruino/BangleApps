@@ -7,6 +7,11 @@
     "icon": "app.png",
     "type": "launch",
     "tags": "tool,system,launcher",
+    "screenshots": [
+        {
+            "url": "screenshot.png"
+        }
+    ],
     "supports": [
         "BANGLEJS2"
     ],

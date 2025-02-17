@@ -5,6 +5,11 @@
   "version": "0.97",
   "description": "A unique clock that displays a single evocative word for each hour of the day",
   "icon": "app.png",
+  "screenshots": [
+    {
+      "url": "screenshot.png"
+    }
+  ],
   "tags": "clock",
   "type": "clock",
   "supports": [
