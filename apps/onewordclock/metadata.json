@@ -24,5 +24,10 @@
       "name": "onewordclock.settings.js",
       "url": "settings.js"
     }
+  ],
+  "data": [
+    {
+      "name": "onewordclock.settings.json"
+    }
   ]
 }

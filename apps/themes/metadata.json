@@ -33,5 +33,10 @@
             "name": "themes.boot.js",
             "url": "boot.js"
         }
+    ],
+    "data": [
+        {
+            "name": "themes.settings.json"
+        }
     ]
 }

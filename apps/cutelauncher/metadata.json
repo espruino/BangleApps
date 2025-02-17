@@ -24,5 +24,10 @@
             "name": "cutelauncher.settings.js",
             "url": "settings.js"
         }
+    ],
+    "data": [
+        {
+            "name": "cutelauncher.settings.json"
+        }
     ]
 }
