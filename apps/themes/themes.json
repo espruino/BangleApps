@@ -18,30 +18,30 @@
         "dark": true
     },
     "Ruby": {
-        "fg": "#000000",
-        "bg": "#FF1A1A",
-        "fg2": "#FFFFFF",
-        "bg2": "#CC0000",
+        "fg": "#FFFFFF",
+        "bg": "#CC0000",
+        "fg2": "#FFB3B3",
+        "bg2": "#990000",
         "fgH": "#FFFFFF",
-        "bgH": "#990000",
+        "bgH": "#660000",
         "dark": false
     },
     "Ocean": {
         "fg": "#FFFFFF",
-        "bg": "#0033CC",
-        "fg2": "#B3D9FF",
-        "bg2": "#002080",
+        "bg": "#0066CC",
+        "fg2": "#B3E0FF",
+        "bg2": "#004C99",
         "fgH": "#FFFFFF",
-        "bgH": "#0052CC",
+        "bgH": "#003366",
         "dark": true
     },
     "Forest": {
-        "fg": "#003300",
-        "bg": "#33CC33",
-        "fg2": "#FFFFFF",
-        "bg2": "#248F24",
+        "fg": "#FFFFFF",
+        "bg": "#2E7D32",
+        "fg2": "#C8E6C9",
+        "bg2": "#1B5E20",
         "fgH": "#FFFFFF",
-        "bgH": "#1A661A",
+        "bgH": "#004D40",
         "dark": false
     },
     "Royal": {
@@ -54,7 +54,7 @@
         "dark": true
     },
     "Sunset": {
-        "fg": "#4A0000",
+        "fg": "#660000",
         "bg": "#FF8C1A",
         "fg2": "#FFFFFF",
         "bg2": "#CC6600",
@@ -125,4 +125,40 @@
         "bgH": "#004C99",
         "dark": false
     },
+    "Midnight": {
+        "fg": "#E0E0E0",
+        "bg": "#0D1B2A",
+        "fg2": "#778DA9",
+        "bg2": "#1B263B",
+        "fgH": "#FFFFFF",
+        "bgH": "#415A77",
+        "dark": true
+    },
+    "Crimson": {
+        "fg": "#FFFFFF",
+        "bg": "#8B0000",
+        "fg2": "#FFB3BA",
+        "bg2": "#600000",
+        "fgH": "#FFFFFF",
+        "bgH": "#400000",
+        "dark": true
+    },
+    "Amber": {
+        "fg": "#212121",
+        "bg": "#FFD180",
+        "fg2": "#424242",
+        "bg2": "#FFAB40",
+        "fgH": "#212121",
+        "bgH": "#FF6D00",
+        "dark": false
+    },
+    "Moss": {
+        "fg": "#212121",
+        "bg": "#C5E1A5",
+        "fg2": "#424242",
+        "bg2": "#9CCC65",
+        "fgH": "#212121",
+        "bgH": "#689F38",
+        "dark": false
+    }
 }
