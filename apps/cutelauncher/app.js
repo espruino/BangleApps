@@ -44,7 +44,7 @@
     const ITEM_HEIGHT = 95;
 
     // Create scroll indicator overlay
-    const overlayWidth = 30;  // Increased width
+    const overlayWidth = 30;
     const overlayHeight = 35;
     const overlay = Graphics.createArrayBuffer(overlayWidth, overlayHeight, 16, { msb: true });
 
@@ -132,25 +132,16 @@
 
     // Function to update scroll indicator
     function updateScrollIndicator(idx) {
-        
-        // Calculate visible items that can fit on screen
-        const visibleItems = Math.floor(g.getHeight() / ITEM_HEIGHT);
-        // Calculate scroll percentage based on current index relative to total scrollable items
-        let scrollPercent = idx / (apps.length - visibleItems);
-        // Constrain scroll percentage between 0 and 1
-        scrollPercent = Math.max(0, Math.min(1, scrollPercent));
-
-        // Add margins to the scrollable area
         const marginX = 1;
         const marginY = 5;
-        const scrollableHeight = g.getHeight() - (marginY * 2) - overlayHeight;
-        let indicatorY = marginY + (scrollableHeight * scrollPercent);
-
-        // Ensure indicator stays within bounds
-        indicatorY = Math.max(marginY, Math.min(g.getHeight() - overlayHeight - marginY, indicatorY));
+        let scrollPercent = (idx) / (apps.length - 1);
+        let scrollableHeight = g.getHeight() - marginY * 2 - overlayHeight;
+        let indicatorY = scrollPercent * scrollableHeight + marginY;
 
         Bangle.setLCDOverlay(overlay, g.getWidth() - overlayWidth - marginX, indicatorY, { id: "scrollIndicator" });
     }
+
+    let prev_idx = -1;
 
     E.showScroller({
         h: ITEM_HEIGHT,
@@ -189,7 +180,10 @@
             }
             let textY = rect.y + iconPadding + iconSize + 15;
             g.drawString(text, rectX + rectSize / 2, textY);
-            updateScrollIndicator(idx);
+            if (idx != prev_idx && settings.scrollbar) {  
+                updateScrollIndicator(idx);
+                prev_idx = idx;
+            }
         },
         select: (idx) => {
             // Launch the selected app
@@ -200,11 +194,8 @@
             setWatch(() => { }, BTN1);
             // Remove lock handler
             Bangle.removeListener('lock');
-            // Remove drag handler
-            if (settings.scrollbar) {
-                // Clear the scroll overlay
-                Bangle.setLCDOverlay();
-            }
+            // Clear the scroll overlay
+            Bangle.setLCDOverlay();
         }
     });
 
