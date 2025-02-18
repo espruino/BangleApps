@@ -48,7 +48,37 @@
     const overlayHeight = 35;
     const overlay = Graphics.createArrayBuffer(overlayWidth, overlayHeight, 16, { msb: true });
 
-    // New helper function for creating rounded rectangle points
+    // Function to create app backdrop
+    function createAppBackdrop(y) {
+        return [
+            58, y + 5,    // Top edge
+            118, y + 5,
+            133 - 15 * 0.7, y + 5,
+            133 - 15 * 0.4, y + 5 + 15 * 0.1,
+            133 - 15 * 0.1, y + 5 + 15 * 0.4,  // Top right corner
+            133, y + 5 + 15 * 0.7,
+            133, y + 20,
+            133, y + 75,    // Right edge
+            133, y + 90 - 15 * 0.7,
+            133 - 15 * 0.1, y + 90 - 15 * 0.4,
+            133 - 15 * 0.4, y + 90 - 15 * 0.1,  // Bottom right corner
+            133 - 15 * 0.7, y + 90,
+            118, y + 90,
+            58, y + 90,    // Bottom edge
+            43 + 15 * 0.7, y + 90,
+            43 + 15 * 0.4, y + 90 - 15 * 0.1,
+            43 + 15 * 0.1, y + 90 - 15 * 0.4,  // Bottom left corner
+            43, y + 90 - 15 * 0.7,
+            43, y + 75,
+            43, y + 20,    // Left edge
+            43, y + 5 + 15 * 0.7,
+            43 + 15 * 0.1, y + 5 + 15 * 0.4,
+            43 + 15 * 0.4, y + 5 + 15 * 0.1,  // Top left corner
+            43 + 15 * 0.7, y + 5
+        ];
+    }
+
+    // Helper function for creating rounded rectangle points
     function createRoundedRectPoints(x1, y1, x2, y2, r) {
         return [
             x1 + r, y1,    // Top edge
@@ -114,34 +144,23 @@
         h: ITEM_HEIGHT,
         c: apps.length,
         draw: (idx, rect) => {
-            g.setColor(g.theme.fg);
             g.setFontAlign(0, -1, 0).setFont('8x16');
-
             // Calculate icon dimensions
             let icon = apps[idx].icon;
             let iconSize = 48;
-
             // Define rectangle size (independent of icon size)
             const rectSize = 80;
-            const rectX = rect.x + (rect.w - rectSize) / 2;
+            const rectX = 48;
 
             // Draw rounded rectangle background using the new function
-            g.setColor(g.theme.bg2);
-            const r = 15;
-            const x1 = rectX - 5;
-            const y1 = rect.y + 5;
-            const x2 = rectX + rectSize + 5;
-            const y2 = rect.y + rectSize + 10;
-
-            const points = createRoundedRectPoints(x1, y1, x2, y2, r);
-            g.fillPoly(points);
-            g.setColor(g.theme.fg);
+            const points = createAppBackdrop(rect.y);
+            g.setColor(g.theme.bg2).fillPoly(points);
 
             // Draw icon centered in the top portion
             let iconPadding = 8;
             // Center icon within the rectangle
             let iconXInRect = rectX + (rectSize - iconSize) / 2;
-            g.setBgColor(g.theme.bg2).drawImage(icon, iconXInRect, rect.y + iconPadding + 8);
+            g.setColor(g.theme.fg).setBgColor(g.theme.bg2).drawImage(icon, iconXInRect, rect.y + iconPadding + 8);
 
             // Draw app name with ellipsis if too long
             const maxWidth = rectSize - 8;
