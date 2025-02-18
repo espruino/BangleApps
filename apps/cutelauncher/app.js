@@ -128,19 +128,31 @@
         overlay.fillRect(lineLeft, lineY1 - 2, lineRight, lineY1 + 2);
         overlay.fillRect(lineLeft, lineY2 - 2, lineRight, lineY2 + 2);
     }
+    initScrollIndicator();
 
     // Function to update scroll indicator
-    function updateScrollIndicator(scroll) {
-        let scrollPercent = scroll / ((apps.length * ITEM_HEIGHT) - g.getHeight());
+    function updateScrollIndicator(idx) {
+        
+        // Calculate visible items that can fit on screen
+        const visibleItems = Math.floor(g.getHeight() / ITEM_HEIGHT);
+        // Calculate scroll percentage based on current index relative to total scrollable items
+        let scrollPercent = idx / (apps.length - visibleItems);
+        // Constrain scroll percentage between 0 and 1
+        scrollPercent = Math.max(0, Math.min(1, scrollPercent));
+
         // Add margins to the scrollable area
         const marginX = 1;
         const marginY = 5;
         const scrollableHeight = g.getHeight() - (marginY * 2) - overlayHeight;
-        let indicatorY = marginY + scrollableHeight * scrollPercent;
+        let indicatorY = marginY + (scrollableHeight * scrollPercent);
+
+        // Ensure indicator stays within bounds
+        indicatorY = Math.max(marginY, Math.min(g.getHeight() - overlayHeight - marginY, indicatorY));
+
         Bangle.setLCDOverlay(overlay, g.getWidth() - overlayWidth - marginX, indicatorY, { id: "scrollIndicator" });
     }
 
-    let scroller = E.showScroller({
+    E.showScroller({
         h: ITEM_HEIGHT,
         c: apps.length,
         draw: (idx, rect) => {
@@ -177,6 +189,7 @@
             }
             let textY = rect.y + iconPadding + iconSize + 15;
             g.drawString(text, rectX + rectSize / 2, textY);
+            updateScrollIndicator(idx);
         },
         select: (idx) => {
             // Launch the selected app
@@ -189,23 +202,11 @@
             Bangle.removeListener('lock');
             // Remove drag handler
             if (settings.scrollbar) {
-                Bangle.removeListener('drag', updateOnDrag);
                 // Clear the scroll overlay
                 Bangle.setLCDOverlay();
             }
         }
     });
-
-    const updateOnDrag = () => updateScrollIndicator(scroller.scroll);
-
-    if (settings.scrollbar) {
-        // Update scroll indicator on drag
-        Bangle.on('drag', updateOnDrag);
-        // Initialize the scroll indicator
-        initScrollIndicator();
-        // Initial update of scroll indicator
-        updateScrollIndicator(scroller.scroll);
-    }
 
     setWatch(Bangle.showClock, BTN1, { debounce: 100 });
     // Add lock handler to show clock when locked
