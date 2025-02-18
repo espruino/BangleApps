@@ -119,11 +119,7 @@
 
             // Calculate icon dimensions
             let icon = apps[idx].icon;
-            let iconWidth = icon.width || 48;
-            let iconHeight = icon.height || 48;
-            let maxSize = 45;
-            let scale = Math.min(maxSize / iconWidth, maxSize / iconHeight);
-            let scaledHeight = Math.floor(iconHeight * scale);
+            let iconSize = 48;
 
             // Define rectangle size (independent of icon size)
             const rectSize = 80;
@@ -144,8 +140,8 @@
             // Draw icon centered in the top portion
             let iconPadding = 8;
             // Center icon within the rectangle
-            let iconXInRect = rectX + (rectSize - maxSize) / 2;
-            g.setBgColor(g.theme.bg2).drawImage(icon, iconXInRect, rect.y + iconPadding + 8, { scale: scale });
+            let iconXInRect = rectX + (rectSize - iconSize) / 2;
+            g.setBgColor(g.theme.bg2).drawImage(icon, iconXInRect, rect.y + iconPadding + 8);
 
             // Draw app name with ellipsis if too long
             const maxWidth = rectSize - 8;
@@ -160,7 +156,7 @@
                 }
                 text = text + ellipsis;
             }
-            let textY = rect.y + iconPadding + scaledHeight + 15;
+            let textY = rect.y + iconPadding + iconSize + 15;
             g.drawString(text, rectX + rectSize / 2, textY);
         },
         select: (idx) => {
