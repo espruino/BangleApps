@@ -142,6 +142,7 @@
     }
 
     let prev_idx = -1;
+    let second_call = false;
 
     E.showScroller({
         h: ITEM_HEIGHT,
@@ -180,10 +181,11 @@
             }
             let textY = rect.y + iconPadding + iconSize + 15;
             g.drawString(text, rectX + rectSize / 2, textY);
-            if (idx != prev_idx && settings.scrollbar) {  
+            if (idx != prev_idx && !second_call && settings.scrollbar) {  
                 updateScrollIndicator(idx);
+                if (prev_idx == -1) second_call = true;
                 prev_idx = idx;
-            }
+            } else if (second_call) second_call = false;
         },
         select: (idx) => {
             // Launch the selected app
