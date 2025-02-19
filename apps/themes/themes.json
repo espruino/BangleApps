@@ -50,7 +50,7 @@
         "fg2": "#FFB3FF",
         "bg2": "#400040",
         "fgH": "#FFFFFF",
-        "bgH": "#990099",
+        "bgH": "#330033",
         "dark": true
     },
     "Sunset": {
@@ -59,7 +59,7 @@
         "fg2": "#FFFFFF",
         "bg2": "#CC6600",
         "fgH": "#FFFFFF",
-        "bgH": "#FF6600",
+        "bgH": "#993300",
         "dark": false
     },
     "Arctic": {
@@ -77,7 +77,7 @@
         "fg2": "#444",
         "bg2": "#CCC",
         "fgH": "#FFF",
-        "bgH": "#666",
+        "bgH": "#111",
         "dark": false
     },
     "Espresso": {
@@ -86,7 +86,7 @@
         "fg2": "#FFD9B3",
         "bg2": "#4D2600",
         "fgH": "#FFFFFF",
-        "bgH": "#804000",
+        "bgH": "#331A00",
         "dark": true
     },
     "Matrix": {
@@ -107,7 +107,7 @@
         "bgH": "#FF6640",
         "dark": false
     },
-    "NightVision": {
+    "Night Vision": {
         "fg": "#00FF00",
         "bg": "#000000",
         "fg2": "#33FF33",
@@ -122,7 +122,7 @@
         "fg2": "#003366",
         "bg2": "#0066CC",
         "fgH": "#FFFFFF",
-        "bgH": "#004C99",
+        "bgH": "#001F3F",
         "dark": false
     },
     "Midnight": {
@@ -138,7 +138,7 @@
         "fg": "#FFFFFF",
         "bg": "#8B0000",
         "fg2": "#FFB3BA",
-        "bg2": "#600000",
+        "bg2": "#4A0000",
         "fgH": "#FFFFFF",
         "bgH": "#400000",
         "dark": true
@@ -160,5 +160,14 @@
         "fgH": "#212121",
         "bgH": "#689F38",
         "dark": false
+    },
+    "LoTR": {
+        "fg": "#DAA520",
+        "bg": "#1B5E20",
+        "fg2": "#C5A35E",
+        "bg2": "#663300",
+        "fgH": "#331A00",
+        "bgH": "#689F38",
+        "dark": true
     }
 }
