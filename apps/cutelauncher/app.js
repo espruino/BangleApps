@@ -121,7 +121,7 @@
         const lineRight = overlayWidth - 9;
 
         // Draw inner lines (increased from ±1 to ±2)
-        overlay.setColor(g.theme.bg2);
+        overlay.setColor(g.theme.fg2);
         overlay.fillRect(lineLeft - 2, lineY1 - 1, lineRight + 2, lineY1 + 1);
         overlay.fillRect(lineLeft - 2, lineY2 - 1, lineRight + 2, lineY2 + 1);
 
