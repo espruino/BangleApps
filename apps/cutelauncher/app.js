@@ -112,7 +112,7 @@
     function initScrollIndicator() {
         overlay.setBgColor(g.theme.bg).clear();
         const points = createRoundedRectPoints(0, 0, overlayWidth, overlayHeight, 10);
-        overlay.setColor(g.theme.fg2).fillPoly(points);
+        overlay.setColor(g.theme.bgH).fillPoly(points);
 
         // Add horizontal lines for scroll thumb aesthetic with outlines
         const lineY1 = overlayHeight / 3;

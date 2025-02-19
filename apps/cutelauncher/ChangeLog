@@ -2,3 +2,4 @@
 0.28: Adjusted icon size to better fit with native dimensions (48x48)
 0.29: Draw function optimization
 0.30: Refine initial scrollbar position
+0.31: Coloring for scrollbar
