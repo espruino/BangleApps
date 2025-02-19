@@ -162,12 +162,12 @@
         "dark": false
     },
     "LoTR": {
-        "fg": "#DAA520",
+        "fg": "#8B6914",
         "bg": "#1B5E20",
         "fg2": "#C5A35E",
-        "bg2": "#663300",
-        "fgH": "#331A00",
-        "bgH": "#689F38",
-        "dark": true
+        "bg2": "#1B5E20",
+        "fgH": "#DAA520",
+        "bgH": "#663300",
+        "dark": false
     }
 }
