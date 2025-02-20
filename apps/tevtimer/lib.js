@@ -111,218 +111,12 @@ class PrimitiveTimer {
     return loaded;
   }
 
-
-  ////// Temporary compatibility code //////
-  check_auto_pause() {
-    console.warn('check_auto_pause: not implemented');
-  }
-
-  time_to_next_alarm() {
-    console.warn('time_to_next_alarm: not implemented');
-
-    if (!this.is_running())
-      return null;
-
-    return this.get() / Math.abs(this.rate);
-  }
-
-  time_to_next_event() {
-    console.warn('time_to_next_event: not implemented');
-    return null;
-  }
-
-  time_to_next_outer_event() {
-    console.warn('time_to_next_outer_event: not implemented');
-    return null;
-  }
-
-  time_to_end_event() {
-    console.warn('time_to_end_event: not implemented');
-    if (this.rate <= 0 && this.get() > 0) {
-      return this.get() / Math.abs(this.rate);
-    }
-    return null;
-  }
-}
-
-
-class TriangleTimer extends PrimitiveTimer {
-  constructor(origin, is_running, rate, name, increment) {
-    super(origin, is_running, rate, name);
-    this.increment = increment || 1;
-
-    this.end_alarm = false;
-    this.outer_alarm = false;
-    this.outer_action = 'Cont';
-    this.pause_checkpoint = null;
-    this.vibrate_pattern = null;
-    this.buzz_count = 4;
-  }
-
-  provisional_name() {
-    const origin_as_tri = as_triangle(
-      this.origin,
-      this.increment
-    );
-    return (this.rate >= 0 ? 'U' : 'D')
-      + ' '
-      + origin_as_tri[0] + '/' + origin_as_tri[1]
-      + ' x' + this.increment;
-  }
-
-  start() {
-    super.start();
-    this.emit('status');
-  }
-
-  pause() {
-    super.pause();
-    this.emit('status');
-  }
-
-  check_auto_pause() {
-    const current_time = super.get();
-
-    if (this.is_running() &&
-        this.outer_action == 'Pause') {
-      if (this.pause_checkpoint === null) {
-        this.pause_checkpoint = current_time
-          + this.time_to_next_outer_event() * this.rate;
-        console.debug('timer auto-pause setup: ' + this.pause_checkpoint);
-      } else if (
-        (this.rate >= 0 && current_time >= this.pause_checkpoint)
-        || (this.rate < 0 && current_time <= this.pause_checkpoint)
-      ) {
-        console.debug('timer auto-pause triggered');
-        this.pause();
-        this.set(this.pause_checkpoint);
-        this.pause_checkpoint = null;
-        this.emit('auto-pause');
-      }
-    } else {
-      this.pause_checkpoint = null;
-    }
-  }
-
-  reset() {
-    this.pause_checkpoint = null;
-    return super.reset();
-  }
-
-  get() {
-    return super.get();
-  }
-
-  set(new_value) {
-    return super.set(new_value);
-  }
-
-  time_to_next_alarm() {
-    if (!this.is_running())
-      return null;
-
-    if (this.outer_alarm) {
-      return this.time_to_next_outer_event();
-    }
-
-    if (this.end_alarm) {
-      return this.time_to_end_event();
-    }
-
-    return null;
-  }
-
-  time_to_next_event() {
-    let next = null;
-
-    if (this.outer_alarm || this.outer_action !== 'Cont') {
-      next = this.time_to_next_outer_event();
-    }
-
-    if (next === null) {
-      next = this.time_to_end_event();
-    }
-
-    return next
-  }
-
-  time_to_next_outer_event() {
-    const as_tri = as_triangle(super.get(), this.increment);
-    let inner_left = this.rate > 0 ? as_tri[0] - as_tri[1] : as_tri[1];
-    // Avoid getting stuck if we're paused precisely on the event time
-    if (!inner_left) {
-      inner_left = as_tri[0] + Math.sign(this.rate) * this.increment;
-    }
-    return Math.max(0, inner_left / Math.abs(this.rate));
-  }
-
-  time_to_end_event() {
-    if (this.rate <= 0 && this.get() > 0) {
-      return this.get() / Math.abs(this.rate);
-    }
-    return null;
-  }
-
-  dump() {
-    let data = super.dump();
-    data.cls = 'TriangleTimer';
-    data.increment = this.increment;
-    data.end_alarm = this.end_alarm;
-    data.outer_alarm = this.outer_alarm;
-    data.outer_action = this.outer_action;
-    data.pause_checkpoint = this.pause_checkpoint;
-    data.vibrate_pattern = this.vibrate_pattern;
-    data.buzz_count = this.buzz_count;
-    return data;
-  }
-
-  static load(data) {
-    if (!(data.cls == 'TriangleTimer' && data.version == 0)) {
-      console.error('Incompatible data type for loading TriangleTimer state');
-    }
-    let loaded = new this(
-      data.origin, false, data.rate, data.name, data.increment);
-    loaded._start_time = data.start_time;
-    loaded._pause_time = data.pause_time;
-    loaded.end_alarm = data.end_alarm;
-    loaded.outer_alarm = data.outer_alarm;
-    loaded.outer_action = data.outer_action;
-    loaded.pause_checkpoint = data.pause_checkpoint;
-    loaded.vibrate_pattern = data.vibrate_pattern;
-    if (data.buzz_count !== undefined) {
-      loaded.buzz_count = data.buzz_count;
-    }
-    return loaded;
-  }
 }
 
 
 function fixed_ceil(value) {
-  // JavaScript sucks balls
+  // JavaScript sucks
   return Math.ceil(Math.round(value * 1e10) / 1e10);
-}
-
-
-function as_triangle(linear_time, increment) {
-  if (increment === undefined) increment = 1;
-  linear_time = linear_time / increment;
-  const outer = fixed_ceil((Math.sqrt(linear_time * 8 + 1) - 1) / 2);
-  const inner = outer - (outer * (outer + 1) / 2 - linear_time);
-  return [outer * increment, inner * increment];
-}
-
-function as_linear(triangle_time, increment) {
-  if (increment === undefined) increment = 1;
-  const outer = triangle_time[0], inner = triangle_time[1];
-  return (outer + (outer - 1) % increment + 1)
-    * fixed_ceil(outer / increment) / 2
-    - outer + inner;
-}
-
-
-function format_triangle(tri_timer) {
-  const tri = as_triangle(tri_timer.get(), tri_timer.increment);
-  return tri[0] + '/' + Math.ceil(tri[1]);
 }
 
 
@@ -414,11 +208,6 @@ const SETTINGS = Object.assign({
 
 var TIMERS = load_timers();
 
-const ACTIONS = [
-  'Cont',
-  'Pause',
-];
-
 
 // Persistent data convenience functions
 
@@ -504,9 +293,9 @@ E.on('kill', () => { save_timers(); });
 E.on('kill', () => { save_settings(); });
 
 
-exports = {TIMERS, SETTINGS, ACTIONS,
+exports = {TIMERS, SETTINGS,
            load_timers, save_timers, schedule_save_timers, save_settings, schedule_save_settings,
-           PrimitiveTimer, TriangleTimer,
-           as_triangle, as_linear, format_triangle, format_duration,
+           PrimitiveTimer,
+           format_duration,
            delete_timer, add_timer, set_last_viewed_timer, set_timers_dirty, set_settings_dirty,
            update_system_alarms};
