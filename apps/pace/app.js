@@ -140,10 +140,12 @@
         var totalDist = dist.getValue();
         var thisSplit = totalDist - prev.dist;
         var thisTime = exs_1.state.duration - prev.time;
-        while (thisSplit > 1000) {
-            splits_1.push({ dist: thisSplit, time: thisTime });
-            thisTime = 0;
-            thisSplit -= 1000;
+        if (thisSplit > 1000) {
+            if (thisTime > 0) {
+                if (splits_1.length || thisTime > 1000 * 60)
+                    splits_1.push({ dist: thisSplit, time: thisTime });
+            }
+            thisSplit %= 1000;
         }
         exs_1.state.notify.dist.next -= thisSplit;
         S_1.writeJSON("pace.json", { splits: splits_1 });
@@ -171,6 +173,30 @@
     });
     Bangle.on('twist', function () {
         Bangle.setBacklight(1);
+    });
+    Bangle.on('tap', function (_e) {
+        if (exs_1.state.active)
+            return;
+        var menu = {
+            "": {
+                remove: function () {
+                    draw_1();
+                },
+            },
+            "< Back": function () {
+                Bangle.setUI();
+            },
+            "Zero time": function () {
+                exs_1.start();
+                exs_1.stop();
+                Bangle.setUI();
+            },
+            "Clear splits": function () {
+                splits_1.splice(0, splits_1.length);
+                Bangle.setUI();
+            },
+        };
+        E.showMenu(menu);
     });
     Bangle.loadWidgets();
     Bangle.drawWidgets();
