@@ -422,35 +422,35 @@ const ACTIONS = [
 
 // Persistent data convenience functions
 
-function delete_tri_timer(timers, tri_timer) {
-  const idx = timers.indexOf(tri_timer);
+function delete_timer(timers, timer) {
+  const idx = timers.indexOf(timer);
   if (idx !== -1) {
     timers.splice(idx, 1);
   } else {
-    console.warn('delete_tri_timer: Bug? Tried to delete a timer not in list');
+    console.warn('delete_timer: Bug? Tried to delete a timer not in list');
   }
   // Return another timer to switch UI to after deleting the focused
   // one
   return timers[Math.min(idx, timers.length - 1)];
 }
 
-function add_tri_timer(timers, tri_timer) {
+function add_timer(timers, timer) {
   // Create a copy of current timer object
-  const new_timer = PrimitiveTimer.load(tri_timer.dump());
+  const new_timer = PrimitiveTimer.load(timer.dump());
   timers.unshift(new_timer);
   return new_timer;
 }
 
-function set_last_viewed_timer(tri_timer) {
-  const idx = TIMERS.indexOf(tri_timer);
+function set_last_viewed_timer(timer) {
+  const idx = TIMERS.indexOf(timer);
   if (idx == -1) {
     console.warn('set_last_viewed_timer: Bug? Called with a timer not found in list');
   } else if (idx == 0) {
     console.debug('set_last_viewed_timer: Already set as last timer');
   } else {
-    // Move tri_timer to top of list
+    // Move timer to top of list
     TIMERS.splice(idx, 1);
-    TIMERS.unshift(tri_timer);
+    TIMERS.unshift(timer);
     set_timers_dirty();
   }
 }
@@ -508,5 +508,5 @@ exports = {TIMERS, SETTINGS, ACTIONS,
            load_timers, save_timers, schedule_save_timers, save_settings, schedule_save_settings,
            PrimitiveTimer, TriangleTimer,
            as_triangle, as_linear, format_triangle, format_duration,
-           delete_tri_timer, add_tri_timer, set_last_viewed_timer, set_timers_dirty, set_settings_dirty,
+           delete_timer, add_timer, set_last_viewed_timer, set_timers_dirty, set_settings_dirty,
            update_system_alarms};

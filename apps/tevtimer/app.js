@@ -52,8 +52,8 @@ function row_font(row_name, mode_name) {
 
 
 class TimerView {
-  constructor(tri_timer) {
-    this.tri_timer = tri_timer;
+  constructor(timer) {
+    this.timer = timer;
 
     this.layout = null;
     this.listeners = {};
@@ -64,7 +64,7 @@ class TimerView {
     this._initLayout();
     this.layout.clear();
     this.render();
-    tt.set_last_viewed_timer(this.tri_timer);
+    tt.set_last_viewed_timer(this.timer);
 
     // Physical button handler
     this.listeners.button = setWatch(
@@ -118,7 +118,7 @@ class TimerView {
                cb: this.start_stop_timer.bind(this)},
               {type: 'btn', font: '6x8:2', fillx: 1, label: 'Menu', id: 'menu_btn',
                cb: () => {
-                 switch_UI(new TimerViewMenu(this.tri_timer));
+                 switch_UI(new TimerViewMenu(this.timer));
                }
               }
             ]
@@ -146,33 +146,33 @@ class TimerView {
         const elem = this.layout[id];
         let mode = tt.SETTINGS.view_mode[id];
         if (mode == 'start hh:mm:ss') {
-          elem.label = tt.format_duration(this.tri_timer.origin / Math.abs(this.tri_timer.rate), true);
+          elem.label = tt.format_duration(this.timer.origin / Math.abs(this.timer.rate), true);
           update_interval = Math.min(update_interval, 1);
         } else if (mode == 'current hh:mm:ss') {
-          elem.label = tt.format_duration(this.tri_timer.get() / Math.abs(this.tri_timer.rate), true);
+          elem.label = tt.format_duration(this.timer.get() / Math.abs(this.timer.rate), true);
           update_interval = Math.min(update_interval, 1);
         } else if (mode == 'time hh:mm:ss') {
           elem.label = locale.time(new Date()).trim();
           update_interval = Math.min(update_interval, 1);
 
         } else if (mode == 'start hh:mm') {
-          elem.label = tt.format_duration(this.tri_timer.origin / Math.abs(this.tri_timer.rate), false);
+          elem.label = tt.format_duration(this.timer.origin / Math.abs(this.timer.rate), false);
           update_interval = Math.min(update_interval, 60);
         } else if (mode == 'current hh:mm') {
-          elem.label = tt.format_duration(this.tri_timer.get() / Math.abs(this.tri_timer.rate), false);
+          elem.label = tt.format_duration(this.timer.get() / Math.abs(this.timer.rate), false);
           update_interval = Math.min(update_interval, 60);
         } else if (mode == 'time hh:mm') {
           elem.label = locale.time(new Date(), 1).trim();
           update_interval = Math.min(update_interval, 60);
 
         } else if (mode == 'name') {
-          elem.label = this.tri_timer.display_name();
+          elem.label = this.timer.display_name();
         }
         this.layout.clear(elem);
         this.layout.render(elem);
       }
 
-      if (this.tri_timer.is_running()) {
+      if (this.timer.is_running()) {
         if (this.timer_timeout) {
           clearTimeout(this.timer_timeout);
           this.timer_timeout = null;
@@ -182,14 +182,14 @@ class TimerView {
         if (update_interval !== Infinity) {
 
           // Calculate approximate time next render is needed.
-          let next_update = this.tri_timer.get() % update_interval;
+          let next_update = this.timer.get() % update_interval;
           if (next_update < 0) {
             next_update = 1 + next_update;
           }
           // Convert next_update from seconds to milliseconds and add
           // compensating factor of 50ms due to timeouts apparently
           // sometimes triggering too early.
-          next_update = next_update / Math.abs(this.tri_timer.rate) + 50;
+          next_update = next_update / Math.abs(this.timer.rate) + 50;
           console.debug('Next render update scheduled in ' + next_update);
           this.timer_timeout = setTimeout(
             () => { this.timer_timeout = null; this.render('timer'); },
@@ -201,7 +201,7 @@ class TimerView {
 
     if (!item || item == 'status') {
       this.layout.start_btn.label =
-        this.tri_timer.is_running() ? 'Pause' : 'Start';
+        this.timer.is_running() ? 'Pause' : 'Start';
       this.layout.render(this.layout.buttons);
     }
   }
@@ -216,10 +216,10 @@ class TimerView {
   }
 
   start_stop_timer() {
-    if (this.tri_timer.is_running()) {
-      this.tri_timer.pause();
+    if (this.timer.is_running()) {
+      this.timer.pause();
     } else {
-      this.tri_timer.start();
+      this.timer.start();
     }
     tt.set_timers_dirty();
     this.render('status');
@@ -229,8 +229,8 @@ class TimerView {
 
 
 class TimerViewMenu {
-  constructor(tri_timer) {
-    this.tri_timer = tri_timer;
+  constructor(timer) {
+    this.timer = timer;
   }
 
   start() {
@@ -242,23 +242,23 @@ class TimerViewMenu {
   }
 
   back() {
-    switch_UI(new TimerView(this.tri_timer));
+    switch_UI(new TimerView(this.timer));
   }
 
   top_menu() {
     const top_menu = {
       '': {
-        title: this.tri_timer.display_name(),
+        title: this.timer.display_name(),
         back: this.back.bind(this)
       },
       'Reset': () => { E.showMenu(reset_menu); },
       'Timers': () => {
-        switch_UI(new TimerMenu(tt.TIMERS, this.tri_timer));
+        switch_UI(new TimerMenu(tt.TIMERS, this.timer));
       },
       'Edit': this.edit_menu.bind(this),
       'Add': () => {
         tt.set_timers_dirty();
-        const new_timer = tt.add_tri_timer(tt.TIMERS, this.tri_timer);
+        const new_timer = tt.add_timer(tt.TIMERS, this.timer);
         const timer_view_menu = new TimerViewMenu(new_timer);
         timer_view_menu.edit_menu();
       },
@@ -275,7 +275,7 @@ class TimerViewMenu {
         back: () => { E.showMenu(top_menu); }
       },
       'Reset': () => {
-        this.tri_timer.reset();
+        this.timer.reset();
         tt.set_timers_dirty();
         this.back();
       },
@@ -289,7 +289,7 @@ class TimerViewMenu {
       },
       'Delete': () => {
         tt.set_timers_dirty();
-        switch_UI(new TimerView(tt.delete_tri_timer(tt.TIMERS, this.tri_timer)));
+        switch_UI(new TimerView(tt.delete_timer(tt.TIMERS, this.timer)));
       },
       'Cancel': () => { E.showMenu(top_menu); },
     };
@@ -300,22 +300,22 @@ class TimerViewMenu {
   edit_menu() {
     const edit_menu = {
       '': {
-        title: 'Edit: ' + this.tri_timer.display_name(),
+        title: 'Edit: ' + this.timer.display_name(),
         back: () => { this.top_menu(); },
       },
       'Start': this.edit_start_hms_menu.bind(this),
       'Vibrate pattern': require("buzz_menu").pattern(
-        this.tri_timer.vibrate_pattern,
-        v => this.tri_timer.vibrate_pattern = v),
+        this.timer.vibrate_pattern,
+        v => this.timer.vibrate_pattern = v),
       'Buzz count': {
-        value: this.tri_timer.buzz_count,
+        value: this.timer.buzz_count,
         min: 0,
         max: 15,
         step: 1,
         wrap: true,
         format: v => v === 0 ? "Forever" : v,
         onchange: v => {
-          this.tri_timer.buzz_count = v;
+          this.timer.buzz_count = v;
           tt.set_timers_dirty();
         },
       },
@@ -326,13 +326,13 @@ class TimerViewMenu {
 
   edit_start_hms_menu() {
     let origin_hms = {
-      h: Math.floor(this.tri_timer.origin / 3600),
-      m: Math.floor(this.tri_timer.origin / 60) % 60,
-      s: Math.floor(this.tri_timer.origin % 60),
+      h: Math.floor(this.timer.origin / 3600),
+      m: Math.floor(this.timer.origin / 60) % 60,
+      s: Math.floor(this.timer.origin % 60),
     };
 
     const update_origin = () => {
-      this.tri_timer.origin = origin_hms.h * 3600
+      this.timer.origin = origin_hms.h * 3600
         + origin_hms.m * 60
         + origin_hms.s;
     };
@@ -383,8 +383,8 @@ class TimerViewMenu {
 
 
 class TimerMenu {
-  constructor(tri_timers, focused_timer) {
-    this.tri_timers = tri_timers;
+  constructor(timers, focused_timer) {
+    this.timers = timers;
     this.focused_timer = focused_timer;
   }
 
@@ -407,9 +407,9 @@ class TimerMenu {
         back: this.back.bind(this)
       }
     };
-    this.tri_timers.forEach((tri_timer) => {
-      menu[tri_timer.display_status() + ' ' + tri_timer.display_name()] =
-        () => { switch_UI(new TimerView(tri_timer)); };
+    this.timers.forEach((timer) => {
+      menu[timer.display_status() + ' ' + timer.display_name()] =
+        () => { switch_UI(new TimerView(timer)); };
     });
     E.showMenu(menu);
   }
