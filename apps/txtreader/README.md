@@ -11,8 +11,9 @@ Very basic text reader with an integrated file selector.
 ## Controls
 
 Bangle.js 2
-- tap the right side of the screen to flip to the next page
-- tap the left side of the screen to flip to the previous page
+- tap the bottom right corner of the screen to flip to the next page
+- tap the bottom left corner of the screen to flip to the previous page
+- tap the top left corner of the screen to toggle font size and go back to page 1
 - exit by pressing the physical button 
 
 ## Creator
