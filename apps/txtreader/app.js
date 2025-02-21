@@ -90,7 +90,7 @@ function onFileSelected(file) {
     let char_w = 6;
     g.clear();
     if (!big) {
-      g.setFont("6x15", 1);
+      g.setFont("6x8", 1);
     } else {
       g.setFont("12x20", 1);
     }
@@ -101,7 +101,8 @@ function onFileSelected(file) {
     g.drawString("Page " + pageNumber, border, 2);
     //g.drawString("Offset " + offset, 60, 2);
     g.drawString(file, g.getWidth() - file.length * char_w, 2);
-    g.flip();
+    // This can be used as a feedback that touch was registered
+    //g.flip();
 
     var text = require("Storage").read(file, offset, chunkSize);
     var lines = text.split("\n");
