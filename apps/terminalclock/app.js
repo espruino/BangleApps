@@ -120,11 +120,19 @@
     drawLine(time, pos);
   };
 
-  let drawDate = function(now, pos){
-    let dow = locale.dow(now, 1);
-    let date = locale.date(now, 1).substr(0,6) + locale.date(now, 1).substr(-2);
-    let locale_date = ">" + dow + " " + date;
-    drawLine(locale_date, pos);
+  let drawDate = function(now, pos) {
+    let date;
+    if (clock.isoDate) {
+      let year = now.getFullYear();
+      let month = now.getMonth() + 1;  // Months are 0-11
+      let day = now.getDate();
+      date = ">" + year + "-" + month + "-" + day;
+    } else {
+      let dow = locale.dow(now, 1);
+      date = locale.date(now, 1).substr(0,6) + locale.date(now, 1).substr(-2);
+      date = ">" + dow + " " + date;
+    }
+    drawLine(date, pos);
   };
 
   let drawInput = function(pos){
