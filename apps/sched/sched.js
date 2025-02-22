@@ -87,7 +87,8 @@ function showPromptBtnCancel(msg,options) {
 }
 
 function showCustomPrompt(message, options, btnToStop) {
-  if (btnToStop) {
+  const BANGLEJS2 = process.env.HWVERSION==2;
+  if (BANGLEJS2 && btnToStop) {
     return showPromptBtnCancel(message, options);
   } else {
     return E.showPrompt(message, options);
