@@ -1,4 +1,5 @@
 function showPromptBtnCancel(msg,options) {
+  if (typeof timeoutId !== 'undefined') clearTimeout(timeoutId);
   if (!options) options={};
   if (!options.buttons)
     options.buttons = {"Yes":true,"No":false};
@@ -64,10 +65,14 @@ function showPromptBtnCancel(msg,options) {
   }
   draw();
   return new Promise(resolve=>{
+    var timeoutId = setTimeout(() => {
+        showPromptBtnCancel();
+        resolve(options.buttons.No);
+    }, 3600000); // 1 hour
     Bangle.setUI({mode:"custom", remove: options.remove, redraw: draw, back:options.back,
       btn: () => { // Handle physical buttons explicitly
             showPromptBtnCancel();
-            resolve(options.buttons["No"]);
+            resolve(options.buttons.No);
           }, 
       touch:(_,e)=>{
         btnPos.forEach((b,i)=>{
@@ -80,6 +85,7 @@ function showPromptBtnCancel(msg,options) {
           }
         });
     }});
+    Bangle.on('kill',()=>{clearTimeout(timeoutId);});
   });
 }
 
