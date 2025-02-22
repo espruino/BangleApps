@@ -74,6 +74,14 @@
     /*LANG*/"Default Timer Pattern": require("buzz_menu").pattern(settings.defaultTimerPattern, v => {
       settings.defaultTimerPattern = v;
       require("sched").setSettings(settings);
-    })
+    }),
+
+    /*LANG*/"BTN1 to Stop": {
+      value: settings.btnToStop,
+      onchange: v => {
+        settings.btnToStop = v;
+        require("sched").setSettings(settings);
+      }
+    }
   });
 })

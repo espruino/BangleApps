@@ -86,6 +86,14 @@ function showPromptBtnCancel(msg,options) {
   });
 }
 
+function showCustomPrompt(message, options, btnToStop) {
+  if (btnToStop) {
+    return showPromptBtnCancel(message, options);
+  } else {
+    return E.showPrompt(message, options);
+  }
+}
+
 if (Bangle.SCHED) {
   clearInterval(Bangle.SCHED);
   delete Bangle.SCHED;
@@ -111,10 +119,10 @@ function showAlarm(alarm) {
 
   let buzzCount = settings.buzzCount;
 
-  showPromptBtnCancel(message, {
+  showCustomPrompt(message, {
     title: alarm.timer ? /*LANG*/"TIMER!" : /*LANG*/"ALARM!",
     buttons: { /*LANG*/"Snooze": true, /*LANG*/"Stop": false } // default is sleep so it'll come back in some mins
-  }).then(function (sleep) {
+  }, settings.btnToStop).then(function (sleep) {
     buzzCount = 0;
 
     if (sleep) {
