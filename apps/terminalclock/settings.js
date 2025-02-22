@@ -3,6 +3,7 @@
   // Load settings
   var settings = Object.assign({
     // TerminalClock specific
+    isoDate: false,
     HRMinConfidence: 50,
     PowerOnInterval: 15,
     L2: 'Date',
@@ -72,6 +73,13 @@
           writeSettings();
         }
      },
+      "ISO date": {
+        value: !!settings.isoDate,
+        onchange: v => {
+          settings.isoDate = v;
+          writeSettings();
+        }
+      },
     };
     const save = (key, v) => {
       settings[key] = v;

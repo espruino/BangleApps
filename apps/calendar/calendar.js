@@ -62,9 +62,11 @@ const loadEvents = () => {
   }));
   // all events synchronized from Gadgetbridge
   events = events.concat((require("Storage").readJSON("android.calendar.json",1) || []).map(a => {
-    // timestamp is in seconds, Date requires milliseconds
-    const date = new Date(a.timestamp * 1000);
-    return {date: date, msg: a.title, type: "e"};
+    // All-day events always start at 00:00:00 UTC, so we need to "undo" the
+    // timezone offsetting to make sure that the day is correct.
+    const offset = a.allDay ? new Date().getTimezoneOffset() * 60 : 0
+    const date = new Date((a.timestamp+offset) * 1000);
+    return {date: date, msg: a.title, type: a.allDay ? "o" : "e"};
   }));
 };
 

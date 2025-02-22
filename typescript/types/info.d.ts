@@ -14,4 +14,4 @@ type AppInfo = {
 
 type AppType = "app" | "clock" | "widget" | "module" | "bootloader" |
   "settings" | "clkinfo" | "RAM" | "launch" | "textinput" | "scheduler" |
-  "notify" | "locale";
+  "notify" | "locale" | "defaultconfig";
