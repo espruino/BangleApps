@@ -1,0 +1,22 @@
+{ "id": "coin_info",
+  "name": "Crypto-Coins Info",
+  "shortName":"Coins Info",
+  "version": "0.01",
+  "description": "Crypto-Coins Infos with the help of the Coinmarketcap API",
+  "icon": "app.png",
+  "type": "bootloader",
+  "tags": "blockchain,crypto,cryptocurrency",
+  "supports" : ["BANGLEJS2"],
+  "interface": "interface.html",
+  "readme": "README.md",
+  "data": [
+    {"name":"coin_info.settings.json"},
+    {"name":"coin_info.cmc_key.json"}
+  ],
+  "storage": [
+    {"name":"owmweather.default.json","url":"default.json"},
+    {"name":"owmweather.boot.js","url":"boot.js"},
+    {"name":"owmweather","url":"lib.js"},
+    {"name":"owmweather.settings.js","url":"settings.js"}
+  ]
+}
