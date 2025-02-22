@@ -93,6 +93,7 @@ declare module Sched {
     buzzIntervalMillis: number,
     defaultAlarmPattern: string,
     defaultTimerPattern: string,
+    btnToStop: boolean,
   };
 
   function getAlarms(): Sched[];
