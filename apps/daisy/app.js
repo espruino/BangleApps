@@ -84,6 +84,8 @@ function loadSettings() {
   settings.fg = settings.fg||'#0f0';
   settings.idle_check = (settings.idle_check === undefined ? true : settings.idle_check);
   settings.batt_hours = (settings.batt_hours === undefined ? false : settings.batt_hours);
+  settings.hr_12 = (settings.hr_12 === undefined ? false : settings.hr_12);
+  settings.show_steps_ring = (settings.show_steps_ring === undefined ? false : settings.show_steps_ring);
   assignPalettes();
 }
 
@@ -221,13 +223,12 @@ function draw() {
 
 function drawClock() {
   var date = new Date();
-  //var timeStr = require("locale").time(date,1);
-  var da = date.toString().split(" ");
-  //var time = da[4].substr(0,5);
-  var hh = da[4].substr(0,2);
-  var mm = da[4].substr(3,2);
-  var steps = getSteps();
-  var p_steps = Math.round(100*(steps/10000));
+  var hh = date.getHours();
+  if (settings.hr_12) hh = hh % 12;
+  hh = hh.toString().toString().padStart(2, '0');
+  var mm = date.getMinutes()
+  var p_steps = settings.show_steps_ring ? Math.round(100*(getSteps()/10000)) : Math.round(10*(mm/6));
+  mm = mm.toString().padStart(2, '0');
 
   g.reset();
   g.setColor(g.theme.bg);
