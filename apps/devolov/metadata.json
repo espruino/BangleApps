@@ -1,0 +1,16 @@
+{ "id": "devolov",
+  "name": "devolov",
+  "shortName":"devolov",
+  "version": "0.01",
+  "description": "Playground for Testing.",
+  "icon": "app.png",
+  "tags": "game",
+  "supports" : ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "screenshots": [{"url":"screenshot.png"}],
+  "storage": [
+    {"name":"devolov.app.js","url":"app.js"},
+    {"name":"devolov.img","url":"app-icon.js","evaluate":true},
+    {"name":"devolov.settings.js","url":"settings.js"}
+  ]
+}
