@@ -117,4 +117,4 @@
   }
 
   E.showMenu(getMainMenu());
-});
+})
