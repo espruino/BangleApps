@@ -68,7 +68,7 @@ function showPromptBtnCancel(msg,options) {
     var timeoutId = setTimeout(() => {
         showPromptBtnCancel();
         resolve(options.buttons.No);
-    }, 3600000); // 1 hour
+    }, 30000); // 1 hour
     Bangle.setUI({mode:"custom", remove: options.remove, redraw: draw, back:options.back,
       btn: () => { // Handle physical buttons explicitly
             showPromptBtnCancel();
