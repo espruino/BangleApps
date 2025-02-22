@@ -8,7 +8,7 @@
   "dependencies": {"weather":"app"},
   "screenshots": [{"url":"screens/screen1.png"}],
   "type": "clock",
-  "tags": "clock, weather",
+  "tags": "clock,weather",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "allow_emulator": true,
   "readme": "README.md",

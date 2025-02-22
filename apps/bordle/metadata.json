@@ -6,7 +6,7 @@
   "description": "Bangle version of a popular word search game",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
-  "tags": "game, text",
+  "tags": "game,text",
   "storage": [
     {"name":"bordle.app.js","url":"bordle.app.js"},
     {"name":"wordlencr.txt","url":"wordlencr.txt"},

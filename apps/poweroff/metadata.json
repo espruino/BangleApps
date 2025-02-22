@@ -4,7 +4,7 @@
 "version": "0.05",
 "description": "Simple app to power off your Bangle.js",
 "icon": "app.png",
-"tags": "tool, poweroff, shutdown",
+"tags": "tool,poweroff,shutdown",
 "supports" : ["BANGLEJS", "BANGLEJS2"],
 "readme": "README.md",
 "allow_emulator": true,

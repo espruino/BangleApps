@@ -261,7 +261,7 @@ var locales = {
     ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%d %B %Y", "1": "%d/%m/%Y" }, // 1 mars 2020 //  01/03/2020
-    abmonth: "janv,févr,mars,avril,mai,juin,juil,août,sept,oct,nov,déc",
+    abmonth: "janv,févr,mars,avr,mai,juin,juil,août,sept,oct,nov,déc",
     month: "janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre",
     abday: "dim,lun,mar,mer,jeu,ven,sam",
     day: "dimanche,lundi,mardi,mercredi,jeudi,vendredi,samedi",
@@ -423,7 +423,7 @@ var locales = {
     ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%A %B %d %Y", "1": "%d/%m/%y" }, // dimanche 1 mars 2020 // 01/03/20
-    abmonth: "janv.,févr.,mars,avril,mai,juin,juil.,août,sept.,oct.,nov.,déc.",
+    abmonth: "janv,févr,mars,avr,mai,juin,juil,août,sept,oct,nov,déc",
     month: "janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre",
     abday: "dim,lun,mar,mer,jeu,ven,sam",
     day: "dimanche,lundi,mardi,mercredi,jeudi,vendredi,samedi",
@@ -452,7 +452,7 @@ var locales = {
     speed: "kmh",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "vorm", 1: " nachm" },
+    ampm: { 0: "vorm", 1: "nachm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%A, %d. %B %Y", "1": "%d.%m.%Y" }, // Sonntag, 1. März 2020 // 1.3.2020
     abmonth: "Jan,Feb,März,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Dez",
@@ -471,7 +471,7 @@ var locales = {
     ampm: { 0: "AM", 1: "PM" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%A %d %B %Y", "1": "%d/%m/%y" }, // dimanche 1 mars 2020 //  01/03/20
-    abmonth: "janv.,févr.,mars,avril,mai,juin,juil.,août,sept.,oct.,nov.,déc.",
+    abmonth: "janv,févr,mars,avr,mai,juin,juil,août,sept,oct,nov,déc",
     month: "janvier,février,mars,avril,mai,juin,juillet,août,septembre,octobre,novembre,décembre",
     abday: "dim,lun,mar,mer,jeu,ven,sam",
     day: "dimanche,lundi,mardi,mercredi,jeudi,vendredi,samedi",
@@ -567,7 +567,7 @@ var locales = {
     ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%A %d %B de %Y", "1": "%d/%m/%Y" }, // dimenge 1 de març de 2020 //  01/03/2020
-    abmonth: "gen.,febr.,març,abril,mai,junh,julh,ago.,set.,oct.,nov.,dec.",
+    abmonth: "gen,febr,març,abril,mai,junh,julh,ago,set,oct,nov,dec",
     month: "genièr,febrièr,març,abril,mai,junh,julhet,agost,setembre,octòbre,novembre,decembre",
     abday: "dg,dl,dm,dc,dj,dv,ds",
     day: "dimenge,diluns,dimars,dimècres,dijòus,divendres,dissabte",
@@ -612,10 +612,10 @@ var locales = {
     speed: "km/h",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "dop.", 1: "pop." },
+    ampm: { 0: "dop", 1: "pop" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%-d. %b %Y", 1: "%-d.%-m.%Y" }, // "3. jan. 2020" // "3.1.2020"(short)
-    abmonth: "sij.,velj.,ožu.,tra.,svi,lip.,srp.,kol.,ruj.,lis.,stu.,pro.",
+    abmonth: "sij,velj,ožu,tra,svi,lip,srp,kol,ruj,lis,stu,pro",
     month: "siječanj,veljača,ožujak,travanj,svibanj,lipanj,srpanj,kolovoz,rujan,listopad,studeni,prosinac",
     abday: "ned.,pon.,uto.,sri.,čet.,pet.,sub.",
     day: "nedjelja,ponedjeljak,utorak,srijeda,četvrtak,petak,subota",
@@ -628,7 +628,7 @@ var locales = {
     speed: "km/h",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
-    ampm: { 0: "dop.", 1: "pop." },
+    ampm: { 0: "dop", 1: "pop" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%-d. %b %Y", 1: "%-d.%-m.%Y" }, // "3. jan. 2020" // "3.1.2020"(short)
     abmonth: "jan.,feb.,mar.,apr.,maj,jun.,jul.,avg.,sep.,okt.,nov.,dec.",
@@ -728,7 +728,7 @@ var locales = {
     ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
     datePattern: { 0: "%d %B %Y", "1": "%d/%m/%y" },
-    abmonth: "gen.,febr.,març,abr.,maig,juny,jul.,ag.,set.,oct.,nov.,des.",
+    abmonth: "gen,febr,març,abr,maig,juny,jul,ag,set,oct,nov,des",
     month: "gener,febrer,març,abril,maig,juny,juliol,agost,setembre,octubre,novembre,desembre",
     abday: "dg.,dl.,dt.,dc.,dj.,dv.,ds.",
     day: "diumenge,dilluns,dimarts,dimecres,dijous,divendres,dissabte",
