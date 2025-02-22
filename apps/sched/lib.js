@@ -113,7 +113,7 @@ exports.getSettings = function () {
       buzzIntervalMillis: 3000, // 3 seconds
       defaultAlarmPattern: "::",
       defaultTimerPattern: "::",
-      btnToStop: true
+      btnToStop: false
     },
     require("Storage").readJSON("sched.settings.json", true) || {}
   );
