@@ -1,7 +1,7 @@
 {
     Bangle.loadWidgets();
     Bangle.drawWidgets();
-    
+
     function countDown() {
         counter--;
 
