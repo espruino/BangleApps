@@ -228,7 +228,7 @@ function drawClock() {
   var ring_percent;
   switch (settings.ring) {
     case 'Hours':
-      ring_percent = Math.round((10*((hh * 60) + mm))/72);
+      ring_percent = Math.round((10*(((hh % 12) * 60) + mm))/72);
       break;
     case 'Minutes':
       ring_percent = Math.round((10*mm)/6);
