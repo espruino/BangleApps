@@ -552,14 +552,15 @@ function buzzer(n) {
 // timeout used to update every minute
 var drawTimeout;
 
-// schedule a draw for the next minute
+// schedule a draw for the next minute or every 2 seconds
 function queueDraw() {
+  let delay = (settings.ring == 'Seconds') ? (2000 - (Date.now() % 2000)) : (60000 - (Date.now() % 60000));
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
     checkIdle();
     draw();
-  }, 60000 - (Date.now() % 60000));
+  }, delay);
 }
 
 // Stop updates when LCD is off, restart when on
