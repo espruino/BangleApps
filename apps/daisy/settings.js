@@ -27,6 +27,7 @@
   var color_options = ['Green','Orange','Cyan','Purple','Red','Blue'];
   var fg_code = ['#0f0','#ff0','#0ff','#f0f','#f00','#00f'];
   var gy_code = ['#020','#220','#022','#202','#200','#002'];
+  var ring_options = ['Minutes', 'Seconds', 'Steps'];
   
   E.showMenu({
     '': { 'title': 'Daisy Clock' },
@@ -63,10 +64,12 @@
         save();
       },
     },
-    'Step Counter Ring': {
-      value: !!s.show_steps_ring,
+    'Ring Display': {
+      value: 0 | ring_options.indexOf(s.ring),
+      min: 0, max: 2,
+      format: v => ring_options[v],
       onchange: v => {
-        s.show_steps_ring = v;
+        s.ring = ring_options[v];
         save();
       },
     }

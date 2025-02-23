@@ -227,7 +227,18 @@ function drawClock() {
   if (settings.hr_12) hh = hh % 12;
   hh = hh.toString().toString().padStart(2, '0');
   var mm = date.getMinutes()
-  var p_steps = settings.show_steps_ring ? Math.round(100*(getSteps()/10000)) : Math.round(10*(mm/6));
+  var p_steps;
+  switch (settings.ring) {
+    case 'Minutes':
+      p_steps = Math.round(100*(mm/60));
+      break;
+    case 'Seconds':
+      p_steps = Math.round(100*(date.getSeconds()/60));
+      break;
+    case 'Steps': 
+      p_steps = Math.round(100*(getSteps()/10000));
+      break;
+  }
   mm = mm.toString().padStart(2, '0');
 
   g.reset();
