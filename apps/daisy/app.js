@@ -254,7 +254,7 @@ function drawClock() {
   g.reset();
   g.setColor(g.theme.bg);
   g.fillRect(0, 0, w, h);
-  g.drawImage(getGaugeImage(ring_percent), 0, 0);
+  g.drawImage(getGaugeImage(ring_percent, settings.ring), 0, 0);
   setLargeFont();
 
   g.setColor(settings.fg);
@@ -312,13 +312,22 @@ Bangle.on('HRM', function(hrm) {
 
 // putting into 1 function like this, rather than individual variables
 // reduces ram usage from 70%-13%
-function getGaugeImage(p) {
+function getGaugeImage(p, type) {
+  const endsDontShow = ['Minutes', 'Seconds'];  // Don't show non-5% iincrements with these ring types
   // p0
-  if (p < 5) return {
+  if (p < 2  || (p < 5 && endsDontShow.includes(type))) return {
     width : 176, height : 176, bpp : 2,
     transparent : -1,
     palette : pal1,
     buffer : require("heatshrink").decompress(atob("AH4A/AH4ACgtVAAVUFUgpDAAdAFMEBFQ4ABqBVnLMQqLLLzWEABLgbVgohEGopYaiofDBihWVHJpYYDgYPbKx1ACJhYZIwT4OcAZWYHyRYUIgQXQH4RqOThCXUYRpCHNyQVVQQTwVQiSZWIQSEQNgSYSIYiEQQSyEUCQLDSOAyCnQiSCYQiSCYQiSCZDaDARObKuBSZwcaVzR0QFYKuZWAYNZWCJJKMoKuaWAahKBhiwTJRSudURorBFTgfMVzqjDO5DaeZ5jaeJhhiKbi4rIbT4hLqoriPI7afUpS5BbTwiKFdZgIADSmHFYIqgbgIrGcgIriEYwzHADZ7HRY4rdaYrjHADcBFYoGBFcgkEGQwAeFYqKHFbzUEcQ4AdiorwiorlEogxFAD59FWoorhoArDqArjgIr/FbYwFAEJSDFf4rXgornqgrDFUkAior/Ff4rGAYYAjKYYr/Ff4r/FbdVFdFAFYNQFcsBFf4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/FbdUFcsFFYUVFdADBFf4r/Ff4rbAYYAjKYYr/Ff4rFoArkqorCgIrnqAr/FbIEFAEBSFFf4rYqgrjgorEiormAocVAogAfEooxFFcB9EFdq1DAD9VFYkBFctQFYoGEADokHFcp8FRQoAdag7iFFb4HFioHGADYjHGY4rcPYyLHADbTHcYNQFT4iIFdZgIADKmJqrcgiorIBIIrhMKIAXUpIrBbjzaBFZAKKbS5MJFcKkJbj4fLBYLcdqorKbjzPMbjxKNMhauTURawdJJorBWDShBFZiRBWDQcOHRyuPOhorBWDIbPWDRzQSYKEYIwLLOHgSEXDIJyPQjD2SQjCCQQjSCRCYY/QN4xDRQiyCSQgjdSCqqECLCRWBYyiECISBWCYqgXCLCBWCQSYYEIhxqCeChYFThoQCKypYEIxgPPLB4cKFQZWXDoosIBhhYWcArWDKzYhHABA1EADArNoArcFhgqeWQysgLJxVfcBLWdAH4A5A"))
+  };
+
+  // p2
+  if (p < 5) return {
+    width : 176, height : 176, bpp : 2,
+    transparent : -1,
+    palette: pal1,
+    buffer : require("heatshrink").decompress(atob("AH4A/ADNUFE8FqtVq2q1AqkFIIrDAAOAFMEBFQYrE1WgKsYrGLL4qFFY2pqDWeFZdUVkAhCAQMKFYdVLDUVFQYMHlWq0oMJKyoOJlQrCLDBWDB5clB5xWOoARMCARYWKwT4OgpYXKwY+SLChECC6A/CNRycIS6jCNIQ5uSCqqCCeCqESTKxCCQiBsCTCRDEQiCCWQigSBYaRwGQU6ESQTCESQTCESQTIbQYCJzZVwKTODjSuaOiArBVzKwDBrKwRJJRlBVzSwDUJQMMWCZKKVzqiNFYIqcD5iudUYZ3IbTzPMbTxMMMRTcXFZDafEJdVFcR5HbT6lKXILaeERQrrMBAAaUw4rBFUDcBFYzkBFcQjGGY4AbPY6LHFbrTFcY4AbgIrFAwIrkEggyGADwrFRQ4reagjiHADsVFeEVFcolEGIoAfPoq1FFcNAFYdQFccBFf4rbGAoAhKQYr/Fa8FFc9UFYYqkgEVFf4r/FYwDDAEZTDFf4r/Ff4rbqorooArBqArlgIr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rbqgrlgorCioroAYIr/Ff4r/FbYDDAEZTDFf4r/FYtAFclVFYUBFc9QFf4rZAgoAgKQor/FbFUFccFFYkVFcwFDioFEAD4lFGIorgPogrtWoYAfqorEgIrlqArFAwgAdEg4rlPgqKFADrUHcQorfA4sVA4wAbEY4zHFbh7GRY4AbaY7jBqAqfERArrMBAAZUxNVbkEVFZAJBFcJhRAC6lJFYLcebQIrIBRTaXJhIrhUhLcfD5YLBbjtVFZTceZ5jceJRpkLVyaiLWDpJNFYKwaUIIrMSIKwaDhw6OVx50NFYKwZDZ6waOaCTBQjBGBZZw8CQi4ZBOR6EYeySEYQSCEaQSITDH6BvGIaKEWQSSEEbqQVVQgRYSKwLGUQgRCQKwTFUC4RYQKwSCTDAhEONQTwULAqcNCARWVLAhGMB55YPDhQqDKy4dFFhAMMLCzgFawZWbEI4AIGogAYFZtAFbgsMFTyyGVkBZOKr7gJazoA/AHI"))
   };
 
   // p5
@@ -466,11 +475,19 @@ function getGaugeImage(p) {
   };
 
   // p95
-  if (p < 99) return {
+  if (p < 98  || (p < 100 && endsDontShow.includes(type))) return {
     width : 176, height : 176, bpp : 2,
     transparent : -1,
     palette : pal2,
     buffer : require("heatshrink").decompress(atob("AH4A/AH4AChWq1WpqtUFUgpBFYYABoApggQqDFYlVqBVjFYxZfFQorGLLsFFZrgbgNVFAeoGohYfiorDBhIACKzVVtQqIFgpYYDgVqB5xYXKwVVoARMLDJGCfBzgDKzA+SLChECC6A/CNRycIS6jCNIQ5uSCqqCCeCqESTKxCCQiBsCTCRDEQiCCWQigSBYaRwGQU6ESQTCESQTCESQTIbQYCJzZVwKTODjSuaOiArBVzKwDBrKwRJJRlBVzSwDUJQMMWCZKKVzqiNFYIqcD5iudUYZ3IbTzPMbTxMMMRTcXFZDafEJdVFcR5HbT6lKXILaeERQrrMBAAaUw4rBFUDcBFYzkBFcQjGGY4AbPY6LHFbrTFcY4AbgIrFAwIrkEggyGADwrFRQ4reagjiHADsVFeEVFcolEGIoAfPoq1FFcNAFYdQFccBFf4rbGAoAhKQYr/Fa8FFc9UFYYqkgEVFf4r/FYwDDAEZTDFf4r/Ff4rbqorooArBqArlgIr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rbqgrlgorCioroAYIr/Ff4r/FbYDDAEZTDFf4r/FYtAFclVFYUBFc9QFf4rZAgoAgKQor/FbFUFccFFYkVFcwFDioFEAD4lFGIorgPogrtWoYAfqorEgIrlqArFAwgAdEg4rlPgqKFADrUHcQorfA4sVA4wAbEY4zHFbh7GRY4AbaY7jBqAqfERArrMBAAZUxNVbkEVFZAJBFcJhRAC6lJFYLcebQIrIBRTaXJhIrhUhLcfD5YLBbjtVFZTceZ5jceJRpkLVyaiLWDpJNFYKwaUIIrMSIKwaDhw6OVx50NFYKwZDZ6waOaCTBQjBGBZZw8CQi4ZBOR6EYeySEYQSCEaQSITDH6BvGIaKEWQSSEEbqQVVQgRYSKwLGUQgRCQKwTFUC4RYQKwSCTDAhEONQTwULAqcNCARWVLAhGMB55YPDhQqDKy4dFFhAMMLCzgFawZWbEI4AIGogAYFZtAFbgsMFTyyGVkBZOKr7gJazoA/AHIA=="))
+  };
+
+  // p98
+  if (p < 100) return {
+    width : 176, height : 176, bpp : 2,
+    transparent : -1,
+    palette : pal2,
+    buffer : require("heatshrink").decompress(atob("AH4A/AH4ACgtV1WpqtUFUlVAAIrCAANAFMEBEoQrFqtQKsQrHLL4jEFY5ZdawIrMcDasEEIo1FLDUVD4YMUKyo5NLDAcDB7ZWOoARMLDJGCfBzgDKzA+SLChECC6A/CNRycIS6jCNIQ5uSCqqCCeCqESTKxCCQiBsCTCRDEQiCCWQigSBYaRwGQU6ESQTCESQTCESQTIbQYCJzZVwKTODjSuaOiArBVzKwDBrKwRJJRlBVzSwDUJQMMWCZKKVzqiNFYIqcD5iudUYZ3IbTzPMbTxMMMRTcXFZDafEJdVFcR5HbT6lKXILaeERQrrMBAAaUw4rBFUDcBFYzkBFcQjGGY4AbPY6LHFbrTFcY4AbgIrFAwIrkEggyGADwrFRQ4reagjiHADsVFeEVFcolEGIoAfPoq1FFcNAFYdQFccBFf4rbGAoAhKQYr/Fa8FFc9UFYYqkgEVFf4r/FYwDDAEZTDFf4r/Ff4rbqorooArBqArlgIr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rbqgrlgorCioroAYIr/Ff4r/FbYDDAEZTDFf4r/FYtAFclVFYUBFc9QFf4rZAgoAgKQor/FbFUFccFFYkVFcwFDioFEAD4lFGIorgPogrtWoYAfqorEgIrlqArFAwgAdEg4rlPgqKFADrUHcQorfA4sVA4wAbEY4zHFbh7GRY4AbaY7jBqAqfERArrMBAAZUxNVbkEVFZAJBFcJhRAC6lJFYLcebQIrIBRTaXJhIrhUhLcfD5YLBbjtVFZTceZ5jceJRpkLVyaiLWDpJNFYKwaUIIrMSIKwaDhw6OVx50NFYKwZDZ6waOaCTBQjBGBZZw8CQi4ZBOR6EYeySEYQSCEaQSITDH6BvGIaKEWQSSEEbqQVVQgRYSKwLGUQgRCQKwTFUC4RYQKwSCTDAhEONQTwULAqcNCARWVLAhGMB55YPDhQqDKy4dFFhAMMLCzgFawZWbEI4AIGogAYFZtAFbgsMFTyyGVkBZOKr7gJazoA/AHI"))
   };
 
   // p100
