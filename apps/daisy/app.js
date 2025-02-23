@@ -229,20 +229,20 @@ function drawClock() {
     if (hh == 0) hh = 12;
   }
   hh = hh.toString().toString().padStart(2, '0');
-  var mm = date.getMinutes()
-  var p_steps;
+  var mm = date.getMinutes();
+  var ring_percent;
   switch (settings.ring) {
     case 'Minutes':
-      p_steps = Math.round(100*(mm/60));
+      ring_percent = Math.round((10*mm)/6);
       break;
     case 'Seconds':
-      p_steps = Math.round(100*(date.getSeconds()/60));
+      ring_percent = Math.round((10*date.getSeconds())/6);
       break;
     case 'Steps': 
-      p_steps = Math.round(100*(getSteps()/10000));
+      ring_percent = Math.round(100*(getSteps()/10000));
       break;
     case 'Battery': 
-      p_steps = E.getBattery();
+      ring_percent = E.getBattery();
       break;
   }
   mm = mm.toString().padStart(2, '0');
@@ -250,7 +250,7 @@ function drawClock() {
   g.reset();
   g.setColor(g.theme.bg);
   g.fillRect(0, 0, w, h);
-  g.drawImage(getGaugeImage(p_steps), 0, 0);
+  g.drawImage(getGaugeImage(ring_percent), 0, 0);
   setLargeFont();
 
   g.setColor(settings.fg);
