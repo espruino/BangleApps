@@ -2,6 +2,8 @@
     Bangle.loadWidgets();
     Bangle.drawWidgets();
 
+    let counter = 30;
+    
     function countDown() {
         counter--;
 
