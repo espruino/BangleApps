@@ -5,7 +5,7 @@
         return {
             text : strToken,
             // color: "#f00",
-            img : atob("GBiBAAAAAAAAAAAAAAAYAAA8AAB+AAD/AAAAAAAAAAAAAAAYAAAYAAQYIA4AcAYAYAA8AAB+AAD/AAH/gD///D///AAAAAAAAAAAAA==")
+            img : atob("MDCBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/AAAAAA//8AAAAB///AAAAB8A/gAAAAgAH4AAAwAAB8AAB4AAA+AADwA4APAADgA4APAAHgA4AHgADAf/ADwAAAf/gBwAAAf/wB4AAAcB4A4AAAcA4A4AAAcA4A4AYAcA4AcA8AcB4AcB+Af/wDdj/Af/4D/n/Af/8D/n/AcAcB/A4AcAOA+A4AcAOAcAcAcAOAAAcAcAAAAAcAcAAAAAeAf/AAAAOAf/AAAAPAf/ADAAHgA4AHgADwA4AHAADwA4APAAB8AAA+AAA+AAB8AAAfgAH4AAAH8A/gAAAD///AAAAA//8AAAAAD/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==")
         }
     }
 
@@ -20,7 +20,7 @@
 
     function hideClkInfo() {
         clearInterval(this.interval);
-        this.interval = undefined;
+        this.interval = null;
     }
 
     var coinInfoItems = {
@@ -29,7 +29,7 @@
         items: [
             {
                 name: "BTC",
-                get : retrieveClkInfo("BTC"),
+                get : () => retrieveClkInfo("BTC"),
                 show : showClkInfo,
                 hide : hideClkInfo
             },
