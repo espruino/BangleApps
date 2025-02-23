@@ -2,7 +2,9 @@
     const SETTINGS_FILE = "coin_info.settings.json";
 
     // Initialize with default settings...
-    let settings = {'tokens':'bitcoin', 'getRateMin':60}
+    // TODO: retrieve from upload-storage
+    const token_options = ['bitcoin', 'ethereum', 'tether'];
+    let settings = {'tokens':token_options, 'tokenSelected':['bitcoin'], 'getRateMin':60}
     // ...and overwrite them with any saved values
     // This way saved values are preserved if a new version adds more settings
     const storage = require('Storage');
@@ -12,26 +14,41 @@
         storage.write(SETTINGS_FILE, settings);
     }
 
-    var token_options = ['bitcoin', 'ethereum', 'tether'];
+    function createMultiSelectMenu() {
+        const menu = {
+            '': { 'title': 'Crpyto-Coin Info' },
+            '< Back': () => Bangle.showClock()
+        };
 
-    E.showMenu({
-        '': { 'title': 'Crpyto-Coin Info' },
-        '< Back': back,
-        'Traceable Tokens': {
-            value: 0 | theme_options.indexOf(settings.theme),
-            min: 0, max: theme_options.length - 1,
-            format: v => theme_options[v],
-            onchange: v => {
-                settings.theme = theme_options[v];
-                save();
-            }
-        },
-        'Req. Rate in Min': {
+        // Dynamic checkbox creation
+        settings.tokens.forEach((token, index) => {
+            menu[token] = {
+                value: settings.tokenSelected.includes(token),
+                onchange: v => {
+                    if (v) {
+                        settings.tokenSelected.push(token);
+                    } else {
+                        settings.tokenSelected = settings.tokenSelected.filter(f => f !== token);
+                    }
+                    save();
+                }
+            };
+        });
+
+        // update time
+        menu['Req. Rate in Min'] = {
             value: !!settings.getRateMin,
             onchange: v => {
                 settings.getRateMin = v;
                 save();
             }
         }
+
+        E.showMenu(menu);
+    }
+
+    Bangle.setUI({
+        mode: 'custom',
+        btn: createMultiSelectMenu
     });
 })
