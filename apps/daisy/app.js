@@ -224,14 +224,13 @@ function draw() {
 function drawClock() {
   var date = new Date();
   var hh = date.getHours();
-  if (settings.hr_12) {
-    hh = hh % 12;
-    if (hh == 0) hh = 12;
-  }
-  hh = hh.toString().toString().padStart(2, '0');
   var mm = date.getMinutes();
   var ring_percent;
   switch (settings.ring) {
+    case 'Hours':
+      let min_so_far = (hh * 60) + mm;
+      ring_percent = Math.round((10*min_so_far)/72);
+      break;
     case 'Minutes':
       ring_percent = Math.round((10*mm)/6);
       break;
@@ -245,6 +244,12 @@ function drawClock() {
       ring_percent = E.getBattery();
       break;
   }
+
+  if (settings.hr_12) {
+    hh = hh % 12;
+    if (hh == 0) hh = 12;
+  }
+  hh = hh.toString().padStart(2, '0');
   mm = mm.toString().padStart(2, '0');
 
   g.reset();
