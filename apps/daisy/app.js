@@ -313,9 +313,10 @@ Bangle.on('HRM', function(hrm) {
 // putting into 1 function like this, rather than individual variables
 // reduces ram usage from 70%-13%
 function getGaugeImage(p, type) {
-  const endsDontShow = ['Minutes', 'Seconds'];  // Don't show non-5% iincrements with these ring types
+  const endsDontShowList = ['Minutes', 'Seconds'];  // Don't show non-5% iincrements with these ring types
+  var endsDontShow = !endsDontShowList.includes(type);
   // p0
-  if (p < 2  || (p < 5 && endsDontShow.includes(type))) return {
+  if (p < 2  || (p < 5 && endsDontShow)) return {
     width : 176, height : 176, bpp : 2,
     transparent : -1,
     palette : pal1,
@@ -475,7 +476,7 @@ function getGaugeImage(p, type) {
   };
 
   // p95
-  if (p < 98  || (p < 100 && endsDontShow.includes(type))) return {
+  if (p < 98  || (p < 100 && endsDontShow)) return {
     width : 176, height : 176, bpp : 2,
     transparent : -1,
     palette : pal2,
