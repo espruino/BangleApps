@@ -1,6 +1,0 @@
-dist
-node_modules
-app-config.user.yaml
-src/app-config.ts
-
-.idea/
