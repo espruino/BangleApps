@@ -224,7 +224,10 @@ function draw() {
 function drawClock() {
   var date = new Date();
   var hh = date.getHours();
-  if (settings.hr_12) hh = hh % 12;
+  if (settings.hr_12) {
+    hh = hh % 12;
+    if (hh == 0) hh = 12;
+  }
   hh = hh.toString().toString().padStart(2, '0');
   var mm = date.getMinutes()
   var p_steps;
@@ -237,6 +240,9 @@ function drawClock() {
       break;
     case 'Steps': 
       p_steps = Math.round(100*(getSteps()/10000));
+      break;
+    case 'Battery': 
+      p_steps = E.getBattery();
       break;
   }
   mm = mm.toString().padStart(2, '0');
@@ -608,9 +614,9 @@ function buzzer(n) {
 // timeout used to update every minute
 var drawTimeout;
 
-// schedule a draw for the next minute or every 2 seconds
+// schedule a draw for the next minute or every 5 seconds
 function queueDraw() {
-  let delay = (settings.ring == 'Seconds') ? (2000 - (Date.now() % 2000)) : (60000 - (Date.now() % 60000));
+  let delay = (settings.ring == 'Seconds') ? (5000 - (Date.now() % 5000)) : (60000 - (Date.now() % 60000));
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
