@@ -3,8 +3,17 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
 </head>
 <body>
-<h3>Set Coinmarketcap API key for Crypto-Coin Info</h3>
-<p><input id="apikey" onkeyup="checkInput()"  style="width:90%; margin: 3px"></input><button id="upload" class="btn btn-primary">Save key</button></p>
+<h3>Settings for Crypto-Coin Info</h3>
+<p>Set Coinmarketcap API key and trackable tokens.</p>
+<p>
+    <label for="apikey">API Key</label><br>
+    <input id="apikey" onkeyup="checkInput()"  style="width:90%; margin: 3px"></input>
+
+    <label for="traceTokens">Traceable tokens. comma delimited</label><br>
+    <input id="traceTokens" onkeyup="checkInput()"  style="width:90%; margin: 3px"></input>
+    
+    <button id="upload" class="btn btn-primary">Save</button>
+</p>
 
 <h4>Where to get your personal API key?</h4>
 <p>Go to <a href="https://coinmarketcap.com/api/">https://coinmarketcap.com/api/</a> and sign up for a free account.<br>
@@ -33,12 +42,13 @@
                     settings = data;
                     console.log("Got settings", settings);
                     document.getElementById("apikey").value = settings.apikey;
-                    console.log("Loaded apikey from BangleJs.");
+                    document.getElementById("traceTokens").value = settings.traceTokens;
+                    console.log("Loaded settings from BangleJs.");
                     checkInput();
                 }
             });
         } catch(ex) {
-            console.log("(Warning) Could not load apikey from BangleJs.");
+            console.log("(Warning) Could not load settings from BangleJs.");
             console.log(ex);
         }
 
@@ -47,6 +57,7 @@
     document.getElementById("upload").addEventListener("click", function() {
         try {
             settings.apikey = document.getElementById("apikey").value;
+            settings.traceTokens = document.getElementById("traceTokens").value;
             Util.showModal("Saving...");
             Util.writeStorage("coin_info.cmc_key.json", JSON.stringify(settings), ()=>{
                 Util.hideModal();
