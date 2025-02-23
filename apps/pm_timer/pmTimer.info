@@ -1,6 +1,0 @@
-require("Storage").write("pmTimer.info",{
-  "id":"pmTimer",
-  "name":"PapaM Timer",
-  "src":"pmTimer.app.js",
-  "icon":"pmTimer.img"
-});
