@@ -6,9 +6,16 @@ const tt = require('tevtimer');
 
 // UI //
 
-ROW_IDS = ['row1', 'row2', 'row3'];
+// Length of time displaying timer view before moving timer to top of
+// timer list
+const MOVE_TO_TOP_TIMEOUT = 5000;
 
-FONT = {
+// Min number of pixels of movement to recognize a touchscreen drag/swipe
+const DRAG_THRESHOLD = 50;
+
+const ROW_IDS = ['row1', 'row2', 'row3'];
+
+const FONT = {
   'row1': {
     'start hh:mm:ss': '12x20',
     'current hh:mm:ss': '12x20',
@@ -64,7 +71,6 @@ class TimerView {
     this._initLayout();
     this.layout.clear();
     this.render();
-    tt.set_last_viewed_timer(this.timer);
 
     // Physical button handler
     this.listeners.button = setWatch(
@@ -72,6 +78,42 @@ class TimerView {
       BTN,
       {edge: 'falling', debounce: 50, repeat: true}
     );
+
+    let distanceX = null;
+    function dragHandler(ev) {
+      if (ev.b) {
+        if (distanceX === null) {
+          // Drag started
+          distanceX = ev.dx;
+        } else {
+          // Drag in progress
+          distanceX += ev.dx;
+        }
+      } else {
+        // Drag released
+        distanceX = null;
+      }
+      if (Math.abs(distanceX) > DRAG_THRESHOLD) {
+        // Horizontal scroll threshold reached
+        Bangle.buzz(50, 0.5);
+        // Switch UI view to next or previous timer in list based on
+        // sign of distanceX
+        let new_index = tt.TIMERS.indexOf(this.timer) + Math.sign(distanceX);
+        if (new_index < 0) {
+          new_index = tt.TIMERS.length - 1;
+        } else if (new_index >= tt.TIMERS.length) {
+          new_index = 0;
+        }
+        switch_UI(new TimerView(tt.TIMERS[new_index]));
+        distanceX = null;
+      }
+    }
+    this.listeners.drag = dragHandler.bind(this);
+    Bangle.on('drag', this.listeners.drag);
+
+    // Auto move-to-top on use handler
+    this.listeners.to_top_timeout = setTimeout(
+      tt.set_last_viewed_timer, MOVE_TO_TOP_TIMEOUT, this.timer);
   }
 
   stop() {
@@ -80,6 +122,8 @@ class TimerView {
       this.timer_timeout = null;
     }
     clearWatch(this.listeners.button);
+    Bangle.removeListener('drag', this.listeners.drag);
+    clearTimeout(this.listeners.to_top_timeout);
     Bangle.setUI();
   }
 
