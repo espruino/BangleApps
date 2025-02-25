@@ -1,4 +1,4 @@
-# GPS Compass App
+# Get Address App
 This app uses the GPS and compass capabilities of the Bangle.js 2 watch to display your current location and direction.
 
 The app uses the Nominatim API to reverse geocode your location and display the street and house number. It also uses the compass to display your current direction.
