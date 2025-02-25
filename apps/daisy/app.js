@@ -116,7 +116,6 @@ function updateSunRiseSunSet(now, lat, lon, sunLeftCalcs){
   // get today's sunlight times for lat/lon
   var times = SunCalc.getTimes(now, lat, lon);
   dateCopy = new Date(now.getTime());
-  yestTmrw = new Date(now.getTime());
 
   // format sunrise time from the Date object
   sunRise = extractTime(times.sunrise);
@@ -125,16 +124,16 @@ function updateSunRiseSunSet(now, lat, lon, sunLeftCalcs){
 
   let sunLeft = times.sunset - dateCopy;
   if (sunLeft <  0) {  // If it's already night
-    yestTmrw.setDate(yestTmrw.getDate() + 1);
-    let timesTmrw = SunCalc.getTimes(yestTmrw, lat, lon);
+    dateCopy.setDate(dateCopy.getDate() + 1);
+    let timesTmrw = SunCalc.getTimes(dateCopy, lat, lon);
     sunStart = times.sunset;
     sunFull = timesTmrw.sunrise - sunStart;
   }
   else {
     sunLeft = dateCopy - times.sunrise;
     if (sunLeft <  0) {  // If it's not morning yet.
-      yestTmrw.setDate(yestTmrw.getDate() - 1);
-      let timesYest = SunCalc.getTimes(yestTmrw, lat, lon);
+      dateCopy.setDate(dateCopy.getDate() - 1);
+      let timesYest = SunCalc.getTimes(dateCopy, lat, lon);
       sunStart = timesYest.sunset;
       sunFull = times.sunrise - sunStart;
     }
