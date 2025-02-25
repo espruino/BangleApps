@@ -20,6 +20,7 @@ Global Settings
 - `Buzz Count` - The number of buzzes before the watch goes silent, or "forever" to buzz until stopped.
 - `Buzz Interval` - The interval between one buzz and the next
 - `Default Alarm/Timer Pattern` - Default vibration pattern for newly created alarms/timers
+- `BTN1 to Stop` - If `Yes` a button press will register the same as pressing `Stop`.
 
 Internals / Library
 -------------------
