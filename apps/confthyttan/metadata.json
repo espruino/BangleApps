@@ -4,7 +4,7 @@
   "description": "A different default set of apps and configurations. Brings many quality of life improvements. Opinionated based on the creators taste. Read more below before installing.",
   "icon": "app.png",
   "type": "defaultconfig",
-  "tags": "system,configuration,config,anotherconfig,thyttan",
+  "tags": "system,configuration,config,anotherconfig,thyttan,defaultconfig",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "dependencies" : {
