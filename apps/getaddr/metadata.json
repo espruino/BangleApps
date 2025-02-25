@@ -1,6 +1,6 @@
 {
     "id": "getaddr",
-    "name": "Get Current Address",
+    "name": "Get Addr",
     "version": "0.01",
     "description": "An app that shows the address of the current location",
     "readme": "README.md",
