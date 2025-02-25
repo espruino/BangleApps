@@ -99,21 +99,52 @@ function loadLocation() {
 
 function extractTime(d){
   var h = d.getHours(), m = d.getMinutes();
+  if (settings.hr_12) {
+    h = h % 12;
+    if (h == 0) h = 12;
+  }
   return(("0"+h).substr(-2) + ":" + ("0"+m).substr(-2));
 }
 
 var sunRise = "00:00";
 var sunSet = "00:00";
 var drawCount = 0;
+var sunStart;
+var sunFull;
 
-function updateSunRiseSunSet(now, lat, lon, line){
+function updateSunRiseSunSet(now, lat, lon, sunLeftCalcs){
   // get today's sunlight times for lat/lon
-  var times = SunCalc.getTimes(new Date(), lat, lon);
+  var times = SunCalc.getTimes(now, lat, lon);
 
   // format sunrise time from the Date object
   sunRise = extractTime(times.sunrise);
   sunSet = extractTime(times.sunset);
+  if (!sunLeftCalcs) return;
+
+  let sunLeft = times.sunset - now;
+  if (sunLeft <  0) {  // If it's already night
+    let tmrw = now;
+    tmrw.setDate(tmrw.getDate() + 1);
+    let timesTmrw = SunCalc.getTimes(tmrw, lat, lon);
+    sunStart = times.sunset;
+    sunFull = timesTmrw.sunrise - sunStart;
+  }
+  else {
+    sunLeft = now - times.sunrise;
+    if (sunLeft <  0) {  // If it's not morning yet.
+      let yest = now;
+      yest.setDate(yest.getDate() - 1);
+      let timesYest = SunCalc.getTimes(yest, lat, lon);
+      sunStart = timesYest.sunset;
+      sunFull = times.sunrise - sunStart;
+    }
+    else {  // We're in the middle of the day
+      sunStart = times.sunrise;
+      sunFull = times.sunset - sunStart;
+    }
+  }
 }
+
 
 function batteryString(){
   let stringToInsert;
@@ -242,6 +273,9 @@ function drawClock() {
     case 'Battery': 
       ring_percent = E.getBattery();
       break;
+    case 'Sun': 
+      ring_percent = 100 * (date - sunStart) / sunFull;
+      break;
   }
 
   if (settings.hr_12) {
@@ -269,7 +303,7 @@ function drawClock() {
 
   // recalc sunrise / sunset every hour
   if (drawCount % 60 == 0)
-    updateSunRiseSunSet(new Date(), location.lat, location.lon);
+    updateSunRiseSunSet(new Date(), location.lat, location.lon, settings.ring == 'Sun');
   drawCount++;
 }
 
@@ -665,6 +699,7 @@ Bangle.setUI("clockupdown", btn=> {
 
 loadSettings();
 loadLocation();
+updateSunRiseSunSet(new Date(), location.lat, location.lon, true);
 
 g.clear();
 Bangle.loadWidgets();
