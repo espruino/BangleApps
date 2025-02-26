@@ -78,7 +78,7 @@ var onMessagesModified = function(type,msg) {
   }
   if (msg && msg.id=="nav" && msg.t=="modify" && active!="map")
     return; // don't show an updated nav message if we're just in the menu
-  showMessageRouter(msg, persist, "dependsOnActive");
+  showMessageOverview(msg&&msg.id, false);
 };
 Bangle.on("message", onMessagesModified);
 
@@ -107,13 +107,13 @@ function showMessageRouter(msg, persist, explicitDestnation) {
     return showMessageOverview(msg.id);
   }
   if ("scroller"===explicitDestnation) {
-    return showMessageScroller(msg);
+    return showMessagesScroller(msg);
   }
   if ("overview"===explicitDestnation) {
     return showMessageOverview(msg.id);
   }
   if ("dependsOnActive"===explicitDestnation) {
-    if ("scroller"===active) {return;}
+    if ("scroller"===active) {return showMessagesScroller(msg);} // reinit scroller with updated messages list.
     if ("list"===active) {return returnToMain();}
     if ("settings"===active || "overview"===active) {return;}
   }
@@ -267,32 +267,126 @@ function showMusicMessage(msg) {
   }, 400);
 }
 
-function showMessageScroller(msg) {
-  cancelReloadTimeout();
+function showMessagesScroller(msg) {
+  const MSG_IDX = msg ? MESSAGES.findIndex((m)=>m.id==msg.id) : undefined;
+
+  if (replying) { return; }
   active = "scroller";
+
+  const WU = 1!==process.env.HWVERSION ? require("widget_utils") : undefined;
+  WU&&WU.hide();
+  const APP_RECT = Bangle.appRect;
+
   var bodyFont = fontBig;
   g.setFont(bodyFont);
-  var lines = [];
-  if (msg.title) lines = g.wrapString(msg.title, g.getWidth()-10);
-  var titleCnt = lines.length;
-  if (titleCnt) lines.push(""); // add blank line after title
-  lines = lines.concat(g.wrapString(msg.body, g.getWidth()-10),["",/*LANG*/"< Back"]);
+  const FONT_HEIGHT = g.getFontHeight();
+  let initScroll;
+  var titleLines = [];
+  let allLines = [];
+  let firstTitleLinePerMsg = [];
+  for (let i=0 ; i<MESSAGES.length ; i++) {
+    if (MSG_IDX === i) {initScroll = allLines.length*FONT_HEIGHT;}
+    let msgIter = MESSAGES[i];
+
+    var lines = [];
+    const TITLE_STRING = msgIter.title||msgIter.sender||msgIter.subject||msgIter.src||/*LANG*/"No Title";
+    lines = g.wrapString(TITLE_STRING, APP_RECT.w-10);
+    firstTitleLinePerMsg.push(allLines.length);
+    for (let i=0; i<lines.length; i++) {
+      titleLines.push(i + allLines.length);
+    }
+    lines = lines.concat(g.wrapString(msgIter.body, APP_RECT.w-10),
+      ["-".repeat(12)]);
+    allLines = allLines.concat(lines);
+  }
+
+  if (allLines.length == 0) {
+    cancelReloadTimeout();
+    returnToClockIfEmpty();
+  }
+
+  let shownScrollIdxFirst = allLines.length;
+  let shownScrollIdxLast = 0;
+
   E.showScroller({
-    h : g.getFontHeight(), // height of each menu item in pixels
-    c : lines.length, // number of menu items
+    scroll : initScroll,
+    h : FONT_HEIGHT, // height of each menu item in pixels
+    c : allLines.length, // number of menu items
     // a function to draw a menu item
-    draw : function(idx, r) {
-      // FIXME: in 2v13 onwards, clearRect(r) will work fine. There's a bug in 2v12
-      g.setBgColor(idx<titleCnt ? g.theme.bg2 : g.theme.bg).
-        setColor(idx<titleCnt ? g.theme.fg2 : g.theme.fg).
-        clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
-      g.setFont(bodyFont).setFontAlign(0,-1).drawString(lines[idx], r.x+r.w/2, r.y);
-    }, select : function(idx) {
-      if (idx>=lines.length-2)
-        showMessageOverview(msg.id, true);
+    draw : function(scrollIdx, r) {"ram";
+      //print(scrollIdx)
+      g.setBgColor(titleLines.find(e=>e==scrollIdx)!==undefined ? g.theme.bg2 : g.theme.bg).
+        setColor(titleLines.find(e=>e==scrollIdx)!==undefined ? g.theme.fg2 : g.theme.fg).
+        clearRect(r);
+      g.setFont(bodyFont).setFontAlign(0,-1).drawString(allLines[scrollIdx], r.x+r.w/2, r.y);
+      if (scrollIdx<shownScrollIdxFirst) {shownScrollIdxFirst = scrollIdx;}
+      if (scrollIdx>shownScrollIdxLast) {shownScrollIdxLast = scrollIdx;}
     },
-    back : () => showMessageOverview(msg.id, true)
+    select : function(scrollIdx, touch) {
+      for (let i=firstTitleLinePerMsg.length-1; i>=0 ; i--) {
+        if (scrollIdx>=firstTitleLinePerMsg[i]) {
+          if (!touch || touch.type===0) {
+            WU&&WU.show();
+            delete titleLines, allLines;
+            //E.showScroller();
+            updateReadMessages();
+            setTimeout(()=>showMessageRouter(MESSAGES[i], true, "overview"),0);
+          }
+          break;
+        }
+      }
+    }
   });
+
+  // If Bangle.js 2 add an external select hw button handler.
+  if (2===process.env.HWVERSION) {
+    setWatch(()=>{
+      if ("scroller"!==active) {return;}
+      Bangle.emit("drag", {dy:0}); // Compatibility with `kineticscroll`, stopping the scroller so it doesn't continue scrolling when the `showMessageOverview` screen is loaded.
+      // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
+      setTimeout(()=>{
+        if (!persist) {return load();}
+        Bangle.emit("touch", 1, {x:APP_RECT.x2/2, y:APP_RECT.y2/2, type:0});
+      },0);
+    }, BTN);
+  }
+
+  function updateReadMessages() {
+    let shownMsgIdxFirst, shownMsgIdxLast;
+    const LINES_PER_SCREEN = APP_RECT.h/FONT_HEIGHT;
+    //print(firstTitleLinePerMsg)
+    //print(shownIdxFirst, shownIdxLast)
+
+    for (let i=0; i<firstTitleLinePerMsg.length-1 ; i++) {
+      const FIRST_LINE_OF_MSG = firstTitleLinePerMsg[i];
+      const LAST_LINE_OF_MSG = firstTitleLinePerMsg[i+1]-1 ?? allLines.length-1;
+
+      if (
+        shownScrollIdxFirst
+          <= FIRST_LINE_OF_MSG && FIRST_LINE_OF_MSG
+            < shownScrollIdxFirst+LINES_PER_SCREEN
+      ) {
+        shownMsgIdxFirst = i;
+      }
+
+      if (
+        shownScrollIdxLast-LINES_PER_SCREEN
+          < LAST_LINE_OF_MSG && LAST_LINE_OF_MSG
+            <= shownScrollIdxLast
+      ) {
+        shownMsgIdxLast = i;
+        //print(i)
+      }
+    }
+
+    //print(shownIdxFirst, shownIdxLast)
+    //print(shownMsgIdxFirst, shownMsgIdxLast)
+    //print(MESSAGES)
+    for (let i=shownMsgIdxFirst; i<shownMsgIdxLast+1; i++) {
+      MESSAGES[i].new = false;
+    }
+    //print(MESSAGES)
+  }
 }
 
 function showMessageSettings(msg) {
@@ -304,7 +398,7 @@ function showMessageSettings(msg) {
   };
 
   if (msg.id!="music")
-    menu[/*LANG*/"View Message"] = () => showMessageScroller(msg);
+    menu[/*LANG*/"View Message"] = () => showMessagesScroller(msg);
 
   if (msg.reply && reply) {
     menu[/*LANG*/"Reply"] = () => {
@@ -477,7 +571,7 @@ function showMessageOverview(msgid, persist) {
     ]},
     {type:"txt", font:bodyFont, label:body, fillx:1, filly:1, pad:2, cb:()=>{
       // allow tapping to show a larger version
-      showMessageScroller(msg);
+      showMessagesScroller(msg);
     } },
     {type:"h",fillx:1, c: footer}
   ]},{back:goBack});
@@ -523,8 +617,8 @@ function checkMessages(options) {
   // If we have a new message, show it
   if (!options.ignoreUnread && newMessages.length) {
     delete newMessages[0].show; // stop us getting stuck here if we're called a second time
-    showMessageOverview(newMessages[0].id, false);
-    // buzz after showMessage, so being busy during layout doesn't affect the buzz pattern
+    showMessagesScroller(newMessages[0]);
+    // buzz after showMessagesScroller, so being busy during scroller setup doesn't affect the buzz pattern
     if (globalThis.BUZZ_ON_NEW_MESSAGE) {
       // this is set if we entered the messages app by loading `messagegui.new.js`
       // ... but only buzz the first time we view a new message
