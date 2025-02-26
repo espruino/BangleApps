@@ -78,7 +78,7 @@ var onMessagesModified = function(type,msg) {
   }
   if (msg && msg.id=="nav" && msg.t=="modify" && active!="map")
     return; // don't show an updated nav message if we're just in the menu
-  showMessageOverview(msg&&msg.id, false);
+  showMessageRouter(msg, persist, "dependsOnActive");
 };
 Bangle.on("message", onMessagesModified);
 
@@ -86,6 +86,39 @@ function saveMessages() {
   require("messages").write(MESSAGES);
 }
 E.on("kill", saveMessages);
+
+function showMessageRouter(msg, persist, explicitDestnation) {
+  //explicitDestnation (undefined/"scroller"/"overview"/"dependsOnActive")
+
+  ////var active; // active screen (undefined/"list"/"music"/"map"/"overview"/"scroller"/"settings")
+  //if (active==undefined) { } else if (active=="list") ... //and so on.
+
+  if (persist) {cancelReloadTimeout();} else if (Bangle.isLocked()) {resetReloadTimeout();}
+
+  if (msg.id=="music") {
+    cancelReloadTimeout(); // don't auto-reload to clock now
+    return showMusicMessage(msg);
+  }
+  if (msg.id=="nav") {
+    cancelReloadTimeout(); // don't auto-reload to clock now
+    return showMapMessage(msg);
+  }
+  if (msg.id=="call") {
+    return showMessageOverview(msg.id);
+  }
+  if ("scroller"===explicitDestnation) {
+    return showMessageScroller(msg);
+  }
+  if ("overview"===explicitDestnation) {
+    return showMessageOverview(msg.id);
+  }
+  if ("dependsOnActive"===explicitDestnation) {
+    if ("scroller"===active) {return;}
+    if ("list"===active) {return returnToMain();}
+    if ("settings"===active || "overview"===active) {return;}
+  }
+  //if (false) {showMessageSettings(msg);}
+}
 
 function showMapMessage(msg) {
   active = "map";
@@ -552,7 +585,7 @@ function checkMessages(options) {
     },
     select : idx => {
       if (idx < MESSAGES.length)
-        showMessageOverview(MESSAGES[idx].id, true);
+        showMessageRouter(MESSAGES[idx], true, "overview");
     },
     back : () => load()
   });
