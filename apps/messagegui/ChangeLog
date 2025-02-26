@@ -113,3 +113,5 @@
 0.82: Stop buzzing when a message is removed (e.g. call answered)
 0.83: Add option to not open the first unread message
 0.84: Fix: Assign show message entry to the settings menu and not the message itself.
+0.85: Refactor to display a scroller with all messages loaded. 
+      Initial scroll position is at the chosen message.
