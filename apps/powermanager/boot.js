@@ -105,8 +105,8 @@
       }
     });
 
-    global.setTimeout = wrapDeferred(global.setTimeout, "t");
-    global.setInterval = wrapDeferred(global.setInterval, "i");
+    globalThis.setTimeout = wrapDeferred(globalThis.setTimeout, "t");
+    globalThis.setInterval = wrapDeferred(globalThis.setInterval, "i");
   }
 
   if (settings.warnEnabled){

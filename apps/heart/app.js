@@ -302,7 +302,7 @@ function graphRecord(n) {
   log("Finished rendering data");
   Bangle.buzz(200, 0.3);
   g.flip();
-  setWatch(stop, (global.BTN2!==undefined)?BTN2:BTN1, {edge:"falling", debounce:50, repeat:false});
+  setWatch(stop, (globalThis.BTN2!==undefined)?BTN2:BTN1, {edge:"falling", debounce:50, repeat:false});
   return;
 }
 

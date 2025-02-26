@@ -32,7 +32,7 @@ Bangle.on('accel',function(v) {
 });
 
 setWatch(_=>load(), BTN1);
-if (global.BTN2) {
+if (globalThis.BTN2) {
   setWatch(_=>load(), BTN2);
   setWatch(_=>load(), BTN3);
 }

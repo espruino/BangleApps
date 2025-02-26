@@ -65,7 +65,7 @@ function switchTheme(mode) {
     s.theme = newTheme;
     require("Storage").writeJSON("setting.json", s);
     // reload clocks with new theme, otherwise just wait for user to switch apps
-    if (Bangle.CLOCK) load(global.__FILE__);
+    if (Bangle.CLOCK) load(globalThis.__FILE__);
   }
 }
 /**
@@ -91,5 +91,5 @@ exports.setMode = function(mode) {
   ));
   exports.applyOptions(mode);
   if (typeof WIDGETS === "object" && "qmsched" in WIDGETS) WIDGETS["qmsched"].draw();
-  if (global.setAppQuietMode) setAppQuietMode(mode); // current app knows how to update itself
+  if (globalThis.setAppQuietMode) setAppQuietMode(mode); // current app knows how to update itself
 };

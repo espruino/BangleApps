@@ -56,7 +56,7 @@ exports = {
   // widget reload function
   widReload: function() {
     // abort if trigger object is not available
-    if (typeof (global.sleeplog || {}).trigger !== "object") return;
+    if (typeof (globalThis.sleeplog || {}).trigger !== "object") return;
 
     // read settings to calculate alarm range
     let settings = exports.getSettings();

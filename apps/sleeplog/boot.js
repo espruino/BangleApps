@@ -4,7 +4,7 @@
 // undefined = service stopped,  0 = unknown, 1 = no consecutive sleep, 2 = consecutive sleep
 
 // create global object with settings
-global.sleeplog = {
+globalThis.sleeplog = {
   conf: Object.assign({
     // main settings
     enabled: true, //   en-/disable completely
@@ -18,14 +18,14 @@ global.sleeplog = {
 };
 
 // check if service is enabled
-if (global.sleeplog.conf.enabled) {
+if (globalThis.sleeplog.conf.enabled) {
   // assign functions to global object
-  global.sleeplog = Object.assign({
+  globalThis.sleeplog = Object.assign({
     // define function to initialy start or restart the service
     start: function() {
       // add kill and health listener
-      E.on('kill', global.sleeplog.saveStatus);
-      Bangle.on('health', global.sleeplog.health);
+      E.on('kill', globalThis.sleeplog.saveStatus);
+      Bangle.on('health', globalThis.sleeplog.health);
 
       // restore saved status
       this.restoreStatus();
@@ -34,8 +34,8 @@ if (global.sleeplog.conf.enabled) {
     // define function to stop the service, it will be restarted on reload if enabled
     stop: function() {
       // remove all listeners
-      Bangle.removeListener('health', global.sleeplog.health);
-      E.removeListener('kill', global.sleeplog.saveStatus);
+      Bangle.removeListener('health', globalThis.sleeplog.health);
+      E.removeListener('kill', globalThis.sleeplog.saveStatus);
 
       // save active values
       this.saveStatus();
@@ -112,21 +112,21 @@ if (global.sleeplog.conf.enabled) {
       }
 
       // write restored values into global object
-      global.sleeplog = Object.assign(this, restore);
+      globalThis.sleeplog = Object.assign(this, restore);
     },
 
     // define function to save active values on a stop or kill event
     // - called by event listener: "this"-reference points to global
     saveStatus: function(force) {
       // check if global variable accessable
-      if (!global.sleeplog) return new Error("sleeplog: Can't save status, global object missing!");
+      if (!globalThis.sleeplog) return new Error("sleeplog: Can't save status, global object missing!");
 
       // check saveUpToDate is not set or forced
-      if (!global.sleeplog.info.saveUpToDate || force) {
+      if (!globalThis.sleeplog.info.saveUpToDate || force) {
         // save status, consecutive status and info timestamps to restore on reload
-        var save = [global.sleeplog.info.lastCheck, global.sleeplog.info.awakeSince, global.sleeplog.info.asleepSince];
+        var save = [globalThis.sleeplog.info.lastCheck, globalThis.sleeplog.info.awakeSince, globalThis.sleeplog.info.asleepSince];
         // add debuging status if active
-        if (global.sleeplog.debug) save.push(global.sleeplog.debug.writeUntil, global.sleeplog.debug.fileid);
+        if (globalThis.sleeplog.debug) save.push(globalThis.sleeplog.debug.writeUntil, globalThis.sleeplog.debug.fileid);
 
         // stringify entries
         save = "," + save.map((entry, index) => {
@@ -135,8 +135,8 @@ if (global.sleeplog.conf.enabled) {
         }).join(",") + "\n";
 
         // add present status if forced
-        if (force) save = (global.sleeplog.info.lastChange / 6E5) + "," +
-          global.sleeplog.status + "," + global.sleeplog.consecutive + "\n" + save;
+        if (force) save = (globalThis.sleeplog.info.lastChange / 6E5) + "," +
+          globalThis.sleeplog.status + "," + globalThis.sleeplog.consecutive + "\n" + save;
 
         // append saved data to StorageFile
         require("Storage").open("sleeplog.log", "a").write(save);
@@ -150,7 +150,7 @@ if (global.sleeplog.conf.enabled) {
     // - called by event listener: "this"-reference points to global
     health: function(data) {
       // check if global variable accessable
-      if (!global.sleeplog) return new Error("sleeplog: Can't process health event, global object missing!");
+      if (!globalThis.sleeplog) return new Error("sleeplog: Can't process health event, global object missing!");
 
       // check if movement is available
       if (!data.movement) return;
@@ -161,20 +161,20 @@ if (global.sleeplog.conf.enabled) {
       // add preliminary status depending on charging and movement thresholds
       // 1 = not worn, 2 = awake, 3 = light sleep, 4 = deep sleep
       data.status = Bangle.isCharging() ? 1 :
-        data.movement <= global.sleeplog.conf.deepTh ? 4 :
-        data.movement <= global.sleeplog.conf.lightTh ? 3 : 2;
+        data.movement <= globalThis.sleeplog.conf.deepTh ? 4 :
+        data.movement <= globalThis.sleeplog.conf.lightTh ? 3 : 2;
 
       // check if changing to deep sleep from non sleeping
-      if (data.status === 4 && global.sleeplog.status <= 2) {
-        global.sleeplog.checkIsWearing((isWearing, data) => {
+      if (data.status === 4 && globalThis.sleeplog.status <= 2) {
+        globalThis.sleeplog.checkIsWearing((isWearing, data) => {
           // correct status
           if (!isWearing) data.status = 1;
           // set status
-          global.sleeplog.setStatus(data);
+          globalThis.sleeplog.setStatus(data);
         }, data);
       } else {
         // set status
-        global.sleeplog.setStatus(data);
+        globalThis.sleeplog.setStatus(data);
       }
     },
 
@@ -357,11 +357,11 @@ if (global.sleeplog.conf.enabled) {
 
     // define trigger object
     trigger: {}
-  }, global.sleeplog);
+  }, globalThis.sleeplog);
 
   // initial starting
-  global.sleeplog.start();
+  globalThis.sleeplog.start();
 } else {
   // clear global object from ram
-  delete global.sleeplog;
+  delete globalThis.sleeplog;
 }

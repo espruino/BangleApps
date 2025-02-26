@@ -20,7 +20,7 @@ let timeoutAutoreset;
 const resetTimeoutAutoreset = (force)=>{
   if (timeoutAutoreset) clearTimeout(timeoutAutoreset);
   setTimeout(()=>{ // Short outer timeout to make sure we have time to leave clock face before checking `Bangle.CLOCK!=1`.
-    if (enabledForApp(global.__FILE__)) {
+    if (enabledForApp(globalThis.__FILE__)) {
       timeoutAutoreset = setTimeout(()=>{
         if (Bangle.CLOCK!=1) Bangle.showClock();
       }, settings.timeout*60*1000);

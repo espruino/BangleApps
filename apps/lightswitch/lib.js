@@ -6,7 +6,7 @@ exports = {
     // check for double tap and direction
     if (data.double) {
       // setup shortcut to this widget or load from storage
-      var w = global.WIDGETS && WIDGETS.lightswitch || Object.assign({
+      var w = globalThis.WIDGETS && WIDGETS.lightswitch || Object.assign({
         unlockSide: "",
         tapSide: "right",
         tapOn: "always",
@@ -31,7 +31,7 @@ exports = {
   // function to flash backlight
   flash: function(tOut) {
     // setup shortcut to this widget or load from storage
-    var w = global.WIDGETS && WIDGETS.lightswitch || Object.assign({
+    var w = globalThis.WIDGETS && WIDGETS.lightswitch || Object.assign({
       tOut: 3000,
       minFlash: 0.2,
       value: 1,
@@ -90,7 +90,7 @@ exports = {
   // refference to widget function or set backlight and write to storage if not skipped
   changeValue: function(value, skipWrite) {
     // check if widgets are loaded
-    if (global.WIDGETS) {
+    if (globalThis.WIDGETS) {
       // execute inside widget
       WIDGETS.lightswitch.changeValue(value, skipWrite);
     } else {

@@ -11,7 +11,7 @@
   "main": "main.cjs.js",
   "module": "main.js",
   "types": "main.d.ts",
-  "jsdelivr": "main.global.min.js",
+  "jsdelivr": "main.globalThis.min.js",
   "browserGlobal": "FullCalendarInteraction",
   "homepage": "https://fullcalendar.io/",
   "bugs": "https://fullcalendar.io/reporting-bugs",

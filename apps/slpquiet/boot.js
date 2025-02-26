@@ -1,8 +1,8 @@
 // first ensure that the sleeplog trigger object is available (sleeplog is enabled)
-if (typeof (global.sleeplog || {}).trigger === "object") {
+if (typeof (globalThis.sleeplog || {}).trigger === "object") {
   // then add your parameters with the function to call as object into the trigger object
 
-  global.sleeplog.trigger["quietMode"] = {
+  globalThis.sleeplog.trigger["quietMode"] = {
     onChange: true,   // false as default, if true call fn only on a status change
     from: 0,           // 0 as default, in ms, first time fn will be called
     //  to: 24*60*60*1000, // 24h as default, in ms, last time fn will be called

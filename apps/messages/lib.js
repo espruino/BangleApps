@@ -125,7 +125,7 @@ exports.openGUI = function(msg) {
  * @param {boolean} show
  */
 exports.toggleWidget = function(show) {
-  if (!global.WIDGETS || !WIDGETS["messages"]) return; // widget is missing!
+  if (!globalThis.WIDGETS || !WIDGETS["messages"]) return; // widget is missing!
   const method = WIDGETS["messages"][show ? "show" : "hide"];
   /* if (typeof(method)!=="function") return; // widget must always have show()+hide(), fail hard rather than hide problems */
   method.apply(WIDGETS["messages"]);

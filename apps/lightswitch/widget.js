@@ -250,7 +250,7 @@
       w.drawIcon(locked);
 
       // add touch listener to control the light depending on settings at first position
-      if (w.touchOn === "always" || !global.__FILE__ ||
+      if (w.touchOn === "always" || !globalThis.__FILE__ ||
         w.touchOn.includes(__FILE__) ||
         w.touchOn.includes(require("Storage").readJSON(__FILE__.replace("app.js", "info")).type))
         Bangle["#ontouch"] = [w.touchListener].concat(Bangle["#ontouch"]);

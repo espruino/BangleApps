@@ -14,7 +14,7 @@ const LightFont='Teletext5x9Ascii';
 const DataFont='7x11Numeric7Seg:2';
 var mode = 0;
 
-if (global.WIDGETS) {require("widget_utils").swipeOn();} // If `dsky_clock` was fast loaded into we seemingly need to hide the widgets before setting the layout so elements are not moved down.
+if (globalThis.WIDGETS) {require("widget_utils").swipeOn();} // If `dsky_clock` was fast loaded into we seemingly need to hide the widgets before setting the layout so elements are not moved down.
 
 var layout = new Layout(
   {type:"h", c:[

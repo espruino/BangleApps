@@ -2,7 +2,7 @@
 // The messages app overrides Bangle.messageListener
 // (placed in separate file, so we don't read this all at boot time)
 exports.messageListener = function(type, msg) {
-  if (msg.handled || (global.__FILE__ && __FILE__.startsWith("messagelist."))) return; // already handled/app open
+  if (msg.handled || (globalThis.__FILE__ && __FILE__.startsWith("messagelist."))) return; // already handled/app open
   // clean up, in case previous message didn't load the app after all
   if (exports.loadTimeout) clearTimeout(exports.loadTimeout);
   delete exports.loadTimeout;

@@ -25,7 +25,7 @@
     UP = -1, DOWN = 1;    // updown directions
   const Layout = require("Layout");
   const debug = function() {
-    if (global.DEBUG_MESSAGELIST) console.log.apply(console, ['messagelist:'].concat(arguments));
+    if (globalThis.DEBUG_MESSAGELIST) console.log.apply(console, ['messagelist:'].concat(arguments));
   }
 
   const settings = () => require("messagegui").settings();

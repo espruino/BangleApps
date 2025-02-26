@@ -63,7 +63,7 @@ function recenter() {
   redraw();
 }
 
-setWatch(recenter, global.BTN2?BTN2:BTN1, {repeat:true});
+setWatch(recenter, globalThis.BTN2?BTN2:BTN1, {repeat:true});
 
 var hasScrolled = false;
 Bangle.on('drag',e=>{

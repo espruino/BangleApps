@@ -118,7 +118,7 @@ function showData(save_file) {
     setWatch(function() {
         if (save_file) showSaveMenu(); // when select only plot, don't ask for save option
         else showMenu();
-    }, global.BTN2 ? BTN2 : BTN);
+    }, globalThis.BTN2 ? BTN2 : BTN);
 }
 
 function showBig(txt) {

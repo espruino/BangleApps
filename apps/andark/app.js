@@ -165,7 +165,7 @@ Bangle.setUI({
 if (settings.loadWidgets) {
   Bangle.loadWidgets();
   require("widget_utils").swipeOn();
-} else if (global.WIDGETS) require("widget_utils").hide();
+} else if (globalThis.WIDGETS) require("widget_utils").hide();
 
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower', updateState);

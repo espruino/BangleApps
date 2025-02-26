@@ -28,7 +28,7 @@
     // write to storage
     storage.writeJSON(filename, settings);
     // check if widgets are loaded
-    if (global.WIDGETS) {
+    if (globalThis.WIDGETS) {
       // setup shortcut to the widget
       var w = WIDGETS.lightswitch;
       // assign changes to widget

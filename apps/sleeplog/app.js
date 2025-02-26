@@ -245,13 +245,13 @@ function draw() {
   g.reset();
   var imgStr = "";
   // check which icon to set
-  if (!global.sleeplog || global.sleeplog.conf.enabled !== true) {
+  if (!globalThis.sleeplog || globalThis.sleeplog.conf.enabled !== true) {
     // set color and disabled service icon
     g.setColor(1, 0, 0);
     imgStr = "FBSBAOAAfwAP+AH3wD4+B8Hw+A+fAH/gA/wAH4AB+AA/wAf+APnwHw+D4Hx8A++AH/AA/gAH";
-  } else if (global.sleeplog.debug) {
+  } else if (globalThis.sleeplog.debug) {
     // set debugging icon
-    imgStr = typeof global.sleeplog.debug === "object" ?
+    imgStr = typeof globalThis.sleeplog.debug === "object" ?
       "FBSBAB/4AQDAF+4BfvAX74F+CBf+gX/oFJKBf+gUkoF/6BSSgX/oFJ6Bf+gX/oF/6BAAgf/4" : // file
       "FBSBAP//+f/V///4AAGAABkAAZgAGcABjgAYcAGDgBhwAY4AGcABmH+ZB/mAABgAAYAAH///"; // console
   }

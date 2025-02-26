@@ -252,7 +252,7 @@ function plotTrack(info) {
   g.drawString("Back",g.getWidth() - 10, g.getHeight()/2);
   setWatch(function() {
     viewTrack(info.fn, info);
-  }, global.BTN3||BTN1);
+  }, globalThis.BTN3||BTN1);
   Bangle.drawWidgets();
   g.flip();
 }
@@ -335,7 +335,7 @@ function plotGraph(info, style) {
   g.drawString("Back",g.getWidth() - 10, g.getHeight() - 40);
   setWatch(function() {
     viewTrack(info.fn, info);
-  }, global.BTN3||BTN1);
+  }, globalThis.BTN3||BTN1);
   g.flip();
 }
 

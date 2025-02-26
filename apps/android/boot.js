@@ -4,8 +4,8 @@
   let settings = Object.assign({rp:true,as:true,vibrate:".."},
     require("Storage").readJSON("android.settings.json",1)||{}
   );
-  let _GB = global.GB;
-  global.GB = e => {
+  let _GB = globalThis.GB;
+  globalThis.GB = e => {
     // feed a copy to other handlers if there were any
     if (_GB) setTimeout(_GB,0,Object.assign({},e));
     Bangle.emit("GB",e);

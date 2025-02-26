@@ -13,11 +13,11 @@
       options = mode;
     }
 
-    var currentFile = global.__FILE__ || "";
+    var currentFile = globalThis.__FILE__ || "";
 
-    if (global.BACK) delete global.BACK;
+    if (globalThis.BACK) delete globalThis.BACK;
     if (options && options.back && enabledForApp(currentFile)) {
-      global.BACK = options.back;
+      globalThis.BACK = options.back;
     }
     setUI(mode, cb);
   };
@@ -36,8 +36,8 @@
     // if it is a left to right swipe
     if (lr === 1) {
       // if we're in an app that has a back button, run the callback for it
-      if (global.BACK && countHandlers("swipe")<=settings.standardNumSwipeHandlers && countHandlers("drag")<=settings.standardNumDragHandlers) {
-        global.BACK();
+      if (globalThis.BACK && countHandlers("swipe")<=settings.standardNumSwipeHandlers && countHandlers("drag")<=settings.standardNumDragHandlers) {
+        globalThis.BACK();
         E.stopEventPropagation();
       }
     }

@@ -6,7 +6,7 @@ Bangle.setUI = (function(mode, cb) {
     if (!mode) throw new Error("Missing mode in setUI({...})");
   }
   var redraw = true;
-  if (global.WIDGETS && WIDGETS.back) {
+  if (globalThis.WIDGETS && WIDGETS.back) {
     redraw = false;
     WIDGETS.back.remove(mode && options.back);
   }
@@ -112,7 +112,7 @@ Bangle.setUI = (function(mode, cb) {
         delete WIDGETS.back;
         if (!noclear) Bangle.drawWidgets();
       }
-    }},global.WIDGETS);
+    }},globalThis.WIDGETS);
     if (redraw) Bangle.drawWidgets();
   }
 })

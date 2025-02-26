@@ -140,11 +140,11 @@
       "Title": /*LANG*/"Daylight Saving"
     },
     "< Back": () => {
-      if(writtenSettings && global._load){
+      if(writtenSettings && globalThis._load){
         // disable fastload to ensure settings are applied
         // when we exit the settings app
-        global.load = global._load;
-        delete global._load;
+        globalThis.load = globalThis._load;
+        delete globalThis._load;
       }
       back();
     },

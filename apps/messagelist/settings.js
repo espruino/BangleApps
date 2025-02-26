@@ -1,6 +1,6 @@
 (function(back) {
   let settings = require("messagegui").settings();
-  const inApp = (global.__FILE__ && __FILE__.startsWith("messagelist."));
+  const inApp = (globalThis.__FILE__ && __FILE__.startsWith("messagelist."));
 
   function updateSetting(setting, value) {
     settings[setting] = value;

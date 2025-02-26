@@ -600,7 +600,7 @@ function getImports() {
         return addHeapObject(ret);
     }, arguments) };
     imports.wbg.__wbg_global_ba75c50d1cf384f4 = function() { return handleError(function () {
-        const ret = global.global;
+        const ret = globalThis.global;
         return addHeapObject(ret);
     }, arguments) };
     imports.wbg.__wbindgen_is_undefined = function(arg0) {

@@ -3,7 +3,7 @@ var s = require("Storage").readJSON("setting.json",1)||{};
 /* If were being called from JS code in order to load the clock quickly (eg from a launcher)
 and the clock in question doesn't have widgets, force a normal 'load' as this will then
 reset everything and remove the widgets. */
-if (global.__FILE__ && !s.clockHasWidgets) {load();throw "Clock has no widgets, can't fast load";}
+if (globalThis.__FILE__ && !s.clockHasWidgets) {load();throw "Clock has no widgets, can't fast load";}
 // Otherwise continue to try and load the clock
 var _clkApp = require("Storage").read(s.clock);
 if (!_clkApp) {
@@ -24,6 +24,6 @@ if (!_clkApp) {
   }
 }
 delete s;
-if (!_clkApp) _clkApp=`E.showMessage("No Clock Found");setWatch(()=>{Bangle.showLauncher();}, global.BTN2||BTN, {repeat:false,edge:"falling"});`;
+if (!_clkApp) _clkApp=`E.showMessage("No Clock Found");setWatch(()=>{Bangle.showLauncher();}, globalThis.BTN2||BTN, {repeat:false,edge:"falling"});`;
 eval(_clkApp);
 delete _clkApp;

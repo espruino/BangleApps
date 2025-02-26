@@ -244,7 +244,7 @@ if (settings.withWidgets) {
   Bangle.loadWidgets();
   Bangle.drawWidgets();
   //console.log(WIDGETS);
-  if (global.WIDGETS) {
+  if (globalThis.WIDGETS) {
     let bottom = 0;
     for (var i in WIDGETS) {
       var w = WIDGETS[i];

@@ -550,8 +550,8 @@ const restoreHandlers = function(){
     }
   }
 
-  global.setWatch = origSetWatch;
-  global.clearWatch = origClearWatch;
+  globalThis.setWatch = origSetWatch;
+  globalThis.clearWatch = origClearWatch;
   Bangle.on = origOn;
   Bangle.prependListener = origPrependListener;
   Bangle.removeListener = origRemove;
@@ -599,8 +599,8 @@ const backupHandlers = function(){
   LOG("Backed up watches", backup.watches);
   clearWatch();
 
-  global.setWatch = backupSetWatch;
-  global.clearWatch = backupClearWatch;
+  globalThis.setWatch = backupSetWatch;
+  globalThis.clearWatch = backupClearWatch;
   Bangle.on = backupOn;
   Bangle.prependListener = backupPrependListener;
   Bangle.removeListener = backupRemove;

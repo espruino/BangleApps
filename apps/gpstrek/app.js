@@ -15,13 +15,13 @@ const SETTINGS = Object.assign(
 );
 
 let init = function(){
-  global.screen = 1;
-  global.drawTimeout = undefined;
-  global.lastDrawnScreen = 0;
-  global.firstDraw = true;
-  global.slices = [];
-  global.maxSlicePages = 1;
-  global.scheduleDraw = false;
+  globalThis.screen = 1;
+  globalThis.drawTimeout = undefined;
+  globalThis.lastDrawnScreen = 0;
+  globalThis.firstDraw = true;
+  globalThis.slices = [];
+  globalThis.maxSlicePages = 1;
+  globalThis.scheduleDraw = false;
 
   Bangle.loadWidgets();
   WIDGETS.gpstrek.start(false);
@@ -1272,8 +1272,8 @@ let switchMenu = function(){
 };
 
 let stopDrawing = function(){
-  if (global.drawTimeout) clearTimeout(global.drawTimeout);
-  global.drawTimeout = undefined;
+  if (globalThis.drawTimeout) clearTimeout(globalThis.drawTimeout);
+  globalThis.drawTimeout = undefined;
   scheduleDraw = false;
 };
 
@@ -1285,7 +1285,7 @@ let startDrawing = function(){
 };
 
 let drawInTimeout = function(){
-  if (global.drawTimeout) return;
+  if (globalThis.drawTimeout) return;
   drawTimeout = setTimeout(()=>{
     drawTimeout = undefined;
     draw();

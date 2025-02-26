@@ -97,7 +97,7 @@ require("Storage").readJSON = ((fname, skipExceptions) => {
 }) satisfies typeof oldRead;
 
 const oldLoad = load;
-global.load = (src: string) => {
+globalThis.load = (src: string) => {
 	if(src){
 		const cache = ensureCache();
 		const ent = cache[src] ||= {

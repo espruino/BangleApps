@@ -60,7 +60,7 @@
     '': { 'title': 'Run' },
     '< Back': back,
   };
-  if (global.WIDGETS&&WIDGETS["recorder"])
+  if (globalThis.WIDGETS&&WIDGETS["recorder"])
     menu[/*LANG*/"Record Run"] = {
       value : !!settings.record,
       onchange : v => {

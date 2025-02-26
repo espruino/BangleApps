@@ -174,8 +174,8 @@
     }
 
     // get thresholds
-    var deepTh = global.sleeplog ? global.sleeplog.conf.deepTh : defaults.deepTh;
-    var lightTh = global.sleeplog ? global.sleeplog.conf.lightTh : defaults.lightTh;
+    var deepTh = globalThis.sleeplog ? globalThis.sleeplog.conf.deepTh : defaults.deepTh;
+    var lightTh = globalThis.sleeplog ? globalThis.sleeplog.conf.lightTh : defaults.lightTh;
     // set lowest movement displayed
     var minMove = deepTh - 20;
     // set start point
@@ -238,10 +238,10 @@
   // show menu or promt to change debugging
   function showDebug() {
     // check if sleeplog is available
-    if (global.sleeplog) {
+    if (globalThis.sleeplog) {
       // get debug status, file and duration
-      var enabled = !!global.sleeplog.debug;
-      var file = typeof global.sleeplog.debug === "object";
+      var enabled = !!globalThis.sleeplog.debug;
+      var file = typeof globalThis.sleeplog.debug === "object";
       var duration = 0;
       // setup debugging menu
       var debugMenu = {
@@ -249,7 +249,7 @@
           title: /*LANG*/"Debugging",
           back: () => {
             // check if some value has changed
-            if (enabled !== !!global.sleeplog.debug || file !== (typeof global.sleeplog.debug === "object") || duration)
+            if (enabled !== !!globalThis.sleeplog.debug || file !== (typeof globalThis.sleeplog.debug === "object") || duration)
               require("sleeplog").setDebug(enabled, file ? duration || 12 : undefined);
             // redraw main menu
             showMain(7);
@@ -265,7 +265,7 @@
           onchange: v => file = v
         },
         /*LANG*/"Duration": {
-          value: file ? (global.sleeplog.debug.writeUntil - Date.now()) / 36E5 | 0 : 12,
+          value: file ? (globalThis.sleeplog.debug.writeUntil - Date.now()) / 36E5 | 0 : 12,
           min: 1,
           max: 96,
           wrap: true,
@@ -386,11 +386,11 @@
   // show main menu
   function showMain(selected) {
     // set debug image
-    var debugImg = !global.sleeplog ?
+    var debugImg = !globalThis.sleeplog ?
       "FBSBAOAAfwAP+AH3wD4+B8Hw+A+fAH/gA/wAH4AB+AA/wAf+APnwHw+D4Hx8A++AH/AA/gAH" : // X
-      typeof global.sleeplog.debug === "object" ?
+      typeof globalThis.sleeplog.debug === "object" ?
       "FBSBAB/4AQDAF+4BfvAX74F+CBf+gX/oFJKBf+gUkoF/6BSSgX/oFJ6Bf+gX/oF/6BAAgf/4" : // file
-      global.sleeplog.debug ?
+      globalThis.sleeplog.debug ?
       "FBSBAP//+f/V///4AAGAABkAAZgAGcABjgAYcAGDgBhwAY4AGcABmH+ZB/mAABgAAYAAH///" : // console
       0; // off
     debugImg = debugImg ? "\0" + atob(debugImg) : false;

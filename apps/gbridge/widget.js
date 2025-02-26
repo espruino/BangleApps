@@ -150,8 +150,8 @@
     }
   }
 
-  var _GB = global.GB;
-  global.GB = (event) => {
+  var _GB = globalThis.GB;
+  globalThis.GB = (event) => {
     switch (event.t) {
       case "notify":
         currentNot = prettifyNotificationEvent(event);

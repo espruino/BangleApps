@@ -29,7 +29,7 @@
   })(Bangle.load);
 
   let swipeHandler = (dir) => {
-    let currentFile = global.__FILE__||"default";
+    let currentFile = globalThis.__FILE__||"default";
     log("swipe:" + dir + " on app: " + currentFile);
 
     if (!inhibit && dir === 1 && !Bangle.CLOCK) {

@@ -22,7 +22,7 @@
     },
   };
 
-  if (global.WIDGETS && WIDGETS["recorder"]) {
+  if (globalThis.WIDGETS && WIDGETS["recorder"]) {
     appMenu[/*LANG*/"Record rides"] = {
       value : !!settings.record,
       onchange : v => {

@@ -1,5 +1,5 @@
 (function () {
-  if (global.MESSAGES) return; // don't load widget while in the app
+  if (globalThis.MESSAGES) return; // don't load widget while in the app
   let settings = require('Storage').readJSON("messages.settings.json", true) || {};
   const s = {
     flash: (settings.flash === undefined) ? true : !!settings.flash,

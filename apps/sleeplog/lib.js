@@ -3,7 +3,7 @@ exports = {
   // define en-/disable function, restarts the service to make changes take effect
   setEnabled: function(enable) {
     // stop if enabled
-    if (global.sleeplog && global.sleeplog.enabled) global.sleeplog.stop();
+    if (globalThis.sleeplog && globalThis.sleeplog.enabled) globalThis.sleeplog.stop();
 
     // define settings filename
     var settings = "sleeplog.json";
@@ -251,7 +251,7 @@ exports = {
     // set default date or correct date type if needed
     if (!date || !date.getDay) date = date ? new Date(date) : new Date();
     // set default ToD as set in sleeplog.conf or settings if available
-    if (ToD === undefined) ToD = (global.sleeplog && global.sleeplog.conf ? global.sleeplog.conf.breakToD :
+    if (ToD === undefined) ToD = (globalThis.sleeplog && globalThis.sleeplog.conf ? globalThis.sleeplog.conf.breakToD :
       (require("Storage").readJSON("sleeplog.json", true) || {}).breakToD) || 12;
     // calculate last break time and return
     return new Date(date.getFullYear(), date.getMonth(), date.getDate(), ToD);
@@ -270,28 +270,28 @@ exports = {
   //  duration in hours, generate csv log if set, max: 96h
   setDebug: function(enable, duration) {
     // check if global variable accessable
-    if (!global.sleeplog) return new Error("sleeplog: Can't set debugging, global object missing!");
+    if (!globalThis.sleeplog) return new Error("sleeplog: Can't set debugging, global object missing!");
 
     // check if nothing has to be changed
     if (!duration &&
-      (enable && global.sleeplog.debug === true) ||
-      (!enable && !global.sleeplog.debug)) return;
+      (enable && globalThis.sleeplog.debug === true) ||
+      (!enable && !globalThis.sleeplog.debug)) return;
 
     // check if en- or disable debugging
     if (enable) {
       // define debug object
-      global.sleeplog.debug = {};
+      globalThis.sleeplog.debug = {};
 
       // check if a file should be generated
       if (typeof duration === "number") {
         // check duration boundaries, 0 => 8
         duration = duration > 96 ? 96 : duration || 12;
         // calculate and set writeUntil in 10min steps
-        global.sleeplog.debug.writeUntil = ((Date.now() / 6E5 | 0) + duration * 6) * 6E5;
+        globalThis.sleeplog.debug.writeUntil = ((Date.now() / 6E5 | 0) + duration * 6) * 6E5;
         // set fileid to "{hours since 1970}"
-        global.sleeplog.debug.fileid = Date.now() / 36E5 | 0;
+        globalThis.sleeplog.debug.fileid = Date.now() / 36E5 | 0;
         // write csv header on empty file
-        var file = require("Storage").open("sleeplog_" + global.sleeplog.debug.fileid + ".csv", "a");
+        var file = require("Storage").open("sleeplog_" + globalThis.sleeplog.debug.fileid + ".csv", "a");
         if (!file.getLength()) file.write(
           "timestamp,movement,status,consecutive,asleepSince,awakeSince,bpm,bpmConfidence\n"
         );
@@ -299,21 +299,21 @@ exports = {
         file = undefined;
       } else {
         // set debug as active
-        global.sleeplog.debug = true;
+        globalThis.sleeplog.debug = true;
       }
     } else {
       // disable debugging
-      delete global.sleeplog.debug;
+      delete globalThis.sleeplog.debug;
     }
 
     // save status forced
-    global.sleeplog.saveStatus(true);
+    globalThis.sleeplog.saveStatus(true);
   },
 
   // define debugging function, called after logging if debug is set
   debug: function(data) {
     // check if global variable accessable and debug active
-    if (!global.sleeplog || !global.sleeplog.debug) return;
+    if (!globalThis.sleeplog || !globalThis.sleeplog.debug) return;
 
     // set functions to convert timestamps
     function localTime(timestamp) {
@@ -328,10 +328,10 @@ exports = {
     var console = "sleeplog: " +
       localTime(data.timestamp) + " > " +
       "movement: " + ("" + data.movement).padStart(4) + ", " +
-      "unknown    ,non consec.,consecutive".split(",")[global.sleeplog.consecutive] + " " +
+      "unknown    ,non consec.,consecutive".split(",")[globalThis.sleeplog.consecutive] + " " +
       "unknown,not worn,awake,light sleep,deep sleep".split(",")[data.status].padEnd(12) + ", " +
-      "asleep since: " + localTime(global.sleeplog.info.asleepSince) + ", " +
-      "awake since: " + localTime(global.sleeplog.info.awakeSince);
+      "asleep since: " + localTime(globalThis.sleeplog.info.asleepSince) + ", " +
+      "awake since: " + localTime(globalThis.sleeplog.info.awakeSince);
     // add bpm if set
     if (data.bpm) console += ", " +
       "bpm: " + ("" + data.bpm).padStart(3) + ", " +
@@ -340,24 +340,24 @@ exports = {
     print(console);
 
     // check if debug is set as object with a file id and it is not past writeUntil
-    if (typeof global.sleeplog.debug === "object" && global.sleeplog.debug.fileid &&
-      Date.now() < global.sleeplog.debug.writeUntil) {
+    if (typeof globalThis.sleeplog.debug === "object" && globalThis.sleeplog.debug.fileid &&
+      Date.now() < globalThis.sleeplog.debug.writeUntil) {
       // generate next csv line
       var csv = [
         officeTime(data.timestamp),
         data.movement,
         data.status,
-        global.sleeplog.consecutive,
-        global.sleeplog.info.asleepSince ? officeTime(global.sleeplog.info.asleepSince) : "",
-        global.sleeplog.info.awakeSince ? officeTime(global.sleeplog.info.awakeSince) : "",
+        globalThis.sleeplog.consecutive,
+        globalThis.sleeplog.info.asleepSince ? officeTime(globalThis.sleeplog.info.asleepSince) : "",
+        globalThis.sleeplog.info.awakeSince ? officeTime(globalThis.sleeplog.info.awakeSince) : "",
         data.bpm || "",
         data.bpmConfidence || ""
       ].join(",");
       // write next line to log if set
-      require("Storage").open("sleeplog_" + global.sleeplog.debug.fileid + ".csv", "a").write(csv + "\n");
+      require("Storage").open("sleeplog_" + globalThis.sleeplog.debug.fileid + ".csv", "a").write(csv + "\n");
     } else {
       // clear file setting in debug
-      global.sleeplog.debug = true;
+      globalThis.sleeplog.debug = true;
     }
 
   },

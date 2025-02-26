@@ -38,7 +38,7 @@
   let initPageAppZeroth = 0;
   let initPageAppLast = 3;
   if (settings.rememberPage) {
-    page = (global.dtlaunch&&global.dtlaunch.handlePagePersist()) ??
+    page = (globalThis.dtlaunch&&globalThis.dtlaunch.handlePagePersist()) ??
       (parseInt(s.read("dtlaunch.page")) ?? 0);
     initPageAppZeroth = page*4;
     initPageAppLast = Math.min(page*4+3, apps.length-1);
@@ -117,9 +117,9 @@
       apps[i].icon = s.read(apps[i].icon); // should just be a link to a memory area
   }
 
-  if (!global.dtlaunch) {
-    global.dtlaunch = {};
-    global.dtlaunch.handlePagePersist = function(page) {
+  if (!globalThis.dtlaunch) {
+    globalThis.dtlaunch = {};
+    globalThis.dtlaunch.handlePagePersist = function(page) {
       // Function for persisting the active page when leaving dtlaunch.
       if (page===undefined) {return this.page||0;}
 
@@ -132,7 +132,7 @@
 
       this.page = page;
     };
-    global.dtlaunch.handlePagePersist(page);
+    globalThis.dtlaunch.handlePagePersist(page);
   }
 
   let swipeListenerDt = function(dirLeftRight, dirUpDown){
@@ -171,7 +171,7 @@
               drawIcon(page,selected,false);
             } else {
               buzzLong();
-              global.dtlaunch.handlePagePersist(page);
+              globalThis.dtlaunch.handlePagePersist(page);
               load(apps[page*4+i].src);
             }
           }
@@ -194,7 +194,7 @@
     touch : touchListenerDt,
     remove : ()=>{
       if (timeoutToClock) {clearTimeout(timeoutToClock);}
-      global.dtlaunch.handlePagePersist(page);
+      globalThis.dtlaunch.handlePagePersist(page);
     }
   });
 

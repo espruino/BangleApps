@@ -164,7 +164,7 @@ function  exitApp() {
 }
 
 setWatch(_=>exitApp(), BTN1);
-if (global.BTN2) {
+if (globalThis.BTN2) {
   setWatch(_=>exitApp(), BTN2);
   setWatch(_=>exitApp(), BTN3);
 }

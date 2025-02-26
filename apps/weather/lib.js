@@ -42,8 +42,8 @@ function update(weatherEvent) {
   exports.emit("update", json.weather);
 }
 exports.update = update;
-const _GB = global.GB;
-global.GB = (event) => {
+const _GB = globalThis.GB;
+globalThis.GB = (event) => {
   if (event.t==="weather") update(event);
   if (_GB) setTimeout(_GB, 0, event);
 };

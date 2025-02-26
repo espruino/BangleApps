@@ -49,8 +49,8 @@ Bluetooth.on('data',function(d) {
 });
 Bluetooth.on('line',function(l) {
   if (l.startsWith('\x10')) l=l.slice(1);
-  if (l.startsWith('GB({') && l.endsWith('})') && global.GB)
-    try { global.GB(JSON.parse(l.slice(3,-1))); } catch(e) {}
+  if (l.startsWith('GB({') && l.endsWith('})') && globalThis.GB)
+    try { globalThis.GB(JSON.parse(l.slice(3,-1))); } catch(e) {}
 });\n`;
 } else {
   if (s.log>=2) boot += `_DBGLOG=require("Storage").open("log.txt","a");
@@ -73,7 +73,7 @@ if (s.log) boot += `E.on('errorFlag', function(errorFlags) {
   E.getErrorFlags();
 });\n`;// E.getErrorFlags() -> clear flags so we get called next time
 // stop users doing bad things!
-if (global.save) boot += `global.save = function() { throw new Error("You can't use save() on Bangle.js without overwriting the bootloader!"); }\n`;
+if (globalThis.save) boot += `globalThis.save = function() { throw new Error("You can't use save() on Bangle.js without overwriting the bootloader!"); }\n`;
 // Apply any settings-specific stuff
 if (s.options) boot+=`Bangle.setOptions(${E.toJS(s.options)});\n`;
 if (s.brightness && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightness});\n`;
@@ -85,7 +85,7 @@ if (s.bleprivacy || (s.passkey!==undefined && s.passkey.length==6)) {
 if (s.blename === false) boot+=`NRF.setAdvertising({},{showName:false});\n`;
 if (s.whitelist && !s.whitelist_disabled) boot+=`NRF.on('connect', function(addr) { if (!NRF.ignoreWhitelist) { let whitelist = (require('Storage').readJSON('setting.json',1)||{}).whitelist; if (NRF.resolveAddress !== undefined) { let resolvedAddr = NRF.resolveAddress(addr); if (resolvedAddr !== undefined) addr = resolvedAddr + " (resolved)"; } if (!whitelist.includes(addr)) NRF.disconnect(); }});\n`;
 if (s.rotate) boot+=`g.setRotation(${s.rotate&3},${s.rotate>>2});\n` // screen rotation
-boot+=`Bangle.loadWidgets=function(){if(!global.WIDGETS)eval(require("Storage").read(".widcache"))};\n`;
+boot+=`Bangle.loadWidgets=function(){if(!globalThis.WIDGETS)eval(require("Storage").read(".widcache"))};\n`;
 // ================================================== FIXING OLDER FIRMWARES
 // deleting stops us getting confused by our own decl. builtins can't be deleted
 // this is a polyfill without fastloading capability
@@ -175,7 +175,7 @@ require('Storage').write('.boot0',bootPost,fileOffset);
 delete boot,bootPost,bootFiles;
 // ================================================== .WIDCACHE for widgets
 let widgetFiles = require("Storage").list(/\.wid\.js$/);
-let widget = `// Made by bootupdate.js\nglobal.WIDGETS={};`, widgetPost = `var W=WIDGETS;WIDGETS={};
+let widget = `// Made by bootupdate.js\nglobalThis.WIDGETS={};`, widgetPost = `var W=WIDGETS;WIDGETS={};
 Object.keys(W).sort((a,b)=>(0|W[b].sortorder)-(0|W[a].sortorder)).forEach(k=>WIDGETS[k]=W[k]);`; // sort
 if (DEBUG) widget+="var _tm=Date.now();";
 outputFileComplete = (dst,fn) => {

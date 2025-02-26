@@ -15,7 +15,7 @@
 
     outerRadius = Math.min(CenterX,CenterY) * 0.9;
 
-    if (global.WIDGETS == null) { return; }
+    if (globalThis.WIDGETS == null) { return; }
 
     let WidgetLayouts = {
       tl:{ x:0,             y:0,               Direction:0 },
@@ -74,7 +74,7 @@
       br:{x:w-1, y:h-24, r:1, c:0}
     };
 
-    if (global.WIDGETS) {
+    if (globalThis.WIDGETS) {
       for (var wd of WIDGETS) {
         var p = pos[wd.area];
         if (!p) continue;

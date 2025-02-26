@@ -5,11 +5,11 @@
   const names = {};
   const settings = require("Storage").readJSON("wid_edit.json", 1) || {};
   if (!('custom' in settings)) settings.custom = {};
-  global._WIDGETS = global._WIDGETS || {};
+  globalThis._WIDGETS = globalThis._WIDGETS || {};
 
   let cleanup = false;
   for (const id in settings.custom) {
-    if (!(id in global.WIDGETS)) {
+    if (!(id in globalThis.WIDGETS)) {
       // widget which no longer exists
       cleanup = true;
       delete settings.custom[id];
@@ -24,12 +24,12 @@
    * Sort & redraw all widgets
    */
   function redrawWidgets() {
-    let W = global.WIDGETS;
-    global.WIDGETS = {};
+    let W = globalThis.WIDGETS;
+    globalThis.WIDGETS = {};
     Object.keys(W)
       .sort() // see comment in boot.js
       .sort((a, b) => (0|W[b].sortorder)-(0|W[a].sortorder))
-      .forEach(k => {global.WIDGETS[k] = W[k];});
+      .forEach(k => {globalThis.WIDGETS[k] = W[k];});
     Bangle.drawWidgets();
   }
 
@@ -52,9 +52,9 @@
   }
 
   function edit(id) {
-    let WIDGET = global.WIDGETS[id],
+    let WIDGET = globalThis.WIDGETS[id],
       def = {area: WIDGET.area, sortorder: WIDGET.sortorder|0}; // default values
-    Object.assign(def, global._WIDGETS[id]||{}); // defaults were saved in _WIDGETS
+    Object.assign(def, globalThis._WIDGETS[id]||{}); // defaults were saved in _WIDGETS
 
     settings.custom = settings.custom||{};
     let saved = settings.custom[id] || {},
@@ -112,8 +112,8 @@
       let _W = {};
       if (saved.area) _W.area = def.area;
       if ('sortorder' in saved) _W.sortorder = def.sortorder;
-      if (Object.keys(_W).length) global._WIDGETS[id] = _W;
-      else delete global._WIDGETS[id];
+      if (Object.keys(_W).length) globalThis._WIDGETS[id] = _W;
+      else delete globalThis._WIDGETS[id];
 
       // drawWidgets won't clear e.g. bottom bar if we just disabled the last bottom widget
       redrawWidgets();
@@ -166,24 +166,24 @@
       "": {
         "title": /*LANG*/"Widgets",
         back: ()=>{
-          if (!Object.keys(global._WIDGETS).length) delete global._WIDGETS; // no defaults to remember
+          if (!Object.keys(globalThis._WIDGETS).length) delete globalThis._WIDGETS; // no defaults to remember
           back();
         }},
     };
-    Object.keys(global.WIDGETS).forEach(id=>{
+    Object.keys(globalThis.WIDGETS).forEach(id=>{
       // mark customized widgets with asterisk
-      menu[name(id)+((id in global._WIDGETS) ? " *" : "")] = () => edit(id);
+      menu[name(id)+((id in globalThis._WIDGETS) ? " *" : "")] = () => edit(id);
     });
-    if (Object.keys(global._WIDGETS).length) { // only show reset if there is anything to reset
+    if (Object.keys(globalThis._WIDGETS).length) { // only show reset if there is anything to reset
       menu[/*LANG*/"Reset All"] = () => {
         E.showPrompt(/*LANG*/"Reset all widgets?").then(confirm => {
           if (confirm) {
             delete settings.custom;
             require("Storage").writeJSON("wid_edit.json", settings);
-            for(let id in global._WIDGETS) {
-              Object.assign(global.WIDGETS[id], global._WIDGETS[id]); // restore defaults
+            for(let id in globalThis._WIDGETS) {
+              Object.assign(globalThis.WIDGETS[id], globalThis._WIDGETS[id]); // restore defaults
             }
-            global._WIDGETS = {};
+            globalThis._WIDGETS = {};
             redrawWidgets();
           }
           mainMenu(); // reload with reset widgets

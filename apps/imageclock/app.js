@@ -802,11 +802,11 @@ s.pl = {};
         if (initialDrawTimeoutUnlocked) clearTimeout(initialDrawTimeoutUnlocked);
         if (initialDrawTimeoutLocked) clearTimeout(initialDrawTimeoutLocked);
 
-        for (let i of global.s.udi){
+        for (let i of globalThis.s.udi){
           //print("Clearing unlocked", i);
           clearInterval(i);
         }
-        for (let i of global.s.ldi){
+        for (let i of globalThis.s.ldi){
           //print("Clearing locked", i);
           clearInterval(i);
         }

@@ -336,8 +336,8 @@ function readWeather() {
   }
 }
 
-const _GB = global.GB;
-global.GB = (event) => {
+const _GB = globalThis.GB;
+globalThis.GB = (event) => {
   if (event.t==="weather") {
     data.temp = event.temp;
     data.code = event.code;

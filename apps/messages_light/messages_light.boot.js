@@ -1,7 +1,7 @@
 //OLD Code
 //override require to filter require("message")
-/*global.require_real=global.require;
-global.require = (_require => file => {
+/*globalThis.require_real=globalThis.require;
+globalThis.require = (_require => file => {
     if (file==="messages") file = "messagesProxy";    
     return _require(file);
 })(require);*/

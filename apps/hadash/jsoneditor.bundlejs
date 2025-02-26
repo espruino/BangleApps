@@ -2541,7 +2541,7 @@
     return iu.test(e20);
   }
   var iu = /^-?[0-9]+$/;
-  var au = "object" == ("undefined" == typeof global ? "undefined" : Ho(global)) && global && global.Object === Object && global;
+  var au = "object" == ("undefined" == typeof global ? "undefined" : Ho(global)) && global && globalThis.Object === Object && global;
   var su = "object" == ("undefined" == typeof self ? "undefined" : Ho(self)) && self && self.Object === Object && self;
   var cu = au || su || Function("return this")();
   var lu = cu.Symbol;

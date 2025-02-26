@@ -16,7 +16,7 @@ exports.listener = function(type, event) {
     event.handled=true;
 
 
-    if( Bangle.CLOCK || global.__FILE__ === undefined || global.__FILE__ === ".bootcde" ||  global.__FILE__.startsWith("messages_light."))
+    if( Bangle.CLOCK || globalThis.__FILE__ === undefined || globalThis.__FILE__ === ".bootcde" ||  globalThis.__FILE__.startsWith("messages_light."))
     {
         //se non ci sono app aperte ( clock oppure c'è  messages_light)
         //continuo con la visualizzazione dell messaggio

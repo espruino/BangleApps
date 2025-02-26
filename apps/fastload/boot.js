@@ -29,7 +29,7 @@ let appFastloadPossible = function(n){
   }
 
   // no widgets, no problem
-  if (!global.WIDGETS) return true;
+  if (!globalThis.WIDGETS) return true;
   let hash = s.hash(n);
   if (cache[n] && hash == cache[n].hash)
     return cache[n].fast;
@@ -41,24 +41,24 @@ let appFastloadPossible = function(n){
   return cache[n].fast;
 };
 
-global._load = load;
+globalThis._load = load;
 
 let slowload = function(n){
-  global._load(n);
+  globalThis._load(n);
 };
 
 let fastload = function(n){
   if (!n || appFastloadPossible(n)){
     // Bangle.load can call load, to prevent recursion this must be the system load
-    global.load = slowload;
+    globalThis.load = slowload;
     Bangle.load(n);
     // if fastloading worked, we need to set load back to this method
-    global.load = fastload;
+    globalThis.load = fastload;
   }
   else
     slowload(n);
 };
-global.load = fastload;
+globalThis.load = fastload;
 
 let appHistory, resetHistory, recordHistory;
 if (SETTINGS.useAppHistory){

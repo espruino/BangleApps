@@ -11,7 +11,7 @@ function loadWillReset() {
  */
 exports.listener = function(type, msg) {
   // Default handler: Launch the GUI for all unhandled messages (except music if disabled in settings)
-  if (msg.handled || (global.__FILE__ && __FILE__.startsWith('messagegui.'))) return; // already handled or app open
+  if (msg.handled || (globalThis.__FILE__ && __FILE__.startsWith('messagegui.'))) return; // already handled or app open
 
   // if no new messages now, make sure we don't load the messages app
   if (exports.messageTimeout && !msg.new && require("messages").status(msg) !== "new") {

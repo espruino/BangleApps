@@ -76,7 +76,7 @@
         return j;
     });
     var oldLoad = load;
-    global.load = function (src) {
+    globalThis.load = function (src) {
         if (src) {
             var cache_2 = ensureCache();
             var ent = cache_2[src] || (cache_2[src] = {

@@ -68,7 +68,7 @@ Bangle.drawWidgets = function () {
     br:{x:w-1, y:h-24, r:1, c:0}
   };
 
-  if (global.WIDGETS) {
+  if (globalThis.WIDGETS) {
     for (var wd of WIDGETS) {
       var p = pos[wd.area];
       if (!p) continue;

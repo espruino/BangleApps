@@ -121,7 +121,7 @@ Available through the App Loader when your watch is connected.
 ### Timestamps and Files
 ---
 
-1. externally visible/usable timestamps (in `global.sleeplog`) are formatted as Bangle timestamps:
+1. externally visible/usable timestamps (in `globalThis.sleeplog`) are formatted as Bangle timestamps:
   seconds since 1970-01-01 00:00 UTC
 2. internally used and logged (to `sleeplog.log (StorageFile)`) is within the highest available resolution:
   10 minutes since 1970-01-01 00:00 UTC (`Bangle / (10 * 60 * 1000)`)
@@ -186,7 +186,7 @@ Available through the App Loader when your watch is connected.
 With the following code it is possible to add functions that will be called every 10 minutes after new movement data when meeting the specified parameters on each :
 ```
 // first ensure that the sleeplog trigger object is available (sleeplog is enabled)
-if (typeof (global.sleeplog || {}).trigger === "object") {
+if (typeof (globalThis.sleeplog || {}).trigger === "object") {
   // then add your parameters with the function to call as object into the trigger object
   sleeplog.trigger["my app name"] = {
     onChange: false,   // false as default, if true call fn only on a status change
