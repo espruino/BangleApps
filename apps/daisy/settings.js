@@ -5,10 +5,10 @@
   let s = {'gy' : '#020',
            'fg' : '#0f0',
            'color': 'Green',
-           'check_idle' : true,
+           'check_idle' : false,
            'batt_hours' : false,
-           'hr_12' : false,
-           'ring' : 'Steps'};
+           'hr_12' : true,
+           'ring' : 'Sun'};
 
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
