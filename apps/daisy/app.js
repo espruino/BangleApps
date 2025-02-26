@@ -109,8 +109,9 @@ function extractTime(d){
 var sunRise = "00:00";
 var sunSet = "00:00";
 var drawCount = 0;
-var sunStart;
-var sunFull;
+var sunStart;  // In terms of ms
+var sunEnd;  // In terms of minutes
+var sunFull;  // In terms of ms
 
 function updateSunRiseSunSet(now, lat, lon, sunLeftCalcs){
   // get today's sunlight times for lat/lon
@@ -128,6 +129,7 @@ function updateSunRiseSunSet(now, lat, lon, sunLeftCalcs){
     let timesTmrw = SunCalc.getTimes(dateCopy, lat, lon);
     sunStart = times.sunset;
     sunFull = timesTmrw.sunrise - sunStart;
+    sunEnd = (60 * timesTmrw.sunrise.getHours()) + timesTmrw.sunrise.getMinutes();
   }
   else {
     sunLeft = dateCopy - times.sunrise;
@@ -136,10 +138,12 @@ function updateSunRiseSunSet(now, lat, lon, sunLeftCalcs){
       let timesYest = SunCalc.getTimes(dateCopy, lat, lon);
       sunStart = timesYest.sunset;
       sunFull = times.sunrise - sunStart;
+      sunEnd = (60 * times.sunrise.getHours()) + times.sunrise.getMinutes();
     }
     else {  // We're in the middle of the day
       sunStart = times.sunrise;
       sunFull = times.sunset - sunStart;
+      sunEnd = (60 * times.sunset.getHours()) + times.sunset.getMinutes();
     }
   }
 }
@@ -273,6 +277,11 @@ function drawClock() {
       ring_percent = E.getBattery();
       break;
     case 'Sun': 
+      if (((60 * date.getHours()) + date.getMinutes()) == sunEnd) {
+        // If we're exactly on the minute that the sun is setting/rising
+        ring_percent = 100;
+        break;
+      }
       ring_percent = 100 * (date - sunStart) / sunFull;
       if (ring_percent > 100) {  // If we're now past a sunrise of sunset
         updateSunRiseSunSet(date, location.lat, location.lon, true);
