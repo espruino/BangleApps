@@ -78,7 +78,7 @@ var onMessagesModified = function(type,msg) {
   }
   if (msg && msg.id=="nav" && msg.t=="modify" && active!="map")
     return; // don't show an updated nav message if we're just in the menu
-  showMessageOverview(msg&&msg.id, false);
+  showMessageRouter(msg, persist, "dependsOnActive");
 };
 Bangle.on("message", onMessagesModified);
 
@@ -455,9 +455,8 @@ function showMessageSettings(msg) {
   E.showMenu(menu);
 }
 
-function showMessageOverview(msgid, persist) {
+function showMessageOverview(msgid) {
   if (replying) { return; }
-  if(!persist) resetReloadTimeout();
   let idx = MESSAGES.findIndex(m=>m.id==msgid);
   var msg = MESSAGES[idx];
   if (updateLabelsInterval) {
@@ -465,14 +464,6 @@ function showMessageOverview(msgid, persist) {
     updateLabelsInterval=undefined;
   }
   if (!msg) return returnToClockIfEmpty(); // go home if no message found
-  if (msg.id=="music") {
-    cancelReloadTimeout(); // don't auto-reload to clock now
-    return showMusicMessage(msg);
-  }
-  if (msg.id=="nav") {
-    cancelReloadTimeout(); // don't auto-reload to clock now
-    return showMapMessage(msg);
-  }
   active = "overview";
   // Normal text message display
   var title=msg.title, titleFont = fontLarge, lines;
@@ -579,8 +570,8 @@ function showMessageOverview(msgid, persist) {
   Bangle.swipeHandler = (lr,ud) => {
     if (lr>0 && posHandler) posHandler();
     if (lr<0 && negHandler) negHandler();
-    if (ud>0 && idx<MESSAGES.length-1) showMessageOverview(MESSAGES[idx+1].id, true);
-    if (ud<0 && idx>0) showMessageOverview(MESSAGES[idx-1].id, true);
+    if (ud>0 && idx<MESSAGES.length-1) showMessageOverview(MESSAGES[idx+1].id);
+    if (ud<0 && idx>0) showMessageOverview(MESSAGES[idx-1].id);
   };
   Bangle.on("swipe", Bangle.swipeHandler);
   g.reset().clearRect(Bangle.appRect);
@@ -630,7 +621,7 @@ function checkMessages(options) {
   }
   // no new messages: show playing music? Only if we have playing music, or state=="show" (set by messagesmusic)
   if (options.openMusic && MESSAGES.some(m=>m.id=="music" && ((m.track && m.state=="play") || m.state=="show")))
-    return showMessageOverview('music', true);
+    return showMessageOverview('music');
   // no new messages - go to clock?
   if (options.clockIfAllRead && newMessages.length==0)
     return load();
