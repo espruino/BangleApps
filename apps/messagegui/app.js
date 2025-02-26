@@ -48,6 +48,8 @@ if (Graphics.prototype.setFontIntl) {
 var active; // active screen (undefined/"list"/"music"/"map"/"message"/"scroller"/"settings")
 var openMusic = false; // go back to music screen after we handle something else?
 var replying = false; // If we're replying to a message, don't interrupt
+var persist = "messagegui.new.js"!==globalThis.__FILE__;
+
 // hack for 2v10 firmware's lack of ':size' font handling
 try {
   g.setFont("6x8:2");
@@ -611,8 +613,14 @@ setTimeout(() => {
 }, 10); // if checkMessages wants to 'load', do that
 
 /* If the Bangle is unlocked by the user, treat that
-as a queue to stop repeated buzzing */
+as a queue to stop repeated buzzing.
+Also suspend the reload timeout while the watch is unlocked. */
 Bangle.on('lock',locked => {
-  if (!locked)
+  if (!locked) {
     require("messages").stopBuzz();
+    cancelReloadTimeout();
+  }
+  if (locked) {
+    if (!persist) {resetReloadTimeout();}
+  }
 });
