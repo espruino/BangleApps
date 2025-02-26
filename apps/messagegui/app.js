@@ -46,7 +46,7 @@ if (Graphics.prototype.setFontIntl) {
   fontVLarge = noScale?"Intl":"Intl:3";
 }
 
-var active; // active screen (undefined/"list"/"music"/"map"/"message"/"scroller"/"settings")
+var active; // active screen (undefined/"list"/"music"/"map"/"overview"/"scroller"/"settings")
 var openMusic = false; // go back to music screen after we handle something else?
 var replying = false; // If we're replying to a message, don't interrupt
 
@@ -78,7 +78,7 @@ var onMessagesModified = function(type,msg) {
   }
   if (msg && msg.id=="nav" && msg.t=="modify" && active!="map")
     return; // don't show an updated nav message if we're just in the menu
-  showMessage(msg&&msg.id, false);
+  showMessageOverview(msg&&msg.id, false);
 };
 Bangle.on("message", onMessagesModified);
 
@@ -256,9 +256,9 @@ function showMessageScroller(msg) {
       g.setFont(bodyFont).setFontAlign(0,-1).drawString(lines[idx], r.x+r.w/2, r.y);
     }, select : function(idx) {
       if (idx>=lines.length-2)
-        showMessage(msg.id, true);
+        showMessageOverview(msg.id, true);
     },
-    back : () => showMessage(msg.id, true)
+    back : () => showMessageOverview(msg.id, true)
   });
 }
 
@@ -266,7 +266,7 @@ function showMessageSettings(msg) {
   active = "settings";
   var menu = {"":{
       "title":/*LANG*/"Message",
-      back:() => showMessage(msg.id, true)
+      back:() => showMessageOverview(msg.id)
     },
   };
 
@@ -280,11 +280,11 @@ function showMessageSettings(msg) {
         .then(result => {
           Bluetooth.println(JSON.stringify(result));
           replying = false;
-          showMessage(msg.id);
+          showMessageOverview(msg.id);
         })
         .catch(() => {
           replying = false;
-          showMessage(msg.id);
+          showMessageOverview(msg.id);
         });
     };
   }
@@ -328,7 +328,7 @@ function showMessageSettings(msg) {
   E.showMenu(menu);
 }
 
-function showMessage(msgid, persist) {
+function showMessageOverview(msgid, persist) {
   if (replying) { return; }
   if(!persist) resetReloadTimeout();
   let idx = MESSAGES.findIndex(m=>m.id==msgid);
@@ -346,7 +346,7 @@ function showMessage(msgid, persist) {
     cancelReloadTimeout(); // don't auto-reload to clock now
     return showMapMessage(msg);
   }
-  active = "message";
+  active = "overview";
   // Normal text message display
   var title=msg.title, titleFont = fontLarge, lines;
   var body=msg.body, bodyFont = fontLarge;
@@ -414,7 +414,7 @@ function showMessage(msgid, persist) {
         .catch(() => {
           replying = false;
           layout.render();
-          showMessage(msg.id);
+          showMessageOverview(msg.id);
         });
     }; footer.push({type:"img",src:atob("QRABAAAAAAAH//+AAAAABgP//8AAAAADgf//4AAAAAHg4ABwAAAAAPh8APgAAAAAfj+B////////geHv///////hf+f///////GPw///////8cGBwAAAAAPx/gDgAAAAAfD/gHAAAAAA8DngOAAAAABwDHP8AAAAADACGf4AAAAAAAAM/w=="),col:"#0f0", cb:posHandler});
   }
@@ -452,8 +452,8 @@ function showMessage(msgid, persist) {
   Bangle.swipeHandler = (lr,ud) => {
     if (lr>0 && posHandler) posHandler();
     if (lr<0 && negHandler) negHandler();
-    if (ud>0 && idx<MESSAGES.length-1) showMessage(MESSAGES[idx+1].id, true);
-    if (ud<0 && idx>0) showMessage(MESSAGES[idx-1].id, true);
+    if (ud>0 && idx<MESSAGES.length-1) showMessageOverview(MESSAGES[idx+1].id, true);
+    if (ud<0 && idx>0) showMessageOverview(MESSAGES[idx-1].id, true);
   };
   Bangle.on("swipe", Bangle.swipeHandler);
   g.reset().clearRect(Bangle.appRect);
@@ -490,7 +490,7 @@ function checkMessages(options) {
   // If we have a new message, show it
   if (!options.ignoreUnread && newMessages.length) {
     delete newMessages[0].show; // stop us getting stuck here if we're called a second time
-    showMessage(newMessages[0].id, false);
+    showMessageOverview(newMessages[0].id, false);
     // buzz after showMessage, so being busy during layout doesn't affect the buzz pattern
     if (globalThis.BUZZ_ON_NEW_MESSAGE) {
       // this is set if we entered the messages app by loading `messagegui.new.js`
@@ -503,7 +503,7 @@ function checkMessages(options) {
   }
   // no new messages: show playing music? Only if we have playing music, or state=="show" (set by messagesmusic)
   if (options.openMusic && MESSAGES.some(m=>m.id=="music" && ((m.track && m.state=="play") || m.state=="show")))
-    return showMessage('music', true);
+    return showMessageOverview('music', true);
   // no new messages - go to clock?
   if (options.clockIfAllRead && newMessages.length==0)
     return load();
@@ -552,7 +552,7 @@ function checkMessages(options) {
     },
     select : idx => {
       if (idx < MESSAGES.length)
-        showMessage(MESSAGES[idx].id, true);
+        showMessageOverview(MESSAGES[idx].id, true);
     },
     back : () => load()
   });
