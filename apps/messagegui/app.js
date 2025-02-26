@@ -512,7 +512,7 @@ function checkMessages(options) {
   E.showScroller({
     h : 50,
     c : Math.max(MESSAGES.length,3), // workaround for 2v10.219 firmware (min 3 not needed for 2v11)
-    draw : function(idx, r) {"ram"
+    draw : function(idx, r) {"ram";
       var msg = MESSAGES[idx];
       if (msg && msg.new) g.setBgColor(g.theme.bgH).setColor(g.theme.fgH);
       else g.setBgColor(g.theme.bg).setColor(g.theme.fg);
@@ -558,7 +558,7 @@ function checkMessages(options) {
   });
 }
 
-function returnToCheckMessages(clock) {
+function returnToCheckMessages() {
   checkMessages({clockIfNoMsg:1,clockIfAllRead:1,ignoreUnread:settings.ignoreUnread,openMusic});
 }
 
