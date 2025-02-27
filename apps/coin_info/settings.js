@@ -44,7 +44,7 @@
 
         menu['SAVE'] = {
             cb: () => {
-                save();
+                storage.write(SETTINGS_FILE, settings);
                 Bangle.showClock();
             }
         }
