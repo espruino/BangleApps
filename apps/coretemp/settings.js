@@ -277,7 +277,6 @@
           let hrmState = hrmResponse[6]; // HRM State
           let retrievedAntId = (byte1) | (byte2 << 8) | (txType << 16);
           let stateText = ["Closed", "Searching", "Synchronized", "Reserved"][hrmState & 0x03];
-          MENU[retrievedAntId+" "+stateText];
           log(`HRM Status: ANT ID = ${retrievedAntId}, Tx-Type = ${txType}, State = ${stateText}`);
           E.showAlert(`HRM Status\nANT ID = ${retrievedAntId}\nState = ${stateText}`).then(() => E.showMenu(HRM_MENU()));
           if (stateText === "Synchronized") {
