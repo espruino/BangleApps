@@ -112,7 +112,6 @@ var drawCount = 0;
 var sunStart;  // In terms of ms
 var sunEnd;  // In terms of minutes
 var sunFull;  // In terms of ms
-var isDaytime = true;
 
 function getMinutesFromDate(date) {
   return (60 * date.getHours()) + date.getMinutes();
@@ -132,7 +131,6 @@ function updateSunRiseSunSet(now, lat, lon, sunLeftCalcs){
   if (sunLeft <  0) {  // If it's already night
     dateCopy.setDate(dateCopy.getDate() + 1);
     let timesTmrw = SunCalc.getTimes(dateCopy, lat, lon);
-    isDaytime = false;
     sunStart = times.sunset;
     sunFull = timesTmrw.sunrise - sunStart;
     sunEnd = getMinutesFromDate(timesTmrw.sunrise);
@@ -142,13 +140,11 @@ function updateSunRiseSunSet(now, lat, lon, sunLeftCalcs){
     if (sunLeft <  0) {  // If it's not morning yet.
       dateCopy.setDate(dateCopy.getDate() - 1);
       let timesYest = SunCalc.getTimes(dateCopy, lat, lon);
-      isDaytime = false;
       sunStart = timesYest.sunset;
       sunFull = times.sunrise - sunStart;
       sunEnd = getMinutesFromDate(times.sunrise);
     }
     else {  // We're in the middle of the day
-      isDaytime = true;
       sunStart = times.sunrise;
       sunFull = times.sunset - sunStart;
       sunEnd = getMinutesFromDate(times.sunset);
@@ -268,7 +264,6 @@ function drawClock() {
   var hh = date.getHours();
   var mm = date.getMinutes();
   var ring_percent;
-  var invertRing = false;
   switch (settings.ring) {
     case 'Hours':
       ring_percent = Math.round((10*(((hh % 12) * 60) + mm))/72);
@@ -293,7 +288,6 @@ function drawClock() {
       }
       // If we're exactly on the minute that the sun is setting/rising 
       if (getMinutesFromDate(date) == sunEnd) ring_percent = 100;
-      invertRing = !isDaytime;
       break;
   }
 
@@ -307,7 +301,7 @@ function drawClock() {
   g.reset();
   g.setColor(g.theme.bg);
   g.fillRect(0, 0, w, h);
-  g.drawImage(getGaugeImage(ring_percent, settings.ring, invertRing), 0, 0);
+  g.drawImage(getGaugeImage(ring_percent, settings.ring, false), 0, 0);
   setLargeFont();
 
   g.setColor(settings.fg);
