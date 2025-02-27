@@ -2,7 +2,7 @@
     const SETTINGS_FILE = "coin_info.settings.json";
     const storage = require('Storage');
 
-    // Default settings with sorted tokens
+    // Default settings with sorted tokens and load settings
     let settings = Object.assign({
         // TODO: MZw - retrieve from upload-storage
         tokens: ['bitcoin', 'ethereum', 'tether'],
@@ -25,9 +25,12 @@
             menu[token] = {
                 value: settings.tokenSelected.includes(token),
                 onchange: v => {
-                    settings.tokenSelected = v
-                        ? [...new Set([...settings.tokenSelected, token])] // Prevent duplicates
-                        : settings.tokenSelected.filter(t => t !== token);
+                    if (v) {
+                        settings.tokenSelected.push(token);
+                    } else {
+                        settings.tokenSelected = settings.tokenSelected.filter(f => f !== token);
+                    }
+                    save();
                 }
             };
         });
@@ -39,18 +42,12 @@
             max: 1440,
             onchange: v => {
                 settings.getRateMin = v;
+                save();
             }
         };
-
-        menu['SAVE'] = {
-            cb: () => {
-                storage.write(SETTINGS_FILE, settings);
-                Bangle.showClock();
-            }
-        }
 
         return menu;
     }
 
     E.showMenu(createMenu());
-})
+})(load)
