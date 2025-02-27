@@ -236,7 +236,7 @@
         return Promise.all(promises).then(() => hrmFound);
       })
       .then(allHRMs => {
-        log("✅ Retrieved all paired HRMs:", allHRMs);
+        log("Retrieved all paired HRMs:", allHRMs);
         return  // Modified start scanning command
       })
   }
@@ -258,17 +258,24 @@
         return Promise.reject(error);
       });
   }
+
   function scanUntilSynchronized(maxRetries, delay) {
     let attempts = 0;
-
     function checkHRMState() {
+      let MENU = {
+        '': { 'title': 'SYNC HRM STATUS' },
+        '< Back': back,
+      }
       if (attempts >= maxRetries) {
         log("Max scan attempts reached. HRM did not synchronize.");
+        E.showPrompt("Max scan attempts reached. HRM did not synchronize.", { title: "HRM Sync Error" }).then((r) => {
+          if(r){
+            E.showMenu(HRM_MENU());
+          }
+        });
         return;
       }
-
       log(`Attempt ${attempts + 1}/${maxRetries}: Checking HRM state...`);
-
       writeToControlPoint(0x05, [0]) // Check paired HRM state
         .then(hrmResponse => {
           log("Sent OpCode: 0x05, response: ", hrmResponse);
@@ -278,12 +285,10 @@
           let hrmState = hrmResponse[6]; // HRM State
           let retrievedAntId = (byte1) | (byte2 << 8) | (txType << 16);
           let stateText = ["Closed", "Searching", "Synchronized", "Reserved"][hrmState & 0x03];
+          MENU[retrievedAntId+" "+stateText];
           log(`HRM Status: ANT ID = ${retrievedAntId}, Tx-Type = ${txType}, State = ${stateText}`);
-          if (stateText === "Synchronized") {
-            log(`HRM ${retrievedAntId} is now synchronized!`);
-          } else {
+          if (stateText !== "Synchronized") {
             log(`HRM ${retrievedAntId} is not yet synchronized. Scanning again...`);
-
             // Start scan again
             writeToControlPoint(0x0D)
               .then(() => writeToControlPoint(0x0A, [0xFF]))
@@ -389,7 +394,6 @@
         },
       }
     };
-
     if (settings.btname || settings.btid && CORECONNECTED) {
       let name = "Clear " + (settings.btname || settings.btid);
       mainmenu[name] = function () {
@@ -435,7 +439,14 @@
     }
     if (settings.btname) {
       menu['ANT+ Status'] = function () { scanUntilSynchronized(10, 3000); },
-        menu['Clear ANT+'] = function () { clearPairedHRM_ANT(); }
+      menu['Clear ANT+'] = function () {
+        E.showPrompt("Clear ANT+ HRs?", { title: "CLear ANT+" }).then((r) => {
+          if (r) {
+           clearPairedHRM_ANT();
+          }
+          E.showMenu(HRM_MENU());
+        });
+      }
     }
     return menu;
   }
