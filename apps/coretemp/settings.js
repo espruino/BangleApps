@@ -403,11 +403,11 @@
           E.showMenu(buildMainMenu());
         });
       };
-    } else {
-      mainmenu["BLE Scan"] = () => createMenuFromScan();
+      mainmenu['HRM Setting'] = function () { E.showMenu(HRM_MENU()); };
+    }else{
+      mainmenu['Scan for CORE'] = function () {ScanForCORESensor();};
     }
-    mainmenu.HRM = function () { E.showMenu(HRM_MENU); };
-    mainmenu.Debug = function () { E.showMenu(submenu_debug); };
+    mainmenu['Debug'] = function () { E.showMenu(submenu_debug); };
     return mainmenu;
   }
   let submenu_debug = {
@@ -429,7 +429,7 @@
 
   function HRM_MENU() {
     let menu = {
-      '': { 'title': 'CORE: ANT+ HR' },
+      '': { 'title': 'CORE: HR' },
       '< Back': function () { E.showMenu(buildMainMenu()); },
       'Scan for ANT+': function () { scanHRM_ANT(); }
     }
@@ -437,10 +437,10 @@
       menu['ANT+ Status'] = function () { scanUntilSynchronized(10, 3000); },
         menu['Clear ANT+'] = function () { clearPairedHRM_ANT(); }
     }
-    E.showMenu(menu);
+    return menu;
   }
 
-  function createMenuFromScan() {
+  function ScanForCORESensor() {
     E.showMenu();
     E.showMessage("Scanning for 5 seconds");
     let submenu_scan = {
@@ -499,7 +499,6 @@
       let count = 0;
       const successHandler = () => {
         E.showMenu(buildMainMenu());
-        scanHRM_ANT();
       };
       const errorHandler = (e) => {
         count++;
