@@ -50,4 +50,4 @@
     }
 
     E.showMenu(createMenu());
-})(load)
+})
