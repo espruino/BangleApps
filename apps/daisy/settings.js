@@ -27,14 +27,14 @@
   var color_options = ['Green','Orange','Cyan','Purple','Red','Blue'];
   var fg_code = ['#0f0','#ff0','#0ff','#f0f','#f00','#00f'];
   var gy_code = ['#020','#220','#022','#202','#200','#002'];
-  var ring_options = ['Hours', 'Minutes', 'Seconds', 'Steps', 'Battery'];
+  var ring_options = ['Hours', 'Minutes', 'Seconds', 'Steps', 'Battery', 'Sun'];
   
   E.showMenu({
     '': { 'title': 'Daisy Clock' },
     '< Back': back,
     'Colour': {
       value: 0 | color_options.indexOf(s.color),
-      min: 0, max: 5,
+      min: 0, max: color_options.length - 1,
       format: v => color_options[v],
       onchange: v => {
         s.color = color_options[v];
@@ -66,7 +66,7 @@
     },
     'Ring Display': {
       value: 0 | ring_options.indexOf(s.ring),
-      min: 0, max: 4,
+      min: 0, max: ring_options.length - 1,
       format: v => ring_options[v],
       onchange: v => {
         s.ring = ring_options[v];
