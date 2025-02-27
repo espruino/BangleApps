@@ -28,7 +28,6 @@
                     settings.tokenSelected = v
                         ? [...new Set([...settings.tokenSelected, token])] // Prevent duplicates
                         : settings.tokenSelected.filter(t => t !== token);
-                    save();
                 }
             };
         });
@@ -40,9 +39,15 @@
             max: 1440,
             onchange: v => {
                 settings.getRateMin = v;
-                save();
             }
         };
+
+        menu['SAVE'] = {
+            cb: () => {
+                save();
+                Bangle.showClock();
+            }
+        }
 
         return menu;
     }

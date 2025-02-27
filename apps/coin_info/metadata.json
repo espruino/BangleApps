@@ -1,7 +1,7 @@
 { "id": "coin_info",
   "name": "Crypto-Coins Info",
   "shortName":"Coins Info",
-  "version": "0.03.3",
+  "version": "0.03.4",
   "description": "Crypto-Coins Infos with the help of the Coinmarketcap API",
   "icon": "app.png",
   "tags": "clkinfo",
