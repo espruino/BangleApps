@@ -40,6 +40,6 @@
 
     return {
         name: "CoinInfo",
-        items: createClkInfoItems
+        items: () => createClkInfoItems()
     };
 })
