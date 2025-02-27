@@ -11,7 +11,7 @@ exports.enable = () => {
 
   let gatt;
   let device;
-  let batteryCharacteristic = null;
+  //let batteryCharacteristic = null;
 
 
   //From BTHRM to call if connected or not:
