@@ -262,17 +262,9 @@
   function scanUntilSynchronized(maxRetries, delay) {
     let attempts = 0;
     function checkHRMState() {
-      let MENU = {
-        '': { 'title': 'SYNC HRM STATUS' },
-        '< Back': function () { E.showMenu(HRM_MENU()); },
-      }
       if (attempts >= maxRetries) {
         log("Max scan attempts reached. HRM did not synchronize.");
-        E.showPrompt("Max scan attempts reached. HRM did not synchronize.", { title: "HRM Sync Error" }).then((r) => {
-          if(r){
-            E.showMenu(HRM_MENU());
-          }
-        });
+        E.showAlert("Max scan attempts reached. HRM did not synchronize.").then(() => E.showMenu(HRM_MENU()));
         return;
       }
       log(`Attempt ${attempts + 1}/${maxRetries}: Checking HRM state...`);
@@ -287,7 +279,10 @@
           let stateText = ["Closed", "Searching", "Synchronized", "Reserved"][hrmState & 0x03];
           MENU[retrievedAntId+" "+stateText];
           log(`HRM Status: ANT ID = ${retrievedAntId}, Tx-Type = ${txType}, State = ${stateText}`);
-          if (stateText !== "Synchronized") {
+          E.showAlert(`HRM Status\nANT ID = ${retrievedAntId}\nState = ${stateText}`).then(() => E.showMenu(HRM_MENU()));
+          if (stateText === "Synchronized") {
+            return;
+          }else{
             log(`HRM ${retrievedAntId} is not yet synchronized. Scanning again...`);
             // Start scan again
             writeToControlPoint(0x0D)
@@ -304,7 +299,6 @@
         .catch(error => {
           log("Error checking HRM state:", error);
         });
-        E.showMenu(MENU);
     }
 
     log("Starting scan to synchronize HRM...");
@@ -376,7 +370,7 @@
             });
             E.showMenu(submenu_scan);
           } else {
-            E.showMessage("No ANT+ HRM found.")
+            E.showAlert("No ANT+ HRM found.").then(() => E.showMenu(HRM_MENU()));
           }
         });
       })
