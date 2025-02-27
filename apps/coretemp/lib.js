@@ -87,7 +87,7 @@ exports.enable = () => {
   }
 
   var mySensor = new CoreSensor();
-
+  /*
   function setupBatteryRead(gatt) {
     gatt.getPrimaryService("180f")
       .then(s => s.getCharacteristic("2a19"))
@@ -106,6 +106,7 @@ exports.enable = () => {
       log("Battery characteristic not ready yet.");
     }
   }
+  */
   function initCORESensor(){
     if(!settings.btname){
       log("CORESensor not paired, quitting");
