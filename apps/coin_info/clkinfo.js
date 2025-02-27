@@ -1,4 +1,6 @@
 (function() {
+    const SETTINGS_FILE = "coin_info.settings.json";
+    var settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
 
     function retrieveClkInfo(strToken) {
         // TODO: do something useful here -> http request to CMC
@@ -25,15 +27,13 @@
 
     var coinInfoItems = {
         name: "CoinInfo",
-        // TODO: get maybe from settings
-        items: [
-            {
-                name: "BTC",
-                get : () => retrieveClkInfo("BTC"),
-                show : showClkInfo,
-                hide : hideClkInfo
-            },
-        ]
+        items: settings.tokenSelected.sort().map(token => {
+            return { name : token,
+                get : () => retrieveClkInfo(token),
+                show : showClkInfo(),
+                hide : hideClkInfo(),
+            }
+        })
     };
 
     return coinInfoItems;
