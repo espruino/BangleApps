@@ -159,7 +159,7 @@
     log("Requesting device with filters", filters);
     promise = NRF.requestDevice({ filters: filters, active: settings.active });
     promise = promise.then((d) => {
-      E.showMessage("Found " + deviceName + "\nConnecting...");
+      E.showMessage("Found!!\n" + deviceName + "\nConnecting...");
       log("Got device", d);
       gatt = d.gatt;
       log("Connecting...");
