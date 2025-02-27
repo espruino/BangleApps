@@ -12,11 +12,10 @@
     }
 
     function showClkInfo() {
-        const self = this;
-        this.interval = setTimeout(() => {
-            self.emit("redraw");
-            self.interval = setInterval(() => {
-                self.emit("redraw");
+        this.interval = setTimeout(()=>{
+            this.emit("redraw");
+            this.interval = setInterval(()=>{
+                this.emit("redraw");
             }, 60000);
         }, 60000 - (Date.now() % 60000));
     }
@@ -28,14 +27,13 @@
 
     function createClkInfoItems() {
         let clkItems = [];
-        settings.tokens.sort().forEach(token => {
-            const clkItem = {
+        (settings.tokens || []).sort().forEach(token => {
+            clkItems.push({
                 name: token,
                 get: () => retrieveClkInfo(token),
                 show: showClkInfo,
-                hide: hideClkInfo,
-            }
-            clkItems.push(clkItem)
+                hide: hideClkInfo
+            });
         });
         return clkItems;
     }
