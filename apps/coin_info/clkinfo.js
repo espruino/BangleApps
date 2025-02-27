@@ -12,12 +12,14 @@
     }
 
     function showClkInfo() {
-        this.interval = setTimeout(()=>{
-            this.emit("redraw");
-            this.interval = setInterval(()=>{
-                this.emit("redraw");
+        const self = this;
+        this.interval = setTimeout(() => {
+            self.emit("redraw");
+            self.interval = setInterval(() => {
+                self.emit("redraw");
             }, 60000);
         }, 60000 - (Date.now() % 60000));
+
     }
 
     function hideClkInfo() {
@@ -27,7 +29,8 @@
 
     function createClkInfoItems() {
         let clkItems = [];
-        (settings.tokens || []).sort().forEach(token => {
+
+        (settings.tokenSelected || []).sort().forEach(token => {
             clkItems.push({
                 name: token,
                 get: () => retrieveClkInfo(token),
