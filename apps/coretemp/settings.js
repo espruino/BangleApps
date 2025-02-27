@@ -264,7 +264,7 @@
     function checkHRMState() {
       let MENU = {
         '': { 'title': 'SYNC HRM STATUS' },
-        '< Back': back,
+        '< Back': function () { E.showMenu(HRM_MENU()); },
       }
       if (attempts >= maxRetries) {
         log("Max scan attempts reached. HRM did not synchronize.");
@@ -304,6 +304,7 @@
         .catch(error => {
           log("Error checking HRM state:", error);
         });
+        E.showMenu(MENU);
     }
 
     log("Starting scan to synchronize HRM...");
