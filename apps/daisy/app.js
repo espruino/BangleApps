@@ -114,6 +114,10 @@ var sunEnd;  // In terms of minutes
 var sunFull;  // In terms of ms
 var isDaytime = true;
 
+function getMinutesFromDate(date) {
+  return (60 * date.getHours()) + date.getMinutes();
+}
+
 function updateSunRiseSunSet(now, lat, lon, sunLeftCalcs){
   // get today's sunlight times for lat/lon
   var times = SunCalc.getTimes(now, lat, lon);
@@ -131,7 +135,7 @@ function updateSunRiseSunSet(now, lat, lon, sunLeftCalcs){
     isDaytime = false;
     sunStart = times.sunset;
     sunFull = timesTmrw.sunrise - sunStart;
-    sunEnd = (60 * timesTmrw.sunrise.getHours()) + timesTmrw.sunrise.getMinutes();
+    sunEnd = getMinutesFromDate(timesTmrw.sunrise);
   }
   else {
     sunLeft = dateCopy - times.sunrise;
@@ -141,13 +145,13 @@ function updateSunRiseSunSet(now, lat, lon, sunLeftCalcs){
       isDaytime = false;
       sunStart = timesYest.sunset;
       sunFull = times.sunrise - sunStart;
-      sunEnd = (60 * times.sunrise.getHours()) + times.sunrise.getMinutes();
+      sunEnd = getMinutesFromDate(times.sunrise);
     }
     else {  // We're in the middle of the day
       isDaytime = true;
       sunStart = times.sunrise;
       sunFull = times.sunset - sunStart;
-      sunEnd = (60 * times.sunset.getHours()) + times.sunset.getMinutes();
+      sunEnd = getMinutesFromDate(times.sunset);
     }
   }
 }
@@ -282,16 +286,13 @@ function drawClock() {
       ring_percent = E.getBattery();
       break;
     case 'Sun': 
-      if (((60 * date.getHours()) + date.getMinutes()) == sunEnd) {
-        // If we're exactly on the minute that the sun is setting/rising
-        ring_percent = 100;
-        break;
-      }
       ring_percent = 100 * (date - sunStart) / sunFull;
       if (ring_percent > 100) {  // If we're now past a sunrise of sunset
         updateSunRiseSunSet(date, location.lat, location.lon, true);
         ring_percent = 100 * (date - sunStart) / sunFull;
       }
+      // If we're exactly on the minute that the sun is setting/rising 
+      if (getMinutesFromDate(date) == sunEnd) ring_percent = 100;
       invertRing = !isDaytime;
       break;
   }
