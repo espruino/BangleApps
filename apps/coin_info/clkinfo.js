@@ -12,10 +12,11 @@
     }
 
     function showClkInfo() {
-        this.interval = setTimeout(()=>{
-            this.emit("redraw");
-            this.interval = setInterval(()=>{
-                this.emit("redraw");
+        const self = this;
+        this.interval = setTimeout(() => {
+            self.emit("redraw");
+            self.interval = setInterval(() => {
+                self.emit("redraw");
             }, 60000);
         }, 60000 - (Date.now() % 60000));
     }
@@ -25,16 +26,22 @@
         this.interval = null;
     }
 
-    var coinInfoItems = {
-        name: "CoinInfo",
-        items: settings.tokenSelected.sort().map(token => {
-            return { name : token,
-                get : () => retrieveClkInfo(token),
-                show : showClkInfo(),
-                hide : hideClkInfo(),
+    function createClkInfoItems() {
+        let clkItems = [];
+        settings.tokens.sort().forEach(token => {
+            const clkItem = {
+                name: token,
+                get: () => retrieveClkInfo(token),
+                show: showClkInfo,
+                hide: hideClkInfo,
             }
-        })
-    };
+            clkItems.push(clkItem)
+        });
+        return clkItems;
+    }
 
-    return coinInfoItems;
+    return {
+        name: "CoinInfo",
+        items: createClkInfoItems
+    };
 })
