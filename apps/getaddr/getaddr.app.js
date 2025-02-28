@@ -1,5 +1,6 @@
 // Set the API endpoint and parameters
 const nominatimApi = 'https://nominatim.openstreetmap.org';
+const lang = require("locale").name.substring(0, 2);
 const params = {
   format: 'json',
   addressdetails: 1,
@@ -94,7 +95,7 @@ function getCurrentLocation() {
 function getStreetAndHouseNumber(lat, lon) {
   const url = `${nominatimApi}/reverse`;
   const paramsStr = Object.keys(params).map(key => `${key}=${encodeURIComponent(params[key])}`).join('&');
-  const fullUrl = `${url}?${paramsStr}&lat=${lat}&lon=${lon}&accept-language=de&format=json`;
+  const fullUrl = `${url}?${paramsStr}&lat=${lat}&lon=${lon}&accept-language=${lang}&format=json`;
 
   Bangle.http(fullUrl).then(data => {
     try {
