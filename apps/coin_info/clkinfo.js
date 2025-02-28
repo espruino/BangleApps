@@ -1,4 +1,6 @@
 (function() {
+    const SETTINGS_FILE = "coin_info.settings.json";
+    const settings = require('Storage').readJSON(SETTINGS_FILE,1) || {};
 
     function retrieveClkInfo(token) {
         return {
@@ -35,9 +37,6 @@
     }
 
     function createClkInfoItems() {
-        const SETTINGS_FILE = "coin_info.settings.json";
-        const settings = require("Storage").readJSON(SETTINGS_FILE,1) || {};
-
         return (settings.tokenSelected || []).map(token => ({
             name: token,
             get: () => retrieveClkInfo(token),
@@ -51,4 +50,4 @@
         name: "CoinInfo",
         items: createClkInfoItems
     };
-});
+})();
