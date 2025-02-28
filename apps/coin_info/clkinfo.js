@@ -1,10 +1,6 @@
 (function() {
-    const SETTINGS_FILE = "coin_info.settings.json";
-    const settings = require("Storage").readJSON(SETTINGS_FILE,1) || {};
 
     function retrieveClkInfo(token) {
-        // TODO: do something useful here -> http request to CMC
-        console.log("Retrieving:", token);
         return {
             text : token,
             // color: "#f00",
@@ -12,20 +8,26 @@
         }
     }
 
+    // function showClkInfo() {
+    //     const self = this;
+    //     this.interval = setTimeout(() => {
+    //         self.emit("redraw");
+    //         self.interval = setInterval(() => {
+    //             console.log("Interval refresh");
+    //             self.emit("redraw");
+    //         }, 60000);
+    //     }, 60000 - (Date.now() % 60000));
+    // }
     function showClkInfo() {
-        console.log("Show called");
-        const self = this;
-        this.interval = setTimeout(() => {
-            self.emit("redraw");
-            self.interval = setInterval(() => {
-                console.log("Interval refresh");
-                self.emit("redraw");
+        this.interval = setTimeout(()=>{
+            this.emit("redraw");
+            this.interval = setInterval(()=>{
+                this.emit("redraw");
             }, 60000);
         }, 60000 - (Date.now() % 60000));
     }
 
     function hideClkInfo() {
-        console.log("Hide called");
         if (this.interval) {
             clearInterval(this.interval);
             this.interval = null;
@@ -33,7 +35,9 @@
     }
 
     function createClkInfoItems() {
-        console.log("Creating items from:", settings.tokenSelected);
+        const SETTINGS_FILE = "coin_info.settings.json";
+        const settings = require("Storage").readJSON(SETTINGS_FILE,1) || {};
+
         return (settings.tokenSelected || []).map(token => ({
             name: token,
             get: () => retrieveClkInfo(token),
