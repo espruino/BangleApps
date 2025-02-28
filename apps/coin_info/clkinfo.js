@@ -59,4 +59,4 @@ function createCoinInfoModule() {
 }
 
 // Export the module.
-exports = createCoinInfoModule();
+module.exports = createCoinInfoModule();
