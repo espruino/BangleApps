@@ -1,6 +1,14 @@
 // Set the API endpoint and parameters
 const nominatimApi = 'https://nominatim.openstreetmap.org';
-const lang = require("locale").name.substring(0, 2);
+const locale = require('locale');
+let lang = locale.name;
+
+if (lang.toLowerCase() === 'system') {
+  lang = 'en';
+} else {
+  lang = lang.substring(0, 2);
+}
+
 const params = {
   format: 'json',
   addressdetails: 1,
