@@ -7,43 +7,38 @@
         name: "CoinInfo",
         items: settings.tokenSelected.map(token => {
             let currentValue = {text: "Load...", img: COIN_ICON};
-            let nextUpdate = 0;
+            let nextUpdate = Date.now() + 3600000;
 
-            function update() {
-                return Bangle.http(
-                    `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?slug=${token}`,
-                    {headers: {'CMC_PRO_API_KEY': db.apiKey}}
-                ).then(res => {
-                    currentValue = {
-                        text: `${res.data["1"].symbol}\n$${res.data["1"].quote.USD.price.toFixed(2)}`,
-                    };
-                    nextUpdate = Date.now() + 3600000;
-                }).catch(e => {
-                    currentValue = {text: `Error: ${e}`, img: COIN_ICON};
-                    nextUpdate = Date.now() + 300000; // Retry in 5 minutes on error
-                }).finally(() => {
-                    Bangle.drawWidgets();
-                });
-            }
+            const update = () => Bangle.http(
+                `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?slug=${token}`,
+                {headers: {'CMC_PRO_API_KEY': db.apiKey}}
+            ).then(res => {
+                currentValue = {
+                    text: `${res.data["1"].symbol}\n$${res.data["1"].quote.USD.price.toFixed(2)}`,
+                };
+                nextUpdate = Date.now() + 3600000;
+                return true;
+            }).catch(e => {
+                currentValue = {text: `Error: ${e}`, img:COIN_ICON};
+                nextUpdate = Date.now() + 300000;
+                return false;
+            }).finally(() => Bangle.drawWidgets());
 
-            function checkUpdate() {
-                if(Date.now() > nextUpdate) {
-                    return update();
-                }
-                return Promise.resolve();
-            }
+            const checkUpdate = () => (Date.now() > nextUpdate)
+                ? update()
+                : Promise.resolve();
 
             return {
                 name: token,
                 get: () => {
-                    checkUpdate().then(); // Explicit promise handling
+                    checkUpdate().then(); // Explicit empty handler
                     return currentValue;
                 },
                 show: function() {
                     update().then(); // Initial fetch
-                    this.interval = setInterval(() => {
-                        checkUpdate().then(() => this.emit("redraw"));
-                    }, 60000);
+                    this.interval = setInterval(() => checkUpdate().then(
+                        () => this.emit("redraw")
+                    ), 60000);
                 },
                 hide: function() {
                     clearInterval(this.interval);
@@ -52,3 +47,4 @@
         })
     };
 })();
+
