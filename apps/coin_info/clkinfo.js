@@ -12,7 +12,7 @@
             return { name : token,
                 get : function()
                 {
-                    const url = `https://pro-api.coinmarketcap.com//v2/cryptocurrency/quotes/latest?slug=${token}`;
+                    const url = `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?slug=${token}`;
                     Bangle
                         .http(url, {
                             method: 'GET',
@@ -28,7 +28,7 @@
                         })
                         .catch(err => {
                             return {
-                                text : err,
+                                text : `ERROR: ${err}`,
                                 img : COIN_ICON
                             }
                         });
