@@ -13,36 +13,32 @@
                 get : function()
                 {
                     const url = `https://pro-api.coinmarketcap.com//v2/cryptocurrency/quotes/latest?slug=${token}`;
-                    Bangle
+                    return Bangle
                         .http(url, {
                             method: 'GET',
                             headers: {
                                 'CMC_PRO_API_KEY': db.apiKey
                             }
                         })
-                        .then((cmcResult) => {
-                            return {
-                                text : cmcResult.resp.data["1"].symbol,
-                                img : COIN_ICON
-                            }
-                        })
-                        .catch(err => {
-                            return {
-                                text : err,
-                                img : COIN_ICON
-                            }
-                        });
+                        .then(cmcResult => ({
+                            text: cmcResult.data.data["1"].symbol, // Fixed data path
+                            img: COIN_ICON
+                        }))
+                        .catch(err => ({
+                            text: err.toString(),
+                            img: COIN_ICON
+                        }));
                 },
                 show : function() {
                     var self = this;
                     // Set timeout to align to the next minute
                     self.interval = setTimeout(function timerTimeout() {
                         self.emit("redraw");
-                        // Continue updating every minute
+                        // Continue updating every hour
                         self.interval = setInterval(function intervalCallback() {
                             self.emit("redraw");
-                        }, 60000);
-                    }, 60000 - (Date.now() % 60000));
+                        }, 3600000);
+                    }, 3600000 - (Date.now() % 3600000));
                 },
                 hide : function() {
                     if (this.interval) {
