@@ -1,4 +1,4 @@
-exports.getQuoteLatest = function(slug) {
+exports.getCmCQuoteLatest = function(apiKey, slug) {
     // Bangle.http("https://pur3.co.uk/hello.txt").then(data=>{
     //     console.log("Got ",data);
     //     // actual response is in data.resp
@@ -11,12 +11,11 @@ exports.getQuoteLatest = function(slug) {
     //  "resp": "Hello World!\n"
     // }
 
-    // return Bangle.http(serverUrl, {
-    //     method: 'GET',
-    //     headers: {
-    //         'Authorization': `Basic ${credentials}`
-    //     }
-    // });
-
-    return { result: "yo"};
+    const url = `https://pro-api.coinmarketcap.com//v2/cryptocurrency/quotes/latest?slug=${slug}`;
+    return Bangle.http(url, {
+        method: 'GET',
+        headers: {
+            'CMC_PRO_API_KEY': apiKey
+        }
+    }).then(data => data.resp);
 }
