@@ -1,7 +1,7 @@
 { "id": "coin_info",
   "name": "Crypto-Coins Info",
   "shortName":"Coins Info",
-  "version": "0.04",
+  "version": "0.04.1",
   "description": "Crypto-Coins Infos with the help of the Coinmarketcap API",
   "icon": "app.png",
   "tags": "clkinfo",
@@ -17,6 +17,5 @@
     {"name":"coin_info.clkinfo.js","url":"clkinfo.js"},
     {"name":"coin_info.settings.js","url":"settings.js"},
     {"name":"coin_info.img","url":"app-icon.js","evaluate":true},
-    {"name":"coin_info.libCmC.js","url":"libCmC.js"}
   ]
 }

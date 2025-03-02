@@ -3,7 +3,6 @@
 
     const settings = require("Storage").readJSON("coin_info.settings.json",1)||{};
     const db = require("Storage").readJSON("coin_info.cmc_key.json",1)||{};
-    const coinInfoLib = require("coin_info");
 
     if (!(settings.tokenSelected instanceof Array))
         settings.tokenSelected = [];
@@ -13,10 +12,17 @@
             return { name : token,
                 get : function()
                 {
-                    coinInfoLib.getCmCQuoteLatest(db.apikey, token)
+                    const url = `https://pro-api.coinmarketcap.com//v2/cryptocurrency/quotes/latest?slug=${token}`;
+                    Bangle
+                        .http(url, {
+                            method: 'GET',
+                            headers: {
+                                'CMC_PRO_API_KEY': db.apiKey
+                            }
+                        })
                         .then((cmcResult) => {
                             return {
-                                text : cmcResult.data["1"].symbol,
+                                text : cmcResult.resp.data["1"].symbol,
                                 img : COIN_ICON
                             }
                         })
