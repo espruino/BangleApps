@@ -40,16 +40,17 @@ const calcHandPolygon = function(len, dia, alpha) {
           "x": dia/2 * Math.cos(alpha + Math.PI/2),
           "y": dia/2 * Math.sin(alpha + Math.PI/2)
         },
-  return [
-    center.x - d.x,
-    center.y - d.y,
-    center.x + d.x,
-    center.y + d.y,
-    x + d.x,
-    y + d.y,
-    x - d.x, 
-    y - d.y
-  ];
+        polygon = [
+          center.x - d.x,
+          center.y - d.y,
+          center.x + d.x,
+          center.y + d.y,
+          x + d.x,
+          y + d.y,
+          x - d.x, 
+          y - d.y
+        ];
+  return polygon;
 };
 
 const drawHands = function(date) {
@@ -104,7 +105,7 @@ const drawNumbers = function() {
   g.setColor(1, 1, 1);
   g.setBgColor(0, 0, 0);
   for(let i = 0; i < 12; i++){
-    hour = hourNumberPositions[i][0]
+    hour = hourNumberPositions[i][0];
     if (settings.show24HourMode){
       hour *= 2;
     }
@@ -142,7 +143,7 @@ const queueDraw = function() {
 
 const draw = function() {
   // draw black rectangle in the middle to clear screen from scale and hands
-  g.setColor(0, 0, 0);
+  g.setColor(0, 1, 1);
   g.fillRect(10, 10, 2 * center.x - 10, 2 * center.x - 10);
   // prepare for drawing the text
   g.setFontAlign(0, 0);
