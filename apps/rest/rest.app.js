@@ -232,11 +232,11 @@ const onTouchPerQuadrantPerMode = {
   SET_REST: [
     [MAIN_MENU, Bangle.buzz], [null, null],
     [null, () => {
-      restSeconds = Math.min(120, Math.max(0, restSeconds - 15));
+      restSeconds = Math.min(600, Math.max(0, restSeconds - 15));
       Bangle.buzz(100);
     }],
     [null, () => {
-      restSeconds = Math.min(120, Math.max(0, restSeconds + 15));
+      restSeconds = Math.min(600, Math.max(0, restSeconds + 15));
       Bangle.buzz(100);
     }],
   ],
