@@ -143,7 +143,7 @@ const queueDraw = function() {
 
 const draw = function() {
   // draw black rectangle in the middle to clear screen from scale and hands
-  g.setColor(0, 1, 1);
+  g.setColor(0, 0, 0);
   g.fillRect(10, 10, 2 * center.x - 10, 2 * center.x - 10);
   // prepare for drawing the text
   g.setFontAlign(0, 0);
