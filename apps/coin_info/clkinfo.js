@@ -12,8 +12,8 @@
             return { name : token,
                 get : function()
                 {
-                    const url = `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?slug=${token}`;
-                    // const url = `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?slug=bitcoin`;
+                    // const url = `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?slug=${token}`;
+                    const url = `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?slug=bitcoin`;
                     return Bangle
                         .http(url, {
                             method: 'GET',
