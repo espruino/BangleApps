@@ -47,6 +47,9 @@
                         this.interval = null;
                     }
                 },
+                run: function () {
+                    this.emit("redraw");
+                }
             }
         })
     };
