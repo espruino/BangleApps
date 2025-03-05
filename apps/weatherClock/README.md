@@ -16,6 +16,11 @@ See the [Bangle.js Gadgetbridge documentation](https://www.espruino.com/Gadgetbr
 
 ![Screenshot2](screens/screen2.png)
 
+## Wind speed units
+
+If you want to change the units for wind speed, you can install the [`Languages` app](https://banglejs.com/apps/?id=locale) which
+allows you to choose the units used for speed/distance/temperature and so on.
+
 ## Creator
 
 James Gough
