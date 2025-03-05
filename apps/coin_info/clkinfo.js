@@ -22,7 +22,7 @@
                             }
                         })
                         .then(cmcResult => ({
-                            text: cmcResult.resp.data["1"].symbol, // Fixed data path
+                            text: JSON.parse(cmcResult.resp).data["1"].symbol, // Fixed data path
                             img: COIN_ICON
                         }))
                         .catch(err => ({
