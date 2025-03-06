@@ -71,7 +71,7 @@
       curPos++;
 
       ["L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9"].forEach((line) => {
-        if (this[line] === "Date") drawDate(date, this.isoDate, curPos);
+        if (this[line] === "Date") drawDate(date, curPos);
         else if (this[line] === "DOW") drawDOW(date, curPos);
         else if (this[line] === "HR") drawHRM(curPos);
         else if (this[line] === "Motion") drawMotion(curPos);
@@ -130,7 +130,7 @@
       let year = now.getFullYear();
       let month = now.getMonth() + 1; // Months are 0-11
       let day = now.getDate();
-      date = ">" + year + "-" + month + "-" + day;
+      date = ">" + year + "-" + String(month).padStart(2, "0") + "-" + String(day).padStart(2, "0");
     } else {
       let dow = locale.dow(now, 1);
       date = locale.date(now, 1).substr(0, 6); // day and month e.g. 01/02/ from 01/02/2003
