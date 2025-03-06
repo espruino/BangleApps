@@ -47,8 +47,8 @@ function formatDay(date) {
   if (date.getDate() == today.getDate())
      return /*LANG*/"Today ";
   else {
-    const tomorrow = new Date(Date.now());
-    tomorrow.setDate(today.getDate + 1);
+    var tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
     if (date.getDate() == tomorrow.getDate()) {
        return /*LANG*/"Tomorrow ";
     }
