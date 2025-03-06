@@ -10,3 +10,4 @@
 0.09: Add default HRM value, default altitude value
 0.10: Add fastloading
 0.11: Add option for ISO 8601 date format
+0.12: Add day of week line
