@@ -88,6 +88,7 @@ function loadSettings() {
   settings.hr_12 = (settings.hr_12 === undefined ? false : settings.hr_12);
   settings.ring = settings.ring||'Steps';
   settings.idxInfo = settings.idxInfo||0;
+  settings.step_target = settings.step_target||10000;
   assignPalettes();
 }
 
@@ -270,7 +271,7 @@ function drawClock() {
       ring_percent = Math.round((10*date.getSeconds())/6);
       break;
     case 'Steps': 
-      ring_percent = Math.round(100*(getSteps()/10000));
+      ring_percent = Math.round(100*(getSteps()/settings.step_target));
       break;
     case 'Battery': 
       ring_percent = E.getBattery();
