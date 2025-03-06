@@ -1,5 +1,5 @@
 var SunCalc = require("suncalc"); // from modules folder
-const storage = require('Storage')
+const storage = require('Storage');
 const widget_utils = require('widget_utils');
 const SETTINGS_FILE = "daisy.json";
 const LOCATION_FILE = "mylocation.json";

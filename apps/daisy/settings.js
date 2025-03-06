@@ -77,7 +77,7 @@
           s.ring = ring_options[v];
           save();
           if (prev != s.ring && (prev === 'Steps' || s.ring === 'Steps')) {
-            E.showMenu(buildMainMenu());
+            setTimeout(() => E.showMenu(buildMainMenu()), 0);  // Reference https://github.com/orgs/espruino/discussions/7697
           }
         },
       }
