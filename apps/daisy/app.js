@@ -13,7 +13,7 @@ let warned = 0;
 let idle = false;
 let IDLE_MINUTES = 26;
 
-let pal1; // palette for 0-40%
+let pal1; // palette for 0-49%
 let pal2; // palette for 50-100%
 const infoLine = (3*h/4) - 6;
 const infoWidth = 56;
@@ -41,7 +41,7 @@ Graphics.prototype.setFontRoboto20 = function(scale) {
 
 function assignPalettes() {
   if (g.theme.dark) {
-    // palette for 0-45%
+    // palette for 0-49%
     pal1 = new Uint16Array([g.theme.bg, g.toColor(settings.gy), g.toColor(settings.fg), g.toColor("#00f")]);
     // palette for 50-100%
     pal2 = new Uint16Array([g.theme.bg, g.toColor(settings.fg), g.toColor(settings.gy), g.toColor("#00f")]);
@@ -85,7 +85,7 @@ function loadSettings() {
   settings.idle_check = (settings.idle_check === undefined ? true : settings.idle_check);
   settings.batt_hours = (settings.batt_hours === undefined ? false : settings.batt_hours);
   settings.hr_12 = (settings.hr_12 === undefined ? false : settings.hr_12);
-  settings.show_steps_ring = (settings.show_steps_ring === undefined ? false : settings.show_steps_ring);
+  settings.ring = settings.ring||'Steps';
   assignPalettes();
 }
 
