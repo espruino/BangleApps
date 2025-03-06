@@ -682,7 +682,7 @@ var drawTimeout;
 
 // schedule a draw for the next minute or every 5 seconds
 function queueDraw() {
-  let delay = (settings.ring == 'Seconds') ? (5000 - (Date.now() % 5000)) : (60000 - (Date.now() % 60000));
+  let delay = (settings.ring == 'Seconds') ? (3000 - (Date.now() % 3000)) : (60000 - (Date.now() % 60000));
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
