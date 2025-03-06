@@ -86,12 +86,19 @@ const drawHands = function(date) {
 const drawText = function(date) {
   g.setFont("Vector", 10);
   g.setBgColor(0, 0, 0);
-  g.setColor(1, 1, 1);
+  
+  const batteryState = E.getBattery();
+  if (batteryState < 20){
+     g.setColor(1, 0, 0);  // draw in red, if battery is low 
+  } else {
+     g.setColor(1, 1, 1);   
+  }
   
   const dateStr = require("locale").date(date);
   g.drawString(dateStr, center.x, center.y + 20, true);
   
-  const batteryStr = Math.round(E.getBattery()/5) * 5 + "%";
+  
+  const batteryStr = batteryState + "%";
   
   if (Bangle.isCharging()) {
     g.setBgColor(1, 0, 0);
