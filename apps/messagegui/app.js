@@ -295,8 +295,18 @@ function showMessagesScroller(msg) {
     for (let i=0; i<lines.length; i++) {
       titleLines.push(i + allLines.length);
     }
+    let footer = [""];
+    if (msg.negative) {
+      footer[0] += "<" + "-".repeat(4) + " " + ((!msg.reply&&!msg.positive)?" ".repeat(6):"");
+    }
+    if (msg.reply || msg.positive) {
+      footer[0] += ((!msg.negative)?" ".repeat(6):"") + " " + "-".repeat(4) + ">";
+    }
+    if (!footer) {
+      footer = ["-".repeat(12)];
+    }
     lines = lines.concat(g.wrapString(msgIter.body, APP_RECT.w-10),
-      ["-".repeat(12)]);
+      footer);
     allLines = allLines.concat(lines);
   }
 
@@ -325,12 +335,20 @@ function showMessagesScroller(msg) {
     select : function(scrollIdx, touch) {
       for (let i=firstTitleLinePerMsg.length-1; i>=0 ; i--) {
         if (scrollIdx>=firstTitleLinePerMsg[i]) {
+          if (touch && touch.type===2) {return;}
+          const MSG_SELECTED = MESSAGES[i];
+          WU&&WU.show();
+          delete titleLines, allLines;
+          //E.showScroller();
+          updateReadMessages();
           if (!touch || touch.type===0) {
-            WU&&WU.show();
-            delete titleLines, allLines;
-            //E.showScroller();
-            updateReadMessages();
-            setTimeout(()=>showMessageRouter(MESSAGES[i], true, "overview"),0);
+            setTimeout(()=>showMessageRouter(MSG_SELECTED, true, "overview"),0);
+          }
+          print(touch)
+          if (touch && touch.type.swipeLR) {
+            print("select swipe")
+            if (touch.type.swipeLR>0 && posHandler) {posHandler(MSG_SELECTED);}
+            if (touch.type.swipeLR<0 && negHandler) {negHandler(MSG_SELECTED);}
           }
           break;
         }
@@ -387,6 +405,50 @@ function showMessagesScroller(msg) {
     }
     //print(MESSAGES)
   }
+  var negHandler,posHandler = [ ];
+  if (msg.negative) {
+    negHandler = (msg)=>{
+      print("negHandler")
+      msg.new = false;
+      cancelReloadTimeout(); // don't auto-reload to clock now
+      Bangle.messageResponse(msg,false);
+      returnToCheckMessages();
+    };
+    //footer.push({type:"img",src:atob("PhAB4A8AAAAAAAPAfAMAAAAAD4PwHAAAAAA/H4DwAAAAAH78B8AAAAAA/+A/AAAAAAH/Af//////w/gP//////8P4D///////H/Af//////z/4D8AAAAAB+/AfAAAAAA/H4DwAAAAAPg/AcAAAAADwHwDAAAAAA4A8AAAAAAAA=="),col:"#f00",cb:negHandler});
+  }
+  if (msg.reply && reply) {
+    print("posHandler reply")
+    posHandler = (msg)=>{
+      replying = true;
+      msg.new = false;
+      cancelReloadTimeout(); // don't auto-reload to clock now
+      reply.reply({msg: msg})
+        .then(result => {
+          Bluetooth.println(JSON.stringify(result));
+          replying = false;
+          returnToCheckMessages();
+        })
+        .catch(() => {
+          replying = false;
+          showMessagesScroller(msg);
+        });
+    };
+    //footer.push({type:"img",src:atob("QRABAAAAAAAH//+AAAAABgP//8AAAAADgf//4AAAAAHg4ABwAAAAAPh8APgAAAAAfj+B////////geHv///////hf+f///////GPw///////8cGBwAAAAAPx/gDgAAAAAfD/gHAAAAAA8DngOAAAAABwDHP8AAAAADACGf4AAAAAAAAM/w=="),col:"#0f0", cb:posHandler});
+  }
+  else if (msg.positive) {
+    posHandler = (msg)=>{
+      print("posHandler")
+      msg.new = false;
+      cancelReloadTimeout(); // don't auto-reload to clock now
+      Bangle.messageResponse(msg,true);
+      returnToCheckMessages();
+    };
+    //footer.push({type:"img",src:atob("QRABAAAAAAAAAAOAAAAABgAAA8AAAAADgAAD4AAAAAHgAAPgAAAAAPgAA+AAAAAAfgAD4///////gAPh///////gA+D///////AD4H//////8cPgAAAAAAPw8+AAAAAAAfB/4AAAAAAA8B/gAAAAAABwB+AAAAAAADAB4AAAAAAAAABgAA=="),col:"#0f0",cb:posHandler});
+  }
+  Bangle.swipeHandler = (lr) => {
+    if (lr) {Bangle.emit("touch", 1, {x:APP_RECT.x2/2, y:APP_RECT.y2/2, type:{swipeLR:lr}});}
+  };
+  Bangle.on("swipe", Bangle.swipeHandler);
 }
 
 function showMessageSettings(msg) {
