@@ -1,4 +1,5 @@
 var SunCalc = require("suncalc"); // from modules folder
+const storage = require('Storage')
 const widget_utils = require('widget_utils');
 const SETTINGS_FILE = "daisy.json";
 const LOCATION_FILE = "mylocation.json";
@@ -86,6 +87,7 @@ function loadSettings() {
   settings.batt_hours = (settings.batt_hours === undefined ? false : settings.batt_hours);
   settings.hr_12 = (settings.hr_12 === undefined ? false : settings.hr_12);
   settings.ring = settings.ring||'Steps';
+  settings.idxInfo = settings.idxInfo||0;
   assignPalettes();
 }
 
@@ -190,28 +192,21 @@ const infoData = {
 };
 
 const infoList = Object.keys(infoData).sort();
-let infoMode = infoList[0];
 
-function nextInfo() {
-  let idx = infoList.indexOf(infoMode);
+function nextInfo(idx) {
   if (idx > -1) {
-    if (idx === infoList.length - 1) infoMode = infoList[0];
-    else infoMode = infoList[idx + 1];
+    if (idx === infoList.length - 1) idx = 0;
+    else idx += 1;
   }
-  // power HRM on/off accordingly
-  Bangle.setHRMPower(infoMode == "ID_HRM" ? 1 : 0);
-  resetHrm();
+  return idx;
 }
 
-function prevInfo() {
-  let idx = infoList.indexOf(infoMode);
+function prevInfo(idx) {
   if (idx > -1) {
-    if (idx === 0) infoMode = infoList[infoList.length - 1];
-    else infoMode = infoList[idx - 1];
+    if (idx === 0) idx = infoList.length - 1;
+    else idx -= 1;
   }
-  // power HRM on/off accordingly
-  Bangle.setHRMPower(infoMode == "ID_HRM" ? 1 : 0);
-  resetHrm();
+  return idx;
 }
 
 function clearInfo() {
@@ -706,13 +701,20 @@ Bangle.on('lcdPower',on=>{
 });
 
 Bangle.setUI("clockupdown", btn=> {
-  if (btn<0) prevInfo();
-  if (btn>0) nextInfo();
+  if (btn<0) settings.idxInfo = prevInfo(settings.idxInfo);
+  if (btn>0) settings.idxInfo = nextInfo(settings.idxInfo);
+  // power HRM on/off accordingly
+  infoMode = infoList[settings.idxInfo];
+  Bangle.setHRMPower(infoMode == "ID_HRM" ? 1 : 0);
+  resetHrm();
+  log_debug("idxInfo=" + settings.idxInfo);
   draw();
+  storage.write(SETTINGS_FILE, settings);  // Retains idxInfo when leaving the face
 });
 
 loadSettings();
 loadLocation();
+var infoMode = infoList[settings.idxInfo];
 updateSunRiseSunSet(new Date(), location.lat, location.lon, true);
 
 g.clear();

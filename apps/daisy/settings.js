@@ -8,7 +8,8 @@
            'check_idle' : true,
            'batt_hours' : false,
            'hr_12' : false,
-           'ring' : 'Steps'};
+           'ring' : 'Steps',
+           'idxInfo' : 0};
 
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
