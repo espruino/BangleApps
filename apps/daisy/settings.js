@@ -32,7 +32,7 @@
   var ring_options = ['Hours', 'Minutes', 'Seconds', 'Steps', 'Battery', 'Sun'];
   var step_options = [100, 1000, 5000, 10000, 15000, 20000];
 
-  function buildMainMenu() {
+  function showMainMenu() {
     let appMenu = {
       '': { 'title': 'Daisy Clock' },
       '< Back': back,
@@ -77,7 +77,7 @@
           s.ring = ring_options[v];
           save();
           if (prev != s.ring && (prev === 'Steps' || s.ring === 'Steps')) {
-            setTimeout(() => E.showMenu(buildMainMenu()), 0);  // Reference https://github.com/orgs/espruino/discussions/7697
+            setTimeout(showMainMenu, 0);  // Reference https://github.com/orgs/espruino/discussions/7697
           }
         },
       }
@@ -93,8 +93,8 @@
         },
       };
     } 
-    return appMenu;
+    E.showMenu(appMenu);
   }
 
-  E.showMenu(buildMainMenu());
+  showMainMenu();
 })
