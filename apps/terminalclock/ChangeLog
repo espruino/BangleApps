@@ -11,3 +11,4 @@
 0.10: Add fastloading
 0.11: Add option for ISO 8601 date format
 0.12: Add day of week line
+0.13: Fix ISO 8601 date, add leading zeros to day and month numbers, correct curPos for date function
