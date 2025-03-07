@@ -29,7 +29,7 @@
   var color_options = ['Green','Orange','Cyan','Purple','Red','Blue'];
   var fg_code = ['#0f0','#ff0','#0ff','#f0f','#f00','#00f'];
   var gy_code = ['#020','#220','#022','#202','#200','#002'];
-  var ring_options = ['Hours', 'Minutes', 'Seconds', 'Steps', 'Battery', 'Sun'];
+  var ring_options = ['Hours', 'Minutes', 'Seconds', 'Day', 'Sun', 'Steps', 'Battery'];
   var step_options = [100, 1000, 5000, 10000, 15000, 20000];
 
   function showMainMenu() {

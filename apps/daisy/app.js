@@ -276,6 +276,9 @@ function drawClock() {
     case 'Seconds':
       ring_percent = Math.round((10*date.getSeconds())/6);
       break;
+    case 'Day':
+      ring_percent = Math.round((10*(((hh % 12) * 60) + mm))/144);
+      break;
     case 'Steps': 
       ring_percent = Math.round(100*(getSteps()/settings.step_target));
       break;
