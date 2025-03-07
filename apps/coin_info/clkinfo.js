@@ -13,16 +13,18 @@
                 get : function()
                 {
                     // const url = `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?slug=${token}`;
-                    const url = `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?slug=bitcoin`;
+                    // const url = `https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?slug=bitcoin`;
+                    const url = `https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT`;
                     return Bangle
                         .http(url, {
-                            method: 'GET',
-                            headers: {
-                                'CMC_PRO_API_KEY': db.apikey
-                            }
+                            method: 'GET'
+                           // ,headers: {
+                           //      'CMC_PRO_API_KEY': db.apikey
+                           //  }
                         })
                         .then(cmcResult => ({
-                            text: JSON.parse(cmcResult.resp).data["1"].symbol, // Fixed data path
+                            // text: JSON.parse(cmcResult.resp).data["1"].symbol, // Fixed data path
+                            text: JSON.parse(cmcResult.resp).symbol, // Fixed data path
                             img: COIN_ICON
                         }))
                         .catch(err => ({
