@@ -185,7 +185,7 @@ function _parseBLEData(buffer, dataSchema) {
                     offset += 1; // 1 byte for each uint8
                 }
                 break;
-            case 'float16':
+            case 'float16':{
                 const b0 = buffer.getUint8(offset, true);
                 const b1 = buffer.getUint8(offset + 1, true);
                 const mantissa = (b1 << 8) | b0;
@@ -195,6 +195,7 @@ function _parseBLEData(buffer, dataSchema) {
                 value = sign * (1 + fraction / 2048) * Math.pow(2, exponent - 15);
                 offset += 2; 
                 break;
+            }
             default:
                 throw new Error(`Unknown data type: ${dataType}`);
         }

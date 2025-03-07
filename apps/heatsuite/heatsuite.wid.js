@@ -420,7 +420,7 @@
             lastGPSFix = unix;
           }
         }
-      };
+      }
       Bangle.on('GPS', logGPS);
       Bangle.setGPSPower(1,appName);
       var updateTime = settings.GPSInterval !== undefined ? settings.GPSInterval * 60 : 600;

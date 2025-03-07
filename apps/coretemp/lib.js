@@ -11,6 +11,7 @@ exports.enable = () => {
   let gatt;
   let device;
   let controlPointChar;
+  let characteristics;
   let blockInit = false;
   let waitingPromise = function (timeout) {
     return new Promise(function (resolve) {
@@ -59,9 +60,9 @@ exports.enable = () => {
           index += 2;
           let skinTemp = dv.getInt16(index, true) / 100.0;
           index += 2;
-          let coreReserved = dv.getInt16(index, true);
+          //let coreReserved = dv.getInt16(index, true);
           index += 2;
-          let qualityAndState = dv.getUint8(index++);
+          //let qualityAndState = dv.getUint8(index++);
           let heartRate = dv.getUint8(index++);
           let heatStrainIndex = dv.getUint8(index) / 10.0;
           let data = {
@@ -165,10 +166,7 @@ exports.enable = () => {
         controlPointChar = newCharacteristic;
         result = result.then(() => {
           log("Starting notifications", newCharacteristic);
-          let OPCodeChar = controlPointChar.writeValue(new Uint8Array([0x02]), {
-            type: "command",
-            handle: true
-          }).then(() => log("OPCodes Intitated", newCharacteristic));
+          let OPCodeChar = controlPointChar.writeValue(new Uint8Array([0x02]), {type: "command",handle: true});
           OPCodeChar = OPCodeChar.then(() => {
             return waitingPromise(3000);
           });

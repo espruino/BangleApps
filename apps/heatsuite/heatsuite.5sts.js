@@ -1,3 +1,10 @@
+/* 
+Sit-to-Stand test, ongoing Validation
+Copyright Nicholas Ravanelli,PhD 2025 
+
+
+*/
+
 const modHS = require('HSModule');
 const Layout = require("Layout");
 
@@ -43,7 +50,7 @@ class fiveXSTS {
       }
 
       switch(this.currentState){
-        case 'idle':
+        case 'idle': {
                 if (this.currentState === "idle") {
                 if (this.movement.length > this.bufferSize) {
                   const removedValue = this.movement.shift(); // Remove the oldest value from the buffer
@@ -74,7 +81,8 @@ class fiveXSTS {
                   }
               }
           break;
-        case 'sit_stand':
+            }
+        case 'sit_stand':{
           if(this.cycleCount < 1){
             this.refreshScreen('Start','');
           }
@@ -107,6 +115,7 @@ class fiveXSTS {
           }
           this.lastState = state;
           break;
+        }
         default:
           break;
       }
