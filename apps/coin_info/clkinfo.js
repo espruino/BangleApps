@@ -3,6 +3,7 @@
 
     const settings = require("Storage").readJSON("coin_info.settings.json",1)||{};
     const db = require("Storage").readJSON("coin_info.cmc_key.json",1)||{};
+    const logFile = require("Storage").open("log.txt", "a");
 
     if (!(settings.tokenSelected instanceof Array))
         settings.tokenSelected = [];
@@ -24,16 +25,21 @@
                         })
                         .then(cmcResult => {
                             // text: JSON.parse(cmcResult.resp).data["1"].symbol, // Fixed data path
+                            logFile.write(cmcResult.toString());
                             const apiData = JSON.parse(cmcResult.resp); // Correctly declare variable
+                            logFile.write(apiData.toString());
                             return {
                                 text: apiData.symbol,
                                 img: COIN_ICON
                             };
                         })
-                        .catch(err => ({
-                            text: err.toString(),
-                            img: COIN_ICON
-                        }));
+                        .catch(err => {
+                            logFile.write("API Error: " + err.toString());
+                            return {
+                                text: err.toString(),
+                                img: COIN_ICON
+                            }
+                        });
                 },
                 show : function() {
                     var self = this;
