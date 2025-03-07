@@ -21,3 +21,4 @@
 0.19: Fix regression after back button added (returnToClock was called twice!)
 0.20: Use Bangle.showClock for changing to clock
 0.21: Make the "App source not found" warning less buggy
+0.22: Add less padding between launcher items, use new font if available in 2v26+
