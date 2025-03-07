@@ -150,9 +150,7 @@
             let name = recorderOptions['key'];
             menu[name] = {
                 value: settings.record.includes(key),
-                format: v => v ? "On" : "Off",
-                onchange: v => {updateRecorder(key,v);
-                }
+                onchange: v => {updateRecorder(key,v);}
             };
         }
         return menu;
