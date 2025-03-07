@@ -345,4 +345,4 @@
         }, { timeout: 4000, active: true, filters: [{ services: [service] }] });
     }
     E.showMenu(mainMenuSettings());
-});
+})
