@@ -7,3 +7,4 @@
 0.07: Fix problem with "Bangle.CLOCK": github.com/espruino/BangleApps/issues/1437
 0.08: Redraw widgets only once per minute
 0.09: Workaround for issue in 2v14 firmware (fix #1959)
+0.10: Ensure that we only display seconds if loaded when unlocked (fix #3690)

@@ -53,8 +53,10 @@ When you first load QuickWeather, it will take you through the setup process. Yo
 
 * Expiration timespan can be set after which the local weather data is considered as invalid
 * Widget can be hidden
+* To change the units for wind speed, you can install the [`Languages` app](https://banglejs.com/apps/?id=locale) which
+allows you to choose the units used for speed/distance/temperature and so on.
 
 ## Controls
 
-BTN2: opens the launcher (Bangle.js 1)
-BTN: opens the launcher (Bangle.js 2)
+* BTN2: opens the launcher (Bangle.js 1)
+* BTN: opens the launcher (Bangle.js 2)
