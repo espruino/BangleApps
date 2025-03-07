@@ -3,7 +3,7 @@ const modHS = require('HSModule');
 var layout;
 
 var settings = modHS.getSettings();
-var appCache = modHS.getCache();
+//var appCache = modHS.getCache();
 function log(msg) {
   if (!settings.DEBUG) {
     return;
@@ -45,7 +45,7 @@ function getTcore(id) {
   var gatt;
   var startTime;
   var complete = false;
-  var characteristic;
+  //var characteristic;
   var TCoreData = {
     "temp": null,
     "ta": null,
@@ -119,7 +119,7 @@ function getTcore(id) {
   });
 }
 
-macID = settings.bt_coreTemperature_id.split(" ");
+let macID = settings.bt_coreTemperature_id.split(" ");
 //so you can see timeout
 Bangle.setOptions({backlightTimeout: 0}) // turn off the timeout
 Bangle.setBacklight(1); // keep screen on

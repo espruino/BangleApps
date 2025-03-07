@@ -1,9 +1,9 @@
 var Layout = require("Layout");
 const modHS = require('HSModule');
 var layout;
-
+let characteristic;
 var settings = modHS.getSettings();
-var appCache = modHS.getCache();
+//var appCache = modHS.getCache();
 function log(msg) {
     if (!settings.DEBUG) {
       return;
@@ -106,7 +106,7 @@ function getBP(id) {
     v.setUint8(5, date.getMinutes());
     v.setUint8(5, date.getSeconds());
     var arr = [];
-    for (i = 0; i < v.buffer.length; i++) {
+    for (let i = 0; i < v.buffer.length; i++) {
       arr[i] = v.buffer[i];
     }
     return characteristic.writeValue(arr);

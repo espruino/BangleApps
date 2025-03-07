@@ -7,6 +7,7 @@
   var appName = "heatsuite";
   var bleAdvertGen = 0xE9D0;
   var lastBLEAdvert = [];
+  var recorders;
   var activeRecorders = [];
   var dataLog = [];
   var lastGPSFix = 0;
@@ -15,7 +16,7 @@
   var processQueue = [];
   var processQueueTimeout = null;
   let initHandlerTimeout = null;
-  let gpsHandlerTimeout = null;
+
   Bangle.setOptions({ 
     "hrmSportMode": -1,
     //manualWatchdog:true
@@ -499,8 +500,6 @@ function studyTaskCheck(timenow) {
   function init() {
     cache = modHS.getCache(); //update cache each minute
     var unix = parseInt((new Date().getTime() / 1000).toFixed(0));
-    if (storeTempLog(unix)) {
-    }
     queueProcess((next, unix) => {
       modHS.log("[HRM + StudyTask]");
       try {
@@ -533,7 +532,7 @@ function studyTaskCheck(timenow) {
     settings = modHS.getSettings(); 
     if(initHandlerTimeout) clearTimeout(initHandlerTimeout);
     activeRecorders = []; //clear active recorders
-    var recorders = getRecorders();
+    recorders = getRecorders();
     settings.record.forEach(r => {
       var recorder = recorders[r];
       if (!recorder) {
@@ -599,7 +598,7 @@ function studyTaskCheck(timenow) {
   //BTHRM Additions
   if (settings.record.includes('bthrm') && Bangle.hasOwnProperty("isBTHRMConnected") ) {
     var BTHRMStatus = 0;
-    BTHRM_ConnectCheck = setInterval(function () {
+    let BTHRM_ConnectCheck = setInterval(function () {
       if (Bangle.isBTHRMConnected() != BTHRMStatus) {
         BTHRMStatus = Bangle.isBTHRMConnected();
         WIDGETS["heatsuite"].draw();
@@ -609,7 +608,7 @@ function studyTaskCheck(timenow) {
   //CORESensor Additions
   if (settings.record.includes('CORESensor') && Bangle.hasOwnProperty("isCORESensorConnected") ) {
     var CORESensorStatus = 0;
-    CORESensor_ConnectCheck = setInterval(function () {
+    let CORESensor_ConnectCheck = setInterval(function () {
       if (Bangle.isCORESensorConnected() != CORESensorStatus) {
         CORESensorStatus = Bangle.isCORESensorConnected();
         WIDGETS["heatsuite"].draw();
@@ -630,7 +629,7 @@ function studyTaskCheck(timenow) {
   NRF.on('disconnect', function(reason) {
     connectionLock = false;
     cache = modHS.getCache(); //update cache each disconnect
-    if(!empty(lastBLEAdvert)){
+    if(lastBLEAdvert){
       updateBLEAdvert(lastBLEAdvert); //update this if its changed with cache update
     }
     processNextInQueue();

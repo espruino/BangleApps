@@ -64,7 +64,7 @@
             v.setUint8(5, date.getMinutes());
             v.setUint8(5, date.getSeconds());
             var arr = [];
-            for (i = 0; i < v.buffer.length; i++) {
+            for (let i = 0; i < v.buffer.length; i++) {
                 arr[i] = v.buffer[i];
             }
             return characteristic.writeValue(arr);
@@ -107,7 +107,7 @@
         Object.keys(settings.StudyTasks).forEach(key => {
             var details = settings.StudyTasks[key];
             if (details.btPair === undefined || !details.btPair) return;
-            id = "bt_" + key + "_id";
+            let id = "bt_" + key + "_id";
             if (settings[id] !== undefined) {
                 menu["Clear " + key] = function () {
                     E.showPrompt("Clear " + key + " device?").then((r) => {
@@ -161,9 +161,11 @@
             '': { 'title': 'Main' },
             '< Back': back
         };
-        menu['Language'] = function () { E.showMenu(languageMenu()) };
+        
+        menu['Recorders'] = function () {E.showMenu(recordMenu()) };
         menu['Devices'] = function () { E.showMenu(deviceSettings()) };
         menu['GPS'] = function () { E.showMenu(gpsSettings()) };
+        menu['Language'] = function () { E.showMenu(languageMenu()) };
         menu['Survey Random'] = {
             value: settings.surveyRandomize || false,
             onchange: v => {
@@ -281,7 +283,7 @@
         var surveySettings = require('Storage').readJSON("heatsuite.survey.json", true) || {};
 
         Object.keys(surveySettings.supported).forEach(key => {
-            var id = surveySettings.supported[key];
+            //var id = surveySettings.supported[key];
             menu[key] = function () {
                 E.showPrompt("Set " + key + "?").then((r) => {
                     if (r) {

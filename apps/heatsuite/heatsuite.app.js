@@ -35,7 +35,6 @@ function findBtDevices() {
   if (settings.StudyTasks.bodyMass !== undefined) {
     filters.push({ services: ['181b'] });
   }
-  var macID;
   NRF.findDevices(function (devices) {
     var found = false;
     if (devices.length !== 0) {
@@ -172,7 +171,7 @@ function draw() {
   
   g.clear();
   g.reset();
-  studyTasks = require('Storage').readJSON(studyTasksJSON, true);
+  let studyTasks = require('Storage').readJSON(studyTasksJSON, true);
   if (studyTasks === undefined) {
     log('No Study Tasks loaded...');
     layout = new Layout({

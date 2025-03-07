@@ -2,15 +2,8 @@ var Layout = require("Layout");
 const modHS = require('HSModule');
 var layout;
 
-var settings = modHS.getSettings();
+//var settings = modHS.getSettings();
 var appCache = modHS.getCache();
-function log(msg) {
-  if (!settings.DEBUG) {
-    return;
-  } else {
-    console.log(msg);
-  }
-}
 
 function YMDInt(date) {
   var year = date.getFullYear().toString();

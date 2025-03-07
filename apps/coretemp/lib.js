@@ -166,10 +166,11 @@ exports.enable = () => {
         controlPointChar = newCharacteristic;
         result = result.then(() => {
           log("Starting notifications", newCharacteristic);
-          let OPCodeChar = controlPointChar.writeValue(new Uint8Array([0x02]), {type: "command",handle: true});
+          let OPCodeChar = controlPointChar.writeValue(new Uint8Array([0x02]), {type: "command",handle: true}).then(() => log("OPCodes started"));
           OPCodeChar = OPCodeChar.then(() => {
             return waitingPromise(3000);
           });
+          return OPCodeChar;
         });
       }
       if (newCharacteristic.properties.notify) {

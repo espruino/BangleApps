@@ -258,7 +258,7 @@ function drawSurveyLayout(index) {
 function surveyResponse(text) {
   var arr = text.split(',');
   var nextSurvey = parseInt(arr[0]) + 1;
-  newArr = {
+  let newArr = {
     "key": arr[1],
     "resp": arr[2],
     "value": arr[3]
