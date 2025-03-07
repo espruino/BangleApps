@@ -12,3 +12,4 @@
 0.12: Added setting to change Battery estimate to hours
 0.13: Fixed Battery estimate Default to percentage and improved setting string
 0.14: Use `power_usage` module
+0.15: Ring can now show hours, minute, or seconds hand, day/night left, or battery; Allowed for 12hr time; Ring now goes up in 5% increments; Step goal can be changed; The info that is set on the watchface will retain when leaving the face
