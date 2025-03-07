@@ -22,11 +22,14 @@
                            //      'CMC_PRO_API_KEY': db.apikey
                            //  }
                         })
-                        .then(cmcResult => ({
+                        .then(cmcResult => {
                             // text: JSON.parse(cmcResult.resp).data["1"].symbol, // Fixed data path
-                            text: cmcResult.resp.symbol,
-                            img: COIN_ICON
-                        }))
+                            const apiData = JSON.parse(cmcResult.resp); // Correctly declare variable
+                            return {
+                                text: apiData.symbol,
+                                img: COIN_ICON
+                            };
+                        })
                         .catch(err => ({
                             text: err.toString(),
                             img: COIN_ICON
