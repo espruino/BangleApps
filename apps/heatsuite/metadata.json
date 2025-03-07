@@ -3,7 +3,7 @@
   "shortName":"HeatSuite",
   "version":"0.08",
   "description": "The smartwatch software to integrate with HeatSuite",
-  "icon": "app.png",
+  "icon": "heatsuite.img",
   "type": "app",
   "tags": "health,tool",
   "supports" : ["BANGLEJS2"],  

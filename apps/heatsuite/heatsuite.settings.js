@@ -146,8 +146,8 @@
             'bthrm': 'BT HRM',
             'CORESensor':'CORE Sensor'
         }
-        for (let key in arr) {
-            let name = arry['key'];
+        for (let key in recorderOptions) {
+            let name = recorderOptions['key'];
             menu[name] = {
                 value: settings.record.includes(key),
                 format: v => v ? "On" : "Off",
