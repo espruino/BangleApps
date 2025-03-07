@@ -97,8 +97,7 @@
       h : rect.height + 10,
       r : 4
     };
-    g.setBgColor(g.theme.bgH).clearRect(r);
-    g.setBgColor(g.theme.bg2).clearRect({x:r.x+2, y:r.y+2, w:r.w-4, h:r.h-4, r:3}).drawString(selectedApp.name, R.w / 2, appY).reset();
+    g.setBgColor(g.theme.bgH).clearRect(r).setBgColor(g.theme.bg2).clearRect({x:r.x+2, y:r.y+2, w:r.w-4, h:r.h-4, r:3}).drawString(selectedApp.name, R.w / 2, appY).setBgColor(g.theme.bg);
   };
 
   let selectItem = function(id, e) {
