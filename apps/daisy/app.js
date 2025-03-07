@@ -1,4 +1,5 @@
 var SunCalc = require("suncalc"); // from modules folder
+const storage = require('Storage');
 const widget_utils = require('widget_utils');
 const SETTINGS_FILE = "daisy.json";
 const LOCATION_FILE = "mylocation.json";
@@ -13,11 +14,12 @@ let warned = 0;
 let idle = false;
 let IDLE_MINUTES = 26;
 
-let pal1; // palette for 0-40%
+let pal1; // palette for 0-49%
 let pal2; // palette for 50-100%
 const infoLine = (3*h/4) - 6;
 const infoWidth = 56;
 const infoHeight = 11;
+const sec_update = 3000; // This ms between updates when the ring is in Seconds mode
 var drawingSteps = false;
 
 function log_debug(o) {
@@ -41,12 +43,12 @@ Graphics.prototype.setFontRoboto20 = function(scale) {
 
 function assignPalettes() {
   if (g.theme.dark) {
-    // palette for 0-45%
+    // palette for 0-49%
     pal1 = new Uint16Array([g.theme.bg, g.toColor(settings.gy), g.toColor(settings.fg), g.toColor("#00f")]);
     // palette for 50-100%
     pal2 = new Uint16Array([g.theme.bg, g.toColor(settings.fg), g.toColor(settings.gy), g.toColor("#00f")]);
   } else {
-    // palette for 0-45%
+    // palette for 0-49%
     pal1 = new Uint16Array([g.theme.bg, g.theme.fg, g.toColor(settings.fg), g.toColor("#00f")]);
     // palette for 50-100%
     pal2 = new Uint16Array([g.theme.bg, g.toColor(settings.fg), g.theme.fg, g.toColor("#00f")]);
@@ -85,7 +87,9 @@ function loadSettings() {
   settings.idle_check = (settings.idle_check === undefined ? true : settings.idle_check);
   settings.batt_hours = (settings.batt_hours === undefined ? false : settings.batt_hours);
   settings.hr_12 = (settings.hr_12 === undefined ? false : settings.hr_12);
-  settings.show_steps_ring = (settings.show_steps_ring === undefined ? false : settings.show_steps_ring);
+  settings.ring = settings.ring||'Steps';
+  settings.idxInfo = settings.idxInfo||0;
+  settings.step_target = settings.step_target||10000;
   assignPalettes();
 }
 
@@ -194,28 +198,21 @@ const infoData = {
 };
 
 const infoList = Object.keys(infoData).sort();
-let infoMode = infoList[0];
 
-function nextInfo() {
-  let idx = infoList.indexOf(infoMode);
+function nextInfo(idx) {
   if (idx > -1) {
-    if (idx === infoList.length - 1) infoMode = infoList[0];
-    else infoMode = infoList[idx + 1];
+    if (idx === infoList.length - 1) idx = 0;
+    else idx += 1;
   }
-  // power HRM on/off accordingly
-  Bangle.setHRMPower(infoMode == "ID_HRM" ? 1 : 0);
-  resetHrm();
+  return idx;
 }
 
-function prevInfo() {
-  let idx = infoList.indexOf(infoMode);
+function prevInfo(idx) {
   if (idx > -1) {
-    if (idx === 0) infoMode = infoList[infoList.length - 1];
-    else infoMode = infoList[idx - 1];
+    if (idx === 0) idx = infoList.length - 1;
+    else idx -= 1;
   }
-  // power HRM on/off accordingly
-  Bangle.setHRMPower(infoMode == "ID_HRM" ? 1 : 0);
-  resetHrm();
+  return idx;
 }
 
 function clearInfo() {
@@ -280,7 +277,7 @@ function drawClock() {
       ring_percent = Math.round((10*date.getSeconds())/6);
       break;
     case 'Steps': 
-      ring_percent = Math.round(100*(getSteps()/10000));
+      ring_percent = Math.round(100*(getSteps()/settings.step_target));
       break;
     case 'Battery': 
       ring_percent = E.getBattery();
@@ -690,9 +687,9 @@ function buzzer(n) {
 // timeout used to update every minute
 var drawTimeout;
 
-// schedule a draw for the next minute or every 5 seconds
+// schedule a draw for the next minute or every sec_update ms
 function queueDraw() {
-  let delay = (settings.ring == 'Seconds') ? (5000 - (Date.now() % 5000)) : (60000 - (Date.now() % 60000));
+  let delay = settings.ring == 'Seconds' ? sec_update - (Date.now() % sec_update) : 60000 - (Date.now() % 60000);
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
@@ -712,13 +709,20 @@ Bangle.on('lcdPower',on=>{
 });
 
 Bangle.setUI("clockupdown", btn=> {
-  if (btn<0) prevInfo();
-  if (btn>0) nextInfo();
+  if (btn<0) settings.idxInfo = prevInfo(settings.idxInfo);
+  if (btn>0) settings.idxInfo = nextInfo(settings.idxInfo);
+  // power HRM on/off accordingly
+  infoMode = infoList[settings.idxInfo];
+  Bangle.setHRMPower(infoMode == "ID_HRM" ? 1 : 0);
+  resetHrm();
+  log_debug("idxInfo=" + settings.idxInfo);
   draw();
+  storage.write(SETTINGS_FILE, settings);  // Retains idxInfo when leaving the face
 });
 
 loadSettings();
 loadLocation();
+var infoMode = infoList[settings.idxInfo];
 updateSunRiseSunSet(new Date(), location.lat, location.lon, true);
 
 g.clear();
