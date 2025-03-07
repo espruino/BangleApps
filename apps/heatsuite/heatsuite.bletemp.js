@@ -45,7 +45,6 @@ function getTcore(id) {
   var gatt;
   var startTime;
   var complete = false;
-  //var characteristic;
   var TCoreData = {
     "temp": null,
     "ta": null,
@@ -63,7 +62,6 @@ function getTcore(id) {
   }).then(function (s) {
     return s.getCharacteristic("00002A1F-0000-1000-8000-00805F9B34FB");
   }).then(function (c) {
-    characteristic = c;
     c.on('characteristicvaluechanged', function (event) {
       const receivedData = modHS.parseBLEData(event.target.value, Schema_ThermistorPodBLE);
       TCoreData.temp = receivedData.tempAvg;

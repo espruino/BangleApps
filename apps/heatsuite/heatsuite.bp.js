@@ -1,7 +1,6 @@
 var Layout = require("Layout");
 const modHS = require('HSModule');
 var layout;
-let characteristic;
 var settings = modHS.getSettings();
 //var appCache = modHS.getCache();
 function log(msg) {
@@ -113,7 +112,6 @@ function getBP(id) {
   }).then(function () {
     return service.getCharacteristic("2A35");
   }).then(function (c) {
-    characteristic = c;
     c.on('characteristicvaluechanged', function (event) {
       //log("-> "); // this is a DataView
       //log(event.target.value);

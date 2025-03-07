@@ -16,6 +16,8 @@
   var processQueue = [];
   var processQueueTimeout = null;
   let initHandlerTimeout = null;
+  let BTHRM_ConnectCheck = null;
+  let CORESensor_ConnectCheck = null;
 
   Bangle.setOptions({ 
     "hrmSportMode": -1,
@@ -531,6 +533,8 @@ function studyTaskCheck(timenow) {
   function startRecorder(){
     settings = modHS.getSettings(); 
     if(initHandlerTimeout) clearTimeout(initHandlerTimeout);
+    if(BTHRM_ConnectCheck) clearInterval(BTHRM_ConnectCheck);
+    if(CORESensor_ConnectCheck) clearInterval(CORESensor_ConnectCheck);
     activeRecorders = []; //clear active recorders
     recorders = getRecorders();
     settings.record.forEach(r => {
@@ -542,6 +546,26 @@ function studyTaskCheck(timenow) {
       activeRecorder.start();
       activeRecorders.push(activeRecorder);
     });
+    //BTHRM Additions
+    if (settings.record.includes('bthrm') && Bangle.hasOwnProperty("isBTHRMConnected") ) {
+      var BTHRMStatus = 0;
+      let BTHRM_ConnectCheck = setInterval(function () {
+        if (Bangle.isBTHRMConnected() != BTHRMStatus) {
+          BTHRMStatus = Bangle.isBTHRMConnected();
+          WIDGETS["heatsuite"].draw();
+        }
+      }, 10000); //runs every 10 seconds
+    }
+    //CORESensor Additions
+    if (settings.record.includes('CORESensor') && Bangle.hasOwnProperty("isCORESensorConnected") ) {
+      var CORESensorStatus = 0;
+      let CORESensor_ConnectCheck = setInterval(function () {
+        if (Bangle.isCORESensorConnected() != CORESensorStatus) {
+          CORESensorStatus = Bangle.isCORESensorConnected();
+          WIDGETS["heatsuite"].draw();
+        }
+      }, 10000); //runs every 10 seconds
+    }
     initHandler();
   }
 
@@ -595,26 +619,7 @@ function studyTaskCheck(timenow) {
     }
   });
 
-  //BTHRM Additions
-  if (settings.record.includes('bthrm') && Bangle.hasOwnProperty("isBTHRMConnected") ) {
-    var BTHRMStatus = 0;
-    let BTHRM_ConnectCheck = setInterval(function () {
-      if (Bangle.isBTHRMConnected() != BTHRMStatus) {
-        BTHRMStatus = Bangle.isBTHRMConnected();
-        WIDGETS["heatsuite"].draw();
-      }
-    }, 10000); //runs every 10 seconds
-  }
-  //CORESensor Additions
-  if (settings.record.includes('CORESensor') && Bangle.hasOwnProperty("isCORESensorConnected") ) {
-    var CORESensorStatus = 0;
-    let CORESensor_ConnectCheck = setInterval(function () {
-      if (Bangle.isCORESensorConnected() != CORESensorStatus) {
-        CORESensorStatus = Bangle.isCORESensorConnected();
-        WIDGETS["heatsuite"].draw();
-      }
-    }, 10000); //runs every 10 seconds
-  }
+
   //Diagnosing BLUETOOTH Connection Issues
   if(NRF.getSecurityStatus().connected){ //if widget starts while a bluetooth connection exits, need to force connection flag
     connectionLock = true;
