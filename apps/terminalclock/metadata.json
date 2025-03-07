@@ -1,25 +1,23 @@
-{ 
+{
   "id": "terminalclock",
   "name": "Terminal Clock",
-  "shortName":"Terminal Clock",
-  "description": "A terminal cli like clock displaying multiple sensor data",
-  "version":"0.10",
+  "shortName": "Terminal Clock",
+  "description": "A terminal CLI like clock displaying configurable, multiple sensor data",
+  "version": "0.13",
   "icon": "app.png",
   "type": "clock",
   "tags": "clock",
-  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "supports": [
+    "BANGLEJS",
+    "BANGLEJS2"
+  ],
   "allow_emulator": false,
   "readme": "README.md",
   "storage": [
-    {"name": "terminalclock.app.js","url": "app.js"},
-    {"name": "terminalclock.settings.js","url": "settings.js"},
-    {"name": "terminalclock.img","url": "app-icon.js","evaluate": true}
+    { "name": "terminalclock.app.js", "url": "app.js" },
+    { "name": "terminalclock.settings.js", "url": "settings.js" },
+    { "name": "terminalclock.img", "url": "app-icon.js", "evaluate": true }
   ],
-  "data": [
-    {"name": "terminalclock.json"}
-  ],
-  "screenshots": [
-    {"url": "screenshot1.png"},
-    {"url": "screenshot2.png"}
-  ]
+  "data": [{ "name": "terminalclock.json" }],
+  "screenshots": [{ "url": "screenshot1.png" }, { "url": "screenshot2.png" }]
 }

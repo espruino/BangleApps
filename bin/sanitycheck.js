@@ -2,6 +2,31 @@
 /* Checks for any obvious problems in apps.json
 */
 
+var BASEDIR = __dirname+"/../";
+var APPSDIR_RELATIVE = "apps/";
+var APPSDIR = BASEDIR + APPSDIR_RELATIVE;
+var showAllErrors = process.argv.includes("--show-all");
+
+if (process.argv.includes("--help")) {
+  console.log(`BangleApps Sanity Check
+------------------------
+
+Checks apps in this repository for common issues that might
+cause problems.
+
+USAGE:
+
+bin/sanitycheck.js
+  - default, runs all tests (hides known errors)
+bin/sanitycheck.js --show-all
+  - show all warnings/errors (including known ones)
+bin/sanitycheck.js --help
+  - show this message
+`);
+  process.exit(0);
+}
+
+
 var fs = require("fs");
 var vm = require("vm");
 var heatshrink = require("../webtools/heatshrink");
@@ -27,40 +52,42 @@ var jsparse = (() => {
   return str => acorn.parse(str, { ecmaVersion: 2020 });
 })();
 
-var BASEDIR = __dirname+"/../";
-var APPSDIR_RELATIVE = "apps/";
-var APPSDIR = BASEDIR + APPSDIR_RELATIVE;
+
 var knownWarningCount = 0;
 var knownErrorCount = 0;
 var warningCount = 0;
 var errorCount = 0;
+var warningList = [];
+var errorList = [];
+
 function ERROR(msg, opt) {
   // file=app.js,line=1,col=5,endColumn=7
   opt = opt||{};
+  errorList.push(msg);
   if (KNOWN_ERRORS.includes(msg)) {
-    console.log(`Known error : ${msg}`);
     knownErrorCount++;
-  } else {
-    console.log(`::error${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
-    errorCount++;
+    if (!showAllErrors) return;
+    msg += " (KNOWN)"
   }
+  console.log(`::error${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
+  errorCount++;
 }
 function WARN(msg, opt) {
   // file=app.js,line=1,col=5,endColumn=7
   opt = opt||{};
+  warningList.push(msg);
   if (KNOWN_WARNINGS.includes(msg)) {
-    console.log(`Known warning : ${msg}`);
     knownWarningCount++;
-  } else {
-    console.log(`::warning${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
-    warningCount++;
+    if (!showAllErrors) return;
+    msg += " (KNOWN)"
   }
+  console.log(`::warning${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
+  warningCount++;
 }
 /* These are errors that we temporarily allow */
 var KNOWN_ERRORS = [
   "In locale en_CA, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
   "In locale fr_FR, long date output must be shorter than 15 characters (10 septembre 2024 -> 17)",
-  "In locale fr_FR, short month must be shorter than 5 characters",
   "In locale sv_SE, speed must be shorter than 5 characters",
   "In locale en_SE, long date output must be shorter than 15 characters (September 10 2024 -> 17)",
   "In locale en_NZ, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
@@ -69,51 +96,23 @@ var KNOWN_ERRORS = [
   "In locale en_IL, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
   "In locale es_ES, long date output must be shorter than 15 characters (miércoles, 10 de septiembre de 2024 -> 35)",
   "In locale fr_BE, long date output must be shorter than 15 characters (dimanche septembre 10 2024 -> 26)",
-  "In locale fr_BE, short month must be shorter than 5 characters",
-  "In locale fr_BE, short month must be shorter than 5 characters",
-  "In locale fr_BE, short month must be shorter than 5 characters",
-  "In locale fr_BE, short month must be shorter than 5 characters",
-  "In locale fr_BE, short month must be shorter than 5 characters",
   "In locale fi_FI, long date output must be shorter than 15 characters (keskiviikkona 10. maaliskuuta 2024 -> 34)",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
   "In locale fi_FI, short month must be shorter than 5 characters",
   "In locale de_CH, meridian must be shorter than 4 characters",
   "In locale de_CH, meridian must be shorter than 4 characters",
   "In locale de_CH, long date output must be shorter than 15 characters (Donnerstag, 10. September 2024 -> 30)",
   "In locale fr_CH, long date output must be shorter than 15 characters (dimanche 10 septembre 2024 -> 26)",
-  "In locale fr_CH, short month must be shorter than 5 characters",
-  "In locale fr_CH, short month must be shorter than 5 characters",
-  "In locale fr_CH, short month must be shorter than 5 characters",
-  "In locale fr_CH, short month must be shorter than 5 characters",
-  "In locale fr_CH, short month must be shorter than 5 characters",
   "In locale wae_CH, long date output must be shorter than 15 characters (Sunntag, 10. Herbštmánet 2024 -> 29)",
   "In locale tr_TR, long date output must be shorter than 15 characters (10 Haziran 2024 Pazartesi -> 25)",
   "In locale hu_HU, long date output must be shorter than 15 characters (2024 Szep 10, Csütörtök -> 23)",
   "In locale oc_FR, long date output must be shorter than 15 characters (divendres 10 setembre de 2024 -> 29)",
   "In locale oc_FR, short month must be shorter than 5 characters",
-  "In locale oc_FR, short month must be shorter than 5 characters",
-  "In locale hr_HR, meridian must be shorter than 4 characters",
-  "In locale hr_HR, meridian must be shorter than 4 characters",
-  "In locale hr_HR, short month must be shorter than 5 characters",
-  "In locale sl_SI, meridian must be shorter than 4 characters",
-  "In locale sl_SI, meridian must be shorter than 4 characters",
   "In locale ca_ES, long date output must be shorter than 15 characters (10 setembre 2024 -> 16)",
-  "In locale ca_ES, short month must be shorter than 5 characters",
 ];
 /* These are warnings we know about but don't want in our output */
 var KNOWN_WARNINGS = [
   "App gpsrec data file wildcard .gpsrc? does not include app ID",
   "App owmweather data file weather.json is also listed as data file for app weather",
-  "App messagegui storage file messagegui is also listed as storage file for app messagelist",
   "App carcrazy has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"carcrazy.settings.json\"}]`)",
   "App loadingscreen has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"loadingscreen.settings.json\"}]`)",
   "App trex has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"trex.settings.json\"}]`)",
@@ -169,7 +168,7 @@ const APP_KEYS = [
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports', 'noOverwrite'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
 const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
-const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","textinput","module","clkinfo"]; // values allowed for "type" field
+const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","textinput","module","clkinfo","defaultconfig"]; // values allowed for "type" field - listed in README.md
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 const GRANDFATHERED_ICONS = ["s7clk",  "snek", "astral", "alpinenav", "slomoclock", "arrow", "pebble", "rebble"];
@@ -207,6 +206,10 @@ apps.forEach((app,appIdx) => {
   if (!app.name) ERROR(`App ${app.id} has no name`, {file:metadataFile});
   var isApp = !app.type || app.type=="app";
   var appTags = app.tags ? app.tags.split(",") : [];
+  if (appTags.some(tag => tag!=tag.trim()))
+    WARN(`App ${app.id} 'tag' list contains whitespace ("${app.tags}")`, {file:metadataFile});
+  if (appTags.some(tag => tag!=tag.toLowerCase()))
+    WARN(`App ${app.id} 'tag' list contains uppercase ("${app.tags}")`, {file:metadataFile});
   if (app.name.length>20 && !app.shortName && isApp) ERROR(`App ${app.id} has a long name, but no shortName`, {file:metadataFile});
   if (app.type && !METADATA_TYPES.includes(app.type))
     ERROR(`App ${app.id} 'type' is one one of `+METADATA_TYPES, {file:metadataFile});
@@ -296,7 +299,8 @@ apps.forEach((app,appIdx) => {
       if (INTERNAL_FILES_IN_APP_TYPE[app.type].includes(file.name))
         fileInternal = true;
     }
-    allFiles.push({app: app.id, file: file.name, internal:fileInternal});
+    if (!app.type=="defaultconfig")
+      allFiles.push({app: app.id, file: file.name, internal:fileInternal});
     if (file.url) if (!fs.existsSync(appDir+file.url)) ERROR(`App ${app.id} file ${file.url} doesn't exist`, {file:metadataFile});
     if (!file.url && !file.content && !app.custom) ERROR(`App ${app.id} file ${file.name} has no contents`, {file:metadataFile});
     var fileContents = "";
@@ -494,7 +498,7 @@ while(fileA=allFiles.pop()) {
       if (isGlob(nameA)||isGlob(nameB))
         ERROR(`App ${fileB.app} ${typeB} file ${nameB} matches app ${fileA.app} ${typeB} file ${nameA}`);
       else if (fileA.app != fileB.app && (!fileA.internal) && (!fileB.internal))
-        WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`);
+        WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`, {file:APPSDIR_RELATIVE+fileB.app+"/metadata.json"});
     }
   })
 }
@@ -520,8 +524,17 @@ function sanityCheckLocales(){
 }
 
 promise.then(function() {
+  KNOWN_ERRORS.forEach(msg => {
+    if (!errorList.includes(msg))
+      WARN(`Known error '${msg}' no longer occurs`);
+  });
+  KNOWN_WARNINGS.forEach(msg => {
+    if (!warningList.includes(msg))
+      WARN(`Known warning '${msg}' no longer occurs`);
+  });
   console.log("==================================");
-  console.log(`${errorCount} errors, ${warningCount} warnings (and ${knownErrorCount} known errors, ${knownWarningCount} known warnings)`);
+  console.log(`${errorCount} errors, ${warningCount} warnings`);
+  console.log(`${knownErrorCount} known errors, ${knownWarningCount} known warnings${(knownErrorCount||knownWarningCount)?", run with --show-all to see them":""}`);
   console.log("==================================");
   if (errorCount)  {
     process.exit(1);

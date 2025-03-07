@@ -1,0 +1,17 @@
+{ "id": "clkshortcuts",
+  "name": "Shortcuts",
+  "shortName": "Shortcuts",
+  "version": "0.01",
+  "description": "Add shortcuts to launch your favourite apps straight from the Clock",
+  "icon": "app.png",
+  "screenshots": [{"url":"add_shortcuts_screenshot.png"}, {"url":"example_shortcuts_screenshot.png"}],
+  "tags": "clkinfo,clockinfo",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    { "name": "clkshortcuts.app.js", "url": "app.js" },
+    { "name": "clkshortcuts.img", "url": "app-icon.js", "evaluate": true },
+    {"name":"clkshortcuts.clkinfo.js","url":"clkinfo.js"}
+  ],
+  "data": [{"name":"clkshortcuts.json"}]
+}

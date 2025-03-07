@@ -1,7 +1,7 @@
 {
     "id": "gallery",
     "name": "Gallery",
-    "version": "0.03",
+    "version": "0.04",
     "description": "A gallery that lets you view images uploaded with the IDE (see README)",
     "readme": "README.md",
     "icon": "icon.png",
@@ -22,6 +22,10 @@
             "name": "gallery.img",
             "url": "icon.js",
             "evaluate": true
+        },
+        {   "name":"gallery.settings.js",
+            "url":"settings.js"
         }
-    ]
+    ],
+    "data": [{"name":"gallery.json"}]
 }

@@ -10,7 +10,7 @@
     {"url": "screenshot-2.png"}
   ],
   "description": "An intuitive, easy-to-use app that aids in the interpretation of resistor color codes and calculation of resistance values.",
-  "tags": "app, tool, electricity, ohms, converter",
+  "tags": "app,tool,electricity,ohms,converter",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "allow_emulator": true,
