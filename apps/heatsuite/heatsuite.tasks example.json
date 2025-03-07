@@ -1,0 +1,89 @@
+{
+  "survey": {
+    "Name": "survey",
+    "icon": "mUy4kA///hf69H+icC18BsH+le/pX85t551Z9mpjdV51B+cBqcKl1sEwUCkUikA1KgMRiMQBAgXCDJYXCDIwXDDJIXEAAIwHAAQYGC4oyDC4wYGGAwyCGA5LGDBEQDAVvsUi/4yHCQWJiMa5QYCCIXt4UvmYbBDA8aomBjlED4QYC+fyk3uDBMR4mhjFJDAsmAQNmJRQAGPY4YJjWc5AYFk3OI4P++QYJwlEoh8CDAR5B9//mYYJPgIAC0JKE8czmc+PhMZoma1gYDY4VsDAPvcBMaMIWZcArhBb4b5OBQKUMV5IJBGQYwIGREQBQQwMGQ4KEC5gZFBxQAZqoABq93AAIWPgoXCDAl3uAXRDAoZNC4gYGJpYXFDA4ZJJAoYJJhAXGDBAyHGA4YJGQ1iC41QgEHDA1xC4kGs0lCwoADDQsRiALDs1mGQYXFDItxiMRDAoyCC44ZEC4IYDJIIyDCYlmAogwDJYYYDs0gDBUHC4QYDC4YRFDA0ADAZLCDC5JEsAYMgJLEDAiQGA44YdMRQYMiJiKhe/4BkKDBUz6lEDCkDmc0olADCk+3fkDCs7DCBZFGJKWEUIxjE8ZjGAB58CC6gyBmgwLA==",
+    "cbBtn": "Bangle.load('heatsuite.survey.js');",
+    "tod": [
+      900,
+      1200,
+      1500,
+      1800
+    ],
+    "debounce": 300,
+    "TaskDesc": "survey_TaskDesc",
+    "headers": [
+      "key",
+      "resp",
+      "value"
+    ],
+    "q_size": 20,
+    "ans_size": 18,
+    "questions": "heatsuite.survey.json"
+  },
+  "bloodPressure": {
+    "Name": "bloodPressure",
+    "icon": "mUy4kA///zNDBIIFBoMIqulnE79shiOM9li2cy6eUkEAyecsMIlNKE4cikQ/VgXn93CE4IYT9Wqu/kGiYYC1WnugzSgVO916u+n8QZQkUu89+9V88+noQvPo+qs1n9Wn8l6Jh0Ck+mMAIYBAYJMB4AYNu1+o9005+C0nq8QYMl1q92mDAmno9yE4bsBAAhWBk9m01mDAmqDAku9wAF8kgDAIABMYYABvQYCgX/AA/ikgwBs1qDAmqMYUE/1EAAtP+Ui84YBvwYEv0iDAMO+mVqoADrfu+UnugZBMYl3p18GIX0wczAAn+DANn8nn8l3893v1OvWsDAk1qszAQQYCu5DB8lMklE896v10DAn+92VSgIFBJQcWtRhCsOuc4IYErdVqZjBGIcav2nu92tQCBv120hjKPgURi0X91H13uuycBs4YErG1DAf/DAQABfgMaswFCsJjF9AYDrIYEAAoxGJQoYMVwoYFz4YQ/e7AAe4PgYYM/1EAAtPDB+ZzOf/4ACAgIYRzz3B93vAwIYR9wwC+n5DCXvxP//GODCmP93pDCnuxOZzGUDCf0px8BpwYMsIYCgQRBVwgFB8Un0wYHtQYDFwQAFkEn9wZGtV+uQYBDIMikUk9/iAgMigEuv1Hs1hCwMWs108/iDAQACl1VwQGDgXqu9n9160/uAwOnEoIAEh3/+QgFu0au/q113uweB+gYFgXuEIsCl131Vms2q0/k/vUDA348AIGkSKC8kil3VwgPG/oYGAASEBkEAhnuPgwYLB4ilBPg2YDB3tRgsAhtZoAYMgFIxxPBDAlfA4oAIl/fUwkC9AgGABEMzv0DIS9BzpSGMhNJ7H+W4Pu/HfGBwABkn47uIxGN7KcGABcu/+ZzP/9gwQJgToBdQYAFA==",
+    "tod": [
+      830,
+      1330,
+      1930
+    ],
+    "TaskDesc": "bloodPressure_TaskDesc",
+    "debounce": 3600,
+    "headers": [
+      "sbp",
+      "dbp",
+      "hr",
+      "afib"
+    ],
+    "btPair": true,
+    "btInfo": {
+      "service": "1810",
+      "supported": [
+        "A&D_UA-651"
+      ]
+    }
+  },
+  "coreTemperature": {
+    "Name": "coreTemperature",
+    "icon": "mUy4kA///o8h7femWExEp5dazXWs8h+uc5Mpj+nqWErXOi99y+13fWMf4AdolEC64ZVglJqtVylAGCeVDANZGSQwBGIQyBGCU4ygyCqhLQglDkWJGQQYRokykUoGQQYQGAUiswyCDCFEn+z4U1tAyBPh4wB/dBrmDsQyBVx4wB2mVivCMoRJOGAVJ7VRrkikYwSzuq0sTkU0GCeq7NLGCutym/GC/zGH4wYg4wYmXppYwTgEV+VliowTgmekUsqNbGCUBr8ikXFigwRDAMyDAMsrIwRPYOCDAMitwwRgEZ4QYCkQwRSgQXCGCUBpAXC/1UuAYQoKUB/mDrMUC6EEivi/FZoMUMKNBr0uqkRCyIwD8sRCyIwEqIvSGANFGAJ3ReoeeGC1EoYwWpNEygwTDANVylEC6Z6BqtEGCgYBqgwUJQQwVGQQXWAH4AJA",
+    "tod": [
+      830,
+      1330,
+      1930
+    ],
+    "TaskDesc": "coreTemperature_TaskDesc",
+    "debounce": 3600,
+    "headers": [
+      "val",
+      "last10"
+    ],
+    "btPair": true,
+    "btInfo": {
+      "service": "1809",
+      "supported": [
+        "BLEThermistorPod"
+      ]
+    }
+  },
+  "bodyMass": {
+    "Name": "bodyMass",
+    "icon": "mUy4kBnP+///sMQ+nMkEAhtbtNirP+4cQinV09BDYOqvs16uCiEx1kRAGUb2kiAB9L2IYD3FvnMzmed7oAH7IMByf2xYwD0cHu4ABgaJBAA0wBoVwnQyC3E3UwV50VEAA8qy4PCuYyC2y/DhVKqoAH0mgCAdrDANPuAGBg/00oYIrQQFDAMjA4dUqxKIstFCAcyDAMpA4dSrVKswAF0mlkoQDyQxHrVM5gAF4mlGI4YLk3OtgYV1nKGKNGJQ1kDB+y9wAFlYYN+lV1QAHqrHEDA8+wrgIrHjDBV3v8ixAAHkX3u4YJ78w+xKIt8D/oYIgvklUwBgIAGgeip1QDA9Ut9Y1o3CAAkH7WF+1FDA19xRjBRQYYF+hjB1HXDAtzl93u+GJRFoBgPym4xG8t3AQIxIr3Xu4CBMY1u/s6XgYYFn2j7/mMYxvBpEk+BKIh9CwiJBGI12pWO64YIvvo0lnVw8G8uuDBXqr1gDH4Y/DDzHODA8H7FI8lQDBEFp2Exr5H1337QFCAAoSB1t/9QxGvvlu4CBDBFe693AQIYFucvu93wxKItAMB+U3DAsNxV3v9PGJH0+931HQDAcpCQNU19e1oxI7Xl/VFDwOSPgkFwXqVxWulCiBGIZED6fQAgUH/Wq14GDhs9KAYYB2xYDMIcHnWq0YHEAgdrDAO4m5FIABNzxYYBjejg6gBAB1wnWxDAIyBt85mYANyf2GAQyC2kiAB9LGAYAwA==",
+    "tod": [
+      800
+    ],
+    "TaskDesc": "bodyMass_TaskDesc",
+    "debounce": 3600,
+    "headers": [
+      "mass",
+      "impedance"
+    ],
+    "btPair": false,
+    "btInfo": {
+      "service": "181b",
+      "supported": [
+        "MIBFS"
+      ]
+    }
+  }
+}

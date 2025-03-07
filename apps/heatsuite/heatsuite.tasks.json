@@ -1,0 +1,35 @@
+{
+    "survey": {
+        "name": "survey",
+        "icon": "kEg4kA\/\/\/E0EBiIABBxwQLiMQAg4eGApIeECwwgGDA4HIHA4PGAwwVBDAwPFBgQPJgIFFQwkQBIcQDYYPFTAgEEF4oKJB5R4KiJ\/OB5CfDAQYPJMogPHBwJvCF4r\/HA4oAHNQwJDTIZvDEAbOIBIQFFB44CFB5KVLB8DVIBAyEGSgQXHCAwoIG4wPNWYoQMA",
+        "cbBtn": "Bangle.load('heatsuite.survey.js');",
+        "debounce": 300,
+        "tod": [
+            "900, 1200, 1500, 1800"
+        ],
+        "headers": [
+            "key",
+            "resp",
+            "value"
+        ],
+        "btPair": false,
+        "btInfo": null,
+        "notify": true
+    },
+    "urine": {
+        "name": "urine",
+        "icon": "j0e4kA\/\/\/8n+gn\/wM5xObsnu9Wr4Ugs1qoEIgEhhGDDoNEpV743E\/wHBu4AJGYUJ2lEAA+4yAOC21Io1Is27s2EsmEpAOEodG3tmxFm7dknYOUslmogBFBwnYxAAHxoOCgHH3YAHvidDhvuAA\/QByUH7tm7oAFuAODgdViNVAAswBwnykQAEl\/1BwkK2m0CAgOH3YOMFhwOOg+IoJKMolSFjUDDgo7I7vbCAg7Hs1liQ7U2AOEqIcEBwP\/qA7F2JZMqp3cfgz+GhmjmYAFnXABgI",
+        "cbBtn": "Bangle.load('heatsuite.urine.js');",
+        "debounce": 0,
+        "tod": [
+            ""
+        ],
+        "headers": [
+            "color",
+            "colorAssessment"
+        ],
+        "btPair": false,
+        "btInfo": null,
+        "notify": false
+    }
+}

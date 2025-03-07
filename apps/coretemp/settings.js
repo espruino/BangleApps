@@ -34,8 +34,8 @@
   let supportedCharacteristics = [
     "00002101-5b1e-4347-b07c-97b514dae121", // Core Body Temperature Characteristic
     "00002102-5b1e-4347-b07c-97b514dae121", //Core Temp Control Point (opCode for extra function)
-    "0x2a1c", //Thermometer
-    "0x2a1d", //Sensor Location (CORE)
+    //"0x2a1c", //Thermometer
+    //"0x2a1d", //Sensor Location (CORE)
     "0x2a19", // Battery
   ];
 
@@ -87,7 +87,6 @@
   };
 
   let characteristics;
-
   let createCharacteristicsPromise = function (newCharacteristics) {
     log("Create characteristics promise ", newCharacteristics.length);
     let result = Promise.resolve();
@@ -123,7 +122,6 @@
         log("Control Point characteristic not found! Reconnecting...");
         return;
       }
-
       // Temporary handler to capture the response
       function handleResponse(event) {
         let response = new Uint8Array(event.target.value.buffer);
@@ -141,7 +139,6 @@
       }
 
       controlPointChar.on("characteristicvaluechanged", handleResponse);
-
       controlPointChar.writeValue(data)
         .then(() => log("Sent OpCode:", opCode.toString(16), "Params:", data))
         .catch(error => {
@@ -299,7 +296,6 @@
           log("Error checking HRM state:", error);
         });
     }
-
     log("Starting scan to synchronize HRM...");
     writeToControlPoint(0x0A, [0xFF]) // Start initial scan
       .then(() => {
@@ -330,7 +326,7 @@
           promises.push(
             writeToControlPoint(0x0C, [i]) // Get Scanned HRM IDs
               .then(hrmResponse => {
-                log("🔍 Response 0x0C:", hrmResponse);
+                log("Response 0x0C:", hrmResponse);
                 let byte1 = hrmResponse[3]; // LSB
                 let byte2 = hrmResponse[4]; // MSB
                 let txType = hrmResponse[5]; // Transmission Type
@@ -396,7 +392,6 @@
             writeSettings("btname", undefined);
             writeSettings("btid", undefined);
             writeSettings("cache", undefined);
-            clearPairedHRM_ANT();
           }
           E.showMenu(buildMainMenu());
         });
