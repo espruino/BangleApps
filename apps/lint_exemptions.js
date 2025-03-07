@@ -322,24 +322,11 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "apps/gbmusic/app.js": {
-    "hash": "c36e9ccf6813264000732cf8aae5b16bb63afafb3bdc81f6f98d670c008b3416",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "apps/gbdebug/app.js": {
     "hash": "5372409dd09a1b165b009afc7dc9af24d4be223ffc6507a3f6e1cbb694a3eeec",
     "rules": [
       "no-unused-vars",
       "no-undef"
-    ]
-  },
-  "apps/gallery/app.js": {
-    "hash": "81b119cc61c9d1ae76071f7ef05580f4f93ac60bf97fbdfe418463817e045402",
-    "rules": [
-      "no-unused-vars"
     ]
   },
   "apps/football/app.js": {
@@ -764,12 +751,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/multidice/app.js": {
-    "hash": "4657e0c1a72c555426561f4395febea280d4140cfeba19429c4f0c4737caf7f5",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/mtgwatchface/app.js": {
     "hash": "7f5ffbd611368003fced26cab9e42dee2bb66b615176ca075198aaf6417b21c9",
     "rules": [
@@ -932,12 +913,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/gbmusic/boot.js": {
-    "hash": "1bf553c4c3452eae3930b4a08cd3e01efc2686fcb19fd2c4f9aa949b7768ff4c",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/gallifr/app.js": {
     "hash": "710063b833ce75cae54a6d0b3309653c59ae5d0e4c2cccd930921621a74f316c",
     "rules": [
@@ -1042,12 +1017,6 @@ module.exports = {
   },
   "apps/calendar/settings.js": {
     "hash": "9f05366b91d0293ed965d8de019bfd044f96683542b86ebabaa3c8d3cc3ad3a7",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/calendar/calendar.js": {
-    "hash": "d4f0375fea397a1b93d39667e9f8eaf1a75ebd0462c216015352131360d30099",
     "rules": [
       "no-undef"
     ]
