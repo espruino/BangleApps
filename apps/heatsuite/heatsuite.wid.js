@@ -502,6 +502,9 @@ function studyTaskCheck(timenow) {
   function init() {
     cache = modHS.getCache(); //update cache each minute
     var unix = parseInt((new Date().getTime() / 1000).toFixed(0));
+    if (storeTempLog(unix)) {
+      modHS.log("Data Logged to RAM");
+    }
     queueProcess((next, unix) => {
       modHS.log("[HRM + StudyTask]");
       try {
@@ -549,7 +552,7 @@ function studyTaskCheck(timenow) {
     //BTHRM Additions
     if (settings.record.includes('bthrm') && Bangle.hasOwnProperty("isBTHRMConnected") ) {
       var BTHRMStatus = 0;
-      let BTHRM_ConnectCheck = setInterval(function () {
+      BTHRM_ConnectCheck = setInterval(function () {
         if (Bangle.isBTHRMConnected() != BTHRMStatus) {
           BTHRMStatus = Bangle.isBTHRMConnected();
           WIDGETS["heatsuite"].draw();
@@ -559,7 +562,7 @@ function studyTaskCheck(timenow) {
     //CORESensor Additions
     if (settings.record.includes('CORESensor') && Bangle.hasOwnProperty("isCORESensorConnected") ) {
       var CORESensorStatus = 0;
-      let CORESensor_ConnectCheck = setInterval(function () {
+      CORESensor_ConnectCheck = setInterval(function () {
         if (Bangle.isCORESensorConnected() != CORESensorStatus) {
           CORESensorStatus = Bangle.isCORESensorConnected();
           WIDGETS["heatsuite"].draw();
