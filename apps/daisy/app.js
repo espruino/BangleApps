@@ -19,6 +19,7 @@ let pal2; // palette for 50-100%
 const infoLine = (3*h/4) - 6;
 const infoWidth = 56;
 const infoHeight = 11;
+const sec_update = 3000; // This ms between updates when the ring is in Seconds mode
 var drawingSteps = false;
 
 function log_debug(o) {
@@ -686,9 +687,9 @@ function buzzer(n) {
 // timeout used to update every minute
 var drawTimeout;
 
-// schedule a draw for the next minute or every 5 seconds
+// schedule a draw for the next minute or every sec_update ms
 function queueDraw() {
-  let delay = (settings.ring == 'Seconds') ? (3000 - (Date.now() % 3000)) : (60000 - (Date.now() % 60000));
+  let delay = settings.ring == 'Seconds' ? sec_update - (Date.now() % sec_update) : 60000 - (Date.now() % 60000);
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;

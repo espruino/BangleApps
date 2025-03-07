@@ -77,7 +77,9 @@
           s.ring = ring_options[v];
           save();
           if (prev != s.ring && (prev === 'Steps' || s.ring === 'Steps')) {
-            setTimeout(showMainMenu, 0);  // Reference https://github.com/orgs/espruino/discussions/7697
+            // redisplay the menu with/without ring setting
+            // Reference https://github.com/orgs/espruino/discussions/7697
+            setTimeout(showMainMenu, 0);
           }
         },
       }
