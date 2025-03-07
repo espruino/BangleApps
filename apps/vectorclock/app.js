@@ -13,7 +13,7 @@ function padNum(n, l) {
 var rects = {};
 var rectsToClear = {};
 var commands = [];
-var showSeconds = true;
+var showSeconds = !Bangle.isLocked();
 
 function pushCommand(command) {
   var hash = E.CRC32(E.toJS(arguments));
