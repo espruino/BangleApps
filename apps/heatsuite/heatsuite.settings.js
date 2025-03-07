@@ -166,7 +166,6 @@
         menu['GPS'] = function () { E.showMenu(gpsSettings()) };
         menu['Survey Random'] = {
             value: settings.surveyRandomize || false,
-            format: v => v ? "On" : "Off",
             onchange: v => {
                 settings.GPS = v;
                 writeSettings("surveyRandomize", v);
@@ -208,7 +207,6 @@
         }
         menu['Notifications'] = {
             value: settings.notifications || false,
-            format: v => v ? "On" : "Off",
             onchange: v => {
                 settings.notifications = v;
                 writeSettings("notifications", v);
@@ -224,7 +222,6 @@
         }; 
         menu['Console'] = {
             value: settings.DEBUG || false,
-            format: v => v ? "On" : "Off",
             onchange: v => {
                 settings.DEBUG = v;
             writeSettings("DEBUG", v);
@@ -232,7 +229,6 @@
         };
         menu['Log (file)'] = {
             value: settings.SAVE_DEBUG || false,
-            format: v => v ? "On" : "Off",
             onchange: v => {
                 settings.SAVE_DEBUG = v;
                 writeSettings("SAVE_DEBUG", v);
@@ -247,7 +243,6 @@
         };
         menu['GPS'] = {
             value: settings.GPS || false,
-            format: v => v ? "On" : "Off",
             onchange: v => {
                 settings.GPS = v;
                 writeSettings("GPS", v);
