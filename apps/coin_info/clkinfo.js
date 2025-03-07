@@ -51,10 +51,10 @@
                         clearInterval(this.interval);
                         this.interval = null;
                     }
-                },
-                run: function () {
-                    this.emit("redraw");
                 }
+                // ,run: function () {
+                //     this.emit("redraw");
+                // }
             }
         })
     };
