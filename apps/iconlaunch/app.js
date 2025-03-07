@@ -4,7 +4,7 @@
     showClocks: true,
     fullscreen: false,
     direct: false,
-    oneClickExit: false,
+    oneClickExit: true,
     swipeExit: false,
     timeOut:"Off"
   }, s.readJSON("iconlaunch.json", true) || {});
@@ -137,8 +137,7 @@
         require("widget_utils").show();
       }
       if(idWatch) clearWatch(idWatch);
-    },
-    btn:Bangle.showClock
+    }
   };
 
   //work both the fullscreen and the oneClickExit
