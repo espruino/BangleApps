@@ -54,7 +54,7 @@
                                 callback();
                             })
                             .catch(err => {
-                                logFile.write("API Error: " + JSON.stringify(err));
+                                // logFile.write("API Error: " + JSON.stringify(err));
                                 cache[token] = {
                                     text: "Error",
                                     img: LOAD_ICON_24
@@ -64,6 +64,7 @@
                     };
 
                     // Set timeout to align to the next hour and then continue updating every hour
+                    const updateTime = settings.getRateMin * 60 * 1000;
                     // TODO get update time from settings
                     self.interval = setTimeout(function timerTimeout() {
                         fetchData(() => {
@@ -74,8 +75,8 @@
                             fetchData(() => {
                                 self.emit("redraw");
                             });
-                        }, 3600000);
-                    }, 60000  - (Date.now() % 60000 ));
+                        }, updateTime);
+                    }, 30000  - (Date.now() % 30000 ));
                 },
                 hide: function() {
                     if (this.interval) {
