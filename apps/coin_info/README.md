@@ -1,6 +1,6 @@
 # Crypto-Coin Info
 
-Crypto-Coins Infos with the help of the Coinmarketcap API
+Crypto-Coins Infos with the help of the Binance API
 
 ## Creator
 

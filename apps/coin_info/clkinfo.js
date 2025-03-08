@@ -1,5 +1,7 @@
 (function() {
     const LOAD_ICON_24 = atob("GBiBAAAAAAAeAAGfwAGB4AAAcBgAOBgYHAAYDAAYDGAYBmAYBgAYBgAYBmDbBmB+BgA8DAAYDBgAHBgAOAAAcAGB4AGfwAAeAAAAAA==");
+    const DECR_ICON_24 = atob("GBiBAAAAAAAAAAAAAAAAAAAAABgAADwAAH4cAD8+AB//AA//gAf/wAPz7AHh/ADA/AAAfAAA/gAA/gAAHgAAAAAAAAAAAAAAAAAAAA==");
+    const INCR_ICON_24 = atob("GBiBAAAAAAAAAAAAAAAAAAAAAAAAHgAA/gAA/gAAfADA/AHh/APz7Af/wA//gB//AD8+AH4cADwAABgAAAAAAAAAAAAAAAAAAAAAAA==");
 
     const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {};
     const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
@@ -35,14 +37,18 @@
 
                         Bangle.http(url, { method: 'GET' })
                             .then(cmcResult => {
-                                logFile.write("HTTP resp:" + JSON.stringify(cmcResult));
+                                // logFile.write("HTTP resp:" + JSON.stringify(cmcResult));
                                 const apiData = JSON.parse(cmcResult.resp);
-                                logFile.write("data:" + JSON.stringify(apiData));
-
+                                // logFile.write("data:" + JSON.stringify(apiData));
                                 let priceString = ciLib.formatPriceString(apiData.lastPrice);
+
+                                let changeIcon = INCR_ICON_24;
+                                if (apiData.priceChange.startsWith("-"))
+                                    changeIcon = DECR_ICON_24;
                                 // Update cache with fetched data
                                 cache[token] = {
                                     text: `${token}\n${priceString}`,
+                                    img: changeIcon
                                 };
 
                                 callback();
