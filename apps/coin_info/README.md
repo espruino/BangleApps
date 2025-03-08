@@ -14,5 +14,12 @@ Crypto-Coins Infos with the help of the Binance API
 
 Martin Zwigl
 
-## Reminder for last working state
-- a5a38fa055e5cd671fe87d8253f4296c767d6d93
+## Reminder (git) for working states
+
+### Clock-Info
+
+- db61b517714130e428a23f20cc58c2b5d2994396
+
+### App
+
+- TBD

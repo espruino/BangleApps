@@ -65,7 +65,6 @@
 
                     // Set timeout to align to the next hour and then continue updating every hour
                     const updateTime = settings.getRateMin * 60 * 1000;
-                    // TODO get update time from settings
                     self.interval = setTimeout(function timerTimeout() {
                         fetchData(() => {
                             self.emit("redraw");
