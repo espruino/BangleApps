@@ -7,4 +7,4 @@ Crypto-Coins Infos with the help of the Coinmarketcap API
 Martin Zwigl
 
 ## Reminder for last working
-- ef6c04b1cca90125d3e41381be4a70231c076412
+- 0cfd65b919157356d46ccbbeb2416d794312e13a
