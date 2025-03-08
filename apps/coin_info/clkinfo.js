@@ -31,7 +31,7 @@
 
                     // Function to fetch data from API
                     const fetchData = (callback) => {
-                        const url = `https://api.binance.com/api/v3/ticker/24hr?symbol=${token.toUpperCase()}USDT`;
+                        const url = `https://api.binance.com/api/v3/ticker/24hr?symbol=${token}USDT`;
 
                         Bangle.http(url, { method: 'GET' })
                             .then(cmcResult => {

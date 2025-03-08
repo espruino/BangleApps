@@ -5,8 +5,8 @@
     // Default settings with sorted tokens and load settings
     let settings = Object.assign({
         // TODO: MZw - retrieve from upload-storage
-        tokens: ['bitcoin', 'ethereum', 'tether'],
-        tokenSelected: ['bitcoin'],
+        tokens: ['BTC', 'ETH', 'STORJ'],
+        tokenSelected: ['BTC'],
         getRateMin: 60
     }, storage.readJSON(SETTINGS_FILE, 1) || {});
 
