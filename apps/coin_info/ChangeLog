@@ -1,2 +1,3 @@
 0.03: Initial creation
-0.04: Using GB http for Coinmarketcap requests
+0.04: Using GB http for Binance API requests
+0.05: Lot of cleanup

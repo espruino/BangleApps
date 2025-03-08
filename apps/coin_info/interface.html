@@ -4,28 +4,24 @@
 </head>
 <body>
 <h3>Settings for Crypto-Coin Info</h3>
-<p>Set Coinmarketcap API key and traceable tokens.</p>
+<p>Input for coins to request and calculate against pair.</p>
 <p>
-    <label for="apikey">API Key</label><br>
-    <input id="apikey" onkeyup="checkInput()"  style="width:90%; margin: 3px"></input>
-
-    <label for="traceTokens">Traceable tokens. comma delimited</label><br>
+    <label for="traceTokens">Traceable tokens - comma delimited</label><br>
     <input id="traceTokens" onkeyup="checkInput()"  style="width:90%; margin: 3px"></input>
-    
+
+    <label for="calcPair">Calc price against...</label><br>
+    <input id="calcPair" onkeyup="checkInput()"  style="width:90%; margin: 3px"></input>
+
     <button id="upload" class="btn btn-primary">Save</button>
 </p>
-
-<h4>Where to get your personal API key?</h4>
-<p>Go to <a href="https://coinmarketcap.com/api/">https://coinmarketcap.com/api/</a> and sign up for a free account.<br>
-    There are various pricing models with various degrees of API access. As of 2025.02.22 there is also a free tier.</p>
-
+<h4>General Info:</h4>
+<p>Requesting from Binance with free API. Get info from their website.</p>
 
 <script src="../../core/lib/interface.js"></script>
-
 <script>
 
     function checkInput() {
-        if(document.getElementById("apikey").value==="") {
+        if(document.getElementById("calcPair").value==="") {
             document.getElementById('upload').disabled = true;
         } else {
             document.getElementById('upload').disabled = false;
@@ -41,7 +37,7 @@
                 if(data){
                     settings = data;
                     console.log("Got settings", settings);
-                    document.getElementById("apikey").value = settings.apikey;
+                    document.getElementById("calcPair").value = settings.calcPair;
                     document.getElementById("traceTokens").value = settings.traceTokens;
                     console.log("Loaded settings from BangleJs.");
                     checkInput();
@@ -56,7 +52,7 @@
 
     document.getElementById("upload").addEventListener("click", function() {
         try {
-            settings.apikey = document.getElementById("apikey").value;
+            settings.calcPair = document.getElementById("calcPair").value;
             settings.traceTokens = document.getElementById("traceTokens").value;
             Util.showModal("Saving...");
             Util.writeStorage("coin_info.cmc_key.json", JSON.stringify(settings), ()=>{

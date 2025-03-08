@@ -1,7 +1,7 @@
 { "id": "coin_info",
   "name": "Crypto-Coins Info",
   "shortName":"Coins Info",
-  "version": "0.04.29",
+  "version": "0.05.00",
   "description": "Crypto-Coins Infos with the help of the Coinmarketcap API",
   "icon": "app.png",
   "tags": "clkinfo",
@@ -11,7 +11,7 @@
   "data": [
     {"name":"coin_info.settings.json"},
     {"name":"coin_info.cmc_key.json"},
-    {"name":"coin_info.log.txt"}
+    {"name":"coin_info.coin_info_log.txt"}
   ],
   "storage": [
     {"name":"coin_info.app.js","url":"app.js"},
