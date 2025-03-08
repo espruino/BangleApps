@@ -25,16 +25,16 @@
                         })
                         .then(cmcResult => {
                             // text: JSON.parse(cmcResult.resp).data["1"].symbol, // Fixed data path
-                            logFile.write(cmcResult.toString());
+                            logFile.write("HTTP resp:" + JSON.stringify(cmcResult));
                             const apiData = JSON.parse(cmcResult.resp); // Correctly declare variable
-                            logFile.write(apiData.toString());
+                            logFile.write("data:" + JSON.stringify(apiData));
                             return {
                                 text: apiData.symbol,
                                 img: COIN_ICON
                             };
                         })
                         .catch(err => {
-                            logFile.write("API Error: " + err.toString());
+                            logFile.write("API Error: " + JSON.stringify(err));
                             return {
                                 text: err.toString(),
                                 img: COIN_ICON
