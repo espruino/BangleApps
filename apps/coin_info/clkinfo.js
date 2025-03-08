@@ -68,7 +68,7 @@
                                 self.emit("redraw");
                             });
                         }, 3600000);
-                    }, 3600000 - (Date.now() % 3600000));
+                    }, 60000  - (Date.now() % 60000 ));
                 },
                 hide: function() {
                     if (this.interval) {
