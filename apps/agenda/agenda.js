@@ -44,11 +44,12 @@ function formatDay(date) {
     return formattedDate;
   }
   const today = new Date(Date.now());
-  if (date.getDay() == today.getDay() && date.getMonth() == today.getMonth())
+  if (date.getDate() == today.getDate())
      return /*LANG*/"Today ";
   else {
-    const tomorrow = new Date(Date.now() + 86400 * 1000);
-    if (date.getDay() == tomorrow.getDay() && date.getMonth() == tomorrow.getMonth()) {
+    var tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    if (date.getDate() == tomorrow.getDate()) {
        return /*LANG*/"Tomorrow ";
     }
     return formattedDate;

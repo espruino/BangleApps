@@ -1,0 +1,17 @@
+{
+    "id": "getaddr",
+    "name": "Get Addr",
+    "version": "0.01",
+    "description": "An app that shows the address of the current location",
+    "readme": "README.md",
+    "icon": "getaddr.png",
+    "screenshots": [{"url":"image1.png"}, {"url":"image2.png"}],
+    "type": "app",
+    "tags": "gps,outdoors,tools",
+    "supports": ["BANGLEJS2"],
+    "dependencies" : {},
+    "storage": [
+      {"name":"getaddr.app.js","url":"getaddr.app.js"},
+      {"name":"getaddr.img","url":"getaddr-icon.js","evaluate":true}
+    ]
+  }
