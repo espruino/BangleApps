@@ -5,6 +5,7 @@
     const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {};
     const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
     const logFile = require("Storage").open("coin_info_log.txt", "a");
+    const ciLib = require("coin_info");
 
     if (!(settings.tokenSelected instanceof Array)) settings.tokenSelected = [];
 
@@ -32,7 +33,7 @@
 
                     // Function to fetch data from API
                     const fetchData = (callback) => {
-                        const url = `https://api.binance.com/api/v3/ticker/24hr?symbol=${token}USDT`;
+                        const url = `https://api.binance.com/api/v3/ticker/24hr?symbol=${token}${db.calcPair}`;
 
                         Bangle.http(url, { method: 'GET' })
                             .then(cmcResult => {
@@ -40,10 +41,11 @@
                                 const apiData = JSON.parse(cmcResult.resp);
                                 logFile.write("data:" + JSON.stringify(apiData));
 
+                                let priceString = ciLib.formatPriceString(apiData.lastPrice);
                                 // Update cache with fetched data
                                 cache[token] = {
-                                    text: `${apiData.symbol}`,
-                                    img: COIN_ICON
+                                    // text: `${apiData.symbol}`,
+                                    text: `${token}\n0.012345`,
                                 };
 
                                 callback();
@@ -52,7 +54,7 @@
                                 logFile.write("API Error: " + JSON.stringify(err));
                                 cache[token] = {
                                     text: "Error",
-                                    img: COIN_ICON
+                                    img: LOAD_ICON_24
                                 };
                                 callback();
                             });
