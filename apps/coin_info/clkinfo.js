@@ -1,16 +1,14 @@
 (function() {
-    const COIN_ICON = atob("MDCBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/AAAAAA//8AAAAB///AAAAB8A/gAAAAgAH4AAAwAAB8AAB4AAA+AADwA4APAADgA4APAAHgA4AHgADAf/ADwAAAf/gBwAAAf/wB4AAAcB4A4AAAcA4A4AAAcA4A4AYAcA4AcA8AcB4AcB+Af/wDdj/Af/4D/n/Af/8D/n/AcAcB/A4AcAOA+A4AcAOAcAcAcAOAAAcAcAAAAAcAcAAAAAeAf/AAAAOAf/AAAAPAf/ADAAHgA4AHgADwA4AHAADwA4APAAB8AAA+AAA+AAB8AAAfgAH4AAAH8A/gAAAD///AAAAA//8AAAAAD/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==");
     const LOAD_ICON_24 = atob("GBiBAAAAAAAeAAGfwAGB4AAAcBgAOBgYHAAYDAAYDGAYBmAYBgAYBgAYBmDbBmB+BgA8DAAYDBgAHBgAOAAAcAGB4AGfwAAeAAAAAA==");
 
     const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {};
     const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
     const logFile = require("Storage").open("coin_info_log.txt", "a");
-    const ciLib = require("coin_info");
+    // const ciLib = require("coin_info");
 
     if (!(settings.tokenSelected instanceof Array)) settings.tokenSelected = [];
 
     let cache = {};
-
     return {
         name: "CoinInfo",
         items: settings.tokenSelected.map(token => {
@@ -41,7 +39,7 @@
                                 const apiData = JSON.parse(cmcResult.resp);
                                 logFile.write("data:" + JSON.stringify(apiData));
 
-                                let priceString = ciLib.formatPriceString(apiData.lastPrice);
+                                // let priceString = ciLib.formatPriceString(apiData.lastPrice);
                                 // Update cache with fetched data
                                 cache[token] = {
                                     // text: `${apiData.symbol}`,
