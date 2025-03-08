@@ -4,7 +4,7 @@
     const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {};
     const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
     const logFile = require("Storage").open("coin_info_log.txt", "a");
-    // const ciLib = require("coin_info");
+    const ciLib = require("coin_info");
 
     if (!(settings.tokenSelected instanceof Array)) settings.tokenSelected = [];
 
@@ -39,11 +39,10 @@
                                 const apiData = JSON.parse(cmcResult.resp);
                                 logFile.write("data:" + JSON.stringify(apiData));
 
-                                // let priceString = ciLib.formatPriceString(apiData.lastPrice);
+                                let priceString = ciLib.formatPriceString(apiData.lastPrice);
                                 // Update cache with fetched data
                                 cache[token] = {
-                                    // text: `${apiData.symbol}`,
-                                    text: `${token}\n0.012345`,
+                                    text: `${token}\n${priceString}`,
                                 };
 
                                 callback();
@@ -59,6 +58,7 @@
                     };
 
                     // Set timeout to align to the next hour and then continue updating every hour
+                    // TODO get update time from settings
                     self.interval = setTimeout(function timerTimeout() {
                         fetchData(() => {
                             self.emit("redraw");
