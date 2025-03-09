@@ -11,6 +11,7 @@ let location;
 // variable for controlling idle alert
 let lastStep = getTime();
 let warned = 0;
+let hourly_buzz_occurred = false;
 let idle = false;
 let IDLE_MINUTES = 26;
 
@@ -87,6 +88,7 @@ function loadSettings() {
   settings.idle_check = (settings.idle_check === undefined ? true : settings.idle_check);
   settings.batt_hours = (settings.batt_hours === undefined ? false : settings.batt_hours);
   settings.hr_12 = (settings.hr_12 === undefined ? false : settings.hr_12);
+  settings.hourly_buzz = (settings.hourly_buzz === undefined ? false : settings.hourly_buzz);
   settings.ring = settings.ring||'Steps';
   settings.idxInfo = settings.idxInfo||0;
   settings.step_target = settings.step_target||10000;
@@ -264,6 +266,7 @@ function drawClock() {
   var date = new Date();
   var hh = date.getHours();
   var mm = date.getMinutes();
+  let min = mm;
   var ring_percent;
   var invertRing = false;
   switch (settings.ring) {
@@ -321,9 +324,20 @@ function drawClock() {
   drawInfo();
 
   // recalc sunrise / sunset every hour
-  if (drawCount % 60 == 0)
-    updateSunRiseSunSet(date, location.lat, location.lon, settings.ring == 'Sun');
+  if (drawCount % 60 == 0) {
+    let recalcSunLeft = (settings.ring == 'Sun' || settings.hourly_buzz);
+    updateSunRiseSunSet(date, location.lat, location.lon, recalcSunLeft);
+  }
   drawCount++;
+
+  if (settings.hourly_buzz) {
+    if (min != 0)
+      hourly_buzz_occurred = false;
+    else if (!hourly_buzz_occurred && isDaytime) {
+      Bangle.buzz(150);
+      hourly_buzz_occurred = true;
+    }
+  }
 }
 
 function drawSteps() {
