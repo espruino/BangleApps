@@ -8,6 +8,7 @@
            'check_idle' : true,
            'batt_hours' : false,
            'hr_12' : false,
+           'hourly_buzz' : false,
            'ring' : 'Steps',
            'idxInfo' : 0,
            'step_target' : 10000};
@@ -65,6 +66,13 @@
         value: !!s.hr_12,
         onchange: v => {
           s.hr_12 = v;
+          save();
+        },
+      },
+      'Hourly Buzz': {
+        value: !!s.hourly_buzz,
+        onchange: v => {
+          s.hourly_buzz = v;
           save();
         },
       },
