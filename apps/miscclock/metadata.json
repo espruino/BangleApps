@@ -7,7 +7,7 @@
   "tags": "",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "storage": [
-    {"name":"misc-clock.app.js","url":"app.js"},
-    {"name":"misc-clock.img","url":"app-icon.js","evaluate":true}
+    {"name":"miscclock.app.js","url":"app.js"},
+    {"name":"miscclock.img","url":"app-icon.js","evaluate":true}
   ]
 }
