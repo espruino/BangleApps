@@ -1,7 +1,4 @@
 {
-    Bangle.loadWidgets();
-    Bangle.drawWidgets();
-
     const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {};
     const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
     let ticker = 0;
@@ -15,7 +12,7 @@
                     {type:"btn", label:"...", halign:"right", cb: l=>{}}
                 ]
             },
-            {type:"txt", id:"tknGraph", font:"20%", label:"12:00", id:"time" },
+            {type:"txt", id:"tknGraph", font:"20%", label:"12:00" },
             {type:"h",
                 c: [
                     {type:"btn", label:"07", cb: l=>{}},
@@ -25,7 +22,8 @@
                 ]
             }
         ]
-    }, { lazy:true });
+    },
+    { lazy:true });
     layout.update();
 
     // timeout used to update every minute
@@ -49,8 +47,6 @@
     draw();
 
     //
-    Bangle.setUI({
-        mode : 'custom',
-        back : Bangle.showClock,
-    });
+    Bangle.loadWidgets(); // loading widgets after drawing the layout in `drawMain()` to display the app UI ASAP.
+    require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
 }
