@@ -61,7 +61,7 @@ function draw() {
     drawTimeout = setTimeout(function() {
         drawTimeout = undefined;
         draw();
-    }, 15000 - (Date.now() % 15000));
+    }, 1000 - (Date.now() % 1000));
 }
 
 // update time and draw
@@ -71,10 +71,10 @@ draw();
 //
 Bangle.loadWidgets(); // loading widgets after drawing the layout in `drawMain()` to display the app UI ASAP.
 require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
-Bangle.setUI({
-    mode: 'custom',
-    back: Bangle.showClock,
-    btn: function() { // Handle button press
-        console.log("Button pressed");
-    }
-});
+// Bangle.setUI({
+//     mode: 'custom',
+//     back: Bangle.showClock,
+//     btn: function() { // Handle button press
+//         console.log("Button pressed");
+//     }
+// });
