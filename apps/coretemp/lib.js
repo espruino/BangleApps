@@ -105,42 +105,6 @@ exports.enable = () => {
       return gatt && gatt.connected;
     };
 
-    Bangle.CORESensorSendOpCode = function (opCode, params) {
-      return new Promise((resolve, reject) => {
-        if (!Bangle.isCORESensorOn()) {
-          log("CORE sensor not connected!!")
-          return false;
-        }
-        if (!controlPointChar) {
-          log("Control Point characteristic not found! Reconnecting...");
-          return;
-        }
-        let data = new Uint8Array([opCode].concat(params));
-        // Temporary handler to capture the response
-        function handleResponse(event) {
-          let response = new Uint8Array(event.target.value.buffer);
-          //let responseOpCode = response[0];
-          let requestOpCode = response[1];  // Matches the sent OpCode
-          let resultCode = response[2];     // 0x01 = Success
-          controlPointChar.removeListener("characteristicvaluechanged", handleResponse);
-          if (requestOpCode === opCode) {
-            if (resultCode === 0x01) { //successful
-              resolve(response);
-            } else {
-              reject("Error Code: " + resultCode);
-            }
-          }
-        }
-        controlPointChar.on("characteristicvaluechanged", handleResponse);
-        controlPointChar.writeValue(data)
-          .then(() => log("Sent OpCode:", opCode.toString(16), "Params:", data))
-          .catch(error => {
-            log("Write error:", error);
-            reject(error);
-          });
-      });
-    };
-
     let onDisconnect = function (reason) {
       blockInit = false;
       log("Disconnect: " + reason);
@@ -159,18 +123,6 @@ exports.enable = () => {
               supportedCharacteristics[newCharacteristic.uuid].handler(data);
             }
           });
-        });
-      }
-      if (newCharacteristic.uuid === "00002102-5b1e-4347-b07c-97b514dae121") {
-        log("Subscribing to CoreTemp Control Point Indications.");
-        controlPointChar = newCharacteristic;
-        result = result.then(() => {
-          log("Starting notifications", newCharacteristic);
-          let OPCodeChar = controlPointChar.writeValue(new Uint8Array([0x02]), {type: "command",handle: true}).then(() => log("OPCodes started"));
-          OPCodeChar = OPCodeChar.then(() => {
-            return waitingPromise(3000);
-          });
-          return OPCodeChar;
         });
       }
       if (newCharacteristic.properties.notify) {

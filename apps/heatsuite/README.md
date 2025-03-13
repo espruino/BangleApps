@@ -4,8 +4,10 @@ This is the HeatSuite Watch Application which allows for seemless integration in
 
 ## What is HeatSuite?
 
+HeatSuite is a comprehensive all in one solution for researchers to monitor the physiolocial, behavioural, and perceptual responses of individuals and their personal environmental exposure. Learn more on the details of the HeatSuite platform here.
+
 ## Why do we need this?
-Commercial enterprises have largely determined what researchers can measure in the field, or have postprocessing embedded into the 
+Commercial enterprises have largely determined what researchers can measure in the field, and/or have proprietary postprocessing embedded into the hardware/software stack which limits transparency and transferrability of data collected. HeatSuite eliminates this one-sided relationship, offering a solution for researchers who desire access and awareness of how and what the actual data is.
 
 ## Watch Specific Features
 This is a list of current features available when using the HeatSuite Watch Application:
@@ -19,8 +21,11 @@ This is a list of current features available when using the HeatSuite Watch Appl
 + Collect perceptions and behaviour using ecological momentary analysis with onboard questionnaires
 + Mictruition frequency and color analysis for index of hydration status
 + Create study schedules for participants to receive programmatic nudges daily, specific to each task
++ Programmatic GPS monitoring, with adaptive power switching for battery optimization
 
-## 
+## Applications/modules that HeatSuite integrates:
+
+
 ## Research Using HeatSuite:
 
 

@@ -147,10 +147,10 @@
         });
     });
   }
+  let gatt;
   function cacheDevice(deviceName) {
     let promise;
     let filters;
-    let gatt;
     characteristics = [];
     filters = [{ name: deviceName }];
     log("Requesting device with filters", filters);
@@ -162,8 +162,9 @@
       log("Connecting...");
       d.on('gattserverdisconnected', function () {
         CORECONNECTED = false;
-        log("Disconnected! Attempting to reconnect...");
-        setTimeout(() => cacheDevice(deviceName), 5000);  // Retry in 5 seconds
+        log("Disconnected! ");
+        gatt = null;
+        //setTimeout(() => cacheDevice(deviceName), 5000);  // Retry in 5 seconds
       });
       return gatt.connect().then(function () {
         log("Connected.");
@@ -202,6 +203,27 @@
       CORECONNECTED = true;
       characteristicsToCache(characteristics);
     });
+  }
+
+  function ConnectToDevice(d) {
+      E.showMessage("Connecting...");
+      let count = 0;
+      const successHandler = () => {
+        E.showMenu(buildMainMenu());
+      };
+      const errorHandler = (e) => {
+        count++;
+        log("ERROR", e);
+        if (count <= 10) {
+          E.showMessage("Error during caching\nRetry " + count + "/10", e);
+          return cacheDevice(d).then(successHandler).catch(errorHandler);
+        } else {
+          E.showAlert("Error during caching", e).then(() => {
+            E.showMenu(buildMainMenu());
+          });
+        }
+      };
+      return cacheDevice(d).then(successHandler).catch(errorHandler);
   }
   /*
   function getPairedAntHRM() {
@@ -278,7 +300,7 @@
           E.showAlert(`HRM Status\nANT ID = ${retrievedAntId}\nState = ${stateText}`).then(() => E.showMenu(HRM_MENU()));
           if (stateText === "Synchronized") {
             return;
-          }else{
+          } else {
             log(`HRM ${retrievedAntId} is not yet synchronized. Scanning again...`);
             // Start scan again
             writeToControlPoint(0x0D)
@@ -380,11 +402,16 @@
         value: !!settings.enabled,
         onchange: v => {
           writeSettings("enabled", v);
-          init();
+        },
+      },
+      'Widget': {
+        value: !!settings.widget,
+        onchange: v => {
+          writeSettings("widget", v);
         },
       }
     };
-    if (settings.btname || settings.btid && CORECONNECTED) {
+    if (settings.btname || settings.btid) {
       let name = "Clear " + (settings.btname || settings.btid);
       mainmenu[name] = function () {
         E.showPrompt("Clear current device?").then((r) => {
@@ -392,13 +419,19 @@
             writeSettings("btname", undefined);
             writeSettings("btid", undefined);
             writeSettings("cache", undefined);
+            if(gatt) gatt.disconnect();
           }
           E.showMenu(buildMainMenu());
         });
       };
-      mainmenu['HRM Setting'] = function () { E.showMenu(HRM_MENU()); };
-    }else{
-      mainmenu['Scan for CORE'] = function () {ScanForCORESensor();};
+      if(!CORECONNECTED){
+        let connect = "Connect " + (settings.btname || settings.btid);
+        mainmenu[connect] = function () {ConnectToDevice(settings.btname)};
+      }else{
+        mainmenu['HRM Settings'] = function () { E.showMenu(HRM_MENU()); };
+      }
+    } else {
+      mainmenu['Scan for CORE'] = function () { ScanForCORESensor(); };
     }
     mainmenu['Debug'] = function () { E.showMenu(submenu_debug); };
     return mainmenu;
@@ -428,14 +461,14 @@
     }
     if (settings.btname) {
       menu['ANT+ Status'] = function () { scanUntilSynchronized(10, 3000); },
-      menu['Clear ANT+'] = function () {
-        E.showPrompt("Clear ANT+ HRs?", { title: "CLear ANT+" }).then((r) => {
-          if (r) {
-           clearPairedHRM_ANT();
-          }
-          E.showMenu(HRM_MENU());
-        });
-      }
+        menu['Clear ANT+'] = function () {
+          E.showPrompt("Clear ANT+ HRs?", { title: "CLear ANT+" }).then((r) => {
+            if (r) {
+              clearPairedHRM_ANT();
+            }
+            E.showMenu(HRM_MENU());
+          });
+        }
     }
     return menu;
   }
@@ -494,28 +527,7 @@
 
   function init() {
     E.showMenu();
-    if (settings.btname) { //connect to device before loading screen....
-      E.showMessage("Connecting...");
-      let count = 0;
-      const successHandler = () => {
-        E.showMenu(buildMainMenu());
-      };
-      const errorHandler = (e) => {
-        count++;
-        log("ERROR", e);
-        if (count <= 10) {
-          E.showMessage("Error during caching\nRetry " + count + "/10", e);
-          return cacheDevice(settings.btname).then(successHandler).catch(errorHandler);
-        } else {
-          E.showAlert("Error during caching", e).then(() => {
-            E.showMenu(buildMainMenu());
-          });
-        }
-      };
-      cacheDevice(settings.btname).then(successHandler).catch(errorHandler);
-    } else {
-      E.showMenu(buildMainMenu());
-    }
+    E.showMenu(buildMainMenu());
   }
   init();
 })

@@ -9,6 +9,8 @@
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
   "dependencies" : { "bthrm":"app", "gpssetup" : "app"},
+  "customConnect": true,
+  "custom": "custom.html",
   "storage": [
     {"name":"heatsuite.img","url":"app-icon.js","evaluate":true},
     {"name":"heatsuite.app.js","url":"heatsuite.app.js"},

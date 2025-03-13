@@ -1,8 +1,7 @@
 /* 
 Sit-to-Stand test, ongoing Validation
+USE AT YOUR OWN RISK :)
 Copyright Nicholas Ravanelli,PhD 2025 
-
-
 */
 
 const modHS = require('HSModule');

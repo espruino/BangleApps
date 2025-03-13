@@ -17,7 +17,6 @@
   var processQueueTimeout = null;
   let initHandlerTimeout = null;
   let BTHRM_ConnectCheck = null;
-  let CORESensor_ConnectCheck = null;
 
   Bangle.setOptions({ 
     "hrmSportMode": -1,
@@ -537,7 +536,6 @@ function studyTaskCheck(timenow) {
     settings = modHS.getSettings(); 
     if(initHandlerTimeout) clearTimeout(initHandlerTimeout);
     if(BTHRM_ConnectCheck) clearInterval(BTHRM_ConnectCheck);
-    if(CORESensor_ConnectCheck) clearInterval(CORESensor_ConnectCheck);
     activeRecorders = []; //clear active recorders
     recorders = getRecorders();
     settings.record.forEach(r => {
@@ -555,16 +553,6 @@ function studyTaskCheck(timenow) {
       BTHRM_ConnectCheck = setInterval(function () {
         if (Bangle.isBTHRMConnected() != BTHRMStatus) {
           BTHRMStatus = Bangle.isBTHRMConnected();
-          WIDGETS["heatsuite"].draw();
-        }
-      }, 10000); //runs every 10 seconds
-    }
-    //CORESensor Additions
-    if (settings.record.includes('CORESensor') && Bangle.hasOwnProperty("isCORESensorConnected") ) {
-      var CORESensorStatus = 0;
-      CORESensor_ConnectCheck = setInterval(function () {
-        if (Bangle.isCORESensorConnected() != CORESensorStatus) {
-          CORESensorStatus = Bangle.isCORESensorConnected();
           WIDGETS["heatsuite"].draw();
         }
       }, 10000); //runs every 10 seconds
