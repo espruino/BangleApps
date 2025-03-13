@@ -5,14 +5,14 @@ let ticker = 0;
 var Layout = require("Layout");
 var layout = new Layout({
         type:"v", c: [
-            {type:"h", valign:-1,
+            {type:"h",
                 c: [
                     {type:"txt", id:"tknName", font:"12x16", label:"Load...", halign:-1},
                     {type:"btn", label:"...", halign:1, cb: d=>setDummy("dot-dot-dot")}
                 ]
             },
             {type:"txt", id:"tknGraph", font:"12x16", label:"graph..." },
-            {type:"h", valign: 1,
+            {type:"h",
                 c: [
                     {type:"btn", label:"07", cb: d=>setDummy("seven")},
                     {type:"btn", label:"14", cb: d=>setDummy("fourteen")},
@@ -71,3 +71,13 @@ draw();
 //
 Bangle.loadWidgets(); // loading widgets after drawing the layout in `drawMain()` to display the app UI ASAP.
 require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
+Bangle.setUI({
+    mode: 'custom',
+    back: Bangle.showClock,
+    btn: function() { // Handle button press
+        console.log("Button pressed");
+    },
+    touch: function(e) { // Handle touch event
+        console.log("Touch event:", e);
+    }
+});
