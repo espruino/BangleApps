@@ -76,8 +76,5 @@ Bangle.setUI({
     back: Bangle.showClock,
     btn: function() { // Handle button press
         console.log("Button pressed");
-    },
-    touch: function(e) { // Handle touch event
-        console.log("Touch event:", e);
     }
 });
