@@ -1,8 +1,7 @@
 (() => {
   var settings = {};
-  var count = 0;
-  var core = 0;
   var CORESensorStatus = false;
+  var CORESensor_ConnectCheck;
   // draw your widget
   function draw() {
     if (!settings.widget)
@@ -34,7 +33,6 @@
       WIDGETS["coretemp"].width = 24;
     } else {
       WIDGETS["CORESensor"].width = 0;
-      count = 0;
     }
   }
 

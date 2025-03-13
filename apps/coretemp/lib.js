@@ -10,7 +10,6 @@ exports.enable = () => {
   };
   let gatt;
   let device;
-  let controlPointChar;
   let characteristics;
   let blockInit = false;
   let waitingPromise = function (timeout) {
