@@ -1,7 +1,6 @@
 (() => {
   var settings = {};
   var CORESensorStatus = false;
-  var CORESensor_ConnectCheck;
   // draw your widget
   function draw() {
     if (!settings.widget)
@@ -37,7 +36,7 @@
   }
 
   if (Bangle.hasOwnProperty("isCORESensorConnected")) {
-    CORESensor_ConnectCheck = setInterval(function () {
+    setInterval(function () {
       if (Bangle.isCORESensorConnected() != CORESensorStatus) {
         CORESensorStatus = Bangle.isCORESensorConnected();
         WIDGETS["coretemp"].draw();
