@@ -11,7 +11,7 @@ var layout = new Layout({
                     {type:"btn", label:"...", halign:1, cb: d=>setDummy("dot-dot-dot")}
                 ]
             },
-            {type:"txt", id:"tknGraph", font:"20%", label:"graph..." },
+            {type:"txt", id:"tknGraph", font:"6x8", label:"graph..." },
             {type:"h",
                 c: [
                     {type:"btn", label:"07", cb: d=>setDummy("seven")},
