@@ -5,14 +5,14 @@ let ticker = 0;
 var Layout = require("Layout");
 var layout = new Layout({
         type:"v", c: [
-            {type:"h",
+            {type:"h", valign:-1,
                 c: [
-                    {type:"txt", id:"tknName", font:"12x16", label:"Load...", halign:-1},
+                    {type:"txt", id:"tknName", font:"12", label:"Load...", halign:-1},
                     {type:"btn", label:"...", halign:1, cb: d=>setDummy("dot-dot-dot")}
                 ]
             },
-            {type:"txt", id:"tknGraph", font:"12x16", label:"graph..." },
-            {type:"h",
+            {type:"txt", id:"tknGraph", font:"12", label:"graph..." },
+            {type:"h", valign:1,
                 c: [
                     {type:"btn", label:"07", cb: d=>setDummy("seven")},
                     {type:"btn", label:"14", cb: d=>setDummy("fourteen")},
