@@ -5,14 +5,14 @@ let ticker = 0;
 var Layout = require("Layout");
 var layout = new Layout({
         type:"v", c: [
-            {type:"h",
+            {type:"h", valign:-1,
                 c: [
-                    {type:"txt", id:"tknName", font:"6x8", label:"Load...", halign:-1},
+                    {type:"txt", id:"tknName", font:"12x16", label:"Load...", halign:-1},
                     {type:"btn", label:"...", halign:1, cb: d=>setDummy("dot-dot-dot")}
                 ]
             },
-            {type:"txt", id:"tknGraph", font:"6x8", label:"graph..." },
-            {type:"h",
+            {type:"txt", id:"tknGraph", font:"12x16", label:"graph..." },
+            {type:"h", valign: 1,
                 c: [
                     {type:"btn", label:"07", cb: d=>setDummy("seven")},
                     {type:"btn", label:"14", cb: d=>setDummy("fourteen")},
@@ -24,6 +24,22 @@ var layout = new Layout({
     },
     { lazy:true });
 layout.update();
+
+//
+// function makeHttpRequest() {
+//     // Ensure Internet Access is enabled in Gadgetbridge settings
+//     Bangle.http("https://example.com/your_api_endpoint")
+//         .then(data => {
+//             console.log("Got HTTP response:", data);
+//             // Handle the response here
+//         })
+//         .catch(err => {
+//             console.error("HTTP request failed:", err);
+//         });
+//
+//     if (httpTimeout) clearTimeout(httpTimeout);
+//     httpTimeout = setTimeout(makeHttpRequest, 300000); // Make HTTP request every 5 minutes
+// }
 
 //
 var currentLabel = "loading...";
