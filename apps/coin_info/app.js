@@ -7,11 +7,11 @@ var layout = new Layout({
         type:"v", c: [
             {type:"h", valign:-1,
                 c: [
-                    {type:"txt", id:"tknName", font:"12", label:"Load...", halign:-1},
+                    {type:"txt", id:"tknName", font:"6x8:2", label:"Load...", halign:-1},
                     {type:"btn", label:"...", halign:1, cb: d=>setDummy("dot-dot-dot")}
                 ]
             },
-            {type:"txt", id:"tknGraph", font:"12", label:"graph..." },
+            {type:"txt", id:"tknGraph", font:"6x8:2", label:"graph..." },
             {type:"h", valign:1,
                 c: [
                     {type:"btn", label:"07", cb: d=>setDummy("seven")},
