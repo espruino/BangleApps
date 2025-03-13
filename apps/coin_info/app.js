@@ -7,7 +7,7 @@ var layout = new Layout({
         type:"v", c: [
             {type:"h",
                 c: [
-                    {type:"txt", id:"tknName", label:"Load...", halign:-1},
+                    {type:"txt", id:"tknName", font:"6x8", label:"Load...", halign:-1},
                     {type:"btn", label:"...", halign:1, cb: d=>setDummy("dot-dot-dot")}
                 ]
             },
