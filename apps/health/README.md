@@ -46,7 +46,7 @@ HRM data is stored as a number representing the best/average value from a 10 min
 
 You can read a day's worth of health data using readDay, which will call the callback with each data packet:
 
-```
+```JS
 require("health").readDay(new Date(), print)
 // ... for each 10 min packet:
 { "steps": 40, "bpmMin": 92, "bpmMax": 95, "movement": 488,
@@ -57,7 +57,7 @@ require("health").readDay(new Date(), print)
 
 Other functions are available too, and they all take a `Date` as an argument:
 
-```
+```JS
 // Read all records from the given month
 require("health").readAllRecords(d, cb)
 
@@ -78,9 +78,9 @@ require("health").readDay(d, cb)
 
 ## TODO
 
-* `interface` page for desktop to allow data to be viewed and exported in common formats
 * More features in app:
-  * Step counting goal (ensure pedometers use this)
+  * Viewing stored altitude/battery/temperature/bpm min/max graphs
+  * Pie chart to show percent of time in each activity
   * Calendar view showing steps per day
   * Yearly view
   * Heart rate 'zone' graph
