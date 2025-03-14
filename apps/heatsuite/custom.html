@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+
+    <p>Select Recorder Options:</p>
+    <div class="form-group">
+
+        <label class="form-switch">
+            <input type="checkbox" name="steps">
+            <i class="form-icon"></i> Steps
+        </label>
+        <label class="form-switch">
+            <input type="checkbox" name="hrm">
+            <i class="form-icon"></i> Optical Heart Rate
+        </label>
+        <label class="form-switch">
+            <input type="checkbox" name="acc">
+            <i class="form-icon"></i> Accelerometry
+        </label>
+        <label class="form-switch">
+            <input type="checkbox" name="bat">
+            <i class="form-icon"></i> Battery
+        </label>
+        <label class="form-switch">
+            <input type="checkbox" name="movement">
+            <i class="form-icon"></i> Movement
+        </label>        
+      </div>
+    <p><button id="upload" class="btn btn-primary">Upload</button></p>
+
+    <script src="../../core/lib/customize.js"></script>
+
+    <script>
+        function onInit(device) { 
+            Util.readStorageJSON("heatsuite.default.json",function(d){
+                console.log(d);
+            });
+         }
+      // When the 'upload' button is clicked...
+      document.getElementById("upload").addEventListener("click", function() {
+        // get the text to add
+        // send app's info (in addition to the contents of metadata.json)
+        sendCustomizedApp();
+      });
+
+    </script>
+  </body>
+</html>
