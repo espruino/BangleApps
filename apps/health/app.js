@@ -39,7 +39,7 @@ function menuDistance() {
     /*LANG*/"per hour": () => showGraph({id:"stepsPerHour",range:"hour",field:"steps",mult:distMult, back:menuDistance}),
     /*LANG*/"per day": () => {
       showGraph({id:"stepsPerDay",range:"day",field:"steps",mult:distMult, back:menuDistance})
-      drawHorizontalLine(settings.stepGoal * (mult || 1));
+      drawHorizontalLine(settings.stepGoal * (distMult || 1));
     }
   });
 }
