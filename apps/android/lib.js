@@ -213,7 +213,8 @@ exports.gbHandler = (event) => {
             ts: sampleTs,
             stp: r.steps,
             hrm: r.bpm,
-            mov: r.movement
+            mov: r.movement,
+            act: r.activity
           });
           actCount++;
         }
