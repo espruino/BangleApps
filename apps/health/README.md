@@ -79,7 +79,8 @@ require("health").readDay(d, cb)
 ## TODO
 
 * More features in app:
-  * Viewing stored altitude/battery/temperature/bpm min/max graphs
+  * Viewing stored altitude/bpm min/max graphs
+  * Currently we only graph per hour but we have 10 min data - should it be shown?
   * Pie chart to show percent of time in each activity
   * Calendar view showing steps per day
   * Yearly view
