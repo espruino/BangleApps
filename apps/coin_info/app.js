@@ -63,19 +63,34 @@ function setDummy(x) {
 // timeout used to update every minute
 var drawTimeout;
 // update the screen
+// function draw() {
+//     layout.tknGraph.label = currentLabel;
+//     layout.tknName.label = (csTokens[ticker]).toUpperCase();
+//     layout.render();
+//
+//     // schedule a draw for the next minute
+//     if (drawTimeout) clearTimeout(drawTimeout);
+//     drawTimeout = setTimeout(function() {
+//         drawTimeout = undefined;
+//         draw();
+//     }, 1000 - (Date.now() % 1000));
+// }
 function draw() {
     g.clear();
 
-    layout.tknGraph.label = currentLabel;
-    layout.tknName.label = (csTokens[ticker]).toUpperCase();
-    layout.render();
+    // Add a small delay to ensure the screen has time to clear
+    setTimeout(function() {
+        layout.tknGraph.label = currentLabel;
+        layout.tknName.label = (csTokens[ticker]).toUpperCase();
+        layout.render();
 
-    // schedule a draw for the next minute
-    if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = setTimeout(function() {
-        drawTimeout = undefined;
-        draw();
-    }, 1000 - (Date.now() % 1000));
+        // Schedule a draw for the next minute
+        if (drawTimeout) clearTimeout(drawTimeout);
+        drawTimeout = setTimeout(function() {
+            drawTimeout = undefined;
+            draw();
+        }, 1000 - (Date.now() % 1000));
+    }, 10); // 10ms delay
 }
 
 // update time and draw
