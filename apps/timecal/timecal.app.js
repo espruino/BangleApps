@@ -105,13 +105,15 @@ class TimeCalClock{
     const weather = require('weather');
     const curr = weather.get();
     const temp = require("locale").temp(curr.temp-273.15).match(/^(\D*\d*)(.*)$/)[0];
-    weather.drawIcon(curr, 24, 20, 20);
+    const iconRadius = 20;
+    const widgetHeight = 24;
+    weather.drawIcon(curr, Bangle.appRect.x + widgetHeight, Bangle.appRect.y + widgetHeight - 4, iconRadius);
 
     g
       .setFontAlign(0, -1)
       .setFont('6x8', 2)
       .setColor(g.theme.fg)
-      .drawString(temp, Bangle.appRect.x2/6, 40);
+      .drawString(temp, Bangle.appRect.x2/6, Bangle.appRect.y + widgetHeight + iconRadius);
   }
 
   /**
