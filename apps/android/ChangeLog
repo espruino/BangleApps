@@ -40,3 +40,5 @@
 0.37: Support Gadgetbridge canned responses
 0.38: Don't rewrite settings file on every boot!
 0.39: Move GB message handling into a library to reduce boot time from 40ms->13ms
+0.40: Ensure we send health 'activity' message to gadgetbridge (added 2v26)
+0.41: When using `actfetch`, fetch historical activity type too
