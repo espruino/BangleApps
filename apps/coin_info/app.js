@@ -1,5 +1,6 @@
 const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {};
 const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
+const csTokens = db.split(',')
 let ticker = 0;
 
 var Layout = require("Layout");
@@ -42,6 +43,18 @@ layout.update();
 // }
 
 //
+function swipeHandler(lr, ud) {
+    if (lr == -1) {
+        ticker = ticker - 1;
+        if (ticker < 0) ticker = 0;
+    }
+    if (lr == 1) {
+        ticker = ticker + 1;
+        if (ticker > csTokens.length - 1) ticker = csTokens.length - 1;
+    }
+}
+
+//
 var currentLabel = "loading...";
 function setDummy(x) {
     currentLabel = x;
@@ -53,7 +66,7 @@ var drawTimeout;
 function draw() {
     //
     layout.tknGraph.label = currentLabel;
-    layout.tknName.label = settings.tokenSelected[ticker];
+    layout.tknName.label = (csTokens[ticker]).toUpperCase();
     layout.render();
 
     // schedule a draw for the next minute
@@ -69,6 +82,7 @@ g.clear();
 draw();
 
 //
+Bangle.on("swipe", swipeHandler);
 Bangle.loadWidgets(); // loading widgets after drawing the layout in `drawMain()` to display the app UI ASAP.
 require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
 // Bangle.setUI({
