@@ -10,11 +10,11 @@ var layout = new Layout({
         type:"v", c: [
             {type:"h", valign:-1,
                 c: [
-                    {type:"txt", id:"tknName", font:"6x8:2", label:"Load...", halign:-1},
+                    {type:"txt", id:"tknName", font:"6x8:2", label:"", halign:-1},
                     {type:"btn", label:"...", halign:1, cb: d=>setDummy("dot-dot-dot")}
                 ]
             },
-            {type:"txt", id:"tknGraph", font:"6x8:2", label:"graph..." },
+            {type:"txt", id:"tknGraph", font:"6x8:2", label:"" },
             {type:"h", valign:1,
                 c: [
                     {type:"btn", label:"07", cb: d=>setDummy("seven")},
@@ -65,7 +65,6 @@ function setDummy(x) {
 function getFmtTknName(currTKn) {
     if (currTKn.length > csTknNameLen)
         csTknNameLen = currTKn.length;
-
     return currTKn.toUpperCase().padEnd(csTknNameLen);
 }
 
@@ -74,11 +73,8 @@ var drawTimeout;
 // update the screen
 function draw() {
     //
-    // layout.clear(layout.tknName);
-    // layout.clear(layout.tknGraph);
-
-    //
-    layout.tknName.label = getFmtTknName(csTokens[ticker]);
+    // layout.tknName.label = getFmtTknName(csTokens[ticker]);
+    layout.tknName.label = csTokens[ticker].toUpperCase();
     layout.tknGraph.label = currentLabel;
     layout.render();
 
