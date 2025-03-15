@@ -2,7 +2,7 @@
 class TimeCalClock{
   DATE_FONT_SIZE(){ return 20; }
   TIME_FONT_SIZE(){ return 40; }
-  
+
   /**
    * @param{Date} date optional the date (e.g. for testing)
    * @param{Settings} settings optional settings to use e.g. for testing
@@ -18,7 +18,7 @@ class TimeCalClock{
 
     const defaults = {
       shwDate:1, //0:none, 1:locale, 2:month, 3:monthshort.year #week
-        
+
       wdStrt:0, //identical to getDay() 0->Su, 1->Mo, ... //Issue #1154: weekstart So/Mo, -1 for use today
 
       tdyNumClr:3, //0:fg, 1:red=#E00, 2:green=#0E0, 3:blue=#00E
@@ -39,7 +39,12 @@ class TimeCalClock{
     Bangle.loadWidgets();
     Bangle.drawWidgets();
 
-    this.centerX = Bangle.appRect.w/2;
+    // X coord to center date and time text at
+    this.dtCenterX = Bangle.appRect.w/2;
+    this.hasWeather = require('weather') && require('weather').get();
+    if(this.hasWeather){
+      this.dtCenterX =2*Bangle.appRect.w/3;
+    }
     this.nrgb = [g.theme.fg, "#E00", "#0E0", "#00E"]; //fg, r ,g , b
 
     this.ABR_DAY=[];
@@ -68,11 +73,46 @@ class TimeCalClock{
   * Run forest run
   **/
   draw(){
+    // DEBUG
+    // require("weather").get = () => ({
+    //   "temp": 298.15,  // Temperature in Kelvin
+    //   "code": 800,     // Weather condition code
+    //   "txt": "few clouds", // Weather condition text
+    // });
+    // require("weather").get = undefined;
+
+    this.hasWeather = require('weather') && require('weather').get();
+    const prevCenterX = this.dtCenterX;
+    if(this.hasWeather){
+      this.dtCenterX = 2 * Bangle.appRect.w / 3;
+    } else {
+      this.dtCenterX = Bangle.appRect.w / 2;
+    }
     this.drawTime();
+    if(prevCenterX !== this.dtCenterX) {
+      this.drawDateAndCal();
+    }
 
     if (this.TZOffset===undefined || this.TZOffset!==d.getTimezoneOffset())
       this.drawDateAndCal();
+
+    if(this.hasWeather){
+      this.drawWeather();
     }
+  }
+
+  drawWeather() {
+    const weather = require('weather');
+    const curr = weather.get();
+    const temp = require("locale").temp(curr.temp-273.15).match(/^(\D*\d*)(.*)$/)[0];
+    weather.drawIcon(curr, 24, 20, 20);
+
+    g
+      .setFontAlign(0, -1)
+      .setFont('6x8', 2)
+      .setColor(g.theme.fg)
+      .drawString(temp, Bangle.appRect.x2/6, 40);
+  }
 
   /**
    * draw given or current time from date
@@ -85,10 +125,13 @@ class TimeCalClock{
 
     d=d?d :new Date();
 
-    g.setFontAlign(0, -1).setFont("Vector", this.TIME_FONT_SIZE()).setColor(g.theme.fg)
-    .clearRect(Bangle.appRect.x, Y, Bangle.appRect.x2, Y+this.TIME_FONT_SIZE()-7)
-    .drawString(("0" + require("locale").time(d, 1)).slice(-5), this.centerX, Y, true);
-    //.drawRect(Bangle.appRect.x, Y, Bangle.appRect.x2, Y+this.TIME_FONT_SIZE()-7); //DEV-Option
+    g.setFontAlign(0, -1)
+      .setFont("Vector", this.TIME_FONT_SIZE())
+      .setColor(g.theme.fg)
+      .clearRect(Bangle.appRect.x, Y - 13, Bangle.appRect.x2,Y+this.TIME_FONT_SIZE()-7)
+      .drawString(("0" + require("locale").time(d, 1)).slice(-5), this.dtCenterX, Y, true)
+      // .drawRect(Bangle.appRect.x, Y - 13, Bangle.appRect.x2,Y+this.TIME_FONT_SIZE()-7) //DEV-Option
+    ;
 
     setTimeout(this.draw.bind(this), 60000-(d.getSeconds()*1000)-d.getMilliseconds());
   }
@@ -108,7 +151,7 @@ class TimeCalClock{
       clearTimeout(this.tOutD);
     this.tOutD=setTimeout(this.drawDateAndCal.bind(this), 86400000-(d.getHours()*24*60*1000)-(d.getMinutes()*60*1000)-d.getSeconds()-d.getMilliseconds());
   }
-  
+
   /**
      * draws given date as defiend in settings
    */
@@ -164,7 +207,12 @@ class TimeCalClock{
       }
     }
     if (render){
-      g.setFont("Vector", FONT_SIZE).setColor(g.theme.fg).setFontAlign(0, -1).clearRect(Bangle.appRect.x, Y, Bangle.appRect.x2, Y+FONT_SIZE-3).drawString(dateStr,this.centerX,Y);
+      g
+        .setFont("Vector", FONT_SIZE)
+        .setColor(g.theme.fg)
+        .setFontAlign(0, -1)
+        .clearRect(Bangle.appRect.x, Y, Bangle.appRect.x2, Y+FONT_SIZE-3)
+        .drawString(dateStr, this.dtCenterX - 3, Y+1);
     }
     //g.drawRect(Bangle.appRect.x, Y, Bangle.appRect.x2, Y+FONT_SIZE-3); //DEV-Option
   }
@@ -181,7 +229,7 @@ class TimeCalClock{
     const CELL_W=Bangle.appRect.w/7; //cell width
     const CELL_H=(CAL_AREA_H-DAY_NAME_FONT_SIZE)/3; //cell heigth
     const DAY_NUM_FONT_SIZE=Math.min(CELL_H-1,15); //size down, max 15
-  
+
     g.setFont("Vector", DAY_NAME_FONT_SIZE).setColor(g.theme.fg).setFontAlign(-1, -1).clearRect(Bangle.appRect.x, CAL_Y, Bangle.appRect.x2, CAL_Y+CAL_AREA_H);
 
     //draw grid & Headline
@@ -202,9 +250,9 @@ class TimeCalClock{
       const y=nextY+i*CELL_H;
       g.drawLine(Bangle.appRect.x, y, Bangle.appRect.x2, y);
     }
-    
+
     g.setFont("Vector", DAY_NUM_FONT_SIZE);
-    
+
     //write days
     const tdyDate=d.getDate();
     const days=this.settings().wdStrt>=0 ? 7+((7+d.getDay()-this.settings().wdStrt)%7) : 10;//start day (week before=7 days + days in this week realtive to week start) or fixed 7+3 days
