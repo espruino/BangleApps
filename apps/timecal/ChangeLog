@@ -10,3 +10,4 @@
 0.05: bugfix: default settings
 0.06: bugfix: Mrk.Color doesn't reflect the color selected, fixes #1706
 0.07: Minor code improvements
+0.08: Added weather integration
