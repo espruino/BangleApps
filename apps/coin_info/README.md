@@ -1,6 +1,6 @@
 # Crypto-Coin Info
 
-Crypto-Coins Infos with the help of the Binance API
+Crypto-Coins Infos with the help of the Binance and CoinStats API
 
 ## Description
 

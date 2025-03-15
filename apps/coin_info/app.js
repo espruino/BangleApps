@@ -71,7 +71,7 @@ function draw() {
     layout.render();
 
     g.flip();
-    
+
     // schedule a draw for the next minute
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = setTimeout(function() {
