@@ -1,6 +1,6 @@
 const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {};
 const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
-const csTokens = db.split(',')
+const csTokens = db.csTokens.split(',');
 let ticker = 0;
 
 var Layout = require("Layout");
