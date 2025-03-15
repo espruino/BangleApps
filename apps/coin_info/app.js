@@ -1,7 +1,7 @@
 const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {};
 const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
 const csTokens = db.csTokens.split(',');
-let ticker = 0;
+var ticker = 0;
 
 var Layout = require("Layout");
 var layout = new Layout({
@@ -65,8 +65,8 @@ var drawTimeout;
 // update the screen
 function draw() {
     //
-    layout.clear(layout.tknName);
-    layout.clear(layout.tknGraph);
+    // layout.clear(layout.tknName);
+    // layout.clear(layout.tknGraph);
 
     //
     layout.tknGraph.label = currentLabel;
