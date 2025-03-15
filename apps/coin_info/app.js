@@ -44,11 +44,11 @@ layout.update();
 
 //
 function swipeHandler(lr, ud) {
-    if (lr == -1) {
+    if (lr == 1) {
         ticker = ticker - 1;
         if (ticker < 0) ticker = 0;
     }
-    if (lr == 1) {
+    if (lr == -1) {
         ticker = ticker + 1;
         if (ticker > csTokens.length - 1) ticker = csTokens.length - 1;
     }
@@ -64,11 +64,14 @@ function setDummy(x) {
 var drawTimeout;
 // update the screen
 function draw() {
-    //
+    g.clear();
+
     layout.tknGraph.label = currentLabel;
     layout.tknName.label = (csTokens[ticker]).toUpperCase();
     layout.render();
 
+    g.flip();
+    
     // schedule a draw for the next minute
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = setTimeout(function() {
