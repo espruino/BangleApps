@@ -6,6 +6,14 @@ var timePeriod = "24h";
 var tknChrtData = [0,1,3,8,10,12,12,10,8,3,1,0];
 
 
+//
+function renderGraph(l) {
+    require("graph").drawLine(g, tknChrtData, {
+        axes : true,
+        x:l.x, y:l.y, width:l.w, height:l.h
+    });
+}
+
 var Layout = require("Layout");
 var layout = new Layout({
         type:"v", c: [
@@ -30,14 +38,6 @@ var layout = new Layout({
     { lazy:true });
 layout.update();
 
-
-//
-function renderGraph(l) {
-    require("graph").drawLine(g, tknChrtData, {
-        axes : true,
-        x:l.x, y:l.y, width:l.w, height:l.h
-    });
-}
 
 //
 // function makeHttpRequest() {
