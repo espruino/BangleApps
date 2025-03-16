@@ -128,10 +128,8 @@ class TimeCalClock{
    * schedules itself to update
    */
   drawTime(){
-    d=this.date ? this.date : new Date();
+    const d=this.date ? this.date : new Date();
     const Y=Bangle.appRect.y+this.DATE_FONT_SIZE()+10;
-
-    d=d?d :new Date();
 
     g.setFontAlign(0, -1)
       .setFont("Vector", this.TIME_FONT_SIZE())
@@ -149,7 +147,7 @@ class TimeCalClock{
    * @param{Date} d provide date or uses today
    */
   drawDateAndCal(){
-    d=this.date ? this.date : new Date();
+    const d=this.date ? this.date : new Date();
 
     this.TZOffset=d.getTimezoneOffset();
     this.drawDate();
@@ -164,7 +162,7 @@ class TimeCalClock{
      * draws given date as defiend in settings
    */
   drawDate(){
-    d=this.date ? this.date : new Date();
+    const d=this.date ? this.date : new Date();
 
     const FONT_SIZE=20;
     const Y=Bangle.appRect.y;
@@ -229,7 +227,7 @@ class TimeCalClock{
    * draws calender week view (-1,0,1) for given date 
    */
   drawCal(){
-    d=this.date ? this.date : new Date();
+    const d=this.date ? this.date : new Date();
 
     const DAY_NAME_FONT_SIZE=10;
     const CAL_Y=Bangle.appRect.y+this.DATE_FONT_SIZE()+10+this.TIME_FONT_SIZE()+3;
@@ -254,7 +252,7 @@ class TimeCalClock{
 
     var nextY=CAL_Y+DAY_NAME_FONT_SIZE;
 
-    for(i=0; i<3; i++){
+    for(let i=0; i<3; i++){
       const y=nextY+i*CELL_H;
       g.drawLine(Bangle.appRect.x, y, Bangle.appRect.x2, y);
     }
@@ -273,11 +271,11 @@ class TimeCalClock{
           g.setColor(this.nrgb[this.settings().tdyMrkClr]); //today marker color or fg color
           switch(this.settings().tdyMrkr){ //0:none, 1:circle, 2:rectangle, 3:filled
             case 1: 
-              for(m=1; m<=this.settings().tdyMrkPxl&&m<CELL_H-1&&m<CELL_W-1; m++)
+              for(let m=1; m<=this.settings().tdyMrkPxl&&m<CELL_H-1&&m<CELL_W-1; m++)
                 g.drawCircle(x*CELL_W+(CELL_W/2)+1, nextY+(CELL_H*y)+(CELL_H/2)+1, Math.min((CELL_W-m)/2, (CELL_H-m)/2)-2);
               break;
             case 2: 
-              for(m=1; m<=this.settings().tdyMrkPxl&&m<CELL_H-1&&m<CELL_W-1; m++)
+              for(let m=1; m<=this.settings().tdyMrkPxl&&m<CELL_H-1&&m<CELL_W-1; m++)
                 g.drawRect(x*CELL_W+m, nextY+CELL_H+m, x*CELL_W+CELL_W-m, nextY+CELL_H+CELL_H-m);
               break;
             case 3:
@@ -320,7 +318,7 @@ class TimeCalClock{
   }
 }
 
-timeCalClock = new TimeCalClock(); timeCalClock.draw();
+let timeCalClock = new TimeCalClock(); timeCalClock.draw();
 
 //hook on settime to redraw immediatly
 var _setTime = setTime;
