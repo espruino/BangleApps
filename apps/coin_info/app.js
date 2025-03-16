@@ -41,7 +41,7 @@ layout.update();
 
 
 //
-function repeatingRequest(repeatable) {
+function getChart(repeatable) {
     const url = `https://openapiv1.coinstats.app/coins/bitcoin/charts?period=${timePeriod}`;
     Bangle
         .http(url, {
@@ -63,7 +63,7 @@ function repeatingRequest(repeatable) {
 
     if (repeatable == true) {
         if (httpTimeout) clearTimeout(httpTimeout);
-        httpTimeout = setTimeout(repeatingRequest, 300000); // Make HTTP request every 5 minutes
+        httpTimeout = setTimeout(getChart, 300000); // Make HTTP request every 5 minutes
     }
 }
 
@@ -108,6 +108,7 @@ function draw() {
 // update time and draw
 g.clear();
 draw();
+getChart(true);
 
 //
 Bangle.on("swipe", swipeHandler);
