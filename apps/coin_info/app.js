@@ -1,7 +1,6 @@
 const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {};
 const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
 const csTokens = db.csTokens.split(',');
-var graph = require("graph");
 //
 var ticker = 0;
 var currLoadMsg = "...";
@@ -14,7 +13,7 @@ function renderGraph(l) {
     g.clearRect(l.x, l.y, l.w, l.h);
 
     if (tknChrtData.length > 0) {
-        graph.drawLine(g, tknChrtData, {
+        require("graph").drawLine(g, tknChrtData, {
             axes: true,
             x: l.x, y: l.y, width: l.w, height: l.h,
             miny: Math.min(...tknChrtData),
@@ -69,7 +68,7 @@ function getChart(period) {
             layout.render(layout.tknGraph)
         })
         .catch(err => {
-            console.error("HTTP request failed:", err);
+            // console.error("HTTP request failed:", err);
         });
 
     // if (repeatable == true) {
