@@ -1,6 +1,8 @@
 const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {};
 const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
 const csTokens = db.csTokens.split(',');
+var graph = require("graph");
+//
 var ticker = 0;
 var currLoadMsg = "...";
 var timePeriod = "24h";
@@ -9,10 +11,17 @@ var tknChrtData = [5,6,5,6,5,6,5,6,5,6,5,6,5,6,];
 
 //
 function renderGraph(l) {
-    require("graph").drawLine(g, tknChrtData, {
-        axes : true,
-        x:l.x, y:l.y, width:l.w, height:l.h
-    });
+    g.clearRect(l.x, l.y, l.w, l.h);
+
+    if (tknChrtData.length > 0) {
+        graph.drawLine(g, tknChrtData, {
+            axes: true,
+            x: l.x, y: l.y, width: l.w, height: l.h,
+            miny: Math.min(...tknChrtData),
+            maxy: Math.max(...tknChrtData),
+            // gridy: 5
+        });
+    }
 }
 
 var Layout = require("Layout");
@@ -28,7 +37,7 @@ var layout = new Layout({
             {type:"custom", render:renderGraph, id:"tknGraph", bgCol:g.theme.bg, fillx:1, filly:1 },
             {type:"h", valign:1,
                 c: [
-                    {type:"btn", label:"24h", cb: d=>setLoadMsg("24 h")},
+                    {type:"btn", label:"24h", cb: d=>getChart("24h")},
                     {type:"btn", label:"1w", cb: d=>setLoadMsg("1 w")},
                     {type:"btn", label:"1m", cb: d=>setLoadMsg("1 m")},
                     {type:"btn", label:"3m", cb: d=>setLoadMsg("3 m")}
@@ -41,8 +50,8 @@ layout.update();
 
 
 //
-function getChart(repeatable) {
-    const url = `https://openapiv1.coinstats.app/coins/bitcoin/charts?period=${timePeriod}`;
+function getChart(period) {
+    const url = `https://openapiv1.coinstats.app/coins/${csTokens[ticker]}/charts?period=${period}`;
     Bangle
         .http(url, {
             method: 'GET',
@@ -63,10 +72,10 @@ function getChart(repeatable) {
             console.error("HTTP request failed:", err);
         });
 
-    if (repeatable == true) {
-        if (httpTimeout) clearTimeout(httpTimeout);
-        httpTimeout = setTimeout(getChart, 300000); // Make HTTP request every 5 minutes
-    }
+    // if (repeatable == true) {
+    //     if (httpTimeout) clearTimeout(httpTimeout);
+    //     httpTimeout = setTimeout(getChart, 300000); // Make HTTP request every 5 minutes
+    // }
 }
 
 //
