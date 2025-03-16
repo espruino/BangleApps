@@ -55,6 +55,7 @@ function repeatingRequest(repeatable) {
             // Handle the response here
             const apiData = JSON.parse(data.resp);
             tknChrtData = apiData.map(innerArray => innerArray[1]);
+            currLoadMsg = "";
         })
         .catch(err => {
             console.error("HTTP request failed:", err);
