@@ -4,7 +4,7 @@ const csTokens = db.csTokens.split(',');
 var ticker = 0;
 var currLoadMsg = "...";
 var timePeriod = "24h";
-var tknChrtData = [0,1,3,8,10,12,12,10,8,3,1,0];
+var tknChrtData = [5,6,5,6,5,6,5,6,5,6,5,6,5,6,];
 
 
 //
@@ -21,7 +21,7 @@ var layout = new Layout({
             {type:"h", valign:-1,
                 c: [
                     {type:"txt", id:"tknName", font:"6x8:2", label:"", halign:-1, fillx:1},
-                    {type:"btn", label:"...", halign:1, cb: d=>setLoadMsg("details")}
+                    {type:"btn", label:"...", halign:1, cb: d=>showDetails()}
                 ]
             },
             {type:"txt", id:"loadMsg", font:"6x8", label:"", fillx:1 },
@@ -41,20 +41,30 @@ layout.update();
 
 
 //
-// function makeHttpRequest() {
-//     // Ensure Internet Access is enabled in Gadgetbridge settings
-//     Bangle.http("https://example.com/your_api_endpoint")
-//         .then(data => {
-//             console.log("Got HTTP response:", data);
-//             // Handle the response here
-//         })
-//         .catch(err => {
-//             console.error("HTTP request failed:", err);
-//         });
-//
-//     if (httpTimeout) clearTimeout(httpTimeout);
-//     httpTimeout = setTimeout(makeHttpRequest, 300000); // Make HTTP request every 5 minutes
-// }
+function repeatingRequest(repeatable) {
+    const url = `https://openapiv1.coinstats.app/coins/bitcoin/charts?period=${timePeriod}`;
+    Bangle
+        .http(url, {
+            method: 'GET',
+            headers: {
+                'X-API-KEY': db.csApiKey
+            }
+        })
+        .then(data => {
+            // console.log("Got HTTP response:", data);
+            // Handle the response here
+            const apiData = JSON.parse(data.resp);
+            tknChrtData = apiData.map(innerArray => innerArray[1]);
+        })
+        .catch(err => {
+            console.error("HTTP request failed:", err);
+        });
+
+    if (repeatable == true) {
+        if (httpTimeout) clearTimeout(httpTimeout);
+        httpTimeout = setTimeout(repeatingRequest, 300000); // Make HTTP request every 5 minutes
+    }
+}
 
 //
 function swipeHandler(lr, ud) {
@@ -71,6 +81,10 @@ function swipeHandler(lr, ud) {
 //
 function setLoadMsg(x) {
     currLoadMsg = `Load... ${x}`;
+    timePeriod = x;
+}
+function showDetails() {
+    currLoadMsg = `Details for ${(csTokens[ticker]).toUpperCase()}`;
 }
 
 // timeout used to update every minute
