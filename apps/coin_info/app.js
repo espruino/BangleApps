@@ -10,17 +10,15 @@ var tknChrtData = [5,6,5,6,5,6,5,6,5,6,5,6,5,6,];
 
 //
 function renderGraph(l) {
-    g.clearRect(l.x, l.y, l.w, l.h);
+    // g.clearRect(l.x, l.y, l.w, l.h);
 
-    if (tknChrtData.length > 0) {
-        require("graph").drawLine(g, tknChrtData, {
-            axes: true,
-            x: l.x, y: l.y, width: l.w, height: l.h,
-            miny: Math.min(...tknChrtData),
-            maxy: Math.max(...tknChrtData),
-            // gridy: 5
-        });
-    }
+    require("graph").drawLine(g, tknChrtData, {
+        axes: true,
+        x: l.x, y: l.y, width: l.w, height: l.h,
+        miny: Math.min(...tknChrtData),
+        maxy: Math.max(...tknChrtData),
+        // gridy: 5
+    });
 }
 
 var Layout = require("Layout");
@@ -36,10 +34,10 @@ var layout = new Layout({
             {type:"custom", render:renderGraph, id:"tknGraph", bgCol:g.theme.bg, fillx:1, filly:1 },
             {type:"h", valign:1,
                 c: [
-                    {type:"btn", label:"24h", cb: d=>getChart("24h")},
-                    {type:"btn", label:"1w", cb: d=>setLoadMsg("1 w")},
-                    {type:"btn", label:"1m", cb: d=>setLoadMsg("1 m")},
-                    {type:"btn", label:"3m", cb: d=>setLoadMsg("3 m")}
+                    {type:"btn", label:"24h", cb: d=>setLoadMsg("24h")},
+                    {type:"btn", label:"1w", cb: d=>setLoadMsg("1w")},
+                    {type:"btn", label:"1m", cb: d=>setLoadMsg("1m")},
+                    {type:"btn", label:"3m", cb: d=>setLoadMsg("3m")}
                 ]
             }
         ]
@@ -49,8 +47,8 @@ layout.update();
 
 
 //
-function getChart(period) {
-    const url = `https://openapiv1.coinstats.app/coins/${csTokens[ticker]}/charts?period=${period}`;
+function getChart() {
+    const url = `https://openapiv1.coinstats.app/coins/${csTokens[ticker]}/charts?period=${timePeriod}`;
     Bangle
         .http(url, {
             method: 'GET',
@@ -60,21 +58,17 @@ function getChart(period) {
         })
         .then(data => {
             // console.log("Got HTTP response:", data);
-            // Handle the response here
             const apiData = JSON.parse(data.resp);
             tknChrtData = apiData.map(innerArray => innerArray[1]);
             currLoadMsg = "";
-            //
-            layout.render(layout.tknGraph)
         })
         .catch(err => {
             // console.error("HTTP request failed:", err);
+        })
+        .finally(() => {
+            // Schedule next update regardless of success or failure
+            updateTimeout = setTimeout(getChart, 300000); // 5 minutes
         });
-
-    // if (repeatable == true) {
-    //     if (httpTimeout) clearTimeout(httpTimeout);
-    //     httpTimeout = setTimeout(getChart, 300000); // Make HTTP request every 5 minutes
-    // }
 }
 
 //
@@ -91,8 +85,8 @@ function swipeHandler(lr, ud) {
 
 //
 function setLoadMsg(x) {
-    currLoadMsg = `Load... ${x}`;
     timePeriod = x;
+    currLoadMsg = `Load... ${x}`;
 }
 function showDetails() {
     currLoadMsg = `Details for ${(csTokens[ticker]).toUpperCase()}`;
@@ -105,6 +99,8 @@ function draw() {
     //
     layout.tknName.label = (csTokens[ticker]).toUpperCase();
     layout.loadMsg.label = currLoadMsg;
+    //
+    layout.render(layout.graph);
     //
     layout.render();
 
@@ -119,7 +115,7 @@ function draw() {
 // update time and draw
 g.clear();
 draw();
-getChart("24h");
+getChart();
 
 //
 Bangle.on("swipe", swipeHandler);
