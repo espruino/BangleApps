@@ -2,6 +2,9 @@ const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {}
 const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
 const csTokens = db.csTokens.split(',');
 var ticker = 0;
+var timePeriod = "24h";
+var tknChrtData = [0,1,3,8,10,12,12,10,8,3,1,0];
+
 
 var Layout = require("Layout");
 var layout = new Layout({
@@ -9,22 +12,32 @@ var layout = new Layout({
             {type:"h", valign:-1,
                 c: [
                     {type:"txt", id:"tknName", font:"6x8:2", label:"", halign:-1, fillx:1},
-                    {type:"btn", label:"...", halign:1, cb: d=>setDummy("dot-dot-dot")}
+                    {type:"btn", label:"...", halign:1, cb: d=>setLoadMsg("details")}
                 ]
             },
-            {type:"txt", id:"tknGraph", font:"6x8:2", label:"", fillx:1 },
+            {type:"txt", id:"loadMsg", font:"6x8", label:"", fillx:1 },
+            {type:"custom", render:renderGraph, id:"tknGraph", bgCol:g.theme.bg, fillx:1, filly:1 },
             {type:"h", valign:1,
                 c: [
-                    {type:"btn", label:"07", cb: d=>setDummy("seven")},
-                    {type:"btn", label:"14", cb: d=>setDummy("fourteen")},
-                    {type:"btn", label:"30", cb: d=>setDummy("thirty")},
-                    {type:"btn", label:"60", cb: d=>setDummy("sixty")}
+                    {type:"btn", label:"24h", cb: d=>setLoadMsg("24 h")},
+                    {type:"btn", label:"1w", cb: d=>setLoadMsg("1 w")},
+                    {type:"btn", label:"1m", cb: d=>setLoadMsg("1 m")},
+                    {type:"btn", label:"3m", cb: d=>setLoadMsg("3 m")}
                 ]
             }
         ]
     },
     { lazy:true });
 layout.update();
+
+
+//
+function renderGraph(l) {
+    require("graph").drawLine(g, tknChrtData, {
+        axes : true,
+        x:l.x, y:l.y, width:l.w, height:l.h
+    });
+}
 
 //
 // function makeHttpRequest() {
@@ -55,9 +68,9 @@ function swipeHandler(lr, ud) {
 }
 
 //
-var currentLabel = "...";
-function setDummy(x) {
-    currentLabel = x;
+var currLoadMsg = "...";
+function setLoadMsg(x) {
+    currentLabel = `Load... ${x}`;
 }
 
 // timeout used to update every minute
@@ -66,7 +79,7 @@ var drawTimeout;
 function draw() {
     //
     layout.tknName.label = (csTokens[ticker]).toUpperCase();
-    layout.tknGraph.label = currentLabel;
+    layout.loadMsg.label = currLoadMsg;
     layout.render();
 
     // schedule a draw for the next minute
