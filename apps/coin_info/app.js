@@ -2,6 +2,8 @@ const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {}
 const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
 const csTokens = db.csTokens.split(',');
 //
+const ciLib = require("coin_info");
+//
 var ticker = 0;
 var currLoadMsg = "...";
 var timePeriod = "24h";
@@ -12,11 +14,12 @@ var tknChrtData = [5,6,5,6,5,6,5,6,5,6,5,6,5,6,];
 function renderGraph(l) {
     // g.clearRect(l.x, l.y, l.w, l.h);
 
+    const bounds = ciLib.findMinMax(tknChrtData);
     require("graph").drawLine(g, tknChrtData, {
         axes: true,
         x: l.x, y: l.y, width: l.w, height: l.h,
-        miny: Math.min(...tknChrtData),
-        maxy: Math.max(...tknChrtData),
+        miny: bounds.min,
+        maxy: bounds.max,
         // gridy: 5
     });
 }
