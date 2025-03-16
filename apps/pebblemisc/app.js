@@ -31,7 +31,7 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
   const h2 = Math.round(3 * h / 5) - 10;
   const h3 = Math.round(7 * h / 8);
 
-  const decorators= [
+  const decorators = [
     {
       "name": "SAMESIES",
       "color": "#0000FF",
@@ -136,20 +136,20 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
         };
 
         let canPalindrom = true;
-        const hoursPalindrom =hours.split("").map((char)=>{
-          if (symetrics[char]== undefined){
-            canPalindrom=false;
+        const hoursPalindrom = hours.split("").map((char) => {
+          if (symetrics[char] == undefined) {
+            canPalindrom = false;
             return;
           }
 
           return symetrics[char];
         }).join("");
 
-        if (!canPalindrom){
+        if (!canPalindrom) {
           return false;
         }
 
-        return hoursPalindrom==minutes;
+        return hoursPalindrom == minutes;
       },
       "tests": [
         {
@@ -193,6 +193,8 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
     g.setFontLECO1976Regular42().setFontAlign(0, -1);
     g.setColor(theme.fg);
     decorators.forEach((item) => {
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
       if (item.validator(hours, minutes)) {
         g.setColor(item.color);
       }

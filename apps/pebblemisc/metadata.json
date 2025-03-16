@@ -1,6 +1,6 @@
 {
   "id": "pebblemisc",
-  "name": "Pebble++ Clockv Misc",
+  "name": "Pebble++ Clock Misc",
   "shortName": "Pebble++ Misc",
   "version": "0.10",
   "description": "A Pebble style clock (based on the 'Pebble++' app) but that display quirky times in a different color",
