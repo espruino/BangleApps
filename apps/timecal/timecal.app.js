@@ -82,6 +82,7 @@ class TimeCalClock{
     // });
     // require("weather").get = undefined;
 
+    const d = this.date ? this.date : new Date();
     this.hasWeather = this.settings().showWeather && require('weather') && require('weather').get();
     const prevCenterX = this.dtCenterX;
     if(this.hasWeather){
