@@ -119,7 +119,7 @@ function draw() {
 // update time and draw
 g.clear();
 draw();
-getChart(false);
+getChart("24h");
 
 //
 Bangle.on("swipe", swipeHandler);
