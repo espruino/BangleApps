@@ -1,9 +1,9 @@
 {
-  "id": "pebblepp",
-  "name": "Pebble++ Clock",
-  "shortName": "Pebble++",
+  "id": "pebblemisc",
+  "name": "Pebble++ Clockv Misc",
+  "shortName": "Pebble++ Misc",
   "version": "0.10",
-  "description": "A Pebble style clock (based on the 'Pebble Clock' app) but with two configurable ClockInfo items at the top and custom backgrounds. Date/theme/borders be reconfigured using settings page.",
+  "description": "A Pebble style clock (based on the 'Pebble++' app) but that display quirky times in a different color",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"},{"url":"screenshot2.png"}],
   "type": "clock",
