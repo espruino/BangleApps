@@ -56,6 +56,8 @@ function getChart(repeatable) {
             const apiData = JSON.parse(data.resp);
             tknChrtData = apiData.map(innerArray => innerArray[1]);
             currLoadMsg = "";
+            //
+            layout.render(layout.tknGraph)
         })
         .catch(err => {
             console.error("HTTP request failed:", err);
@@ -95,6 +97,7 @@ function draw() {
     //
     layout.tknName.label = (csTokens[ticker]).toUpperCase();
     layout.loadMsg.label = currLoadMsg;
+    //
     layout.render();
 
     // schedule a draw for the next minute
@@ -108,7 +111,7 @@ function draw() {
 // update time and draw
 g.clear();
 draw();
-getChart(true);
+getChart(false);
 
 //
 Bangle.on("swipe", swipeHandler);
