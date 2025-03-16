@@ -29,7 +29,8 @@ class TimeCalClock{
       suClr:1, //0:fg, 1:red=#E00, 2:green=#0E0, 3:blue=#00E
       //phColor:"#E00", //public holiday
 
-      calBrdr:false 
+      calBrdr:false,
+      showWeather:false
     };
     for (const k in this._settings) if (!defaults.hasOwnProperty(k)) delete this._settings[k]; //remove invalid settings
     for (const k in defaults) if(!this._settings.hasOwnProperty(k)) this._settings[k] = defaults[k]; //assign missing defaults
@@ -41,7 +42,7 @@ class TimeCalClock{
 
     // X coord to center date and time text at
     this.dtCenterX = Bangle.appRect.w/2;
-    this.hasWeather = require('weather') && require('weather').get();
+    this.hasWeather = this.settings().showWeather && require('weather') && require('weather').get();
     if(this.hasWeather){
       this.dtCenterX =2*Bangle.appRect.w/3;
     }
@@ -81,7 +82,7 @@ class TimeCalClock{
     // });
     // require("weather").get = undefined;
 
-    this.hasWeather = require('weather') && require('weather').get();
+    this.hasWeather = this.settings().showWeather && require('weather') && require('weather').get();
     const prevCenterX = this.dtCenterX;
     if(this.hasWeather){
       this.dtCenterX = 2 * Bangle.appRect.w / 3;
@@ -107,8 +108,13 @@ class TimeCalClock{
     const temp = require("locale").temp(curr.temp-273.15).match(/^(\D*\d*)(.*)$/)[0];
     const iconRadius = 20;
     const widgetHeight = 24;
+    g.clearRect(
+      Bangle.appRect.x,
+      Bangle.appRect.y,
+      Bangle.appRect.w/3,
+      Bangle.appRect.y + widgetHeight + iconRadius
+    );
     weather.drawIcon(curr, Bangle.appRect.x + widgetHeight, Bangle.appRect.y + widgetHeight - 4, iconRadius);
-
     g
       .setFontAlign(0, -1)
       .setFont('6x8', 2)
