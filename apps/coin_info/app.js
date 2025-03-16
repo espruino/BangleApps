@@ -2,6 +2,7 @@ const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {}
 const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
 const csTokens = db.csTokens.split(',');
 var ticker = 0;
+var currLoadMsg = "...";
 var timePeriod = "24h";
 var tknChrtData = [0,1,3,8,10,12,12,10,8,3,1,0];
 
@@ -68,9 +69,8 @@ function swipeHandler(lr, ud) {
 }
 
 //
-var currLoadMsg = "...";
 function setLoadMsg(x) {
-    currentLabel = `Load... ${x}`;
+    currLoadMsg = `Load... ${x}`;
 }
 
 // timeout used to update every minute
