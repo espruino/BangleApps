@@ -1,9 +1,7 @@
 const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {};
 const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
 const csTokens = db.csTokens.split(',');
-//
 var ticker = 0;
-var csTknNameLen = (csTokens[ticker]).length;
 
 var Layout = require("Layout");
 var layout = new Layout({
@@ -62,23 +60,12 @@ function setDummy(x) {
     currentLabel = x;
 }
 
-function getFmtTknName(currTKn) {
-    if (currTKn.length > csTknNameLen)
-        csTknNameLen = currTKn.length;
-
-    return currTKn.toUpperCase().padEnd(csTknNameLen);
-}
-
 // timeout used to update every minute
 var drawTimeout;
 // update the screen
 function draw() {
     //
-    // layout.clear(layout.tknName);
-    // layout.clear(layout.tknGraph);
-
-    //
-    layout.tknName.label = getFmtTknName(csTokens[ticker]);
+    layout.tknName.label = (csTokens[ticker]).toUpperCase();
     layout.tknGraph.label = currentLabel;
     layout.render();
 
