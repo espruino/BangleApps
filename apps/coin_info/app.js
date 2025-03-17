@@ -70,7 +70,10 @@ function getChart() {
             tknChrtData = [1,2,3,4,5,6,7,8,9,8,7,6,5,4,];
             currLoadMsg = "";
             //
-            layout.render();
+            // Manually clear and update the graph area
+            g.clearRect(layout.tknGraph.x, layout.tknGraph.y, layout.tknGraph.w, layout.tknGraph.h);
+            layout.forgetLazyState(); // Force a full re-render
+            layout.render(layout.tknGraph); // Render just the graph area
             logFile.write("2. rendered");
         })
         .catch(err => {
