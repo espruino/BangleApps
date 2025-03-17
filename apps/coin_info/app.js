@@ -74,11 +74,8 @@ layout.update();
 
 
 //
-var updateTimeout;
+var getChartTimeout;
 function getChart(period) {
-    // Clear any existing timeout
-    if (updateTimeout) clearTimeout(updateTimeout);
-
     //
     const date = new Date().toDateString();
     logFile.write("Called:" + date);
@@ -108,11 +105,13 @@ function getChart(period) {
         .catch(err => {
             // logFile.write("API Error: " + JSON.stringify(err));
             tknChrtData = [1,2,3,4,5,6,7,8,9,8,7,6,5,4,];
-        })
-        .finally(() => {
-            // Schedule next update regardless of success or failure
-            updateTimeout = setTimeout(getChart, 30000, period); // 5 minutes
         });
+
+    if (getChartTimeout) clearTimeout(getChartTimeout);
+    getChartTimeout = setTimeout(function() {
+        getChartTimeout = undefined;
+        getChart(period);
+    }, 30000);
 }
 
 //
