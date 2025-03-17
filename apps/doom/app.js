@@ -26,17 +26,19 @@ function castRay(angle) {
     y += sinA;
     if (map[Math.floor(y / TILE_SIZE)][Math.floor(x / TILE_SIZE)] === 1) break;
   }
-  return Math.sqrt(Math.pow(x - player.x,2) + Math.pow(y - player.y,2));
+  return Math.sqrt(Math.pow(x - player.x, 2) + Math.pow(y - player.y, 2));
 }
 
 // ==== RENDER FUNCTION ====
 function render() {
   g.clear(); // Clear screen
 
-  // Draw sky and ground
-  g.setColor(0, 0, 255); // Blue for sky
+  // Draw sky
+  g.setColor(1, 1, 1); // White sky
   g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
-  g.setColor(50, 50, 50); // Gray for ground
+  
+  // Draw ground
+  g.setColor(0.5, 0.25, 0); // Brown ground (3-bit approximation)
   g.fillRect(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT);
 
   // Raycasting loop
@@ -45,9 +47,9 @@ function render() {
     let dist = castRay(angle);
     let height = Math.min(SCREEN_HEIGHT, (TILE_SIZE * SCREEN_HEIGHT) / dist);
     
-    // Distance-based shading
-    let shade = Math.max(0, 255 - Math.floor(Math.pow(dist, 1.1) * 0.4));
-    g.setColor(shade, shade, shade);
+    // Distance-based shading (limited to 3-bit colors)
+    let colorIndex = Math.floor(Math.max(0, 7 - Math.pow(dist, 0.8) * 0.2)); 
+    g.setColor(colorIndex / 7, colorIndex / 7, colorIndex / 7);
     
     // Draw vertical wall slice
     let startY = (SCREEN_HEIGHT - height) / 2;
@@ -71,14 +73,14 @@ const buttonArea = {
 };
 
 function drawButtons() {
-  g.setColor(0, 255, 0); // Green buttons
+  g.setColor(0, 1, 0); // Green buttons
   for (let key in buttonArea) {
     let b = buttonArea[key];
     g.fillRect(b.x, b.y, b.x + b.width, b.y + b.height);
   }
 
   // Draw labels
-  g.setColor(255, 255, 255);
+  g.setColor(1, 1, 1); // White text
   g.drawString("F", buttonArea.forward.x + 10, buttonArea.forward.y + 10);
   g.drawString("B", buttonArea.backward.x + 10, buttonArea.backward.y + 10);
   g.drawString("L", buttonArea.left.x + 10, buttonArea.left.y + 10);
