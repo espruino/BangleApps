@@ -77,9 +77,7 @@ layout.update();
 var updateTimeout;
 function getChart(period) {
     //
-    const date = new Date();
-    const dateString = date.toDateString();
-    logFile.write("Called:" + dateString);
+    logFile.write("Called:" + Date.toString());
 
     // Clear any existing timeout
     if (updateTimeout) clearTimeout(updateTimeout);
