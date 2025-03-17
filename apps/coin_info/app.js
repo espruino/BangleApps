@@ -1,3 +1,4 @@
+const logFile = require("Storage").open("coin_info_log.txt", "a");
 const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {};
 const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
 const csTokens = db.csTokens.split(',');
@@ -60,13 +61,14 @@ function getChart() {
             }
         })
         .then(data => {
-            // console.log("Got HTTP response:", data);
+            logFile.write("HTTP resp:" + JSON.stringify(data));
             const apiData = JSON.parse(data.resp);
             tknChrtData = apiData.map(innerArray => innerArray[1]);
+            logFile.write("Chart data:" + JSON.stringify(tknChrtData));
             currLoadMsg = "";
         })
         .catch(err => {
-            // console.error("HTTP request failed:", err);
+            logFile.write("API Error: " + JSON.stringify(err));
         })
         .finally(() => {
             // Schedule next update regardless of success or failure
