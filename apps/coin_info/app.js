@@ -16,6 +16,7 @@ function renderGraph(l) {
     // g.clearRect(l.x, l.y, l.w, l.h);
 
     const bounds = ciLib.findMinMax(tknChrtData);
+    logFile.write("?. graphy: " + JSON.stringify(bounds));
     require("graph").drawLine(g, tknChrtData, {
         axes: true,
         x: l.x, y: l.y, width: l.w, height: l.h,
@@ -61,15 +62,19 @@ function getChart() {
             }
         })
         .then(data => {
-            logFile.write("HTTP resp:" + JSON.stringify(data));
+            // logFile.write("HTTP resp:" + JSON.stringify(data));
             const apiData = JSON.parse(data.resp);
             tknChrtData = apiData.map(innerArray => innerArray[1]);
-            logFile.write("Chart data:" + JSON.stringify(tknChrtData));
+            // logFile.write("Chart data:" + JSON.stringify(tknChrtData));
+            logFile.write("1. got data");
             tknChrtData = [1,2,3,4,5,6,7,8,9,8,7,6,5,4,];
             currLoadMsg = "";
+            //
+            layout.render();
+            logFile.write("2. rendered");
         })
         .catch(err => {
-            logFile.write("API Error: " + JSON.stringify(err));
+            // logFile.write("API Error: " + JSON.stringify(err));
         })
         .finally(() => {
             // Schedule next update regardless of success or failure
