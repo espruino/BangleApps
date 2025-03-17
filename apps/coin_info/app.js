@@ -11,7 +11,20 @@ var timePeriod = "24h";
 var tknChrtData = [5,6,5,6,5,6,5,6,5,6,5,6,5,6,];
 
 
+//
+function swipeHandler(lr, ud) {
+    if (lr == 1) {
+        ticker = ticker - 1;
+        if (ticker < 0) ticker = 0;
+    }
+    if (lr == -1) {
+        ticker = ticker + 1;
+        if (ticker > csTokens.length - 1) ticker = csTokens.length - 1;
+    }
+}
 Bangle.on("swipe", swipeHandler);
+
+
 //
 function renderGraph(l) {
     // g.clearRect(l.x, l.y, l.w, l.h);
@@ -82,18 +95,6 @@ function getChart() {
             // Schedule next update regardless of success or failure
             updateTimeout = setTimeout(getChart, 300000); // 5 minutes
         });
-}
-
-//
-function swipeHandler(lr, ud) {
-    if (lr == 1) {
-        ticker = ticker - 1;
-        if (ticker < 0) ticker = 0;
-    }
-    if (lr == -1) {
-        ticker = ticker + 1;
-        if (ticker > csTokens.length - 1) ticker = csTokens.length - 1;
-    }
 }
 
 //
