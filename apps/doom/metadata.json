@@ -1,0 +1,17 @@
+{
+  "id": "doom",
+  "name": "DOOM",
+  "shortName": "doom",
+  "version": "0.01",
+  "description": "DOOM BangleJS adaptation.",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot_doom.png"}],
+  "tags": "doom",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"doom.app.js","url":"app.js","supports": ["BANGLEJS2"]},
+    {"name":"doom.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"doom.json"}]
+}
