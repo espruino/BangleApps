@@ -14,13 +14,13 @@ var tknChrtData = [5,6,5,6,5,6,5,6,5,6,5,6,5,6,];
 //
 Bangle.loadWidgets(); // loading widgets after drawing the layout in `drawMain()` to display the app UI ASAP.
 require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
-Bangle.setUI({
-    mode: 'custom',
-    back: Bangle.showClock
-    // btn: function() { // Handle button press
-    //     console.log("Button pressed");
-    // }
-});
+// Bangle.setUI({
+//     mode: 'custom',
+//     back: Bangle.showClock
+//     // btn: function() { // Handle button press
+//     //     console.log("Button pressed");
+//     // }
+// });
 //
 function swipeHandler(lr, ud) {
     if (lr == 1) {
@@ -74,7 +74,10 @@ layout.update();
 
 
 //
-function getChart() {
+function getChart(period) {
+    timePeriod = period;
+    currLoadMsg = `Load... ${period}`;
+
     const url = `https://openapiv1.coinstats.app/coins/${csTokens[ticker]}/charts?period=${timePeriod}`;
     Bangle
         .http(url, {
@@ -96,10 +99,11 @@ function getChart() {
         })
         .catch(err => {
             // logFile.write("API Error: " + JSON.stringify(err));
+            tknChrtData = [1,2,3,4,5,6,7,8,9,8,7,6,5,4,];
         })
         .finally(() => {
             // Schedule next update regardless of success or failure
-            updateTimeout = setTimeout(getChart, 300000); // 5 minutes
+            updateTimeout = setTimeout(getChart, 60000, period); // 5 minutes
         });
 }
 
@@ -135,4 +139,4 @@ function draw() {
 // update time and draw
 g.clear();
 draw();
-getChart();
+getChart("24h");
