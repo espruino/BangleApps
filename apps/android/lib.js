@@ -44,6 +44,10 @@ exports.gbHandler = (event) => {
     "musicinfo" : function() {
       require("messages").pushMessage(Object.assign(event, {t:"modify",id:"music",title:"Music"}));
     },
+    // {t:"audio", v:(percentage of max volume for android STREAM_MUSIC)}
+    "audio" : function() {
+      Bangle.emit("musicVolume", event.v);
+    },
     // {"t":"call","cmd":"incoming/end/start/outgoing","name":"Bob","number":"12421312"})
     "call" : function() {
       Object.assign(event, {
