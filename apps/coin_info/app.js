@@ -75,6 +75,13 @@ layout.update();
 
 //
 function getChart(period) {
+    // Clear any existing timeout
+    if (updateTimeout) clearTimeout(updateTimeout);
+
+    //
+    const date = new Date().toDateString();
+    logFile.write("Called:" + date);
+    //
     timePeriod = period;
     currLoadMsg = `Load... ${period}`;
 
@@ -103,7 +110,7 @@ function getChart(period) {
         })
         .finally(() => {
             // Schedule next update regardless of success or failure
-            updateTimeout = setTimeout(getChart, 60000, period); // 5 minutes
+            updateTimeout = setTimeout(getChart, 30000, period); // 5 minutes
         });
 }
 
