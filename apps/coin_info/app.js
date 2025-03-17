@@ -1,5 +1,5 @@
 const logFile = require("Storage").open("coin_info_log.txt", "a");
-const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {};
+// const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {};
 const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
 const csTokens = db.csTokens.split(',');
 //
@@ -11,6 +11,16 @@ var timePeriod = "24h";
 var tknChrtData = [5,6,5,6,5,6,5,6,5,6,5,6,5,6,];
 
 
+//
+Bangle.loadWidgets(); // loading widgets after drawing the layout in `drawMain()` to display the app UI ASAP.
+require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
+Bangle.setUI({
+    mode: 'custom',
+    back: Bangle.showClock
+    // btn: function() { // Handle button press
+    //     console.log("Button pressed");
+    // }
+});
 //
 function swipeHandler(lr, ud) {
     if (lr == 1) {
@@ -27,10 +37,8 @@ Bangle.on("swipe", swipeHandler);
 
 //
 function renderGraph(l) {
-    // g.clearRect(l.x, l.y, l.w, l.h);
-
     const bounds = ciLib.findMinMax(tknChrtData);
-    logFile.write("?. graphy: " + JSON.stringify(bounds) + "\n");
+    // logFile.write("?. graphy: " + JSON.stringify(bounds) + "\n");
     require("graph").drawLine(g, tknChrtData, {
         axes: true,
         x: l.x, y: l.y, width: l.w, height: l.h,
@@ -80,10 +88,8 @@ function getChart() {
             const apiData = JSON.parse(data.resp);
             tknChrtData = apiData.map(innerArray => innerArray[1]);
             // logFile.write("Chart data:" + JSON.stringify(tknChrtData));
-            // tknChrtData = [1,2,3,4,5,6,7,8,9,8,7,6,5,4,];
             currLoadMsg = "";
             //
-            // Manually clear and update the graph area
             g.clearRect(layout.tknGraph.x, layout.tknGraph.y, layout.tknGraph.w, layout.tknGraph.h);
             layout.forgetLazyState(); // Force a full re-render
             layout.render(layout.tknGraph); // Render just the graph area
@@ -130,14 +136,3 @@ function draw() {
 g.clear();
 draw();
 getChart();
-
-//
-Bangle.loadWidgets(); // loading widgets after drawing the layout in `drawMain()` to display the app UI ASAP.
-require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
-// Bangle.setUI({
-//     mode: 'custom',
-//     back: Bangle.showClock,
-//     btn: function() { // Handle button press
-//         console.log("Button pressed");
-//     }
-// });
