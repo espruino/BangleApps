@@ -11,12 +11,13 @@ var timePeriod = "24h";
 var tknChrtData = [5,6,5,6,5,6,5,6,5,6,5,6,5,6,];
 
 
+Bangle.on("swipe", swipeHandler);
 //
 function renderGraph(l) {
     // g.clearRect(l.x, l.y, l.w, l.h);
 
     const bounds = ciLib.findMinMax(tknChrtData);
-    logFile.write("?. graphy: " + JSON.stringify(bounds));
+    logFile.write("?. graphy: " + JSON.stringify(bounds) + "\n");
     require("graph").drawLine(g, tknChrtData, {
         axes: true,
         x: l.x, y: l.y, width: l.w, height: l.h,
@@ -66,15 +67,13 @@ function getChart() {
             const apiData = JSON.parse(data.resp);
             tknChrtData = apiData.map(innerArray => innerArray[1]);
             // logFile.write("Chart data:" + JSON.stringify(tknChrtData));
-            logFile.write("1. got data");
-            tknChrtData = [1,2,3,4,5,6,7,8,9,8,7,6,5,4,];
+            // tknChrtData = [1,2,3,4,5,6,7,8,9,8,7,6,5,4,];
             currLoadMsg = "";
             //
             // Manually clear and update the graph area
             g.clearRect(layout.tknGraph.x, layout.tknGraph.y, layout.tknGraph.w, layout.tknGraph.h);
             layout.forgetLazyState(); // Force a full re-render
             layout.render(layout.tknGraph); // Render just the graph area
-            logFile.write("2. rendered");
         })
         .catch(err => {
             // logFile.write("API Error: " + JSON.stringify(err));
@@ -132,7 +131,6 @@ draw();
 getChart();
 
 //
-Bangle.on("swipe", swipeHandler);
 Bangle.loadWidgets(); // loading widgets after drawing the layout in `drawMain()` to display the app UI ASAP.
 require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
 // Bangle.setUI({
