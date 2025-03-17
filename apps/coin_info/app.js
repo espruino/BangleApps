@@ -74,6 +74,7 @@ layout.update();
 
 
 //
+var updateTimeout;
 function getChart(period) {
     // Clear any existing timeout
     if (updateTimeout) clearTimeout(updateTimeout);
