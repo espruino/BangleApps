@@ -1,8 +1,11 @@
-Bangle.loadWidgets();
-g.clear(true);
-Bangle.drawWidgets();
+const DEFAULTS = {
+  button: 0,
+  buttonWhileLocked: false,
+  disableBacklightTimeout: true,
+  disableLockTimeout: true,
+};
 
-Bangle.setLCDTimeout(undefined);
+const settings = require("Storage").readJSON("splitsw.json", 1) || DEFAULTS;
 
 let renderIntervalId;
 let startTime;
@@ -27,9 +30,49 @@ var layout = new Layout( {
     ]},
   ]
 }, {
+  // TODO: The layout libary always seems to give the physical button label space
+  // even if it's empty (neither of these work)
+  // btns:[
+  //   {label:"", cb: l=>buttonPress()},
+  //   {cb: l=>buttonPress()},
+  // ],
   lazy: true,
   back: load,
 });
+
+const initStopwatch = function() {
+  Bangle.loadWidgets();
+  g.clear(true);
+  Bangle.drawWidgets(); // TODO: no sign of the widgets!
+
+  // TODO: it looks like this conflicts with using the layout library
+  // Bangle.setUI({mode:"custom", btn: ()=>buttonPress()});
+
+  // TODO: there doesn't seem to be an on button event and this
+  // conflicts with the setUI back function
+  // setWatch(function() {
+  //   console.log("Pressed");
+  // }, BTN, {edge:"rising", debounce:50, repeat:true});
+
+  // TODO: it would be confusing to react to an unlock button press
+  // but not a normal button press!
+  // if (settings.buttonWhileLocked === true) {
+  //   Bangle.on('lock', function(on, reason) {
+  //     if ((on === false) && (reason === 'button')) {
+  //       buttonPress();
+  //     }
+  //   });
+  // }
+
+  if (settings.disableBacklightTimeout === true) {
+    Bangle.setOptions({backlightTimeout: 0});
+    Bangle.setBacklight(1);
+  }
+
+  if (settings.disableLockTimeout === true) {
+    Bangle.setOptions({lockTimeout: 0});
+  }
+};
 
 // TODO The code in this function appears in various apps so it might be
 // nice to add something to the time_utils module. (There is already a
@@ -60,6 +103,12 @@ const renderIntervalCallback = function() {
 
 const buzz = function() {
   Bangle.buzz(50, 0.5);
+};
+
+const buttonPress = function() {
+  console.log("Pressed");
+
+  // TODO: start, stop or split depending on the app settings
 };
 
 const startStop = function() {
@@ -164,4 +213,5 @@ const updateStopwatch = function() {
   // layout.debug();
 };
 
+initStopwatch();
 updateStopwatch();
