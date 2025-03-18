@@ -1,5 +1,3 @@
-
-
 // ==== GAME VARIABLES ====
 const SCREEN_WIDTH = 176;
 const SCREEN_HEIGHT = 176;
@@ -17,6 +15,7 @@ const map = [
 ];
 
 let player = { x: 2 * TILE_SIZE, y: 2 * TILE_SIZE, angle: 0 };
+let needsRender = true; // Flag to control rendering
 
 // ==== RAYCASTING FUNCTION ====
 function castRay(angle) {
@@ -27,19 +26,22 @@ function castRay(angle) {
     y += sinA;
     if (map[Math.floor(y / TILE_SIZE)][Math.floor(x / TILE_SIZE)] === 1) break;
   }
-  return Math.sqrt(Math.pow(x - player.x, 2) + Math.pow(y - player.y, 2));
+  return Math.sqrt((x - player.x) * (x - player.x) + (y - player.y) * (y - player.y));
 }
 
 // ==== RENDER FUNCTION ====
 function render() {
+  if (!needsRender) return; // Only render when needed
+  needsRender = false; // Reset flag
+
   g.clear(); // Clear screen
   
   // Draw sky
-  g.setColor(0, 0, 0); // White sky
+  g.setColor(0, 0, 0);
   g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
   
   // Draw ground
-  g.setColor(0.5, 0.25, 0); // Brown ground (3-bit approximation)
+  g.setColor(0.5, 0.25, 0);
   g.fillRect(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT);
 
   // Raycasting loop
@@ -48,8 +50,8 @@ function render() {
     let dist = castRay(angle);
     let height = Math.min(SCREEN_HEIGHT, (TILE_SIZE * SCREEN_HEIGHT) / dist);
     
-    // Distance-based shading (limited to 3-bit colors)
-    let colorIndex = Math.floor(Math.max(0, 7 - Math.pow(dist, 0.8) * 0.2)); 
+    // Optimized distance shading (avoids Math.pow)
+    let colorIndex = Math.floor(Math.max(0, 7 - (dist * 0.25))); 
     g.setColor(colorIndex / 7, colorIndex / 7, colorIndex / 7);
     
     // Draw vertical wall slice
@@ -70,42 +72,35 @@ function movePlayer(backward) {
   if (map[Math.floor(newY / TILE_SIZE)][Math.floor(newX / TILE_SIZE)] === 0) {
     player.x = newX;
     player.y = newY;
-    render();
+    needsRender = true; // Mark for rendering
   }
 }
 
 // ==== TOUCH INPUT HANDLING ====
 Bangle.on("touch", (wat, xy) => {
-  let x = xy.x;
-  let y = xy.y;
-  let cx = SCREEN_WIDTH / 2;
-  let cy = SCREEN_HEIGHT / 2; // Center of screen
+  let x = xy.x, y = xy.y;
+  let cx = SCREEN_WIDTH / 2, cy = SCREEN_HEIGHT / 2;
   
-  // Calculate triangle region
   if (x + y < cx + cy) { // Top-left or top-right
     if (x > y) { // Top triangle (Forward)
       movePlayer(true);
     } else { // Left triangle (Rotate left)
-      player.angle -= 0.09817477042;
-      render();
+      player.angle -= 0.098;
+      needsRender = true;
     }
   } else { // Bottom-left or bottom-right
     if (x < y) { // Bottom triangle (Backward)
       movePlayer(false);
     } else { // Right triangle (Rotate right)
-      player.angle += 0.09817477042;
-      render();
+      player.angle += 0.098;
+      needsRender = true;
     }
   }
 });
 
 // ==== GAME LOOP ====
-let lastRenderTime = Date.now();
 setInterval(() => {
-  if (Date.now() - lastRenderTime >= 33) {
-    render();
-    lastRenderTime = Date.now();
-  }
+  if (needsRender) render();
 }, 33);
 
 render(); // Initial rendering
