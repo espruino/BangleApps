@@ -35,7 +35,7 @@ function render() {
   g.clear(); // Clear screen
   
   // Draw sky
-  g.setColor(1, 1, 1); // White sky
+  g.setColor(0, 0, 0); // White sky
   g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
   
   // Draw ground
@@ -75,9 +75,7 @@ function movePlayer(backward) {
 }
 
 // ==== TOUCH INPUT HANDLING ====
-Bangle.on("tap", (xy) => {
-  console.log("TAP");
-  console.log(xy);
+Bangle.on("touch", (wat, xy) => {
   let x = xy.x;
   let y = xy.y;
   let cx = SCREEN_WIDTH / 2;
@@ -88,14 +86,14 @@ Bangle.on("tap", (xy) => {
     if (x > y) { // Top triangle (Forward)
       movePlayer(true);
     } else { // Left triangle (Rotate left)
-      player.angle -= Math.PI / 32;
+      player.angle -= 0.09817477042;
       render();
     }
   } else { // Bottom-left or bottom-right
     if (x < y) { // Bottom triangle (Backward)
       movePlayer(false);
     } else { // Right triangle (Rotate right)
-      player.angle += Math.PI / 32;
+      player.angle += 0.09817477042;
       render();
     }
   }
