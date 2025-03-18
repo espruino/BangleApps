@@ -1,9 +1,10 @@
-// ==== GRAPHICS SETUP ====
-const g = require("Graphics"); // Implicitly available on Bangle.js
-g.clear();  // Clear the screen initially
+
 
 // ==== GAME VARIABLES ====
-const SCREEN_WIDTH = 176, SCREEN_HEIGHT = 176, TILE_SIZE = 16, FOV = Math.PI / 4;
+const SCREEN_WIDTH = 176;
+const SCREEN_HEIGHT = 176;
+const TILE_SIZE = 16;
+const FOV = Math.PI / 4;
 const map = [
   [1,1,1,1,1,1,1,1],
   [1,0,0,0,0,0,0,1],
@@ -32,7 +33,7 @@ function castRay(angle) {
 // ==== RENDER FUNCTION ====
 function render() {
   g.clear(); // Clear screen
-
+  
   // Draw sky
   g.setColor(1, 1, 1); // White sky
   g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
@@ -56,68 +57,8 @@ function render() {
     g.fillRect(i, startY, i + 1, startY + height);
   }
 
-  // Draw buttons
-  drawButtons();
-
-  // Flip the buffer to update the display
-  g.flip();
+  g.flip();  // Update display
 }
-
-// ==== BUTTON SETUP ====
-const BUTTON_SIZE = 30, BUTTON_HEIGHT = 50;
-const buttonArea = {
-  forward: { x: SCREEN_WIDTH / 2 - BUTTON_SIZE / 2, y: 10, width: BUTTON_SIZE, height: BUTTON_HEIGHT },
-  backward: { x: SCREEN_WIDTH / 2 - BUTTON_SIZE / 2, y: SCREEN_HEIGHT - BUTTON_HEIGHT - 10, width: BUTTON_SIZE, height: BUTTON_HEIGHT },
-  left: { x: 10, y: SCREEN_HEIGHT / 2 - BUTTON_SIZE / 2, width: BUTTON_SIZE, height: BUTTON_SIZE },
-  right: { x: SCREEN_WIDTH - BUTTON_SIZE - 10, y: SCREEN_HEIGHT / 2 - BUTTON_SIZE / 2, width: BUTTON_SIZE, height: BUTTON_SIZE }
-};
-
-function drawButtons() {
-  g.setColor(0, 1, 0); // Green buttons
-  for (let key in buttonArea) {
-    let b = buttonArea[key];
-    g.fillRect(b.x, b.y, b.x + b.width, b.y + b.height);
-  }
-
-  // Draw labels
-  g.setColor(1, 1, 1); // White text
-  g.drawString("F", buttonArea.forward.x + 10, buttonArea.forward.y + 10);
-  g.drawString("B", buttonArea.backward.x + 10, buttonArea.backward.y + 10);
-  g.drawString("L", buttonArea.left.x + 10, buttonArea.left.y + 10);
-  g.drawString("R", buttonArea.right.x + 10, buttonArea.right.y + 10);
-}
-
-// ==== TOUCH INPUT HANDLER ====
-let lastTouchTime = 0, touchDelay = 100;
-
-Bangle.on('touch', function(_, e) {
-  const currentTime = Date.now();
-  if (currentTime - lastTouchTime < touchDelay) return;
-  lastTouchTime = currentTime;
-
-  let moveSpeed = TILE_SIZE / 4;
-  let rotateSpeed = Math.PI / 32;
-
-  // Check touch coordinates for button press
-  if (e.x >= buttonArea.forward.x && e.x <= buttonArea.forward.x + buttonArea.forward.width &&
-      e.y >= buttonArea.forward.y && e.y <= buttonArea.forward.y + buttonArea.forward.height) {
-    movePlayer(false);
-  }
-  if (e.x >= buttonArea.backward.x && e.x <= buttonArea.backward.x + buttonArea.backward.width &&
-      e.y >= buttonArea.backward.y && e.y <= buttonArea.backward.y + buttonArea.backward.height) {
-    movePlayer(true);
-  }
-  if (e.x >= buttonArea.left.x && e.x <= buttonArea.left.x + buttonArea.left.width &&
-      e.y >= buttonArea.left.y && e.y <= buttonArea.left.y + buttonArea.left.height) {
-    player.angle -= rotateSpeed;
-    render();
-  }
-  if (e.x >= buttonArea.right.x && e.x <= buttonArea.right.x + buttonArea.right.width &&
-      e.y >= buttonArea.right.y && e.y <= buttonArea.right.y + buttonArea.right.height) {
-    player.angle += rotateSpeed;
-    render();
-  }
-});
 
 // ==== PLAYER MOVEMENT FUNCTION ====
 function movePlayer(backward) {
@@ -133,6 +74,33 @@ function movePlayer(backward) {
   }
 }
 
+// ==== TOUCH INPUT HANDLING ====
+Bangle.on("tap", (xy) => {
+  console.log("TAP");
+  console.log(xy);
+  let x = xy.x;
+  let y = xy.y;
+  let cx = SCREEN_WIDTH / 2;
+  let cy = SCREEN_HEIGHT / 2; // Center of screen
+  
+  // Calculate triangle region
+  if (x + y < cx + cy) { // Top-left or top-right
+    if (x > y) { // Top triangle (Forward)
+      movePlayer(true);
+    } else { // Left triangle (Rotate left)
+      player.angle -= Math.PI / 32;
+      render();
+    }
+  } else { // Bottom-left or bottom-right
+    if (x < y) { // Bottom triangle (Backward)
+      movePlayer(false);
+    } else { // Right triangle (Rotate right)
+      player.angle += Math.PI / 32;
+      render();
+    }
+  }
+});
+
 // ==== GAME LOOP ====
 let lastRenderTime = Date.now();
 setInterval(() => {
@@ -141,3 +109,5 @@ setInterval(() => {
     lastRenderTime = Date.now();
   }
 }, 33);
+
+render(); // Initial rendering
