@@ -77,7 +77,7 @@ function movePlayer(backward) {
 }
 
 // ==== TOUCH INPUT HANDLING ====
-Bangle.on("touch", (wat, xy) => {
+Bangle.on("tap", (xy) => {
   let x = xy.x, y = xy.y;
   let cx = SCREEN_WIDTH / 2, cy = SCREEN_HEIGHT / 2;
   
@@ -103,4 +103,4 @@ setInterval(() => {
   if (needsRender) render();
 }, 33);
 
-render(); // Initial rendering
+render();
