@@ -2,7 +2,7 @@
   "id": "pebblemisc",
   "name": "Pebble++ Clock Misc",
   "shortName": "Pebble++ Misc",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A Pebble style clock (based on the 'Pebble++' app) but that display quirky times in a different color",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"},{"url":"screenshot2.png"}],
@@ -11,11 +11,11 @@
   "supports": ["BANGLEJS2"],
   "dependencies" : { "clock_info":"module", "clockbg":"module" },
   "storage": [
-    {"name":"pebblepp.app.js","url":"app.js"},
-    {"name":"pebblepp.settings.js","url":"settings.js"},
-    {"name":"pebblepp.img","url":"icon.js","evaluate":true}
+    {"name":"pebblemisc.app.js","url":"app.js"},
+    {"name":"pebblemisc.settings.js","url":"settings.js"},
+    {"name":"pebblemisc.img","url":"icon.js","evaluate":true}
   ],
   "data": [
-    {"name":"pebblepp.settings.json"}
+    {"name":"pebblemisc.settings.json"}
   ]
 }

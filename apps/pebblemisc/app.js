@@ -24,6 +24,7 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
   let background = require("clockbg");
   let theme;
   let drawTimeout;
+  let buzz = false;
 
   const h = g.getHeight();
   const w = g.getWidth();
@@ -197,6 +198,10 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
       const minutes = date.getMinutes().toString().padStart(2, '0');
       if (item.validator(hours, minutes)) {
         g.setColor(item.color);
+
+        if (buzz) {
+          Bangle.buzz()
+        }
       }
     });
     g.drawString(time, w / 2, h2 + 8);
@@ -302,4 +307,8 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
   g.setColor(theme.fg).fillRect(0, h2 - 6, w, h3 + 6);
 
   draw();
+
+  setWatch(function () {
+    buzz = !buzz
+  }, BTN, { edge: "rising", repeat: true });
 }
