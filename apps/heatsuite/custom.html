@@ -3,45 +3,76 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
+    <ul class="tab tab-block">
+      <li class="tab-item active">
+        <a href="javascript:showTab('heatsuite__settingsContainer')">Settings</a>
+      </li>
+      <li class="tab-item">
+        <a href="javascript:showTab('heatsuite__tasksContainer')">Tasks</a>
+      </li>
+      <li class="tab-item">
+        <a href="#">Survey</a>
+      </li>
+    </ul>
+    <div class="container apploader-tab" id="heatsuite__settingsContainer">
+      <p>Select Recorder Options:</p>
+      <div class="form-group">
+          <label class="form-switch">
+              <input type="checkbox" name="record" value="steps">
+              <i class="form-icon"></i> Steps
+          </label>
+          <label class="form-switch">
+              <input type="checkbox" name="record" value="hrm">
+              <i class="form-icon"></i> Optical Heart Rate
+          </label>
+          <label class="form-switch">
+              <input type="checkbox" name="record" value="acc">
+              <i class="form-icon"></i> Accelerometry
+          </label>
+          <label class="form-switch">
+              <input type="checkbox" name="record" value="bat">
+              <i class="form-icon"></i> Battery
+          </label>
+          <label class="form-switch">
+              <input type="checkbox" name="record" value="movement">
+              <i class="form-icon"></i> Movement
+          </label>  
+          <label class="form-switch">
+            <input type="checkbox" name="record" value="baro">
+            <i class="form-icon"></i> Temperature/Pressure
+          </label>  
+          <label class="form-switch">
+            <input type="checkbox" name="record" value="bthrm">
+            <i class="form-icon"></i> Bluetooth HRM (Uses BTHRM)
+          </label>      
+          <label class="form-switch">
+            <input type="checkbox" name="record" value="CORESensor">
+            <i class="form-icon"></i> CORE Sensor (Uses coretemp)
+          </label>         
+        </div>  
+    </div>
+    <div class="container apploader-tab" id="heatsuite__tasksContainer">
 
-    <p>Select Recorder Options:</p>
-    <div class="form-group">
+    </div>
 
-        <label class="form-switch">
-            <input type="checkbox" name="steps">
-            <i class="form-icon"></i> Steps
-        </label>
-        <label class="form-switch">
-            <input type="checkbox" name="hrm">
-            <i class="form-icon"></i> Optical Heart Rate
-        </label>
-        <label class="form-switch">
-            <input type="checkbox" name="acc">
-            <i class="form-icon"></i> Accelerometry
-        </label>
-        <label class="form-switch">
-            <input type="checkbox" name="bat">
-            <i class="form-icon"></i> Battery
-        </label>
-        <label class="form-switch">
-            <input type="checkbox" name="movement">
-            <i class="form-icon"></i> Movement
-        </label>        
-      </div>
     <p><button id="upload" class="btn btn-primary">Upload</button></p>
 
     <script src="../../core/lib/customize.js"></script>
 
     <script>
+        var heatsuiteSettings = {};
         function onInit(device) { 
             Util.readStorageJSON("heatsuite.default.json",function(d){
-                console.log(d);
+                //console.log(d);
+                try {
+                  heatsuiteSettings = JSON.parse(d); 
+              } catch (error) {
+                  console.error("Failed to parse JSON:", error);
+              }
             });
          }
       // When the 'upload' button is clicked...
       document.getElementById("upload").addEventListener("click", function() {
-        // get the text to add
-        // send app's info (in addition to the contents of metadata.json)
         sendCustomizedApp();
       });
 
