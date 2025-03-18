@@ -1,0 +1,47 @@
+{
+    "id": "themes",
+    "name": "Themes",
+    "shortName": "Themes",
+    "version": "0.01",
+    "description": "Color palettes at your disposal",
+    "type": "app",
+    "tags": "tool",
+    "screenshots": [
+        {
+            "url": "screenshot.png"
+        }
+    ],
+    "supports": [
+        "BANGLEJS2"
+    ],
+    "allow_emulator": true,
+    "icon": "themes.png",
+    "storage": [
+        {
+            "name": "themes.app.js",
+            "url": "app.js"
+        },
+        {
+            "name": "themes.img",
+            "url": "app-icon.js",
+            "evaluate": true
+        },
+        {
+            "name": "themes.settings.js",
+            "url": "settings.js"
+        },
+        {
+            "name": "themes.boot.js",
+            "url": "boot.js"
+        }
+    ],
+    "data": [
+        {
+            "name": "themes.settings.json"
+        },
+        {
+            "name": "themes.json",
+            "url": "themes.json"
+        }
+    ]
+}

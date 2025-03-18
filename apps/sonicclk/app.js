@@ -268,7 +268,6 @@ const settingsMenu = {
   "": { title: "Settings" },
   "Active Mode": {
     value: settings.activeMode,
-    format: (v) => (v ? "On" : "Off"),
     onchange: (v) => (settings.activeMode = v),
   },
   "Twist Thresh": {

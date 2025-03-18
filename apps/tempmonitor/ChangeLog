@@ -1,0 +1,6 @@
+0.01: 1st version: saves values to csv
+0.02: added HTML interface
+0.03: Added Stop/start recording, change BG color, filesize info
+0.04: Support for negative degree, Min/Max, random for emulator, clean of code 
+0.05: Fix issue on BJS2 caused by Bangle.getPressure promise
+0.06: Minor code improvements

@@ -1,3 +1,4 @@
 0.01: Based on the Analog Clock app, minimal dot
 0.02: Remove hardcoded hour buzz (you can install widchime if you miss it)
 0.03: Use setUI, adjust for themes and different size screens
+0.04: Minor code improvements

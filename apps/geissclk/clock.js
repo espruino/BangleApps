@@ -1,4 +1,7 @@
 var W = 79, H = 64;
+// if screen is always on, only animate when unlocked
+var isScreenAlwaysOn = process.env.BOARD=="BANGLEJS2";
+
 /*var compiled = E.compiledC(`
 // void transl(int, int, int )
 int transl(unsigned char *map, unsigned char *imgfrom, unsigned char *imgto) {
@@ -46,6 +49,7 @@ var map = new Uint8Array(W*H);
 var pal = new Uint16Array(256);
 var PALETTES = 3;
 var MAPS = 6;
+var animInterval;
 
 // If we're missing any maps, compute them!
 (function() {
@@ -65,6 +69,8 @@ function randomPalette() {
   var n = (0|Math.random()*200000) % PALETTES;
   var p = new Uint8Array(pal.buffer);
   p.set(require("Storage").readArrayBuffer("geissclk."+n+".pal"));
+  if (!g.theme.dark) // if not dark, invert colors
+    E.mapInPlace(pal,pal,x=>x^0xFFFF);
 }
 
 function randomMap() {
@@ -93,7 +99,7 @@ var im = {
 };
 var lastSeconds = -1;
 
-function iterate() { "ram"
+function iterate(clearBuf) { "ram"
   var d = new Date();
   var time = require("locale").time(d,1);
   var seconds = d.getSeconds().toString().padStart(2,0);
@@ -108,27 +114,59 @@ function iterate() { "ram"
     gfx.buffer = dataa.buffer;
   }
   var x,y,n,t = getTime()/10;
-  var amt = 100*Bangle.getAccel().diff;
-  for (var i=0;i<amt;i++) {
-    //x = Math.round((W/2) + 20*Math.sin(t));
-    //y = Math.round((H/2) + 20*Math.cos(t));
-    //t += 0.628;
-    x = 1+(Math.random()*(W-2))|0;
-    y = 1+(Math.random()*(H-2))|0;
-    dataa[x + y*W] = 240;
+  if (clearBuf) {
+    gfx.clear();
+  } else { // do geiss animation
+    var amt = 100*Bangle.getAccel().diff;
+    for (var i=0;i<amt;i++) {
+      //x = Math.round((W/2) + 20*Math.sin(t));
+      //y = Math.round((H/2) + 20*Math.cos(t));
+      //t += 0.628;
+      x = 1+(Math.random()*(W-2))|0;
+      y = 1+(Math.random()*(H-2))|0;
+      dataa[x + y*W] = 240;
+    }
+    compiled.transl(addrmap, addra, addrb);
   }
-  compiled.transl(addrmap, addra, addrb);
 
 
   x = 8;
+
   gfx.setFont("5x9Numeric7Seg",2);
   gfx.drawString(time, x, 20);
-  gfx.setFont("5x9Numeric7Seg");
-  gfx.drawString(seconds, x+55, 30);
+  if (!clearBuf) { // don't draw seconds if not animating
+    gfx.setFont("5x9Numeric7Seg");
+    gfx.drawString(seconds, x+55, 30);
+  }
   // firmwares pre-2v09 wouldn't accelerate a 3x blit if it went right to the RHS - hence we're 79px not 80
-  g.drawImage(im,1,24,{scale:3});
+  if (g.getWidth()==176)  // Bangle.js 2
+    g.drawImage(im,8,24,{scale:2});
+  else
+    g.drawImage(im,3,24,{scale:3});
 }
 
+if (isScreenAlwaysOn) {
+  Bangle.on('lock',function(on) {
+    if (animInterval) {
+      clearInterval(animInterval);
+      animInterval = undefined;
+    }
+    if (!on) { // not locked - animate!
+      randomMap();
+      randomPalette();
+      iterate();
+      animInterval = setInterval(iterate, 50);
+    } else {
+      iterate(true); // just clear
+      animInterval = setTimeout(function() {
+        iterate(true);
+        animInterval = setInterval(function() {
+          iterate(true);
+        }, 60000);
+      }, 60000 - (Date.now() % 60000));
+    }
+  });
+}
 
 Bangle.on('lcdPower',function(on) {
   if (animInterval) {
@@ -142,11 +180,17 @@ Bangle.on('lcdPower',function(on) {
     animInterval = setInterval(iterate, 50);
   }
 });
-g.clear();
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-iterate();
-animInterval = setInterval(iterate, 50);
 
 // Show launcher when button pressed
 Bangle.setUI("clock");
+g.clear(1);
+
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+iterate(true);
+if (Bangle.isLCDOn() && (!isScreenAlwaysOn || !Bangle.isLocked())) {
+  console.log("Starting");
+  animInterval = setInterval(iterate, 50);
+}
+
+

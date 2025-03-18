@@ -1,7 +1,7 @@
 { "id": "scicalc",
   "name": "Scientific Calculator",
   "shortName":"SciCalc",
-  "version":"0.01",
+  "version":"0.03",
   "description": "Scientific calculator",
   "icon": "scicalc.png",
   "screenshots" : [ { "url":"scicalc_screenshot1.png" }, { "url":"scicalc_screenshot2.png" }, { "url":"scicalc_screenshot3.png" } ],

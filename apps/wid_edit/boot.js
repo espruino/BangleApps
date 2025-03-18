@@ -1,24 +1,20 @@
-Bangle.loadWidgets = function() {
-  global.WIDGETS={};
-  require("Storage").list(/\.wid\.js$/)
-    .forEach(w=>{
-      try { eval(require("Storage").read(w)); }
-      catch (e) { print(w, e); }
-    });
-  const s = require("Storage").readJSON("wid_edit.json", 1) || {},
-    c = s.custom || {};
+Bangle.loadWidgets = (o => ()=>{
+  o();
+  const s = require("Storage").readJSON("wid_edit.json", 1) || {};
+  const c = s.custom || {};
   for (const w in c){
     if (!(w in WIDGETS)) continue; // widget no longer exists
     // store defaults of customized values in _WIDGETS
-    global._WIDGETS=global._WIDGETS||{};
-    _WIDGETS[w] = {};
-    Object.keys(c[w]).forEach(k => _WIDGETS[w][k] = WIDGETS[w][k]);
-    Object.assign(WIDGETS[w], c[w]);
+    if (!global._WIDGETS) global._WIDGETS = {};
+    if (!global._WIDGETS[w]) global._WIDGETS[w] = {};
+    Object.keys(c[w]).forEach(k => global._WIDGETS[w][k] = global.WIDGETS[w][k]);
+    //overide values in widget with configured ones
+    Object.assign(global.WIDGETS[w], c[w]);
   }
-  const W = WIDGETS;
-  WIDGETS = {};
+  const W = global.WIDGETS;
+  global.WIDGETS = {};
   Object.keys(W)
-    .sort()
+    .sort() // sort alphabetically. the next sort is stable and preserves this if sortorder matches
     .sort((a, b) => (0|W[b].sortorder)-(0|W[a].sortorder))
-    .forEach(k => WIDGETS[k] = W[k]);
-}
+    .forEach(k => global.WIDGETS[k] = W[k]);
+})(Bangle.loadWidgets);

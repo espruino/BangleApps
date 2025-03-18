@@ -1,0 +1,16 @@
+{
+  "id": "hwid_a_battery_widget",
+  "name": "A Battery Widget (with percentage) - Hanks Mod",
+  "shortName":"H Battery Widget",
+  "icon": "widget.png",
+  "version":"0.11",
+  "type": "widget",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "description": "Simple and slim battery widget with charge status and percentage",
+  "tags": "widget,battery",
+  "provides_widgets" : ["battery"],
+  "storage": [
+    {"name":"hwid_a_battery_widget.wid.js","url":"widget.js"}
+  ]
+}

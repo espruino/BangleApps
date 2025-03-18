@@ -1,0 +1,18 @@
+{
+  "id": "qcenter",
+  "name": "Quick Center",
+  "shortName": "QCenter",
+  "version": "0.05",
+  "description": "An app for quickly launching your favourite apps, inspired by the control centres of other watches.",
+  "icon": "app.png",
+  "tags": "",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "screenshots": [{ "url": "screenshot.png" }],
+  "storage": [
+    { "name": "qcenter.app.js", "url": "app.js" },
+    { "name": "qcenter.settings.js", "url": "settings.js" },
+    { "name": "qcenter.img", "url": "app-icon.js", "evaluate": true }
+  ],
+  "data": [{"name":"qcenter.json"}]
+}

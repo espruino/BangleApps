@@ -1,0 +1,15 @@
+{ "id": "spaceclock",
+  "name": "Space Clock (Casio Style)",
+  "shortName":"Space Clock",
+  "version": "0.02",
+  "description": "Watch face in the style of Casio Prototype Space Resist",
+  "icon": "app-icon.png",
+  "type": "clock",
+  "tags": "clock,casio,retro",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"spaceclock.app.js","url":"app.js"},
+    {"name":"spaceclock.img","url":"app-icon.js","evaluate":true}
+  ]
+}

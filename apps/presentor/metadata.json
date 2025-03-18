@@ -1,7 +1,7 @@
 {
   "id": "presentor",
   "name": "Presentor",
-  "version": "0.08",
+  "version": "0.15",
   "description": "Use your Bangle to present!",
   "icon": "app.png",
   "type": "app",
@@ -12,7 +12,8 @@
   "allow_emulator": true,
   "storage": [
     {"name":"presentor.app.js","url":"app.js"},
-    {"name":"presentor.img","url":"app-icon.js","evaluate":true},
+    {"name":"presentor.img","url":"app-icon.js","evaluate":true}
+  ], "data": [
     {"name":"presentor.json","url":"settings.json"}
   ]
 }

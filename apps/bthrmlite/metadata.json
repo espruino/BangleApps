@@ -1,0 +1,15 @@
+{ "id": "bthrmlite",
+  "name": "Bluetooth Heart Rate Monitor (Lite)",
+  "shortName":"BT HRM",
+  "version":"0.01",
+  "description": "Overrides Bangle.js's build in heart rate monitor with an external Bluetooth one. Cut-down version that uses less RAM.",
+  "icon": "app.png",
+  "tags": "health,bluetooth",
+  "type": "bootloader",
+  "supports" : ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"bthrmlite.boot.js","url":"boot.js"},
+    {"name":"bthrmlite.img","url":"app-icon.js","evaluate":true}
+  ]
+}

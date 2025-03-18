@@ -11,5 +11,7 @@
       Reduce memory usage by ~30%
       Generate scale based on defined minimum and maximum measurement
       Added background line on 50% to ease estimation of drawn values
-0.06: tag HRM power requests to allow this ot work alongside other widgets/apps (fix #799)
-0.07: theme support
+0.06: Tag HRM power requests to allow this ot work alongside other widgets/apps (fix #799)
+0.07: Theme support
+0.08: Use default Bangle formatter for booleans
+0.09: Minor code improvements

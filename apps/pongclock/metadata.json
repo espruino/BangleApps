@@ -1,0 +1,21 @@
+{ "id": "pongclock",
+  "name": "Pong Clock",
+  "shortName":"Pong Clock",
+  "icon": "pongclock.png",
+  "version":"0.03",
+  "description": "A Pong playing clock",
+  "type": "clock",
+  "tags": "",
+  "allow_emulator":true, 
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme":"README.md",
+  "screenshots" : [ { "url":"screenshot.png" }, { "url":"screenshot_settings.png" }, { "url":"screenshot_invers_full.png" } ],
+  "storage": [
+    {"name":"pongclock.app.js","url":"app.js"},
+    {"name":"pongclock.img","url":"pongclock-icon.js","evaluate":true},
+    {"name":"pongclock.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"pongclock.json"}
+  ]
+}

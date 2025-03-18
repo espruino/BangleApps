@@ -1,7 +1,7 @@
 {
   "id": "miclock",
   "name": "Mixed Clock",
-  "version": "0.05",
+  "version": "0.06",
   "description": "A mix of analog and digital Clock",
   "icon": "clock-mixed.png",
   "type": "clock",

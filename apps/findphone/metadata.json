@@ -2,7 +2,7 @@
   "id": "findphone",
   "name": "Find Phone",
   "shortName": "Find Phone",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Find your phone via Gadgetbridge. Click any button to let your phone ring. 📳  Note: The functionality is available even without this app, just go to Settings, App Settings, Gadgetbridge, Find Phone.",
   "icon": "app.png",
   "tags": "tool,android",

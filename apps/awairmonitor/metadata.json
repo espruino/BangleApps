@@ -4,7 +4,7 @@
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],
   "allow_emulator": true,
-  "version":"0.03",
+  "version": "0.04",
   "description": "Displays the level of CO2, VOC, PM 2.5, Humidity and Temperature, from your Awair device.",
   "type": "clock",
   "tags": "clock,tool,health",

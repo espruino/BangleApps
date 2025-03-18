@@ -15,7 +15,6 @@
     "< Back" : () => back(),
     'Show clocks': {
       value: settings.showClocks,
-      format: v => v?"On":"Off",
       onchange: v => {
         settings.showClocks = v;
         writeSettings();
@@ -23,7 +22,6 @@
     },
     'Show launchers': {
       value: settings.showLaunchers,
-      format: v => v?"On":"Off",
       onchange: v => {
         settings.showLaunchers = v;
         writeSettings();

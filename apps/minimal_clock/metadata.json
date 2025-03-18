@@ -1,7 +1,7 @@
 { "id": "minimal_clock",
   "name": "Minimal Analog Clock",
   "shortName":"Minimal Clock",
-  "version":"0.03",
+  "version": "0.05",
   "description": "a minimal analog clock - just with some hands and no clock face",
   "icon": "app-icon.png",
   "type": "clock",

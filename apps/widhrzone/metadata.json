@@ -1,0 +1,16 @@
+{
+  "id": "widhrzone",
+  "name": "Heart rate zone widget",
+  "shortName": "HRzone widget",
+  "version": "0.02",
+  "description": "Widget that displays the current out of five heart rate training zones 1. HEALTH (50-60% of max. HR, Recovery, grey), 2. FAT-B (60-70% of max. HR, burns fat, blue), 3. AROBIC (70-80% of max. HR, Endurance, green), 4. ANAROB (80-90% of max. HR, Speed, yellow), 5. MAX (90-100% of max. HR, red). Only visible when heart rate monitor is active and inside one of the zones. Requires to set the maximum heart rate in settings (if unsure set to 220-age).",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,health",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "screenshots" : [ { "url":"screenshot.png" } ],
+  "storage": [
+    {"name":"widhrzone.wid.js","url":"widget.js"}
+  ],
+  "dependencies": {"myprofile":"app"}
+}

@@ -1,0 +1,44 @@
+{
+  "id": "infoclk",
+  "name": "Informational clock",
+  "version": "0.11",
+  "description": "A configurable clock with extra info and shortcuts when unlocked, but large time when locked",
+  "readme": "README.md",
+  "icon": "icon.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "storage": [
+    {
+      "name": "infoclk.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "infoclk.settings.js",
+      "url": "settings.js"
+    },
+    {
+      "name": "infoclk-font.js",
+      "url": "font.js"
+    },
+    {
+      "name": "infoclk-config.js",
+      "url": "configLoad.js"
+    },
+    {
+      "name": "infoclk.img",
+      "url": "icon.js",
+      "evaluate": true
+    }
+  ],
+  "data": [
+    {
+      "name": "infoclk.json"
+    }
+  ],
+  "dependencies": {
+    "weather": "app"
+  }
+}

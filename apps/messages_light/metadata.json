@@ -1,0 +1,21 @@
+{
+  "id": "messages_light",
+  "name": "Messages Light",
+  "version": "1.08",
+  "description": "A light implementation of messages App (display notifications from iOS and Gadgetbridge/Android)",
+  "icon": "app.png",
+  "type": "app",
+  "tags": "tool,system",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "dependencies" : { "messageicons":"module","messages":"app" },
+  "readme": "README.md",
+  "storage": [
+    {"name":"messages_light.app.js","url":"messages_light.app.js"},
+    {"name":"messages_light.settings.js","url":"messages_light.settings.js"},
+    {"name":"messages_light.img","url":"app-icon.js","evaluate":true},
+    {"name":"boot_messages_light.boot.js","url":"messages_light.boot.js"},
+    {"name":"messages_light.listener.js","url":"messages_light.listener.js"}
+  ],
+  "data": [{"name":"messages_light.settings.json"},{"name":"messages_light.NewMessage.json"}],
+  "screenshots": [{"url":"screenshot-notify.png"} ,{"url":"screenshot-long-text1.png"},{"url":"screenshot-long-text2.png"}, {"url":"screenshot-call.png"} ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "groceryaug",
+  "name": "Grocery Augmented",
+  "version": "0.02",
+  "description": "Modified version of the Grocery App - lets you upload an image with the products you need to shop - Display a list of product and track if you already put them in your cart.",
+  "icon": "groceryaug.png",
+  "readme":"README.md",
+  "type": "app",
+  "tags": "tool,outdoors,shopping,list",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "custom": "groceryaug.html",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"groceryaug.app.js","url":"app.js"},
+    {"name":"groceryaug.img","url":"groceryaug-icon.js","evaluate":true}
+  ]
+}

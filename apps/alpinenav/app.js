@@ -145,7 +145,7 @@ Bangle.setCompassPower(1);
 Bangle.setGPSPower(1);
 g.clear();
 process_GPS();
-var poll_GPS = setInterval(process_GPS, 9000);
+/*var poll_GPS =*/ setInterval(process_GPS, 9000);
 
 setWatch(function () {
     if (!button_lock) {
@@ -224,7 +224,7 @@ Bangle.on('mag', function (m) {
     if (isNaN(m.heading))
         compass_heading = "---";
     else
-        compass_heading = 360 - Math.round(m.heading);
+        compass_heading = Math.round(m.heading);
     current_colour = g.getColor();
     g.reset();
     g.setColor(background_colour);

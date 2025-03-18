@@ -1,0 +1,2 @@
+0.01: Moved out of 'alarm' app
+0.02: Decouple reloading of widget when alarms change

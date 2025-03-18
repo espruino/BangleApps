@@ -1,0 +1,28 @@
+{
+  "id": "messagelist",
+  "name": "Message List",
+  "version": "0.05",
+  "description": "Display notifications from iOS and Gadgetbridge/Android as a list",
+  "icon": "app.png",
+  "type": "app",
+  "tags": "tool,system",
+  "screenshots": [
+    {"url": "screenshot0.png"},
+    {"url": "screenshot1.png"},
+    {"url": "screenshot2.png"},
+    {"url": "screenshot3.png"}
+  ],
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "dependencies" : { "messageicons":"module" },
+  "provides_modules": ["messagegui"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"messagelist.boot.js","url":"boot.js"},
+    {"name":"messagegui","url":"lib.js"},
+    {"name":"messagelist.app.js","url":"app.js"},
+    {"name":"messagelist.settings.js","url":"settings.js"},
+    {"name":"messagelist.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"messagelist.settings.json"}],
+  "sortorder": -9
+}

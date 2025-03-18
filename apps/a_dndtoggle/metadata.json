@@ -1,0 +1,20 @@
+{
+  "id": "a_dndtoggle",
+  "name": "a_dndtoggle - Toggle Quiet Mode of the watch",
+  "shortName": "A_DND Toggle",
+  "version": "0.02",
+  "description": "Toggle Quiet Mode of the watch just by starting this app.",
+  "icon": "a_dndtoggle.png",
+  "type": "app",
+  "tags": "tool",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "data" : [
+    {"name":"a_dndtoggle.settings.json"}
+  ],
+  "storage": [
+    {"name":"a_dndtoggle.app.js","url":"a_dndtoggle.app.js"},
+    {"name":"a_dndtoggle.settings.js","url":"settings.js"},
+	{"name":"a_dndtoggle.img","url":"app-icon.js","evaluate":true}
+  ],  
+  "readme": "README.md"
+}

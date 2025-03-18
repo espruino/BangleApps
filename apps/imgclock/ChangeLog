@@ -7,3 +7,7 @@
 0.06: Support 12 hour time
 0.07: Don't cut off wide date formats
 0.08: Use Bangle.setUI for button/launcher handling
+0.09: Bangle.js 2 compatibility
+0.10: Tell clock widgets to hide.
+0.11: Allow fullscreen clock faces with hidden widgets
+0.12: Fixed a bug where other app's graphics would not get cleared.

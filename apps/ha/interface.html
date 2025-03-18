@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <h3>Home Assistant trigger config</h3>
+    <p><textarea id="triggers" style="width:500px; height:300px">
+[
+  {"display": "Open", "trigger": "OPEN_DOOR", "icon":"door"},
+  {"display": "Office", "trigger": "TOGGLE_LIGHT", "icon":"light"},
+  {"display": "Living Room", "trigger": "OVEN", "icon":"fire"}
+]</textarea></p>
+    <p><button id="upload" class="btn btn-primary">Upload trigger</button></p>
+
+    <script src="../../core/lib/interface.js"></script>
+
+    <script>
+       function onInit(){
+          /*
+          * Load trigger from Bangle.js
+          */
+          console.log("Loading trigger from Bangle.js...");
+          try {
+          Util.readStorage("ha.trigger.json", data=>{
+                if(data.length > 0){
+                  document.getElementById("triggers").innerHTML = data;
+                  console.log("Loaded trigger from Bangle.js.");
+                }
+              });
+          } catch(ex) {
+              console.log("(Warning) Could not load trigger from Bangle.js.");
+              console.log(ex);
+          }
+        }
+
+        /*
+         * Upload trigger to Bangle.js
+         */
+        document.getElementById("upload").addEventListener("click", function() {
+            // get the text to add
+            var triggerText = document.getElementById("triggers").value;
+
+             Util.showModal("Saving...");
+              Util.writeStorage("ha.trigger.json", triggerText, ()=>{
+                Util.hideModal();
+              });
+            console.log("Sent ha.trigger.json!");
+        });
+
+    </script>
+  </body>
+</html>

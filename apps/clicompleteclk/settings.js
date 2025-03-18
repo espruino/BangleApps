@@ -9,7 +9,6 @@
     '': { 'title': 'CLI complete clk' },
     'Show battery': {
       value: "battery" in settings ? settings.battery : false,
-      format: () => (settings.battery ? 'Yes' : 'No'),
       onchange: () => {
         settings.battery = !settings.battery;
         save('battery', settings.battery);
@@ -27,7 +26,6 @@
     },
     'Show weather': {
       value: "weather" in settings ? settings.weather : false,
-      format: () => (settings.weather ? 'Yes' : 'No'),
       onchange: () => {
         settings.weather = !settings.weather;
         save('weather', settings.weather);
@@ -35,7 +33,6 @@
     },
     'Show steps': {
       value: "steps" in settings ? settings.steps : false,
-      format: () => (settings.steps ? 'Yes' : 'No'),
       onchange: () => {
         settings.steps = !settings.steps;
         save('steps', settings.steps);
@@ -43,7 +40,6 @@
     },
     'Show heartrate': {
       value: "heartrate" in settings ? settings.heartrate : false,
-      format: () => (settings.heartrate ? 'Yes' : 'No'),
       onchange: () => {
         settings.heartrate = !settings.heartrate;
         save('heartrate', settings.heartrate);
@@ -51,4 +47,4 @@
     },
     '< Back': back,
   });
-});
+})

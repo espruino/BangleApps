@@ -1,0 +1,13 @@
+{ "id": "widminbat",
+  "name": "Minimal Battery",
+  "shortName":"MinBat",
+  "version":"0.03",
+  "description": "A minimal version of the battery widget that only appears if the battery is running low (below 30%)",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,battery,minimal",
+  "supports" : ["BANGLEJS2", "BANGLEJS"],
+  "storage": [
+    {"name":"widminbat.wid.js","url":"widget.js"}
+  ]
+}

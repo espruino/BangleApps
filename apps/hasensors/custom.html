@@ -1,0 +1,105 @@
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <title>Home Assistant Sensors configuration</title>
+    <style>
+        label {
+            display: block;
+            margin-bottom: 1em;
+        }
+        label span:first-child {
+            display: inline-block;
+            min-width: 20ex;
+        }
+        label span.explanation {
+            display: block;
+            margin-left: 21ex;
+        }
+
+        input:invalid {
+            outline: 1px solid red;
+            background: lightcoral;
+        }
+    </style>
+</head>
+<body>
+<form id="sensorform">
+    <label><span>Sensor ID:</span>
+        <input name="id" size="10" value="banglejs" required pattern="[_a-z0-9]+">
+        <span class="explanation">Lowercase letters, numbers or underscores.</span></label>
+    <label><span>Sensor Name:</span>
+        <input name="name" size="10" value="Bangle.js" required>
+        <span class="explanation">Human-friendly sensor name.</span></label>
+    <label><span>Home Assistant URL:</span>
+        <input name="url" type="url" placeholder="http://home_assistant_url:8123" required>
+        <span class="explanation">Needs to be reachable by your phone.</span></label>
+    <label><span>Authentication Token:</span>
+        <input name="token" required pattern="[\-_\.0-9a-zA-Z]+">
+        <span class="explanation">Create a long-lived access token in Home Assistant at the bottom of
+        <a href="https://my.home-assistant.io/redirect/profile/" target="_blank">your user profile</a>.</span></label>
+</form>
+<p>
+    <button id="upload" class="btn btn-primary" disabled>Upload</button>
+</p>
+<script src="../../core/lib/customize.js"></script>
+<script>
+    const STORAGE_KEY = "hasensors-config";
+    const fields = ["id", "name", "url", "token"];
+    const form = document.getElementById("sensorform");
+    const LIBRARY_URL = "./lib.js";
+
+    // fetch library code template, enable upload button once we"ve got it
+    let libTpl;
+    fetch(LIBRARY_URL).then(response=>{
+        if (! response.ok) return;
+console.log(response);
+        response.text().then(code=>{
+            libTpl = code;
+            document.getElementById("upload").disabled = false;
+        });
+    });
+
+    // try to pre-fill form with values previously saved in localStorage
+    let stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+        try {
+            stored = JSON.parse(stored);
+        } catch (_) {
+            stored = undefined;
+        }
+    }
+    if (stored) {
+        for (const field of fields) {
+            form[field].value = stored[field];
+        }
+    }
+
+    document.getElementById("upload").addEventListener("click", function () {
+        // validate form fields or bail out
+        for (const field of fields) {
+            if (!form[field].validity.valid) {
+                form[field].focus();
+                alert("Please enter a valid " + field);
+                return;
+            }
+        }
+        let config = {};
+        for (const field of fields) {
+            config[field] = form[field].value;
+        }
+        // save config to localStorage for re-use next time
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+        // replace {placeholders} in library code template
+        const lib = libTpl.replace(/\{(\w+)\}/g, (_,f) => config[f]);
+        console.log("config:", config, JSON.stringify(config));
+        sendCustomizedApp({
+            id: "hasensors",
+            storage: [
+                {name: "hasensors.boot.js", url: "boot.js"},
+                {name: "hasensors", content: lib},
+            ],
+        });
+    });
+</script>
+</body>
+</html>

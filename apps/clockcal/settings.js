@@ -1,7 +1,8 @@
 (function (back) {
     var FILE = "clockcal.json";
-    defaults={
-        CAL_ROWS: 4, //number of calendar rows.(weeks) Shouldn't exceed 5 when using widgets.
+    const defaults={
+        CAL_ROWS: 4, //total number of calendar rows.(weeks) Shouldn't exceed 5 when using widgets.
+        CAL_ROWS_PRIOR: 0, //number of calendar rows.(weeks) that show above the current week
         BUZZ_ON_BT: true, //2x slow buzz on disconnect, 2x fast buzz on connect. Will be extra widget eventually
         MODE24: true, //24h mode vs 12h mode
         FIRSTDAY: 6, //First day of the week: mo, tu, we, th, fr, sa, su
@@ -9,24 +10,23 @@
         REDSAT: true, // Use red color for saturday?
         DRAGDOWN: "[AI:messg]",
         DRAGRIGHT: "[AI:music]",
-        DRAGLEFT: "[ignore]",
+        DRAGLEFT: "[AI:agenda]",
         DRAGUP: "[calend.]"
     };
-    settings = Object.assign(defaults, require('Storage').readJSON(FILE, true) || {});
+    let settings = Object.assign(defaults, require('Storage').readJSON(FILE, true) || {});
 
-    actions = ["[ignore]","[calend.]","[AI:music]","[AI:messg]"];
+    let actions = ["[ignore]","[calend.]","[AI:music]","[AI:messg]","[AI:agenda]"];
     require("Storage").list(RegExp(".app.js")).forEach(element => actions.push(element.replace(".app.js","")));
-  
+
     function writeSettings() {
         require('Storage').writeJSON(FILE, settings);
     }
 
-    menu = {
+    const menu = {
         "": { "title": "Clock & Calendar" },
         "< Back": () => back(),
         'Buzz(dis)conn.?': {
             value: settings.BUZZ_ON_BT,
-            format: v => v ? "On" : "Off",
             onchange: v => {
                 settings.BUZZ_ON_BT = v;
                 writeSettings();
@@ -37,6 +37,14 @@
             min: 0, max: 6,
             onchange: v => {
                 settings.CAL_ROWS = v;
+                writeSettings();
+            }
+        },
+        '#Cal Rows Prior': {
+            value: settings.CAL_ROWS_PRIOR,
+            min: 0, max: 4,
+            onchange: v => {
+                settings.CAL_ROWS_PRIOR = v;
                 writeSettings();
             }
         },
@@ -59,7 +67,6 @@
         },
         'Red Saturday?': {
             value: settings.REDSAT,
-            format: v => v ? "On" : "Off",
             onchange: v => {
                 settings.REDSAT = v;
                 writeSettings();
@@ -67,7 +74,6 @@
         },
         'Red Sunday?': {
             value: settings.REDSUN,
-            format: v => v ? "On" : "Off",
             onchange: v => {
                 settings.REDSUN = v;
                 writeSettings();
@@ -96,7 +102,7 @@
             value: actions.indexOf(settings.DRAGDOWN),
             format: v => actions[v],
             onchange: v => {
-                settings.DRGDOWN = actions[v];
+                settings.DRAGDOWN = actions[v];
                 writeSettings();
             }
         },
@@ -109,19 +115,12 @@
                 writeSettings();
             }
         },
-        'Load deafauls?': {
-            value: 0,
-            min: 0, max: 1,
-            format: v => ["No", "Yes"][v],
-            onchange: v => {
-                if (v == 1) {
-                    settings = defaults;
-                    writeSettings();
-                    load();
-                }
-            }
-        },
+        'Load defaults': () => {
+            settings = defaults;
+            writeSettings();
+            load();
+        }
     };
     // Show the menu
     E.showMenu(menu);
-});
+})

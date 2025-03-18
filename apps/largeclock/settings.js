@@ -74,7 +74,6 @@
     "BTN3 app": () => showApps("BTN3"),
     "On right hand": {
       value: !!settings.right_hand,
-      format: v=>v?"Yes":"No",
       onchange: v=>{
         settings.right_hand = v;
         s.writeJSON("largeclock.json", settings);
@@ -83,4 +82,4 @@
   };
 
   E.showMenu(mainMenu);
-});
+})

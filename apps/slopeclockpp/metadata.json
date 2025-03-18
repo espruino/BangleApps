@@ -1,0 +1,21 @@
+{ "id": "slopeclockpp",
+  "name": "Slope Clock ++",
+  "version":"0.11",
+  "description": "A clock where hours and minutes are divided by a sloping line. When the minute changes, the numbers slide off the screen. This is a clone of the original Slope Clock which shows extra information and allows the colors to be selected.",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock,clkinfo",
+  "supports" : ["BANGLEJS2"],
+  "dependencies" : { "clock_info":"module" },
+  "readme": "README.md",
+  "storage": [
+    {"name":"slopeclockpp.app.js","url":"app.js"},
+    {"name":"slopeclockpp.img","url":"app-icon.js","evaluate":true},
+    {"name":"slopeclockpp.settings.js","url":"settings.js"},
+    {"name":"slopeclockpp.default.json","url":"default.json"}
+   ],
+   "data": [
+     {"name":"slopeclockpp.json"}
+   ]
+}

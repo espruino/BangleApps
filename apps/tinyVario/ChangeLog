@@ -1,0 +1,7 @@
+0.01: Initial Version
+0.02: Touch data fields to configure them.
+0.03: Changed menu layout, fixed automatic flight time detection.
+0.04: flight time detection should work without GPS now. New vario display available.
+0.05: some bugs fiexed, no new features.
+0.06: Minor code improvements
+0.07: Minor code improvements

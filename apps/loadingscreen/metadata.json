@@ -1,0 +1,15 @@
+{ "id": "loadingscreen",
+  "name": "Loading Screen",
+  "version":"0.01",
+  "description": "On Bangle.js 2v18+, this lets you customize the app loading screen via an new menu in Settings -> Apps",
+  "icon": "app.png",
+  "screenshots" : [ { "url":"screenshot1.png" }, { "url":"screenshot2.png" } ],
+  "tags": "tool",
+  "type": "settings",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"loadingscreen.settings.js","url":"settings.js"}
+  ],
+  "data":[{"name":".loading"}]
+}

@@ -1,0 +1,31 @@
+{
+  "id": "rgb",
+  "name": "rgb",
+  "shortName": "rgb",
+  "version": "0.01",
+  "type": "app",
+  "description": "RGB utility",
+  "icon": "app.png",
+  "allow_emulator": true,
+  "tags": "tools",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "readme": "README.md",
+  "storage": [
+    {
+      "name": "rgb.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "rgb.img",
+      "url": "app-icon.js",
+      "evaluate": true
+    }
+  ],
+  "screenshots": [
+    {
+      "url": "screenshot.png"
+    }
+  ]
+}

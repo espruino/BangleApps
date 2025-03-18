@@ -1,2 +1,5 @@
 0.02: Add "ram" keyword to allow 2v06 Espruino builds to cache function that needs to be fast
 0.03: Bangle 2 support
+0.04: Increase size of ship, asteroids and fonts for better readability
+0.05: improve collision detect for larger ship v astroid
+0.06: added, 7 point asteroid ploygon, made ship solid, rather than outline

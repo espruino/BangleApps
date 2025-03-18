@@ -28,7 +28,6 @@ function showMainMenu() {
     '': { 'title': 'Heart Recorder' },
     'RECORD': {
       value: !!settings.isRecording,
-      format: v=>v?"On":"Off",
       onchange: v => {
         settings.isRecording = v;
         updateSettings();
@@ -215,7 +214,7 @@ function graphRecord(n) {
   var measure;
 
   while (line !== undefined) {
-    currentLine = line;
+    const currentLine = line;
     line = f.readLine();
     tempCount++;
     if (tempCount == startLine) {
@@ -260,7 +259,7 @@ function graphRecord(n) {
       positionX++;
       if (parseInt(currentLine.split(",")[2]) >= 70) {
         g.setColor(1, 0.3, 0.3);
-        oldPositionY = positionY;
+        const oldPositionY = positionY;
         measure = parseInt(currentLine.split(",")[1]);
         positionY = GraphYZero - measure + MinMeasurement;
         if (positionY > GraphYZero) {

@@ -1,2 +1,5 @@
 0.01: First published version of app
 0.02: Move to Bangle.setUI to launcher support
+0.03: Tell clock widgets to hide.
+0.04: Minor code improvements
+0.05: Minor code improvements

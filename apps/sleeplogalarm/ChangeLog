@@ -1,0 +1,6 @@
+0.01: New App!
+0.02: Add "from Consec."-setting
+0.03: Correct how to ignore last triggered alarm
+0.04: Make "disable alarm" possible on next day; correct alarm filtering; improve settings
+0.05: Correct hide function + replace all `var` with `let`.
+0.06: Minor code improvements

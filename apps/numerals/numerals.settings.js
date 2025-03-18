@@ -14,7 +14,7 @@
   if (!numeralsSettings) resetSettings();
   let dm = ["fill","frame","framefill","thickframe","thickfill"];
   let col = process.env.HWVERSION==1?["rnd","r/g","y/w","o/c","b/y"]:["rnd","r/g","g/b","r/c","m/g"];
-  let btn = [[24,"BTN1"],[22,"BTN2"],[23,"BTN3"],[11,"BTN4"],[16,"BTN5"]];
+  //let btn = [[24,"BTN1"],[22,"BTN2"],[23,"BTN3"],[11,"BTN4"],[16,"BTN5"]];
   var menu={
     "" : { "title":"Numerals"},
     "Colors": {
@@ -30,10 +30,8 @@
       onchange: v=> { numeralsSettings.drawMode=dm[v]; updateSettings();}
     },
     "Date on touch": {
-      value: 0|numeralsSettings.showDate,
-      min:0,max:1,
-      format: v=>v?"On":"Off",
-      onchange: v=> { numeralsSettings.showDate=v; updateSettings();}
+      value: !!numeralsSettings.showDate,
+      onchange: v=> { numeralsSettings.showDate=v?1:0; updateSettings();}
     },
     "< back": back
   };

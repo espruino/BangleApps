@@ -1,0 +1,24 @@
+{
+  "id": "gpstrek",
+  "name": "GPS Trekking",
+  "version": "0.12",
+  "description": "Helper for tracking the status/progress during hiking. Do NOT depend on this for navigation!",
+  "icon": "icon.png",
+  "screenshots": [{"url":"screenInit.png"},{"url":"screenMenu.png"},{"url":"screenMap.png"},{"url":"screenLost.png"},{"url":"screenOverview.png"},{"url":"screenOverviewScroll.png"},{"url":"screenSlices.png"},{"url":"screenSlices2.png"},{"url":"screenSlices3.png"}],
+  "tags": "tool,outdoors,gps",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "dependencies" : { "waypoints":"app" },
+  "interface" : "interface.html",
+  "storage": [
+    {"name":"gpstrek.app.js","url":"app.js"},
+    {"name":"gpstrek.settings.js","url":"settings.js"},
+    {"name":"gpstrek.default.json","url":"default.json"},
+    {"name":"gpstrek.wid.js","url":"widget.js"},
+    {"name":"gpstrek.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"gpstrek.state.json"},
+    {"name":"gpstrek.json"}
+  ]
+}

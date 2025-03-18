@@ -1,7 +1,7 @@
 {
   "id": "fwupdate",
   "name": "Firmware Update",
-  "version": "0.04",
+  "version": "0.06",
   "description": "Uploads new Espruino firmwares to Bangle.js 2",
   "icon": "app.png",
   "type": "RAM",
@@ -10,5 +10,5 @@
   "custom": "custom.html",
   "customConnect": true,
   "storage": [],
-  "sortorder": 20
+  "sortorder": -11
 }

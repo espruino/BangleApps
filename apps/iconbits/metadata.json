@@ -1,0 +1,14 @@
+{ "id": "iconbits",
+  "name": "Icon bits",
+  "version": "0.02",
+  "description": "Bitmap editor suitable for creating icons",
+  "icon": "app.png",
+  "readme": "README.md",
+  "supports" : ["BANGLEJS2"],
+  "allow_emulator": true,
+  "tags": "tools",
+  "storage": [
+      {"name":"iconbits.app.js","url":"iconbits.app.js"},
+      {"name":"iconbits.img","url":"app-icon.js","evaluate":true}
+  ]
+}

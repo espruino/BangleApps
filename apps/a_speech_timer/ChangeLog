@@ -1,2 +1,4 @@
 1.00: Release (2021/12/01)
 1.01: Grey font when timer is frozen (2021/12/04)
+1.02: Force light theme, since the app is not designed for dark theme (2022/12/28)
+1.03: Minor code improvements

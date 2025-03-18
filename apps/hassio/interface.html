@@ -1,0 +1,106 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+
+    <h4>Config</h4>
+    <textarea style="width: 100%;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;height:80%;resize: none;" id="json">
+
+    </textarea>
+    <button id="reset" class="btn btn-error">Reload</button>
+    <button id="save" class="btn btn-primary">Save</button>
+
+    <script src="../../core/lib/interface.js"></script>
+
+    <script>
+      const STR_FIELDS = ["api_key", "host", "id", "friendly_name"]
+      const INT_FIELDS = ["interval"]
+      const TEMPLATES = "templates"
+      document.getElementById('reset').addEventListener('click', reset)
+      document.getElementById('save').addEventListener('click', save);
+
+      function validate(str) {
+        let settings = {};
+        try {
+          settings = JSON.parse(str)
+        } catch (e) {
+          alert("Unable to parse settings: " + String(e))
+          return false;
+        }
+        
+        if (typeof settings !== "object") {
+          alert("Settings must be an object")
+          return false;
+        }
+
+        for (const field of STR_FIELDS) {
+          if (settings[field] === undefined || typeof settings[field] !== "string") {
+            alert(`Field ${field} must be a string`)
+            return false;
+          }
+        }
+
+        for (const field of INT_FIELDS) {
+          if (settings[field] === undefined || typeof settings[field] !== "number") {
+            alert(`Field ${field} must be a number`)
+            return false;
+          }
+        }
+
+        if (settings[TEMPLATES] === undefined || !(settings[TEMPLATES] instanceof Array)) {
+          alert(`Field ${TEMPLATES} must be a list`)
+          return false;
+        }
+
+        for (const template of settings[TEMPLATES]) {
+          if (template["name"] === undefined || typeof template["name"] !== "string") {
+            alert(`Field name of a template must be a string`)
+            return false;
+          }
+          if (template["temp"] === undefined || typeof template["temp"] !== "string") {
+            alert(`Field name of a template must be a string`)
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      function getData() {
+        // show loading window
+        Util.showModal("Loading...");
+        Util.readStorageJSON('hassio.json', data=>{
+          // remove window
+          Util.hideModal();
+
+          document.getElementById('json').value = JSON.stringify(data, null, 1);
+        });
+      }
+
+      function save(){
+        Util.showModal("Saving...");
+        let data = document.getElementById('json').value;
+
+        if (!validate(data)) {
+          Util.hideModal();
+          return;
+        }
+
+        Util.writeStorage("hassio.json", data, () => {
+          Util.hideModal();
+        });
+      }
+
+      function reset(){
+        getData();
+      }
+
+      // Called when app starts
+      function onInit() {
+        getData();
+      }
+    </script>
+  </body>
+</html>
+

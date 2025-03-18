@@ -1,0 +1,14 @@
+{ "id": "Tyreid",
+  "name": "Tyreid",
+  "shortName":"Tyreid",
+  "version":"0.01",
+  "description": "Bluetooth war-driving app for Bangle.js 2",
+  "icon": "small_logo.png",
+  "tags": "",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"Tyreid.app.js","url":"app.js"},
+    {"name":"Tyreid.img","url":"app-icon.js","evaluate":true}
+  ]
+}

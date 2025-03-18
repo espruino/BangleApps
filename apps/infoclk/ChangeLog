@@ -1,0 +1,15 @@
+0.01: New app!
+0.02-0.07: Bug fixes
+0.08: Submitted to the app loader
+0.09: Added weather dependency
+      Up and down swipes can now be configured separately
+      The settings menu can now handle having shortcuts configured to apps that were removed
+      Default notification app is now messageui rather than messages
+      Support for dual stage unlock
+      Support for a calendar bar
+      The clock face is redrawn less often, hoping to save some battery
+      Option to show the seconds when unlocked, even when otherwise hidden by other settings
+      Broke out config loading into separate file to avoid duplicating a whole bunch of code
+      Added support for fast loading
+0.10: Minor code improvements
+0.11: Make sure variables are properly defined in settings.js

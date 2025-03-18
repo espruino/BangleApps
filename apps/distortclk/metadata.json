@@ -1,0 +1,17 @@
+{
+    "id": "distortclk",
+    "name": "Distort Clock",
+    "shortName":"Distort Clock",
+    "version": "0.03",
+    "description": "A clockface",
+    "icon": "app.png",
+    "type": "clock",
+    "tags": "clock",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator": true,
+    "readme":"README.md",
+    "storage": [
+      {"name":"distortclk.app.js","url":"app.js"},
+      {"name":"distortclk.img","url":"app-icon.js","evaluate":true}
+    ]
+}

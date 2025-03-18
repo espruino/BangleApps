@@ -13,10 +13,10 @@ function padNum(n, l) {
 var rects = {};
 var rectsToClear = {};
 var commands = [];
-var showSeconds = true;
+var showSeconds = !Bangle.isLocked();
 
 function pushCommand(command) {
-  let hash = E.CRC32(E.toJS(arguments));
+  var hash = E.CRC32(E.toJS(arguments));
   if (!delete rectsToClear[hash]) {
     commands.push({hash: hash, command: Function.apply.bind(command, null, arguments.slice(1))});
   }

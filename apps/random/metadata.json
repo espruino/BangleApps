@@ -1,0 +1,24 @@
+{
+  "id": "random",
+  "name": "Random",
+  "version": "0.03",
+  "description": "Flip coins, roll dice, draw a card, or choose random numbers",
+  "icon": "icon.png",
+  "tags": "tool",
+  "supports": [
+    "BANGLEJS",
+    "BANGLEJS2"
+  ],
+  "allow_emulator": true,
+  "storage": [
+    {
+      "name": "random.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "random.img",
+      "url": "icon.js",
+      "evaluate": true
+    }
+  ]
+}

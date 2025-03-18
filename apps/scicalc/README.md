@@ -5,7 +5,7 @@ by the JS interpreter.
 
 ## Usage
 
-Buttons are arranged on 3 separate screens, swiping left or right switches between them. Swiping down has the same effect as hitting the "=" button.
+Buttons are arranged on 3 separate screens, swiping up or down switches between them. Swiping right has the same effect as hitting the "=" button. Swiping left has the same effect as hitting the "<" button.
 
 ## Features
 

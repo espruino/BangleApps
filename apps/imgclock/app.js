@@ -3,15 +3,17 @@ Draws a fullscreen image from flash memory
 Saves a small image to flash which is just the area where the clock is
 Keeps an offscreen buffer and draws the time to that
 */
+g.clear(); //clears other apps's graphics
 var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
 var inf = require("Storage").readJSON("imgclock.face.json");
 var img = require("Storage").read("imgclock.face.img");
 var IX = inf.x, IY = inf.y, IBPP = inf.bpp;
 var IW = 174, IH = 45, OY = 24;
+if (inf.hideWidgets) OY=0;
 var bgwidth = img.charCodeAt(0);
 var bgoptions;
-if (bgwidth<240)
-  bgoptions = { scale : 240/bgwidth };
+if (bgwidth<g.getWidth())
+  bgoptions = { scale : g.getWidth()/bgwidth };
 
 require("Font7x11Numeric7Seg").add(Graphics);
 var cg = Graphics.createArrayBuffer(IW,IH,IBPP,{msb:true});
@@ -26,7 +28,7 @@ function createBgImg() {
   require("Storage").write("imgclock.face.bg", cg.buffer);
   bgimg = require("Storage").read("imgclock.face.bg");
 }
-if (!bgimg || !bgimg.length) createBgImg();
+if (!bgimg || bgimg.length<10) createBgImg();
 
 function draw() {
   var t = new Date();
@@ -72,8 +74,12 @@ g.drawImage(img, 0,OY,bgoptions);
 // draw clock itself and do it every second
 draw();
 var secondInterval = setInterval(draw,1000);
+// Show launcher when button pressed
+Bangle.setUI("clock");
 // load widgets
 Bangle.loadWidgets();
+if (inf.hideWidgets)
+  require("widget_utils").swipeOn();
 Bangle.drawWidgets();
 // Stop when LCD goes off
 Bangle.on('lcdPower',on=>{
@@ -84,5 +90,4 @@ Bangle.on('lcdPower',on=>{
     draw();
   }
 });
-// Show launcher when button pressed
-Bangle.setUI("clock");
+

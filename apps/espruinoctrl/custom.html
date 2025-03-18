@@ -164,6 +164,7 @@ function cmd(cmd,mac,rx) {
   if (mac) {
     E.showMessage("Connecting\\n"+mac);
     if (mac.length==17) mac+=" random";
+    NRF.setTxPower(process.env.HWVERSION == 2 ? 8 : 4);
     NRF.connect(mac).then(dev=>send(dev,cmd,onDone)).catch(err);
   } else {
     E.showMessage("Scanning...");
@@ -197,9 +198,9 @@ function sendCommandRX(device, text, callback) {
         setWatch(function() {
           if (callback) callback();
           resolve();
-        }, BTN3);
+        }, (process.env.HWVERSION==2) ? BTN1 : BTN2);
         g.reset().setFont("6x8",2).setFontAlign(0,0,1);
-        g.drawString("Back", g.getWidth()-10, g.getHeight()-50);
+        g.drawString("Back", g.getWidth()-10, g.getHeight()/2);
       }, 200);
     }
     device.getPrimaryService("6e400001-b5a3-f393-e0a9-e50e24dcca9e").then(function(s) {

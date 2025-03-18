@@ -1,0 +1,16 @@
+0.01: Moved from modules/clock_info.js
+0.02: Fix settings page
+0.03: Reported image for battery now reflects charge level
+0.04: On 2v18+ firmware, we can now stop swipe events from being handled by other apps
+      eg. when a clockinfo is selected, swipes won't affect swipe-down widgets
+0.05: Reported image for battery is now transparent (2v18+)
+0.06: When >1 clockinfo, swiping one back tries to ensure they don't display the same thing
+0.07: Developer tweak: clkinfo load errors are emitted
+0.08: Pass options to show(), hide() and run(), and add focus() and blur() item methods
+0.09: Save clkinfo settings on kill and remove
+0.10: Fix focus bug when changing focus between two clock infos
+0.11: Prepend swipe listener if possible
+0.12: Add drawFilledImage to allow drawing icons with a separately coloured middle
+0.13: Cache loaded ClockInfos so if we have clockInfoWidget and a clock, we don't load them twice (saves ~300ms)
+0.14: Check for .clkinfocache and use that if exists (from boot 0.64)
+0.15: Fix error when displaying a category with only one clockinfo (fix #3728)

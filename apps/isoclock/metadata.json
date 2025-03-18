@@ -2,7 +2,7 @@
   "id": "isoclock",
   "name": "ISO Compliant Clock Face",
   "shortName": "ISO Clock",
-  "version": "0.02",
+  "version": "0.04",
   "description": "Tweaked fork of digiclock for ISO date and time",
   "icon": "isoclock.png",
   "type": "clock",

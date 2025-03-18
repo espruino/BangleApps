@@ -8,3 +8,6 @@
 0.09: Add onHide callback
 0.10: Improvements to help notifications work with themes
 0.11: Fix regression that caused no notifications and corrupted background
+0.12: Add Bangle.js 2 support with Bangle.setLCDOverlay
+0.13: Add a default title background for the dark theme
+0.14: Stop event propagation on notification tap

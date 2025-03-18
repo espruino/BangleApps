@@ -1,0 +1,17 @@
+{
+  "id": "calclock",
+  "name": "Calendar Clock",
+  "shortName": "CalClock",
+  "version": "0.09",
+  "description": "Show the current and upcoming events synchronized from Gadgetbridge",
+  "icon": "calclock.png",
+  "type": "clock",
+  "tags": "clock,agenda",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"calclock.app.js","url":"calclock.js"},
+    {"name":"calclock.img","url":"calclock-icon.js","evaluate":true}
+  ],
+  "screenshots": [{"url":"screenshot.png"}]
+}

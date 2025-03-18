@@ -1,0 +1,25 @@
+{ "id": "rebbleagenda",
+  "name": "Rebble Agenda",
+  "shortName":"Agenda",
+  "version": "0.02",
+  "description": "A pebble-inspired animated agenda",
+  "icon": "app.png",
+  "screenshots" : [ 
+    { "url":"screenshot_rebbleagenda_events.png" }, 
+    { "url":"screenshot_rebbleagenda_customtheme.png" }, 
+    { "url":"screenshot_rebbleagenda_sun.png" } 
+  ],
+  "type": "app",
+  "tags": "agenda,tool",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "dependencies" : { "weather":"app" },
+  "storage": [
+    {"name":"rebbleagenda.app.js","url":"app.js"},
+    {"name":"rebbleagenda.settings.js","url":"settings.js"},
+    {"name":"rebbleagenda.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"rebbleagenda.json"}
+  ]
+}

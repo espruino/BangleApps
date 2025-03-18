@@ -2,7 +2,7 @@
   "id": "ltherm",
   "name": "Localized Thermometer",
   "shortName": "Thermometer",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Displays the current temperature in localized units.",
   "icon": "thermf.png",
   "tags": "tool",

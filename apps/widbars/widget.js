@@ -42,7 +42,7 @@
     if (top) g             .clearRect(x,y,     x+w-1,y+top-1); // erase above bar
     if (f)   g.setColor(col).fillRect(x,y+top, x+w-1,y+h-1);   // even for f=0.001 this is still 1 pixel high
   }
-  let batColor='#0f0';
+  let batColor=Bangle.isCharging()?'#ff0':'#0f0';
   function draw() {
     g.reset();
     const x = this.x, y = this.y,

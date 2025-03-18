@@ -1,0 +1,4 @@
+0.01: New App!
+0.02: Use fractional numbers and scale the points to keep working consistently on whole screen
+0.03: Use default Bangle formatter for booleans
+0.04: Minor code improvements

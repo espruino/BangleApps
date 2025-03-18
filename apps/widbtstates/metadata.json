@@ -1,0 +1,14 @@
+{
+  "id": "widbtstates",
+  "name": "Bluetooth States",
+  "version": "0.02",
+  "description": "If active, shows a white bluetooth icon, if connected, a blue one (nothing if sleeping)",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,bluetooth",
+  "provides_widgets" : ["bluetooth"],
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"widbtstates.wid.js","url":"widget.js"}
+  ]
+}

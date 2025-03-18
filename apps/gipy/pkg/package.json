@@ -1,0 +1,12 @@
+{
+  "name": "gps",
+  "version": "0.1.0",
+  "files": [
+    "gps_bg.wasm",
+    "gps.js",
+    "gps.d.ts"
+  ],
+  "module": "gps.js",
+  "types": "gps.d.ts",
+  "sideEffects": false
+}

@@ -43,7 +43,7 @@ Colours, font, user input, image, load widgets
  - Press center area - Prints Touch3
  - Swipe Left - Displays Switch OFF image
  - Swipe Right - Displays Switch ON image
- - BTN1 - Prints Button1
+ - BTN1 - Prints Button1, Down (moves selection to next row)
  - BTN2 - Prints Button2
  - BTN3 - Quit to Launcher
 

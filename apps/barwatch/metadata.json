@@ -1,0 +1,18 @@
+{ 
+  "id": "barwatch",
+  "name": "BarWatch",
+  "shortName":"BarWatch",
+  "version":"0.01",
+  "description": "A watch that displays the time using bars. One bar for each hour.",
+  "readme": "README.md",
+  "icon": "screenshot.png",
+  "tags": "clock",
+  "type": "clock",
+  "allow_emulator":true,
+  "screenshots" : [ { "url": "screenshot.png" } ],
+  "supports" : ["BANGLEJS2"],  
+  "storage": [
+    {"name":"barwatch.app.js","url":"app.js"},
+    {"name":"barwatch.img","url":"app-icon.js","evaluate":true}
+  ]
+}

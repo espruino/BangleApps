@@ -23,17 +23,7 @@ function saveKML(track,title) {
     </Placemark>
   </Document>
 </kml>`;
-  var a = document.createElement("a"),
-      file = new Blob([kml], {type: "application/vnd.google-earth.kml+xml"});
-  var url = URL.createObjectURL(file);
-  a.href = url;
-  a.download = title+".kml";
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(function() {
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-  }, 0);
+  Util.saveFile(title+".kml", "application/vnd.google-earth.kml+xml", kml);
 }
 
 function saveGPX(track, title) {
@@ -56,17 +46,7 @@ function saveGPX(track, title) {
     </trkseg>
   </trk>
 </gpx>`;
-  var a = document.createElement("a"),
-      file = new Blob([gpx], {type: "application/gpx+xml"});
-  var url = URL.createObjectURL(file);
-  a.href = url;
-  a.download = title+".gpx";
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(function() {
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-  }, 0);
+  Util.saveFile(title+".gpx", "application/gpx+xml", gpx);
 }
 
 function trackLineToObject(l, hasTrackNumber) {

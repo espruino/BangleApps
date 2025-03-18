@@ -1,3 +1,4 @@
 0.01: Core functionnality
 0.02: Offer to enable HID if disabled
 0.03: Adds Readme and tags to be used by App Loader
+0.04: Adds Bangle.js 2 support, Buzz and Touch

@@ -12,24 +12,24 @@ const allWords = [
 const hours = {
   0: ["", 0, 0],
   1: ["ONE", 17, 47, 77],
-  2: ["TWO", 06, 16, 17],
+  2: ["TWO", 6, 16, 17],
   3: ["THREE", 35, 45, 55, 65, 75],
-  4: ["FOUR", 07, 17, 27, 37],
-  5: ["FIVE", 04, 14, 24, 34],
-  6: ["SIX", 05, 15, 25],
-  7: ["SEVEN", 05, 46, 56, 66, 67],
+  4: ["FOUR", 7, 17, 27, 37],
+  5: ["FIVE", 4, 14, 24, 34],
+  6: ["SIX", 5, 15, 25],
+  7: ["SEVEN", 5, 46, 56, 66, 67],
   8: ["EIGHT", 34, 44, 54, 64, 74],
   9: ["NINE", 47, 57, 67, 77],
   10: ["TEN", 74, 75, 76],
   11: ["ELEVEN", 26, 36, 46, 56, 66, 76],
-  12: ["TWELVE", 06, 16, 26, 36, 56, 66]
+  12: ["TWELVE", 6, 16, 26, 36, 56, 66]
 };
 
 const mins = {
   0: ["A", 0, 0],
-  1: ["FIVE", 02, 12, 22, 32],
+  1: ["FIVE", 2, 12, 22, 32],
   2: ["TEN", 10, 30, 40],
-  3: ["QUARTER", 01, 11, 21, 31, 41, 51, 61],
+  3: ["QUARTER", 1, 11, 21, 31, 41, 51, 61],
   4: ["TWENTY", 10, 20, 30, 40, 50, 60],
   5: ["HALF", 42, 52, 62, 72],
   6: ["PAST", 13, 23, 33, 43],
@@ -122,11 +122,11 @@ Bangle.on('lcdPower', function(on) {
   if (on) drawWordClock();
 });
 
+// Show launcher when button pressed
+Bangle.setUI("clock");
+
 g.clear();
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 setInterval(drawWordClock, 1E4);
 drawWordClock();
-
-// Show launcher when button pressed
-Bangle.setUI("clock");

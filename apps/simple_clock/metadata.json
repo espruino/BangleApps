@@ -1,7 +1,7 @@
 { "id": "simple_clock",
   "name": "Simple Analog Clock",
   "shortName":"Simple Clock",
-  "version":"0.02",
+  "version": "0.04",
   "description": "a simple, yet stylish, analog clock",
   "icon": "app-icon.png",
   "type": "clock",

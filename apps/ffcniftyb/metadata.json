@@ -1,7 +1,7 @@
 {
   "id": "ffcniftyb",
   "name": "Nifty-B Clock",
-  "version": "0.03",
+  "version": "0.04",
   "description": "A nifty clock (series B) with time, date and colour configuration",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

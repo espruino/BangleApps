@@ -1,0 +1,8 @@
+0.01: Moved messages widget into standalone widget app
+0.02: Fix 'srcs' being defined in global scope
+      Remove library stub
+0.03: Fix messages not showing if UI auto-open is disabled
+0.04: Now shows message icons again (#2416)
+0.05: Match draw() API e.g. to allow wid_edit to alter this widget
+0.06: Fix bug that meant that only one widget was shown (now 3 unless changed in Settings->Apps->Messages->Widget messages)
+0.07: Only load messages module if we have messages (30ms speed improvement)

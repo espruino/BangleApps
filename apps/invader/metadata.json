@@ -1,0 +1,15 @@
+{ "id": "invader",
+  "name": "Invader",
+  "shortName":"Invader",
+  "version": "0.12",
+  "description": "A Space Invader game-like demo - work in progress",
+  "icon": "app.png",
+  "screenshots" : [ { "url":"screenshot_0.png" }, { "url":"screenshot_1.png" }, { "url":"screenshot_2.png" } ],
+  "tags": "game",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"invader.app.js","url":"app.js"},
+    {"name":"invader.img","url":"app-icon.js","evaluate":true}
+  ]
+}

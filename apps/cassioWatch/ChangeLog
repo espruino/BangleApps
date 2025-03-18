@@ -1,0 +1,14 @@
+0.0: Main App.
+0.1: Performance Fixes.
+0.2: Correct Screen Clear and Draw.
+0.3: Minor Fixes.
+0.4: Clear Old Time on Screen Before Draw new Time
+0.5: Update Date and Time to use Native date Funcions
+0.6: Add Settings Page
+0.7: Update Rocket Sequences Scope to not use memory all time
+0.8: Update Some Variable Scopes to not use memory until need
+0.9: Remove ESLint spaces
+0.10: Show daily steps, heartrate and the temperature if weather information is available.
+0.11: Tell clock widgets to hide.
+0.12: Swipe down to see widgets, step counter now just uses getHealthStatus
+0.13: Report latest HRM rather than HRM 10 minutes ago (fix #2395)

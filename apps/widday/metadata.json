@@ -1,0 +1,15 @@
+{ "id": "widday",
+  "name": "Day Widget",
+  "shortName":"My Timer",
+  "icon": "widget.png",
+  "type": "widget",
+  "version":"0.01",
+  "description": "Just the day of the current date as widget",
+  "readme": "README.md",
+  "tags": "widget,say,date",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "screenshots" : [ { "url":"screenshot.png" } ],
+  "storage": [
+    {"name":"widday.wid.js","url":"widget.js"}
+  ]
+}

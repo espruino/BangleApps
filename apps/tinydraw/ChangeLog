@@ -1,3 +1,4 @@
 0.01: Initial release
 0.02: Don't start drawing with white colour on white canvas
 0.03: Fix segmented line glitch when drawing, optimize screen lock detection
+0.04: Minor code improvements

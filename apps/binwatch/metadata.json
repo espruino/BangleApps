@@ -3,7 +3,7 @@
   "shortName":"BinWatch",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],
-  "version":"0.04",
+  "version": "0.07",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "allow_emulator":true,

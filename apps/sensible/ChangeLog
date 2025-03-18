@@ -4,3 +4,4 @@
 0.04: Advertise bar, GPS, HRM and mag services
 0.05: Refactored for efficiency, corrected sensor value inaccuracies
 0.06: User settings are written to persistent storage, loaded on app start
+0.07: Use default Bangle formatter for booleans

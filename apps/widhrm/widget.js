@@ -1,5 +1,18 @@
 (() => {
   if (!Bangle.isLocked) return; // old firmware
+  
+  const SETTINGS_FILE = 'widhrm.json';
+  let settings;
+  function loadSettings() {
+    settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {};
+    const DEFAULTS = {
+      'confidence': 0
+    };
+    Object.keys(DEFAULTS).forEach(k=>{
+      if (settings[k]===undefined) settings[k]=DEFAULTS[k];
+    });
+  }
+  
   var currentBPM;
   var lastBPM;
   var isHRMOn = false;
@@ -39,7 +52,7 @@
       bpm = lastBPM;
       isCurrent = false;
     }
-    if (bpm===undefined)
+    if (bpm===undefined || (settings && bpm<settings["confidence"]))
       bpm = "--";
     g.setColor(isCurrent ? g.theme.fg : "#808080");
     g.drawString(bpm, this.x+width/2, this.y+19);

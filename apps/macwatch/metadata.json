@@ -1,0 +1,17 @@
+{ "id": "macwatch",
+  "name": "MacWatch",
+  "shortName":"MacWatch",
+  "icon": "app.png",
+  "version": "0.02",
+  "description": "Simple clock with classic Mac font",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "screenshots": [{"url":"screenshot-dark-date.png"}],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"macwatch.app.js","url":"app.js"},
+    {"name":"macwatch.img","url":"app-icon.js","evaluate":true}
+  ]
+}

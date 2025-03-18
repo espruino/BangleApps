@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="OsmAndRouterV2" xmlns="http://www.topografix.com/GPX/1/1" xmlns:osmand="https://osmand.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+	<metadata>
+		<name>1kmsquare100</name>
+		<desc>Export from GpsPrune</desc>
+	</metadata>
+	<trk>
+		<name>1kmsquare100</name>
+		<number>1</number>
+		<trkseg>
+			<trkpt lat="47.2578455" lon="11.9929891">
+				<ele>2265</ele>
+				<name>Lower left</name>
+			</trkpt>
+			<trkpt lat="47.258592" lon="11.9923341">
+				<ele>2256</ele>
+			</trkpt>
+			<trkpt lat="47.2594506" lon="11.9927412">
+				<ele>2230</ele>
+			</trkpt>
+			<trkpt lat="47.2603323" lon="11.9924949">
+				<ele>2219</ele>
+			</trkpt>
+			<trkpt lat="47.2612056" lon="11.9928175">
+				<ele>2199</ele>
+			</trkpt>
+			<trkpt lat="47.2621002" lon="11.9929817">
+				<ele>2182</ele>
+			</trkpt>
+			<trkpt lat="47.2629025" lon="11.9923915">
+				<ele>2189</ele>
+			</trkpt>
+			<trkpt lat="47.2637828" lon="11.9926486">
+				<ele>2180</ele>
+			</trkpt>
+			<trkpt lat="47.2646733" lon="11.9928167">
+				<ele>2191</ele>
+			</trkpt>
+			<trkpt lat="47.2655617" lon="11.9930357">
+				<ele>2185</ele>
+			</trkpt>
+			<trkpt lat="47.2662862" lon="11.992252">
+				<ele>2186</ele>
+			</trkpt>
+			<trkpt lat="47.2669305" lon="11.993173">
+				<ele>2166</ele>
+				<name>Top left</name>
+			</trkpt>
+			<trkpt lat="47.266666" lon="11.9944419">
+				<ele>2171</ele>
+			</trkpt>
+			<trkpt lat="47.2667579" lon="11.99576">
+				<ele>2194</ele>
+			</trkpt>
+			<trkpt lat="47.2669409" lon="11.9970579">
+				<ele>2207</ele>
+			</trkpt>
+			<trkpt lat="47.2666562" lon="11.9983128">
+				<ele>2212</ele>
+			</trkpt>
+			<trkpt lat="47.2666027" lon="11.9996335">
+				<ele>2262</ele>
+			</trkpt>
+			<trkpt lat="47.2667245" lon="12.0009395">
+				<ele>2278</ele>
+			</trkpt>
+			<trkpt lat="47.2668457" lon="12.002256">
+				<ele>2297</ele>
+			</trkpt>
+			<trkpt lat="47.2666126" lon="12.0035373">
+				<ele>2303</ele>
+			</trkpt>
+			<trkpt lat="47.2664554" lon="12.004841">
+				<ele>2251</ele>
+			</trkpt>
+			<trkpt lat="47.2669461" lon="12.005948">
+				<ele>2245</ele>
+				<name>Top right</name>
+			</trkpt>
+			<trkpt lat="47.2660877" lon="12.006323">
+				<ele>2195</ele>
+			</trkpt>
+			<trkpt lat="47.2652729" lon="12.0057552">
+				<ele>2163</ele>
+			</trkpt>
+			<trkpt lat="47.2643926" lon="12.0060123">
+				<ele>2131</ele>
+			</trkpt>
+			<trkpt lat="47.2634978" lon="12.0058302">
+				<ele>2095</ele>
+			</trkpt>
+			<trkpt lat="47.2626129" lon="12.0060759">
+				<ele>2066</ele>
+			</trkpt>
+			<trkpt lat="47.2617325" lon="12.0058188">
+				<ele>2037</ele>
+			</trkpt>
+			<trkpt lat="47.2608668" lon="12.0061784">
+				<ele>1993</ele>
+			</trkpt>
+			<trkpt lat="47.2600155" lon="12.0057392">
+				<ele>1967</ele>
+			</trkpt>
+			<trkpt lat="47.2591203" lon="12.0058233">
+				<ele>1949</ele>
+			</trkpt>
+			<trkpt lat="47.2582307" lon="12.0059718">
+				<ele>1972</ele>
+			</trkpt>
+			<trkpt lat="47.2578014" lon="12.004804">
+				<ele>2011</ele>
+				<name>Lower right</name>
+			</trkpt>
+			<trkpt lat="47.2577232" lon="12.0034834">
+				<ele>2044</ele>
+			</trkpt>
+			<trkpt lat="47.257745" lon="12.0021656">
+				<ele>2061</ele>
+			</trkpt>
+			<trkpt lat="47.2578682" lon="12.0008597">
+				<ele>2065</ele>
+			</trkpt>
+			<trkpt lat="47.2577082" lon="11.9995526">
+				<ele>2071</ele>
+			</trkpt>
+			<trkpt lat="47.2575917" lon="11.9982348">
+				<ele>2102</ele>
+			</trkpt>
+			<trkpt lat="47.2577401" lon="11.996924">
+				<ele>2147</ele>
+			</trkpt>
+			<trkpt lat="47.257715" lon="11.9956061">
+				<ele>2197</ele>
+			</trkpt>
+			<trkpt lat="47.2578996" lon="11.9943081">
+				<ele>2228</ele>
+			</trkpt>
+			<trkpt lat="47.2578436" lon="11.992992">
+				<ele>2265</ele>
+				<name>Destination</name>
+			</trkpt>
+		</trkseg>
+	</trk>
+</gpx>

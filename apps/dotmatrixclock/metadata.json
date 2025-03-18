@@ -1,7 +1,7 @@
 {
   "id": "dotmatrixclock",
   "name": "Dotmatrix Clock",
-  "version": "0.01",
+  "version": "0.02",
   "description": "A clear white-on-blue dotmatrix simulated clock",
   "icon": "dotmatrixclock.png",
   "type": "clock",

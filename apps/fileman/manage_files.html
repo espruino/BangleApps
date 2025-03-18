@@ -1,0 +1,101 @@
+<html>
+<head>
+  <link rel="stylesheet" href="../../css/spectre.min.css">
+</head>
+<body>
+<script src="../../core/lib/interface.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+
+<div id="app">
+  <table class="table">
+    <thead><tr><th>Stats</th><th></th></tr></thead>
+    <tbody><tr v-for="s in stats"><td>{{s[0]}}</td><td>{{s[1]}}</td></tr></tbody>
+  </table>
+  <h3>Files</h3>
+  <div class="form-group">
+    <label class="form-label">Filter</label>
+    <input class="form-input" v-model="fileFilter" type="text" />
+  </div>
+  <table class="table">
+  <thead><tr><th>Filename</th><th>show</th><th>delete</th></tr></thead>
+  <tbody>
+    <tr v-for="file in filteredFiles">
+      <td>{{file}}</td>
+      <td><button v-on:click="showFile(file)" class="btn btn-primary btn-lg mr-2">show</button></td>
+      <td><button v-on:click="deleteFile(file)" class="btn btn-primary btn-lg mr-2">delete</button></td>
+    </tr>
+  </tbody>
+</table>
+<div v-if="fileContents">
+    <div class="modal active" id="modal-id">
+      <div class="modal-container" style="max-height: 95vh;">
+        <div class="modal-header">
+          <div class="modal-title h5">File Contents</div>
+        </div>
+        <div class="modal-body">
+          <div class="content">
+            <pre><code>
+              {{fileContents}}
+            </code></pre>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" v-on:click="hideFile()">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      files: ['Click load files to see something'],
+      fileFilter: '',
+      stats: [['No stats', 'loaded']],
+      fileContents: null,
+    },
+    computed: {
+      filteredFiles: function () {
+        return this.files.filter((f) => f.includes(this.fileFilter));
+      }
+    },
+    mounted: function () {
+      setTimeout(() => {
+        this.loadFiles();
+        this.getStats();
+      }, 1000);
+    },
+    methods: {
+      loadFiles: function () {
+        Puck.eval('require("Storage").list()', (files) => {
+          this.files = files.filter((f) => !f.startsWith('.')).sort();
+        });
+      },
+      getStats: function () {
+        Puck.eval('require("Storage").getStats()', (stats) => {
+          this.stats = Object.entries(stats);
+        });
+      },
+      deleteFile: function (file) {
+        if(confirm(`Really delete ${file}?`)) {
+          Puck.eval(`require("Storage").erase("${file}")`, () => {
+            this.loadFiles();
+            this.getStats();
+          });
+        }
+      },
+      showFile: function (file) {
+        Puck.eval(`require("Storage").read("${file}")`, (contents) => {
+          this.fileContents = contents;
+        })
+      },
+      hideFile: function () {
+        this.fileContents = null;
+      }
+    }
+  })
+</script>
+</body>
+</html>

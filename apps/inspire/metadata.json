@@ -1,0 +1,16 @@
+{
+  "id": "inspire",
+  "name": "Inspire Breathing",
+  "shortName": "Inspire",
+  "version": "0.03",
+  "description": "exercise breathing every now and then",
+  "icon": "app-icon.png",
+  "tags": "tools,health",
+  "screenshots": [{"url":"screenshot.png"}],
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"inspire.app.js","url":"app.js"},
+    {"name":"inspire.img","url":"app-icon.js","evaluate":true}
+  ]
+}

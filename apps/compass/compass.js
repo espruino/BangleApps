@@ -20,7 +20,7 @@ ag.setColor(1).fillCircle(AGM,AGM,AGM-1,AGM-1);
 ag.setColor(0).fillCircle(AGM,AGM,AGM-11,AGM-11);
 
 function arrow(r,c) {
-  r=r*Math.PI/180;
+  r=(360-r)*Math.PI/180;
   var p = Math.PI/2;
   ag.setColor(c).fillPoly([
     AGM+AGH*Math.sin(r), AGM-AGH*Math.cos(r),
@@ -68,7 +68,7 @@ g.clear(1);
 g.setFont("6x8").setFontAlign(0,0,3).drawString(/*LANG*/"RESET", g.getWidth()-5, g.getHeight()/2);
 setWatch(function() {
   Bangle.resetCompass();
-}, (process.env.HWVERSION==2) ? BTN1 : BTN2, {repeat:true});
+}, (process.env.HWVERSION==2) ? BTN1 : BTN2, {repeat:true, edge:"falling"});
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();

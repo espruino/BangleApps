@@ -1,0 +1,31 @@
+{
+  "id": "sunrise",
+  "name": "Sunrise",
+  "shortName": "Sunrise",
+  "version": "0.08",
+  "type": "clock",
+  "description": "Show sunrise and sunset times",
+  "icon": "app.png",
+  "allow_emulator": true,
+  "tags": "clock",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "readme": "README.md",
+  "storage": [
+    {
+      "name": "sunrise.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "sunrise.img",
+      "url": "app-icon.js",
+      "evaluate": true
+    }
+  ],
+  "screenshots": [
+    {
+      "url": "screenshot.png"
+    }
+  ]
+}

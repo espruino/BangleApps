@@ -1,0 +1,4 @@
+...
+0.02: First update with ChangeLog Added
+0.03: Move waypoints.json (and editor) to 'waypoints' app
+0.04: Added adjustment for Bangle.js magnetometer heading fix

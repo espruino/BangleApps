@@ -33,7 +33,6 @@
       },
       "CountDown Buzz": {
         value: !!settings.countDownBuzz,
-        format: value => value?"On":"Off",
         onchange: (value) => {
           settings.countDownBuzz = value;
           writeSettings(settings);
@@ -82,4 +81,4 @@
 
   settings = readSettings();
   showMainMenu();
-});
+})

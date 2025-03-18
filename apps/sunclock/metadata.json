@@ -1,7 +1,7 @@
 {
   "id": "sunclock",
   "name": "Sun Clock",
-  "version": "0.01",
+  "version": "0.03",
   "description": "A clock with sunset/sunrise, sun height/azimuth",
   "icon": "app.png",
   "type": "clock",
@@ -11,7 +11,6 @@
   "allow_emulator": true,
   "storage": [
     {"name":"sunclock.app.js","url":"app.js"},
-    {"name":"sunclock.img","url":"app-icon.js","evaluate":true},
-    {"name":"suncalc.js","url":"suncalc.js"}
+    {"name":"sunclock.img","url":"app-icon.js","evaluate":true}
   ]
 }

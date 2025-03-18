@@ -1,0 +1,5 @@
+0.01: New App!
+0.02: Fix fast loading on swipe to clock
+0.03: Adds a setting for going back to clock on a timeout
+0.04: Fix timeouts closing fast loaded apps
+0.05: Minor code improvements

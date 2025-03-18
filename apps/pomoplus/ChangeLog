@@ -1,0 +1,7 @@
+0.01: New app!
+0.02-0.04: Bug fixes
+0.05: Submitted to the app loader
+0.06: Added setting to show clock after start/resume
+0.07: Make fonts and buttons larger for legibility and ease of use. Hide
+	buttons when screen is locked. Toggle the graphical presentation when
+	pressing the (middle) hardware button.

@@ -70,7 +70,7 @@ class Options {
             delay
         );
     }
-    
+
     bless(k) {
         Object.defineProperty(this, k, {
             get: () => this.backing[k],
@@ -103,7 +103,7 @@ class Options {
         if (this.bored) clearTimeout(this.bored);
         this.bored = setTimeout(_ => this.showMenu(), 15000);
     }
-    
+
     reset() {
         this.backing = {__proto__: this.constructor.defaults};
         this.writeBack(0);
@@ -145,7 +145,7 @@ class RomanOptions extends Options {
             Defaults: _ => {this.reset(); this.interact();}
         };
     }
-        
+
     interact() {this.showMenu(this.menu);}
 }
 
@@ -337,7 +337,7 @@ const events = {
     //            colour: colour, dramatic?: bool, event?: any}
     fixed: [{time: Number.POSITIVE_INFINITY}], // indexed by ms absolute
     wall: [{time: Number.POSITIVE_INFINITY}], // indexed by nominal ms + TZ ms
-    
+
     clean: function(now, l) {
         let o = now.getTimezoneOffset() * 60000;
         let tf = now.getTime() + l, tw = tf - o;
@@ -345,9 +345,9 @@ const events = {
         while (this.wall[0].time <= tw) this.wall.shift();
         while (this.fixed[0].time <= tf) this.fixed.shift();
     },
-    
+
     scan: function(now, from, to, f) {
-        result = Infinity;
+        let result = Infinity;
         let o = now.getTimezoneOffset() * 60000;
         let t = now.getTime() - o;
         let c, p, i, l = from - o, h = to - o;
@@ -482,7 +482,7 @@ class Sidebar {
                 compassI,
                 this.x + 4 + imageWidth(compassI) / 2,
                 this.y + 4 + imageHeight(compassI) / 2,
-                a ? {rotate: c.heading / 180 * Math.PI} : undefined
+                a ? {rotate: (360-c.heading) / 180 * Math.PI} : undefined
             );
             this.y += 4 + imageHeight(compassI);
         }
@@ -535,13 +535,13 @@ class Roman {
     static pos(p, r) {
         let h = r * rectW / 2;
         let v = r * rectH / 2;
-        p = (p + 1) % 12;  
+        p = (p + 1) % 12;
         return p <= 2 ? [faceCX + h * (p - 1), faceCY - v]
             : p < 6 ? [faceCX + h, faceCY + v / 2 * (p - 4)]
             : p <= 8 ? [faceCX - h * (p - 7), faceCY + v]
             : [faceCX - h, faceCY - v / 2 * (p - 10)];
     }
-    
+
     alert(e, date, now, past) {
         const g = this.g;
         g.setColor(e.colour);
@@ -564,7 +564,7 @@ class Roman {
         }
         return Infinity;
     }
-    
+
     render(d, rate) {
         const g = this.g;
         const state = this.state || (g.clear(true), this.state = {});
@@ -625,7 +625,7 @@ class Roman {
             for (let h = keyHour; h < keyHour + 12; h++) {
                 g.drawString(
                     numeral(h % 24, options),
-                    faceX + layout[h % 12 * 2], 
+                    faceX + layout[h % 12 * 2],
                     faceY + layout[h % 12 * 2 + 1]
                 );
             }
@@ -643,7 +643,7 @@ class Roman {
             (e, t, p) => this.alert(e, t, d, p)
         );
         if (rate > requestedRate) rate = requestedRate;
-        
+
         // Hands
         // Here we are using incremental hands for hours and minutes.
         // If we quantised, we could use hand-crafted bitmaps, though.
@@ -668,7 +668,7 @@ class Clock {
         this.rates = {};
 
         this.options.on('done', () => this.start());
-        
+
         this.listeners = {
             charging: _ => {face.doIcons('charging'); this.active();},
             lock: _ => {face.doIcons('locked'); this.active();},
@@ -723,7 +723,7 @@ class Clock {
         this.face.reset(); // Cancel any ongoing background rendering
         return this;
     }
-    
+
     active() {
         const prev = this.rate;
         const now = Date.now();
@@ -781,4 +781,4 @@ class Clock {
 //////////////////////////////////////////////////////////////////////////////
 /*                                 Main                                     */
 
-const clock = new Clock(new Roman(g, events)).start();
+new Clock(new Roman(g, events)).start();

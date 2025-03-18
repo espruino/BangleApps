@@ -1,17 +1,19 @@
 {
   "id": "a_clock_timer",
   "name": "A Clock with Timer",
-  "version": "0.01",
+  "version": "1.01",
   "description": "A Clock with Timer, Map and Time Zones",
   "icon": "app.png",
-  "screenshots": [{"url":"screenshot.png"}],
+  "screenshots": [{"url":"screenshot.png"},{"url":"screenshot-1.png"}],
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS2"],
   "allow_emulator": true,
   "readme": "README.md",
+  "custom": "custom.html",
   "storage": [
     {"name":"a_clock_timer.app.js","url":"app.js"},
     {"name":"a_clock_timer.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "data": [{"name":"a_clock_timer.settings.json"}]
 }

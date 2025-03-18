@@ -1,0 +1,7 @@
+0.01: New app!
+0.02: Add sensor icons
+      Customize code directly, remove config file
+0.03: Add HRM sensor
+      Add step count sensor
+      Add pressure and temperature sensors
+      Document Home Assistant `unique ID` workaround

@@ -1,0 +1,11 @@
+0.01: Release for Bangle 2 (2021/11/18)
+0.02: Internal id update to wid_* as per Gordon's request (2021/11/21)
+0.03: Support dark themes
+0.04: Increase screen update rate when charging
+0.05: Deleting Background - making Font larger
+0.06: Fixing refresh issues
+0.07: Fixed position after unlocking
+0.08: Handling exceptions
+0.09: Add option for showing battery high mark
+0.10: Fix background color
+0.11: Minor code improvements

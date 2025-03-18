@@ -1,0 +1,13 @@
+{
+  "id": "widlockunlock",
+  "name": "Lock/Unlock Widget",
+  "version": "0.03",
+  "description": "On devices with always-on display (Bangle.js 2) this displays lock icon whenever the display is locked, or an unlock icon otherwise. Tap to lock the lcd (unless the back button is shown, in which case it takes priority)",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,lock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"widlockunlock.wid.js","url":"widget.js"}
+  ]
+}

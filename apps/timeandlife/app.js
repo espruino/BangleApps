@@ -1,6 +1,4 @@
 // Globals
-const X = 176,
-  Y = 176; // screen resolution of bangle 2
 const STEP_TIMEOUT = 1000;
 const PAUSE_TIME = 3000;
 
@@ -151,7 +149,6 @@ const step = () => {
   if (new Date() - lastPaused < PAUSE_TIME) {
     return;
   }
-  let startTime = new Date();
   const dataAddr = E.getAddressOf(data, true);
   const nextDataAddr = E.getAddressOf(nextData, true);
   updateStateC.run(dataAddr, nextDataAddr);

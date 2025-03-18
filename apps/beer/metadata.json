@@ -1,11 +1,11 @@
 {
   "id": "beer",
   "name": "Beer Compass",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Uploads all the pubs in an area onto your watch, so it can always point you at the nearest one",
   "icon": "app.png",
   "tags": "",
-  "supports": ["BANGLEJS"],
+  "supports": ["BANGLEJS","BANGLEJS2"],
   "custom": "custom.html",
   "storage": [
     {"name":"beer.app.js"},

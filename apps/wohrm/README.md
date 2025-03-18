@@ -30,3 +30,9 @@ Pressing middle button will switch off the HRM of the watch and return you to th
 # HRM usage
 The HRM is switched on when the app is started. It stays switch on while the app is running, even
 when the watch screen goes to stand-by.
+
+
+Screenshot BJS2 emul
+
+![](bangle2-workout-HRM-screenshot.png)
+

@@ -1,0 +1,3 @@
+0.01: First release
+0.02: added missing type i metadata
+0.03: Use default Bangle formatter for booleans

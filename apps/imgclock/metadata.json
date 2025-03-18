@@ -2,18 +2,19 @@
   "id": "imgclock",
   "name": "Image background clock",
   "shortName": "Image Clock",
-  "version": "0.08",
-  "description": "A clock with an image as a background",
+  "version": "0.12",
+  "description": "A clock with an image as a background. **Note:** this clock shows seconds, so has higher than average power consumption.",
   "icon": "app.png",
   "type": "clock",
   "tags": "clock",
-  "supports": ["BANGLEJS"],
+  "supports": ["BANGLEJS","BANGLEJS2"],
   "custom": "custom.html",
+  "customConnect": true,
   "storage": [
     {"name":"imgclock.app.js","url":"app.js"},
     {"name":"imgclock.img","url":"app-icon.js","evaluate":true},
     {"name":"imgclock.face.img"},
     {"name":"imgclock.face.json"},
-    {"name":"imgclock.face.bg","content":""}
+    {"name":"imgclock.face.bg","content":"X"}
   ]
 }

@@ -2,8 +2,8 @@
   "id": "activepedom",
   "name": "Active Pedometer",
   "shortName": "Active Pedometer",
-  "version": "0.09",
-  "description": "Pedometer that filters out arm movement and displays a step goal progress. Steps are saved to a daily file and can be viewed as graph.",
+  "version": "0.11",
+  "description": "(NOT RECOMMENDED) Pedometer that filters out arm movement and displays a step goal progress. Steps are saved to a daily file and can be viewed as graph. The `Health` app now provides step logging and graphs.",
   "icon": "app.png",
   "tags": "outdoors,widget",
   "supports": ["BANGLEJS"],
@@ -14,5 +14,6 @@
     {"name":"activepedom.settings.js","url":"settings.js"},
     {"name":"activepedom.img","url":"app-icon.js","evaluate":true},
     {"name":"activepedom.app.js","url":"app.js"}
-  ]
+  ],
+  "data":[{"name":"activepedom.settings.json"}]
 }

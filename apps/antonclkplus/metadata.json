@@ -1,0 +1,20 @@
+{
+  "id": "antonclkplus",
+  "name": "Anton Clock Plus",
+  "shortName": "Anton Clock+",
+  "version": "0.11",
+  "description": "A clock using the bold Anton font, optionally showing seconds and date in ISO-8601 format.",
+  "readme":"README.md",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"antonclkplus.app.js","url":"app.js"},
+    {"name":"antonclkplus.settings.js","url":"settings.js"},
+    {"name":"antonclkplus.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"antonclkplus.json"}]
+}

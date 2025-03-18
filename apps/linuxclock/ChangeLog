@@ -1,0 +1,6 @@
+0.01: New App.
+0.02: Performance improvements.
+0.03: Update clock_info to avoid a redraw
+0.04: Fix clkinfo -- use .get instead of .show
+0.05: Use clock_info module as an app
+0.06: Fix month in date (jan 0 -> 1, etc)

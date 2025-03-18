@@ -4,3 +4,6 @@
 0.05: Update *on* the minute rather than every 15 secs
       Now show widgets
       Make compatible with themes, and Bangle.js 2
+0.06: Enable fastloading
+0.07: Adds fullscreen mode setting
+0.08: Minor code improvements

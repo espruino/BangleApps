@@ -11,7 +11,8 @@
   "storage": [
     {"name":"hourstrike.app.js","url":"app.js"},
     {"name":"hourstrike.boot.js","url":"boot.js"},
-    {"name":"hourstrike.img","url":"app-icon.js","evaluate":true},
+    {"name":"hourstrike.img","url":"app-icon.js","evaluate":true}
+  ], "data" : [
     {"name":"hourstrike.json","url":"hourstrike.json"}
   ]
 }

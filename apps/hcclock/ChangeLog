@@ -1,3 +1,7 @@
 0.01: Base code
 0.02: Saved settings when switching color scheme
 0.03: Added Button 3 opening messages (if app is installed)
+0.04: Use `messages` library to check for new messages
+0.05: Use `messages` library to open message GUI
+0.06: Minor code improvements
+0.07: Minor code improvements

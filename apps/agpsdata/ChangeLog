@@ -1,0 +1,8 @@
+0.01: First, proof of concept
+0.02: Load AGPS data on app start and automatically in background
+0.03: Do not load AGPS data on boot
+      Increase minimum interval to 6 hours
+0.04: Write AGPS data chunks with delay to improve reliability
+0.05: Show last success date
+      Do not start A-GPS update automatically
+0.06: Switch off gps after updating

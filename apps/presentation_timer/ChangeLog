@@ -1,0 +1,4 @@
+0.01: first release
+0.02: added interface for configuration from app loader
+0.03: merged save state and interpolating non-defined numeric slides
+0.04: Minor code improvements

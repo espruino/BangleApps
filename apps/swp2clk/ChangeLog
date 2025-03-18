@@ -1,1 +1,5 @@
 0.01: Initial creation of "Swipe back to the Clock" App. Let's you swipe from left to right on any app to return back to the clock face. 
+0.02: Fix deleting from white and black lists.
+0.03: Adapt to availability of Bangle.showClock and Bangle.load
+0.04: Fix 'Uncaught ReferenceError: "__FILE__" is not defined' error (fix #2326)
+0.05: Fix settings didn't call the Storage class correctly.

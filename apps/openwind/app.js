@@ -1,13 +1,11 @@
 OW_CHAR_UUID = '0000cc91-0000-1000-8000-00805f9b34fb';
 require("Font7x11Numeric7Seg").add(Graphics);
-var gatt = {};
+//var gatt = {};
 var cx = g.getWidth()/2;
 var cy = 24+(g.getHeight()-24)/2;
 var w = (g.getWidth()-24)/2;
-var y1 = 24;
-var y2 = g.getHeight()-1;
 var gps_course = { spd: 0 };
-var course_marker_len = g.getWidth()/4;
+//var course_marker_len = g.getWidth()/4;
 
 var settings = require("Storage").readJSON('openwindsettings.json', 1) || {};
 
@@ -81,7 +79,7 @@ function parseDevice(d) {
   console.log("Found device");
   device.gatt.connect().then(function(ga) {
     console.log("Connected");
-    gatt = ga;
+    //gatt = ga;
     return ga.getPrimaryService("cc90");
   }).then(function(s) {
     return s.getCharacteristic("cc91");

@@ -1,0 +1,5 @@
+0.01: New App!
+0.02: Minor code improvements
+0.03: Better scrolling behaviour
+0.04: Fix incorrect appRect handling (missing back buttons and doubled menu titles)
+0.05: Bring in change from the firmware implementation forwarding the type of touch (short/long).

@@ -1,0 +1,71 @@
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <title>Messages Debug</title>
+</head>
+<body>
+<div id="data"></div>
+<button class="btn btn-default" id="btnSave">Save</button>
+<button class="btn btn-default" id="btnDelete">Clear</button>
+<button class="btn btn-default" id="btnReload" style="float:right">Reload</button>
+
+<script src="../../core/lib/interface.js"></script>
+<script>
+  const dataElement = document.getElementById("data");
+  let messages = "";
+
+  function getData() {
+    // show loading window
+    Util.showModal("Loading...");
+    // get the data
+    dataElement.innerHTML = "";
+    Util.readStorageFile(`messagesdebug.log`, data => {
+      messages = data.trim();
+      // remove window
+      Util.hideModal();
+      let disable = false;
+      if (data.length) {
+        dataElement.innerHTML = `<pre style="overflow:auto;border:1px solid black;">${data}</pre>`;
+      } else {
+        dataElement.innerHTML = "<b>No messages found</b>";
+        disable = true;
+      }
+      ['btnSave','btnDelete','btnCopy'].forEach(id=>{
+        document.getElementById(id).disabled = disable;
+      });
+    });
+  }
+
+  const button = (id, fn) => document.getElementById(id).addEventListener("click", fn);
+  // Save messages to file
+  button("btnSave", function() {
+    let a = document.createElement("a");
+    let url = URL.createObjectURL(new Blob([messages], {type: "text/plain"}));
+    a.href = url;
+    a.download = "messagesdebug.log";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }, 0);
+  });
+  // Delete the file from the watch
+  button("btnDelete", function() {
+    Util.showModal("Deleting...");
+    Util.eraseStorageFile("messagesdebug.log", function() {
+      Util.hideModal();
+      getData();
+    });
+  });
+  // Reload, in case we're e.g. using the IDE to send test messages
+  button("btnReload", getData);
+
+  // Called when app starts
+  function onInit() {
+    getData();
+  }
+
+</script>
+</body>
+</html>

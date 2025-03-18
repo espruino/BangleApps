@@ -1,24 +1,22 @@
 const store = require('Storage');
 
-const boolFormat = (v) => v ? "On" : "Off";
-
 function showMainMenu() {
   const mainmenu = {
     '': {
-      'title': 'App Manager',
+      'title': /*LANG*/'App Manager',
     },
     '< Back': ()=> {load();},
-    'Sort Apps': () => showSortAppsMenu(),
-    'Manage Apps': ()=> showApps(),
-    'Compact': () => {
-      E.showMessage('Compacting...');
+    /*LANG*/'Sort Apps': () => showSortAppsMenu(),
+    /*LANG*/'Manage Apps': ()=> showApps(),
+    /*LANG*/'Compact': () => {
+      E.showMessage(/*LANG*/'Compacting...');
       try {
         store.compact();
       } catch (e) {
       }
       showMainMenu();
     },
-    'Free': {
+    /*LANG*/'Free': {
       value: undefined,
       format: (v) => {
         return store.getFree();
@@ -67,13 +65,13 @@ function eraseData(info) {
   });
 }
 function eraseApp(app, files,data) {
-  E.showMessage('Erasing\n' + app.name + '...');
+  E.showMessage(/*LANG*/'Erasing\n' + app.name + '...');
   var info = store.readJSON(app.id + ".info", 1)||{};
   if (files) eraseFiles(info);
   if (data) eraseData(info);
 }
 function eraseOne(app, files,data){
-  E.showPrompt('Erase\n'+app.name+'?').then((v) => {
+  E.showPrompt(/*LANG*/'Erase\n'+app.name+'?').then((v) => {
     if (v) {
       Bangle.buzz(100, 1);
       eraseApp(app, files, data);
@@ -84,7 +82,7 @@ function eraseOne(app, files,data){
   });
 }
 function eraseAll(apps, files,data) {
-  E.showPrompt('Erase all?').then((v) => {
+  E.showPrompt(/*LANG*/'Erase all?').then((v) => {
     if (v) {
       Bangle.buzz(100, 1);
       apps.forEach(app => eraseApp(app, files, data));
@@ -101,11 +99,11 @@ function showAppMenu(app) {
     '< Back': () => showApps(),
   };
   if (app.hasData) {
-    appmenu['Erase Completely']    = () => eraseOne(app, true, true);
-    appmenu['Erase App,Keep Data'] = () => eraseOne(app, true, false);
-    appmenu['Only Erase Data']     = () => eraseOne(app, false, true);
+    appmenu[/*LANG*/'Erase Completely']    = () => eraseOne(app, true, true);
+    appmenu[/*LANG*/'Erase App,Keep Data'] = () => eraseOne(app, true, false);
+    appmenu[/*LANG*/'Only Erase Data']     = () => eraseOne(app, false, true);
   } else {
-    appmenu['Erase'] = () => eraseOne(app, true, false);
+    appmenu[/*LANG*/'Erase'] = () => eraseOne(app, true, false);
   }
   E.showMenu(appmenu);
 }
@@ -113,7 +111,7 @@ function showAppMenu(app) {
 function showApps() {
   const appsmenu = {
     '': {
-      'title': 'Apps',
+      'title': /*LANG*/'Apps',
     },
     '< Back': () => showMainMenu(),
   };
@@ -130,17 +128,17 @@ function showApps() {
       menu[app.name] = () => showAppMenu(app);
       return menu;
     }, appsmenu);
-    appsmenu['Erase All'] = () => {
+    appsmenu[/*LANG*/'Erase All'] = () => {
       E.showMenu({
-        '': {'title': 'Erase All'},
-        'Erase Everything':     () => eraseAll(list, true, true),
-        'Erase Apps,Keep Data': () => eraseAll(list, true, false),
-        'Only Erase Data':      () => eraseAll(list, false, true),
+        '': {'title': /*LANG*/'Erase All'},
+        /*LANG*/'Erase Everything':     () => eraseAll(list, true, true),
+        /*LANG*/'Erase Apps,Keep Data': () => eraseAll(list, true, false),
+        /*LANG*/'Only Erase Data':      () => eraseAll(list, false, true),
         '< Back': () => showApps(),
       });
     };
   } else {
-    appsmenu['...No Apps...'] = {
+    appsmenu[/*LANG*/'...No Apps...'] = {
       value: undefined,
       format: ()=> '',
       onchange: ()=> {}
@@ -152,16 +150,16 @@ function showApps() {
 function showSortAppsMenu() {
   const sorterMenu = {
     '': {
-      'title': 'App Sorter',
+      'title': /*LANG*/'App Sorter',
     },
     '< Back': () => showMainMenu(),
-    'Sort: manually': ()=> showSortAppsManually(),
-    'Sort: alph. ASC': () => {
-      E.showMessage('Sorting:\nAlphabetically\nascending ...');
+    /*LANG*/'Sort: manually': ()=> showSortAppsManually(),
+    /*LANG*/'Sort: alph. ASC': () => {
+      E.showMessage(/*LANG*/'Sorting:\nAlphabetically\nascending ...');
       sortAlphabet(false);
     },
     'Sort: alph. DESC': () => {
-      E.showMessage('Sorting:\nAlphabetically\ndescending ...');
+      E.showMessage(/*LANG*/'Sorting:\nAlphabetically\ndescending ...');
       sortAlphabet(true);
     }
   };
@@ -171,7 +169,7 @@ function showSortAppsMenu() {
 function showSortAppsManually() {
   const appsSorterMenu = {
     '': {
-      'title': 'Sort: manually',
+      'title': /*LANG*/'Sort: manually',
     },
     '< Back': () => showSortAppsMenu(),
   };
@@ -188,7 +186,7 @@ function showSortAppsManually() {
       return menu;
     }, appsSorterMenu);
   } else {
-    appsSorterMenu['...No Apps...'] = {
+    appsSorterMenu[/*LANG*/'...No Apps...'] = {
       value: undefined,
       format: ()=> '',
       onchange: ()=> {}

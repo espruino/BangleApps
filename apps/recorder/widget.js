@@ -1,23 +1,25 @@
-(() => {
-  var storageFile; // file for GPS track
-  var entriesWritten = 0;
-  var activeRecorders = [];
-  var writeInterval;
+{
+  let storageFile; // file for GPS track
+  let activeRecorders = [];
+  let writeSetup; // the interval for writing, or 'true' if using GPS
+  let writeSubSecs; // true if we should write .1s for time, otherwise round to nearest second
 
-  function loadSettings() {
+  let loadSettings = function() {
     var settings = require("Storage").readJSON("recorder.json",1)||{};
     settings.period = settings.period||10;
     if (!settings.file || !settings.file.startsWith("recorder.log"))
       settings.recording = false;
+    if (!settings.record)
+      settings.record = ["gps"];
     return settings;
   }
 
-  function updateSettings(settings) {
+  let updateSettings = function(settings) {
     require("Storage").writeJSON("recorder.json", settings);
     if (WIDGETS["recorder"]) WIDGETS["recorder"].reload();
   }
 
-  function getRecorders() {
+  let getRecorders = function() {
     var recorders = {
       gps:function() {
         var lat = 0;
@@ -61,7 +63,7 @@
         function onHRM(h) {
           bpmConfidence = h.confidence;
           bpm = h.bpm;
-          srv = h.src;
+          src = h.src;
         }
         return {
           name : "HR",
@@ -143,15 +145,17 @@
       }
     }
 
-    /* eg. foobar.recorder.js
+    /* You can add new data items to record by creating a JS file on the Bangle named ending in `.recorder.js` that adds a new item
+to the supplied `recorders` array. For example `foobar.recorder.js` could contain:
+
     (function(recorders) {
       recorders.foobar = {
-        name : "Foobar",
-        fields : ["foobar"],
-        getValues : () => [123],
-        start : () => {},
-        stop : () => {},
-        draw (x,y) => {} // draw 12x12px status image
+        name : "Foobar",           // Name to appear in UIs
+        fields : ["foobar"],       // Column headings to appear as header in recorded CSV data
+        getValues : () => [123],   // Columns of data (length should match 'fields')
+        start : () => {},          // Called when recording starts - turn on any hardware/intervals you need
+        stop : () => {},           // Called when recording stops - turn off any hardware/intervals
+        draw (x,y) => {}           // draw 12x12px status image at x,y on g
       }
     })
     */
@@ -159,11 +163,25 @@
     return recorders;
   }
 
-  function writeLog() {
-    entriesWritten++;
+  let getActiveRecorders = function(settings) {
+    let activeRecorders = [];
+    let recorders = getRecorders();
+    settings.record.forEach(r => {
+      var recorder = recorders[r];
+      if (!recorder) {
+        console.log(/*LANG*/"Recorder for "+E.toJS(r)+/*LANG*/"+not found");
+        return;
+      }
+      activeRecorders.push(recorder());
+    });
+    return activeRecorders;
+  };
+  let getCSVHeaders = activeRecorders => ["Time"].concat(activeRecorders.map(r=>r.fields));
+
+  let writeLog = function() {
     WIDGETS["recorder"].draw();
     try {
-      var fields = [Math.round(getTime())];
+      var fields = [writeSubSecs?getTime().toFixed(1):Math.round(getTime())];
       activeRecorders.forEach(recorder => fields.push.apply(fields,recorder.getValues()));
       if (storageFile) storageFile.write(fields.join(",")+"\n");
     } catch(e) {
@@ -178,28 +196,20 @@
   }
 
   // Called by the GPS app to reload settings and decide what to do
-  function reload() {
+  let reload = function() {
     var settings = loadSettings();
-    if (writeInterval) clearInterval(writeInterval);
-    writeInterval = undefined;
+    if (typeof writeSetup === "number") clearInterval(writeSetup);
+    writeSetup = undefined;
+    Bangle.removeListener('GPS', writeLog);
 
     activeRecorders.forEach(rec => rec.stop());
     activeRecorders = [];
-    entriesWritten = 0;
 
     if (settings.recording) {
       // set up recorders
-      var recorders = getRecorders(); // TODO: order??
-      settings.record.forEach(r => {
-        var recorder = recorders[r];
-        if (!recorder) {
-          console.log(/*LANG*/"Recorder for "+E.toJS(r)+/*LANG*/"+not found");
-          return;
-        }
-        var activeRecorder = recorder();
+      activeRecorders = getActiveRecorders(settings);
+      activeRecorders.forEach(activeRecorder => {
         activeRecorder.start();
-        activeRecorders.push(activeRecorder);
-        // TODO: write field names?
       });
       WIDGETS["recorder"].width = 15 + ((activeRecorders.length+1)>>1)*12; // 12px per recorder
       // open/create file
@@ -209,13 +219,17 @@
       } else {
         storageFile = require("Storage").open(settings.file,"w");
         // New file - write headers
-        var fields = ["Time"];
-        activeRecorders.forEach(recorder => fields.push.apply(fields,recorder.fields));
-        storageFile.write(fields.join(",")+"\n");
+        storageFile.write(getCSVHeaders(activeRecorders).join(",")+"\n");
       }
       // start recording...
       WIDGETS["recorder"].draw();
-      writeInterval = setInterval(writeLog, settings.period*1000);
+      writeSubSecs = settings.period===1;
+      if (settings.period===1 && settings.record.includes("gps")) {
+        Bangle.on('GPS', writeLog);
+        writeSetup = true;
+      } else {
+        writeSetup = setInterval(writeLog, settings.period*1000, settings.period);
+      }
     } else {
       WIDGETS["recorder"].width = 0;
       storageFile = undefined;
@@ -223,65 +237,123 @@
   }
   // add the widget
   WIDGETS["recorder"]={area:"tl",width:0,draw:function() {
-    if (!writeInterval) return;
-    g.reset();    g.drawImage(atob("DRSBAAGAHgDwAwAAA8B/D/hvx38zzh4w8A+AbgMwGYDMDGBjAA=="),this.x+1,this.y+2);
+    if (!writeSetup) return;
+    g.reset().drawImage(atob("DRSBAAGAHgDwAwAAA8B/D/hvx38zzh4w8A+AbgMwGYDMDGBjAA=="),this.x+1,this.y+2);
     activeRecorders.forEach((recorder,i)=>{
       recorder.draw(this.x+15+(i>>1)*12, this.y+(i&1)*12);
     });
   },getRecorders:getRecorders,reload:function() {
     reload();
     Bangle.drawWidgets(); // relayout all widgets
-  },setRecording:function(isOn, forceAppend) {
+  },isRecording:function() {
+    return !!writeSetup;
+  },setRecording:function(isOn, options) {
+    /* options = {
+      force : [optional] "append"/"new"/"overwrite" - don't ask, just do what's requested
+    } */
     var settings = loadSettings();
-    if (isOn && !settings.recording && !settings.file) {
-      settings.file = "recorder.log0.csv";
-    } else if (isOn && !forceAppend && !settings.recording && require("Storage").list(settings.file).length){
-      var logfiles=require("Storage").list(/recorder.log.*/);
-      var maxNumber=0;
-      for (var c of logfiles){
-          maxNumber = Math.max(maxNumber, c.match(/\d+/)[0]);
+    options = options||{};
+    if (isOn && !settings.recording) {
+      var date=(new Date()).toISOString().substr(0,10).replace(/-/g,""), trackNo=10;
+      function getTrackFilename() { return "recorder.log" + date + trackNo.toString(36) + ".csv"; }
+      if (!settings.file || !settings.file.startsWith("recorder.log" + date)) {
+        // if no filename set or date different, set up a new filename
+        settings.file = getTrackFilename();
       }
-      var newFileName;
-      if (maxNumber < 99){
-        newFileName="recorder.log" + (maxNumber + 1) + ".csv";
-        updateSettings(settings);
-      }
-      var buttons={/*LANG*/"Yes":"overwrite",/*LANG*/"No":"cancel"};
-      if (newFileName) buttons[/*LANG*/"New"] = "new";
-      buttons[/*LANG*/"Append"] = "append";
-      return E.showPrompt(/*LANG*/"Overwrite\nLog " + settings.file.match(/\d+/)[0] + "?",{title:/*LANG*/"Recorder",buttons:buttons}).then(selection=>{
-        if (selection==="cancel") return false; // just cancel
-        if (selection==="overwrite")
-          require("Storage").open(settings.file,"r").erase();
-        if (selection==="new"){
-          settings.file = newFileName;
-          updateSettings(settings);
+      var headers = require("Storage").open(settings.file,"r").readLine();
+      if (headers){ // if file exists
+        if(headers.trim()!==getCSVHeaders(getActiveRecorders(settings)).join(",")){
+          // headers don't match, reset (#3081)
+          options.force = "new";
         }
-        // if (selection==="append") // we do nothing - all is fine
-        return WIDGETS["recorder"].setRecording(1,true/*force append*/);
-      });
+        if (!options.force) { // if not forced, ask the question
+          g.reset(); // work around bug in 2v17 and earlier where bg color wasn't reset
+          return E.showPrompt(
+                    /*LANG*/"Overwrite\nLog " + settings.file.match(/^recorder\.log(.*)\.csv$/)[1] + "?",
+                    { title:/*LANG*/"Recorder",
+                      buttons:{/*LANG*/"Yes":"overwrite",/*LANG*/"No":"cancel",/*LANG*/"New":"new",/*LANG*/"Append":"append"}
+                    }).then(selection=>{
+            if (selection==="cancel") return false; // just cancel
+            if (selection==="overwrite") return WIDGETS["recorder"].setRecording(1,{force:"overwrite"});
+            if (selection==="new") return WIDGETS["recorder"].setRecording(1,{force:"new"});
+            if (selection==="append") return WIDGETS["recorder"].setRecording(1,{force:"append"});
+            throw new Error("Unknown response!");
+          });
+        } else if (options.force=="append") {
+          // do nothing, filename is the same - we are good
+        } else if (options.force=="overwrite") {
+          // wipe the file
+          require("Storage").open(settings.file,"r").erase();
+        } else if (options.force=="new") {
+          // new file - use the current date
+          var newFileName;
+          do { // while a file exists, add one to the letter after the date
+            newFileName = getTrackFilename();
+            trackNo++;
+          } while (require("Storage").list(newFileName).length);
+          settings.file = newFileName;
+        } else throw new Error("Unknown options.force, "+options.force);
+      }
     }
     settings.recording = isOn;
     updateSettings(settings);
     WIDGETS["recorder"].reload();
     return Promise.resolve(settings.recording);
-  }/*,plotTrack:function(m) { // m=instance of openstmap module
-    // if we're here, settings was already loaded
-    var f = require("Storage").open(settings.file,"r");
-    var l = f.readLine(f);
-    if (l===undefined) return;
-    var c = l.split(",");
-    var mp = m.latLonToXY(+c[1], +c[2]);
-    g.moveTo(mp.x,mp.y);
-    l = f.readLine(f);
-    while(l!==undefined) {
-      c = l.split(",");
-      mp = m.latLonToXY(+c[1], +c[2]);
-      g.lineTo(mp.x,mp.y);
-      g.fillCircle(mp.x,mp.y,2); // make the track more visible
-      l = f.readLine(f);
+  },plotTrack:function(m, options) { // m=instance of openstmap module
+    /* Plots the current track in the currently set color.
+      options can be {
+        async: if true, plots the path a bit at a time - returns an object with a 'stop' function to stop
+        callback: a function to call back when plotting is finished
+      }
+     */
+    options = options||{};
+    var settings = loadSettings();
+    if (!settings.file) return; // no file specified
+    // keep function to draw track in RAM
+    function plot(g) { "ram";
+      var f = require("Storage").open(settings.file,"r");
+      var l = f.readLine();
+      if (l===undefined) return; // empty file?
+      var mp, c = l.split(",");
+      var la=c.indexOf("Latitude"),lo=c.indexOf("Longitude");
+      if (la<0 || lo<0) return; // no GPS!
+      l = f.readLine();c=[];
+      while (l && !c[la]) {
+        c = l.split(",");
+        l = f.readLine(f);
+      }
+      var asyncTimeout;
+      var color = g.getColor();
+      function plotPartial() {
+        asyncTimeout = undefined;
+        if (l===undefined) return; // empty file?
+        mp = m.latLonToXY(+c[la], +c[lo]);
+        g.moveTo(mp.x,mp.y).setColor(color);
+        l = f.readLine(f);
+        var n = options.async ? 10 : 200; // only plot first 200 points to keep things fast(ish)
+        while(l && n--) {
+          c = l.split(",");
+          if (c[la]) {
+            mp = m.latLonToXY(+c[la], +c[lo]);
+            g.lineTo(mp.x,mp.y);
+          }
+          l = f.readLine(f);
+        }
+        if (options.async && n<0)
+          asyncTimeout = setTimeout(plotPartial, 20);
+        else if (options.callback) options.callback();
+      }
+      plotPartial();
+      if (options.async) return {
+        stop : function() {
+          if (asyncTimeout) clearTimeout(asyncTimeout);
+          asyncTimeout = undefined;
+          if (options.callback) options.callback();
+        }
+      };
     }
-  }*/};
+    return plot(g);
+  }};
   // load settings, set correct widget width
   reload();
-})()
+}

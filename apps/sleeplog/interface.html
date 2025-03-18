@@ -1,0 +1,220 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+  </head>
+  <body>
+    <div id="table"></div>
+    <div id="view"></div>
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+var domTable = document.getElementById("table");
+var domView = document.getElementById("view");
+
+function viewLog(logData, filename) {
+  domView.innerHTML = "";
+  var html = `
+    <div class="container">
+      <h4><b>Viewing data of:</b> ` + filename + `</h4>
+    </div>
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Duration</th>
+          <th>Status</th>
+          <th>Sleep</th>
+        </tr>
+      </thead>
+      <tbody>`;
+  logData.forEach((entry, index, log) => {
+    var duration = ((log[index + 1] || [Math.floor(Date.now() / 6E5)])[0] - entry[0]) * 10;
+    html += `
+        <tr style="text-align: center">
+          <td style="text-align: right">` +
+            new Date(entry[0] * 6E5).toLocaleDateString(undefined) + `
+          </td>
+          <td>` +
+            new Date(entry[0] * 6E5).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) + `
+          </td>
+          <td style="text-align: right"><div class="container"` +
+            (duration >= 60 ? ` style="background-color: hsl(192, 50%, ` +
+              (duration > 480 ? 50 : 100 - Math.floor(duration / 60) * 50 / 8) +
+              `%)">` : `>`) +
+            duration + ` min
+          </td>
+          <td><div class="container" style="background-color: ` +
+            ["orange", "lightcoral", "lightgreen", "lightcyan", "lightskyblue"][entry[1]] + `">` +
+            ["unknown", "not worn", "awake", "light sleep", "deep sleep"][entry[1]] + `
+          </div></td>
+          <td><div class="container" style="background-color: ` +
+            ["orange", "lightgreen", "lightskyblue"][entry[2]] + `">` +
+            ["unknown", "non consecutive", "consecutive"][entry[2]] + `
+          </div></td>
+        </tr>`
+    });
+  html += `
+      </tbody>
+    </table>`;
+  domView.innerHTML = html;
+}
+
+function saveCSV(logData, date0, date1) {
+  var csvTime = document.getElementById("csvTime").selectedIndex;
+  var filename = "sleeplog_" +
+    new Date(date0).toISOString().substr(0, 10) + "_" +
+    new Date(date1).toISOString().substr(5, 5);
+  logData = logData.map(entry => {
+    entry[0] *= 6E5;
+    if (csvTime === 1) entry[0] /= 1E3;
+    if (csvTime === 2) entry[0] = entry[0] / 864E5 + 25569;
+    return entry.join(",");
+  }).join("\n");
+  Util.saveCSV(filename, "time,sleep,consecutive\n" + logData);
+}
+
+function readLog(date, callback) {
+  Util.showModal("Downloading logged data...");
+  Puck.eval(`require("sleeplog").readLog(` + date + `, ` + date + ` + 12096E5)`, logData => {
+    Util.hideModal();
+    callback(logData);
+  });
+}
+
+function deleteFile(filename, callback) {
+  if (window.confirm("Do you really want to remove " + filename)) {
+    Util.showModal("Deleting " + filename + " ...");
+    if (filename.endsWith(" (StorageFile)")) {
+      Util.eraseStorageFile(filename, () => {
+        Util.hideModal();
+        callback();
+      });
+    } else {
+      Util.eraseStorage(filename, () => {
+        Util.hideModal();
+        callback();
+      });
+    }
+  }
+}
+
+function deleteBefore(dateString, callback) {
+  date = new Date(dateString);
+  if (window.confirm("Do you really want to remove all data before " + date.toLocaleDateString(undefined))) {
+    Util.showModal("Deleting all data before" + date.toLocaleDateString(undefined) + " ...");
+    Puck.eval(`require("Storage").list(/^sleeplog_\\d+.log$/)` +
+      `.filter(file => (parseInt(file.match(/\\d+/)[0]) + 0.25) * 12096E5 < ` + date.valueOf() + ` - 12096E5)` +
+      `.map(file => require("Storage").erase(file)).length`, count => {
+      Util.hideModal();
+      window.alert(count + " files deleted");
+      callback();
+    })
+  }
+}
+
+function viewFiles() {
+  Util.showModal("Loading...");
+  domTable.innerHTML = "";
+  Puck.eval(`require("Storage").list(/^sleeplog_\\d+.log$/)`, files => {
+    // add active log
+    files.push("" + Math.floor(Date.now() / 12096E5 - 0.25));
+    files = files.map(file => { return {
+      filename: file.length === 4 ? "sleeplog.log (StorageFile)" : file,
+      date: (parseInt(file.match(/\d+/)[0]) + 0.25) * 12096E5
+    }});
+    files = files.sort((a, b) => a.date - b.date);
+    var html = `
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>File</th>
+          <th>from</th>
+          <th>to</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>`;
+    files.forEach(file => { html += `
+        <tr>
+          <td>${file.filename}</td>
+          <td>${new Date(file.date).toLocaleDateString(undefined)}</td>
+          <td>${new Date(file.date + 12096E5).toLocaleDateString(undefined)}</td>
+          <td>
+            <button class="btn btn-sm tooltip" data-tooltip="view data" task="view" filename="${file.filename}" date="${file.date}">
+              <i class="icon icon-caret"></i>
+            </button>
+            <button class="btn btn-sm tooltip btn-primary" data-tooltip="save csv-file" task="csv" filename="${file.filename}" date="${file.date}">
+              <i class="icon icon-download"></i>
+            </button>
+            <button class="btn btn-sm tooltip btn-error" data-tooltip="delete file" task="del" filename="${file.filename}" date="${file.date}">
+              <i class="icon icon-delete"></i>
+            </button>`;
+      html += `
+          </td>
+        </tr>`;
+    });
+    html += `
+      </tbody>
+    </table>
+    <div class="container">
+      <form class="form-horizontal">
+        <div class="form-group">
+          <div class="col-sm-12">
+            <label class="form-label"><b>csv time format</b></label>
+          </div>
+          <div class="col-sm-12">
+            <select class="form-select" id="csvTime">
+              <option>JavaScript (milliseconds since 1970)</option>
+              <option>UNIX (seconds since 1970)</option>
+              <option>Office (days since 1900)</option>
+            </select>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="container">
+      <form class="form-horizontal">
+        <div class="form-group">
+          <div class="col-sm-12">
+            <label class="form-label"><b>Delete all logfiles before</b></label>
+          </div>
+          <div class="col-sm-10">
+            <input class="form-input" id="delBeforeDate" type="date" value="2022-01-01">
+          </div>
+          <div class="col-mx-auto">
+            <button class="btn tooltip btn-error" data-tooltip="delete old files" task="delBefore">
+              <i class="icon icon-delete"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>`;
+    domTable.innerHTML = html;
+    Util.hideModal();
+    var buttons = domTable.querySelectorAll("button");
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].addEventListener("click", event => {
+        var button = event.currentTarget;
+        var task = button.getAttribute("task");
+        if (task === "delBefore") {
+          deleteBefore(document.getElementById("delBeforeDate").value, () => viewFiles());
+        } else {
+          var filename = button.getAttribute("filename");
+          var date = button.getAttribute("date") - 0;
+          if (!task || !filename || !date) return;
+          if (task === "view") readLog(date, logData => viewLog(logData, filename));
+          else if (task === "csv") readLog(date, logData => saveCSV(logData, date, date + 12096E5));
+          else if (task === "del") deleteFile(filename, () => viewFiles());
+        }
+      });
+    }
+  });
+}
+
+function onInit() {
+  viewFiles();
+}
+    </script>
+  </body>
+</html>

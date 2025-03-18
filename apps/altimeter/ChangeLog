@@ -1,2 +1,4 @@
 0.01: New App!
 0.02: Actually upload correct code
+0.03: Display sea-level pressure, too, and allow calibration
+0.04: Switch to using system code for pressure calibration

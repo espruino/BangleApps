@@ -1,32 +1,40 @@
+{
 // Berlin Clock see https://en.wikipedia.org/wiki/Mengenlehreuhr
 // https://github.com/eska-muc/BangleApps
+
+var settings = require('Storage').readJSON("berlinc.json", true) || {};
 const fields = [4, 4, 11, 4];
-const offset = 24;
-const width = g.getWidth() - 2 * offset;
-const height = g.getHeight() - 2 * offset;
-const rowHeight = height / 4;
 
-var show_date = false;
-var show_time = false;
-var yy = 0;
+let fullscreen = !!settings.fullscreen;
 
-var rowlights = [];
-var time_digit = [];
+let show_date = false;
+let show_time = false;
+
+let rowlights = [];
+let time_digit = [];
 
 // timeout used to update every minute
-var drawTimeout;
+let drawTimeout;
 
 // schedule a draw for the next minute
-function queueDraw() {
+let queueDraw = () => {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
     draw();
   }, 60000 - (Date.now() % 60000));
-}
+};
 
-function draw() {
-  g.reset().clearRect(0,24,g.getWidth(),g.getHeight());
+let draw = () => {
+  let width = Math.min(Bangle.appRect.w,Bangle.appRect.h);
+  let height = width;
+  let offset = g.getHeight() - height;
+  let x = Math.floor((g.getWidth() - width)/2);
+
+  if (show_date) height -= 8;
+  let rowHeight = (height - 1) / 4;
+  g.setBgColor(g.theme.bg);
+  g.reset().clearRect(Bangle.appRect);
   var now = new Date();
 
   // show date below the clock
@@ -37,7 +45,7 @@ function draw() {
     var dateString = `${yr}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
     var strWidth = g.stringWidth(dateString);
     g.setColor(g.theme.fg).setFontAlign(-1,-1);
-    g.drawString(dateString, ( g.getWidth() - strWidth ) / 2, height + offset + 4);
+    g.drawString(dateString, ( Bangle.appRect.x + Bangle.appRect.w - strWidth ) / 2, Bangle.appRect.y2 - 5);
   }
 
   rowlights[0] = Math.floor(now.getHours() / 5);
@@ -50,15 +58,16 @@ function draw() {
   time_digit[2] = Math.floor(now.getMinutes() / 10);
   time_digit[3] = now.getMinutes() % 10;
 
-  g.drawRect(offset, offset, width + offset, height + offset);
+  g.setColor(g.theme.fg);
+  g.drawRect(x, offset, x + width - 1, height + offset - 1);
   for (row = 0; row < 4; row++) {
     nfields = fields[row];
-    boxWidth = width / nfields;
+    boxWidth = (width - 1) / nfields;
 
     for (col = 0; col < nfields; col++) {
-      x1 = col * boxWidth + offset;
+      x1 = col * boxWidth + x;
       y1 = row * rowHeight + offset;
-      x2 = (col + 1) * boxWidth + offset;
+      x2 = (col + 1) * boxWidth + x;
       y2 = (row + 1) * rowHeight + offset;
 
       g.setColor(g.theme.fg).drawRect(x1, y1, x2, y2);
@@ -84,33 +93,53 @@ function draw() {
   queueDraw();
 }
 
-function toggleDate() {
+let toggleDate = () => {
   show_date = ! show_date;
   draw();
 }
 
-function toggleTime() {
+let toggleTime = () => {
   show_time = ! show_time;
   draw();
 }
 
-// Stop updates when LCD is off, restart when on
-Bangle.on('lcdPower',on=>{
+let clear = () => {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = undefined;
+}
+
+let onLcdPower = on => {
   if (on) {
     draw(); // draw immediately, queue redraw
   } else { // stop draw timer
-    if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = undefined;
+    clear();
   }
-});
+}
+
+let cleanup = () => {
+  clear();
+  Bangle.removeListener("lcdPower", onLcdPower);
+  require("widget_utils").show();
+}
+
+// Stop updates when LCD is off, restart when on
+Bangle.on('lcdPower',onLcdPower);
 
 // Show launcher when button pressed, handle up/down
-Bangle.setUI("clockupdown", dir=> {
+Bangle.setUI({mode: "clockupdown", remove: cleanup}, dir=> {
   if (dir<0) toggleTime();
   if (dir>0) toggleDate();
 });
 
 g.clear();
 Bangle.loadWidgets();
+
+if (fullscreen){
+  if (process.env.HWVERSION == 2) require("widget_utils").swipeOn();
+  else require("widget_utils").hide();
+}
+
 Bangle.drawWidgets();
+
 draw();
+}

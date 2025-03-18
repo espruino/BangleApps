@@ -1,4 +1,4 @@
-var DateFormatter = require("slidingtext.dtfmt.js");
+const DateFormatter = require("slidingtext.dtfmt.js");
 
 /**
  * Japanese date formatting
@@ -28,21 +28,21 @@ const japaneseMinuteStr = [ ["", "PUN"],
 
 function japaneseHoursToText(hours){
     hours = hours % 12;
-    if(hours == 0){
+    if(hours === 0){
         hours = 12;
     }
     return japaneseHourStr[hours];
 }
 
 function japaneseMinsToText(mins){
-    if(mins == 0){
+    if(mins === 0){
         return ["",""];
-    } else if(mins == 30)
+    } else if(mins === 30)
         return ["HAN",""];
     else {
-        var units = mins % 10;
-        var mins_txt = japaneseMinuteStr[units];
-        var tens = mins /10 | 0;
+        const units = mins % 10;
+        const mins_txt = japaneseMinuteStr[units];
+        const tens = mins /10 | 0;
         if(tens > 0){
             var tens_txt = tensPrefixStr[tens];
             var minutes_txt;
@@ -59,12 +59,31 @@ function japaneseMinsToText(mins){
 }
 
 class JapaneseDateFormatter extends DateFormatter {
-    constructor() { super(); }
-    name(){return "Japanese (Romanji)";}
+    constructor() {
+        super();
+    }
     formatDate(date){
-        var hours_txt = japaneseHoursToText(date.getHours());
-        var mins_txt = japaneseMinsToText(date.getMinutes());
+        const hours_txt = japaneseHoursToText(date.getHours());
+        const mins_txt = japaneseMinsToText(date.getMinutes());
         return [hours_txt,"JI", mins_txt[0], mins_txt[1] ];
+    }
+    defaultRowTypes(){ return {}; }
+
+    defaultRowDefs(){
+        return [
+            {
+                type: 'large',
+                init_coords: [0.05,0.1],
+                row_direction: [0.0,1.0],
+                rows: 1
+            },
+            {
+                type: 'medium',
+                init_coords: [0.05,0.4],
+                row_direction: [0.0,1.0],
+                rows: 3
+            }
+        ];
     }
 }
 

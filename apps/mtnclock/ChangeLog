@@ -1,0 +1,5 @@
+0.01: New App!
+0.02: Get weather from weather.json
+0.03: Address unexpected undefined when reading weather.json
+0.04: Adding settings and the ability to show the widgets bar
+0.05: Fix the widgets disappearing on weather update

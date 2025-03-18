@@ -77,6 +77,11 @@ var clock = new ClockFace({
     resume: function() {   // optional, called when the screen turns on
       // for example: turn GPS/compass back on
     },
+    remove: function() {   // optional, used for Fast Loading
+      // for example: remove listeners
+      // Fast Loading will not be used unless this function is present,
+      // if there is nothing to clean up, you can just leave it empty.
+    },
     up: function() {   // optional, up handler
     },
     down: function() {   // optional, down handler
@@ -85,6 +90,7 @@ var clock = new ClockFace({
       if (dir === -1) // Up
       else // (dir === 1): Down
     },
+    settingsFile: 'appid.settings.json', // optional, values from file will be applied to `this`
   });
 clock.start();
 
@@ -110,11 +116,52 @@ clock.start();
 
 ```
 
+
+SettingsFile
+------------
+If you use the `settingsFile` option, values from that file are loaded and set
+directly on the clock.
+
+For example:
+
+```json
+// example.settings.json:
+{
+  "showDate": false,
+  "foo": 123
+}
+```
+```js
+   var ClockFace = require("ClockFace");
+   var clock = new ClockFace({
+     draw: function(){/*...*/},
+     settingsFile: "example.settings.json",
+   });
+   // now
+   clock.showDate === false;
+   clock.foo === 123;
+   clock.hideWidgets === 0; // default when not in settings file
+   clock.is12Hour === ??; // not in settings file: uses global setting
+   clock.start();
+
+```
+
 Properties
 ----------
 The following properties are automatically set on the clock:
 * `is12Hour`: `true` if the "Time Format" setting is set to "12h", `false` for "24h".
 * `paused`: `true` while the clock is paused.  (You don't need to check this inside your `draw()` code)
+* `showDate`: `true` (if not overridden through the settings file.)
+* `hideWidgets`: `0` (if not overridden through the settings file.)   
+   If set to `1` before calling `start()`, the clock calls `require("widget_utils")hide();` for you. 
+   (Bangle.js 2 only: `2` for swipe-down)
+   Best is to add a setting for this, but if you never want to show widgets, you could do this:
+   ```js
+   var ClockFace = require("ClockFace");
+   var clock = new ClockFace({draw: function(){/*...*/}});
+   clock.hideWidgets = 1; // hide widgets
+   clock.start();
+   ```
 
 Inside the `draw()`/`update()` function you can access these using `this`:
 
@@ -132,5 +179,43 @@ clock.start();
 Bangle.on('step', function(steps) {
   if (clock.paused === false) // draw step count
 });
+
+```
+
+
+ClockFace_menu
+==============
+If your clock comes with a settings menu, you can use this library to easily add
+some common options:
+
+```js
+
+let settings = require("Storage").readJSON("<appid>.settings.json", true)||{};
+function save(key, value) {
+  settings[key] = value;
+  require("Storage").writeJSON("<appid>.settings.json", settings);
+}
+
+let menu = {
+  "": {"title": /*LANG*/"<clock name> Settings"},
+};
+require("ClockFace_menu").addItems(menu, save, { 
+  showDate: settings.showDate, 
+  hideWidgets: settings.hideWidgets,
+});
+E.showMenu(menu);
+
+```
+
+Or even simpler, if you just want to use a basic settings file:
+```js
+let menu = {
+  "": {"title": /*LANG*/"<clock name> Settings"},
+  /*LANG*/"< Back": back,  
+};
+require("ClockFace_menu").addSettingsFile(menu, "<appid>.settings.json", [ 
+  "showDate", "hideWidgets", "powerSave",
+]);
+E.showMenu(menu);
 
 ```

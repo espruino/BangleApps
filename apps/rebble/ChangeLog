@@ -6,3 +6,14 @@
 0.06: Add 12h support and autocycle control
 0.07: added localization, removed deprecated code
 0.08: removed unused font, fix autocycle,  imported suncalc and trimmed, removed pedometer dependency, "tap to cycle" setting
+0.09: fix battery icon size
+0.10: Tell clock widgets to hide.
+0.11: fix issue https://github.com/espruino/BangleApps/issues/2128 (#2128) ( settings undefined )
+0.12: implemented widget_utils
+0.13: convert var/function into let
+0.14: cleanup code and fix fastload issue
+0.15: fix draw before widget hide
+0.16: Use 'modules/suncalc.js' to avoid it being copied 8 times for different apps
+0.17: Add fullscreen option (on by default) to show widgets, adjust sidebar 1 and 2 when fullscreen is off
+0.18: Minor code improvements
+0.19: Fix steps counter text white when it should be black

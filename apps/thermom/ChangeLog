@@ -4,3 +4,5 @@
 0.05: Use temperature from current locale
       Update every 10s, average last 5 readings
       Changes based on #1092
+0.06: Minor tweaks for stability. Update every 5 seconds
+0.07: Add back button

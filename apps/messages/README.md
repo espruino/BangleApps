@@ -1,61 +1,73 @@
-# Messages app
+# Messages library
 
-This app handles the display of messages and message notifications. It stores
-a list of currently received messages and allows them to be listed, viewed,
-and responded to.
+This library handles the passing of messages. It can stores a list of messages
+and allows them to be retrieved by other apps.
 
-It is a replacement for the old `notify`/`gadgetbridge` apps.
+## Example
+
+Assuming you are using GadgetBridge and "overlay notifications":
+
+1. Gadgetbridge sends an event to your watch for an incoming message
+2. The `android` app parses the message, and calls `require("messages").pushMessage({/** the message */})`
+3. `require("messages")` calls `Bangle.emit("message", "text", {/** the message */})`
+4. Overlay Notifications shows the message in an overlay, and marks it as `handled`
+5. The default UI app (Message UI, `messagegui`) sees the event is marked as `handled`, so does nothing.
+6. The default widget (`widmessages`) does nothing with `handled`, and shows a notification icon.
+7. You tap the notification, in order to open the full GUI: Overlay Notifications
+   calls `require("messages").openGUI({/** the message */})`
+8. `openGUI` calls `require("messagegui").open(/** copy of the message */)`.
+9. The `messagegui` library loads the Message UI app.
+
+
+
+## Events
+
+When a new message arrives, a `"message"` event is emitted, you can listen for
+it like this:
+
+```js
+myMessageListener = Bangle.on("message", (type, message)=>{
+  if (message.handled) return; // another app already handled this message
+  // <type> is one of "text", "call", "alarm", "map", or "music"
+  // see `messages/lib.js` for possible <message> formats
+  // message.t could be "add", "modify" or "remove"
+  E.showMessage(`${message.title}\n${message.body}`, `${message.t} ${type} message`);
+  // You can prevent the default `message` app from loading by setting `message.handled = true`:
+  message.handled = true;
+});
+```
+
+Apps can launch the currently installed Message GUI by calling `require("messages").openGUI()`.
+If you want to write your own GUI, it should include a library called `messagegui`
+with a method called `open` that will cause it to be opened, with the
+optionally supplied message. See `apps/messagegui/lib.js` for an example.
+
 
 ## Settings
 
-You can change settings by going to the global `Settings` app, then `App Settings`
-and `Messages`:
+You can configure settings by going to `Settings ->  Apps -> Messages`
 
-* `Vibrate` - This is the pattern of buzzes that should be made when a new message is received
-* `Repeat` - How often should buzzes repeat - the default of 4 means the Bangle will buzz every 4 seconds
-* `Unread Timer` - When a new message is received we go into the Messages app.
-If there is no user input for this amount of time then the app will exit and return
-to the clock where a ringing bell will be shown in the Widget bar.
-* `Min Font` - The minimum font size used when displaying messages on the screen. A bigger font
-is chosen if there isn't much message text, but this specifies the smallest the font should get before
-it starts getting clipped.
-* `Auto-Open Music` - Should the app automatically open when the phone starts playing music?
-* `Unlock Watch` - Should the app unlock the watch when a new message arrives, so you can touch the buttons at the bottom of the app?
-* `Flash Icon` - Toggle flashing of the widget icon.
+There are several options to choose from:
 
-## New Messages
-
-When a new message is received:
-
-* If you're in an app, the Bangle will buzz and a 'new message' icon appears in the Widget bar. You can tap this bar to view the message.
-* If you're in a clock, the Messages app will automatically start and show the message
-
-When a message is shown, you'll see a screen showing the message title and text.
-
-* The 'back-arrow' button (or physical button on Bangle.js 2) goes back to Messages, marking the current message as read.
-* The top-left icon shows more options, for instance deleting the message of marking unread
-* On Bangle.js 2 you can tap on the message body to view a scrollable version of the title and text (or can use the top-left icon + `View Message`)
-* If shown, the 'tick' button:
-   * **Android** opens the notification on the phone
-   * **iOS** responds positively to the notification (accept call/etc)
-* If shown, the 'cross' button:
-   * **Android** dismisses the notification on the phone
-   * **iOS** responds negatively to the notification (dismiss call/etc)
-
-## Images
-_1. Screenshot of a notification_
-
-![](screenshot.png)
-
-_2. What the notify icon looks like (it's touchable on Bangle.js2!)_
-
-![](screenshot-notify.gif)
-
-
+* **Vibrate** : Vibration pattern to use for messages
+* **Vibrate for calls** : Vibration pattern to use for calls
+* **Repeat** : How many times to vibrate for messages
+* **Repeat for calls** : How many times to vibrate for calls
+* **Vibrate timer** : How many seconds should we vibrate for?
+* **Unread timer** : How long should the Messages app show an unread message for before going back to the clock?
+* **Min Font** : Minimum font size for messages
+* **Auto-Open Music** : Should the messages music screen auto open when music is played?
+* **Unlock Watch** : When a message arrives should the watch be unlocked?
+* **Flash Icon** : Should the messages icon in the widget flash when a message arrives?
+* **Quiet mode disables auto-open** : When in quiet mode, should we not open the messages app for new messages?
+* **Disable auto-open** : Should we not open the messages app for new messages?
+* **Widget messages** : How many message icons should the widget show?
+* **Icon color mode** : Should icons in widgets be coloured?
+* **Car driver pos** : What side of the car is the driver on? This affects navigation icons for roundabouts
 
 ## Requests
 
-Please file any issues on https://github.com/espruino/BangleApps/issues/new?title=messages%20app
+Please file any issues on https://github.com/espruino/BangleApps/issues/new?title=[messages]%20library
 
 ## Creator
 

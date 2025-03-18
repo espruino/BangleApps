@@ -1,8 +1,8 @@
 {
   "id": "widclk",
   "name": "Digital clock widget",
-  "version": "0.06",
-  "description": "A simple digital clock widget",
+  "version": "0.08",
+  "description": "A simple digital clock widget that appears when not showing a fullscreen clock",
   "icon": "widget.png",
   "type": "widget",
   "tags": "widget,clock",

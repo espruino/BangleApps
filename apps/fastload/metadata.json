@@ -1,0 +1,16 @@
+{ "id": "fastload",
+  "name": "Fastload Utils",
+  "shortName" : "Fastload Utils",
+  "version": "0.06",
+  "icon": "icon.png",
+  "description": "Enable experimental fastloading for more apps",
+  "type":"bootloader",
+  "tags": "system",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"fastload.5.boot.js","url":"boot.js"},
+    {"name":"fastload.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"fastload.json"}]
+}

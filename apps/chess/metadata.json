@@ -1,0 +1,17 @@
+{
+  "id": "chess",
+  "name": "Chess",
+  "shortName": "Chess",
+  "version": "0.05",
+  "description": "Chess game based on the [p4wn engine](https://p4wn.sourceforge.net/). Drag on the touchscreen to move the green cursor onto a piece, select it with a single touch and drag the now red cursor around. Release the piece with another touch to finish the move. The button opens a menu.",
+  "icon": "app.png",
+  "tags": "game",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"chess.app.js","url":"app.js"},
+    {"name":"chessengine","url":"engine.js"},
+    {"name":"chess.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"chess.json"}],
+  "screenshots": [ {"url":"screenshot.png"} ]
+}

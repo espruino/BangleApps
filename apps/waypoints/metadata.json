@@ -1,0 +1,21 @@
+{ "id": "waypoints",
+  "name": "Waypoints",
+  "version": "0.10",
+  "description": "Provides 'waypoints.json' used by various navigation apps, as well as a way to edit it from the App Loader or from the device",
+  "icon": "app.png",
+  "tags": "tool,outdoors,gps",
+  "supports" : ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "storage": [
+    {"name":"waypoints.app.js","url":"waypoints.app.js"},
+    {"name":"waypoints.img","url":"app-icon.js","evaluate":true},
+    {"name":"waypoints","url":"lib.js"}
+  ],
+  "data": [
+    {"name":"waypoints.json","url":"waypoints.json"},
+    {"name":"waypoints.1.json"},
+    {"name":"waypoints.2.json"},
+    {"name":"waypoints.3.json"}
+  ]
+}

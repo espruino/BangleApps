@@ -1,0 +1,19 @@
+0.01: Basic agenda with events from GB
+0.02: Added settings page to force calendar sync
+0.03: Disable past events display from settings
+0.04: Added awareness of allDay field
+0.05: Displaying calendar colour and name
+0.06: Added clkinfo for clocks.
+0.07: Clkinfo improvements.
+0.08: Fix error in clkinfo (didn't require Storage & locale)
+      Fix clkinfo icon
+0.09: Ensure Agenda supplies an image for clkinfo items
+0.10: Update clock_info to avoid a redraw
+0.11: Setting to use "Today" and "Yesterday" instead of dates
+      Added dynamic, short and range fields to clkinfo
+0.12: Added color field and updating clkinfo periodically (running events)
+0.13: Show day of the week in date
+0.14: Fixed "Today" and "Yesterday" wrongly displayed for allDay events on some time zones
+0.15: Minor code improvements
+0.16: Correct date for all day events in negative timezones, improve locale display
+0.17: Fixed "Today" and "Tomorrow" labels displaying in non-current weeks

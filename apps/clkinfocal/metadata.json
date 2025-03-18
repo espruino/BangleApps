@@ -1,0 +1,15 @@
+{ "id": "clkinfocal",
+  "name": "Calendar Clockinfo",
+  "version":"0.05",
+  "description": "For clocks that display 'clockinfo' (messages that can be cycled through using the clock_info module) this displays the day of the month in the icon, and the weekday. There is also a settings menu to select the format of the text",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clkinfo",
+  "tags": "clkinfo,calendar",
+  "supports" : ["BANGLEJS2"],
+  "storage": [
+    {"name":"clkinfocal.clkinfo.js","url":"clkinfo.js"},
+    {"name":"clkinfocal.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"clkinfocal.json"}]
+}

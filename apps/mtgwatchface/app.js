@@ -182,6 +182,6 @@ NRF.on('connect', draw);
 NRF.on('disconnect', draw);
 Bangle.on("charging", draw);
 
-var redrawTimerId = setInterval(function(){
+setInterval(function(){
    draw();
 }, 60000);

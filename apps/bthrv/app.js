@@ -1,4 +1,4 @@
-var btm = g.getHeight()-1;
+//var btm = g.getHeight()-1;
 var ui = false;
 
 function clear(y){
@@ -10,7 +10,7 @@ var startingTime;
 var currentSlot = 0;
 var hrvSlots = [10,20,30,60,120,300];
 var hrvValues = {};
-var rrRmsProgress;
+//var rrRmsProgress;
 
 var rrNumberOfValues = 0;
 var rrSquared = 0;
@@ -120,7 +120,7 @@ function resetHrv(){
 }
 
 
-var settings = require('Storage').readJSON("bthrm.json", true) || {};
+//var settings = require('Storage').readJSON("bthrm.json", true) || {};
 
 g.clear();
 Bangle.loadWidgets();

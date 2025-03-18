@@ -1,0 +1,66 @@
+
+- is path projection wrong for high res ?
+
+medium TODO:
+
+- prefetch tiles ?
+- update documentation to reflect new display ?
+- add an image for the arrow ?
+
+*** thoughts on lcd power ***
+
+so, i tried experimenting with turning the lcd off in order to save power.
+
+the good news: this saves a lot. i did a 3h ride which usually depletes the battery and I still had
+around two more hours to go.
+
+now the bad news:
+
+- i had to de-activate the twist detection : you cannot raise your watch to the eyes to turn it on.
+that's because with twist detection on all road bumps turn the watch on constantly.
+- i tried manual detection like :
+
+Bangle.on('accel', function(xyz) { 
+
+  if (xyz.diff > 0.4 && xyz.mag > 1 && xyz.z < -1.4) {
+      Bangle.setLCDPower(true);
+      Bangle.setLocked(false);
+  }
+
+});
+
+this works nicely when you sit on a chair with a simulated gps signal but does not work so nicely when on the bike.
+sometimes it is ok, sometimes you can try 10 times with no success.
+
+- instead i use screen touch to turn it on. that's a bother since you need two hands but well it could be worth it.
+the problem is in the delay: between 1 and 5 seconds before the screen comes back on.
+
+
+my conclusion is that:
+
+* we should not turn screen off unless we agree to have an unresponsive ui
+* we should maybe autowake near segments ends and when lost 
+* we should play with backlight instead
+
+
+**************************
+
+JIT: array declaration in jit is buggy
+(especially several declarations)
+
+**************************
+
++ try disabling gps for more powersaving
+
++ when you walk the direction still has a tendency to shift
+
++ put back foot only ways
++ put back street names
++ put back shortest paths but with points cache this time and jit
++ how to display paths from shortest path ?
+
+
+misc:
++ use Bangle.project(latlong)
+
+

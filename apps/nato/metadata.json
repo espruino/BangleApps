@@ -2,7 +2,7 @@
   "id": "nato",
   "name": "NATO Alphabet",
   "shortName": "NATOAlphabet",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Learn the NATO Phonetic alphabet plus some numbers.",
   "icon": "nato.png",
   "type": "app",

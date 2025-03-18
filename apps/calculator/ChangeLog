@@ -3,3 +3,6 @@
 0.03: Support for different screen sizes and touchscreen
 0.04: Display current operation on LHS
 0.05: Grid positioning and swipe controls to switch between numbers, operators and special (for Bangle.js 2)
+0.06: Bangle.js 2: Exit with a short press of the physical button
+0.07: Bangle.js 2: Exit by pressing upper left corner of the screen
+0.08: truncate long numbers (and append '...' to displayed value)

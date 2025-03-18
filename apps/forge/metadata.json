@@ -1,0 +1,13 @@
+{ "id": "forge",
+  "name": "App Forge",
+  "version": "0.03",
+  "description": "Easy way to run development versions of your apps",
+  "icon": "app.png",
+  "readme": "README.md",
+  "supports" : ["BANGLEJS2"],
+  "tags": "tool",
+  "storage": [
+      {"name":"forge.app.js","url":"forge.app.js"},
+      {"name":"forge.img","url":"app-icon.js","evaluate":true}
+  ]
+}

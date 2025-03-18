@@ -5,7 +5,7 @@
   "description": "A detailed description of my great app",
   "icon": "app.png",
   "tags": "",
-  "supports" : ["BANGLEJS2"],  
+  "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"7chname.app.js","url":"app.js"},

@@ -1,0 +1,18 @@
+
+{
+    "id": "widalt",
+    "name": "Altimeter widget",
+    "version": "0.03",
+    "description": "Displays barometric altitude",
+    "readme": "README.md",
+    "icon": "widalt.png",
+    "type": "widget",
+    "tags": "widget",
+    "supports": ["BANGLEJS2"],
+    "allow_emulator":false,
+    "storage": [
+      {"name":"widalt.wid.js","url":"widalt.wid.js"},
+      {"name":"widalt.settings.js","url":"widalt.settings.js"}
+    ],
+    "data": [{"name":"widalt.json"}]
+  }

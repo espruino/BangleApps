@@ -1,0 +1,6 @@
+0.01: AdvCasio first version
+0.02: Remove un-needed fonts to improve memory usage
+0.03: Tell clock widgets to hide.
+0.04: Swipe down to see widgets, step counter now just uses getHealthStatus
+0.05: Report latest HRM rather than HRM 10 minutes ago (fix #2395)
+0.06: Use watch temperature

@@ -1,7 +1,7 @@
 {
   "id": "minionclk",
   "name": "Minion clock",
-  "version": "0.05",
+  "version": "0.06",
   "description": "Minion themed clock.",
   "icon": "minionclk.png",
   "type": "clock",

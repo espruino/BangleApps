@@ -1,0 +1,21 @@
+{
+  "id": "cassioWatch",
+  "name": "Cassio Watch",
+  "description": "Animated Clock with Space Cassio Watch Style",
+  "screenshots": [{ "url": "screens/screen_night.png" },{ "url": "screens/screen_day.png" }],
+  "icon": "app.png",
+  "version": "0.13",
+  "type": "clock",
+  "tags": "clock,weather,cassio,retro",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "readme": "README.md",
+  "storage": [
+    { "name": "cassioWatch.app.js", "url": "app.js" },
+    { "name": "cassioWatch.settings.js","url": "settings.js" },
+    { "name": "cassioWatch.img", "url": "icon.js", "evaluate": true }
+  ],
+  "data": [
+    { "name": "cassioWatch.settings.json" }
+  ]
+}

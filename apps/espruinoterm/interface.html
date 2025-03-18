@@ -1,0 +1,101 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-exp.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <style>
+    .badgeerror[data-badge]::after { background-color: red; }
+    </style>
+  </head>
+  <body>
+    <p>Enter the menu items you'd like to see appear in the app below. When finished, click `Save to Bangle.js` to save the JavaScript back.</p>
+    <div style="overflow-x:scroll">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Command</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+      </tbody>
+    </table>
+  </div>
+    <p><button id="save" class="btn btn-primary">Save to Bangle.js</button></p>
+
+    <script src="../../core/lib/interface.js"></script>
+
+    <script>
+      var options;
+      setDefaults();
+
+      function setDefaults() {
+        options = [
+          {title:"Version", cmd:"process.env.VERSION"},
+          {title:"Battery", cmd:"E.getBattery()"},
+          {title:"Flash LED", cmd:"LED.set();setTimeout(()=>LED.reset(),1000);"}
+        ];
+      }
+
+      function refresh() {
+        var tbody = document.getElementById("tbody");
+        tbody.innerHTML = "";
+        options.forEach((option,idx)=>{
+          var tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><input type="text" name="title"></td>
+            <td><input type="text" name="command"></td>
+            <td><button class="btn btn-action"><i class="icon icon-delete"></i></button></td>
+          `;
+          var titleInput = tr.children[0].firstChild;
+          titleInput.value = option.title;
+          titleInput.addEventListener("change", function(e) {
+            option.title = titleInput.value;
+          });
+          var cmdInput = tr.children[1].firstChild;
+          cmdInput.value = option.cmd;
+          cmdInput.addEventListener("change", function(e) {
+            option.cmd = cmdInput.value;
+          });
+          tr.children[2].firstChild.addEventListener("click", function() {
+            options.splice(idx,1);
+            refresh();
+          });
+          tbody.appendChild(tr);
+        });
+        var tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><button class="btn">Reset to Defaults</button></td>
+          <td></td>
+          <td><button class="btn btn-action"><i class="icon icon-plus"></i></button></td>
+        `;
+        tr.children[0].firstChild.addEventListener("click", function() {
+          setDefaults();
+          refresh();
+        });
+        tr.children[2].firstChild.addEventListener("click", function() {
+          options.push({"title":"",cmd:""});
+          refresh();
+        });
+        tbody.appendChild(tr);
+      }
+
+      function onInit() {
+        Util.showModal("Loading...");
+        Util.readStorageJSON("espruinoterm.json", function(options) {
+          Util.hideModal();
+          if (!Array.isArray(options)) setDefaults();
+          refresh();
+        });
+      }
+      refresh();
+      document.getElementById("save").addEventListener("click", function() {
+        Util.showModal("Saving...");
+        Util.writeStorage("espruinoterm.json", JSON.stringify(options), function() {
+          Util.hideModal();
+        });
+      });
+    </script>
+  </body>
+</html>

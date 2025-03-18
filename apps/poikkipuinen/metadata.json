@@ -1,0 +1,16 @@
+{ "id": "poikkipuinen",
+  "name": "Poikkipuinen - Minimal watch face",
+  "shortName":"Poikkipuinen",
+  "version":"0.01",
+  "description": "A minimal digital watch face.",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot1.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS","BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"poikkipuinen.app.js","url":"app.js"},
+    {"name":"poikkipuinen.img","url":"app-icon.js","evaluate":true}
+  ]
+}

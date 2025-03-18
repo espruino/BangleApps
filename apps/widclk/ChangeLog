@@ -3,3 +3,5 @@
 0.04: Fix regression stopping correct widget updates
 0.05: Don't show clock widget if already showing clock app
 0.06: Use 7 segment font, update *on* the minute, use less memory
+0.07: allow turning on/off when quick-switching apps
+0.08: Ensure we clear the whole rect so we don't end up leaving old text when time changes (fix #3073)

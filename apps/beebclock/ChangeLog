@@ -4,3 +4,4 @@
 0.04: Update to use Bangle.setUI instead of setWatch
 0.05: Avoid 'loadWidgets' at LCD on, which will cause memory leak
       Avoid clearTimeout() usage, as it may break other widgets
+0.06: Minor code improvements

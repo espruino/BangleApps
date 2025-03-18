@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+
 const Setter = {
   NONE: "none",
   UPPER: 'upper',
@@ -18,7 +18,7 @@ let lowerLimitChanged = true;
 
 let limitSetter = Setter.NONE;
 
-let currentHeartRate = 0;
+let currentHeartRate = 0; //use for emuls
 let hrConfidence = -1;
 let hrChanged = true;
 let confidenceChanged = true;
@@ -39,7 +39,7 @@ const upperLshape = isB1 ? {
   right: Bangle.appRect.x2-100,
   left: Bangle.appRect.x2,
   bottom: 24,
-  top: Bangle.appRect.y2,
+  top: Bangle.appRect.y2-24, //for bottom widget
   rectWidth: 26,
   cornerRoundness: 4,
   orientation: -1,   // rotated 180°
@@ -58,19 +58,20 @@ const lowerLshape = {
 };
 
 const centerBar = {
-  minY: (upperLshape.bottom + upperLshape.top - upperLshape.rectWidth)/2,
-  maxY: (upperLshape.bottom + upperLshape.top + upperLshape.rectWidth)/2,
+    //1.5 =height*2
+  minY: (upperLshape.bottom + upperLshape.top - (upperLshape.rectWidth*1.5))/2,
+  maxY: (upperLshape.bottom + upperLshape.top + (upperLshape.rectWidth*1.5))/2,
   confidenceWidth: isB1 ? 10 : 8,
   minX: isB1 ? 55 : upperLshape.rectWidth + 14,
   maxX: isB1 ? 165 : Bangle.appRect.x2 - upperLshape.rectWidth - 14
 };
 
 const fontSizes = isB1 ? {
-  limits: 13,
-  heartRate: 24
+  limits: 14,
+  heartRate: 44
 } : {
-  limits: 12,
-  heartRate: 20
+  limits: 16,
+  heartRate: 34
 };
 
 function fillEllipse(x, y, x2, y2) {
@@ -178,10 +179,11 @@ function renderCurrentHeartRate() {
 
   g.setColor(g.theme.bg);
   g.setFontVector(fontSizes.heartRate);
-  g.setFontAlign(1, 0, 0);
+  g.setFontAlign(0, 0, 0);//center
   g.drawString(currentHeartRate,
-               Math.max(upperLshape.right+upperLshape.cornerRoundness,
-                        lowerLshape.right-lowerLshape.cornerRoundness),
+              // Math.max(upperLshape.right+upperLshape.cornerRoundness, lowerLshape.right-lowerLshape.cornerRoundness),
+              // Math.max(upperLshape.right+upperLshape.cornerRoundness, lowerLshape.right-lowerLshape.cornerRoundness)-(g.stringWidth(currentHeartRate)/2),
+               centerBar.minX+((centerBar.maxX-centerBar.minX)/2),
                (centerBar.minY+centerBar.maxY)/2);
 
   //Reset alignment to defaults

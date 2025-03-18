@@ -1,0 +1,2 @@
+0.01: New App!
+0.02: Bump version to allow new buzz.js module to be loaded - fixes memory/performance hog when buzz called

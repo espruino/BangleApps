@@ -1,0 +1,16 @@
+{ "id": "wristlight",
+  "name": "Wrist Light",
+  "shortName":"Wrist Light",
+  "icon": "wristlight48.png",
+  "version": "0.02",
+  "description": "A flash light with different colors on your wrist",
+  "tags": "flash,light",
+  "allow_emulator":true, 
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme":"README.md",
+  "screenshots" : [ { "url":"screenshot.png" }, { "url":"screenshot_red.png" } ],
+  "storage": [
+    {"name":"wristlight.app.js","url":"app.js"},
+    {"name":"wristlight.img","url":"wristlight-icon.js","evaluate":true}
+  ]
+}

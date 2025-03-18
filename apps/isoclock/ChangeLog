@@ -1,2 +1,4 @@
 0.01: Created app based on digiclock with some small tweaks.
 0.02: Swap to Bangle.setUI for launcher/buttons
+0.03: Tell clock widgets to hide.
+0.04: Minor code improvements

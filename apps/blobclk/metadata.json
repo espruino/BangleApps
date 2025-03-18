@@ -2,7 +2,7 @@
   "id": "blobclk",
   "name": "Large Digit Blob Clock",
   "shortName": "Blob Clock",
-  "version": "0.06",
+  "version": "0.07",
   "description": "A clock with big digits",
   "icon": "clock-blob.png",
   "type": "clock",

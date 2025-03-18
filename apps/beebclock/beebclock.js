@@ -108,10 +108,10 @@ for (let h=1; h<=12; h++) {
 // so we buffer once and minute, and draw the second hand dynamically
 // (with a bit of flicker)
 const drawFace = (G) => {
-  const fw = R1 * 2;
-  const fh = R1 * 2;
-  const fw2 = R1;
-  const fh2 = R1;
+  //const fw = R1 * 2;
+  //const fh = R1 * 2;
+  //const fw2 = R1;
+  //const fh2 = R1;
   let hs = [];
 
   // Wipe the image and start with white
@@ -182,7 +182,7 @@ const drawAll = (force) => {
   if (!faceImg) force = true;
 
   let face_changed = force;
-  let date_changed = false;
+  //let date_changed = false;
 
   tmp = hours;
   hours = now.getHours();
@@ -214,7 +214,7 @@ const drawAll = (force) => {
     tmp = date;
     date = now.getDate();
     if (tmp !== date) {
-      date_changed = true;
+      //date_changed = true;
       face_changed = true; // Should have changed anyway with hour/minute rollover
     }
   }

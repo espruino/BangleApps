@@ -1,2 +1,4 @@
 0.01: First released version
 0.02: Changed setWatch to Bangle.setUI
+0.03: Tell clock widgets to hide.
+0.04: Minor code improvements

@@ -20,3 +20,37 @@
 0.14: Remove unneeded variable assignment
 0.15: Show distance more accurately in conjunction with new locale app (fix #1523)
 0.16: Ability to append to existing track (fix #1712)
+0.17: Use default Bangle formatter for booleans
+0.18: Improve widget load speed, allow currently recording track to be plotted in openstmap
+0.19: Fix track plotting code
+0.20: Automatic translation of some more strings.
+0.21: Speed report now uses speed units from locale
+0.22: Convert Yes/No On/Off in settings to checkboxes
+0.23: Add graphing for HRM, fix some other graphs
+      Altitude graphing now uses barometer altitude if it exists
+      plotTrack in widget allows track to be drawn in the background (doesn't block execution)
+0.24: Can now specify `setRecording(true, {force:...` to not show a menu
+0.25: Widget now has `isRecording()` for retrieving recording status.
+0.26: Now record filename based on date
+0.27: Fix first ever recorded filename being log0 (now all are dated)
+0.28: Automatically create new track if the filename is different
+0.29: When plotting with OpenStMap scale map to track width & height
+0.30: Add clock info for showing and toggling recording state
+0.31: Ensure that background-drawn tracks can get cancelled, and draw less at a time to make updates smoother
+      plotTrack now draws the current track even if you're not actively recording
+0.32: Add cadence data to output files
+0.33: Ensure that a new file is always created if the stuff that's being recorded has changed (fix #3081)
+0.34: Avoid prompting when creating a new file (#3081)
+0.35: Handle loading without a settings file (default record setting)
+0.36: When recording with 1 second periods, log time with one decimal.
+0.37: 1 second periods + gps log => log when gps event is received, not with
+	setInterval.
+0.38: Tweaks to speed up track rendering
+0.39: Minor code improvements
+0.40: Fix reference error from missing `settings` object in widget on 1 sec	recordings with gps.
+      Fix HRM source never being set in output data
+0.41: Fix exit from plots and graphs would easily react twice, going back two
+	levels instead of one.
+0.42: Minor code improvements
+0.43: Fix interaction on clocks without widgets
+0.44: List tracks in reverse chronological order.

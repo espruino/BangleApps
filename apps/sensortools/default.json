@@ -1,0 +1,19 @@
+{
+  "enabled": false,
+  "log": false,
+  "mag": {
+    "enabled": false,
+    "mode": "emulate",
+    "name": "static"
+  },
+  "hrm": {
+    "enabled": false,
+    "mode": "modify",
+    "name": "bpmtrippled"
+  },
+  "gps": {
+    "enabled": false,
+    "mode": "emulate",
+    "name": "changingfix"
+  }
+}

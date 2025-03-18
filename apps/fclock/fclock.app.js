@@ -2,7 +2,7 @@ var minutes;
 var seconds;
 var hours;
 var date;
-var first = true;
+//var first = true;
 var locale = require('locale');
 var _12hour = (require("Storage").readJSON("setting.json", 1) || {})["12hour"] || false;
 
@@ -86,7 +86,7 @@ const drawSec = function (sections, color) {
 
 const drawClock = function () {
 
-  currentTime = new Date();
+  const currentTime = new Date();
 
   //Get date as a string
   date = dateStr(currentTime);
@@ -163,15 +163,16 @@ const drawHR = function () {
   }
 
   if (grow) {
-    color = settings.hr.color;
-    g.setColor(color);
+    g.setColor(settings.hr.color);
     g.fillCircle(settings.hr.x, settings.hr.y, size);
   } else {
-    color = "#000000";
-    g.setColor(color);
+    g.setColor("#000000");
     g.drawCircle(settings.hr.x, settings.hr.y, size);
   }
 };
+
+// Show launcher when button pressed
+Bangle.setUI("clock");
 
 // clean app screen
 g.clear();
@@ -198,6 +199,3 @@ Bangle.on('HRM', function (d) {
 
 // draw now
 drawClock();
-
-// Show launcher when button pressed
-Bangle.setUI("clock");

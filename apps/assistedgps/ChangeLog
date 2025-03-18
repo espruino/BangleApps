@@ -1,3 +1,7 @@
 0.01: New App!
 0.02: Update to work with Bangle.js 2
 0.03: Select GNSS systems to use for Bangle.js 2
+0.04: Now turns GPS off after upload
+0.05: Fix regression in 0.04 that caused AGPS data not to get loaded
+0.06: Auto-set GPS output sentences - newer Bangle.js 2 don't include RMC (GPS direction + time) by default
+0.07: Bangle.js 2 now gets estimated time + lat/lon from the browser (~3x faster fix)

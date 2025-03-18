@@ -1,0 +1,16 @@
+{ "id": "barcode",
+  "name": "Barcode clock",
+  "shortName":"Barcode clock",
+  "icon": "barcode.icon.png",
+  "version": "0.11",
+  "description": "EAN-8 compatible barcode clock.",
+  "tags": "barcode,ean,ean-8,watchface,clock,clockface",
+  "type": "clock",
+  "supports" : ["BANGLEJS2"],
+  "storage": [
+    {"name":"barcode.app.js","url":"barcode.app.js"},
+    {"name":"barcode.img","url":"barcode.icon.js","evaluate":true}
+  ],
+  "readme":"README.md",
+  "screenshots": [{"url":"barcode.clock.png"}]
+}

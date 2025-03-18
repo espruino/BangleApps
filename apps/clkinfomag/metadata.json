@@ -1,0 +1,12 @@
+{ "id": "clkinfomag",
+  "name": "Compass Clockinfo",
+  "version":"0.02",
+  "description": "Extra information to add to clock screens. When selected, displays the compass heading and an arrow pointing North",
+  "icon": "icon.png",
+  "type": "clkinfo",
+  "tags": "clkinfo,compass,mag,magnetometer",
+  "supports" : ["BANGLEJS2"],
+  "storage": [
+    {"name":"clkinfomag.clkinfo.js","url":"clkinfo.js"}
+  ]
+}

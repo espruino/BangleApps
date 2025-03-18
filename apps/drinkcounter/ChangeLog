@@ -1,0 +1,5 @@
+0.10: Initial release - still work in progress
+0.15: Added settings and calculations
+0.20: Added status saving
+0.25: Adopted for Bangle.js 1 - kind of
+0.26: Minor code improvements

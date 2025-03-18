@@ -1,0 +1,173 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/lint/lint.min.css">
+</head>
+
+<body>
+    <script src="../../core/lib/customize.js"></script>
+    <script src="../../core/lib/espruinotools.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/lint/lint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/lint/javascript-lint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/hint/javascript-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jshint/2.11.0/jshint.min.js"></script>
+    <p>Upload code to devices with names starting with:</p>
+    <p><input type="text" id="nameprefix"></input></p>
+    <p>Enter the code to send before upload here:</p>
+    <p><textarea id="pre-code"></textarea></p>
+    <p>Enter your program to upload here:</p>
+    <p><textarea id="js-code"></textarea></p>
+    <p>Enter the code to send after upload here:</p>
+    <p><textarea id="post-code"></textarea></p>
+    <p>Then click <button id="upload" class="btn btn-primary">Upload</button>&nbsp;<span id="btninfo" style="color:orange"></span> </p>
+    <p><a id="setdefault">Click here</a> to reset to defaults.</p>
+    <script>
+  const LS_PRECODE = "espruinoprog.precode";
+  const LS_JSCODE = "espruinoprog.code";
+  const LS_POSTCODE = "espruinoprog.postcode";
+  const LS_NAMEPREFIX = "espruinoprog.namePrefix";
+  var preeditor,jseditor,posteditor;
+
+  function setDefaults() {
+    if (localStorage.getItem(LS_PRECODE) === null) {
+        localStorage.setItem(LS_PRECODE, `// Erase all files (faster than eraseall)
+require("Storage").list().forEach(f=>require("Storage").erase(f));reset();`);
+    }
+    if (localStorage.getItem(LS_JSCODE) === null) {
+        localStorage.setItem(LS_JSCODE, `// Flash LED2 every 2 seconds
+setInterval(function() {
+  LED2.set();
+  setTimeout(function() {
+    LED2.reset();
+  }, 100);
+}, 2000);`);
+    }
+    if (localStorage.getItem(LS_POSTCODE) === null) {
+        localStorage.setItem(LS_POSTCODE, `// Turn red LED on to show programmed
+// Bluetooth off to stop this getting re-programmed
+LED.set();NRF.sleep();`);
+    }
+    if (localStorage.getItem(LS_NAMEPREFIX) === null) {
+        localStorage.setItem(LS_NAMEPREFIX, "Puck.js");
+    }
+    document.getElementById("pre-code").value = localStorage.getItem(LS_PRECODE);
+    if (preeditor) preeditor.setValue(document.getElementById("pre-code").value);
+    document.getElementById("js-code").value = localStorage.getItem(LS_JSCODE);
+    if (jseditor) jseditor.setValue(document.getElementById("js-code").value);
+    document.getElementById("post-code").value = localStorage.getItem(LS_POSTCODE);
+    if (posteditor) posteditor.setValue(document.getElementById("post-code").value);
+    document.getElementById("nameprefix").value = localStorage.getItem(LS_NAMEPREFIX);
+  }
+  setDefaults();
+
+  // The code editor
+  var lintFlags = {
+      esversion: 6, // Enable ES6 for literals, arrow fns, binary
+      evil: true, // don't warn on use of strings in setInterval
+      laxbreak: true, // don't warn about newlines in expressions
+      laxcomma: true // don't warn about commas at the start of the line
+  };
+  preeditor = CodeMirror.fromTextArea(document.getElementById("pre-code"), {
+      width: "100%",
+      height: "auto",
+      matchBrackets: true,
+      mode: { name: "javascript", globalVars: false },
+      lineWrapping: true,
+      showTrailingSpace: true,
+      lint: lintFlags,
+      gutters: ["CodeMirror-linenumbers", "CodeMirror-lint-markers"],
+      lineNumbers: true
+  });
+  jseditor = CodeMirror.fromTextArea(document.getElementById("js-code"), {
+      width: "100%",
+      height: "auto",
+      matchBrackets: true,
+      mode: { name: "javascript", globalVars: false },
+      lineWrapping: true,
+      showTrailingSpace: true,
+      lint: lintFlags,
+      gutters: ["CodeMirror-linenumbers", "CodeMirror-lint-markers"],
+      lineNumbers: true
+  });
+  posteditor = CodeMirror.fromTextArea(document.getElementById("post-code"), {
+      width: "100%",
+      height: "auto",
+      matchBrackets: true,
+      mode: { name: "javascript", globalVars: false },
+      lineWrapping: true,
+      showTrailingSpace: true,
+      lint: lintFlags,
+      gutters: ["CodeMirror-linenumbers", "CodeMirror-lint-markers"],
+      lineNumbers: true
+  });
+  function hasWarnings() {
+    return  preeditor.state.lint.marked.length!=0 ||
+            jseditor.state.lint.marked.length!=0 ||
+            posteditor.state.lint.marked.length!=0;
+  }
+  var editorChangedTimeout;
+  function editorChanged() {
+    if (editorChangedTimeout) clearTimeout(editorChangedTimeout);
+    editorChangedTimeout = setTimeout(function() {
+      if (hasWarnings()) {
+        document.getElementById("btninfo").innerHTML = "There are warnings in the code to be uploaded";
+        //document.getElementById("upload").classList.add("disabled");
+      } else {
+        document.getElementById("btninfo").innerHTML = "";
+        //document.getElementById("upload").classList.remove("disabled");
+      }
+    }, 500);
+  }
+
+  preeditor.on("change", editorChanged);
+  jseditor.on("change", editorChanged);
+  posteditor.on("change", editorChanged);
+
+  document.getElementById("upload").addEventListener("click", function() {
+    var precode = preeditor.getValue();
+    var jscode = jseditor.getValue();
+    var postcode = posteditor.getValue();
+    var namePrefix = document.getElementById("nameprefix").value;
+    localStorage.setItem(LS_PRECODE, precode);
+    localStorage.setItem(LS_JSCODE, jscode);
+    localStorage.setItem(LS_POSTCODE, postcode);
+    localStorage.setItem(LS_NAMEPREFIX, namePrefix);
+
+    // force version - as long as we're above 1v96 we get the ability to upload to different storage files
+    var ENV = Espruino.Core.Env.getData();
+    ENV.VERSION_MAJOR = 2;
+    ENV.VERSION_MINOR = 0;
+    // Now compile
+    Espruino.transform(jscode, {
+      SET_TIME_ON_WRITE : false, // time would just be out of date
+      SAVE_ON_SEND : 1, // save to flash
+      LOAD_STORAGE_FILE : 0, // do not load from storage after saving
+      // PRETOKENISE : true,
+      // MINIFICATION_LEVEL : "ESPRIMA", // maybe?
+    }).then(content => {
+      sendCustomizedApp({
+        storage: [{ name: "espruinoprog.json", content: JSON.stringify({
+            namePrefix : namePrefix,
+            pre : Espruino.Core.CodeWriter.reformatCode(precode),
+            code : Espruino.Core.CodeWriter.reformatCode(content),
+            post : Espruino.Core.CodeWriter.reformatCode(postcode)
+        })}]
+      });
+    });
+  });
+  document.getElementById("setdefault").addEventListener("click", function(e) {
+    e.preventDefault();
+    localStorage.removeItem(LS_PRECODE);
+    localStorage.removeItem(LS_JSCODE);
+    localStorage.removeItem(LS_POSTCODE);
+    localStorage.removeItem(LS_NAMEPREFIX);
+    setDefaults();
+  });
+  </script>
+</body>
+
+</html>

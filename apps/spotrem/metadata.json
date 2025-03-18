@@ -1,0 +1,17 @@
+{
+  "id": "spotrem",
+  "name": "Remote for Spotify",
+  "version": "0.13",
+  "description": "Control spotify on your android device.",
+  "readme": "README.md",
+  "type": "app",
+  "tags": "spotify,music,player,remote,control,intent,intents,gadgetbridge,spotrem",
+  "icon": "app.png",
+  "screenshots" : [ {"url":"screenshot1.png"}, {"url":"screenshot2.png"} ],
+  "supports": ["BANGLEJS2"],
+  "dependencies": { "textinput":"type"},
+  "storage": [
+    {"name":"spotrem.app.js","url":"app.js"},
+    {"name":"spotrem.img","url":"app-icon.js","evaluate":true}
+  ]
+}

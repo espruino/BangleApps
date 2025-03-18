@@ -13,3 +13,8 @@
 0.14: Fix drawing the bar when charging
 0.15: Added option to always display the icon when charging (useful if 'hide if charge greater than' is enabled)
 0.16: Increase screen update rate when charging
+0.17: Add option 'Remove Jitter'='Drop only' to prevent percentage from getting up again when not charging
+      Add option to disable vibration when charger connects
+0.18: Only redraw when values change
+0.19: Match draw() API e.g. to allow wid_edit to alter this widget
+0.20: Remove clear of the screen on reload (will break currently running app)

@@ -14,3 +14,23 @@
 0.13: Add support for internationalization
 0.14: Move settings
 0.15: Fix charts (fix #1366)
+0.16: Code tidyup, add back button in top left of health app graphs
+0.17: Add automatic translation of bar chart labels
+0.18: Show step goal in daily step chart
+0.19: Can show notification when daily step goal is reached
+0.20: Fix the settings page, it would not update settings correctly.
+0.21: Update boot.min.js.
+0.22: Fix timeout for heartrate sensor on 3 minute setting (#2435)
+0.23: Fix HRM logic
+0.24: Correct daily health summary for movement (some logic errors resulted in garbage data being written)
+0.25: lib.read* methods now return correctly scaled movement
+      movement graph in app is now an average, not sum
+      fix 11pm slot for daily HRM
+0.26: Implement API for activity fetching
+0.27: Fix typo in daily summary graph code causing graph not to load
+      Fix daily summaries for 31st of the month
+0.28: Calculate distance from steps if myprofile is installed and stride length is set
+0.29: Minor code improvements
+0.30: Minor code improvements
+0.31: Add support for new health format (storing more data)
+      Added graphs for Temperature and Battery

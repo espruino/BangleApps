@@ -10,7 +10,7 @@ var img = atob("sIwDkm2S66DYwA2AAAAAHAHGSRxJEkAAgmGGBxDIADIdAFJIbAHF9HP00kBUC6Dt
 var imgHeight = g.imageMetrics(img).height;
 var imgScroll = Math.floor(Math.random()*imgHeight);
 
-g.reset().setFont("6x15").setFontAlign(0,0);
+g.clear(1).setFont("6x15").setFontAlign(0,0);
 g.drawString(ENV.VERSION + "  " + NRF.getAddress(), g.getWidth()/2, 171);
 g.drawImage(img,0,24);
 
@@ -20,11 +20,11 @@ function getVersion(name,file) {
   return v?(name+" "+(v?"v"+v:"Unknown")):"NO "+name;
 }
 
-var versions = [
+/*var versions = [
   getVersion("Bootloader","boot.info"),
   getVersion("Launcher","launch.info"),
   getVersion("Settings","setting.info")
-];
+];*/
 var logo = E.toArrayBuffer(atob("PBwBAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAD/w+AAAAQAHA4hAAAAQAMAMhAAAAQAYBmhAAAAQAYBGiAAAAQAQCD/H74+R4wGDhoKJCSEwEDgoKJCT8wFDgoKJCSAwHDhoKJCSEQHj/H6I+R4YHmAAAACAAYEGAAABCAAMEMAAAA8AAHA4AAAAAAAD/wAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/gAAAAAAAB/g"));
 
 var imageTop = 24;
@@ -35,17 +35,17 @@ function drawInfo() {
   g.setFont("4x6").setFontAlign(0,0).drawString("BANGLEJS.COM",W-30,56);
   var h=8, y = 24-h;
   g.setFont("6x8").setFontAlign(-1,-1);
-  g.drawString("Powered by Espruino",0,y+=4+h);
-  g.drawString("Version "+ENV.VERSION,0,y+=h);
+  g.drawString(/*LANG*/"Powered by Espruino",0,y+=4+h);
+  g.drawString(/*LANG*/"Version "+ENV.VERSION,0,y+=h);
   g.drawString("Commit "+ENV.GIT_COMMIT,0,y+=h);
 
   getVersion("Bootloader","boot.info");
   getVersion("Launcher","launch.info");
   getVersion("Settings","setting.info");
 
-  g.drawString(MEM.total+" JS Vars",0,y+=h);
-  g.drawString("Storage: "+(require("Storage").getFree()>>10)+"k free",0,y+=h);
-  if (ENV.STORAGE) g.drawString("         "+(ENV.STORAGE>>10)+"k total",0,y+=h);
+  g.drawString(MEM.total+/*LANG*/" JS Vars",0,y+=h);
+  g.drawString("Storage: "+(require("Storage").getFree()>>10)+/*LANG*/"k free",0,y+=h);
+  if (ENV.STORAGE) g.drawString("         "+(ENV.STORAGE>>10)+/*LANG*/"k total",0,y+=h);
   if (ENV.SPIFLASH) g.drawString("SPI Flash: "+(ENV.SPIFLASH>>10)+"k",0,y+=h);
   imageTop = y+h;
   imgScroll = imgHeight-imageTop;
@@ -69,4 +69,7 @@ function drawImage() {
 
 // TODO: a nice little animation before
 setTimeout(drawInfo, 1000);
-setWatch(_=>load(), BTN1);
+Bangle.setUI({
+  mode : "custom",
+  back : load
+});

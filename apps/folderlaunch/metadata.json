@@ -1,0 +1,49 @@
+{
+    "id": "folderlaunch",
+    "name": "Folder launcher",
+    "version": "0.04",
+    "description": "Launcher that allows you to put your apps into folders",
+    "icon": "icon.png",
+    "type": "launch",
+    "tags": "tool,system,launcher",
+    "supports": [
+        "BANGLEJS2"
+    ],
+    "readme": "README.md",
+    "interface": "interface.html",
+    "storage": [
+        {
+            "name": "folderlaunch.app.js",
+            "url": "app.js"
+        },
+        {
+            "name": "folderlaunch.settings.js",
+            "url": "settings.js"
+        },
+        {
+            "name": "folderlaunch-configLoad.js",
+            "url": "configLoad.js"
+        },
+        {
+            "name": "folderlaunch.img",
+            "url": "icon.js",
+            "evaluate": true
+        }
+    ],
+    "data": [
+        {
+            "name": "folderlaunch.json"
+        }
+    ],
+    "dependencies": {
+        "textinput": "type"
+    },
+    "screenshots": [
+        {
+            "url": "screenshot1.png"
+        },
+        {
+            "url": "screenshot2.png"
+        }
+    ]
+}

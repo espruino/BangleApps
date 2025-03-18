@@ -1,0 +1,25 @@
+{
+  "id": "happyclk",
+  "name": "Happy Clock",
+  "shortName":"Happy Clock",
+  "icon": "happyclk.png",
+  "version": "0.03",
+  "readme": "README.md",
+  "supports": ["BANGLEJS2"],
+  "description": "A happy clock :)",
+  "type": "clock",
+  "tags": "clock",
+  "screenshots": [
+    {"url":"screenshot_1.png"},
+    {"url":"screenshot_2.png"},
+    {"url":"screenshot_3.png"},
+    {"url":"screenshot_4.png"},
+    {"url":"screenshot_5.png"}
+  ],
+  "storage": [
+    {"name":"happyclk.app.js","url":"happyclk.app.js"},
+    {"name":"happyclk.img","url":"happyclk.icon.js","evaluate":true},
+    {"name":"happyclk.settings.js","url":"happyclk.settings.js"}
+  ],
+  "data":[{"name":"happyclk.setting.json"}]
+}

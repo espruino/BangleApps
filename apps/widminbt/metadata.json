@@ -1,0 +1,14 @@
+{
+  "id": "widminbt",
+  "name": "Minimal Bluetooth Widget",
+  "version": "0.02",
+  "description": "Appears whenever bluetooth is disconnected",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,bluetooth,minimal",
+  "provides_widgets" : ["bluetooth"],
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"widminbt.wid.js","url":"widget.js"}
+  ]
+}

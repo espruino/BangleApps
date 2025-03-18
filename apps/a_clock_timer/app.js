@@ -2,7 +2,7 @@
 function getImg() {
   return require("heatshrink").decompress(atob("2FRgP/ABnxBRP5BJH+gEfBZHghnAv4JFmA+Bj0PBIn3//4h3An4oDAQJWEEIf8AwMEuFOCofAh/QjAWEg4VEwEAnw2DDoKEHEYPwAoUBmgrDhgUHS4XgAwUD/gVC/g+FAAZgEwEf4YqC/EQFQ4NDFgV/4Z3C/EcCo1974VCLAV/V4d7Co9/Co0PCoX+vk4Ko/HCosCRYX5nwTFkEAr/nCokICoL+B/aCGCoMHCoq3EdoraGCosPz4HBcILEJCocBwEHOwQrIgQrHgoHCFYMEgwVJYoMBsEnCofAnkMNQJXH4D4EbQMPkF/xwrEj+/HIkAoAVDj8QueHCoorDCoUDLwd96J0BKwgrHh4VDv+9CosDx6QCCo4HB//8VwvvXgQVDJIYSBCo/sBwaZBgF/NoYVHgH8V4qYDAwUYlAVFEYbFDDgwAGConogf9Zg8DCpP4cIh0Dg0BGAgVE+gVIgUA+AVI+wVE/xAEh5HDEgn+CpEAbgJCCHQoVBn4VJ/ED4ANDAAQVJ4EPPQPAt4VF4BeDColgj/8h/gFYwJBCpF//k//ANDCAYVIcgP+CpH/54VHCAIVB/4VIwYECCocIAwIVBx4VG9+AMITbCYAYJB34VG/UAj4VI7/9Cgw9CJYXAmBtDMAQsIfYhvCCofyvywGB4QFFgYGC/d+agYVLSgf8+ArG/APBD4QVBgh0CAwNwv/fCo4PCCo94s7VDCohnDAoI7Enlv8BZECoRCDAggAB3/3/gzDMAIVFY4IVE4IPBOoZ9DCpXwCoMvCqKxB//3bYywD4BtFAAPfDooVFFYIVGw4VFB4KZFngNE/uPCovgFYgEBuK+Fg4zFCoIrFCovwgQVF+AVFgPxEYzFEbgQVD4EDCoozBYogVCgYVE8bpGCo4HDCoPzBgoVIL4fAg4MGgAIHCofgCszND8BOHK4x2BCofwXgv4h6vGCps/Co6uDAA/7RgIjDDwTaDABPA//9FaAtDCop0FC5YVDLwoAH8//94GD/wVNCYKNECpwPBQggVPNggVBNp4VFFZwAGCquHCqnzCB4"));
 }
-var IMAGEWIDTH = 176;
+//var IMAGEWIDTH = 176;
 var IMAGEHEIGHT = 81;
 
 Graphics.prototype.setFontMichroma36 = function() {
@@ -18,19 +18,29 @@ var timervalue = 0;
 var istimeron = false;
 var timertick;
 
-Bangle.on('touch',t=>{
-  if (t == 1) {
+Bangle.on('touch',(touchside, touchdata)=>{
+  if (touchside == 1) {
     Bangle.buzz(30);
-    if (timervalue < 5*60) { timervalue = 1 ; }
-    else { timervalue -= 5*60; }
+    var changevalue = 0;
+    if(touchdata.y > 88) {
+      changevalue += 60*5;
+    } else {
+      changevalue += 60*1;
+    }
+    if (timervalue < changevalue) { timervalue = 1 ; }
+    else { timervalue -= changevalue; }
   }
-  else if (t == 2) {
+  else if (touchside == 2) {
     Bangle.buzz(30);
     if (!istimeron) {
       istimeron = true;
       timertick = setInterval(countDown, 1000);
     }
-    timervalue += 60*10;
+    if(touchdata.y > 88) {
+      timervalue += 60*10;
+    } else {
+      timervalue += 60*1;
+    }
   }
 });
 
@@ -73,12 +83,13 @@ function countDown() {
 function showWelcomeMessage() {
   g.reset().clearRect(0, 76, 44+44, g.getHeight()/2+6);
   g.setFontAlign(0, 0).setFont("6x8");
-  g.drawString("Touch right to", 44, 80);
+  g.drawString("Tap right to", 44, 80);
   g.drawString("start timer", 44, 88);
   setTimeout(function(){ g.reset().clearRect(0, 76, 44+44, g.getHeight()/2+6); }, 8000);
 }
 
 // time
+var offsets = require("Storage").readJSON("a_clock_timer.settings.json") || [ ["PAR",1], ["TYO",9] ];
 var drawTimeout;
 
 function getGmt() {
@@ -102,20 +113,34 @@ function queueNextDraw() {
 function draw() {
   g.reset().clearRect(0,24,g.getWidth(),g.getHeight()-IMAGEHEIGHT);
   g.drawImage(getImg(),0,g.getHeight()-IMAGEHEIGHT);
-  
-  var x_sun = 176 - (getGmt().getHours() / 24 * 176 + 4);
+
+  var gmtHours = getGmt().getHours();
+
+  var x_sun = 176 - (gmtHours / 24 * 176 + 4);
   g.setColor('#ff0').drawLine(x_sun, g.getHeight()-IMAGEHEIGHT, x_sun, g.getHeight());
   g.reset();
 
+  var x_night_start = (176 - (((gmtHours-6)%24) / 24 * 176 + 4)) % 176;
+  var x_night_end = 176 - (((gmtHours+6)%24) / 24 * 176 + 4);
+  g.setColor('#000');
+  for (let x = x_night_start; x < (x_night_end < x_night_start ? 176 : x_night_end); x+=2) {
+    g.drawLine(x, g.getHeight()-IMAGEHEIGHT, x, g.getHeight());
+  }
+  if (x_night_end < x_night_start) {
+    for (let x = 0; x < x_night_end; x+=2) {
+      g.drawLine(x, g.getHeight()-IMAGEHEIGHT, x, g.getHeight());
+    }
+  }
+
   var locale = require("locale");
-  
+
   var date = new Date();
   g.setFontAlign(0,0);
   g.setFont("Michroma36").drawString(locale.time(date,1), g.getWidth()/2, 46);
   g.setFont("6x8");
   g.drawString(locale.date(new Date(),1), 125, 68);
-  g.drawString("PAR "+locale.time(getTimeFromTimezone(1),1), 125, 80);
-  g.drawString("TYO "+locale.time(getTimeFromTimezone(9),1), 125, 88);
+  g.drawString(offsets[0][0]+" "+locale.time(getTimeFromTimezone(offsets[0][1]),1), 125, 80);
+  g.drawString(offsets[1][0]+" "+locale.time(getTimeFromTimezone(offsets[1][1]),1), 125, 88);
 
   queueNextDraw();
 }

@@ -1,0 +1,16 @@
+{ "id": "rinkulainen",
+  "name": "Rinkulainen - Minimal & Stylish watch face",
+  "shortName":"Rinkulainen",
+  "version":"0.01",
+  "description": "A minimal watch face, with rings/disks for hours and minutes. Date underneath. With easy to mod source code for making your own themes. Some example themes included.",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot2.png"}, {"url":"screenshot1.png"}, {"url":"screenshot3.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS","BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"rinkulainen.app.js","url":"app.js"},
+    {"name":"rinkulainen.img","url":"app-icon.js","evaluate":true}
+  ]
+}

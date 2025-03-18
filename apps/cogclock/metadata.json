@@ -1,0 +1,20 @@
+{
+  "id": "cogclock",
+  "name": "Cog Clock",
+  "version": "0.05",
+  "description": "A cross-shaped clock inside a cog",
+  "icon": "icon.png",
+  "screenshots": [{"url":"screenshot_b1.png"},{"url":"screenshot_b2.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"cogclock.app.js","url":"app.js"},
+    {"name":"cogclock.settings.js","url":"settings.js"},
+    {"name":"cogclock.img","url":"icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name": "cogclock.settings.json"}
+  ]
+}

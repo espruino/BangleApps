@@ -1,0 +1,16 @@
+{ "id": "usgs",
+  "name": "USGS Data fetching app",
+  "shortName":"USGS",
+  "version": "0.03",
+  "description": "App that fetches [USGS water data](https://maps.waterdata.usgs.gov/) for a configurable location (requires connection to Android phone)",
+  "icon": "app.png",
+  "tags": "outdoors,exercise,http",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"usgs.app.js","url":"app.js"},
+    {"name":"usgs.settings.js","url":"settings.js"},
+    {"name":"usgs.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"usgs.json"}]
+}

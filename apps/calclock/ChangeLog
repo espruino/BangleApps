@@ -1,0 +1,9 @@
+0.01: Initial version
+0.02: More compact rendering & app icon
+0.03: Tell clock widgets to hide.
+0.04: Improve current time readability in light theme.
+0.05: Show calendar colors & improved all day events.
+0.06: Improved multi-line locations & titles
+0.07: Buzz 30, 15 and 1 minute before an event
+0.08: No buzz during quiet hours & tweaked 30-minute buzz
+0.09: Minor code improvements

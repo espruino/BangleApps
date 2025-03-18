@@ -1,0 +1,134 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.6.0/dist/geosearch.css"/>
+  </head>
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+      }
+      #map { z-index: 1; }
+      #controls {
+        padding: 10px;
+        margin: 10px;
+        border: 1px solid black;
+        position:absolute;
+        right:0px;top:0px;
+        background-color: rgb(255, 255, 255);
+        z-index: 100;
+      }
+      #maptiles {
+        width: 256px;
+        height: 256px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map">
+    </div>
+    <div id="controls">
+      <span id="select-hint">Click the map to select a location</span>
+      <button id="locate-me" class="btn" title="Locate me">&#x26ef;</button>
+      <button id="locate-marker" class="btn" style="display:none" title="Locate marker"><i class="icon icon-location"></i></button>
+      <button id="select" class="btn btn-primary" style="display:none" title="Save to device">Save</button><br/>
+    </div>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="../../webtools/heatshrink.js"></script>
+    <script src="../../webtools/imageconverter.js"></script>
+    <script src="https://unpkg.com/leaflet-geosearch@3.6.0/dist/bundle.min.js"></script>
+
+    <script>
+      var TILELAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+      var map = L.map('map').locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
+      var tileLayer = L.tileLayer(TILELAYER, {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>'
+      });
+      tileLayer.addTo(map);
+
+      // Search box:
+      const searchProvider = new window.GeoSearch.OpenStreetMapProvider();
+      const searchControl = new GeoSearch.GeoSearchControl({
+        provider: searchProvider,
+        style: 'button',
+        updateMap: true,
+        autoClose: true,
+        showMarker: false,
+        keepResult: true,
+        autoComplete: false
+      });
+      map.addControl(searchControl);
+
+      let latlon;
+      var marker;
+
+      function setPosition(ll) {
+        latlon = ll;
+        if (map.hasLayer(marker)) {
+          map.removeLayer(marker);
+        }
+        marker = new L.marker(latlon).addTo(map);
+
+        document.getElementById("select-hint").style.display="none";
+        document.getElementById("select").style.display="";
+        document.getElementById("locate-marker").style.display="";
+      }
+
+      map.on('click', function(e){
+        setPosition(e.latlng);
+      });
+
+      function convertMapToFile(map) {
+        return {lat: map.lat, lon: map.lng};
+      }
+
+      function convertFileToMap(file) {
+        return {lat: file.lat, lng: file.lon};
+      }
+
+      document.getElementById("locate-me").addEventListener("click", function() {
+        map.locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
+      });
+
+      document.getElementById("locate-marker").addEventListener("click", function() {
+        if (latlon && latlon.lng != null && latlon.lat != null) {
+          map.setView(latlon);
+        }
+      });
+
+      document.getElementById("select").addEventListener("click", function() {
+        let settings = convertMapToFile(latlon); // {"lat":48.8566,"lon":2.3522,"location":"Paris"}
+        settings.location = "custom";
+        Util.showModal("Saving...");
+        Util.writeStorage("mylocation.json", JSON.stringify(settings), ()=>{
+          Util.hideModal();
+          Util.close(); // close this window
+        });
+      });
+
+      function onInit() {
+        // read existing location
+        Util.readStorageJSON("mylocation.json", function(data) {
+          if (data===undefined) return; // no file
+          try {
+            setPosition(convertFileToMap(data));
+          } catch (e) {
+            console.error(e);
+          }
+        });
+      }
+
+    </script>
+  </body>
+</html>

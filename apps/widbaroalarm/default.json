@@ -7,5 +7,7 @@
   "drop3halarm": 2,
   "raise3halarm": 0,
   "show": true,
-  "interval": 15
+  "interval": 15,
+  "dismissDelayMin": 15,
+  "pauseDelayMin": 60
 }

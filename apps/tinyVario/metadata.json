@@ -1,0 +1,15 @@
+{ "id": "tinyVario",
+  "name": "Tiny Vario",
+  "shortName" : "tinyVario",
+  "version": "0.07",
+  "icon": "app.png",
+  "readme": "README.md",
+  "description": "A very simple app for gliding / paragliding / hang gliding etc.",
+  "tags": "outdoors",
+  "supports" : ["BANGLEJS2"],
+  "storage": [
+    {"name":"tinyVario.app.js","url":"app.js"},
+    {"name":"tinyVario.img","url":"app-icon.js","evaluate":true}
+    ],
+  "data": [{"name":"tinyVario.json"}]
+}

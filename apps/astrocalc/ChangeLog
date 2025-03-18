@@ -1,2 +1,9 @@
 0.01: Create astrocalc app
 0.02: Store last GPS lock, can be used instead of waiting for new GPS on start
+0.03: Use 'modules/suncalc.js' to avoid it being copied 8 times for different apps
+0.04: Compatibility with Bangle.js 2, get location from My Location
+0.05: Enable widgets
+0.06: Fix azimuth (bug #2651), only show degrees
+0.07: Minor code improvements
+0.08: Minor code improvements
+0.09: Fix: Handle when the moon rise/set do not occur on the current day

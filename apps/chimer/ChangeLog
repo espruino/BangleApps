@@ -1,0 +1,5 @@
+0.01: Initial Creation
+0.02: Fixed some sleep bugs. Added a sleep mode toggle
+0.03: Reduce busy-loop and code
+0.04: Separate buzz-time and sleep-time
+0.05: Minor code improvements

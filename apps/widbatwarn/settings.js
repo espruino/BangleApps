@@ -2,9 +2,8 @@
  * @param {function} back Use back() to return to settings menu
  */
 (function(back) {
-  const SETTINGS_FILE = "widbatwarn.json",
-    storage = require("Storage"),
-    translate = require("locale").translate;
+  const SETTINGS_FILE = "widbatwarn.json";
+  const storage = require("Storage");
 
   // initialize with default settings...
   let s = {
@@ -39,9 +38,8 @@
     },
     "Buzz": {
       value: s.buzz,
-      format: b => translate(b?"Yes":"No"),
       onchange: save("buzz"),
     },
   };
   E.showMenu(menu);
-});
+})

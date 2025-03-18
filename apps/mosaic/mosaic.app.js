@@ -2,6 +2,7 @@ Array.prototype.sample = function(){
   return this[Math.floor(Math.random()*this.length)];
 };
 
+{
 const SETTINGS_FILE = "mosaic.settings.json";
 let settings;
 let theme;
@@ -24,11 +25,11 @@ let digits = [
   E.toArrayBuffer(atob("BQcB/Gsex+A="))
 ];
 
-function loadSettings() {
+let loadSettings = function() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)|| {'showWidgets': false, 'theme':'System'};
 }
 
-function loadThemeColors() {
+let loadThemeColors = function() {
   theme = {fg: g.theme.fg, bg: g.theme.bg};
   if (settings.theme === "Dark") {
     theme.fg = g.toColor(1,1,1);
@@ -40,7 +41,7 @@ function loadThemeColors() {
   }
 }
 
-function queueDraw(seconds) {
+let queueDraw = function(seconds) {
   let millisecs = seconds * 1000;
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
@@ -49,7 +50,7 @@ function queueDraw(seconds) {
   }, millisecs - (Date.now() % millisecs));
 }
 
-function draw() {
+let draw = function() {
   // draw colourful grid
   for (let i_x = 0; i_x < num_squares_w; i_x++) {
     for (let i_y = 0; i_y < num_squares_h; i_y++) {
@@ -58,13 +59,15 @@ function draw() {
       );
     }
   }
-  let t = new Date();
+  let t = require("locale").time(new Date(), 1);
+  let hour = parseInt(t.split(":")[0]);
+  let minute = parseInt(t.split(":")[1]);
   g.setBgColor(theme.fg);
   g.setColor(theme.bg);
-  g.drawImage(digits[Math.floor(t.getHours()/10)], (mid_x-5)*s+o_w, (mid_y-7)*s+o_h, {scale:s});
-  g.drawImage(digits[t.getHours() % 10], (mid_x+1)*s+o_w, (mid_y-7)*s+o_h, {scale:s});
-  g.drawImage(digits[Math.floor(t.getMinutes()/10)], (mid_x-5)*s+o_w, (mid_y+1)*s+o_h, {scale:s});
-  g.drawImage(digits[t.getMinutes() % 10], (mid_x+1)*s+o_w, (mid_y+1)*s+o_h, {scale:s});
+  g.drawImage(digits[Math.floor(hour/10)], (mid_x-5)*s+o_w, (mid_y-7)*s+o_h, {scale:s});
+  g.drawImage(digits[hour % 10], (mid_x+1)*s+o_w, (mid_y-7)*s+o_h, {scale:s});
+  g.drawImage(digits[Math.floor(minute/10)], (mid_x-5)*s+o_w, (mid_y+1)*s+o_h, {scale:s});
+  g.drawImage(digits[minute % 10], (mid_x+1)*s+o_w, (mid_y+1)*s+o_h, {scale:s});
 
   queueDraw(timeout);
 }
@@ -73,7 +76,7 @@ g.clear();
 loadSettings();
 loadThemeColors();
 
-offset_widgets = settings.showWidgets ? 24 : 0;
+const offset_widgets = settings.showWidgets ? 24 : 0;
 let available_height = g.getHeight() - offset_widgets;
 
 // Calculate grid size and offsets
@@ -85,8 +88,6 @@ let o_h = Math.floor((g.getHeight() - num_squares_h * s+offset_widgets)/2);
 let mid_x = Math.floor(num_squares_w/2);
 let mid_y = Math.floor((num_squares_h-1)/2);
 
-draw();
-
 Bangle.on('lcdPower',on=>{
   if (on) {
     draw(); // draw immediately, queue redraw
@@ -96,8 +97,23 @@ Bangle.on('lcdPower',on=>{
   }
 });
 
-Bangle.setUI('clock');
+Bangle.setUI({
+  mode : 'clock',
+  remove : function() {
+    // Called to unload all of the clock app
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+    delete Array.prototype.sample;
+    require('widget_utils').show(); // re-show widgets
+  }
+});
+
+Bangle.loadWidgets();
 if (settings.showWidgets) {
-  Bangle.loadWidgets();
   Bangle.drawWidgets();
+} else {
+  require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
+}
+
+draw();
 }

@@ -1,19 +1,20 @@
 {
   "id": "weather",
   "name": "Weather",
-  "version": "0.15",
-  "description": "Show Gadgetbridge weather report",
+  "version": "0.26",
+  "description": "Show Gadgetbridge/iOS weather report",
   "icon": "icon.png",
   "screenshots": [{"url":"screenshot.png"}],
-  "tags": "widget,outdoors",
+  "tags": "widget,outdoors,clkinfo",
   "supports": ["BANGLEJS","BANGLEJS2"],
-  "readme": "readme.md",
+  "readme": "README.md",
   "storage": [
     {"name":"weather.app.js","url":"app.js"},
     {"name":"weather.wid.js","url":"widget.js"},
     {"name":"weather","url":"lib.js"},
     {"name":"weather.img","url":"icon.js","evaluate":true},
-    {"name":"weather.settings.js","url":"settings.js"}
+    {"name":"weather.settings.js","url":"settings.js"},
+    {"name":"weather.clkinfo.js","url":"clkinfo.js"}
   ],
   "data": [{"name":"weather.json"}]
 }

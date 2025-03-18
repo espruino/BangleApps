@@ -11,12 +11,12 @@ Translations are supported to get the time in the language of your choice! To ch
 *  nn_NO - Norwegian Nynorsk (thank you zerodogg)
 *  sv_SE - Swedish
 *  de_DE - German
+*  da_DK - Danish
 
 Most translations are taken from the original Fuzzy Text International code.
 
 ## TODO
 * Bold hour word (as the pebble version has)
-* Animation when changing time?
 
 ## References
 Based on Pebble app Fuzzy Text International: https://github.com/hallettj/Fuzzy-Text-International

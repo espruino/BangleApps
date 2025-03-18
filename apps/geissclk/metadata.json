@@ -1,12 +1,12 @@
 {
   "id": "geissclk",
   "name": "Geiss Clock",
-  "version": "0.03",
+  "version": "0.05",
   "description": "7 segment clock with animated background in the style of Ryan Geiss' music visualisation. NOTE: The first run will take ~1 minute to do some precalculation",
   "icon": "clock.png",
   "type": "clock",
   "tags": "clock",
-  "supports": ["BANGLEJS"],
+  "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
     {"name":"geissclk.app.js","url":"clock.js"},
     {"name":"geissclk.precompute.js","url":"precompute.js"},

@@ -1,0 +1,15 @@
+0.01: New App!
+0.02: Change font to 5x9 7 segment-style
+      Add settings page
+      Add option to show seconds
+0.03: Fix Bell not appearing on alarms > 24h and redrawing interval
+      Update to match the default alarm widget, and not show itself when an alarm is hidden.
+0.04: Fix check for active alarm
+0.05: Convert Yes/No On/Off in settings to checkboxes
+0.06: Remember next alarm to reduce calculation amount
+      Redraw only every hour when no alarm in next 24h
+0.07: Fix when no alarms are present
+0.08: Selectable font. Allow to disable hour padding.
+0.09: Match draw() API e.g. to allow wid_edit to alter this widget
+0.10: Change 4x5 font to 6x8, teletext is now default font
+0.11: Bugfix: handle changes in alarms (e.g. done without a load, such as via fastload)

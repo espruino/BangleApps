@@ -1,0 +1,16 @@
+{ "id": "widdst",
+  "name": "Daylight Saving",
+  "version":"0.06",
+  "description": "Widget to set daylight saving rules. Requires Espruino 2v15 or later - see the instructions below for more information.",
+  "icon": "icon.png",
+  "type": "widget",
+  "tags": "widget,tool",
+  "supports" : ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"widdst.wid.js","url":"widget.js"},
+    {"name":"widdst.0.boot.js","url":"boot.js"},
+    {"name":"widdst.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"widdst.json"}]
+}

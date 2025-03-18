@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ================================================================
 # apps.json used to contain the metadata for every app. Now the
 # metadata is stored in each apps's directory - app/yourapp/metadata.js
@@ -23,7 +23,7 @@ echo "[" > "$outfile"
 first=1
 for app in apps/*/; do 
   echo "Processing $app..."; 
-  if [[ "$app" =~ ^apps/_example.* ]]; then
+  if [[ "$app" =~ ^apps/_example.* ]] || [ ! -e "$app/"metadata.json ]; then
     echo "Ignoring $app"
   else
     if [ $first -eq 1 ]; then

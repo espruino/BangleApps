@@ -1,7 +1,7 @@
 {
   "id": "mysticclock",
   "name": "Mystic Clock",
-  "version": "1.01",
+  "version": "1.02",
   "description": "A retro-inspired watchface featuring time, date, and an interactive data display line.",
   "icon": "mystic-clock.png",
   "type": "clock",
@@ -14,5 +14,8 @@
     {"name":"mysticclock.app.js","url":"mystic-clock-app.js"},
     {"name":"mysticclock.settings.js","url":"mystic-clock-settings.js"},
     {"name":"mysticclock.img","url":"mystic-clock-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"mysticclock.settings.json"}
   ]
 }

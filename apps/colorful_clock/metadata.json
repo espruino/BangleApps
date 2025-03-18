@@ -1,7 +1,7 @@
 { "id": "colorful_clock",
   "name": "Colorful Analog Clock",
   "shortName":"Colorful Clock",
-  "version":"0.03",
+  "version": "0.05",
   "description": "a colorful analog clock",
   "icon": "app-icon.png",
   "type": "clock",

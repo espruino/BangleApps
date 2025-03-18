@@ -73,7 +73,7 @@ let lastTemp = 0;
 
 const phone = {
   get status() {
-    return NRF.getSecurityStatus().connected ? "Yes" : "No";
+    return NRF.getSecurityStatus().connected ? /*LANG*/"Yes" : /*LANG*/"No";
   },
   message: null,
   messageTimeout: null,
@@ -92,6 +92,7 @@ function writeSettings(newSettings) {
 }
 
 function phoneOutbound(msg) {
+  Bluetooth.println("");
   Bluetooth.println(JSON.stringify(msg));
 }
 
@@ -133,11 +134,12 @@ function truncStr(str, max) {
 
 function phoneInbound(evt) {
   switch (evt.t) {
-    case 'notify':
+    case 'notify': {
       const sender = truncStr(evt.sender, 10);
       const subject = truncStr(evt.subject, 15);
       phoneNewMessage("notify", `${sender} - '${subject}'`);
       break;
+    }
     case 'call':
       if (evt.cmd === "accept") {
         let nameOrNumber = "Unknown";

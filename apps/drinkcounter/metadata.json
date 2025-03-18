@@ -1,0 +1,24 @@
+{
+  "id": "drinkcounter",
+  "name": "Drink Counter",
+  "shortName": "Drink Counter",
+  "version": "0.26",
+  "description": "Counts drinks you had for science. Calculates blood alcohol content (BAC)",
+  "allow_emulator":true,
+  "icon": "drinkcounter.png",
+  "type": "app",
+  "tags": "health",
+  "screenshots": [{"url":"screenshot_drnkcnt.png"}],
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"drinkcounter.app.js","url":"app.js"},
+    {"name":"drinkcounter.img","url":"drinkcounter-icon.js","evaluate":true},
+    {"name":"drinkcounter.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"drinkcounter.settings.json"},
+    {"name":"drinkcounter.json"},
+    {"name":"drinkcounter.status.json"}	
+  ]
+}

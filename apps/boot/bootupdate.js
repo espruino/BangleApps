@@ -1,21 +1,27 @@
 /* This rewrites boot0.js based on current settings. If settings changed then it
 recalculates, but this avoids us doing a whole bunch of reconfiguration most
 of the time. */
+{ // execute in our own scope so we don't have to free variables...
 E.showMessage(/*LANG*/"Updating boot0...");
-var s = require('Storage').readJSON('setting.json',1)||{};
-var BANGLEJS2 = process.env.HWVERSION==2; // Is Bangle.js 2
-var boot = "", bootPost = "";
-if (require('Storage').hash) { // new in 2v11 - helps ensure files haven't changed
-  var CRC = E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\.boot\.js/)+E.CRC32(process.env.GIT_COMMIT);
-  boot += `if (E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\\.boot\\.js/)+E.CRC32(process.env.GIT_COMMIT)!=${CRC})`;
-} else {
-  var CRC = E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\.boot\.js/))+E.CRC32(process.env.GIT_COMMIT);
-  boot += `if (E.CRC32(require('Storage').read('setting.json'))+E.CRC32(require('Storage').list(/\\.boot\\.js/))+E.CRC32(process.env.GIT_COMMIT)!=${CRC})`;
+let s = require('Storage').readJSON('setting.json',1)||{};
+//const BANGLEJS2 = process.env.HWVERSION==2; // Is Bangle.js 2
+const FWVERSION = parseFloat(process.env.VERSION.replace("v","").replace(/\.(\d\d)$/,".0$1"));
+const DEBUG = s.bootDebug; // we can set this to enable debugging output in boot0
+let boot = "", bootPost = "";
+if (DEBUG) {
+  boot += "var _tm=Date.now()\n";
+  bootPost += "delete _tm;";
 }
-boot += ` { eval(require('Storage').read('bootupdate.js')); throw "Storage Updated!"}\n`;
+if (FWVERSION < 216) {
+  E.showMessage(/*LANG*/"Please update Bangle.js firmware\n\nCurrent = "+process.env.VERSION,{title:"ERROR"});
+  throw new Error("Old firmware");
+}
+let CRC = E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\.js$/)+E.CRC32(process.env.GIT_COMMIT);
+boot += `if(E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\\.js$/)+E.CRC32(process.env.GIT_COMMIT)!=${CRC})`;
+boot += `{eval(require('Storage').read('bootupdate.js'));}else{\n`;
 boot += `E.setFlags({pretokenise:1});\n`;
 boot += `var bleServices = {}, bleServiceOptions = { uart : true};\n`;
-bootPost += `NRF.setServices(bleServices, bleServiceOptions);delete bleServices,bleServiceOptions;\n`; // executed after other boot code
+bootPost += `NRF.setServices(bleServices,bleServiceOptions);delete bleServices,bleServiceOptions;\n`; // executed after other boot code
 if (s.ble!==false) {
   if (s.HID) { // Human interface device
     if (s.HID=="joy") boot += `Bangle.HID = E.toUint8Array(atob("BQEJBKEBCQGhAAUJGQEpBRUAJQGVBXUBgQKVA3UBgQMFAQkwCTEVgSV/dQiVAoECwMA="));`;
@@ -25,21 +31,19 @@ if (s.ble!==false) {
     boot += `bleServiceOptions.hid=Bangle.HID;\n`;
   }
 }
-if (s.log==2) { // logging to file
-    boot += `_DBGLOG=require("Storage").open("log.txt","a");
-`;
-} if (s.blerepl===false) { // If not programmable, force terminal off Bluetooth
-  if (s.log==2) boot += `_DBGLOG=require("Storage").open("log.txt","a");
-LoopbackB.on('data',function(d) {_DBGLOG.write(d);Terminal.write(d);});
+// settings.log 0-off, 1-display, 2-log, 3-both
+if (s.blerepl===false) { // If not programmable, force terminal off Bluetooth
+  if (s.log>=2) { boot += `_DBGLOG=require("Storage").open("log.txt","a");
+LoopbackB.on('data',function(d) {_DBGLOG.write(d);${(s.log==3)?"Terminal.write(d);":""}});
 LoopbackA.setConsole(true);\n`;
-  else if (s.log) boot += `Terminal.setConsole(true);\n`; // if showing debug, force REPL onto terminal
+  } else if (s.log==1) boot += `Terminal.setConsole(true);\n`; // if showing debug, force REPL onto terminal
   else boot += `E.setConsole(null,{force:true});\n`; // on new (2v05+) firmware we have E.setConsole which allows a 'null' console
   /* If not programmable add our own handler for Bluetooth data
   to allow Gadgetbridge commands to be received*/
   boot += `
 Bluetooth.line="";
 Bluetooth.on('data',function(d) {
-  var l = (Bluetooth.line + d).split(/[\\n\\r]/);
+  let l = (Bluetooth.line + d).split(/[\\n\\r]/);
   Bluetooth.line = l.pop();
   l.forEach(n=>Bluetooth.emit("line",n));
 });
@@ -49,10 +53,10 @@ Bluetooth.on('line',function(l) {
     try { global.GB(JSON.parse(l.slice(3,-1))); } catch(e) {}
 });\n`;
 } else {
-  if (s.log==2) boot += `_DBGLOG=require("Storage").open("log.txt","a");
-LoopbackB.on('data',function(d) {_DBGLOG.write(d);Terminal.write(d);});
+  if (s.log>=2) boot += `_DBGLOG=require("Storage").open("log.txt","a");
+LoopbackB.on('data',function(d) {_DBGLOG.write(d);${(s.log==3)?"Terminal.write(d);":""}});
 if (!NRF.getSecurityStatus().connected) LoopbackA.setConsole();\n`;
-  else if (s.log) boot += `if (!NRF.getSecurityStatus().connected) Terminal.setConsole();\n`; // if showing debug, put REPL on terminal (until connection)
+  else if (s.log==1) boot += `if (!NRF.getSecurityStatus().connected) Terminal.setConsole();\n`; // if showing debug, put REPL on terminal (until connection)
   else boot += `Bluetooth.setConsole(true);\n`; // else if no debug, force REPL to Bluetooth
 }
 // we just reset, so BLE should be on.
@@ -62,112 +66,44 @@ if (s.ble===false) boot += `if (!NRF.getSecurityStatus().connected) NRF.sleep();
 if (s.timeout!==undefined) boot += `Bangle.setLCDTimeout(${s.timeout});\n`;
 if (!s.timeout) boot += `Bangle.setLCDPower(1);\n`;
 boot += `E.setTimeZone(${s.timezone});`;
-// Set vibrate, beep, etc IF on older firmwares
-if (!Bangle.F_BEEPSET) {
-  if (!s.vibrate) boot += `Bangle.buzz=Promise.resolve;\n`
-  if (s.beep===false) boot += `Bangle.beep=Promise.resolve;\n`
-  else if (s.beep=="vib" && !BANGLEJS2) boot += `Bangle.beep = function (time, freq) {
-    return new Promise(function(resolve) {
-      if ((0|freq)<=0) freq=4000;
-      if ((0|time)<=0) time=200;
-      if (time>5000) time=5000;
-      analogWrite(D13,0.1,{freq:freq});
-      setTimeout(function() {
-        digitalWrite(D13,0);
-        resolve();
-      }, time);
-    });
-  };\n`;
-}
-// Draw out of memory errors onto the screen
-boot += `E.on('errorFlag', function(errorFlags) {
+// Draw out of memory errors onto the screen if logging enabled
+if (s.log) boot += `E.on('errorFlag', function(errorFlags) {
   g.reset(1).setColor("#ff0000").setFont("6x8").setFontAlign(0,1).drawString(errorFlags,g.getWidth()/2,g.getHeight()-1).flip();
   print("Interpreter error:", errorFlags);
-  E.getErrorFlags(); // clear flags so we get called next time
-});\n`;
+  E.getErrorFlags();
+});\n`;// E.getErrorFlags() -> clear flags so we get called next time
 // stop users doing bad things!
 if (global.save) boot += `global.save = function() { throw new Error("You can't use save() on Bangle.js without overwriting the bootloader!"); }\n`;
 // Apply any settings-specific stuff
 if (s.options) boot+=`Bangle.setOptions(${E.toJS(s.options)});\n`;
 if (s.brightness && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightness});\n`;
-if (s.passkey!==undefined && s.passkey.length==6) boot+=`NRF.setSecurity({passkey:${E.toJS(s.passkey.toString())}, mitm:1, display:1});\n`;
-if (s.whitelist) boot+=`NRF.on('connect', function(addr) { if (!(require('Storage').readJSON('setting.json',1)||{}).whitelist.includes(addr)) NRF.disconnect(); });\n`;
-// Pre-2v10 firmwares without a theme/setUI
-delete g.theme; // deleting stops us getting confused by our own decl. builtins can't be deleted
-if (!g.theme) {
-  boot += `g.theme={fg:-1,bg:0,fg2:-1,bg2:7,fgH:-1,bgH:0x02F7,dark:true};\n`;
+if (s.bleprivacy || (s.passkey!==undefined && s.passkey.length==6)) {
+  let passkey = s.passkey ? `passkey:${E.toJS(s.passkey.toString())},display:1,mitm:1,` : "";
+  let privacy = s.bleprivacy ? `privacy:${E.toJS(s.bleprivacy)},` : "";
+  boot+=`NRF.setSecurity({${passkey}${privacy}});\n`;
 }
-try {
-  Bangle.setUI({}); // In 2v12.xx we added the option for mode to be an object - for 2v12 and earlier, add a fix if it fails with an object supplied
-} catch(e) {
-  boot += `Bangle._setUI = Bangle.setUI;
-Bangle.setUI=function(mode, cb) {
-  if (Bangle.uiRemove) {
-    Bangle.uiRemove();
-    delete Bangle.uiRemove;
-  }
-  if ("object"==typeof mode) {
-    // TODO: handle mode.back?
-    mode = mode.mode;
-  }
-  Bangle._setUI(mode, cb);
-};\n`;
-}
-delete E.showScroller; // deleting stops us getting confused by our own decl. builtins can't be deleted
-if (!E.showScroller) { // added in 2v11 - this is a limited functionality polyfill
-  boot += `E.showScroller = (function(a){function n(){g.reset();b>=l+c&&(c=1+b-l);b<c&&(c=b);g.setColor(g.theme.fg);for(var d=0;d<l;d++){var m=d+c;if(0>m||m>=a.c)break;var f=24+d*a.h;a.draw(m,{x:0,y:f,w:h,h:a.h});d+c==b&&g.setColor(g.theme.fg).drawRect(0,f,h-1,f+a.h-1).drawRect(1,f+1,h-2,f+a.h-2)}g.setColor(c?g.theme.fg:g.theme.bg);g.fillPoly([e,6,e-14,20,e+14,20]);g.setColor(a.c>l+c?g.theme.fg:g.theme.bg);g.fillPoly([e,k-7,e-14,k-21,e+14,k-21])}if(!a)return Bangle.setUI();var b=0,c=0,h=g.getWidth(),
-k=g.getHeight(),e=h/2,l=Math.floor((k-48)/a.h);g.reset().clearRect(0,24,h-1,k-1);n();Bangle.setUI("updown",d=>{d?(b+=d,0>b&&(b=a.c-1),b>=a.c&&(b=0),n()):a.select(b)})});\n`;
-}
-delete g.imageMetrics; // deleting stops us getting confused by our own decl. builtins can't be deleted
-if (!g.imageMetrics) { // added in 2v11 - this is a limited functionality polyfill
-  boot += `Graphics.prototype.imageMetrics=function(src) {
-  if (src[0]) return {width:src[0],height:src[1]};
-  else if ('object'==typeof src) return {
-    width:("width" in src) ? src.width : src.getWidth(),
-    height:("height" in src) ? src.height : src.getHeight()};
-  var im = E.toString(src);
-  return {width:im.charCodeAt(0), height:im.charCodeAt(1)};
-};\n`;
-}
-delete g.stringMetrics; // deleting stops us getting confused by our own decl. builtins can't be deleted
-if (!g.stringMetrics) { // added in 2v11 - this is a limited functionality polyfill
-  boot += `Graphics.prototype.stringMetrics=function(txt) {
-  txt = txt.toString().split("\\n");
-  return {width:Math.max.apply(null,txt.map(x=>g.stringWidth(x))), height:this.getFontHeight()*txt.length};
-};\n`;
-}
-delete g.wrapString; // deleting stops us getting confused by our own decl. builtins can't be deleted
-if (!g.wrapString) { // added in 2v11 - this is a limited functionality polyfill
-  boot += `Graphics.prototype.wrapString=function(str, maxWidth) {
-  var lines = [];
-  for (var unwrappedLine of str.split("\\n")) {
-    var words = unwrappedLine.split(" ");
-    var line = words.shift();
-    for (var word of words) {
-      if (g.stringWidth(line + " " + word) > maxWidth) {
-        lines.push(line);
-        line = word;
-      } else {
-        line += " " + word;
-      }
-    }
-    lines.push(line);
-  }
-  return lines;
-};\n`;
-}
-delete Bangle.appRect; // deleting stops us getting confused by our own decl. builtins can't be deleted
-if (!Bangle.appRect) { // added in 2v11 - polyfill for older firmwares
-  boot += `Bangle.appRect = ((y,w,h)=>({x:0,y:0,w:w,h:h,x2:w-1,y2:h-1}))(g.getWidth(),g.getHeight());
-  (lw=>{ Bangle.loadWidgets = () => { lw(); Bangle.appRect = ((y,w,h)=>({x:0,y:y,w:w,h:h-y,x2:w-1,y2:h-(1+h)}))(global.WIDGETS?24:0,g.getWidth(),g.getHeight()); }; })(Bangle.loadWidgets);\n`;
-}
+if (s.blename === false) boot+=`NRF.setAdvertising({},{showName:false});\n`;
+if (s.whitelist && !s.whitelist_disabled) boot+=`NRF.on('connect', function(addr) { if (!NRF.ignoreWhitelist) { let whitelist = (require('Storage').readJSON('setting.json',1)||{}).whitelist; if (NRF.resolveAddress !== undefined) { let resolvedAddr = NRF.resolveAddress(addr); if (resolvedAddr !== undefined) addr = resolvedAddr + " (resolved)"; } if (!whitelist.includes(addr)) NRF.disconnect(); }});\n`;
+if (s.rotate) boot+=`g.setRotation(${s.rotate&3},${s.rotate>>2});\n` // screen rotation
+boot+=`Bangle.loadWidgets=function(){if(!global.WIDGETS)eval(require("Storage").read(".widcache"))};\n`;
+// ================================================== FIXING OLDER FIRMWARES
+// deleting stops us getting confused by our own decl. builtins can't be deleted
+// this is a polyfill without fastloading capability
+delete Bangle.showClock;
+if (!Bangle.showClock) boot += `Bangle.showClock = ()=>{load(".bootcde")};\n`;
+delete Bangle.load;
+if (!Bangle.load) boot += `Bangle.load = load;\n`;
 
-// Append *.boot.js files
+// show timings
+if (DEBUG) boot += `print(".boot0",0|(Date.now()-_tm),"ms");_tm=Date.now();\n`
+// ================================================== .BOOT0
+// Append *.boot.js files.
+// Name files with a number - eg 'foo.5.boot.js' to enforce order (lowest first). Numbered files get placed before non-numbered
 // These could change bleServices/bleServiceOptions if needed
-var bootFiles = require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
-  var getPriority = /.*\.(\d+)\.boot\.js$/;
-  var aPriority = a.match(getPriority);
-  var bPriority = b.match(getPriority);
+let bootFiles = require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
+  let getPriority = /.*\.(\d+)\.boot\.js$/;
+  let aPriority = a.match(getPriority);
+  let bPriority = b.match(getPriority);
   if (aPriority && bPriority){
     return parseInt(aPriority[1]) - parseInt(bPriority[1]);
   } else if (aPriority && !bPriority){
@@ -178,15 +114,48 @@ var bootFiles = require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
   return a==b ? 0 : (a>b ? 1 : -1);
 });
 // precalculate file size
-var fileSize = boot.length + bootPost.length;
-bootFiles.forEach(bootFile=>{
-  // match the size of data we're adding below in bootFiles.forEach
-  fileSize += 2+bootFile.length+1+require('Storage').read(bootFile).length+2;
-});
-// write file in chunks (so as not to use up all RAM)
-require('Storage').write('.boot0',boot,0,fileSize);
-var fileOffset = boot.length;
-bootFiles.forEach(bootFile=>{
+bootPost += "}";
+let fileOffset,fileSize;
+/* code to output a file, plus preable and postable
+when called with dst==undefined it just increments
+fileOffset so we can see ho wbig the file has to be */
+let outputFile = (dst,src,pre,post) => {"ram";
+  if (DEBUG) {
+    if (dst) require('Storage').write(dst,`//${src}\n`,fileOffset);
+    fileOffset+=2+src.length+1;
+  }
+  if (pre) {
+    if (dst) require('Storage').write(dst,pre,fileOffset);
+    fileOffset+=pre.length;
+  }
+  let f = require('Storage').read(src);
+  if (src.endsWith("clkinfo.js") && f[0]!="(") {
+    /* we shouldn't have to do this but it seems sometimes (sched 0.28) folks have
+    used libraries which get added into the clockinfo, and we can't use them directly
+    to we have to revert back to eval */
+    f = `eval(require('Storage').read(${E.toJS(src)}))`;
+  }
+  if (dst) {
+    // we can't just write 'f' in one go because it can be too big
+    let len = f.length;
+    let offset = 0;
+    while (len) {
+      let chunk = Math.min(len, 2048);
+      require('Storage').write(dst,f.substr(offset, chunk),fileOffset);
+      fileOffset+=chunk;
+      offset+=chunk;
+      len-=chunk;
+    }
+  } else
+    fileOffset+=f.length;
+  if (dst) require('Storage').write(dst,post,fileOffset);
+  fileOffset+=post.length;
+  if (DEBUG) {
+    if (dst) require('Storage').write(dst,`print(${E.toJS(src)},0|(Date.now()-_tm),"ms");_tm=Date.now();\n`,fileOffset);
+    fileOffset += 48+E.toJS(src).length;
+  }
+};
+let outputFileComplete = (dst,fn) => {
   // we add a semicolon so if the file is wrapped in (function(){ ... }()
   // with no semicolon we don't end up with (function(){ ... }()(function(){ ... }()
   // which would cause an error!
@@ -194,32 +163,50 @@ bootFiles.forEach(bootFile=>{
   // "//"+bootFile+"\n"+require('Storage').read(bootFile)+";\n";
   // but we need to do this without ever loading everything into RAM as some
   // boot files seem to be getting pretty big now.
-  require('Storage').write('.boot0',"//"+bootFile+"\n",fileOffset);
-  fileOffset+=2+bootFile.length+1;
-  var bf = require('Storage').read(bootFile);
-  // we can't just write 'bf' in one go because at least in 2v13 and earlier
-  // Espruino wants to read the whole file into RAM first, and on Bangle.js 1
-  // it can be too big (especially BTHRM).
-  var bflen = bf.length;
-  var bfoffset = 0;
-  while (bflen) {
-    var bfchunk = Math.min(bflen, 2048);
-    require('Storage').write('.boot0',bf.substr(bfoffset, bfchunk),fileOffset);
-    fileOffset+=bfchunk;
-    bfoffset+=bfchunk;
-    bflen-=bfchunk;
-  }
-  require('Storage').write('.boot0',";\n",fileOffset);
-  fileOffset+=2;
-});
+  outputFile(dst,fn,"",";\n");
+};
+fileOffset = boot.length + bootPost.length;
+bootFiles.forEach(fn=>outputFileComplete(undefined,fn)); // just get sizes
+fileSize = fileOffset;
+require('Storage').write('.boot0',boot,0,fileSize);
+fileOffset = boot.length;
+bootFiles.forEach(fn=>outputFileComplete('.boot0',fn));
 require('Storage').write('.boot0',bootPost,fileOffset);
-
-delete boot;
-delete bootPost;
-delete bootFiles;
-delete fileSize;
-delete fileOffset;
+delete boot,bootPost,bootFiles;
+// ================================================== .WIDCACHE for widgets
+let widgetFiles = require("Storage").list(/\.wid\.js$/);
+let widget = `// Made by bootupdate.js\nglobal.WIDGETS={};`, widgetPost = `var W=WIDGETS;WIDGETS={};
+Object.keys(W).sort((a,b)=>(0|W[b].sortorder)-(0|W[a].sortorder)).forEach(k=>WIDGETS[k]=W[k]);`; // sort
+if (DEBUG) widget+="var _tm=Date.now();";
+outputFileComplete = (dst,fn) => {
+  outputFile(dst,fn,"try{",`}catch(e){print(${E.toJS(fn)},e,e.stack)}\n`);
+};
+fileOffset = widget.length + widgetPost.length;
+widgetFiles.forEach(fn=>outputFileComplete(undefined,fn)); // just get sizes
+fileSize = fileOffset;
+require('Storage').write('.widcache',widget,0,fileSize);
+fileOffset = widget.length;
+widgetFiles.forEach(fn=>outputFileComplete('.widcache',fn));
+require('Storage').write('.widcache',widgetPost,fileOffset);
+delete widget,widgetPost,widgetFiles;
+// ================================================== .clkinfocache for clockinfos
+let ciFiles = require("Storage").list(/\.clkinfo\.js$/);
+let ci = `// Made by bootupdate.js\n`;
+if (DEBUG) ci+="var _tm=Date.now();";
+outputFileComplete = (dst,fn) => {
+  outputFile(dst,fn,"try{let fn=",`;let a=fn(),b=menu.find(x=>x.name===a.name);if(b)b.items=b.items.concat(a.items)else menu=menu.concat(a);}catch(e){print(${E.toJS(fn)},e,e.stack)}\n`);
+};
+fileOffset = ci.length;
+ciFiles.forEach(fn=>outputFileComplete(undefined,fn)); // just get sizes
+fileSize = fileOffset;
+require('Storage').write('.clkinfocache',ci,0,fileSize);
+fileOffset = ci.length;
+ciFiles.forEach(fn=>outputFileComplete('.clkinfocache',fn));
+delete ci,ciFiles;
+// test with require("clock_info").load()
+// ================================================== END
 E.showMessage(/*LANG*/"Reloading...");
-eval(require('Storage').read('.boot0'));
+}
 // .bootcde should be run automatically after if required, since
 // we normally get called automatically from '.boot0'
+eval(require('Storage').read('.boot0'));

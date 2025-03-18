@@ -5,20 +5,59 @@
   <body>
     <div class="container">
       <div class="columns">
+        Please wait...
       </div>
     </div>
 
     <script src="../../core/lib/customize.js"></script>
-    <script src="../../core/lib/imageconverter.js"></script>
+    <script src="../../webtools/imageconverter.js"></script>
 
     <script>
-      var faces = [
+      var faces = [];
+      const FACES_BANGLE1 = [
         { img:"122240.png", bpp : 8, x:56, y:20, align: 1, col:"#FFFFFF", name:"Cityscape", attrib:"getwallpapers.com", attribLink:"http://getwallpapers.com/collection/8-bit-wallpaper", description:"" },
         { img:"122271.png", bpp : 8, x:10, y:125, align: -1, col:"#FFFFFF", name:"Sunset", attrib:"getwallpapers.com", attribLink:"http://getwallpapers.com/collection/8-bit-wallpaper", description:"" },
         { img:"thisisfine.png", bpp : 8, x:53, y:5, align: 0, col:"#000000", name:"This is fine.", attrib:"Gunshow #648", attribLink:"https://knowyourmeme.com/memes/this-is-fine", description:"" },
         { img:"explode.png", bpp : 8, x:0, y:145, align: 0, col:"#FFFFFF", name:"Boom.", attrib:"", attribLink:"", description:"" },
       ];
+      const FACES_BANGLE2 = [
+        { img:"b2_122240.png", bpp : 8, x:2, y:5, align: 1, col:"#FFFFFF", name:"Cityscape", attrib:"getwallpapers.com", attribLink:"http://getwallpapers.com/collection/8-bit-wallpaper", description:"" },
+        { img:"b2_122271.png", bpp : 8, x:2, y:115, align: -1, col:"#FFFFFF", name:"Sunset", attrib:"getwallpapers.com", attribLink:"http://getwallpapers.com/collection/8-bit-wallpaper", description:"" },
+        { img:"b2_thisisfine.png", bpp : 8, x:10, y:0, align: 0, col:"#000000", name:"This is fine.", attrib:"Gunshow #648", attribLink:"https://knowyourmeme.com/memes/this-is-fine", description:"" },
+        { img:"b2_explode.png", bpp : 8, x:2, y:115, align: 0, col:"#FFFFFF", name:"Boom.", attrib:"", attribLink:"", description:"" },
+      ];
 
+      var recommendedUploadStyle = "...";
+      var defaultBPP = 8;
+      var defaultImageMode = "...";
+      var defaultPositions = {};
+
+      function onInit(device) {
+        if (device && device.id=="BANGLEJS2") {
+          faces = FACES_BANGLE2;
+          recommendedUploadStyle = "176x152 or 176x176(hidden widgets) 3bpp (8 color)";
+          defaultBPP = 8;
+          defaultImageMode = "web";
+          defaultPositions = {
+            "2,5,-1":"Top",
+            "2,115,-1":"Bottom",
+          };
+        } else {
+          faces = FACES_BANGLE1;
+          recommendedUploadStyle = "240x192 or 240x216 8bpp web palette";
+          defaultBPP = 8;
+          defaultImageMode = "web";
+          defaultPositions = {
+            "16,16,-1":"Top Left",
+            "50,16,1":"Top Right",
+            "16,131,-1":"Bottom Left",
+            "50,131,1":"Bottom Right"
+          };
+        }
+        updateFaces();
+      }
+hazel
+      function updateFaces() {
       document.querySelector(".columns").innerHTML = faces.map((face,facenumber)=>`
 <div class="column col-6 col-xs-12">
   <div class="card">
@@ -42,7 +81,7 @@
     </div>
     <div class="card-header">
       <div class="card-title h5">Custom</div>
-      <div class="card-subtitle text-gray">(240x192 or 240x216 8 bit web palette)</div>
+      <div class="card-subtitle text-gray">${recommendedUploadStyle}</div>
     </div>
     <div class="card-body">
     <div class="form-group">
@@ -54,11 +93,17 @@
       </div>
     </div>
     <div class="form-group">
-    <label class="form-switch">
-      <input type="checkbox" id="cusom16bit">
-      <i class="form-icon"></i> 16 bit images (look better, slower, not recommended)
-    </label>
-  </div>
+      <label class="form-switch">
+        <input type="checkbox" id="custom16bit">
+        <i class="form-icon"></i> 16 bit images (look better, slower, not recommended)
+      </label>
+    </div>
+    <div class="form-group">
+      <label class="form-switch">
+        <input type="checkbox" id="hideWidgets">
+        <i class="form-icon"></i> Hide Widgets (use a square image)
+      </label>
+    </div>
     <div class="form-group">
       <label class="form-label" for="customcolor">Clock color</label>
       <select class="form-select" id="customcolor">
@@ -69,10 +114,7 @@
     <div class="form-group">
       <label class="form-label" for="customlocation">Clock location</label>
       <select class="form-select" id="customlocation">
-        <option value="16,16,-1">Top Left</option>
-        <option value="50,16,1">Top Right</option>
-        <option value="16,131,-1">Bottom Left</option>
-        <option value="50,131,1">Bottom Right</option>
+        ${Object.keys(defaultPositions).map(k=>`<option value="${k}">${defaultPositions[k]}</option>`).join("")}
       </select>
     </div>
     </div>
@@ -90,16 +132,18 @@
           // build app text
           var facenumber = btn.target.getAttribute("face");
           var face;
+          var hideWidgets = true;
           if (facenumber=="custom") {
             var select = document.getElementById("customlocation");
             var pos = select.options[select.selectedIndex].value.split(",").map(x=>parseInt(x));
             select = document.getElementById("customcolor");
             var col = select.options[select.selectedIndex].value;
+            hideWidgets = document.getElementById('hideWidgets').checked;
             face = {
               x : pos[0],
               y : pos[1],
               align: pos[2],
-              bpp : document.getElementById('cusom16bit').checked ? 16 : 8,
+              bpp : document.getElementById('custom16bit').checked ? 16 : defaultBPP,
               col : col
             };
           } else {
@@ -110,9 +154,10 @@
             x : face.x,
             y : face.y,
             align : face.align,
-            col : face.col
+            col : face.col,
+            hideWidgets : hideWidgets
           };
-          var imgMode = faceInfo.bpp==16 ? "rgb565" : "web";
+          var imgMode = faceInfo.bpp==16 ? "rgb565" : defaultImageMode;
           var img = document.querySelector(`img[face='${facenumber}']`);
           var imgString = imageconverter.imagetoString(img, {mode:imgMode, output:"raw", compression:false});
           // send finished app
@@ -136,6 +181,7 @@
           fr.readAsDataURL(files[0]);
         }
     }
+  }
 
     </script>
   </body>

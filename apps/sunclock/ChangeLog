@@ -1,0 +1,3 @@
+0.01: First commit
+0.02: Use 'modules/suncalc.js' to avoid it being copied 8 times for different apps
+0.03: Minor code improvements

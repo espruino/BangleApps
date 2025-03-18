@@ -1,3 +1,8 @@
 0.01: Create astral clock app
 0.02: Fixed Whirlpool galaxy RA/DA, larger compass display, fixed moonphase overlapping battery widget
 0.03: Update to use Bangle.setUI instead of setWatch
+0.04: Tell clock widgets to hide.
+0.05: Added adjustment for Bangle.js magnetometer heading fix
+0.06: optimized to update much faster
+0.07: added support for bangle.js 2
+0.08: call setUI before loading widgets to indicate we're a clock

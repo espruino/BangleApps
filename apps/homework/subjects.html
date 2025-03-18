@@ -20,9 +20,10 @@
         // send finished app (in addition to contents of app.json)
         sendCustomizedApp({
           storage:[
-            {name:"subjects.txt"},
+            {name:"homework.subjects.txt", url:"subjects.txt", content:app},
           ]
         });
+        console.log("Sent homework.subjects.txt!");
       });
 
     </script>

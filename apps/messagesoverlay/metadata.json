@@ -1,0 +1,20 @@
+{
+  "id": "messagesoverlay",
+  "name": "Messages Overlay",
+  "version": "0.11",
+  "description": "An overlay based implementation of a messages UI (display notifications from iOS and Gadgetbridge/Android)",
+  "icon": "app.png",
+  "type": "bootloader",
+  "tags": "tool,system",
+  "supports": ["BANGLEJS2"],
+  "dependencies" : { "messageicons":"module","messages":"app" },
+  "readme": "README.md",
+  "storage": [
+    {"name":"messagesoverlay","url":"lib.js"},
+    {"name":"messagesoverlay.0.boot.js","url":"boot.js"},
+    {"name":"messagesoverlay.settings.js","url":"settings.js"},
+    {"name":"messagesoverlay.default.json","url":"default.json"}
+  ],
+  "data":[{"name":"messagesoverlay.json"}],
+  "screenshots": [{"url":"screen_call.png"} ,{"url":"screen_message.png"} ]
+}

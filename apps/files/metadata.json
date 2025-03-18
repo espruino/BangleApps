@@ -1,7 +1,7 @@
 {
   "id": "files",
   "name": "App Manager",
-  "version": "0.07",
+  "version": "0.08",
   "description": "Show currently installed apps, free space, and allow their deletion from the watch",
   "icon": "files.png",
   "tags": "tool,system,files",

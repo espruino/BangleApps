@@ -1,0 +1,14 @@
+{ "id": "orloj",
+  "name": "Orloj",
+  "version": "0.10",
+  "description": "Astronomical clock",
+  "icon": "app.png",
+  "readme": "README.md",
+  "supports" : ["BANGLEJS2"],
+  "type": "clock",
+  "tags": "clock",
+  "storage": [
+      {"name":"orloj.app.js","url":"app.js"},
+      {"name":"orloj.img","url":"app-icon.js","evaluate":true}
+  ]
+}

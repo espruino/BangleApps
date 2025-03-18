@@ -1,7 +1,7 @@
 {
   "id": "limelight",
   "name": "Limelight",
-  "version": "0.01",
+  "version": "0.04",
   "description": "Simple analogue clock (with configurable fonts) based on the work of @Andreas_Rozek (Simple_Clock)",
   "icon": "limelight.png",
   "readme":"README.md",
@@ -13,5 +13,8 @@
     {"name":"limelight.app.js","url":"limelight.app.js"},
     {"name":"limelight.settings.js","url":"limelight.settings.js"},
     {"name":"limelight.img","url":"limelight.icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"limelight.json"}
   ]
 }

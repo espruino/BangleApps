@@ -1,0 +1,8 @@
+1.00: New keyboard
+1.01: Change swipe interface to taps, speed up responses (efficiency tweaks).
+1.02: Generalize drawing and letter scaling. Allow custom and auto-generated character sets. Improve documentation.
+1.03: Attempt to improve keyboard load time.
+1.04: Make code asynchronous and improve load time.
+1.05: Fix layout issue and rename library
+1.06: Touch up readme, prep for IPO, add screenshots
+1.07: Fix widget display

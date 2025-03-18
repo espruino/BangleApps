@@ -1,0 +1,20 @@
+{
+  "id": "elapsed_t",
+  "name": "Elapsed Time Clock",
+  "shortName": "Elapsed Time",
+  "type": "clock",
+  "version":"0.04",
+  "description": "A clock that calculates the time difference between now and any given target date.",
+  "tags": "clock,tool",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"elapsed_t.app.js","url":"app.js"},
+    {"name":"elapsed_t.settings.js","url":"settings.js"},
+    {"name":"elapsed_t.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"elapsed_t.data.json"}],
+  "icon": "app.png",
+  "readme": "README.md",
+  "screenshots": [{ "url": "screenshot1.png" }, { "url": "screenshot2.png" }, { "url": "screenshot3.png" }, { "url": "screenshot4.png" }],
+  "allow_emulator":true
+}

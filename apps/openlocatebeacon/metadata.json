@@ -1,0 +1,19 @@
+{
+  "id": "openlocatebeacon",
+  "name": "OpenLocate Beacon",
+  "shortName": "OpenLocate Beacon",
+  "version": "0.04",
+  "description": "Advertise GPS geolocation data using the OpenLocate Beacon packet specification.",
+  "icon": "openlocatebeacon.png",
+  "screenshots": [],
+  "type": "app",
+  "tags": "tool,sensors,bluetooth",
+  "supports" : [ "BANGLEJS2" ],
+  "allow_emulator": true,
+  "readme": "README.md",
+  "storage": [
+    { "name": "openlocatebeacon.app.js", "url": "openlocatebeacon.js" },
+    { "name": "openlocatebeacon.img", "url": "openlocatebeacon-icon.js",
+      "evaluate": true }
+  ]
+}

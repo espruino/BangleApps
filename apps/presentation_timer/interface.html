@@ -1,0 +1,126 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css" />
+
+    <style type="text/css">
+      .alert {
+        padding: 20px;
+        background-color: #f44336; /* Red */
+        color: white;
+        margin-bottom: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="info"></div>
+
+    <button id="btnReload" class="btn btn-primary">Reload from watch</button>
+    <button id="btnUpload" class="btn btn-primary">Upload to watch</button>
+    <button id="btnDownload" class="btn btn-primary">Download</button>
+
+    <pre id="presentation_timer" contenteditable></pre>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+      const filePresentationTimer = "presentation_timer.csv";
+      const defaultValue="1.5;1\n2;2\n2.5;3\n3;4\n"
+
+      function errorFormat() {
+        var date = new Date();
+        var error =
+          '<p class="alert">' +
+          date.toUTCString() +
+          " : Wrong format, it should be CSV, refer to the README" +
+          "</p>";
+        return error;
+      }
+
+      function getEditableContent() {
+        //transform any tag in an EOL (should be <br> or <div>), ignore ending tags
+        return document.getElementById("presentation_timer")
+                .innerHTML.replace(/<[^>]*>/g,"\n").replace(/\n\n+/g, '\n').replace(/^\n|\n$/g, '');
+      }
+
+      const re = new RegExp("^([0-9]*[.])?[0-9]+;[A-z0-9]+$");
+      function isCorrectCsvString(str) {
+        let wronglines = str.split("\n").filter(e=>e && !e.match(re));
+        //TODO check for increasing numbers
+        if(wronglines.length) {
+          console.log(wronglines.join("\n"));
+          return false;
+        }
+        return true;
+      }
+
+      function uploadFile(fileid, contents) {
+        Puck.write(
+          `\x10(function() {
+          require("Storage").write("${fileid}",\`${contents}\`);
+          Bluetooth.print("OK");
+         })()\n`,
+          (ret) => {
+            console.log("uploadFile", ret);
+          }
+        );
+      }
+
+      /* Load settings CSV file from the watch.
+       */
+      function loadTimes() {
+        document.getElementById("info").innerHTML = "";
+        Util.showModal("Loading...");
+        Puck.eval(`require('Storage').read("${filePresentationTimer}")`, (data) => {
+          document.getElementById("presentation_timer").innerHTML = data;
+          Util.hideModal();
+          if(!data) {
+            document.getElementById("presentation_timer").innerHTML = defaultValue;
+          }
+        });
+      }
+      /* Save settings as a CSV file on the watch.
+       */
+      function uploadTimes() {
+        document.getElementById("info").innerHTML = "";
+        Util.showModal("Uploading...");
+        let csvTimes = getEditableContent();
+        if (isCorrectCsvString(csvTimes)) {
+          uploadFile(filePresentationTimer, csvTimes);
+        } else {
+          document.getElementById("info").innerHTML = errorFormat();
+        }
+        Util.hideModal();
+      }
+
+      function downloadTimes() {
+        document.getElementById("info").innerHTML = "";
+        Util.showModal("Downloading...");
+        let csvTimes = getEditableContent();
+        if (isCorrectCsvString(csvTimes)) {
+          Util.saveFile(filePresentationTimer, "text/csv", csvTimes);
+        } else {
+          document.getElementById("info").innerHTML = errorFormat();
+        }
+        Util.hideModal();
+      }
+
+      document
+        .getElementById("btnUpload")
+        .addEventListener("click", function () {
+          uploadTimes();
+        });
+      document
+        .getElementById("btnDownload")
+        .addEventListener("click", function () {
+          downloadTimes();
+        });
+      document
+        .getElementById("btnReload")
+        .addEventListener("click", function () {
+          loadTimes();
+        });
+      function onInit() {
+        loadTimes();
+      }
+    </script>
+  </body>
+</html>

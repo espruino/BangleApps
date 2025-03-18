@@ -1,4 +1,4 @@
-#!/usr/bin/nodejs
+#!/usr/bin/env node
 /*
 Mashes together a bunch of different apps into a big binary blob.
 We then store this *inside* the Bangle.js firmware and can use it
@@ -7,29 +7,25 @@ to populate Storage initially.
 Bangle.js 1 doesn't really have anough flash space for this,
 but we have enough on v2.
 */
-var SETTINGS = {
-  pretokenise : true
-};
-
-var DEVICE = process.argv[2];
+var DEVICEID = process.argv[2];
 
 var path = require('path');
+var fs = require("fs");
 var ROOTDIR = path.join(__dirname, '..');
-var APPDIR = ROOTDIR+'/apps';
-var MINIFY = true;
 var OUTFILE, APPS;
+var JSUTILS = path.join(ROOTDIR, '../Espruino/src/jsutils.h');
 
-if (DEVICE=="BANGLEJS") {
+if (DEVICEID=="BANGLEJS") {
   var OUTFILE = path.join(ROOTDIR, '../Espruino/libs/banglejs/banglejs1_storage_default.c');
   var APPS = [ // IDs of apps to install
     "boot","launch","mclock","setting",
-    "about","alarm","widbat","widbt","welcome"
+    "about","alarm","sched","widbat","widbt","welcome"
   ];
-} else if (DEVICE=="BANGLEJS2") {
+} else if (DEVICEID=="BANGLEJS2") {
   var OUTFILE = path.join(ROOTDIR, '../Espruino/libs/banglejs/banglejs2_storage_default.c');
   var APPS = [ // IDs of apps to install
     "boot","launch","antonclk","setting",
-    "about","alarm","health","widlock","widbat","widbt","widid","welcome"
+    "about","alarm","sched","health","widlock","widbat","widbt","widid","welcome"
   ];
 } else {
   console.log("USAGE:");
@@ -37,16 +33,21 @@ if (DEVICE=="BANGLEJS") {
   console.log("  bin/firmwaremaker_c.js BANGLEJS2");
   process.exit(1);
 }
-console.log("Device = ",DEVICE);
+console.log("Device = ",DEVICEID);
 
+// Search for version String
+var VERSION = "2v10";
+var m = require("fs").readFileSync(JSUTILS).toString().match(/#define\s*JS_VERSION\s*([^\n]*)/);
+if (m) {
+  VERSION = JSON.parse(m[1]);
+}
+console.log("Using version "+VERSION);
 
-var fs = require("fs");
-global.Const = {
-  /* Are we only putting a single app on a device? If so
-  apps should all be saved as .bootcde and we write info
-  about the current app into app.info */
-  SINGLE_APP_ONLY : false,
-};
+var apploader = require("../core/lib/apploader.js");
+apploader.init({
+  DEVICEID : DEVICEID,
+  VERSION : VERSION,
+});
 
 
 function atob(input) {
@@ -84,38 +85,17 @@ function atob(input) {
     return new Uint8Array(output);
   }
 
-var AppInfo = require(ROOTDIR+"/core/js/appinfo.js");
 var appfiles = [];
-
-function fileGetter(url) {
-  console.log("Loading "+url)
-  if (MINIFY) {
-    if (url.endsWith(".json")) {
-      var f = url.slice(0,-5);
-      console.log("MINIFYING JSON "+f);
-      var j = eval("("+fs.readFileSync(url).toString("binary")+")");
-      var code = JSON.stringify(j);
-      //console.log(code);
-      url = f+".min.json";
-      fs.writeFileSync(url, code);
-    }
-  }
-  var blob = fs.readFileSync(url);
-  var data;
-  if (url.endsWith(".js") || url.endsWith(".json"))
-    data = blob.toString(); // allow JS/etc to be written in UTF-8
-  else
-    data = blob.toString("binary")
-  return Promise.resolve(data);
-}
 
 // If file should be evaluated, try and do it...
 function evaluateFile(file) {
+  var content = file.content.trim();
   var hsStart = 'require("heatshrink").decompress(atob("';
   var hsEnd = '"))';
-  if (file.content.startsWith(hsStart) && file.content.endsWith(hsEnd)) {
-    var heatshrink = require(ROOTDIR+"/core/lib/heatshrink.js");
-    var b64 = file.content.slice(hsStart.length, -hsEnd.length);
+  if (content.startsWith(hsStart) && content.endsWith(hsEnd)) {
+    console.log("heatshrink");
+    var heatshrink = require(ROOTDIR+"/webtools/heatshrink.js");
+    var b64 = content.slice(hsStart.length, -hsEnd.length);
     var decompressed = heatshrink.decompress(atob(b64));
     file.content = "";
     for (var i=0;i<decompressed.length;i++)
@@ -127,22 +107,30 @@ function evaluateFile(file) {
     return;
   }
   // else... uh-oh
+  console.log("=========================================");
+  console.log("Unable to evaluate "+file.name);
   console.log(file);
   throw new Error("Unable to evaluate "+file.name);
 }
 
 Promise.all(APPS.map(appid => {
-  try {
-    var app = JSON.parse(fs.readFileSync(APPDIR + "/" + appid + "/metadata.json").toString());
-  } catch (e) {
-    throw new Error(`App ${appid} not found`);
-  }
-  return AppInfo.getFiles(app, {
-    fileGetter : fileGetter,
-    settings : SETTINGS,
-    device : { id : DEVICE }
-  }).then(files => {
-    appfiles = appfiles.concat(files);
+  var app = apploader.apps.find(a => a.id==appid);
+  if (!app) throw new Error(`App ${appid} not found`);
+  return apploader.getAppFiles(app).then(files => {
+    files.forEach(f => {
+      var existing = appfiles.find(a=> a.name==f.name);
+      if (existing) {
+        if (existing.content !== f.content) {
+          console.log("=========================================");
+          console.log(`Duplicate file ${f.name} is different`);
+          console.log("EXISTING", existing.content);
+          console.log("NEW", f.content);          
+          throw new Error(`Duplicate file ${f.name} is different`)
+        }
+      } else {
+        appfiles.push(f);
+      }
+    });
   });
 })).then(() => {
   // work out what goes in storage
@@ -172,7 +160,7 @@ Promise.all(APPS.map(appid => {
 // Generated by BangleApps/bin/build_bangles_c.js
 
 const int jsfStorageInitialContentLength = ${storageContent.length};
-const char jsfStorageInitialContents[] = {
+const unsigned char jsfStorageInitialContents[] = {
 `;
 for (var i=0;i<storageContent.length;i+=32) {
   var chunk = storageContent.substr(i,32);

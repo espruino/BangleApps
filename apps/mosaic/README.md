@@ -4,7 +4,7 @@ A fabulously colourful clock!
 
 * Clearly shows the time on a colourful background that changes every minute.
 * Dark and Light theme compatible, with a setting to override the digit colour scheme.
-* Show or hide widgets with a setting (default shows widgets).
+* Show or hide widgets with a setting (default hides widgets, swipe down to show them thanks to `widget_utils`).
 
 ![](mosaic-scr1.png)
 ![](mosaic-scr2.png)

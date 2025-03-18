@@ -1,0 +1,15 @@
+{
+  "id": "widalarm",
+  "name": "Alarms Widget",
+  "version": "0.02",
+  "description": "Displays an alarm icon in the widgets bar if any alarm is active",
+  "icon": "app.png",
+  "type": "widget",
+  "tags": "tool,alarm,widget",
+  "supports": [ "BANGLEJS", "BANGLEJS2" ],
+  "provides_widgets" : ["alarm"],
+  "default" : true,
+  "storage": [
+    { "name": "widalarm.wid.js", "url": "widget.js" }
+  ]
+}

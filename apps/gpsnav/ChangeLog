@@ -3,4 +3,7 @@
 0.03: Add Waypoint Editor
 0.04: Fix great circle formula
 0.05: Use locale for speed and distance + fix Vector font sizes
-
+0.06: Move waypoints.json (and editor) to 'waypoints' app
+0.07: Add support for b2
+0.08: Fix not displaying of wpindex = 0, correct compass drawing and nm calculation on b2
+0.09: Minor code improvements

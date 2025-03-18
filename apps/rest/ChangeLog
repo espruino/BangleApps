@@ -1,0 +1,3 @@
+0.01: First Release
+0.02: Use built-in rounded-rect draw function, faster UI
+0.03: Maximum rest time increased from 120s to 600s

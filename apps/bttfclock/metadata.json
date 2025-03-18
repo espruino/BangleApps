@@ -1,0 +1,17 @@
+{
+  "id": "bttfclock",
+  "name": "Back To The Future",
+  "version": "0.03",
+  "description": "The watch of Marty McFly",
+  "readme": "README.md",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"bttfclock.app.js","url":"app.js"},
+    {"name":"bttfclock.img","url":"app-icon.js","evaluate":true}
+  ]
+}

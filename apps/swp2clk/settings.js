@@ -53,6 +53,7 @@
 
     appList.forEach((app) => {
       if (settings.whiteList.indexOf(app.src) >= 0) {
+        let index = settings.whiteList.indexOf(app.src);
         whiteListMenu[app.name] = () => {
           E.showPrompt("Delete from WL?", {
             title: "Delete from WL?",
@@ -101,6 +102,7 @@
 
     appList.forEach((app) => {
       if (settings.blackList.indexOf(app.src) >= 0) {
+        let index = settings.whiteList.indexOf(app.src);
         blackListMenu[app.name] = () => {
           E.showPrompt("Delete from BL?", {
             title: "Delete from BL?",
@@ -148,10 +150,10 @@
   };
 
   var getAppList = () => {
-    var appList = storage
+    var appList = require("Storage")
       .list(/\.info$/)
       .map((appInfoFileName) => {
-        var appInfo = storage.readJSON(appInfoFileName, 1);
+        var appInfo = require("Storage").readJSON(appInfoFileName, 1);
         return (
           appInfo && {
             name: appInfo.name,
@@ -178,4 +180,4 @@
 
   settings = readSettings();
   showMainMenu();
-});
+})

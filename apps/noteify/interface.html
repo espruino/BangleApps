@@ -18,11 +18,16 @@
 var notesElement = document.getElementById("notes");
 var notes = {};
 
+function disableFormInput() {
+  document.querySelectorAll(".form-input").forEach(el => el.disabled = true);
+  document.querySelectorAll(".btn").forEach(el => el.disabled = true);
+}
+
 function getData() {
   // show loading window
   Util.showModal("Loading...");
-  Util.readStorage(`noteify.json`,data=>{
-    notes = JSON.parse(data || "[]");
+  Util.readStorageJSON(`noteify.json`,data=>{
+    notes = data || [];
 
     // remove window
     Util.hideModal();
@@ -53,8 +58,10 @@ function getData() {
       buttonSave.classList.add('btn-default');
       buttonSave.onclick = function() {
         notes[i].note = textarea.value;
-        Util.writeStorage("noteify.json", JSON.stringify(notes));
-        location.reload();
+        disableFormInput();
+        Util.writeStorage("noteify.json", JSON.stringify(notes), () => {
+          location.reload(); // reload so we see current data
+        });
       }
       divColumn2.appendChild(buttonSave);
 
@@ -64,8 +71,10 @@ function getData() {
       buttonDelete.onclick = function() {
         notes[i].note = textarea.value;
         notes.splice(i, 1);
-        Util.writeStorage("noteify.json", JSON.stringify(notes));
-        location.reload(); // reload so we see current data
+        disableFormInput();
+        Util.writeStorage("noteify.json", JSON.stringify(notes), () => {
+          location.reload(); // reload so we see current data
+        });
       }
       divColumn2.appendChild(buttonDelete);
       divColumn.appendChild(divColumn2);
@@ -77,8 +86,10 @@ function getData() {
     document.getElementById("btnAdd").addEventListener("click", function() {
       const note = document.getElementById("note-new").value;
       notes.push({"note": note});
-      Util.writeStorage("noteify.json", JSON.stringify(notes));
-      location.reload(); // reload so we see current data
+      disableFormInput();
+      Util.writeStorage("noteify.json", JSON.stringify(notes), () => {
+        location.reload(); // reload so we see current data
+      });
     });
   });
 }

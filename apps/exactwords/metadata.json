@@ -1,0 +1,22 @@
+{ "id": "exactwords",
+  "name": "Exact Words Clock",
+  "shortName":"Exact Words",
+  "version":"0.1",
+  "description": "Each minute of the day has a different phrase. ",
+  "icon": "app.png",
+  "screenshots" : [ { "url":"1517.png" },
+                    { "url":"0634.png" },
+                    { "url":"1200.png" },
+                    { "url":"1517.png" },
+                    { "url":"1616.png" },
+                    { "url":"2020.png" },
+                    { "url":"2358.png" } ],
+  "tags": "clock",
+  "type": "clock",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"exactwords.app.js","url":"app.js"},
+    {"name":"exactwords.img","url":"app-icon.js","evaluate":true}
+  ]
+}

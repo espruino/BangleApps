@@ -45,7 +45,10 @@ var booster = { x : g.getWidth()/4 + Math.random()*g.getWidth()/2,
 
 var exploded = false;
 var nExplosions = 0;
-var landed = false;
+//var landed = false;
+var lightning = 0;
+
+var settings = require("Storage").readJSON('f9settings.json', 1) || {};
 
 const gravity = 4;
 const dt = 0.1;
@@ -61,18 +64,40 @@ function flameImageGen (throttle) {
 
 function drawFalcon(x, y, throttle, angle) {
   g.setColor(1, 1, 1).drawImage(falcon9, x, y, {rotate:angle});
-  if (throttle>0) {
+  if (throttle>0 || lightning>0) {
     var flameImg = flameImageGen(throttle);
     var r = falcon9.height/2 + flameImg.height/2-1;
     var xoffs = -Math.sin(angle)*r;
     var yoffs = Math.cos(angle)*r;
     if (Math.random()>0.7) g.setColor(1, 0.5, 0);
     else g.setColor(1, 1, 0);
-    g.drawImage(flameImg, x+xoffs, y+yoffs, {rotate:angle});
+    if (throttle>0) g.drawImage(flameImg, x+xoffs, y+yoffs, {rotate:angle});
+    if (lightning>1 && lightning<30) {
+      for (var i=0; i<6; ++i) {
+        var r = Math.random()*6;
+        var x = Math.random()*5 - xoffs;
+        var y = Math.random()*5 - yoffs;
+        g.setColor(1, Math.random()*0.5+0.5, 0).fillCircle(booster.x+x, booster.y+y, r);
+      }
+    }
   }
 }
 
+function drawLightning() {
+  var c = {x:cloudOffs+50, y:30};
+  var dx = c.x-booster.x;
+  var dy = c.y-booster.y;
+  var m1 = {x:booster.x+0.6*dx+Math.random()*20, y:booster.y+0.6*dy+Math.random()*10};
+  var m2 = {x:booster.x+0.4*dx+Math.random()*20, y:booster.y+0.4*dy+Math.random()*10};
+  g.setColor(1, 1, 1).drawLine(c.x, c.y, m1.x, m1.y).drawLine(m1.x, m1.y, m2.x, m2.y).drawLine(m2.x, m2.y, booster.x, booster.y);
+}
+
 function drawBG() {
+  if (lightning==1) {
+    g.setBgColor(1, 1, 1).clear();
+    Bangle.buzz(200);
+    return;
+  }
   g.setBgColor(0.2, 0.2, 1).clear();
   g.setColor(0, 0, 1).fillRect(0, g.getHeight()-oceanHeight, g.getWidth()-1, g.getHeight()-1);
   g.setColor(0.5, 0.5, 1).fillCircle(cloudOffs+34, 30, 15).fillCircle(cloudOffs+60, 35, 20).fillCircle(cloudOffs+75, 20, 10);
@@ -88,6 +113,7 @@ function renderScreen(input) {
   drawBG();
   showFuel();
   drawFalcon(booster.x, booster.y, Math.floor(input.throttle*12), input.angle);
+  if (lightning>1 && lightning<6) drawLightning();
 }
 
 function getInputs() {
@@ -97,6 +123,7 @@ function getInputs() {
   if (t > 1) t = 1;
   if (t < 0) t = 0;
   if (booster.fuel<=0) t = 0;
+  if (lightning>0 && lightning<20) t = 0;
   return {throttle: t, angle: a};
 }
 
@@ -121,7 +148,6 @@ function gameStep() {
   else {
     var input = getInputs();
     if (booster.y >= targetY) {
-//      console.log(booster.x + " " + booster.y + " " + booster.vy + " " + droneX + " " + input.angle);
       if (Math.abs(booster.x-droneX-droneShip.width/2)<droneShip.width/2 && Math.abs(input.angle)<Math.PI/8 && booster.vy<maxV) {
         renderScreen({angle:0, throttle:0});
         epilogue("You landed!");
@@ -129,6 +155,8 @@ function gameStep() {
       else exploded = true;
     }
     else {
+      if (lightning) ++lightning;
+      if (settings.lightning && (lightning==0||lightning>40) && Math.random()>0.98) lightning = 1;
       booster.x += booster.vx*dt;
       booster.y += booster.vy*dt;
       booster.vy += gravity*dt;

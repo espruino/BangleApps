@@ -1,0 +1,19 @@
+{ "id": "tetris",
+  "name": "Tetris",
+  "shortName":"Tetris",
+  "version": "0.12",
+  "description": "Tetris",
+  "icon": "tetris.png",
+  "readme": "README.md",
+  "tags": "game",
+  "supports" : ["BANGLEJS2"],
+  "allow_emulator": true,
+  "readme": "README.md",
+  "storage": [
+    {"name":"tetris.app.js","url":"tetris.app.js"},
+    {"name":"tetris.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"tetris.json"}
+  ]
+}

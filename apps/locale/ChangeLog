@@ -19,3 +19,6 @@
 0.16: Remove global variables that used RAM
       Add second 'dp' argument for decimal places in distance/speed/temp (fix #1523)
 0.17: Fix regression where long month names were 'undefined' (fix #1641)
+0.18: Fix lint warnings, change anv->janv for fr_BE and fr_CH
+0.19: Deprecate currency information
+0.20: Improve support for meridians

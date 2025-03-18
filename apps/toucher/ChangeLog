@@ -5,3 +5,5 @@
 0.05: Improve perf
 0.06: Complete rewrite in 80x80, better perf, add settings
 0.07: Added suppport for Bangle 2, added README file
+0.08: Use default Bangle formatter for booleans
+0.09: Minor code improvements

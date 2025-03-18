@@ -1,0 +1,18 @@
+{
+  "id": "espruinoprog",
+  "name": "Espruino Programmer",
+  "shortName": "Programmer",
+  "version": "0.02",
+  "description": "Finds Bluetooth devices with a specific name (eg 'Puck.js'), connects and uploads code. Great for programming many devices at once!",
+  "icon": "app.png",
+  "tags": "tool,bluetooth",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "custom": "custom.html",
+  "storage": [
+    {"name":"espruinoprog.app.js","url":"app.js"},
+    {"name":"espruinoprog.img","url":"app-icon.js","evaluate":true}
+  ], "data": [
+    {"name":"espruinoprog.json"}
+  ]
+}

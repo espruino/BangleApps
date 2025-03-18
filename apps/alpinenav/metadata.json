@@ -1,7 +1,7 @@
 {
   "id": "alpinenav",
   "name": "Alpine Nav",
-  "version": "0.01",
+  "version": "0.03",
   "description": "App that performs GPS monitoring to track and display position relative to a given origin in realtime",
   "icon": "app-icon.png",
   "tags": "outdoors,gps",

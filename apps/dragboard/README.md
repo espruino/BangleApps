@@ -12,5 +12,8 @@ Known bugs:
 - Initially developed for use with dark theme set on Bangle.js 2 - that is still the preferred way to view it although it now works with other themes.
 - When repeatedly doing 'del' on an empty text-string, the letter case is changed back and forth between upper and lower case.
 
-To do: 
-- Possibly provide a dragboard.settings.js file
+Settings: 
+- CAPS LOCK: all characters are displayed and typed in uppercase
+- ABC Color: color of the characters row
+- Num Color: color of the digits and symbols row
+- Highlight Color: color of the currently highlighted character

@@ -1,0 +1,18 @@
+{
+  "id": "gassist",
+  "name": "Google Assist",
+  "version": "0.01",
+  "description": "A simple way to initiate Google Assistant on Android. Intents must be enabled in  Gadgetbridge.",
+  "icon": "app.png",
+  "type": "app",
+  "tags": "tool,voice,tasker",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": false,
+  "storage": [
+    {"name":"gassist.boot.js","url":"boot.js"},
+    {"name":"gassist.app.js","url":"app.js"},
+    {"name":"gassist.settings.js","url":"settings.js"},
+    {"name":"gassist.img","url":"icon.js","evaluate":true}
+  ],
+  "data": [{"name":"gassist.json"}]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "entonclk",
+  "name": "Enton Clock",
+  "version": "0.3",
+  "description": "A simple clock using the Audiowide font with timer. ",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "readme":"README.md",
+  "storage": [
+    {"name":"entonclk.app.js","url":"app.js"},
+    {"name":"entonclk.img","url":"app-icon.js","evaluate":true}
+  ]
+}

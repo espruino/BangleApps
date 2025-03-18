@@ -4,3 +4,12 @@
 0.04: added heart rate which is switched on when cycled to it through up/down touch on rhs
 0.05: changed text to uppercase, just looks better, removed colons on text
 0.06: better contrast for light theme, use fg color instead of dithered for ring
+0.07: Use default Bangle formatter for booleans
+0.08: fix idle timer always getting set to true
+0.09: Use 'modules/suncalc.js' to avoid it being copied 8 times for different apps
+0.10: Use widget_utils.
+0.11: Minor code improvements
+0.12: Added setting to change Battery estimate to hours
+0.13: Fixed Battery estimate Default to percentage and improved setting string
+0.14: Use `power_usage` module
+0.15: Ring can now show hours, minute, or seconds hand, day/night left, or battery; Allowed for 12hr time; Ring now goes up in 5% increments; Step goal can be changed; The info that is set on the watchface will retain when leaving the face

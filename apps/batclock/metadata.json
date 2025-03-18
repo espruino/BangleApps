@@ -2,7 +2,7 @@
   "id": "batclock",
   "name": "Bat Clock",
   "shortName": "Bat Clock",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Morphing Clock, with an awesome \"The Dark Knight\" themed logo.",
   "icon": "bat-clock.png",
   "screenshots": [{"url":"screenshot.png"}],

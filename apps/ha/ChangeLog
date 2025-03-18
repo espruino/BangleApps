@@ -1,0 +1,12 @@
+0.01: Release
+0.02: Includeas the ha.lib.js library that can be used by other apps or clocks.
+0.03: Added clkinfo for clocks.
+0.04: Feedback if clkinfo run is called.
+0.05: Clkinfo improvements.
+0.06: Updated clkinfo icon.
+0.07: Update clock_info to avoid a redraw
+0.08: Allow swiping to switch triggers
+0.09: Improve web interface, arrows in UI
+0.10: Issue newline before GB commands (solves issue with console.log and ignored commands)
+0.11: Minor code improvements
+0.12: Add slider functionality

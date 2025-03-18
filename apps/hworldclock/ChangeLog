@@ -1,0 +1,24 @@
+0.15: Initial release - be patient as this is the first try :)
+0.16: Fix timing
+0.17: Fix hours
+0.18: Code cleanup and major changes with seconds timing. New feature: if watch is locked, seconds get refreshed every 10 seconds.
+0.19: Fix PM Hours
+0.20: Add theme support
+0.21: Add Settings
+0.22: Use default Bangle formatter for booleans
+0.23: Added note to configure position in "my location" if not done yet. Small fixes.
+0.24: Added fast load
+0.25: Minor code optimization
+0.26: BJS2: Swipe down to rotate 180 degree
+0.27: BJS2: Changed swipe down to swipe up
+0.28: Reverted changes to implementation of 0.25
+0.29: Use 'modules/suncalc.js' to avoid it being copied 8 times for different apps
+0.30: BJS2: swipe seems to be working now
+0.31: Tweaking the swipe option; Added mylocation as a dependency.
+      Remove calls to Bangle.loadWidgets as they are not needed and create warnings
+0.32: Added setting to show single timezone small, like where multiple ones are configured
+0.33: Tidy up and fix clearInterval(undefined) errors
+0.34: Fix 'fast load' so clock doesn't always redraw when screen unlocked/locked
+0.35: Minor code improvements
+0.36: Minor code improvements
+0.37: Fix settings (show default as '90' not 'off')

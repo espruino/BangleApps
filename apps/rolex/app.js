@@ -44,7 +44,9 @@ let cx = W/2;
 let cy = H/2;
 let Timeout;
 
-Bangle.loadWidgets();
+Bangle.setUI("clock");
+// load widgets after 'setUI' so they're aware there is a clock active
+Bangle.loadWidgets(); 
 
 /* Custom version of Bangle.drawWidgets (does not clear the widget areas) Thanks to rozek */
 
@@ -94,7 +96,6 @@ function drawHands() {
 
   let twoPi = 2*Math.PI;
   let Pi = Math.PI;
-  let halfPi = Math.PI/2;
 
   let hourAngle = (hour+(min/60))/12 * twoPi - Pi;
   let minAngle = (min/60) * twoPi - Pi;
@@ -142,8 +143,4 @@ Bangle.on('lcdPower', (on) => {
     displayRefresh();
   }
 });
-
-Bangle.setUI("clock");
-// load widgets after 'setUI' so they're aware there is a clock active
-Bangle.loadWidgets(); 
 displayRefresh();

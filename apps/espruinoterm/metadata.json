@@ -1,0 +1,20 @@
+{
+  "id": "espruinoterm",
+  "name": "Espruino Terminal",
+  "shortName": "Espruino Term",
+  "version": "0.02",
+  "description": "Send commands to other Espruino devices via the Bluetooth UART interface, and see the result on a VT100 terminal. Customisable commands!",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "tags": "tool,bluetooth",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "dependencies": {"textinput":"type"},
+  "storage": [
+    {"name":"espruinoterm.app.js","url":"app.js"},
+    {"name":"espruinoterm.img","url":"app-icon.js","evaluate":true}
+  ],"data": [
+    {"name":"espruinoterm.json","url":"app.json"}
+  ]
+}

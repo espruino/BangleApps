@@ -52,7 +52,9 @@ let cx = W/2;
 let cy = H/2;
 let Timeout;
 
-Bangle.loadWidgets();
+Bangle.setUI("clock");
+// load widgets after 'setUI' so they're aware there is a clock active
+Bangle.loadWidgets(); 
 
 /* Custom version of Bangle.drawWidgets (does not clear the widget areas) Thanks to rozek */
 
@@ -118,7 +120,7 @@ function drawHands() {
   else {g.setColor(g.theme.bg);}
   g.drawString(weekDay[0].toUpperCase(), 137, 90);
 
-  handLayers = [
+  const handLayers = [
     {x:cx,
      y:cy,
      image:imgHour,
@@ -146,7 +148,7 @@ function drawBackground() {
   g.clear(1);
   g.setBgColor(g.theme.bg);
   g.setColor(g.theme.fg);
-  bgLayer = [
+  const bgLayer = [
     {x:cx,
      y:cy,
      image:imgBg,
@@ -175,7 +177,4 @@ Bangle.on('lcdPower', (on) => {
   }
 });
 
-Bangle.setUI("clock");
-// load widgets after 'setUI' so they're aware there is a clock active
-Bangle.loadWidgets(); 
 displayRefresh();

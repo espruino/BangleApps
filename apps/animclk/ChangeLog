@@ -1,3 +1,6 @@
 0.01: New App!
 0.02: Fix bug if image clock wasn't installed
 0.03: Update to use setUI
+0.04: Tell clock widgets to hide. Move loadWidgets() so it only runs on
+startup and not on every draw.
+0.05: Minor code improvements

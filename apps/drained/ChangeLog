@@ -1,0 +1,9 @@
+0.01: New app!
+0.02: Allow boot exceptions, e.g. to load DST
+0.03: Permit exceptions to load in low-power mode, e.g. daylight saving time.
+      Also avoid polluting global scope.
+0.04: Enhance menu: enable bluetooth, visit settings & visit recovery
+0.05: Enhance menu: permit toggling bluetooth
+0.06: Display clock in green when charging, with "charging" text
+0.07: Correctly restore full power when the charged threshold is reached
+0.08: Redisplay immediately on changes to charging status

@@ -4,3 +4,4 @@
 0.05: Tweaks to help with memory usage
 0.06: Reduce memory usage
 0.07: Allow negative numbers when manual-sorting
+0.08: Automatic translation of strings.

@@ -1,0 +1,17 @@
+{
+  "id": "lunaclock",
+  "name": "Luna Clock",
+  "version": "0.02",
+  "description": "Simple clock face inspired by the moon.",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"lunaclock.app.js","url":"app.js"},
+    {"name":"lunaclock.img","url":"app-icon.js","evaluate":true}
+  ]
+}

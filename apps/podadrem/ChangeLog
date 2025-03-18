@@ -1,0 +1,13 @@
+0.01: Inital release.
+0.02: Misc fixes. Add Search and play.
+0.03: Simplify "Search and play" function after some bugfixes to Podcast
+Addict.
+0.04: New layout.
+0.05: Add widget field, tweak layout.
+0.06: Add compatibility with Fastload Utils.
+0.07: Remove just the specific listeners to not interfere with Quick Launch
+when fastloading.
+0.08: Issue newline before GB commands (solves issue with console.log and ignored commands)
+0.09: Don't send the gadgetbridge wake command twice. Once should do since we issue newline before GB commands.
+0.10: Minor code improvements
+0.11: Fix a warning from the linter.

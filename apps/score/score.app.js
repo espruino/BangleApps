@@ -10,6 +10,7 @@ let tennisScores = ['00','15','30','40','DC','AD'];
 let scores = null;
 let tScores = null;
 let cSet = null;
+let matchEnd = null;
 
 let firstShownSet = null;
 
@@ -19,10 +20,10 @@ let correctionMode = false;
 let w = g.getWidth();
 let h = g.getHeight();
 
-let isBangle1 = process.env.BOARD === 'BANGLEJS';
+let isBangle1 = process.env.BOARD === 'BANGLEJS' || process.env.BOARD === 'EMSCRIPTEN';
 
 function getXCoord(func) {
-  let offset = 40;
+  let offset = 20;
   return func(w-offset)+offset;
 }
 
@@ -54,7 +55,9 @@ function setupInputWatchers(init) {
     }
   });
   if (init) {
-    setWatch(() => handleInput(2), isBangle1 ? BTN2 : BTN, { repeat: true });
+    if (isBangle1) {
+      setWatch(() => handleInput(2), BTN2, { repeat: true });
+    }
     Bangle.on('touch', (b, e) => {
       if (isBangle1) {
         if (b === 1) {
@@ -63,10 +66,36 @@ function setupInputWatchers(init) {
           handleInput(4);
         }
       } else {
-        if (e.x < getXCoord(w => w/2)) {
-          handleInput(0);
+        if (e.y > 18) {
+          if (e.x < getXCoord(w => w/2)) {
+            handleInput(0);
+          } else {
+            handleInput(1);
+          }
         } else {
-          handleInput(1);
+          // long press except if we have the menu opened or we are in the emulator (that doesn't 
+          // seem to support long press events)
+          if (e.type === 2 || settingsMenuOpened || process.env.BOARD === 'EMSCRIPTEN2') {
+            handleInput(2);
+          } else {
+            let p = null;
+            
+            if (matchWon(0)) p = 0;
+            else if (matchWon(1)) p = 1;
+            
+            // display full instructions if there is space available, or brief ones otherwise
+            if (p === null) {
+              drawInitialMsg();
+            } else {
+              g.setFontAlign(0,0);
+              g.setFont('Teletext5x9Ascii',1);
+              g.drawString(
+                "-Long press-",
+                getXCoord(w => p === 0 ? w/4*3: (w/4) + 20),
+                15
+              );
+            }
+          }
         }
       }
     });
@@ -74,6 +103,7 @@ function setupInputWatchers(init) {
 }
 
 function setupMatch() {
+  matchEnd = null;
   scores = [];
   for (let s = 0; s < sets(); s++) {
     scores.push([0,0,null,0,0]);
@@ -96,28 +126,32 @@ function setupMatch() {
 
 function showSettingsMenu() {
   settingsMenuOpened = getSecondsTime();
-  l = null;
-  settingsMenu(function (s, reset) {
-    E.showMenu();
+  settingsMenu(function (s, reset, back) {
+    // console.log('reset:', reset, 'back:', back);
+    if (isBangle1) {
+      E.showMenu();
+    }
 
     settings = s;
 
     if (reset) {
       setupMatch();
-    } else if (getSecondsTime() - settingsMenuOpened < 500 || correctionMode) {
-      correctionMode = !correctionMode;
     }
+    if (isBangle1 || (!isBangle1 && back)) {
+      settingsMenuOpened = null;
 
-    settingsMenuOpened = null;
+      draw();
 
-    draw();
-
-    setupDisplay();
-    setupInputWatchers();
+      setupDisplay();
+      setupInputWatchers();
+    }
   }, function (msg) {
     switch (msg) {
       case 'end_set':
         updateCurrentSet(1);
+        break;
+      case 'correct_mode':
+        correctionMode = !correctionMode;
         break;
     }
   });
@@ -145,6 +179,7 @@ function currentSet() {
 
 function shouldTiebreak() {
   return settings.enableMaxScoreTiebreak &&
+    scores[cSet][0] === scores[cSet][1] &&
     scores[cSet][0] + scores[cSet][1] === (maxScore() - 1) * 2;
 }
 
@@ -177,27 +212,21 @@ function tiebreakWon(set, player) {
   let pScore = scores[set][3+player];
   let p2Score = scores[set][3+~~!player];
 
-  let winScoreReached = pScore >= settings.maxScoreTiebreakWinScore;
-  let isTwoAhead = !settings.maxScoreTiebreakEnableTwoAhead || pScore - p2Score >= 2;
-  let reachedMaxScore = settings.maxScoreTiebreakEnableMaxScore && pScore >= tiebreakMaxScore();
-
-  return reachedMaxScore || (winScoreReached && isTwoAhead);
+  // reachedMaxScore || (winScoreReached && isTwoAhead);
+  return (settings.maxScoreTiebreakEnableMaxScore && pScore >= tiebreakMaxScore()) || 
+    ((pScore >= settings.maxScoreTiebreakWinScore) && 
+     (!settings.maxScoreTiebreakEnableTwoAhead || pScore - p2Score >= 2));
 }
 
 function setWon(set, player) {
   let pScore = scores[set][player];
   let p2Score = scores[set][~~!player];
 
-  let winScoreReached = pScore >= settings.winScore;
-  let isTwoAhead = !settings.enableTwoAhead || pScore - p2Score >= 2;
-  let tiebreakW = tiebreakWon(set, player);
-  let reachedMaxScore = settings.enableMaxScore && pScore >= maxScore();
-  let manuallyEndedWon = cSet > set ? pScore > p2Score : false;
-
+  // (tiebreak won / max score) || (winScoreReached && isTwoAhead) || manuallyEndedWon
   return (
-    (settings.enableMaxScoreTiebreak ? tiebreakW : reachedMaxScore) ||
-      (winScoreReached && isTwoAhead) ||
-      manuallyEndedWon
+    (settings.enableMaxScoreTiebreak ? tiebreakWon(set, player) : settings.enableMaxScore && pScore >= maxScore()) || 
+      (pScore >= settings.winScore && (!settings.enableTwoAhead || pScore - p2Score >= 2)) || 
+      (cSet > set ? pScore > p2Score : false)
   );
 }
 
@@ -206,7 +235,7 @@ function setEnded(set) {
 }
 
 function setsWon(player) {
-  return Array(sets()).fill(0).map((_, s) => ~~setWon(s, player)).reduce((a,v) => a+v, 0);
+  return Uint16Array(sets()).fill(0).map((_, s) => ~~setWon(s, player)).reduce((a,v) => a+v, 0);
 }
 
 function matchWon(player) {
@@ -214,7 +243,14 @@ function matchWon(player) {
 }
 
 function matchEnded() {
-  return (matchWon(0) || matchWon(1)) && cSet > (setsWon(0) + setsWon(1) - 1);
+  // query if the match is ended only if: the value is not already saved or the set changed
+  if (matchEnd == null || matchEnd.set != cSet) {
+    matchEnd = {
+      ended: (matchWon(0) || matchWon(1)) && cSet > (setsWon(0) + setsWon(1) - 1),
+      set: cSet,
+    }
+  }
+  return matchEnd.ended
 }
 
 function matchScore(player) {
@@ -305,7 +341,20 @@ function score(player) {
 }
 
 function handleInput(button) {
+  // console.log('button:', button);
   if (settingsMenuOpened) {
+
+    if (!isBangle1 && button == 2) {
+      E.showMenu();
+
+      settingsMenuOpened = null;
+
+      draw();
+
+      setupDisplay();
+      setupInputWatchers();
+      
+    }
     return;
   }
 
@@ -318,7 +367,7 @@ function handleInput(button) {
       showSettingsMenu();
       return;
     case 3:
-    case 4:
+    case 4: {
       let hLimit = currentSet() - setsPerPage() + 1;
       let lLimit = 0;
       let val = (button * 2 - 7);
@@ -326,6 +375,7 @@ function handleInput(button) {
       if (firstShownSet > hLimit) firstShownSet = hLimit;
       if (firstShownSet < lLimit) firstShownSet = lLimit;
       break;
+    }
   }
 
   draw();
@@ -340,8 +390,8 @@ function draw() {
       g.setFontAlign(0,0);
       g.setFont('Teletext5x9Ascii',2);
       g.drawString(
-        "WINNER",
-        getXCoord(w => p === 0 ? w/4 : w/4*3),
+        "WINS",
+        getXCoord(w => p === 0 ? w/4 + 7 : w/4*3 + 7),
         15
       );
     } else if (matchEnded()) {
@@ -376,7 +426,7 @@ function draw() {
       g.setFont('7x11Numeric7Seg',2);
       g.drawString(
         formatNumber(matchScore(p), 3),
-        getXCoord(w => p === 0 ? w/2 - 3 : w/2 + 6),
+        getXCoord(w => p === 0 ? w/2 - 6 : w/2 + 9),
         h-5
       );
     }
@@ -387,7 +437,7 @@ function draw() {
     g.setFont('Teletext5x9Ascii',2);
     g.drawString(
       "R",
-      getXCoord(w => w/2),
+      getXCoord(w => w/2) + 1,
       h-10
     );
   }
@@ -411,13 +461,13 @@ function draw() {
     g.drawString(set+1, 5, y-10);
     if (scores[set+1][2] != null) {
       let dur2 = formatDuration(scores[set+1][2] - scores[set][2]);
-      g.drawString(dur2, 5, y+10);
+      g.drawString(dur2, 2, y+10);
     }
 
     for (let p = 0; p < 2; p++) {
       if (!setWon(set, p === 0 ? 1 : 0) || matchEnded()) {
-        let bigNumX = getXCoord(w => p === 0 ? w/4-12 : w/4*3+15);
-        let smallNumX = getXCoord(w => p === 0 ? w/2-2 : w/2+3);
+        let bigNumX = getXCoord(w => p === 0 ? w/4-2 : w/4*3+5);
+        let smallNumX = getXCoord(w => p === 0 ? w/2-1 : w/2+2);
 
         if (settings.enableTennisScoring && set === cSet && !shouldTiebreak()) {
           g.setFontAlign(0,0);
@@ -427,12 +477,12 @@ function draw() {
             bigNumX,
             y
           );
-        } else if (shouldTiebreak() && set === cSet) {
+        } else if (set === cSet && shouldTiebreak()) {
           g.setFontAlign(0,0);
           g.setFont('7x11Numeric7Seg',3);
           g.drawString(
             formatNumber(scores[set][3+p], 3),
-            bigNumX,
+            bigNumX + (p === 0 ? -5 : 5),
             y
           );
         } else {
@@ -445,7 +495,7 @@ function draw() {
           );
         }
 
-        if ((shouldTiebreak() || settings.enableTennisScoring) && set === cSet) {
+        if (set === cSet && (shouldTiebreak() || settings.enableTennisScoring)) {
           g.setFontAlign(p === 0 ? 1 : -1,0);
           g.setFont('7x11Numeric7Seg',1);
           g.drawString(
@@ -472,7 +522,20 @@ function draw() {
   g.flip();
 }
 
+function drawInitialMsg() {
+  if (!isBangle1) {
+    g.setFontAlign(0,0);
+    g.setFont('Teletext5x9Ascii',1);
+    g.drawString(
+      "-Long press here for menu-",
+      90,
+      15
+    );
+  }
+}
+
 setupDisplay();
 setupInputWatchers(true);
 setupMatch();
 draw();
+drawInitialMsg();

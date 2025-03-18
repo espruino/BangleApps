@@ -1,0 +1,15 @@
+{ "id": "henkinen",
+  "name": "Henkinen - Tiny Breathing Helper",
+  "shortName":"Henkinen",
+  "version": "0.02",
+  "description": "A tiny app helping you to breath and relax.",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot1.png"}],
+  "tags": "outdoors",
+  "supports" : ["BANGLEJS","BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"henkinen.app.js","url":"app.js"},
+    {"name":"henkinen.img","url":"app-icon.js","evaluate":true}
+  ]
+}

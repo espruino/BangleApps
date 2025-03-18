@@ -1,0 +1,5 @@
+0.01: New app!
+0.02: Fix music updates while app is already open
+0.03: Fix invalid use of Bangle.setUI
+0.04: Fix app crashing when new message arrives
+0.05: Minor code improvements

@@ -1,0 +1,20 @@
+{
+  "id": "presentation_timer",
+  "name": "Presentation Timer",
+  "version": "0.04",
+  "description": "A touch based presentation timer for Bangle JS 2",
+  "icon": "presentation_timer.png",
+  "screenshots": [{"url":"screenshot1.png"},{"url":"screenshot2.png"},{"url":"screenshot3.png"},{"url":"screenshot4.png"}],
+  "tags": "tools,app",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "storage": [
+    {"name":"presentation_timer.app.js","url":"presentation_timer.app.js"},
+    {"name":"presentation_timer.img","url":"presentation_timer.icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"presentation_timer.json"},
+    { "name": "presentation_timer.csv" }
+  ]
+}

@@ -1,0 +1,17 @@
+{ "id": "macwatch2",
+  "name": "MacWatch2",
+  "shortName":"MacWatch2",
+  "icon": "app.png",
+  "version": "0.07",
+  "description": "Classic Mac Finder clock",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "screenshots": [{"url":"screenshot.png"}],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"macwatch2.app.js","url":"app.js"},
+    {"name":"macwatch2.img","url":"app-icon.js","evaluate":true}
+  ]
+}

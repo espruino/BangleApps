@@ -1,0 +1,34 @@
+{
+  "id": "kanawatch",
+  "name": "Kanawatch",
+  "shortName": "Kanawatch",
+  "version": "0.12",
+  "type": "clock",
+  "description": "Learn Hiragana and Katakana",
+  "icon": "app.png",
+  "allow_emulator": true,
+  "tags": "clock",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "readme": "README.md",
+  "storage": [
+    {
+      "name": "kanawatch.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "kanawatch.img",
+      "url": "app-icon.js",
+      "evaluate": true
+    }
+  ],
+  "screenshots": [
+    {
+      "url": "screenshot.png"
+    },
+    {
+      "url": "screenshot2.png"
+    }
+  ]
+}

@@ -5,3 +5,5 @@
 0.05: Add icon
 0.06: remove app image as it is unused
 0.07: Bump version number for change to apps.json causing 404 on upload
+0.08: Use default Bangle formatter for booleans
+0.09: Minor code improvements

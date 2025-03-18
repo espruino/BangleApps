@@ -23,7 +23,7 @@ function nextFace(){
   iface += 1
   iface = iface % FACES.length;
   face = FACES[iface]();
-  
+
   g.clear();
   g.reset();
   face.init(gpsObj, swObj, hrmObj, tripObject);
@@ -64,7 +64,7 @@ function buttonReleased(btn) {
     clearInterval(pressTimer);
     pressTimer = undefined;
   }
-  
+
   if ( dur >= 1.5 ) {
     switch(btn) {
     case 1:
@@ -165,11 +165,11 @@ GPS.prototype.getLastFix = function() {
 GPS.prototype.determineGPSState = function() {
   this.log_debug("determineGPSState");
   gpsPowerState = Bangle.isGPSOn();
-  
+
   //this.log_debug("last_fix.fix " + this.last_fix.fix);
   //this.log_debug("gpsPowerState " + this.gpsPowerState);
   //this.log_debug("last_fix.satellites " + this.last_fix.satellites);
-  
+
   if (!gpsPowerState) {
     this.gpsState = this.GPS_OFF;
     this.resetLastFix();
@@ -178,9 +178,9 @@ GPS.prototype.determineGPSState = function() {
   } else {
     this.gpsState = this.GPS_SATS;
   }
-  
+
   this.log_debug("gpsState=" + this.gpsState);
-  
+
   if (this.gpsState !== this.GPS_OFF) {
     if (this.listenerCount === 0) {
       Bangle.on('GPS', processFix);
@@ -196,9 +196,9 @@ GPS.prototype.determineGPSState = function() {
   }
 };
 
-GPS.prototype.getGPSTime = function() {  
+GPS.prototype.getGPSTime = function() {
   var time;
-  
+
   if (this.last_fix !== undefined && this.last_fix.time !== undefined && this.last_fix.time.toUTCString !== undefined &&
       (this.gpsState == this.GPS_SATS || this.gpsState == this.GPS_RUNNING)) {
     time = this.last_fix.time.toUTCString().split(" ");
@@ -216,7 +216,7 @@ GPS.prototype.toggleGPSPower = function() {
   this.gpsPowerState = Bangle.isGPSOn();
   this.gpsPowerState = !this.gpsPowerState;
   Bangle.setGPSPower((this.gpsPowerState ? 1 : 0), 'kitchen');
-  
+
   this.resetLastFix();
   this.determineGPSState();
 
@@ -247,11 +247,11 @@ GPS.prototype.processFix = function(fix) {
   //this.log_debug("GPS:processFix()");
   //this.log_debug(fix);
   this.last_fix.time = fix.time;
-  
+
   if (this.gpsState == this.GPS_TIME) {
     this.gpsState = this.GPS_SATS;
   }
-  
+
   if (fix.fix) {
     //this.log_debug("Got fix - setting state to GPS_RUNNING");
     this.gpsState = this.GPS_RUNNING;
@@ -271,10 +271,10 @@ GPS.prototype.formatTime = function(now) {
 GPS.prototype.timeSince = function(t) {
   var hms = t.split(":");
   var now = new Date();
-  
+
   var sn = 3600*(now.getHours()) + 60*(now.getMinutes()) + 1*(now.getSeconds());
   var st = 3600*(hms[0]) + 60*(hms[1]) + 1*(hms[2]);
-  
+
   return (sn - st);
 };
 
@@ -313,7 +313,7 @@ GPS.prototype.getWPdistance = function() {
 GPS.prototype.getWPbearing = function() {
   //log_debug(this.last_fix);
   //log_debug(this.wp_current);
-  
+
   if (this.wp_current.name === "E-WPT" || this.wp_current.name === "NONE" || this.wp_current.lat === undefined || this.wp_current.lat === 0)
     return 0;
   else
@@ -321,7 +321,7 @@ GPS.prototype.getWPbearing = function() {
 }
 
 GPS.prototype.loadFirstWaypoint = function() {
-  var waypoints = require("Storage").readJSON("waypoints.json")||[{name:"E-WPT"}];
+  var waypoints = require("waypoints").load();
   this.wp_index = 0;
   this.wp_current = waypoints[this.wp_index];
   log_debug(this.wp_current);
@@ -345,10 +345,10 @@ GPS.prototype.markWaypoint = function() {
     return;
 
   log_debug("GPS::markWaypoint()");
-  
-  var waypoints = require("Storage").readJSON("waypoints.json")||[{name:"E-WPT"}];
+
+  var waypoints = require("waypoints").load();
   this.wp_current = waypoints[this.wp_index];
-  
+
   if (this.waypointHasLocation()) {
      waypoints[this.wp_index] = {name:this.wp_current.name, lat:0, lon:0};
   } else {
@@ -356,12 +356,12 @@ GPS.prototype.markWaypoint = function() {
   }
 
   this.wp_current = waypoints[this.wp_index];
-  require("Storage").writeJSON("waypoints.json", waypoints);
+  require("waypoints").save(waypoints);
   log_debug("GPS::markWaypoint() written");
 }
 
 GPS.prototype.nextWaypoint = function(inc) {
-  var waypoints = require("Storage").readJSON("waypoints.json")||[{name:"E-WPT"}];
+  var waypoints = require("waypoints").load();
   this.wp_index+=inc;
   if (this.wp_index>=waypoints.length) this.wp_index=0;
   if (this.wp_index<0) this.wp_index = waypoints.length-1;
@@ -463,7 +463,7 @@ OsGridRef.latLongToOsGrid = function(point) {
  *
  */
 function to_map_ref(digits, easting, northing) {
-  if (![ 0,2,4,6,8,10,12,14,16 ].includes(Number(digits))) throw new RangeError(`invalid precision '${digits}'`); // eslint-disable-line comma-spacing
+  if (![ 0,2,4,6,8,10,12,14,16 ].includes(Number(digits))) throw new RangeError(`invalid precision '${digits}'`);
 
   let e = easting;
   let n = northing;
@@ -520,7 +520,7 @@ function STOPWATCH() {
   this.redrawLaps = true;
   this.redrawTime = true;
 }
-  
+
 STOPWATCH.prototype.log_debug = function(o) {
   //console.log(o);
 }
@@ -531,7 +531,7 @@ STOPWATCH.prototype.timeToText = function(t) {
   let secs = Math.floor(t/1000)%60;
   let text;
 
-  if (hrs === 0) 
+  if (hrs === 0)
     text = ("0"+mins).substr(-2) + ":" + ("0"+secs).substr(-2);
   else
     text = (""+hrs) + ":" + ("0"+mins).substr(-2) + ":" + ("0"+secs).substr(-2);
@@ -551,7 +551,7 @@ STOPWATCH.prototype.stopStart = function() {
 
   if (this.running)
     this.tStart = Date.now() + this.tStart - this.tCurrent;
-  
+
   this.tTotal = Date.now() + this.tTotal - this.tCurrent;
   this.tCurrent = Date.now();
   this.redrawButtons = true;
@@ -623,7 +623,7 @@ STOPWATCH.prototype.drawLaptimes = function() {
   g.setFont("Vector",24);
   g.setFontAlign(-1,-1);
   g.clearRect(4, 205, 239, 229); // clear the last line of the lap times
-  
+
   let laps = 0;
   for (let i in this.lapTimes) {
     g.drawString(this.lapTimes.length-i + ": " + this.timeToText(this.lapTimes[i]), 4, this.timeY + 40 + i*24);
@@ -645,7 +645,7 @@ STOPWATCH.prototype.drawTime = function() {
   g.setFont("Vector",38);
   g.setFontAlign(0,0);
   g.clearRect(0, this.timeY-21, 200, this.timeY+21);
-  g.setColor(0xFFC0); 
+  g.setColor(0xFFC0);
   g.drawString(txtTotal, xTotal, this.timeY);
 
   // current lap time
@@ -691,7 +691,7 @@ function HRM() {
   this.bpm = 0;
   this.confidence = 0;
 }
-  
+
 HRM.prototype.log_debug = function(o) {
   //console.log(o);
 }
@@ -782,7 +782,7 @@ Debug Object
 function DEBUG() {
   this.logfile = require("Storage").open("debug.log","a");
 }
-  
+
 DEBUG.prototype.log = function(msg) {
   let timestamp = new Date().toString().split(" ")[4];
   let line = timestamp + ", " + msg + "\n";

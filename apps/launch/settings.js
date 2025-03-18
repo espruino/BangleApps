@@ -26,14 +26,12 @@
     },
     /*LANG*/"Show Clocks": {
       value: settings.showClocks == true,
-      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
       onchange: (m) => { save("showClocks", m) }
     },
     /*LANG*/"Fullscreen": {
       value: settings.fullscreen == true,
-      format: v => v ? /*LANG*/"Yes" : /*LANG*/"No",
       onchange: (m) => { save("fullscreen", m) }
     }
   };
   E.showMenu(appMenu);
-});
+})

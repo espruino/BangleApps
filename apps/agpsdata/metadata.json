@@ -1,0 +1,24 @@
+{ "id": "agpsdata",
+  "name": "A-GPS Data Downloader App",
+  "shortName":"A-GPS Data",
+  "icon": "agpsdata.png",
+  "version":"0.06",
+  "description": "Once installed, this app allows you to download assisted GPS (A-GPS) data directly to your Bangle.js **via Gadgetbridge on an Android phone** when you run the app. If you just want to upload the latest AGPS data from this app loader, please use the `Assisted GPS Update (AGPS)` app.",
+  "tags": "boot,tool,assisted,gps,agps,http",
+  "allow_emulator":true, 
+  "supports": ["BANGLEJS2"],
+  "readme":"README.md",
+  "screenshots" : [ { "url":"screenshot.png" }, { "url":"screenshot2.png" } ],
+  "storage": [
+    {"name":"agpsdata.app.js","url":"app.js"},
+    {"name":"agpsdata.img","url":"agpsdata-icon.js","evaluate":true},
+    {"name":"agpsdata.default.json","url":"default.json"},
+    {"name":"agpsdata.boot.js","url":"boot.js"},
+    {"name":"agpsdata","url":"lib.js"},
+    {"name":"agpsdata.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name": "agpsdata.json"},
+    {"name": "agpsdata.settings.json"}
+  ]
+}

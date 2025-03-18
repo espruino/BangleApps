@@ -1,0 +1,11 @@
+0.01: Please forgive me
+0.02: Now tells time!
+0.03: Interaction
+0.04: Shows day of week
+0.05: Shows day of month
+0.06: Updates every 5 minutes when locked, or when unlock occurs. Also shows nr of steps.
+0.07: Step count resets at midnight
+0.08: Step count stored in memory to survive reloads. Now shows step count daily and since last reboot.
+0.09: NOW it really should reset daily (instead of every other day...)
+0.10: Tell clock widgets to hide.
+0.11: Minor code improvements

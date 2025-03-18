@@ -1,0 +1,16 @@
+{
+  "id": "chimer",
+  "name": "Chimer",
+  "version": "0.05",
+  "description": "A fork of Hour Chime that adds extra features such as: \n - Buzz or beep on every 60, 30 or 15 minutes. \n - Repeat Chime up to 3 times \n - Set hours to disable chime",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.MD",
+  "storage": [
+    { "name": "chimer.wid.js", "url": "widget.js" },
+    { "name": "chimer.settings.js", "url": "settings.js" }
+  ],
+  "data": [{ "name": "chimer.json" }]
+}

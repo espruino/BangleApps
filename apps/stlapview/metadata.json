@@ -1,0 +1,27 @@
+{
+  "id": "stlapview",
+  "name": "Stopwatch laps",
+  "version": "0.03",
+  "description": "Optional lap viewer for my stopwatch app",
+  "icon": "icon.png",
+  "type": "app",
+  "tags": "tools,app",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "allow_emulator": true,
+  "storage": [
+    {
+      "name": "stlapview.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "stlapview.img",
+      "url": "icon.js",
+      "evaluate": true
+    }
+  ],
+  "dependencies": {
+    "stlap": "app"
+  }
+}

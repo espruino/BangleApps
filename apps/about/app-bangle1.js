@@ -11,8 +11,8 @@ g.drawString("BANGLEJS.COM",120,y-4);
 } else {
   y=-(4+h); // small screen, start right at top
 }
-g.drawString("Powered by Espruino",0,y+=4+h);
-g.drawString("Version "+ENV.VERSION,0,y+=h);
+g.drawString(/*LANG*/"Powered by Espruino",0,y+=4+h);
+g.drawString(/*LANG*/"Version "+ENV.VERSION,0,y+=h);
 g.drawString("Commit "+ENV.GIT_COMMIT,0,y+=h);
 function getVersion(name,file) {
   var j = s.readJSON(file,1);
@@ -24,9 +24,9 @@ getVersion("Launcher","launch.info");
 getVersion("Settings","setting.info");
 
 y+=h;
-g.drawString(MEM.total+" JS Variables available",0,y+=h);
-g.drawString("Storage: "+(require("Storage").getFree()>>10)+"k free",0,y+=h);
-if (ENV.STORAGE) g.drawString("         "+(ENV.STORAGE>>10)+"k total",0,y+=h);
+g.drawString(MEM.total+/*LANG*/" JS Variables available",0,y+=h);
+g.drawString("Storage: "+(require("Storage").getFree()>>10)+/*LANG*/"k free",0,y+=h);
+if (ENV.STORAGE) g.drawString("         "+(ENV.STORAGE>>10)+/*LANG*/"k total",0,y+=h);
 if (ENV.SPIFLASH) g.drawString("SPI Flash: "+(ENV.SPIFLASH>>10)+"k",0,y+=h);
 g.setFontAlign(0,-1);
 g.flip();

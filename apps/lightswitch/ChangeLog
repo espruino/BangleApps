@@ -3,3 +3,8 @@
 0.03: Settings page now uses built-in min/max/wrap (fix #1607)
 0.04: Add masking widget input to other apps (using espruino/Espruino#2151), add a oversize option to increase the touch area.
 0.05: Prevent drawing into app area.
+0.06: Fix issue where .draw was being called by reference (not allowing widgets to be hidden)
+0.07: Handle the swipe event that is generated when draging to change light intensity, so it doesn't trigger some other swipe handler.
+0.08: Ensure boot code doesn't allocate and leave a gloval variable named 'settings'
+0.09: Handle lightswitch logic running before its widget has loaded
+0.10: Minor code improvements

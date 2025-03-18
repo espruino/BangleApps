@@ -1,0 +1,13 @@
+{
+  "id": "widclkscrl",
+  "name": "Scrolling clock widget",
+  "version": "0.01",
+  "description": "A widget that displays the current date & time after unlocking the watch when not showing a fullscreen clock. The information is scrolled by in a two digit field, so this widget is kept tight.",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "storage": [
+    {"name":"widclkscrl.wid.js","url":"widget.js"}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "widsleepstatus",
+  "name": "Sleep Status Widget",
+  "version": "0.02",
+  "description": "Shows current status of sleep from sleeplog app.",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,sleep",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "dependencies" : { "sleeplog":"app" },
+  "storage": [
+    {"name":"widsleepstatus.wid.js","url":"widget.js"},
+    {"name":"widsleepstatus.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"widsleepstatus.json"}]
+}

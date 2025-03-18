@@ -1,0 +1,67 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <div id="data"></div>
+    <button class="btn btn-default" id="btnSave">Save</button>
+    <button class="btn btn-default" id="btnDelete">Delete</button>
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+var dataElement = document.getElementById("data");
+var csvData = "";
+
+function getData() {
+  // show loading window
+  Util.showModal("Loading...");
+  // get the data
+  dataElement.innerHTML = "";
+  Util.readStorageFile(`temphistory.csv`,data=>{
+    csvData = data.trim();
+    // remove window
+    Util.hideModal();
+    // If no data, report it and exit
+    if (data.length==0) {
+      dataElement.innerHTML = "<b>No data found</b>";
+      return;
+    }
+    // Otherwise parse the data and output it as a table
+    //<td>${(new Date(l[0]*1000)).toLocaleString()}</td>
+    dataElement.innerHTML = `<table>
+    <tr>
+      <th>Month</th>
+      <th>Day</th>
+      <th>Time HH:mm</th>
+      <th>temperature</th>
+    </tr>`+data.trim().split("\n").map(l=>{
+      l = l.split(";");
+      return `<tr>
+      <td>${l[0]}</td>
+      <td>${l[1]}</td>
+      <td>${l[2]}</td>
+      <td>${l[3]}</td>
+      </tr>`
+    }).join("\n")+"</table>";
+  });
+}
+
+// You can call a utility function to save the data
+document.getElementById("btnSave").addEventListener("click", function() {
+  Util.saveCSV("temphistory", csvData);
+});
+// Or you can also delete the file
+document.getElementById("btnDelete").addEventListener("click", function() {
+  Util.showModal("Deleting...");
+  Util.eraseStorageFile("temphistory.csv", function() {
+    Util.hideModal();
+    getData();
+  });
+});
+// Called when app starts
+function onInit() {
+  getData();
+}
+
+    </script>
+  </body>
+</html>

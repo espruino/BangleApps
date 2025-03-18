@@ -2,7 +2,7 @@
 "id":"a_speech_timer",
 "name":"Speech Timer",
 "icon": "app.png",
-"version":"1.01",
+"version": "1.03",
 "description": "A timer designed to help keeping your speeches and presentations to time.",
 "tags": "tool,timer",
 "readme":"README.md",

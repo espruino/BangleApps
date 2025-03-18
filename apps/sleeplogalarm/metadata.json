@@ -1,0 +1,22 @@
+{
+  "id":"sleeplogalarm",
+  "name":"Sleep Log Alarm",
+  "shortName": "SleepLogAlarm",
+  "version": "0.06",
+  "description": "Enhance your morning and let your alarms wake you up when you are in light sleep.",
+  "icon": "app.png",
+  "type": "widget",
+  "tags": "tool,widget",
+  "supports": ["BANGLEJS2"],
+  "dependencies": {
+    "scheduler": "type",
+    "sleeplog": "app"
+  },
+  "readme": "README.md",
+  "storage": [
+    {"name": "sleeplogalarm", "url": "lib.js"},
+    {"name": "sleeplogalarm.settings.js", "url": "settings.js"},
+    {"name": "sleeplogalarm.wid.js", "url": "widget.js"}
+  ],
+  "data":[{"name":"sleeplogalarm.settings.json"}]
+}

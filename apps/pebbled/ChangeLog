@@ -1,1 +1,7 @@
 0.01: first release
+0.02: Tell clock widgets to hide.
+0.03: Swipe down to see widgets
+      Support for fast loading
+0.04: Localisation request: added Miles and AM/PM
+0.05: Prevent exceptions from halting the draw cycle
+0.06: Fix Settings page to ensure that the currently set distance is displayed (not 0.75)

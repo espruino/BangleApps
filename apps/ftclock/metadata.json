@@ -1,7 +1,7 @@
 {
   "id": "ftclock",
   "name": "Four Twenty Clock",
-  "version": "0.03",
+  "version": "0.04",
   "description": "A clock that tells when and where it's going to be 4:20 next",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}, {"url":"screenshot1.png"}],

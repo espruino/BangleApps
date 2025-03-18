@@ -2,11 +2,11 @@
   "id": "hidcam",
   "name": "Camera shutter",
   "shortName": "Cam shutter",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Enable HID, connect to your phone, start your camera and trigger the shot on your Bangle",
   "icon": "app.png",
   "tags": "bluetooth,tool",
-  "supports": ["BANGLEJS"],
+  "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"hidcam.app.js","url":"app.js"},

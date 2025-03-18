@@ -3,3 +3,6 @@
 0.03: Optional show lock status via color
 0.04: Ensure that widgets are always hidden in fullscreen mode
 0.05: Better lock/unlock animation
+0.06: Use widget_utils
+0.07: Convert Yes/No On/Off in settings to checkboxes
+0.08: Minor code improvements

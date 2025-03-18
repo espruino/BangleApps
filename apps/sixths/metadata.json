@@ -1,0 +1,15 @@
+{ "id": "sixths",
+  "name": "Sixth sense",
+  "version": "0.11",
+  "description": "Clock for outdoor use with GPS support",
+  "icon": "app.png",
+  "readme": "README.md",
+  "supports" : ["BANGLEJS2"],
+  "allow_emulator": true,
+  "type": "clock",
+  "tags": "clock",
+  "storage": [
+      {"name":"sixths.app.js","url":"sixths.app.js"},
+      {"name":"sixths.img","url":"app-icon.js","evaluate":true}
+  ]
+}

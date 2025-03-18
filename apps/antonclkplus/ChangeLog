@@ -1,0 +1,16 @@
+0.01: New App!
+0.02: Load widgets after setUI so widclk knows when to hide
+0.03: Clock now shows day of week under date.
+0.04: Clock can optionally show seconds, date optionally in ISO-8601 format, weekdays and uppercase configurable, too.
+0.05: Clock can optionally show ISO-8601 calendar weeknumber (default: Off)
+      when weekday name "Off": week #:<num>
+      when weekday name "On": weekday name is cut at 6th position and .#<week num> is added
+0.06: fixes #1271 - wrong settings name
+      when weekday name and calendar weeknumber are on then display is <weekday short> #<calweek>
+      week is buffered until date or timezone changes
+0.07: align default settings with app.js (otherwise the initial displayed settings will be confusing to users)
+0.08: fixed calendar weeknumber not shortened to two digits
+0.09: Use default Bangle formatter for booleans
+0.10: Use Bangle.setUI({remove:...}) to allow loading the launcher without a full reset on 2v16
+      Modified to avoid leaving functions defined when using setUI({remove:...})
+0.11: Minor code improvements

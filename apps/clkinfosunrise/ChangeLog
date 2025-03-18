@@ -1,0 +1,6 @@
+0.01: New App!
+0.02: Use 'modules/suncalc.js' to avoid it being copied 8 times for different apps
+      Add a 'time' clockinfo that also displays a percentage of day left
+0.03: Change 3rd mode to show the time to next sunrise/sunset time (not actual time)
+0.04: Minor code improvements
+0.05: Minor code improvements

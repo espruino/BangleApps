@@ -1,0 +1,40 @@
+{
+  "id": "pomoplus",
+  "name": "Pomodoro Plus",
+  "version": "0.07",
+  "description": "A configurable pomodoro timer that runs in the background.",
+  "icon": "icon.png",
+  "type": "app",
+  "tags": "pomodoro,cooking,tools",
+  "supports": [
+    "BANGLEJS",
+    "BANGLEJS2"
+  ],
+  "readme": "README.md",
+  "storage": [
+    {
+      "name": "pomoplus.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "pomoplus.img",
+      "url": "icon.js",
+      "evaluate": true
+    },
+    {
+      "name": "pomoplus.boot.js",
+      "url": "boot.js"
+    },
+    {
+      "name": "pomoplus-com.js",
+      "url": "common.js"
+    },
+    {
+      "name": "pomoplus.settings.js",
+      "url": "settings.js"
+    }
+  ],
+  "data": [
+    {"name":"pomoplus.settings.json"}
+  ]
+}

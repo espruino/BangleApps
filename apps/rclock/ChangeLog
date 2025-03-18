@@ -5,3 +5,5 @@
 0.05: Changes which circle show minutes and seconds
 0.06: Avoid function wrapper, use setUI for launcher
       Clock face smaller so no longer breaks widgets
+0.07: Tell clock widgets to hide.
+0.08: Minor code improvements

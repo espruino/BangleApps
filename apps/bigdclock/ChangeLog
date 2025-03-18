@@ -1,0 +1,9 @@
+0.01: Initial version
+0.02: setTimeout bug fix; no leading zero on date; lightmode; 12 hour format; cleanup
+0.03: Internationalisation; bug fix - battery icon responds promptly to charging state
+0.04: bug fix
+0.05: proper fix for the race condition in queueDraw()
+0.06: Tell clock widgets to hide.
+0.07: Better battery graphic - now has green, yellow and red sections; battery status reflected in the bar across the middle of the screen; current battery state checked only once every 15 minutes, leading to longer-lasting battery charge
+0.08: Minor code improvements
+0.09: Something was changing the value of the "width" variable, which caused the battery usage feature to malfunction. The "width" variable has been renamed - the cause remains a mystery.

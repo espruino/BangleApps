@@ -1,0 +1,143 @@
+0.01: Initial code
+
+0.05:
+	* We now buzz before reaching a waypoint.
+	* Display is only updated when not locked.
+	* We detect leaving path and finding path again.
+	* We display remaining distance to next point.
+
+0.06:
+	* Special display for points with steep turns.
+	* Buzz on points with steep turns and unlock.
+	* Losing gps is now displayed.
+
+0.07:
+	* We now use orientation to detect current segment
+	when segments overlap going in both directions.
+	* File format is now versioned.
+
+0.08:
+	* Don't use gps course anymore but figure it from previous positions.
+	* Bugfix: path colors are back.
+	* Always buzz when reaching waypoint even if unlocked.
+
+0.09:
+	* We now display interest points.
+	* Menu to choose which file to load.
+
+0.10:
+	* Display performances enhancement.
+	* Waypoints information is embedded in file and extracted from comments on
+	points.
+	* Bugfix in map display (last segment was missing + wrong colors).
+	* Waypoint detections using OSM + sharp angles
+	* New algorith for direction detection
+
+0.11:
+	* Better fonts (more free space, still readable).
+	* Display direction to nearest point when lost.
+	* Display average speed.
+	* Turn off gps when locked and between points
+
+0.12:
+	* Bugfix in speed computation.
+	* Bugfix in current segment detection.
+	* Bugfix : lost direction.
+	* Larger fonts.
+	* Detecting next point correctly when going back.
+
+0.13:
+	* Bugfix in lost direction.
+	* Buzzing 100m ahead instead of 50m.
+	* Detect sharp turns.
+	* Display instant speed.
+	* New instant speed algorithm.
+	* Bugfix for remaining distance when going back.
+
+0.14:
+	* Detect starting distance to compute a good average speed.
+	* Settings
+	* Account for breaks in average speed.
+
+0.15:
+	* Record traveled distance to get a good average speed.
+	* Breaks (low speed) will not count in average speed.
+	* Bugfix in average speed.
+
+0.16:
+	* When lost indicates nearest point on path.
+	* Rescale display if lost and too far.
+	* New setting to hide points and increase display speed.
+	* Speed optimisations.
+	* Estimated time of Arrival/Going back.
+	* Display current and next segment in red so that you know where to go.
+	* Avoid angles flickering at low speed at the cost of less refresh.
+	* Splash screen while waiting for gps signal.
+
+0.17:
+	* Convert Yes/No On/Off in settings to checkboxes
+
+0.18:
+	* Major rewrite of display : now tile based
+	* We have a map. Never get lost again.
+
+0.19:
+	* Several fixes for osm requests and map computations
+	* Display path in leaflet
+	* Reduce framerate if locked
+	* Stroke to move around in the map
+	* Fix for missing paths in display
+
+0.20:
+	* Large display for instant speed
+	* Bugfix for negative coordinates
+	* Disable menu while the map is not loaded
+	* Turn screen off while idling to save battery (with setting)
+	* New setting : disable buzz on turns
+	* New setting : turn bluetooth off to save battery
+	* New setting : power screen off between points to save battery
+	* Color change for lost direction (now purple)
+	* Adaptive screen powersaving
+
+0.21:
+	* Jit is back for display functions (10% speed increase)
+	* Store, parse and display elevation data
+	* Removed 'lost' indicator (we now change position to purple when lost)
+	* Powersaving fix : don't powersave when lost
+	* Bugfix for negative remaining distance when going backwards
+	* New settings for powersaving
+	* Adjustments to powersaving algorithm
+
+0.22:
+	* Powersaving disabled by default
+	* Default choice for powersaving in the settings
+	* Better position in elevation profiles
+	* Integrating fixes in upstream rust heatshrink crate
+	* Small path optimisations with brouter (removing looplets)
+	* Bugfix in nearest segment detection
+
+0.23:
+	* New display algorithm : way faster, larger roads, zooming out is now ok
+	* You will need to re-generate your maps because the new algorithm uses a different scale
+	* Better path simplification
+	* Removed sharp turns auto-detection
+	* Waypoints autodetection using the map : this will generate more points than really needed but can still be effective.
+	* New option: sleep between waypoints
+	* Interface: centered svg preview + display file sizes
+	* Interface: disable/enable waypoints detection and elevation
+	* Touching the screen when sleeping will wake up but not change screen
+	* Removing footways (if bicycles not allowed) to reduce resource usage
+	* Switching screen will clear the screen immediately so you can know your screen touch has been received
+	
+0.24:
+	* Fix for loading very large files (> 65kb)
+	* New menu on file selection : reverse path without waiting for file to load
+	* Fix for files converted from maps2gpx : path was not reduced in size correctly
+	* Experimental ski mode : have a ski slopes map
+	* Fix for path projection display when lost and zoomed out
+
+0.25: Minor code improvements
+
+0.26: Add option to plot openstmap if installed
+
+0.27: Support for large paths (grid sizes > 65k)

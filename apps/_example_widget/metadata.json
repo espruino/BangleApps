@@ -3,7 +3,7 @@
   "shortName":"Short Name",
   "version":"0.01",
   "description": "A detailed description of my great widget",
-  "icon": "widget.png",  
+  "icon": "icon.png",
   "type": "widget",
   "tags": "widget",
   "supports" : ["BANGLEJS2"],

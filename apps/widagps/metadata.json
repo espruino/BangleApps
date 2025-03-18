@@ -1,0 +1,14 @@
+{ "id": "widagps",
+  "name": "AGPS Widget (automatic download)",
+  "shortName":"AGPS Widget",
+  "icon": "widget.png",
+  "type": "widget",
+  "version":"0.02",
+  "description": "Once installed, this widget allows your Bangle.js 2 to load AGPS data in the background **via Gadgetbridge on an Android phone** so it is always up to date. If you just want to upload the latest AGPS data from this app loader, please use the `Assisted GPS Update (AGPS)` app.",
+  "readme": "README.md",
+  "tags": "widget,agps,http",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"widagps.wid.js","url":"widget.js"}
+  ]
+}

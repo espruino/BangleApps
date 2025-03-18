@@ -1,0 +1,6 @@
+0.01: Initial version
+0.02: Checks for correct firmware; E.setDST(...) moved to boot.js
+0.03: Convert Yes/No On/Off in settings to checkboxes
+0.04: Give the boot file the highest priority to ensure it runs before sched (fix #2663)
+0.05: Tweaks to ensure Gadgetbridge can't overwrite timezone on 2v19.106 and later
+0.06: If fastload is present, ensure DST changes are still applied when leaving settings

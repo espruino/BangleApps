@@ -3,6 +3,8 @@
 
   let outerRadius = Math.min(CenterX,CenterY) * 0.9;
 
+  Bangle.setUI('clock');
+
   Bangle.loadWidgets();
 
 /**** updateClockFaceSize ****/
@@ -116,7 +118,6 @@
 
   let twoPi  = 2*Math.PI;
   let Pi     = Math.PI;
-  let halfPi = Math.PI/2;
 
   let sin = Math.sin, cos = Math.cos;
 
@@ -225,6 +226,3 @@
     }
   });
 
-  Bangle.loadWidgets();
-
-  Bangle.setUI('clock');

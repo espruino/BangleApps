@@ -6,17 +6,18 @@ if (Bangle.SCHED) {
 }
 
 function showAlarm(alarm) {
+  const alarmIndex = alarms.indexOf(alarm);
   const settings = require("sched").getSettings();
 
-  let msg = "";
-  msg += require("time_utils").formatTime(alarm.timer ? alarm.timer : alarm.t);
+  let message = "";
+  message += alarm.timer ? require("time_utils").formatDuration(alarm.timer) : require("time_utils").formatTime(alarm.t);
   if (alarm.msg) {
-    msg += "\n"+alarm.msg;
+    message += "\n" + alarm.msg;
   } else {
-    if (alarm.timer)
-      msg = atob("ACQswgD//33vRcGHIQAAABVVVAAAAAAAABVVVAAAAAAAABVVVAAAAAAAABVVVAAAAAAAABVVVAAAAAAAABVVVAAAAAAAAAP/wAAAAAAAAAP/wAAAAAAAAAqqoAPAAAAAAqqqqoP8AAAAKqqqqqv/AAACqqqqqqq/wAAKqqqlWqqvwAAqqqqlVaqrAACqqqqlVVqqAAKqqqqlVVaqgAKqaqqlVVWqgAqpWqqlVVVqoAqlWqqlVVVaoCqlV6qlVVVaqCqVVfqlVVVWqCqVVf6lVVVWqKpVVX/lVVVVqqpVVV/+VVVVqqpVVV//lVVVqqpVVVfr1VVVqqpVVVfr1VVVqqpVVVb/lVVVqqpVVVW+VVVVqqpVVVVVVVVVqiqVVVVVVVVWqCqVVVVVVVVWqCqlVVVVVVVaqAqlVVVVVVVaoAqpVVVVVVVqoAKqVVVVVVWqgAKqlVVVVVaqgACqpVVVVVqqAAAqqlVVVaqoAAAKqqVVWqqgAAACqqqqqqqAAAAAKqqqqqgAAAAAAqqqqoAAAAAAAAqqoAAAAA==")+" "+msg;
-    else
-      msg = atob("AC0swgF97///RcEpMlVVVVVVf9VVVVVVVVX/9VVf9VVf/1VVV///1Vf9VX///VVX///VWqqlV///1Vf//9aqqqqpf//9V///2qqqqqqn///V///6qqqqqqr///X//+qqoAAKqqv//3//6qoAAAAKqr//3//qqAAAAAAqq//3/+qoAADwAAKqv/3/+qgAADwAACqv/3/aqAAADwAAAqp/19qoAAADwAAAKqfV1qgAAADwAAACqXVWqgAAADwAAACqlVWqAAAADwAAAAqlVWqAAAADwAAAAqlVWqAAAADwAAAAqlVaoAAAADwAAAAKpVaoAAAADwAAAAKpVaoAAAADwAAAAKpVaoAAAAOsAAAAKpVaoAAAAOsAAAAKpVaoAAAAL/AAAAKpVaoAAAAgPwAAAKpVaoAAACAD8AAAKpVWqAAAIAA/AAAqlVWqAAAgAAPwAAqlVWqAACAAADwAAqlVWqgAIAAAAAACqlVVqgAgAAAAAACqVVVqoAAAAAAAAKqVVVaqAAAAAAAAqpVVVWqgAAAAAACqlVVVWqoAAAAAAKqlVVVVqqAAAAAAqqVVVVVaqoAAAAKqpVVVVVeqqoAAKqqtVVVVV/6qqqqqqr/VVVVX/2qqqqqqn/1VVVf/VaqqqqpV/9VVVf9VVWqqlVVf9VVVf1VVVVVVVVX9VQ==")+" "+msg;
+    message = (alarm.timer
+      ? atob("ACQswgD//33vRcGHIQAAABVVVAAAAAAAABVVVAAAAAAAABVVVAAAAAAAABVVVAAAAAAAABVVVAAAAAAAABVVVAAAAAAAAAP/wAAAAAAAAAP/wAAAAAAAAAqqoAPAAAAAAqqqqoP8AAAAKqqqqqv/AAACqqqqqqq/wAAKqqqlWqqvwAAqqqqlVaqrAACqqqqlVVqqAAKqqqqlVVaqgAKqaqqlVVWqgAqpWqqlVVVqoAqlWqqlVVVaoCqlV6qlVVVaqCqVVfqlVVVWqCqVVf6lVVVWqKpVVX/lVVVVqqpVVV/+VVVVqqpVVV//lVVVqqpVVVfr1VVVqqpVVVfr1VVVqqpVVVb/lVVVqqpVVVW+VVVVqqpVVVVVVVVVqiqVVVVVVVVWqCqVVVVVVVVWqCqlVVVVVVVaqAqlVVVVVVVaoAqpVVVVVVVqoAKqVVVVVVWqgAKqlVVVVVaqgACqpVVVVVqqAAAqqlVVVaqoAAAKqqVVWqqgAAACqqqqqqqAAAAAKqqqqqgAAAAAAqqqqoAAAAAAAAqqoAAAAA==")
+      : atob("AC0swgF97///RcEpMlVVVVVVf9VVVVVVVVX/9VVf9VVf/1VVV///1Vf9VX///VVX///VWqqlV///1Vf//9aqqqqpf//9V///2qqqqqqn///V///6qqqqqqr///X//+qqoAAKqqv//3//6qoAAAAKqr//3//qqAAAAAAqq//3/+qoAADwAAKqv/3/+qgAADwAACqv/3/aqAAADwAAAqp/19qoAAADwAAAKqfV1qgAAADwAAACqXVWqgAAADwAAACqlVWqAAAADwAAAAqlVWqAAAADwAAAAqlVWqAAAADwAAAAqlVaoAAAADwAAAAKpVaoAAAADwAAAAKpVaoAAAADwAAAAKpVaoAAAAOsAAAAKpVaoAAAAOsAAAAKpVaoAAAAL/AAAAKpVaoAAAAgPwAAAKpVaoAAACAD8AAAKpVWqAAAIAA/AAAqlVWqAAAgAAPwAAqlVWqAACAAADwAAqlVWqgAIAAAAAACqlVVqgAgAAAAAACqVVVqoAAAAAAAAKqVVVaqAAAAAAAAqpVVVWqgAAAAAACqlVVVWqoAAAAAAKqlVVVVqqAAAAAAqqVVVVVaqoAAAAKqpVVVVVeqqoAAKqqtVVVVV/6qqqqqqr/VVVVX/2qqqqqqn/1VVVf/VaqqqqpV/9VVVf9VVWqqlVVf9VVVf1VVVVVVVVX9VQ==")
+    ) + " " + message
   }
 
   Bangle.loadWidgets();
@@ -24,23 +25,44 @@ function showAlarm(alarm) {
 
   let buzzCount = settings.buzzCount;
 
-  E.showPrompt(msg,{
-    title:alarm.timer ? /*LANG*/"TIMER!" : /*LANG*/"ALARM!",
-    buttons : {/*LANG*/"Snooze":true,/*LANG*/"Stop":false} // default is sleep so it'll come back in 10 mins
-  }).then(function(sleep) {
+  E.showPrompt(message, {
+    title: alarm.timer ? /*LANG*/"TIMER!" : /*LANG*/"ALARM!",
+    buttons: { /*LANG*/"Snooze": true, /*LANG*/"Stop": false } // default is sleep so it'll come back in some mins
+  }).then(function (sleep) {
     buzzCount = 0;
+
     if (sleep) {
-      if(alarm.ot===undefined) alarm.ot = alarm.t;
-      alarm.t += settings.defaultSnoozeMillis;
+      if (alarm.ot === undefined) {
+        alarm.ot = alarm.t;
+      }
+      let time = new Date();
+      let currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
+      alarm.t = currentTime + settings.defaultSnoozeMillis;
+      alarm.t %= 86400000;
+      Bangle.emit("alarmSnooze", alarm);
     } else {
-      if (!alarm.timer) alarm.last = (new Date()).getDate();
-      if (alarm.ot!==undefined) {
+      let del = alarm.del === undefined ? settings.defaultDeleteExpiredTimers : alarm.del;
+      if (del) {
+        alarms.splice(alarmIndex, 1);
+      } else {
+        if (alarm.date && alarm.rp) {
+          setNextRepeatDate(alarm);
+        } else if (!alarm.timer) {
+          alarm.last = new Date().getDate();
+        }
+        if (alarm.ot !== undefined) {
           alarm.t = alarm.ot;
           delete alarm.ot;
+        }
+        if (!alarm.rp) {
+          alarm.on = false;
+        }
       }
-      if (!alarm.rp) alarm.on = false;
+      Bangle.emit("alarmDismiss", alarm);
     }
-    // alarm is still a member of 'alarms', so writing to array writes changes back directly
+
+    // The updated alarm is still a member of 'alarms'
+    // so writing to array writes changes back directly
     require("sched").setAlarms(alarms);
     load();
   });
@@ -50,8 +72,9 @@ function showAlarm(alarm) {
       Bangle.setLocked(false);
     }
 
-    require("buzz").pattern(alarm.vibrate === undefined ? ".." : alarm.vibrate).then(() => {
-      if (buzzCount--) {
+    const pattern = alarm.vibrate || (alarm.timer ? settings.defaultTimerPattern : settings.defaultAlarmPattern);
+    require("buzz").pattern(pattern).then(() => {
+      if (buzzCount == null || buzzCount--) {
         setTimeout(buzz, settings.buzzIntervalMillis);
       } else if (alarm.as) { // auto-snooze
         buzzCount = settings.buzzCount;
@@ -60,13 +83,41 @@ function showAlarm(alarm) {
     });
   }
 
+  function setNextRepeatDate(alarm) {
+    let date = new Date(alarm.date);
+    let rp = alarm.rp;
+    if (rp===true) { // fallback in case rp is set wrong
+      date.setDate(date.getDate() + 1);
+    } else switch(rp.interval) { // rp is an object
+      case "day":
+        date.setDate(date.getDate() + rp.num);
+        break;
+      case "week":
+        date.setDate(date.getDate() + (rp.num * 7));
+        break;
+      case "month":
+        if (!alarm.od) alarm.od = date.getDate();
+        date = new Date(date.getFullYear(), date.getMonth() + rp.num, alarm.od);
+        if (date.getDate() != alarm.od) date.setDate(0);
+        break;
+      case "year":
+        if (!alarm.od) alarm.od = date.getDate();
+        date = new Date(date.getFullYear() + rp.num, date.getMonth(), alarm.od);
+        if (date.getDate() != alarm.od) date.setDate(0);
+        break;
+      default:
+        console.log(`sched: unknown repeat '${JSON.stringify(rp)}'`);
+        break;
+    }
+    alarm.date = date.toLocalISOString().slice(0,10);
+  }
+
   if ((require("Storage").readJSON("setting.json", 1) || {}).quiet > 1)
     return;
 
   buzz();
 }
 
-// Check for alarms
 let alarms = require("sched").getAlarms();
 let active = require("sched").getActiveAlarms(alarms);
 if (active.length) {

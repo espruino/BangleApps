@@ -1,0 +1,21 @@
+{
+  "id": "sokoban",
+  "name": "Sokoban",
+  "shortName": "Sokoban",
+  "version": "0.03",
+  "description": "Classic Sokoban game (microban levels).",
+  "allow_emulator":false,
+  "icon": "sokoban.png",
+  "type": "app",
+  "tags": "game",
+  "screenshots": [{"url":"soko.png"}],
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"sokoban.app.js","url":"app.js"},
+    {"name":"sokoban.microban.sok", "url":"sokoban.microban.sok"},
+    {"name":"sokoban.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"sokoban.json"}
+  ]
+}

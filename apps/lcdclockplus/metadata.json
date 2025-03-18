@@ -1,0 +1,16 @@
+{ "id": "lcdclockplus",
+  "name": "LCD Clock Plus",
+  "version": "0.03",
+  "description": "A Casio-style clock, with four ClockInfo areas at the top and bottom. Tap them and swipe up/down and left/right to toggle between different information.",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"},{"url":"screenshot2.png"}],
+  "type": "clock",
+  "tags": "clock,clkinfo",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "dependencies" : { "clock_info":"module" },
+  "storage": [
+    {"name":"lcdclockplus.app.js","url":"app.js"},
+    {"name":"lcdclockplus.img","url":"app-icon.js","evaluate":true}
+  ]
+}

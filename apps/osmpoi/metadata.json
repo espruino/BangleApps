@@ -1,7 +1,7 @@
 {
   "id": "osmpoi",
   "name": "POI Compass",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Uploads all the points of interest in an area onto your watch, same as Beer Compass with more p.o.i.",
   "icon": "app.png",
   "tags": "tool,outdoors,gps",

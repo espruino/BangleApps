@@ -1,7 +1,7 @@
 {
   "id": "battleship",
   "name": "Battleship",
-  "version": "0.01",
+  "version": "0.02",
   "description": "The classic game of battleship",
   "icon": "battleship-icon.png",
   "tags": "game",

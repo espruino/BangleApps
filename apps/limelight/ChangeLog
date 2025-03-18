@@ -1,1 +1,4 @@
 0.01: first release
+0.02: Tell clock widgets to hide.
+0.03: Use widget_utils.
+0.04: Minor code improvements

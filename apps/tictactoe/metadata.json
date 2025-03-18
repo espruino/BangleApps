@@ -1,0 +1,17 @@
+{ "id": "tictactoe",
+  "name": "TicTacToe",
+  "shortName":"TicTacToe",
+  "icon": "app.png",
+  "version": "0.03",
+  "description": "Tic Tac Toe for two players!",
+  "tags": "game",
+  "storage": [
+    {"name":"tictactoe.app.js","url":"app.js"},
+    {"name":"tictactoe.img","url":"app-icon.js","evaluate":true}
+  ],
+  "screenshots" : [ 
+    { "url":"tttscreenshot.png" },
+    { "url":"tttscreenshot2.png" }
+  ],
+  "supports": ["BANGLEJS2"]
+}

@@ -1,6 +1,6 @@
 // PALETTES ---------------------------
 E.showMessage("Precomputing\npalettes\n\nPlease wait...\n0 / 3");
-(function() { // fire
+(function() { "jit" // fire
   for (var i=0;i<256;i++) {
     var r = Math.min(i*6,240);
     var g = Math.min(i*3,240);
@@ -10,7 +10,7 @@ E.showMessage("Precomputing\npalettes\n\nPlease wait...\n0 / 3");
 })()
 require("Storage").write("geissclk.0.pal",pal.buffer);
 E.showMessage("Precomputing\npalettes\n\nPlease wait...\n1 / 3");
-(function() { // gunge
+(function() { "jit" // gunge
   for (var i=0;i<256;i++) {
     var r = 0;
     var g = Math.min(i*3,255);
@@ -20,7 +20,7 @@ E.showMessage("Precomputing\npalettes\n\nPlease wait...\n1 / 3");
 })()
 require("Storage").write("geissclk.1.pal",pal.buffer);
 E.showMessage("Precomputing\npalettes\n\nPlease wait...\n2 / 3");
-(function() { // rainbow
+(function() { "jit" // rainbow
   for (var i=0;i<256;i++) {
     var cl = E.HSBtoRGB((48+i)/128,1,Math.min(i/16,0.9),true);
     var r = cl[0];
@@ -35,7 +35,7 @@ require("Storage").write("geissclk.2.pal",pal.buffer);
 // MAPS ----------------------------------------------
 E.showMessage("Precomputing\nmaps\n\nPlease wait...\n0 / 5");
 // straight out
-(function() { "ram"; var n = 0; for (var y=0;y<H;y++) {
+(function() { "jit"; var n = 0; for (var y=0;y<H;y++) {
   for (var x=0;x<W;x++) {
     var dx = x-(W/2);
     var dy = y-(H/2);
@@ -49,7 +49,7 @@ E.showMessage("Precomputing\nmaps\n\nPlease wait...\n0 / 5");
 require("Storage").write("geissclk.0.map",map);
 E.showMessage("Precomputing\nmaps\n\nPlease wait...\n1 / 5");
 // ripple out
-(function() { "ram";  var n = 0; for (var y=0;y<H;y++) {
+(function() { "jit";  var n = 0; for (var y=0;y<H;y++) {
   for (var x=0;x<W;x++) {
     var dx = x-(W/2);
     var dy = y-(H/2);
@@ -63,7 +63,7 @@ E.showMessage("Precomputing\nmaps\n\nPlease wait...\n1 / 5");
 require("Storage").write("geissclk.1.map",map);
 E.showMessage("Precomputing\nmaps\n\nPlease wait...\n2 / 5");
 // twisty outwards
-(function() { "ram";  var n = 0; for (var y=0;y<H;y++) {
+(function() { "jit";  var n = 0; for (var y=0;y<H;y++) {
   for (var x=0;x<W;x++) {
     var dx = x-(W/2);
     var dy = y-(H/2);
@@ -76,7 +76,7 @@ E.showMessage("Precomputing\nmaps\n\nPlease wait...\n2 / 5");
 require("Storage").write("geissclk.2.map",map);
 E.showMessage("Precomputing\nmaps\n\nPlease wait...\n3 / 5");
 // spiral
-(function() { "ram";  var n = 0; for (var y=0;y<H;y++) {
+(function() { "jit";  var n = 0; for (var y=0;y<H;y++) {
   for (var x=0;x<W;x++) {
     var dx = x-(W/2);
     var dy = y-(H/2);
@@ -89,7 +89,7 @@ E.showMessage("Precomputing\nmaps\n\nPlease wait...\n3 / 5");
 require("Storage").write("geissclk.3.map",map);
 E.showMessage("Precomputing\nmaps\n\nPlease wait...\n4 / 5");
 // blur down
-(function() { "ram";  var n=0; for (var y=0;y<H;y++) {
+(function() { "jit";  var n=0; for (var y=0;y<H;y++) {
   for (var x=0;x<W;x++) {
     map[n++] = 136 - 6*16 + (y&1)*8-4;
   }
@@ -97,7 +97,7 @@ E.showMessage("Precomputing\nmaps\n\nPlease wait...\n4 / 5");
 require("Storage").write("geissclk.4.map",map);
 E.showMessage("Precomputing\nmaps\n\nPlease wait...\n5 / 5");
 // twisty
-(function() { "ram";  var n=0; for (var y=0;y<H;y++) {
+(function() { "jit";  var n=0; for (var y=0;y<H;y++) {
   for (var x=0;x<W;x++) {
     dx = Math.sin(y*0.2);
     dy = Math.cos(x*0.2);

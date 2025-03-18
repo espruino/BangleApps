@@ -2,3 +2,7 @@
 0.02: first running version for BangleJs2
 0.03: corrected icon, added screen shot, extended description
 0.04: corrected format of background image (raw binary)
+0.05: move setUI() up before draw() as to not have a false positive 'sanity
+check' when building on github.
+0.06: Minor code improvements
+0.07: Minor code improvements

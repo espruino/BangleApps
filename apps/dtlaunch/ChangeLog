@@ -11,4 +11,24 @@
 0.11: Fix bangle.js 1 white icons not displaying
 0.12: On Bangle 2 change to swiping up/down to move between pages as to match page indicator. Swiping from left to right now loads the clock.
 0.13: Added swipeExit setting so that left-right to exit is an option
-0.14: Don't move pages when doing exit swipe.
+0.14: Don't move pages when doing exit swipe - Bangle 2.
+0.15: 'Swipe to exit'-code is slightly altered to be more reliable - Bangle 2.
+0.16: Use default Bangle formatter for booleans
+0.17: Bangle 2: Fast loading on exit to clock face. Added option for exit to
+clock face by timeout.
+0.18: Bangle 2: Move interactions inside setUI. Replace "one click exit" with
+back-functionality through setUI, adding the red back button as well. Hardware
+button to exit is no longer an option.
+0.19: Bangle 2: Utilize new Bangle.load(), Bangle.showClock() functions to
+facilitate 'fast switching' of apps where available.
+0.20: Bangle 2: Revert use of Bangle.load() to classic load() calls since
+widgets would still be loaded when they weren't supposed to.
+0.21: Bangle 2: Call Bangle.drawWidgets() early on so that the widget field
+immediately follows the correct theme.
+0.22: Bangle 2: Change to not automatically marking the first app on a page
+when moving pages. Add caching for faster startups.
+0.23: Bangle 1: Fix issue with missing icons, added touch screen interactions
+0.24: Add buzz-on-interaction setting
+0.25: Minor code improvements
+0.26: Bangle 2: Postpone loading icons that are not needed initially.
+0.27: Bangle 2: Add setting to remember and present the last open page between instances of dtlaunch.

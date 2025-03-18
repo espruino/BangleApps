@@ -6,3 +6,4 @@
 0.12: Improve pattern detection code readability by PaddeK http://forum.espruino.com/profiles/117930/
 0.13: Improve pattern rendering by HughB http://forum.espruino.com/profiles/167235/
 0.14: Update setUI to work with new Bangle.js 2v13 menu style
+0.15: Update to support clocks in custom setUI mode

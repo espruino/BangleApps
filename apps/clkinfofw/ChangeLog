@@ -1,0 +1,2 @@
+0.01: First release
+0.02: Update clock_info to avoid a redraw and image allocation

@@ -2,7 +2,7 @@
   "id": "bootgattbat",
   "name": "BLE GATT Battery Service",
   "shortName": "BLE Battery Service",
-  "version": "0.01",
+  "version": "0.03",
   "description": "Adds the GATT Battery Service to advertise the percentage of battery currently remaining over Bluetooth.\n",
   "icon": "bluetooth.png",
   "type": "bootloader",

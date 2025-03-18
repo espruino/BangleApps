@@ -1,0 +1,17 @@
+{ "id": "bigdclock",
+  "name": "Big digit clock containing just the essentials",
+  "shortName":"Big digit clk",
+  "version": "0.09",
+  "description": "A clock containing just the essentials, made as easy to read as possible for those of us that need glasses. It contains the time, the day-of-week, the day-of-month, and the current battery state-of-charge.",
+  "icon": "bigdclock.png",
+  "type": "clock",
+  "tags": "clock",
+  "allow_emulator":true,
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "screenshots": [ { "url":"screenshot.png" } ],
+  "storage": [
+    {"name":"bigdclock.app.js","url":"bigdclock.app.js"},
+    {"name":"bigdclock.img","url":"bigdclock.icon.js","evaluate":true}
+  ]
+}

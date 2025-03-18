@@ -1,0 +1,22 @@
+{
+  "id": "widbgjs",
+  "name": "Blood Glucose Widget (xdrip)",
+  "shortName":"BG Widget",
+  "icon": "screenshot.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "version": "0.04",
+  "type": "widget",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator":true,
+  "description": "Displays the current blood glucose received from xdrip and send over via a <a href=\"https://codeberg.org/phrogg/BG2BangleJSApp/\" target=\"_BLANK\">helper app</a> on the watch.",
+  "tags": "widget",
+  "storage": [
+    {"name":"widbgjs.wid.js","url":"widget.js"},
+    {"name":"widbgjs.settings.js","url":"settings.js"}
+   ],
+  "data": [
+    {"name":"widbgjs.json"},
+    {"name":"widbgjs.settings.json"}
+  ]
+ }

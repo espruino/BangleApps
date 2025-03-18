@@ -2,7 +2,7 @@
   "id": "toucher",
   "name": "Touch Launcher",
   "shortName": "Toucher",
-  "version": "0.07",
+  "version": "0.09",
   "description": "Touch enable left to right launcher.",
   "icon": "app.png",
   "type": "launch",

@@ -2,7 +2,7 @@
   "id": "dane_tcr",
   "name": "DANE Touch Launcher",
   "shortName": "DANE Toucher",
-  "version": "0.07",
+  "version": "0.09",
   "description": "Touch enable left to right launcher in the style of the DANE Watchface",
   "icon": "app.png",
   "type": "launch",

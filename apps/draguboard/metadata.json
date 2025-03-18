@@ -1,0 +1,18 @@
+{ "id": "draguboard",
+  "name": "DragUboard",
+  "version":"0.03",
+  "description": "A library for text input via swiping U-shaped keyboard.",
+  "icon": "app.png",
+  "type":"textinput",
+  "tags": "keyboard",
+  "supports" : ["BANGLEJS2"],
+  "screenshots": [{"url":"screenshot.png"}],
+  "readme": "README.md",
+  "storage": [
+    {"name":"textinput","url":"lib.js"},
+    {"name":"draguboard.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"draguboard.json"}
+  ]
+}

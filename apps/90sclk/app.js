@@ -1,6 +1,7 @@
 const SETTINGS_FILE = "90sclk.setting.json";
 const locale = require('locale');
 const storage = require('Storage');
+const widget_utils = require('widget_utils');
 
 
 /*
@@ -109,11 +110,14 @@ function draw() {
 
   // Draw widgets if not fullscreen
   if(settings.fullscreen){
-    for (let wd of WIDGETS) {wd.draw=()=>{};wd.area="";}
+    widget_utils.hide();
   } else {
     Bangle.drawWidgets();
   }
 }
+
+// Show launcher when middle button pressed
+Bangle.setUI("clock");
 
 Bangle.loadWidgets();
 
@@ -140,5 +144,3 @@ Bangle.on('lock', function(isLocked) {
 });
 
 
-// Show launcher when middle button pressed
-Bangle.setUI("clock");

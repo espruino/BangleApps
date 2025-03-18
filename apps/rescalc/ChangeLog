@@ -1,0 +1,4 @@
+0.01: New App!
+0.02: Fixes colors not matching user input from color menu in some cases, 3 bands are now shown larger, various code improvements.
+0.03: Use transparent icon with better visibility on dark backgrounds, new resistor img with darker outlines
+0.04: Fix capitalization. Improve decimal handling.

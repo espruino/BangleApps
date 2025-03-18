@@ -90,17 +90,17 @@ const drawSecArc = function (sections, color) {
 
 const drawClock = function () {
   g.reset();
-  currentTime = new Date();
+  let currentTime = new Date();
 
   //Set to initial time when started
   if (first == true) {
     minutes = currentTime.getMinutes();
     seconds = currentTime.getSeconds();
-    for (count = 0; count <= minutes; count++) {
+    for (let count = 0; count <= minutes; count++) {
       drawMinArc(count, settings.circle.colormin);
     }
 
-    for (count = 0; count <= seconds; count++) {
+    for (let count = 0; count <= seconds; count++) {
       drawSecArc(count, settings.circle.colorsec);
     }
     first = false;
@@ -110,7 +110,7 @@ const drawClock = function () {
   if (seconds == 59) {
     g.setColor('#000000');
     g.fillCircle(settings.circle.middle, settings.circle.center, (settings.circle.height / 2));
-    for (count = 0; count <= minutes; count++) {
+    for (let count = 0; count <= minutes; count++) {
       drawMinArc(count, settings.circle.colormin);
     }
   }
@@ -196,6 +196,9 @@ const drawHR = function () {
   }
 };
 
+// Show launcher when button pressed
+Bangle.setUI("clock");
+
 // clean app screen
 g.clear();
 Bangle.loadWidgets();
@@ -222,5 +225,3 @@ Bangle.on('HRM', function (d) {
 // draw now
 drawClock();
 
-// Show launcher when button pressed
-Bangle.setUI("clock");

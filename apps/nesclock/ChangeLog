@@ -1,0 +1,4 @@
+0.01: First release of clock with faces for mario1-3, kirby, and zelda 
+0.02: Fix issue witih plumbers font where some numbers were cut off.
+0.03: Fix issue with smb3 font on 24hr time. Better center time.
+0.04: Rearrange bitmap code to save memory.

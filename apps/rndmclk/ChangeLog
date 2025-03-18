@@ -1,3 +1,4 @@
 0.01: New widget
 0.02: Less invasive, change default clock setting instead of directly loading the new clock (no longer breaks Gadgetbridge notifications)
 0.03: Only changes when the widget id reloaded (no longer uses LCD turning off)
+0.04: Minor code improvements

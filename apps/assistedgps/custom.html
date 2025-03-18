@@ -31,7 +31,7 @@
       <div class="form-group">
         <label class="form-label">Select which GNSS system you want.</label>
         <label class="form-radio">
-          <input type="radio" name="gnss_select" value="1" checked><i class="form-icon"></i> GPS
+          <input type="radio" name="gnss_select" value="1" checked><i class="form-icon"></i> GPS (fastest to get a fix)
         </label>
         <label class="form-radio">
           <input type="radio" name="gnss_select" value="2"><i class="form-icon"></i> BDS
@@ -49,7 +49,7 @@
           <input type="radio" name="gnss_select" value="6"><i class="form-icon"></i> BDS+GLONASS
         </label>
         <label class="form-radio">
-          <input type="radio" name="gnss_select" value="6"><i class="form-icon"></i> GPS+BDS+GLONASS
+          <input type="radio" name="gnss_select" value="7"><i class="form-icon"></i> GPS+BDS+GLONASS
         </label>
       </div>
     </div>
@@ -60,6 +60,7 @@
     <script>
       var isB1; // is Bangle.js 1?
       var isB2; // is Bangle.js 2?
+      var currentPosition;
 
       // When the 'upload' button is clicked...
       document.getElementById("upload").addEventListener("click", function() {
@@ -120,6 +121,7 @@
       }
 
 // =================================================== Bangle.js 2 CASIC
+// https://www.espruino.com/Bangle.js2+Technical#gps
 
     function CASIC_CHECKSUM(cmd) {
       var cs = 0;
@@ -128,36 +130,94 @@
       return cmd+"*"+cs.toString(16).toUpperCase().padStart(2, '0');
     }
 
+    // Send a binary CASIC packet, eg: {classId:6, messageId:0, payload:[]}
+    function CASIC_PKT(pkt) {
+      pkt.payload = pkt.payload || [];
+      var plen = pkt.payload.length;
+      var msg = new Uint8Array(10+pkt.payload.length);
+      msg.set([0xBA,0xCE,
+              plen, // LENGTH
+              0x00,
+              pkt.classId, // CLASS	ID
+              pkt.messageId]); // MESSAGE	ID
+      msg.set(pkt.payload, 6);
+      var dv = new DataView(msg.buffer);
+      // checksum
+      var ckSum = 0;
+      for (i = -4; i < plen; i+=4)
+        ckSum = 0|(ckSum+dv.getUint32(6+i, true));
+      dv.setUint32(6+plen, ckSum, true);
+      return msg;
+    }
+
+    // Send AID_INI message, {lat,lon,alt}
+    function AID_INI(pos) {
+      var msg = new Uint8Array(56);
+      var dv = new DataView(msg.buffer);
+      /*
+      double							xOrLat, yOrLon, zOrAlt;
+      double							tow; // 24
+      float							df; // 32
+      float							posAcc; // 36
+      float							tAcc; // 40
+      float							fAcc; // 44
+      unsigned int					res; // 48
+      unsigned short int				wn; // 52
+      unsigned char					timeSource; // 54
+      unsigned char					flags; // 55
+    */
+      var ms = Date.now();
+      var wk = (ms-new Date("1980-01-06T00:00:00Z")) / 604800000;
+      var wn = Math.floor(wk); // week number
+      var tow = (wk-wn) * 604800; // seconds in week
+      dv.setFloat64(0, pos.lat, true); // xOrLat
+      dv.setFloat64(8, pos.lon, true); // yOrLon
+      dv.setFloat64(16, pos.alt, true); // zOrAlt
+      dv.setFloat64(24, tow, true); // tow
+      dv.setFloat32(32, 0, true); // df
+      dv.setFloat32(36, 0, true); // posAcc
+      dv.setFloat32(40, 0, true); // tAcc
+      dv.setFloat32(44, 0, true); // fAcc
+      dv.setUint32(48, 0, true); // res
+      dv.setUint16(52, wn, true); // wn
+      dv.setUint8(54,0); // timeSource
+      dv.setUint8(55, 0x23); // flags ( lat/lon and clock valid, no drift data )
+      return CASIC_PKT({classId:0x0B, messageId:0x01, payload:msg});
+    }
+
 // ===================================================
 
       function jsFromBase64(b64) {
         var bin = atob(b64);
         var chunkSize = 128;
-        var js = "\x10Bangle.setGPSPower(1);\n"; // turn GPS on
+        var js = "\x10Bangle.setGPSPower(1,'agps');\n"; // turn GPS on
         if (isB1) { // UBLOX
           //js += `\x10Bangle.on('GPS-raw',function (d) { if (d.startsWith("\\xB5\\x62\\x05\\x01")) Terminal.println("GPS ACK"); else if (d.startsWith("\\xB5\\x62\\x05\\x00")) Terminal.println("GPS NACK"); })\n`;
           //js += "\x10var t=getTime()+1;while(t>getTime());\n"; // wait 1 sec
           js += `\x10Serial1.write(atob("${btoa(String.fromCharCode.apply(null,UBX_MGA_INI_TIME_UTC()))}"))\n`; // set GPS time
         }
         if (isB2) { // CASIC
-
           // Select what GNSS System to use for decreased fix time.
           var radios = document.getElementsByName('gnss_select');
           var gnss_select="1";
           for (var i=0; i<radios.length; i++)
             if (radios[i].checked)
               gnss_select=radios[i].value;
+          js += `\x10var t=getTime()+0.5;while (getTime()<t);\n`; // This is nasty - but we just wait here until the GPS has had time to boot
           js += `\x10Serial1.println("${CASIC_CHECKSUM("$PCAS04,"+gnss_select)}")\n`; // set GNSS mode
-          // What about:
-          // NAV-TIMEUTC (0x01 0x10)
-          // NAV-PV (0x01 0x03)
-          // or AGPS.zip uses AID-INI (0x0B 0x01)
+          js += `\x10Serial1.println("${CASIC_CHECKSUM("$PCAS03,1,0,0,1,1,0,0,0")}")\n`; // enable GGA,GSV,RMC packets (new Bangle.js 2 GPS firmwares don't include RMC by default!)
+          // If the browser let us have the current location, give it to the GPS chip to get a faster fix
+          if (currentPosition) {
+            js += `\x10Serial1.write([${AID_INI(currentPosition).join(",")}])\n`;
+          }
+          // Serial1.println("$PCAS06,0*1B") gets the current firmware version
         }
 
         for (var i=0;i<bin.length;i+=chunkSize) {
           var chunk = bin.substr(i,chunkSize);
           js += `\x10Serial1.write(atob("${btoa(chunk)}"))\n`;
         }
+        js += "\x10setTimeout(() => Bangle.setGPSPower(0,'agps'), 1000);\n"; // turn GPS off after a delay
         return js;
       }
 
@@ -180,7 +240,19 @@
         document.getElementById("banglejs1-info").style = isB1?"":"display:none";
         document.getElementById("banglejs2-info").style = isB2?"":"display:none";
         document.getElementById("upload-wrap").style = "";
+
+        if (isB2) {
+          // get current position for AGPS improvement
+          navigator.geolocation.getCurrentPosition(function(position) {
+            currentPosition = {
+              lat : position.coords.latitude,
+              lon : position.coords.longitude,
+              alt : 0|position.coords.altitude
+            };
+          });
+        }
       }
+
 
     </script>
   </body>

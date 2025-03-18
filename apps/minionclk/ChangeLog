@@ -3,3 +3,4 @@
 0.03: Fixed rendering for Espruino v2.06
 0.04: Fixed overlapped rendering of dates
 0.05: Use Bangle.setUI for button/launcher handling
+0.06: Tell clock widgets to hide.

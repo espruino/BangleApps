@@ -14,60 +14,54 @@
   </style>
 </head>
 <body>
-  <h3>&nbsp;&nbsp;&nbsp;Select Fonts to upload:</h3>
+  <h1>&nbsp;&nbsp;&nbsp;Select Fonts to upload:</h1>
   <form>
-    <input type="checkbox" id="BarlowCond">
-    <label for="BarlowCond"><img src="fonts/BarlowCond-p1.png"> <img src="fonts/BarlowCond-p2.png"></label><br>
-    <input type="checkbox" id="BebasNeue">
-    <label for="BebasNeue"><img src="fonts/BebasNeue-p1.png"> <img src="fonts/BebasNeue-p2.png"></label><br>
-    <input type="checkbox" id="Dekko">
-    <label for="Dekko"><img src="fonts/Dekko-p1.png"> <img src="fonts/Dekko-p2.png"></label><br>
-    <input type="checkbox" id="DinAlternate">
-    <label for="DinAlternate"><img src="fonts/DinAlternate-p1.png"> <img src="fonts/DinAlternate-p2.png"></label><br>
-    <input type="checkbox" id="Impact">
-    <label for="Impact"><img src="fonts/Impact-p1.png"> <img src="fonts/Impact-p2.png"></label><br>
-    <input type="checkbox" id="Nunito">
-    <label for="Nunito"><img src="fonts/Nunito-p1.png"> <img src="fonts/Nunito-p2.png"></label><br>
-    <input type="checkbox" id="OpenSansEC">
-    <label for="OpenSansEC"><img src="fonts/OpenSansEC-p1.png"> <img src="fonts/OpenSansEC-p2.png"></label><br>
-    <input type="checkbox" id="Phosphate">
-    <label for="Phosphate"><img src="fonts/Phosphate-p1.png"> <img src="fonts/Phosphate-p2.png"></label><br>
-    <input type="checkbox" id="Quicksand">
-    <label for="Quicksand"><img src="fonts/Quicksand-p1.png"> <img src="fonts/Quicksand-p2.png"></label><br>
-    <input type="checkbox" id="SairaEC">
-    <label for="SairaEC"><img src="fonts/SairaEC-p1.png"> <img src="fonts/SairaEC-p2.png"></label><br>
-    <input type="checkbox" id="Teko">
-    <label for="Teko"><img src="fonts/Teko-p1.png"> <img src="fonts/Teko-p2.png"></label><br>
-    <input type="checkbox" id="Yumaro">
-    <label for="Yumaro"><img src="fonts/Yumaro-p1.png"> <img src="fonts/Yumaro-p2.png"></label><br>
-    <input type="checkbox" id="YuseiMagic">
-    <label for="YuseiMagic"><img src="fonts/YuseiMagic-p1.png"> <img src="fonts/YuseiMagic-p2.png"></label><br>
-    <p><button id="upload" class="btn btn-primary">Upload selected Fonts</button></p>
     <script src="../../core/lib/customize.js"></script>
     <script>
-      FontList = ["BarlowCond", "BebasNeue", "Dekko", "DinAlternate",
+      console.log("TEST");
+      const FontList = ["Teko", "LuckiestGuy", "Bangers", "RubikOne", "Oswald", "Anton", "TitanOne", "BarlowCond", "BebasNeue", "Dekko", "DinAlternate",
       "Impact", "Nunito", "OpenSansEC", "Phosphate", "Quicksand", "SairaEC",
-      "Yumaro", "YuseiMagic"]
-      // When the 'upload' button is clicked...
-      document.getElementById("upload").addEventListener("click", function() {
+      "Yumaro", "YuseiMagic", "MouseMemoirs", "ArchivoNarrow", "FjallaOne", "NerkoOne"];
+      for (fontName of FontList) {
+        var cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.id = fontName;
+        cb.name = "font"
+        var lb = document.createElement('label');
+        lb.setAttribute("for",fontName);
+        var img1 = document.createElement('img')
+        img1.src = "fonts/"+fontName+"-p1.png";
+        var img2 = document.createElement('img')
+        img2.src = "fonts/"+fontName+"-p2.png";
+        lb.appendChild(img1);
+        lb.appendChild(img2);
+        document.forms[0].appendChild(cb);
+        document.forms[0].appendChild(lb);
+        document.forms[0].appendChild(document.createElement('br'));
+      }
+      btn=document.createElement('button');
+      btn.id="upload";
+      btn.innerHTML="Upload selected Fonts";
+      btn.addEventListener("click", function() {
         var n=0;
         var fonts = [];
-        for (fontName of FontList) {
-          if (document.getElementById(fontName).checked==true) {
-            var f = new Object();
+        for (fontElement of document.getElementsByName("font")) {
+          if (fontElement.checked==true) {
             fonts.push({
               name:"contourclock-"+n+".json",
-              url:"font-"+fontName+".json"
+              url:"fonts/font-"+fontElement.id+".json"
             });
             n++;
           }
         }
-        if (n>0)
+        if (n>0) {
+          fonts.push({name:"contourclock-install.json", content:"{\"n\":"+n+"}"});
           sendCustomizedApp({storage:fonts});
-        else
+        } else {
           alert("Please select at least one Font!");
-
+        }
     });
+    document.forms[0].appendChild(btn);
     </script>
   </form>
 </body>

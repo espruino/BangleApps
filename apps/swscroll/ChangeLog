@@ -1,0 +1,8 @@
+0.01: Inital release.
+0.02: Rebasing on latest changes to showScroller_Q3 (https://github.com/espruino/Espruino/commit/2d3c34ef7c2b9fe2118e816aacd2e096adb99596).
+0.03: Rebasing on latest changes to showScroller_Q3 (https://github.com/espruino/Espruino/commit/b6f8105b6348bb6f7cd03ac11efc1f3585c6ad79). Ensure that changing a menu item when half-scrolled off screen doesn't overwrite widgets.
+0.04: Rebasing on latest changes to showScroller_Q3 (https://github.com/espruino/Espruino/commit/a0e2d9231df709849f81abf572a742b0fceab85b). Fixes missing `isActive` function that caused an error.
+0.05: Fix for the rebase in ver 0.04. Check boxes didn't behave but now they do.
+0.06: Minor code improvements
+0.07: Minor code improvements
+0.08: Bring in change from the firmware implementation forwarding the type of touch (short/long).

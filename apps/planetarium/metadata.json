@@ -2,7 +2,7 @@
   "id": "planetarium",
   "name": "Planetarium",
   "shortName": "Planetarium",
-  "version": "0.03",
+  "version": "0.06",
   "description": "Planetarium showing up to 500 stars using the watch location and time",
   "icon": "planetarium.png",
   "tags": "",

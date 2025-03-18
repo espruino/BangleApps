@@ -1,0 +1,30 @@
+{
+    "id": "textreader",
+    "name": "Text Reader",
+    "shortName": "TextReader",
+    "version": "0.01",
+    "description": "Read text files from your Bangle.js filesystem",
+    "type": "app",
+    "tags": "tool,files,reader",
+    "screenshots": [
+        {
+            "url": "screenshot.png"
+        }
+    ],
+    "supports": [
+        "BANGLEJS2"
+    ],
+    "allow_emulator": true,
+    "icon": "textreader.png",
+    "storage": [
+        {
+            "name": "textreader.app.js",
+            "url": "app.js"
+        },
+        {
+            "name": "textreader.img",
+            "url": "app-icon.js",
+            "evaluate": true
+        }
+    ]
+}

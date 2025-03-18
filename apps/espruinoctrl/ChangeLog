@@ -1,1 +1,3 @@
 0.01: New App!
+0.02: Disable not existing BTN3 on Bangle.js 2, set maximum transmit power
+0.03: Now use BTN2 on Bangle.js 1, and on Bangle.js 2 use the middle button to return to the menu

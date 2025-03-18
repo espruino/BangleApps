@@ -1,0 +1,7 @@
+0.01: New App!
+0.02: Use clock_info module as an app
+0.03: clock_info now uses app name to maintain settings specifically for this clock face
+0.04: clock_info is loaded before widgets to match other clocks
+0.05: fix alignment of clock items caused by 0.04 (fix #2970)
+0.06: Minor code improvements
+0.07: fix special characters in clockinfo menus 

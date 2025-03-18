@@ -3,7 +3,7 @@
   "name": "Not Analog",
   "shortName":"Not Analog",
   "icon": "notanalog.png",
-  "version":"0.05",
+  "version": "0.08",
   "readme": "README.md",
   "supports": ["BANGLEJS2"],
   "description": "An analog watch face for people that can not read analog watch faces.",

@@ -1,0 +1,23 @@
+{
+  "id": "gipy",
+  "name": "Gipy",
+  "shortName": "Gipy",
+  "version": "0.27",
+  "description": "Follow gpx files using the gps. Don't get lost in your bike trips and hikes.",
+  "allow_emulator":false,
+  "icon": "gipy.png",
+  "type": "app",
+  "tags": "tool,outdoors,gps",
+  "screenshots": [{"url":"splash.png"}, {"url":"heights.png"}, {"url":"shot.png"}],
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "storage": [
+    {"name":"gipy.app.js","url":"app.js"},
+    {"name":"gipy.settings.js","url":"settings.js"},
+    {"name":"gipy.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"gipy.json"}
+  ]
+}

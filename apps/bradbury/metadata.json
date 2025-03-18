@@ -3,7 +3,7 @@
  "shortName":"Bradbury",
  "icon": "app.png",
  "screenshots": [{"url":"screenshot.png"}],
- "version":"0.01",
+ "version": "0.02",
  "description": "A watch face based on the classic Seiko model worn by one of my favorite authors. I didn't follow the original lcd layout exactly, opting for larger font for more easily readable time, and adding date, battery level, and step count; read from the device. Tapping the screen toggles visibility of widgets.",
  "type": "clock",
  "supports":["BANGLEJS2"],

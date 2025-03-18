@@ -1,7 +1,7 @@
 { "id": "configurable_clock",
   "name": "Configurable Analog Clock",
   "shortName":"Configurable Clock",
-  "version":"0.02",
+  "version": "0.04",
   "description": "an analog clock with several kinds of faces, hands and colors to choose from",
   "icon": "app-icon.png",
   "type": "clock",

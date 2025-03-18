@@ -2,7 +2,7 @@
   "id": "gallifr",
   "name": "Time Traveller's Chronometer",
   "shortName": "Time Travel Clock",
-  "version": "0.02",
+  "version": "0.04",
   "description": "A clock for time travellers. The light pie segment shows the minutes, the black circle, the hour. The dial itself reads 'time' just in case you forget.",
   "icon": "gallifr.png",
   "screenshots": [{"url":"screenshot_time.png"}],

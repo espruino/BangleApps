@@ -1,0 +1,4 @@
+0.01: first release
+0.02: removed fast load, minimalism is useful for narrowing down on issues
+0.03: Use clock_info module as an app
+0.04: clock_info now uses app name to maintain settings specifically for this clock face

@@ -5,11 +5,11 @@ var finding = false;
 
 function draw() {
   // show message
-  g.clear(g.theme.bg); 
+  g.clear(g.theme.bg);
   g.setColor(g.theme.fg);
   g.setFont("Vector", fontSize);
   g.setFontAlign(0,0);
-  
+
   if (finding) {
     g.drawString("Finding...", g.getWidth()/2, (g.getHeight()/2)-20);
     g.drawString("Click to stop", g.getWidth()/2, (g.getHeight()/2)+20);
@@ -20,6 +20,7 @@ function draw() {
 }
 
 function findPhone(v) {
+  Bluetooth.println("");
   Bluetooth.println(JSON.stringify({t:"findPhone", n:v}));
 }
 
@@ -43,7 +44,7 @@ if (process.env.HWVERSION == 1) {
 
 if (process.env.HWVERSION == 2) {
   Bangle.on('touch', function(button, xy) {
-   
+
     // click top part of the screen to stop start
     if (xy.y < g.getHeight() / 2) {
       find();

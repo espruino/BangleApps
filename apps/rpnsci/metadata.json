@@ -1,0 +1,24 @@
+{
+    "id": "rpnsci",
+    "name": "RPN Scientific Calculator",
+    "shortName": "Calculator",
+    "icon": "icon.png",
+    "version": "0.04",
+    "description": "RPN scientific calculator with memory function.",
+    "tags": "",
+    "supports": [
+        "BANGLEJS2"
+    ],
+    "readme": "README.md",
+    "storage": [
+        {
+            "name": "rpnsci.app.js",
+            "url": "app.js"
+        },
+        {
+            "name": "rpnsci.img",
+            "url": "icon.js",
+            "evaluate": "true"
+        }
+    ]
+}

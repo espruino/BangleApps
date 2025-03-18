@@ -2,6 +2,8 @@
   const intervalLow = 60000; // update time when not charging
   const intervalHigh = 2000; // update time when charging
 
+  let prevMin = 100;
+
   let COLORS = {};
 
   if (process.env.HWVERSION == 1) {
@@ -33,6 +35,8 @@
       'charger': true,
       'hideifmorethan': 100,
       'alwaysoncharge': false,
+      'removejitter': 0, // 0 == off, 1 == downwards only
+      'buzzoncharge': true,
     };
     Object.keys(DEFAULTS).forEach(k=>{
       if (settings[k]===undefined) settings[k]=DEFAULTS[k];
@@ -82,14 +86,32 @@
     return changed;
   }
 
-  function draw() {
+  function draw(fromInterval) {
   // if hidden, don't draw
     if (!WIDGETS["batpc"].width) return;
     // else...
     var s = 39;
     var x = this.x, y = this.y;
-    const l = E.getBattery(),
-          c = levelColor(l);
+    let l = E.getBattery();
+    if (setting('removejitter') === 1) {
+      // if we have seen a battery percentage that was lower than current, use lower
+      if (Bangle.isCharging()) {
+        prevMin = l; // charging is the only way to increase percentage
+      } else if (prevMin >= l) {
+        prevMin = l;
+      } else {
+        l = prevMin;
+      }
+    }
+
+    if (fromInterval === true && this.prevLevel === l && this.prevCharging === Bangle.isCharging()) {
+      return; // unchanged, do nothing
+    }
+
+    this.prevLevel = l;
+    this.prevCharging = Bangle.isCharging();
+
+    const c = levelColor(l);
 
     if (Bangle.isCharging() && setting('charger')) {
       g.setColor(chargerColor()).drawImage(atob(
@@ -134,7 +156,6 @@
     // need to redraw all widgets, because changing the "charger" setting
     // can affect the width and mess with the whole widget layout
     setWidth();
-    g.clear();
     Bangle.drawWidgets();
   }
 
@@ -148,7 +169,9 @@
   }
 
   Bangle.on('charging',function(charging) {
-    if(charging) Bangle.buzz();
+    if (setting('buzzoncharge')) {
+      if(charging) Bangle.buzz();
+    }
     update();
     g.flip();
   });
@@ -157,7 +180,7 @@
     if (on) update();
   });
 
-  var id = setInterval(()=>WIDGETS["batpc"].draw(), intervalLow);
+  var id = setInterval(()=>WIDGETS["batpc"].draw(WIDGETS["batpc"], true), intervalLow);
 
   WIDGETS["batpc"]={area:"tr",width:40,draw:draw,reload:reload};
   setWidth();

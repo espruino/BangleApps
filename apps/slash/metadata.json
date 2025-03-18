@@ -4,7 +4,7 @@
   "shortName":"Slash",
   "icon": "slash.png",
   "screenshots": [{"url":"screenshot.png"}],
-  "version":"0.01",
+  "version":"0.02",
   "description": "Slash Watch based on Pebble watch face by Nikki.",
   "tags": "clock",
   "type": "clock",

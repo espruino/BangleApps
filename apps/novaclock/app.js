@@ -1,0 +1,273 @@
+function nova() {
+  var nova = require("heatshrink").decompress(atob("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"));
+  return nova;
+}
+
+function novaEyesStage1() {
+  var novaEyesStage1 = require("heatshrink").decompress(atob("rFYxH+AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4ArgAAFDNhVj5gAFH58rDIXN5movwZRKs+oAIg/OgEr5mi1Go0V+AYIFCLN7oGABIZiK0fXAAkOh0Ph0IBQo+HDI0PhEHhEPDJpWoKQJVCh5ZHHwoZFCgcPg50BLIpYpHohVF1hFChxXODAQACL4hXsHgwABgAACBQg+HDIhuChAZEOYJYtJYkIKwo+EBoJXKJYIABDIyxGK8yUFSYpXKHwTIFKw4NFWFKUGHg0AKwaWGDIrHGWGA9QLIUIK5LJBDJAaDK9o8BhA9JHwSvLK5QQBhEOK9qVLgAMBK5bJJAAMHK9yuBJIRXWh78BDJBWBDIpXnWAIvB1hWNK4xYCOJK7BDIxYoGAZYGBQMOdg6wFBgZWFg7IGK9JYCGQI8FdYpXILAMIDI7IILFZOBAIYCBIoI8KOQ4VDYwRWtHorwCAAQ/DBohXKLAZZCLYQZKLFRZFBQo8HDJLLBDJpYlAB4ZiLE3M5moAQIAFHhgZD5oaCDofNK14/E1Go0QADHaBZDKwQBBKuTyKDNgA/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AD4A=="));
+  return novaEyesStage1;
+}
+
+function novaEyesStage0() {
+  var novaEyesStage0 = require("heatshrink").decompress(atob("rFYxH+AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4ArgAAFDNhVj64AFH58rDLBVrH6EAlYZXK0Y7KH4gZiK1MOh0Ph0IHxoZGh8Ig8Ih5YwHgpSBKoUPLI4+FDIoUDh8HOgJZFLFI9EKousIoUOK5wYCAARfEK9g8GAAMAAAQKEHw4ZENwUIDIhzBLFpLEhBWFHwgNBK5RLBAAIZGWIxXmSgqTFK5Q+CZApWHBoqwpSgw8GgBWDSwwZFY4ywwHqBZChBXJZIIZIDQZXtHgMIHpI+CV5ZXKCAMIhxXtSpcABgJXLZJIABg5XuVwJJCK60PfgIZIKwIZFK86wBF4OsKxpXGLARxJXYIZGLFAwDLAwKBhzsHWAoMDKwsHZAxXpLAQyBHgrrFK5BYBhAZHZBBYrJwIBDAQJFBHhRyHCobGCK1o9FeAQACH4YNEK5RYDLIRbCDJRYqLIoKFHg4ZJZYIZNLFYAIHhIZZLEo/LBgIZkLNw7QDLJZnAAgZsAH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4AfA"));
+  return novaEyesStage0;
+}
+
+function novaEyesStage2() {
+  var novaEyesStage2 = require("heatshrink").decompress(atob("rFYxH+AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4ArgAAFDNhVj5nM1ABC5g/PlYQB1AYCvwZRKsxWE0RZPBgOiv2iAQNUAYIACLN6RBHYQAETQKcDHxMAvwACLIYaEOYRWtGQYAD1BAELBKsBBgRRCWIQBCDwZYqKwKoGLowFDHwpWCDIRRBAQPMAwd+vANBWNRXBJASoDeRKWGDIoEBOoQDDDAQeBK9CUBJQiTCAAq2CB4Q+DDITGFCAZ2DOohYngAAVDLhWj64ACh0PhA0G6+sBoMPCQY+BgAKCBYMOhwZHBoYZFK88PAAKMHKwYABK4oZEKw5YEDIxXpHpRZChBXJZIIZIDQZXtHgMIHpI+CV5ZXKCAMIhxXtSpcABgJXLZJIABg5XuVwJJCK60PfgIZIKwIZFK86wBF4OsgErKxZXGLARxJXYIZGLEoAVDLhXk1AAC5mo0QGDABJXEBIgaBDYfMAA4ZELEouEHgIALHgsABAN+5hUB0R1CDJywlRIvNAQYECMgZXGY4ZXBCAIDCKQTIILFAAISYo8IOQYUDAoQDCBQRWrHwQABcoxdFHhJyCC4i3DDoWiK1hYDRgSQCAAgMBDJ3NDQJWE5oZMLM6ZGHaBZDOgQBBKuQ/FAAgZsAH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4AfA"));
+  return novaEyesStage2;
+}
+
+function novaEyesStage3() {
+  var novaEyesStage3 = require("heatshrink").decompress(atob("rFYxH+AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4ArgAAFDNhVj5nM1ABC5g/PlYQB1AYCvwZRKsxWE0RZPBgOiv2iAQNUAYIACLN6RBHYQAETQKcDHxMAvwACLIYaEOYRWtGQYAD1BAELBKsBBgRRCWIQBCBQV+LFRWBVAxdGAoY+FKwQZCJgICB5hZCvF+qgFBWNRXBJASoDeROiK4ytDCIOoC4R5DAYQIBK9A8BGIY2EABQ+DZARRBUoJVCDYzTELE49CVgo7KHosABoocFZYgBDK8yuGABJfGHwIZQLYQcDLEsAAC4ZaK8nXAAMPh8OGhHX1gPBhATCK4QZDh0PJ5IaCh4ZEK848BhCOKHwI9FOIpXKCAMIhxXpdrAZZK8mo1Gi0V+AIYABBAOiBoIAEBAJXCAwQYDDIwAFDYRXoJAozCAYRDCAAN4I4RXCJAoFELBIdBK8o+DGoyzDKQKcDHgpyBYwquECoYMCAQJWmWAgvCUYadHdgzKF5jMCAITTD5gIDK84+B5gABG4SZDd5A8FZQZLDLQIWGDJCwlLAQAC5oCDAgQABVwoZEKIQeCAYTGFDI5YmcogEEAAg8IOQYUDAoQDCBQRWrHwQABJoV+SQ48KOQRpEW4YdC0RWsLAaMCAIQAEBgIZO5oaCKwfNDJhZnTIw7QLIZ0EKuQ/FAAgZsAH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4AfA=="));
+  return novaEyesStage3;
+}
+
+function novaEyesStage4() {
+  var novaEyesStage4 = require("heatshrink").decompress(atob("rFYxH+AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4ArgAAFDNhVj5nM1ABC5g/PlYQB1AYCvwZRKsxWE0RZPBgOiv2iAQNUAYIACLN6RBHYQAETQKcDHxMAvwACLIYaEOYRWtGQYAD1BAELBKsBBgRRCWIQBCBQV+LFRWBVAxdGAoY+FKwQZCJgICB5hZCvF+qgFBWNRXBJASoDeROiK4ytDCIOoC4R5DAYQIBK9EAJQg2EBAoFEHwauBUIN4p1UKoQbGaYhYnK4KvCKoQFBHYi6EHosrBQQaCYwRbBDQd4XYSwoKwIuB5oACIAJBBAYpMDAAI+BKwIKDDAJKBvC2BEgIUDEwawmdgIvDGIhVDLYYAEHoIZBVIQPBKwJeBZoLJEXgYHBK8wzBHISMF5xdFK45GCMwQDBNYonBBAN+XAV+K8wAPlYHGDKIAHV8ztCqiHBWo6gEdgOoK4SpEAgQODDwIjBAAIjBCIRXm5g1CHQQCDHgJWCAgIAD0RXDDIPM5oRC5oECDYR+CK9aVES4ZQFHQShEK4yvEAAbJGAARXlHwI9BJYIAEAwLsEql4vwBBHgZYCCQRrEEYgMDAQJWmWAgvCJQJaDUQQ8DVwYZFVAS9CAITED5gIDK84+BcIQ3CTIa5HKwjKFJYZaBCwwZIWEpYCAAXNAQYECAAJkBK4ysCYYR2DAQIICAAZXpd4zqFAAg8IOQYUDAoQDCBQRWrHwQABJoV+SQ48KOQRpEW4YdC0RWsLAaMCAIQAEBgIZO5oaCKwfNDJhZnTIw7QLIZ0EKuQ/FAAgZsAH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4AfA=="));
+  return novaEyesStage4;
+
+}
+
+function novaEyesWhiteStage0() {
+  var novaEyesWhiteStage0 = require("heatshrink").decompress(atob("rFYxH+AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4ArgAAFDNhVj64AFH58rDLBVrH6EAlYZXK0Y7KH4gZiK2Q+JDLJW0Hw4ZZK/5X6HiY+FDLJX/K/Q8VHwYZZK/5X/K/5X/K/5X/K/5X/K+Y+WHgYZZK/5X7Hyg8FDLJX/K/Y+SHg4ZZLGg8JDLJYlH5YMBDMhZuHaAZZLM4AEDNgA/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AD4A="));
+  return novaEyesWhiteStage0;
+}
+
+function novaEyesTransStage1() {
+  var novaEyesTransStage1 = require("heatshrink").decompress(atob("rFYxH+AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4ArgAAFDNhVj5gAFH58rDIXN5movwZRKs+oAIg/OgEr5mi1Go0V+AYIFCLN7oGABIZiK0YRYDLJW0CY4ZZK/5X6FCoVDDLJX/K/QmXC4IZZK/5X/K/5X/K/5X/K/5X/K+YmWCoYZZK/5X7FCgTFDLJX/K/YqSCI4ZZLEoAPDMRYm5nM1ACBAAo8MDIfNDQQdD5pWvH4mo1GiAAY7QLIZWCAIJVyeRQZsAH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4AfA"));
+  return novaEyesTransStage1;
+}
+
+function novaEyesTransStage2() {
+  var novaEyesTransStage2 = require("heatshrink").decompress(atob("rFYxH+AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4ArgAAFDNhVj5nM1ABC5g/PlYQB1AYCvwZRKsxWE0RZPBgOiv2iAQNUAYIACLN6RBHYQAETQKcDHxMAvwACLIYaEOYRWtGQYAD1BAELBKsBBgRRCWIQBCDwZYqKwKoGLowFDHwpWCDIRRBAQPMAwd+vANBWNRXBJASoDeRKWGDIoEBOoQDDDAQeBK9CUBJQiTCAAq2CB4Q+DDITGFCAZ2DOohYngAAVDLhWjC7AZZK/5X/K/5X/K/5X/K/5X/K+YmBACoZcK8moAAXM1GiAwYAJK4gJEDQIbD5gAHDIhYlFwg8BABY8FgAIBv3MKgOiOoQZOWEqJF5oCDAgRkDK4zHDK4IQBAYRSCZBBYoABCTFHhByDCgYFCAYQKCK1Y+CAALlGLoo8JOQQXEW4YdC0RWsLAaMCSAQAEBgIZO5oaBKwnNDJhZnTIw7QLIZ0CAIJVyH4oAEDNgA/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AD4A=="));
+  return novaEyesTransStage2;
+}
+
+function novaEyesTransStage3() {
+  var novaEyesTransStage3 = require("heatshrink").decompress(atob("rFYxH+AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4ArgAAFDNhVj5nM1ABC5g/PlYQB1AYCvwZRKsxWE0RZPBgOiv2iAQNUAYIACLN6RBHYQAETQKcDHxMAvwACLIYaEOYRWtGQYAD1BAELBKsBBgRRCWIQBCBQV+LFRWBVAxdGAoY+FKwQZCJgICB5hZCvF+qgFBWNRXBJASoDeROiK4ytDCIOoC4R5DAYQIBK9A8BGIY2EABQ+DZARRBUoJVCDYzTELE49CVgo7KHosABoocFZYgBDK8yuGABJfGHwIZQLYQcDLEsAAC4ZaK8gXYDLJX/K/jtYDLJXk1Go0WivwBDAAIIB0QNBAAgIBK4QGCDAYZGAAobCK9BIFGYQDCIYQABvBHCK4RIFAohYJDoJXlHwY1GWYZSBTgY8FOQLGFVwgVDBgQCBK0ywEF4SjDTo7sGZQvMZgQBCaYfMBAZXnHwPMAAI3CTIbvIHgrKDJYZaBCwwZIWEpYCAAXNAQYECAAKuFDIhRCDwQDCYwoZHLEzlEAggAEHhByDCgYFCAYQKCK1Y+CAAJNCvySHHhRyCNIi3DDoWiK1hYDRgQBCAAgMBDJ3NDQRWD5oZMLM6ZGHaBZDOghVyH4oAEDNgA/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AD4="));
+  return novaEyesTransStage3;
+}
+
+function novaTopRedraw() {
+  var novaTopRedraw = require("heatshrink").decompress(atob("rFYxH+AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AHsAABZM/K5fM5kAv2igGi1EAvFUK/6v/K8isDAQV+BAK4BJn5XL1BOB1GoLod4LQIRE0XM5vM1HN5pX/5hXBIwJdGKwgYGA45X3TgJRDLQZXFAH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AB8AIH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4AP"));
+  return novaTopRedraw;
+}
+
+function star() {
+  var backgroundstar = require("heatshrink").decompress(atob("rFYxH+AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A9qxA/K/5W/AH5XGLH6w/K34A/AA2BwJB/K62sIP5XWIH4AW1iv/K/5X/AHFWqwCCq2BJ4ICB1mBAAJZBAQIQBlYUCAYMrAgJZ8KQICBU4QCBLIJVBK4QOCNAJSCOQQA/XpQA/K6q3CAH5XUwJB/ACqu/V7BA/AC2BwJB/LC5A/V/4AtqxX/AC2slZB/ACuBqxB/LC5A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4A/AH4Ao"));
+  return backgroundstar;
+}
+
+function novaOpenEyes(speed, white, animation) {
+  if (!white) {
+    g.drawImage(novaEyesStage4(), -10, -10, {
+      scale: 2.2
+    });
+    setTimeout(function() {
+      g.drawImage(novaEyesStage3(), -10, -10, {
+        scale: 2.2
+      });
+    }, speed * 2);
+    setTimeout(function() {
+      g.drawImage(novaEyesStage2(), -10, -10, {
+        scale: 2.2
+      });
+    }, speed * 3);
+    setTimeout(function() {
+      g.drawImage(novaEyesStage1(), -10, -10, {
+        scale: 2.2
+      });
+    }, speed * 4);
+    if (animation) {
+      setTimeout(function() {
+        g.drawImage(novaEyesStage0(), -10, -10, {
+          scale: 2.2
+        });
+      }, speed * 5);
+    }
+  } else {
+
+    g.drawImage(novaEyesStage4(), -10, -10, {
+      scale: 2.2
+    });
+    setTimeout(function() {
+      g.drawImage(novaEyesWhiteStage0(), -10, -10, {
+        scale: 2.2
+      });
+      timedraw(true);
+      g.drawImage(novaEyesTransStage3(), -10, -10, {
+        scale: 2.2
+      });
+    }, speed * 2);
+    setTimeout(function() {
+      g.drawImage(novaEyesWhiteStage0(), -10, -10, {
+        scale: 2.2
+      });
+      timedraw(true);
+      g.drawImage(novaEyesTransStage2(), -10, -10, {
+        scale: 2.2
+      });
+    }, speed * 3);
+    setTimeout(function() {
+      g.drawImage(novaEyesWhiteStage0(), -10, -10, {
+        scale: 2.2
+      });
+      timedraw(true);
+      g.drawImage(novaEyesTransStage1(), -10, -10, {
+        scale: 2.2
+      });
+      open = true;
+    }, speed * 4);
+    if (animation) {
+      setTimeout(function() {
+        g.drawImage(novaEyesWhiteStage0(), -10, -10, {
+          scale: 2.2
+        });
+        open = true;
+      }, speed * 5);
+    }
+  }
+}
+
+function novaCloseEyes(speed, white, animation) {
+  if (!white) { // for other
+    if (animation) {
+      g.drawImage(novaEyesStage0(), -10, -10, {
+        scale: 2.2
+      });
+    }
+    setTimeout(function() {
+      g.drawImage(novaEyesStage1(), -10, -10, {
+        scale: 2.2
+      });
+    }, speed * 2);
+    setTimeout(function() {
+      g.drawImage(novaEyesStage2(), -10, -10, {
+        scale: 2.2
+      });
+    }, speed * 3);
+    setTimeout(function() {
+      g.drawImage(novaEyesStage3(), -10, -10, {
+        scale: 2.2
+      });
+    }, speed * 4);
+    setTimeout(function() {
+      g.drawImage(novaEyesStage4(), -10, -10, {
+        scale: 2.2
+      });
+    }, speed * 5);
+  } else { // for time
+
+    if (animation) {
+      timedraw(true);
+      g.drawImage(novaEyesWhiteStage0(), -10, -10, {
+        scale: 2.2
+      });
+    }
+    setTimeout(function() {
+      timedraw(true);
+      g.drawImage(novaEyesTransStage1(), -10, -10, {
+        scale: 2.2
+      });
+    }, speed * 2);
+    setTimeout(function() {
+      timedraw(true);
+      g.drawImage(novaEyesTransStage2(), -10, -10, {
+        scale: 2.2
+      });
+    }, speed * 3);
+    setTimeout(function() {
+      timedraw(true);
+      g.drawImage(novaEyesTransStage3(), -10, -10, {
+        scale: 2.2
+      });
+    }, speed * 4);
+    setTimeout(function() {
+      g.drawImage(novaEyesStage4(), -10, -10, {
+        scale: 2.2
+      });
+    }, speed * 5);
+    open = false;
+  }
+}
+
+function timedraw(animation) {
+  if (open && timemode || animation) {
+    g.setFont("6x8", 4);
+    g.setColor("#00F");
+    var d = new Date();
+    var h = d.getHours(),
+      m = d.getMinutes();
+    g.drawImage(novaEyesWhiteStage0(), -10, -10, {
+      scale: 2.2
+    });
+    g.drawImage(novaEyesTransStage1(), -10, -10, {
+      scale: 2.2
+    });
+    // Check if single digit
+    var hourDigits = h.toString();
+    if (hourDigits.length === 1) { // if hour digits only one, render in middle
+      g.drawString(h, 50, 66);
+    } else {
+      g.drawString(h, 38, 66);
+    }
+    var minutes = m.toString();
+    if (minutes.length === 1) { // same for mins
+      g.drawString(m, 107, 66);
+    } else {
+      g.drawString(m, 94, 66);
+    }
+  }
+}
+
+function main() {
+  Bangle.on("lock", function(lock) {
+    g.drawImage(novaTopRedraw(), -10, novaYPos, {
+      scale: 2.2
+    });
+    if (lock) {
+      novaCloseEyes(200, true, false);
+      setTimeout(function() {
+        novaOpenEyes(100, false, false);
+        timemode = false;
+      }, 1200);
+    }else{
+      novaCloseEyes(100, false, false);
+      setTimeout(function() {
+        timemode = true;
+        novaOpenEyes(200, true, false);
+      }, 600);
+    }
+  });
+}
+
+
+g.setFont("6x8", 4);
+g.setColor("#FFF");
+var open = false;
+var timemode = true;
+var novaYPos = -7;
+Bangle.setUI("clock");
+g.clear();
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+g.drawImage(nova(), -10, -10, {
+  scale: 2.2
+});
+
+g.drawImage(star(), 5, -5, {scale:0.8});
+g.drawImage(star(), -10, 120, {scale:0.8});
+g.drawImage(star(), 120, -5, {scale:0.8});
+
+
+
+setInterval(function() {
+  timedraw();
+  g.drawImage(novaTopRedraw(), -10, novaYPos, {
+    scale: 2.2
+  });
+}, 1000);
+
+novaOpenEyes(300, true, false);
+main();

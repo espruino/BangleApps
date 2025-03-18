@@ -13,7 +13,7 @@
     && (a.last != d) // not already fired today
     && (a.t + 60000 > currentTime) // is not in the past by >1 minute
     && (a.dow >> time.getDay() & 1) // is allowed on this day of the week
-    && (!a.date || a.date == time.toISOString().substr(0, 10)) // is allowed on this date
+    && (!a.date || a.date == time.toLocalISOString().substr(0, 10)) // is allowed on this date
   );
   if (active.length) {
     active = active.sort((a,b)=>a.t-b.t); // sort by time
@@ -26,7 +26,7 @@
     If active[0].js is defined, just run that code as-is and not alarm.js */
     Bangle.SCHED = setTimeout(active[0].js||'load("sched.js")',t);
   } else { // check for new alarms at midnight (so day of week works)
-    Bangle.SCHED = setTimeout('eval(require("Storage").read("sched.boot.js"))', 86400000 - (Date.now()%86400000));
+    Bangle.SCHED = setTimeout('eval(require("Storage").read("sched.boot.js"))', 86400000 - currentTime);
   }
 })();
 /* DEBUGGING

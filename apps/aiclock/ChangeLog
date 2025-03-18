@@ -1,0 +1,9 @@
+0.01: New app!
+0.02: Design improvements and fixes.
+0.03: Indicate battery level through line occurrence.
+0.04: Use widget_utils module.
+0.05: Support for clkinfo.
+0.06: ClockInfo Fix: Use .get instead of .show as .show is not implemented for weather etc.
+0.07: Use clock_info.addInteractive instead of a custom implementation
+0.08: Use clock_info module as an app
+0.09: clock_info now uses app name to maintain settings specifically for this clock face

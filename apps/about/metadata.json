@@ -1,7 +1,7 @@
 {
   "id": "about",
   "name": "About",
-  "version": "0.12",
+  "version": "0.15",
   "description": "Bangle.js About page - showing software version, stats, and a collaborative mural from the Bangle.js KickStarter backers",
   "icon": "app.png",
   "tags": "tool,system",

@@ -1,0 +1,31 @@
+{
+  "id": "dvdbounce",
+  "name": "Bouncing DVD logo",
+  "shortName": "Bouncing DVD",
+  "version": "0.01",
+  "description": "Have you ever wanted to admire the bouncing DVD logo on your watch? Now you can! Let's hope it touches an angle.",
+  "icon": "dvdbounce.png",
+  "tags": "game",
+  "supports": [
+    "BANGLEJS",
+    "BANGLEJS2"
+  ],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {
+      "name": "dvdbounce.app.js",
+      "url": "dvdbounce.app.js"
+    },
+    {
+      "name": "dvdbounce.img",
+      "url": "dvdbounce-icon.js",
+      "evaluate": true
+    }
+  ],
+  "screenshots": [
+    {
+      "url": "screenshot.gif"
+    }
+  ]
+}

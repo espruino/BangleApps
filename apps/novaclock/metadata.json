@@ -1,0 +1,15 @@
+{ "id": "novaclock",
+  "name": "Nova Clock",
+  "shortName":"Nova Clock",
+  "icon": "app.png",
+  "type": "clock",
+  "version": "0.12",
+  "description": "A clock inspired by the Kirby series",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "readme":"README.md",
+  "storage": [
+    {"name":"novaclock.app.js","url":"app.js"},
+    {"name":"novaclock.img","url":"app-icon.js","evaluate":true}
+  ]
+}

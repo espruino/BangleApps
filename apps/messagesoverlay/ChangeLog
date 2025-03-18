@@ -1,0 +1,17 @@
+0.01: Initial fork from messages_light
+0.02: Fix touch/drag/swipe handlers not being restored correctly if a message is removed
+0.03: Scroll six lines per swipe, leaving the previous top/bottom row visible.
+0.04: Use the event mechanism for getting messages
+0.05: Fix the overlay keeping the LCD on
+0.06: Better low memory handling
+      Fix first message beeing displayed again on unlock
+0.07: Adds settings
+      Automatic discard of oldest messages
+      Indicator for multiple messages in queue
+      Some optimization in the rendering code
+      Track handler changes done by background code
+0.08: Fix linter warnings
+0.09: Fix scrolling to last line for long text
+0.10: Track Listeners added with prependListener
+      Handle changed internal callback variable name for watches introduced in 2v21.104
+0.11: Update for new setLCDOverlay remove handler

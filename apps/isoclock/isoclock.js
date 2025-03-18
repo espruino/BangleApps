@@ -14,7 +14,7 @@ function draw() {
   var month = date.getMonth()+1;
   var dateNum = date.getDate();
   var year = date.getFullYear();
-  var half = "AM";
+  //var half = "AM";
   var time = ("0" + h).substr(-2) + ":" + ("0" + m).substr(-2);
 
   //convert day into string
@@ -54,7 +54,7 @@ function draw() {
 
 
   if (h > 12) {
-    half = "PM";
+    //half = "PM";
     h = h - 12;
   }
   //reset graphics
@@ -89,8 +89,8 @@ Bangle.on('lcdPower',on=>{
   }
 });
 
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-
 // Show launcher when button pressed
 Bangle.setUI("clock");
+
+Bangle.loadWidgets();
+Bangle.drawWidgets();

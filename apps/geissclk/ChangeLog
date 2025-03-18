@@ -1,3 +1,5 @@
 0.01: New App!
 0.02: BTN2->launcher, use smaller text to allow "20:00" to fit on screen
 0.03: Changed setWatch to Bangle.setUI
+0.04: Tell clock widgets to hide.
+0.05: Making geissclock work on Bangle.js 2 (but only animate when unlocked!)

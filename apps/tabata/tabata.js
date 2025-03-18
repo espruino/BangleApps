@@ -71,7 +71,7 @@ function startTabata() {
     clearTimeout(timer);
     clearWatch(clearBtn1);
     clearWatch(clearBtn2);
-    clearWatch(clearBtn2);
+    clearWatch(clearBtn2); // TODO: Should it be Btn3 here?
     showMainMenu();
   }
 

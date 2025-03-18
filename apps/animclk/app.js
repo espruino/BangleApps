@@ -16,7 +16,6 @@ var is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"];
 var IX = 80, IY = 10, IBPP = 1;
 var IW = 174, IH = 45, OY = 24;
 var inf = {align:0};
-var bgoptions;
 
 require("Font7x11Numeric7Seg").add(Graphics);
 var cg = Graphics.createArrayBuffer(IW,IH,IBPP,{msb:true});
@@ -87,7 +86,6 @@ if (g.drawImages) {
   draw();
   var secondInterval = setInterval(draw,100);
   // load widgets
-  Bangle.loadWidgets();
   Bangle.drawWidgets();
   // Stop when LCD goes off
   Bangle.on('lcdPower',on=>{
@@ -104,3 +102,5 @@ if (g.drawImages) {
 }
 // Show launcher when button pressed
 Bangle.setUI("clock");
+
+Bangle.loadWidgets();

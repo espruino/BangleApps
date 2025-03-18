@@ -1,0 +1,21 @@
+{
+  "id": "lato",
+  "name": "Lato",
+  "version": "0.04",
+  "description": "A Lato Font clock with fast load and clock_info",
+  "readme": "README.md",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot3.png"}],
+  "type": "clock",
+  "tags": "clock,clkinfo",
+  "supports": ["BANGLEJS2"],
+  "dependencies" : { "clock_info":"module" },
+  "storage": [
+    {"name":"lato.app.js","url":"app.js"},
+    {"name":"lato.img","url":"icon.js","evaluate":true},
+    {"name":"lato.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"lato.json"}
+  ]
+}

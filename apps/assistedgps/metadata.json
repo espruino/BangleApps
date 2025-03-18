@@ -1,13 +1,16 @@
 {
   "id": "assistedgps",
-  "name": "Assisted GPS Update (AGPS)",
-  "version": "0.03",
-  "description": "Downloads assisted GPS (AGPS) data to Bangle.js 1 or 2 for faster GPS startup and more accurate fixes. **No app will be installed**, this just uploads new data to the GPS chip.",
+  "name": "Assisted GPS Updater (AGPS)",
+  "shortName": "AGPS",
+  "version": "0.07",
+  "description": "Downloads assisted GPS (AGPS) data to Bangle.js for faster GPS startup and more accurate fixes. **No app will be installed**, this just uploads new data to the GPS chip.",
+  "sortorder": -1,
   "icon": "app.png",
   "type": "RAM",
-  "tags": "tool,outdoors,agps",
+  "tags": "tool,outdoors,agps,gps,a-gps,agps",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "custom": "custom.html",
   "customConnect": true,
-  "storage": []
+  "storage": [],
+  "sortorder": -1
 }
