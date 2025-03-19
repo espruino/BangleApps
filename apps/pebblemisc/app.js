@@ -311,8 +311,9 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
 
   setWatch(function () {
     buzz = !buzz;
-    const status = (buzz) ? "On" : "Off";
-    E.showMessage("Buzz", "Status : " + status);
-    setTimeout(() => draw(), 1000);
+    
+    if (buzz){
+      Bangle.buzz();
+    }
   }, BTN, { edge: "rising", repeat: true, debounce:50, replace: true });
 }
