@@ -98,7 +98,8 @@ function getChart(period) {
             tknChrtData = apiData.map(innerArray => innerArray[1]);
             // logFile.write("Chart data:" + JSON.stringify(tknChrtData));
             currLoadMsg = "";
-            gridYValue = ciLib.calculateOptimalYAxisSpacing(tknChrtData);
+            const oSpcOjb = ciLib.calculateOptimalYAxisSpacing(tknChrtData);
+            gridYValue = oSpcOjb.roundedInterval;
             //
             g.clearRect(layout.tknGraph.x, layout.tknGraph.y, layout.tknGraph.w, layout.tknGraph.h);
             layout.forgetLazyState(); // Force a full re-render
