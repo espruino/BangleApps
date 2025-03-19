@@ -1,7 +1,7 @@
 { "id": "coin_info",
   "name": "Crypto-Coins Info",
   "shortName":"Coins Info",
-  "version": "0.06.57",
+  "version": "0.06.58",
   "description": "Crypto-Coins Infos with the help of the Binance API",
   "icon": "app.png",
   "tags": "clkinfo",

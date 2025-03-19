@@ -45,7 +45,7 @@ function renderGraph(l) {
         x: l.x, y: l.y, width: l.w, height: l.h,
         miny: bounds.min,
         maxy: bounds.max,
-        gridy: gridYValue
+        // gridy: gridYValue
     });
 }
 
@@ -97,14 +97,20 @@ function getChart(period) {
             const apiData = JSON.parse(data.resp);
             tknChrtData = apiData.map(innerArray => innerArray[1]);
             // logFile.write("Chart data:" + JSON.stringify(tknChrtData));
-            currLoadMsg = "";
-            const oSpcOjb = ciLib.calculateOptimalYAxisSpacing(tknChrtData);
+
+            // just not readable
+            // const oSpcOjb = ciLib.calculateOptimalYAxisSpacing(tknChrtData);
             // logFile.write("Y-Axis:" + JSON.stringify(oSpcOjb));
-            gridYValue = oSpcOjb.interval;
+            // gridYValue = oSpcOjb.interval;
+
             //
             g.clearRect(layout.tknGraph.x, layout.tknGraph.y, layout.tknGraph.w, layout.tknGraph.h);
             layout.forgetLazyState(); // Force a full re-render
             layout.render(layout.tknGraph); // Render just the graph area
+
+            //
+            currLoadMsg = "";
+            layout.render(layout.loadMsg);
         })
         .catch(err => {
             // logFile.write("API Error: " + JSON.stringify(err));

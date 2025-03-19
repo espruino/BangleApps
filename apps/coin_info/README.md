@@ -26,6 +26,8 @@ Martin Zwigl
 
 ### App
 
-- Using CoinStats for historical data
+- Using CoinStats for chart-data
 - token-names on CoinStats are different to Binance; they also have to be uploaded via Interface
 - You also need a CoinStats API access key which is good for a fair amount of calls
+- I tried with gridy for the axis, but for this data - it is just not readable...
+- Let me know when you have good suggestions for improvement.
