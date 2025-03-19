@@ -180,6 +180,11 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
     }
   ];
 
+  const x1 = w / 2 - 30;
+  const y1 = h3 + 5;
+  const x2 = w / 2 + 30;
+  const y2 = h;
+
   let draw = function () {
     let locale = require("locale");
     let date = new Date();
@@ -285,21 +290,36 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
   });
 
   // Show launcher when middle button pressed
-  // Bangle.setUI({
-  //   mode: "clock",
-  //   redraw: draw,
-    // remove: function () {
-    //   // Called to unload all of the clock app
-    //   if (drawTimeout) clearTimeout(drawTimeout);
-    //   drawTimeout = undefined;
-    //   clockInfoMenuA.remove();
-    //   clockInfoMenuB.remove();
-    //   delete Graphics.prototype.setFontLECO1976Regular22;
-    //   delete Graphics.prototype.setFontLECO1976Regular42;
-    //   delete Graphics.prototype.setFontLECO1976Regular14;
-    //   require("widget_utils").show(); // re-show widgets
-    // }
-  // });
+  Bangle.setUI({
+    mode: "clock",
+    redraw: draw,
+    remove: function () {
+      // Called to unload all of the clock app
+      if (drawTimeout) clearTimeout(drawTimeout);
+      drawTimeout = undefined;
+      clockInfoMenuA.remove();
+      clockInfoMenuB.remove();
+      delete Graphics.prototype.setFontLECO1976Regular22;
+      delete Graphics.prototype.setFontLECO1976Regular42;
+      delete Graphics.prototype.setFontLECO1976Regular14;
+      require("widget_utils").show(); // re-show widgets
+    }
+  });
+
+  Bangle.setUI({
+    mode: "custom", // Use custom UI mode
+    touch: (n, e) => {
+      // n is the touch number (0 for single touch)
+      // e contains touch event details (x, y, etc.)
+      if (e.x >= x1 && e.x <= x2 && e.y >= y1 && e.y <= y2) {
+        buzz = !buzz;
+
+        buzzStatus = buzz ? "On" : "Off";
+        E.showMessage("Buzz", buzzStatus);
+        setTimeout(() => E.showMessage(""), 1000);
+      }
+    },
+  });
 
   Bangle.loadWidgets();
   require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
@@ -309,29 +329,4 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
 
   draw();
 
-  setWatch(function () {
-    try {
-      buzz = !buzz;
-      
-      if (buzz) {
-        console.log("Buzz");
-        Bangle.buzz(200).then(() => {
-          setTimeout(() => {
-            Bangle.buzz(200);
-          }, 300);
-        });
-      } else {
-        console.log("No Buzz");
-        Bangle.buzz(200)
-        
-      }
-    } catch (e) {
-      console.log("Error in button handler:", e);
-    }
-  }, BTN, {
-    edge: "falling",
-    replace: true,
-    repeat: true,
-    debounce: 50,
-  });
 }
