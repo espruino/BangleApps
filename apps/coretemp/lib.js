@@ -64,6 +64,8 @@ exports.enable = () => {
           let qualityAndState = dv.getUint8(index++);
           let heartRate = dv.getUint8(index++);
           let heatStrainIndex = dv.getUint8(index) / 10.0;
+          let dataQuality = qualityAndState & 0x07;
+          let hrState = (qualityAndState >> 4) & 0x03;
           let data = {
             core: coreTemp || null,
             skin: skinTemp || null,
@@ -72,7 +74,8 @@ exports.enable = () => {
             heatflux: coreReserved,
             hsi: heatStrainIndex,
             battery: 0,
-            quality: qualityAndState
+            dataQuality: dataQuality,
+            hrState: hrState
           };
           if (lastReceivedData.hasOwnProperty("0x180f")) {
             data.battery = lastReceivedData["0x180f"]["0x2a19"];

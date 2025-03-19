@@ -10,8 +10,8 @@
         hr = c.hr;
         heatflux = c.heatflux; 
         hsi = c.hsi;
-        battery= c.battery,
-        quality = c.quality
+        battery= c.battery;
+        quality = c.dataQuality;
     }
     return {
       name : "Core",
