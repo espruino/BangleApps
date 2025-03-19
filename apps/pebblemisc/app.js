@@ -310,18 +310,18 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
   draw();
 
   setWatch(function () {
-    buzz = !buzz;
-
-    console.log("Buzz: ", buzz);
-
-    if (buzz) {
-      Bangle.buzz(200).then(() => {
-        setTimeout(() => {
-          Bangle.buzz(200);
-        }, 300);
-      });
-    } else {
-      Bangle.buzz(200);
+    try {
+      buzz = !buzz;
+      
+      if (buzz) {
+        console.log("Buzz");
+        Bangle.buzz(200)
+      } else {
+        console.log("No Buzz");
+        
+      }
+    } catch (e) {
+      console.log("Error in button handler:", e);
     }
   }, BTN, {
     edge: "falling",
