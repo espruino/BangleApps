@@ -67,8 +67,8 @@ exports.enable = () => {
           let dataQuality = qualityAndState & 0x07;
           let hrState = (qualityAndState >> 4) & 0x03;
           let data = {
-            core: coreTemp || null,
-            skin: skinTemp || null,
+            core: coreTemp,
+            skin: skinTemp,
             unit: (flags & 0b00001000) ? "F" : "C",
             hr: heartRate,
             heatflux: coreReserved,
