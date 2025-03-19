@@ -313,5 +313,5 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
     const status = (buzz) ? "On" : "Off";
     E.showMessage("Buzz", "Status : " + status);
     setTimeout(() => draw(), 1000);
-  }, BTN, { edge: "rising", repeat: true });
+  }, BTN, { edge: "rising", repeat: true, debounce:50 });
 }
