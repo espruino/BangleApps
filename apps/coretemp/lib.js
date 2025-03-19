@@ -1,7 +1,7 @@
 exports.enable = () => {
   var settings = require("Storage").readJSON("coretemp.json", 1) || {};
   let log = function () { };//print
-  Bangle.enableCORESensorLog() = function () {
+  Bangle.enableCORESensorLog = function () {
     log = function (text, param) {
       let logline = new Date().toISOString() + " - " + text;
       if (param) logline += ": " + JSON.stringify(param);
