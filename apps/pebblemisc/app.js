@@ -288,17 +288,17 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
   Bangle.setUI({
     mode: "clock",
     redraw: draw,
-    remove: function () {
-      // Called to unload all of the clock app
-      if (drawTimeout) clearTimeout(drawTimeout);
-      drawTimeout = undefined;
-      clockInfoMenuA.remove();
-      clockInfoMenuB.remove();
-      delete Graphics.prototype.setFontLECO1976Regular22;
-      delete Graphics.prototype.setFontLECO1976Regular42;
-      delete Graphics.prototype.setFontLECO1976Regular14;
-      require("widget_utils").show(); // re-show widgets
-    }
+    // remove: function () {
+    //   // Called to unload all of the clock app
+    //   if (drawTimeout) clearTimeout(drawTimeout);
+    //   drawTimeout = undefined;
+    //   clockInfoMenuA.remove();
+    //   clockInfoMenuB.remove();
+    //   delete Graphics.prototype.setFontLECO1976Regular22;
+    //   delete Graphics.prototype.setFontLECO1976Regular42;
+    //   delete Graphics.prototype.setFontLECO1976Regular14;
+    //   require("widget_utils").show(); // re-show widgets
+    // }
   });
 
   Bangle.loadWidgets();
