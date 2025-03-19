@@ -128,6 +128,7 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
       "color": "#0000FF",
       "validator": (hours, minutes) => {
         symetrics = {
+          "0": "0",
           "1": "1",
           "2": "5",
           "5": "2",
@@ -136,17 +137,17 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
           "9": "6",
         };
 
-        let canPalindrom = true;
+        let hasSymetry = true;
         const hoursPalindrom = hours.split("").map((char) => {
           if (symetrics[char] == undefined) {
-            canPalindrom = false;
+            hasSymetry = false;
             return;
           }
 
           return symetrics[char];
-        }).join("");
+        }).reverse().join("");
 
-        if (!canPalindrom) {
+        if (!hasSymetry) {
           return false;
         }
 
@@ -313,5 +314,5 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
     const status = (buzz) ? "On" : "Off";
     E.showMessage("Buzz", "Status : " + status);
     setTimeout(() => draw(), 1000);
-  }, BTN, { edge: "rising", repeat: true, debounce:50 });
+  }, BTN, { edge: "rising", repeat: true, debounce:50, replace: true });
 }
