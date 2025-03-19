@@ -59,16 +59,17 @@ exports.enable = () => {
           index += 2;
           let skinTemp = dv.getInt16(index, true) / 100.0;
           index += 2;
-          //let coreReserved = dv.getInt16(index, true);
+          let coreReserved = dv.getInt16(index, true); //caleraGT only with firmware decryption provided by Greenteg
           index += 2;
           //let qualityAndState = dv.getUint8(index++);
           let heartRate = dv.getUint8(index++);
           let heatStrainIndex = dv.getUint8(index) / 10.0;
           let data = {
-            core: coreTemp,
-            skin: skinTemp,
+            core: coreTemp || null,
+            skin: skinTemp || null,
             unit: (flags & 0b00001000) ? "F" : "C",
             hr: heartRate,
+            heatflux: coreReserved,
             hsi: heatStrainIndex,
             battery: 0
           };

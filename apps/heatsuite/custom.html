@@ -3,19 +3,21 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
-    <ul class="tab tab-block">
-      <li class="tab-item active">
-        <a href="javascript:showTab('heatsuite__settingsContainer')">Settings</a>
+    <ul class="tab tab-block" id="tab-navigate">
+      <li class="tab-item active" id="tab-settingsContainer">
+        <a href="javascript:showTab('settingsContainer')">Settings</a>
       </li>
-      <li class="tab-item">
-        <a href="javascript:showTab('heatsuite__tasksContainer')">Tasks</a>
+      <li class="tab-item" id="tab-tasksContainer">
+        <a href="javascript:showTab('tasksContainer')">Tasks</a>
       </li>
-      <li class="tab-item">
-        <a href="#">Survey</a>
+      <li class="tab-item" id="tab-surveyContainer">
+        <a href="javascript:showTab('surveyContainer')">EMA</a>
       </li>
     </ul>
-    <div class="container apploader-tab" id="heatsuite__settingsContainer">
-      <p>Select Recorder Options:</p>
+    <div class="container apploader-tab" id="settingsContainer">
+      <div class="row pt-2"><strong>Recorder Options:</strong>
+        <br>Select what sensor/data you want to record and average each minute:
+      </div>
       <div class="form-group">
           <label class="form-switch">
               <input type="checkbox" name="record" value="steps">
@@ -43,16 +45,45 @@
           </label>  
           <label class="form-switch">
             <input type="checkbox" name="record" value="bthrm">
-            <i class="form-icon"></i> Bluetooth HRM (Uses BTHRM)
+            <i class="form-icon"></i> Bluetooth HRM (Uses BTHRM app/module)
           </label>      
           <label class="form-switch">
             <input type="checkbox" name="record" value="CORESensor">
-            <i class="form-icon"></i> CORE Sensor (Uses coretemp)
+            <i class="form-icon"></i> CORE Sensor (Uses coretemp app/module)
           </label>         
         </div>  
-    </div>
-    <div class="container apploader-tab" id="heatsuite__tasksContainer">
 
+        <div class="row pt-2"><strong>GPS PSMOO Options:</strong>
+          <br>Option to have GPS work in PSMOO (uses GPS Setup app module)
+        </div> 
+          <div class="form-group">
+            <label class="form-switch">
+                <input type="checkbox" name="GPS">
+                <i class="form-icon"></i> Turn GPS On
+            </label>
+            <label class="form-label" for="input-GPSScanTime">Scan Time (mins)</label>
+            <input class="form-input" type="number" name="GPSScanTime" id="input-GPSScanTime" placeholder=2 min=0>
+            <p class="form-input-hint mb-0">The time spent scanning for a GPS signal.</strong></p>
+            <label class="form-label" for="input-GPSInterval">Scan Interval (mins)</label>
+            <input class="form-input" type="number" name="GPSInterval" id="input-GPSInterval" placeholder=10 min=0>
+            <p class="form-input-hint mb-0">The time between scans when a <strong>signal is not acquired.</strong></p>
+            <label class="form-label" for="input-GPSAdaptiveTime">Adaptive Time (mins)</label>
+            <input class="form-input" type="number" name="GPSAdaptiveTime" id="input-GPSAdaptiveTime" placeholder=2 min=0>
+            <p class="form-input-hint mb-0">The time between scans when a <strong>signal is acquired.</strong></p>
+          </div>
+          <div class="row pt-2"><strong>Extras:</strong>
+            <label class="form-label" for="input-studyID">Study ID:</label>
+            <input class="form-input" type="text" name="studyID" id="input-studyID" value="" minlength="1" maxlength="4">
+            <p class="form-input-hint mb-0">For communicating with HeatSuite Nodes. Maximum of 4 (no special) characters.</p>
+            <label class="form-label" for="input-filePrefix">File Prefix</label>
+            <input class="form-input" type="text" name="filePrefix" id="input-filePrefix" value="htst_" minlength="1" maxlength="5">
+            <p class="form-input-hint mb-0">ONLY CHANGE IF YOU KNOW WHAT YOU ARE DOING.</p>
+
+          </div>
+    </div>
+    <div class="container apploader-tab" id="tasksContainer">
+    </div>
+    <div class="container apploader-tab" id="surveyContainer">
     </div>
 
     <p><button id="upload" class="btn btn-primary">Upload</button></p>
@@ -60,6 +91,21 @@
     <script src="../../core/lib/customize.js"></script>
 
     <script>
+      //function from original index.js of BangleApps - required to bring here as the custom.html is loaded in an iframe
+      function showTab(tabname) {
+        document.querySelectorAll("#tab-navigate .tab-item").forEach(tab => {
+          tab.classList.remove("active");
+        });
+        document.querySelectorAll(".apploader-tab").forEach(tab => {
+          tab.style.display = "none";
+        });
+        document.getElementById("tab-"+tabname).classList.add("active");
+        document.getElementById(tabname).style.display = "inherit";
+      }
+      const studyIDInput = document.getElementById('input-studyID');
+      studyIDInput.addEventListener("input", () => {
+        studyIDInput.value = studyIDInput.value.replace(/[^a-zA-Z0-9]/g, '');
+      });
         var heatsuiteSettings = {};
         function onInit(device) { 
             Util.readStorageJSON("heatsuite.default.json",function(d){

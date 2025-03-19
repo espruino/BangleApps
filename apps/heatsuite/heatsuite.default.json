@@ -4,13 +4,8 @@
   "notifications" : true,
   "record" : ["bat","steps","hrm","baro","acc"],
   "filePrefix": "htst_",
-  "bpmconfthreshold" : 80, 
-  "logInterval" : 60000, 
-  "writeInterval": 10, 
-  "logfileHour": false, 
-  "averageData" : true,
   "GPS" : true,
-  "GPSActiveTime" : 10,
+  "GPSAdaptiveTime" : 2,
   "GPSInterval" : 30,
   "GPSScanTime" : 5
 }
