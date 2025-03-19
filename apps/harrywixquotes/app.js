@@ -89,6 +89,7 @@ function startGame() {
   // ==== TOUCH INPUT HANDLING ====
   Bangle.on("touch", (t, xy) => {
     console.log("TAP");
+    const ROTATION = Math.PI/32;
     let x = xy.x,
       y = xy.y;
 
@@ -99,7 +100,7 @@ function startGame() {
         movePlayer(true);
       } else {
         // Left triangle (Rotate left)
-        player.angle -= 0.098;
+        player.angle -= ROTATION;
         needsRender = true;
       }
     } else {
@@ -109,7 +110,7 @@ function startGame() {
         movePlayer(false);
       } else {
         // Right triangle (Rotate right)
-        player.angle += 0.098;
+        player.angle += ROTATION;
         needsRender = true;
       }
     }
