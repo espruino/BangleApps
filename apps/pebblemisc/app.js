@@ -309,17 +309,22 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
 
   draw();
 
-  setWatch(function () {
-    buzz = !buzz;
-
-    if (buzz) {
-      Bangle.buzz(200).then(() => {
-        setTimeout(() => {
-          Bangle.buzz(200);
-        }, 300);
-      });
-    } else {
-      Bangle.buzz(200);
-    }
-  }, BTN, { edge: "rising", repeat: true, debounce: 50, replace: true });
 }
+setWatch(function () {
+  buzz = !buzz;
+
+  if (buzz) {
+    Bangle.buzz(200).then(() => {
+      setTimeout(() => {
+        Bangle.buzz(200);
+      }, 300);
+    });
+  } else {
+    Bangle.buzz(200);
+  }
+}, BTN, {
+  edge: "falling",
+  replace: true,
+  repeat: true,
+  debounce: 50,
+});
