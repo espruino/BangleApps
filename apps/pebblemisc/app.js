@@ -285,9 +285,9 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
   });
 
   // Show launcher when middle button pressed
-  Bangle.setUI({
-    mode: "clock",
-    redraw: draw,
+  // Bangle.setUI({
+  //   mode: "clock",
+  //   redraw: draw,
     // remove: function () {
     //   // Called to unload all of the clock app
     //   if (drawTimeout) clearTimeout(drawTimeout);
@@ -299,7 +299,7 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
     //   delete Graphics.prototype.setFontLECO1976Regular14;
     //   require("widget_utils").show(); // re-show widgets
     // }
-  });
+  // });
 
   Bangle.loadWidgets();
   require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
@@ -315,9 +315,14 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
       
       if (buzz) {
         console.log("Buzz");
-        Bangle.buzz(200)
+        Bangle.buzz(200).then(() => {
+          setTimeout(() => {
+            Bangle.buzz(200);
+          }, 300);
+        });
       } else {
         console.log("No Buzz");
+        Bangle.buzz(200)
         
       }
     } catch (e) {
