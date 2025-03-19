@@ -58,3 +58,48 @@ exports.findMinMax = function(values) {
     return { min: min, max: max };
 }
 
+exports.myLog10 = function(value) {
+    return Math.log(value) / Math.LN10;
+}
+
+exports.calculateOptimalYAxisSpacing = function(data) {
+    // Check if data is empty
+    if (data.length === 0) {
+        return { min: 0, max: 1, interval: 1 };
+    }
+
+    // Find the minimum and maximum values in the data
+    const bounds = this.findMinMax(data);
+    let minY = bounds.min;
+    let maxY = bounds.max;
+
+    // Calculate the range of the data
+    let range = maxY - minY;
+
+    // If all values are the same, set a small range to avoid division by zero
+    if (range === 0) {
+        range = 1;
+    }
+
+    // Determine the number of ticks (e.g., 5 to 10 ticks)
+    let numTicks = 7; // You can adjust this value based on your preference
+
+    // Calculate the interval
+    let interval = range / (numTicks - 1);
+
+    // Round the interval to a nice number (e.g., 1, 2, 5, 10)
+    let roundedInterval = Math.pow(10, Math.floor(this.myLog10(interval)));
+    if (interval / roundedInterval > 5) {
+        roundedInterval *= 5;
+    } else if (interval / roundedInterval > 2) {
+        roundedInterval *= 2;
+    }
+
+    // Adjust min and max to ensure they are on the rounded interval
+    let adjustedMin = Math.floor(minY / roundedInterval) * roundedInterval;
+    let adjustedMax = Math.ceil(maxY / roundedInterval) * roundedInterval;
+
+    return { min: adjustedMin, max: adjustedMax, interval: roundedInterval };
+}
+
+
