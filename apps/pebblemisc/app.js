@@ -32,6 +32,8 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
   const h2 = Math.round(3 * h / 5) - 10;
   const h3 = Math.round(7 * h / 8);
 
+
+
   const decorators = [
     {
       "name": "SAMESIES",
@@ -180,10 +182,6 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
     }
   ];
 
-  const x1 = w / 2 - 30;
-  const y1 = h3 + 5;
-  const x2 = w / 2 + 30;
-  const y2 = h;
 
   let draw = function () {
     let locale = require("locale");
@@ -306,12 +304,13 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
     }
   });
 
+  // 
   Bangle.setUI({
     mode: "custom", // Use custom UI mode
     touch: (n, e) => {
       // n is the touch number (0 for single touch)
       // e contains touch event details (x, y, etc.)
-      if (e.x >= x1 && e.x <= x2 && e.y >= y1 && e.y <= y2) {
+      if (e.x >= 0 && e.x <= w && e.y >= h/2 && e.y <= h) {
         buzz = !buzz;
 
         buzzStatus = buzz ? "On" : "Off";
