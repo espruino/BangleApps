@@ -301,24 +301,20 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
       delete Graphics.prototype.setFontLECO1976Regular42;
       delete Graphics.prototype.setFontLECO1976Regular14;
       require("widget_utils").show(); // re-show widgets
-    }
-  });
-
-  // 
-  Bangle.setUI({
-    mode: "custom", // Use custom UI mode
+    },
     touch: (n, e) => {
       // n is the touch number (0 for single touch)
       // e contains touch event details (x, y, etc.)
-      if (e.x >= 0 && e.x <= w && e.y >= h/2 && e.y <= h) {
+      if (e.x >= 0 && e.x <= w && e.y >= h / 2 && e.y <= h) {
         buzz = !buzz;
 
         buzzStatus = buzz ? "On" : "Off";
         E.showMessage("Buzz", buzzStatus);
         setTimeout(() => E.showMessage(""), 1000);
       }
-    },
+    }
   });
+
 
   Bangle.loadWidgets();
   require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
