@@ -1,191 +1,205 @@
-// exec each function from seq one after the other
-function animate(seq,period) {
-  var c = g.getColor();
-  var i = setInterval(function() {
-    if (seq.length) {
-      var f = seq.shift();
-      g.setColor(c);
-      if (f) f();
-    } else clearInterval(i);
-  },period);
-}
-
-// Fade in to FG color with angled lines
-function fade(col, callback) {
-  var n = 0;
-  function f() {"ram"
-    g.setColor(col);
-    for (var i=n;i<240;i+=10) g.drawLine(i,0,0,i).drawLine(i,240,240,i);
-    g.flip();
-    n++;
-    if (n<10) setTimeout(f,0);
-    else callback();
-  }
-  f();
-}
-
-var quotes = [
-  "",
-  "Get that bread!",
-  "Fuck yeah!",
-  "Hulle weet nie\nwat ons weet nie"
+// ==== GAME VARIABLES ====
+const SCREEN_WIDTH = 176;
+const SCREEN_HEIGHT = 176;
+const TILE_SIZE = 16;
+const FOV = Math.PI / 4;
+const map = [
+  [1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 1, 1, 1, 0, 0, 1],
+  [1, 0, 1, 0, 1, 0, 0, 1],
+  [1, 0, 1, 0, 1, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1],
 ];
 
-var SCENE_COUNT= 2 + quotes.length;
+let player = { x: 2 * TILE_SIZE, y: 2 * TILE_SIZE, angle: 0 };
+let needsRender = true; // Flag to control rendering
 
+let cx = SCREEN_WIDTH / 2,
+  cy = SCREEN_HEIGHT / 2;
 
-function getScene(n) {
-  if (n==0) return function() {
-    g.reset().setBgColor(0).clearRect(0,0,176,176);
-    g.setFont("6x15");
-    var n=0;
-    var l = Bangle.getLogo();
-    var im = g.imageMetrics(l);
-    var i = setInterval(function() {
-      n+=0.1;
-      g.setColor(n,n,n);
-      g.drawImage(l,(176-im.width)/2,(176-im.height)/2);
-      if (n>=1) {
-        clearInterval(i);
-        setTimeout(()=>g.drawString("Harry's",44,104), 500);
-        setTimeout(()=>g.drawString("Hacked Watch",44,116), 1000);
-        setTimeout(()=>g.drawString("~ Quotes ~",44,128), 1500);
-      }
-    },50);
-  };
-  if (n == 1) {
-    var s = 30;
-    g.clearRect(88-s,78-s,88+s,78+s);
-    
-    var img = require("heatshrink").decompress(atob("mEw4P/AAJF/AEMHwAECkEP4AFC+EP8AEBgPwj4FCgf4j/wDYQFB/AFE/gFBh4FB/wFBB4IFDn4jB/+T+n/zERUIX/iEZAokcAgX+uEKv4FC6EJAoX/mEPC4dwAohZBAofgAofP+EH/wHBwfgg/8g//gIRBAoYdBAov+AoPD/ApEMoIFD/gFj"));
-    var im = g.imageMetrics(img);
-    g.reset();
-    g.setBgColor("#ff0000");
-    var y = 176, speed = 5;
-    function balloon(callback) {
-      y-=speed;
-      var x = (176-im.width)/2;
-      g.drawImage(img,x,y);
-      g.clearRect(x,y+81,x+77,y+81+speed);
-      if (y>30) setTimeout(balloon,0,callback);
-      else callback();
+// ==== RAYCASTING FUNCTION ====
+function castRay(angle) {
+  let sinA = Math.sin(angle),
+    cosA = Math.cos(angle);
+  let x = player.x,
+    y = player.y;
+  while (true) {
+    x += cosA;
+    y += sinA;
+    if (map[Math.floor(y / TILE_SIZE)][Math.floor(x / TILE_SIZE)] === 1) break;
+  }
+  return Math.sqrt(
+    (x - player.x) * (x - player.x) + (y - player.y) * (y - player.y)
+  );
+}
+
+// ==== RENDER FUNCTION ====
+function render() {
+  if (!needsRender) return; // Only render when needed
+  needsRender = false; // Reset flag
+
+  g.clear(); // Clear screen
+
+  // Draw sky
+  g.setColor(0, 0, 0);
+  g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+
+  // Draw ground
+  g.setColor(0.5, 0.25, 0);
+  g.fillRect(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+  // Raycasting loop
+  for (let i = 0; i < SCREEN_WIDTH; i++) {
+    let angle = player.angle - FOV / 2 + (i / SCREEN_WIDTH) * FOV;
+    let dist = castRay(angle);
+    let height = Math.min(SCREEN_HEIGHT, (TILE_SIZE * SCREEN_HEIGHT) / dist);
+
+    // Optimized distance shading (avoids Math.pow)
+    let colorIndex = Math.floor(Math.max(0, 7 - dist * 0.25));
+    g.setColor(colorIndex / 7, colorIndex / 7, colorIndex / 7);
+
+    // Draw vertical wall slice
+    let startY = (SCREEN_HEIGHT - height) / 2;
+    g.fillRect(i, startY, i + 1, startY + height);
+  }
+
+  g.flip(); // Update display
+}
+
+// ==== PLAYER MOVEMENT FUNCTION ====
+function movePlayer(backward) {
+  let direction = backward ? -1 : 1;
+  let newX = player.x + ((Math.cos(player.angle) * TILE_SIZE) / 4) * direction;
+  let newY = player.y + ((Math.sin(player.angle) * TILE_SIZE) / 4) * direction;
+
+  // Wall collision check
+  if (map[Math.floor(newY / TILE_SIZE)][Math.floor(newX / TILE_SIZE)] === 0) {
+    player.x = newX;
+    player.y = newY;
+    needsRender = true; // Mark for rendering
+  }
+}
+
+// ==== TOUCH INPUT HANDLING ====
+Bangle.on("touch", (t, xy) => {
+  console.log("TAP");
+  let x = xy.x,
+    y = xy.y;
+
+  if (x + y < cx + cy) {
+    // Top-left or top-right
+    if (x > y) {
+      // Top triangle (Forward)
+      movePlayer(true);
+    } else {
+      // Left triangle (Rotate left)
+      player.angle -= 0.098;
+      needsRender = true;
     }
-    fade("#ff0000", function() {
-      balloon(function() {
-        g.setColor(-1).setFont("6x15:2").setFontAlign(0,0);
-        g.drawString("Fuck Yeah!",88,130);
-      });
+  } else {
+    // Bottom-left or bottom-right
+    if (x < y) {
+      // Bottom triangle (Backward)
+      movePlayer(false);
+    } else {
+      // Right triangle (Rotate right)
+      player.angle += 0.098;
+      needsRender = true;
+    }
+  }
+});
+
+function startGame() {
+  // ==== GAME LOOP ====
+  setInterval(() => {
+    if (needsRender) render();
+  }, 33);
+  render();
+}
+
+function introAnim() {
+  //g.reset();
+  g.setBgColor("#000000").setColor(0).clear();
+
+  //g.setColor(1,1,1);
+  //g.drawString("Enter if you dare...",20,120);
+  //g.drawString("Not much more\nto say...",x,130);
+
+  //g.clear();
+  const W = g.getWidth();
+  const H = g.getHeight();
+
+  function Drip() {
+    this.x = Math.random() * W;
+    this.y = 0;
+    this.size = 2 + Math.random() * 3;
+    this.speed = 2 + Math.random() * 2;
+  }
+
+  let drips = [new Drip()];
+
+  function drawDrips() {
+    g.clear();
+    g.setColor(1, 0, 0); // Red color for blood
+
+    drips.forEach((drip, i) => {
+      g.fillCircle(drip.x, drip.y, drip.size);
+      drip.y += drip.speed;
+
+      // Add a smear effect for realism
+      g.fillRect(
+        drip.x - drip.size / 2,
+        drip.y - drip.size,
+        drip.x + drip.size / 2,
+        drip.y
+      );
+
+      // Reset if it reaches the bottom
+      if (drip.y > H) {
+        drips[i] = new Drip();
+      }
     });
-    setTimeout(function() {
-      var n=0;
-      var i = setInterval(function() {
-        n+=4;
-        g.scroll(0,-4);
-        if (n>150)
-          clearInterval(i);
-      },20);
-    },3500);
-  }
-
-  if (n >= 2) {
-    g.reset();
-    g.setBgColor("#ff0000").setColor(0).clear();
-    //g.setFont("12x20").setFontAlign(0,0);
-    var x = 88;
-    
-    
-      g.drawString(quotes[n-2],x,30);
-      //g.drawString("Not much more\nto say...",x,130);
-    
-
-    var rx = 0, ry = 0;
-    // draw a cube
-    function draw() {
-      // rotate
-      rx += 0.1;
-      ry += 0.11;
-      var rcx=Math.cos(rx),
-        rsx=Math.sin(rx),
-        rcy=Math.cos(ry),
-        rsy=Math.sin(ry);
-      // Project 3D coordinates into 2D
-      function p(x,y,z) {
-        var t;
-        t = x*rcy + z*rsy;
-        z = z*rcy - x*rsy;
-        x=t;
-        t = y*rcx + z*rsx;
-        z = z*rcx - y*rsx;
-        y=t;
-        z += 4;
-        return [88 + 60*x/z, 78+ 60*y/z];
-      }
-
-      var a;
-      // draw a series of lines to make up our cube
-      var s = 30;
-      g.clearRect(88-s,78-s,88+s,78+s);
-      a = p(-1,-1,-1); g.moveTo(a[0],a[1]);
-      a = p(1,-1,-1); g.lineTo(a[0],a[1]);
-      a = p(1,1,-1); g.lineTo(a[0],a[1]);
-      a = p(-1,1,-1); g.lineTo(a[0],a[1]);
-      a = p(-1,-1,-1); g.lineTo(a[0],a[1]);
-      a = p(-1,-1,1); g.moveTo(a[0],a[1]);
-      a = p(1,-1,1); g.lineTo(a[0],a[1]);
-      a = p(1,1,1); g.lineTo(a[0],a[1]);
-      a = p(-1,1,1); g.lineTo(a[0],a[1]);
-      a = p(-1,-1,1); g.lineTo(a[0],a[1]);
-      a = p(-1,-1,-1); g.moveTo(a[0],a[1]);
-      a = p(-1,-1,1); g.lineTo(a[0],a[1]);
-      a = p(1,-1,-1); g.moveTo(a[0],a[1]);
-      a = p(1,-1,1); g.lineTo(a[0],a[1]);
-      a = p(1,1,-1); g.moveTo(a[0],a[1]);
-      a = p(1,1,1); g.lineTo(a[0],a[1]);
-      a = p(-1,1,-1); g.moveTo(a[0],a[1]);
-      a = p(-1,1,1); g.lineTo(a[0],a[1]);
+    if (drips.length < 50) {
+      drips.push(new Drip());
     }
 
-    setInterval(draw,50);
-  };
-}
-
-var sceneNumber = 0;
-
-function move(dir) {
-  if (dir>0 && sceneNumber+1 == SCENE_COUNT) return; // at the end
-  sceneNumber = (sceneNumber+dir)%SCENE_COUNT;
-  if (sceneNumber<0) sceneNumber=0;
-  clearInterval();
-  getScene(sceneNumber)();
-  if (sceneNumber>1) {
-    var l = SCENE_COUNT;
-    for (var i=0;i<l-2;i++) {
-      var x = 88+(i-(l-2)/2)*12;
-      if (i<sceneNumber-1) {
-        g.setColor(-1).fillCircle(x,166,4);
-      } else {
-        g.setColor(0).fillCircle(x,166,4);
-        g.setColor(-1).drawCircle(x,166,4);
-      }
-    }
+    g.flip();
   }
-  if (sceneNumber < SCENE_COUNT-1)
-    setTimeout(function() {
-      move(1);
-    }, 5000);
+
+  // Run the animation
+  const dripInterval = setInterval(drawDrips, 50);
+  setWatch(
+    () => {
+      clearInterval(dripInterval);
+      startGame();
+    },
+    BTN1,
+    { repeat: false }
+  );
 }
 
+function titlePage() {
+  g.clear();
+  g.setColor(0, 0, 0);
+  g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+  g.setColor(1, 1, 1);
+  setTimeout(() => g.drawString("D", cx - 30, cy), 500);
+  setTimeout(() => g.drawString("O", cx - 20, cy), 1000);
+  setTimeout(() => g.drawString("O", cx - 10, cy), 1500);
+  setTimeout(() => g.drawString("M", cx, cy), 2000);
 
+  setWatch(
+    () => {
+      introAnim();
+    },
+    BTN1,
+    { repeat: false }
+  );
+}
 
-Bangle.on('swipe', dir => move(dir));
-setWatch(()=>{
-  if (sceneNumber == SCENE_COUNT-1)
-    load();
-  else
-    move(1);
-}, BTN1, {repeat:true});
+//setTimeout(()=>startGame(), 4000);
 
-Bangle.setLCDTimeout(0);
-Bangle.setLocked(0);
-Bangle.setLCDPower(1);
-move(0);
+titlePage();
