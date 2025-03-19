@@ -2,7 +2,7 @@
   "id": "pebblemisc",
   "name": "Pebble++ Clock Misc",
   "shortName": "Pebble++ Misc",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A Pebble style clock (based on the 'Pebble++' app) but that display quirky times in a different color",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"},{"url":"screenshot2.png"}],
