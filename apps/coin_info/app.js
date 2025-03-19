@@ -61,8 +61,8 @@ var layout = new Layout({
             {type:"custom", render:renderGraph, id:"tknGraph", bgCol:g.theme.bg, fillx:1, filly:1 },
             {type:"h", valign:1,
                 c: [
-                    {type:"btn", label:"24h", cb: d=>setLoadMsg("24h")},
-                    {type:"btn", label:"1w", cb: d=>setLoadMsg("1w")},
+                    {type:"btn", label:"24h", cb: d=>getChart("24h")},
+                    {type:"btn", label:"1w", cb: d=>getChart("1w")},
                     {type:"btn", label:"1m", cb: d=>setLoadMsg("1m")},
                     {type:"btn", label:"3m", cb: d=>setLoadMsg("3m")}
                 ]
@@ -77,11 +77,11 @@ layout.update();
 var updateTimeout;
 function getChart(period) {
     //
-    const date = new Date();
-    logFile.write("Called:" + date.toString());
-    //
     timePeriod = period;
     currLoadMsg = `Load... ${period}`;
+    //
+    const date = new Date();
+    logFile.write("Called:" + date.toISOString() + " -- " + timePeriod + " -- " + csTokens[ticker] + "\n");
 
     const url = `https://openapiv1.coinstats.app/coins/${csTokens[ticker]}/charts?period=${timePeriod}`;
     Bangle
