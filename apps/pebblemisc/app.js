@@ -306,12 +306,15 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
       if (e.x >= 0 && e.x <= w && e.y >= h / 2 && e.y <= h) {
         buzz = !buzz;
 
-        buzzStatus = buzz ? "On" : "Off";
-        E.showMessage("Buzz", buzzStatus);
-        setTimeout(() => {
-          draw();
-          E.showMessage("");
-        }, 1000);
+        if (buzz) {
+          Bangle.buzz(200).then(() => {
+            setTimeout(() => {
+              Bangle.buzz(200);
+            }, 300);
+          });
+        } else {
+          Bangle.buzz(200);
+        }
       }
     }
   });
