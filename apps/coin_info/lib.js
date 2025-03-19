@@ -69,7 +69,7 @@ exports.calculateOptimalYAxisSpacing = function(data) {
     }
 
     // Find the minimum and maximum values in the data
-    const bounds = this.findMinMax(data);
+    const bounds = exports.findMinMax(data);
     let minY = bounds.min;
     let maxY = bounds.max;
 
@@ -88,7 +88,7 @@ exports.calculateOptimalYAxisSpacing = function(data) {
     let interval = range / (numTicks - 1);
 
     // Round the interval to a nice number (e.g., 1, 2, 5, 10)
-    let roundedInterval = Math.pow(10, Math.floor(this.myLog10(interval)));
+    let roundedInterval = Math.pow(10, Math.floor(exports.myLog10(interval)));
     if (interval / roundedInterval > 5) {
         roundedInterval *= 5;
     } else if (interval / roundedInterval > 2) {
