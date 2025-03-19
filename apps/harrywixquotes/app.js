@@ -23,8 +23,43 @@ function startGame() {
   let player = { x: 2 * TILE_SIZE, y: 2 * TILE_SIZE, angle: 0 };
   let needsRender = true; // Flag to control rendering
   
+  function dist(x1, x2, y1, y2) {
+    return Math.sqrt(
+      (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)
+    );
+  }
+  function castRay() {
+      let x = player.x;
+      let y = player.y;
+
+      // Direction vector
+      let dx = Math.cos(player.angle) * 0.1;  // Small steps for accuracy
+      let dy = Math.sin(player.angle) * 0.1;
+
+      // Step until hitting a wall
+      while (true) {
+          x += dx;
+          y += dy;
+
+          let mapX = Math.floor(x / TILE_SIZE);
+          let mapY = Math.floor(y / TILE_SIZE);
+        console.log(mapX);
+        console.log(mapY);
+
+          // Check bounds manually instead of using optional chaining
+          if (mapY < 0 || mapY >= map.length || mapX < 0 || mapX >= map[0].length) {
+              break; // Out of bounds
+          }
+
+          // Stop when we hit a wall
+          if (map[mapY][mapX] === 1) {
+              return { x: mapX, y: mapY };
+          }
+      }
+  }
+  
   // ==== RAYCASTING FUNCTION ====
-  function castRay(angle) {
+  function castRayDist(angle) {
     let sinA = Math.sin(angle),
       cosA = Math.cos(angle);
     let x = player.x,
@@ -34,9 +69,7 @@ function startGame() {
       y += sinA;
       if (map[Math.floor(y / TILE_SIZE)][Math.floor(x / TILE_SIZE)] === 1) break;
     }
-    return Math.sqrt(
-      (x - player.x) * (x - player.x) + (y - player.y) * (y - player.y)
-    );
+    return dist(x, player.x, y, player.y);
   }
 
   // ==== RENDER FUNCTION ====
@@ -57,7 +90,7 @@ function startGame() {
     // Raycasting loop
     for (let i = 0; i < SCREEN_WIDTH; i++) {
       let angle = player.angle - FOV / 2 + (i / SCREEN_WIDTH) * FOV;
-      let dist = castRay(angle);
+      let dist = castRayDist(angle);
       let height = Math.min(SCREEN_HEIGHT, (TILE_SIZE * SCREEN_HEIGHT) / dist);
 
       // Optimized distance shading (avoids Math.pow)
@@ -84,6 +117,11 @@ function startGame() {
       player.y = newY;
       needsRender = true; // Mark for rendering
     }
+  }
+  // ==== SHOOT FUNCTION ====
+  function shootGun() {
+    g.setColor(1, 0, 0);
+    g.fillCircle(cx, cy, 3);
   }
 
   // ==== TOUCH INPUT HANDLING ====
@@ -116,11 +154,20 @@ function startGame() {
     }
   });
   
+  
   // ==== GAME LOOP ====
   setInterval(() => {
     if (needsRender) render();
   }, 33);
   render();
+  
+  setWatch(
+    () => {
+      shootGun();
+    },
+    BTN1,
+    { repeat: true }
+  );
 }
 
 function introAnim() {
