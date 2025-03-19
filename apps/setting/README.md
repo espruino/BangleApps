@@ -18,7 +18,7 @@ See below for options under each heading:
 * **Clock** if you have more than one clock face, select the default one
 * **Launcher** if you have more than one app launcher, select the default one
 * **Date & Time** Configure the current time - Note that this can be done much more easily by choosing 'Set Time' from the App Loader
-* **Altitude** On Bangle.js 2, adjust the altitude (
+* **Altitude** On Bangle.js 2, calibrate the altitude (which varies depending on Air Pressure). Tap `Adjust Up`/`Adjust Down` to move the reported altitude by around 10m
 
 ## Alerts
 
