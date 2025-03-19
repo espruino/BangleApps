@@ -36,6 +36,7 @@ Bangle.on("swipe", swipeHandler);
 
 
 //
+var gridYValue = 5;
 function renderGraph(l) {
     const bounds = ciLib.findMinMax(tknChrtData);
     // logFile.write("?. graphy: " + JSON.stringify(bounds) + "\n");
@@ -44,7 +45,7 @@ function renderGraph(l) {
         x: l.x, y: l.y, width: l.w, height: l.h,
         miny: bounds.min,
         maxy: bounds.max,
-        // gridy: 5
+        gridy: gridYValue
     });
 }
 
@@ -63,8 +64,8 @@ var layout = new Layout({
                 c: [
                     {type:"btn", label:"24h", cb: d=>getChart("24h")},
                     {type:"btn", label:"1w", cb: d=>getChart("1w")},
-                    {type:"btn", label:"1m", cb: d=>setLoadMsg("1m")},
-                    {type:"btn", label:"3m", cb: d=>setLoadMsg("3m")}
+                    {type:"btn", label:"1m", cb: d=>getChart("1m")},
+                    {type:"btn", label:"3m", cb: d=>getChart("3m")}
                 ]
             }
         ]
@@ -80,8 +81,8 @@ function getChart(period) {
     timePeriod = period;
     currLoadMsg = `Load... ${period}`;
     //
-    const date = new Date();
-    logFile.write("Called:" + date.toISOString() + " -- " + timePeriod + " -- " + csTokens[ticker] + "\n");
+    // const date = new Date();
+    // logFile.write("Called:" + date.toISOString() + " -- " + timePeriod + " -- " + csTokens[ticker] + "\n");
 
     const url = `https://openapiv1.coinstats.app/coins/${csTokens[ticker]}/charts?period=${timePeriod}`;
     Bangle
@@ -97,6 +98,7 @@ function getChart(period) {
             tknChrtData = apiData.map(innerArray => innerArray[1]);
             // logFile.write("Chart data:" + JSON.stringify(tknChrtData));
             currLoadMsg = "";
+            gridYValue = ciLib.calculateOptimalYAxisSpacing(tknChrtData);
             //
             g.clearRect(layout.tknGraph.x, layout.tknGraph.y, layout.tknGraph.w, layout.tknGraph.h);
             layout.forgetLazyState(); // Force a full re-render
@@ -111,7 +113,7 @@ function getChart(period) {
     updateTimeout = setTimeout(function() {
         updateTimeout = undefined;
         getChart(period);
-    }, 30000 - (Date.now() % 30000));
+    }, 60000 - (Date.now() % 60000));
 }
 
 //
