@@ -119,10 +119,50 @@ function startGame() {
     }
   }
   // ==== SHOOT FUNCTION ====
-  function shootGun() {
-    g.setColor(1, 0, 0);
-    g.fillCircle(cx, cy, 3);
+function shootGun() {
+  g.setColor(1, 0, 0); // Set bullet color
+
+  function Bullet() {
+    this.x = cx;
+    this.y = SCREEN_HEIGHT;
+    this.size = 20;
+    this.speed = 2 + Math.random() * 2;
   }
+
+  const bullets = [new Bullet()];
+
+  function drawBullets() {
+    // Redraw the background ONLY where bullets were
+    bullets.forEach((bullet, i) => {
+      g.setColor(1, 1, 1); // Background color
+      g.fillCircle(bullet.x, bullet.y, bullet.size); // Erase old bullet
+
+      // Update bullet position
+      if (bullet.y > cy) {
+        bullet.y -= bullet.speed;
+      }
+      bullet.size *= 0.9; // Shrink bullet
+      
+      // Stop rendering when bullet is too small
+      if (bullet.size < 2) {
+        bullets.splice(i, 1);
+      } else {
+        g.setColor(1, 0, 0); // Bullet color
+        g.fillCircle(bullet.x, bullet.y, bullet.size);
+      }
+    });
+
+    g.flip(); // Refresh screen
+
+    // Stop the interval when no bullets remain
+    if (bullets.length === 0) {
+      clearInterval(bulletInterval);
+    }
+  }
+
+  // Run the animation
+  const bulletInterval = setInterval(drawBullets, 50);
+}
 
   // ==== TOUCH INPUT HANDLING ====
   Bangle.on("touch", (t, xy) => {
