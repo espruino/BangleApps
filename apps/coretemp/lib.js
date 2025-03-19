@@ -1,7 +1,7 @@
 exports.enable = () => {
   var settings = require("Storage").readJSON("coretemp.json", 1) || {};
   let log = function () { };//print
-  Bangle.enableCORESensorLog = function () {
+  Bangle.enableCORESensorLog() = function () {
     log = function (text, param) {
       let logline = new Date().toISOString() + " - " + text;
       if (param) logline += ": " + JSON.stringify(param);
@@ -61,7 +61,7 @@ exports.enable = () => {
           index += 2;
           let coreReserved = dv.getInt16(index, true); //caleraGT only with firmware decryption provided by Greenteg
           index += 2;
-          //let qualityAndState = dv.getUint8(index++);
+          let qualityAndState = dv.getUint8(index++);
           let heartRate = dv.getUint8(index++);
           let heatStrainIndex = dv.getUint8(index) / 10.0;
           let data = {
@@ -71,7 +71,8 @@ exports.enable = () => {
             hr: heartRate,
             heatflux: coreReserved,
             hsi: heatStrainIndex,
-            battery: 0
+            battery: 0,
+            quality: qualityAndState
           };
           if (lastReceivedData.hasOwnProperty("0x180f")) {
             data.battery = lastReceivedData["0x180f"]["0x2a19"];
