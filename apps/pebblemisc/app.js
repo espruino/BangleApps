@@ -312,6 +312,8 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
   setWatch(function () {
     buzz = !buzz;
 
+    console.log("Buzz: ", buzz);
+
     if (buzz) {
       Bangle.buzz(200).then(() => {
         setTimeout(() => {
@@ -321,5 +323,10 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
     } else {
       Bangle.buzz(200);
     }
-  }, BTN, { edge: "rising", repeat: true, debounce: 50, replace: true });
+  }, BTN, {
+    edge: "falling",
+    replace: true,
+    repeat: true,
+    debounce: 50,
+  });
 }
