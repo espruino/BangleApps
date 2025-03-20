@@ -13,14 +13,15 @@
 
       let goAway = ()=>{
         let isAllWidgetsHidden = true;
-        for (var w of global.WIDGETS) {
-          if (!w._draw) {
-            isAllWidgetsHidden = false;
-            break;
+        if (global.WIDGETS) {
+          for (var w of global.WIDGETS) {
+            if (!w._draw) {
+              isAllWidgetsHidden = false;
+              break;
+            }
           }
         }
-
-        if (global.WIDGETS && !isAllWidgetsHidden) {
+        if (!isAllWidgetsHidden) {
           Bangle.drawWidgets();
         } else if (Bangle.uiRedraw) {
           Bangle.uiRedraw();
