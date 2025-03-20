@@ -267,12 +267,16 @@ window.addEventListener('load', (event) => {
   // BLE Compatibility
   var selectBLECompat = document.getElementById("settings-ble-compat");
   if (selectBLECompat) {
-    Puck.increaseMTU = !SETTINGS.bleCompat;
+    function setBLECompat(compat) {
+      if ("undefined"!==typeof Puck) Puck.increaseMTU = !compat;
+      if ("undefined"!==typeof UART) UART.increaseMTU = !compat;
+    }
+    setBLECompat(SETTINGS.bleCompat);
     selectBLECompat.checked = !!SETTINGS.bleCompat;
     selectBLECompat.addEventListener("change",event=>{
       console.log("BLE compatibility mode "+(event.target.checked?"on":"off"));
       SETTINGS.bleCompat = event.target.checked;
-      Puck.increaseMTU = !SETTINGS.bleCompat;
+      setBLECompat(SETTINGS.bleCompat);
       saveSettings();
     });
   }
