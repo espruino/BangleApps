@@ -130,8 +130,35 @@ function setLoadMsg(x) {
     currLoadMsg = `Load... ${x}`;
 }
 function showDetails() {
-    currLoadMsg = `Details for ${(csTokens[ticker]).toUpperCase()}`;
+    const token = csTokens[ticker];
+    const url = `https://openapiv1.coinstats.app/coins/${token}/info`;
+    Bangle.http(url, {
+        method: 'GET',
+        headers: {
+            'X-API-KEY': db.csApiKey
+        }
+    })
+        .then(data => {
+            const tokenInfo = JSON.parse(data.resp);
+            const msg = `
+            Details for ${token.toUpperCase()}\n
+            Name: ${tokenInfo.name}\n
+            Price: ${tokenInfo.price}\n
+            Market Cap: ${tokenInfo.marketCap}\n
+            // Add more fields as needed
+        `;
+            E.showAlert(msg, "Token Details").then(function() {
+                // print("Ok pressed");
+            });
+        })
+        .catch(err => {
+            const msg = `Failed to fetch details for ${token.toUpperCase()}`;
+            E.showAlert(msg, "Error").then(function() {
+                // print("Ok pressed");
+            });
+        });
 }
+
 
 // timeout used to update every minute
 var drawTimeout;
