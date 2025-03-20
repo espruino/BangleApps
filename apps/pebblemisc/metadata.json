@@ -5,7 +5,7 @@
   "version": "0.0.21",
   "description": "A Pebble style clock (based on the 'Pebble++' app) but that display quirky times in a different color",
   "icon": "app.png",
-  "screenshots": [{"url":"screenshot.png"},{"url":"screenshot2.png"}],
+  "screenshots": [{"url":"screenshot.jpg"}],
   "type": "clock",
   "tags": "clock,clkinfo,clockbg",
   "supports": ["BANGLEJS2"],
