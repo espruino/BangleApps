@@ -26,6 +26,7 @@
     }
   };
 
+  let isWeHidingTheWidgets = false;
   let timeout;
   let onMusicVolume = (volPercent)=>{
     if (timeout) {clearTimeout(timeout);}
@@ -33,15 +34,20 @@
     if (Bangle.CLOCK) {
 
       let isAllWidgetsHidden = true;
-      if (global.WIDGETS) {
-        for (var w of global.WIDGETS) {
-          if (!w._draw) {
-            isAllWidgetsHidden = false;
-            break;
+      if (!timeout) { // No need to do this if we already did it before and it wasn't undone. I.e. the timout to execute `goAway` never ran out.
+        if (global.WIDGETS) {
+          for (var w of global.WIDGETS) {
+            if (!w._draw) {
+              isAllWidgetsHidden = false;
+              break;
+            }
           }
         }
+        if (!isAllWidgetsHidden) {
+          WIDGET_UTILS_HIDE();
+          isWeHidingTheWidgets = true; // Remember if it was we who hid the widgets between draws of the volume bar.
+        }
       }
-      if (!timeout) {WIDGET_UTILS_HIDE();}
       let barWidth = g.getWidth()*volPercent/100;
       g.
         setColor(0x0000).fillRect(0,0,g.getWidth(),24).
@@ -50,9 +56,10 @@
         drawString("volume",barWidth,1);
 
       let goAway = ()=>{
-        if (!isAllWidgetsHidden) {
+        if (isWeHidingTheWidgets) {
           g.reset().clearRect(0,0,g.getWidth(),24);
           WIDGET_UTILS_SHOW();
+          isWeHidingTheWidgets = false;
         } else if (Bangle.uiRedraw) {
           Bangle.uiRedraw();
         } else {
