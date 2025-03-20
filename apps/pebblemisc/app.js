@@ -197,9 +197,10 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
 
 
   let draw = function () {
-    let locale = require("locale");
     let date = new Date();
 
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
 
     g.reset();
     g.setBgColor(theme.bg).clearRect(0, h2, w, h3); // clear area where clock is
@@ -211,8 +212,6 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
     g.setFontLECO1976Regular42().setFontAlign(0, -1);
     g.setColor(theme.fg);
     decorators.forEach((item) => {
-      const hours = date.getHours().toString().padStart(2, '0');
-      const minutes = date.getMinutes().toString().padStart(2, '0');
       if (item.validator(hours, minutes)) {
         g.setColor(item.color);
 
