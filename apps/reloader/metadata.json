@@ -1,0 +1,18 @@
+{ "id": "reloader",
+  "name": "Reloader",
+  "shortName":"Reloader",
+  "version":"0.01",
+  "description": "Automatically reloads your watch every N hours if no activity to prevent crashing.",
+  "icon": "app.png",
+  "tags": "tool,system",
+  "type": "bootloader",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"reloader.settings.js","url":"settings.js"},
+    {"name":"reloader.boot.js","url":"boot.js"}
+  ],
+  "data": [
+    {"name": "reloader.json"}
+  ]
+}
