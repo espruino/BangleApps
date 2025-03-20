@@ -19,7 +19,7 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
 }
 
 {
-  const SETTINGS_FILE = "pebblemisc.json";
+const SETTINGS_FILE = "pebblemisc.json";
   let settings = Object.assign({
     'theme': 'System',
     'showdate': true,

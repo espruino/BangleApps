@@ -1,5 +1,5 @@
 (function(back) {
-  const SETTINGS_FILE = "pebblepp.json";
+  const SETTINGS_FILE = "pebblemisc.json";
 
   // Initialize with default settings...
   let settings = {'theme':'System', 'showdate':true, 'clkinfoborder':false}
