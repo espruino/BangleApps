@@ -20,7 +20,12 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
 
 {
   const SETTINGS_FILE = "pebblemisc.json";
-  let settings = Object.assign({ 'theme': 'System', 'showdate': true, 'clkinfoborder': false }, require("Storage").readJSON(SETTINGS_FILE, 1) || {});
+  let settings = Object.assign({
+    'theme': 'System',
+    'showdate': true,
+    'clkinfoborder': false,
+    'buzzOnQuirkyTime': false,
+  }, require("Storage").readJSON(SETTINGS_FILE, 1) || {});
   let background = require("clockbg");
   let theme;
   let drawTimeout;
@@ -179,6 +184,14 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
         ];
         return times.indexOf(hours + minutes) != -1;
       }
+    },
+    {
+      "name": "YEAR",
+      "color": "#0000FF",
+      "validator": (hours, minutes) => {
+        d = new Date();
+        return d.getFullYear() == hours + minutes;
+      }
     }
   ];
 
@@ -186,7 +199,7 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
   let draw = function () {
     let locale = require("locale");
     let date = new Date();
-    let time = locale.time(date, 1);
+
 
     g.reset();
     g.setBgColor(theme.bg).clearRect(0, h2, w, h3); // clear area where clock is
@@ -203,12 +216,12 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
       if (item.validator(hours, minutes)) {
         g.setColor(item.color);
 
-        if (buzz) {
+        if (settings.buzzOnQuirkyTime) {
           Bangle.buzz()
         }
       }
     });
-    g.drawString(time, w / 2, h2 + 8);
+    g.drawString(hours + ":" + minutes, w / 2, h2 + 8);
 
     // queue next draw
     if (drawTimeout) clearTimeout(drawTimeout);
@@ -304,17 +317,6 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
     },
     touch: (n, e) => {
       if (e.x >= 0 && e.x <= w && e.y >= h / 2 && e.y <= h) {
-        buzz = !buzz;
-
-        if (buzz) {
-          Bangle.buzz(200).then(() => {
-            setTimeout(() => {
-              Bangle.buzz(200);
-            }, 300);
-          });
-        } else {
-          Bangle.buzz(200);
-        }
       }
     }
   });
