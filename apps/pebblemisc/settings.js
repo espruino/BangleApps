@@ -39,6 +39,13 @@
         settings.clkinfoborder = v;
         save();
       }
+    },
+    /*LANG*/'Buzz on quirky type': {
+      value: !!settings.buzzOnQuirkyTime,
+      onchange: v => {
+        settings.buzzOnQuirkyTime = v;
+        save();
+      }
     }
   });
 })
