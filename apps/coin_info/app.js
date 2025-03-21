@@ -152,6 +152,7 @@ function showDetails() {
                 g.clear();
                 layout.forgetLazyState();
                 layout.render();
+                layout.setUI();
             });
         })
         .catch(err => {
@@ -161,6 +162,7 @@ function showDetails() {
                 g.clear();
                 layout.forgetLazyState();
                 layout.render();
+                layout.setUI();
             });
         });
 }
