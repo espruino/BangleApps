@@ -131,7 +131,7 @@ function setLoadMsg(x) {
 }
 function showDetails() {
     const token = csTokens[ticker];
-    const url = `https://openapiv1.coinstats.app/coins/${token}/info`;
+    const url = `https://openapiv1.coinstats.app/coins/${token}`;
     Bangle.http(url, {
         method: 'GET',
         headers: {
@@ -142,7 +142,7 @@ function showDetails() {
             const tokenInfo = JSON.parse(data.resp);
             const msg = `
             Details for ${token.toUpperCase()}\n
-            Name: ${tokenInfo.name}\n
+            // Name: ${tokenInfo.name}\n
             Price: ${tokenInfo.price}\n
             Market Cap: ${tokenInfo.marketCap}\n
             // Add more fields as needed
