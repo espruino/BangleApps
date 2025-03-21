@@ -142,19 +142,18 @@ function showDetails() {
             const tokenInfo = JSON.parse(data.resp);
             const priceFmt = ciLib.formatPriceString(tokenInfo.price);
             const mCapFmt = ciLib.formatPriceString(tokenInfo.marketCap);
+            const title = `Details ${tokenInfo.symbol}`;
             const msg = `
-            ${token.toUpperCase()}\n
             Price: ${priceFmt}
-            M-Cap: ${mCapFmt}\n
+            M-Cap: ${mCapFmt}
         `;
-            // E.showAlert(msg, "Token Details").then(function() {
-            //     // print("Ok pressed");
-            //     g.clear();
-            //     layout.forgetLazyState();
-            //     layout.render();
-            //     layout.setUI();
-            // });
-            E.showMessage(msg, "Token Details");
+            E.showAlert(msg, title).then(function() {
+                // print("Ok pressed");
+                g.clear();
+                layout.forgetLazyState();
+                layout.render();
+                layout.setUI();
+            });
         })
         .catch(err => {
             const msg = `Failed to fetch details for ${token.toUpperCase()}`;
