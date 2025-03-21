@@ -147,13 +147,14 @@ function showDetails() {
             Price: ${priceFmt}
             M-Cap: ${mCapFmt}\n
         `;
-            E.showAlert(msg, "Token Details").then(function() {
-                // print("Ok pressed");
-                g.clear();
-                layout.forgetLazyState();
-                layout.render();
-                layout.setUI();
-            });
+            // E.showAlert(msg, "Token Details").then(function() {
+            //     // print("Ok pressed");
+            //     g.clear();
+            //     layout.forgetLazyState();
+            //     layout.render();
+            //     layout.setUI();
+            // });
+            E.showMessage(msg, "Token Details");
         })
         .catch(err => {
             const msg = `Failed to fetch details for ${token.toUpperCase()}`;
