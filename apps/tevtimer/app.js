@@ -342,10 +342,25 @@ class TimerViewMenu {
   }
 
   edit_menu() {
+    let keyboard = null;
+    try { keyboard = require("textinput"); } catch (e) {}
+
     const edit_menu = {
       '': {
         title: 'Edit: ' + this.timer.display_name(),
         back: () => { this.top_menu(); },
+      },
+      'Name': {
+        value: this.timer.name,
+        onchange: () => {
+          setTimeout(() => {
+            keyboard.input({text:this.timer.name}).then(text => {
+              this.timer.name = text;
+              tt.set_timers_dirty();
+              setTimeout(() => { this.edit_menu(); }, 0);
+            });
+          }, 0);
+        }
       },
       'Start': this.edit_start_hms_menu.bind(this),
       'Vibrate pattern': require("buzz_menu").pattern(
@@ -364,6 +379,10 @@ class TimerViewMenu {
         },
       },
     };
+
+    if (!keyboard) {
+      delete edit_menu.Name;
+    }
 
     E.showMenu(edit_menu);
   }
