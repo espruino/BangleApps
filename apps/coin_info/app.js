@@ -149,12 +149,16 @@ function showDetails() {
         `;
             E.showAlert(msg, "Token Details").then(function() {
                 // print("Ok pressed");
+                g.clear();
+                layout.render();
             });
         })
         .catch(err => {
             const msg = `Failed to fetch details for ${token.toUpperCase()}`;
             E.showAlert(msg, "Error").then(function() {
                 // print("Ok pressed");
+                g.clear();
+                layout.render();
             });
         });
 }
