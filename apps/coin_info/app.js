@@ -140,11 +140,12 @@ function showDetails() {
     })
         .then(data => {
             const tokenInfo = JSON.parse(data.resp);
+            const priceFmt = ciLib.formatPriceString(tokenInfo.price);
+            const mCapFmt = ciLib.formatPriceString(tokenInfo.marketCap);
             const msg = `
             Details for ${token.toUpperCase()}\n
-            // Name: ${tokenInfo.name}\n
-            Price: ${tokenInfo.price}\n
-            Market Cap: ${tokenInfo.marketCap}\n
+            Price: ${priceFmt}\n
+            Market Cap: ${mCapFmt}\n
             // Add more fields as needed
         `;
             E.showAlert(msg, "Token Details").then(function() {
