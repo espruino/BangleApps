@@ -150,6 +150,7 @@ function showDetails() {
             E.showAlert(msg, "Token Details").then(function() {
                 // print("Ok pressed");
                 g.clear();
+                layout.forgetLazyState();
                 layout.render();
             });
         })
@@ -158,6 +159,7 @@ function showDetails() {
             E.showAlert(msg, "Error").then(function() {
                 // print("Ok pressed");
                 g.clear();
+                layout.forgetLazyState();
                 layout.render();
             });
         });
