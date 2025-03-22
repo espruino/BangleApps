@@ -7,6 +7,7 @@ Crypto-Coins Infos with the help of the Binance and CoinStats API
 - Is a clock_info module and an app
 - I use Pebble++ watch to show a bigger size of clock_info
 - I use a wider, more readable font for Pebble++
+- Upload data via App-Loader interface first!!!
 
 ![Screenshot Click_Info 01](screenshots/20250316_01.jpg)
 ![Screenshot Click_Info 02](screenshots/20250316_02.jpg)

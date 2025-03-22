@@ -9,6 +9,7 @@ var ticker = 0;
 var currLoadMsg = "...";
 var timePeriod = "24h";
 var tknChrtData = [5,6,5,6,5,6,5,6,5,6,5,6,5,6,];
+var optSpacing = {};
 
 
 //
@@ -100,7 +101,7 @@ function getChart(period) {
             // logFile.write("Chart data:" + JSON.stringify(tknChrtData));
 
             // just not readable
-            // const oSpcOjb = ciLib.calculateOptimalYAxisSpacing(tknChrtData);
+            optSpacing = ciLib.calculateOptimalYAxisSpacing(tknChrtData);
             // logFile.write("Y-Axis:" + JSON.stringify(oSpcOjb));
             // gridYValue = oSpcOjb.interval;
 

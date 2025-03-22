@@ -99,7 +99,9 @@ exports.calculateOptimalYAxisSpacing = function(data) {
     let adjustedMin = Math.floor(minY / roundedInterval) * roundedInterval;
     let adjustedMax = Math.ceil(maxY / roundedInterval) * roundedInterval;
 
-    return { min: adjustedMin, max: adjustedMax, interval: roundedInterval };
+    let first = data[0];
+    let last = data[data.length - 1];
+    return { min: adjustedMin, max: adjustedMax, interval: roundedInterval, first: first, last: last };
 }
 
 
