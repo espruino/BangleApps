@@ -1,0 +1,16 @@
+{ "id": "voldisp",
+  "name": "Display Volume for Android",
+  "version":"0.01",
+  "description": "Display the media volume of your android device when it's changed. A bar shows up at the top of your Bangles screen. (Needs recent Gadgetbridge nightly or stable ver. 85 once out)",
+  "icon": "app.png",
+  "tags": "audio,media,android,volume,sound",
+  "type": "bootloader",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "screenshots" : [
+    { "url":"screenshot.png" }
+  ],
+  "storage": [
+    {"name":"voldisp.boot.js","url":"boot.js"}
+  ]
+}
