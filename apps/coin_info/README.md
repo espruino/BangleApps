@@ -8,8 +8,10 @@ Crypto-Coins Infos with the help of the Binance and CoinStats API
 - I use Pebble++ watch to show a bigger size of clock_info
 - I use a wider, more readable font for Pebble++
 
-![Screenshot01](screenshots/20250316_01.jpg)
-![Screenshot02](screenshots/20250316_02.jpg)
+![Screenshot Click_Info 01](screenshots/20250316_01.jpg)
+![Screenshot Click_Info 02](screenshots/20250316_02.jpg)
+![Screenshot App BTC Graph](screenshots/20250322_01.jpg)
+![Screenshot APP BTC Details](screenshots/20250322_02.jpg)
 
 ## Creator
 
