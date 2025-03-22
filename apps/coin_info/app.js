@@ -132,8 +132,8 @@ function showLowHigh() {
     // logFile.write("OptSpacing:" + JSON.stringify(optSpacing) + "\n");
     const first = ciLib.formatPriceString(optSpacing.first);
     const last = ciLib.formatPriceString(optSpacing.last);
-    const low = ciLib.formatPriceString(optSpacing.min);
-    const high = ciLib.formatPriceString(optSpacing.max);
+    const low = ciLib.formatPriceString(optSpacing.rawMin);
+    const high = ciLib.formatPriceString(optSpacing.rawMax);
     const msg = `
             First: ${first}
             Last: ${last}

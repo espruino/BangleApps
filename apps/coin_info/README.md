@@ -49,3 +49,4 @@ Martin Zwigl
 - Pause HTTP request cycle during show of Details or Lows/Highs
 - Better choosing of fonts for more space
 - set UI properly to have back button next to widgets
+- clean-up code structure
