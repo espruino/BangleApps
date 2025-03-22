@@ -243,6 +243,7 @@ function shootGun() {
 
       // Collision detection with zombies
       zombies.forEach((zombie, j) => {
+        /*console.log(bullet.size);
         let dx1 = bullet.x - zombie.x - zombie.baseSize/2;
         let dx2 = bullet.x - zombie.x + zombie.baseSize/2;
         let dy = bullet.y - zombie.y;
@@ -250,14 +251,16 @@ function shootGun() {
         let dist2 = Math.sqrt(dx2 * dx2 + dy*dy);
         let dist = Math.min(dist1, dist2);
         console.log("checking bullet");
-        console.log(dist);
-        if (dist < 40) {
+        console.log(dist);*/
+        screen_data = zombieScreenData(zombie);
+        if (screen_data !== null && Math.abs(screen_data.x - cx) < 20) {
           // Bullet hits zombie
           zombie.health -= 1;
           if (zombie.health <= 0) {
-            zombies.splice(j, 1); // Zombie dies
+            
             console.log("KILLED ZOMBIE");
             g.drawString("KILL", cx, cy);
+            setTimeout(zombies.splice(j, 1), 500);
           }
           bullets.splice(i, 1); // Bullet disappears
         }
@@ -434,4 +437,3 @@ function titlePage() {
 }
 
 titlePage();
- 
