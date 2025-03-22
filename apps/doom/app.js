@@ -1,4 +1,4 @@
-function renderZombies() {
+/*function renderZombies() {
   zombies.forEach(zombie => {
     // Calculate the angle to the zombie
     let dx = zombie.x - player.x;
@@ -36,7 +36,7 @@ function renderZombies() {
       g.fillRect(screenX - size / 2, screenY - size / 2, screenX + size / 2, screenY + size / 2);
     }
   });
-}
+}*/
 // ==== SCREEN VARIABLES ====
 const SCREEN_WIDTH = 176;
 const SCREEN_HEIGHT = 176;
@@ -67,12 +67,13 @@ function startGame() {
     this.y = y;  // World-space coordinates
     this.baseSize = 20;  // Base size of the zombie
     this.speed = 0.5;  // Speed at which the zombie moves
+    this.health = 1;
   }
 
   // Zombies placed at world coordinates
   let zombies = [
-    new Zombie(5 * TILE_SIZE, 3 * TILE_SIZE),
-    new Zombie(6 * TILE_SIZE, 4 * TILE_SIZE),
+    new Zombie(1 * TILE_SIZE, 1 * TILE_SIZE),
+    new Zombie(1 * TILE_SIZE, 2 * TILE_SIZE),
   ];
 
   // Move zombies toward the player
@@ -90,46 +91,78 @@ function startGame() {
       }
     });
   }
-
-function renderZombies() {
-  zombies.forEach(zombie => {
-    // Calculate the angle to the zombie
+  function zombieScreenData(zombie) {
     let dx = zombie.x - player.x;
     let dy = zombie.y - player.y;
     let zombieAngle = Math.atan2(dy, dx);
 
-    // Normalize the zombie's angle relative to the player's facing angle
-    let angleDifference = Math.abs(player.angle - zombieAngle);
+    let angleDifference = player.angle - zombieAngle;
+    angleDifference = (angleDifference + Math.PI) % (2 * Math.PI) - Math.PI; 
     
-    // Adjust angleDifference to be between 0 and Math.PI
-    if (angleDifference > Math.PI) {
-      angleDifference = 2 * Math.PI - angleDifference;
-    }
-
-    // Check if the zombie is within the field of view
-    if (angleDifference <= FOV / 2) {
-      // Zombie is within the field of view, so calculate distance
+    if (Math.abs(angleDifference) <= FOV / 2) {
       let dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < TILE_SIZE) dist = TILE_SIZE; // Prevent extreme scaling
 
-      // Prevent zombies from being rendered too close (it would make them too large)
-      if (dist < TILE_SIZE) dist = TILE_SIZE;
-
-      // Scale the zombie's height based on its distance (closer = taller)
       let height = Math.min(SCREEN_HEIGHT, (TILE_SIZE * SCREEN_HEIGHT) / dist);
-
-      // Convert world coordinates to screen coordinates (perspective projection)
-      let screenX = SCREEN_WIDTH / 2 + (dx / dist) * (SCREEN_WIDTH / 2);  // Perspective X projection
-      let screenY = SCREEN_HEIGHT / 2 + (dy / dist) * (SCREEN_HEIGHT / 2);  // Perspective Y projection
-
-      // Adjust the zombie's height for perspective scaling (similar to wall height)
-      height = height / dist * 50; // Adjust the height to match the perspective
-
-      // Draw the zombie as a rectangle (or whatever shape you prefer)
-      g.setColor(0, 1, 0); // Green color for zombies
-      g.fillRect(screenX - TILE_SIZE / 2, screenY - height / 2, screenX + TILE_SIZE / 2, screenY + height / 2);
+      let width = height/3;
+      let screenX = SCREEN_WIDTH / 2 + Math.tan(-angleDifference) * (SCREEN_WIDTH / 2);
+      let screenY = (SCREEN_HEIGHT / 2) + Math.tan(angleDifference)/(SCREEN_HEIGHT / 2);
+      
+      return {
+        x: screenX,
+        y: screenY,
+        height: height,
+        width: width
+      }
     }
+    return null;
+  }
+
+function renderZombies() {
+  zombies.forEach(zombie => {
+    /*let dx = zombie.x - player.x;
+    let dy = zombie.y - player.y;
+    let zombieAngle = Math.atan2(dy, dx);
+
+    let angleDifference = player.angle - zombieAngle;
+    angleDifference = (angleDifference + Math.PI) % (2 * Math.PI) - Math.PI; // Normalize angle
+    
+    if (Math.abs(angleDifference) <= FOV / 2) {
+      console.log("render");
+      let dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < TILE_SIZE) dist = TILE_SIZE; // Prevent extreme scaling
+
+      let height = Math.min(SCREEN_HEIGHT, (TILE_SIZE * SCREEN_HEIGHT) / dist);
+      let width = height/3;
+      let screenX = SCREEN_WIDTH / 2 + Math.tan(angleDifference) * (SCREEN_WIDTH / 2);
+      let screenY = (SCREEN_HEIGHT / 2) + Math.tan(angleDifference)/(SCREEN_HEIGHT / 2);*/
+    
+      screen_data = zombieScreenData(zombie);
+      if (screen_data !== null) {
+
+      //if (Math.abs(screenX - x) < zombie.baseSize) {
+      if (zombie.health > 0) {
+        g.setColor(0, 1, 0);
+      } else {
+        g.setColor(1,0,0);
+      }
+      const zombieTopY = screen_data.y - screen_data.height / 2, zombieBottomY = screen_data.y + screen_data.height / 2, zombieLeftX = screen_data.x - screen_data.width/2, zombieRightX = screen_data.x + screen_data.width/2;
+      
+      g.fillCircle(screen_data.x, zombieTopY - 20, 10);
+      g.setColor(1,1,1);
+      g.drawString(zombie.health, zombieLeftX, zombieTopY - 20);
+      if (zombie.health > 0) {
+        g.setColor(0, 1, 0);
+      } else {
+        g.setColor(1,0,0);
+      }
+      g.fillRect(zombieLeftX, zombieTopY, zombieRightX, zombieBottomY);
+      //}
+      }
+    //}
   });
 }
+
 
 
 
@@ -154,8 +187,6 @@ function renderZombies() {
 
           let mapX = Math.floor(x / TILE_SIZE);
           let mapY = Math.floor(y / TILE_SIZE);
-        console.log(mapX);
-        console.log(mapY);
 
           // Check bounds manually instead of using optional chaining
           if (mapY < 0 || mapY >= map.length || mapX < 0 || mapX >= map[0].length) {
@@ -212,15 +243,21 @@ function shootGun() {
 
       // Collision detection with zombies
       zombies.forEach((zombie, j) => {
-        let dx = bullet.x - zombie.x;
+        let dx1 = bullet.x - zombie.x - zombie.baseSize/2;
+        let dx2 = bullet.x - zombie.x + zombie.baseSize/2;
         let dy = bullet.y - zombie.y;
-        let dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < zombie.size + bullet.size) {
+        let dist1 = Math.sqrt(dx1 * dx1 + dy * dy);
+        let dist2 = Math.sqrt(dx2 * dx2 + dy*dy);
+        let dist = Math.min(dist1, dist2);
+        console.log("checking bullet");
+        console.log(dist);
+        if (dist < 40) {
           // Bullet hits zombie
           zombie.health -= 1;
           if (zombie.health <= 0) {
             zombies.splice(j, 1); // Zombie dies
             console.log("KILLED ZOMBIE");
+            g.drawString("KILL", cx, cy);
           }
           bullets.splice(i, 1); // Bullet disappears
         }
@@ -299,8 +336,10 @@ function shootGun() {
       // Draw vertical wall slice
       let startY = (SCREEN_HEIGHT - height) / 2;
       g.fillRect(i, startY, i + 1, startY + height);
+      
+      //renderZombieSlice(i);
     }
-    moveZombies();
+    //moveZombies();
     renderZombies();
 
     g.flip(); // Update display
@@ -395,3 +434,4 @@ function titlePage() {
 }
 
 titlePage();
+ 
