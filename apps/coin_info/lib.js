@@ -7,8 +7,8 @@
  * @returns {string} The formatted string.
  */
 exports.formatPriceString = function(input) {
-    // Convert input to a number
-    let number = parseFloat(input);
+    // Ensure input is a number
+    let number = typeof input === 'string' ? parseFloat(input) : input;
 
     // Check if input is not a number
     if (isNaN(number)) {
