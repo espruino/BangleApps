@@ -55,7 +55,8 @@ var layout = new Layout({
             {type:"h", valign:-1,
                 c: [
                     {type:"txt", id:"tknName", font:"6x8:2", label:"", halign:-1, fillx:1},
-                    {type:"btn", label:"...", halign:1, cb: d=>showDetails()}
+                    {type:"btn", label:"...", halign:1, cb: d=>showDetails()},
+                    {type:"btn", label:"L/H", halign:1, cb: d=>showDetails()}
                 ]
             },
             {type:"txt", id:"loadMsg", font:"6x8", label:"", fillx:1 },
@@ -146,6 +147,7 @@ function showDetails() {
             const msg = `
             Price: ${priceFmt}
             M-Cap: ${mCapFmt}
+            1h:${tokenInfo.priceChange1h} 1d:${tokenInfo.priceChange1d} 1w:${tokenInfo.priceChange1w}
         `;
             E.showAlert(msg, title).then(function() {
                 // print("Ok pressed");

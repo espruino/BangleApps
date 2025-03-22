@@ -31,3 +31,12 @@ Martin Zwigl
 - You also need a CoinStats API access key which is good for a fair amount of calls
 - I tried with gridy for the axis, but for this data - it is just not readable...
 - Let me know when you have good suggestions for improvement.
+- "..." button shows current details for current token
+- Swipe L-R changes token you supplied via interface
+- Not much guard-rails in the app -> you should have at least one token (each) present
+- Also the API token
+
+### Settings
+
+- Choose which of the uploaded tokens to display in clock_info
+- Choose update-time for clock_info HTTP requests to Binance
