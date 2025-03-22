@@ -57,7 +57,7 @@ var layout = new Layout({
                 c: [
                     {type:"txt", id:"tknName", font:"6x8:2", label:"", halign:-1, fillx:1},
                     {type:"btn", label:"..", halign:1, cb: d=>showDetails()},
-                    {type:"btn", label:"LH", halign:1, cb: d=>showDetails()}
+                    {type:"btn", label:"LH", halign:1, cb: d=>showLowHigh()}
                 ]
             },
             {type:"txt", id:"loadMsg", font:"6x8", label:"", fillx:1 },
@@ -127,9 +127,25 @@ function getChart(period) {
 }
 
 //
-function setLoadMsg(x) {
-    timePeriod = x;
-    currLoadMsg = `Load... ${x}`;
+function showLowHigh() {
+    const title = `L/H ${tokenInfo.symbol}`;
+    const first = ciLib.formatPriceString(optSpacing.first);
+    const last = ciLib.formatPriceString(optSpacing.last);
+    const low = ciLib.formatPriceString(optSpacing.low);
+    const high = ciLib.formatPriceString(optSpacing.high);
+    const msg = `
+            First: ${first}
+            Last: ${last}
+            Low: ${low}
+            High: ${high}
+        `;
+    E.showAlert(msg, title).then(function() {
+        // print("Ok pressed");
+        g.clear();
+        layout.forgetLazyState();
+        layout.render();
+        layout.setUI();
+    });
 }
 function showDetails() {
     const token = csTokens[ticker];
