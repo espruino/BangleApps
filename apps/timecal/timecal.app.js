@@ -42,8 +42,11 @@ class TimeCalClock{
 
     // X coord to center date and time text at
     this.dtCenterX = Bangle.appRect.w/2;
-    this.hasWeather = this.settings().showWeather && require('weather') && require('weather').get();
-    if(this.hasWeather){
+    this.weather = undefined;
+    if(this.settings().showWeather && require('weather')){
+      this.weather = require('weather').get();
+    }
+    if(this.weather){
       this.dtCenterX =2*Bangle.appRect.w/3;
     }
     this.nrgb = [g.theme.fg, "#E00", "#0E0", "#00E"]; //fg, r ,g , b
@@ -83,9 +86,11 @@ class TimeCalClock{
     // require("weather").get = undefined;
 
     const d = this.date ? this.date : new Date();
-    this.hasWeather = this.settings().showWeather && require('weather') && require('weather').get();
+    if (this.settings().showWeather && require('weather')){
+      this.weather = require('weather').get();
+    }
     const prevCenterX = this.dtCenterX;
-    if(this.hasWeather){
+    if(this.weather){
       this.dtCenterX = 2 * Bangle.appRect.w / 3;
     } else {
       this.dtCenterX = Bangle.appRect.w / 2;
@@ -98,14 +103,13 @@ class TimeCalClock{
     if (this.TZOffset===undefined || this.TZOffset!==d.getTimezoneOffset())
       this.drawDateAndCal();
 
-    if(this.hasWeather){
+    if(this.weather){
       this.drawWeather();
     }
   }
 
   drawWeather() {
-    const weather = require('weather');
-    const curr = weather.get();
+    const curr = this.weather;
     const temp = require("locale").temp(curr.temp-273.15).match(/^(\D*\d*)(.*)$/)[0];
     const iconRadius = 20;
     const widgetHeight = 24;
@@ -115,7 +119,7 @@ class TimeCalClock{
       Bangle.appRect.w/3,
       Bangle.appRect.y + widgetHeight + iconRadius
     );
-    weather.drawIcon(curr, Bangle.appRect.x + widgetHeight, Bangle.appRect.y + widgetHeight - 4, iconRadius);
+    (require('weather')).drawIcon(curr, Bangle.appRect.x + widgetHeight, Bangle.appRect.y + widgetHeight - 4, iconRadius);
     g
       .setFontAlign(0, -1)
       .setFont('6x8', 2)
