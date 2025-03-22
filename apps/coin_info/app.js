@@ -129,15 +129,17 @@ function getChart(period) {
 //
 function showLowHigh() {
     const title = `L/H ${csTokens[ticker]}`;
+    //
+    logFile.write("OptSpacing:" + JSON.stringify(optSpacing) + "\n");
     const first = ciLib.formatPriceString(optSpacing.first);
     const last = ciLib.formatPriceString(optSpacing.last);
-    const low = ciLib.formatPriceString(optSpacing.low);
-    const high = ciLib.formatPriceString(optSpacing.high);
+    // const low = ciLib.formatPriceString(optSpacing.low);
+    // const high = ciLib.formatPriceString(optSpacing.high);
     const msg = `
             First: ${first}
             Last: ${last}
-            Low: ${low}
-            High: ${high}
+            Low: 0
+            High: 0
         `;
     E.showAlert(msg, title).then(function() {
         // print("Ok pressed");
