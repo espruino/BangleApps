@@ -40,3 +40,8 @@ Martin Zwigl
 
 - Choose which of the uploaded tokens to display in clock_info
 - Choose update-time for clock_info HTTP requests to Binance
+
+## Possible Improvements / TODOs
+
+- Pause HTTP request cycle during show of Details or Lows/Highs
+- Better chosing of fonts for more space
