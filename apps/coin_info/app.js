@@ -128,7 +128,7 @@ function getChart(period) {
 
 //
 function showLowHigh() {
-    const title = `L/H ${tokenInfo.symbol}`;
+    const title = `L/H ${csTokens[ticker]}`;
     const first = ciLib.formatPriceString(optSpacing.first);
     const last = ciLib.formatPriceString(optSpacing.last);
     const low = ciLib.formatPriceString(optSpacing.low);
