@@ -1,5 +1,4 @@
 const logFile = require("Storage").open("coin_info_log.txt", "a");
-// const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {};
 const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
 const csTokens = db.csTokens.split(',');
 //
@@ -130,16 +129,16 @@ function getChart(period) {
 function showLowHigh() {
     const title = `L/H ${csTokens[ticker]}`;
     //
-    logFile.write("OptSpacing:" + JSON.stringify(optSpacing) + "\n");
+    // logFile.write("OptSpacing:" + JSON.stringify(optSpacing) + "\n");
     const first = ciLib.formatPriceString(optSpacing.first);
     const last = ciLib.formatPriceString(optSpacing.last);
-    // const low = ciLib.formatPriceString(optSpacing.low);
-    // const high = ciLib.formatPriceString(optSpacing.high);
+    const low = ciLib.formatPriceString(optSpacing.min);
+    const high = ciLib.formatPriceString(optSpacing.max);
     const msg = `
             First: ${first}
             Last: ${last}
-            Low: 0
-            High: 0
+            Low: ${low}
+            High: ${high}
         `;
     E.showAlert(msg, title).then(function() {
         // print("Ok pressed");

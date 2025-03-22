@@ -47,4 +47,5 @@ Martin Zwigl
 ## Possible Improvements / TODOs
 
 - Pause HTTP request cycle during show of Details or Lows/Highs
-- Better chosing of fonts for more space
+- Better choosing of fonts for more space
+- set UI properly to have back button next to widgets
