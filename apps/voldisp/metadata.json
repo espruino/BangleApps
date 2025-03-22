@@ -6,6 +6,7 @@
   "tags": "audio,media,android,volume,sound",
   "type": "bootloader",
   "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
   "screenshots" : [
     { "url":"screenshot.png" }
   ],
