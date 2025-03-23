@@ -59,7 +59,8 @@ function startGame() {
   function Hoard(n) {
     let zombies = [];
     for (let i = 0; i < n; i++) {
-      let x = gameSettings.MAP.LAYOUT[0].length - Math.floor(1 + 3 * Math.random()),
+      let x =
+          gameSettings.MAP.LAYOUT[0].length - Math.floor(1 + 3 * Math.random()),
         y = gameSettings.MAP.LAYOUT.length - Math.floor(1 + 3 * Math.random());
       zombies.push(
         new Zombie(
@@ -302,11 +303,10 @@ function startGame() {
     }
 
     const bulletInterval = setInterval(drawBullets, 50);
+    setTimeout(() => clearInterval(bulletInterval), 1000)
   }
 
-  // ==== TOUCH INPUT HANDLING ====
-  Bangle.on("touch", (t, xy) => {
-    console.log("TAP");
+  function handleTouch(xy) {
     const ROTATION = Math.PI / 16;
     let x = xy.x,
       y = xy.y;
@@ -332,6 +332,16 @@ function startGame() {
         game.needsRender = true;
       }
     }
+  }
+
+  // ==== TOUCH INPUT HANDLING ====
+  Bangle.on("touch", (t, xy) => {
+    console.log("Touch");
+    handleTouch(xy);
+  });
+  Bangle.on("tap", (xy) => {
+    console.log("Tap");
+    handleTouch(xy);
   });
 
   // ==== RENDER FUNCTION ====
