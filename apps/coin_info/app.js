@@ -201,11 +201,6 @@ function showDetails() {
 var drawTimeout;
 // update the screen
 function draw() {
-    if (isPaused) {
-        if (drawTimeout) clearTimeout(drawTimeout);
-        return;
-    }
-
     //
     layout.tknName.label = (csTokens[ticker]).toUpperCase();
     layout.loadMsg.label = currLoadMsg;
