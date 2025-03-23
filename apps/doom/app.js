@@ -59,8 +59,8 @@ function startGame() {
   function Hoard(n) {
     let zombies = [];
     for (let i = 0; i < n; i++) {
-      let x = 4 + Math.floor(2 * Math.random()),
-        y = 4 + Math.floor(2 * Math.random());
+      let x = gameSettings.MAP.LAYOUT[0].length - Math.floor(1 + 3 * Math.random()),
+        y = gameSettings.MAP.LAYOUT.length - Math.floor(1 + 3 * Math.random());
       zombies.push(
         new Zombie(
           x * gameSettings.MAP.TILE_SIZE,
@@ -85,8 +85,8 @@ function startGame() {
         // Only move if not already very close
         dx /= dist; // Normalize direction vector
         dy /= dist;
-        zombie.x += (dx * zombie.speed) / (Math.random() + 0.5); // Move zombie towards player
-        zombie.y += (dy * zombie.speed) / (Math.random() + 0.5);
+        zombie.x += (dx * zombie.speed) / (Math.random() + 0.25); // Move zombie towards player
+        zombie.y += (dy * zombie.speed) / (Math.random() + 0.25);
       } else {
         if (new Date().getTime() - (player.lastHit ?? 0) > 500) {
           player.health += -1;
@@ -307,7 +307,7 @@ function startGame() {
   // ==== TOUCH INPUT HANDLING ====
   Bangle.on("touch", (t, xy) => {
     console.log("TAP");
-    const ROTATION = Math.PI / 32;
+    const ROTATION = Math.PI / 16;
     let x = xy.x,
       y = xy.y;
 
