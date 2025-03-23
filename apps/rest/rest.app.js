@@ -1,18 +1,6 @@
 
 function roundRect (x1, y1, x2, y2, halfrad) {
-  const fullrad = halfrad + halfrad
-  const bgColor = g.getBgColor();
-  const fgColor = g.getColor();
-  g.fillRect(x1, y1, x2, y2);
-  g.setColor(bgColor).fillRect(x1, y1, x1 + halfrad, y1 + halfrad);
-  g.setColor(fgColor).fillEllipse(x1, y1, x1 + fullrad, y1 + fullrad);
-  g.setColor(bgColor).fillRect(x2 - halfrad, y1, x2, y1 + halfrad);
-  g.setColor(fgColor).fillEllipse(x2 - fullrad, y1, x2, y1 + fullrad);
-
-  g.setColor(bgColor).fillRect(x1, y2-halfrad, x1 + halfrad, y2);
-  g.setColor(fgColor).fillEllipse(x1, y2-fullrad, x1 + fullrad, y2);
-  g.setColor(bgColor).fillRect(x2 - halfrad, y2-halfrad, x2, y2);
-  g.setColor(fgColor).fillEllipse(x2 - fullrad, y2-fullrad, x2, y2);
+  g.fillRect({x:x1, y:y1, x2:x2, y2:y2, r: halfrad});
 }
 
 function center(r) {
@@ -244,11 +232,11 @@ const onTouchPerQuadrantPerMode = {
   SET_REST: [
     [MAIN_MENU, Bangle.buzz], [null, null],
     [null, () => {
-      restSeconds = Math.min(120, Math.max(0, restSeconds - 15));
+      restSeconds = Math.min(600, Math.max(0, restSeconds - 15));
       Bangle.buzz(100);
     }],
     [null, () => {
-      restSeconds = Math.min(120, Math.max(0, restSeconds + 15));
+      restSeconds = Math.min(600, Math.max(0, restSeconds + 15));
       Bangle.buzz(100);
     }],
   ],

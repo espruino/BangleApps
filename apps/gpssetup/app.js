@@ -34,6 +34,7 @@ function loadSettings() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
   settings.update = settings.update||120;
   settings.search = settings.search||5;
+  settings.fix_req = settings.fix_req||1;
   settings.power_mode = settings.power_mode||"SuperE";
   log_debug(settings);
 }
@@ -83,6 +84,16 @@ function showMainMenu() {
       step: 1,
       onchange: v => {
         settings.search = v;
+        updateSettings();
+      }
+    },
+    'Fix Req (#)': {
+      value: settings.fix_req,
+      min: 1,
+      max: 100,
+      step: 1,
+      onchange: v => {
+        settings.fix_req = v;
         updateSettings();
       }
     }

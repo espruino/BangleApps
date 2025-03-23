@@ -1,405 +1,277 @@
-const SunCalc = require("suncalc"); // from modules folder
+/* sun version 0.0.3 */
+let sun	= {
+  SunCalc: null,
+  lat: 50,
+  lon: 14,
+  rise: 0,  /* Unix time of sunrise/sunset */
+  set: 0,
+  init: function() {  
+    try {
+      this.SunCalc = require("suncalc"); // from modules folder
+    } catch (e) {
+      print("Require error", e);
+    }
+    print("Have suncalc: ", this.SunCalc);
+  },
+  sunPos: function() {
+    let d = new Date();
+    if (!this.SunCalc) {
+      let sun = {};
+      sun.azimuth = 175;
+      sun.altitude = 15;
+      return sun;
+    }
+    let sun = this.SunCalc.getPosition(d, this.lat, this.lon);
+    print(sun.azimuth, sun.altitude);
+    return sun;
+  },
+  sunTime: function() {
+    let d = new Date();
+    if (!this.SunCalc) {
+      let sun = {};
+      sun.sunrise = d;
+      sun.sunset = d;
+      return sun;
+    }
+    let sun = this.SunCalc.getTimes(d, this.lat, this.lon);
+    return sun;
+  },
+  adj: function (x) {
+    if (x < 0)
+      return x + 24*60*60;
+    return x;
+  },
+  toSunrise: function () {
+    return this.adj(this.rise - getTime());
+  },
+  toSunset: function () {
+    return this.adj(this.set - getTime());
+  },
+  update: function () {
+    let t = this.sunTime();
+    this.rise = t.sunrise.getTime() / 1000;
+    this.set  = t.sunset.getTime() / 1000;
+  },
+  // < 0 : next is sunrise, in abs(ret) seconds
+  // > 0 
+  getNext: function () {
+    let rise = this.toSunrise();
+    let set = this.toSunset();
+    if (rise < set) {
+      return -rise;
+    }
+    return set;
+ //   set = set / 60;
+ //   return s + (set / 60).toFixed(0) + ":" + (set % 60).toFixed(0);
+  },
+};
 
-// ################################################################################
+sun.init();
 
-let ScreenWidth  = g.getWidth(),  CenterX = ScreenWidth/2;
-let ScreenHeight = g.getHeight(), CenterY = ScreenHeight/2;
-let outerRadius = Math.min(CenterX,CenterY) * 0.9;
+const defaultSettings = {
+  loadWidgets    : false,
+  textAboveHands : false,
+  shortHrHand    : true
+};
+const white = 0;
+const settings = Object.assign(defaultSettings, require('Storage').readJSON('andark.json',1)||{});
 
-const lat = 50.1;
-const lon = 14.45;
+const c={"x":g.getWidth()/2,"y":g.getHeight()/2};
 
-const h = g.getHeight();
-const w = g.getWidth();
-const sm = 15;
-var altitude, temperature;
+const zahlpos=(function() {
+  let z=[];
+  let sk=1;
+  for(let i=-10;i<50;i+=5){
+     let win=i*2*Math.PI/60;
+     let xsk =c.x+2+Math.cos(win)*(c.x-10),
+         ysk =c.y+2+Math.sin(win)*(c.x-10);
+    if(sk==3){xsk-=10;}
+    if(sk==6){ysk-=10;}
+    if(sk==9){xsk+=10;}
+    if(sk==12){ysk+=10;}
+    if(sk==10){xsk+=3;}
+    z.push([sk,xsk,ysk]);
+    sk+=1;
+  }
+  return z;
+})();
 
-var img_north = Graphics.createImage(`
-    X    
-   XXX   
-   XXX   
-  X XXX  
-  X XXX  
- X  XXXX 
- X  XXXX 
-X   XXXXX
-X   XXXXX
-XXXXXXXXX
-`);
+let unlock = false;
 
-var img_sunrise = Graphics.createImage(`
-   XXX   
-  XXXXX  
-XXXXXXXXX
-`);
-
-var img_moonrise = Graphics.createImage(`
-   XXX   
-  XX  X  
-XXXXXXXXX
-`);
-
-var img_altitude = Graphics.createImage(`
-X       X
-X   X   X
-XXXXXXXXX
-X   X   X
-X       X
-`);
-
-var img_temperature = Graphics.createImage(`
- XX      
-XXXXXXXX 
-X      XX
-XXXXXXXX 
- XX      
-`);
-
-var img_battery = Graphics.createImage(`
-XXXXXXXX 
-XXX    X 
-XXXX   XX
-XXXXX  X 
-XXXXXXXX 
-`);
-
-var img_step = Graphics.createImage(`
-     XXX 
- XX XXXXX
-XXX XXXXX
-XXX XXXXX
- XX XXXX 
-`);
-
-var img_sun = Graphics.createImage(`
-X       X
-   XXX   
- XXXXXXX 
-XXXXXXXXX
-XXXXXXXXX
-XXXXXXXXX
- XXXXXXX 
-   XXX   
-X       X
-`);
-
-var img_moon = Graphics.createImage(`
-   XXX   
- XX  XXX 
-X    XXXX
-X     XXX
-X     XXX
-X     XXX
-X    XXXX
- X   XXX 
-   XXX   
-`);
-
-let use_compass = 0;
-
-function draw() {
-  drawBorders();
-  queueDraw();
+function zeiger(len,dia,tim){
+  const x=c.x+ Math.cos(tim)*len/2,
+        y=c.y + Math.sin(tim)*len/2,
+        d={"d":3,"x":dia/2*Math.cos(tim+Math.PI/2),"y":dia/2*Math.sin(tim+Math.PI/2)},
+        pol=[c.x-d.x,c.y-d.y,c.x+d.x,c.y+d.y,x+d.x,y+d.y,x-d.x,y-d.y];
+  return pol;
 }
 
-function radA(p) { return p*(Math.PI*2); }
-function radD(d) { return d*(h/2); }
+function drawHands(d) {
+  let m=d.getMinutes(), h=d.getHours(), s=d.getSeconds();
+  g.setColor(white,white,white);
 
-function radX(p, d) {
-  let a = radA(p);
-  return h/2 + Math.sin(a)*radD(d);
+  if(h>12){
+    h=h-12;
+  }
+  //calculates the position of the minute, second and hour hand
+  h=2*Math.PI/12*(h+m/60)-Math.PI/2;
+  //more accurate
+  //m=2*Math.PI/60*(m+s/60)-Math.PI/2;
+  m=2*Math.PI/60*(m)-Math.PI/2;
+
+  s=2*Math.PI/60*s-Math.PI/2;
+  //g.setColor(1,0,0);
+  const hz = zeiger(settings.shortHrHand?88:100,5,h);
+  g.fillPoly(hz,true);
+  //g.setColor(1,1,1);
+  const minz = zeiger(150,5,m);
+  g.fillPoly(minz,true);
+  if (unlock){
+    const sekz = zeiger(150,2,s);
+    g.fillPoly(sekz,true);
+  }
+  g.fillCircle(c.x,c.y,4);
 }
 
-function radY(p, d) {
-  let a = radA(p);
-  return w/2 - Math.cos(a)*radD(d);
+function setColor() {
+   g.setBgColor(!white,!white,!white);
+  g.setColor(white,white,white);
 }
 
-function fracHour(d) {
+function drawText(d) {
+  g.setFont("Vector",20);
+  //let dateStr = require("locale").date(d);
+  //g.drawString(dateStr, c.x, c.y+20, true);
+  let bat = E.getBattery();
+  let batStr = Math.round(bat/5)*5+"%";
+  if (Bangle.isCharging()) {
+    g.setBgColor(1,0,0);
+  }
+  if (bat < 30)
+    g.drawString(batStr, c.x, c.y+40, true);
+}
+
+function drawNumbers(d) {
   let hour = d.getHours();
-  let min = d.getMinutes();
-  hour = hour + min/60;
-  if (hour > 12)
-    hour -= 12;
-  return hour;
-}
-
-  let HourHandLength = outerRadius * 0.5;
-  let HourHandWidth  = 2*3, halfHourHandWidth = HourHandWidth/2;
-
-  let MinuteHandLength = outerRadius * 0.7;
-  let MinuteHandWidth  = 2*2, halfMinuteHandWidth = MinuteHandWidth/2;
-
-  let SecondHandLength = outerRadius * 0.9;
-  let SecondHandOffset = 6;
-
-  let twoPi  = 2*Math.PI;
-  let Pi     = Math.PI;
-
-  let sin = Math.sin, cos = Math.cos;
-
-  let HourHandPolygon = [
-    -halfHourHandWidth,halfHourHandWidth,
-    -halfHourHandWidth,halfHourHandWidth-HourHandLength,
-     halfHourHandWidth,halfHourHandWidth-HourHandLength,
-     halfHourHandWidth,halfHourHandWidth,
-  ];
-
-  let MinuteHandPolygon = [
-    -halfMinuteHandWidth,halfMinuteHandWidth,
-    -halfMinuteHandWidth,halfMinuteHandWidth-MinuteHandLength,
-     halfMinuteHandWidth,halfMinuteHandWidth-MinuteHandLength,
-     halfMinuteHandWidth,halfMinuteHandWidth,
-  ];
-
-/**** drawClockFace ****/
-
-  function drawClockFace () {
-    g.setColor(g.theme.fg);
-    g.setFont('Vector', 22);
-
-    g.setFontAlign(0,-1);
-    g.drawString('12', CenterX,CenterY-outerRadius);
-
-    g.setFontAlign(1,0);
-    g.drawString('3', CenterX+outerRadius,CenterY);
-
-    g.setFontAlign(0,1);
-    g.drawString('6', CenterX,CenterY+outerRadius);
-
-    g.setFontAlign(-1,0);
-    g.drawString('9', CenterX-outerRadius,CenterY);
+  if (d.getMinutes() > 30) {
+    hour += 1;
   }
-
-/**** transforme polygon ****/
-
-  let transformedPolygon = new Array(HourHandPolygon.length);
-
-  function transformPolygon (originalPolygon, OriginX,OriginY, Phi) {
-    let sPhi = sin(Phi), cPhi = cos(Phi), x,y;
-
-    for (let i = 0, l = originalPolygon.length; i < l; i+=2) {
-      x = originalPolygon[i];
-      y = originalPolygon[i+1];
-
-      transformedPolygon[i]   = OriginX + x*cPhi + y*sPhi;
-      transformedPolygon[i+1] = OriginY + x*sPhi - y*cPhi;
-    }
+  let day = d.getDate();
+  if (day > 12) {
+    day = day % 10;
+    if (!day)
+      day = 10;
   }
-
-/**** draw clock hands ****/
-
-  function drawClockHands () {
-    let now = new Date();
-
-    let Hours   = now.getHours() % 12;
-    let Minutes = now.getMinutes();
-    let Seconds = now.getSeconds();
-
-    let HoursAngle   = (Hours+(Minutes/60))/12 * twoPi - Pi;
-    let MinutesAngle = (Minutes/60)            * twoPi - Pi;
-    let SecondsAngle = (Seconds/60)            * twoPi - Pi;
-
-    g.setColor(g.theme.fg);
-
-    transformPolygon(HourHandPolygon, CenterX,CenterY, HoursAngle);
-    g.fillPoly(transformedPolygon);
-
-    transformPolygon(MinuteHandPolygon, CenterX,CenterY, MinutesAngle);
-    g.fillPoly(transformedPolygon);
-
-    let sPhi = Math.sin(SecondsAngle), cPhi = Math.cos(SecondsAngle);
-
-    g.setColor(g.theme.fg2);
-    g.drawLine(
-      CenterX + SecondHandOffset*sPhi,
-      CenterY - SecondHandOffset*cPhi,
-      CenterX - SecondHandLength*sPhi,
-      CenterY + SecondHandLength*cPhi
-    );
-
-    g.setFont('Vector', 22);
-
-    g.setFontAlign(-1, 1);
-    g.drawString(now.getDate(), CenterX-outerRadius,CenterY+outerRadius);
-
-  }
-
-function drawTimeIcon(time, icon, options) {
-  let h = fracHour(time);
-  let x = radX(h/12, 0.7);
-  let y = radY(h/12, 0.7);
-  g.drawImage(icon, x,y, options);
-}
-
-function drawOutsideIcon(h, icon, options) {
-  let x = radX(h, 0.95);
-  let y = radY(h, 0.95);
-  g.drawImage(icon, x,y, options);
-}
-
-function drawBorders() {
-  g.reset();
-  g.setColor(0);
-  g.fillRect(Bangle.appRect);
-
-  g.setColor(-1);
-  g.fillCircle(w/2, h/2, h/2 - 2);
-  if (0) {
-    g.fillCircle(sm+1, sm+1, sm);
-    g.fillCircle(sm+1, h-sm-1, sm);
-    g.fillCircle(w-sm-1, h-sm-1, sm);
-    g.fillCircle(h-sm-1, sm+1, sm);
-  }
-  g.setColor(0, 1, 0);
-  g.drawCircle(h/2, w/2, radD(0.7));
-  g.drawCircle(h/2, w/2, radD(0.5));
-
-  outerRadius = radD(0.7);
-  drawClockHands();
-
-  let d = new Date();
-  let hour = fracHour(d);
-  let min = d.getMinutes();
-  let day = d.getDay();
-  day = day + hour/24;
-  {
-    let x = radX(hour/12, 0.7);
-    let y = radY(hour/12, 0.7);
-    g.setColor(0, 0, 0);
-    g.fillCircle(x,y, 5);
-  }
-  {
-    let x = radX(min/60, 0.5);
-    let y = radY(min/60, 0.5);
-    g.setColor(0, 0, 0);
-    g.drawLine(h/2, w/2, x, y);
-  }
-  {
-    let x = radX(hour/12, 0.3);
-    let y = radY(hour/12, 0.3);
-    g.setColor(0, 0, 0);
-    g.drawLine(h/2, w/2, x, y);
-  }
-  {
-    let km = 0.001 * 0.719 * Bangle.getHealthStatus("day").steps;
-    let x = radX(km/12 + 0, 0.95);
-    let y = radY(km/12 + 0, 0.95);
-    g.setColor(0, 0.7, 0);
-    g.drawImage(img_step, x,y, { scale: 2, rotate: Math.PI*0.0 } );
-  }
-  {
-    let bat = E.getBattery();
-    let x = radX(bat/100, 0.95);
-    let y = radY(bat/100, 0.95);
-    g.setColor(0.7, 0, 0);
-    g.drawImage(img_battery, x,y, { scale: 2, rotate: Math.PI*0.0 } );
-  }
-  {
-    d = new Date();
-    const sun = SunCalc.getTimes(d, lat, lon);
-    g.setColor(0.5, 0.5, 0);
-    print("sun", sun);
-    drawTimeIcon(sun.sunset, img_sunrise, { rotate: Math.PI, scale: 2 });
-    drawTimeIcon(sun.sunrise, img_sunrise, { scale: 2 });
-    g.setColor(0, 0, 0);
-    const moon = SunCalc.getMoonTimes(d, lat, lon);
-    print("moon", moon);
-    drawTimeIcon(moon.set, img_moonrise, { rotate: Math.PI, scale: 2 });
-    drawTimeIcon(moon.rise, img_sunrise, { scale: 2 });
-    let pos = SunCalc.getPosition(d, lat, lon);
-    print("sun:", pos);
-    if (pos.altitude > -0.1) {
-      g.setColor(0.5, 0.5, 0);
-      az = pos.azimuth;
-      drawOutsideIcon(az / (2*Math.PI), img_sun, { scale: 2 });
-    }
-    pos = SunCalc.getMoonPosition(d, lat, lon);
-    print("moon:", pos);
-    if (pos.altitude > -0.05) {
-      g.setColor(0, 0, 0);
-      az = pos.azimuth;
-      drawOutsideIcon(az / (2*Math.PI), img_moon, { scale: 2 });
-    }
-  }
-  {
-    Bangle.getPressure().then((x) =>
-      { altitude = x.altitude; temperature = x.temperature; },
-      print);
-    print(altitude, temperature);
-    drawOutsideIcon(altitude / 120, img_altitude, { scale: 2 });
-    drawOutsideIcon(temperature / 12, img_temperature, { scale: 2 });
-  }
-  if (use_compass) {
-    let obj = Bangle.getCompass();
-    if (obj) {
-      let h = 360-obj.heading;
-      let x = radX(h/360, 0.7);
-      let y = radY(h/360, 0.7);
-      g.setColor(0, 0, 1);
-      g.drawImage(img_north, x,y, {scale:2});
-    }
-  }
-  {
-    let x = radX(day/7, 0.95);
-    let y = radY(day/7, 0.95);
-    g.setColor(0, 0, 0);
-    g.fillCircle(x,y, 5);
+  //draws the numbers on the screen
+  for(let i = 0;i<12;i++){
+     let on = false;
+     let j = i+1;
+     g.setFont("Vector",20);
+     if (j == day) {
+       on = true;
+       g.setFont("Vector",29);
+     }
+    if ((j % 12) == (hour % 12))
+      on = true;
+    setColor();
+    if (!on)
+      g.setColor(white/2, !white, white);
+    if (1 || on)
+      g.drawString(zahlpos[i][0],zahlpos[i][1],zahlpos[i][2],true);
   }
 }
 
-function drawEmpty() {
-  g.reset();
-  g.setColor(g.theme.bg);
-  g.fillRect(Bangle.appRect);
+function draw(){
+  // draw black rectangle in the middle to clear screen from scale and hands
+  g.setColor(!white,!white,!white);
+  g.fillRect(10,10,2*c.x-10,2*c.x-10);
+  // prepare for drawing the text
+  g.setFontAlign(0,0);
+  // do drawing
+  const d=new Date();
+  drawScale(d);		// FIXME: it is enough to do once in 12 hours or so
+  drawNumbers(d);
+  if (settings.textAboveHands) {
+    drawHands(d); drawText(d);
+  } else {
+    drawText(d); drawHands(d);
+  }
 }
 
-Bangle.on('touch', function(button, xy) {
-  var x = xy.x;
-  var y = xy.y;
-  if (y > h) y = h;
-  if (y < 0) y = 0;
-  if (x > w) x = w;
-  if (x < 0) x = 0;
-});
-
-// if we get a step then we are not idle
-Bangle.on('step', s => {
-});
-
-// timeout used to update every minute
-var drawTimeout;
-
-// schedule a draw for the next minute
-function queueDraw() {
-  if (drawTimeout) clearTimeout(drawTimeout);
-  next = 60000;
-  if (use_compass) next = 250;
-  drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
-    draw();
-  }, next - (Date.now() % next));
+/* 0..12 -> angle suitable for drawScale */
+function conv(m) { return -15 + (m / 12) * 60; }
+/* datetime -> 0..12 float */
+function hour12(d) {
+  let h = d.getHours() + d.getMinutes() / 60;
+  if (h > 12)
+    h = h - 12;
+  return h;
 }
+
+//draws the scale once the app is started
+function drawScale(d){
+  // clear the screen
+  g.setBgColor(!white,!white,!white);
+  g.clear();
+  // Display month as a wider mark
+  let m = conv(d.getMonth() + 1);
+  print(m);
+
+  let pos = sun.sunPos().azimuth;
+  pos = conv(12*(pos/360));
+  
+  let t = sun.sunTime();
+  // FIXME
+  let set = conv(hour12(t.sunset));
+  let dark = conv(hour12(t.sunset) + 0.25);
+  print(set, dark, pos);
+  
+  // draw the ticks of the scale
+  for(let i=-14;i<47;i++){
+    const win=i*2*Math.PI/60;
+    let d=2;
+    if(i%5==0){d=5;}
+    if(i==m){d=10;}
+    if (i>=pos && i<=(pos+2))
+      g.setColor(!white,!white,white/2);
+    else if (i>=set && i<=dark)
+      g.setColor(white/2,!white,white/2);
+    else
+      g.setColor(white,white,white);
+    g.fillPoly(zeiger(300,d,win),true);
+      g.setColor(!white,!white,!white);
+    g.fillRect(10,10,2*c.x-10,2*c.x-10);
+  }
+}
+
+//// main running sequence ////
+
+// Show launcher when middle button pressed, and widgets that we're clock
+Bangle.setUI("clock");
+// Load widgets if needed, and make them show swipeable
+if (settings.loadWidgets) {
+  Bangle.loadWidgets();
+  require("widget_utils").swipeOn();
+} else if (global.WIDGETS) require("widget_utils").hide();
+// Clear the screen once, at startup
+drawScale(new Date());
+draw();
+
+let secondInterval = setInterval(draw, 1000);
 
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower',on=>{
+  if (secondInterval) clearInterval(secondInterval);
+  secondInterval = undefined;
   if (on) {
-    draw(); // draw immediately, queue redraw
-  } else { // stop draw timer
-    if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = undefined;
+    secondInterval = setInterval(draw, 1000);
+    draw(); // draw immediately
   }
 });
-
-Bangle.setUI("clockupdown", btn=> {
-  if (btn<0) use_compass = 0;
-  if (btn>0) use_compass = 1;
-  Bangle.setCompassPower(use_compass, 'orloj');
-  draw();
+Bangle.on('lock',on=>{
+  unlock = !on;
+  if (secondInterval) clearInterval(secondInterval);
+  secondInterval = setInterval(draw, unlock ? 1000 : 60000);
+  draw(); // draw immediately
 });
-
-if (use_compass)
-  Bangle.setCompassPower(true, 'orloj');
-g.clear();
-draw();
-
+Bangle.on('charging',on=>{draw();});

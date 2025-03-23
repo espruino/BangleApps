@@ -3,9 +3,9 @@
   "shortName":"Screenlock",
   "version":"0.03",
   "description": "Lock a Bangle 2 screen by tapping a widget.",
-  "icon": "widget.png",  
+  "icon": "widget.png",
   "type": "widget",
-  "tags": "widget, screenlock",
+  "tags": "widget,screenlock",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [

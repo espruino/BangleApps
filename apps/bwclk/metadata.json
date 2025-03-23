@@ -1,7 +1,7 @@
 {
   "id": "bwclk",
   "name": "BW Clock",
-  "version": "0.33",
+  "version": "0.34",
   "description": "A very minimalistic clock.",
   "readme": "README.md",
   "icon": "app.png",

@@ -6,7 +6,7 @@
   "icon": "app.png",
   "version": "0.13",
   "type": "clock",
-  "tags": "clock, weather, cassio, retro",
+  "tags": "clock,weather,cassio,retro",
   "supports": ["BANGLEJS2"],
   "allow_emulator": true,
   "readme": "README.md",

@@ -4,10 +4,11 @@
     showClocks: true,
     fullscreen: false,
     direct: false,
-    oneClickExit: false,
+    oneClickExit: true,
     swipeExit: false,
     timeOut:"Off"
   }, s.readJSON("iconlaunch.json", true) || {});
+  let font = g.getFonts().includes("28") ? "28" : "12x20";
 
   if (!settings.fullscreen) {
     Bangle.loadWidgets();
@@ -56,12 +57,7 @@
 
   let texted;
   let drawItem = function(itemI, r) {
-    let x = whitespace;
-    let i = itemI * appsN - 1;
-    let selectedApp;
-    let c;
-    let selectedRect;
-    let item = launchCache.items[itemI];
+    let x = whitespace, i = itemI * appsN - 1, selectedApp, c, selectedRect, item = launchCache.items[itemI];
     if (texted == itemI){
       g.clearRect(r.x, r.y, r.x + r.w - 1, r.y + r.h - 1);
       texted = undefined;
@@ -89,20 +85,19 @@
   };
 
   let drawText = function(i, appY, selectedApp) {
-    "jit";
     const idy = (selectedItem - (selectedItem % 3)) / 3;
     if (i != idy) return;
     appY = appY + itemSize/2;
-    g.setFontAlign(0, 0, 0);
-    g.setFont("12x20");
+    g.setFontAlign(0, 0, 0).setFont(font);
     const rect = g.stringMetrics(selectedApp.name);
-    g.clearRect(
-      R.w / 2 - rect.width / 2 - 2,
-      appY - rect.height / 2 - 2,
-      R.w / 2 + rect.width / 2 + 1,
-      appY + rect.height / 2 + 1
-    );
-    g.drawString(selectedApp.name, R.w / 2, appY);
+    let r = {
+      x : (R.w - rect.width) / 2 - 7,
+      y : appY - rect.height / 2 - 6,
+      w : rect.width + 15,
+      h : rect.height + 10,
+      r : 4
+    };
+    g.setBgColor(g.theme.bgH).clearRect(r).setBgColor(g.theme.bg2).clearRect({x:r.x+2, y:r.y+2, w:r.w-4, h:r.h-4, r:3}).drawString(selectedApp.name, R.w / 2, appY).setBgColor(g.theme.bg);
   };
 
   let selectItem = function(id, e) {
@@ -141,25 +136,18 @@
         require("widget_utils").show();
       }
       if(idWatch) clearWatch(idWatch);
-    },
-    btn:Bangle.showClock
+    }
   };
 
   //work both the fullscreen and the oneClickExit
-  if( settings.fullscreen && settings.oneClickExit)
-  {
+  if( settings.fullscreen && settings.oneClickExit) {
       idWatch=setWatch(function(e) {
         Bangle.showClock();
       }, BTN, {repeat:false, edge:'rising' });
 
-  }
-  else if( settings.oneClickExit )
-  {
+  } else if( settings.oneClickExit ) {
       options.back=Bangle.showClock;
   }
-
-
-
 
   let scroller = E.showScroller(options);
 

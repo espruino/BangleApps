@@ -1,4 +1,5 @@
 var SunCalc = require("suncalc"); // from modules folder
+const storage = require('Storage');
 const widget_utils = require('widget_utils');
 const SETTINGS_FILE = "daisy.json";
 const LOCATION_FILE = "mylocation.json";
@@ -13,11 +14,12 @@ let warned = 0;
 let idle = false;
 let IDLE_MINUTES = 26;
 
-let pal1; // palette for 0-40%
+let pal1; // palette for 0-49%
 let pal2; // palette for 50-100%
 const infoLine = (3*h/4) - 6;
 const infoWidth = 56;
 const infoHeight = 11;
+const sec_update = 3000; // This ms between updates when the ring is in Seconds mode
 var drawingSteps = false;
 
 function log_debug(o) {
@@ -41,12 +43,12 @@ Graphics.prototype.setFontRoboto20 = function(scale) {
 
 function assignPalettes() {
   if (g.theme.dark) {
-    // palette for 0-40%
+    // palette for 0-49%
     pal1 = new Uint16Array([g.theme.bg, g.toColor(settings.gy), g.toColor(settings.fg), g.toColor("#00f")]);
     // palette for 50-100%
     pal2 = new Uint16Array([g.theme.bg, g.toColor(settings.fg), g.toColor(settings.gy), g.toColor("#00f")]);
   } else {
-    // palette for 0-40%
+    // palette for 0-49%
     pal1 = new Uint16Array([g.theme.bg, g.theme.fg, g.toColor(settings.fg), g.toColor("#00f")]);
     // palette for 50-100%
     pal2 = new Uint16Array([g.theme.bg, g.toColor(settings.fg), g.theme.fg, g.toColor("#00f")]);
@@ -84,6 +86,10 @@ function loadSettings() {
   settings.fg = settings.fg||'#0f0';
   settings.idle_check = (settings.idle_check === undefined ? true : settings.idle_check);
   settings.batt_hours = (settings.batt_hours === undefined ? false : settings.batt_hours);
+  settings.hr_12 = (settings.hr_12 === undefined ? false : settings.hr_12);
+  settings.ring = settings.ring||'Steps';
+  settings.idxInfo = settings.idxInfo||0;
+  settings.step_target = settings.step_target||10000;
   assignPalettes();
 }
 
@@ -97,21 +103,63 @@ function loadLocation() {
 
 function extractTime(d){
   var h = d.getHours(), m = d.getMinutes();
+  if (settings.hr_12) {
+    h = h % 12;
+    if (h == 0) h = 12;
+  }
   return(("0"+h).substr(-2) + ":" + ("0"+m).substr(-2));
 }
 
 var sunRise = "00:00";
 var sunSet = "00:00";
 var drawCount = 0;
+var sunStart;  // In terms of ms
+var sunEnd;  // In terms of minutes
+var sunFull;  // In terms of ms
+var isDaytime = true;
 
-function updateSunRiseSunSet(now, lat, lon, line){
+function getMinutesFromDate(date) {
+  return (60 * date.getHours()) + date.getMinutes();
+}
+
+function updateSunRiseSunSet(now, lat, lon, sunLeftCalcs){
   // get today's sunlight times for lat/lon
-  var times = SunCalc.getTimes(new Date(), lat, lon);
+  var times = SunCalc.getTimes(now, lat, lon);
+  var dateCopy = new Date(now.getTime());
 
   // format sunrise time from the Date object
   sunRise = extractTime(times.sunrise);
   sunSet = extractTime(times.sunset);
+  if (!sunLeftCalcs) return;
+
+  let sunLeft = times.sunset - dateCopy;
+  if (sunLeft <  0) {  // If it's already night
+    dateCopy.setDate(dateCopy.getDate() + 1);
+    let timesTmrw = SunCalc.getTimes(dateCopy, lat, lon);
+    isDaytime = false;
+    sunStart = times.sunset;
+    sunFull = timesTmrw.sunrise - sunStart;
+    sunEnd = getMinutesFromDate(timesTmrw.sunrise);
+  }
+  else {
+    sunLeft = dateCopy - times.sunrise;
+    if (sunLeft <  0) {  // If it's not morning yet.
+      dateCopy.setDate(dateCopy.getDate() - 1);
+      let timesYest = SunCalc.getTimes(dateCopy, lat, lon);
+      isDaytime = false;
+      sunStart = timesYest.sunset;
+      sunFull = times.sunrise - sunStart;
+      sunEnd = getMinutesFromDate(times.sunrise);
+    }
+    else {  // We're in the middle of the day
+      isDaytime = true;
+      sunStart = times.sunrise;
+      sunFull = times.sunset - sunStart;
+      sunEnd = getMinutesFromDate(times.sunset);
+    }
+  }
 }
+
 
 function batteryString(){
   let stringToInsert;
@@ -150,28 +198,21 @@ const infoData = {
 };
 
 const infoList = Object.keys(infoData).sort();
-let infoMode = infoList[0];
 
-function nextInfo() {
-  let idx = infoList.indexOf(infoMode);
+function nextInfo(idx) {
   if (idx > -1) {
-    if (idx === infoList.length - 1) infoMode = infoList[0];
-    else infoMode = infoList[idx + 1];
+    if (idx === infoList.length - 1) idx = 0;
+    else idx += 1;
   }
-  // power HRM on/off accordingly
-  Bangle.setHRMPower(infoMode == "ID_HRM" ? 1 : 0);
-  resetHrm();
+  return idx;
 }
 
-function prevInfo() {
-  let idx = infoList.indexOf(infoMode);
+function prevInfo(idx) {
   if (idx > -1) {
-    if (idx === 0) infoMode = infoList[infoList.length - 1];
-    else infoMode = infoList[idx - 1];
+    if (idx === 0) idx = infoList.length - 1;
+    else idx -= 1;
   }
-  // power HRM on/off accordingly
-  Bangle.setHRMPower(infoMode == "ID_HRM" ? 1 : 0);
-  resetHrm();
+  return idx;
 }
 
 function clearInfo() {
@@ -221,18 +262,49 @@ function draw() {
 
 function drawClock() {
   var date = new Date();
-  //var timeStr = require("locale").time(date,1);
-  var da = date.toString().split(" ");
-  //var time = da[4].substr(0,5);
-  var hh = da[4].substr(0,2);
-  var mm = da[4].substr(3,2);
-  var steps = getSteps();
-  var p_steps = Math.round(100*(steps/10000));
+  var hh = date.getHours();
+  var mm = date.getMinutes();
+  var ring_percent;
+  var invertRing = false;
+  switch (settings.ring) {
+    case 'Hours':
+      ring_percent = Math.round((10*(((hh % 12) * 60) + mm))/72);
+      break;
+    case 'Minutes':
+      ring_percent = Math.round((10*mm)/6);
+      break;
+    case 'Seconds':
+      ring_percent = Math.round((10*date.getSeconds())/6);
+      break;
+    case 'Steps': 
+      ring_percent = Math.round(100*(getSteps()/settings.step_target));
+      break;
+    case 'Battery': 
+      ring_percent = E.getBattery();
+      break;
+    case 'Sun': 
+      ring_percent = 100 * (date - sunStart) / sunFull;
+      if (ring_percent > 100) {  // If we're now past a sunrise of sunset
+        updateSunRiseSunSet(date, location.lat, location.lon, true);
+        ring_percent = 100 * (date - sunStart) / sunFull;
+      }
+      // If we're exactly on the minute that the sun is setting/rising 
+      if (getMinutesFromDate(date) == sunEnd) ring_percent = 100;
+      invertRing = !isDaytime;
+      break;
+  }
+
+  if (settings.hr_12) {
+    hh = hh % 12;
+    if (hh == 0) hh = 12;
+  }
+  hh = hh.toString().padStart(2, '0');
+  mm = mm.toString().padStart(2, '0');
 
   g.reset();
   g.setColor(g.theme.bg);
   g.fillRect(0, 0, w, h);
-  g.drawImage(getGaugeImage(p_steps), 0, 0);
+  g.drawImage(getGaugeImage(ring_percent, settings.ring, invertRing), 0, 0);
   setLargeFont();
 
   g.setColor(settings.fg);
@@ -247,7 +319,7 @@ function drawClock() {
 
   // recalc sunrise / sunset every hour
   if (drawCount % 60 == 0)
-    updateSunRiseSunSet(new Date(), location.lat, location.lon);
+    updateSunRiseSunSet(date, location.lat, location.lon, settings.ring == 'Sun');
   drawCount++;
 }
 
@@ -290,116 +362,191 @@ Bangle.on('HRM', function(hrm) {
 
 // putting into 1 function like this, rather than individual variables
 // reduces ram usage from 70%-13%
-function getGaugeImage(p) {
+function getGaugeImage(p, type, reverse) {
+  const endsDontShowList = ['Minutes', 'Seconds'];  // Don't show non-5% increments with these ring types
+  if (reverse) p = 100 - p;
+  var endsDontShow = endsDontShowList.includes(type);
   // p0
-  if (p < 2) return {
+  if (p < 2  || (p < 5 && endsDontShow)) return {
     width : 176, height : 176, bpp : 2,
     transparent : -1,
-    palette : pal1,
+    palette : (reverse ? pal2 : pal1),
     buffer : require("heatshrink").decompress(atob("AH4A/AH4ACgtVAAVUFUgpDAAdAFMEBFQ4ABqBVnLMQqLLLzWEABLgbVgohEGopYaiofDBihWVHJpYYDgYPbKx1ACJhYZIwT4OcAZWYHyRYUIgQXQH4RqOThCXUYRpCHNyQVVQQTwVQiSZWIQSEQNgSYSIYiEQQSyEUCQLDSOAyCnQiSCYQiSCYQiSCZDaDARObKuBSZwcaVzR0QFYKuZWAYNZWCJJKMoKuaWAahKBhiwTJRSudURorBFTgfMVzqjDO5DaeZ5jaeJhhiKbi4rIbT4hLqoriPI7afUpS5BbTwiKFdZgIADSmHFYIqgbgIrGcgIriEYwzHADZ7HRY4rdaYrjHADcBFYoGBFcgkEGQwAeFYqKHFbzUEcQ4AdiorwiorlEogxFAD59FWoorhoArDqArjgIr/FbYwFAEJSDFf4rXgornqgrDFUkAior/Ff4rGAYYAjKYYr/Ff4r/FbdVFdFAFYNQFcsBFf4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/FbdUFcsFFYUVFdADBFf4r/Ff4rbAYYAjKYYr/Ff4rFoArkqorCgIrnqAr/FbIEFAEBSFFf4rYqgrjgorEiormAocVAogAfEooxFFcB9EFdq1DAD9VFYkBFctQFYoGEADokHFcp8FRQoAdag7iFFb4HFioHGADYjHGY4rcPYyLHADbTHcYNQFT4iIFdZgIADKmJqrcgiorIBIIrhMKIAXUpIrBbjzaBFZAKKbS5MJFcKkJbj4fLBYLcdqorKbjzPMbjxKNMhauTURawdJJorBWDShBFZiRBWDQcOHRyuPOhorBWDIbPWDRzQSYKEYIwLLOHgSEXDIJyPQjD2SQjCCQQjSCRCYY/QN4xDRQiyCSQgjdSCqqECLCRWBYyiECISBWCYqgXCLCBWCQSYYEIhxqCeChYFThoQCKypYEIxgPPLB4cKFQZWXDoosIBhhYWcArWDKzYhHABA1EADArNoArcFhgqeWQysgLJxVfcBLWdAH4A5A"))
   };
 
   // p2
-  if (p >= 2 && p < 4) return {
+  if (p < 5) return {
     width : 176, height : 176, bpp : 2,
     transparent : -1,
-    palette: pal1,
+    palette : (reverse ? pal2 : pal1),
     buffer : require("heatshrink").decompress(atob("AH4A/ADNUFE8FqtVq2q1AqkFIIrDAAOAFMEBFQYrE1WgKsYrGLL4qFFY2pqDWeFZdUVkAhCAQMKFYdVLDUVFQYMHlWq0oMJKyoOJlQrCLDBWDB5clB5xWOoARMCARYWKwT4OgpYXKwY+SLChECC6A/CNRycIS6jCNIQ5uSCqqCCeCqESTKxCCQiBsCTCRDEQiCCWQigSBYaRwGQU6ESQTCESQTCESQTIbQYCJzZVwKTODjSuaOiArBVzKwDBrKwRJJRlBVzSwDUJQMMWCZKKVzqiNFYIqcD5iudUYZ3IbTzPMbTxMMMRTcXFZDafEJdVFcR5HbT6lKXILaeERQrrMBAAaUw4rBFUDcBFYzkBFcQjGGY4AbPY6LHFbrTFcY4AbgIrFAwIrkEggyGADwrFRQ4reagjiHADsVFeEVFcolEGIoAfPoq1FFcNAFYdQFccBFf4rbGAoAhKQYr/Fa8FFc9UFYYqkgEVFf4r/FYwDDAEZTDFf4r/Ff4rbqorooArBqArlgIr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rbqgrlgorCioroAYIr/Ff4r/FbYDDAEZTDFf4r/FYtAFclVFYUBFc9QFf4rZAgoAgKQor/FbFUFccFFYkVFcwFDioFEAD4lFGIorgPogrtWoYAfqorEgIrlqArFAwgAdEg4rlPgqKFADrUHcQorfA4sVA4wAbEY4zHFbh7GRY4AbaY7jBqAqfERArrMBAAZUxNVbkEVFZAJBFcJhRAC6lJFYLcebQIrIBRTaXJhIrhUhLcfD5YLBbjtVFZTceZ5jceJRpkLVyaiLWDpJNFYKwaUIIrMSIKwaDhw6OVx50NFYKwZDZ6waOaCTBQjBGBZZw8CQi4ZBOR6EYeySEYQSCEaQSITDH6BvGIaKEWQSSEEbqQVVQgRYSKwLGUQgRCQKwTFUC4RYQKwSCTDAhEONQTwULAqcNCARWVLAhGMB55YPDhQqDKy4dFFhAMMLCzgFawZWbEI4AIGogAYFZtAFbgsMFTyyGVkBZOKr7gJazoA/AHI"))
   };
 
-  // p4
-  if (p >= 4 && p < 7) return {
+  // p5
+  if (p < 10) return {
     width : 176, height : 176, bpp : 2,
     transparent : -1,
-    palette : pal1,
-    buffer : require("heatshrink").decompress(atob("AH4A/AH4ACgtVqtW1WoFUgpBFYYABwApggIqDFYmq0BVjFY2loAqjFY1VqDWeFZdUVkAhEhQrDLDcVFQYMHlQrCBhBWVHJpYYDgYPbKx1ACJhYZIwT4OgpYXKwY+SLChECC6A/CNRycIS6jCNIQ5uSCqqCCeCqESTKxCCQiBsCTCRDEQiCCWQigSBYaRwGQU6ESQTCESQTCESQTIbQYCJzZVwKTODjSuaOiArBVzKwDBrKwRJJRlBVzSwDUJQMMWCZKKVzqiNFYIqcD5iudUYZ3IbTzPMbTxMMMRTcXFZDafEJdVFcR5HbT6lKXILaeERQrrMBAAaUw4rBFUDcBFYzkBFcQjGGY4AbPY6LHFbrTFcY4AbgIrFAwIrkEggyGADwrFRQ4reagjiHADsVFeEVFcolEGIoAfPoq1FFcNAFYdQFccBFf4rbGAoAhKQYr/Fa8FFc9UFYYqkgEVFf4r/FYwDDAEZTDFf4r/Ff4rbqorooArBqArlgIr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rbqgrlgorCioroAYIr/Ff4r/FbYDDAEZTDFf4r/FYtAFclVFYUBFc9QFf4rZAgoAgKQor/FbFUFccFFYkVFcwFDioFEAD4lFGIorgPogrtWoYAfqorEgIrlqArFAwgAdEg4rlPgqKFADrUHcQorfA4sVA4wAbEY4zHFbh7GRY4AbaY7jBqAqfERArrMBAAZUxNVbkEVFZAJBFcJhRAC6lJFYLcebQIrIBRTaXJhIrhUhLcfD5YLBbjtVFZTceZ5jceJRpkLVyaiLWDpJNFYKwaUIIrMSIKwaDhw6OVx50NFYKwZDZ6waOaCTBQjBGBZZw8CQi4ZBOR6EYeySEYQSCEaQSITDH6BvGIaKEWQSSEEbqQVVQgRYSKwLGUQgRCQKwTFUC4RYQKwSCTDAhEONQTwULAqcNCARWVLAhGMB55YPDhQqDKy4dFFhAMMLCzgFawZWbEI4AIGogAYFZtAFbgsMFTyyGVkBZOKr7gJazoA/AHI"))
-  };
-
-  // p7
-  if (p >= 7 && p < 10) return {
-    width : 176, height : 176, bpp : 2,
-    transparent : -1,
-    palette : pal1,
-    buffer : require("heatshrink").decompress(atob("AH4A/AH4ACgtVqtW1WoFUgpBFYYABwApggIqDFYmq0BVjFYxZfFQorGLLrWCFZbgbVgtUBQcKLD8VFQYMHlQsDKzoOJFgZYYKwYPLFgWlKzVACJgrCqBWYawgAJcAOlNBhWMCZ8qFYJYUgoqBC6ECFYJqOAApWSS4jCNQQ5uSCqqCCeCqESFQKZUIQSEQNgSYSIYiEQQSyEUCQLDSOAyCnQiSCYQiSCYQiSCZDaDARObKuBSZwcaVzR0QFYKuZWAYNZWCJJKMoKuaWAahKBhiwTJRSudURorBFTgfMVzqjDO5DaeZ5jaeJhhiKbi4rIbT4hLqoriPI7afUpS5BbTwiKFdZgIADSmHFYIqgbgIrGcgIriEYwzHADZ7HRY4rdaYrjHADcBFYoGBFcgkEGQwAeFYqKHFbzUEcQ4AdiorwiorlEogxFAD59FWoorhoArDqArjgIr/FbYwFAEJSDFf4rXgornqgrDFUkAior/Ff4rGAYYAjKYYr/Ff4r/FbdVFdFAFYNQFcsBFf4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/FbdUFcsFFYUVFdADBFf4r/Ff4rbAYYAjKYYr/Ff4rFoArkqorCgIrnqAr/FbIEFAEBSFFf4rYqgrjgorEiormAocVAogAfEooxFFcB9EFdq1DAD9VFYkBFctQFYoGEADokHFcp8FRQoAdag7iFFb4HFioHGADYjHGY4rcPYyLHADbTHcYNQFT4iIFdZgIADKmJqrcgiorIBIIrhMKIAXUpIrBbjzaBFZAKKbS5MJFcKkJbj4fLBYLcdqorKbjzPMbjxKNMhauTURawdJJorBWDShBFZiRBWDQcOHRyuPOhorBWDIbPWDRzQSYKEYIwLLOHgSEXDIJyPQjD2SQjCCQQjSCRCYY/QN4xDRQiyCSQgjdSCqqECLCRWBYyiECISBWCYqgXCLCBWCQSYYEIhxqCeChYFThoQCKypYEIxgPPLB4cKFQZWXDoosIBhhYWcArWDKzYhHABA1EADArNoArcFhgqeWQysgLJxVfcBLWdAH4A5A=="))
+    palette : (reverse ? pal2 : pal1),
+    buffer : require("heatshrink").decompress(atob("AH4A/AH4ACgtVqtW1WoFUgpBFYYABwApggIqDFYmq0BVjFYxZfFQorGLLrWCFZeUVkFUBQcKFYdVqArZioqDBg8qFYQMIKyoOJlWpBoJYYKwYPLlIPOKx1ACJgQCLCxWCawgAJgpYXKwY+SLChECC6A/CNRycIS6jCNIQ5uSCqqCCeCqESTKxCCQiBsCTCRDEQiCCWQigSBYaRwGQU6ESQTCESQTCESQTIbQYCJzZVwKTODjSuaOiArBVzKwDBrKwRJJRlBVzSwDUJQMMWCZKKVzqiNFYIqcD5iudUYZ3IbTzPMbTxMMMRTcXFZDafEJdVFcR5HbT6lKXILaeERQrrMBAAaUw4rBFUDcBFYzkBFcQjGGY4AbPY6LHFbrTFcY4AbgIrFAwIrkEggyGADwrFRQ4reagjiHADsVFeEVFcolEGIoAfPoq1FFcNAFYdQFccBFf4rbGAoAhKQYr/Fa8FFc9UFYYqkgEVFf4r/FYwDDAEZTDFf4r/Ff4rbqorooArBqArlgIr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rbqgrlgorCioroAYIr/Ff4r/FbYDDAEZTDFf4r/FYtAFclVFYUBFc9QFf4rZAgoAgKQor/FbFUFccFFYkVFcwFDioFEAD4lFGIorgPogrtWoYAfqorEgIrlqArFAwgAdEg4rlPgqKFADrUHcQorfA4sVA4wAbEY4zHFbh7GRY4AbaY7jBqAqfERArrMBAAZUxNVbkEVFZAJBFcJhRAC6lJFYLcebQIrIBRTaXJhIrhUhLcfD5YLBbjtVFZTceZ5jceJRpkLVyaiLWDpJNFYKwaUIIrMSIKwaDhw6OVx50NFYKwZDZ6waOaCTBQjBGBZZw8CQi4ZBOR6EYeySEYQSCEaQSITDH6BvGIaKEWQSSEEbqQVVQgRYSKwLGUQgRCQKwTFUC4RYQKwSCTDAhEONQTwULAqcNCARWVLAhGMB55YPDhQqDKy4dFFhAMMLCzgFawZWbEI4AIGogAYFZtAFbgsMFTyyGVkBZOKr7gJazoA/AHIA="))  
   };
 
   // p10
-  if (p >= 10 && p < 20) return {
+  if (p < 15) return {
     width : 176, height : 176, bpp : 2,
     transparent : -1,
-    palette : pal1,
+    palette : (reverse ? pal2 : pal1),
     buffer : require("heatshrink").decompress(atob("AH4A/AH4ACgtVqtW1WoFUgpBFYYABwApggIqDFYmq0BVjFYxZfFQorGLLrWCFZbgbVgtUBQcKLD8VFQYMHlQsDKzoOJFgZYYKwYPLFgZWaoARMLDJWCawgAJcAZWYCZ6FCLCkFFQNQCZ8CFYOoFaZWSLAmAQShWQLAiESQQRtTLAOkQSdUFacK1WloCCSCaAAEFYKaQQSyEC0pvQirZTbomlIh6CYZAZFOQTBxDQhyCYOQhoPQS4bQHaBzaVwKTODjSuaOiArBVzKwDBrKwRJJRlBVzSwDUJQMMWCZKKVzqiNFYIqcD5iudUYZ3IbTzPMbTxMMMRTcXFZDafEJdVFcR5HbT6lKXILaeERQrrMBAAaUw4rBFUDcBFYzkBFcQjGGY4AbPY6LHFbrTFcY4AbgIrFAwIrkEggyGADwrFRQ4reagjiHADsVFeEVFcolEGIoAfPoq1FFcNAFYdQFccBFf4rbGAoAhKQYr/Fa8FFc9UFYYqkgEVFf4r/FYwDDAEZTDFf4r/Ff4rbqorooArBqArlgIr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rbqgrlgorCioroAYIr/Ff4r/FbYDDAEZTDFf4r/FYtAFclVFYUBFc9QFf4rZAgoAgKQor/FbFUFccFFYkVFcwFDioFEAD4lFGIorgPogrtWoYAfqorEgIrlqArFAwgAdEg4rlPgqKFADrUHcQorfA4sVA4wAbEY4zHFbh7GRY4AbaY7jBqAqfERArrMBAAZUxNVbkEVFZAJBFcJhRAC6lJFYLcebQIrIBRTaXJhIrhUhLcfD5YLBbjtVFZTceZ5jceJRpkLVyaiLWDpJNFYKwaUIIrMSIKwaDhw6OVx50NFYKwZDZ6waOaCTBQjBGBZZw8CQi4ZBOR6EYeySEYQSCEaQSITDH6BvGIaKEWQSSEEbqQVVQgRYSKwLGUQgRCQKwTFUC4RYQKwSCTDAhEONQTwULAqcNCARWVLAhGMB55YPDhQqDKy4dFFhAMMLCzgFawZWbEI4AIGogAYFZtAFbgsMFTyyGVkBZOKr7gJazoA/AHI"))
   };
 
-  // p20
-  if (p >= 20 && p < 30) return {
+  // p15
+  if (p < 20) return {
     width : 176, height : 176, bpp : 2,
     transparent : -1,
-    palette : pal1,
+    palette : (reverse ? pal2 : pal1),
+    buffer : require("heatshrink").decompress(atob("AH4A/AH4ACgtVqtW1WoFUgpBFYYABwApggIqDFYmq0BVjFYxZfFQorGLLrWCFZbgbVgtUBQcKLD8VFQYMHlQsDKzoOJFgZYYKwYPLFgZWaoARMLDJWCawgAJcAZWYCZ6FCLCkFFQNQCZ8CFYOoFaZWSLAmAQShWQLAiESQQRtTLAKESFQNUFacKQiSCCoArTgCESQSyEUirZTboyCnQiSCYQiSCYQiSCZQgeAVxwqYQgSwMVwNUFbMKWBquaWCArBVzKwDbRoqaWATcKbQKuaWAbcKbQKuaWAbcKVzqwNFYIqcWAOpbRSucWAWVO5DaeZ5jaeJhgrBbTqkLbT4hLqoriPI7afUpS5BbTwiKFdZgIADSmHFYIqgbgIrGcgIriEYwzHADZ7HRY4rdaYrjHADcBFYoGBFcgkEGQwAeFYqKHFbzUEcQ4AdiorwiorlEogxFAD59FWoorhoArDqArjgIr/FbYwFAEJSDFf4rXgornqgrDFUkAior/Ff4rGAYYAjKYYr/Ff4r/FbdVFdFAFYNQFcsBFf4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/FbdUFcsFFYUVFdADBFf4r/Ff4rbAYYAjKYYr/Ff4rFoArkqorCgIrnqAr/FbIEFAEBSFFf4rYqgrjgorEiormAocVAogAfEooxFFcB9EFdq1DAD9VFYkBFctQFYoGEADokHFcp8FRQoAdag7iFFb4HFioHGADYjHGY4rcPYyLHADbTHcYNQFT4iIFdZgIADKmJqrcgiorIBIIrhMKIAXUpIrBbjzaBFZAKKbS5MJFcKkJbj4fLBYLcdqorKbjzPMbjxKNMhauTURawdJJorBWDShBFZiRBWDQcOHRyuPOhorBWDIbPWDRzQSYKEYIwLLOHgSEXDIJyPQjD2SQjCCQQjSCRCYY/QN4xDRQiyCSQgjdSCqqECLCRWBYyiECISBWCYqgXCLCBWCQSYYEIhxqCeChYFThoQCKypYEIxgPPLB4cKFQZWXDoosIBhhYWcArWDKzYhHABA1EADArNoArcFhgqeWQysgLJxVfcBLWdAH4A5A=="))
+  };
+
+  // p20
+  if (p < 25) return {
+    width : 176, height : 176, bpp : 2,
+    transparent : -1,
+    palette : (reverse ? pal2 : pal1),
     buffer : require("heatshrink").decompress(atob("AH4A/AH4ACgtVqtW1WoFUgpBFYYABwApggIqDFYmq0BVjFYxZfFQorGLLrWCFZbgbVgtUBQcKLD8VFQYMHlQsDKzoOJFgZYYKwYPLFgZWaoARMLDJWCawgAJcAZWYCZ6FCLCkFFQNQCZ8CFYOoFaZWSLAmAQShWQLAiESQQRtTLAKESFQNUFacKQiSCCoArTgCESQSyEUirZTboyCnQiSCYQiSCYQiSCZQgeAVxwqYQgSwMVwNUFbMKWBquaWCArBVzKwDbRoqaWATcKbQKuaWAbcKbQKuaWAbcKVzqwNFYIqcWATaKVziwDbhDaebhjaebhgrBbTrcCFZDafbhdVFcTcHbT7cDFY0BbT7cD0ArxgtVoArfgGq1ArHFUDcBFY0VFceqFY1UFcMKFY1VFcmAFYtQFcMCFYsBFcugFYtAFcMAFYsFFcuoFYoqigEqFeEVFcuqFYlUFccKFYlVFc2AFYdQFccCFf4AWgNVoAEGAERSDFf4rXgornqgrDFUkAior/Ff4rGAYYAjKYYr/Ff4r/FbdVFdFAFYNQFcsBFf4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/FbdUFcsFFYUVFdADBFf4r/Ff4rbAYYAjKYYr/Ff4rFoArkqorCgIrnqAr/FbIEFAEBSFFf4rYqgrjgorEiormAocVAogAfEooxFFcB9EFdq1DAD9VFYkBFctQFYoGEADokHFcp8FRQoAdag7iFFb4HFioHGADYjHGY4rcPYyLHADbTHcYNQFT4iIFdZgIADKmJqrcgiorIBIIrhMKIAXUpIrBbjzaBFZAKKbS5MJFcKkJbj4fLBYLcdqorKbjzPMbjxKNMhauTURawdJJorBWDShBFZiRBWDQcOHRyuPOhorBWDIbPWDRzQSYKEYIwLLOHgSEXDIJyPQjD2SQjCCQQjSCRCYY/QN4xDRQiyCSQgjdSCqqECLCRWBYyiECISBWCYqgXCLCBWCQSYYEIhxqCeChYFThoQCKypYEIxgPPLB4cKFQZWXDoosIBhhYWcArWDKzYhHABA1EADArNoArcFhgqeWQysgLJxVfcBLWdAH4A5A="))
   };
 
-  // p30
-  if (p >= 30 && p < 40) return {
+  // p25
+  if (p < 30) return {
     width : 176, height : 176, bpp : 2,
     transparent : -1,
-    palette : pal1,
+    palette : (reverse ? pal2 : pal1),
+    buffer : require("heatshrink").decompress(atob("AH4A/AH4ACgtVqtW1WoFUgpBFYYABwApggIqDFYmq0BVjFYxZfFQorGLLrWCFZbgbVgtUBQcKLD8VFQYMHlQsDKzoOJFgZYYKwYPLFgZWaoARMLDJWCawgAJcAZWYCZ6FCLCkFFQNQCZ8CFYOoFaZWSLAmAQShWQLAiESQQRtTLAKESFQNUFacKQiSCCoArTgCESQSyEUirZTboyCnQiSCYQiSCYQiSCZQgeAVxwqYQgSwMVwNUFbMKWBquaWCArBVzKwDbRoqaWATcKbQKuaWAbcKbQKuaWAbcKVzqwNFYIqcWATaKVziwDbhDaebhjaebhgrBbTrcCFZDafbhdVFcTcHbT7cDFY0BbT7cD0ArxgtVoArfgGq1ArHFUDcBFY0VFceqFY1UFcMKFY1VFcmAFYtQFcMCFYsBFcugFYtAFcMAFYsFFcuoFYoqigEqFeEVFcuqFYlUFccKFYlVFc2AFYdQFccCFf4rbgNVoArjgGq0Ar/FbMFFc+oFYYqkgEqFf4r/FY0VqgrlhWqFf4r/Ff4rdqorowArBqArlgQr/Ff4r/Ff4r/Ff4AKgNVoAr/Ff4r/Ff4r/Ff4rNqgrlgorCioroAYIr/Ff4r/FbYDDAEZTDFf4r/FYtAFclVFYUBFc9QFf4rZAgoAgKQor/FbFUFccFFYkVFcwFDioFEAD4lFGIorgPogrtWoYAfqorEgIrlqArFAwgAdEg4rlPgqKFADrUHcQorfA4sVA4wAbEY4zHFbh7GRY4AbaY7jBqAqfERArrMBAAZUxNVbkEVFZAJBFcJhRAC6lJFYLcebQIrIBRTaXJhIrhUhLcfD5YLBbjtVFZTceZ5jceJRpkLVyaiLWDpJNFYKwaUIIrMSIKwaDhw6OVx50NFYKwZDZ6waOaCTBQjBGBZZw8CQi4ZBOR6EYeySEYQSCEaQSITDH6BvGIaKEWQSSEEbqQVVQgRYSKwLGUQgRCQKwTFUC4RYQKwSCTDAhEONQTwULAqcNCARWVLAhGMB55YPDhQqDKy4dFFhAMMLCzgFawZWbEI4AIGogAYFZtAFbgsMFTyyGVkBZOKr7gJazoA/AHIA="))
+  };
+
+  // p30
+  if (p < 35) return {
+    width : 176, height : 176, bpp : 2,
+    transparent : -1,
+    palette : (reverse ? pal2 : pal1),
     buffer : require("heatshrink").decompress(atob("AH4A/AH4ACgtVqtW1WoFUgpBFYYABwApggIqDFYmq0BVjFYxZfFQorGLLrWCFZbgbVgtUBQcKLD8VFQYMHlQsDKzoOJFgZYYKwYPLFgZWaoARMLDJWCawgAJcAZWYCZ6FCLCkFFQNQCZ8CFYOoFaZWSLAmAQShWQLAiESQQRtTLAKESFQNUFacKQiSCCoArTgCESQSyEUirZTboyCnQiSCYQiSCYQiSCZQgeAVxwqYQgSwMVwNUFbMKWBquaWCArBVzKwDbRoqaWATcKbQKuaWAbcKbQKuaWAbcKVzqwNFYIqcWATaKVziwDbhDaebhjaebhgrBbTrcCFZDafbhdVFcTcHbT7cDFY0BbT7cD0ArxgtVoArfgGq1ArHFUDcBFY0VFceqFY1UFcMKFY1VFcmAFYtQFcMCFYsBFcugFYtAFcMAFYsFFcuoFYoqigEqFeEVFcuqFYlUFccKFYlVFc2AFYdQFccCFf4rbgNVoArjgGq0Ar/FbMFFc+oFYYqkgEqFf4r/FY0VqgrlhWqFf4r/Ff4rdqorowArBqArlgQr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rbqgrlhQrCioroAYIr/Ff4r/FbcFqorllWoFf4r/FY9AFcmqFYUBFc+gFf4rZgFVqAqjgWqwAr/FbdUFccFawkVFcwFDioFEAD4lFGIorgPogrtWoYAfqorEgIrlqArFAwgAdEg4rlPgqKFADrUHcQorfA4sVA4wAbEY4zHFbh7GRY4AbaY7jBqAqfERArrMBAAZUxNVbkEVFZAJBFcJhRAC6lJFYLcebQIrIBRTaXJhIrhUhLcfD5YLBbjtVFZTceZ5jceJRpkLVyaiLWDpJNFYKwaUIIrMSIKwaDhw6OVx50NFYKwZDZ6waOaCTBQjBGBZZw8CQi4ZBOR6EYeySEYQSCEaQSITDH6BvGIaKEWQSSEEbqQVVQgRYSKwLGUQgRCQKwTFUC4RYQKwSCTDAhEONQTwULAqcNCARWVLAhGMB55YPDhQqDKy4dFFhAMMLCzgFawZWbEI4AIGogAYFZtAFbgsMFTyyGVkBZOKr7gJazoA/AHI"))
   };
 
-  // p40
-  if (p >= 40 && p < 50) return {
+  // p35
+  if (p < 40) return {
     width : 176, height : 176, bpp : 2,
     transparent : -1,
-    palette : pal1,
+    palette : (reverse ? pal2 : pal1),
+    buffer : require("heatshrink").decompress(atob("AH4A/AH4ACgtVqtW1WoFUgpBFYYABwApggIqDFYmq0BVjFYxZfFQorGLLrWCFZbgbVgtUBQcKLD8VFQYMHlQsDKzoOJFgZYYKwYPLFgZWaoARMLDJWCawgAJcAZWYCZ6FCLCkFFQNQCZ8CFYOoFaZWSLAmAQShWQLAiESQQRtTLAKESFQNUFacKQiSCCoArTgCESQSyEUirZTboyCnQiSCYQiSCYQiSCZQgeAVxwqYQgSwMVwNUFbMKWBquaWCArBVzKwDbRoqaWATcKbQKuaWAbcKbQKuaWAbcKVzqwNFYIqcWATaKVziwDbhDaebhjaebhgrBbTrcCFZDafbhdVFcTcHbT7cDFY0BbT7cD0ArxgtVoArfgGq1ArHFUDcBFY0VFceqFY1UFcMKFY1VFcmAFYtQFcMCFYsBFcugFYtAFcMAFYsFFcuoFYoqigEqFeEVFcuqFYlUFccKFYlVFc2AFYdQFccCFf4rbgNVoArjgGq0Ar/FbMFFc+oFYYqkgEqFf4r/FY0VqgrlhWqFf4r/Ff4rdqorowArBqArlgQr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rbqgrlhQrCioroAYIr/Ff4r/FbcFqorllWoFf4r/FY9AFcmqFYUBFc+gFf4rZgFVqAqjgWqwAr/FbdUFccKFYkVFcwFDitVFccqFYkFFcuoFeNAFcWqFYkBFcugFYtQFUMCFYsAFcuAFYtUFcMKFY0VFcgHFitVFcMqFY0FFceoFY9AFcGqFY0BqtQFT8C1WgFeMAqtUFb8K1WAFY7cglQrIiorgjWqBI8FqtAFb1W1ArJbjz9BFZAKBbjxMBsALIFcKkJbj4fLBYLcdqorKbjzPMbjxKNMhauTURawdJJorBWDShBFZiRBWDQcOHRyuPOhorBWDIbPWDRzQSYKEYIwLLOHgSEXDIJyPQjD2SQjCCQQjSCRCYY/QN4xDRQiyCSQgjdSCqqECLCRWBYyiECISBWCYqgXCLCBWCQSYYEIhxqCeChYFThoQCKypYEIxgPPLB4cKFQZWXDoosIBhhYWcArWDKzYhHABA1EADArNoArcFhgqeWQysgLJxVfcBLWdAH4A5"))
+  };
+
+  // p40
+  if (p < 45) return {
+    width : 176, height : 176, bpp : 2,
+    transparent : -1,
+    palette : (reverse ? pal2 : pal1),
     buffer : require("heatshrink").decompress(atob("AH4A/AH4ACgtVqtW1WoFUgpBFYYABwApggIqDFYmq0BVjFYxZfFQorGLLrWCFZbgbVgtUBQcKLD8VFQYMHlQsDKzoOJFgZYYKwYPLFgZWaoARMLDJWCawgAJcAZWYCZ6FCLCkFFQNQCZ8CFYOoFaZWSLAmAQShWQLAiESQQRtTLAKESFQNUFacKQiSCCoArTgCESQSyEUirZTboyCnQiSCYQiSCYQiSCZQgeAVxwqYQgSwMVwNUFbMKWBquaWCArBVzKwDbRoqaWATcKbQKuaWAbcKbQKuaWAbcKVzqwNFYIqcWATaKVziwDbhDaebhjaebhgrBbTrcCFZDafbhdVFcTcHbT7cDFY0BbT7cD0ArxgtVoArfgGq1ArHFUDcBFY0VFceqFY1UFcMKFY1VFcmAFYtQFcMCFYsBFcugFYtAFcMAFYsFFcuoFYoqigEqFeEVFcuqFYlUFccKFYlVFc2AFYdQFccCFf4rbgNVoArjgGq0Ar/FbMFFc+oFYYqkgEqFf4r/FY0VqgrlhWqFf4r/Ff4rdqorowArBqArlgQr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rbqgrlhQrCioroAYIr/Ff4r/FbcFqorllWoFf4r/FY9AFcmqFYUBFc+gFf4rZgFVqAqjgWqwAr/FbdUFccKFYkVFcwFDitVFccqFYkFFcuoFeNAFcWqFYkBFcugFYtQFUMCFYsAFcuAFYtUFcMKFY0VFcgHFitVFcMqFY0FFceoFY9AFcGqFY0BqtQFT8C1WgFeMAqtUFb8K1WAFY7cglQrIioriBI8FqtAFb2q1ArJbjzaBFZEBbj7aB0ALIFcLaHbkLaJFYbcd1QrKbjzaKbkDaLbgSwcVwLaJWD6uLFYawaVwIrMbgKwaVwLaKbgawaVwLaLbgawZQQLaLWDiuOWAaEYQQKuMWAiEXKwKuNQjUBQR6EaiqCPQjVVQSATCqtUFSZvB1WACiSEUY4KCQQgjdSCqqECLCRWBYyiECISBWCYqgXCLCBWCQSYYEIhxqCeChYFThoQCKypYEIxgPPLB4cKFQZWXDoosIBhhYWcArWDKzYhHABA1EADArNoArcFhgqeWQysgLJxVfcBLWdAH4A5A"))
   };
 
-  // p50
-  if (p >= 50 && p < 60) return {
+  // p45
+  if (p < 50) return {
     width : 176, height : 176, bpp : 2,
     transparent : -1,
-    palette : pal2,
+    palette : (reverse ? pal2 : pal1),
+    buffer : require("heatshrink").decompress(atob("AH4A/AH4ACgtVqtW1WoFUgpBFYYABwApggIqDFYmq0BVjFYxZfFQorGLLrWCFZbgbVgtUBQcKLD8VFQYMHlQsDKzoOJFgZYYKwYPLFgZWaoARMLDJWCawgAJcAZWYCZ6FCLCkFFQNQCZ8CFYOoFaZWSLAmAQShWQLAiESQQRtTLAKESFQNUFacKQiSCCoArTgCESQSyEUirZTboyCnQiSCYQiSCYQiSCZQgeAVxwqYQgSwMVwNUFbMKWBquaWCArBVzKwDbRoqaWATcKbQKuaWAbcKbQKuaWAbcKVzqwNFYIqcWATaKVziwDbhDaebhjaebhgrBbTrcCFZDafbhdVFcTcHbT7cDFY0BbT7cD0ArxgtVoArfgGq1ArHFUDcBFY0VFceqFY1UFcMKFY1VFcmAFYtQFcMCFYsBFcugFYtAFcMAFYsFFcuoFYoqigEqFeEVFcuqFYlUFccKFYlVFc2AFYdQFccCFf4rbgNVoArjgGq0Ar/FbMFFc+oFYYqkgEqFf4r/FY0VqgrlhWqFf4r/Ff4rdqorowArBqArlgQr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rbqgrlhQrCioroAYIr/Ff4r/FbcFqorllWoFf4r/FY9AFcmqFYUBFc+gFf4rZgFVqAqjgWqwAr/FbdUFccKFYkVFcwFDitVFccqFYkFFcuoFeNAFcWqFYkBFcugFYtQFUMCFYsAFcuAFYtUFcMKFY0VFcgHFitVFcMqFY0FFceoFY9AFcGqFY0BqtQFT8C1WgFeMAqtUFb8K1WAFY7cglQrIioriBI8FqtAFb2q1ArJbjzaBFZEBbj7aB0ALIFcLaHbkLaJFYbcd1QrKbjzaKbkDaLbgSwcVwLaJWD6uLFYawaVwIrMbgKwaVwLaKbgawaVwLaLbgawZQQLaLWDiuOWAaEYQQKuMWAiEXKwKuNQjSCQQjSCQQjSCRAAIrBqgqThQrBwAUQQiyCSQgjdSbISCRQgZYSKwKCSQghYQKwSCSQghYQKwSCTAAMVFYNUCJsKFQOqFShYEoARMrRWXLAiFMiorCFSxYEFhQ6BFYJWXLAosIBgVWKzBYGcAsFBIdWKzIhGABI1EADArNoArcFhgqeWQwAEqAqeLJRVfcBLWdAH4A5A="))
+  };
+
+  // p50
+  if (p < 55) return {
+    width : 176, height : 176, bpp : 2,
+    transparent : -1,
+    palette : (reverse ? pal1 : pal2),
     buffer : require("heatshrink").decompress(atob("AH4A/AH4AChWq1WpqtUFUgpBFYYABoApggQqDFYlVqBVjFYxZfFQorGLLrWCFZbgbVguoBQcFLD8qFQYMHiosDKzoOJFgZYYKwYPLFgZWawARMLDJWCawgAJcAZWYCZ6FCLCkKFQOgCZ8BFYNUFaZWSLAlAQShWQLAiESQQRtTLAKESFQOoFacFQiSCCwArTgCESQSyEUlTZTboyCnQiSCYQiSCYQiSCZQgdAVxwqYQgSwMVwOoFbMFWBquaWCArBVzKwDbRoqaWATcKbQKuaWAbcKbQKuaWAbcKVzqwNFYIqcWATaKVziwDbhDaebhjaebhgrBbTrcCFZDafbheqFcTcHbT7cDFY0CbT7cDqArxhWqwArfgFVqgrHFUDcBFY0qFcdVFY2oFcMFFY2qFclAFYugFcMBFYsCFctQFYuAFcMAFYsKFctUFYoqigEVFeEqFctVFYmoFccFFYmqFc1AFYegFccBFf4rbgWqwArjgFVqAr/FbMKFc9UFYYqkgEVFf4r/FY0q1ArlgtVFf4r/Ff4rd1QrooArB0ArlgIr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rb1ArlgorClQroAYIr/Ff4r/FbcK1QrlitUFf4r/FY+AFclVFYUCFc9QFf4rZgGq0AqjgNVoAr/FbeoFccFFYkqFcwFDlWqFccVFYkKFctUFeOAFcVVFYkCFctQFYugFUMBFYsAFctAFYuoFcMFFY0qFcgHFlWqFcMVFY0KFcdUFY+AFcFVFY0C1WgFT8BqtQFeMA1WoFb8FqtAFY7cgiorIlQriBI8K1WAFb1VqgrJbjzaBFZECbj7aBqALIFcLaHbkLaJFYbcdqorKbjzaKbkDaLbgSwcVwLaJWD6uLFYawaVwIrMbgKwaVwLaKbgawaVwLaLbgawZQQLaLWDiuOWAaEYQQKuMWAiEXKwKuNQjSCQQjSCQQjSCRAAIrB1AqTgorBoAUQQiyCSQgjdSbISCRQgZYSKwKCSQghYQKwSCSQghYQKwSCTAAMqFYOoCJsFFQNVFShYEwARMFQRWVLAiFMQIRWWLAosKFQZWXLAosIFQZWYLAzgFawZWbAAMKFgmq1IoEAANUFTQABFZtAFbgsFFYwqeWQorFVjZZJFYhVfcAwrCazoA/AHI"))
   };
 
-  // p60
-  if (p >= 60 && p < 70) return {
+  // p55
+  if (p < 60) return {
     width : 176, height : 176, bpp : 2,
     transparent : -1,
-    palette : pal2,
+    palette : (reverse ? pal1 : pal2),
+    buffer : require("heatshrink").decompress(atob("AH4A/AH4AChWq1WpqtUFUgpBFYYABoApggQqDFYlVqBVjFYxZfFQorGLLrWCFZbgbVguoBQcFLD8qFQYMHiosDKzoOJFgZYYKwYPLFgZWawARMLDJWCawgAJcAZWYCZ6FCLCkKFQOgCZ8BFYNUFaZWSLAlAQShWQLAiESQQRtTLAKESFQOoFacFQiSCCwArTgCESQSyEUlTZTboyCnQiSCYQiSCYQiSCZQgdAVxwqYQgSwMVwOoFbMFWBquaWCArBVzKwDbRoqaWATcKbQKuaWAbcKbQKuaWAbcKVzqwNFYIqcWATaKVziwDbhDaebhjaebhgrBbTrcCFZDafbheqFcTcHbT7cDFY0CbT7cDqArxhWqwArfgFVqgrHFUDcBFY0qFcdVFY2oFcMFFY2qFclAFYugFcMBFYsCFctQFYuAFcMAFYsKFctUFYoqigEVFeEqFctVFYmoFccFFYmqFc1AFYegFccBFf4rbgWqwArjgFVqAr/FbMKFc9UFYYqkgEVFf4r/FY0q1ArlgtVFf4r/Ff4rd1QrooArB0ArlgIr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rb1ArlgorClQroAYIr/Ff4r/FbcK1QrlitUFf4r/FY+AFclVFYUCFc9QFf4rZgGq0AqjgNVoAr/FbeoFccFFYkqFcwFDlWqFccVFYkKFctUFeOAFcVVFYkCFctQFYugFUMBFYsAFctAFYuoFcMFFY0qFcgHFlWqFcMVFY0KFcdUFY+AFcFVFY0C1WgFT8BqtQFeMA1WoFb8FqtAFY7cgiorIlQriBI8K1WAFb1VqgrJbjzaBFZECbj7aBqALIFcLaHbkLaJFYbcdqorKbjzaKbkDaLbgSwcVwLaJWD6uLFYawaVwIrMbgKwaVwLaKbgawaVwLaLbgawZQQLaLWDiuOWAaEYQQKuMWAiEXKwKuNQjSCQQjSCQQjSCRAAIrB1AqTgorBoAUQQiyCSQgjdSbISCRQgZYSKwKCSQghYQKwSCSQghYQKwSCTAAMqFYOoCJsFFQNVFShYEwARMFQRWVLAmVQJxWWLAgcLFQZWXLAWpJJQqDKzBYC0ofDqjWHKzYhHABA1EADArNoArcFhgqegEBFRKsbLJxVfcBLWdAH4A5A=="))
+  };
+
+  // p60
+  if (p < 65) return {
+    width : 176, height : 176, bpp : 2,
+    transparent : -1,
+    palette : (reverse ? pal1 : pal2),
     buffer : require("heatshrink").decompress(atob("AH4A/AH4AChWq1WpqtUFUgpBFYYABoApggQqDFYlVqBVjFYxZfFQorGLLrWCFZbgbVguoBQcFLD8qFQYMHiosDKzoOJFgZYYKwYPLFgZWawARMLDJWCawgAJcAZWYCZ6FCLCkKFQOgCZ8BFYNUFaZWSLAlAQShWQLAiESQQRtTLAKESFQOoFacFQiSCCwArTgCESQSyEUlTZTboyCnQiSCYQiSCYQiSCZQgdAVxwqYQgSwMVwOoFbMFWBquaWCArBVzKwDbRoqaWATcKbQKuaWAbcKbQKuaWAbcKVzqwNFYIqcWATaKVziwDbhDaebhjaebhgrBbTrcCFZDafbheqFcTcHbT7cDFY0CbT7cDqArxhWqwArfgFVqgrHFUDcBFY0qFcdVFY2oFcMFFY2qFclAFYugFcMBFYsCFctQFYuAFcMAFYsKFctUFYoqigEVFeEqFctVFYmoFccFFYmqFc1AFYegFccBFf4rbgWqwArjgFVqAr/FbMKFc9UFYYqkgEVFf4r/FY0q1ArlgtVFf4r/Ff4rd1QrooArB0ArlgIr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rb1ArlgorClQroAYIr/Ff4r/FbcK1QrlitUFf4r/FY+AFclVFYUCFc9QFf4rZgGq0AqjgNVoAr/FbeoFccFFYkqFcwFDlWqFccVFYkKFctUFeOAFcVVFYkCFctQFYugFUMBFYsAFctAFYuoFcMFFY0qFcgHFlWqFcMVFY0KFcdUFY+AFcFVFY0C1WgFT8BqtQFeMA1WoFb8FqtAFY7cgiorIlQriBI8K1WAFb1VqgrJbjzaBFZECbj7aBqALIFcLaHbkLaJFYbcdqorKbjzaKbkDaLbgSwcVwLaJWD6uLFYawaVwIrMbgKwaVwLaKbgawaVwLaLbgawZQQLaLWDiuOWAaEYQQKuMWAelNBqCLVxqEC0oRPQS6EC0oSQQSyECFYKEVQSIABFYI/QAAcFFYJDRCgSCmYYjdSCqqYCLCRWBYyiECISBWCYqgXCLCBWCQSYYEIhxqCeChYFThoQCKypYEIxgPPLB4cKFQZWXDoosIBhhYWcArWDKzYhHABA1EADArNoArcFhgqeWQysgLJxVfcBLWdAH4A5A"))
   };
 
-  // p70
-  if (p >= 70 && p < 80) return {
+  // p65
+  if (p < 70) return {
     width : 176, height : 176, bpp : 2,
     transparent : -1,
-    palette : pal2,
+    palette : (reverse ? pal1 : pal2),
+    buffer : require("heatshrink").decompress(atob("AH4A/AH4AChWq1WpqtUFUgpBFYYABoApggQqDFYlVqBVjFYxZfFQorGLLrWCFZbgbVguoBQcFLD8qFQYMHiosDKzoOJFgZYYKwYPLFgZWawARMLDJWCawgAJcAZWYCZ6FCLCkKFQOgCZ8BFYNUFaZWSLAlAQShWQLAiESQQRtTLAKESFQOoFacFQiSCCwArTgCESQSyEUlTZTboyCnQiSCYQiSCYQiSCZQgdAVxwqYQgSwMVwOoFbMFWBquaWCArBVzKwDbRoqaWATcKbQKuaWAbcKbQKuaWAbcKVzqwNFYIqcWATaKVziwDbhDaebhjaebhgrBbTrcCFZDafbheqFcTcHbT7cDFY0CbT7cDqArxhWqwArfgFVqgrHFUDcBFY0qFcdVFY2oFcMFFY2qFclAFYugFcMBFYsCFctQFYuAFcMAFYsKFctUFYoqigEVFeEqFctVFYmoFccFFYmqFc1AFYegFccBFf4rbgWqwArjgFVqAr/FbMKFc9UFYYqkgEVFf4r/FY0q1ArlgtVFf4r/Ff4rd1QrooArB0ArlgIr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rb1ArlgorClQroAYIr/Ff4r/FbcK1QrlitUFf4r/FY+AFclVFYUCFc9QFf4rZgGq0AqjgNVoAr/FbeoFccFFYkqFcwFDlWqFccVFYkKFctUFeOAFcVVFYkCFctQFYugFUMBFYsAFctAFYuoFcMFFY0qFcgHFlWqFcMVFY0KFcdUFY+AFcFVFY0C1WgFT8BqtQFeMA1WkFb8FqtAFY+VbUArIlVVFcIJHhI1IAC9VqiNJXI7aYFZAKKbS5MJFcKkJXRLafBYbcdqorKbjzPMbjxKNMhauTURawdJJorBWDShBFZiRBWDQcOHRyuPOhorBWDIbPWDRzQSYKEYIwLLOHgSEXDIJyPQjD2SQjCCQQjSCRCYY/QN4xDRQiyCSQgjdSCqqECLCRWBYyiECISBWCYqgXCLCBWCQSYYEIhxqCeChYFThoQCKypYEIxgPPLB4cKFQZWXDoosIBhhYWcArWDKzYhHABA1EADArNoArcFhgqeWQysgLJxVfcBLWdAH4A5A="))
+  };
+
+  // p70
+  if (p < 75) return {
+    width : 176, height : 176, bpp : 2,
+    transparent : -1,
+    palette : (reverse ? pal1 : pal2),
     buffer : require("heatshrink").decompress(atob("AH4A/AH4AChWq1WpqtUFUgpBFYYABoApggQqDFYlVqBVjFYxZfFQorGLLrWCFZbgbVguoBQcFLD8qFQYMHiosDKzoOJFgZYYKwYPLFgZWawARMLDJWCawgAJcAZWYCZ6FCLCkKFQOgCZ8BFYNUFaZWSLAlAQShWQLAiESQQRtTLAKESFQOoFacFQiSCCwArTgCESQSyEUlTZTboyCnQiSCYQiSCYQiSCZQgdAVxwqYQgSwMVwOoFbMFWBquaWCArBVzKwDbRoqaWATcKbQKuaWAbcKbQKuaWAbcKVzqwNFYIqcWATaKVziwDbhDaebhjaebhgrBbTrcCFZDafbheqFcTcHbT7cDFY0CbT7cDqArxhWqwArfgFVqgrHFUDcBFY0qFcdVFY2oFcMFFY2qFclAFYugFcMBFYsCFctQFYuAFcMAFYsKFctUFYoqigEVFeEqFctVFYmoFccFFYmqFc1AFYegFccBFf4rbgWqwArjgFVqAr/FbMKFc9UFYYqkgEVFf4r/FY0q1ArlgtVFf4r/Ff4rd1QrooArB0ArlgIr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rb1ArlgorClQroAYIr/Ff4r/FbcK1QrlitUFf4r/FY+AFclVFYUCFc9QFf4rZAgoAggNVoAr/FbdUFccFFYkVFcwFDioFEAD4lFGIorgPogrtWoYAfqorEgIrlqArFAwgAdEg4rlPgqKFADrUHcQorfA4sVA4wAbEY4zHFbh7GRY4AbaY7jBqAqfERArrMBAAZUxNVbkEVFZAJBFcJhRAC6lJFYLcebQIrIBRTaXJhIrhUhLcfD5YLBbjtVFZTceZ5jceJRpkLVyaiLWDpJNFYKwaUIIrMSIKwaDhw6OVx50NFYKwZDZ6waOaCTBQjBGBZZw8CQi4ZBOR6EYeySEYQSCEaQSITDH6BvGIaKEWQSSEEbqQVVQgRYSKwLGUQgRCQKwTFUC4RYQKwSCTDAhEONQTwULAqcNCARWVLAhGMB55YPDhQqDKy4dFFhAMMLCzgFawZWbEI4AIGogAYFZtAFbgsMFTyyGVkBZOKr7gJazoA/AHIA="))
   };
 
-  // p80
-  if (p >= 80 && p < 90) return {
+  // p75
+  if (p < 80) return {
     width : 176, height : 176, bpp : 2,
     transparent : -1,
-    palette : pal2,
+    palette : (reverse ? pal1 : pal2),
+    buffer : require("heatshrink").decompress(atob("AH4A/AH4AChWq1WpqtUFUgpBFYYABoApggQqDFYlVqBVjFYxZfFQorGLLrWCFZbgbVguoBQcFLD8qFQYMHiosDKzoOJFgZYYKwYPLFgZWawARMLDJWCawgAJcAZWYCZ6FCLCkKFQOgCZ8BFYNUFaZWSLAlAQShWQLAiESQQRtTLAKESFQOoFacFQiSCCwArTgCESQSyEUlTZTboyCnQiSCYQiSCYQiSCZQgdAVxwqYQgSwMVwOoFbMFWBquaWCArBVzKwDbRoqaWATcKbQKuaWAbcKbQKuaWAbcKVzqwNFYIqcWATaKVziwDbhDaebhjaebhgrBbTrcCFZDafbheqFcTcHbT7cDFY0CbT7cDqArxhWqwArfgFVqgrHFUDcBFY0qFcdVFY2oFcMFFY2qFclAFYugFcMBFYsCFctQFYuAFcMAFYsKFctUFYoqigEVFeEqFctVFYmoFccFFYmqFc1AFYegFccBFf4rbgWqwArjgFVqAr/FbMKFc9UFYYqkgEVFf4r/FY0q1ArlgtVFf4r/Ff4rd1QrooArB0ArlgIr/Ff4r/Ff4r/Ff4rOqtQFf4r/Ff4r/Ff4r/FZVUFcsFFYUVFdADBFf4r/Ff4rbAYYAjKYYr/Ff4rFoArkqorCgIrnqAr/FbIEFAEBSFFf4rYqgrjgorEiormAocVAogAfEooxFFcB9EFdq1DAD9VFYkBFctQFYoGEADokHFcp8FRQoAdag7iFFb4HFioHGADYjHGY4rcPYyLHADbTHcYNQFT4iIFdZgIADKmJqrcgiorIBIIrhMKIAXUpIrBbjzaBFZAKKbS5MJFcKkJbj4fLBYLcdqorKbjzPMbjxKNMhauTURawdJJorBWDShBFZiRBWDQcOHRyuPOhorBWDIbPWDRzQSYKEYIwLLOHgSEXDIJyPQjD2SQjCCQQjSCRCYY/QN4xDRQiyCSQgjdSCqqECLCRWBYyiECISBWCYqgXCLCBWCQSYYEIhxqCeChYFThoQCKypYEIxgPPLB4cKFQZWXDoosIBhhYWcArWDKzYhHABA1EADArNoArcFhgqeWQysgLJxVfcBLWdAH4A5"))
+  };
+
+  // p80
+  if (p < 85) return {
+    width : 176, height : 176, bpp : 2,
+    transparent : -1,
+    palette : (reverse ? pal1 : pal2),
     buffer : require("heatshrink").decompress(atob("AH4A/AH4AChWq1WpqtUFUgpBFYYABoApggQqDFYlVqBVjFYxZfFQorGLLrWCFZbgbVguoBQcFLD8qFQYMHiosDKzoOJFgZYYKwYPLFgZWawARMLDJWCawgAJcAZWYCZ6FCLCkKFQOgCZ8BFYNUFaZWSLAlAQShWQLAiESQQRtTLAKESFQOoFacFQiSCCwArTgCESQSyEUlTZTboyCnQiSCYQiSCYQiSCZQgdAVxwqYQgSwMVwOoFbMFWBquaWCArBVzKwDbRoqaWATcKbQKuaWAbcKbQKuaWAbcKVzqwNFYIqcWATaKVziwDbhDaebhjaebhgrBbTrcCFZDafbheqFcTcHbT7cDFY0CbT7cDqArxhWqwArfgFVqgrHFUDcBFY0qFcdVFY2oFcMFFY2qFclAFYugFcMBFYsCFctQFYuAFcMAFYsKFctUFYoqigEVFeEqFctVFYmoFccFFYmqFc1AcIdQFccBFf4rbGAoAhKQYr/Fa8FFc9UFYYqkgEVFf4r/FYwDDAEZTDFf4r/Ff4rbqorooArBqArlgIr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rbqgrlgorCioroAYIr/Ff4r/FbYDDAEZTDFf4r/FYtAFclVFYUBFc9QFf4rZAgoAgKQor/FbFUFccFFYkVFcwFDioFEAD4lFGIorgPogrtWoYAfqorEgIrlqArFAwgAdEg4rlPgqKFADrUHcQorfA4sVA4wAbEY4zHFbh7GRY4AbaY7jBqAqfERArrMBAAZUxNVbkEVFZAJBFcJhRAC6lJFYLcebQIrIBRTaXJhIrhUhLcfD5YLBbjtVFZTceZ5jceJRpkLVyaiLWDpJNFYKwaUIIrMSIKwaDhw6OVx50NFYKwZDZ6waOaCTBQjBGBZZw8CQi4ZBOR6EYeySEYQSCEaQSITDH6BvGIaKEWQSSEEbqQVVQgRYSKwLGUQgRCQKwTFUC4RYQKwSCTDAhEONQTwULAqcNCARWVLAhGMB55YPDhQqDKy4dFFhAMMLCzgFawZWbEI4AIGogAYFZtAFbgsMFTyyGVkBZOKr7gJazoA/AHIA="))
   };
 
-  // p90
-  if (p >= 90 && p < 100) return {
+  // p85
+  if (p < 90) return {
     width : 176, height : 176, bpp : 2,
     transparent : -1,
-    palette : pal2,
+    palette : (reverse ? pal1 : pal2),
+    buffer : require("heatshrink").decompress(atob("AH4A/AH4AChWq1WpqtUFUgpBFYYABoApggQqDFYlVqBVjFYxZfFQorGLLrWCFZbgbVguoBQcFLD8qFQYMHiosDKzoOJFgZYYKwYPLFgZWawARMLDJWCawgAJcAZWYCZ6FCLCkKFQOgCZ8BFYNUFaZWSLAlAQShWQLAiESQQRtTLAKESFQOoFacFQiSCCwArTgCESQSyEUlTZTboyCnQiSCYQiSCYQiSCZQgdAVxwqYQgSwMVwOoFbMFWBquaWCArBVzKwDbRoqaWATcKbQKuaWAbcKbQKuaWAbcKVzqwNFYIqcWATaKVziwDbhEBtQrgbhEFrTacbhkFqzadbgQrIXRbcfqoribg5hJbjIrGXILlIbjIiGFdZgIADSmHFYIqgbgIrGcgIriEYwzHADZ7HRY4rdaYrjHADcBFYoGBFcgkEGQwAeFYqKHFbzUEcQ4AdiorwiorlEogxFAD59FWoorhoArDqArjgIr/FbYwFAEJSDFf4rXgornqgrDFUkAior/Ff4rGAYYAjKYYr/Ff4r/FbdVFdFAFYNQFcsBFf4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/FbdUFcsFFYUVFdADBFf4r/Ff4rbAYYAjKYYr/Ff4rFoArkqorCgIrnqAr/FbIEFAEBSFFf4rYqgrjgorEiormAocVAogAfEooxFFcB9EFdq1DAD9VFYkBFctQFYoGEADokHFcp8FRQoAdag7iFFb4HFioHGADYjHGY4rcPYyLHADbTHcYNQFT4iIFdZgIADKmJqrcgiorIBIIrhMKIAXUpIrBbjzaBFZAKKbS5MJFcKkJbj4fLBYLcdqorKbjzPMbjxKNMhauTURawdJJorBWDShBFZiRBWDQcOHRyuPOhorBWDIbPWDRzQSYKEYIwLLOHgSEXDIJyPQjD2SQjCCQQjSCRCYY/QN4xDRQiyCSQgjdSCqqECLCRWBYyiECISBWCYqgXCLCBWCQSYYEIhxqCeChYFThoQCKypYEIxgPPLB4cKFQZWXDoosIBhhYWcArWDKzYhHABA1EADArNoArcFhgqeWQysgLJxVfcBLWdAH4A5"))
+  };
+
+  // p90
+  if (p < 95) return {
+    width : 176, height : 176, bpp : 2,
+    transparent : -1,
+    palette : (reverse ? pal1 : pal2),
     buffer : require("heatshrink").decompress(atob("AH4A/AH4AChWq1WpqtUFUgpBFYYABoApggQqDFYlVqBVjFYxZfFQorGLLrWCFZbgbVguoBQcFLD8qFQYMHiosDKzoOJFgZYYKwYPLFgZWawARMLDJWCawgAJcAZWYCZ6FCLCkKFQOgCZ8BFYNUFaZWSLAlAQShWQLAiESQQRtTLAKESquq1ArTgqESNgOqwArTIYKERH4KCUQigSBbKTdGCKKCVQiTCCFSyERCALBQQjAPBoArXDZ7ARObKuBSZwcaVzR0QFYKuZWAYNZWCJJKMoKuaWAahKBhiwTJRSudURorBFTgfMVzqjDO5DaeZ5jaeJhhiKbi4rIbT4hLqoriPI7afUpS5BbTwiKFdZgIADSmHFYIqgbgIrGcgIriEYwzHADZ7HRY4rdaYrjHADcBFYoGBFcgkEGQwAeFYqKHFbzUEcQ4AdiorwiorlEogxFAD59FWoorhoArDqArjgIr/FbYwFAEJSDFf4rXgornqgrDFUkAior/Ff4rGAYYAjKYYr/Ff4r/FbdVFdFAFYNQFcsBFf4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/FbdUFcsFFYUVFdADBFf4r/Ff4rbAYYAjKYYr/Ff4rFoArkqorCgIrnqAr/FbIEFAEBSFFf4rYqgrjgorEiormAocVAogAfEooxFFcB9EFdq1DAD9VFYkBFctQFYoGEADokHFcp8FRQoAdag7iFFb4HFioHGADYjHGY4rcPYyLHADbTHcYNQFT4iIFdZgIADKmJqrcgiorIBIIrhMKIAXUpIrBbjzaBFZAKKbS5MJFcKkJbj4fLBYLcdqorKbjzPMbjxKNMhauTURawdJJorBWDShBFZiRBWDQcOHRyuPOhorBWDIbPWDRzQSYKEYIwLLOHgSEXDIJyPQjD2SQjCCQQjSCRCYY/QN4xDRQiyCSQgjdSCqqECLCRWBYyiECISBWCYqgXCLCBWCQSYYEIhxqCeChYFThoQCKypYEIxgPPLB4cKFQZWXDoosIBhhYWcArWDKzYhHABA1EADArNoArcFhgqeWQysgLJxVfcBLWdAH4A5A"))
+  };
+
+  // p95
+  if (p < 98  || (p < 100 && endsDontShow)) return {
+    width : 176, height : 176, bpp : 2,
+    transparent : -1,
+    palette : (reverse ? pal1 : pal2),
+    buffer : require("heatshrink").decompress(atob("AH4A/AH4AChWq1WpqtUFUgpBFYYABoApggQqDFYlVqBVjFYxZfFQorGLLsFFZrgbgNVFAeoGohYfiorDBhIACKzVVtQqIFgpYYDgVqB5xYXKwVVoARMLDJGCfBzgDKzA+SLChECC6A/CNRycIS6jCNIQ5uSCqqCCeCqESTKxCCQiBsCTCRDEQiCCWQigSBYaRwGQU6ESQTCESQTCESQTIbQYCJzZVwKTODjSuaOiArBVzKwDBrKwRJJRlBVzSwDUJQMMWCZKKVzqiNFYIqcD5iudUYZ3IbTzPMbTxMMMRTcXFZDafEJdVFcR5HbT6lKXILaeERQrrMBAAaUw4rBFUDcBFYzkBFcQjGGY4AbPY6LHFbrTFcY4AbgIrFAwIrkEggyGADwrFRQ4reagjiHADsVFeEVFcolEGIoAfPoq1FFcNAFYdQFccBFf4rbGAoAhKQYr/Fa8FFc9UFYYqkgEVFf4r/FYwDDAEZTDFf4r/Ff4rbqorooArBqArlgIr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rbqgrlgorCioroAYIr/Ff4r/FbYDDAEZTDFf4r/FYtAFclVFYUBFc9QFf4rZAgoAgKQor/FbFUFccFFYkVFcwFDioFEAD4lFGIorgPogrtWoYAfqorEgIrlqArFAwgAdEg4rlPgqKFADrUHcQorfA4sVA4wAbEY4zHFbh7GRY4AbaY7jBqAqfERArrMBAAZUxNVbkEVFZAJBFcJhRAC6lJFYLcebQIrIBRTaXJhIrhUhLcfD5YLBbjtVFZTceZ5jceJRpkLVyaiLWDpJNFYKwaUIIrMSIKwaDhw6OVx50NFYKwZDZ6waOaCTBQjBGBZZw8CQi4ZBOR6EYeySEYQSCEaQSITDH6BvGIaKEWQSSEEbqQVVQgRYSKwLGUQgRCQKwTFUC4RYQKwSCTDAhEONQTwULAqcNCARWVLAhGMB55YPDhQqDKy4dFFhAMMLCzgFawZWbEI4AIGogAYFZtAFbgsMFTyyGVkBZOKr7gJazoA/AHIA=="))
+  };
+
+  // p98
+  if (p < 100) return {
+    width : 176, height : 176, bpp : 2,
+    transparent : -1,
+    palette : (reverse ? pal1 : pal2),
+    buffer : require("heatshrink").decompress(atob("AH4A/AH4ACgtV1WpqtUFUlVAAIrCAANAFMEBEoQrFqtQKsQrHLL4jEFY5ZdawIrMcDasEEIo1FLDUVD4YMUKyo5NLDAcDB7ZWOoARMLDJGCfBzgDKzA+SLChECC6A/CNRycIS6jCNIQ5uSCqqCCeCqESTKxCCQiBsCTCRDEQiCCWQigSBYaRwGQU6ESQTCESQTCESQTIbQYCJzZVwKTODjSuaOiArBVzKwDBrKwRJJRlBVzSwDUJQMMWCZKKVzqiNFYIqcD5iudUYZ3IbTzPMbTxMMMRTcXFZDafEJdVFcR5HbT6lKXILaeERQrrMBAAaUw4rBFUDcBFYzkBFcQjGGY4AbPY6LHFbrTFcY4AbgIrFAwIrkEggyGADwrFRQ4reagjiHADsVFeEVFcolEGIoAfPoq1FFcNAFYdQFccBFf4rbGAoAhKQYr/Fa8FFc9UFYYqkgEVFf4r/FYwDDAEZTDFf4r/Ff4rbqorooArBqArlgIr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rbqgrlgorCioroAYIr/Ff4r/FbYDDAEZTDFf4r/FYtAFclVFYUBFc9QFf4rZAgoAgKQor/FbFUFccFFYkVFcwFDioFEAD4lFGIorgPogrtWoYAfqorEgIrlqArFAwgAdEg4rlPgqKFADrUHcQorfA4sVA4wAbEY4zHFbh7GRY4AbaY7jBqAqfERArrMBAAZUxNVbkEVFZAJBFcJhRAC6lJFYLcebQIrIBRTaXJhIrhUhLcfD5YLBbjtVFZTceZ5jceJRpkLVyaiLWDpJNFYKwaUIIrMSIKwaDhw6OVx50NFYKwZDZ6waOaCTBQjBGBZZw8CQi4ZBOR6EYeySEYQSCEaQSITDH6BvGIaKEWQSSEEbqQVVQgRYSKwLGUQgRCQKwTFUC4RYQKwSCTDAhEONQTwULAqcNCARWVLAhGMB55YPDhQqDKy4dFFhAMMLCzgFawZWbEI4AIGogAYFZtAFbgsMFTyyGVkBZOKr7gJazoA/AHI"))
   };
 
   // p100
   return {
     width : 176, height : 176, bpp : 2,
     transparent : -1,
-    palette : pal2,
+    palette : (reverse ? pal1 : pal2),
     buffer : require("heatshrink").decompress(atob("AH4A/AH4ACgtVAAVUFUgpDAAdAFMEBFQ4ABqBVnLMQqLFjzWEABLgbVgohEGoqyaiofDBihWVHJpYYDgYPbKxz5NLDJGCfBzgDKzA+SLChECC6A/CNRycIS6jCNIQ5uSCqqCCeCqESTKxCCQiBsCTCRDEQiCCWQigSBYaRwGQU6ESQTCESQTCESQTIbQYCJzZVwKTODjSuaOiArBVzKwDBrKwRJJRlBVzSwDUJQMMWCZKKVzqiNFYIqcD5iudUYZ3IbTzPMbTxMMMRTcXFZDafEJdVFcR5HbT6lKXILaeERQrrMBAAaUw4rBFUDcBFYzkBFcQjGGY4AbPY6LHFbrTFcY4AbgIrFAwIrkEggyGADwrFRQ4reagjiHADsVFeEVFcolEGIoAfPoq1FFcNAFYdQFccBFf4rbGAoAhKQYr/Fa8FFc9UFYYqkgEVFf4r/FYwDDAEZTDFf4r/Ff4rbqorooArBqArlgIr/Ff4r/Ff4r/Ff4r/Ff4r/Ff4r/Ff4rbqgrlgorCioroAYIr/Ff4r/FbYDDAEZTDFf4r/FYtAFclVFYUBFc9QFf4rZAgoAgKQor/FbFUFccFFYkVFcwFDioFEAD4lFGIorgPogrtWoYAfqorEgIrlqArFAwgAdEg4rlPgqKFADrUHcQorfA4sVA4wAbEY4zHFbh7GRY4AbaY7jBqAqfERArrMBAAZUxNVbkEVFZAJBFcJhRAC6lJFYLcebQIrIBRTaXJhIrhUhLcfD5YLBbjtVFZTceZ5jceJRpkLVyaiLWDpJNFYKwaUIIrMSIKwaDhw6OVx50NFYKwZDZ6waOaCTBQjBGBZZw8CQi4ZBOR6EYeySEYQSCEaQSITDH6BvGIaKEWQSSEEbqQVVQgRYSKwLGUQgRCQKwTFUC4RYQKwSCTDAhEONQTwULAqcNCARWVLAhGMB55YPDhQqDKy4dFFhAMMLCzgFawZWbEI4AIGogAYFZtAFbgsMFTyyGVkBZOKr7gJazoA/AHIA="))
   };
 }
@@ -540,14 +687,15 @@ function buzzer(n) {
 // timeout used to update every minute
 var drawTimeout;
 
-// schedule a draw for the next minute
+// schedule a draw for the next minute or every sec_update ms
 function queueDraw() {
+  let delay = settings.ring == 'Seconds' ? sec_update - (Date.now() % sec_update) : 60000 - (Date.now() % 60000);
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
     checkIdle();
     draw();
-  }, 60000 - (Date.now() % 60000));
+  }, delay);
 }
 
 // Stop updates when LCD is off, restart when on
@@ -561,13 +709,21 @@ Bangle.on('lcdPower',on=>{
 });
 
 Bangle.setUI("clockupdown", btn=> {
-  if (btn<0) prevInfo();
-  if (btn>0) nextInfo();
+  if (btn<0) settings.idxInfo = prevInfo(settings.idxInfo);
+  if (btn>0) settings.idxInfo = nextInfo(settings.idxInfo);
+  // power HRM on/off accordingly
+  infoMode = infoList[settings.idxInfo];
+  Bangle.setHRMPower(infoMode == "ID_HRM" ? 1 : 0);
+  resetHrm();
+  log_debug("idxInfo=" + settings.idxInfo);
   draw();
+  storage.write(SETTINGS_FILE, settings);  // Retains idxInfo when leaving the face
 });
 
 loadSettings();
 loadLocation();
+var infoMode = infoList[settings.idxInfo];
+updateSunRiseSunSet(new Date(), location.lat, location.lon, true);
 
 g.clear();
 Bangle.loadWidgets();

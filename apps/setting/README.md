@@ -1,20 +1,32 @@
 # Settings
 
-This is Bangle.js's settings menu
+This is Bangle.js's main settings menu:
 
-* **App/Widget Settings** settings specific to installed applications
-* **BLE** Bluetooth Settings menu - see below.
+* **Apps** - Settings for installed apps/widgets
+* **System** - Settings related to themes, default apps, date & time, etc
+* **Bluetooth** - Bluetooth Settings menu - see below.
+* **Alerts** - Set how Bangle.js alerts you (including Quiet mode)
+* **Utils** - Utilities, including resetting settings
+
+See below for options under each heading:
+
+## System - System settings
+
+* **Theme** Adjust the colour scheme
+* **LCD** Configure settings about the screen. How long it stays on, how bright it is, and when it turns on - see below.
+* **Locale** set time zone, the time format (12/24h, for supported clocks) and the first day of the week
+* **Clock** if you have more than one clock face, select the default one
+* **Launcher** if you have more than one app launcher, select the default one
+* **Date & Time** Configure the current time - Note that this can be done much more easily by choosing 'Set Time' from the App Loader
+* **Altitude** On Bangle.js 2, calibrate the altitude (which varies depending on Air Pressure). Tap `Adjust Up`/`Adjust Down` to move the reported altitude by around 10m
+
+## Alerts
+
 * **Beep** most Bangle.js do not have a speaker inside, but they can use the vibration motor to beep in different pitches. You can change the behaviour here to use a Piezo speaker if one is connected
 * **Vibration** enable/disable the vibration motor
 * **Quiet Mode** prevent notifications/alarms from vibrating/beeping/turning the screen on - see below
-* **Locale** set time zone, the time format (12/24h, for supported clocks) and the first day of the week
-* **Select Clock** if you have more than one clock face, select the default one
-* **Date & Time** Configure the current time - Note that this can be done much more easily by choosing 'Set Time' from the App Loader
-* **LCD** Configure settings about the screen. How long it stays on, how bright it is, and when it turns on - see below.
-* **Theme** Adjust the colour scheme
-* **Utils** Utilities - including resetting settings (see below)
 
-## BLE - Bluetooth Settings
+## Bluetooth
 
 * **Make Connectable** regardless of the current Bluetooth settings, makes Bangle.js so you can connect to it (while the window is up)
 * **BLE** is Bluetooth LE enabled and the watch connectable?
@@ -67,3 +79,13 @@ The exact effects depend on the app.  In general the watch will not wake up by i
 * **Reset Settings** Reset the settings (as set in this app) to defaults. Does not reset settings for other apps.
 * **Factory Reset** (not available on Bangle.js 1) - wipe **everything** and return to a factory state
 * **Turn Off** Turn Bangle.js off
+
+# Development
+
+The settings code uses `push/pop/restoreMenu` to navigate different levels of menus. These functions are used as follows:
+
+- `pushMenu`: enter a new level of menu, one deeper than the current (e.g. a submenu)
+- `popMenu`: return to the previous menu level, one more shallow than the current (e.g. returning from a submenu)
+- `restoreMenu`: redraw the current menu (e.g. after an alert)
+
+These functions will keep track of outer menu's scroll positions, to avoid the user being returned to the very first entry as they navigate.

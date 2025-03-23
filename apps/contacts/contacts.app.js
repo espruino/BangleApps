@@ -1,14 +1,14 @@
-/* contacts.js */
-
 var Layout = require("Layout");
 
-var wp = require('Storage').readJSON("contacts.json", true) || [];
+var contacts = require('Storage').readJSON("contacts.json", true) || [];
 
 function writeContacts() {
-  require('Storage').writeJSON("contacts.json", wp);
+  require('Storage').writeJSON("contacts.json", contacts);
 }
 
 function callNumber (number) {
+  E.showMessage('Calling ' + number + '...');
+  setTimeout(() => mainMenu(), 2000);
   Bluetooth.println(JSON.stringify({
     t:"intent",
     target:"activity",
@@ -17,35 +17,49 @@ function callNumber (number) {
     categories:["android.intent.category.DEFAULT"],
     data: 'tel:' + number,
   }))
-
 }
 
 function mainMenu() {
   var menu = {
+    "": {
+      "title": "Contacts",
+    },
     "< Back" : Bangle.load
   };
-  if (!wp.length) {
+  if (!contacts.length) {
     menu['No Contacts'] = () => {};
-  } else {
-    for (const e of wp) {
-      const closureE = e;
-      menu[e.name] = () => showContact(closureE);
-    }
   }
-  menu["Add"] = addContact;
-  menu["Remove"] = removeContact;
+  contacts.forEach((e, idx) => {
+    menu[e.name] = () => showContact(idx)
+  })
+  menu["Add Contact"] = addContact;
   g.clear();
   E.showMenu(menu);
 }
 
-function showContact(i) {
+function showContact(idx) {
   g.clear();
+  var name = contacts[idx].name;
+  let longName = g.setFont("6x8:2").stringWidth(name) >= g.getWidth();
+  var number = contacts[idx].number;
+  let longNumber = g.setFont("6x8:2").stringWidth(number) >= g.getWidth();
   (new Layout ({
     type:"v",
     c: [
-      {type:"txt", font:"10%", pad:1, fillx:1, filly:1, label: i["name"] + "\n" + i["number"]},
-      {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "Call", cb: l => callNumber(i['number'])},
-      {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "Back to list", cb: mainMenu}
+      {type: 'h', filly: 3, fillx:1, c: [
+        {type:"btn", font:"6x8", pad:1, fillx:1, filly:1, label: "<- Back to list", cb: mainMenu},
+        {type:"btn", pad:1, fillx:1, filly:3, src: require("heatshrink").decompress(atob("jUawYGDgVJkgQGBAOSBAsJkALBBIoaCDogaCAQYXBgIIFkmAC4IIFyVAgAIGGQUJHwo4FAo2QBwICDNAVAkgCEEAYUFEAQUFE34mRPwgmEcYgmDUg8AgjLGgAA==")),
+          cb: () => (
+            E.showPrompt("Delete Contact '" + name + "'?", )
+              .then((res) => { if (res) { deleteContact(idx) } else { mainMenu() } })
+          )
+        },
+      ]},
+      {type:"txt", font:longName ? "6x8" : "6x8:2", pad:1, fillx:2, filly:3, label: longName ? name.slice(0, name.length/2) + '\n' + name.slice(name.length/2) : name},
+      {type:"txt", font: "6x8:2", pad:1, fillx:2, filly:3, label: longNumber ? number.slice(0, number.length/2) + '\n' + number.slice(number.length/2) : number},
+      {type: 'h', filly: 3, fillx:1, c: [
+          {type:"btn", pad:1, fillx:1, filly:3, src:atob("GBiBAAAAAAAAAAAAAB8AAB+AAB+AAB+AAB+AAA+AAA8AAA4AAAYAAAcAAAMAAAGAAAHB8ADz+AA/+AAf+AAH+AAA+AAAAAAAAAAAAA=="), cb: l => callNumber(number)},
+        ]},
     ],
     lazy:true
   })).render();
@@ -80,10 +94,10 @@ function showNumpad() {
           {type:"h",filly:1, c: [digitBtn("4"), digitBtn("5"), digitBtn("6")]},
           {type:"h",filly:1, c: [digitBtn("7"), digitBtn("8"), digitBtn("9")]},
           {type:"h",filly:1, c: [
-            {type:"btn", font:ds, width:58, label:"C", cb: removeDigit},
-            digitBtn('0'),
-            {type:"btn", font:ds, width:58, id:"OK", label:"OK", cb: l => resolve(number)}
-          ]}
+              {type:"btn", font:ds, width:58, label:"C", cb: removeDigit},
+              digitBtn('0'),
+              {type:"btn", font:ds, width:58, id:"OK", label:"OK", cb: l => resolve(number)}
+            ]}
         ]}
       ], lazy:true});
     g.clear();
@@ -92,77 +106,28 @@ function showNumpad() {
   });
 }
 
-function removeContact() {
-  var menu = {
-    "" : {title : "Select Contact"},
-    "< Back" : mainMenu
-  };
-  if (wp.length===0) Object.assign(menu, {"No Contacts":""});
-  else {
-    wp.forEach((val, card) => {
-      const name = wp[card].name;
-      menu[name]=()=>{
-        E.showMenu();
-        var confirmRemove = new Layout (
-          {type:"v", c: [
-            {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:"Delete"},
-            {type:"txt", font:"15%", pad:1, fillx:1, filly:1, label:name},
-            {type:"h", c: [
-              {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: "YES", cb:l=>{
-                wp.splice(card, 1);
-                writeContacts();
-                mainMenu();
-              }},
-              {type:"btn", font:"15%", pad:1, fillx:1, filly:1, label: " NO", cb:l=>{mainMenu();}}
-            ]}
-          ], lazy:true});
-        g.clear();
-        confirmRemove.render();
-      };
-    });
-  }
-  E.showMenu(menu);
-}
-
-
-function addNewContact(name) {
-  g.clear();
-  showNumpad().then((number) => {
-      wp.push({name: name, number: number});
-      writeContacts();
-      mainMenu();
-  })
-
-
-
-}
-
-function tryAddContact(name) {
-  if (wp.filter((e) => e.name === name).length) {
-    E.showMenu();
-    var alreadyExists = new Layout (
-      {type:"v", c: [
-        {type:"txt", font:Math.min(15,100/name.length)+"%", pad:1, fillx:1, filly:1, label:name},
-        {type:"txt", font:"12%", pad:1, fillx:1, filly:1, label:"already exists."},
-        {type:"h", c: [
-          {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "REPLACE", cb:l=>{ addNewContact(name); }},
-          {type:"btn", font:"10%", pad:1, fillx:1, filly:1, label: "CANCEL", cb:l=>{mainMenu();}}
-        ]}
-      ], lazy:true});
-    g.clear();
-    alreadyExists.render();
-     return;
-  }
-  addNewContact(name);
+function deleteContact(idx) {
+  contacts.splice(idx, 1);
+  writeContacts();
+  mainMenu();
 }
 
 function addContact() {
-  require("textinput").input({text:""}).then(name => {
-    if (name !== "") {
-      tryAddContact(name);
-    } else
-      mainMenu();
-  });
+  require("textinput").input({text:""})
+    .then(name => {
+      name = name.trim();
+      if (name !== "") {
+        g.clear();
+        showNumpad().then((number) => {
+          contacts.push({name: name, number: number});
+          writeContacts();
+          mainMenu();
+        })
+      } else {
+        E.showMessage("Invalid name");
+        setTimeout(() => mainMenu(), 1000);
+      }
+    });
 }
 
 g.reset();

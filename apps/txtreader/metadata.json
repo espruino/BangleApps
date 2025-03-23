@@ -1,0 +1,16 @@
+{
+  "id": "txtreader",
+  "name": "txtreader",
+  "shortName": "txtreader",
+  "version": "0.02",
+  "description": "Basic text reader with pages and a file selector.",
+  "icon": "txtreader.png",
+  "screenshots": [{"url":"screenshot_txtreader.png"}],
+  "tags": "app,tool",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"txtreader.app.js","url":"app.js"},
+    {"name":"txtreader.img","url":"app-icon.js","evaluate":true}
+  ]
+}

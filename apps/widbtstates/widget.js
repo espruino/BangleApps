@@ -32,7 +32,7 @@
             if (state == 0)
                 return;
             g.reset();
-            g.setColor(colours[state]["".concat(g.theme.dark)]);
+            g.setColor(colours[state][g.theme.dark]);
             g.drawImage(atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="), this.x + 2, this.y + 2);
         },
         width: width(),

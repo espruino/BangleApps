@@ -8,6 +8,7 @@
   "screenshots": [{"url":"screenshot_welcome.png"}],
   "tags": "start,welcome",
   "supports": ["BANGLEJS","BANGLEJS2"],
+  "provides_features" : ["welcome"],
   "allow_emulator": true,
   "storage": [
     {"name":"welcome.boot.js","url":"boot.js"},

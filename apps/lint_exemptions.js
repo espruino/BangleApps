@@ -79,12 +79,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/podadrem/app.js": {
-    "hash": "f7392e74974f69553aade2dcc07527b5d3b71a9b84e6dc5e0dd995e78dff8007",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "apps/openstmap/imagefilter.js": {
     "hash": "8a71e9a0ecfa94150379c41a5a915cfdac39f8b2e485e5cc1ce4629e85293acd",
     "rules": [
@@ -148,13 +142,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "apps/waypoints/waypoints.app.js": {
-    "hash": "ff02639eb8f81784c942093d57d254295e2c78918adb4bcffdf0d0284ebfac55",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "apps/timerclk/timer.js": {
     "hash": "3b70606f1742b34bf4769f6e8703144ff0c3ba401a3a21f97ddcab5432c94db5",
     "rules": [
@@ -195,21 +182,8 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "apps/poweroff/settings.js": {
-    "hash": "c197afe72c612a4b3825a3a12a628d0f4ed83823da3f28885bbf473037a02506",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "apps/oxofocus/app.js": {
     "hash": "cd29309373974ef038725e26d8a2ff2634a437c89cdffc3b12defd65a948db75",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
-  "apps/orloj/app.js": {
-    "hash": "fa43f035d759ba94f564392f410c0c6c485bb41a33c062f03d666738d517ccf3",
     "rules": [
       "no-unused-vars",
       "no-undef"
@@ -348,24 +322,11 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "apps/gbmusic/app.js": {
-    "hash": "c36e9ccf6813264000732cf8aae5b16bb63afafb3bdc81f6f98d670c008b3416",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "apps/gbdebug/app.js": {
     "hash": "5372409dd09a1b165b009afc7dc9af24d4be223ffc6507a3f6e1cbb694a3eeec",
     "rules": [
       "no-unused-vars",
       "no-undef"
-    ]
-  },
-  "apps/gallery/app.js": {
-    "hash": "81b119cc61c9d1ae76071f7ef05580f4f93ac60bf97fbdfe418463817e045402",
-    "rules": [
-      "no-unused-vars"
     ]
   },
   "apps/football/app.js": {
@@ -490,13 +451,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/doztime/app-bangle1.js": {
-    "hash": "1e9598c201175180ae77d1c3bc47e8138b339b72eb58782b5057fb7aefdc88a1",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "apps/carcrazy/app.js": {
     "hash": "fd9f98f4f9e24c63a8fa02918dceab4503edf88e06537922caf86e85884408f3",
     "rules": [
@@ -587,12 +541,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/swp2clk/settings.js": {
-    "hash": "2d9de7ffdf171f6e7b058741046c8a326cf9d5dba651f52fcdb523214b08d626",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/sunclock/app.js": {
     "hash": "54f49294816e06907003a71289a8b79641b1cd082044fb22bb4c4b80f6845459",
     "rules": [
@@ -613,12 +561,6 @@ module.exports = {
   },
   "apps/stepo/app.js": {
     "hash": "67f620970949011b962fb2a2a1bc9fe44cf2dee2e3342d9c6b3399318d6dbc17",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/spotrem/app.js": {
-    "hash": "35f3ee5371acde28427fd01e191ff58108d3d9e4db1a221dca081b7a7b9c3c77",
     "rules": [
       "no-undef"
     ]
@@ -761,12 +703,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/owmweather/boot.js": {
-    "hash": "10fe98e871a7df3338fc764d62ac4db65c20c44774aad112f5faf26c7497f78e",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/openwind/app.js": {
     "hash": "91bfda771bd5cc3127ede3b52f5f088b733ac9e7fc2d8dff4f1d732e66a8af47",
     "rules": [
@@ -811,12 +747,6 @@ module.exports = {
   },
   "apps/mywelcome/app-bangle1.js": {
     "hash": "d569916d2a07f067c96ab45f23b12bf68579c9861927613e228c4536485c1454",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/multidice/app.js": {
-    "hash": "4657e0c1a72c555426561f4395febea280d4140cfeba19429c4f0c4737caf7f5",
     "rules": [
       "no-undef"
     ]
@@ -917,12 +847,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/infoclk/settings.js": {
-    "hash": "56adc3eff3cbc04dd08238ed7e559416ebbc7736c872070c757d70bf5f31b440",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/infoclk/app.js": {
     "hash": "27cc368eb1be14658db7fd482e78c4bc7673e2a1c68bc3a1a5f7c7e29915ca88",
     "rules": [
@@ -971,12 +895,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/gpssetup/gpssetup.js": {
-    "hash": "a63f670f4adf04895e6837270fcf19bd56f0a6d049cfb8e3ad8928c283d1bfd3",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/glbasic/glbasic.app.js": {
     "hash": "7d12a030d6f0ef69a0e5a9783229fd49c0a6a06bf751e3ac562145d2ce8350e9",
     "rules": [
@@ -991,12 +909,6 @@ module.exports = {
   },
   "apps/gbridge/sample_messages.js": {
     "hash": "4d0139c7575cdd817338beff88cdb299caba555c5e3666535f92abc76643e466",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/gbmusic/boot.js": {
-    "hash": "1bf553c4c3452eae3930b4a08cd3e01efc2686fcb19fd2c4f9aa949b7768ff4c",
     "rules": [
       "no-undef"
     ]
@@ -1105,12 +1017,6 @@ module.exports = {
   },
   "apps/calendar/settings.js": {
     "hash": "9f05366b91d0293ed965d8de019bfd044f96683542b86ebabaa3c8d3cc3ad3a7",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/calendar/calendar.js": {
-    "hash": "d4f0375fea397a1b93d39667e9f8eaf1a75ebd0462c216015352131360d30099",
     "rules": [
       "no-undef"
     ]

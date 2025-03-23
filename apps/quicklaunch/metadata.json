@@ -2,10 +2,10 @@
   "id": "quicklaunch",
   "name": "Quick Launch",
   "icon": "app.png",
-  "version": "0.15",
+  "version": "0.16",
   "description": "Tap or swipe left/right/up/down on your clock face to launch up to five apps of your choice. Configurations can be accessed through Settings->Apps.",
   "type": "bootloader",
-  "tags": "tools, system",
+  "tags": "tools,system",
   "readme": "README.md",
   "supports": ["BANGLEJS2"],
   "storage": [

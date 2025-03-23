@@ -1,6 +1,6 @@
 { "id": "orloj",
   "name": "Orloj",
-  "version": "0.03",
+  "version": "0.10",
   "description": "Astronomical clock",
   "icon": "app.png",
   "readme": "README.md",

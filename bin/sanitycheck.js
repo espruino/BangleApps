@@ -2,6 +2,31 @@
 /* Checks for any obvious problems in apps.json
 */
 
+var BASEDIR = __dirname+"/../";
+var APPSDIR_RELATIVE = "apps/";
+var APPSDIR = BASEDIR + APPSDIR_RELATIVE;
+var showAllErrors = process.argv.includes("--show-all");
+
+if (process.argv.includes("--help")) {
+  console.log(`BangleApps Sanity Check
+------------------------
+
+Checks apps in this repository for common issues that might
+cause problems.
+
+USAGE:
+
+bin/sanitycheck.js
+  - default, runs all tests (hides known errors)
+bin/sanitycheck.js --show-all
+  - show all warnings/errors (including known ones)
+bin/sanitycheck.js --help
+  - show this message
+`);
+  process.exit(0);
+}
+
+
 var fs = require("fs");
 var vm = require("vm");
 var heatshrink = require("../webtools/heatshrink");
@@ -10,53 +35,59 @@ apploader.init({
   DEVICEID : "BANGLEJS2"
 });*/
 
+var jsparse = (() => {
+  var acorn;
+  try {
+    acorn = require("acorn");
+  } catch (e) {
+    console.log("=====================================================");
+    console.log("  ACORN NOT FOUND");
+    console.log("  ---------------");
+    console.log("");
+    console.log("  This means we won't sanity-check uploaded JSON");
+    console.log("=====================================================");
+    return str => {throw new Error("no acorn")};
+  }
 
-var acorn;
-try {
-  acorn = require("acorn");
-} catch (e) {
-  console.log("=====================================================");
-  console.log("  ACORN NOT FOUND");
-  console.log("  ---------------");
-  console.log("");
-  console.log("  This means we won't sanity-check uploaded JSON");
-  console.log("=====================================================");
-}
+  return str => acorn.parse(str, { ecmaVersion: 2020 });
+})();
 
-var BASEDIR = __dirname+"/../";
-var APPSDIR_RELATIVE = "apps/";
-var APPSDIR = BASEDIR + APPSDIR_RELATIVE;
+
 var knownWarningCount = 0;
 var knownErrorCount = 0;
 var warningCount = 0;
 var errorCount = 0;
+var warningList = [];
+var errorList = [];
+
 function ERROR(msg, opt) {
   // file=app.js,line=1,col=5,endColumn=7
   opt = opt||{};
+  errorList.push(msg);
   if (KNOWN_ERRORS.includes(msg)) {
-    console.log(`Known error : ${msg}`);
     knownErrorCount++;
-  } else {
-    console.log(`::error${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
-    errorCount++;
+    if (!showAllErrors) return;
+    msg += " (KNOWN)"
   }
+  console.log(`::error${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
+  errorCount++;
 }
 function WARN(msg, opt) {
   // file=app.js,line=1,col=5,endColumn=7
   opt = opt||{};
+  warningList.push(msg);
   if (KNOWN_WARNINGS.includes(msg)) {
-    console.log(`Known warning : ${msg}`);
     knownWarningCount++;
-  } else {
-    console.log(`::warning${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
-    warningCount++;
+    if (!showAllErrors) return;
+    msg += " (KNOWN)"
   }
+  console.log(`::warning${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
+  warningCount++;
 }
 /* These are errors that we temporarily allow */
 var KNOWN_ERRORS = [
   "In locale en_CA, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
   "In locale fr_FR, long date output must be shorter than 15 characters (10 septembre 2024 -> 17)",
-  "In locale fr_FR, short month must be shorter than 5 characters",
   "In locale sv_SE, speed must be shorter than 5 characters",
   "In locale en_SE, long date output must be shorter than 15 characters (September 10 2024 -> 17)",
   "In locale en_NZ, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
@@ -65,51 +96,23 @@ var KNOWN_ERRORS = [
   "In locale en_IL, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
   "In locale es_ES, long date output must be shorter than 15 characters (miércoles, 10 de septiembre de 2024 -> 35)",
   "In locale fr_BE, long date output must be shorter than 15 characters (dimanche septembre 10 2024 -> 26)",
-  "In locale fr_BE, short month must be shorter than 5 characters",
-  "In locale fr_BE, short month must be shorter than 5 characters",
-  "In locale fr_BE, short month must be shorter than 5 characters",
-  "In locale fr_BE, short month must be shorter than 5 characters",
-  "In locale fr_BE, short month must be shorter than 5 characters",
   "In locale fi_FI, long date output must be shorter than 15 characters (keskiviikkona 10. maaliskuuta 2024 -> 34)",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
-  "In locale fi_FI, short month must be shorter than 5 characters",
   "In locale fi_FI, short month must be shorter than 5 characters",
   "In locale de_CH, meridian must be shorter than 4 characters",
   "In locale de_CH, meridian must be shorter than 4 characters",
   "In locale de_CH, long date output must be shorter than 15 characters (Donnerstag, 10. September 2024 -> 30)",
   "In locale fr_CH, long date output must be shorter than 15 characters (dimanche 10 septembre 2024 -> 26)",
-  "In locale fr_CH, short month must be shorter than 5 characters",
-  "In locale fr_CH, short month must be shorter than 5 characters",
-  "In locale fr_CH, short month must be shorter than 5 characters",
-  "In locale fr_CH, short month must be shorter than 5 characters",
-  "In locale fr_CH, short month must be shorter than 5 characters",
   "In locale wae_CH, long date output must be shorter than 15 characters (Sunntag, 10. Herbštmánet 2024 -> 29)",
   "In locale tr_TR, long date output must be shorter than 15 characters (10 Haziran 2024 Pazartesi -> 25)",
   "In locale hu_HU, long date output must be shorter than 15 characters (2024 Szep 10, Csütörtök -> 23)",
   "In locale oc_FR, long date output must be shorter than 15 characters (divendres 10 setembre de 2024 -> 29)",
   "In locale oc_FR, short month must be shorter than 5 characters",
-  "In locale oc_FR, short month must be shorter than 5 characters",
-  "In locale hr_HR, meridian must be shorter than 4 characters",
-  "In locale hr_HR, meridian must be shorter than 4 characters",
-  "In locale hr_HR, short month must be shorter than 5 characters",
-  "In locale sl_SI, meridian must be shorter than 4 characters",
-  "In locale sl_SI, meridian must be shorter than 4 characters",
   "In locale ca_ES, long date output must be shorter than 15 characters (10 setembre 2024 -> 16)",
-  "In locale ca_ES, short month must be shorter than 5 characters",
 ];
 /* These are warnings we know about but don't want in our output */
 var KNOWN_WARNINGS = [
   "App gpsrec data file wildcard .gpsrc? does not include app ID",
   "App owmweather data file weather.json is also listed as data file for app weather",
-  "App messagegui storage file messagegui is also listed as storage file for app messagelist",
   "App carcrazy has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"carcrazy.settings.json\"}]`)",
   "App loadingscreen has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"loadingscreen.settings.json\"}]`)",
   "App trex has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"trex.settings.json\"}]`)",
@@ -120,104 +123,6 @@ var KNOWN_WARNINGS = [
   `In locale test, long time format might not work in some apps if it is not "%HH:%MM:%SS"`,
   `In locale wae_CH, short time format might not work in some apps if it is not "%HH:%MM"`,
   `In locale test, short time format might not work in some apps if it is not "%HH:%MM"`,
-  "App a_dndtoggle file a_dndtoggle.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App activepedom file activepedom.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App agpsdata file agpsdata.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App alarm file alarm.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App andark file andark.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App antonclkplus file antonclkplus.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App banglexercise file banglexercise.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App barclock file barclock.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App berlinc file berlinc.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App bikespeedo file bikespeedo.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App blc file blc.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App boxclk file boxclk.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App bthome file bthome.clkinfo.js should be evaluated as a function but doesn't end in ')'",
-  "App bthrm file bthrm.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App carcrazy file carcrazy.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App chimer file chimer.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App circlesclock file circlesclock.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App clicompleteclk file clicompleteclk.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App clkinfocal file clkinfocal.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App clkinfogps file gps.clkinfo.js should be evaluated as a function but doesn't end in ')'",
-  "App clkinfogpsspeed file clkinfogpsspeed.clkinfo.js should be evaluated as a function but doesn't end in ')'",
-  "App clkinfom file ram.clkinfo.js should be evaluated as a function but doesn't end in ')'",
-  "App clkinfomag file clkinfomag.clkinfo.js should be evaluated as a function but doesn't end in ')'",
-  "App clkinfostopw file stopw.clkinfo.js should be evaluated as a function but doesn't end in ')'",
-  "App clockcal file clockcal.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App cogclock file cogclock.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App counter2 file counter2.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App cprassist file cprassist.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App dane_tcr file dane_tcr.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App dragboard file dragboard.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App draguboard file draguboard.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App drained file drained.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App drinkcounter file drinkcounter.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App dtlaunch file dtlaunch.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App ffcniftyb file ffcniftyb.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App folderlaunch file folderlaunch.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App gassist file gassist.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App gbmusic file gbmusic.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App getup file getup.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App gipy file gipy.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App gpsrec file gpsrec.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App gpssetup file gpssetup.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App iconlaunch file iconlaunch.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App infoclk file infoclk.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App largeclock file largeclock.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App launch file launch.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App messagelist file messagelist.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App messages file messages.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App messages_light file messages_light.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App messagesoverlay file messagesoverlay.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App metronome file metronome.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App multitimer file multitimer.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App nesclock file nesclock.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App nightwatch file nightwatch.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App owmweather file owmweather.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App pebble file pebble.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App pebbled file pebbled.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App pongclock file pongclock.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App popconlaunch file popcon.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App poweroff file poweroff.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App puzzle15 file puzzle15.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App qcenter file qcenter.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App rebbleagenda file rebbleagenda.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App recorder file recorder.clkinfo.js should be evaluated as a function but doesn't end in ')'",
-  "App rep file rep.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App saclock file saclock.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App sched file sched.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App score file score.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App sensortools file sensortools.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App shadowclk file shadowclk.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App shortcuts file shortcuts.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App simplebgclock file simplebgclock.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App slomoclock file slomoclock.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App slopeclockpp file slopeclockpp.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App smclock file smclock.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App speedalt file speedalt.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App speedalt2 file speedalt2.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App swp2clk file swp2clk.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App taglaunch file taglaunch.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App thunder file thunder.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App timecal file timecal.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App timerclk file timerclk.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App timestamplog file timestamplog.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App toucher file toucher.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App touchtimer file touchtimer.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App trex file trex.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App usgs file usgs.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App weatherClock file weatherClock.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App wid_edit file wid_edit.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App widalarmeta file widalarmeta.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App widbaroalarm file widbaroalarm.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App widbatwarn file widbatwarn.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App widbgjs file widbgjs.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App widdst file widdst.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App widgps file widgps.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App widhrm file widhrm.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App widmp file widmp.settings.js should be evaluated as a function but doesn't end in ')'",
-  "App widsleepstatus file widsleepstatus.settings.js should be evaluated as a function but doesn't end in ')'",
 ];
 
 var apps = [];
@@ -258,12 +163,12 @@ const APP_KEYS = [
   'id', 'name', 'shortName', 'version', 'icon', 'screenshots', 'description', 'tags', 'type',
   'sortorder', 'readme', 'custom', 'customConnect', 'interface', 'storage', 'data',
   'supports', 'allow_emulator',
-  'dependencies', 'provides_modules', 'provides_widgets', "default"
+  'dependencies', 'provides_modules', 'provides_widgets', 'provides_features', "default"
 ];
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports', 'noOverwrite'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
 const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
-const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","textinput","module","clkinfo"]; // values allowed for "type" field
+const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","textinput","module","clkinfo","defaultconfig"]; // values allowed for "type" field - listed in README.md
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 const GRANDFATHERED_ICONS = ["s7clk",  "snek", "astral", "alpinenav", "slomoclock", "arrow", "pebble", "rebble"];
@@ -301,6 +206,10 @@ apps.forEach((app,appIdx) => {
   if (!app.name) ERROR(`App ${app.id} has no name`, {file:metadataFile});
   var isApp = !app.type || app.type=="app";
   var appTags = app.tags ? app.tags.split(",") : [];
+  if (appTags.some(tag => tag!=tag.trim()))
+    WARN(`App ${app.id} 'tag' list contains whitespace ("${app.tags}")`, {file:metadataFile});
+  if (appTags.some(tag => tag!=tag.toLowerCase()))
+    WARN(`App ${app.id} 'tag' list contains uppercase ("${app.tags}")`, {file:metadataFile});
   if (app.name.length>20 && !app.shortName && isApp) ERROR(`App ${app.id} has a long name, but no shortName`, {file:metadataFile});
   if (app.type && !METADATA_TYPES.includes(app.type))
     ERROR(`App ${app.id} 'type' is one one of `+METADATA_TYPES, {file:metadataFile});
@@ -390,7 +299,8 @@ apps.forEach((app,appIdx) => {
       if (INTERNAL_FILES_IN_APP_TYPE[app.type].includes(file.name))
         fileInternal = true;
     }
-    allFiles.push({app: app.id, file: file.name, internal:fileInternal});
+    if (!app.type=="defaultconfig")
+      allFiles.push({app: app.id, file: file.name, internal:fileInternal});
     if (file.url) if (!fs.existsSync(appDir+file.url)) ERROR(`App ${app.id} file ${file.url} doesn't exist`, {file:metadataFile});
     if (!file.url && !file.content && !app.custom) ERROR(`App ${app.id} file ${file.name} has no contents`, {file:metadataFile});
     var fileContents = "";
@@ -399,7 +309,7 @@ apps.forEach((app,appIdx) => {
     if (file.supports && !Array.isArray(file.supports)) ERROR(`App ${app.id} file ${file.name} supports field is not an array`, {file:metadataFile});
     if (file.evaluate) {
       try {
-        acorn.parse("("+fileContents+")");
+        jsparse("("+fileContents+")");
       } catch(e) {
         console.log("=====================================================");
         console.log("  PARSE OF "+appDir+file.url+" failed.");
@@ -415,7 +325,7 @@ apps.forEach((app,appIdx) => {
       // TODO: actual lint?
       var ast;
       try {
-        ast = acorn.parse(fileContents);
+        ast = jsparse(fileContents);
       } catch(e) {
         console.log("=====================================================");
         console.log("  PARSE OF "+appDir+file.url+" failed.");
@@ -588,7 +498,7 @@ while(fileA=allFiles.pop()) {
       if (isGlob(nameA)||isGlob(nameB))
         ERROR(`App ${fileB.app} ${typeB} file ${nameB} matches app ${fileA.app} ${typeB} file ${nameA}`);
       else if (fileA.app != fileB.app && (!fileA.internal) && (!fileB.internal))
-        WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`);
+        WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`, {file:APPSDIR_RELATIVE+fileB.app+"/metadata.json"});
     }
   })
 }
@@ -614,8 +524,17 @@ function sanityCheckLocales(){
 }
 
 promise.then(function() {
+  KNOWN_ERRORS.forEach(msg => {
+    if (!errorList.includes(msg))
+      WARN(`Known error '${msg}' no longer occurs`);
+  });
+  KNOWN_WARNINGS.forEach(msg => {
+    if (!warningList.includes(msg))
+      WARN(`Known warning '${msg}' no longer occurs`);
+  });
   console.log("==================================");
-  console.log(`${errorCount} errors, ${warningCount} warnings (and ${knownErrorCount} known errors, ${knownWarningCount} known warnings)`);
+  console.log(`${errorCount} errors, ${warningCount} warnings`);
+  console.log(`${knownErrorCount} known errors, ${knownWarningCount} known warnings${(knownErrorCount||knownWarningCount)?", run with --show-all to see them":""}`);
   console.log("==================================");
   if (errorCount)  {
     process.exit(1);

@@ -45,20 +45,22 @@
       <div id="map">
       </div>
       <div id="controls">
-        <div style="display:inline-block;text-align:left;vertical-align: top;" id="3bitdiv">
-          <input type="checkbox" id="3bit"></input><span>3 bit</span>
-          <br>
-          <input type="checkbox" id="preview"><span>Preview</span>
+        <div class="form-group" style="display:inline-block;">
+          <select class="form-select" id="mapStyle">
+            <option value="3bit" selected>3 bit</option>
+            <option value="8bit">8 bit</option>
+            <option value="1bit">1 bit</option>
+          </select>
         </div>
         <div class="form-group" style="display:inline-block;">
-        <select class="form-select" id="mapSize">
-          <option value="4">Small (4x4)</option>
-          <option value="5" selected>Medium (5x5)</option>
-          <option value="7">Large (7x7)</option>
-          <option value="10">XL (10x10)</option>
-          <option value="15">XXL (15x15)</option>
-        </select>
-      </div>
+          <select class="form-select" id="mapSize">
+            <option value="4">Small (4x4)</option>
+            <option value="5" selected>Medium (5x5)</option>
+            <option value="7">Large (7x7)</option>
+            <option value="10">XL (10x10)</option>
+            <option value="15">XXL (15x15)</option>
+          </select>
+        </div>
         <button id="getmap" class="btn btn-primary">Get Map</button><button class="btn" onclick="showLoadedMaps()">Map List</button><br/>
         <canvas id="maptiles" style="display:none"></canvas>
         <div id="uploadbuttons" style="display:none"><button id="upload" class="btn btn-primary">Upload</button>
@@ -94,19 +96,46 @@ TODO:
       var TILELAYER = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
       var PREVIEWTILELAYER = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
+      MAPSTYLES = {
+        "3bit" : {
+          layer : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          attribution: 'Map data &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>',
+          img : { compression:false, output:"raw", mode:"3bit",diffusion:"bayer2"}
+        }, "8bit" : {
+          layer : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          attribution: 'Map data &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>',
+          img : { compression:false, output:"raw", mode:"web" }
+        }, "1bit" : {
+          layer : 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png',
+          attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          img : { compression:false, output:"raw", mode:"1bit",inverted:true }
+        }
+      };
+
       var loadedMaps = [];
 
       // Tiles used for Bangle.js itself
-      var bangleTileLayer = L.tileLayer(TILELAYER, {
-        maxZoom: 18,
-        attribution: 'Map data &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>'
-      });
+      var bangleTileLayer;
       // Tiles used for the may the user sees (faster)
-      var previewTileLayer = L.tileLayer(PREVIEWTILELAYER, {
-        maxZoom: 18,
-        attribution: 'Map data &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors</a>'
-      });
+      var previewTileLayer;
+      // Currently selected version of MAPSTYLES
+      var currentStyle;
+
       // Could optionally overlay trails: https://wiki.openstreetmap.org/wiki/Tiles
+
+
+      function createMapLayers(style) {
+        currentStyle = style;
+        bangleTileLayer = L.tileLayer(style.layer, {
+          maxZoom: 18,
+          attribution: style.attribution
+        });
+        previewTileLayer = L.tileLayer(style.layer, {
+          maxZoom: 18,
+          attribution: style.attribution
+        });
+      }
+      createMapLayers(MAPSTYLES["3bit"]);
 
       // Create map and try and set the location to where the browser thinks we are
       var map = L.map('map').locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
@@ -130,10 +159,11 @@ TODO:
         if (device && device.info && device.info.g) {
           // On 3 bit devices, 3 bit is the best way
           // still allow 8 bit as it makes zoom out much nicer
-          if (device.info.g.bpp==3) {
+          // ... but lets just default to 3 bit anyway now
+          /*if (device.info.g.bpp==3) {
             document.getElementById("3bit").checked = true;
             //document.getElementById("3bitdiv").style = "display:none";
-          }
+          }*/
         }
 
         showLoadedMaps();
@@ -257,17 +287,7 @@ TODO:
 
       // convert canvas into an actual tiled image file
       function tilesLoaded(ctx, width, height, mapImageFile) {
-        var options = {
-          compression:false, output:"raw",
-          mode:"web"
-        };
-        if (document.getElementById("3bit").checked) {
-          options = {
-            compression:false, output:"raw",
-            mode:"3bit",
-            diffusion:"bayer2"
-          };
-        }
+        var options = currentStyle.img; // compression options
         /* Go through all the data beforehand and
         turn the saturation up to maximum, so if thresholded to 3 bits it
         works a lot better */
@@ -289,9 +309,9 @@ TODO:
             options.width = TILESIZE;
             options.height = TILESIZE;
             var imgstr = imageconverter.RGBAtoString(rgba, options);
-            if (document.getElementById("preview").checked) {
+            /*if (document.getElementById("preview").checked) {
               ctx.putImageData(imageData,x*TILESIZE, y*TILESIZE); // write preview
-            }
+            }*/
             /*var compress = 'require("heatshrink").decompress('
             if (!imgstr.startsWith(compress)) throw "Data in wrong format";
             imgstr = imgstr.slice(compress.length,-1);*/
@@ -406,6 +426,14 @@ TODO:
           document.getElementById("mapstats").innerText = "Size : "+ (mapSizeInK+"kb");
           console.log(mapFiles);
         });
+      });
+
+      document.getElementById("mapStyle").addEventListener("click", function() {
+        var style = document.getElementById("mapStyle").value;
+        if (!style in MAPSTYLES) return;
+        map.removeLayer(previewTileLayer);
+        createMapLayers(MAPSTYLES[style]);
+        previewTileLayer.addTo(map);
       });
 
       document.getElementById("upload").addEventListener("click", function() {

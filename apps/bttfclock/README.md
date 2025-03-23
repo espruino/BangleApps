@@ -8,23 +8,26 @@ A watchface inspierd by <a target="_blank" href="https://apps.garmin.com/apps/d1
 
 - Improving quality of Fonts.
 - More status icons.
-- A way to change step golas.
-- Improving bangle app performances (using functions for images and specialized array).
 
 ## Functionalities
 
 - Current time
 - Current day and month
-- Steps
 - Battery
-- Step goal
+- Steps
+- Step goal can be set white the <a target="_blank" href="https://github.com/espruino/BangleApps/tree/master/apps/health">Health Tracking</a> app defult is 10000
 - Bluetooth connected icon
+- Alarm icon
+- Notification icon
 
 ## Screenshots
 Clock:<br/>
-
+![](screenshot.png)<br/>
+Clock when charging:<br/>
+![](screenshotCharging.png)<br/>
 
 ## Usage
+Install it and enjoy
 
 
 ## Links

@@ -1,0 +1,18 @@
+{
+  "id": "pushups",
+  "name": "Pushups",
+  "shortName": "Pushups",
+  "version": "0.1",
+  "description": "Pushups countdown using the accelerometer.",
+  "allow_emulator":false,
+  "icon": "pushups.png",
+  "type": "app",
+  "tags": "health",
+  "supports": ["BANGLEJS2"],
+  "screenshots": [{"url":"shot_pushups.png"}, {"url":"shot_squats.png"}, {"url":"shot_menu.png"}],
+  "readme": "README.md",
+  "storage": [
+    {"name":"pushups.app.js","url":"app.js"},
+    {"name":"pushups.img","url":"app-icon.js","evaluate":true}
+  ]
+}
