@@ -286,7 +286,9 @@ function shootGun() {
         if (bullet.check_hit && screen_data !== null && Math.abs(screen_data.x - cx) < 20) {
           // Bullet hits zombie
           zombie.health -= 1;
-          if (zombie.health <= 0) {
+          if (zombie.health < 0) {
+            return;
+          } else if (zombie.health == 0) {
             player.kills += 1;
             console.log("KILLED ZOMBIE");
             g.setColor(1,0,0);
@@ -427,7 +429,6 @@ function shootGun() {
       } else {
         player = Object.create(initialPlayer);
         needsRender = true;
-        console.log(player);
         renderInterval = setRenderInterval();
       }
       if (zombies.length == 0) {
