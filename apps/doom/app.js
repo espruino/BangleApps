@@ -348,25 +348,25 @@ function shootGun() {
   
   // ==== RENDER FUNCTION ====
   function render() {
-    lastRender = new Date().getTime();
+    
     if (player.health <= 0) {
       g.setBgColor("#000000").setColor(0).clear();
       g.setColor(1,0,0);
       g.drawString("YOU DIED", cx-50, cy);
       clearInterval(renderInterval);
       return;
-    } else if (zombies.length == 0) {
+    } //else if (zombies.length == 0) {
       //g.setBgColor("#000000").setColor(0).clear();
-      g.setColor(0,1,0);
-      g.drawString("LEVEL SUCCESS", cx-50, cy);
-      clearInterval(renderInterval);
-    }
+      //g.setColor(0,1,0);
+      //g.drawString("LEVEL SUCCESS", cx-50, cy);
+    //}
     
     if (!needsRender) return; // Only render when needed
     needsRender = false; // Reset flag
+    lastRender = new Date().getTime();
 
     g.clear(); // Clear screen
-
+    
     // Draw sky
     g.setColor(0, 0, 0);
     g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
@@ -394,6 +394,12 @@ function shootGun() {
     moveZombies();
     renderZombies();
     renderHUD();
+    
+    if (zombies.length == 0) {
+      //g.setBgColor("#000000").setColor(0).clear();
+      g.setColor(0,1,0);
+      g.drawString("LEVEL SUCCESS", cx-80, cy);
+    }
     
 
     g.flip(); // Update display
