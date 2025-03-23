@@ -278,7 +278,7 @@ function shootGun() {
         console.log("checking bullet");
         console.log(dist);*/
         screen_data = zombieScreenData(zombie);
-        if (screen_data !== null && Math.abs(screen_data.x - cx) < 20) {
+        if (bullet.check_hit && screen_data !== null && Math.abs(screen_data.x - cx) < 20) {
           // Bullet hits zombie
           zombie.health -= 1;
           if (zombie.health <= 0) {
