@@ -1,7 +1,7 @@
 {
   "id": "doom",
   "name": "DOOM",
-  "shortName": "doom",
+  "shortName": "DOOM",
   "version": "0.01",
   "description": "DOOM BangleJS adaptation.",
   "icon": "app.png",
