@@ -11,6 +11,7 @@
     { "url": "screenshots/alien.png" },
     { "url": "screenshots/death.png" }
   ],
+  "readme": "README.md",
   "tags": "doom",
   "supports": ["BANGLEJS2"],
   "allow_emulator": true,
