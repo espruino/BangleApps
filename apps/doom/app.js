@@ -135,7 +135,7 @@ function startGame() {
 
   function renderZombies() {
     zombies.forEach((zombie) => {
-      screen_data = zombieScreenData(zombie);
+      let screen_data = zombieScreenData(zombie);
       if (screen_data !== null) {
         if (zombie.health > 0) {
           g.setColor(0, 1, 0);
@@ -267,7 +267,7 @@ function startGame() {
         if (bullet.check_hit) {
           // Collision detection with zombies
           zombies.forEach((zombie, j) => {
-            screen_data = zombieScreenData(zombie);
+            let screen_data = zombieScreenData(zombie);
             if (
               bullet.check_hit &&
               screen_data !== null &&
