@@ -1,14 +1,3 @@
-// exec each function from seq one after the other
-function animate(seq,period) {
-  var c = g.getColor();
-  var i = setInterval(function() {
-    if (seq.length) {
-      var f = seq.shift();
-      g.setColor(c);
-      if (f) f();
-    } else clearInterval(i);
-  },period);
-}
 
 // Fade in to FG color with angled lines
 function fade(col, callback) {
@@ -27,7 +16,7 @@ function fade(col, callback) {
 var quotes = [
   "",
   "Get that bread!",
-  "Fuck yeah!",
+  "WOOOOOOOO",
   "Hulle weet nie\nwat ons weet nie"
 ];
 
@@ -146,7 +135,7 @@ function getScene(n) {
     }
 
     setInterval(draw,50);
-  };
+  }
 }
 
 var sceneNumber = 0;
