@@ -58,15 +58,15 @@ function startGame() {
     [1, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1],
   ];
-
-  let player = { x: 2 * TILE_SIZE, y: 2 * TILE_SIZE, angle: 0 };
+  const player_MAX_HEALTH = 10;
+  let player = { x: 2 * TILE_SIZE, y: 2 * TILE_SIZE, angle: 0 , health: player_MAX_HEALTH-1, kills: 0 };
   let needsRender = true; // Flag to control rendering
   
   function Zombie(x, y) {
     this.x = x;  // World-space coordinates
     this.y = y;  // World-space coordinates
     this.baseSize = 20;  // Base size of the zombie
-    this.speed = 0.5;  // Speed at which the zombie moves
+    this.speed = 1.5;  // Speed at which the zombie moves
     this.health = 5;
   }
 
@@ -88,6 +88,8 @@ function startGame() {
         dy /= dist;
         zombie.x += dx * zombie.speed; // Move zombie towards player
         zombie.y += dy * zombie.speed;
+      } else {
+        player.health += -1;
       }
     });
   }
@@ -118,11 +120,7 @@ function startGame() {
     return null;
   }
 
-function renderZombies() {
-  g.setColor(0,1,0);
-   g.setFont("Vector",20);
-  g.drawString(zombies.length, 20, 20);
-  
+function renderZombies() {  
   zombies.forEach(zombie => {
     /*let dx = zombie.x - player.x;
     let dy = zombie.y - player.y;
@@ -169,6 +167,24 @@ function renderZombies() {
     //}
   });
 }
+  
+  function renderHUD() {
+    g.setColor(1,0,0);
+    g.setFont("Vector",20);
+    g.fillRect(40, SCREEN_HEIGHT-40, SCREEN_WIDTH-40, SCREEN_HEIGHT-20);
+    g.setColor(0,1,0);
+    g.fillRect(40, SCREEN_HEIGHT-40, 40 + (SCREEN_WIDTH-80)*(player.health/player_MAX_HEALTH), SCREEN_HEIGHT-20);
+    g.setFont("Vector",10);
+    g.drawString("Zombies:", 20, 20);
+    g.setFont("Vector",20);
+    g.drawString(zombies.length, 20, 30);
+
+    g.setColor(1,0,0);
+    g.setFont("Vector",10);
+    g.drawString("Kills:", SCREEN_WIDTH-20, 20);
+    g.setFont("Vector",20);
+    g.drawString(player.kills, SCREEN_WIDTH-20, 30);
+  }
 
 
 
@@ -265,7 +281,7 @@ function shootGun() {
           // Bullet hits zombie
           zombie.health -= 1;
           if (zombie.health <= 0) {
-            
+            player.kills += 1;
             console.log("KILLED ZOMBIE");
             g.setColor(1,0,0);
             g.drawString("KILL", cx, cy);
@@ -355,8 +371,9 @@ function shootGun() {
       
       //renderZombieSlice(i);
     }
-    //moveZombies();
+    moveZombies();
     renderZombies();
+    renderHUD();
     
 
     g.flip(); // Update display
