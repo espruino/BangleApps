@@ -391,7 +391,7 @@ function shootGun() {
       
       //renderZombieSlice(i);
     }
-    moveZombies();
+    //moveZombies();
     renderZombies();
     renderHUD();
     
@@ -405,37 +405,36 @@ function shootGun() {
     g.flip(); // Update display
   }
   
+  function setRenderInterval() {
+    return setInterval(() => {
+      moveZombies();
+      if (needsRender) {
+        render();
+      } else if (new Date().getTime() - lastRender > 500) {
+        needsRender = true;
+      }
+    }, 33);
+  }
+  
   // ==== GAME LOOP ====
-  renderInterval = setInterval(() => {
-    moveZombies();
-    console.log(lastRender);
-    console.log(new Date().getTime() - lastRender);
-    if (needsRender) {
-      render();
-    } else if (new Date().getTime() - lastRender > 500) {
-      needsRender = true;
-    }
-  }, 33);
+  let renderInterval = setRenderInterval();
   render();
   
   setWatch(
     () => {
-      if (player.health > 0) {
+      if (player.health > 0 && zombies.length > 0) {
         shootGun();
       } else {
         player = Object.create(initialPlayer);
         needsRender = true;
         console.log(player);
-  renderInterval = setInterval(() => {
-    moveZombies();
-    console.log(lastRender);
-    console.log(new Date().getTime() - lastRender);
-    if (needsRender) {
-      render();
-    } else if (new Date().getTime() - lastRender > 500) {
-      needsRender = true;
-    }
-  }, 33);
+        renderInterval = setRenderInterval();
+      }
+      if (zombies.length == 0) {
+        zombies = [
+          new Zombie(6 * TILE_SIZE, 6 * TILE_SIZE),
+          new Zombie(4 * TILE_SIZE, 4 * TILE_SIZE),
+        ];
       }
     },
     BTN1,
