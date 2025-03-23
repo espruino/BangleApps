@@ -13,6 +13,7 @@ Crypto-Coins Infos with the help of the Binance and CoinStats API
 ![Screenshot Click_Info 02](screenshots/20250316_02.jpg)
 ![Screenshot App BTC Graph](screenshots/20250322_01.jpg)
 ![Screenshot APP BTC Details](screenshots/20250322_02.jpg)
+![Screenshot APP STORJ Low/High](screenshots/20250323_01.jpg)
 
 ## Creator
 
@@ -35,9 +36,11 @@ Martin Zwigl
 - I tried with gridy for the axis, but for this data - it is just not readable...
 - Let me know when you have good suggestions for improvement.
 - ".." button shows current details for current token
+- "LH" button shows low and high on graph as well as the first and last point in series
 - Swipe L-R changes token you supplied via interface
 - Not much guard-rails in the app -> you should have at least one token (each) present
-- Also the API token
+- Also the API token and fiat currency you want to match against (eg. USD, EUR)
+- New data is requested every minute, except on button touch
 
 ### Settings
 
