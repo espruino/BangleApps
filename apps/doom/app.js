@@ -60,7 +60,7 @@ function startGame() {
     [1, 1, 1, 1, 1, 1, 1, 1],
   ];
   const player_MAX_HEALTH = 10;
-  const initialPlayer = { x: 2 * TILE_SIZE, y: 2 * TILE_SIZE, angle: 0 , health: player_MAX_HEALTH-1, kills: 0 };
+  const initialPlayer = { x: 2 * TILE_SIZE, y: 2 * TILE_SIZE, angle: 0 , health: player_MAX_HEALTH-1, kills: 0, lastHit: null };
   let player = Object.create(initialPlayer);
   let needsRender = true; // Flag to control rendering
   
@@ -91,8 +91,11 @@ function startGame() {
         zombie.x += dx * zombie.speed; // Move zombie towards player
         zombie.y += dy * zombie.speed;
       } else {
-        player.health += -1;
-        g.setBgColor("#ff0000").setColor(0).clear();
+        if (new Date().getTime() - (player.lastHit ?? 0) > 500) {
+          player.health += -1;
+          g.setBgColor("#ff0000").setColor(0).clear();
+          player.lastHit = new Date().getTime();
+        }
       }
     });
   }
@@ -412,12 +415,16 @@ function shootGun() {
         player = Object.create(initialPlayer);
         needsRender = true;
         console.log(player);
-        renderInterval = setInterval(() => {
-          moveZombies();
-          console.log(lastRender);
-          console.log(new Date().getTime() - lastRender);
-          if (needsRender || new Date().getTime() - lastRender > 2) render();
-        }, 33);
+  renderInterval = setInterval(() => {
+    moveZombies();
+    console.log(lastRender);
+    console.log(new Date().getTime() - lastRender);
+    if (needsRender) {
+      render();
+    } else if (new Date().getTime() - lastRender > 500) {
+      needsRender = true;
+    }
+  }, 33);
       }
     },
     BTN1,
