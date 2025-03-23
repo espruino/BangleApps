@@ -6,6 +6,8 @@ let cx = SCREEN_WIDTH / 2,
   cy = SCREEN_HEIGHT / 2;
 
 function startGame() {
+  g.clear();
+  
   function Game() {
     this.level = 1;
     this.lastRender = null;
@@ -52,7 +54,7 @@ function startGame() {
     this.x = x;
     this.y = y;
     this.baseSize = 20;
-    this.speed = 0.1;
+    this.speed = 0.05;
     this.health = 5;
   }
 
@@ -407,7 +409,7 @@ function startGame() {
       } else if (new Date().getTime() - game.lastRender > 500) {
         game.needsRender = true;
       }
-    }, 33);
+    }, 100);
   }
 
   // ==== GAME LOOP ====
