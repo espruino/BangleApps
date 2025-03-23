@@ -60,7 +60,7 @@ function startGame() {
     [1, 1, 1, 1, 1, 1, 1, 1],
   ];
   const player_MAX_HEALTH = 10;
-  const initialPlayer = { x: 2 * TILE_SIZE, y: 2 * TILE_SIZE, angle: 0 , health: player_MAX_HEALTH-1, kills: 0, lastHit: null };
+  const initialPlayer = { x: 2 * TILE_SIZE, y: 2 * TILE_SIZE, angle: 0 , health: player_MAX_HEALTH, kills: 0, lastHit: null };
   let player = Object.create(initialPlayer);
   let needsRender = true; // Flag to control rendering
   
@@ -74,8 +74,8 @@ function startGame() {
 
   // Zombies placed at world coordinates
   let zombies = [
-    new Zombie(1 * TILE_SIZE, 1 * TILE_SIZE),
-    new Zombie(1 * TILE_SIZE, 2 * TILE_SIZE),
+    new Zombie(6 * TILE_SIZE, 6 * TILE_SIZE),
+    new Zombie(4 * TILE_SIZE, 4 * TILE_SIZE),
   ];
 
   // Move zombies toward the player
@@ -88,8 +88,8 @@ function startGame() {
       if (dist > 0.5) { // Only move if not already very close
         dx /= dist; // Normalize direction vector
         dy /= dist;
-        zombie.x += dx * zombie.speed; // Move zombie towards player
-        zombie.y += dy * zombie.speed;
+        zombie.x += dx * zombie.speed/(Math.random()+0.5); // Move zombie towards player
+        zombie.y += dy * zombie.speed/(Math.random()+0.5);
       } else {
         if (new Date().getTime() - (player.lastHit ?? 0) > 500) {
           player.health += -1;
@@ -355,6 +355,11 @@ function shootGun() {
       g.drawString("YOU DIED", cx-50, cy);
       clearInterval(renderInterval);
       return;
+    } else if (zombies.length == 0) {
+      //g.setBgColor("#000000").setColor(0).clear();
+      g.setColor(0,1,0);
+      g.drawString("LEVEL SUCCESS", cx-50, cy);
+      clearInterval(renderInterval);
     }
     
     if (!needsRender) return; // Only render when needed
