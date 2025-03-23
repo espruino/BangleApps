@@ -6,8 +6,13 @@ let cx = SCREEN_WIDTH / 2,
   cy = SCREEN_HEIGHT / 2;
 
 function startGame() {
-  let lastRender = null;
-  let needsRender = true; // Flag to control rendering
+  function Game() {
+    this.level = 1;
+    this.lastRender = null;
+    this.needsRender = true;
+  }
+
+  let game = new Game();
 
   // ==== GAME VARIABLES ====
   const gameSettings = {
@@ -33,29 +38,41 @@ function startGame() {
       },
     },
   };
-  const initialPlayer = {
-    x: gameSettings.PLAYER.START.x * gameSettings.MAP.TILE_SIZE,
-    y: gameSettings.PLAYER.START.y * gameSettings.MAP.TILE_SIZE,
-    angle: 0,
-    health: gameSettings.PLAYER.MAX_HEALTH,
-    kills: 0,
-    lastHit: null,
-  };
-  let player = Object.create(initialPlayer);
+  function Player() {
+    this.x = gameSettings.PLAYER.START.x * gameSettings.MAP.TILE_SIZE;
+    this.y = gameSettings.PLAYER.START.y * gameSettings.MAP.TILE_SIZE;
+    this.angle = 0;
+    this.health = gameSettings.PLAYER.MAX_HEALTH;
+    this.kills = 0;
+    this.lastHit = null;
+  }
+  let player = new Player();
 
   function Zombie(x, y) {
-    this.x = x; // World-space coordinates
-    this.y = y; // World-space coordinates
-    this.baseSize = 20; // Base size of the zombie
-    this.speed = 0.1; // Speed at which the zombie moves
+    this.x = x;
+    this.y = y;
+    this.baseSize = 20;
+    this.speed = 0.1;
     this.health = 5;
   }
 
+  function Hoard(n) {
+    let zombies = [];
+    for (let i = 0; i < n; i++) {
+      let x = 4 + Math.floor(2 * Math.random()),
+        y = 4 + Math.floor(2 * Math.random());
+      zombies.push(
+        new Zombie(
+          x * gameSettings.MAP.TILE_SIZE,
+          y * gameSettings.MAP.TILE_SIZE
+        )
+      );
+    }
+    this.zombies = zombies;
+  }
+
   // Zombies placed at world coordinates
-  let zombies = [
-    new Zombie(6 * gameSettings.MAP.TILE_SIZE, 6 * gameSettings.MAP.TILE_SIZE),
-    new Zombie(4 * gameSettings.MAP.TILE_SIZE, 4 * gameSettings.MAP.TILE_SIZE),
-  ];
+  let zombies = new Hoard(game.level).zombies;
 
   // Move zombies toward the player
   function moveZombies() {
@@ -159,13 +176,17 @@ function startGame() {
     g.fillRect(
       40,
       SCREEN_HEIGHT - 40,
-      40 + (SCREEN_WIDTH - 80) * (player.health / gameSettings.PLAYER.MAX_HEALTH),
+      40 +
+        (SCREEN_WIDTH - 80) * (player.health / gameSettings.PLAYER.MAX_HEALTH),
       SCREEN_HEIGHT - 20
     );
     g.setFont("Vector", 10);
     g.drawString("Zombies:", 20, 20);
     g.setFont("Vector", 20);
     g.drawString(zombies.length, 20, 30);
+
+    g.setFont("Vector", 10);
+    g.drawString(`Level ${game.level}`, SCREEN_WIDTH / 2 - 10, 20);
 
     g.setColor(1, 0, 0);
     g.setFont("Vector", 10);
@@ -177,33 +198,6 @@ function startGame() {
   function dist(x1, x2, y1, y2) {
     return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
   }
-  function castRay() {
-    let x = player.x;
-    let y = player.y;
-
-    // Direction vector
-    let dx = Math.cos(player.angle) * 0.1; // Small steps for accuracy
-    let dy = Math.sin(player.angle) * 0.1;
-
-    // Step until hitting a wall
-    while (true) {
-      x += dx;
-      y += dy;
-
-      let mapX = Math.floor(x / gameSettings.MAP.TILE_SIZE);
-      let mapY = Math.floor(y / gameSettings.MAP.TILE_SIZE);
-
-      // Check bounds manually instead of using optional chaining
-      if (mapY < 0 || mapY >= map.length || mapX < 0 || mapX >= gameSettings.MAP.LAYOUT[0].length) {
-        break; // Out of bounds
-      }
-
-      // Stop when we hit a wall
-      if (gameSettings.MAP.LAYOUT[mapY][mapX] === 1) {
-        return { x: mapX, y: mapY };
-      }
-    }
-  }
 
   // ==== RAYCASTING FUNCTION ====
   function castRayDist(angle) {
@@ -214,7 +208,11 @@ function startGame() {
     while (true) {
       x += cosA;
       y += sinA;
-      if (gameSettings.MAP.LAYOUT[Math.floor(y / gameSettings.MAP.TILE_SIZE)][Math.floor(x / gameSettings.MAP.TILE_SIZE)] === 1)
+      if (
+        gameSettings.MAP.LAYOUT[Math.floor(y / gameSettings.MAP.TILE_SIZE)][
+          Math.floor(x / gameSettings.MAP.TILE_SIZE)
+        ] === 1
+      )
         break;
     }
     return dist(x, player.x, y, player.y);
@@ -224,15 +222,21 @@ function startGame() {
   function movePlayer(backward) {
     let direction = backward ? -1 : 1;
     let newX =
-      player.x + ((Math.cos(player.angle) * gameSettings.MAP.TILE_SIZE) / 4) * direction;
+      player.x +
+      ((Math.cos(player.angle) * gameSettings.MAP.TILE_SIZE) / 4) * direction;
     let newY =
-      player.y + ((Math.sin(player.angle) * gameSettings.MAP.TILE_SIZE) / 4) * direction;
+      player.y +
+      ((Math.sin(player.angle) * gameSettings.MAP.TILE_SIZE) / 4) * direction;
 
     // Wall collision check
-    if (gameSettings.MAP.LAYOUT[Math.floor(newY / gameSettings.MAP.TILE_SIZE)][Math.floor(newX / gameSettings.MAP.TILE_SIZE)] === 0) {
+    if (
+      gameSettings.MAP.LAYOUT[Math.floor(newY / gameSettings.MAP.TILE_SIZE)][
+        Math.floor(newX / gameSettings.MAP.TILE_SIZE)
+      ] === 0
+    ) {
       player.x = newX;
       player.y = newY;
-      needsRender = true; // Mark for rendering
+      game.needsRender = true; // Mark for rendering
     }
   }
 
@@ -315,7 +319,7 @@ function startGame() {
       } else {
         // Left triangle (Rotate left)
         player.angle -= ROTATION;
-        needsRender = true;
+        game.needsRender = true;
       }
     } else {
       // Bottom-left or bottom-right
@@ -325,7 +329,7 @@ function startGame() {
       } else {
         // Right triangle (Rotate right)
         player.angle += ROTATION;
-        needsRender = true;
+        game.needsRender = true;
       }
     }
   });
@@ -340,9 +344,9 @@ function startGame() {
       return;
     }
 
-    if (!needsRender) return; // Only render when needed
-    needsRender = false; // Reset flag
-    lastRender = new Date().getTime();
+    if (!game.needsRender) return; // Only render when needed
+    game.needsRender = false; // Reset flag
+    game.lastRender = new Date().getTime();
 
     g.clear(); // Clear screen
 
@@ -356,9 +360,15 @@ function startGame() {
 
     // Raycasting loop
     for (let i = 0; i < SCREEN_WIDTH; i++) {
-      let angle = player.angle - gameSettings.PLAYER.FOV / 2 + (i / SCREEN_WIDTH) * gameSettings.PLAYER.FOV;
+      let angle =
+        player.angle -
+        gameSettings.PLAYER.FOV / 2 +
+        (i / SCREEN_WIDTH) * gameSettings.PLAYER.FOV;
       let dist = castRayDist(angle);
-      let height = Math.min(SCREEN_HEIGHT, (gameSettings.MAP.TILE_SIZE * SCREEN_HEIGHT) / dist);
+      let height = Math.min(
+        SCREEN_HEIGHT,
+        (gameSettings.MAP.TILE_SIZE * SCREEN_HEIGHT) / dist
+      );
 
       // Optimized distance shading (avoids Math.pow)
       let colorIndex = Math.floor(Math.max(0, 7 - dist * 0.25));
@@ -367,15 +377,11 @@ function startGame() {
       // Draw vertical wall slice
       let startY = (SCREEN_HEIGHT - height) / 2;
       g.fillRect(i, startY, i + 1, startY + height);
-
-      //renderZombieSlice(i);
     }
-    //moveZombies();
     renderZombies();
     renderHUD();
 
     if (zombies.length == 0) {
-      //g.setBgColor("#000000").setColor(0).clear();
       g.setColor(0, 1, 0);
       g.drawString("LEVEL SUCCESS", cx - 80, cy);
     }
@@ -386,10 +392,10 @@ function startGame() {
   function setRenderInterval() {
     return setInterval(() => {
       moveZombies();
-      if (needsRender) {
+      if (game.needsRender) {
         render();
-      } else if (new Date().getTime() - lastRender > 500) {
-        needsRender = true;
+      } else if (new Date().getTime() - game.lastRender > 500) {
+        game.needsRender = true;
       }
     }, 33);
   }
@@ -403,15 +409,13 @@ function startGame() {
       if (player.health > 0 && zombies.length > 0) {
         shootGun();
       } else {
-        player = Object.create(initialPlayer);
-        needsRender = true;
+        if (zombies.length == 0) {
+          game.level += 1;
+          zombies = new Hoard(game.level).zombies;
+        }
+        player = new Player();
+        game.needsRender = true;
         renderInterval = setRenderInterval();
-      }
-      if (zombies.length == 0) {
-        zombies = [
-          new Zombie(6 * gameSettings.MAP.TILE_SIZE, 6 * gameSettings.MAP.TILE_SIZE),
-          new Zombie(4 * gameSettings.MAP.TILE_SIZE, 4 * gameSettings.MAP.TILE_SIZE),
-        ];
       }
     },
     BTN1,
