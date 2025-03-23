@@ -59,7 +59,8 @@ function startGame() {
     [1, 1, 1, 1, 1, 1, 1, 1],
   ];
   const player_MAX_HEALTH = 10;
-  let player = { x: 2 * TILE_SIZE, y: 2 * TILE_SIZE, angle: 0 , health: player_MAX_HEALTH-1, kills: 0 };
+  const initialPlayer = { x: 2 * TILE_SIZE, y: 2 * TILE_SIZE, angle: 0 , health: player_MAX_HEALTH-1, kills: 0 };
+  let player = Object.create(initialPlayer);
   let needsRender = true; // Flag to control rendering
   
   function Zombie(x, y) {
@@ -181,9 +182,9 @@ function renderZombies() {
 
     g.setColor(1,0,0);
     g.setFont("Vector",10);
-    g.drawString("Kills:", SCREEN_WIDTH-20, 20);
+    g.drawString("Kills:", SCREEN_WIDTH-40, 20);
     g.setFont("Vector",20);
-    g.drawString(player.kills, SCREEN_WIDTH-20, 30);
+    g.drawString(player.kills, SCREEN_WIDTH-40, 30);
   }
 
 
@@ -342,6 +343,13 @@ function shootGun() {
   
   // ==== RENDER FUNCTION ====
   function render() {
+    if (player.health <= 0) {
+      g.setBgColor("#000000").setColor(0).clear();
+      g.setColor(1,0,0);
+      g.drawString("YOU DIED", cx-50, cy);
+      return;
+    }
+    
     if (!needsRender) return; // Only render when needed
     needsRender = false; // Reset flag
 
@@ -387,7 +395,13 @@ function shootGun() {
   
   setWatch(
     () => {
+      if (player.health > 0) {
       shootGun();
+      } else {
+        player = Object.create(initialPlayer);
+        needsRender = true;
+        console.log(player);
+      }
     },
     BTN1,
     { repeat: true }
