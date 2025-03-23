@@ -67,7 +67,7 @@ function startGame() {
     this.x = x;  // World-space coordinates
     this.y = y;  // World-space coordinates
     this.baseSize = 20;  // Base size of the zombie
-    this.speed = 1;  // Speed at which the zombie moves
+    this.speed = 0.1;  // Speed at which the zombie moves
     this.health = 5;
   }
 
@@ -390,6 +390,7 @@ function shootGun() {
   
   // ==== GAME LOOP ====
   setInterval(() => {
+    moveZombies();
     if (needsRender) render();
   }, 33);
   render();
