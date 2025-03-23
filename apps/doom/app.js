@@ -91,7 +91,7 @@ function startGame() {
         zombie.x += (dx * zombie.speed) / (Math.random() + 0.25); // Move zombie towards player
         zombie.y += (dy * zombie.speed) / (Math.random() + 0.25);
       } else {
-        if (new Date().getTime() - (player.lastHit ?? 0) > 500) {
+        if (new Date().getTime() - (player.lastHit || 0) > 500) {
           player.health += -1;
           g.setBgColor("#ff0000").setColor(0).clear();
           player.lastHit = new Date().getTime();

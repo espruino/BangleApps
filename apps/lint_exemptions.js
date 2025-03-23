@@ -79,12 +79,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/podadrem/app.js": {
-    "hash": "f7392e74974f69553aade2dcc07527b5d3b71a9b84e6dc5e0dd995e78dff8007",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "apps/openstmap/imagefilter.js": {
     "hash": "8a71e9a0ecfa94150379c41a5a915cfdac39f8b2e485e5cc1ce4629e85293acd",
     "rules": [
@@ -191,12 +185,6 @@ module.exports = {
   },
   "apps/promenu/boot.js": {
     "hash": "21ee195418a13c0ed584381542a6132928cdd2d007ec7078ce6fe4650c6fdd19",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
-  "apps/poweroff/settings.js": {
-    "hash": "c197afe72c612a4b3825a3a12a628d0f4ed83823da3f28885bbf473037a02506",
     "rules": [
       "no-unused-vars"
     ]
@@ -587,12 +575,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/swp2clk/settings.js": {
-    "hash": "2d9de7ffdf171f6e7b058741046c8a326cf9d5dba651f52fcdb523214b08d626",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/sunclock/app.js": {
     "hash": "54f49294816e06907003a71289a8b79641b1cd082044fb22bb4c4b80f6845459",
     "rules": [
@@ -613,12 +595,6 @@ module.exports = {
   },
   "apps/stepo/app.js": {
     "hash": "67f620970949011b962fb2a2a1bc9fe44cf2dee2e3342d9c6b3399318d6dbc17",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/spotrem/app.js": {
-    "hash": "35f3ee5371acde28427fd01e191ff58108d3d9e4db1a221dca081b7a7b9c3c77",
     "rules": [
       "no-undef"
     ]
@@ -913,12 +889,6 @@ module.exports = {
   },
   "apps/kanawatch/app.js": {
     "hash": "01c3fede367b7cbdbaf6b532ebfd4e6ffff61b2e20ce44b25dd04117853a44f2",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/infoclk/settings.js": {
-    "hash": "56adc3eff3cbc04dd08238ed7e559416ebbc7736c872070c757d70bf5f31b440",
     "rules": [
       "no-undef"
     ]
