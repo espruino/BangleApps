@@ -67,7 +67,7 @@ function startGame() {
     this.y = y;  // World-space coordinates
     this.baseSize = 20;  // Base size of the zombie
     this.speed = 0.5;  // Speed at which the zombie moves
-    this.health = 1;
+    this.health = 5;
   }
 
   // Zombies placed at world coordinates
@@ -103,10 +103,10 @@ function startGame() {
       let dist = Math.sqrt(dx * dx + dy * dy);
       if (dist < TILE_SIZE) dist = TILE_SIZE; // Prevent extreme scaling
 
-      let height = Math.min(SCREEN_HEIGHT, (TILE_SIZE * SCREEN_HEIGHT) / dist);
+      let height = Math.min(SCREEN_HEIGHT, (TILE_SIZE*0.9 * SCREEN_HEIGHT) / dist);
       let width = height/3;
       let screenX = SCREEN_WIDTH / 2 + Math.tan(-angleDifference) * (SCREEN_WIDTH / 2);
-      let screenY = (SCREEN_HEIGHT / 2) + Math.tan(angleDifference)/(SCREEN_HEIGHT / 2);
+      let screenY = (SCREEN_HEIGHT / 2) + Math.tan(angleDifference)/(SCREEN_HEIGHT / 2) + 400/dist;
       
       return {
         x: screenX,
@@ -119,6 +119,10 @@ function startGame() {
   }
 
 function renderZombies() {
+  g.setColor(0,1,0);
+   g.setFont("Vector",20);
+  g.drawString(zombies.length, 20, 20);
+  
   zombies.forEach(zombie => {
     /*let dx = zombie.x - player.x;
     let dy = zombie.y - player.y;
@@ -150,13 +154,16 @@ function renderZombies() {
       
       g.fillCircle(screen_data.x, zombieTopY - 20, 10);
       g.setColor(1,1,1);
-      g.drawString(zombie.health, zombieLeftX, zombieTopY - 20);
+      g.drawString(zombie.health, screen_data.x, zombieTopY - 30);
       if (zombie.health > 0) {
-        g.setColor(0, 1, 0);
+        g.setColor(0.12,0.56, 0.12);
       } else {
         g.setColor(1,0,0);
       }
-      g.fillRect(zombieLeftX, zombieTopY, zombieRightX, zombieBottomY);
+        g.fillRect(zombieLeftX, zombieTopY + (zombieBottomY - zombieTopY)/4, zombieRightX, zombieBottomY - (zombieBottomY - zombieTopY)/4);
+      g.fillRect(zombieLeftX + 10, zombieTopY, zombieRightX -10, zombieBottomY);
+      
+      //g.fillRect(zombieLeftX, zombieTopY*2, zombieRightX, zombieBottomY*0.75);
       //}
       }
     //}
@@ -230,7 +237,7 @@ function renderZombies() {
   
   // ==== SHOOT FUNCTION ====
 function shootGun() {
-  let bullets = [{ x: cx, y: SCREEN_HEIGHT, size: 20, speed: 2 + Math.random() * 2 }];
+  let bullets = [{ x: cx, y: SCREEN_HEIGHT, size: 20, speed: 2 + Math.random() * 2, check_hit: true }];
 
   function drawBullets() {
     bullets.forEach((bullet, i) => {
@@ -241,6 +248,7 @@ function shootGun() {
       if (bullet.y > cy) bullet.y -= bullet.speed;
       bullet.size *= 0.9; // Shrink bullet
 
+      if (bullet.check_hit) {
       // Collision detection with zombies
       zombies.forEach((zombie, j) => {
         /*console.log(bullet.size);
@@ -259,12 +267,17 @@ function shootGun() {
           if (zombie.health <= 0) {
             
             console.log("KILLED ZOMBIE");
+            g.setColor(1,0,0);
             g.drawString("KILL", cx, cy);
-            setTimeout(zombies.splice(j, 1), 500);
+            setTimeout(() => zombies.splice(j, 1),1000);
+          } else {
+            g.setColor(1,0,0);
+            g.drawString("HIT", cx, cy);
           }
-          bullets.splice(i, 1); // Bullet disappears
+          bullet.check_hit = false; // Bullet disappears
         }
       });
+      }
 
       // Stop rendering when bullet is too small
       if (bullet.size < 2) {
@@ -344,6 +357,7 @@ function shootGun() {
     }
     //moveZombies();
     renderZombies();
+    
 
     g.flip(); // Update display
   }
