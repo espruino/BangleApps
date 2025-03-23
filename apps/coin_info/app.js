@@ -9,6 +9,7 @@ var currLoadMsg = "...";
 var timePeriod = "24h";
 var tknChrtData = [5,6,5,6,5,6,5,6,5,6,5,6,5,6,];
 var optSpacing = {};
+var isPaused = false;
 
 
 //
@@ -78,6 +79,11 @@ layout.update();
 //
 var updateTimeout;
 function getChart(period) {
+    if (isPaused) {
+        if (updateTimeout) clearTimeout(updateTimeout);
+        return;
+    }
+
     //
     timePeriod = period;
     currLoadMsg = `Load... ${period}`;
@@ -140,8 +146,9 @@ function showLowHigh() {
             Low: ${low}
             High: ${high}
         `;
+    isPaused = true;
     E.showAlert(msg, title).then(function() {
-        // print("Ok pressed");
+        isPaused = false;
         g.clear();
         layout.forgetLazyState();
         layout.render();
@@ -168,8 +175,9 @@ function showDetails() {
             1h:${tokenInfo.priceChange1h} 
             1d:${tokenInfo.priceChange1d} 1w:${tokenInfo.priceChange1w}
         `;
+            isPaused = true;
             E.showAlert(msg, title).then(function() {
-                // print("Ok pressed");
+                isPaused = false;
                 g.clear();
                 layout.forgetLazyState();
                 layout.render();
@@ -193,6 +201,11 @@ function showDetails() {
 var drawTimeout;
 // update the screen
 function draw() {
+    if (isPaused) {
+        if (drawTimeout) clearTimeout(drawTimeout);
+        return;
+    }
+
     //
     layout.tknName.label = (csTokens[ticker]).toUpperCase();
     layout.loadMsg.label = currLoadMsg;
