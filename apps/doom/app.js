@@ -45,6 +45,7 @@ let cx = SCREEN_WIDTH / 2,
   cy = SCREEN_HEIGHT / 2;
 
 function startGame() {
+  let lastRender = null;
   // ==== GAME VARIABLES ====
   const TILE_SIZE = 16;
   const FOV = Math.PI / 4;
@@ -84,7 +85,7 @@ function startGame() {
       let dy = player.y - zombie.y;
       let dist = Math.sqrt(dx * dx + dy * dy);
 
-      if (dist > 1) { // Only move if not already very close
+      if (dist > 0.5) { // Only move if not already very close
         dx /= dist; // Normalize direction vector
         dy /= dist;
         zombie.x += dx * zombie.speed; // Move zombie towards player
@@ -344,10 +345,12 @@ function shootGun() {
   
   // ==== RENDER FUNCTION ====
   function render() {
+    lastRender = new Date().getTime();
     if (player.health <= 0) {
       g.setBgColor("#000000").setColor(0).clear();
       g.setColor(1,0,0);
       g.drawString("YOU DIED", cx-50, cy);
+      clearInterval(renderInterval);
       return;
     }
     
@@ -389,20 +392,32 @@ function shootGun() {
   }
   
   // ==== GAME LOOP ====
-  setInterval(() => {
+  renderInterval = setInterval(() => {
     moveZombies();
-    if (needsRender) render();
+    console.log(lastRender);
+    console.log(new Date().getTime() - lastRender);
+    if (needsRender) {
+      render();
+    } else if (new Date().getTime() - lastRender > 500) {
+      needsRender = true;
+    }
   }, 33);
   render();
   
   setWatch(
     () => {
       if (player.health > 0) {
-      shootGun();
+        shootGun();
       } else {
         player = Object.create(initialPlayer);
         needsRender = true;
         console.log(player);
+        renderInterval = setInterval(() => {
+          moveZombies();
+          console.log(lastRender);
+          console.log(new Date().getTime() - lastRender);
+          if (needsRender || new Date().getTime() - lastRender > 2) render();
+        }, 33);
       }
     },
     BTN1,
