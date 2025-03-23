@@ -67,7 +67,7 @@ function startGame() {
     this.x = x;  // World-space coordinates
     this.y = y;  // World-space coordinates
     this.baseSize = 20;  // Base size of the zombie
-    this.speed = 1.5;  // Speed at which the zombie moves
+    this.speed = 1;  // Speed at which the zombie moves
     this.health = 5;
   }
 
@@ -91,6 +91,7 @@ function startGame() {
         zombie.y += dy * zombie.speed;
       } else {
         player.health += -1;
+        g.setBgColor("#ff0000").setColor(0).clear();
       }
     });
   }
