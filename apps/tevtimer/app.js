@@ -64,7 +64,7 @@ class TimerView {
 
     this.layout = null;
     this.listeners = {};
-    this.timer_timeout = null;
+    this.listeners.timer_render_timeout = null;
   }
 
   start() {
@@ -117,9 +117,9 @@ class TimerView {
   }
 
   stop() {
-    if (this.timer_timeout !== null) {
-      clearTimeout(this.timer_timeout);
-      this.timer_timeout = null;
+    if (this.listeners.timer_render_timeout !== null) {
+      clearTimeout(this.listeners.timer_render_timeout);
+      this.listeners.timer_render_timeout = null;
     }
     clearWatch(this.listeners.button);
     Bangle.removeListener('drag', this.listeners.drag);
@@ -217,9 +217,9 @@ class TimerView {
       }
 
       if (this.timer.is_running()) {
-        if (this.timer_timeout) {
-          clearTimeout(this.timer_timeout);
-          this.timer_timeout = null;
+        if (this.listeners.timer_render_timeout) {
+          clearTimeout(this.listeners.timer_render_timeout);
+          this.listeners.timer_render_timeout = null;
         }
 
         // Set up timeout to render timer again when needed
@@ -235,8 +235,11 @@ class TimerView {
           // sometimes triggering too early.
           next_update = next_update / Math.abs(this.timer.rate) + 50;
           console.debug('Next render update scheduled in ' + next_update);
-          this.timer_timeout = setTimeout(
-            () => { this.timer_timeout = null; this.render('timer'); },
+          this.listeners.timer_render_timeout = setTimeout(
+            () => {
+               this.listeners.timer_render_timeout = null;
+               this.render('timer');
+            },
             next_update
           );
         }
