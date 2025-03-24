@@ -510,7 +510,7 @@ function checkMessages(options) {
   active = "list";
   // Otherwise show a list of messages
   E.showScroller({
-    h : 48,
+    h : 50,
     c : Math.max(MESSAGES.length,3), // workaround for 2v10.219 firmware (min 3 not needed for 2v11)
     draw : function(idx, r) {"ram"
       var msg = MESSAGES[idx];
@@ -527,25 +527,25 @@ function checkMessages(options) {
       if (img) {
         var fg = g.getColor(),
             col = require("messageicons").getColor(msg, {settings, default:fg});
-        g.setColor(col).drawImage(img, x+24, r.y+24, {rotate:0}) // force centering
+        g.setColor(col).drawImage(img, x+20, r.y+24, {rotate:0}) // force centering
          .setColor(fg); // only color the icon
-        x += 50;
+        x += 40;
       }
-      if (title) g.setFontAlign(-1,-1).setFont(fontBig).drawString(title, x,r.y+2);
+      if (title) g.setFontAlign(-1,-1).setFont(fontBig).drawString(title, x,r.y+1);
       var longBody = false;
       if (body) {
-        g.setFontAlign(-1,-1).setFont(fontSmall);
+        g.setFontAlign(-1,0).setFont(fontSmall);
         // if the body includes an image, it probably won't be small enough to allow>1 line
-        let maxLines = Math.floor(34/g.getFontHeight()), pady = 0;
-        if (body.includes("\0")) { maxLines=1; pady=4; }
-        var l = g.wrapString(body, r.w-(x+14));
+        let maxLines = Math.floor(34/g.getFontHeight());
+        if (body.includes("\0")) { maxLines=1; }
+        var l = g.wrapString(body, r.w-(x+8));
         if (l.length>maxLines) {
           l = l.slice(0,maxLines);
           l[l.length-1]+="...";
         }
         longBody = l.length>2;
         // draw the body
-        g.drawString(l.join("\n"), x+10,r.y+20+pady);
+        g.drawString(l.join("\n"), x+6,r.y+36);
       }
       if (!longBody && msg.src) g.setFontAlign(1,1).setFont("6x8").drawString(msg.src, r.x+r.w-2, r.y+r.h-2);
       g.setColor("#888").fillRect(r.x,r.y+r.h-1,r.x+r.w-1,r.y+r.h-1); // dividing line between items
