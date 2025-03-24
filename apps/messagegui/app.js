@@ -26,11 +26,12 @@ var layout; // global var containing the layout for the currently displayed mess
 var settings = require('Storage').readJSON("messages.settings.json", true) || {};
 var reply;
 try { reply = require("reply"); } catch (e) {}
-var fontSmall = "6x8";
-var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
-var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
-var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
-var fontVLarge = g.getFonts().includes("6x15")?"12x20:2":"6x8:5";
+var fontList = g.getFonts();
+var fontSmall = fontList.includes("14")?"14":"6x8";
+var fontMedium = fontList.includes("17")?"17":(fontList.includes("6x15")?"6x15":"6x8:2");
+var fontBig = fontList.includes("22")?"22":(fontList.includes("12x20")?"12x20":"6x8:2");
+var fontLarge = fontList.includes("28")?"28":(fontList.includes("6x15")?"6x15:2":"6x8:4");
+var fontVLarge = fontList.includes("22")?"22:2":(fontList.includes("6x15")?"12x20:2":"6x8:5");
 
 // If a font library is installed, just switch to using that for everything in messages
 if (Graphics.prototype.setFontIntl) {
@@ -48,19 +49,6 @@ if (Graphics.prototype.setFontIntl) {
 var active; // active screen (undefined/"list"/"music"/"map"/"message"/"scroller"/"settings")
 var openMusic = false; // go back to music screen after we handle something else?
 var replying = false; // If we're replying to a message, don't interrupt
-// hack for 2v10 firmware's lack of ':size' font handling
-try {
-  g.setFont("6x8:2");
-} catch (e) {
-  g._setFont = g.setFont;
-  g.setFont = function(f,s) {
-    if (f.includes(":")) {
-      f = f.split(":");
-      return g._setFont(f[0],f[1]);
-    }
-    return g._setFont(f,s);
-  };
-}
 
 /** this is a timeout if the app has started and is showing a single message
 but the user hasn't seen it (eg no user input) - in which case
@@ -139,7 +127,7 @@ function showMapMessage(msg) {
   layout = new Layout({ type:"v", c: [
     {type:"txt", font:street?fontMedium:fontLarge, label:target, bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:3 },
     street?{type:"h", bgCol:g.theme.bg2, col: g.theme.fg2,  fillx:1, c: [
-      {type:"txt", font:"6x8", label:"Towards" },
+      {type:"txt", font:fontSmall, label:"Towards" },
       {type:"txt", font:fontLarge, label:street }
     ]}:{},
     {type:"h",fillx:1, filly:1, c: [
@@ -148,7 +136,7 @@ function showMapMessage(msg) {
         {type:"txt", font:fontVLarge, label:distance||"" }
       ]},
     ]},
-    {type:"txt", font:"6x8:2", label:msg.eta?`ETA ${msg.eta}`:"" }
+    {type:"txt", font:fontMedium, label:msg.eta?`ETA ${msg.eta}`:"" }
   ]});
   g.reset().clearRect(Bangle.appRect);
   layout.render();
