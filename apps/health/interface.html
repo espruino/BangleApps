@@ -7,45 +7,49 @@
 
     <script src="../../core/lib/interface.js"></script>
     <script type="module" src="chart.min.js"></script>
+    <script>exports = {};</script>
+    <script type="module" src="lib.js"></script>
     <script>
-const DB_RECORD_LEN = 4;
-const DB_RECORDS_PER_HR = 6;
-const DB_RECORDS_PER_DAY = DB_RECORDS_PER_HR*24 + 1/*summary*/;
-const DB_RECORDS_PER_MONTH = DB_RECORDS_PER_DAY*31;
 const DB_HEADER_LEN = 8;
-const DB_FILE_LEN = DB_HEADER_LEN + DB_RECORDS_PER_MONTH*DB_RECORD_LEN;
+const DB_RECORDS_PER_HR = 6;
 
 var domContent = document.getElementById("content");
 
 function saveCSV(data, date, title) {
   // date = "2021-9"/ etc
-  var csv = "Date,Time,Steps,Heartrate,Movement\n";
+  var csv = "Date,Time,Steps,Heartrate,Movement,Heartrate(min),Heartrate(max),Temperature,Altitude,Activity,Battery\n";
   var f = data;
 
+  var inf = exports.getDecoder(data);
   var idx = DB_HEADER_LEN;
   for (var day=0;day<31;day++) {
     for (var hr=0;hr<24;hr++) { // actually 25, see below
       for (var m=0;m<DB_RECORDS_PER_HR;m++) {
-        var h = f.substr(idx, DB_RECORD_LEN);
-        if (h!="\xFF\xFF\xFF\xFF") {
-          var h = {
-            day:day+1, hr : hr, min:m*10,
-            steps : (h.charCodeAt(0)<<8) | h.charCodeAt(1),
-            bpm : h.charCodeAt(2),
-            movement : h.charCodeAt(3)
-          };
+        var h = f.substr(idx, inf.r);
+        if (h!=inf.clr) {
+          var h = Object.assign({
+            day : day + 1,
+            hr : hr,
+            min : m * 10
+          }, inf.decode(h));
           csv += [
             date + "-" + h.day,
             h.hr+":"+h.min.toString().padStart(2,0),
             h.steps,
             h.bpm||"",
-            h.movement
+            h.movement,
+            h.bpmMin||h.bpm||"",
+            h.bpmMax||h.bpm||"",
+            (h.temperature!==undefined)?h.temperature:"",
+            (h.altitude!==undefined)?h.altitude:"",
+            (h.activity!==undefined)?h.activity:"",
+            (h.battery!==undefined)?h.battery:"",
           ].join(",")+"\n";
         }
-        idx += DB_RECORD_LEN;
+        idx += inf.r;
       }
     }
-    idx += DB_RECORD_LEN; // +1 because we have an extra record with totals for the end of the day
+    idx += inf.r; // +1 because we have an extra record with totals for the end of the day
   }
 
   Util.saveCSV(title, csv);
@@ -136,22 +140,20 @@ function getMonthList() {
 
 function getDailyData(data) {
   var dailyData = [];
+  var inf = exports.getDecoder(data);
   var idx = DB_HEADER_LEN;
   for (var day = 0; day < 31; day++) {
     var dayData = {steps: 0, bpm: 0, movement: 0};
     let bpmCnt = 0;
     for (var hr = 0; hr < 24; hr++) { // actually 25, see below
       for (var m = 0; m < DB_RECORDS_PER_HR; m++) {
-        var h = data.substr(idx, DB_RECORD_LEN);
-        if (h != "\xFF\xFF\xFF\xFF") {
-          var h = {
+        var h = data.substr(idx, inf.r);
+        if (h != inf.clr) {
+          var h = Object.assign({
             day : day + 1,
             hr : hr,
-            min : m * 10,
-            steps : (h.charCodeAt(0) << 8) | h.charCodeAt(1),
-            bpm : h.charCodeAt(2),
-            movement : h.charCodeAt(3)
-          };
+            min : m * 10
+          }, inf.decode(h));
           dayData.steps += h.steps; // sum
           if (h.bpm > 0) {
             dayData.bpm = dayData.bpm + h.bpm;
@@ -159,10 +161,10 @@ function getDailyData(data) {
           }
           dayData.movement += h.movement; // sum
         }
-        idx += DB_RECORD_LEN;
+        idx += inf.r;
       }
     }
-    idx += DB_RECORD_LEN; // +1 because we have an extra record with totals
+    idx += inf.r; // +1 because we have an extra record with totals
                           // for the end of the day
     if (bpmCnt > 0) {
       dayData.bpm = Math.round(dayData.bpm/bpmCnt); // average
@@ -177,7 +179,7 @@ function viewMonthDataAsTable(filename, date, monthstr) {
   Util.readStorage(
     filename, data => {
       Util.hideModal();
-      
+
       var htmlOverview = `<h1>` + monthstr + `</ h1>
       <button class="btn btn-primary" id="backtomonth" style="float: right;margin-right: 5px;">Back</button>
       <table class="table table-striped table-hover">
@@ -215,7 +217,7 @@ function viewMonthDataAsGraph(filename, date, monthstr) {
   Util.readStorage(
     filename, data => {
       Util.hideModal();
-      
+
       var html = `<h1>` + monthstr + `</ h1>
       <button class="btn btn-primary" id="backtomonth" style="float: right;margin-right: 5px;">Back</button>
       <h2>Steps</h2>
@@ -228,10 +230,10 @@ function viewMonthDataAsGraph(filename, date, monthstr) {
        domContent.querySelector("#backtomonth").addEventListener("click",event => {
          getMonthList();
       });
-      
+
       var labels = [];
       var dataSteps = [], dataBPM = [], dataMovement = [];
-      
+
       var dailyData = getDailyData(data);
       for (var i = 1; i < dailyData.length + 1; i++) {
          var dayData = dailyData[i];
@@ -242,7 +244,7 @@ function viewMonthDataAsGraph(filename, date, monthstr) {
            dataMovement.push(dayData.movement);
         }
       }
-      
+
       new Chart(document.getElementById("chartSteps"), {
           type: 'bar',
           data: {
@@ -261,7 +263,7 @@ function viewMonthDataAsGraph(filename, date, monthstr) {
             }
           }
         });
-        
+
        new Chart(document.getElementById("chartBPM"), {
           type: 'bar',
           data: {
@@ -280,7 +282,7 @@ function viewMonthDataAsGraph(filename, date, monthstr) {
             }
           }
         });
-        
+
        new Chart(document.getElementById("chartMovement"), {
           type: 'bar',
           data: {

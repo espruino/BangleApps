@@ -32,3 +32,5 @@
 0.28: Calculate distance from steps if myprofile is installed and stride length is set
 0.29: Minor code improvements
 0.30: Minor code improvements
+0.31: Add support for new health format (storing more data)
+      Added graphs for Temperature and Battery

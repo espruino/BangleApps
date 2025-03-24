@@ -7,7 +7,7 @@
   "screenshots": [{"url":"screenshot.png"}],
   "tags": "widget,outdoors,clkinfo",
   "supports": ["BANGLEJS","BANGLEJS2"],
-  "readme": "readme.md",
+  "readme": "README.md",
   "storage": [
     {"name":"weather.app.js","url":"app.js"},
     {"name":"weather.wid.js","url":"widget.js"},

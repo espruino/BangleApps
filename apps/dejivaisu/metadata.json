@@ -1,0 +1,27 @@
+{
+  "id": "dejivaisu",
+  "name": "Dejivaisu",
+  "version": "0.1",
+  "description": "A clock loosely inspired by a certain digital device. Includes an (optional) animated mascot and a seconds animation.",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+        {
+            "name": "dejivaisu.app.js",
+            "url": "app.js"
+        },
+        {
+            "name": "dejivaisu.img",
+            "url": "app-icon.js",
+            "evaluate": true
+        },
+        {   "name":"dejivaisu.settings.js",
+            "url":"settings.js"
+        }
+    ],
+    "data": [{"name":"dejivaisu.json"}]
+}

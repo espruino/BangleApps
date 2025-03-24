@@ -3,6 +3,7 @@ Simple watch [slomoclock]
 Mike Bennett mike[at]kereru.com
 0.01 : Initial
 0.03 : Use Layout library
+0.20 : Add day of week display
 */
 
 //var v='0.10';
@@ -54,7 +55,8 @@ var layout = new Layout( {
         {type:"txt", font:"40%", label:"", id:"hour", valign:1},
         {type:"txt", font:"40%", label:"", id:"min", valign:-1},
       ]},
-      {type:"v", c: [
+      {type:"v", c: [        
+        {type:"txt", font:"10%", label:"", id:"dow", col:0xEFE0, halign:1},
         {type:"txt", font:"10%", label:"", id:"day", col:0xEFE0, halign:1},
         {type:"txt", font:"10%", label:"", id:"mon", col:0xEFE0, halign:1},
       ]}
@@ -82,6 +84,8 @@ function draw() {
   layout.min.col = cfg.colour==0 ? colH[hh] :  cfg.colour==1 ? colH[colNum] :col[cfg.colour];
   
   // Update date
+  var dayOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  layout.dow.label = dayOfWeek[date.getDay()];
   layout.day.label = date.getDate();
   layout.mon.label = require("locale").month(date,1);
    

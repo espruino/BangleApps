@@ -1,7 +1,7 @@
 {
   "id": "vectorclock",
   "name": "Vector Clock",
-  "version": "0.09",
+  "version": "0.10",
   "description": "A digital clock that uses the built-in vector font.",
   "icon": "app.png",
   "type": "clock",

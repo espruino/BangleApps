@@ -1,4 +1,3 @@
-{
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
@@ -110,7 +109,6 @@ function mainMenu() {
 }
 
 function systemMenu() {
-
   const mainmenu = {
     '': { 'title': /*LANG*/'System' },
     '< Back': ()=>popMenu(mainMenu()),
@@ -121,6 +119,7 @@ function systemMenu() {
     /*LANG*/'Launcher': ()=>pushMenu(launcherMenu()),
     /*LANG*/'Date & Time': ()=>pushMenu(setTimeMenu())
   };
+  if (Bangle.getPressure) mainmenu[/*LANG*/"Altitude"] = ()=>pushMenu(showAltitude());
 
   return mainmenu;
 }
@@ -1030,5 +1029,45 @@ function showTouchscreenCalibration() {
   showTapSpot();
 }
 
-pushMenu(mainMenu());
+// Calibrate altitude - Bangle.js2 only
+function showAltitude() {
+  function onPressure(pressure) {
+    menuPressure.value = Math.round(pressure.pressure);
+    menuAltitude.value = Math.round(pressure.altitude);
+    m.draw();
+  }
+  Bangle.setBarometerPower(1,"settings");
+  Bangle.on("pressure",onPressure);
+  var seaLevelPressure = Bangle.getOptions().seaLevelPressure;
+  if (!isFinite(seaLevelPressure)) seaLevelPressure=1013.25;
+  var menuPressure = {value:"-"};
+  var menuAltitude = {value:"-"};
+  var m = E.showMenu({ "" : {title:/*LANG*/"Altitude",back:() => {
+      Bangle.setBarometerPower(0,"settings");
+      Bangle.removeListener("pressure",onPressure);
+      settings.seaLevelPressure = seaLevelPressure;
+      updateSettings();
+      popMenu(systemMenu());
+    }},
+    /*LANG*/"Pressure (hPa)" : menuPressure,
+    /*LANG*/"Altitude (m)" : menuAltitude,
+    /*LANG*/"Adjust up" : function() {
+      Bangle.buzz(80);
+      seaLevelPressure++;
+      Bangle.setOptions({seaLevelPressure:seaLevelPressure});
+    },
+    /*LANG*/"Adjust down" : function() {
+      Bangle.buzz(80);
+      seaLevelPressure--;
+      Bangle.setOptions({seaLevelPressure:seaLevelPressure});
+    },
+    /*LANG*/"Set Default" : function() {
+      Bangle.buzz();
+      seaLevelPressure=1013.25;
+      Bangle.setOptions({seaLevelPressure:seaLevelPressure});
+    }
+  });
 }
+
+// Show the main menu
+pushMenu(mainMenu());

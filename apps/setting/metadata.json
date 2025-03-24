@@ -1,7 +1,7 @@
 {
   "id": "setting",
   "name": "Settings",
-  "version": "0.75",
+  "version": "0.76",
   "description": "A menu for setting up Bangle.js",
   "icon": "settings.png",
   "tags": "tool,system",
