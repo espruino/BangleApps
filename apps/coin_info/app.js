@@ -1,4 +1,4 @@
-const logFile = require("Storage").open("coin_info_log.txt", "a");
+// const logFile = require("Storage").open("coin_info_log.txt", "a");
 const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
 const csTokens = db.csTokens.split(',');
 //
@@ -37,7 +37,6 @@ Bangle.on("swipe", swipeHandler);
 
 
 //
-var gridYValue = 5;
 function renderGraph(l) {
     const bounds = ciLib.findMinMax(tknChrtData);
     // logFile.write("?. graphy: " + JSON.stringify(bounds) + "\n");
@@ -46,7 +45,7 @@ function renderGraph(l) {
         x: l.x, y: l.y, width: l.w, height: l.h,
         miny: bounds.min,
         maxy: bounds.max,
-        // gridy: gridYValue
+        // gridy: 5
     });
 }
 
@@ -107,9 +106,6 @@ function getChart(period) {
 
             // just not readable
             optSpacing = ciLib.calculateOptimalYAxisSpacing(tknChrtData);
-            // logFile.write("Y-Axis:" + JSON.stringify(oSpcOjb));
-            // gridYValue = oSpcOjb.interval;
-
             //
             g.clearRect(layout.tknGraph.x, layout.tknGraph.y, layout.tknGraph.w, layout.tknGraph.h);
             layout.forgetLazyState(); // Force a full re-render

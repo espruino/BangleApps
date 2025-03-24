@@ -5,7 +5,7 @@
 
     const settings = require("Storage").readJSON("coin_info.settings.json", 1) || {};
     const db = require("Storage").readJSON("coin_info.cmc_key.json", 1) || {};
-    const logFile = require("Storage").open("coin_info_log.txt", "a");
+    // const logFile = require("Storage").open("coin_info_log.txt", "a");
     const ciLib = require("coin_info");
 
     if (!(settings.tokenSelected instanceof Array)) settings.tokenSelected = [];
