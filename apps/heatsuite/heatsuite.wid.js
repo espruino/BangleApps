@@ -1,5 +1,4 @@
 (() => {
-  //Add CORE in future
   const modHS = require('HSModule');
   var settings = modHS.getSettings();
   var cache = modHS.getCache();
@@ -266,7 +265,7 @@
           name: "movement",
           fields: ["movement"],
           getValues: () => {
-            return Bangle.getHealthStatus().movement;
+            return [Bangle.getHealthStatus().movement];
           },
           start: () => { },
           stop: () => { },
@@ -395,20 +394,23 @@
   }
   function fallDetectFunc(acc){
       if(!fallDetected){
-        let d = new Date.getTime();
+        let d = new Date().getTime();
         if(fallTime != 0 && fallTime - d > 200){
           fallTime = 0; fallDetected = false;
         }else if (acc.mag < 0.2 && fallTime === 0){
           fallTime = d;
         }else if(acc.mag > 2.1 && fallTime - d < 200){ // impact
           //IMPACT
+          Bangle.buzz(400);
           E.showPrompt("Did you fall?",{title: "FALL DETECTION",img:atob("FBQBAfgAf+Af/4P//D+fx/n+f5/v+f//n//5//+f//n////3//5/n+P//D//wf/4B/4AH4A=")}).then((r) => {
             if (r) {
                 fallDetected = true;
                 modHS.saveDataToFile('fall', 'fall', {'fall':1});
                 healthEventBLEAdvert('fall', {'time':parseInt((d / 1000).toFixed(0)) });
+                Bangle.showClock();
             }else{
-              Bangle.load(); //no fall, so just return to clock
+                modHS.saveDataToFile('fall', 'fall', {'fall':0});
+                Bangle.showClock(); //no fall, so just return to clock
             }
         });
         }
@@ -648,8 +650,7 @@ function studyTaskCheck(timenow) {
     g.setColor(-1);
     g.setFont("Vector", 12);
     g.drawString("HS", this.x + 12, this.y + 12);
-    g.setColor((Bangle.hasOwnProperty("isBTHRMConnected") && Bangle.isBTHRMConnected()) ? "#00F" : "#0f0");
-    g.drawImage(atob("EhCCAAKoAqgCqqiqqCqqqqqqqqqqqqqqqqqqqqqqqqqqqqqiqqqqqAqqqqoAKqqqgACqqqAAAqqoAAAKqgAAACqAAAAAoAAAAAoAAA=="), this.x + 21, this.y + 3);
+    g.setColor((Bangle.hasOwnProperty("isBTHRMConnected") && Bangle.isBTHRMConnected()) ? "#00F" : "#0f0"); g.drawImage(atob("EhCCAAKoAqgCqqiqqCqqqqqqqqqqqqqqqqqqqqqqqqqqqqqiqqqqqAqqqqoAKqqqgACqqqAAAqqoAAAKqgAAACqAAAAAoAAAAAoAAA=="), this.x + 21, this.y + 3);
   }
   WIDGETS.heatsuite = {
     area: 'tr',
