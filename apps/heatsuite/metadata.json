@@ -8,7 +8,7 @@
   "tags": "health,tool",
   "supports" : ["BANGLEJS2"],  
   "readme": "README.md",
-  "dependencies" : { "bthrm":"app", "gpssetup" : "app"},
+  "dependencies" : { "bthrm":"app", "gpssetup" : "app", "coretemp":"app"},
   "customConnect": true,
   "custom": "custom.html",
   "storage": [
@@ -20,10 +20,8 @@
     {"name":"heatsuite.survey.js","url":"heatsuite.survey.js"},
     {"name":"heatsuite.bletemp.js","url":"heatsuite.bletemp.js"},
     {"name":"heatsuite.bp.js","url":"heatsuite.bp.js"},
-    {"name":"heatsuite.urine.js","url":"heatsuite.urine.js"},
-    {"name":"heatsuite.default.json","url":"heatsuite.default.json"},
-    {"name":"heatsuite.survey.json","url":"survey.questions.js", "evaluate": true},
-    {"name":"heatsuite.tasks.json","url":"heatsuite.tasks.json"}
+    {"name":"heatsuite.mass.js","url":"heatsuite.mass.js"},
+    {"name":"heatsuite.urine.js","url":"heatsuite.urine.js"}
   ],
   "data": [
     {"name":"heatsuite.settings.json"},

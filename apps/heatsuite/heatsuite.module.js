@@ -37,7 +37,7 @@ function _renameOldFile(file){
         }
     }
 }
-function _getRecordFile(type, task, headers) {
+function _getRecordFile(type, headers) {
     var settings = _getSettings();
     var dt = new Date();
     var hour = dt.getHours();
@@ -50,20 +50,20 @@ function _getRecordFile(type, task, headers) {
     var fileName = settings.filePrefix + type + "_";
     fileName = fileName + date;
     //header checking
-    var fields = ["unix", "tz"];
-    switch (type) {
-        case 'minData':
-            fields.push(headers);
-            break;
-        case 'gps':
-            fields.push(['lat','lon','alt','speed','course','fix','satellites']);
-            break;
-        default:
-            fields.push.apply(fields, settings.StudyTasks[task].headers);
-            break;
-    }
+    //var fields = ["unix", "tz"];
+    //switch (type) {
+    //    case 'minData':
+    //        fields.push(headers);
+    //        break;
+    //    case 'gps':
+    //        fields.push(['lat','lon','alt','speed','course','fix','satellites']);
+    //        break;
+    //    default:
+    //        fields = headers;
+    //        break;
+    //}
     if (require('Storage').list(fileName).length > 0) {
-        if(_checkFileHeaders(fileName,fields)){
+        if(_checkFileHeaders(fileName,headers)){
             return require('Storage').open(fileName, 'a');
         }else{ // need to rename the old file as headers have changed
             _renameOldFile(fileName);
@@ -86,29 +86,25 @@ function _checkStorageFree(type) {
     }
 }
 function _saveDataToFile(type, task, arr) {
-    var settings = _getSettings();
-    var currFile = _getRecordFile(type, task, false);
-    var keys = settings.StudyTasks[task].headers;
     var newArr = {
         'unix' : parseInt((getTime()).toFixed(0)),
         'tz' : (new Date()).getTimezoneOffset() * -60
     }
-    keys.forEach(function(key) {
-        if (arr.hasOwnProperty(key)) {
+    for (var key in arr) {
             newArr[key] = arr[key];
-        } else {
-            newArr[key] = null;
-        }
-    });
+    }
     var data = [];
+    var headers = [];
     for (var key in newArr) {
         if(Array.isArray(newArr[key])){
             newArr[key] = newArr[key].join(';');
         }
         data.push(newArr[key]);
+        headers.push(key);
     }
-    var String = data.join(',') + '\n';
+    var currFile = _getRecordFile(type, headers);
     if (currFile) {
+        var String = data.join(',') + '\n';
         currFile.write(String);
         _updateTaskQueue(task, newArr);
         return true;

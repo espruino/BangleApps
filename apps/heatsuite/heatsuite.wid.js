@@ -6,6 +6,7 @@
   var hrmInterval = 0;
   var appName = "heatsuite";
   var bleAdvertGen = 0xE9D0;
+  var bleAdvertHealth = 0xFA11;
   var lastBLEAdvert = [];
   var recorders;
   var activeRecorders = [];
@@ -17,6 +18,9 @@
   var processQueueTimeout = null;
   let initHandlerTimeout = null;
   let BTHRM_ConnectCheck = null;
+  //Fall Detection
+  var fallTimeout = 0;
+  var fallDetected = false;
 
   Bangle.setOptions({ 
     "hrmSportMode": -1,
@@ -360,6 +364,56 @@
     let advert = createRandomizedPayload(studyid, batt, temperature, heartRate, hr_loc, movement, nodePing);
     require("ble_advert").set(bleAdvertGen, advert);
   }
+  //function for broadcasting emergent health events
+  function healthEventBLEAdvert(type, data){
+    var HEALTH_EVENTS = {
+      fall: 0x01,
+      custom: 0xFF
+    };
+    var eventType = HEALTH_EVENTS[type] || HEALTH_EVENTS.custom;
+    let payload = [eventType];
+    switch (eventType) {
+      case (HEALTH_EVENTS.fall):{
+        let timestamp = data.time || Math.floor(Date.now() / 1000); // default to current time
+        payload.push((timestamp >> 24) & 0xFF);
+        payload.push((timestamp >> 16) & 0xFF);
+        payload.push((timestamp >> 8) & 0xFF);
+        payload.push(timestamp & 0xFF);
+        break;
+      }
+      default:{
+        if(data && data.length > 0){
+          for (var i = 0; i < data.length; i++) {
+            payload.push(data[i]);
+          }
+        }
+        break;
+      }
+    }
+    //broadcast event (unencrypted)
+    require("ble_advert").set(bleAdvertHealth, payload);
+  }
+  function fallDetect(e){
+      if(!fallDetected){
+        let d = new Date.getTime();
+        if(fallTimeout != 0 && fallTimeout - d > 200){
+          fallTimeout = 0; fallDetected = false;
+        }else if (accel.mag < 0.2 && fallDetect === 0){
+          fallDetect = d;
+        }else if(accel.mag > 2.1 && fallDetect - d < 200){ // impact
+          //IMPACT
+          E.showPrompt("Did you fall?",{title: "FALL DETECTION",img:atob("FBQBAfgAf+Af/4P//D+fx/n+f5/v+f//n//5//+f//n////3//5/n+P//D//wf/4B/4AH4A=")}).then((r) => {
+            if (r) {
+                fallDetected = true;
+                modHS.saveDataToFile('fall', 'fall', {'fall':1});
+                healthEventBLEAdvert('fall', {'time':parseInt((d / 1000).toFixed(0)) });
+            }else{
+              Bangle.load(); //no fall, so just return to clock
+            }
+        });
+        }
+      }
+  }
 
   function storeTempLog(unix){
     var fields = [unix, ((new Date()).getTimezoneOffset() * -60)];
@@ -370,9 +424,9 @@
   }
 
   function writeLog() {
-    var headers = [];
+    var headers = ["unix", "tz"];
     activeRecorders.forEach(recorder => headers.push.apply(headers, recorder.fields));
-    var storageFile = modHS.getRecordFile('minData', false, headers);
+    var storageFile = modHS.getRecordFile('minData', headers);
     try {
       if (storageFile) {
         while (dataLog.length > 0) {
@@ -398,7 +452,7 @@
   }
 
   function writeGPS() {
-      var storageFile = modHS.getRecordFile('gps');
+      var storageFile = modHS.getRecordFile('gps',["unix", "tz",'lat',"lon","alt","speed","course","fix","satellites"]);
       if (storageFile) {
         while (gpsLog.length > 0) { //store it
           let item = gpsLog.shift(); 
@@ -547,6 +601,11 @@ function studyTaskCheck(timenow) {
       activeRecorder.start();
       activeRecorders.push(activeRecorder);
     });
+    if(settings.fallDetect){
+      Bangle.on('accel', fallDetect);
+    }else{
+      Bangle.removeListener('accel', fallDetect);
+    }
     //BTHRM Additions
     if (settings.record.includes('bthrm') && Bangle.hasOwnProperty("isBTHRMConnected") ) {
       var BTHRMStatus = 0;

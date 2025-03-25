@@ -4,19 +4,28 @@ var layout;
 var settings = modHS.getSettings();
 //var appCache = modHS.getCache();
 function log(msg) {
-    if (!settings.DEBUG) {
-      return;
-    } else {
-      console.log(msg);
-    }
+  if (!settings.DEBUG) {
+    return;
+  } else {
+    console.log(msg);
+  }
 }
 
-//Schema for the message coming from the BLE ThermistorPod:
+//Schema for the message coming from the A&D Medical UA651BLE:
 function analyzeBPData(data) {
-  const flags = data.getUint8(0,1);
+  const flags = data.getUint8(0, 1);
   const buf = data.buffer;
+  let result = { //Schema for BP measures
+    "sbp" : null,
+    "dbp" : null,
+    "map" : null,
+    "hr" : null,
+    "moved" : null,
+    "cuffLoose" : null,
+    "irregularPulse" : null,
+    "improperMeasure" : null
+  };
   let index = 1;
-  const result = {};
   result.sbp = buf[index];
   index += 2;
   result.dbp = buf[index];
@@ -24,30 +33,30 @@ function analyzeBPData(data) {
   result.map = buf[index];
   index += 2;
   if (flags & 0x02) {
-      result.date = {
-          year: buf[index] + (buf[index + 1] << 8),
-          month: buf[index + 2],
-          day: buf[index + 3],
-          hour: buf[index + 4],
-          minute: buf[index + 5],
-          second: buf[index + 6],
-      };
-      index += 7;
+    //result.date = { // no need here yet
+    //  year: buf[index] + (buf[index + 1] << 8),
+    //  month: buf[index + 2],
+    //  day: buf[index + 3],
+    //  hour: buf[index + 4],
+    //  minute: buf[index + 5],
+    //  second: buf[index + 6],
+    //};
+    index += 7;
   }
   if (flags & 0x04) {
-      result.hr = buf[index];
-      index += 2;
+    result.hr = buf[index];
+    index += 2;
   }
   if (flags & 0x08) {
-      index += 1;
+    index += 1;
   }
   if (flags & 0x10) {
-      const ms = buf[index];
-      result.moved = (ms & 0b1) ? 1 : 0;
-      result.cuffLoose = (ms & 0b10) ? 1 : 0;
-      result.irregularPulse = (ms & 0b100) ? 1 : 0;
-      result.improperMeasure = (ms & 0b100000) ? 1 : 0;
-      index += 1;
+    const ms = buf[index];
+    result.moved = (ms & 0b1) ? 1 : 0;
+    result.cuffLoose = (ms & 0b10) ? 1 : 0;
+    result.irregularPulse = (ms & 0b100) ? 1 : 0;
+    result.improperMeasure = (ms & 0b100000) ? 1 : 0;
+    index += 1;
   }
   return result;
 }
@@ -116,17 +125,7 @@ function getBP(id) {
       //log("-> "); // this is a DataView
       //log(event.target.value);
       const receivedData = analyzeBPData(event.target.value);
-      //and now we repackage the data into the array we want:
-      var bp_arr = {};
-      var keys = settings.StudyTasks.bloodPressure.headers;
-      keys.forEach(function(key) {
-        if (receivedData.hasOwnProperty(key)) {
-          bp_arr[key] = receivedData[key];
-        } else {
-          bp_arr[key] = null;
-        }
-      });
-      modHS.saveDataToFile('bpres', 'bloodPressure', bp_arr);
+      modHS.saveDataToFile('bpres', 'bloodPressure', receivedData);
       layout = new Layout({
         type: "v", c: [
           {
@@ -180,4 +179,4 @@ function getBP(id) {
   });
 }
 var macID = settings.bt_bloodPressure_id.split(" ");
-setTimeout(() => {getBP(macID[0])}, 2000);
+setTimeout(() => { getBP(macID[0]) }, 2000);

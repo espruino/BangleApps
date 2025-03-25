@@ -55,6 +55,7 @@ function getTcore(id) {
     gatt = g;
     startTime = parseInt((getTime()).toFixed(0));
     gatt.device.on('gattserverdisconnected', function (reason) {
+      gatt = null;
       Bangle.load();
       log("Disconnected ", reason);
     });
@@ -106,7 +107,9 @@ function getTcore(id) {
       g.clear();
       layout.render();
       if (complete) {
-        gatt.disconnect();
+        if(gatt){
+          gatt.disconnect();
+        }
         setTimeout(() => { Bangle.load() }, 2000);
       }
     });

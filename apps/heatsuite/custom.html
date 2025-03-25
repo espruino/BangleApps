@@ -1,127 +1,400 @@
 <html>
-  <head>
-    <link rel="stylesheet" href="../../css/spectre.min.css">
-  </head>
-  <body>
-    <ul class="tab tab-block" id="tab-navigate">
-      <li class="tab-item active" id="tab-settingsContainer">
-        <a href="javascript:showTab('settingsContainer')">Settings</a>
-      </li>
-      <li class="tab-item" id="tab-tasksContainer">
-        <a href="javascript:showTab('tasksContainer')">Tasks</a>
-      </li>
-      <li class="tab-item" id="tab-surveyContainer">
-        <a href="javascript:showTab('surveyContainer')">EMA</a>
-      </li>
-    </ul>
-    <div class="container apploader-tab" id="settingsContainer">
+
+<head>
+  <link rel="stylesheet" href="../../css/spectre.min.css">
+  <style>
+    .jsoneditor-container {
+      height: 500px;
+      margin-bottom: 30px;
+      border: 1px solid #ccc;
+    }
+    .editor-section {
+      margin-bottom: 40px;
+    }
+  </style>  
+</head>
+
+<body>
+  <ul class="tab tab-block" id="tab-navigate">
+    <li class="tab-item active" id="tab-settingsContainer">
+      <a href="javascript:showTab('settingsContainer')">Settings</a>
+    </li>
+    <li class="tab-item" id="tab-tasksContainer">
+      <a href="javascript:showTab('tasksContainer')">Tasks</a>
+    </li>
+    <li class="tab-item" id="tab-surveyContainer">
+      <a href="javascript:showTab('surveyContainer')">EMA</a>
+    </li>
+  </ul>
+  <div class="container apploader-tab" id="settingsContainer">
+    <form id="heatsuiteSettings">
       <div class="row pt-2"><strong>Recorder Options:</strong>
         <br>Select what sensor/data you want to record and average each minute:
       </div>
       <div class="form-group">
-          <label class="form-switch">
-              <input type="checkbox" name="record" value="steps">
-              <i class="form-icon"></i> Steps
-          </label>
-          <label class="form-switch">
-              <input type="checkbox" name="record" value="hrm">
-              <i class="form-icon"></i> Optical Heart Rate
-          </label>
-          <label class="form-switch">
-              <input type="checkbox" name="record" value="acc">
-              <i class="form-icon"></i> Accelerometry
-          </label>
-          <label class="form-switch">
-              <input type="checkbox" name="record" value="bat">
-              <i class="form-icon"></i> Battery
-          </label>
-          <label class="form-switch">
-              <input type="checkbox" name="record" value="movement">
-              <i class="form-icon"></i> Movement
-          </label>  
-          <label class="form-switch">
-            <input type="checkbox" name="record" value="baro">
-            <i class="form-icon"></i> Temperature/Pressure
-          </label>  
-          <label class="form-switch">
-            <input type="checkbox" name="record" value="bthrm">
-            <i class="form-icon"></i> Bluetooth HRM (Uses BTHRM app/module)
-          </label>      
-          <label class="form-switch">
-            <input type="checkbox" name="record" value="CORESensor">
-            <i class="form-icon"></i> CORE Sensor (Uses coretemp app/module)
-          </label>         
-        </div>  
+        <label class="form-switch">
+          <input type="checkbox" name="record" value="steps">
+          <i class="form-icon"></i> Steps
+        </label>
+        <label class="form-switch">
+          <input type="checkbox" name="record" value="hrm">
+          <i class="form-icon"></i> Optical Heart Rate
+        </label>
+        <label class="form-switch">
+          <input type="checkbox" name="record" value="acc">
+          <i class="form-icon"></i> Accelerometry
+        </label>
+        <label class="form-switch">
+          <input type="checkbox" name="record" value="bat">
+          <i class="form-icon"></i> Battery
+        </label>
+        <label class="form-switch">
+          <input type="checkbox" name="record" value="movement">
+          <i class="form-icon"></i> Movement
+        </label>
+        <label class="form-switch">
+          <input type="checkbox" name="record" value="baro">
+          <i class="form-icon"></i> Temperature/Pressure
+        </label>
+        <label class="form-switch">
+          <input type="checkbox" name="record" value="bthrm">
+          <i class="form-icon"></i> Bluetooth HRM (Uses BTHRM app/module)
+        </label>
+        <label class="form-switch">
+          <input type="checkbox" name="record" value="CORESensor">
+          <i class="form-icon"></i> CORE Sensor (Uses coretemp app/module)
+        </label>
+      </div>
 
-        <div class="row pt-2"><strong>GPS PSMOO Options:</strong>
-          <br>Option to have GPS work in PSMOO (uses GPS Setup app module)
-        </div> 
-          <div class="form-group">
-            <label class="form-switch">
-                <input type="checkbox" name="GPS">
-                <i class="form-icon"></i> Turn GPS On
-            </label>
-            <label class="form-label" for="input-GPSScanTime">Scan Time (mins)</label>
-            <input class="form-input" type="number" name="GPSScanTime" id="input-GPSScanTime" placeholder=2 min=0>
-            <p class="form-input-hint mb-0">The time spent scanning for a GPS signal.</strong></p>
-            <label class="form-label" for="input-GPSInterval">Scan Interval (mins)</label>
-            <input class="form-input" type="number" name="GPSInterval" id="input-GPSInterval" placeholder=10 min=0>
-            <p class="form-input-hint mb-0">The time between scans when a <strong>signal is not acquired.</strong></p>
-            <label class="form-label" for="input-GPSAdaptiveTime">Adaptive Time (mins)</label>
-            <input class="form-input" type="number" name="GPSAdaptiveTime" id="input-GPSAdaptiveTime" placeholder=2 min=0>
-            <p class="form-input-hint mb-0">The time between scans when a <strong>signal is acquired.</strong></p>
-          </div>
-          <div class="row pt-2"><strong>Extras:</strong>
-            <label class="form-label" for="input-studyID">Study ID:</label>
-            <input class="form-input" type="text" name="studyID" id="input-studyID" value="" minlength="1" maxlength="4">
-            <p class="form-input-hint mb-0">For communicating with HeatSuite Nodes. Maximum of 4 (no special) characters.</p>
-            <label class="form-label" for="input-filePrefix">File Prefix</label>
-            <input class="form-input" type="text" name="filePrefix" id="input-filePrefix" value="htst_" minlength="1" maxlength="5">
-            <p class="form-input-hint mb-0">ONLY CHANGE IF YOU KNOW WHAT YOU ARE DOING.</p>
+      <div class="row pt-2"><strong>GPS PSMOO Options:</strong>
+        <br>Option to have GPS work in PSMOO (uses GPSSetup app/module)
+      </div>
+      <div class="form-group">
+        <label class="form-switch">
+          <input type="checkbox" name="GPS">
+          <i class="form-icon"></i> Turn GPS On
+        </label>
+        <label class="form-label" for="input-GPSScanTime">Scan Time (mins)</label>
+        <input class="form-input" type="number" name="GPSScanTime" id="input-GPSScanTime" value=2 min=0>
+        <p class="form-input-hint mb-0">The time spent scanning for a GPS signal.</strong></p>
+        <label class="form-label" for="input-GPSInterval">Scan Interval (mins)</label>
+        <input class="form-input" type="number" name="GPSInterval" id="input-GPSInterval" value=10 min=0>
+        <p class="form-input-hint mb-0">The time between scans when a <strong>signal is not acquired.</strong></p>
+        <label class="form-label" for="input-GPSAdaptiveTime">Adaptive Time (mins)</label>
+        <input class="form-input" type="number" name="GPSAdaptiveTime" id="input-GPSAdaptiveTime" value=2 min=0>
+        <p class="form-input-hint mb-0">The time between scans when a <strong>signal is acquired.</strong></p>
+      </div>
+      <div class="row pt-2"><strong>Extras:</strong>
 
-          </div>
+        <label class="form-switch">
+          <input type="checkbox" name="fallDetect">
+          <i class="form-icon"></i> Fall Detection
+        </label>
+        <p class="form-input-hint mb-0">Will detect falls.</p>
+        <label class="form-switch">
+          <input type="checkbox" name="surveyRandomize">
+          <i class="form-icon"></i> Randomize EMA questions
+        </label>
+        <p class="form-input-hint mb-0">Enable this if you want your questions to be shuffled at random each time.</p>
+        <label class="form-label" for="input-studyID">Study ID:</label>
+        <input class="form-input" type="text" name="studyID" id="input-studyID" value="" minlength="1" maxlength="4">
+        <p class="form-input-hint mb-0">For communicating with HeatSuite Nodes. Maximum of 4 (no special) characters.
+        </p>
+        <label class="form-label" for="input-filePrefix">File Prefix</label>
+        <input class="form-input" type="text" name="filePrefix" id="input-filePrefix" value="htst_" minlength="1"
+          maxlength="5">
+        <p class="form-input-hint mb-0">ONLY CHANGE IF YOU KNOW WHAT YOU ARE DOING.</p>
+
+      </div>
+    </form>
+  </div>
+  <div class="container apploader-tab pb-2" id="tasksContainer" style="display:none;">
+    <div class="row pt-2"><strong>Edit your Task JSON File Editor:</strong>
+      <br><a href="https://heatsuitelabs.github.io/HeatSuiteDocs/" target="_blank">Read the Docs</a> on how to properly format the JSON file. GUI coming soon to BangleApps.
     </div>
-    <div class="container apploader-tab" id="tasksContainer">
+    
+    <div id="heatsuite_taskFile_editor" class="jsoneditor-container"></div>
+    <button class="btn btn-primary" id="heatsuite_taskFile_resetBtn">Restore Default</button>
+  </div>
+  <div class="container apploader-tab pb-2" id="surveyContainer" style="display:none;">
+    <div class="row pt-2"><strong>Ecological Momentary Assessment (EMA) JSON File Editor:</strong>
+      <br><a href="https://heatsuitelabs.github.io/HeatSuiteDocs/" target="_blank">Read the Docs</a> on how to properly format the JSON file. GUI coming soon to BangleApps.
     </div>
-    <div class="container apploader-tab" id="surveyContainer">
-    </div>
+    <div id="heatsuite_surveyFile_editor" class="jsoneditor-container"></div>
+    <button class="btn btn-primary" id="heatsuite_surveyFile_resetBtn">Restore Default</button>
+  </div>
 
-    <p><button id="upload" class="btn btn-primary">Upload</button></p>
+  <p><button id="upload" class="btn btn-primary">Upload</button></p>
 
-    <script src="../../core/lib/customize.js"></script>
+  <script src="../../core/lib/customize.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/jsoneditor@latest/dist/jsoneditor.min.css" rel="stylesheet" type="text/css">
+  <script src="https://cdn.jsdelivr.net/npm/jsoneditor@latest/dist/jsoneditor.min.js"></script>
 
-    <script>
-      //function from original index.js of BangleApps - required to bring here as the custom.html is loaded in an iframe
-      function showTab(tabname) {
-        document.querySelectorAll("#tab-navigate .tab-item").forEach(tab => {
-          tab.classList.remove("active");
-        });
-        document.querySelectorAll(".apploader-tab").forEach(tab => {
-          tab.style.display = "none";
-        });
-        document.getElementById("tab-"+tabname).classList.add("active");
-        document.getElementById(tabname).style.display = "inherit";
+  <script>
+    //default Schema
+    let heatsuite__taskFile_defaultSchema = {
+      "survey": {
+        "Name": "survey",
+        "icon": "mUy4kA///hf69H+icC18BsH+le/pX85t551Z9mpjdV51B+cBqcKl1sEwUCkUikA1KgMRiMQBAgXCDJYXCDIwXDDJIXEAAIwHAAQYGC4oyDC4wYGGAwyCGA5LGDBEQDAVvsUi/4yHCQWJiMa5QYCCIXt4UvmYbBDA8aomBjlED4QYC+fyk3uDBMR4mhjFJDAsmAQNmJRQAGPY4YJjWc5AYFk3OI4P++QYJwlEoh8CDAR5B9//mYYJPgIAC0JKE8czmc+PhMZoma1gYDY4VsDAPvcBMaMIWZcArhBb4b5OBQKUMV5IJBGQYwIGREQBQQwMGQ4KEC5gZFBxQAZqoABq93AAIWPgoXCDAl3uAXRDAoZNC4gYGJpYXFDA4ZJJAoYJJhAXGDBAyHGA4YJGQ1iC41QgEHDA1xC4kGs0lCwoADDQsRiALDs1mGQYXFDItxiMRDAoyCC44ZEC4IYDJIIyDCYlmAogwDJYYYDs0gDBUHC4QYDC4YRFDA0ADAZLCDC5JEsAYMgJLEDAiQGA44YdMRQYMiJiKhe/4BkKDBUz6lEDCkDmc0olADCk+3fkDCs7DCBZFGJKWEUIxjE8ZjGAB58CC6gyBmgwLA==",
+        "cbBtn": "Bangle.load('heatsuite.survey.js');",
+        "tod": [
+          900,
+          1200,
+          1500,
+          1800
+        ],
+        "debounce": 300,
+        "TaskDesc": "survey_TaskDesc"
+      },
+      "bloodPressure": {
+        "Name": "bloodPressure",
+        "icon": "mUy4kA///zNDBIIFBoMIqulnE79shiOM9li2cy6eUkEAyecsMIlNKE4cikQ/VgXn93CE4IYT9Wqu/kGiYYC1WnugzSgVO916u+n8QZQkUu89+9V88+noQvPo+qs1n9Wn8l6Jh0Ck+mMAIYBAYJMB4AYNu1+o9005+C0nq8QYMl1q92mDAmno9yE4bsBAAhWBk9m01mDAmqDAku9wAF8kgDAIABMYYABvQYCgX/AA/ikgwBs1qDAmqMYUE/1EAAtP+Ui84YBvwYEv0iDAMO+mVqoADrfu+UnugZBMYl3p18GIX0wczAAn+DANn8nn8l3893v1OvWsDAk1qszAQQYCu5DB8lMklE896v10DAn+92VSgIFBJQcWtRhCsOuc4IYErdVqZjBGIcav2nu92tQCBv120hjKPgURi0X91H13uuycBs4YErG1DAf/DAQABfgMaswFCsJjF9AYDrIYEAAoxGJQoYMVwoYFz4YQ/e7AAe4PgYYM/1EAAtPDB+ZzOf/4ACAgIYRzz3B93vAwIYR9wwC+n5DCXvxP//GODCmP93pDCnuxOZzGUDCf0px8BpwYMsIYCgQRBVwgFB8Un0wYHtQYDFwQAFkEn9wZGtV+uQYBDIMikUk9/iAgMigEuv1Hs1hCwMWs108/iDAQACl1VwQGDgXqu9n9160/uAwOnEoIAEh3/+QgFu0au/q113uweB+gYFgXuEIsCl131Vms2q0/k/vUDA348AIGkSKC8kil3VwgPG/oYGAASEBkEAhnuPgwYLB4ilBPg2YDB3tRgsAhtZoAYMgFIxxPBDAlfA4oAIl/fUwkC9AgGABEMzv0DIS9BzpSGMhNJ7H+W4Pu/HfGBwABkn47uIxGN7KcGABcu/+ZzP/9gwQJgToBdQYAFA==",
+        "tod": [
+          830,
+          1330,
+          1930
+        ],
+        "TaskDesc": "bloodPressure_TaskDesc",
+        "debounce": 3600,
+        "btPair": true,
+        "btInfo": {
+          "service": "1810",
+          "supported": [
+            "A&D_UA-651"
+          ]
+        }
+      },
+      "coreTemperature": {
+        "Name": "coreTemperature",
+        "icon": "mUy4kA///o8h7femWExEp5dazXWs8h+uc5Mpj+nqWErXOi99y+13fWMf4AdolEC64ZVglJqtVylAGCeVDANZGSQwBGIQyBGCU4ygyCqhLQglDkWJGQQYRokykUoGQQYQGAUiswyCDCFEn+z4U1tAyBPh4wB/dBrmDsQyBVx4wB2mVivCMoRJOGAVJ7VRrkikYwSzuq0sTkU0GCeq7NLGCutym/GC/zGH4wYg4wYmXppYwTgEV+VliowTgmekUsqNbGCUBr8ikXFigwRDAMyDAMsrIwRPYOCDAMitwwRgEZ4QYCkQwRSgQXCGCUBpAXC/1UuAYQoKUB/mDrMUC6EEivi/FZoMUMKNBr0uqkRCyIwD8sRCyIwEqIvSGANFGAJ3ReoeeGC1EoYwWpNEygwTDANVylEC6Z6BqtEGCgYBqgwUJQQwVGQQXWAH4AJA",
+        "tod": [
+          830,
+          1330,
+          1930
+        ],
+        "TaskDesc": "coreTemperature_TaskDesc",
+        "debounce": 3600,
+        "btPair": true,
+        "btInfo": {
+          "service": "1809",
+          "supported": [
+            "BLEThermistorPod"
+          ]
+        }
+      },
+      "bodyMass": {
+        "Name": "bodyMass",
+        "icon": "mUy4kBnP+///sMQ+nMkEAhtbtNirP+4cQinV09BDYOqvs16uCiEx1kRAGUb2kiAB9L2IYD3FvnMzmed7oAH7IMByf2xYwD0cHu4ABgaJBAA0wBoVwnQyC3E3UwV50VEAA8qy4PCuYyC2y/DhVKqoAH0mgCAdrDANPuAGBg/00oYIrQQFDAMjA4dUqxKIstFCAcyDAMpA4dSrVKswAF0mlkoQDyQxHrVM5gAF4mlGI4YLk3OtgYV1nKGKNGJQ1kDB+y9wAFlYYN+lV1QAHqrHEDA8+wrgIrHjDBV3v8ixAAHkX3u4YJ78w+xKIt8D/oYIgvklUwBgIAGgeip1QDA9Ut9Y1o3CAAkH7WF+1FDA19xRjBRQYYF+hjB1HXDAtzl93u+GJRFoBgPym4xG8t3AQIxIr3Xu4CBMY1u/s6XgYYFn2j7/mMYxvBpEk+BKIh9CwiJBGI12pWO64YIvvo0lnVw8G8uuDBXqr1gDH4Y/DDzHODA8H7FI8lQDBEFp2Exr5H1337QFCAAoSB1t/9QxGvvlu4CBDBFe693AQIYFucvu93wxKItAMB+U3DAsNxV3v9PGJH0+931HQDAcpCQNU19e1oxI7Xl/VFDwOSPgkFwXqVxWulCiBGIZED6fQAgUH/Wq14GDhs9KAYYB2xYDMIcHnWq0YHEAgdrDAO4m5FIABNzxYYBjejg6gBAB1wnWxDAIyBt85mYANyf2GAQyC2kiAB9LGAYAwA==",
+        "tod": [
+          800
+        ],
+        "TaskDesc": "bodyMass_TaskDesc",
+        "debounce": 3600,
+        "btPair": false,
+        "btInfo": {
+          "service": "181b",
+          "supported": [
+            "MIBFS"
+          ]
+        }
+      },
+      "urine": {
+            "name": "urine",
+            "icon": "j0e4kA\/\/\/8n+gn\/wM5xObsnu9Wr4Ugs1qoEIgEhhGDDoNEpV743E\/wHBu4AJGYUJ2lEAA+4yAOC21Io1Is27s2EsmEpAOEodG3tmxFm7dknYOUslmogBFBwnYxAAHxoOCgHH3YAHvidDhvuAA\/QByUH7tm7oAFuAODgdViNVAAswBwnykQAEl\/1BwkK2m0CAgOH3YOMFhwOOg+IoJKMolSFjUDDgo7I7vbCAg7Hs1liQ7U2AOEqIcEBwP\/qA7F2JZMqp3cfgz+GhmjmYAFnXABgI",
+            "cbBtn": "Bangle.load('heatsuite.urine.js');",
+            "debounce": 0,
+            "tod": [
+            ],
+            "btPair": false,
+            "btInfo": null,
+            "notify": false
+        }
+    };
+    let heatsuite__surveyFile_defaultSchema = {
+      "supported":{
+          "en_GB":"English (GB)",
+          "fr_CA":"Francais (CA)"
+          },
+      "questions":[{
+          "key":"comfort",
+          "text": {
+              "en_GB":"Thermal comfort?",
+              "fr_CA":"Confort thermique?"
+              },
+          "tod":[[0,2359]],
+          "oncePerDay": true,
+          "orderFix":false,
+          "options": [{
+              "text":{
+                  "en_GB":"Comfortable",
+                  "fr_CA":"Confortable"
+                  },
+              "value":0,
+              "color":"#ffffff",
+              "btnColor":"#38ed35"
+              },{
+              "text":{
+                  "en_GB":"Uncomfortable",
+                  "fr_CA": "Inconfortable"
+                  },
+              "value":1,
+              "color":"#ffffff",
+              "btnColor":"#ff0019"
+              }]
+          }]
+      };
+    //function from original index.js of BangleApps - required to bring here as the custom.html is loaded in an iframe
+    function showTab(tabname) {
+      document.querySelectorAll("#tab-navigate .tab-item").forEach(tab => {
+        tab.classList.remove("active");
+      });
+      document.querySelectorAll(".apploader-tab").forEach(tab => {
+        tab.style.display = "none";
+      });
+      document.getElementById("tab-" + tabname).classList.add("active");
+      document.getElementById(tabname).style.display = "inherit";
+    }
+    function formDataToJson(form) {
+      const formData = new FormData(form);
+      const data = {};
+      const forceArrayFields = ['record']; // force these to always be arrays
+      const checkboxHandled = new Set();
+      for (let [name, value] of formData.entries()) {
+        const field = form.querySelector(`[name="${name}"]`);
+        if (field && field.type === 'checkbox') {
+          if (checkboxHandled.has(name)) continue;
+          checkboxHandled.add(name);
+          const checkboxes = form.querySelectorAll(`input[type="checkbox"][name="${name}"]`);
+          const values = Array.from(checkboxes)
+                              .filter(cb => cb.checked)
+                              .map(cb => cb.value);
+    
+          data[name] = forceArrayFields.includes(name) ? values : (values.length ? values[0] : false);
+        } else {
+          if (data.hasOwnProperty(name)) {
+            if (!Array.isArray(data[name])) {
+              data[name] = [data[name]];
+            }
+            data[name].push(value);
+          } else {
+            if (name === "studyID" && !value.length) continue;
+            data[name] = value;
+          }
+        }
       }
+      forceArrayFields.forEach(field => {
+        if (!Array.isArray(data[field])) {
+          data[field] = data[field] !== undefined ? [data[field]] : [];
+        }
+      });
+      return data;
+    }    
+    function fillFormFromJson(form, data) {
+      for (let [name, value] of Object.entries(data)) {
+        const fields = form.querySelectorAll(`[name="${name}"]`);
+        if (!fields.length) continue;
+        fields.forEach(field => {
+          if (field.type === 'checkbox') {
+            if (Array.isArray(value)) {
+              field.checked = value.includes(field.value);
+            } else {
+              field.checked = value === true || value === field.value || value === "true";
+            }
+          } else if (field.type === 'radio') {
+            field.checked = (field.value === value);
+          } else {
+            field.value = value;
+          }
+        });
+      }
+    }
+    
+    //autosave form data to localstorage
+    function autosaveSettings(){
+      const form = document.getElementById('heatsuiteSettings');
+      const formjson = formDataToJson(form);
+      localStorage.setItem("heatuite__settings", JSON.stringify(formjson));
+    }
+    
+    function onInit(device) {
+      Util.readStorageJSON("heatsuite.default.json", function (d) {
+        try {
+          fillFormFromJson(settingsForm,JSON.parse(d));
+        } catch (error) {
+          console.error("Failed to parse JSON:", error);
+        }
+      });
+    }
+    const editors = {};
+    function initJsonEditor({ elementId, storageKey, defaultSchema, resetBtnId }) {
+      const container = document.getElementById(elementId);
+      const savedContent = localStorage.getItem(storageKey);
+      const initialContent = savedContent ? JSON.parse(savedContent) : defaultSchema;
+      const options = {
+        modes: ['tree', 'form', 'code', 'text'],
+        mode: 'code',
+        onChange: function () {
+          try {
+            const currentContent = editor.get();
+            localStorage.setItem(storageKey, JSON.stringify(currentContent));
+          } catch (err) {
+            console.error(`[${storageKey}] Invalid JSON not saved.`);
+          }
+        }
+      };
+      const editor = new JSONEditor(container, options);
+      editor.set(initialContent);
+      editors[storageKey] = { editor, defaultSchema };
+      if (resetBtnId) {
+        const resetBtn = document.getElementById(resetBtnId);
+        resetBtn.addEventListener('click', () => {
+          editor.set(defaultSchema);
+          localStorage.setItem(storageKey, JSON.stringify(defaultSchema));
+        });
+      }
+    }
+    window.onload = function () {
       const studyIDInput = document.getElementById('input-studyID');
       studyIDInput.addEventListener("input", () => {
         studyIDInput.value = studyIDInput.value.replace(/[^a-zA-Z0-9]/g, '');
       });
-        var heatsuiteSettings = {};
-        function onInit(device) { 
-            Util.readStorageJSON("heatsuite.default.json",function(d){
-                //console.log(d);
-                try {
-                  heatsuiteSettings = JSON.parse(d); 
-              } catch (error) {
-                  console.error("Failed to parse JSON:", error);
-              }
-            });
-         }
-      // When the 'upload' button is clicked...
-      document.getElementById("upload").addEventListener("click", function() {
-        sendCustomizedApp();
+      const settingsForm = document.getElementById('heatsuiteSettings');
+      settingsForm.addEventListener('input', autosaveSettings);
+      settingsForm.addEventListener('change', autosaveSettings);
+      const storedSettings = localStorage.getItem("heatuite__settings");
+      if (storedSettings) { //lets fill form:
+        fillFormFromJson(settingsForm, JSON.parse(storedSettings));
+      }
+      //initialize both JsonEditors for tasks and surveys
+      initJsonEditor({
+        elementId: 'heatsuite_taskFile_editor',
+        storageKey: 'heatsuite__taskFile',
+        defaultSchema: heatsuite__taskFile_defaultSchema,
+        resetBtnId: 'heatsuite_taskFile_resetBtn'
       });
+      initJsonEditor({
+        elementId: 'heatsuite_surveyFile_editor',
+        storageKey: 'heatsuite__surveyFile',
+        defaultSchema: heatsuite__surveyFile_defaultSchema,
+        resetBtnId: 'heatsuite_surveyFile_resetBtn'
+      });
+    };
 
-    </script>
-  </body>
+    // When the 'upload' button is clicked...
+    document.getElementById("upload").addEventListener("click", function () {
+      const form = document.getElementById('heatsuiteSettings');
+      var heatsuiteTasks = localStorage.getItem('heatsuite__taskFile');
+      var heatsuiteEMA = localStorage.getItem('heatsuite__surveyFile');
+      sendCustomizedApp({
+        storage: [
+          { 'name': "heatsuite.default.json", content: JSON.stringify(formDataToJson(form)) },
+          { "name": "heatsuite.tasks.json", content: "atob("+btoa(JSON.stringify(heatsuiteTasks))+")", evaluate: true  },
+          { "name": "heatsuite.survey.json", content: "atob("+btoa(JSON.stringify(heatsuiteEMA))+")", evaluate: true },
+        ]
+      });
+    });
+
+  </script>
+</body>
+
 </html>
