@@ -204,6 +204,7 @@ function startGame() {
 
   // ==== RAYCASTING FUNCTION ====
   function castRayDist(angle) {
+    "ram"
     let sinA = Math.sin(angle),
       cosA = Math.cos(angle);
     let x = player.x,
@@ -348,6 +349,7 @@ function startGame() {
 
   // ==== RENDER FUNCTION ====
   function render() {
+    "ram"
     if (player.health <= 0) {
       g.setBgColor("#000000").setColor(0).clear();
       g.setColor(1, 0, 0);
