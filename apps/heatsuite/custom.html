@@ -388,8 +388,8 @@
       sendCustomizedApp({
         storage: [
           { 'name': "heatsuite.default.json", content: JSON.stringify(formDataToJson(form)) },
-          { "name": "heatsuite.tasks.json", content: editors['heatsuite__taskFile'].editor.get() },
-          { "name": "heatsuite.survey.json", content: editors['heatsuite__surveyFile'].editor.get() },
+          { "name": "heatsuite.tasks.json", content: JSON.stringify(editors['heatsuite__taskFile'].editor.get()) },
+          { "name": "heatsuite.survey.json", content: JSON.stringify(editors['heatsuite__surveyFile'].editor.get()) },
         ]
       });
     });
