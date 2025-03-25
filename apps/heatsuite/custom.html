@@ -384,13 +384,11 @@
     // When the 'upload' button is clicked...
     document.getElementById("upload").addEventListener("click", function () {
       const form = document.getElementById('heatsuiteSettings');
-      var heatsuiteTasks = localStorage.getItem('heatsuite__taskFile');
-      var heatsuiteEMA = localStorage.getItem('heatsuite__surveyFile');
       sendCustomizedApp({
         storage: [
           { 'name': "heatsuite.default.json", content: JSON.stringify(formDataToJson(form)) },
-          { "name": "heatsuite.tasks.json", content: heatsuiteTasks },
-          { "name": "heatsuite.survey.json", content: heatsuiteEMA },
+          { "name": "heatsuite.tasks.json", content: localStorage.getItem('heatsuite__taskFile') },
+          { "name": "heatsuite.survey.json", content: localStorage.getItem('heatsuite__surveyFile') },
         ]
       });
     });
