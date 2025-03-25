@@ -1,8 +1,8 @@
 type ActualMenuItem = Exclude<Menu["..."], MenuOptions | undefined>;
 
 type PromenuSettings = {
-	naturalScroll: boolean,
-	wrapAround: boolean,
+  naturalScroll: boolean,
+  wrapAround: boolean,
 };
 
 const enum Consts {
