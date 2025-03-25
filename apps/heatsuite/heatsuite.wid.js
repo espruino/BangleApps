@@ -601,7 +601,7 @@ function studyTaskCheck(timenow) {
       activeRecorder.start();
       activeRecorders.push(activeRecorder);
     });
-    if(settings.includes('fallDetect') && settings.fallDetect){
+    if(settings.hasOwnProperty('fallDetect') && settings.fallDetect){
       Bangle.on('accel', fallDetectFunc);
     }else{
       Bangle.removeListener('accel', fallDetectFunc);
@@ -639,7 +639,7 @@ function studyTaskCheck(timenow) {
   writeSetTimeout();
 
   //widget stuff
-  var iconWidth = 44 + (Bangle.hasOwnProperty("isCORESensorConnected") ? 23 : 0);
+  var iconWidth = 44;
   function draw() {
     g.reset();
     if (cache.taskQueue !== undefined) (cache.taskQueue.length > 0 ? g.setColor("#f00") : g.setColor("#0f0"));
@@ -650,9 +650,6 @@ function studyTaskCheck(timenow) {
     g.drawString("HS", this.x + 12, this.y + 12);
     g.setColor((Bangle.hasOwnProperty("isBTHRMConnected") && Bangle.isBTHRMConnected()) ? "#00F" : "#0f0");
     g.drawImage(atob("EhCCAAKoAqgCqqiqqCqqqqqqqqqqqqqqqqqqqqqqqqqqqqqiqqqqqAqqqqoAKqqqgACqqqAAAqqoAAAKqgAAACqAAAAAoAAAAAoAAA=="), this.x + 21, this.y + 3);
-    if(Bangle.hasOwnProperty("isCORESensorConnected")){
-      g.setColor((Bangle.isCORESensorConnected()) ? "#0f0" : "#CCC"); g.drawImage(atob("FBSCAAAAADwAAAPw/8AAP/PD8AP/wwDwD//PAPAP/APA8D/AA//wP8AA/8A/AAAAPP8AAAD8/wAAAPz/AAAA/D8AAAAAP8AAA/A/8AAP8A/8AD/wD///z8AD///PAAA///AAAAP/wAA="), this.x + 42, this.y + 1);
-    }
   }
   WIDGETS.heatsuite = {
     area: 'tr',

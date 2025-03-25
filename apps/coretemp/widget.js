@@ -17,7 +17,7 @@
     }
 
     g.drawImage(
-      atob("DAyBAAHh0js3EuDMA8A8AWBnDj9A8A=="),
+      atob("FBSCAAAAADwAAAPw/8AAP/PD8AP/wwDwD//PAPAP/APA8D/AA//wP8AA/8A/AAAAPP8AAAD8/wAAAPz/AAAA/D8AAAAAP8AAA/A/8AAP8A/8AD/wD///z8AD///PAAA///AAAAP/wAA="),
       this.x + (24 - 12) / 2, this.y + 1);
     g.setColor(-1);
   }
