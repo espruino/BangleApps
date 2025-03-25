@@ -320,7 +320,7 @@
       Util.readStorageJSON("heatsuite.default.json", function (d) {
         try {
           const settingsForm = document.getElementById('heatsuiteSettings');
-          fillFormFromJson(settingsForm,JSON.parse(d));
+          fillFormFromJson(settingsForm,d);
         } catch (error) {
           console.error("Failed to parse JSON:", error);
         }
