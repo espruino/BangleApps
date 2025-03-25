@@ -338,15 +338,19 @@ function showMessagesScroller(msg) {
           if (touch && touch.type===2) {return;}
           const MSG_SELECTED = MESSAGES[i];
           WU&&WU.show();
-          delete titleLines, allLines;
           //E.showScroller();
           updateReadMessages();
-          if (!touch || touch.type===0) {
-            setTimeout(()=>showMessageRouter(MSG_SELECTED, true, "overview"),0);
+          delete titleLines, allLines;
+          if (touch && touch.type.back) {
+            returnToMain();
+          } else if (!touch || touch.type===0) {
+            setTimeout(()=>{
+              showMessageSettings(MSG_SELECTED)
+            },0);
           }
-          print(touch)
+          //print(touch)
           if (touch && touch.type.swipeLR) {
-            print("select swipe")
+            //print("select swipe")
             if (touch.type.swipeLR>0 && posHandler) {posHandler(MSG_SELECTED);}
             if (touch.type.swipeLR<0 && negHandler) {negHandler(MSG_SELECTED);}
           }
@@ -356,7 +360,7 @@ function showMessagesScroller(msg) {
     }
   });
 
-  // If Bangle.js 2 add an external select hw button handler.
+  // If Bangle.js 2 add an external back hw button handler.
   if (2===process.env.HWVERSION) {
     setWatch(()=>{
       if ("scroller"!==active) {return;}
@@ -364,10 +368,22 @@ function showMessagesScroller(msg) {
       // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
       setTimeout(()=>{
         if (!persist) {return load();}
-        Bangle.emit("touch", 1, {x:APP_RECT.x2/2, y:APP_RECT.y2/2, type:0});
+        Bangle.emit("touch", 1, {x:Math.floor(APP_RECT.x2/2), y:Math.floor(APP_RECT.y2/2), type:{back:true}});
       },0);
     }, BTN);
   }
+
+  // Add an external back touch handler.
+  let touchHandler = (button, xy)=>{
+    // if ((left side of Banlge 1 screen) || (top left corner of Bangle 2 screen))
+    if ((!xy && 1===button) || (xy && xy.type===0 && xy.x<30 && xy.y<30)) {
+      if (!persist) {return load();}
+      returnToMain();
+      E.stopEventPropagation();
+      Bangle.removeListener("touch", touchHandler);
+    }
+  };
+  Bangle.prependListener("touch", touchHandler);
 
   function updateReadMessages() {
     let shownMsgIdxFirst, shownMsgIdxLast;
@@ -375,9 +391,10 @@ function showMessagesScroller(msg) {
     //print(firstTitleLinePerMsg)
     //print(shownIdxFirst, shownIdxLast)
 
-    for (let i=0; i<firstTitleLinePerMsg.length-1 ; i++) {
+    for (let i=0; i<firstTitleLinePerMsg.length ; i++) {
       const FIRST_LINE_OF_MSG = firstTitleLinePerMsg[i];
-      const LAST_LINE_OF_MSG = firstTitleLinePerMsg[i+1]-1 ?? allLines.length-1;
+      const LAST_LINE_OF_MSG = (firstTitleLinePerMsg[i+1] || allLines.length) - 1;
+      //print("  ", FIRST_LINE_OF_MSG, LAST_LINE_OF_MSG, allLines.length);
 
       if (
         shownScrollIdxFirst
@@ -397,7 +414,7 @@ function showMessagesScroller(msg) {
       }
     }
 
-    //print(shownIdxFirst, shownIdxLast)
+    //print(shownScrollIdxFirst, shownScrollIdxLast)
     //print(shownMsgIdxFirst, shownMsgIdxLast)
     //print(MESSAGES)
     for (let i=shownMsgIdxFirst; i<shownMsgIdxLast+1; i++) {
@@ -408,7 +425,7 @@ function showMessagesScroller(msg) {
   var negHandler,posHandler = [ ];
   if (msg.negative) {
     negHandler = (msg)=>{
-      print("negHandler")
+      //print("negHandler")
       msg.new = false;
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,false);
@@ -417,7 +434,7 @@ function showMessagesScroller(msg) {
     //footer.push({type:"img",src:atob("PhAB4A8AAAAAAAPAfAMAAAAAD4PwHAAAAAA/H4DwAAAAAH78B8AAAAAA/+A/AAAAAAH/Af//////w/gP//////8P4D///////H/Af//////z/4D8AAAAAB+/AfAAAAAA/H4DwAAAAAPg/AcAAAAADwHwDAAAAAA4A8AAAAAAAA=="),col:"#f00",cb:negHandler});
   }
   if (msg.reply && reply) {
-    print("posHandler reply")
+    //print("posHandler reply")
     posHandler = (msg)=>{
       replying = true;
       msg.new = false;
@@ -437,7 +454,7 @@ function showMessagesScroller(msg) {
   }
   else if (msg.positive) {
     posHandler = (msg)=>{
-      print("posHandler")
+      //print("posHandler")
       msg.new = false;
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,true);
@@ -446,7 +463,7 @@ function showMessagesScroller(msg) {
     //footer.push({type:"img",src:atob("QRABAAAAAAAAAAOAAAAABgAAA8AAAAADgAAD4AAAAAHgAAPgAAAAAPgAA+AAAAAAfgAD4///////gAPh///////gA+D///////AD4H//////8cPgAAAAAAPw8+AAAAAAAfB/4AAAAAAA8B/gAAAAAABwB+AAAAAAADAB4AAAAAAAAABgAA=="),col:"#0f0",cb:posHandler});
   }
   Bangle.swipeHandler = (lr) => {
-    if (lr) {Bangle.emit("touch", 1, {x:APP_RECT.x2/2, y:APP_RECT.y2/2, type:{swipeLR:lr}});}
+    if (lr) {Bangle.emit("touch", 1, {x:Math.floor(APP_RECT.x2/2), y:Math.floor(APP_RECT.y2/2), type:{swipeLR:lr}});}
   };
   Bangle.on("swipe", Bangle.swipeHandler);
 }
@@ -455,7 +472,7 @@ function showMessageSettings(msg) {
   active = "settings";
   var menu = {"":{
       "title":/*LANG*/"Message",
-      back:() => showMessageOverview(msg.id)
+      back:() => showMessagesScroller(msg)
     },
   };
 
@@ -469,11 +486,11 @@ function showMessageSettings(msg) {
         .then(result => {
           Bluetooth.println(JSON.stringify(result));
           replying = false;
-          showMessageOverview(msg.id);
+          showMessagesScroller(msg);
         })
         .catch(() => {
           replying = false;
-          showMessageOverview(msg.id);
+          showMessagesScroller(msg);
         });
     };
   }
@@ -594,7 +611,7 @@ function showMessageOverview(msgid) {
         .catch(() => {
           replying = false;
           layout.render();
-          showMessageOverview(msg.id);
+          showMessagesScroller(msg);
         });
     }; footer.push({type:"img",src:atob("QRABAAAAAAAH//+AAAAABgP//8AAAAADgf//4AAAAAHg4ABwAAAAAPh8APgAAAAAfj+B////////geHv///////hf+f///////GPw///////8cGBwAAAAAPx/gDgAAAAAfD/gHAAAAAA8DngOAAAAABwDHP8AAAAADACGf4AAAAAAAAM/w=="),col:"#0f0", cb:posHandler});
   }
@@ -732,7 +749,7 @@ function checkMessages(options) {
     },
     select : idx => {
       if (idx < MESSAGES.length)
-        showMessageRouter(MESSAGES[idx], true, "overview");
+        showMessageRouter(MESSAGES[idx], true, "scroller");
     },
     back : () => load()
   });
