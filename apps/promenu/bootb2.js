@@ -1,7 +1,7 @@
 var _a, _b;
-var settings = (require("Storage").readJSON("promenu.settings.json", true) || {});
-(_a = settings.naturalScroll) !== null && _a !== void 0 ? _a : (settings.naturalScroll = false);
-(_b = settings.wrapAround) !== null && _b !== void 0 ? _b : (settings.wrapAround = true);
+var S = (require("Storage").readJSON("promenu.settings.json", true) || {});
+(_a = S.naturalScroll) !== null && _a !== void 0 ? _a : (S.naturalScroll = false);
+(_b = S.wrapAround) !== null && _b !== void 0 ? _b : (S.wrapAround = true);
 E.showMenu = function (items) {
     var RectRnd = function (x1, y1, x2, y2, r) {
         var pp = [];
@@ -168,7 +168,7 @@ E.showMenu = function (items) {
             }
             else {
                 var lastSelected = selected;
-                if (settings.wrapAround) {
+                if (S.wrapAround) {
                     selected = (selected + dir + menuItems.length) % menuItems.length;
                 }
                 else {
@@ -210,7 +210,7 @@ E.showMenu = function (items) {
         },
     }, function (dir) {
         if (dir)
-            l.move(settings.naturalScroll ? -dir : dir);
+            l.move(S.naturalScroll ? -dir : dir);
         else
             l.select();
     });

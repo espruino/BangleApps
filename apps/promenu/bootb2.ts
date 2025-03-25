@@ -1,18 +1,17 @@
 type ActualMenuItem = Exclude<Menu["..."], MenuOptions | undefined>;
 
 type PromenuSettings = {
-	naturalScroll: boolean,
-	wrapAround: boolean,
+  naturalScroll: boolean,
+  wrapAround: boolean,
 };
 
 const enum Consts {
   NAME_SCROLL_PAD = 5,
 }
 
-const settings = (require("Storage").readJSON("promenu.settings.json", true) || {}) as PromenuSettings;
-settings.naturalScroll ??= false;
-settings.wrapAround ??= true;
-
+const S = (require("Storage").readJSON("promenu.settings.json", true) || {}) as PromenuSettings;
+S.naturalScroll ??= false;
+S.wrapAround ??= true;
 
 E.showMenu = (items?: Menu): MenuInstance => {
   const RectRnd = (x1: number, y1: number, x2: number, y2: number, r: number) => {
@@ -217,7 +216,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
 
       } else {
         const lastSelected = selected;
-        if (settings.wrapAround) {
+        if (S.wrapAround) {
           selected = (selected + dir + /*keep +ve*/menuItems.length) % menuItems.length;
         } else {
           selected = E.clip(selected + dir, 0, menuItems.length - 1);
@@ -258,7 +257,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
     },
   } as SetUIArg<"updown">,
   dir => {
-    if (dir) l.move(settings.naturalScroll ? -dir : dir);
+    if (dir) l.move(S.naturalScroll ? -dir : dir);
     else l.select();
   });
 
