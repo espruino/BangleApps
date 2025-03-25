@@ -19,7 +19,7 @@
   let initHandlerTimeout = null;
   let BTHRM_ConnectCheck = null;
   //Fall Detection
-  var fallTimeout = 0;
+  var fallTime = 0;
   var fallDetected = false;
 
   Bangle.setOptions({ 
@@ -393,14 +393,14 @@
     //broadcast event (unencrypted)
     require("ble_advert").set(bleAdvertHealth, payload);
   }
-  function fallDetectFunc(e){
+  function fallDetectFunc(acc){
       if(!fallDetected){
         let d = new Date.getTime();
-        if(fallTimeout != 0 && fallTimeout - d > 200){
-          fallTimeout = 0; fallDetected = false;
-        }else if (accel.mag < 0.2 && fallDetect === 0){
-          fallDetect = d;
-        }else if(accel.mag > 2.1 && fallDetect - d < 200){ // impact
+        if(fallTime != 0 && fallTime - d > 200){
+          fallTime = 0; fallDetected = false;
+        }else if (acc.mag < 0.2 && fallTime === 0){
+          fallTime = d;
+        }else if(acc.mag > 2.1 && fallTime - d < 200){ // impact
           //IMPACT
           E.showPrompt("Did you fall?",{title: "FALL DETECTION",img:atob("FBQBAfgAf+Af/4P//D+fx/n+f5/v+f//n//5//+f//n////3//5/n+P//D//wf/4B/4AH4A=")}).then((r) => {
             if (r) {
@@ -601,7 +601,7 @@ function studyTaskCheck(timenow) {
       activeRecorder.start();
       activeRecorders.push(activeRecorder);
     });
-    if(settings.fallDetect){
+    if(settings.includes('fallDetect') && settings.fallDetect){
       Bangle.on('accel', fallDetectFunc);
     }else{
       Bangle.removeListener('accel', fallDetectFunc);
