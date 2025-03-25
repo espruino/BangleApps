@@ -13,18 +13,23 @@ Commercial enterprises have largely determined what researchers can measure in t
 This is a list of current features available when using the HeatSuite Watch Application:
 
 + Per minute averaging and/or sum of onboard watch sensor data (Heart rate, barometer temperature and pressure, accelerometer, battery)
-+ Can connect external bluetooth devices for added physiological monitoring (e.g. Bluetooth Heart Rate, CORE Sensor) - more being added!
++ Can connect external bluetooth devices for added physiological monitoring (e.g. Bluetooth Heart Rate, CORE Sensor) - more being added.
 + Connect and store data from other devices including:
     + Blood Pressure Monitor (A&D Medical UA651-BLE)
-    + Oral Temperature using Custom Dongle - Contact [Nicholas Ravanelli, PhD](emailto:nick.ravanelli@gmail.com)
+    + Oral Temperature using custom dongle - Contact [Nicholas Ravanelli, PhD](emailto:nick.ravanelli@gmail.com)
     + Body Mass Scale (Xiaomi Composition Scale 2)
-+ Collect perceptions and behaviour using ecological momentary analysis with onboard questionnaires
++ Collect perceptions and behaviour using ecological momentary assessments with onboard questionnaires
 + Mictruition frequency and color analysis for index of hydration status
 + Create study schedules for participants to receive programmatic nudges daily, specific to each task
 + Programmatic GPS monitoring, with adaptive power switching for battery optimization
++ Fall Detection and bluetooth broadcasting (beta)
 
 ## Applications/modules that HeatSuite integrates:
 
+* [BTHRM](https://banglejs.com/apps/#bthrm)
+* [coretemp](https://banglejs.com/apps/#coretemp)
+* [gpssetup](https://banglejs.com/apps/#gpssetup)
+* [recorder](https://banglejs.com/apps/#recorder) (modified with per minute averaging)
 
 ## Research Using HeatSuite:
 
