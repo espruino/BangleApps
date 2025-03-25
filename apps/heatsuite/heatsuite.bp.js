@@ -130,14 +130,14 @@ function getBP(id) {
         type: "v", c: [
           {
             type: "h", c: [
-              { type: "txt", font: "12x20:2", label: bp_arr.sbp, fillx: 1 },
+              { type: "txt", font: "12x20:2", label: receivedData.sbp, fillx: 1 },
               { type: "txt", font: "12x20:2", label: "/", fillx: 1 },
-              { type: "txt", font: "12x20:2", label: bp_arr.dbp, fillx: 1 }
+              { type: "txt", font: "12x20:2", label: receivedData.dbp, fillx: 1 }
             ]
           },
           {
             type: "h", c: [
-              { type: "txt", font: "12x20:2", label: bp_arr.hr, fillx: 1 },
+              { type: "txt", font: "12x20:2", label: receivedData.hr, fillx: 1 },
               { type: "txt", font: "12x20:2", label: "BPM", fillx: 1 },
             ]
           },

@@ -70,7 +70,7 @@ function _getRecordFile(type, headers) {
         }
     }
     var storageFile = require("Storage").open(fileName, "w");
-    storageFile.write(fields.join(",") + "\n");
+    storageFile.write(headers.join(",") + "\n");
     return require("Storage").open(fileName, "a");
 }
 function _checkStorageFree(type) {

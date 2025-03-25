@@ -393,7 +393,7 @@
     //broadcast event (unencrypted)
     require("ble_advert").set(bleAdvertHealth, payload);
   }
-  function fallDetect(e){
+  function fallDetectFunc(e){
       if(!fallDetected){
         let d = new Date.getTime();
         if(fallTimeout != 0 && fallTimeout - d > 200){
@@ -602,9 +602,9 @@ function studyTaskCheck(timenow) {
       activeRecorders.push(activeRecorder);
     });
     if(settings.fallDetect){
-      Bangle.on('accel', fallDetect);
+      Bangle.on('accel', fallDetectFunc);
     }else{
-      Bangle.removeListener('accel', fallDetect);
+      Bangle.removeListener('accel', fallDetectFunc);
     }
     //BTHRM Additions
     if (settings.record.includes('bthrm') && Bangle.hasOwnProperty("isBTHRMConnected") ) {
