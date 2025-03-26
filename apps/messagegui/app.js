@@ -340,6 +340,9 @@ function showMessagesScroller(msg) {
           setColor("#f00").drawImage(footerImgNeg,r.x+5+3,r.y).
           setColor("#0f0").drawImage(footerImgPos,r.w-64-5,r.y);
       }
+      if (0===scrollIdx) {
+        g.setColor("#f00").drawImage(atob("GBiBAAAYAAH/gAf/4A//8B//+D///D///H/P/n+H/n8P/n4f/vwAP/wAP34f/n8P/n+H/n/P/j///D///B//+A//8Af/4AH/gAAYAA=="), r.x, r.y);
+      }
       if (scrollIdx<shownScrollIdxFirst) {shownScrollIdxFirst = scrollIdx;}
       if (scrollIdx>shownScrollIdxLast) {shownScrollIdxLast = scrollIdx;}
     },
