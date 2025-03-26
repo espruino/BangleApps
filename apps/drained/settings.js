@@ -87,4 +87,4 @@
         });
     };
     updateAndRedraw();
-});
+})

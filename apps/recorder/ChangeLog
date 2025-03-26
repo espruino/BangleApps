@@ -53,3 +53,4 @@
 	levels instead of one.
 0.42: Minor code improvements
 0.43: Fix interaction on clocks without widgets
+0.44: List tracks in reverse chronological order.

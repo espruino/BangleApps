@@ -1,6 +1,6 @@
 { "id": "trail",
   "name": "Trail Rail",
-  "version":"0.01",
+  "version":"0.11",
   "description": "Follow a GPX track in car or on bike",
   "icon": "app.png",
   "readme": "README.md",

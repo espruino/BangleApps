@@ -1,6 +1,6 @@
 { "id": "lcdclockplus",
   "name": "LCD Clock Plus",
-  "version": "0.02",
+  "version": "0.03",
   "description": "A Casio-style clock, with four ClockInfo areas at the top and bottom. Tap them and swipe up/down and left/right to toggle between different information.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"},{"url":"screenshot2.png"}],

@@ -1,9 +1,6 @@
 {
   let drawTimeout;
-  let extrasTimeout;
-  let onLock;
-  //let onTap;
-  //let onTwist;
+  let extrasTimer=0;
   let settings = require('Storage').readJSON("contourclock.json", true) || {};
   if (settings.fontIndex == undefined) {
     settings.fontIndex = 0;
@@ -16,9 +13,9 @@
     require('Storage').writeJSON("contourclock.json", settings);
   }
   require("FontTeletext10x18Ascii").add(Graphics);
-  let extrasShown = (!settings.hidewhenlocked) && (!Bangle.isLocked());
   let installedFonts = require('Storage').readJSON("contourclock-install.json") || {};
-  if (installedFonts.n > 0) { //New install - check for unused font files
+  // New install - check for unused font files. This should probably be handled by the installer instead
+  if (installedFonts.n > 0) { 
     settings.fontIndex = E.clip(settings.fontIndex, -installedFonts.n + 1, installedFonts.n - 1);
     require('Storage').writeJSON("contourclock.json", settings);
     for (let n = installedFonts.n;; n++) {
@@ -27,14 +24,22 @@
     }
     require("Storage").erase("contourclock-install.json");
   }
-  let showExtras = function() { //show extras for a limited time
+  let onLock = function(locked) {if (!locked) showExtras();};
+  let showExtras = function() { //show extras for 5s
     drawExtras();
-    if (extrasTimeout) clearTimeout(extrasTimeout);
-    extrasTimeout = setTimeout(() => {
-      extrasTimeout = undefined;
-      hideExtras();
-    }, 5000);
-    extrasShown = false;
+    extrasTimer = 5000-60000-(Date.now()%60000);
+    if (extrasTimer<0) {  //schedule next redraw early to hide extras
+      if (drawTimeout) clearTimeout(drawTimeout);
+      drawTimeout = setTimeout(function() {
+        drawTimeout = undefined;
+        draw();
+      }, 5000);
+    }
+  };
+  let hideExtras = function() {
+    g.reset();
+    g.clearRect(0, 138, g.getWidth() - 1, 176);
+    if (settings.widgets) require("widget_utils").hide();
   };
   let drawExtras = function() { //draw date, day of the week and widgets
     let date = new Date();
@@ -43,38 +48,27 @@
     g.setFont("Teletext10x18Ascii").setFontAlign(0, 1);
     if (settings.weekday) g.drawString(require("locale").dow(date).toUpperCase(), g.getWidth() / 2, g.getHeight() - 18);
     if (settings.date) g.drawString(require('locale').date(date, 1), g.getWidth() / 2, g.getHeight());
-    require("widget_utils").show();
-    extrasShown = true;
-  };
-  let hideExtras = function() {
-    if (extrasTimeout) clearTimeout(extrasTimeout);
-    extrasTimeout = undefined; //NEW
-    g.reset();
-    g.clearRect(0, 138, g.getWidth() - 1, 176);
-    require("widget_utils").hide();
-    extrasShown = false; ///NEW
+    if (settings.widgets) require("widget_utils").show();
   };
   let draw = function() {
-    if (drawTimeout) clearTimeout(drawTimeout); //NEW
-    drawTimeout = setTimeout(function() {
-      drawTimeout = undefined;
-      draw();
-    }, 60000 - (Date.now() % 60000));
+    if (extrasTimer>0) { //schedule next draw early to remove extras
+      drawTimeout = setTimeout(function() {
+        drawTimeout = undefined;
+        draw();
+      }, extrasTimer);
+      extrasTimer=0;
+    } else {
+      if (settings.hideWhenLocked) hideExtras();
+      drawTimeout = setTimeout(function() {
+        drawTimeout = undefined;
+        draw();
+      }, 60000 - (Date.now() % 60000));
+    }
     g.reset();
-    if (extrasShown) drawExtras();
-    else hideExtras();
+    if (!settings.hideWhenLocked) drawExtras();
     require('contourclock').drawClock(settings.fontIndex);
   };
   if (settings.hideWhenLocked) {
-    onLock = locked => {
-      if (!locked) {
-        require("widget_utils").show();
-        drawExtras();
-      } else {
-        require("widget_utils").hide();
-        hideExtras();
-      }
-    };
     Bangle.on('lock', onLock);
     if (settings.tapToShow) Bangle.on('tap', showExtras);
     if (settings.twistToShow) Bangle.on('twist', showExtras);
@@ -82,14 +76,16 @@
   Bangle.setUI({
     mode: "clock",
     remove: function() {
-      Bangle.removeListener('lock', onLock);
-      Bangle.removeListener('tap', showExtras);
-      Bangle.removeListener('twist', showExtras);
-      if (drawTimeout) clearTimeout(drawTimeout);
-      if (extrasTimeout) clearTimeout(extrasTimeout);
-      drawTimeout = undefined;
-      extrasTimeout = undefined;
-      if (settings.hideWhenLocked) require("widget_utils").show();
+      if (settings.hideWhenLocked) {
+        Bangle.removeListener('lock', onLock);
+        if (settings.tapToShow) Bangle.removeListener('tap', showExtras);
+        if (settings.twistToShow) Bangle.removeListener('twist', showExtras);
+      }
+      if (drawTimeout) {
+        clearTimeout(drawTimeout);
+        drawTimeout = undefined;
+      }
+      if (settings.hideWhenLocked && settings.widgets) require("widget_utils").show();
       g.reset();
       g.clear();
     }
@@ -97,7 +93,8 @@
   g.clear();
   if (settings.widgets) {
     Bangle.loadWidgets();
-    setTimeout(Bangle.drawWidgets,0); //NEW
+    Bangle.drawWidgets();
   }
   draw();
+  if (!settings.hideWhenLocked || !Bangle.isLocked()) showExtras();
 }

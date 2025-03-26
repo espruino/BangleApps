@@ -18,7 +18,7 @@
         "": { "title": "Counter2" },
         "< Back": () => back(),
         'Default C1': {
-            value: settings[0],
+            value: settings.max0,
             min: -99, max: 99,
             onchange: v => {
                 settings.max0 = v;
@@ -26,7 +26,7 @@
             }
         },
         'Default C2': {
-            value: settings[2],
+            value: settings.max1,
             min: -99, max: 99,
             onchange: v => {
                 settings.max1 = v;
@@ -52,4 +52,4 @@
     };
     // Show the menu
     E.showMenu(menu);
-});
+})

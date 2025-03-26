@@ -15,3 +15,4 @@
 0.11: Skip double buffering, use 240x240 size
 0.12: Fix swipe direction (#800)
 0.13: Bangle.js 2 support
+0.14: Brighter Christmas tree on Bangle.js 2

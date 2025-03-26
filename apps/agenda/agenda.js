@@ -30,20 +30,26 @@ var settings = require("Storage").readJSON("agenda.settings.json",true)||{};
 
 CALENDAR=CALENDAR.sort((a,b)=>a.timestamp - b.timestamp);
 
-function getDate(timestamp) {
-  return new Date(timestamp*1000);
+function getDate(timestamp, allDay) {
+  // All day events are always in UTC and always start at 00:00:00, so we
+  // need to "undo" the timezone offsetting to make sure that the day is
+  // correct.
+  var offset = allDay ? new Date().getTimezoneOffset() * 60 : 0
+  return new Date((timestamp+offset)*1000);
 }
+
 function formatDay(date) {
-  let formattedDate = Locale.dow(date,1) + " " + Locale.date(date).replace(/\d\d\d\d/,"");
+  let formattedDate = Locale.dow(date,1) + " " + Locale.date(date).replace(/,*\s*\d\d\d\d/,"");
   if (!settings.useToday) {
     return formattedDate;
   }
   const today = new Date(Date.now());
-  if (date.getDay() == today.getDay() && date.getMonth() == today.getMonth())
+  if (date.getDate() == today.getDate())
      return /*LANG*/"Today ";
   else {
-    const tomorrow = new Date(Date.now() + 86400 * 1000);
-    if (date.getDay() == tomorrow.getDay() && date.getMonth() == tomorrow.getMonth()) {
+    var tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    if (date.getDate() == tomorrow.getDate()) {
        return /*LANG*/"Tomorrow ";
     }
     return formattedDate;
@@ -57,8 +63,9 @@ function formatDateLong(date, includeDay, allDay) {
   }
   return shortTime;
 }
+
 function formatDateShort(date, allDay) {
-  return formatDay(date)+(allDay?"":Locale.time(date,1)+Locale.meridian(date));
+  return formatDay(date)+(allDay?"":" "+Locale.time(date,1)+Locale.meridian(date));
 }
 
 var lines = [];
@@ -69,16 +76,19 @@ function showEvent(ev) {
   //var lines = [];
   if (ev.title) lines = g.wrapString(ev.title, g.getWidth()-10);
   var titleCnt = lines.length;
-  var start = getDate(ev.timestamp);
-  var end = getDate((+ev.timestamp) + (+ev.durationInSeconds));
+  var start = getDate(ev.timestamp, ev.allDay);
+  // All day events end at the midnight boundary of the following day. Here, we
+  // subtract one second for all day events so the days display correctly.
+  const allDayEndCorrection = ev.allDay ? 1 : 0;
+  var end = getDate((+ev.timestamp) + (+ev.durationInSeconds) - allDayEndCorrection, ev.allDay);
   var includeDay = true;
   if (titleCnt) lines.push(""); // add blank line after title
   if(start.getDay() == end.getDay() && start.getMonth() == end.getMonth())
     includeDay = false;
-  if(includeDay && ev.allDay) {
-    //single day all day (average to avoid getting previous day)
+  if(!includeDay && ev.allDay) {
+    //single day all day
     lines = lines.concat(
-      g.wrapString(formatDateLong(new Date((start+end)/2), includeDay, ev.allDay), g.getWidth()-10));
+      g.wrapString(formatDateLong(start, includeDay, ev.allDay), g.getWidth()-10));
   } else if(includeDay || ev.allDay) {
     lines = lines.concat(
       /*LANG*/"Start"+":",
@@ -137,7 +147,7 @@ function showList() {
       if (!ev) return;
       var isPast = false;
       var x = r.x+2, title = ev.title;
-      var body = formatDateShort(getDate(ev.timestamp),ev.allDay)+"\n"+(ev.location?ev.location:/*LANG*/"No location");
+      var body = formatDateShort(getDate(ev.timestamp, ev.allDay),ev.allDay)+"\n"+(ev.location?ev.location:/*LANG*/"No location");
       if(settings.pastEvents) isPast = ev.timestamp + ev.durationInSeconds < (new Date())/1000;
       if (title) g.setFontAlign(-1,-1).setFont(fontBig)
         .setColor(isPast ? "#888" : g.theme.fg).drawString(title, x+4,r.y+2);

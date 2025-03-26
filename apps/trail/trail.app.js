@@ -128,7 +128,7 @@ let fmt = {
   },
 };
 
-/* gps library v0.1.2 */
+/* gps library v0.1.3 */
 let gps = {
   emulator: -1,
   init: function(x) {
@@ -161,8 +161,8 @@ let gps = {
       return Bangle.getGPSFix();
     let fix = {};
     fix.fix = 1;
-    fix.lat = 50;
-    fix.lon = 14-(getTime()-this.gps_start) / 1000; /* Go West! */
+    fix.lat = 50.010507;
+    fix.lon = 14.765840-(getTime()-this.gps_start) / 10000; /* Go West! */
     fix.alt = 200;
     fix.speed = 5;
     fix.course = 30;
@@ -266,6 +266,9 @@ let egt = {
     if (s[1].split('=')[1] === undefined) {
       r.lat = 1 * s[0];
       r.lon = 1 * s[1];
+      if (!r.lat || !r.lon) {
+        print("Parse error at ", l);
+      }
     }
 
     for (let fi of s) {
@@ -279,6 +282,92 @@ let egt = {
   },
 };
 
+/* zoom library v0.0.4 */
+var zoom = {
+  buf : 0,
+  /* y coordinate is "strange" -- positive values go north */ 
+  /* x1 -- left, x2 -- right of simulated canvas.
+     we want x1 < x2, y1 < y2. */
+  x1 : 0, x2 : 0, y1 : 0, y2 : 0, 
+  /* screen size in pixels */
+  ss : 176,
+  /* size in pixels */
+  init : function(size) {
+    this.size = size;
+    this.buf = Graphics.createArrayBuffer(size, size, 2, { msb: true });
+  },
+  clear : function() {
+    this.buf.reset().clear();
+  },
+  /* Origin in lat/lon */
+  origin : 0,
+  geoNew : function(p, is) {
+    this.clear();
+    this.origin = p;
+    let i = Bangle.project(p);
+    this.x1 = i.x - is;
+    this.x2 = i.x + is;
+    this.y1 = i.y - is;
+    this.y2 = i.y + is;
+  },
+  /* output: 0..1 */
+  xrel : function(i)  {
+    let r = {};
+    r.x = ((i.x - this.x1) / (this.x2 - this.x1));
+    r.y = ((i.y - this.y1) / (this.y2 - this.y1));
+    return r;
+  },
+  /* input: meters, output: pixels in buf*/
+  xform : function(p) {
+    let r = this.xrel(p);
+    r.x *= this.size;
+    r.y *= -this.size;
+    r.y += this.size;
+    return r;
+  },
+  /* takes x, y with lat/lon m */
+  geoLine : function(i1, i2) {
+    this.drawLine(Bangle.project(i1), Bangle.project(i2));
+  },
+  /* takes x, y in m */
+  drawLine : function(i1, i2) {
+    let p1 = this.xform(i1);
+    let p2 = this.xform(i2);
+    //print("line", p1, p2);
+    this.buf.drawLine(p1.x, p1.y, p2.x, p2.y);
+  },
+  geoPaint : function(i, head, z) {
+    this.mPaint(Bangle.project(i), head, z);
+  },
+  /* vx, vy: viewpoint in meters,
+     head: which heading to display as up,
+     zoom: how many meters from center of screen to edge */
+  mPaint : function(v, head, z) {
+    let sh = this.xrel(v);
+    sh.x = sh.x - 0.5;
+    sh.y = 0.5 - sh.y;
+    let scale = ((this.y2-this.y1)/(z*2)) * this.ss/this.size;
+    let dist = Math.sqrt(sh.x*sh.x + sh.y*sh.y) * this.ss * scale;
+    let theta = Math.atan2(-sh.y, sh.x);
+    let rad = (head / 360) * 2 * Math.PI;
+    let ox = Math.sin(theta - rad + 1.5*Math.PI) * dist;
+    let oy = Math.cos(theta - rad + 1.5*Math.PI) * dist;
+    /*
+    print("scale", scale);
+    print("dist", dist);
+    print("o", ox, oy);
+    */
+    
+    /* drawimage... takes middle of the image, and rotates around it.
+                ... in pixels
+       scale is pixels to pixels */
+    g.drawImage(zoom.buf, 176/2 + ox, 176/2 + oy,
+                { rotate: rad,
+                  scale: scale });
+  }
+};
+
+
 function toCartesian(v) {
   const R = 6371; // Poloměr Země v km
   const latRad = v.lat * Math.PI / 180;
@@ -291,19 +380,22 @@ function toCartesian(v) {
 }
 
 function distSegment(x1, x2, xP) {
-  // Převod zeměpisných souřadnic na kartézské souřadnice
+  // Translate geo to cartesian
   const p1 = toCartesian(x1);
   const p2 = toCartesian(x2);
   const p = toCartesian(xP);
 
-  // Vektor p1p2
   const dx = p2.x - p1.x;
   const dy = p2.y - p1.y;
+  
+  const div = (dx * dx + dy * dy);
 
-  // Projekce bodu p na přímku definovanou body p1 a p2
-  const dot = ((p.x - p1.x) * dx + (p.y - p1.y) * dy) / (dx * dx + dy * dy);
+  // Project point p to line defined by p1 / p2.
+  let dot = 2;
+  if (div)
+    dot = ((p.x - p1.x) * dx + (p.y - p1.y) * dy) / div;
 
-  // Určení bodu na přímce, kde leží projekce
+  // Compute closest point to projection
   let closestX, closestY;
   if (dot < 0) {
     closestX = p1.x;
@@ -316,7 +408,6 @@ function distSegment(x1, x2, xP) {
     closestY = p1.y + dot * dy;
   }
 
-  // Vzdálenost mezi bodem p a nejbližším bodem na úsečce
   const distance = Math.sqrt((p.x - closestX) * (p.x - closestX) + (p.y - closestY) * (p.y - closestY));
 
   return distance * 1000;
@@ -333,67 +424,44 @@ function angleDifference(angle1, angle2) {
   return difference;
 }
 
-function drawThickLine(x1, y1, x2, y2, thickness) {
-  // Calculate the perpendicular offset for the line thickness
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const length = Math.sqrt(dx * dx + dy * dy);
-  const offsetX = (dy / length) * (thickness / 2);
-  const offsetY = (dx / length) * (thickness / 2);
-
-  // Draw multiple lines to simulate thickness
-  for (let i = -thickness / 2; i <= thickness / 2; i++) {
-    g.drawLine(
-      x1 + offsetX * i,
-      y1 - offsetY * i,
-      x2 + offsetX * i,
-      y2 - offsetY * i
-    );
-  }
-}
-
-function toxy(pp, p) {
-  let r = {};
-  let d = fmt.distance(pp, p);
-  let h = fmt.radians(fmt.bearing(pp, p) - pp.course);
-  let x = pp.x, y = pp.y;
-  x += d * pp.ppm * Math.sin(h);
-  y -= d * pp.ppm * Math.cos(h);
-  r.x = x;
-  r.y = y;
-  return r;
-}
-
-function paint(pp, p1, p2, thick) {
-  let d1 = toxy(pp, p1);
-  let d2 = toxy(pp, p2);
-  drawThickLine(d1.x, d1.y, d2.x, d2.y, thick);
-}
-
-var destination = {}, num = 0, dist = 0;
+var start = {}, destination = {}, num = 0, dist = 0;
 
 function read(pp, n) {
-  g.reset().clear();
   let f = require("Storage").open(n+".st", "r");
   let l = f.readLine();
   let prev = 0;
+
+  g.setColor(0, 0, 0);
+  g.setFont("Vector", 31);
+  
   while (l!==undefined) {
-    num++;
     l = ""+l;
-    //print(l);
     let p = egt.parse(l);
     if (p.lat) {
       if (prev) {
         dist += fmt.distance(prev, p);
-        //paint(pp, prev, p);
+        if (pp.g)
+          paint(pp, prev, p, 1);
+      } else {
+        zoom.geoNew(p, 3000);
+        start = p;
+        pp.lat = p.lat;
+        pp.lon = p.lon;
       }
       prev = p;
     }
     l = f.readLine();
-    if (!(num % 100)) {
-      ui.drawMsg(num + "\n" + fmt.fmtDist(dist / 1000));
+    if (!(num % 30)) {
+      g.clear();
+      zoom.geoPaint(prev, 0, 1500);
+      g.drawString(num + "\n" + fmt.fmtDist(dist / 1000), 3, 3);
+      g.flip();
       print(num, "points");
+      if (!(num % 300)) {
+        zoom.geoNew(prev, 3000);
+      }
     }
+    num++;
   }
   ui.drawMsg(num + "\n" + fmt.fmtDist(dist / 1000));
   destination = prev;
@@ -405,19 +473,22 @@ function time_read(n) {
   print("Running...");
   let v1 = getTime();
   let pp = {};
-  pp.lat = 50;
-  pp.lon = 14.75;
-  pp.ppm = 0.08; /* Pixels per meter */
-  pp.course = 270;
+  pp.ppm = 0.0008 * 5; /* Pixels per meter */
+  pp.course = 0;
+  pp.x = 176/2;
+  pp.y = 176/2;
+  pp.g = zoom.buf;
   read(pp, n);
+  // { rotate: Math.PI / 4 + i/100, scale: 1-i/100 }
+
   let v2 = getTime();
   print("Read took", (v2-v1), "seconds");
   step_init();
   print(num, "points", dist, "distance");
-  setTimeout(step, 1000);
+  setTimeout(step, 100);
 }
 
-var track_name = "", inf, point_num, track = [], track_points = 30, north = {};
+var track_name = "", inf, point_num, track = [], track_points = 30, north = {}, point_drawn;
 
 function step_init() {
   inf = require("Storage").open(track_name + ".st", "r");
@@ -425,7 +496,9 @@ function step_init() {
   north.lat = 89.9;
   north.lon = 0;
   point_num = 0;
+  point_drawn = 0;
   track = [];
+  zoom.geoNew(start, 3000);
 }
 
 function load_next() {
@@ -433,8 +506,7 @@ function load_next() {
     let l = inf.readLine();
     if (l === undefined) {
       print("End of track");
-      ui.drawMsg("End of track");
-      break;
+      return 0;
     }
     let p = egt.parse(l);
     if (!p.lat) {
@@ -442,37 +514,53 @@ function load_next() {
       continue;
     }
     p.point_num = point_num++;
-    p.passed = 0;
     print("Loading ", p.point_num);
     track.push(p);
   }
+  return 1;
+}
+
+function paint(pp, p1, p2, thick) {
+  zoom.geoLine(p1, p2);
 }
 
 function paint_all(pp) {
   let prev = 0;
   let mDist = 99999999999, m = 0;
   const fast = 0;
+  let new_drawn = -1;
 
   g.setColor(1, 0, 0);
+  for (let i = track.length-1; i > 1; i--) {
+    let p = track[i];
+    if (point_drawn >= p.point_num)
+      break;
+    prev = track[i-1];
+    paint(pp, prev, p, 3);
+    if (new_drawn == -1)
+      new_drawn = p.point_num;
+  }
+  if (new_drawn != -1)
+    point_drawn = new_drawn;
   for (let i = 1; i < track.length; i++) {
     let p = track[i];
     prev = track[i-1];
-    if (0 && fmt.distance(p, pp) < 100)
-      p.passed = 1;
     if (!fast) {
       let d = distSegment(prev, p, pp);
       if (d < mDist) {
         mDist = d;
         m = i;
-      } else {
-        g.setColor(0, 0, 0);
-      }
+      } else if (mDist < 10 && d > 100)
+        break;
     }
-    paint(pp, prev, p, 3);
   }
   if (fast)
     return { quiet: 0, offtrack : 0 };
   print("Best segment was", m, "dist", mDist);
+  if (fmt.distance(track[m], zoom.origin) > 1500) {
+    zoom.geoNew(track[m], 3000); // FIXME: this will flicker
+    point_drawn = 0;
+  }
   let ahead = 0, a = fmt.bearing(track[m-1], track[m]), quiet = -1;
   for (let i = m+1; i < track.length; i++) {
     let a2 = fmt.bearing(track[i-1], track[i]);
@@ -482,6 +570,7 @@ function paint_all(pp) {
         quiet = ahead + fmt.distance(pp, track[i-1]);
       print("...straight", ahead);
       a = a2;
+      break;
     }
     ahead += fmt.distance(track[i-1], track[i]);
   }
@@ -489,14 +578,12 @@ function paint_all(pp) {
   return { quiet: quiet, offtrack: mDist };
 }
 
-function step_to(pp, pass_all) {
-  pp.x = ui.w/2;
-  pp.y = ui.h*0.66;
-  
-  g.setColor(0.5, 0.5, 1);
-  let sc = 2.5;
-  g.fillPoly([ pp.x, pp.y, pp.x - 5*sc, pp.y + 12*sc, pp.x + 5*sc, pp.y + 12*sc ]);
-  
+function drop_last() {
+    print("Dropping ", track[0].point_num);
+    track.shift();
+}
+
+function step_to(pp, pass_all) {    
   if (0) {
     g.setColor(0.5, 0.5, 1);
     paint(pp, pp, destination, 1);
@@ -504,12 +591,12 @@ function step_to(pp, pass_all) {
     g.setColor(1, 0.5, 0.5);
     paint(pp, pp, north, 1);
   }
-  
+
   let quiet = paint_all(pp);
   
-  if ((pass_all || track[0].passed) && distSegment(track[0], track[1], pp) > 150) {
-    print("Dropping ", track[0].point_num);
-    track.shift();
+  while (distSegment(track[0], track[1], pp) > 150 &&
+         track.length > 10) {
+    drop_last();
   }
   return quiet;
 }
@@ -523,12 +610,13 @@ function step() {
 
   let fix = gps.getGPSFix();
 
-  load_next();
+  let have_more = load_next();
   
   let pp = fix;
   pp.ppm = 0.08 * 3; /* Pixels per meter */
+  pp.g = g;
 
-  if (!fix.fix) {
+  if (demo_mode || !fix.fix) {
     let i = 2;
     pp.lat = track[i].lat;
     pp.lon = track[i].lon;
@@ -536,11 +624,29 @@ function step() {
   }
 
   let quiet = step_to(pp, 1);
+  if (1) {
+    g.setColor(0, 0, 0);
+    zoom.geoPaint(pp, -pp.course, 500);
+  }
+  
+  {
+  pp.x = ui.w/2;
+  pp.y = ui.h*0.5;
 
+  g.setColor(0, 0, 1);
+  let sc = 2.5;
+  g.drawPoly([ pp.x, pp.y, pp.x - 5*sc, pp.y + 12*sc, pp.x + 5*sc, pp.y + 12*sc ], true);
+
+  }
+  
+  g.setColor(0, 0, 0);
   if (!fast) {
     g.setFont("Vector", 31);
     g.setFontAlign(-1, -1);
     let msg = "\noff " + fmt.fmtDist(quiet.offtrack/1000);
+    if (!have_more) {
+      msg += "\nEnd!";
+    }
     g.drawString(fmt.fmtFix(fix, getTime()-gps.gps_start) + msg, 3, 3);
   }
   if (!fast) {
@@ -556,10 +662,10 @@ function step() {
     Bangle.setLCDPower(1);
 
   if (demo_mode)
-    track.shift();
+    drop_last();
   let v2 = getTime();
   print("Step took", (v2-v1), "seconds");
-  setTimeout(step, 100);
+  setTimeout(step, 1000);
 }
 
 function recover() {
@@ -570,20 +676,23 @@ function recover() {
   pp.ppm = 0.08 * 3; /* Pixels per meter */
   if (!fix.fix) {
     print("Can't recover with no fix\n");
-    fix.lat = 50.0122;
-    fix.lon = 14.7780;
+    fix.lat = 50.010507;
+    fix.lon = 14.765840;
   }
-  load_next();
   load_next();
   while(1) {
     let d = distSegment(track[0], track[1], pp);
-    print("Recover, d", d);
+    if (d === undefined) {
+      print("Distance wrong?");
+    }
+    print("Recover, d", d, track[0], track[1]);
     if (d < 400)
       break;
     track.shift();
     if (0)
       step_to(pp, 1);
-    load_next();
+    if (!load_next())
+      break;
     ui.drawMsg("Recover\n" + fmt.fmtDist(d / 1000));
   }
 }
@@ -607,22 +716,18 @@ fmt.init();
 egt.init();
 gps.init();
 gps.start_gps();
+zoom.init(176);
 
 const st = require('Storage');
 
-let l = /^t\..*\.egt$/;
+let l = /^[tr]\..*\.egt$/;
 l = st.list(l, {sf:false});
 
 print(l);
 
 function load_track(x) {
-  print("Loading", x);
-  Bangle.buzz(50, 1); // Won't happen because load() is quicker
-  g.reset().clear()
-    .setFont("Vector", 40)
-    .drawString("Loading", 0, 30)
-    .drawString(x, 0, 80);
-  g.flip();
+  Bangle.buzz(50, 1);
+  ui.drawMsg("Loading\n"+x);
   track_name = x;
   time_read(x);
   

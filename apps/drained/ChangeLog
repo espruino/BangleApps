@@ -5,3 +5,5 @@
 0.04: Enhance menu: enable bluetooth, visit settings & visit recovery
 0.05: Enhance menu: permit toggling bluetooth
 0.06: Display clock in green when charging, with "charging" text
+0.07: Correctly restore full power when the charged threshold is reached
+0.08: Redisplay immediately on changes to charging status

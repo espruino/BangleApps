@@ -1,0 +1,198 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <div id="tracks"></div>
+    <div class="container" id="toastcontainer" style="position:fixed; bottom:8px; left:0px; right:0px; z-index: 100;"></div>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script src="../../core/js/ui.js"></script>
+    <script src="../../core/js/utils.js"></script>
+    <script>
+var domTracks = document.getElementById("tracks");
+var fileCache = new Map();
+
+function saveGPX(track, title) {
+  // Output GPX
+  var gpx = `<?xml version="1.0" encoding="UTF-8"?>
+<gpx creator="Bangle.js" version="1.1">
+  <metadata>
+    <time>${isoTime(track[0][0])}</time>
+  </metadata>
+  <trk>
+    <name>${title}</name>
+    <trkseg>`;
+  track.forEach(pt=>{
+    gpx += `
+      <trkpt lat="${pt[1]}" lon="${pt[2]}">
+        <ele>${pt[3]}</ele>
+        <time>${isoTime(pt[0])}</time>
+      </trkpt>`;
+
+  });
+  gpx += `
+    </trkseg>
+  </trk>
+</gpx>`;
+  Util.saveFile(title+".gpx", "application/gpx+xml", gpx);
+  showToast("Download finished.", "success");
+}
+
+function trackLineToObject(l) {
+  if (l===undefined) return {};
+  return l.trim().split(",");
+}
+
+function isoTime(t) {
+  var td = new Date(Number(t));
+  var ti = td.toISOString();
+  return ti;
+}
+
+function downloadTrack(filename, callback) {
+  function onData(data) {
+    var lines = data.trim().split("\n");
+    var headers = lines.shift().split(",");
+    var track = lines.map(l=>trackLineToObject(l));
+    callback(track);
+  }
+
+  const data = fileCache.get(filename);
+  if (data) {
+    onData(data);
+  } else {
+    Util.showModal(`Downloading ${filename}...`);
+    Util.readStorageFile(filename, data => {
+      fileCache.set(filename, data);
+      onData(data);
+      Util.hideModal();
+    });
+  }
+}
+
+function downloadAll(trackList, cb) {
+  const tracks = trackList.slice();
+
+  const downloadOne = () => {
+    const track = tracks.pop();
+    if(!track) {
+      showToast("Finished downloading all.", "success");
+      return;
+    }
+
+    downloadTrack(
+      track.filename,
+      lines => {
+        cb(lines, `Bangle.js Track ${track.number}`);
+        downloadOne();
+      }
+    );
+  };
+
+  downloadOne();
+}
+
+function getTrackList() {
+  Util.showModal("Loading Track List...");
+  domTracks.innerHTML = "";
+  Puck.eval(`require("Storage").list(/^\\.pacer.*\\.csv$/,{sf:1})`,files=>{
+    var trackList = [];
+    var promise = Promise.resolve();
+    files.forEach(filename => {
+      promise = promise.then(()=>new Promise(resolve => {
+        var trackNo = filename.match(/^\.pacer(.*)\.csv$/)[1];
+        Util.showModal(`Loading Track ${trackNo}...`);
+        Puck.eval(`(${JSON.stringify(filename)})`, trackInfo=>{
+          console.log(filename," => ",trackInfo);
+          trackList.push({
+            filename : filename,
+            number : trackNo,
+          });
+          resolve();
+        });
+      }));
+    });
+    // ================================================
+    // When 'promise' completes we now have all the info in trackList
+    promise.then(() => {
+      var html = `
+      <div class="container">
+      <h2>Tracks</h2>
+      <div class="columns">\n`;
+      trackList.forEach(track => {
+        console.log("track", track);
+        const trackDate = new Date (track.number.slice(0,4) + '-' + track.number.slice(4,6) + '-' + track.number.slice (6,8))
+        const trackFullDate = trackDate.toDateString() + ' ' + track.number.slice(8,10) + ':' + track.number.slice(10,12) + ':' + track.number.slice (12,14)
+        html += `
+         <div class="column col-12">
+           <div class="card-header">
+             <div class="card-title h5">
+               ${trackFullDate} &nbsp;
+               <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadgpx">Download GPX</button>
+               <button class="btn btn-default" filename="${track.filename}" trackid="${track.number}" task="delete">Delete</button>
+             </div>
+             <div class="card-subtitle">
+               &nbsp;
+             </div>
+           </div>
+         </div>
+        `;
+      });
+      if (trackList.length==0) {
+        html += `
+         <div class="column col-12">
+           <div class="card-header">
+             <div class="card-title h5">No tracks</div>
+             <div class="card-subtitle text-gray">No GPS tracks found</div>
+           </div>
+         </div>
+         `;
+      }
+      html += `
+        </div><!-- columns -->
+        <h2>Batch</h2>
+        <div class="form-group">
+          <button class="btn btn-primary" task="downloadgpx_all">Download all GPX</button>
+        </div>
+        </div>`;
+      domTracks.innerHTML = html;
+      Util.hideModal();
+      var buttons = domTracks.querySelectorAll("button");
+        for (var i=0;i<buttons.length;i++) {
+          buttons[i].addEventListener("click",event => {
+            var button = event.currentTarget;
+            var filename = button.getAttribute("filename");
+            var trackid = parseInt(button.getAttribute("trackid"));
+            var task = button.getAttribute("task");
+
+            if (!/_all$/.test(task) && (!filename || trackid===undefined)) return;
+
+            switch(task) {
+              case "delete":
+                Util.showModal(`Deleting ${filename}...`);
+                Util.eraseStorageFile(filename,()=>{
+                  Util.hideModal();
+                  getTrackList();
+                });
+                break;
+              case "downloadgpx":
+                downloadTrack(filename, track => saveGPX(track, `Bangle.js Track ${trackid}`));
+                break;
+              case "downloadgpx_all":
+                downloadAll(trackList, saveGPX);
+                break;
+            }
+          });
+        }
+      });
+  });
+}
+
+function onInit() {
+  getTrackList();
+}
+
+    </script>
+  </body>
+</html>

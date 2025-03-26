@@ -1,0 +1,19 @@
+{
+    "id": "batterybooster",
+    "name": "Battery Booster",
+    "icon": "app.png",
+    "version": "0.01",
+    "description": "A bootloader app which adds scripts to boost battery life of your Bangle.js 2",
+    "type": "bootloader",
+    "tags": "tools,system",
+    "readme": "README.md",
+    "supports": [
+        "BANGLEJS2"
+    ],
+    "storage": [
+        {
+            "name": "batterybooster.boot.js",
+            "url": "boot.js"
+        }
+    ]
+}

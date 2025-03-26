@@ -21,15 +21,17 @@
       <label><input id="customize" type="checkbox" /> Advanced: Customize the date and time formats.</label>
     </div>
     <p>
-      <span id="customize-warning"></span>
       <table id="examples-short-long"></table>
       <table id="examples"></table>
     </p>
+
+    <p id="customize-warning"></p>
 
     <p>Then click <button id="upload" class="btn btn-primary">Upload</button></p>
 
     <script src="../../core/lib/customize.js"></script>
     <script src="../../core/js/utils.js"></script>
+    <script src="sanitycheck.js"></script>
     <script src="locales.js"></script>
 
     <script>
@@ -103,32 +105,6 @@ exports = { name : "system", currencySym:"£",
         return '\\x'+(n+256).toString(16).slice(-2);
       }
 
-      // do some sanity checks
-      Object.keys(locales).forEach(function(localeName) {
-        var locale = locales[localeName];
-        if (locale.trans && !locale.trans.on) console.error(localeName+": If translations are provided, 'on' *must* be included");
-        if (distanceUnits[locale.distance[0]]===undefined) console.error(localeName+": Unknown distance unit "+locale.distance[0]);
-        if (distanceUnits[locale.distance[1]]===undefined) console.error(localeName+": Unknown distance unit "+locale.distance[1]);
-        if (speedUnits[locale.speed]===undefined) console.error(localeName+": Unknown speed unit "+locale.speed);
-        if (locale.temperature!='°C' && locale.temperature!='°F')
-          console.error(localeName+": Unknown temperature unit "+locale.temperature);
-        // Now check that codepage is ok and all chars in translation are in that codepage
-        const codePageName = "ISO8859-1";
-        if (locale.codePage) codePageName = locale.codePage;
-        const codePage = codePages[codePageName];
-        if (codePage===undefined) console.error(localeName+": Unknown codePage "+codePageName);
-        function checkChars(v,path) {
-          if ("object"==typeof v)
-            Object.keys(v).forEach(k=>checkChars(v[k], path+"."+k));
-          else if ("string"==typeof v)
-            for (var i=0;i<v.length;i++)
-              if (codePageLookup(localeName, codePage, v[i])===undefined)
-                console.error(` ... in ${path}[${i}]`);
-        }
-        checkChars(locale,localeName);
-      });
-
-
       function createLocaleModule() {
         console.log(`Language ${lang}`);
 
@@ -184,8 +160,6 @@ exports = { name : "system", currencySym:"£",
           "%a":  `${js(locale.abday)}.split(',')[d.getDay()]`,
           "%B":  `${js(locale.month)}.split(',')[d.getMonth()]`,
           "%b":  `${js(locale.abmonth)}.split(',')[d.getMonth()]`,
-          "%p":  `d.getHours()<12?${js(locale.ampm[0].toUpperCase())}:${js(locale.ampm[1].toUpperCase())}`,
-          "%P":  `d.getHours()<12?${js(locale.ampm[0].toLowerCase())}:${js(locale.ampm[1].toLowerCase())}`
         };
 
         var timeN = patternToCode(locale.timePattern[0]);
@@ -269,8 +243,6 @@ exports = {
         }
 
         var date = new Date();
-        // TODO: This warning should have a link to an article explaining how the formats work, and how long they are allowed to be
-        document.getElementById("customize-warning").innerText = customizeLocale ? "⚠️ If you make the formats too long, some apps will not work!" : "";
         document.getElementById("examples-short-long").innerHTML = `
 <tr><td class="table_t"></td><td style="font-weight:bold">Short</td><td style="font-weight:bold">Long</td></tr>
 <tr><td class="table_t">Day</td><td>${exports.dow(date,1)}</td><td>${exports.dow(date,0)}</td></tr>
@@ -332,27 +304,63 @@ ${customizeLocale ? `<tr><td class="table_t">Meridian names</td>
           document.querySelector("input#short-date-pattern").addEventListener("input", event => {
             locale.datePattern["1"] = event.target.value;
             document.querySelector("td#short-date-pattern-output").innerText = patternToOutput(event.target.value);
+            checkCustomLocale();
           });
           document.querySelector("input#long-date-pattern").addEventListener("input", event => {
             locale.datePattern["0"] = event.target.value;
             document.querySelector("td#long-date-pattern-output").innerText = patternToOutput(event.target.value);
+            checkCustomLocale();
           });
           document.querySelector("input#short-time-pattern").addEventListener("input", event => {
             locale.timePattern["1"] = event.target.value;
             document.querySelector("td#short-time-pattern-output").innerText = patternToOutput(event.target.value);
+            checkCustomLocale();
           });
           document.querySelector("input#long-time-pattern").addEventListener("input", event => {
             locale.timePattern["0"] = event.target.value;
             document.querySelector("td#long-time-pattern-output").innerText = patternToOutput(event.target.value);
+            checkCustomLocale();
           });
           document.querySelector("input#meridian-am").addEventListener("input", event => {
             locale.ampm["0"] = event.target.value;
             document.querySelector("span#meridian-am-output").innerText = event.target.value;
+            checkCustomLocale();
           });
           document.querySelector("input#meridian-pm").addEventListener("input", event => {
             locale.ampm["1"] = event.target.value;
             document.querySelector("span#meridian-pm-output").innerText = event.target.value;
+            checkCustomLocale();
           });
+
+          let isCheckingLocale = false;
+          // Polyfill for WebKit:
+          const requestIdleCallback = globalThis.requestIdleCallback || ((func) => {func()});
+          // Check that a custom locale follows some basic standards
+          function checkCustomLocale(){
+            if(isCheckingLocale) return;
+            isCheckingLocale = true;
+            setTimeout(() => {
+              requestIdleCallback(() => {
+                isCheckingLocale = false;
+                const result = globalThis.checkLocale(locale, {speedUnits, distanceUnits, codePages, CODEPAGE_CONVERSIONS});
+                let text = "";
+                for(const w of [...result.errors, ...result.warnings]){
+                  text += `⚠️ ${w.name} ${w.error}.\n`;
+                }
+                const element = document.getElementById("customize-warning");
+                if(text.length > 0){
+                  text += "\nIf you upload this locale, some apps might no longer work.\nPlease try to resolve the issues before uploading."
+                  element.classList.add("toast");
+                  element.classList.add("toast-error");
+                }else{
+                  element.classList.remove("toast");
+                  element.classList.remove("toast-error");
+                }
+                element.innerText = text;
+              }, {timeout: 2000})
+            }, 500);
+          }
+
         }
         return getLocaleModule(false);
       }
@@ -416,6 +424,10 @@ ${customizeLocale ? `<tr><td class="table_t">Meridian names</td>
         }else{
           createLocaleModule();
         }
+        const warningsElement = document.getElementById("customize-warning")
+        warningsElement.innerText = "";
+        warningsElement.classList.remove("toast");
+        warningsElement.classList.remove("toast-error");
       }
       customizeSelector.addEventListener('change', handleCustomizeChange);
       function handleCustomizeChange(){

@@ -1,13 +1,7 @@
 (function() {
-  const alarm = require('sched');
-  const iconAlarmOn = atob("GBiBAAAAAAAAAAYAYA4AcBx+ODn/nAP/wAf/4A/n8A/n8B/n+B/n+B/n+B/n+B/h+B/4+A/+8A//8Af/4AP/wAH/gAB+AAAAAAAAAA==");
-  const iconAlarmOff = atob("GBiBAAAAAAAAAAYAYA4AcBx+ODn/nAP/wAf/4A/n8A/n8B/n+B/n+B/nAB/mAB/geB/5/g/5tg/zAwfzhwPzhwHzAwB5tgAB/gAAeA==");
-  const iconTimerOn = atob("GBiBAAAAAAAAAAAAAAf/4Af/4AGBgAGBgAGBgAD/AAD/AAB+AAA8AAA8AAB+AADnAADDAAGBgAGBgAGBgAf/4Af/4AAAAAAAAAAAAA==");
-  const iconTimerOff = atob("GBiBAAAAAAAAAAAAAAf/4Af/4AGBgAGBgAGBgAD/AAD/AAB+AAA8AAA8AAB+AADkeADB/gGBtgGDAwGDhwfzhwfzAwABtgAB/gAAeA==");
-
   //from 0 to max, the higher the closer to fire (as in a progress bar)
-  function getAlarmValue(a){
-    let min = Math.round(alarm.getTimeToAlarm(a)/(60*1000));
+  function getAlarmValue(a) {
+    let min = Math.round(require('sched').getTimeToAlarm(a)/(60*1000));
     if(!min) return 0; //not active or more than a day
     return getAlarmMax(a)-min;
   }
@@ -21,30 +15,36 @@
 
   function getAlarmIcon(a) {
     if(a.on) {
-      if(a.timer) return iconTimerOn;
-      return iconAlarmOn;
+      if(a.timer) return atob("GBiBAAAAAAAAAAAAAAf/4Af/4AGBgAGBgAGBgAD/AAD/AAB+AAA8AAA8AAB+AADnAADDAAGBgAGBgAGBgAf/4Af/4AAAAAAAAAAAAA==");
+      if(a.date) return atob("GBiBAAAAAAAAAAAAAA//8B//+BgAGBgAGBgAGB//+B//+B//+B/++B/8+B/5+B8z+B+H+B/P+B//+B//+B//+A//8AAAAAAAAAAAAA==");
+      return atob("GBiBAAAAAAAAAAYAYA4AcBx+ODn/nAP/wAf/4A/n8A/n8B/n+B/n+B/n+B/n+B/h+B/4+A/+8A//8Af/4AP/wAH/gAB+AAAAAAAAAA==");
     } else {
-      if(a.timer) return iconTimerOff;
-      return iconAlarmOff;
+      if(a.timer) return atob("GBiBAAAAAAAAAAAAAAf/4Af/4AGBgAGBgAGBgAD/AAD/AAB+AAA8AAA8AAB+AADkeADB/gGBtgGDAwGDhwfzhwfzAwABtgAB/gAAeA==");
+      if(a.date) return atob("GBgBAAAAAAAAAAAAD//wH//4GAAYGAAYGAAYH//4H//4H//4H/74H/wAH/gAHzB4H4H+H8m2H/MDH/OHH/OHD/MDAAG2AAH+AAB4");
+      return atob("GBiBAAAAAAAAAAYAYA4AcBx+ODn/nAP/wAf/4A/n8A/n8B/n+B/n+B/nAB/mAB/geB/5/g/5tg/zAwfzhwPzhwHzAwB5tgAB/gAAeA==");
     }
   }
 
   function getAlarmText(a){
     if(a.timer) {
       if(!a.on) return /*LANG*/"off";
-      let time = Math.round(alarm.getTimeToAlarm(a)/(60*1000));
+      let time = Math.round(require('sched').getTimeToAlarm(a)/(60*1000));
       if(time > 60)
         time = Math.round(time / 60) + "h";
       else
         time += "m";
       return time;
     }
+    if(a.date){
+      const d = new Date(a.date);
+      return `${d.getDate()} ${require("locale").month(d, 1)}`;
+    }
     return require("time_utils").formatTime(a.t);
   }
 
   //workaround for sorting undefined values
   function getAlarmOrder(a) {
-    let val = alarm.getTimeToAlarm(a);
+    let val = require('sched').getTimeToAlarm(a);
     if(typeof val == "undefined") return 86400*1000;
     return val;
   }
@@ -58,7 +58,7 @@
     const minute = 60 * 1000;
     const halfhour = 30 * minute;
     const hour = 2 * halfhour;
-    let msecs = alarm.getTimeToAlarm(a);
+    let msecs = require('sched').getTimeToAlarm(a);
     if(typeof msecs == "undefined" || msecs == 0)
       return [];
     if(msecs > hour) { //refresh every half an hour
@@ -95,16 +95,17 @@
     }, switchTimeout);
   }
 
-  var img = iconAlarmOn;
+  // read the file direct here to avoid loading sched library (saves 10ms!)
+  var all = /*require('sched').getAlarms()*/require("Storage").readJSON("sched.json",1)||[];
   //get only alarms not created by other apps
   var alarmItems = {
     name: /*LANG*/"Alarms",
-    img: img,
+    img: getAlarmIcon({on:1}),
     dynamic: true,
-    items: alarm.getAlarms().filter(a=>!a.appid)
-    //.sort((a,b)=>alarm.getTimeToAlarm(a)-alarm.getTimeToAlarm(b))
+    items: all.filter(a=>!a.appid)
+    //.sort((a,b)=>require('sched').getTimeToAlarm(a)-require('sched').getTimeToAlarm(b))
     .sort((a,b)=>getAlarmOrder(a)-getAlarmOrder(b))
-      .map((a, i)=>({
+      .map(a => ({
         name: null,
         hasRange: true,
         get: () => ({ text: getAlarmText(a), img: getAlarmIcon(a),
@@ -123,9 +124,16 @@
           this.interval = undefined;
           this.switchTimeout = undefined;
         },
-        run: function() { }
+        run: function() {
+          if (a.date) return; // ignore events
+          a.on = !a.on;
+          a.last = 0;
+          if(a.on && a.timer) require('sched').resetTimer(a);
+          this.emit("redraw");
+          require('sched').setAlarms(all);
+          require('sched').reload(); // schedule/unschedule the alarm
+        }
       })),
   };
-
   return alarmItems;
 })

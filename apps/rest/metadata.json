@@ -1,7 +1,7 @@
 { "id": "rest",
   "name": "Rest - Workout Timer App",
   "shortName":"Rest",
-  "version": "0.01",
+  "version": "0.03",
   "description": "Rest timer and Set counter for workout, fitness and lifting things.",
   "icon": "app.png",
   "screenshots": [{"url": "screenshot1.png"}, {"url": "screenshot2.png"}, {"url": "screenshot3.png"}],

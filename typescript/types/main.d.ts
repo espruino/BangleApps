@@ -33,6 +33,7 @@ type MenuNumberItem = {
 type MenuOptions = {
   title?: string;
   back?: () => void;
+  remove?: () => void;
   selected?: number;
   fontHeight?: number;
   scroll?: number;
@@ -69,7 +70,16 @@ type MenuInstance = {
   draw: () => void;
   move: (n: number) => void;
   select: () => void;
+  scroller?: MenuScroller; // BangleJS 2
 };
+
+/**
+ * Menu scroller.
+ */
+type MenuScroller = {
+  scroll: number;
+};
+
 
 declare const BTN1: Pin;
 declare const BTN2: Pin;
@@ -586,7 +596,7 @@ declare class ESP32 {
    * @param {boolean} enable - switches Bluetooth on or off
    * @url http://www.espruino.com/Reference#l_ESP32_enableBLE
    */
-  static enableBLE(enable: boolean): void;
+  static enableBLE(enable: ShortBoolean): void;
 
   /**
    * Switches Wifi off/on, removes saved code from Flash, resets the board, and on
@@ -595,7 +605,7 @@ declare class ESP32 {
    * @param {boolean} enable - switches Wifi on or off
    * @url http://www.espruino.com/Reference#l_ESP32_enableWifi
    */
-  static enableWifi(enable: boolean): void;
+  static enableWifi(enable: ShortBoolean): void;
 
   /**
    * This function is useful for ESP32 [OTA Updates](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ota.html)
@@ -609,7 +619,7 @@ declare class ESP32 {
    * @param {boolean} isValid - Set whether this app is valid or not. If `isValid==false` the device will reboot.
    * @url http://www.espruino.com/Reference#l_ESP32_setOTAValid
    */
-  static setOTAValid(isValid: boolean): void;
+  static setOTAValid(isValid: ShortBoolean): void;
 
 
 }
@@ -926,7 +936,7 @@ declare class NRF {
    * See Nordic's `ble_gap_evt_auth_status_t` structure for more information.
    * @param {string} event - The event to listen to.
    * @param {(status: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `status` An object containing `{auth_status,bonded,lv4,kdist_own,kdist_peer}
+   * * `status` An object containing `{auth_status,bonded,lv4,kdist_own,kdist_peer}`
    * @url http://www.espruino.com/Reference#l_NRF_security
    */
   static on(event: "security", callback: (status: any) => void): void;
@@ -934,11 +944,11 @@ declare class NRF {
   /**
    * Called when Bluetooth advertising starts or stops on Espruino
    * @param {string} event - The event to listen to.
-   * @param {(isAdvertising: boolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * @param {(isAdvertising: ShortBoolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
    * * `isAdvertising` Whether we are advertising or not
    * @url http://www.espruino.com/Reference#l_NRF_advertising
    */
-  static on(event: "advertising", callback: (isAdvertising: boolean) => void): void;
+  static on(event: "advertising", callback: (isAdvertising: ShortBoolean) => void): void;
 
   /**
    * Called during the bonding process to update on status
@@ -1064,7 +1074,7 @@ declare class NRF {
    * @returns {any} MAC address - a string of the form 'aa:bb:cc:dd:ee:ff'
    * @url http://www.espruino.com/Reference#l_NRF_getAddress
    */
-  static getAddress(current: boolean): any;
+  static getAddress(current: ShortBoolean): any;
 
   /**
    * Set this device's default Bluetooth MAC address:
@@ -1629,7 +1639,7 @@ declare class NRF {
 
   /**
    * **THIS IS DEPRECATED** - please use `NRF.setConnectionInterval` for peripheral
-   * and `NRF.connect(addr, options)`/`BluetoothRemoteGATTServer.connect(options)`
+   * and `NRF.connect(address, options)`/`BluetoothRemoteGATTServer.connect(options)`
    * for central connections.
    * This sets the connection parameters - these affect the transfer speed and power
    * usage when the device is connected.
@@ -1643,7 +1653,7 @@ declare class NRF {
    * @param {boolean} lowPower - Whether the connection is low power or not
    * @url http://www.espruino.com/Reference#l_NRF_setLowPowerConnection
    */
-  static setLowPowerConnection(lowPower: boolean): void;
+  static setLowPowerConnection(lowPower: ShortBoolean): void;
 
   /**
    * Enables NFC and starts advertising the given URL. For example:
@@ -1770,7 +1780,7 @@ declare class NRF {
    * @param {boolean} positive - `true` for positive action, `false` for negative
    * @url http://www.espruino.com/Reference#l_NRF_ancsAction
    */
-  static ancsAction(uid: number, positive: boolean): void;
+  static ancsAction(uid: number, positive: ShortBoolean): void;
 
   /**
    * Get ANCS info for a notification event received via `E.ANCS`, e.g.:
@@ -2059,7 +2069,7 @@ declare class NRF {
    * @param {boolean} whitelisting - Are we using a whitelist? (default false)
    * @url http://www.espruino.com/Reference#l_NRF_setWhitelist
    */
-  static setWhitelist(whitelisting: boolean): void;
+  static setWhitelist(whitelisting: ShortBoolean): void;
 
   /**
    * When connected, Bluetooth LE devices communicate at a set interval. Lowering the
@@ -2245,7 +2255,7 @@ declare class NRF {
    * @returns {any} A promise
    * @url http://www.espruino.com/Reference#l_NRF_startBonding
    */
-  static startBonding(forceRepair: boolean): any;
+  static startBonding(forceRepair: ShortBoolean): any;
 
 
 }
@@ -2299,9 +2309,9 @@ declare class AES {
   /**
    *
    * @param {any} passphrase - Message to encrypt
-   * @param {any} key - Key to encrypt message - must be an ArrayBuffer of 128, 192, or 256 BITS
+   * @param {any} key - Key to encrypt message - must be an `ArrayBuffer` of 128, 192, or 256 BITS
    * @param {any} [options] - [optional] An object, may specify `{ iv : new Uint8Array(16), mode : 'CBC|CFB|CTR|OFB|ECB' }`
-   * @returns {any} Returns an ArrayBuffer
+   * @returns {any} Returns an `ArrayBuffer`
    * @url http://www.espruino.com/Reference#l_AES_encrypt
    */
   static encrypt(passphrase: any, key: any, options?: any): ArrayBuffer;
@@ -2309,9 +2319,9 @@ declare class AES {
   /**
    *
    * @param {any} passphrase - Message to decrypt
-   * @param {any} key - Key to encrypt message - must be an ArrayBuffer of 128, 192, or 256 BITS
+   * @param {any} key - Key to encrypt message - must be an `ArrayBuffer` of 128, 192, or 256 BITS
    * @param {any} [options] - [optional] An object, may specify `{ iv : new Uint8Array(16), mode : 'CBC|CFB|CTR|OFB|ECB' }`
-   * @returns {any} Returns an ArrayBuffer
+   * @returns {any} Returns an `ArrayBuffer`
    * @url http://www.espruino.com/Reference#l_AES_decrypt
    */
   static decrypt(passphrase: any, key: any, options?: any): ArrayBuffer;
@@ -2350,7 +2360,7 @@ declare class Pixl {
    * @param {boolean} isOn - True if the LCD should be on, false if not
    * @url http://www.espruino.com/Reference#l_Pixl_setLCDPower
    */
-  static setLCDPower(isOn: boolean): void;
+  static setLCDPower(isOn: ShortBoolean): void;
 
   /**
    * Writes a command directly to the ST7567 LCD controller
@@ -2480,7 +2490,7 @@ declare class url {
    * @returns {any} An object containing options for ```http.request``` or ```http.get```. Contains `method`, `host`, `path`, `pathname`, `search`, `port` and `query`
    * @url http://www.espruino.com/Reference#l_url_parse
    */
-  static parse(urlStr: any, parseQuery: boolean): any;
+  static parse(urlStr: any, parseQuery: ShortBoolean): any;
 
 
 }
@@ -2641,7 +2651,7 @@ declare class Socket {
 declare class dgramSocket {
   /**
    * The 'message' event is called when a datagram message is received. If a handler
-   * is defined with `X.on('message', function(msg) { ... })` then it will be called`
+   * is defined with `X.on('message', function(msg) { ... })` then it will be called
    * @param {string} event - The event to listen to.
    * @param {(msg: any, rinfo: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
    * * `msg` A string containing the received message
@@ -3730,13 +3740,208 @@ declare class Qwiic {
    * @returns {any} The same Qwiic object (for call chaining)
    * @url http://www.espruino.com/Reference#l_Qwiic_setPower
    */
-  setPower(isOn: boolean): any;
+  setPower(isOn: ShortBoolean): any;
 
   /**
    * @returns {any} An I2C object using this Qwiic connector, already set up
    * @url http://www.espruino.com/Reference#l_Qwiic_i2c
    */
   i2c: any;
+}
+
+/**
+ * @url http://www.espruino.com/Reference#Pip
+ */
+declare class Pip {
+  /**
+   * The video had started
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @url http://www.espruino.com/Reference#l_Pip_streamStarted
+   */
+  static on(event: "streamStarted", callback: () => void): void;
+
+  /**
+   * The video had ended
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @url http://www.espruino.com/Reference#l_Pip_streamStopped
+   */
+  static on(event: "streamStopped", callback: () => void): void;
+
+  /**
+   * The video had looped
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @url http://www.espruino.com/Reference#l_Pip_streamLooped
+   */
+  static on(event: "streamLooped", callback: () => void): void;
+
+  /**
+   *
+   * @param {any} fn - Filename
+   * @param {any} options - [Optional] object `{x:0, y:0, debug:false, repeat:false}`
+   * @url http://www.espruino.com/Reference#l_Pip_videoStart
+   */
+  static videoStart(fn: any, options: any): void;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_Pip_videoStop
+   */
+  static videoStop(): void;
+
+  /**
+   *
+   * @param {any} fn - Filename
+   * @param {any} options - [Optional] object `{debug:false, repeat:false}`
+   * @url http://www.espruino.com/Reference#l_Pip_audioStart
+   */
+  static audioStart(fn: any, options: any): void;
+
+  /**
+   * Read the given WAV file into RAM
+   *
+   * @param {any} fn - Filename
+   * @returns {any} The raw sound data as a flat string
+   * @url http://www.espruino.com/Reference#l_Pip_audioRead
+   */
+  static audioRead(fn: any): any;
+
+  /**
+   * Return the builtin sound
+   *
+   * @param {any} id - OK/NEXT/COLUMN
+   * @returns {any} The sound as a native string
+   * @url http://www.espruino.com/Reference#l_Pip_audioBuiltin
+   */
+  static audioBuiltin(id: any): any;
+
+  /**
+   * Return how many samples are free in the ring buffer
+   * @returns {number} How many samples are left free in the ring buffer
+   * @url http://www.espruino.com/Reference#l_Pip_audioGetFree
+   */
+  static audioGetFree(): number;
+
+  /**
+   * Play audio straight from a variable of raw WAV data - this adds everything to the buffer at once so blocks
+   *
+   * @param {any} wav - Raw 16 bit sound data
+   * @param {any} options - [Optional] object
+   * @url http://www.espruino.com/Reference#l_Pip_audioStartVar
+   */
+  static audioStartVar(wav: any, options: any): void;
+
+  /**
+   *
+   * @param {number} vol
+   * @url http://www.espruino.com/Reference#l_Pip_setVol
+   */
+  static setVol(vol: number): void;
+
+  /**
+   * Writes a DAC register with a value
+   *
+   * @param {number} reg
+   * @param {number} value
+   * @url http://www.espruino.com/Reference#l_Pip_writeDACReg
+   */
+  static writeDACReg(reg: number, value: number): void;
+
+  /**
+   * Returns the current value of a DAC register
+   *
+   * @param {number} reg
+   * @returns {number} The current register value
+   * @url http://www.espruino.com/Reference#l_Pip_readDACReg
+   */
+  static readDACReg(reg: number): number;
+
+  /**
+   * Enable/disabled the DAC power supply (which also powers the audio amp and SD card)
+   *
+   * @param {boolean} isOn
+   * @url http://www.espruino.com/Reference#l_Pip_setDACPower
+   */
+  static setDACPower(isOn: ShortBoolean): void;
+
+  /**
+   * Initialise the ES8388 audio codec IC
+   * @url http://www.espruino.com/Reference#l_Pip_initDAC
+   */
+  static initDAC(): void;
+
+  /**
+   * * 'off'/undefined -> off
+   * * 'out' -> output
+   *
+   * @param {any} mode - Mode string - see below
+   * @url http://www.espruino.com/Reference#l_Pip_setDACMode
+   */
+  static setDACMode(mode: any): void;
+
+  /**
+   *
+   * @param {boolean} isOn
+   * @url http://www.espruino.com/Reference#l_Pip_setLCDPower
+   */
+  static setLCDPower(isOn: ShortBoolean): void;
+
+  /**
+   * Enter standby mode - can only be started by pressing the power button (PA0).
+   * @url http://www.espruino.com/Reference#l_Pip_off
+   */
+  static off(): void;
+
+  /**
+   * Enter sleep mode - JS is still executed
+   * @url http://www.espruino.com/Reference#l_Pip_sleep
+   */
+  static sleep(): void;
+
+  /**
+   * Wake up the pipboy
+   * @url http://www.espruino.com/Reference#l_Pip_wake
+   */
+  static wake(): void;
+
+  /**
+   * If `height` isn't specified the image height is used, otherwise only part of the image can be rendered.
+   *
+   * @param {any} img
+   * @param {number} x
+   * @param {number} y
+   * @param {any} options - scale(int) or { scale:int, noScanEffect:bool, height:int }
+   * @url http://www.espruino.com/Reference#l_Pip_blitImage
+   */
+  static blitImage(img: any, x: number, y: number, options: any): void;
+
+  /**
+   * This copies the contents of the current I2S audio buffer out to an array
+   * that can be rendered to the screen with drawPoly.
+   * Because the array is meant to be `x,y,x,y,x,y` only the second elements are
+   * touched.
+   *
+   * @param {any} dst
+   * @param {number} y1
+   * @param {number} y2
+   * @url http://www.espruino.com/Reference#l_Pip_getAudioWaveform
+   */
+  static getAudioWaveform(dst: any, y1: number, y2: number): void;
+
+  /**
+   * @returns {boolean} True if audio is currently playing
+   * @url http://www.espruino.com/Reference#l_Pip_audioIsPlaying
+   */
+  static audioIsPlaying(): boolean;
+
+  /**
+   * @returns {any} Returns `'video'` if a video is playing, or `'audio'` if audio is playing, `undefined` otherwise.
+   * @url http://www.espruino.com/Reference#l_Pip_streamPlaying
+   */
+  static streamPlaying(): any;
+
+
 }
 
 /**
@@ -3800,11 +4005,11 @@ declare class Bangle {
   /**
    * Has the watch been moved so that it is face-up, or not face up?
    * @param {string} event - The event to listen to.
-   * @param {(up: boolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * @param {(up: ShortBoolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
    * * `up` `true` if face-up
    * @url http://www.espruino.com/Reference#l_Bangle_faceUp
    */
-  static on(event: "faceUp", callback: (up: boolean) => void): void;
+  static on(event: "faceUp", callback: (up: ShortBoolean) => void): void;
 
   /**
    * This event happens when the watch has been twisted around it's axis - for
@@ -3819,11 +4024,11 @@ declare class Bangle {
   /**
    * Is the battery charging or not?
    * @param {string} event - The event to listen to.
-   * @param {(charging: boolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * @param {(charging: ShortBoolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
    * * `charging` `true` if charging
    * @url http://www.espruino.com/Reference#l_Bangle_charging
    */
-  static on(event: "charging", callback: (charging: boolean) => void): void;
+  static on(event: "charging", callback: (charging: ShortBoolean) => void): void;
 
   /**
    * Magnetometer/Compass data available with `{x,y,z,dx,dy,dz,heading}` object as a
@@ -3848,7 +4053,7 @@ declare class Bangle {
    * Raw NMEA GPS / u-blox data messages received as a string
    * To get this event you must turn the GPS on with `Bangle.setGPSPower(1)`.
    * @param {string} event - The event to listen to.
-   * @param {(nmea: any, dataLoss: boolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * @param {(nmea: any, dataLoss: ShortBoolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
    * * `nmea` A string containing the raw NMEA data from the GPS
    * * `dataLoss` This is set to true if some lines of GPS data have previously been lost (eg because system was too busy to queue up a GPS-raw event)
    * @url http://www.espruino.com/Reference#l_Bangle_GPS-raw
@@ -3942,31 +4147,31 @@ declare class Bangle {
    * Has the screen been turned on or off? Can be used to stop tasks that are no
    * longer useful if nothing is displayed. Also see `Bangle.isLCDOn()`
    * @param {string} event - The event to listen to.
-   * @param {(on: boolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * @param {(on: ShortBoolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
    * * `on` `true` if screen is on
    * @url http://www.espruino.com/Reference#l_Bangle_lcdPower
    */
-  static on(event: "lcdPower", callback: (on: boolean) => void): void;
+  static on(event: "lcdPower", callback: (on: ShortBoolean) => void): void;
 
   /**
    * Has the backlight been turned on or off? Can be used to stop tasks that are no
    * longer useful if want to see in sun screen only. Also see `Bangle.isBacklightOn()`
    * @param {string} event - The event to listen to.
-   * @param {(on: boolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * @param {(on: ShortBoolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
    * * `on` `true` if backlight is on
    * @url http://www.espruino.com/Reference#l_Bangle_backlight
    */
-  static on(event: "backlight", callback: (on: boolean) => void): void;
+  static on(event: "backlight", callback: (on: ShortBoolean) => void): void;
 
   /**
    * Has the screen been locked? Also see `Bangle.isLocked()`
    * @param {string} event - The event to listen to.
-   * @param {(on: boolean, reason: string) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * @param {(on: ShortBoolean, reason: string) => void} callback - A function that is executed when the event occurs. Its arguments are:
    * * `on` `true` if screen is locked, `false` if it is unlocked and touchscreen/buttons will work
    * * `reason` (2v20 onwards) If known, the reason for locking/unlocking - 'button','js','tap','doubleTap','faceUp','twist','timeout'
    * @url http://www.espruino.com/Reference#l_Bangle_lock
    */
-  static on(event: "lock", callback: (on: boolean, reason: string) => void): void;
+  static on(event: "lock", callback: (on: ShortBoolean, reason: string) => void): void;
 
   /**
    * If the watch is tapped, this event contains information on the way it was
@@ -4103,7 +4308,7 @@ declare class Bangle {
    * @param {boolean} isOn - True if the LCD backlight should be on, false if not
    * @url http://www.espruino.com/Reference#l_Bangle_setBacklight
    */
-  static setBacklight(isOn: boolean): void;
+  static setBacklight(isOn: ShortBoolean): void;
 
   /**
    * This function can be used to turn Bangle.js's LCD off or on.
@@ -4122,7 +4327,7 @@ declare class Bangle {
    * @param {boolean} isOn - True if the LCD should be on, false if not
    * @url http://www.espruino.com/Reference#l_Bangle_setLCDPower
    */
-  static setLCDPower(isOn: boolean): void;
+  static setLCDPower(isOn: ShortBoolean): void;
 
   /**
    * This function can be used to adjust the brightness of Bangle.js's display, and
@@ -4309,6 +4514,9 @@ declare class Bangle {
    *   off
    * * `btnLoadTimeout` how many milliseconds does the home button have to be pressed
    * for before the clock is reloaded? 1500ms default, or 0 means never.
+   * * `manualWatchdog` if set, this disables automatic kicking of the watchdog timer
+   * from the interrupt (when the button isn't held). You will then have to manually
+   * call `E.kickWatchdog()` from your code or the watch will reset after ~5 seconds.
    * * `hrmPollInterval` set the requested poll interval (in milliseconds) for the
    *   heart rate monitor. On Bangle.js 2 only 10,20,40,80,160,200 ms are supported,
    *   and polling rate may not be exact. The algorithm's filtering is tuned for
@@ -4362,7 +4570,7 @@ declare class Bangle {
    * @param {boolean} isLocked - `true` if the Bangle is locked (no user input allowed)
    * @url http://www.espruino.com/Reference#l_Bangle_setLocked
    */
-  static setLocked(isLocked: boolean): void;
+  static setLocked(isLocked: ShortBoolean): void;
 
   /**
    * Also see the `Bangle.lock` event
@@ -4925,7 +5133,7 @@ declare class Bangle {
    * @param {boolean} noReboot - Do not reboot the watch when done (default false, so will reboot)
    * @url http://www.espruino.com/Reference#l_Bangle_factoryReset
    */
-  static factoryReset(noReboot: boolean): void;
+  static factoryReset(noReboot: ShortBoolean): void;
 
   /**
    * Returns the rectangle on the screen that is currently reserved for the app.
@@ -4976,7 +5184,7 @@ declare class Badge {
 
 /**
  * A Web Bluetooth-style device - you can request one using
- * `NRF.requestDevice(address)`
+ * `NRF.requestDevice(options)`
  * For example:
  * ```
  * var gatt;
@@ -5170,7 +5378,7 @@ declare class BluetoothRemoteGATTServer {
    * @returns {any} A `Promise` that is resolved (or rejected) when the bonding is complete
    * @url http://www.espruino.com/Reference#l_BluetoothRemoteGATTServer_startBonding
    */
-  startBonding(forceRePair: boolean): Promise<void>;
+  startBonding(forceRePair: ShortBoolean): Promise<void>;
 
   /**
    * Return an object with information about the security state of the current
@@ -5443,8 +5651,8 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
   static getInstance(): Graphics | undefined
 
   /**
-   * Create a Graphics object that renders to an Array Buffer. This will have a field
-   * called 'buffer' that can get used to get at the buffer itself
+   * Create a `Graphics` object that renders to an `ArrayBuffer`. This will have a field
+   * called `'buffer'` that can get used to get at the buffer itself
    *
    * @param {number} width - Pixels wide
    * @param {number} height - Pixels high
@@ -5453,34 +5661,35 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * An object of other options. `{ zigzag : true/false(default), vertical_byte : true/false(default), msb : true/false(default), color_order: 'rgb'(default),'bgr',etc }`
    * `zigzag` = whether to alternate the direction of scanlines for rows
    * `vertical_byte` = whether to align bits in a byte vertically or not
-   * `msb` = when bits<8, store pixels most significant bit first, when bits>8, store most significant byte first
+   * `msb` = when bits<8, store pixels most significant bit first, when bits>8, store most significant byte first (as of 2v25, msb:true is default)
    * `interleavex` = Pixels 0,2,4,etc are from the top half of the image, 1,3,5,etc from the bottom half. Used for P3 LED panels.
    * `color_order` = re-orders the colour values that are supplied via setColor
-   * @returns {any} The new Graphics object
+   * `buffer` = if specified, createArrayBuffer won't create a new buffer but will use the given one
+   * @returns {any} The new `Graphics` object
    * @url http://www.espruino.com/Reference#l_Graphics_createArrayBuffer
    */
   static createArrayBuffer(width: number, height: number, bpp: number, options?: { zigzag?: boolean, vertical_byte?: boolean, msb?: boolean, color_order?: "rgb" | "rbg" | "brg" | "bgr" | "grb" | "gbr" }): Graphics<true>;
 
   /**
-   * Create a Graphics object that renders by calling a JavaScript callback function
+   * Create a `Graphics` object that renders by calling a JavaScript callback function
    * to draw pixels
    *
    * @param {number} width - Pixels wide
    * @param {number} height - Pixels high
    * @param {number} bpp - Number of bits per pixel
    * @param {any} callback - A function of the form ```function(x,y,col)``` that is called whenever a pixel needs to be drawn, or an object with: ```{setPixel:function(x,y,col),fillRect:function(x1,y1,x2,y2,col)}```. All arguments are already bounds checked.
-   * @returns {any} The new Graphics object
+   * @returns {any} The new `Graphics` object
    * @url http://www.espruino.com/Reference#l_Graphics_createCallback
    */
   static createCallback(width: number, height: number, bpp: number, callback: ((x: number, y: number, col: number) => void) | { setPixel: (x: number, y: number, col: number) => void; fillRect: (x1: number, y1: number, x2: number, y2: number, col: number) => void }): Graphics<false>;
 
   /**
-   * Create a Graphics object that renders to SDL window (Linux-based devices only)
+   * Create a `Graphics` object that renders to SDL window (Linux-based devices only)
    *
    * @param {number} width - Pixels wide
    * @param {number} height - Pixels high
    * @param {number} bpp - Bits per pixel (8,16,24 or 32 supported)
-   * @returns {any} The new Graphics object
+   * @returns {any} The new `Graphics` object
    * @url http://www.espruino.com/Reference#l_Graphics_createSDL
    */
   static createSDL(width: number, height: number, bpp: number): Graphics;
@@ -5551,6 +5760,69 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
   drawSeg(a: number, ar: number, r: number): Graphics;
 
   /**
+   * Set the current font to Monofonto 23 (2 bpp, cap height = 22 px, total height = 27 px)
+   *
+   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto23
+   */
+  setFontMonofonto23(scale?: number): Graphics;
+
+  /**
+   * Set the current font to Monofonto 16 (4 bpp, cap height = 16 px)
+   *
+   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto16
+   */
+  setFontMonofonto16(scale?: number): Graphics;
+
+  /**
+   * Set the current font to Monofonto 18 (2 bpp, cap height = 17 px, total height = 21 px)
+   *
+   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto18
+   */
+  setFontMonofonto18(scale?: number): Graphics;
+
+  /**
+   * Set the current font to Monofonto 96 (digits and colon only, 2 bpp, cap height = 96 px)
+   *
+   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto96
+   */
+  setFontMonofonto96(scale?: number): Graphics;
+
+  /**
+   * Set the current font to Monofonto 28 (2 bpp, cap height = 26 px, total height = 33 px)
+   *
+   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto28
+   */
+  setFontMonofonto28(scale?: number): Graphics;
+
+  /**
+   * Set the current font to Monofonto 120 (digits and colon only, 2 bpp, cap height = 120 px)
+   *
+   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto120
+   */
+  setFontMonofonto120(scale?: number): Graphics;
+
+  /**
+   * Set the current font to Monofonto 36 (2 bpp, cap height = 34 px, total height = 43 px)
+   *
+   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto36
+   */
+  setFontMonofonto36(scale?: number): Graphics;
+
+  /**
    * Set the current font
    *
    * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
@@ -5586,10 +5858,10 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * @param {boolean} [all] - [optional] (only on some devices) If `true` then copy all pixels, not just those that have changed.
    * @url http://www.espruino.com/Reference#l_Graphics_flip
    */
-  flip(all?: boolean): void;
+  flip(all?: ShortBoolean): void;
 
   /**
-   * On Graphics instances with an offscreen buffer, this is an `ArrayBuffer` that
+   * On `Graphics` instances with an offscreen buffer, this is an `ArrayBuffer` that
    * provides access to the underlying pixel data.
    * ```
    * g=Graphics.createArrayBuffer(8,8,8)
@@ -5605,32 +5877,32 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * 0, 0, 0, 0, 0, 0, 255, 0,
    * 0, 0, 0, 0, 0, 0, 0, 255])
    * ```
-   * @returns {any} An ArrayBuffer (or not defined on Graphics instances not created with `Graphics.createArrayBuffer`)
+   * @returns {any} An ArrayBuffer (or not defined on `Graphics` instances not created with `Graphics.createArrayBuffer`)
    * @url http://www.espruino.com/Reference#l_Graphics_buffer
    */
   buffer: IsBuffer extends true ? ArrayBuffer : undefined
 
   /**
-   * The width of this Graphics instance
-   * @returns {number} The width of this Graphics instance
+   * The width of this `Graphics` instance
+   * @returns {number} The width of this `Graphics` instance
    * @url http://www.espruino.com/Reference#l_Graphics_getWidth
    */
   getWidth(): number;
 
   /**
-   * The height of this Graphics instance
-   * @returns {number} The height of this Graphics instance
+   * The height of this `Graphics` instance
+   * @returns {number} The height of this `Graphics` instance
    * @url http://www.espruino.com/Reference#l_Graphics_getHeight
    */
   getHeight(): number;
 
   /**
-   * The number of bits per pixel of this Graphics instance
+   * The number of bits per pixel of this `Graphics` instance
    * **Note:** Bangle.js 2 behaves a little differently here. The display is 3 bit,
    * so `getBPP` returns 3 and `asBMP`/`asImage`/etc return 3 bit images. However in
    * order to allow dithering, the colors returned by `Graphics.getColor` and
    * `Graphics.theme` are actually 16 bits.
-   * @returns {number} The bits per pixel of this Graphics instance
+   * @returns {number} The bits per pixel of this `Graphics` instance
    * @url http://www.espruino.com/Reference#l_Graphics_getBPP
    */
   getBPP(): number;
@@ -5650,7 +5922,7 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_clear
    */
-  clear(reset?: boolean): Graphics;
+  clear(reset?: ShortBoolean): Graphics;
 
   /**
    * Fill a rectangular area in the Foreground Color
@@ -5795,7 +6067,7 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * g.toColor(1,0,0) => 0xF800
    * ```
    *
-   * @param {any} r - Red (between 0 and 1) **OR** an integer representing the color in the current bit depth and color order **OR** a hexidecimal color string of the form `'#rrggbb' or `'#rgb'`
+   * @param {any} r - Red (between 0 and 1) **OR** an integer representing the color in the current bit depth and color order **OR** a hexidecimal color string of the form `'#rrggbb'` or `'#rgb'`
    * @param {any} g - Green (between 0 and 1)
    * @param {any} b - Blue (between 0 and 1)
    * @returns {number} The color index represented by the arguments
@@ -6251,8 +6523,8 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * * A String where the the first few bytes are:
    *   `width,height,bpp,[transparent,]image_bytes...`. If a transparent colour is
    *   specified the top bit of `bpp` should be set.
-   * * An ArrayBuffer Graphics object (if `bpp<8`, `msb:true` must be set) - this is
-   *   disabled on devices without much flash memory available. If a Graphics object
+   * * An ArrayBuffer `Graphics` object (if `bpp<8`, `msb:true` must be set) - this is
+   *   disabled on devices without much flash memory available. If a `Graphics` object
    *   is supplied, it can also contain transparent/palette fields as if it were
    *   an image.
    * See https://www.espruino.com/Graphics#images-bitmaps for more information about
@@ -6329,14 +6601,14 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
   drawImages(layers: { x: number, y: number, image: Image, scale?: number, rotate?: number, center?: boolean, repeat?: boolean, nobounds?: boolean }[], options?: { x: number, y: number, width: number, height: number }): Graphics;
 
   /**
-   * Return this Graphics object as an Image that can be used with
+   * Return this `Graphics` object as an Image that can be used with
    * `Graphics.drawImage`. Check out [the Graphics reference
    * page](http://www.espruino.com/Graphics#images-bitmaps) for more information on
    * images.
    * Will return undefined if data can't be allocated for the image.
    * The image data itself will be referenced rather than copied if:
    * * An image `object` was requested (not `string`)
-   * * The Graphics instance was created with `Graphics.createArrayBuffer`
+   * * The `Graphics` instance was created with `Graphics.createArrayBuffer`
    * * Is 8 bpp *OR* the `{msb:true}` option was given
    * * No other format options (zigzag/etc) were given
    * Otherwise data will be copied, which takes up more space and may be quite slow.
@@ -6402,7 +6674,7 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
   blit(options: { x1: number, y1: number, x2: number, y2: number, w: number, h: number, setModified?: boolean }): Graphics;
 
   /**
-   * Create a Windows BMP file from this Graphics instance, and return it as a
+   * Create a Windows BMP file from this `Graphics` instance, and return it as a
    * String.
    * @returns {any} A String representing the Graphics as a Windows BMP file (or 'undefined' if not possible)
    * @url http://www.espruino.com/Reference#l_Graphics_asBMP
@@ -6425,9 +6697,9 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * inline automatically.
    * This is identical to `console.log(g.asURL())` - it is just a convenient function
    * for easy debugging and producing screenshots of what is currently in the
-   * Graphics instance.
-   * **Note:** This may not work on some bit depths of Graphics instances. It will
-   * also not work for the main Graphics instance of Bangle.js 1 as the graphics on
+   * `Graphics` instance.
+   * **Note:** This may not work on some bit depths of `Graphics` instances. It will
+   * also not work for the main `Graphics` instance of Bangle.js 1 as the graphics on
    * Bangle.js 1 are stored in write-only memory.
    * @url http://www.espruino.com/Reference#l_Graphics_dump
    */
@@ -6479,8 +6751,8 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
   transformVertices(arr: number[], transformation: { x?: number, y?: number, scale?: number, rotate?: number } | [number, number, number, number, number, number]): number[];
 
   /**
-   * Flood fills the given Graphics instance out from a particular point.
-   * **Note:** This only works on Graphics instances that support readback with `getPixel`. It
+   * Flood fills the given `Graphics` instance out from a particular point.
+   * **Note:** This only works on `Graphics` instances that support readback with `getPixel`. It
    * is also not capable of filling over dithered patterns (eg non-solid colours on Bangle.js 2)
    *
    * @param {number} x - X coordinate to start from
@@ -6505,7 +6777,7 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * }
    * ```
    * These values can then be passed to `g.setColor`/`g.setBgColor` for example
-   * `g.setColor(g.theme.fg2)`. When the Graphics instance is reset, the background
+   * `g.setColor(g.theme.fg2)`. When the `Graphics` instance is reset, the background
    * color is automatically set to `g.theme.bg` and foreground is set to
    * `g.theme.fg`.
    * On Bangle.js these values can be changed by writing updated values to `theme` in
@@ -6532,8 +6804,8 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
   setTheme(theme: { [key in keyof Theme]?: Theme[key] extends number ? ColorResolvable : Theme[key] }): Graphics;
 
   /**
-   * Perform a filter on the current Graphics instance. Requires the Graphics
-   * instance to support readback (eg `getPixel` should work), and only uses
+   * Perform a filter on the current `Graphics` instance. Requires the Graphics
+   * instance to support readback (eg `.getPixel` should work), and only uses
    * 8 bit values for buffer and filter.
    * ```
    * g.filter([ // a gaussian filter
@@ -6584,7 +6856,7 @@ declare class WioLTE {
    * @param {boolean} onoff - Whether to turn the Grove connectors power on or off (D38/D39 are always powered)
    * @url http://www.espruino.com/Reference#l_WioLTE_setGrovePower
    */
-  static setGrovePower(onoff: boolean): void;
+  static setGrovePower(onoff: ShortBoolean): void;
 
   /**
    * Turn power to the WIO's LED on or off.
@@ -6594,7 +6866,7 @@ declare class WioLTE {
    * @param {boolean} onoff - true = on, false = off
    * @url http://www.espruino.com/Reference#l_WioLTE_setLEDPower
    */
-  static setLEDPower(onoff: boolean): void;
+  static setLEDPower(onoff: ShortBoolean): void;
 
   /**
    * @returns {any}
@@ -6642,32 +6914,84 @@ declare class WioLTE {
  */
 declare class Waveform {
   /**
+   * Event emitted when playback has finished
+   * @param {string} event - The event to listen to.
+   * @param {(buffer: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `buffer` the last played buffer
+   * @url http://www.espruino.com/Reference#l_Waveform_finish
+   */
+  static on(event: "finish", callback: (buffer: any) => void): void;
+
+  /**
+   * When in double-buffered mode, this event is emitted when the `Waveform` class swaps to playing a new buffer - so you should then fill this current buffer up with new data.
+   * @param {string} event - The event to listen to.
+   * @param {(buffer: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `buffer` the last played buffer (which now needs to be filled ready for playback)
+   * @url http://www.espruino.com/Reference#l_Waveform_buffer
+   */
+  static on(event: "buffer", callback: (buffer: any) => void): void;
+
+  /**
    * Create a waveform class. This allows high speed input and output of waveforms.
    * It has an internal variable called `buffer` (as well as `buffer2` when
    * double-buffered - see `options` below) which contains the data to input/output.
+   * Options can contain:
+   * ```JS
+   * {
+   *   doubleBuffer : bool   // whether to allocate two buffers or not (default false)
+   *   bits         : 8/16   // the amount of bits to use (default 8).
+   * }
+   * ```
    * When double-buffered, a 'buffer' event will be emitted each time a buffer is
    * finished with (the argument is that buffer). When the recording stops, a
    * 'finish' event will be emitted (with the first argument as the buffer).
+   * ```JS
+   * // Output a sine wave
+   * var w = new Waveform(1000);
+   * for (var i=0;i<1000;i++) w.buffer[i]=128+120*Math.sin(i/2);
+   * analogWrite(H0, 0.5, {freq:80000}); // set up H0 to output an analog value by PWM
+   * w.on("finish", () => print("Done!"))
+   * w.startOutput(H0,8000); // start playback
+   * ```
+   * ```JS
+   * // On 2v25, from Storage
+   * var f = require("Storage").read("sound.pcm");
+   * var w = new Waveform(E.toArrayBuffer(f));
+   * w.on("finish", () => print("Done!"))
+   * w.startOutput(H0,8000); // start playback
+   * ```
+   * See https://www.espruino.com/Waveform for more examples.
    * @constructor
    *
-   * @param {number} samples - The number of samples
-   * @param {any} options - Optional options struct `{doubleBuffer:bool, bits : 8/16}` where: `doubleBuffer` is whether to allocate two buffers or not (default false), and bits is the amount of bits to use (default 8).
+   * @param {any} samples - The number of samples to allocate as an integer, *or* an arraybuffer (2v25+) containing the samples
+   * @param {any} [options] - [optional] options struct `{ doubleBuffer:bool, bits : 8/16 }` (see below)
    * @returns {any} An Waveform object
    * @url http://www.espruino.com/Reference#l_Waveform_Waveform
    */
-  static new(samples: number, options: any): any;
+  static new(samples: any, options?: any): any;
 
   /**
    * Will start outputting the waveform on the given pin - the pin must have
    * previously been initialised with analogWrite. If not repeating, it'll emit a
    * `finish` event when it is done.
+   * ```
+   * {
+   *   time : float,        // the that the waveform with start output at, e.g. `getTime()+1` (otherwise it is immediate)
+   *   repeat : bool,       // whether to repeat the given sample
+   *   npin : Pin,          // If specified, the waveform is output across two pins (see below)
+   * }
+   * ```
+   * Using `npin` allows you to split the Waveform output between two pins and hence avoid
+   * any DC bias (or need to capacitor), for instance you could attach a speaker to `H0` and
+   * `H1` on Jolt.js. When the value in the waveform was at 50% both outputs would be 0,
+   * below 50% the signal would be on `npin` with `pin` as 0, and above 50% it would be on `pin` with `npin` as 0.
    *
    * @param {Pin} output - The pin to output on
    * @param {number} freq - The frequency to output each sample at
-   * @param {any} options - Optional options struct `{time:float,repeat:bool}` where: `time` is the that the waveform with start output at, e.g. `getTime()+1` (otherwise it is immediate), `repeat` is a boolean specifying whether to repeat the give sample
+   * @param {any} [options] - [optional] options struct `{time:float, repeat:bool, npin:Pin}` (see below)
    * @url http://www.espruino.com/Reference#l_Waveform_startOutput
    */
-  startOutput(output: Pin, freq: number, options: any): void;
+  startOutput(output: Pin, freq: number, options?: any): void;
 
   /**
    * Will start inputting the waveform on the given pin that supports analog. If not
@@ -6675,10 +6999,10 @@ declare class Waveform {
    *
    * @param {Pin} output - The pin to output on
    * @param {number} freq - The frequency to output each sample at
-   * @param {any} options - Optional options struct `{time:float,repeat:bool}` where: `time` is the that the waveform with start output at, e.g. `getTime()+1` (otherwise it is immediate), `repeat` is a boolean specifying whether to repeat the give sample
+   * @param {any} [options] - [optional] options struct `{time:float,repeat:bool}` where: `time` is the that the waveform with start output at, e.g. `getTime()+1` (otherwise it is immediate), `repeat` is a boolean specifying whether to repeat the give sample
    * @url http://www.espruino.com/Reference#l_Waveform_startInput
    */
-  startInput(output: Pin, freq: number, options: any): void;
+  startInput(output: Pin, freq: number, options?: any): void;
 
   /**
    * Stop a waveform that is currently outputting
@@ -7280,8 +7604,8 @@ interface Uint8ArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Uint8Array_Uint8Array
    */
@@ -7305,8 +7629,8 @@ interface Uint8ClampedArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Uint8ClampedArray_Uint8ClampedArray
    */
@@ -7328,8 +7652,8 @@ interface Int8ArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Int8Array_Int8Array
    */
@@ -7351,8 +7675,8 @@ interface Uint16ArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Uint16Array_Uint16Array
    */
@@ -7374,8 +7698,8 @@ interface Int16ArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Int16Array_Int16Array
    */
@@ -7406,8 +7730,8 @@ declare class Uint24Array {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Uint24Array_Uint24Array
    */
@@ -7427,8 +7751,8 @@ interface Uint32ArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Uint32Array_Uint32Array
    */
@@ -7450,8 +7774,8 @@ interface Int32ArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Int32Array_Int32Array
    */
@@ -7473,8 +7797,8 @@ interface Float32ArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer)
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`)
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Float32Array_Float32Array
    */
@@ -7496,8 +7820,8 @@ interface Float64ArrayConstructor {
    * @constructor
    *
    * @param {any} arr - The array or typed array to base this off, or an integer which is the array length
-   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an ArrayBuffer). Maximum 65535.
-   * @param {number} length - The length (ONLY IF the first argument was an ArrayBuffer)
+   * @param {number} byteOffset - The byte offset in the ArrayBuffer  (ONLY IF the first argument was an `ArrayBuffer`). Maximum 65535.
+   * @param {number} length - The length (ONLY IF the first argument was an `ArrayBuffer`)
    * @returns {any} A typed array
    * @url http://www.espruino.com/Reference#l_Float64Array_Float64Array
    */
@@ -7869,10 +8193,23 @@ interface MathConstructor {
   pow(x: number, y: number): number;
 
   /**
-   * @returns {number} A random number between 0 and 1
+   * @returns {number} A random number X, where `0 <= X < 1`
    * @url http://www.espruino.com/Reference#l_Math_random
    */
   random(): number;
+
+  /**
+   * (Added in 2v25) Returns a random integer `X`, where `0 <= X < range`, or `-2147483648 <= X <= 2147483647` if `range <= 0` or `undefined`
+   * If `range` is supplied, this value is created using `modulo` of a 31 bit integer, so as `val` gets larger (24+ bits)
+   * the values produced will be less randomly distributed, and no values above `0x7FFFFFFF` will ever be returned.
+   * If `val==undefined` or `val<=0` a **32 bit** random number will be returned as an int (`-2147483648` .. `2147483647`).
+   * **Note:** this is not part of the JS spec, but is included in Espruino as it makes a lot of sense on embedded targets
+   *
+   * @param {number} range - How big a random number do we want
+   * @returns {number} A random integer
+   * @url http://www.espruino.com/Reference#l_Math_randInt
+   */
+  randInt(range: number): number;
 
   /**
    *
@@ -8294,6 +8631,10 @@ declare class E {
    *     menu is removed
    *   * (Bangle.js 2) `scroll : int` - an integer specifying how much the initial
    *     menu should be scrolled by
+   * * (Bangle.js 2) The mapped functions can consider the touch event that interacted with the entry:
+   *   `"Entry" : function(touch) { ... }`
+   *   * This is also true of `onchange` mapped functions in entry objects:
+   *     `onchange : (value, touch) => { ... }`
    * * The object returned by `E.showMenu` contains:
    *   * (Bangle.js 2) `scroller` - the object returned by `E.showScroller` -
    *     `scroller.scroll` returns the amount the menu is currently scrolled by
@@ -8397,6 +8738,7 @@ declare class E {
    *   draw : function(idx, rect) { ... }
    *   // a function to call when the item is selected, touch parameter is only relevant
    *   // for Bangle.js 2 and contains the coordinates touched inside the selected item
+   *   // as well as the type of the touch - see `Bangle.touch`.
    *   select : function(idx, touch) { ... }
    *   // optional function to be called when 'back' is tapped
    *   back : function() { ...}
@@ -8748,6 +9090,35 @@ declare class E {
   static kickWatchdog(): void;
 
   /**
+   * Called when a bit rises or falls above a set level. See `E.setComparator` for setup.
+   * @param {string} event - The event to listen to.
+   * @param {(dir: number) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `dir` The direction of the pin's state change
+   * @url http://www.espruino.com/Reference#l_E_comparator
+   */
+  static on(event: "comparator", callback: (dir: number) => void): void;
+
+  /**
+   * (Added 2v25) Enable the nRF52 chip's `LPCOMP` hardware. When enabled, it creates an `E.on("comparator", ...)`
+   * event whenever the pin supplied rises or falls past the setpoint given (with 50mv hysteresis).
+   * ```JS
+   * E.setComparator(D28, 8/16); // compare with VDD/2
+   * E.on("comparator", e => {
+   *   print(e); // 1 for up, or -1 for down
+   * });
+   * ```
+   * **Note:** There is just one LPCOMP, so you can only enable the comparator on one pin.
+   * **On [Jolt.js](https://www.espruino.com/Jolt.js):** when using `E.setComparator` on the analog pins on the
+   * Terminal block (`H0`/`H2`/`H4`/`H8`), the `level` you give needs to be in volts. Because the comparator only
+   * works in 16 steps, you can only detect multiples of 1.37v (1.37/2.74/4.11/etc)
+   *
+   * @param {Pin} pin - The `Pin` to enable the comparator on
+   * @param {number} level - The level to trigger on, or `undefined` to disable. (see below for [Jolt.js](https://www.espruino.com/Jolt.js))
+   * @url http://www.espruino.com/Reference#l_E_setComparator
+   */
+  static setComparator(pin: Pin, level: number): void;
+
+  /**
    * Get and reset the error flags. Returns an array that can contain:
    * `'FIFO_FULL'`: The receive FIFO filled up and data was lost. This could be state
    * transitions for setWatch, or received characters.
@@ -8835,7 +9206,7 @@ declare class E {
    * Note that this is an ArrayBuffer, not a Uint8Array. To get one of those, do:
    * `new Uint8Array(E.toArrayBuffer('....'))`.
    *
-   * @param {any} str - The string to convert to an ArrayBuffer
+   * @param {any} str - The string to convert to an `ArrayBuffer`
    * @returns {any} An ArrayBuffer that uses the given string
    * @url http://www.espruino.com/Reference#l_E_toArrayBuffer
    */
@@ -8852,12 +9223,16 @@ declare class E {
    * flat string of the same length, the backing string will be returned without
    * doing a copy or other allocation. The same applies if there's a single argument
    * which is itself a flat string.
-   * ```JS
+   * ```
    * E.toString(0,1,2,"Hi",3)
    * "\0\1\2Hi\3"
+   * ```
+   * ```
    * E.toString(1,2,{data:[3,4], count:4},5,6)
    * "\1\2\3\4\3\4\3\4\3\4\5\6"
-   * >E.toString(1,2,{callback : () => "Hello World"},5,6)
+   * ```
+   * ```
+   * E.toString(1,2,{callback : () => "Hello World"},5,6)
    * ="\1\2Hello World\5\6"
    * ```
    * **Note:** Prior to Espruino 2v18 `E.toString` would always return a flat string,
@@ -8934,7 +9309,7 @@ declare class E {
   static isUTF8(str: any): boolean;
 
   /**
-   * This creates a Uint8Array from the given arguments. These are handled as
+   * This creates a `Uint8Array` from the given arguments. These are handled as
    * follows:
    *  * `Number` -> read as an integer, using the lowest 8 bits
    *  * `String` -> use each character's numeric value (e.g.
@@ -8958,7 +9333,7 @@ declare class E {
    * =new Uint8Array([104, 105, 1, 2, 3])
    * ```
    *
-   * @param {any} args - The arguments to convert to a Uint8Array
+   * @param {any} args - The arguments to convert to a `Uint8Array`
    * @returns {any} A Uint8Array
    * @url http://www.espruino.com/Reference#l_E_toUint8Array
    */
@@ -9046,6 +9421,23 @@ declare class E {
    * @url http://www.espruino.com/Reference#l_E_setClock
    */
   static setClock(options: number | { M: number, N: number, P: number, Q: number, latency?: number, PCLK?: number, PCLK2?: number }): number;
+
+  /**
+   * On boards other than STM32 this currently just returns `undefined`
+   * ### STM32
+   * See `E.setClock` for more information.
+   * Returns:
+   * ```
+   * {
+   *   sysclk, hclk, pclk1, pclk2,  // various clocks in Hz
+   *   M, N, P, Q, PCLK1, PCLK2     // STM32F4: currently set divisors
+   *   RTCCLKSource : "LSI/LSE/HSE_Div#" // STM32F4 source for RTC clock
+   * }
+   * ```
+   * @returns {any} An object containing information about the current clock
+   * @url http://www.espruino.com/Reference#l_E_getClock
+   */
+  static getClock(): any;
 
   /**
    * Changes the device that the JS console (otherwise known as the REPL) is attached
@@ -9186,7 +9578,7 @@ declare class E {
    * @returns {number} The address of the given variable
    * @url http://www.espruino.com/Reference#l_E_getAddressOf
    */
-  static getAddressOf(v: any, flatAddress: boolean): number;
+  static getAddressOf(v: any, flatAddress: ShortBoolean): number;
 
   /**
    * Take each element of the `from` array, look it up in `map` (or call
@@ -9444,6 +9836,13 @@ declare class E {
   static reboot(): void;
 
   /**
+   * Forces a hard reboot of the microcontroller into the ST DFU mode
+   * **Note:** The device will stay in DFU mode until it is power-cycled or reset
+   * @url http://www.espruino.com/Reference#l_E_rebootToDFU
+   */
+  static rebootToDFU(): void;
+
+  /**
    * USB HID will only take effect next time you unplug and re-plug your Espruino. If
    * you're disconnecting it from power you'll have to make sure you have `save()`d
    * after calling this function.
@@ -9519,7 +9918,7 @@ declare class E {
    * @returns {number} The RTC prescaler's current value
    * @url http://www.espruino.com/Reference#l_E_getRTCPrescaler
    */
-  static getRTCPrescaler(calibrate: boolean): number;
+  static getRTCPrescaler(calibrate: ShortBoolean): number;
 
   /**
    * This function returns an object detailing the current **estimated** power usage
@@ -9646,13 +10045,13 @@ declare class OneWire {
    * @param {boolean} power - Whether to leave power on after write (default is false)
    * @url http://www.espruino.com/Reference#l_OneWire_write
    */
-  write(data: any, power: boolean): void;
+  write(data: any, power: ShortBoolean): void;
 
   /**
    * Read a byte
    *
    * @param {any} [count] - [optional] The amount of bytes to read
-   * @returns {any} The byte that was read, or a Uint8Array if count was specified and >=0
+   * @returns {any} The byte that was read, or a `Uint8Array` if count was specified and >=0
    * @url http://www.espruino.com/Reference#l_OneWire_read
    */
   read(count?: any): any;
@@ -10140,6 +10539,8 @@ interface Array<T> {
   /**
    * Return an array which is made from the following: ```A.map(function) =
    * [function(A[0]), function(A[1]), ...]```
+   * **Note:** Do not modify the array you're iterating over from inside the callback (`a.map(()=>a.push(0))`).
+   * It will cause non-spec-compliant behaviour.
    *
    * @param {any} function - Function used to map one item to another
    * @param {any} [thisArg] - [optional] If specified, the function is called with 'this' set to thisArg
@@ -10150,6 +10551,8 @@ interface Array<T> {
 
   /**
    * Executes a provided function once per array element.
+   * **Note:** Do not modify the array you're iterating over from inside the callback (`a.forEach(()=>a.push(0))`).
+   * It will cause non-spec-compliant behaviour.
    *
    * @param {any} function - Function to be executed
    * @param {any} [thisArg] - [optional] If specified, the function is called with 'this' set to thisArg
@@ -10160,6 +10563,8 @@ interface Array<T> {
   /**
    * Return an array which contains only those elements for which the callback
    * function returns 'true'
+   * **Note:** Do not modify the array you're iterating over from inside the callback (`a.filter(()=>a.push(0))`).
+   * It will cause non-spec-compliant behaviour.
    *
    * @param {any} function - Function to be executed
    * @param {any} [thisArg] - [optional] If specified, the function is called with 'this' set to thisArg
@@ -10176,6 +10581,8 @@ interface Array<T> {
    * ["Hello","There","World"].find(a=>a[0]=="T")
    * // returns "There"
    * ```
+   * **Note:** Do not modify the array you're iterating over from inside the callback (`a.find(()=>a.push(0))`).
+   * It will cause non-spec-compliant behaviour.
    *
    * @param {any} function - Function to be executed
    * @returns {any} The array element where `function` returns `true`, or `undefined`
@@ -10191,6 +10598,8 @@ interface Array<T> {
    * ["Hello","There","World"].findIndex(a=>a[0]=="T")
    * // returns 1
    * ```
+   * **Note:** Do not modify the array you're iterating over from inside the callback (`a.findIndex(()=>a.push(0))`).
+   * It will cause non-spec-compliant behaviour.
    *
    * @param {any} function - Function to be executed
    * @returns {any} The array element's index where `function` returns `true`, or `-1`
@@ -10201,6 +10610,8 @@ interface Array<T> {
   /**
    * Return 'true' if the callback returns 'true' for any of the elements in the
    * array
+   * **Note:** Do not modify the array you're iterating over from inside the callback (`a.some(()=>a.push(0))`).
+   * It will cause non-spec-compliant behaviour.
    *
    * @param {any} function - Function to be executed
    * @param {any} [thisArg] - [optional] If specified, the function is called with 'this' set to thisArg
@@ -10211,6 +10622,8 @@ interface Array<T> {
 
   /**
    * Return 'true' if the callback returns 'true' for every element in the array
+   * **Note:** Do not modify the array you're iterating over from inside the callback (`a.every(()=>a.push(0))`).
+   * It will cause non-spec-compliant behaviour.
    *
    * @param {any} function - Function to be executed
    * @param {any} [thisArg] - [optional] If specified, the function is called with 'this' set to thisArg
@@ -10223,13 +10636,15 @@ interface Array<T> {
    * Execute `previousValue=initialValue` and then `previousValue =
    * callback(previousValue, currentValue, index, array)` for each element in the
    * array, and finally return previousValue.
+   * **Note:** Do not modify the array you're iterating over from inside the callback (`a.reduce(()=>a.push(0))`).
+   * It will cause non-spec-compliant behaviour.
    *
    * @param {any} callback - Function used to reduce the array
    * @param {any} initialValue - if specified, the initial value to pass to the function
    * @returns {any} The value returned by the last function called
    * @url http://www.espruino.com/Reference#l_Array_reduce
    */
-  reduce(callback: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T, initialValue?: T): T;
+  reduce<O>(callback: (previousValue: O, currentValue: T, currentIndex: number, array: T[]) => O, initialValue?: O): O;
 
   /**
    * Both remove and add items to an array
@@ -10274,6 +10689,8 @@ interface Array<T> {
 
   /**
    * Do an in-place quicksort of the array
+   * **Note:** Do not modify the array you're iterating over from inside the callback (`a.sort(()=>a.push(0))`).
+   * It will cause non-spec-compliant behaviour.
    *
    * @param {any} var - A function to use to compare array elements (or undefined)
    * @returns {any} This array object
@@ -10339,8 +10756,6 @@ interface JSONConstructor {
 
   /**
    * Parse the given JSON string into a JavaScript object
-   * NOTE: This implementation uses eval() internally, and as such it is unsafe as it
-   * can allow arbitrary JS commands to be executed.
    *
    * @param {any} string - A JSON string
    * @returns {any} The JavaScript object created by parsing the data string
@@ -10529,19 +10944,19 @@ declare class I2C {
   writeTo(address: any, ...data: any[]): void;
 
   /**
-   * Request bytes from the given slave device, and return them as a Uint8Array
+   * Request bytes from the given slave device, and return them as a `Uint8Array`
    * (packed array of bytes). This is like using Arduino Wire's requestFrom,
    * available and read functions. Sends a STOP unless `{address:X, stop:false}` is used.
    *
    * @param {any} address - The 7 bit address of the device to request bytes from, or an object of the form `{address:12, stop:false}` to send this data without a STOP signal.
    * @param {number} quantity - The number of bytes to request
-   * @returns {any} The data that was returned - as a Uint8Array
+   * @returns {any} The data that was returned - as a `Uint8Array`
    * @url http://www.espruino.com/Reference#l_I2C_readFrom
    */
   readFrom(address: any, quantity: number): Uint8Array;
 
   /**
-   * Request bytes from a register on the given I2C slave device, and return them as a Uint8Array
+   * Request bytes from a register on the given I2C slave device, and return them as a `Uint8Array`
    * (packed array of bytes).
    * This is the same as calling `I2C.writeTo` and `I2C.readFrom`:
    * ```
@@ -10554,7 +10969,7 @@ declare class I2C {
    * @param {number} address - The 7 bit address of the device to request bytes from
    * @param {number} reg - The register on the device to read bytes from
    * @param {number} quantity - The number of bytes to request
-   * @returns {any} The data that was returned - as a Uint8Array
+   * @returns {any} The data that was returned - as a `Uint8Array`
    * @url http://www.espruino.com/Reference#l_I2C_readReg
    */
   readReg(address: number, reg: number, quantity: number): Uint8Array;
@@ -10922,7 +11337,7 @@ declare class Serial {
    * @param {boolean} force - Whether to force the console to this port
    * @url http://www.espruino.com/Reference#l_Serial_setConsole
    */
-  setConsole(force: boolean): void;
+  setConsole(force: ShortBoolean): void;
 
   /**
    * Setup this Serial port with the given baud rate and options.
@@ -10999,7 +11414,7 @@ declare class Serial {
   /**
    * Print a line to the serial port with a newline (`\r\n`) at the end of it.
    *  **Note:** This function converts data to a string first, e.g.
-   *  `Serial.print([1,2,3])` is equivalent to `Serial.print("1,2,3"). If you'd like
+   *  `Serial.print([1,2,3])` is equivalent to `Serial.print("1,2,3")`. If you'd like
    *  to write raw bytes, use `Serial.write`.
    *
    * @param {any} string - A String to print
@@ -11069,6 +11484,16 @@ declare class Serial {
    * @url http://www.espruino.com/Reference#l_Serial_flush
    */
   flush(): void;
+
+  /**
+   * (Added 2v25) Is the given Serial device connected?
+   * * USB/Bluetooth/Telnet/etc: Is this connected?
+   * * Serial1/etc: Has the device been initialised?
+   * * LoopbackA/LoopbackB/Terminal: always return true
+   * @returns {boolean} `true` if connected/initialised, false otherwise
+   * @url http://www.espruino.com/Reference#l_Serial_isConnected
+   */
+  isConnected(): boolean;
 }
 
 /**
@@ -11595,7 +12020,7 @@ declare class Pin {
    * @param {boolean} value - Whether to set output high (true/1) or low (false/0)
    * @url http://www.espruino.com/Reference#l_Pin_write
    */
-  write(value: boolean): void;
+  write(value: ShortBoolean): void;
 
   /**
    * Sets the output state of the pin to the parameter given at the specified time.
@@ -11603,10 +12028,10 @@ declare class Pin {
    *  you need to use `pin.write(0)` or `pinMode(pin, 'output')` first.
    *
    * @param {boolean} value - Whether to set output high (true/1) or low (false/0)
-   * @param {number} time - Time at which to write
+   * @param {number} time - Time at which to write (in seconds)
    * @url http://www.espruino.com/Reference#l_Pin_writeAtTime
    */
-  writeAtTime(value: boolean, time: number): void;
+  writeAtTime(value: ShortBoolean, time: number): void;
 
   /**
    * Return the current mode of the given pin. See `pinMode` for more information.
@@ -11646,7 +12071,7 @@ declare class Pin {
    * @param {any} time - A time in milliseconds, or an array of times (in which case a square wave will be output starting with a pulse of 'value')
    * @url http://www.espruino.com/Reference#l_Pin_pulse
    */
-  pulse(value: boolean, time: any): void;
+  pulse(value: ShortBoolean, time: any): void;
 
   /**
    * (Added in 2v20) Get the analogue value of the given pin. See `analogRead` for more information.
@@ -11676,12 +12101,14 @@ declare class Pin {
    * Get information about this pin and its capabilities. Of the form:
    * ```
    * {
-   *   "port"      : "A", // the Pin's port on the chip
-   *   "num"       : 12, // the Pin's number
-   *   "in_addr"   : 0x..., // (if available) the address of the pin's input address in bit-banded memory (can be used with peek)
-   *   "out_addr"  : 0x..., // (if available) the address of the pin's output address in bit-banded memory (can be used with poke)
-   *   "analog"    : { ADCs : [1], channel : 12 }, // If analog input is available
-   *   "functions" : {
+   *   "port"        : "A",    // the Pin's port on the chip
+   *   "num"         : 12,     // the Pin's number
+   *   "mode"        : (2v25+) // string: the pin's mode (same as Pin.getMode())
+   *   "output"      : (2v25+) // 0/1: the state of the pin's output register
+   *   "in_addr"     : 0x..., // (if available) the address of the pin's input address in bit-banded memory (can be used with peek)
+   *   "out_addr"    : 0x..., // (if available) the address of the pin's output address in bit-banded memory (can be used with poke)
+   *   "analog"      : { ADCs : [1], channel : 12 }, // If analog input is available
+   *   "functions"   : {
    *     "TIM1":{type:"CH1, af:0},
    *     "I2C3":{type:"SCL", af:1}
    *   }
@@ -11715,6 +12142,67 @@ interface Boolean {
 declare const Boolean: BooleanConstructor
 
 // GLOBALS
+
+/**
+ * @returns {any} An object containing the pins for the Qwiic connector on Curio `{sda,scl}`
+ * @url http://www.espruino.com/Reference#l__global_Q
+ */
+declare const Q: Qwiic;
+
+/**
+ * @returns {Pin} The pin for the servo motor
+ * @url http://www.espruino.com/Reference#l__global_SERVO
+ */
+declare const SERVO: Pin;
+
+/**
+ * @returns {Pin} The pin for the IR LED
+ * @url http://www.espruino.com/Reference#l__global_IRLED
+ */
+declare const IRLED: Pin;
+
+/**
+ * @returns {Pin} The pin for the left IR sensor
+ * @url http://www.espruino.com/Reference#l__global_IRL
+ */
+declare const IRL: Pin;
+
+/**
+ * @returns {Pin} The pin for the left motor
+ * @url http://www.espruino.com/Reference#l__global_ML1
+ */
+declare const ML1: Pin;
+
+/**
+ * @returns {Pin} The pin for the left motor
+ * @url http://www.espruino.com/Reference#l__global_ML2
+ */
+declare const ML2: Pin;
+
+/**
+ * @returns {Pin} The pin for the right IR sensor
+ * @url http://www.espruino.com/Reference#l__global_IRR
+ */
+declare const IRR: Pin;
+
+/**
+ * @returns {Pin} The pin for the right motor
+ * @url http://www.espruino.com/Reference#l__global_MR1
+ */
+declare const MR1: Pin;
+
+/**
+ * @returns {Pin} The pin for the right motor
+ * @url http://www.espruino.com/Reference#l__global_MR2
+ */
+declare const MR2: Pin;
+
+/**
+ *
+ * @param {any} col - The colours to use, a 24 element array (8 x RGB)
+ * @url http://www.espruino.com/Reference#l__global_led
+ */
+declare function led(col: any): void;
 
 /**
  * The pin marked SDA on the Arduino pin footprint. This is connected directly to
@@ -12042,7 +12530,7 @@ declare function setSleepIndicator(pin: any): void;
  * @param {boolean} sleep
  * @url http://www.espruino.com/Reference#l__global_setDeepSleep
  */
-declare function setDeepSleep(sleep: boolean): void;
+declare function setDeepSleep(sleep: ShortBoolean): void;
 
 /**
  * Output current interpreter state in a text form such that it can be copied to a
@@ -12120,7 +12608,7 @@ declare function save(): void;
  * @param {boolean} clearFlash - Remove saved code from flash as well
  * @url http://www.espruino.com/Reference#l__global_reset
  */
-declare function reset(clearFlash: boolean): void;
+declare function reset(clearFlash: ShortBoolean): void;
 
 /**
  * Fill the console with the contents of the given function, so you can edit it.
@@ -12140,7 +12628,7 @@ declare function edit(funcName: any): void;
  * @param {boolean} echoOn
  * @url http://www.espruino.com/Reference#l__global_echo
  */
-declare function echo(echoOn: boolean): void;
+declare function echo(echoOn: ShortBoolean): void;
 
 /**
  * Return the current system time in Seconds (as a floating point number)
@@ -12284,7 +12772,7 @@ declare function changeInterval(id: IntervalId, time: number): void;
  * Read 8 bits of memory at the given location - DANGEROUS!
  *
  * @param {number} addr - The address in memory to read
- * @param {number} [count] - [optional] the number of items to read. If >1 a Uint8Array will be returned.
+ * @param {number} [count] - [optional] the number of items to read. If >1 a `Uint8Array` will be returned.
  * @returns {any} The value of memory at the given location
  * @url http://www.espruino.com/Reference#l__global_peek8
  */
@@ -12304,7 +12792,7 @@ declare function poke8(addr: number, value: number | number[]): void;
  * Read 16 bits of memory at the given location - DANGEROUS!
  *
  * @param {number} addr - The address in memory to read
- * @param {number} [count] - [optional] the number of items to read. If >1 a Uint16Array will be returned.
+ * @param {number} [count] - [optional] the number of items to read. If >1 a `Uint16Array` will be returned.
  * @returns {any} The value of memory at the given location
  * @url http://www.espruino.com/Reference#l__global_peek16
  */
@@ -12324,7 +12812,7 @@ declare function poke16(addr: number, value: number | number[]): void;
  * Read 32 bits of memory at the given location - DANGEROUS!
  *
  * @param {number} addr - The address in memory to read
- * @param {number} [count] - [optional] the number of items to read. If >1 a Uint32Array will be returned.
+ * @param {number} [count] - [optional] the number of items to read. If >1 a `Uint32Array` will be returned.
  * @returns {any} The value of memory at the given location
  * @url http://www.espruino.com/Reference#l__global_peek32
  */
@@ -12541,7 +13029,7 @@ declare function shiftOut(pins: Pin | Pin[], options: { clk?: Pin, clkPol?: bool
  *    // setting irq:true will call that function in the interrupt itself
  *    irq : false(default)
  *    // Advanced: If specified, the given pin will be read whenever the watch is called
- *    // and the state will be included as a 'data' field in the callback
+ *    // and the state will be included as a 'data' field in the callback (`debounce:0` is required)
  *    data : pin
  *    // Advanced: On Nordic devices, a watch may be 'high' or 'low' accuracy. By default low
  *    // accuracy is used (which is better for power consumption), but this means that
@@ -12558,7 +13046,7 @@ declare function shiftOut(pins: Pin | Pin[], options: { clk?: Pin, clkPol?: bool
  *    When using `edge:'rising'` or `edge:'falling'`, this is not the same as when
  *    the function was last called.
  *  * `data` is included if `data:pin` was specified in the options, and can be
- *    used for reading in clocked data
+ *    used for reading in clocked data. It will only work if `debounce:0` is used
  * For instance, if you want to measure the length of a positive pulse you could
  * use `setWatch(function(e) { console.log(e.time-e.lastTime); }, BTN, {
  * repeat:true, edge:'falling' });`. This will only be called on the falling edge
@@ -12597,6 +13085,16 @@ declare function clearWatch(id: number): void;
 declare function clearWatch(): void;
 
 declare const global: {
+  Q: typeof Q;
+  SERVO: typeof SERVO;
+  IRLED: typeof IRLED;
+  IRL: typeof IRL;
+  ML1: typeof ML1;
+  ML2: typeof ML2;
+  IRR: typeof IRR;
+  MR1: typeof MR1;
+  MR2: typeof MR2;
+  led: typeof led;
   SDA: typeof SDA;
   SCL: typeof SCL;
   show: typeof show;
@@ -13032,7 +13530,7 @@ declare module "ESP8266" {
    * @param {boolean} enable - Enable or disable the debug logging.
    * @url http://www.espruino.com/Reference#l_ESP8266_logDebug
    */
-  function logDebug(enable: boolean): void;
+  function logDebug(enable: ShortBoolean): void;
 
   /**
    * Set the debug logging mode. It can be disabled (which frees ~1.2KB of heap),
@@ -13081,10 +13579,9 @@ declare module "ESP8266" {
    * * `cpuFrequency` - CPU operating frequency in Mhz.
    * * `freeHeap` - Amount of free heap in bytes.
    * * `maxCon` - Maximum number of concurrent connections.
-   * * `flashMap` - Configured flash size&map: '512KB:256/256' .. '4MB:512/512'
+   * * `flashMap` - Configured flash size&map: '512KB:256/256' .. `'4MB:512/512'`
    * * `flashKB` - Configured flash size in KB as integer
-   * * `flashChip` - Type of flash chip as string with manufacturer & chip, ex: '0xEF
-   *   0x4016`
+   * * `flashChip` - Type of flash chip as string with manufacturer & chip, ex: `'0xEF 0x4016'`
    * @returns {any} The state of the ESP8266
    * @url http://www.espruino.com/Reference#l_ESP8266_getState
    */
@@ -13218,7 +13715,7 @@ declare module "crypto" {
    * @param {any} passphrase - Passphrase
    * @param {any} salt - Salt for turning passphrase into a key
    * @param {any} options - Object of Options, `{ keySize: 8 (in 32 bit words), iterations: 10, hasher: 'SHA1'/'SHA224'/'SHA256'/'SHA384'/'SHA512' }`
-   * @returns {any} Returns an ArrayBuffer
+   * @returns {any} Returns an `ArrayBuffer`
    * @url http://www.espruino.com/Reference#l_crypto_PBKDF2
    */
   function PBKDF2(passphrase: any, salt: any, options: any): ArrayBuffer;
@@ -13361,7 +13858,7 @@ declare module "tls" {
    * * Just specify the filename (<=100 characters) and it will be loaded and parsed
    *   if you have an SD card connected. For instance `options.key = "key.pem";`
    * * Specify a function, which will be called to retrieve the data. For instance
-   *   `options.key = function() { eeprom.load_my_info(); };
+   *   `options.key = function() { eeprom.load_my_info(); };`
    * For more information about generating and using certificates, see:
    * https://engineering.circle.com/https-authorized-certs-with-node-js/
    * (You'll need to use 2048 bit certificates as opposed to 4096 bit shown above)
@@ -13966,8 +14463,7 @@ declare module "http" {
    *   });
    * });
    * ```
-   * See `http.request()` and [the Internet page](/Internet) and ` for more usage
-   * examples.
+   * See `http.request()` and [the Internet page](/Internet) for more usage examples.
    *
    * @param {any} options - A simple URL, or an object containing host,port,path,method fields
    * @param {any} callback - A function(res) that will be called when a connection is made. You can then call `res.on('data', function(data) { ... })` and `res.on('close', function() { ... })` to deal with the response.
@@ -14279,14 +14775,14 @@ declare module "tensorflow" {
  */
 declare module "heatshrink" {
   /**
-   * Compress the data supplied as input, and return heatshrink encoded data as an ArrayBuffer.
+   * Compress the data supplied as input, and return heatshrink encoded data as an `ArrayBuffer`.
    * No type information is stored, and the `data` argument is treated as an array of bytes
    * (whether it is a `String`/`Uint8Array` or even `Uint16Array`), so the result of
-   * decompressing any compressed data will always be an ArrayBuffer.
+   * decompressing any compressed data will always be an `ArrayBuffer`.
    * If you'd like a way to perform compression/decompression on desktop, check out https://github.com/espruino/EspruinoWebTools#heatshrinkjs
    *
    * @param {any} data - The data to compress
-   * @returns {any} Returns the result as an ArrayBuffer
+   * @returns {any} Returns the result as an `ArrayBuffer`
    * @url http://www.espruino.com/Reference#l_heatshrink_compress
    */
   function compress(data: any): ArrayBuffer;
@@ -14590,7 +15086,7 @@ declare module "Storage" {
    * @param {boolean} [showMessage] - [optional] If true, an overlay message will be displayed on the screen while compaction is happening. Default is false.
    * @url http://www.espruino.com/Reference#l_Storage_compact
    */
-  function compact(showMessage?: boolean): void;
+  function compact(showMessage?: ShortBoolean): void;
 
   /**
    * This writes information about all blocks in flash memory to the console - and is
@@ -14609,7 +15105,7 @@ declare module "Storage" {
    * @returns {number} The amount of free bytes
    * @url http://www.espruino.com/Reference#l_Storage_getFree
    */
-  function getFree(checkInternalFlash: boolean): number;
+  function getFree(checkInternalFlash: ShortBoolean): number;
 
   /**
    * Returns:
@@ -14629,7 +15125,7 @@ declare module "Storage" {
    * @returns {any} An object containing info about the current Storage system
    * @url http://www.espruino.com/Reference#l_Storage_getStats
    */
-  function getStats(checkInternalFlash: boolean): any;
+  function getStats(checkInternalFlash: ShortBoolean): any;
 
   /**
    * Writes a lookup table for files into Bangle.js's storage. This allows any file

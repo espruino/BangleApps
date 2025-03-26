@@ -5,7 +5,7 @@
     showClocks: true,
     fullscreen: false,
     direct: false,
-    oneClickExit: false,
+    oneClickExit: true,
     swipeExit: false,
     timeOut:"Off"
   }, s.readJSON("iconlaunch.json", true) || {});
@@ -19,7 +19,7 @@
     "": { "title": /*LANG*/"Launcher", back: back },
     /*LANG*/"Show Clocks": {
       value: settings.showClocks == true,
-      onchange: (m) => { 
+      onchange: (m) => {
         save("showClocks", m);
         s.erase("iconlaunch.cache.json"); //delete the cache app list
      }
@@ -50,4 +50,4 @@
     },
   };
   E.showMenu(appMenu);
-});
+})

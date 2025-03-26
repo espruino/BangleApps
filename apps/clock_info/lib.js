@@ -14,6 +14,8 @@ if (stepGoal == undefined) {
 exports.loadCount = 0;
 /// A list of all the instances returned by addInteractive
 exports.clockInfos = [];
+/// A list of loaded clockInfos
+exports.clockInfoMenus = undefined;
 
 /// Load the settings, with defaults
 exports.loadSettings = function() {
@@ -29,6 +31,8 @@ exports.loadSettings = function() {
 
 /// Load a list of ClockInfos - this does not cache and reloads each time
 exports.load = function() {
+  if (exports.clockInfoMenus)
+    return exports.clockInfoMenus;
   var settings = exports.loadSettings();
   delete settings.apps; // keep just the basic settings in memory
   // info used for drawing...
@@ -131,10 +135,14 @@ exports.load = function() {
       hide : function() { clearInterval(this.interval); delete this.interval; },
     });
   }
-
+  var clkInfoCache = require('Storage').read('.clkinfocache');
+  if (clkInfoCache!==undefined) {
+    // note: code below is included in clkinfocache by bootupdate.js
+    // we use clkinfocache if it exists as it's faster
+    eval(clkInfoCache);
+  } else require("Storage").list(/clkinfo\.js$/).forEach(fn => {
   // In case there exists already a menu object b with the same name as the next
   // object a, we append the items. Otherwise we add the new object a to the list.
-  require("Storage").list(/clkinfo.js$/).forEach(fn => {
     try{
       var a = eval(require("Storage").read(fn))();
       var b = menu.find(x => x.name === a.name);
@@ -146,6 +154,7 @@ exports.load = function() {
   });
 
   // return it all!
+  exports.clockInfoMenus = menu;
   return menu;
 };
 
@@ -274,7 +283,7 @@ exports.addInteractive = function(menu, options) {
         //in the worst case we come back to 0
       } while(menu[options.menuA].items.length==0);
       // When we change, ensure we don't display the same thing as another clockinfo if we can avoid it
-      while ((options.menuB < menu[options.menuA].items.length) &&
+      while ((options.menuB < menu[options.menuA].items.length-1) &&
              exports.clockInfos.some(m => (m!=options) && m.menuA==options.menuA && m.menuB==options.menuB))
           options.menuB++;
     }
@@ -345,6 +354,9 @@ exports.addInteractive = function(menu, options) {
     menuHideItem(menu[options.menuA].items[options.menuB]);
     exports.loadCount--;
     delete exports.clockInfos[options.index];
+    // If nothing loaded now, clear our list of loaded menus
+    if (exports.loadCount==0)
+      exports.clockInfoMenus = undefined;
   };
   options.redraw = function() {
     drawItem(menu[options.menuA].items[options.menuB]);

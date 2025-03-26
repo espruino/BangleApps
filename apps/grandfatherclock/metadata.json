@@ -1,0 +1,18 @@
+{ "id": "grandfatherclock",
+  "name": "Grandfather Clock Widget",
+  "shortName":"Grandfather Clock",
+  "version":"0.02",
+  "description": "A widget that chimes every fraction of an hour (similar to Chimer), and counts out the fractions and the o'clock hour.",
+  "icon": "icon.png",
+  "type": "widget",
+  "tags": "widget",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"grandfatherclock.wid.js","url":"widget.js"},
+    {"name":"grandfatherclock.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"grandfatherclock.json"}
+  ]
+}

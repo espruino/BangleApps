@@ -156,7 +156,6 @@
     // need to redraw all widgets, because changing the "charger" setting
     // can affect the width and mess with the whole widget layout
     setWidth();
-    g.clear();
     Bangle.drawWidgets();
   }
 

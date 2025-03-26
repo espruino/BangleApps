@@ -38,6 +38,7 @@
       // if we're in an app that has a back button, run the callback for it
       if (global.BACK && countHandlers("swipe")<=settings.standardNumSwipeHandlers && countHandlers("drag")<=settings.standardNumDragHandlers) {
         global.BACK();
+        E.stopEventPropagation();
       }
     }
   }
@@ -56,5 +57,5 @@
   }
 
   // Listen to left to right swipe
-  Bangle.on("swipe", goBack);
+  Bangle.prependListener("swipe", goBack);
 })();

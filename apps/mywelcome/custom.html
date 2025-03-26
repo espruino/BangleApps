@@ -16,7 +16,7 @@
 </div>
     <p><button id="try" class="btn">Try in Emulator</button></p>
     <p><button id="upload" class="btn btn-primary">Upload</button></p>
-    <p>This is currently Christmas-themed, but more themes will be added in the future.</p>
+    <p>To turn the Bangle off so the Welcome screen runs at startup go to <code>Settings -> Apps -> My Welcome</code>  and choose <code>Turn off & run next</code></p>
 
     <script src="../../core/lib/customize.js"></script>
 
@@ -76,7 +76,7 @@ var ig = require("heatshrink").decompress(atob("jk0ggGDg93AAVwCYwMEBxAMFAAIaHuc/
   // if (style=="Christmas")
   return `(function() {
   var isnow = require("heatshrink").decompress(atob("jEagQWTgfAAocf+gFDh4FDiARBggVB3AFBl3Agf8jfkn/AgX/v/9/+Agfv/2//YrBgfwh4wCgfghYFJCIYdFFIw1EIIpNFL44FFOIoAP"));
-  var itree = require("heatshrink").decompress(atob("mtWxH+ADHHDTI0aGuXH5vNGmhqvTYIzBGtoxF6fTG4g4oGgQyBAAZssGoI0Ga1g1FGdo01ZgIAEGmHHNoLSuAAN/rdb0YFBGlgCBGYIABA4YArGYY1CGn4znAAM6GeVd5PQ5Iyurc/vQ0oGZFAn+d4XC3d5GddiGYIEBy+7zoEBGlFhoEcsQ9GT08+oFk1mkGdaVBMgNArnJ6/KzswGs/J6GlrlbqtbvPC5PCy8wGohniMIPJvIpCqmX3e7vI0BqhqlMIY0DqhtBqoEBa0xgBMIIoEqoABGQwzfsIhBv4qHABM50vQGjg1CGaN66DoBGt1ioGd5LoBGjo1PGYNhvLoCa7wnBqgvGA4YzCAgN5GUAsCqoDBmAHCAYU/wPQ0oSDGcBiDqkwAYcxoFd5PX6GdGjrIIqtUAAc3jk5vPC4fCy5pef5I2BTQMcnAHBy+7y95T0oADnFk1ekBpI2aGRUin7NGAA9hsIzVsIgHTAKZBZoPJ5LNDGhBpXGolcwOsrtcA4TNB3bNDGb/+sVin9AoGe6HX5InEvN/TkP+5XQwM/sRsBzqWB4QuKGjvC6HQ4QdDvKWBZYMwmAuHmFUCYNbqibX3fD5O7qolEZQQ0FBwgKDqgJBGiphEDwNUEgJbBFIQqCAgYOCB4IzCnE6GyhYFGoQnDABYzGAAQ1UAAo2NBoQSBnOB0t/Gjo2EABIPCoGe6HX4QzTGRIAEqtVF4QEBBQc4oE4y/J5PCvIxeABk/oADBvO73eXTyAyZMwM/Awd5vIOFGslAr2Av4PLNcU/jmA6HX5I1KasFcn8dTIOd5PJ4SZGGiNhAAIyNn0ckU+ZYe7AAJpJEYJnNGZk+n9kw9cBAcwGoN5aZg1JJJQABm8/oEjoDKC5ALCrUwqh/NrvQ6HDGp04n9doEdoE/sQJBZQZhCqgABGZk6zw0K/1dnVAoNAFwOlCYL1FubJBy4GCGh1AnOX4XC3YzHFYOeCgdV5PQ5OdD4rKBqqYNGYlbv+X3edGY3CGgKMDAAO7JAJgDAClcr2BEYgADaIZ0DL4uXGbDuB6HX5I1GsP+sNhOgWXIhBmWd4Od5PK4TwFGIJoBAYI2BAD0/jlcQoO7AAJaEGQQADGr0/sjNEvOdAoZmDGgw2ZsVAkeAZpQACGZI2VsU/kVGn1bZoPJZogpGGhA4GfRYwBoGC1mlBQbNFFoo0JNxAGCEod/wM6oFAn9iv/J6/Kzo1Ey9/MZQAKCg4GCFgTDEvPCSwI0BC5I0RN4ocEYYPQ5OdHgeXSwTFKGaJyKFYPC3f+MIdbpzFLAD4zB/1OqtbqtOGgYArGAIADGl9UAAI0wGQN5GoQ0vvIABGoI0uGYQABqo0zNOg0uaQY0/GllOGn40//w="));
+  var itree = require("heatshrink").decompress(atob("mtWwcBkmSpICFnAIHARV2CKFJk1sEyNO7cSEyFt22EEx2d23bCgPYChsnCIIUBxI7OEyKJCEyMk9o7BO6A7CEx+TEwKzQndhwxiQuMpklxHaGGjBiQkoDBEx+So0YsOZEyNJ//JJp9hy/+KBs5suWpO5kmEEx/bjVJwJNMEwNN0uWrI7NrN3/8ZsuRMRmW7d7/+CrNkExdP/lhw+ekOWggmLz/8hMpk0IkDIMn15O4QCCxIUKsmZkGCEwVYWBYjDAQWDzgUJqxxBAwdZnP/HZOVywmEw96vDsLEYLIBrM30mQKB+XvNgTxWUyUJOgMJn/+pLvKJoUIsGDj/5wwmJ8mSpCeBhM3k+RkgmJnBNDycYpMGjBiJpwDBEwP8wVZkuWogUHkomCsnf/wFCR4LFKydttPkDYKhBsTFJr9140SoImLpMpm3n/tky0JZAVkEw+f4dZtPmd4YUBrAmHz/1y2SomGd4OQjMgEw+Tk+YEYUhy0ZsAFBMQ8mpMChEgwEJsECgDLBprvGpxKDBwIXBAoNg4zIHdgcIgEACgOCv9keIIUFdgYCEs//zA7FyYDCHAQCDt1/gJNFrAmIm/GyVhxLXFrIbEhAwBtMl0zIFktlEw0Z/IFDZAq/ByxXE73/8oyBso7EybjBEweHttp/4FBCgJ3EnNkdIQpBm3WrVJCIMly1EEwkYCIMYsnfrDsBzAICsOBEwVJsmSjMgyaYB61IEYNJsoPB//JCgNGcYPXtu1w2ePoMZQAef/xQCy3btv/8UJlMkrLFBeoImB3MkHYX+OgOf8LIHsObjVIEwOZ/sZkMkSYLsDQgf9PQLIBqV5DoNJEw9g4/8UINY8uUzLFGAQdN5fkVQORnIRBYogCEs3WiVBBwLsEAQYmCkuTvtl0nZd4TFBCIQmFjux/6hBd4Y7CFI0m7dT/LsB8uWGINWooRFunf/o4ByA4BkqJBkniKANkp1ZtrLBt/+rNpk1ZsR/EKANEAQMf+OWj15BAdESgopBktln+xHAKnBOIOUVJFJrVJh1ZsBEBOIIRIAQUwyGCgAOKCg1hgIROAQNEiECEx8k8OGgg7QfYMJEx+Td4J0NAQdJ0hiQp0YTwIUP4MmyBiQjFhwJiQgmaoA7QsOGiA7PpkStLaIoAA="));
   var W=g.getWidth(),H=g.getHeight();
   var titleFont = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
   var flakes = [];
@@ -112,6 +112,8 @@ var ig = require("heatshrink").decompress(atob("jk0ggGDg93AAVwCYwMEBxAMFAAIaHuc/
   setInterval(draw,50);
 })();
 `;
+// or an 8 bit tree, but 3 bit (above) renders better on Bangle.js 2
+// var itree = require("heatshrink").decompress(atob("mtWxH+ADHHDTI0aGuXH5vNGmhqvTYIzBGtoxF6fTG4g4oGgQyBAAZssGoI0Ga1g1FGdo01ZgIAEGmHHNoLSuAAN/rdb0YFBGlgCBGYIABA4YArGYY1CGn4znAAM6GeVd5PQ5Iyurc/vQ0oGZFAn+d4XC3d5GddiGYIEBy+7zoEBGlFhoEcsQ9GT08+oFk1mkGdaVBMgNArnJ6/KzswGs/J6GlrlbqtbvPC5PCy8wGohniMIPJvIpCqmX3e7vI0BqhqlMIY0DqhtBqoEBa0xgBMIIoEqoABGQwzfsIhBv4qHABM50vQGjg1CGaN66DoBGt1ioGd5LoBGjo1PGYNhvLoCa7wnBqgvGA4YzCAgN5GUAsCqoDBmAHCAYU/wPQ0oSDGcBiDqkwAYcxoFd5PX6GdGjrIIqtUAAc3jk5vPC4fCy5pef5I2BTQMcnAHBy+7y95T0oADnFk1ekBpI2aGRUin7NGAA9hsIzVsIgHTAKZBZoPJ5LNDGhBpXGolcwOsrtcA4TNB3bNDGb/+sVin9AoGe6HX5InEvN/TkP+5XQwM/sRsBzqWB4QuKGjvC6HQ4QdDvKWBZYMwmAuHmFUCYNbqibX3fD5O7qolEZQQ0FBwgKDqgJBGiphEDwNUEgJbBFIQqCAgYOCB4IzCnE6GyhYFGoQnDABYzGAAQ1UAAo2NBoQSBnOB0t/Gjo2EABIPCoGe6HX4QzTGRIAEqtVF4QEBBQc4oE4y/J5PCvIxeABk/oADBvO73eXTyAyZMwM/Awd5vIOFGslAr2Av4PLNcU/jmA6HX5I1KasFcn8dTIOd5PJ4SZGGiNhAAIyNn0ckU+ZYe7AAJpJEYJnNGZk+n9kw9cBAcwGoN5aZg1JJJQABm8/oEjoDKC5ALCrUwqh/NrvQ6HDGp04n9doEdoE/sQJBZQZhCqgABGZk6zw0K/1dnVAoNAFwOlCYL1FubJBy4GCGh1AnOX4XC3YzHFYOeCgdV5PQ5OdD4rKBqqYNGYlbv+X3edGY3CGgKMDAAO7JAJgDAClcr2BEYgADaIZ0DL4uXGbDuB6HX5I1GsP+sNhOgWXIhBmWd4Od5PK4TwFGIJoBAYI2BAD0/jlcQoO7AAJaEGQQADGr0/sjNEvOdAoZmDGgw2ZsVAkeAZpQACGZI2VsU/kVGn1bZoPJZogpGGhA4GfRYwBoGC1mlBQbNFFoo0JNxAGCEod/wM6oFAn9iv/J6/Kzo1Ey9/MZQAKCg4GCFgTDEvPCSwI0BC5I0RN4ocEYYPQ5OdHgeXSwTFKGaJyKFYPC3f+MIdbpzFLAD4zB/1OqtbqtOGgYArGAIADGl9UAAI0wGQN5GoQ0vvIABGoI0uGYQABqo0zNOg0uaQY0/GllOGn40//w="))
 }
       // when 'try' is clicked, load the emulator...
       document.getElementById("try").addEventListener("click", function() {

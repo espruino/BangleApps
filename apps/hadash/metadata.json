@@ -1,0 +1,20 @@
+{
+  "id": "hadash",
+  "name": "Home-Assistant Dashboard",
+  "shortName":"HA-Dash",
+  "version":"1.01",
+  "description": "Interact with Home-Assistant (query states, call services)",
+  "icon": "hadash.png",
+  "screenshots": [{ "url": "screenshot.png" }],
+  "type": "app",
+  "tags": "tool,online",
+  "supports": ["BANGLEJS2"],
+  "dependencies": { "textinput": "type" },
+  "readme": "README.md",
+  "interface": "interface.html",
+  "storage": [
+    { "name":"hadash.app.js", "url":"hadash.app.js" },
+    { "name":"hadash.img",    "url":"hadash-icon.js", "evaluate":true }
+  ],
+  "data": [{ "name":"hadash.json" }]
+}

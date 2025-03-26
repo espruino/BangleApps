@@ -11,6 +11,7 @@
     <script src="../../core/js/utils.js"></script>
     <script>
 var domTracks = document.getElementById("tracks");
+var fileCache = new Map();
 
 function filterGPSCoordinates(track) {
   // only include data points with GPS values
@@ -153,14 +154,24 @@ function trackLineToObject(headers, l) {
 }
 
 function downloadTrack(filename, callback) {
-  Util.showModal(`Downloading ${filename}...`);
-  Util.readStorageFile(filename,data=>{
-    Util.hideModal();
+  function onData(data) {
     var lines = data.trim().split("\n");
     var headers = lines.shift().split(",");
     var track = lines.map(l=>trackLineToObject(headers, l));
     callback(track);
-  });
+  }
+
+  const data = fileCache.get(filename);
+  if (data) {
+    onData(data);
+  } else {
+    Util.showModal(`Downloading ${filename}...`);
+    Util.readStorageFile(filename, data => {
+      fileCache.set(filename, data);
+      onData(data);
+      Util.hideModal();
+    });
+  }
 }
 
 function downloadAll(trackList, cb) {

@@ -34,4 +34,4 @@
     }
   };
   E.showMenu(appMenu);
-});
+})

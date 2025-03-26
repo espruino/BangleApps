@@ -2,6 +2,7 @@
   <head>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
     <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.6.0/dist/geosearch.css"/>
   </head>
     <style>
@@ -34,7 +35,9 @@
     </div>
     <div id="controls">
       <span id="select-hint">Click the map to select a location</span>
-      <button id="select" class="btn btn-primary" style="display:none">Save</button><br/>
+      <button id="locate-me" class="btn" title="Locate me">&#x26ef;</button>
+      <button id="locate-marker" class="btn" style="display:none" title="Locate marker"><i class="icon icon-location"></i></button>
+      <button id="select" class="btn btn-primary" style="display:none" title="Save to device">Save</button><br/>
     </div>
 
     <script src="../../core/lib/interface.js"></script>
@@ -76,18 +79,36 @@
           map.removeLayer(marker);
         }
         marker = new L.marker(latlon).addTo(map);
+
         document.getElementById("select-hint").style.display="none";
         document.getElementById("select").style.display="";
+        document.getElementById("locate-marker").style.display="";
       }
 
       map.on('click', function(e){
         setPosition(e.latlng);
       });
 
+      function convertMapToFile(map) {
+        return {lat: map.lat, lon: map.lng};
+      }
+
+      function convertFileToMap(file) {
+        return {lat: file.lat, lng: file.lon};
+      }
+
+      document.getElementById("locate-me").addEventListener("click", function() {
+        map.locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
+      });
+
+      document.getElementById("locate-marker").addEventListener("click", function() {
+        if (latlon && latlon.lng != null && latlon.lat != null) {
+          map.setView(latlon);
+        }
+      });
+
       document.getElementById("select").addEventListener("click", function() {
-        let settings = {}; // {"lat":48.8566,"lon":2.3522,"location":"Paris"}
-        settings.lat = latlon.lat;
-        settings.lon = latlon.lng;
+        let settings = convertMapToFile(latlon); // {"lat":48.8566,"lon":2.3522,"location":"Paris"}
         settings.location = "custom";
         Util.showModal("Saving...");
         Util.writeStorage("mylocation.json", JSON.stringify(settings), ()=>{
@@ -101,7 +122,7 @@
         Util.readStorageJSON("mylocation.json", function(data) {
           if (data===undefined) return; // no file
           try {
-            setPosition(data);
+            setPosition(convertFileToMap(data));
           } catch (e) {
             console.error(e);
           }

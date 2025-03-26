@@ -8,6 +8,7 @@
     swipeExit: false,
     timeOut: "Off",
     interactionBuzz: false,
+    rememberPage: false,
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
@@ -64,5 +65,12 @@
         writeSettings();
       }
     },
+    /*LANG*/'Remember Page': {
+      value: settings.rememberPage,
+      onchange: v => {
+        settings.rememberPage = v;
+        writeSettings();
+      }
+    },
   });
-});
+})

@@ -88,13 +88,23 @@ function showMainMenu(scroll, group, scrollback) {
   const getGroups = settings.showGroup && !group;
   const groups = getGroups ? {} : undefined;
   var showAlarm;
+  const getIcon = (e)=>{return e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff);};
 
   alarms.forEach((e, index) => {
     showAlarm = !settings.showGroup || (group ? e.group === group : !e.group);
     if(showAlarm) {
-      menu[trimLabel(getLabel(e),40)] = {
-        value: e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff),
-        onchange: () => setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index, undefined, scroller.scroll, group)
+      const label = trimLabel(getLabel(e),40);
+      menu[label] = {
+        value: e.on,
+        onchange: (v, touch) => {
+          if (touch && (2==touch.type || 145<touch.x)) { // Long touch or touched icon.
+            e.on = v;
+            saveAndReload();
+          } else {
+            setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index, undefined, scroller?scroller.scroll:undefined, group);
+          }
+        },
+        format: v=>getIcon(e)
       };
     } else if (getGroups) {
       groups[e.group] = undefined;
@@ -102,7 +112,7 @@ function showMainMenu(scroll, group, scrollback) {
   });
 
   if (!group) {
-    Object.keys(groups).sort().forEach(g => menu[g] = () => showMainMenu(null, g, scroller.scroll));
+    Object.keys(groups).sort().forEach(g => menu[g] = () => showMainMenu(null, g, scroller?scroller.scroll:undefined));
     menu[/*LANG*/"Advanced"] = () => showAdvancedMenu();
   }
 

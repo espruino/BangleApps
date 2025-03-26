@@ -17,6 +17,9 @@
         } else return '' + hour;
     }
 
+  let minute; // Is used in onchange functions. Defined here to appease the linter.
+  let hour; // Is used in onchange functions. Defined here to appease the linter.
+
     // The menu for configuring when the seconds are shown
     function showSecondsMenu() {
         E.showMenu({
@@ -744,4 +747,4 @@
     }
 
     showMainMenu();
-});
+})

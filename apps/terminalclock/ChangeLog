@@ -7,5 +7,8 @@
 0.07: Use ClockFace module and rework the settings to be able to personnalize the order of the lines
 0.08: Hide widgets instead of not loading them at all
       Use Clockface_menu for widgets and power saving settings
-0.09: Add default HRM value, default altitude value 
+0.09: Add default HRM value, default altitude value
 0.10: Add fastloading
+0.11: Add option for ISO 8601 date format
+0.12: Add day of week line
+0.13: Fix ISO 8601 date, add leading zeros to day and month numbers, correct curPos for date function

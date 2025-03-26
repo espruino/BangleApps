@@ -16,14 +16,16 @@
     The DFU (bootloader) rarely changes, so it does not have to be the same version as your main firmware.</p>
   </ul>
     <div id="fw-ok" style="display:none">
-      <p  id="fw-old-bootloader-msg">If you have an early (KickStarter or developer) Bangle.js device and still have the old 2v10.x DFU, the Firmware Update
-        will fail with a message about the DFU version. If so, please <a href="bootloader_espruino_2v20_banglejs2.hex" class="fw-link">click here to update to DFU 2v20</a> and then click the 'Upload' button that appears.</p>
+      <p id="fw-old-bootloader-msg">If you have an early (KickStarter or developer) Bangle.js device and still have the old 2v10.x DFU, the Firmware Update
+        will fail with a message about the DFU version. If so, please <a href="bootloader_espruino_2v25_banglejs2.hex" class="fw-link">click here to update to DFU 2v25</a> and then click the 'Upload' button that appears.</p>
+      <p><button id="upload" class="btn btn-primary" style="display:none">Upload</button></p>
       <div id="latest-firmware" style="display:none">
         <p>The currently available Espruino firmware releases are:</p>
         <ul id="latest-firmware-list">
         </ul>
         <p>To update, click a link above and then click the 'Upload' button that appears.</p>
       </div>
+
 
       <p><a href="#" id="info-btn">What is DFU? ▼</a></p>
       <div id="info-div" style="display:none">
@@ -33,7 +35,7 @@
         Bangle.js firmware. Normally you would update firmware via this Firmware
         Updater app, but if for some reason Bangle.js will not boot, you can
         <a href="https://www.espruino.com/Bangle.js2#firmware-updates" target="_blank">always use DFU to do the update manually</a>.
-        On DFU 2v19 and earlier, iOS devices could have issues updating firmware - 2v20 fixes this.</p>
+        On DFU 2v19 and earlier, iOS devices could have issues updating firmware - 2v20 at later fixes this.</p>
         <p>DFU is itself a bootloader, but here we're calling it DFU to avoid confusion
         with the Bootloader app in the app loader (which prepares Bangle.js for running apps).</p>
       </div>
@@ -51,7 +53,7 @@
         potentially overwrite your DFU with the wrong binary and brick your Bangle.</p>
         <input class="form-input" type="file" id="fileLoader" accept=".hex,.app_hex,.zip"/><br>
       </div>
-      <p><button id="upload" class="btn btn-primary" style="display:none">Upload</button></p>
+
     </div>
 
 
@@ -106,7 +108,8 @@ function onInit(device) {
     else if (crcs[0] == 3816337552) version = "2v21";
     else if (crcs[0] == 3329616485) version = "2v22";
     else if (crcs[0] == 1569433504) version = "2v23";
-    else if (crcs[0] == 680675961) version = "2v24";    
+    else if (crcs[0] == 680675961) version = "2v24";
+    else if (crcs[0] == 4148062987 || crcs[0] == 3675049818) version = "2v25";
     else { // for other versions all 7 pages are used, check those
       var crc = crcs[1];
       if (crc==1339551013) { version = "2v10.219"; ok = false; }
@@ -127,7 +130,7 @@ function onInit(device) {
     }
     document.getElementById("boot-version").innerHTML = version;
     var versionNumber = parseFloat(version.replace(".","").replace("v","."));
-    if (versionNumber>=2.20)
+    if (versionNumber>=2.25)
       document.getElementById("fw-old-bootloader-msg").style.display = "none";
   });
 }
@@ -385,6 +388,7 @@ function createJS_bootloader(binary, startAddress, endAddress) {
   for (var i=startAddress;i<endAddress;i+=4096)
     hexJS += 'f.erasePage(0x'+i.toString(16)+');\n';
   hexJS += `f.write(_fw,${startAddress});\n`;
+  hexJS += 'E.showMessage("Update Complete.")\n';
   hexJS += `})()\n`;
   log("DFU ready for upload");
 }

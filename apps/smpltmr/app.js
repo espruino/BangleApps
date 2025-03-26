@@ -173,12 +173,15 @@ function updateLayoutField(layout, field, value) {
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
-Bangle.setUI({
+let uiOptions = {
   mode : "custom",
   touch : function(n,e) {onTouch(n,e);},
   drag : function(e) {onDrag(e);},
-  btn : function(n) {onButton();},
-});
+};
+if (parseFloat(process.env.VERSION.replace("v","")) < 224.164) {uiOptions.btn = function(n) {onButton();};}
+else {uiOptions.btnRelease = function(n) {onButton();};}
+
+Bangle.setUI(uiOptions);
 
 g.clearRect(Bangle.appRect);
 if (timerRunning()) {

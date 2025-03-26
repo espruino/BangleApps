@@ -6,7 +6,7 @@
   "description": "Show the current and upcoming events synchronized from Gadgetbridge",
   "icon": "calclock.png",
   "type": "clock",
-  "tags": "clock agenda",
+  "tags": "clock,agenda",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [

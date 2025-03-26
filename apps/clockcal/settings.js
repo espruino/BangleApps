@@ -1,7 +1,8 @@
 (function (back) {
     var FILE = "clockcal.json";
     const defaults={
-        CAL_ROWS: 4, //number of calendar rows.(weeks) Shouldn't exceed 5 when using widgets.
+        CAL_ROWS: 4, //total number of calendar rows.(weeks) Shouldn't exceed 5 when using widgets.
+        CAL_ROWS_PRIOR: 0, //number of calendar rows.(weeks) that show above the current week
         BUZZ_ON_BT: true, //2x slow buzz on disconnect, 2x fast buzz on connect. Will be extra widget eventually
         MODE24: true, //24h mode vs 12h mode
         FIRSTDAY: 6, //First day of the week: mo, tu, we, th, fr, sa, su
@@ -36,6 +37,14 @@
             min: 0, max: 6,
             onchange: v => {
                 settings.CAL_ROWS = v;
+                writeSettings();
+            }
+        },
+        '#Cal Rows Prior': {
+            value: settings.CAL_ROWS_PRIOR,
+            min: 0, max: 4,
+            onchange: v => {
+                settings.CAL_ROWS_PRIOR = v;
                 writeSettings();
             }
         },
@@ -114,4 +123,4 @@
     };
     // Show the menu
     E.showMenu(menu);
-});
+})

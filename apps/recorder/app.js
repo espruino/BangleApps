@@ -95,7 +95,7 @@ function viewTracks() {
     '': { 'title': /*LANG*/'Tracks' }
   };
   var found = false;
-  require("Storage").list(/^recorder\.log.*\.csv$/,{sf:true}).forEach(filename=>{
+  require("Storage").list(/^recorder\.log.*\.csv$/,{sf:true}).reverse().forEach(filename=>{
     found = true;
     menu[/*LANG*/getTrackNumber(filename)] = ()=>viewTrack(filename,false);
   });

@@ -78,8 +78,9 @@ const draw = () => {
 };
 
 const reload = () => {
+  let scroller: MenuInstance["scroller"] | undefined;
   const showMenu = () => {
-    const menu: { [k: string]: () => void } = {
+    const menu: Menu = {
       "Restore to full power": drainedRestore,
     };
 
@@ -92,8 +93,12 @@ const reload = () => {
     menu["Recovery"] = () => Bangle.showRecoveryMenu();
     menu["Exit menu"] = reload;
 
+    if(scroller){
+      menu[""] = { selected: scroller.scroll };
+    }
+
     if(nextDraw) clearTimeout(nextDraw);
-    E.showMenu(menu);
+    ({ scroller } = E.showMenu(menu));
   };
 
   Bangle.setUI({
@@ -115,7 +120,7 @@ reload();
 Bangle.emit("drained", E.getBattery());
 
 // restore normal boot on charge
-const { keepStartup = true, restore = 20, exceptions = ["widdst.0"] }: DrainedSettings
+const { keepStartup = true, restore = 20, exceptions = ["widdst.0"], interval = 10 }: DrainedSettings
   = require("Storage").readJSON(`${app}.setting.json`, true) || {};
 
 // re-enable normal boot code when we're above a threshold:
@@ -142,7 +147,11 @@ if (Bangle.isCharging())
   checkCharge();
 
 Bangle.on("charging", charging => {
-  if(charging) checkCharge();
+  if(drainedInterval)
+    drainedInterval = clearInterval(drainedInterval) as undefined;
+  if(charging)
+    drainedInterval = setInterval(checkCharge, interval * 60 * 1000);
+  draw(); // redraw to update charging status on screen
 });
 
 if(!keepStartup){

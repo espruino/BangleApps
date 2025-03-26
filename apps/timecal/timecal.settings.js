@@ -17,7 +17,8 @@
     suClr:1, //0:fg, 1:red=#E00, 2:green=#0E0, 3:blue=#00E
     //phColor:"#E00", //public holiday
 
-    calBrdr:false 
+    calBrdr:false,
+    showWeather:false
   };
   let validSttngs = require("Storage").readJSON(FILE, 1) || {};
   for (const k in validSttngs) if (!DEFAULTS.hasOwnProperty(k)) delete this.validSttngs[k]; //remove invalid settings
@@ -64,6 +65,11 @@
         format: v => v ? /*LANG*/"show" : /*LANG*/"none",
         onchange: v => chngdSttngs.calBrdr = v
       },
+      "Weather": {
+        value: chngdSttngs.showWeather,
+        format: v => v ? /*LANG*/"show" : /*LANG*/"none",
+        onchange: v => chngdSttngs.showWeather = v
+      },
       /*LANG*/"Today settings": () => showTodayMenu(),
       /*LANG*/"< Cancel": () => cancelExitSettings()
     });
@@ -104,4 +110,4 @@
   };
 
   showMainMenu();
-});
+})

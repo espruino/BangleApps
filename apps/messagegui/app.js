@@ -26,11 +26,12 @@ var layout; // global var containing the layout for the currently displayed mess
 var settings = require('Storage').readJSON("messages.settings.json", true) || {};
 var reply;
 try { reply = require("reply"); } catch (e) {}
-var fontSmall = "6x8";
-var fontMedium = g.getFonts().includes("6x15")?"6x15":"6x8:2";
-var fontBig = g.getFonts().includes("12x20")?"12x20":"6x8:2";
-var fontLarge = g.getFonts().includes("6x15")?"6x15:2":"6x8:4";
-var fontVLarge = g.getFonts().includes("6x15")?"12x20:2":"6x8:5";
+var fontList = g.getFonts();
+var fontSmall = fontList.includes("14")?"14":"6x8";
+var fontMedium = fontList.includes("17")?"17":(fontList.includes("6x15")?"6x15":"6x8:2");
+var fontBig = fontList.includes("22")?"22":(fontList.includes("12x20")?"12x20":"6x8:2");
+var fontLarge = fontList.includes("28")?"28":(fontList.includes("6x15")?"6x15:2":"6x8:4");
+var fontVLarge = fontList.includes("22")?"22:2":(fontList.includes("6x15")?"12x20:2":"6x8:5");
 
 // If a font library is installed, just switch to using that for everything in messages
 if (Graphics.prototype.setFontIntl) {
@@ -48,19 +49,6 @@ if (Graphics.prototype.setFontIntl) {
 var active; // active screen (undefined/"list"/"music"/"map"/"message"/"scroller"/"settings")
 var openMusic = false; // go back to music screen after we handle something else?
 var replying = false; // If we're replying to a message, don't interrupt
-// hack for 2v10 firmware's lack of ':size' font handling
-try {
-  g.setFont("6x8:2");
-} catch (e) {
-  g._setFont = g.setFont;
-  g.setFont = function(f,s) {
-    if (f.includes(":")) {
-      f = f.split(":");
-      return g._setFont(f[0],f[1]);
-    }
-    return g._setFont(f,s);
-  };
-}
 
 /** this is a timeout if the app has started and is showing a single message
 but the user hasn't seen it (eg no user input) - in which case
@@ -139,7 +127,7 @@ function showMapMessage(msg) {
   layout = new Layout({ type:"v", c: [
     {type:"txt", font:street?fontMedium:fontLarge, label:target, bgCol:g.theme.bg2, col: g.theme.fg2, fillx:1, pad:3 },
     street?{type:"h", bgCol:g.theme.bg2, col: g.theme.fg2,  fillx:1, c: [
-      {type:"txt", font:"6x8", label:"Towards" },
+      {type:"txt", font:fontSmall, label:"Towards" },
       {type:"txt", font:fontLarge, label:street }
     ]}:{},
     {type:"h",fillx:1, filly:1, c: [
@@ -148,14 +136,14 @@ function showMapMessage(msg) {
         {type:"txt", font:fontVLarge, label:distance||"" }
       ]},
     ]},
-    {type:"txt", font:"6x8:2", label:msg.eta?`ETA ${msg.eta}`:"" }
+    {type:"txt", font:fontMedium, label:msg.eta?`ETA ${msg.eta}`:"" }
   ]});
   g.reset().clearRect(Bangle.appRect);
   layout.render();
   function back() { // mark as not new and return to menu
     msg.new = false;
     layout = undefined;
-    checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:0});
+    checkMessages({clockIfNoMsg:1,clockIfAllRead:1,ignoreUnread:settings.ignoreUnread,openMusic:0});
   }
   Bangle.setUI({mode:"updown", back: back}, back); // any input takes us back
 }
@@ -165,7 +153,9 @@ let updateLabelsInterval;
 function showMusicMessage(msg) {
   active = "music";
   // defaults, so e.g. msg.xyz.length doesn't error. `msg` should contain up to date info
-  msg = Object.assign({artist: "", album: "", track: "Music"}, msg);
+  msg.artist = msg.artist||"";
+  msg.album = msg.album||"";
+  msg.track = msg.track||"Music";
   openMusic = msg.state=="play";
   var trackScrollOffset = 0;
   var artistScrollOffset = 0;
@@ -183,15 +173,18 @@ function showMusicMessage(msg) {
     var sliceLength = offset + maxLen > text.length ? text.length - offset : maxLen;
     return text.substr(offset, sliceLength).padEnd(maxLen, " ");
   }
-  function back() {
+  function unload() {
     clearInterval(updateLabelsInterval);
     updateLabelsInterval = undefined;
+  }
+  function back() {
+    unload();
     openMusic = false;
     var wasNew = msg.new;
     msg.new = false;
     layout = undefined;
-    if (wasNew) checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:0,openMusic:0});
-    else checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
+    if (wasNew) checkMessages({clockIfNoMsg:1,clockIfAllRead:1,ignoreUnread:1,openMusic:0});
+    else returnToMain();
   }
   function updateLabels() {
     trackName = reduceStringAndPad(msg.track, trackScrollOffset, 13);
@@ -213,13 +206,19 @@ function showMusicMessage(msg) {
       { type:"v", fillx:1, c: [
         { type:"txt", font:fontMedium, bgCol:g.theme.bg2, label:artistName, pad:2, id:"artist" },
         { type:"txt", font:fontMedium, bgCol:g.theme.bg2, label:albumName, pad:2, id:"album" }
-      ]}
+      ]},
+      { type:"img", pad:4, src:require("messageicons").getImage(msg),
+        cb:()=>{
+          unload();
+          showMessageSettings(msg);
+        }
+      }
     ]},
     {type:"txt", font:fontLarge, bgCol:g.theme.bg, label:trackName, fillx:1, filly:1, pad:2, id:"track" },
     Bangle.musicControl?{type:"h",fillx:1, c: [
-      {type:"btn", pad:8, label:"\0"+atob("FhgBwAADwAAPwAA/wAD/gAP/gA//gD//gP//g///j///P//////////P//4//+D//gP/4A/+AD/gAP8AA/AADwAAMAAA"), cb:()=>Bangle.musicControl("play")}, // play
-      {type:"btn", pad:8, label:"\0"+atob("EhaBAHgHvwP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP/wP3gHg"), cb:()=>Bangle.musicControl("pause")}, // pause
-      {type:"btn", pad:8, label:"\0"+atob("EhKBAMAB+AB/gB/wB/8B/+B//B//x//5//5//x//B/+B/8B/wB/gB+AB8ABw"), cb:()=>Bangle.musicControl("next")}, // next
+      {type:"btn", pad:8, label:atob("ABYYgQDAAAPAAA/AAD/AAP+AA/+AD/+AP/+A//+D//+P//8//////////8///j//4P/+A//gD/4AP+AA/wAD8AAPAAAwAAA="), cb:()=>Bangle.musicControl("play")}, // play
+      {type:"btn", pad:8, label:atob("ABIWgQB4B78D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D/8D94B4A=="), cb:()=>Bangle.musicControl("pause")}, // pause
+      {type:"btn", pad:8, label:atob("ABISgQDAAfgAf4Af8Af/Af/gf/wf/8f/+f/+f/8f/wf/gf/Af8Af4AfgAfAAcA=="), cb:()=>Bangle.musicControl("next")}, // next
     ]}:{},
     {type:"txt", font:"6x8:2", label:msg.dur?fmtTime(msg.dur):"--:--" }
   ]}, { back : back });
@@ -265,12 +264,14 @@ function showMessageScroller(msg) {
 
 function showMessageSettings(msg) {
   active = "settings";
-  var menu = {"":{"title":/*LANG*/"Message"},
-    "< Back" : () => showMessage(msg.id, true),
-    /*LANG*/"View Message" : () => {
-      showMessageScroller(msg);
+  var menu = {"":{
+      "title":/*LANG*/"Message",
+      back:() => showMessage(msg.id, true)
     },
   };
+
+  if (msg.id!="music")
+    menu[/*LANG*/"View Message"] = () => showMessageScroller(msg);
 
   if (msg.reply && reply) {
     menu[/*LANG*/"Reply"] = () => {
@@ -291,7 +292,7 @@ function showMessageSettings(msg) {
   menu = Object.assign(menu, {
     /*LANG*/"Delete" : () => {
       MESSAGES = MESSAGES.filter(m=>m.id!=msg.id);
-      checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
+      returnToMain();
     },
   });
 
@@ -302,25 +303,25 @@ function showMessageSettings(msg) {
           Bangle.messageIgnore(msg);
           MESSAGES = MESSAGES.filter(m=>m.id!=msg.id);
         }
-        checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
+        returnToMain();
       });
     };
 
   menu = Object.assign(menu, {
     /*LANG*/"Mark Unread" : () => {
       msg.new = true;
-      checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
+      returnToMain();
     },
     /*LANG*/"Mark all read" : () => {
       MESSAGES.forEach(msg => msg.new = false);
-      checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
+      returnToMain();
     },
     /*LANG*/"Delete all messages" : () => {
       E.showPrompt(/*LANG*/"Are you sure?", {title:/*LANG*/"Delete All Messages"}).then(isYes => {
         if (isYes) {
           MESSAGES = [];
         }
-        checkMessages({clockIfNoMsg:0,clockIfAllRead:0,showMsgIfUnread:0,openMusic:0});
+        returnToMain();
       });
     },
   });
@@ -336,7 +337,7 @@ function showMessage(msgid, persist) {
     clearInterval(updateLabelsInterval);
     updateLabelsInterval=undefined;
   }
-  if (!msg) return checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0,openMusic:openMusic}); // go home if no message found
+  if (!msg) return returnToClockIfEmpty(); // go home if no message found
   if (msg.id=="music") {
     cancelReloadTimeout(); // don't auto-reload to clock now
     return showMusicMessage(msg);
@@ -386,7 +387,7 @@ function showMessage(msgid, persist) {
     layout = undefined;
     msg.new = false; // read mail
     cancelReloadTimeout(); // don't auto-reload to clock now
-    checkMessages({clockIfNoMsg:1,clockIfAllRead:0,showMsgIfUnread:0,openMusic:openMusic});
+    returnToClockIfEmpty();
   }
   var negHandler,posHandler,footer = [ ];
   if (msg.negative) {
@@ -394,7 +395,7 @@ function showMessage(msgid, persist) {
       msg.new = false;
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,false);
-      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:openMusic});
+      returnToCheckMessages();
     }; footer.push({type:"img",src:atob("PhAB4A8AAAAAAAPAfAMAAAAAD4PwHAAAAAA/H4DwAAAAAH78B8AAAAAA/+A/AAAAAAH/Af//////w/gP//////8P4D///////H/Af//////z/4D8AAAAAB+/AfAAAAAA/H4DwAAAAAPg/AcAAAAADwHwDAAAAAA4A8AAAAAAAA=="),col:"#f00",cb:negHandler});
   }
   footer.push({fillx:1}); // push images to left/right
@@ -408,7 +409,7 @@ function showMessage(msgid, persist) {
           Bluetooth.println(JSON.stringify(result));
           replying = false;
           layout.render();
-          checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:openMusic});
+          returnToCheckMessages();
         })
         .catch(() => {
           replying = false;
@@ -422,7 +423,7 @@ function showMessage(msgid, persist) {
       msg.new = false;
       cancelReloadTimeout(); // don't auto-reload to clock now
       Bangle.messageResponse(msg,true);
-      checkMessages({clockIfNoMsg:1,clockIfAllRead:1,showMsgIfUnread:1,openMusic:openMusic});
+      returnToCheckMessages();
     }; footer.push({type:"img",src:atob("QRABAAAAAAAAAAOAAAAABgAAA8AAAAADgAAD4AAAAAHgAAPgAAAAAPgAA+AAAAAAfgAD4///////gAPh///////gA+D///////AD4H//////8cPgAAAAAAPw8+AAAAAAAfB/4AAAAAAA8B/gAAAAAABwB+AAAAAAADAB4AAAAAAAAABgAA=="),col:"#0f0",cb:posHandler});
   }
 
@@ -434,7 +435,7 @@ function showMessage(msgid, persist) {
       ]},
       { type:"btn",
         src:require("messageicons").getImage(msg),
-        col:require("messageicons").getColor(msg, {settings:settings, default:g.theme.fg2}),
+        col:require("messageicons").getColor(msg, {settings, default:g.theme.fg2}),
         pad: 3, cb:()=>{
           cancelReloadTimeout(); // don't auto-reload to clock now
           showMessageSettings(msg);
@@ -463,7 +464,7 @@ function showMessage(msgid, persist) {
 /* options = {
   clockIfNoMsg : bool
   clockIfAllRead : bool
-  showMsgIfUnread : bool
+  ignoreUnread : bool   // don't automatically navigate to the first unread message
   openMusic : bool      // open music if it's playing
   dontStopBuzz : bool   // don't stuf buzzing (any time other than the first this is undefined/false)
 }
@@ -487,7 +488,7 @@ function checkMessages(options) {
   // we have >0 messages
   var newMessages = MESSAGES.filter(m=>m.new&&m.id!="music");
   // If we have a new message, show it
-  if (options.showMsgIfUnread && newMessages.length) {
+  if (!options.ignoreUnread && newMessages.length) {
     delete newMessages[0].show; // stop us getting stuck here if we're called a second time
     showMessage(newMessages[0].id, false);
     // buzz after showMessage, so being busy during layout doesn't affect the buzz pattern
@@ -509,7 +510,7 @@ function checkMessages(options) {
   active = "list";
   // Otherwise show a list of messages
   E.showScroller({
-    h : 48,
+    h : 50,
     c : Math.max(MESSAGES.length,3), // workaround for 2v10.219 firmware (min 3 not needed for 2v11)
     draw : function(idx, r) {"ram"
       var msg = MESSAGES[idx];
@@ -525,26 +526,26 @@ function checkMessages(options) {
       }
       if (img) {
         var fg = g.getColor(),
-            col = require("messageicons").getColor(msg, {settings:settings, default:fg});
-        g.setColor(col).drawImage(img, x+24, r.y+24, {rotate:0}) // force centering
+            col = require("messageicons").getColor(msg, {settings, default:fg});
+        g.setColor(col).drawImage(img, x+20, r.y+24, {rotate:0}) // force centering
          .setColor(fg); // only color the icon
-        x += 50;
+        x += 40;
       }
-      if (title) g.setFontAlign(-1,-1).setFont(fontBig).drawString(title, x,r.y+2);
+      if (title) g.setFontAlign(-1,-1).setFont(fontBig).drawString(title, x,r.y+1);
       var longBody = false;
       if (body) {
-        g.setFontAlign(-1,-1).setFont(fontSmall);
+        g.setFontAlign(-1,0).setFont(fontSmall);
         // if the body includes an image, it probably won't be small enough to allow>1 line
-        let maxLines = Math.floor(34/g.getFontHeight()), pady = 0;
-        if (body.includes("\0")) { maxLines=1; pady=4; }
-        var l = g.wrapString(body, r.w-(x+14));
+        let maxLines = Math.floor(34/g.getFontHeight());
+        if (body.includes("\0")) { maxLines=1; }
+        var l = g.wrapString(body, r.w-(x+8));
         if (l.length>maxLines) {
           l = l.slice(0,maxLines);
           l[l.length-1]+="...";
         }
         longBody = l.length>2;
         // draw the body
-        g.drawString(l.join("\n"), x+10,r.y+20+pady);
+        g.drawString(l.join("\n"), x+6,r.y+36);
       }
       if (!longBody && msg.src) g.setFontAlign(1,1).setFont("6x8").drawString(msg.src, r.x+r.w-2, r.y+r.h-2);
       g.setColor("#888").fillRect(r.x,r.y+r.h-1,r.x+r.w-1,r.y+r.h-1); // dividing line between items
@@ -557,6 +558,17 @@ function checkMessages(options) {
   });
 }
 
+function returnToCheckMessages(clock) {
+  checkMessages({clockIfNoMsg:1,clockIfAllRead:1,ignoreUnread:settings.ignoreUnread,openMusic});
+}
+
+function returnToMain() {
+  checkMessages({clockIfNoMsg:0,clockIfAllRead:0,ignoreUnread:1,openMusic:0});
+}
+
+function returnToClockIfEmpty() {
+  checkMessages({clockIfNoMsg:1,clockIfAllRead:0,ignoreUnread:1,openMusic});
+}
 
 function cancelReloadTimeout() {
   if (!unreadTimeout) return;
@@ -581,7 +593,7 @@ setTimeout(() => {
   // only openMusic on launch if music is new, or state=="show" (set by messagesmusic)
   var musicMsg = MESSAGES.find(m => m.id === "music");
   checkMessages({
-    clockIfNoMsg: 0, clockIfAllRead: 0, showMsgIfUnread: 1,
+    clockIfNoMsg: 0, clockIfAllRead: 0, ignoreUnread: settings.ignoreUnread,
     openMusic: ((musicMsg&&musicMsg.new) && settings.openMusic) || (musicMsg&&musicMsg.state=="show"),
     dontStopBuzz: 1 });
 }, 10); // if checkMessages wants to 'load', do that

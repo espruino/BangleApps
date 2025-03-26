@@ -32,4 +32,4 @@
   }
   require("ClockFace_menu").addItems(menu, save, items);
   E.showMenu(menu);
-});
+})

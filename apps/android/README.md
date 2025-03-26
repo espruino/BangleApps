@@ -49,11 +49,21 @@ The boot code also provides some useful functions:
   * `body` the body of the HTTP request
   * `headers` an object of headers, eg `{HeaderOne : "headercontents"}`
 
+`Bangle.http` returns a promise which contains:
+
+```JS
+{
+  t:"http",
+  id: // the ID of this HTTP request
+  resp: "...." // a string containing the response
+}
+```
+
 eg:
 
-```
+```JS
 Bangle.http("https://pur3.co.uk/hello.txt").then(data=>{
-  console.log("Got ",data);
+  console.log("Got ",data.resp);
 });
 ```
 

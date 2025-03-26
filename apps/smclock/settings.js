@@ -1,8 +1,8 @@
-// settings menu for Monogram Watch Face
-// Anton Clock settings were used as template
-// helper functions taken from Anton Clock
-
 (function (back) {
+  // settings menu for Monogram Watch Face
+  // Anton Clock settings were used as template
+  // helper functions taken from Anton Clock  
+  
   var FILE = "smclock.json";
   // load settings from the file
   // assign default values if it doesn't exist
@@ -87,6 +87,4 @@
 
   // Actually display the menu
   E.showMenu(mainmenu);
-});
-
-// end of file
+})
