@@ -1,0 +1,23 @@
+{ "id": "coin_info",
+  "name": "Crypto-Coins Info",
+  "shortName":"Coins Info",
+  "version": "0.10",
+  "description": "Crypto-Coins Infos with the help of the Binance API",
+  "icon": "app.png",
+  "tags": "clkinfo",
+  "supports" : ["BANGLEJS2"],
+  "interface": "interface.html",
+  "readme": "README.md",
+  "data": [
+    {"name":"coin_info.settings.json"},
+    {"name":"coin_info.cmc_key.json"},
+    {"name":"coin_info.coin_info_log.txt"}
+  ],
+  "storage": [
+    {"name":"coin_info.app.js","url":"app.js"},
+    {"name":"coin_info.clkinfo.js","url":"clkinfo.js"},
+    {"name":"coin_info.settings.js","url":"settings.js"},
+    {"name":"coin_info.img","url":"app-icon.js","evaluate":true},
+    {"name":"coin_info","url":"lib.js"}
+  ]
+}
