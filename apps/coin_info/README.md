@@ -21,6 +21,18 @@ Martin Zwigl
 
 ## Parts Infos
 
+### App-Loader web-interface
+
+- Binance
+  - Find docs here [Binance API](https://www.binance.com/en/binance-api)
+  - For Binance use symbols like BTC,ETH,STORJ 
+  - For the calc counterpart use USDT (I don't know why USD is measured on the stablecoin) or EUR or other fiat currency
+- Coinstats
+  - Find docs here [Coinstats API](https://openapi.coinstats.app/)
+  - Get an API key at the website. Free is worth 1Mio token, which in turn is worth around 250k - 300k requests per month
+  - Supply crypto token in the form of its IDs like bitcoin,ethereum,storj
+- It is not necessary to re-upload the app when uploading data. Data is read with app start
+
 ### Clock-Info
 
 - Updates prices with the free Binance API
@@ -49,7 +61,6 @@ Martin Zwigl
 
 ## Possible Improvements / TODOs
 
-- Pause HTTP request cycle during show of Details or Lows/Highs
 - Better choosing of fonts for more space
 - set UI properly to have back button next to widgets
 - clean-up code structure
