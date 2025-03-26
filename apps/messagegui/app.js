@@ -284,6 +284,7 @@ function showMessagesScroller(msg) {
   var titleLines = [];
   let allLines = [];
   let firstTitleLinePerMsg = [];
+  let footerImgs = {};
   for (let i=0 ; i<MESSAGES.length ; i++) {
     if (MSG_IDX === i) {initScroll = allLines.length*FONT_HEIGHT;}
     let msgIter = MESSAGES[i];
@@ -297,10 +298,15 @@ function showMessagesScroller(msg) {
     }
     let footer = [""];
     if (msg.negative) {
-      footer[0] += "<" + "-".repeat(4) + " " + ((!msg.reply&&!msg.positive)?" ".repeat(6):"");
+      //footer[0] += "<" + "-".repeat(4) + " " + ((!msg.reply&&!msg.positive)?" ".repeat(6):"");
+      footerImgs.neg = {src:atob("PhAB4A8AAAAAAAPAfAMAAAAAD4PwHAAAAAA/H4DwAAAAAH78B8AAAAAA/+A/AAAAAAH/Af//////w/gP//////8P4D///////H/Af//////z/4D8AAAAAB+/AfAAAAAA/H4DwAAAAAPg/AcAAAAADwHwDAAAAAA4A8AAAAAAAA=="),col:"#f00"}
     }
-    if (msg.reply || msg.positive) {
-      footer[0] += ((!msg.negative)?" ".repeat(6):"") + " " + "-".repeat(4) + ">";
+    if (msg.reply && reply) {
+      //footer[0] += ((!msg.negative)?" ".repeat(6):"") + " " + "-".repeat(4) + ">";
+      footerImgs.pos = {src:atob("QRABAAAAAAAH//+AAAAABgP//8AAAAADgf//4AAAAAHg4ABwAAAAAPh8APgAAAAAfj+B////////geHv///////hf+f///////GPw///////8cGBwAAAAAPx/gDgAAAAAfD/gHAAAAAA8DngOAAAAABwDHP8AAAAADACGf4AAAAAAAAM/w=="),col:"#0f0"}
+    } else if (msg.positive) {
+      //footer[0] += ((!msg.negative)?" ".repeat(6):"") + " " + "-".repeat(4) + ">";
+      footerImgs.pos = {src:atob("QRABAAAAAAAAAAOAAAAABgAAA8AAAAADgAAD4AAAAAHgAAPgAAAAAPgAA+AAAAAAfgAD4///////gAPh///////gA+D///////AD4H//////8cPgAAAAAAPw8+AAAAAAAfB/4AAAAAAA8B/gAAAAAABwB+AAAAAAADAB4AAAAAAAAABgAA=="),col:"#0f0"}
     }
     if (!footer) {
       footer = ["-".repeat(12)];
@@ -329,6 +335,11 @@ function showMessagesScroller(msg) {
         setColor(titleLines.find(e=>e==scrollIdx)!==undefined ? g.theme.fg2 : g.theme.fg).
         clearRect(r);
       g.setFont(bodyFont).setFontAlign(0,-1).drawString(allLines[scrollIdx], r.x+r.w/2, r.y);
+      if (allLines[scrollIdx]==="") {
+        g.
+          setColor(footerImgs.neg.col).drawImage(footerImgs.neg.src,r.x+5+3,r.y).
+          setColor(footerImgs.pos.col).drawImage(footerImgs.pos.src,r.w-64-5,r.y);
+      }
       if (scrollIdx<shownScrollIdxFirst) {shownScrollIdxFirst = scrollIdx;}
       if (scrollIdx>shownScrollIdxLast) {shownScrollIdxLast = scrollIdx;}
     },
@@ -338,7 +349,9 @@ function showMessagesScroller(msg) {
           if (touch && touch.type===2) {return;}
           const MSG_SELECTED = MESSAGES[i];
           WU&&WU.show();
-          //E.showScroller();
+          print(process.memory());
+          E.showScroller();
+          print(process.memory());
           updateReadMessages();
           delete titleLines, allLines;
           if (touch && touch.type.back) {
@@ -360,19 +373,6 @@ function showMessagesScroller(msg) {
     }
   });
 
-  // If Bangle.js 2 add an external back hw button handler.
-  if (2===process.env.HWVERSION) {
-    setWatch(()=>{
-      if ("scroller"!==active) {return;}
-      Bangle.emit("drag", {dy:0}); // Compatibility with `kineticscroll`, stopping the scroller so it doesn't continue scrolling when the `showMessageOverview` screen is loaded.
-      // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
-      setTimeout(()=>{
-        if (!persist) {return load();}
-        Bangle.emit("touch", 1, {x:Math.floor(APP_RECT.x2/2), y:Math.floor(APP_RECT.y2/2), type:{back:true}});
-      },0);
-    }, BTN);
-  }
-
   // Add an external back touch handler.
   let touchHandler = (button, xy)=>{
     // if ((left side of Banlge 1 screen) || (top left corner of Bangle 2 screen))
@@ -381,9 +381,26 @@ function showMessagesScroller(msg) {
       returnToMain();
       E.stopEventPropagation();
       Bangle.removeListener("touch", touchHandler);
+      if (btnWatch) {clearWatch(btnWatch); btnWatch = undefined;}
     }
   };
   Bangle.prependListener("touch", touchHandler);
+
+  // If Bangle.js 2 add an external back hw button handler.
+  let btnWatch;
+  if (2===process.env.HWVERSION) {
+    btnWatch = setWatch(()=>{
+      if ("scroller"!==active) {return;}
+      Bangle.emit("drag", {dy:0}); // Compatibility with `kineticscroll`, stopping the scroller so it doesn't continue scrolling when the `showMessageOverview` screen is loaded.
+      // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
+      setTimeout(()=>{
+        if (!persist) {return load();}
+        Bangle.removeListener("touch", touchHandler);
+        Bangle.emit("touch", 1, {x:Math.floor(APP_RECT.x2/2), y:Math.floor(APP_RECT.y2/2), type:{back:true}});
+      },0);
+    }, BTN);
+  }
+
 
   function updateReadMessages() {
     let shownMsgIdxFirst, shownMsgIdxLast;
