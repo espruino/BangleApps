@@ -1,60 +1,23 @@
 (function() {
-  const TIMER_IDX = "smpltmr";
-  var alarm = require('sched');
+  const TIMER_IDX = "smpltmr", alarm = require('sched');
 
-  function isAlarmEnabled(){
-    try{
-
-      var alarmObj = alarm.getAlarm(TIMER_IDX);
-      if(alarmObj===undefined || !alarmObj.on){
-        return false;
-      }
-
-      return true;
-
-    } catch(ex){ }
-    return false;
+  function getAlarm() {
+    var alarmObj =  alarm.getAlarm(TIMER_IDX),
+        min = (alarmObj && alarmObj.on) ? alarm.getTimeToAlarm(alarmObj)/(60*1000) : 0;
+    return {
+      minutes : min,
+      text : min ? ((min<1) ? "<1" : Math.round(min)) + /*LANG*/" min" : /*LANG*/"OFF",
+      max : alarmObj?alarmObj.timer/60000:1
+    };
   }
 
-  function getAlarmMinutes(){
-    if(!isAlarmEnabled()){
-        return -1;
-    }
-    var alarmObj =  alarm.getAlarm(TIMER_IDX);
-    return Math.round(alarm.getTimeToAlarm(alarmObj)/(60*1000));
-  }
-
-  function getAlarmMinutesText(){
-    var min = getAlarmMinutes();
-    if(min < 0)
-      return "OFF";
-    return min + " min";
-  }
-
-  function increaseAlarm(t){
-    try{
-        var minutes = isAlarmEnabled() ? getAlarmMinutes() : 0;
-        alarm.setAlarm(TIMER_IDX, {
-          timer : (minutes+t)*60*1000,
-        });
-        alarm.reload();
-    } catch(ex){ }
-  }
-
-  function decreaseAlarm(t){
-    try{
-        var minutes = getAlarmMinutes();
-        minutes -= t;
-
-        alarm.setAlarm(TIMER_IDX, undefined);
-        if(minutes > 0){
-          alarm.setAlarm(TIMER_IDX, {
-              timer : minutes*60*1000,
-          });
-        }
-
-        alarm.reload();
-    } catch(ex){ }
+  function changeAlarm(t) {
+    var minutes = Math.round(getAlarm().minutes) + t;
+    alarm.setAlarm(TIMER_IDX, undefined);
+    if(minutes > 0)
+      alarm.setAlarm(TIMER_IDX, { timer : minutes*60000 });
+    alarm.reload();
+    return true;
   }
 
   var smpltmrItems = {
@@ -63,33 +26,48 @@
     items: [
       {
         name: null,
-        get: () => ({ text: getAlarmMinutesText(), img: smpltmrItems.img } ),
-        show: function() { this.interval = setInterval(()=>this.emit('redraw'), 60000); },
-        hide: function () { clearInterval(this.interval); delete this.interval; },
-        //run: function() { } // should tapping do something?
+        get: function() {
+          var alm = getAlarm();
+          if (alm.minutes > 0) { // draw an icon showing actual progress (don't ever go 100% as looks odd)
+            if (this.uses) {
+              if (this.timeout) clearTimeout(this.timeout);
+              this.timeout = setTimeout(()=>{
+                this.emit('redraw');
+                delete this.timeout;
+              }, alm.minutes<3 ? 2000 : (alm.minutes < 30 ? 30000 : 60000));
+            }
+            var gr = Graphics.createArrayBuffer(24,24,1), poly = [11.5,13.5], s=Math.sin,c=Math.cos, a = Math.min(alm.minutes * Math.PI*2 / alm.max,5.5);
+            for (var i=0;i<a;i+=0.5) poly.push(11.5+6*s(i), 13.5-6*c(i));
+            poly.push(11.5+6*s(a), 13.5-6*c(a));
+            gr.drawImage(atob("GBgBAH4AAH4AABgAABgAAH4ADf+wD4HwDgBwDAAwGAAYGAAYMAAMMAAMMAAMMAAMMAAMMAAMGAAYGAAYDAAwDgBwB4HgAf+AAH4A")).fillPoly(poly);
+            return { text: alm.text, img: gr.asImage("string") };
+          } else
+            return { text: alm.text, img: smpltmrItems.img };
+        },
+        show: function() { },
+        hide: function() { if (this.timeout) clearTimeout(this.timeout); delete this.timeout; },
+        run: function() { changeAlarm(1); this.emit('redraw'); return true; } // tapping adds 1 minute
       },
     ]
   };
 
-  const restoreMainItem = function(clkinfo) {
-    clkinfo.menuB = 0;
-    // clock info redraws after this
-  };
-
-  var offsets = [+5,-5];
-  offsets.forEach((o, i) => {
+  let onBlur = function(clkinfo) { clkinfo.setItem(clkinfo.menuA,0); }; // change back to menu
+  [-5,-30].forEach(o => {
     smpltmrItems.items = smpltmrItems.items.concat({
       name: null,
-      get: () => ({ text: (o > 0 ? "+" : "") + o + " min", img: (o>0)?atob("GBiBAAB+AAB+AAAYAAAYAAB+AA3/sA+B8A4AcAwAMBgYGBgYGDAYDDAYDDH/jDH/jDAYDDAYDBgYGBgYGAwAMA4AcAeB4AH/gAB+AA=="):atob("GBiBAAB+AAB+AAAYAAAYAAB+AA3/sA+B8A4AcAwAMBgAGBgAGDAADDAADDH/jDH/jDAADDAADBgAGBgAGAwAMA4AcAeB4AH/gAB+AA==") }),
-      show: function() { },
-      hide: function() { },
-      blur: restoreMainItem,
-      run: function() {
-        if(o > 0) increaseAlarm(o);
-        else decreaseAlarm(Math.abs(o));
-        this.show();
-        return true;
-      }
+      get: () => ({ text: o + /*LANG*/" min", img: atob("GBiBAAB+AAB+AAAYAAAYAAB+AA3/sA+B8A4AcAwAMBgAGBgAGDAADDAADDH/jDH/jDAADDAADBgAGBgAGAwAMA4AcAeB4AH/gAB+AA==") }),
+      show: function() {},
+      hide: function() {},
+      blur: onBlur, run: changeAlarm.bind(null,o)
+    });
+  });
+  [+30,+5].forEach(o => {
+    smpltmrItems.items = smpltmrItems.items.concat({
+      name: null,
+      get: () => ({ text: "+" + o + /*LANG*/" min", img: atob("GBiBAAB+AAB+AAAYAAAYAAB+AA3/sA+B8A4AcAwAMBgYGBgYGDAYDDAYDDH/jDH/jDAYDDAYDBgYGBgYGAwAMA4AcAeB4AH/gAB+AA==") }),
+      show: function() {},
+      hide: function() {},
+      blur: onBlur, run: changeAlarm.bind(null,o)
     });
   });
 
