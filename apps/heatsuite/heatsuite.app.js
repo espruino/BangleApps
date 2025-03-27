@@ -4,14 +4,6 @@ var modHS = require("HSModule");
 var layout;
 var NRFFindDeviceTimeout, TaskScreenTimeout;
 
-function log(msg) {
-  if (!settings.DEBUG) {
-    return;
-  } else {
-    console.log(msg);
-  }
-}
-
 var settings = modHS.getSettings();
 
 var appCache = modHS.getCache();
@@ -35,13 +27,14 @@ function findBtDevices() {
   if (settings.StudyTasks.bodyMass !== undefined) {
     filters.push({ services: ['181b'] });
   }
+  NRF.setScan(); //clear any scans running!
   NRF.findDevices(function (devices) {
     var found = false;
     if (devices.length !== 0) {
       devices.every((d) => {
-        log("Found device", d);
+        modHS.log("Found device", d);
         var services = d.services;
-        log("Services: ", services);
+        modHS.log("Services: ", services);
         if (services !== undefined && services.includes('1810') && d.id === settings.bt_bloodPressure_id) {
           //Blood Pressure
           found = true;
@@ -55,7 +48,7 @@ function findBtDevices() {
           var data = d.serviceData[services];
           var ctlByte = data[1];
           var weightRemoved = ctlByte & (1 << 7);
-          log(weightRemoved);
+          modHS.log(weightRemoved);
           if (weightRemoved === 0) {
             //Mass found
             found = true;
@@ -65,7 +58,7 @@ function findBtDevices() {
             if (NRFFindDeviceTimeout) clearTimeout(NRFFindDeviceTimeout);
             return Bangle.load('heatsuite.mass.js');
           }
-          log("No weight on scale");
+          modHS.log("No weight on scale");
         } else if (services !== undefined && services.includes('1809') && d.id === settings.bt_coreTemperature_id) {
           //Core Temperature
           found = true;
@@ -79,7 +72,7 @@ function findBtDevices() {
       });
     }
     if (!found) {
-      log("Search Complete, No Devices Found");
+      modHS.log("Search Complete, No Devices Found");
       queueNRFFindDeviceTimeout();
     } else {
       if (TaskScreenTimeout) clearTimeout(TaskScreenTimeout);
@@ -113,7 +106,7 @@ function draw() {
     if(require("Storage").list().includes("heatsuite.survey.json")){ //likely just using for EMA survey
       return Bangle.load('heatsuite.survey.js'); //go right to survey!
     }
-    log('No Study Tasks loaded...');
+    modHS.log('No Study Tasks loaded...');
     layout = new Layout({
       type: "v",
       c: [

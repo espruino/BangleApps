@@ -5,7 +5,6 @@
   var hrmInterval = 0;
   var appName = "heatsuite";
   var bleAdvertGen = 0xE9D0;
-  var bleAdvertHealth = 0xFA11;
   var lastBLEAdvert = [];
   var recorders;
   var activeRecorders = [];
@@ -23,7 +22,6 @@
 
   Bangle.setOptions({ 
     "hrmSportMode": -1,
-    //manualWatchdog:true
   });
 
   function queueProcess(func, arg) {
@@ -102,21 +100,41 @@
     }
       const dataBlocks = [];
       dataBlocks.push([0x00, textBytes[0], textBytes[1], textBytes[2], textBytes[3]]); // Study Code
-      if(studyid !== "####"){
-        dataBlocks.push([0x01, battery]); // Battery level
-        dataBlocks.push([0x02, temperature & 255, (temperature >> 8) & 255]); // Temperature (2 bytes)
-
-        // Validate heartRate: ensure it's a number and not NaN, else default to 0
-        let heartRateValue = parseInt(heartRate);
-        if (isNaN(heartRateValue)) {
-            heartRateValue = 0;  // Default to 0 if heartRate is not valid
+      if (cache.hasOwnProperty('alert') && Object.keys(cache.alert).length > 0) {
+        var HEALTH_EVENTS = {
+          fall: 1,
+          custom: 99
+        };
+        var HEALTH_EVENT_TYPE = HEALTH_EVENTS[cache.alert.type] || HEALTH_EVENTS.custom;
+        dataBlocks.push([0x07, HEALTH_EVENT_TYPE]);
+      }
+      if (studyid !== "####") {
+        if (battery != null) {
+          dataBlocks.push([0x01, battery]); // Battery level
         }
-        dataBlocks.push([0x03, heartRateValue]);
-        dataBlocks.push([0x04, hr_loc]); // Heart rate location
-        dataBlocks.push([0x05,movement & 255, (movement >> 8) & 255, (movement >> 16) & 255,(movement >> 24) & 255 ]);
+        if (temperature != null && !isNaN(temperature)) {
+          dataBlocks.push([0x02, temperature & 255, (temperature >> 8) & 255]); // Temperature
+        }
+        if (heartRate != null && !isNaN(heartRate)) {
+          dataBlocks.push([0x03, heartRate]);
+        }
+        if (hr_loc != null && !isNaN(hr_loc)) {
+          dataBlocks.push([0x04, hr_loc]);
+        }
+
+        if (movement != null && !isNaN(movement)) {
+          dataBlocks.push([
+            0x05,
+            movement & 255,
+            (movement >> 8) & 255,
+            (movement >> 16) & 255,
+            (movement >> 24) & 255
+          ]);
+        }
+      }
+      if (!isNaN(pingFlag)) {
         let statusByte = (+Bangle.isCharging() << 1) | pingFlag;
         dataBlocks.push([0x06, statusByte]);
-        //dataBlocks.push([0x07, pingFlag]);
       }
       const randomizedDataBlocks = shuffleArray(dataBlocks);
       const payload = flattenArray(randomizedDataBlocks);
@@ -273,16 +291,19 @@
         };
       },
       acc: function () {
-        var accDiffarray = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
+        var accMagArray = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
         function accelHandler(accel) {
-          accDiffarray = newValueHandler(accDiffarray, accel.diff);
+          // magnitude is computed as: x*x + y*y + z*z
+          // to compute Elucidean Norm Minus One, simply run: sqrt(mag) - 1
+          // (https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0061691) 
+          accMagArray = newValueHandler(accMagArray, accel.mag);
         }
         return {
           name: "Accelerometer",
           fields: ["acc_min", "acc_max", "acc_avg", "acc_sum"],
           getValues: () => {
-            var r = [accDiffarray.min === null ? null : accDiffarray.min.toFixed(4), accDiffarray.max === null ? null : accDiffarray.max.toFixed(4), accDiffarray.avg === null ? null : accDiffarray.avg.toFixed(4), accDiffarray.sum === null ? null : accDiffarray.sum.toFixed(4)];
-            accDiffarray = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
+            var r = [accMagArray.min === null ? null : accMagArray.min.toFixed(4), accMagArray.max === null ? null : accMagArray.max.toFixed(4), accMagArray.avg === null ? null : accMagArray.avg.toFixed(4), accMagArray.sum === null ? null : accMagArray.sum.toFixed(4)];
+            accMagArray = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
             return r;
           },
           start: () => {
@@ -342,74 +363,77 @@
   }
 
   function updateBLEAdvert(data){
-    var headers = ['unix','tz'];
-    activeRecorders.forEach(recorder => headers.push.apply(headers, recorder.fields));
-    var unix = data[0]; //Unix is always first
-    var batt  = data[headers.indexOf('batt_p')];
-    var temperature = Math.round(data[headers.indexOf('baro_temp')]*100);
-    var heartRate = data[headers.indexOf('hr')];
-    var hr_loc = 1;
-    if(headers.includes('bt_hrm')){
-      hr_loc = 2;
-      heartRate = data[headers.indexOf('bt_hrm')]; 
+      var unix = parseInt((new Date().getTime() / 1000).toFixed(0));
+      var batt = null,
+          rawTemp = null,
+          temperature = null,
+          heartRate = null,
+          hr_loc = null,
+          rawMovement = null,
+          movement = null;
+    if (data.length > 0) {
+      var headers = ['unix','tz'];
+      activeRecorders.forEach(recorder => headers.push.apply(headers, recorder.fields));
+      const safeGet = (field) => {
+        const index = headers.indexOf(field);
+        return index !== -1 ? data[index] : null;
+      };
+      unix = data[0]; // Unix timestamp is always first
+      batt = safeGet('batt_p', data, headers);
+      rawTemp = safeGet('baro_temp', data, headers);
+      temperature = (rawTemp != null) ? Math.round(rawTemp * 100) : null;
+      heartRate = safeGet('hr', data, headers);
+      hr_loc = 1;
+      if (headers.includes('bt_hrm')) {
+        hr_loc = 2;
+        heartRate = safeGet('bt_hrm', data, headers);
+      }
+      rawMovement = safeGet('acc_sum', data, headers);
+      movement = (rawMovement != null) ? Math.round(rawMovement * 10000) : null;
     }
-    var movement = Math.round(data[headers.indexOf('acc_sum')] * 10000);
     var studyid = settings.studyID || "####";
         if (studyid.length > 4) {
           studyid = studyid.substring(0, 4);
         }
     var lastNodePing = cache.lastNodePing || 0;
-    var nodePing = (Math.abs(unix - lastNodePing) > 360) ? 1 : 0; //only allow for a BLE connection every 5 minutes
+    var nodePing = (Math.abs(unix - lastNodePing) > 360) ? 1 : 0;
     let advert = createRandomizedPayload(studyid, batt, temperature, heartRate, hr_loc, movement, nodePing);
+    console.log(advert);
     require("ble_advert").set(bleAdvertGen, advert);
   }
   //function for broadcasting emergent health events
-  function healthEventBLEAdvert(type, data){
+  function healthEventBLEAdvert(type){
     var HEALTH_EVENTS = {
       fall: 0x01,
       custom: 0xFF
     };
     var eventType = HEALTH_EVENTS[type] || HEALTH_EVENTS.custom;
     let payload = [eventType];
-    switch (eventType) {
-      case (HEALTH_EVENTS.fall):{
-        let timestamp = data.time || Math.floor(Date.now() / 1000); // default to current time
-        payload.push((timestamp >> 24) & 0xFF);
-        payload.push((timestamp >> 16) & 0xFF);
-        payload.push((timestamp >> 8) & 0xFF);
-        payload.push(timestamp & 0xFF);
-        break;
-      }
-      default:{
-        if(data && data.length > 0){
-          for (var i = 0; i < data.length; i++) {
-            payload.push(data[i]);
-          }
-        }
-        break;
-      }
-    }
     //broadcast event (unencrypted)
-    require("ble_advert").set(bleAdvertHealth, payload);
+    
+    //require("ble_advert").set(bleAdvertHealth, payload);
+    console.log(NRF.getAdvertisingData());
   }
   function fallDetectFunc(acc){
       if(!fallDetected){
         let d = new Date().getTime();
-        if(fallTime != 0 && fallTime - d > 200){
+        if(fallTime != 0){
+          console.log("acc",acc.mag);
+        }
+        if(fallTime != 0 && d - fallTime > 200){
           fallTime = 0; fallDetected = false;
-        }else if (acc.mag < 0.2 && fallTime === 0){
+        }else if (acc.mag < 0.3 && fallTime === 0){
           fallTime = d;
-        }else if(acc.mag > 2.1 && fallTime - d < 200){ // impact
+          console.log("FALLING",fallTime);
+        }else if(acc.mag > 2.1 && d - fallTime < 200){ // impact
           //IMPACT
           Bangle.buzz(400);
           E.showPrompt("Did you fall?",{title: "FALL DETECTION",img:atob("FBQBAfgAf+Af/4P//D+fx/n+f5/v+f//n//5//+f//n////3//5/n+P//D//wf/4B/4AH4A=")}).then((r) => {
             if (r) {
                 fallDetected = true;
-                modHS.saveDataToFile('fall', 'fall', {'fall':1});
-                healthEventBLEAdvert('fall', {'time':parseInt((d / 1000).toFixed(0)) });
+                modHS.saveDataToFile('alert', 'alert', {'type':'fall'});
                 Bangle.showClock();
             }else{
-                modHS.saveDataToFile('fall', 'fall', {'fall':0});
                 Bangle.showClock(); //no fall, so just return to clock
             }
         });
@@ -618,6 +642,7 @@ function studyTaskCheck(timenow) {
         }
       }, 10000); //runs every 10 seconds
     }
+    updateBLEAdvert(lastBLEAdvert);
     initHandler();
   }
 

@@ -315,17 +315,37 @@
       const formjson = formDataToJson(form);
       localStorage.setItem("heatuite__settings", JSON.stringify(formjson));
     }
-    
-    function onInit(device) {
-      Util.readStorageJSON("heatsuite.default.json", function (d) {
-        try {
-          const settingsForm = document.getElementById('heatsuiteSettings');
-          fillFormFromJson(settingsForm,d);
-        } catch (error) {
-          console.error("Failed to parse JSON:", error);
-        }
+    function readStorageJSONAsync(filename) {
+      return new Promise((resolve, reject) => {
+        Util.readStorageJSON(filename, function (data) {
+          try {
+            resolve(data || {});
+          } catch (err) {
+            reject(err);
+          }
+        });
       });
     }
+    function onInit(device) {
+      let settings = {};
+      let promise = Promise.resolve();
+      promise = promise.then(() => {
+        return readStorageJSONAsync("heatsuite.default.json");
+      });
+      promise = promise.then(defaults => {
+        return readStorageJSONAsync("heatsuite.settings.json").then(user => {
+          settings = Object.assign({}, defaults, user);
+        });
+      });
+      promise = promise.then(() => {
+        const settingsForm = document.getElementById('heatsuiteSettings');
+        fillFormFromJson(settingsForm, settings);
+      });
+      promise.catch(error => {
+        console.error("Error loading settings:", error);
+      });
+    }
+
     const editors = {};
     function initJsonEditor({ elementId, storageKey, defaultSchema, resetBtnId }) {
       const container = document.getElementById(elementId);
@@ -387,7 +407,7 @@
       //TO DO VALIDATE jsonEditors!
       sendCustomizedApp({
         storage: [
-          { 'name': "heatsuite.default.json", content: JSON.stringify(formDataToJson(form)) },
+          { 'name': "heatsuite.settings.json", content: JSON.stringify(formDataToJson(form)) },
           { "name": "heatsuite.tasks.json", content: JSON.stringify(editors['heatsuite__taskFile'].editor.get()) },
           { "name": "heatsuite.survey.json", content: JSON.stringify(editors['heatsuite__surveyFile'].editor.get()) },
         ]
