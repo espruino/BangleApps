@@ -236,7 +236,6 @@ window.addEventListener('load', (event) => {
     });
   });
 
-
   // Button to install all default apps in one go
   el = document.getElementById("installdefault");
   if (el) el.addEventListener("click", event=>{
@@ -333,6 +332,16 @@ window.addEventListener('load', (event) => {
     });
     reloadLanguage();
   });
+
+  if (!navigator.bluetooth) {
+    console.warn("No Web Bluetooth on this platform");
+    var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (iOS) {
+      showToast(`iOS doesn't natively support Web Bluetooth. To use Web Bluetooth on iOS you'll need to <a href="https://itunes.apple.com/us/app/webble/id1193531073">download the WebBLE App</a>`, "error", 1000000000);
+    } else {
+      showToast(`This Web Browser doesn't support Web Bluetooth.\nPlease <a href="https://www.espruino.com/Quick+Start+BLE#with-web-bluetooth">click here to see instructions for enabling it</a>`, "error", 1000000000);
+    }
+  }
 });
 
 function onAppJSONLoaded() {
