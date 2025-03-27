@@ -24,6 +24,10 @@ const FONT = {
     'start hh:mm': '12x20',
     'current hh:mm': '12x20',
     'time hh:mm': '12x20',
+
+    'name': '12x20',
+
+    'mode': '12x20',
   },
 
   'row2': {
@@ -34,6 +38,10 @@ const FONT = {
     'start hh:mm': 'Vector:56x42',
     'current hh:mm': 'Vector:56x42',
     'time hh:mm': 'Vector:56x42',
+
+    'name': 'Vector:34x42',
+
+    'mode': 'Vector:34x42',
   },
 
   'row3': {
@@ -44,8 +52,22 @@ const FONT = {
     'start hh:mm': 'Vector:56x56',
     'current hh:mm': 'Vector:56x56',
     'time hh:mm': 'Vector:56x56',
+
+    'name': 'Vector:34x56',
+
+    'mode': 'Vector:34x56',
   }
 };
+
+VIEW_MODE_MENU = [
+  'start hh:mm:ss',
+  'start hh:mm',
+  'current hh:mm:ss',
+  'current hh:mm',
+  'time hh:mm:ss',
+  'time hh:mm',
+  'name',
+];
 
 
 function row_font(row_name, mode_name) {
@@ -136,22 +158,22 @@ class TimerView {
           {
             type: 'txt',
             id: 'row1',
-            label: '88:88:88',
-            font: row_font('row1', tt.SETTINGS.view_mode['row1']),
+            label: '',
+            font: row_font('row1', tt.SETTINGS.view_mode.row1),
             fillx: 1,
           },
           {
             type: 'txt',
             id: 'row2',
-            label: '88:88:88',
-            font: row_font('row2', tt.SETTINGS.view_mode['row2']),
+            label: '',
+            font: row_font('row2', tt.SETTINGS.view_mode.row2),
             fillx: 1,
           },
           {
             type: 'txt',
             id: 'row3',
             label: '',
-            font: row_font('row3', tt.SETTINGS.view_mode['row3']),
+            font: row_font('row3', tt.SETTINGS.view_mode.row3),
             fillx: 1,
           },
           {
@@ -275,6 +297,79 @@ class TimerView {
 }
 
 
+class TimerModeView {
+  constructor(timer) {
+    this.timer = timer;
+
+    this.layout = null;
+    this.listeners = {};
+  }
+
+  start() {
+    this._initLayout();
+    this.layout.clear();
+    this.render();
+  }
+
+  stop() {
+
+  }
+
+  _initLayout() {
+    const layout = new Layout(
+      {
+        type: 'v',
+        bgCol: g.theme.bg,
+        c: [
+          {
+            type: 'txt',
+            id: 'row1',
+            label: tt.SETTINGS.view_mode.row1,
+            font: row_font('row1', 'mode'),
+            fillx: 1,
+          },
+          {
+            type: 'txt',
+            id: 'row2',
+            label: tt.SETTINGS.view_mode.row2,
+            font: row_font('row2', 'mode'),
+            fillx: 1,
+          },
+          {
+            type: 'txt',
+            id: 'row3',
+            label: tt.SETTINGS.view_mode.row3,
+            font: row_font('row3', 'mode'),
+            fillx: 1,
+          },
+          {
+            type: 'h',
+            id: 'buttons',
+            c: [
+              {type: 'btn', font: '6x8:2', fillx: 1, label: 'Cancel', id: 'cancel_btn',
+               cb: () => {
+                 switch_UI(new TimerViewMenu(this.timer));
+               }
+              },
+              {type: 'btn', font: '6x8:2', fillx: 1, label: 'OK', id: 'ok_btn',
+               cb: () => {
+                 switch_UI(new TimerView(this.timer));
+               }
+              },
+            ]
+          }
+        ]
+      }
+    );
+    this.layout = layout;
+  }
+
+  render() {
+    this.layout.render();
+  }
+}
+
+
 class TimerViewMenu {
   constructor(timer) {
     this.timer = timer;
@@ -303,6 +398,9 @@ class TimerViewMenu {
         switch_UI(new TimerMenu(tt.TIMERS, this.timer));
       },
       'Edit': this.edit_menu.bind(this),
+      'Format': () => {
+        switch_UI(new TimerModeView(this.timer));
+      },
       'Add': () => {
         tt.set_timers_dirty();
         const new_timer = tt.add_timer(tt.TIMERS, this.timer);
