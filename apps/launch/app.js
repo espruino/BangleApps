@@ -1,10 +1,9 @@
 { // must be inside our own scope here so that when we are unloaded everything disappears
   let s = require("Storage");
   // handle customised launcher
-  let scaleval = 1;
-  let vectorval = 20;
-  let font = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
-  if (g.getFonts().includes("22")) font="22"; // 2v26+
+  let scaleval = 1, vectorval = 20, fonts = g.getFonts();
+  let font = fonts.includes("12x20") ? "12x20" : "6x8:2";
+  if (fonts.includes("22")) font="22"; // 2v26+
   let settings = Object.assign({
     showClocks: true,
     fullscreen: false
@@ -20,6 +19,19 @@
       scaleval = (font.split("x")[1])/20;
     }
   }
+  let height = 50*scaleval;
+
+  // Now apps list is loaded - render
+  if (!settings.fullscreen)
+    Bangle.loadWidgets();
+  let R = Bangle.appRect;
+  g.reset().clearRect(R).setColor("#888");
+  for (var y=R.y;y<R.y2;y+=height) {
+    g.drawRect(5*scaleval,y+5*scaleval,49*scaleval,y+49*scaleval) // image
+     .drawRect(54*scaleval,y+20*scaleval,R.y2-16,y+34*scaleval); // text
+  }
+  g.flip();
+
   // cache app list so launcher loads more quickly
   let launchCache = s.readJSON("launch.cache.json", true)||{};
   let launchHash = require("Storage").hash(/\.info/);
@@ -39,13 +51,11 @@
     s.writeJSON("launch.cache.json", launchCache);
   }
   let apps = launchCache.apps;
-  // Now apps list is loaded - render
-  if (!settings.fullscreen)
-    Bangle.loadWidgets();
+
 
   const drawMenu = () => {
     E.showScroller({
-      h : 50*scaleval, c : apps.length,
+      h : height, c : apps.length,
       draw : (i, r) => {
         var app = apps[i];
         if (!app) return;

@@ -22,3 +22,4 @@
 0.20: Use Bangle.showClock for changing to clock
 0.21: Make the "App source not found" warning less buggy
 0.22: Add less padding between launcher items, use new font if available in 2v26+
+0.23: Draw a placeholder screen right at the start to speed up apparent boot time
