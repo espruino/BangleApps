@@ -499,12 +499,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/timecal/timecal.app.js": {
-    "hash": "9ad04daff299db71901a07d2d1d5116e273287041e9c342c3cd7a4b67db12936",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/tictactoe/app.js": {
     "hash": "ab459d8ceff1cbcf8fb10360dcfd3cef8130b59500adf404cf443f81e145099e",
     "rules": [
