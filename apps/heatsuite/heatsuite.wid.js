@@ -401,31 +401,19 @@
     console.log(advert);
     require("ble_advert").set(bleAdvertGen, advert);
   }
-  //function for broadcasting emergent health events
-  function healthEventBLEAdvert(type){
-    var HEALTH_EVENTS = {
-      fall: 0x01,
-      custom: 0xFF
-    };
-    var eventType = HEALTH_EVENTS[type] || HEALTH_EVENTS.custom;
-    let payload = [eventType];
-    //broadcast event (unencrypted)
-    
-    //require("ble_advert").set(bleAdvertHealth, payload);
-    console.log(NRF.getAdvertisingData());
-  }
+
   function fallDetectFunc(acc){
       if(!fallDetected){
         let d = new Date().getTime();
         if(fallTime != 0){
-          console.log("acc",acc.mag);
+          modHS.log("acc",acc.mag);
         }
         if(fallTime != 0 && d - fallTime > 200){
           fallTime = 0; fallDetected = false;
         }else if (acc.mag < 0.3 && fallTime === 0){
           fallTime = d;
-          console.log("FALLING",fallTime);
-        }else if(acc.mag > 2.1 && d - fallTime < 200){ // impact
+          modHS.log("FALLING",fallTime);
+        }else if(acc.mag > 2.1 && d - fallTime < 200){
           //IMPACT
           Bangle.buzz(400);
           E.showPrompt("Did you fall?",{title: "FALL DETECTION",img:atob("FBQBAfgAf+Af/4P//D+fx/n+f5/v+f//n//5//+f//n////3//5/n+P//D//wf/4B/4AH4A=")}).then((r) => {
