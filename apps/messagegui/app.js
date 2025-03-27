@@ -341,7 +341,9 @@ function showMessagesScroller(msg) {
           setColor("#0f0").drawImage(footerImgPos,r.w-64-5,r.y);
       }
       if (0===scrollIdx) {
-        g.setColor("#f00").drawImage(atob("GBiBAAAYAAH/gAf/4A//8B//+D///D///H/P/n+H/n8P/n4f/vwAP/wAP34f/n8P/n+H/n/P/j///D///B//+A//8Af/4AH/gAAYAA=="), r.x, r.y);
+        g.
+          setColor("#f00").drawImage(atob("GBiBAAAYAAH/gAf/4A//8B//+D///D///H/P/n+H/n8P/n4f/vwAP/wAP34f/n8P/n+H/n/P/j///D///B//+A//8Af/4AH/gAAYAA=="), r.x, r.y-1).
+          setColor(g.theme.fg2).drawImage(atob("GBgBABgAAf+AB//gD//wH//4P//8P//8fAA+fAA+f//+f//+/AA//AA/f//+f//+fAA+fAA+P//8P//8H//4D//wB//gAf+AABgA"),r.w-24,r.y-1);
       }
       if (scrollIdx<shownScrollIdxFirst) {shownScrollIdxFirst = scrollIdx;}
       if (scrollIdx>shownScrollIdxLast) {shownScrollIdxLast = scrollIdx;}
