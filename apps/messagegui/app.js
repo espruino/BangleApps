@@ -282,7 +282,7 @@ function showMessagesScroller(msg) {
   const FONT_HEIGHT = g.getFontHeight();
   let initScroll;
   var titleLines = [];
-  let allLines = [];
+  let allLines = [""];
   let firstTitleLinePerMsg = [];
   let footerImgNeg, footerImgPos;
   for (let i=0 ; i<MESSAGES.length ; i++) {
