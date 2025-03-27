@@ -16,6 +16,22 @@
   } else { // for fast-load, if we had widgets then we should hide them
     require("widget_utils").hide();
   }
+
+  let selectedItem = -1;
+  const R = Bangle.appRect;
+  const iconSize = 48;
+  const appsN = Math.floor(R.w / iconSize);
+  const whitespace = Math.floor((R.w - appsN * iconSize) / (appsN + 1));
+  const iconYoffset = Math.floor(whitespace/4)-1;
+  const itemSize = iconSize + whitespace;
+
+  // show some grey blocks as a loading screen
+  g.clearRect(Bangle.appRect).setColor("#888");
+  for (var y=R.y+whitespace/2;y<R.h;y+=itemSize)
+    for (var x=R.x+whitespace/2;x<R.w;x+=itemSize)
+      g.drawRect(x+16,y+16,x+32,y+32);
+  g.flip();
+
   let launchCache = s.readJSON("iconlaunch.cache.json", true)||{};
   let launchHash = s.hash(/\.info/);
   if (launchCache.hash!=launchHash) {
@@ -38,13 +54,7 @@
   const ICON_MISSING = s.read("iconlaunch.na.img");
   let count = 0;
 
-  let selectedItem = -1;
-  const R = Bangle.appRect;
-  const iconSize = 48;
-  const appsN = Math.floor(R.w / iconSize);
-  const whitespace = Math.floor((R.w - appsN * iconSize) / (appsN + 1));
-  const iconYoffset = Math.floor(whitespace/4)-1;
-  const itemSize = iconSize + whitespace;
+
 
   launchCache.items = {};
   for (let c of launchCache.apps){
@@ -82,8 +92,9 @@
       drawText(itemI, r.y, selectedApp);
       texted=itemI;
     }
+    if (firstRun) g.flip(); // at startup
   };
-
+  let firstRun = true;
   let drawText = function(i, appY, selectedApp) {
     const idy = (selectedItem - (selectedItem % 3)) / 3;
     if (i != idy) return;
@@ -150,10 +161,11 @@
   }
 
   let scroller = E.showScroller(options);
+  firstRun = false; // this stops us flipping the screen after each line we draw
 
   let timeout;
   const updateTimeout = function(){
-  if (settings.timeOut!="Off"){
+    if (settings.timeOut!="Off"){
       let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
       if (timeout) clearTimeout(timeout);
       timeout = setTimeout(Bangle.showClock,time*1000);
