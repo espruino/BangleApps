@@ -8,11 +8,11 @@
 					return require("recorder").isRecording() ? {
 						text: "Recording",
 						short: "Rec",
-						img: atob("GBiBAAAAABwAAD4MAH8eAH8OAH8AAD4QABx8AAD8AAH+AAE+AAM/AAN7wAN4wAB4AAB8AAD8AADOAAHGAAOHAAMDAAIBAAAAAAAAAA=="),
+						img: atob("GBiBAAAAABwAAD4MAH8eAH8eAH8cAD4YABx8AAD8AAH+AAG+AAM/AAN7wAN4wAB4AAB8AAD8AADOAAHGAAOHAAMDAAIBAAAAAAAAAA=="),
 					} : {
 						text: "Paused",
 						short: "Paused",
-						img: atob("GBiBAAAAAAAAAAAAAAAAAAHDgAPnwAPjwAPnwAPnwAPnwAPnwAPnwAPnwAPnwAPnwAPnwAPnwAPjwAPnwAHDgAAAAAAAAAAAAAAAAA=="),
+						img: atob("GBiBAAAAAAAAADYMADYeADYeADYcADYYAAB8AAD8AAH+AAG+AAM/AAN7wAN4wAB4AAB8AAD8AADOAAHGAAOHAAMDAAIBAAAAAAAAAA=="),
 					};
 				},
 				run: function() {
