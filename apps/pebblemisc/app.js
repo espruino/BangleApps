@@ -19,12 +19,12 @@ Graphics.prototype.setFontLECO1976Regular14 = function () {
 }
 
 {
-const SETTINGS_FILE = "pebblemisc.json";
+  const SETTINGS_FILE = "pebblemisc.json";
   let settings = Object.assign({
     'theme': 'System',
     'showdate': true,
     'clkinfoborder': false,
-    'buzzOnQuirkyTime': false,
+    'buzzOnQuirkyTime': true,
   }, require("Storage").readJSON(SETTINGS_FILE, 1) || {});
   let background = require("clockbg");
   let theme;
@@ -42,7 +42,6 @@ const SETTINGS_FILE = "pebblemisc.json";
   const decorators = [
     {
       "name": "SAMESIES",
-      "color": "#0000FF",
       "validator": (hours, minutes) => {
         return hours == minutes;
       },
@@ -61,7 +60,6 @@ const SETTINGS_FILE = "pebblemisc.json";
     },
     {
       "name": "FOUR_OF_A_KIND",
-      "color": "#0000FF",
       "validator": (hours, minutes) => {
         const str = hours + minutes;
 
@@ -85,7 +83,6 @@ const SETTINGS_FILE = "pebblemisc.json";
     },
     {
       "name": "TWO_PAIRS",
-      "color": "#0000FF",
       "validator": (hours, minutes) => {
         var firstChar = hours[0];
         const hoursSameChar = hours.split("").every((char) => char === firstChar);
@@ -110,7 +107,6 @@ const SETTINGS_FILE = "pebblemisc.json";
     },
     {
       "name": "PALINDROM",
-      "color": "#0000FF",
       "validator": (hours, minutes) => {
         const str = hours + minutes;
         const reversed = str.split("").reverse().join("");
@@ -132,7 +128,6 @@ const SETTINGS_FILE = "pebblemisc.json";
     },
     {
       "name": "SYMETRIC",
-      "color": "#0000FF",
       "validator": (hours, minutes) => {
         symetrics = {
           "0": "0",
@@ -175,7 +170,6 @@ const SETTINGS_FILE = "pebblemisc.json";
     },
     {
       "name": "MISC",
-      "color": "#0000FF",
       "validator": (hours, minutes) => {
         times = [
           "1337",
@@ -187,7 +181,6 @@ const SETTINGS_FILE = "pebblemisc.json";
     },
     {
       "name": "YEAR",
-      "color": "#0000FF",
       "validator": (hours, minutes) => {
         d = new Date();
         return d.getFullYear() == hours + minutes;
@@ -205,15 +198,20 @@ const SETTINGS_FILE = "pebblemisc.json";
     g.reset();
     g.setBgColor(theme.bg).clearRect(0, h2, w, h3); // clear area where clock is
     if (settings.showdate) {
-      g.setColor(theme.fg).fillRect(w / 2 - 30, h3 + 5, w / 2 + 30, h); // refresh date background
+      g.setColor(theme.fg).fillRect(w / 2 - 75, h3 + 5, w / 2 + 75, h); // refresh date background
       g.setFontLECO1976Regular22().setFontAlign(0, -1);
-      g.setColor(theme.bg).drawString(date.getDate() + "." + (date.getMonth() + 1), w / 2, h3 + 5);
+
+      const todayDay = date.getDate().toString().padStart(2, "0");
+      const todayMonth = (date.getMonth() + 1).toString().padStart(2, "0");
+      const todayYear = date.getFullYear();
+      const today = todayDay + "/" + todayMonth + "/" + todayYear;
+      g.setColor(theme.bg).drawString(today, w / 2, h3 + 5);
     }
     g.setFontLECO1976Regular42().setFontAlign(0, -1);
     g.setColor(theme.fg);
     decorators.forEach((item) => {
       if (item.validator(hours, minutes)) {
-        g.setColor(item.color);
+        g.setColor(theme.bg);
 
         if (settings.buzzOnQuirkyTime) {
           Bangle.buzz()

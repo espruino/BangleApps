@@ -40,7 +40,7 @@
         save();
       }
     },
-    /*LANG*/'Buzz on quirky type': {
+    /*LANG*/'Buzz on quirky time': {
       value: !!settings.buzzOnQuirkyTime,
       onchange: v => {
         settings.buzzOnQuirkyTime = v;
