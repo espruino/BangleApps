@@ -280,13 +280,14 @@ function showMessagesScroller(msg) {
   var bodyFont = fontBig;
   g.setFont(bodyFont);
   const FONT_HEIGHT = g.getFontHeight();
-  let initScroll;
+  let initScrollIdx;
   var titleLines = [];
-  let allLines = [""];
+  let allLines = [" "];
   let firstTitleLinePerMsg = [];
   let footerImgNeg, footerImgPos;
   for (let i=0 ; i<MESSAGES.length ; i++) {
-    if (MSG_IDX === i) {initScroll = allLines.length*FONT_HEIGHT;}
+    if (MSG_IDX === i) {initScrollIdx = allLines.length;
+    }
     let msgIter = MESSAGES[i];
 
     var lines = [];
@@ -325,7 +326,7 @@ function showMessagesScroller(msg) {
   let shownScrollIdxLast = 0;
 
   E.showScroller({
-    scroll : initScroll,
+    scroll : initScrollIdx*FONT_HEIGHT,
     h : FONT_HEIGHT, // height of each menu item in pixels
     c : allLines.length, // number of menu items
     // a function to draw a menu item
@@ -340,7 +341,7 @@ function showMessagesScroller(msg) {
           setColor("#f00").drawImage(footerImgNeg,r.x+5+3,r.y).
           setColor("#0f0").drawImage(footerImgPos,r.w-64-5,r.y);
       }
-      if (0===scrollIdx) {
+      if (allLines[scrollIdx]===" ") {
         g.
           setColor("#f00").drawImage(atob("GBiBAAAYAAH/gAf/4A//8B//+D///D///H/P/n+H/n8P/n4f/vwAP/wAP34f/n8P/n+H/n/P/j///D///B//+A//8Af/4AH/gAAYAA=="), r.x, r.y-1).
           setColor(g.theme.fg2).drawImage(atob("GBgBABgAAf+AB//gD//wH//4P//8P//8fAA+fAA+f//+f//+/AA//AA/f//+f//+fAA+fAA+P//8P//8H//4D//wB//gAf+AABgA"),r.w-24,r.y-1);
@@ -387,6 +388,11 @@ function showMessagesScroller(msg) {
       E.stopEventPropagation();
       Bangle.removeListener("touch", touchHandler);
       if (btnWatch) {clearWatch(btnWatch); btnWatch = undefined;}
+    } else if (xy && xy.type===0 && xy.x>175-30 && xy.y<30) {
+      Bangle.emit("touch", 2, {x:Math.floor(APP_RECT.x2/2), y:Math.floor(APP_RECT.y2/2), type:0});
+      E.stopEventPropagation();
+      if (btnWatch) {clearWatch(btnWatch); btnWatch = undefined;}
+      Bangle.removeListener("touch", touchHandler);
     }
   };
   Bangle.prependListener("touch", touchHandler);
@@ -401,7 +407,7 @@ function showMessagesScroller(msg) {
       setTimeout(()=>{
         if (!persist) {return load();}
         Bangle.removeListener("touch", touchHandler);
-        Bangle.emit("touch", 1, {x:Math.floor(APP_RECT.x2/2), y:Math.floor(APP_RECT.y2/2), type:{back:true}});
+        Bangle.emit("touch",1, {type:{back:true}});
       },0);
     }, BTN);
   }
