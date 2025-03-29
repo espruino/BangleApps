@@ -1,7 +1,8 @@
 (function (back) {
   let settings = require("sched").getSettings();
+  const BANGLEJS2 = process.env.HWVERSION == 2;
 
-  E.showMenu({
+  let menu = {
     "": { "title": /*LANG*/"Scheduler" },
 
     "< Back": () => back(),
@@ -70,10 +71,21 @@
       settings.defaultAlarmPattern = v;
       require("sched").setSettings(settings);
     }),
-
     /*LANG*/"Default Timer Pattern": require("buzz_menu").pattern(settings.defaultTimerPattern, v => {
       settings.defaultTimerPattern = v;
       require("sched").setSettings(settings);
     })
-  });
+  };
+
+  if (BANGLEJS2) {
+    menu[/*LANG*/"BTN1 to Stop"] = {
+      value: settings.btnToStop,
+      onchange: v => {
+        settings.btnToStop = v;
+        require("sched").setSettings(settings);
+      }
+    };
+  }
+
+  E.showMenu(menu);
 })
