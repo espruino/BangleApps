@@ -384,6 +384,7 @@ function showMessagesScroller(msg) {
     // if ((left side of Banlge 1 screen) || (top left corner of Bangle 2 screen))
     if ((!xy && 1===button) || (xy && xy.type===0 && xy.x<30 && xy.y<30)) {
       if (!persist) {return load();}
+      WU&&WU.show();
       returnToMain();
       E.stopEventPropagation();
       Bangle.removeListener("touch", touchHandler);
@@ -407,7 +408,7 @@ function showMessagesScroller(msg) {
       setTimeout(()=>{
         if (!persist) {return load();}
         Bangle.removeListener("touch", touchHandler);
-        Bangle.emit("touch",1, {type:{back:true}});
+        Bangle.emit("touch",1, {x:Math.floor(APP_RECT.x2/2), y:Math.floor(APP_RECT.y2/2), type:{back:true}});
       },0);
     }, BTN);
   }
