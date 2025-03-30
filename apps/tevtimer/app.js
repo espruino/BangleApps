@@ -41,7 +41,7 @@ const FONT = {
 
     'name': 'Vector:34x42',
 
-    'mode': 'Vector:34x42',
+    'mode': 'Vector:26x42',
   },
 
   'row3': {
@@ -55,7 +55,7 @@ const FONT = {
 
     'name': 'Vector:34x56',
 
-    'mode': 'Vector:34x56',
+    'mode': 'Vector:26x56',
   }
 };
 
@@ -68,6 +68,16 @@ VIEW_MODE_MENU = [
   'time hh:mm',
   'name',
 ];
+
+VIEW_MODE_DISPLAY = {
+  'start hh:mm:ss': 'Start HMS',
+  'start hh:mm': 'Start HM',
+  'current hh:mm:ss': 'Curr HMS',
+  'current hh:mm': 'Curr HM',
+  'time hh:mm:ss': 'Time HMS',
+  'time hh:mm': 'Time HM',
+  'name': 'Name',
+}
 
 
 function row_font(row_name, mode_name) {
@@ -316,31 +326,96 @@ class TimerModeView {
   }
 
   _initLayout() {
+    function draw_triangle(lay, flip) {
+      flip = flip ? lay.width : 0;
+      g.setColor(g.theme.fg2)
+       .fillPoly([flip + lay.x, lay.y + lay.height / 2,
+                  lay.x + lay.width - flip, lay.y,
+                  lay.x + lay.width - flip, lay.y + lay.height]);
+    }
+
     const layout = new Layout(
       {
         type: 'v',
         bgCol: g.theme.bg,
         c: [
           {
-            type: 'txt',
-            id: 'row1',
-            label: tt.SETTINGS.view_mode.row1,
-            font: row_font('row1', 'mode'),
-            fillx: 1,
+            type: 'h',
+            c: [
+              {
+                type: 'custom',
+                id: 'row1_left',
+                render: lay => draw_triangle(lay, false),
+                width: 10,
+                height: 10,
+              },
+              {
+                type: 'txt',
+                id: 'row1',
+                label: VIEW_MODE_DISPLAY[tt.SETTINGS.view_mode.row1],
+                font: row_font('row1', 'mode'),
+                fillx: 1,
+              },
+              {
+                type: 'custom',
+                id: 'row1_right',
+                render: lay => draw_triangle(lay, true),
+                width: 10,
+                height: 10,
+              },
+            ],
           },
           {
-            type: 'txt',
-            id: 'row2',
-            label: tt.SETTINGS.view_mode.row2,
-            font: row_font('row2', 'mode'),
-            fillx: 1,
+            type: 'h',
+            c: [
+              {
+                type: 'custom',
+                id: 'row2_left',
+                render: lay => draw_triangle(lay, false),
+                width: 10,
+                height: 10,
+              },
+              {
+                type: 'txt',
+                id: 'row2',
+                label: VIEW_MODE_DISPLAY[tt.SETTINGS.view_mode.row2],
+                font: row_font('row2', 'mode'),
+                fillx: 1,
+              },
+              {
+                type: 'custom',
+                id: 'row2_right',
+                render: lay => draw_triangle(lay, true),
+                width: 10,
+                height: 10,
+              },
+            ],
           },
           {
-            type: 'txt',
-            id: 'row3',
-            label: tt.SETTINGS.view_mode.row3,
-            font: row_font('row3', 'mode'),
-            fillx: 1,
+            type: 'h',
+            c: [
+              {
+                type: 'custom',
+                id: 'row3_left',
+                render: lay => draw_triangle(lay, false),
+                width: 10,
+                height: 10,
+              },
+              {
+                type: 'txt',
+                id: 'row3',
+                label: VIEW_MODE_DISPLAY[tt.SETTINGS.view_mode.row3],
+                font: row_font('row3', 'mode'),
+                fillx: 1,
+              },
+              {
+                type: 'custom',
+                id: 'row3_right',
+                render: lay => draw_triangle(lay, true),
+                width: 10,
+                height: 10,
+              },
+            ],
           },
           {
             type: 'h',
