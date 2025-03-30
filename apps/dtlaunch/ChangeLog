@@ -35,3 +35,4 @@ when moving pages. Add caching for faster startups.
 0.28: Bangle 2: Fix showClocks and showLaunchers settings not taking effect by
       clearing cache when changing those settings.
       Bangle 2: Use a separate cache file from the standard launcher.
+      Bangle 2: Don't leave cache file after uninstalling the app.

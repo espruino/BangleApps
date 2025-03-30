@@ -16,5 +16,8 @@
     {"name":"dtlaunch.settings.js","url":"settings-b2.js", "supports": ["BANGLEJS2"]},
     {"name":"dtlaunch.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"dtlaunch.json"}]
+  "data": [
+    {"name":"dtlaunch.json"},
+    {"name":"dtlaunch.cache.json"}
+  ]
 }
