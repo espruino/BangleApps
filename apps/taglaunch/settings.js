@@ -26,7 +26,10 @@
     },
     /*LANG*/"Show Clocks": {
       value: settings.showClocks == true,
-      onchange: (m) => { save("showClocks", m) }
+      onchange: (m) => {
+        save("showClocks", m);
+        require("Storage").erase("taglaunch.cache.json"); //delete the cache app list
+       }
     },
     /*LANG*/"Fullscreen": {
       value: settings.fullscreen == true,
