@@ -10,6 +10,9 @@
     settings[key] = value;
     require("Storage").write("launch.json",settings);
   }
+  function clearCache() {
+    require("Storage").erase("launch.cache.json")
+  }
   const appMenu = {
     "": { "title": /*LANG*/"Launcher" },
     /*LANG*/"< Back": back,
@@ -26,7 +29,10 @@
     },
     /*LANG*/"Show Clocks": {
       value: settings.showClocks == true,
-      onchange: (m) => { save("showClocks", m) }
+      onchange: (m) => {
+        save("showClocks", m);
+        clearCache();
+      }
     },
     /*LANG*/"Fullscreen": {
       value: settings.fullscreen == true,
