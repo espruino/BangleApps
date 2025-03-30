@@ -18,7 +18,7 @@
   const timeOutChoices = [/*LANG*/"Off", "10s", "15s", "20s", "30s"];
 
   function clearCache() {
-    require("Storage").erase("launch.cache.json")
+    require("Storage").erase("dtlaunch.cache.json")
   }
 
   E.showMenu({
