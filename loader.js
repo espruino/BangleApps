@@ -333,7 +333,7 @@ window.addEventListener('load', (event) => {
     reloadLanguage();
   });
 
-  if (!navigator.bluetooth) {
+  if ((typeof Android === "undefined") && !navigator.bluetooth) {
     console.warn("No Web Bluetooth on this platform");
     var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     if (iOS) {
