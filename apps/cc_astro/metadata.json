@@ -1,0 +1,18 @@
+{ "id": "cc_astro",
+  "name": "CC Astro",
+  "shortName":"CC-Astro",
+  "version":"0.01",
+  "description": "astronomy clock face",
+  "icon": "cc_astro_icon.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],
+  "screenshots": [{"url":"cc_astro_screen.png"}],
+  "readme": "README.md",
+  "storage": [
+    {"name":"cc_astro.app.js","url":"app.js"},
+    {"name":"cc_astro.settings.js","url":"settings.js"},
+    {"name":"cc_astro.img","url":"app_icon.js","evaluate":true}
+  ],
+  "data": [{"name":"cc_astro.json"}]
+}
