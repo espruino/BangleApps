@@ -31,3 +31,4 @@
 0.28: Added an icon for disabled events
 0.29: Improve clkinfo startup time by 10ms
 0.30: Fix possible bug in toggling an alarm to on, from clkinfo
+0.31: Ensure we reschedule alarms after setTimeZone has been called (fix #3791)
