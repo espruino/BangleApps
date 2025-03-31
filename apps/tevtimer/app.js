@@ -59,7 +59,7 @@ const FONT = {
   }
 };
 
-VIEW_MODE_MENU = [
+FORMAT_MENU = [
   'start hh:mm:ss',
   'start hh:mm',
   'current hh:mm:ss',
@@ -69,7 +69,7 @@ VIEW_MODE_MENU = [
   'name',
 ];
 
-VIEW_MODE_DISPLAY = {
+FORMAT_DISPLAY = {
   'start hh:mm:ss': 'Start HMS',
   'start hh:mm': 'Start HM',
   'current hh:mm:ss': 'Curr HMS',
@@ -169,21 +169,21 @@ class TimerView {
             type: 'txt',
             id: 'row1',
             label: '',
-            font: row_font('row1', tt.SETTINGS.view_mode.row1),
+            font: row_font('row1', tt.SETTINGS.format.row1),
             fillx: 1,
           },
           {
             type: 'txt',
             id: 'row2',
             label: '',
-            font: row_font('row2', tt.SETTINGS.view_mode.row2),
+            font: row_font('row2', tt.SETTINGS.format.row2),
             fillx: 1,
           },
           {
             type: 'txt',
             id: 'row3',
             label: '',
-            font: row_font('row3', tt.SETTINGS.view_mode.row3),
+            font: row_font('row3', tt.SETTINGS.format.row3),
             fillx: 1,
           },
           {
@@ -220,7 +220,7 @@ class TimerView {
 
       for (var id of ROW_IDS) {
         const elem = this.layout[id];
-        let mode = tt.SETTINGS.view_mode[id];
+        let mode = tt.SETTINGS.format[id];
         if (mode == 'start hh:mm:ss') {
           elem.label = tt.format_duration(this.timer.origin / Math.abs(this.timer.rate), true);
           update_interval = Math.min(update_interval, 1);
@@ -288,7 +288,7 @@ class TimerView {
   _update_fonts() {
     for (var id of ROW_IDS) {
       const elem = this.layout[id];
-      elem.font = row_font(id, tt.SETTINGS.view_mode[id]);
+      elem.font = row_font(id, tt.SETTINGS.format[id]);
       this.layout.clear(elem);
       this.layout.render(elem);
     }
@@ -307,7 +307,7 @@ class TimerView {
 }
 
 
-class TimerModeView {
+class TimerFormatView {
   constructor(timer) {
     this.timer = timer;
 
@@ -352,7 +352,7 @@ class TimerModeView {
               {
                 type: 'txt',
                 id: 'row1',
-                label: VIEW_MODE_DISPLAY[tt.SETTINGS.view_mode.row1],
+                label: FORMAT_DISPLAY[tt.SETTINGS.format.row1],
                 font: row_font('row1', 'mode'),
                 fillx: 1,
               },
@@ -378,7 +378,7 @@ class TimerModeView {
               {
                 type: 'txt',
                 id: 'row2',
-                label: VIEW_MODE_DISPLAY[tt.SETTINGS.view_mode.row2],
+                label: FORMAT_DISPLAY[tt.SETTINGS.format.row2],
                 font: row_font('row2', 'mode'),
                 fillx: 1,
               },
@@ -404,7 +404,7 @@ class TimerModeView {
               {
                 type: 'txt',
                 id: 'row3',
-                label: VIEW_MODE_DISPLAY[tt.SETTINGS.view_mode.row3],
+                label: FORMAT_DISPLAY[tt.SETTINGS.format.row3],
                 font: row_font('row3', 'mode'),
                 fillx: 1,
               },
@@ -474,7 +474,7 @@ class TimerViewMenu {
       },
       'Edit': this.edit_menu.bind(this),
       'Format': () => {
-        switch_UI(new TimerModeView(this.timer));
+        switch_UI(new TimerFormatView(this.timer));
       },
       'Add': () => {
         tt.set_timers_dirty();

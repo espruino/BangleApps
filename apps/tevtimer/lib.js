@@ -199,7 +199,7 @@ function schedule_save_settings() {
 
 // Default settings
 const SETTINGS = Object.assign({
-  'view_mode': {
+  'format': {
     'row1': 'time hh:mm',
     'row2': 'start hh:mm:ss',
     'row3': 'current hh:mm:ss',
