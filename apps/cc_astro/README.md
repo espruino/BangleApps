@@ -1,17 +1,9 @@
-# Analog Clock With Abstract Face
+# Astronomy Clock
 
 ## Features
 
-* inspired from the abstract face of the google smartwatch
-* second hand (only on unlocked screen)
-* date
-* battery percentage (showing charge status with color)
-* turned off or swipeable widgets (choose in settings)
+* shows earth as hour and venus as minute hand
+* shows mercury as second hand only on unlocked screen
+* if battery is low, the sun will become to a red giant
 
-![logo](cc_clock24_screen.png)
-
-## Settings
-
-* whether to load widgets, or not; if widgets are loaded, they are swipeable from the top; if not, NO ACTIONS of widgets are available
-* date and battery can be printed both below hands (as if hands were physical) and above (more readable)
-* hour hand can be made slighly shorter to improve readability when minute hand is behind a number
+![logo](screenshot1.png)
