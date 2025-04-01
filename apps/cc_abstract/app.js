@@ -1,10 +1,7 @@
 // ----- const -----
 
 const defaultSettings = {
-  loadWidgets    : false,
-  textAboveHands : false,
-  shortHrHand    : false,
-  show24HourMode : false
+  loadWidgets: false
 };
 
 const settings = Object.assign(defaultSettings, require('Storage').readJSON('cc_abstract.json', 1) || {});
