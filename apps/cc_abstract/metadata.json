@@ -1,0 +1,17 @@
+{ "id": "cc_abstract",
+  "name": "CC Abstract",
+  "shortName": "CC-Abstract",
+  "version": "0.01",
+  "description": "analog clock abstract face",
+  "icon": "app_icon.png",
+  "type": "clock",
+  "tags": "clock,abstract",
+  "supports" : ["BANGLEJS2"],
+  "screenshots": [{"url":"screenshot1.png"}, {"url":"screenshot2.png"}],
+  "readme": "README.md",
+  "storage": [
+    {"name": "cc_abstract.app.js", "url": "app.js"},
+    {"name": "cc_abstract.img", "url": "app_icon.js", "evaluate": true}
+  ],
+  "data": [{"name":"cc_abstract.json"}]
+}
