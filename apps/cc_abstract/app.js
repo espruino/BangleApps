@@ -145,7 +145,7 @@ function calcOval(x0, y0, phi0, len, r) {
   // dist(A, 1): r
   // atan2(A, B): phi 
 
-  polygon = [];
+  var polygon = [];
 
   const n = 4;
   const dphi = Math.PI / n;  // pi=180°
