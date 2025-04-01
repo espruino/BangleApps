@@ -1,7 +1,7 @@
 {
   "id": "dtlaunch",
   "name": "Desktop Launcher",
-  "version": "0.27",
+  "version": "0.28",
   "description": "Desktop style App Launcher with six (four for Bangle 2) apps per page - fast access if you have lots of apps installed.",
   "screenshots": [{"url":"shot1.png"},{"url":"shot2.png"},{"url":"shot3.png"}],
   "icon": "icon.png",
@@ -16,5 +16,8 @@
     {"name":"dtlaunch.settings.js","url":"settings-b2.js", "supports": ["BANGLEJS2"]},
     {"name":"dtlaunch.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"dtlaunch.json"}]
+  "data": [
+    {"name":"dtlaunch.json"},
+    {"name":"dtlaunch.cache.json"}
+  ]
 }
