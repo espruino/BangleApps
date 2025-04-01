@@ -57,7 +57,7 @@
 
 
   const drawMenu = () => {
-    let scroller = E.showScroller({
+    E.showScroller({
       h : height, c : apps.length,
       draw : (i, r) => {
         var app = apps[i];
