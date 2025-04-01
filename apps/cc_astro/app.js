@@ -1,14 +1,5 @@
 // ----- const -----
 
-const defaultSettings = {
-  loadWidgets    : false,
-  textAboveHands : false,
-  shortHrHand    : false,
-  show24HourMode : false
-};
-
-const settings = Object.assign(defaultSettings, require('Storage').readJSON('cc_abstract.json', 1) || {});
-
 const center = {
   "x": g.getWidth()/2,
   "y": g.getHeight()/2
@@ -18,7 +9,7 @@ const parameters = {
   "earthOrbitRadius": 80,
   "venusOrbitRadius": 60,
   "mercuryOrbitRadius": 40,
-  "earthRadius": 8,
+  "earthRadius": 6,
   "venusRadius": 6,
   "mercuryRadius": 4,
   "sunRadius": 12,
@@ -183,15 +174,6 @@ Bangle.setUI({
     require("widget_utils").show();
   }
 });
-
-// Load widgets if needed, and make them show swipeable
-if (settings.loadWidgets) {
-  Bangle.loadWidgets();
-  require("widget_utils").swipeOn();
-} 
-else if (global.WIDGETS) {
-  require("widget_utils").hide();
-}
 
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower', updateState);
