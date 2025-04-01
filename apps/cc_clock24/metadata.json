@@ -1,18 +1,18 @@
 { "id": "cc_clock24",
   "name": "CC Clock 24",
-  "shortName":"CC-Clock24",
-  "version":"0.01",
+  "shortName": "CC-Clock24",
+  "version": "0.02",
   "description": "analog clock face with 24 hour pointer",
-  "icon": "cc_clock24_icon.png",
+  "icon": "app_icon.png",
   "type": "clock",
   "tags": "clock",
   "supports" : ["BANGLEJS2"],
-  "screenshots": [{"url":"cc_clock24_screen.png"}],
+  "screenshots": [{"url": "screenshot1.png"}, {"url": "screenshot2.png"}, {"url": "screenshot3.png"}],
   "readme": "README.md",
   "storage": [
-    {"name":"cc_clock24.app.js","url":"app.js"},
-    {"name":"cc_clock24.settings.js","url":"settings.js"},
-    {"name":"cc_clock24.img","url":"app_icon.js","evaluate":true}
+    {"name": "cc_clock24.app.js", "url": "app.js"},
+    {"name": "cc_clock24.settings.js", "url": "settings.js"},
+    {"name": "cc_clock24.img", "url": "app_icon.js", "evaluate": true}
   ],
-  "data": [{"name":"cc_clock24.json"}]
+  "data": [{"name": "cc_clock24.json"}]
 }

@@ -1,4 +1,4 @@
-# Analog Clock With 24 hour hands
+# Analog Clock With Optional 24 hour hands
 
 ## Features
 
@@ -7,7 +7,7 @@
 * battery percentage (showing charge status with color)
 * turned off or swipeable widgets (choose in settings)
 
-![logo](cc_clock24_screen.png)
+![logo](screenshot1.png)
 
 ## Settings
 
