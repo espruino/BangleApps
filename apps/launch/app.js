@@ -16,7 +16,7 @@
       font = "Vector"+(vectorval).toString();
     } else{
       font = settings.font;
-      scaleval = (font.split("x")[1])/20;
+      scaleval = g.setFont(font).stringMetrics("X").height / 20;
     }
   }
   let height = 50*scaleval;
@@ -109,4 +109,4 @@
 
   if (!settings.fullscreen) // finally draw widgets
     Bangle.drawWidgets();
-  }
+}
