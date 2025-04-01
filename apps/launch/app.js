@@ -85,13 +85,9 @@
         if (lockTimeout) clearTimeout(lockTimeout);
         Bangle.removeListener("lock", lockHandler);
         // Restore widgets if they were hidden by fullscreen setting
-        if (global.WIDGETS) require("widget_utils").show();
+        if (global.WIDGETS && settings.fullscreen) require("widget_utils").show();
       }
     });
-    if (settings.fullscreen) {
-      require("widget_utils").hide();
-      scroller.draw(); // FIX: The red back button will flicker before the widget is hidden and scroller redrawn.
-    }
     g.flip(); // force a render before widgets have finished drawing
 
     // 10s of inactivity goes back to clock
