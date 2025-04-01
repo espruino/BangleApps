@@ -22,8 +22,11 @@
   let height = 50*scaleval;
 
   // Now apps list is loaded - render
-  if (!settings.fullscreen)
+  if (!settings.fullscreen) {
     Bangle.loadWidgets();
+  } else if (global.WIDGETS) {
+    require("widget_utils").hide();
+  }
   let R = Bangle.appRect;
   g.reset().clearRect(R).setColor("#888");
   for (var y=R.y;y<R.y2;y+=height) {
@@ -81,6 +84,8 @@
         // cleanup the timeout to not leave anything behind after being removed from ram
         if (lockTimeout) clearTimeout(lockTimeout);
         Bangle.removeListener("lock", lockHandler);
+        // Restore widgets if they were hidden by fullscreen setting
+        if (global.WIDGETS && settings.fullscreen) require("widget_utils").show();
       }
     });
     g.flip(); // force a render before widgets have finished drawing
