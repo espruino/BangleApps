@@ -25,5 +25,6 @@
 0.23: Draw a placeholder screen right at the start to speed up apparent boot time
 0.24: Fix Launcher when a custom font from 2v26+ is specified (fix #3787)
       Fix fullscreen when fastloading the launcher. (TODO:fix back btn flicker)
-      Fix showClocks setting not taking effect by now clearing cache when
-      changing those settings.
+0.25: Fix showClocks setting not taking effect by now clearing cache when changing those settings.
+      Remove Vector Font size option (Vector fonts added as other font styles)
+      Add Height option to set menu item height independently of Font
