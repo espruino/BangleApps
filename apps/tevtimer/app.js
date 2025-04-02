@@ -13,6 +13,8 @@ const MOVE_TO_TOP_TIMEOUT = 5000;
 // Min number of pixels of movement to recognize a touchscreen drag/swipe
 const DRAG_THRESHOLD = 50;
 
+const ARROW_BTN_SIZE = 15;
+
 const ROW_IDS = ['row1', 'row2', 'row3'];
 
 const FONT = {
@@ -33,13 +35,13 @@ const FONT = {
   'row2': {
     'start hh:mm:ss': 'Vector:34x42',
     'current hh:mm:ss': 'Vector:34x42',
-    'time hh:mm:ss': 'Vector:34x42',
+    'time hh:mm:ss': 'Vector:24x42',
 
     'start hh:mm': 'Vector:56x42',
     'current hh:mm': 'Vector:56x42',
     'time hh:mm': 'Vector:56x42',
 
-    'name': 'Vector:34x42',
+    'name': 'Vector:24x42',
 
     'mode': 'Vector:26x42',
   },
@@ -47,13 +49,13 @@ const FONT = {
   'row3': {
     'start hh:mm:ss': 'Vector:34x56',
     'current hh:mm:ss': 'Vector:34x56',
-    'time hh:mm:ss': 'Vector:34x56',
+    'time hh:mm:ss': 'Vector:24x56',
 
     'start hh:mm': 'Vector:56x56',
     'current hh:mm': 'Vector:56x56',
     'time hh:mm': 'Vector:56x56',
 
-    'name': 'Vector:34x56',
+    'name': 'Vector:24x56',
 
     'mode': 'Vector:26x56',
   }
@@ -101,6 +103,7 @@ class TimerView {
 
   start() {
     this._initLayout();
+    this.layout.update();
     this.layout.clear();
     this.render();
 
@@ -313,19 +316,102 @@ class TimerFormatView {
 
     this.layout = null;
     this.listeners = {};
+
+    // Get format name indeces for UI
+    this.format_idx = {};
+    for (var row_id of ROW_IDS) {
+      let idx = FORMAT_MENU.indexOf(tt.SETTINGS.format[row_id]);
+      if (idx === -1) {
+        console.warn('Unknown format "' + tt.SETTINGS.format[row_id] + '"');
+        idx = 0;
+      }
+      this.format_idx[row_id] = idx;
+    }
   }
 
   start() {
     this._initLayout();
+    this.layout.update();
     this.layout.clear();
     this.render();
+
+    // Drag handler
+    let distanceX = null;
+    function dragHandler(ev) {
+      if (ev.b) {
+        if (distanceX === null) {
+          // Drag started
+          distanceX = ev.dx;
+        } else {
+          // Drag in progress
+          distanceX += ev.dx;
+        }
+      } else {
+        // Drag released
+        distanceX = null;
+      }
+      if (Math.abs(distanceX) > DRAG_THRESHOLD) {
+        // Horizontal drag threshold reached
+        // Increment or decrement row's format index based on sign of
+        // distanceX
+        for (var row_id of ROW_IDS) {
+          if (ev.y < this.layout[row_id].y + this.layout[row_id].h) {
+            Bangle.buzz(50, 0.5);
+            if (Math.sign(distanceX) > 0) {
+              this.incr_format_idx(row_id);
+            } else {
+              this.decr_format_idx(row_id);
+            }
+            distanceX = null;
+            break;
+          }
+        }
+      }
+    }
+    this.listeners.drag = dragHandler.bind(this);
+    Bangle.on('drag', this.listeners.drag);
+
+    // Touch handler
+    function touchHandler(button, xy) {
+      // Increment or decrement row's format index based on the arrow tapped
+      for (var row_id of ROW_IDS) {
+        const prev_id = row_id + '.prev';
+        const next_id = row_id + '.next';
+        if (xy.x >= this.layout[prev_id].x
+            && xy.x <= this.layout[prev_id].x + this.layout[prev_id].w
+            && xy.y >= this.layout[prev_id].y
+            && xy.y <= this.layout[prev_id].y + this.layout[prev_id].h) {
+          this.decr_format_idx(row_id);
+          break;
+        } else if (xy.x >= this.layout[next_id].x
+                   && xy.x <= this.layout[next_id].x + this.layout[next_id].w
+                   && xy.y >= this.layout[next_id].y
+                   && xy.y <= this.layout[next_id].y + this.layout[next_id].h) {
+          this.incr_format_idx(row_id);
+          break;
+        }
+      }
+    }
+    this.listeners.touch = touchHandler.bind(this);
+    Bangle.on('touch', this.listeners.touch);
+
+    // Physical button handler
+    this.listeners.button = setWatch(
+      this.ok.bind(this),
+      BTN,
+      {edge: 'falling', debounce: 50, repeat: true}
+    );
   }
 
   stop() {
-
+    Bangle.removeListener('drag', this.listeners.drag);
+    Bangle.removeListener('touch', this.listeners.touch);
+    clearWatch(this.listeners.button);
   }
 
   _initLayout() {
+    // Render right-pointing triangle if `flip`, else left-pointing
+    // triangle
     function draw_triangle(lay, flip) {
       flip = flip ? lay.width : 0;
       g.setColor(g.theme.fg2)
@@ -344,24 +430,24 @@ class TimerFormatView {
             c: [
               {
                 type: 'custom',
-                id: 'row1_left',
+                id: 'row1.prev',
                 render: lay => draw_triangle(lay, false),
-                width: 10,
-                height: 10,
+                width: ARROW_BTN_SIZE,
+                height: ARROW_BTN_SIZE,
               },
               {
                 type: 'txt',
                 id: 'row1',
-                label: FORMAT_DISPLAY[tt.SETTINGS.format.row1],
+                label: FORMAT_DISPLAY[FORMAT_MENU[this.format_idx.row1]],
                 font: row_font('row1', 'mode'),
                 fillx: 1,
               },
               {
                 type: 'custom',
-                id: 'row1_right',
+                id: 'row1.next',
                 render: lay => draw_triangle(lay, true),
-                width: 10,
-                height: 10,
+                width: ARROW_BTN_SIZE,
+                height: ARROW_BTN_SIZE,
               },
             ],
           },
@@ -370,24 +456,24 @@ class TimerFormatView {
             c: [
               {
                 type: 'custom',
-                id: 'row2_left',
+                id: 'row2.prev',
                 render: lay => draw_triangle(lay, false),
-                width: 10,
-                height: 10,
+                width: ARROW_BTN_SIZE,
+                height: ARROW_BTN_SIZE,
               },
               {
                 type: 'txt',
                 id: 'row2',
-                label: FORMAT_DISPLAY[tt.SETTINGS.format.row2],
+                label: FORMAT_DISPLAY[FORMAT_MENU[this.format_idx.row2]],
                 font: row_font('row2', 'mode'),
                 fillx: 1,
               },
               {
                 type: 'custom',
-                id: 'row2_right',
+                id: 'row2.next',
                 render: lay => draw_triangle(lay, true),
-                width: 10,
-                height: 10,
+                width: ARROW_BTN_SIZE,
+                height: ARROW_BTN_SIZE,
               },
             ],
           },
@@ -396,24 +482,24 @@ class TimerFormatView {
             c: [
               {
                 type: 'custom',
-                id: 'row3_left',
+                id: 'row3.prev',
                 render: lay => draw_triangle(lay, false),
-                width: 10,
-                height: 10,
+                width: ARROW_BTN_SIZE,
+                height: ARROW_BTN_SIZE,
               },
               {
                 type: 'txt',
                 id: 'row3',
-                label: FORMAT_DISPLAY[tt.SETTINGS.format.row3],
+                label: FORMAT_DISPLAY[FORMAT_MENU[this.format_idx.row3]],
                 font: row_font('row3', 'mode'),
                 fillx: 1,
               },
               {
                 type: 'custom',
-                id: 'row3_right',
+                id: 'row3.next',
                 render: lay => draw_triangle(lay, true),
-                width: 10,
-                height: 10,
+                width: ARROW_BTN_SIZE,
+                height: ARROW_BTN_SIZE,
               },
             ],
           },
@@ -422,14 +508,10 @@ class TimerFormatView {
             id: 'buttons',
             c: [
               {type: 'btn', font: '6x8:2', fillx: 1, label: 'Cancel', id: 'cancel_btn',
-               cb: () => {
-                 switch_UI(new TimerViewMenu(this.timer));
-               }
+               cb: () => { this.cancel(); }
               },
               {type: 'btn', font: '6x8:2', fillx: 1, label: 'OK', id: 'ok_btn',
-               cb: () => {
-                 switch_UI(new TimerView(this.timer));
-               }
+               cb: () => { this.ok(); }
               },
             ]
           }
@@ -441,6 +523,43 @@ class TimerFormatView {
 
   render() {
     this.layout.render();
+  }
+
+  update_row(row_id) {
+    const elem = this.layout[row_id];
+    elem.label = FORMAT_DISPLAY[FORMAT_MENU[this.format_idx[row_id]]];
+    this.layout.clear(elem);
+    this.layout.render(elem);
+  }
+
+  incr_format_idx(row_id) {
+    this.format_idx[row_id] += 1;
+    if (this.format_idx[row_id] >= FORMAT_MENU.length) {
+      this.format_idx[row_id] = 0;
+    }
+    this.update_row(row_id);
+  }
+
+  decr_format_idx(row_id) {
+    this.format_idx[row_id] -= 1;
+    if (this.format_idx[row_id] < 0) {
+      this.format_idx[row_id] = FORMAT_MENU.length - 1;
+    }
+    this.update_row(row_id);
+  }
+
+  // Save new format settings and return to TimerView
+  ok() {
+    for (var row_id of ROW_IDS) {
+      tt.SETTINGS.format[row_id] = FORMAT_MENU[this.format_idx[row_id]];
+    }
+    tt.set_settings_dirty();
+    switch_UI(new TimerView(this.timer));
+  }
+
+  // Return to TimerViewMenu without saving changes
+  cancel() {
+    switch_UI(new TimerViewMenu(this.timer));
   }
 }
 
