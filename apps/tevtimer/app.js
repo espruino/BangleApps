@@ -92,6 +92,31 @@ function row_font(row_name, mode_name) {
 }
 
 
+// Determine time in milliseconds until next display update for a timer
+// that should be updated every `interval` milliseconds.
+function next_time_update(interval, curr_time, direction) {
+  if (interval <= 0) {
+    // Don't update if interval is zero or negative
+    return Infinity;
+  }
+
+  // Find the next time we should update the display
+  let next_update = (curr_time % interval);
+  if (direction < 0) {
+    next_update = 1 - next_update;
+  }
+  if (next_update < 0) {
+    // Handle negative modulus
+    next_update += interval;
+  }
+  next_update = interval - next_update;
+
+  // Add compensating factor of 50ms due to timeouts apparently
+  // sometimes triggering too early.
+  return next_update + 50;
+}
+
+
 class TimerView {
   constructor(timer) {
     this.timer = timer;
@@ -223,27 +248,42 @@ class TimerView {
 
       for (var id of ROW_IDS) {
         const elem = this.layout[id];
+        const running = this.timer.is_running();
         let mode = tt.SETTINGS.format[id];
         if (mode == 'start hh:mm:ss') {
           elem.label = tt.format_duration(this.timer.origin / Math.abs(this.timer.rate), true);
-          update_interval = Math.min(update_interval, 1);
         } else if (mode == 'current hh:mm:ss') {
           elem.label = tt.format_duration(this.timer.get() / Math.abs(this.timer.rate), true);
-          update_interval = Math.min(update_interval, 1);
+          if (running) {
+            update_interval = Math.min(
+              update_interval, 
+              next_time_update(1000, this.timer.get_msec(), this.timer.rate)
+            );
+          }
         } else if (mode == 'time hh:mm:ss') {
           elem.label = locale.time(new Date()).trim();
-          update_interval = Math.min(update_interval, 1);
+          update_interval = Math.min(
+            update_interval, 
+            next_time_update(1000, Date.now(), 1)
+          );
 
         } else if (mode == 'start hh:mm') {
           elem.label = tt.format_duration(this.timer.origin / Math.abs(this.timer.rate), false);
-          update_interval = Math.min(update_interval, 60);
         } else if (mode == 'current hh:mm') {
           elem.label = tt.format_duration(this.timer.get() / Math.abs(this.timer.rate), false);
-          update_interval = Math.min(update_interval, 60);
+          if (running) {
+            // Update every minute for current HM when running
+            update_interval = Math.min(
+              update_interval,
+              next_time_update(60000, this.timer.get_msec(), this.timer.rate)
+            );
+          }
         } else if (mode == 'time hh:mm') {
           elem.label = locale.time(new Date(), 1).trim();
-          update_interval = Math.min(update_interval, 60);
-
+          update_interval = Math.min(
+            update_interval,
+            next_time_update(60000, Date.now(), 1)
+          );
         } else if (mode == 'name') {
           elem.label = this.timer.display_name();
         }
@@ -251,33 +291,22 @@ class TimerView {
         this.layout.render(elem);
       }
 
-      if (this.timer.is_running()) {
-        if (this.listeners.timer_render_timeout) {
-          clearTimeout(this.listeners.timer_render_timeout);
-          this.listeners.timer_render_timeout = null;
-        }
 
-        // Set up timeout to render timer again when needed
-        if (update_interval !== Infinity) {
+      if (this.listeners.timer_render_timeout) {
+        clearTimeout(this.listeners.timer_render_timeout);
+        this.listeners.timer_render_timeout = null;
+      }
 
-          // Calculate approximate time next render is needed.
-          let next_update = this.timer.get() % update_interval;
-          if (next_update < 0) {
-            next_update = 1 + next_update;
-          }
-          // Convert next_update from seconds to milliseconds and add
-          // compensating factor of 50ms due to timeouts apparently
-          // sometimes triggering too early.
-          next_update = next_update / Math.abs(this.timer.rate) + 50;
-          console.debug('Next render update scheduled in ' + next_update);
-          this.listeners.timer_render_timeout = setTimeout(
-            () => {
-               this.listeners.timer_render_timeout = null;
-               this.render('timer');
-            },
-            next_update
-          );
-        }
+      // Set up timeout to render timer again when needed
+      if (update_interval !== Infinity) {
+        console.debug('Next render update scheduled in ' + update_interval);
+        this.listeners.timer_render_timeout = setTimeout(
+          () => {
+              this.listeners.timer_render_timeout = null;
+              this.render('timer');
+          },
+          update_interval
+        );
       }
     }
 

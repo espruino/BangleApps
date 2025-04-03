@@ -76,6 +76,10 @@ class PrimitiveTimer {
     return this.origin + (this.rate * elapsed);
   }
 
+  get_msec() {
+    return this.get() / Math.abs(this.rate);
+  }
+
   set(new_value) {
     const now = Date.now();
     this._start_time = (now - new_value / this.rate)
