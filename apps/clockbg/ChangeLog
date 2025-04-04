@@ -6,3 +6,4 @@
       Add a 'view' option in settings menu to view the current background
 0.05: Random square+plasma speed improvements (~2x faster)
 0.06: 25% speed improvement if Math.randInt exists (2v25 fw)
+0.07: Added 'rings'and 'tris' background styles
