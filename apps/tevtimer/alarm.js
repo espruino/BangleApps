@@ -1,5 +1,34 @@
 const tt = require('tevtimer');
 
+function setNextRepeatDate(alarm) {
+  let date = new Date(alarm.date);
+  let rp = alarm.rp;
+  if (rp===true) { // fallback in case rp is set wrong
+    date.setDate(date.getDate() + 1);
+  } else switch(rp.interval) { // rp is an object
+    case "day":
+      date.setDate(date.getDate() + rp.num);
+      break;
+    case "week":
+      date.setDate(date.getDate() + (rp.num * 7));
+      break;
+    case "month":
+      if (!alarm.od) alarm.od = date.getDate();
+      date = new Date(date.getFullYear(), date.getMonth() + rp.num, alarm.od);
+      if (date.getDate() != alarm.od) date.setDate(0);
+      break;
+    case "year":
+      if (!alarm.od) alarm.od = date.getDate();
+      date = new Date(date.getFullYear() + rp.num, date.getMonth(), alarm.od);
+      if (date.getDate() != alarm.od) date.setDate(0);
+      break;
+    default:
+      console.log(`sched: unknown repeat '${JSON.stringify(rp)}'`);
+      break;
+  }
+  alarm.date = date.toLocalISOString().slice(0,10);
+}
+
 function showAlarm(alarm) {
   const alarmIndex = alarms.indexOf(alarm);
   const settings = require("sched").getSettings();
