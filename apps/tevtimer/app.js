@@ -37,8 +37,8 @@ const FONT = {
     'current hh:mm:ss': 'Vector:34x42',
     'time hh:mm:ss': 'Vector:24x42',
 
-    'start hh:mm': 'Vector:56x42',
-    'current hh:mm': 'Vector:56x42',
+    'start hh:mm': 'Vector:48x42',
+    'current hh:mm': 'Vector:48x42',
     'time hh:mm': 'Vector:56x42',
 
     'name': 'Vector:24x42',
@@ -51,8 +51,8 @@ const FONT = {
     'current hh:mm:ss': 'Vector:34x56',
     'time hh:mm:ss': 'Vector:24x56',
 
-    'start hh:mm': 'Vector:56x56',
-    'current hh:mm': 'Vector:56x56',
+    'start hh:mm': 'Vector:48x56',
+    'current hh:mm': 'Vector:48x56',
     'time hh:mm': 'Vector:56x56',
 
     'name': 'Vector:24x56',
