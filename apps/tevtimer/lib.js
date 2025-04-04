@@ -3,6 +3,20 @@ const Sched = require('sched');
 const Time_utils = require('time_utils');
 
 
+// Convenience //
+
+function mod(n, m) {
+  // Modulus function that works like Python's % operator
+  return ((n % m) + m) % m;
+}
+
+function ceil(value) {
+  // JavaScript's Math.ceil function is weird, too
+  // Attempt to work around it
+  return Math.ceil(Math.round(value * 1e10) / 1e10);
+}
+
+
 // Data models //
 
 class PrimitiveTimer {
@@ -76,10 +90,6 @@ class PrimitiveTimer {
     return this.origin + (this.rate * elapsed);
   }
 
-  get_msec() {
-    return this.get() / Math.abs(this.rate);
-  }
-
   set(new_value) {
     const now = Date.now();
     this._start_time = (now - new_value / this.rate)
@@ -87,6 +97,18 @@ class PrimitiveTimer {
     if (!this.is_running()) {
       this._pause_time = now;
     }
+  }
+
+  // Convert given timer value to milliseconds using this.rate
+  // Uses the current value of the timer if no value is provided
+  to_msec(value) {
+    if (typeof value === 'undefined') {
+      value = this.get();
+    }
+    if (typeof value !== 'number') {
+      throw new Error('Invalid value type for to_msec');
+    }
+    return ceil(value / Math.abs(this.rate));
   }
 
   dump() {
@@ -115,12 +137,6 @@ class PrimitiveTimer {
     return loaded;
   }
 
-}
-
-
-function fixed_ceil(value) {
-  // JavaScript sucks
-  return Math.ceil(Math.round(value * 1e10) / 1e10);
 }
 
 
@@ -298,6 +314,7 @@ E.on('kill', () => { save_settings(); });
 
 
 exports = {TIMERS, SETTINGS,
+           mod, ceil,
            load_timers, save_timers, schedule_save_timers, save_settings, schedule_save_settings,
            PrimitiveTimer,
            format_duration,

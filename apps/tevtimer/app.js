@@ -61,7 +61,7 @@ const FONT = {
   }
 };
 
-FORMAT_MENU = [
+const FORMAT_MENU = [
   'start hh:mm:ss',
   'start hh:mm',
   'current hh:mm:ss',
@@ -71,7 +71,7 @@ FORMAT_MENU = [
   'name',
 ];
 
-FORMAT_DISPLAY = {
+const FORMAT_DISPLAY = {
   'start hh:mm:ss': 'Start HMS',
   'start hh:mm': 'Start HM',
   'current hh:mm:ss': 'Curr HMS',
@@ -79,11 +79,11 @@ FORMAT_DISPLAY = {
   'time hh:mm:ss': 'Time HMS',
   'time hh:mm': 'Time HM',
   'name': 'Name',
-}
+};
 
 
 function row_font(row_name, mode_name) {
-  font = FONT[row_name][mode_name];
+  let font = FONT[row_name][mode_name];
   if (font === undefined) {
     console.error('Unknown font for row_font("' + row_name + '", "' + mode_name + '")');
     return '12x20';
@@ -101,7 +101,7 @@ function next_time_update(interval, curr_time, direction) {
   }
 
   // Find the next time we should update the display
-  let next_update = (curr_time % interval);
+  let next_update = tt.mod(curr_time, interval);
   if (direction < 0) {
     next_update = 1 - next_update;
   }
@@ -159,12 +159,9 @@ class TimerView {
         // Switch UI view to next or previous timer in list based on
         // sign of distanceX
         let new_index = tt.TIMERS.indexOf(this.timer) + Math.sign(distanceX);
-        if (new_index < 0) {
-          new_index = tt.TIMERS.length - 1;
-        } else if (new_index >= tt.TIMERS.length) {
-          new_index = 0;
-        }
-        switch_UI(new TimerView(tt.TIMERS[new_index]));
+        switch_UI(new TimerView(tt.TIMERS[
+          tt.mod(new_index, tt.TIMERS.length)
+        ]));
         distanceX = null;
       }
     }
@@ -251,13 +248,13 @@ class TimerView {
         const running = this.timer.is_running();
         let mode = tt.SETTINGS.format[id];
         if (mode == 'start hh:mm:ss') {
-          elem.label = tt.format_duration(this.timer.origin / Math.abs(this.timer.rate), true);
+          elem.label = tt.format_duration(this.timer.to_msec(this.timer.origin), true);
         } else if (mode == 'current hh:mm:ss') {
-          elem.label = tt.format_duration(this.timer.get() / Math.abs(this.timer.rate), true);
+          elem.label = tt.format_duration(this.timer.to_msec(), true);
           if (running) {
             update_interval = Math.min(
               update_interval, 
-              next_time_update(1000, this.timer.get_msec(), this.timer.rate)
+              next_time_update(1000, this.timer.to_msec(), this.timer.rate)
             );
           }
         } else if (mode == 'time hh:mm:ss') {
@@ -268,14 +265,14 @@ class TimerView {
           );
 
         } else if (mode == 'start hh:mm') {
-          elem.label = tt.format_duration(this.timer.origin / Math.abs(this.timer.rate), false);
+          elem.label = tt.format_duration(this.timer.to_msec(this.timer.origin), false);
         } else if (mode == 'current hh:mm') {
-          elem.label = tt.format_duration(this.timer.get() / Math.abs(this.timer.rate), false);
+          elem.label = tt.format_duration(this.timer.to_msec(), false);
           if (running) {
             // Update every minute for current HM when running
             update_interval = Math.min(
               update_interval,
-              next_time_update(60000, this.timer.get_msec(), this.timer.rate)
+              next_time_update(60000, this.timer.to_msec(), this.timer.rate)
             );
           }
         } else if (mode == 'time hh:mm') {
@@ -403,21 +400,20 @@ class TimerFormatView {
     // Touch handler
     function touchHandler(button, xy) {
       // Increment or decrement row's format index based on the arrow tapped
-      for (var row_id of ROW_IDS) {
-        const prev_id = row_id + '.prev';
-        const next_id = row_id + '.next';
-        if (xy.x >= this.layout[prev_id].x
-            && xy.x <= this.layout[prev_id].x + this.layout[prev_id].w
-            && xy.y >= this.layout[prev_id].y
-            && xy.y <= this.layout[prev_id].y + this.layout[prev_id].h) {
-          this.decr_format_idx(row_id);
-          break;
-        } else if (xy.x >= this.layout[next_id].x
-                   && xy.x <= this.layout[next_id].x + this.layout[next_id].w
-                   && xy.y >= this.layout[next_id].y
-                   && xy.y <= this.layout[next_id].y + this.layout[next_id].h) {
-          this.incr_format_idx(row_id);
-          break;
+      for (let row_id of ROW_IDS) {
+        for (let btn_id of ['prev', 'next']) {
+          let elem = row_id + '.' + btn_id;
+          if (xy.x >= this.layout[elem].x
+              && xy.x <= this.layout[elem].x + this.layout[elem].w
+              && xy.y >= this.layout[elem].y
+              && xy.y <= this.layout[elem].y + this.layout[elem].h) {
+            if (btn_id === 'prev') {
+              this.decr_format_idx(row_id);
+            } else {
+              this.incr_format_idx(row_id);
+            }
+            break;
+          }
         }
       }
     }
