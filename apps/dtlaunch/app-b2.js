@@ -23,7 +23,7 @@
     hash : launchHash,
     apps : s.list(/\.info$/)
       .map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};})
-      .filter(app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || !app.type))
+      .filter(app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || (app.type=="launch" && settings.showLaunchers) || !app.type))
       .sort((a,b)=>{
         var n=(0|a.sortorder)-(0|b.sortorder);
         if (n) return n; // do sortorder first
