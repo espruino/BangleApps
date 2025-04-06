@@ -5,6 +5,12 @@ var layout;
 //var settings = modHS.getSettings();
 var appCache = modHS.getCache();
 
+results = {
+  color: 0,
+  volume: null,
+  colorAssessment: appCache.urine && appCache.urine.colorAssessment ? appCache.urine.colorAssessment : 0
+} 
+
 function YMDInt(date) {
   var year = date.getFullYear().toString();
   var month = (date.getMonth() + 1).toString().padStart(2, '0'); 
@@ -15,18 +21,13 @@ function YMDInt(date) {
 }
 
 function saveUrineData(color) {
-  let out = {
-    color: color,
-    colorAssessment: 0
-  };
   if (color > 0) {
     var d = new Date();
-    out.colorAssessment = YMDInt(d);
-  } else {
-    out.colorAssessment = appCache.urine && appCache.urine.colorAssessment ? appCache.urine.colorAssessment : 0;
+    results.color = color;
+    results.colorAssessment = YMDInt(d);
   }
   Bangle.buzz(150);
-  modHS.saveDataToFile('urine', 'urine', out);
+  modHS.saveDataToFile('urine', 'urine', results);
   g.clear();
   g.reset();
   layout = new Layout({
@@ -47,35 +48,39 @@ function saveUrineData(color) {
     Bangle.load();
   }, 500);
 }
-var dateNow = new Date();
-var lastUrineColorDate = appCache.urine && appCache.urine.colorAssessment ? appCache.urine.colorAssessment : 0;
-var hourCurrent = dateNow.getHours();
-var currentDay = YMDInt(dateNow);
-if (hourCurrent >= 16 && currentDay > lastUrineColorDate) {
-  var layout = new Layout({
-    type: "v", c: [
-      {
-        type: "h", c: [
-          { type: "btn", font: "6x8:2", label: " ", btnFaceCol: E.HSBtoRGB(0.3, 0.99, 1), cb: l => saveUrineData(2), fillx: 1, filly: 1, pad: 1 },
-          { type: "btn", font: "6x8:2", label: " ", btnFaceCol: E.HSBtoRGB(0.2, 1, 1), cb: l => saveUrineData(1), fillx: 1, filly: 1, pad: 1 }
 
-        ]
-      },
-      {
-        type: "h", c: [
-          { type: "btn", font: "6x8:2", label: " ", btnFaceCol: E.HSBtoRGB(0.38, 1, 1), cb: l => saveUrineData(3), fillx: 1, filly: 1, pad: 1 },
-          { type: "btn", font: "6x8:2", label: " ", btnFaceCol: E.HSBtoRGB(0.44, 1, 0.9), cb: l => saveUrineData(4), fillx: 1, filly: 1, pad: 1 },
-        ]
-      }
-    ]
-  });
-  g.clear();
-  g.reset();
-  layout.render();
-} else {
-  saveUrineData(0);
+function drawColorAssessment(){
+  var dateNow = new Date();
+  var lastUrineColorDate = appCache.urine && appCache.urine.colorAssessment ? appCache.urine.colorAssessment : 0;
+  var hourCurrent = dateNow.getHours();
+  var currentDay = YMDInt(dateNow);
+  if (hourCurrent >= 16 && currentDay > lastUrineColorDate) {
+    var layout = new Layout({
+      type: "v", c: [
+        {
+          type: "h", c: [
+            { type: "btn", font: "6x8:2", label: " ", btnFaceCol: E.HSBtoRGB(0.3, 0.99, 1), cb: l => saveUrineData(2), fillx: 1, filly: 1, pad: 1 },
+            { type: "btn", font: "6x8:2", label: " ", btnFaceCol: E.HSBtoRGB(0.2, 1, 1), cb: l => saveUrineData(1), fillx: 1, filly: 1, pad: 1 }
+  
+          ]
+        },
+        {
+          type: "h", c: [
+            { type: "btn", font: "6x8:2", label: " ", btnFaceCol: E.HSBtoRGB(0.38, 1, 1), cb: l => saveUrineData(3), fillx: 1, filly: 1, pad: 1 },
+            { type: "btn", font: "6x8:2", label: " ", btnFaceCol: E.HSBtoRGB(0.44, 1, 0.9), cb: l => saveUrineData(4), fillx: 1, filly: 1, pad: 1 },
+          ]
+        }
+      ]
+    });
+    g.clear();
+    g.reset();
+    layout.render();
+  } else {
+    saveUrineData(0);
+  }
 }
 
+drawColorAssessment();
 /*
 //Urine Colours adapted NSW chart and from the Hillmen Urine Chart to includes blood presence
 //https://www.health.nsw.gov.au/environment/beattheheat/Pages/urine-colour-chart.aspx

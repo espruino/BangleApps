@@ -1,4 +1,6 @@
 var studyTasksJSON = "heatsuite.tasks.json";
+let studyTasks = require('Storage').readJSON(studyTasksJSON, true) || {};
+
 var Layout = require("Layout");
 var modHS = require("HSModule");
 var layout;
@@ -17,16 +19,6 @@ function queueNRFFindDeviceTimeout() {
 }
 
 function findBtDevices() {
-  var filters = [];
-  if (settings.bt_bloodPressure_id !== undefined) {
-    filters.push({ id: settings.bt_bloodPressure_id });
-  }
-  if (settings.bt_coreTemperature_id !== undefined) {
-    filters.push({ id: settings.bt_coreTemperature_id });
-  }
-  if (settings.StudyTasks.bodyMass !== undefined) {
-    filters.push({ services: ['181b'] });
-  }
   NRF.setScan(); //clear any scans running!
   NRF.findDevices(function (devices) {
     var found = false;
@@ -40,11 +32,9 @@ function findBtDevices() {
           found = true;
           layout.msg.label = "BP Found";
           layout.render();
-          //macID = settings.bt_bloodPressure_id.split(" ");
-          //setTimeout(getBP(macID[0]), 2000);
           if (NRFFindDeviceTimeout) clearTimeout(NRFFindDeviceTimeout);
           return Bangle.load('heatsuite.bp.js');
-        } else if (services !== undefined && services.includes('181b')) {
+        } else if (services !== undefined && services.includes('181b') && Object.keys(studyTasks).includes("bodyMass")) {
           var data = d.serviceData[services];
           var ctlByte = data[1];
           var weightRemoved = ctlByte & (1 << 7);
@@ -54,7 +44,6 @@ function findBtDevices() {
             found = true;
             layout.msg.label = "Scale Found";
             layout.render();
-
             if (NRFFindDeviceTimeout) clearTimeout(NRFFindDeviceTimeout);
             return Bangle.load('heatsuite.mass.js');
           }
@@ -64,8 +53,6 @@ function findBtDevices() {
           found = true;
           layout.msg.label = "Temp Found";
           layout.render();
-          //macID = settings.bt_coreTemperature_id.split(" ");
-          //setTimeout(getTcore(macID[0]), 2000);
           if (NRFFindDeviceTimeout) clearTimeout(NRFFindDeviceTimeout);
           return Bangle.load('heatsuite.bletemp.js');
         }
@@ -78,7 +65,7 @@ function findBtDevices() {
       if (TaskScreenTimeout) clearTimeout(TaskScreenTimeout);
       if (NRFFindDeviceTimeout) clearTimeout(NRFFindDeviceTimeout);
     }
-  }, { timeout: 3000, active: true, filters: filters });
+  }, { timeout: 3000, active: true});
 }
 
 function taskButtonInterpretter(arg, string) {
@@ -101,7 +88,6 @@ function queueTaskScreenTimeout() {
 function draw() {
   g.clear();
   g.reset();
-  let studyTasks = require('Storage').readJSON(studyTasksJSON, true) || {};
   if (Object.keys(studyTasks).length === 0) {
     if(require("Storage").list().includes("heatsuite.survey.json")){ //likely just using for EMA survey
       return Bangle.load('heatsuite.survey.js'); //go right to survey!
@@ -134,6 +120,10 @@ function draw() {
   }
   var layoutOut = { type: "v", c: [] };
   var row = { type: "h", c: [] };
+  var rowCount = 2;
+  if( Object.keys(studyTasks).length > 4){
+    rowCount = 3; //so we can include up to 9 tasks on the screen at once
+  }
   Object.keys(studyTasks).forEach(key => {
     var btn = { type: "btn", fillx: 1, filly: 1 };
     btn.id = key;
@@ -157,8 +147,7 @@ function draw() {
       }
     }
     //builder for each icon in taskScreen
-    //if the row is bigger than 2 icons, skip to next one
-    if (row.c.length >= 2) {
+    if (row.c.length >= rowCount) {
       layoutOut.c.push(row);
       row = { type: "h", c: [] };
     }

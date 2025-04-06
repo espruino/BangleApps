@@ -153,6 +153,13 @@
                 onchange: v => {updateRecorder(key,v);}
             };
         }
+        menu['High Acc'] = {
+            value: settings.highAcc || false,
+            onchange: v => {
+                settings.highAcc = v;
+                writeSettings("highAcc", v);
+            }
+        };
         return menu;
     }
 

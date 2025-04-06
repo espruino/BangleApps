@@ -47,30 +47,19 @@ function _getRecordFile(type, headers) {
     var day = dt.getDate();
     if (day < 10) day = '0' + day;
     var date = dt.getFullYear() + "" + month + "" + day;
-    var fileName = settings.filePrefix + type + "_";
+    var fileName = settings.filePrefix + "_" + type + "_";
     fileName = fileName + date;
-    //header checking
-    //var fields = ["unix", "tz"];
-    //switch (type) {
-    //    case 'minData':
-    //        fields.push(headers);
-    //        break;
-    //    case 'gps':
-    //        fields.push(['lat','lon','alt','speed','course','fix','satellites']);
-    //        break;
-    //    default:
-    //        fields = headers;
-    //        break;
-    //}
-    if (require('Storage').list(fileName).length > 0) {
+    if (require('Storage').list(fileName).length > 0 && type !== "accel") {
         if(_checkFileHeaders(fileName,headers)){
             return require('Storage').open(fileName, 'a');
         }else{ // need to rename the old file as headers have changed
             _renameOldFile(fileName);
         }
     }
-    var storageFile = require("Storage").open(fileName, "w");
-    storageFile.write(headers.join(",") + "\n");
+    if (type !== "accel") {
+        var storageFile = require("Storage").open(fileName, "w");
+        storageFile.write(headers.join(",") + "\n");
+    }
     return require("Storage").open(fileName, "a");
 }
 function _checkStorageFree(type) {

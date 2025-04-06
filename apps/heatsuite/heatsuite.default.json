@@ -3,7 +3,7 @@
   "SAVE_DEBUG": false,
   "notifications" : true,
   "record" : ["bat","steps","hrm","baro","acc"],
-  "filePrefix": "htst_",
+  "filePrefix": "htst",
   "GPS" : true,
   "GPSAdaptiveTime" : 2,
   "GPSInterval" : 30,

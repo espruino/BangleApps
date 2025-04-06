@@ -16,19 +16,34 @@
   var processQueueTimeout = null;
   let initHandlerTimeout = null;
   let BTHRM_ConnectCheck = null;
+  //high Accelerometry data
+  var perSecAccHandler = null;
+  var highAccTimeout = null;
+  var highAccWriteTimeout = null;
   //Fall Detection
   var fallTime = 0;
   var fallDetected = false;
 
-  Bangle.setOptions({ 
+  Bangle.setOptions({
     "hrmSportMode": -1,
   });
-
+  //function for setting timeouts to the nearest second or minute
+  function timeoutAligned(periodMs, callback) {
+    var now = new Date();
+    var millisPassed = (now.getSeconds() * 1000) + now.getMilliseconds();
+    if (periodMs < 1000) periodMs = 1000; //nothing less than a second is allowed
+    var millisLeft = periodMs - (millisPassed % periodMs);
+    return setTimeout(() => { callback(); }, millisLeft);
+  }
+  function secondsSinceMidnight() {//valuable for compact storage of time
+    let d = new Date();
+    return d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds();
+  }
   function queueProcess(func, arg) {
     processQueue.push((next) => func(next, arg));
     if (!connectionLock) {
-      processNextInQueue(); 
-    }else{
+      processNextInQueue();
+    } else {
       if (!processQueueTimeout) {
         processQueueTimeout = setTimeout(processNextInQueue, 1000);
       }
@@ -46,7 +61,7 @@
         modHS.log("[ProcessQueue] Processing queued Task");
         processNextInQueue();
       });
-    }else{
+    } else {
       if (!processQueueTimeout) {
         processQueueTimeout = setTimeout(processNextInQueue, 1000);
       }
@@ -55,90 +70,92 @@
   function stringToBytes(str) {
     const byteArray = new Uint8Array(str.length);
     for (let i = 0; i < str.length; i++) {
-        byteArray[i] = str.charCodeAt(i);
+      byteArray[i] = str.charCodeAt(i);
     }
     return byteArray;
   }
   function xorEncryptWithSalt(payload, key, salt) {
-      const encrypted = [];
-      const keyLen = key.length;
-      const saltLen = salt.length;
+    const encrypted = [];
+    const keyLen = key.length;
+    const saltLen = salt.length;
 
-      for (let i = 0; i < payload.length; i++) {
-          encrypted[i] = payload[i] ^ key.charCodeAt(i % keyLen) ^ salt.charCodeAt(i % saltLen);
-      }
-      return encrypted;
+    for (let i = 0; i < payload.length; i++) {
+      encrypted[i] = payload[i] ^ key.charCodeAt(i % keyLen) ^ salt.charCodeAt(i % saltLen);
+    }
+    return encrypted;
   }
   function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        let temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-      }
-      return array;
+      const j = Math.floor(Math.random() * (i + 1));
+      let temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
+    return array;
   }
   function flattenArray(array) {
-      let flattened = [];
-      for (let i = 0; i < array.length; i++) {
-          if (Array.isArray(array[i])) {
-              // If the element is an array, concatenate it recursively
-              flattened = flattened.concat(flattenArray(array[i]));
-          } else {
-              // If it's not an array, add the element to the result
-              flattened.push(array[i]);
-          }
+    let flattened = [];
+    for (let i = 0; i < array.length; i++) {
+      if (Array.isArray(array[i])) {
+        // If the element is an array, concatenate it recursively
+        flattened = flattened.concat(flattenArray(array[i]));
+      } else {
+        // If it's not an array, add the element to the result
+        flattened.push(array[i]);
       }
-      return flattened;
+    }
+    return flattened;
   }
   function createRandomizedPayload(studyid, battery, temperature, heartRate, hr_loc, movement, pingFlag) {
-      let textBytes = stringToBytes(studyid);
-          if (textBytes.length < 4) {
-        const paddedArray = new Uint8Array(4);  // Create a new Uint8Array with 4 bytes (default 0x00)
-        paddedArray.set(textBytes);  // Copy the textBytes into the paddedArray
-        textBytes = paddedArray;  // Replace textBytes with the padded version
+    let textBytes = stringToBytes(studyid);
+    if (textBytes.length < 4) {
+      const paddedArray = new Uint8Array(4);  // Create a new Uint8Array with 4 bytes (default 0x00)
+      paddedArray.set(textBytes);  // Copy the textBytes into the paddedArray
+      textBytes = paddedArray;  // Replace textBytes with the padded version
     }
-      const dataBlocks = [];
-      dataBlocks.push([0x00, textBytes[0], textBytes[1], textBytes[2], textBytes[3]]); // Study Code
-      if (cache.hasOwnProperty('alert') && Object.keys(cache.alert).length > 0) {
-        var HEALTH_EVENTS = {
-          fall: 1,
-          custom: 99
-        };
-        var HEALTH_EVENT_TYPE = HEALTH_EVENTS[cache.alert.type] || HEALTH_EVENTS.custom;
-        dataBlocks.push([0x07, HEALTH_EVENT_TYPE]);
+    const dataBlocks = [];
+    dataBlocks.push([0x00, textBytes[0], textBytes[1], textBytes[2], textBytes[3]]); // Study Code
+    var alert = false;
+    if (cache.hasOwnProperty('alert') && Object.keys(cache.alert).length > 0) {
+      var HEALTH_EVENTS = {
+        fall: 1,
+        custom: 99
+      };
+      var HEALTH_EVENT_TYPE = HEALTH_EVENTS[cache.alert.type] || HEALTH_EVENTS.custom;
+      dataBlocks.push([0x07, HEALTH_EVENT_TYPE]);
+    }
+    if (studyid !== "####") {
+      if (battery != null) {
+        dataBlocks.push([0x01, battery]); // Battery level
       }
-      if (studyid !== "####") {
-        if (battery != null) {
-          dataBlocks.push([0x01, battery]); // Battery level
-        }
-        if (temperature != null && !isNaN(temperature)) {
-          dataBlocks.push([0x02, temperature & 255, (temperature >> 8) & 255]); // Temperature
-        }
-        if (heartRate != null && !isNaN(heartRate)) {
-          dataBlocks.push([0x03, heartRate]);
-        }
-        if (hr_loc != null && !isNaN(hr_loc)) {
-          dataBlocks.push([0x04, hr_loc]);
-        }
+      if (temperature != null && !isNaN(temperature)) {
+        dataBlocks.push([0x02, temperature & 255, (temperature >> 8) & 255]); // Temperature
+      }
+      if (heartRate != null && !isNaN(heartRate)) {
+        dataBlocks.push([0x03, heartRate]);
+      }
+      if (hr_loc != null && !isNaN(hr_loc) && !alert) { //sub this for an alert flag if needed!
+        dataBlocks.push([0x04, hr_loc]);
+      }
 
-        if (movement != null && !isNaN(movement)) {
-          dataBlocks.push([
-            0x05,
-            movement & 255,
-            (movement >> 8) & 255,
-            (movement >> 16) & 255,
-            (movement >> 24) & 255
-          ]);
-        }
+      if (movement != null && !isNaN(movement)) {
+        dataBlocks.push([
+          0x05,
+          movement & 255,
+          (movement >> 8) & 255,
+          (movement >> 16) & 255,
+          (movement >> 24) & 255
+        ]);
       }
-      if (!isNaN(pingFlag)) {
-        let statusByte = (+Bangle.isCharging() << 1) | pingFlag;
-        dataBlocks.push([0x06, statusByte]);
-      }
-      const randomizedDataBlocks = shuffleArray(dataBlocks);
-      const payload = flattenArray(randomizedDataBlocks);
-      return studyid !== "####" ? xorEncryptWithSalt(payload, "heatsuite", studyid) : payload;
+    }
+    if (!isNaN(pingFlag)) {
+      let statusByte = (+Bangle.isCharging() << 1) | pingFlag;
+      dataBlocks.push([0x06, statusByte]);
+    }
+    modHS.log(JSON.stringify(dataBlocks));
+    const randomizedDataBlocks = shuffleArray(dataBlocks);
+    const payload = flattenArray(randomizedDataBlocks);
+    return studyid !== "####" ? xorEncryptWithSalt(payload, "heatsuite", studyid) : payload;
   }
   //from: https://github.com/espruino/BangleApps/tree/master/apps/recorder
   //adapted to minute average data
@@ -219,7 +236,7 @@
         function onCORE(h) {
           core = newValueHandler(core, h.core);
           skin = newValueHandler(skin, h.skin);
-          if(core_hr > 0){
+          if (core_hr > 0) {
             core_hr = newValueHandler(core_hr, h.hr);
           }
           hsi = newValueHandler(hsi, h.hsi);
@@ -228,9 +245,9 @@
         }
         return {
           name: "CORESensor",
-          fields: ["core", "skin", "unit","core_hr", "hsi", "core_bat"],
+          fields: ["core", "skin", "unit", "core_hr", "hsi", "core_bat"],
           getValues: () => {
-            const result = [core.avg === null ? null : core.avg.toFixed(2), skin.avg === null ? null : skin.avg.toFixed(2),unit,core_hr.avg === null ? null : core_hr.avg.toFixed(0),hsi.avg === null ? null : hsi.avg.toFixed(1),core_bat];
+            const result = [core.avg === null ? null : core.avg.toFixed(2), skin.avg === null ? null : skin.avg.toFixed(2), unit, core_hr.avg === null ? null : core_hr.avg.toFixed(0), hsi.avg === null ? null : hsi.avg.toFixed(1), core_bat];
             core = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
             skin = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
             core_hr = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
@@ -293,8 +310,8 @@
       acc: function () {
         var accMagArray = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
         function accelHandler(accel) {
-          // magnitude is computed as: x*x + y*y + z*z
-          // to compute Elucidean Norm Minus One, simply run: sqrt(mag) - 1
+          // magnitude is computed as: sqrt(x*x + y*y + z*z)
+          // to compute Elucidean Norm Minus One, simply run: mag - 1
           // (https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0061691) 
           accMagArray = newValueHandler(accMagArray, accel.mag);
         }
@@ -361,18 +378,92 @@
     arr.max = (value > arr.max) ? value : arr.max;
     return arr;
   }
+  //increased accelerometer data storage for higher resolution activity tracking 
+  function perSecAcc(status) {
+    if(!status){
+      if (perSecAccHandler) Bangle.removeListener('accel', perSecAccHandler);
+      if (highAccTimeout) clearTimeout(highAccTimeout);
+      if (highAccWriteTimeout) clearTimeout(highAccWriteTimeout);
+      return;
+    }
+    function arrayAcc() {
+      return { count: 0, sum: 0 };
+    }
+    function updateArray(acc, value) {
+      acc.sum += value;
+      acc.count++;
+    }
+    function getAvg(acc) {
+      return acc.count ? acc.sum / acc.count : 0;
+    }
+    let x = arrayAcc();
+    let y = arrayAcc();
+    let z = arrayAcc();
+    let accTemp = [];
+    function perSecAccHandler(accel){
+      updateArray(x, accel.x);
+      updateArray(y, accel.y);
+      updateArray(z, accel.z);
+    }
+    Bangle.on('accel', perSecAccHandler);
 
-  function updateBLEAdvert(data){
-      var unix = parseInt((new Date().getTime() / 1000).toFixed(0));
-      var batt = null,
-          rawTemp = null,
-          temperature = null,
-          heartRate = null,
-          hr_loc = null,
-          rawMovement = null,
-          movement = null;
+    function writeAccLog(buf) {
+      let f = modHS.getRecordFile("accel", []);
+      accTemp.forEach(b => {
+        let dv = new DataView(b.buffer);
+        let t = dv.getUint32(0, true);
+        let x = dv.getInt16(4, true);
+        let y = dv.getInt16(6, true);
+        let z = dv.getInt16(8, true);
+        f.write([t, x, y, z].join(",") + "\n");
+      });
+      f = null;
+      accTemp = [];
+    }
+    function writeHSAccelSetTimeout() {
+      if (accTemp.length > 0) {
+        queueProcess((next, buf) => {
+          writeAccLog(buf);
+          next();
+        },accTemp);
+        accTemp = [];
+      }
+      highAccWriteTimeout = timeoutAligned(10000, writeHSAccelSetTimeout); //check every 10 seconds
+    }
+    function tempAccLog() {
+      let scaledX = Math.round(getAvg(x) * 8192);
+      let scaledY = Math.round(getAvg(y) * 8192);
+      let scaledZ = Math.round(getAvg(z) * 8192);
+      let secondsSM = secondsSinceMidnight();
+      let b = new Uint8Array(10);
+      let dv = new DataView(b.buffer);
+      dv.setUint32(0, secondsSM, true);  
+      dv.setInt16(4, scaledX, true);
+      dv.setInt16(6, scaledY, true);
+      dv.setInt16(8, scaledZ, true);
+      accTemp.push(b);  // Push Uint8Array
+      x = arrayAcc();
+      y = arrayAcc();
+      z = arrayAcc();
+      highAccTimeout = timeoutAligned(1000, tempAccLog);
+    }
+    let rawAccLogInt = (settings.AccLogInt ? settings.AccLogInt * 1000 : 1000);
+    let accLogInt = Math.max(1000, Math.round(rawAccLogInt / 1000) * 1000);
+    highAccTimeout = timeoutAligned(accLogInt, tempAccLog);
+    highAccWriteTimeout = timeoutAligned(30000, writeHSAccelSetTimeout);
+  }
+  
+  function updateBLEAdvert(data) {
+    var unix = parseInt((new Date().getTime() / 1000).toFixed(0));
+    var batt = null,
+      rawTemp = null,
+      temperature = null,
+      heartRate = null,
+      hr_loc = null,
+      rawMovement = null,
+      movement = null;
     if (data.length > 0) {
-      var headers = ['unix','tz'];
+      var headers = ['unix', 'tz'];
       activeRecorders.forEach(recorder => headers.push.apply(headers, recorder.fields));
       const safeGet = (field) => {
         const index = headers.indexOf(field);
@@ -392,44 +483,44 @@
       movement = (rawMovement != null) ? Math.round(rawMovement * 10000) : null;
     }
     var studyid = settings.studyID || "####";
-        if (studyid.length > 4) {
-          studyid = studyid.substring(0, 4);
-        }
+    if (studyid.length > 4) {
+      studyid = studyid.substring(0, 4);
+    }
     var lastNodePing = cache.lastNodePing || 0;
     var nodePing = (Math.abs(unix - lastNodePing) > 360) ? 1 : 0;
     let advert = createRandomizedPayload(studyid, batt, temperature, heartRate, hr_loc, movement, nodePing);
-    console.log(advert);
+    modHS.log(advert);
     require("ble_advert").set(bleAdvertGen, advert);
   }
 
-  function fallDetectFunc(acc){
-      if(!fallDetected){
-        let d = new Date().getTime();
-        if(fallTime != 0){
-          modHS.log("acc",acc.mag);
-        }
-        if(fallTime != 0 && d - fallTime > 200){
-          fallTime = 0; fallDetected = false;
-        }else if (acc.mag < 0.3 && fallTime === 0){
-          fallTime = d;
-          modHS.log("FALLING",fallTime);
-        }else if(acc.mag > 2.1 && d - fallTime < 200){
-          //IMPACT
-          Bangle.buzz(400);
-          E.showPrompt("Did you fall?",{title: "FALL DETECTION",img:atob("FBQBAfgAf+Af/4P//D+fx/n+f5/v+f//n//5//+f//n////3//5/n+P//D//wf/4B/4AH4A=")}).then((r) => {
-            if (r) {
-                fallDetected = true;
-                modHS.saveDataToFile('alert', 'alert', {'type':'fall'});
-                Bangle.showClock();
-            }else{
-                Bangle.showClock(); //no fall, so just return to clock
-            }
-        });
-        }
+  function fallDetectFunc(acc) {
+    if (!fallDetected) {
+      let d = new Date().getTime();
+      if (fallTime != 0) {
+        modHS.log("acc", acc.mag);
       }
+      if (fallTime != 0 && d - fallTime > 200) {
+        fallTime = 0; fallDetected = false;
+      } else if (acc.mag < 0.3 && fallTime === 0) {
+        fallTime = d;
+        modHS.log("FALLING", fallTime);
+      } else if (acc.mag > 2.1 && d - fallTime < 200) {
+        //IMPACT
+        Bangle.buzz(400);
+        E.showPrompt("Did you fall?", { title: "FALL DETECTION", img: atob("FBQBAfgAf+Af/4P//D+fx/n+f5/v+f//n//5//+f//n////3//5/n+P//D//wf/4B/4AH4A=") }).then((r) => {
+          if (r) {
+            fallDetected = true;
+            modHS.saveDataToFile('alert', 'alert', { 'type': 'fall' });
+            Bangle.showClock();
+          } else {
+            Bangle.showClock(); //no fall, so just return to clock
+          }
+        });
+      }
+    }
   }
 
-  function storeTempLog(unix){
+  function storeTempLog(unix) {
     var fields = [unix, ((new Date()).getTimezoneOffset() * -60)];
     activeRecorders.forEach(recorder => fields.push.apply(fields, recorder.getValues()));
     dataLog.push(fields);
@@ -444,7 +535,7 @@
     try {
       if (storageFile) {
         while (dataLog.length > 0) {
-          let item = dataLog.shift(); 
+          let item = dataLog.shift();
           storageFile.write(item.join(',') + '\n');
         }
       }
@@ -466,104 +557,104 @@
   }
 
   function writeGPS() {
-      var storageFile = modHS.getRecordFile('gps',["unix", "tz",'lat',"lon","alt","speed","course","fix","satellites"]);
-      if (storageFile) {
-        while (gpsLog.length > 0) { //store it
-          let item = gpsLog.shift(); 
-          storageFile.write(item.join(',') + '\n');
-          cache["lastGPSSignal"] = item[0];
-          queueProcess((next,cache) => {
-            modHS.writeCache(cache);
-            next();
-          },cache);
-        }
+    var storageFile = modHS.getRecordFile('gps', ["unix", "tz", 'lat', "lon", "alt", "speed", "course", "fix", "satellites"]);
+    if (storageFile) {
+      while (gpsLog.length > 0) { //store it
+        let item = gpsLog.shift();
+        storageFile.write(item.join(',') + '\n');
+        cache["lastGPSSignal"] = item[0];
+        queueProcess((next, cache) => {
+          modHS.writeCache(cache);
+          next();
+        }, cache);
+      }
     }
   }
   function gpsHandler() {
-    if(settings.GPS){
-      function logGPS(f){
+    if (settings.GPS) {
+      function logGPS(f) {
         if (!isNaN(f.lat)) {
           const unix = parseInt((new Date().getTime() / 1000).toFixed(0));
-          if(unix > lastGPSFix + 60){
-            var fields = [unix, ((new Date()).getTimezoneOffset() * -60),f.lat,f.lon,f.alt,f.speed,f.course,f.fix,f.satellites];
+          if (unix > lastGPSFix + 60) {
+            var fields = [unix, ((new Date()).getTimezoneOffset() * -60), f.lat, f.lon, f.alt, f.speed, f.course, f.fix, f.satellites];
             gpsLog.push(fields);
             lastGPSFix = unix;
           }
         }
       }
       Bangle.on('GPS', logGPS);
-      Bangle.setGPSPower(1,appName);
+      Bangle.setGPSPower(1, appName);
       var updateTime = settings.GPSInterval !== undefined ? settings.GPSInterval * 60 : 600;
       var searchTime = settings.GPSScanTime !== undefined ? settings.GPSScanTime * 60 : 60;
       var adaptiveTime = settings.GPSAdaptiveTime !== undefined ? settings.GPSAdaptiveTime * 60 : 120;
-      require("gpssetup").setPowerMode({ power_mode:"PSMOO", update: updateTime, search:searchTime, adaptive: adaptiveTime,appName: appName});
-    }else{
-      Bangle.setGPSPower(0,appName); //just make sure its off
+      require("gpssetup").setPowerMode({ power_mode: "PSMOO", update: updateTime, search: searchTime, adaptive: adaptiveTime, appName: appName });
+    } else {
+      Bangle.setGPSPower(0, appName); //just make sure its off
     }
   }
 
-function studyTaskCheck(timenow) {
-  modHS.log("[StudyTask] Func init at " + timenow);
-  let notifications = false;
-  const tasks = settings.StudyTasks;
-  for (const key in tasks) {
-    const task = tasks[key];
-    modHS.log(`[StudyTask] Processing task: ${JSON.stringify(task)}`);
-    if (!cache[key]) {
-      cache[key] = {}; 
-    }
-    const d = new Date(timenow * 1000);
-    const hours = d.getHours();
-    const minutes = d.getMinutes().toString().padStart(2, "0");
-    const tod = parseInt(`${hours}${minutes}`);
-    const lastTaskTime = cache[key].unix || 0;
-    const debounceTime = (timenow - lastTaskTime) >= task.debounce;
-    if (Array.isArray(task.tod) && task.tod.includes(tod) && debounceTime) {
-      modHS.log(`[StudyTask] Time to notify: ${task}`);
-      const taskID = { id: key, time: timenow };
-      cache.taskQueue = cache.taskQueue || []; // Ensure taskQueue exists
-      cache.taskQueue.push(taskID);
-      var seen = {};
-      var newTaskQueue = [];
-      for (var i = 0; i < cache.taskQueue.length; i++) {
-        var obj = cache.taskQueue[i];
-        if (!seen[obj.id]) {
-          seen[obj.id] = true;
-          newTaskQueue.push(obj);
+  function studyTaskCheck(timenow) {
+    modHS.log("[StudyTask] Func init at " + timenow);
+    let notifications = false;
+    const tasks = settings.StudyTasks;
+    for (const key in tasks) {
+      const task = tasks[key];
+      modHS.log(`[StudyTask] Processing task: ${JSON.stringify(task)}`);
+      if (!cache[key]) {
+        cache[key] = {};
+      }
+      const d = new Date(timenow * 1000);
+      const hours = d.getHours();
+      const minutes = d.getMinutes().toString().padStart(2, "0");
+      const tod = parseInt(`${hours}${minutes}`);
+      const lastTaskTime = cache[key].unix || 0;
+      const debounceTime = (timenow - lastTaskTime) >= task.debounce;
+      if (Array.isArray(task.tod) && task.tod.includes(tod) && debounceTime) {
+        modHS.log(`[StudyTask] Time to notify: ${task}`);
+        const taskID = { id: key, time: timenow };
+        cache.taskQueue = cache.taskQueue || []; // Ensure taskQueue exists
+        cache.taskQueue.push(taskID);
+        var seen = {};
+        var newTaskQueue = [];
+        for (var i = 0; i < cache.taskQueue.length; i++) {
+          var obj = cache.taskQueue[i];
+          if (!seen[obj.id]) {
+            seen[obj.id] = true;
+            newTaskQueue.push(obj);
+          }
         }
+        cache.taskQueue = newTaskQueue;
+        modHS.log(`[StudyTask] ${JSON.stringify(cache)}`);
+        if (task.notify) {
+          notifications = true;
+        }
+        modHS.writeCache(cache);
+        WIDGETS["heatsuite"].draw();
       }
-      cache.taskQueue = newTaskQueue;
-      modHS.log(`[StudyTask] ${JSON.stringify(cache)}`);
-      if (task.notify) {
-        notifications = true;
-      }
-      modHS.writeCache(cache);
-      WIDGETS["heatsuite"].draw();
     }
+    if (notifications) {
+      Bangle.buzz(200);
+      setTimeout(() => Bangle.buzz(200), 300);
+    }
+    if (notifications && Bangle.CLOCK && settings.notifications) {
+      const desc = `Tasks: ${cache.taskQueue.length}`;
+      E.showPrompt(desc, {
+        title: "NOTIFICATION",
+        img: atob("FBQBAfgAf+Af/4P//D+fx/n+f5/v+f//n//5//+f//n////3//5/n+P//D//wf/4B/4AH4A="),
+        buttons: {
+          " X ": false,
+          " >> ": true
+        }
+      }).then(v => {
+        if (v) {
+          Bangle.load("heatsuite.app.js");
+        } else {
+          Bangle.load();
+        }
+      });
+    }
+    modHS.log("[StudyTask] Func end");
   }
-  if (notifications) {
-    Bangle.buzz(200);
-    setTimeout(() => Bangle.buzz(200), 300);
-  }
-  if (notifications && Bangle.CLOCK && settings.notifications) {
-    const desc = `Tasks: ${cache.taskQueue.length}`;
-    E.showPrompt(desc, {
-      title: "NOTIFICATION",
-      img: atob("FBQBAfgAf+Af/4P//D+fx/n+f5/v+f//n//5//+f//n////3//5/n+P//D//wf/4B/4AH4A="),
-      buttons: {
-        " X ": false,
-        " >> ": true
-      }
-    }).then(v => {
-      if (v) {
-        Bangle.load("heatsuite.app.js");
-      } else {
-        Bangle.load();
-      }
-    });
-  }
-  modHS.log("[StudyTask] Func end");
-}
 
   //heart beat of the backend
   function init() {
@@ -575,35 +666,35 @@ function studyTaskCheck(timenow) {
     queueProcess((next, unix) => {
       modHS.log("[HRM + StudyTask]");
       try {
-          // HRM interval check
-          if (settings.HRMInterval > 0) {
-              if (hrmInterval >= settings.HRMInterval) {
-                  toggleHRM();
-                  hrmInterval = 0;
-              }
-              hrmInterval++;
+        // HRM interval check
+        if (settings.HRMInterval > 0) {
+          if (hrmInterval >= settings.HRMInterval) {
+            toggleHRM();
+            hrmInterval = 0;
           }
-          if (Object.keys(settings.StudyTasks).length > 0) {
-              studyTaskCheck(unix); // This might also need to be queued if async
-          }
+          hrmInterval++;
+        }
+        if (Object.keys(settings.StudyTasks).length > 0) {
+          studyTaskCheck(unix); // This might also need to be queued if async
+        }
       } catch (error) {
-          modHS.log("Error in StudyTaskCheck:", error);
+        modHS.log("Error in StudyTaskCheck:", error);
       } finally {
-          next(); // Ensure next() is called even if an error occurs
+        next(); // Ensure next() is called even if an error occurs
       }
     }, unix);
   }
-
-  function initHandler(){
-    var date = new Date();
-    var millisLeft = 60000 - ((date.getSeconds() * 1000) + date.getMilliseconds());
-    initHandlerTimeout = setTimeout(() => {init();initHandler();}, millisLeft);
+  function initHandler() {
+    function callback() {
+      init(); initHandler();
+    }
+    initHandlerTimeout = timeoutAligned(60000, callback);
   }
 
-  function startRecorder(){
-    settings = modHS.getSettings(); 
-    if(initHandlerTimeout) clearTimeout(initHandlerTimeout);
-    if(BTHRM_ConnectCheck) clearInterval(BTHRM_ConnectCheck);
+  function startRecorder() {
+    settings = modHS.getSettings();
+    if (initHandlerTimeout) clearTimeout(initHandlerTimeout);
+    if (BTHRM_ConnectCheck) clearInterval(BTHRM_ConnectCheck);
     activeRecorders = []; //clear active recorders
     recorders = getRecorders();
     settings.record.forEach(r => {
@@ -615,13 +706,13 @@ function studyTaskCheck(timenow) {
       activeRecorder.start();
       activeRecorders.push(activeRecorder);
     });
-    if(settings.hasOwnProperty('fallDetect') && settings.fallDetect){
+    if (settings.hasOwnProperty('fallDetect') && settings.fallDetect) {
       Bangle.on('accel', fallDetectFunc);
-    }else{
+    } else {
       Bangle.removeListener('accel', fallDetectFunc);
     }
     //BTHRM Additions
-    if (settings.record.includes('bthrm') && Bangle.hasOwnProperty("isBTHRMConnected") ) {
+    if (settings.record.includes('bthrm') && Bangle.hasOwnProperty("isBTHRMConnected")) {
       var BTHRMStatus = 0;
       BTHRM_ConnectCheck = setInterval(function () {
         if (Bangle.isBTHRMConnected() != BTHRMStatus) {
@@ -632,21 +723,29 @@ function studyTaskCheck(timenow) {
     }
     updateBLEAdvert(lastBLEAdvert);
     initHandler();
+    if (settings.highAcc !== undefined && settings.highAcc) {
+      perSecAcc(settings.highAcc);
+    }
   }
 
   startRecorder();
-  
+
   gpsHandler();
 
-  function writeSetTimeout(){
-    if(!connectionLock){
-      if(dataLog.length>0){
-        writeLog();
+  function writeSetTimeout() {
+      if (dataLog.length > 0) {
+        queueProcess((next, unix) => {
+          writeLog();
+          next();
+        },0);
       }
-      if(gpsLog.length>0){
-        writeGPS();
+      if (gpsLog.length > 0) {
+        //writeGPS();
+        queueProcess((next, unix) => {
+          writeGPS();
+          next();
+        },0);
       }
-    }
     setTimeout(writeSetTimeout, 5000);
   }
 
@@ -659,11 +758,12 @@ function studyTaskCheck(timenow) {
     g.reset();
     if (cache.taskQueue !== undefined) (cache.taskQueue.length > 0 ? g.setColor("#f00") : g.setColor("#0f0"));
     g.setFontAlign(0, 0);
-    g.fillRect({ x: this.x, y: this.y, w: this.x + iconWidth - 1, h: this.y + 23 , r: 8 });
+    g.fillRect({ x: this.x, y: this.y, w: this.x + iconWidth - 1, h: this.y + 23, r: 8 });
     g.setColor(-1);
     g.setFont("Vector", 12);
-    g.drawString("HS", this.x + 12, this.y + 12);
-    g.setColor((Bangle.hasOwnProperty("isBTHRMConnected") && Bangle.isBTHRMConnected()) ? "#00F" : "#0f0"); g.drawImage(atob("EhCCAAKoAqgCqqiqqCqqqqqqqqqqqqqqqqqqqqqqqqqqqqqiqqqqqAqqqqoAKqqqgACqqqAAAqqoAAAKqgAAACqAAAAAoAAAAAoAAA=="), this.x + 21, this.y + 3);
+    g.drawImage(atob("FBfCAP//AADk+kPKAAAoAAAAAKoAAAAAKAAAAFQoFQAAVTxVAFQVVVQVRABVABFVEBQEVQBUABUAAFUAVQCoFVVUKogAVQAiqBVVVCoAVQBVAABUABUAVRAUBFVEAFUAEVQVVVQVAFU8VQAAVCgVAAAAKAAAAACqAAAAACgAAA=="), this.x + 1, this.y + 1);
+    g.setColor((Bangle.hasOwnProperty("isBTHRMConnected") && Bangle.isBTHRMConnected()) ? "#00F" : "#0f0");
+    g.drawImage(atob("EhCCAAKoAqgCqqiqqCqqqqqqqqqqqqqqqqqqqqqqqqqqqqqiqqqqqAqqqqoAKqqqgACqqqAAAqqoAAAKqgAAACqAAAAAoAAAAAoAAA=="), this.x + 22, this.y + 3);
   }
   WIDGETS.heatsuite = {
     area: 'tr',
@@ -682,23 +782,23 @@ function studyTaskCheck(timenow) {
 
 
   //Diagnosing BLUETOOTH Connection Issues
-  if(NRF.getSecurityStatus().connected){ //if widget starts while a bluetooth connection exits, need to force connection flag
+  if (NRF.getSecurityStatus().connected) { //if widget starts while a bluetooth connection exits, need to force connection flag
     connectionLock = true;
   }
-  NRF.on('error', function(msg) {
-    modHS.log("[NRF][ERROR] "+msg);
-   });
-  NRF.on('connect', function(addr) {
-    connectionLock = true;
-    modHS.log("[NRF][CONNECTED] "+JSON.stringify(addr));
+  NRF.on('error', function (msg) {
+    modHS.log("[NRF][ERROR] " + msg);
   });
-  NRF.on('disconnect', function(reason) {
+  NRF.on('connect', function (addr) {
+    connectionLock = true;
+    modHS.log("[NRF][CONNECTED] " + JSON.stringify(addr));
+  });
+  NRF.on('disconnect', function (reason) {
     connectionLock = false;
     cache = modHS.getCache(); //update cache each disconnect
-    if(lastBLEAdvert){
+    if (lastBLEAdvert) {
       updateBLEAdvert(lastBLEAdvert); //update this if its changed with cache update
     }
     processNextInQueue();
-    modHS.log("[NRF][DISCONNECT] "+JSON.stringify(reason));
+    modHS.log("[NRF][DISCONNECT] " + JSON.stringify(reason));
   });
 })();

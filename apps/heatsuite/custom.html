@@ -2,6 +2,7 @@
 
 <head>
   <link rel="stylesheet" href="../../css/spectre.min.css">
+  <link rel="stylesheet" href="../../css/spectre-icons.min.css">
   <style>
     .jsoneditor-container {
       height: 500px;
@@ -25,6 +26,12 @@
     <li class="tab-item" id="tab-surveyContainer">
       <a href="javascript:showTab('surveyContainer')">EMA</a>
     </li>
+    <li class="tab-item" id="tab-downloadData">
+      <a href="javascript:showTab('downloadData')">
+        <div id="downloadData-tab-label" class="" data-badge="0">Download
+        </div>
+      </a>
+    </li>
   </ul>
   <div class="container apploader-tab" id="settingsContainer">
     <form id="heatsuiteSettings">
@@ -42,7 +49,7 @@
         </label>
         <label class="form-switch">
           <input type="checkbox" name="record" value="acc">
-          <i class="form-icon"></i> Accelerometry
+          <i class="form-icon"></i> Accelerometry (per minute magnitude)
         </label>
         <label class="form-switch">
           <input type="checkbox" name="record" value="bat">
@@ -65,7 +72,19 @@
           <i class="form-icon"></i> CORE Sensor (Uses coretemp app/module)
         </label>
       </div>
-
+      <div class="row pt-2"><strong>High Resolution Accelerometer Data:</strong>
+        <br>If you want to record high temporal resolution accelerometer data (per second x,y,z; can store up to 4 days of data, will rollover).
+        <div class="form-group">
+          <label class="form-switch">
+            <input type="checkbox" name="highAcc">
+            <i class="form-icon"></i> High Temporal Accelerometry (xyz) 
+          </label>
+          <label class="form-label" for="input-AccLogInt">Interval (seconds)</label>
+          <input class="form-input" type="number" name="AccLogInt" id="input-AccLogInt" value=1 min=1>
+          <p class="form-input-hint mb-0">Interval for logging averaged x,y,z from accelerometer - default is 1 second
+          </p>
+        </div>
+      </div>
       <div class="row pt-2"><strong>GPS PSMOO Options:</strong>
         <br>Option to have GPS work in PSMOO (uses GPSSetup app/module)
       </div>
@@ -101,7 +120,7 @@
         <p class="form-input-hint mb-0">For communicating with HeatSuite Nodes. Maximum of 4 (no special) characters.
         </p>
         <label class="form-label" for="input-filePrefix">File Prefix</label>
-        <input class="form-input" type="text" name="filePrefix" id="input-filePrefix" value="htst_" minlength="1"
+        <input class="form-input" type="text" name="filePrefix" id="input-filePrefix" value="htst" minlength="1"
           maxlength="5">
         <p class="form-input-hint mb-0">ONLY CHANGE IF YOU KNOW WHAT YOU ARE DOING.</p>
 
@@ -123,8 +142,19 @@
     <div id="heatsuite_surveyFile_editor" class="jsoneditor-container"></div>
     <button class="btn btn-primary" id="heatsuite_surveyFile_resetBtn">Restore Default</button>
   </div>
-
-  <p><button id="upload" class="btn btn-primary">Upload</button></p>
+  <div class="container apploader-tab pb-2" id="downloadData" style="display:none;">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>File name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="downloadData-tab-content">
+      </tbody>
+    </table>
+  </div>
+  <p class="p-2 m-2"><button id="upload" class="btn btn-success">Upload</button></p>
 
   <script src="../../core/lib/customize.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/jsoneditor@latest/dist/jsoneditor.min.css" rel="stylesheet" type="text/css">
@@ -326,6 +356,92 @@
         });
       });
     }
+    function readStorageAsync(filename) {
+      return new Promise((resolve, reject) => {
+        Util.readStorageFile(filename, function (data) {
+          try {
+            resolve(data);
+          } catch (err) {
+            reject(err);
+          }
+        });
+      });
+    }
+    function DownloadSingleFile(filename){
+      Util.readStorageFile(filename, (c)=>{
+        let url;
+        const a = document.createElement('a');
+        fnArr = filename.split('_');
+        if(fnArr[1] !== 'accel'){
+          const blob = new Blob([c], { type: 'text/plain' });
+          url = URL.createObjectURL(blob);
+        }else{
+
+          function secondsToClock(seconds) {
+            let h = Math.floor(seconds / 3600);
+            let m = Math.floor((seconds % 3600) / 60);
+            let s = seconds % 60;
+            return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':');
+          }
+          let csv = "time,seconds,x,y,z\n"; // Header
+          let lines = c.trim().split("\n");
+          for (let line of lines) {
+            let parts = line.split(",").map(v => parseInt(v, 10));
+            if (parts.length !== 4) continue;
+            let seconds = parts[0];
+            let x = parts[1]/8192;
+            let y = parts[2]/8192;
+            let z = parts[3]/8192;
+            let time = secondsToClock(seconds);
+            csv += `${time},${seconds},${x},${y},${z}\n`;
+          }
+          const blob = new Blob([csv], { type: 'text/csv' });
+          url = URL.createObjectURL(blob);
+        }
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+        return;
+      });
+    }
+    function downloadAllFiles(){
+      
+    }
+    function deleteFile(filename){
+      if (confirm(`Are you sure you want to delete ${filename}?`)) {
+        Util.eraseStorageFile(filename,(c) =>{
+          var filePrefix = settings.filePrefix || 'htst';
+          return Puck.eval('require("Storage").list(/^'+filePrefix+'/)',renderDownloadTab);
+        }); 
+      }
+    }
+    function renderDownloadTabLogs(e){
+      var element = document.getElementById("downloadData-tab-content");
+      if(e.length > 0){
+
+      }else{
+          e.innerHTML = "No files to download.";
+      }
+    }
+    function renderDownloadTab(e){
+      var element = document.getElementById("downloadData-tab-content");
+      var tab_badge = document.getElementById("downloadData-tab-label");
+      if(e.length > 0){
+        tab_badge.classList.add("badge");
+        tab_badge.dataset.badge = e.length;
+        element.innerHTML = "";
+        e.forEach((file)=>{
+          var filename = file.replace(/\x01$/, '');
+          element.insertAdjacentHTML('beforeend', `<tr id="file-${filename}"><td>${filename}</td><td><i class="icon icon-download" onclick="DownloadSingleFile('${filename}');"></i>&nbsp; <i class="icon icon-delete" onclick="deleteFile('${filename}');"></i></td></tr>`);
+        });
+        element.insertAdjacentHTML('beforeend',`<tr id="end" class="text-bold"><td><button class="btn">Download All <i class="icon icon-download" onclick="DownloadAllFiles(JSON.parse("${e}"));"></i></button></td><td><button class="btn">Delete All <i class="icon icon-delete" onclick=""></i></button> </td></tr>`);
+      }else{
+          tab_badge.classList.remove("badge");
+          tab_badge.dataset.badge = 0;
+          element.innerHTML = '<tr class="active"><td>No Files</td></tr>';
+      }
+    }
     function onInit(device) {
       let settings = {};
       let promise = Promise.resolve();
@@ -341,6 +457,14 @@
         const settingsForm = document.getElementById('heatsuiteSettings');
         fillFormFromJson(settingsForm, settings);
       });
+      promise = promise.then(() =>{
+        document.getElementById("downloadData-tab-content").innerHTML = '<div class="loading"></div>';;
+        var filePrefix = settings.filePrefix || 'htst';
+        return Puck.eval('require("Storage").list(/^'+filePrefix+'/)',renderDownloadTab);
+      });
+      //promise = promise.then(()=>{
+      //  return Puck.eval('require("Storage").list(heatsuite.log)',renderDownloadTabLogs);
+      //});
       promise.catch(error => {
         console.error("Error loading settings:", error);
       });
@@ -378,6 +502,10 @@
       const studyIDInput = document.getElementById('input-studyID');
       studyIDInput.addEventListener("input", () => {
         studyIDInput.value = studyIDInput.value.replace(/[^a-zA-Z0-9]/g, '');
+      });
+      const filePrefixInput = document.getElementById('input-filePrefix');
+      filePrefixInput.addEventListener("input", () => {
+        filePrefixInput.value = filePrefixInput.value.replace(/[^a-zA-Z0-9]/g, '');
       });
       const settingsForm = document.getElementById('heatsuiteSettings');
       settingsForm.addEventListener('input', autosaveSettings);
