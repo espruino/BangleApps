@@ -164,4 +164,19 @@ function draw() {
   queueNRFFindDeviceTimeout();
   queueTaskScreenTimeout();
 }
+
+Bangle.setLocked(false); //unlock screen!
+require("widget_utils").hide();
+Bangle.setUI({
+  mode : "custom",
+  btn : ()=>{
+    Bangle.load();
+  },
+  remove: () => {
+    if (TaskScreenTimeout) clearTimeout(TaskScreenTimeout);
+    if (NRFFindDeviceTimeout) clearTimeout(NRFFindDeviceTimeout);
+    NRFFindDeviceTimeout = undefined;
+    TaskScreenTimeout = undefined;
+  }
+});
 draw();

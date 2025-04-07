@@ -5,7 +5,7 @@ var layout;
 //var settings = modHS.getSettings();
 var appCache = modHS.getCache();
 
-results = {
+var results = {
   color: 0,
   volume: null,
   colorAssessment: appCache.urine && appCache.urine.colorAssessment ? appCache.urine.colorAssessment : 0

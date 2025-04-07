@@ -398,9 +398,9 @@
     }
     let mag = arrayAcc();
     let accTemp = [];
-    function perSecAccHandler(accel){
+    perSecAccHandler = function(accel){
       updateArray(mag, accel.mag);
-    }
+    };
     Bangle.on('accel', perSecAccHandler);
 
     function writeAccLog(buf) {
@@ -772,11 +772,12 @@
       WIDGETS["heatsuite"].draw();
     }
   };
-  Bangle.on('swipe', function (dLR, dUD) {
-    if (dLR === 1 && dUD === 0) {
-      Bangle.load('heatsuite.app.js');
-    }
-  });
+
+  Bangle.on('tap', function(data) {
+      if(data.double && data.dir === "front"){
+        Bangle.load('heatsuite.app.js');
+      }
+    });
 
 
   //Diagnosing BLUETOOTH Connection Issues
