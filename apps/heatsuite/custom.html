@@ -73,15 +73,15 @@
         </label>
       </div>
       <div class="row pt-2"><strong>High Resolution Accelerometer Data:</strong>
-        <br>If you want to record high temporal resolution accelerometer data (per second x,y,z; can store up to 4 days of data, will rollover).
+        <br>If you want to record high temporal resolution accelerometer data (magnitude of x,y,z; can store up to 4 days of data at 1 second, will rollover).
         <div class="form-group">
           <label class="form-switch">
             <input type="checkbox" name="highAcc">
-            <i class="form-icon"></i> High Temporal Accelerometry (xyz) 
+            <i class="form-icon"></i> High Temporal Accelerometry &radic;(x&sup2; + y&sup2; + z&sup2;) 
           </label>
           <label class="form-label" for="input-AccLogInt">Interval (seconds)</label>
           <input class="form-input" type="number" name="AccLogInt" id="input-AccLogInt" value=1 min=1>
-          <p class="form-input-hint mb-0">Interval for logging averaged x,y,z from accelerometer - default is 1 second
+          <p class="form-input-hint mb-0">Interval for logging averaged magnitude and sum from accelerometer - default is 1 second
           </p>
         </div>
       </div>
@@ -383,17 +383,16 @@
             let s = seconds % 60;
             return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':');
           }
-          let csv = "time,seconds,x,y,z\n"; // Header
+          let csv = "time,seconds,mag_avg,mag_sum\n"; // Header
           let lines = c.trim().split("\n");
           for (let line of lines) {
             let parts = line.split(",").map(v => parseInt(v, 10));
             if (parts.length !== 4) continue;
             let seconds = parts[0];
-            let x = parts[1]/8192;
-            let y = parts[2]/8192;
-            let z = parts[3]/8192;
+            let avg = parts[1]/8192;
+            let sum = parts[2]/8192;
             let time = secondsToClock(seconds);
-            csv += `${time},${seconds},${x},${y},${z}\n`;
+            csv += `${time},${seconds},${avg},${sum}\n`;
           }
           const blob = new Blob([csv], { type: 'text/csv' });
           url = URL.createObjectURL(blob);

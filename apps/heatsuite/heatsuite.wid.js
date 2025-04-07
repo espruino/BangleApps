@@ -396,29 +396,31 @@
     function getAvg(acc) {
       return acc.count ? acc.sum / acc.count : 0;
     }
-    let x = arrayAcc();
-    let y = arrayAcc();
-    let z = arrayAcc();
+    let mag = arrayAcc();
     let accTemp = [];
     function perSecAccHandler(accel){
-      updateArray(x, accel.x);
-      updateArray(y, accel.y);
-      updateArray(z, accel.z);
+      updateArray(mag, accel.mag);
     }
     Bangle.on('accel', perSecAccHandler);
 
     function writeAccLog(buf) {
       let f = modHS.getRecordFile("accel", []);
-      accTemp.forEach(b => {
-        let dv = new DataView(b.buffer);
+      let line = "";
+      function processArray(){ //non blocking function
+        let dv = new DataView(buf.shift());
         let t = dv.getUint32(0, true);
-        let x = dv.getInt16(4, true);
-        let y = dv.getInt16(6, true);
-        let z = dv.getInt16(8, true);
-        f.write([t, x, y, z].join(",") + "\n");
-      });
-      f = null;
-      accTemp = [];
+        let mag = dv.getInt16(4, true);
+        let sum = dv.getInt16(6, true);
+        line += t + "," + mag + "," + sum + "\n";
+        if(buf.length){
+          setTimeout(processArray,1);
+        }else{
+          f.write(line);
+          f = null;
+          return;
+        }
+      }
+      processArray();
     }
     function writeHSAccelSetTimeout() {
       if (accTemp.length > 0) {
@@ -431,20 +433,16 @@
       highAccWriteTimeout = timeoutAligned(10000, writeHSAccelSetTimeout); //check every 10 seconds
     }
     function tempAccLog() {
-      let scaledX = Math.round(getAvg(x) * 8192);
-      let scaledY = Math.round(getAvg(y) * 8192);
-      let scaledZ = Math.round(getAvg(z) * 8192);
       let secondsSM = secondsSinceMidnight();
-      let b = new Uint8Array(10);
+      let scaledMagAvg = Math.round(getAvg(mag) * 8192);
+      let scaledMagSum = Math.round(mag.sum * 8192);
+      let b = new Uint8Array(8);
       let dv = new DataView(b.buffer);
       dv.setUint32(0, secondsSM, true);  
-      dv.setInt16(4, scaledX, true);
-      dv.setInt16(6, scaledY, true);
-      dv.setInt16(8, scaledZ, true);
+      dv.setInt16(4, scaledMagAvg, true);
+      dv.setInt16(6, scaledMagSum, true);
       accTemp.push(b);  // Push Uint8Array
-      x = arrayAcc();
-      y = arrayAcc();
-      z = arrayAcc();
+      mag = arrayAcc();
       highAccTimeout = timeoutAligned(1000, tempAccLog);
     }
     let rawAccLogInt = (settings.AccLogInt ? settings.AccLogInt * 1000 : 1000);
