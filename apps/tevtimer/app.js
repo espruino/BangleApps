@@ -1,5 +1,6 @@
 const Layout = require('Layout');
 const locale = require('locale');
+const pickers = require('more_pickers');
 
 const tt = require('tevtimer');
 
@@ -682,7 +683,7 @@ class TimerViewMenu {
           }, 0);
         }
       },
-      'Start': this.edit_start_hms_menu.bind(this),
+      'Start': this.edit_start.bind(this),
       'Vibrate pattern': require("buzz_menu").pattern(
         this.timer.vibrate_pattern,
         v => this.timer.vibrate_pattern = v),
@@ -707,60 +708,42 @@ class TimerViewMenu {
     E.showMenu(edit_menu);
   }
 
-  edit_start_hms_menu() {
+  edit_start() {
     let origin_hms = {
       h: Math.floor(this.timer.origin / 3600),
       m: Math.floor(this.timer.origin / 60) % 60,
       s: Math.floor(this.timer.origin % 60),
     };
 
-    const update_origin = () => {
-      this.timer.origin = origin_hms.h * 3600
-        + origin_hms.m * 60
-        + origin_hms.s;
-    };
+    function picker_format(v) {
+      // Display leading 0 for single digit values in the picker
+      return v < 10 ? '0' + v : v;
+    }
 
-    const edit_start_hms_menu = {
-      '': {
-        title: 'Start (HMS)',
-        back: this.edit_menu.bind(this),
-      },
-      'Hours': {
-        value: origin_hms.h,
-        min: 0,
-        max: 9999,
-        wrap: true,
-        onchange: v => {
-          origin_hms.h = v;
-          update_origin();
-          tt.set_timers_dirty();
-        }
-      },
-      'Minutes': {
-        value: origin_hms.m,
-        min: 0,
-        max: 59,
-        wrap: true,
-        onchange: v => {
-          origin_hms.m = v;
-          update_origin();
-          tt.set_timers_dirty();
-        }
-      },
-      'Seconds': {
-        value: origin_hms.s,
-        min: 0,
-        max: 59,
-        wrap: true,
-        onchange: v => {
-          origin_hms.s = v;
-          update_origin();
-          tt.set_timers_dirty();
-        }
-      },
-    };
-
-    E.showMenu(edit_start_hms_menu);
+    pickers.triplePicker({
+      title: "Set Start",
+      value_1: origin_hms.h,
+      value_2: origin_hms.m,
+      value_3: origin_hms.s,
+      format_2: picker_format,
+      format_3: picker_format,
+      min_1: 0,
+      max_1: 99,
+      min_2: 0,
+      max_2: 59,
+      min_3: 0,
+      max_3: 59,
+      wrap_1: false,
+      wrap_2: true,
+      wrap_3: true,
+      separator_1: ':',
+      separator_2: ':',
+      back: this.edit_menu.bind(this),
+      onchange: (h, m, s) => {
+        this.timer.origin = h * 3600 + m * 60 + s;
+        tt.set_timers_dirty();
+      }
+    });
   }
 }
 
