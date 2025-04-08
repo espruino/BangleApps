@@ -102,7 +102,9 @@ class PrimitiveTimer {
   // Convert given timer value to milliseconds using this.rate
   // Uses the current value of the timer if no value is provided
   to_msec(value) {
-    value = value || this.get();
+    if (value === undefined) {
+      value = this.get();
+    }
     return Math.ceil(value / Math.abs(this.rate));
   }
 
