@@ -114,11 +114,11 @@ function systemMenu() {
   const mainmenu = {
     '': { 'title': /*LANG*/'System' },
     '< Back': ()=>popMenu(mainMenu()),
+    /*LANG*/'Clock': ()=>pushMenu(clockMenu()),
+    /*LANG*/'Launcher': ()=>pushMenu(launcherMenu()),
     /*LANG*/'Theme': ()=>showThemeMenu(),
     /*LANG*/'LCD': ()=>pushMenu(LCDMenu()),
     /*LANG*/'Locale': ()=>pushMenu(localeMenu()),
-    /*LANG*/'Clock': ()=>pushMenu(clockMenu()),
-    /*LANG*/'Launcher': ()=>pushMenu(launcherMenu()),
     /*LANG*/'Date & Time': ()=>pushMenu(setTimeMenu())
   };
 
