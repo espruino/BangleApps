@@ -113,3 +113,5 @@
 0.82: Stop buzzing when a message is removed (e.g. call answered)
 0.83: Add option to not open the first unread message
 0.84: Fix: Assign show message entry to the settings menu and not the message itself.
+0.85: Use new Rebble fonts if available
+      Remove workaround for 2v10 (>3 years ago) - assume everyone is on never firmware now

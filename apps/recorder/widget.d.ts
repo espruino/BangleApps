@@ -1,8 +1,4 @@
 type RecorderWidget = Widget & {
-	getRecorders(): Recorders;
-
-	reload(): void,
-
 	isRecording(): boolean,
 
 	setRecording(

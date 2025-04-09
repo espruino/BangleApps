@@ -209,11 +209,15 @@
       </div>
     </footer>
 
-    <script src="webtools/puck.js"></script>
+    <script src="webtools/uart.js"></script>
+    <script src="core/js/utils.js"></script>
+    <script>
+      UART.ports = UART.ports.filter(e => e.includes("Bluetooth")); // all watches are Bluetooth
+      Const.CONNECTION_DEVICE = "Bluetooth"; // force Bluetooth because we know (don't look it up)
+    </script>
     <script src="webtools/heatshrink.js"></script>
     <script src="core/lib/marked.min.js"></script>
     <script src="core/lib/espruinotools.js"></script>
-    <script src="core/js/utils.js"></script>
     <script src="loader.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script> <!-- for backup.js -->
     <script src="backup.js"></script>

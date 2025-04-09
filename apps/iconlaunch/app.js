@@ -4,10 +4,11 @@
     showClocks: true,
     fullscreen: false,
     direct: false,
-    oneClickExit: false,
+    oneClickExit: true,
     swipeExit: false,
     timeOut:"Off"
   }, s.readJSON("iconlaunch.json", true) || {});
+  let font = g.getFonts().includes("28") ? "28" : "12x20";
 
   if (!settings.fullscreen) {
     Bangle.loadWidgets();
@@ -15,6 +16,22 @@
   } else { // for fast-load, if we had widgets then we should hide them
     require("widget_utils").hide();
   }
+
+  let selectedItem = -1;
+  const R = Bangle.appRect;
+  const iconSize = 48;
+  const appsN = Math.floor(R.w / iconSize);
+  const whitespace = Math.floor((R.w - appsN * iconSize) / (appsN + 1));
+  const iconYoffset = Math.floor(whitespace/4)-1;
+  const itemSize = iconSize + whitespace;
+
+  // show some grey blocks as a loading screen
+  g.clearRect(Bangle.appRect).setColor("#888");
+  for (var y=R.y+whitespace/2;y<R.h;y+=itemSize)
+    for (var x=R.x+whitespace/2;x<R.w;x+=itemSize)
+      g.drawRect(x+16,y+16,x+32,y+32);
+  g.flip();
+
   let launchCache = s.readJSON("iconlaunch.cache.json", true)||{};
   let launchHash = s.hash(/\.info/);
   if (launchCache.hash!=launchHash) {
@@ -37,13 +54,7 @@
   const ICON_MISSING = s.read("iconlaunch.na.img");
   let count = 0;
 
-  let selectedItem = -1;
-  const R = Bangle.appRect;
-  const iconSize = 48;
-  const appsN = Math.floor(R.w / iconSize);
-  const whitespace = Math.floor((R.w - appsN * iconSize) / (appsN + 1));
-  const iconYoffset = Math.floor(whitespace/4)-1;
-  const itemSize = iconSize + whitespace;
+
 
   launchCache.items = {};
   for (let c of launchCache.apps){
@@ -56,12 +67,7 @@
 
   let texted;
   let drawItem = function(itemI, r) {
-    let x = whitespace;
-    let i = itemI * appsN - 1;
-    let selectedApp;
-    let c;
-    let selectedRect;
-    let item = launchCache.items[itemI];
+    let x = whitespace, i = itemI * appsN - 1, selectedApp, c, selectedRect, item = launchCache.items[itemI];
     if (texted == itemI){
       g.clearRect(r.x, r.y, r.x + r.w - 1, r.y + r.h - 1);
       texted = undefined;
@@ -86,23 +92,23 @@
       drawText(itemI, r.y, selectedApp);
       texted=itemI;
     }
+    if (firstRun) g.flip(); // at startup
   };
-
+  let firstRun = true;
   let drawText = function(i, appY, selectedApp) {
-    "jit";
     const idy = (selectedItem - (selectedItem % 3)) / 3;
     if (i != idy) return;
     appY = appY + itemSize/2;
-    g.setFontAlign(0, 0, 0);
-    g.setFont("12x20");
+    g.setFontAlign(0, 0, 0).setFont(font);
     const rect = g.stringMetrics(selectedApp.name);
-    g.clearRect(
-      R.w / 2 - rect.width / 2 - 2,
-      appY - rect.height / 2 - 2,
-      R.w / 2 + rect.width / 2 + 1,
-      appY + rect.height / 2 + 1
-    );
-    g.drawString(selectedApp.name, R.w / 2, appY);
+    let r = {
+      x : (R.w - rect.width) / 2 - 7,
+      y : appY - rect.height / 2 - 6,
+      w : rect.width + 15,
+      h : rect.height + 10,
+      r : 4
+    };
+    g.setBgColor(g.theme.bgH).clearRect(r).setBgColor(g.theme.bg2).clearRect({x:r.x+2, y:r.y+2, w:r.w-4, h:r.h-4, r:3}).drawString(selectedApp.name, R.w / 2, appY).setBgColor(g.theme.bg);
   };
 
   let selectItem = function(id, e) {
@@ -141,31 +147,25 @@
         require("widget_utils").show();
       }
       if(idWatch) clearWatch(idWatch);
-    },
-    btn:Bangle.showClock
+    }
   };
 
   //work both the fullscreen and the oneClickExit
-  if( settings.fullscreen && settings.oneClickExit)
-  {
+  if( settings.fullscreen && settings.oneClickExit) {
       idWatch=setWatch(function(e) {
         Bangle.showClock();
       }, BTN, {repeat:false, edge:'rising' });
 
-  }
-  else if( settings.oneClickExit )
-  {
+  } else if( settings.oneClickExit ) {
       options.back=Bangle.showClock;
   }
 
-
-
-
   let scroller = E.showScroller(options);
+  firstRun = false; // this stops us flipping the screen after each line we draw
 
   let timeout;
   const updateTimeout = function(){
-  if (settings.timeOut!="Off"){
+    if (settings.timeOut!="Off"){
       let time=parseInt(settings.timeOut);  //the "s" will be trimmed by the parseInt
       if (timeout) clearTimeout(timeout);
       timeout = setTimeout(Bangle.showClock,time*1000);

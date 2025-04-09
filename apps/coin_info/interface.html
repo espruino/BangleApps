@@ -1,0 +1,80 @@
+<html>
+<head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+</head>
+<body>
+<h3>Settings for Crypto-Coin Info</h3>
+<p>Input for coins to request and calculate against pair.</p>
+<p>
+    <label for="traceTokens">Trace from Binance eg. BTC,ETH,STORj</label><br>
+    <input id="traceTokens" onkeyup="checkInput()"  style="width:90%; margin: 3px"></input>
+
+    <label for="calcPair">Calc price against what currency eg. USDT or EUR</label><br>
+    <input id="calcPair" onkeyup="checkInput()"  style="width:90%; margin: 3px"></input>
+
+    <label for="csTokens">Trace from Coinstats eg. bitcoin,ethereum,storj</label><br>
+    <input id="csTokens" onkeyup="checkInput()"  style="width:90%; margin: 3px"></input>
+
+    <label for="csApiKey">CoinStats API Key</label><br>
+    <input id="csApiKey" onkeyup="checkInput()"  style="width:90%; margin: 3px"></input>
+
+    <button id="upload" class="btn btn-primary">Save</button>
+</p>
+<h4>General Info:</h4>
+<p>Requesting from Binance with free API. Get info from their website.</p>
+
+<script src="../../core/lib/interface.js"></script>
+<script>
+
+    function checkInput() {
+        if(document.getElementById("calcPair").value==="") {
+            document.getElementById('upload').disabled = true;
+        } else {
+            document.getElementById('upload').disabled = false;
+        }
+    }
+    checkInput();
+
+    var settings = {};
+    function onInit(){
+        console.log("Loading settings from BangleJs...");
+        try {
+            Util.readStorageJSON("coin_info.cmc_key.json", data=>{
+                if(data){
+                    settings = data;
+                    console.log("Got settings", settings);
+                    document.getElementById("calcPair").value = settings.calcPair;
+                    document.getElementById("traceTokens").value = settings.traceTokens;
+                    document.getElementById("csTokens").value = settings.csTokens;
+                    document.getElementById("csApiKey").value = settings.csApiKey;
+                    console.log("Loaded settings from BangleJs.");
+                    checkInput();
+                }
+            });
+        } catch(ex) {
+            console.log("(Warning) Could not load settings from BangleJs.");
+            console.log(ex);
+        }
+
+    }
+
+    document.getElementById("upload").addEventListener("click", function() {
+        try {
+            settings.calcPair = document.getElementById("calcPair").value;
+            settings.traceTokens = document.getElementById("traceTokens").value;
+            settings.csTokens = document.getElementById("csTokens").value;
+            settings.csApiKey = document.getElementById("csApiKey").value;
+            Util.showModal("Saving...");
+            Util.writeStorage("coin_info.cmc_key.json", JSON.stringify(settings), ()=>{
+                Util.hideModal();
+            });
+            console.log("Sent settings!");
+        } catch(ex) {
+            console.log("(Warning) Could not write settings to BangleJs.");
+            console.log(ex);
+        }
+    });
+
+</script>
+</body>
+</html>

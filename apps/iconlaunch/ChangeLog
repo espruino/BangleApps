@@ -24,3 +24,6 @@
 0.17: fix fullscreen with oneClickExit
 0.18: Better performance
 0.19: Remove 'jit' keyword as 'for(..of..)' is not supported (fix #2937)
+0.20: Use '28' font if installed (2v26+) and put it inside a rounded rect in the current theme
+      Ensure 'oneClickExit' is the default
+0.21: Display placeholder icons at start and render line by line to the screen to make loading seem faster

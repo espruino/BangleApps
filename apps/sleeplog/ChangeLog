@@ -14,3 +14,4 @@
 0.16: Only write logs if we have a non-empty log to write
 0.17: Minor code improvements
 0.18: Add back as a function to prevent translation making it a menu entry
+0.19: Write sleep state into health event's .activity field

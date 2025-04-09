@@ -25,7 +25,7 @@ if (global.sleeplog.conf.enabled) {
     start: function() {
       // add kill and health listener
       E.on('kill', global.sleeplog.saveStatus);
-      Bangle.on('health', global.sleeplog.health);
+      Bangle.prependListener('health', global.sleeplog.health);
 
       // restore saved status
       this.restoreStatus();
@@ -176,6 +176,9 @@ if (global.sleeplog.conf.enabled) {
         // set status
         global.sleeplog.setStatus(data);
       }
+      // update activity in the 'health' event for when it's logged/sent to Gadgetbridge
+      if (data.status==3) data.activity="LIGHT_SLEEP";
+      if (data.status==4) data.activity="DEEP_SLEEP";
     },
 
     // check wearing status either based on HRM or temperature as set in settings

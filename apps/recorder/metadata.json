@@ -2,7 +2,7 @@
   "id": "recorder",
   "name": "Recorder",
   "shortName": "Recorder",
-  "version": "0.44",
+  "version": "0.45",
   "description": "Record GPS position, heart rate and more in the background, then download to your PC.",
   "icon": "app.png",
   "tags": "tool,outdoors,gps,widget,clkinfo",
@@ -10,6 +10,8 @@
   "readme": "README.md",
   "interface": "interface.html",
   "storage": [
+    {"name":"recorder","url":"lib.js"},
+    {"name":"recorder.boot.js","url":"boot.js"},
     {"name":"recorder.app.js","url":"app.js"},
     {"name":"recorder.img","url":"app-icon.js","evaluate":true},
     {"name":"recorder.wid.js","url":"widget.js"},

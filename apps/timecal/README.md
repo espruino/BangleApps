@@ -5,6 +5,7 @@ Shows the
 * Date
 * Time (hh:mm) - respecting 12/24 (uses locale string)
 * 3 weeks calendar view (last,current and next week)
+* Weather icon and temperature - if weather app is set up
 
 ### The settings menu
 Calendar View can be customized
@@ -13,6 +14,7 @@ Calendar View can be customized
 * Start wday: Set day of week start. Values: 0=Sunday, 1=Monday,...,6=Saturday or -1=Relative to today [default 0: Sunday]
 * Su color: Set Sundays color. Values: none [default], red, green or blue
 * Border: show or none [default]
+* Weather: show or none [default]
 * Submenu Today settings - choose how today is highlighted
   * < Back:
   * Color: none, red [default], green or blue

@@ -27,7 +27,7 @@ Some apps like the [Run app](https://banglejs.com/apps/?id=run) are able to auto
 
 **Note:** It is possible for other apps to record information using this app
 as well. They need to define a `foobar.recorder.js` file - see the `getRecorders`
-function in `widget.js` for more information.
+function in `lib.js` for more information.
 
 ## Graphing
 
@@ -46,11 +46,13 @@ You can also view some information on the watch.
 
 ## Usage in code
 
-As long as widgets are loaded, you can:
+You can do:
 
-* Call `WIDGETS["recorder"].setRecording(true)` to start recording (it returns a promise, and may show a menu)
-* Call `WIDGETS["recorder"].setRecording(true, {force:"new"/"append"/"overwrite")` to start recording (it returns a promise, and will not show a menu)
-* Call `WIDGETS["recorder"].setRecording(false)` to stop recording
+* Call `require("recorder").setRecording(true)` to start recording (it returns a promise, and may show a menu)
+* Call `require("recorder").setRecording(true, {force:"new"/"append"/"overwrite")` to start recording (it returns a promise, and will not show a menu)
+* Call `require("recorder").setRecording(false)` to stop recording
+
+And check `require("recorder").isRecording()` to see if we're recording or not.
 
 ### Recording new items
 

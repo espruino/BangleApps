@@ -4,6 +4,7 @@
     clearTimeout(Bangle.SCHED);
     delete Bangle.SCHED;
   }
+  delete E.setTimeZone; // delete any modified setTimeZone we added below
   var alarms = require('Storage').readJSON('sched.json',1)||[];
   var time = new Date();
   var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
@@ -25,6 +26,9 @@
     normally.
     If active[0].js is defined, just run that code as-is and not alarm.js */
     Bangle.SCHED = setTimeout(active[0].js||'load("sched.js")',t);
+    // Override setTimeZone to ensure we reschedule alarms after it has been called - fix #3791
+    var tz = E.setTimeZone;
+    E.setTimeZone = function(z) { tz(z);eval(require("Storage").read("sched.boot.js")); };
   } else { // check for new alarms at midnight (so day of week works)
     Bangle.SCHED = setTimeout('eval(require("Storage").read("sched.boot.js"))', 86400000 - currentTime);
   }

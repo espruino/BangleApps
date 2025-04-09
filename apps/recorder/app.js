@@ -26,8 +26,7 @@ loadSettings();
 
 function updateSettings() {
   require("Storage").writeJSON("recorder.json", settings);
-  if (WIDGETS["recorder"])
-    WIDGETS["recorder"].reload();
+  require("recorder").reload();
 }
 
 function getTrackNumber(filename) {
@@ -56,7 +55,7 @@ function showMainMenu() {
       onchange: v => {
         setTimeout(function() {
           E.showMenu();
-          WIDGETS["recorder"].setRecording(v).then(function() {
+          require("recorder").setRecording(v).then(function() {
             //print("Record start Complete");
             loadSettings();
             //print("Recording: "+settings.recording);
@@ -80,7 +79,7 @@ function showMainMenu() {
       }
     }
   };
-  var recorders = WIDGETS["recorder"].getRecorders();
+  var recorders = require("recorder").getRecorders();
   Object.keys(recorders).forEach(id=>{
     mainmenu[/*LANG*/"Log "+recorders[id]().name] = menuRecord(id);
   });
@@ -172,7 +171,7 @@ function viewTrack(filename, info) {
     '': { 'title': /*LANG*/'Track '+info.fn }
   };
   if (info.time)
-    menu[info.time.toISOString().substr(0,16).replace("T"," ")] = {};
+    menu[info.time.toISOString().substr(0,16).replace("T"," ")] = {value:""};
   menu["Duration"] = { value : asTime(info.duration)};
   menu["Records"] = { value : ""+info.records };
   if (info.fields.includes("Latitude"))
