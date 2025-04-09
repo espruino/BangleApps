@@ -20,11 +20,12 @@ function ceil(value) {
 // Data models //
 
 class PrimitiveTimer {
-  constructor(origin, is_running, rate, name) {
+  constructor(origin, is_running, rate, name, id) {
     this.origin = origin || 0;
     // default rate +1 unit per 1000 ms, countup
     this.rate = rate || 0.001;
     this.name = name || '';
+    this.id = id || 0;
 
     this.vibrate_pattern = ';;;';
     this.buzz_count = 4;
@@ -115,6 +116,7 @@ class PrimitiveTimer {
       origin: this.origin,
       rate: this.rate,
       name: this.name,
+      id: this.id,
       start_time: this._start_time,
       pause_time: this._pause_time,
       vibrate_pattern: this.vibrate_pattern,
@@ -126,7 +128,7 @@ class PrimitiveTimer {
     if (!(data.cls == 'PrimitiveTimer' && data.version == 0)) {
       console.error('Incompatible data type for loading PrimitiveTimer state');
     }
-    let loaded = new this(data.origin, false, data.rate, data.name);
+    let loaded = new this(data.origin, false, data.rate, data.name, data.id);
     loaded._start_time = data.start_time;
     loaded._pause_time = data.pause_time;
     loaded.vibrate_pattern = data.vibrate_pattern;
@@ -162,6 +164,28 @@ var SAVE_TIMERS_TIMEOUT = null;
 var SAVE_SETTINGS_TIMEOUT = null;
 
 
+function next_id() {
+  // Find the next unused ID number for timers
+  let max_id = 0;
+  for (let timer of TIMERS) {
+    if (timer.id > max_id) {
+      max_id = timer.id;
+    }
+  }
+  return max_id + 1;
+}
+
+function find_timer_by_id(id) {
+  // Find a timer in TIMERS by its ID; return the timer object or null
+  // if not found
+  for (let timer of TIMERS) {
+    if (timer.id == id) {
+      return timer;
+    }
+  }
+  return null;
+}
+
 function load_timers() {
   console.log('loading timers');
   let timers = Storage.readJSON(TIMERS_FILENAME, true) || [];
@@ -169,7 +193,7 @@ function load_timers() {
     // Deserealize timer objects
     timers = timers.map(t => PrimitiveTimer.load(t));
   } else {
-    timers = [new PrimitiveTimer(600, false, -0.001)];
+    timers = [new PrimitiveTimer(600, false, -0.001, '', 1)];
     timers[0].end_alarm = true;
   }
   return timers;
@@ -243,6 +267,9 @@ function delete_timer(timers, timer) {
 function add_timer(timers, timer) {
   // Create a copy of current timer object
   const new_timer = PrimitiveTimer.load(timer.dump());
+  // Assign a new ID to the timer
+  new_timer.id = next_id();
+  // Place it at the top of the list
   timers.unshift(new_timer);
   return new_timer;
 }
