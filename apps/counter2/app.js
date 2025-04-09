@@ -53,10 +53,10 @@ function updateScreen() {
     g.drawString(Math.floor(counter[1]), halfwidth * 1.5, halfheight);
   }
   else {
-    g.setBgColor(b1);
+    g.setBgColor(b2);  // Using right counter's colors b/c blue looks nicer than red
     g.clearRect(0, 0, screenwidth, screenheight);
     g.setFont("Vector", 90).setFontAlign(0, 0);
-    g.setColor(f1);
+    g.setColor(f2);
     g.drawString(Math.floor(counter[0]), halfwidth, halfheight);
   }
   saveSettings();
@@ -80,7 +80,7 @@ Bangle.on("drag", e => {
       if (Math.abs(dy) > Math.abs(dx) + 30) {
         adjust = (dy > 0) ? -1 : 1;
       } else {
-        adjust = (e.y > halfwidth) ? -1 : 1;
+        adjust = (e.y > halfheight) ? -1 : 1;
       }
       counter[c] += adjust;
       updateScreen();
