@@ -7,7 +7,6 @@
            'color': 'Green',
            'check_idle' : false,
            'batt_hours' : false,
-           'hr_12' : true,
            'hourly_buzz' : false,
            'ring' : 'Sun',
            'idxInfo' : 0,
@@ -82,24 +81,17 @@
         save();
       },
     };
-    appMenu['Expected Battery Life In Days Not Percentage'] = {
-      value: !!s.batt_hours,
-      onchange: v => {
-        s.batt_hours = v;
-        save();
-      },
-    };
-    appMenu['12 Hr Time'] = {
-      value: !!s.hr_12,
-      onchange: v => {
-        s.hr_12 = v;
-        save();
-      },
-    };
     appMenu['Hourly Buzz'] = {
       value: !!s.hourly_buzz,
       onchange: v => {
         s.hourly_buzz = v;
+        save();
+      },
+    };
+    appMenu['Expected Battery Life In Days Not Percentage'] = {
+      value: !!s.batt_hours,
+      onchange: v => {
+        s.batt_hours = v;
         save();
       },
     };

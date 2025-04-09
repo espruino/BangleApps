@@ -2,6 +2,7 @@ var SunCalc = require("suncalc"); // from modules folder
 const storage = require('Storage');
 const widget_utils = require('widget_utils');
 const SETTINGS_FILE = "daisy.json";
+const global_settings = storage.readJSON("setting.json", true) || {};
 const LOCATION_FILE = "mylocation.json";
 const h = g.getHeight();
 const w = g.getWidth();
@@ -87,7 +88,7 @@ function loadSettings() {
   settings.fg = settings.fg||'#0f0';
   settings.idle_check = (settings.idle_check === undefined ? true : settings.idle_check);
   settings.batt_hours = (settings.batt_hours === undefined ? false : settings.batt_hours);
-  settings.hr_12 = (settings.hr_12 === undefined ? false : settings.hr_12);
+  settings.hr_12 = (global_settings["12hour"] === undefined ? false : global_settings["12hour"]);
   settings.hourly_buzz = (settings.hourly_buzz === undefined ? false : settings.hourly_buzz);
   settings.ring = settings.ring||'Steps';
   settings.idxInfo = settings.idxInfo||0;
