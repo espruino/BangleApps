@@ -1,6 +1,7 @@
 (function (back) {
     var FILE = "counter2.json";
     const defaults={
+        display2:true,
         counter0:40,
         counter1:0,
         max0:40,
@@ -14,26 +15,39 @@
         require('Storage').writeJSON(FILE, settings);
     }
 
-    const menu = {
-        "": { "title": "Counter2" },
-        "< Back": () => back(),
-        'Default C1': {
-            value: settings.max0,
-            min: -99, max: 99,
-            onchange: v => {
-                settings.max0 = v;
-                writeSettings();
-            }
-        },
-        'Default C2': {
-            value: settings.max1,
-            min: -99, max: 99,
-            onchange: v => {
-                settings.max1 = v;
-                writeSettings();
-            }
-        },
-        'Color': {
+    function showMainMenu() {
+        let appMenu = {
+            "": { "title": "Counter2" },
+            "< Back": () => back(),
+            'Display Two Counters': {
+                value: settings.display2,
+                onchange: v => {
+                    settings.display2 = v;
+                    writeSettings();
+                    // redisplay the menu with/without C2 setting
+                    setTimeout(showMainMenu, 0);
+                }
+            },
+            'Default C1': {
+                value: settings.max0,
+                min: -99, max: 99,
+                onchange: v => {
+                    settings.max0 = v;
+                    writeSettings();
+                }
+            },
+        };
+        if (settings.display2) {
+            appMenu['Default C2'] = {
+                value: settings.max1,
+                min: -99, max: 99,
+                onchange: v => {
+                    settings.max1 = v;
+                    writeSettings();
+                }
+            };
+        }
+        appMenu['Color'] = {
             value: settings.colortext,
             format: v => v?"Text":"Backg",            
             onchange: v => {
@@ -41,15 +55,16 @@
                 console.log("Color",v);
                 writeSettings();
             }
-        },
-        'Vibrate': {
+        };
+        appMenu['Vibrate'] = {
             value: settings.buzz,
             onchange: v => {
                 settings.buzz = v;
                 writeSettings();
-            }
-        }
-    };
-    // Show the menu
-    E.showMenu(menu);
-})
+        },
+      };
+      E.showMenu(appMenu);
+    }
+  
+    showMainMenu();
+  })

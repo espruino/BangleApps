@@ -1,6 +1,7 @@
 Bangle.loadWidgets();
 
 var s = Object.assign({
+  display2:true,
   counter0:40,
   counter1:0,
   max0:40,
@@ -40,22 +41,31 @@ let ignoreonce = false;
 var dragtimeout;
 
 function updateScreen() {
-  g.setBgColor(b1);
-  g.clearRect(0, 0, halfwidth, screenheight);
-  g.setBgColor(b2);
-  g.clearRect(halfwidth, 0, screenwidth, screenheight);
-  g.setFont("Vector", 60).setFontAlign(0, 0);
-  g.setColor(f1);
-  g.drawString(Math.floor(counter[0]), halfwidth * 0.5, halfheight);
-  g.setColor(f2);
-  g.drawString(Math.floor(counter[1]), halfwidth * 1.5, halfheight);
+  if (s.display2) {
+    g.setBgColor(b1);
+    g.clearRect(0, 0, halfwidth, screenheight);
+    g.setBgColor(b2);
+    g.clearRect(halfwidth, 0, screenwidth, screenheight);
+    g.setFont("Vector", 60).setFontAlign(0, 0);
+    g.setColor(f1);
+    g.drawString(Math.floor(counter[0]), halfwidth * 0.5, halfheight);
+    g.setColor(f2);
+    g.drawString(Math.floor(counter[1]), halfwidth * 1.5, halfheight);
+  }
+  else {
+    g.setBgColor(b1);
+    g.clearRect(0, 0, screenwidth, screenheight);
+    g.setFont("Vector", 90).setFontAlign(0, 0);
+    g.setColor(f1);
+    g.drawString(Math.floor(counter[0]), halfwidth, halfheight);
+  }
   saveSettings();
   if (s.buzz)  Bangle.buzz(50,.5);
   Bangle.drawWidgets();
 }
 
 Bangle.on("drag", e => {
-  const c = (e.x < halfwidth) ? 0 : 1;
+  const c = (e.x >= halfwidth && s.display2) ? 1 : 0;
   if (!drag) {
     if (ignoreonce) {
       ignoreonce = false;
