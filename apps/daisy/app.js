@@ -84,8 +84,8 @@ function getSteps() {
 
 function loadSettings() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
-  settings.gy = settings.gy||'#020';
-  settings.fg = settings.fg||'#0f0';
+  settings.gy = settings.gy||'#022';
+  settings.fg = settings.fg||'#0ff';
   settings.idle_check = (settings.idle_check === undefined ? true : settings.idle_check);
   settings.batt_hours = (settings.batt_hours === undefined ? false : settings.batt_hours);
   settings.hr_12 = (global_settings["12hour"] === undefined ? false : global_settings["12hour"]);

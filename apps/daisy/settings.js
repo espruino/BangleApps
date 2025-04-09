@@ -2,9 +2,9 @@
   const SETTINGS_FILE = "daisy.json";
 
   // initialize with default settings...
-  let s = {'gy' : '#020',
-    'fg' : '#0f0',
-    'color': 'Green',
+  let s = {'gy' : '#022',
+    'fg' : '#0ff',
+    'color': 'Cyan',
     'check_idle' : false,
     'batt_hours' : false,
     'hourly_buzz' : false,
@@ -26,9 +26,9 @@ settings = s;
 storage.write(SETTINGS_FILE, settings);
 }
 
-var color_options = ['Green','Orange','Cyan','Purple','Red','Blue'];
-var fg_code = ['#0f0','#ff0','#0ff','#f0f','#f00','#00f'];
-var gy_code = ['#020','#220','#022','#202','#200','#002'];
+var color_options = ['Cyan','Green','Orange','Purple','Red','Blue'];
+var fg_code = ['#0ff','#0f0','#ff0','#f0f','#f00','#00f'];
+var gy_code = ['#022','#020','#220','#202','#200','#002'];
 var ring_options = ['Hours', 'Minutes', 'Seconds', 'Day', 'Sun', 'Steps', 'Battery'];
 var step_options = [100, 1000, 5000, 10000, 15000, 20000];
 
