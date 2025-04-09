@@ -19,8 +19,9 @@
         let appMenu = {
             "": { "title": "Counter2" },
             "< Back": () => back(),
-            'Display Two Counters': {
+            'Counters to Display ': {
                 value: settings.display2,
+                format: v => v?"2":"1",
                 onchange: v => {
                     settings.display2 = v;
                     writeSettings();
