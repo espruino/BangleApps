@@ -684,6 +684,21 @@ class TimerViewMenu {
         }
       },
       'Start': this.edit_start.bind(this),
+      'At end': {
+        // Option to auto-start another timer when this one ends
+        format: v => v === -1
+                     ? "Stop"
+                     : tt.TIMERS[v].display_status()
+                       + ' '
+                       + tt.TIMERS[v].display_name(),
+        value: tt.find_timer_by_id(this.timer.chain_id),
+        min: -1,
+        max: tt.TIMERS.length - 1,
+        onchange: v => {
+          this.timer.chain_id = v === -1 ? null : tt.TIMERS[v].id;
+          tt.set_timers_dirty();
+        }
+      },
       'Vibrate pattern': require("buzz_menu").pattern(
         this.timer.vibrate_pattern,
         v => this.timer.vibrate_pattern = v),

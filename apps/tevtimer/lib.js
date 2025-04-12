@@ -29,6 +29,7 @@ class PrimitiveTimer {
 
     this.vibrate_pattern = ';;;';
     this.buzz_count = 4;
+    this.chain_id = null;
 
     this._start_time = Date.now();
     this._pause_time = is_running ? null : this._start_time;
@@ -117,6 +118,7 @@ class PrimitiveTimer {
       rate: this.rate,
       name: this.name,
       id: this.id,
+      chain_id: this.chain_id,
       start_time: this._start_time,
       pause_time: this._pause_time,
       vibrate_pattern: this.vibrate_pattern,
@@ -129,6 +131,7 @@ class PrimitiveTimer {
       console.error('Incompatible data type for loading PrimitiveTimer state');
     }
     let loaded = new this(data.origin, false, data.rate, data.name, data.id);
+    loaded.chain_id = data.chain_id;
     loaded._start_time = data.start_time;
     loaded._pause_time = data.pause_time;
     loaded.vibrate_pattern = data.vibrate_pattern;
@@ -176,14 +179,13 @@ function next_id() {
 }
 
 function find_timer_by_id(id) {
-  // Find a timer in TIMERS by its ID; return the timer object or null
-  // if not found
-  for (let timer of TIMERS) {
-    if (timer.id == id) {
-      return timer;
+  // Return index of timer with ID id, or -1 if not found
+  for (let idx = 0; idx < TIMERS.length; idx++) {
+    if (TIMERS[idx].id == id) {
+      return idx;
     }
   }
-  return null;
+  return -1;
 }
 
 function load_timers() {
@@ -339,6 +341,7 @@ E.on('kill', () => { save_settings(); });
 
 exports = {TIMERS, SETTINGS,
            mod, ceil,
+           next_id, find_timer_by_id,
            load_timers, save_timers, schedule_save_timers, save_settings, schedule_save_settings,
            PrimitiveTimer,
            format_duration,
