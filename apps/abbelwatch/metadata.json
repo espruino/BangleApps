@@ -1,6 +1,6 @@
 { "id": "abbelwatch",
   "name": "abbelwatch",
-  "shortName":"abbelWatch",
+  "shortName":"abbelwatch",
   "icon": "app.png",
   "description": "A clock that Includes a selection of fonts to personalize your watch face",
   "type": "clock",
