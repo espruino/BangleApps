@@ -196,7 +196,7 @@ var emulator = (process.env.BOARD=="EMSCRIPTEN" || process.env.BOARD=="EMSCRIPTE
 var SATinView = 0;
 
 function drawFix(dat) {
-  g.clearRect(0,screenYstart,screenW,screenH);
+  g.reset().clearRect(0,screenYstart,screenW,screenH);
 
   var v = '';
   var u='';
@@ -234,7 +234,6 @@ function drawFix(dat) {
       drawSats('View:' + SATinView);
     }
   }
-  g.reset();
 }
 
 
@@ -404,8 +403,8 @@ function onGPS(fix) {
 }
 
 function updateClock() {
-  drawTime();
   g.reset();
+  drawTime();
 
   if ( emulator ) {
     max.spd++; max.alt++;
@@ -499,7 +498,7 @@ function nextMode() {
 
 function start() {
   Bangle.setBarometerPower(1); // needs some time...
-  g.clearRect(0,screenYstart,screenW,screenH);
+  g.reset().clearRect(0,screenYstart,screenW,screenH);
   onGPS(lf);
   Bangle.setGPSPower(1);
   Bangle.on('GPS', onGPS);
