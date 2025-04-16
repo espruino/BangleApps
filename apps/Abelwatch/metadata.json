@@ -4,7 +4,7 @@
   "icon": "app.png",
   "version":"0.01",
   "description": "Multiple fonts and colors",
-  "tags": "",
+  "tags": "abbelwatch",
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"abbelWatch.app.js","url":"app.js"},
