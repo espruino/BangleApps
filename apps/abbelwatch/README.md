@@ -5,6 +5,7 @@
 It features a stylish design, multiple fonts, and intuitive gesture controls to enhance your daily smartwatch experience.
 
 ---
+![Screenshot of the app](screenshot.png)
 
 ## ✨ Features
 
