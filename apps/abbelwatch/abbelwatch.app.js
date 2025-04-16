@@ -509,16 +509,16 @@ function createColorMenu(title, colorSetter, returnMenu) {
     "Weiss": "#FFFFFF",
     "Schwarz": "#000000",
     "Gelb": "#FFFF00",
-     "Orange": "#ff8000",
+    "Orange": "#ff8000",
     "Türkis": "#00FFFF",
     "Blau": "#0000FF",
     "Grün": "#00FF00",
-     "Cyan": "#00fff7",
+    "Cyan": "#00fff7",
     "Rot": "#FF0000",
-     "Pink": "#ff0084",
-     "Magenta": "#ff00ff",
+    "Pink": "#ff0084",
+    "Magenta": "#ff00ff",
     "Azzuro": "#88b3f7",
-   "Hell-Rot": "#f09b7f",
+    "Hell-Rot": "#f09b7f",
     "Grau": "#757575"
   };
   
@@ -640,10 +640,6 @@ Bangle.on('swipe', function(dir) {
   }
 });
 
-// Handle button press
-setWatch(function() {
-  showMenu();
-}, BTN1, { repeat: false, edge: 'rising' });
 
 // LCD power management
 Bangle.on('lcdPower', on => {
@@ -682,6 +678,10 @@ function init() {
   if (settings.color > 0) {
     _rCol = settings.color - 1;
   }
+  if (state.wischfunktion !== 4) {
+    Bangle.setHRMPower(false);
+    Bangle.removeAllListeners("HRM");
+  }
   
   setUpdateInterval(1);
   draw();
@@ -689,4 +689,4 @@ function init() {
 
 // Start the app
 init();
-Bangle.setLCDTimeout(10); // Bildschirm soll nach 10 Sekunden aus
+Bangle.setLCDTimeout(10); // screen turns off after 10 sec
