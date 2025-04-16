@@ -11,11 +11,11 @@ const LONG_PRESS_DURATION = 1000; // 1 second for long press
 const DEFAULT_BRIGHTNESS = 0.5;
 const MAX_BRIGHTNESS = 1.0;
 
-var currentFont = "NummeralByLucaEggerRegular";
+var currentFont = "NummeralByLERegular";
 
 // App state
 let state = {
-  wischfunktion: 0,     // Main display mode (0=date, 1=time, 2=seconds, 3=steps, 4=heart rate)
+  wischfunktion: 1,     // Main display mode (0=date, 1=time, 2=seconds, 3=steps, 4=heart rate)
   wischfunktionZ: 1,    // Secondary display mode (0=battery, 1=normal, 2=light)
   window: 1,            // Current horizontal swipe position
   windowZ: 1,           // Current vertical swipe position
@@ -49,11 +49,34 @@ let colors = {
 
 function setupFonts() {
 
-Graphics.prototype.setFontNummeralByLucaEggerRegular = function() {
-  // Actual height 43 (47 - 5)
+  
+  
+  
+  
+  
+  
+  Graphics.prototype.setFontNunitoBlack = function() {
+  
+// Actual height ///58//// (54 - 2)
   // 1 BPP
   return this.setFontCustom(
-    E.toString(require('heatshrink').decompress(atob('ABUCAwv+AokP/AGEv/gAocH/4MEn4TEgP/4AgEE4t/+ATFGhcfKpcHAokBJww6Ej4MEg5AEHIOAM5IYLgBmFn5fEh/8MpYYEgFwZLP/AAQ3Bh4GDFYIFDHAIMEIoN/AwfggYTFj4FDOQIME4DjBAAR5Bn47ENIIWBGIOAAQQQBGgSWCGgYMBEgI0BRQU/GgSwBEgI0CRwQ0CEAV/GgRsBEgQPCEgYPBGkwTBCAJpEv6eqAAY0CaYgTEc4oMBDQhLBAH4A/ACN8AokP+AGEVwQACaYIMEn7jBAAS4BCYkPcYIADv4nEgbJFj7TFAoYdBGgIACGIL0E8DtEDQMPfYt/CYg0BAAY0FE4IgFCYgMBE4hSEABMHKIRzCAQI9BIIMP/BeCPQJEBJQXABQIMCC4KeBNYXwNIPBNIn+IYRpC+AgCNIWDNIn8j/4v5pC8H/4Y0E/0fGgnwGgoiBGgYiBGggiBGgj4CGgb4CGgQiBGgj4CGgYkBGl6cCGgYABGgacCGgacCGgYABGgb5CGgYABGgggBGgQTC4E/8DyEfYQAMnEAmEAuEAg/wgfAh4gCEoI4BwA0BgY0DT2o0wj40FaoI0Dw40Fn40E8I0FcgI0Ev40E4Y0WdwTcCcAIACGgQADegYABGgQADGgQACGgQGD+ATFgAnEBgIAMJ4JMBAwQnBFYIABEAQ/BBgZTBDIgaDNIRnBAAJpCCYRBDBgQTCE43AAwRnDAAZaFPAJPDDYI0DIYQ0CF4YgEaIRkEGgatBGn40FUoYbCfYgMFEQIMEGwL0E4AlBCYirCfYQgEGwITEEAInEPAgAJOoKDBjhID+EDEAnAn/gGgZ/BwD0C/kfDgN/AwPgAIIPBAAJFBEAf4n5pE4JpE/0PNIX8n/wv5pC8P/wY0Dh40E/F/GgnDGgn+j40E+A0Fw40/GiwABGgbnDGgTICGgSgCGgbcCGgJGBfYUH/i0Cc4XAE4WAgF8bgQMBABruCJwMAEoRBCBghVBBghpCAwfwNIIADwA/CCYYME8AgEE4JnCLgRpBHYieEPoKeEGgTTDGgLTDGgTTDGgTTCGgTTDGgTTDGn40GTwY0BTwg0BTwmHTwg0BTwg0BTwZGC/40BIwITCdwIcBBgcDbgYMBACc8AYUcEAQFBgIDBn/AAwMf4EDGAIQBHAKcBAwM/AYJRBBgXAg4TCn5VDBgXwNIOABIIDBTgMAQAIDBTgICBEAIwCBgItBGgQMBDoIwCBgQ0CBgY0BSIIMBGgS+CgA0BBgJsCaIQwBJYQMEGgIMDGgPfBgY4BWARsCWAg0BBgjRCXoZMBBgbKGj56CGgafCGgYMEGgIMDGgIMEGgJtBGgbGCGgYMEh4MEE4IMEgBtCDQYFEAChwBAALGCAoRyCBgZFBBgiGBTwQAB+CeCCYaeCAAJzBEAngTwQACTwQ7EB4N/CAPAGgMD/EfGgQEB4A0D4H+CAI0BAgPwn40CAgOBGgeB/hFBGgIEBF4I0/GgienAAY0CaYgTEc4oMBDQnAAwIASLgIeBv0AJAX4g5BBNIR4B8BpDCAJpD/ieDAwPhNIqeDE4SeDAAPDNIn+aYk/+CeD4P/w7TDh40E+F/GgmDGgn8j40E8A0Fg40/GgzTDTwi0CTwYABegqeEdwSeCfYbTCAAI0CAAeACYggBE4mADQnwgAAbgQCB4AGCnkAh4FCgYrBN4IABj5FB8AGCBQM/AoQKBgJOBAAMeBAJOBAANAHJIA=='))),
+E.toString(require('heatshrink').decompress(atob('ACUIAwsf4AGEh/4AwkD/wGEgP/wAHEv/gEYocFg4cFgAcGn45Fg4jFAA8BAwsDDgsD+AjF/hkF/4GGDgkf/4cEn//DggGBDgl/AwoFBNYgGFRoIiEgYGBQ4YGGg4GBHwYbCP4g3BAwhTBLQgcBUQjGISYseVBgAJv4zESoJCEIIIABGoSOCMwYNDSAQbCDoZzCRQZzCCogGECoIqDFYUPFwUDVwMDTgc/IIK4Dh4cCJYQSCDg4yECQI5GLojFBKwwVEGwRzGFYiQGT4YbEKgbFWAAcQAwsOAwsHa4iRFAAK1BCov/Cot/dgapCPwIADj4jFh6FCGIf+c5l/AwY1BVpoccAC1gQoQcCniFDOYWARgkPQIV/HITdCv5WDSYQDC/4cBKQIcBn5ZDDgIjCh5WCZIQGBDgQqBM4PfDgWAAwPnDgYGB8IcCQAd/HIQAB/EfDgSHCg6QE/hzCVoQ0BDgQVBAwIcCCoQDBO4QGCSAcPPYaUCiCUCDgIAOuCtFjwGCRoUPD4RWDRII5BGoICCBAKGBVoU/DIPgD4QeBUYfggYhBDIIJCLYIcCPAYcDwBbBDgg7CDgX8gYXCHIXDcoM/DgS1CWwLdDV4StD77nDv//+4GBEYIVB/IGBEYLgB/gmBWgV//y+BPwUHH4IqCAAM8WYIGDVIwAJVgQGEGIQGDEYpABAwwcEJwgGDDgiDCAwvfDgYGB44cDAwPBDgYwCYgKQD4DEBAwMfAwMHDgSGBVo4ACDgYACDoIcBAAQdBDjgACgK0GKwYACKwYACKwYcDb4QAXgZ7BDoRFDKwn+dAZWCCoZzC8EBCAJzCBYM/wAcEh/gDgeAgYcFgAcDBYQcDBYQcD4ALBHIfwh/wgYcC/kD/+DFoIcCUwQcEZQnwHYTKC/hYCEYIcCCoSxDCoQqBWITYDYQYGFD4IUBACKkCbwYqFh5HETAZkCBoZdCAwhPDAwZTBNQQVEAwaQD/DMBSAf4VoMPVoICBPgK+Cgf8PgTKC/6ZBZQYJBPILKCBIJXCDgX4JIYcB/xJDFoIcCKwYcBMwQjBDgIVCLoQmBZQKJDOoQGEM4IGFgFgYSQAENQQoFAwqHCHwhZBAAMcDgs/Dgt/DIIcDOYQcCNoIZBDgUDOgIcDTAQcDRIQcDVoQcDRAKQDv6lCTwIcBWYTQBFAYpCHoTIDDgQ+DDgayGRQgcBF4QcDQQaQIACMDDAZ7Bh47DFYJ7BLwRPBIYh5B8ZfDCQP9SAhsCSAYGDCoQGEFYKdDh5oBh/gn4aBIIMD/EHAgM/DgILBEIMHDgWAKAISBDgPwn4VBDgQwDHJLKDKwpuBNgQGBx7FDJ4PDLoYVB8AVBTAQ/BBISjCAYN/AwStDd4YAVewpICdIgGBPALSCIoJUBSASmC8CjBOYf8SATKDSA3ADgSHDDgU/4EDDgYJCv8BZQYtB4F/DgIJBg6+BDgXgCAM/VoMP/+H/l/M4I5D/5dFWgbKEOoIVEUwQVDAwRlDWgYGGBwSYEg5YBADMQAQMIAwSUCPgJXCOAQtCg5wCNgUB/+AAQReCUARQCj6gCDgsHDghoCDgTEBAQYSBAYMHOgYAFA=='))),
+    46,
+    atob("DhgbFhoaHBobGhsbDg=="),
+    58|65536
+  );
+};  
+  
+  
+  
+  
+  
+  
+Graphics.prototype.setFontNummeralByLERegular = function() {
+  // Actual height 43 (47 - 5)
+  // 1 BPP
+  
+  return this.setFontCustom( E.toString(require('heatshrink').decompress(atob('ABUCAwv+AokP/AGEv/gAocH/4MEn4TEgP/4AgEE4t/+ATFGhcfKpcHAokBJww6Ej4MEg5AEHIOAM5IYLgBmFn5fEh/8MpYYEgFwZLP/AAQ3Bh4GDFYIFDHAIMEIoN/AwfggYTFj4FDOQIME4DjBAAR5Bn47ENIIWBGIOAAQQQBGgSWCGgYMBEgI0BRQU/GgSwBEgI0CRwQ0CEAV/GgRsBEgQPCEgYPBGkwTBCAJpEv6eqAAY0CaYgTEc4oMBDQhLBAH4A/ACN8AokP+AGEVwQACaYIMEn7jBAAS4BCYkPcYIADv4nEgbJFj7TFAoYdBGgIACGIL0E8DtEDQMPfYt/CYg0BAAY0FE4IgFCYgMBE4hSEABMHKIRzCAQI9BIIMP/BeCPQJEBJQXABQIMCC4KeBNYXwNIPBNIn+IYRpC+AgCNIWDNIn8j/4v5pC8H/4Y0E/0fGgnwGgoiBGgYiBGggiBGgj4CGgb4CGgQiBGgj4CGgYkBGl6cCGgYABGgacCGgacCGgYABGgb5CGgYABGgggBGgQTC4E/8DyEfYQAMnEAmEAuEAg/wgfAh4gCEoI4BwA0BgY0DT2o0wj40FaoI0Dw40Fn40E8I0FcgI0Ev40E4Y0WdwTcCcAIACGgQADegYABGgQADGgQACGgQGD+ATFgAnEBgIAMJ4JMBAwQnBFYIABEAQ/BBgZTBDIgaDNIRnBAAJpCCYRBDBgQTCE43AAwRnDAAZaFPAJPDDYI0DIYQ0CF4YgEaIRkEGgatBGn40FUoYbCfYgMFEQIMEGwL0E4AlBCYirCfYQgEGwITEEAInEPAgAJOoKDBjhID+EDEAnAn/gGgZ/BwD0C/kfDgN/AwPgAIIPBAAJFBEAf4n5pE4JpE/0PNIX8n/wv5pC8P/wY0Dh40E/F/GgnDGgn+j40E+A0Fw40/GiwABGgbnDGgTICGgSgCGgbcCGgJGBfYUH/i0Cc4XAE4WAgF8bgQMBABruCJwMAEoRBCBghVBBghpCAwfwNIIADwA/CCYYME8AgEE4JnCLgRpBHYieEPoKeEGgTTDGgLTDGgTTDGgTTCGgTTDGgTTDGn40GTwY0BTwg0BTwmHTwg0BTwg0BTwZGC/40BIwITCdwIcBBgcDbgYMBACc8AYUcEAQFBgIDBn/AAwMf4EDGAIQBHAKcBAwM/AYJRBBgXAg4TCn5VDBgXwNIOABIIDBTgMAQAIDBTgICBEAIwCBgItBGgQMBDoIwCBgQ0CBgY0BSIIMBGgS+CgA0BBgJsCaIQwBJYQMEGgIMDGgPfBgY4BWARsCWAg0BBgjRCXoZMBBgbKGj56CGgafCGgYMEGgIMDGgIMEGgJtBGgbGCGgYMEh4MEE4IMEgBtCDQYFEAChwBAALGCAoRyCBgZFBBgiGBTwQAB+CeCCYaeCAAJzBEAngTwQACTwQ7EB4N/CAPAGgMD/EfGgQEB4A0D4H+CAI0BAgPwn40CAgOBGgeB/hFBGgIEBF4I0/GgienAAY0CaYgTEc4oMBDQnAAwIASLgIeBv0AJAX4g5BBNIR4B8BpDCAJpD/ieDAwPhNIqeDE4SeDAAPDNIn+aYk/+CeD4P/w7TDh40E+F/GgmDGgn8j40E8A0Fg40/GgzTDTwi0CTwYABegqeEdwSeCfYbTCAAI0CAAeACYggBE4mADQnwgAAbgQCB4AGCnkAh4FCgYrBN4IABj5FB8AGCBQM/AoQKBgJOBAAMeBAJOBAANAHJIA=='))),
     46,
     atob("DhAqKykpKSkpKyoqDA=="),
     53|65536
@@ -172,7 +195,8 @@ function drawDate() {
   g.setFontAlign(0, 0).setFont(currentFont,2);
   let x = display.centerX - 20;
   let y = display.centerY - 35;
-  if(currentFont == "NummeralByLucaEggerRegular"){
+  if(currentFont == "NunitoBlack"){y+=3;}
+  if(currentFont == "NummeralByLERegular"){
     y-=8;
     x-=10;
     }
@@ -180,7 +204,7 @@ function drawDate() {
   g.setColor(colors.fg);
   g.drawString(dateStr, x, y);
   // Draw month
-  if(currentFont == "NummeralByLucaEggerRegular"){x-=10;}
+  if(currentFont == "NummeralByLERegular"){x-=10;}
   y += 87;
   x += 40;
   g.setColor(colors.fg2);
@@ -206,7 +230,8 @@ setUpdateInterval(1);
   let x = display.centerX;
   let y = display.centerY - 35;
   //fontcorrection
-  if(currentFont == "NummeralByLucaEggerRegular"){y-=8;}
+  if(currentFont == "NummeralByLERegular"){y-=8;}
+  if(currentFont == "NunitoBlack"){y+=3;}
   // Draw hours
   g.setColor(colors.fg);
   g.drawString(hStr, x, y);
@@ -237,7 +262,8 @@ function drawSeconds() {
   let x = display.centerX;
   let y = display.centerY - 35;
   //fontcorrection
-  if(currentFont == "NummeralByLucaEggerRegular"){y-=8;}
+  if(currentFont == "NummeralByLERegular"){y-=8;}
+  if(currentFont == "NunitoBlack"){y+=3;}
   // Draw minutes
   g.setColor(colors.fg);
   g.drawString(mStr, x, y);
@@ -415,12 +441,16 @@ function createMenuSystem() {
     E.showMenu(mainMenu);
   },
     "NumeraLE": () => {
-    currentFont = "NummeralByLucaEggerRegular";
+    currentFont = "NummeralByLERegular";
     g.setFont("Vector"); // Make sure this font is available
     E.showMenu(mainMenu);
   },
   "NewRocker": () => {
     currentFont = "NewRockerRegular";  // This should match what's in your fonts object
+    E.showMenu(mainMenu);
+  },
+  "NunitoBlack": () => {
+    currentFont = "NunitoBlack";  // This should match what's in your fonts object
     E.showMenu(mainMenu);
   },
   "Teko": () => {
@@ -478,11 +508,15 @@ function createColorMenu(title, colorSetter, returnMenu) {
    colorOptions = {
     "Weiss": "#FFFFFF",
     "Schwarz": "#000000",
-    "Orange": "#FFFF00",
+    "Gelb": "#FFFF00",
+     "Orange": "#ff8000",
     "Türkis": "#00FFFF",
     "Blau": "#0000FF",
     "Grün": "#00FF00",
+     "Cyan": "#00fff7",
     "Rot": "#FF0000",
+     "Pink": "#ff0084",
+     "Magenta": "#ff00ff",
     "Azzuro": "#88b3f7",
    "Hell-Rot": "#f09b7f",
     "Grau": "#757575"
