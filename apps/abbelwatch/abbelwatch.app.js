@@ -480,6 +480,7 @@ function createMenuSystem() {
     },*/
     "< Back": () => {
       E.showMenu(); // Closes menu
+      state.menuOpen = false;
       state.wischfunktion = 1;
       state.wischfunktionZ = 1;
       state.windowZ = 1;
@@ -488,6 +489,11 @@ function createMenuSystem() {
   };
 }
 
+function conditionalBuzz(duration) {
+  if (!state.menuOpen) {
+    Bangle.buzz(duration || 60);
+  }
+}
 // Handle long press
 function onLongPress() {
   state.loongpress = true;
@@ -499,7 +505,7 @@ function onLongPress() {
   showMenu();
   
   // Optional vibration feedback
-  Bangle.buzz();
+  conditionalBuzz();
 }
 
 
@@ -553,6 +559,7 @@ function createColorMenu(title, colorSetter, returnMenu) {
 
 // Show the menu
 function showMenu() {
+  state.menuOpen = true;
   E.showMenu(mainMenu);
 }
 
@@ -597,12 +604,12 @@ Bangle.on('drag', function(e) {
     if (e.dy < -60 && Math.abs(e.dy) > Math.abs(e.dx)) {
       // Swipe up
       state.windowZ++;
-      Bangle.buzz(60);
+      conditionalBuzz();
       state.swipeDone = true;
     } else if (e.dy > 60 && Math.abs(e.dy) > Math.abs(e.dx)) {
       // Swipe down
       state.windowZ--;
-      Bangle.buzz(60);
+      conditionalBuzz();
       state.swipeDone = true;
     }
     
@@ -625,11 +632,11 @@ Bangle.on('swipe', function(dir) {
   if (dir === -1) {
     // Swipe left
     state.window++;
-    Bangle.buzz(60);
+    conditionalBuzz();
   } else if (dir === 1) {
     // Swipe right
     state.window--;
-    Bangle.buzz(60);
+    conditionalBuzz();
   }
   
   // Constrain within range
