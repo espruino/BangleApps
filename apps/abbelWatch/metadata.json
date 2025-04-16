@@ -2,7 +2,7 @@
   "name": "abbelwatch",
   "shortName":"abbelWatch",
   "icon": "app.png",
-  "description": "A clock that Includes a selection of fonts to personalize your watch face"
+  "description": "A clock that Includes a selection of fonts to personalize your watch face",
   "type": "clock",
   "version":"0.01",
   "tags": "abbelwatch",
