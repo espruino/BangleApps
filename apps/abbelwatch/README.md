@@ -13,6 +13,7 @@ Includes a selection of fonts to personalize your watch face:
 - **Bodoni**
 - **NumeraLE**
 - **NewRocker**
+- **Nunito**
 - **Teko**
 
 ### 👆 Gesture Controls
