@@ -4,8 +4,10 @@
   "icon": "app.png",
   "type": "clock",
   "version":"0.01",
-  "description": "Multiple fonts and colors",
-  "tags": "abbelwatch",
+  "description": "A clock that Includes a selection of fonts to personalize your watch face"
+  "tags": "abbelwatch, clock, steps",
+  "allow_emulator": true,
+  "readme": "README.md",
   "supports": ["BANGLEJS2"],
 "storage": [
   {"name":"abbelWatch.app.js","url":"abbelWatch.app.js"},
