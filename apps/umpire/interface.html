@@ -37,7 +37,7 @@ function getData() {
     </tr>`+data.trim().split("\n").map(l=>{
       l = l.split(",");
       return `<tr>
-      <td>${(new Date(l[0]*1000)).toLocaleString()}</td>
+      <td>${(new Date(l[0])).toLocaleString()}</td>
       <td>${l1]}</td>
       <td>${l2}</td>
       <td>${l3]}</td>
