@@ -30,10 +30,12 @@ function countDown(dir) {
   var timeSig = new Date();
   ballTimes.push(timeSig.getTime());
   
+  if(dir!=0) {
   if(dir>0) {
     addLog(timeSig, over, counter, "Ball", "");
   } else {
-    addLog(timeSig, over, counter, "Other", "");
+    addLog(timeSig, over, counter, "Correction", "");
+  }
   }
 
   // Over
