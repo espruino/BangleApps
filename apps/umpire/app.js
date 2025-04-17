@@ -38,7 +38,7 @@ function countDown(dir) {
     addLog(timeSig, over, counter, "Correction", "");
   }
     Bangle.buzz();
-    if(counter==4) Bangle.buzz();
+    if(counter==4) setTimeout(Bangle.buzz(), 300);
   }
 
   // Over
@@ -73,7 +73,8 @@ function countDown(dir) {
 
 
     // Now buzz
-    Bangle.buzz();Bangle.buzz();
+    setTimeout(Bangle.buzz(), 300);
+    setTimeout(Bangle.buzz(), 1000);
 
 Bangle.setUI({
 
