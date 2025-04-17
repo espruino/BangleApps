@@ -14,5 +14,6 @@
     {"name":"counter2.settings.js","url":"settings.js"},
     {"name":"counter2.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"counter2.json"}]
+  "data": [{"name":"counter2.json"}],
+  "sortorder": -1
 }
