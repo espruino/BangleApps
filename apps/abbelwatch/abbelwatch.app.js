@@ -418,24 +418,24 @@ let mainMenu, colorSettingsMenu, fontMenu;
 function createMenuSystem() {
   // Color settings menu
   colorSettingsMenu = {
-    "": { "title": "Farbe wählen" },
-    "Hintergrund": () => {
+    "": { "title": "Choose Color" },
+    "Background": () => {
       E.showMenu(createColorMenu("Hintergrundfarbe", (color) => colors.bg = color, colorSettingsMenu));
     },
-    "Ziffern Oben": () => {
+    "Upper digits": () => {
       E.showMenu(createColorMenu("Obere Zeichen", (color) => colors.fg = color, colorSettingsMenu));
     },
-    "Ziffern Unten": () => {
+    "Lower digits": () => {
       E.showMenu(createColorMenu("Untere Zeichen", (color) => colors.fg2 = color, colorSettingsMenu));
     },
-    "< Zurück": () => {
+    "< back": () => {
       E.showMenu(mainMenu);
     }
   };
   
   // Font menu
   fontMenu = {
-  "": { "title": "Font Wählen" },
+  "": { "title": "Choose Font" },
   "Bodoni": () => {
     currentFont = "BodoniModaVariableFontopszwght";  // Make sure this font is available
     E.showMenu(mainMenu);
@@ -458,7 +458,7 @@ function createMenuSystem() {
     g.setFont("Vector"); // Make sure this font is available
     E.showMenu(mainMenu);
   },
-  "< Zurück": () => {
+  "< back": () => {
     E.showMenu(mainMenu);
   }
 };
@@ -466,7 +466,7 @@ function createMenuSystem() {
   // Main menu
   mainMenu = {
     "": { "title": "Abbel Menu" },
-    "Farbwahl": () => {
+    "Color": () => {
       E.showMenu(colorSettingsMenu);
     },
     "Fonts": () => {
@@ -512,20 +512,20 @@ function onLongPress() {
 // Create a color picker menu
 function createColorMenu(title, colorSetter, returnMenu) {
    colorOptions = {
-    "Weiss": "#FFFFFF",
-    "Schwarz": "#000000",
-    "Gelb": "#FFFF00",
+    "White": "#FFFFFF",
+    "Black": "#000000",
+    "Yellow": "#FFFF00",
     "Orange": "#ff8000",
-    "Türkis": "#00FFFF",
-    "Blau": "#0000FF",
-    "Grün": "#00FF00",
+    "Turquoise": "#00FFFF",
+    "Blue": "#0000FF",
+    "Green": "#00FF00",
     "Cyan": "#00fff7",
-    "Rot": "#FF0000",
+    "Red": "#FF0000",
     "Pink": "#ff0084",
     "Magenta": "#ff00ff",
-    "Azzuro": "#88b3f7",
-    "Hell-Rot": "#f09b7f",
-    "Grau": "#757575"
+    "Azure": "#88b3f7",
+    "Light-Red": "#f09b7f",
+    "Gray": "#757575"
   };
   
   const menu = { "": { "title": title } };
