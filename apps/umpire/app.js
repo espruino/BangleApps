@@ -41,7 +41,7 @@ function countDown(dir) {
       Bangle.buzz().then(()=>{
         return new Promise(resolve=>setTimeout(resolve,500)); // wait 500ms
       }).then(()=>{
-        return Bangle.buzz();
+        return Bangle.buzz(500);
       })
     } else if(counter==5) {
       Bangle.buzz(800);
@@ -84,7 +84,7 @@ function countDown(dir) {
 
 
     // Now buzz
-    Bangle.buzz(1000);
+    Bangle.buzz(1200);
 
 Bangle.setUI({
 
