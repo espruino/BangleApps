@@ -29,7 +29,7 @@ function getData() {
 // Otherwise parse the data and output it as a table
     dataElement.innerHTML = `<table>
     <tr>
-      <th>Time/th>
+      <th>Time</th>
       <th>Over</th>
       <th>Ball</th>
       <th>Event</th>
@@ -37,11 +37,11 @@ function getData() {
     </tr>`+data.trim().split("\n").map(l=>{
       l = l.split(",");
       return `<tr>
-      <td>${(new Date(l[0])).toLocaleString()}</td>
-      <td>${l1]}</td>
-      <td>${l2}</td>
-      <td>${l3]}</td>
-      <td>${l4]}</td>
+      <td>${l[0]}</td>
+      <td>${l[1]}</td>
+      <td>${l[2]}</td>
+      <td>${l[3]}</td>
+      <td>${l[4]}</td>
       </tr>`
     }).join("\n")+"</table>";
   });
