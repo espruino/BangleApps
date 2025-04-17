@@ -10,7 +10,7 @@ function addLog(timeSig, over, ball, matchEvent, metaData) {
   var csv = [
     formatTimeOfDay(timeSig),
     over, ball, 
-    matchEvent, metaData + " "
+    matchEvent, metaData
   ];
   // Write data here
   file.write(csv.join(",")+"\n");
