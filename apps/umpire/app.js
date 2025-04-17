@@ -138,7 +138,7 @@ function startOver() {
 var file = require("Storage").open("matchlog.csv","a");
 
 var timeSig = new Date();
-addLog(formatTimeOfDay(timeSig), "-", "-", "App Started", timeSig);
+addLog(timeSig, "-", "-", "App Started", timeSig);
 
 var menuItems = {
   "":{title:"Umpire"},
