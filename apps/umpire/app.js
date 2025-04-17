@@ -3,6 +3,7 @@ var counter = 0;
 var over = 0;
 var ballTimes = [];
 var overTimes = [];
+var gameState = "Ready..."
 
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   // The fields we want to put in out CSV file
@@ -105,6 +106,7 @@ Bangle.setUI({
 
 function startOver() {
   var timeSig = new Date();
+  if(over==0) overTimes.push(timeSig.getTime());
   over += 1;
   counter = 0;
   ballTimes = [];
@@ -136,6 +138,14 @@ function startOver() {
 var file = require("Storage").open("matchlog.csv","a");
 
 var timeSig = new Date();
-overTimes.push(timeSig.getTime());
+addLog(formatTimeOfDay(timeSig), "-", "-", "App Started", timeSig);
 
-startOver();
+var menuItems = {
+  "":{title:"Umpire"},
+  " ":{value:gameState},
+  "Play" : ()=>startOver()
+};
+
+var menu = E.showMenu(menuItems);
+
+//startOver();
