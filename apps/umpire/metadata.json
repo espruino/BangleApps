@@ -5,6 +5,7 @@
   "version":"0.01",
   "description": "Cricket umpire ball counter and match event logger",
   "tags": "",
+  "interface": "interface.html",
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"umpire.app.js","url":"app.js"},
