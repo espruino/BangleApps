@@ -4,10 +4,12 @@ var over = 0;
 var ballTimes = [];
 var overTimes = [];
 
-function addLog(matchEvent) {
+function addLog(timeSig, over, ball, matchEvent, metaData) {
   // The fields we want to put in out CSV file
   var csv = [
-    matchEvent
+    timeSig.getTime(),
+    over, ball, 
+    matchEvent, metaData
   ];
   // Write data here
   file.write(csv.join(",")+"\n");
@@ -28,9 +30,11 @@ function countDown(dir) {
   var timeSig = new Date();
   ballTimes.push(timeSig.getTime());
   
-  if(dir>0) addLog(formatTimeOfDay(timeSig) + " Ball " + over + "." +  counter);
-
-
+  if(dir>0) {
+    addLog(timeSig, over, counter, "Ball", "");
+  } else {
+    addLog(timeSig, over, counter, "Other", "");
+  }
 
   // Over
 
@@ -46,14 +50,14 @@ function countDown(dir) {
     
     var overMinutesString = over + " " + formatDuration(overDuration) + "";
     
-    
-    addLog(matchMinutesString + "\n" + overMinutesString);
+    addLog(timeSig, over, counter, "Over Duration", overMinutesString);
+    addLog(timeSig, over, counter, "Innings Duration", matchMinutesString);
 
     //console.log(overTimes);
 
     // display the 'over' message
 
-    E.showMessage(matchMinutesString + "\n" + overMinutesString, "END OF OVER");
+    E.showMessage(overMinutesString + "\n" + matchMinutesString, "END OF OVER");
 
     // Now buzz
 
@@ -99,12 +103,11 @@ Bangle.setUI({
 }
 
 function startOver() {
-  
+  var timeSig = new Date();
   over += 1;
-  addLog("Over " + over);
-
   counter = 0;
   ballTimes = [];
+  addLog(timeSig, over, counter, "New Over", "");
 
   // allow interaction, drag up/down and press button
 
