@@ -16,6 +16,7 @@ const b1 = (s.colortext) ? g.theme.bg : "#f00";
 const b2 = (s.colortext) ? g.theme.bg : "#00f";
 
 var drag;
+var dragCurr = {x:0 ,y:0 ,dx:0 ,dy:0 ,b:false};
 
 const screenwidth = g.getWidth();
 const screenheight = g.getHeight();
@@ -38,6 +39,7 @@ function saveSettings() {
 }
 
 let ignoreonce = false;
+let fastupdateoccurring = false;
 var dragtimeout;
 
 function updateScreen() {
@@ -64,32 +66,55 @@ function updateScreen() {
   Bangle.drawWidgets();
 }
 
+Bangle.on("gesture", e => {
+  if (dragCurr.b) {
+    const c = (dragCurr.x >= halfwidth && s.display2) ? 1 : 0;
+    resetcounter(c);
+  }
+});
+
 Bangle.on("drag", e => {
   const c = (e.x >= halfwidth && s.display2) ? 1 : 0;
+  dragCurr = e;
   if (!drag) {
     if (ignoreonce) {
       ignoreonce = false;
       return;
     }
     drag = { x: e.x, y: e.y };
-    dragtimeout = setTimeout(function () { resetcounter(c); }, 600); //if dragging for 500ms, reset counter
+    dragtimeout = setTimeout(function () { fastupdatecounter(c); }, 600); //if dragging for 500ms, reset counter
   }
   else if (drag && !e.b) { // released
-      let adjust = 0;
-      const dx = e.x - drag.x, dy = e.y - drag.y;
-      if (Math.abs(dy) > Math.abs(dx) + 30) {
-        adjust = (dy > 0) ? -1 : 1;
-      } else {
-        adjust = (e.y > halfheight) ? -1 : 1;
-      }
-      counter[c] += adjust;
-      updateScreen();
-      drag = undefined;
-      clearTimeout(dragtimeout);
-    }
+    if (!fastupdateoccurring)
+      updatecounter(c);
+    drag = undefined;
+    clearTimeout(dragtimeout);
+    fastupdateoccurring = false;
+  }
 });
 
+function updatecounter(which) {
+  let adjust = 0;
+  const dx = dragCurr.x - drag.x, dy = dragCurr.y - drag.y;
+  if (Math.abs(dy) > Math.abs(dx) + 30) {
+    adjust = (dy > 0) ? -1 : 1;
+  } else {
+    adjust = (dragCurr.y > halfheight) ? -1 : 1;
+  }
+  counter[which] += adjust;
+  updateScreen();
+}
+
+function fastupdatecounter(which) {
+  fastupdateoccurring = true;
+  updatecounter(which);
+  dragtimeout = setTimeout(function () { fastupdatecounter(which); }, 50);
+}
+
+
 function resetcounter(which) {
+  fastupdateoccurring = false;
+  clearTimeout(dragtimeout);
   counter[which] = defaults[which];
   console.log("resetting counter ", which);
   updateScreen();

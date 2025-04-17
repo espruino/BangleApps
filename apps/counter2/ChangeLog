@@ -4,3 +4,4 @@
 0.04: Fix lint warnings
 0.05: Fix on not reading counter defaults in Settings
 0.06: Can show only one counter.
+0.07: Added gesture to reset and fast updating.

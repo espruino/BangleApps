@@ -11,10 +11,12 @@ The counter state gets saved. Best to use this with pattern launcher or ClockCal
 ## Howto
  - Tap top side or swipe up to increase counter
  - Tap bottom side or swipe down to decrease counter
- - Hold (600ms) to reset to default value (configurable)
+ - Hold (600ms) to quickly change the counter
+ - Tap and hold the screen while qucikly rotating your wrist to reset to default value (configurable)
  - Press button to exit
 
 ## Configurable Features
+- Show both Counters or only one
 - Default value Counter 1
 - Default value Counter 2
 - Buzz on interact
