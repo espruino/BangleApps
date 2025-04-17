@@ -317,6 +317,7 @@ exports.getStats = function(statIDs, options) {
   if (needHRM) Bangle.setHRMPower(true,"exs");
   if (needBaro) Bangle.setBarometerPower(true,"exs");
   setInterval(function() { // run once a second....
+    if (stats["time"]) stats["time"].emit("changed",stats["time"]);
     if (!state.active) return;
     // called once a second
     var now = Date.now();
@@ -328,7 +329,6 @@ exports.getStats = function(statIDs, options) {
     // move step history onwards
     state.stepHistory.set(state.stepHistory,1);
     state.stepHistory[0]=0;
-    if (stats["time"]) stats["time"].emit("changed",stats["time"]);
     // update BPM - if nothing valid in 60s remove the reading
     state.BPMage++;
     if (state.BPM && state.BPMage>60) {
