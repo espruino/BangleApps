@@ -37,10 +37,17 @@ function countDown(dir) {
   } else {
     addLog(timeSig, over, counter, "Correction", "");
   }
-    Bangle.buzz();
-    if(counter==4) setTimeout(function () {
-      Bangle.buzz()}, 600);
-    if(counter==5) Bangle.buzz();
+    if(counter==4) {
+      Bangle.buzz().then(()=>{
+        return new Promise(resolve=>setTimeout(resolve,500)); // wait 500ms
+      }).then(()=>{
+        return Bangle.buzz();
+      })
+    } else if(counter==5) {
+      Bangle.buzz(800);
+    } else {
+      Bangle.buzz()
+    }
 
   
   }
@@ -77,10 +84,7 @@ function countDown(dir) {
 
 
     // Now buzz
-    setTimeout(function () {
-      Bangle.buzz()}, 600);
-    setTimeout(function () {
-      Bangle.buzz()}, 1000);
+    Bangle.buzz(1000);
 
 Bangle.setUI({
 
