@@ -92,9 +92,12 @@ function onStartStop() {
         then(() => WIDGETS["recorder"].setRecording(true, { force : shouldResume?"append":undefined })).
         then(() => {
           screen = "main";
-          layout.setUI(); // grab our input handling again
-          layout.forgetLazyState();
-          layout.render();
+          if(!shouldResume){
+            // setRecording might have rendered - need to grab UI
+            layout.setUI(); // grab our input handling again
+            layout.forgetLazyState();
+            layout.render();
+          }
         });
     } else {
       promise = promise.then(
