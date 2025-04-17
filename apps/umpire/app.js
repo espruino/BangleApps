@@ -3,7 +3,7 @@ var counter = 0;
 var over = 0;
 var ballTimes = [];
 var overTimes = [];
-var gameState = "Ready..."
+var gameState = "Ready...";
 
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   // The fields we want to put in out CSV file
