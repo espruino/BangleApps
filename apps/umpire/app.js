@@ -45,21 +45,29 @@ function countDown(dir) {
     var firstOverTime = overTimes[0];
     var matchDuration = new Date(timeSig.getTime() - firstOverTime);
     
-    var matchMinutesString = "M " + formatDuration(matchDuration);
+    var matchMinutesString = formatDuration(matchDuration);
     
     var firstBallTime = ballTimes[0];
     var overDuration = new Date(timeSig.getTime() - firstBallTime);
     
-    var overMinutesString = over + " " + formatDuration(overDuration) + "";
+    var overMinutesString = formatDuration(overDuration) + "";
     
     addLog(timeSig, over, counter, "Over Duration", overMinutesString);
     addLog(timeSig, over, counter, "Innings Duration", matchMinutesString);
 
     //console.log(overTimes);
 
-    // display the 'over' message
+    //E.showMessage(overMinutesString + "\n" + matchMinutesString, "END OF OVER");
 
-    E.showMessage(overMinutesString + "\n" + matchMinutesString, "END OF OVER");
+  g.clear(1); // clear screen and reset graphics state
+  g.setFontAlign(0,0); // center font
+  g.setFont("Vector",48); 
+  g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, g.getHeight()/3.5);
+  g.setFont("Vector",48)
+  g.drawString(over + " - " + overMinutesString + "\nI - " + matchMinutesString, g.getWidth()/1.89, g.getHeight()/1.4);
+
+
+
 
     // Now buzz
 
@@ -84,24 +92,14 @@ Bangle.setUI({
   }
 
   g.clear(1); // clear screen and reset graphics state
-
   g.setFontAlign(0,0); // center font
-
   g.setFont("Vector",48); // vector font, 80px
-
-  // draw the current counter value
-
   g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, g.getHeight()/3.5);
-  
   g.setFont("Vector",80); // vector font, 80px
-
-  
   g.drawString(over + "." + counter, g.getWidth()/1.89, g.getHeight()/1.4);
 
   // optional - this keeps the watch LCD lit up
-
   Bangle.setLCDPower(1);
-
 }
 
 function startOver() {
