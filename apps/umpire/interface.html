@@ -27,7 +27,7 @@ function getData() {
       return;
     }
 // Otherwise parse the data and output it as a table
-    dataElement.innerHTML = `<table style="border: 1px solid #808080">
+    dataElement.innerHTML = `<table style="border: 1px solid #cccccc">
     <tr>
       <th>Time</th>
       <th>Over</th>
@@ -38,8 +38,8 @@ function getData() {
       l = l.split(",");
       return `<tr>
       <td>${l[0]}</td>
-      <td>${l[1]}</td>
-      <td>${l[2]}</td>
+      <td align="center">${l[1]}</td>
+      <td align="center">${l[2]}</td>
       <td>${l[3]}</td>
       <td>${l[4]}</td>
       </tr>`
