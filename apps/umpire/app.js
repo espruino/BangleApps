@@ -20,7 +20,7 @@ function formatDuration(timeDate) {
   return (timeDate.getHours()-1) + ":" + timeDate.getMinutes().toString().padStart(2, "0") + ":" + timeDate.getSeconds().toString().padStart(2, "0") + "";
 }
 
-function formatTimeOfDay(timeSig) { return timeSig.getHours() + ":" + timeSig.getMinutes().toString().padStart(2, "0") + ":" + timeSig.getSeconds().toString().padStart(2, "0");}
+function formatTimeOfDay(timeSig) { return timeSig.getHours() + ":" + timeSig.getMinutes().toString().padStart(2, "0");}
 
 
 function countDown(dir) {
