@@ -84,7 +84,7 @@ function countDown(dir) {
 
 
     // Now buzz
-    Bangle.buzz(1200);
+    Bangle.buzz();
 
 Bangle.setUI({
 
