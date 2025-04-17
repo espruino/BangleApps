@@ -4,6 +4,15 @@ var over = 0;
 var ballTimes = [];
 var overTimes = [];
 
+function addLog(matchEvent) {
+  // The fields we want to put in out CSV file
+  var csv = [
+    matchEvent
+  ];
+  // Write data here
+  file.write(csv.join(",")+"\n");
+  console.log(csv);
+}
  
 function formatDuration(timeDate) { 
   return (timeDate.getHours()-1) + ":" + timeDate.getMinutes().toString().padStart(2, "0") + ":" + timeDate.getSeconds().toString().padStart(2, "0") + "";
@@ -19,7 +28,7 @@ function countDown(dir) {
   var timeSig = new Date();
   ballTimes.push(timeSig.getTime());
   
-  if(dir>0) console.log(formatTimeOfDay(timeSig) + " Ball " + over + "." +  counter);
+  if(dir>0) addLog(formatTimeOfDay(timeSig) + " Ball " + over + "." +  counter);
 
 
 
@@ -38,7 +47,7 @@ function countDown(dir) {
     var overMinutesString = over + " " + formatDuration(overDuration) + "";
     
     
-    console.log(matchMinutesString + "\n" + overMinutesString);
+    addLog(matchMinutesString + "\n" + overMinutesString);
 
     //console.log(overTimes);
 
@@ -92,7 +101,7 @@ Bangle.setUI({
 function startOver() {
   
   over += 1;
-  console.log("Over " + over);
+  addLog("Over " + over);
 
   counter = 0;
   ballTimes = [];
@@ -119,7 +128,10 @@ function startOver() {
   countDown(0);
 
 }
-  var timeSig = new Date();
-  overTimes.push(timeSig.getTime());
+// Create the file in append mode
+var file = require("Storage").open("matchlog.csv","a");
 
-	startOver();
+var timeSig = new Date();
+overTimes.push(timeSig.getTime());
+
+startOver();
