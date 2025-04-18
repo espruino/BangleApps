@@ -87,10 +87,11 @@ function onStartStop() {
   // an overwrite before we start tracking exstats
   if (settings.record && WIDGETS["recorder"]) {
     if (running) {
-      screen = "menu";
       promise = promise.
-        then(() => WIDGETS["recorder"].setRecording(true, { force : shouldResume?"append":undefined })).
         then(() => {
+          screen = "menu";
+          return WIDGETS["recorder"].setRecording(true, { force : shouldResume?"append":undefined });
+        }).then(() => {
           screen = "main";
           if(!shouldResume){
             // setRecording might have rendered - need to grab UI
