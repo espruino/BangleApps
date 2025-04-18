@@ -29,7 +29,7 @@ function countDown(dir) {
   if(counter<0) counter=0;
 
   var timeSig = new Date();
-  var lastBallTime = timeSig.getTime();
+  var lastBallTime = new Date(timeSig.getTime());
   if(over>0) lastBallTime = ballTimes[ballTimes.length - 1];
   //console.log(lastBallTime);
   var deadDuration = new Date(timeSig.getTime() - lastBallTime);
