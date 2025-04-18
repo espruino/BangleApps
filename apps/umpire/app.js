@@ -80,12 +80,7 @@ function countDown(dir) {
   g.setFont("Vector",24);
   g.drawString(over + " " + overMinutesString + "\nI " + matchMinutesString, g.getWidth()/1.89, g.getHeight()/1.4);
 
-  var lastBallTime = timeSig;
-  if(over>0) lastBallTime = ballTimes[ballTimes.length - 1];
-  var deadDuration = new Date(timeSig.getTime() - lastBallTime);
-  g.setFont("Vector",12);
-  g.drawString(formatDuration(deadDuration), g.getWidth()/1.89, 16);
-
+  
 
     // Now buzz
     Bangle.buzz();
@@ -114,6 +109,12 @@ Bangle.setUI({
   g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, g.getHeight()/3.5);
   g.setFont("Vector",80); // vector font, 80px
   g.drawString(over + "." + counter, g.getWidth()/1.89, g.getHeight()/1.4);
+  
+  var lastBallTime = timeSig;
+  if(over>0) lastBallTime = ballTimes[ballTimes.length - 1];
+  var deadDuration = new Date(timeSig.getTime() - lastBallTime);
+  g.setFont("Vector",16);
+  g.drawString(formatDuration(deadDuration), g.getWidth()/1.89, 18);
 
   // optional - this keeps the watch LCD lit up
   Bangle.setLCDPower(1);
@@ -146,6 +147,7 @@ function startOver() {
     }
 
   });
+  Bangle.on('twist', function() { countDown(0) });
   countDown(0);
 
 }
