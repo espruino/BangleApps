@@ -4,6 +4,7 @@ var over = 0;
 var ballTimes = [];
 var overTimes = [];
 var gameState = "Ready...";
+var countdownDebounce = false;
 
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   // The fields we want to put in out CSV file
@@ -25,6 +26,8 @@ function formatTimeOfDay(timeSig) { return timeSig.getHours() + ":" + timeSig.ge
 
 
 function countDown(dir) {
+  if(!countdownDebounce) {
+  countdownDebounce = true;
   counter += dir;
   if(counter<0) counter=0;
 
@@ -99,6 +102,7 @@ function countDown(dir) {
         startOver();
       }
     });
+    countdownDebounce = false;
     return;
   }
   }
@@ -112,7 +116,8 @@ function countDown(dir) {
   g.setFont("Vector",18);
   g.drawString("..." + formatDuration(deadDuration), g.getWidth()/1.89, 166);
   }
-
+  countdownDebounce = false;
+  }
 }
 
 function startOver() {
