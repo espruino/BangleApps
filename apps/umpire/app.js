@@ -56,6 +56,7 @@ function countDown(dir) {
   }
   // Over
   if (counter>=6) {
+    Bangle.on('twist', function() { });
     overTimes.push(timeSig.getTime());
     var firstOverTime = overTimes[0];
     var matchDuration = new Date(timeSig.getTime() - firstOverTime);
