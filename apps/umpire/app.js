@@ -37,6 +37,7 @@ function countDown(dir) {
 
   if(dir!=0) {
     ballTimes.push(timeSig.getTime());
+    Bangle.setLCDPower(1);
   if(dir>0) {
     addLog(timeSig, over, counter, "Ball", formatDuration(deadDuration));
   } else {
@@ -96,6 +97,7 @@ function countDown(dir) {
     return;
   }
   }
+  if(counter<6) {
   g.clear(1); // clear screen and reset graphics state
   g.setFontAlign(0,0); // center font
   g.setFont("Vector",48); // vector font, 80px
@@ -104,9 +106,8 @@ function countDown(dir) {
   g.drawString(over + "." + counter, g.getWidth()/1.89, 120);
   g.setFont("Vector",18);
   g.drawString("..." + formatDuration(deadDuration), g.getWidth()/1.89, 166);
+  }
 
-  // optional - this keeps the watch LCD lit up
-  Bangle.setLCDPower(1);
 }
 
 function startOver() {
