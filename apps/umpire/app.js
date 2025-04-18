@@ -26,7 +26,7 @@ function formatTimeOfDay(timeSig) { return timeSig.getHours() + ":" + timeSig.ge
 
 
 function countDown(dir) {
-  if(!countdownDebounce) {
+  if(countdownDebounce!=true) {
   countdownDebounce = true;
   counter += dir;
   if(counter<0) counter=0;
