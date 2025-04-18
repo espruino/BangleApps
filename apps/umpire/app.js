@@ -147,7 +147,10 @@ function startOver() {
     }
 
   });
-  Bangle.on('twist', function() { countDown(0) });
+  Bangle.on('twist', function() { 
+    console.log("twist");
+    countDown(0);
+  });
   countDown(0);
 
 }
