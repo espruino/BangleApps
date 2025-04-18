@@ -44,7 +44,7 @@ function countDown(dir) {
   var deadDuration = new Date(timeSig.getTime() - lastBallTime);
   console.log(deadDuration);
   if(dir!=0) {
-    ballTimes.push(timeSig.getTime());
+    if(counter>0) ballTimes.push(timeSig.getTime());
     Bangle.setLCDPower(1);
   if(dir>0) {
     addLog(timeSig, over, counter, "Ball", formatDuration(deadDuration));
