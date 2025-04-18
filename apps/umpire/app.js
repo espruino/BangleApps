@@ -154,7 +154,6 @@ addLog(timeSig, "-", "-", "App Started", timeSig);
 
 var menuItems = {
   "":{title:"Umpire"},
-  //" ":{value:gameState},
   "Play" : ()=>startOver()
 };
 
