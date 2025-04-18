@@ -125,6 +125,15 @@ function countDown(dir) {
 }
 
 function startOver(resume) {
+  Bangle.setUI({
+    mode : "updown",
+  }, dir => {
+    if (!dir) { // if tapped or button pressed, start/stop
+      countDown(1);
+    } else { // otherwise if dir nonzero, up/down
+      countDown(-dir);
+    }
+  });
   var timeSig = new Date();
   if(resume!=true) {
     if(over==0) {
@@ -138,19 +147,10 @@ function startOver(resume) {
     counter = 0;
     ballTimes = [];
     addLog(timeSig, over, counter, "New Over", "");    
+    countDown(0);
+  } else {
+    countDown(1);
   }
-  // allow interaction, drag up/down and press button
-
-  Bangle.setUI({
-    mode : "updown",
-  }, dir => {
-    if (!dir) { // if tapped or button pressed, start/stop
-      countDown(1);
-    } else { // otherwise if dir nonzero, up/down
-      countDown(-dir);
-    }
-  });
-  countDown(0);
 }
 
 function resumeGame() {
