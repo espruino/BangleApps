@@ -6,6 +6,7 @@
         counter1:0,
         max0:40,
         max1:0,
+        fullscreen: true,
         buzz: true,
         colortext: true,
     };
@@ -54,6 +55,13 @@
             onchange: v => {
                 settings.colortext = v;
                 console.log("Color",v);
+                writeSettings();
+            }
+        };
+        appMenu['Fullscreen'] = {
+            value: settings.fullscreen,
+            onchange: v => {
+                settings.fullscreen = v;
                 writeSettings();
             }
         };

@@ -1,14 +1,17 @@
-Bangle.loadWidgets();
-
 var s = Object.assign({
   display2:true,
   counter0:40,
   counter1:0,
   max0:40,
   max1:0,
+  fullscreen:true,
   buzz: true,
   colortext: true,
 }, require('Storage').readJSON("counter2.json", true) || {});
+
+var sGlob = Object.assign({
+  timeout: 10,
+}, require('Storage').readJSON("setting.json", true) || {});
 
 const f1 = (s.colortext) ? "#f00" : "#fff";
 const f2 = (s.colortext) ? "#00f" : "#fff";
@@ -63,8 +66,24 @@ function updateScreen() {
   }
   saveSettings();
   if (s.buzz)  Bangle.buzz(50,.5);
-  Bangle.drawWidgets();
+
+  Bangle.loadWidgets();
+  if (s.fullscreen) {
+    require("widget_utils").hide();
+  }
+  else {
+    Bangle.drawWidgets();
+  }
 }
+
+// Clearing the timer on lock is likely uneeded, but just in case
+Bangle.on('lock', e => {
+  drag = undefined;
+  var timeOutTimer = sGlob.timeout * 1000;
+  Bangle.setOptions({backlightTimeout: timeOutTimer, lockTimeout: timeOutTimer});
+  if (dragtimeout) clearTimeout(dragtimeout);
+  fastupdateoccurring = false;
+});
 
 Bangle.on("gesture", e => {
   if (dragCurr.b) {
@@ -88,7 +107,11 @@ Bangle.on("drag", e => {
     if (!fastupdateoccurring)
       updatecounter(c);
     drag = undefined;
-    clearTimeout(dragtimeout);
+    if (dragtimeout) {
+      let timeOutTimer = 1000;
+      Bangle.setOptions({backlightTimeout: timeOutTimer, lockTimeout: timeOutTimer});
+      clearTimeout(dragtimeout);
+    }
     fastupdateoccurring = false;
   }
 });
@@ -108,13 +131,18 @@ function updatecounter(which) {
 function fastupdatecounter(which) {
   fastupdateoccurring = true;
   updatecounter(which);
-  dragtimeout = setTimeout(function () { fastupdatecounter(which); }, 50);
+  Bangle.setOptions({backlightTimeout: 0, lockTimeout: 0});
+  dragtimeout = setTimeout(function () { fastupdatecounter(which); }, 10);
 }
 
 
 function resetcounter(which) {
   fastupdateoccurring = false;
-  clearTimeout(dragtimeout);
+  if (dragtimeout) {
+    let timeOutTimer = 1000;
+    Bangle.setOptions({backlightTimeout: timeOutTimer, lockTimeout: timeOutTimer});
+    clearTimeout(dragtimeout);
+  }
   counter[which] = defaults[which];
   console.log("resetting counter ", which);
   updateScreen();
@@ -126,5 +154,7 @@ function resetcounter(which) {
 updateScreen();
 
 setWatch(function() {
+  var timeOutTimer = sGlob.timeout * 1000;
+  Bangle.setOptions({backlightTimeout: timeOutTimer, lockTimeout: timeOutTimer});
   load();
 }, BTN1, {repeat:true, edge:"falling"});
