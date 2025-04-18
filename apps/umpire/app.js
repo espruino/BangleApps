@@ -144,7 +144,7 @@ function startOver() {
     }
   });
   Bangle.on('twist', function() { 
-    //console.log("twist");
+    console.log("twist");
     countDown(0);
   });
   countDown(0);
@@ -152,6 +152,7 @@ function startOver() {
 }
 
 function resumeGame() {
+  Bangle.buzz();
   menu = E.showMenu();
   if(over==0) {
     startOver();
