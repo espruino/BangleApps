@@ -96,7 +96,7 @@ function countDown(dir) {
 
     Bangle.setUI({
       mode : "custom",
-      swipe : (dir)=>{
+      swipe : (directionLR, directionUD)=>{
         Bangle.setUI();
         E.showMenu(menuItems);
       },
@@ -126,14 +126,18 @@ function countDown(dir) {
 
 function startOver(resume) {
   Bangle.setUI({
-    mode : "updown",
-  }, dir => {
-    if (!dir) { // if tapped or button pressed, start/stop
-      countDown(1);
-    } else { // otherwise if dir nonzero, up/down
-      countDown(-dir);
-    }
-  });
+      mode : "custom",
+      swipe : (directionLR, directionUD)=>{
+        if (!directionUD) { // if tapped or button pressed, start/stop
+          countDown(1);
+        } else { // otherwise if dir nonzero, up/down
+          countDown(-1);
+        }
+      },
+      btn : ()=>{
+        countDown(1);
+      }
+    });
   var timeSig = new Date();
   if(resume!=true) {
     if(over==0) {
