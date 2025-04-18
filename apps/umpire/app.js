@@ -29,8 +29,9 @@ function countDown(dir) {
   if(counter<0) counter=0;
 
   var timeSig = new Date();
-  var lastBallTime = new Date(timeSig.getTime());
-  if(over>0) lastBallTime = ballTimes[ballTimes.length - 1];
+  var lastBallTime = timeSig.getTime();
+  if(counter>0) lastBallTime = ballTimes[ballTimes.length - 1];
+  if(over>0) lastBallTime = overTimes[overTimes.length - 1];
   //console.log(lastBallTime);
   var deadDuration = new Date(timeSig.getTime() - lastBallTime);
 
@@ -100,8 +101,8 @@ function countDown(dir) {
   g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 50);
   g.setFont("Vector",80); // vector font, 80px
   g.drawString(over + "." + counter, g.getWidth()/1.89, 120);
-  g.setFont("Vector",16);
-  g.drawString("..." + formatDuration(deadDuration), g.getWidth()/1.89, 170);
+  g.setFont("Vector",18);
+  g.drawString("..." + formatDuration(deadDuration), g.getWidth()/1.89, 166);
 
   // optional - this keeps the watch LCD lit up
   Bangle.setLCDPower(1);
