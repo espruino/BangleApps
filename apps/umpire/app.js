@@ -35,14 +35,14 @@ function countDown(dir) {
   var lastBallTime = timeSig.getTime();
   if(ballTimes.length>0) {
     lastBallTime = ballTimes[ballTimes.length - 1];
-    console.log("Last ball time");
+    //console.log("Last ball time");
   } else if(overTimes.length>0) {
     lastBallTime = overTimes[overTimes.length - 1];
-    console.log("Last over time");
+    //console.log("Last over time");
   }
   
   var deadDuration = new Date(timeSig.getTime() - lastBallTime);
-  console.log(deadDuration);
+  //console.log(deadDuration);
   if(dir!=0) {
     if(counter>0) ballTimes.push(timeSig.getTime());
     Bangle.setLCDPower(1);
@@ -154,7 +154,7 @@ addLog(timeSig, "-", "-", "App Started", timeSig);
 
 var menuItems = {
   "":{title:"Umpire"},
-  " ":{value:gameState},
+  //" ":{value:gameState},
   "Play" : ()=>startOver()
 };
 
