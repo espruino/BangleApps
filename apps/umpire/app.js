@@ -97,8 +97,10 @@ function countDown(dir) {
     Bangle.setUI({
       mode : "custom",
       swipe : (directionLR, directionUD)=>{
-        Bangle.setUI();
-        E.showMenu(menuItems);
+        if(!directionUD) {
+          Bangle.setUI();
+          startOver();
+        }
       },
       btn : ()=>{
         // remove old button press handler
@@ -128,10 +130,11 @@ function startOver(resume) {
   Bangle.setUI({
       mode : "custom",
       swipe : (directionLR, directionUD)=>{
-        if (!directionUD) { // if tapped or button pressed, start/stop
-          countDown(1);
-        } else { // otherwise if dir nonzero, up/down
-          countDown(-1);
+        if (!directionUD) { 
+          Bangle.setUI();
+          E.showMenu(menuItems);
+        } else {
+          countDown(-directionUD);
         }
       },
       btn : ()=>{
