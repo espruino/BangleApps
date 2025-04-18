@@ -33,10 +33,10 @@ function countDown(dir) {
 
   var timeSig = new Date();
   var lastBallTime = timeSig.getTime();
-  if(counter>0) {
+  if(ballTimes.length>0) {
     lastBallTime = ballTimes[ballTimes.length - 1];
     console.log("Last ball time");
-  } else if(over>0) {
+  } else if(overTimes.length>0) {
     lastBallTime = overTimes[overTimes.length - 1];
     console.log("Last over time");
   }
