@@ -186,9 +186,9 @@ addLog(timeSig, "-", "-", "App Started", timeSig);
 var menuItems = {
   "":{title:"Umpire"},
   " ":{value: "Play"},
-  "" : ()=>resumeGame(),
+  " " : ()=>resumeGame(),
   " ":{value: "Wicket"},
-  "" : ()=>incrementWickets(1)
+  " " : ()=>incrementWickets(1)
 };
 
 var menu = E.showMenu(menuItems);
