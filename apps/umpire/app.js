@@ -32,12 +32,14 @@ function countDown(dir) {
   var lastBallTime = timeSig.getTime();
   if(counter>0) {
     lastBallTime = ballTimes[ballTimes.length - 1];
+    console.log("Last ball time");
   } else if(over>0) {
     lastBallTime = overTimes[overTimes.length - 1];
+    console.log("Last over time");
   }
-  //console.log(lastBallTime);
+  
   var deadDuration = new Date(timeSig.getTime() - lastBallTime);
-
+  console.log(deadDuration);
   if(dir!=0) {
     ballTimes.push(timeSig.getTime());
     Bangle.setLCDPower(1);
