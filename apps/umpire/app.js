@@ -149,7 +149,7 @@ function startOver(resume) {
     addLog(timeSig, over, counter, "New Over", "");    
     countDown(0);
   } else {
-    countDown(1);
+    countDown(-1);
   }
 }
 
