@@ -149,6 +149,7 @@ function startOver() {
 }
 
 function resumeGame() {
+  menu = E.showMenu();
   if(over==0) {
     startOver();
   } else {
@@ -166,4 +167,4 @@ var menuItems = {
   "Play" : ()=>resumeGame()
 };
 
-E.showMenu(menuItems);
+var menu = E.showMenu(menuItems);
