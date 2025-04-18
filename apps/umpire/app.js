@@ -147,10 +147,9 @@ function startOver(resume) {
     counter = 0;
     ballTimes = [];
     addLog(timeSig, over, counter, "New Over", "");    
-    countDown(0);
-  } else {
-    countDown(-1);
+    
   }
+  countDown(0);
 }
 
 function resumeGame() {
