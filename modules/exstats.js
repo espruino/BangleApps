@@ -229,7 +229,7 @@ exports.getStats = function(statIDs, options) {
   if (statIDs.includes("time")) {
     stats["time"]={
       title : "Time",
-      getValue : function() { return Date.now()-state.startTime; },
+      getValue : function() { return state.duration; },
       getString : function() { return formatTime(this.getValue()) },
     };
   }
@@ -317,12 +317,12 @@ exports.getStats = function(statIDs, options) {
   if (needHRM) Bangle.setHRMPower(true,"exs");
   if (needBaro) Bangle.setBarometerPower(true,"exs");
   setInterval(function() { // run once a second....
-    if (stats["time"]) stats["time"].emit("changed",stats["time"]);
     if (!state.active) return;
     // called once a second
     var now = Date.now();
     state.duration += now - state.lastTime; // in ms
     state.lastTime = now;
+    if (stats["time"]) stats["time"].emit("changed",stats["time"]);
     // set cadence -> steps over last minute
     state.stepsPerMin = Math.round(60000 * E.sum(state.stepHistory) / Math.min(state.duration,60000));
     if (stats["caden"]) stats["caden"].emit("changed",stats["caden"]);
@@ -335,7 +335,7 @@ exports.getStats = function(statIDs, options) {
       state.BPM = 0;
       if (stats["bpm"]) stats["bpm"].emit("changed",stats["bpm"]);
     }
-    if (state.notify.time.increment > 0 && state.notify.time.next <= now) {
+    if (state.notify.time.increment > 0 && state.notify.time.next <= state.duration) {
       state.notify.time.next = state.notify.time.next + state.notify.time.increment;
       stats["time"].emit("notify",stats["time"]);
     }
