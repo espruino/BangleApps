@@ -96,7 +96,7 @@ function countDown(dir) {
 
     Bangle.setUI({
       mode : "custom",
-      back : ()=>{
+      swipe : (dir)=>{
         Bangle.setUI();
         E.showMenu(menuItems);
       },
