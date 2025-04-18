@@ -139,12 +139,25 @@ function startOver() {
       countDown(-dir);
     }
   });
+  Bangle.setUI({
+    mode : "leftright",
+  }, dir => {
+    var menu = E.showMenu(menuItems);
+  });
   Bangle.on('twist', function() { 
     //console.log("twist");
     countDown(0);
   });
   countDown(0);
 
+}
+
+function resumeGame() {
+  if(over==0) {
+    startOver();
+  } else {
+    countDown(0);
+  }
 }
 // Create the file in append mode
 var file = require("Storage").open("matchlog.csv","a");
@@ -154,7 +167,7 @@ addLog(timeSig, "-", "-", "App Started", timeSig);
 
 var menuItems = {
   "":{title:"Umpire"},
-  "Play" : ()=>startOver()
+  "Play" : ()=>resumeGame()
 };
 
 var menu = E.showMenu(menuItems);
