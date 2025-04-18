@@ -96,6 +96,7 @@ function countDown(dir) {
 
     Bangle.setUI({
       mode : "custom",
+      back : ()=>{E.showMenu(menuItems)},
       btn : ()=>{
         // remove old button press handler
         Bangle.setUI();
@@ -151,7 +152,7 @@ function resumeGame() {
   if(over==0) {
     startOver();
   } else {
-    E.showMenu();
+    countDown(0);
   }
 }
 // Create the file in append mode
