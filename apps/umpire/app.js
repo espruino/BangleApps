@@ -112,6 +112,7 @@ Bangle.setUI({
   
   var lastBallTime = timeSig;
   if(over>0) lastBallTime = ballTimes[ballTimes.length - 1];
+  console.log(lastBallTime);
   var deadDuration = new Date(timeSig.getTime() - lastBallTime);
   g.setFont("Vector",16);
   g.drawString(formatDuration(deadDuration), g.getWidth()/1.89, 18);
