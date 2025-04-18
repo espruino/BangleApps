@@ -124,14 +124,21 @@ function countDown(dir) {
   }
 }
 
-function startOver() {
+function startOver(resume) {
   var timeSig = new Date();
-  if(over==0) overTimes.push(timeSig.getTime());
-  over += 1;
-  counter = 0;
-  ballTimes = [];
-  addLog(timeSig, over, counter, "New Over", "");
-
+  if(resume!=true) {
+    if(over==0) {
+      overTimes.push(timeSig.getTime());
+      Bangle.on('twist', function() { 
+        console.log("twist");
+        countDown(0);
+      });
+    }
+    over += 1;
+    counter = 0;
+    ballTimes = [];
+    addLog(timeSig, over, counter, "New Over", "");    
+  }
   // allow interaction, drag up/down and press button
 
   Bangle.setUI({
@@ -143,12 +150,7 @@ function startOver() {
       countDown(-dir);
     }
   });
-  Bangle.on('twist', function() { 
-    console.log("twist");
-    countDown(0);
-  });
   countDown(0);
-
 }
 
 function resumeGame() {
@@ -157,7 +159,7 @@ function resumeGame() {
   if(over==0) {
     startOver();
   } else {
-    countDown(0);
+    startOver(true);
   }
 }
 // Create the file in append mode
