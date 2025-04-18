@@ -96,7 +96,10 @@ function countDown(dir) {
 
     Bangle.setUI({
       mode : "custom",
-      back : ()=>{E.showMenu(menuItems)},
+      back : ()=>{
+        Bangle.setUI();
+        E.showMenu(menuItems);
+      },
       btn : ()=>{
         // remove old button press handler
         Bangle.setUI();
