@@ -48,12 +48,8 @@ function countDown(dir) {
     } else {
       Bangle.buzz()
     }
-
-  
   }
-
   // Over
-
   if (counter>=6) {
     overTimes.push(timeSig.getTime());
     var firstOverTime = overTimes[0];
@@ -73,34 +69,25 @@ function countDown(dir) {
 
     //E.showMessage(overMinutesString + "\n" + matchMinutesString, "END OF OVER");
 
-  g.clear(1); // clear screen and reset graphics state
-  g.setFontAlign(0,0); // center font
-  g.setFont("Vector",48); 
-  g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, g.getHeight()/3.5);
-  g.setFont("Vector",24);
-  g.drawString(over + " " + overMinutesString + "\nI " + matchMinutesString, g.getWidth()/1.89, g.getHeight()/1.4);
-
-  
+    g.clear(1); // clear screen and reset graphics state
+    g.setFontAlign(0,0); // center font
+    g.setFont("Vector",48); 
+    g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, g.getHeight()/3.5);
+    g.setFont("Vector",24);
+    g.drawString(over + " " + overMinutesString + "\nI " + matchMinutesString, g.getWidth()/1.89, g.getHeight()/1.4);
 
     // Now buzz
     Bangle.buzz();
 
-Bangle.setUI({
-
-  mode : "custom",
-
-  btn : ()=>{
-
-    // remove old button press handler
-
-    Bangle.setUI();
-    startOver();
-
-  }
-
-});
+    Bangle.setUI({
+      mode : "custom",
+      btn : ()=>{
+        // remove old button press handler
+        Bangle.setUI();
+        startOver();
+      }
+    });
     return;
-
   }
 
   g.clear(1); // clear screen and reset graphics state
@@ -110,7 +97,7 @@ Bangle.setUI({
   g.setFont("Vector",80); // vector font, 80px
   g.drawString(over + "." + counter, g.getWidth()/1.89, g.getHeight()/1.4);
   
-  var lastBallTime = timeSig;
+  var lastBallTime = timeSig.getTime();
   if(over>0) lastBallTime = ballTimes[ballTimes.length - 1];
   console.log(lastBallTime);
   var deadDuration = new Date(timeSig.getTime() - lastBallTime);
@@ -132,21 +119,13 @@ function startOver() {
   // allow interaction, drag up/down and press button
 
   Bangle.setUI({
-
     mode : "updown",
-
   }, dir => {
-
     if (!dir) { // if tapped or button pressed, start/stop
       countDown(1);
-
-    } else { // otherwise if dir nonzero, count time up/down
-
-      countDown(-dir); // countDown decrements
-
-
+    } else { // otherwise if dir nonzero, up/down
+      countDown(-dir);
     }
-
   });
   Bangle.on('twist', function() { 
     console.log("twist");
@@ -168,5 +147,3 @@ var menuItems = {
 };
 
 var menu = E.showMenu(menuItems);
-
-//startOver();
