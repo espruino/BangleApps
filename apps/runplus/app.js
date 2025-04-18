@@ -27,6 +27,7 @@ let settings = Object.assign({
   B6: "caden",
   paceLength: 1000,
   alwaysResume: false,
+  vibrate: false,
   notify: {
     dist: {
       value: 0,
@@ -59,6 +60,8 @@ function setStatus(running) {
 
 // Called to start/stop running
 function onStartStop() {
+  if (settings.vibrate) Bangle.buzz(250);
+
   if (screen === "karvonen") {
     // start/stop on the karvonen screen reverts us to the main screen
     setScreen("main");
