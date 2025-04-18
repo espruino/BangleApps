@@ -53,10 +53,10 @@ function countDown(dir) {
     } else {
       Bangle.buzz()
     }
-  }
+  
   // Over
   if (counter>=6) {
-    Bangle.on('twist', function() { });
+    //Bangle.on('twist', function() { });
     overTimes.push(timeSig.getTime());
     var firstOverTime = overTimes[0];
     var matchDuration = new Date(timeSig.getTime() - firstOverTime);
@@ -95,7 +95,7 @@ function countDown(dir) {
     });
     return;
   }
-
+  }
   g.clear(1); // clear screen and reset graphics state
   g.setFontAlign(0,0); // center font
   g.setFont("Vector",48); // vector font, 80px
