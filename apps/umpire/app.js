@@ -29,13 +29,17 @@ function countDown(dir) {
   if(counter<0) counter=0;
 
   var timeSig = new Date();
-  ballTimes.push(timeSig.getTime());
-  
+  var lastBallTime = timeSig.getTime();
+  if(over>0) lastBallTime = ballTimes[ballTimes.length - 1];
+  //console.log(lastBallTime);
+  var deadDuration = new Date(timeSig.getTime() - lastBallTime);
+
   if(dir!=0) {
+    ballTimes.push(timeSig.getTime());
   if(dir>0) {
-    addLog(timeSig, over, counter, "Ball", "");
+    addLog(timeSig, over, counter, "Ball", formatDuration(deadDuration));
   } else {
-    addLog(timeSig, over, counter, "Correction", "");
+    addLog(timeSig, over, counter, "Correction", formatDuration(deadDuration));
   }
     if(counter==4) {
       Bangle.buzz().then(()=>{
@@ -96,11 +100,6 @@ function countDown(dir) {
   g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, g.getHeight()/3.5);
   g.setFont("Vector",80); // vector font, 80px
   g.drawString(over + "." + counter, g.getWidth()/1.89, g.getHeight()/1.4);
-  
-  var lastBallTime = timeSig.getTime();
-  if(over>0) lastBallTime = ballTimes[ballTimes.length - 1];
-  console.log(lastBallTime);
-  var deadDuration = new Date(timeSig.getTime() - lastBallTime);
   g.setFont("Vector",16);
   g.drawString(formatDuration(deadDuration), g.getWidth()/1.89, 18);
 
