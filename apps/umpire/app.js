@@ -185,11 +185,11 @@ addLog(timeSig, "-", "-", "App Started", timeSig);
 
 var menuItems = {
   "":{title:"Umpire"},
-  " ":{value: "Play"},
+  "Play":{value: "Play"},
   "" : ()=>resumeGame(),
-  " ":{value: "Wicket"},
+  "Wicket":{value: "Wicket"},
   "" : ()=>incrementWickets(1),
-  " ":{value: "Recall"},
+  "Recall":{value: "Recall"},
   "" : ()=>incrementWickets(-1)
 };
 
