@@ -1,4 +1,4 @@
-
+var wickets = 0
 var counter = 0;
 var over = 0;
 var ballTimes = [];
@@ -80,7 +80,11 @@ function countDown(dir) {
   g.setFont("Vector",24);
   g.drawString(over + " " + overMinutesString + "\nI " + matchMinutesString, g.getWidth()/1.89, g.getHeight()/1.4);
 
-
+  var lastBallTime = timeSig;
+  if(over>0) lastBallTime = ballTimes[ballTimes.length - 1];
+  var deadDuration = new Date(timeSig.getTime() - lastBallTime);
+  g.setFont("Vector",12);
+  g.drawString(formatDuration(deadDuration), g.getWidth()/1.89, 16);
 
 
     // Now buzz
