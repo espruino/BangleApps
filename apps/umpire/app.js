@@ -97,11 +97,11 @@ function countDown(dir) {
   g.clear(1); // clear screen and reset graphics state
   g.setFontAlign(0,0); // center font
   g.setFont("Vector",48); // vector font, 80px
-  g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, g.getHeight()/3.5);
+  g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 50);
   g.setFont("Vector",80); // vector font, 80px
-  g.drawString(over + "." + counter, g.getWidth()/1.89, g.getHeight()/1.4);
+  g.drawString(over + "." + counter, g.getWidth()/1.89, 120);
   g.setFont("Vector",16);
-  g.drawString(formatDuration(deadDuration), g.getWidth()/1.89, 18);
+  g.drawString("..." + formatDuration(deadDuration), g.getWidth()/1.89, 170);
 
   // optional - this keeps the watch LCD lit up
   Bangle.setLCDPower(1);
@@ -127,7 +127,7 @@ function startOver() {
     }
   });
   Bangle.on('twist', function() { 
-    console.log("twist");
+    //console.log("twist");
     countDown(0);
   });
   countDown(0);
