@@ -114,6 +114,8 @@ function countDown(dir) {
   }
   if(counter<6) {
   g.clear(1); // clear screen and reset graphics state
+  g.setFont("Vector",24); // vector font, 80px
+  g.drawString(wickets, 160, 16);
   g.setFontAlign(0,0); // center font
   g.setFont("Vector",48); // vector font, 80px
   g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 50);
@@ -168,6 +170,13 @@ function resumeGame() {
     startOver(true);
   }
 }
+
+function incrementWickets(inc) {
+  wickets += inc;
+  var timeSig = new Date();
+  addLog(timeSig, over, counter, "Wicket", wickets);
+  resumeGame();
+}
 // Create the file in append mode
 var file = require("Storage").open("matchlog.csv","a");
 
@@ -176,7 +185,8 @@ addLog(timeSig, "-", "-", "App Started", timeSig);
 
 var menuItems = {
   "":{title:"Umpire"},
-  "Play" : ()=>resumeGame()
+  "Play" : ()=>resumeGame(),
+  "Wicket" : ()=>incrementWickets(1)
 };
 
 var menu = E.showMenu(menuItems);
