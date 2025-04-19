@@ -172,20 +172,21 @@ function resumeGame() {
 }
 
 function incrementWickets(inc) {
-  Bangle.buzz();
-  menu = E.showMenu();
   E.showPrompt("Wicket?").then(function(confirmed) {
     if (confirmed) {
       E.showPrompt();
+      Bangle.buzz();
       wickets += inc;
       var timeSig = new Date();
       addLog(timeSig, over, counter, "Wicket", wickets);
+      console.log("Load menu");
       menu = E.showMenu(menuItems);
     } else {
       E.showPrompt();
+      Bangle.buzz();
+      console.log("Load menu");
       menu = E.showMenu(menuItems);
     }
-    
   });
 }
 // Create the file in append mode
