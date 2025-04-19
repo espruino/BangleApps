@@ -61,7 +61,7 @@ function getHr(h) {
 
 function extractTime(d) {
     const out = getHr(d.getHours());
-    const hr = out[0];
+    const h = out[0];
     const amPm = out[1];
     const m = d.getMinutes();
     return `${h}:${("0"+m).substr(-2)}${amPm}`;
