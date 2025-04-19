@@ -172,16 +172,18 @@ function resumeGame() {
 }
 
 function incrementWickets(inc) {
+  Bangle.buzz();
+  menu = E.showMenu();
   E.showPrompt("Wicket?").then(function(confirmed) {
     if (confirmed) {
       E.showPrompt();
       wickets += inc;
       var timeSig = new Date();
       addLog(timeSig, over, counter, "Wicket", wickets);
-      resumeGame();
+      menu = E.showMenu(menuItems);
     } else {
       E.showPrompt();
-      resumeGame();
+      menu = E.showMenu(menuItems);
     }
     
   });
