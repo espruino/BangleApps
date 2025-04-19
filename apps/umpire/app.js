@@ -221,7 +221,7 @@ var scroller = {
     g.setFont("Vector", 36).drawString(scrollMenuItems[idx],r.x+10,r.y+12);
   },
   select : (idx) => {
-    console.log("You selected ", scrollMenuItems[idx]);
+    console.log("You selected 99 ", scrollMenuItems[idx]);
     if(idx==0) resumeGame();
   }
 }
