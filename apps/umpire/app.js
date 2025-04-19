@@ -135,7 +135,7 @@ function startOver(resume) {
         if (!directionUD) { 
           Bangle.setUI();
           countdownDebounce = true;
-          E.showMenu(menuItems);
+          scrollMenu = E.showScroller(scroller);
         } else {
           countDown(-directionUD);
         }
@@ -164,7 +164,6 @@ function startOver(resume) {
 
 function resumeGame() {
   Bangle.buzz();
-  menu = E.showMenu();
   countdownDebounce = false;
   if(over==0) {
     startOver();
@@ -185,8 +184,8 @@ function incrementWickets(inc) {
     } else {
       E.showPrompt();
       Bangle.buzz();
-      console.log("Load menu");
-      menu = E.showMenu(menuItems);
+      console.log("Load scroller");
+      scrollMenu = E.showScroller(scroller);
     }
   });
 }
@@ -196,20 +195,7 @@ var file = require("Storage").open("matchlog.csv","a");
 var timeSig = new Date();
 addLog(timeSig, "-", "-", "App Started", timeSig);
 
-var menuItems = {
-  "":{title:"Umpire"},
-  "Play" : ()=>resumeGame(),
-  "-->" : ()=>resumeGame(),
-  "Wicket" : ()=>incrementWickets(1),
-  "-->" : ()=>incrementWickets(1),
-  "Set wickets" : {
-    value : wickets,
-    min:0,max:10,step:1,wrap:true,
-    onchange : v => { incrementWickets(v - wickets); }
-  }
-};
 countdownDebounce = true;
-//var menu = E.showMenu(menuItems);
 
 var scrollMenuItems =[
   "Play", "Wicket"
@@ -223,6 +209,7 @@ var scroller = {
   select : (idx) => {
     console.log("You selected 99 ", scrollMenuItems[idx]);
     if(idx==0) resumeGame();
+    if(idx==1) incrementWickets(1);
   }
 }
 var scrollMenu = E.showScroller(scroller);
