@@ -217,8 +217,9 @@ var scrollMenuItems =[
 var scrollMenu = E.showScroller({
   h : 60, c : 2,
   draw : (idx, r) => {
-    g.setBgColor((idx&1)?"#000":"#333").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
-    g.setFont("6x8:2").drawString(scrollMenuItems[idx],r.x+10,r.y+4);
+    g.setBgColor((idx&1)?"#000":"#222").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
+    g.setFont("Vector", 36).drawString(scrollMenuItems[idx],r.x+10,r.y+4);
   },
-  select : (idx) => console.log("You selected ", idx)
+  select : (idx) => {
+    console.log("You selected ", scrollMenuItems[idx]);
 });
