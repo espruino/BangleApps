@@ -1,7 +1,6 @@
 var SunCalc = require("suncalc"); // from modules folder
 const storage = require('Storage');
 const widget_utils = require('widget_utils');
-//const SETTINGS_FILE = "jsonClock.json";
 const global_settings = storage.readJSON("setting.json", true) || {};
 const LOCATION_FILE = "mylocation.json";
 const h = g.getHeight();
@@ -18,10 +17,10 @@ var settings = {
 };
 
 let clrs = {
-  tab :     "#DDDDDD",                                  // grey
+  tab :     "#505050",                                  // grey
   keys:     settings.dark_mode ? "#4287f5" : "#0000FF", // blue
   strings:  settings.dark_mode ? "#F0A000" : "#FF0000", // orange or red
-  ints:     settings.dark_mode ? "#00FF00" : "#00FF00", // green
+  ints:     settings.dark_mode ? "#00FF00" : "#005F00", // green
   bg:       g.theme.bg,
   brackets: g.theme.fg,
 };
@@ -29,8 +28,7 @@ let clrs = {
 
 let jsonText;
 let lines = [];
-let scrollOffset = 0;
-let fontSize = 12;
+let fontSize = 13;
 const lineHeight = 16;
 
 const buttonHeight = 12;
@@ -46,19 +44,25 @@ var numWidth = 0;
 // requires the myLocation app
 function loadLocation() {
     location = require("Storage").readJSON(LOCATION_FILE,1)||{};
-    location.lat = location.lat||35.7796;
-    location.lon = location.lon||-78.6382;
-    location.location = location.location||"Raleigh";
+    location.lat = location.lat||0;
+    location.lon = location.lon||0;
+    location.location = location.location||null;
+}
+
+function getHr(h) {
+  var amPm = "";
+  if (settings.hr_12) {
+    amPm = h < 12 ? "AM" : "PM";
+    h = h % 12;
+    if (h == 0) h = 12;
+  }
+  return [h, amPm];
 }
 
 function extractTime(d){
-    var h = d.getHours(), m = d.getMinutes();
-    var amPm = "";
-    if (settings.hr_12) {
-      amPm = h < 12 ? "AM" : "PM";
-      h = h % 12;
-      if (h == 0) h = 12;
-    }
+    const out = getHr(d.getHours());
+    const hr = out[0]; const amPm = out[1];
+    const m = d.getMinutes();
     return `${h}:${("0"+m).substr(-2)}${amPm}`;
   }
 
@@ -71,7 +75,7 @@ function extractTime(d){
     const month = months[d.getMonth()];
     const day = d.getDate();
   
-    return `${weekday} ${month}, ${day}`;
+    return `${weekday} ${month} ${day}`;
   }
 
   function getSteps() {
@@ -81,22 +85,23 @@ function extractTime(d){
       if (WIDGETS.wpedom !== undefined)
         return WIDGETS.wpedom.getSteps();
       else
-        return 0;
+        return null;
     }
   }
 
-  function getVal() {
+  function getVal(now, loc) {
     const vals = {};
-    const now = new Date();
     const currentDateStr = extractDate(now);
-    if (lastSunCalcDate !== currentDateStr) {
-      cachedSunTimes = SunCalc.getTimes(now, location.lat, location.lon);
-      lastSunCalcDate = currentDateStr;
+    if (loc.location) {
+      if (lastSunCalcDate !== currentDateStr) {
+        cachedSunTimes = SunCalc.getTimes(now, location.lat, location.lon);
+        lastSunCalcDate = currentDateStr;
+      }
+      vals.rise = extractTime(cachedSunTimes.sunrise);
+      vals.set = extractTime(cachedSunTimes.sunset);
     }
     vals.time = extractTime(now);
     vals.date = currentDateStr;
-    vals.rise = extractTime(cachedSunTimes.sunrise);
-    vals.set = extractTime(cachedSunTimes.sunset);
     vals.batt_pct = E.getBattery();
     vals.steps = getSteps();
     return vals;
@@ -104,18 +109,36 @@ function extractTime(d){
   
 
 function loadJson() {
-    vals = getVal();
-    const raw = JSON.stringify({
-        time: vals.time,
-        date: vals.date,
-        sun: {
+  const now = new Date();
+  vals = getVal(now, location);
+  //vals.steps = null;  // For testing; uncomment to see the steps not appear
+  //location.location = null;  // For testing, if null, the time becomes an struct to take up sun's struct
+  let raw;
+
+  if (location.location !== null) {
+    raw = {
+      time: vals.time,
+      dt: vals.date,
+      sun: {
         rise: vals.rise,
         set: vals.set,
-        },
-        "batt_%": vals.batt_pct,
-        steps: vals.steps
-    });
-  jsonText = JSON.stringify(JSON.parse(raw), null, 2);
+      },
+      "batt_%": vals.batt_pct,
+    };
+  } else {
+    raw = {
+      time: {
+        hr: getHr(now.getHours())[0],
+        min: now.getMinutes(),
+      },
+      dt: vals.date,
+      "batt_%": vals.batt_pct,
+    };
+  }
+
+  if (vals.steps != null) raw.steps = vals.steps;
+
+  jsonText = JSON.stringify(raw, null, 2); // just stringify the object
   lines = jsonText.split("\n");
 }
 
@@ -137,13 +160,8 @@ function draw() {
   g.setFont("Vector", fontSize);
 
   for (let i = 0; i < maxLines; i++) {
-    const lineIndex = i + scrollOffset;
-    const line = lines[lineIndex];
-    if (!line) continue;
-
     const y = headerHeight + i * lineHeight;
-
-    const lineNumberStr = (lineIndex + 1).toString().padStart(2, " ") + " ";
+    const lineNumberStr = (i + 1).toString().padStart(2, " ") + " ";
     g.drawString(lineNumberStr, 0, y);
     numWidth = Math.max(numWidth, g.stringWidth(lineNumberStr));
   }
@@ -153,7 +171,7 @@ function draw() {
 
 function redraw() {
   for (let i = 0; i < maxLines; i++) {
-    const lineIndex = i + scrollOffset;
+    const lineIndex = i;
     const line = lines[lineIndex];
     if (!line) continue;
     const y = headerHeight + i * lineHeight;
@@ -218,22 +236,12 @@ function redrawValues(){
     }, 60000 - (Date.now() % 60000));
 }
 
-function scroll(amount) {
-  const maxOffset = Math.max(0, lines.length - Math.floor((h - headerHeight) / lineHeight));
-  scrollOffset = Math.max(0, Math.min(scrollOffset + amount, maxOffset));
-  draw();
-}
-
-
 Bangle.on('touch', (zone, e) => {
   if (e.x >= (buttonY - buttonHeight) && e.x <= (buttonX + buttonHeight)
       && (e.y >= (buttonY - buttonHeight) && e.y <= (buttonY + buttonHeight))) {
     load(); // Exit app
   }
 });
-
-
-Bangle.on('drag', (e) => scroll(-e.dy));
 
 Bangle.on('backlight', function(on) {
   if (on) {
