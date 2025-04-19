@@ -172,10 +172,14 @@ function resumeGame() {
 }
 
 function incrementWickets(inc) {
-  wickets += inc;
-  var timeSig = new Date();
-  addLog(timeSig, over, counter, "Wicket", wickets);
-  resumeGame();
+  E.showPrompt("Wicket?").then(function(confirmed) {
+    if (confirmed) {
+      wickets += inc;
+      var timeSig = new Date();
+      addLog(timeSig, over, counter, "Wicket", wickets);
+      resumeGame();
+    }
+  });
 }
 // Create the file in append mode
 var file = require("Storage").open("matchlog.csv","a");
