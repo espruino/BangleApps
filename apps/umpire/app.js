@@ -193,7 +193,7 @@ function incrementWickets(inc) {
 var file = require("Storage").open("matchlog.csv","a");
 
 var timeSig = new Date();
-addLog(timeSig, "-", "-", "App Started", timeSig);
+addLog(timeSig, "100", "a", "App Started", timeSig);
 
 countdownDebounce = true;
 
@@ -207,7 +207,7 @@ var scroller = {
     g.setFont("Vector", 36).drawString(scrollMenuItems[idx],r.x+10,r.y+12);
   },
   select : (idx) => {
-    console.log("You selected 99 ", scrollMenuItems[idx]);
+    console.log(scrollMenuItems[idx]);
     if(idx==0) resumeGame();
     if(idx==1) incrementWickets(1);
   }
