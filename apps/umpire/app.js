@@ -201,7 +201,7 @@ var menuItems = {
   "Play" : ()=>resumeGame(),
   "-->" : ()=>resumeGame(),
   "Wicket" : ()=>incrementWickets(1),
-  "-->" : ()=>incrementWickets(1)
+  "-->" : ()=>incrementWickets(1),
 };
 countdownDebounce = true;
 var menu = E.showMenu(menuItems);
