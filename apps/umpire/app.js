@@ -174,12 +174,16 @@ function resumeGame() {
 function incrementWickets(inc) {
   E.showPrompt("Wicket?").then(function(confirmed) {
     if (confirmed) {
+      E.showPrompt();
       wickets += inc;
       var timeSig = new Date();
       addLog(timeSig, over, counter, "Wicket", wickets);
       resumeGame();
+    } else {
+      E.showPrompt();
+      resumeGame();
     }
-    E.showPrompt();
+    
   });
 }
 // Create the file in append mode
