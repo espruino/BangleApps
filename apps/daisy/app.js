@@ -116,6 +116,7 @@ function extractTime(d){
 var sunRise = "00:00";
 var sunSet = "00:00";
 var drawCount = 0;
+var night; // In terms of minutes
 var sunStart;  // In terms of ms
 var sunEnd;  // In terms of minutes
 var sunFull;  // In terms of ms
@@ -135,14 +136,15 @@ function updateSunRiseSunSet(now, lat, lon, sunLeftCalcs){
   sunSet = extractTime(times.sunset);
   if (!sunLeftCalcs) return;
 
-  let sunLeft = times.sunset - dateCopy;
+  let sunLeft = times.dusk - dateCopy;
   if (sunLeft <  0) {  // If it's already night
     dateCopy.setDate(dateCopy.getDate() + 1);
     let timesTmrw = SunCalc.getTimes(dateCopy, lat, lon);
     isDaytime = false;
-    sunStart = times.sunset;
+    sunStart = times.dusk;
     sunFull = timesTmrw.sunrise - sunStart;
     sunEnd = getMinutesFromDate(timesTmrw.sunrise);
+    night = getMinutesFromDate(timesTmrw.sunriseEnd);
   }
   else {
     sunLeft = dateCopy - times.sunrise;
@@ -150,15 +152,17 @@ function updateSunRiseSunSet(now, lat, lon, sunLeftCalcs){
       dateCopy.setDate(dateCopy.getDate() - 1);
       let timesYest = SunCalc.getTimes(dateCopy, lat, lon);
       isDaytime = false;
-      sunStart = timesYest.sunset;
+      sunStart = timesYest.dusk;
       sunFull = times.sunrise - sunStart;
       sunEnd = getMinutesFromDate(times.sunrise);
+      night = getMinutesFromDate(times.sunriseEnd);
     }
     else {  // We're in the middle of the day
       isDaytime = true;
-      sunStart = times.sunrise;
+      sunStart = times.sunriseEnd;
       sunFull = times.sunset - sunStart;
       sunEnd = getMinutesFromDate(times.sunset);
+      night = getMinutesFromDate(times.dusk);
     }
   }
 }
@@ -290,13 +294,15 @@ function drawClock() {
       ring_percent = E.getBattery();
       break;
     case 'Sun': 
-      ring_percent = 100 * (date - sunStart) / sunFull;
-      if (ring_percent > 100) {  // If we're now past a sunrise of sunset
-        updateSunRiseSunSet(date, location.lat, location.lon, true);
+      var dayMin = getMinutesFromDate(date);
+      if (dayMin >= sunEnd && dayMin <= night) ring_percent = 100;
+      else {
         ring_percent = 100 * (date - sunStart) / sunFull;
+        if (ring_percent > 100) {  // If we're now past a sunrise of sunset
+          updateSunRiseSunSet(date, location.lat, location.lon, true);
+          ring_percent = 100 * (date - sunStart) / sunFull;
+        }  
       }
-      // If we're exactly on the minute that the sun is setting/rising 
-      if (getMinutesFromDate(date) == sunEnd) ring_percent = 100;
       invertRing = !isDaytime;
       break;
   }
