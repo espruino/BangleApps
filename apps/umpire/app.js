@@ -173,7 +173,7 @@ function resumeGame() {
 }
 
 function incrementWickets(inc) {
-  E.showPrompt("Wicket?").then(function(confirmed) {
+  E.showPrompt("Amend wickets by " + inc + "?").then(function(confirmed) {
     if (confirmed) {
       E.showPrompt();
       Bangle.buzz();
@@ -193,23 +193,24 @@ function incrementWickets(inc) {
 var file = require("Storage").open("matchlog.csv","a");
 
 var timeSig = new Date();
-addLog(timeSig, "100", "a", "App Started", timeSig);
+addLog(timeSig, "101", "a", "App Started", timeSig);
 
 countdownDebounce = true;
 
 var scrollMenuItems =[
-  "Play", "Wicket"
+  "Play", "Wicket", "Revoke"
 ];
 var scroller = {
-  h : 60, c : 2,
+  h : 60, c : scrollMenuItems.length,
   draw : (idx, r) => {
     g.setBgColor((idx&1)?"#000":"#121").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
     g.setFont("Vector", 36).drawString(scrollMenuItems[idx],r.x+10,r.y+12);
   },
   select : (idx) => {
     console.log(scrollMenuItems[idx]);
-    if(idx==0) resumeGame();
-    if(idx==1) incrementWickets(1);
+    if(scrollMenuItems[idx]=="Play") resumeGame();
+    if(scrollMenuItems[idx]=="Wicket") incrementWickets(1);
+    if(scrollMenuItems[idx]=="Revoke") incrementWickets(-1);
   }
 }
 var scrollMenu = E.showScroller(scroller);
