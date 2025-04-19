@@ -179,6 +179,7 @@ function incrementWickets(inc) {
       addLog(timeSig, over, counter, "Wicket", wickets);
       resumeGame();
     }
+    E.showPrompt();
   });
 }
 // Create the file in append mode
