@@ -212,7 +212,7 @@ countdownDebounce = true;
 //var menu = E.showMenu(menuItems);
 
 var scrollMenuItems =[
-  "🏏 Play", "⏏️ Wicket"
+  "Play", "Wicket"
 ];
 var scrollMenu = E.showScroller({
   h : 60, c : 2,
