@@ -1,0 +1,19 @@
+{ "id": "jsonclock",
+  "name": "jsonclock",
+  "version": "0.01",
+  "dependencies": {"mylocation":"app"},
+  "description": "JSON view of the time, date, steps, battery, and sunrise and sunset times",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports" : ["BANGLEJS2"],
+  "screenshots": [{"url":"app.png"}],
+  "readme": "README.md",
+  "storage": [
+    {"name":"jsonclock.app.js","url":"app.js"},
+    {"name":"jsonclock.img","url":"app-icon.js","evaluate":true},
+    {"name":"jsonclock.settings.js","url":"settings.js"}
+  ],
+  "data": [{"name":"jsonclock.json"}],
+  "sortorder": -9
+}
