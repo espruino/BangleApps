@@ -172,6 +172,7 @@ function resumeGame() {
 }
 
 function incrementWickets(inc) {
+  countdownDebounce = true;
   E.showPrompt("Wicket?").then(function(confirmed) {
     if (confirmed) {
       E.showPrompt();
@@ -181,11 +182,13 @@ function incrementWickets(inc) {
       addLog(timeSig, over, counter, "Wicket", wickets);
       console.log("Load menu");
       menu = E.showMenu(menuItems);
+      countdownDebounce = false;
     } else {
       E.showPrompt();
       Bangle.buzz();
       console.log("Load menu");
       menu = E.showMenu(menuItems);
+      countdownDebounce = false;
     }
   });
 }
