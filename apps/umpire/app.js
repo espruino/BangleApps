@@ -214,11 +214,15 @@ countdownDebounce = true;
 var scrollMenuItems =[
   "Play", "Wicket"
 ];
-var scrollMenu = E.showScroller({
+var scroller = {
   h : 60, c : 2,
   draw : (idx, r) => {
-    g.setBgColor((idx&1)?"#000":"#222").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
+    g.setBgColor((idx&1)?"#000":"#121").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
     g.setFont("Vector", 36).drawString(scrollMenuItems[idx],r.x+10,r.y+12);
   },
-  select : (idx) => console.log("You selected ", scrollMenuItems[idx])
-});
+  select : (idx) => {
+    console.log("You selected ", scrollMenuItems[idx]);
+    if(idx==0) resumeGame();
+  }
+}
+var scrollMenu = E.showScroller(scroller);
