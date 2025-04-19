@@ -7,6 +7,10 @@ const LOCATION_FILE = "mylocation.json";
 const h = g.getHeight();
 const w = g.getWidth();
 let location;
+let cachedSunTimes = null;
+let lastSunCalcDate = null;
+var prevVals = {};
+let drawTimeout;
 
 var settings = {
   hr_12: global_settings["12hour"] !== undefined ? global_settings["12hour"] : false,
@@ -14,7 +18,7 @@ var settings = {
 };
 
 let clrs = {
-  tab :     settings.dark_mode ? "#2d2d30" : "#DDDDDD", // grey
+  tab :     "#DDDDDD",                                  // grey
   keys:     settings.dark_mode ? "#4287f5" : "#0000FF", // blue
   strings:  settings.dark_mode ? "#F0A000" : "#FF0000", // orange or red
   ints:     settings.dark_mode ? "#00FF00" : "#00FF00", // green
@@ -81,18 +85,22 @@ function extractTime(d){
     }
   }
 
-function getVal() {
-    vals = {};
+  function getVal() {
+    const vals = {};
     const now = new Date();
-    const sunTimes = SunCalc.getTimes(now, location.lat, location.lon);
+    const currentDateStr = extractDate(now);
+    if (lastSunCalcDate !== currentDateStr) {
+      cachedSunTimes = SunCalc.getTimes(now, location.lat, location.lon);
+      lastSunCalcDate = currentDateStr;
+    }
     vals.time = extractTime(now);
-    vals.date = extractDate(now);
-    vals.rise = extractTime(sunTimes.sunrise);
-    vals.set = extractTime(sunTimes.sunset);
+    vals.date = currentDateStr;
+    vals.rise = extractTime(cachedSunTimes.sunrise);
+    vals.set = extractTime(cachedSunTimes.sunset);
     vals.batt_pct = E.getBattery();
     vals.steps = getSteps();
     return vals;
-}
+  }
   
 
 function loadJson() {
@@ -158,6 +166,9 @@ function redraw() {
       const key = kvMatch[1];
       let value = kvMatch[2];
 
+      if (prevVals.key == value) continue;
+      prevVals.key = value;
+
       // Key
       g.setColor(clrs.keys);
       g.drawString(indent + `"${key}"`, numWidth, y);
@@ -200,6 +211,11 @@ function redrawValues(){
     loadJson();
     clearVals();
     redraw();
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = setTimeout(function() {
+      drawTimeout = undefined;
+      redrawValues();
+    }, 60000 - (Date.now() % 60000));
 }
 
 function scroll(amount) {
@@ -219,6 +235,12 @@ Bangle.on('touch', (zone, e) => {
 
 Bangle.on('drag', (e) => scroll(-e.dy));
 
+Bangle.on('backlight', function(on) {
+  if (on) {
+    redrawValues(); // or just draw() if you want full re-render
+  }
+});
+
 Bangle.setUI({
   mode: "clock",
   remove: function () {
@@ -231,4 +253,4 @@ loadLocation();
 Bangle.loadWidgets();
 widget_utils.hide();
 draw();
-setInterval(redrawValues, 5000);
+setTimeout(Bangle.drawWidgets,0);
