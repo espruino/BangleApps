@@ -134,6 +134,7 @@ function startOver(resume) {
       swipe : (directionLR, directionUD)=>{
         if (!directionUD) { 
           Bangle.setUI();
+          countdownDebounce = true;
           E.showMenu(menuItems);
         } else {
           countDown(-directionUD);
@@ -164,6 +165,7 @@ function startOver(resume) {
 function resumeGame() {
   Bangle.buzz();
   menu = E.showMenu();
+  countdownDebounce = false;
   if(over==0) {
     startOver();
   } else {
@@ -172,7 +174,6 @@ function resumeGame() {
 }
 
 function incrementWickets(inc) {
-  countdownDebounce = true;
   E.showPrompt("Wicket?").then(function(confirmed) {
     if (confirmed) {
       E.showPrompt();
@@ -182,13 +183,11 @@ function incrementWickets(inc) {
       addLog(timeSig, over, counter, "Wicket", wickets);
       console.log("Load menu");
       menu = E.showMenu(menuItems);
-      countdownDebounce = false;
     } else {
       E.showPrompt();
       Bangle.buzz();
       console.log("Load menu");
       menu = E.showMenu(menuItems);
-      countdownDebounce = false;
     }
   });
 }
@@ -205,5 +204,5 @@ var menuItems = {
   "Wicket" : ()=>incrementWickets(1),
   "-->" : ()=>incrementWickets(1)
 };
-
+countdownDebounce = true;
 var menu = E.showMenu(menuItems);
