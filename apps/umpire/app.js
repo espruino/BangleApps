@@ -222,4 +222,5 @@ var scrollMenu = E.showScroller({
   },
   select : (idx) => {
     console.log("You selected ", scrollMenuItems[idx]);
+  }
 });
