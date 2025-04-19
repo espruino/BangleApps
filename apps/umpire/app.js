@@ -181,8 +181,7 @@ function incrementWickets(inc) {
       wickets += inc;
       var timeSig = new Date();
       addLog(timeSig, over, counter, "Wicket", wickets);
-      console.log("Load menu");
-      menu = E.showMenu(menuItems);
+      resumeGame();
     } else {
       E.showPrompt();
       Bangle.buzz();
