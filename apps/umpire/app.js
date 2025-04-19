@@ -202,6 +202,11 @@ var menuItems = {
   "-->" : ()=>resumeGame(),
   "Wicket" : ()=>incrementWickets(1),
   "-->" : ()=>incrementWickets(1),
+  "Set wickets" : {
+    value : wickets,
+    min:0,max:10,step:1,wrap:true,
+    onchange : v => { incrementWickets(v - wickets); }
+  }
 };
 countdownDebounce = true;
 var menu = E.showMenu(menuItems);
