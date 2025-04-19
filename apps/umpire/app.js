@@ -193,13 +193,41 @@ function incrementWickets(inc) {
 var file = require("Storage").open("matchlog.csv","a");
 
 var timeSig = new Date();
-addLog(timeSig, "101", "a", "App Started", timeSig);
+addLog(timeSig, "103", "a", "App Started", timeSig);
 
 countdownDebounce = true;
 
-var scrollMenuItems =[
-  "Play", "Wicket", "Revoke"
+var scrollMenuItems = [
+  "Toss", "Play", "Wicket", "Revoke"
 ];
+
+function performToss() {
+  var tossMenuItems = [
+  "Home Won=>Bat",
+  "Home Won=>Bowl",
+  "Away Won=>Bat",
+  "Away Won=>Bowl",
+  "Cancel"
+  ];
+  scrollMenu = E.showScroller({
+    h : 40, c : tossMenuItems.length,
+  draw : (idx, r) => {
+    g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
+    g.setFont("Vector", 24).drawString(scrollMenuItems[idx],r.x+10,r.y+8);
+  },
+  select : (idx) => {
+    console.log(tossMenuItems[idx]);
+    if(tossMenuItems[idx]=="Cancel") {
+      scrollMenu = E.showScroller(scroller);
+    } else {
+      var timeSig = new Date();
+      addLog(timeSig, "-", "-", "Toss", tossMenuItems[idx]);
+      scrollMenu = E.showScroller(scroller);
+    };
+  }
+  });
+}
+
 var scroller = {
   h : 60, c : scrollMenuItems.length,
   draw : (idx, r) => {
@@ -208,9 +236,11 @@ var scroller = {
   },
   select : (idx) => {
     console.log(scrollMenuItems[idx]);
+    if(scrollMenuItems[idx]=="Toss") resumeGame();
     if(scrollMenuItems[idx]=="Play") resumeGame();
     if(scrollMenuItems[idx]=="Wicket") incrementWickets(1);
     if(scrollMenuItems[idx]=="Revoke") incrementWickets(-1);
   }
 }
+
 var scrollMenu = E.showScroller(scroller);
