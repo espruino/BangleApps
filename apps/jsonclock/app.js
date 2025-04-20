@@ -1,4 +1,5 @@
-var SunCalc = require("suncalc"); // from modules folder
+{
+const SunCalc = require("suncalc"); // from modules folder
 const storage = require('Storage');
 const widget_utils = require('widget_utils');
 const global_settings = storage.readJSON("setting.json", true) || {};
@@ -42,14 +43,14 @@ const maxLines = Math.floor(usableHeight / lineHeight);
 var numWidth = 0;
 
 // requires the myLocation app
-function loadLocation() {
+let loadLocation = function() {
     location = require("Storage").readJSON(LOCATION_FILE, 1) || {};
     location.lat = location.lat || 0;
     location.lon = location.lon || 0;
     location.location = location.location || null;
-}
+};
 
-function getHr(h) {
+let getHr = function(h) {
     var amPm = "";
     if (settings.hr_12) {
         amPm = h < 12 ? "AM" : "PM";
@@ -57,17 +58,17 @@ function getHr(h) {
         if (h == 0) h = 12;
     }
     return [h, amPm];
-}
+};
 
-function extractTime(d) {
+let extractTime = function(d) {
     const out = getHr(d.getHours());
     const h = out[0];
     const amPm = out[1];
     const m = d.getMinutes();
     return `${h}:${("0"+m).substr(-2)}${amPm}`;
-}
+};
 
-function extractDate(d) {
+let extractDate = function(d) {
     const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -78,9 +79,9 @@ function extractDate(d) {
     const day = d.getDate();
 
     return `${weekday} ${month} ${day}`;
-}
+};
 
-function getSteps() {
+let getSteps = function() {
     try {
         return Bangle.getHealthStatus("day").steps;
     } catch (e) {
@@ -89,9 +90,9 @@ function getSteps() {
         else
             return null;
     }
-}
+};
 
-function getVal(now, loc) {
+let getVal = function(now, loc) {
     const vals = {};
     const currentDateStr = extractDate(now);
     if (loc.location) {
@@ -107,10 +108,9 @@ function getVal(now, loc) {
     vals.batt_pct = E.getBattery();
     vals.steps = getSteps();
     return vals;
-}
+};
 
-
-function loadJson() {
+let loadJson = function() {
     const now = new Date();
     vals = getVal(now, location);
     //vals.steps = null;  // For testing; uncomment to see the steps not appear
@@ -142,9 +142,9 @@ function loadJson() {
 
     jsonText = JSON.stringify(raw, null, 2); // just stringify the object
     lines = jsonText.split("\n");
-}
+};
 
-function draw() {
+let draw = function() {
     g.clear();
     g.setFontAlign(-1, -1);
     g.setFont("Vector", 10);
@@ -169,9 +169,9 @@ function draw() {
     }
 
     redraw();
-}
+};
 
-function redraw() {
+let redraw = function() {
     for (let i = 0; i < maxLines; i++) {
         const lineIndex = i;
         const line = lines[lineIndex];
@@ -217,19 +217,18 @@ function redraw() {
             g.drawString(line, numWidth, y);
         }
     }
-    Bangle.drawWidgets();
-}
+};
 
-function clearVals() {
+let clearVals = function() {
     g.setFont("Vector", fontSize);
     g.setFontAlign(-1, -1);
     valuePositions.forEach(pos => {
         g.setColor(clrs.bg);
         g.fillRect(pos.x, pos.y, w, pos.y + lineHeight);
     });
-}
+};
 
-function redrawValues() {
+let redrawValues = function() {
     loadJson();
     clearVals();
     redraw();
@@ -238,12 +237,12 @@ function redrawValues() {
         drawTimeout = undefined;
         redrawValues();
     }, 60000 - (Date.now() % 60000));
-}
+};
 
 Bangle.on('touch', (zone, e) => {
     if (e.x >= (buttonY - buttonHeight) && e.x <= (buttonX + buttonHeight) &&
         (e.y >= (buttonY - buttonHeight) && e.y <= (buttonY + buttonHeight))) {
-        load(); // Exit app
+        Bangle.showLauncher(); // Exit app
     }
 });
 
@@ -253,16 +252,9 @@ Bangle.on('backlight', function(on) {
     }
 });
 
-Bangle.setUI({
-    mode: "clock",
-    remove: function() {
-        if (drawTimeout) clearTimeout(drawTimeout);
-        drawTimeout = undefined;
-    }
-});
-
+Bangle.setUI("clock");
 loadLocation();
 Bangle.loadWidgets();
 widget_utils.hide();
 draw();
-setTimeout(Bangle.drawWidgets, 0);
+}
