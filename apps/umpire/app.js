@@ -143,6 +143,7 @@ function startOver(resume) {
   if(resume!=true) {
     if(over==0) { // set an inital time for camparison
       overTimes.push(timeSig.getTime());
+      addLog(timeSig, over, counter, "New Over", "");        
       // set up twist refresh once only
       Bangle.on('twist', function() { 
         if(!processing) {
