@@ -36,6 +36,17 @@ var step_options = [100, 1000, 5000, 10000, 15000, 20000];
     let appMenu = {
       '': { 'title': 'Daisy Clock' },
       '< Back': back,
+      'Color': {
+        value: 0 | color_options.indexOf(s.color),
+        min: 0, max: color_options.length - 1,
+        format: v => color_options[v],
+        onchange: v => {
+          s.color = color_options[v];
+          s.fg = fg_code[v];
+          s.gy = gy_code[v];
+          save();
+        }
+      },
       'Ring Display': {
         value: 0 | ring_options.indexOf(s.ring),
         min: 0, max: ring_options.length - 1,
@@ -63,17 +74,6 @@ var step_options = [100, 1000, 5000, 10000, 15000, 20000];
         },
       };
     } 
-    appMenu['Color'] = {
-      value: 0 | color_options.indexOf(s.color),
-      min: 0, max: color_options.length - 1,
-      format: v => color_options[v],
-      onchange: v => {
-        s.color = color_options[v];
-        s.fg = fg_code[v];
-        s.gy = gy_code[v];
-        save();
-      },
-    };
     appMenu['Hourly Buzz'] = {
       value: !!s.hourly_buzz,
       onchange: v => {
