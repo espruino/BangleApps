@@ -336,7 +336,7 @@
   /* Startup Process
   ------------------------------------------------------------------------------*/
 
-  g.clear();
+  g.reset().clear();
   drawAll();
   startTimers();
   registerEvents();
