@@ -220,9 +220,14 @@ function showTossMenu() {
 
 function showMainMenu() {
   processing = true;
-  var scrollMenuItems = [
-    "Play", "Wicket", "Revoke", "Toss"
-  ];
+  
+  var scrollMenuItems = ["Play"];
+  if(overs==0) scrollMenuItems.push("Toss");
+  if(overs>0) {
+    scrollMenuItems.push("Wicket");
+    if(wickets>0) scrollMenuItems.push("Revoke");
+  }
+
   return E.showScroller({
   h : 60, c : scrollMenuItems.length,
   draw : (idx, r) => {
