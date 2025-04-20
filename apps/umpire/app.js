@@ -89,8 +89,8 @@ function countDown(dir) {
     g.setFontAlign(0,0); // center font
     g.setFont("Vector",48); 
     g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, g.getHeight()/3.5);
-    g.setFont("Vector",24);
-    g.drawString(over + " " + overMinutesString + "\nI " + matchMinutesString, g.getWidth()/1.89, g.getHeight()/1.4);
+    g.setFont("Vector", 36);
+    g.drawString(over + " " + overMinutesString + "\nI " + matchMinutesString, g.getWidth()/1.89, 125);
 
     // Now buzz
     Bangle.buzz();
