@@ -185,12 +185,19 @@ let redraw = function() {
 
             // Key
             g.setColor(clrs.keys);
-            const keyText = indent + `"${key}": `
+            const keyText = indent + `"${key}"`;
             g.drawString(keyText, numWidth, y);
             const keyWidth = g.stringWidth(keyText);
-            const valueX = numWidth + keyWidth;
+            let valueX = numWidth + keyWidth;
+
+            g.setColor(clrs.brackets);
+            const colonText = ": ";
+            g.drawString(colonText, valueX, y);
+            valueX += g.stringWidth(colonText);
 
             // Value color
+            const endComma = value.endsWith(',');
+            if (endComma) value = value.slice(0, -1);
             if (value.startsWith('"')) {
                 g.setColor(clrs.strings);
             } else if (value.startsWith('{') || value.startsWith('}')) {
@@ -199,7 +206,10 @@ let redraw = function() {
                 g.setColor(clrs.ints);
             }
             g.drawString(value, valueX, y);
-
+            if (endComma){
+                g.setColor(clrs.brackets);
+                g.drawString(',', valueX + g.stringWidth(value), y);
+            }
             valuePositions.push({
                 key,
                 x: valueX,
