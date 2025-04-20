@@ -4,6 +4,7 @@ var counter = 0;
 var over = 0;
 var ballTimes = [];
 var overTimes = [];
+var log = []
 
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   // The fields we want to put in out CSV file
@@ -15,6 +16,13 @@ function addLog(timeSig, over, ball, matchEvent, metaData) {
   // Write data here
   file.write(csv.join(",")+"\n");
   console.log(csv);
+  log.push({
+    time: formatTimeOfDay(timeSig),
+    over: over,
+    ball: ball,
+    matchEvent: matchEvent,
+    metaData: metaData
+  });
 }
  
 function formatDuration(timeDate) { 
@@ -129,6 +137,10 @@ function startOver(resume) {
           processing = true;
           Bangle.setUI();
           menu = showMainMenu();
+        } else if (directionLR==1) { 
+          processing = true;
+          Bangle.setUI();
+          menu = showLog();
         } else {
           processing = true;
           countDown(-directionUD);
@@ -241,6 +253,20 @@ function showMainMenu() {
     if(scrollMenuItems[idx]=="Play") resumeGame();
     if(scrollMenuItems[idx]=="Wicket") incrementWickets(1);
     if(scrollMenuItems[idx]=="Recall") incrementWickets(-1);
+  }
+  });
+}
+
+function showLog() {
+  processing = true;
+  return E.showScroller({
+    h : 20, c : log.length,
+  draw : (idx, r) => {
+    g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
+    g.setFont("Vector", 18).drawString(log[time],r.x+6,r.y+1);
+  },
+  select : (idx) => {
+      menu = showMainMenu();
   }
   });
 }
