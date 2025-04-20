@@ -153,7 +153,6 @@ let draw = function() {
     g.setColor(clrs.tab);
 
     g.fillRect(90, 0, w, headerHeight);
-    loadJson();
     g.setColor(clrs.brackets);
     g.drawString("clockface.json", 3, 3);
 
@@ -168,7 +167,7 @@ let draw = function() {
         numWidth = Math.max(numWidth, g.stringWidth(lineNumberStr));
     }
 
-    redraw();
+    redrawValues();
 };
 
 let redraw = function() {
