@@ -236,7 +236,7 @@ var scroller = {
   },
   select : (idx) => {
     console.log(scrollMenuItems[idx]);
-    if(scrollMenuItems[idx]=="Toss") resumeGame();
+    if(scrollMenuItems[idx]=="Toss") performToss();
     if(scrollMenuItems[idx]=="Play") resumeGame();
     if(scrollMenuItems[idx]=="Wicket") incrementWickets(1);
     if(scrollMenuItems[idx]=="Revoke") incrementWickets(-1);
