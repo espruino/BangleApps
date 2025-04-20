@@ -18,6 +18,7 @@
     B6: "caden",
     paceLength: 1000, // TODO: Default to either 1km or 1mi based on locale
     alwaysResume: false,
+    vibrate: false,
     notify: {
       dist: {
         increment: 0,
@@ -77,6 +78,13 @@
     value : settings.alwaysResume,
     onchange : v => {
       settings.alwaysResume = v;
+      saveSettings();
+    },
+  };
+  menu[/*LANG*/"Start/stop vibrate"] = {
+    value : settings.vibrate,
+    onchange : v => {
+      settings.vibrate = v;
       saveSettings();
     },
   };
