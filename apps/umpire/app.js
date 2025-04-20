@@ -1,10 +1,9 @@
+var processing = true; //debounce to inhibit twist events
 var wickets = 0
 var counter = 0;
 var over = 0;
 var ballTimes = [];
 var overTimes = [];
-var gameState = "Ready...";
-var countdownDebounce = false;
 
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   // The fields we want to put in out CSV file
@@ -26,8 +25,7 @@ function formatTimeOfDay(timeSig) { return timeSig.getHours() + ":" + timeSig.ge
 
 
 function countDown(dir) {
-  if(countdownDebounce!=true) {
-  countdownDebounce = true;
+  processing = true;
   counter += dir;
   if(counter<0) counter=0;
 
@@ -65,24 +63,19 @@ function countDown(dir) {
   
   // Over
   if (counter>=6) {
-    //Bangle.on('twist', function() { });
     overTimes.push(timeSig.getTime());
     var firstOverTime = overTimes[0];
     var matchDuration = new Date(timeSig.getTime() - firstOverTime);
-    
     var matchMinutesString = formatDuration(matchDuration);
     
     var firstBallTime = ballTimes[0];
     var overDuration = new Date(timeSig.getTime() - firstBallTime);
-    
     var overMinutesString = formatDuration(overDuration) + "";
     
     addLog(timeSig, over, counter, "Over Duration", overMinutesString);
     addLog(timeSig, over, counter, "Innings Duration", matchMinutesString);
 
     //console.log(overTimes);
-
-    //E.showMessage(overMinutesString + "\n" + matchMinutesString, "END OF OVER");
 
     g.clear(1); // clear screen and reset graphics state
     g.setFontAlign(0,0); // center font
@@ -108,7 +101,7 @@ function countDown(dir) {
         startOver();
       }
     });
-    countdownDebounce = false;
+    processing = false;
     return;
   }
   }
@@ -124,47 +117,53 @@ function countDown(dir) {
   g.setFont("Vector",18);
   g.drawString("..." + formatDuration(deadDuration), g.getWidth()/1.89, 166);
   }
-  countdownDebounce = false;
-  }
+  processing = false;
 }
 
 function startOver(resume) {
+  processing = true;
   Bangle.setUI({
       mode : "custom",
       swipe : (directionLR, directionUD)=>{
         if (!directionUD) { 
+          processing = true;
           Bangle.setUI();
-          countdownDebounce = true;
-          scrollMenu = E.showScroller(scroller);
+          menu = showMainMenu();
         } else {
+          processing = true;
           countDown(-directionUD);
         }
       },
       btn : ()=>{
+        processing = true;
         countDown(1);
       }
     });
   var timeSig = new Date();
   if(resume!=true) {
-    if(over==0) {
+    if(over==0) { // set an inital time for camparison
       overTimes.push(timeSig.getTime());
+      // set up twist refresh once only
       Bangle.on('twist', function() { 
-        console.log("twist");
-        countDown(0);
+        if(!processing) {
+          processing = true;
+          console.log("Twist");
+          countDown(0);
+        }
       });
     }
+    // start new over
     over += 1;
-    counter = 0;
+    counter = 0; 
     ballTimes = [];
-    addLog(timeSig, over, counter, "New Over", "");    
-    
+    addLog(timeSig, over, counter, "New Over", "");        
   }
+  // whether resuming or new over, refresh UI
   countDown(0);
 }
 
 function resumeGame() {
   Bangle.buzz();
-  countdownDebounce = false;
   if(over==0) {
     startOver();
   } else {
@@ -173,6 +172,7 @@ function resumeGame() {
 }
 
 function incrementWickets(inc) {
+  processing = true;
   E.showPrompt("Amend wickets by " + inc + "?").then(function(confirmed) {
     if (confirmed) {
       E.showPrompt();
@@ -184,24 +184,13 @@ function incrementWickets(inc) {
     } else {
       E.showPrompt();
       Bangle.buzz();
-      console.log("Load scroller");
-      scrollMenu = E.showScroller(scroller);
+      menu = showMainMenu();
     }
   });
 }
-// Create the file in append mode
-var file = require("Storage").open("matchlog.csv","a");
 
-var timeSig = new Date();
-addLog(timeSig, "103", "a", "App Started", timeSig);
-
-countdownDebounce = true;
-
-var scrollMenuItems = [
-  "Toss", "Play", "Wicket", "Revoke"
-];
-
-function performToss() {
+function showTossMenu() {
+  processing = true;
   var tossMenuItems = [
   "Home Won=>Bat",
   "Home Won=>Bowl",
@@ -209,7 +198,7 @@ function performToss() {
   "Away Won=>Bowl",
   "Cancel"
   ];
-  scrollMenu = E.showScroller({
+  return E.showScroller({
     h : 40, c : tossMenuItems.length,
   draw : (idx, r) => {
     g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
@@ -218,17 +207,23 @@ function performToss() {
   select : (idx) => {
     console.log(tossMenuItems[idx]);
     if(tossMenuItems[idx]=="Cancel") {
-      scrollMenu = E.showScroller(scroller);
+      menu = showMainMenu();
     } else {
+      Bangle.buzz();
       var timeSig = new Date();
       addLog(timeSig, "-", "-", "Toss", tossMenuItems[idx]);
-      scrollMenu = E.showScroller(scroller);
+      menu = showMainMenu();
     };
   }
   });
 }
 
-var scroller = {
+function showMainMenu() {
+  processing = true;
+  var scrollMenuItems = [
+    "Play", "Wicket", "Revoke", "Toss"
+  ];
+  return E.showScroller({
   h : 60, c : scrollMenuItems.length,
   draw : (idx, r) => {
     g.setBgColor((idx&1)?"#000":"#121").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
@@ -236,11 +231,18 @@ var scroller = {
   },
   select : (idx) => {
     console.log(scrollMenuItems[idx]);
-    if(scrollMenuItems[idx]=="Toss") performToss();
+    if(scrollMenuItems[idx]=="Toss") menu = showTossMenu();;
     if(scrollMenuItems[idx]=="Play") resumeGame();
     if(scrollMenuItems[idx]=="Wicket") incrementWickets(1);
     if(scrollMenuItems[idx]=="Revoke") incrementWickets(-1);
   }
+  });
 }
 
-var scrollMenu = E.showScroller(scroller);
+// Start the app
+var file = require("Storage").open("matchlog.csv","a");
+
+var timeSig = new Date();
+addLog(timeSig, "103", "a", "App Started", timeSig);
+
+var menu = showMainMenu();
