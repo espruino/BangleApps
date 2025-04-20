@@ -193,17 +193,17 @@ function incrementWickets(inc) {
 function showTossMenu() {
   processing = true;
   var tossMenuItems = [
-  "Home Won=>Bat",
-  "Home Won=>Bowl",
-  "Away Won=>Bat",
-  "Away Won=>Bowl",
+  "Home Won:Bat",
+  "Home Won:Bowl",
+  "Away Won:Bat",
+  "Away Won:Bowl",
   "Cancel"
   ];
   return E.showScroller({
     h : 40, c : tossMenuItems.length,
   draw : (idx, r) => {
     g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
-    g.setFont("Vector", 24).drawString(tossMenuItems[idx],r.x+10,r.y+8);
+    g.setFont("Vector", 20).drawString(tossMenuItems[idx],r.x+10,r.y+8);
   },
   select : (idx) => {
     console.log(tossMenuItems[idx]);
@@ -226,7 +226,7 @@ function showMainMenu() {
   if(over==0) scrollMenuItems.push("Toss");
   if(over>0) {
     scrollMenuItems.push("Wicket");
-    if(wickets>0) scrollMenuItems.push("Revoke");
+    if(wickets>0) scrollMenuItems.push("Recall");
   }
 
   return E.showScroller({
@@ -240,7 +240,7 @@ function showMainMenu() {
     if(scrollMenuItems[idx]=="Toss") menu = showTossMenu();;
     if(scrollMenuItems[idx]=="Play") resumeGame();
     if(scrollMenuItems[idx]=="Wicket") incrementWickets(1);
-    if(scrollMenuItems[idx]=="Revoke") incrementWickets(-1);
+    if(scrollMenuItems[idx]=="Recall") incrementWickets(-1);
   }
   });
 }
@@ -249,6 +249,6 @@ function showMainMenu() {
 var file = require("Storage").open("matchlog.csv","a");
 
 var timeSig = new Date();
-addLog(timeSig, "103", "a", "App Started", timeSig);
+addLog(timeSig, "113", "a", "App Started", timeSig);
 
 var menu = showMainMenu();
