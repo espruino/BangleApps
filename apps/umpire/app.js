@@ -263,7 +263,7 @@ function showLog() {
     h : 20, c : log.length,
   draw : (idx, r) => {
     g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
-    g.setFont("Vector", 18).drawString(log[time],r.x+6,r.y+1);
+    g.setFont("Vector", 18).drawString(log[idx].time,r.x+6,r.y+1);
   },
   select : (idx) => {
       menu = showMainMenu();
