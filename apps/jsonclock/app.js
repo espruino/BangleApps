@@ -115,34 +115,29 @@ let loadJson = function() {
     const vals = getVal(now, location);
     //vals.steps = null;  // For testing; uncomment to see the steps not appear
     //location.location = null;  // For testing, if null, the time becomes an struct to take up sun's struct
-    let raw;
-
-    if (location.location !== null) {
-        raw = {
-            time: vals.time,
-            dt: vals.date,
-            sun: {
-                rise: vals.rise,
-                set: vals.set,
+    const hasLoc = location.location !== null;
+    let raw = {
+        time: hasLoc
+        ? vals.time
+        : {
+            hr: getHr(now.getHours())[0],
+            min: now.getMinutes(),
             },
-            "batt_%": vals.batt_pct,
-        };
-    } else {
-        raw = {
-            time: {
-                hr: getHr(now.getHours())[0],
-                min: now.getMinutes(),
-            },
-            dt: vals.date,
-            "batt_%": vals.batt_pct,
+        dt: vals.date,
+        "batt_%": vals.batt_pct,
+    };
+    if (vals.steps != null) {
+        raw.steps = vals.steps;
+    }
+    if (hasLoc) {
+        raw.sun = {
+        rise: vals.rise,
+        set: vals.set,
         };
     }
-
-    if (vals.steps != null) raw.steps = vals.steps;
-
     jsonText = JSON.stringify(raw, null, 2);
     lines = jsonText.split("\n");
-};
+    };
 
 let draw = function() {
     g.clear();
@@ -190,10 +185,10 @@ let redraw = function() {
 
             // Key
             g.setColor(clrs.keys);
-            g.drawString(indent + `"${key}"`, numWidth, y);
-            const keyWidth = g.stringWidth(indent + `"${key}"`);
+            const keyText = indent + `"${key}": `
+            g.drawString(keyText, numWidth, y);
+            const keyWidth = g.stringWidth(keyText);
             const valueX = numWidth + keyWidth;
-            const valueText = ": " + value;
 
             // Value color
             if (value.startsWith('"')) {
@@ -203,7 +198,7 @@ let redraw = function() {
             } else {
                 g.setColor(clrs.ints);
             }
-            g.drawString(valueText, valueX, y);
+            g.drawString(value, valueX, y);
 
             valuePositions.push({
                 key,
