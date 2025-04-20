@@ -4,6 +4,7 @@ var counter = 0;
 var over = 0;
 var ballTimes = [];
 var overTimes = [];
+var tossOutcome = "Toss";
 
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   // The fields we want to put in out CSV file
@@ -203,7 +204,7 @@ function showTossMenu() {
     h : 40, c : tossMenuItems.length,
   draw : (idx, r) => {
     g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
-    g.setFont("Vector", 20).drawString(tossMenuItems[idx],r.x+10,r.y+10);
+    g.setFont("Vector", 20).drawString(tossMenuItems[idx],r.x+6,r.y+10);
   },
   select : (idx) => {
     console.log(tossMenuItems[idx]);
@@ -213,6 +214,7 @@ function showTossMenu() {
       Bangle.buzz();
       var timeSig = new Date();
       addLog(timeSig, "-", "-", "Toss", tossMenuItems[idx]);
+      tossOutcome = tossMenuItems[idx];
       menu = showMainMenu();
     };
   }
@@ -223,11 +225,11 @@ function showMainMenu() {
   processing = true;
   
   var scrollMenuItems = ["Play"];
-  if(over==0) scrollMenuItems.push("Toss");
   if(over>0) {
     scrollMenuItems.push("Wicket");
     if(wickets>0) scrollMenuItems.push("Recall");
   }
+  scrollMenuItems.push(tossOutcome);
 
   return E.showScroller({
   h : 80, c : scrollMenuItems.length,
