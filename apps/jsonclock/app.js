@@ -140,7 +140,7 @@ let loadJson = function() {
 
     if (vals.steps != null) raw.steps = vals.steps;
 
-    jsonText = JSON.stringify(raw, null, 2); // just stringify the object
+    jsonText = JSON.stringify(raw, null, 2);
     lines = jsonText.split("\n");
 };
 
@@ -248,7 +248,7 @@ Bangle.on('touch', (zone, e) => {
 
 Bangle.on('backlight', function(on) {
     if (on) {
-        redrawValues(); // or just draw() if you want full re-render
+        redrawValues();
     }
 });
 
