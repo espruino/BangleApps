@@ -125,7 +125,7 @@ function startOver(resume) {
   Bangle.setUI({
       mode : "custom",
       swipe : (directionLR, directionUD)=>{
-        if (!directionUD) { 
+        if (directionLR==1) { 
           processing = true;
           Bangle.setUI();
           menu = showMainMenu();
