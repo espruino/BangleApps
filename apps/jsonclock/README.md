@@ -2,7 +2,7 @@
 
   *JSON view of the time.*
 
-Written by: [David Volvoskiy](https://github.com/voloved) and fully
+Written by: [David Volovskiy](https://github.com/voloved) and fully
 inspired by  [This FitBit face](https://github.com/Sharkgrammer/clockface.json)
 
 * Displays a JSON that shows the date, time, step count, sunrise/set and battery.
