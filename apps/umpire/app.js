@@ -222,8 +222,8 @@ function showMainMenu() {
   processing = true;
   
   var scrollMenuItems = ["Play"];
-  if(overs==0) scrollMenuItems.push("Toss");
-  if(overs>0) {
+  if(over==0) scrollMenuItems.push("Toss");
+  if(over>0) {
     scrollMenuItems.push("Wicket");
     if(wickets>0) scrollMenuItems.push("Revoke");
   }
