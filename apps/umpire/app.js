@@ -213,7 +213,7 @@ function performToss() {
     h : 40, c : tossMenuItems.length,
   draw : (idx, r) => {
     g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
-    g.setFont("Vector", 24).drawString(scrollMenuItems[idx],r.x+10,r.y+8);
+    g.setFont("Vector", 24).drawString(tossMenuItems[idx],r.x+10,r.y+8);
   },
   select : (idx) => {
     console.log(tossMenuItems[idx]);
