@@ -1,32 +1,39 @@
 {
-  // TODO: Should the global case just hijack the swipe and drag events, modifying them before passing on to other listeners?
-  //   - That could be a new separate bootloader app instead though?
-
   const settings = Object.assign({
     global: false,
     apps: []
   }, require("Storage").readJSON("swipeinv.json", true) || {});
 
-  if (settings.global || settings.apps.length > 0) {
-    const setURIOrig = Bangle.setUI;
-    Bangle.setUI = (mode, callback) => {
-      if (typeof mode === "object" && mode.swipe) {
+  setTimeout(() => { // Timeout so we prepend listeners late, hopefully after all other listerners were added.
+    if (settings.global || settings.apps.length > 0) {
+
+      let swipeInverter = (dirLR, dirUD, obj) => {
         if (settings.global ^ settings.apps.includes(global.__FILE__)) {
-          const origSwipeCb = mode.swipe;
-          mode.swipe = (dirLR, dirUD) => origSwipeCb(dirLR * -1, dirUD * -1);
-        }
-      }
-      if (typeof mode === "object" && mode.drag) {
-        if (settings.global ^ settings.apps.includes(global.__FILE__)) {
-          const origDragCb = mode.drag;
-          mode.drag = (e) => {
-            e.dx *= -1;
-            e.dy *= -1;
-            origDragCb(e);
+          if (!(obj && obj.inverted)) {
+            E.stopEventPropagation();
+            obj = Object.assign({inverted:true}, obj);
+
+            Bangle.emit("swipe", dirLR * -1, dirUD * -1, obj)
           }
         }
       }
-      return setURIOrig(mode, callback);
-    };
-  }
+
+      let dragInverter = (e) => {
+        if (settings.global ^ settings.apps.includes(global.__FILE__)) {
+          if (!e.inverted) {
+            E.stopEventPropagation();
+            e.inverted = true;
+
+            e.dx *= -1;
+            e.dy *= -1;
+            Bangle.emit("drag", e);
+          }
+        }
+      }
+
+      Bangle.prependListener("swipe", swipeInverter);
+      Bangle.prependListener("drag", dragInverter);
+
+    }
+  }, 0)
 }
