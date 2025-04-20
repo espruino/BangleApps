@@ -125,7 +125,7 @@ function startOver(resume) {
   Bangle.setUI({
       mode : "custom",
       swipe : (directionLR, directionUD)=>{
-        if (directionLR==1) { 
+        if (directionLR==-1) { 
           processing = true;
           Bangle.setUI();
           menu = showMainMenu();
@@ -193,17 +193,17 @@ function incrementWickets(inc) {
 function showTossMenu() {
   processing = true;
   var tossMenuItems = [
-  "Home Won:Bat",
-  "Home Won:Bowl",
-  "Away Won:Bat",
-  "Away Won:Bowl",
+  "Home Won: Bat",
+  "Home Won: Bowl",
+  "Away Won: Bat",
+  "Away Won: Bowl",
   "Cancel"
   ];
   return E.showScroller({
     h : 40, c : tossMenuItems.length,
   draw : (idx, r) => {
     g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
-    g.setFont("Vector", 20).drawString(tossMenuItems[idx],r.x+10,r.y+8);
+    g.setFont("Vector", 20).drawString(tossMenuItems[idx],r.x+10,r.y+10);
   },
   select : (idx) => {
     console.log(tossMenuItems[idx]);
