@@ -112,7 +112,7 @@ let getVal = function(now, loc) {
 
 let loadJson = function() {
     const now = new Date();
-    vals = getVal(now, location);
+    const vals = getVal(now, location);
     //vals.steps = null;  // For testing; uncomment to see the steps not appear
     //location.location = null;  // For testing, if null, the time becomes an struct to take up sun's struct
     let raw;
