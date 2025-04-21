@@ -37,9 +37,9 @@ function showLog() {
       || log[idx].matchEvent=="Toss"
       || log[idx].matchEvent=="App Started"){
       g.setFont("Vector", 22).drawString(
-      log[idx].time + " " +
       log[idx].matchEvent,r.x+6,r.y+2);
       g.setFont("Vector", 18).drawString(
+      log[idx].time + " " +
       log[idx].metaData,r.x+6,r.y+27);
     } else {
       g.setFont("Vector", 22).drawString(
