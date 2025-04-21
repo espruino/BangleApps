@@ -29,26 +29,26 @@ function showLog() {
   processing = true;
   Bangle.setUI();
   return E.showScroller({
-    h : 40, c : log.length,
+    h : 50, c : log.length,
   draw : (idx, r) => {
     g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
     if(log[idx].matchEvent=="Over Duration"
       || log[idx].matchEvent=="Innings Duration"
       || log[idx].matchEvent=="Toss"
       || log[idx].matchEvent=="App Started"){
-      g.setFont("Vector", 18).drawString(
+      g.setFont("Vector", 24).drawString(
       log[idx].time + " " +
       log[idx].matchEvent,r.x+6,r.y+1);
       g.setFont("Vector", 18).drawString(
-      log[idx].metaData,r.x+16,r.y+21);
+      log[idx].metaData,r.x+16,r.y+27);
     } else {
-      g.setFont("Vector", 18).drawString(
+      g.setFont("Vector", 24).drawString(
       log[idx].time + " " +
       log[idx].over + "." +
       log[idx].ball + " " +
       log[idx].matchEvent,r.x+6,r.y+1);
       g.setFont("Vector", 18).drawString(
-      log[idx].metaData,r.x+16,r.y+21);
+      log[idx].metaData,r.x+16,r.y+27);
     }
   },
   select : (idx) => {
@@ -257,8 +257,8 @@ function showTossMenu() {
     if(idx==tossIndex) {
       g.setBgColor("#fff").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
       g.setBgColor("#000").clearRect(r.x+2,r.y+2,r.x+r.w-3,r.y+r.h-3);
-      g.setFont("Vector", 16).drawString(tossTimeString,r.x+1,r.y+35);
-      g.setFont("Vector", 16).drawString(tossMenuItems[idx],r.x+26,r.y+5);
+      g.setFont("Vector", 16).drawString(tossTimeString,r.x+1,r.y+5);
+      g.setFont("Vector", 16).drawString(tossMenuItems[idx],r.x+26,r.y+24);
     } else {
       g.setFont("Vector", 20).drawString(tossMenuItems[idx],r.x+6,r.y+10);
     }
