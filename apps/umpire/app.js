@@ -119,14 +119,15 @@ function countDown(dir) {
       addLog(timeSig, over, counter, "Over Duration", overMinutesString);
       addLog(timeSig, over, counter, "Innings Duration", matchMinutesString);
 
-      //console.log(overTimes);
-      // menu = showLog();
-      startOver();
-      return;
+      //console.log(overTimes)
+      // start new over
+      over += 1;
+      counter = 0; 
+      ballTimes = [];
     }
   }
   
-  if(counter<6) { // refresh in-play
+  //if(counter<6) { // refresh in-play
     g.clear(1); // clear screen and reset graphics state
     g.setFont("Vector",24); // vector font, 80px
     g.drawString(wickets, 158, 10);
@@ -137,7 +138,7 @@ function countDown(dir) {
     g.drawString(over + "." + counter, g.getWidth()/1.89, 120);
     g.setFont("Vector",18);
     g.drawString("..." + formatDuration(deadDuration), g.getWidth()/1.89, 166);
-  }
+  //}
   processing = false;
 }
 
@@ -152,9 +153,12 @@ function startOver(resume) {
         } else if (directionLR==1) { 
           processing = true;
           menu = showLog();
+        } else if (directionUD==-1) { 
+          processing = true;
+          countDown(1);
         } else {
           processing = true;
-          countDown(-directionUD);
+          countDown(-1);
         }
       },
       btn : ()=>{
