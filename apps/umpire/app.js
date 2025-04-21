@@ -288,7 +288,7 @@ function showMainMenu() {
     scrollMenuItems.push("Wicket");
     if(wickets>0) scrollMenuItems.push("Recall");
   }
-  if(over==0) scrollMenuItems.push("Toss");
+  // if(over==0) scrollMenuItems.push("Toss");
 
   return E.showScroller({
   h : 80, c : scrollMenuItems.length,
@@ -313,3 +313,12 @@ var timeSig = new Date();
 addLog(timeSig, "155", "a", "Date", timeSig.toUTCString());
 
 var menu = showMainMenu();
+Bangle.setUI({
+      mode : "custom",
+      swipe : (directionLR, directionUD)=>{
+        console.log("swipe");
+      },
+      btn : ()=>{
+        console.log("btn");
+      }
+    });
