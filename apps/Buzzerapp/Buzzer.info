@@ -1,7 +1,7 @@
 {
   "id": "buzzer",
   "name": "Buzzer",
-  "type": "app",
+  "type": "clock",
   "version": "0.01",
   "icon": "app.png",
   "screenshots": [],
@@ -10,7 +10,7 @@
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    { "name": "Buzzer.app.js", "url": "Buzzer.app.js" },
+    { "name": "Buzzerapp.app.js", "url": "Buzzer.app.js" },
     { "name": "Buzzer.img", "url": "Buzzer.img", "evaluate": true }
   ]
 }
