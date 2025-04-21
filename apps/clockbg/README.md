@@ -16,6 +16,8 @@ You can either:
   * `Image` - choose from a previously uploaded image
   * `Squares` - a randomly generated pattern of squares in the selected color palette
   * `Plasma` - a randomly generated 'plasma' pattern of squares in the selected color palette (random noise with a gaussian filter applied)
+  * `Rings` - randomly generated rings in the selected color palette
+  * `Tris` - randomly generated overlapping triangles in the selected color palette
 
 
 ## Usage in code

@@ -65,7 +65,11 @@
   agenda.forEach((entry, i) => {
 
     var title = entry.title.slice(0,12);
-    var date = new Date(entry.timestamp*1000);
+    // All day events are always in UTC and always start at 00:00:00, so we
+    // need to "undo" the timezone offsetting to make sure that the day is
+    // correct.
+    var offset = entry.allDay ? new Date().getTimezoneOffset() * 60 : 0
+    var date = new Date((entry.timestamp+offset)*1000);
     var dateStr = locale.date(date).replace(/\d\d\d\d/,"");
     var shortStr = ((date-now) > 86400000 || entry.allDay) ? dateStr : locale.time(date,1);
     var color = "#"+(0x1000000+Number(entry.color)).toString(16).padStart(6,"0");

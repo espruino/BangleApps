@@ -1,0 +1,21 @@
+{ "id": "cc_astro",
+  "name": "CC Astro",
+  "shortName": "CC-Astro",
+  "version": "0.01",
+  "description": "A clock with planets as clock hands",
+  "icon": "app_icon.png",
+  "type": "clock",
+  "tags": "clock,astro,planets,earth,venus,mercury,sun",
+  "supports" : ["BANGLEJS2"],
+  "screenshots": [
+    {"url":"screenshot1.png"}, 
+    {"url":"screenshot2.png"}, 
+    {"url":"screenshot3.png"}
+  ],
+  "readme": "README.md",
+  "storage": [
+    {"name": "cc_astro.app.js", "url": "app.js"},
+    {"name": "cc_astro.img", "url": "app_icon.js", "evaluate":true}
+  ],
+  "data": [{"name":"cc_astro.json"}]
+}

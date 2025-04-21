@@ -2,14 +2,14 @@
   let settings = Object.assign({
     style : "randomcolor",
     colors : ["#F00","#0F0","#00F"]
-  },require("Storage").readJSON("clockbg.json")||{});
+  },require("Storage").readJSON("clockbg.json",1)||{});
 
   function saveSettings() {
     if (settings.style!="image")
       delete settings.fn;
     if (settings.style!="color")
       delete settings.color;
-    if (!["randomcolor","squares","plasma"].includes(settings.style))
+    if (!["randomcolor","squares","plasma","rings","tris"].includes(settings.style))
       delete settings.colors;
     require("Storage").writeJSON("clockbg.json", settings);
   }
@@ -127,7 +127,48 @@
           };
         });
         E.showMenu(menu);
-      }
+      },
+      /*LANG*/"Rings" : function() {
+        var cols = [ // list of color palettes used as possible square colours - 2 entries
+          ["#ff0","#f00"], // yellow/red
+          ["#0ff","#000"], // cyan/blue
+          ["#888","#000"], // grey/black
+          ["#888","#fff"], // grey/white
+          ["#444","#0f0"], // grey/green
+          ["#444","#f0f"], // grey/purple
+          // Please add some more!
+        ];
+        var menu =  {"":{title:/*LANG*/"Rings", back:showModeMenu}};
+        cols.forEach(col => {
+          menu[getColorsImage(col)] = () => {
+            settings.style = "rings";
+            settings.colors = col;
+            saveSettings();
+            showMainMenu();
+          };
+        });
+        E.showMenu(menu);
+      },
+      /*LANG*/"Tris" : function() {
+        var cols = [ // 2/4/8/16 (8/16 both use 4bpp)
+          ["#00f","#05f","#0bf","#0fd","#0f7","#0f1","#3f0","#9f0","#ff0","#f90","#f30","#f01","#f07","#f0d","#b0f","#50f"],
+          ["#00f","#0bf","#0f7","#3f0","#ff0","#f30","#f07","#b0f"],
+          ["#0ef","#6f0","#f10","#90f"],
+          ["#09f","#1f0","#f60","#e0f"],
+          ["#000","#444","#888","#fff"]
+          // Please add some more!
+        ];
+        var menu =  {"":{title:/*LANG*/"Colors", back:showModeMenu}};
+        cols.forEach(col => {
+          menu[getColorsImage(col)] = () => {
+            settings.style = "tris";
+            settings.colors = col;
+            saveSettings();
+            showMainMenu();
+          };
+        });
+        E.showMenu(menu);
+      },
     });
   }
 
