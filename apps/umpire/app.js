@@ -140,7 +140,7 @@ function countDown(dir) {
   processing = false;
 }
 
-function startOver(resume) {
+function startPlay(resume) {
   processing = true;
   Bangle.setUI({
       mode : "custom",
@@ -182,13 +182,14 @@ function startOver(resume) {
         }
       });
     } else {
-      if(timeCalled) {
+      
+    }
+  }
+  if(timeCalled) {
         timeCalled = false;
         var lastTimeTime = timeTimes[timeTimes.length - 1];
         var timeDuration = new Date(timeSig.getTime() - lastTimeTime);
         addLog(timeSig, over, counter, "Play", "Lost: " + formatDuration(timeDuration));    
-      }
-    }
   }
   // whether resuming or new over, refresh UI
   countDown(0);
@@ -197,9 +198,9 @@ function startOver(resume) {
 function resumeGame() {
   Bangle.buzz();
   if(over==0) {
-    startOver();
+    startPlay();
   } else {
-    startOver(true);
+    startPlay(true);
   }
 }
 
