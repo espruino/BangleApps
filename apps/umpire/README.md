@@ -54,3 +54,5 @@ When choosing "Wicket" or "Recall" from the main menu E.showPrompt is used to as
 The main menu, the "Toss" sub-menu and log viewer all use E.showScroller to display a scrollable list of tappable items. This is in preference to E.showMenu which, at the time of writing, has bugs affecting where the touch event is detected in the list of menu items (one lower than it should).
 
 Whenever a scroller is shown, the in-play swipe interactions are switched off.
+
+Exceptionally, when the log viewer is shown after the 6th ball of an over the next tap will start a new over. Otherwise, tapping on the log viewer returns the umpire to the in-play screen.
