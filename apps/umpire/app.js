@@ -5,6 +5,7 @@ var over = 0;
 var ballTimes = [];
 var overTimes = [];
 var log = []
+var tossIndex = 4; // default to Cancel until recorded
 
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   var csv = [
@@ -252,6 +253,10 @@ function showTossMenu() {
     h : 40, c : tossMenuItems.length,
   draw : (idx, r) => {
     g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
+    if(idx==tossIndex) {
+      g.setBgColor("#fff").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
+      g.setBgColor("#000").clearRect(r.x+2,r.y+2,r.x+r.w-3,r.y+r.h-3);
+    }
     g.setFont("Vector", 20).drawString(tossMenuItems[idx],r.x+6,r.y+10);
   },
   select : (idx) => {
@@ -260,6 +265,7 @@ function showTossMenu() {
       menu = showMainMenu();
     } else {
       Bangle.buzz();
+      tossIndex = idx;
       var timeSig = new Date();
       addLog(timeSig, "-", "-", "Toss", tossMenuItems[idx]);
       menu = showMainMenu();
