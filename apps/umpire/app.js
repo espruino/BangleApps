@@ -307,6 +307,6 @@ function showMainMenu() {
 var file = require("Storage").open("matchlog.csv","a");
 
 var timeSig = new Date();
-addLog(timeSig, "113", "a", "App Started", timeSig);
+addLog(timeSig, "145", "a", "App Started", timeSig);
 
 var menu = showMainMenu();
