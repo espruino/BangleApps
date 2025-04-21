@@ -120,7 +120,8 @@ function countDown(dir) {
       addLog(timeSig, over, counter, "Innings Duration", matchMinutesString);
 
       //console.log(overTimes);
-      menu = showLog();
+      // menu = showLog();
+      startOver();
       return;
     }
   }
