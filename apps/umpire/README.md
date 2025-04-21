@@ -62,3 +62,10 @@ Tapping on the log viewer returns the umpire to the in-play screen.
 The app uses Bangle.twist to detect the umpire turning their wrist to view the screen and, when the in-play screen is active, will refresh the current time and elapsed time since the last ball.
 
 Showing the elapsed time since the last ball was logged helps the umpire to assess whether either team is timewasting and whether a new batter has made it to the crease as required by the laws.
+
+## Timing ##
+
+The app calculates three durations:
+1. **Ball to ball** - When logging a ball the elapsed time since the last logged ball.
+2. **Overs** - When logging the last ball of the over, the elapsed time since the last ball of the previous over was logged (or when "Play" was initially called).
+3. **Lost Time** - When logging a call of "Play" after a call of "Time" the elapsed time since the call of "Time".
