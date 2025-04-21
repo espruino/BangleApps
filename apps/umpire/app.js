@@ -26,22 +26,26 @@ function addLog(timeSig, over, ball, matchEvent, metaData) {
 function showLog() {
   processing = true;
   return E.showScroller({
-    h : 20, c : log.length,
+    h : 40, c : log.length,
   draw : (idx, r) => {
     g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
     if(log[idx].matchEvent=="Over Duration"
     || log[idx].matchEvent=="Innings Duration"){
       g.setFont("Vector", 18).drawString(
-      log[idx].metaData + " " +
-      log[idx].matchEvent + " " +
-      log[idx].time,r.x+6,r.y+1);
+      log[idx].time + " " +
+      log[idx].over + "." +
+      log[idx].ball + " " +
+      log[idx].matchEvent,r.x+6,r.y+1);
+      g.setFont("Vector", 18).drawString(
+      log[idx].metaData,r.x+16,r.y+21);
     } else {
       g.setFont("Vector", 18).drawString(
       log[idx].time + " " +
       log[idx].over + "." +
       log[idx].ball + " " +
-      log[idx].matchEvent + " " +
-      log[idx].metaData,r.x+6,r.y+1);
+      log[idx].matchEvent,r.x+6,r.y+1);
+      g.setFont("Vector", 18).drawString(
+      log[idx].metaData,r.x+16,r.y+21);
     }
   },
   select : (idx) => {
