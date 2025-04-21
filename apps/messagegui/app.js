@@ -351,31 +351,29 @@ function showMessagesScroller(msg) {
       if (scrollIdx>shownScrollIdxLast) {shownScrollIdxLast = scrollIdx;}
     },
     select : function(scrollIdx, touch) {
-      for (let i=firstTitleLinePerMsg.length-1; i>=0 ; i--) {
-        if (scrollIdx>=firstTitleLinePerMsg[i]) {
-          if (touch && touch.type===2) {return;}
-          const MSG_SELECTED = MESSAGES[i];
-          WU&&WU.show();
-          print(process.memory());
-          E.showScroller();
-          print(process.memory());
-          updateReadMessages();
-          delete titleLines, allLines;
-          if (touch && touch.type.back) {
-            returnToMain();
-          } else if (!touch || touch.type===0) {
-            setTimeout(()=>{
-              showMessageSettings(MSG_SELECTED)
-            },0);
-          }
-          //print(touch)
-          if (touch && touch.type.swipeLR) {
-            //print("select swipe")
-            if (touch.type.swipeLR>0 && posHandler) {posHandler(MSG_SELECTED);}
-            if (touch.type.swipeLR<0 && negHandler) {negHandler(MSG_SELECTED);}
-          }
-          break;
-        }
+      if (touch && touch.type===2) {return;}
+      const MSG_SELECTED = findSelectedMsg(scrollIdx);
+      WU&&WU.show();
+
+      print(process.memory().free);
+      E.showScroller();
+      Bangle.removeListener("swipe", Bangle.swipeHandler);
+      Bangle.removeListener("touch", touchHandler);
+      print(process.memory().free);
+      updateReadMessages();
+      delete titleLines, allLines;
+      if (touch && touch.type.back) {
+        returnToMain();
+      } else if (!touch || touch.type===0) {
+        setTimeout(()=>{
+          showMessageSettings(MSG_SELECTED)
+        },0);
+      }
+      //print(touch)
+      if (touch && touch.type.swipeLR) {
+        //print("select swipe")
+        if (touch.type.swipeLR>0 && posHandler) {posHandler(MSG_SELECTED);}
+        if (touch.type.swipeLR<0 && negHandler) {negHandler(MSG_SELECTED);}
       }
     },
     back: function () {
@@ -384,6 +382,15 @@ function showMessagesScroller(msg) {
       Bangle.emit("touch", 1, { x: Math.floor(APP_RECT.x2 / 2), y: Math.floor(APP_RECT.y2 / 2), type: { back: true } });
     }
   });
+
+  // helper function for message selection
+  let findSelectedMsg = function(scrollIdx) {
+    for (let i = firstTitleLinePerMsg.length - 1; i >= 0; i--) {
+      if (scrollIdx >= firstTitleLinePerMsg[i]) {
+        return MESSAGES[i];
+      }
+    }
+  }
 
   // Add an external back touch handler.
   let touchHandler = (button, xy)=>{
