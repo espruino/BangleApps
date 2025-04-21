@@ -369,8 +369,9 @@ function showMessagesScroller(msg) {
         },0);
       }
       //print(touch)
-      if (touch && touch.type.swipeLR) {
+      if (touch && touch.type.swipeLR!=0) {
         //print("select swipe")
+        updateReadMessages();
         if (touch.type.swipeLR>0 && posHandler) {posHandler(MSG_SELECTED);}
         if (touch.type.swipeLR<0 && negHandler) {negHandler(MSG_SELECTED);}
       }
@@ -378,6 +379,8 @@ function showMessagesScroller(msg) {
     back: function () {
       if (!persist) { return load(); }
       Bangle.removeListener("touch", touchHandler);
+      updateReadMessages();
+      WU&&WU.show();
       returnToMain();
     }
   });
