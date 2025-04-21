@@ -121,16 +121,6 @@ function countDown(dir) {
 
       //console.log(overTimes);
       menu = showLog();
-      Bangle.setUI({
-        mode : "custom",
-        btn : ()=>{
-          if(counter==6) {
-            startOver();
-          } else {
-            resumeGame();
-          }
-        }
-      });
       return;
     }
   }
@@ -214,7 +204,16 @@ function incrementWickets(inc) {
       wickets += inc;
       var timeSig = new Date();
       addLog(timeSig, over, counter, "Wicket", wickets);
-      resumeGame();
+      E.showPrompt("Amend balls by " + inc + "?").then(function(confirmed) {
+        if (confirmed) {
+          E.showPrompt();
+          Bangle.buzz();
+          countDown(inc);
+          resumeGame();
+        } else {
+          E.showPrompt();
+          resumeGame();
+        }
     } else {
       E.showPrompt();
       Bangle.buzz();
