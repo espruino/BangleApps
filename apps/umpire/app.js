@@ -310,6 +310,6 @@ function showMainMenu() {
 var file = require("Storage").open("matchlog.csv","a");
 
 var timeSig = new Date();
-addLog(timeSig, "155", "a", "Date", timeSig);
+addLog(timeSig, "155", "a", "Date", timeSig.toUTCString());
 
 var menu = showMainMenu();
