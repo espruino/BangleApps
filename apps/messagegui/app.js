@@ -352,7 +352,8 @@ function showMessagesScroller(msg) {
     },
     select : function(scrollIdx, touch) {
       if (touch && touch.type===2) {return;}
-      const MSG_SELECTED = findSelectedMsg(scrollIdx);
+      const MSG_SELECTED_IDX = findSelectedMsgIdx(scrollIdx);
+      const MSG_SELECTED = MESSAGES[MSG_SELECTED_IDX];
       WU&&WU.show();
 
       print(process.memory().free);
@@ -411,10 +412,10 @@ function showMessagesScroller(msg) {
   //// Helper functions ////
 
   // helper function for message selection
-  let findSelectedMsg = function(scrollIdx) {
+  let findSelectedMsgIdx = function(scrollIdx) {
     for (let i = firstTitleLinePerMsg.length - 1; i >= 0; i--) {
       if (scrollIdx >= firstTitleLinePerMsg[i]) {
-        return MESSAGES[i];
+        return i;
       }
     }
   }
