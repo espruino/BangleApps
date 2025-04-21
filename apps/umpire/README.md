@@ -37,7 +37,7 @@ After logging the 4th ball in the over, the app buzzes twice. This is typically 
 
 After the 5th ball the app gives one long buzz to remind the umpire that the next ball will close the over (if fairly delivered).
 
-Logging the 6th ball triggers the log viewer so that the umpire can check the over duration and innings duration.
+Logging the 6th ball triggers the change of over.
 
 Whilst the in-play screen is displayed swiping will cause the following actions to occur:
 - **Swipe Up** performs the same action as the Button press.
@@ -47,7 +47,7 @@ Whilst the in-play screen is displayed swiping will cause the following actions 
 
 ### Confirmation Prompts ###
 
-When choosing "Wicket" or "Recall" from the main menu E.showPrompt is used to ask for positive confirmation before incrementing or decrementing the wickets, respectively. This has relatively small tap targets on the Bangle.js 2 screen but appears stable.
+When choosing "Wicket" or "Recall" from the main menu E.showPrompt is used to ask for positive confirmation before incrementing or decrementing the wickets, respectively, and then to increment or decrement the ball count. This has relatively small tap targets on the Bangle.js 2 screen but appears stable.
 
 ### Scrollers ###
 
@@ -55,16 +55,10 @@ The main menu, the "Toss" sub-menu and log viewer all use E.showScroller to disp
 
 Whenever a scroller is shown, the in-play swipe interactions are switched off.
 
-Exceptionally, when the log viewer is shown after the 6th ball of an over the next tap will start a new over. Otherwise, tapping on the log viewer returns the umpire to the in-play screen.
+Tapping on the log viewer returns the umpire to the in-play screen.
 
 ### Twist to refresh ###
 
 The app uses Bangle.twist to detect the umpire turning their wrist to view the screen and, when the in-play screen is active, will refresh the current time and elapsed time since the last ball.
 
 Showing the elapsed time since the last ball was logged helps the umpire to assess whether either team is timewasting and whether a new batter has made it to the crease as required by the laws.
-
-### Recording the "Toss" ###
-
-The main menu offers the option to log the outcome of the Toss before play begins. It's a limited feature with a workaround to allow the decision logged to be viewed before the log viewer is available in-play.
-
-The app is not designed to remove the need for the umpire to keep a paper scorecard, and so the Toss and tracking of delayed start to the match is limited.
