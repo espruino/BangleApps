@@ -127,34 +127,6 @@ function countDown(dir) {
           resumeGame();
         }
       });
-
-/*
-    g.clear(1); // clear screen and reset graphics state
-    g.setFontAlign(0,0); // center font
-    g.setFont("Vector",48); 
-    g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 50);
-    g.setFont("Vector", 30);
-    g.drawSt=ver + " " + overMinutesString + "\nI " + matchMinutesString, g.getWidth()/1.89, 125);
-
-    // Now buzz
-    Bangle.buzz();
-
-    Bangle.setUI({
-      mode : "custom",
-      swipe : (directionLR, directionUD)=>{
-        if(!directionUD) {
-          Bangle.setUI();
-          startOver();
-        }
-      },
-      btn : ()=>{
-        // remove old button press handler
-        Bangle.setUI();
-        startOver();
-      }
-    });
-    processing = false;
-    */
       return;
     }
   }
