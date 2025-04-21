@@ -255,9 +255,10 @@ function showTossMenu() {
 function showMainMenu() {
   processing = true;
   Bangle.setUI();
-  var scrollMenuItems = ["Play"];
+  var scrollMenuItems = [];
+  if(over==0) scrollMenuItems.push("Call Play");
   if(over>0) {
-    scrollMenuItems.push("Wicket");
+    scrollMenuItems.push("« Back", "Wicket");
     if(wickets>0) scrollMenuItems.push("Recall");
   }
   // if(over==0) scrollMenuItems.push("Toss");
@@ -270,8 +271,9 @@ function showMainMenu() {
   },
   select : (idx) => {
     console.log(scrollMenuItems[idx]);
-    if(scrollMenuItems[idx]=="Toss") menu = showTossMenu();;
-    if(scrollMenuItems[idx]=="Play") resumeGame();
+    if(scrollMenuItems[idx]=="Call Time") menu = showTossMenu();;
+    if(scrollMenuItems[idx]=="Call Play"
+      || scrollMenuItems[idx]=="« Back") resumeGame();
     if(scrollMenuItems[idx]=="Wicket") incrementWickets(1);
     if(scrollMenuItems[idx]=="Recall") incrementWickets(-1);
   }
