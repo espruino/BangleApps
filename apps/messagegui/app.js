@@ -49,6 +49,7 @@ if (Graphics.prototype.setFontIntl) {
 var active; // active screen (undefined/"list"/"music"/"map"/"overview"/"scroller"/"settings")
 var openMusic = false; // go back to music screen after we handle something else?
 var replying = false; // If we're replying to a message, don't interrupt
+var persist = "messagegui.app.js" === global.__FILE__;
 
 /** this is a timeout if the app has started and is showing a single message
 but the user hasn't seen it (eg no user input) - in which case
