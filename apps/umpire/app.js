@@ -4,6 +4,7 @@ var counter = 0;
 var over = 0;
 var ballTimes = [];
 var overTimes = [];
+var timeTimes = [];
 var log = [];
 var tossIndex = 0; // default to Cancel until recorded
 var tossTimeString = "";
@@ -181,7 +182,11 @@ function startOver(resume) {
         }
       });
     } else {
-      // addLog(timeSig, over, counter, "Over", "");    
+      if(timeCalled) {
+        timeCalled = false;
+        var lastTimeTime = timeTimes[timeTimes.length - 1];
+        var timeDuration = new Date(timeSig.getTime() - lastTimeTime);
+        addLog(timeSig, over, counter, "Play", "Lost: " +formatDuration(timeDuration));    
     }
   }
   // whether resuming or new over, refresh UI
@@ -190,7 +195,6 @@ function startOver(resume) {
 
 function resumeGame() {
   Bangle.buzz();
-  timeCalled = false;
   if(over==0) {
     startOver();
   } else {
@@ -282,6 +286,7 @@ function showMainMenu() {
     if(scrollMenuItems[idx]=="Call Time") {
       timeCalled = true;
       var timeSig = new Date();
+      timeTimes.push(timeSig.getTime());
       addLog(timeSig, over, counter, "Time", "");        
       menu = showMainMenu();
     }
