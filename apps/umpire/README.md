@@ -56,3 +56,9 @@ The main menu, the "Toss" sub-menu and log viewer all use E.showScroller to disp
 Whenever a scroller is shown, the in-play swipe interactions are switched off.
 
 Exceptionally, when the log viewer is shown after the 6th ball of an over the next tap will start a new over. Otherwise, tapping on the log viewer returns the umpire to the in-play screen.
+
+### Recording the "Toss" ###
+
+The main menu offers the option to log the outcome of the Toss before play begins. It's a limited feature with a workaround to allow the decision logged to be viewed before the log viewer is available in-play.
+
+The app is not designed to remove the need for the umpire to keep a paper scorecard, and so the Toss and tracking of delayed start to the match is limited.
