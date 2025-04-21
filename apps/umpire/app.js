@@ -203,7 +203,11 @@ function incrementWickets(inc) {
       Bangle.buzz();
       wickets += inc;
       var timeSig = new Date();
-      addLog(timeSig, over, counter, "Wicket", wickets);
+      if(inc>0) {
+        addLog(timeSig, over, counter, "Wicket", "Wickets: " + wickets);
+      } else {
+        addLog(timeSig, over, counter, "Recall Batter", "Wickets: " + wickets);
+      }
       resumeGame();
     } else {
       E.showPrompt();
