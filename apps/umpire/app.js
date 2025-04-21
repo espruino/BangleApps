@@ -265,7 +265,7 @@ function showTossMenu() {
   },
   select : (idx) => {
     console.log(tossMenuItems[idx]);
-    if(tossMenuItems[idx]=="Cancel") {
+    if(tossMenuItems[idx]=="« Back") {
       menu = showMainMenu();
     } else {
       Bangle.buzz();
