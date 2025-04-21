@@ -35,7 +35,7 @@ function showLog() {
     if(log[idx].matchEvent=="Over Duration"
       || log[idx].matchEvent=="Innings Duration"
       || log[idx].matchEvent=="Toss"
-      || log[idx].matchEvent=="App Started"){
+      || log[idx].matchEvent=="Date"){
       g.setFont("Vector", 22).drawString(
       log[idx].matchEvent,r.x+6,r.y+2);
       g.setFont("Vector", 18).drawString(
@@ -310,6 +310,6 @@ function showMainMenu() {
 var file = require("Storage").open("matchlog.csv","a");
 
 var timeSig = new Date();
-addLog(timeSig, "145", "a", "App Started", timeSig);
+addLog(timeSig, "155", "a", "Date", timeSig);
 
 var menu = showMainMenu();
