@@ -48,3 +48,7 @@ Whilst the in-play screen is displayed swiping will cause the following actions 
 - **Swipe Down** decrements the ball count and logs the action as a "Correction".
 - **Swipe Right** shows the log viewer. Logging the 6th ball also triggers the log viewer so that the umpire can check the over duration and innings duration.
 - **Swipe Left** shows the main menu.
+
+### Confirmation Prompts ###
+
+When choosing "Wicket" or "Recall" from the main menu E.showPrompt is used to ask for positive confirmation before incrementing or decrementing the wickets, respectively. This has relatively small tap targets on the Bangle.js 2 screen but appears stable.
