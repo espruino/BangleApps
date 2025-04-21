@@ -731,9 +731,6 @@ function checkMessages(options) {
     }
     return;
   }
-  // no new messages: show playing music? Only if we have playing music, or state=="show" (set by messagesmusic)
-  if (options.openMusic && MESSAGES.some(m=>m.id=="music" && ((m.track && m.state=="play") || m.state=="show")))
-    return showMessageOverview('music');
   // no new messages - go to clock?
   if (options.clockIfAllRead && newMessages.length==0)
     return load();
