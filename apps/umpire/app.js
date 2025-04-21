@@ -5,7 +5,7 @@ var over = 0;
 var ballTimes = [];
 var overTimes = [];
 var log = []
-var tossIndex = 4; // default to Cancel until recorded
+var tossIndex = 0; // default to Cancel until recorded
 
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   var csv = [
@@ -243,11 +243,11 @@ function showTossMenu() {
   processing = true;
   Bangle.setUI();
   var tossMenuItems = [
-  "Home Won: Bat",
-  "Home Won: Bowl",
-  "Away Won: Bat",
-  "Away Won: Bowl",
-  "Cancel"
+    "« Back",
+    "Home Won: Bat",
+    "Home Won: Bowl",
+    "Away Won: Bat",
+    "Away Won: Bowl"
   ];
   return E.showScroller({
     h : 40, c : tossMenuItems.length,
