@@ -36,17 +36,17 @@ function showLog() {
       || log[idx].matchEvent=="Innings Duration"
       || log[idx].matchEvent=="Toss"
       || log[idx].matchEvent=="App Started"){
-      g.setFont("Vector", 24).drawString(
+      g.setFont("Vector", 22).drawString(
       log[idx].time + " " +
-      log[idx].matchEvent,r.x+6,r.y+1);
+      log[idx].matchEvent,r.x+6,r.y+2);
       g.setFont("Vector", 18).drawString(
       log[idx].metaData,r.x+16,r.y+27);
     } else {
-      g.setFont("Vector", 24).drawString(
+      g.setFont("Vector", 22).drawString(
       log[idx].time + " " +
       log[idx].over + "." +
       log[idx].ball + " " +
-      log[idx].matchEvent,r.x+6,r.y+1);
+      log[idx].matchEvent,r.x+6,r.y+2);
       g.setFont("Vector", 18).drawString(
       log[idx].metaData,r.x+16,r.y+27);
     }
