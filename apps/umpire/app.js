@@ -195,7 +195,7 @@ function startOver(resume) {
     over += 1;
     counter = 0; 
     ballTimes = [];
-    if(over==0) { // set an inital time for camparison
+    if(over==1) { // set an inital time for camparison
       overTimes.push(timeSig.getTime());
       addLog(timeSig, over, counter, "Play", "");        
       // set up twist refresh once only
