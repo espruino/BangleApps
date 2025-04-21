@@ -1,12 +1,12 @@
 var processing = true; //debounce to inhibit twist events
-var wickets = 0
+var wickets = 0;
 var counter = 0;
 var over = 0;
 var ballTimes = [];
 var overTimes = [];
-var log = []
+var log = [];
 var tossIndex = 0; // default to Cancel until recorded
-var tossTimeString = "" ;
+var tossTimeString = "";
 
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   var csv = [
@@ -52,11 +52,7 @@ function showLog() {
     }
   },
   select : (idx) => {
-      if(counter==6) {
-        startOver();
-      } else {
-        resumeGame();
-      }
+    resumeGame();
   }
   });
 }
@@ -213,7 +209,8 @@ function incrementWickets(inc) {
         if (confirmed) {
           E.showPrompt();
           Bangle.buzz();
-          countDown(inc);
+          if(counter>0) counter -= 1;
+          addLog(timeSig, over, counter, "Correction", "");
           resumeGame();
         } else {
           E.showPrompt();
