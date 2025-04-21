@@ -45,7 +45,11 @@ function showLog() {
     }
   },
   select : (idx) => {
-      menu = resumeGame();
+      if(counter==6) {
+        startOver();
+      } else {
+        menu = resumeGame();
+      }
   }
   });
 }
@@ -77,11 +81,11 @@ function countDown(dir) {
   if(dir!=0) {
     if(counter>0) ballTimes.push(timeSig.getTime());
     Bangle.setLCDPower(1);
-  if(dir>0) {
-    addLog(timeSig, over, counter, "Ball", formatDuration(deadDuration));
-  } else {
-    addLog(timeSig, over, counter, "Correction", formatDuration(deadDuration));
-  }
+    if(dir>0) {
+      addLog(timeSig, over, counter, "Ball", formatDuration(deadDuration));
+    } else {
+      addLog(timeSig, over, counter, "Correction", formatDuration(deadDuration));
+    }
     if(counter==4) {
       Bangle.buzz().then(()=>{
         return new Promise(resolve=>setTimeout(resolve,500)); // wait 500ms
@@ -94,28 +98,30 @@ function countDown(dir) {
       Bangle.buzz()
     }
   
-  // Over
-  if (counter>=6) {
-    overTimes.push(timeSig.getTime());
-    var firstOverTime = overTimes[0];
-    var matchDuration = new Date(timeSig.getTime() - firstOverTime);
-    var matchMinutesString = formatDuration(matchDuration);
+    // Over
+    if (counter==6) {
+      overTimes.push(timeSig.getTime());
+      var firstOverTime = overTimes[0];
+      var matchDuration = new Date(timeSig.getTime() - firstOverTime);
+      var matchMinutesString = formatDuration(matchDuration);
     
-    var firstBallTime = ballTimes[0];
-    var overDuration = new Date(timeSig.getTime() - firstBallTime);
-    var overMinutesString = formatDuration(overDuration) + "";
+      var firstBallTime = ballTimes[0];
+      var overDuration = new Date(timeSig.getTime() - firstBallTime);
+      var overMinutesString = formatDuration(overDuration) + "";
     
-    addLog(timeSig, over, counter, "Over Duration", overMinutesString);
-    addLog(timeSig, over, counter, "Innings Duration", matchMinutesString);
+      addLog(timeSig, over, counter, "Over Duration", overMinutesString);
+      addLog(timeSig, over, counter, "Innings Duration", matchMinutesString);
 
-    //console.log(overTimes);
+      //console.log(overTimes);
+      menu = showLog();
 
+/*
     g.clear(1); // clear screen and reset graphics state
     g.setFontAlign(0,0); // center font
     g.setFont("Vector",48); 
     g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 50);
     g.setFont("Vector", 30);
-    g.drawString(over + " " + overMinutesString + "\nI " + matchMinutesString, g.getWidth()/1.89, 125);
+    g.drawSt=ver + " " + overMinutesString + "\nI " + matchMinutesString, g.getWidth()/1.89, 125);
 
     // Now buzz
     Bangle.buzz();
@@ -135,20 +141,22 @@ function countDown(dir) {
       }
     });
     processing = false;
-    return;
+    */
+      return;
+    }
   }
-  }
-  if(counter<6) {
-  g.clear(1); // clear screen and reset graphics state
-  g.setFont("Vector",24); // vector font, 80px
-  g.drawString(wickets, 158, 10);
-  g.setFontAlign(0,0); // center font
-  g.setFont("Vector",48); // vector font, 80px
-  g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 50);
-  g.setFont("Vector",80); // vector font, 80px
-  g.drawString(over + "." + counter, g.getWidth()/1.89, 120);
-  g.setFont("Vector",18);
-  g.drawString("..." + formatDuration(deadDuration), g.getWidth()/1.89, 166);
+  
+  if(counter<6) { // refresh in-play
+    g.clear(1); // clear screen and reset graphics state
+    g.setFont("Vector",24); // vector font, 80px
+    g.drawString(wickets, 158, 10);
+    g.setFontAlign(0,0); // center font
+    g.setFont("Vector",48); // vector font, 80px
+    g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 50);
+    g.setFont("Vector",80); // vector font, 80px
+    g.drawString(over + "." + counter, g.getWidth()/1.89, 120);
+    g.setFont("Vector",18);
+    g.drawString("..." + formatDuration(deadDuration), g.getWidth()/1.89, 166);
   }
   processing = false;
 }
@@ -160,11 +168,9 @@ function startOver(resume) {
       swipe : (directionLR, directionUD)=>{
         if (directionLR==-1) { 
           processing = true;
-          Bangle.setUI();
           menu = showMainMenu();
         } else if (directionLR==1) { 
           processing = true;
-          Bangle.setUI();
           menu = showLog();
         } else {
           processing = true;
@@ -229,6 +235,7 @@ function incrementWickets(inc) {
 
 function showTossMenu() {
   processing = true;
+  Bangle.setUI();
   var tossMenuItems = [
   "Home Won: Bat",
   "Home Won: Bowl",
@@ -258,7 +265,7 @@ function showTossMenu() {
 
 function showMainMenu() {
   processing = true;
-  
+  Bangle.setUI();
   var scrollMenuItems = ["Play"];
   if(over>0) {
     scrollMenuItems.push("Wicket");
