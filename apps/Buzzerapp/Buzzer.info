@@ -1,0 +1,16 @@
+{
+  "id": "buzzer",
+  "name": "Buzzer",
+  "type": "app",
+  "version": "0.01",
+  "icon": "app.png",
+  "screenshots": [],
+  "description": "A quiz buzzer system by help of Puck.js",
+  "author": "Brijesh",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    { "name": "Buzzer.app.js", "url": "Buzzer.app.js" },
+    { "name": "Buzzer.img", "url": "Buzzer.img", "evaluate": true }
+  ]
+}
