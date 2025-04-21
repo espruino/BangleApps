@@ -25,26 +25,7 @@ function addLog(timeSig, over, ball, matchEvent, metaData) {
 
 function showLog() {
   processing = true;
-  Bangle.setUI({
-      mode : "custom",
-      swipe : (directionLR, directionUD)=>{
-        Bangle.setUI();
-        if(counter==6) {
-          startOver();
-        } else {
-          menu = resumeGame();
-        }      
-      }
-      ,
-      btn : ()=>{
-        Bangle.setUI();
-        if(counter==6) {
-          startOver();
-        } else {
-          menu = resumeGame();
-        }
-      }
-    });
+  Bangle.setUI();
   return E.showScroller({
     h : 40, c : log.length,
   draw : (idx, r) => {
