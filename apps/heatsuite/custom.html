@@ -162,10 +162,10 @@
 
   <script>
     //default Schema
-    let heatsuite__taskFile_defaultSchema = {
-      "survey": {
-        "Name": "survey",
-        "icon": "mUy4kA///hf69H+icC18BsH+le/pX85t551Z9mpjdV51B+cBqcKl1sEwUCkUikA1KgMRiMQBAgXCDJYXCDIwXDDJIXEAAIwHAAQYGC4oyDC4wYGGAwyCGA5LGDBEQDAVvsUi/4yHCQWJiMa5QYCCIXt4UvmYbBDA8aomBjlED4QYC+fyk3uDBMR4mhjFJDAsmAQNmJRQAGPY4YJjWc5AYFk3OI4P++QYJwlEoh8CDAR5B9//mYYJPgIAC0JKE8czmc+PhMZoma1gYDY4VsDAPvcBMaMIWZcArhBb4b5OBQKUMV5IJBGQYwIGREQBQQwMGQ4KEC5gZFBxQAZqoABq93AAIWPgoXCDAl3uAXRDAoZNC4gYGJpYXFDA4ZJJAoYJJhAXGDBAyHGA4YJGQ1iC41QgEHDA1xC4kGs0lCwoADDQsRiALDs1mGQYXFDItxiMRDAoyCC44ZEC4IYDJIIyDCYlmAogwDJYYYDs0gDBUHC4QYDC4YRFDA0ADAZLCDC5JEsAYMgJLEDAiQGA44YdMRQYMiJiKhe/4BkKDBUz6lEDCkDmc0olADCk+3fkDCs7DCBZFGJKWEUIxjE8ZjGAB58CC6gyBmgwLA==",
+    let heatsuite__taskFile_defaultSchema = [
+      {
+        "id": "survey",
+        "icon": 'require("heatshrink").decompress(atob("lEo4kA///6H7BIP2m9hjEpyQLBxeq0UAp3js1Z5F59GB9nChvL+83E4cCkQABkA6NgUq293rVCChsq6MRAAOcoQmM4ISCAAPqFBclCQkRjJpBExOxCYsR8goJkmRB4XuAYUVCZMsJYdEFgUZoATIpwTC1XnooFC2QTIoIhCC4OqCYVyMRGhBoXhjNLAoXSCZkR2mpAgXilGIwRnFCYlKPgd40czmeoCglJCYd5AgdYn////zCgknBwfZAgeqCQIUCwQTClQOD3oDCj1DCYf/nATHAAcawYTE/Q8CkoTHvE/+c6mY8FMYgACi9Kn84xAqDmSfC7euCYnE0f/1CKBPQRQBgWqkUk3zeCvWKBwJ4BnATFKQUipWq0koBoSyBxATDZYsCkUAOgk4AoYTGAAUjCYgmCUAgAFlQTDRQQTGgUowQuBJ4f/nQEDRYIiD81u0UAhAODmYECeAkCq1ms1nkECbIoACD4ImCCQIAB2QGBFAYADHYchs3nv1msguBY4IAD+bhBCYVGs261YTCMovz1GKnSfCCYIACtRXCxTHBeAJYBxGACYek8wnDSYWIxAjCdocls0eE4PiXhAAEhEWCQNhoATNgFOCYPkCRxABpdqIQQUP2gSQCYMiCaMAHRw="))',
         "cbBtn": "Bangle.load('heatsuite.survey.js');",
         "tod": [
           900,
@@ -173,18 +173,16 @@
           1500,
           1800
         ],
-        "debounce": 300,
-        "TaskDesc": "survey_TaskDesc"
+        "debounce": 300
       },
-      "bloodPressure": {
-        "Name": "bloodPressure",
-        "icon": "mUy4kA///zNDBIIFBoMIqulnE79shiOM9li2cy6eUkEAyecsMIlNKE4cikQ/VgXn93CE4IYT9Wqu/kGiYYC1WnugzSgVO916u+n8QZQkUu89+9V88+noQvPo+qs1n9Wn8l6Jh0Ck+mMAIYBAYJMB4AYNu1+o9005+C0nq8QYMl1q92mDAmno9yE4bsBAAhWBk9m01mDAmqDAku9wAF8kgDAIABMYYABvQYCgX/AA/ikgwBs1qDAmqMYUE/1EAAtP+Ui84YBvwYEv0iDAMO+mVqoADrfu+UnugZBMYl3p18GIX0wczAAn+DANn8nn8l3893v1OvWsDAk1qszAQQYCu5DB8lMklE896v10DAn+92VSgIFBJQcWtRhCsOuc4IYErdVqZjBGIcav2nu92tQCBv120hjKPgURi0X91H13uuycBs4YErG1DAf/DAQABfgMaswFCsJjF9AYDrIYEAAoxGJQoYMVwoYFz4YQ/e7AAe4PgYYM/1EAAtPDB+ZzOf/4ACAgIYRzz3B93vAwIYR9wwC+n5DCXvxP//GODCmP93pDCnuxOZzGUDCf0px8BpwYMsIYCgQRBVwgFB8Un0wYHtQYDFwQAFkEn9wZGtV+uQYBDIMikUk9/iAgMigEuv1Hs1hCwMWs108/iDAQACl1VwQGDgXqu9n9160/uAwOnEoIAEh3/+QgFu0au/q113uweB+gYFgXuEIsCl131Vms2q0/k/vUDA348AIGkSKC8kil3VwgPG/oYGAASEBkEAhnuPgwYLB4ilBPg2YDB3tRgsAhtZoAYMgFIxxPBDAlfA4oAIl/fUwkC9AgGABEMzv0DIS9BzpSGMhNJ7H+W4Pu/HfGBwABkn47uIxGN7KcGABcu/+ZzP/9gwQJgToBdQYAFA==",
+      {
+        "id": "bloodPressure",
+        "icon": 'require("heatshrink").decompress(atob("lEo4kA///zND//3BYOe98ggHGhEllM533ssW5odBhFOud642DhE10omCnczHSO3s3jmATP3MRjNrCh+2s0ZzNrCJkDn1mv1382X8YlMyMRi1xy1hzwSKhdxs12CYIWBu5RKm8WtMeCYfp8ATJ2MRiITDjPpsCUCu4ADv2w24TBjITCiOZE4MLCQgABve+MQMXCYeW2ATBv2ZAAeeve28w7Ey3mE4dCkQACx172INBtd+s1m81xJ4ITBpH/wn//oTB29pjIRBs1nAgITD7l3zGXv4nDsJRBiORz1hCYdCogBCCYWhiNusNutIWByA7EKIXXCYOq1QPBAAIZBiA7DvITCp4TDAAYTBHYp3CpgTNxvdAAX+CZl+9wAECZjDBbIQEBCZwlC9ITOy98zOcFAITOzl+vgTQvJSCJ6QWBCYMaCZED852CAAXj21pCgkRswTBgEzmc78/rAgMwm1usLvDz1m2ATBAAMD5+TAodpiIVBt3njN+CYvn8YGDnwnEu18uAMDgHpDQkAnfms1mtc+/4TFvngAwgxCAQV3EAt8AwoWFvIMF5gTKgF/HYv5mATKnPLAoc3+4TLh3J8ayCvieDKBN85LVBznJJxaSCvPM5nJuYSMCgW73ezBIoA="))',
         "tod": [
           830,
           1330,
           1930
         ],
-        "TaskDesc": "bloodPressure_TaskDesc",
         "debounce": 3600,
         "btPair": true,
         "btInfo": {
@@ -194,9 +192,9 @@
           ]
         }
       },
-      "coreTemperature": {
-        "Name": "coreTemperature",
-        "icon": "mUy4kA///o8h7femWExEp5dazXWs8h+uc5Mpj+nqWErXOi99y+13fWMf4AdolEC64ZVglJqtVylAGCeVDANZGSQwBGIQyBGCU4ygyCqhLQglDkWJGQQYRokykUoGQQYQGAUiswyCDCFEn+z4U1tAyBPh4wB/dBrmDsQyBVx4wB2mVivCMoRJOGAVJ7VRrkikYwSzuq0sTkU0GCeq7NLGCutym/GC/zGH4wYg4wYmXppYwTgEV+VliowTgmekUsqNbGCUBr8ikXFigwRDAMyDAMsrIwRPYOCDAMitwwRgEZ4QYCkQwRSgQXCGCUBpAXC/1UuAYQoKUB/mDrMUC6EEivi/FZoMUMKNBr0uqkRCyIwD8sRCyIwEqIvSGANFGAJ3ReoeeGC1EoYwWpNEygwTDANVylEC6Z6BqtEGCgYBqgwUJQQwVGQQXWAH4AJA",
+      {
+        "id": "coreTemperature",
+        "icon": 'require("heatshrink").decompress(atob("lEo4kA///A4Pf99fx3YtnjjEkkN/7+X0ujoFK/VusdBhH0ykIoXY2ozPjnBIyEBr2piATPiuq1WREx9aCYIoPjmaCYIoOgNo9ITC1gTMi3yvwoC9gmNw8nFAVRExmL5dyFAOlMZcBt+2223FAImN+9Emlru/cExlo6kzme8x9hJptkmYnBwwmN21DmdG3Am/TZF28YmPgvyl9rEx0AjsikX28wmNgFnkVyFAImNgHnl7pBvAmNgOyk/3u/2ExsM6UiEx8Ajd3u9/6omNgO3u/b8wSNgEeu974IRNEwPvu+xCRzrB+/+HBwABrF/8ISPhnXYBwAC5t9qImQ2/cCR8Ajm32ASPgPr5YmQj3eMCEB9qHQEycA5wmROoImRgAA=="))',
         "tod": [
           830,
           1330,
@@ -212,13 +210,12 @@
           ]
         }
       },
-      "bodyMass": {
-        "Name": "bodyMass",
-        "icon": "mUy4kBnP+///sMQ+nMkEAhtbtNirP+4cQinV09BDYOqvs16uCiEx1kRAGUb2kiAB9L2IYD3FvnMzmed7oAH7IMByf2xYwD0cHu4ABgaJBAA0wBoVwnQyC3E3UwV50VEAA8qy4PCuYyC2y/DhVKqoAH0mgCAdrDANPuAGBg/00oYIrQQFDAMjA4dUqxKIstFCAcyDAMpA4dSrVKswAF0mlkoQDyQxHrVM5gAF4mlGI4YLk3OtgYV1nKGKNGJQ1kDB+y9wAFlYYN+lV1QAHqrHEDA8+wrgIrHjDBV3v8ixAAHkX3u4YJ78w+xKIt8D/oYIgvklUwBgIAGgeip1QDA9Ut9Y1o3CAAkH7WF+1FDA19xRjBRQYYF+hjB1HXDAtzl93u+GJRFoBgPym4xG8t3AQIxIr3Xu4CBMY1u/s6XgYYFn2j7/mMYxvBpEk+BKIh9CwiJBGI12pWO64YIvvo0lnVw8G8uuDBXqr1gDH4Y/DDzHODA8H7FI8lQDBEFp2Exr5H1337QFCAAoSB1t/9QxGvvlu4CBDBFe693AQIYFucvu93wxKItAMB+U3DAsNxV3v9PGJH0+931HQDAcpCQNU19e1oxI7Xl/VFDwOSPgkFwXqVxWulCiBGIZED6fQAgUH/Wq14GDhs9KAYYB2xYDMIcHnWq0YHEAgdrDAO4m5FIABNzxYYBjejg6gBAB1wnWxDAIyBt85mYANyf2GAQyC2kiAB9LGAYAwA==",
+      {
+        "id": "bodyMass",
+        "icon": "require('heatshrink').decompress(atob('lEo4kB3//AAIJB7//wUQjnn485t97vvvoMIhlj9dasspptbz33kshiIApkUpylP/nGswAB5n/pOSkQSEl+3utVAAOI93uxAGCq96+QSCil1gczABdXyITBo4SDmt6ut61Wq09TBQU+ukRiVwDgcK5t1vvd7vc0ALD88hjgbDmcLvxOBAAOH2ALDgvBk5EEq1+wpfBrGHsoLDh1yyouEtN+q3M5llw+WvwMCgF5CYMFu9V3l2E4tn5dVu9Qh1ZCYN0/9E2s65phBMYWjrdE/9HCYOXmv2u9kqaLBRIKLDmtLu9vqF5y83o930lzWA83+4MCvMnmtKCZYgB2lQuQTBtmr5ijEAAc15mr+1euUqTYNESwgAFBgUO0Urgc+uwmIFAVn8fu2UW8czu2DCZM4s8z9FhCYVcE5fFmflsMcCAITP4MfCaPxigQB8yeIUAVumHloMZCYMLCZewCYORCYU32YTJndzCYUSEgM34p7BAA0+rgTBg8hCYM+ulE2oTHrdEo/g84TCmvLvdHgYSFmF009kuYTEu93tiNGDwN3vm+CYWjm9nCZvqkMR2E3pV6pQ7H1932lw9cRiNonGk+llMY9Wp9KwFWCYNFZgN3HQflrw8Du9emFUCYMqG41cdIIAEh2yCYMUbI1VqpSF89BCYMRo7FIAAc4ugSCiMZ2tY9wAGn3uwt7yITDiMp+1mAAtqrVmt+SCQgAl'))",
         "tod": [
           800
         ],
-        "TaskDesc": "bodyMass_TaskDesc",
         "debounce": 3600,
         "btPair": false,
         "btInfo": {
@@ -228,18 +225,27 @@
           ]
         }
       },
-      "urine": {
-            "name": "urine",
-            "icon": "j0e4kA\/\/\/8n+gn\/wM5xObsnu9Wr4Ugs1qoEIgEhhGDDoNEpV743E\/wHBu4AJGYUJ2lEAA+4yAOC21Io1Is27s2EsmEpAOEodG3tmxFm7dknYOUslmogBFBwnYxAAHxoOCgHH3YAHvidDhvuAA\/QByUH7tm7oAFuAODgdViNVAAswBwnykQAEl\/1BwkK2m0CAgOH3YOMFhwOOg+IoJKMolSFjUDDgo7I7vbCAg7Hs1liQ7U2AOEqIcEBwP\/qA7F2JZMqp3cfgz+GhmjmYAFnXABgI",
-            "cbBtn": "Bangle.load('heatsuite.urine.js');",
-            "debounce": 0,
-            "tod": [
-            ],
-            "btPair": false,
-            "btInfo": null,
-            "notify": false
-        }
-    };
+      {
+        "id": "urine",
+        "icon": "require('heatshrink').decompress(atob('lEo4kA///7/3oMInGVtdC//3rvn5lS7/Gx1rksZDYIXB7edkAFB4wqGhcukXgHp0Lkkz6eaCheykWq9Ux5nM42elWilwjH0c97VG5lVqtcjOp7s3JwIAEgU4xF6tgSBAAPBzXf/FACYsK7GD1vFCYdcjuIx+bCY/azgSDAANRyePzwTHzQ6EAAWax87CY2Z1I6EHgVqvNyMY0q1ATGqsX1XrRg1JoITH4dJRY0Ao5iGAAPN1MkogVFogTI42p1uIUItEngTJ0lE0AnQle7J59d1JjHoemO4/JoYTHpGjWZGTCY9BzWMCYvBzVjCZFn1tc5gADtOtqewCY2py/qvOZAAeu1OUCY0LSYN3ogAEo90Yo0AgU4xAAJYooTBzvdABLFFAAMq1QAJMY+0ExMyCQ0AgkRjiKEAAQTIhVhirbGrmeCY8C6MRCY1VvYTHhwTI4x2HAANhCY/Ndw4AB0YTG5mERQ5QCods5nFrnM4Np1YSIAAOy1PWiMRtE31wSKgEL0mq0lEAQJNJHgc96c5zM9xFLCZcE7GPAAP4x7FIAAe5xGP/4AC7QTLlMzAAk0RRIAB8UiAAkuCYwA=='))",
+        "cbBtn": "Bangle.load('heatsuite.urine.js');",
+        "debounce": 0,
+        "tod": [],
+        "btPair": false,
+        "btInfo": null,
+        "notify": false
+      },
+      {
+        "id": "sleep",
+        "icon": "require('heatshrink').decompress(atob('lEo4kA///v3nBIPDjE968CqOzxlX/1m0VBhGBkHb61qpV4/0978Y2xZ1gQTmkQ9VkA9llJKMJZMjmRADlM85gAC4eSBYUCCIOW23Mmc281v30RAAXr+wLBmfMt9py0Rj27CAgAEBYIMCtMsB5AAE///33u4UD2ISLjfMnNu9cwhPxE5nr5m+9+QgVhBYhpBAAVrA4Mcn/ui0gCYsWnVVAANa0YLBsfxCZFjrGIAAWFm0fRQP+CY0fmoSDAANT/dmswTCMYkc1ATFxXBUIPuMYMDCYfsquqAAOlxGqqs7CYcwT4mzqfGGgNmu9onQTB93uT4ITFzHdAAd3xM/CYo7D2eWCYtpCYY7BMYgTNY4vzCY1jz4TCT4r5Bs92v996/3AoPM2J3BCYsfm/duvDtvWnk3u9z+ITIm3d63IE4Nss48BCYhjE5l9J4t35jHFT4fzr/dJoJRBu9lO4ITBT4MsNAPhHgPM7vfnnD/t3wf+8ITB93Cy0R9e//exspNBtGGHQQLC30RtOW+3Mmcz5/ztpOC692ngLC5lvtMjmUggAABhh5BWQciBYUCCIIQCAAcjs4SBuwMHAA+V42MrISOAAMikQSQAD4='))",
+        "cbBtn": 'modHS.saveDataToFile("sleep", "event", {"marker":"sleep"});Bangle.showClock();',
+        "debounce": 0,
+        "tod": [],
+        "btPair": false,
+        "btInfo": null,
+        "notify": false
+      }
+    ];
     let heatsuite__surveyFile_defaultSchema = {
       "supported":{
           "en_GB":"English (GB)",
@@ -387,10 +393,10 @@
           let lines = c.trim().split("\n");
           for (let line of lines) {
             let parts = line.split(",").map(v => parseInt(v, 10));
-            if (parts.length !== 4) continue;
+            if (parts.length !== 3) continue;
             let seconds = parts[0];
             let avg = parts[1]/8192;
-            let sum = parts[2]/8192;
+            let sum = parts[2]/1024; //scaled differently
             let time = secondsToClock(seconds);
             csv += `${time},${seconds},${avg},${sum}\n`;
           }

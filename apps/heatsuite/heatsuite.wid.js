@@ -404,24 +404,31 @@
     Bangle.on('accel', perSecAccHandler);
 
     function writeAccLog(buf) {
+      if (!buf || !buf.length) return;
       let f = modHS.getRecordFile("accel", []);
+      if (!f) return;
       let line = "";
-      function processArray(){ //non blocking function
-        let dv = new DataView(buf.shift());
-        let t = dv.getUint32(0, true);
-        let mag = dv.getInt16(4, true);
-        let sum = dv.getInt16(6, true);
-        line += t + "," + mag + "," + sum + "\n";
-        if(buf.length){
-          setTimeout(processArray,1);
-        }else{
+      function processArrayChunk() {
+        let chunkSize = 10; 
+        for (let i = 0; i < chunkSize && buf.length; i++) {
+          let data = buf.shift();
+          if (!data || data.length !== 8) continue;
+          let dv = new DataView(data.buffer);
+          let t = dv.getUint32(0, true);
+          let mag = dv.getUint16(4, true);
+          let sum = dv.getUint16(6, true);
+          line += t + "," + mag + "," + sum + "\n";
+        }
+        if (buf.length) {
+          setTimeout(processArrayChunk, 10); 
+        } else {
           f.write(line);
           f = null;
-          return;
         }
       }
-      processArray();
+      processArrayChunk();
     }
+    
     function writeHSAccelSetTimeout() {
       if (accTemp.length > 0) {
         queueProcess((next, buf) => {
@@ -435,12 +442,12 @@
     function tempAccLog() {
       let secondsSM = secondsSinceMidnight();
       let scaledMagAvg = Math.round(getAvg(mag) * 8192);
-      let scaledMagSum = Math.round(mag.sum * 8192);
+      let scaledMagSum = Math.round(mag.sum * 1024);
       let b = new Uint8Array(8);
       let dv = new DataView(b.buffer);
       dv.setUint32(0, secondsSM, true);  
-      dv.setInt16(4, scaledMagAvg, true);
-      dv.setInt16(6, scaledMagSum, true);
+      dv.setUint16(4, scaledMagAvg, true);
+      dv.setUint16(6, scaledMagSum, true);
       accTemp.push(b);  // Push Uint8Array
       mag = arrayAcc();
       highAccTimeout = timeoutAligned(1000, tempAccLog);
@@ -595,8 +602,8 @@
     modHS.log("[StudyTask] Func init at " + timenow);
     let notifications = false;
     const tasks = settings.StudyTasks;
-    for (const key in tasks) {
-      const task = tasks[key];
+    tasks.forEach(task => {
+      let key = task.id;
       modHS.log(`[StudyTask] Processing task: ${JSON.stringify(task)}`);
       if (!cache[key]) {
         cache[key] = {};
@@ -607,7 +614,7 @@
       const tod = parseInt(`${hours}${minutes}`);
       const lastTaskTime = cache[key].unix || 0;
       const debounceTime = (timenow - lastTaskTime) >= task.debounce;
-      if (Array.isArray(task.tod) && task.tod.includes(tod) && debounceTime) {
+      if (task.tod !== undefined && Array.isArray(task.tod) && task.tod.includes(tod) && debounceTime) {
         modHS.log(`[StudyTask] Time to notify: ${task}`);
         const taskID = { id: key, time: timenow };
         cache.taskQueue = cache.taskQueue || []; // Ensure taskQueue exists
@@ -629,7 +636,7 @@
         modHS.writeCache(cache);
         WIDGETS["heatsuite"].draw();
       }
-    }
+    });
     if (notifications) {
       Bangle.buzz(200);
       setTimeout(() => Bangle.buzz(200), 300);
@@ -672,7 +679,7 @@
           }
           hrmInterval++;
         }
-        if (Object.keys(settings.StudyTasks).length > 0) {
+        if (settings.StudyTasks.length > 0) {
           studyTaskCheck(unix); // This might also need to be queued if async
         }
       } catch (error) {
@@ -774,7 +781,8 @@
   };
 
   Bangle.on('tap', function(data) {
-      if(data.double && data.dir === "front"){
+      if(data.double && data.dir === "front" && !Bangle.isCharging()){
+        require("widget_utils").hide();
         Bangle.load('heatsuite.app.js');
       }
     });

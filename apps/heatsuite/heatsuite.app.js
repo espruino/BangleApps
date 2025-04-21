@@ -1,14 +1,15 @@
-var studyTasksJSON = "heatsuite.tasks.json";
+{
+let studyTasksJSON = "heatsuite.tasks.json";
 let studyTasks = require('Storage').readJSON(studyTasksJSON, true) || {};
 
-var Layout = require("Layout");
-var modHS = require("HSModule");
-var layout;
-var NRFFindDeviceTimeout, TaskScreenTimeout;
+let Layout = require("Layout");
+let modHS = require("HSModule");
+let layout;
+let NRFFindDeviceTimeout, TaskScreenTimeout;
 
-var settings = modHS.getSettings();
+let settings = modHS.getSettings();
 
-var appCache = modHS.getCache();
+let appCache = modHS.getCache();
 
 function queueNRFFindDeviceTimeout() {
   if (NRFFindDeviceTimeout) clearTimeout(NRFFindDeviceTimeout);
@@ -21,11 +22,11 @@ function queueNRFFindDeviceTimeout() {
 function findBtDevices() {
   NRF.setScan(); //clear any scans running!
   NRF.findDevices(function (devices) {
-    var found = false;
+    let found = false;
     if (devices.length !== 0) {
       devices.every((d) => {
         modHS.log("Found device", d);
-        var services = d.services;
+        let services = d.services;
         modHS.log("Services: ", services);
         if (services !== undefined && services.includes('1810') && d.id === settings.bt_bloodPressure_id) {
           //Blood Pressure
@@ -34,10 +35,10 @@ function findBtDevices() {
           layout.render();
           if (NRFFindDeviceTimeout) clearTimeout(NRFFindDeviceTimeout);
           return Bangle.load('heatsuite.bp.js');
-        } else if (services !== undefined && services.includes('181b') && Object.keys(studyTasks).includes("bodyMass")) {
-          var data = d.serviceData[services];
-          var ctlByte = data[1];
-          var weightRemoved = ctlByte & (1 << 7);
+        } else if (services !== undefined && services.includes('181b') && studyTasks.filter(task => task.id === "bodyMass")) {
+          let data = d.serviceData[services];
+          let ctlByte = data[1];
+          let weightRemoved = ctlByte & (1 << 7);
           modHS.log(weightRemoved);
           if (weightRemoved === 0) {
             //Mass found
@@ -70,8 +71,9 @@ function findBtDevices() {
 
 function taskButtonInterpretter(arg, string) {
   //turn off FindDeviceHandler whenever we navigate off task screen
-  var command = 'if (NRFFindDeviceTimeout){clearTimeout(NRFFindDeviceTimeout);}' + string;
+  let command = 'if (NRFFindDeviceTimeout){clearTimeout(NRFFindDeviceTimeout);}' + string;
   let func = new Function(arg, command);
+  return eval(command);
   func();
 }
 
@@ -88,7 +90,7 @@ function queueTaskScreenTimeout() {
 function draw() {
   g.clear();
   g.reset();
-  if (Object.keys(studyTasks).length === 0) {
+  if (studyTasks.length === 0) {
     if(require("Storage").list().includes("heatsuite.survey.json")){ //likely just using for EMA survey
       return Bangle.load('heatsuite.survey.js'); //go right to survey!
     }
@@ -109,8 +111,8 @@ function draw() {
     layout.render();
     return;
   }
-  var taskArr = appCache.taskQueue;
-  var taskID = [];
+  let taskArr = appCache.taskQueue;
+  let taskID = [];
   if (taskArr !== undefined) {
     taskID = taskArr.filter(function (taskArr) {
       return taskArr.id;
@@ -118,32 +120,32 @@ function draw() {
       return taskArr.id;
     });
   }
-  var layoutOut = { type: "v", c: [] };
-  var row = { type: "h", c: [] };
-  var rowCount = 2;
-  if( Object.keys(studyTasks).length > 4){
+  let layoutOut = { type: "v", c: [] };
+  let row = { type: "h", c: [] };
+  let rowCount = 2;
+  if( studyTasks.length > 4){
     rowCount = 3; //so we can include up to 9 tasks on the screen at once
   }
-  Object.keys(studyTasks).forEach(key => {
-    var btn = { type: "btn", fillx: 1, filly: 1 };
-    btn.id = key;
-    btn.src = function () { return require("heatshrink").decompress(atob(settings.StudyTasks[key].icon)); };
+  studyTasks.forEach(task => {
+    let btn = { type: "btn", fillx: 1, filly: 1 };
+    btn.id = task.id;
+    btn.src = eval(task.icon);
     //callback on button press
-    if (studyTasks[key].cbBtn) {
-      btn.cb = l => taskButtonInterpretter("true", settings.StudyTasks[key].cbBtn);
+    if (task.cbBtn) {
+      btn.cb = l => taskButtonInterpretter("true", task.cbBtn);
     }
     //back color determination
     btn.btnFaceCol = "#90EE90";
     //a to do!!
-    if (taskID.includes(key)) {
+    if (taskID.includes(task.id)) {
       btn.btnFaceCol = "#FFFF00";
     }
     //no bt paired
-    if (studyTasks[key].btPair === true) {
-      if (settings["bt_" + key + "_id"] === undefined || !settings["bt_" + key + "_id"]) {
+    if (task.btPair === true) {
+      if (settings["bt_" + task.id + "_id"] === undefined || !settings["bt_" + task.id + "_id"]) {
         //make it clickable so we can go to settings and pair something
         btn.btnFaceCol = "#FF0000";
-        btn.cb = l => taskButtonInterpretter('true', "Bangle.load('heatsuite.settings.js);");
+        btn.cb = l => taskButtonInterpretter('true', "Bangle.load('heatsuite.settings.js');");
       }
     }
     //builder for each icon in taskScreen
@@ -159,24 +161,26 @@ function draw() {
   }
   //Final 
   layoutOut.c.push({ type: "txt", font: "6x8:2", label: "Searching...", id: "msg", fillx: 1 });
-  layout = new Layout(layoutOut, { lazy: true });
+  let options = { 
+    lazy: true,
+    btns:[{label:"Exit", cb: l=>Bangle.showClock() }],
+    remove: () => {
+      NRF.setScan(); //clear scan
+      if (TaskScreenTimeout) clearTimeout(TaskScreenTimeout);
+      if (NRFFindDeviceTimeout) clearTimeout(NRFFindDeviceTimeout);
+      NRFFindDeviceTimeout = undefined;
+      TaskScreenTimeout = undefined;
+      require("widget_utils").show();
+    }
+  };
+  layout = new Layout(layoutOut, options);
   layout.render();
   queueNRFFindDeviceTimeout();
   queueTaskScreenTimeout();
 }
 
 Bangle.setLocked(false); //unlock screen!
+Bangle.loadWidgets();
 require("widget_utils").hide();
-Bangle.setUI({
-  mode : "custom",
-  btn : ()=>{
-    Bangle.load();
-  },
-  remove: () => {
-    if (TaskScreenTimeout) clearTimeout(TaskScreenTimeout);
-    if (NRFFindDeviceTimeout) clearTimeout(NRFFindDeviceTimeout);
-    NRFFindDeviceTimeout = undefined;
-    TaskScreenTimeout = undefined;
-  }
-});
 draw();
+}

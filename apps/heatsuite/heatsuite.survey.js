@@ -196,63 +196,20 @@ function drawSurveyLayout(index) {
     id: "label"
   };
   out.c.push(q);
-  var options = question.options;
-  var optLayout = false;
   var optFont = 'Vector:30';
-  if (question.optLayout !== undefined) optLayout = question.optLayout;
   if (question.optFont !== undefined) optFont = question.optFont;
-  question.scroll = true;
-  if(question.scroll !== undefined && question.scroll){
-    var opt = {
-      type: "btn",
-      font: optFont,
-      label: ">>",
-      pad: 1,
-      btnFaceCol: "#0f0",
-      cb: l => drawResponseOpts(index)
-    };
-    out.c.push(opt);
-    layout = new Layout(out);
-    layout.render();
-    return;
-  } 
-  var optionArr = [];
-  for (let i = 0; i < options.length; i++) {
-    var optionText = options[i].value;
-    if (options[i].text !== undefined) {
-      optionText = options[i].text[lang];
-    }
-    const cbString = index + "," + question.key + "," + optionText + "," + options[i].value;
-    var opt = {
-      type: "btn",
-      font: optFont,
-      label: optionText,
-      pad: 1,
-      btnFaceCol: options[i].btnColor,
-      col: options[i].color,
-      cb: l => surveyResponse(cbString)
-    };
-    optionArr.push(opt);
-  }
-
-  if (optLayout) {
-    var opts = {
-      type: "h",
-      c: []
-    };
-    optionArr.forEach(obj => {
-      opts.c.push(obj);
-    });
-    out.c.push(opts);
-  } else {
-    optionArr.forEach(obj => {
-      obj.fillx = 1;
-      obj.pad = 1;
-      out.c.push(obj);
-    });
-  }
+  var opt = {
+    type: "btn",
+    font: optFont,
+    label: ">>",
+    pad: 1,
+    btnFaceCol: "#0f0",
+    cb: l => drawResponseOpts(index)
+  };
+  out.c.push(opt);
   layout = new Layout(out);
   layout.render();
+  return; 
 }
 
 function surveyResponse(text) {

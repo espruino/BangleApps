@@ -23,7 +23,13 @@ function analyzeBPData(data) {
     "moved" : null,
     "cuffLoose" : null,
     "irregularPulse" : null,
-    "improperMeasure" : null
+    "improperMeasure" : null,
+    "year" : null,
+    "month" : null,
+    "day" : null,
+    "hour" : null,
+    "minute" : null,
+    "second" : null
   };
   let index = 1;
   result.sbp = buf[index];
@@ -33,14 +39,12 @@ function analyzeBPData(data) {
   result.map = buf[index];
   index += 2;
   if (flags & 0x02) {
-    //result.date = { // no need here yet
-    //  year: buf[index] + (buf[index + 1] << 8),
-    //  month: buf[index + 2],
-    //  day: buf[index + 3],
-    //  hour: buf[index + 4],
-    //  minute: buf[index + 5],
-    //  second: buf[index + 6],
-    //};
+    result.year = buf[index] + (buf[index + 1] << 8),
+    result.month = buf[index + 2],
+    result.day = buf[index + 3],
+    result.hour = buf[index + 4],
+    result.minute = buf[index + 5],
+    result.second = buf[index + 6],
     index += 7;
   }
   if (flags & 0x04) {
