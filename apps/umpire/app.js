@@ -191,6 +191,10 @@ function startOver(resume) {
     });
   var timeSig = new Date();
   if(resume!=true) {
+    // start new over
+    over += 1;
+    counter = 0; 
+    ballTimes = [];
     if(over==0) { // set an inital time for camparison
       overTimes.push(timeSig.getTime());
       addLog(timeSig, over, counter, "Play", "");        
@@ -202,12 +206,9 @@ function startOver(resume) {
           countDown(0);
         }
       });
+    } else {
+      addLog(timeSig, over, counter, "Over", "");    
     }
-    // start new over
-    over += 1;
-    counter = 0; 
-    ballTimes = [];
-    addLog(timeSig, over, counter, "New Over", "");        
   }
   // whether resuming or new over, refresh UI
   countDown(0);
