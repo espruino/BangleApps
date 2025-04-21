@@ -362,9 +362,7 @@ function showMessagesScroller(msg) {
       print(process.memory().free);
       updateReadMessages();
       delete titleLines, allLines;
-      if (touch && touch.type.back) {
-        returnToMain();
-      } else if (!touch || touch.type===0) {
+      if (!touch || touch.type===0) {
         setTimeout(()=>{
           showMessageSettings(MSG_SELECTED)
         },0);
@@ -379,7 +377,7 @@ function showMessagesScroller(msg) {
     back: function () {
       if (!persist) { return load(); }
       Bangle.removeListener("touch", touchHandler);
-      Bangle.emit("touch", 1, { x: Math.floor(APP_RECT.x2 / 2), y: Math.floor(APP_RECT.y2 / 2), type: { back: true } });
+      returnToMain();
     }
   });
 
