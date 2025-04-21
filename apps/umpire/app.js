@@ -36,8 +36,7 @@ function showLog() {
       log[idx].over + "." +
       log[idx].ball + " " +
       log[idx].matchEvent + " " +
-      log[idx].time + " " +
-      ,r.x+6,r.y+1);
+      log[idx].time,r.x+6,r.y+1);
   },
   select : (idx) => {
       menu = resumeGame();
