@@ -204,22 +204,7 @@ function incrementWickets(inc) {
       wickets += inc;
       var timeSig = new Date();
       addLog(timeSig, over, counter, "Wicket", wickets);
-      E.showPrompt("Amend balls by " + inc + "?").then(function(confirmed) {
-        if (confirmed) {
-          E.showPrompt();
-          Bangle.buzz();
-          counter += inc;
-          if(counter<0) {
-            counter = 0;
-          } else {
-            addLog(timeSig, over, counter, "Correction", "");
-          }
-          resumeGame();
-        } else {
-          E.showPrompt();
-          resumeGame();
-        }
-      }
+      resumeGame();
     } else {
       E.showPrompt();
       Bangle.buzz();
