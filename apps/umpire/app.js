@@ -7,6 +7,7 @@ var overTimes = [];
 var log = [];
 var tossIndex = 0; // default to Cancel until recorded
 var tossTimeString = "";
+var timeCalled = false;
 
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   var csv = [
@@ -189,6 +190,7 @@ function startOver(resume) {
 
 function resumeGame() {
   Bangle.buzz();
+  timeCalled = false;
   if(over==0) {
     startOver();
   } else {
@@ -260,10 +262,10 @@ function showMainMenu() {
   processing = true;
   Bangle.setUI();
   var scrollMenuItems = [];
-  if(over==0) {
-    scrollMenuItems.push("Call Play");
+  if(over==0 || timeCalled) {
+    scrollMenuItems.push("Call Play", "View Log");
   }
-  if(over>0) {
+  if(over>0 && !timeCalled) {
     scrollMenuItems.push("« Back", "Wicket");
     if(wickets>0) scrollMenuItems.push("Recall");
     scrollMenuItems.push("Call Time");
@@ -277,7 +279,12 @@ function showMainMenu() {
   },
   select : (idx) => {
     console.log(scrollMenuItems[idx]);
-    if(scrollMenuItems[idx]=="Call Time") menu = showTossMenu();;
+    if(scrollMenuItems[idx]=="Call Time") {
+      timeCalled = true;
+      var timeSig = new Date();
+      addLog(timeSig, over, counter, "Time", "");        
+      menu = showMainMenu();
+    }
     if(scrollMenuItems[idx]=="Call Play"
       || scrollMenuItems[idx]=="« Back") resumeGame();
     if(scrollMenuItems[idx]=="Wicket") incrementWickets(1);
