@@ -200,7 +200,6 @@ function incrementWickets(inc) {
   processing = true;
   E.showPrompt("Amend wickets by " + inc + "?").then(function(confirmed) {
     if (confirmed) {
-      E.showPrompt();
       Bangle.buzz();
       wickets += inc;
       var timeSig = new Date();
@@ -209,8 +208,12 @@ function incrementWickets(inc) {
         if (confirmed) {
           E.showPrompt();
           Bangle.buzz();
-          if(counter>0) counter -= 1;
-          addLog(timeSig, over, counter, "Correction", "");
+          counter += inc;
+          if(counter<0) {
+            counter = 0;
+          } else {
+            addLog(timeSig, over, counter, "Correction", "");
+          }
           resumeGame();
         } else {
           E.showPrompt();
