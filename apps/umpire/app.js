@@ -207,7 +207,7 @@ function startOver(resume) {
         }
       });
     } else {
-      addLog(timeSig, over, counter, "Over", "");    
+      // addLog(timeSig, over, counter, "Over", "");    
     }
   }
   // whether resuming or new over, refresh UI
