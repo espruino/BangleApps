@@ -23,3 +23,28 @@ The app is split into three screens shown to the umpire on the watch:
 2. In-play Screen
 3. Log viewer
 
+## Interaction ##
+
+Bangle.js 2 app interactions are enabled and constrained by the Bangle and Espruino (E) libraries. This app uses the following patterns:
+
+### Scrollers ###
+
+The main menu, the "Toss" sub-menu and log viewer all use E.showScroller to display a scrollable list of tappable items. This is in preference to E.showMenu which, at the time of writing, has bugs affecting where the touch event is detected in the list of menu items (one lower than it should).
+
+Whenever a scroller is shown, the swipe interactions are switched off.
+
+### Swipe and Button ###
+
+The in-play screen detects swipe and button events using Bangle.setUI. This appears reliable. 
+
+When in-play, use of the button increments the (fairly delivered) ball count. The app does not suppress the screen lock so by default it requires the umpire to press once to unlock the watch and a second press to log the ball. Bangle.buzz is used to give positive feedback when the app takes action so that the screen does not need to be looked at.
+
+After logging the 4th ball in the over, the app buzzes twice. This is typically when the umpire needs to check the balls remaining with the other umpire, in case they have not logged every fair delivery.
+
+After the 5th ball the app gives one long buzz to remind the umpire that the next ball will close the over (if fairly delivered).
+
+Whilst the in-play screen is displayed swiping will cause the following actions to occur:
+- **Swipe Up** performs the same action as the Button press.
+- **Swipe Down** decrements the ball count and logs the action as a "Correction".
+- **Swipe Right** shows the log viewer. Logging the 6th ball also triggers the log viewer so that the umpire can check the over duration and innings duration.
+- **Swipe Left** shows the main menu.
