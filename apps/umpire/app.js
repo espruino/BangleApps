@@ -186,7 +186,8 @@ function startOver(resume) {
         timeCalled = false;
         var lastTimeTime = timeTimes[timeTimes.length - 1];
         var timeDuration = new Date(timeSig.getTime() - lastTimeTime);
-        addLog(timeSig, over, counter, "Play", "Lost: " +formatDuration(timeDuration));    
+        addLog(timeSig, over, counter, "Play", "Lost: " + formatDuration(timeDuration));    
+      }
     }
   }
   // whether resuming or new over, refresh UI
