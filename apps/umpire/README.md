@@ -57,6 +57,12 @@ Whenever a scroller is shown, the in-play swipe interactions are switched off.
 
 Exceptionally, when the log viewer is shown after the 6th ball of an over the next tap will start a new over. Otherwise, tapping on the log viewer returns the umpire to the in-play screen.
 
+### Twist to refresh ###
+
+The app uses Bangle.twist to detect the umpire turning their wrist to view the screen and, when the in-play screen is active, will refresh the current time and elapsed time since the last ball.
+
+Showing the elapsed time since the last ball was logged helps the umpire to assess whether either team is timewasting and whether a new batter has made it to the crease as required by the laws.
+
 ### Recording the "Toss" ###
 
 The main menu offers the option to log the outcome of the Toss before play begins. It's a limited feature with a workaround to allow the decision logged to be viewed before the log viewer is available in-play.
