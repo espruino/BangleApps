@@ -121,6 +121,12 @@ function countDown(dir) {
 
       //console.log(overTimes);
       menu = showLog();
+      Bangle.setUI({
+        mode : "custom",
+        btn : ()=>{
+          resumeGame();
+        }
+      });
 
 /*
     g.clear(1); // clear screen and reset graphics state
@@ -313,12 +319,3 @@ var timeSig = new Date();
 addLog(timeSig, "155", "a", "Date", timeSig.toUTCString());
 
 var menu = showMainMenu();
-Bangle.setUI({
-      mode : "custom",
-      swipe : (directionLR, directionUD)=>{
-        console.log("swipe");
-      },
-      btn : ()=>{
-        console.log("btn");
-      }
-    });
