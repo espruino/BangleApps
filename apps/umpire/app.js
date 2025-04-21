@@ -216,6 +216,7 @@ function incrementWickets(inc) {
           E.showPrompt();
           resumeGame();
         }
+      }
     } else {
       E.showPrompt();
       Bangle.buzz();
