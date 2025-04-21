@@ -377,6 +377,11 @@ function showMessagesScroller(msg) {
           break;
         }
       }
+    },
+    back: function () {
+      if (!persist) { return load(); }
+      Bangle.removeListener("touch", touchHandler);
+      Bangle.emit("touch", 1, { x: Math.floor(APP_RECT.x2 / 2), y: Math.floor(APP_RECT.y2 / 2), type: { back: true } });
     }
   });
 
@@ -389,31 +394,13 @@ function showMessagesScroller(msg) {
       returnToMain();
       E.stopEventPropagation();
       Bangle.removeListener("touch", touchHandler);
-      if (btnWatch) {clearWatch(btnWatch); btnWatch = undefined;}
     } else if (xy && xy.type===0 && xy.x>175-30 && xy.y<30) {
       Bangle.emit("touch", 2, {x:Math.floor(APP_RECT.x2/2), y:Math.floor(APP_RECT.y2/2), type:0});
       E.stopEventPropagation();
-      if (btnWatch) {clearWatch(btnWatch); btnWatch = undefined;}
       Bangle.removeListener("touch", touchHandler);
     }
   };
   Bangle.prependListener("touch", touchHandler);
-
-  // If Bangle.js 2 add an external back hw button handler.
-  let btnWatch;
-  if (2===process.env.HWVERSION) {
-    btnWatch = setWatch(()=>{
-      if ("scroller"!==active) {return;}
-      Bangle.emit("drag", {dy:0}); // Compatibility with `kineticscroll`, stopping the scroller so it doesn't continue scrolling when the `showMessageOverview` screen is loaded.
-      // Zero ms timeout as to not move on before the scroller has registered the emitted drag event.
-      setTimeout(()=>{
-        if (!persist) {return load();}
-        Bangle.removeListener("touch", touchHandler);
-        Bangle.emit("touch",1, {x:Math.floor(APP_RECT.x2/2), y:Math.floor(APP_RECT.y2/2), type:{back:true}});
-      },0);
-    }, BTN);
-  }
-
 
   function updateReadMessages() {
     let shownMsgIdxFirst, shownMsgIdxLast;
