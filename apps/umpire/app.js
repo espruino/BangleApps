@@ -186,10 +186,11 @@ function startPlay(resume) {
     }
   }
   if(timeCalled) {
-        timeCalled = false;
-        var lastTimeTime = timeTimes[timeTimes.length - 1];
-        var timeDuration = new Date(timeSig.getTime() - lastTimeTime);
-        addLog(timeSig, over, counter, "Play", "Lost: " + formatDuration(timeDuration));    
+    console.log("Play after Time");
+    timeCalled = false;
+    var lastTimeTime = timeTimes[timeTimes.length - 1];
+    var timeDuration = new Date(timeSig.getTime() - lastTimeTime);
+    addLog(timeSig, over, counter, "Play", "Lost: " + formatDuration(timeDuration));    
   }
   // whether resuming or new over, refresh UI
   countDown(0);
