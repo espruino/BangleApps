@@ -256,7 +256,7 @@ function showTossMenu() {
     g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
     if(idx==tossIndex) {
       g.setBgColor("#fff").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
-      g.setBgColor("#000").clearRect(r.x+3,r.y+3,r.x+r.w-4,r.y+r.h-4);
+      g.setBgColor("#000").clearRect(r.x+2,r.y+2,r.x+r.w-3,r.y+r.h-3);
       g.setFont("Vector", 16).drawString(tossTimeString,r.x+1,r.y+35);
       g.setFont("Vector", 16).drawString(tossMenuItems[idx],r.x+26,r.y+5);
     } else {
