@@ -16,7 +16,7 @@ function addLog(timeSig, over, ball, matchEvent, metaData) {
   // Write data here
   file.write(csv.join(",")+"\n");
   console.log(csv);
-  log.push({
+  log.unshift({
     time: formatTimeOfDay(timeSig),
     over: over,
     ball: ball,
@@ -24,7 +24,27 @@ function addLog(timeSig, over, ball, matchEvent, metaData) {
     metaData: metaData
   });
 }
- 
+
+function showLog() {
+  processing = true;
+  return E.showScroller({
+    h : 20, c : log.length,
+  draw : (idx, r) => {
+    g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
+    g.setFont("Vector", 18).drawString(
+      log[idx].time + " " +
+      log[idx].over + "." +
+      log[idx].ball + " " +
+      log[idx].matchEvent + " " +
+      log[idx].time + " " +
+      ,r.x+6,r.y+1);
+  },
+  select : (idx) => {
+      menu = resumeGame();
+  }
+  });
+}
+
 function formatDuration(timeDate) { 
   return (timeDate.getHours()-1) + ":" + timeDate.getMinutes().toString().padStart(2, "0") + ":" + timeDate.getSeconds().toString().padStart(2, "0") + "";
 }
@@ -88,8 +108,8 @@ function countDown(dir) {
     g.clear(1); // clear screen and reset graphics state
     g.setFontAlign(0,0); // center font
     g.setFont("Vector",48); 
-    g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, g.getHeight()/3.5);
-    g.setFont("Vector", 36);
+    g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 50);
+    g.setFont("Vector", 30);
     g.drawString(over + " " + overMinutesString + "\nI " + matchMinutesString, g.getWidth()/1.89, 125);
 
     // Now buzz
@@ -253,20 +273,6 @@ function showMainMenu() {
     if(scrollMenuItems[idx]=="Play") resumeGame();
     if(scrollMenuItems[idx]=="Wicket") incrementWickets(1);
     if(scrollMenuItems[idx]=="Recall") incrementWickets(-1);
-  }
-  });
-}
-
-function showLog() {
-  processing = true;
-  return E.showScroller({
-    h : 20, c : log.length,
-  draw : (idx, r) => {
-    g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
-    g.setFont("Vector", 18).drawString(log[idx],r.x+6,r.y+1);
-  },
-  select : (idx) => {
-      menu = showMainMenu();
   }
   });
 }
