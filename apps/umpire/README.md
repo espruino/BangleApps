@@ -27,12 +27,6 @@ The app is split into three screens shown to the umpire on the watch:
 
 Bangle.js 2 app interactions are enabled and constrained by the Bangle and Espruino (E) libraries. This app uses the following patterns:
 
-### Scrollers ###
-
-The main menu, the "Toss" sub-menu and log viewer all use E.showScroller to display a scrollable list of tappable items. This is in preference to E.showMenu which, at the time of writing, has bugs affecting where the touch event is detected in the list of menu items (one lower than it should).
-
-Whenever a scroller is shown, the swipe interactions are switched off.
-
 ### Swipe and Button ###
 
 The in-play screen detects swipe and button events using Bangle.setUI. This appears reliable. 
@@ -43,12 +37,20 @@ After logging the 4th ball in the over, the app buzzes twice. This is typically 
 
 After the 5th ball the app gives one long buzz to remind the umpire that the next ball will close the over (if fairly delivered).
 
+Logging the 6th ball triggers the log viewer so that the umpire can check the over duration and innings duration.
+
 Whilst the in-play screen is displayed swiping will cause the following actions to occur:
 - **Swipe Up** performs the same action as the Button press.
 - **Swipe Down** decrements the ball count and logs the action as a "Correction".
-- **Swipe Right** shows the log viewer. Logging the 6th ball also triggers the log viewer so that the umpire can check the over duration and innings duration.
+- **Swipe Right** shows the log viewer. 
 - **Swipe Left** shows the main menu.
 
 ### Confirmation Prompts ###
 
 When choosing "Wicket" or "Recall" from the main menu E.showPrompt is used to ask for positive confirmation before incrementing or decrementing the wickets, respectively. This has relatively small tap targets on the Bangle.js 2 screen but appears stable.
+
+### Scrollers ###
+
+The main menu, the "Toss" sub-menu and log viewer all use E.showScroller to display a scrollable list of tappable items. This is in preference to E.showMenu which, at the time of writing, has bugs affecting where the touch event is detected in the list of menu items (one lower than it should).
+
+Whenever a scroller is shown, the in-play swipe interactions are switched off.
