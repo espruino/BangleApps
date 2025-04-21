@@ -63,6 +63,8 @@ HeatSuite uses icons from [Flaticon.com](https://www.flaticon.com) & [Freepik.co
 
 ## Research Using HeatSuite
 
+Select publications below, a full list can be found [here]():
+
 Ravanelli N, Lefebvre K, Mornas A, & Gagnon D. *Evaluating compliance with HeatSuite for monitoring in-situ physiological and perceptual responses and personal environmental exposure*. npj-Digital Medicine.
 
 ## Creator
