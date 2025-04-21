@@ -55,7 +55,7 @@ function showLog() {
       if(counter==6) {
         startOver();
       } else {
-        menu = resumeGame();
+        resumeGame();
       }
   }
   });
@@ -124,7 +124,11 @@ function countDown(dir) {
       Bangle.setUI({
         mode : "custom",
         btn : ()=>{
-          resumeGame();
+          if(counter==6) {
+            startOver();
+          } else {
+            resumeGame();
+          }
         }
       });
       return;
