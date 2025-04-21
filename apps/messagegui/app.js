@@ -383,16 +383,17 @@ function showMessagesScroller(msg) {
     }
   });
 
-  // helper function for message selection
-  let findSelectedMsg = function(scrollIdx) {
-    for (let i = firstTitleLinePerMsg.length - 1; i >= 0; i--) {
-      if (scrollIdx >= firstTitleLinePerMsg[i]) {
-        return MESSAGES[i];
-      }
-    }
-  }
+  //// Additional input handling to extend that of E.showScroller ////
+
+  // Input handling for positive and negative response via swipes.
+  // Emits a touch event that in turn triggers the select function of E.showScroller above.
+  Bangle.swipeHandler = (lr) => {
+    if (lr) {Bangle.emit("touch", 1, {x:Math.floor(APP_RECT.x2/2), y:Math.floor(APP_RECT.y2/2), type:{swipeLR:lr}});}
+  };
+  Bangle.on("swipe", Bangle.swipeHandler);
 
   // Add an external back touch handler.
+  // Emits a new touch event that in turn triggers the select function of E.showScroller above.
   let touchHandler = (button, xy)=>{
     // if ((left side of Banlge 1 screen) || (top left corner of Bangle 2 screen))
     if ((!xy && 1===button) || (xy && xy.type===0 && xy.x<30 && xy.y<30)) {
@@ -409,6 +410,18 @@ function showMessagesScroller(msg) {
   };
   Bangle.prependListener("touch", touchHandler);
 
+  //// Helper functions ////
+
+  // helper function for message selection
+  let findSelectedMsg = function(scrollIdx) {
+    for (let i = firstTitleLinePerMsg.length - 1; i >= 0; i--) {
+      if (scrollIdx >= firstTitleLinePerMsg[i]) {
+        return MESSAGES[i];
+      }
+    }
+  }
+
+  // Helper function to update new status of messages
   function updateReadMessages() {
     let shownMsgIdxFirst, shownMsgIdxLast;
     const LINES_PER_SCREEN = APP_RECT.h/FONT_HEIGHT;
@@ -446,6 +459,8 @@ function showMessagesScroller(msg) {
     }
     //print(MESSAGES)
   }
+
+  // Helper functions to handle positive and negative responses to messages
   var negHandler,posHandler = [ ];
   if (msg.negative) {
     negHandler = (msg)=>{
@@ -486,10 +501,6 @@ function showMessagesScroller(msg) {
     };
     //footer.push({type:"img",src:atob("QRABAAAAAAAAAAOAAAAABgAAA8AAAAADgAAD4AAAAAHgAAPgAAAAAPgAA+AAAAAAfgAD4///////gAPh///////gA+D///////AD4H//////8cPgAAAAAAPw8+AAAAAAAfB/4AAAAAAA8B/gAAAAAABwB+AAAAAAADAB4AAAAAAAAABgAA=="),col:"#0f0",cb:posHandler});
   }
-  Bangle.swipeHandler = (lr) => {
-    if (lr) {Bangle.emit("touch", 1, {x:Math.floor(APP_RECT.x2/2), y:Math.floor(APP_RECT.y2/2), type:{swipeLR:lr}});}
-  };
-  Bangle.on("swipe", Bangle.swipeHandler);
 }
 
 function showMessageSettings(msg) {
