@@ -10,7 +10,7 @@
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    { "name": "Buzzerapp.app.js", "url": "Buzzer.app.js" },
+    { "name": "Buzzer.app.js", "url": "Buzzer.app.js" },
     { "name": "Buzzer.img", "url": "Buzzer.img", "evaluate": true }
   ]
 }
