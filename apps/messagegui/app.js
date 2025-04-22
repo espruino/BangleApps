@@ -118,6 +118,7 @@ function showMessageRouter(msg, persist, explicitDestnation) {
     if ("list"===active) {return returnToMain();}
     if ("settings"===active || "overview"===active) {return;}
   }
+  return showMessagesScroller(msg);
   //if (false) {showMessageSettings(msg);}
 }
 
