@@ -3,7 +3,7 @@
   "name": "Buzzer",
   "type": "clock",
   "version": "0.01",
-  "icon": "app-icon.js",
+  "icon": "app.png",
   "screenshots": [],
   "description": "A quiz buzzer system by help of Puck.js",
   "author": "Brijesh",
