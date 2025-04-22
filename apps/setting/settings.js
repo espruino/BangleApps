@@ -1036,6 +1036,11 @@ function showAltitude() {
     menuAltitude.value = Math.round(pressure.altitude);
     m.draw();
   }
+  function altitudeDone() {
+    settings.seaLevelPressure = seaLevelPressure;
+    updateSettings();
+  }
+
   Bangle.setBarometerPower(1,"settings");
   Bangle.on("pressure",onPressure);
   var seaLevelPressure = Bangle.getOptions().seaLevelPressure;
@@ -1045,8 +1050,7 @@ function showAltitude() {
   var m = E.showMenu({ "" : {title:/*LANG*/"Altitude",back:() => {
       Bangle.setBarometerPower(0,"settings");
       Bangle.removeListener("pressure",onPressure);
-      settings.seaLevelPressure = seaLevelPressure;
-      updateSettings();
+      altitudeDone();
       popMenu(systemMenu());
     }},
     /*LANG*/"Pressure (hPa)" : menuPressure,
