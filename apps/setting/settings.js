@@ -1036,8 +1036,14 @@ function showAltitude() {
     menuAltitude.value = Math.round(pressure.altitude);
     m.draw();
   }
+  function altitudeDone() {
+    settings.seaLevelPressure = seaLevelPressure;
+    updateSettings();
+  }
+
   Bangle.setBarometerPower(1,"settings");
   Bangle.on("pressure",onPressure);
+  E.on("kill", altitudeDone);
   var seaLevelPressure = Bangle.getOptions().seaLevelPressure;
   if (!isFinite(seaLevelPressure)) seaLevelPressure=1013.25;
   var menuPressure = {value:"-"};
@@ -1045,8 +1051,8 @@ function showAltitude() {
   var m = E.showMenu({ "" : {title:/*LANG*/"Altitude",back:() => {
       Bangle.setBarometerPower(0,"settings");
       Bangle.removeListener("pressure",onPressure);
-      settings.seaLevelPressure = seaLevelPressure;
-      updateSettings();
+      E.removeListener("kill",altitudeDone);
+      altitudeDone();
       popMenu(systemMenu());
     }},
     /*LANG*/"Pressure (hPa)" : menuPressure,
@@ -1054,17 +1060,17 @@ function showAltitude() {
     /*LANG*/"Adjust up" : function() {
       Bangle.buzz(80);
       seaLevelPressure++;
-      Bangle.setOptions({seaLevelPressure:seaLevelPressure});
+      Bangle.setOptions({seaLevelPressure});
     },
     /*LANG*/"Adjust down" : function() {
       Bangle.buzz(80);
       seaLevelPressure--;
-      Bangle.setOptions({seaLevelPressure:seaLevelPressure});
+      Bangle.setOptions({seaLevelPressure});
     },
     /*LANG*/"Set Default" : function() {
       Bangle.buzz();
       seaLevelPressure=1013.25;
-      Bangle.setOptions({seaLevelPressure:seaLevelPressure});
+      Bangle.setOptions({seaLevelPressure});
     }
   });
 }
