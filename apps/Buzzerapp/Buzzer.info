@@ -11,6 +11,6 @@
   "readme": "README.md",
   "storage": [
     { "name": "Buzzerapp.app.js", "url": "Buzzerapp.app.js" },
-    { "name": "Buzzerapp.img", "url": "Buzzer.img", "evaluate": true }
+    { "name": "Buzzerapp.img", "url": "app-icon.js", "evaluate": true }
   ]
 }
