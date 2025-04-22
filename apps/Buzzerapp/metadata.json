@@ -1,0 +1,14 @@
+{ "id": "Buzzerapp",
+  "name": "Buzzer APP",
+  "shortName":"Bapp",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "This is my buzzer app",
+  "tags": "tool",
+  "supports" : ["BANGLEJS", "BANGLEJS2"],  
+  "readme": "README.md",
+  "storage": [
+    {"name":"Buzzerapp.app.js","url":"app.js"},
+    {"name":"Buzzerapp.img","url":"app-icon.js","evaluate":true}
+  ]
+}
