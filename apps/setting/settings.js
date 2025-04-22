@@ -1054,17 +1054,17 @@ function showAltitude() {
     /*LANG*/"Adjust up" : function() {
       Bangle.buzz(80);
       seaLevelPressure++;
-      Bangle.setOptions({seaLevelPressure:seaLevelPressure});
+      Bangle.setOptions({seaLevelPressure});
     },
     /*LANG*/"Adjust down" : function() {
       Bangle.buzz(80);
       seaLevelPressure--;
-      Bangle.setOptions({seaLevelPressure:seaLevelPressure});
+      Bangle.setOptions({seaLevelPressure});
     },
     /*LANG*/"Set Default" : function() {
       Bangle.buzz();
       seaLevelPressure=1013.25;
-      Bangle.setOptions({seaLevelPressure:seaLevelPressure});
+      Bangle.setOptions({seaLevelPressure});
     }
   });
 }
