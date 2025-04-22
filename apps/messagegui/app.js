@@ -724,7 +724,7 @@ function checkMessages(options) {
   // If we have a new message, show it
   if (!options.ignoreUnread && newMessages.length) {
     delete newMessages[0].show; // stop us getting stuck here if we're called a second time
-    showMessagesScroller(newMessages[0]);
+    showMessageRouter(newMessages[0], persist);
     // buzz after showMessagesScroller, so being busy during scroller setup doesn't affect the buzz pattern
     if (global.BUZZ_ON_NEW_MESSAGE) {
       // this is set if we entered the messages app by loading `messagegui.new.js`
