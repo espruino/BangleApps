@@ -4,3 +4,4 @@
 0.04: Handle fast loading
 0.05: Fix theme reset for some themes
 0.06: Minor fix: do not remove VGA8 font
+0.07: Added AM/PM functionality
