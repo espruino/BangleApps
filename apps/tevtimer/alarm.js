@@ -1,39 +1,31 @@
-const tt = require('tevtimer');
-
-function setNextRepeatDate(alarm) {
-  let date = new Date(alarm.date);
-  let rp = alarm.rp;
-  if (rp===true) { // fallback in case rp is set wrong
-    date.setDate(date.getDate() + 1);
-  } else switch(rp.interval) { // rp is an object
-    case "day":
-      date.setDate(date.getDate() + rp.num);
-      break;
-    case "week":
-      date.setDate(date.getDate() + (rp.num * 7));
-      break;
-    case "month":
-      if (!alarm.od) alarm.od = date.getDate();
-      date = new Date(date.getFullYear(), date.getMonth() + rp.num, alarm.od);
-      if (date.getDate() != alarm.od) date.setDate(0);
-      break;
-    case "year":
-      if (!alarm.od) alarm.od = date.getDate();
-      date = new Date(date.getFullYear() + rp.num, date.getMonth(), alarm.od);
-      if (date.getDate() != alarm.od) date.setDate(0);
-      break;
-    default:
-      console.log(`sched: unknown repeat '${JSON.stringify(rp)}'`);
-      break;
-  }
-  alarm.date = date.toLocalISOString().slice(0,10);
+// Chances are boot0.js got run already and scheduled *another*
+// 'load(sched.js)' - so let's remove it first!
+if (Bangle.SCHED) {
+  clearInterval(Bangle.SCHED);
+  delete Bangle.SCHED;
 }
+
+const tt = require('tevtimer');
 
 function showAlarm(alarm) {
   const alarmIndex = alarms.indexOf(alarm);
   const settings = require("sched").getSettings();
   const timer = tt.TIMERS[alarm.data.idx];
   let message = timer.display_name() + '\n' + alarm.msg;
+
+  // If there's a timer chained from this one, start it
+  if (timer.chain_id !== null) {
+    const chainTimer = tt.TIMERS[tt.find_timer_by_id(timer.chain_id)];
+    if (chainTimer !== undefined) {
+      chainTimer.reset();
+      chainTimer.start();
+      tt.set_last_viewed_timer(chainTimer);
+      tt.save_timers();
+      tt.update_system_alarms(); // FIXME: This might break snoozing
+    } else {
+      console.warn("tevtimer: unable to find chained timer with ID " + timer.chain_id);
+    }
+  }
 
   if (alarm.msg) {
     message += "\n" + alarm.msg;
@@ -109,6 +101,35 @@ function showAlarm(alarm) {
         setTimeout(buzz, settings.defaultSnoozeMillis);
       }
     });
+  }
+
+  function setNextRepeatDate(alarm) {
+    let date = new Date(alarm.date);
+    let rp = alarm.rp;
+    if (rp===true) { // fallback in case rp is set wrong
+      date.setDate(date.getDate() + 1);
+    } else switch(rp.interval) { // rp is an object
+      case "day":
+        date.setDate(date.getDate() + rp.num);
+        break;
+      case "week":
+        date.setDate(date.getDate() + (rp.num * 7));
+        break;
+      case "month":
+        if (!alarm.od) alarm.od = date.getDate();
+        date = new Date(date.getFullYear(), date.getMonth() + rp.num, alarm.od);
+        if (date.getDate() != alarm.od) date.setDate(0);
+        break;
+      case "year":
+        if (!alarm.od) alarm.od = date.getDate();
+        date = new Date(date.getFullYear() + rp.num, date.getMonth(), alarm.od);
+        if (date.getDate() != alarm.od) date.setDate(0);
+        break;
+      default:
+        console.log(`sched: unknown repeat '${JSON.stringify(rp)}'`);
+        break;
+    }
+    alarm.date = date.toLocalISOString().slice(0,10);
   }
 
   if ((require("Storage").readJSON("setting.json", 1) || {}).quiet > 1)
