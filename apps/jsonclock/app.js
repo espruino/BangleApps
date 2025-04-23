@@ -221,7 +221,11 @@ let redraw = function() {
                 g.drawString(',', pos.x + g.stringWidth(value), pos.y);
             }
         }
+        else if (!keysDrawn) {
+            g.setColor(clrs.brackets);
+            g.drawString(line, numWidth, y);
     }
+}
     keysDrawn = true;
 };
 
