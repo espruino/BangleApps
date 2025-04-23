@@ -31,6 +31,5 @@ Write to correct settings file, fixing settings not working.
 0.28: Add vibration feedback on start/stop
 0.29: Optimise UI: only redraw if we showed a recorder menu and correctly
 	track screen state
-
-
-
+0.30: Change the "time" stat to show active time (duration) rather than
+	elapsed time (fix #3802), and sync with recorder on load

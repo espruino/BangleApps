@@ -51,6 +51,11 @@ let statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,setti
 let exs = ExStats.getStats(statIDs, settings);
 // ---------------------------
 
+// handle the case where we were stopped outside of the app
+if(exs.state.active && settings.record && require("recorder") && !require("recorder").isRecording()){
+  exs.stop();
+}
+
 function setStatus(running) {
   layout.button.label = running ? "STOP" : "START";
   layout.status.label = running ? "RUN" : "STOP";

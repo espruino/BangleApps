@@ -17,8 +17,8 @@
 				},
 				run: function() {
 					const recorder = require("recorder");
-          recorder.setRecording(!recorder.isRecording(), { force: "append" }).then(() => this.emit("redraw"));
-          return true; // buzz
+					recorder.setRecording(!recorder.isRecording(), { force: "append" }).then(() => this.emit("redraw"));
+					return true; // buzz
 				},
 				show: function() {},
 				hide: function() {},
