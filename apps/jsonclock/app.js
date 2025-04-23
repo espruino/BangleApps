@@ -36,7 +36,7 @@ const buttonHeight = 12;
 const buttonX = 78;
 const buttonY = 3;
 
-let valuePositions = [];
+let keysDrawn = false;
 const headerHeight = 16;
 const usableHeight = h - headerHeight;
 const maxLines = Math.floor(usableHeight / lineHeight);
@@ -143,7 +143,6 @@ let draw = function() {
     g.clear();
     g.setFontAlign(-1, -1);
     g.setFont("Vector", 10);
-    valuePositions = [];
 
     g.setColor(clrs.tab);
 
@@ -179,22 +178,33 @@ let redraw = function() {
         if (kvMatch) {
             const key = kvMatch[1];
             let value = kvMatch[2];
+    
+            let valPrev = (prevVals[key] && prevVals[key].text) || null;
+            if (valPrev === value) continue;
+            
+            if (!keysDrawn) {
+                prevVals[key] = {};
+                // Key
+                g.setColor(clrs.keys);
+                const keyText = indent + `"${key}"`;
+                g.drawString(keyText, numWidth, y);
+                const keyWidth = g.stringWidth(keyText);
+                let valueX = numWidth + keyWidth;
 
-            if (prevVals.key == value) continue;
-            prevVals.key = value;
+                g.setColor(clrs.brackets);
+                const colonText = ": ";
+                g.drawString(colonText, valueX, y);
+                valueX += g.stringWidth(colonText);
+                prevVals[key].x = valueX;
+                prevVals[key].y = y;
+            }
+            prevVals[key].text = value;
+            let pos = prevVals[key];
 
-            // Key
-            g.setColor(clrs.keys);
-            const keyText = indent + `"${key}"`;
-            g.drawString(keyText, numWidth, y);
-            const keyWidth = g.stringWidth(keyText);
-            let valueX = numWidth + keyWidth;
-
-            g.setColor(clrs.brackets);
-            const colonText = ": ";
-            g.drawString(colonText, valueX, y);
-            valueX += g.stringWidth(colonText);
-
+            // Clear prev values
+            g.setColor(clrs.bg);
+            g.fillRect(pos.x, pos.y, w, pos.y + lineHeight);
+            
             // Value color
             const endComma = value.endsWith(',');
             if (endComma) value = value.slice(0, -1);
@@ -205,36 +215,18 @@ let redraw = function() {
             } else {
                 g.setColor(clrs.ints);
             }
-            g.drawString(value, valueX, y);
+            g.drawString(value, pos.x, pos.y);
             if (endComma){
                 g.setColor(clrs.brackets);
-                g.drawString(',', valueX + g.stringWidth(value), y);
+                g.drawString(',', pos.x + g.stringWidth(value), pos.y);
             }
-            valuePositions.push({
-                key,
-                x: valueX,
-                y,
-                text: value
-            });
-        } else {
-            g.setColor(clrs.brackets);
-            g.drawString(line, numWidth, y);
         }
     }
-};
-
-let clearVals = function() {
-    g.setFont("Vector", fontSize);
-    g.setFontAlign(-1, -1);
-    valuePositions.forEach(pos => {
-        g.setColor(clrs.bg);
-        g.fillRect(pos.x, pos.y, w, pos.y + lineHeight);
-    });
+    keysDrawn = true;
 };
 
 let redrawValues = function() {
     loadJson();
-    clearVals();
     redraw();
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = setTimeout(function() {
