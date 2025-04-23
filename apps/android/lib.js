@@ -232,8 +232,8 @@ exports.gbHandler = (event) => {
     },
     //{t:"listRecs", id:"20230616a"}
     "listRecs": function() {
-      let recs = require("Storage").list(/^recorder\.log.*\.csv$/,{sf:true}).map(s => s.slice(12, 21));
-      if (event.id.length > 2) { // Handle if there was no id supplied. Then we send a list all available recorder logs back.
+      let recs = require("Storage").list(/^recorder\.log.*\.csv$/,{sf:true}).map(s => s.slice(12, 21)).filter(s => s.length>7 /*ignore 'old' tracks without date*/);
+      if (event.id && event.id.length > 2) { // Handle if there was no id supplied. Then we send a list all available recorder logs back.
         let firstNonsyncedIdx = recs.findIndex((logId) => logId > event.id);
         if (-1 == firstNonsyncedIdx) {
           recs = []
