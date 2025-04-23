@@ -165,6 +165,7 @@ let draw = function() {
 };
 
 let redraw = function() {
+    g.setFont("Vector", fontSize);
     for (let i = 0; i < maxLines; i++) {
         const lineIndex = i;
         const line = lines[lineIndex];
