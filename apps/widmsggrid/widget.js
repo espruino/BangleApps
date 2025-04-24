@@ -49,6 +49,7 @@
           r++;
         }
       });
+      g.reset(); // Make sure we don't leave clipRect set to some smaller rectangle.
       if (w.total > 1) {
         // show total number of messages in bottom-right corner
         g.reset();
