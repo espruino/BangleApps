@@ -321,6 +321,7 @@ exports.httpHandler = (url,options) => {
   if (options.method) req.method = options.method;
   if (options.body) req.body = options.body;
   if (options.headers) req.headers = options.headers;
+  req.timeout = options.timeout || 30000;
   exports.gbSend(req);
   //create the promise
   var promise = new Promise(function(resolve,reject) {
@@ -329,7 +330,7 @@ exports.httpHandler = (url,options) => {
       //if after "timeoutMillisec" it still hasn't answered -> reject
       delete Bangle.httpRequest[options.id];
       reject("Timeout");
-    },options.timeout||30000)};
+    },req.timeout+500)};
   });
   return promise;
 };

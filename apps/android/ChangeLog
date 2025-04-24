@@ -46,3 +46,4 @@
       arrival. (Needs Gadgetbridge nightly (either flavour) for now, or stable
       version 85 when it's out)
 0.43: Ensure listRecs doesn't list old-style recorded tracks (Otherwise Gadgetbridge fails parsing the filename)
+0.44: Pass HTTP request timeout to Gadgetbridge
