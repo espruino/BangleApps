@@ -440,7 +440,7 @@
           var filename = file.replace(/\x01$/, '');
           element.insertAdjacentHTML('beforeend', `<tr id="file-${filename}"><td>${filename}</td><td><i class="icon icon-download" onclick="DownloadSingleFile('${filename}');"></i>&nbsp; <i class="icon icon-delete" onclick="deleteFile('${filename}');"></i></td></tr>`);
         });
-        element.insertAdjacentHTML('beforeend',`<tr id="end" class="text-bold"><td><button class="btn">Download All <i class="icon icon-download" onclick="DownloadAllFiles(JSON.parse("${e}"));"></i></button></td><td><button class="btn">Delete All <i class="icon icon-delete" onclick=""></i></button> </td></tr>`);
+        //element.insertAdjacentHTML('beforeend',`<tr id="end" class="text-bold"><td><button class="btn">Download All <i class="icon icon-download" onclick="DownloadAllFiles(JSON.parse("${e}"));"></i></button></td><td><button class="btn">Delete All <i class="icon icon-delete" onclick=""></i></button> </td></tr>`);
       }else{
           tab_badge.classList.remove("badge");
           tab_badge.dataset.badge = 0;

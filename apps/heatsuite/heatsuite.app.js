@@ -74,7 +74,7 @@ function taskButtonInterpretter(arg, string) {
   let command = 'if (NRFFindDeviceTimeout){clearTimeout(NRFFindDeviceTimeout);}' + string;
   let func = new Function(arg, command);
   return eval(command);
-  func();
+  //func();
 }
 
 function queueTaskScreenTimeout() {

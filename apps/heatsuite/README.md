@@ -63,9 +63,12 @@ HeatSuite uses icons from [Flaticon.com](https://www.flaticon.com) & [Freepik.co
 
 ## Research Using HeatSuite
 
-Select publications below, a full list can be found [here]():
+A full list of peer-reviewed research and conference preceedings using HeatSuite can be found [here](https://heatsuitelabs.github.io/HeatSuiteDocs/research/)
 
-Ravanelli N, Lefebvre K, Mornas A, & Gagnon D. *Evaluating compliance with HeatSuite for monitoring in-situ physiological and perceptual responses and personal environmental exposure*. npj-Digital Medicine.
+## To Do
+
+* Finish Download All and Delete All functions on custom.html
+* Graphical User Interface for EMA and Task Development
 
 ## Creator
 
