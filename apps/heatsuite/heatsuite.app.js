@@ -69,12 +69,10 @@ function findBtDevices() {
   }, { timeout: 3000, active: true});
 }
 
-function taskButtonInterpretter(arg, string) {
+function taskButtonInterpretter(string) {
   //turn off FindDeviceHandler whenever we navigate off task screen
   let command = 'if (NRFFindDeviceTimeout){clearTimeout(NRFFindDeviceTimeout);}' + string;
-  let func = new Function(arg, command);
   return eval(command);
-  //func();
 }
 
 function queueTaskScreenTimeout() {
@@ -132,7 +130,7 @@ function draw() {
     btn.src = eval(task.icon);
     //callback on button press
     if (task.cbBtn) {
-      btn.cb = l => taskButtonInterpretter("true", task.cbBtn);
+      btn.cb = l => taskButtonInterpretter(task.cbBtn);
     }
     //back color determination
     btn.btnFaceCol = "#90EE90";
@@ -145,7 +143,7 @@ function draw() {
       if (settings["bt_" + task.id + "_id"] === undefined || !settings["bt_" + task.id + "_id"]) {
         //make it clickable so we can go to settings and pair something
         btn.btnFaceCol = "#FF0000";
-        btn.cb = l => taskButtonInterpretter('true', "Bangle.load('heatsuite.settings.js');");
+        btn.cb = l => taskButtonInterpretter("Bangle.load('heatsuite.settings.js');");
       }
     }
     //builder for each icon in taskScreen
