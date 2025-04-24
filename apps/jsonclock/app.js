@@ -250,7 +250,7 @@ let redrawValues = function() {
     drawTimeout = setTimeout(function() {
         drawTimeout = undefined;
         redrawValues();
-    }, 600 - (Date.now() % 600));
+    }, 60000 - (Date.now() % 60000));
 };
 
 Bangle.on('touch', (zone, e) => {
