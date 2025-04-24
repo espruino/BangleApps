@@ -330,7 +330,7 @@ exports.httpHandler = (url,options) => {
       //if after "timeoutMillisec" it still hasn't answered -> reject
       delete Bangle.httpRequest[options.id];
       reject("Timeout");
-    },req.timeout)};
+    },req.timeout+500)};
   });
   return promise;
 };
