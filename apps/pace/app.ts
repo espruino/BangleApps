@@ -152,13 +152,11 @@ const drawSplit = (i: number, y: number, pace: number | string) =>
 
 const pauseRun = () => {
   exs.stop();
-  Bangle.setGPSPower(0, "pace")
   draw();
 };
 
 const resumeRun = () => {
   exs.resume();
-  Bangle.setGPSPower(1, "pace");
 
   g.clearRect(Bangle.appRect); // splits -> layout, clear. layout -> splits, fine
   layout.forgetLazyState();
@@ -263,6 +261,7 @@ Bangle.on('tap', e => {
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+Bangle.setGPSPower(1, "pace");
 
 g.clearRect(Bangle.appRect);
 draw();
