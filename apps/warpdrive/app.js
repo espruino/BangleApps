@@ -488,7 +488,6 @@ const sintable = new Uint8Array(256);
 const translation = new Uint32Array(10);
 let bgColor = 0;
 const BLACK = g.setColor.bind(g, 0);
-const WHITE = g.setColor.bind(g, 0xFFFF);
 let lcdBuffer = 0;
 let locked = false;
 let charging = false;
@@ -507,16 +506,6 @@ function setupInterval(force) {
     if (stop) widget_utils.show();
     else if (widget_utils.hide) widget_utils.hide();
   }
-}
-
-function test(addr, y) {
-  BLACK().fillRect(0, y, 176, y);
-  if (peek8(addr)) return false;
-  WHITE().fillRect(0, y, 176, y);
-  let b = peek8(addr);
-  BLACK().fillRect(0, y, 176, y);
-  if (!b) return false;
-  return !peek8(addr);
 }
 
 function init() {
