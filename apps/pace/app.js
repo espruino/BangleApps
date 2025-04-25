@@ -10,6 +10,7 @@
     });
     var S_1 = require("Storage");
     var drawTimeout_1;
+    var menuShown_1 = false;
     var splits_1 = [];
     var splitOffset_1 = 0, splitOffsetPx_1 = 0;
     var GPS_TIMEOUT_MS_1 = 30000;
@@ -129,6 +130,12 @@
         else
             resumeRun_1();
     };
+    var hideMenu_1 = function () {
+        if (!menuShown_1)
+            return;
+        Bangle.setUI();
+        menuShown_1 = false;
+    };
     exs_1.start();
     exs_1.stats.dist.on("notify", function (dist) {
         var prev = { time: 0, dist: 0 };
@@ -156,7 +163,7 @@
     });
     setWatch(function () { return onButton_1(); }, BTN1, { repeat: true });
     Bangle.on('drag', function (e) {
-        if (exs_1.state.active || e.b === 0)
+        if (exs_1.state.active || e.b === 0 || menuShown_1)
             return;
         splitOffsetPx_1 -= e.dy;
         if (splitOffsetPx_1 > 20) {
@@ -174,9 +181,10 @@
     Bangle.on('twist', function () {
         Bangle.setBacklight(1);
     });
-    Bangle.on('tap', function (_e) {
-        if (exs_1.state.active)
+    Bangle.on('tap', function (e) {
+        if (exs_1.state.active || menuShown_1 || !e.double)
             return;
+        menuShown_1 = true;
         var menu = {
             "": {
                 remove: function () {
@@ -184,16 +192,16 @@
                 },
             },
             "< Back": function () {
-                Bangle.setUI();
+                hideMenu_1();
             },
             "Zero time": function () {
                 exs_1.start();
                 exs_1.stop();
-                Bangle.setUI();
+                hideMenu_1();
             },
             "Clear splits": function () {
                 splits_1.splice(0, splits_1.length);
-                Bangle.setUI();
+                hideMenu_1();
             },
         };
         E.showMenu(menu);

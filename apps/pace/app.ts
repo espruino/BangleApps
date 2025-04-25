@@ -14,6 +14,7 @@ const exs = require("exstats").getStats(
 const S = require("Storage");
 
 let drawTimeout: TimeoutId | undefined;
+let menuShown = false;
 
 type Dist = number & { brand: 'dist' };
 type Time = number & { brand: 'time' };
@@ -171,6 +172,12 @@ const onButton = () => {
     resumeRun();
 };
 
+const hideMenu = () => {
+  if (!menuShown) return;
+  Bangle.setUI(); // calls `remove`, which handles redrawing
+  menuShown = false;
+}
+
 exs.start(); // aka reset
 
 exs.stats.dist.on("notify", (dist) => {
@@ -209,7 +216,7 @@ Bangle.on('lock', locked => {
 setWatch(() => onButton(), BTN1, { repeat: true });
 
 Bangle.on('drag', e => {
-  if (exs.state.active || e.b === 0) return;
+  if (exs.state.active || e.b === 0 || menuShown) return;
 
   splitOffsetPx -= e.dy;
   if (splitOffsetPx > 20) {
@@ -226,9 +233,11 @@ Bangle.on('twist', () => {
   Bangle.setBacklight(1);
 });
 
-Bangle.on('tap', _e => {
-  if(exs.state.active) return;
+Bangle.on('tap', e => {
+  // require a double tap, to avoid picking up menu "< Back" taps
+  if(exs.state.active || menuShown || !e.double) return;
 
+  menuShown = true;
   const menu: Menu = {
     "": {
       remove: () => {
@@ -236,16 +245,16 @@ Bangle.on('tap', _e => {
       },
     },
     "< Back": () => {
-      Bangle.setUI(); // calls `remove`, which handles redrawing
+      hideMenu();
     },
     "Zero time": () => {
       exs.start(); // calls reset
       exs.stop(); // re-pauses
-      Bangle.setUI();
+      hideMenu();
     },
     "Clear splits": () => {
       splits.splice(0, splits.length);
-      Bangle.setUI();
+      hideMenu();
     },
   };
 
