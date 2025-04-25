@@ -8,3 +8,4 @@ declare function require(moduleName: "Layout"): typeof Layout.Layout;
 declare function require(moduleName: "power_usage"): PowerUsageModule;
 declare function require(moduleName: "exstats"): typeof ExStats;
 declare function require(moduleName: "time_utils"): typeof TimeUtils;
+declare function require(moduleName: "textinput"): typeof TextInput;
