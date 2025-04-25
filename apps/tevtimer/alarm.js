@@ -8,9 +8,12 @@ if (Bangle.SCHED) {
 const tt = require('tevtimer');
 
 function showAlarm(alarm) {
-  const alarmIndex = alarms.indexOf(alarm);
   const settings = require("sched").getSettings();
-  const timer = tt.TIMERS[alarm.data.idx];
+  const timer = tt.TIMERS[tt.find_timer_by_id(alarm.id)];
+  if (timer === undefined) {
+    console.error("tevtimer: unable to find timer with ID " + alarm.id);
+    return;
+  }
   let message = timer.display_name() + '\n' + alarm.msg;
 
   // If there's a timer chained from this one, start it
@@ -20,8 +23,6 @@ function showAlarm(alarm) {
       chainTimer.reset();
       chainTimer.start();
       tt.set_last_viewed_timer(chainTimer);
-      tt.save_timers();
-      tt.update_system_alarms(); // FIXME: This might break snoozing
     } else {
       console.warn("tevtimer: unable to find chained timer with ID " + timer.chain_id);
     }
@@ -58,29 +59,32 @@ function showAlarm(alarm) {
       alarm.t %= 86400000;
       Bangle.emit("alarmSnooze", alarm);
     } else {
-      let del = alarm.del === undefined ? settings.defaultDeleteExpiredTimers : alarm.del;
-      if (del) {
-        alarms.splice(alarmIndex, 1);
-      } else {
-        if (alarm.date && alarm.rp) {
-          setNextRepeatDate(alarm);
-        } else if (!alarm.timer) {
-          alarm.last = new Date().getDate();
-        }
-        if (alarm.ot !== undefined) {
-          alarm.t = alarm.ot;
-          delete alarm.ot;
-        }
-        if (!alarm.rp) {
-          alarm.on = false;
-        }
+      // Don't do timer deletions here; this is handled by the
+      // tevtimer library code (and it may rearrange the alarm indeces
+      // in the process)
+
+      if (alarm.date && alarm.rp) {
+        setNextRepeatDate(alarm);
+      } else if (!alarm.timer) {
+        alarm.last = new Date().getDate();
       }
-      Bangle.emit("alarmDismiss", alarm);
+      if (alarm.ot !== undefined) {
+        alarm.t = alarm.ot;
+        delete alarm.ot;
+      }
+      if (!alarm.rp) {
+        alarm.on = false;
+      }
     }
+    Bangle.emit("alarmDismiss", alarm);
 
     // The updated alarm is still a member of 'alarms'
     // so writing to array writes changes back directly
     require("sched").setAlarms(alarms);
+
+    // Update system alarms for any changed timers just before we finish
+    tt.update_system_alarms();
+
     load();
   });
 

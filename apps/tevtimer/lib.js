@@ -305,8 +305,13 @@ function set_settings_dirty() {
 function delete_system_alarms() {
   var alarms = Sched.getAlarms().filter(a => a.appid == 'tevtimer');
   for (let alarm of alarms) {
-    console.debug('delete sched alarm ' + alarm.id);
-    Sched.setAlarm(alarm.id, undefined);
+    if (alarm.ot === undefined) {
+      console.debug('delete_system_alarms: delete sched alarm ' + alarm.id);
+      Sched.setAlarm(alarm.id, undefined);
+    } else {
+      // Avoid deleting timers awaiting snoozing
+      console.debug('delete_system_alarms: skipping snoozed alarm ' + alarm.id);
+    }
   }
   Sched.reload();
 }
@@ -314,15 +319,15 @@ function delete_system_alarms() {
 function set_system_alarms() {
   for (let idx = 0; idx < TIMERS.length; idx++) {
     let timer = TIMERS[idx];
-    let time_to_next_alarm = timer.get() / Math.abs(timer.rate);
+    let time_to_next_alarm = timer.to_msec();
     if (timer.is_running() && time_to_next_alarm > 0) {
-      console.debug('set sched alarm ' + idx + ' (' + time_to_next_alarm + ')');
-      Sched.setAlarm(idx.toString(), {
+      console.debug('set_system_alarms: set sched alarm ' + timer.id
+                    + ' (' + time_to_next_alarm + ' ms)');
+      Sched.setAlarm(timer.id, {
         appid: 'tevtimer',
         timer: time_to_next_alarm,
         msg: '',
         js: "load('tevtimer.alarm.js');",
-        data: { idx: idx },
       });
     }
   }

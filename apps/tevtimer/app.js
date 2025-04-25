@@ -297,7 +297,7 @@ class TimerView {
 
       // Set up timeout to render timer again when needed
       if (update_interval !== Infinity) {
-        console.debug('Next render update scheduled in ' + update_interval);
+        console.debug('Next render update scheduled in ' + update_interval + ' ms');
         this.listeners.timer_render_timeout = setTimeout(
           () => {
               this.listeners.timer_render_timeout = null;
