@@ -475,12 +475,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/warpdrive/app.js": {
-    "hash": "c2f9113c4d298a3021ec4bc0bc5f5d1bcd88267b4fa2acc03ae17d6447ed7d00",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/usgs/settings.js": {
     "hash": "00ee672a6920f5667bfbd2988fd2853cfd579895a843ae036a00028dcb13878d",
     "rules": [

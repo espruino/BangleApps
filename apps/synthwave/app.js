@@ -618,10 +618,7 @@ var fontNum = atob("AAAAAAAAAAAAAA//8D//g//8P/+I//8//44//w//j4//A/+P4/8A/4/4AAAA
 const sintable = new Uint8Array(256);
 let bgColor = 0;
 const BLACK = g.setColor.bind(g, 0);
-const WHITE = g.setColor.bind(g, 0xFFFF);
-let lcdBuffer = 0,
-  start = 0;
-
+let lcdBuffer = 0;
 let locked = false;
 let charging = false;
 let stopped = true;
@@ -641,75 +638,6 @@ function setupInterval(force) {
   }
 }
 
-function test(addr, y) {
-  BLACK().fillRect(0, y, 176, y);
-  if (peek8(addr)) return false;
-  WHITE().fillRect(0, y, 176, y);
-  let b = peek8(addr);
-  BLACK().fillRect(0, y, 176, y);
-  if (!b) return false;
-  return !peek8(addr);
-}
-
-function probe() {
-  if (!start) {
-    start = 0x20000000;
-    if (test(Bangle.getOptions().lcdBufferPtr, 0))
-      start = Bangle.getOptions().lcdBufferPtr; // FW=2v21
-    else if (test(0x2002d3fe, 0)) // try to skip loading if possible
-      start = 0x2002d3fe; // FW=2v20
-  }
-  const end = Math.min(start + 0x800, 0x20038000);
-
-  if (start >= end) {
-    print("Could not find framebuffer");
-    return;
-  }
-
-  BLACK().fillRect(0, 0, 176, 0);
-  // sampling every 64 bytes since a 176-pixel row is 66 bytes at 3bpp
-  for (; start < end; start += 64) {
-    if (peek8(start)) continue;
-    WHITE().fillRect(0, 0, 176, 0);
-    let b = peek8(start);
-    BLACK().fillRect(0, 0, 176, 0);
-    if (!b) continue;
-    if (!peek8(start)) break;
-  }
-
-  if (start >= end) {
-    setTimeout(probe, 1);
-    return;
-  }
-
-  // find the beginning of the row
-  while (test(start - 1, 0))
-    start--;
-
-  /*
-    let stride = (176 * 3 + 7) >> 3,
-      padding = 0;
-    for (let i = 0; i < 20; ++i, ++padding) {
-      if (test(start + stride + padding, 1)) {
-        break;
-      }
-    }
-
-    stride += padding;
-    if (padding == 20) {
-      print("Warning: Could not calculate padding");
-      stride = 68;
-    }
-    */
-  let stride = 68;
-
-  lcdBuffer = start;
-  print('Found lcdBuffer at ' + lcdBuffer.toString(16) + ' stride=' + stride);
-  gfx.init(start, stride, E.getAddressOf(sintable, true));
-  gfx.setCamera(0, 0, 0);
-  setupInterval(true);
-}
-
 function init() {
   require("Font5x9Numeric7Seg").add(Graphics);
   g.setFont("5x9Numeric7Seg");
@@ -723,7 +651,23 @@ function init() {
   // setup sin/cos table
   for (let i = 0; i < sintable.length; ++i)
       sintable[i] = Math.sin((i * Math.PI * 0.5) / sintable.length) * ((1 << 8) - 1);
-  setTimeout(probe, 1);
+
+  lcdBuffer = Bangle.getOptions().lcdBufferPtr;
+  if (!lcdBuffer) {
+    E.showMessage("Needs firmwave 2v21 or newer");
+    return;
+  }
+  let stride = 68;
+  //print('Found lcdBuffer at ' + lcdBuffer.toString(16) + ' stride=' + stride);
+  var sintablePtr = E.getAddressOf(sintable, true);
+  if (!sintablePtr) {
+    lcdBuffer = 0;
+    E.showMessage("Not enough memory");
+    return;
+  }
+  gfx.init(lcdBuffer, stride, sintablePtr);
+  gfx.setCamera(0, 0, 0);
+  setupInterval(true);
 }
 
 function tick(locked) {
