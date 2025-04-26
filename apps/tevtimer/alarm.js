@@ -16,13 +16,16 @@ function showAlarm(alarm) {
   }
   let message = timer.display_name() + '\n' + alarm.msg;
 
-  // If there's a timer chained from this one, start it
-  if (timer.chain_id !== null) {
-    const chainTimer = tt.TIMERS[tt.find_timer_by_id(timer.chain_id)];
+  // If there's a timer chained from this one, start it (only for
+  // alarms not in snoozed status)
+  var isChainedTimer = false;
+  if (timer.chain_id !== null && alarm.ot === undefined) {
+    var chainTimer = tt.TIMERS[tt.find_timer_by_id(timer.chain_id)];
     if (chainTimer !== undefined) {
       chainTimer.reset();
       chainTimer.start();
       tt.set_last_viewed_timer(chainTimer);
+      isChainedTimer = true;
     } else {
       console.warn("tevtimer: unable to find chained timer with ID " + timer.chain_id);
     }
@@ -43,13 +46,20 @@ function showAlarm(alarm) {
   // buzzCount should really be called buzzRepeat, so subtract 1
   let buzzCount = timer.buzz_count - 1;
 
+  // Alarm options for non-chained timer are OK (dismiss the alarm) and
+  // Snooze (retrigger the alarm after a delay).
+  // Alarm options for chained timer are OK (dismiss) and Halt (dismiss
+  // and pause the triggering timer).
+  let promptButtons = isChainedTimer
+    ? { "Halt": 'halt', "OK": 'ok' }
+    : { "Snooze": 'snooze', "OK": 'ok' };
   E.showPrompt(message, {
     title: 'tev timer',
-    buttons: { "Snooze": true, "Stop": false } // default is sleep so it'll come back in some mins
-  }).then(function (sleep) {
+    buttons: promptButtons,
+  }).then(function (action) {
     buzzCount = 0;
 
-    if (sleep) {
+    if (action === 'snooze') {
       if (alarm.ot === undefined) {
         alarm.ot = alarm.t;
       }
@@ -58,7 +68,8 @@ function showAlarm(alarm) {
       alarm.t = currentTime + settings.defaultSnoozeMillis;
       alarm.t %= 86400000;
       Bangle.emit("alarmSnooze", alarm);
-    } else {
+    }
+    if (action === 'ok' || action === 'halt') {
       // Don't do timer deletions here; this is handled by the
       // tevtimer library code (and it may rearrange the alarm indeces
       // in the process)
@@ -76,6 +87,10 @@ function showAlarm(alarm) {
         alarm.on = false;
       }
     }
+    if (action === 'halt') {
+      timer.pause();
+      chainTimer.pause();
+    }
     Bangle.emit("alarmDismiss", alarm);
 
     // The updated alarm is still a member of 'alarms'
@@ -85,7 +100,12 @@ function showAlarm(alarm) {
     // Update system alarms for any changed timers just before we finish
     tt.update_system_alarms();
 
-    load();
+    // Load `tevtimer` app upon halt, else the default (clock) app
+    if (action === 'halt') {
+      load('tevtimer.app.js');
+    } else {
+      load();
+    }
   });
 
   function buzz() {
