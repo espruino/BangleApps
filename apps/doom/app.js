@@ -1,3 +1,4 @@
+
 // ==== SCREEN VARIABLES ====
 const SCREEN_WIDTH = 176;
 const SCREEN_HEIGHT = 176;
@@ -172,6 +173,7 @@ function startGame() {
   }
 
   function renderHUD() {
+    "ram";
     g.setColor(1, 0, 0);
     g.setFont("Vector", 20);
     g.fillRect(40, SCREEN_HEIGHT - 40, SCREEN_WIDTH - 40, SCREEN_HEIGHT - 20);
@@ -199,12 +201,13 @@ function startGame() {
   }
 
   function dist(x1, x2, y1, y2) {
+    "compiled";
     return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
   }
 
   // ==== RAYCASTING FUNCTION ====
   function castRayDist(angle) {
-    "ram"
+    "compiled";
     let sinA = Math.sin(angle),
       cosA = Math.cos(angle);
     let x = player.x,
@@ -305,8 +308,8 @@ function startGame() {
       g.flip(); // Refresh screen
     }
 
-    const bulletInterval = setInterval(drawBullets, 50);
-    setTimeout(() => clearInterval(bulletInterval), 1000)
+    const bulletInterval = setInterval(drawBullets, 100);
+    setTimeout(() => clearInterval(bulletInterval), 2000)
   }
 
   function handleTouch(xy) {
@@ -338,7 +341,7 @@ function startGame() {
   }
 
   // ==== TOUCH INPUT HANDLING ====
-  Bangle.on("touch", (t, xy) => {
+  Bangle.on("touch", (_, xy) => {
     console.log("Touch");
     handleTouch(xy);
   });
@@ -349,7 +352,7 @@ function startGame() {
 
   // ==== RENDER FUNCTION ====
   function render() {
-    "ram"
+    "compiled";
     if (player.health <= 0) {
       g.setBgColor("#000000").setColor(0).clear();
       g.setColor(1, 0, 0);
@@ -429,7 +432,6 @@ function startGame() {
         }
         player = new Player();
         game.needsRender = true;
-        renderInterval = setRenderInterval();
       }
     },
     BTN1,
