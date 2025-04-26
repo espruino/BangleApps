@@ -173,7 +173,6 @@ function startGame() {
   }
 
   function renderHUD() {
-    "ram";
     g.setColor(1, 0, 0);
     g.setFont("Vector", 20);
     g.fillRect(40, SCREEN_HEIGHT - 40, SCREEN_WIDTH - 40, SCREEN_HEIGHT - 20);
@@ -405,7 +404,6 @@ function startGame() {
 
     g.flip(); // Update display
   }
-
   function setRenderInterval() {
     return setInterval(() => {
       moveZombies();
