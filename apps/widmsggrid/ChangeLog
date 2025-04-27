@@ -4,3 +4,4 @@
 0.04: Remove library stub
 0.05: Don't turn on LCD
 0.06: Don't draw outside of widget field
+0.07: Don't leave clipRect modified, as per [this comment](https://github.com/espruino/BangleApps/pull/3813#issuecomment-2826952155).

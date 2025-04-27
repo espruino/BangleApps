@@ -9,9 +9,9 @@ const enum Consts {
   NAME_SCROLL_PAD = 5,
 }
 
-const S = (require("Storage").readJSON("promenu.settings.json", true) || {}) as PromenuSettings;
-S.naturalScroll ??= false;
-S.wrapAround ??= true;
+const prosettings = (require("Storage").readJSON("promenu.settings.json", true) || {}) as PromenuSettings;
+prosettings.naturalScroll ??= false;
+prosettings.wrapAround ??= true;
 
 E.showMenu = (items?: Menu): MenuInstance => {
   const RectRnd = (x1: number, y1: number, x2: number, y2: number, r: number) => {
@@ -216,7 +216,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
 
       } else {
         const lastSelected = selected;
-        if (S.wrapAround) {
+        if (prosettings.wrapAround) {
           selected = (selected + dir + /*keep +ve*/menuItems.length) % menuItems.length;
         } else {
           selected = E.clip(selected + dir, 0, menuItems.length - 1);
@@ -257,7 +257,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
     },
   } as SetUIArg<"updown">,
   dir => {
-    if (dir) l.move(S.naturalScroll ? -dir : dir);
+    if (dir) l.move(prosettings.naturalScroll ? -dir : dir);
     else l.select();
   });
 

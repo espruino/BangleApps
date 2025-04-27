@@ -4,13 +4,22 @@ const storage = require('Storage');
 const widget_utils = require('widget_utils');
 const global_settings = storage.readJSON("setting.json", true) || {};
 const LOCATION_FILE = "mylocation.json";
-const h = g.getHeight();
-const w = g.getWidth();
 let location;
 let cachedSunTimes = null;
 let lastSunCalcDate = null;
-var prevVals = {};
+var valsArrs = {};
 let drawTimeout;
+
+const h = g.getHeight();
+const w = g.getWidth();
+const fontSize = 13;
+const lineHeight = 16;
+const buttonHeight = 12;
+const buttonX = 78;
+const buttonY = 3;
+const headerHeight = 16;
+const usableHeight = h - headerHeight;
+const maxLines = Math.floor(usableHeight / lineHeight);
 
 var settings = {
     hr_12: global_settings["12hour"] !== undefined ? global_settings["12hour"] : false,
@@ -25,22 +34,6 @@ let clrs = {
     bg: g.theme.bg,
     brackets: g.theme.fg,
 };
-
-
-let jsonText;
-let lines = [];
-let fontSize = 13;
-const lineHeight = 16;
-
-const buttonHeight = 12;
-const buttonX = 78;
-const buttonY = 3;
-
-let valuePositions = [];
-const headerHeight = 16;
-const usableHeight = h - headerHeight;
-const maxLines = Math.floor(usableHeight / lineHeight);
-var numWidth = 0;
 
 // requires the myLocation app
 let loadLocation = function() {
@@ -110,45 +103,49 @@ let getVal = function(now, loc) {
     return vals;
 };
 
-let loadJson = function() {
+
+let getKeyValRegex = function(line) {
+    return line.trim().match(/^"([^"]+)":\s*(.+)$/);
+};
+
+let getIndentRegex = function(line) {
+    const indentMatch = line.match(/^(\s*)/);
+    return indentMatch ? indentMatch[1] : "";
+};
+
+let getJsonLine = function() {
     const now = new Date();
     const vals = getVal(now, location);
     //vals.steps = null;  // For testing; uncomment to see the steps not appear
     //location.location = null;  // For testing, if null, the time becomes an struct to take up sun's struct
-    let raw;
-
-    if (location.location !== null) {
-        raw = {
-            time: vals.time,
-            dt: vals.date,
-            sun: {
-                rise: vals.rise,
-                set: vals.set,
+    const hasLoc = location.location !== null;
+    let raw = {
+        time: hasLoc
+        ? vals.time
+        : {
+            hr: getHr(now.getHours())[0],
+            min: now.getMinutes(),
             },
-            "batt_%": vals.batt_pct,
-        };
-    } else {
-        raw = {
-            time: {
-                hr: getHr(now.getHours())[0],
-                min: now.getMinutes(),
-            },
-            dt: vals.date,
-            "batt_%": vals.batt_pct,
+        dt: vals.date,
+        "batt_%": vals.batt_pct,
+    };
+    if (vals.steps != null) {
+        raw.steps = vals.steps;
+    }
+    if (hasLoc) {
+        raw.sun = {
+        rise: vals.rise,
+        set: vals.set,
         };
     }
-
-    if (vals.steps != null) raw.steps = vals.steps;
-
-    jsonText = JSON.stringify(raw, null, 2);
-    lines = jsonText.split("\n");
+    let jsonText = JSON.stringify(raw, null, 2);
+    return jsonText.split("\n");
 };
 
 let draw = function() {
     g.clear();
     g.setFontAlign(-1, -1);
     g.setFont("Vector", 10);
-    valuePositions = [];
 
     g.setColor(clrs.tab);
 
@@ -159,77 +156,95 @@ let draw = function() {
     g.setFont("Vector", buttonHeight);
     g.drawString("X", buttonX, buttonY);
     g.setFont("Vector", fontSize);
-
+    
+    var lines = getJsonLine();
+    var numWidth = 0;
+    
+    // Draw numbers first to find out their max width
     for (let i = 0; i < maxLines; i++) {
         const y = headerHeight + i * lineHeight;
         const lineNumberStr = (i + 1).toString().padStart(2, " ") + " ";
         g.drawString(lineNumberStr, 0, y);
         numWidth = Math.max(numWidth, g.stringWidth(lineNumberStr));
     }
-
-    redrawValues();
-};
-
-let redraw = function() {
     for (let i = 0; i < maxLines; i++) {
-        const lineIndex = i;
-        const line = lines[lineIndex];
-        if (!line) continue;
         const y = headerHeight + i * lineHeight;
+        const line = lines[i];
+        if (!line) continue;
 
-        const indentMatch = line.match(/^(\s*)/);
-        const indent = indentMatch ? indentMatch[1] : "";
-
-        const kvMatch = line.trim().match(/^"([^"]+)":\s*(.+)$/);
+        let kvMatch = getKeyValRegex(line);
         if (kvMatch) {
             const key = kvMatch[1];
             let value = kvMatch[2];
 
-            if (prevVals.key == value) continue;
-            prevVals.key = value;
-
             // Key
             g.setColor(clrs.keys);
-            g.drawString(indent + `"${key}"`, numWidth, y);
-            const keyWidth = g.stringWidth(indent + `"${key}"`);
-            const valueX = numWidth + keyWidth;
-            const valueText = ": " + value;
+            const indent = getIndentRegex(line);
+            const keyText = indent + `"${key}"`;
+            g.drawString(keyText, numWidth, y);
+            const keyWidth = g.stringWidth(keyText);
+            let x = numWidth + keyWidth;
 
+            g.setColor(clrs.brackets);
+            const colonText = ": ";
+            g.drawString(colonText, x, y);
+            x += g.stringWidth(colonText);
+            
             // Value color
+            const endComma = value.endsWith(',');
+            valsArrs[key] = {text:value, x:x, y:y, endComma:endComma};
+            if (endComma) value = value.slice(0, -1);
             if (value.startsWith('"')) {
-                g.setColor(clrs.strings);
+                valsArrs[key].color = clrs.strings;
             } else if (value.startsWith('{') || value.startsWith('}')) {
-                g.setColor(clrs.brackets);
+                valsArrs[key].color = clrs.brackets;
             } else {
-                g.setColor(clrs.ints);
+                valsArrs[key].color = clrs.ints;
             }
-            g.drawString(valueText, valueX, y);
-
-            valuePositions.push({
-                key,
-                x: valueX,
-                y,
-                text: value
-            });
-        } else {
+            g.setColor(valsArrs[key].color);
+            g.drawString(value, x, y);
+            if (endComma){
+                g.setColor(clrs.brackets);
+                g.drawString(',', x + g.stringWidth(value), y);
+            }
+        }
+        else {
             g.setColor(clrs.brackets);
             g.drawString(line, numWidth, y);
         }
     }
 };
 
-let clearVals = function() {
-    g.setFont("Vector", fontSize);
+// Redraws only values that changed
+let redraw = function() {
     g.setFontAlign(-1, -1);
-    valuePositions.forEach(pos => {
+    g.setFont("Vector", fontSize);
+    var lines = getJsonLine();
+
+    for (let i = 0; i < lines.length; i++) {
+        let kvMatch = getKeyValRegex(lines[i]);
+        if (!kvMatch) continue;
+        const key = kvMatch[1];
+        let value = kvMatch[2];
+        if (!(key in valsArrs)) continue;
+        let valsArr = valsArrs[key];
+        if (value === valsArr.text) continue; // No need to update
+        valsArrs[key].text = value;
+
+        // Clear prev values
         g.setColor(clrs.bg);
-        g.fillRect(pos.x, pos.y, w, pos.y + lineHeight);
-    });
+        g.fillRect(valsArr.x, valsArr.y, w, valsArr.y + lineHeight);
+
+        g.setColor(valsArr.color);
+        g.drawString(value, valsArr.x, valsArr.y);
+        if (valsArr.endComma){
+            g.setColor(clrs.brackets);
+            g.drawString(',', valsArr.Banglex + g.stringWidth(value), valsArr.y);
+        }
+    }
 };
 
 let redrawValues = function() {
-    loadJson();
-    clearVals();
     redraw();
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = setTimeout(function() {
@@ -256,4 +271,5 @@ loadLocation();
 Bangle.loadWidgets();
 widget_utils.hide();
 draw();
+redrawValues(); // To set the timeout
 }
