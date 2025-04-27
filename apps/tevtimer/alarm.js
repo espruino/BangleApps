@@ -26,6 +26,7 @@ function showAlarm(alarm) {
       chainTimer.start();
       tt.set_last_viewed_timer(chainTimer);
       isChainedTimer = true;
+      tt.update_system_alarms();
     } else {
       console.warn("tevtimer: unable to find chained timer with ID " + timer.chain_id);
     }
@@ -90,15 +91,13 @@ function showAlarm(alarm) {
     if (action === 'halt') {
       timer.pause();
       chainTimer.pause();
+      tt.update_system_alarms();
     }
     Bangle.emit("alarmDismiss", alarm);
 
     // The updated alarm is still a member of 'alarms'
     // so writing to array writes changes back directly
     require("sched").setAlarms(alarms);
-
-    // Update system alarms for any changed timers just before we finish
-    tt.update_system_alarms();
 
     // Load `tevtimer` app upon halt, else the default (clock) app
     if (action === 'halt') {
