@@ -1,34 +1,26 @@
-# Puck_Buzzer
-A advanced new version with Dashboard on with [Bangle.js 2](https://www.espruino.com/Bangle.js2), and [Puck.js](https://www.espruino.com/Puck.js)
+# App Name
 
-# What's new here
-1. Leaderboard on Bangle.js
+Buzzerapp
+Basically it use with puckjs for specially Quize round in school where student have to press the puck and Bangle show on it screen that who press first, second like... that
+Main aim through this app is need to aware about the student how technology simply is working back side of this regular daily usage devices
+## Usage
 
-- Tracks who buzzed first
-- Displays names in order
-- Resets round on button press
+Specially in Quize round in school where student have to press the puck and Bangle show on it screen that who press first, second like that..
+Teacher have a one bangle and other group of student have a one puck each in group.
 
-2. Sound/Vibration Patterns
+## Features
 
-- First buzzer: 🎵 Beep twice + long vibration
-- Others get short buzz only
+A dashboard where every puck show who press first, second....
+Different Vibration type
 
-# Number of participants
-Each Puck.js has a unique name like "QuizBuzzer1", "QuizBuzzer2", etc.
-Puck.js sends: { buzz: true, name: "Puck A" }
-Bangle.js tracks the order people buzzed in.
-(since Banglejs have a limitation here, it connect only 2 puck at a time)
+## Controls
 
-- Problem:
-  
--Bangle.js (Central) can only connect to one (Fully operational) BLE Peripheral (i.e., Puck.js) at a time.
+Bangle button for every new round of quize
 
--It works well with 1–2 devices, but simultaneous interactions with 3+ Pucks is unreliable, especially if kids buzz fast.
+## Requests
 
--BLE scanning + connecting takes ~1s, so tight competition gets clunky.
+BK7175
 
-# IDE
-https://www.espruino.com/ide/
+## Creator
 
-
-
+Brijesh
