@@ -101,6 +101,8 @@
           <option value="2">H - High - 30%</option>
         </select>
       </div>
+      <label for="appname">App name</label>
+      <input type="text" id="appname" class="form-input" value="qrcode">
       <button id="upload" class="btn btn-primary">Upload</button>
 
       <script src="../../core/lib/customize.js"></script>
@@ -365,8 +367,10 @@ g.drawString(content,g.getWidth()/2,g.getHeight()-(g.getHeight()-img[1])/4);
 `}
 g.setColor(1,1,1);
 `;
+
+          var appname = document.getElementById("appname").value.trim() || "qrcode";
           sendCustomizedApp({
-            storage:[{name:"qrcode.app.js", url:"app.js", content:app}]
+            storage:[{name:`${appname}.app.js`, url:"app.js", content:app}]
           });
 
         });
