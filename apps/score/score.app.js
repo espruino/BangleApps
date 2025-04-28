@@ -44,30 +44,36 @@ function setupDisplay() {
 }
 
 function setupInputWatchers(init) {
-  Bangle.setUI('updown', v => {
-    if (v) {
-      if (isBangle1) {
+  Bangle.setUI('updown',
+    isBangle1
+    ? (v => {
+      if (v) {
         let i = settings.mirrorScoreButtons ? v : v * -1;
         handleInput(Math.floor((i+2)/2));
-      } else {
+      }
+    })
+    : (v => {
+      if (v) {
         // +1 -> 4
         // -1 -> 3
         handleInput(Math.floor((v+2)/2)+3);
       }
-    }
-  });
+    })
+  );
   if (init) {
     if (isBangle1) {
       setWatch(() => handleInput(2), BTN2, { repeat: true });
     }
-    Bangle.on('touch', (b, e) => {
-      if (isBangle1) {
+    Bangle.on('touch',
+      isBangle1
+      ? ((b, e) => {
         if (b === 1) {
           handleInput(3);
         } else {
           handleInput(4);
         }
-      } else {
+      })
+      : ((b, e) => {
         if (e.y > 18) {
           if (e.x < getXCoord(w => w/2)) {
             handleInput(0);
@@ -99,8 +105,8 @@ function setupInputWatchers(init) {
             }
           }
         }
-      }
-    });
+      })
+    );
   }
 }
 
@@ -139,7 +145,7 @@ function showSettingsMenu() {
     if (reset) {
       setupMatch();
     }
-    if (isBangle1 || (!isBangle1 && back)) {
+    if (isBangle1 || back) {
       settingsMenuOpened = null;
 
       draw();
