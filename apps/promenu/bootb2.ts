@@ -34,15 +34,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
 
   let selected = options.scroll || options.selected || 0;
 
-  const ar = Bangle.appRect;
-  g.reset().clearRect(ar);
-
-  const x = ar.x;
-  const x2 = ar.x2;
-  let y = ar.y;
-  const y2 = ar.y2 - 12; // padding at end for arrow
-  if (options.title)
-    y += 22;
+  g.reset().clearRect(Bangle.appRect);
 
   let lastIdx = 0;
   let selectEdit: undefined | ActualMenuItem = undefined;
@@ -61,6 +53,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
     y: number,
     nameScroll: number = 0,
   ) => {
+    const { x2 } = Bangle.appRect;
     const hl = (idx === selected && !selectEdit);
     if(g.theme.dark){
       fillRectRnd(x, y, x2, y + fontHeight - 3, 7, hl ? g.theme.bgH : g.theme.bg + 40);
@@ -114,6 +107,13 @@ E.showMenu = (items?: Menu): MenuInstance => {
 
   const l = {
     draw: (rowmin?: number, rowmax?: number) => {
+      // always refresh appRect, a back button may have appeared
+      let { x, x2, y, y2 } = Bangle.appRect;
+      if(y === 0) y = 24; // always bump down for widgets/back button
+
+      if (options.title) y += 22;
+      y2 -= 12; // padding at end for arrow
+
       if (nameScroller) clearInterval(nameScroller), nameScroller = null;
       let rows = 0|Math.min((y2 - y) / fontHeight, menuItems.length);
       let idx = E.clip(selected - (rows>>1), 0, menuItems.length - rows);
