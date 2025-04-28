@@ -59,9 +59,9 @@ class PrimitiveTimer {
     // origin and current value
 
     return (
-      Time_utils.formatDuration(this.to_msec(this.origin))
+      format_duration_2(this.to_msec(this.origin))
       + ' / '
-      + Time_utils.formatDuration(this.to_msec())
+      + format_duration_2(this.to_msec())
     );
   }
 
@@ -192,6 +192,21 @@ function format_duration(msec, have_seconds) {
     str += ":" + ("0" + time.s).substr(-2);
   }
   return str;
+}
+
+
+function format_duration_2(msec) {
+  // Like `time_utils.formatDuration`, but handles negative durations
+  // and returns '0s' instead of an empty string for a duration of zero
+
+  let s = Time_utils.formatDuration(Math.abs(msec))
+  if (s === '') {
+    return '0s';
+  }
+  if (msec < 0) {
+    return '- ' + s;
+  }
+  return s;
 }
 
 
@@ -433,6 +448,6 @@ exports = {TIMERS, SETTINGS,
            next_id, find_timer_by_id,
            load_timers, save_timers, schedule_save_timers, save_settings, schedule_save_settings,
            PrimitiveTimer,
-           format_duration,
+           format_duration, format_duration_2,
            delete_timer, add_timer, set_last_viewed_timer, set_timers_dirty, set_settings_dirty,
            update_system_alarms};
