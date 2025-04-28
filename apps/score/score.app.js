@@ -50,6 +50,8 @@ function setupInputWatchers(init) {
         let i = settings.mirrorScoreButtons ? v : v * -1;
         handleInput(Math.floor((i+2)/2));
       } else {
+        // +1 -> 4
+        // -1 -> 3
         handleInput(Math.floor((v+2)/2)+3);
       }
     }
