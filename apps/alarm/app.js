@@ -99,6 +99,7 @@ function showMainMenu(scroll, group, scrollback) {
         onchange: (v, touch) => {
           if (touch && (2==touch.type || 145<touch.x)) { // Long touch or touched icon.
             e.on = v;
+            if (e.on) prepareForSave(e, index);
             saveAndReload();
           } else {
             setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index, undefined, scroller?scroller.scroll:undefined, group);
@@ -325,6 +326,14 @@ function prepareAlarmForSave(alarm, alarmIndex, time, date, temp) {
     } else {
       alarms[alarmIndex] = alarm;
     }
+  }
+}
+
+function prepareForSave(alarm, alarmIndex) {
+  if (alarm.timer) {
+    prepareTimerForSave(alarm, alarmIndex, require("time_utils").decodeTime(alarm.timer));
+  } else {
+    prepareAlarmForSave(alarm, alarmIndex, require("time_utils").decodeTime(alarm.t));
   }
 }
 
@@ -574,13 +583,7 @@ function enableAll(on) {
       if (confirm) {
         alarms.forEach((alarm, i) => {
           alarm.on = on;
-          if (on) {
-            if (alarm.timer) {
-              prepareTimerForSave(alarm, i, require("time_utils").decodeTime(alarm.timer));
-            } else {
-              prepareAlarmForSave(alarm, i, require("time_utils").decodeTime(alarm.t));
-            }
-          }
+          if (on) prepareForSave(alarm, i);
         });
         saveAndReload();
         showMainMenu();
