@@ -11,7 +11,7 @@
 type MenuBooleanItem = {
   value: boolean;
   format?: (value: boolean) => string;
-  onchange?: (value: boolean) => void;
+  onchange?: (value: boolean, evt?: TouchCallbackXY) => void;
 };
 
 /**
@@ -20,7 +20,7 @@ type MenuBooleanItem = {
 type MenuNumberItem = {
   value: number;
   format?: (value: number) => string;
-  onchange?: (value: number) => void;
+  onchange?: (value: number, evt?: TouchCallbackXY) => void;
   step?: number;
   min?: number;
   max?: number;
@@ -56,10 +56,10 @@ type Menu = {
   ""?: MenuOptions;
   [key: string]:
     | MenuOptions
-    | (() => void)
+    | ((e?: TouchCallbackXY) => void)
     | MenuBooleanItem
     | MenuNumberItem
-    | { value: string; onchange?: () => void }
+    | { value: string; onchange?: (value: unknown, evt?: TouchCallbackXY) => void }
     | undefined;
 };
 
@@ -68,8 +68,6 @@ type Menu = {
  */
 type MenuInstance = {
   draw: () => void;
-  move: (n: number) => void;
-  select: () => void;
   scroller?: MenuScroller; // BangleJS 2
 };
 
@@ -149,7 +147,8 @@ type TapAxis = -2 | -1 | 0 | 1 | 2;
 
 type SwipeCallback = (directionLR: -1 | 0 | 1, directionUD?: -1 | 0 | 1) => void;
 
-type TouchCallback = (button: number, xy?: { x: number, y: number }) => void;
+type TouchCallbackXY = { x: number, y: number, type: 0 | 2 };
+type TouchCallback = (button?: number, xy?: TouchCallbackXY) => void;
 
 type DragCallback = (event: {
   x: number;
