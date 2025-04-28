@@ -315,7 +315,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate, scroll, group) {
 }
 
 function prepareAlarmForSave(alarm, alarmIndex, time, date, temp) {
-  if(time != null) alarm.t = require("time_utils").encodeTime(time);
+  alarm.t = require("time_utils").encodeTime(time);
   alarm.last = alarm.t < require("time_utils").getCurrentTimeMillis() ? new Date().getDate() : 0;
   if(date) alarm.date = date.toLocalISOString().slice(0,10);
 
@@ -547,10 +547,8 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
 }
 
 function prepareTimerForSave(timer, timerIndex, time, temp) {
-  if (time != null) {
-    timer.timer = require("time_utils").encodeTime(time);
-    timer.t = (require("time_utils").getCurrentTimeMillis() + timer.timer) % 86400000;
-  }
+  timer.timer = require("time_utils").encodeTime(time);
+  timer.t = (require("time_utils").getCurrentTimeMillis() + timer.timer) % 86400000;
   timer.last = 0;
 
   if (!temp) {
