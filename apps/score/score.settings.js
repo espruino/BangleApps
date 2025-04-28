@@ -2,50 +2,27 @@
   const isBangle1 = process.env.BOARD === 'BANGLEJS'
 
   function fillSettingsWithDefaults(settings) {
-    if (isBangle1) {
-      if (settings.mirrorScoreButtons == null) {
-        settings.mirrorScoreButtons = false;
-      }
-      if (settings.keepDisplayOn == null) {
-        settings.keepDisplayOn = true;
-      }
-    }
-    if (settings.winSets == null) {
-      settings.winSets = 2;
-    }
-    if (settings.setsPerPage == null) {
-      settings.setsPerPage = 5;
-    }
-    if (settings.winScore == null) {
-      settings.winScore = 21;
-    }
-    if (settings.enableTwoAhead == null) {
-      settings.enableTwoAhead = true;
-    }
-    if (settings.enableMaxScore == null) {
-      settings.enableMaxScore = true;
-    }
-    if (settings.maxScore == null) {
-      settings.maxScore = 30;
-    }
-    if (settings.enableTennisScoring == null) {
-      settings.enableTennisScoring = false;
-    }
+    settings = Object.assign({
+      winSets: 2,
+      setsPerPage: 5,
+      winScore: 21,
+      enableTwoAhead: true,
+      enableMaxScore: true,
+      maxScore: 30,
+      enableTennisScoring: false,
 
-    if (settings.enableMaxScoreTiebreak == null) {
-      settings.enableMaxScoreTiebreak = false;
-    }
-    if (settings.maxScoreTiebreakWinScore == null) {
-      settings.maxScoreTiebreakWinScore = 6;
-    }
-    if (settings.maxScoreTiebreakEnableTwoAhead == null) {
-      settings.maxScoreTiebreakEnableTwoAhead = true;
-    }
-    if (settings.maxScoreTiebreakEnableMaxScore == null) {
-      settings.maxScoreTiebreakEnableMaxScore = false;
-    }
-    if (settings.maxScoreTiebreakMaxScore == null) {
-      settings.maxScoreTiebreakMaxScore = 15;
+      enableMaxScoreTiebreak: false,
+      maxScoreTiebreakWinScore: 6,
+      maxScoreTiebreakEnableTwoAhead: true,
+      maxScoreTiebreakEnableMaxScore: false,
+      maxScoreTiebreakMaxScore: 15,
+    }, settings);
+
+    if (isBangle1) {
+      settings = Object.assign({
+        mirrorScoreButtons: false,
+        keepDisplayOn: true,
+      }, settings);
     }
 
     return settings;
