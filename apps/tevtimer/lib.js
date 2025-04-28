@@ -3,7 +3,7 @@ const Sched = require('sched');
 const Time_utils = require('time_utils');
 
 
-// Convenience //
+// Convenience functions //
 
 function mod(n, m) {
   // Modulus function that works like Python's % operator
@@ -20,7 +20,20 @@ function ceil(value) {
 // Data models //
 
 class PrimitiveTimer {
+  // A simple timer object that can be used as a countdown or countup
+  // timer. It can be paused and resumed, and it can be reset to its
+  // original value. It can also be saved to and loaded from a
+  // persistent storage.
+
   constructor(origin, is_running, rate, name, id) {
+    // origin: initial value of the timer
+    // is_running: true if the timer should begin running immediately,
+    //             false if it should be paused
+    // rate: rate of the timer, in units per second. Positive for
+    //       countup, negative for countdown
+    // name: name of the timer (can be empty)
+    // id: ID of the timer
+
     this.origin = origin || 0;
     // default rate +1 unit per 1000 ms, countup
     this.rate = rate || 0.001;
@@ -36,18 +49,26 @@ class PrimitiveTimer {
   }
 
   display_name() {
+    // Return a string to display as the timer name
+    // If the name is empty, return a generated name
     return this.name ? this.name : this.provisional_name();
   }
 
   provisional_name() {
+    // Return a generated name for the timer based on the timer's
+    // origin and current value
+
     return (
-      Time_utils.formatDuration(this.origin / Math.abs(this.rate))
+      Time_utils.formatDuration(this.to_msec(this.origin))
       + ' / '
-      + Time_utils.formatDuration(Math.abs(this.get() / Math.abs(this.rate)))
+      + Time_utils.formatDuration(this.to_msec())
     );
   }
 
   display_status() {
+    // Return a string representing the timer's status
+    // (e.g. running, paused, expired)
+
     let status = '';
 
     // Indicate timer expired if its current value is <= 0 and it's
@@ -64,10 +85,14 @@ class PrimitiveTimer {
   }
 
   is_running() {
+    // Return true if the timer is running, false if it is paused
+
     return !this._pause_time;
   }
 
   start() {
+    // Start the timer if it is paused
+
     if (!this.is_running()) {
       this._start_time += Date.now() - this._pause_time;
       this._pause_time = null;
@@ -75,6 +100,8 @@ class PrimitiveTimer {
   }
 
   pause() {
+    // Pause the timer if it is running
+
     if (this.is_running()) {
       this._pause_time = Date.now();
     }
@@ -85,6 +112,8 @@ class PrimitiveTimer {
   }
 
   get() {
+    // Return the current value of the timer, in rate units
+
     const now = Date.now();
     const elapsed =
           (now - this._start_time)
@@ -93,6 +122,8 @@ class PrimitiveTimer {
   }
 
   set(new_value) {
+    // Set the timer to a new value, in rate units
+
     const now = Date.now();
     this._start_time = (now - new_value / this.rate)
       + (this.origin / this.rate);
@@ -101,9 +132,9 @@ class PrimitiveTimer {
     }
   }
 
-  // Convert given timer value to milliseconds using this.rate
-  // Uses the current value of the timer if no value is provided
   to_msec(value) {
+    // Convert given timer value to milliseconds using this.rate
+    // Uses the current value of the timer if no value is provided
     if (value === undefined) {
       value = this.get();
     }
@@ -111,6 +142,8 @@ class PrimitiveTimer {
   }
 
   dump() {
+    // Serialize the timer object to a JSON-compatible object
+
     return {
       cls: 'PrimitiveTimer',
       version: 0,
@@ -127,6 +160,9 @@ class PrimitiveTimer {
   }
 
   static load(data) {
+    // Deserialize a JSON-compatible object to a PrimitiveTimer
+    // object
+
     if (!(data.cls == 'PrimitiveTimer' && data.version == 0)) {
       console.error('Incompatible data type for loading PrimitiveTimer state');
     }
@@ -143,6 +179,9 @@ class PrimitiveTimer {
 
 
 function format_duration(msec, have_seconds) {
+  // Format a duration in milliseconds as a string in HH:MM format
+  // (have_seconds is false) or HH:MM:SS format (have_seconds is true)
+
   if (msec < 0) {
     return '-' + format_duration(-msec, have_seconds);
   }
@@ -189,10 +228,13 @@ function find_timer_by_id(id) {
 }
 
 function load_timers() {
+  // Load timers from persistent storage
+  // If no timers are found, create and return a default timer
+
   console.log('loading timers');
   let timers = Storage.readJSON(TIMERS_FILENAME, true) || [];
   if (timers.length) {
-    // Deserealize timer objects
+    // Deserialize timer objects
     timers = timers.map(t => PrimitiveTimer.load(t));
   } else {
     timers = [new PrimitiveTimer(600, false, -0.001, '', 1)];
@@ -202,6 +244,8 @@ function load_timers() {
 }
 
 function save_timers() {
+  // Save TIMERS to persistent storage
+
   console.log('saving timers');
   const dumped_timers = TIMERS.map(t => t.dump());
   if (!Storage.writeJSON(TIMERS_FILENAME, dumped_timers)) {
@@ -210,6 +254,11 @@ function save_timers() {
 }
 
 function schedule_save_timers() {
+  // Schedule a save of the timers to persistent storage
+  // after a timeout. This is used to reduce the number of
+  // writes to the flash storage when several changes are
+  // made in a short time.
+
   if (SAVE_TIMERS_TIMEOUT === null) {
     console.log('scheduling timer save');
     SAVE_TIMERS_TIMEOUT = setTimeout(() => {
@@ -222,6 +271,8 @@ function schedule_save_timers() {
 }
 
 function save_settings() {
+  // Save SETTINGS to persistent storage
+
   console.log('saving settings');
   if (!Storage.writeJSON(SETTINGS_FILENAME, SETTINGS)) {
     E.showAlert('Trouble saving settings');
@@ -229,6 +280,11 @@ function save_settings() {
 }
 
 function schedule_save_settings() {
+  // Schedule a save of the settings to persistent storage
+  // after a timeout. This is used to reduce the number of
+  // writes to the flash storage when several changes are
+  // made in a short time.
+
   if (SAVE_SETTINGS_TIMEOUT === null) {
     console.log('scheduling settings save');
     SAVE_SETTINGS_TIMEOUT = setTimeout(() => {
@@ -255,6 +311,10 @@ var TIMERS = load_timers();
 // Persistent data convenience functions
 
 function delete_timer(timers, timer) {
+  // Find `timer` in array `timers` and remove it.
+  // Return the next timer in the list, or the last one if `timer`
+  // was the last one in the list.
+
   const idx = timers.indexOf(timer);
   if (idx !== -1) {
     timers.splice(idx, 1);
@@ -267,6 +327,11 @@ function delete_timer(timers, timer) {
 }
 
 function add_timer(timers, timer) {
+  // Create a independent timer object duplicating `timer`, assign it a
+  // new unique ID, and add it to the top of the array `timers`.
+  // Return the new timer object.
+  // This is used to create a new timer from an existing one.
+
   // Create a copy of current timer object
   const new_timer = PrimitiveTimer.load(timer.dump());
   // Assign a new ID to the timer
@@ -277,6 +342,9 @@ function add_timer(timers, timer) {
 }
 
 function set_last_viewed_timer(timer) {
+  // Move `timer` to the top of the list of timers, so it will be
+  // displayed first when the timer list is shown.
+
   const idx = TIMERS.indexOf(timer);
   if (idx == -1) {
     console.warn('set_last_viewed_timer: Bug? Called with a timer not found in list');
@@ -291,11 +359,17 @@ function set_last_viewed_timer(timer) {
 }
 
 function set_timers_dirty() {
+  // Mark the timers as modified and schedule a write to
+  // persistent storage.
+
   setTimeout(update_system_alarms, 500);
   schedule_save_timers();
 }
 
 function set_settings_dirty() {
+  // Mark the settings as modified and schedule a write to
+  // persistent storage.
+
   schedule_save_settings();
 }
 
@@ -303,6 +377,9 @@ function set_settings_dirty() {
 // Alarm handling //
 
 function delete_system_alarms() {
+  // Delete system alarms associated with the tevtimer app (except those
+  // that are snoozed, so that they will trigger later)
+
   var alarms = Sched.getAlarms().filter(a => a.appid == 'tevtimer');
   for (let alarm of alarms) {
     if (alarm.ot === undefined) {
@@ -317,6 +394,9 @@ function delete_system_alarms() {
 }
 
 function set_system_alarms() {
+  // Set system alarms (via `sched` app) for running countdown timers
+  // that will expire in the future.
+
   for (let idx = 0; idx < TIMERS.length; idx++) {
     let timer = TIMERS[idx];
     let time_to_next_alarm = timer.to_msec();
@@ -335,11 +415,15 @@ function set_system_alarms() {
 }
 
 function update_system_alarms() {
+  // Refresh system alarms (`sched` app) to reflect changes to timers
+
   delete_system_alarms();
   set_system_alarms();
 }
 
 
+// Make sure we save timers and settings when switching to another app
+// or rebooting
 E.on('kill', () => { save_timers(); });
 E.on('kill', () => { save_settings(); });
 

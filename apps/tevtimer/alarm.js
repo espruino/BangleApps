@@ -1,3 +1,6 @@
+// Derived from `sched.js` from the `sched` app, with modifications
+// for features unique to the `tevtimer` app.
+
 // Chances are boot0.js got run already and scheduled *another*
 // 'load(sched.js)' - so let's remove it first!
 if (Bangle.SCHED) {
@@ -8,6 +11,8 @@ if (Bangle.SCHED) {
 const tt = require('tevtimer');
 
 function showAlarm(alarm) {
+  // Alert the user of the alarm and handle the response
+
   const settings = require("sched").getSettings();
   const timer = tt.TIMERS[tt.find_timer_by_id(alarm.id)];
   if (timer === undefined) {
@@ -52,8 +57,8 @@ function showAlarm(alarm) {
   // Alarm options for chained timer are OK (dismiss) and Halt (dismiss
   // and pause the triggering timer).
   let promptButtons = isChainedTimer
-    ? { "Halt": 'halt', "OK": 'ok' }
-    : { "Snooze": 'snooze', "OK": 'ok' };
+    ? { 'Halt': 'halt', 'OK': 'ok' }
+    : { 'Snooze': 'snooze', 'OK': 'ok' };
   E.showPrompt(message, {
     title: 'tev timer',
     buttons: promptButtons,
@@ -108,6 +113,8 @@ function showAlarm(alarm) {
   });
 
   function buzz() {
+    // Handle buzzing and screen unlocking
+
     if (settings.unlockAtBuzz) {
       Bangle.setLocked(false);
     }
@@ -127,6 +134,9 @@ function showAlarm(alarm) {
   }
 
   function setNextRepeatDate(alarm) {
+    // Handle repeating alarms
+    // This is not used in tevtimer
+
     let date = new Date(alarm.date);
     let rp = alarm.rp;
     if (rp===true) { // fallback in case rp is set wrong

@@ -14,10 +14,13 @@ const MOVE_TO_TOP_TIMEOUT = 5000;
 // Min number of pixels of movement to recognize a touchscreen drag/swipe
 const DRAG_THRESHOLD = 50;
 
+// Physical left/right button size in UI
 const ARROW_BTN_SIZE = 15;
 
+// IDs of main screen labels
 const ROW_IDS = ['row1', 'row2', 'row3'];
 
+// Fonts to use for each screen label and display format
 const FONT = {
   'row1': {
     'start hh:mm:ss': '12x20',
@@ -30,7 +33,7 @@ const FONT = {
 
     'name': '12x20',
 
-    'mode': '12x20',
+    'format-menu': '12x20',
   },
 
   'row2': {
@@ -44,7 +47,7 @@ const FONT = {
 
     'name': 'Vector:24x42',
 
-    'mode': 'Vector:26x42',
+    'format-menu': 'Vector:26x42',
   },
 
   'row3': {
@@ -58,10 +61,12 @@ const FONT = {
 
     'name': 'Vector:24x56',
 
-    'mode': 'Vector:26x56',
+    'format-menu': 'Vector:26x56',
   }
 };
 
+// List of format IDs available in the format menu
+// (in the order they are displayed in the menu)
 const FORMAT_MENU = [
   'start hh:mm:ss',
   'start hh:mm',
@@ -72,6 +77,8 @@ const FORMAT_MENU = [
   'name',
 ];
 
+// Mapping of format IDs to their human-friendly names displayed in the
+// format menu
 const FORMAT_DISPLAY = {
   'start hh:mm:ss': 'Start HMS',
   'start hh:mm': 'Start HM',
@@ -83,20 +90,29 @@ const FORMAT_DISPLAY = {
 };
 
 
-function row_font(row_name, mode_name) {
-  let font = FONT[row_name][mode_name];
+function row_font(row_name, format) {
+  // Convenience function to retrieve the font ID for the given display
+  // field and format mode
+
+  let font = FONT[row_name][format];
   if (font === undefined) {
-    console.error('Unknown font for row_font("' + row_name + '", "' + mode_name + '")');
+    console.error('Unknown font for row_font("' + row_name + '", "' + format + '")');
     return '12x20';
   }
   return font;
 }
 
 
-// Determine time in milliseconds until next display update for a timer
-// that should be updated every `interval` milliseconds.
 function next_time_update(interval, curr_time, direction) {
-  if (interval <= 0) {
+  // Determine time in milliseconds until next display update for a timer
+  // that should be updated every `interval` milliseconds.
+  //
+  // `curr_time` is the current time in milliseconds, and `direction`
+  // is either 1 (forward) or -1 (backward). The function returns the
+  // time in milliseconds until the next update, or Infinity if there
+  // is no update needed (e.g. if interval is zero or negative).
+
+if (interval <= 0) {
     // Don't update if interval is zero or negative
     return Infinity;
   }
@@ -119,6 +135,10 @@ function next_time_update(interval, curr_time, direction) {
 
 
 class TimerView {
+  // Primary UI for displaying and operating a timer. The
+  // PrimitiveTimer object is passed to the constructor as a
+  // parameter.
+
   constructor(timer) {
     this.timer = timer;
 
@@ -128,6 +148,8 @@ class TimerView {
   }
 
   start() {
+    // Initialize, display, and activate the UI
+
     this._initLayout();
     this.layout.update();
     this.layout.clear();
@@ -175,6 +197,8 @@ class TimerView {
   }
 
   stop() {
+    // Shut down the UI and clean up listeners and handlers
+
     if (this.listeners.timer_render_timeout !== null) {
       clearTimeout(this.listeners.timer_render_timeout);
       this.listeners.timer_render_timeout = null;
@@ -232,6 +256,10 @@ class TimerView {
   }
 
   render(item) {
+    // Draw the timer display and update the status and buttons. The
+    // `item` parameter specifies which part of the display to update.
+    // If `item` is not specified, the entire display is updated.
+
     console.debug('render called: ' + item);
 
     if (!item) {
@@ -254,14 +282,14 @@ class TimerView {
           elem.label = tt.format_duration(this.timer.to_msec(), true);
           if (running) {
             update_interval = Math.min(
-              update_interval, 
+              update_interval,
               next_time_update(1000, this.timer.to_msec(), this.timer.rate)
             );
           }
         } else if (mode == 'time hh:mm:ss') {
           elem.label = locale.time(new Date()).trim();
           update_interval = Math.min(
-            update_interval, 
+            update_interval,
             next_time_update(1000, Date.now(), 1)
           );
 
@@ -325,6 +353,8 @@ class TimerView {
   }
 
   start_stop_timer() {
+    // Start or pause the timer
+
     if (this.timer.is_running()) {
       this.timer.pause();
     } else {
@@ -338,6 +368,10 @@ class TimerView {
 
 
 class TimerFormatView {
+  // UI for selecting the display format of a timer. The
+  // PrimitiveTimer object is passed to the constructor as a
+  // parameter.
+
   constructor(timer) {
     this.timer = timer;
 
@@ -357,6 +391,8 @@ class TimerFormatView {
   }
 
   start() {
+    // Initialize, display, and activate the UI
+
     this._initLayout();
     this.layout.update();
     this.layout.clear();
@@ -430,6 +466,8 @@ class TimerFormatView {
   }
 
   stop() {
+    // Shut down the UI and clean up listeners and handlers
+
     Bangle.removeListener('drag', this.listeners.drag);
     Bangle.removeListener('touch', this.listeners.touch);
     clearWatch(this.listeners.button);
@@ -465,7 +503,7 @@ class TimerFormatView {
                 type: 'txt',
                 id: 'row1',
                 label: FORMAT_DISPLAY[FORMAT_MENU[this.format_idx.row1]],
-                font: row_font('row1', 'mode'),
+                font: row_font('row1', 'format-menu'),
                 fillx: 1,
               },
               {
@@ -491,7 +529,7 @@ class TimerFormatView {
                 type: 'txt',
                 id: 'row2',
                 label: FORMAT_DISPLAY[FORMAT_MENU[this.format_idx.row2]],
-                font: row_font('row2', 'mode'),
+                font: row_font('row2', 'format-menu'),
                 fillx: 1,
               },
               {
@@ -517,7 +555,7 @@ class TimerFormatView {
                 type: 'txt',
                 id: 'row3',
                 label: FORMAT_DISPLAY[FORMAT_MENU[this.format_idx.row3]],
-                font: row_font('row3', 'mode'),
+                font: row_font('row3', 'format-menu'),
                 fillx: 1,
               },
               {
@@ -548,10 +586,15 @@ class TimerFormatView {
   }
 
   render() {
+    // Draw the format selection UI.
+
     this.layout.render();
   }
 
   update_row(row_id) {
+    // Render the display format for the given row ID. The row ID
+    // should be one of 'row1', 'row2', or 'row3'.
+
     const elem = this.layout[row_id];
     elem.label = FORMAT_DISPLAY[FORMAT_MENU[this.format_idx[row_id]]];
     this.layout.clear(elem);
@@ -559,6 +602,9 @@ class TimerFormatView {
   }
 
   incr_format_idx(row_id) {
+    // Increment the selected format for the given row ID. The row ID
+    // should be one of 'row1', 'row2', or 'row3'.
+
     this.format_idx[row_id] += 1;
     if (this.format_idx[row_id] >= FORMAT_MENU.length) {
       this.format_idx[row_id] = 0;
@@ -567,6 +613,9 @@ class TimerFormatView {
   }
 
   decr_format_idx(row_id) {
+    // Decrement the selected format for the given row ID. The row ID
+    // should be one of 'row1', 'row2', or 'row3'.
+
     this.format_idx[row_id] -= 1;
     if (this.format_idx[row_id] < 0) {
       this.format_idx[row_id] = FORMAT_MENU.length - 1;
@@ -574,8 +623,8 @@ class TimerFormatView {
     this.update_row(row_id);
   }
 
-  // Save new format settings and return to TimerView
   ok() {
+    // Save new format settings and return to TimerView
     for (var row_id of ROW_IDS) {
       tt.SETTINGS.format[row_id] = FORMAT_MENU[this.format_idx[row_id]];
     }
@@ -583,31 +632,43 @@ class TimerFormatView {
     switch_UI(new TimerView(this.timer));
   }
 
-  // Return to TimerViewMenu without saving changes
   cancel() {
+    // Return to TimerViewMenu without saving changes
     switch_UI(new TimerViewMenu(this.timer));
   }
 }
 
 
 class TimerViewMenu {
+  // UI for displaying the timer menu. The PrimitiveTimer object is
+  // passed to the constructor as a parameter.
+
   constructor(timer) {
     this.timer = timer;
   }
 
   start() {
+    // Display and activate the top menu of the timer view menu.
+
     this.top_menu();
   }
 
   stop() {
+    // Shut down the UI and clean up listeners and handlers
+
     E.showMenu();
   }
 
   back() {
+    // Return to the timer view
+    // (i.e. the timer that was previously displayed)
+
     switch_UI(new TimerView(this.timer));
   }
 
   top_menu() {
+    // Display the top-level menu for the timer
+
     const top_menu = {
       '': {
         title: this.timer.display_name(),
@@ -663,6 +724,9 @@ class TimerViewMenu {
   }
 
   edit_menu() {
+    // Display the edit menu for the timer. This can be called in
+    // place of `start` to jump directly to the edit menu.
+
     let keyboard = null;
     try { keyboard = require("textinput"); } catch (e) {}
 
@@ -724,6 +788,9 @@ class TimerViewMenu {
   }
 
   edit_start() {
+    // Display the edit > start menu for the timer
+    // (i.e. the timer's starting value)
+
     let origin_hms = {
       h: Math.floor(this.timer.origin / 3600),
       m: Math.floor(this.timer.origin / 60) % 60,
@@ -764,24 +831,37 @@ class TimerViewMenu {
 
 
 class TimerMenu {
+  // UI for displaying the list of timers. The list of
+  // PrimitiveTimer objects is passed to the constructor as a
+  // parameter. The currently focused timer is passed as the
+  // second parameter.
+
   constructor(timers, focused_timer) {
     this.timers = timers;
     this.focused_timer = focused_timer;
   }
 
   start() {
+    // Display the top timer menu
+
     this.top_menu();
   }
 
   stop() {
+    // Shut down the UI and clean up listeners and handlers
+
     E.showMenu();
   }
 
   back() {
+    // Return to the timer's menu
+
     switch_UI(new TimerViewMenu(this.focused_timer));
   }
 
   top_menu() {
+    // Display the top-level menu for the timer list
+
     let menu = {
       '': {
         title: "Timers",
@@ -798,6 +878,10 @@ class TimerMenu {
 
 
 function switch_UI(new_UI) {
+  // Switch from one UI to another. The new UI instance is passed as a
+  // parameter. The old UI is stopped and cleaned up, and the new
+  // UI is started.
+
   if (CURRENT_UI) {
     CURRENT_UI.stop();
   }
