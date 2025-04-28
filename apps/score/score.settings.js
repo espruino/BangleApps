@@ -174,10 +174,10 @@
   const inAppMenu = function () {
     let m = {
       '': {'title': 'Score Menu'},
-      '< Back': function () { back(settings, changed, false); },
-      'Correct mode': function () { inApp('correct_mode'); back(settings, false, true); },
-      'Reset match': function () { back(settings, true, true); },
-      'End current set': function () { inApp('end_set'); back(settings, changed, true); },
+      '< Back': function () { back(settings, changed); },
+      'Correct mode': function () { inApp('correct_mode'); back(settings, false); },
+      'Reset match': function () { back(settings, true); },
+      'End current set': function () { inApp('end_set'); back(settings, changed); },
       'Configuration': function () { E.showMenu(appMenu(function () {
         E.showMenu(inAppMenu());
       })); },

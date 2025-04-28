@@ -151,14 +151,13 @@ function showSettingsMenu() {
     if (reset) {
       setupMatch();
     }
-    if (isBangle1 || back) {
-      settingsMenuOpened = null;
 
-      draw();
+    settingsMenuOpened = null;
 
-      setupDisplay();
-      setupInputWatchers();
-    }
+    draw();
+
+    setupDisplay();
+    setupInputWatchers();
   }, function (msg) {
     switch (msg) {
       case 'end_set':
