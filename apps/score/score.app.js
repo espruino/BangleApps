@@ -67,9 +67,11 @@ function setupInputWatchers(init) {
     })
   );
   if (init) {
-    if (isBangle1) {
-      setWatch(() => handleInput(KEY_MENU), BTN2, { repeat: true });
-    }
+    setWatch(
+      () => handleInput(KEY_MENU),
+      isBangle1 ? BTN2 : BTN,
+      { repeat: true },
+    );
     Bangle.on('touch',
       isBangle1
       ? ((b, e) => {
