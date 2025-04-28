@@ -15,7 +15,7 @@
       "" : { "title" : /*LANG*/"Swipe inversion apps" },
       "< Back" : () => { writeSettings(); mainMenu();}
     };
-    require("Storage").list(/\.info$/).map(app=>require("Storage").readJSON(app,1)).filter(app => app.type === "app" || !app.type).sort((a,b) => {
+    require("Storage").list(/\.info$/).map(app=>require("Storage").readJSON(app,1)).filter(app => app.type==="app" || app.type==="clock" || app.type==="launch" || !app.type).sort((a,b) => {
       if (a.name<b.name) return -1;
       if (a.name>b.name) return 1;
       return 0;
