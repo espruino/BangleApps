@@ -2,6 +2,12 @@ require('Font5x9Numeric7Seg').add(Graphics);
 require('Font7x11Numeric7Seg').add(Graphics);
 require('FontTeletext5x9Ascii').add(Graphics);
 
+const KEY_SCORE_L = 0;
+const KEY_SCORE_R = 1;
+const KEY_MENU = 2;
+const KEY_TENNIS_H = 3;
+const KEY_TENNIS_L = 4;
+
 let settingsMenu = eval(require('Storage').read('score.settings.js'));
 let settings = settingsMenu(null, null, true);
 
@@ -62,29 +68,29 @@ function setupInputWatchers(init) {
   );
   if (init) {
     if (isBangle1) {
-      setWatch(() => handleInput(2), BTN2, { repeat: true });
+      setWatch(() => handleInput(KEY_MENU), BTN2, { repeat: true });
     }
     Bangle.on('touch',
       isBangle1
       ? ((b, e) => {
         if (b === 1) {
-          handleInput(3);
+          handleInput(KEY_TENNIS_H);
         } else {
-          handleInput(4);
+          handleInput(KEY_TENNIS_L);
         }
       })
       : ((b, e) => {
         if (e.y > 18) {
           if (e.x < getXCoord(w => w/2)) {
-            handleInput(0);
+            handleInput(KEY_SCORE_L);
           } else {
-            handleInput(1);
+            handleInput(KEY_SCORE_R);
           }
         } else {
           // long press except if we have the menu opened or we are in the emulator (that doesn't
           // seem to support long press events)
           if (e.type === 2 || settingsMenuOpened || process.env.BOARD === 'EMSCRIPTEN2') {
-            handleInput(2);
+            handleInput(KEY_MENU);
           } else {
             let p = null;
 
@@ -352,7 +358,7 @@ function handleInput(button) {
   // console.log('button:', button);
   if (settingsMenuOpened) {
 
-    if (!isBangle1 && button == 2) {
+    if (!isBangle1 && button == KEY_MENU) { // Bangle2 long press, hide menu
       E.showMenu();
 
       settingsMenuOpened = null;
@@ -367,15 +373,15 @@ function handleInput(button) {
   }
 
   switch (button) {
-    case 0:
-    case 1:
+    case KEY_SCORE_L:
+    case KEY_SCORE_R:
       score(button);
       break;
-    case 2:
+    case KEY_MENU:
       showSettingsMenu();
       return;
-    case 3:
-    case 4: {
+    case KEY_TENNIS_H:
+    case KEY_TENNIS_L: {
       let hLimit = currentSet() - setsPerPage() + 1;
       let lLimit = 0;
       let val = (button * 2 - 7);
