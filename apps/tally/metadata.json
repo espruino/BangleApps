@@ -6,7 +6,6 @@
   "description": "Add to a tally from clock info",
   "icon": "app.png",
   "tags": "clkinfo",
-  "type": "clkinfo",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
