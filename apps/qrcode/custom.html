@@ -341,7 +341,7 @@
           if(document.getElementById("useWIFI").checked){
             content = document.getElementById("ssid").value
           }
-          if(!(document.getElementById("description").value === "")){
+          if(document.getElementById("description").value !== ""){
             content = document.getElementById("description").value;
           }
           var img = imageconverter.canvastoString(document.getElementsByTagName("canvas")[0],{mode:"1bit",output:"string",compression:true});
