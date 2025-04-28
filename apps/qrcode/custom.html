@@ -270,6 +270,7 @@
           } catch (error) {
             document.getElementById("errors").innerText="Error: QR could not be created.";
             console.error(error);
+            return;
           }
 
           targetSize = Math.min(deviceWidth - border, deviceHeight - border);
@@ -300,6 +301,7 @@
           } catch (error) {
             document.getElementById("errors").innerText="Error: QR could not be created.";
             console.error(error);
+            return;
           }
         }
 
