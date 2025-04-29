@@ -87,11 +87,10 @@ function showMainMenu(scroll, group, scrollback) {
   };
   const getGroups = settings.showGroup && !group;
   const groups = getGroups ? {} : undefined;
-  var showAlarm;
   const getIcon = (e)=>{return e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff);};
 
   alarms.forEach((e, index) => {
-    showAlarm = !settings.showGroup || (group ? e.group === group : !e.group);
+    const showAlarm = !settings.showGroup || (group ? e.group === group : !e.group);
     if(showAlarm) {
       const label = trimLabel(getLabel(e),40);
       menu[label] = {
