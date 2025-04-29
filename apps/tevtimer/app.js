@@ -112,7 +112,7 @@ function next_time_update(interval, curr_time, direction) {
   // time in milliseconds until the next update, or Infinity if there
   // is no update needed (e.g. if interval is zero or negative).
 
-if (interval <= 0) {
+  if (interval <= 0) {
     // Don't update if interval is zero or negative
     return Infinity;
   }
@@ -131,6 +131,53 @@ if (interval <= 0) {
   // Add compensating factor of 50ms due to timeouts apparently
   // sometimes triggering too early.
   return next_update + 50;
+}
+
+
+function draw_triangle(lay, flip) {
+  // Render right-pointing triangle if `flip`, else left-pointing
+  // triangle
+
+  flip = flip ? lay.width : 0;
+  g.setColor(g.theme.fg2)
+   .fillPoly([flip + lay.x, lay.y + lay.height / 2,
+              lay.x + lay.width - flip, lay.y,
+              lay.x + lay.width - flip, lay.y + lay.height]);
+}
+
+
+function update_status_widget(timer) {
+  // Update the status widget with the current timer status. The
+  // timer is passed as a parameter.
+
+  function widget_draw() {
+    // Draw a right-pointing arrow if the timer is running
+
+    g.reset();
+    if (WIDGETS.tevtimer.width > 1) {
+      draw_triangle({
+        x: WIDGETS.tevtimer.x,
+        // Center the arrow vertically in the 24-pixel-height widget area
+        y: WIDGETS.tevtimer.y + Math.floor((24 - ARROW_BTN_SIZE) / 2),
+        width: ARROW_BTN_SIZE,
+        height: ARROW_BTN_SIZE
+      }, true);
+    }
+  }
+
+  // For some reason, a width of 0 when there's nothing to display
+  // doesn't work as expected, so we use 1 instead.
+  let width = timer.is_running() ? ARROW_BTN_SIZE : 1;
+
+  if (WIDGETS.tevtimer === undefined) {
+    WIDGETS.tevtimer = {
+      area: 'tr',
+      width: width,
+      draw: widget_draw,
+    };
+  }
+  WIDGETS.tevtimer.width = width;
+  Bangle.drawWidgets();
 }
 
 
@@ -340,6 +387,7 @@ class TimerView {
       this.layout.start_btn.label =
         this.timer.is_running() ? 'Pause' : 'Start';
       this.layout.render(this.layout.buttons);
+      update_status_widget(this.timer);
     }
   }
 
@@ -474,16 +522,6 @@ class TimerFormatView {
   }
 
   _initLayout() {
-    // Render right-pointing triangle if `flip`, else left-pointing
-    // triangle
-    function draw_triangle(lay, flip) {
-      flip = flip ? lay.width : 0;
-      g.setColor(g.theme.fg2)
-       .fillPoly([flip + lay.x, lay.y + lay.height / 2,
-                  lay.x + lay.width - flip, lay.y,
-                  lay.x + lay.width - flip, lay.y + lay.height]);
-    }
-
     const layout = new Layout(
       {
         type: 'v',
@@ -899,4 +937,5 @@ var CURRENT_UI = null;
 
 tt.update_system_alarms();
 
+update_status_widget(tt.TIMERS[0]);
 switch_UI(new TimerView(tt.TIMERS[0]));
