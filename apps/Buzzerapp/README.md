@@ -4,8 +4,7 @@ Basically it use with puckjs for specially Quize round in school where student h
 Main aim through this app is need to aware about the student how technology simply is working back side of this regular daily usage devices
 ## Usage
 
-Specially in Quize round in school where student have to press the puck and Bangle show on it screen that who press first, second like that..
-Teacher have a one bangle and other group of student have a one puck each in group.
+During the quiz round, each student group is provided with a response button (puck), while the teacher operates a central control device (referred to as the "bangle"). When a student presses their group’s puck, the system registers the response time and displays the order in which each group responded—first, second, and so on—on the teacher's bangle screen. This setup ensures a fair and transparent method for determining which team answered first.
 
 ## Features
 
