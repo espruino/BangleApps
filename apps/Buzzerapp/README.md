@@ -8,12 +8,12 @@ During the quiz round, each student group is provided with a response button (pu
 
 ## Features
 
-A dashboard where every puck show who press first, second....
+A dashboard where every puck show who press first, second so on..,
 Different Vibration type
 
 ## Controls
 
-Bangle button for every new round of quize
+Bangle button for every new round of quiz
 
 ## Requests
 
