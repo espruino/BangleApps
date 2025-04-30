@@ -213,6 +213,7 @@ function incrementWickets(inc) {
       wickets += inc;
       var timeSig = new Date();
       if(inc>0) {
+        counter+=1;
         addLog(timeSig, over, counter, "Wicket", "Wickets: " + wickets);
       } else {
         addLog(timeSig, over, counter, "Recall Batter", "Wickets: " + wickets);
