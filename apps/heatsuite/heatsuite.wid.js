@@ -230,6 +230,7 @@
         var core = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
         var skin = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
         var core_hr = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
+        var heatflux = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
         var hsi = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
         var core_bat = null;
         var unit = null;
@@ -239,18 +240,20 @@
           if (core_hr > 0) {
             core_hr = newValueHandler(core_hr, h.hr);
           }
+          heatflux = newValueHandler(heatflux, h.heatflux);
           hsi = newValueHandler(hsi, h.hsi);
           core_bat = h.battery;
           unit = h.unit;
         }
         return {
           name: "CORESensor",
-          fields: ["core", "skin", "unit", "core_hr", "hsi", "core_bat"],
+          fields: ["core", "skin", "unit", "core_hr", "hf","hsi", "core_bat"],
           getValues: () => {
-            const result = [core.avg === null ? null : core.avg.toFixed(2), skin.avg === null ? null : skin.avg.toFixed(2), unit, core_hr.avg === null ? null : core_hr.avg.toFixed(0), hsi.avg === null ? null : hsi.avg.toFixed(1), core_bat];
+            const result = [core.avg === null ? null : core.avg.toFixed(2), skin.avg === null ? null : skin.avg.toFixed(2), unit, core_hr.avg === null ? null : core_hr.avg.toFixed(0), heatflux.avg === null ? null : heatflux.avg.toFixed(2),hsi.avg === null ? null : hsi.avg.toFixed(1), core_bat];
             core = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
             skin = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
             core_hr = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
+            heatflux = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
             hsi = { "count": null, "avg": null, "min": null, "max": null, "sum": null, "last": null };
             core_bat = null;
             unit = null;
