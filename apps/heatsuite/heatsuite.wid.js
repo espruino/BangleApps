@@ -202,7 +202,9 @@
           bt_bat = h.bat;
           bt_energy = h.energy;
           bt_contact = h.contact;
-          if (h.rr) bt_rr.push(h.rr);
+          if (h.rr) {
+            h.rr.forEach(val => bt_rr.push(val));
+          }
         }
         return {
           name: "BT HR",
