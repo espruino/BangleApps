@@ -104,9 +104,9 @@
     function deviceSettings() {
         var menu = { '< Back': function () { E.showMenu(mainMenuSettings()); } };
         menu[''] = { 'title': 'Devices' };
-        Object.keys(settings.StudyTasks).forEach(key => {
-            var details = settings.StudyTasks[key];
-            if (details.btPair === undefined || !details.btPair) return;
+        settings.StudyTasks.forEach(task => {
+            if (task.btPair === undefined || !task.btPair) return;
+            let key = task.id; // Adjust based on how you identify tasks
             let id = "bt_" + key + "_id";
             if (settings[id] !== undefined) {
                 menu["Clear " + key] = function () {
@@ -119,7 +119,7 @@
                     });
                 };
             } else {
-                menu["Pair " + key] = () => createMenuFromScan(key, settings.StudyTasks[key].btInfo.service);
+                menu["Pair " + key] = () => createMenuFromScan(key, task.btInfo.service);
             }
         });
         return menu;
@@ -147,7 +147,7 @@
             'CORESensor':'CORE Sensor'
         }
         for (let key in recorderOptions) {
-            let name = recorderOptions['key'];
+            let name = recorderOptions[key];
             menu[name] = {
                 value: settings.record.includes(key),
                 onchange: v => {updateRecorder(key,v);}

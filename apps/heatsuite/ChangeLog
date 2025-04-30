@@ -4,3 +4,4 @@
 0.07: Fixing storage overloaded issue
 0.08: Added scrolling to Surveys. CORESensor app added.
 0.09: Added High Temporal Accelerometry logging (x,y,z per second)
+0.10: Fixes to settings.js to account for optimizations in studyTasks.json
