@@ -175,11 +175,11 @@ E.showMenu = (items?: Menu): MenuInstance => {
       g.setColor((idx < menuItems.length)?g.theme.fg:g.theme.bg).fillPoly([72, 166, 104, 166, 88, 174]);
       g.flip();
     },
-    select: () => {
+    select: (evt: TouchCallbackXY | undefined) => {
       const item = items![menuItems[selected]] as ActualMenuItem;
 
       if (typeof item === "function") {
-        item();
+        item(evt);
       } else if (typeof item === "object") {
         if (typeof item.value === "number") {
           selectEdit = selectEdit ? undefined : item;
@@ -188,12 +188,12 @@ E.showMenu = (items?: Menu): MenuInstance => {
             item.value = !item.value;
 
           if (item.onchange)
-            item.onchange(item.value as boolean);
+            item.onchange(item.value as boolean, evt);
         }
         l.draw();
       }
     },
-    move: (dir: number) => {
+    move: (dir: number, evt: TouchCallbackXY | undefined) => {
       const item = selectEdit;
 
       if (typeof item === "object" && typeof item.value === "number") {
@@ -209,7 +209,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
 
         if (item.value !== orig) {
           if (item.onchange)
-            item.onchange(item.value);
+            item.onchange(item.value, evt);
 
           l.draw(selected, selected);
         }
@@ -247,6 +247,11 @@ E.showMenu = (items?: Menu): MenuInstance => {
     Bangle.on('swipe', onSwipe);
   }
 
+  const cb = (dir?: 1 | -1, evt?: TouchCallbackXY) => {
+    if (dir) l.move(prosettings.naturalScroll ? -dir : dir, evt);
+    else l.select(evt);
+  };
+
   Bangle.setUI({
     mode: "updown",
     back,
@@ -255,11 +260,13 @@ E.showMenu = (items?: Menu): MenuInstance => {
       Bangle.removeListener("swipe", onSwipe);
       options.remove?.();
     },
-  } as SetUIArg<"updown">,
-  dir => {
-    if (dir) l.move(prosettings.naturalScroll ? -dir : dir);
-    else l.select();
-  });
+    touch: ((_button, xy) => {
+      // since we've specified options.touch,
+      // we need to pass through all taps since the default
+      // touchHandler isn't installed in setUI
+      cb(void 0, xy);
+    }) satisfies TouchCallback,
+  } as SetUIArg<"updown">, cb);
 
   return l;
 };
