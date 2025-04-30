@@ -133,10 +133,10 @@ E.showMenu = function (items) {
             g.setColor((idx < menuItems.length) ? g.theme.fg : g.theme.bg).fillPoly([72, 166, 104, 166, 88, 174]);
             g.flip();
         },
-        select: function () {
+        select: function (evt) {
             var item = items[menuItems[selected]];
             if (typeof item === "function") {
-                item();
+                item(evt);
             }
             else if (typeof item === "object") {
                 if (typeof item.value === "number") {
@@ -146,12 +146,12 @@ E.showMenu = function (items) {
                     if (typeof item.value === "boolean")
                         item.value = !item.value;
                     if (item.onchange)
-                        item.onchange(item.value);
+                        item.onchange(item.value, evt);
                 }
                 l.draw();
             }
         },
-        move: function (dir) {
+        move: function (dir, evt) {
             var item = selectEdit;
             if (typeof item === "object" && typeof item.value === "number") {
                 var orig = item.value;
@@ -162,7 +162,7 @@ E.showMenu = function (items) {
                     item.value = item.wrap ? item.min : item.max;
                 if (item.value !== orig) {
                     if (item.onchange)
-                        item.onchange(item.value);
+                        item.onchange(item.value, evt);
                     l.draw(selected, selected);
                 }
             }
@@ -198,6 +198,12 @@ E.showMenu = function (items) {
         };
         Bangle.on('swipe', onSwipe);
     }
+    var cb = function (dir, evt) {
+        if (dir)
+            l.move(prosettings.naturalScroll ? -dir : dir, evt);
+        else
+            l.select(evt);
+    };
     Bangle.setUI({
         mode: "updown",
         back: back,
@@ -208,11 +214,9 @@ E.showMenu = function (items) {
             Bangle.removeListener("swipe", onSwipe);
             (_a = options.remove) === null || _a === void 0 ? void 0 : _a.call(options);
         },
-    }, function (dir) {
-        if (dir)
-            l.move(prosettings.naturalScroll ? -dir : dir);
-        else
-            l.select();
-    });
+        touch: (function (_button, xy) {
+            cb(void 0, xy);
+        }),
+    }, cb);
     return l;
 };
