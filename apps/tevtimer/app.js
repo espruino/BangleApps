@@ -31,6 +31,8 @@ const FONT = {
     'current hh:mm': '12x20',
     'time hh:mm': '12x20',
 
+    'current auto': '12x20',
+
     'name': '12x20',
 
     'format-menu': '12x20',
@@ -44,6 +46,8 @@ const FONT = {
     'start hh:mm': 'Vector:48x42',
     'current hh:mm': 'Vector:48x42',
     'time hh:mm': 'Vector:56x42',
+
+    'current auto': 'Vector:34x42',
 
     'name': 'Vector:24x42',
 
@@ -59,6 +63,8 @@ const FONT = {
     'current hh:mm': 'Vector:48x56',
     'time hh:mm': 'Vector:56x56',
 
+    'current auto': 'Vector:34x56',
+
     'name': 'Vector:24x56',
 
     'format-menu': 'Vector:26x56',
@@ -70,6 +76,7 @@ const FONT = {
 const FORMAT_MENU = [
   'start hh:mm:ss',
   'start hh:mm',
+  'current auto',
   'current hh:mm:ss',
   'current hh:mm',
   'time hh:mm:ss',
@@ -82,6 +89,7 @@ const FORMAT_MENU = [
 const FORMAT_DISPLAY = {
   'start hh:mm:ss': 'Start HMS',
   'start hh:mm': 'Start HM',
+  'current auto': 'Curr Auto',
   'current hh:mm:ss': 'Curr HMS',
   'current hh:mm': 'Curr HM',
   'time hh:mm:ss': 'Time HMS',
@@ -241,6 +249,20 @@ class TimerView {
     // Auto move-to-top on use handler
     this.listeners.to_top_timeout = setTimeout(
       tt.set_last_viewed_timer, MOVE_TO_TOP_TIMEOUT, this.timer);
+
+    // Screen lock/unlock handler
+    function lockHandler() {
+      // If 'current auto' is an active format, update the timer
+      // display
+      for (var id of ROW_IDS) {
+        if (tt.SETTINGS.format[id] == 'current auto') {
+          this.render('timer');
+          break;
+        }
+      }
+    }
+    this.listeners.lock = lockHandler.bind(this);
+    Bangle.on('lock', this.listeners.lock);
   }
 
   stop() {
@@ -253,6 +275,7 @@ class TimerView {
     clearWatch(this.listeners.button);
     Bangle.removeListener('drag', this.listeners.drag);
     clearTimeout(this.listeners.to_top_timeout);
+    Bangle.removeListener('lock', this.listeners.lock);
     Bangle.setUI();
   }
 
@@ -325,7 +348,11 @@ class TimerView {
         let mode = tt.SETTINGS.format[id];
         if (mode == 'start hh:mm:ss') {
           elem.label = tt.format_duration(this.timer.to_msec(this.timer.origin), true);
-        } else if (mode == 'current hh:mm:ss') {
+
+        } else if (
+          mode == 'current hh:mm:ss'
+          || (mode == 'current auto' && !Bangle.isLocked())
+        ) {
           elem.label = tt.format_duration(this.timer.to_msec(), true);
           if (running) {
             update_interval = Math.min(
@@ -333,6 +360,7 @@ class TimerView {
               next_time_update(1000, this.timer.to_msec(), this.timer.rate)
             );
           }
+
         } else if (mode == 'time hh:mm:ss') {
           elem.label = locale.time(new Date()).trim();
           update_interval = Math.min(
@@ -342,7 +370,11 @@ class TimerView {
 
         } else if (mode == 'start hh:mm') {
           elem.label = tt.format_duration(this.timer.to_msec(this.timer.origin), false);
-        } else if (mode == 'current hh:mm') {
+
+        } else if (
+          mode == 'current hh:mm'
+          || (mode == 'current auto' && Bangle.isLocked())
+        ) {
           elem.label = tt.format_duration(this.timer.to_msec(), false);
           if (running) {
             // Update every minute for current HM when running
@@ -351,15 +383,18 @@ class TimerView {
               next_time_update(60000, this.timer.to_msec(), this.timer.rate)
             );
           }
+
         } else if (mode == 'time hh:mm') {
           elem.label = locale.time(new Date(), 1).trim();
           update_interval = Math.min(
             update_interval,
             next_time_update(60000, Date.now(), 1)
           );
+
         } else if (mode == 'name') {
           elem.label = this.timer.display_name();
         }
+
         this.layout.clear(elem);
         this.layout.render(elem);
       }
