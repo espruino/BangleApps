@@ -67,7 +67,7 @@
 
     if (!settings.appTune) {settings.appTune = {};}
 
-    settings.apps.forEach((appSrc,index,array) => {
+    settings.apps.forEach((appID,index,array) => {
       // Create a sub menu and show it.
       let subMenu = {
         "" : { "title" : /*LANG*/"Tune"+" "+appSrc },
@@ -75,9 +75,9 @@
       }
       let entries = [{name:"Swipe Horizontal", id:"swipeH"}, {name:"Swipe Vertical", id:"swipeV"}, {name:"Drag Horizontal", id:"dragH"}, {name:"Drag Vertical", id:"dragV"}];
       entries.forEach((setting, index, array)=>{
-        if (!settings.appTune[app[setting.id]) {settings.appTune[settings.id] = }
+        if (!settings.apps.keys().includes(appID)) {settings.apps.[settings.id] = }
         subMenu[setting.name] = {
-          value: settings.appTune.includes(app.src),
+          value: settings.apps.keys().includes(appID),
           onchange: v => {
             if (v) {
               settings.apps.push(app.src);
