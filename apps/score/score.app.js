@@ -397,8 +397,7 @@ function handleInput(button) {
 }
 
 function draw() {
-  g.setFontAlign(0,0);
-  g.clear();
+  g.reset().setFontAlign(0,0).clear();
 
   for (let p = 0; p < 2; p++) {
     if (matchWon(p)) {
