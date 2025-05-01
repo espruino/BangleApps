@@ -524,11 +524,16 @@ class TimerFormatView {
     // Touch handler
     function touchHandler(button, xy) {
       // Increment or decrement row's format index based on the arrow tapped
+
+      // Enlarge tap area by this amount in the X direction to make it
+      // easier to hit
+      const x_tolerance = 20;
+
       for (let row_id of ROW_IDS) {
         for (let btn_id of ['prev', 'next']) {
           let elem = row_id + '.' + btn_id;
-          if (xy.x >= this.layout[elem].x
-              && xy.x <= this.layout[elem].x + this.layout[elem].w
+          if (xy.x >= this.layout[elem].x - x_tolerance
+              && xy.x <= this.layout[elem].x + this.layout[elem].w + x_tolerance
               && xy.y >= this.layout[elem].y
               && xy.y <= this.layout[elem].y + this.layout[elem].h) {
             if (btn_id === 'prev') {
