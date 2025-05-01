@@ -20,14 +20,7 @@ E.showMenu = function (items) {
     var menuItems = Object.keys(items).filter(function (x) { return x.length; });
     var fontHeight = options.fontHeight || 25;
     var selected = options.scroll || options.selected || 0;
-    var ar = Bangle.appRect;
-    g.reset().clearRect(ar);
-    var x = ar.x;
-    var x2 = ar.x2;
-    var y = ar.y;
-    var y2 = ar.y2 - 12;
-    if (options.title)
-        y += 22;
+    g.reset().clearRect(Bangle.appRect);
     var lastIdx = 0;
     var selectEdit = undefined;
     var scroller = {
@@ -36,6 +29,7 @@ E.showMenu = function (items) {
     var nameScroller = null;
     var drawLine = function (name, v, item, idx, x, y, nameScroll) {
         if (nameScroll === void 0) { nameScroll = 0; }
+        var x2 = Bangle.appRect.x2;
         var hl = (idx === selected && !selectEdit);
         if (g.theme.dark) {
             fillRectRnd(x, y, x2, y + fontHeight - 3, 7, hl ? g.theme.bgH : g.theme.bg + 40);
@@ -74,6 +68,12 @@ E.showMenu = function (items) {
     };
     var l = {
         draw: function (rowmin, rowmax) {
+            var _a = Bangle.appRect, x = _a.x, x2 = _a.x2, y = _a.y, y2 = _a.y2;
+            if (y === 0)
+                y = 24;
+            if (options.title)
+                y += 22;
+            y2 -= 12;
             if (nameScroller)
                 clearInterval(nameScroller), nameScroller = null;
             var rows = 0 | Math.min((y2 - y) / fontHeight, menuItems.length);
