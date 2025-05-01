@@ -11,17 +11,17 @@
   }
 
   // Convert settings when coming from ver < 4
-  function convertSettings() {
-    if ("array" === typeof(settings.apps)) {
+  function convertAppsArrayToObject() {
+    if (Array.isArray(settings.apps)) {
       let newObject = {};
       settings.apps.forEach((source)=>{
-      let idExtractedFromSource = source.split(".")[0];
+        let idExtractedFromSource = source.split(".")[0];
         newObject[idExtractedFromSource] = {};
       })
       settings.apps = newObject;
     }
   }
-  convertSettings();
+  convertAppsArrayToObject();
 
   function appMenu() {
     let menu = {
@@ -34,10 +34,10 @@
       return 0;
     }).forEach(app => {
       menu[app.name] = {
-        value: settings.apps.keys().includes(app.id),
+        value: Object.keys(settings.apps).includes(app.id),
         onchange: v => {
           if (v) {
-            if (!settings.apps[app.id] || settings.apps[app.id].keys().length===0) {
+            if (!settings.apps[app.id] || Object.keys(settings.apps[app.id]).length===0) {
                 settings.apps[app.id] = {"swipeH":true, "swipeV":true, "dragH":true, "dragV":true};
               }
           } else {
@@ -65,38 +65,32 @@
       /*LANG*/'Select apps': () => appMenu(),
     };
 
-    if (!settings.appTune) {settings.appTune = {};}
-
-    settings.apps.forEach((appID,index,array) => {
+    Object.keys(settings.apps).forEach((appID) => {
       // Create a sub menu and show it.
       let subMenu = {
-        "" : { "title" : /*LANG*/"Tune"+" "+appSrc },
+        "" : { "title" : /*LANG*/"Tune"+" "+appID },
         "< Back" : () => { writeSettings(); mainMenu();}
       }
-      let entries = [{name:"Swipe Horizontal", id:"swipeH"}, {name:"Swipe Vertical", id:"swipeV"}, {name:"Drag Horizontal", id:"dragH"}, {name:"Drag Vertical", id:"dragV"}];
-      entries.forEach((setting, index, array)=>{
-        if (!settings.apps.keys().includes(appID)) {settings.apps.[settings.id] = }
+      let subMenuEntries = [{name:"Swipe Horizontal", id:"swipeH"}, {name:"Swipe Vertical", id:"swipeV"}, {name:"Drag Horizontal", id:"dragH"}, {name:"Drag Vertical", id:"dragV"}];
+      subMenuEntries.forEach((setting)=>{
+        if (!Object.keys(settings.apps).includes(appID)) {settings.apps[appID] = {"swipeH":true, "swipeV":true, "dragH":true, "dragV":true}}
         subMenu[setting.name] = {
-          value: settings.apps.keys().includes(appID),
+          value: settings.apps[appID][setting.id],
           onchange: v => {
             if (v) {
-              settings.apps.push(app.src);
+              settings.apps[appID][setting.id] = true;
             } else {
-              const idx = settings.apps.indexOf(app.src);
-              if (idx !== -1) {
-                settings.apps.splice(idx, 1);
-              }
+              settings.apps[appID][setting.id] = false;
             }
           }
         };
-
       })
 
-      menu[appSrc] = ()=>E.showMenu(subMenu);
+      menu[appID] = ()=>E.showMenu(subMenu);
     });
     
     E.showMenu(menu);
   }
 
   mainMenu();
-})
+})(()=>{}) // Call with empty back fn when developing.
