@@ -2,3 +2,5 @@
 0.02: Fix reset of progress bars on midnight. Fix display of 100k+ steps.
 0.03: Added option to display weather.
 0.04: Added option to display live updates of step count.
+0.05: Reset graphics before initial clearing of the screen. Helps in some
+      situations if using fastload utils.
