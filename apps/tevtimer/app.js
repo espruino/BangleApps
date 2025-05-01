@@ -31,7 +31,9 @@ const FONT = {
     'current hh:mm': '12x20',
     'time hh:mm': '12x20',
 
+    'start auto': '12x20',
     'current auto': '12x20',
+    'time auto': '12x20',
 
     'name': '12x20',
 
@@ -47,7 +49,9 @@ const FONT = {
     'current hh:mm': 'Vector:48x42',
     'time hh:mm': 'Vector:56x42',
 
+    'start auto': 'Vector:34x42',
     'current auto': 'Vector:34x42',
+    'time auto': 'Vector:24x42',
 
     'name': 'Vector:24x42',
 
@@ -63,7 +67,9 @@ const FONT = {
     'current hh:mm': 'Vector:48x56',
     'time hh:mm': 'Vector:56x56',
 
+    'start auto': 'Vector:34x56',
     'current auto': 'Vector:34x56',
+    'time auto': 'Vector:24x56',
 
     'name': 'Vector:24x56',
 
@@ -74,11 +80,13 @@ const FONT = {
 // List of format IDs available in the format menu
 // (in the order they are displayed in the menu)
 const FORMAT_MENU = [
+  'start auto',
   'start hh:mm:ss',
   'start hh:mm',
   'current auto',
   'current hh:mm:ss',
   'current hh:mm',
+  'time auto',
   'time hh:mm:ss',
   'time hh:mm',
   'name',
@@ -87,11 +95,13 @@ const FORMAT_MENU = [
 // Mapping of format IDs to their human-friendly names displayed in the
 // format menu
 const FORMAT_DISPLAY = {
+  'start auto': 'Start Auto',
   'start hh:mm:ss': 'Start HMS',
   'start hh:mm': 'Start HM',
   'current auto': 'Curr Auto',
   'current hh:mm:ss': 'Curr HMS',
   'current hh:mm': 'Curr HM',
+  'time auto': 'Time Auto',
   'time hh:mm:ss': 'Time HMS',
   'time hh:mm': 'Time HM',
   'name': 'Name',
@@ -345,9 +355,13 @@ class TimerView {
         const running = this.timer.is_running();
 
         let mode = tt.SETTINGS.format[id];
-        // Special handling for “auto” modes
-        if (mode == 'current auto') {
+        // Special handling for “auto” formats
+        if (mode == 'start auto') {
+          mode = Bangle.isLocked() ? 'start hh:mm' : 'start hh:mm:ss';
+        } else if (mode == 'current auto') {
           mode = Bangle.isLocked() ? 'current hh:mm' : 'current hh:mm:ss';
+        } else if (mode == 'time auto') {
+          mode = Bangle.isLocked() ? 'time hh:mm' : 'time hh:mm:ss';
         }
 
         if (mode == 'start hh:mm:ss') {
