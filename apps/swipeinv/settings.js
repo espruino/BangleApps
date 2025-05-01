@@ -38,7 +38,7 @@
         onchange: v => {
           if (v) {
             if (!settings.apps[app.id] || Object.keys(settings.apps[app.id]).length===0) {
-                settings.apps[app.id] = {"swipeH":true, "swipeV":true, "dragH":true, "dragV":true};
+                settings.apps[app.id] = {"name":app.name, "swipeH":true, "swipeV":true, "dragH":true, "dragV":true};
               }
           } else {
             if (settings.apps[app.id]) {delete settings.apps[app.id];}
@@ -86,7 +86,7 @@
         };
       })
 
-      menu[appID] = ()=>E.showMenu(subMenu);
+      menu[settings.apps[appID].name] = ()=>E.showMenu(subMenu);
     });
     
     E.showMenu(menu);
