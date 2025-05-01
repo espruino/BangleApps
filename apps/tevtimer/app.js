@@ -354,20 +354,20 @@ class TimerView {
         const elem = this.layout[id];
         const running = this.timer.is_running();
 
-        let mode = tt.SETTINGS.format[id];
+        let format = tt.SETTINGS.format[id];
         // Special handling for “auto” formats
-        if (mode == 'start auto') {
-          mode = Bangle.isLocked() ? 'start hh:mm' : 'start hh:mm:ss';
-        } else if (mode == 'current auto') {
-          mode = Bangle.isLocked() ? 'current hh:mm' : 'current hh:mm:ss';
-        } else if (mode == 'time auto') {
-          mode = Bangle.isLocked() ? 'time hh:mm' : 'time hh:mm:ss';
+        if (format == 'start auto') {
+          format = Bangle.isLocked() ? 'start hh:mm' : 'start hh:mm:ss';
+        } else if (format == 'current auto') {
+          format = Bangle.isLocked() ? 'current hh:mm' : 'current hh:mm:ss';
+        } else if (format == 'time auto') {
+          format = Bangle.isLocked() ? 'time hh:mm' : 'time hh:mm:ss';
         }
 
-        if (mode == 'start hh:mm:ss') {
+        if (format == 'start hh:mm:ss') {
           elem.label = tt.format_duration(this.timer.to_msec(this.timer.origin), true);
 
-        } else if (mode == 'current hh:mm:ss') {
+        } else if (format == 'current hh:mm:ss') {
           elem.label = tt.format_duration(this.timer.to_msec(), true);
           if (running) {
             update_interval = Math.min(
@@ -376,17 +376,17 @@ class TimerView {
             );
           }
 
-        } else if (mode == 'time hh:mm:ss') {
+        } else if (format == 'time hh:mm:ss') {
           elem.label = locale.time(new Date()).trim();
           update_interval = Math.min(
             update_interval,
             next_time_update(1000, Date.now(), 1)
           );
 
-        } else if (mode == 'start hh:mm') {
+        } else if (format == 'start hh:mm') {
           elem.label = tt.format_duration(this.timer.to_msec(this.timer.origin), false);
 
-        } else if (mode == 'current hh:mm') {
+        } else if (format == 'current hh:mm') {
           elem.label = tt.format_duration(this.timer.to_msec(), false);
           if (running) {
             // Update every minute for current HM when running
@@ -396,18 +396,18 @@ class TimerView {
             );
           }
 
-        } else if (mode == 'time hh:mm') {
+        } else if (format == 'time hh:mm') {
           elem.label = locale.time(new Date(), 1).trim();
           update_interval = Math.min(
             update_interval,
             next_time_update(60000, Date.now(), 1)
           );
 
-        } else if (mode == 'name') {
+        } else if (format == 'name') {
           elem.label = this.timer.display_name();
         }
 
-        elem.font = row_font(id, mode);
+        elem.font = row_font(id, format);
         this.layout.clear(elem);
         this.layout.render(elem);
       }
