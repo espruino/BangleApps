@@ -93,4 +93,4 @@
   }
 
   mainMenu();
-})(()=>{}) // Call with empty back fn when developing.
+})
