@@ -5,7 +5,9 @@
   }, require("Storage").readJSON("swipeinv.json", true) || {});
 
   let getAppIdFromSrc = ()=> {
-    return global.__FILE__ && global.__FILE__.split(".")[0];
+    if (!global.__FILE__ || global.__FILE__===".bootcde") {
+      return require("Storage").readJSON("setting.json",true).clock
+    } else {return global.__FILE__.split(".")[0];}
   }
 
   setTimeout(() => { // Timeout so we prepend listeners late, hopefully after all other listerners were added.
