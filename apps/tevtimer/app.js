@@ -338,21 +338,22 @@ class TimerView {
 
     if (!item || item == 'timer') {
 
-      this._update_fonts();
-
       let update_interval = Infinity;
 
       for (var id of ROW_IDS) {
         const elem = this.layout[id];
         const running = this.timer.is_running();
+
         let mode = tt.SETTINGS.format[id];
+        // Special handling for “auto” modes
+        if (mode == 'current auto') {
+          mode = Bangle.isLocked() ? 'current hh:mm' : 'current hh:mm:ss';
+        }
+
         if (mode == 'start hh:mm:ss') {
           elem.label = tt.format_duration(this.timer.to_msec(this.timer.origin), true);
 
-        } else if (
-          mode == 'current hh:mm:ss'
-          || (mode == 'current auto' && !Bangle.isLocked())
-        ) {
+        } else if (mode == 'current hh:mm:ss') {
           elem.label = tt.format_duration(this.timer.to_msec(), true);
           if (running) {
             update_interval = Math.min(
@@ -371,10 +372,7 @@ class TimerView {
         } else if (mode == 'start hh:mm') {
           elem.label = tt.format_duration(this.timer.to_msec(this.timer.origin), false);
 
-        } else if (
-          mode == 'current hh:mm'
-          || (mode == 'current auto' && Bangle.isLocked())
-        ) {
+        } else if (mode == 'current hh:mm') {
           elem.label = tt.format_duration(this.timer.to_msec(), false);
           if (running) {
             // Update every minute for current HM when running
@@ -395,6 +393,7 @@ class TimerView {
           elem.label = this.timer.display_name();
         }
 
+        elem.font = row_font(id, mode);
         this.layout.clear(elem);
         this.layout.render(elem);
       }
@@ -423,15 +422,6 @@ class TimerView {
         this.timer.is_running() ? 'Pause' : 'Start';
       this.layout.render(this.layout.buttons);
       update_status_widget(this.timer);
-    }
-  }
-
-  _update_fonts() {
-    for (var id of ROW_IDS) {
-      const elem = this.layout[id];
-      elem.font = row_font(id, tt.SETTINGS.format[id]);
-      this.layout.clear(elem);
-      this.layout.render(elem);
     }
   }
 
