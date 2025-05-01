@@ -2,6 +2,12 @@ require('Font5x9Numeric7Seg').add(Graphics);
 require('Font7x11Numeric7Seg').add(Graphics);
 require('FontTeletext5x9Ascii').add(Graphics);
 
+const KEY_SCORE_L = 0;
+const KEY_SCORE_R = 1;
+const KEY_MENU = 2;
+const KEY_TENNIS_H = 3;
+const KEY_TENNIS_L = 4;
+
 let settingsMenu = eval(require('Storage').read('score.settings.js'));
 let settings = settingsMenu(null, null, true);
 
@@ -44,45 +50,55 @@ function setupDisplay() {
 }
 
 function setupInputWatchers(init) {
-  Bangle.setUI('updown', v => {
-    if (v) {
-      if (isBangle1) {
+  Bangle.setUI('updown',
+    isBangle1
+    ? (v => {
+      if (v) {
         let i = settings.mirrorScoreButtons ? v : v * -1;
         handleInput(Math.floor((i+2)/2));
-      } else {
+      }
+    })
+    : (v => {
+      if (v) {
+        // +1 -> 4
+        // -1 -> 3
         handleInput(Math.floor((v+2)/2)+3);
       }
-    }
-  });
+    })
+  );
   if (init) {
-    if (isBangle1) {
-      setWatch(() => handleInput(2), BTN2, { repeat: true });
-    }
-    Bangle.on('touch', (b, e) => {
-      if (isBangle1) {
+    setWatch(
+      () => handleInput(KEY_MENU),
+      isBangle1 ? BTN2 : BTN,
+      { repeat: true },
+    );
+    Bangle.on('touch',
+      isBangle1
+      ? ((b, e) => {
         if (b === 1) {
-          handleInput(3);
+          handleInput(KEY_TENNIS_H);
         } else {
-          handleInput(4);
+          handleInput(KEY_TENNIS_L);
         }
-      } else {
+      })
+      : ((b, e) => {
         if (e.y > 18) {
           if (e.x < getXCoord(w => w/2)) {
-            handleInput(0);
+            handleInput(KEY_SCORE_L);
           } else {
-            handleInput(1);
+            handleInput(KEY_SCORE_R);
           }
         } else {
-          // long press except if we have the menu opened or we are in the emulator (that doesn't 
+          // long press except if we have the menu opened or we are in the emulator (that doesn't
           // seem to support long press events)
           if (e.type === 2 || settingsMenuOpened || process.env.BOARD === 'EMSCRIPTEN2') {
-            handleInput(2);
+            handleInput(KEY_MENU);
           } else {
             let p = null;
-            
+
             if (matchWon(0)) p = 0;
             else if (matchWon(1)) p = 1;
-            
+
             // display full instructions if there is space available, or brief ones otherwise
             if (p === null) {
               drawInitialMsg();
@@ -97,8 +113,8 @@ function setupInputWatchers(init) {
             }
           }
         }
-      }
-    });
+      })
+    );
   }
 }
 
@@ -137,14 +153,13 @@ function showSettingsMenu() {
     if (reset) {
       setupMatch();
     }
-    if (isBangle1 || (!isBangle1 && back)) {
-      settingsMenuOpened = null;
 
-      draw();
+    settingsMenuOpened = null;
 
-      setupDisplay();
-      setupInputWatchers();
-    }
+    draw();
+
+    setupDisplay();
+    setupInputWatchers();
   }, function (msg) {
     switch (msg) {
       case 'end_set':
@@ -213,8 +228,8 @@ function tiebreakWon(set, player) {
   let p2Score = scores[set][3+~~!player];
 
   // reachedMaxScore || (winScoreReached && isTwoAhead);
-  return (settings.maxScoreTiebreakEnableMaxScore && pScore >= tiebreakMaxScore()) || 
-    ((pScore >= settings.maxScoreTiebreakWinScore) && 
+  return (settings.maxScoreTiebreakEnableMaxScore && pScore >= tiebreakMaxScore()) ||
+    ((pScore >= settings.maxScoreTiebreakWinScore) &&
      (!settings.maxScoreTiebreakEnableTwoAhead || pScore - p2Score >= 2));
 }
 
@@ -224,8 +239,8 @@ function setWon(set, player) {
 
   // (tiebreak won / max score) || (winScoreReached && isTwoAhead) || manuallyEndedWon
   return (
-    (settings.enableMaxScoreTiebreak ? tiebreakWon(set, player) : settings.enableMaxScore && pScore >= maxScore()) || 
-      (pScore >= settings.winScore && (!settings.enableTwoAhead || pScore - p2Score >= 2)) || 
+    (settings.enableMaxScoreTiebreak ? tiebreakWon(set, player) : settings.enableMaxScore && pScore >= maxScore()) ||
+      (pScore >= settings.winScore && (!settings.enableTwoAhead || pScore - p2Score >= 2)) ||
       (cSet > set ? pScore > p2Score : false)
   );
 }
@@ -344,7 +359,7 @@ function handleInput(button) {
   // console.log('button:', button);
   if (settingsMenuOpened) {
 
-    if (!isBangle1 && button == 2) {
+    if (!isBangle1 && button == KEY_MENU) { // Bangle2 long press, hide menu
       E.showMenu();
 
       settingsMenuOpened = null;
@@ -353,21 +368,21 @@ function handleInput(button) {
 
       setupDisplay();
       setupInputWatchers();
-      
+
     }
     return;
   }
 
   switch (button) {
-    case 0:
-    case 1:
+    case KEY_SCORE_L:
+    case KEY_SCORE_R:
       score(button);
       break;
-    case 2:
+    case KEY_MENU:
       showSettingsMenu();
       return;
-    case 3:
-    case 4: {
+    case KEY_TENNIS_H:
+    case KEY_TENNIS_L: {
       let hLimit = currentSet() - setsPerPage() + 1;
       let lLimit = 0;
       let val = (button * 2 - 7);
@@ -382,8 +397,7 @@ function handleInput(button) {
 }
 
 function draw() {
-  g.setFontAlign(0,0);
-  g.clear();
+  g.reset().setFontAlign(0,0).clear();
 
   for (let p = 0; p < 2; p++) {
     if (matchWon(p)) {
