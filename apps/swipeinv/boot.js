@@ -5,6 +5,7 @@
   }, require("Storage").readJSON("swipeinv.json", true) || {});
 
   let getAppIdFromSrc = ()=> {
+    "ram"
     if (!global.__FILE__ || global.__FILE__===".bootcde") {
       return require("Storage").readJSON("setting.json",true).clock
     } else {return global.__FILE__.split(".")[0];}
@@ -14,6 +15,7 @@
     if (settings.global || Object.keys(settings.apps).length > 0) {
 
       let swipeInverter = (dirLR, dirUD, obj) => {
+        "ram"
         if (settings.global ^ Object.keys(settings.apps).includes(getAppIdFromSrc())) {
           if (!(obj && obj.inverted)) {
             E.stopEventPropagation();
@@ -28,6 +30,7 @@
       }
 
       let dragInverter = (e) => {
+        "ram"
         if (settings.global ^ Object.keys(settings.apps).includes(getAppIdFromSrc())) {
           if (!e.inverted) {
             E.stopEventPropagation();
