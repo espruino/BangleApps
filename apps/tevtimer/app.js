@@ -190,7 +190,6 @@ function update_status_widget(timer) {
   if (WIDGETS.tevtimer === undefined) {
     WIDGETS.tevtimer = {
       area: 'tr',
-      width: width,
       draw: widget_draw,
     };
   }
@@ -222,11 +221,27 @@ class TimerView {
 
     // Physical button handler
     this.listeners.button = setWatch(
-      this.start_stop_timer.bind(this),
+      () => { this.dispatch_action(tt.SETTINGS.button_act); },
       BTN,
-      {edge: 'falling', debounce: 50, repeat: true}
+      {edge: 'rising', debounce: 50, repeat: true}
     );
 
+    // Tap handler
+    function tapHandler(button, xy) {
+      // Check if the tap was in the area of the timer display
+      if (xy.y < this.layout.buttons.y) {
+        // Dispatch action specified based on left or right half of display tapped
+        if (xy.x < this.layout.row1.x + this.layout.row1.w / 2) {
+          this.dispatch_action(tt.SETTINGS.left_tap_act);
+        } else {
+          this.dispatch_action(tt.SETTINGS.right_tap_act);
+        }
+      }
+    }
+    this.listeners.tap = tapHandler.bind(this);
+    Bangle.on('touch', this.listeners.tap);
+
+    // Drag handler
     let distanceX = null;
     function dragHandler(ev) {
       if (ev.b) {
@@ -283,6 +298,7 @@ class TimerView {
       this.listeners.timer_render_timeout = null;
     }
     clearWatch(this.listeners.button);
+    Bangle.removeListener('touch', this.listeners.tap);
     Bangle.removeListener('drag', this.listeners.drag);
     clearTimeout(this.listeners.to_top_timeout);
     Bangle.removeListener('lock', this.listeners.lock);
@@ -451,6 +467,22 @@ class TimerView {
     this.render('status');
     this.render('timer');
   }
+
+  dispatch_action(action) {
+    // Execute a UI action represented by the string `action`.
+
+    if (action === 'start/stop') {
+      return this.start_stop_timer()
+
+    } else if (action === 'edit_start') {
+      // Display the timer start edit UI
+      this.stop();
+      CURRENT_UI = new TimerViewMenu(this.timer);
+      CURRENT_UI.edit_start(
+        () => { switch_UI(new TimerView(this.timer)); },
+      );
+    }
+  }
 }
 
 
@@ -553,7 +585,7 @@ class TimerFormatView {
     this.listeners.button = setWatch(
       this.ok.bind(this),
       BTN,
-      {edge: 'falling', debounce: 50, repeat: true}
+      {edge: 'rising', debounce: 50, repeat: true}
     );
   }
 
@@ -748,19 +780,21 @@ class TimerViewMenu {
     switch_UI(new TimerView(this.timer));
   }
 
-  top_menu() {
+  top_menu(back) {
     // Display the top-level menu for the timer
+    // `back` is optional and specifies the previous routine to return to
+    console.log('top_menu: ' + back);
 
     const top_menu = {
       '': {
         title: this.timer.display_name(),
-        back: this.back.bind(this)
+        back: back || (() => { this.back(); }),
       },
       'Reset': () => { E.showMenu(reset_menu); },
       'Timers': () => {
         switch_UI(new TimerMenu(tt.TIMERS, this.timer));
       },
-      'Edit': this.edit_menu.bind(this),
+      'Edit': () => { this.edit_menu() },
       'Format': () => {
         switch_UI(new TimerFormatView(this.timer));
       },
@@ -805,9 +839,11 @@ class TimerViewMenu {
     E.showMenu(top_menu);
   }
 
-  edit_menu() {
+  edit_menu(back) {
     // Display the edit menu for the timer. This can be called in
     // place of `start` to jump directly to the edit menu.
+    // `back` is optional and specifies the previous routine to return to
+    console.log('edit_menu: ' + back);
 
     let keyboard = null;
     try { keyboard = require("textinput"); } catch (e) {}
@@ -815,7 +851,7 @@ class TimerViewMenu {
     const edit_menu = {
       '': {
         title: 'Edit: ' + this.timer.display_name(),
-        back: () => { this.top_menu(); },
+        back: back || (() => { this.top_menu() }),
       },
       'Name': {
         value: this.timer.name,
@@ -829,7 +865,7 @@ class TimerViewMenu {
           }, 0);
         }
       },
-      'Start': this.edit_start.bind(this),
+      'Start': () => { this.edit_start(); },
       'At end': {
         // Option to auto-start another timer when this one ends
         format: v => v === -1
@@ -869,9 +905,11 @@ class TimerViewMenu {
     E.showMenu(edit_menu);
   }
 
-  edit_start() {
+  edit_start(back) {
     // Display the edit > start menu for the timer
     // (i.e. the timer's starting value)
+    // `back` is optional and specifies the previous routine to return to
+    console.log('edit_start: ' + back);
 
     let origin_hms = {
       h: Math.floor(this.timer.origin / 3600),
@@ -902,7 +940,7 @@ class TimerViewMenu {
       wrap_3: true,
       separator_1: ':',
       separator_2: ':',
-      back: this.edit_menu.bind(this),
+      back: back || (() => { this.edit_menu(); }),
       onchange: (h, m, s) => {
         this.timer.origin = h * 3600 + m * 60 + s;
         tt.set_timers_dirty();

@@ -318,6 +318,9 @@ const SETTINGS = Object.assign({
     'row2': 'start hh:mm:ss',
     'row3': 'current hh:mm:ss',
   },
+  'button_act': 'start/stop',
+  'left_tap_act': 'edit_start',
+  'right_tap_act': 'edit_start',
 }, Storage.readJSON(SETTINGS_FILENAME, true) || {});
 
 var TIMERS = load_timers();
