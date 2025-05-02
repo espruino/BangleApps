@@ -583,7 +583,7 @@ class TimerFormatView {
 
     // Physical button handler
     this.listeners.button = setWatch(
-      this.ok.bind(this),
+      this.cancel.bind(this),
       BTN,
       {edge: 'rising', debounce: 50, repeat: true}
     );
