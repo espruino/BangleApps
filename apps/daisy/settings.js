@@ -37,45 +37,6 @@
     let appMenu = {
       '': { 'title': 'Daisy Clock' },
       '< Back': back,
-      'Colour': {
-        value: 0 | color_options.indexOf(s.color),
-        min: 0, max: color_options.length - 1,
-        format: v => color_options[v],
-        onchange: v => {
-          s.color = color_options[v];
-          s.fg = fg_code[v];
-          s.gy = gy_code[v];
-          save();
-        },
-      },
-      'Idle Warning': {
-        value: !!s.idle_check,
-        onchange: v => {
-          s.idle_check = v;
-          save();
-        },
-      },
-      'Expected Battery Life In Days Not Percentage': {
-        value: !!s.batt_hours,
-        onchange: v => {
-          s.batt_hours = v;
-          save();
-        },
-      },
-      '12 Hr Time': {
-        value: !!s.hr_12,
-        onchange: v => {
-          s.hr_12 = v;
-          save();
-        },
-      },
-      'Hourly Buzz': {
-        value: !!s.hourly_buzz,
-        onchange: v => {
-          s.hourly_buzz = v;
-          save();
-        },
-      },
       'Ring Display': {
         value: 0 | ring_options.indexOf(s.ring),
         min: 0, max: ring_options.length - 1,
@@ -103,6 +64,45 @@
         },
       };
     } 
+    appMenu['Colour'] = {
+      value: 0 | color_options.indexOf(s.color),
+      min: 0, max: color_options.length - 1,
+      format: v => color_options[v],
+      onchange: v => {
+        s.color = color_options[v];
+        s.fg = fg_code[v];
+        s.gy = gy_code[v];
+        save();
+      },
+    };
+    appMenu['Idle Warning'] = {
+      value: !!s.idle_check,
+      onchange: v => {
+        s.idle_check = v;
+        save();
+      },
+    };
+    appMenu['Expected Battery Life In Days Not Percentage'] = {
+      value: !!s.batt_hours,
+      onchange: v => {
+        s.batt_hours = v;
+        save();
+      },
+    };
+    appMenu['12 Hr Time'] = {
+      value: !!s.hr_12,
+      onchange: v => {
+        s.hr_12 = v;
+        save();
+      },
+    };
+    appMenu['Hourly Buzz'] = {
+      value: !!s.hourly_buzz,
+      onchange: v => {
+        s.hourly_buzz = v;
+        save();
+      },
+    };
     E.showMenu(appMenu);
   }
 
