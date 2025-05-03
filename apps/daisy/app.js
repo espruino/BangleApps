@@ -136,12 +136,12 @@ function updateSunRiseSunSet(now, lat, lon, sunLeftCalcs){
   sunSet = extractTime(times.sunset);
   if (!sunLeftCalcs) return;
 
-  let sunLeft = times.dusk - dateCopy;
+  let sunLeft = times.sunset - dateCopy;
   if (sunLeft <  0) {  // If it's already night
     dateCopy.setDate(dateCopy.getDate() + 1);
     let timesTmrw = SunCalc.getTimes(dateCopy, lat, lon);
     isDaytime = false;
-    sunStart = times.dusk;
+    sunStart = times.sunset;
     sunFull = timesTmrw.sunrise - sunStart;
     sunEnd = getMinutesFromDate(timesTmrw.sunrise);
     night = getMinutesFromDate(timesTmrw.sunriseEnd);
@@ -152,7 +152,7 @@ function updateSunRiseSunSet(now, lat, lon, sunLeftCalcs){
       dateCopy.setDate(dateCopy.getDate() - 1);
       let timesYest = SunCalc.getTimes(dateCopy, lat, lon);
       isDaytime = false;
-      sunStart = timesYest.dusk;
+      sunStart = timesYest.sunset;
       sunFull = times.sunrise - sunStart;
       sunEnd = getMinutesFromDate(times.sunrise);
       night = getMinutesFromDate(times.sunriseEnd);
@@ -160,9 +160,9 @@ function updateSunRiseSunSet(now, lat, lon, sunLeftCalcs){
     else {  // We're in the middle of the day
       isDaytime = true;
       sunStart = times.sunriseEnd;
-      sunFull = times.sunset - sunStart;
-      sunEnd = getMinutesFromDate(times.sunset);
-      night = getMinutesFromDate(times.dusk);
+      sunFull = times.sunsetStart - sunStart;
+      sunEnd = getMinutesFromDate(times.sunsetStart);
+      night = getMinutesFromDate(times.sunset);
     }
   }
 }
