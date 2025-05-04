@@ -2,11 +2,11 @@
 
 Inverts swipe direction globally or per app, see settings. If global inversion is enabled, you can unselect the inversion per app and vice versa.
 
+Can invert swipe as well as drag events. This can be fine tuned for each inverted app in the settings.
+
 ## Limitations
 
-Swipe Inversion can only invert directions on apps that use `Bangle.setUI` to set up swipes. Swipes set up with `Bangle.on("swipe", ...)` is currently not managed.
-
-Swiping behavior that uses the `drag` event is not altered either.
+Swipe Inversion must sit before other swipe and drag event listeners so they don't run before the event is inverted. If a listener were to be prepended to the list of listeners after Swipe Inversion was, that listener will act on the non-inverted event.
 
 ## TODO
 
