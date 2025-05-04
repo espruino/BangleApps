@@ -327,7 +327,9 @@ function drawGaugeImage(date) {
   }
   if (end !== prevRing.end || start !== prevRing.start || ring_max !== prevRing.max) {
     drawRing(start, end, ring_max);
-    prevRing = {start: start, end: end, max: ring_max};
+    prevRing.start = start;
+    prevRing.end = end;
+    prevRing.max = ring_max;
   }
   log_debug("Start: "+ start + "  end: " +end);
 }
