@@ -94,7 +94,7 @@ function correct_season(letter, dir) {
 }
 
 function get_zambretti_letter(pressure, dir) {
-  let table = () => {
+  let table = (() => {
     if (dir < 0) { // Barometer Falling
       return ZAMBRETTI_FALLING;
     } else if (dir == 0) { // Barometer Steady
@@ -102,7 +102,7 @@ function get_zambretti_letter(pressure, dir) {
     } else { // Barometer Rising
       return ZAMBRETTI_RISING;
     }
-  }();
+  })();
 
   const closest = Object.keys(table).reduce(function(prev, curr) {
     return (Math.abs(curr - pressure) < Math.abs(prev - pressure) ? curr : prev);
