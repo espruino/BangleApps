@@ -21,8 +21,11 @@ let pal2; // palette for 50-100%
 const infoLine = (3*h/4) - 6;
 const infoWidth = 56;
 const infoHeight = 11;
+const textStartWidth = 28;
+const textStartHeight = 44;
 const sec_update = 1000; // This ms between updates when the ring is in Seconds mode
 var drawingSteps = false;
+var prevRing = {start: null, end: null, max: null};
 
 function log_debug(o) {
   //print(o);
@@ -322,7 +325,10 @@ function drawGaugeImage(date) {
     start = max - end;
     end = max;
   }
-  drawRing(start, end, ring_max);
+  if (end !== prevRing.end || start !== prevRing.start || ring_max !== prevRing.max) {
+    drawRing(start, end, ring_max);
+    prevRing = {start: start, end: end, max: ring_max};
+  }
   log_debug("Start: "+ start + "  end: " +end);
 }
 
@@ -340,7 +346,7 @@ function drawClock() {
 
   g.reset();
   g.setColor(g.theme.bg);
-  g.fillRect(0, 0, w, h);
+  g.fillRect(textStartWidth, textStartHeight, w-textStartWidth, h-textStartHeight); // Clears the text within the circle
   drawGaugeImage(date);
   setLargeFont();
 

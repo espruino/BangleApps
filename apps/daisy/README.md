@@ -23,7 +23,7 @@ See [#1248](https://github.com/espruino/BangleApps/issues/1248)
 * In the settings, the ring can be set to:
   *  Hours - Displays the ring as though it's the hour hand on an analog clock.
   *  Minutes - Displays the ring as though it's the minute hand on an analog clock.
-  *  Seconds - Displays the ring as though it's the seconds hand on an analog clock.
+  *  Seconds - Displays the ring as though it's the seconds hand on an analog clock. This option uses far more battery than any other option as it updates the screen 60 times more often.
   *  Day - Displays the ring as how much of the day is left. Functionally, it fills the ring half as quickly as the Hours option.
   *  Steps - Displays the ring as the amount of steps taken that day out of Step Target setting.
   *  Battery - Displays the ring as the amount of battery percentage left.
