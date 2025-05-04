@@ -10,10 +10,11 @@ Swiping behavior that uses the `drag` event is not altered either.
 
 ## TODO
 
-- Try to handle swipes from `Bangle.on("swipe", ...)`
-  - alternatively refactor apps using that to only use `Bangle.setUI` for setting up swipes.
-    - Think about how to accommodate e.g. `touch` or `back` handlers set up in `Layout` library calls. They are removed if we refactor some `Bangle.on("swipe", ...)` to `Bangle.setUI`. (Is it maybe resolved if we call `Bangle.setUI` before the `Layout` call? - have not tested that yet.)
 - Add bootloader apps and widgets to the list of apps that can be individually toggled in settings?
+  - How? Right now we look at `global.__FILE__` the active app in order to determine which events to invert. That doesn't work for widgets and bootcode. In fact they will probably be inverted along with the currently running app.
+- Refactor to invert at time of registering the event listeners?
+  - This would make it so `swipeinv` does not depend on being first in the call list of event listeners.
+  - Some work towards this was done in [thyttan@5cbb72e](https://github.com/thyttan/BangleApps/commit/5cbb72ee55f7fb7d335ffba228575a862a0ae612) but it it doesn't work yet.
 
 ## Requests
 
