@@ -1145,15 +1145,17 @@ class TimerMenu {
 
 
 function switch_UI(new_UI) {
-  // Switch from one UI to another. The new UI instance is passed as a
-  // parameter. The old UI is stopped and cleaned up, and the new
-  // UI is started.
+  // Switch from one UI mode to another (after current call stack
+  // completes). The new UI instance is passed as a parameter. The old
+  // UI is stopped and cleaned up, and the new UI is started.
 
-  if (CURRENT_UI) {
-    CURRENT_UI.stop();
-  }
-  CURRENT_UI = new_UI;
-  CURRENT_UI.start();
+  setTimeout(() => {
+    if (CURRENT_UI) {
+      CURRENT_UI.stop();
+    }
+    CURRENT_UI = new_UI;
+    CURRENT_UI.start();
+  }, 0);
 }
 
 
