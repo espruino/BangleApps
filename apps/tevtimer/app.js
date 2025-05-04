@@ -998,12 +998,18 @@ class TimerEditMenu {
             keyboard.input({text:this.timer.name}).then(text => {
               this.timer.name = text;
               tt.set_timers_dirty();
-              switch_UI(new TimerViewMenu(this.timer));
+              switch_UI(this);
             });
           }, 0);
         }
       },
-      'Start': () => { switch_UI(new TimerEditStart(this.timer)); },
+      'Start': () => {
+        switch_UI(new TimerEditStart(
+          this.timer,
+          () => { switch_UI(this); }
+        )
+      );
+      },
       'At end': {
         // Option to auto-start another timer when this one ends
         format: v => v === -1
