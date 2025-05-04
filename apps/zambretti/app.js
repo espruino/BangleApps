@@ -143,7 +143,7 @@ const layout = new Layout({
     {type:"txt", font:"12%", id:"forecast", filly: 1, wrap: 1, width: Bangle.appRect.w, pad: 1},
     {type:"h", c:[
       {type: 'v', c:[
-        {type:"txt", font:"9%", label:/*LANG*/"Pressure  ", pad: 3, halign: -1},
+        {type:"txt", font:"9%", label:/*LANG*/"Pressure", pad: 3, halign: -1},
         {type:"txt", font:"9%", label:/*LANG*/"Difference", pad: 3, halign: -1},
         {type:"txt", font:"9%", label:/*LANG*/"Temperature", pad: 3, halign: -1},
       ]},
