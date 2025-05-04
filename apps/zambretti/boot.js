@@ -8,18 +8,6 @@
     return !(pressure == undefined || pressure <= 0);
   };
 
-  const calculcate3hAveragePressure = () => {
-    if (history3 != undefined && history3.length > 0) {
-      let sum = 0;
-      for (let i = 0; i < history3.length; i++) {
-        sum += history3[i].p;
-      }
-      threeHourAvrPressure = sum / history3.length;
-    } else {
-      threeHourAvrPressure = undefined;
-    }
-  };
-
   const handlePressureValue = (pressure) => {
     if (pressure == undefined || pressure <= 0) {
       return;
@@ -46,8 +34,6 @@
 
     // write data to storage
     require('Storage').writeJSON(LOG_FILE, history3);
-
-    calculcate3hAveragePressure();
   };
 
   const barometerPressureHandler = (e) => {
