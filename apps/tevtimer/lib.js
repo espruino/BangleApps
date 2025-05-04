@@ -312,6 +312,19 @@ function schedule_save_settings() {
 }
 
 // Default settings
+
+// List of actions in menu, in order presented
+const ACTIONS = [
+  'start/stop',
+  'edit_start',
+];
+
+// Map of action IDs to their UI displayed names
+const ACTION_NAMES = {
+  'start/stop': 'Start/stop',
+  'edit_start': 'Edit start',
+};
+
 const SETTINGS = Object.assign({
   'format': {
     'row1': 'time hh:mm',
@@ -446,7 +459,7 @@ E.on('kill', () => { save_timers(); });
 E.on('kill', () => { save_settings(); });
 
 
-exports = {TIMERS, SETTINGS,
+exports = {TIMERS, SETTINGS, ACTIONS, ACTION_NAMES,
            mod, ceil,
            next_id, find_timer_by_id,
            load_timers, save_timers, schedule_save_timers, save_settings, schedule_save_settings,

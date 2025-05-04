@@ -807,6 +807,7 @@ class TimerViewMenu {
         switch_UI(new TimerEditMenu(new_timer));
       },
       'Delete': () => { switch_UI(new DeleteTimer(this.timer)); },
+      'Settings': () => { switch_UI(new AppSettingsMenu(this.timer)); },
     };
     if (tt.TIMERS.length <= 1) {
       // Prevent user deleting last timer
@@ -1133,6 +1134,76 @@ class TimerMenu {
       menu[timer.display_status() + ' ' + timer.display_name()] =
         () => { this.back(timer, this.focused_timer); };
     });
+    E.showMenu(menu);
+  }
+
+  stop() {
+    // Shut down the UI and clean up listeners and handlers
+
+    E.showMenu();
+  }
+}
+
+
+class AppSettingsMenu {
+  // UI for displaying the app settings menu.
+
+  constructor(timer, back) {
+    // `timer` is the last focused timer object (only used for default
+    // back handler described below).
+    // `back` is a function that activates the previous UI to
+    // return to when the menu is exited. If not specified, a default
+    // back handler is used that returns to the TimerViewMenu for the
+    // last-focused timer.
+    this.timer = timer;
+    this.back = back || this._back;
+  }
+
+  _back() {
+    // Default back handler
+    switch_UI(new TimerViewMenu(this.timer));
+  }
+
+  start() {
+    // Display the app settings menu
+
+    const menu = {
+      '': {
+        title: 'Settings',
+        back: () => { this.back(); }
+      },
+      'Button': {
+        value: tt.ACTIONS.indexOf(tt.SETTINGS.button_act),
+        min: 0,
+        max: tt.ACTIONS.length - 1,
+        format: v => tt.ACTION_NAMES[tt.ACTIONS[v]],
+        onchange: v => {
+          tt.SETTINGS.button_act = tt.ACTIONS[v];
+          tt.set_settings_dirty();
+        }
+      },
+      'Tap left': {
+        value: tt.ACTIONS.indexOf(tt.SETTINGS.left_tap_act),
+        min: 0,
+        max: tt.ACTIONS.length - 1,
+        format: v => tt.ACTION_NAMES[tt.ACTIONS[v]],
+        onchange: v => {
+          tt.SETTINGS.left_tap_act = tt.ACTIONS[v];
+          tt.set_settings_dirty();
+        }
+      },
+      'Tap right': {
+        value: tt.ACTIONS.indexOf(tt.SETTINGS.right_tap_act),
+        min: 0,
+        max: tt.ACTIONS.length - 1,
+        format: v => tt.ACTION_NAMES[tt.ACTIONS[v]],
+        onchange: v => {
+          tt.SETTINGS.right_tap_act = tt.ACTIONS[v];
+          tt.set_settings_dirty();
+        }
+      },
+    };
+
     E.showMenu(menu);
   }
 
