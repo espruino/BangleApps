@@ -476,13 +476,43 @@ class TimerView {
     if (action === 'start/stop') {
       this.start_stop_timer()
 
-    } else if (action === 'edit_start') {
+    } else if (action === 'reset') {
       switch_UI(
-        new TimerEditStart(
+        new ResetTimer(
           this.timer,
           () => { switch_UI(new TimerView(this.timer)); }
         )
       );
+
+    } else if (action === 'timers') {
+      switch_UI(
+        new TimerMenu(
+          tt.TIMERS,
+          this.timer,
+          (timer, focused_timer) => {
+            switch_UI(new TimerView(timer || focused_timer));
+          }
+        )
+      );
+
+    } else if (action == 'edit') {
+      switch_UI(new TimerEditMenu(
+        this.timer,
+        () => { switch_UI(new TimerView(this.timer)); }
+      ));
+
+    } else if (action === 'edit_start') {
+      switch_UI(new TimerEditStart(
+        this.timer,
+        () => { switch_UI(new TimerView(this.timer)); }
+      ));
+
+    } else if (action == 'format') {
+      switch_UI(new TimerFormatView(
+        this.timer,
+        () => { switch_UI(new TimerView(this.timer)); }
+      ));
+
     }
   }
 }

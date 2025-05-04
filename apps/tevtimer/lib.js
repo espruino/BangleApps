@@ -316,13 +316,21 @@ function schedule_save_settings() {
 // List of actions in menu, in order presented
 const ACTIONS = [
   'start/stop',
+  'reset',
+  'timers',
+  'edit',
   'edit_start',
+  'format',
 ];
 
 // Map of action IDs to their UI displayed names
 const ACTION_NAMES = {
   'start/stop': 'Start/stop',
+  'reset': 'Reset',
+  'timers': 'Timers',
+  'edit': 'Edit timer',
   'edit_start': 'Edit start',
+  'format': 'Format',
 };
 
 const SETTINGS = Object.assign({
