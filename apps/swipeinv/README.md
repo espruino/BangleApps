@@ -11,10 +11,11 @@ Swiping behavior that uses the `drag` event is not altered either.
 ## TODO
 
 - Add bootloader apps and widgets to the list of apps that can be individually toggled in settings?
-  - How? Right now we look at `global.__FILE__` the active app in order to determine which events to invert. That doesn't work for widgets and bootcode. In fact they will probably be inverted along with the currently running app.
+  - How? Right now we look at `global.__FILE__` to find the active app in order to determine which events to invert. That doesn't work for widgets and bootcode.
+    - In fact they will probably be inverted along with the currently running app.
 - Refactor to invert at time of registering the event listeners?
   - This would make it so `swipeinv` does not depend on being first in the call list of event listeners.
-  - Some work towards this was done in [thyttan@5cbb72e](https://github.com/thyttan/BangleApps/commit/5cbb72ee55f7fb7d335ffba228575a862a0ae612) but it it doesn't work yet.
+  - Some work towards this was done in [thyttan@5cbb72e](https://github.com/thyttan/BangleApps/commit/5cbb72ee55f7fb7d335ffba228575a862a0ae612) but it doesn't work yet.
 
 ## Requests
 
@@ -26,3 +27,4 @@ nxdefiant
 
 ## Contributors
 
+thyttan
