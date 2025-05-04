@@ -38,44 +38,44 @@ Z: /*LANG*/'Stormy, much rain',
 };
 
 const ZAMBRETTI_FALLING = {
-	1050: 'A',
-	1040: 'B',
-	1024: 'C',
-	1018: 'H',
-	1010: 'O',
-	1004: 'R',
-	 998: 'U',
-	 991: 'V',
-	 985: 'X',
+1050: 'A',
+1040: 'B',
+1024: 'C',
+1018: 'H',
+1010: 'O',
+1004: 'R',
+ 998: 'U',
+ 991: 'V',
+ 985: 'X',
 };
 
 const ZAMBRETTI_STEADY = {
-	1033: 'A',
-	1023: 'B',
-	1014: 'E',
-	1008: 'K',
-	1000: 'N',
-	 994: 'P',
-	 989: 'S',
-	 981: 'W',
-	 974: 'X',
-	 960: 'Z',
+1033: 'A',
+1023: 'B',
+1014: 'E',
+1008: 'K',
+1000: 'N',
+ 994: 'P',
+ 989: 'S',
+ 981: 'W',
+ 974: 'X',
+ 960: 'Z',
 };
 
 const ZAMBRETTI_RISING = {
-	1030: 'A',
-	1022: 'B',
-	1012: 'C',
-	1007: 'F',
-	1000: 'G',
-	 995: 'I',
-	 990: 'J',
-	 984: 'L',
-	 978: 'M',
-	 970: 'Q',
-	 965: 'T',
-	 959: 'Y',
-	 947: 'Z',
+1030: 'A',
+1022: 'B',
+1012: 'C',
+1007: 'F',
+1000: 'G',
+ 995: 'I',
+ 990: 'J',
+ 984: 'L',
+ 978: 'M',
+ 970: 'Q',
+ 965: 'T',
+ 959: 'Y',
+ 947: 'Z',
 };
 
 function correct_season(letter, dir) {
@@ -132,7 +132,7 @@ function showMenu() {
         loadSettings();
         showMenu();
       }),
-    'Plot history': () => {E.showMenu(); history();},
+    'Plot history': () => {E.showMenu(); plot();},
   };
   E.showMenu(menu);
 }
@@ -181,7 +181,7 @@ function show() {
   Bangle.getPressure().then(p =>{if (p) draw(p.temperature);});
 }
 
-function history() {
+function plot() {
   const interval = 15; // minutes
   const history3 = require('Storage').readJSON("zambretti.log.json", true) || []; // history of recent 3 hours
 

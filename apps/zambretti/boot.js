@@ -4,11 +4,11 @@
   const history3 = require('Storage').readJSON(LOG_FILE, true) || []; // history of recent 3 hours
   let currentPressures = [];
 
-  isValidPressureValue = (pressure) => {
+  const isValidPressureValue = (pressure) => {
     return !(pressure == undefined || pressure <= 0);
   };
 
-  calculcate3hAveragePressure = () => {
+  const calculcate3hAveragePressure = () => {
     if (history3 != undefined && history3.length > 0) {
       let sum = 0;
       for (let i = 0; i < history3.length; i++) {
@@ -20,7 +20,7 @@
     }
   };
 
-  handlePressureValue = (pressure) => {
+  const handlePressureValue = (pressure) => {
     if (pressure == undefined || pressure <= 0) {
       return;
     }
@@ -50,7 +50,7 @@
     calculcate3hAveragePressure();
   };
 
-  barometerPressureHandler = (e) => {
+  const barometerPressureHandler = (e) => {
     const MEDIANLENGTH = 20;
     while (currentPressures.length > MEDIANLENGTH)
       currentPressures.pop();
@@ -62,7 +62,7 @@
 
       if (median.length > 10) {
         var mid = median.length >> 1;
-        medianPressure = Math.round(E.sum(median.slice(mid - 4, mid + 5)) / 9);
+        let medianPressure = Math.round(E.sum(median.slice(mid - 4, mid + 5)) / 9);
         if (medianPressure > 0) {
           turnOff();
           handlePressureValue(medianPressure);
@@ -78,13 +78,13 @@
   take the middle one (median)
   turn off barometer power
   */
-  getPressureValue = () => {
+  const getPressureValue = () => {
     Bangle.setBarometerPower(true, "zambretti");
     Bangle.on('pressure', barometerPressureHandler);
     setTimeout(turnOff, 30000);
   };
 
-  turnOff = () => {
+  const turnOff = () => {
     Bangle.removeListener('pressure', barometerPressureHandler);
     Bangle.setBarometerPower(false, "zambretti");
   };
