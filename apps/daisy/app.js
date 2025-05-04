@@ -305,12 +305,12 @@ function drawGaugeImage(date) {
       break;
     case 'Sun':
       var dayMin = getMinutesFromDate(date);
-      if (dayMin >= sunEnd && dayMin <= night) ring_fill = 100;
+      if (dayMin >= sunEnd && dayMin <= night) ring_fill = max;
       else {
-        ring_fill = 100 * (date - sunStart) / sunFull;
-        if (ring_fill > 100) {  // If we're now past a sunrise of sunset
+        ring_fill = max * (date - sunStart) / sunFull;
+        if (ring_fill > max) {  // If we're now past a sunrise of sunset
           updateSunRiseSunSet(date, location.lat, location.lon, true);
-          ring_fill = 100 * (date - sunStart) / sunFull;
+          ring_fill = max * (date - sunStart) / sunFull;
         }
       }
       invertRing = !isDaytime;
@@ -319,8 +319,8 @@ function drawGaugeImage(date) {
   var start = 0;
   var end = ring_fill;
   if (invertRing) {
-    start = 100 - end;
-    end = 100;
+    start = max - end;
+    end = max;
   }
   drawRing(start, end, ring_max);
   log_debug("Start: "+ start + "  end: " +end);
@@ -417,17 +417,22 @@ function addPoint(loc, max) {
 }
 
 function polyArray(start, end, max) {
+  const eighth = max / 8;
   if (start == end) return []; // No array to draw if the points are the same.
-  if (start > end) end = max - end;
+  let startOrigin = start;
+  let endOrigin = end;
+  start %= max;
+  end %= max;
+  if(start == 0 && startOrigin != 0) start = max;
+  if(end == 0 && endOrigin != 0) end = max;
+  if (start > end) end += max;
   var array = [g.getHeight()/2, g.getHeight()/2];
   var pt = addPoint(start, max);
   array.push(pt[0], pt[1]);
 
-  for (let i = start+1; i < end; i++) {
-    if (((i - start)) % 13 < 1) { // Add a point every 8th of the circle
-      pt = addPoint(i, max);
-      array.push(pt[0], pt[1]);
-    }
+  for (let i = start + eighth; i < end; i += eighth) {
+    pt = addPoint(i, max);
+    array.push(pt[0], pt[1]);
   }
   pt = addPoint(end, max);
   array.push(pt[0], pt[1]);
@@ -449,14 +454,14 @@ function drawRing(start, end, max) {
   buf.setColor(1).fillEllipse(edge,edge,w-edge,h-edge);
   buf.setColor(0).fillEllipse(edge+thickness,edge+thickness,w-edge-thickness,h-edge-thickness);
   img.palette = pal2;
-  g.drawImage(img, 0, 0);  // Draws an unfilled circle
+  g.drawImage(img, 0, 0);  // Draws a filled-in circle
+  if((end - start) >= max) return;  // No need to add the unfilled circle
   buf.clear();
-
   buf.setColor(1).fillEllipse(edge,edge,w-edge,h-edge);
   buf.setColor(0).fillEllipse(edge+thickness,edge+thickness,w-edge-thickness,h-edge-thickness);
-  buf.setColor(0).fillPoly(polyArray(start, end, max));
+  buf.setColor(0).fillPoly(polyArray(start, end, max)); // Masks the filled-in part of the segment over the unfilled part
   img.palette = pal1;
-  g.drawImage(img, 0, 0);  // Draws the filled-in segment
+  g.drawImage(img, 0, 0);  // Draws the unfilled-in segment
   return;
 }
 
