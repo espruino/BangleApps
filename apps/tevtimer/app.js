@@ -198,6 +198,8 @@ function update_status_widget(timer) {
 }
 
 
+// UI modes //
+
 class TimerView {
   // Primary UI for displaying and operating a timer. The
   // PrimitiveTimer object is passed to the constructor as a
@@ -472,14 +474,14 @@ class TimerView {
     // Execute a UI action represented by the string `action`.
 
     if (action === 'start/stop') {
-      return this.start_stop_timer()
+      this.start_stop_timer()
 
     } else if (action === 'edit_start') {
-      // Display the timer start edit UI
-      this.stop();
-      CURRENT_UI = new TimerViewMenu(this.timer);
-      CURRENT_UI.edit_start(
-        () => { switch_UI(new TimerView(this.timer)); },
+      switch_UI(
+        new TimerEditStart(
+          this.timer,
+          () => { switch_UI(new TimerView(this.timer)); }
+        )
       );
     }
   }
@@ -487,12 +489,19 @@ class TimerView {
 
 
 class TimerFormatView {
-  // UI for selecting the display format of a timer. The
-  // PrimitiveTimer object is passed to the constructor as a
-  // parameter.
+  // UI for selecting the display format of a timer.
 
-  constructor(timer) {
+  constructor(timer, back) {
+    // `timer` is the current PrimitiveTimer object being edited.
+    // `back` is the function that activates the previous UI to return
+    // to when the format selection is exited. It is passed `true` if
+    // the format change was confirmed and `false` if it was canceled.
+    // If `back` is not specified, a default back handler is used that
+    // returns to the TimerView if accepted or TimerViewMenu if
+    // canceled.
+
     this.timer = timer;
+    this.back = back || this._back;
 
     this.layout = null;
     this.listeners = {};
@@ -506,6 +515,15 @@ class TimerFormatView {
         idx = 0;
       }
       this.format_idx[row_id] = idx;
+    }
+  }
+
+  _back(ok) {
+    // Default back handler
+    if (ok) {
+      switch_UI(new TimerView(this.timer));
+    } else {
+      switch_UI(new TimerViewMenu(this.timer));
     }
   }
 
@@ -743,28 +761,59 @@ class TimerFormatView {
       tt.SETTINGS.format[row_id] = FORMAT_MENU[this.format_idx[row_id]];
     }
     tt.set_settings_dirty();
-    switch_UI(new TimerView(this.timer));
+    this.back(true);
   }
 
   cancel() {
     // Return to TimerViewMenu without saving changes
-    switch_UI(new TimerViewMenu(this.timer));
+    this.back(false);
   }
 }
 
 
 class TimerViewMenu {
-  // UI for displaying the timer menu. The PrimitiveTimer object is
-  // passed to the constructor as a parameter.
+  // UI for displaying the timer menu.
 
-  constructor(timer) {
+  constructor(timer, back) {
+    // `timer` is the PrimitiveTimer object whose menu is being
+    // displayed. `back` is a function that activates the previous UI
+    // to return to when the menu is exited.
+
     this.timer = timer;
+    this.back = back || this._back;
+  }
+
+  _back() {
+    // Default back handler
+    // Return to TimerView for the current timer
+    switch_UI(new TimerView(this.timer));
   }
 
   start() {
-    // Display and activate the top menu of the timer view menu.
+    // Display and activate the timer view menu.
 
-    this.top_menu();
+    const menu = {
+      '': {
+        title: this.timer.display_name(),
+        back: (() => { this.back(); }),
+      },
+      'Reset': () => { switch_UI(new ResetTimer(this.timer)); },
+      'Timers': () => { switch_UI(new TimerMenu(tt.TIMERS, this.timer)); },
+      'Edit': () => { switch_UI(new TimerEditMenu(this.timer)); },
+      'Format': () => { switch_UI(new TimerFormatView(this.timer)); },
+      'Add': () => {
+        tt.set_timers_dirty();
+        const new_timer = tt.add_timer(tt.TIMERS, this.timer);
+        switch_UI(new TimerEditMenu(new_timer));
+      },
+      'Delete': () => { switch_UI(new DeleteTimer(this.timer)); },
+    };
+    if (tt.TIMERS.length <= 1) {
+      // Prevent user deleting last timer
+      delete menu.Delete;
+    }
+
+    E.showMenu(menu);
   }
 
   stop() {
@@ -773,85 +822,143 @@ class TimerViewMenu {
     E.showMenu();
   }
 
-  back() {
-    // Return to the timer view
-    // (i.e. the timer that was previously displayed)
+}
 
-    switch_UI(new TimerView(this.timer));
+class ResetTimer {
+  // UI for resetting a timer.
+
+  constructor(timer, back) {
+    // `timer` is the PrimitiveTimer object to reset.
+    // `back` is a function that activates the previous UI to return
+    // to when the menu is exited. It is passed `true` if the timer is
+    // reset and `false` if it is canceled. If `back` is not
+    // specified, a default back handler is used that returns to
+    // TimerView if accepted or TimerViewMenu if canceled.
+
+    this.timer = timer;
+    this.back = back || this._back;
   }
 
-  top_menu(back) {
-    // Display the top-level menu for the timer
-    // `back` is optional and specifies the previous routine to return to
-    console.log('top_menu: ' + back);
+  _back(ok) {
+    // Default back handler
 
-    const top_menu = {
-      '': {
-        title: this.timer.display_name(),
-        back: back || (() => { this.back(); }),
-      },
-      'Reset': () => { E.showMenu(reset_menu); },
-      'Timers': () => {
-        switch_UI(new TimerMenu(tt.TIMERS, this.timer));
-      },
-      'Edit': () => { this.edit_menu() },
-      'Format': () => {
-        switch_UI(new TimerFormatView(this.timer));
-      },
-      'Add': () => {
-        tt.set_timers_dirty();
-        const new_timer = tt.add_timer(tt.TIMERS, this.timer);
-        const timer_view_menu = new TimerViewMenu(new_timer);
-        timer_view_menu.edit_menu();
-      },
-      'Delete': () => { E.showMenu(delete_menu); },
-    };
-    if (tt.TIMERS.length <= 1) {
-      // Prevent user deleting last timer
-      delete top_menu.Delete;
+    if (ok) {
+      switch_UI(new TimerView(this.timer));
+    } else {
+      switch_UI(new TimerViewMenu(this.timer));
     }
+  }
 
-    const reset_menu = {
+  start() {
+    // Display and activate the reset timer confirmation menu.
+
+    const menu = {
       '': {
         title: 'Confirm reset',
-        back: () => { E.showMenu(top_menu); }
+        back: () => { this.back(false); }
       },
       'Reset': () => {
         this.timer.reset();
         tt.set_timers_dirty();
-        this.back();
+        this.back(true);
       },
-      'Cancel': () => { E.showMenu(top_menu); },
+      'Cancel': () => { this.back(false); },
     };
 
-    const delete_menu = {
-      '': {
-        title: 'Confirm delete',
-        back: () => { E.showMenu(top_menu); }
-      },
-      'Delete': () => {
-        tt.set_timers_dirty();
-        switch_UI(new TimerView(tt.delete_timer(tt.TIMERS, this.timer)));
-      },
-      'Cancel': () => { E.showMenu(top_menu); },
-    };
-
-    E.showMenu(top_menu);
+    E.showMenu(menu);
   }
 
-  edit_menu(back) {
-    // Display the edit menu for the timer. This can be called in
-    // place of `start` to jump directly to the edit menu.
-    // `back` is optional and specifies the previous routine to return to
-    console.log('edit_menu: ' + back);
+  stop() {
+    // Shut down the UI and clean up listeners and handlers
+
+    E.showMenu();
+  }
+}
+
+class DeleteTimer {
+  // UI for deleting a timer.
+
+  constructor(timer, back) {
+    // `timer` is the PrimitiveTimer object to delete. `back` is a
+    // function that activates the previous UI to return to when the
+    // menu is exited. It is passed `true` for the first parameter if
+    // the timer is deleted and `false` if it is canceled. For the
+    // second parameter, it is passed the same timer if canceled or
+    // another existing timer in the list if the given timer was
+    // deleted. If `back` is not specified, a default back handler is
+    // used that returns to TimerView if accepted or TimerViewMenu if
+    // canceled.
+
+    this.timer = timer;
+    this.back = back || this._back;
+  }
+
+  _back(ok, timer) {
+    // Default back handler
+
+    if (ok) {
+      switch_UI(new TimerView(timer));
+    } else {
+      switch_UI(new TimerViewMenu(timer));
+    }
+  }
+
+  start() {
+    // Display and activate the delete timer confirmation menu.
+
+    const menu = {
+      '': {
+        title: 'Confirm delete',
+        back: () => { this.back(false, this.timer); }
+      },
+      'Delete': () => {
+        ok = true;
+        tt.set_timers_dirty();
+        this.back(true, tt.delete_timer(tt.TIMERS, this.timer));
+      },
+      'Cancel': () => { this.back(false, this.timer) },
+    };
+
+    E.showMenu(menu);
+
+  }
+
+  stop() {
+    // Shut down the UI and clean up listeners and handlers
+
+    E.showMenu();
+  }
+}
+
+class TimerEditMenu {
+  // UI for editing a timer.
+
+  constructor(timer, back) {
+    // `timer` is the PrimitiveTimer object to edit. `back` is a
+    // function that activates the previous UI to return to when the
+    // menu is exited. If `back` is not specified, a default back
+    // handler is used that returns to TimerViewMenu.
+
+    this.timer = timer;
+    this.back = back || this._back;
+  }
+
+  _back() {
+    // Default back handler
+
+    switch_UI(new TimerViewMenu(this.timer));
+  }
+
+  start() {
+    // Display the edit menu for the timer.
 
     let keyboard = null;
     try { keyboard = require("textinput"); } catch (e) {}
 
-    const edit_menu = {
+    const menu = {
       '': {
         title: 'Edit: ' + this.timer.display_name(),
-        back: back || (() => { this.top_menu() }),
+        back: () => { this.back(); }
       },
       'Name': {
         value: this.timer.name,
@@ -860,12 +967,12 @@ class TimerViewMenu {
             keyboard.input({text:this.timer.name}).then(text => {
               this.timer.name = text;
               tt.set_timers_dirty();
-              setTimeout(() => { this.edit_menu(); }, 0);
+              switch_UI(new TimerViewMenu(this.timer));
             });
           }, 0);
         }
       },
-      'Start': () => { this.edit_start(); },
+      'Start': () => { switch_UI(new TimerEditStart(this.timer)); },
       'At end': {
         // Option to auto-start another timer when this one ends
         format: v => v === -1
@@ -899,17 +1006,45 @@ class TimerViewMenu {
     };
 
     if (!keyboard) {
-      delete edit_menu.Name;
+      // Hide the Name menu item if text input module is not available
+      delete menu.Name;
     }
 
-    E.showMenu(edit_menu);
+    E.showMenu(menu);
   }
 
-  edit_start(back) {
+  stop() {
+    // Shut down the UI and clean up listeners and handlers
+
+    E.showMenu();
+  }
+}
+
+
+class TimerEditStart {
+  // UI for editing the timer's starting value.
+
+  constructor(timer, back) {
+    // `timer` is the PrimitiveTimer object to edit. `back` is a
+    // function that activates the previous UI to return to when the
+    // menu is exited. It is passed `true` if the timer is edited and
+    // `false` if it is canceled. If `back` is not specified, a
+    // default back handler is used that returns to TimerView.
+
+    this.timer = timer;
+    this.back = back || this._back;
+  }
+
+  _back(ok) {
+    // Default back handler
+
+    switch_UI(new TimerEditMenu(this.timer));
+  }
+
+  start() {
     // Display the edit > start menu for the timer
-    // (i.e. the timer's starting value)
-    // `back` is optional and specifies the previous routine to return to
-    console.log('edit_start: ' + back);
+
+    var ok = false;
 
     let origin_hms = {
       h: Math.floor(this.timer.origin / 3600),
@@ -940,31 +1075,13 @@ class TimerViewMenu {
       wrap_3: true,
       separator_1: ':',
       separator_2: ':',
-      back: back || (() => { this.edit_menu(); }),
+      back: () => { this.back(ok); },
       onchange: (h, m, s) => {
+        ok = true;
         this.timer.origin = h * 3600 + m * 60 + s;
         tt.set_timers_dirty();
       }
     });
-  }
-}
-
-
-class TimerMenu {
-  // UI for displaying the list of timers. The list of
-  // PrimitiveTimer objects is passed to the constructor as a
-  // parameter. The currently focused timer is passed as the
-  // second parameter.
-
-  constructor(timers, focused_timer) {
-    this.timers = timers;
-    this.focused_timer = focused_timer;
-  }
-
-  start() {
-    // Display the top timer menu
-
-    this.top_menu();
   }
 
   stop() {
@@ -972,27 +1089,57 @@ class TimerMenu {
 
     E.showMenu();
   }
+}
 
-  back() {
-    // Return to the timer's menu
 
-    switch_UI(new TimerViewMenu(this.focused_timer));
+class TimerMenu {
+  // UI for choosing among the list of defined timers.
+
+  constructor(timers, focused_timer, back) {
+    // `timers` is the list of PrimitiveTimer objects to display.
+    // `focused_timer` is the PrimitiveTimer object that is currently
+    // being displayed. `back` is a function that activates the
+    // previous UI to return to when the menu is exited. It is passed
+    // the selected timer object if a timer is selected or `null` if
+    // the menu is canceled, and the last-focused timer object. If not
+    // specified, a default back handler is used that returns to
+    // TimerView for the selected timer or TimerViewMenu if canceled.
+
+    this.timers = timers;
+    this.focused_timer = focused_timer;
+    this.back = back || this._back;
   }
 
-  top_menu() {
-    // Display the top-level menu for the timer list
+  _back(timer, focused_timer) {
+    // Default back handler
+
+    if (timer) {
+      switch_UI(new TimerView(timer));
+    } else {
+      switch_UI(new TimerViewMenu(focused_timer));
+    }
+  }
+
+  start() {
+    // Display the timer menu
 
     let menu = {
       '': {
         title: "Timers",
-        back: this.back.bind(this)
+        back: () => { this.back(null, this.focused_timer); }
       }
     };
     this.timers.forEach((timer) => {
       menu[timer.display_status() + ' ' + timer.display_name()] =
-        () => { switch_UI(new TimerView(timer)); };
+        () => { this.back(timer, this.focused_timer); };
     });
     E.showMenu(menu);
+  }
+
+  stop() {
+    // Shut down the UI and clean up listeners and handlers
+
+    E.showMenu();
   }
 }
 
