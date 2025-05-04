@@ -7,6 +7,7 @@
   const CLOCK_APP_ID = require("Storage").readJSON("setting.json",true).clock.split(".")[0];
 
   let getAppIdFromCurrentFile = ()=> {
+    "ram"
     if (!global.__FILE__ || global.__FILE__===".bootcde") {
       return CLOCK_APP_ID;
     } else {return global.__FILE__.split(".")[0];}
