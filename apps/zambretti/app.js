@@ -161,10 +161,10 @@ function draw(temperature) {
   const pressure_cur = history3[history3.length-1].p;
   const pressure_last = history3[0].p;
   const diff = pressure_cur - pressure_last;
-  const pressure_sea = Math.round(pressure_cur * Math.pow(1 - (0.0065 * height) / (temperature + (0.0065 * height) + 273.15),-5.257));
+  const pressure_sea = pressure_cur * Math.pow(1 - (0.0065 * height) / (temperature + (0.0065 * height) + 273.15),-5.257);
 
   layout.forecast.label = ZAMBRETTI_FORECAST[get_zambretti_letter(pressure_sea, diff)];
-  layout.pressure.label = pressure_sea;
+  layout.pressure.label = Math.round(pressure_sea);
   layout.diff.label = diff;
   layout.temp.label = require("locale").number(temperature,1);
   layout.render();
