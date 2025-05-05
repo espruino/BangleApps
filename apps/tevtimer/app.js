@@ -952,7 +952,6 @@ class DeleteTimer {
         back: () => { this.back(false, this.timer); }
       },
       'Delete': () => {
-        ok = true;
         tt.set_timers_dirty();
         this.back(true, tt.delete_timer(tt.TIMERS, this.timer));
       },
