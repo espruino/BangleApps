@@ -320,7 +320,7 @@ function drawGaugeImage(date) {
       break;
   }
   var start = 0;
-  var end = ring_fill;
+  var end = Math.round(ring_fill);
   if (invertRing) {
     start = ring_max - end;
     end = ring_max;
@@ -330,6 +330,7 @@ function drawGaugeImage(date) {
     prevRing.start = start;
     prevRing.end = end;
     prevRing.max = ring_max;
+    log_debug("Redrew ring at " + hh + ":" + mm);
   }
   log_debug("Start: "+ start + "  end: " +end);
 }
