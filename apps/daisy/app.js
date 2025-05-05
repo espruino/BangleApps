@@ -2,6 +2,7 @@ var SunCalc = require("suncalc"); // from modules folder
 const storage = require('Storage');
 const widget_utils = require('widget_utils');
 const SETTINGS_FILE = "daisy.json";
+let settings = undefined;
 const global_settings = storage.readJSON("setting.json", true) || {};
 const LOCATION_FILE = "mylocation.json";
 const h = g.getHeight();

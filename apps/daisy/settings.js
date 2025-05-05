@@ -3,14 +3,14 @@
 
   // initialize with default settings...
   let s = {'gy' : '#020',
-    'fg' : '#0f0',
-    'color': 'Green',
-    'check_idle' : true,
-    'batt_hours' : false,
-    'hourly_buzz' : false,
-    'ring' : 'Steps',
-    'idxInfo' : 0,
-    'step_target' : 10000};
+           'fg' : '#0f0',
+           'color': 'Green',
+           'check_idle' : true,
+           'batt_hours' : false,
+           'hourly_buzz' : false,
+           'ring' : 'Steps',
+           'idxInfo' : 0,
+           'step_target' : 10000};
 
 // ...and overwrite them with any saved values
 // This way saved values are preserved if a new version adds more settings
@@ -22,8 +22,8 @@ s[key] = saved[key];
 }
 
 function save() {
-settings = s;
-storage.write(SETTINGS_FILE, settings);
+  settings = s;
+  storage.write(SETTINGS_FILE, settings);
 }
 
 var color_options = ['Green','Orange','Cyan','Purple','Red','Blue'];
