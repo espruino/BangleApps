@@ -881,7 +881,8 @@ class ResetTimer {
   }
 
   start() {
-    // Display and activate the reset timer confirmation menu.
+    // Display and activate the reset timer confirmation menu if
+    // configured in settings, or immediately reset the timer if not.
 
     const menu = {
       '': {
@@ -896,7 +897,13 @@ class ResetTimer {
       'Cancel': () => { this.back(false); },
     };
 
-    E.showMenu(menu);
+    if (tt.SETTINGS.confirm_reset === true
+        || (tt.SETTINGS.confirm_reset === 'auto'
+            && this.timer.to_msec() > 0)) {
+      E.showMenu(menu);
+    } else {
+      menu.Reset();
+    }
   }
 
   stop() {
@@ -935,7 +942,9 @@ class DeleteTimer {
   }
 
   start() {
-    // Display and activate the delete timer confirmation menu.
+    // Display and activate the delete timer confirmation menu if
+    // configured in settings, or immediately delete the timer if
+    // not.
 
     const menu = {
       '': {
@@ -950,7 +959,11 @@ class DeleteTimer {
       'Cancel': () => { this.back(false, this.timer) },
     };
 
-    E.showMenu(menu);
+    if (tt.SETTINGS.confirm_delete) {
+      E.showMenu(menu);
+    } else {
+      menu.Delete();
+    }
 
   }
 
@@ -1235,6 +1248,24 @@ class AppSettingsMenu {
         format: v => tt.ACTION_NAMES[tt.ACTIONS[v]],
         onchange: v => {
           tt.SETTINGS.right_tap_act = tt.ACTIONS[v];
+          tt.set_settings_dirty();
+        }
+      },
+      'Confirm reset': {
+        value: [true, 'auto', false].indexOf(tt.SETTINGS.confirm_reset),
+        format: v => ['Always', 'Auto', 'Never'][v],
+        min: 0,
+        max: 2,
+        onchange: v => {
+          tt.SETTINGS.confirm_reset = [true, 'auto', false][v];
+          tt.set_settings_dirty();
+        }
+      },
+      'Confirm delete': {
+        value: tt.SETTINGS.confirm_delete,   // boolean
+        format: v => v ? 'Always' : 'Never',
+        onchange: v => {
+          tt.SETTINGS.confirm_delete = v;
           tt.set_settings_dirty();
         }
       },
