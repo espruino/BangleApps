@@ -308,12 +308,12 @@ function drawGaugeImage(date) {
       break;
     case 'Sun':
       var dayMin = getMinutesFromDate(date);
-      if (dayMin >= sunEnd && dayMin <= night) ring_fill = max;
+      if (dayMin >= sunEnd && dayMin <= night) ring_fill = ring_max;
       else {
-        ring_fill = max * (date - sunStart) / sunFull;
-        if (ring_fill > max) {  // If we're now past a sunrise of sunset
+        ring_fill = ring_max * (date - sunStart) / sunFull;
+        if (ring_fill > ring_max) {  // If we're now past a sunrise of sunset
           updateSunRiseSunSet(date, location.lat, location.lon, true);
-          ring_fill = max * (date - sunStart) / sunFull;
+          ring_fill = ring_max * (date - sunStart) / sunFull;
         }
       }
       invertRing = !isDaytime;
@@ -322,8 +322,8 @@ function drawGaugeImage(date) {
   var start = 0;
   var end = ring_fill;
   if (invertRing) {
-    start = max - end;
-    end = max;
+    start = ring_max - end;
+    end = ring_max;
   }
   if (end !== prevRing.end || start !== prevRing.start || ring_max !== prevRing.max) {
     drawRing(start, end, ring_max);
