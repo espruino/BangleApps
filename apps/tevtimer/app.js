@@ -1268,6 +1268,14 @@ class AppSettingsMenu {
           tt.set_settings_dirty();
         }
       },
+      'On alarm go to': {
+        value: tt.SETTINGS.alarm_return,    // boolean
+        format: v => v ? 'Timer' : 'Clock',
+        onchange: v => {
+          tt.SETTINGS.alarm_return = v;
+          tt.set_settings_dirty();
+        }
+      },
     };
 
     E.showMenu(menu);

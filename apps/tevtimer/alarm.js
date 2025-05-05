@@ -104,8 +104,7 @@ function showAlarm(alarm) {
     // so writing to array writes changes back directly
     require("sched").setAlarms(alarms);
 
-    // Load `tevtimer` app upon halt, else the default (clock) app
-    if (action === 'halt') {
+    if (action === 'halt' || tt.SETTINGS.alarm_return) {
       load('tevtimer.app.js');
     } else {
       load();

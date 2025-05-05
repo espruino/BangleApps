@@ -344,6 +344,7 @@ const SETTINGS = Object.assign({
   'right_tap_act': 'edit_start',
   'confirm_reset': 'auto',
   'confirm_delete': true,
+  'alarm_return': false,
 }, Storage.readJSON(SETTINGS_FILENAME, true) || {});
 
 var TIMERS = load_timers();
