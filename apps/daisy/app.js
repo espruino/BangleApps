@@ -23,7 +23,7 @@ const infoWidth = 56;
 const infoHeight = 11;
 const ringEdge = 4;
 const ringThick = 6;
-const sec_update = 1000; // This ms between updates when the ring is in Seconds mode
+let nextUpdateMs;
 var drawingSteps = false;
 var prevRing = {start: null, end: null, max: null};
 
@@ -604,6 +604,35 @@ function buzzer(n) {
   }, 500);
 }
 
+function getDelayMs(prevDelayMs, ring_setting, now) {
+  // Much of the logic here is for slowing or speeding the delay on the seconds setting.
+  // returns [ms before next update, if only the ring should be updated]
+  const sec_batt = [20, 50];
+  const sec_delay = [10000, 2000, 1000];
+  const deadband = 5;
+  if (ring_setting == 'Seconds') {
+    const nearNextMinute = (now % 60000) >= (60000 - prevDelayMs);
+    if (nearNextMinute) {
+      let batt = E.getBattery();
+      for (let i = 0; i < sec_batt.length; i++) {
+        if (batt <= sec_batt[i])
+          return [sec_delay[i], false];
+      }
+      // Check for coming out of the above states w/ deadband
+      for (let i = 0; i < sec_batt.length; i++) {
+        if (prevDelayMs == sec_delay[i] && batt >= (sec_batt[i] + deadband))
+          return [sec_delay[i + 1], false];
+      }
+      return [sec_delay[sec_delay.length - 1], false];
+    }
+    else {
+      return [prevDelayMs, true];
+    }
+  }
+  else
+    return [60000, false];
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 // timeout used to update every minute
@@ -612,13 +641,14 @@ var drawTimeout;
 // schedule a draw for the next minute or every sec_update ms
 function queueDraw() {
   let now = Date.now();
-  let delay = settings.ring == 'Seconds' ? sec_update - (now % sec_update) : 60000 - (now % 60000);
+  var nextUpdateRet = getDelayMs(nextUpdateMs, settings.ring, now);
+  nextUpdateMs = nextUpdateRet[0];
+  let delay = nextUpdateMs - (now % nextUpdateMs);
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
     checkIdle();
-    let updateRingOnly = settings.ring == 'Seconds' && (now % 60000) < 59000;
-    draw(updateRingOnly);
+    draw(nextUpdateRet[1]);
   }, delay);
 }
 
@@ -648,6 +678,7 @@ loadSettings();
 loadLocation();
 var infoMode = infoList[settings.idxInfo];
 updateSunRiseSunSet(new Date(), location.lat, location.lon, true);
+nextUpdateMs = getDelayMs(1000, settings.ring, Date.now())[0];
 
 g.clear();
 Bangle.loadWidgets();
