@@ -225,7 +225,7 @@ class TimerView {
     this.listeners.button = setWatch(
       () => { this.dispatch_action(tt.SETTINGS.button_act); },
       BTN,
-      {edge: 'rising', debounce: 50, repeat: true}
+      {edge: 'falling', debounce: 50, repeat: true}
     );
 
     // Tap handler
@@ -633,7 +633,7 @@ class TimerFormatView {
     this.listeners.button = setWatch(
       this.cancel.bind(this),
       BTN,
-      {edge: 'rising', debounce: 50, repeat: true}
+      {edge: 'falling', debounce: 50, repeat: true}
     );
   }
 
