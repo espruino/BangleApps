@@ -520,7 +520,7 @@
         E.showPrompt("Did you fall?", { title: "FALL DETECTION", img: atob("FBQBAfgAf+Af/4P//D+fx/n+f5/v+f//n//5//+f//n////3//5/n+P//D//wf/4B/4AH4A=") }).then((r) => {
           if (r) {
             fallDetected = true;
-            modHS.saveDataToFile('alert', 'alert', { 'type': 'fall' });
+            modHS.saveDataToFile('alert', 'marker', { 'event': 'fall' });
             Bangle.showClock();
           } else {
             Bangle.showClock(); //no fall, so just return to clock
@@ -785,23 +785,24 @@
     }
   };
 
-  Bangle.on('tap', function(data) {
-      if(data.double && data.dir === "front" && !Bangle.isCharging()){
-        require("widget_utils").hide();
-        Bangle.load('heatsuite.app.js');
-      }
-    });
-
+  Bangle.on('swipe', function(dir) {
+    if (dir === 1) { // 1 = right swipe
+      Bangle.buzz();
+      require("widget_utils").hide();
+      Bangle.load('heatsuite.app.js');
+    }
+  });
 
   //Diagnosing BLUETOOTH Connection Issues
-  if (NRF.getSecurityStatus().connected) { //if widget starts while a bluetooth connection exits, need to force connection flag
-    connectionLock = true;
+  //for managing memory issues - keeping code here for testing purposes in the future
+  if (NRF.getSecurityStatus().connected) { //if widget starts while a bluetooth connection exits, force connection flag - but this is 
+    //connectionLock = true;
   }
   NRF.on('error', function (msg) {
     modHS.log("[NRF][ERROR] " + msg);
   });
   NRF.on('connect', function (addr) {
-    connectionLock = true;
+    //connectionLock = true;
     modHS.log("[NRF][CONNECTED] " + JSON.stringify(addr));
   });
   NRF.on('disconnect', function (reason) {

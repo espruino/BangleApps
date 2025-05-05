@@ -3,6 +3,7 @@
 <head>
   <link rel="stylesheet" href="../../css/spectre.min.css">
   <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <style>
     .jsoneditor-container {
       height: 500px;
@@ -152,6 +153,7 @@
       </thead>
       <tbody id="downloadData-tab-content">
       </tbody>
+      <div id="progressElementHeatSuite" style="margin-top:10px; font-weight:bold;"></div>
     </table>
   </div>
   <p class="p-2 m-2"><button id="upload" class="btn btn-success">Upload</button></p>
@@ -161,6 +163,7 @@
   <script src="https://cdn.jsdelivr.net/npm/jsoneditor@latest/dist/jsoneditor.min.js"></script>
 
   <script>
+    let HeatSuiteFileList = [];
     //default Schema
     let heatsuite__taskFile_defaultSchema = [
       {
@@ -373,46 +376,76 @@
         });
       });
     }
-    function DownloadSingleFile(filename){
-      Util.readStorageFile(filename, (c)=>{
+    function downloadSingleFile(filename, callback) {
+      Util.readStorageFile(filename, (c) => {
         let url;
+        let blob;
         const a = document.createElement('a');
-        fnArr = filename.split('_');
-        if(fnArr[1] !== 'accel'){
-          const blob = new Blob([c], { type: 'text/plain' });
+        let fnArr = filename.split('_');
+    
+        if (fnArr[1] !== 'accel') {
+          blob = new Blob([c], { type: 'text/plain' });
           url = URL.createObjectURL(blob);
-        }else{
-
+          if (callback) return callback(filename, blob); // Call with original blob
+        } else {
           function secondsToClock(seconds) {
             let h = Math.floor(seconds / 3600);
             let m = Math.floor((seconds % 3600) / 60);
             let s = seconds % 60;
             return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':');
           }
-          let csv = "time,seconds,mag_avg,mag_sum\n"; // Header
+          let csv = "time,seconds,mag_avg,mag_sum\n";
           let lines = c.trim().split("\n");
           for (let line of lines) {
             let parts = line.split(",").map(v => parseInt(v, 10));
             if (parts.length !== 3) continue;
             let seconds = parts[0];
-            let avg = parts[1]/8192;
-            let sum = parts[2]/1024; //scaled differently
+            let avg = parts[1] / 8192;
+            let sum = parts[2] / 1024;
             let time = secondsToClock(seconds);
             csv += `${time},${seconds},${avg},${sum}\n`;
           }
-          const blob = new Blob([csv], { type: 'text/csv' });
-          url = URL.createObjectURL(blob);
+          blob = new Blob([csv], { type: 'text/csv' });
         }
+        if (callback) return callback(filename, blob); 
+        url = URL.createObjectURL(blob);
         a.href = url;
         a.download = filename;
         a.click();
         URL.revokeObjectURL(url);
-        return;
       });
     }
-    function downloadAllFiles(){
-      
+    function downloadAllFiles() {
+      console.log("Downloading all files", HeatSuiteFileList);
+      const zip = new JSZip();
+      let index = 0;
+      const progressEl = document.getElementById("progressElementHeatSuite");
+      if (progressEl) progressEl.textContent = "Preparing to download...";
+      function processNext() {
+        if (index >= HeatSuiteFileList.length) {
+          if (progressEl) progressEl.textContent = "Creating ZIP...";
+          zip.generateAsync({ type: "blob" }).then(content => {
+            const a = document.createElement('a');
+            const url = URL.createObjectURL(content);
+            a.href = url;
+            a.download = "all_files.zip";
+            a.click();
+            URL.revokeObjectURL(url);
+            if (progressEl) progressEl.textContent = "Download complete!";
+          });
+          return;
+        }
+        const filename = HeatSuiteFileList[index];
+        if (progressEl) progressEl.textContent = `Downloading file ${index + 1} of ${HeatSuiteFileList.length}: ${filename}`;
+        downloadSingleFile(filename, (name, blob) => {
+          zip.file(name, blob);
+          index++;
+          processNext();
+        });
+      }
+      processNext();
     }
+    
     function deleteFile(filename){
       if (confirm(`Are you sure you want to delete ${filename}?`)) {
         Util.eraseStorageFile(filename,(c) =>{
@@ -421,6 +454,30 @@
         }); 
       }
     }
+    function deleteAllFiles() {
+      if (!confirm("Are you sure you want to delete all files?")) return;
+      console.log("Deleting all files", HeatSuiteFileList);
+      let index = 0;
+      const progressEl = document.getElementById("progressElementHeatSuite");
+      if (progressEl) progressEl.textContent = "Preparing to delete files...";
+      function processNext() {
+        if (index >= HeatSuiteFileList.length) {
+          if (progressEl) progressEl.textContent = "All files deleted.";
+          // Refresh the list via Puck/E.show
+          const filePrefix = settings.filePrefix || 'htst';
+          Puck.eval('require("Storage").list(/^' + filePrefix + '/)', renderDownloadTab);
+          return;
+        }
+        const filename = HeatSuiteFileList[index];
+        if (progressEl) progressEl.textContent = `Deleting file ${index + 1} of ${HeatSuiteFileList.length}: ${filename}`;
+        Util.eraseStorageFile(filename, () => {
+          index++;
+          processNext();
+        });
+      }
+      processNext(); // Start the chain
+    }
+    
     function renderDownloadTabLogs(e){
       var element = document.getElementById("downloadData-tab-content");
       if(e.length > 0){
@@ -430,17 +487,17 @@
       }
     }
     function renderDownloadTab(e){
+      HeatSuiteFileList = e.map(file => file.replace(/\x01$/, '')); //save it globally for later use...safer
       var element = document.getElementById("downloadData-tab-content");
       var tab_badge = document.getElementById("downloadData-tab-label");
-      if(e.length > 0){
+      if(HeatSuiteFileList.length > 0){
         tab_badge.classList.add("badge");
-        tab_badge.dataset.badge = e.length;
+        tab_badge.dataset.badge = HeatSuiteFileList.length;
         element.innerHTML = "";
-        e.forEach((file)=>{
-          var filename = file.replace(/\x01$/, '');
-          element.insertAdjacentHTML('beforeend', `<tr id="file-${filename}"><td>${filename}</td><td><i class="icon icon-download" onclick="DownloadSingleFile('${filename}');"></i>&nbsp; <i class="icon icon-delete" onclick="deleteFile('${filename}');"></i></td></tr>`);
+        HeatSuiteFileList.forEach((filename)=>{
+          element.insertAdjacentHTML('beforeend', `<tr id="file-${filename}"><td>${filename}</td><td><i class="icon icon-download" onclick="downloadSingleFile('${filename}');"></i>&nbsp; <i class="icon icon-delete" onclick="deleteFile('${filename}');"></i></td></tr>`);
         });
-        //element.insertAdjacentHTML('beforeend',`<tr id="end" class="text-bold"><td><button class="btn">Download All <i class="icon icon-download" onclick="DownloadAllFiles(JSON.parse("${e}"));"></i></button></td><td><button class="btn">Delete All <i class="icon icon-delete" onclick=""></i></button> </td></tr>`);
+        element.insertAdjacentHTML('beforeend',`<tr id="end" class="text-bold"><td><button class="btn" onclick="downloadAllFiles();">Download All <i class="icon icon-download" ></i></button></td><td><button class="btn" onclick="">Delete All <i class="icon icon-delete" ></i></button> </td></tr>`);
       }else{
           tab_badge.classList.remove("badge");
           tab_badge.dataset.badge = 0;
