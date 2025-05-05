@@ -21,8 +21,8 @@ let pal2; // palette for 50-100%
 const infoLine = (3*h/4) - 6;
 const infoWidth = 56;
 const infoHeight = 11;
-const textStartWidth = 28;
-const textStartHeight = 44;
+const ringEdge = 4;
+const ringThick = 6;
 const sec_update = 1000; // This ms between updates when the ring is in Seconds mode
 var drawingSteps = false;
 var prevRing = {start: null, end: null, max: null};
@@ -348,7 +348,7 @@ function drawClock() {
 
   g.reset();
   g.setColor(g.theme.bg);
-  g.fillRect(textStartWidth, textStartHeight, w-textStartWidth, h-textStartHeight); // Clears the text within the circle
+  g.fillEllipse(ringEdge+ringThick,ringEdge+ringThick,w-ringEdge-ringThick,h-ringEdge-ringThick); // Clears the text within the circle
   drawGaugeImage(date);
   setLargeFont();
 
@@ -449,8 +449,6 @@ function polyArray(start, end, max) {
 }
 
 function drawRing(start, end, max) {
-  const edge = 4;
-  const thickness = 6;
   // Create persistent `buf` inside the function scope
   if (!drawRing._buf) {
     drawRing._buf = Graphics.createArrayBuffer(w, h, 2, { msb: true });
@@ -459,14 +457,14 @@ function drawRing(start, end, max) {
   let img = { width: w, height: h, transparent: 0,
               bpp: 2, palette: pal1, buffer: buf.buffer };
   buf.clear();
-  buf.setColor(1).fillEllipse(edge,edge,w-edge,h-edge);
-  buf.setColor(0).fillEllipse(edge+thickness,edge+thickness,w-edge-thickness,h-edge-thickness);
+  buf.setColor(1).fillEllipse(ringEdge,ringEdge,w-ringEdge,h-ringEdge);
+  buf.setColor(0).fillEllipse(ringEdge+ringThick,ringEdge+ringThick,w-ringEdge-ringThick,h-ringEdge-ringThick);
   img.palette = pal2;
   g.drawImage(img, 0, 0);  // Draws a filled-in circle
   if((end - start) >= max) return;  // No need to add the unfilled circle
   buf.clear();
-  buf.setColor(1).fillEllipse(edge,edge,w-edge,h-edge);
-  buf.setColor(0).fillEllipse(edge+thickness,edge+thickness,w-edge-thickness,h-edge-thickness);
+  buf.setColor(1).fillEllipse(ringEdge,ringEdge,w-ringEdge,h-ringEdge);
+  buf.setColor(0).fillEllipse(ringEdge+ringThick,ringEdge+ringThick,w-ringEdge-ringThick,h-ringEdge-ringThick);
   buf.setColor(0).fillPoly(polyArray(start, end, max)); // Masks the filled-in part of the segment over the unfilled part
   img.palette = pal1;
   g.drawImage(img, 0, 0);  // Draws the unfilled-in segment
