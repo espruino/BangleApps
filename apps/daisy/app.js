@@ -339,7 +339,6 @@ function drawClock() {
   var date = new Date();
   var hh = date.getHours();
   var mm = date.getMinutes();
-  let min = mm;
   if (settings.hr_12) {
     hh = hh % 12;
     if (hh == 0) hh = 12;
