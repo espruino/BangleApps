@@ -1,8 +1,9 @@
 var SunCalc = require("suncalc"); // from modules folder
 const storage = require('Storage');
 const widget_utils = require('widget_utils');
-const SETTINGS_FILE = "daisy.json";
 let settings = undefined;
+let location = undefined;
+const SETTINGS_FILE = "daisy.json";
 const global_settings = storage.readJSON("setting.json", true) || {};
 const LOCATION_FILE = "mylocation.json";
 const h = g.getHeight();
@@ -418,9 +419,9 @@ Bangle.on('HRM', function(hrm) {
 /////////////////   GAUGE images /////////////////////////////////////
 
 function addPoint(loc, max) {
-  angle = ((2*Math.PI)/max) * loc;
-  x = hyp * Math.sin(angle);
-  y = hyp * Math.cos(angle + Math.PI);
+  var angle = ((2*Math.PI)/max) * loc;
+  var x = hyp * Math.sin(angle);
+  var y = hyp * Math.cos(angle + Math.PI);
   x += rad;
   y += rad;
   return [Math.round(x),Math.round(y)];
