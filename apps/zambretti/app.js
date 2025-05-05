@@ -86,11 +86,11 @@ function correct_season(letter, dir) {
 
   let corr = 0;
   if (dir < 0 && !summer) { // Winter falling
-    corr = -1;
+    corr = +1;
   } else if (dir > 0 && summer) { // Summer rising
-    corr = 1;
+    corr = -1;
   }
-  return String.fromCharCode(letter.charCodeAt(0)+corr);
+  return letter == 'A' || letter == 'Z' ? letter : String.fromCharCode(letter.charCodeAt(0)+corr);
 }
 
 function get_zambretti_letter(pressure, dir) {
