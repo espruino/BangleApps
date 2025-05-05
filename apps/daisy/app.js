@@ -14,7 +14,6 @@ const hyp = Math.sqrt(Math.pow(rad, 2) + Math.pow(rad, 2));
 // variable for controlling idle alert
 let lastStep = getTime();
 let warned = 0;
-let hourly_buzz_occurred = false;
 let idle = false;
 let IDLE_MINUTES = 26;
 
@@ -94,7 +93,6 @@ function loadSettings() {
   settings.idle_check = (settings.idle_check === undefined ? true : settings.idle_check);
   settings.batt_hours = (settings.batt_hours === undefined ? false : settings.batt_hours);
   settings.hr_12 = (global_settings["12hour"] === undefined ? false : global_settings["12hour"]);
-  settings.hourly_buzz = (settings.hourly_buzz === undefined ? false : settings.hourly_buzz);
   settings.ring = settings.ring||'Steps';
   settings.idxInfo = settings.idxInfo||0;
   settings.step_target = settings.step_target||10000;
@@ -367,19 +365,10 @@ function drawClock() {
 
   // recalc sunrise / sunset every hour
   if (drawCount % 60 == 0) {
-    let recalcSunLeft = (settings.ring == 'Sun' || settings.hourly_buzz);
+    let recalcSunLeft = (settings.ring == 'Sun');
     updateSunRiseSunSet(date, location.lat, location.lon, recalcSunLeft);
   }
   drawCount++;
-
-  if (settings.hourly_buzz) {
-    if (min != 0)
-      hourly_buzz_occurred = false;
-    else if (!hourly_buzz_occurred && isDaytime) {
-      Bangle.buzz(150);
-      hourly_buzz_occurred = true;
-    }
-  }
 }
 
 function drawSteps() {
