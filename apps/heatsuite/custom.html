@@ -311,8 +311,7 @@
           const checkboxes = form.querySelectorAll(`input[type="checkbox"][name="${name}"]`);
           const values = Array.from(checkboxes)
                               .filter(cb => cb.checked)
-                              .map(cb => cb.value);
-    
+                              .map(cb => cb.hasAttribute('value') ? cb.value : true);                
           data[name] = forceArrayFields.includes(name) ? values : (values.length ? values[0] : false);
         } else {
           if (data.hasOwnProperty(name)) {

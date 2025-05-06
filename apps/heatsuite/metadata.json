@@ -15,7 +15,6 @@
     {"name":"heatsuite.img","url":"app-icon.js","evaluate":true},
     {"name":"HSModule","url":"heatsuite.module.js"},
     {"name":"heatsuite.app.js","url":"heatsuite.app.js"},
-    {"name":"heatsuite.boot.js","url":"heatsuite.boot.js"},
     {"name":"heatsuite.settings.js","url":"heatsuite.settings.js"},
     {"name":"heatsuite.wid.js","url":"heatsuite.wid.js"},
     {"name":"heatsuite.survey.js","url":"heatsuite.survey.js"},

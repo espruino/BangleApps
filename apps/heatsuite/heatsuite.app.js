@@ -144,7 +144,7 @@ function draw() {
       if (settings["bt_" + task.id + "_id"] === undefined || !settings["bt_" + task.id + "_id"]) {
         //make it clickable so we can go to settings and pair something
         btn.btnFaceCol = "#FF0000";
-        btn.cb = l => eval(require("Storage").read("heatsuite.settings.js"))(()=>load());
+        btn.cb = l => eval(require("Storage").read("heatsuite.settings.js"))(()=>load("heatsuite.app.js"));
       }
     }
     if(task.btInfo !== undefined){
