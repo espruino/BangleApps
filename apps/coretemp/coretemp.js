@@ -39,11 +39,12 @@ function drawBackground(message) {
   g.drawImage(corelogo, px - 146 / 2, 30);
   g.drawString(message, g.getWidth() / 2, g.getHeight() / 2 + 16);
 }
-Bangle.setCORESensorPower(1,"COREAPP");
-Bangle.on('CORESensor', onCore);
+
 
 if (!settings.enabled) {
   drawBackground("Sensor off\nEnable in Settings");
 } else {
+  Bangle.setCORESensorPower(1,"COREAPP");
+  Bangle.on('CORESensor', onCore);
   drawBackground("Waiting for\ndata...");
 }

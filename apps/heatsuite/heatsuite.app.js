@@ -86,6 +86,7 @@ function queueTaskScreenTimeout() {
 }
 
 function draw() {
+  let btRequired = false;
   g.clear();
   g.reset();
   if (studyTasks.length === 0) {
@@ -143,8 +144,11 @@ function draw() {
       if (settings["bt_" + task.id + "_id"] === undefined || !settings["bt_" + task.id + "_id"]) {
         //make it clickable so we can go to settings and pair something
         btn.btnFaceCol = "#FF0000";
-        btn.cb = l => taskButtonInterpretter("Bangle.load('heatsuite.settings.js');");
+        btn.cb = l => eval(require("Storage").read("heatsuite.settings.js"))(()=>load());
       }
+    }
+    if(task.btInfo !== undefined){
+      btRequired = true;//we will be scanning for bluetooth devices
     }
     //builder for each icon in taskScreen
     if (row.c.length >= rowCount) {
@@ -158,7 +162,7 @@ function draw() {
     layoutOut.c.push(row);
   }
   //Final 
-  layoutOut.c.push({ type: "txt", font: "6x8:2", label: "Searching...", id: "msg", fillx: 1 });
+  if(btRequired) layoutOut.c.push({ type: "txt", font: "6x8:2", label: "Searching...", id: "msg", fillx: 1 });
   let options = { 
     lazy: true,
     btns:[{label:"Exit", cb: l=>Bangle.showClock() }],
@@ -173,12 +177,13 @@ function draw() {
   };
   layout = new Layout(layoutOut, options);
   layout.render();
-  queueNRFFindDeviceTimeout();
+  if(btRequired) queueNRFFindDeviceTimeout();
   queueTaskScreenTimeout();
 }
 
 Bangle.setLocked(false); //unlock screen!
 Bangle.loadWidgets();
+Bangle.drawWidgets();
 require("widget_utils").hide();
 draw();
 }

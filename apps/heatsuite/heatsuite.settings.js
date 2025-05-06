@@ -16,6 +16,7 @@
         s[key] = value;
         require('Storage').writeJSON(settingsJSON, s);
         settings = readSettings();
+        if (global.WIDGETS && WIDGETS["heatsuite"]) WIDGETS["heatsuite"].changed(); //redraw widget on settings update if open
     }
 
     function readSettings() {
@@ -173,6 +174,13 @@
         menu['Devices'] = function () { E.showMenu(deviceSettings()) };
         menu['GPS'] = function () { E.showMenu(gpsSettings()) };
         menu['Language'] = function () { E.showMenu(languageMenu()) };
+        menu['Swipe Launch'] = {
+            value: settings.swipeOpen || false,
+            onchange: v => {
+                settings.swipeOpen = v;
+                writeSettings("swipeOpen", v);
+            }
+        };
         menu['Survey Random'] = {
             value: settings.surveyRandomize || false,
             onchange: v => {
@@ -346,5 +354,6 @@
             E.showMenu(submenu_scan);
         }, { timeout: 4000, active: true, filters: [{ services: [service] }] });
     }
+    
     E.showMenu(mainMenuSettings());
 })

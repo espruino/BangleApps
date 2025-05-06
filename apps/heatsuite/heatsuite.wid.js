@@ -736,6 +736,15 @@
     if (settings.highAcc !== undefined && settings.highAcc) {
       perSecAcc(settings.highAcc);
     }
+    if(settings.swipeOpen !== undefined && settings.swipeOpen){
+      Bangle.on('swipe', function(dir) {
+        if (dir === 1) { // 1 = right swipe
+          Bangle.buzz();
+          require("widget_utils").hide();
+          Bangle.load('heatsuite.app.js');
+        }
+      });
+    }
   }
 
   startRecorder();
@@ -766,7 +775,7 @@
   var iconWidth = 44;
   function draw() {
     g.reset();
-    if (cache.taskQueue !== undefined) (cache.taskQueue.length > 0 ? g.setColor("#f00") : g.setColor("#0f0"));
+    g.setColor(cache.taskQueue === undefined ? "#fff" : cache.taskQueue.length > 0 ? "#f00" : "#0f0");
     g.setFontAlign(0, 0);
     g.fillRect({ x: this.x, y: this.y, w: this.x + iconWidth - 1, h: this.y + 23, r: 8 });
     g.setColor(-1);
@@ -774,6 +783,7 @@
     g.drawImage(atob("FBfCAP//AADk+kPKAAAoAAAAAKoAAAAAKAAAAFQoFQAAVTxVAFQVVVQVRABVABFVEBQEVQBUABUAAFUAVQCoFVVUKogAVQAiqBVVVCoAVQBVAABUABUAVRAUBFVEAFUAEVQVVVQVAFU8VQAAVCgVAAAAKAAAAACqAAAAACgAAA=="), this.x + 1, this.y + 1);
     g.setColor((Bangle.hasOwnProperty("isBTHRMConnected") && Bangle.isBTHRMConnected()) ? "#00F" : "#0f0");
     g.drawImage(atob("EhCCAAKoAqgCqqiqqCqqqqqqqqqqqqqqqqqqqqqqqqqqqqqiqqqqqAqqqqoAKqqqgACqqqAAAqqoAAAKqgAAACqAAAAAoAAAAAoAAA=="), this.x + 22, this.y + 3);
+  
   }
   WIDGETS.heatsuite = {
     area: 'tr',
@@ -784,14 +794,6 @@
       WIDGETS["heatsuite"].draw();
     }
   };
-
-  Bangle.on('swipe', function(dir) {
-    if (dir === 1) { // 1 = right swipe
-      Bangle.buzz();
-      require("widget_utils").hide();
-      Bangle.load('heatsuite.app.js');
-    }
-  });
 
   //Diagnosing BLUETOOTH Connection Issues
   //for managing memory issues - keeping code here for testing purposes in the future

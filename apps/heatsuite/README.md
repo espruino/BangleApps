@@ -27,13 +27,39 @@ This is a list of current features available when using the HeatSuite Watch Appl
 + Programmatic GPS monitoring, with adaptive power switching for battery optimization
 + Fall Detection and bluetooth broadcasting (beta)
 
+## I just installed HeatSuite and I see a bunch of options. What do they mean?
+
+HeatSuite uses a default studyTasks.json - visible and fully editable in the `Tasks` tab when installing HeatSuite on the watch. You can customize this to your liking by following the instructions [in the docs](https://heatsuitelabs.github.io/HeatSuiteDocs/watchapp/watchapp-tasks/). Some specific details are provided in this readme.
+
+## What do the button colors mean?
+
+![HeatSuite Main Application](heatsuite_layout.png)
+
+The colors of each of the buttons provide the user some feedback:
+
++ <font color="green">Green</font> Means the task has been completed recently, or the user can press the button to navigate to or do a task.*
++  <font color="red">Red</font> means that the task can't be completed yet because another step needs to be done. This example shows that the external devices have yet to be paired with the watch.
++ <font color="yellow">Yellow</font> means you are scheduled to do this task. 
+
+_*Note: If the task requires a bluetooth device, the app will scan for the device and automatically handle the task once found._
+
+## What does `Searching...` at the bottom of the HeatSuite app layout mean?
+
+The `Searching...` text at the bottom of the screen shows that the watch is searching for devices that it may need to connect to via Bluetooth. This text will change when a device is found, and the appropriate handling of the task will ensue. As Bluetooth scanning drains the battery, the HeatSuite App will timeout after 3 minutes and revert back to the clock. 
+
+_Note: This will only show when a bluetooth device is associated with a task._
+
+## Why does swiping right open the HeatSuite App?
+
+The objective of HeatSuite was to make data collection in the field easier for participants. By default, swiping right when the HeatSuite widget is visible will open the app. This can be toggled off in the app settings.
+
 ## Can I request or add a feature? 
 
 Certainly!! To help ensure that the release on BangleApps is always functional and works with the other devices within the HeatSuite ecosystem, please make any feature requests or code updates to the forked version within the [HeatSuiteLabs repository](https://github.com/HeatSuiteLabs/BangleApps). That is our testing bed before we push to the official Bangle Apps git.
 
 ## Watch accelerometer data
 
-The current interation of the HeatSuite application provides the option to average the accelerometer `x,z,y` every second or as needed (known as High Temporal Resolution Accelerometer Logging), and/or magnitude per minute. Magnitude is calculated in the Espruino firmware as:
+The current interation of the HeatSuite application provides the option to average the accelerometer `x,y,z` every second or as needed (known as High Temporal Resolution Accelerometer Logging), and/or magnitude per minute. Magnitude is calculated in the Espruino firmware as:
 
 ``` 
 sqrt(x^2 + y^2 + z^2)
@@ -72,4 +98,4 @@ A full list of peer-reviewed research and conference preceedings using HeatSuite
 
 ## Creator
 
-[Nicholas Ravanelli, PhD](https://github.com/nravaneli)
+[Nicholas Ravanelli, PhD](https://github.com/nravanelli)
