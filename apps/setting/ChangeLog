@@ -86,3 +86,4 @@ of 'Select Clock'
 0.75: Restore previous menu's scroll positions
 0.76: Add altitude calibration menu (and update README after menu changed)
 0.77: Save altitude calibration when user exits via reset
+0.78: Fix menu scroll restore on BangleJS1

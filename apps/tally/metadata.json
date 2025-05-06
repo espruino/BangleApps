@@ -1,0 +1,21 @@
+{
+  "id": "tally",
+  "name": "Tally Keeper",
+  "shortName": "Tally",
+  "version": "0.01",
+  "description": "Add to a tally from clock info",
+  "icon": "app.png",
+  "tags": "clkinfo",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    { "name": "tally.settings.js", "url": "settings.js" },
+    { "name": "tally.img", "url": "app-icon.js", "evaluate": true },
+    { "name": "tally.clkinfo.js", "url": "clkinfo.js" },
+    { "name": "tally.app.js", "url": "app.js" }
+  ],
+  "data": [
+    { "name": "tallycfg.json" },
+    { "name": "tallies.csv" }
+  ]
+}

@@ -26,5 +26,10 @@
     "winScore": 11,
     "enableTwoAhead": true,
     "enableMaxScore": false
+  },
+  "Squash": {
+    "winScore": 9,
+    "enableTwoAhead": true,
+    "enableMaxScore": false
   }
 }

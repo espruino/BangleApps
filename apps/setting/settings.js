@@ -27,7 +27,8 @@ function pushMenu(menu) {
 function restoreMenu(menu) {
   // equivalent to pushMenu(null); popMenu(menu);
   if(!menu[""]) menu[""] = {};
-  menu[""].scroll = menuScroller.scroll;
+  if(menuScroller) // may be undefined on BangleJS1
+    menu[""].scroll = menuScroller.scroll;
   menuScroller = E.showMenu(menu).scroller;
 }
 

@@ -46,6 +46,9 @@ exports.resetTimer = function(alarm, time) {
   time = time || new Date();
   var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
   alarm.t = (currentTime + alarm.timer) % 86400000;
+  alarm.last = "timer" in alarm || alarm.t >= require("time_utils").getCurrentTimeMillis()
+    ? 0
+    : new Date().getDate();
 };
 /// Get time until the given alarm (object). Return undefined if alarm not enabled, or if 86400000 or more, alarm could be *more* than a day in the future
 exports.getTimeToAlarm = function(alarm, time) {

@@ -4,3 +4,4 @@
 0.04: Allow scanning of QR codes from camera or file
 0.05: Change brightness on touch
 0.06: Add ability to generate contact info (MeCard format) QR code
+0.07: Add custom appname (for storing multiple QR codes)

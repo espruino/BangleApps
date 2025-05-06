@@ -229,6 +229,7 @@ let redraw = function() {
         if (!(key in valsArrs)) continue;
         let valsArr = valsArrs[key];
         if (value === valsArr.text) continue; // No need to update
+        if (valsArr.endComma) value = value.slice(0, -1);
         valsArrs[key].text = value;
 
         // Clear prev values
@@ -239,7 +240,7 @@ let redraw = function() {
         g.drawString(value, valsArr.x, valsArr.y);
         if (valsArr.endComma){
             g.setColor(clrs.brackets);
-            g.drawString(',', valsArr.Banglex + g.stringWidth(value), valsArr.y);
+            g.drawString(',', valsArr.x + g.stringWidth(value), valsArr.y);
         }
     }
 };

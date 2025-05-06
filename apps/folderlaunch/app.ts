@@ -174,7 +174,7 @@
    * @param _button 1 for left half, 2 for right half
    * @param xy postion on screen
    */
-  let onTouch = function (_button: number, xy: { x: number, y: number } | undefined) {
+  let onTouch = function (_button, xy) {
     // Determine which grid cell was tapped
     let x: number = Math.floor((xy!.x - 12) / ((g.getWidth() - 24) / config.display.rows));
     if (x < 0) x = 0;
@@ -206,7 +206,7 @@
         break;
       }
     }
-  }
+  } satisfies TouchCallback;
 
   let page: number = 0;
   let nPages: number; // Set when setting folder
