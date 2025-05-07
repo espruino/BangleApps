@@ -14,3 +14,4 @@
 0.13: Cache loaded ClockInfos so if we have clockInfoWidget and a clock, we don't load them twice (saves ~300ms)
 0.14: Check for .clkinfocache and use that if exists (from boot 0.64)
 0.15: Fix error when displaying a category with only one clockinfo (fix #3728)
+0.16: Add BLE clkinfo entry
