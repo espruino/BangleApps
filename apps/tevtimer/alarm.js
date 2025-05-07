@@ -31,7 +31,10 @@ function showAlarm(alarm) {
       chainTimer.start();
       tt.set_last_viewed_timer(chainTimer);
       isChainedTimer = true;
+
+      // Update system alarm list
       tt.update_system_alarms();
+      alarms = require("sched").getAlarms();
     } else {
       console.warn("tevtimer: unable to find chained timer with ID " + timer.chain_id);
     }
@@ -73,30 +76,20 @@ function showAlarm(alarm) {
       let currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
       alarm.t = currentTime + settings.defaultSnoozeMillis;
       alarm.t %= 86400000;
+
       Bangle.emit("alarmSnooze", alarm);
     }
     if (action === 'ok' || action === 'halt') {
-      // Don't do timer deletions here; this is handled by the
-      // tevtimer library code (and it may rearrange the alarm indeces
-      // in the process)
-
-      if (alarm.date && alarm.rp) {
-        setNextRepeatDate(alarm);
-      } else if (!alarm.timer) {
-        alarm.last = new Date().getDate();
-      }
-      if (alarm.ot !== undefined) {
-        alarm.t = alarm.ot;
-        delete alarm.ot;
-      }
-      if (!alarm.rp) {
-        alarm.on = false;
+      let index = alarms.indexOf(alarm);
+      if (index !== -1) {
+        alarms.splice(index, 1);
       }
     }
     if (action === 'halt') {
       timer.pause();
       chainTimer.pause();
       tt.update_system_alarms();
+      alarms = require("sched").getAlarms();
     }
     Bangle.emit("alarmDismiss", alarm);
 
