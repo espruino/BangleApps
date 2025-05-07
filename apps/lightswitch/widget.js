@@ -121,6 +121,7 @@
         } else {
           // activate backlight
           this.isOn = true;
+          Bangle.setLCDPower(true);
           // redraw complete widget icon
           this.drawIcon(false);
         }
