@@ -38,13 +38,14 @@ exports = {
       isOn: true
     }, require("Storage").readJSON("lightswitch.json", true) || {});
 
-    // chack if locked, backlight off or actual value lower then minimal flash value
+    // check if locked, backlight off or actual value lower then minimal flash value
     if (Bangle.isLocked() || !w.isOn || w.value < w.minFlash) {
 
       // set inner bulb and brightness
       var setBrightness = function(w, value) {
         if (w.drawInnerBulb) w.drawInnerBulb(value);
         Bangle.setLCDBrightness(value);
+        Bangle.setLCDPower(true);
       };
 
       // override timeout if defined
