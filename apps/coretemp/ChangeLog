@@ -3,3 +3,4 @@
 0.03: Move code for recording to this app
 0.04: Use default Bangle formatter for booleans
 0.05: Minor code improvements
+0.06: Added advanced settings, adapted code to mirror bthrm funcitonality, and will work with latest firmware CORE Sensor Firmware (V0.87)

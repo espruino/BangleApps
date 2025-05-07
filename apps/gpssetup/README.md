@@ -59,6 +59,7 @@ used. These settings will remain for all apps that use the GPS.
 
 - fix_req (Bangle.js2 only) - the number of fixes required before the GPS turns off until next search for GPS signal. default is 1.
 
+- adaptive (Bangle.js2 only) - When a GPS signal is acquired, this can reduce the time in seconds until next scan to generate higher temporal resolution of gps fixes. Off if set to 0.
 ## Module
 
 A module is provided that'll allow you to set GPS configuration from your own
@@ -69,11 +70,13 @@ app. To use it:
 // needed unless the watch's battery has run down
 require("gpssetup").setPowerMode();
 
-// This sets up the PSMOO mode. update/search are optional in seconds
+// This sets up the PSMOO mode. update/search/adaptive are optional in seconds
 require("gpssetup").setPowerMode({
   power_mode:"PSMOO",
   update:optional (default 120),
-  search:optional (default 5)})
+  search:optional (default 5),
+  adaptive: optional (default 0)
+  });
 
 // This sets up SuperE
 require("gpssetup").setPowerMode({power_mode:"SuperE"})

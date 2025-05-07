@@ -1,62 +1,54 @@
-// TODO Change to a generic multiple sensor widget?
-
 (() => {
   var settings = {};
-  var count = 0;
-  var core = 0;
-
+  var CORESensorStatus = false;
   // draw your widget
   function draw() {
-    if (!settings.enabled)
+    if (!settings.widget)
       return;
     g.reset();
     g.setFont("6x8", 1).setFontAlign(0, 0);
     g.setFontAlign(0, 0);
     g.clearRect(this.x, this.y, this.x + 23, this.y + 23);
 
-    if (count & 1) {
+    if (CORESensorStatus) {
       g.setColor("#0f0"); // green
     } else {
       g.setColor(g.theme.dark ? "#333" : "#CCC"); // off = grey
     }
 
     g.drawImage(
-        atob("DAyBAAHh0js3EuDMA8A8AWBnDj9A8A=="),
-        this.x+(24-12)/2,this.y+1);
-
-    g.setColor(g.theme.fg);
-    g.drawString(parseInt(core)+"\n."+parseInt((core*100)%100), this.x + 24 / 2, this.y + 18);
-
+      atob("FBSCAAAAADwAAAPw/8AAP/PD8AP/wwDwD//PAPAP/APA8D/AA//wP8AA/8A/AAAAPP8AAAD8/wAAAPz/AAAA/D8AAAAAP8AAA/A/8AAP8A/8AD/wD///z8AD///PAAA///AAAAP/wAA="),
+      this.x + (24 - 12) / 2, this.y + 1);
     g.setColor(-1);
   }
-
-  // Set a listener to 'blink'
-  function onTemp(temp) {
-    count = count + 1;
-    core = temp.core;
-    WIDGETS["coretemp"].draw();
-  }
-
   // Called by sensor app to update status
   function reload() {
     settings = require("Storage").readJSON("coretemp.json", 1) || {};
-
-    Bangle.removeListener('CoreTemp', onTemp);
-
+    if (!settings.widget) {
+      delete WIDGETS["coretemp"];
+      return;
+    }
     if (settings.enabled) {
       WIDGETS["coretemp"].width = 24;
-      Bangle.on('CoreTemp', onTemp);
     } else {
-      WIDGETS["coretemp"].width = 0;
-      count = 0;
+      WIDGETS["CORESensor"].width = 0;
     }
+  }
+
+  if (Bangle.hasOwnProperty("isCORESensorConnected")) {
+    setInterval(function () {
+      if (Bangle.isCORESensorConnected() != CORESensorStatus) {
+        CORESensorStatus = Bangle.isCORESensorConnected();
+        WIDGETS["coretemp"].draw();
+      }
+    }, 10000); //runs every 10 seconds
   }
   // add the widget
   WIDGETS["coretemp"] = {
-    area : "tl",
-    width : 24,
-    draw : draw,
-    reload : function() {
+    area: "tl",
+    width: 24,
+    draw: draw,
+    reload: function () {
       reload();
       Bangle.drawWidgets(); // relayout all widgets
     }

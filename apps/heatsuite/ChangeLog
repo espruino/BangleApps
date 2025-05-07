@@ -1,0 +1,7 @@
+0.01: New App!
+0.05: Added functionality for incorporating BTHRM
+0.06: Modified BLE Broadcasting; Includes Optical HR and Wrist Temperature
+0.07: Fixing storage overloaded issue
+0.08: Added scrolling to Surveys. CORESensor app added.
+0.09: Added High Temporal Accelerometry logging (x,y,z per second)
+0.10: Fixes to settings.js to account for optimizations in studyTasks.json
