@@ -450,6 +450,7 @@ function set_system_alarms() {
         timer: time_to_next_alarm,
         msg: '',
         js: "load('tevtimer.alarm.js');",
+        as: true,    // Allow auto-snooze if not immediately dismissed
       });
     }
   }
