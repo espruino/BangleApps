@@ -24,8 +24,9 @@ function showAlarm(alarm) {
   // If there's a timer chained from this one, start it (only for
   // alarms not in snoozed status)
   var isChainedTimer = false;
+  var chainTimer = null;
   if (timer.chain_id !== null && alarm.ot === undefined) {
-    var chainTimer = tt.TIMERS[tt.find_timer_by_id(timer.chain_id)];
+    chainTimer = tt.TIMERS[tt.find_timer_by_id(timer.chain_id)];
     if (chainTimer !== undefined) {
       chainTimer.reset();
       chainTimer.start();
@@ -84,13 +85,19 @@ function showAlarm(alarm) {
       if (index !== -1) {
         alarms.splice(index, 1);
       }
+      if (timer !== chainTimer) {
+        timer.pause();
+        if (tt.SETTINGS.auto_reset) {
+          timer.reset();
+        }
+      }
     }
     if (action === 'halt') {
-      timer.pause();
       chainTimer.pause();
-      tt.update_system_alarms();
-      alarms = require("sched").getAlarms();
     }
+    tt.update_system_alarms();
+    alarms = require("sched").getAlarms();
+
     Bangle.emit("alarmDismiss", alarm);
 
     // The updated alarm is still a member of 'alarms'

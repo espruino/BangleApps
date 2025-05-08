@@ -345,6 +345,7 @@ const SETTINGS = Object.assign({
   'confirm_reset': 'auto',
   'confirm_delete': true,
   'alarm_return': false,
+  'auto_reset': false,
 }, Storage.readJSON(SETTINGS_FILENAME, true) || {});
 
 var TIMERS = load_timers();

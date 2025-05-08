@@ -1276,6 +1276,13 @@ class AppSettingsMenu {
           tt.set_settings_dirty();
         }
       },
+      'Auto reset': {
+        value: tt.SETTINGS.auto_reset,      // boolean
+        onchange: v => {
+          tt.SETTINGS.auto_reset = v;
+          tt.set_settings_dirty();
+        }
+      }
     };
 
     E.showMenu(menu);
