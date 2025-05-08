@@ -14,7 +14,7 @@
     "" : { "title" : "Umpire Ball Counter" },
     "< Back" : () => back(),
     'Balls per over': {
-      value: 0|settings.ballsPerOver,  // 0| converts undefined to 0
+      value: settings.ballsPerOver,
       min: 4, max: 10,
       onchange: v => {
         settings.ballsPerOver = v;
