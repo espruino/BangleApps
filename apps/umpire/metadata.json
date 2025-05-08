@@ -11,5 +11,6 @@
   "storage": [
     {"name":"umpire.app.js","url":"app.js"},
     {"name":"umpire.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "data": [{"name":"umpire.json"}]
 }
