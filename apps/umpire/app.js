@@ -2,6 +2,7 @@ var processing = true; //debounce to inhibit twist events
 var wickets = 0;
 var counter = 0;
 var over = 0;
+var ballsPerOver = 6;
 var ballTimes = [];
 var overTimes = [];
 var timeTimes = [];
@@ -91,20 +92,20 @@ function countDown(dir) {
     } else {
       addLog(timeSig, over, counter, "Correction", formatDuration(deadDuration));
     }
-    if(counter==4) {
+    if(counter == ballsPerOver - 2) {
       Bangle.buzz().then(()=>{
         return new Promise(resolve=>setTimeout(resolve,500)); // wait 500ms
       }).then(()=>{
         return Bangle.buzz(500);
       })
-    } else if(counter==5) {
+    } else if(counter == ballsPerOver - 1) {
       Bangle.buzz(800);
     } else {
       Bangle.buzz()
     }
   
     // Over
-    if (counter==6) {
+    if (counter == ballsPerOver) {
       overTimes.push(timeSig.getTime());
       var firstOverTime = overTimes[0];
       var matchDuration = new Date(timeSig.getTime() - firstOverTime);
@@ -125,7 +126,6 @@ function countDown(dir) {
     }
   }
   
-  //if(counter<6) { // refresh in-play
     g.clear(1); // clear screen and reset graphics state
     g.setFont("Vector",24); // vector font, 80px
     g.drawString(wickets, 158, 10);
@@ -136,7 +136,7 @@ function countDown(dir) {
     g.drawString(over + "." + counter, g.getWidth()/1.89, 120);
     g.setFont("Vector",18);
     g.drawString("..." + formatDuration(deadDuration), g.getWidth()/1.89, 166);
-  //}
+  
   processing = false;
 }
 
