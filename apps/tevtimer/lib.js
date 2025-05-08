@@ -187,9 +187,9 @@ function format_duration(msec, have_seconds) {
   }
   const time = Time_utils.decodeTime(msec);
   time.h += time.d * 24;
-  let str = time.h + ":" + ("0" + time.m).substr(-2);
+  let str = time.h + ":" + ("0" + time.m).slice(-2);
   if (have_seconds) {
-    str += ":" + ("0" + time.s).substr(-2);
+    str += ":" + ("0" + time.s).slice(-2);
   }
   return str;
 }
