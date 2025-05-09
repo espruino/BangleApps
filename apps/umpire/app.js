@@ -150,6 +150,7 @@ function countDown(dir) {
     g.drawString(over + "." + counter, g.getWidth()/1.89, 120);
     g.setFont("Vector",18);
     var ballGraph = ballFaced.repeat(counter) + ballToCome.repeat(ballsPerOver-counter);
+    if(timeCalled) ballGraph = '-TIME-';
     g.drawString(ballGraph + ' ' + formatDuration(deadDuration), g.getWidth()/1.89, 166);
   
   processing = false;
