@@ -1,6 +1,7 @@
 var settings = Object.assign({
   // default values
-  ballsPerOver: 6
+  ballsPerOver: 6,
+  oversPerInnings: 20
 }, require('Storage').readJSON("umpire.json", true) || {});
 
 var processing = true; //debounce to inhibit twist events
@@ -8,6 +9,7 @@ var wickets = 0;
 var counter = 0;
 var over = 0;
 var ballsPerOver = settings.ballsPerOver;
+var oversPerInnings = settings.oversPerInnings;
 var ballTimes = [];
 var overTimes = [];
 var timeTimes = [];
