@@ -24,7 +24,7 @@
     },
     'Overs per innings': {
       value: settings.oversPerInnings,
-      min: 12, max: 50,
+      min: 4, max: 50,
       onchange: v => {
         settings.oversPerInnings = v;
         writeSettings();
