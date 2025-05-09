@@ -140,7 +140,7 @@ function countDown(dir) {
     g.setFont("Vector",80); // vector font, 80px
     g.drawString(over + "." + counter, g.getWidth()/1.89, 120);
     g.setFont("Vector",18);
-    g.drawString("..." + formatDuration(deadDuration), g.getWidth()/1.89, 166);
+    g.drawString(".".repeat(ballsPerOver) + formatDuration(deadDuration), g.getWidth()/1.89, 166);
   
   processing = false;
 }
@@ -326,7 +326,7 @@ function newInnings() {
   log = [];
   timeCalled = false;
   var timeSig = new Date();
-  addLog(timeSig, "245", "a", "Date", timeSig.toUTCString());
+  addLog(timeSig, "-", "-", "New Innings", timeSig.toUTCString());
 }
 
 newInnings();
