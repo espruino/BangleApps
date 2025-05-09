@@ -16,7 +16,7 @@ var tossIndex = 0; // default to Cancel until recorded
 var tossTimeString = "";
 var timeCalled = false;
 var ballToCome = '-';
-var ballFaced = '=';
+var ballFaced =  '=';
 
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   var csv = [
