@@ -97,18 +97,34 @@ let swipeHandler = function(LR, _) {
   }
 };
 
+let dy = 0;
+let dragHandler = function(e) {
+
+  let cb = ud => {
+    if (ud) Bangle.musicControl(ud>0 ? "volumedown" : "volumeup");
+  }
+
+  // replace the ud callback functionality of setui "updown" mode (copy it here)
+  // add on my volume knob.
+  dy += e.dy;
+  if (!e.b) dy=0;
+  while (Math.abs(dy)>32) {
+    if (dy>0) { dy-=32; cb(1) }
+    else { dy+=32; cb(-1) }
+    Bangle.buzz(20);
+  }
+};
+
 // Navigation input on the main layout
 let setUI = function() {
   Bangle.setUI(
-    {mode : "updown",
+    {mode : "custom",
      touch: touchHandler,
      swipe: swipeHandler,
+     drag: dragHandler,
      btn: ()=>load(),
      remove : ()=>widgetUtils.show(),
-    },
-      ud => {
-        if (ud) Bangle.musicControl(ud>0 ? "volumedown" : "volumeup");
-      }
+    }
   );
 };
 
