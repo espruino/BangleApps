@@ -155,7 +155,7 @@ let dragHandler = function(e) {
 };
 
 
-dial = function(cb, options) {
+let dial = function(cb, options) {
     "ram";
     options = options || {};
 
