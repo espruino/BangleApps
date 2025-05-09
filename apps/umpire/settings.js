@@ -3,6 +3,7 @@
   // Load settings
   var settings = Object.assign({
     ballsPerOver: 6,
+    oversPerInnings: 20
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
@@ -18,6 +19,13 @@
       min: 4, max: 10,
       onchange: v => {
         settings.ballsPerOver = v;
+        writeSettings();
+      },
+    'Overs per innings': {
+      value: settings.oversPerInnings,
+      min: 12, max: 50,
+      onchange: v => {
+        settings.oversPerInnings = v;
         writeSettings();
       }
     },
