@@ -276,14 +276,14 @@ function showMainMenu() {
   Bangle.setUI();
   var scrollMenuItems = [];
   if(over==0 || timeCalled) {
-    scrollMenuItems.push("Play " + ballsPerOver + "-ball");
+    scrollMenuItems.push("Call Play");
   }
   if(over>0 && !timeCalled) {
     scrollMenuItems.push("« Back", "Wicket");
     if(wickets>0) scrollMenuItems.push("Recall");
     scrollMenuItems.push("Call Time");
   }
-  scrollMenuItems.push("New Innings");
+  scrollMenuItems.push("New Inn.");
 
   return E.showScroller({
   h : 80, c : scrollMenuItems.length,
@@ -304,7 +304,7 @@ function showMainMenu() {
       || scrollMenuItems[idx]=="« Back") resumeGame();
     if(scrollMenuItems[idx]=="Wicket") incrementWickets(1);
     if(scrollMenuItems[idx]=="Recall") incrementWickets(-1);
-    if(scrollMenuItems[idx]=="New Innings") newInnings();
+    if(scrollMenuItems[idx]=="New Inn.") newInnings();
   }
   });
 }
