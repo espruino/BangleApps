@@ -97,23 +97,149 @@ let swipeHandler = function(LR, _) {
   }
 };
 
+let dx = 0;
 let dy = 0;
+let volumeChangedThisGoAround = false;
+let knobTimeout;
 let dragHandler = function(e) {
 
   let cb = ud => {
-    if (ud) Bangle.musicControl(ud>0 ? "volumedown" : "volumeup");
+    if (ud) Bangle.musicControl(ud<0 ? "volumedown" : "volumeup");
   }
 
-  // replace the ud callback functionality of setui "updown" mode (copy it here)
-  // add on my volume knob.
+  let resetOuterScopeVariables = ()=>{
+    dy=0;
+    dx=0;
+    volumeChangedThisGoAround=false;
+  }
+
+  dx += e.dx;
   dy += e.dy;
-  if (!e.b) dy=0;
+  if (!e.b) {resetOuterScopeVariables();}
+
   while (Math.abs(dy)>32) {
-    if (dy>0) { dy-=32; cb(1) }
-    else { dy+=32; cb(-1) }
+    if (dy>0) { dy-=32; cb(-1) }
+    else { dy+=32; cb(1) }
+    volumeChangedThisGoAround = true;
     Bangle.buzz(20);
   }
+
+  if (volumeChangedThisGoAround && Math.abs(dx)>32) {
+      // setup volume knob here.
+    cb(Math.sign(dx))
+    resetOuterScopeVariables();
+    let volumeKnob = dial(cb);
+    let timingOutVolumeKnob = (e)=>{
+        if (!e.b) {
+          setKnobTimeout();
+        } else if (knobTimeout) {
+          clearTimeout(knobTimeout);
+          knobTimeout = undefined;
+        }
+        volumeKnob(e);
+      }
+    let swipeMask = ()=>{
+        E.stopEventPropagation();
+      }
+    let setKnobTimeout = ()=>{
+        knobTimeout = setTimeout(()=>{
+          Bangle.removeListener("drag", timingOutVolumeKnob)
+          Bangle.removeListener("swipe", swipeMask);
+          knobTimeout = undefined;
+          print("removed volume knob")
+        }, 350);
+      }
+    Bangle.prependListener("drag", timingOutVolumeKnob);
+    Bangle.prependListener("swipe", swipeMask);
+  }
 };
+
+
+dial = function(cb, options) {
+    "ram";
+    options = options || {};
+
+    const SCREEN_W = g.getWidth();
+    const SCREEN_H = g.getHeight();
+
+    const DIAL_RECT = options.dialRect || {
+      x: 0,
+      y: 0,
+      x2: SCREEN_W - 1,
+      y2: SCREEN_H - 1,
+      w: SCREEN_W,
+      h: SCREEN_H,
+    };
+
+    const CENTER = {
+      x: DIAL_RECT.x + DIAL_RECT.w / 2,
+      y: DIAL_RECT.y + DIAL_RECT.h / 2,
+    };
+
+    const BASE_SCREEN_W = 176;
+    const STEPS_PER_TURN = options.stepsPerWholeTurn || 10;
+    const BASE_THRESHOLD = 50;
+    const THRESHOLD =
+      BASE_THRESHOLD *
+      (10 / STEPS_PER_TURN) *
+      (DIAL_RECT.w / BASE_SCREEN_W);
+
+    let cumulative = 0;
+
+    function onDrag(e) {
+      "ram";
+
+      if (
+        e.x < DIAL_RECT.x ||
+        e.x > DIAL_RECT.x2 ||
+        e.y < DIAL_RECT.y ||
+        e.y > DIAL_RECT.y2
+      ) {
+        return;
+      }
+
+      if (e.y < CENTER.y) {
+        cumulative += e.dx;
+      } else {
+        cumulative -= e.dx;
+      }
+
+      if (e.x < CENTER.x) {
+        cumulative -= e.dy;
+      } else {
+        cumulative += e.dy;
+      }
+
+      function stepHandler(step) {
+        Bangle.buzz(20, 0.3);
+        cumulative -= THRESHOLD * step;
+        cb(step);
+      }
+
+      while (cumulative > THRESHOLD) {
+        stepHandler(1);
+      }
+      while (cumulative < -THRESHOLD) {
+        stepHandler(-1);
+      }
+
+      E.stopEventPropagation();
+    }
+    
+    return onDrag;
+/*
+    if (exports.dial._handler) {
+      Bangle.removeListener("drag", dial._handler);
+    }
+
+    exports.dial._handler = onDrag;
+    Bangle.prependListener("drag", onDrag);
+    
+    Bangle.prependListener("swipe", ()=>{ 
+      E.stopEventPropagation();
+    }
+                          );*/
+  };
 
 // Navigation input on the main layout
 let setUI = function() {
