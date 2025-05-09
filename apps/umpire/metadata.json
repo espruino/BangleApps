@@ -3,7 +3,7 @@
   "shortName":"Umpire",
   "icon": "app.png",
   "version":"1.00",
-  "description": /*LANG*/"Cricket umpire ball counter and match event logger",
+  "description": "Cricket umpire ball counter and match event logger",
   "tags": "",
   "readme":"README.md",
   "interface": "interface.html",
