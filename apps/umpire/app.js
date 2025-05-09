@@ -149,7 +149,9 @@ function countDown(dir) {
     g.setFont("Vector",48); // vector font, 80px
     g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 50);
     g.setFont("Vector",80); // vector font, 80px
-    g.drawString(over + "." + counter, g.getWidth()/1.89, 120);
+    var ballString = over + "." + counter;
+    if(over > oversPerInnings) ballString = oversPerInnings + ' END';
+    g.drawString(ballString, g.getWidth()/1.89, 120);
     g.setFont("Vector",18);
     var ballGraph = ballFaced.repeat(counter) + ballToCome.repeat(ballsPerOver-counter);
     if(timeCalled) ballGraph = '-TIME-';
@@ -333,7 +335,7 @@ function newInnings() {
   log = [];
   timeCalled = false;
   var timeSig = new Date();
-  addLog(timeSig, "-", "-", "New Innings", timeSig.toUTCString());
+  addLog(timeSig, oversPerInnings, ballsPerOver, "New Innings", timeSig.toUTCString());
 }
 
 newInnings();
