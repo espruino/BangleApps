@@ -92,6 +92,13 @@ function countDown(dir) {
   var deadDuration = new Date(timeSig.getTime() - lastBallTime);
   //console.log(deadDuration);
   if(dir!=0) {
+    if(timeCalled) {
+      console.log("Play after Time");
+      timeCalled = false;
+      var lastTimeTime = timeTimes[timeTimes.length - 1];
+      var timeDuration = new Date(timeSig.getTime() - lastTimeTime);
+      addLog(timeSig, over, counter, "Play", "Lost: " + formatDuration(timeDuration));    
+    }
     if(counter>0) ballTimes.push(timeSig.getTime());
     Bangle.setLCDPower(1);
     if(dir>0) {
@@ -142,7 +149,8 @@ function countDown(dir) {
     g.setFont("Vector",80); // vector font, 80px
     g.drawString(over + "." + counter, g.getWidth()/1.89, 120);
     g.setFont("Vector",18);
-    g.drawString(ballFaced.repeat(counter) + ballToCome.repeat(ballsPerOver-counter) + ' ' + formatDuration(deadDuration), g.getWidth()/1.89, 166);
+    var ballGraph = ballFaced.repeat(counter) + ballToCome.repeat(ballsPerOver-counter);
+    g.drawString(ballGraph + ' ' + formatDuration(deadDuration), g.getWidth()/1.89, 166);
   
   processing = false;
 }
@@ -192,13 +200,7 @@ function startPlay(resume) {
       
     }
   }
-  if(timeCalled) {
-    console.log("Play after Time");
-    timeCalled = false;
-    var lastTimeTime = timeTimes[timeTimes.length - 1];
-    var timeDuration = new Date(timeSig.getTime() - lastTimeTime);
-    addLog(timeSig, over, counter, "Play", "Lost: " + formatDuration(timeDuration));    
-  }
+  
   // whether resuming or new over, refresh UI
   countDown(0);
 }
@@ -300,7 +302,7 @@ function showMainMenu() {
       var timeSig = new Date();
       timeTimes.push(timeSig.getTime());
       addLog(timeSig, over, counter, "Time", "");        
-      menu = showMainMenu();
+      resumeGame();
     }
     if(scrollMenuItems[idx]=="Call Play"
       || scrollMenuItems[idx]=="« Back") resumeGame();
