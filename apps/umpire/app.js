@@ -15,6 +15,7 @@ var log = [];
 var tossIndex = 0; // default to Cancel until recorded
 var tossTimeString = "";
 var timeCalled = false;
+var ballToCome = '°';
 
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   var csv = [
@@ -140,7 +141,7 @@ function countDown(dir) {
     g.setFont("Vector",80); // vector font, 80px
     g.drawString(over + "." + counter, g.getWidth()/1.89, 120);
     g.setFont("Vector",18);
-    g.drawString(".".repeat(ballsPerOver) + formatDuration(deadDuration), g.getWidth()/1.89, 166);
+    g.drawString(ballToCome.repeat(ballsPerOver) + formatDuration(deadDuration), g.getWidth()/1.89, 166);
   
   processing = false;
 }
