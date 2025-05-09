@@ -150,7 +150,7 @@ function countDown(dir) {
     g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 50);
     g.setFont("Vector",80); // vector font, 80px
     var ballString = over + "." + counter;
-    if(over > oversPerInnings) ballString = oversPerInnings + ' END';
+    if(over > oversPerInnings) ballString = 'END';
     g.drawString(ballString, g.getWidth()/1.89, 120);
     g.setFont("Vector",18);
     var ballGraph = ballFaced.repeat(counter) + ballToCome.repeat(ballsPerOver-counter);
