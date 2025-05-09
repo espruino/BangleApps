@@ -276,13 +276,14 @@ function showMainMenu() {
   Bangle.setUI();
   var scrollMenuItems = [];
   if(over==0 || timeCalled) {
-    scrollMenuItems.push("Call Play", "View Log");
+    scrollMenuItems.push("Play " + ballsPerOver + "-ball");
   }
   if(over>0 && !timeCalled) {
     scrollMenuItems.push("« Back", "Wicket");
     if(wickets>0) scrollMenuItems.push("Recall");
     scrollMenuItems.push("Call Time");
   }
+  scrollMenuItems.push("New Innings");
 
   return E.showScroller({
   h : 80, c : scrollMenuItems.length,
@@ -303,6 +304,7 @@ function showMainMenu() {
       || scrollMenuItems[idx]=="« Back") resumeGame();
     if(scrollMenuItems[idx]=="Wicket") incrementWickets(1);
     if(scrollMenuItems[idx]=="Recall") incrementWickets(-1);
+    if(scrollMenuItems[idx]=="New Innings") newInnings();
   }
   });
 }
@@ -310,7 +312,19 @@ function showMainMenu() {
 // Start the app
 var file = require("Storage").open("matchlog.csv","a");
 
-var timeSig = new Date();
-addLog(timeSig, "178", "a", "Date", timeSig.toUTCString());
+function newInnings() {
+  processing = true; //debounce to inhibit twist events
+  wickets = 0;
+  counter = 0;
+  over = 0;
+  ballTimes = [];
+  overTimes = [];
+  timeTimes = [];
+  log = [];
+  timeCalled = false;
+  var timeSig = new Date();
+  addLog(timeSig, "245", "a", "Date", timeSig.toUTCString());
+}
 
+newInnings();
 var menu = showMainMenu();
