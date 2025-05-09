@@ -14,8 +14,6 @@ var ballTimes = [];
 var overTimes = [];
 var timeTimes = [];
 var log = [];
-var tossIndex = 0; // default to Cancel until recorded
-var tossTimeString = "";
 var timeCalled = false;
 var ballToCome = '-';
 var ballFaced =  '=';
@@ -238,45 +236,6 @@ function incrementWickets(inc) {
       Bangle.buzz();
       menu = showMainMenu();
     }
-  });
-}
-
-function showTossMenu() {
-  processing = true;
-  Bangle.setUI();
-  var tossMenuItems = [
-    "« Back",
-    "Home Won: Bat",
-    "Home Won: Bowl",
-    "Away Won: Bat",
-    "Away Won: Bowl"
-  ];
-  return E.showScroller({
-    h : 40, c : tossMenuItems.length,
-  draw : (idx, r) => {
-    g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
-    if(idx==tossIndex) {
-      g.setBgColor("#fff").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
-      g.setBgColor("#000").clearRect(r.x+2,r.y+2,r.x+r.w-3,r.y+r.h-3);
-      g.setFont("Vector", 16).drawString(tossTimeString,r.x+1,r.y+5);
-      g.setFont("Vector", 16).drawString(tossMenuItems[idx],r.x+26,r.y+24);
-    } else {
-      g.setFont("Vector", 20).drawString(tossMenuItems[idx],r.x+6,r.y+10);
-    }
-  },
-  select : (idx) => {
-    console.log(tossMenuItems[idx]);
-    if(tossMenuItems[idx]=="« Back") {
-      menu = showMainMenu();
-    } else {
-      Bangle.buzz();
-      tossIndex = idx;
-      var timeSig = new Date();
-      addLog(timeSig, "-", "-", "Toss", tossMenuItems[idx]);
-      tossTimeString = formatTimeOfDay(timeSig);
-      menu = showMainMenu();
-    };
-  }
   });
 }
 
