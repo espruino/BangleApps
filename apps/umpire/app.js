@@ -282,8 +282,8 @@ function showMainMenu() {
     scrollMenuItems.push("« Back", "Wicket");
     if(wickets>0) scrollMenuItems.push("Recall");
     scrollMenuItems.push("Call Time");
+    scrollMenuItems.push("New Inn.");
   }
-  scrollMenuItems.push("New Inn.");
 
   return E.showScroller({
   h : 80, c : scrollMenuItems.length,
@@ -304,7 +304,10 @@ function showMainMenu() {
       || scrollMenuItems[idx]=="« Back") resumeGame();
     if(scrollMenuItems[idx]=="Wicket") incrementWickets(1);
     if(scrollMenuItems[idx]=="Recall") incrementWickets(-1);
-    if(scrollMenuItems[idx]=="New Inn.") newInnings();
+    if(scrollMenuItems[idx]=="New Inn.") {
+      newInnings();
+      menu = showMainMenu();
+    }
   }
   });
 }
