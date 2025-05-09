@@ -42,10 +42,8 @@ function showLog() {
     h : 50, c : log.length,
   draw : (idx, r) => {
     g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
-    if(log[idx].matchEvent=="Over Duration"
-      || log[idx].matchEvent=="Innings Duration"
-      || log[idx].matchEvent=="Toss"
-      || log[idx].matchEvent=="Date"){
+    if(log[idx].matchEvent==/*LANG*/"Over Duration"
+      || log[idx].matchEvent==/*LANG*/"Innings Duration"){
       g.setFont("Vector", 22).drawString(
       log[idx].matchEvent,r.x+6,r.y+2);
       g.setFont("Vector", 18).drawString(
@@ -83,28 +81,26 @@ function countDown(dir) {
   var lastBallTime = timeSig.getTime();
   if(ballTimes.length>0) {
     lastBallTime = ballTimes[ballTimes.length - 1];
-    //console.log("Last ball time");
   } else if(overTimes.length>0) {
     lastBallTime = overTimes[overTimes.length - 1];
-    //console.log("Last over time");
   }
   
   var deadDuration = new Date(timeSig.getTime() - lastBallTime);
   //console.log(deadDuration);
   if(dir!=0) {
     if(timeCalled) {
-      console.log("Play after Time");
+      //console.log("Play after Time");
       timeCalled = false;
       var lastTimeTime = timeTimes[timeTimes.length - 1];
       var timeDuration = new Date(timeSig.getTime() - lastTimeTime);
-      addLog(timeSig, over, counter, "Play", "Lost: " + formatDuration(timeDuration));    
+      addLog(timeSig, over, counter, "Play", /*LANG*/"Lost: " + formatDuration(timeDuration));    
     }
     if(counter>0) ballTimes.push(timeSig.getTime());
     Bangle.setLCDPower(1);
     if(dir>0) {
       addLog(timeSig, over, counter, "Ball", formatDuration(deadDuration));
     } else {
-      addLog(timeSig, over, counter, "Correction", formatDuration(deadDuration));
+      addLog(timeSig, over, counter, /*LANG*/"Correction", formatDuration(deadDuration));
     }
     if(counter == ballsPerOver - 2) {
       Bangle.buzz(400).then(()=>{
@@ -129,8 +125,8 @@ function countDown(dir) {
       var overDuration = new Date(timeSig.getTime() - firstBallTime);
       var overMinutesString = formatDuration(overDuration) + "";
     
-      addLog(timeSig, over, counter, "Over Duration", overMinutesString);
-      addLog(timeSig, over, counter, "Innings Duration", matchMinutesString);
+      addLog(timeSig, over, counter, /*LANG*/"Over Duration", overMinutesString);
+      addLog(timeSig, over, counter, /*LANG*/"Innings Duration", matchMinutesString);
 
       //console.log(overTimes)
       // start new over
@@ -219,7 +215,7 @@ function resumeGame() {
 
 function incrementWickets(inc) {
   processing = true;
-  E.showPrompt("Amend wickets by " + inc + "?").then(function(confirmed) {
+  E.showPrompt(/*LANG*/"Amend wickets by " + inc + "?").then(function(confirmed) {
     if (confirmed) {
       Bangle.buzz();
       wickets += inc;
@@ -228,7 +224,7 @@ function incrementWickets(inc) {
         countDown(1);
         addLog(timeSig, over, counter, "Wicket", "Wickets: " + wickets);
       } else {
-        addLog(timeSig, over, counter, "Recall Batter", "Wickets: " + wickets);
+        addLog(timeSig, over, counter, /*LANG*/"Recall Batter", "Wickets: " + wickets);
       }
       resumeGame();
     } else {
@@ -248,7 +244,7 @@ function showMainMenu() {
   }
   if(over>0 && !timeCalled) {
     scrollMenuItems.push("« Back", "Wicket");
-    if(wickets>0) scrollMenuItems.push("Recall");
+    if(wickets>0) scrollMenuItems.push(/*LANG*/"Recall");
     scrollMenuItems.push("Call Time");
     scrollMenuItems.push("New Inn.");
   }
@@ -271,7 +267,7 @@ function showMainMenu() {
     if(scrollMenuItems[idx]=="Call Play"
       || scrollMenuItems[idx]=="« Back") resumeGame();
     if(scrollMenuItems[idx]=="Wicket") incrementWickets(1);
-    if(scrollMenuItems[idx]=="Recall") incrementWickets(-1);
+    if(scrollMenuItems[idx]==/*LANG*/"Recall") incrementWickets(-1);
     if(scrollMenuItems[idx]=="New Inn.") {
       newInnings();
       menu = showMainMenu();
