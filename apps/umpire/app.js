@@ -109,7 +109,7 @@ function countDown(dir) {
       addLog(timeSig, over, counter, "Correction", formatDuration(deadDuration));
     }
     if(counter == ballsPerOver - 2) {
-      Bangle.buzz().then(()=>{
+      Bangle.buzz(400).then(()=>{
         return new Promise(resolve=>setTimeout(resolve,500)); // wait 500ms
       }).then(()=>{
         return Bangle.buzz(500);
