@@ -5,9 +5,7 @@ There are a few ways to keep track of balls when umpiring a cricket match. These
 
 In addition, the umpire needs to know the time and to record particular events like when "Play" was called or when a fielder left the field. These events are written down on paper.
 
-Of note is that umpires do not keep score, and to try and keep score is considered detrimental to achieving the umpire's other duties on the field.
-
-The purchase of my watch and the building of this app were a direct result of wanting to improve on the "modern" clicker whilst making post-match reports easier to write for myself as an aspiring umpire.
+This app is designed to replace the clicker, and keep track of events for analysis and reporting after each match.
 
 ## Objectives ##
 
@@ -23,6 +21,10 @@ The app is split into three screens shown to the umpire on the watch:
 2. In-play Screen
 3. Log viewer
 
+There an additional module to allow settings to be changed via the watch Settings menu. The number of balls in the over and the number of overs in the innings are configurable, so that 15 eight-ball overs, T20, 40-50 over and The Hundred can all be supported.
+
+A further module of the app is a web page used to access the log file from the app store.
+
 ## Interaction ##
 
 Bangle.js 2 app interactions are enabled and constrained by the Bangle and Espruino (E) libraries. This app uses the following patterns:
@@ -33,11 +35,11 @@ The in-play screen detects swipe and button events using Bangle.setUI. This appe
 
 When in-play, use of the button increments the (fairly delivered) ball count. The app does not suppress the screen lock so by default it requires the umpire to press once to unlock the watch and a second press to log the ball. Bangle.buzz is used to give positive feedback when the app takes action so that the screen does not need to be looked at.
 
-After logging the 4th ball in the over, the app buzzes twice. This is typically when the umpire needs to check the balls remaining with the other umpire, in case they have not logged every fair delivery.
+After logging the third-to-last ball in the over, the app buzzes twice. This is typically when the umpire needs to check the balls remaining with the other umpire, in case they have not logged every fair delivery.
 
-After the 5th ball the app gives one long buzz to remind the umpire that the next ball will close the over (if fairly delivered).
+After the second-to-last ball the app gives one long buzz to remind the umpire that the next ball will close the over (if fairly delivered).
 
-Logging the 6th ball triggers the change of over.
+Logging the final ball triggers the change of over. When the last over of the innings is complete the screen shows "END" but allows play to continue to be logged until the new innings is triggered.
 
 Whilst the in-play screen is displayed swiping will cause the following actions to occur:
 - **Swipe Up** performs the same action as the Button press.
