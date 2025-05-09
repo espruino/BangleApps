@@ -21,9 +21,9 @@ The app is split into three screens shown to the umpire on the watch:
 2. In-play Screen
 3. Log viewer
 
-There an additional module to allow settings to be changed via the watch Settings menu. The number of balls in the over and the number of overs in the innings are configurable, so that 15 eight-ball overs, T20, 40-50 over and The Hundred can all be supported.
+There is an additional module to allow settings to be changed via the watch Settings menu. The number of balls in the over and the number of overs in the innings are configurable, so that 15 eight-ball overs, T20, 40-50 overs and The Hundred can all be supported.
 
-A further module of the app is a web page used to access the log file from the app store.
+A further module of the app is the web page used to access the log file via bluetooth.
 
 ## Interaction ##
 
