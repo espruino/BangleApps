@@ -68,7 +68,7 @@ function showLog() {
 }
 
 function formatDuration(timeDate) { 
-  return (timeDate.getHours()-timezoneOffsetHours) + ":" + timeDate.getMinutes().toString().padStart(2, "0") + ":" + timeDate.getSeconds().toString().padStart(2, "0") + "";
+  return (timeDate.getHours() + timezoneOffsetHours) + ":" + timeDate.getMinutes().toString().padStart(2, "0") + ":" + timeDate.getSeconds().toString().padStart(2, "0") + "";
 }
 
 function formatTimeOfDay(timeSig) { 
