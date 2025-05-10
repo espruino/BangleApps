@@ -34,6 +34,7 @@ function getData() {
       <th>Ball</th>
       <th>Event</th>
       <th>Metadata</th>  
+      <th>Steps</th>
     </tr>`+data.trim().split("\n").map(l=>{
       l = l.split(",");
       return `<tr>
@@ -42,6 +43,7 @@ function getData() {
       <td align="center">${l[2]}</td>
       <td>${l[3]}</td>
       <td>${l[4]}</td>
+      <td>${l[5]}</td>
       </tr>`
     }).join("\n")+"</table>";
   });
