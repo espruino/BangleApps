@@ -18,13 +18,14 @@ var timeCalled = false;
 var ballToCome = '-';
 var ballFaced =  '=';
 var timezoneOffsetHours = (new Date()).getTimezoneOffset() / 60;
-console.log("timezoneOffsetHours", timezoneOffsetHours);
+//console.log("timezoneOffsetHours", timezoneOffsetHours);
+var stepCountOffset = Bangle.getStepCount();
 
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   var csv = [
     formatTimeOfDay(timeSig),
     over, ball, 
-    matchEvent, metaData
+    matchEvent, metaData, steps
   ];
   file.write(csv.join(",")+"\n");
   console.log(csv);
@@ -33,7 +34,8 @@ function addLog(timeSig, over, ball, matchEvent, metaData) {
     over: over,
     ball: ball,
     matchEvent: matchEvent,
-    metaData: metaData
+    metaData: metaData,
+    steps: Bangle.getStepCount() - stepCountOffset
   });
 }
 
