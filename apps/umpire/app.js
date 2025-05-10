@@ -22,6 +22,7 @@ var timezoneOffsetHours = (new Date()).getTimezoneOffset() / 60;
 var stepCountOffset = Bangle.getStepCount();
 
 function addLog(timeSig, over, ball, matchEvent, metaData) {
+  var steps = Bangle.getStepCount() - stepCountOffset;
   var csv = [
     formatTimeOfDay(timeSig),
     over, ball, 
@@ -35,7 +36,7 @@ function addLog(timeSig, over, ball, matchEvent, metaData) {
     ball: ball,
     matchEvent: matchEvent,
     metaData: metaData,
-    steps: Bangle.getStepCount() - stepCountOffset
+    steps: steps
   });
 }
 
