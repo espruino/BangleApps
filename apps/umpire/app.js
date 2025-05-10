@@ -18,6 +18,7 @@ var timeCalled = false;
 var ballToCome = '-';
 var ballFaced =  '=';
 var timezoneOffsetHours = (new Date()).getTimezoneOffset() / 60;
+console.log("timezoneOffsetHours", timezoneOffsetHours);
 
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   var csv = [
