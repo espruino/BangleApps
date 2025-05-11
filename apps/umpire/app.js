@@ -23,6 +23,18 @@ var overTimes = [];
 var timeTimes = [];
 var log = [];
 var timeCalled = false;
+var heartRate = '...';
+var HRM = false;
+
+function toggleHRM() {
+  if(HRM) {
+    Bangle.setHRMPower(0);
+    HRM = false;
+ } else {
+    Bangle.setHRMPower(1);
+    HRM = true;
+  }
+}
 
 // write events to storage (csv, persistent) 
 // and memory (can be truncated while running)
@@ -195,7 +207,7 @@ function startPlay(resume) {
     });
   var timeSig = new Date();
   if(resume!=true) {
-    // start new over
+    // start app
     over += 1;
     counter = 0; 
     ballTimes = [];
@@ -206,12 +218,11 @@ function startPlay(resume) {
       Bangle.on('twist', function() { 
         if(!processing) {
           processing = true;
-          console.log("Twist");
+          console.log("Twist", heartRate);
           countDown(0);
         }
       });
-    } else {
-      
+      Bangle.on('HRM', function(h) {heartRate = h.bpm || 0});
     }
   }
   
@@ -309,4 +320,5 @@ function newInnings() {
 }
 
 newInnings();
+toggleHRM();
 var menu = showMainMenu();
