@@ -315,7 +315,7 @@ function showMainMenu() {
     scrollMenuItems.push("Wicket");
     if(wickets>0) scrollMenuItems.push(/*LANG*/"Recall");
     scrollMenuItems.push("Call Time");
-    scrollMenuItems.push("Next Innings");
+    scrollMenuItems.push("2nd Innings");
     if(!HRM) scrollMenuItems.push("Start HRM");
   }
   if(HRM) scrollMenuItems.push("Stop HRM");
@@ -340,7 +340,7 @@ function showMainMenu() {
       || scrollMenuItems[idx]=="« Back") resumeGame();
     if(scrollMenuItems[idx]=="Wicket") incrementWickets(1);
     if(scrollMenuItems[idx]==/*LANG*/"Recall") incrementWickets(-1);
-    if(scrollMenuItems[idx]=="New Inn.") {
+    if(scrollMenuItems[idx]=="2nd Innings") {
       newInnings();
       menu = showMainMenu();
     }
@@ -357,17 +357,26 @@ function showMainMenu() {
 var file = require("Storage").open("matchlog.csv","a");
 
 function newInnings() {
-  processing = true; //debounce to inhibit twist events
-  wickets = 0;
-  counter = 0;
-  over = 0;
-  ballTimes = [];
-  overTimes = [];
-  timeTimes = [];
-  log = [];
-  timeCalled = false;
   var timeSig = new Date();
-  addLog(timeSig, oversPerInnings + 1, ballsPerOver, "New Innings", timeSig);
+  if(over!=0) {
+    E.showPrompt(/*LANG*/"Start next innings?").then(function(confirmed) {
+      if (confirmed) {
+        Bangle.buzz();
+        processing = true; //debounce to inhibit twist events
+        wickets = 0;
+        counter = 0;
+        over = 0;
+        ballTimes = [];
+        overTimes = [];
+        timeTimes = [];
+        log = [];
+        timeCalled = false;
+        addLog(timeSig, oversPerInnings + 1, ballsPerOver, "New Innings", timeSig);
+      }
+    }
+  } else {
+    addLog(timeSig, oversPerInnings + 1, ballsPerOver, "New Innings", timeSig);
+  }
 }
 
 newInnings();
