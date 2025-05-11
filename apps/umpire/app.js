@@ -150,6 +150,7 @@ function countDown(dir) {
     if(timeCalled) {
       //console.log("Play after Time");
       timeCalled = false;
+      if(HRM) Bangle.setHRMPower(1);
       var lastTimeTime = timeTimes[timeTimes.length - 1];
       var timeDuration = new Date(timeSig.getTime() - lastTimeTime);
       addLog(timeSig, over, counter, "Play", /*LANG*/"Lost: " + formatDuration(timeDuration));    
@@ -329,6 +330,7 @@ function showMainMenu() {
     console.log(scrollMenuItems[idx]);
     if(scrollMenuItems[idx]=="Call Time") {
       timeCalled = true;
+      Bangle.setHRMPower(0);
       var timeSig = new Date();
       timeTimes.push(timeSig.getTime());
       addLog(timeSig, over, counter, "Time", "");        
