@@ -279,8 +279,8 @@ function showMainMenu() {
     if(wickets>0) scrollMenuItems.push(/*LANG*/"Recall");
     scrollMenuItems.push("Call Time");
     scrollMenuItems.push("New Inn.");
+    if(!HRM) scrollMenuItems.push("Start HRM");
   }
-  if(!HRM) scrollMenuItems.push("Start HRM");
   if(HRM) scrollMenuItems.push("Stop HRM");
 
   return E.showScroller({
