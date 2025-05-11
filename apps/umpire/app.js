@@ -193,8 +193,8 @@ function countDown(dir) {
   
     g.clear(1); // clear screen and reset graphics state
     g.setFontAlign(1,0);
-    g.setFont("Vector",24); // vector font, 80px
-    g.drawString(wickets, 156, 12);
+    g.setFont("Vector",26); // vector font, 80px
+    g.drawString(wickets, 160, 12);
     g.setFont("Vector",12);
     g.drawString('\¦\¦\¦', 174, 14);
     g.setFontAlign(-1,0);
