@@ -56,6 +56,7 @@ function updateHeartRate(h) {
       var timeSig = new Date();
       addLog(timeSig, over, counter, "Heart Rate", ">" + heartRateLimit);
       //console.log("Heart Event", heartRate, heartRateEventSeconds);
+      Bangle.buzz();
     }
   }
   if(heartRateEventSeconds>10) {
