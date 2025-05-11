@@ -49,13 +49,14 @@ function updateHeartRate(h) {
   //console.log("HRM", heartRate, (new Date()));
   if(heartRate >= heartRateLimit) {
     heartRateEventSeconds++;
-    console.log("Heart Event", heartRate, heartRateEventSeconds);
+    //console.log("Heart Over", heartRate, heartRateEventSeconds);
     if(heartRateEventSeconds==10) console.log("Heart Event", heartRate, heartRateEventSeconds);
   }
   if(heartRateEventSeconds>10) {
     if(heartRate < heartRateLimit) {
+      console.log("Heart Under (+10s allowed)", heartRate, heartRateEventSeconds);
       heartRateEventSeconds = -10;
-    }
+   }
   }
 }
 
