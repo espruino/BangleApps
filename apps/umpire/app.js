@@ -23,13 +23,14 @@ var overTimes = [];
 var timeTimes = [];
 var log = [];
 var timeCalled = false;
-var heartRate = '...';
+var heartRate = '';
 var HRM = false;
 
 function toggleHRM() {
   if(HRM) {
     Bangle.setHRMPower(0);
     HRM = false;
+    heartRate = '';
  } else {
     Bangle.setHRMPower(1);
     HRM = true;
@@ -164,9 +165,11 @@ function countDown(dir) {
   }
   
     g.clear(1); // clear screen and reset graphics state
+    g.setFontAlign(0,0); // center font
     g.setFont("Vector",24); // vector font, 80px
     g.drawString(wickets, 158, 10);
-    g.setFontAlign(0,0); // center font
+    g.setFont("Vector",18); // vector font, 80px
+    g.drawString(heartRate, 18, 10);
     g.setFont("Vector",48); // vector font, 80px
     g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 50);
     g.setFont("Vector",80); // vector font, 80px
@@ -301,7 +304,10 @@ function showMainMenu() {
       menu = showMainMenu();
     }
     if(scrollMenuItems[idx]=="Start HRM"
-      || scrollMenuItems[idx]=="Stop HRM") toggleHRM();
+      || scrollMenuItems[idx]=="Stop HRM") {
+      toggleHRM();
+      resumeGame();
+    }
   }
   });
 }
