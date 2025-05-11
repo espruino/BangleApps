@@ -274,6 +274,8 @@ function showMainMenu() {
     scrollMenuItems.push("Call Time");
     scrollMenuItems.push("New Inn.");
   }
+  if(!HRM) scrollMenuItems.push("Start HRM");
+  if(HRM) scrollMenuItems.push("Stop HRM");
 
   return E.showScroller({
   h : 80, c : scrollMenuItems.length,
@@ -298,6 +300,8 @@ function showMainMenu() {
       newInnings();
       menu = showMainMenu();
     }
+    if(scrollMenuItems[idx]=="Start HRM"
+      || scrollMenuItems[idx]=="Stop HRM") toggleHRM();
   }
   });
 }
@@ -320,5 +324,4 @@ function newInnings() {
 }
 
 newInnings();
-toggleHRM();
 var menu = showMainMenu();
