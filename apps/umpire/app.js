@@ -79,8 +79,8 @@ function showLog() {
     }
     g.setFont("Vector", 18).drawString(
     log[idx].time + " " +
-    log[idx].metaData,r.x+6,r.y+27) + " " +
-    log[idx].heartRate;
+    log[idx].metaData + " " +
+    log[idx].heartRate,r.x+6,r.y+27);
   },
   select : (idx) => {
     resumeGame();
