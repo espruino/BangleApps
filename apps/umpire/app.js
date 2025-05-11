@@ -194,7 +194,7 @@ function countDown(dir) {
     g.clear(1); // clear screen and reset graphics state
     g.setFontAlign(1,0);
     g.setFont("Vector",24); // vector font, 80px
-    g.drawString(wickets, 165, 12);
+    g.drawString(wickets, 174, 12);
     g.setFontAlign(-1,0);
     g.setFont("Vector",18); // vector font, 80px
     var heartRateString = '♥' + heartRate;
@@ -202,7 +202,7 @@ function countDown(dir) {
     g.drawString(battery + '% ' + heartRateString, 2, 9);
     g.setFontAlign(0,0);
     g.setFont("Vector",48); // vector font, 80px
-    g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 50);
+    g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 54);
     g.setFont("Vector",80); // vector font, 80px
     var ballString = over + "." + counter;
     if(over > oversPerInnings) ballString = 'END';
