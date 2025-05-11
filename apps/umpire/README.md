@@ -1,5 +1,8 @@
 # Umpire Ball Counter
 *Cricket umpire ball counter and match event logger for Bangle.js 2 hackable smart watch*
+
+![Bangle.js2 smart watch in a collage of screenshots](20250511_210249-COLLAGE.jpg)
+
 ## Background
 There are a few ways to keep track of balls when umpiring a cricket match. These vary from the rudimentary - having some stones in your pockets and transferring them from one side to the other - to the "modern" umpire's clicker. The latter allows you to track fairly delivered balls, overs completed and wickets fallen.
 
