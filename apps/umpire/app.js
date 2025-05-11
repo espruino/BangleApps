@@ -73,7 +73,7 @@ function addLog(timeSig, over, ball, matchEvent, metaData) {
   battery = E.getBattery();
   var csv = [
     formatTimeOfDay(timeSig),
-    over, ball, 
+    over-1, ball, 
     matchEvent, metaData, 
     steps, heartRate, battery
   ];
@@ -81,7 +81,7 @@ function addLog(timeSig, over, ball, matchEvent, metaData) {
   console.log(csv);
   log.unshift({ // in rev. chrono. order
     time: formatTimeOfDay(timeSig),
-    over: over,
+    over: over-1,
     ball: ball,
     matchEvent: matchEvent,
     metaData: metaData,
@@ -211,7 +211,7 @@ function countDown(dir) {
     g.setFont("Vector",48); // vector font, 80px
     g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 55);
     g.setFont("Vector",80); // vector font, 80px
-    var ballString = over + "." + counter;
+    var ballString = (over-1) + "." + counter;
     if(over > oversPerInnings) ballString = 'END';
     g.drawString(ballString, g.getWidth()/1.89, 120);
     g.setFont("Vector",18);
