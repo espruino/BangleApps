@@ -199,7 +199,7 @@ function countDown(dir) {
     g.drawString('\¦\¦\¦', 174, 14);
     g.setFontAlign(-1,0);
     g.setFont("Vector",18); // vector font, 80px
-    var heartRateString = '\√' + heartRate;
+    var heartRateString = '*' + heartRate;
     if(heartRate==0) heartRateString = '';
     g.drawString(battery + '% ' + heartRateString, 2, 9);
     g.setFontAlign(0,0);
