@@ -52,7 +52,11 @@ function updateHeartRate(h) {
   if(heartRate >= heartRateLimit) {
     heartRateEventSeconds++;
     //console.log("Heart Over", heartRate, heartRateEventSeconds);
-    if(heartRateEventSeconds==10) console.log("Heart Event", heartRate, heartRateEventSeconds);
+    if(heartRateEventSeconds==10) {
+      var timeSig = new Date();
+      addLog(timeSig, over, counter, "Heart Rate", ">" + heartRateLimit);
+      //console.log("Heart Event", heartRate, heartRateEventSeconds);
+    }
   }
   if(heartRateEventSeconds>10) {
     if(heartRate < heartRateLimit) {
@@ -199,9 +203,9 @@ function countDown(dir) {
     g.drawString('\¦\¦\¦', 173, 15);
     g.setFontAlign(-1,0);
     g.setFont("Vector",16); // vector font, 80px
-    var heartRateString = heartRate + '.';
+    var heartRateString = heartRate + 'bpm';
     if(heartRate==0) heartRateString = '';
-    g.drawString(battery + '% ' + heartRateString, 3, 9);
+    g.drawString(battery + '% ' + heartRateString, 5, 11);
     g.setFontAlign(0,0);
     g.setFont("Vector",48); // vector font, 80px
     g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 55);
