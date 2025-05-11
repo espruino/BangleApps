@@ -184,8 +184,8 @@ function countDown(dir) {
       var overDuration = new Date(timeSig.getTime() - lastOverTime);
       var overMinutesString = formatDuration(overDuration) + "";
     
-      addLog(timeSig, over, counter, /*LANG*/"Over Duration", overMinutesString);
-      addLog(timeSig, over, counter, /*LANG*/"Innings Duration", matchMinutesString);
+      addLog(timeSig, over + 1, counter, /*LANG*/"Over Duration", overMinutesString);
+      addLog(timeSig, over + 1, counter, /*LANG*/"Innings Duration", matchMinutesString);
 
       //console.log(overTimes)
       // start new over
@@ -367,7 +367,7 @@ function newInnings() {
   log = [];
   timeCalled = false;
   var timeSig = new Date();
-  addLog(timeSig, oversPerInnings, ballsPerOver, "New Innings", timeSig.toUTCString());
+  addLog(timeSig, oversPerInnings + 1, ballsPerOver, "New Innings", timeSig);
 }
 
 newInnings();
