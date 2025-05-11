@@ -44,7 +44,7 @@ function addLog(timeSig, over, ball, matchEvent, metaData) {
   var csv = [
     formatTimeOfDay(timeSig),
     over, ball, 
-    matchEvent, metaData, steps
+    matchEvent, metaData, steps, heartRate
   ];
   file.write(csv.join(",")+"\n");
   console.log(csv);
@@ -54,7 +54,8 @@ function addLog(timeSig, over, ball, matchEvent, metaData) {
     ball: ball,
     matchEvent: matchEvent,
     metaData: metaData,
-    steps: steps
+    steps: steps,
+    heartRate: heartRate
   });
 }
 
@@ -70,18 +71,16 @@ function showLog() {
       || log[idx].matchEvent==/*LANG*/"Innings Duration"){
       g.setFont("Vector", 22).drawString(
       log[idx].matchEvent,r.x+6,r.y+2);
-      g.setFont("Vector", 18).drawString(
-      log[idx].time + " " +
-      log[idx].metaData,r.x+6,r.y+27);
     } else {
       g.setFont("Vector", 22).drawString(
       log[idx].over + "." +
       log[idx].ball + " " +
       log[idx].matchEvent,r.x+6,r.y+2);
-      g.setFont("Vector", 18).drawString(
-      log[idx].time + " " +
-      log[idx].metaData,r.x+6,r.y+27);
     }
+    g.setFont("Vector", 18).drawString(
+    log[idx].time + " " +
+    log[idx].metaData,r.x+6,r.y+27) + " " +
+    log[idx].heartRate;
   },
   select : (idx) => {
     resumeGame();
@@ -167,7 +166,7 @@ function countDown(dir) {
     g.clear(1); // clear screen and reset graphics state
     g.setFontAlign(0,0); // center font
     g.setFont("Vector",24); // vector font, 80px
-    g.drawString(wickets, 158, 10);
+    g.drawString(wickets, 160, 10);
     g.setFont("Vector",18); // vector font, 80px
     g.drawString(heartRate, 18, 10);
     g.setFont("Vector",48); // vector font, 80px
