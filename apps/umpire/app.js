@@ -321,7 +321,7 @@ function showMainMenu() {
   h : 80, c : scrollMenuItems.length,
   draw : (idx, r) => {
     g.setBgColor((idx&1)?"#000":"#121").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
-    g.setFont("Vector", 36).drawString(scrollMenuItems[idx],r.x+10,r.y+26);
+    g.setFont("Vector", 30).drawString(scrollMenuItems[idx],r.x+10,r.y+30);
   },
   select : (idx) => {
     console.log(scrollMenuItems[idx]);
