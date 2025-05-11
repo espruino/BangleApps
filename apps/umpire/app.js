@@ -27,6 +27,7 @@ var overTimes = [];
 var timeTimes = [];
 var log = [];
 var timeCalled = false;
+var battery = E.getBattery();
 var heartRate = '';
 var heartRates = [];
 var HRM = false;
@@ -53,13 +54,14 @@ function updateHeartRate(h) {
 
 // write events to storage (csv, persistent) 
 // and memory (can be truncated while running)
-// TODO E.getBattery()
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   var steps = Bangle.getStepCount() - stepCountOffset;
+  battery = E.getBattery();
   var csv = [
     formatTimeOfDay(timeSig),
     over, ball, 
-    matchEvent, metaData, steps, heartRate
+    matchEvent, metaData, 
+    steps, heartRate, battery
   ];
   file.write(csv.join(",")+"\n");
   console.log(csv);
@@ -70,7 +72,8 @@ function addLog(timeSig, over, ball, matchEvent, metaData) {
     matchEvent: matchEvent,
     metaData: metaData,
     steps: steps,
-    heartRate: heartRate
+    heartRate: heartRate,
+    battery: battery
   });
 }
 
@@ -183,7 +186,7 @@ function countDown(dir) {
     g.setFont("Vector",24); // vector font, 80px
     g.drawString(wickets, 160, 10);
     g.setFont("Vector",18); // vector font, 80px
-    g.drawString(heartRate, 18, 10);
+    g.drawString(battery + "% " + heartRate, 18, 10);
     g.setFont("Vector",48); // vector font, 80px
     g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 50);
     g.setFont("Vector",80); // vector font, 80px
