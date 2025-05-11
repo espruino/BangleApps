@@ -28,6 +28,7 @@ var timeTimes = [];
 var log = [];
 var timeCalled = false;
 var heartRate = '';
+var heartRates = [];
 var HRM = false;
 var lastSteps = stepCountOffset;
 
@@ -42,8 +43,17 @@ function toggleHRM() {
   }
 }
 
+function updateHeartRate(h) {
+  heartRate = h.bpm || 0;
+  console.log("HRM", heartRate, (new Date()));
+  if(heartRate >= heartRateLimit) {
+    console.log("Heart Event", heartRate);
+  }
+}
+
 // write events to storage (csv, persistent) 
 // and memory (can be truncated while running)
+// TODO E.getBattery()
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   var steps = Bangle.getStepCount() - stepCountOffset;
   var csv = [
@@ -229,10 +239,7 @@ function startPlay(resume) {
           countDown(0);
         }
       });
-      Bangle.on('HRM', function(h) {
-        heartRate = h.bpm || 0;
-        if(heartRate >= heartRateLimit) console.log("Heart", heartRate);
-      });
+      Bangle.on('HRM', updateHeartRate(h));
     }
   }
   
