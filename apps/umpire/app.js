@@ -205,7 +205,7 @@ function countDown(dir) {
     g.setFontAlign(-1,0);
     g.setFont("Vector",16); // vector font, 80px
     var heartRateString = heartRate + 'bpm';
-    if(heartRate==0) heartRateString = '';
+    if(!HRM) heartRateString = '';
     g.drawString(battery + '% ' + heartRateString, 5, 11);
     g.setFontAlign(0,0);
     g.setFont("Vector",48); // vector font, 80px
