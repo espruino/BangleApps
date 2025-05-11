@@ -56,7 +56,6 @@ function updateHeartRate(h) {
       var timeSig = new Date();
       addLog(timeSig, over, counter, "Heart Rate", ">" + heartRateLimit);
       //console.log("Heart Event", heartRate, heartRateEventSeconds);
-      Bangle.buzz();
     }
   }
   if(heartRateEventSeconds>10) {
@@ -204,8 +203,8 @@ function countDown(dir) {
     g.drawString('\¦\¦\¦', 173, 15);
     g.setFontAlign(-1,0);
     g.setFont("Vector",16); // vector font, 80px
-    var heartRateString = heartRate + 'bpm';
-    if(!HRM) heartRateString = '';
+    var heartRateString = heartRate + '!!!';
+    if(heartRateEventSeconds <= 0) heartRateString = '';
     g.drawString(battery + '% ' + heartRateString, 5, 11);
     g.setFontAlign(0,0);
     g.setFont("Vector",48); // vector font, 80px
