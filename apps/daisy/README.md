@@ -4,11 +4,10 @@
    cyclic information line that includes, day, date, steps, battery,
    sunrise and sunset times*
 
-Written by: [Hugh Barney](https://github.com/hughbarney) For support
-and discussion please post in the [Bangle JS
-Forum](http://forum.espruino.com/microcosms/1424/)
+Written by: [Hugh Barney](https://github.com/hughbarney) and [David Volovskiy](https://github.com/voloved)
+For support and discussion please post in the [Bangle JS Forum](http://forum.espruino.com/microcosms/1424/)
 
-* Derived from [The Ring](https://banglejs.com/apps/?id=thering) proof of concept and the [Pastel clock](https://banglejs.com/apps/?q=pastel)
+* Derived from [The Ring](https://banglejs.com/apps/?id=thering) proof of concept and the [Pastel clock](https://banglejs.com/apps/?q=pastel), though all rings are dynamically created.
 * Includes the [Lazybones](https://banglejs.com/apps/?q=lazybones) Idle warning timer
 * Touch the top right/top left to cycle through the info display (Day, Date, Steps, Sunrise, Sunset, Heart Rate, Battery Estimate)
 * The heart rate monitor is turned on only when Heart rate is selected and will take a few seconds to settle
@@ -24,7 +23,8 @@ See [#1248](https://github.com/espruino/BangleApps/issues/1248)
 * In the settings, the ring can be set to:
   *  Hours - Displays the ring as though it's the hour hand on an analog clock.
   *  Minutes - Displays the ring as though it's the minute hand on an analog clock.
-  *  Seconds - Displays the ring as though it's the seconds hand on an analog clock.
+  *  Seconds - Displays the ring as though it's the seconds hand on an analog clock. This option uses far more battery than any other option as it updates the screen 60 times more often.
+  *  Day - Displays the ring as how much of the day is left. Functionally, it fills the ring half as quickly as the Hours option.
   *  Steps - Displays the ring as the amount of steps taken that day out of Step Target setting.
   *  Battery - Displays the ring as the amount of battery percentage left.
   *  Sun - Displays the ring as the amount of time that has passed from sunrise to sunset in the day and the amount of time between sunset and sunrise at night.
