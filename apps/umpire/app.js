@@ -1,26 +1,31 @@
+// settings and environment 
+// (not checked again while running)
 var settings = Object.assign({
   // default values
   ballsPerOver: 6,
   oversPerInnings: 40
 }, require('Storage').readJSON("umpire.json", true) || {});
+var ballsPerOver = settings.ballsPerOver;
+var oversPerInnings = settings.oversPerInnings;
+settings.delete();
+var timezoneOffsetHours = (new Date()).getTimezoneOffset() / 60;
+var stepCountOffset = Bangle.getStepCount();
+var ballToCome = '-';
+var ballFaced =  '=';
 
+// globals
 var processing = true; //debounce to inhibit twist events
 var wickets = 0;
 var counter = 0;
 var over = 0;
-var ballsPerOver = settings.ballsPerOver;
-var oversPerInnings = settings.oversPerInnings;
 var ballTimes = [];
 var overTimes = [];
 var timeTimes = [];
 var log = [];
 var timeCalled = false;
-var ballToCome = '-';
-var ballFaced =  '=';
-var timezoneOffsetHours = (new Date()).getTimezoneOffset() / 60;
-//console.log("timezoneOffsetHours", timezoneOffsetHours);
-var stepCountOffset = Bangle.getStepCount();
 
+// write events to storage (csv, persistent) 
+// and memory (can be truncated while running)
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   var steps = Bangle.getStepCount() - stepCountOffset;
   var csv = [
@@ -40,6 +45,7 @@ function addLog(timeSig, over, ball, matchEvent, metaData) {
   });
 }
 
+// display log from memory (not csv)
 function showLog() {
   processing = true;
   Bangle.setUI();
@@ -70,14 +76,17 @@ function showLog() {
   });
 }
 
+// format date (diff) as duration
 function formatDuration(timeDate) { 
   return (timeDate.getHours() + timezoneOffsetHours) + ":" + timeDate.getMinutes().toString().padStart(2, "0") + ":" + timeDate.getSeconds().toString().padStart(2, "0") + "";
 }
 
+// format date as clock
 function formatTimeOfDay(timeSig) { 
   return timeSig.getHours() + ":" + timeSig.getMinutes().toString().padStart(2, "0");
 }
 
+// main ball counter logic
 function countDown(dir) {
   processing = true;
   counter += dir;
