@@ -29,7 +29,7 @@ var log = [];
 var timeCalled = false;
 var battery = E.getBattery();
 var heartRate = '';
-var heartRates = [];
+var heartRateEventSeconds = 0;
 var HRM = false;
 var lastSteps = stepCountOffset;
 
@@ -46,9 +46,16 @@ function toggleHRM() {
 
 function updateHeartRate(h) {
   heartRate = h.bpm || 0;
-  console.log("HRM", heartRate, (new Date()));
+  //console.log("HRM", heartRate, (new Date()));
   if(heartRate >= heartRateLimit) {
-    console.log("Heart Event", heartRate);
+    heartRateEventSeconds++;
+    console.log("Heart Event", heartRate, heartRateEventSeconds);
+    if(heartRateEventSeconds==10) console.log("Heart Event", heartRate, heartRateEventSeconds);
+  }
+  if(heartRateEventSeconds>10) {
+    if(heartRate < heartRateLimit) {
+      heartRateEventSeconds = -10;
+    }
   }
 }
 
