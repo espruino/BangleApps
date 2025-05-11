@@ -242,7 +242,7 @@ function startPlay(resume) {
           countDown(0);
         }
       });
-      Bangle.on('HRM', function(h) updateHeartRate(h));
+      Bangle.on('HRM', function(h) {updateHeartRate(h)});
     }
   }
   
