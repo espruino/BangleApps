@@ -44,6 +44,8 @@ function toggleHRM() {
   }
 }
 
+// process heart rate monitor event 
+// each second (approx.)
 function updateHeartRate(h) {
   heartRate = h.bpm || 0;
   //console.log("HRM", heartRate, (new Date()));
