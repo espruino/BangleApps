@@ -3,7 +3,9 @@
   // Load settings
   var settings = Object.assign({
     ballsPerOver: 6,
-    oversPerInnings: 20
+    oversPerInnings: 20,
+    ballStepLimit: 500,
+    heartRateLimit: 100
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
@@ -22,11 +24,27 @@
         writeSettings();
       }
     },
-    'Overs per innings': {
+    'Overs per inn.': {
       value: settings.oversPerInnings,
       min: 12, max: 50,
       onchange: v => {
         settings.oversPerInnings = v;
+        writeSettings();
+      }
+    },
+    'Auto-log ball': {
+      value: settings.ballStepLimit,
+      min: 200, max: 600,
+      onchange: v => {
+        settings.ballStepLimit = v;
+        writeSettings();
+      }
+    },
+    'Auto-log HRM': {
+      value: settings.heartRateLimit,
+      min: 100, max: 200,
+      onchange: v => {
+        settings.heartRateLimit = v;
         writeSettings();
       }
     }
