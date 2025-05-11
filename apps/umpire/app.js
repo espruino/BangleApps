@@ -182,11 +182,13 @@ function countDown(dir) {
   }
   
     g.clear(1); // clear screen and reset graphics state
-    g.setFontAlign(0,0); // center font
+    g.setFontAlign(1,0);
     g.setFont("Vector",24); // vector font, 80px
-    g.drawString(wickets, 160, 10);
+    g.drawString(wickets, 165, 10);
+    g.setFontAlign(-1,0);
     g.setFont("Vector",18); // vector font, 80px
-    g.drawString(battery + "% " + heartRate, 18, 10);
+    g.drawString(battery + "% " + heartRate, 2, 10);
+    g.setFontAlign(0,0);
     g.setFont("Vector",48); // vector font, 80px
     g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 50);
     g.setFont("Vector",80); // vector font, 80px
