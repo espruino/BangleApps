@@ -3,15 +3,19 @@
 var settings = Object.assign({
   // default values
   ballsPerOver: 6,
-  oversPerInnings: 40
+  oversPerInnings: 40,
+  ballStepLimit: 500,
+  heartRateLimit: 100
 }, require('Storage').readJSON("umpire.json", true) || {});
-var ballsPerOver = settings.ballsPerOver;
-var oversPerInnings = settings.oversPerInnings;
+const ballsPerOver = settings.ballsPerOver;
+const oversPerInnings = settings.oversPerInnings;
+const ballStepLimit = settings.ballStepLimit;
+const heartRateLimit = settings.heartRateLimit;
 delete settings;
-var timezoneOffsetHours = (new Date()).getTimezoneOffset() / 60;
-var stepCountOffset = Bangle.getStepCount();
-var ballToCome = '-';
-var ballFaced =  '=';
+const timezoneOffsetHours = (new Date()).getTimezoneOffset() / 60;
+const stepCountOffset = Bangle.getStepCount();
+const ballToCome = '-';
+const ballFaced =  '=';
 
 // globals
 var processing = true; //debounce to inhibit twist events
