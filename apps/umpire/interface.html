@@ -35,6 +35,7 @@ function getData() {
       <th>Event</th>
       <th>Metadata</th>  
       <th>Steps</th>
+      <th>Heart Rate</th>
     </tr>`+data.trim().split("\n").map(l=>{
       l = l.split(",");
       return `<tr>
@@ -44,6 +45,7 @@ function getData() {
       <td>${l[3]}</td>
       <td>${l[4]}</td>
       <td>${l[5]}</td>
+      <td>${l[6]}</td>
       </tr>`
     }).join("\n")+"</table>";
   });
@@ -51,6 +53,7 @@ function getData() {
 
 // You can call a utility function to save the data
 document.getElementById("btnSave").addEventListener("click", function() {
+  // TODO column headings in output
   Util.saveCSV("matchdata", csvData);
 });
 // Or you can also delete the file
