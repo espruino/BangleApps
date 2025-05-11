@@ -7,7 +7,7 @@ var settings = Object.assign({
 }, require('Storage').readJSON("umpire.json", true) || {});
 var ballsPerOver = settings.ballsPerOver;
 var oversPerInnings = settings.oversPerInnings;
-settings.delete();
+delete settings;
 var timezoneOffsetHours = (new Date()).getTimezoneOffset() / 60;
 var stepCountOffset = Bangle.getStepCount();
 var ballToCome = '-';
