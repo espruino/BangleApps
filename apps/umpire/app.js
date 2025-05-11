@@ -373,6 +373,7 @@ function newInnings() {
         timeCalled = false;
         addLog(timeSig, oversPerInnings + 1, ballsPerOver, "New Innings", timeSig);
       }
+      menu = showMainMenu();
     }
   } else {
     addLog(timeSig, oversPerInnings + 1, ballsPerOver, "New Innings", timeSig);
