@@ -305,14 +305,16 @@ function showMainMenu() {
   processing = true;
   Bangle.setUI();
   var scrollMenuItems = [];
-  if(over==0 || timeCalled) {
+  if(over==0) {
     scrollMenuItems.push("Call Play");
+  } else {
+    scrollMenuItems.push("« Back");
   }
   if(over>0 && !timeCalled) {
-    scrollMenuItems.push("« Back", "Wicket");
+    scrollMenuItems.push("Wicket");
     if(wickets>0) scrollMenuItems.push(/*LANG*/"Recall");
     scrollMenuItems.push("Call Time");
-    scrollMenuItems.push("New Inn.");
+    scrollMenuItems.push("Next Innings");
     if(!HRM) scrollMenuItems.push("Start HRM");
   }
   if(HRM) scrollMenuItems.push("Stop HRM");
@@ -321,7 +323,7 @@ function showMainMenu() {
   h : 80, c : scrollMenuItems.length,
   draw : (idx, r) => {
     g.setBgColor((idx&1)?"#000":"#121").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
-    g.setFont("Vector", 30).drawString(scrollMenuItems[idx],r.x+10,r.y+30);
+    g.setFont("Vector", 30).drawString(scrollMenuItems[idx],r.x+10,r.y+28);
   },
   select : (idx) => {
     console.log(scrollMenuItems[idx]);
