@@ -238,11 +238,13 @@ function startPlay(resume) {
       Bangle.on('twist', function() { 
         if(!processing) {
           processing = true;
-          console.log("Twist", heartRate);
+          console.log("Twist", heartRate, battery);
           countDown(0);
         }
       });
-      Bangle.on('HRM', function(h) {updateHeartRate(h)});
+      Bangle.on('HRM', function() {
+        updateHeartRate(h);
+      });
     }
   }
   
