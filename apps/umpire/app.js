@@ -5,7 +5,7 @@ var settings = Object.assign({
   ballsPerOver: 6,
   oversPerInnings: 40,
   ballStepLimit: 500,
-  heartRateLimit: 100
+  heartRateLimit: 80
 }, require('Storage').readJSON("umpire.json", true) || {});
 const ballsPerOver = settings.ballsPerOver;
 const oversPerInnings = settings.oversPerInnings;
@@ -29,6 +29,7 @@ var log = [];
 var timeCalled = false;
 var heartRate = '';
 var HRM = false;
+var lastSteps = stepCountOffset;
 
 function toggleHRM() {
   if(HRM) {
@@ -228,7 +229,10 @@ function startPlay(resume) {
           countDown(0);
         }
       });
-      Bangle.on('HRM', function(h) {heartRate = h.bpm || 0});
+      Bangle.on('HRM', function(h) {
+        heartRate = h.bpm || 0;
+        if(heartRate >= heartRateLimit) console.log("Heart", heartRate);
+      });
     }
   }
   
