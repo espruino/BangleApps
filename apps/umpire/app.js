@@ -197,7 +197,8 @@ function countDown(dir) {
     g.drawString(wickets, 165, 10);
     g.setFontAlign(-1,0);
     g.setFont("Vector",18); // vector font, 80px
-    g.drawString(battery + "% " + heartRate, 2, 10);
+    var heartRateString = (heartRate > 0)? heartRate + " bpm": "";
+    g.drawString(battery + "% " + heartRateString, 2, 10);
     g.setFontAlign(0,0);
     g.setFont("Vector",48); // vector font, 80px
     g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 50);
