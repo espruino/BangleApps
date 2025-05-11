@@ -122,13 +122,12 @@ function countDown(dir) {
   
     // Over
     if (counter == ballsPerOver) {
-      overTimes.push(timeSig.getTime());
       var firstOverTime = overTimes[0];
       var matchDuration = new Date(timeSig.getTime() - firstOverTime);
       var matchMinutesString = formatDuration(matchDuration);
     
-      var firstBallTime = ballTimes[0];
-      var overDuration = new Date(timeSig.getTime() - firstBallTime);
+      var lastOverTime = overTimes[overTimes.length - 1];
+      var overDuration = new Date(timeSig.getTime() - lastOverTime);
       var overMinutesString = formatDuration(overDuration) + "";
     
       addLog(timeSig, over, counter, /*LANG*/"Over Duration", overMinutesString);
@@ -136,6 +135,7 @@ function countDown(dir) {
 
       //console.log(overTimes)
       // start new over
+      overTimes.push(timeSig.getTime());
       over += 1;
       counter = 0; 
       ballTimes = [];
