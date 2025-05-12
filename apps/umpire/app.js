@@ -304,7 +304,6 @@ function incrementWickets(inc) {
       resumeGame();
     } else {
       E.showPrompt();
-      Bangle.buzz();
       menu = showMainMenu();
     }
   });
@@ -382,7 +381,7 @@ function newInnings() {
         addLog(timeSig, oversPerInnings + 1, ballsPerOver, "New Innings", timeSig);
       }
       menu = showMainMenu();
-    }
+    });
   } else {
     addLog(timeSig, oversPerInnings + 1, ballsPerOver, "New Innings", timeSig);
   }
