@@ -27,7 +27,8 @@ var overTimes = [];
 var timeTimes = [];
 var log = [];
 var timeCalled = false;
-var battery = E.getBattery();
+var batteryPercents = [];
+var battery = getBattery();
 var heartRate = '';
 var heartRateEventSeconds = 0;
 var HRM = false;
@@ -42,6 +43,12 @@ function toggleHRM() {
     Bangle.setHRMPower(1);
     HRM = true;
   }
+}
+
+function getBattery() {
+  batteryPercents.push(E.getBattery());
+  if(batteryPercents.length > 20) batteryPercents.shift();
+  return batteryPercents.reduce((avg,e,i,arr)=>avg+e/arr.length,0).trunc(0);
 }
 
 // process heart rate monitor event 
@@ -70,7 +77,7 @@ function updateHeartRate(h) {
 // and memory (can be truncated while running)
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   var steps = Bangle.getStepCount() - stepCountOffset;
-  battery = E.getBattery();
+  battery = getBattery();
   var csv = [
     formatTimeOfDay(timeSig),
     over-1, ball, 
