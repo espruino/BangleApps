@@ -134,7 +134,15 @@ function formatTimeOfDay(timeSig) {
 function countDown(dir) {
   processing = true;
   counter += dir;
-  if(counter<0) counter=0;
+  if(over==1 && counter<0) {
+    counter=0;
+  } else {
+  if(counter<0) {
+    // Correction to last ball of over
+    counter = ballsPerOver -1;
+    over -= 1;
+    ballTimes.push(overTimes.pop());
+  }
 
   var timeSig = new Date();
   var lastBallTime = timeSig.getTime();
@@ -194,6 +202,7 @@ function countDown(dir) {
       counter = 0; 
       ballTimes = [];
     }
+  }
   }
   
     g.clear(1); // clear screen and reset graphics state
