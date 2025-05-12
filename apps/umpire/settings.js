@@ -4,7 +4,6 @@
   var settings = Object.assign({
     ballsPerOver: 6,
     oversPerInnings: 20,
-    ballStepLimit: 500,
     heartRateLimit: 100
   }, require('Storage').readJSON(FILE, true) || {});
 
@@ -29,14 +28,6 @@
       min: 12, max: 50,
       onchange: v => {
         settings.oversPerInnings = v;
-        writeSettings();
-      }
-    },
-    'Auto-log ball': {
-      value: settings.ballStepLimit,
-      min: 200, max: 600,
-      onchange: v => {
-        settings.ballStepLimit = v;
         writeSettings();
       }
     },
