@@ -5,6 +5,8 @@
   "icon": "app.png",
   "version": "0.01",
   "description": "An ergonomic countdown timer app",
+  "screenshots": [ {"url": "screenshot.png" } ],
+  "readme": "README.md",
   "tags": "timer",
   "supports": ["BANGLEJS2"],
   "dependencies": {"scheduler": "type"},
