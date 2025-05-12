@@ -7,7 +7,7 @@ var settings = Object.assign({
   heartRateLimit: 100
 }, require('Storage').readJSON("umpire.json", true) || {});
 const BALLS_PER_OVER = settings.ballsPerOver;
-const oversPerInnings = settings.oversPerInnings;
+const OVERS_PER_INNINGS = settings.oversPerInnings;
 const heartRateLimit = settings.heartRateLimit;
 delete settings;
 const timezoneOffsetHours = (new Date()).getTimezoneOffset() / 60;
@@ -220,7 +220,7 @@ function countDown(dir) {
     g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 55);
     g.setFont("Vector",80); // vector font, 80px
     var ballString = (over-1) + "." + counter;
-    if(over > oversPerInnings) ballString = 'END';
+    if(over > OVERS_PER_INNINGS) ballString = 'END';
     g.drawString(ballString, g.getWidth()/1.89, 120);
     g.setFont("Vector",18);
     var ballGraph = ballFaced.repeat(counter) + ballToCome.repeat(ballsPerOver-counter);
@@ -375,7 +375,7 @@ function newInnings() {
         timeTimes = [];
         log = [];
         timeCalled = false;
-        addLog(timeSig, oversPerInnings + 1, ballsPerOver, "New Innings", timeSig);
+        addLog(timeSig, OVERS_PER_INNINGS + 1, BALLS_PER_OVER, "New Innings", require("locale").date(new Date(), 1));
         resumeGame();
       } else {
         E.showPrompt();
@@ -383,7 +383,7 @@ function newInnings() {
       }
     });
   } else {
-    addLog(timeSig, oversPerInnings + 1, ballsPerOver, "New Innings", require("locale").date(new Date(), 1));
+    addLog(timeSig, OVERS_PER_INNINGS + 1, BALLS_PER_OVER, "New Innings", require("locale").date(new Date(), 1));
   }
 }
 
