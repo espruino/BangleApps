@@ -159,7 +159,6 @@ function countDown(dir) {
   }
   
   var deadDuration = new Date(timeSig.getTime() - lastBallTime);
-  //console.log(deadDuration);
   if(dir!=0) {
     if(timeCalled) {
       //console.log("Play after Time");
