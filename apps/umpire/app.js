@@ -54,14 +54,11 @@ function getBattery() {
 // each second (approx.)
 function updateHeartRate(h) {
   heartRate = h.bpm || 0;
-  //console.log("HRM", heartRate, (new Date()));
   if(heartRate >= heartRateLimit) {
     heartRateEventSeconds++;
-    //console.log("Heart Over", heartRate, heartRateEventSeconds);
     if(heartRateEventSeconds==10) {
       var timeSig = new Date();
       addLog(timeSig, over, counter, "Heart Rate", ">" + heartRateLimit);
-      //console.log("Heart Event", heartRate, heartRateEventSeconds);
     }
   }
   if(heartRateEventSeconds>10) {
