@@ -47,7 +47,7 @@ function toggleHRM() {
 function getBattery() {
   batteryPercents.push(E.getBattery());
   if(batteryPercents.length > 20) batteryPercents.shift();
-  return batteryPercents.reduce((avg,e,i,arr)=>avg+e/arr.length,0).trunc(0);
+  return Math.trunc(batteryPercents.reduce((avg,e,i,arr)=>avg+e/arr.length,0));
 }
 
 // process heart rate monitor event 
