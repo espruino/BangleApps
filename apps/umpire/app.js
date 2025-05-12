@@ -78,7 +78,7 @@ function addLog(timeSig, over, ball, matchEvent, metaData) {
     formatTimeOfDay(timeSig),
     over-1, ball, 
     matchEvent, metaData, 
-    steps, heartRate, battery
+    steps, battery, heartRate
   ];
   file.write(csv.join(",")+"\n");
   console.log(csv);
@@ -89,8 +89,8 @@ function addLog(timeSig, over, ball, matchEvent, metaData) {
     matchEvent: matchEvent,
     metaData: metaData,
     steps: steps,
-    heartRate: heartRate,
-    battery: battery
+    battery: battery,
+    heartRate: heartRate
   });
 }
 
