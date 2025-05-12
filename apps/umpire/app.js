@@ -30,20 +30,21 @@ var battery = 0;
 var heartRate = '';
 var heartRateEventSeconds = 0;
 var HRM = false;
-var lastSteps = stepCountOffset;
+var lastSteps = STEP_COUNT_OFFSET;
 
 function toggleHRM() {
   if(HRM) {
     Bangle.setHRMPower(0);
     HRM = false;
     heartRate = '';
- } else {
+  } else {
     Bangle.setHRMPower(1);
     HRM = true;
   }
 }
 
 function getBattery() {
+  // calculate last 10 moving average %
   batteryPercents.push(E.getBattery());
   if(batteryPercents.length > 10) batteryPercents.shift();
   return Math.round(batteryPercents.reduce((avg,e,i,arr)=>avg+e/arr.length,0));
@@ -55,16 +56,12 @@ function updateHeartRate(h) {
   heartRate = h.bpm || 0;
   if(heartRate >= HEART_RATE_LIMIT) {
     heartRateEventSeconds++;
-    if(heartRateEventSeconds==10) {
-      var timeSig = new Date();
-      addLog(timeSig, over, counter, "Heart Rate", ">" + HEART_RATE_LIMIT);
-    }
+    if(heartRateEventSeconds==10) 
+      addLog((new Date()), over, counter, "Heart Rate", ">" + HEART_RATE_LIMIT);
   }
-  if(heartRateEventSeconds > 10) {
-    if(heartRate < HEART_RATE_LIMIT) {
+  if(heartRateEventSeconds > 10 
+     && heartRate < HEART_RATE_LIMIT) 
       heartRateEventSeconds = -10;
-   }
-  }
 }
 
 // write events to storage (csv, persistent) 
