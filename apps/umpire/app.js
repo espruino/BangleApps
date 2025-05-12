@@ -350,10 +350,7 @@ function showMainMenu() {
       || scrollMenuItems[idx]=="« Back") resumeGame();
     if(scrollMenuItems[idx]=="Wicket") incrementWickets(1);
     if(scrollMenuItems[idx]==/*LANG*/"Recall") incrementWickets(-1);
-    if(scrollMenuItems[idx]=="2nd Innings") {
-      newInnings();
-      menu = showMainMenu();
-    }
+    if(scrollMenuItems[idx]=="2nd Innings") newInnings();
     if(scrollMenuItems[idx]=="Start HRM"
       || scrollMenuItems[idx]=="Stop HRM") {
       toggleHRM();
