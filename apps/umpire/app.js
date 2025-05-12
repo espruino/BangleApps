@@ -57,7 +57,8 @@ function updateHeartRate(h) {
   if(heartRate >= HEART_RATE_LIMIT) {
     heartRateEventSeconds++;
     if(heartRateEventSeconds==10) 
-      addLog((new Date()), over, counter, "Heart Rate", ">" + HEART_RATE_LIMIT);
+      addLog((new Date()), over, counter, 
+        "Heart Rate", ">" + HEART_RATE_LIMIT);
   }
   if(heartRateEventSeconds > 10 
      && heartRate < HEART_RATE_LIMIT) 
@@ -68,6 +69,7 @@ function updateHeartRate(h) {
 // and memory (can be truncated while running)
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   var steps = Bangle.getStepCount() - STEP_COUNT_OFFSET;
+  // write to storage
   var csv = [
     formatTimeOfDay(timeSig),
     over-1, ball, 
@@ -75,7 +77,7 @@ function addLog(timeSig, over, ball, matchEvent, metaData) {
     steps, battery, heartRate
   ];
   file.write(csv.join(",")+"\n");
-  console.log(csv);
+  // write to memory
   log.unshift({ // in rev. chrono. order
     time: formatTimeOfDay(timeSig),
     over: over-1,
@@ -93,71 +95,86 @@ function showLog() {
   processing = true;
   Bangle.setUI();
   return E.showScroller({
-    h : 50, c : log.length,
-  draw : (idx, r) => {
-    g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
-    if(log[idx].matchEvent==/*LANG*/"Over Duration"
-      || log[idx].matchEvent==/*LANG*/"Innings Duration"){
-      g.setFont("Vector", 22).drawString(
-      log[idx].matchEvent,r.x+6,r.y+2);
-    } else {
-      g.setFont("Vector", 22).drawString(
-      log[idx].over + "." +
-      log[idx].ball + " " +
-      log[idx].matchEvent,r.x+6,r.y+2);
+    h: 50, c: log.length,
+    draw: (idx, r) => {
+      g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
+      if(log[idx].matchEvent==/*LANG*/"Over Duration"
+        || log[idx].matchEvent==/*LANG*/"Innings Duration") {
+        g.setFont("Vector", 22).drawString(
+          log[idx].matchEvent,r.x+6,r.y+2);
+      } else {
+        g.setFont("Vector", 22).drawString(
+          log[idx].over + "." +
+          log[idx].ball + " " +
+          log[idx].matchEvent,r.x+6,r.y+2);
+      }
+      g.setFont("Vector", 18).drawString(
+        log[idx].time + " " +
+        log[idx].metaData + " " +
+        log[idx].heartRate,r.x+6,r.y+27);
+    },
+    select: (idx) => {
+      resumeGame();
     }
-    g.setFont("Vector", 18).drawString(
-    log[idx].time + " " +
-    log[idx].metaData + " " +
-    log[idx].heartRate,r.x+6,r.y+27);
-  },
-  select : (idx) => {
-    resumeGame();
-  }
   });
 }
 
 // format date (diff) as duration
 function formatDuration(timeDate) { 
-  return (timeDate.getHours() + TIMEZONE_OFFSET_HOURS) + ":" + timeDate.getMinutes().toString().padStart(2, "0") + ":" + timeDate.getSeconds().toString().padStart(2, "0") + "";
+  return (timeDate.getHours() + TIMEZONE_OFFSET_HOURS) + ":" 
+    + timeDate.getMinutes().toString().padStart(2, "0") + ":" 
+    + timeDate.getSeconds().toString().padStart(2, "0") + "";
 }
 
 // format date as clock
 function formatTimeOfDay(timeSig) { 
-  return timeSig.getHours() + ":" + timeSig.getMinutes().toString().padStart(2, "0");
+  return timeSig.getHours() + ":" 
+    + timeSig.getMinutes().toString().padStart(2, "0");
 }
 
 // main ball counter logic
+// and in-play screen
 function countDown(dir) {
   processing = true;
-  battery = getBattery();
+  battery = getBattery(); // refresh battery
   counter += dir;
+  // suppress correction on first ball of innings
   if(over==1 && counter<0) {
     counter=0;
-  } else {
+    processing = false;
+    return;
+  }
+  // Correction to last ball of over
   if(counter<0) {
-    // Correction to last ball of over
     counter = BALLS_PER_OVER -1;
     over -= 1;
+    // use end of over time as last ball time
     ballTimes.push(overTimes.pop());
   }
-
+  // create timestamp for log
   var timeSig = new Date();
+  // calculate elapsed since last ball
   var lastBallTime = timeSig.getTime();
   if(ballTimes.length>0) {
     lastBallTime = ballTimes[ballTimes.length - 1];
   } else if(overTimes.length>0) {
     lastBallTime = overTimes[overTimes.length - 1];
   }
-  
-  var deadDuration = new Date(timeSig.getTime() - lastBallTime);
+  var deadDuration = new Date(
+    timeSig.getTime() - lastBallTime);
+  // process new (dead) ball
   if(dir!=0) {
+    // call play after time?
     if(timeCalled) {
       timeCalled = false;
+      // resume heart rate monitoring
       if(HRM) Bangle.setHRMPower(1);
+      // calculate time lost and log it
       var lastTimeTime = timeTimes[timeTimes.length - 1];
-      var timeDuration = new Date(timeSig.getTime() - lastTimeTime);
-      addLog(timeSig, over, counter, "Play", /*LANG*/"Lost: " + formatDuration(timeDuration));    
+      var timeDuration = new Date(
+        timeSig.getTime() - lastTimeTime);
+      addLog(timeSig, over, counter, 
+        "Play", /*LANG*/"Lost: " + formatDuration(timeDuration));    
     }
     if(counter>0) ballTimes.push(timeSig.getTime());
     Bangle.setLCDPower(1);
@@ -222,7 +239,7 @@ function countDown(dir) {
     var ballGraph = BALL_FACED_CHAR.repeat(counter) + BALL_TO_COME_CHAR.repeat(BALLS_PER_OVER - counter);
     if(timeCalled) ballGraph = '-TIME-';
     g.drawString(ballGraph + ' ' + formatDuration(deadDuration), 93, 166);
-  }
+  
   processing = false;
 }
 
