@@ -1,12 +1,12 @@
 // settings and environment 
-// (not checked again while running)
+// (not loaded again while running)
 var settings = Object.assign({
   // default values
   ballsPerOver: 6,
   oversPerInnings: 40,
   heartRateLimit: 100
 }, require('Storage').readJSON("umpire.json", true) || {});
-const ballsPerOver = settings.ballsPerOver;
+const BALLS_PER_OVER = settings.ballsPerOver;
 const oversPerInnings = settings.oversPerInnings;
 const heartRateLimit = settings.heartRateLimit;
 delete settings;
@@ -141,7 +141,7 @@ function countDown(dir) {
   } else {
   if(counter<0) {
     // Correction to last ball of over
-    counter = ballsPerOver -1;
+    counter = BALLS_PER_OVER -1;
     over -= 1;
     ballTimes.push(overTimes.pop());
   }
@@ -157,7 +157,6 @@ function countDown(dir) {
   var deadDuration = new Date(timeSig.getTime() - lastBallTime);
   if(dir!=0) {
     if(timeCalled) {
-      //console.log("Play after Time");
       timeCalled = false;
       if(HRM) Bangle.setHRMPower(1);
       var lastTimeTime = timeTimes[timeTimes.length - 1];
@@ -171,20 +170,20 @@ function countDown(dir) {
     } else {
       addLog(timeSig, over, counter, /*LANG*/"Correction", formatDuration(deadDuration));
     }
-    if(counter == ballsPerOver - 2) {
+    if(counter == BALLS_PER_OVER - 2) {
       Bangle.buzz(400).then(()=>{
         return new Promise(resolve=>setTimeout(resolve,500)); // wait 500ms
       }).then(()=>{
         return Bangle.buzz(500);
       })
-    } else if(counter == ballsPerOver - 1) {
+    } else if(counter == BALLS_PER_OVER - 1) {
       Bangle.buzz(800);
     } else {
       Bangle.buzz()
     }
   
     // Over
-    if (counter == ballsPerOver) {
+    if (counter == BALLS_PER_OVER) {
       var firstOverTime = overTimes[0];
       var matchDuration = new Date(timeSig.getTime() - firstOverTime);
       var matchMinutesString = formatDuration(matchDuration);
