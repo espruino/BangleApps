@@ -46,7 +46,7 @@ function toggleHRM() {
 
 function getBattery() {
   batteryPercents.push(E.getBattery());
-  if(batteryPercents.length > 20) batteryPercents.shift();
+  if(batteryPercents.length > 10) batteryPercents.shift();
   return Math.trunc(batteryPercents.reduce((avg,e,i,arr)=>avg+e/arr.length,0));
 }
 
