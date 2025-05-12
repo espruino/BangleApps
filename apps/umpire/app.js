@@ -261,11 +261,12 @@ function countDown(dir) {
   processing = false;
 }
 
-function startPlay(resume) {
+function resumeGame() {
   processing = true;
+  Bangle.buzz();
   Bangle.setUI({
-      mode : "custom",
-      swipe : (directionLR, directionUD)=>{
+      mode: "custom",
+      swipe: (directionLR, directionUD)=>{
         if (directionLR==-1) { 
           processing = true;
           menu = showMainMenu();
@@ -280,43 +281,33 @@ function startPlay(resume) {
           countDown(-1);
         }
       },
-      btn : ()=>{
+      btn: ()=>{
         processing = true;
         countDown(1);
       }
     });
-  var timeSig = new Date();
-  if(resume!=true) {
-    // start app
-    over += 1;
-    counter = 0; 
+  if(over==0) { // at start of innings
+    over += 1; // N.B. 1-based overs in code
+    counter = 0; // balls
     ballTimes = [];
-    if(over==1) { // set an inital time for camparison
-      overTimes.push(timeSig.getTime());
-      addLog(timeSig, over, counter, "Play", "");        
-      // set up twist refresh once only
-      Bangle.on('twist', function() { 
-        if(!processing) {
-          processing = true;
-          console.log("Twist", heartRate, battery);
-          countDown(0);
-        }
-      });
-      Bangle.on('HRM', function(h) {updateHeartRate(h);});
-    }
+    // set an inital time for comparison  
+    var timeSig = new Date();
+    overTimes.push(timeSig.getTime());
+    addLog(timeSig, over, counter, 
+      "Play", "");        
+    // set up twist refresh once only
+    Bangle.on('twist', function() { 
+      if(!processing) {
+        processing = true; // debounce
+        countDown(0);
+      }
+    });
+    // set up HRM listener once only
+    Bangle.on('HRM', function(h) {
+      updateHeartRate(h)});
   }
-  
-  // whether resuming or new over, refresh UI
+  // load in-play screen
   countDown(0);
-}
-
-function resumeGame() {
-  Bangle.buzz();
-  if(over==0) {
-    startPlay();
-  } else {
-    startPlay(true);
-  }
 }
 
 function incrementWickets(inc) {
