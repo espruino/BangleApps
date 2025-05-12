@@ -21,6 +21,16 @@ function showAlarm(alarm) {
   }
   let message = timer.display_name() + '\n' + alarm.msg;
 
+  // Altering alarms from here is tricky. Making changes to timers
+  // requires calling tt.update_system_alarms() to update the system
+  // alarm list to reflect the new timer state. But that means we need
+  // to retrieve the alarms again from sched.getAlarms() before
+  // changing them ourselves or else we risk overwriting the changes.
+  // Likewise, after directly modifying alarms, we need to write them
+  // back with sched.setAlarms() before doing anything that will call
+  // tt.update_system_alarms(), or else the latter will work with an
+  // outdated list of alarms.
+
   // If there's a timer chained from this one, start it (only for
   // alarms not in snoozed status)
   var isChainedTimer = false;
@@ -77,6 +87,7 @@ function showAlarm(alarm) {
       let currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
       alarm.t = currentTime + settings.defaultSnoozeMillis;
       alarm.t %= 86400000;
+      require("sched").setAlarms(alarms);
 
       Bangle.emit("alarmSnooze", alarm);
     }
@@ -84,6 +95,7 @@ function showAlarm(alarm) {
       let index = alarms.indexOf(alarm);
       if (index !== -1) {
         alarms.splice(index, 1);
+        require("sched").setAlarms(alarms);
       }
       if (timer !== chainTimer) {
         timer.pause();
@@ -100,8 +112,6 @@ function showAlarm(alarm) {
 
     Bangle.emit("alarmDismiss", alarm);
 
-    // The updated alarm is still a member of 'alarms'
-    // so writing to array writes changes back directly
     require("sched").setAlarms(alarms);
 
     if (action === 'halt' || tt.SETTINGS.alarm_return) {
