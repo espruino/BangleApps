@@ -369,7 +369,6 @@ var file = require("Storage").open("matchlog.csv","a");
 function newInnings() {
   var timeSig = new Date();
   if(over!=0) {
-    console.log("New Innings prompt");
     E.showPrompt(/*LANG*/"Start next innings?").then(function(confirmed) {
       if (confirmed) {
         Bangle.buzz();
@@ -384,6 +383,7 @@ function newInnings() {
         timeCalled = false;
         addLog(timeSig, oversPerInnings + 1, ballsPerOver, "New Innings", timeSig);
       }
+      console.log(confirmed);
       menu = showMainMenu();
     });
   } else {
