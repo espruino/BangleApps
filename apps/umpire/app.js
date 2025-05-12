@@ -103,8 +103,7 @@ function showLog() {
   draw : (idx, r) => {
     g.setBgColor((idx&1)?"#000":"#112").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
     if(log[idx].matchEvent==/*LANG*/"Over Duration"
-      || log[idx].matchEvent==/*LANG*/"Innings Duration"
-      || log[idx].matchEvent==/*LANG*/"New Innings"){
+      || log[idx].matchEvent==/*LANG*/"Innings Duration"){
       g.setFont("Vector", 22).drawString(
       log[idx].matchEvent,r.x+6,r.y+2);
     } else {
@@ -387,7 +386,7 @@ function newInnings() {
       }
     });
   } else {
-    addLog(timeSig, oversPerInnings + 1, ballsPerOver, "New Innings", timeSig);
+    addLog(timeSig, oversPerInnings + 1, ballsPerOver, "New Innings", require("locale").date(new Date(), 1));
   }
 }
 
