@@ -4,12 +4,10 @@ var settings = Object.assign({
   // default values
   ballsPerOver: 6,
   oversPerInnings: 40,
-  ballStepLimit: 500,
   heartRateLimit: 100
 }, require('Storage').readJSON("umpire.json", true) || {});
 const ballsPerOver = settings.ballsPerOver;
 const oversPerInnings = settings.oversPerInnings;
-const ballStepLimit = settings.ballStepLimit;
 const heartRateLimit = settings.heartRateLimit;
 delete settings;
 const timezoneOffsetHours = (new Date()).getTimezoneOffset() / 60;
