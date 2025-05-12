@@ -203,7 +203,6 @@ function countDown(dir) {
       ballTimes = [];
     }
   }
-  }
   
     g.clear(1); // clear screen and reset graphics state
     g.setFontAlign(1,0);
@@ -227,7 +226,7 @@ function countDown(dir) {
     var ballGraph = ballFaced.repeat(counter) + ballToCome.repeat(ballsPerOver-counter);
     if(timeCalled) ballGraph = '-TIME-';
     g.drawString(ballGraph + ' ' + formatDuration(deadDuration), g.getWidth()/1.89, 166);
-  
+  }
   processing = false;
 }
 
