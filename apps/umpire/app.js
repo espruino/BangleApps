@@ -192,8 +192,8 @@ function countDown(dir) {
       var overDuration = new Date(timeSig.getTime() - lastOverTime);
       var overMinutesString = formatDuration(overDuration) + "";
     
-      addLog(timeSig, over + 1, counter, /*LANG*/"Over Duration", overMinutesString);
-      addLog(timeSig, over + 1, counter, /*LANG*/"Innings Duration", matchMinutesString);
+      addLog(timeSig, over + 1, 0, /*LANG*/"Over Duration", overMinutesString);
+      addLog(timeSig, over + 1, 0, /*LANG*/"Innings Duration", matchMinutesString);
 
       //console.log(overTimes)
       // start new over
