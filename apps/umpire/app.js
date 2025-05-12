@@ -8,7 +8,7 @@ var settings = Object.assign({
 }, require('Storage').readJSON("umpire.json", true) || {});
 const BALLS_PER_OVER = settings.ballsPerOver;
 const OVERS_PER_INNINGS = settings.oversPerInnings;
-const heartRateLimit = settings.heartRateLimit;
+const HEART_RATE_LIMIT = settings.heartRateLimit;
 delete settings;
 const timezoneOffsetHours = (new Date()).getTimezoneOffset() / 60;
 const stepCountOffset = Bangle.getStepCount();
@@ -53,16 +53,15 @@ function getBattery() {
 // each second (approx.)
 function updateHeartRate(h) {
   heartRate = h.bpm || 0;
-  if(heartRate >= heartRateLimit) {
+  if(heartRate >= HEART_RATE_LIMIT) {
     heartRateEventSeconds++;
     if(heartRateEventSeconds==10) {
       var timeSig = new Date();
-      addLog(timeSig, over, counter, "Heart Rate", ">" + heartRateLimit);
+      addLog(timeSig, over, counter, "Heart Rate", ">" + HEART_RATE_LIMIT);
     }
   }
-  if(heartRateEventSeconds>10) {
-    if(heartRate < heartRateLimit) {
-      console.log("Heart Under (+10s allowed)", heartRate, heartRateEventSeconds);
+  if(heartRateEventSeconds > 10) {
+    if(heartRate < HEART_RATE_LIMIT) {
       heartRateEventSeconds = -10;
    }
   }
@@ -320,7 +319,7 @@ function showMainMenu() {
   }
   if(over>0 && !timeCalled) {
     scrollMenuItems.push("Wicket");
-    if(wickets>0) scrollMenuItems.push(/*LANG*/"Recall");
+    if(wickets>0) scrollMenuItems.push(/*LANG*/"Recall Batter");
     scrollMenuItems.push("Call Time");
     scrollMenuItems.push("2nd Innings");
     if(!HRM) scrollMenuItems.push("Start HRM");
@@ -346,7 +345,7 @@ function showMainMenu() {
     if(scrollMenuItems[idx]=="Call Play"
       || scrollMenuItems[idx]=="« Back") resumeGame();
     if(scrollMenuItems[idx]=="Wicket") incrementWickets(1);
-    if(scrollMenuItems[idx]==/*LANG*/"Recall") incrementWickets(-1);
+    if(scrollMenuItems[idx]==/*LANG*/"Recall Batter") incrementWickets(-1);
     if(scrollMenuItems[idx]=="2nd Innings") newInnings();
     if(scrollMenuItems[idx]=="Start HRM"
       || scrollMenuItems[idx]=="Stop HRM") {
