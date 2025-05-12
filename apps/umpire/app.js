@@ -28,7 +28,6 @@ var timeTimes = [];
 var log = [];
 var timeCalled = false;
 var batteryPercents = [];
-var battery = getBattery();
 var heartRate = '';
 var heartRateEventSeconds = 0;
 var HRM = false;
@@ -77,7 +76,7 @@ function updateHeartRate(h) {
 // and memory (can be truncated while running)
 function addLog(timeSig, over, ball, matchEvent, metaData) {
   var steps = Bangle.getStepCount() - stepCountOffset;
-  battery = getBattery();
+  var battery = getBattery();
   var csv = [
     formatTimeOfDay(timeSig),
     over-1, ball, 
