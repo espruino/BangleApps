@@ -382,9 +382,11 @@ function newInnings() {
         log = [];
         timeCalled = false;
         addLog(timeSig, oversPerInnings + 1, ballsPerOver, "New Innings", timeSig);
+        resumeGame();
+      } else {
+        E.showPrompt();
+        menu = showMainMenu();
       }
-      console.log(confirmed);
-      menu = showMainMenu();
     });
   } else {
     addLog(timeSig, oversPerInnings + 1, ballsPerOver, "New Innings", timeSig);
