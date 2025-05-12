@@ -10,10 +10,10 @@ const BALLS_PER_OVER = settings.ballsPerOver;
 const OVERS_PER_INNINGS = settings.oversPerInnings;
 const HEART_RATE_LIMIT = settings.heartRateLimit;
 delete settings;
-const timezoneOffsetHours = (new Date()).getTimezoneOffset() / 60;
-const stepCountOffset = Bangle.getStepCount();
-const ballToCome = '-';
-const ballFaced =  '=';
+const TIMEZONE_OFFSET_HOURS = (new Date()).getTimezoneOffset() / 60;
+const STEP_COUNT_OFFSET = Bangle.getStepCount();
+const BALL_TO_COME_CHAR = '-';
+const BALL_FACED_CHAR = '=';
 
 // globals
 var processing = true; //debounce to inhibit twist events
@@ -70,7 +70,7 @@ function updateHeartRate(h) {
 // write events to storage (csv, persistent) 
 // and memory (can be truncated while running)
 function addLog(timeSig, over, ball, matchEvent, metaData) {
-  var steps = Bangle.getStepCount() - stepCountOffset;
+  var steps = Bangle.getStepCount() - STEP_COUNT_OFFSET;
   var csv = [
     formatTimeOfDay(timeSig),
     over-1, ball, 
@@ -122,7 +122,7 @@ function showLog() {
 
 // format date (diff) as duration
 function formatDuration(timeDate) { 
-  return (timeDate.getHours() + timezoneOffsetHours) + ":" + timeDate.getMinutes().toString().padStart(2, "0") + ":" + timeDate.getSeconds().toString().padStart(2, "0") + "";
+  return (timeDate.getHours() + TIMEZONE_OFFSET_HOURS) + ":" + timeDate.getMinutes().toString().padStart(2, "0") + ":" + timeDate.getSeconds().toString().padStart(2, "0") + "";
 }
 
 // format date as clock
@@ -216,15 +216,15 @@ function countDown(dir) {
     g.drawString(battery + '% ' + heartRateString, 5, 11);
     g.setFontAlign(0,0);
     g.setFont("Vector",48); // vector font, 80px
-    g.drawString(formatTimeOfDay(timeSig), g.getWidth()/1.89, 55);
+    g.drawString(formatTimeOfDay(timeSig), 93, 55);
     g.setFont("Vector",80); // vector font, 80px
     var ballString = (over-1) + "." + counter;
     if(over > OVERS_PER_INNINGS) ballString = 'END';
-    g.drawString(ballString, g.getWidth()/1.89, 120);
+    g.drawString(ballString, 93, 120);
     g.setFont("Vector",18);
-    var ballGraph = ballFaced.repeat(counter) + ballToCome.repeat(ballsPerOver-counter);
+    var ballGraph = BALL_FACED_CHAR.repeat(counter) + BALL_TO_COME_CHAR.repeat(BALLS_PER_OVER - counter);
     if(timeCalled) ballGraph = '-TIME-';
-    g.drawString(ballGraph + ' ' + formatDuration(deadDuration), g.getWidth()/1.89, 166);
+    g.drawString(ballGraph + ' ' + formatDuration(deadDuration), 93, 166);
   }
   processing = false;
 }
