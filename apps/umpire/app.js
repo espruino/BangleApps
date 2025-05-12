@@ -391,4 +391,5 @@ function newInnings() {
 }
 
 newInnings();
+
 var menu = showMainMenu();
