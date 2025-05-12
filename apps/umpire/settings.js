@@ -3,7 +3,7 @@
   // Load settings
   var settings = Object.assign({
     ballsPerOver: 6,
-    oversPerInnings: 20,
+    oversPerInnings: 40,
     heartRateLimit: 100
   }, require('Storage').readJSON(FILE, true) || {});
 
