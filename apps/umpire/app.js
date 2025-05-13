@@ -36,6 +36,7 @@ function toggleHRM() {
   if(HRM) {
     Bangle.setHRMPower(0);
     HRM = false;
+    heartRateEventSeconds = 0;
     heartRate = '';
   } else {
     Bangle.setHRMPower(1);
@@ -365,10 +366,11 @@ function showMainMenu() {
         timeCalled = true;
         // power down HRM until play
         Bangle.setHRMPower(0);
+        heartRateEventSeconds = 0;
         var timeSig = new Date();
         timeTimes.push(timeSig.getTime());
         addLog(timeSig, over, counter, 
-               "Time", "");        
+               "Time", (HRM? "HRM Paused" : ""));        
         resumeGame();
       }
       if(scrollMenuItems[idx]=="Call Play") 
