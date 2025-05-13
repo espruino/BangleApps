@@ -423,6 +423,10 @@ function newInnings() {
 }
 // initialise file in storage
 var file = require("Storage").open("matchlog.csv","a");
+// save state on exit TODO WIP
+E.on("kill", function() {
+  console.log("Umpire app closed");
+});
 // start app
 newInnings(); // prepare 1st innings
 var menu = showMainMenu(); // ready to play
