@@ -231,7 +231,7 @@ function countDown(dir) {
     }
   }
   // refresh in-play screen
-  //g.clear(1);
+  g.clear(1);
   // draw wickets fallen (top-right)
   g.setFontAlign(1,0);
   g.setFont("Vector",26).
