@@ -261,7 +261,7 @@ function countDown(dir) {
   processing = false;
 }
 
-function resumeGame() {
+function resumeGame(play) {
   processing = true;
   Bangle.buzz();
   Bangle.setUI({
@@ -307,7 +307,7 @@ function resumeGame() {
       updateHeartRate(h)});
   }
   // load in-play screen
-  countDown(0);
+  countDown(play? -1: 0);
 }
 
 function incrementWickets(inc) {
@@ -339,11 +339,10 @@ function showMainMenu() {
   Bangle.setUI();
   var scrollMenuItems = [];
   // add menu items
-  if(over==0) {
-    scrollMenuItems.push("Call Play");
-  } else {
+  if(over>0)
     scrollMenuItems.push("« Back");
-  }
+  if(over==0 || timeCalled) 
+    scrollMenuItems.push("Call Play");
   if(over>0 && !timeCalled) {
     scrollMenuItems.push("Wicket");
     if(wickets>0) 
@@ -372,9 +371,10 @@ function showMainMenu() {
                "Time", "");        
         resumeGame();
       }
-      if(scrollMenuItems[idx]=="Call Play"
-        || scrollMenuItems[idx]=="« Back") 
-        resumeGame();
+      if(scrollMenuItems[idx]=="Call Play") 
+        resumeGame(timeCalled);
+      if(scrollMenuItems[idx]=="« Back") 
+        resumeGame();      
       if(scrollMenuItems[idx]=="Wicket") 
         incrementWickets(1);
       if(scrollMenuItems[idx]==/*LANG*/"Recall Batter") 
