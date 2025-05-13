@@ -145,6 +145,9 @@ function countDown(dir) {
     processing = false;
     return;
   }
+  // Suppress dir when play after time
+  if(timeCalled)
+    counter -= dir;
   // Correction to last ball of over
   if(counter<0) {
     counter = BALLS_PER_OVER -1;
@@ -175,7 +178,7 @@ function countDown(dir) {
       var timeDuration = new Date(
         timeSig.getTime() - lastTimeTime);
       addLog(timeSig, over, counter, 
-        "Play", /*LANG*/"Lost: " + formatDuration(timeDuration));    
+        "Play", /*LANG*/"Lost:" + formatDuration(timeDuration));    
     }
     
     if(counter>0) // reset elapsed time
@@ -349,7 +352,7 @@ function showMainMenu() {
     if(wickets>0) 
       scrollMenuItems.push(/*LANG*/"Recall Batter");
     scrollMenuItems.push("Call Time");
-    scrollMenuItems.push("2nd Innings");
+    scrollMenuItems.push("New Innings");
     if(!HRM) 
       scrollMenuItems.push("Start HRM");
   }
@@ -381,7 +384,7 @@ function showMainMenu() {
         incrementWickets(1);
       if(scrollMenuItems[idx]==/*LANG*/"Recall Batter") 
         incrementWickets(-1);
-      if(scrollMenuItems[idx]=="2nd Innings") 
+      if(scrollMenuItems[idx]=="New Innings") 
         newInnings();
       if(scrollMenuItems[idx]=="Start HRM"
         || scrollMenuItems[idx]=="Stop HRM") {
@@ -394,7 +397,7 @@ function showMainMenu() {
 
 function newInnings() {
   var timeSig = new Date();
-  if(over!=0) { // next innings
+  if(over!=0) { // new innings
     E.showPrompt(/*LANG*/"Start next innings?").
       then(function(confirmed) {
       if (confirmed) {
@@ -416,7 +419,7 @@ function newInnings() {
         menu = showMainMenu();
       }
     });
-  } else { // 1st innings
+  } else { // resume innings or start app
     addLog(timeSig, OVERS_PER_INNINGS + 1, BALLS_PER_OVER, 
       "New Innings", require("locale").date(new Date(), 1));
   }
@@ -425,7 +428,7 @@ function newInnings() {
 var file = require("Storage").open("matchlog.csv","a");
 // save state on exit TODO WIP
 E.on("kill", function() {
-  console.log("Umpire app closed");
+  console.log("Umpire app closed at " + (over-1) + "." + counter);
 });
 // start app
 newInnings(); // prepare 1st innings
