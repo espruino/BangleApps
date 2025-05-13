@@ -4,7 +4,7 @@
   "shortName":"tev's timer",
   "icon": "app.png",
   "version": "0.01",
-  "description": "An ergonomic countdown timer app",
+  "description": "A countdown timer app with interval and repeat features",
   "screenshots": [ {"url": "screenshot.png" } ],
   "readme": "README.md",
   "tags": "timer",
