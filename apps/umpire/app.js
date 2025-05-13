@@ -30,7 +30,6 @@ var battery = 0;
 var heartRate = '';
 var heartRateEventSeconds = 0;
 var HRM = false;
-var lastSteps = STEP_COUNT_OFFSET;
 
 function toggleHRM() {
   if(HRM) {
