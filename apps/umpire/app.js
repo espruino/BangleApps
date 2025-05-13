@@ -312,16 +312,19 @@ function resumeGame() {
 
 function incrementWickets(inc) {
   processing = true;
-  E.showPrompt(/*LANG*/"Amend wickets by " + inc + "?").then(function(confirmed) {
+  E.showPrompt(/*LANG*/"Amend wickets by " + inc + "?").
+    then(function(confirmed) {
     if (confirmed) {
       Bangle.buzz();
       wickets += inc;
       var timeSig = new Date();
       if(inc>0) {
         countDown(1);
-        addLog(timeSig, over, counter, "Wicket", "Wickets: " + wickets);
+        addLog(timeSig, over, counter, 
+          "Wicket", "Wickets: " + wickets);
       } else {
-        addLog(timeSig, over, counter, /*LANG*/"Recall Batter", "Wickets: " + wickets);
+        addLog(timeSig, over, counter, 
+          /*LANG*/"Recall Batter", "Wickets: " + wickets);
       }
       resumeGame();
     } else {
@@ -335,6 +338,7 @@ function showMainMenu() {
   processing = true;
   Bangle.setUI();
   var scrollMenuItems = [];
+  // add menu items
   if(over==0) {
     scrollMenuItems.push("Call Play");
   } else {
@@ -342,50 +346,55 @@ function showMainMenu() {
   }
   if(over>0 && !timeCalled) {
     scrollMenuItems.push("Wicket");
-    if(wickets>0) scrollMenuItems.push(/*LANG*/"Recall Batter");
+    if(wickets>0) 
+      scrollMenuItems.push(/*LANG*/"Recall Batter");
     scrollMenuItems.push("Call Time");
     scrollMenuItems.push("2nd Innings");
-    if(!HRM) scrollMenuItems.push("Start HRM");
+    if(!HRM) 
+      scrollMenuItems.push("Start HRM");
   }
   if(HRM) scrollMenuItems.push("Stop HRM");
-
+  // show menu
   return E.showScroller({
-  h : 80, c : scrollMenuItems.length,
-  draw : (idx, r) => {
-    g.setBgColor((idx&1)?"#000":"#121").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
-    g.setFont("Vector", 30).drawString(scrollMenuItems[idx],r.x+10,r.y+28);
-  },
-  select : (idx) => {
-    console.log(scrollMenuItems[idx]);
-    if(scrollMenuItems[idx]=="Call Time") {
-      timeCalled = true;
-      Bangle.setHRMPower(0);
-      var timeSig = new Date();
-      timeTimes.push(timeSig.getTime());
-      addLog(timeSig, over, counter, "Time", "");        
-      resumeGame();
+    h: 80, c: scrollMenuItems.length,
+    draw: (idx, r) => {
+      g.setBgColor((idx&1)?"#000":"#121").clearRect(r.x,r.y,r.x+r.w-1,r.y+r.h-1);
+      g.setFont("Vector", 30).drawString(scrollMenuItems[idx],r.x+10,r.y+28);
+    },
+    select: (idx) => {
+      if(scrollMenuItems[idx]=="Call Time") {
+        timeCalled = true;
+        // power down HRM until play
+        Bangle.setHRMPower(0);
+        var timeSig = new Date();
+        timeTimes.push(timeSig.getTime());
+        addLog(timeSig, over, counter, 
+               "Time", "");        
+        resumeGame();
+      }
+      if(scrollMenuItems[idx]=="Call Play"
+        || scrollMenuItems[idx]=="« Back") 
+        resumeGame();
+      if(scrollMenuItems[idx]=="Wicket") 
+        incrementWickets(1);
+      if(scrollMenuItems[idx]==/*LANG*/"Recall Batter") 
+        incrementWickets(-1);
+      if(scrollMenuItems[idx]=="2nd Innings") 
+        newInnings();
+      if(scrollMenuItems[idx]=="Start HRM"
+        || scrollMenuItems[idx]=="Stop HRM") {
+        toggleHRM();
+        resumeGame();
+      }
     }
-    if(scrollMenuItems[idx]=="Call Play"
-      || scrollMenuItems[idx]=="« Back") resumeGame();
-    if(scrollMenuItems[idx]=="Wicket") incrementWickets(1);
-    if(scrollMenuItems[idx]==/*LANG*/"Recall Batter") incrementWickets(-1);
-    if(scrollMenuItems[idx]=="2nd Innings") newInnings();
-    if(scrollMenuItems[idx]=="Start HRM"
-      || scrollMenuItems[idx]=="Stop HRM") {
-      toggleHRM();
-      resumeGame();
-    }
-  }
   });
 }
 
-// Start the app
-var file = require("Storage").open("matchlog.csv","a");
-
 function newInnings() {
   var timeSig = new Date();
-  if(over!=0) {
-    E.showPrompt(/*LANG*/"Start next innings?").then(function(confirmed) {
+  if(over!=0) { // next innings
+    E.showPrompt(/*LANG*/"Start next innings?").
+      then(function(confirmed) {
       if (confirmed) {
         Bangle.buzz();
         processing = true; //debounce to inhibit twist events
@@ -397,18 +406,21 @@ function newInnings() {
         timeTimes = [];
         log = [];
         timeCalled = false;
-        addLog(timeSig, OVERS_PER_INNINGS + 1, BALLS_PER_OVER, "New Innings", require("locale").date(new Date(), 1));
+        addLog(timeSig, OVERS_PER_INNINGS + 1, BALLS_PER_OVER, 
+          "New Innings", require("locale").date(new Date(), 1));
         resumeGame();
       } else {
         E.showPrompt();
         menu = showMainMenu();
       }
     });
-  } else {
-    addLog(timeSig, OVERS_PER_INNINGS + 1, BALLS_PER_OVER, "New Innings", require("locale").date(new Date(), 1));
+  } else { // 1st innings
+    addLog(timeSig, OVERS_PER_INNINGS + 1, BALLS_PER_OVER, 
+      "New Innings", require("locale").date(new Date(), 1));
   }
 }
-
-newInnings();
-
-var menu = showMainMenu();
+// initialise file in storage
+var file = require("Storage").open("matchlog.csv","a");
+// start app
+newInnings(); // prepare 1st innings
+var menu = showMainMenu(); // ready to play
