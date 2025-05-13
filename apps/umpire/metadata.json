@@ -4,7 +4,7 @@
   "icon": "app.png",
   "version": "1.30",
   "description": "Cricket umpire ball counter and match event logger",
-  "tags": "",
+  "tags": "outdoors,tool,health,sports,referee,judge,assistant",
   "readme":"README.md",
   "interface": "interface.html",
   "supports": ["BANGLEJS2"],
