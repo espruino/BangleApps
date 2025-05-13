@@ -272,10 +272,10 @@ function resumeGame(play) {
       swipe: (directionLR, directionUD)=>{
         if (directionLR==-1) { 
           processing = true;
-          menu = showMainMenu();
+          showMainMenu();
         } else if (directionLR==1) { 
           processing = true;
-          menu = showLog();
+          showLog();
         } else if (directionUD==-1) { 
           processing = true;
           countDown(1);
@@ -332,7 +332,7 @@ function incrementWickets(inc) {
       resumeGame();
     } else {
       E.showPrompt();
-      menu = showMainMenu();
+      showMainMenu();
     }
   });
 }
@@ -415,7 +415,7 @@ function newInnings() {
         resumeGame();
       } else {
         E.showPrompt();
-        menu = showMainMenu();
+        showMainMenu();
       }
     });
   } else { // resume innings or start app
@@ -431,4 +431,4 @@ E.on("kill", function() {
 });
 // start app
 newInnings(); // prepare 1st innings
-var menu = showMainMenu(); // ready to play
+showMainMenu(); // ready to play
