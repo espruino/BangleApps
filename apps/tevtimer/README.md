@@ -3,11 +3,8 @@
 This Bangle.js 2 app aims to be an ergonomic timer that features:
 
 * Large, easy-to-read fonts
-
 * Multiple simultaneous timer operation
-
 * Interval and repeat timers
-
 * A customizable three-line display
 
 ![App screenshot](screenshot.png)
@@ -21,17 +18,11 @@ The main timer screen appears when you start the app. The button on the lower-le
 The on-screen menu button displays the following menu items:
 
 * **Reset:** Reset the currently displayed timer back to its starting value.
-
 * **Timers:** Select a different timer to display. The most recently used timer is automatically moved to the top of the list.
-
 * **Edit:** Edit the currently displayed timer
-
 * **Format:** Customize the timer display
-
 * **Add:** Create a new timer with the same parameters as the currently displayed one. The Edit menu will appear allowing you to adjust the newly created timer.
-
 * **Delete:** Delete the currently displayed timer
-
 * **Settings:** Adjust global app settings
 
 ## Editing a timer
@@ -39,13 +30,9 @@ The on-screen menu button displays the following menu items:
 The following parameters can be adjusted individually for each timer by displaying that timer on the main screen and then selecting **Edit** from the menu:
 
 * **Name:** (available when a keyboard app is installed) Allows you to assign a custom name to the timer to display in menus
-
 * **Start:** Set the starting time of the timer
-
 * **At end:** Allows for creating interval or repeat timers. Selecting “Stop” causes the timer to simply stop when it expires and the resulting alert is dismissed. Selecting a timer here will cause the selected timer to reset and automatically begin counting down once this timer expires. See “Chained timers” below.
-
 * **Vibrate pattern:** Choose the vibration pattern for the alert when the timer expires
-
 * **Buzz count:** Choose the number of times the vibration pattern signals when the timer expires before silencing itself
 
 ## Chained timers
@@ -57,19 +44,14 @@ When a timer reaches its end, it can be configured to automatically start anothe
 Selecting Format from the menu allows you to customize the display. The display has three lines, and each one can be set to one of the following general modes:
 
 * **Current:** Shows the current timer position as it counts down
-
 * **Start:** Shows the starting point of the timer
-
 * **Time:** Shows the current time of day
-
 * **Name:** Shows the name of the timer (if set by a keyboard app; otherwise displays an auto-generated name based on the timer's starting point and current position)
 
 The Current, Start, and Time modes each have three subtypes allowing you to set the precision of the displayed time:
 
 * **HMS:** Hours, minutes, and seconds
-
 * **HM:** Hours and minutes only
-
 * **Auto:** Displays only hours and minutes while the screen is locked; when unlocked, automatically displays the seconds too
 
 The primary benefit to choosing a mode that hides the seconds is to reduce battery consumption when the timer is being displayed for an extended period of time.
@@ -83,15 +65,10 @@ The Settings option in the menu contains the following options which apply to al
 Choose a shortcut action to perform when the physical button is pressed (after the screen is unlocked), when the left side of the touch screen (above the buttons when the main time screen is displayed) is tapped, and when the right side of the touch screen is tapped, respectively. By default, pressing the button toggles the timer between running and paused, and tapping either side of the screen brings up the screen for setting the starting time of the timer. These actions can be customized:
 
 * **Start/stop:** Toggle the timer between paused and running
-
 * **Reset:** Reset the timer
-
 * **Timers:** Display the timer selection menu to display a different timer
-
 * **Edit timer:** Display the timer edit menu
-
 * **Edit start:** Display the timer start time edit screen
-
 * **Format:** Display the display format selection screen
 
 ### Confirm reset
