@@ -1,5 +1,4 @@
 // settings and environment 
-// (not loaded again while running)
 var settings = Object.assign({
   // default values
   ballsPerOver: 6,
