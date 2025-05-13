@@ -36,7 +36,7 @@ Bangle.js 2 app interactions are governed by the Bangle and Espruino (E) librari
 
 ### Swipe and Button ###
 
-The in-play screen detects swipe and button events using Bangle.setUI. This appears reliable. 
+The in-play screen detects swipe and button events using Bangle.setUI.
 
 When in-play, use of the button increments the (fairly delivered) ball count. The app does not suppress the screen lock so by default it requires the umpire to press once to unlock the watch and a second press to log the ball. Bangle.buzz is used to give positive feedback when the app takes action so that the screen does not need to be looked at.
 
@@ -56,11 +56,11 @@ Whilst the in-play screen is displayed swiping will cause the following actions 
 
 ### Confirmation Prompts ###
 
-When choosing "Wicket" or "Recall" from the main menu, E.showPrompt is used to ask for positive confirmation before incrementing or decrementing the wickets, respectively. Those functions also increment or decrement the ball count. E.showPrompt offers relatively small tap targets on the Bangle.js 2 screen but appears stable.
+When choosing "Wicket" or "Recall" from the main menu, E.showPrompt is used to ask for positive confirmation before incrementing or decrementing the wickets, respectively. Those functions also increment or decrement the ball count.
 
 ### Scrollers ###
 
-The main menu and log viewer both use E.showScroller to display a scrollable list of tappable items. This is in preference to E.showMenu which, at the time of writing, has bugs affecting where the touch event is detected in the list of menu items (one lower than it should).
+The main menu and log viewer both use E.showScroller to display a scrollable list of tappable items. This is in preference to E.showMenu which has very small touch targets.
 
 Whenever a scroller is shown, the in-play swipe interactions are switched off.
 
@@ -89,6 +89,6 @@ N.B. The HRM takes about 5 seconds to start measuring the umpire's heart rate.
 
 Once switched on, the HRM has two additional features:
 
-- **Battery Saving** - After the Call of Time the HRM is powered down until (Play is called and) the next ball is logged.
+1. **Battery Saving** - After the Call of Time the HRM is powered down until (Play is called and) the next ball is logged.
 
-- **Auto-logging** - The app Settings menu has an additional item which is a heartbeat rate over which the app should automatically log an event. Once the umpire's heart rate goes over the limit for 10 consecutive seconds an event will be logged and the in-play screen will show the heart rate on every refresh. Until the heart rate falls below the threshold no further heart events will be logged. A further event will not be triggered until the limit is exceeded again for 20 consecutive seconds. The HRM can be stopped from the main menu during the match.
+2. **Auto-logging** - The app Settings menu has an additional item which is a heartbeat rate over which the app should automatically log an event. Once the umpire's heart rate goes over the limit for 10 consecutive seconds an event will be logged and the in-play screen will show the heart rate on every refresh. Until the heart rate falls below the threshold no further heart events will be logged. A further event will not be triggered until the limit is exceeded again for 20 consecutive seconds. The HRM can be stopped from the main menu during the match.
