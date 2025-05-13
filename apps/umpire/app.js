@@ -4,7 +4,7 @@ var settings = Object.assign({
   // default values
   ballsPerOver: 6,
   oversPerInnings: 40,
-  heartRateLimit: 100
+  heartRateLimit: 130
 }, require('Storage').readJSON("umpire.json", true) || {});
 const BALLS_PER_OVER = settings.ballsPerOver;
 const OVERS_PER_INNINGS = settings.oversPerInnings;
