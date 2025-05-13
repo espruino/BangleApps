@@ -179,18 +179,18 @@ function countDown(dir) {
         timeSig.getTime() - lastTimeTime);
       addLog(timeSig, over, counter, 
         "Play", /*LANG*/"Lost:" + formatDuration(timeDuration));    
-    }
+    } else {
+      if(counter>0) // reset elapsed time
+        ballTimes.push(timeSig.getTime());
+      Bangle.setLCDPower(1); //TODO need any more?
     
-    if(counter>0) // reset elapsed time
-      ballTimes.push(timeSig.getTime());
-    Bangle.setLCDPower(1); //TODO need any more?
-    
-    if(dir>0) { // fairly delivered ball
-      addLog(timeSig, over, counter, 
-             "Ball", formatDuration(deadDuration));
-    } else { // +1 ball still to come
-      addLog(timeSig, over, counter, 
-             /*LANG*/"Correction", formatDuration(deadDuration));
+      if(dir>0) { // fairly delivered ball
+        addLog(timeSig, over, counter, 
+          "Ball", formatDuration(deadDuration));
+      } else { // +1 ball still to come
+        addLog(timeSig, over, counter, 
+          /*LANG*/"Correction", formatDuration(deadDuration));
+      }
     }
     // give haptic feedback
     if(counter == BALLS_PER_OVER - 2) {
@@ -231,36 +231,36 @@ function countDown(dir) {
     }
   }
   // refresh in-play screen
-  g.clear(1);
+  //g.clear(1);
   // draw wickets fallen (top-right)
   g.setFontAlign(1,0);
   g.setFont("Vector",26).
-   drawString(wickets, 162, 14);
+   drawString(wickets, 162, 14, true);
   g.setFont("Vector",12).
-   drawString('\¦\¦\¦', 173, 15);
+   drawString('\¦\¦\¦', 173, 15, true);
   // draw battery and heart rate (top-left)
   g.setFontAlign(-1,0);
   var heartRateString = 'HR:' + heartRate;
   if(heartRateEventSeconds <= 0) heartRateString = '';
   g.setFont("Vector",16).
-    drawString(battery + '% ' + heartRateString, 5, 11);
+    drawString(battery + '% ' + heartRateString, 5, 11, true);
   // draw clock (upper-centre)
   g.setFontAlign(0,0);
   g.setFont("Vector",48).
-    drawString(formatTimeOfDay(timeSig), 93, 55);
+    drawString(formatTimeOfDay(timeSig), 93, 55, true);
   // draw over.ball (centre)
   var ballString = (over-1) + "." + counter;
   if(over > OVERS_PER_INNINGS) 
     ballString = 'END';
   g.setFont("Vector",80).
-    drawString(ballString, 93, 120);
+    drawString(ballString, 93, 120, true);
   // draw ball graph and elapsed time
   var ballGraph = 
     BALL_FACED_CHAR.repeat(counter) 
     + BALL_TO_COME_CHAR.repeat(BALLS_PER_OVER - counter);
   if(timeCalled) ballGraph = '-TIME-';
   g.setFont("Vector",18).drawString(
-    ballGraph + ' ' + formatDuration(deadDuration), 93, 166);
+    ballGraph + ' ' + formatDuration(deadDuration), 93, 166, true);
   // return to wait for next input
   processing = false;
 }
