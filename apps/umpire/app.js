@@ -298,16 +298,6 @@ function resumeGame(play) {
     overTimes.push(timeSig.getTime());
     addLog(timeSig, over, counter, 
       "Play", "");        
-    // set up twist refresh once only
-    Bangle.on('twist', function() { 
-      if(!processing) {
-        processing = true; // debounce
-        countDown(0);
-      }
-    });
-    // set up HRM listener once only
-    Bangle.on('HRM', function(h) {
-      updateHeartRate(h)});
   }
   // load in-play screen
   countDown(play? -1: 0);
@@ -429,6 +419,15 @@ var file = require("Storage").open("matchlog.csv","a");
 E.on("kill", function() {
   console.log("Umpire app closed at " + (over-1) + "." + counter);
 });
-// start app
+// set up twist refresh once only 
+Bangle.on('twist', function() { 
+  if(!processing) {
+    processing = true; // debounce
+    countDown(0);
+  }
+});
+// set up HRM listener once only
+Bangle.on('HRM', function(h) {
+  updateHeartRate(h)});
 newInnings(); // prepare 1st innings
 showMainMenu(); // ready to play
