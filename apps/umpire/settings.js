@@ -4,7 +4,7 @@
   var settings = Object.assign({
     ballsPerOver: 6,
     oversPerInnings: 40,
-    heartRateLimit: 100
+    heartRateLimit: 130
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
