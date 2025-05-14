@@ -2,18 +2,20 @@
 
 Inverts swipe direction globally or per app, see settings. If global inversion is enabled, you can unselect the inversion per app and vice versa.
 
+Can invert swipe as well as drag events. This can be fine tuned for each inverted app in the settings.
+
 ## Limitations
 
-Swipe Inversion can only invert directions on apps that use `Bangle.setUI` to set up swipes. Swipes set up with `Bangle.on("swipe", ...)` is currently not managed.
-
-Swiping behavior that uses the `drag` event is not altered either.
+Swipe Inversion must sit before other swipe and drag event listeners so they don't run before the event is inverted. If a listener were to be prepended to the list of listeners after Swipe Inversion was, that listener will act on the non-inverted event.
 
 ## TODO
 
-- Try to handle swipes from `Bangle.on("swipe", ...)`
-  - alternatively refactor apps using that to only use `Bangle.setUI` for setting up swipes.
-    - Think about how to accommodate e.g. `touch` or `back` handlers set up in `Layout` library calls. They are removed if we refactor some `Bangle.on("swipe", ...)` to `Bangle.setUI`. (Is it maybe resolved if we call `Bangle.setUI` before the `Layout` call? - have not tested that yet.)
 - Add bootloader apps and widgets to the list of apps that can be individually toggled in settings?
+  - How? Right now we look at `global.__FILE__` to find the active app in order to determine which events to invert. That doesn't work for widgets and bootcode.
+    - In fact they will probably be inverted along with the currently running app.
+- Refactor to invert at time of registering the event listeners?
+  - This would make it so `swipeinv` does not depend on being first in the call list of event listeners.
+  - Some work towards this was done in [thyttan@5cbb72e](https://github.com/thyttan/BangleApps/commit/5cbb72ee55f7fb7d335ffba228575a862a0ae612) but it doesn't work yet.
 
 ## Requests
 
@@ -25,3 +27,4 @@ nxdefiant
 
 ## Contributors
 
+thyttan
