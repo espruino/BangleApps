@@ -15,6 +15,7 @@ const S = require("Storage");
 
 let drawTimeout: TimeoutId | undefined;
 let menuShown = false;
+let latestGps: GPSFix | undefined;
 
 type Dist = number & { brand: 'dist' };
 type Time = number & { brand: 'time' };
@@ -29,36 +30,72 @@ let splitOffset = 0, splitOffsetPx = 0;
 
 const GPS_TIMEOUT_MS = 30000;
 
+const drawGpsLvl = (l: Layout.RenderedHierarchy) => {
+  const gps = latestGps;
+  const nsats = gps?.satellites ?? 0;
+
+  if (!gps || !gps.fix)
+    g.setColor("#FF0000");
+  else if (gps.satellites < 4)
+    g.setColor("#FF5500");
+  else if (gps.satellites < 6)
+    g.setColor("#FF8800");
+  else if (gps.satellites < 8)
+    g.setColor("#FFCC00");
+  else
+    g.setColor("#00FF00");
+
+  g.clearRect(l.x, l.y, l.x + l.w, l.y + l.h);
+
+  g.fillRect(
+    l.x,
+    l.y + l.h - 10 - (l.h - 10) * ((nsats > 12 ? 12 : nsats) / 12),
+    l.x + l.w,
+    l.y + l.h
+  );
+};
+
 const layout = new Layout({
-  type: "v",
+  type: "h",
   c: [
     {
-      type: "txt",
-      font: "6x8:2",
-      label: "Pace",
-      id: "paceLabel",
-      pad: 4
+      type: "custom",
+      render: drawGpsLvl,
+      filly: 1,
+      width: 10,
     },
     {
-      type: "txt",
-      font: "Vector:40",
-      label: "",
-      id: "pace",
-      halign: 0
-    },
-    {
-      type: "txt",
-      font: "6x8:2",
-      label: "Time",
-      id: "timeLabel",
-      pad: 4
-    },
-    {
-      type: "txt",
-      font: "Vector:40",
-      label: "",
-      id: "time",
-      halign: 0
+      type: "v",
+      c: [
+        {
+          type: "txt",
+          font: "6x8:2",
+          label: "Pace",
+          id: "paceLabel",
+          pad: 4
+        },
+        {
+          type: "txt",
+          font: "Vector:40",
+          label: "",
+          id: "pace",
+          halign: 0
+        },
+        {
+          type: "txt",
+          font: "6x8:2",
+          label: "Time",
+          id: "timeLabel",
+          pad: 4
+        },
+        {
+          type: "txt",
+          font: "Vector:40",
+          label: "",
+          id: "time",
+          halign: 0
+        },
+      ]
     },
   ]
 }, {
@@ -262,6 +299,7 @@ Bangle.on('tap', e => {
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.setGPSPower(1, "pace");
+Bangle.on("GPS", gps => latestGps = gps);
 
 g.clearRect(Bangle.appRect);
 draw();
