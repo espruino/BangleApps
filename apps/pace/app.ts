@@ -45,8 +45,6 @@ const drawGpsLvl = (l: Layout.RenderedHierarchy) => {
   else
     g.setColor("#00FF00");
 
-  g.clearRect(l.x, l.y, l.x + l.w, l.y + l.h);
-
   g.fillRect(
     l.x,
     l.y + l.h - 10 - (l.h - 10) * ((nsats > 12 ? 12 : nsats) / 12),
@@ -63,6 +61,7 @@ const layout = new Layout({
       render: drawGpsLvl,
       filly: 1,
       width: 10,
+      bgCol: g.theme.bg, // automatically clears before render()
     },
     {
       type: "v",
