@@ -128,7 +128,7 @@ let dragHandler = function(e) {
       // setup volume knob here.
     cb(Math.sign(dx))
     resetOuterScopeVariables();
-    let volumeKnob = dial(cb);
+    let volumeKnob = dial(cb, {stepsPerWholeTurn:7});
     let timingOutVolumeKnob = (e)=>{
         if (!e.b) {
           setKnobTimeout();
@@ -211,7 +211,7 @@ let dial = function(cb, options) {
       }
 
       function stepHandler(step) {
-        Bangle.buzz(20, 0.3);
+        Bangle.buzz(20, 0.4);
         cumulative -= THRESHOLD * step;
         cb(step);
       }
