@@ -171,6 +171,7 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
       strWidth = g.stringWidth(text);
       if (strWidth+imgWidthClear > options.w) {
         g.setMiniFont();
+        text = g.wrapString(text, options.w-imgWidthClear).join("\n");
         strWidth = g.stringWidth(text);
       }
     }
