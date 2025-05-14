@@ -343,6 +343,10 @@ apps.forEach((app,appIdx) => {
         if (a>=0 && b>=0 && a<b)
           WARN(`Clock ${app.id} file calls loadWidgets before setUI (clock widget/etc won't be aware a clock app is running)`, {file:appDirRelative+file.url, line : fileContents.substr(0,a).split("\n").length});
       }
+      if (fileContents.includes("clock_info") && (!app.dependencies || !app.dependencies.clock_info) && !["boot","clock_info"].includes(app.id))
+        ERROR(`App ${app.id}'s uses clock_info but doesn't have a dependency on it`, {file:appDirRelative+file.url});
+      if (fileContents.includes("clockbg") && (!app.dependencies || !app.dependencies.clockbg) && !["clockbg"].includes(app.id))
+        ERROR(`App ${app.id}'s uses clockbg but doesn't have a dependency on it`, {file:appDirRelative+file.url});
       // if settings
       if (/\.settings?\.js$/.test(file.name)) {
         // suggest adding to datafiles
