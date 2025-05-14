@@ -25,7 +25,7 @@ type Split = {
   time: Time,
 };
 
-const splits: Split[] = []; // times
+const splits: Split[] = (S.readJSON("pace.json", 1) as Split[]) || []; // times
 let splitOffset = 0, splitOffsetPx = 0;
 
 const GPS_TIMEOUT_MS = 30000;
