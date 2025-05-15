@@ -1,2 +1,3 @@
 0.01: New Clock!
 0.02: Clockinfos now save under correct name, and wrap correctly to >1 line
+0.03: Fix time's border when drawing over a solid color background
