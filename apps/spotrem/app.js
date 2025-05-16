@@ -211,7 +211,7 @@ let dial = function(cb, options) {
       }
 
       function stepHandler(step) {
-        Bangle.buzz(20, 0.4);
+        Bangle.buzz(20, 0.8);
         cumulative -= THRESHOLD * step;
         cb(step);
       }
