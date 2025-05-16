@@ -104,7 +104,8 @@ let knobTimeout;
 let dragHandler = function(e) {
 
   let cb = ud => {
-    if (ud) Bangle.musicControl(ud<0 ? "volumedown" : "volumeup");
+      Bangle.musicControl(ud<0 ? "volumedown" : "volumeup");
+      Bangle.buzz(20);
   }
 
   let resetOuterScopeVariables = ()=>{
@@ -121,7 +122,6 @@ let dragHandler = function(e) {
     if (dy>0) { dy-=32; cb(-1) }
     else { dy+=32; cb(1) }
     volumeChangedThisGoAround = true;
-    Bangle.buzz(20);
   }
 
   if (volumeChangedThisGoAround && Math.abs(dx)>32) {
@@ -211,7 +211,6 @@ let dial = function(cb, options) {
       }
 
       function stepHandler(step) {
-        Bangle.buzz(20, 0.8);
         cumulative -= THRESHOLD * step;
         cb(step);
       }
