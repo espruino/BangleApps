@@ -145,6 +145,8 @@ let dragHandler = function(e) {
         knobTimeout = setTimeout(()=>{
           Bangle.removeListener("drag", timingOutVolumeKnob)
           Bangle.removeListener("swipe", swipeMask);
+          Bangle.buzz(40);
+          setTimeout(Bangle.buzz, 150, 40, 0.8)
           knobTimeout = undefined;
           print("removed volume knob")
         }, 350);
