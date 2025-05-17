@@ -8,6 +8,7 @@
   "screenshots": [ {"url": "screenshot.png" } ],
   "readme": "README.md",
   "tags": "timer",
+  "interface": "interface.html",
   "supports": ["BANGLEJS2"],
   "dependencies": {"scheduler": "type"},
   "storage": [
