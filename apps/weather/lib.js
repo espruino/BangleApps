@@ -1,5 +1,5 @@
-const storage = require('Storage');
-const B2 = process.env.HWVERSION===2;
+const storage = require("Storage");
+const B2 = process.env.HWVERSION === 2;
 
 let expiryTimeout;
 function scheduleExpiry(json) {
@@ -7,7 +7,7 @@ function scheduleExpiry(json) {
     clearTimeout(expiryTimeout);
     expiryTimeout = undefined;
   }
-  let expiry = "expiry" in json ? json.expiry : 2*3600000;
+  let expiry = "expiry" in json ? json.expiry : 2 * 3600000;
   if (json.weather && json.weather.time && expiry) {
     let t = json.weather.time + expiry - Date.now();
     expiryTimeout = setTimeout(update, t);
@@ -15,7 +15,7 @@ function scheduleExpiry(json) {
 }
 
 function update(weatherEvent) {
-  let json = storage.readJSON('weather.json')||{};
+  let json = storage.readJSON("weather.json") || {};
 
   if (weatherEvent) {
     let weather = weatherEvent.clone();
@@ -24,92 +24,90 @@ function update(weatherEvent) {
     if (weather.wdir != null) {
       // Convert numeric direction into human-readable label
       let deg = weather.wdir;
-      while (deg<0 || deg>360) {
-        deg = (deg+360)%360;
+      while (deg < 0 || deg > 360) {
+        deg = (deg + 360) % 360;
       }
-      weather.wrose = ['n','ne','e','se','s','sw','w','nw','n'][Math.floor((deg+22.5)/45)];
+      weather.wrose = ["n", "ne", "e", "se", "s", "sw", "w", "nw", "n"][Math.floor((deg + 22.5) / 45)];
     }
 
     json.weather = weather;
-  }
-  else {
+  } else {
     delete json.weather;
   }
 
-
-  storage.write('weather.json', json);
+  storage.write("weather.json", json);
   scheduleExpiry(json);
   exports.emit("update", json.weather);
 }
 exports.update = update;
 const _GB = global.GB;
 global.GB = (event) => {
-  if (event.t==="weather") update(event);
+  if (event.t === "weather") update(event);
   if (_GB) setTimeout(_GB, 0, event);
 };
 
-exports.get = function() {
-  return (storage.readJSON('weather.json')||{}).weather;
-}
+exports.get = () => {
+  return (storage.readJSON("weather.json") || {}).weather;
+};
 
-scheduleExpiry(storage.readJSON('weather.json')||{});
+scheduleExpiry(storage.readJSON("weather.json") || {});
 
 function getPalette(monochrome, ovr) {
   var palette;
-  if(monochrome) {
+  if (monochrome) {
     palette = {
-      sun: '#FFF',
-      cloud: '#FFF',
-      bgCloud: '#FFF',
-      rain: '#FFF',
-      lightning: '#FFF',
-      snow: '#FFF',
-      mist: '#FFF',
-      background: '#000'
+      sun: "#FFF",
+      cloud: "#FFF",
+      bgCloud: "#FFF",
+      rain: "#FFF",
+      lightning: "#FFF",
+      snow: "#FFF",
+      mist: "#FFF",
+      background: "#000",
     };
   } else {
     if (B2) {
       if (ovr.theme.dark) {
         palette = {
-          sun: '#FF0',
-          cloud: '#FFF',
-          bgCloud: '#777', // dithers on B2, but that's ok
-          rain: '#0FF',
-          lightning: '#FF0',
-          snow: '#FFF',
-          mist: '#FFF'
+          sun: "#FF0",
+          cloud: "#FFF",
+          bgCloud: "#777", // dithers on B2, but that's ok
+          rain: "#0FF",
+          lightning: "#FF0",
+          snow: "#FFF",
+          mist: "#FFF",
         };
       } else {
         palette = {
-          sun: '#FF0',
-          cloud: '#777', // dithers on B2, but that's ok
-          bgCloud: '#000',
-          rain: '#00F',
-          lightning: '#FF0',
-          snow: '#0FF',
-          mist: '#0FF'
+          sun: "#FF0",
+          cloud: "#777", // dithers on B2, but that's ok
+          bgCloud: "#000",
+          rain: "#00F",
+          lightning: "#FF0",
+          snow: "#0FF",
+          mist: "#0FF",
         };
       }
     } else {
       if (ovr.theme.dark) {
         palette = {
-          sun: '#FE0',
-          cloud: '#BBB',
-          bgCloud: '#777',
-          rain: '#0CF',
-          lightning: '#FE0',
-          snow: '#FFF',
-          mist: '#FFF'
+          sun: "#FE0",
+          cloud: "#BBB",
+          bgCloud: "#777",
+          rain: "#0CF",
+          lightning: "#FE0",
+          snow: "#FFF",
+          mist: "#FFF",
         };
       } else {
         palette = {
-          sun: '#FC0',
-          cloud: '#000',
-          bgCloud: '#777',
-          rain: '#07F',
-          lightning: '#FC0',
-          snow: '#CCC',
-          mist: '#CCC'
+          sun: "#FC0",
+          cloud: "#000",
+          bgCloud: "#777",
+          rain: "#07F",
+          lightning: "#FC0",
+          snow: "#CCC",
+          mist: "#CCC",
         };
       }
     }
@@ -117,10 +115,10 @@ function getPalette(monochrome, ovr) {
   return palette;
 }
 
-exports.getColor = function(code) {
+exports.getColor = (code) => {
   const codeGroup = Math.round(code / 100);
   const palette = getPalette(0, g);
-  const cloud = g.blendColor(palette.cloud, palette.bgCloud, .5); //theme independent
+  const cloud = g.blendColor(palette.cloud, palette.bgCloud, 0.5); //theme independent
   switch (codeGroup) {
     case 2: return g.blendColor(cloud, palette.lightning, .5);
     case 3: return palette.rain;
@@ -144,7 +142,7 @@ exports.getColor = function(code) {
       }
     default: return cloud;
   }
-}
+};
 
 /**
  *
@@ -158,9 +156,9 @@ exports.getColor = function(code) {
  * @param ovr Graphics instance (or undefined for g)
  * @param monochrome If true, produce a monochromatic icon
  */
-exports.drawIcon = function(cond, x, y, r, ovr, monochrome) {
+exports.drawIcon = (cond, x, y, r, ovr, monochrome) => {
   var palette;
-  if(!ovr) ovr = g;
+  if (!ovr) ovr = g;
 
   palette = getPalette(monochrome, ovr);
 
@@ -257,7 +255,7 @@ exports.drawIcon = function(cond, x, y, r, ovr, monochrome) {
 
   function drawSnow(x, y, r) {
     function rotatePoints(points, pivotX, pivotY, angle) {
-      for(let i = 0; i<points.length; i += 2) {
+      for (let i = 0; i < points.length; i += 2) {
         const x = points[i];
         const y = points[i+1];
         points[i] = Math.cos(angle)*(x-pivotX)-Math.sin(angle)*(y-pivotY)+
@@ -269,7 +267,7 @@ exports.drawIcon = function(cond, x, y, r, ovr, monochrome) {
 
     ovr.setColor(palette.snow);
     const w = 1/12*r;
-    for(let i = 0; i<=6; ++i) {
+    for (let i = 0; i <= 6; ++i) {
       const points = [
         x+w, y,
         x-w, y,
@@ -279,7 +277,7 @@ exports.drawIcon = function(cond, x, y, r, ovr, monochrome) {
       rotatePoints(points, x, y, i/3*Math.PI);
       ovr.fillPoly(points);
 
-      for(let j = -1; j<=1; j += 2) {
+      for (let j = -1; j <= 1; j += 2) {
         const points = [
           x+w, y+7/12*r,
           x-w, y+7/12*r,
@@ -317,8 +315,8 @@ exports.drawIcon = function(cond, x, y, r, ovr, monochrome) {
   }
 
   /*
-  * Choose weather icon to display based on weather description
-  */
+   * Choose weather icon to display based on weather description
+   */
   function chooseIconByTxt(txt) {
     if (!txt) return () => {};
     txt = txt.toLowerCase();
@@ -336,7 +334,8 @@ exports.drawIcon = function(cond, x, y, r, ovr, monochrome) {
     if (txt.includes("few clouds")) return drawFewClouds;
     if (txt.includes("scattered clouds")) return drawCloud;
     if (txt.includes("clouds")) return drawBrokenClouds;
-    if (txt.includes("mist") ||
+    if (
+      txt.includes("mist") ||
       txt.includes("smoke") ||
       txt.includes("haze") ||
       txt.includes("sand") ||
@@ -344,16 +343,17 @@ exports.drawIcon = function(cond, x, y, r, ovr, monochrome) {
       txt.includes("fog") ||
       txt.includes("ash") ||
       txt.includes("squalls") ||
-      txt.includes("tornado")) {
+      txt.includes("tornado")
+    ) {
       return drawMist;
     }
     return drawUnknown;
   }
 
   /*
-  * Choose weather icon to display based on weather conditition code
-  * https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2
-  */
+   * Choose weather icon to display based on weather condition code
+   * https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2
+   */
   function chooseIconByCode(code) {
     const codeGroup = Math.round(code / 100);
     switch (codeGroup) {
@@ -382,16 +382,15 @@ exports.drawIcon = function(cond, x, y, r, ovr, monochrome) {
   }
 
   function chooseIcon(cond) {
-    if (typeof (cond)==="object") {
+    if (typeof cond === "object") {
       if ("code" in cond) return chooseIconByCode(cond.code);
       if ("txt" in cond) return chooseIconByTxt(cond.txt);
-    } else if (typeof (cond)==="number") {
+    } else if (typeof cond === "number") {
       return chooseIconByCode(cond.code);
-    } else if (typeof (cond)==="string") {
+    } else if (typeof cond === "string") {
       return chooseIconByTxt(cond.txt);
     }
     return drawUnknown;
   }
   chooseIcon(cond)(x, y, r);
-
 };
