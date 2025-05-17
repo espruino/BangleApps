@@ -125,6 +125,9 @@
             }
         ];
 
+        const TIMERS_FILE = 'tevtimer.timers.json';
+        const MAX_BUZZ_COUNT = 15;
+
         var userTimers = [];
 
         function onInit() {
@@ -135,7 +138,7 @@
                 <button id="btn-add-timer" class="btn btn-primary">Add Timer</button>
                 <button id="btn-save-timers" class="btn btn-primary">Save Timers</button>
             </div>
-            <div id="timertable"></div>
+            <div id="timerblocks"></div>
             `;
             document.getElementById('btn-reload-timers').addEventListener('click', reloadTimers);
             document.getElementById('btn-add-timer').addEventListener('click', addTimer);
@@ -189,7 +192,7 @@
             const activeElementId = activeElement ? activeElement.id : null;
 
             // Re-render the table
-            document.getElementById('timertable').innerHTML = timerBlocks(userTimers);
+            document.getElementById('timerblocks').innerHTML = timerBlocks(userTimers);
             updateAtEndDropdowns();
 
             // Reattach button handlers
@@ -267,7 +270,7 @@
                     </div>
                     <div class="timer-settings">
                         <label>Vibrate Pattern: <input type="text" class="vibrate" id="vibrate-${i}" value="${timer.vibrate_pattern}" maxlength="8" /></label>
-                        <label>Buzz Count: <input type="number" id="buzz-${i}" value="${timer.buzz_count}" min="0" max="15" /></label>
+                        <label>Buzz Count: <input type="number" id="buzz-${i}" value="${timer.buzz_count}" min="0" max="${MAX_BUZZ_COUNT}" /></label>
                     </div>
                 </div>
                 `;
