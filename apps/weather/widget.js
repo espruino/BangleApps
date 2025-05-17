@@ -6,7 +6,7 @@
   let settings;
 
   function loadSettings() {
-    settings = require("Storage").readJSON("weather.json", 1) || {};
+    settings = require("Storage").readJSON("weatherSetting.json", 1) || {};
   }
 
   function setting(key) {

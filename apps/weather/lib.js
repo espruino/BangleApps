@@ -2,43 +2,147 @@ const storage = require("Storage");
 const B2 = process.env.HWVERSION === 2;
 
 let expiryTimeout;
-function scheduleExpiry(json) {
+function scheduleExpiry() {
   if (expiryTimeout) {
     clearTimeout(expiryTimeout);
     expiryTimeout = undefined;
   }
-  let expiry = "expiry" in json ? json.expiry : 2 * 3600000;
-  if (json.weather && json.weather.time && expiry) {
-    let t = json.weather.time + expiry - Date.now();
-    expiryTimeout = setTimeout(update, t);
+
+  const json = storage.readJSON("weatherSetting.json") || {};
+  const expiry = "expiry" in json ? json.expiry : 2 * 3600000;
+  expiryTimeout = setTimeout(() => {
+    storage.write("weather.json", { t: "weather", weather: undefined });
+    storage.write("weather2.json", {});
+  }, expiry);
+}
+
+let refreshTimeout;
+function scheduleRefresh() {
+  if (refreshTimeout) {
+    clearTimeout(refreshTimeout);
+    refreshTimeout = undefined;
   }
+  const json = storage.readJSON("weatherSetting.json") || {};
+  const refresh = "refresh" in json ? json.refresh : 0;
+  if (refresh === 0) {
+    return;
+  }
+  refreshTimeout = setTimeout(() => {
+    updateWeather(false);
+    scheduleRefresh();
+  }, refresh);
+}
+
+const angles = ["n", "ne", "e", "se", "s", "sw", "w", "nw", "n"];
+function windDirection(angle) {
+  return angles[Math.floor((angle + 22.5) / 45)];
 }
 
 function update(weatherEvent) {
-  let json = storage.readJSON("weather.json") || {};
-
-  if (weatherEvent) {
-    let weather = weatherEvent.clone();
-    delete weather.t;
-    weather.time = Date.now();
-    if (weather.wdir != null) {
-      // Convert numeric direction into human-readable label
-      let deg = weather.wdir;
-      while (deg < 0 || deg > 360) {
-        deg = (deg + 360) % 360;
-      }
-      weather.wrose = ["n", "ne", "e", "se", "s", "sw", "w", "nw", "n"][Math.floor((deg + 22.5) / 45)];
-    }
-
-    json.weather = weather;
-  } else {
-    delete json.weather;
+  if (weatherEvent == null) {
+    return;
   }
 
-  storage.write("weather.json", json);
-  scheduleExpiry(json);
-  exports.emit("update", json.weather);
+  if (weatherEvent.t !== "weather") {
+    return;
+  }
+
+  const weatherSetting = storage.readJSON("weatherSetting.json") || {};
+
+  if (weatherEvent.v == null || weatherEvent.v === 1) {
+    let json = { "t": "weather", "weather": weatherEvent.clone() };
+    let weather = json.weather;
+
+    weather.time = Date.now();
+    if (weather.wdir != null) {
+      weather.wrose = windDirection(weather.wdir);
+    }
+
+    storage.write("weather.json", json);
+    exports.emit("update", weather);
+
+    // Request forecast if supported by GadgetBridge and set in settings
+    if (weatherEvent.v != null && (weatherSetting.forecast ?? false)) {
+      updateWeather(true);
+    }
+
+    // Either GadgetBridge doesn't support v2 and/or we don't need forecast, so we use this event for refresh scheduling
+    if (weatherEvent.v == null || (weatherSetting.forecast ?? false) === false) {
+      weatherSetting.time = Date.now();
+      storage.write("weatherSetting.json", weatherSetting);
+
+      scheduleExpiry();
+      scheduleRefresh();
+    }
+  } else if (weatherEvent.v === 2) {
+    weatherSetting.time = Date.now();
+    storage.write("weatherSetting.json", weatherSetting);
+
+    // Store binary data for parsing when requested by other apps later
+    let cloned = weatherEvent.clone();
+    cloned.time = weatherSetting.time;
+    storage.write("weather2.json", cloned);
+
+    // If we stored weather v1 recently, we don't need to parse non-forecast from v2
+    // Otherwise we need to parse part of it to refresh weather1.json
+    let weather1 = storage.readJSON("weather.json") ?? {};
+    if (weather1.weather == null || weather1.weather.time == null || Date.now() - weather1.weather.time >= 60 * 1000) {
+      weather1 = undefined; // Clear memory
+      const weather2 = decodeWeatherV2(weatherEvent, true, false);
+
+      // Store simpler weather for apps that doesn't need forecast or backward compatibility
+      const weather = downgradeWeatherV2(weather2);
+      storage.write("weather.json", weather);
+    }
+
+    cloned = undefined; // Clear memory
+
+    scheduleExpiry();
+    scheduleRefresh();
+
+    exports.emit("update2");
+  }
 }
+
+function updateWeather(force) {
+  const settings = storage.readJSON("weatherSetting.json") || {};
+
+  let lastFetch = settings.time ?? 0;
+
+  // More than 5 minutes
+  if (force || Date.now() - lastFetch >= 5 * 60 * 1000) {
+    Bluetooth.println("");
+    Bluetooth.println(JSON.stringify({ t: "weather", v: 2, f: settings.forecast ?? false }));
+  }
+}
+
+function getWeather(forecast) {
+  const weatherSetting = storage.readJSON("weatherSetting.json") || {};
+
+  if (forecast === false || !(weatherSetting.forecast ?? false)) {
+    // biome-ignore lint/complexity/useOptionalChain: not supported by Espruino
+    return (storage.readJSON("weather.json") ?? {}).weather;
+  } else {
+    const json2 = storage.readJSON("weather2.json");
+    if (json2 == null) {
+      // Fallback in case no weather v2 exists, but we have weather v1
+      // biome-ignore lint/complexity/useOptionalChain: not supported by Espruino
+      return (storage.readJSON("weather.json") ?? {}).weather;
+    }
+
+    if (json2.d == null) {
+      // We have already parsed weather v2
+      return json2;
+    }
+
+    // We have weather v2, but not decoded
+    const decoded = decodeWeatherV2(json2, true, true);
+    storage.write("weather2.json", decoded);
+
+    return decoded;
+  }
+}
+
 exports.update = update;
 const _GB = global.GB;
 global.GB = (event) => {
@@ -46,11 +150,134 @@ global.GB = (event) => {
   if (_GB) setTimeout(_GB, 0, event);
 };
 
-exports.get = () => {
-  return (storage.readJSON("weather.json") || {}).weather;
-};
+exports.updateWeather = updateWeather;
+exports.get = () => getWeather(false);
+exports.getWeather = getWeather;
 
-scheduleExpiry(storage.readJSON("weather.json") || {});
+scheduleRefresh();
+
+function decodeWeatherV2(jsonData, canDestroyArgument, parseForecast) {
+  let time;
+  if (jsonData != null && jsonData.time != null) {
+    time = Math.round(jsonData.time);
+  } else {
+    time = Math.round(Date.now());
+  }
+
+  // Check if we have data to parse
+  if (jsonData == null || jsonData.d == null) {
+    return { t: "weather2", v: 2, time: time };
+  }
+
+  // This needs to be kept in sync with GadgetBridge
+  const weatherCodes = [
+    [200, 201, 202, 210, 211, 212, 221, 230, 231, 232],
+    [300, 301, 302, 310, 311, 312, 313, 314, 321],
+    [],
+    [500, 501, 502, 503, 504, 511, 520, 521, 522, 531],
+    [600, 601, 602, 611, 612, 613, 615, 616, 620, 621, 622],
+    [701, 711, 721, 731, 741, 751, 761, 762, 771, 781],
+    [800, 801, 802, 803, 804],
+  ];
+  const mapWCode = (code) => {
+    return weatherCodes[code >> 5][code & 0x1f];
+  };
+
+  const buffer = E.toArrayBuffer(atob(jsonData.d));
+  const dataView = new DataView(buffer);
+
+  if (canDestroyArgument) {
+    delete jsonData.d; // Free some memory if we can
+  }
+
+  const weather = {
+    t: "weather2",
+    v: 2,
+    time: time,
+    temp: dataView.getInt8(0),
+    hi: dataView.getInt8(1),
+    lo: dataView.getInt8(2),
+    hum: dataView.getUint8(3),
+    rain: dataView.getUint8(4),
+    uv: dataView.getUint8(5) / 10,
+    code: mapWCode(dataView.getUint8(6)),
+    txt: jsonData.c,
+    wind: dataView.getUint16(7, true) / 100,
+    wdir: dataView.getUint16(9, true),
+    loc: jsonData.l,
+    dew: dataView.getInt8(11),
+    pres: dataView.getUint16(12, true) / 10,
+    cloud: dataView.getUint8(14),
+    visib: dataView.getUint32(15, true) / 10,
+    sunrise: dataView.getUint32(19, true),
+    sunset: dataView.getUint32(23, true),
+    moonrise: dataView.getUint32(27, true),
+    moonset: dataView.getUint32(31, true),
+    moonphase: dataView.getUint16(35, true),
+    feel: dataView.getInt8(37, true),
+  };
+  weather.wrose = windDirection(weather.wdir);
+
+  let offset = 38;
+  if (offset < buffer.length && parseForecast) {
+    // We have forecast data
+
+    // Hourly forecast
+    const hoursAmount = dataView.getUint8(offset++);
+
+    const timestampBase = dataView.getUint32(offset, true);
+    offset += 4;
+
+    weather.hourfcast = {
+      time: [].map.call(new Uint8Array(buffer, offset, hoursAmount), (v) => timestampBase + (v / 10) * 3600),
+      temp: new Int8Array(buffer, offset + hoursAmount, hoursAmount),
+      code: [].map.call(new Uint8Array(buffer, offset + hoursAmount * 2, hoursAmount), mapWCode),
+      wind: new Uint8Array(buffer, offset + hoursAmount * 3, hoursAmount),
+      wdir: [].map.call(new Uint8Array(buffer, offset + hoursAmount * 4, hoursAmount), (v) => v * 2),
+      wrose: [].map.call(new Uint8Array(buffer, offset + hoursAmount * 4, hoursAmount), (v) => windDirection(v * 2)),
+      rain: new Uint8Array(buffer, offset + hoursAmount * 5, hoursAmount),
+    };
+    offset += hoursAmount * 6;
+
+    // Daily forecast
+    const daysAmount = dataView.getUint8(offset++);
+
+    weather.dayfcast = {
+      hi: new Int8Array(buffer, offset, daysAmount),
+      lo: new Int8Array(buffer, offset + daysAmount, daysAmount),
+      code: [].map.call(new Uint8Array(buffer, offset + daysAmount * 2, daysAmount), mapWCode),
+      wind: new Uint8Array(buffer, offset + daysAmount * 3, daysAmount),
+      wdir: [].map.call(new Uint8Array(buffer, offset + daysAmount * 4, daysAmount), (v) => v * 2),
+      wrose: [].map.call(new Uint8Array(buffer, offset + daysAmount * 4, daysAmount), (v) => windDirection(v * 2)),
+      rain: new Uint8Array(buffer, offset + daysAmount * 5, daysAmount),
+    };
+  }
+
+  return weather;
+}
+
+function downgradeWeatherV2(weather2) {
+  const json = { t: "weather" };
+
+  json.weather = {
+    v: 1,
+    time: weather2.time,
+    temp: weather2.temp + 273,
+    hi: weather2.hi + 273,
+    lo: weather2.lo + 273,
+    hum: weather2.hum,
+    rain: weather2.rain,
+    uv: weather2.uv,
+    code: weather2.code,
+    txt: weather2.txt,
+    wind: weather2.wind,
+    wdir: weather2.wdir,
+    wrose: weather2.wrose,
+    loc: weather2.loc,
+  };
+
+  return json;
+}
 
 function getPalette(monochrome, ovr) {
   var palette;
