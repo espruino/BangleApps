@@ -85,7 +85,12 @@ function assignPalettes() {
   palbg = new Uint16Array([g.toColor(g.theme.bg)]);
   for (let i = 0; i < settings.rings.length; i++) {
     let ring = settings.rings[i];
-    if (g.theme.dark) {
+    if (ring.type == 'Full' && ring.color == 'Blk/Wht') {
+      // BLK/WHT is the outside in light mode, so all of it gets filled in.
+      // Using the dark theme stops it from being a one-color circle.
+      pals[i].pal1 = new Uint16Array([g.theme.bg, g.toColor(ring.gy), g.toColor(ring.fg), g.toColor("#00f")]);
+      pals[i].pal2 = new Uint16Array([g.theme.bg, g.toColor(ring.fg), g.toColor(ring.gy), g.toColor("#00f")]);
+    } else if (g.theme.dark) {
       // palette for 0-49%
       pals[i].pal1 = new Uint16Array([g.theme.bg, g.toColor(ring.gy), g.toColor(ring.fg), g.toColor("#00f")]);
       // palette for 50-100%
@@ -193,8 +198,9 @@ function loadSettings() {
   settings.rings[2].step_target = settings.rings[2].step_target||10000;
 
   for (let i = 0; i < settings.rings.length; i++) {
+    // Needed in case the user swaps themes
     if (settings.rings[i].color == 'Blk/Wht') {
-      settings.rings[i].gy = g.theme.fg;
+      settings.rings[i].gy = g.theme.dark ? '#222' : '#888';
       settings.rings[i].fg = g.theme.fg;
     }
   }
@@ -493,7 +499,6 @@ function drawAllRings(date, drawOnlyThisType) {
     let ring = settings.rings[i];
     if (ring.type == "None") continue;
     if (drawOnlyThisType != null && ring.ring != drawOnlyThisType) continue;
-    if (ring.type == 'Full' && ring.color == 'Blk/Wht') ring.type = 'Semi';
     result = getGaugeImage(date, ring.ring, ring.step_target);
     drawIfChanged(result[0], result[1], result[2], i, ring.type);
   }
