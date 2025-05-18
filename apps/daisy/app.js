@@ -23,9 +23,9 @@ var pals = Array(3).fill().map(() => (
   }));
 
 let palbg;
-const infoLine = (3*h/4) - 6;
-const infoWidth = 56;
-const infoHeight = 11;
+const infoLineDefault = (3*h/4) - 6;
+const infoWidthDefault = 56;
+const infoHeightDefault = 11;
 const ringEdge = 4;
 const ringIterOffset = 10;
 const ringThick = 6;
@@ -58,7 +58,8 @@ Graphics.prototype.setFontBloggerSansLight42 = function() {
     atob("CQ0VFBQVFhUVFRUVCg=="),
     42|65536
   );
-}
+};
+
 // Three rings
 Graphics.prototype.setFontBloggerSansLight38 = function() {
   // Actual height 25 (28 - 4)
@@ -69,7 +70,7 @@ Graphics.prototype.setFontBloggerSansLight38 = function() {
     atob("CAwTEhITFBMTExMTCQ=="),
     38|65536
   );
-}
+};
 
 Graphics.prototype.setFontRoboto20 = function(scale) {
   // Actual height 21 (20 - 0)
@@ -138,12 +139,16 @@ function setLargeFont() {
 
 function setSmallFont() {
   let size = 16;
+  if (infoMode == "ID_HRM" ) {
+    g.setFont('Vector', size);
+    return;
+  }
   switch (innerMostRing) {
-  case 3:
-    size = 9;
-    break;
   case 2:
     size = 13;
+    break;
+  case 3:
+    size = 12;
     break;
   }
   g.setFont('Vector', size);
@@ -164,6 +169,7 @@ function getSteps() {
 
 function loadSettings() {
   settings = require("Storage").readJSON(SETTINGS_FILE,1)||{};
+  settings.rings = settings.rings || [{}, {}, {}];
 
   settings.rings[0].gy = settings.rings[0].gy||'#020';
   settings.rings[0].fg = settings.rings[0].fg||'#0f0';
@@ -173,16 +179,24 @@ function loadSettings() {
 
   settings.rings[1].gy = settings.rings[1].gy||'#020';
   settings.rings[1].fg = settings.rings[1].fg||'#0f0';
-  settings.rings[1].type = settings.rings[1].type||'Semi';
+  settings.rings[1].type = settings.rings[1].type||'None';
   settings.rings[1].ring = settings.rings[1].ring||'Minutes';
   settings.rings[1].step_target = settings.rings[1].step_target||10000;
 
   settings.rings[2].gy = settings.rings[2].gy||'#020';
   settings.rings[2].fg = settings.rings[2].fg||'#0f0';
-  settings.rings[2].type = 'None';
-  settings.rings[2].ring = settings.rings[2].ring||'Seconds';
+  settings.rings[2].type = settings.rings[2].type||'None';
+  settings.rings[2].ring = settings.rings[2].ring||'Hours';
   settings.rings[2].step_target = settings.rings[2].step_target||10000;
 
+  for (let i = 0; i < settings.rings.length; i++) {
+    if (settings.rings[i].color == 'Blk/Wht') {
+      settings.rings[i].gy = g.theme.fg;
+      settings.rings[i].fg = g.theme.fg;
+    }
+  }
+
+  settings.fg = settings.fg||'#0ff';
   settings.idle_check = (settings.idle_check === undefined ? true : settings.idle_check);
   settings.batt_hours = (settings.batt_hours === undefined ? false : settings.batt_hours);
   settings.hr_12 = (global_settings["12hour"] === undefined ? false : global_settings["12hour"]);
@@ -316,22 +330,36 @@ function prevInfo(idx) {
   return idx;
 }
 
-function clearInfo() {
-
-  var width = infoWidth;
-  var height = infoHeight;
+function getInfoDims() {
+  var line  = infoLineDefault;
+  var width = infoWidthDefault;
+  var height = infoHeightDefault;
   switch (innerMostRing) {
-    case 3:
-      width -= 20;
-      height -= 3;
-      break;
     case 2:
       width -= 8;
       height -= 2;
+      line -= 7;
+      break;
+    case 3:
+      width -= 10;
+      height -= 6;
+      line -= 10;
       break;
   }
+  if (infoMode == "ID_HRM") {
+    width = 30;
+    height = infoHeightDefault;
+  }
+  return[line, width, height];
+}
+
+function clearInfo() {
+  var dims = getInfoDims();
+  var line = dims[0];
+  var width = dims[1];
+  var height = dims[2];
   g.setColor(g.theme.bg);
-  g.fillRect((w/2) - width, infoLine - height, (w/2) + width, infoLine + height);
+  g.fillRect((w/2) - width, line - height, (w/2) + width, line + height);
 }
 
 function drawInfo() {
@@ -339,18 +367,20 @@ function drawInfo() {
   g.setColor(g.theme.fg);
   setSmallFont();
   g.setFontAlign(0,0);
-
+  var dims = getInfoDims();
+  var line = dims[0];
+  var height = dims[2];
   if (infoMode == "ID_HRM") {
     clearInfo();
     g.setColor('#f00'); // red
-    drawHeartIcon();
+    drawHeartIcon(line, height);
   } else {
-    g.drawString((infoData[infoMode].calc().toUpperCase()), w/2, infoLine);
+    g.drawString((infoData[infoMode].calc().toUpperCase()), w/2, line);
   }
 }
 
-function drawHeartIcon() {
-  g.drawImage(hrmImg, (w/2) - infoHeight - 20, infoLine - infoHeight);
+function drawHeartIcon(line, height) {
+  g.drawImage(hrmImg, (w/2) - height - 20, line - height);
 }
 
 function drawHrm() {
@@ -358,11 +388,14 @@ function drawHrm() {
   var d = new Date();
   clearInfo();
   g.setColor(d.getSeconds()&1 ? '#f00' : g.theme.bg);
-  drawHeartIcon();
+  var dims = getInfoDims();
+  var line = dims[0];
+  var height = dims[2];
+  drawHeartIcon(line, height);
   setSmallFont();
   g.setFontAlign(-1,0); // left
   g.setColor(hrmConfidence >= 50 ? g.theme.fg : '#f00');
-  g.drawString(hrmCurrent, (w/2) + 10, infoLine);
+  g.drawString(hrmCurrent, (w/2) + 10, line);
 }
 
 function draw(updateSeconds) {
@@ -372,7 +405,6 @@ function draw(updateSeconds) {
       drawAllRings(date, updateSeconds);
     }
     else {
-      g.clear();
       drawClock();
     }
   }
@@ -389,8 +421,8 @@ function getGaugeImage(date, ringType, step_target) {
   var ring_max = 100;
   switch (ringType) {
     case 'Hours':
-      ring_fill = hh % 12;
-      ring_max = 12;
+      ring_fill = ((hh % 12) * 60) + mm;
+      ring_max = 12 * 60;
       break;
     case 'Minutes':
       ring_fill = mm;
@@ -458,7 +490,7 @@ function drawAllRings(date, updateSeconds) {
     let ring = settings.rings[i];
     if (ring.type == "None") continue;
     if (ring.ring != "Seconds" && updateSeconds) continue;
-    if (ring.type == 'Full' && ring.color == 'Fore') ring.type = 'Semi';
+    if (ring.type == 'Full' && ring.color == 'Blk/Wht') ring.type = 'Semi';
     result = getGaugeImage(date, ring.ring, ring.step_target);
     drawIfChanged(result[0], result[1], result[2], i, ring.type);
   }
@@ -478,10 +510,12 @@ function drawClock() {
   g.reset();
   g.setColor(g.theme.bg);
   innerMostRing = getInnerMostRing();
+  let edge = ringEdge + (innerMostRing * ringIterOffset);
+  g.fillEllipse(edge+ringThick,edge+ringThick,w-edge-ringThick,h-edge-ringThick); // Clears the text within the circle
   drawAllRings(date, false);
   setLargeFont();
 
-  g.setColor(settings.rings[0].fg);
+  g.setColor(settings.fg);
   g.setFontAlign(1,0);  // right aligned
   g.drawString(hh, (w/2) - 1, h/2);
 
@@ -521,7 +555,8 @@ function resetHrm() {
   if (infoMode == "ID_HRM") {
     clearInfo();
     g.setColor('#f00'); // red
-    drawHeartIcon();
+    var dims = getInfoDims();
+    drawHeartIcon(dims[0], dims[2]);
   }
 }
 
@@ -594,24 +629,29 @@ function drawRing(start, end, max, idx) {
 
 function drawSemi(start, end, max, idx) {
   // Create persistent `buf` inside the function scope
+  var fullCircle = (end - start) >= max;
   if (!drawSemi._buf) {
     drawSemi._buf = Graphics.createArrayBuffer(w, h, 2, { msb: true });
   }
   const buf = drawSemi._buf;
   let img = { width: w, height: h, transparent: 0,
-              bpp: 2, palette: pals[idx].pal1, buffer: buf.buffer };
+              bpp: 2, palette: pals[idx].pal2, buffer: buf.buffer };
   let edge = ringEdge + (idx * ringIterOffset);
   buf.clear();
   buf.setColor(1).fillEllipse(edge,edge,w-edge,h-edge);
   buf.setColor(0).fillEllipse(edge+ringThick,edge+ringThick,w-edge-ringThick,h-edge-ringThick);
-  img.palette = palbg;
+  if (fullCircle)
+    img.palette = pals[idx].pal2;
+  else
+    img.palette = palbg;
   g.drawImage(img, 0, 0);  // Draws a filled-in circle with the bg color, clearing it
-  if((end - start) >= max) return;  // No need to add the unfilled circle
+  if(end == start) return; //If the ring should be completely empty
+  if(fullCircle) return;  // No need to add the unfilled circle
   buf.clear();
   buf.setColor(1).fillEllipse(edge,edge,w-edge,h-edge);
   buf.setColor(0).fillEllipse(edge+ringThick,edge+ringThick,w-edge-ringThick,h-edge-ringThick);
   buf.setColor(0).fillPoly(polyArray(end, start, max)); // Masks the filled-in part of the segment over the unfilled part
-  img.palette = pals[idx].pal1;
+  img.palette = pals[idx].pal2;
   g.drawImage(img, 0, 0);  // Draws the unfilled-in segment
   return;
 }
@@ -623,7 +663,7 @@ function drawC(end, max, idx) {
   }
   const buf = drawC._buf;
   let img = { width: w, height: h, transparent: 0,
-              bpp: 2, palette: pals[idx].pal1, buffer: buf.buffer };
+              bpp: 2, palette: pals[idx].pal2, buffer: buf.buffer };
   let edge = ringEdge + (idx * ringIterOffset);
   buf.clear();
   buf.setColor(1).fillEllipse(edge,edge,w-edge,h-edge);
@@ -633,10 +673,10 @@ function drawC(end, max, idx) {
   buf.clear();
   buf.setColor(1).fillEllipse(edge,edge,w-edge,h-edge);
   buf.setColor(0).fillEllipse(edge+ringThick,edge+ringThick,w-edge-ringThick,h-edge-ringThick);
+  if (end > max) end = max;
   var vertices = rotate_points(end, max);
   buf.setColor(0).fillPoly(vertices);
-  img.palette = pals[idx].pal1;
-  rotate = (2 * Math.PI) / (max / end);
+  img.palette = pals[idx].pal2;
   g.drawImage(img, 0, 0);  // Draws the unfilled-in segment  
   return;
 }
@@ -846,6 +886,7 @@ Bangle.on('lcdPower',on=>{
 });
 
 Bangle.setUI("clockupdown", btn=> {
+  clearInfo(); // Used to clear infobox in case we're going to the HRM
   if (btn<0) settings.idxInfo = prevInfo(settings.idxInfo);
   if (btn>0) settings.idxInfo = nextInfo(settings.idxInfo);
   // power HRM on/off accordingly
