@@ -436,8 +436,8 @@ function getGaugeImage(date, ringType, step_target) {
       ring_max = 1440;
       break;
     case 'Steps':
-      ring_fill = getSteps();
-      ring_max = step_target;
+      ring_max = 100;
+      ring_fill = ring_max * (getSteps() / step_target);
       break;
     case 'Battery':
       ring_fill = E.getBattery();
@@ -541,6 +541,7 @@ function drawSteps() {
   g.setFontAlign(0,0);
   g.setColor(g.theme.fg);
   g.drawString('STEPS ' + getSteps(), w/2, dims[0]);
+  drawAllRings(new Date(), 'Steps');
   drawingSteps = false;
 }
 
