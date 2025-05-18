@@ -32,6 +32,7 @@ const ringThick = 6;
 let nextUpdateMs;
 var drawingSteps = false;
 var innerMostRing = 0;
+var prevStepDisplayed = 0;
 var prevRing = Array(3).fill().map(() => ({ start: null, end: null, max: null }));
 
 function log_debug(o) {
@@ -307,7 +308,7 @@ const infoData = {
   ID_DAY:   { calc: () => {var d = require("locale").dow(new Date()).toLowerCase(); return d[0].toUpperCase() + d.substring(1);} },
   ID_SR:    { calc: () => 'SUNRISE ' + sunRise },
   ID_SS:    { calc: () => 'SUNSET ' + sunSet },
-  ID_STEP:  { calc: () => 'STEPS ' + getSteps() },
+  ID_STEP:  { calc: () => {var steps = getSteps(); prevStepDisplayed = steps; return 'STEPS ' + steps;}},
   ID_BATT:  { calc: batteryString},
   ID_HRM:   { calc: () => hrmCurrent }
 };
@@ -533,27 +534,35 @@ function drawClock() {
   drawCount++;
 }
 
+function checkRedrawSteps(steps) {
+  var redrawText = false;
+  var redrawRings = false;
+  const minStepText = 10; // In number of steps
+  const minStepPctUpdate = 3;  // If the current step is less percent than last updated, don't redraw the rings
+  if (infoMode == "ID_STEP") {
+    if (minStepText >= (steps - prevStepDisplayed)) {
+      redrawText = true;
+    }
+  }
+  for (let i = 0; i < settings.rings.length; i++) {
+    let ring = settings.rings[i];
+    if(ring.type == "None" || ring.ring != 'Steps') continue;
+    let percentChanged = 100 * ((steps - prevRing[i].end) / ring.step_target);
+    if(percentChanged >= minStepPctUpdate) {
+      redrawRings = true;
+      break;
+    }
+  }
+  return [redrawText, redrawRings];
+}
+
 function drawSteps() {
-  if (drawingSteps) return;
-  drawingSteps = true;
   clearInfo();
-  const minStepPctUpdate = 3;  // If the current step less percent than last updated, don't redraw
   var dims = getInfoDims();
   setSmallFont();
   g.setFontAlign(0,0);
   g.setColor(g.theme.fg);
-  var steps = getSteps();
-  g.drawString('STEPS ' + steps, w/2, dims[0]);
-  for (let i = 0; i < settings.rings.length; i++) {
-    let ring = settings.rings[i];
-    if(ring.type == "None" || ring.ring != 'Steps') continue;
-    var percentChanged = 100 * ((steps - prevRing[idx].end) / ring.step_target);
-    if(percentChanged >= minStepPctUpdate) {
-      drawAllRings(new Date(), 'Steps');
-      break;
-    }
-  }
-  drawingSteps = false;
+  g.drawString((infoData[infoMode].calc().toUpperCase()), w/2, dims[0]);
 }
 
 /////////////////   GAUGE images /////////////////////////////////////
@@ -780,8 +789,14 @@ Bangle.on('step', s => {
   }
   idle = false;
   warned = 0;
-
-  if (infoMode == "ID_STEP") drawSteps();
+  if (drawingSteps) return;
+  var steps = getSteps();
+  ret = checkRedrawSteps(steps);
+  if (!ret[0] && !ret[1]) return;
+  drawingSteps = true;
+  if (ret[0]) drawSteps();
+  if (ret[1]) drawAllRings(new Date(), 'Steps');
+  drawingSteps = false;
 });
 
 function checkIdle() {
