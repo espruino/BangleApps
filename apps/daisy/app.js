@@ -539,7 +539,8 @@ function checkRedrawSteps(steps) {
   var redrawRings = false;
   const minStepToUpdate = 10; // In number of steps as a minumum to update either the rings or text.
   const minStepPctUpdateRings = 3;  // If the current step is less percent than last updated, don't redraw the rings
-  if (minStepToUpdate < (steps - prevStepDisplayed)) return [redrawText, redrawRings];
+  if (minStepToUpdate > (steps - prevStepDisplayed)) return [redrawText, redrawRings];
+  prevStepDisplayed = steps;
   if (infoMode == "ID_STEP") {
     redrawText = true;
   }
