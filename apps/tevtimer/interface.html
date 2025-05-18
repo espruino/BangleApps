@@ -55,76 +55,6 @@
     <div id="content">Loading...</div>
     <script>
         const DATA_VERSION = 0;
-
-        // Test data
-        var testTimers = [
-            {
-                cls: "PrimitiveTimer",
-                version: 0,
-                origin: 10,
-                rate: -0.001,
-                name: "",
-                id: 9,
-                chain_id: null,
-                start_time: 1747250975164,
-                pause_time: 1747250975164,
-                vibrate_pattern: ";;;",
-                buzz_count: 4
-            },
-            {
-                cls: "PrimitiveTimer",
-                version: 0,
-                origin: 10,
-                rate: -0.001,
-                name: "",
-                id: 11,
-                chain_id: 10,
-                start_time: 1746824262928,
-                pause_time: 1746824266564,
-                vibrate_pattern: ";;;",
-                buzz_count: 4
-            },
-            {
-                cls: "PrimitiveTimer",
-                version: 0,
-                origin: 5,
-                rate: -0.001,
-                name: "",
-                id: 10,
-                chain_id: 11,
-                start_time: 1746824264739,
-                pause_time: 1746824264739,
-                vibrate_pattern: ";;;",
-                buzz_count: 4
-            },
-            {
-                cls: "PrimitiveTimer",
-                version: 0,
-                origin: 600,
-                rate: -0.001,
-                name: "10 min",
-                id: 8,
-                chain_id: null,
-                start_time: 1746738217165,
-                pause_time: 1746738560210,
-                vibrate_pattern: ";;;",
-                buzz_count: 4
-            },
-            {
-                cls: "PrimitiveTimer",
-                version: 0,
-                origin: 300,
-                rate: -0.001,
-                name: "",
-                id: 6,
-                chain_id: null,
-                start_time: 1746664492975,
-                pause_time: 1746664492975,
-                vibrate_pattern: ";;;",
-                buzz_count: 4
-            }
-        ];
-
         const TIMERS_FILE = 'tevtimer.timers.json';
         const MAX_BUZZ_COUNT = 15;
 
@@ -143,27 +73,14 @@
             document.getElementById('btn-reload-timers').addEventListener('click', reloadTimers);
             document.getElementById('btn-add-timer').addEventListener('click', addTimer);
             document.getElementById('btn-save-timers').addEventListener('click', saveTimers);
-            userTimers = loadTestTimers();
-            // userTimers = loadTimers();
-            updateTimerBlocks();
+            loadTimers();
         }
 
         function loadTimers() {
-            var loadedTimers
-            Util.readStorageJSON('tevtimer.timers.json', timers => {
-                loadedTimers = timers;
+            Util.readStorageJSON(TIMERS_FILE, timers => {
+                userTimers = timers;
+                setTimeout(updateTimerBlocks, 100);
             });
-            return loadedTimers;
-        }
-
-        function loadTestTimers() {
-            // Return a copy of testTimers
-            let t = [];
-            for (let i = 0; i < testTimers.length; i++) {
-                let timer = JSON.parse(JSON.stringify(testTimers[i]));
-                t.push(timer);
-            }
-            return t
         }
 
         function getTimerById(timers, id) {
@@ -415,8 +332,7 @@
 
         function reloadTimers() {
             if (confirm("This will reload timer data from the Bangle.js and discard any unsaved changes. Reload?")) {
-                userTimers = loadTestTimers();
-                setTimeout(updateTimerBlocks(), 100);
+                loadTimers();
             }
         }
 
@@ -442,9 +358,6 @@
                 }
             });
         }
-
-        // XXX: For testing only; remove later
-        onInit();
     </script>
 </body>
 
