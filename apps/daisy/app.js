@@ -467,6 +467,7 @@ function getGaugeImage(date, ringType, step_target) {
   }
   var start = 0;
   var end = Math.round(ring_fill);
+  if ((end - start) > ring_max) end = ring_max;  // Capping end var so the ring doesn't need to update if already full.
   if (invertRing) {
     start = ring_max - end;
     end = ring_max;
