@@ -519,6 +519,9 @@ function dismissPrompt() {
   warned = false;
   lastStep = getTime();
   Bangle.buzz(100);
+  // Reset the prevRings to force all rings to update
+  prevRing = Array(3).fill().map(() => ({ start: null, end: null, max: null }));
+  g.clear();
   draw(false);
 }
 
