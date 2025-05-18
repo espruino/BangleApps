@@ -537,18 +537,17 @@ function drawClock() {
 function checkRedrawSteps(steps) {
   var redrawText = false;
   var redrawRings = false;
-  const minStepText = 10; // In number of steps
-  const minStepPctUpdate = 3;  // If the current step is less percent than last updated, don't redraw the rings
+  const minStepToUpdate = 10; // In number of steps as a minumum to update either the rings or text.
+  const minStepPctUpdateRings = 3;  // If the current step is less percent than last updated, don't redraw the rings
+  if (minStepToUpdate < (steps - prevStepDisplayed)) return [redrawText, redrawRings];
   if (infoMode == "ID_STEP") {
-    if (minStepText >= (steps - prevStepDisplayed)) {
-      redrawText = true;
-    }
+    redrawText = true;
   }
   for (let i = 0; i < settings.rings.length; i++) {
     let ring = settings.rings[i];
     if(ring.type == "None" || ring.ring != 'Steps') continue;
     let percentChanged = 100 * ((steps - prevRing[i].end) / ring.step_target);
-    if(percentChanged >= minStepPctUpdate) {
+    if(percentChanged >= minStepPctUpdateRings) {
       redrawRings = true;
       break;
     }
