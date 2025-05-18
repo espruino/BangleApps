@@ -285,17 +285,12 @@
         }
 
         function attachButtonHandlers() {
-            // Handle "Move up" buttons
             document.querySelectorAll('.btn-move-up').forEach((button, index) => {
                 button.addEventListener('click', () => moveTimerUp(index + 1));
             });
-
-            // Handle "Move down" buttons
             document.querySelectorAll('.btn-move-down').forEach((button, index) => {
                 button.addEventListener('click', () => moveTimerDown(index));
             });
-
-            // Handle "Delete" buttons
             document.querySelectorAll('.btn-delete').forEach((button, index) => {
                 button.addEventListener('click', () => deleteTimer(index));
             });
@@ -309,8 +304,6 @@
 
                     if (type === 'name') {
                         userTimers[index].name = value;
-                        
-                        // Update only the At End dropdowns
                         updateAtEndDropdowns();
                     } else if (type === 'hours' || type === 'minutes' || type === 'seconds') {
                         let hInput = document.getElementById(`hours-${index}`);
@@ -342,10 +335,8 @@
 
         function moveTimerUp(index) {
             if (index > 0) {
-                // Swap the timers
                 [userTimers[index - 1], userTimers[index]] = [userTimers[index], userTimers[index - 1]];
 
-                // Re-render the table
                 updateTimerBlocks();
 
                 // Move focus to the new position of the "Move up" button
@@ -358,10 +349,8 @@
 
         function moveTimerDown(index) {
             if (index < userTimers.length - 1) {
-                // Swap the timers
                 [userTimers[index], userTimers[index + 1]] = [userTimers[index + 1], userTimers[index]];
 
-                // Re-render the table
                 updateTimerBlocks();
 
                 // Move focus to the new position of the "Move down" button
@@ -424,8 +413,8 @@
         
         function saveTimers() {
             if (userTimers.length) {
-                // (Guard in case the user manages to click Save before
-                // the timers are loaded, or something like that)
+                // Guard in case the user manages to click Save before
+                // the timers are loaded, or something like that
                 Util.writeStorage(TIMERS_FILE, JSON.stringify(userTimers), () => {
                     alert('Timers saved successfully.');
                 });
