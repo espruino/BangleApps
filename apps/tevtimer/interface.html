@@ -103,6 +103,13 @@
             return maxId + 1;
         }
 
+        function splitHMS(hms) {
+            let h = Math.floor(hms / 3600);
+            let m = Math.floor((hms % 3600) / 60);
+            let s = Math.floor(hms % 60);
+            return [h, m, s];
+        }
+
         function updateTimerBlocks() {
             // Track the currently focused element
             const activeElement = document.activeElement;
@@ -152,9 +159,7 @@
                     console.error('Unsupported timer rate');
                     continue;
                 }
-                let h = Math.floor(timer.origin / 3600);
-                let m = Math.floor((timer.origin % 3600) / 60);
-                let s = Math.floor(timer.origin % 60);
+                let [h, m, s] = splitHMS(timer.origin);
                 let atEndTimer = timer.chain_id ? getTimerById(timers, timer.chain_id) : null;
                 let atEndSelected = atEndTimer ? atEndTimer.id : 'null';
 
@@ -197,17 +202,12 @@
         }
 
         function attachButtonHandlers() {
-            // Handle "Move up" buttons
             document.querySelectorAll('.btn-move-up').forEach((button, index) => {
                 button.addEventListener('click', () => moveTimerUp(index + 1));
             });
-
-            // Handle "Move down" buttons
             document.querySelectorAll('.btn-move-down').forEach((button, index) => {
                 button.addEventListener('click', () => moveTimerDown(index));
             });
-
-            // Handle "Delete" buttons
             document.querySelectorAll('.btn-delete').forEach((button, index) => {
                 button.addEventListener('click', () => deleteTimer(index));
             });
@@ -221,20 +221,30 @@
 
                     if (type === 'name') {
                         userTimers[index].name = value;
-                        
-                        // Update only the At End dropdowns
                         updateAtEndDropdowns();
                     } else if (type === 'hours' || type === 'minutes' || type === 'seconds') {
-                        let h = parseInt(document.getElementById(`hours-${index}`).value) || 0;
-                        let m = parseInt(document.getElementById(`minutes-${index}`).value) || 0;
-                        let s = parseInt(document.getElementById(`seconds-${index}`).value) || 0;
-                        userTimers[index].origin = h * 3600 + m * 60 + s;
+                        let hInput = document.getElementById(`hours-${index}`);
+                        let mInput = document.getElementById(`minutes-${index}`);
+                        let sInput = document.getElementById(`seconds-${index}`);
+                        let h = parseInt(hInput.value) || 0;
+                        let m = parseInt(mInput.value) || 0;
+                        let s = parseInt(sInput.value) || 0;
+                        userTimers[index].origin = Math.max(
+                            Math.min(h * 3600 + m * 60 + s, 99 * 3600 + 59 * 60 + 59),
+                            0);
+                        // Normalize the values in case minutes/seconds >59
+                        [h, m, s] = splitHMS(userTimers[index].origin);
+                        hInput.value = h;
+                        mInput.value = m;
+                        sInput.value = s;
                     } else if (type === 'atend') {
                         userTimers[index].chain_id = value == 'null' ? null : parseInt(value);
                     } else if (type === 'vibrate') {
                         userTimers[index].vibrate_pattern = value;
                     } else if (type === 'buzz') {
-                        userTimers[index].buzz_count = parseInt(value);
+                        userTimers[index].buzz_count =
+                            Math.max(Math.min(MAX_BUZZ_COUNT, parseInt(value)), 0);
+                        event.target.value = userTimers[index].buzz_count;
                     }
                 });
             });
@@ -242,10 +252,8 @@
 
         function moveTimerUp(index) {
             if (index > 0) {
-                // Swap the timers
                 [userTimers[index - 1], userTimers[index]] = [userTimers[index], userTimers[index - 1]];
 
-                // Re-render the table
                 updateTimerBlocks();
 
                 // Move focus to the new position of the "Move up" button
@@ -258,10 +266,8 @@
 
         function moveTimerDown(index) {
             if (index < userTimers.length - 1) {
-                // Swap the timers
                 [userTimers[index], userTimers[index + 1]] = [userTimers[index + 1], userTimers[index]];
 
-                // Re-render the table
                 updateTimerBlocks();
 
                 // Move focus to the new position of the "Move down" button
@@ -323,11 +329,13 @@
         }
         
         function saveTimers() {
-            // Save the timers to storage
-            console.log(userTimers);
-            // Util.writeStorageJSON('tevtimer.timers.json', userTimers, () => {
-            //     console.log('Timers saved successfully');
-            // });
+            if (userTimers.length) {
+                // Guard in case the user manages to click Save before
+                // the timers are loaded, or something like that
+                Util.writeStorage(TIMERS_FILE, JSON.stringify(userTimers), () => {
+                    alert('Timers saved successfully.');
+                });
+            };
         }
 
         function reloadTimers() {
