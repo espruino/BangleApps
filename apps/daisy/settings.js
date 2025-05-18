@@ -60,61 +60,61 @@ function save() {
   var step_options = [100, 1000, 5000, 10000, 15000, 20000];
 
   function showRingMenu(ringIndex) {
-  const ring = s.rings[ringIndex];
-  let ringMenu = {
-    '': { title: `Ring ${ringIndex + 1}` },
-    '< Back': showMainMenu,
-    'Type': {
-      value: ring_types.indexOf(ring.type),
-      min: 0, max: ring_types.length - 1,
-      format: v => ring_types[v],
-      onchange: v => {
-        let prev = ring.type;
-        ring.type = ring_types[v];
-        save();
-        if (prev != ring.type && (prev === 'None' || ring.type === 'None')) {
-          setTimeout(showRingMenu, 0, ringIndex);
-        }
-      }
-    },
-  };
-  if (ring.type != 'None') {
-    ringMenu['Color'] = {
-      value: 0 | color_options.indexOf(ring.color),
-      min: 0, max: color_options.length - 1,
-      format: v => color_options[v],
-      onchange: v => {
-        ring.color = color_options[v];
-        ring.fg = fg_code[v];
-        ring.gy = gy_code[v];
-        save();
-      }
-    };
-    ringMenu['Display'] = {
-      value: 0 | ring_options.indexOf(ring.ring),
-      min: 0, max: ring_options.length - 1,
-      format: v => ring_options[v],
-      onchange: v => {
-        let prev = ring.ring;
-        ring.ring = ring_options[v];
-        save();
-        if (prev != ring.ring && (prev === 'Steps' || ring.ring === 'Steps')) {
-          setTimeout(showRingMenu, 0, ringIndex);
+    const ring = s.rings[ringIndex];
+    let ringMenu = {
+      '': { title: `Ring ${ringIndex + 1}` },
+      '< Back': showMainMenu,
+      'Type': {
+        value: ring_types.indexOf(ring.type),
+        min: 0, max: ring_types.length - 1,
+        format: v => ring_types[v],
+        onchange: v => {
+          let prev = ring.type;
+          ring.type = ring_types[v];
+          save();
+          if (prev != ring.type && (prev === 'None' || ring.type === 'None')) {
+            setTimeout(showRingMenu, 0, ringIndex);
+          }
         }
       },
     };
-  }
-  if (ring.ring == 'Steps') {
-    ringMenu[/*LANG*/"Step Target"] = {
-      value: 0 | step_options.indexOf(ring.step_target),
-      min: 0, max: step_options.length - 1,
-      format: v => step_options[v],
-      onchange: v => {
-        ring.step_target = step_options[v];
-        save();
-      },
+    if (ring.type != 'None') {
+      ringMenu['Color'] = {
+        value: 0 | color_options.indexOf(ring.color),
+        min: 0, max: color_options.length - 1,
+        format: v => color_options[v],
+        onchange: v => {
+          ring.color = color_options[v];
+          ring.fg = fg_code[v];
+          ring.gy = gy_code[v];
+          save();
+        }
       };
-    } 
+      ringMenu['Display'] = {
+        value: 0 | ring_options.indexOf(ring.ring),
+        min: 0, max: ring_options.length - 1,
+        format: v => ring_options[v],
+        onchange: v => {
+          let prev = ring.ring;
+          ring.ring = ring_options[v];
+          save();
+          if (prev != ring.ring && (prev === 'Steps' || ring.ring === 'Steps')) {
+            setTimeout(showRingMenu, 0, ringIndex);
+          }
+        },
+      };
+      if (ring.ring == 'Steps') {
+        ringMenu[/*LANG*/"Step Target"] = {
+          value: 0 | step_options.indexOf(ring.step_target),
+          min: 0, max: step_options.length - 1,
+          format: v => step_options[v],
+          onchange: v => {
+            ring.step_target = step_options[v];
+            save();
+          },
+        };
+      };
+    }
     E.showMenu(ringMenu);
   }
 
