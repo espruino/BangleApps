@@ -29,6 +29,8 @@ const infoHeightDefault = 11;
 const ringEdge = 4;
 const ringIterOffset = 10;
 const ringThick = 6;
+const minStepToUpdate = 10; // In number of steps as a minumum to update the text.
+const minStepPctUpdateRings = 3;  // If the current step is less percent than last updated, don't redraw the rings
 let nextUpdateMs;
 var drawingSteps = false;
 var innerMostRing = 0;
@@ -537,11 +539,7 @@ function drawClock() {
 function checkRedrawSteps(steps) {
   var redrawText = false;
   var redrawRings = false;
-  const minStepToUpdate = 10; // In number of steps as a minumum to update either the rings or text.
-  const minStepPctUpdateRings = 3;  // If the current step is less percent than last updated, don't redraw the rings
-  if (minStepToUpdate > (steps - prevStepDisplayed)) return [redrawText, redrawRings];
-  prevStepDisplayed = steps;
-  if (infoMode == "ID_STEP") {
+  if (infoMode == "ID_STEP" && (minStepToUpdate <= (steps - prevStepDisplayed))) {
     redrawText = true;
   }
   for (let i = 0; i < settings.rings.length; i++) {
