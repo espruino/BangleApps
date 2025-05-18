@@ -437,7 +437,8 @@ function getGaugeImage(date, ringType, step_target) {
       break;
     case 'Steps':
       ring_max = 100;
-      ring_fill = ring_max * (getSteps() / step_target);
+      ring_fill = getSteps();
+      ring_max = step_target;
       break;
     case 'Battery':
       ring_fill = E.getBattery();
@@ -536,12 +537,22 @@ function drawSteps() {
   if (drawingSteps) return;
   drawingSteps = true;
   clearInfo();
+  const minStepPctUpdate = 3;  // If the current step less percent than last updated, don't redraw
   var dims = getInfoDims();
   setSmallFont();
   g.setFontAlign(0,0);
   g.setColor(g.theme.fg);
-  g.drawString('STEPS ' + getSteps(), w/2, dims[0]);
-  drawAllRings(new Date(), 'Steps');
+  var steps = getSteps();
+  g.drawString('STEPS ' + steps, w/2, dims[0]);
+  for (let i = 0; i < settings.rings.length; i++) {
+    let ring = settings.rings[i];
+    if(ring.type == "None" || ring.ring != 'Steps') continue;
+    var percentChanged = 100 * ((steps - prevRing[idx].end) / ring.step_target);
+    if(percentChanged >= minStepPctUpdate) {
+      drawAllRings(new Date(), 'Steps');
+      break;
+    }
+  }
   drawingSteps = false;
 }
 
