@@ -371,7 +371,6 @@ function drawInfo() {
   var line = dims[0];
   var height = dims[2];
   if (infoMode == "ID_HRM") {
-    clearInfo();
     g.setColor('#f00'); // red
     drawHeartIcon(line, height);
   } else {
@@ -402,7 +401,7 @@ function draw(updateSeconds) {
   if (!idle) {
     if (updateSeconds) {
       let date  = new Date();
-      drawAllRings(date, updateSeconds);
+      drawAllRings(date, 'Seconds');
     }
     else {
       drawClock();
@@ -485,11 +484,11 @@ function drawIfChanged(start, end, ring_max, idx, type) {
   log_debug("Redrew ring #" + idx);
 }
 
-function drawAllRings(date, updateSeconds) {
+function drawAllRings(date, drawOnlyThisType) {
   for (let i = 0; i < settings.rings.length; i++) {
     let ring = settings.rings[i];
     if (ring.type == "None") continue;
-    if (ring.ring != "Seconds" && updateSeconds) continue;
+    if (drawOnlyThisType != null && ring.ring != drawOnlyThisType) continue;
     if (ring.type == 'Full' && ring.color == 'Blk/Wht') ring.type = 'Semi';
     result = getGaugeImage(date, ring.ring, ring.step_target);
     drawIfChanged(result[0], result[1], result[2], i, ring.type);
@@ -512,7 +511,7 @@ function drawClock() {
   innerMostRing = getInnerMostRing();
   let edge = ringEdge + (innerMostRing * ringIterOffset);
   g.fillEllipse(edge+ringThick,edge+ringThick,w-edge-ringThick,h-edge-ringThick); // Clears the text within the circle
-  drawAllRings(date, false);
+  drawAllRings(date, null);
   setLargeFont();
 
   g.setColor(settings.fg);
@@ -537,10 +536,11 @@ function drawSteps() {
   if (drawingSteps) return;
   drawingSteps = true;
   clearInfo();
+  var dims = getInfoDims();
   setSmallFont();
   g.setFontAlign(0,0);
   g.setColor(g.theme.fg);
-  g.drawString('STEPS ' + getSteps(), w/2, (3*h/4) - 4);
+  g.drawString('STEPS ' + getSteps(), w/2, dims[0]);
   drawingSteps = false;
 }
 
