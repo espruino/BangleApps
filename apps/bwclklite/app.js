@@ -101,7 +101,7 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
     let hideClkInfo = info.text == null;
 
     g.reset().setBgColor(g.theme.fg).clearRect(options.x, options.y, options.x+options.w, options.y+options.h);
-    g.setFontAlign(0,0).setColor(g.theme.bg);
+    g.setFontAlign(-1,-1).setColor(g.theme.bg);
 
     if (options.focus){
       let y = hideClkInfo ? options.y+20 : options.y+2;
@@ -117,26 +117,36 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
       return;
     }
 
-    // Set text and font
+    // Set text and font, compute sizes.
     let image = info.img;
+    let imgWidth = image == null ? 0 : 24;
+    let imgWidthClear = parseInt(imgWidth*1.3);
     let text = String(info.text);
+    let strWidth;
     if(text.split('\n').length > 1){
       g.setFont("6x8"); //g.setMiniFont();
+      strWidth = g.stringWidth(text);
     } else {
       g.setFont("6x8:3"); //g.setSmallFont();
+      strWidth = g.stringWidth(text);
+      if (strWidth+imgWidthClear > options.w) {
+        g.setFont("6x8"); //g.setMiniFont();
+        text = g.wrapString(text, options.w-imgWidthClear).join("\n");
+        strWidth = g.stringWidth(text);
+      }
     }
 
-    // Compute sizes
-    let strWidth = g.stringWidth(text);
-    let imgWidth = image == null ? 0 : 24;
+    // Compute positions
     let midx = options.x+options.w/2;
+    let imgPosX = Math.max(midx-Math.floor(imgWidthClear/2)-parseInt(strWidth/2), 0);
+    let strPosX = imgPosX+imgWidthClear;
 
     // Draw
     if (image) {
       let scale = imgWidth / image.width;
-      g.drawImage(image, midx-parseInt(imgWidth*1.3/2)-parseInt(strWidth/2), options.y+6, {scale: scale});
+      g.drawImage(image, imgPosX, options.y+6, {scale: scale});
     }
-    g.drawString(text, midx+parseInt(imgWidth*1.3/2), options.y+20);
+    g.drawString(text, strPosX, options.y+6);
 
     // In case we are in focus and the focus box changes (fullscreen yes/no)
     // we draw the time again. Otherwise it could happen that a while line is
