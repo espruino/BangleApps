@@ -11,39 +11,68 @@
     var S_1 = require("Storage");
     var drawTimeout_1;
     var menuShown_1 = false;
-    var splits_1 = [];
+    var latestGps_1;
+    var splits_1 = S_1.readJSON("pace.json", 1) || [];
     var splitOffset_1 = 0, splitOffsetPx_1 = 0;
     var GPS_TIMEOUT_MS_1 = 30000;
+    var drawGpsLvl = function (l) {
+        var _a;
+        var gps = latestGps_1;
+        var nsats = (_a = gps === null || gps === void 0 ? void 0 : gps.satellites) !== null && _a !== void 0 ? _a : 0;
+        if (!gps || !gps.fix)
+            g.setColor("#FF0000");
+        else if (gps.satellites < 4)
+            g.setColor("#FF5500");
+        else if (gps.satellites < 6)
+            g.setColor("#FF8800");
+        else if (gps.satellites < 8)
+            g.setColor("#FFCC00");
+        else
+            g.setColor("#00FF00");
+        g.fillRect(l.x, l.y + l.h - 10 - (l.h - 10) * ((nsats > 12 ? 12 : nsats) / 12), l.x + l.w, l.y + l.h);
+    };
     var layout_1 = new Layout_1({
-        type: "v",
+        type: "h",
         c: [
             {
-                type: "txt",
-                font: "6x8:2",
-                label: "Pace",
-                id: "paceLabel",
-                pad: 4
+                type: "custom",
+                render: drawGpsLvl,
+                filly: 1,
+                width: 10,
+                bgCol: g.theme.bg,
             },
             {
-                type: "txt",
-                font: "Vector:40",
-                label: "",
-                id: "pace",
-                halign: 0
-            },
-            {
-                type: "txt",
-                font: "6x8:2",
-                label: "Time",
-                id: "timeLabel",
-                pad: 4
-            },
-            {
-                type: "txt",
-                font: "Vector:40",
-                label: "",
-                id: "time",
-                halign: 0
+                type: "v",
+                c: [
+                    {
+                        type: "txt",
+                        font: "6x8:2",
+                        label: "Pace",
+                        id: "paceLabel",
+                        pad: 4
+                    },
+                    {
+                        type: "txt",
+                        font: "Vector:40",
+                        label: "",
+                        id: "pace",
+                        halign: 0
+                    },
+                    {
+                        type: "txt",
+                        font: "6x8:2",
+                        label: "Time",
+                        id: "timeLabel",
+                        pad: 4
+                    },
+                    {
+                        type: "txt",
+                        font: "Vector:40",
+                        label: "",
+                        id: "time",
+                        halign: 0
+                    },
+                ]
             },
         ]
     }, {
@@ -207,6 +236,7 @@
     Bangle.loadWidgets();
     Bangle.drawWidgets();
     Bangle.setGPSPower(1, "pace");
+    Bangle.on("GPS", function (gps) { return latestGps_1 = gps; });
     g.clearRect(Bangle.appRect);
     draw_1();
 }
