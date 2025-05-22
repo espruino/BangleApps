@@ -350,7 +350,7 @@ function getInfoDims() {
       line -= 7;
       break;
     case 3:
-      width -= 10;
+      width -= 9;
       height -= 6;
       line -= 10;
       break;
