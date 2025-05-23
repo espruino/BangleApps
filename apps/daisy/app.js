@@ -34,6 +34,7 @@ const minStepPctUpdateRings = 3;  // If the current step is less percent than la
 let nextUpdateMs;
 var drawingSteps = false;
 var innerMostRing = 0;
+var outerMostRing = 0;
 var prevStepDisplayed = 0;
 var prevRing = Array(3).fill().map(() => ({ start: null, end: null, max: null }));
 
@@ -518,13 +519,13 @@ function drawClock() {
 
   g.reset();
   g.setColor(g.theme.bg);
-  innerMostRing = getInnerMostRing();
+  getInnerOuterMostRing();
   let edge = ringEdge + (innerMostRing * ringIterOffset);
   g.fillEllipse(edge+ringThick,edge+ringThick,w-edge-ringThick,h-edge-ringThick); // Clears the text within the circle
   drawAllRings(date, null);
   setLargeFont();
 
-  g.setColor(settings.fg);
+  g.setColor(settings.rings[outerMostRing - 1].fg);
   g.setFontAlign(1,0);  // right aligned
   g.drawString(hh, (w/2) - 1, h/2);
 
@@ -902,15 +903,23 @@ function queueDraw() {
   }, delay);
 }
 
-function getInnerMostRing() {
-  var innerMost = 0;
-  for (let i = settings.rings.length - 1; i >= 0; i--) {
-  if (settings.rings[i].type !== "None") {
-    innerMost = i+1;
-    break;
+function getInnerOuterMostRing() {
+  let innerMost = 0;
+  let outerMost = 0;
+  for (let i = 0; i < settings.rings.length; i++) {
+    let j = settings.rings.length - 1 - i;
+    if (outerMost === 0 && settings.rings[i].type !== "None") {
+      outerMost = i + 1;
+    }
+    if (innerMost === 0 && settings.rings[j].type !== "None") {
+      innerMost = j + 1;
+    }
+    if (outerMost !== 0 && innerMost !== 0) {
+      break;
     }
   }
-  return innerMost;
+  innerMostRing = innerMost;
+  outerMostRing = outerMost;
 }
 
 // Stop updates when LCD is off, restart when on
@@ -938,7 +947,7 @@ Bangle.setUI("clockupdown", btn=> {
 
 loadSettings();
 loadLocation();
-innerMostRing = getInnerMostRing();
+getInnerOuterMostRing();
 var infoMode = infoList[settings.idxInfo];
 updateSunRiseSunSet(new Date(), location.lat, location.lon, true);
 nextUpdateMs = getDelayMs(1000, settings.rings, Date.now())[0];
@@ -948,4 +957,4 @@ Bangle.loadWidgets();
  * we are not drawing the widgets as we are taking over the whole screen
  */
 widget_utils.hide();
-redrawWholeFace()
+redrawWholeFace();

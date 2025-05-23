@@ -4,7 +4,6 @@
   // default settings
   let s = {
     rings: [{}, {}, {}],
-    color: 'Green',
     fg: '#0f0',
     check_idle: true,
     batt_hours: false,
@@ -125,16 +124,6 @@ function save() {
       'Ring 1': () => showRingMenu(0),
       'Ring 2': () => showRingMenu(1),
       'Ring 3': () => showRingMenu(2),
-      'Hour Color': {
-        value: 0 | color_options.indexOf(s.color),
-        min: 0, max: color_options.length - 1,
-        format: v => color_options[v],
-        onchange: v => {
-          s.color = color_options[v];
-          s.fg = fg_code[v];
-          save();
-        },
-      },
       'Battery Life Format' : {
         value: !!s.batt_hours,
         format: value => value?"Days":"%",
