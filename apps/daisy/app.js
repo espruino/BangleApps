@@ -206,7 +206,20 @@ function loadSettings() {
     }
   }
 
-  settings.fg = settings.fg||'#0ff';
+  getInnerOuterMostRing();
+  settings.color = settings.color||'Outer';
+  settings.fg = settings.fg||'#0f0';
+  switch (settings.color) {
+    case 'Outer':
+      if (outerMostRing == 0) break;
+      settings.fg = settings.rings[outerMostRing - 1].fg;
+      break;
+    case 'Inner':
+      if (innerMostRing == 0) break;
+      settings.fg = settings.rings[innerMostRing - 1].fg;
+      break;
+  }
+
   settings.idle_check = (settings.idle_check === undefined ? true : settings.idle_check);
   settings.batt_hours = (settings.batt_hours === undefined ? false : settings.batt_hours);
   settings.hr_12 = (global_settings["12hour"] === undefined ? false : global_settings["12hour"]);
@@ -525,7 +538,7 @@ function drawClock() {
   drawAllRings(date, null);
   setLargeFont();
 
-  g.setColor(settings.rings[outerMostRing - 1].fg);
+  g.setColor(settings.fg);
   g.setFontAlign(1,0);  // right aligned
   g.drawString(hh, (w/2) - 1, h/2);
 
@@ -947,7 +960,6 @@ Bangle.setUI("clockupdown", btn=> {
 
 loadSettings();
 loadLocation();
-getInnerOuterMostRing();
 var infoMode = infoList[settings.idxInfo];
 updateSunRiseSunSet(new Date(), location.lat, location.lon, true);
 nextUpdateMs = getDelayMs(1000, settings.rings, Date.now())[0];

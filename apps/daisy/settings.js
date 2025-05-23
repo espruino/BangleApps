@@ -4,6 +4,7 @@
   // default settings
   let s = {
     rings: [{}, {}, {}],
+    color: 'Outer',
     fg: '#0f0',
     check_idle: true,
     batt_hours: false,
@@ -57,6 +58,8 @@ function save() {
   var ring_options = ['Hours', 'Minutes', 'Seconds', 'Day', 'Sun', 'Steps', 'Battery'];
   var ring_types = ['None', 'Full', 'Semi', 'C'];
   var step_options = [100, 1000, 5000, 10000, 15000, 20000];
+  var color_options_font = ['Outer', 'Inner'].concat(color_options);
+  var fg_code_font = [null, null].concat(color_options);
 
   function showRingMenu(ringIndex) {
     const ring = s.rings[ringIndex];
@@ -124,6 +127,16 @@ function save() {
       'Ring 1': () => showRingMenu(0),
       'Ring 2': () => showRingMenu(1),
       'Ring 3': () => showRingMenu(2),
+      'Hour Color': {
+        value: 0 | color_options_font.indexOf(s.color),
+        min: 0, max: color_options_font.length - 1,
+        format: v => color_options_font[v],
+        onchange: v => {
+          s.color = color_options_font[v];
+          s.fg = fg_code_font[v];
+          save();
+        },
+      },
       'Battery Life Format' : {
         value: !!s.batt_hours,
         format: value => value?"Days":"%",
