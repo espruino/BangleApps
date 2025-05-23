@@ -89,6 +89,10 @@
       format: v => v ? v :/*LANG*/"Hide",
       onchange: v => updateSetting("maxMessages", v)
     },
+    /*LANG*/'Show Widgets': {
+      value: !!settings.showWidgets,
+      onchange: v => updateSetting("showWidgets", v)
+    },
     /*LANG*/'Icon color mode': {
       value: Math.max(0,iconColorModes.indexOf(settings.iconColorMode)),
       min: 0, max: iconColorModes.length - 1,
