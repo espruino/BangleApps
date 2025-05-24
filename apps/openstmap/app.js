@@ -230,12 +230,12 @@ function showMenu() {
   };
 
   // If we have the recorder widget, add a menu item to start/stop recording
-  if (WIDGETS.recorder) {
+  if (hasRecorder) {
     menu[/*LANG*/"Record"] = {
-      value : WIDGETS.recorder.isRecording(),
+      value : require("recorder").isRecording(),
       onchange : isOn => {
         E.showMessage(/*LANG*/"Please Wait...");
-        WIDGETS.recorder.setRecording(isOn).then(showMap);
+        require("recorder").setRecording(isOn).then(showMap);
       }
     };
   }
