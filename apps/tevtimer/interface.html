@@ -56,6 +56,7 @@
     <script>
         const DATA_VERSION = 0;
         const TIMERS_FILE = 'tevtimer.timers.json';
+        const APP_FILE = 'tevtimer.app.js';
         const MAX_BUZZ_COUNT = 15;
 
         var userTimers = [];
@@ -332,8 +333,14 @@
             if (userTimers.length) {
                 // Guard in case the user manages to click Save before
                 // the timers are loaded, or something like that
-                Util.writeStorage(TIMERS_FILE, JSON.stringify(userTimers), () => {
-                    alert('Timers saved successfully.');
+
+                // Ensure timer app is not running while we replace the timer file
+                Puck.write("if (global.__FILE__=='" + APP_FILE + "')load();\n", () => {
+                    setTimeout(() => {
+                        Util.writeStorage(TIMERS_FILE, JSON.stringify(userTimers), () => {
+                            alert('Timers saved successfully.');
+                        });
+                    }, 2000);
                 });
             };
         }
