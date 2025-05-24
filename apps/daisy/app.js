@@ -514,7 +514,7 @@ function drawAllRings(date, drawOnlyThisType) {
     let ring = settings.rings[i];
     if (ring.type == "None") continue;
     if (drawOnlyThisType != null && ring.ring != drawOnlyThisType) continue;
-    result = getGaugeImage(date, ring.ring, ring.step_target);
+    var result = getGaugeImage(date, ring.ring, ring.step_target);
     drawIfChanged(result[0], result[1], result[2], i, ring.type);
   }
 }
@@ -816,7 +816,7 @@ Bangle.on('step', s => {
   warned = 0;
   if (drawingSteps) return;
   var steps = getSteps();
-  ret = checkRedrawSteps(steps);
+  var ret = checkRedrawSteps(steps);
   if (!ret[0] && !ret[1]) return;
   drawingSteps = true;
   if (ret[0]) drawSteps();
