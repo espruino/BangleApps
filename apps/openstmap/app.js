@@ -1,13 +1,14 @@
 var m = require("openstmap");
-var HASWIDGETS = true;
 var R;
 var fix = {};
 var mapVisible = false;
 var hasScrolled = false;
 var settings = require("Storage").readJSON("openstmap.json",1)||{};
+var HASWIDGETS = !settings.noWidgets;
 var plotTrack;
 let checkMapPos = false; // Do we need to check the if the coordinates we have are valid
 var startDrag = 0;
+var hasRecorder = require("Storage").read("recorder")!=undefined; // do we have the recorder library?
 
 if (Bangle.setLCDOverlay) {
   // Icon for current location+direction: https://icons8.com/icon/11932/gps 24x24, 1 Bit + transparency + inverted
@@ -53,9 +54,9 @@ function redraw() {
       g.setColor("#f00").flip(); // force immediate draw on double-buffered screens - track will update later
       WIDGETS["gpsrec"].plotTrack(m);
     }
-    if (HASWIDGETS && WIDGETS["recorder"] && WIDGETS["recorder"].plotTrack) {
+    if (hasRecorder) {
       g.setColor("#f00").flip(); // force immediate draw on double-buffered screens - track will update later
-      plotTrack = WIDGETS["recorder"].plotTrack(m, { async : true, callback : function() {
+      plotTrack = require("recorder").plotTrack(m, { async : true, callback : function() {
         plotTrack = undefined;
       }});
     }
@@ -115,6 +116,7 @@ function drawLocation() {
   }
 
   var p = m.latLonToXY(fix.lat, fix.lon);
+  // TODO: if this is getting off the screen, we could adjust the map over? Also show marker to show what direction we're offscreen
 
   ovLoc.clear();
   if (isInside(R, p, ovLoc.getWidth(), ovLoc.getHeight())) { // avoid drawing over widget area
@@ -196,7 +198,12 @@ function showMenu() {
     value : !!settings.drawMarker,
     onchange : v => { settings.drawMarker=v; writeSettings(); }
   },
+  /*LANG*/"Hide Widgets": {
+    value : !!settings.noWidgets,
+    onchange : v => { settings.noWidgets=v; writeSettings(); load("openstmap.app.js"); }
+  },
   });
+
 
   if (Bangle.setLCDOverlay) {
     menu[/*LANG*/"Direction source"] = {
