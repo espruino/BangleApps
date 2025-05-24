@@ -24,8 +24,8 @@ var pals = Array(3).fill().map(() => (
 
 let palbg;
 const infoLineDefault = (3*h/4) - 6;
-const infoWidthDefault = 56;
-const infoHeightDefault = 11;
+const infoWidthDefault = 64;
+const infoHeightDefault = 8;
 const ringEdge = 4;
 const ringIterOffset = 10;
 const ringThick = 6;
@@ -359,13 +359,13 @@ function getInfoDims() {
   var height = infoHeightDefault;
   switch (innerMostRing) {
     case 2:
-      width -= 8;
+      width -= 10;
       height -= 2;
       line -= 7;
       break;
     case 3:
-      width -= 9;
-      height -= 6;
+      width -= 17;
+      height -= 3;
       line -= 10;
       break;
   }

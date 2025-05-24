@@ -1,43 +1,43 @@
 (function(back) {
   const SETTINGS_FILE = "daisy.json";
 
-  // default settings
-  let s = {
-    rings: [{}, {}, {}],
+  function getDefaultSettings() {
+  return {
+    rings: [
+      {
+        color: 'Green',
+        fg: '#0f0',
+        gy: '#020',
+        ring: 'Steps',
+        type: 'Full',
+        step_target: 10000,
+      },
+      {
+        color: 'Blk/Wht',
+        fg: null,
+        gy: null,
+        ring: 'Minutes',
+        type: 'None',
+        step_target: 10000,
+      },
+      {
+        color: 'Green',
+        fg: '#0f0',
+        gy: '#020',
+        ring: 'Hours',
+        type: 'None',
+        step_target: 10000,
+      }
+    ],
     color: 'Outer',
     fg: '#0f0',
     check_idle: true,
     batt_hours: false,
     idxInfo: 0,
   };
+}
 
-  s.rings[0] = {
-    color: 'Green',
-    fg: '#0f0',
-    gy: '#020',
-    ring: 'Steps',
-    type: 'Full',
-    step_target: 10000,
-  };
-
-    s.rings[1] = {
-    color: 'Blk/Wht',
-    fg: null,
-    gy: null,
-    ring: 'Minutes',
-    type: 'None',
-    step_target: 10000,
-  };
-
-    s.rings[2] = {
-    color: 'Green',
-    fg: '#0f0',
-    gy: '#020',
-    ring: 'Hours',
-    type: 'None',
-    step_target: 10000,
-  };
-
+let s = getDefaultSettings();
 // ...and overwrite them with any saved values
 // This way saved values are preserved if a new version adds more settings
 const storage = require('Storage');
