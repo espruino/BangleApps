@@ -1,0 +1,14 @@
+{
+  "id": "gestimer",
+  "name": "Gesture Timer",
+  "shortName": "GesTimer",
+  "version": "0.03",
+  "description": "Battery-optimized timer widget with double-swipe protection. Double-swipe in any direction to unlock, then single swipes work: right/left ±1min, up/down ±10min. Visual feedback, multiple completion buzzes.",
+  "icon": "widget.png",
+  "type": "widget",
+  "tags": "widget,timer,gesture,battery-optimized",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"gestimer.wid.js","url":"widget.js"}
+  ]
+}
