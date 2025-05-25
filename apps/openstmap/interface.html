@@ -192,6 +192,8 @@ TODO:
                 loadedMaps[mapNumber] = mapInfo;
                 if (mapInfo!==undefined) {
                   mapsLoaded.push({mapNumber: mapNumber, mapInfo: mapInfo});
+                  let kBytes = (mapInfo.imgx*mapInfo.imgy*3)>>13;
+                  if (mapInfo.kBytes) kBytes = mapInfo.kBytes;
                   mapsLoadedContainer.innerHTML += `
 <div class="tile">
   <div class="tile-icon">
@@ -200,7 +202,7 @@ TODO:
   </div>
   <div class="tile-content">
     <p class="tile-title">Map ${mapNumber}</p>
-    <p class="tile-subtitle">${mapInfo.w*mapInfo.h} Tiles (${((mapInfo.imgx*mapInfo.imgy)>>11).toFixed(0)}k)</p>
+    <p class="tile-subtitle">${mapInfo.w*mapInfo.h} Tiles (${kBytes}k)</p>
   </div>
   <div class="tile-action">
     <button class="btn btn-primary" onclick="onMapDelete(${mapNumber})">Delete</button>
@@ -387,7 +389,7 @@ TODO:
                 img.crossOrigin = "Anonymous";
                 tileGetters.push(new Promise(function(resolve,reject) {
                   img.onload = function(){
-                    ctx.drawImage(img,i*OSMTILESIZE - ox, j*OSMTILESIZE - oy);
+                    ctx.drawImage(img,i*OSMTILESIZE - ox, j*OSMTILESIZE - oy, OSMTILESIZE, OSMTILESIZE);
                     /*if (testPt) {
                       ctx.fillStyle="green";
                       ctx.fillRect(testPt.x-1, testPt.y-5, 3,10);
@@ -411,6 +413,7 @@ TODO:
           while (loadedMaps[mapNumber]) mapNumber++;
           let mapImageFile = `openstmap.${mapNumber}.img`;
           mapFiles = tilesLoaded(ctx, canvas.width, canvas.height, mapImageFile);
+          var mapSizeInK = Math.round(mapFiles.reduce((r,m)=>m.content.length+r,0)/1000);
           mapFiles.unshift({name:`openstmap.${mapNumber}.json`,content:JSON.stringify({
             imgx : canvas.width,
             imgy : canvas.height,
@@ -420,15 +423,16 @@ TODO:
             lon : centerlatlon.lng,
             w : Math.round(canvas.width / TILESIZE), // width in tiles
             h : Math.round(canvas.height / TILESIZE), // height in tiles
+            kBytes : mapSizeInK,
             fn : mapImageFile
           })});
-          var mapSizeInK = Math.round(mapFiles.reduce((r,m)=>m.content.length+r,0)/1000);
+
           document.getElementById("mapstats").innerText = "Size : "+ (mapSizeInK+"kb");
           console.log(mapFiles);
         });
       });
 
-      document.getElementById("mapStyle").addEventListener("click", function() {
+      document.getElementById("mapStyle").addEventListener("change", function() {
         var style = document.getElementById("mapStyle").value;
         if (!style in MAPSTYLES) return;
         map.removeLayer(previewTileLayer);

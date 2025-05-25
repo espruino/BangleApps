@@ -114,8 +114,8 @@ exports.getSettings = function () {
       defaultDeleteExpiredTimers: true, // Always
       buzzCount: 10,
       buzzIntervalMillis: 3000, // 3 seconds
-      defaultAlarmPattern: "::",
-      defaultTimerPattern: "::"
+      defaultAlarmPattern: "==",
+      defaultTimerPattern: "=="
     },
     require("Storage").readJSON("sched.settings.json", true) || {}
   );

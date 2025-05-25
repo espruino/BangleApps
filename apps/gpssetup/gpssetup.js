@@ -165,9 +165,11 @@ function setupPSMOO(settings) {
       var gpsTimeout = null;
       var gpsActive = false;
       var fix = 0;
+      var lastFix = false;
       function cb(f){
         if(parseInt(f.fix) === 1){ 
           fix++;
+          lastFix = true;
           if(fix >= settings.fix_req){
             fix = 0;
             turnOffGPS();
@@ -180,9 +182,14 @@ function setupPSMOO(settings) {
         clearTimeout(gpsTimeout);
         Bangle.setGPSPower(0,settings.appName);
         Bangle.removeListener('GPS', cb); // cleaning it up
+        var timeout = settings.update * 1000;
+        if(lastFix && settings.adaptive > 0){
+          timeout = settings.adaptive * 1000;
+        }
+        lastFix = false;
         gpsTimeout = setTimeout(() => {
           turnOnGPS();
-        }, settings.update * 1000);
+        }, timeout);
       }
       function turnOnGPS(){
         if (gpsActive) return;
@@ -213,15 +220,17 @@ exports.setPowerMode = function(options) {
   if (options) {
     if (options.update) settings.update = options.update;
     if (options.search) settings.search = options.search;
+    if (options.adaptive) settings.adaptive = options.adaptive;
     if (options.fix_req) settings.fix_req = options.fix_req;
     if (options.power_mode) settings.power_mode = options.power_mode;
     if (options.appName) settings.appName = options.appName;
   }
   settings.update = settings.update||120;
   settings.search = settings.search||5;
+  settings.adaptive = settings.adaptive||0;
   settings.fix_req = settings.fix_req||1; //default to just one fix and will turn off 
   settings.power_mode = settings.power_mode||"SuperE";
-  settings.appName = settings.appName || "gpssetup";
+  settings.appName = settings.appName||"gpssetup";
   if (options) require("Storage").write(SETTINGS_FILE, settings);
   if(!Bangle.isGPSOn()) Bangle.setGPSPower(1,settings.appName); //always know its on - no point calling this otherwise!!!
   if (settings.power_mode === "PSMOO") {

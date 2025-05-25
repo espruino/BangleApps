@@ -12,7 +12,17 @@ var advertise = function (options) {
         }
         return obj;
     };
-    NRF.setAdvertising(clone(Bangle.bleAdvert), options);
+    if (process.env.VERSION >= "2.26") {
+        options = options || {};
+        if (!options.manufacturer)
+            options.manufacturer = false;
+    }
+    try {
+        NRF.setAdvertising(clone(Bangle.bleAdvert), options);
+    }
+    catch (e) {
+        console.log("ble_advert error", e);
+    }
 };
 var manyAdv = function (bleAdvert) {
     return Array.isArray(bleAdvert) && typeof bleAdvert[0] === "object";

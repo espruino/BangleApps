@@ -1,5 +1,5 @@
+var settings = require("Storage").readJSON("coretemp.json", 1) || {};
 // Simply listen for core events and show data
-
 //var btm = g.getHeight() - 1;
 var px = g.getWidth() / 2;
 
@@ -21,25 +21,14 @@ var corelogo = {
 function onCore(c) {
   // Large or small font
   var sz = ((process.env.HWVERSION == 1) ? 3 : 2);
-
   g.setFontAlign(0, 0);
   g.clearRect(0, 32 + 48, g.getWidth(), 32 + 48 + 24 * 4);
   g.setColor(g.theme.dark ? "#CCC" : "#333");  // gray
-  g.setFont("6x8", sz).drawString(
-      "Core: " + ((c.core < 327) ? (c.core + c.unit) : 'n/a'), px, 48 + 48);
-  g.setFont("6x8", sz).drawString("Skin: " + c.skin + c.unit, px, 48 + 48 + 24);
-}
-
-// Background task will activate once settings are enabled.
-function enableSensor() {
-  settings = require("Storage").readJSON("coretemp.json", 1) || {};
-
-  if (!settings.enabled) {
-    settings.enabled = true;
-    require("Storage").write("coretemp.json", settings);
-
-    drawBackground("Waiting for\ndata...");
-  }
+  g.setFont("6x8", sz).drawString("Core: " + ((c.core < 327) ? (c.core + c.unit) : 'n/a'), px, 48 + 48);
+  g.setFont("6x8", sz).drawString("Skin: " + c.skin + c.unit, px, 48 + 48 + 14);
+  g.setFont("6x8", sz).drawString("HR: " + c.hr + " BPM", px, 48 + 48 + 28);
+  g.setFont("6x8", sz).drawString("HSI: " + c.hsi+ "/10", px, 48 + 48 + 42);
+  g.setFont("6x8", sz).drawString("BATT: " + c.battery+ "%", px, 48 + 48 + 56);
 }
 
 function drawBackground(message) {
@@ -51,16 +40,11 @@ function drawBackground(message) {
   g.drawString(message, g.getWidth() / 2, g.getHeight() / 2 + 16);
 }
 
-Bangle.on('CoreTemp', onCore);
-
-settings = require("Storage").readJSON("coretemp.json", 1) || {};
 
 if (!settings.enabled) {
-  drawBackground("Sensor off\nBTN" +
-                 ((process.env.HWVERSION == 1) ? '2' : '1') + " to enable");
+  drawBackground("Sensor off\nEnable in Settings");
 } else {
+  Bangle.setCORESensorPower(1,"COREAPP");
+  Bangle.on('CORESensor', onCore);
   drawBackground("Waiting for\ndata...");
 }
-
-setWatch(() => { enableSensor(); }, (process.env.HWVERSION == 1) ? BTN2 : BTN1,
-         {repeat : false});

@@ -1,0 +1,614 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="../../css/spectre.min.css">
+  <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    .jsoneditor-container {
+      height: 500px;
+      margin-bottom: 30px;
+      border: 1px solid #ccc;
+    }
+    .editor-section {
+      margin-bottom: 40px;
+    }
+  </style>  
+</head>
+
+<body>
+  <ul class="tab tab-block" id="tab-navigate">
+    <li class="tab-item active" id="tab-settingsContainer">
+      <a href="javascript:showTab('settingsContainer')">Settings</a>
+    </li>
+    <li class="tab-item" id="tab-tasksContainer">
+      <a href="javascript:showTab('tasksContainer')">Tasks</a>
+    </li>
+    <li class="tab-item" id="tab-surveyContainer">
+      <a href="javascript:showTab('surveyContainer')">EMA</a>
+    </li>
+    <li class="tab-item" id="tab-downloadData">
+      <a href="javascript:showTab('downloadData')">
+        <div id="downloadData-tab-label" class="" data-badge="0">Download
+        </div>
+      </a>
+    </li>
+  </ul>
+  <div class="container apploader-tab" id="settingsContainer">
+    <form id="heatsuiteSettings">
+      <div class="row pt-2"><strong>Recorder Options:</strong>
+        <br>Select what sensor/data you want to record and average each minute:
+      </div>
+      <div class="form-group">
+        <label class="form-switch">
+          <input type="checkbox" name="record" value="steps">
+          <i class="form-icon"></i> Steps
+        </label>
+        <label class="form-switch">
+          <input type="checkbox" name="record" value="hrm">
+          <i class="form-icon"></i> Optical Heart Rate
+        </label>
+        <label class="form-switch">
+          <input type="checkbox" name="record" value="acc">
+          <i class="form-icon"></i> Accelerometry (per minute magnitude)
+        </label>
+        <label class="form-switch">
+          <input type="checkbox" name="record" value="bat">
+          <i class="form-icon"></i> Battery
+        </label>
+        <label class="form-switch">
+          <input type="checkbox" name="record" value="movement">
+          <i class="form-icon"></i> Movement
+        </label>
+        <label class="form-switch">
+          <input type="checkbox" name="record" value="baro">
+          <i class="form-icon"></i> Temperature/Pressure
+        </label>
+        <label class="form-switch">
+          <input type="checkbox" name="record" value="bthrm">
+          <i class="form-icon"></i> Bluetooth HRM (Uses BTHRM app/module)
+        </label>
+        <label class="form-switch">
+          <input type="checkbox" name="record" value="CORESensor">
+          <i class="form-icon"></i> CORE Sensor (Uses coretemp app/module)
+        </label>
+      </div>
+      <div class="row pt-2"><strong>High Resolution Accelerometer Data:</strong>
+        <br>If you want to record high temporal resolution accelerometer data (magnitude of x,y,z; can store up to 4 days of data at 1 second, will rollover).
+        <div class="form-group">
+          <label class="form-switch">
+            <input type="checkbox" name="highAcc">
+            <i class="form-icon"></i> High Temporal Accelerometry &radic;(x&sup2; + y&sup2; + z&sup2;) 
+          </label>
+          <label class="form-label" for="input-AccLogInt">Interval (seconds)</label>
+          <input class="form-input" type="number" name="AccLogInt" id="input-AccLogInt" value=1 min=1>
+          <p class="form-input-hint mb-0">Interval for logging averaged magnitude and sum from accelerometer - default is 1 second
+          </p>
+        </div>
+      </div>
+      <div class="row pt-2"><strong>GPS PSMOO Options:</strong>
+        <br>Option to have GPS work in PSMOO (uses GPSSetup app/module)
+      </div>
+      <div class="form-group">
+        <label class="form-switch">
+          <input type="checkbox" name="GPS">
+          <i class="form-icon"></i> Turn GPS On
+        </label>
+        <label class="form-label" for="input-GPSScanTime">Scan Time (mins)</label>
+        <input class="form-input" type="number" name="GPSScanTime" id="input-GPSScanTime" value=2 min=0>
+        <p class="form-input-hint mb-0">The time spent scanning for a GPS signal.</strong></p>
+        <label class="form-label" for="input-GPSInterval">Scan Interval (mins)</label>
+        <input class="form-input" type="number" name="GPSInterval" id="input-GPSInterval" value=10 min=0>
+        <p class="form-input-hint mb-0">The time between scans when a <strong>signal is not acquired.</strong></p>
+        <label class="form-label" for="input-GPSAdaptiveTime">Adaptive Time (mins)</label>
+        <input class="form-input" type="number" name="GPSAdaptiveTime" id="input-GPSAdaptiveTime" value=2 min=0>
+        <p class="form-input-hint mb-0">The time between scans when a <strong>signal is acquired.</strong></p>
+      </div>
+      <div class="row pt-2"><strong>Extras:</strong>
+
+        <label class="form-switch">
+          <input type="checkbox" name="fallDetect">
+          <i class="form-icon"></i> Fall Detection (beta)
+        </label>
+        <p class="form-input-hint mb-0">Will detect falls.</p>
+        <label class="form-switch">
+          <input type="checkbox" name="surveyRandomize">
+          <i class="form-icon"></i> Randomize EMA questions
+        </label>
+        <p class="form-input-hint mb-0">Enable this if you want your questions to be shuffled at random each time.</p>
+        <label class="form-switch">
+          <input type="checkbox" name="swipeOpen" checked>
+          <i class="form-icon"></i> Swipe to Launch HeatSuite App
+        </label>
+        <p class="form-input-hint mb-0">On by default. Will enable quick access to the HeatSuite app for participants by simply swiping right on the screen.</p>
+        <label class="form-label" for="input-studyID">Study ID:</label>
+        <input class="form-input" type="text" name="studyID" id="input-studyID" value="" minlength="1" maxlength="4">
+        <p class="form-input-hint mb-0">For communicating with HeatSuite Nodes. Maximum of 4 (no special) characters.
+        </p>
+        <label class="form-label" for="input-filePrefix">File Prefix</label>
+        <input class="form-input" type="text" name="filePrefix" id="input-filePrefix" value="htst" minlength="1"
+          maxlength="5">
+        <p class="form-input-hint mb-0">ONLY CHANGE IF YOU KNOW WHAT YOU ARE DOING.</p>
+
+      </div>
+    </form>
+  </div>
+  <div class="container apploader-tab pb-2" id="tasksContainer" style="display:none;">
+    <div class="row pt-2"><strong>Edit your Task JSON File Editor:</strong>
+      <br><a href="https://heatsuitelabs.github.io/HeatSuiteDocs/" target="_blank">Read the Docs</a> on how to properly format the JSON file. GUI coming soon to BangleApps.
+    </div>
+    
+    <div id="heatsuite_taskFile_editor" class="jsoneditor-container"></div>
+    <button class="btn btn-primary" id="heatsuite_taskFile_resetBtn">Restore Default</button>
+  </div>
+  <div class="container apploader-tab pb-2" id="surveyContainer" style="display:none;">
+    <div class="row pt-2"><strong>Ecological Momentary Assessment (EMA) JSON File Editor:</strong>
+      <br><a href="https://heatsuitelabs.github.io/HeatSuiteDocs/" target="_blank">Read the Docs</a> on how to properly format the JSON file. GUI coming soon to BangleApps.
+    </div>
+    <div id="heatsuite_surveyFile_editor" class="jsoneditor-container"></div>
+    <button class="btn btn-primary" id="heatsuite_surveyFile_resetBtn">Restore Default</button>
+  </div>
+  <div class="container apploader-tab pb-2" id="downloadData" style="display:none;">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>File name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="downloadData-tab-content">
+      </tbody>
+      <div id="progressElementHeatSuite" style="margin-top:10px; font-weight:bold;"></div>
+    </table>
+  </div>
+  <p class="p-2 m-2"><button id="upload" class="btn btn-success">Upload</button></p>
+
+  <script src="../../core/lib/customize.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/jsoneditor@latest/dist/jsoneditor.min.css" rel="stylesheet" type="text/css">
+  <script src="https://cdn.jsdelivr.net/npm/jsoneditor@latest/dist/jsoneditor.min.js"></script>
+
+  <script>
+    let HeatSuiteFileList = [];
+    //default Schema
+    let heatsuite__taskFile_defaultSchema = [
+      {
+        "id": "survey",
+        "icon": 'require("heatshrink").decompress(atob("lEo4kA///6H7BIP2m9hjEpyQLBxeq0UAp3js1Z5F59GB9nChvL+83E4cCkQABkA6NgUq293rVCChsq6MRAAOcoQmM4ISCAAPqFBclCQkRjJpBExOxCYsR8goJkmRB4XuAYUVCZMsJYdEFgUZoATIpwTC1XnooFC2QTIoIhCC4OqCYVyMRGhBoXhjNLAoXSCZkR2mpAgXilGIwRnFCYlKPgd40czmeoCglJCYd5AgdYn////zCgknBwfZAgeqCQIUCwQTClQOD3oDCj1DCYf/nATHAAcawYTE/Q8CkoTHvE/+c6mY8FMYgACi9Kn84xAqDmSfC7euCYnE0f/1CKBPQRQBgWqkUk3zeCvWKBwJ4BnATFKQUipWq0koBoSyBxATDZYsCkUAOgk4AoYTGAAUjCYgmCUAgAFlQTDRQQTGgUowQuBJ4f/nQEDRYIiD81u0UAhAODmYECeAkCq1ms1nkECbIoACD4ImCCQIAB2QGBFAYADHYchs3nv1msguBY4IAD+bhBCYVGs261YTCMovz1GKnSfCCYIACtRXCxTHBeAJYBxGACYek8wnDSYWIxAjCdocls0eE4PiXhAAEhEWCQNhoATNgFOCYPkCRxABpdqIQQUP2gSQCYMiCaMAHRw="))',
+        "cbBtn": "Bangle.load('heatsuite.survey.js');",
+        "tod": [
+          900,
+          1200,
+          1500,
+          1800
+        ],
+        "debounce": 300
+      },
+      {
+        "id": "bloodPressure",
+        "icon": 'require("heatshrink").decompress(atob("lEo4kA///zND//3BYOe98ggHGhEllM533ssW5odBhFOud642DhE10omCnczHSO3s3jmATP3MRjNrCh+2s0ZzNrCJkDn1mv1382X8YlMyMRi1xy1hzwSKhdxs12CYIWBu5RKm8WtMeCYfp8ATJ2MRiITDjPpsCUCu4ADv2w24TBjITCiOZE4MLCQgABve+MQMXCYeW2ATBv2ZAAeeve28w7Ey3mE4dCkQACx172INBtd+s1m81xJ4ITBpH/wn//oTB29pjIRBs1nAgITD7l3zGXv4nDsJRBiORz1hCYdCogBCCYWhiNusNutIWByA7EKIXXCYOq1QPBAAIZBiA7DvITCp4TDAAYTBHYp3CpgTNxvdAAX+CZl+9wAECZjDBbIQEBCZwlC9ITOy98zOcFAITOzl+vgTQvJSCJ6QWBCYMaCZED852CAAXj21pCgkRswTBgEzmc78/rAgMwm1usLvDz1m2ATBAAMD5+TAodpiIVBt3njN+CYvn8YGDnwnEu18uAMDgHpDQkAnfms1mtc+/4TFvngAwgxCAQV3EAt8AwoWFvIMF5gTKgF/HYv5mATKnPLAoc3+4TLh3J8ayCvieDKBN85LVBznJJxaSCvPM5nJuYSMCgW73ezBIoA="))',
+        "tod": [
+          830,
+          1330,
+          1930
+        ],
+        "debounce": 3600,
+        "btPair": true,
+        "btInfo": {
+          "service": "1810",
+          "supported": [
+            "A&D_UA-651"
+          ]
+        }
+      },
+      {
+        "id": "coreTemperature",
+        "icon": 'require("heatshrink").decompress(atob("lEo4kA///A4Pf99fx3YtnjjEkkN/7+X0ujoFK/VusdBhH0ykIoXY2ozPjnBIyEBr2piATPiuq1WREx9aCYIoPjmaCYIoOgNo9ITC1gTMi3yvwoC9gmNw8nFAVRExmL5dyFAOlMZcBt+2223FAImN+9Emlru/cExlo6kzme8x9hJptkmYnBwwmN21DmdG3Am/TZF28YmPgvyl9rEx0AjsikX28wmNgFnkVyFAImNgHnl7pBvAmNgOyk/3u/2ExsM6UiEx8Ajd3u9/6omNgO3u/b8wSNgEeu974IRNEwPvu+xCRzrB+/+HBwABrF/8ISPhnXYBwAC5t9qImQ2/cCR8Ajm32ASPgPr5YmQj3eMCEB9qHQEycA5wmROoImRgAA=="))',
+        "tod": [
+          830,
+          1330,
+          1930
+        ],
+        "TaskDesc": "coreTemperature_TaskDesc",
+        "debounce": 3600,
+        "btPair": true,
+        "btInfo": {
+          "service": "1809",
+          "supported": [
+            "BLEThermistorPod"
+          ]
+        }
+      },
+      {
+        "id": "bodyMass",
+        "icon": "require('heatshrink').decompress(atob('lEo4kB3//AAIJB7//wUQjnn485t97vvvoMIhlj9dasspptbz33kshiIApkUpylP/nGswAB5n/pOSkQSEl+3utVAAOI93uxAGCq96+QSCil1gczABdXyITBo4SDmt6ut61Wq09TBQU+ukRiVwDgcK5t1vvd7vc0ALD88hjgbDmcLvxOBAAOH2ALDgvBk5EEq1+wpfBrGHsoLDh1yyouEtN+q3M5llw+WvwMCgF5CYMFu9V3l2E4tn5dVu9Qh1ZCYN0/9E2s65phBMYWjrdE/9HCYOXmv2u9kqaLBRIKLDmtLu9vqF5y83o930lzWA83+4MCvMnmtKCZYgB2lQuQTBtmr5ijEAAc15mr+1euUqTYNESwgAFBgUO0Urgc+uwmIFAVn8fu2UW8czu2DCZM4s8z9FhCYVcE5fFmflsMcCAITP4MfCaPxigQB8yeIUAVumHloMZCYMLCZewCYORCYU32YTJndzCYUSEgM34p7BAA0+rgTBg8hCYM+ulE2oTHrdEo/g84TCmvLvdHgYSFmF009kuYTEu93tiNGDwN3vm+CYWjm9nCZvqkMR2E3pV6pQ7H1932lw9cRiNonGk+llMY9Wp9KwFWCYNFZgN3HQflrw8Du9emFUCYMqG41cdIIAEh2yCYMUbI1VqpSF89BCYMRo7FIAAc4ugSCiMZ2tY9wAGn3uwt7yITDiMp+1mAAtqrVmt+SCQgAl'))",
+        "tod": [
+          800
+        ],
+        "debounce": 3600,
+        "btPair": false,
+        "btInfo": {
+          "service": "181b",
+          "supported": [
+            "MIBFS"
+          ]
+        }
+      },
+      {
+        "id": "urine",
+        "icon": "require('heatshrink').decompress(atob('lEo4kA///7/3oMInGVtdC//3rvn5lS7/Gx1rksZDYIXB7edkAFB4wqGhcukXgHp0Lkkz6eaCheykWq9Ux5nM42elWilwjH0c97VG5lVqtcjOp7s3JwIAEgU4xF6tgSBAAPBzXf/FACYsK7GD1vFCYdcjuIx+bCY/azgSDAANRyePzwTHzQ6EAAWax87CY2Z1I6EHgVqvNyMY0q1ATGqsX1XrRg1JoITH4dJRY0Ao5iGAAPN1MkogVFogTI42p1uIUItEngTJ0lE0AnQle7J59d1JjHoemO4/JoYTHpGjWZGTCY9BzWMCYvBzVjCZFn1tc5gADtOtqewCY2py/qvOZAAeu1OUCY0LSYN3ogAEo90Yo0AgU4xAAJYooTBzvdABLFFAAMq1QAJMY+0ExMyCQ0AgkRjiKEAAQTIhVhirbGrmeCY8C6MRCY1VvYTHhwTI4x2HAANhCY/Ndw4AB0YTG5mERQ5QCods5nFrnM4Np1YSIAAOy1PWiMRtE31wSKgEL0mq0lEAQJNJHgc96c5zM9xFLCZcE7GPAAP4x7FIAAe5xGP/4AC7QTLlMzAAk0RRIAB8UiAAkuCYwA=='))",
+        "cbBtn": "Bangle.load('heatsuite.urine.js');",
+        "debounce": 0,
+        "tod": [],
+        "btPair": false,
+        "btInfo": null,
+        "notify": false
+      },
+      {
+        "id": "sleep",
+        "icon": "require('heatshrink').decompress(atob('lEo4kA///v3nBIPDjE968CqOzxlX/1m0VBhGBkHb61qpV4/0978Y2xZ1gQTmkQ9VkA9llJKMJZMjmRADlM85gAC4eSBYUCCIOW23Mmc281v30RAAXr+wLBmfMt9py0Rj27CAgAEBYIMCtMsB5AAE///33u4UD2ISLjfMnNu9cwhPxE5nr5m+9+QgVhBYhpBAAVrA4Mcn/ui0gCYsWnVVAANa0YLBsfxCZFjrGIAAWFm0fRQP+CY0fmoSDAANT/dmswTCMYkc1ATFxXBUIPuMYMDCYfsquqAAOlxGqqs7CYcwT4mzqfGGgNmu9onQTB93uT4ITFzHdAAd3xM/CYo7D2eWCYtpCYY7BMYgTNY4vzCY1jz4TCT4r5Bs92v996/3AoPM2J3BCYsfm/duvDtvWnk3u9z+ITIm3d63IE4Nss48BCYhjE5l9J4t35jHFT4fzr/dJoJRBu9lO4ITBT4MsNAPhHgPM7vfnnD/t3wf+8ITB93Cy0R9e//exspNBtGGHQQLC30RtOW+3Mmcz5/ztpOC692ngLC5lvtMjmUggAABhh5BWQciBYUCCIIQCAAcjs4SBuwMHAA+V42MrISOAAMikQSQAD4='))",
+        "cbBtn": 'modHS.saveDataToFile("sleep", "event", {"marker":"sleep"});Bangle.showClock();',
+        "debounce": 0,
+        "tod": [],
+        "btPair": false,
+        "btInfo": null,
+        "notify": false
+      }
+    ];
+    let heatsuite__surveyFile_defaultSchema = {
+      "supported":{
+          "en_GB":"English (GB)",
+          "fr_CA":"Francais (CA)"
+          },
+      "questions":[{
+          "key":"comfort",
+          "text": {
+              "en_GB":"Thermal comfort?",
+              "fr_CA":"Confort thermique?"
+              },
+          "tod":[[0,2359]],
+          "oncePerDay": true,
+          "orderFix":false,
+          "options": [{
+              "text":{
+                  "en_GB":"Comfortable",
+                  "fr_CA":"Confortable"
+                  },
+              "value":0,
+              "color":"#ffffff",
+              "btnColor":"#38ed35"
+              },{
+              "text":{
+                  "en_GB":"Uncomfortable",
+                  "fr_CA": "Inconfortable"
+                  },
+              "value":1,
+              "color":"#ffffff",
+              "btnColor":"#ff0019"
+              }]
+          }]
+      };
+    //function from original index.js of BangleApps - required to bring here as the custom.html is loaded in an iframe
+    function showTab(tabname) {
+      document.querySelectorAll("#tab-navigate .tab-item").forEach(tab => {
+        tab.classList.remove("active");
+      });
+      document.querySelectorAll(".apploader-tab").forEach(tab => {
+        tab.style.display = "none";
+      });
+      document.getElementById("tab-" + tabname).classList.add("active");
+      document.getElementById(tabname).style.display = "inherit";
+    }
+    function formDataToJson(form) {
+      const formData = new FormData(form);
+      const data = {};
+      const forceArrayFields = ['record']; // force these to always be arrays
+      const checkboxHandled = new Set();
+      for (let [name, value] of formData.entries()) {
+        const field = form.querySelector(`[name="${name}"]`);
+        if (field && field.type === 'checkbox') {
+          if (checkboxHandled.has(name)) continue;
+          checkboxHandled.add(name);
+          const checkboxes = form.querySelectorAll(`input[type="checkbox"][name="${name}"]`);
+          const values = Array.from(checkboxes)
+                              .filter(cb => cb.checked)
+                              .map(cb => cb.hasAttribute('value') ? cb.value : true);                
+          data[name] = forceArrayFields.includes(name) ? values : (values.length ? values[0] : false);
+        } else {
+          if (data.hasOwnProperty(name)) {
+            if (!Array.isArray(data[name])) {
+              data[name] = [data[name]];
+            }
+            data[name].push(value);
+          } else {
+            if (name === "studyID" && !value.length) continue;
+            data[name] = value;
+          }
+        }
+      }
+      forceArrayFields.forEach(field => {
+        if (!Array.isArray(data[field])) {
+          data[field] = data[field] !== undefined ? [data[field]] : [];
+        }
+      });
+      return data;
+    }    
+    function fillFormFromJson(form, data) {
+      for (let [name, value] of Object.entries(data)) {
+        const fields = form.querySelectorAll(`[name="${name}"]`);
+        if (!fields.length) continue;
+        fields.forEach(field => {
+          if (field.type === 'checkbox') {
+            if (Array.isArray(value)) {
+              field.checked = value.includes(field.value);
+            } else {
+              field.checked = value === true || value === field.value || value === "true";
+            }
+          } else if (field.type === 'radio') {
+            field.checked = (field.value === value);
+          } else {
+            field.value = value;
+          }
+        });
+      }
+    }
+    
+    //autosave form data to localstorage
+    function autosaveSettings(){
+      const form = document.getElementById('heatsuiteSettings');
+      const formjson = formDataToJson(form);
+      localStorage.setItem("heatuite__settings", JSON.stringify(formjson));
+    }
+    function readStorageJSONAsync(filename) {
+      return new Promise((resolve, reject) => {
+        Util.readStorageJSON(filename, function (data) {
+          try {
+            resolve(data || {});
+          } catch (err) {
+            reject(err);
+          }
+        });
+      });
+    }
+    function readStorageAsync(filename) {
+      return new Promise((resolve, reject) => {
+        Util.readStorageFile(filename, function (data) {
+          try {
+            resolve(data);
+          } catch (err) {
+            reject(err);
+          }
+        });
+      });
+    }
+    function downloadSingleFile(filename, callback) {
+      Util.readStorageFile(filename, (c) => {
+        let url;
+        let blob;
+        const a = document.createElement('a');
+        let fnArr = filename.split('_');
+    
+        if (fnArr[1] !== 'accel') {
+          blob = new Blob([c], { type: 'text/plain' });
+          url = URL.createObjectURL(blob);
+          if (callback) return callback(filename, blob); // Call with original blob
+        } else {
+          function secondsToClock(seconds) {
+            let h = Math.floor(seconds / 3600);
+            let m = Math.floor((seconds % 3600) / 60);
+            let s = seconds % 60;
+            return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':');
+          }
+          let csv = "time,seconds,mag_avg,mag_sum\n";
+          let lines = c.trim().split("\n");
+          for (let line of lines) {
+            let parts = line.split(",").map(v => parseInt(v, 10));
+            if (parts.length !== 3) continue;
+            let seconds = parts[0];
+            let avg = parts[1] / 8192;
+            let sum = parts[2] / 1024;
+            let time = secondsToClock(seconds);
+            csv += `${time},${seconds},${avg},${sum}\n`;
+          }
+          blob = new Blob([csv], { type: 'text/csv' });
+        }
+        if (callback) return callback(filename, blob); 
+        url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    }
+    function downloadAllFiles() {
+      console.log("Downloading all files", HeatSuiteFileList);
+      const zip = new JSZip();
+      let index = 0;
+      const progressEl = document.getElementById("progressElementHeatSuite");
+      if (progressEl) progressEl.textContent = "Preparing to download...";
+      function processNext() {
+        if (index >= HeatSuiteFileList.length) {
+          if (progressEl) progressEl.textContent = "Creating ZIP...";
+          zip.generateAsync({ type: "blob" }).then(content => {
+            const a = document.createElement('a');
+            const url = URL.createObjectURL(content);
+            a.href = url;
+            a.download = "all_files.zip";
+            a.click();
+            URL.revokeObjectURL(url);
+            if (progressEl) progressEl.textContent = "Download complete!";
+          });
+          return;
+        }
+        const filename = HeatSuiteFileList[index];
+        if (progressEl) progressEl.textContent = `Downloading file ${index + 1} of ${HeatSuiteFileList.length}: ${filename}`;
+        downloadSingleFile(filename, (name, blob) => {
+          zip.file(name, blob);
+          index++;
+          processNext();
+        });
+      }
+      processNext();
+    }
+    
+    function deleteFile(filename){
+      if (confirm(`Are you sure you want to delete ${filename}?`)) {
+        Util.eraseStorageFile(filename,(c) =>{
+          var filePrefix = settings.filePrefix || 'htst';
+          return Puck.eval('require("Storage").list(/^'+filePrefix+'/)',renderDownloadTab);
+        }); 
+      }
+    }
+    function deleteAllFiles() {
+      if (!confirm("Are you sure you want to delete all files?")) return;
+      console.log("Deleting all files", HeatSuiteFileList);
+      let index = 0;
+      const progressEl = document.getElementById("progressElementHeatSuite");
+      if (progressEl) progressEl.textContent = "Preparing to delete files...";
+      function processNext() {
+        if (index >= HeatSuiteFileList.length) {
+          if (progressEl) progressEl.textContent = "All files deleted.";
+          // Refresh the list via Puck/E.show
+          const filePrefix = settings.filePrefix || 'htst';
+          Puck.eval('require("Storage").list(/^' + filePrefix + '/)', renderDownloadTab);
+          return;
+        }
+        const filename = HeatSuiteFileList[index];
+        if (progressEl) progressEl.textContent = `Deleting file ${index + 1} of ${HeatSuiteFileList.length}: ${filename}`;
+        Util.eraseStorageFile(filename, () => {
+          index++;
+          processNext();
+        });
+      }
+      processNext(); // Start the chain
+    }
+    
+    function renderDownloadTabLogs(e){
+      var element = document.getElementById("downloadData-tab-content");
+      if(e.length > 0){
+
+      }else{
+          e.innerHTML = "No files to download.";
+      }
+    }
+    function renderDownloadTab(e){
+      HeatSuiteFileList = e.map(file => file.replace(/\x01$/, '')); //save it globally for later use...safer
+      var element = document.getElementById("downloadData-tab-content");
+      var tab_badge = document.getElementById("downloadData-tab-label");
+      if(HeatSuiteFileList.length > 0){
+        tab_badge.classList.add("badge");
+        tab_badge.dataset.badge = HeatSuiteFileList.length;
+        element.innerHTML = "";
+        HeatSuiteFileList.forEach((filename)=>{
+          element.insertAdjacentHTML('beforeend', `<tr id="file-${filename}"><td>${filename}</td><td><i class="icon icon-download" onclick="downloadSingleFile('${filename}');"></i>&nbsp; <i class="icon icon-delete" onclick="deleteFile('${filename}');"></i></td></tr>`);
+        });
+        element.insertAdjacentHTML('beforeend',`<tr id="end" class="text-bold"><td><button class="btn" onclick="downloadAllFiles();">Download All <i class="icon icon-download" ></i></button></td><td><button class="btn" onclick="">Delete All <i class="icon icon-delete" ></i></button> </td></tr>`);
+      }else{
+          tab_badge.classList.remove("badge");
+          tab_badge.dataset.badge = 0;
+          element.innerHTML = '<tr class="active"><td>No Files</td></tr>';
+      }
+    }
+    function onInit(device) {
+      let settings = {};
+      let promise = Promise.resolve();
+      promise = promise.then(() => {
+        return readStorageJSONAsync("heatsuite.default.json");
+      });
+      promise = promise.then(defaults => {
+        return readStorageJSONAsync("heatsuite.settings.json").then(user => {
+          settings = Object.assign({}, defaults, user);
+        });
+      });
+      promise = promise.then(() => {
+        const settingsForm = document.getElementById('heatsuiteSettings');
+        fillFormFromJson(settingsForm, settings);
+      });
+      promise = promise.then(() =>{
+        document.getElementById("downloadData-tab-content").innerHTML = '<div class="loading"></div>';;
+        var filePrefix = settings.filePrefix || 'htst';
+        return Puck.eval('require("Storage").list(/^'+filePrefix+'/)',renderDownloadTab);
+      });
+      //promise = promise.then(()=>{
+      //  return Puck.eval('require("Storage").list(heatsuite.log)',renderDownloadTabLogs);
+      //});
+      promise.catch(error => {
+        console.error("Error loading settings:", error);
+      });
+    }
+
+    const editors = {};
+    function initJsonEditor({ elementId, storageKey, defaultSchema, resetBtnId }) {
+      const container = document.getElementById(elementId);
+      const savedContent = localStorage.getItem(storageKey);
+      const initialContent = savedContent ? JSON.parse(savedContent) : defaultSchema;
+      const options = {
+        modes: ['tree', 'form', 'code', 'text'],
+        mode: 'code',
+        onChange: function () {
+          try {
+            const currentContent = editor.get();
+            localStorage.setItem(storageKey, JSON.stringify(currentContent));
+          } catch (err) {
+            console.error(`[${storageKey}] Invalid JSON not saved.`);
+          }
+        }
+      };
+      const editor = new JSONEditor(container, options);
+      editor.set(initialContent);
+      editors[storageKey] = { editor, defaultSchema };
+      if (resetBtnId) {
+        const resetBtn = document.getElementById(resetBtnId);
+        resetBtn.addEventListener('click', () => {
+          editor.set(defaultSchema);
+          localStorage.setItem(storageKey, JSON.stringify(defaultSchema));
+        });
+      }
+    }
+    window.onload = function () {
+      const studyIDInput = document.getElementById('input-studyID');
+      studyIDInput.addEventListener("input", () => {
+        studyIDInput.value = studyIDInput.value.replace(/[^a-zA-Z0-9]/g, '');
+      });
+      const filePrefixInput = document.getElementById('input-filePrefix');
+      filePrefixInput.addEventListener("input", () => {
+        filePrefixInput.value = filePrefixInput.value.replace(/[^a-zA-Z0-9]/g, '');
+      });
+      const settingsForm = document.getElementById('heatsuiteSettings');
+      settingsForm.addEventListener('input', autosaveSettings);
+      settingsForm.addEventListener('change', autosaveSettings);
+      const storedSettings = localStorage.getItem("heatuite__settings");
+      if (storedSettings) { //lets fill form:
+        fillFormFromJson(settingsForm, JSON.parse(storedSettings));
+      }
+      //initialize both JsonEditors for tasks and surveys
+      initJsonEditor({
+        elementId: 'heatsuite_taskFile_editor',
+        storageKey: 'heatsuite__taskFile',
+        defaultSchema: heatsuite__taskFile_defaultSchema,
+        resetBtnId: 'heatsuite_taskFile_resetBtn'
+      });
+      initJsonEditor({
+        elementId: 'heatsuite_surveyFile_editor',
+        storageKey: 'heatsuite__surveyFile',
+        defaultSchema: heatsuite__surveyFile_defaultSchema,
+        resetBtnId: 'heatsuite_surveyFile_resetBtn'
+      });
+    };
+
+    // When the 'upload' button is clicked...
+    document.getElementById("upload").addEventListener("click", function () {
+      const form = document.getElementById('heatsuiteSettings');
+      //TO DO VALIDATE jsonEditors!
+      sendCustomizedApp({
+        storage: [
+          { 'name': "heatsuite.settings.json", content: JSON.stringify(formDataToJson(form)) },
+          { "name": "heatsuite.tasks.json", content: JSON.stringify(editors['heatsuite__taskFile'].editor.get()) },
+          { "name": "heatsuite.survey.json", content: JSON.stringify(editors['heatsuite__surveyFile'].editor.get()) },
+        ]
+      });
+    });
+
+  </script>
+</body>
+
+</html>
