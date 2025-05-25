@@ -128,7 +128,7 @@ let dragHandler = function(e) {
       // setup volume knob here.
     cb(Math.sign(dx))
     resetOuterScopeVariables();
-    let volumeKnob = dial(cb, {stepsPerWholeTurn:7});
+    let volumeKnob = dial(cb);
     let timingOutVolumeKnob = (e)=>{
         if (!e.b) {
           setKnobTimeout();
@@ -159,19 +159,22 @@ let dragHandler = function(e) {
 
 let dial = function(cb, options) {
     "ram";
-    options = options || {};
-
     const SCREEN_W = g.getWidth();
     const SCREEN_H = g.getHeight();
 
-    const DIAL_RECT = options.dialRect || {
-      x: 0,
-      y: 0,
-      x2: SCREEN_W - 1,
-      y2: SCREEN_H - 1,
-      w: SCREEN_W,
-      h: SCREEN_H,
-    };
+    options = Object.assign(
+      { stepsPerWholeTurn : 8,
+        dialRect : {
+          x: 0,
+          y: 0,
+          x2: SCREEN_W - 1,
+          y2: SCREEN_H - 1,
+          w: SCREEN_W,
+          h: SCREEN_H,
+        },
+      }, options);
+
+    const DIAL_RECT = options.dialRect;
 
     const CENTER = {
       x: DIAL_RECT.x + DIAL_RECT.w / 2,
@@ -179,7 +182,7 @@ let dial = function(cb, options) {
     };
 
     const BASE_SCREEN_W = 176;
-    const STEPS_PER_TURN = options.stepsPerWholeTurn || 10;
+    const STEPS_PER_TURN = options.stepsPerWholeTurn;
     const BASE_THRESHOLD = 50;
     const THRESHOLD =
       BASE_THRESHOLD *
@@ -226,7 +229,7 @@ let dial = function(cb, options) {
 
       E.stopEventPropagation();
     }
-    
+
     return onDrag;
 /*
     if (exports.dial._handler) {
