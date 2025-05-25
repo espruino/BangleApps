@@ -1,89 +1,77 @@
-let Dial = function(cb, options) {
-    "ram";
-    const SCREEN_W = g.getWidth();
-    const SCREEN_H = g.getHeight();
+function Dial(cb, options) {
+  "ram";
+  const SCREEN_W = g.getWidth();
+  const SCREEN_H = g.getHeight();
 
-    options = Object.assign(
-      { stepsPerWholeTurn : 8,
-        dialRect : {
-          x: 0,
-          y: 0,
-          x2: SCREEN_W - 1,
-          y2: SCREEN_H - 1,
-          w: SCREEN_W,
-          h: SCREEN_H,
-        },
-      }, options);
+  options = Object.assign(
+    { stepsPerWholeTurn : 8,
+      dialRect : {
+        x: 0,
+        y: 0,
+        x2: SCREEN_W - 1,
+        y2: SCREEN_H - 1,
+        w: SCREEN_W,
+        h: SCREEN_H,
+      },
+    }, options);
 
-    const DIAL_RECT = options.dialRect;
+  const DIAL_RECT = options.dialRect;
 
-    const CENTER = {
-      x: DIAL_RECT.x + DIAL_RECT.w / 2,
-      y: DIAL_RECT.y + DIAL_RECT.h / 2,
-    };
+  const CENTER = {
+    x: DIAL_RECT.x + DIAL_RECT.w / 2,
+    y: DIAL_RECT.y + DIAL_RECT.h / 2,
+  };
 
-    const BASE_SCREEN_W = 176;
-    const STEPS_PER_TURN = options.stepsPerWholeTurn;
-    const BASE_THRESHOLD = 50;
-    const THRESHOLD =
-      BASE_THRESHOLD *
+  const BASE_SCREEN_W = 176;
+  const STEPS_PER_TURN = options.stepsPerWholeTurn;
+  const BASE_THRESHOLD = 50;
+  const THRESHOLD =
+    BASE_THRESHOLD *
       (10 / STEPS_PER_TURN) *
       (DIAL_RECT.w / BASE_SCREEN_W);
 
-    let cumulative = 0;
+  let cumulative = 0;
 
-    function onDrag(e) {
-      "ram";
+  function onDrag(e) {
+    "ram";
 
-      if (
-        e.x < DIAL_RECT.x ||
+    if (
+      e.x < DIAL_RECT.x ||
         e.x > DIAL_RECT.x2 ||
         e.y < DIAL_RECT.y ||
         e.y > DIAL_RECT.y2
-      ) {
-        return;
-      }
-
-      if (e.y < CENTER.y) {
-        cumulative += e.dx;
-      } else {
-        cumulative -= e.dx;
-      }
-
-      if (e.x < CENTER.x) {
-        cumulative -= e.dy;
-      } else {
-        cumulative += e.dy;
-      }
-
-      function stepHandler(step) {
-        cumulative -= THRESHOLD * step;
-        cb(step);
-      }
-
-      while (cumulative > THRESHOLD) {
-        stepHandler(1);
-      }
-      while (cumulative < -THRESHOLD) {
-        stepHandler(-1);
-      }
-
-      E.stopEventPropagation();
+    ) {
+      return;
     }
 
-    return onDrag;
-/*
-    if (exports.dial._handler) {
-      Bangle.removeListener("drag", dial._handler);
+    if (e.y < CENTER.y) {
+      cumulative += e.dx;
+    } else {
+      cumulative -= e.dx;
     }
 
-    exports.dial._handler = onDrag;
-    Bangle.prependListener("drag", onDrag);
-    
-    Bangle.prependListener("swipe", ()=>{ 
-      E.stopEventPropagation();
+    if (e.x < CENTER.x) {
+      cumulative -= e.dy;
+    } else {
+      cumulative += e.dy;
     }
-                          );*/
-  };
+
+    function stepHandler(step) {
+      cumulative -= THRESHOLD * step;
+      cb(step);
+    }
+
+    while (cumulative > THRESHOLD) {
+      stepHandler(1);
+    }
+    while (cumulative < -THRESHOLD) {
+      stepHandler(-1);
+    }
+
+    E.stopEventPropagation();
+  }
+
+  return onDrag;
+}
 
 exports = Dial;
