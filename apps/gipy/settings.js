@@ -11,6 +11,7 @@
             power_lcd_off: false,
             powersave_by_default: false,
             sleep_between_waypoints: false,
+            keep_gps_alive: true
         },
         require("Storage").readJSON(FILE, true) || {}
     );
@@ -97,6 +98,14 @@
                 settings.sleep_between_waypoints = v;
                 writeSettings();
             }
-        }
+        },
+        "keep gps alive": {
+          value: !!settings.keep_gps_alive, // !! converts undefined to false
+          format: (v) => (v ? "Yes" : "No"),
+          onchange: (v) => {
+            settings.keep_gps_alive = v;
+            writeSettings();
+          },
+        },
     });
 })
