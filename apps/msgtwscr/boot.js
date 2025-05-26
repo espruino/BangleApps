@@ -10,7 +10,12 @@
       if (global.__FILE__=="messagegui.new.js") {
         onTwistEmitDrag();
       }
-    },700) // It feels like there's a more elegant solution than checking the filename after 700 milliseconds. But this at least seems to work w/o sometimes activating when it shouldn't.
+    },1000)
+    // It feels like there's a more elegant solution than checking the filename
+    // after 1000 milliseconds. But this at least seems to work w/o sometimes
+    // activating when it shouldn't.
+    // Maybe we could add events for when fast load and/or Bangle.uiRemove occurs?
+    // Then that could be used similarly to boot code and/or the `kill` event.
   }});
 
   // twistThreshold How much acceleration to register a twist of the watch strap? Can be negative for opposite direction. default = 800
@@ -18,16 +23,30 @@
   // twistTimeout How little time (in ms) must a twist take from low->high acceleration? default = 1000
   function onTwistEmitDrag() {
     Bangle.setOptions({twistThreshold:2500, twistMaxY:-800, twistTimeout:400});
-    Bangle.on("twist", ()=>{
+    let twistHandler = ()=>{
       Bangle.setLocked(false);
       Bangle.setLCDPower(true);
+      Bangle.emit("swipe",0,-1);
       let i = 25;
       const int = setInterval(() => {
         Bangle.emit("drag", {dy:-3})
         i--;
         if (i<1) clearInterval(int);
       }, 10);
-    });
+    }
+    Bangle.on("twist", twistHandler);
+    // Give messagegui some extra time to add its remove function to
+    // Bangle.uiRemove, then attach msgtwscr remove logic.
+    setTimeout(
+      ()=>{if (Bangle.uiRemove) {
+        let showMessageUIRemove = Bangle.uiRemove;
+        Bangle.uiRemove = function () {
+          Bangle.removeListener("twist", twistHandler)
+          showMessageUIRemove();
+        }
+      }},
+      500
+    )
 
   }
 }
