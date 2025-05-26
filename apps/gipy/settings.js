@@ -101,7 +101,6 @@
         },
         "keep gps alive": {
           value: !!settings.keep_gps_alive, // !! converts undefined to false
-          format: (v) => (v ? "Yes" : "No"),
           onchange: (v) => {
             settings.keep_gps_alive = v;
             writeSettings();
