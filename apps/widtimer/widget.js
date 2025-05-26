@@ -28,7 +28,15 @@
   const BUZZ_TOTAL_TIME = 5000; // 5 seconds total
   
   /** Gesture control constants */
-  const DOUBLE_SWIPE_TIMEOUT = 1500; // 1.5 seconds between swipes
+  const UNLOCK_GESTURE_TIMEOUT = 1500; // milliseconds before unlock gesture has to be started from scratcb
+  const UNLOCK_CONTROL_TIMEOUT = 5000; // milliseconds before gesture control locks again 
+  const DIRECTION_LEFT = "left";
+  const DIRECTION_RIGHT = "right";
+  const DIRECTION_UP = "up";
+  const DIRECTION_DOWN = "down";
+
+
+
 
   // =============================================================================
   // STATE VARIABLES
@@ -208,6 +216,19 @@
     WIDGETS["widtimer"].draw();
   }
 
+  function isHorizontal(direction) {
+    return (direction == DIRECTION_LEFT) || (direction == DIRECTION_RIGHT)
+  }
+
+  function isVertical(direction) {
+    return (direction == DIRECTION_UP) || (direction == DIRECTION_DOWN)
+  }
+
+  function isUnlockGesture(first_direction, second_direction) {
+    return (isHorizontal(first_direction) && isVertical(second_direction)
+      || isVertical(first_direction) && isHorizontal(second_direction)) 
+  }
+
   /**
    * Set up gesture handlers with double-swipe protection against accidental activation
    */
@@ -254,15 +275,15 @@
             if (!isControlLocked) {
               // Controls unlocked - execute adjustment immediately
               adjustTimer(adjustment);
-            } else if (lastSwipeDirection === direction && 
-                       currentTime - lastSwipeTime < DOUBLE_SWIPE_TIMEOUT) {
+            } else if (isUnlockGesture(direction, lastSwipeDirection) && 
+                       currentTime - lastSwipeTime < UNLOCK_GESTURE_TIMEOUT) {
               // Double swipe detected - unlock controls and execute
               isControlLocked = false;
-              adjustTimer(adjustment);
+              // adjustTimer(adjustment);
               Bangle.buzz(50); // Provide unlock feedback
 
-              // Auto-lock after 10 seconds of inactivity
-              setTimeout(resetUnlock, 10000);
+              // Auto-lock after `UNLOCK_CONTROL_TIMEOUT` seconds of inactivity
+              setTimeout(resetUnlock, UNLOCK_CONTROL_TIMEOUT);
             }
 
             // Update gesture tracking state
