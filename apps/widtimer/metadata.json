@@ -4,9 +4,9 @@
   "shortName": "WidTimer",
   "version": "0.03",
   "description": "Timer widget with swipe controls. Double-swipe in any direction to unlock, then single swipes work: right/left ±1min, up/down ±10min. Will buzz upon timer completion.",
-  "icon": "widget.png",
+  "icon": "widtimer.png",
   "type": "widget",
-  "tags": "widget,timer,gesture,battery-optimized",
+  "tags": "widget,timer,gesture",
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"widtimer.wid.js","url":"widget.js"}
