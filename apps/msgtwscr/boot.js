@@ -10,9 +10,9 @@
       if (global.__FILE__=="messagegui.new.js") {
         onTwistEmitDrag();
       }
-    },1000)
+    },700)
     // It feels like there's a more elegant solution than checking the filename
-    // after 1000 milliseconds. But this at least seems to work w/o sometimes
+    // after 700 milliseconds. But this at least seems to work w/o sometimes
     // activating when it shouldn't.
     // Maybe we could add events for when fast load and/or Bangle.uiRemove occurs?
     // Then that could be used similarly to boot code and/or the `kill` event.
@@ -45,8 +45,6 @@
           showMessageUIRemove();
         }
       }},
-      500
-    )
-
+      800)
   }
 }
