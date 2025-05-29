@@ -2,7 +2,8 @@
 const defaultSettings = {
   loadWidgets    : false,
   textAboveHands : false,
-  shortHrHand    : false
+  shortHrHand    : false,
+  weekdayNoYear  : false
 };
 const settings = Object.assign(defaultSettings, require('Storage').readJSON('andark.json',1)||{});
 
@@ -65,7 +66,9 @@ const drawText = function(d) {
   g.setFont("Vector",10);
   g.setBgColor(0,0,0);
   g.setColor(1,1,1);
-  const dateStr = require("locale").date(d);
+  const dateStr = settings.weekdayNoYear
+    ? require("locale").dow(d, 1)+" "+d.getDate()+" "+require("locale").month(d, 1)
+    : require("locale").date(d);
   g.drawString(dateStr, c.x, c.y+20, true);
   const batStr = Math.round(E.getBattery()/5)*5+"%";
   if (Bangle.isCharging()) {

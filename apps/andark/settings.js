@@ -2,7 +2,8 @@
   const defaultSettings = {
     loadWidgets    : false,
     textAboveHands : false,
-    shortHrHand    : false
+    shortHrHand    : false,
+    weekdayNoYear  : false
   }
   let settings = Object.assign(defaultSettings, require('Storage').readJSON('andark.json',1)||{});
 
@@ -21,6 +22,10 @@
     /*LANG*/'Short hour hand': {
       value : !!settings.shortHrHand,
       onchange : v => { settings.shortHrHand=v; save();}
+    },
+    /*LANG*/'Show weekday not year': {
+      value : !!settings.weekdayNoYear,
+      onchange : v => { settings.weekdayNoYear=v; save();}
     },
   };
 
