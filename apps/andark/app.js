@@ -3,7 +3,8 @@ const defaultSettings = {
   loadWidgets    : false,
   textAboveHands : false,
   shortHrHand    : false,
-  weekdayNoYear  : false
+  weekdayNoYear  : false,
+  noBattery      : false
 };
 const settings = Object.assign(defaultSettings, require('Storage').readJSON('andark.json',1)||{});
 
@@ -63,18 +64,23 @@ const drawHands = function(d) {
 };
 
 const drawText = function(d) {
-  g.setFont("Vector",10);
   g.setBgColor(0,0,0);
   g.setColor(1,1,1);
   const dateStr = settings.weekdayNoYear
     ? require("locale").dow(d, 1)+" "+d.getDate()+" "+require("locale").month(d, 1)
     : require("locale").date(d);
-  g.drawString(dateStr, c.x, c.y+20, true);
   const batStr = Math.round(E.getBattery()/5)*5+"%";
-  if (Bangle.isCharging()) {
-    g.setBgColor(1,0,0);
+  if (settings.noBattery) {
+    g.setFont("Vector",13);
+    g.drawString(dateStr, c.x, c.y+25, true);
+  } else {
+    g.setFont("Vector",10);
+    g.drawString(dateStr, c.x, c.y+20, true);
+    if (Bangle.isCharging()) {
+      g.setBgColor(1,0,0);
+    }
+    g.drawString(batStr, c.x, c.y+40, true);
   }
-  g.drawString(batStr, c.x, c.y+40, true);
 };
 
 const drawNumbers = function() {

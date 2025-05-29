@@ -15,3 +15,4 @@
 * date and battery can be printed both below hands (as if hands were physical) and above (more readable)
 * hour hand can be made slighly shorter to improve readability when minute hand is behind a number
 * show the weekday and not the year
+* hide the battery percentage

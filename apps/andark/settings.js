@@ -3,7 +3,8 @@
     loadWidgets    : false,
     textAboveHands : false,
     shortHrHand    : false,
-    weekdayNoYear  : false
+    weekdayNoYear  : false,
+    noBattery      : false
   }
   let settings = Object.assign(defaultSettings, require('Storage').readJSON('andark.json',1)||{});
 
@@ -26,6 +27,10 @@
     /*LANG*/'Show weekday not year': {
       value : !!settings.weekdayNoYear,
       onchange : v => { settings.weekdayNoYear=v; save();}
+    },
+    /*LANG*/'Hide the battery': {
+      value : !!settings.noBattery,
+      onchange : v => { settings.noBattery=v; save();}
     },
   };
 
