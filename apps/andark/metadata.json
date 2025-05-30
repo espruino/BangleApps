@@ -6,8 +6,9 @@
   "icon": "andark_icon.png",
   "type": "clock",
   "tags": "clock",
+  "allow_emulator": true,
   "supports" : ["BANGLEJS2"],
-  "screenshots": [{"url":"andark_screen.png"}],
+  "screenshots": [{"url":"andark_screen.png"},{"url":"andark_screen_light_weekday_nobatt.png"}],
   "readme": "README.md",
   "storage": [
     {"name":"andark.app.js","url":"app.js"},

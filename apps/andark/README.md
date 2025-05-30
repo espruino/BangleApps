@@ -7,7 +7,13 @@
 * battery percentage (showing charge status with color)
 * turned off or swipeable widgets (choose in settings)
 
-![logo](andark_screen.png)
+![Screenshot of Dark Analog Clock with default settings](andark_screen.png)
+
+*Default settings*
+
+![Screenshot of Dark Analog Clock with default settings](andark_screen_light_weekday_nobatt.png)
+
+*Following system theme, with weekday shown and battery hidden*
 
 ## Settings
 
