@@ -4,7 +4,8 @@
     textAboveHands : false,
     shortHrHand    : false,
     weekdayNoYear  : false,
-    noBattery      : false
+    noBattery      : false,
+    darkTheme      : true
   }
   let settings = Object.assign(defaultSettings, require('Storage').readJSON('andark.json',1)||{});
 
@@ -31,6 +32,10 @@
     /*LANG*/'Hide the battery': {
       value : !!settings.noBattery,
       onchange : v => { settings.noBattery=v; save();}
+    },
+    /*LANG*/'Dark theme': {
+      value : !!settings.darkTheme,
+      onchange : v => { settings.darkTheme=v; save();}
     },
   };
 

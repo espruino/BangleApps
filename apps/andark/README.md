@@ -16,3 +16,4 @@
 * hour hand can be made slighly shorter to improve readability when minute hand is behind a number
 * show the weekday and not the year
 * hide the battery percentage
+* dark theme (enabled by default); disable to follow system theme
