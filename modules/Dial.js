@@ -8,8 +8,6 @@ function Dial(cb, options) {
       dialRect : {
         x: 0,
         y: 0,
-        x2: SCREEN_W - 1,
-        y2: SCREEN_H - 1,
         w: SCREEN_W,
         h: SCREEN_H,
       },
@@ -37,9 +35,9 @@ function Dial(cb, options) {
 
     if (
       e.x < DIAL_RECT.x ||
-        e.x > DIAL_RECT.x2 ||
+        e.x > DIAL_RECT.x+DIAL_RECT.w-1 ||
         e.y < DIAL_RECT.y ||
-        e.y > DIAL_RECT.y2
+        e.y > DIAL_RECT.y+DIAL_RECT.h-1
     ) {
       return;
     }
