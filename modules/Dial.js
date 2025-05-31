@@ -4,7 +4,7 @@ function Dial(cb, options) {
   const SCREEN_H = g.getHeight();
 
   options = Object.assign(
-    { stepsPerWholeTurn : 8,
+    { stepsPerWholeTurn : 7, // 7 chosen as it felt the best in use.
       dialRect : {
         x: 0,
         y: 0,
