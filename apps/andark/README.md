@@ -21,5 +21,5 @@
 * date and battery can be printed both below hands (as if hands were physical) and above (more readable)
 * hour hand can be made slighly shorter to improve readability when minute hand is behind a number
 * show the weekday and not the year
-* hide the battery percentage
+* hide the battery percentage; the font for the date is increased since there is more space
 * dark theme (enabled by default); disable to follow system theme

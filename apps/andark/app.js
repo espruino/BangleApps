@@ -9,6 +9,7 @@ const defaultSettings = {
 };
 const settings = Object.assign(defaultSettings, require('Storage').readJSON('andark.json',1)||{});
 
+const origTheme = g.theme;
 if (settings.darkTheme) {
   g.setTheme({bg: "#000"});
   g.setTheme({fg: "#FFF"});
@@ -168,6 +169,7 @@ const drawScale = function() {
 Bangle.setUI({
   mode: "clock",
   remove: function() {
+    if (settings.darkTheme) g.setTheme(origTheme);
     Bangle.removeListener('lcdPower', updateState);
     Bangle.removeListener('lock', updateState);
     Bangle.removeListener('charging', draw);
