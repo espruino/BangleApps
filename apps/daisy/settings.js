@@ -58,7 +58,7 @@ function save() {
   var ring_options = ['Hours', 'Minutes', 'Seconds', 'Day', 'Sun', 'Steps', 'Battery'];
   var ring_types = ['None', 'Full', 'Semi', 'C'];
   var step_options = [100, 1000, 5000, 10000, 15000, 20000];
-  var color_options_font = ['Outer', 'Inner'].concat(color_options);
+  var color_options_font = ['Outer', 'Inner', 'Fullest'].concat(color_options);
   var fg_code_font = [null, null].concat(color_options);
 
   function showRingMenu(ringIndex) {
