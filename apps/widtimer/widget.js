@@ -188,10 +188,6 @@
       settings.totalTime = Math.max(0, settings.totalTime + seconds);
       remainingTime = settings.totalTime;
 
-      // Auto-start if time > 0
-      if (settings.totalTime > 0) {
-        startTimer();
-      }
     }
 
     saveSettings();
@@ -281,6 +277,11 @@
               isControlLocked = false;
               // adjustTimer(adjustment);
               Bangle.buzz(50); // Provide unlock feedback
+
+              // Auto-start if time > 0
+              if (settings.totalTime > 0) {
+                startTimer();
+              }
 
               // Auto-lock after `UNLOCK_CONTROL_TIMEOUT` seconds of inactivity
               setTimeout(resetUnlock, UNLOCK_CONTROL_TIMEOUT);
