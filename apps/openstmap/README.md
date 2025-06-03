@@ -45,6 +45,22 @@ The map displays:
 * Your currently recorded/recording track in red (if the `Recorder` app is installed)
 * Any waypoints as red markers (if the `Waypoint` app is installed)
 
+## Bangle.js App Settings
+
+Pressing the button while in the app and unlocked brings up the settings menu:
+
+* `Center GPS` - (if GPS lock available) centre the map on the GPS location
+* `Zoom in` - zooms in on the map (tapping bottom left in the map also does this)
+* `Zoom out` - zooms out on the map (tapping bottom right in the map also does this)
+* `Draw Track` - if `Recorder` is installed this will draw the current GPS track in red
+* `Draw cont. position` - will leaves a series of red dots on screen marking your previous GPS position (these disappear when you scroll)
+* `Hide Widgets` - hide the widget bar to leave more space for the map
+* `Autoscroll` - then the GPS marker starts going offscreen, scroll to show it again
+* `Direction Source` - (Bangle.js 2 only) `None/GPS/Compass` When showing the direction with the GPS marker where to get the direction from. If `None` a GPS marker isn't shown
+* `Reset Compass` - reset the compass (if calibration has gone wrong - turn in a circle immediately after to recalibrate)
+* `Center Map` - Center the view on the current map (not GPS)
+* `Record` - If `Recorder` app is installed, start/stop recording
+* `Exit` - Exit to the Clock
 
 ## Library
 

@@ -6,11 +6,12 @@ var settings = require("Storage").readJSON("openstmap.json",1)||{};
 var HASWIDGETS = !settings.noWidgets;
 var plotTrack;
 let checkMapPos = false; // Do we need to check the if the coordinates we have are valid
-var startDrag = 0; //< to detect a short tap when zooming
+var startDrag = undefined; //< to detect a short tap when zooming
 var hasRecorder = require("Storage").read("recorder")!=undefined; // do we have the recorder library?
 var hasWaypoints = require("Storage").read("waypoints")!=undefined; // do we have the recorder library?
 var labelFont = g.getFonts().includes("17")?"17":"6x8:2";
 var imgLoc, ovLoc, ovSize = 34; /*Math.ceil(Math.sqrt(imgLoc[0]*imgLoc[0]+imgLoc[1]*imgLoc[1]))*/
+var locOnscreen = undefined; // is the GPS location currently onscreen?
 
 if (Bangle.setLCDOverlay) {
   // Icon for current location+direction: https://icons8.com/icon/11932/gps 24x24, 1 Bit + transparency + inverted
@@ -117,28 +118,29 @@ function drawLocation() {
   }
 
   var p = m.latLonToXY(fix.lat, fix.lon);
-  // TODO: if this is getting off the screen, we could adjust the map over? Also show marker to show what direction we're offscreen
-
   ovLoc.clear();
-
-  if (isInside(R, p, ovLoc.getWidth(), ovLoc.getHeight())) { // avoid drawing over widget area
+  locOnscreen = isInside(R, p, ovLoc.getWidth(), ovLoc.getHeight());
+  if (locOnscreen) { // if we're onscreen, draw the course
     const angle = settings.dirSrc === 1 ? fix.course : Bangle.getCompass().heading;
-    if (!isNaN(angle)) {
+    if (isNaN(angle)) {
+      ovLoc.fillCircle(ovSize/2,ovSize/2,8);
+    } else {
       ovLoc.drawImage(imgLoc, ovLoc.getWidth()/2, ovLoc.getHeight()/2, {rotate: angle*Math.PI/180});
     }
-  } else { // if off-screen, draw a blue dot on the edge
-    var mx = (R.x+R.x2)/2, my = (R.y+R.y2)/2;
-    var dy = p.y - mx, dx = p.x - my;
+  } else { // if off-screen, draw a blue circle on the edge
+    var mx = R.w/2, my = R.h/2;
+    var dy = p.y - (R.y+my), dx = p.x - mx;
+    ovLoc.fillCircle(ovSize/2,ovSize/2,16);
     if (Math.abs(dx)>Math.abs(dy)) {
       dy = mx * dy / Math.abs(dx);
       dx = mx * Math.sign(dx);
     } else {
+      if (dy<0) ovLoc.clearRect(0,0,ovSize, (ovSize/2)-1); // so we don't overlap widgets!
       dx = my * dx / Math.abs(dy);
       dy = my * Math.sign(dy);
     }
     p.x = mx+dx;
-    p.y = my+dy;
-    ovLoc.fillCircle(ovSize/2,ovSize/2,16);
+    p.y = R.y+my+dy;
   }
   Bangle.setLCDOverlay({width:ovSize, height:ovSize,
           bpp:ovLoc.getBPP(), transparent:0,
@@ -152,7 +154,22 @@ function drawLocation() {
 Bangle.on('GPS',function(f) {
   fix=f;
   if (HASWIDGETS && WIDGETS["sats"]) WIDGETS["sats"].draw(WIDGETS["sats"]);
-  if (mapVisible) {
+  if (mapVisible) { // could be in settings
+    // Automatically scroll if GPS is going offscreen and not dragging
+    if (settings.autoscroll && fix.fix && startDrag===undefined) {
+      if (locOnscreen) { // if we were onscreen last time we drew the location
+        var p = m.latLonToXY(fix.lat, fix.lon); // where are we onscreen?
+        var sx=0,sy=0;
+        if (p.x<R.x+32) sx = 1;
+        if (p.y<R.y+32) sy = 1;
+        if (p.x>R.x2-32) sx = -1;
+        if (p.y>R.y2-32) sy = -1;
+        if (sx||sy) {
+          scroll(sx*80,sy*80);
+          redraw();
+        }
+      }
+    }
     drawMarker();
     drawLocation();
   }
@@ -217,6 +234,10 @@ function showMenu() {
     value : !!settings.noWidgets,
     onchange : v => { settings.noWidgets=v; writeSettings(); load("openstmap.app.js"); }
   },
+  /*LANG*/"Autoscroll": {
+    value : !!settings.autoscroll,
+    onchange : v => { settings.autoscroll=v; writeSettings(); }
+  },
   });
 
 
@@ -258,6 +279,13 @@ function showMenu() {
   E.showMenu(menu);
 }
 
+function scroll(sx,sy) {
+  g.setClipRect(R.x,R.y,R.x2,R.y2);
+  g.scroll(sx,sy);
+  m.scroll(sx,sy);
+  g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1); // restore cliprect
+}
+
 function showMap() {
   mapVisible = true;
   g.reset().clearRect(R);
@@ -265,18 +293,15 @@ function showMap() {
   Bangle.setUI({mode:"custom",drag:e=>{
     if (plotTrack && plotTrack.stop) plotTrack.stop();
     if (e.b) {
-      if (!startDrag)
+      if (startDrag===undefined)
         startDrag = getTime();
       if (e.dx || e.dy) {
-        g.setClipRect(R.x,R.y,R.x2,R.y2);
-        g.scroll(e.dx,e.dy);
-        m.scroll(e.dx,e.dy);
-        g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
+        scroll(e.dx,e.dy);
       }
       drawLocation();
-    } else if (startDrag) {
+    } else if (startDrag!==undefined) {
       const delta = getTime() - startDrag;
-      startDrag = 0;
+      startDrag = undefined;
       if (delta < 0.2) { // short tap?
         if (e.y > g.getHeight() - 32) { // at bottom egde?
           if (e.x < 32) { // zoom in/out
