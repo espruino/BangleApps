@@ -2,7 +2,7 @@
     "id":"mosaic-plus",
     "name":"Mosaic Clock +",
     "shortName": "Mosaic Clock +",
-    "version": "0.5",
+    "version": "0.05",
     "description": "A fabulously colourful clock - plus weekday and battery bar.",
     "readme": "README.md",
     "icon":"mosaic-plus.png",
