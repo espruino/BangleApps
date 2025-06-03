@@ -118,7 +118,7 @@ function drawLocation() {
   }
 
   var p = m.latLonToXY(fix.lat, fix.lon);
-  ovLoc.setBgColor(1).clear().setBgColor(0);
+  ovLoc.setBgColor(1/*transparent*/).clear().setBgColor(0);
   locOnscreen = isInside(R, p, ovSize, ovSize);
   if (locOnscreen) { // if we're onscreen, draw the course
     const angle = settings.dirSrc === 1 ? fix.course : Bangle.getCompass().heading;
@@ -130,13 +130,13 @@ function drawLocation() {
   } else { // if off-screen, draw a blue circle on the edge
     var mx = R.w/2, my = R.h/2;
     var dy = p.y - (R.y+my), dx = p.x - mx;
-    ovLoc.fillCircle(ovSize/2,ovSize/2,15);
+    ovLoc.fillCircle(ovSize/2,ovSize/2,13);
     if (Math.abs(dx)>Math.abs(dy)) {
-      dy = mx * dy / Math.abs(dx);
+      dy = my * dy / Math.abs(dx);
       dx = mx * Math.sign(dx);
     } else {
-      if (dy<0) ovLoc.clearRect(0,0,ovSize, (ovSize/2)-1); // so we don't overlap widgets!
-      dx = my * dx / Math.abs(dy);
+      if (dy<0) ovLoc.setBgColor(1/*transparent*/).clearRect(0,0,ovSize, (ovSize/2)-1); // so we don't overlap widgets!
+      dx = mx * dx / Math.abs(dy);
       dy = my * Math.sign(dy);
     }
     p.x = mx+dx;
