@@ -359,18 +359,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "apps/coretemp/settings.js": {
-    "hash": "b5aa84ecab587b444028b4491b2c2e8f3b2303aa33745265ab629c6ff5141cfb",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
-  "apps/coretemp/boot.js": {
-    "hash": "02ee3a04d7dc485367394a91e570affd712ab919bbb155bdafc00e534d3bcd4a",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "apps/configurable_clock/app.js": {
     "hash": "09d1d02b63abc4ecea5e00a7372de7150ccfe67c2502ff5d298ec7b8e29c353b",
     "rules": [
@@ -981,12 +969,6 @@ module.exports = {
   },
   "apps/cprassist/cprassist.js": {
     "hash": "647f0a1b3dc52466079049a68c27448c18693df8deb1eb8e04ff84fcb93c323e",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/coretemp/coretemp.js": {
-    "hash": "7230802388f9cbb7026ce0e94ced6656dc79a411ef7740279ec82eb4fc892d48",
     "rules": [
       "no-undef"
     ]
