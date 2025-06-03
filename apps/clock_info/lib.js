@@ -138,7 +138,7 @@ exports.load = function() {
           NRF.wake();
           Bluetooth.setConsole(1);
         }
-        this.emit("redraw");
+        setTimeout(() => this.emit("redraw"), 250);
       },
       show: function(){},
       hide: function(){},
