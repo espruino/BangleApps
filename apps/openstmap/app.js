@@ -10,14 +10,14 @@ var startDrag = undefined; //< to detect a short tap when zooming
 var hasRecorder = require("Storage").read("recorder")!=undefined; // do we have the recorder library?
 var hasWaypoints = require("Storage").read("waypoints")!=undefined; // do we have the recorder library?
 var labelFont = g.getFonts().includes("17")?"17":"6x8:2";
-var imgLoc, ovLoc, ovSize = 34; /*Math.ceil(Math.sqrt(imgLoc[0]*imgLoc[0]+imgLoc[1]*imgLoc[1]))*/
+var imgLoc, ovLoc, ovSize = 30; /*Math.ceil(Math.sqrt(imgLoc[0]*imgLoc[0]+imgLoc[1]*imgLoc[1]))*/
 var locOnscreen = undefined; // is the GPS location currently onscreen?
 
 if (Bangle.setLCDOverlay) {
-  // Icon for current location+direction: https://icons8.com/icon/11932/gps 24x24, 1 Bit + transparency + inverted
-  imgLoc = require("heatshrink").decompress(atob("jEYwINLAQk8AQl+AQn/AQcB/+AAQUD//AAQUH//gAQUP//wAQUf//4j8AvA9IA=="));
+  // Icon for current location + direction (icon_gps.png, 2 bit bw, transparent)
+  imgLoc = atob("EBiCAVVQBVVVU8VVVVPFVVVDwVVVT/FVVU/xVVUP8FVVP/xVVT/8VVQ//BVU//8VVP//FVD//wVT///FU///xUP//8FP///xD/AP8D/BQ/w/BVD8PxVU/AAVVABVVVVVVVVVVQ==");
   // overlay buffer for current location, a bit bigger then image so we can rotate
-  ovLoc = Graphics.createArrayBuffer(ovSize,ovSize,imgLoc[2] & 0x7f,{msb:true});
+  ovLoc = Graphics.createArrayBuffer(ovSize,ovSize,2,{msb:true});
 }
 
 if (settings.lat !== undefined && settings.lon !== undefined && settings.scale !== undefined) {
@@ -78,12 +78,12 @@ function drawPOI() {
   }
   if (!waypoints) return;
   g;
-   var img = atob("DRXCAP//APgfAAAAAFVAAVVVAVVVUFUBVFUAFVVABVVQAVRVAVQVVVUBVVUAVVVABVVAAVVQABVQAAVUAABUAACVgACJiACISIAIiIAAiIAA");
+   var img = atob("ERnCAQD4/////x8AVWqqVVWoAKlVoAAClaAAAClgAqACaAJWAKgCVWAKAJVYAoAlVgCoAlYApgAqACVgAAApWAAACVWAAApVYAACVVYAApVVgACVVVgApVVWACVVVeAtVVXcDdVV3s7dVd3i3dVd3t3VVd3d1UA="); // icon_place.png optimal 2 bit + transparent
   g.setFont(labelFont).setFontAlign(-1,0);
   waypoints.forEach((wp, idx) => {
     if (wp.lat === undefined || wp.lon === undefined) return;
     var p = m.latLonToXY(wp.lat, wp.lon);
-    g.setColor("#fff").drawImage(img, p.x-6, p.y-18);
+    g.setColor("#fff").drawImage(img, p.x-8, p.y-22);
     g.setColor(0).drawString(wp.name, p.x+8, p.y);
   });
 }
@@ -118,19 +118,19 @@ function drawLocation() {
   }
 
   var p = m.latLonToXY(fix.lat, fix.lon);
-  ovLoc.clear();
-  locOnscreen = isInside(R, p, ovLoc.getWidth(), ovLoc.getHeight());
+  ovLoc.setBgColor(1).clear().setBgColor(0);
+  locOnscreen = isInside(R, p, ovSize, ovSize);
   if (locOnscreen) { // if we're onscreen, draw the course
     const angle = settings.dirSrc === 1 ? fix.course : Bangle.getCompass().heading;
     if (isNaN(angle)) {
       ovLoc.fillCircle(ovSize/2,ovSize/2,8);
     } else {
-      ovLoc.drawImage(imgLoc, ovLoc.getWidth()/2, ovLoc.getHeight()/2, {rotate: angle*Math.PI/180});
+      ovLoc.drawImage(imgLoc, ovSize/2, ovSize/2, {rotate: angle*Math.PI/180});
     }
   } else { // if off-screen, draw a blue circle on the edge
     var mx = R.w/2, my = R.h/2;
     var dy = p.y - (R.y+my), dx = p.x - mx;
-    ovLoc.fillCircle(ovSize/2,ovSize/2,16);
+    ovLoc.fillCircle(ovSize/2,ovSize/2,15);
     if (Math.abs(dx)>Math.abs(dy)) {
       dy = mx * dy / Math.abs(dx);
       dx = mx * Math.sign(dx);
@@ -143,8 +143,8 @@ function drawLocation() {
     p.y = R.y+my+dy;
   }
   Bangle.setLCDOverlay({width:ovSize, height:ovSize,
-          bpp:ovLoc.getBPP(), transparent:0,
-          palette:new Uint16Array([0, g.toColor("#00F")]),
+          bpp:ovLoc.getBPP(), transparent:1,
+          palette:new Uint16Array([g.toColor("#FFF"), 0, 0, g.toColor("#00F")]),
           buffer:ovLoc.buffer
         }, p.x-ovSize/2, p.y-ovSize/2);
 
