@@ -6,7 +6,7 @@ allows you to use the maps in your Bangle.js applications.
 
 ## Uploader
 
-Once you've installed OpenStreepMap on your Bangle, find it
+Once you've installed OpenStreetMap on your Bangle, find it
 in the App Loader and click the Disk icon next to it.
 
 A window will pop up showing what maps you have loaded.
@@ -34,13 +34,16 @@ and marks the path that you've been travelling (if enabled), and
 displays waypoints in the watch (if dependencies exist).
 
 * Drag on the screen to move the map
-* Click bottom left to zoom in, bottom right to zoom out
+* Click at the bottom left corner to zoom in, bottom right to zoom out (or you can choose from the menu)
 * Press the button to bring up a menu, where you can zoom, go to GPS location,
 put the map back in its default location, or choose whether to draw the currently
 recording GPS track (from the `Recorder` app).
 
-**Note:** If enabled, drawing the currently recorded GPS track can take a second
-or two (which happens after you've finished scrolling the screen with your finger).
+The map displays:
+
+* Your current GPS location and angle (in blue) or a circle at the edge of the screen if your location is offscreen
+* Your currently recorded/recording track in red (if the `Recorder` app is installed)
+* Any waypoints as red markers (if the `Waypoint` app is installed)
 
 
 ## Library
