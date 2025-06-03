@@ -420,11 +420,34 @@ function drawHrm() {
   g.drawString(hrmCurrent, (w/2) + 10, line);
 }
 
+function drawHour(date) {
+  // Run setLargeFont before running this function
+  var hh = date.getHours();
+  if (settings.hr_12) {
+    hh = hh % 12;
+    if (hh == 0) hh = 12;
+  }
+  hh = hh.toString().padStart(2, '0');
+  if (settings.color == 'Fullest') {
+    settings.fg = settings.rings[getFullestRing()].fg;
+  }
+  g.setColor(settings.fg);
+  g.setFontAlign(1,0);  // right aligned
+  g.drawString(hh, (w/2) - 1, h/2);
+}
+
 function draw(updateSeconds) {
   if (!idle) {
     if (updateSeconds) {
       let date  = new Date();
       drawAllRings(date, 'Seconds');
+      if (settings.color == 'Fullest') {
+        let fgNew = settings.rings[getFullestRing()].fg;
+        if (settings.fg != fgNew) {
+          setLargeFont();
+          drawHour(date);
+        }
+      }
     }
     else {
       drawClock();
@@ -521,13 +544,7 @@ function drawAllRings(date, drawOnlyThisType) {
 
 function drawClock() {
   var date = new Date();
-  var hh = date.getHours();
   var mm = date.getMinutes();
-  if (settings.hr_12) {
-    hh = hh % 12;
-    if (hh == 0) hh = 12;
-  }
-  hh = hh.toString().padStart(2, '0');
   mm = mm.toString().padStart(2, '0');
 
   g.reset();
@@ -538,11 +555,7 @@ function drawClock() {
   drawAllRings(date, null);
   setLargeFont();
 
-  if (settings.color == 'Fullest')
-    settings.fg = settings.rings[getFullestRing()].fg;
-  g.setColor(settings.fg);
-  g.setFontAlign(1,0);  // right aligned
-  g.drawString(hh, (w/2) - 1, h/2);
+  drawHour(date);
 
   g.setColor(g.theme.fg);
   g.setFontAlign(-1,0); // left aligned
