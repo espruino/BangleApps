@@ -1,6 +1,6 @@
 { "id": "daisy",
   "name": "Daisy",
-  "version": "0.16",
+  "version": "0.17",
   "dependencies": {"mylocation":"app"},
   "description": "A beautiful digital clock with large ring gauge, idle timer and a cyclic information line that includes, day, date, steps, battery, sunrise and sunset times",
   "icon": "app.png",
