@@ -100,12 +100,12 @@ let draw = function() {
   }
   const boxLeft = dayX - 15;
   const boxRight = dayX + 10;
-  const boxWidth = boxRight - boxLeft;
+  //const boxWidth = boxRight - boxLeft;
 
   let batt = E.getBattery(); // battery %
   batt = Math.max(10, batt); // clamp to 10% minimum for visibility
 
-  let batteryGap = 0;
+  //let batteryGap = 0;
   let padding = 4;
 
   // Box dimensions
@@ -115,7 +115,7 @@ let draw = function() {
   // Ensure correct vertical direction
   let topY = Math.min(batteryTop, batteryBottom);
   let bottomY = Math.max(batteryTop, batteryBottom);
-  let batteryHeight = bottomY - topY;
+  //let batteryHeight = bottomY - topY;
 
   let innerTop = topY + padding;
   let innerBottom = bottomY - padding;
