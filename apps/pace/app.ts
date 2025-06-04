@@ -25,7 +25,11 @@ type Split = {
   time: Time,
 };
 
-const splits: Split[] = (S.readJSON("pace.json", 1) as Split[]) || []; // times
+type PaceState = { splits: Split[] };
+
+const splits: PaceState["splits"] =
+  (S.readJSON("pace.json", 1) as PaceState | undefined)?.splits || [];
+
 let splitOffset = 0, splitOffsetPx = 0;
 
 const GPS_TIMEOUT_MS = 30000;
@@ -245,7 +249,7 @@ exs.stats.dist.on("notify", (dist) => {
   // subtract <how much we're over> off the next split notify
   exs.state.notify.dist.next -= thisSplit;
 
-  S.writeJSON("pace.json", { splits });
+  S.writeJSON("pace.json", { splits } satisfies PaceState);
 });
 
 Bangle.on('lock', locked => {
