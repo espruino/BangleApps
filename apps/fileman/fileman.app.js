@@ -65,6 +65,11 @@ function visit_file(fn) {
   E.showMenu(menu);
 }
 
+function drawUtilMenu() {
+  var free = (require("Storage").getFree() / (1024*1024)).toFixed(2) + " MB\n";
+  E.showAlert(free).then( function() { drawMenu(); } );
+}
+
 function drawMenu() {
   nend = (nstart+n<files.length)?nstart+n : files.length;
   var menu = {
@@ -76,15 +81,18 @@ function drawMenu() {
     menu = {};
     drawMenu();
   }
-  for (var i=nstart; i<nend; ++i) {
-    menu[files[i]] = visit_file.bind(null, files[i]);
-  }
   menu["> next"] = function() {
     if (nstart+n<files.length) nstart += n;
     else nstart = 0;
     menu = {};
     drawMenu();
     m.move(-1);
+  }
+  menu["..."] = function() {
+    drawUtilMenu();
+  }
+  for (var i=nstart; i<nend; ++i) {
+    menu[files[i]] = visit_file.bind(null, files[i]);
   }
   m = E.showMenu(menu);
 }
