@@ -1,0 +1,24 @@
+{
+  "id": "tevtimer",
+  "name": "tev's timer",
+  "shortName":"tev's timer",
+  "icon": "app.png",
+  "version": "0.01",
+  "description": "A countdown timer app with interval and repeat features",
+  "screenshots": [ {"url": "screenshot.png" } ],
+  "readme": "README.md",
+  "tags": "timer",
+  "interface": "interface.html",
+  "supports": ["BANGLEJS2"],
+  "dependencies": {"scheduler": "type"},
+  "storage": [
+    {"name": "tevtimer.app.js", "url": "app.js"},
+    {"name": "tevtimer.alarm.js", "url": "alarm.js"},
+    {"name": "tevtimer", "url": "lib.js"},
+    {"name": "tevtimer.img", "url": "app-icon.js", "evaluate": true}
+  ],
+  "data": [
+    {"name": "tevtimer.json"},
+    {"name": "tevtimer.timers.json"}
+  ]
+}
