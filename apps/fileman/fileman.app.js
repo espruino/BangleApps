@@ -65,9 +65,28 @@ function visit_file(fn) {
   E.showMenu(menu);
 }
 
-function drawUtilMenu() {
+function showFree() {
   var free = (require("Storage").getFree() / (1024*1024)).toFixed(2) + " MB\n";
   E.showAlert(free).then( function() { drawMenu(); } );
+}
+
+function jumpTo(v) {
+  nstart = Math.round((v/100)*files.length);
+  if (nstart >= files.length) { nstart = 0; }
+  drawMenu();
+}
+
+function drawUtilMenu() {
+  var menu = {
+    '' : {'title' : "Utils"}
+  };
+  menu['Show free'] = showFree;
+  for (let i=0; i<10; i++) {
+    let v = i*10;
+    menu['Jump to '+v+'%'] = function() { jumpTo(v); };
+  }
+  menu['< Back'] = drawMenu;
+  E.showMenu(menu);
 }
 
 function drawMenu() {
@@ -80,17 +99,17 @@ function drawMenu() {
     if (nstart<0) nstart = files.length-n>0 ? files.length-n : 0;
     menu = {};
     drawMenu();
-  }
+  };
   menu["> next"] = function() {
     if (nstart+n<files.length) nstart += n;
     else nstart = 0;
     menu = {};
     drawMenu();
     m.move(-1);
-  }
-  menu["..."] = function() {
+  };
+  menu["[utils...]"] = function() {
     drawUtilMenu();
-  }
+  };
   for (var i=nstart; i<nend; ++i) {
     menu[files[i]] = visit_file.bind(null, files[i]);
   }
