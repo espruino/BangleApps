@@ -56,13 +56,19 @@ const drawGpsLvl = (l: Layout.RenderedHierarchy) => {
 const layout = new Layout({
   type: "h",
   c: [
-    {
+    ({
       type: "custom",
       render: drawGpsLvl,
+      id: "gpslvl",
       filly: 1,
       width: 10,
       bgCol: g.theme.bg, // automatically clears before render()
-    },
+      redraw: -1, // see below gps updating
+    } as unknown as {
+      // hack to avoid a more complex id-mapping Layout inference
+      type: "custom",
+      render: (_: Layout.RenderedHierarchy) => void
+    }),
     {
       type: "v",
       c: [
@@ -298,7 +304,13 @@ Bangle.on('tap', e => {
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.setGPSPower(1, "pace");
-Bangle.on("GPS", gps => latestGps = gps);
+Bangle.on("GPS", gps => {
+  const newSats = gps?.satellites;
+  const l = layout["gpslvl"] as unknown as Layout.RenderedHierarchy | undefined;
+  if(l && newSats !== latestGps?.satellites)
+    (l as any).redraw = newSats; // force a redraw
+  latestGps = gps;
+});
 
 g.clearRect(Bangle.appRect);
 draw();
