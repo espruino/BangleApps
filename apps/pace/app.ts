@@ -48,8 +48,8 @@ const drawGpsLvl = (l: Layout.RenderedHierarchy) => {
   g.fillRect(
     l.x,
     l.y + l.h - 10 - (l.h - 10) * ((nsats > 12 ? 12 : nsats) / 12),
-    l.x + l.w,
-    l.y + l.h
+    l.x + l.w - 1,
+    l.y + l.h - 1
   );
 };
 
