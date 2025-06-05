@@ -355,6 +355,9 @@ function showMessage(msgid, persist) {
     cancelReloadTimeout(); // don't auto-reload to clock now
     return showMapMessage(msg);
   }
+  // remove widgets here as we need to check the height when choosing a font
+  Bangle.setUI(); // force last UI to be removed (will call require("widget_utils").show(); if last displaying a message)
+  if (!settings.showWidgets) require("widget_utils").hide();
   active = "message";
   // Normal text message display
   let src=msg.src||/*LANG*/"Message", srcFont = fontSmall;
@@ -380,7 +383,7 @@ function showMessage(msgid, persist) {
     }
   }
   if (body) { // Try and find a font that fits...
-    let w = g.getWidth()-2, h = Bangle.appRect.h-60;
+    let w = g.getWidth()-2, h = Bangle.appRect.h-80;
     if (g.setFont(bodyFont).wrapString(body, w).length*g.getFontHeight() > h) {
       bodyFont = fontBig;
       if (settings.fontSize!=1 && g.setFont(bodyFont).wrapString(body, w).length*g.getFontHeight() > h) {
@@ -439,8 +442,6 @@ function showMessage(msgid, persist) {
   let textLineOffset = -(linesPerRow + ((rowLeftDraw||rowRightDraw)?1:0));
   let msgIcon = require("messageicons").getImage(msg);
   let msgCol = require("messageicons").getColor(msg, {settings, default:g.theme.fg2});
-  Bangle.setUI(); // force last UI to be removed (will call require("widget_utils").show(); if last displaying a message)
-  if (!settings.showWidgets) require("widget_utils").hide();
   let scroller = E.showScroller({
     h : rowHeight, // height of each menu item in pixels
     c : Math.ceil((lines.length-textLineOffset) / linesPerRow), // number of menu items
