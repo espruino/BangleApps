@@ -10,6 +10,8 @@ Requires [Gadgetbridge](https://www.espruino.com/Gadgetbridge).
 2. Open a music player on your Android phone.
 3. Open this app on your Bangle.js.
 
+Note: On startup, Simple Music will ping Gadgetbridge for track data by quickly turning the volume up, then down. This only happens once, and shouldn't be noticeable in most cases.
+
 ## Features
 
 - Shows the current song title and album
