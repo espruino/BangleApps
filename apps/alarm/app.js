@@ -293,7 +293,6 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate, scroll, group) {
     delete menu[/*LANG*/"Day"];
     delete menu[/*LANG*/"Month"];
     delete menu[/*LANG*/"Year"];
-    delete menu[/*LANG*/"Delete After Expiration"];
   }
 
   if (!isNew) {
