@@ -306,7 +306,6 @@ Bangle.on('tap', e => {
 });
 
 Bangle.loadWidgets();
-Bangle.drawWidgets();
 Bangle.setGPSPower(1, "pace");
 Bangle.on("GPS", gps => {
   const l = layout["gpslvl"] as unknown as LayoutWithGPS | undefined;
@@ -314,5 +313,16 @@ Bangle.on("GPS", gps => {
 });
 
 g.clearRect(Bangle.appRect);
-draw();
+
+if(splits){
+  E.showMessage(`Restored splits\n(${splits.length})`, "Pace");
+  setTimeout(() => {
+    g.reset().clear();
+    Bangle.drawWidgets();
+    draw();
+  }, 1000);
+}else{
+  Bangle.drawWidgets();
+  draw();
+}
 }

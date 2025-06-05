@@ -235,7 +235,6 @@ var _a;
         E.showMenu(menu);
     });
     Bangle.loadWidgets();
-    Bangle.drawWidgets();
     Bangle.setGPSPower(1, "pace");
     Bangle.on("GPS", function (gps) {
         var l = layout_1["gpslvl"];
@@ -243,5 +242,16 @@ var _a;
             l.gps = gps;
     });
     g.clearRect(Bangle.appRect);
-    draw_1();
+    if (splits_1) {
+        E.showMessage("Restored splits\n(".concat(splits_1.length, ")"), "Pace");
+        setTimeout(function () {
+            g.reset().clear();
+            Bangle.drawWidgets();
+            draw_1();
+        }, 1000);
+    }
+    else {
+        Bangle.drawWidgets();
+        draw_1();
+    }
 }
