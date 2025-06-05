@@ -179,21 +179,24 @@ function updateState(state) {
 /**
  * Listen for Gadgetbridge events
  */
-setTimeout(
-  () => {
-    globalThis.GB = (_GB => e => {
-      switch (e.t) {
-        case "musicinfo":
-          return showTrackInfo(e);
-        case "musicstate":
-          return updateState(e);
-        default:
-          // pass on other events
-          if (_GB) setTimeout(_GB, 0, e);
-      }
-    })(globalThis.GB);
-  }, 1);
+setTimeout(() => {
+  globalThis.GB = (_GB => e => {
+    switch (e.t) {
+      case "musicinfo":
+        return showTrackInfo(e);
+      case "musicstate":
+        return updateState(e);
+      default:
+        // pass on other events
+        if (_GB) setTimeout(_GB, 0, e);
+    }
+  })(globalThis.GB);
+}, 1);
 
+// Toggle play/pause if the button is pressed
+setWatch(function() {
+  sendCommand(appState.state === PlaybackState.paused ? Command.play : Command.pause, true);
+}, BTN, {edge:"rising", debounce:50, repeat:true});
 
 // Start the app
 initialize();

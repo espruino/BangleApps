@@ -20,6 +20,12 @@ Note: On startup, Simple Music will ping Gadgetbridge for track data by quickly 
 
 ## Controls
 
+### Button controls
+
+Press the side button to toggle playing or pausing the current track.
+
+### Touch controls
+
 Use the on-screen buttons to go back to the previous track, play/pause the current track, or skip to the next track.
 
 Swipe up/down to increase/decrease the volume, or swip left/right to navigate to the previous/next song.
