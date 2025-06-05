@@ -4,3 +4,4 @@
 0.04: Bump exstats module - show active time, not elapsed
 0.05: Fix menu display - don't draw over the menu and vice-versa. Require
 	double-tap for menu
+0.06: Show GPS strength bar on the left and restore splits from previous run
