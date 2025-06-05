@@ -12,13 +12,12 @@ var _a;
     var S_1 = require("Storage");
     var drawTimeout_1;
     var menuShown_1 = false;
-    var latestGps_1;
     var splits_1 = ((_a = S_1.readJSON("pace.json", 1)) === null || _a === void 0 ? void 0 : _a.splits) || [];
     var splitOffset_1 = 0, splitOffsetPx_1 = 0;
     var GPS_TIMEOUT_MS_1 = 30000;
     var drawGpsLvl = function (l) {
         var _a;
-        var gps = latestGps_1;
+        var gps = l.gps;
         var nsats = (_a = gps === null || gps === void 0 ? void 0 : gps.satellites) !== null && _a !== void 0 ? _a : 0;
         if (!gps || !gps.fix)
             g.setColor("#FF0000");
@@ -42,7 +41,6 @@ var _a;
                 filly: 1,
                 width: 10,
                 bgCol: g.theme.bg,
-                redraw: -1,
             },
             {
                 type: "v",
@@ -240,11 +238,9 @@ var _a;
     Bangle.drawWidgets();
     Bangle.setGPSPower(1, "pace");
     Bangle.on("GPS", function (gps) {
-        var newSats = gps === null || gps === void 0 ? void 0 : gps.satellites;
         var l = layout_1["gpslvl"];
-        if (l && newSats !== (latestGps_1 === null || latestGps_1 === void 0 ? void 0 : latestGps_1.satellites))
-            l.redraw = newSats;
-        latestGps_1 = gps;
+        if (l)
+            l.gps = gps;
     });
     g.clearRect(Bangle.appRect);
     draw_1();

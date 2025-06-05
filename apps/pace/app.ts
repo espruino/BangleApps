@@ -15,7 +15,6 @@ const S = require("Storage");
 
 let drawTimeout: TimeoutId | undefined;
 let menuShown = false;
-let latestGps: GPSFix | undefined;
 
 type Dist = number & { brand: 'dist' };
 type Time = number & { brand: 'time' };
@@ -24,6 +23,8 @@ type Split = {
   dist: Dist,
   time: Time,
 };
+
+type LayoutWithGPS = Layout.RenderedHierarchy & { gps?: GPSFix };
 
 type PaceState = { splits: Split[] };
 
@@ -35,7 +36,7 @@ let splitOffset = 0, splitOffsetPx = 0;
 const GPS_TIMEOUT_MS = 30000;
 
 const drawGpsLvl = (l: Layout.RenderedHierarchy) => {
-  const gps = latestGps;
+  const gps = (l as LayoutWithGPS).gps;
   const nsats = gps?.satellites ?? 0;
 
   if (!gps || !gps.fix)
@@ -67,7 +68,6 @@ const layout = new Layout({
       filly: 1,
       width: 10,
       bgCol: g.theme.bg, // automatically clears before render()
-      redraw: -1, // see below gps updating
     } as unknown as {
       // hack to avoid a more complex id-mapping Layout inference
       type: "custom",
@@ -309,11 +309,8 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 Bangle.setGPSPower(1, "pace");
 Bangle.on("GPS", gps => {
-  const newSats = gps?.satellites;
-  const l = layout["gpslvl"] as unknown as Layout.RenderedHierarchy | undefined;
-  if(l && newSats !== latestGps?.satellites)
-    (l as any).redraw = newSats; // force a redraw
-  latestGps = gps;
+  const l = layout["gpslvl"] as unknown as LayoutWithGPS | undefined;
+  if(l) l.gps = gps; // force a redraw
 });
 
 g.clearRect(Bangle.appRect);
