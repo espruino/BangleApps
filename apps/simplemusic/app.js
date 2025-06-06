@@ -98,15 +98,11 @@ function initialize() {
     }
   });
 
-  // Listen for music events
-  Bangle.on("music", (type, message)=>{
-    switch (type) {
-      case "musicinfo":
-        showTrackInfo(message);
-        break;
-      case "musicstate":
-        updateState(message);
-        break;
+  // Eat music events (๑ᵔ⤙ᵔ๑)
+  Bangle.on("message", (type, message)=>{
+    if (type === "music" && !message.handled) {
+      processMusicEvent(message);
+      message.handled = true;
     };
   });
 
@@ -125,8 +121,8 @@ function initialize() {
 }
 
 function draw() {
+  layout.update();
   layout.render();
-  Bangle.drawWidgets();
 }
 
 /// Track how long the current song has been running.
@@ -135,7 +131,7 @@ let position = 0;
 function updateTime() {
   position++;
   layout.elapsed.label = formatTime(position);
-  layout.render();
+  draw();
 
   if (Debug) console.log("Tick");
 }
@@ -148,58 +144,46 @@ function updateTime() {
 function sendCommand(command, buzz) {
   if (buzz) Bangle.buzz(50);
   Bluetooth.println(JSON.stringify({ t: "music", n: command }));
-
-  /*
-  switch (command) {
-    // If this is a play or pause command, display the track and artist
-    case Command.play:
-      updateState(PlaybackState.playing);
-      break;
-    case Command.pause:
-      updateState(PlaybackState.paused);
-      break;
-    // Reset the duration clock when switching tracks
-    case Command.next:
-    case Command.previous:
-      updateState(appState.state);
-      break;
-  }
-  */
 }
 
-/**
- * Get info about the current playing song.
- * @param {Object} info - Gadgetbridge musicinfo event
- */
-function showTrackInfo(info) {
-  layout.title.label = info ? info.track : "Track N/A";
-  layout.artist.label = info ? info.artist : "Artist N/A";
-  layout.duration.label = info ? formatTime(info.dur) : formatTime(0);
+function processMusicEvent(event) {
+  if (Debug) console.log("State: " + event.state);
+  if (Debug) console.log("Position: " + event.position);
+
+  if (event.position !== null) position = event.position;
+
+  switch(event.state) {
+    case PlaybackState.playing:
+      if (Debug) console.log("Playing");
+      appState.state = event.state;
+      elapsedTimer = setInterval(updateTime, 1000);
+      layout.playpause.label = " || ";
+      break;
+    case PlaybackState.paused:
+      if (Debug) console.log("Paused");
+      appState.state = event.state;
+      clearInterval(elapsedTimer);
+      layout.playpause.label = " > ";
+      break;
+    case PlaybackState.previous:
+    case PlaybackState.next:
+      // Reset position
+      position = 0;
+      appState.state = PlaybackState.playing;
+      break;
+  }
+
+  // Render track info on song change
+  if (event.track != layout.title.label) {
+    clearInterval(elapsedTimer);
+    elapsedTimer = setInterval(updateTime, 1000);
+    layout.title.label = event ? event.track : "Track N/A";
+    layout.artist.label = event ? event.artist : "Artist N/A";
+    layout.duration.label = formatTime(0);
+  };
+
   draw();
   if (Debug) layout.debug();
-}
-
-/**
- * Updates the current state of the app.
- * Called when Gadgetbridge updates (see boot.js)
- * @param {*} state 
- */
-function updateState(state) {
-  appState.state = state;
-  position = state.position;
-
-  // Alternate between play and pause symbols
-  if (state === PlaybackState.playing) {
-    if (Debug) console.log("Playing");
-    elapsedTimer = setInterval(updateTime, 1000);
-    layout.playpause.label = " || ";
-  }
-  else if (state === PlaybackState.paused) {
-    if (Debug) console.log("Paused");
-    if (elapsedTimer) clearInterval(elapsedTimer);
-    layout.playpause.label = " > ";
-  }
-  draw();
 }
 
 // Start the app and set up listeners
