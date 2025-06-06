@@ -1,5 +1,3 @@
-// FIXME: Messages collects music messages and puts them in a queue. Listen to that instead
-
 // For info on interfacing with Gadgetbridge, see https://www.espruino.com/Gadgetbridge
 const Debug = false;  // Set to true to show debugging into
 const Layout = require("Layout");
@@ -100,9 +98,30 @@ function initialize() {
     }
   });
 
+  // Listen for music events
+  Bangle.on("music", (type, message)=>{
+    switch (type) {
+      case "musicinfo":
+        showTrackInfo(message);
+        break;
+      case "musicstate":
+        updateState(message);
+        break;
+    };
+  });
+
+  // Toggle play/pause if the button is pressed
+  setWatch(function() {
+    sendCommand(appState.state === PlaybackState.paused ? Command.play : Command.pause, true);
+  }, BTN, {edge:"rising", debounce:50, repeat:true});
+
   // Goad Gadgetbridge into sending us the current track info
   sendCommand(Command.volumeup, false);
   sendCommand(Command.volumedown, false);
+
+  // Render the screen
+  g.clear();
+  draw();
 }
 
 function draw() {
@@ -130,6 +149,7 @@ function sendCommand(command, buzz) {
   if (buzz) Bangle.buzz(50);
   Bluetooth.println(JSON.stringify({ t: "music", n: command }));
 
+  /*
   switch (command) {
     // If this is a play or pause command, display the track and artist
     case Command.play:
@@ -144,6 +164,7 @@ function sendCommand(command, buzz) {
       updateState(appState.state);
       break;
   }
+  */
 }
 
 /**
@@ -169,40 +190,17 @@ function updateState(state) {
 
   // Alternate between play and pause symbols
   if (state === PlaybackState.playing) {
+    if (Debug) console.log("Playing");
     elapsedTimer = setInterval(updateTime, 1000);
     layout.playpause.label = " || ";
   }
   else if (state === PlaybackState.paused) {
+    if (Debug) console.log("Paused");
     if (elapsedTimer) clearInterval(elapsedTimer);
     layout.playpause.label = " > ";
   }
+  draw();
 }
 
-/**
- * Listen for Gadgetbridge events
- */
-setTimeout(() => {
-  globalThis.GB = (_GB => e => {
-    switch (e.t) {
-      case "musicinfo":
-        return showTrackInfo(e);
-      case "musicstate":
-        return updateState(e);
-      default:
-        // pass on other events
-        if (_GB) setTimeout(_GB, 0, e);
-    }
-  })(globalThis.GB);
-}, 1);
-
-// Toggle play/pause if the button is pressed
-setWatch(function() {
-  sendCommand(appState.state === PlaybackState.paused ? Command.play : Command.pause, true);
-}, BTN, {edge:"rising", debounce:50, repeat:true});
-
-// Start the app
+// Start the app and set up listeners
 initialize();
-
-// Render the screen
-g.clear();
-draw();
