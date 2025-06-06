@@ -1,3 +1,5 @@
+// FIXME: Messages collects music messages and puts them in a queue. Listen to that instead
+
 // For info on interfacing with Gadgetbridge, see https://www.espruino.com/Gadgetbridge
 const Debug = false;  // Set to true to show debugging into
 const Layout = require("Layout");
@@ -108,6 +110,17 @@ function draw() {
   Bangle.drawWidgets();
 }
 
+/// Track how long the current song has been running.
+let elapsedTimer;
+let position = 0;
+function updateTime() {
+  position++;
+  layout.elapsed.label = formatTime(position);
+  layout.render();
+
+  if (Debug) console.log("Tick");
+}
+
 /**
  * Send a command via Bluetooth back to Gadgetbridge.
  * @param {Command} command Which command to execute
@@ -125,23 +138,12 @@ function sendCommand(command, buzz) {
     case Command.pause:
       updateState(PlaybackState.paused);
       break;
-    // Reset the duration clock for new tracks
+    // Reset the duration clock when switching tracks
     case Command.next:
     case Command.previous:
-      layout.elapsed.label = formatTime(0);
+      updateState(appState.state);
       break;
   }
-}
-
-/// Track how long the current song has been running.
-let elapsedTimer;
-let position = 0;
-function updateTime() {
-  position++;
-  layout.elapsed.label = formatTime(position);
-  layout.render();
-
-  if (Debug) console.log("Tick");
 }
 
 /**
