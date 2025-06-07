@@ -1,4 +1,5 @@
 0.01: New app!
 0.02: Improve handling of large amounts of files (fix #579)
 0.03: Update RegExp use (Was using backreference instead of character code)
+0.04: Add submenu to display free space and to allow quick navigation with many files
 
