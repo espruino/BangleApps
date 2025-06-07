@@ -425,10 +425,6 @@ let gpsg = {
   },
 };
 
-function log2(x) {
-  return Math.log(x) / Math.log(2);
-}
-
 var debug = 0;
 var cur_altitude;
 var adj_time = 0, adj_alt = 0;
