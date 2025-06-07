@@ -15,7 +15,7 @@ function delete_file(fn) {
       }
       else STOR.erase(fn);
     }
-  }).then(function() { filed=[];files=get_pruned_file_list(); }).then(drawMenu);
+  }).then(function() { files=get_pruned_file_list(); }).then(drawMenu);
 }
 
 function get_length(fn) {
