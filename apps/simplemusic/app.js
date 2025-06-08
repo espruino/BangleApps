@@ -100,16 +100,18 @@ function initialize() {
 
   // Eat music events (๑ᵔ⤙ᵔ๑)
   Bangle.on("message", (type, message)=>{
-    if (type === "music" && !message.handled) {
+    if (type.includes("music") && !message.handled) {
       processMusicEvent(message);
       message.handled = true;
     };
   });
 
   // Toggle play/pause if the button is pressed
+  /*
   setWatch(function() {
     sendCommand(appState.state === PlaybackState.paused ? Command.play : Command.pause, true);
   }, BTN, {edge:"rising", debounce:50, repeat:true});
+  */
 
   // Goad Gadgetbridge into sending us the current track info
   sendCommand(Command.volumeup, false);
@@ -125,7 +127,7 @@ function draw() {
   layout.render();
 }
 
-/// Track how long the current song has been running.
+// Track how long the current song has been running.
 let elapsedTimer;
 let position = 0;
 function updateTime() {
@@ -136,6 +138,14 @@ function updateTime() {
   if (Debug) console.log("Tick");
 }
 
+function clearTimer() {
+  position = 0;
+  if (elapsedTimer) {
+    clearInterval(elapsedTimer);
+    elapsedTimer = undefined;
+  };
+}
+
 /**
  * Send a command via Bluetooth back to Gadgetbridge.
  * @param {Command} command Which command to execute
@@ -143,14 +153,14 @@ function updateTime() {
  */
 function sendCommand(command, buzz) {
   if (buzz) Bangle.buzz(50);
-  Bluetooth.println(JSON.stringify({ t: "music", n: command }));
+  Bangle.musicControl(command);
 }
 
 function processMusicEvent(event) {
   if (Debug) console.log("State: " + event.state);
   if (Debug) console.log("Position: " + event.position);
 
-  if (event.position !== null) position = event.position;
+  position = event.position;
 
   switch(event.state) {
     case PlaybackState.playing:
@@ -162,7 +172,7 @@ function processMusicEvent(event) {
     case PlaybackState.paused:
       if (Debug) console.log("Paused");
       appState.state = event.state;
-      clearInterval(elapsedTimer);
+      clearTimer();
       layout.playpause.label = " > ";
       break;
     case PlaybackState.previous:
@@ -173,13 +183,12 @@ function processMusicEvent(event) {
       break;
   }
 
-  // Render track info on song change
+  // Re-render track info on song change
   if (event.track != layout.title.label) {
-    clearInterval(elapsedTimer);
-    elapsedTimer = setInterval(updateTime, 1000);
+    position = 0;
     layout.title.label = event ? event.track : "Track N/A";
     layout.artist.label = event ? event.artist : "Artist N/A";
-    layout.duration.label = formatTime(0);
+    layout.duration.label = formatTime(event.dur);
   };
 
   draw();
