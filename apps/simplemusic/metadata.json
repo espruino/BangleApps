@@ -12,6 +12,5 @@
   "storage": [
     {"name":"simplemusic.app.js","url":"app.js"},
     {"name":"simplemusic.img","url":"app-icon.js","evaluate":true}
-  ],
-  "data": [{"name":"simplemusic.json"},{"name":"simplemusic.load.json"}]
+  ]
 }
