@@ -103,7 +103,7 @@ function initialize() {
     if (type.includes("music") && !message.handled) {
       processMusicEvent(message);
       message.handled = true;
-    };
+    }
   });
 
   // Toggle play/pause if the button is pressed
@@ -143,7 +143,7 @@ function clearTimer() {
   if (elapsedTimer) {
     clearInterval(elapsedTimer);
     elapsedTimer = undefined;
-  };
+  }
 }
 
 /**
@@ -189,7 +189,7 @@ function processMusicEvent(event) {
     layout.title.label = event ? event.track : "Track N/A";
     layout.artist.label = event ? event.artist : "Artist N/A";
     layout.duration.label = formatTime(event.dur);
-  };
+  }
 
   draw();
   if (Debug) layout.debug();
