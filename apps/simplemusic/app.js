@@ -107,11 +107,9 @@ function initialize() {
   });
 
   // Toggle play/pause if the button is pressed
-  /*
   setWatch(function() {
     sendCommand(appState.state === PlaybackState.paused ? Command.play : Command.pause, true);
-  }, BTN, {edge:"rising", debounce:50, repeat:true});
-  */
+  }, BTN, {edge: "falling", debounce: 50, repeat: true});
 
   // Goad Gadgetbridge into sending us the current track info
   sendCommand(Command.volumeup, false);
