@@ -33,7 +33,7 @@ function parseWeather(response) {
   }
 }
 
-exports.pull = function(completionCallback) {
+exports.pull = function(completionCallback, errorCallback) {
   let location = require("Storage").readJSON("mylocation.json", 1) || {
     "lat": 51.50,
     "lon": 0.12,
@@ -46,9 +46,9 @@ exports.pull = function(completionCallback) {
       let result = parseWeather(event.resp);
       if (completionCallback) completionCallback(result);
     }).catch((e)=>{
-      if (completionCallback) completionCallback(e);
+      if (errorCallback) errorCallback(e);
     });
   } else {
-    if (completionCallback) completionCallback(/*LANG*/"No http method found");
+    if (errorCallback) errorCallback(/*LANG*/"No http method found");
   }
 };

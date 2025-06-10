@@ -12,12 +12,15 @@
 
   let onCompleted = function (result) {
     loading = false;
-    if(typeof result === "string") {
-      console.log("owmweather error: " + result);
-    } else {
-      settings.updated = Date.now();
-      require('Storage').writeJSON("owmweather.json", settings);
-    }
+    settings.updated = Date.now();
+    require('Storage').writeJSON("owmweather.json", settings);
+    if (timeoutRef) clearTimeout(timeoutRef);
+    timeoutRef = setTimeout(loadIfDueAndReschedule, refreshMillis());
+  };
+
+  let onError = function(e) {
+    console.log("owmweather error:", e);
+    loading = false;
     if (timeoutRef) clearTimeout(timeoutRef);
     timeoutRef = setTimeout(loadIfDueAndReschedule, refreshMillis());
   };
@@ -34,7 +37,7 @@
     if (!MillisUntilDue || MillisUntilDue <= 0) {
       if (!loading) {
         loading = true;
-        require("owmweather").pull(onCompleted);
+        require("owmweather").pull(onCompleted, onError);
       }
     } else {
       // called to early, reschedule
