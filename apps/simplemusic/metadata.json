@@ -1,0 +1,16 @@
+{ "id": "simplemusic",
+  "name": "Simple Music Controls",
+  "shortName":" Simple Music",
+  "version":"0.01",
+  "description": "Control the music on your Gadgetbridge-enabled phone using Bangle.js. This is a remixed version of rigrig's fantastic Gadgetbridge Music Controls app.",
+  "icon": "app.png",
+  "type": "app",
+  "tags": "bluetooth,gadgetbridge,music,tools",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"simplemusic.app.js","url":"app.js"},
+    {"name":"simplemusic.img","url":"app-icon.js","evaluate":true}
+  ]
+}
