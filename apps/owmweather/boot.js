@@ -10,10 +10,14 @@
     return settings.refresh * 1000 * 60 + 1;  // +1 <- leave some slack
   };
 
-  let onCompleted = function () {
+  let onCompleted = function (result) {
     loading = false;
-    settings.updated = Date.now();
-    require('Storage').writeJSON("owmweather.json", settings);
+    if(typeof result === "string") {
+      console.log("owmweather error: " + result);
+    } else {
+      settings.updated = Date.now();
+      require('Storage').writeJSON("owmweather.json", settings);
+    }
     if (timeoutRef) clearTimeout(timeoutRef);
     timeoutRef = setTimeout(loadIfDueAndReschedule, refreshMillis());
   };
