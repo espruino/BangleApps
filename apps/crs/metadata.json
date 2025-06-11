@@ -1,0 +1,10 @@
+{
+  "id": "crsclock",
+  "name": "Circadian Rhythm Clock",
+  "type": "clock",
+  "src": "crsclock_lightweight.js",
+  "icon": "icon.png",
+  "version": "1.2",
+  "description": "Shows CRS (Circadian Rhythm Score), steps, mood, and light exposure.",
+  "supports": ["BANGLEJS2"]
+}
