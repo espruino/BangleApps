@@ -8,5 +8,7 @@
   "version": "1.2",
   "description": "Shows CRS (Circadian Rhythm Score), steps, mood, and light exposure.",
   "patent": "GB2509149.7: Wearable Circadian Rhythm Score (CRS) System for Estimating Biological Time",
-  "supports": ["BANGLEJS2"]
+  "supports": ["BANGLEJS2"],
+  "readme": "README.me",
+  "changelog": "ChangeLog"
 }
