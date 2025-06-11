@@ -5,7 +5,7 @@
   "type": "clock",
   "src": "crsclock.js",
   "icon": "icon.png",
-  "version": "1.2",
+  "version": "0.06",
   "description": "Shows CRS (Circadian Rhythm Score), steps, mood, and light exposure.",
   "patent": "GB2509149.7: Wearable Circadian Rhythm Score (CRS) System for Estimating Biological Time",
   "supports": ["BANGLEJS2"],
