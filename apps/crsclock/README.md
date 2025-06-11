@@ -119,7 +119,7 @@ Jakub Tencl, Ph.D.
 
 ## Patent and Licensing
 
-This app is based on methods described in UK Patent Application GB2315743.6:  
+This app is based on methods described in UK Patent Application GB2509149.7:  
 **"Wearable Circadian Rhythm Score (CRS) System for Estimating Biological Time"**
 
 Unless otherwise stated, this project is released under the MIT license.  
