@@ -10,7 +10,7 @@
     return settings.refresh * 1000 * 60 + 1;  // +1 <- leave some slack
   };
 
-  let onCompleted = function (result) {
+  let onCompleted = function () {
     loading = false;
     settings.updated = Date.now();
     require('Storage').writeJSON("owmweather.json", settings);

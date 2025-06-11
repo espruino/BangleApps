@@ -44,7 +44,11 @@ exports.pull = function(completionCallback, errorCallback) {
   if (Bangle.http){
     Bangle.http(uri, {timeout:10000}).then(event => {
       let result = parseWeather(event.resp);
-      if (completionCallback) completionCallback(result);
+      if (result === undefined) {
+        if (completionCallback) completionCallback();
+      } else {
+        if (errorCallback) errorCallback(result);
+      }
     }).catch((e)=>{
       if (errorCallback) errorCallback(e);
     });
