@@ -4,8 +4,6 @@
 
 **Circadian Rhythm Clock** is an advanced wellness clock for Bangle.js 2 that estimates and visualizes your body’s internal circadian time and alignment. It calculates a personalized **Circadian Rhythm Score (CRS)** using your recent sleep timing, physical activity patterns, and (optionally) heart rate data. The app helps users monitor their biological rhythms, optimize their sleep, and maintain healthy light/activity habits—even on a device with limited sensors.
 
----
-
 ### **Core Features**
 
 #### **1. Real-Time CRS Calculation**
@@ -67,15 +65,11 @@
 * Aggressively trims stored history to a set maximum (e.g., 200 entries) to ensure stability and prevent memory overflows.
 * All heavy computations (like trend chart) are run only on-demand.
 
----
-
 ### **Sensor/Hardware Adaptation**
 
 * If the **heart rate sensor** is unavailable or disabled, the app uses step/activity stability only.
 * If **no light sensor** is present (default for Bangle.js 2), the app estimates “light exposure” as the number of hours the user is active during daytime, outside their sleep window.
 * The app is robust to missing or partial data.
-
----
 
 ### **User Experience**
 
@@ -83,15 +77,12 @@
 * **Vivid, readable interface** with color themes and a clean, minimal design.
 * **Alerts** for hydration and sleep transitions are gentle and non-intrusive.
 
----
 
 ### **Intended Users**
 
 * Anyone interested in **improving sleep, productivity, or circadian health**.
 * Shift workers, travelers, or students seeking to track and align their biological clocks.
 * Users who want more than a step counter—actionable, science-based feedback on internal time.
-
----
 
 ### **How It Works**
 
@@ -101,16 +92,12 @@
 4. **Presents key circadian health metrics** on the main watch face.
 5. **Offers friendly reminders** and data export for deeper analysis.
 
----
-
 ### **Technical Details**
 
 * **Code:** JavaScript (Espruino), optimized for Bangle.js 2
 * **Persistent storage:** Steps, heart rate, and light/“light hour” proxies saved locally, aggressively pruned for memory safety.
 * **User interface:** Button/touch/swipe navigation, E.showMenu/E.showAlert for dialogs, custom clock face rendering.
 * **No dependencies:** Runs entirely on the watch—no phone, no cloud required.
-
----
 
 ## Author
 
@@ -125,8 +112,6 @@ This app is based on methods described in UK Patent Application GB2509149.7:
 Unless otherwise stated, this project is released under the MIT license.  
 Use of the patented method may be subject to licensing or permission.  
 For inquiries, contact the author.
-
----
 
 ### **Summary**
 
