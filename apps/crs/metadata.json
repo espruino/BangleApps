@@ -3,7 +3,7 @@
   "name": "Circadian Rhythm Clock",
   "author": "Jakub Tencl info@ihypnosis.org.uk",
   "type": "clock",
-  "src": "crsclock_lightweight.js",
+  "src": "crsclock.js",
   "icon": "icon.png",
   "version": "1.2",
   "description": "Shows CRS (Circadian Rhythm Score), steps, mood, and light exposure.",
