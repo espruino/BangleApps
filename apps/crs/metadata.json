@@ -1,6 +1,7 @@
 {
   "id": "crsclock",
   "name": "Circadian Rhythm Clock",
+  "author": "Jakub Tencl info@ihypnosis.org.uk",
   "type": "clock",
   "src": "crsclock_lightweight.js",
   "icon": "icon.png",
