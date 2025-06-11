@@ -112,6 +112,22 @@
 
 ---
 
+## Author
+
+Jakub Tencl, Ph.D.  
+[https://ihypnosis.org.uk](https://ihypnosis.org.uk)
+
+## Patent and Licensing
+
+This app is based on methods described in UK Patent Application GB2315743.6:  
+**"Wearable Circadian Rhythm Score (CRS) System for Estimating Biological Time"**
+
+Unless otherwise stated, this project is released under the MIT license.  
+Use of the patented method may be subject to licensing or permission.  
+For inquiries, contact the author.
+
+---
+
 ### **Summary**
 
 The Circadian Rhythm Clock transforms the Bangle.js 2 into a **bio-aware, personalized circadian dashboard**, guiding users toward better alignment with their biological clock and modern life.
