@@ -3,5 +3,5 @@ Circadian Rhythm Clock - ChangeLog
 1.2  (2025-06-11)
   - Initial release for Bangle.js 2
   - Shows CRS (Circadian Rhythm Score), Steps, Mood, and Light Exposure
-  - BioTime estimation based on patent GB2590149.7
+  - BioTime estimation based on patent GB2509149.7
 
