@@ -1,14 +1,16 @@
 {
   "id": "crsclock",
   "name": "Circadian Rhythm Clock",
-  "author": "Jakub Tencl info@ihypnosis.org.uk",
-  "type": "clock",
-  "src": "crsclock.js",
-  "icon": "icon.png",
+  "shortName":"Circadian",
   "version": "0.06",
   "description": "Shows CRS (Circadian Rhythm Score), steps, mood, and light exposure.",
-  "patent": "GB2509149.7: Wearable Circadian Rhythm Score (CRS) System for Estimating Biological Time",
+  "icon": "icon.png",
+  "type": "clock",
+  "tags": "clock",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
-  "changelog": "ChangeLog"
+  "storage": [
+    { "name": "crsclock.app.js", "url": "crsclock.js" },
+    { "name": "crsclock.img", "url":"app-icon.js","evaluate":true }
+  ]
 }
