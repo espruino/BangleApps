@@ -72,13 +72,13 @@ function bangleUpload() {
         type:"arraybuffer",
         mimeType:".zip,application/zip"}, function(data) {
       if (data===undefined) return;
-      var promise = Promise.resolve();
       var zip = new JSZip();
       var cmds = "";
-      zip.loadAsync(data).then(function(zip) {
+      return zip.loadAsync(data).then(function(zip) {
         return showPrompt("Restore from ZIP","Are you sure? This will overwrite existing apps");
       }).then(()=>{
         Progress.show({title:`Reading ZIP`});
+        var promise = Promise.resolve();
         zip.forEach(function (path, file){
           console.log("path");
           promise = promise
@@ -124,16 +124,14 @@ function bangleUpload() {
         showToast('Restore failed, ' + err, 'error');
         resolve();
       });
-      return promise;
-    });
-  }
+  }));
 }
 
 window.addEventListener('load', (event) => {
   document.getElementById("downloadallapps").addEventListener("click",event=>{
-    startOperation({name:"Backup Apps"}, () => bangleDownload);
+    startOperation({name:"Backup Apps"}, () => bangleDownload());
   });
   document.getElementById("uploadallapps").addEventListener("click",event=>{
-    startOperation({name:"Restore Apps"}, () => bangleUpload);
+    startOperation({name:"Restore Apps"}, () => bangleUpload());
   });
 });
