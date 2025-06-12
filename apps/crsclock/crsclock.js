@@ -777,6 +777,7 @@ const menuOpts = {
   "Export Data":   exportData,
   "Theme":         setTheme,
   "About":         showAbout,
+  "Go to Launcher": () => Bangle.showLauncher(),
   "Reset All Data": confirmResetAllData,
   "Exit":          () => Bangle.showClock()
 };
