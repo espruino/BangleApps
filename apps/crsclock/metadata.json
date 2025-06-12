@@ -10,10 +10,5 @@
   "patent": "GB2509149.7: Wearable Circadian Rhythm Score (CRS) System for Estimating Biological Time",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
-  "changelog": "ChangeLog",
-  "storage": [
-    { "name": "crsclock.app.js", "url": "crsclock.js" },
-    { "name": "crsclock.info", "url": "metadata.json" },
-    { "name": "crsclock.img", "url": "icon.png" }
-  ]
+  "changelog": "ChangeLog"
 }
