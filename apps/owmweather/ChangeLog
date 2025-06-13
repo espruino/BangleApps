@@ -7,3 +7,4 @@
 0.07: Update weather after reconnecting bluetooth if update is due, refactor code
 0.08: Undo change to One Call API 3.0
 0.09: Fix infinite loop when settings.updated is not defined
+0.10: Fix settings.updated being updated even when OWM call failed
