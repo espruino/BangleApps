@@ -1,0 +1,16 @@
+{
+  "id": "crsclock",
+  "name": "Circadian Rhythm Clock",
+  "shortName":"Circadian",
+  "version": "0.06",
+  "description": "Shows CRS (Circadian Rhythm Score), steps, mood, and light exposure.",
+  "icon": "icon.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    { "name": "crsclock.app.js", "url": "crsclock.js" },
+    { "name": "crsclock.img", "url":"app-icon.js","evaluate":true }
+  ]
+}
