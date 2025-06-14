@@ -83,7 +83,7 @@ const STATS_FONT_SIZE = 16;
 function getSleepWindowStr() {
   let a = ("0"+S.sleepStart).substr(-2) + ":00";
   let b = ("0"+S.sleepEnd).substr(-2)   + ":00";
-  return a + "–" + b;
+  return a + "-" + b;
 }
 
 function stability(arr, key, hours) {
@@ -610,7 +610,7 @@ function calibrateBT() {
         Bangle.setUI(uiOpts);
       });
     })(d);
-    m["−" + d + "h"] = (() => () => {
+    m["-" + d + "h"] = (() => () => {
       S.phaseOffset -= d;
       saveSettings();
       E.showAlert("Offset now: " + (S.phaseOffset>=0? "+"+S.phaseOffset : S.phaseOffset) + "h").then(() => {
@@ -711,7 +711,7 @@ function setBioTimeReference() {
   E.showMenu(m);
 
   function promptRefTime() {
-    E.showPrompt("Hour (0–23)?").then(h => {
+    E.showPrompt("Hour (0-23)?").then(h => {
       if (h===undefined || h<0 || h>23) {
         E.showAlert("Invalid hour").then(() => {
           drawClock();
@@ -720,7 +720,7 @@ function setBioTimeReference() {
         return;
       }
       S.bioTimeRefHour = h;
-      E.showPrompt("Minute (0–59)?").then(m => {
+      E.showPrompt("Minute (0-59)?").then(m => {
         if (m===undefined || m<0 || m>59) {
           E.showAlert("Invalid minute").then(() => {
             drawClock();
