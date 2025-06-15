@@ -70,19 +70,27 @@
   }
 
   // ===== DIGIT BITMAPS =====
-  const digitBitmaps = {
-    ' ': [0, 0, 0, 0, 0],
-    '0': [7, 5, 5, 5, 7],
-    '1': [2, 6, 2, 2, 7],
-    '2': [7, 1, 7, 4, 7],
-    '3': [7, 1, 7, 1, 7],
-    '4': [5, 5, 7, 1, 1],
-    '5': [7, 4, 7, 1, 7],
-    '6': [7, 4, 7, 5, 7],
-    '7': [7, 1, 1, 1, 1],
-    '8': [7, 5, 7, 5, 7],
-    '9': [7, 5, 7, 1, 7]
-  };
+  // Each digit packed into 16 bits (5 rows × 3 bits each)
+  const digitBitmaps = new Uint16Array([
+    0b000000000000000,  // ' ' (space)
+    0b111101101101111,  // '0'
+    0b010110010010111,  // '1'
+    0b111001111100111,  // '2'
+    0b111001111001111,  // '3'
+    0b101101111001001,  // '4'
+    0b111100111001111,  // '5'
+    0b111100111101111,  // '6'
+    0b111001001001001,  // '7'
+    0b111101111101111,  // '8'
+    0b111101111001111   // '9'
+  ]);
+  
+  // Helper function to get digit index
+  function getDigitIndex(char) {
+    if (char === ' ') return 0;
+    const num = parseInt(char);
+    return (num >= 0 && num <= 9) ? num + 1 : 0;
+  }
 
   // ===== CALCULATED CONSTANTS =====
   const digitWidth = 3 * SCALE;
@@ -222,12 +230,16 @@
 
   // ===== TILE CALCULATION =====
   function calculateTilesToUpdate(x, y, s, currentDigit, prevDigit) {
-    const current = digitBitmaps[currentDigit] || digitBitmaps[' '];
-    const previous = digitBitmaps[prevDigit] || digitBitmaps[' '];
+    const currentPacked = digitBitmaps[getDigitIndex(currentDigit)];
+    const prevPacked = digitBitmaps[getDigitIndex(prevDigit)];
     const tiles = [];
     
     for (let row = 0; row < 5; row++) {
-      const diff = current[row] ^ previous[row];
+      // Extract row bits: shift right by (4-row)*3 positions
+      const shift = (4 - row) * 3;
+      const currentRow = (currentPacked >> shift) & 0b111;
+      const prevRow = (prevPacked >> shift) & 0b111;
+      const diff = currentRow ^ prevRow;
       if (diff === 0) continue;
       
       for (let col = 0; col < 3; col++) {
@@ -235,7 +247,7 @@
           tiles.push({
             x: x + col * s,
             y: y + row * s,
-            state: (current[row] >> (2 - col)) & 1
+            state: (currentRow >> (2 - col)) & 1
           });
         }
       }
@@ -375,6 +387,7 @@
             });
           } else {
             lastTime = "";
+            animationTimeouts = [];  // Clear animation timeouts to prevent memory leak
             if (callback) callback();
           }
         });
@@ -427,6 +440,7 @@
 
     function finishDrawing() {
       g.flip();
+      animationTimeouts = [];  // Clear animation timeouts to prevent memory leak
       lastTime = currentTime;
       if (showSeconds && !showingClockInfo) updateSeconds();
       scheduleNextUpdate();
@@ -490,6 +504,7 @@
     function finishSeconds() {
       lastSeconds = seconds;
       isSeconds = false;
+      animationTimeouts = [];  // Clear animation timeouts to prevent memory leak
       g.flip();
       
       // Check if we have a pending switch
@@ -530,6 +545,7 @@
       drawDigit(positions.seconds.x[1], positions.seconds.y + widgetYOffset, SEC_SCALE, " ", lastSeconds[1] || ' ', () => {
         lastSeconds = "";
         isSeconds = false;
+        animationTimeouts = [];  // Clear animation timeouts to prevent memory leak
         if (callback) callback();
       }, false, false);
     }, false, false);
