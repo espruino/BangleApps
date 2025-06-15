@@ -113,6 +113,8 @@ Unless otherwise stated, this project is released under the MIT license.
 Use of the patented method may be subject to licensing or permission.  
 For inquiries, contact the author.
 
+Note: The patented method does not require licensing for non-commercial, research, educational, or personal use within the open-source community. Commercial or broad distribution beyond these uses may require permission or licensing. For such use cases, please contact the author.
+
 ### **Summary**
 
 The Circadian Rhythm Clock transforms the Bangle.js 2 into a **bio-aware, personalized circadian dashboard**, guiding users toward better alignment with their biological clock and modern life.
