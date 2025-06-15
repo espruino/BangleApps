@@ -761,16 +761,6 @@
       clockInfoUnfocused = true;
       clockInfoMenu.focus = false;
       clockInfoMenu.redraw();
-    } else if (showSeconds && userClockInfoPreference !== 'hide') {
-      // Seconds are enabled and user hasn't dismissed clock info
-      showingClockInfo = false;
-      clockInfoUnfocused = false;
-    } else if (!showSeconds && userClockInfoPreference !== 'hide' && settings.seconds === "dynamic" && clockInfoMenu) {
-      // Dynamic mode when locked - show clock info unfocused if not dismissed
-      showingClockInfo = true;
-      clockInfoUnfocused = true;
-      clockInfoMenu.focus = false;
-      clockInfoMenu.redraw();
     } else {
       // Default: show nothing in seconds area
       showingClockInfo = false;
@@ -862,7 +852,7 @@
         if (!showingClockInfo && lastSeconds !== "") {
           if (secondsTimeout) clearTimeout(secondsTimeout);
           clearSeconds(() => {
-            if (userClockInfoPreference !== 'hide') {
+            if (userClockInfoPreference === 'show') {
               showingClockInfo = true;
               clockInfoUnfocused = true;
               if (clockInfoMenu) {
@@ -874,10 +864,9 @@
           });
         }
       } else {
-        if (userClockInfoPreference !== 'show' && showingClockInfo && userClockInfoPreference !== 'hide') {
+        if (showingClockInfo && userClockInfoPreference !== 'show') {
           switchToSeconds();
-        } else if (showSeconds && !showingClockInfo && userClockInfoPreference !== 'show') {
-          showingClockInfo = false;
+        } else if (showSeconds && !showingClockInfo) {
           updateAndAnimTime();
         }
       }
