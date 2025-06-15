@@ -452,14 +452,15 @@
       const tiles0 = calculateTilesToUpdate(positions.seconds.x[0], positions.seconds.y + widgetYOffset, SEC_SCALE, secondsStr[0], ' ');
       const tiles1 = calculateTilesToUpdate(positions.seconds.x[1], positions.seconds.y + widgetYOffset, SEC_SCALE, secondsStr[1], ' ');
       const tilesNeeded = tiles0.length + tiles1.length;
-      
-      // Each tile takes ANIM_DELAY to draw in fast mode
-      const estimatedDrawTime = tilesNeeded * ANIM_DELAY * 2 // Double for safety margin
-      const timeUntilNextSecond = 1000 - currentMs;
-      
+
+      // Check time again after calculations
+      const nowAfterCalc = new Date();
+      const timeUntilNextSecond = 1000 - nowAfterCalc.getMilliseconds();
+      const estimatedDrawTime = tilesNeeded * ANIM_DELAY * 2; // Double for safety margin
+
       // If we can't finish in time, skip to next second
       if (estimatedDrawTime > timeUntilNextSecond) {
-        seconds = (seconds + 1) % 60;
+        seconds = (nowAfterCalc.getSeconds() + 1) % 60;
       }
     }
     
