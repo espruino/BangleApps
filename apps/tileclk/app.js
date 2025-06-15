@@ -479,13 +479,16 @@
     
     const skipAnimation = lastSeconds < 0;
     
+    // Declare digit variables once
+    let s1, s2, prevS1, prevS2;
+    
     if (skipAnimation) {
       // Calculate how many tiles need to be drawn from blank
-      const s1 = Math.floor(secondsNum / 10);
-      const s2 = secondsNum % 10;
-      const tiles0 = calculateTilesToUpdate(positions.seconds.x[0], positions.seconds.y + widgetYOffset, SEC_SCALE, s1, -1);
-      const tiles1 = calculateTilesToUpdate(positions.seconds.x[1], positions.seconds.y + widgetYOffset, SEC_SCALE, s2, -1);
-      const tilesNeeded = tiles0.length + tiles1.length;
+      s1 = Math.floor(secondsNum / 10);
+      s2 = secondsNum % 10;
+      let tiles0 = calculateTilesToUpdate(positions.seconds.x[0], positions.seconds.y + widgetYOffset, SEC_SCALE, s1, -1);
+      let tiles1 = calculateTilesToUpdate(positions.seconds.x[1], positions.seconds.y + widgetYOffset, SEC_SCALE, s2, -1);
+      let tilesNeeded = tiles0.length + tiles1.length;
 
       // Check time again after calculations
       const nowAfterCalc = new Date();
@@ -494,15 +497,16 @@
 
       // If we can't finish in time, skip to next second
       if (estimatedDrawTime > timeUntilNextSecond) {
-        secondsNum = (nowAfterCalc.getSeconds() + 1) % 60;
+        // Get current time again to make sure we skip to the right second
+        secondsNum = (new Date().getSeconds() + 1) % 60;
       }
     }
 
     // Extract current and previous digits
-    const s1 = Math.floor(secondsNum / 10);
-    const s2 = secondsNum % 10;
-    const prevS1 = lastSeconds < 0 ? -1 : Math.floor(lastSeconds / 10);
-    const prevS2 = lastSeconds < 0 ? -1 : lastSeconds % 10;
+    s1 = Math.floor(secondsNum / 10);
+    s2 = secondsNum % 10;
+    prevS1 = lastSeconds < 0 ? -1 : Math.floor(lastSeconds / 10);
+    prevS2 = lastSeconds < 0 ? -1 : lastSeconds % 10;
     
     function updateDigit(index) {
       // Check if we should stop
