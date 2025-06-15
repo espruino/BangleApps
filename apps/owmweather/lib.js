@@ -27,13 +27,12 @@ function parseWeather(response) {
     json.weather = weather;
     require("Storage").writeJSON('weather.json', json);
     if (require("Storage").read("weather")!==undefined) require("weather").emit("update", json.weather);
-    return undefined;
   } else {
-    return /*LANG*/"Not OWM data";
+    throw /*LANG*/"Not OWM data";
   }
 }
 
-exports.pull = function(completionCallback) {
+exports.pull = function(completionCallback, errorCallback) {
   let location = require("Storage").readJSON("mylocation.json", 1) || {
     "lat": 51.50,
     "lon": 0.12,
@@ -43,12 +42,12 @@ exports.pull = function(completionCallback) {
   let uri = "https://api.openweathermap.org/data/2.5/weather?lat=" + location.lat.toFixed(2) + "&lon=" + location.lon.toFixed(2) + "&exclude=hourly,daily&appid=" + settings.apikey;
   if (Bangle.http){
     Bangle.http(uri, {timeout:10000}).then(event => {
-      let result = parseWeather(event.resp);
-      if (completionCallback) completionCallback(result);
+      parseWeather(event.resp);
+      if (completionCallback) completionCallback();
     }).catch((e)=>{
-      if (completionCallback) completionCallback(e);
+      if (errorCallback) errorCallback(e);
     });
   } else {
-    if (completionCallback) completionCallback(/*LANG*/"No http method found");
+    if (errorCallback) errorCallback(/*LANG*/"No http method found");
   }
 };
