@@ -524,23 +524,12 @@
       secondsTimeout = null;
     }
 
-    // If currently drawing, cancel animations and clear immediately
+    // If currently drawing, cancel animations but still do sequential clear
     if (isSeconds) {
       cancelAllAnimations();
-      isSeconds = false;
-      
-      // Clear both digits immediately
-      g.setColor(g.theme.bg);
-      g.fillRect(positions.seconds.x[0], positions.seconds.y + widgetYOffset, 
-                 positions.seconds.x[1] + secDigitWidth - 1, 
-                 positions.seconds.y + widgetYOffset + 5 * SEC_SCALE - 1);
-      lastSeconds = "";
-      
-      if (callback) callback();
-      return;
     }
 
-    // Normal animated clearing
+    // Always do sequential animated clearing
     isSeconds = true;
     drawDigit(positions.seconds.x[0], positions.seconds.y + widgetYOffset, SEC_SCALE, " ", lastSeconds[0] || ' ', () => {
       drawDigit(positions.seconds.x[1], positions.seconds.y + widgetYOffset, SEC_SCALE, " ", lastSeconds[1] || ' ', () => {
