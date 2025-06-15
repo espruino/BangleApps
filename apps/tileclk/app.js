@@ -41,9 +41,9 @@
   let drawTimeout = null;
   let secondsTimeout = null;
   
-  // Time tracking
-  let lastTime = "";
-  let lastSeconds = "";
+  // Time tracking - simple integers
+  let lastTime = -1;  // HHMM format (e.g., 1234 for 12:34)
+  let lastSeconds = -1;  // 0-59
   
   // Clock info menu
   let clockInfoMenu = null;
@@ -54,6 +54,7 @@
   
   // Animation timeouts tracking
   let animationTimeouts = [];
+  
   
   // ===== STATE PERSISTENCE =====
   function loadDisplayState() {
@@ -86,10 +87,24 @@
   ]);
   
   // Helper function to get digit index
-  function getDigitIndex(char) {
-    if (char === ' ') return 0;
-    const num = parseInt(char);
-    return (num >= 0 && num <= 9) ? num + 1 : 0;
+  function getDigitIndex(digit) {
+    if (digit === null || digit === -1) return 0; // space/blank
+    return (digit >= 0 && digit <= 9) ? digit + 1 : 0;
+  }
+  
+  // Helper function to extract digits from time integer
+  function extractTimeDigits(time) {
+    if (time < 0) {
+      return { h1: -1, h2: -1, m1: -1, m2: -1 };
+    }
+    const hours = Math.floor(time / 100);
+    const minutes = time % 100;
+    return {
+      h1: Math.floor(hours / 10),
+      h2: hours % 10,
+      m1: Math.floor(minutes / 10),
+      m2: minutes % 10
+    };
   }
 
   // ===== CALCULATED CONSTANTS =====
@@ -330,7 +345,7 @@
       if (callback) callback();
       return;
     }
-    const layout = is12Hour && lastTime[0] === '0' ? threeDigitLayout : fourDigitLayout;
+    const layout = is12Hour && lastTime >= 0 && lastTime < 1000 ? threeDigitLayout : fourDigitLayout;
     const colonItem = layout.find(item => item.type === 'colon');
 
     if (colonItem) {
@@ -347,15 +362,10 @@
   }
 
   function clearAllDigits(callback) {
-    const wasThreeDigit = is12Hour && lastTime[0] === '0';
+    const wasThreeDigit = is12Hour && lastTime >= 0 && lastTime < 1000;
     const layout = wasThreeDigit ? threeDigitLayout : fourDigitLayout;
     
-    const previousDigits = {
-      h1: lastTime[0] || ' ',
-      h2: lastTime[1] || ' ',
-      m1: lastTime[2] || ' ',
-      m2: lastTime[3] || ' '
-    };
+    const previousDigits = extractTimeDigits(lastTime);
     
     // Direct callback chaining for better performance
     function clearItems(items, next) {
@@ -366,7 +376,7 @@
       const item = items.shift();
       
       if (item.type === 'digit') {
-        drawDigit(item.x, item.y, item.scale, " ", previousDigits[item.value], () => clearItems(items, next), false, true);
+        drawDigit(item.x, item.y, item.scale, -1, previousDigits[item.value], () => clearItems(items, next), false, true);
       } else if (item.type === 'colon') {
         clearColon(() => clearItems(items, next));
       }
@@ -382,11 +392,11 @@
         clearItems(minuteItems.slice(), () => {
           if (showSeconds && !showingClockInfo) {
             clearSeconds(() => {
-              lastTime = "";
+              lastTime = -1;
               if (callback) callback();
             });
           } else {
-            lastTime = "";
+            lastTime = -1;
             animationTimeouts = [];  // Clear animation timeouts to prevent memory leak
             if (callback) callback();
           }
@@ -400,17 +410,27 @@
     if (!isDrawing) return;
 
     const now = new Date();
-    const hours = (is12Hour ? now.getHours() % 12 || 12 : now.getHours()).toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const currentTime = hours + minutes;
-    const isCurrentThreeDigit = is12Hour && hours[0] === '0';
-    const wasLastThreeDigit = is12Hour && lastTime[0] === '0';
+    const hoursNum = is12Hour ? now.getHours() % 12 || 12 : now.getHours();
+    const minutesNum = now.getMinutes();
+    const currentTime = hoursNum * 100 + minutesNum;
+    
+    // Extract digits only for layout decision
+    const isCurrentThreeDigit = is12Hour && hoursNum < 10;
+    const wasLastThreeDigit = is12Hour && lastTime >= 0 && lastTime < 1000;
 
     function drawTime() {
-      const currentDigits = { h1: hours[0], h2: hours[1], m1: minutes[0], m2: minutes[1] };
-      const previousDigits = (isCurrentThreeDigit !== wasLastThreeDigit && lastTime !== "") ? 
-        { h1: ' ', h2: ' ', m1: ' ', m2: ' ' } : 
-        { h1: lastTime[0] || ' ', h2: lastTime[1] || ' ', m1: lastTime[2] || ' ', m2: lastTime[3] || ' ' };
+      // Extract current digits
+      const h1 = Math.floor(hoursNum / 10);
+      const h2 = hoursNum % 10;
+      const m1 = Math.floor(minutesNum / 10);
+      const m2 = minutesNum % 10;
+      
+      const digitMap = { h1: h1, h2: h2, m1: m1, m2: m2 };
+      
+      // Extract previous digits (or -1 for blank)
+      const previousDigits = (isCurrentThreeDigit !== wasLastThreeDigit && lastTime >= 0) ?
+        { h1: -1, h2: -1, m1: -1, m2: -1 } :
+        extractTimeDigits(lastTime);
       
       const layout = isCurrentThreeDigit ? threeDigitLayout : fourDigitLayout;
       
@@ -425,7 +445,7 @@
         const next = () => drawLayout(items, onComplete);
         
         if (item.type === 'digit') {
-          drawDigit(item.x, item.y, item.scale, currentDigits[item.value], previousDigits[item.value], next, false, true);
+          drawDigit(item.x, item.y, item.scale, digitMap[item.value], previousDigits[item.value], next, false, true);
         } else if (item.type === 'colon') {
           drawColon(item.x, item.y, next);
         }
@@ -455,15 +475,16 @@
     isSeconds = true;
 
     const now = new Date();
-    let seconds = now.getSeconds();
+    let secondsNum = now.getSeconds();
     
-    const skipAnimation = lastSeconds === "";
+    const skipAnimation = lastSeconds < 0;
     
     if (skipAnimation) {
       // Calculate how many tiles need to be drawn from blank
-      const secondsStr = seconds.toString().padStart(2, '0');
-      const tiles0 = calculateTilesToUpdate(positions.seconds.x[0], positions.seconds.y + widgetYOffset, SEC_SCALE, secondsStr[0], ' ');
-      const tiles1 = calculateTilesToUpdate(positions.seconds.x[1], positions.seconds.y + widgetYOffset, SEC_SCALE, secondsStr[1], ' ');
+      const s1 = Math.floor(secondsNum / 10);
+      const s2 = secondsNum % 10;
+      const tiles0 = calculateTilesToUpdate(positions.seconds.x[0], positions.seconds.y + widgetYOffset, SEC_SCALE, s1, -1);
+      const tiles1 = calculateTilesToUpdate(positions.seconds.x[1], positions.seconds.y + widgetYOffset, SEC_SCALE, s2, -1);
       const tilesNeeded = tiles0.length + tiles1.length;
 
       // Check time again after calculations
@@ -473,12 +494,16 @@
 
       // If we can't finish in time, skip to next second
       if (estimatedDrawTime > timeUntilNextSecond) {
-        seconds = (nowAfterCalc.getSeconds() + 1) % 60;
+        secondsNum = (nowAfterCalc.getSeconds() + 1) % 60;
       }
     }
-    
-    seconds = seconds.toString().padStart(2, '0');
 
+    // Extract current and previous digits
+    const s1 = Math.floor(secondsNum / 10);
+    const s2 = secondsNum % 10;
+    const prevS1 = lastSeconds < 0 ? -1 : Math.floor(lastSeconds / 10);
+    const prevS2 = lastSeconds < 0 ? -1 : lastSeconds % 10;
+    
     function updateDigit(index) {
       // Check if we should stop
       if (!isDrawing || pendingSwitch || showingClockInfo) {
@@ -486,8 +511,11 @@
         return;
       }
       
-      if (seconds[index] !== (lastSeconds[index] || ' ')) {
-        drawSecondDigit(index, seconds[index], lastSeconds[index] || ' ', () => {
+      const currentDigit = index === 0 ? s1 : s2;
+      const prevDigit = index === 0 ? prevS1 : prevS2;
+      
+      if (currentDigit !== prevDigit) {
+        drawSecondDigit(index, currentDigit, prevDigit, () => {
           if (index === 0) {
             updateDigit(1);
           } else {
@@ -502,7 +530,7 @@
     }
 
     function finishSeconds() {
-      lastSeconds = seconds;
+      lastSeconds = secondsNum;
       isSeconds = false;
       animationTimeouts = [];  // Clear animation timeouts to prevent memory leak
       g.flip();
@@ -528,7 +556,7 @@
 
   function clearSeconds(callback) {
     // If not drawing seconds, just call callback
-    if (lastSeconds === "") {
+    if (lastSeconds < 0) {
       if (callback) callback();
       return;
     }
@@ -541,9 +569,12 @@
 
     // Always do sequential animated clearing
     isSeconds = true;
-    drawDigit(positions.seconds.x[0], positions.seconds.y + widgetYOffset, SEC_SCALE, " ", lastSeconds[0] || ' ', () => {
-      drawDigit(positions.seconds.x[1], positions.seconds.y + widgetYOffset, SEC_SCALE, " ", lastSeconds[1] || ' ', () => {
-        lastSeconds = "";
+    const s1 = Math.floor(lastSeconds / 10);
+    const s2 = lastSeconds % 10;
+    
+    drawDigit(positions.seconds.x[0], positions.seconds.y + widgetYOffset, SEC_SCALE, -1, s1, () => {
+      drawDigit(positions.seconds.x[1], positions.seconds.y + widgetYOffset, SEC_SCALE, -1, s2, () => {
+        lastSeconds = -1;
         isSeconds = false;
         animationTimeouts = [];  // Clear animation timeouts to prevent memory leak
         if (callback) callback();
@@ -594,7 +625,7 @@
       g.flip();
     };
     
-    if (showSeconds && lastSeconds !== "") {
+    if (showSeconds && lastSeconds >= 0) {
       clearSeconds(show);
     } else {
       show();
@@ -622,7 +653,7 @@
     userClockInfoPreference = 'hide';
     showingClockInfo = false;
     clockInfoUnfocused = false;
-    lastSeconds = "";
+    lastSeconds = -1;
     
     g.setColor(g.theme.bg);
     g.fillRect(0, positions.seconds.y + widgetYOffset - 10, width, positions.seconds.y + widgetYOffset + 50);
@@ -758,8 +789,8 @@
   function drawClock() {
     g.clear(Bangle.appRect);
     if (settings.widgets !== "hide") Bangle.drawWidgets();
-    lastTime = "";
-    lastSeconds = "";
+    lastTime = -1;
+    lastSeconds = -1;
     isColonDrawn = false;
     
     // Load saved state
@@ -829,8 +860,8 @@
       showingClockInfo = false;
       clockInfoUnfocused = false;
       userClockInfoPreference = null;
-      lastTime = "";
-      lastSeconds = "";
+      lastTime = -1;
+      lastSeconds = -1;
       isColonDrawn = false;
       
       // Clear caches
@@ -865,7 +896,7 @@
       pendingSwitch = false; // Clear any pending switch
       
       if (isLocked) {
-        if (!showingClockInfo && lastSeconds !== "") {
+        if (!showingClockInfo && lastSeconds >= 0) {
           if (secondsTimeout) clearTimeout(secondsTimeout);
           clearSeconds(() => {
             if (userClockInfoPreference === 'show') {
