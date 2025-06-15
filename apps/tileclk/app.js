@@ -441,7 +441,6 @@
     isSeconds = true;
 
     const now = new Date();
-    const currentMs = now.getMilliseconds();
     let seconds = now.getSeconds();
     
     const skipAnimation = lastSeconds === "";
@@ -523,11 +522,6 @@
     if (secondsTimeout) {
       clearTimeout(secondsTimeout);
       secondsTimeout = null;
-    }
-
-    // If currently drawing, cancel animations but still do sequential clear
-    if (isSeconds) {
-      cancelAllAnimations();
     }
 
     // Always do sequential animated clearing
