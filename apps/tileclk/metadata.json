@@ -17,7 +17,7 @@
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "data": [
-    {"name": "tileclk.settings.json"},
+    {"name": "tileclk.json"},
     {"name": "tileclk.state.json"}
   ],
   "storage": [
