@@ -1,4 +1,5 @@
-{ "id": "mclock",
+{ 
+  "id": "mclock",
   "name": "Modern Clock",
   "shortName":"Modern Clock",
   "icon": "app.png",
