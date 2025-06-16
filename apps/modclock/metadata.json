@@ -1,0 +1,20 @@
+{ 
+  "id": "ModernClock",
+  "name": "Modern Clock",
+  "shortName":"Modern Clock",
+  "icon": "app.png",
+  "version":"0.01",
+  "description": "A modern, simple clock, with two clockInfos",
+  "type":"clock",    
+  "tags": ["clock", "clkinfo"],
+  "supports": ["BANGLEJS2"],
+  "screenshots" : [ { "url":"Screenshot1.png" }, 
+    { "url":"Screenshot2.png" }  ],
+  "dependencies" : { "clock_info":"module"},
+  "allow_emulator":true,
+  "readme":"README.md",
+  "storage": [
+    {"name":"mclock.app.js","url":"app.js"},
+    {"name":"mclock.img","url":"app-icon.js","evaluate":true}
+  ]
+}
