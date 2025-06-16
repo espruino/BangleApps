@@ -536,8 +536,14 @@
     function finishSeconds() {
       lastSeconds = secondsNum;
       isSeconds = false;
-      animationTimeouts = [];  // Clear animation timeouts to prevent memory leak
+      animationTimeouts = [];
       g.flip();
+      
+      // If we're locked after finishing animation, clear the seconds
+      if (settings.seconds === "dynamic" && Bangle.isLocked() && !showingClockInfo) {
+        clearSeconds();
+        return;
+      }
       
       // Check if we have a pending switch
       if (pendingSwitch) {
