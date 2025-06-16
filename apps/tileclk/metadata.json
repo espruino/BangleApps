@@ -1,0 +1,28 @@
+{
+  "id": "tileclk",
+  "name": "Tile Clock",
+  "shortName": "Tile Clock",
+  "version": "0.01",
+  "description": "A tile-based digital clock with animated transitions, customizable borders, and clock info integration.",
+  "icon": "icon.png",
+  "dependencies" : { "clock_info":"module" },
+  "screenshots": [
+    {"url": "screenshot.png"},
+    {"url": "screenshot2.png"},
+    {"url": "screenshot3.png"},
+    {"url": "screenshot4.png"}
+  ],
+  "type": "clock",
+  "tags": "clock,digital,animated,tiles,clkinfo",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "data": [
+    {"name": "tileclk.json"},
+    {"name": "tileclk.state.json"}
+  ],
+  "storage": [
+    {"name": "tileclk.app.js", "url": "app.js"},
+    {"name": "tileclk.settings.js", "url": "settings.js"},
+    {"name": "tileclk.img", "url": "app-icon.js", "evaluate": true}
+  ]
+}
