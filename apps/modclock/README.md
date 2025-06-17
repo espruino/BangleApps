@@ -2,7 +2,7 @@
 
 
 
-A beautifully simple, modern clock with two Clock Infos, and a clean UI. Has Fast Loading.
+A beautifully simple, modern clock with two Clock Infos, and a clean UI. 
 
 ![](Screenshot1.png)
 
@@ -12,9 +12,11 @@ A beautifully simple, modern clock with two Clock Infos, and a clean UI. Has Fas
 
 * Has 2 Clock Infos, that are individually changeable. 
 
-* Has Fast Loading, for quicker access to launcher.
-
 * Low battery consumption.
+
+* Uses locale for time and date.
+
+* Bold time font, for quicker readability.
 
 
 ## Creator
