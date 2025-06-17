@@ -1,5 +1,5 @@
 (function() {
-  /* Tile Clock with Clock Info Integration - Performance Optimized */
+  /* Tile Clock with Clock Info Integration */
   
   // ===== CONSTANTS =====
   const SCALE = 12;
@@ -31,53 +31,82 @@
   // Display state
   let showingClockInfo = false;
   let clockInfoUnfocused = false;
-  let userPreferClockInfo = false;
-  let userDismissedClockInfo = false;
+  let userClockInfoPreference = null; // null: no preference, 'show': user wants it, 'hide': user dismissed it
+  let pendingSwitch = false;
   
   // Animation state
   let isDrawing = true;
   let isColonDrawn = false;
-  let isDrawingSeconds = false;
+  let isSeconds = false;
   let drawTimeout = null;
   let secondsTimeout = null;
   
-  // Time tracking
-  let lastTime = "";
-  let lastSeconds = "";
+  // Time tracking - simple integers
+  let lastTime = -1;  // HHMM format (e.g., 1234 for 12:34)
+  let lastSeconds = -1;  // 0-59
   
   // Clock info menu
   let clockInfoMenu = null;
+  
+  // Event handlers (for cleanup)
+  let touchHandler = null;
+  let lockHandler = null;
+  
+  // Animation timeouts tracking
+  let animationTimeouts = [];
+  
   
   // ===== STATE PERSISTENCE =====
   function loadDisplayState() {
     const state = require('Storage').readJSON("tileclk.state.json", true) || {};
     showingClockInfo = state.showingClockInfo || false;
-    userPreferClockInfo = state.userPreferClockInfo || false;
-    userDismissedClockInfo = state.userDismissedClockInfo || false;
+    userClockInfoPreference = state.userClockInfoPreference || null;
   }
   
   function saveDisplayState() {
     require('Storage').writeJSON("tileclk.state.json", {
       showingClockInfo: showingClockInfo,
-      userPreferClockInfo: userPreferClockInfo,
-      userDismissedClockInfo: userDismissedClockInfo
+      userClockInfoPreference: userClockInfoPreference
     });
   }
 
   // ===== DIGIT BITMAPS =====
-  const digitBitmaps = {
-    ' ': [0, 0, 0, 0, 0],
-    '0': [7, 5, 5, 5, 7],
-    '1': [2, 6, 2, 2, 7],
-    '2': [7, 1, 7, 4, 7],
-    '3': [7, 1, 7, 1, 7],
-    '4': [5, 5, 7, 1, 1],
-    '5': [7, 4, 7, 1, 7],
-    '6': [7, 4, 7, 5, 7],
-    '7': [7, 1, 1, 1, 1],
-    '8': [7, 5, 7, 5, 7],
-    '9': [7, 5, 7, 1, 7]
-  };
+  // Each digit packed into 16 bits (5 rows × 3 bits each)
+  const digitBitmaps = new Uint16Array([
+    0b000000000000000,  // ' ' (space)
+    0b111101101101111,  // '0'
+    0b010110010010111,  // '1'
+    0b111001111100111,  // '2'
+    0b111001111001111,  // '3'
+    0b101101111001001,  // '4'
+    0b111100111001111,  // '5'
+    0b111100111101111,  // '6'
+    0b111001001001001,  // '7'
+    0b111101111101111,  // '8'
+    0b111101111001111   // '9'
+  ]);
+  
+  // Helper function to get digit index
+  function getDigitIndex(digit) {
+    if (digit === null || digit === -1) return 0; // space/blank
+    return (digit >= 0 && digit <= 9) ? digit + 1 : 0;
+  }
+  
+  // Helper function to extract digits from time integer
+  function extractTimeDigits(time) {
+    if (time < 0) {
+      return { h1: -1, h2: -1, m1: -1, m2: -1 };
+    }
+    // Bitwise OR 0 for integer division - more efficient on microcontrollers
+    const hours = (time / 100) | 0;
+    const minutes = time % 100;
+    return {
+      h1: (hours / 10) | 0,
+      h2: hours % 10,
+      m1: (minutes / 10) | 0,
+      m2: minutes % 10
+    };
+  }
 
   // ===== CALCULATED CONSTANTS =====
   const digitWidth = 3 * SCALE;
@@ -89,11 +118,11 @@
   // ===== WIDGET OFFSET =====
   const widgetYOffset = (settings.widgets === "hide" || settings.widgets === "swipe") ? -SCALE : 0;
 
-  // ===== BORDER COLOR (Inlined for performance) =====
+  // ===== BORDER COLOR =====
   const borderColor = settings.borderColor === "theme" || !settings.borderColor ? 
     g.theme.bgH : g.toColor(settings.borderColor);
 
-  // ===== POSITION CALCULATIONS (Pre-computed for performance) =====
+  // ===== POSITION CALCULATIONS =====
   const positions = {
     threeDigit: (() => {
       const totalWidth = 3 * digitWidth + colonWidth + 3 * GAP;
@@ -130,15 +159,20 @@
     }
   };
 
-  // Pre-compute touch areas for faster access
-  const mainTimeAreaBottom = widgetYOffset + Math.round(0.6 * height);
-  const secondsAreaLeft = positions.seconds.x[0] - 10;
-  const secondsAreaRight = positions.seconds.x[1] + secDigitWidth + 10;
-  const secondsAreaTop = positions.seconds.y + widgetYOffset - 10;
-  const secondsAreaBottom = positions.seconds.y + widgetYOffset + 5 * SEC_SCALE + 10;
-  const clockInfoAreaBottom = positions.seconds.y + widgetYOffset + 40;
+  // Touch areas
+  const mainTimeArea = {
+    top: widgetYOffset,
+    bottom: widgetYOffset + Math.round(0.6 * height)
+  };
+  
+  const secondsArea = {
+    left: positions.seconds.x[0] - 10,
+    right: positions.seconds.x[1] + secDigitWidth + 10,
+    top: positions.seconds.y + widgetYOffset - 10,
+    bottom: positions.seconds.y + widgetYOffset + 50  // Covers both seconds and clock info
+  };
 
-  // ===== LAYOUT GENERATION (Optimized with pre-built layouts) =====
+  // ===== LAYOUT GENERATION =====
   const threeDigitLayout = [
     { type: 'digit', value: 'h2', x: positions.threeDigit.digitX[0], y: positions.threeDigit.digitsY + widgetYOffset, scale: SCALE },
     { type: 'colon', x: positions.threeDigit.colonX, y: positions.threeDigit.colonY + widgetYOffset, scale: SCALE },
@@ -161,22 +195,20 @@
     const key = c1 + "_" + c2 + "_" + Math.round(fraction * FRAC_STEPS);
     if (colorCache[key]) return colorCache[key];
     
-    const r1 = (c1 >> 16) & 0xFF;
-    const g1 = (c1 >> 8) & 0xFF;
-    const b1 = c1 & 0xFF;
-    const r2 = (c2 >> 16) & 0xFF;
-    const g2 = (c2 >> 8) & 0xFF;
-    const b2 = c2 & 0xFF;
+    // Pre-calculate fractions to avoid repeated operations
+    const invFrac = FRAC_STEPS - Math.round(fraction * FRAC_STEPS);
+    const frac = Math.round(fraction * FRAC_STEPS);
     
-    const r = Math.round(r1 * (1 - fraction) + r2 * fraction);
-    const g = Math.round(g1 * (1 - fraction) + g2 * fraction);
-    const b = Math.round(b1 * (1 - fraction) + b2 * fraction);
+    // Inline color extraction and use bitwise OR for integer conversion
+    const r = ((((c1 >> 16) & 0xFF) * invFrac + ((c2 >> 16) & 0xFF) * frac) / FRAC_STEPS) | 0;
+    const g = ((((c1 >> 8) & 0xFF) * invFrac + ((c2 >> 8) & 0xFF) * frac) / FRAC_STEPS) | 0;
+    const b = (((c1 & 0xFF) * invFrac + (c2 & 0xFF) * frac) / FRAC_STEPS) | 0;
     
     colorCache[key] = (r << 16) | (g << 8) | b;
     return colorCache[key];
   }
 
-  // ===== BORDER DRAWING (Inlined check for performance) =====
+  // ===== BORDER DRAWING =====
   function drawBorder(x, y, s, thickness) {
     if (!showBorders || thickness <= 0) return;
     
@@ -193,13 +225,14 @@
     const thickness = isMainDigit ? MAIN_BORDER_THICKNESS : SEC_BORDER_THICKNESS;
 
     function transition() {
-      if (!isDrawing) return;
+      if (!isDrawing || (pendingSwitch && isSeconds)) return;
       g.setColor(interpColor(on ? g.theme.bg : g.theme.fg, on ? g.theme.fg : g.theme.bg, Math.abs(progress - (on ? 0 : 1))));
       g.fillRect(x, y, x + s - 1, y + s - 1);
 
       progress += step;
       if (progress >= 0 && progress <= 1) {
-        setTimeout(transition, ANIM_DELAY);
+        const timeout = setTimeout(transition, ANIM_DELAY);
+        animationTimeouts.push(timeout);
       } else {
         if (on) drawBorder(x, y, s, thickness);
         if (callback) callback();
@@ -211,23 +244,65 @@
 
   // ===== TILE CALCULATION =====
   function calculateTilesToUpdate(x, y, s, currentDigit, prevDigit) {
-    const current = digitBitmaps[currentDigit] || digitBitmaps[' '];
-    const previous = digitBitmaps[prevDigit] || digitBitmaps[' '];
+    const currentPacked = digitBitmaps[getDigitIndex(currentDigit)];
+    const prevPacked = digitBitmaps[getDigitIndex(prevDigit)];
     const tiles = [];
     
-    for (let row = 0; row < 5; row++) {
-      const diff = current[row] ^ previous[row];
-      if (diff === 0) continue;
-      
-      for (let col = 0; col < 3; col++) {
-        if (diff & (1 << (2 - col))) {
-          tiles.push({
-            x: x + col * s,
-            y: y + row * s,
-            state: (current[row] >> (2 - col)) & 1
-          });
-        }
-      }
+    let yPos = y;
+    
+    // Loop unrolled for 5 rows - eliminates loop overhead on microcontroller
+    // Row 0
+    let currentRow = (currentPacked >> 12) & 0b111;
+    let prevRow = (prevPacked >> 12) & 0b111;
+    let diff = currentRow ^ prevRow;
+    if (diff) {
+      if (diff & 4) tiles.push({ x: x, y: yPos, state: (currentRow >> 2) & 1 });
+      if (diff & 2) tiles.push({ x: x + s, y: yPos, state: (currentRow >> 1) & 1 });
+      if (diff & 1) tiles.push({ x: x + s + s, y: yPos, state: currentRow & 1 });
+    }
+    
+    // Row 1
+    yPos += s;
+    currentRow = (currentPacked >> 9) & 0b111;
+    prevRow = (prevPacked >> 9) & 0b111;
+    diff = currentRow ^ prevRow;
+    if (diff) {
+      if (diff & 4) tiles.push({ x: x, y: yPos, state: (currentRow >> 2) & 1 });
+      if (diff & 2) tiles.push({ x: x + s, y: yPos, state: (currentRow >> 1) & 1 });
+      if (diff & 1) tiles.push({ x: x + s + s, y: yPos, state: currentRow & 1 });
+    }
+    
+    // Row 2
+    yPos += s;
+    currentRow = (currentPacked >> 6) & 0b111;
+    prevRow = (prevPacked >> 6) & 0b111;
+    diff = currentRow ^ prevRow;
+    if (diff) {
+      if (diff & 4) tiles.push({ x: x, y: yPos, state: (currentRow >> 2) & 1 });
+      if (diff & 2) tiles.push({ x: x + s, y: yPos, state: (currentRow >> 1) & 1 });
+      if (diff & 1) tiles.push({ x: x + s + s, y: yPos, state: currentRow & 1 });
+    }
+    
+    // Row 3
+    yPos += s;
+    currentRow = (currentPacked >> 3) & 0b111;
+    prevRow = (prevPacked >> 3) & 0b111;
+    diff = currentRow ^ prevRow;
+    if (diff) {
+      if (diff & 4) tiles.push({ x: x, y: yPos, state: (currentRow >> 2) & 1 });
+      if (diff & 2) tiles.push({ x: x + s, y: yPos, state: (currentRow >> 1) & 1 });
+      if (diff & 1) tiles.push({ x: x + s + s, y: yPos, state: currentRow & 1 });
+    }
+    
+    // Row 4
+    yPos += s;
+    currentRow = currentPacked & 0b111;
+    prevRow = prevPacked & 0b111;
+    diff = currentRow ^ prevRow;
+    if (diff) {
+      if (diff & 4) tiles.push({ x: x, y: yPos, state: (currentRow >> 2) & 1 });
+      if (diff & 2) tiles.push({ x: x + s, y: yPos, state: (currentRow >> 1) & 1 });
+      if (diff & 1) tiles.push({ x: x + s + s, y: yPos, state: currentRow & 1 });
     }
     
     return tiles;
@@ -252,13 +327,14 @@
   }
 
   function updateTiles(tiles, s, callback, skipAnimation, isMainDigit) {
-    if (!isDrawing || !tiles.length) {
+    if (!isDrawing || !tiles.length || (pendingSwitch && isSeconds)) {
       if (callback) callback();
       return;
     }
     const tile = tiles.shift();
     updateTile(tile, s, skipAnimation, isMainDigit);
-    setTimeout(() => updateTiles(tiles, s, callback, skipAnimation, isMainDigit), ANIM_DELAY);
+    const timeout = setTimeout(() => updateTiles(tiles, s, callback, skipAnimation, isMainDigit), ANIM_DELAY);
+    animationTimeouts.push(timeout);
   }
 
   // ===== DIGIT DRAWING =====
@@ -267,6 +343,13 @@
       if (callback) callback();
       return;
     }
+    
+    // Check if we should stop seconds animation
+    if (isSeconds && pendingSwitch) {
+      if (callback) callback();
+      return;
+    }
+    
     const tiles = calculateTilesToUpdate(x, y, s, num, prevNum);
     updateTiles(tiles, s, callback, skipAnimation, isMainDigit);
   }
@@ -299,7 +382,7 @@
       if (callback) callback();
       return;
     }
-    const layout = is12Hour && lastTime[0] === '0' ? threeDigitLayout : fourDigitLayout;
+    const layout = is12Hour && lastTime >= 0 && lastTime < 1000 ? threeDigitLayout : fourDigitLayout;
     const colonItem = layout.find(item => item.type === 'colon');
 
     if (colonItem) {
@@ -316,15 +399,10 @@
   }
 
   function clearAllDigits(callback) {
-    const wasThreeDigit = is12Hour && lastTime[0] === '0';
+    const wasThreeDigit = is12Hour && lastTime >= 0 && lastTime < 1000;
     const layout = wasThreeDigit ? threeDigitLayout : fourDigitLayout;
     
-    const previousDigits = {
-      h1: lastTime[0] || ' ',
-      h2: lastTime[1] || ' ',
-      m1: lastTime[2] || ' ',
-      m2: lastTime[3] || ' '
-    };
+    const previousDigits = extractTimeDigits(lastTime);
     
     // Direct callback chaining for better performance
     function clearItems(items, next) {
@@ -335,7 +413,7 @@
       const item = items.shift();
       
       if (item.type === 'digit') {
-        drawDigit(item.x, item.y, item.scale, " ", previousDigits[item.value], () => clearItems(items, next), false, true);
+        drawDigit(item.x, item.y, item.scale, -1, previousDigits[item.value], () => clearItems(items, next), false, true);
       } else if (item.type === 'colon') {
         clearColon(() => clearItems(items, next));
       }
@@ -351,11 +429,12 @@
         clearItems(minuteItems.slice(), () => {
           if (showSeconds && !showingClockInfo) {
             clearSeconds(() => {
-              lastTime = "";
+              lastTime = -1;
               if (callback) callback();
             });
           } else {
-            lastTime = "";
+            lastTime = -1;
+            animationTimeouts = [];  // Clear animation timeouts to prevent memory leak
             if (callback) callback();
           }
         });
@@ -363,22 +442,32 @@
     });
   }
 
-  // ===== MAIN TIME UPDATE (Optimized with direct logic) =====
+  // ===== MAIN TIME UPDATE =====
   function updateAndAnimTime() {
     if (!isDrawing) return;
 
     const now = new Date();
-    const hours = (is12Hour ? now.getHours() % 12 || 12 : now.getHours()).toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const currentTime = hours + minutes;
-    const isCurrentThreeDigit = is12Hour && hours[0] === '0';
-    const wasLastThreeDigit = is12Hour && lastTime[0] === '0';
+    const hoursNum = is12Hour ? now.getHours() % 12 || 12 : now.getHours();
+    const minutesNum = now.getMinutes();
+    const currentTime = hoursNum * 100 + minutesNum;
+    
+    // Extract digits only for layout decision
+    const isCurrentThreeDigit = is12Hour && hoursNum < 10;
+    const wasLastThreeDigit = is12Hour && lastTime >= 0 && lastTime < 1000;
 
     function drawTime() {
-      const currentDigits = { h1: hours[0], h2: hours[1], m1: minutes[0], m2: minutes[1] };
-      const previousDigits = (isCurrentThreeDigit !== wasLastThreeDigit && lastTime !== "") ? 
-        { h1: ' ', h2: ' ', m1: ' ', m2: ' ' } : 
-        { h1: lastTime[0] || ' ', h2: lastTime[1] || ' ', m1: lastTime[2] || ' ', m2: lastTime[3] || ' ' };
+      // Extract current digits - bitwise OR faster than Math.floor on Espruino
+      const h1 = (hoursNum / 10) | 0;
+      const h2 = hoursNum % 10;
+      const m1 = (minutesNum / 10) | 0;
+      const m2 = minutesNum % 10;
+      
+      const digitMap = { h1: h1, h2: h2, m1: m1, m2: m2 };
+      
+      // Extract previous digits (or -1 for blank)
+      const previousDigits = (isCurrentThreeDigit !== wasLastThreeDigit && lastTime >= 0) ?
+        { h1: -1, h2: -1, m1: -1, m2: -1 } :
+        extractTimeDigits(lastTime);
       
       const layout = isCurrentThreeDigit ? threeDigitLayout : fourDigitLayout;
       
@@ -393,7 +482,7 @@
         const next = () => drawLayout(items, onComplete);
         
         if (item.type === 'digit') {
-          drawDigit(item.x, item.y, item.scale, currentDigits[item.value], previousDigits[item.value], next, false, true);
+          drawDigit(item.x, item.y, item.scale, digitMap[item.value], previousDigits[item.value], next, false, true);
         } else if (item.type === 'colon') {
           drawColon(item.x, item.y, next);
         }
@@ -408,6 +497,7 @@
 
     function finishDrawing() {
       g.flip();
+      animationTimeouts = [];  // Clear animation timeouts to prevent memory leak
       lastTime = currentTime;
       if (showSeconds && !showingClockInfo) updateSeconds();
       scheduleNextUpdate();
@@ -418,37 +508,55 @@
 
   // ===== SECONDS HANDLING =====
   function updateSeconds() {
-    if (isDrawingSeconds || !showSeconds || showingClockInfo) return;
-    isDrawingSeconds = true;
+    if (isSeconds || !showSeconds || showingClockInfo || pendingSwitch) return;
+    isSeconds = true;
 
     const now = new Date();
-    const currentMs = now.getMilliseconds();
-    let seconds = now.getSeconds();
+    let secondsNum = now.getSeconds();
     
-    const skipAnimation = lastSeconds === "";
+    const skipAnimation = lastSeconds < 0;
+    
+    // Declare digit variables once
+    let s1, s2, prevS1, prevS2;
     
     if (skipAnimation) {
       // Calculate how many tiles need to be drawn from blank
-      const secondsStr = seconds.toString().padStart(2, '0');
-      const tiles0 = calculateTilesToUpdate(positions.seconds.x[0], positions.seconds.y + widgetYOffset, SEC_SCALE, secondsStr[0], ' ');
-      const tiles1 = calculateTilesToUpdate(positions.seconds.x[1], positions.seconds.y + widgetYOffset, SEC_SCALE, secondsStr[1], ' ');
-      const tilesNeeded = tiles0.length + tiles1.length;
-      
-      // Each tile takes ANIM_DELAY to draw in fast mode
-      const estimatedDrawTime = tilesNeeded * ANIM_DELAY * 2 // Double for safety margin
-      const timeUntilNextSecond = 1000 - currentMs;
-      
+      s1 = (secondsNum / 10) | 0;  // Bitwise OR for integer division
+      s2 = secondsNum % 10;
+      let tiles0 = calculateTilesToUpdate(positions.seconds.x[0], positions.seconds.y + widgetYOffset, SEC_SCALE, s1, -1);
+      let tiles1 = calculateTilesToUpdate(positions.seconds.x[1], positions.seconds.y + widgetYOffset, SEC_SCALE, s2, -1);
+      let tilesNeeded = tiles0.length + tiles1.length;
+
+      // Check time again after calculations
+      const nowAfterCalc = new Date();
+      const timeUntilNextSecond = 1000 - nowAfterCalc.getMilliseconds();
+      const estimatedDrawTime = tilesNeeded * ANIM_DELAY * 2; // Double for safety margin
+
       // If we can't finish in time, skip to next second
       if (estimatedDrawTime > timeUntilNextSecond) {
-        seconds = (seconds + 1) % 60;
+        // Get current time again to make sure we skip to the right second
+        secondsNum = (new Date().getSeconds() + 1) % 60;
       }
     }
-    
-    seconds = seconds.toString().padStart(2, '0');
 
+    // Extract current and previous digits
+    s1 = (secondsNum / 10) | 0;  // Bitwise OR for integer division
+    s2 = secondsNum % 10;
+    prevS1 = lastSeconds < 0 ? -1 : (lastSeconds / 10) | 0;
+    prevS2 = lastSeconds < 0 ? -1 : lastSeconds % 10;
+    
     function updateDigit(index) {
-      if (seconds[index] !== (lastSeconds[index] || ' ')) {
-        drawSecondDigit(index, seconds[index], lastSeconds[index] || ' ', () => {
+      // Check if we should stop
+      if (!isDrawing || pendingSwitch || showingClockInfo) {
+        isSeconds = false;
+        return;
+      }
+      
+      const currentDigit = index === 0 ? s1 : s2;
+      const prevDigit = index === 0 ? prevS1 : prevS2;
+      
+      if (currentDigit !== prevDigit) {
+        drawSecondDigit(index, currentDigit, prevDigit, () => {
           if (index === 0) {
             updateDigit(1);
           } else {
@@ -463,13 +571,26 @@
     }
 
     function finishSeconds() {
-      lastSeconds = seconds;
-      isDrawingSeconds = false;
+      lastSeconds = secondsNum;
+      isSeconds = false;
+      animationTimeouts = [];
       g.flip();
+      
+      // If we're locked after finishing animation, clear the seconds
+      if (settings.seconds === "dynamic" && Bangle.isLocked() && !showingClockInfo) {
+        clearSeconds();
+        return;
+      }
+      
+      // Check if we have a pending switch
+      if (pendingSwitch) {
+        setTimeout(switchToClockInfo, 10);
+        return;
+      }
       
       if (secondsTimeout) clearTimeout(secondsTimeout);
       secondsTimeout = setTimeout(() => {
-        if (showSeconds && !showingClockInfo) updateSeconds();
+        if (showSeconds && !showingClockInfo && !pendingSwitch) updateSeconds();
       }, 1000 - new Date().getMilliseconds());
     }
 
@@ -481,26 +602,65 @@
   }
 
   function clearSeconds(callback) {
-    if (isDrawingSeconds) {
-      setTimeout(() => clearSeconds(callback), 50);
+    // If not drawing seconds, just call callback
+    if (lastSeconds < 0) {
+      if (callback) callback();
       return;
     }
 
-    isDrawingSeconds = true;
-    drawDigit(positions.seconds.x[0], positions.seconds.y + widgetYOffset, SEC_SCALE, " ", lastSeconds[0] || ' ', () => {
-      drawDigit(positions.seconds.x[1], positions.seconds.y + widgetYOffset, SEC_SCALE, " ", lastSeconds[1] || ' ', () => {
-        lastSeconds = "";
-        isDrawingSeconds = false;
+    // Cancel any pending seconds update
+    if (secondsTimeout) {
+      clearTimeout(secondsTimeout);
+      secondsTimeout = null;
+    }
+
+    // Always do sequential animated clearing
+    isSeconds = true;
+    const s1 = (lastSeconds / 10) | 0;  // Bitwise OR for integer division
+    const s2 = lastSeconds % 10;
+    
+    drawDigit(positions.seconds.x[0], positions.seconds.y + widgetYOffset, SEC_SCALE, -1, s1, () => {
+      drawDigit(positions.seconds.x[1], positions.seconds.y + widgetYOffset, SEC_SCALE, -1, s2, () => {
+        lastSeconds = -1;
+        isSeconds = false;
+        animationTimeouts = [];  // Clear animation timeouts to prevent memory leak
         if (callback) callback();
-      });
+      }, false, false);
     }, false, false);
   }
 
+  // ===== ANIMATION CLEANUP =====
+  function cancelAllAnimations() {
+    animationTimeouts.forEach(t => clearTimeout(t));
+    animationTimeouts = [];
+  }
+  
   // ===== SWITCHING FUNCTIONS (Optimized with direct state changes) =====
   function switchToClockInfo() {
-    if (showingClockInfo || !clockInfoMenu) return;
+    if (showingClockInfo || !clockInfoMenu) {
+      pendingSwitch = false;
+      return;
+    }
     
-    if (secondsTimeout) clearTimeout(secondsTimeout);
+    // Mark that we want to switch
+    pendingSwitch = true;
+    
+    // If seconds are drawing, wait a bit and retry
+    if (isSeconds) {
+      setTimeout(() => {
+        if (pendingSwitch) switchToClockInfo();
+      }, 100);
+      return;
+    }
+    
+    // Clear pending flag
+    pendingSwitch = false;
+    
+    cancelAllAnimations();
+    if (secondsTimeout) {
+      clearTimeout(secondsTimeout);
+      secondsTimeout = null;
+    }
     
     const show = () => {
       showingClockInfo = true;
@@ -512,7 +672,7 @@
       g.flip();
     };
     
-    if (showSeconds && lastSeconds !== "") {
+    if (showSeconds && lastSeconds >= 0) {
       clearSeconds(show);
     } else {
       show();
@@ -522,7 +682,8 @@
   function hideClockInfo() {
     if (!showingClockInfo) return;
     
-    userPreferClockInfo = false;
+    pendingSwitch = false;
+    cancelAllAnimations();
     showingClockInfo = false;
     clockInfoUnfocused = false;
     
@@ -534,11 +695,12 @@
   function switchToSeconds() {
     if (!showingClockInfo || !showSeconds) return;
     
-    userPreferClockInfo = false;
-    userDismissedClockInfo = true;
+    pendingSwitch = false;
+    cancelAllAnimations();
+    userClockInfoPreference = 'hide';
     showingClockInfo = false;
     clockInfoUnfocused = false;
-    lastSeconds = "";
+    lastSeconds = -1;
     
     g.setColor(g.theme.bg);
     g.fillRect(0, positions.seconds.y + widgetYOffset - 10, width, positions.seconds.y + widgetYOffset + 50);
@@ -547,12 +709,19 @@
     updateAndAnimTime();
   }
 
-  // ===== TOUCH HANDLING (Optimized with pre-computed areas) =====
+  // ===== TOUCH HANDLING =====
   function setupTouchHandler() {
-    Bangle.on("touch", (_, e) => {
+    // Remove old handler if exists
+    if (touchHandler) {
+      Bangle.removeListener("touch", touchHandler);
+    }
+    
+    // Create new handler
+    touchHandler = (_, e) => {
       if (showingClockInfo) {
         // Check if tap is on clock info area
-        if (e.y >= secondsAreaTop && e.y <= clockInfoAreaBottom) {
+        if (e.x >= secondsArea.left && e.x <= secondsArea.right &&
+            e.y >= secondsArea.top && e.y <= secondsArea.bottom) {
           // Refocus if unfocused
           if (clockInfoUnfocused) {
             if (settings.haptics !== false) Bangle.buzz(50); // Haptic feedback for refocus
@@ -567,7 +736,7 @@
         }
         
         // Check main time area for dismissal
-        if (e.x >= 0 && e.x <= width && e.y >= widgetYOffset && e.y <= mainTimeAreaBottom) {
+        if (e.y >= mainTimeArea.top && e.y <= mainTimeArea.bottom) {
           if (!clockInfoUnfocused) {
             // First tap: unfocus
             if (settings.haptics !== false) Bangle.buzz(40); // Light haptic for unfocus
@@ -581,26 +750,26 @@
             // Second tap: dismiss
             if (settings.haptics !== false) Bangle.buzz(60); // Slightly stronger haptic for dismiss
             if (showSeconds) {
-              userPreferClockInfo = false;
-              userDismissedClockInfo = true;
               switchToSeconds();
             } else {
-              userDismissedClockInfo = true;
+              userClockInfoPreference = 'hide';
               hideClockInfo();
             }
           }
         }
       } else {
         // Check seconds area for switching to clock info
-        if (e.x >= secondsAreaLeft && e.x <= secondsAreaRight &&
-            e.y >= secondsAreaTop && e.y <= secondsAreaBottom) {
+        if (e.x >= secondsArea.left && e.x <= secondsArea.right &&
+            e.y >= secondsArea.top && e.y <= secondsArea.bottom) {
           if (settings.haptics !== false) Bangle.buzz(50); // Haptic feedback for showing clock info
-          userPreferClockInfo = true;
-          userDismissedClockInfo = false;
+          userClockInfoPreference = 'show';
           switchToClockInfo();
         }
       }
-    });
+    };
+    
+    // Add the handler
+    Bangle.on("touch", touchHandler);
   }
 
   // ===== CLOCK INFO SETUP =====
@@ -667,16 +836,12 @@
   function drawClock() {
     g.clear(Bangle.appRect);
     if (settings.widgets !== "hide") Bangle.drawWidgets();
-    lastTime = "";
-    lastSeconds = "";
+    lastTime = -1;
+    lastSeconds = -1;
     isColonDrawn = false;
     
     // Load saved state
     loadDisplayState();
-    
-    // Setup clock info and touch handler
-    setupClockInfo();
-    setupTouchHandler();
     
     // Determine initial display based on saved preferences and current settings
     if (showingClockInfo && clockInfoMenu) {
@@ -684,18 +849,8 @@
       clockInfoUnfocused = true;
       clockInfoMenu.focus = false;
       clockInfoMenu.redraw();
-    } else if (userPreferClockInfo && clockInfoMenu) {
+    } else if (userClockInfoPreference === 'show' && clockInfoMenu) {
       // User prefers clock info - show it unfocused
-      showingClockInfo = true;
-      clockInfoUnfocused = true;
-      clockInfoMenu.focus = false;
-      clockInfoMenu.redraw();
-    } else if (showSeconds && !userDismissedClockInfo) {
-      // Seconds are enabled and user hasn't dismissed clock info
-      showingClockInfo = false;
-      clockInfoUnfocused = false;
-    } else if (!showSeconds && !userDismissedClockInfo && settings.seconds === "dynamic" && clockInfoMenu) {
-      // Dynamic mode when locked - show clock info unfocused if not dismissed
       showingClockInfo = true;
       clockInfoUnfocused = true;
       clockInfoMenu.focus = false;
@@ -713,15 +868,55 @@
   Bangle.setUI({
     mode: "clock",
     remove: function() {
+      // Stop all drawing
       isDrawing = false;
+      pendingSwitch = false;
+      isSeconds = false;
+      
+      // Save current state
       saveDisplayState();
       
-      if (drawTimeout) clearTimeout(drawTimeout);
-      if (secondsTimeout) clearTimeout(secondsTimeout);
+      // Clear all timeouts
+      if (drawTimeout) {
+        clearTimeout(drawTimeout);
+        drawTimeout = null;
+      }
+      if (secondsTimeout) {
+        clearTimeout(secondsTimeout);
+        secondsTimeout = null;
+      }
+      cancelAllAnimations();
       
+      // Remove event handlers
+      if (touchHandler) {
+        Bangle.removeListener("touch", touchHandler);
+        touchHandler = null;
+      }
+      if (lockHandler) {
+        Bangle.removeListener("lock", lockHandler);
+        lockHandler = null;
+      }
+      
+      // Remove clock info menu
       if (clockInfoMenu) {
         clockInfoMenu.remove();
         clockInfoMenu = null;
+      }
+      
+      // Clear state variables
+      showingClockInfo = false;
+      clockInfoUnfocused = false;
+      userClockInfoPreference = null;
+      lastTime = -1;
+      lastSeconds = -1;
+      isColonDrawn = false;
+      
+      // Clear caches
+      Object.keys(colorCache).forEach(key => delete colorCache[key]);
+      
+      // Restore widgets if hidden
+      if (["hide", "swipe"].includes(settings.widgets)) {
+        require("widget_utils").show();
       }
     }
   });
@@ -731,15 +926,27 @@
   if (settings.widgets === "hide") require("widget_utils").hide();
   else if (settings.widgets === "swipe") require("widget_utils").swipeOn();
 
+  // ===== SETUP (run once) =====
+  setupClockInfo();
+  setupTouchHandler();
+  
   // ===== LOCK HANDLER =====
-  Bangle.on('lock', function(isLocked) {
+  // Remove old handler if exists
+  if (lockHandler) {
+    Bangle.removeListener('lock', lockHandler);
+  }
+  
+  // Create new handler
+  lockHandler = function(isLocked) {
     if (settings.seconds === "dynamic") {
       showSeconds = !isLocked;
+      pendingSwitch = false; // Clear any pending switch
+      
       if (isLocked) {
-        if (!showingClockInfo && lastSeconds !== "") {
+        if (!showingClockInfo && lastSeconds >= 0) {
           if (secondsTimeout) clearTimeout(secondsTimeout);
           clearSeconds(() => {
-            if (!userDismissedClockInfo) {
+            if (userClockInfoPreference === 'show') {
               showingClockInfo = true;
               clockInfoUnfocused = true;
               if (clockInfoMenu) {
@@ -751,15 +958,17 @@
           });
         }
       } else {
-        if (!userPreferClockInfo && showingClockInfo && !userDismissedClockInfo) {
+        if (showingClockInfo && userClockInfoPreference !== 'show') {
           switchToSeconds();
-        } else if (showSeconds && !showingClockInfo && !userPreferClockInfo) {
-          showingClockInfo = false;
+        } else if (showSeconds && !showingClockInfo) {
           updateAndAnimTime();
         }
       }
     }
-  });
+  };
+  
+  // Add the handler
+  Bangle.on('lock', lockHandler);
 
   // ===== START CLOCK =====
   drawClock();

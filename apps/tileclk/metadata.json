@@ -4,7 +4,7 @@
   "shortName": "Tile Clock",
   "version": "0.01",
   "description": "A tile-based digital clock with animated transitions, customizable borders, and clock info integration.",
-  "icon": "screenshot.png",
+  "icon": "icon.png",
   "dependencies" : { "clock_info":"module" },
   "screenshots": [
     {"url": "screenshot.png"},
@@ -17,7 +17,7 @@
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "data": [
-    {"name": "tileclk.settings.json"},
+    {"name": "tileclk.json"},
     {"name": "tileclk.state.json"}
   ],
   "storage": [
