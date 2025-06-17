@@ -87,3 +87,4 @@ of 'Select Clock'
 0.76: Add altitude calibration menu (and update README after menu changed)
 0.77: Save altitude calibration when user exits via reset
 0.78: Fix menu scroll restore on BangleJS1
+0.79: Ensure that tapping on pressure/altitude doesn't cause a menu to display temporarily
