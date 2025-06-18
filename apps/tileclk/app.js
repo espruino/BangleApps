@@ -6,7 +6,6 @@
   const SEC_SCALE = 6;
   const FRAC_STEPS = 5;
   const ANIM_DELAY = 16;
-  const COLOR_INTERP = 0.2;
   const GAP = 3;
   const MAIN_BORDER_THICKNESS = 2;
   const SEC_BORDER_THICKNESS = 1;
@@ -27,33 +26,14 @@
   let showSeconds = settings.seconds === "show" || (settings.seconds === "dynamic" && !Bangle.isLocked());
   const showBorders = settings.borders !== false;
 
-  // ===== FLAT STATE VARIABLES (Optimized for access speed) =====
-  // Display state
-  let showingClockInfo = false;
-  let clockInfoUnfocused = false;
-  let userClockInfoPreference = null; // null: no preference, 'show': user wants it, 'hide': user dismissed it
-  let pendingSwitch = false;
-  
-  // Animation state
-  let isDrawing = true;
-  let isColonDrawn = false;
-  let isSeconds = false;
-  let drawTimeout = null;
-  let secondsTimeout = null;
-  
-  // Time tracking - simple integers
-  let lastTime = -1;  // HHMM format (e.g., 1234 for 12:34)
-  let lastSeconds = -1;  // 0-59
-  
-  // Clock info menu
-  let clockInfoMenu = null;
-  
-  // Event handlers (for cleanup)
-  let touchHandler = null;
-  let lockHandler = null;
-  
-  // Animation timeouts tracking
-  let animationTimeouts = [];
+  // ===== STATE VARIABLES =====
+  let showingClockInfo = false, clockInfoUnfocused = false, userClockInfoPreference = null;
+  let pendingSwitch = false, isDrawing = true, isColonDrawn = false, isSeconds = false;
+  let drawTimeout = null, secondsTimeout = null, lastTime = null, lastSeconds = null;
+  let clockInfoMenu = null, touchHandler = null, lockHandler = null;
+  let animationTimeouts = new Uint16Array(50), animationTimeoutCount = 0;
+  // State tracking for conditional saving
+  let initialShowingClockInfo = false, initialUserClockInfoPreference = null;
   
   
   // ===== STATE PERSISTENCE =====
@@ -61,45 +41,78 @@
     const state = require('Storage').readJSON("tileclk.state.json", true) || {};
     showingClockInfo = state.showingClockInfo || false;
     userClockInfoPreference = state.userClockInfoPreference || null;
+    
+    // Track initial values for conditional saving
+    initialShowingClockInfo = showingClockInfo;
+    initialUserClockInfoPreference = userClockInfoPreference;
   }
   
   function saveDisplayState() {
-    require('Storage').writeJSON("tileclk.state.json", {
-      showingClockInfo: showingClockInfo,
-      userClockInfoPreference: userClockInfoPreference
-    });
+    // Only save if values have changed to reduce flash wear
+    if (showingClockInfo !== initialShowingClockInfo || 
+        userClockInfoPreference !== initialUserClockInfoPreference) {
+      require('Storage').writeJSON("tileclk.state.json", {
+        showingClockInfo: showingClockInfo,
+        userClockInfoPreference: userClockInfoPreference
+      });
+    }
   }
 
   // ===== DIGIT BITMAPS =====
-  // Each digit packed into 16 bits (5 rows × 3 bits each)
   const digitBitmaps = new Uint16Array([
-    0b000000000000000,  // ' ' (space)
-    0b111101101101111,  // '0'
-    0b010110010010111,  // '1'
-    0b111001111100111,  // '2'
-    0b111001111001111,  // '3'
-    0b101101111001001,  // '4'
-    0b111100111001111,  // '5'
-    0b111100111101111,  // '6'
-    0b111001001001001,  // '7'
-    0b111101111101111,  // '8'
-    0b111101111001111   // '9'
+    0b000000000000000,0b111101101101111,0b010110010010111,0b111001111100111,0b111001111001111,
+    0b101101111001001,0b111100111001111,0b111100111101111,0b111001001001001,0b111101111101111,0b111101111001111
   ]);
+
+  let timeCache = null;
+
+  const initEssentialCaches = () => {
+    timeCache = {
+      hourDigits12: new Uint8Array(24 * 2),
+      hourDigits24: new Uint8Array(24 * 2),
+      minuteDigits: new Uint8Array(60 * 2)
+    };
+    
+    for (let h = 0; h < 24; h++) {
+      const h12 = h % 12 || 12;
+      timeCache.hourDigits12[h * 2] = (h12 / 10) | 0;
+      timeCache.hourDigits12[h * 2 + 1] = h12 % 10;
+      timeCache.hourDigits24[h * 2] = (h / 10) | 0;
+      timeCache.hourDigits24[h * 2 + 1] = h % 10;
+    }
+    
+    for (let m = 0; m < 60; m++) {
+      timeCache.minuteDigits[m * 2] = (m / 10) | 0;
+      timeCache.minuteDigits[m * 2 + 1] = m % 10;
+    }
+  }
   
   // Helper function to get digit index
-  function getDigitIndex(digit) {
-    if (digit === null || digit === -1) return 0; // space/blank
+  const getDigitIndex = (digit) => {
+    if (digit === null) return 0; // space/blank
     return (digit >= 0 && digit <= 9) ? digit + 1 : 0;
   }
   
-  // Helper function to extract digits from time integer
-  function extractTimeDigits(time) {
-    if (time < 0) {
-      return { h1: -1, h2: -1, m1: -1, m2: -1 };
+  const extractTimeDigits = (time) => {
+    if (time === null) {
+      return { h1: null, h2: null, m1: null, m2: null };
     }
-    // Bitwise OR 0 for integer division - more efficient on microcontrollers
+    
     const hours = (time / 100) | 0;
     const minutes = time % 100;
+    
+    if (timeCache && timeCache.minuteDigits) {
+      const hourCache = is12Hour ? timeCache.hourDigits12 : timeCache.hourDigits24;
+      const minuteCache = timeCache.minuteDigits;
+      
+      return {
+        h1: hourCache[hours * 2],
+        h2: hourCache[hours * 2 + 1],
+        m1: minuteCache[minutes * 2],
+        m2: minuteCache[minutes * 2 + 1]
+      };
+    }
+    
     return {
       h1: (hours / 10) | 0,
       h2: hours % 10,
@@ -108,21 +121,12 @@
     };
   }
 
-  // ===== CALCULATED CONSTANTS =====
-  const digitWidth = 3 * SCALE;
-  const colonWidth = SCALE;
-  const secDigitWidth = 3 * SEC_SCALE;
-  const totalSecWidth = 2 * secDigitWidth + GAP;
-  const secStartX = (width / 2) - (totalSecWidth / 2);
-
-  // ===== WIDGET OFFSET =====
+  const digitWidth = 3 * SCALE, colonWidth = SCALE, secDigitWidth = 3 * SEC_SCALE;
+  const totalSecWidth = 2 * secDigitWidth + GAP, secStartX = (width / 2) - (totalSecWidth / 2);
   const widgetYOffset = (settings.widgets === "hide" || settings.widgets === "swipe") ? -SCALE : 0;
-
-  // ===== BORDER COLOR =====
   const borderColor = settings.borderColor === "theme" || !settings.borderColor ? 
     g.theme.bgH : g.toColor(settings.borderColor);
 
-  // ===== POSITION CALCULATIONS =====
   const positions = {
     threeDigit: (() => {
       const totalWidth = 3 * digitWidth + colonWidth + 3 * GAP;
@@ -160,26 +164,15 @@
   };
 
   // Touch areas
-  const mainTimeArea = {
-    top: widgetYOffset,
-    bottom: widgetYOffset + Math.round(0.6 * height)
-  };
-  
-  const secondsArea = {
-    left: positions.seconds.x[0] - 10,
-    right: positions.seconds.x[1] + secDigitWidth + 10,
-    top: positions.seconds.y + widgetYOffset - 10,
-    bottom: positions.seconds.y + widgetYOffset + 50  // Covers both seconds and clock info
-  };
+  const mainTimeArea = { top: widgetYOffset, bottom: widgetYOffset + Math.round(0.6 * height) };
+  const bottomArea = { top: positions.seconds.y + widgetYOffset - 10, bottom: height };
 
-  // ===== LAYOUT GENERATION =====
   const threeDigitLayout = [
     { type: 'digit', value: 'h2', x: positions.threeDigit.digitX[0], y: positions.threeDigit.digitsY + widgetYOffset, scale: SCALE },
     { type: 'colon', x: positions.threeDigit.colonX, y: positions.threeDigit.colonY + widgetYOffset, scale: SCALE },
     { type: 'digit', value: 'm1', x: positions.threeDigit.digitX[1], y: positions.threeDigit.digitsY + widgetYOffset, scale: SCALE },
     { type: 'digit', value: 'm2', x: positions.threeDigit.digitX[2], y: positions.threeDigit.digitsY + widgetYOffset, scale: SCALE }
   ];
-  
   const fourDigitLayout = [
     { type: 'digit', value: 'h1', x: positions.fourDigit.digitX[0], y: positions.fourDigit.digitsY + widgetYOffset, scale: SCALE },
     { type: 'digit', value: 'h2', x: positions.fourDigit.digitX[1], y: positions.fourDigit.digitsY + widgetYOffset, scale: SCALE },
@@ -188,30 +181,37 @@
     { type: 'digit', value: 'm2', x: positions.fourDigit.digitX[3], y: positions.fourDigit.digitsY + widgetYOffset, scale: SCALE }
   ];
 
-  // ===== COLOR INTERPOLATION WITH CACHING =====
-  const colorCache = {};
-  
-  function interpColor(c1, c2, fraction) {
-    const key = c1 + "_" + c2 + "_" + Math.round(fraction * FRAC_STEPS);
-    if (colorCache[key]) return colorCache[key];
-    
-    // Pre-calculate fractions to avoid repeated operations
-    const invFrac = FRAC_STEPS - Math.round(fraction * FRAC_STEPS);
-    const frac = Math.round(fraction * FRAC_STEPS);
-    
-    // Inline color extraction and use bitwise OR for integer conversion
-    const r = ((((c1 >> 16) & 0xFF) * invFrac + ((c2 >> 16) & 0xFF) * frac) / FRAC_STEPS) | 0;
-    const g = ((((c1 >> 8) & 0xFF) * invFrac + ((c2 >> 8) & 0xFF) * frac) / FRAC_STEPS) | 0;
-    const b = (((c1 & 0xFF) * invFrac + (c2 & 0xFF) * frac) / FRAC_STEPS) | 0;
-    
-    colorCache[key] = (r << 16) | (g << 8) | b;
-    return colorCache[key];
-  }
+  // ===== EFFICIENT COLOR SYSTEM =====
+  // Pre-calculated color tables for animations using typed arrays
+  let colorOn = null, colorOff = null;
 
-  // ===== BORDER DRAWING =====
-  function drawBorder(x, y, s, thickness) {
-    if (!showBorders || thickness <= 0) return;
+  const initColorTables = () => {
+    // Use Uint32Array for maximum performance
+    colorOn = new Uint32Array(FRAC_STEPS + 1);
+    colorOff = new Uint32Array(FRAC_STEPS + 1);
     
+    const bgColor = g.theme.bg;
+    const fgColor = g.theme.fg;
+    
+    // Calculate all color transitions
+    for (let i = 0; i <= FRAC_STEPS; i++) {
+      const frac = i / FRAC_STEPS;
+      const invFrac = 1 - frac;
+      
+      // Direct calculation for better performance
+      const rOn = (((bgColor >> 16) & 0xFF) * invFrac + ((fgColor >> 16) & 0xFF) * frac) | 0;
+      const gOn = (((bgColor >> 8) & 0xFF) * invFrac + ((fgColor >> 8) & 0xFF) * frac) | 0;
+      const bOn = ((bgColor & 0xFF) * invFrac + (fgColor & 0xFF) * frac) | 0;
+      const rOff = (((fgColor >> 16) & 0xFF) * invFrac + ((bgColor >> 16) & 0xFF) * frac) | 0;
+      const gOff = (((fgColor >> 8) & 0xFF) * invFrac + ((bgColor >> 8) & 0xFF) * frac) | 0;
+      const bOff = ((fgColor & 0xFF) * invFrac + (bgColor & 0xFF) * frac) | 0;
+      colorOn[i] = (rOn << 16) | (gOn << 8) | bOn;
+      colorOff[i] = (rOff << 16) | (gOff << 8) | bOff;
+    }
+  }
+  // ===== BORDER DRAWING =====
+  const drawBorder = (x, y, s, thickness) => {
+    if (!showBorders || thickness <= 0) return;
     g.setColor(borderColor);
     for (let i = 0; i < thickness; i++) {
       g.drawRect(x + i, y + i, x + s - 1 - i, y + s - 1 - i);
@@ -219,22 +219,27 @@
   }
 
   // ===== ANIMATION FUNCTIONS =====
-  function animateTile(x, y, s, on, callback, isMainDigit) {
-    let progress = on ? 0 : 1;
-    const step = on ? COLOR_INTERP : -COLOR_INTERP;
-    const thickness = isMainDigit ? MAIN_BORDER_THICKNESS : SEC_BORDER_THICKNESS;
+  function animateTransition(x, y, s, startColor, endColor, drawBorderFunc, callback) {
+    let step = 0;
+    const colors = startColor === g.theme.bg ? colorOn : colorOff;
 
     function transition() {
       if (!isDrawing || (pendingSwitch && isSeconds)) return;
-      g.setColor(interpColor(on ? g.theme.bg : g.theme.fg, on ? g.theme.fg : g.theme.bg, Math.abs(progress - (on ? 0 : 1))));
+      
+      // Use pre-calculated color instead of interpColor()
+      g.setColor(colors[step]);
       g.fillRect(x, y, x + s - 1, y + s - 1);
 
-      progress += step;
-      if (progress >= 0 && progress <= 1) {
+      step++;
+      if (step <= FRAC_STEPS) {
         const timeout = setTimeout(transition, ANIM_DELAY);
-        animationTimeouts.push(timeout);
+        if (animationTimeoutCount < animationTimeouts.length) {
+          animationTimeouts[animationTimeoutCount++] = timeout;
+        }
       } else {
-        if (on) drawBorder(x, y, s, thickness);
+        g.setColor(endColor);
+        g.fillRect(x, y, x + s - 1, y + s - 1);
+        if (drawBorderFunc) drawBorderFunc();
         if (callback) callback();
       }
     }
@@ -242,74 +247,42 @@
     transition();
   }
 
+  function animateTileOn(x, y, s, callback, isMainDigit) {
+    const thickness = isMainDigit ? MAIN_BORDER_THICKNESS : SEC_BORDER_THICKNESS;
+    const borderFunc = (showBorders && thickness > 0) ? 
+      () => drawBorder(x, y, s, thickness) : null;
+    animateTransition(x, y, s, g.theme.bg, g.theme.fg, borderFunc, callback);
+  }
+
+  function animateTileOff(x, y, s, callback) {
+    animateTransition(x, y, s, g.theme.fg, g.theme.bg, null, callback);
+  }
   // ===== TILE CALCULATION =====
-  function calculateTilesToUpdate(x, y, s, currentDigit, prevDigit) {
+  const calculateTilesToUpdate = (x, y, s, currentDigit, prevDigit) => {
     const currentPacked = digitBitmaps[getDigitIndex(currentDigit)];
     const prevPacked = digitBitmaps[getDigitIndex(prevDigit)];
     const tiles = [];
     
     let yPos = y;
     
-    // Loop unrolled for 5 rows - eliminates loop overhead on microcontroller
-    // Row 0
-    let currentRow = (currentPacked >> 12) & 0b111;
-    let prevRow = (prevPacked >> 12) & 0b111;
-    let diff = currentRow ^ prevRow;
-    if (diff) {
-      if (diff & 4) tiles.push({ x: x, y: yPos, state: (currentRow >> 2) & 1 });
-      if (diff & 2) tiles.push({ x: x + s, y: yPos, state: (currentRow >> 1) & 1 });
-      if (diff & 1) tiles.push({ x: x + s + s, y: yPos, state: currentRow & 1 });
-    }
-    
-    // Row 1
-    yPos += s;
-    currentRow = (currentPacked >> 9) & 0b111;
-    prevRow = (prevPacked >> 9) & 0b111;
-    diff = currentRow ^ prevRow;
-    if (diff) {
-      if (diff & 4) tiles.push({ x: x, y: yPos, state: (currentRow >> 2) & 1 });
-      if (diff & 2) tiles.push({ x: x + s, y: yPos, state: (currentRow >> 1) & 1 });
-      if (diff & 1) tiles.push({ x: x + s + s, y: yPos, state: currentRow & 1 });
-    }
-    
-    // Row 2
-    yPos += s;
-    currentRow = (currentPacked >> 6) & 0b111;
-    prevRow = (prevPacked >> 6) & 0b111;
-    diff = currentRow ^ prevRow;
-    if (diff) {
-      if (diff & 4) tiles.push({ x: x, y: yPos, state: (currentRow >> 2) & 1 });
-      if (diff & 2) tiles.push({ x: x + s, y: yPos, state: (currentRow >> 1) & 1 });
-      if (diff & 1) tiles.push({ x: x + s + s, y: yPos, state: currentRow & 1 });
-    }
-    
-    // Row 3
-    yPos += s;
-    currentRow = (currentPacked >> 3) & 0b111;
-    prevRow = (prevPacked >> 3) & 0b111;
-    diff = currentRow ^ prevRow;
-    if (diff) {
-      if (diff & 4) tiles.push({ x: x, y: yPos, state: (currentRow >> 2) & 1 });
-      if (diff & 2) tiles.push({ x: x + s, y: yPos, state: (currentRow >> 1) & 1 });
-      if (diff & 1) tiles.push({ x: x + s + s, y: yPos, state: currentRow & 1 });
-    }
-    
-    // Row 4
-    yPos += s;
-    currentRow = currentPacked & 0b111;
-    prevRow = prevPacked & 0b111;
-    diff = currentRow ^ prevRow;
-    if (diff) {
-      if (diff & 4) tiles.push({ x: x, y: yPos, state: (currentRow >> 2) & 1 });
-      if (diff & 2) tiles.push({ x: x + s, y: yPos, state: (currentRow >> 1) & 1 });
-      if (diff & 1) tiles.push({ x: x + s + s, y: yPos, state: currentRow & 1 });
+    // Loop through 5 rows
+    for (let row = 0; row < 5; row++) {
+      const shift = 12 - row * 3;
+      const currentRow = (currentPacked >> shift) & 0b111;
+      const prevRow = (prevPacked >> shift) & 0b111;
+      const diff = currentRow ^ prevRow;
+      if (diff) {
+        if (diff & 4) tiles.push({ x: x, y: yPos, state: (currentRow >> 2) & 1 });
+        if (diff & 2) tiles.push({ x: x + s, y: yPos, state: (currentRow >> 1) & 1 });
+        if (diff & 1) tiles.push({ x: x + s + s, y: yPos, state: currentRow & 1 });
+      }
+      yPos += s;
     }
     
     return tiles;
   }
-
   // ===== TILE UPDATE =====
-  function updateTile(tile, s, skipAnimation, isMainDigit) {
+  function updateTile(tile, s, skipAnimation, isMainDigit, isClearing) {
     const thickness = isMainDigit ? MAIN_BORDER_THICKNESS : SEC_BORDER_THICKNESS;
     
     if (tile.state) {
@@ -318,25 +291,30 @@
         g.fillRect(tile.x, tile.y, tile.x + s - 1, tile.y + s - 1);
         drawBorder(tile.x, tile.y, s, thickness);
       } else {
-        animateTile(tile.x, tile.y, s, true, null, isMainDigit);
+        animateTileOn(tile.x, tile.y, s, null, isMainDigit);
       }
     } else {
-      g.setColor(g.theme.bg);
-      g.fillRect(tile.x, tile.y, tile.x + s - 1, tile.y + s - 1);
+      if (skipAnimation || isClearing) {
+        g.setColor(g.theme.bg);
+        g.fillRect(tile.x, tile.y, tile.x + s - 1, tile.y + s - 1);
+      } else {
+        animateTileOff(tile.x, tile.y, s, null);
+      }
     }
   }
 
-  function updateTiles(tiles, s, callback, skipAnimation, isMainDigit) {
+  function updateTiles(tiles, s, callback, skipAnimation, isMainDigit, isClearing) {
     if (!isDrawing || !tiles.length || (pendingSwitch && isSeconds)) {
       if (callback) callback();
       return;
     }
     const tile = tiles.shift();
-    updateTile(tile, s, skipAnimation, isMainDigit);
-    const timeout = setTimeout(() => updateTiles(tiles, s, callback, skipAnimation, isMainDigit), ANIM_DELAY);
-    animationTimeouts.push(timeout);
+    updateTile(tile, s, skipAnimation, isMainDigit, isClearing);
+    const timeout = setTimeout(() => updateTiles(tiles, s, callback, skipAnimation, isMainDigit, isClearing), ANIM_DELAY);
+    if (animationTimeoutCount < animationTimeouts.length) {
+      animationTimeouts[animationTimeoutCount++] = timeout;
+    }
   }
-
   // ===== DIGIT DRAWING =====
   function drawDigit(x, y, s, num, prevNum, callback, skipAnimation, isMainDigit) {
     if (num === prevNum) {
@@ -351,7 +329,7 @@
     }
     
     const tiles = calculateTilesToUpdate(x, y, s, num, prevNum);
-    updateTiles(tiles, s, callback, skipAnimation, isMainDigit);
+    updateTiles(tiles, s, callback, skipAnimation, isMainDigit, num === null);
   }
 
   function drawColon(x, y, callback) {
@@ -359,14 +337,13 @@
       if (callback) callback();
       return;
     }
-    animateTile(x, y + SCALE * 2, SCALE, true, () => {
-      animateTile(x, y + SCALE * 4, SCALE, true, () => {
+    animateTileOn(x, y + SCALE * 2, SCALE, () => {
+      animateTileOn(x, y + SCALE * 4, SCALE, () => {
         isColonDrawn = true;
         if (callback) callback();
       }, true);
     }, true);
   }
-
   // ===== TIME UPDATE SCHEDULING =====
   function scheduleNextUpdate() {
     if (drawTimeout) clearTimeout(drawTimeout);
@@ -375,23 +352,22 @@
     
     drawTimeout = setTimeout(updateAndAnimTime, msUntilNextMinute);
   }
-
   // ===== CLEARING FUNCTIONS (Direct callback approach for performance) =====
   function clearColon(callback) {
     if (!isColonDrawn) {
       if (callback) callback();
       return;
     }
-    const layout = is12Hour && lastTime >= 0 && lastTime < 1000 ? threeDigitLayout : fourDigitLayout;
+    const layout = is12Hour && lastTime !== null && lastTime < 1000 ? threeDigitLayout : fourDigitLayout;
     const colonItem = layout.find(item => item.type === 'colon');
 
     if (colonItem) {
-      animateTile(colonItem.x, colonItem.y + SCALE * 2, SCALE, false, () => {
-        animateTile(colonItem.x, colonItem.y + SCALE * 4, SCALE, false, () => {
+      animateTileOff(colonItem.x, colonItem.y + SCALE * 2, SCALE, () => {
+        animateTileOff(colonItem.x, colonItem.y + SCALE * 4, SCALE, () => {
           isColonDrawn = false;
           if (callback) callback();
-        }, true);
-      }, true);
+        });
+      });
     } else {
       isColonDrawn = false;
       if (callback) callback();
@@ -399,7 +375,7 @@
   }
 
   function clearAllDigits(callback) {
-    const wasThreeDigit = is12Hour && lastTime >= 0 && lastTime < 1000;
+    const wasThreeDigit = is12Hour && lastTime !== null && lastTime < 1000;
     const layout = wasThreeDigit ? threeDigitLayout : fourDigitLayout;
     
     const previousDigits = extractTimeDigits(lastTime);
@@ -413,7 +389,7 @@
       const item = items.shift();
       
       if (item.type === 'digit') {
-        drawDigit(item.x, item.y, item.scale, -1, previousDigits[item.value], () => clearItems(items, next), false, true);
+        drawDigit(item.x, item.y, item.scale, null, previousDigits[item.value], () => clearItems(items, next), false, true);
       } else if (item.type === 'colon') {
         clearColon(() => clearItems(items, next));
       }
@@ -429,12 +405,11 @@
         clearItems(minuteItems.slice(), () => {
           if (showSeconds && !showingClockInfo) {
             clearSeconds(() => {
-              lastTime = -1;
+              lastTime = null;
               if (callback) callback();
             });
           } else {
-            lastTime = -1;
-            animationTimeouts = [];  // Clear animation timeouts to prevent memory leak
+            lastTime = null;
             if (callback) callback();
           }
         });
@@ -453,20 +428,33 @@
     
     // Extract digits only for layout decision
     const isCurrentThreeDigit = is12Hour && hoursNum < 10;
-    const wasLastThreeDigit = is12Hour && lastTime >= 0 && lastTime < 1000;
+    const wasLastThreeDigit = is12Hour && lastTime !== null && lastTime < 1000;
 
     function drawTime() {
-      // Extract current digits - bitwise OR faster than Math.floor on Espruino
-      const h1 = (hoursNum / 10) | 0;
-      const h2 = hoursNum % 10;
-      const m1 = (minutesNum / 10) | 0;
-      const m2 = minutesNum % 10;
+      // Extract current digits using cached lookups for maximum performance
+      let h1, h2, m1, m2;
+      
+      if (timeCache && timeCache.minuteDigits) {
+        const hourCache = is12Hour ? timeCache.hourDigits12 : timeCache.hourDigits24;
+        const minuteCache = timeCache.minuteDigits;
+        
+        h1 = hourCache[hoursNum * 2];
+        h2 = hourCache[hoursNum * 2 + 1];
+        m1 = minuteCache[minutesNum * 2];
+        m2 = minuteCache[minutesNum * 2 + 1];
+      } else {
+        // Fallback to direct calculation
+        h1 = (hoursNum / 10) | 0;
+        h2 = hoursNum % 10;
+        m1 = (minutesNum / 10) | 0;
+        m2 = minutesNum % 10;
+      }
       
       const digitMap = { h1: h1, h2: h2, m1: m1, m2: m2 };
       
-      // Extract previous digits (or -1 for blank)
-      const previousDigits = (isCurrentThreeDigit !== wasLastThreeDigit && lastTime >= 0) ?
-        { h1: -1, h2: -1, m1: -1, m2: -1 } :
+      // Extract previous digits (or null for blank)
+      const previousDigits = (isCurrentThreeDigit !== wasLastThreeDigit && lastTime !== null) ?
+        { h1: null, h2: null, m1: null, m2: null } :
         extractTimeDigits(lastTime);
       
       const layout = isCurrentThreeDigit ? threeDigitLayout : fourDigitLayout;
@@ -496,8 +484,6 @@
     }
 
     function finishDrawing() {
-      g.flip();
-      animationTimeouts = [];  // Clear animation timeouts to prevent memory leak
       lastTime = currentTime;
       if (showSeconds && !showingClockInfo) updateSeconds();
       scheduleNextUpdate();
@@ -514,17 +500,23 @@
     const now = new Date();
     let secondsNum = now.getSeconds();
     
-    const skipAnimation = lastSeconds < 0;
+    const skipAnimation = lastSeconds === null;
     
     // Declare digit variables once
     let s1, s2, prevS1, prevS2;
     
     if (skipAnimation) {
-      // Calculate how many tiles need to be drawn from blank
-      s1 = (secondsNum / 10) | 0;  // Bitwise OR for integer division
-      s2 = secondsNum % 10;
-      let tiles0 = calculateTilesToUpdate(positions.seconds.x[0], positions.seconds.y + widgetYOffset, SEC_SCALE, s1, -1);
-      let tiles1 = calculateTilesToUpdate(positions.seconds.x[1], positions.seconds.y + widgetYOffset, SEC_SCALE, s2, -1);
+      // Calculate how many tiles need to be drawn from blank using cached lookups
+      if (timeCache && timeCache.minuteDigits) {
+        s1 = timeCache.minuteDigits[secondsNum * 2];
+        s2 = timeCache.minuteDigits[secondsNum * 2 + 1];
+      } else {
+        s1 = (secondsNum / 10) | 0;  // Bitwise OR for integer division
+        s2 = secondsNum % 10;
+      }
+      
+      let tiles0 = calculateTilesToUpdate(positions.seconds.x[0], positions.seconds.y + widgetYOffset, SEC_SCALE, s1, null);
+      let tiles1 = calculateTilesToUpdate(positions.seconds.x[1], positions.seconds.y + widgetYOffset, SEC_SCALE, s2, null);
       let tilesNeeded = tiles0.length + tiles1.length;
 
       // Check time again after calculations
@@ -539,11 +531,23 @@
       }
     }
 
-    // Extract current and previous digits
-    s1 = (secondsNum / 10) | 0;  // Bitwise OR for integer division
-    s2 = secondsNum % 10;
-    prevS1 = lastSeconds < 0 ? -1 : (lastSeconds / 10) | 0;
-    prevS2 = lastSeconds < 0 ? -1 : lastSeconds % 10;
+    // Extract current and previous digits using cached lookups
+    if (timeCache && timeCache.minuteDigits) {
+      s1 = timeCache.minuteDigits[secondsNum * 2];
+      s2 = timeCache.minuteDigits[secondsNum * 2 + 1];
+      if (lastSeconds !== null) {
+        prevS1 = timeCache.minuteDigits[lastSeconds * 2];
+        prevS2 = timeCache.minuteDigits[lastSeconds * 2 + 1];
+      } else {
+        prevS1 = null;
+        prevS2 = null;
+      }
+    } else {
+      s1 = (secondsNum / 10) | 0;  // Bitwise OR for integer division
+      s2 = secondsNum % 10;
+      prevS1 = lastSeconds === null ? null : (lastSeconds / 10) | 0;
+      prevS2 = lastSeconds === null ? null : lastSeconds % 10;
+    }
     
     function updateDigit(index) {
       // Check if we should stop
@@ -573,8 +577,6 @@
     function finishSeconds() {
       lastSeconds = secondsNum;
       isSeconds = false;
-      animationTimeouts = [];
-      g.flip();
       
       // If we're locked after finishing animation, clear the seconds
       if (settings.seconds === "dynamic" && Bangle.isLocked() && !showingClockInfo) {
@@ -603,7 +605,7 @@
 
   function clearSeconds(callback) {
     // If not drawing seconds, just call callback
-    if (lastSeconds < 0) {
+    if (lastSeconds === null) {
       if (callback) callback();
       return;
     }
@@ -614,16 +616,22 @@
       secondsTimeout = null;
     }
 
-    // Always do sequential animated clearing
+    // Always do sequential animated clearing using cached lookups
     isSeconds = true;
-    const s1 = (lastSeconds / 10) | 0;  // Bitwise OR for integer division
-    const s2 = lastSeconds % 10;
+    let s1, s2;
     
-    drawDigit(positions.seconds.x[0], positions.seconds.y + widgetYOffset, SEC_SCALE, -1, s1, () => {
-      drawDigit(positions.seconds.x[1], positions.seconds.y + widgetYOffset, SEC_SCALE, -1, s2, () => {
-        lastSeconds = -1;
+    if (timeCache && timeCache.minuteDigits) {
+      s1 = timeCache.minuteDigits[lastSeconds * 2];
+      s2 = timeCache.minuteDigits[lastSeconds * 2 + 1];
+    } else {
+      s1 = (lastSeconds / 10) | 0;  // Bitwise OR for integer division
+      s2 = lastSeconds % 10;
+    }
+    
+    drawDigit(positions.seconds.x[0], positions.seconds.y + widgetYOffset, SEC_SCALE, null, s1, () => {
+      drawDigit(positions.seconds.x[1], positions.seconds.y + widgetYOffset, SEC_SCALE, null, s2, () => {
+        lastSeconds = null;
         isSeconds = false;
-        animationTimeouts = [];  // Clear animation timeouts to prevent memory leak
         if (callback) callback();
       }, false, false);
     }, false, false);
@@ -631,8 +639,11 @@
 
   // ===== ANIMATION CLEANUP =====
   function cancelAllAnimations() {
-    animationTimeouts.forEach(t => clearTimeout(t));
-    animationTimeouts = [];
+    // Use typed array for better performance
+    for (let i = 0; i < animationTimeoutCount; i++) {
+      clearTimeout(animationTimeouts[i]);
+    }
+    animationTimeoutCount = 0;
   }
   
   // ===== SWITCHING FUNCTIONS (Optimized with direct state changes) =====
@@ -672,7 +683,7 @@
       g.flip();
     };
     
-    if (showSeconds && lastSeconds >= 0) {
+    if (showSeconds && lastSeconds !== null) {
       clearSeconds(show);
     } else {
       show();
@@ -700,7 +711,7 @@
     userClockInfoPreference = 'hide';
     showingClockInfo = false;
     clockInfoUnfocused = false;
-    lastSeconds = -1;
+    lastSeconds = null;
     
     g.setColor(g.theme.bg);
     g.fillRect(0, positions.seconds.y + widgetYOffset - 10, width, positions.seconds.y + widgetYOffset + 50);
@@ -716,30 +727,13 @@
       Bangle.removeListener("touch", touchHandler);
     }
     
-    // Create new handler
     touchHandler = (_, e) => {
-      if (showingClockInfo) {
-        // Check if tap is on clock info area
-        if (e.x >= secondsArea.left && e.x <= secondsArea.right &&
-            e.y >= secondsArea.top && e.y <= secondsArea.bottom) {
-          // Refocus if unfocused
-          if (clockInfoUnfocused) {
-            if (settings.haptics !== false) Bangle.buzz(50); // Haptic feedback for refocus
-            clockInfoUnfocused = false;
-            if (clockInfoMenu) {
-              clockInfoMenu.focus = true;
-              clockInfoMenu.redraw();
-            }
-            g.flip();
-          }
-          return;
-        }
-        
-        // Check main time area for dismissal
-        if (e.y >= mainTimeArea.top && e.y <= mainTimeArea.bottom) {
+      // Main time area - cycles through clock info states when clock info is available
+      if (e.y >= mainTimeArea.top && e.y <= mainTimeArea.bottom) {
+        if (showingClockInfo) {
           if (!clockInfoUnfocused) {
             // First tap: unfocus
-            if (settings.haptics !== false) Bangle.buzz(40); // Light haptic for unfocus
+            if (settings.haptics !== false) Bangle.buzz(40);
             clockInfoUnfocused = true;
             if (clockInfoMenu) {
               clockInfoMenu.focus = false;
@@ -748,7 +742,7 @@
             g.flip();
           } else {
             // Second tap: dismiss
-            if (settings.haptics !== false) Bangle.buzz(60); // Slightly stronger haptic for dismiss
+            if (settings.haptics !== false) Bangle.buzz(60);
             if (showSeconds) {
               switchToSeconds();
             } else {
@@ -757,13 +751,32 @@
             }
           }
         }
-      } else {
-        // Check seconds area for switching to clock info
-        if (e.x >= secondsArea.left && e.x <= secondsArea.right &&
-            e.y >= secondsArea.top && e.y <= secondsArea.bottom) {
-          if (settings.haptics !== false) Bangle.buzz(50); // Haptic feedback for showing clock info
-          userClockInfoPreference = 'show';
-          switchToClockInfo();
+        return;
+      }
+      
+      // Bottom area - toggles between seconds and clock info
+      if (e.y >= bottomArea.top && e.y <= bottomArea.bottom) {
+        if (showingClockInfo) {
+          // Refocus if unfocused, otherwise toggle to seconds
+          if (clockInfoUnfocused) {
+            if (settings.haptics !== false) Bangle.buzz(50);
+            clockInfoUnfocused = false;
+            if (clockInfoMenu) {
+              clockInfoMenu.focus = true;
+              clockInfoMenu.redraw();
+            }
+            g.flip();
+          } else if (showSeconds) {
+            if (settings.haptics !== false) Bangle.buzz(50);
+            switchToSeconds();
+          }
+        } else {
+          // Switch to clock info if available
+          if (clockInfoMenu) {
+            if (settings.haptics !== false) Bangle.buzz(50);
+            userClockInfoPreference = 'show';
+            switchToClockInfo();
+          }
         }
       }
     };
@@ -836,9 +849,13 @@
   function drawClock() {
     g.clear(Bangle.appRect);
     if (settings.widgets !== "hide") Bangle.drawWidgets();
-    lastTime = -1;
-    lastSeconds = -1;
+    lastTime = null;
+    lastSeconds = null;
     isColonDrawn = false;
+    
+    // Initialize essential caches
+    if (!timeCache) initEssentialCaches();
+    if (!colorOn || !colorOff) initColorTables();
     
     // Load saved state
     loadDisplayState();
@@ -907,12 +924,19 @@
       showingClockInfo = false;
       clockInfoUnfocused = false;
       userClockInfoPreference = null;
-      lastTime = -1;
-      lastSeconds = -1;
+      lastTime = null;
+      lastSeconds = null;
       isColonDrawn = false;
+      isDrawing = false;
+      pendingSwitch = false;
+      isSeconds = false;
+      
+      // Clear animation system
+      colorOn = null;
+      colorOff = null;
       
       // Clear caches
-      Object.keys(colorCache).forEach(key => delete colorCache[key]);
+      timeCache = null;
       
       // Restore widgets if hidden
       if (["hide", "swipe"].includes(settings.widgets)) {
@@ -943,7 +967,7 @@
       pendingSwitch = false; // Clear any pending switch
       
       if (isLocked) {
-        if (!showingClockInfo && lastSeconds >= 0) {
+        if (!showingClockInfo && lastSeconds !== null) {
           if (secondsTimeout) clearTimeout(secondsTimeout);
           clearSeconds(() => {
             if (userClockInfoPreference === 'show') {
@@ -961,7 +985,7 @@
         if (showingClockInfo && userClockInfoPreference !== 'show') {
           switchToSeconds();
         } else if (showSeconds && !showingClockInfo) {
-          updateAndAnimTime();
+          updateSeconds();
         }
       }
     }
