@@ -150,7 +150,7 @@ let draw = function() {
   g.setFontAlign(0,1); // align center bottom
   // pad the date - this clears the background if the date were to change length
   var dateStr = require("locale").dow(new Date(), 1)+", "+ require("locale").month(new Date(), true)+" "+new Date().getDate();
-  g.drawString(" "+dateStr+" ", g.getWidth()/2, Y+16, true /*clear background*/);
+  g.drawString(" "+dateStr+" ", g.getWidth()/2, Y+18, true /*clear background*/);
   
   
   
