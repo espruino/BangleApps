@@ -4,7 +4,7 @@
     img: atob("GBiBAAAAAAAAAAAYAAD/AAOBwAYAYAwAMAgAEBgAGBAACBCBCDHDjDCBDBAACBAACBhCGAh+EAwYMAYAYAOBwAD/AAAYAAAAAAAAAA=="),
     items: [
       { name : "London",
-        get : function() { return { text : "London /n3:24",
+        get : function() { return { text : "London \n3:24",
                        // v : 10, min : 0, max : 100, - optional
                       img : atob("") 
       }},
