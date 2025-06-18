@@ -3,7 +3,7 @@
   "name": "Modern Clock",
   "shortName":"Modern Clk",
   "icon": "app.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "A modern, simple clock, with two Clock Infos and Fast Loading",
   "type":"clock",    
   "tags": "clock,clkinfo",
