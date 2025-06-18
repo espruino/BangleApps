@@ -1,12 +1,14 @@
 (function() {
   return {
-    name: "Bangle",
-    // img: 24x24px image for this list of items. The default "Bangle" list has its own image so this is not needed
+    name: "World Clock",
+    img: atob("GBiBAAAAAAAAAAAYAAD/AAOBwAYAYAwAMAgAEBgAGBAACBCBCDHDjDCBDBAACBAACBhCGAh+EAwYMAYAYAOBwAD/AAAYAAAAAAAAAA=="),
     items: [
-      { name : "Item1",
-        get : function() { return { text : "TextOfItem1",
+      { name : "London",
+        get : function() { return { text : "London /n3:24",
                        // v : 10, min : 0, max : 100, - optional
-                      img : atob("GBiBAAAAAAAAAAAYAAD/AAOBwAYAYAwAMAgAEBgAGBAACBCBCDHDjDCBDBAACBAACBhCGAh+EAwYMAYAYAOBwAD/AAAYAAAAAAAAAA==") }},
+                      img : atob("") 
+      }},
+       
         show : function() {},
         hide : function() {},
         // run : function() {} optional (called when tapped)
