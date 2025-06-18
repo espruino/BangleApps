@@ -758,7 +758,7 @@
       // Bottom area - toggles between seconds and clock info
       if (e.y >= bottomArea.top && e.y <= bottomArea.bottom) {
         if (showingClockInfo) {
-          // Refocus if unfocused, otherwise toggle to seconds
+          // Refocus if unfocused
           if (clockInfoUnfocused) {
             if (settings.haptics !== false) Bangle.buzz(50);
             clockInfoUnfocused = false;
@@ -767,10 +767,8 @@
               clockInfoMenu.redraw();
             }
             g.flip();
-          } else if (showSeconds) {
-            if (settings.haptics !== false) Bangle.buzz(50);
-            switchToSeconds();
           }
+          // When focused, do nothing (don't hide)
         } else {
           // Switch to clock info if available
           if (clockInfoMenu) {
