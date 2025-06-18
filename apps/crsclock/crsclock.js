@@ -83,7 +83,7 @@ const STATS_FONT_SIZE = 16;
 function getSleepWindowStr() {
   let a = ("0"+S.sleepStart).substr(-2) + ":00";
   let b = ("0"+S.sleepEnd).substr(-2)   + ":00";
-  return a + "–" + b;
+  return a + "-" + b;
 }
 
 function stability(arr, key, hours) {
