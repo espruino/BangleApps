@@ -126,7 +126,6 @@ let clockInfoMenuRight = require("clock_info").addInteractive(clockInfoItems, {
 
 // DRAW FACE
 let draw = function() {
-  require("FontTeletext10x18Mode7").add(Graphics);
   var X = g.getWidth() / 2;
   var Y = (g.getHeight() / 2)-15;
   g.reset();
@@ -139,7 +138,7 @@ let draw = function() {
 
   g.setFontBold();
   g.setFontAlign(0,1);
-  g.drawString(" "+clock+" ", X-10, Y, true /*clear background*/);
+  g.drawString(" "+clock+" ", X-10, Y+1, true /*clear background*/);
   // draw the meridian(am/pm) and seconds (2x size 7 segment)
   
   g.setFont("Vector",20);
@@ -151,7 +150,7 @@ let draw = function() {
   g.setFontAlign(0,1); // align center bottom
   // pad the date - this clears the background if the date were to change length
   var dateStr = require("locale").dow(new Date(), 1)+", "+ require("locale").month(new Date(), true)+" "+new Date().getDate();
-  g.drawString(" "+dateStr+" ", g.getWidth()/2, Y+15, true /*clear background*/);
+  g.drawString(" "+dateStr+" ", g.getWidth()/2, Y+16, true /*clear background*/);
   
   
   
@@ -184,8 +183,5 @@ g.clear();
 // Load widgets
 Bangle.loadWidgets();
 draw();
-drawClockInfos();
 setTimeout(Bangle.drawWidgets,0);
 }
-
-
