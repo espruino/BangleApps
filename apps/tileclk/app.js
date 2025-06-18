@@ -182,36 +182,35 @@
   ];
 
   // ===== EFFICIENT COLOR SYSTEM =====
-  // Pre-calculated color tables for animations using typed arrays
+  // Pre-calculated color tables for animations
   let colorOn = null, colorOff = null;
 
   const initColorTables = () => {
-    // Use Uint32Array for maximum performance
-    colorOn = new Uint32Array(FRAC_STEPS + 1);
-    colorOff = new Uint32Array(FRAC_STEPS + 1);
+    // Use Uint16Array since Bangle uses RGB565 (16-bit) colors
+    colorOn = new Uint16Array(FRAC_STEPS + 1);
+    colorOff = new Uint16Array(FRAC_STEPS + 1);
     
     const bgColor = g.theme.bg;
     const fgColor = g.theme.fg;
     
-    // Calculate all color transitions
+    // Simple linear interpolation between color values
     for (let i = 0; i <= FRAC_STEPS; i++) {
       const frac = i / FRAC_STEPS;
-      const invFrac = 1 - frac;
       
-      // Direct calculation for better performance
-      const rOn = (((bgColor >> 16) & 0xFF) * invFrac + ((fgColor >> 16) & 0xFF) * frac) | 0;
-      const gOn = (((bgColor >> 8) & 0xFF) * invFrac + ((fgColor >> 8) & 0xFF) * frac) | 0;
-      const bOn = ((bgColor & 0xFF) * invFrac + (fgColor & 0xFF) * frac) | 0;
-      const rOff = (((fgColor >> 16) & 0xFF) * invFrac + ((bgColor >> 16) & 0xFF) * frac) | 0;
-      const gOff = (((fgColor >> 8) & 0xFF) * invFrac + ((bgColor >> 8) & 0xFF) * frac) | 0;
-      const bOff = ((fgColor & 0xFF) * invFrac + (bgColor & 0xFF) * frac) | 0;
-      colorOn[i] = (rOn << 16) | (gOn << 8) | bOn;
-      colorOff[i] = (rOff << 16) | (gOff << 8) | bOff;
+      // Direct interpolation of RGB565 values
+      colorOn[i] = (bgColor + (fgColor - bgColor) * frac + 0.5) | 0;
+      colorOff[i] = (fgColor + (bgColor - fgColor) * frac + 0.5) | 0;
     }
   }
-  // ===== BORDER DRAWING =====
-  const drawBorder = (x, y, s, thickness) => {
-    if (!showBorders || thickness <= 0) return;
+  
+  // ===== CONSOLIDATED BORDER DRAWING =====
+  const drawBorder = (x, y, s, isMainDigit) => {
+    if (!showBorders) return;
+    
+    // Direct variable lookup is faster than object property access
+    const thickness = isMainDigit ? MAIN_BORDER_THICKNESS : SEC_BORDER_THICKNESS;
+    if (thickness <= 0) return;
+    
     g.setColor(borderColor);
     for (let i = 0; i < thickness; i++) {
       g.drawRect(x + i, y + i, x + s - 1 - i, y + s - 1 - i);
@@ -226,7 +225,7 @@
     function transition() {
       if (!isDrawing || (pendingSwitch && isSeconds)) return;
       
-      // Use pre-calculated color instead of interpColor()
+      // Use pre-calculated color
       g.setColor(colors[step]);
       g.fillRect(x, y, x + s - 1, y + s - 1);
 
@@ -248,15 +247,14 @@
   }
 
   function animateTileOn(x, y, s, callback, isMainDigit) {
-    const thickness = isMainDigit ? MAIN_BORDER_THICKNESS : SEC_BORDER_THICKNESS;
-    const borderFunc = (showBorders && thickness > 0) ? 
-      () => drawBorder(x, y, s, thickness) : null;
+    const borderFunc = showBorders ? () => drawBorder(x, y, s, isMainDigit) : null;
     animateTransition(x, y, s, g.theme.bg, g.theme.fg, borderFunc, callback);
   }
 
   function animateTileOff(x, y, s, callback) {
     animateTransition(x, y, s, g.theme.fg, g.theme.bg, null, callback);
   }
+
   // ===== TILE CALCULATION =====
   const calculateTilesToUpdate = (x, y, s, currentDigit, prevDigit) => {
     const currentPacked = digitBitmaps[getDigitIndex(currentDigit)];
@@ -281,15 +279,14 @@
     
     return tiles;
   }
+  
   // ===== TILE UPDATE =====
   function updateTile(tile, s, skipAnimation, isMainDigit, isClearing) {
-    const thickness = isMainDigit ? MAIN_BORDER_THICKNESS : SEC_BORDER_THICKNESS;
-    
     if (tile.state) {
       if (skipAnimation) {
         g.setColor(g.theme.fg);
         g.fillRect(tile.x, tile.y, tile.x + s - 1, tile.y + s - 1);
-        drawBorder(tile.x, tile.y, s, thickness);
+        drawBorder(tile.x, tile.y, s, isMainDigit);
       } else {
         animateTileOn(tile.x, tile.y, s, null, isMainDigit);
       }
@@ -315,6 +312,7 @@
       animationTimeouts[animationTimeoutCount++] = timeout;
     }
   }
+  
   // ===== DIGIT DRAWING =====
   function drawDigit(x, y, s, num, prevNum, callback, skipAnimation, isMainDigit) {
     if (num === prevNum) {
@@ -344,6 +342,7 @@
       }, true);
     }, true);
   }
+  
   // ===== TIME UPDATE SCHEDULING =====
   function scheduleNextUpdate() {
     if (drawTimeout) clearTimeout(drawTimeout);
@@ -352,6 +351,7 @@
     
     drawTimeout = setTimeout(updateAndAnimTime, msUntilNextMinute);
   }
+  
   // ===== CLEARING FUNCTIONS (Direct callback approach for performance) =====
   function clearColon(callback) {
     if (!isColonDrawn) {
@@ -417,7 +417,7 @@
     });
   }
 
-  // ===== MAIN TIME UPDATE =====
+  // ===== MAIN TIME UPDATE (OPTIMIZED) =====
   function updateAndAnimTime() {
     if (!isDrawing) return;
 
@@ -426,32 +426,33 @@
     const minutesNum = now.getMinutes();
     const currentTime = hoursNum * 100 + minutesNum;
     
-    // Extract digits only for layout decision
-    const isCurrentThreeDigit = is12Hour && hoursNum < 10;
-    const wasLastThreeDigit = is12Hour && lastTime !== null && lastTime < 1000;
-
-    function drawTime() {
-      // Extract current digits using cached lookups for maximum performance
-      let h1, h2, m1, m2;
-      
+    // Extract current digits ONCE
+    const currentDigits = (() => {
       if (timeCache && timeCache.minuteDigits) {
         const hourCache = is12Hour ? timeCache.hourDigits12 : timeCache.hourDigits24;
         const minuteCache = timeCache.minuteDigits;
         
-        h1 = hourCache[hoursNum * 2];
-        h2 = hourCache[hoursNum * 2 + 1];
-        m1 = minuteCache[minutesNum * 2];
-        m2 = minuteCache[minutesNum * 2 + 1];
+        return {
+          h1: hourCache[hoursNum * 2],
+          h2: hourCache[hoursNum * 2 + 1],
+          m1: minuteCache[minutesNum * 2],
+          m2: minuteCache[minutesNum * 2 + 1]
+        };
       } else {
-        // Fallback to direct calculation
-        h1 = (hoursNum / 10) | 0;
-        h2 = hoursNum % 10;
-        m1 = (minutesNum / 10) | 0;
-        m2 = minutesNum % 10;
+        return {
+          h1: (hoursNum / 10) | 0,
+          h2: hoursNum % 10,
+          m1: (minutesNum / 10) | 0,
+          m2: minutesNum % 10
+        };
       }
-      
-      const digitMap = { h1: h1, h2: h2, m1: m1, m2: m2 };
-      
+    })();
+    
+    // Determine layout based on extracted digits
+    const isCurrentThreeDigit = is12Hour && currentDigits.h1 === 0;
+    const wasLastThreeDigit = is12Hour && lastTime !== null && lastTime < 1000;
+
+    function drawTime() {
       // Extract previous digits (or null for blank)
       const previousDigits = (isCurrentThreeDigit !== wasLastThreeDigit && lastTime !== null) ?
         { h1: null, h2: null, m1: null, m2: null } :
@@ -470,7 +471,7 @@
         const next = () => drawLayout(items, onComplete);
         
         if (item.type === 'digit') {
-          drawDigit(item.x, item.y, item.scale, digitMap[item.value], previousDigits[item.value], next, false, true);
+          drawDigit(item.x, item.y, item.scale, currentDigits[item.value], previousDigits[item.value], next, false, true);
         } else if (item.type === 'colon') {
           drawColon(item.x, item.y, next);
         }
