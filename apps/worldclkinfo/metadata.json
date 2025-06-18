@@ -1,0 +1,12 @@
+{ "id": "worldclkinfo",
+  "name": "World Clock Info",
+  "version": "0.01",
+  "description": "Creates a ClockInfo List (Access by swiping left or right) with big cities' times (London, Hong Kong, Delhi, New York).",
+  "icon": "app.png",
+  "type": "clkinfo",
+  "tags": "clkinfo",
+  "supports" : ["BANGLEJS2"],
+  "storage": [
+    {"name":"worldclkinfo.clkinfo.js","url":"clkinfo.js"}
+  ]
+}
