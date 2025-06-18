@@ -6,7 +6,7 @@
   "version":"0.01",
   "description": "A modern, simple clock, with two Clock Infos and Fast Loading",
   "type":"clock",    
-  "tags": "clock", "clkinfo",
+  "tags": "clock,clkinfo",
   "supports": ["BANGLEJS2"],
   "screenshots" : [ { "url":"Screenshot1.png" }, 
     { "url":"Screenshot2.png" }  ],
