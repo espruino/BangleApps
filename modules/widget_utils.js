@@ -132,16 +132,34 @@ exports.swipeOn = function(autohide) {
     if (exports.animInterval) clearInterval(exports.animInterval);
     exports.animInterval = setInterval(function() {
       exports.offset += dir;
-      let stop = false;
-      if (dir>0 && exports.offset>=0) { // fully down
-        stop = true;
-        exports.offset = 0;
-        Bangle.emit("widgets-shown");
-      } else if (dir<0 && exports.offset<-23) { // fully up
-        stop = true;
-        exports.offset = -24;
-        Bangle.emit("widgets-hidden");
-      }
+        let stop = false;
+// exports.offset >=0              <0                     <-23
+//     dir >0     shown, so stop.  in process of showing  start show
+//         <0     start hide       in process of hiding   hidden, so stop
+        if (dir > 0) {
+            if (exports.offset >= 0) {
+                stop = true;
+                exports.offset = 0;
+                Bangle.emit("widgets-shown");
+            } else if (exports.offset <= -23) {
+                Bangle.emit("widgets-start-show");
+            } else {
+                Bangle.emit("widget-anim-step");
+            }
+        } else if (dir < 0) {
+            if (exports.offset>=0) {
+                Bangle.emit("widget-start-hide");
+            } else if (exports.offset <= -23) {
+                stop = true;
+                exports.offset = -24;
+                Bangle.emit("widgets-hidden");
+            } else {
+                Bangle.emit("widget-anim-step");
+            }
+        }
+        else {
+            // dir == 0??
+        }
       if (stop) {
         clearInterval(exports.animInterval);
         delete exports.animInterval;
@@ -159,18 +177,11 @@ exports.swipeOn = function(autohide) {
     let cb;
     if (exports.autohide > 0) cb = function() {
       exports.hideTimeout = setTimeout(function() {
-        Bangle.emit("widgets-start-hide");
         anim(-4);
       }, exports.autohide);
     };
-    if (ud>0 && exports.offset<0) {
-      Bangle.emit("widgets-start-show");
-      anim(4, cb);
-    }
-    if (ud<0 && exports.offset>-24) {
-      Bangle.emit("widgets-start-hide");
-      anim(-4);
-    }
+    if (ud>0 && exports.offset<0) anim(4, cb);
+    if (ud<0 && exports.offset>-24) anim(-4);
   };
   Bangle.on("swipe", exports.swipeHandler);
   Bangle.drawWidgets();
