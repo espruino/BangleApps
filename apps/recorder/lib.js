@@ -120,9 +120,9 @@ exports.getRecorders = function() {
     recorders['baro'] = function() {
       var temp="",press="",alt="";
       function onPress(c) {
-          temp=c.temperature;
-          press=c.pressure;
-          alt=c.altitude;
+          temp=c.temperature.toFixed(1);
+          press=c.pressure.toFixed(2);
+          alt=c.altitude.toFixed(2);
       }
       return {
         name : "Baro",
