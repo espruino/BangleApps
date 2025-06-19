@@ -26,8 +26,8 @@ for (var i=0;i<10;i++) {
 
 var clockStr="";
 var x=g.getWidth()/2;
-var cy=g.getHeight()-(g.getHeight()/7)
-var by=g.getHeight()-(g.getHeight()/3.500)
+var cy=g.getHeight()-(g.getHeight()/7);
+var by=g.getHeight()-(g.getHeight()/3.500);
 
 
 function calculateTime(){
