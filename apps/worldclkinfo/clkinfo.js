@@ -19,6 +19,7 @@
   const dubaiTimeOffset=240;
   const laTimeOffset=-420;
   const parisTimeOffset=120;
+  const hongKongTimeOffset=480
 
   var showCityName=false;
   
@@ -51,7 +52,9 @@
       case "Paris":
         timeOffset=parisTimeOffset;
         break;
-
+      case "Hong Kong":
+        timeOffset=hongKongTimeOffset;
+        break;
       default:
         //Nothing else matches
         timeOffset=0
@@ -92,6 +95,9 @@
         break; 
       case "New York":
         finalCityStr="NYC";
+        break;
+      case "Hong Kong":
+        finalCityStr="HK";
         break;
       default:
         //Nothing else matches
@@ -299,6 +305,33 @@
         get : () => {
           return {
             text : getWorldDateString("Paris"),
+            //blank image
+            img : atob("GBiBAAB+AAP/wAeB4A4AcBgYGDAYDHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA==")
+          };
+        },
+        show : function() {
+          this.interval = setTimeout(()=>{
+            this.emit("redraw");
+            this.interval = setInterval(()=>{
+              this.emit("redraw");
+            }, 60000);
+          }, 60000 - (Date.now() % 60000));
+        },
+       hide : function() {
+          clearInterval(this.interval);
+          this.interval = undefined;
+        },
+       run : function() {
+         //toggle showCityName
+          
+          showCityName=!showCityName;
+          this.emit("redraw");
+        }
+      },
+      { name : "Hong Kong",
+        get : () => {
+          return {
+            text : getWorldDateString("Hong Kong"),
             //blank image
             img : atob("GBiBAAB+AAP/wAeB4A4AcBgYGDAYDHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA==")
           };
