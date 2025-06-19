@@ -14,10 +14,11 @@
 
   
   
-  function getWorldDate(string city){
+  function getWorldDate(city){
     //Gets difference between UTC and local time
-    var currOffset = new Date().getTimezoneOffset();
-    var date=newDate();
+    var date=new Date();
+    var currOffset = date.getTimezoneOffset();
+    
     var timeOffset;
     
     switch (city) {
@@ -50,11 +51,11 @@
     }
     
     //go to UTC time
-    date.setMinutes(date.getMinutes() - currOffset);
+    date.setMinutes(date.getMinutes() + currOffset);
     //from there, go to city time
     date.setMinutes(date.getMinutes() + timeOffset);
     
-    var clockStr = require("locale").time(date, 1 /*omit seconds*/);
+    var clockStr = require("locale").time(date, 1 /*omit seconds*/)+" "+require("locale").meridian(date);
     
     return clockStr;
     
