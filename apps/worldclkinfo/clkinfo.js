@@ -155,7 +155,7 @@
           clearInterval(this.interval);
           this.interval = undefined;
         }
-      },
+      }
       
     ]
   };
