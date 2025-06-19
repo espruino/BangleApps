@@ -82,7 +82,7 @@ let clockInfoMenuLeft = require("clock_info").addInteractive(clockInfoItems, {
     if (info.img){
       g.drawImage(info.img, midx-12,midy-21);
     }// draw the image
-    g.setFont("Vector",17).setFontAlign(0,1).drawString(info.text, midx,midy+23); // draw the text
+    g.setFont("Vector",16).setFontAlign(0,1).drawString(info.text, midx,midy+23); // draw the text
   }
 });
 
@@ -115,7 +115,7 @@ let clockInfoMenuRight = require("clock_info").addInteractive(clockInfoItems, {
     if (info.img){
       g.drawImage(info.img, midx-12,midy-21);
     }// draw the image
-    g.setFont("Vector",17).setFontAlign(0,1).drawString(info.text, midx,midy+23); // draw the text
+    g.setFont("Vector",16).setFontAlign(0,1).drawString(info.text, midx,midy+23); // draw the text
   }
 });
 
