@@ -197,6 +197,14 @@ function viewTrack(filename, info) {
     menu[/*LANG*/'Plot HRM'] = function() {
       plotGraph(info, "Heartrate");
     };
+  if (info.fields.includes("Steps"))
+    menu[/*LANG*/'Plot Steps'] = function() {
+      plotGraph(info, "Steps");
+    };
+  if (info.fields.includes("Battery Percentage"))
+    menu[/*LANG*/'Plot Battery'] = function() {
+      plotGraph(info, "Battery");
+    };
   // TODO: steps, heart rate?
   menu[/*LANG*/'Erase'] = function() {
     E.showPrompt(/*LANG*/"Delete Track?").then(function(v) {
@@ -358,12 +366,34 @@ function plotGraph(info, style) { "ram"
       infn[i]+=+c[altIdx];
       infc[i]++;
     }
+  } else if (style=="Steps") {
+    title = /*LANG*/"Steps/min";
+    var stpIdx = info.fields.indexOf("Steps");
+    var t,lt = c[timeIdx];
+    while(l!==undefined) {
+      c=l.trim().split(",");l = f.readLine(f);
+      if (c[stpIdx]=="") continue;
+      t = c[timeIdx];
+      i = Math.round(80*(t - strt)/dur);
+      infn[i]+=60*c[stpIdx];
+      infc[i]+=t-lt;
+      lt = t;
+    }
+  } else if (style=="Battery") {
+    title = /*LANG*/"Battery %";
+    var batIdx = info.fields.indexOf("Battery Percentage");
+    while(l!==undefined) {
+      c=l.trim().split(",");l = f.readLine(f);
+      if (c[batIdx]=="") continue;
+      i = Math.round(80*(c[timeIdx] - strt)/dur);
+      infn[i]+=+c[batIdx];
+      infc[i]++;
+    }
   } else if (style=="Speed") {
     // use locate to work out units
     var localeStr = require("locale").speed(1,5); // get what 1kph equates to
     let units = localeStr.replace(/[0-9.]*/,"");
     factor = parseFloat(localeStr)*3.6; // m/sec to whatever out units are
-    // title
     title = /*LANG*/"Speed"+` (${units})`;
     var latIdx = info.fields.indexOf("Latitude");
     var lonIdx = info.fields.indexOf("Longitude");
@@ -378,19 +408,15 @@ function plotGraph(info, style) { "ram"
     while(l!==undefined) {
       c=l.trim().split(",");
       l = f.readLine(f);
-      if (c[latIdx] == "") {
-        continue;
-      }
+      if (c[latIdx] == "") continue;
       t = c[timeIdx];
       i = Math.round(80*(t - strt)/dur);
       p = Bangle.project({lat:c[latIdx],lon:c[lonIdx]});
       dx = p.x-lp.x;
       dy = p.y-lp.y;
       d = Math.sqrt(dx*dx+dy*dy);
-      if (t!=lt) {
-        infn[i]+=d / (t-lt); // speed
-        infc[i]++;
-      }
+      infn[i]+=d; // speed
+      infc[i]+=t-lt;
       lp = p;
       lt = t;
     }
@@ -406,6 +432,7 @@ function plotGraph(info, style) { "ram"
     if (n>max) max=n;
     if (n<min) min=n;
   }
+  if (style=="Battery") {min=0;max=100;}
   // work out a nice grid value
   var heightDiff = max-min;
   var grid = 1;

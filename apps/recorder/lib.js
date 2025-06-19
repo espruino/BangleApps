@@ -91,7 +91,7 @@ exports.getRecorders = function() {
         name : "BAT",
         fields : ["Battery Percentage", "Battery Voltage", "Charging"],
         getValues : () => {
-          return [E.getBattery(), NRF.getBattery(), Bangle.isCharging()];
+          return [E.getBattery(), NRF.getBattery().toFixed(2), Bangle.isCharging()];
         },
         start : () => {
         },
