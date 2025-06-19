@@ -325,6 +325,7 @@ function plotGraph(info, style) { "ram"
   var lt = 0; // last time
   //var tn = 0; // count for each time period
   var strt, dur = info.duration;
+  if (dur<1) dur=1;
   var f = require("Storage").open(filename,"r");
   if (f===undefined) return;
   var l = f.readLine(f);
@@ -372,7 +373,7 @@ function plotGraph(info, style) { "ram"
       l = f.readLine(f);
     }
     // now iterate
-    var p,lp = Bangle.project({lat:c[1],lon:c[2]});
+    var p,lp = Bangle.project({lat:c[latIdx],lon:c[lonIdx]});
     var t,dx,dy,d,lt = c[timeIdx];
     while(l!==undefined) {
       c=l.trim().split(",");

@@ -58,3 +58,4 @@
       Improve recorder ClockInfo icons
 0.46: Ensure altitude graph draws properly (or any graph using the last column of CSV data)
       Lower accuracy of barometer data to ~1cm (saves about 15b/record)
+0.47: Fix 'blip' on speed map on some recordings
