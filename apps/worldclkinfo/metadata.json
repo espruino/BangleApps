@@ -6,9 +6,12 @@
   "type": "clkinfo",
   "tags": "clkinfo",
   "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
   "storage": [
     {"name":"worldclkinfo.clkinfo.js","url":"clkinfo.js"},
-    {"name":"worldclkinfo.settings.js","url":"settings.js"},
+    {"name":"worldclkinfo.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"worldclkinfosettings.json"}] 
+  "data": [
+    {"name":"worldclkinfosettings.json"}
+  ]
 }
