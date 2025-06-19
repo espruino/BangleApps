@@ -37,7 +37,7 @@
   
   
   // ===== STATE PERSISTENCE =====
-  function loadDisplayState() {
+  const loadDisplayState = () => {
     const state = require('Storage').readJSON("tileclk.state.json", true) || {};
     showingClockInfo = state.showingClockInfo || false;
     userClockInfoPreference = state.userClockInfoPreference || null;
@@ -47,7 +47,7 @@
     initialUserClockInfoPreference = userClockInfoPreference;
   }
   
-  function saveDisplayState() {
+  const saveDisplayState = () => {
     // Only save if values have changed to reduce flash wear
     if (showingClockInfo !== initialShowingClockInfo || 
         userClockInfoPreference !== initialUserClockInfoPreference) {
@@ -218,11 +218,11 @@
   }
 
   // ===== ANIMATION FUNCTIONS =====
-  function animateTransition(x, y, s, startColor, endColor, drawBorderFunc, callback) {
+  const animateTransition = (x, y, s, startColor, endColor, drawBorderFunc, callback) => {
     let step = 0;
     const colors = startColor === g.theme.bg ? colorOn : colorOff;
 
-    function transition() {
+    const transition = () => {
       if (!isDrawing || (pendingSwitch && isSeconds)) return;
       
       // Use pre-calculated color
@@ -246,12 +246,12 @@
     transition();
   }
 
-  function animateTileOn(x, y, s, callback, isMainDigit) {
+  const animateTileOn = (x, y, s, callback, isMainDigit) => {
     const borderFunc = showBorders ? () => drawBorder(x, y, s, isMainDigit) : null;
     animateTransition(x, y, s, g.theme.bg, g.theme.fg, borderFunc, callback);
   }
 
-  function animateTileOff(x, y, s, callback) {
+  const animateTileOff = (x, y, s, callback) => {
     animateTransition(x, y, s, g.theme.fg, g.theme.bg, null, callback);
   }
 
@@ -281,7 +281,7 @@
   }
   
   // ===== TILE UPDATE =====
-  function updateTile(tile, s, skipAnimation, isMainDigit, isClearing) {
+  const updateTile = (tile, s, skipAnimation, isMainDigit, isClearing) => {
     if (tile.state) {
       if (skipAnimation) {
         g.setColor(g.theme.fg);
@@ -300,7 +300,7 @@
     }
   }
 
-  function updateTiles(tiles, s, callback, skipAnimation, isMainDigit, isClearing) {
+  const updateTiles = (tiles, s, callback, skipAnimation, isMainDigit, isClearing) => {
     if (!isDrawing || !tiles.length || (pendingSwitch && isSeconds)) {
       if (callback) callback();
       return;
@@ -314,7 +314,7 @@
   }
   
   // ===== DIGIT DRAWING =====
-  function drawDigit(x, y, s, num, prevNum, callback, skipAnimation, isMainDigit) {
+  const drawDigit = (x, y, s, num, prevNum, callback, skipAnimation, isMainDigit) => {
     if (num === prevNum) {
       if (callback) callback();
       return;
@@ -330,7 +330,7 @@
     updateTiles(tiles, s, callback, skipAnimation, isMainDigit, num === null);
   }
 
-  function drawColon(x, y, callback) {
+  const drawColon = (x, y, callback) => {
     if (!isDrawing || isColonDrawn) {
       if (callback) callback();
       return;
@@ -344,7 +344,7 @@
   }
   
   // ===== TIME UPDATE SCHEDULING =====
-  function scheduleNextUpdate() {
+  const scheduleNextUpdate = () => {
     if (drawTimeout) clearTimeout(drawTimeout);
     const now = new Date();
     const msUntilNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
@@ -353,7 +353,7 @@
   }
   
   // ===== CLEARING FUNCTIONS (Direct callback approach for performance) =====
-  function clearColon(callback) {
+  const clearColon = (callback) => {
     if (!isColonDrawn) {
       if (callback) callback();
       return;
@@ -374,14 +374,14 @@
     }
   }
 
-  function clearAllDigits(callback) {
+  const clearAllDigits = (callback) => {
     const wasThreeDigit = is12Hour && lastTime !== null && lastTime < 1000;
     const layout = wasThreeDigit ? threeDigitLayout : fourDigitLayout;
     
     const previousDigits = extractTimeDigits(lastTime);
     
     // Direct callback chaining for better performance
-    function clearItems(items, next) {
+    const clearItems = (items, next) => {
       if (!items.length) {
         next();
         return;
@@ -600,11 +600,11 @@
     updateDigit(0);
   }
 
-  function drawSecondDigit(index, digit, prevDigit, callback, skipAnimation) {
+  const drawSecondDigit = (index, digit, prevDigit, callback, skipAnimation) => {
     drawDigit(positions.seconds.x[index], positions.seconds.y + widgetYOffset, SEC_SCALE, digit, prevDigit, callback, skipAnimation, false);
   }
 
-  function clearSeconds(callback) {
+  const clearSeconds = (callback) => {
     // If not drawing seconds, just call callback
     if (lastSeconds === null) {
       if (callback) callback();
@@ -639,7 +639,7 @@
   }
 
   // ===== ANIMATION CLEANUP =====
-  function cancelAllAnimations() {
+  const cancelAllAnimations = () => {
     // Use typed array for better performance
     for (let i = 0; i < animationTimeoutCount; i++) {
       clearTimeout(animationTimeouts[i]);
@@ -648,7 +648,7 @@
   }
   
   // ===== SWITCHING FUNCTIONS (Optimized with direct state changes) =====
-  function switchToClockInfo() {
+  const switchToClockInfo = () => {
     if (showingClockInfo || !clockInfoMenu) {
       pendingSwitch = false;
       return;
@@ -691,7 +691,7 @@
     }
   }
 
-  function hideClockInfo() {
+  const hideClockInfo = () => {
     if (!showingClockInfo) return;
     
     pendingSwitch = false;
@@ -704,7 +704,7 @@
     g.flip();
   }
 
-  function switchToSeconds() {
+  const switchToSeconds = () => {
     if (!showingClockInfo || !showSeconds) return;
     
     pendingSwitch = false;
@@ -722,7 +722,7 @@
   }
 
   // ===== TOUCH HANDLING =====
-  function setupTouchHandler() {
+  const setupTouchHandler = () => {
     // Remove old handler if exists
     if (touchHandler) {
       Bangle.removeListener("touch", touchHandler);
@@ -785,7 +785,7 @@
   }
 
   // ===== CLOCK INFO SETUP =====
-  function setupClockInfo() {
+  const setupClockInfo = () => {
     if (clockInfoMenu) return;
     
     try {
@@ -845,7 +845,7 @@
   }
 
   // ===== MAIN CLOCK DRAW =====
-  function drawClock() {
+  const drawClock = () => {
     g.clear(Bangle.appRect);
     if (settings.widgets !== "hide") Bangle.drawWidgets();
     lastTime = null;

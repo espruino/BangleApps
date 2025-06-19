@@ -7,7 +7,7 @@
     haptics: true
   }, require("Storage").readJSON("tileclk.json", true) || {});
 
-  function writeSettings() {
+  const writeSettings = () => {
     require("Storage").writeJSON("tileclk.json", appSettings);
   }
 
@@ -25,7 +25,7 @@
     "Yellow": "#FFFF00"
   };
 
-  function showMenu() {
+  const showMenu = () => {
     E.showMenu({
       "": { "title": "Tile Clock" },
       "< Back": () => back(),
