@@ -12,6 +12,7 @@ Use a clock with ClockInfo, then swipe left/right to get to the World Clock list
 * Dubai
 * Los Angeles
 * Paris
+* Hong Kong
 
 
 To add any more, consider opening a feature request, contacting [RKBoss6](https://github.com/RKBoss6) on GitHub, or fork the espruino/BangleApps repo and modify the app to your needs.
