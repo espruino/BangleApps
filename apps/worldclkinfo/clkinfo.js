@@ -20,7 +20,7 @@
   const laTimeOffset=-420;
   const parisTimeOffset=120;
 
-  
+  var showCityName=false;
   
   function getWorldDateString(cityName){
     //Gets difference between UTC and local time
@@ -97,6 +97,7 @@
         //Nothing else matches
         finalCityStr=cityName;
       }
+      
     }else{
       
       finalCityStr=cityName;   
@@ -106,7 +107,13 @@
     
     
     
-    var finalStr=finalCityStr+"\n"+clockStr;
+    //var finalStr=finalCityStr+"\n"+clockStr+"\n";
+    if(showCityName){
+      //show city
+      var finalStr=finalCityStr;
+    }else{
+      var finalStr=clockStr;
+    }
     return finalStr;
     
     
@@ -125,7 +132,7 @@
           return {
             text : getWorldDateString("London"),
             //blank image
-            img : atob("")
+            img : atob("GBiBAAB+AAP/wAeB4A4AcBgYGDAYDHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA==")
           };
         },
         show : function() {
@@ -139,7 +146,14 @@
        hide : function() {
           clearInterval(this.interval);
           this.interval = undefined;
+        },
+       run : function() {
+         //toggle showCityName
+          
+          showCityName=!showCityName;
+          this.emit("redraw");
         }
+       
       },
       
       { name : "Mumbai",
@@ -147,7 +161,7 @@
           return {
             text : getWorldDateString("Mumbai"),
             //blank image
-            img : atob("")
+            img : atob("GBiBAAB+AAP/wAeB4A4AcBgYGDAYDHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA==")
           };
         },
         show : function() {
@@ -161,6 +175,12 @@
        hide : function() {
           clearInterval(this.interval);
           this.interval = undefined;
+        },
+       run : function() {
+         //toggle showCityName
+          
+          showCityName=!showCityName;
+          this.emit("redraw");
         }
       },
       
@@ -169,7 +189,7 @@
           return {
             text : getWorldDateString("New York"),
             //blank image
-            img : atob("")
+            img : atob("GBiBAAB+AAP/wAeB4A4AcBgYGDAYDHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA==")
           };
         },
         show : function() {
@@ -183,6 +203,12 @@
        hide : function() {
           clearInterval(this.interval);
           this.interval = undefined;
+        },
+       run : function() {
+         //toggle showCityName
+          
+          showCityName=!showCityName;
+          this.emit("redraw");
         }
       },
       
@@ -191,7 +217,7 @@
           return {
             text : getWorldDateString("Tokyo"),
             //blank image
-            img : atob("")
+            img : atob("GBiBAAB+AAP/wAeB4A4AcBgYGDAYDHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA==")
           };
         },
         show : function() {
@@ -205,6 +231,12 @@
        hide : function() {
           clearInterval(this.interval);
           this.interval = undefined;
+        },
+       run : function() {
+         //toggle showCityName
+          
+          showCityName=!showCityName;
+          this.emit("redraw");
         }
       },
       
@@ -213,7 +245,7 @@
           return {
             text : getWorldDateString("Dubai"),
             //blank image
-            img : atob("")
+            img : atob("GBiBAAB+AAP/wAeB4A4AcBgYGDAYDHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA==")
           };
         },
         show : function() {
@@ -227,6 +259,12 @@
        hide : function() {
           clearInterval(this.interval);
           this.interval = undefined;
+        },
+       run : function() {
+         //toggle showCityName
+          
+          showCityName=!showCityName;
+          this.emit("redraw");
         }
       },
       { name : "Los Angeles",
@@ -234,7 +272,7 @@
           return {
             text : getWorldDateString("Los Angeles"),
             //blank image
-            img : atob("")
+            img : atob("GBiBAAB+AAP/wAeB4A4AcBgYGDAYDHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA==")
           };
         },
         show : function() {
@@ -248,6 +286,12 @@
        hide : function() {
           clearInterval(this.interval);
           this.interval = undefined;
+        },
+       run : function() {
+         //toggle showCityName
+          
+          showCityName=!showCityName;
+          this.emit("redraw");
         }
       },
       
@@ -256,7 +300,7 @@
           return {
             text : getWorldDateString("Paris"),
             //blank image
-            img : atob("")
+            img : atob("GBiBAAB+AAP/wAeB4A4AcBgYGDAYDHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA==")
           };
         },
         show : function() {
@@ -270,6 +314,12 @@
        hide : function() {
           clearInterval(this.interval);
           this.interval = undefined;
+        },
+       run : function() {
+         //toggle showCityName
+          
+          showCityName=!showCityName;
+          this.emit("redraw");
         }
       }
       
