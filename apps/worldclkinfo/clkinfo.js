@@ -2,6 +2,14 @@
 (function() {
   
   
+  //read settings
+  var settings = Object.assign({
+  // default values
+  shorten: true,
+  showMeridians: true,
+  shortenMeridians:false,
+  }, require("Storage").readJSON("worldclkinfosettings.json", true) || {});
+  
   //All offsets from UTC in minutes. Positive: behind UTC. Negative: Ahead of UTC. 
 
   const londonTimeOffset=60;
@@ -14,14 +22,14 @@
 
   
   
-  function getWorldDate(city){
+  function getWorldDateString(cityName){
     //Gets difference between UTC and local time
     var date=new Date();
     var currOffset = date.getTimezoneOffset();
     
     var timeOffset;
     
-    switch (city) {
+    switch (cityName) {
       case "London":
         timeOffset=londonTimeOffset;
         break; 
@@ -55,9 +63,51 @@
     //from there, go to city time
     date.setMinutes(date.getMinutes() + timeOffset);
     
-    var clockStr = require("locale").time(date, 1 /*omit seconds*/)+" "+require("locale").meridian(date);
+    var meridian=require("locale").meridian(date);
     
-    return clockStr;
+    var clockStr;
+    if(settings.showMeridians==true){
+      if(settings.shortenMeridians==true){
+        //get A - am, or P - pm
+        clockStr = require("locale").time(date, 1 /*omit seconds*/)+meridian[0];
+        
+      }else{
+        clockStr = require("locale").time(date, 1 /*omit seconds*/)+" "+meridian;
+      }
+
+    }else{
+      
+      clockStr = require("locale").time(date, 1 /*omit seconds*/);
+      
+    }
+    
+    
+    var finalCityStr;
+    
+    if(settings.shorten==true){
+      
+      switch (cityName) {
+      case "Los Angeles":
+        finalCityStr="LA";
+        break; 
+      case "New York":
+        finalCityStr="NYC";
+        break;
+      default:
+        //Nothing else matches
+        finalCityStr=cityName;
+      }
+    }else{
+      
+      finalCityStr=cityName;   
+      
+      
+    }
+    
+    
+    
+    var finalStr=finalCityStr+"\n"+clockStr;
+    return finalStr;
     
     
   }
@@ -73,7 +123,7 @@
       { name : "London",
         get : () => {
           return {
-            text : "London"+"\n"+getWorldDate("London"),
+            text : getWorldDateString("London"),
             //blank image
             img : atob("")
           };
@@ -95,7 +145,7 @@
       { name : "Mumbai",
         get : () => {
           return {
-            text : "Mumbai"+"\n"+getWorldDate("Mumbai"),
+            text : getWorldDateString("Mumbai"),
             //blank image
             img : atob("")
           };
@@ -117,7 +167,7 @@
       { name : "New York",
         get : () => {
           return {
-            text : "New York"+"\n"+getWorldDate("New York"),
+            text : getWorldDateString("New York"),
             //blank image
             img : atob("")
           };
@@ -139,7 +189,7 @@
       { name : "Tokyo",
         get : () => {
           return {
-            text : "Tokyo"+"\n"+getWorldDate("Tokyo"),
+            text : getWorldDateString("Tokyo"),
             //blank image
             img : atob("")
           };
@@ -161,7 +211,7 @@
       { name : "Dubai",
         get : () => {
           return {
-            text : "Dubai"+"\n"+getWorldDate("Dubai"),
+            text : getWorldDateString("Dubai"),
             //blank image
             img : atob("")
           };
@@ -182,7 +232,7 @@
       { name : "Los Angeles",
         get : () => {
           return {
-            text : "Los Angeles"+"\n"+getWorldDate("Los Angeles"),
+            text : getWorldDateString("Los Angeles"),
             //blank image
             img : atob("")
           };
@@ -204,7 +254,7 @@
       { name : "Paris",
         get : () => {
           return {
-            text : "Paris"+"\n"+getWorldDate("Paris"),
+            text : getWorldDateString("Paris"),
             //blank image
             img : atob("")
           };
