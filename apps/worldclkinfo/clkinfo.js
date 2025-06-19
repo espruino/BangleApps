@@ -155,7 +155,74 @@
           clearInterval(this.interval);
           this.interval = undefined;
         }
+      },
+      
+      { name : "Dubai",
+        get : () => {
+          return {
+            text : "Dubai"+"\n"+getWorldDate("Dubai"),
+            //blank image
+            img : atob("")
+          };
+        },
+        show : function() {
+          this.interval = setTimeout(()=>{
+            this.emit("redraw");
+            this.interval = setInterval(()=>{
+              this.emit("redraw");
+            }, 60000);
+          }, 60000 - (Date.now() % 60000));
+        },
+       hide : function() {
+          clearInterval(this.interval);
+          this.interval = undefined;
+        }
+      },
+      { name : "Los Angeles",
+        get : () => {
+          return {
+            text : "Los Angeles"+"\n"+getWorldDate("Los Angeles"),
+            //blank image
+            img : atob("")
+          };
+        },
+        show : function() {
+          this.interval = setTimeout(()=>{
+            this.emit("redraw");
+            this.interval = setInterval(()=>{
+              this.emit("redraw");
+            }, 60000);
+          }, 60000 - (Date.now() % 60000));
+        },
+       hide : function() {
+          clearInterval(this.interval);
+          this.interval = undefined;
+        }
+      },
+      
+      { name : "Paris",
+        get : () => {
+          return {
+            text : "Paris"+"\n"+getWorldDate("Paris"),
+            //blank image
+            img : atob("")
+          };
+        },
+        show : function() {
+          this.interval = setTimeout(()=>{
+            this.emit("redraw");
+            this.interval = setInterval(()=>{
+              this.emit("redraw");
+            }, 60000);
+          }, 60000 - (Date.now() % 60000));
+        },
+       hide : function() {
+          clearInterval(this.interval);
+          this.interval = undefined;
+        }
       }
+      
+      
       
     ]
   };
