@@ -1,6 +1,6 @@
 { "id": "worldclkinfo",
   "name": "World Clock Info",
-  "version": "0.04",
+  "version": "0.05",
   "description": "Creates a ClockInfo List to view times around the world (London, Hong Kong, Delhi, New York, etc.)",
   "icon": "app.png",
   "type": "clkinfo",
