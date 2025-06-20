@@ -3,7 +3,7 @@ var settings = Object.assign({
   // default values
   showBatPercent: true,
   showTime: true,
-  keepScreenOn:false,
+  
   
   }, require("Storage").readJSON("chargeAnimSettings.json", true) || {});
 
