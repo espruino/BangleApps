@@ -322,7 +322,7 @@ exports.drawIcon = function(cond, x, y, r, ovr, monochrome) {
   function chooseIconByTxt(txt) {
     if (!txt) return () => {};
     txt = txt.toLowerCase();
-    if (txt.includes("thunderstorm")) return drawThunderstorm;
+    if (txt.includes("storm")) return drawThunderstorm;
     if (txt.includes("freezing")||txt.includes("snow")||
       txt.includes("sleet")) {
       return drawSnow;
@@ -332,8 +332,8 @@ exports.drawIcon = function(cond, x, y, r, ovr, monochrome) {
       return drawRain;
     }
     if (txt.includes("rain")) return drawShowerRain;
-    if (txt.includes("clear")) return drawSun;
-    if (txt.includes("few clouds")) return drawFewClouds;
+    if (txt.includes("clear")||txt.includes("sunny")) return drawSun;
+    if (txt.includes("few clouds")||txt.includes("partly cloudy")) return drawFewClouds;
     if (txt.includes("scattered clouds")) return drawCloud;
     if (txt.includes("clouds")) return drawBrokenClouds;
     if (txt.includes("mist") ||
