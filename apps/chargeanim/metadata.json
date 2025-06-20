@@ -7,7 +7,10 @@
   "tags": "battery",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "allow_emulator": true,
-  "screenshots": [{"url":"Screenshot1"},{"url":"Screenshot2"},{"url":"Screenshot3"}],
+  "screenshots": [
+    {"url":"Screenshot1"},
+    {"url":"Screenshot2"},
+    {"url":"Screenshot3"}],
   "storage": [
     {"name":"chargeanim.app.js","url":"app.js"},
     {"name":"chargeanim.boot.js","url":"boot.js"},
