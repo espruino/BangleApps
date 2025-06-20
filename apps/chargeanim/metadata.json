@@ -8,9 +8,9 @@
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "allow_emulator": true,
   "screenshots": [
-    {"url":"Screenshot1"},
-    {"url":"Screenshot2"},
-    {"url":"Screenshot3"}],
+    {"url":"Screenshot1.png"},
+    {"url":"Screenshot2.png"},
+    {"url":"Screenshot3.png"}],
   "storage": [
     {"name":"chargeanim.app.js","url":"app.js"},
     {"name":"chargeanim.boot.js","url":"boot.js"},
