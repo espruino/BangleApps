@@ -124,6 +124,8 @@ var recognizeAndDrawPattern = () => {
       }
       log("Pattern is finished.");
       isFinished = true;
+      g.clear();
+      require("widget_utils").show();
       Bangle.setUI();
       resolve(pattern.join(""));
     };
@@ -165,6 +167,7 @@ var recognizeAndDrawPattern = () => {
         positions = [];
       }
     };
+    require("widget_utils").hide();
     g.clear();
     drawCirclesWithPattern([]);
     Bangle.setUI({mode:"custom", drag:dragHandler, btn :finishHandler});
@@ -471,4 +474,6 @@ var log = (message) => {
 // run main function
 //////
 
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 showMainMenu();

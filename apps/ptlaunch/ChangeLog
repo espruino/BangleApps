@@ -10,3 +10,4 @@
 0.16: Fix issue adding new patterns (fix #3858)
       Display message if tapping manage when there are no patterns
       Speed improvements
+      Add widgets to app (work around E.showMenu(back) bug with no widgets in Espruino 2v27)
