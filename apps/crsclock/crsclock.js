@@ -83,7 +83,7 @@ const STATS_FONT_SIZE = 16;
 function getSleepWindowStr() {
   let a = ("0"+S.sleepStart).substr(-2) + ":00";
   let b = ("0"+S.sleepEnd).substr(-2)   + ":00";
-  return a + "–" + b;
+  return a + "-" + b;
 }
 
 function stability(arr, key, hours) {
@@ -518,7 +518,7 @@ function confirmResetAllData() {
   });
 }
 
-// Menu logic: Sleep window, hydration, BT calibration, theme, notifications, bio ref, about — unchanged, use as before
+// Menu logic: Sleep window, hydration, BT calibration, theme, notifications, bio ref, about - unchanged, use as before
 
 function setSleepWindow() {
   let menu = { "": { title: "Select Start Hour" } };
@@ -743,7 +743,7 @@ function showAbout() {
   E.showAlert(
     "Circadian Wellness Clock v" + VERSION + "\n" +
     "Displays your CRS and BioTime.\n" +
-    "© 2025"
+    "Copyright 2025"
   ).then(()=>{
     drawClock();
     Bangle.setUI(uiOpts);
