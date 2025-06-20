@@ -6,7 +6,7 @@
     // default values
     showBatPercent: true,
     showTime: true,
-    keepScreenOn:false,
+    
 
   }, require('Storage').readJSON(FILE, true) || {});
 
@@ -37,17 +37,8 @@
       // format: ... may be specified as a function which converts the value to a string
       // if the value is a boolean, showMenu() will convert this automatically, which
       // keeps settings menus consistent
-    },
-    'Keep Backlight On': {
-      value: !!settings.keepScreenOn,  // !! converts undefined to false
-      onchange: v => {
-        settings.keepScreenOn = v;
-        writeSettings();
-      }
-      // format: ... may be specified as a function which converts the value to a string
-      // if the value is a boolean, showMenu() will convert this automatically, which
-      // keeps settings menus consistent
-    },
+    }
+    
     
   });
 })
