@@ -23,16 +23,17 @@ for (var i=0;i<10;i++) {
   bubbles.push({y:Math.random()*H,ly:0,x:(0.5+(i<5?i:i+8))*W/18,v:0.6+Math.random(),s:0.5+Math.random()});
 }
 
+g.setFont("Vector",22);
+g.setFontAlign(0,0);
 
 var clockStr="";
 var x=g.getWidth()/2;
-var cy=g.getHeight()-(g.getHeight()/7);
-var by=g.getHeight()-(g.getHeight()/3.500);
+var cy=g.getHeight()-(g.getHeight()/7)
+var by=g.getHeight()-(g.getHeight()/3.500)
 
 
 function calculateTime(){
-  g.setFont("Vector",22);
-  g.setFontAlign(0,0);
+
   var d=new Date();
   clockStr = require("locale").time(d, 1); // Hour and minute
   var meridian=require("locale").meridian(d);
@@ -52,16 +53,7 @@ function calculate(){
   
   
 }
-function drawClock(){
 
-  
-  
-}
-function drawBatPercent(){
-  
-  
-  
-}
 function anim() {
   /* we don't use any kind of buffering here. Just draw one image
   at a time (image contains a background) too, and there is minimal
@@ -85,6 +77,7 @@ function anim() {
   });
   g.drawImage(imgbat, mx,my,{scale:b2scale, rotate:Math.sin(getTime()*2)*0.5-Math.PI/2 + b2rot});
   g.flip();
+  
   if(settings.showTime==true){
     g.drawString(clockStr,x,cy);
   }
