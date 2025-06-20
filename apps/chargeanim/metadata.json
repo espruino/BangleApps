@@ -2,7 +2,7 @@
   "id": "chargeanim",
   "name": "Charge Animation",
   "version": "0.03",
-  "description": "When charging, show a sideways charging animation and optionally, keep the screen on, show time, or show battery percentage. When removed from the charger load the clock again.",
+  "description": "When charging, show a sideways charging animation and optionally, show time, or show battery percentage. When removed from the charger, clock loads again.",
   "icon": "icon.png",
   "tags": "battery",
   "supports": ["BANGLEJS", "BANGLEJS2"],
