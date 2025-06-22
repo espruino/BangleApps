@@ -5,11 +5,43 @@ let current = weather.get();
 
 Bangle.loadWidgets();
 
+
 var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
   {filly: 1},
   {type: "h", filly: 0, c: [
-    {type: "custom", width: g.getWidth()/2, height: g.getWidth()/2, valign: -1, txt: "unknown", id: "icon",
-      render: l => weather.drawIcon(l, l.x+l.w/2, l.y+l.h/2, l.w/2-5)},
+    {type: "v", width: g.getWidth()/2, c: [  // Vertical container for icon + UV
+      {type: "custom", fillx: 1, height: g.getHeight()/2 - 30, valign: -1, txt: "unknown", id: "icon",
+        render: l => weather.drawIcon(l, l.x+l.w/2, l.y+l.h/2, l.w/2-10)},
+      {type: "custom", fillx: 1, height: 20, id: "uvDisplay",
+        render: l => {
+          if (!current || current.uv === undefined) return;
+          const uv = Math.min(parseInt(current.uv), 11); // Cap at 11
+          
+          // UV color thresholds: [max_value, color] based on WHO standards
+          const colors = [[2,"#0F0"], [5,"#FF0"], [7,"#F80"], [10,"#F00"], [11,"#F0F"]];
+          const color = colors.find(c => uv <= c[0])[1];
+          
+          // Setup and measure label
+          g.setFont("6x8").setFontAlign(-1, 0);
+          const label = "UV: ";
+          const labelW = g.stringWidth(label);
+          
+          // Calculate centered position (4px block + 1px spacing) * blocks - last spacing
+          const totalW = labelW + uv * 5 - (uv > 0 ? 1 : 0);
+          const x = l.x + (l.w - totalW) / 2;
+          const y = l.y + l.h;
+          
+          // Draw label
+          g.setColor(g.theme.fg).drawString(label, x, y);
+          
+          // Draw UV blocks
+          g.setColor(color);
+          for (let i = 0; i < uv; i++) {
+            g.fillRect(x + labelW + i * 5, y - 3, x + labelW + i * 5 + 3, y + 3);
+          }
+        }
+      },
+    ]},
     {type: "v", fillx: 1, c: [
       {type: "h", pad: 2, c: [
         {type: "txt", font: "18%", id: "temp", label: "000"},
