@@ -138,7 +138,7 @@
           return {
             text : getWorldDateString("London"),
             //blank image
-            img : atob("GBiBAAB+AAP/wAeB4A4AcBgYGDAYDHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA==")
+            img : atob("GBiBAAD/AAPnwAbDYBiBGBEAiD///H///kMAwsIAQ4IAQYIAQf///////4IAQYIAQcIAQ0MAwn///j///BEAiBiBGAbDYAPnwAD/AA==")
           };
         },
         show : function() {
@@ -167,7 +167,7 @@
           return {
             text : getWorldDateString("Mumbai"),
             //blank image
-            img : atob("GBiBAAB+AAP/wAeB4A4AcBgYGDAYDHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA==")
+            img : atob("GBiBAAD/AAPnwAbDYBiBGBEAiD///H///kMAwsIAQ4IAQYIAQf///////4IAQYIAQcIAQ0MAwn///j///BEAiBiBGAbDYAPnwAD/AA==")
           };
         },
         show : function() {
@@ -195,7 +195,7 @@
           return {
             text : getWorldDateString("New York"),
             //blank image
-            img : atob("GBiBAAB+AAP/wAeB4A4AcBgYGDAYDHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA==")
+            img : atob("GBiBAAD/AAPnwAbDYBiBGBEAiD///H///kMAwsIAQ4IAQYIAQf///////4IAQYIAQcIAQ0MAwn///j///BEAiBiBGAbDYAPnwAD/AA==")
           };
         },
         show : function() {
@@ -223,7 +223,7 @@
           return {
             text : getWorldDateString("Tokyo"),
             //blank image
-            img : atob("GBiBAAB+AAP/wAeB4A4AcBgYGDAYDHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA==")
+            img : atob("GBiBAAD/AAPnwAbDYBiBGBEAiD///H///kMAwsIAQ4IAQYIAQf///////4IAQYIAQcIAQ0MAwn///j///BEAiBiBGAbDYAPnwAD/AA==")
           };
         },
         show : function() {
@@ -251,7 +251,7 @@
           return {
             text : getWorldDateString("Dubai"),
             //blank image
-            img : atob("GBiBAAB+AAP/wAeB4A4AcBgYGDAYDHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA==")
+            img : atob("GBiBAAD/AAPnwAbDYBiBGBEAiD///H///kMAwsIAQ4IAQYIAQf///////4IAQYIAQcIAQ0MAwn///j///BEAiBiBGAbDYAPnwAD/AA==")
           };
         },
         show : function() {
@@ -278,7 +278,7 @@
           return {
             text : getWorldDateString("Los Angeles"),
             //blank image
-            img : atob("GBiBAAB+AAP/wAeB4A4AcBgYGDAYDHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA==")
+            img : atob("GBiBAAD/AAPnwAbDYBiBGBEAiD///H///kMAwsIAQ4IAQYIAQf///////4IAQYIAQcIAQ0MAwn///j///BEAiBiBGAbDYAPnwAD/AA==")
           };
         },
         show : function() {
@@ -306,7 +306,7 @@
           return {
             text : getWorldDateString("Paris"),
             //blank image
-            img : atob("GBiBAAB+AAP/wAeB4A4AcBgYGDAYDHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA==")
+            img : atob("GBiBAAD/AAPnwAbDYBiBGBEAiD///H///kMAwsIAQ4IAQYIAQf///////4IAQYIAQcIAQ0MAwn///j///BEAiBiBGAbDYAPnwAD/AA==")
           };
         },
         show : function() {
@@ -333,7 +333,7 @@
           return {
             text : getWorldDateString("Hong Kong"),
             //blank image
-            img : atob("GBiBAAB+AAP/wAeB4A4AcBgYGDAYDHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA==")
+            img : atob("GBiBAAD/AAPnwAbDYBiBGBEAiD///H///kMAwsIAQ4IAQYIAQf///////4IAQYIAQcIAQ0MAwn///j///BEAiBiBGAbDYAPnwAD/AA==")
           };
         },
         show : function() {
