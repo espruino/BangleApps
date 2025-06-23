@@ -1,13 +1,12 @@
 # Weather
 
-This allows your Bangle.js to display weather reports from the Gadgetbridge app on an Android phone.
+This allows your Bangle.js to display weather reports from the Gadgetbridge app for an Android phone, or by using the iOS shortcut below to push weather information.
 
 It adds a widget with a weather pictogram and the temperature.
 You can view the full report through the app:
 
 ![Screenshot](screenshot.png)
-
-## Setup
+## Android Setup
 
 1. Install [Gadgetbridge for Android](https://f-droid.org/packages/nodomain.freeyourgadget.gadgetbridge/) on your phone.
 2. Set up [Gadgetbridge weather reporting](https://codeberg.org/Freeyourgadget/Gadgetbridge/wiki/Weather).
@@ -15,7 +14,7 @@ You can view the full report through the app:
 If using the `Bangle.js Gadgetbridge` app on your phone (as opposed to the standard F-Droid `Gadgetbridge`) you need to set the package name
 to `com.espruino.gadgetbridge.banglejs` in the settings of the weather app (`settings -> gadgetbridge support -> package name`).
 
-## Android Weather Apps
+### Android Weather Apps
 
 There are two weather apps for Android that can connect with Gadgetbridge:
 
@@ -48,6 +47,9 @@ When you first load QuickWeather, it will take you through the setup process. Yo
 ### Weather Notification
 
 **Note:** at one time, the Weather Notification app also worked with Gadgetbridge. However, many users are reporting it's no longer seeing the OpenWeatherMap API key as valid. The app has not received any updates since August of 2020, and may be unmaintained. 
+
+## iOS Setup
+Use the iOS shortcut here: [Shortcut](https://www.icloud.com/shortcuts/7b11b4335dd04ab7aa3b77e1167c936f). The shortcut uses Apple Weather for weather updates, and sends a notification, which is read by Bangle.js. To push weather every hour, or intervel, you will need to create a shortcut automation for every time you want to push the weather.
 
 ## Settings
 
