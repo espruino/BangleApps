@@ -76,14 +76,15 @@ function anim() {
     g.drawImage(imgbubble,f.y,f.x,{scale:f.s * b2scale, rotate:b2rot});
   });
   g.drawImage(imgbat, mx,my,{scale:b2scale, rotate:Math.sin(getTime()*2)*0.5-Math.PI/2 + b2rot});
-  g.flip();
-  
   if(settings.showTime==true){
     g.drawString(clockStr,x,cy);
   }
   if(settings.showBatPercent==true){
     g.drawString(batteryPercentStr,x,by,true);
   }
+  g.flip();
+  
+  
 }
   
 if(settings.showBatPercent||settings.showTime){
@@ -92,7 +93,7 @@ if(settings.showBatPercent||settings.showTime){
   setInterval(calculate,20000);
 }
 
-setInterval(anim,15);
+setInterval(anim,22);
 
 
 Bangle.on("charging", isCharging => {
