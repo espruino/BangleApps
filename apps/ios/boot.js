@@ -191,6 +191,11 @@ E.on('notify',msg=>{
         wdir: d.wdir,
         loc: d.loc
     }
+    // Convert string fields to numbers for iOS weather shortcut
+    const numFields = ['code', 'wdir', 'temp', 'hi', 'lo', 'hum', 'wind', 'uv', 'rain'];
+    numFields.forEach(field => {
+      if (weatherEvent[field] != null) weatherEvent[field] = +weatherEvent[field];
+    });
     require("weather").update(weatherEvent);
     NRF.ancsAction(msg.uid, false);
     return;
