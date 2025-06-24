@@ -12,7 +12,7 @@
     let hw = require('Storage').readJSON("powermanager.hw.json", true) || {};
     if (!hw.start) hw.start = Date.now();
     if (!hw.power) hw.power = {};
-
+    
     const saveEvery = 1000 * 60 * 5;
     const TO_WRAP = ["GPS","Compass","Barometer","HRM","LCD"];
 
@@ -138,7 +138,7 @@
       var current = Math.round((op()+op()+op()+op())/4);
       if (Bangle.isCharging() && current > p) p = current;
       if (!Bangle.isCharging() && current < p) p = current;
-      return p;
+      return Math.round(p);
     };
   }
   
