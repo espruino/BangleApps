@@ -8,7 +8,7 @@ You can view the full report through the app:
 
 ![Screenshot](screenshot.png)
 ## iOS Setup
-Use the iOS shortcut [here](https://www.icloud.com/shortcuts/aad648484c724ced85ff774d283aff8b). The shortcut uses Apple Weather for weather updates, and sends a notification, which is read by Bangle.js. To push weather every hour, or interval, you will need to create a shortcut automation for every time you want to push the weather.
+Use the iOS shortcut [here](https://www.icloud.com/shortcuts/dbf7159200d945179e0938c15e64f102). The shortcut uses Apple Weather for weather updates, and sends a notification, which is read by Bangle.js. To push weather every hour, or interval, you will need to create a shortcut automation for every time you want to push the weather.
 ## Android Setup
 
 1. Install [Gadgetbridge for Android](https://f-droid.org/packages/nodomain.freeyourgadget.gadgetbridge/) on your phone.
@@ -64,7 +64,7 @@ Adds:
 
 * Expiration timespan can be set after which the local weather data is considered as invalid
 * Widget can be hidden
-* To change the units for wind speed, you can install the [`Languages` app](https://banglejs.com/apps/?id=locale) which
+* To change the units for wind speed, you can install the [`Languages app`](https://banglejs.com/apps/?id=locale) which
 allows you to choose the units used for speed/distance/temperature and so on.
 
 ## Controls
