@@ -1,4 +1,4 @@
-/* no-unused-vars */
+
 (function() {
   var settings = Object.assign(
     require('Storage').readJSON("powermanager.default.json", true) || {},
@@ -76,7 +76,7 @@
       })(Bangle[functionName]);
     }
     /* exported functions */
-    let functions = {};
+    var functions = {};
     let wrapDeferred = ((o,t) => (a) => {
       if (a == eval || typeof a == "string") {
         return o.apply(this, arguments);
@@ -164,4 +164,4 @@
     });
   }
 })();
-/* no-unused-vars */
+
