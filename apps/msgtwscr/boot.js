@@ -2,7 +2,7 @@
   // twistThreshold How much acceleration to register a twist of the watch strap? Can be negative for opposite direction. default = 800
   // twistMaxY Maximum acceleration in Y to trigger a twist (low Y means watch is facing the right way up). default = -800
   // twistTimeout How little time (in ms) must a twist take from low->high acceleration? default = 1000
-  function onTwistEmitDrag() {
+  let onTwistEmitDrag = ()=>{
     Bangle.setOptions({twistThreshold:2500, twistMaxY:-800, twistTimeout:400});
     let isTwistDragging = false;
     let twistHandler = ()=>{
