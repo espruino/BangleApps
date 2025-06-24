@@ -1,3 +1,4 @@
+/* no-unused-vars */
 (function() {
   var settings = Object.assign(
     require('Storage').readJSON("powermanager.default.json", true) || {},
@@ -163,3 +164,4 @@
     });
   }
 })();
+/* no-unused-vars */
