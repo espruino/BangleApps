@@ -812,10 +812,14 @@
         const maxTextWidth = options.w - imgSize - padding * 3;
         
         if (g.stringWidth(text) > maxTextWidth) {
-          while (g.stringWidth(text + "...") > maxTextWidth && text.length > 0) {
-            text = text.substr(0, text.length - 1);
+          if (text.indexOf(' ') === -1) {
+            g.setFont("6x8:2");
+            if (g.stringWidth(text) > maxTextWidth) g.setFont("6x8:1");
+          } else {
+            g.setFont("6x8:2");
+            const lines = g.wrapString(text, maxTextWidth);
+            text = lines.slice(0, 2).join("\n") + (lines.length > 2 ? "..." : "");
           }
-          text = text + "...";
         }
         
         const textWidth = g.stringWidth(text);
