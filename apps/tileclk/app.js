@@ -164,7 +164,7 @@
   };
 
   // Touch areas
-  const mainTimeArea = { top: widgetYOffset, bottom: widgetYOffset + Math.round(0.6 * height) };
+  const mainTimeArea = { top: widgetYOffset, bottom: widgetYOffset + Math.round(0.75 * height) };
   const bottomArea = { top: positions.seconds.y + widgetYOffset - 10, bottom: height };
 
   const threeDigitLayout = [
