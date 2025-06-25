@@ -128,7 +128,7 @@ exports.load = function() {
       get: function() {
         return {
           text: this.isOn() ? "On" : "Off",
-          img: atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA==")
+          img: atob("GBiBAAAAAAAAAAAYAAAcAAAWAAATAAARgAMRgAGTAADWAAB8AAA4AAA4AAB8AADWAAGTAAMRgAARgAATAAAWAAAcAAAYAAAAAAAAAA==")
         };
       },
       run: function() {

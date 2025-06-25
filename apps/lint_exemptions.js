@@ -925,12 +925,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/fileman/fileman.app.js": {
-    "hash": "f378179e7dd3655ba7e9ce03e1f7fd5a2d1768ad7d9083b22e7d740405be842a",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/flappy/app.js": {
     "hash": "e24b0c5e0469070e02dae00887bf50569c2c141a80c7c356b36987ddf68ce9cc",
     "rules": [
@@ -1047,12 +1041,6 @@ module.exports = {
   },
   "apps/approxclock/app.js": {
     "hash": "675ce5f16bb26649a39c86561e9fa46bb31e369a465fac9b35e5debfe18672ec",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/altimeter/app.js": {
-    "hash": "054ac328db51034aa339f1d10b4d264badd49438b95f08bc6fbfb90bd88c6ae0",
     "rules": [
       "no-undef"
     ]

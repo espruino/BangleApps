@@ -15,3 +15,4 @@
 0.14: Check for .clkinfocache and use that if exists (from boot 0.64)
 0.15: Fix error when displaying a category with only one clockinfo (fix #3728)
 0.16: Add BLE clkinfo entry
+0.17: Fix BLE icon alignment and border on some clocks
