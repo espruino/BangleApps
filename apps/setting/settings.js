@@ -338,11 +338,12 @@ function showThemeMenu(pop) {
     // these would cause dithering, which is not great for e.g. text
     rgb[/*LANG*/'Orange'] = "#ff7f00";
     rgb[/*LANG*/'Grey'] = "#7f7f7f";
-    //these are more dithered colors for backgrounds, etc.
+    rgb[/*LANG*/'Purple'] = "#7f00ff";
     rgb[/*LANG*/'Maroon'] = "#541111";
-    rgb[/*LANG*/'Dark purple'] = "#3e1363";
-    rgb[/*LANG*/'Dark green'] = "#136332";
-    rgb[/*LANG*/'Dark blue'] = "#0e185c";
+    rgb[/*LANG*/'Indigo'] = "#3e1363";
+    rgb[/*LANG*/'Dark Green'] = "#136332";
+    rgb[/*LANG*/'Navy'] = "#0e185c";
+    
     
     let colors = [], names = [];
     for(const c in rgb) {
