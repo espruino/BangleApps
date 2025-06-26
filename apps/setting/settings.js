@@ -335,15 +335,14 @@ function showThemeMenu(pop) {
     rgb[/*LANG*/'Magenta'] = "#f0f";
     rgb[/*LANG*/'Yellow'] = "#ff0";
     
-    // these would cause dithering, which is not great for e.g. text
+    // These would cause dithering, which is not great for e.g. text
     rgb[/*LANG*/'Orange'] = "#ff7f00";
-    rgb[/*LANG*/'Grey'] = "#7f7f7f";
     rgb[/*LANG*/'Purple'] = "#7f00ff";
-    rgb[/*LANG*/'Maroon'] = "#541111";
+    rgb[/*LANG*/'Grey'] = "#7f7f7f";
+    rgb[/*LANG*/'Maroon'] = "#3e1363";
     rgb[/*LANG*/'Indigo'] = "#3e1363";
-    rgb[/*LANG*/'Dark Green'] = "#136332";
-    rgb[/*LANG*/'Navy'] = "#0e185c";
-    
+    rgb[/*LANG*/'Dark Green'] = "#0e5c13";
+    rgb[/*LANG*/'Navy'] = "#121e75";
     
     let colors = [], names = [];
     for(const c in rgb) {
