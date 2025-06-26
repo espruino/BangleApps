@@ -58,7 +58,7 @@ let clockInfoItems = require("clock_info").load();
 
 let clockInfoMenuLeft = require("clock_info").addInteractive(clockInfoItems, {
     // Add the dimensions we're rendering to here - these are used to detect taps on the clock info area
-    x : 13, y: 103, w: 66, h:65,
+    x : 10, y: 100, w: 72, h:70,
   // You can add other information here you want to be passed into 'options' in 'draw'
   // This function draws the info
   draw : (itm, info, options) => {
@@ -71,10 +71,10 @@ let clockInfoMenuLeft = require("clock_info").addInteractive(clockInfoItems, {
     if (options.focus){
       // show if focused
       g.setColor(0,15,255);
-      bRoundedRectangle(10,100,82,170,8); 
+      bRoundedRectangle(options.x,options.y,options.x+options.w,options.y+options.h,8); 
     }else{
       g.setColor(g.theme.fg);
-      bRoundedRectangle(10,100,82,170,8); 
+      bRoundedRectangle(options.x,options.y,options.x+options.w,options.y+options.h,8); 
     }
     // we're drawing center-aligned here
     var midx = options.x+options.w/2;
@@ -91,7 +91,7 @@ let clockInfoMenuLeft = require("clock_info").addInteractive(clockInfoItems, {
 //CLOCK INFO RIGHT DIMENSIONS: 97,113, w:66, h: 55
 let clockInfoMenuRight = require("clock_info").addInteractive(clockInfoItems, {
   // Add the dimensions we're rendering to here - these are used to detect taps on the clock info area
-  x : 97, y: 103, w: 66, h:65,
+  x : 94, y: 100, w: 72, h:70,
   // You can add other information here you want to be passed into 'options' in 'draw'
   // This function draws the info
   draw : (itm, info, options) => {
@@ -104,10 +104,10 @@ let clockInfoMenuRight = require("clock_info").addInteractive(clockInfoItems, {
     if (options.focus){
       // show if focused
       g.setColor(0,15,255);
-      bRoundedRectangle(94,100,166,170,8);  
+      bRoundedRectangle(options.x,options.y,options.x+options.w,options.y+options.h,8);  
     }else{
       g.setColor(g.theme.fg);
-      bRoundedRectangle(94,100,166,170,8);     
+      bRoundedRectangle(options.x,options.y,options.x+options.w,options.y+options.h,8);     
     }
     // we're drawing center-aligned here
     var midx = options.x+options.w/2;
@@ -138,14 +138,34 @@ let draw = function() {
    // align bottom right
 
   g.setFontBold();
-  g.setFontAlign(0,1);
-  g.drawString("  "+clock+"  ", X-10, Y+1, true /*clear background*/);
-  // draw the meridian(am/pm) and seconds (2x size 7 segment)
   
-  g.setFont("Vector",20);
+  if(meridian!=""){
+    //calculate alignment
+    g.setFontBold();
+    //padding in px
+    var padding=7;
+    var clkStrWidth= g.stringWidth(clock);
+    g.setFont("Vector",18);
+    var meridianStrWidth=g.stringWidth(meridian);
+    var totalStrWidth=meridianStrWidth+padding+clkStrWidth;
+    var startX = ((g.getWidth() - totalStrWidth) / 2)+6;
+    g.clearRect(startX,50,startX+totalStrWidth,80);
+    g.setFontBold();
+    g.setFontAlign(-1,1);
+    g.drawString(clock, startX, Y+2,true);
+    g.setFont("Vector",20);
+    g.setFontAlign(-1,1);
+    g.drawString(meridian, startX + clkStrWidth + padding, Y-5, true);
+    
+  }else{
+    
+    g.setFontBold();
+    g.setFontAlign(0,1);
+    g.drawString("  "+clock+"  ", X, Y-2,true);
+    
+  }
+  
 
-  g.setFontAlign(-1,1); // align bottom left
-  g.drawString(meridian, X+50, Y-10, true /*clear background*/);
   // draw the date, in a normal font
   g.setFont("Vector",18);
   g.setFontAlign(0,0); // align center bottom
