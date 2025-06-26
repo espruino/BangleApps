@@ -1,10 +1,9 @@
-
 (function() {
   var settings = Object.assign(
     require('Storage').readJSON("powermanager.default.json", true) || {},
     require('Storage').readJSON("powermanager.json", true) || {}
   );
-
+  
   if (settings.log) {
     let logFile = require('Storage').open("powermanager.log","a");
     let def = require('Storage').readJSON("powermanager.def.json", true) || {};
@@ -29,7 +28,9 @@
         require('Storage').writeJSON("powermanager.hw.json", hw);
       }
     }
-
+    
+    
+    
     setInterval(save, saveEvery);
 
     E.on("kill", ()=>{
@@ -75,7 +76,8 @@
         return result;
       })(Bangle[functionName]);
     }
-    /* exported functions */
+
+    let functions = {};
     let wrapDeferred = ((o,t) => (a) => {
       if (a == eval || typeof a == "string") {
         return o.apply(this, arguments);
@@ -131,15 +133,30 @@
     handleCharging(Bangle.isCharging());
   }
 
+  var savedBatPercent=E.getBattery();
   if (settings.forceMonoPercentage){
-    var p = (E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery())/4;
-    var op = E.getBattery;
+    var newPercent =Math.round((E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery())/6);
+    
     E.getBattery = function() {
-      var current = Math.round((op()+op()+op()+op())/4);
-      if (Bangle.isCharging() && current > p) p = current;
-      if (!Bangle.isCharging() && current < p) p = current;
-      return Math.round(p);
-    };
+      var percentToReturn;
+      if(Bangle.isCharging()){
+        //only go up
+        if(newPercent>savedBatPercent){
+          percentToReturn=newPercent;
+          savedBatPercent=newPercent;
+        }else{
+          percentToReturn=savedBatPercent;
+        }
+      }else{
+        if(newPercent<savedBatPercent){
+          percentToReturn=newPercent;
+          savedBatPercent=newPercent;
+        }else{
+          percentToReturn=savedBatPercent;
+        }
+      }
+      return percentToReturn;
+  };
   }
   
   if (settings.forceMonoVoltage){
@@ -163,4 +180,3 @@
     });
   }
 })();
-
