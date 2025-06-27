@@ -10,7 +10,7 @@ You can view the full report through the app:
 
 ## iOS Setup
 
-Use the iOS shortcut [here](https://www.icloud.com/shortcuts/ae5f3d7d6ed3460c98a3396b267aa1c5). The shortcut uses Apple Weather for weather updates, and sends a notification, which is read by Bangle.js. To push weather every hour, or interval, you will need to create a shortcut automation for every time you want to push the weather.
+Use the iOS shortcut [here](https://www.icloud.com/shortcuts/738171beab944a5caacb4396f473811e). The shortcut uses Apple Weather for weather updates, and sends a notification, which is read by Bangle.js. To push weather every hour, or interval, you will need to create a shortcut automation for every time you want to push the weather.
 
 ## Android Setup
 
