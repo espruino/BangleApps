@@ -8,11 +8,20 @@ This is Bangle.js's main settings menu:
 * **Alerts** - Set how Bangle.js alerts you (including Quiet mode)
 * **Utils** - Utilities, including resetting settings
 
+**New Users:** these are some settings you'll probably want to change right away:
+
+* **Calibrate LCD** Make sure that the LCD touchscreen responds to touches where you expect them to
+* **Locale** Set whether you want 12 hour time, and what day of the week the week starts on.
+
 See below for options under each heading:
+  
+## Apps - App-specific settings
+
+This is where you adjust settings for an individual app. (eg. Health app: Adjust how often heart rate tracking should fire.)
 
 ## System - System settings
 
-* **Theme** Adjust the colour scheme
+* **Theme** Adjust the colour scheme. Choose between light mode, dark mode, or a custom theme. To adjust themes in more detail you can also use the [Theme Switcher App](https://banglejs.com/apps/?id=themesetter)
 * **LCD** Configure settings about the screen. How long it stays on, how bright it is, and when it turns on - see below.
 * **Locale** set time zone, the time format (12/24h, for supported clocks) and the first day of the week
 * **Clock** if you have more than one clock face, select the default one
@@ -44,9 +53,9 @@ See below for options under each heading:
 * **Rotation** allows you to rotate (or mirror) what's displayed on the screen, eg. for left-handed wearers (needs 2v16 or 2v15 cutting edge firmware to work reliably)
 * **Wake on X** should the given activity wake up the Bangle.js LCD?
   * On Bangle.js 2 when locked the touchscreen is turned off to save power. Because of this,
-    `Wake on Touch` actually uses the accelerometer, and you need to actually tap the display to wake Bangle.js (we recently renamed the menu item to `Wake on Tap`).
+    `Wake on Tap` actually uses the accelerometer, and you need to actually tap the display to wake Bangle.js.
 * **Twist X** these options adjust the sensitivity of `Wake on Twist` to ensure Bangle.js wakes up with just the right amount of wrist movement.
-* **Calibrate** on Bangle.js 2, pop up a screen allowing you to calibrate the touchscreen (calibration only works on 2v16 or 2v15 cutting edge builds)
+* **Calibrate** on Bangle.js 2, pop up a screen allowing you to calibrate the touchscreen, ensuring your touches are mapped to the right place on the screen. (Highly reccomended for new users!)
 
 ## Locale
 
