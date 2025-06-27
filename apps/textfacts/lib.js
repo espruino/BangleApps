@@ -3,7 +3,7 @@ exports.getCount = function() {
   return 162;
 };
 exports.getText = function(n) {
-  /*var s = require("Storage").read("textsource.txt");
+  var s = require("Storage").read("textsource.txt");
   var idx = s.indexOf("\n");
   var lengths = [idx];
   while (idx>=0) {
