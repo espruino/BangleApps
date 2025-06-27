@@ -149,7 +149,7 @@ let draw = function() {
     var meridianStrWidth=g.stringWidth(meridian);
     var totalStrWidth=meridianStrWidth+padding+clkStrWidth;
     var startX = ((g.getWidth() - totalStrWidth) / 2)+6;
-    g.clearRect(startX,50,startX+totalStrWidth,80);
+    g.clearRect(0,0,g.getWidth(),90);
     g.setFontBold();
     g.setFontAlign(-1,1);
     g.drawString(clock, startX, Y+2,true);
