@@ -201,23 +201,14 @@ const chartTypes = {
     scales: { y: { min: 0, max: 100, title: 'Battery %' }, y1: { position: 'right', min: 3.0, max: 4.2, title: 'Voltage (V)', grid: false } }
   },
   steps: { filter: d => d.Steps !== undefined && d.Steps !== "", data: d => parseInt(d.Steps) || 0, label: 'Steps per Interval', color: '#36a2eb', title: 'Step Count Over Time', type: 'bar', cumulative: true },
-  elevation: { 
-    filter: d => (d['Barometer Altitude'] && d['Barometer Altitude'] !== "" && !isNaN(parseFloat(d['Barometer Altitude']))) || (d.Altitude && d.Altitude !== "" && !isNaN(parseFloat(d.Altitude))), 
-    data: d => {
-      if (d['Barometer Altitude'] && d['Barometer Altitude'] !== "" && !isNaN(parseFloat(d['Barometer Altitude']))) {
-        return convertElevation(parseFloat(d['Barometer Altitude'])).value;
-      } else {
-        return convertElevation(parseFloat(d.Altitude)).value;
-      }
-    }, 
-    label: () => convertElevation(1).label, 
-    color: '#8b5cf6', 
+  elevation: {
+    filter: d => (d['Barometer Altitude'] !== undefined && d['Barometer Altitude'] !== "") || (d.Altitude !== undefined && d.Altitude !== ""),
     title: 'Elevation Profile',
-    getTitle: data => {
-      // Check if we have any barometer altitude data
-      const hasBarometerAlt = data.some(d => d['Barometer Altitude'] && d['Barometer Altitude'] !== "" && !isNaN(parseFloat(d['Barometer Altitude'])));
-      return hasBarometerAlt ? 'Elevation Profile (Barometer)' : 'Elevation Profile (GPS)';
-    }
+    datasets: [
+      { key: 'Barometer Altitude', label: () => 'Barometer (' + convertElevation(1).unit + ')', color: '#8b5cf6', yAxis: 'y', convert: convertElevation },
+      { key: 'Altitude', label: () => 'GPS (' + convertElevation(1).unit + ')', color: '#a855f7', yAxis: 'y', convert: convertElevation }
+    ],
+    scales: { y: { title: () => convertElevation(1).label } }
   },
   speed: { filter: d => d.Latitude && d.Longitude && d.Latitude !== "" && d.Longitude !== "", calculate: true, label: () => convertSpeed(1).label, color: '#f59e0b', title: 'Speed Over Time' },
   barometer: {
@@ -252,7 +243,7 @@ const createChart = (type, canvasId, trackData) => {
       .filter(ds => data.some(pt => pt[ds.key] !== undefined && pt[ds.key] !== ""))
       .map(ds => makeDataset(ds.label, data.map(pt => {
         const val = parseFloat(pt[ds.key]);
-        return val ? (ds.convert ? ds.convert(val).value : val) : null;
+        return val ? (ds.convert ? parseFloat(ds.convert(val).value.toFixed(1)) : val) : null;
       }), ds.color, { fill: false, yAxisID: ds.yAxis }));
   } else if (type === 'speed') {
     // Calculate speed from GPS coordinates
@@ -292,7 +283,7 @@ const createChart = (type, canvasId, trackData) => {
       interaction: { intersect: false, mode: 'point' },
       plugins: {
         title: { display: true, text: config.getTitle ? config.getTitle(data) : config.title },
-        legend: { display: datasets.length > 1 },
+        legend: { display: true },
         tooltip: { mode: 'nearest', intersect: false }
       },
       scales: {
@@ -520,7 +511,10 @@ function createLeafletMap(containerId, coordinates, fullTrack) {
           const items = [];
           if (pointData.Time) items.push(`<strong>🕐 ${pointData.Time.toLocaleTimeString()}</strong>`);
           if (pointData.Heartrate) items.push(`❤️ ${pointData.Heartrate} BPM`);
-          if (pointData.Altitude) {
+          if (pointData['Barometer Altitude'] && pointData['Barometer Altitude'] !== "" && !isNaN(parseFloat(pointData['Barometer Altitude']))) {
+            const e = convertElevation(parseFloat(pointData['Barometer Altitude']));
+            items.push(`⛰️ ${e.value.toFixed(0)} ${e.unit}`);
+          } else if (pointData.Altitude) {
             const e = convertElevation(parseFloat(pointData.Altitude));
             items.push(`⛰️ ${e.value.toFixed(0)} ${e.unit}`);
           }
