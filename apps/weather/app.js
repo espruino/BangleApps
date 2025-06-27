@@ -9,38 +9,9 @@ Bangle.loadWidgets();
 var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
   {filly: 1},
   {type: "h", filly: 0, c: [
-    {type: "v", width: g.getWidth()/2, c: [  // Vertical container for icon + UV
+    {type: "v", width: g.getWidth()/2, c: [  // Vertical container for icon
       {type: "custom", fillx: 1, height: g.getHeight()/2 - 30, valign: -1, txt: "unknown", id: "icon",
-        render: l => weather.drawIcon(l, l.x+l.w/2, l.y+l.h/2, l.w/2-10)},
-      {type: "custom", fillx: 1, height: 20, id: "uvDisplay",
-        render: l => {
-          if (!current || current.uv === undefined) return;
-          const uv = Math.min(parseInt(current.uv), 11); // Cap at 11
-          
-          // UV color thresholds: [max_value, color] based on WHO standards
-          const colors = [[2,"#0F0"], [5,"#FF0"], [7,"#F80"], [10,"#F00"], [11,"#F0F"]];
-          const color = colors.find(c => uv <= c[0])[1];
-          
-          // Setup and measure label
-          g.setFont("6x8").setFontAlign(-1, 0);
-          const label = "UV: ";
-          const labelW = g.stringWidth(label);
-          
-          // Calculate centered position (4px block + 1px spacing) * blocks - last spacing
-          const totalW = labelW + uv * 5 - (uv > 0 ? 1 : 0);
-          const x = l.x + (l.w - totalW) / 2;
-          const y = l.y + l.h;
-          
-          // Draw label
-          g.setColor(g.theme.fg).drawString(label, x, y);
-          
-          // Draw UV blocks
-          g.setColor(color);
-          for (let i = 0; i < uv; i++) {
-            g.fillRect(x + labelW + i * 5, y - 3, x + labelW + i * 5 + 3, y + 3);
-          }
-        }
-      },
+        render: l => weather.drawIcon(l, l.x+l.w/2, l.y+l.h/2, l.w/2-5)},
     ]},
     {type: "v", fillx: 1, c: [
       {type: "h", pad: 2, c: [
@@ -50,12 +21,43 @@ var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
       {filly: 1},
       {type: "txt", font: "6x8", pad: 2, halign: 1, label: /*LANG*/"Humidity"},
       {type: "txt", font: "9%", pad: 2, halign: 1, id: "hum", label: "000%"},
-      {filly: 1},
-      {type: "txt", font: "6x8", pad: 2, halign: -1, label: /*LANG*/"Wind"},
-      {type: "h", halign: -1, c: [
+      {type: "txt", font: "6x8", pad: [2, 2, 2, 2], halign: -1, label: /*LANG*/"Wind"},
+      {type: "h", pad: [0, 2, 2, 2], halign: -1, c: [
         {type: "txt", font: "9%", pad: 2, id: "wind",  label: "00"},
         {type: "txt", font: "6x8", pad: 2, valign: -1, id: "windUnit", label: "km/h"},
       ]},
+      {type: "custom", fillx: 1, height: 15, id: "uvDisplay",
+        render: l => {
+          if (!current || current.uv === undefined || current.uv === 0) return;
+          const uv = Math.min(parseInt(current.uv), 11); // Cap at 11
+          
+          // UV color thresholds: [max_value, color] based on WHO standards
+          const colors = [[2,"#0F0"], [5,"#FF0"], [7,"#F80"], [10,"#F00"], [11,"#F0F"]];
+          const color = colors.find(c => uv <= c[0])[1];
+          const blockH = 8, blockW = 3;
+          
+          // Draw UV title and blocks on same line
+          g.setFont("6x8").setFontAlign(-1, 0);
+          const label = "UV";
+          const labelW = g.stringWidth(label);
+          
+          const x = l.x + 2;
+          const y = l.y + l.h / 2;
+          
+          // Draw title
+          g.setColor(g.theme.fg).drawString(label, x, y);
+          
+          // Draw UV blocks after title
+          g.setColor(color);
+          for (let i = 0; i < uv; i++) {
+            const blockX = x + labelW + 4 + i * (blockW + 2);
+            g.fillRect(blockX, y - blockH/2, blockX + blockW, y + blockW/2);
+          }
+          
+          // Reset graphics state to prevent interference
+          g.reset();
+        }
+      },
     ]},
   ]},
   {filly: 1},
@@ -91,6 +93,7 @@ function draw() {
   layout.loc.label = current.loc;
   layout.updateTime.label = `${formatDuration(Date.now() - current.time)} ago`; // How to autotranslate this and similar?
   layout.update();
+  layout.forgetLazyState();
   layout.render();
 }
 
