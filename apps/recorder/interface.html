@@ -201,7 +201,24 @@ const chartTypes = {
     scales: { y: { min: 0, max: 100, title: 'Battery %' }, y1: { position: 'right', min: 3.0, max: 4.2, title: 'Voltage (V)', grid: false } }
   },
   steps: { filter: d => d.Steps !== undefined && d.Steps !== "", data: d => parseInt(d.Steps) || 0, label: 'Steps per Interval', color: '#36a2eb', title: 'Step Count Over Time', type: 'bar', cumulative: true },
-  elevation: { filter: d => d.Altitude && d.Altitude !== "" && !isNaN(parseFloat(d.Altitude)), data: d => convertElevation(parseFloat(d.Altitude)).value, label: () => convertElevation(1).label, color: '#8b5cf6', title: 'Elevation Profile' },
+  elevation: { 
+    filter: d => (d['Barometer Altitude'] && d['Barometer Altitude'] !== "" && !isNaN(parseFloat(d['Barometer Altitude']))) || (d.Altitude && d.Altitude !== "" && !isNaN(parseFloat(d.Altitude))), 
+    data: d => {
+      if (d['Barometer Altitude'] && d['Barometer Altitude'] !== "" && !isNaN(parseFloat(d['Barometer Altitude']))) {
+        return convertElevation(parseFloat(d['Barometer Altitude'])).value;
+      } else {
+        return convertElevation(parseFloat(d.Altitude)).value;
+      }
+    }, 
+    label: () => convertElevation(1).label, 
+    color: '#8b5cf6', 
+    title: 'Elevation Profile',
+    getTitle: data => {
+      // Check if we have any barometer altitude data
+      const hasBarometerAlt = data.some(d => d['Barometer Altitude'] && d['Barometer Altitude'] !== "" && !isNaN(parseFloat(d['Barometer Altitude'])));
+      return hasBarometerAlt ? 'Elevation Profile (Barometer)' : 'Elevation Profile (GPS)';
+    }
+  },
   speed: { filter: d => d.Latitude && d.Longitude && d.Latitude !== "" && d.Longitude !== "", calculate: true, label: () => convertSpeed(1).label, color: '#f59e0b', title: 'Speed Over Time' },
   barometer: {
     filter: d => d['Barometer Temperature'] !== undefined || d['Barometer Pressure'] !== undefined,
@@ -274,7 +291,7 @@ const createChart = (type, canvasId, trackData) => {
       animation: { duration: 300 },
       interaction: { intersect: false, mode: 'point' },
       plugins: {
-        title: { display: true, text: config.title },
+        title: { display: true, text: config.getTitle ? config.getTitle(data) : config.title },
         legend: { display: datasets.length > 1 },
         tooltip: { mode: 'nearest', intersect: false }
       },
