@@ -165,7 +165,7 @@ let draw = function() {
     
   }
   
-
+  
   // draw the date, in a normal font
   g.setFont("Vector",18);
   g.setFontAlign(0,0); // align center bottom
@@ -173,7 +173,7 @@ let draw = function() {
   var dateStr = require("locale").dow(new Date(), 1)+", "+ require("locale").month(new Date(), true)+" "+new Date().getDate();
   g.drawString(" "+dateStr+" ", g.getWidth()/2, Y+9, true /*clear background*/);
   
-  
+  Bangle.drawWidgets();
   
   // queue next draw
   if (drawTimeout) clearTimeout(drawTimeout);
@@ -203,5 +203,4 @@ g.clear();
 // Load widgets
 Bangle.loadWidgets();
 draw();
-setTimeout(Bangle.drawWidgets,0);
 }
