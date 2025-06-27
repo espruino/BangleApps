@@ -2,7 +2,7 @@
   "id": "modclock",
   "name": "Modern Clock",
   "shortName":"Modern Clk",
-  "icon": "app.png",
+  "icon": "icon.png",
   "version":"0.01",
   "description": "A modern, simple clock, with two Clock Infos and Fast Loading",
   "type":"clock",    
