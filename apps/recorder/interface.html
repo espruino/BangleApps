@@ -205,12 +205,12 @@ const chartTypes = {
     filter: d => (d['Barometer Altitude'] !== undefined && d['Barometer Altitude'] !== "") || (d.Altitude !== undefined && d.Altitude !== ""),
     title: 'Elevation Profile',
     datasets: [
-      { key: 'Barometer Altitude', label: () => 'Barometer (' + convertElevation(1).unit + ')', color: '#8b5cf6', yAxis: 'y', convert: convertElevation },
-      { key: 'Altitude', label: () => 'GPS (' + convertElevation(1).unit + ')', color: '#a855f7', yAxis: 'y', convert: convertElevation }
+      { key: 'Barometer Altitude', label: () => 'Barometer (' + convertElevation(1).unit + ')', color: '#14b8a6', yAxis: 'y', convert: convertElevation },
+      { key: 'Altitude', label: () => 'GPS (' + convertElevation(1).unit + ')', color: '#9333ea', yAxis: 'y', convert: convertElevation }
     ],
     scales: { y: { title: () => convertElevation(1).label } }
   },
-  speed: { filter: d => d.Latitude && d.Longitude && d.Latitude !== "" && d.Longitude !== "", calculate: true, label: () => convertSpeed(1).label, color: '#f59e0b', title: 'Speed Over Time' },
+  speed: { filter: d => d.Latitude && d.Longitude && d.Latitude !== "" && d.Longitude !== "", calculate: true, label: () => convertSpeed(1).label, color: '#10b981', title: 'Speed Over Time' },
   barometer: {
     filter: d => d['Barometer Temperature'] !== undefined || d['Barometer Pressure'] !== undefined,
     title: 'Barometer Data Over Time',
@@ -290,7 +290,7 @@ const createChart = (type, canvasId, trackData) => {
         x: { title: { display: true, text: 'Time' } },
         y: { beginAtZero: type !== 'heartrate', title: { display: true, text: typeof config.label === 'function' ? config.label() : config.label || 'Value' } }
       },
-      elements: { point: { radius: 2, hoverRadius: 4 } }
+      elements: { point: { radius: 1, hoverRadius: 3 } }
     }
   };
 
