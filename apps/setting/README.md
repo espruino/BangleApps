@@ -14,6 +14,9 @@ These are some settings you should change right off the bat, if you are a new us
 * **Calibrate LCD** Make sure that the LCD touchscreen responds to touches where you expect them to
 * **Locale** Set whether you want 12 hour time, and what day of the week the week starts on.
   
+## Apps - App-specific settings
+This is where you adjust settings for an individual app. (eg. Health app: Adjust how often heart rate tracking should fire.)
+
 ## System - System settings
 
 * **Theme** Adjust the colour scheme. Choose between light mode, dark mode, or a custom theme.
