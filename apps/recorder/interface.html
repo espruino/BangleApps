@@ -829,13 +829,11 @@ ${trackData.Latitude ? `
 
             switch(task) {
               case "delete":
-                if (confirm(`Are you sure you want to delete Track ${trackid}?`)) {
-                  Util.showModal(`Deleting ${filename}...`);
-                  Util.eraseStorageFile(filename, () => {
-                    Util.hideModal();
-                    getTrackList();
-                  });
-                }
+                Util.showModal(`Deleting ${filename}...`);
+                Util.eraseStorageFile(filename, () => {
+                  Util.hideModal();
+                  getTrackList();
+                });
                 break;
               case "downloadkml":
                 downloadTrack(filename, track => saveKML(track, `Bangle.js Track ${trackid}`));
