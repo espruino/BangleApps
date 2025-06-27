@@ -8,18 +8,20 @@ This is Bangle.js's main settings menu:
 * **Alerts** - Set how Bangle.js alerts you (including Quiet mode)
 * **Utils** - Utilities, including resetting settings
 
-See below for options under each heading:
-## New Users
-These are some settings you should change right off the bat, if you are a new user.
+**New Users:** these are some settings you'll probably want to change right away:
+
 * **Calibrate LCD** Make sure that the LCD touchscreen responds to touches where you expect them to
 * **Locale** Set whether you want 12 hour time, and what day of the week the week starts on.
+
+See below for options under each heading:
   
 ## Apps - App-specific settings
+
 This is where you adjust settings for an individual app. (eg. Health app: Adjust how often heart rate tracking should fire.)
 
 ## System - System settings
 
-* **Theme** Adjust the colour scheme. Choose between light mode, dark mode, or a custom theme.
+* **Theme** Adjust the colour scheme. Choose between light mode, dark mode, or a custom theme. To adjust themes in more detail you can also use the [Theme Switcher App](https://banglejs.com/apps/?id=themesetter)
 * **LCD** Configure settings about the screen. How long it stays on, how bright it is, and when it turns on - see below.
 * **Locale** set time zone, the time format (12/24h, for supported clocks) and the first day of the week
 * **Clock** if you have more than one clock face, select the default one
