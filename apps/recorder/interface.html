@@ -829,11 +829,29 @@ ${trackData.Latitude ? `
 
             switch(task) {
               case "delete":
-                Util.showModal(`Deleting ${filename}...`);
-                Util.eraseStorageFile(filename, () => {
-                  Util.hideModal();
-                  getTrackList();
-                });
+                if (button.dataset.confirmDelete === "true") {
+                  // Second click - proceed with deletion
+                  Util.showModal(`Deleting ${filename}...`);
+                  Util.eraseStorageFile(filename, () => {
+                    Util.hideModal();
+                    getTrackList();
+                  });
+                } else {
+                  // First click - change to confirm state
+                  const originalText = button.textContent;
+                  button.textContent = "Confirm Delete";
+                  button.classList.add("btn-error");
+                  button.dataset.confirmDelete = "true";
+                  
+                  // Reset after 3 seconds
+                  setTimeout(() => {
+                    if (button.dataset.confirmDelete === "true") {
+                      button.textContent = originalText;
+                      button.classList.remove("btn-error");
+                      delete button.dataset.confirmDelete;
+                    }
+                  }, 3000);
+                }
                 break;
               case "downloadkml":
                 downloadTrack(filename, track => saveKML(track, `Bangle.js Track ${trackid}`));
