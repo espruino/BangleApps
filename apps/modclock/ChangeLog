@@ -1,1 +1,2 @@
-0.01: App Created w/ clockInfos, bold font, date and time.
+0.01: App created w/ clockInfos, bold font, date and time.
+0.02: Added text truncation for long ClockInfo strings.

@@ -9,7 +9,21 @@ Graphics.prototype.setFontBold = function(scale) {
 { // must be inside our own scope here so that when we are unloaded everything disappears
   // we also define functions using 'let fn = function() {..}' for the same reason. function decls are global
 let drawTimeout;
+  
+let calcStrLength=function(str,limitLength){
 
+    //too long
+    
+     // Example maximum length
+    var truncatedText = str;
+
+    if (str.length > limitLength) {
+      truncatedText = str.substring(0, limitLength - 3) + "...";
+    }
+  
+    return truncatedText;
+};
+  
 //ROUNDED RECT FUNCTION
 let bRoundedRectangle= function(x1,y1,x2,y2,r) {
     var f = 1 - r;
@@ -58,7 +72,7 @@ let clockInfoItems = require("clock_info").load();
 
 let clockInfoMenuLeft = require("clock_info").addInteractive(clockInfoItems, {
     // Add the dimensions we're rendering to here - these are used to detect taps on the clock info area
-    x : 10, y: 100, w: 72, h:70,
+    x : 7, y: 100, w: 76, h:70,
   // You can add other information here you want to be passed into 'options' in 'draw'
   // This function draws the info
   draw : (itm, info, options) => {
@@ -82,7 +96,7 @@ let clockInfoMenuLeft = require("clock_info").addInteractive(clockInfoItems, {
     if (info.img){
       g.drawImage(info.img, midx-12,midy-21);
     }// draw the image
-    g.setFont("Vector",16).setFontAlign(0,1).drawString(info.text, midx,midy+23); // draw the text
+    g.setFont("Vector",16).setFontAlign(0,1).drawString(calcStrLength(info.text,8), midx,midy+23); // draw the text
   }
 });
 
@@ -91,7 +105,7 @@ let clockInfoMenuLeft = require("clock_info").addInteractive(clockInfoItems, {
 //CLOCK INFO RIGHT DIMENSIONS: 97,113, w:66, h: 55
 let clockInfoMenuRight = require("clock_info").addInteractive(clockInfoItems, {
   // Add the dimensions we're rendering to here - these are used to detect taps on the clock info area
-  x : 94, y: 100, w: 72, h:70,
+  x : 91, y: 100, w: 76, h:70,
   // You can add other information here you want to be passed into 'options' in 'draw'
   // This function draws the info
   draw : (itm, info, options) => {
@@ -115,7 +129,7 @@ let clockInfoMenuRight = require("clock_info").addInteractive(clockInfoItems, {
     if (info.img){
       g.drawImage(info.img, midx-12,midy-21);
     }// draw the image
-    g.setFont("Vector",16).setFontAlign(0,1).drawString(info.text, midx,midy+23); // draw the text
+    g.setFont("Vector",16).setFontAlign(0,1).drawString(calcStrLength(info.text,8), midx,midy+23); // draw the text
   }
 });
 
