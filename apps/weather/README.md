@@ -7,8 +7,12 @@ It also adds a ClockInfo list to Bangle.js.
 You can view the full report through the app:
 
 ![Screenshot](screenshot.png)
+
 ## iOS Setup
-Use the [iOS shortcut here](https://www.icloud.com/shortcuts/93c186179e4f4c1ead76dbca619cd791). The shortcut uses Apple Weather for weather updates, and sends a notification, which is read by Bangle.js. To push weather every hour, or interval, you will need to create a shortcut automation for every time you want to push the weather.
+
+Use the iOS shortcut [here](https://www.icloud.com/shortcuts/73be0ce1076446f3bdc45a5707de5c4d). The shortcut uses Apple Weather for weather updates, and sends a notification, which is read by Bangle.js. To push weather every hour, or interval, you will need to create a shortcut automation for every time you want to push the weather.
+
+
 ## Android Setup
 
 1. Install [Gadgetbridge for Android](https://f-droid.org/packages/nodomain.freeyourgadget.gadgetbridge/) on your phone.
@@ -51,8 +55,8 @@ When you first load QuickWeather, it will take you through the setup process. Yo
 
 **Note:** at one time, the Weather Notification app also worked with Gadgetbridge. However, many users are reporting it's no longer seeing the OpenWeatherMap API key as valid. The app has not received any updates since August of 2020, and may be unmaintained. 
 
-
 ## Clock Infos
+
 Tap on any clockInfo when focused to directly open the weather app.
 Adds:
 * Condition ClockInfo with condition icon
@@ -60,6 +64,7 @@ Adds:
 * Wind speed ClockInfo.
 * Chance of rain ClockInfo.
 * Temperature ClockInfo without condition icon.
+
 ## Settings
 
 * Expiration timespan can be set after which the local weather data is considered as invalid
