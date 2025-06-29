@@ -180,6 +180,7 @@ E.on('notify',msg=>{
     let weatherEvent = {
         t: "weather",
         temp: d.temp,
+        feels: d.feels,
         hi: d.hi,
         lo: d.lo,
         hum: d.hum,
@@ -192,7 +193,7 @@ E.on('notify',msg=>{
         loc: d.loc
     }
     // Convert string fields to numbers for iOS weather shortcut
-    const numFields = ['code', 'wdir', 'temp', 'hi', 'lo', 'hum', 'wind', 'uv', 'rain'];
+    const numFields = ['code', 'wdir', 'temp','feels', 'hi', 'lo', 'hum', 'wind', 'uv', 'rain'];
     numFields.forEach(field => {
       if (weatherEvent[field] != null) weatherEvent[field] = +weatherEvent[field];
     });
