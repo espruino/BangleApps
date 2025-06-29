@@ -61,13 +61,13 @@ function update(weatherEvent) {
     storage.write("weather.json", json);
     exports.emit("update", weather);
 
-    // Request forecast if supported by GadgetBridge and set in settings
-    if (weatherEvent.v != null && (weatherSetting.forecast ?? false)) {
+    // Request extended/forecast if supported by Weather Provider and set in settings
+    if (weatherEvent.v != null && (weatherSetting.dataType ?? "basic") !== "basic") {
       updateWeather(true);
     }
 
-    // Either GadgetBridge doesn't support v2 and/or we don't need forecast, so we use this event for refresh scheduling
-    if (weatherEvent.v == null || (weatherSetting.forecast ?? false) === false) {
+    // Either Weather Provider doesn't support v2 and/or we don't need extended/forecast, so we use this event for refresh scheduling
+    if (weatherEvent.v == null || (weatherSetting.dataType ?? "basic") === "basic") {
       weatherSetting.time = Date.now();
       storage.write("weatherSetting.json", weatherSetting);
 
@@ -93,6 +93,12 @@ function update(weatherEvent) {
       // Store simpler weather for apps that doesn't need forecast or backward compatibility
       const weather = downgradeWeatherV2(weather2);
       storage.write("weather.json", weather);
+      exports.emit("update", weather);
+    } else if (weather1.weather != null && weather1.weather.feels === undefined) {
+      // Grab feels like temperature as we have it in v2
+      weather1.weather.feels = decodeWeatherV2FeelsLike(weatherEvent);
+      storage.write("weather.json", weather);
+      exports.emit("update", weather);
     }
 
     cloned = undefined; // Clear memory
@@ -111,15 +117,15 @@ function updateWeather(force) {
 
   // More than 5 minutes
   if (force || Date.now() - lastFetch >= 5 * 60 * 1000) {
-    Bluetooth.println("");
-    Bluetooth.println(JSON.stringify({ t: "weather", v: 2, f: settings.forecast ?? false }));
+    Bluetooth.println(""); // This empty line is important for correct communication with Weather Provider
+    Bluetooth.println(JSON.stringify({ t: "weather", v: 2, f: settings.dataType === "forecast" }));
   }
 }
 
-function getWeather(forecast) {
+function getWeather(extended) {
   const weatherSetting = storage.readJSON("weatherSetting.json") || {};
 
-  if (forecast === false || !(weatherSetting.forecast ?? false)) {
+  if (extended === false || (weatherSetting.dataType ?? "basic") === "basic") {
     // biome-ignore lint/complexity/useOptionalChain: not supported by Espruino
     return (storage.readJSON("weather.json") ?? {}).weather;
   } else {
@@ -169,7 +175,7 @@ function decodeWeatherV2(jsonData, canDestroyArgument, parseForecast) {
     return { t: "weather2", v: 2, time: time };
   }
 
-  // This needs to be kept in sync with GadgetBridge
+  // This needs to be kept in sync with Weather Provider
   const weatherCodes = [
     [200, 201, 202, 210, 211, 212, 221, 230, 231, 232],
     [300, 301, 302, 310, 311, 312, 313, 314, 321],
@@ -214,7 +220,7 @@ function decodeWeatherV2(jsonData, canDestroyArgument, parseForecast) {
     moonrise: dataView.getUint32(27, true),
     moonset: dataView.getUint32(31, true),
     moonphase: dataView.getUint16(35, true),
-    feel: dataView.getInt8(37, true),
+    feels: dataView.getInt8(37, true),
   };
   weather.wrose = windDirection(weather.wdir);
 
@@ -256,6 +262,16 @@ function decodeWeatherV2(jsonData, canDestroyArgument, parseForecast) {
   return weather;
 }
 
+function decodeWeatherV2FeelsLike(jsonData) {
+  if (jsonData == null || jsonData.d == null) {
+    return undefined;
+  }
+
+  const buffer = E.toArrayBuffer(atob(jsonData.d));
+
+  return new DataView(buffer).getInt8(37, true);
+}
+
 function downgradeWeatherV2(weather2) {
   const json = { t: "weather" };
 
@@ -274,6 +290,7 @@ function downgradeWeatherV2(weather2) {
     wdir: weather2.wdir,
     wrose: weather2.wrose,
     loc: weather2.loc,
+    feels: weather2.feels,
   };
 
   return json;

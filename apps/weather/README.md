@@ -77,7 +77,7 @@ Adds:
 
 * Expiration time span can be set after which the local weather data is considered as invalid
 * Automatic weather data request interval can be set (weather data are pushed to Bangle automatically, but this can help in cases when it fails) (requires Gadgetbridge v0.86+)
-* Forecast weather data can be enabled (this requires other App to use the data, Weather App itself doesn't show the forecast data) (requires Gadgetbridge v0.86+)
+* Extended or forecast weather data can be enabled (this requires other App to use this data, Weather App itself doesn't show the forecast data) (requires Gadgetbridge v0.86+)
 * Widget can be hidden
 * To change the units for wind speed, you can install the [`Languages app`](https://banglejs.com/apps/?id=locale) which
 allows you to choose the units used for speed/distance/temperature and so on.
@@ -89,15 +89,17 @@ allows you to choose the units used for speed/distance/temperature and so on.
 
 ## Weather App API
 
+Note: except `getWeather()` and `get()` it is android only for now
+
 Weather App can provide weather and forecast data to other Apps.
 
-* Get weather data without forecast:
+* Get weather data without forecast/extended:
   ```javascript
    const weather = require("weather");
    weatherData = weather.getWeather(false);  // or weather.get()
   ```
 
-* Get weather data with forecast (needs forecast enabled in settings):
+* Get weather data with forecast/extended (needs forecast/extended enabled in settings):
   ```javascript
    const weather = require("weather");
    weatherData = weather.getWeather(true);

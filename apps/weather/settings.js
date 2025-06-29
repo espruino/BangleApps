@@ -19,6 +19,8 @@
     storage.write("weatherSetting.json", settings);
   }
 
+  const DATA_TYPE = ["basic", "extended", "forecast"];
+
   E.showMenu({
     "": { "title": "Weather" },
     "Expiry": {
@@ -45,11 +47,14 @@
       },
       onchange: (x) => save("refresh", x),
     },
-    Forecast: {
-      value: "forecast" in settings ? settings.forecast : false,
-      onchange: () => {
-        settings.forecast = !settings.forecast;
-        save("forecast", settings.forecast);
+    "Data type": {
+      value: DATA_TYPE.indexOf(settings.dataType ?? "basic"),
+      format: (v) => DATA_TYPE[v],
+      min: 0,
+      max: DATA_TYPE.length - 1,
+      onchange: (v) => {
+        settings.dataType = DATA_TYPE[v];
+        save("dataType", settings.dataType);
       },
     },
     "Hide Widget": {
