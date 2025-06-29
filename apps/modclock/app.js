@@ -10,15 +10,15 @@ Graphics.prototype.setFontBold = function(scale) {
   // we also define functions using 'let fn = function() {..}' for the same reason. function decls are global
 let drawTimeout;
   
-let calcStrLength=function(str,maxLength){
+let calcStrLength=function(str,limitLength){
 
     //too long
     
      // Example maximum length
     var truncatedText = str;
 
-    if (str.length > maxLength) {
-      truncatedText = str.substring(0, maxLength - 3) + "...";
+    if (str.length > limitLength) {
+      truncatedText = str.substring(0, limitLength - 3) + "...";
     }
   
     return truncatedText;
