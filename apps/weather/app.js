@@ -44,14 +44,15 @@ var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
     ]},
     {type: "v", fillx: 1, c: [
       {pad:5},
+
       {type: "h", pad: 2, c: [
         {type: "txt", font: "18%", id: "temp", label: "000"},
         {type: "txt", font: "12%", valign: -1, id: "tempUnit", label: "°C"},
       ]},
       {filly: 1},
       {type: "h", pad: 1, c: [
-        {type: "txt", font: "6x8", pad: 2, halign: 1, label: /*LANG*/"Feels:"},
-        {type: "txt", font: "9%", pad: 2, halign: 1, id: "feelslike", label: "35°F"},
+        {type: "txt", font: "6x8", pad: 2, halign: 1, id: "feelsLikeLabel",label: /*LANG*/"Feels:"},
+        {type: "txt", font: "9%", pad: 2, halign: 1, id: "feelsLike", label: "35°F"},
       ]},
       {filly: 1},
       {type: "h", pad: 2, c: [
@@ -94,9 +95,11 @@ function draw() {
   layout.temp.label = temp[1];
   layout.tempUnit.label = temp[2];
   if (!current || current.feels === undefined){
-    layout.feelslike.label = "N/A";
+    layout.feelsLike.label = "";
+    layout.feelsLikeLabel.label="";
   }else{
-    layout.feelslike.label = feelsLikeTemp[1]+feelsLikeTemp[2];
+    layout.feelsLike.label = feelsLikeTemp[1]+feelsLikeTemp[2];
+    layout.feelsLikeLabel.label="Feels: ";
   }
   
   layout.hum.label = current.hum+"%";
@@ -106,6 +109,7 @@ function draw() {
   layout.cond.label = current.txt.charAt(0).toUpperCase()+(current.txt||'').slice(1);
   layout.loc.label = current.loc;
   layout.updateTime.label = `${formatDuration(Date.now() - current.time)} ago`; // How to autotranslate this and similar?
+  //layout.clear(layout.feelsLike);
   layout.update();
   layout.render();
 }
@@ -125,9 +129,9 @@ function update() {
   } else {
     layout.forgetLazyState();
     if (NRF.getSecurityStatus().connected) {
-      E.showMessage(/*LANG*/"Weather\nunknown\n\nIs Gadgetbridge\nweather\nreporting set\nup on your\nphone?");
+      E.showMessage(/*LANG*/"Weather data\nexpired.\n\nRe-push weather\ndata from your\nphone");
     } else {
-      E.showMessage(/*LANG*/"Weather\nunknown\n\nGadgetbridge\nnot connected");
+      E.showMessage(/*LANG*/"Weather data\n has expired.");
       NRF.on("connect", update);
     }
   }
