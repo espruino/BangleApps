@@ -21,7 +21,7 @@
 
   const DATA_TYPE = ["basic", "extended", "forecast"];
 
-  E.showMenu({
+  menuItems = {
     "": { "title": "Weather" },
     "Expiry": {
       value: "expiry" in settings ? settings.expiry : 2 * 3600000,
@@ -35,7 +35,26 @@
       },
       onchange: (x) => save("expiry", x),
     },
-    "Refresh Rate": {
+    "Hide Widget": {
+      value: "hide" in settings ? settings.hide : false,
+      onchange: () => {
+        settings.hide = !settings.hide;
+        save("hide", settings.hide);
+      },
+    },
+    "< Back": back,
+  };
+
+  // Add android only settings
+  let android = false;
+  try {
+    if (require("android") != null) {
+      android = true;
+    }
+  } catch (_) {}
+
+  if (android) {
+    menuItems["Refresh Rate"] = {
       value: "refresh" in settings ? settings.refresh : 0,
       min: 0,
       max: 24 * 3600000,
@@ -46,8 +65,9 @@
         if (x < 86400000) return `${Math.floor(x / 36000) / 100}h`;
       },
       onchange: (x) => save("refresh", x),
-    },
-    "Data type": {
+    };
+
+    menuItems["Data type"] = {
       value: DATA_TYPE.indexOf(settings.dataType ?? "basic"),
       format: (v) => DATA_TYPE[v],
       min: 0,
@@ -56,17 +76,12 @@
         settings.dataType = DATA_TYPE[v];
         save("dataType", settings.dataType);
       },
-    },
-    "Hide Widget": {
-      value: "hide" in settings ? settings.hide : false,
-      onchange: () => {
-        settings.hide = !settings.hide;
-        save("hide", settings.hide);
-      },
-    },
-    "Force refresh": () => {
+    };
+
+    menuItems["Force refresh"] = () => {
       require("weather").updateWeather(true);
-    },
-    "< Back": back,
-  });
+    };
+  }
+
+  E.showMenu(menuItems);
 };
