@@ -156,9 +156,9 @@ if(showInlineClkInfo){
       var midx = options.x+options.w/2;
       var midy=options.y+options.h/2;
       if (info.img){
-        g.drawImage(info.img, options.x+4,midy-7.2,{scale: 0.6});
+        g.drawImage(info.img, options.x+4,midy-7.2,{scale: 0.63});
       }// draw the image
-      g.setFont("Vector",16).setFontAlign(0,0).drawString(calcStrLength(info.text,6), midx,midy+1); // draw the text
+      g.setFont("Vector",15).setFontAlign(-1,0).drawString(calcStrLength(info.text,6), options.x+22,midy+1); // draw the text
     }
   }); 
 
