@@ -9,16 +9,17 @@ Graphics.prototype.setFontBold = function(scale) {
 { // must be inside our own scope here so that when we are unloaded everything disappears
   // we also define functions using 'let fn = function() {..}' for the same reason. function decls are global
 let drawTimeout;
-  
-let calcStrLength=function(str,limitLength){
+let dateStrWidth;
+let showInlineClkInfo=true;
+let calcStrLength=function(str,maxLength){
 
     //too long
     
      // Example maximum length
     var truncatedText = str;
 
-    if (str.length > limitLength) {
-      truncatedText = str.substring(0, limitLength - 3) + "...";
+    if (str.length > maxLength) {
+      truncatedText = str.substring(0, maxLength - 3) + "...";
     }
   
     return truncatedText;
@@ -62,7 +63,6 @@ let bRoundedRectangle= function(x1,y1,x2,y2,r) {
   };
   
   
-  
 //CLOCK INFO
 let clockInfoItems = require("clock_info").load();
 
@@ -84,7 +84,7 @@ let clockInfoMenuLeft = require("clock_info").addInteractive(clockInfoItems, {
     // indicate focus - we're using a border, but you could change color?
     if (options.focus){
       // show if focused
-      g.setColor(0,15,255);
+      g.setColor(0,0,255);
       bRoundedRectangle(options.x,options.y,options.x+options.w,options.y+options.h,8); 
     }else{
       g.setColor(g.theme.fg);
@@ -117,7 +117,7 @@ let clockInfoMenuRight = require("clock_info").addInteractive(clockInfoItems, {
     // indicate focus - we're using a border, but you could change color?
     if (options.focus){
       // show if focused
-      g.setColor(0,15,255);
+      g.setColor(0,0,255);
       bRoundedRectangle(options.x,options.y,options.x+options.w,options.y+options.h,8);  
     }else{
       g.setColor(g.theme.fg);
@@ -132,12 +132,39 @@ let clockInfoMenuRight = require("clock_info").addInteractive(clockInfoItems, {
     g.setFont("Vector",16).setFontAlign(0,1).drawString(calcStrLength(info.text,8), midx,midy+23); // draw the text
   }
 });
+let clockInfoMenuInline;
+
+if(showInlineClkInfo){
+    clockInfoMenuInline = require("clock_info").addInteractive(clockInfoItems, {
+      // Add the dimensions we're rendering to here - these are used to detect taps on the clock info area
+      x : g.getWidth()/2+6, y: 69, w: 80, h:25,
+    // You can add other information here you want to be passed into 'options' in 'draw'
+    // This function draws the info
+    draw : (itm, info, options) => {
+      // itm: the item containing name/hasRange/etc
+      // info: data returned from itm.get() containing text/img/etc
+      // options: options passed into addInteractive
+      // Clear the background
+      g.reset().clearRect(options.x, options.y, options.x+options.w, options.y+options.h);
+      // indicate focus - we're using a border, but you could change color?
+      if (options.focus){
+        // show if focused
+        g.setColor(0,0,255);
+       
+      }
+      // we're drawing center-aligned here
+      var midx = options.x+options.w/2;
+      var midy=options.y+options.h/2;
+      if (info.img){
+        g.drawImage(info.img, options.x+4,midy-7.2,{scale: 0.6});
+      }// draw the image
+      g.setFont("Vector",16).setFontAlign(0,0).drawString(calcStrLength(info.text,5), midx,midy+1); // draw the text
+    }
+  }); 
+
+}
 
 
-  
-  
-  
-  
 
 // DRAW FACE
 let draw = function() {
@@ -150,7 +177,7 @@ let draw = function() {
   // draw the current time (4x size 7 segment)
 
    // align bottom right
-
+  
   g.setFontBold();
   
   if(meridian!=""){
@@ -163,13 +190,13 @@ let draw = function() {
     var meridianStrWidth=g.stringWidth(meridian);
     var totalStrWidth=meridianStrWidth+padding+clkStrWidth;
     var startX = ((g.getWidth() - totalStrWidth) / 2)+6;
-    g.clearRect(0,0,g.getWidth(),90);
+    g.clearRect(0,0,g.getWidth(),64);
     g.setFontBold();
     g.setFontAlign(-1,1);
-    g.drawString(clock, startX, Y+2,true);
+    g.drawString(clock, startX, Y-2);
     g.setFont("Vector",20);
     g.setFontAlign(-1,1);
-    g.drawString(meridian, startX + clkStrWidth + padding, Y-5, true);
+    g.drawString(meridian, startX + clkStrWidth + padding, Y-9, true);
     
   }else{
     
@@ -179,15 +206,18 @@ let draw = function() {
     
   }
   
-  
   // draw the date, in a normal font
-  g.setFont("Vector",18);
-  g.setFontAlign(0,0); // align center bottom
+  g.setFont("Vector",16);
+  g.setFontAlign(1,0); // align center bottom
   // pad the date - this clears the background if the date were to change length
-  var dateStr = require("locale").dow(new Date(), 1)+", "+ require("locale").month(new Date(), true)+" "+new Date().getDate();
-  g.drawString(" "+dateStr+" ", g.getWidth()/2, Y+9, true /*clear background*/);
+  var dateStr = require("locale").dow(new Date(), 1)+", " +new Date().getDate();
+  //print(g.stringHeight(dateStr));
+  dateStrWidth=g.stringWidth(dateStr);
+  g.drawString(" "+dateStr+" ", g.getWidth()/2+6, Y+9, true /*clear background*/);
   
   Bangle.drawWidgets();
+  g.setColor("#ffffff");
+
   
   // queue next draw
   if (drawTimeout) clearTimeout(drawTimeout);
@@ -210,6 +240,7 @@ Bangle.setUI({
     delete Graphics.prototype.setFontBold;
     clockInfoMenuRight.remove();
     clockInfoMenuLeft.remove();
+    if(showInlineClkInfo) clockInfoMenuInline.remove();
     
   }});
   
@@ -217,4 +248,6 @@ g.clear();
 // Load widgets
 Bangle.loadWidgets();
 draw();
+
+  
 }
