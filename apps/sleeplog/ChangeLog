@@ -15,3 +15,4 @@
 0.17: Minor code improvements
 0.18: Add back as a function to prevent translation making it a menu entry
 0.19: Write sleep state into health event's .activity field
+0.20: Increase default sleep thresholds, tweak settings to allow higher ones to be chosen
