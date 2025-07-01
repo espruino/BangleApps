@@ -209,7 +209,7 @@ let draw = function() {
   g.setFont("Vector",16);
   g.setFontAlign(1,0); // align center bottom
   // pad the date - this clears the background if the date were to change length
-  var dateStr = require("locale").dow(new Date(), 1)+", " +new Date().getDate();
+  var dateStr = "  "+require("locale").dow(new Date(), 1)+", " +new Date().getDate();
   //print(g.stringHeight(dateStr));
   g.drawString(" "+dateStr+" ", g.getWidth()/2+6, Y+9, true /*clear background*/);
   
