@@ -84,7 +84,7 @@ let clockInfoMenuLeft = require("clock_info").addInteractive(clockInfoItems, {
     // indicate focus - we're using a border, but you could change color?
     if (options.focus){
       // show if focused
-      g.setColor(0,0,255);
+      g.setColor(0,255,15);
       bRoundedRectangle(options.x,options.y,options.x+options.w,options.y+options.h,8); 
     }else{
       g.setColor(g.theme.fg);
@@ -117,7 +117,7 @@ let clockInfoMenuRight = require("clock_info").addInteractive(clockInfoItems, {
     // indicate focus - we're using a border, but you could change color?
     if (options.focus){
       // show if focused
-      g.setColor(0,0,255);
+      g.setColor(0,255,15);
       bRoundedRectangle(options.x,options.y,options.x+options.w,options.y+options.h,8);  
     }else{
       g.setColor(g.theme.fg);
@@ -149,7 +149,7 @@ if(showInlineClkInfo){
       // indicate focus - we're using a border, but you could change color?
       if (options.focus){
         // show if focused
-        g.setColor(0,0,255);
+        g.setColor(0,255,15);
        
       }
       // we're drawing center-aligned here
@@ -158,7 +158,7 @@ if(showInlineClkInfo){
       if (info.img){
         g.drawImage(info.img, options.x+4,midy-7.2,{scale: 0.6});
       }// draw the image
-      g.setFont("Vector",16).setFontAlign(0,0).drawString(calcStrLength(info.text,5), midx,midy+1); // draw the text
+      g.setFont("Vector",16).setFontAlign(0,0).drawString(calcStrLength(info.text,6), midx,midy+1); // draw the text
     }
   }); 
 
