@@ -114,7 +114,7 @@ exports.readFullDatabase = function(cb) {
   require("Storage").list(/health-[0-9]+-[0-9]+.raw/).forEach(val => {
     var parts = val.split('-');
     var y = parseInt(parts[1],10);
-    var mo = parseInt(parts[2].replace('.raw', ''),10);
+    var mo = parseInt(parts[2].replace('.raw', ''),10) - 1;
     exports.readAllRecords(new Date(y, mo, 1), (r) => {"ram";
       r.date = new Date(y, mo, r.day, r.hr, r.min);
       cb(r);
