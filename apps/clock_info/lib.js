@@ -128,7 +128,8 @@ exports.load = function() {
       get: function() {
         return {
           text: this.isOn() ? "On" : "Off",
-          img: atob("GBiBAAAAAAAAAAAYAAAcAAAWAAATAAARgAMRgAGTAADWAAB8AAA4AAA4AAB8AADWAAGTAAMRgAARgAATAAAWAAAcAAAYAAAAAAAAAA==")
+          img: atob("GBiBAAAAAAAAAAAYAAAcAAAWAAATAAARgAMRgAGTAADGAAB8AAA4AAA4AAB8AADGAAGTAAMRgAARgAATAAAWAAAcAAAYAAAAAAAAAA==")
+          // small gaps added to BLE icon to ensure middle of B isn't filled
         };
       },
       run: function() {
