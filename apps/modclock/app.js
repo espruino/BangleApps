@@ -137,7 +137,7 @@ let clockInfoMenuInline;
 if(showInlineClkInfo){
     clockInfoMenuInline = require("clock_info").addInteractive(clockInfoItems, {
       // Add the dimensions we're rendering to here - these are used to detect taps on the clock info area
-      x : g.getWidth()/2+6, y: 69, w: 80, h:25,
+      x : g.getWidth()/2+6, y: 69, w: 95, h:25,
     // You can add other information here you want to be passed into 'options' in 'draw'
     // This function draws the info
     draw : (itm, info, options) => {
@@ -153,7 +153,7 @@ if(showInlineClkInfo){
        
       }
       // we're drawing center-aligned here
-      var midx = options.x+options.w/2;
+      //var midx = options.x+options.w/2;
       var midy=options.y+options.h/2;
       if (info.img){
         g.drawImage(info.img, options.x+4,midy-7.2,{scale: 0.63});
@@ -212,7 +212,6 @@ let draw = function() {
   // pad the date - this clears the background if the date were to change length
   var dateStr = require("locale").dow(new Date(), 1)+", " +new Date().getDate();
   //print(g.stringHeight(dateStr));
-  dateStrWidth=g.stringWidth(dateStr);
   g.drawString(" "+dateStr+" ", g.getWidth()/2+6, Y+9, true /*clear background*/);
   
   Bangle.drawWidgets();
