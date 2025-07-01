@@ -4,7 +4,7 @@
 
 A beautifully simple, modern clock with three Clock Infos, and a clean UI. Fast-Loads.
 
-![](Screenshot1.png)
+![](Scr1.png)
 
 
 
