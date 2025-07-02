@@ -28,6 +28,10 @@ if (showPrompt) {
  });
 } else {
   E.showMessage("Powering off...");
+  
+  setTimeout(function() {
+    if (Bangle.softOff) Bangle.softOff(); else Bangle.off();
+  }, 1000);
 }
 
 Bangle.loadWidgets();
