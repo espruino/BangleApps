@@ -69,6 +69,15 @@ function startAccelerometer() {
   inactivityCheckInterval = setInterval(checkInactivity, 5000); // Check every 5 seconds
 }
 
+function stopAccelerometer() {
+  Bangle.setPollInterval(0); // Stop polling accelerometer
+  Bangle.removeListener('accel', handleAccelData);
+  if (inactivityCheckInterval) {
+    clearInterval(inactivityCheckInterval);
+    inactivityCheckInterval = null;
+  }
+}
+
 function handleAccelData(data) {
   var prevAccel = {x: accelData.x, y: accelData.y, z: accelData.z};
   accelData = data;
@@ -368,6 +377,12 @@ function startEmergency() {
       clearInterval(mainInterval);
       clearInterval(vibrationInterval);
       pigAlive = false;
+      // Also stop accelerometer and related intervals when pig dies
+      stopAccelerometer();
+      if (restlessVibrationInterval) {
+        clearInterval(restlessVibrationInterval);
+        restlessVibrationInterval = null;
+      }
     }
   }, 20000);
 }
@@ -385,6 +400,9 @@ function revivePig() {
   vibrationInterval = null;
   restlessVibrationInterval = null;
 
+  // Re-start intervals and settings
+  applyAppSpecificSettings(); // Apply settings again on revive
+  startAccelerometer(); // Re-start accelerometer
   if (!mainInterval) mainInterval = setInterval(tick, 500);
   g.clear();
   drawFace();
@@ -392,48 +410,100 @@ function revivePig() {
 }
 
 // === BUTTON CONTROLS ===
-setWatch(() => {
-  if (!pigAlive) revivePig();
-  else if (menuVisible) {
-    selectedOption = (selectedOption - 1 + menuOptions.length) % menuOptions.length;
-    drawMenu();
-  }
-}, BTN1, { repeat: true, edge: "rising" });
+var btn1Watch, btn2Watch, btn3Watch; // Variablen, um die Watches zu speichern
 
-setWatch(() => {
-  if (!pigAlive) return;
-  if (!menuVisible) {
-    menuVisible = true;
-    selectedOption = 0;
-    drawMenu();
-  } else {
-    handleMenuSelection(menuOptions[selectedOption]);
-    menuVisible = false;
-    drawFace();
-  }
-}, BTN2, { repeat: true, edge: "rising" });
+function setupWatches() {
+  btn1Watch = setWatch(() => {
+    if (!pigAlive) revivePig();
+    else if (menuVisible) {
+      selectedOption = (selectedOption - 1 + menuOptions.length) % menuOptions.length;
+      drawMenu();
+    }
+  }, BTN1, { repeat: true, edge: "rising" });
 
-setWatch(() => {
-  if (!pigAlive || !menuVisible) return;
-  selectedOption = (selectedOption + 1) % menuOptions.length;
-  drawMenu();
-}, BTN3, { repeat: true, edge: "rising" });
+  btn2Watch = setWatch(() => {
+    if (!pigAlive) return;
+    if (!menuVisible) {
+      menuVisible = true;
+      selectedOption = 0;
+      drawMenu();
+    } else {
+      handleMenuSelection(menuOptions[selectedOption]);
+      menuVisible = false;
+      drawFace();
+    }
+  }, BTN2, { repeat: true, edge: "rising" });
+
+  btn3Watch = setWatch(() => {
+    if (!pigAlive || !menuVisible) return;
+    selectedOption = (selectedOption + 1) % menuOptions.length;
+    drawMenu();
+  }, BTN3, { repeat: true, edge: "rising" });
+}
+
+function clearAllWatches() {
+  if (btn1Watch) clearWatch(btn1Watch);
+  if (btn2Watch) clearWatch(btn2Watch);
+  if (btn3Watch) clearWatch(btn3Watch);
+  btn1Watch = btn2Watch = btn3Watch = null;
+}
 
 // === BLUETOOTH INPUT HANDLER ===
-Bluetooth.on('data', function(data) {
+// Bluetooth Listener müssen auch abgemeldet werden, wenn die App beendet wird.
+// Um dies zu vereinfachen, setzen wir einen globalen Listener, den wir bei 'kill' entfernen.
+var bluetoothListener = function(data) {
   data = data.trim().toLowerCase();
   if (data === "feed") handleMenuSelection("Feed");
   else if (data === "pet") handleMenuSelection("Pet");
   else if (data === "clean") handleMenuSelection("Clean");
   else if (data === "sleep") handleMenuSelection("Sleep");
   else if (data === "status") Bluetooth.println("STATUS " + JSON.stringify(needs));
-});
+};
 
-// === INIT ===
-startAccelerometer();
-mainInterval = setInterval(tick, 500);
-drawFace();
 
-// Uncomment these after uploading to disable REPL input:
+// === APP LIFECYCLE FUNCTIONS ===
+function startApp() {
+  applyAppSpecificSettings(); // Apply settings for this app
+  setupWatches(); // Setup button watches
+  startAccelerometer(); // Start accelerometer monitoring
+
+  // Setup Bluetooth listener
+  Bluetooth.on('data', bluetoothListener);
+  
+  // Initial draw and game loop
+  mainInterval = setInterval(tick, 500);
+  drawFace();
+}
+
+function stopApp() {
+  // Clean up all intervals and watches
+  if (mainInterval) clearInterval(mainInterval);
+  if (emergencyTimer) clearTimeout(emergencyTimer);
+  if (vibrationInterval) clearInterval(vibrationInterval);
+  if (inactivityCheckInterval) clearInterval(inactivityCheckInterval);
+  if (restlessVibrationInterval) clearInterval(restlessVibrationInterval);
+  
+  mainInterval = null;
+  emergencyTimer = null;
+  vibrationInterval = null;
+  inactivityCheckInterval = null;
+  restlessVibrationInterval = null;
+
+  stopAccelerometer(); // Stop accelerometer polling and listener
+  clearAllWatches(); // Remove button watches
+  Bluetooth.removeListener('data', bluetoothListener); // Remove Bluetooth listener
+
+  resetSystemSettings(); // Reset Bangle.js system settings
+}
+
+// WICHTIG: Diese Zeilen teilen dem Bangle.js Launcher mit, wie Ihre App startet und stoppt.
+// Sie MÜSSEN am Ende der Datei stehen.
+Bangle.load = startApp;
+Bangle.on('kill', stopApp);
+// Bangle.setUI ist wichtig, um die Standard-UI des Launchers zu deaktivieren
+// (und hier auf "updown" mit undefined-Callback gesetzt, um die BTN1/3 zu übergeben)
+Bangle.setUI("updown", undefined); 
+
+// Deaktivieren Sie die REPL-Konsole, nachdem Sie die App hochgeladen haben, wenn Sie das möchten:
 // NRF.setServices({}, { uart: true });
 // E.setConsole(null);
