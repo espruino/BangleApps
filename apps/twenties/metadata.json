@@ -2,7 +2,7 @@
   "id": "twenties",
   "name": "Twenties",
   "shortName": "Twenties",
-  "version": "0.0.5",
+  "version": "0.05",
   "description": "Buzzes every 20m to stand / sit and look 20ft away for 20s.",
   "icon": "app.png",
   "type": "bootloader",
