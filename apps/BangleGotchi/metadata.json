@@ -7,7 +7,7 @@
   "icon": "Piggy-icon.js", 
   "type": "app",
   "tags": "game, pet, gotchi",
-  "supports": ["BANGLEJS1"], 
+  "supports": ["Bangle.js 1"], 
   "storage": [
     {"name":"piggy.app.js","url":"piggy.app.js"},
     {"name":"icon.img","url":"Piggy-icon.js","evaluate":true} 
