@@ -4,7 +4,7 @@
   "shortName":"My Piggy",
   "version": "0.01",
   "description": "Your virtual pet on the Bangle.js!",
-  "icon": "Piggy-icon.js", // 
+  "icon": "Piggy-icon.js", 
   "type": "app",
   "tags": "game, pet, gotchi",
   "supports": ["BANGLEJS1"], 
