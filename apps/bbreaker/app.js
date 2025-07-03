@@ -22,7 +22,7 @@
   let lives = 3;
 
   const storage = require("Storage");
-  const BEEP = () => Bangle.buzz(100);
+  //const BEEP = () => Bangle.buzz(100);
 
   function loadHighScore() {
     const saved = storage.readJSON("breakout_highscore.json", 1);
