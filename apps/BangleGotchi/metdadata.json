@@ -1,6 +1,8 @@
 {
   "id": "piggy",
   "name": "Piggy Gotchi",
+  "icon": "piggy.png",
+  "shortName":"My Piggy,
   "version": "0.01",
   "description": "Your virtual pet on the Bangle.js!",
   "icon": "piggy-icon.js",
@@ -9,6 +11,6 @@
   "supports": ["BANGLEJS1"],
   "storage": [
     {"name":"piggy.app.js","url":"piggy.app.js"},
-    {"name":"piggy-icon.js","url":"piggy-icon.js","evaluate":true}
+    {"name":"icon.img","url":"piggy-icon.js","evaluate":true}
   ]
 }
