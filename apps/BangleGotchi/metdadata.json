@@ -2,7 +2,7 @@
   "id": "piggy",
   "name": "Piggy Gotchi",
   "icon": "piggy.png",
-  "shortName":"My Piggy,
+  "shortName":"My Piggy",
   "version": "0.01",
   "description": "Your virtual pet on the Bangle.js!",
   "icon": "piggy-icon.js",
