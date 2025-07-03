@@ -6,7 +6,8 @@
   "description": "Your virtual pet on the Bangle.js!",
   "type": "app",
   "tags": "game, pet, gotchi",
-  "supports": ["BANGLEJS2"], 
+  "supports": ["BANGLEJS2"],
+  "files": "BangleGotchi.info,piggy.app.js",
   "storage": [
     {"name":"piggy.app.js","url":"piggy.app.js"}
   ]
