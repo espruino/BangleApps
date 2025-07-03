@@ -1,9 +1,6 @@
 // === CONFIGURATION ===
-Bangle.setLCDTimeout(0);
-Bangle.setOptions({ wakeOnBTN1: false });
-Bangle.loadWidgets = function() {};
-Bangle.drawWidgets = function() {};
-g.clear();
+// Diese Einstellungen werden jetzt in startApp() aufgerufen und in stopApp() zurückgesetzt,
+// um Konflikte mit dem Launcher zu vermeiden.
 
 // === STATE ===
 var mainInterval = null;
@@ -39,12 +36,35 @@ var isRestless = false;
 var shakeAnimation = 0;
 var shakeAnimationTimer = null;
 
+// === HELPER FUNCTIONS FOR APP LIFECYCLE ===
+function applyAppSpecificSettings() {
+  // Diese Einstellungen werden nur gesetzt, wenn die App aktiv ist
+  Bangle.setLCDTimeout(0); // Display immer an
+  Bangle.setOptions({ wakeOnBTN1: false }); // BTN1 weckt nicht auf
+  Bangle.loadWidgets = function() {}; // Widgets deaktivieren
+  Bangle.drawWidgets = function() {};
+  g.clear(); // Display löschen
+}
+
+function resetSystemSettings() {
+  // Diese Funktion setzt die globalen Einstellungen zurück
+  // Standardmäßig ist LCD-Timeout nach 10 Sekunden, BTN1 weckt auf, Widgets werden geladen und gezeichnet.
+  Bangle.setLCDTimeout(10); // Oder welchen Wert auch immer Sie bevorzugen
+  Bangle.setOptions({ wakeOnBTN1: true });
+  // Setzen Sie loadWidgets und drawWidgets auf ihre Standardfunktionen zurück
+  // Der Einfachheit halber können Sie eine einfache Funktion zuweisen, die Widgets neu zeichnet
+  // (da der Launcher selbst load/drawWidgets aufrufen wird)
+  Bangle.loadWidgets = function() { Bangle.drawWidgets(); };
+  Bangle.drawWidgets = function() {}; // Wird vom Launcher aufgerufen, wenn er startet.
+  g.clear(); // Display löschen, um Reste der App zu entfernen
+}
+
 // === ACCELEROMETER FUNCTIONS ===
 function startAccelerometer() {
   // Set accelerometer to poll mode with reasonable frequency
   Bangle.setPollInterval(200); // Poll every 200ms
   Bangle.on('accel', handleAccelData);
-  
+
   // Start inactivity monitoring
   inactivityCheckInterval = setInterval(checkInactivity, 5000); // Check every 5 seconds
 }
@@ -52,23 +72,23 @@ function startAccelerometer() {
 function handleAccelData(data) {
   var prevAccel = {x: accelData.x, y: accelData.y, z: accelData.z};
   accelData = data;
-  
+
   // Calculate movement magnitude
   var deltaX = Math.abs(data.x - prevAccel.x);
   var deltaY = Math.abs(data.y - prevAccel.y);
   var deltaZ = Math.abs(data.z - prevAccel.z);
   var magnitude = Math.sqrt(deltaX*deltaX + deltaY*deltaY + deltaZ*deltaZ);
-  
+
   // Update last movement time for any significant movement
   if (magnitude > 0.3) {
     lastMovementTime = Date.now();
-    
+
     // Stop restless behavior if pig was restless
     if (isRestless) {
       stopRestlessBehavior();
     }
   }
-  
+
   // Detect shake (stronger movement)
   if (magnitude > shakeThreshold && pigAlive && !menuVisible) {
     handleShake();
@@ -78,16 +98,16 @@ function handleAccelData(data) {
 function handleShake() {
   // Boost loneliness (playing with pig)
   needs.loneliness = Math.min(100, needs.loneliness + 15);
-  
+
   // Add some energy too (pig enjoys playing)
   needs.energy = Math.min(100, needs.energy + 5);
-  
+
   // Trigger shake animation
   triggerShakeAnimation();
-  
+
   // Happy buzz
   Bangle.buzz(150);
-  
+
   // Send status update
   Bluetooth.println("SHAKE_PLAY " + JSON.stringify(needs));
 }
@@ -102,9 +122,9 @@ function triggerShakeAnimation() {
 
 function checkInactivity() {
   if (!pigAlive || menuVisible) return;
-  
+
   var timeSinceMovement = Date.now() - lastMovementTime;
-  
+
   if (timeSinceMovement > inactivityThreshold && !isRestless) {
     startRestlessBehavior();
   }
@@ -112,10 +132,10 @@ function checkInactivity() {
 
 function startRestlessBehavior() {
   if (isRestless || !pigAlive) return;
-  
+
   isRestless = true;
   isSad = true; // Make pig look sad
-  
+
   // Start gentle vibration pattern
   restlessVibrationInterval = setInterval(() => {
     if (pigAlive && isRestless) {
@@ -124,26 +144,26 @@ function startRestlessBehavior() {
       needs.loneliness = Math.max(0, needs.loneliness - 2);
     }
   }, 3000); // Every 3 seconds
-  
+
   Bluetooth.println("PIG_RESTLESS needs attention!");
 }
 
 function stopRestlessBehavior() {
   if (!isRestless) return;
-  
+
   isRestless = false;
   if (restlessVibrationInterval) {
     clearInterval(restlessVibrationInterval);
     restlessVibrationInterval = null;
   }
-  
+
   // Pig becomes happy again
   setTimeout(() => {
     if (!isSadFromNeeds()) {
       isSad = false;
     }
   }, 1000);
-  
+
   Bluetooth.println("PIG_HAPPY movement detected!");
 }
 
@@ -157,7 +177,7 @@ function drawFace() {
   if (menuVisible) return;
   g.setColor(0, 0, 0);
   g.fillRect(0, 0, g.getWidth(), g.getHeight());
-  
+
   // Enhanced wobble with shake animation
   var baseWobble = Math.sin(wobble) * 3;
   var shakeWobble = shakeAnimation > 0 ? Math.sin(wobble * 3) * 8 : 0;
@@ -309,12 +329,12 @@ function updateNeeds() {
   needs.loneliness = Math.max(0, needs.loneliness - 0.7);
   needs.cleanliness = Math.max(0, needs.cleanliness - 0.5);
   needs.energy = Math.max(0, needs.energy - 0.6);
-  
+
   // Update sadness based on needs (not just restlessness)
   if (!isRestless) {
     isSad = isSadFromNeeds();
   }
-  
+
   if (needs.hunger >= 100 && !emergency) startEmergency();
 }
 
@@ -323,10 +343,10 @@ function tick() {
   wobble += wobbleDir * 0.2;
   if (Math.abs(wobble) > 2) wobbleDir = -wobbleDir;
   blinkNow = (Math.random() < 0.05);
-  
+
   // Reduce shake animation
   if (shakeAnimation > 0) shakeAnimation--;
-  
+
   updateNeeds();
   if (menuVisible) drawMenu();
   else drawFace();
@@ -359,12 +379,12 @@ function revivePig() {
   menuVisible = false;
   isRestless = false;
   lastMovementTime = Date.now();
-  
+
   clearInterval(vibrationInterval);
   clearInterval(restlessVibrationInterval);
   vibrationInterval = null;
   restlessVibrationInterval = null;
-  
+
   if (!mainInterval) mainInterval = setInterval(tick, 500);
   g.clear();
   drawFace();
