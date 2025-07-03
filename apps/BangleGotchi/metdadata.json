@@ -9,6 +9,6 @@
   "supports": ["BANGLEJS1"],
   "storage": [
     {"name":"piggy.app.js","url":"piggy.app.js"},
-    {"name":"piggy-icon.js","url":"piggy-icon.js"}
+    {"name":"piggy-icon.js","url":"piggy-icon.js","evaluate":true}
   ]
 }
