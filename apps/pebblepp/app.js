@@ -20,7 +20,7 @@ Graphics.prototype.setFontLECO1976Regular14 = function() {
 
 {
 const SETTINGS_FILE = "pebblepp.json";
-let settings = Object.assign({'theme':'System', 'showdate':true, 'clkinfoborder': false}, require("Storage").readJSON(SETTINGS_FILE,1)||{});
+let settings = Object.assign({'theme':'System', 'showdate':true, 'clkinfoborder': true}, require("Storage").readJSON(SETTINGS_FILE,1)||{});
 let background = require("clockbg");
 let theme;
 let drawTimeout;
@@ -102,7 +102,7 @@ let clockInfoDraw = (itm, info, options) => {
     g.setFontLECO1976Regular14();
   if (g.stringWidth(txt) > options.w) {// if still too big, split to 2 lines
     var l = g.wrapString(txt, options.w);
-    txt = l.slice(0,2).join("\n") + (l.length>2)?"...":"";
+    txt = l.slice(0,2).join("\n") + ((l.length>2)?"...":"");
   }
   y = options.y+options.h-12;
   if (settings.clkinfoborder) {

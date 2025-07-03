@@ -24,18 +24,8 @@
     ];
     return positions.reduce((pattern, p, i, arr) => {
       var idx = circles.findIndex((c) => {
-        var dx = p.x > c.x ? p.x - c.x : c.x - p.x;
-        if (dx > CIRCLE_RADIUS) {
-          return false;
-        }
-        var dy = p.y > c.y ? p.y - c.y : c.y - p.y;
-        if (dy > CIRCLE_RADIUS) {
-          return false;
-        }
-        if (dx + dy <= CIRCLE_RADIUS) {
-          return true;
-        }
-        return dx * dx + dy * dy <= CIRCLE_RADIUS_2;
+        var dx = p.x - c.x, dy = p.y - c.y;
+        return dx*dx + dy*dy <= CIRCLE_RADIUS_2;
       });
       if (idx >= 0) {
         pattern += circles[idx].i;

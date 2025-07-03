@@ -2,7 +2,7 @@
   "id": "pebblepp",
   "name": "Pebble++ Clock",
   "shortName": "Pebble++",
-  "version": "0.10",
+  "version": "0.11",
   "description": "A Pebble style clock (based on the 'Pebble Clock' app) but with two configurable ClockInfo items at the top and custom backgrounds. Date/theme/borders be reconfigured using settings page.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"},{"url":"screenshot2.png"}],

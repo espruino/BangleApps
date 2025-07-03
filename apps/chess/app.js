@@ -306,4 +306,4 @@ setWatch(() => {
       }
     },
   });
-}, BTN, { repeat: true, edge: "falling" });
+}, BTN, { repeat: true, edge: "rising" });

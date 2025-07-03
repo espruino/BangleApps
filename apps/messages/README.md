@@ -62,6 +62,7 @@ There are several options to choose from:
 * **Quiet mode disables auto-open** : When in quiet mode, should we not open the messages app for new messages?
 * **Disable auto-open** : Should we not open the messages app for new messages?
 * **Widget messages** : How many message icons should the widget show?
+* **Show Widgets** : Should widgets be shown when a message is being displayed (default of disabled leaves more room for the message text)
 * **Icon color mode** : Should icons in widgets be coloured?
 * **Car driver pos** : What side of the car is the driver on? This affects navigation icons for roundabouts
 

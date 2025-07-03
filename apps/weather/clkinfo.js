@@ -50,6 +50,7 @@
                   weatherLib.on("update", this.updater);
                 },
                 hide: function () { weatherLib.removeListener("update", this.updater); }
+                ,run : function() {load("weather.app.js");}
             },
             {
                 name: "condition",
@@ -61,6 +62,7 @@
                   weatherLib.on("update", this.updater);
                 },
                 hide: function () { weatherLib.removeListener("update", this.updater); }
+                ,run : function() {load("weather.app.js");}
             },
             {
                 name: "temperature",
@@ -72,6 +74,7 @@
                   weatherLib.on("update", this.updater);
                 },
                 hide: function () { weatherLib.removeListener("update", this.updater); }
+                ,run : function() {load("weather.app.js");}
             },
             {
                 name: "humidity",
@@ -83,6 +86,7 @@
                   weatherLib.on("update", this.updater);
                 },
                 hide: function () { weatherLib.removeListener("update", this.updater); }
+                ,run : function() {load("weather.app.js");}
             },
             {
                 name: "wind",
@@ -94,6 +98,7 @@
                   weatherLib.on("update", this.updater);
                 },
                 hide: function () { weatherLib.removeListener("update", this.updater); }
+                ,run : function() {load("weather.app.js");}
             },
         ]
     };

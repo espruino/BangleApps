@@ -64,7 +64,7 @@
 
   agenda.forEach((entry, i) => {
 
-    var title = entry.title.slice(0,12);
+    var title = g.setFont("6x8").wrapString(entry.title,100)[0];
     // All day events are always in UTC and always start at 00:00:00, so we
     // need to "undo" the timezone offsetting to make sure that the day is
     // correct.

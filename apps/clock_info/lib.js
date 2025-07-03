@@ -118,6 +118,31 @@ exports.load = function() {
         }
         hrm = 0;
       },
+    },
+    { name: "BLE",
+      hasRange: false,
+      isOn: () => {
+        const s = NRF.getSecurityStatus();
+        return s.advertising || s.connected;
+      },
+      get: function() {
+        return {
+          text: this.isOn() ? "On" : "Off",
+          img: atob("GBiBAAAAAAAAAAAYAAAcAAAWAAATAAARgAMRgAGTAADGAAB8AAA4AAA4AAB8AADGAAGTAAMRgAARgAATAAAWAAAcAAAYAAAAAAAAAA==")
+          // small gaps added to BLE icon to ensure middle of B isn't filled
+        };
+      },
+      run: function() {
+        if (this.isOn()) {
+          NRF.sleep();
+        } else {
+          NRF.wake();
+          Bluetooth.setConsole(1);
+        }
+        setTimeout(() => this.emit("redraw"), 250);
+      },
+      show: function(){},
+      hide: function(){},
     }
   ],
   }];
