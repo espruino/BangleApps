@@ -1,15 +1,15 @@
 {
-  "id": "BangleGotchi", // <-- WICHTIG: Dies ist jetzt "BangleGotchi", passend zum Ordnernamen
+  "id": "BangleGotchi",
   "name": "Piggy Gotchi",
   "shortName":"My Piggy",
   "version": "0.01",
   "description": "Your virtual pet on the Bangle.js!",
-  "icon": "Piggy-icon.js", // <-- Dieser Eintrag ist jetzt der einzige und verweist auf die JS-Icon-Datei (Groß-/Kleinschreibung beachtet)
+  "icon": "Piggy-icon.js", // 
   "type": "app",
   "tags": "game, pet, gotchi",
-  "supports": ["BANGLEJS1"], // Beibehalten, falls Bangle.js 1 Ihr Ziel ist. Für Bangle.js 2 wäre es "BANGLEJS2".
+  "supports": ["BANGLEJS1"], 
   "storage": [
     {"name":"piggy.app.js","url":"piggy.app.js"},
-    {"name":"icon.img","url":"Piggy-icon.js","evaluate":true} // <-- WICHTIG: Hier die Groß-/Kleinschreibung des Dateinamens "Piggy-icon.js" anpassen
+    {"name":"icon.img","url":"Piggy-icon.js","evaluate":true} 
   ]
 }
