@@ -2,7 +2,7 @@
     "name": "BrickBreaker",
     "shortName":"BrickBreaker",
     "icon": "bbreaker.png",
-    "version":"0.03",
+    "version":"0.04",
     "description": "A simple BreakOut clone for the Banglejs",
     "tags": "game",
     "readme": "README.md",
