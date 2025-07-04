@@ -21,6 +21,8 @@ https://developer.mozilla.org/en-US/docs/Games/Tutorials/2D_Breakout_game_pure_J
 
 Started on 2020 but rewrote all in 2025 and this is the version I got without having issues with Memory Exhaustion.
 
+And yes, for Bangle 1, old school!
+
 ## Creator
 
 Israel Ochoa <isuraeru at gmail.com>
