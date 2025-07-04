@@ -2,7 +2,7 @@
   const BALL_RADIUS = 3;
   const PADDLE_WIDTH = 26;
   const PADDLE_HEIGHT = 6;
-  const BRICK_ROWS = 4;
+  const BRICK_ROWS = 2;
   const BRICK_HEIGHT = 8;
   const BRICK_PADDING = 4;
   const BRICK_OFFSET_TOP = 40;
@@ -38,10 +38,12 @@
 
   function initBricks() {
     bricks = []; // Reset the array completely
+let brickCount = 0;
     for (let r = 0; r < BRICK_ROWS; r++) {
       for (let c = 0; c < BRICK_COLS; c++) {
         let brickX = BRICK_OFFSET_LEFT + c * (BRICK_WIDTH + BRICK_PADDING);
         let brickY = BRICK_OFFSET_TOP + r * (BRICK_HEIGHT + BRICK_PADDING);
+if (brickCount++ > 20) return;
         bricks.push({ x: brickX, y: brickY, status: 1 });
       }
     }
