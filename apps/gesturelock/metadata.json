@@ -2,7 +2,6 @@
   "id": "gesturelock",
   "name": "Gesture Lock",
   "shortName":"Gesture Lk",
-  "icon": "icon.png",
   "version":"0.01",
   "description": "Uses an AI model to detect a gesture to lock the Bangle",
   "type":"bootloader",    
