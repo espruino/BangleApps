@@ -11,6 +11,6 @@
   "storage": [
     {"name":"gesturelock.boot.js","url":"boot.js"},
     {"name":".tfmodel","url":"tfmodel"},
-    {"name":".tfnames","url":"tfnames"}
+    {"name":".tfnames","url":"tfnames.txt"}
   ]
 }
