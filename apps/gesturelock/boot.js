@@ -26,11 +26,6 @@ Bangle.on('aiGesture',(gesture)=>{
     lock();
     
   }
-  if(gesture=="Agitate"){
-    
-    
-    
-  }
 });
 
 
