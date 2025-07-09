@@ -3,95 +3,92 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
-    <p>Data Tesst 2</p>
+    <p>Data Test 2</p>
     <script src="../../core/lib/customize.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>    
     <div id="storageInfo"></div>
     <div id="piechart" style="width: 900px; height: 500px;"></div>
-    <script>
-      
 
-      
-      
-      
-      // Called when we know what device we're using
+    <script>
+      let globalApps = [];
+
       function onInit(device) {
         Util.showModal("Reading Storage...");
         Puck.eval(`require("Storage").list(/\\.info$/).map(appInfoName => {
-  let appInfo = require("Storage").readJSON(appInfoName,1)||{};
-  //print(appInfoName, appInfo);
-  var fileSize = 0, dataSize = 0;
-  appInfo.files.split(",").forEach(f => fileSize += require("Storage").read(f).length);
-  var data = (appInfo.data||"").split(";");
-  function wildcardToRegexp(wc) {
-    return new RegExp("^"+wc.replaceAll(".","\\\\.").replaceAll("?",".*")+"$");
-  }
-  // normal files
-  if (data[0]) data[0].split(",").forEach(wc => {
-    require("Storage").list(wildcardToRegexp(wc), {sf:false}).forEach(f => {
-      dataSize += require("Storage").read(f).length
-    });
-  });
-  // storage files
-  if (data[1]) data[1].split(",").forEach(wc => {
-    require("Storage").list(wildcardToRegexp(wc), {sf:true}).forEach(f => {
-      dataSize += require("Storage").open(f,"r").getLength();
-    });
-  });
-  return [appInfo.id, fileSize, dataSize];
-})`, function(apps) {
-  apps.sort((a,b) => (b[1]+b[2]) - (a[1]+a[2]));
-  Util.hideModal();
-  console.log(apps);
-
-    
-  document.getElementById("storageInfo").innerHTML = `
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>App</th>
-          <th>Code (kb)</th>
-          <th>Data (kb)</th>
-          <th>Total (kb)</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${apps.map(app => `
-          <tr>
-            <td>${app[0]}</td>
-            <td>${(app[1]/1000).toFixed(1)}</td>
-            <td>${(app[2]/1000).toFixed(1)}</td>
-            <td>${((app[1]+app[2])/1000).toFixed(1)}</td>
-          </tr>`).join("")}
-      </tbody>
-    </table>`;
-    if (apps.length === 0) {
-      document.getElementById("storageInfo").innerHTML = "<p>No apps found</p>";
-  }
-});
-
-  function drawChart() {
-        
-        var data = google.visualization.arrayToDataTable([
-          ${apps.map(app => `
-          [${app[0]},${app[1]+app[2]}],
-            ).join("")}
+          let appInfo = require("Storage").readJSON(appInfoName,1)||{};
+          var fileSize = 0, dataSize = 0;
+          appInfo.files.split(",").forEach(f => fileSize += require("Storage").read(f).length);
+          var data = (appInfo.data||"").split(";");
+          function wildcardToRegexp(wc) {
+            return new RegExp("^"+wc.replaceAll(".","\\\\.").replaceAll("?",".*")+"$");
+          }
+          if (data[0]) data[0].split(",").forEach(wc => {
+            require("Storage").list(wildcardToRegexp(wc), {sf:false}).forEach(f => {
+              dataSize += require("Storage").read(f).length
+            });
+          });
+          if (data[1]) data[1].split(",").forEach(wc => {
+            require("Storage").list(wildcardToRegexp(wc), {sf:true}).forEach(f => {
+              dataSize += require("Storage").open(f,"r").getLength();
+            });
+          });
+          return [appInfo.id, fileSize, dataSize];
+        })`, function(apps) {
+          Util.hideModal();
+          globalApps = apps.sort((a,b) => (b[1]+b[2]) - (a[1]+a[2]));
           
-        ]);
+          if (apps.length === 0) {
+            document.getElementById("storageInfo").innerHTML = "<p>No apps found</p>";
+            return;
+          }
 
-        var options = {
-          title: 'App Storage'
+          document.getElementById("storageInfo").innerHTML = `
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>App</th>
+                  <th>Code (kb)</th>
+                  <th>Data (kb)</th>
+                  <th>Total (kb)</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${apps.map(app => `
+                  <tr>
+                    <td>${app[0]}</td>
+                    <td>${(app[1]/1000).toFixed(1)}</td>
+                    <td>${(app[2]/1000).toFixed(1)}</td>
+                    <td>${((app[1]+app[2])/1000).toFixed(1)}</td>
+                  </tr>`).join("")}
+              </tbody>
+            </table>`;
+          
+          drawChart(); // Now safe to call
+        });
+      }
+
+      function drawChart() {
+        if (globalApps.length === 0) return;
+
+        const chartData = [
+          ['App', 'Total Size']
+        ].concat(globalApps.map(app => [app[0], app[1] + app[2]]));
+
+        const data = google.visualization.arrayToDataTable(chartData);
+
+        const options = {
+          title: 'App Storage Breakdown',
+          is3D: true
         };
 
-        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-
+        const chart = new google.visualization.PieChart(document.getElementById('piechart'));
         chart.draw(data, options);
       }
-        
-      }
-  google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
 
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(() => {
+        drawChart();
+      });
     </script>
   </body>
 </html>
