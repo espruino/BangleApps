@@ -9,15 +9,14 @@
     <div id="storageInfo"></div>
     <div id="piechart" style="width: 900px; height: 500px;"></div>
     <script>
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
+      
 
       
       
       
       // Called when we know what device we're using
       function onInit(device) {
-        //Util.showModal("Reading Storage...");
+        Util.showModal("Reading Storage...");
         Puck.eval(`require("Storage").list(/\\.info$/).map(appInfoName => {
   let appInfo = require("Storage").readJSON(appInfoName,1)||{};
   //print(appInfoName, appInfo);
@@ -75,7 +74,7 @@
         
         var data = google.visualization.arrayToDataTable([
           ${apps.map(app => `
-          [${app[0]},${app[1]+app[2]}
+          [${app[0]},${app[1]+app[2]}],
             ).join("")}
           
         ]);
@@ -90,7 +89,8 @@
       }
         
       }
-  
+  google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
 
     </script>
   </body>
