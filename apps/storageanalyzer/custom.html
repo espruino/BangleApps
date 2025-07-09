@@ -6,16 +6,16 @@
     <script src="../../core/lib/customize.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>    
 
-    <!-- Toggle Buttons -->
+    //buttons
     <div class="btn-group" style="margin: 1em; display: flex; justify-content: center;">
       <button id="tableButton" class="btn btn-primary">View Table</button>
       <button id="pieChartButton" class="btn">View Pie Chart</button>
     </div>
 
-    <!-- Table View -->
+    //table
     <div id="storageTable"></div>
 
-    <!-- Chart View -->
+    //chart
     <div id="storagePieChart" style="display: none; justify-content: center;">
       <div id="piechart" style="width: 100%; max-width: 600px; height: 400px;"></div>
     </div>
@@ -86,7 +86,7 @@
 
         const chartData = [
           ['App', 'Total Size']
-        ].concat(globalApps.map(app => [app[0], app[1] + app[2]]));
+        ].concat(globalApps.map(app => [app[0], (app[1] + app[2])/1000+" kb"]));
 
         const data = google.visualization.arrayToDataTable(chartData);
 
