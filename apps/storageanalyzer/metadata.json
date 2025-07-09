@@ -9,5 +9,6 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "custom": "custom.html",
   "customConnect": true,
-  "storage": []
+  "storage": [],
+  "sortorder" : -10,
 }
