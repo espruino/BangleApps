@@ -3,15 +3,27 @@
     <link rel="stylesheet" href="../../css/spectre.min.css">
   </head>
   <body>
-    <p>Data Test 2</p>
     <script src="../../core/lib/customize.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>    
-    <div id="storageInfo"></div>
-    <div id="piechart" style="width: 900px; height: 500px;"></div>
+
+    <!-- Toggle Buttons -->
+    <div class="btn-group" style="margin: 1em; display: flex; justify-content: center;">
+      <button id="tableButton" class="btn btn-primary">View Table</button>
+      <button id="pieChartButton" class="btn">View Pie Chart</button>
+    </div>
+
+    <!-- Table View -->
+    <div id="storageTable"></div>
+
+    <!-- Chart View -->
+    <div id="storagePieChart" style="display: none; justify-content: center;">
+      <div id="piechart" style="width: 100%; max-width: 600px; height: 400px;"></div>
+    </div>
 
     <script>
       let globalApps = [];
 
+      // Called by the app loader
       function onInit(device) {
         Util.showModal("Reading Storage...");
         Puck.eval(`require("Storage").list(/\\.info$/).map(appInfoName => {
@@ -36,35 +48,37 @@
         })`, function(apps) {
           Util.hideModal();
           globalApps = apps.sort((a,b) => (b[1]+b[2]) - (a[1]+a[2]));
-          
+
           if (apps.length === 0) {
-            document.getElementById("storageInfo").innerHTML = "<p>No apps found</p>";
+            document.getElementById("storageTable").innerHTML = "<p>No apps found</p>";
             return;
           }
 
-          document.getElementById("storageInfo").innerHTML = `
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>App</th>
-                  <th>Code (kb)</th>
-                  <th>Data (kb)</th>
-                  <th>Total (kb)</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${apps.map(app => `
-                  <tr>
-                    <td>${app[0]}</td>
-                    <td>${(app[1]/1000).toFixed(1)}</td>
-                    <td>${(app[2]/1000).toFixed(1)}</td>
-                    <td>${((app[1]+app[2])/1000).toFixed(1)}</td>
-                  </tr>`).join("")}
-              </tbody>
-            </table>`;
-          
-          drawChart(); // Now safe to call
+          drawTable();
         });
+      }
+
+      function drawTable() {
+        document.getElementById("storageTable").innerHTML = `
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>App</th>
+                <th>Code (kb)</th>
+                <th>Data (kb)</th>
+                <th>Total (kb)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${globalApps.map(app => `
+                <tr>
+                  <td>${app[0]}</td>
+                  <td>${(app[1]/1000).toFixed(1)}</td>
+                  <td>${(app[2]/1000).toFixed(1)}</td>
+                  <td>${((app[1]+app[2])/1000).toFixed(1)}</td>
+                </tr>`).join("")}
+            </tbody>
+          </table>`;
       }
 
       function drawChart() {
@@ -78,17 +92,46 @@
 
         const options = {
           title: 'App Storage Breakdown',
-          is3D: true
+          is3D: false,
+          chartArea: {
+            width: '90%',
+            height: '80%'
+          },
+          legend: {
+            position: 'bottom'
+          }
         };
 
         const chart = new google.visualization.PieChart(document.getElementById('piechart'));
         chart.draw(data, options);
       }
 
+      // Load Google Charts and prepare initial chart (in background)
       google.charts.load('current', {'packages':['corechart']});
       google.charts.setOnLoadCallback(() => {
         drawChart();
       });
+
+      // Toggle view buttons
+      document.getElementById("pieChartButton").addEventListener("click", function () {
+        document.getElementById("storageTable").style.display = "none";
+        document.getElementById("storagePieChart").style.display = "flex";
+        drawChart();
+
+        this.classList.add("btn-primary");
+        document.getElementById("tableButton").classList.remove("btn-primary");
+      });
+
+      document.getElementById("tableButton").addEventListener("click", function () {
+        document.getElementById("storageTable").style.display = "block";
+        document.getElementById("storagePieChart").style.display = "none";
+        drawTable();
+
+        this.classList.add("btn-primary");
+        document.getElementById("pieChartButton").classList.remove("btn-primary");
+      });
+
+     
     </script>
   </body>
 </html>
