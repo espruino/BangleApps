@@ -1,0 +1,69 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+
+    <script src="../../core/lib/customize.js"></script>
+    <div id="storageInfo"></div>
+
+    <script>
+      // Called when we know what device we're using
+      function onInit(device) {
+        Util.showModal("Reading Storage...");
+        Puck.eval(`require("Storage").list(/\\.info$/).map(appInfoName => {
+  let appInfo = require("Storage").readJSON(appInfoName,1)||{};
+  //print(appInfoName, appInfo);
+  var fileSize = 0, dataSize = 0;
+  appInfo.files.split(",").forEach(f => fileSize += require("Storage").read(f).length);
+  var data = (appInfo.data||"").split(";");
+  function wildcardToRegexp(wc) {
+    return new RegExp("^"+wc.replaceAll(".","\\\\.").replaceAll("?",".*")+"$");
+  }
+  // normal files
+  if (data[0]) data[0].split(",").forEach(wc => {
+    require("Storage").list(wildcardToRegexp(wc), {sf:false}).forEach(f => {
+      dataSize += require("Storage").read(f).length
+    });
+  });
+  // storage files
+  if (data[1]) data[1].split(",").forEach(wc => {
+    require("Storage").list(wildcardToRegexp(wc), {sf:true}).forEach(f => {
+      dataSize += require("Storage").open(f,"r").getLength();
+    });
+  });
+  return [appInfo.id, fileSize, dataSize];
+})`, function(apps) {
+  apps.sort((a,b) => (b[1]+b[2]) - (a[1]+a[2]));
+  Util.hideModal();
+  console.log(apps);
+  document.getElementById("storageInfo").innerHTML = `
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>App</th>
+          <th>Code (kb)</th>
+          <th>Data (kb)</th>
+          <th>Total (kb)</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${apps.map(app => `
+          <tr>
+            <td>${app[0]}</td>
+            <td>${(app[1]/1000).toFixed(1)}</td>
+            <td>${(app[2]/1000).toFixed(1)}</td>
+            <td>${((app[1]+app[2])/1000).toFixed(1)}</td>
+          </tr>`).join("")}
+      </tbody>
+    </table>`;
+    if (apps.length === 0) {
+      document.getElementById("storageInfo").innerHTML = "<p>No apps found</p>";
+  }
+});
+      }
+
+
+    </script>
+  </body>
+</html>
