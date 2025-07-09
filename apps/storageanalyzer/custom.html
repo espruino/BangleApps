@@ -5,9 +5,33 @@
   <body>
 
     <script src="../../core/lib/customize.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <div id="storageInfo"></div>
 
     <script>
+
+      
+           google.charts.load('current', {'packages':['corechart']});
+   google.charts.setOnLoadCallback(drawChart);
+  
+   function drawChart() {
+       var data = google.visualization.arrayToDataTable([
+           ['Task', 'Hours per Day'],
+           ['Work',     11],
+           ['Eat',      2],
+           ['Commute',  2],
+           ['Watch TV', 2],
+           ['Sleep',    7]
+       ]);
+
+       var options = {
+           title: 'App Storage Chart'
+       };
+
+       var chart = new google.visualization.PieChart(document.getElementById('storagePieChart'));
+       chart.draw(data, options);
+   }
+      
       // Called when we know what device we're using
       function onInit(device) {
         Util.showModal("Reading Storage...");
@@ -37,6 +61,10 @@
   apps.sort((a,b) => (b[1]+b[2]) - (a[1]+a[2]));
   Util.hideModal();
   console.log(apps);
+
+     //create pie chart
+     document.getElementById("storagePieChart").innerHTML = `
+       <div id="piechart" style="width: 500px; height: 300px;"></div>;  
   document.getElementById("storageInfo").innerHTML = `
     <table class="table table-striped">
       <thead>
@@ -62,7 +90,7 @@
   }
 });
       }
-
+  
 
     </script>
   </body>
