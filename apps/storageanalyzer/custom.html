@@ -6,18 +6,18 @@
     <script src="../../core/lib/customize.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>    
 
-    //buttons
+    <!-- Toggle Buttons -->
     <div class="btn-group" style="margin: 1em; display: flex; justify-content: center;">
       <button id="tableButton" class="btn btn-primary">View Table</button>
       <button id="pieChartButton" class="btn">View Pie Chart</button>
     </div>
 
-    //table
+    <!-- Table View -->
     <div id="storageTable"></div>
 
-    //chart
-    <div id="appPieChart" style="display: none; justify-content: center;">
-      <div id="AppChart" style="width: 100%; max-width: 600px; height: 400px;"></div>
+    <!-- Chart View -->
+    <div id="storagePieChart" style="display: none; justify-content: center;">
+      <div id="piechart" style="width: 100%; max-width: 600px; height: 400px;"></div>
     </div>
 
     <script>
@@ -86,7 +86,7 @@
 
         const chartData = [
           ['App', 'Total Size']
-        ].concat(globalApps.map(app => [app[0], (app[1] + app[2])/1000+" kb"]));
+        ].concat(globalApps.map(app => [app[0], app[1] + app[2]]));
 
         const data = google.visualization.arrayToDataTable(chartData);
 
@@ -102,7 +102,7 @@
           }
         };
 
-        const chart = new google.visualization.PieChart(document.getElementById('AppChart'));
+        const chart = new google.visualization.PieChart(document.getElementById('piechart'));
         chart.draw(data, options);
       }
 
@@ -115,7 +115,7 @@
       // Toggle view buttons
       document.getElementById("pieChartButton").addEventListener("click", function () {
         document.getElementById("storageTable").style.display = "none";
-        document.getElementById("appPieChart").style.display = "flex";
+        document.getElementById("storagePieChart").style.display = "flex";
         drawChart();
 
         this.classList.add("btn-primary");
@@ -124,14 +124,15 @@
 
       document.getElementById("tableButton").addEventListener("click", function () {
         document.getElementById("storageTable").style.display = "block";
-        document.getElementById("appPieChart").style.display = "none";
+        document.getElementById("storagePieChart").style.display = "none";
         drawTable();
 
         this.classList.add("btn-primary");
         document.getElementById("pieChartButton").classList.remove("btn-primary");
       });
 
-     
+      // Register as app loader's entry point
+      window.onInit = onInit;
     </script>
   </body>
 </html>
