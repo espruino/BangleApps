@@ -86,7 +86,7 @@
 
         const chartData = [
           ['App', 'Total Size']
-        ].concat(globalApps.map(app => [app[0], app[1] + app[2]]));
+        ].concat(globalApps.map(app => [app[0], (app[1] + app[2])/1000+" kb"]));
 
         const data = google.visualization.arrayToDataTable(chartData);
 
