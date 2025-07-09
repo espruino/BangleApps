@@ -86,12 +86,12 @@
 
         const chartData = [
           ['App', 'Total Size']
-        ].concat(globalApps.map(app => [app[0], (app[1] + app[2])/1000+" kb"]));
+        ].concat(globalApps.map(app => [app[0], (app[1] + app[2])/1000]));
 
         const data = google.visualization.arrayToDataTable(chartData);
 
         const options = {
-          title: 'App Storage Breakdown',
+          title: 'App Storage Breakdown (in KBs)',
           is3D: false,
           chartArea: {
             width: '90%',
