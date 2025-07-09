@@ -16,8 +16,8 @@
     <div id="storageTable"></div>
 
     //chart
-    <div id="storagePieChart" style="display: none; justify-content: center;">
-      <div id="piechart" style="width: 100%; max-width: 600px; height: 400px;"></div>
+    <div id="appPieChart" style="display: none; justify-content: center;">
+      <div id="AppChart" style="width: 100%; max-width: 600px; height: 400px;"></div>
     </div>
 
     <script>
@@ -102,7 +102,7 @@
           }
         };
 
-        const chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        const chart = new google.visualization.PieChart(document.getElementById('AppChart'));
         chart.draw(data, options);
       }
 
@@ -115,7 +115,7 @@
       // Toggle view buttons
       document.getElementById("pieChartButton").addEventListener("click", function () {
         document.getElementById("storageTable").style.display = "none";
-        document.getElementById("storagePieChart").style.display = "flex";
+        document.getElementById("appPieChart").style.display = "flex";
         drawChart();
 
         this.classList.add("btn-primary");
@@ -124,7 +124,7 @@
 
       document.getElementById("tableButton").addEventListener("click", function () {
         document.getElementById("storageTable").style.display = "block";
-        document.getElementById("storagePieChart").style.display = "none";
+        document.getElementById("appPieChart").style.display = "none";
         drawTable();
 
         this.classList.add("btn-primary");
