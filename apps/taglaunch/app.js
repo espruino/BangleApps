@@ -108,15 +108,21 @@ let showTagMenu = (tag) => {
       }
     },
     select : i => {
-      let app = appsByTag[tag][i];
-      if (!app) return;
-      if (!app.src || require("Storage").read(app.src)===undefined) {
-        Bangle.setUI();
-        E.showMessage(/*LANG*/"App Source\nNot found");
-        setTimeout(showMainMenu, 2000);
-      } else {
-        load(app.src);
-      }
+      Bangle.buzz(25);
+      //let the buzz have effect
+      setTimeout(() => {
+        let app = appsByTag[tag][i];
+      
+        if (!app) return;
+        if (!app.src || require("Storage").read(app.src)===undefined) {
+          Bangle.setUI();
+          E.showMessage(/*LANG*/"App Source\nNot found");
+          setTimeout(showMainMenu, 2000);
+        } else {
+          load(app.src);
+        }
+      }, 27);
+      
     },
     back : showMainMenu,
     remove: unload
@@ -138,6 +144,7 @@ let showMainMenu = () => {
       }
     },
     select : i => {
+      Bangle.buzz(25);
       let tag = tagKeys[i];
       showTagMenu(tag);
     },
