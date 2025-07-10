@@ -21,7 +21,7 @@
      },
     /*LANG*/"Vector Font Size": {
       value: settings.vectorsize || 10,
-      min:10, max: 22,step:1,wrap:true,
+      min:10, max: 25,step:1,wrap:true,
       onchange: (m) => {save("vectorsize", m)}
     },
     /*LANG*/"Show Clocks": {
