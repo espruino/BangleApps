@@ -9,7 +9,7 @@ require("Storage").writeJSON("setting.json", s);
 
 
 let unlockedWithLongPress = false;
-const longPressTime=300; //(ms)
+const longPressTime=400; //(ms)
 
 Bangle.on('lock', function(isLocked) {
   Bangle.setLCDBrightness(0);
