@@ -9,6 +9,6 @@
   "readme": "README.md",
   "supports": ["BANGLEJS2"],
   "storage": [
-    {"name":"backlite.boot.js","url":"boot.js"},
+    {"name":"backlite.boot.js","url":"boot.js"}
   ]
 }
