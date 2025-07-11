@@ -1,3 +1,5 @@
+Modules.addCached("widget_utils",function(){exports.offset=0,exports.hide=function(){if(exports.cleanup(),!global.WIDGETS)return;g.reset();for(var a of global.WIDGETS){if(a._draw)return;a._draw=a.draw,a.draw=()=>{},a._area=a.area,a.area='',a.x!=undefined&&g.clearRect(a.x,a.y,a.x+a.width-1,a.y+23)}},exports.show=function(){if(exports.cleanup(),!global.WIDGETS)return;for(var a of global.WIDGETS){if(!a._draw)return;a.draw=a._draw,a.area=a._area,delete a._draw,delete a._area,a.draw(a)}},exports.cleanupOverlay=function(){exports.offset=-24,Bangle.setLCDOverlay&&Bangle.setLCDOverlay(undefined,{id:'widget_utils'}),delete exports.autohide,delete Bangle.appRect,exports.animInterval&&(clearInterval(exports.animInterval),delete exports.animInterval),exports.hideTimeout&&(clearTimeout(exports.hideTimeout),delete exports.hideTimeout)},exports.cleanup=function(){exports.cleanupOverlay(),delete exports.offset,exports.swipeHandler&&(Bangle.removeListener('swipe',exports.swipeHandler),delete exports.swipeHandler),exports.origDraw&&(Bangle.drawWidgets=exports.origDraw,delete exports.origDraw)},exports.swipeOn=function(e){function f(){const b=exports.offset;Bangle.appRect.y=b+24,Bangle.appRect.h=1+Bangle.appRect.y2-Bangle.appRect.y,Bangle.setLCDOverlay&&(b>-24?Bangle.setLCDOverlay(a,0,b,{id:'widget_utils',remove:()=>{require('widget_utils').cleanupOverlay()}}):Bangle.setLCDOverlay(undefined,{id:'widget_utils'}))}function c(a,b){exports.animInterval&&clearInterval(exports.animInterval),exports.animInterval=setInterval(function(){exports.offset+=a;let c=!1;a>0&&exports.offset>=0?(c=!0,exports.offset=0):a<0&&exports.offset<-23&&(c=!0,exports.offset=-24),c&&(clearInterval(exports.animInterval),delete exports.animInterval,b&&b()),f()},50)}if(process.env.HWVERSION!==2)return exports.hide();if(exports.cleanup(),!global.WIDGETS)return;exports.autohide=e===undefined?2e3:e,Bangle.appRect={x:0,y:0,w:g.getWidth(),h:g.getHeight(),x2:g.getWidth()-1,y2:g.getHeight()-1};let a=Graphics.createArrayBuffer(g.getWidth(),26,16,{msb:!0});a.theme=g.theme,a._reset=a.reset,a.reset=function(){return this._reset().setColor(g.theme.fg).setBgColor(g.theme.bg)},a.reset().clearRect(0,0,a.getWidth(),23).fillRect(0,24,a.getWidth(),25);let d=g;exports.offset=-24;for(var b of global.WIDGETS)b._draw||(b._draw=b.draw,b.draw=function(){g=a,this._draw(this),g=d,exports.offset>-24&&f()},b._area=b.area,b.area.startsWith('b')&&(b.area='t'+b.area.substr(1)));exports.origDraw=Bangle.drawWidgets,Bangle.drawWidgets=()=>{g=a,exports.origDraw(),g=d},exports.swipeHandler=function(d,a){exports.hideTimeout&&(clearTimeout(exports.hideTimeout),delete exports.hideTimeout);let b;exports.autohide>0&&(b=function(){exports.hideTimeout=setTimeout(function(){c(-4)},exports.autohide)}),a>0&&exports.offset<0&&c(4,b),a<0&&exports.offset>-24&&c(-4)},Bangle.on('swipe',exports.swipeHandler),Bangle.drawWidgets()}});
+Modules.addCached("date_utils",function(){exports.dow=(c,a)=>{var b=require('locale').dow({getDay:()=>(c|0)%7},a).slice(0,a==2?1:100);return a==2?b.toUpperCase():b},exports.dows=(d,c)=>{var a=[];for(var b=0;b<7;b++)a.push(exports.dow(b+(d||0),c));return c==2?a.map(a=>a.toUpperCase()):a},exports.month=(c,a)=>{var b=require('locale').month({getMonth:()=>(11+(c|0))%12},a).slice(0,a==2?1:100);return a==2?b.toUpperCase():b},exports.months=c=>{var a=[],d=require('locale');for(var b=0;b<12;b++)a.push(d.month({getMonth:()=>b},c).slice(0,c==2?1:100));return c==2?a.map(a=>a.toUpperCase()):a}});
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
@@ -72,7 +74,7 @@ function resetSettings() {
     // clockHasWidgets: false,      // Does the clock in 'clock' contain the string 'Bangle.loadWidgets'
     "12hour" : false,               // 12 or 24 hour clock?
     firstDayOfWeek: 0,              // 0 -> Sunday (default), 1 -> Monday
-    brightness: 1,                  // LCD brightness from 0 to 1
+    brightness: 0,                  // LCD brightness from 0 to 1
     // welcomed : undefined/true (whether welcome app should show)
     options: {
       wakeOnBTN1: true,
@@ -326,24 +328,20 @@ function showThemeMenu(pop) {
       upd(th);
     }
     let rgb = {};
-    rgb[/*LANG*/'Black'] = "#000";
-    rgb[/*LANG*/'White'] = "#fff";
-    rgb[/*LANG*/'Red'] = "#f00";
-    rgb[/*LANG*/'Green'] = "#0f0";
-    rgb[/*LANG*/'Blue'] = "#00f";
-    rgb[/*LANG*/'Cyan'] = "#0ff";
-    rgb[/*LANG*/'Magenta'] = "#f0f";
-    rgb[/*LANG*/'Yellow'] = "#ff0";
-    
-    // These would cause dithering, which is not great for e.g. text
-    rgb[/*LANG*/'Orange'] = "#ff7f00";
-    rgb[/*LANG*/'Purple'] = "#7f00ff";
-    rgb[/*LANG*/'Grey'] = "#7f7f7f";
-    rgb[/*LANG*/'Maroon'] = "#3e1363";
-    rgb[/*LANG*/'Indigo'] = "#3e1363";
-    rgb[/*LANG*/'Dark Green'] = "#0e5c13";
-    rgb[/*LANG*/'Navy'] = "#121e75";
-    
+    rgb[/*LANG*/'black'] = "#000";
+    rgb[/*LANG*/'white'] = "#fff";
+    rgb[/*LANG*/'red'] = "#f00";
+    rgb[/*LANG*/'green'] = "#0f0";
+    rgb[/*LANG*/'blue'] = "#00f";
+    rgb[/*LANG*/'cyan'] = "#0ff";
+    rgb[/*LANG*/'magenta'] = "#f0f";
+    rgb[/*LANG*/'yellow'] = "#ff0";
+    if (!BANGLEJS2) {
+      // these would cause dithering, which is not great for e.g. text
+      rgb[/*LANG*/'orange'] = "#ff7f00";
+      rgb[/*LANG*/'purple'] = "#7f00ff";
+      rgb[/*LANG*/'grey'] = "#7f7f7f";
+    }
     let colors = [], names = [];
     for(const c in rgb) {
       names.push(c);
@@ -478,11 +476,12 @@ function LCDMenu() {
   Object.assign(lcdMenu, {
     /*LANG*/'LCD Brightness': {
       value: settings.brightness,
-      min: 0.1,
+      min: 0,
       max: 1,
       step: 0.1,
       onchange: v => {
-        settings.brightness = v || 1;
+        settings.brightness = v || 0;
+        print(settings.brightness);
         updateSettings();
         Bangle.setLCDBrightness(settings.brightness);
       }
