@@ -391,8 +391,6 @@ function showMessage(msgid, persist) {
       }
     }
     lines = g.setFont(bodyFont).wrapString(body, w);
-    if (lines.length<3)
-      lines.unshift(""); // if less lines, pad them out a bit at the top!
   }
   let negHandler,posHandler,rowLeftDraw,rowRightDraw;
   if (msg.negative) {
@@ -432,12 +430,14 @@ function showMessage(msgid, persist) {
   }
   let fontHeight = g.setFont(bodyFont).getFontHeight();
   let lineHeight = (fontHeight>25)?fontHeight:25;
-  if (title.includes("\n")) lineHeight=25; // ensure enough room for 2 lines of title in header
+  if (title.includes("\n") && lineHeight<25) lineHeight=25; // ensure enough room for 2 lines of title in header
   let linesPerRow = 2;
   if (fontHeight<17) {
     lineHeight = 16;
     linesPerRow = 3;
   }
+  if ((lines.length+4.5)*lineHeight < Bangle.appRect.h)
+    lines.unshift(""); // if less lines, pad them out a bit at the top!
   let rowHeight = lineHeight*linesPerRow;
   let textLineOffset = -(linesPerRow + ((rowLeftDraw||rowRightDraw)?1:0));
   let msgIcon = require("messageicons").getImage(msg);
