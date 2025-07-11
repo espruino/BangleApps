@@ -326,20 +326,24 @@ function showThemeMenu(pop) {
       upd(th);
     }
     let rgb = {};
-    rgb[/*LANG*/'black'] = "#000";
-    rgb[/*LANG*/'white'] = "#fff";
-    rgb[/*LANG*/'red'] = "#f00";
-    rgb[/*LANG*/'green'] = "#0f0";
-    rgb[/*LANG*/'blue'] = "#00f";
-    rgb[/*LANG*/'cyan'] = "#0ff";
-    rgb[/*LANG*/'magenta'] = "#f0f";
-    rgb[/*LANG*/'yellow'] = "#ff0";
-    if (!BANGLEJS2) {
-      // these would cause dithering, which is not great for e.g. text
-      rgb[/*LANG*/'orange'] = "#ff7f00";
-      rgb[/*LANG*/'purple'] = "#7f00ff";
-      rgb[/*LANG*/'grey'] = "#7f7f7f";
-    }
+    rgb[/*LANG*/'Black'] = "#000";
+    rgb[/*LANG*/'White'] = "#fff";
+    rgb[/*LANG*/'Red'] = "#f00";
+    rgb[/*LANG*/'Green'] = "#0f0";
+    rgb[/*LANG*/'Blue'] = "#00f";
+    rgb[/*LANG*/'Cyan'] = "#0ff";
+    rgb[/*LANG*/'Magenta'] = "#f0f";
+    rgb[/*LANG*/'Yellow'] = "#ff0";
+    
+    // These would cause dithering, which is not great for e.g. text
+    rgb[/*LANG*/'Orange'] = "#ff7f00";
+    rgb[/*LANG*/'Purple'] = "#7f00ff";
+    rgb[/*LANG*/'Grey'] = "#7f7f7f";
+    rgb[/*LANG*/'Maroon'] = "#3e1363";
+    rgb[/*LANG*/'Indigo'] = "#3e1363";
+    rgb[/*LANG*/'Dark Green'] = "#0e5c13";
+    rgb[/*LANG*/'Navy'] = "#121e75";
+    
     let colors = [], names = [];
     for(const c in rgb) {
       names.push(c);
