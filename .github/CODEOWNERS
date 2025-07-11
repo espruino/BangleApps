@@ -1,0 +1,58 @@
+apps/btadv @bobrippling
+apps/clkinfostopw @bobrippling
+apps/ctrlpad @bobrippling
+apps/drained @bobrippling
+apps/pace @bobrippling
+apps/popconlaunch @bobrippling
+apps/promenu @bobrippling
+apps/recorder @bobrippling
+apps/rep @bobrippling
+apps/tally @bobrippling
+apps/widbattpwr @bobrippling
+apps/widbtstates @bobrippling
+apps/widhid @bobrippling
+
+apps/autoreset @thyttan
+apps/bwclklite @thyttan
+apps/chronlog @thyttan
+apps/confthyttan @thyttan
+apps/delaylock @thyttan
+apps/dragboard @thyttan
+apps/fastreset @thyttan
+apps/gbdiscon @thyttan
+apps/longpressbuzz @thyttan
+apps/messagesmusic @thyttan
+apps/msgtwscr @thyttan
+apps/msgwakefup @thyttan
+apps/podadrem @thyttan
+apps/runplus @thyttan
+apps/sevenmin @thyttan
+apps/spotrem @thyttan
+apps/swscroll @thyttan
+apps/voldisp @thyttan
+apps/widminbate @thyttan
+
+apps/chess @nxdefiant
+apps/gpsautotime @nxdefiant
+apps/gpsmagcourse @nxdefiant
+apps/hidjoystick @nxdefiant
+apps/hrmmar @nxdefiant
+apps/miclock2 @nxdefiant
+apps/myprofile @nxdefiant
+apps/sleepphasealarm @nxdefiant
+apps/sportmode @nxdefiant
+apps/swipeinv @nxdefiant
+apps/taglaunch @nxdefiant
+apps/widalarmeta @nxdefiant
+apps/widclkscrl @nxdefiant
+apps/widhrzone @nxdefiant
+apps/widshipbell @nxdefiant
+apps/zambretti @nxdefiant
+
+apps/beeptest @bb0x88
+
+apps/folderlaunch @bruceblore
+
+apps/txtreader @tonykakuuu
+
+apps/scrolly @retcurve
