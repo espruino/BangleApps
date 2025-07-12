@@ -15,6 +15,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y jq
 
+      - name: Fetch relevant refs
+        run: |
+          # fetch master and unshallow HEAD
+          git fetch origin --unshallow
+
       - name: Tag app authors
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
