@@ -10,5 +10,6 @@
   "readme": "README.md",
   "storage": [
     {"name":"fastreset.boot.js","url":"boot.js"}
-  ]
+  ],
+  "author": "thyttan"
 }

@@ -13,5 +13,6 @@
 		{"name":"rep.settings.js","url":"settings.js"},
 		{"name":"rep.img","url":"app-icon.js","evaluate":true}
 	],
-	"data": [{"name":"rep.json"}]
+	"data": [{"name":"rep.json"}],
+  "author": "bobrippling"
 }

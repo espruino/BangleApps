@@ -10,5 +10,6 @@
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"swscroll.boot.js","url":"boot.js"}
-  ]
+  ],
+  "author": "thyttan"
 }

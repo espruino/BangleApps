@@ -12,5 +12,6 @@
   "storage": [
     {"name":"ctrlpad.boot.js","url":"main.js"},
     {"name":"ctrlpad.img","url":"icon.js","evaluate":true}
-  ]
+  ],
+  "author": "bobrippling"
 }

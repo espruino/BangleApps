@@ -10,5 +10,6 @@
 	"storage": [
 		{ "name": "pace.app.js","url": "app.js" },
 		{ "name": "pace.img","url": "app-icon.js","evaluate": true }
-	]
+	],
+ "author": "bobrippling"
 }

@@ -12,5 +12,6 @@
     {"name":"widshipbell.wid.js","url":"widget.js"},
     {"name":"widshipbell.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"widshipbell.json"}]
+  "data": [{"name":"widshipbell.json"}],
+  "author": "nxdefiant"
 }
