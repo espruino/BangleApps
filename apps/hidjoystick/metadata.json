@@ -10,5 +10,6 @@
   "storage": [
     {"name":"hidjoystick.app.js","url":"app.js"},
     {"name":"hidjoystick.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "nxdefiant"
 }
