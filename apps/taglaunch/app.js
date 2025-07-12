@@ -31,7 +31,9 @@ if ("font" in settings){
     scaleval = (font.split("x")[1])/20;
   }
 }
-
+let buzz=function(){
+    Bangle.buzz(25);        
+}
 let sort = (a, b) => {
   let n=(0|a.sortorder)-(0|b.sortorder);
   if (n) return n; // do sortorder first
@@ -110,7 +112,7 @@ let showTagMenu = (tag) => {
     },
     select : i => {
       if(settings.buzz){
-        Bangle.buzz(25);
+        buzz();
         //let the buzz have effect
         setTimeout(() => {
           let app = appsByTag[tag][i];
@@ -157,7 +159,7 @@ let showMainMenu = () => {
       }
     },
     select : i => {
-      if(settings.buzz)Bangle.buzz(25);
+      if(settings.buzz)buzz();
       let tag = tagKeys[i];
       showTagMenu(tag);
     },
