@@ -17,7 +17,8 @@ let vectorval = 20;
 let font = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
 let settings = Object.assign({
   showClocks: true,
-  fullscreen: false
+  fullscreen: false,
+  buzz:false
 }, s.readJSON("taglaunch.json", true) || {});
 if ("vectorsize" in settings)
   vectorval = parseInt(settings.vectorsize);
@@ -30,7 +31,9 @@ if ("font" in settings){
     scaleval = (font.split("x")[1])/20;
   }
 }
-
+let buzz=function(){
+    Bangle.buzz(25);        
+}
 let sort = (a, b) => {
   let n=(0|a.sortorder)-(0|b.sortorder);
   if (n) return n; // do sortorder first
@@ -108,14 +111,32 @@ let showTagMenu = (tag) => {
       }
     },
     select : i => {
-      let app = appsByTag[tag][i];
-      if (!app) return;
-      if (!app.src || require("Storage").read(app.src)===undefined) {
-        Bangle.setUI();
-        E.showMessage(/*LANG*/"App Source\nNot found");
-        setTimeout(showMainMenu, 2000);
-      } else {
-        load(app.src);
+      if(settings.buzz){
+        buzz();
+        //let the buzz have effect
+        setTimeout(() => {
+          let app = appsByTag[tag][i];
+
+          if (!app) return;
+          if (!app.src || require("Storage").read(app.src)===undefined) {
+            Bangle.setUI();
+            E.showMessage(/*LANG*/"App Source\nNot found");
+            setTimeout(showMainMenu, 2000);
+          } else {
+            load(app.src);
+          }
+        }, 27);
+      }else{
+        let app = appsByTag[tag][i];
+      
+        if (!app) return;
+        if (!app.src || require("Storage").read(app.src)===undefined) {
+          Bangle.setUI();
+          E.showMessage(/*LANG*/"App Source\nNot found");
+          setTimeout(showMainMenu, 2000);
+        } else {
+          load(app.src);
+        }
       }
     },
     back : showMainMenu,
@@ -138,6 +159,7 @@ let showMainMenu = () => {
       }
     },
     select : i => {
+      if(settings.buzz)buzz();
       let tag = tagKeys[i];
       showTagMenu(tag);
     },
