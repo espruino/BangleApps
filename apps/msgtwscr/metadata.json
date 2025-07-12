@@ -9,5 +9,6 @@
   "readme": "README.md",
   "storage": [
     {"name":"msgtwscr.boot.js","url":"boot.js"}
-  ]
+  ],
+  "author": "thyttan"
 }

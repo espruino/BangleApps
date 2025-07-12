@@ -14,5 +14,6 @@
     {"name":"hrmfftelim","url":"fftelim.js"},
     {"name":"hrmmar.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"hrmmar.json"}]
+  "data": [{"name":"hrmmar.json"}],
+  "author": "nxdefiant"
 }

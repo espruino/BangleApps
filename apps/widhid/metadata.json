@@ -12,5 +12,6 @@
   "storage": [
     {"name":"widhid.wid.js","url":"wid.js"},
     {"name":"widhid.img","url":"icon.js","evaluate":true}
-  ]
+  ],
+  "author": "bobrippling"
 }

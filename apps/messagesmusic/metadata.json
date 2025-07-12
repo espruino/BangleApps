@@ -14,5 +14,6 @@
     {"name":"messagesmusic.app.js","url":"app.js"},
     {"name":"messagesmusic.img","url":"app-icon.js","evaluate":true}
   ],
-  "dependencies":{"messages":"module"}
+  "dependencies":{"messages":"module"},
+  "author": "thyttan"
 }

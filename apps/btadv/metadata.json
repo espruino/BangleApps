@@ -11,5 +11,6 @@
   "storage": [
     {"name":"btadv.app.js","url":"app.js"},
     {"name":"btadv.img","url":"icon.js","evaluate":true}
-  ]
+  ],
+  "author": "bobrippling"
 }

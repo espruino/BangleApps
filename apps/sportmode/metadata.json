@@ -12,5 +12,6 @@
     {"name":"sportmode.boot.js","url":"boot.js"},
     {"name":"sportmode.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"sportmode.json"}]
+  "data": [{"name":"sportmode.json"}],
+  "author": "nxdefiant"
 }

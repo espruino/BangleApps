@@ -17,5 +17,6 @@
   "data": [
     { "name": "tallycfg.json" },
     { "name": "tallies.csv" }
-  ]
+  ],
+  "author": "bobrippling"
 }

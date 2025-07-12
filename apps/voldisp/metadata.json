@@ -12,5 +12,6 @@
   ],
   "storage": [
     {"name":"voldisp.boot.js","url":"boot.js"}
-  ]
+  ],
+  "author": "thyttan"
 }

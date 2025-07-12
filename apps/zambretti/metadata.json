@@ -15,6 +15,6 @@
     {"name":"zambretti.boot.js","url":"boot.js"},
     {"name":"zambretti.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"zambretti.json"}, {"name":"zambretti.log.json"}]
+  "data": [{"name":"zambretti.json"}, {"name":"zambretti.log.json"}],
+  "author": "nxdefiant"
 }
-

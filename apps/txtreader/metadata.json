@@ -12,5 +12,6 @@
   "storage": [
     {"name":"txtreader.app.js","url":"app.js"},
     {"name":"txtreader.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "tonykakuuu"
 }
