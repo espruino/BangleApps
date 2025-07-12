@@ -29,7 +29,7 @@
       value: settings.buzz == true,
       onchange: (m) => {
         save("buzz", m);
-        require("Storage").erase("taglaunch.cache.json"); //delete the cache app list
+        
       }
     },
     /*LANG*/"Show Clocks": {
