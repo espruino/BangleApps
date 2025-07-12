@@ -14,5 +14,6 @@
     {"name":"taglaunch.app.js","url":"app.js"},
     {"name":"taglaunch.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"taglaunch.json"},{"name":"taglaunch.cache.json"}]
+  "data": [{"name":"taglaunch.json"},{"name":"taglaunch.cache.json"}],
+  "author": "nxdefiant"
 }
