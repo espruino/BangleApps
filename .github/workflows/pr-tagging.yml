@@ -1,0 +1,45 @@
+name: Tag app authors
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  mention-app-authors:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      - name: Tag app authors
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }} # this is the slug, so user/repo
+        run: |
+          git diff --name-only origin/master... -- apps/ \
+            | grep -o 'apps/[^/]*' \
+            | sort \
+            | uniq \
+            | while read d
+            do
+              author=$(jq -r '.author // ""' < "$d/metadata.json")
+              if test -z "$author"
+              then continue
+              fi
+
+              echo "tagging @$author for \`$d\`"
+            done \
+            | jq -Rsc '{body: .}' \
+            | xargs -I{} curl \
+              -fsSL \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Content-Type: application/json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              -d {} \
+              "https://api.github.com/repos/$REPO/issues/$PR_NUMBER/comments"
