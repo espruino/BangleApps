@@ -31,9 +31,7 @@ if ("font" in settings){
     scaleval = (font.split("x")[1])/20;
   }
 }
-let buzz=function(){
-    Bangle.buzz(25);        
-}
+
 let sort = (a, b) => {
   let n=(0|a.sortorder)-(0|b.sortorder);
   if (n) return n; // do sortorder first
@@ -111,24 +109,8 @@ let showTagMenu = (tag) => {
       }
     },
     select : i => {
-      if(settings.buzz){
-        buzz();
-        //let the buzz have effect
-        setTimeout(() => {
-          let app = appsByTag[tag][i];
-
-          if (!app) return;
-          if (!app.src || require("Storage").read(app.src)===undefined) {
-            Bangle.setUI();
-            E.showMessage(/*LANG*/"App Source\nNot found");
-            setTimeout(showMainMenu, 2000);
-          } else {
-            load(app.src);
-          }
-        }, 27);
-      }else{
+      const loadApp = () => {
         let app = appsByTag[tag][i];
-      
         if (!app) return;
         if (!app.src || require("Storage").read(app.src)===undefined) {
           Bangle.setUI();
@@ -137,7 +119,15 @@ let showTagMenu = (tag) => {
         } else {
           load(app.src);
         }
+      };    
+      if(settings.buzz){
+        Bangle.buzz(25);
+        //let the buzz have effect
+        setTimeout(loadApp,27);
+      }else{
+        loadApp();
       }
+      
     },
     back : showMainMenu,
     remove: unload
@@ -159,7 +149,7 @@ let showMainMenu = () => {
       }
     },
     select : i => {
-      if(settings.buzz)buzz();
+      if(settings.buzz)Bangle.buzz(25);
       let tag = tagKeys[i];
       showTagMenu(tag);
     },
