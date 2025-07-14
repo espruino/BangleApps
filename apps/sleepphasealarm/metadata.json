@@ -16,5 +16,6 @@
   ],
   "data": [{"name":"sleepphasealarm.json"}],
   "interface": "interface.html",
-  "screenshots": [ {"url":"screenshot.png"}, {"url":"screenshot_log.png"} ]
+  "screenshots": [ {"url":"screenshot.png"}, {"url":"screenshot_log.png"} ],
+  "author": "nxdefiant"
 }

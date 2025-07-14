@@ -13,5 +13,6 @@
   "storage": [
     {"name":"spotrem.app.js","url":"app.js"},
     {"name":"spotrem.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "thyttan"
 }
