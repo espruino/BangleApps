@@ -72,7 +72,7 @@ function resetSettings() {
     // clockHasWidgets: false,      // Does the clock in 'clock' contain the string 'Bangle.loadWidgets'
     "12hour" : false,               // 12 or 24 hour clock?
     firstDayOfWeek: 0,              // 0 -> Sunday (default), 1 -> Monday
-    brightness: 1,                  // LCD brightness from 0 to 1
+    brightness: 0,                  // LCD brightness from 0 to 1
     // welcomed : undefined/true (whether welcome app should show)
     options: {
       wakeOnBTN1: true,
@@ -474,11 +474,12 @@ function LCDMenu() {
   Object.assign(lcdMenu, {
     /*LANG*/'LCD Brightness': {
       value: settings.brightness,
-      min: 0.1,
+      min: 0,
       max: 1,
       step: 0.1,
       onchange: v => {
-        settings.brightness = v || 1;
+        settings.brightness = v || 0;
+        print(settings.brightness);
         updateSettings();
         Bangle.setLCDBrightness(settings.brightness);
       }

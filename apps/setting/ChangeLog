@@ -88,3 +88,4 @@ of 'Select Clock'
 0.77: Save altitude calibration when user exits via reset
 0.78: Fix menu scroll restore on BangleJS1
 0.79: Ensure that tapping on pressure/altitude doesn't cause a menu to display temporarily
+0.80: Add option to set LCD brightness to 0, default brightness is now 0 as well.
