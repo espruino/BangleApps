@@ -25,3 +25,4 @@
 0.26: Expose update function (for use by iOS integration)
 0.27: Add UV index display
 0.28: Fix UV positioning, hide when 0
+0.29: Add feels-like temperature data and clock_info
