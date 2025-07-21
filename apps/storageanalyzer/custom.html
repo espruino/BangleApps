@@ -18,40 +18,67 @@
     <!-- Chart View -->
     <div id="storagePieChart" style="display: none; flex-direction: column; align-items: center;">
       <div id="piechart" style="width: 100%; max-width: 600px; height: 400px;"></div>
-      <div id="totalStoragePie" style="width: 100%; max-width: 600px; height: 300px;"></div>
+      <div id="totalStoragePie" style="width: 100%; max-width: 600px; height: 300px; margin-top: 2em;"></div>
     </div>
 
     <script>
       let globalApps = [];
       let storageStats = null;
+      let isBangle2 = false;
 
       function onInit(device) {
+        isBangle2 = device?.HWVERSION === 2;
+
         Util.showModal("Reading Storage...");
-        Puck.eval(`(()=>{
-          let getApps = () => require("Storage").list(/\\.info$/).map(appInfoName => {
-            let appInfo = require("Storage").readJSON(appInfoName,1)||{};
-            var fileSize = 0, dataSize = 0;
-            appInfo.files.split(",").forEach(f => fileSize += require("Storage").read(f).length);
-            var data = (appInfo.data||"").split(";");
-            function wildcardToRegexp(wc) {
-              return new RegExp("^"+wc.replaceAll(".","\\\\.").replaceAll("?",".*")+"$");
+
+        const evalCode = `(()=>{
+          const Storage = require("Storage");
+          let apps = Storage.list(/\\.info$/).map(infoFile => {
+            let info = Storage.readJSON(infoFile, 1) || {};
+            let codeSize = 0, dataSize = 0;
+            if (info.files && info.files.length) {
+              info.files.split(",").forEach(f => {
+                let fileData = Storage.read(f);
+                if (fileData) codeSize += fileData.length;
+              });
+            }
+            let data = (info.data||"").split(";");
+            function wcToRegExp(wc) {
+              return new RegExp("^"+wc.replaceAll(".", "\\\\.").replaceAll("?", ".*")+"$");
             }
             if (data[0]) data[0].split(",").forEach(wc => {
-              require("Storage").list(wildcardToRegexp(wc), {sf:false}).forEach(f => {
-                dataSize += require("Storage").read(f).length
+              Storage.list(wcToRegExp(wc), {sf:false}).forEach(f => {
+                let d = Storage.read(f);
+                if (d) dataSize += d.length;
               });
             });
             if (data[1]) data[1].split(",").forEach(wc => {
-              require("Storage").list(wildcardToRegexp(wc), {sf:true}).forEach(f => {
-                dataSize += require("Storage").open(f,"r").getLength();
+              Storage.list(wcToRegExp(wc), {sf:true}).forEach(f => {
+                let openFile = Storage.open(f, "r");
+                if (openFile) dataSize += openFile.getLength();
               });
             });
-            return [appInfo.id, fileSize, dataSize];
+            return [info.id || infoFile.replace(".info",""), codeSize, dataSize];
           });
-          return [getApps(), require(\"Storage\").getStats()]; })()`, function(result) {
+          ${
+            isBangle2 
+              ? "let stats = Storage.getStats(); return [apps, stats];"
+              : "return [apps, null];"
+          }
+        })()`;
+
+        Puck.eval(evalCode, function(result) {
           Util.hideModal();
+
           globalApps = result[0].sort((a,b) => (b[1]+b[2]) - (a[1]+a[2]));
           storageStats = result[1];
+
+          if (!isBangle2) {
+            // Hide total storage pie for Bangle.js 1
+            document.getElementById('totalStoragePie').style.display = 'none';
+          } else {
+            document.getElementById('totalStoragePie').style.display = 'block';
+          }
 
           if (globalApps.length === 0) {
             document.getElementById("storageTable").innerHTML = "<p>No apps found</p>";
@@ -68,9 +95,9 @@
             <thead>
               <tr>
                 <th>App</th>
-                <th>Code (kb)</th>
-                <th>Data (kb)</th>
-                <th>Total (kb)</th>
+                <th>Code (KB)</th>
+                <th>Data (KB)</th>
+                <th>Total (KB)</th>
               </tr>
             </thead>
             <tbody>
@@ -88,33 +115,33 @@
       function drawChart() {
         if (globalApps.length === 0) return;
 
-        // App-specific chart
-        const chartData = [
+        // Draw pie chart for apps
+        const appChartData = [
           ['App', 'Total Size (KB)']
         ].concat(globalApps.map(app => [app[0], (app[1] + app[2])/1000]));
 
-        const data = google.visualization.arrayToDataTable(chartData);
-
-        const options = {
+        const dataApps = google.visualization.arrayToDataTable(appChartData);
+        const appChartOptions = {
           title: 'App Storage Breakdown',
           chartArea: { width: '90%', height: '80%' },
           legend: { position: 'bottom' }
         };
 
-        const chart = new google.visualization.PieChart(document.getElementById('piechart'));
-        chart.draw(data, options);
+        const appChart = new google.visualization.PieChart(document.getElementById('piechart'));
+        appChart.draw(dataApps, appChartOptions);
 
-        // Total storage chart
-        if (storageStats) {
+        // Draw total storage pie only on Bangle.js 2
+        if (isBangle2 && storageStats) {
           const usedKB = storageStats.usedBytes / 1000;
           const freeKB = storageStats.freeBytes / 1000;
-          const totalData = google.visualization.arrayToDataTable([
+
+          const totalChartData = google.visualization.arrayToDataTable([
             ['Type', 'KB'],
             ['Used', usedKB],
             ['Free', freeKB]
           ]);
 
-          const totalOptions = {
+          const totalChartOptions = {
             title: 'Total Storage Usage',
             pieHole: 0.4,
             chartArea: { width: '90%', height: '80%' },
@@ -122,29 +149,37 @@
           };
 
           const totalChart = new google.visualization.PieChart(document.getElementById('totalStoragePie'));
-          totalChart.draw(totalData, totalOptions);
+          totalChart.draw(totalChartData, totalChartOptions);
         }
       }
 
+      // Load Google Charts
       google.charts.load('current', {'packages':['corechart']});
-      
+      google.charts.setOnLoadCallback(() => {
+        drawTable(); // Start with table view
+      });
 
-      document.getElementById("pieChartButton").addEventListener("click", function () {
+      // Buttons event listeners
+      document.getElementById("pieChartButton").addEventListener("click", () => {
         document.getElementById("storageTable").style.display = "none";
         document.getElementById("storagePieChart").style.display = "flex";
         drawChart();
-        this.classList.add("btn-primary");
+
+        document.getElementById("pieChartButton").classList.add("btn-primary");
         document.getElementById("tableButton").classList.remove("btn-primary");
       });
 
-      document.getElementById("tableButton").addEventListener("click", function () {
+      document.getElementById("tableButton").addEventListener("click", () => {
         document.getElementById("storageTable").style.display = "block";
         document.getElementById("storagePieChart").style.display = "none";
         drawTable();
-        this.classList.add("btn-primary");
+
+        document.getElementById("tableButton").classList.add("btn-primary");
         document.getElementById("pieChartButton").classList.remove("btn-primary");
       });
-      
+
+      // Register entrypoint for app loader
+      window.onInit = onInit;
     </script>
   </body>
 </html>
