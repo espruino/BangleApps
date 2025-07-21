@@ -39,22 +39,23 @@ exports.load = function() {
   var hrm = 0;
   var alt = "--";
   // callbacks (needed for easy removal of listeners)
-  function batteryUpdateHandler() { bangleItems[0].emit("redraw"); }
-  function stepUpdateHandler() { bangleItems[1].emit("redraw"); }
+  function batteryUpdateHandler() { bangleItems.find(i=>i.name=="Battery").emit("redraw"); }
+  function stepUpdateHandler() { bangleItems.find(i=>i.name=="Steps").emit("redraw"); }
   function hrmUpdateHandler(e) {
     if (e && e.confidence>60) hrm = Math.round(e.bpm);
-    bangleItems[2].emit("redraw");
+    bangleItems.find(i=>i.name=="HRM").emit("redraw");
   }
   function altUpdateHandler() {
     try {
       Bangle.getPressure().then(data=>{
         if (!data) return;
         alt = Math.round(data.altitude) + "m";
-        bangleItems[3].emit("redraw");
+        bangleItems.find(i=>i.name=="Altitude").emit("redraw");
       });
     } catch (e) {
       print("Caught "+e+"\n in function altUpdateHandler in module clock_info");
-      bangleItems[3].emit('redraw');}
+      bangleItems.find(i=>i.name=="Altitude").emit('redraw');
+    }
   }
   // actual menu
   var menu = [{
