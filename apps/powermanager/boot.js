@@ -160,7 +160,7 @@
   }
   
   if (settings.forceMonoVoltage){
-    var v = (NRF.getBattery()+NRF.getBattery()+NRF.getBattery()+NRF.getBattery())/4;
+    var v = (NRF.getBattery()+NRF.getBattery()+NRF.getBattery()+NRF.getBattery()+NRF.getBattery()+NRF.getBattery())/6;
     var ov = NRF.getBattery;
     NRF.getBattery = function() {
       var current = (ov()+ov()+ov()+ov())/4;
