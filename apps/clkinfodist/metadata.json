@@ -1,0 +1,14 @@
+{ "id": "clkinfodist",
+  "name": "Clockinfo Distance",
+  "version":"0.01",
+  "description": "Uses the 'My Profile' app's Stride Length to calculate distance travelled based on step count. Tap to reset for measuring distances.",
+  "icon": "app.png",
+  "screenshots": [{"url":"screenshot.png"}],
+  "type": "clkinfo",
+  "tags": "clkinfo,distance,steps,outdoors,tool",
+  "dependencies": {"myprofile":"app"},
+  "supports" : ["BANGLEJS2"],
+  "storage": [
+    {"name":"clkinfodist.clkinfo.js","url":"clkinfo.js"}
+  ]
+}
