@@ -14,7 +14,7 @@
 
 // a message
 require("messages").pushMessage({"t":"add","id":1575479849,"src":"WhatsApp","title":"My Friend","body":"Hey! How's everything going?",reply:1,negative:1})
-require("messages").pushMessage({"t":"add","id":1575479849,"src":"Skype","title":"My Friend","body":"Hey! How's everything going? This is a really really long message that is really so super long you'll have to scroll it lots and lots",positive:1,negative:1})
+require("messages").pushMessage({"t":"add","id":1575479850,"src":"Skype","title":"My Friend","body":"Hey! How's everything going? This is a really really long message that is really so super long you'll have to scroll it lots and lots",positive:1,negative:1})
 require("messages").pushMessage({"t":"add","id":23232,"src":"Skype","title":"Mr. Bobby McBobFace","body":"Boopedy-boop",positive:1,negative:1})
 require("messages").pushMessage({"t":"add","id":23233,"src":"Skype","title":"Thyttan test","body":"Nummerplåtsbelysning trodo",positive:1,negative:1})
 require("messages").pushMessage({"t":"add","id":23234,"src":"Skype","title":"Thyttan test 2","body":"Nummerplåtsbelysning trodo Nummerplåtsbelysning trodo Nummerplåtsbelysning trodo Nummerplåtsbelysning trodo Nummerplåtsbelysning trodo Nummerplåtsbelysning trodo",positive:1,negative:1})
