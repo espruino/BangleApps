@@ -61,7 +61,9 @@
           drawTable();
         });
       }
-
+      function roundDecimal(num){
+        return Math.round(num * 10) / 10;
+      }
       function drawTable() {
         document.getElementById("storageTable").innerHTML = `
           <table class="table table-striped">
@@ -77,7 +79,7 @@
               ${globalApps.map(app => `
                 <tr>
                   <td>${app[0]}</td>
-                  <td>${(app[1]/1000).toFixed(1)}</td>
+                  <td>${(app[1]/1000).toFixed(1}</td>
                   <td>${(app[2]/1000).toFixed(1)}</td>
                   <td>${((app[1]+app[2])/1000).toFixed(1)}</td>
                 </tr>`).join("")}
@@ -91,7 +93,7 @@
         // App-specific chart
         const chartData = [
           ['App', 'Total Size (KB)']
-        ].concat(globalApps.map(app => [app[0], (app[1] + app[2])/1000]));
+        ].concat(globalApps.map(app => [app[0], roundDecimal((app[1] + app[2])/1000)]));
 
         const data = google.visualization.arrayToDataTable(chartData);
 
@@ -106,9 +108,9 @@
 
         // Total storage chart
         if (storageStats) {
-          const usedKB = storageStats.fileBytes / 1000;
-          const freeKB = storageStats.freeBytes / 1000;
-          const trashKB =  storageStats.trashBytes / 1000;
+          const usedKB = roundDecimal(storageStats.fileBytes / 1000);
+          const freeKB = roundDecimal(storageStats.freeBytes / 1000);
+          const trashKB =  roundDecimal(storageStats.trashBytes / 1000);
           const totalData = google.visualization.arrayToDataTable([
             ['Type', 'KB'],
             ['Used', usedKB],
