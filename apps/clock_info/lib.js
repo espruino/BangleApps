@@ -157,6 +157,7 @@ exports.load = function() {
         min : 0, max : settings.maxAltitude,
         img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAAACAAAGAAAPAAEZgAOwwAPwQAZgYAwAMBgAGBAACDAADGAABv///////wAAAAAAAAAAAAAAAAAAAA==")
       }),
+      run : function() { alt = "--"; this.emit("redraw"); altUpdateHandler(); },
       show : function() { this.interval = setInterval(altUpdateHandler, 60000); alt = "--"; altUpdateHandler(); },
       hide : function() { clearInterval(this.interval); delete this.interval; },
     });
