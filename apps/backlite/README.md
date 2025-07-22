@@ -1,8 +1,11 @@
 # BackLite
-This app greatly conserves battery life by only turning the backlight on when you long press the button from a locked state.
+### This app needs the latest settings app update (v 0.80), to ensure that setting the brightness to `0` does not default to `1`.
+
+BackLite is an app which greatly conserves battery life by only turning the backlight on when you long press the button from a locked state.
 
 Modern watches have a dedicated button to turn the backlight on, so as not to waste battery in an already light environment. This app recreates that functionality for the Bangle.js, which only has one button.
-#### Warning: This app overwrites the LCD brightness setting in `Bangle.js LCD settings`. Do not change it, or the app will stop functioning, and you will go back to the normal state of usage. To fix, just reboot.
+
+#### Warning: This app overwrites the LCD brightness setting in `Bangle.js LCD settings`. If it is changed, the app will basically lose functionality. It auto-fixes itself every boot, so if you change the brightness, just reboot.
 # Usage
 When you unlock with a press of the button, or any other way you unlock the watch, the backlight will not turn on, as most of the time you are able to read it, due to the transreflective display on the Bangle.js 2. 
 
