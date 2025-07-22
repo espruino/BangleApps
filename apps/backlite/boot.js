@@ -5,10 +5,6 @@
   if (!("lcdTimeout" in s)) s.lcdTimeout = 5; // fallback so  logic doesn't break
   require("Storage").writeJSON("setting.json", s);
 
-
-
-
-  let unlockedWithLongPress = false;
   const longPressTime=400; //(ms)
 
   Bangle.on('lock', function(isLocked) {
@@ -18,7 +14,6 @@
       // Just unlocked — give a short delay and check if BTN1 is still pressed
       setTimeout(() => {
         if (digitalRead(BTN1)) {
-          unlockedWithLongPress = true;
           //set brightness until. locked.
           Bangle.setLCDBrightness(0.1);
           
@@ -30,3 +25,4 @@
   });
 
 }
+
