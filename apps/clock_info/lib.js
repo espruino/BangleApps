@@ -121,7 +121,6 @@ exports.load = function() {
       },
     },
     { name: "BLE",
-      hasRange: false,
       isOn: () => {
         const s = NRF.getSecurityStatus();
         return s.advertising || s.connected;
