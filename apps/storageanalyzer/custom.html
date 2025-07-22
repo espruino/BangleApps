@@ -9,56 +9,49 @@
     <!-- Toggle Buttons -->
     <div class="btn-group" style="margin: 1em; display: flex; justify-content: center;">
       <button id="tableButton" class="btn btn-primary">View Table</button>
-      <button id="pieChartButton" class="btn">View Pie Charts</button>
+      <button id="pieChartButton" class="btn">View Pie Chart</button>
     </div>
 
     <!-- Table View -->
     <div id="storageTable"></div>
 
-    <!-- Charts View -->
-    <div id="storagePieCharts" style="display: none; flex-direction: column; align-items: center; gap: 1.5em;">
-      <!-- App Breakdown Chart -->
+    <!-- Chart View -->
+    <div id="storagePieChart" style="display: none; flex-direction: column; align-items: center;">
       <div id="piechart" style="width: 100%; max-width: 600px; height: 400px;"></div>
-      <!-- Total Storage Chart -->
       <div id="totalStoragePie" style="width: 100%; max-width: 600px; height: 300px;"></div>
     </div>
 
     <script>
       let globalApps = [];
       let storageStats = null;
-      let hasGetStats = true;
-
+      
       function onInit(device) {
         Util.showModal("Reading Storage...");
-
-        // Fetch app list and stats from the watch
         Puck.eval(`(()=>{
-          const Storage = require("Storage");
-          const getApps = () => Storage.list(/\\.info$/).map(n => {
-            const app = Storage.readJSON(n,1)||{};
-            let fileSize=0, dataSize=0;
-            if (app.files) app.files.split(",").forEach(f=>{
-              const d = Storage.read(f); if (d) fileSize += d.length;
+          let getApps = () => require("Storage").list(/\\.info$/).map(appInfoName => {
+            let appInfo = require("Storage").readJSON(appInfoName,1)||{};
+            var fileSize = 0, dataSize = 0;
+            appInfo.files.split(",").forEach(f => fileSize += require("Storage").read(f).length);
+            var data = (appInfo.data||"").split(";");
+            function wildcardToRegexp(wc) {
+              return new RegExp("^"+wc.replaceAll(".","\\\\.").replaceAll("?",".*")+"$");
+            }
+            if (data[0]) data[0].split(",").forEach(wc => {
+              require("Storage").list(wildcardToRegexp(wc), {sf:false}).forEach(f => {
+                dataSize += require("Storage").read(f).length
+              });
             });
-            const parts = (app.data||"").split(";");
-            function toRegExp(wc) { return new RegExp("^"+wc.replace(/[.+?^${}()|[\\]\\\\]/g,"\\\\$&").replace(/\\*/g,".*")+"$"); }
-            if (parts[0]) parts[0].split(",").forEach(wc=>{
-              Storage.list(toRegExp(wc), {sf:false}).forEach(f=>{const d=Storage.read(f); if (d) dataSize += d.length;});
+            if (data[1]) data[1].split(",").forEach(wc => {
+              require("Storage").list(wildcardToRegexp(wc), {sf:true}).forEach(f => {
+                dataSize += require("Storage").open(f,"r").getLength();
+              });
             });
-            if (parts[1]) parts[1].split(",").forEach(wc=>{
-              Storage.list(toRegExp(wc), {sf:true}).forEach(f=>{ try{ dataSize += Storage.open(f,"r").getLength(); }catch(e){} });
-            });
-            return [app.id||"Unknown", fileSize, dataSize];
+            return [appInfo.id, fileSize, dataSize];
           });
-
-          let stats;
-          try { stats = Storage.getStats(); } catch(e) { stats = null; }
-          return [getApps(), stats];
-        })()`, function(result) {
+          return [getApps(), require(\"Storage\").getStats()]; })()`, function(result) {
           Util.hideModal();
-          globalApps = result[0].sort((a,b)=>(b[1]+b[2])-(a[1]+a[2]));
+          globalApps = result[0].sort((a,b) => (b[1]+b[2]) - (a[1]+a[2]));
           storageStats = result[1];
-          hasGetStats = !!storageStats;
 
           if (globalApps.length === 0) {
             document.getElementById("storageTable").innerHTML = "<p>No apps found</p>";
@@ -75,9 +68,9 @@
             <thead>
               <tr>
                 <th>App</th>
-                <th>Code (KB)</th>
-                <th>Data (KB)</th>
-                <th>Total (KB)</th>
+                <th>Code (kb)</th>
+                <th>Data (kb)</th>
+                <th>Total (kb)</th>
               </tr>
             </thead>
             <tbody>
@@ -92,69 +85,68 @@
           </table>`;
       }
 
-      function drawCharts() {
+      function drawChart() {
         if (globalApps.length === 0) return;
 
-        // Chart 1: App Breakdown
-        const appData = google.visualization.arrayToDataTable([
-          ['App', 'Total Size (KB)'],
-          ...globalApps.map(a => [a[0], (a[1]+a[2])/1000])
-        ]);
+        // App-specific chart
+        const chartData = [
+          ['App', 'Total Size (KB)']
+        ].concat(globalApps.map(app => [app[0], (app[1] + app[2])/1000]));
 
-        const appChart = new google.visualization.PieChart(document.getElementById('piechart'));
-        appChart.draw(appData, {
+        const data = google.visualization.arrayToDataTable(chartData);
+
+        const options = {
           title: 'App Storage Breakdown',
           chartArea: { width: '90%', height: '80%' },
           legend: { position: 'bottom' }
-        });
+        };
 
-        // Chart 2: Total Storage (only if stats available, i.e., Bangle.js 2)
-        const totalDiv = document.getElementById('totalStoragePie');
-        if (!hasGetStats) {
-          totalDiv.style.display = "none"; // hide for Bangle.js 1
-          return;
+        const chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        chart.draw(data, options);
+
+        // Total storage chart
+        if (storageStats) {
+          const usedKB = storageStats.fileBytes / 1000;
+          const freeKB = storageStats.freeBytes / 1000;
+          const trashKB =  storageStats.trashBytes / 1000;
+          const totalData = google.visualization.arrayToDataTable([
+            ['Type', 'KB'],
+            ['Used', usedKB],
+            ['Free', freeKB],
+            ['Trash', trashKB],
+          ]);
+
+          const totalOptions = {
+            title: 'Total Storage Usage',
+            
+            chartArea: { width: '90%', height: '80%' },
+            legend: { position: 'bottom' }
+          };
+
+          const totalChart = new google.visualization.PieChart(document.getElementById('totalStoragePie'));
+          totalChart.draw(totalData, totalOptions);
         }
-
-        const used = (storageStats.fileBytes||0)/1000;
-        const free = (storageStats.freeBytes||0)/1000;
-        const trash = (storageStats.garbageBytes||0)/1000;
-
-        const totalData = google.visualization.arrayToDataTable([
-          ['Type', 'KB'],
-          ['Used', used],
-          ['Free', free],
-          ['Trash', trash]
-        ]);
-
-        const totalChart = new google.visualization.PieChart(totalDiv);
-        totalChart.draw(totalData, {
-          title: 'Total Storage Usage',
-          pieHole: 0.4,
-          chartArea: { width: '90%', height: '80%' },
-          legend: { position: 'bottom' }
-        });
       }
 
-      // Load Google Charts
       google.charts.load('current', {'packages':['corechart']});
+      
 
-      document.getElementById("pieChartButton").addEventListener("click", function() {
+      document.getElementById("pieChartButton").addEventListener("click", function () {
         document.getElementById("storageTable").style.display = "none";
-        document.getElementById("storagePieCharts").style.display = "flex";
-        google.charts.setOnLoadCallback(drawCharts);
+        document.getElementById("storagePieChart").style.display = "flex";
+        drawChart();
         this.classList.add("btn-primary");
         document.getElementById("tableButton").classList.remove("btn-primary");
       });
 
-      document.getElementById("tableButton").addEventListener("click", function() {
+      document.getElementById("tableButton").addEventListener("click", function () {
         document.getElementById("storageTable").style.display = "block";
-        document.getElementById("storagePieCharts").style.display = "none";
+        document.getElementById("storagePieChart").style.display = "none";
         drawTable();
         this.classList.add("btn-primary");
         document.getElementById("pieChartButton").classList.remove("btn-primary");
       });
-
-      window.onInit = onInit;
+      
     </script>
   </body>
 </html>
