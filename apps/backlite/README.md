@@ -16,3 +16,5 @@ Some apps like `Light Switch Widget` will prevent this app from working properly
 `Brightness` - The LCD brightness when unlocked with a long press.
 # Creator
 RKBoss6
+
+TODO: Add a setting for long press time, or light duration
