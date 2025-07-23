@@ -64,5 +64,6 @@
      "url":"edgeclk.settings.json"},
     {"name":"setting.json",
      "url":"setting.json"}
-  ]
+  ],
+  "author": "thyttan"
 }

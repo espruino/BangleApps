@@ -9,5 +9,6 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
     {"name":"widclkscrl.wid.js","url":"widget.js"}
-  ]
+  ],
+  "author": "nxdefiant"
 }
