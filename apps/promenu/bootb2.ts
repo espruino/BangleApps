@@ -13,7 +13,12 @@ const prosettings = (require("Storage").readJSON("promenu.settings.json", true) 
 prosettings.naturalScroll ??= false;
 prosettings.wrapAround ??= true;
 
-E.showMenu = (items?: Menu): MenuInstance => {
+E.showMenu = ((items?: Menu): MenuInstance | void => {
+  if(items == null){
+    g.clearRect(Bangle.appRect);
+    return Bangle.setUI();
+  }
+
   const RectRnd = (x1: number, y1: number, x2: number, y2: number, r: number) => {
     const pp = [];
     pp.push(...g.quadraticBezier([x2 - r, y1, x2, y1, x2, y1 + r]));
@@ -269,4 +274,4 @@ E.showMenu = (items?: Menu): MenuInstance => {
   } as SetUIArg<"updown">, cb);
 
   return l;
-};
+}) as typeof E.showMenu;
