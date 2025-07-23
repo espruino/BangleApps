@@ -264,7 +264,7 @@ E.showMenu = ((items?: Menu): MenuInstance | void => {
       cb(void 0, xy);
   }) satisfies TouchCallback;
 
-  Bangle.setUI({
+  const uiopts = {
     mode: "updown",
     back: back as () => void,
     remove: () => {
@@ -273,7 +273,9 @@ E.showMenu = ((items?: Menu): MenuInstance | void => {
       options.remove?.();
     },
     touch: touchcb,
-  } as SetUIArg<"updown">, cb);
+  } as SetUIArg<"updown">;
+
+  Bangle.setUI(uiopts, cb);
 
   return l;
 }) as typeof E.showMenu;
