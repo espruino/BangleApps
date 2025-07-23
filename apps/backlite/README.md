@@ -12,5 +12,7 @@ When you unlock with a press of the button, or any other way you unlock the watc
 If you press and hold the button to unlock the watch (for around half a second), the backlight will turn on for 5 seconds - just enough to see what you need to see. After that, it will turn off again.
 
 Some apps like `Light Switch Widget` will prevent this app from working properly.
+# Settings
+`Brightness` - The LCD brightness when unlocked with a long press.
 # Creator
 RKBoss6
