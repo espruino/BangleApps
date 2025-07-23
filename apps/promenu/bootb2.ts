@@ -257,6 +257,13 @@ E.showMenu = ((items?: Menu): MenuInstance | void => {
     else l.select(evt);
   };
 
+  const touchcb = ((_button, xy) => {
+      // since we've specified options.touch,
+      // we need to pass through all taps since the default
+      // touchHandler isn't installed in setUI
+      cb(void 0, xy);
+  }) satisfies TouchCallback;
+
   Bangle.setUI({
     mode: "updown",
     back: back as () => void,
@@ -265,12 +272,7 @@ E.showMenu = ((items?: Menu): MenuInstance | void => {
       Bangle.removeListener("swipe", onSwipe);
       options.remove?.();
     },
-    touch: ((_button, xy) => {
-      // since we've specified options.touch,
-      // we need to pass through all taps since the default
-      // touchHandler isn't installed in setUI
-      cb(void 0, xy);
-    }) satisfies TouchCallback,
+    touch: touchcb,
   } as SetUIArg<"updown">, cb);
 
   return l;
