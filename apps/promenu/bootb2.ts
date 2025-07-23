@@ -269,24 +269,32 @@ E.showMenu = ((items?: Menu): MenuInstance | void => {
     remove: () => {
       if (nameScroller) clearInterval(nameScroller);
       Bangle.removeListener("swipe", onSwipe);
-      if(is2v26_27)
+      if(setUITouch)
           Bangle.removeListener("touch", touchcb);
       options.remove?.();
     },
   } satisfies SetUIArg<"updown">;
 
-  const is2v26_27 = process.env.VERSION === "2v26" || process.env.VERSION === "2v27";
-  if (!is2v26_27) {
-      // no need for workaround
+  // does setUI install its own touch handler?
+  const setUITouch = process.env.VERSION >= "2v26";
+  if (!setUITouch) {
+      // old firmware, we can use its touch handler - no need for workaround
       (uiopts as any).touch = touchcb;
   }
 
   Bangle.setUI(uiopts, cb);
 
-  if(is2v26_27){
-      // work around:
+  if(setUITouch){
+      // new firmware, remove setUI's touch handler and use just our own to
+      // avoid `cb` drawing the menu (as part of setUI's touch handler)
+      // followed by us drawing the menu (as part of our touch handler)
+      //
+      // work around details:
       // - https://github.com/espruino/Espruino/issues/2648
       // - https://github.com/orgs/espruino/discussions/7697#discussioncomment-13782299
+      Bangle.removeListener("touch", (Bangle as any).touchHandler);
+      delete (Bangle as any).touchHandler;
+
       Bangle.on("touch", touchcb);
   }
 

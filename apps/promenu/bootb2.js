@@ -126,7 +126,6 @@ E.showMenu = (function (items) {
                             nameScroll_1 = 0;
                     }, 300, name, v, item, idx, x, iy);
                 }
-                g.setColor(g.theme.fg);
                 iy += fontHeight;
                 idx++;
             };
@@ -219,17 +218,19 @@ E.showMenu = (function (items) {
             if (nameScroller)
                 clearInterval(nameScroller);
             Bangle.removeListener("swipe", onSwipe);
-            if (is2v26_27)
+            if (setUITouch)
                 Bangle.removeListener("touch", touchcb);
             (_a = options.remove) === null || _a === void 0 ? void 0 : _a.call(options);
         },
     };
-    var is2v26_27 = process.env.VERSION === "2v26" || process.env.VERSION === "2v27";
-    if (!is2v26_27) {
+    var setUITouch = process.env.VERSION >= "2v26";
+    if (!setUITouch) {
         uiopts.touch = touchcb;
     }
     Bangle.setUI(uiopts, cb);
-    if (is2v26_27) {
+    if (setUITouch) {
+        Bangle.removeListener("touch", Bangle.touchHandler);
+        delete Bangle.touchHandler;
         Bangle.on("touch", touchcb);
     }
     return l;
