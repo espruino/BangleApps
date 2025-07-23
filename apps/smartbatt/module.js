@@ -113,7 +113,7 @@
   exports.changeInterval = function(newInterval) {
     clearInterval(interval);
     interval=setInterval(recordBattery, newInterval);
-  };
+  }
   // Start recording every 5 minutes
   interval=setInterval(recordBattery, 600000);
   recordBattery(); // Log immediately
