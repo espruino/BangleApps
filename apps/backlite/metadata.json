@@ -3,7 +3,7 @@
   "name": "BackLite",
   "version": "0.01",
   "description": "Conserves battery life by turning the backlight on only on a long press of the button from a locked state.",
-  "icon": "app.png",
+  "icon": "icon.png",
   "type": "bootloader",
   "tags": "system",
   "readme": "README.md",
