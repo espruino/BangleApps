@@ -270,12 +270,26 @@ E.showMenu = ((items?: Menu): MenuInstance | void => {
     remove: () => {
       if (nameScroller) clearInterval(nameScroller);
       Bangle.removeListener("swipe", onSwipe);
+      if(is2v26_27)
+          Bangle.removeListener("touch", touchcb);
       options.remove?.();
     },
-    touch: touchcb,
-  } as SetUIArg<"updown">;
+  } satisfies SetUIArg<"updown">;
+
+  const is2v26_27 = process.env.VERSION === "2v26" || process.env.VERSION === "2v27";
+  if (!is2v26_27) {
+      // no need for workaround
+      (uiopts as any).touch = touchcb;
+  }
 
   Bangle.setUI(uiopts, cb);
+
+  if(is2v26_27){
+      // work around:
+      // - https://github.com/espruino/Espruino/issues/2648
+      // - https://github.com/orgs/espruino/discussions/7697#discussioncomment-13782299
+      Bangle.on("touch", touchcb);
+  }
 
   return l;
 }) as typeof E.showMenu;
