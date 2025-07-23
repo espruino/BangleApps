@@ -25,7 +25,6 @@
     let batt = E.getBattery();
     let battChange = data.battLastRecorded - batt;
     let deltaHours = (now - data.timeLastRecorded) / (1000 * 60 * 60);
-    let totalHours=data.totalHours;
     // Default reason (in case we skip)
     let reason = "Recorded";
 
@@ -72,7 +71,7 @@
 
 
 
-  getData=function() {
+  function getData() {
     return storage.readJSON(filename, 1) || {
       avgBattDrainage: 0,
       battLastRecorded: E.getBattery(),
@@ -85,7 +84,7 @@
 
 
   // Estimate hours remaining
-  estimateBatteryLife=function() {
+  function estimateBatteryLife() {
     let data = getData();
     var batt = E.getBattery();
     var hrsLeft = Math.abs(batt / data.avgBattDrainage);
@@ -95,7 +94,7 @@
     };
   }
   
-  deleteData= function(){
+  function deleteData(){
     storage.erase(filename);
   };
   // Expose public API
