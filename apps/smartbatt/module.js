@@ -96,7 +96,7 @@
   
   function deleteData(){
     storage.erase(filename);
-  };
+  }
   // Expose public API
   exports.record = recordBattery;
   exports.deleteData = deleteData;
