@@ -259,7 +259,7 @@ E.showMenu = ((items?: Menu): MenuInstance | void => {
 
   Bangle.setUI({
     mode: "updown",
-    back,
+    back: back as () => void,
     remove: () => {
       if (nameScroller) clearInterval(nameScroller);
       Bangle.removeListener("swipe", onSwipe);
