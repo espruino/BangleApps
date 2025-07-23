@@ -1,4 +1,13 @@
 {
+  let getSettings = function(){
+    return Object.assign({
+      // default values
+      brightness: 0.3,
+
+    }, require('Storage').readJSON("BackLite.settings.json", true) || {});
+  };
+
+  
   //Set LCD to zero every reboot
   let s = require("Storage").readJSON("setting.json", 1) || {};
   s.brightness = 0;
@@ -15,8 +24,7 @@
       setTimeout(() => {
         if (digitalRead(BTN1)) {
           //set brightness until. locked.
-          Bangle.setLCDBrightness(0.1);
-          
+          Bangle.setLCDBrightness(getSettings().brightness);
         } else {
           Bangle.setLCDBrightness(0);
         }
