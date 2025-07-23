@@ -7,11 +7,16 @@ var s = Object.assign({
   fullscreen:true,
   buzz: true,
   colortext: true,
+  keepunlocked: false,
 }, require('Storage').readJSON("counter2.json", true) || {});
 
 var sGlob = Object.assign({
   timeout: 10,
 }, require('Storage').readJSON("setting.json", true) || {});
+
+const lockTimeout = s.keepunlocked ? 0 : 1000;
+if (s.keepunlocked)
+  Bangle.setOptions({lockTimeout});
 
 const f1 = (s.colortext) ? "#f00" : "#fff";
 const f2 = (s.colortext) ? "#00f" : "#fff";
@@ -80,7 +85,7 @@ function updateScreen() {
 Bangle.on('lock', e => {
   drag = undefined;
   var timeOutTimer = sGlob.timeout * 1000;
-  Bangle.setOptions({backlightTimeout: timeOutTimer, lockTimeout: timeOutTimer});
+  Bangle.setOptions({backlightTimeout: timeOutTimer, lockTimeout});
   if (dragtimeout) clearTimeout(dragtimeout);
   fastupdateoccurring = false;
 });
@@ -102,7 +107,7 @@ Bangle.on("drag", e => {
     drag = undefined;
     if (dragtimeout) {
       let timeOutTimer = 1000;
-      Bangle.setOptions({backlightTimeout: timeOutTimer, lockTimeout: timeOutTimer});
+      Bangle.setOptions({backlightTimeout: timeOutTimer, lockTimeout});
       clearTimeout(dragtimeout);
     }
     fastupdateoccurring = false;
@@ -134,7 +139,7 @@ function resetcounter(which) {
   fastupdateoccurring = false;
   if (dragtimeout) {
     let timeOutTimer = 1000;
-    Bangle.setOptions({backlightTimeout: timeOutTimer, lockTimeout: timeOutTimer});
+    Bangle.setOptions({backlightTimeout: timeOutTimer, lockTimeout});
     clearTimeout(dragtimeout);
   }
   if (which == null) {
@@ -152,7 +157,6 @@ function resetcounter(which) {
   ignoreonce = true;
 }
 
-
 updateScreen();
 
 setWatch(function() {
@@ -163,6 +167,6 @@ setWatch(function() {
     }
   }
   var timeOutTimer = sGlob.timeout * 1000;
-  Bangle.setOptions({backlightTimeout: timeOutTimer, lockTimeout: timeOutTimer});
+  Bangle.setOptions({backlightTimeout: timeOutTimer, lockTimeout});
   load();
 }, BTN1, {repeat:true, edge:"falling"});
