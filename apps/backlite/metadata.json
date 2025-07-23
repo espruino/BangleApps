@@ -12,5 +12,6 @@
     {"name":"backlite.boot.js","url":"boot.js"},
     {"name":"backlite.settings.js","url":"settings.js"}
     
-  ]
+  ],
+  "data": [{"name":"BackLite.settings.json"}]
 }
