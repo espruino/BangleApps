@@ -6,6 +6,7 @@ on:
 
 jobs:
   mention-app-authors:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,8 +24,9 @@ jobs:
       - name: Tag app authors
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          REPO: ${{ github.repository }} # this is the slug, so user/repo
+          #PR_NUMBER: ${{ github.event.pull_request.number }}
+          #REPO: ${{ github.repository }} # this is the slug, so user/repo
+          COMMENT_URL: https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments
         run: |
           git diff --name-only origin/master... -- apps/ \
             | grep -o 'apps/[^/]*' \
@@ -39,12 +41,18 @@ jobs:
 
               echo "tagging @$author for \`$d\`"
             done \
-            | jq -Rsc '{body: .}' \
-            | xargs -I{} curl \
-              -fsSL \
-              -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer $GITHUB_TOKEN" \
-              -H "Content-Type: application/json" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              -d {} \
-              "https://api.github.com/repos/$REPO/issues/$PR_NUMBER/comments"
+            > comment.txt
+
+      - uses: actions/github-script@v7
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const fs = require("fs");
+            const comment = fs.readFileSync("comment.txt", "utf8");
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment,
+            })
