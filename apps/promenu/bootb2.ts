@@ -172,7 +172,6 @@ E.showMenu = ((items?: Menu): MenuInstance | void => {
           }, 300, name, v, item, idx, x, iy);
         }
 
-        g.setColor(g.theme.fg);
         iy += fontHeight;
         idx++;
       }
