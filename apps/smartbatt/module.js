@@ -4,7 +4,7 @@
   var storage=require("Storage");
 
   var logFile = "smartbattlog.json";
-
+  var doLogging=true;
   function logBatterySample(entry) {
     let log = storage.readJSON(logFile, 1) || [];
 
@@ -30,8 +30,16 @@
 
 
     if (battChange <= 0) {
-      reason = "Skipped: battery rose or no change";
-      data.battLastRecorded = batt;
+      reason = "Skipped: battery fluctuated or no change";
+      if(Math.abs(battChange)<5){
+        //less than 6% difference, average percents
+        var newBatt=(batt+data.battLastRecorded)/2;
+        data.battLastRecorded = newBatt;
+      }else{
+        //probably charged, ignore average
+        data.battLastRecorded = batt;
+      }
+      
       storage.writeJSON(filename, data);
     } else if (deltaHours <= 0 || !isFinite(deltaHours)) {
       reason = "Skipped: invalid time delta";
@@ -56,17 +64,18 @@
 
       reason = "Drainage recorded: " + currentDrainage.toFixed(3) + "%/hr";
     }
-
-    // Always log the sample
-    logBatterySample({
-      time: now,
-      battNow: batt,
-      battLast: data.battLastRecorded,
-      battChange: battChange,
-      deltaHours: deltaHours,
-      avgDrainage: data.avgBattDrainage,
-      reason: reason
-    });
+    if(doLogging){
+      // Always log the sample
+      logBatterySample({
+        time: now,
+        battNow: batt,
+        battLast: data.battLastRecorded,
+        battChange: battChange,
+        deltaHours: deltaHours,
+        avgDrainage: data.avgBattDrainage,
+        reason: reason
+      });
+    }
   }
 
 
@@ -96,7 +105,7 @@
   
   function deleteData(){
     storage.erase(filename);
-  }
+  };
   // Expose public API
   exports.record = recordBattery;
   exports.deleteData = deleteData;
