@@ -493,9 +493,12 @@ function angleDifference(angle1, angle2) {
   return difference;
 }
 
+/* Main code */
+
 /* These are initialized by read() function, below */
 var start = {}, destination = {}, num = 0, dist = 0;
 
+/* pp .. Point, n .. filename, candy .. enable "eye candy" drawing */
 function read(pp, n, candy) {
   let f = require("Storage").open(n+".st", "r");
   let l = f.readLine();
@@ -544,7 +547,7 @@ function read(pp, n, candy) {
 
 /* Find out start/stop points (and display some eye-candy) */
 function time_read() {
-  let n = track_name
+  let n = track_name;
   ui.drawMsg("Converting");
   print("Converting...");
   to_storage(n);
@@ -562,6 +565,7 @@ function time_read() {
   let v2 = getTime();
   print("Read took", (v2-v1), "seconds");
   step_init();
+  zoom.geoNew(start, 3000);
   print(num, "points", dist, "distance");
   setTimeout(step, 100);
 }
@@ -714,6 +718,11 @@ function step() {
     pp.lon = track[i].lon;
     pp.course = fmt.bearing(track[i], track[i+1]);
   }
+  if (!follow && !fix.fix) {
+    pp.lat = 50.010507;  /* FIXME */
+    pp.lon = 14.765840;
+    pp.course = 0;
+  }
 
   let quiet = {};
   if (follow)
@@ -748,7 +757,7 @@ function step() {
   }
   
   g.setColor(0, 0, 0);
-  if (follow && !fast) {
+  if (zoom_scale && !fast) {
     g.setFont("Vector", 31);
     g.setFontAlign(-1, -1);
     let msg = "\noff " + fmt.fmtDist(quiet.offtrack/1000);
@@ -826,13 +835,9 @@ function draw_map() {
   pp.y = 176/2;
   pp.g = zoom.buf;
   let d = 0;
-  //load_next();
-  zoom.geoNew(pp, 3000);
-  {
-    read(pp, track_name, 0);
-      ui.drawMsg("Drawn\n" + fmt.fmtDist(d / 1000) + "\n" + point_num + "/" + num);
-      step_init();
-  }
+  step_init();  
+  read(pp, track_name, 0);
+  ui.drawMsg("Drawn\n" + fmt.fmtDist(d / 1000) + "\n" + point_num + "/" + num);
 }
 
 /* Convert "normal" file to storagefile... so that we can read lines from it */
