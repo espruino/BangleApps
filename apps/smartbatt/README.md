@@ -6,10 +6,27 @@ Because the Bangle.js battery percent fluctuates naturally, it is highly recomen
 Use an app that needs this module, like `Smart Battery Widget`.
 When this app is installed, <i><b>do not rely on it for the first 24-30 hours.</b></i>
 The module might return different data than expected, or a severely low prediction. Give it time. It will learn from drainage rates, which needs the battery to drain. If your watch normally lasts for a long time on one charge, it will take longer for the module to return an accurate reading.
+
+If you think something is wrong with the predictions after 3 days, try clearing the data, and let it rebuild again from scratch.
+
 ## Settings
 ### Clear Data - Clears all learned data. 
 Use this when you switch to a new clock or change the battery drainage in a fundamental way. The app averages drainage over time, and so you might just want to restart the learned data to be more accurate for the new configurations you have implemented.
-
-If you think something is wrong with the predictions, try clearing the data, and let it rebuild the data again from scratch.
+### Logging - Enables logging for stats that this module uses. 
+Logs:
+* The time in unix seconds that the record event was triggered
+* The current battery percentage
+* The last saved battery percentage
+* The change in hours between the time last recorded and now
+* The average or learned drainage for battery per hour
+* The status of that record event:
+  * Recorded
+  * Skipped due to battery fluctuations or no change
+  * Invalid time between the two periods (first record)
+## Functions
+From any app, you can call `require("smartbatt")` and then one of the functions below:
+* `require("smartbatt").record()` - Attempts to record the battery and push it to the average.
+* `require("smartbatt").get()` - Returns an object that contains the hours left and current battery percentage
+* `require("smartbatt").deleteData()` - Deletes all learned data. (Automatically re-learns)
 ## Creator
 RKBoss6
