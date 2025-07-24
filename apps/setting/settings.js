@@ -1,3 +1,4 @@
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
@@ -474,11 +475,11 @@ function LCDMenu() {
   Object.assign(lcdMenu, {
     /*LANG*/'LCD Brightness': {
       value: settings.brightness,
-      min: 0.1,
+      min : BANGLEJS2 ? 0 : 0.1,
       max: 1,
       step: 0.1,
       onchange: v => {
-        settings.brightness = v || 1;
+        settings.brightness = v ?? 1;
         updateSettings();
         Bangle.setLCDBrightness(settings.brightness);
       }
