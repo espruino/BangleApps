@@ -15,6 +15,6 @@
     {"name":"smartbatt.settings.js","url":"settings.js"}
   ],
   "data": [
-    {"name":"smartbatt.settings.json"},
+    {"name":"smartbatt.settings.json"}
   ]
 }
