@@ -11,6 +11,10 @@
   "provides_modules" : ["smartbatt"],
   "readme": "README.md",
   "storage": [
-    {"name":"smartbatt","url":"module.js"}
+    {"name":"smartbatt","url":"module.js"},
+    {"name":"smartbatt.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"smartbatt.settings.json"},
   ]
 }
