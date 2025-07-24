@@ -1,5 +1,7 @@
 # Smart Battery Module
 A module for providing a truly accurate battery life in terms of days. The module learns from daily usage and drainage patterns, and extrapolates that. As you use it more, and the battery keeps draining, the predictions should become more accurate.
+
+Because the Bangle.js battery percent fluctuates naturally, it is highly recomended to use the `Power Manager` app and enable monotonic/stable percentage to stabilize the percentage, and reduce fluctuations. This may help provide more accurate readings.
 ## Upon Install
 Use an app that needs this module, like `Smart Battery Widget`.
 When this app is installed, <i><b>do not rely on it for the first 24-30 hours.</b></i>
