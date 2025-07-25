@@ -1,10 +1,15 @@
 {
-  var filename = "smartbattdata.json";
+  var dataFile = "smartbattdata.json";
   var interval;
   var storage=require("Storage");
-
+  var settings = Object.assign({
+    //Record Interval stored in ms
+      doLogging:false
+  }, require('Storage').readJSON("smartbatt.settings.json", true) || {});
+  
   var logFile = "smartbattlog.json";
   var doLogging=true;
+  
   function logBatterySample(entry) {
     let log = storage.readJSON(logFile, 1) || [];
 
@@ -40,31 +45,27 @@
         data.battLastRecorded = batt;
       }
       
-      storage.writeJSON(filename, data);
+      storage.writeJSON(dataFile, data);
     } else if (deltaHours <= 0 || !isFinite(deltaHours)) {
       reason = "Skipped: invalid time delta";
       data.timeLastRecorded = now;
       data.battLastRecorded = batt;
-      storage.writeJSON(filename, data);
+      storage.writeJSON(dataFile, data);
     } else {
 
       let currentDrainage = battChange / deltaHours;
-      // Calculate new average
-      let alpha = 0.3; // how "fast" to react (0.1 = slow, 0.5 = fast)
 
-      // Weight alpha by how much time the new reading represents
-      let weight = deltaHours / (deltaHours + 1);
-      let effectiveAlpha = alpha * weight;
-      data.avgBattDrainage = (effectiveAlpha * currentDrainage) + (1 - effectiveAlpha) * data.avgBattDrainage;
+      let newAvg = weightedAverage(data.avgBattDrainage, data.totalHours, currentDrainage, deltaHours);
+      data.avgBattDrainage=newAvg;
       data.timeLastRecorded = now;
       data.totalCycles += 1;
       data.totalHours+=deltaHours;
       data.battLastRecorded = batt;
-      storage.writeJSON(filename, data);
+      storage.writeJSON(dataFile, data);
 
       reason = "Drainage recorded: " + currentDrainage.toFixed(3) + "%/hr";
     }
-    if(doLogging){
+    if(settings.doLogging){
       // Always log the sample
       logBatterySample({
         time: now,
@@ -77,11 +78,15 @@
       });
     }
   }
+  
+  function weightedAverage(oldValue, oldWeight, newValue, newWeight) {
+    return (oldValue * oldWeight + newValue * newWeight) / (oldWeight + newWeight);
+  }
 
 
 
   function getData() {
-    return storage.readJSON(filename, 1) || {
+    return storage.readJSON(dataFile, 1) || {
       avgBattDrainage: 0,
       battLastRecorded: E.getBattery(),
       timeLastRecorded: Date.now(),
@@ -104,7 +109,8 @@
   }
   
   function deleteData(){
-    storage.erase(filename);
+    storage.erase(dataFile);
+    storage.erase(logFile);
   }
   // Expose public API
   exports.record = recordBattery;
@@ -113,7 +119,7 @@
   exports.changeInterval = function(newInterval) {
     clearInterval(interval);
     interval=setInterval(recordBattery, newInterval);
-  }
+  };
   // Start recording every 5 minutes
   interval=setInterval(recordBattery, 600000);
   recordBattery(); // Log immediately
