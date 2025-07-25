@@ -1,4 +1,4 @@
-(function(){
+((){
 
   const intervalLow = 30000; // update interval when not charging
   const intervalHigh = 30000; // faster update when charging
