@@ -2,13 +2,16 @@
   var dataFile = "smartbattdata.json";
   var interval;
   var storage=require("Storage");
-  var settings = Object.assign({
-    //Record Interval stored in ms
-      doLogging:false
-  }, require('Storage').readJSON("smartbatt.settings.json", true) || {});
+  
   
   var logFile = "smartbattlog.json";
-  var doLogging=true;
+  
+  function getSettings(){
+    return Object.assign({
+      //Record Interval stored in ms
+        doLogging:false
+    }, require('Storage').readJSON("smartbatt.settings.json", true) || {});
+  }
   
   function logBatterySample(entry) {
     let log = storage.readJSON(logFile, 1) || [];
@@ -65,7 +68,7 @@
 
       reason = "Drainage recorded: " + currentDrainage.toFixed(3) + "%/hr";
     }
-    if(settings.doLogging){
+    if(getSettings().doLogging){
       // Always log the sample
       logBatterySample({
         time: now,
@@ -83,7 +86,7 @@
     return (oldValue * oldWeight + newValue * newWeight) / (oldWeight + newWeight);
   }
 
-
+  
 
   function getData() {
     return storage.readJSON(dataFile, 1) || {
