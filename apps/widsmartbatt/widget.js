@@ -1,5 +1,9 @@
-((){
-
+(function(){
+  WIDGETS["widsmartbatt"] = {
+    area: "tr",
+    width: 30,
+    draw: draw
+  };
   const intervalLow = 30000; // update interval when not charging
   const intervalHigh = 30000; // faster update when charging
   var showPercent = false;
@@ -85,9 +89,5 @@
 
   var id = setInterval(() => WIDGETS["widsmartbatt"].draw(), intervalLow);
 
-  WIDGETS["widsmartbatt"] = {
-    area: "tr",
-    width: 30,
-    draw: draw
-  };
+  
 })();
