@@ -13,7 +13,7 @@
   E.showMenu({
     "" : { "title" : "BackLite" },
     'Brightness': {
-      value: 0.3|settings.brightness,  
+      value: settings.brightness||0,  
       min: 0.1, max: 1,
       step: 0.1,
       onchange: v => {
