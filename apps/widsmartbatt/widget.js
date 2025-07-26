@@ -1,9 +1,5 @@
 (function(){
-  WIDGETS["widsmartbatt"] = {
-    area: "tr",
-    width: 30,
-    draw: draw
-  };
+  
   const intervalLow = 30000; // update interval when not charging
   const intervalHigh = 30000; // faster update when charging
   var showPercent = false;
@@ -25,42 +21,49 @@
   };
 
   function draw() {
-  let batt=E.getBattery();
-  let data = require("smartbatt").get();
-  let hrsLeft=data.hrsLeft;
-  let days = hrsLeft / 24;
-
-  let txt = showPercent
-    ? batt
-    : (days >= 1
-      ? Math.round(Math.min(days, 99)) + "d"
-      : Math.round(hrsLeft) + "h");
-  if(Bangle.isCharging()) txt=E.getBattery();
-  let s = 29;
-  let x = this.x, y = this.y;
-  let xl = x + 4 + batt * (s - 12) / 100;
+    let batt=E.getBattery();
+    let data = require("smartbatt").get();
+    let hrsLeft=data.hrsLeft;
+    let days = hrsLeft / 24;
   
-  // Drawing code follows...
-  g.setColor(COLORS.bg);
-  g.fillRect(x + 2, y + 5, x + s - 6, y + 18);
-
-  g.setColor(levelColor(batt));
-  g.fillRect(x + 1, y + 3, x + s - 5, y + 4);
-  g.fillRect(x + 1, y + 19, x + s - 5, y + 20);
-  g.fillRect(x, y + 4, x + 1, y + 19);
-  g.fillRect(x + s - 5, y + 4, x + s - 4, y + 19);
-  g.fillRect(x + s - 3, y + 8, x + s - 2, y + 16);
-  g.fillRect(x + 4, y + 15, xl, y + 16);
-
-  g.setColor(COLORS.fg);
-  g.setFontAlign(0, 0);
-  g.setFont('6x8');
-  g.drawString(txt, x + 14, y + 10);
-
-  if (Bangle.isCharging()) changeInterval(id, intervalHigh);
-  else changeInterval(id, intervalLow);
+    let txt = showPercent
+      ? batt
+      : (days >= 1
+        ? Math.round(Math.min(days, 99)) + "d"
+        : Math.round(hrsLeft) + "h");
+    if(Bangle.isCharging()) txt=E.getBattery();
+    let s = 29;
+    let x = this.x, y = this.y;
+    let xl = x + 4 + batt * (s - 12) / 100;
+    
+    // Drawing code follows...
+    g.setColor(COLORS.bg);
+    g.fillRect(x + 2, y + 5, x + s - 6, y + 18);
+  
+    g.setColor(levelColor(batt));
+    g.fillRect(x + 1, y + 3, x + s - 5, y + 4);
+    g.fillRect(x + 1, y + 19, x + s - 5, y + 20);
+    g.fillRect(x, y + 4, x + 1, y + 19);
+    g.fillRect(x + s - 5, y + 4, x + s - 4, y + 19);
+    g.fillRect(x + s - 3, y + 8, x + s - 2, y + 16);
+    g.fillRect(x + 4, y + 15, xl, y + 16);
+  
+    g.setColor(COLORS.fg);
+    g.setFontAlign(0, 0);
+    g.setFont('6x8');
+    g.drawString(txt, x + 14, y + 10);
+  
+    if (Bangle.isCharging()) changeInterval(id, intervalHigh);
+    else changeInterval(id, intervalLow);
 }
-
+  WIDGETS["widsmartbatt"] = {
+    area: "tr",
+    width: 30,
+    draw: function() {
+        // Call your drawing function
+        draw();
+      }
+  };
 
   // Touch to temporarily show battery percent
   Bangle.on("touch", function (_btn, xy) {
