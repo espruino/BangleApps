@@ -22,7 +22,11 @@
 
   function draw() {
     let batt=E.getBattery();
-    let data = require("smartbatt").get();
+    try {
+      data = require("smartbatt").get();
+    } catch (e) {
+      data.hrsLeft = 0;
+    }
     let hrsLeft=data.hrsLeft;
     let days = hrsLeft / 24;
   
