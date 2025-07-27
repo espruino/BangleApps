@@ -891,10 +891,10 @@ function load_track(x) {
         zoom_mode++;
         if (zoom_mode == 3)
           zoom_mode = 0;
-        ui.drawMsg("Zoom mode " + zoom_mode);
+        ui.drawMsg("Zoom\nmode\n" + zoom_mode);
         break;
     case 2: demo_mode = !demo_mode; 
-        ui.drawMsg("Demo mode " + demo_mode);
+        ui.drawMsg("Demo\nmode\n" + demo_mode);
         break;
     }
   }
