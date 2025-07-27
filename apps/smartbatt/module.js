@@ -29,7 +29,7 @@
   function recordBattery() {
     let now = Date.now();
     let data = getData();
-
+    let formattedNow=new Date();
     let batt = E.getBattery();
     let battChange = data.battLastRecorded - batt;
     let deltaHours = (now - data.timeLastRecorded) / (1000 * 60 * 60);
@@ -57,7 +57,35 @@
     } else {
 
       let currentDrainage = battChange / deltaHours;
+      let drainageChange=data.avgBattDrainage-currentDrainage;
+      //check if drainage rate has fluctuated quite a bit
+      
+      if(Math.abs(drainageChange)>currentDrainage*0.7&&data.fluctuationEvent==0){
+        //has fluctuated, first time doing so
+        reason="Skipped: Extreme fluctuation";
+        //set fluctuationevent so it knows what was the first time.
+        data.fluctuationEvent=data.totalCycles+1;
+        data.battLastRecorded=batt;
+        storage.writeJSON(dataFile, data);
 
+        if(getSettings().doLogging){
+        // Always log the sample
+        logBatterySample({
+          time: formattedNow,
+          battNow: batt,
+          battLast: data.battLastRecorded,
+          battChange: battChange,
+          deltaHours: deltaHours,
+          avgDrainage: data.avgBattDrainage,
+          reason: reason
+        });
+          return;
+      }else{
+        data.fluctuationEvent=0;
+      }
+        
+      }
+      
       let newAvg = weightedAverage(data.avgBattDrainage, data.totalHours, currentDrainage, deltaHours);
       data.avgBattDrainage=newAvg;
       data.timeLastRecorded = now;
@@ -71,7 +99,7 @@
     if(getSettings().doLogging){
       // Always log the sample
       logBatterySample({
-        time: now,
+        time: formattedNow,
         battNow: batt,
         battLast: data.battLastRecorded,
         battChange: battChange,
@@ -94,7 +122,8 @@
       battLastRecorded: E.getBattery(),
       timeLastRecorded: Date.now(),
       totalCycles: 0,
-      totalHours:0
+      totalHours:0,
+      fluctuationEvent:0
     };
   }
 
