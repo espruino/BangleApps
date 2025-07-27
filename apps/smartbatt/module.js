@@ -15,21 +15,26 @@
   
   function logBatterySample(entry) {
     let log = storage.readJSON(logFile, 1) || [];
-
-    // Keep it from growing forever (optional: only keep last 100 entries)
-    if (log.length > 100) log.shift();
+    //get human-readable time
+    let d = new Date();
+    entry.time = d.getFullYear() + "-" +
+                ("0"+(d.getMonth()+1)).slice(-2) + "-" +
+                ("0"+d.getDate()).slice(-2) + " " +
+                ("0"+d.getHours()).slice(-2) + ":" +
+                ("0"+d.getMinutes()).slice(-2) + ":" +
+                ("0"+d.getSeconds()).slice(-2);
 
     log.push(entry);
+    if (log.length > 100) log = log.slice(-100);
+
     storage.writeJSON(logFile, log);
   }
-
 
 
   // Record current battery reading into current average
   function recordBattery() {
     let now = Date.now();
     let data = getData();
-    let formattedNow=new Date();
     let batt = E.getBattery();
     let battChange = data.battLastRecorded - batt;
     let deltaHours = (now - data.timeLastRecorded) / (1000 * 60 * 60);
@@ -71,7 +76,6 @@
         if(getSettings().doLogging){
         // Always log the sample
         logBatterySample({
-          time: formattedNow,
           battNow: batt,
           battLast: data.battLastRecorded,
           battChange: battChange,
@@ -99,7 +103,6 @@
     if(getSettings().doLogging){
       // Always log the sample
       logBatterySample({
-        time: formattedNow,
         battNow: batt,
         battLast: data.battLastRecorded,
         battChange: battChange,
