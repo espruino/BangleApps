@@ -13,6 +13,7 @@ If you think something is wrong with the predictions after 3 days, try clearing 
 ### Clear Data - Clears all learned data. 
 Use this when you switch to a new clock or change the battery drainage in a fundamental way. The app averages drainage over time, and so you might just want to restart the learned data to be more accurate for the new configurations you have implemented.
 ### Logging - Enables logging for stats that this module uses. 
+To view the log file, go to the [Web IDE](https://www.espruino.com/ide/#), click on the storage icon (4 discs), and scroll to the file named `smartbattlog.json`. From there, you can view the file, copy to editor, or save it to your computer.
 Logs:
 * The time in a human-readable format (hh:mm:ss, mm:dd:yy) when the record event was triggered
 * The current battery percentage
