@@ -29,18 +29,6 @@ var img = {
   buffer : new Uint8Array(176*176*(3/8)).buffer
 };
 
-function j_test(c) {
-  for(let i=0; i<(176*176*3)/8; ) {
-    // 1 aka 0x49 -> green
-    // 2 aka      -> red
-    // 4          -> blue
-    let v = 0x249;
-    c[i++] = v & 0xff;
-    c[i++] = v >> 1 & 0xff;
-    c[i++] = v >> 2 & 0xff;
-  }
-}
-
 function msg(s) {
   g.reset().clear().setFont("Vector", 33).drawString(s, 10, 30).flip();
 }
