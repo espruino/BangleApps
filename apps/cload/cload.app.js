@@ -41,16 +41,6 @@ function j_test(c) {
   }
 }
 
-function drawC() {
-  g.reset().clear();
-  if (0) {
-    print("c returns ", c.c_test(E.getAddressOf(img.buffer, true)));
-  } else {
-    j_test(img.buffer);
-  }
-  g.drawImage(img, 0, 0);
-}
-
 function msg(s) {
   g.reset().clear().setFont("Vector", 33).drawString(s, 10, 30).flip();
 }
@@ -68,6 +58,8 @@ function step() {
   print(a1, a2, a3);
   return ccode(0x8a61c, a1, a2, a3);
 }
+
+var binData;
 
 function load() {
   bin = new Uint8Array(12*1024);
