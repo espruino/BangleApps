@@ -64,8 +64,8 @@
       let currentDrainage = battChange / deltaHours;
       let drainageChange=data.avgBattDrainage-currentDrainage;
       //check if drainage rate has fluctuated quite a bit
-      
-      if(Math.abs(drainageChange)>currentDrainage*0.7&&data.fluctuationEvent==0){
+      //If fluctuation event is 0, first time fluctuating like this, cycles > 10 so as not to interfere with initial data collection.
+      if(Math.abs(drainageChange)>currentDrainage*0.7&&data.fluctuationEvent==0&&data.totalCycles>=10){
         //has fluctuated, first time doing so
         reason="Skipped: Extreme fluctuation";
         //set fluctuationevent so it knows what was the first time.
