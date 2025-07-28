@@ -11,7 +11,6 @@
   //Set LCD to zero every reboot
   let s = require("Storage").readJSON("setting.json", 1) || {};
   s.brightness = 0;
-  if (!("lcdTimeout" in s)) s.lcdTimeout = 5; // fallback so  logic doesn't break
   require("Storage").writeJSON("setting.json", s);
   //remove large settings object from memory
   s=null;
