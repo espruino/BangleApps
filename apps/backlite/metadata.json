@@ -1,7 +1,7 @@
 {
   "id": "backlite",
   "name": "BackLite",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Conserves battery life by turning the backlight on only on a long press of the button from a locked state. **Requires the latest settings update (v0.80)**",
   "icon": "icon.png",
   "type": "bootloader",
