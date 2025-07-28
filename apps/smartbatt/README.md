@@ -14,7 +14,7 @@ If you think something is wrong with the predictions after 3 days, try clearing 
 Use this when you switch to a new clock or change the battery drainage in a fundamental way. The app averages drainage over time, and so you might just want to restart the learned data to be more accurate for the new configurations you have implemented.
 ### Logging - Enables logging for stats that this module uses. 
 Logs:
-* The time in unix seconds that the record event was triggered
+* The time in a human-readable format (hh:mm:ss, mm:dd:yy) when the record event was triggered
 * The current battery percentage
 * The last saved battery percentage
 * The change in hours between the time last recorded and now
