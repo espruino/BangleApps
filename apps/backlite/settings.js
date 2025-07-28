@@ -12,7 +12,7 @@
 
   E.showMenu({
     "" : { "title" : "BackLite" },
-    "< Back": () => (back()), // fallback if run standalone
+    "< Back": back, // fallback if run standalone
     "Brightness": {
       value: settings.brightness,
       min: 0.1, max: 1,
