@@ -13,7 +13,8 @@
   s.brightness = 0;
   if (!("lcdTimeout" in s)) s.lcdTimeout = 5; // fallback so  logic doesn't break
   require("Storage").writeJSON("setting.json", s);
-
+  //remove large settings object from memory
+  s=null;
   const longPressTime=400; //(ms)
 
   Bangle.on('lock', function(isLocked) {
