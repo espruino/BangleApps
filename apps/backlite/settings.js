@@ -1,7 +1,6 @@
 (function(back) {
   var FILE = "BackLite.settings.json";
 
-  // Load settings safely (avoid crashes on bad/missing JSON)
   var settings = require("Storage").readJSON(FILE, 1) || {};
   
   if (!isFinite(settings.brightness)) settings.brightness = 0.3;
