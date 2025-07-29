@@ -61,7 +61,7 @@ exports.getDecoder = function(fileContents) {
         health.steps>>8,health.steps&255, // 16 bit steps
         health.bpmMin || health.bpm, // 8 bit bpm
         health.bpmMax || health.bpm, // 8 bit bpm
-        Math.min(health.movement, 255),
+        Math.min(health.movement >> 3, 255),
         E.getBattery()|(Bangle.isCharging()&&128),
         0|Math.round(health.temperature*2),
         (alt>>8)|(Math.max(0,exports.ACTIVITY.indexOf(health.activity))<<5),alt&255,
@@ -82,7 +82,7 @@ exports.getDecoder = function(fileContents) {
       encode : health => { "ram"; return String.fromCharCode(
         health.steps>>8,health.steps&255, // 16 bit steps
         health.bpm, // 8 bit bpm
-        Math.min(health.movement, 255));
+        Math.min(health.movement >> 3, 255));
       }
     };
   }
