@@ -140,22 +140,13 @@
     E.getBattery = function() {
       var percentToReturn;
       if(Bangle.isCharging()){
-        //only go up
-        if(newPercent>savedBatPercent){
-          percentToReturn=newPercent;
-          savedBatPercent=newPercent;
-        }else{
-          percentToReturn=savedBatPercent;
-        }
+        if(newPercent > savedBatPercent)
+          savedBatPercent = newPercent;
       }else{
-        if(newPercent<savedBatPercent){
-          percentToReturn=newPercent;
-          savedBatPercent=newPercent;
-        }else{
-          percentToReturn=savedBatPercent;
-        }
+        if(newPercent < savedBatPercent)
+          savedBatPercent = newPercent;
       }
-      return percentToReturn;
+      return savedBatPercent;
   };
   }
   
