@@ -12,6 +12,6 @@
   "tags": "widget,battery",
   "provides_widgets" : ["battery"],
   "storage": [
-    {"name":"widsmartbatt.widget.js","url":"widget.js"}
+    {"name":"widsmartbatt.wid.js","url":"widget.js"}
   ]
 }
