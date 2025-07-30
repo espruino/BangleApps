@@ -1,7 +1,5 @@
 (function(){
-  
-  const intervalLow = 30000; // update interval when not charging
-  const intervalHigh = 30000; // faster update when charging
+
   var showPercent = false;
   const width = 40;
   const height = 24;
@@ -57,8 +55,7 @@
     g.setFont('6x8');
     g.drawString(txt, x + 14, y + 10);
   
-    if (Bangle.isCharging()) changeInterval(id, intervalHigh);
-    else changeInterval(id, intervalLow);
+    
 }
   WIDGETS["widsmartbatt"] = {
     area: "tr",
@@ -80,6 +77,7 @@
     if (w.x - oversize <= x && x < w.x + width + oversize
       && w.y - oversize <= y && y < w.y + height + oversize) {
       E.stopEventPropagation && E.stopEventPropagation();
+      Bangle.buzz(20);
       showPercent = true;
       setTimeout(() => {
         showPercent = false;
@@ -93,8 +91,8 @@
   Bangle.on('charging', function () {
     WIDGETS["widsmartbatt"].draw();
   });
-
-  var id = setInterval(() => WIDGETS["widsmartbatt"].draw(), intervalLow);
+  //draw once per minute...
+  var id = setInterval(() => WIDGETS["widsmartbatt"].draw(), 60000);
 
   
 })();
