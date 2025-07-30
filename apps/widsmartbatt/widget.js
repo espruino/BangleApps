@@ -84,7 +84,7 @@
     WIDGETS["widsmartbatt"].draw();
   });
   
-  var id = setInterval(() => WIDGETS["widsmartbatt"].draw(), 60000);
+  setInterval(() => WIDGETS["widsmartbatt"].draw(), 60000);
 
   
 })();
