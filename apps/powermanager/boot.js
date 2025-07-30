@@ -138,7 +138,7 @@
     var newPercent =Math.round((E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery())/6);
     
     E.getBattery = function() {
-      var percentToReturn;
+
       if(Bangle.isCharging()){
         if(newPercent > savedBatPercent)
           savedBatPercent = newPercent;
