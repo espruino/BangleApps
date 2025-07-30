@@ -1,5 +1,5 @@
 (function(){
-
+  
   var showPercent = false;
   const width = 40;
   const height = 24;
@@ -19,47 +19,44 @@
   };
 
   function draw() {
-    let batt=E.getBattery();
-    let data = require("smartbatt").get();
-    let hrsLeft=data.hrsLeft;
-    let days = hrsLeft / 24;
+  let batt=E.getBattery();
+  let data = require("smartbatt").get();
+  let hrsLeft=data.hrsLeft;
+  let days = hrsLeft / 24;
+
+  let txt = showPercent
+    ? batt
+    : (days >= 1
+      ? Math.round(Math.min(days, 99)) + "d"
+      : Math.round(hrsLeft) + "h");
+  if(Bangle.isCharging()) txt=E.getBattery();
+  let s = 29;
+  let x = this.x, y = this.y;
+  let xl = x + 4 + batt * (s - 12) / 100;
   
-    let txt = showPercent
-      ? batt
-      : (days >= 1
-        ? Math.round(Math.min(days, 99)) + "d"
-        : Math.round(hrsLeft) + "h");
-    if(Bangle.isCharging()) txt=E.getBattery();
-    let s = 29;
-    let x = this.x, y = this.y;
-    let xl = x + 4 + batt * (s - 12) / 100;
-    
-    // Drawing code follows...
-    g.setColor(COLORS.bg);
-    g.fillRect(x + 2, y + 5, x + s - 6, y + 18);
+  // Drawing code follows...
+  g.setColor(COLORS.bg);
+  g.fillRect(x + 2, y + 5, x + s - 6, y + 18);
+
+  g.setColor(levelColor(batt));
+  g.fillRect(x + 1, y + 3, x + s - 5, y + 4);
+  g.fillRect(x + 1, y + 19, x + s - 5, y + 20);
+  g.fillRect(x, y + 4, x + 1, y + 19);
+  g.fillRect(x + s - 5, y + 4, x + s - 4, y + 19);
+  g.fillRect(x + s - 3, y + 8, x + s - 2, y + 16);
+  g.fillRect(x + 4, y + 15, xl, y + 16);
+
+  g.setColor(COLORS.fg);
+  g.setFontAlign(0, 0);
+  g.setFont('6x8');
+  g.drawString(txt, x + 14, y + 10);
+
   
-    g.setColor(levelColor(batt));
-    g.fillRect(x + 1, y + 3, x + s - 5, y + 4);
-    g.fillRect(x + 1, y + 19, x + s - 5, y + 20);
-    g.fillRect(x, y + 4, x + 1, y + 19);
-    g.fillRect(x + s - 5, y + 4, x + s - 4, y + 19);
-    g.fillRect(x + s - 3, y + 8, x + s - 2, y + 16);
-    g.fillRect(x + 4, y + 15, xl, y + 16);
-  
-    g.setColor(COLORS.fg);
-    g.setFontAlign(0, 0);
-    g.setFont('6x8');
-    g.drawString(txt, x + 14, y + 10);
-  
-    
 }
   WIDGETS["widsmartbatt"] = {
     area: "tr",
     width: 30,
-    draw: function() {
-        // Call your drawing function
-        draw();
-      }
+    draw: draw
   };
 
   // Touch to temporarily show battery percent
@@ -73,7 +70,6 @@
     if (w.x - oversize <= x && x < w.x + width + oversize
       && w.y - oversize <= y && y < w.y + height + oversize) {
       E.stopEventPropagation && E.stopEventPropagation();
-      Bangle.buzz(20);
       showPercent = true;
       setTimeout(() => {
         showPercent = false;
@@ -87,7 +83,7 @@
   Bangle.on('charging', function () {
     WIDGETS["widsmartbatt"].draw();
   });
-  //draw once per minute...
+  
   var id = setInterval(() => WIDGETS["widsmartbatt"].draw(), 60000);
 
   
