@@ -191,13 +191,47 @@ E.on('notify',msg=>{
         wind: d.wind,
         wdir: d.wdir,
         loc: d.loc
-    }
+    };
     // Convert string fields to numbers for iOS weather shortcut
     const numFields = ['code', 'wdir', 'temp','feels', 'hi', 'lo', 'hum', 'wind', 'uv', 'rain'];
     numFields.forEach(field => {
       if (weatherEvent[field] != null) weatherEvent[field] = +weatherEvent[field];
     });
     require("weather").update(weatherEvent);
+    NRF.ancsAction(msg.uid, false);
+    return;
+  }
+  
+  if (msg.title === "BangleDumpLocation") {
+    
+    const d = JSON.parse(msg.message);
+    
+    /* Example:
+    {"lat":"2912.0744", "lon":"2333.332", "city":"Chicago"}*/
+    let locationJson = {
+        t: "location",
+        lat:d.lat,
+        lon:d.lon,
+        city:d.city
+    
+    };
+    // Convert string fields to numbers
+    const numFields = ['lat', 'lon'];
+    numFields.forEach(field => {
+      if (locationJson[field] != null) locationJson[field] = +locationJson[field];
+    });
+   
+    //load mylocation file
+    let myLocationJson = Object.assign({
+      lat: d.lat,
+      lon: d.lon,
+      location:d.city
+    }, require("Storage").readJSON("mylocation.json", true) || {});
+    myLocationJson.lon=locationJson.lon;
+    myLocationJson.lat=locationJson.lat;
+    myLocationJson.location=locationJson.city;
+    require("Storage").write("mylocation.json",myLocationJson);
+    
     NRF.ancsAction(msg.uid, false);
     return;
   }
