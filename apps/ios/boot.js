@@ -227,8 +227,9 @@ E.on('notify',msg=>{
       lat: d.lat,
       lon: d.lon,
       location:d.city
-    }, require("Storage").readJSON("mylocation.json", true) || {});
-    
+    }, require("Storage").readJSON("mylocation.json", true) || {});    
+    //remove notification from phone
+    NRF.ancsAction(msg.uid, false);
     if(Math.abs(myLocationJson.lat - locationJson.lat) < 0.0001	 && Math.abs(myLocationJson.lon -locationJson.lon) < 0.0001){
       //same location, do not write
       return;
@@ -239,7 +240,7 @@ E.on('notify',msg=>{
     myLocationJson.location=locationJson.city;
     require("Storage").write("mylocation.json",myLocationJson);
     
-    NRF.ancsAction(msg.uid, false);
+
     return;
   }
 
