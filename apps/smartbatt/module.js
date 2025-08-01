@@ -1,28 +1,28 @@
 {
   var dataFile = "smartbattdata.json";
   var interval;
-  var storage=require("Storage");
-  
-  
+  var storage = require("Storage");
+
+
   var logFile = "smartbattlog.json";
-  
-  function getSettings(){
+
+  function getSettings() {
     return Object.assign({
       //Record Interval stored in ms
-        doLogging:false
+      doLogging: false
     }, require('Storage').readJSON("smartbatt.settings.json", true) || {});
   }
-  
+
   function logBatterySample(entry) {
     let log = storage.readJSON(logFile, 1) || [];
     //get human-readable time
     let d = new Date();
     entry.time = d.getFullYear() + "-" +
-                ("0"+(d.getMonth()+1)).slice(-2) + "-" +
-                ("0"+d.getDate()).slice(-2) + " " +
-                ("0"+d.getHours()).slice(-2) + ":" +
-                ("0"+d.getMinutes()).slice(-2) + ":" +
-                ("0"+d.getSeconds()).slice(-2);
+      ("0" + (d.getMonth() + 1)).slice(-2) + "-" +
+      ("0" + d.getDate()).slice(-2) + " " +
+      ("0" + d.getHours()).slice(-2) + ":" +
+      ("0" + d.getMinutes()).slice(-2) + ":" +
+      ("0" + d.getSeconds()).slice(-2);
 
     log.push(entry);
     if (log.length > 100) log = log.slice(-100);
@@ -44,15 +44,15 @@
 
     if (battChange <= 0) {
       reason = "Skipped: battery fluctuated or no change";
-      if(Math.abs(battChange)<5){
+      if (Math.abs(battChange) < 5) {
         //less than 6% difference, average percents
-        var newBatt=(batt+data.battLastRecorded)/2;
+        var newBatt = (batt + data.battLastRecorded) / 2;
         data.battLastRecorded = newBatt;
-      }else{
+      } else {
         //probably charged, ignore average
         data.battLastRecorded = batt;
       }
-      
+
       storage.writeJSON(dataFile, data);
     } else if (deltaHours <= 0 || !isFinite(deltaHours)) {
       reason = "Skipped: invalid time delta";
@@ -60,64 +60,40 @@
       data.battLastRecorded = batt;
       storage.writeJSON(dataFile, data);
     } else {
-
+      let weightCoefficient = 1;
       let currentDrainage = battChange / deltaHours;
-      let drainageChange=data.avgBattDrainage-currentDrainage;
-      //check if drainage rate has fluctuated quite a bit
-      //If fluctuation event is 0, first time fluctuating like this, cycles > 10 so as not to interfere with initial data collection.
-      if(Math.abs(drainageChange)>currentDrainage*0.7&&data.fluctuationEvent==0&&data.totalCycles>=10){
-        //has fluctuated, first time doing so
-        reason="Skipped: Extreme fluctuation";
-        //set fluctuationevent so it knows what was the first time.
-        data.fluctuationEvent=data.totalCycles+1;
-        data.battLastRecorded=batt;
-        storage.writeJSON(dataFile, data);
+      let drainageChange = data.avgBattDrainage - currentDrainage;
 
-        if(getSettings().doLogging){
-        // Always log the sample
-        logBatterySample({
-          battNow: batt,
-          battLast: data.battLastRecorded,
-          battChange: battChange,
-          deltaHours: deltaHours,
-          avgDrainage: data.avgBattDrainage,
-          reason: reason
-        });
-          return;
-      }else{
-        data.fluctuationEvent=0;
-      }
-        
-      }
-      
-      let newAvg = weightedAverage(data.avgBattDrainage, data.totalHours, currentDrainage, deltaHours);
-      data.avgBattDrainage=newAvg;
+
+      let newAvg = weightedAverage(data.avgBattDrainage, data.totalHours, currentDrainage, deltaHours * weightCoefficient);
+      data.avgBattDrainage = newAvg;
       data.timeLastRecorded = now;
       data.totalCycles += 1;
-      data.totalHours+=deltaHours;
+      data.totalHours += deltaHours;
       data.battLastRecorded = batt;
       storage.writeJSON(dataFile, data);
 
       reason = "Drainage recorded: " + currentDrainage.toFixed(3) + "%/hr";
     }
-    if(getSettings().doLogging){
+    if (getSettings().doLogging) {
       // Always log the sample
       logBatterySample({
         battNow: batt,
         battLast: data.battLastRecorded,
         battChange: battChange,
         deltaHours: deltaHours,
+        timeLastRecorded: data.timeLastRecorded,
         avgDrainage: data.avgBattDrainage,
         reason: reason
       });
     }
   }
-  
+
   function weightedAverage(oldValue, oldWeight, newValue, newWeight) {
     return (oldValue * oldWeight + newValue * newWeight) / (oldWeight + newWeight);
   }
 
-  
+
 
   function getData() {
     return storage.readJSON(dataFile, 1) || {
@@ -125,8 +101,7 @@
       battLastRecorded: E.getBattery(),
       timeLastRecorded: Date.now(),
       totalCycles: 0,
-      totalHours:0,
-      fluctuationEvent:0
+      totalHours: 0,
     };
   }
 
@@ -142,8 +117,8 @@
       hrsLeft: hrsLeft,
     };
   }
-  
-  function deleteData(){
+
+  function deleteData() {
     storage.erase(dataFile);
     storage.erase(logFile);
   }
@@ -151,11 +126,11 @@
   exports.record = recordBattery;
   exports.deleteData = deleteData;
   exports.get = estimateBatteryLife;
-  exports.changeInterval = function(newInterval) {
+  exports.changeInterval = function (newInterval) {
     clearInterval(interval);
-    interval=setInterval(recordBattery, newInterval);
+    interval = setInterval(recordBattery, newInterval);
   };
   // Start recording every 5 minutes
-  interval=setInterval(recordBattery, 600000);
+  interval = setInterval(recordBattery, 600000);
   recordBattery(); // Log immediately
 }
