@@ -2,7 +2,11 @@ var _a, _b;
 var prosettings = (require("Storage").readJSON("promenu.settings.json", true) || {});
 (_a = prosettings.naturalScroll) !== null && _a !== void 0 ? _a : (prosettings.naturalScroll = false);
 (_b = prosettings.wrapAround) !== null && _b !== void 0 ? _b : (prosettings.wrapAround = true);
-E.showMenu = function (items) {
+E.showMenu = (function (items) {
+    if (items == null) {
+        g.clearRect(Bangle.appRect);
+        return Bangle.setUI();
+    }
     var RectRnd = function (x1, y1, x2, y2, r) {
         var pp = [];
         pp.push.apply(pp, g.quadraticBezier([x2 - r, y1, x2, y1, x2, y1 + r]));
@@ -122,7 +126,6 @@ E.showMenu = function (items) {
                             nameScroll_1 = 0;
                     }, 300, name, v, item, idx, x, iy);
                 }
-                g.setColor(g.theme.fg);
                 iy += fontHeight;
                 idx++;
             };
@@ -204,7 +207,10 @@ E.showMenu = function (items) {
         else
             l.select(evt);
     };
-    Bangle.setUI({
+    var touchcb = (function (_button, xy) {
+        cb(void 0, xy);
+    });
+    var uiopts = {
         mode: "updown",
         back: back,
         remove: function () {
@@ -212,11 +218,20 @@ E.showMenu = function (items) {
             if (nameScroller)
                 clearInterval(nameScroller);
             Bangle.removeListener("swipe", onSwipe);
+            if (setUITouch)
+                Bangle.removeListener("touch", touchcb);
             (_a = options.remove) === null || _a === void 0 ? void 0 : _a.call(options);
         },
-        touch: (function (_button, xy) {
-            cb(void 0, xy);
-        }),
-    }, cb);
+    };
+    var setUITouch = process.env.VERSION >= "2v26";
+    if (!setUITouch) {
+        uiopts.touch = touchcb;
+    }
+    Bangle.setUI(uiopts, cb);
+    if (setUITouch) {
+        Bangle.removeListener("touch", Bangle.touchHandler);
+        delete Bangle.touchHandler;
+        Bangle.on("touch", touchcb);
+    }
     return l;
-};
+});

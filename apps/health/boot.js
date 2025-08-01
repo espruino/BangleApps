@@ -6,7 +6,7 @@
       function startMeasurement() {
         // if is charging, or hardly moved and face up/down, don't start HRM
         if (Bangle.isCharging() ||
-            (Bangle.getHealthStatus("last").movement<400 && Math.abs(Bangle.getAccel().z)>0.99)) return;
+            (Bangle.getHealthStatus("last").movement<100 && Math.abs(Bangle.getAccel().z)>0.99)) return;
         // otherwise turn HRM on
         Bangle.setHRMPower(1, "health");
         setTimeout(() => {
@@ -81,12 +81,6 @@ Bangle.on("health", health => {
     require("Storage").write(fn, "HEALTH2\0", 0, DB_HEADER_LEN + DB_RECORDS_PER_MONTH*inf.r); // header (and allocate full new file)
   }
   var recordPos = DB_HEADER_LEN+(rec*inf.r);
-
-  // scale down reported movement value in order to fit it within a
-  // uint8 DB field
-  health = Object.assign({}, health);
-  health.movement /= 8;
-
   require("Storage").write(fn, inf.encode(health), recordPos);
   if (rec%DB_RECORDS_PER_DAY != DB_RECORDS_PER_DAY-2) return;
   // we're at the end of the day. Read in all of the data for the day and sum it up

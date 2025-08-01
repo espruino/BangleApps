@@ -1,0 +1,4 @@
+0.01: App created w/ clockInfos, bold font, date and time.
+0.02: Added text truncation for long ClockInfo strings.
+0.03: Added small inline Clock Info next to date
+0.04: Fix date not clearing

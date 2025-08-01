@@ -275,6 +275,10 @@ apps.forEach((app,appIdx) => {
     } else
       ERROR(`App ${app.id} 'dependencies' must be an object`, {file:metadataFile});
   }
+  if (!app.storage) {
+    ERROR(`App ${app.id} metadata has no "storage" field`, {file:metadataFile});
+    return;
+  }
 
   if (app.storage.find(f=>f.name.endsWith(".clkinfo.js")) && !appTags.includes("clkinfo"))
     WARN(`App ${app.id} provides ...clkinfo.js but doesn't have clkinfo tag`, {file:metadataFile});

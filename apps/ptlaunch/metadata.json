@@ -2,7 +2,7 @@
   "id": "ptlaunch",
   "name": "Pattern Launcher",
   "shortName": "Pattern Launcher",
-  "version": "0.15",
+  "version": "0.16",
   "description": "Directly launch apps from the clock screen with custom patterns.",
   "icon": "app.png",
   "screenshots": [{"url":"manage_patterns_light.png"}],

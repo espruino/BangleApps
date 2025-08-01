@@ -23,3 +23,5 @@
 0.24: Redraw clock_info on update and provide color field for condition
 0.25: Added monochrome parameter to drawIcon in lib
 0.26: Expose update function (for use by iOS integration)
+0.27: Add UV index display
+0.28: Fix UV positioning, hide when 0

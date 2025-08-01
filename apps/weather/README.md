@@ -1,13 +1,18 @@
 # Weather
 
-This allows your Bangle.js to display weather reports from the Gadgetbridge app on an Android phone.
+This allows your Bangle.js to display weather reports from the Gadgetbridge app for an Android phone, or by using the iOS shortcut below to push weather information.
 
 It adds a widget with a weather pictogram and the temperature.
+It also adds a ClockInfo list to Bangle.js. 
 You can view the full report through the app:
 
 ![Screenshot](screenshot.png)
 
-## Setup
+## iOS Setup
+
+Use the iOS shortcut [here](https://www.icloud.com/shortcuts/73be0ce1076446f3bdc45a5707de5c4d). The shortcut uses Apple Weather for weather updates, and sends a notification, which is read by Bangle.js. To push weather every hour, or interval, you will need to create a shortcut automation for every time you want to push the weather.
+
+## Android Setup
 
 1. Install [Gadgetbridge for Android](https://f-droid.org/packages/nodomain.freeyourgadget.gadgetbridge/) on your phone.
 2. Set up [Gadgetbridge weather reporting](https://codeberg.org/Freeyourgadget/Gadgetbridge/wiki/Weather).
@@ -15,7 +20,7 @@ You can view the full report through the app:
 If using the `Bangle.js Gadgetbridge` app on your phone (as opposed to the standard F-Droid `Gadgetbridge`) you need to set the package name
 to `com.espruino.gadgetbridge.banglejs` in the settings of the weather app (`settings -> gadgetbridge support -> package name`).
 
-## Android Weather Apps
+### Android Weather Apps
 
 There are two weather apps for Android that can connect with Gadgetbridge:
 
@@ -49,11 +54,21 @@ When you first load QuickWeather, it will take you through the setup process. Yo
 
 **Note:** at one time, the Weather Notification app also worked with Gadgetbridge. However, many users are reporting it's no longer seeing the OpenWeatherMap API key as valid. The app has not received any updates since August of 2020, and may be unmaintained. 
 
+## Clock Infos
+
+Tap on any clockInfo when focused to directly open the weather app.
+Adds:
+* Condition ClockInfo with condition icon
+* Temperature ClockInfo with condition icon.
+* Wind speed ClockInfo.
+* Chance of rain ClockInfo.
+* Temperature ClockInfo without condition icon.
+
 ## Settings
 
 * Expiration timespan can be set after which the local weather data is considered as invalid
 * Widget can be hidden
-* To change the units for wind speed, you can install the [`Languages` app](https://banglejs.com/apps/?id=locale) which
+* To change the units for wind speed, you can install the [`Languages app`](https://banglejs.com/apps/?id=locale) which
 allows you to choose the units used for speed/distance/temperature and so on.
 
 ## Controls

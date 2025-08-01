@@ -34,6 +34,7 @@ var settings = Object.assign(
     power_lcd_off: false,
     powersave_by_default: false,
     sleep_between_waypoints: false,
+    keep_gps_alive: true
   },
   s.readJSON("gipy.json", true) || {}
 );
@@ -255,6 +256,7 @@ class Map {
   add_to_tile_image(img, absolute_tile_x, absolute_tile_y) {
     let tile_x = absolute_tile_x - this.first_tile[0];
     let tile_y = absolute_tile_y - this.first_tile[1];
+    if (tile_x < 0 || tile_y < 0) return; // FIXME: Negative Array index
     let side = img.getWidth() - 6;
 
     let thick = this.color[0] == 1;
@@ -609,16 +611,16 @@ class Status {
       );
 
       // disable gps when far from next point and locked
-      // if (Bangle.isLocked() && !settings.keep_gps_alive) {
-      //   let time_to_next_point =
-      //     (this.distance_to_next_point * 3.6) / settings.max_speed;
-      //   if (time_to_next_point > 60) {
-      //     Bangle.setGPSPower(false, "gipy");
-      //     setTimeout(function () {
-      //       Bangle.setGPSPower(true, "gipy");
-      //     }, time_to_next_point);
-      //   }
-      // }
+      if (Bangle.isLocked() && !settings.keep_gps_alive) {
+        let time_to_next_point =
+          (this.distance_to_next_point * 3.6) / settings.max_speed;
+        if (time_to_next_point > 60) {
+          Bangle.setGPSPower(false, "gipy");
+          setTimeout(function () {
+            Bangle.setGPSPower(true, "gipy");
+          }, time_to_next_point);
+        }
+      }
       let reaching_waypoint = this.path.is_waypoint(next_point);
       if (this.distance_to_next_point <= 100) {
         if (reaching_waypoint || !settings.sleep_between_waypoints) {

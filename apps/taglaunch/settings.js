@@ -2,7 +2,8 @@
 (function(back) {
   let settings = Object.assign({
     showClocks: true,
-    fullscreen: false
+    fullscreen: false,
+    buzz:false
   }, require("Storage").readJSON("taglaunch.json", true) || {});
 
   let fonts = g.getFonts();
@@ -21,8 +22,15 @@
      },
     /*LANG*/"Vector Font Size": {
       value: settings.vectorsize || 10,
-      min:10, max: 20,step:1,wrap:true,
+      min:10, max: 25,step:1,wrap:true,
       onchange: (m) => {save("vectorsize", m)}
+    },
+    /*LANG*/"Haptic Feedback": {
+      value: settings.buzz == true,
+      onchange: (m) => {
+        save("buzz", m);
+        
+      }
     },
     /*LANG*/"Show Clocks": {
       value: settings.showClocks == true,

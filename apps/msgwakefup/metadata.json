@@ -1,6 +1,6 @@
 { "id": "msgwakefup",
   "name": "Message wake on face up",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Temporarily activate wake on face up function when a new message is auto displayed.",
   "icon": "app.png",
   "tags": "messages,tweak",

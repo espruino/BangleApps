@@ -11,8 +11,8 @@ global.sleeplog = {
     // threshold settings
     maxAwake: 36E5, //  [ms] maximal awake time to count for consecutive sleep
     minConsec: 18E5, // [ms] minimal time to count for consecutive sleep
-    deepTh: 100, //     threshold for deep sleep
-    lightTh: 200, //    threshold for light sleep
+    deepTh: 150, //     threshold for deep sleep
+    lightTh: 300, //    threshold for light sleep
     wearTemp: 19.5, //    temperature threshold to count as worn
   }, require("Storage").readJSON("sleeplog.json", true) || {})
 };
