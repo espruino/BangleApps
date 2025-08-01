@@ -124,6 +124,7 @@ E.on('notify',msg=>{
     "tv.twitch": "Twitch",
     // could also use NRF.ancsGetAppInfo(msg.appId) here
   };
+  
 
   //if (appNames[msg.appId]) msg.a
   if (msg.title === "BangleDumpCalendar") {
@@ -227,6 +228,12 @@ E.on('notify',msg=>{
       lon: d.lon,
       location:d.city
     }, require("Storage").readJSON("mylocation.json", true) || {});
+    
+    if(Math.abs(myLocationJson.lat - locationJson.lat) < 0.0001	 && Math.abs(myLocationJson.lon -locationJson.lon) < 0.0001){
+      //same location, do not write
+      return;
+    }
+    
     myLocationJson.lon=locationJson.lon;
     myLocationJson.lat=locationJson.lat;
     myLocationJson.location=locationJson.city;
