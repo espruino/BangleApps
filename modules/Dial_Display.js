@@ -56,13 +56,17 @@ let dialDisplayGenerator = function(options) {
   return dialDisplay;
 }
 
+// Debugging below
+
 let options = {};
 let dialDisplay = dialDisplayGenerator(options);
 
 let cb = (step)=>{
   print(step);
-  dialDisplay(step);
+  let value = dialDisplay(step);
+  print(value);
 };
 
+g.clear();
 let dial = require("Dial")(cb);
 Bangle.on("drag", dial);
