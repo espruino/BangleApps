@@ -124,6 +124,7 @@ E.on('notify',msg=>{
     "tv.twitch": "Twitch",
     // could also use NRF.ancsGetAppInfo(msg.appId) here
   };
+  
 
   //if (appNames[msg.appId]) msg.a
   if (msg.title === "BangleDumpCalendar") {
@@ -191,7 +192,7 @@ E.on('notify',msg=>{
         wind: d.wind,
         wdir: d.wdir,
         loc: d.loc
-    }
+    };
     // Convert string fields to numbers for iOS weather shortcut
     const numFields = ['code', 'wdir', 'temp','feels', 'hi', 'lo', 'hum', 'wind', 'uv', 'rain'];
     numFields.forEach(field => {
@@ -199,6 +200,47 @@ E.on('notify',msg=>{
     });
     require("weather").update(weatherEvent);
     NRF.ancsAction(msg.uid, false);
+    return;
+  }
+  
+  if (msg.title === "BangleDumpLocation") {
+    
+    const d = JSON.parse(msg.message);
+    
+    /* Example:
+    {"lat":"2912.0744", "lon":"2333.332", "city":"Chicago"}*/
+    let locationJson = {
+        t: "location",
+        lat:d.lat,
+        lon:d.lon,
+        city:d.city
+    
+    };
+    // Convert string fields to numbers
+    const numFields = ['lat', 'lon'];
+    numFields.forEach(field => {
+      if (locationJson[field] != null) locationJson[field] = +locationJson[field];
+    });
+   
+    //load mylocation file
+    let myLocationJson = Object.assign({
+      lat: d.lat,
+      lon: d.lon,
+      location:d.city
+    }, require("Storage").readJSON("mylocation.json", true) || {});    
+    //remove notification from phone
+    NRF.ancsAction(msg.uid, false);
+    if(Math.abs(myLocationJson.lat - locationJson.lat) < 0.0001	 && Math.abs(myLocationJson.lon -locationJson.lon) < 0.0001){
+      //same location, do not write
+      return;
+    }
+    
+    myLocationJson.lon=locationJson.lon;
+    myLocationJson.lat=locationJson.lat;
+    myLocationJson.location=locationJson.city;
+    require("Storage").write("mylocation.json",myLocationJson);
+    
+
     return;
   }
 
