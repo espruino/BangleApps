@@ -16,3 +16,6 @@
 0.15: Fix error when displaying a category with only one clockinfo (fix #3728)
 0.16: Add BLE clkinfo entry
 0.17: Fix BLE icon alignment and border on some clocks
+0.18: Tweak BLE icon to add gap and ensure middle of B isn't filled
+0.19: Fix Altitude ClockInfo after BLE added
+      Tapping Altitude now updates the reading

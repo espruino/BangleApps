@@ -133,5 +133,7 @@
     };
 
     Bangle.on("alarmReload", () => WIDGETS["widalarmeta"].reload());
+    Bangle.on("lock", () => WIDGETS["widalarmeta"].draw(WIDGETS["widalarmeta"]))
+    Bangle.on("lcdPower", () => WIDGETS["widalarmeta"].draw(WIDGETS["widalarmeta"]))
   }
 })();

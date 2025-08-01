@@ -4,6 +4,7 @@
   "version": "0.13",
   "description": "Measure your heart rate and see live sensor data",
   "icon": "heartrate.png",
+  "screenshots" : [ { "url":"screenshot.png" } ],
   "tags": "health",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [

@@ -2,6 +2,9 @@ var DEBUG = false;
 var FILE = "touchtimer.data.json";
 
 var main = () => {
+  Bangle.loadWidgets();
+  require("widget_utils").swipeOn(); // hide widgets, make them visible with a swipe
+  
   var settings = readSettings();
 
   var button1 = new Button({ x1: 1, y1: 35, x2: 58, y2: 70 }, 1);

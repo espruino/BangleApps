@@ -39,22 +39,23 @@ exports.load = function() {
   var hrm = 0;
   var alt = "--";
   // callbacks (needed for easy removal of listeners)
-  function batteryUpdateHandler() { bangleItems[0].emit("redraw"); }
-  function stepUpdateHandler() { bangleItems[1].emit("redraw"); }
+  function batteryUpdateHandler() { bangleItems.find(i=>i.name=="Battery").emit("redraw"); }
+  function stepUpdateHandler() { bangleItems.find(i=>i.name=="Steps").emit("redraw"); }
   function hrmUpdateHandler(e) {
     if (e && e.confidence>60) hrm = Math.round(e.bpm);
-    bangleItems[2].emit("redraw");
+    bangleItems.find(i=>i.name=="HRM").emit("redraw");
   }
   function altUpdateHandler() {
     try {
       Bangle.getPressure().then(data=>{
         if (!data) return;
         alt = Math.round(data.altitude) + "m";
-        bangleItems[3].emit("redraw");
+        bangleItems.find(i=>i.name=="Altitude").emit("redraw");
       });
     } catch (e) {
       print("Caught "+e+"\n in function altUpdateHandler in module clock_info");
-      bangleItems[3].emit('redraw');}
+      bangleItems.find(i=>i.name=="Altitude").emit('redraw');
+    }
   }
   // actual menu
   var menu = [{
@@ -120,7 +121,6 @@ exports.load = function() {
       },
     },
     { name: "BLE",
-      hasRange: false,
       isOn: () => {
         const s = NRF.getSecurityStatus();
         return s.advertising || s.connected;
@@ -128,7 +128,8 @@ exports.load = function() {
       get: function() {
         return {
           text: this.isOn() ? "On" : "Off",
-          img: atob("GBiBAAAAAAAAAAAYAAAcAAAWAAATAAARgAMRgAGTAADWAAB8AAA4AAA4AAB8AADWAAGTAAMRgAARgAATAAAWAAAcAAAYAAAAAAAAAA==")
+          img: atob("GBiBAAAAAAAAAAAYAAAcAAAWAAATAAARgAMRgAGTAADGAAB8AAA4AAA4AAB8AADGAAGTAAMRgAARgAATAAAWAAAcAAAYAAAAAAAAAA==")
+          // small gaps added to BLE icon to ensure middle of B isn't filled
         };
       },
       run: function() {
@@ -155,6 +156,7 @@ exports.load = function() {
         min : 0, max : settings.maxAltitude,
         img : atob("GBiBAAAAAAAAAAAAAAAAAAAAAAACAAAGAAAPAAEZgAOwwAPwQAZgYAwAMBgAGBAACDAADGAABv///////wAAAAAAAAAAAAAAAAAAAA==")
       }),
+      run : function() { alt = "--"; this.emit("redraw"); altUpdateHandler(); },
       show : function() { this.interval = setInterval(altUpdateHandler, 60000); alt = "--"; altUpdateHandler(); },
       hide : function() { clearInterval(this.interval); delete this.interval; },
     });
