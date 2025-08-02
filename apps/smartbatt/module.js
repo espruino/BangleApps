@@ -62,9 +62,6 @@
     } else {
       let weightCoefficient = 1;
       let currentDrainage = battChange / deltaHours;
-      let drainageChange = data.avgBattDrainage - currentDrainage;
-
-
       let newAvg = weightedAverage(data.avgBattDrainage, data.totalHours, currentDrainage, deltaHours * weightCoefficient);
       data.avgBattDrainage = newAvg;
       data.timeLastRecorded = now;
@@ -115,6 +112,9 @@
     return {
       batt: batt,
       hrsLeft: hrsLeft,
+      avgDrainage:data.avgDrainage,
+      totalHours:data.totalHours,
+      cycles:data.cycles
     };
   }
 
