@@ -1,25 +1,28 @@
 (function() {
   var img;
-  var v;
-  var data;
-  var hrLeft = 0;
-  var daysLeft = 0;
-  var showPercent=false;
+  var batt;
   //updates values
-  function updateValues(){
-    v = E.getBattery();
-    data = require("smartbatt").get();
-    hrLeft = data.hrsLeft;
-    daysLeft = hrLeft / 24;
 
-    hrLeft = Math.round(hrLeft);
+  
+  function getHrsFormatted(hrsLeft){
+
+    var daysLeft = hrsLeft / 24;
     daysLeft = Math.round(daysLeft);
-  }
+    if (Bangle.isCharging()) {
+      return batt+"%";
+    }
+    else if(daysLeft >= 1) {
+      return daysLeft+"d";
+    }
 
+    else {
+      return Math.round(hrsLeft)+"h";
+    }
+  }
   
   //draws battery icon and fill bar
   function drawBatt(){
-    v =E.getBattery();
+    batt =E.getBattery();
     var s=24,g=Graphics.createArrayBuffer(24,24,1,{msb:true});
     g.fillRect(0,6,s-3,18).clearRect(2,8,s-5,16).fillRect(s-2,10,s,15).fillRect(3,9,3+v*(s-9)/100,15);
     g.transparent=0;
@@ -29,7 +32,6 @@
   //calls both updates for values and icons.
   //might split in the future since values updates once every five minutes so we dont need to call it in every minute while the battery can be updated once a minute.
   function updateDisplay(){
-    updateValues();
     drawBatt();
   }
 
@@ -38,19 +40,16 @@
     items: [
       { name : "BattStatus",
         get : () => {
-          updateValues();
-          drawBatt();
           
+          drawBatt();
+          var data=require("smartbatt").get();
+
           //update clock info according to batt state
           if (Bangle.isCharging()) {
-            return { text: v+"%", img : img};
+            return { text: batt+"%", img : img};
           }
-          else if(daysLeft >= 1) {
-            return { text: daysLeft+"d", img : img};
-          }
-
-          else {
-            return {text: hrLeft+"h", img: img};
+          else{
+            return { text: getHrsFormatted(data.hrsLeft), img : img};
           }
         },
 
@@ -58,7 +57,7 @@
             this.interval = setInterval(()=>{
                 updateDisplay();
                 this.emit('redraw');
-              }, 60000);
+              }, 300000);
           },
 
         hide : function() {
@@ -76,7 +75,7 @@
         show : function() {
             this.interval = setInterval(()=>{
                 this.emit('redraw');
-              }, 60000);
+              }, 300000);
           },
 
         hide : function() {
