@@ -12,7 +12,8 @@
   "readme": "README.md",
   "storage": [
     {"name":"smartbatt","url":"module.js"},
-    {"name":"smartbatt.settings.js","url":"settings.js"}
+    {"name":"smartbatt.settings.js","url":"settings.js"},
+    {"name":"smartbatt.clkinfo.js","url":"clkinfo.js"}
   ],
   "data": [
     {"name":"smartbatt.settings.json"}
