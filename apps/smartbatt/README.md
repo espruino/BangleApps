@@ -8,6 +8,10 @@ When this app is installed, <i><b>do not rely on it for the first 24-30 hours.</
 The module might return different data than expected, or a severely low prediction. Give it time. It will learn from drainage rates, which needs the battery to drain. If your watch normally lasts for a long time on one charge, it will take longer for the module to return an accurate reading.
 
 If you think something is wrong with the predictions after 3 days, try clearing the data, and let it rebuild again from scratch.
+## Clock Infos
+The module provides two clockInfos:
+- Days left
+- Learned drainage rate per hour
 
 ## Settings
 ### Clear Data - Clears all learned data. 
@@ -27,7 +31,18 @@ Logs:
 ## Functions
 From any app, you can call `require("smartbatt")` and then one of the functions below:
 * `require("smartbatt").record()` - Attempts to record the battery and push it to the average.
-* `require("smartbatt").get()` - Returns an object that contains the hours left and current battery percentage
+* `require("smartbatt").get()` - Returns an object that contains:
+
+  
+  * `hrsRemaining` - Hours remaining
+  * `avgDrainage` - Learned battery drainage per hour
+  * `totalCycles` - Total times the battery has been recorded and averaged
+  * `totalHours` - Total hours recorded
+  * `batt` - Current battery level
+
+    
 * `require("smartbatt").deleteData()` - Deletes all learned data. (Automatically re-learns)
 ## Creator
-RKBoss6
+- RKBoss6
+## Contributors
+- RelapsingCertainly
