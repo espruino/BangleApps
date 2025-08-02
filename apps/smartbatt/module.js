@@ -112,9 +112,9 @@
     return {
       batt: batt,
       hrsLeft: hrsLeft,
-      avgDrainage:data.avgDrainage,
+      avgDrainage:data.avgBattDrainage,
       totalHours:data.totalHours,
-      cycles:data.cycles
+      cycles:data.totalCycles
     };
   }
 
