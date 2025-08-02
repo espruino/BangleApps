@@ -24,7 +24,7 @@
   function drawBatt(){
     batt =E.getBattery();
     var s=24,g=Graphics.createArrayBuffer(24,24,1,{msb:true});
-    g.fillRect(0,6,s-3,18).clearRect(2,8,s-5,16).fillRect(s-2,10,s,15).fillRect(3,9,3+v*(s-9)/100,15);
+    g.fillRect(0,6,s-3,18).clearRect(2,8,s-5,16).fillRect(s-2,10,s,15).fillRect(3,9,3+batt*(s-9)/100,15);
     g.transparent=0;
     img=g.asImage("string");
   }
