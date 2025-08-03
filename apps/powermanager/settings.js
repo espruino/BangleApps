@@ -27,13 +27,13 @@
     'Widget': function() {
       E.showMenu(submenu_widget);
     },
-    'Monotonic percentage': {
+    'Stable Percentage': {
       value: !!settings.forceMonoPercentage,
       onchange: v => {
         writeSettings("forceMonoPercentage", v);
       }
     },
-    'Monotonic voltage': {
+    'Stable Voltage': {
       value: !!settings.forceMonoVoltage,
       onchange: v => {
         writeSettings("forceMonoVoltage", v);

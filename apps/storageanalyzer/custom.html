@@ -24,7 +24,7 @@
     <script>
       let globalApps = [];
       let storageStats = null;
-
+      
       function onInit(device) {
         Util.showModal("Reading Storage...");
         Puck.eval(`(()=>{
@@ -61,7 +61,9 @@
           drawTable();
         });
       }
-
+      function roundDecimal(num){
+        return Math.round(num * 10) / 10;
+      }
       function drawTable() {
         document.getElementById("storageTable").innerHTML = `
           <table class="table table-striped">
@@ -91,12 +93,12 @@
         // App-specific chart
         const chartData = [
           ['App', 'Total Size (KB)']
-        ].concat(globalApps.map(app => [app[0], (app[1] + app[2])/1000]));
+        ].concat(globalApps.map(app => [app[0], roundDecimal((app[1] + app[2])/1000)]));
 
         const data = google.visualization.arrayToDataTable(chartData);
 
         const options = {
-          title: 'App Storage Breakdown',
+          title: 'App Storage Breakdown (KBs)',
           chartArea: { width: '90%', height: '80%' },
           legend: { position: 'bottom' }
         };
@@ -106,17 +108,19 @@
 
         // Total storage chart
         if (storageStats) {
-          const usedKB = storageStats.usedBytes / 1000;
-          const freeKB = storageStats.freeBytes / 1000;
+          const usedKB = roundDecimal(storageStats.fileBytes / 1000);
+          const freeKB = roundDecimal(storageStats.freeBytes / 1000);
+          const trashKB =  roundDecimal(storageStats.trashBytes / 1000);
           const totalData = google.visualization.arrayToDataTable([
             ['Type', 'KB'],
             ['Used', usedKB],
-            ['Free', freeKB]
+            ['Free', freeKB],
+            ['Trash', trashKB],
           ]);
 
           const totalOptions = {
-            title: 'Total Storage Usage',
-            pieHole: 0.4,
+            title: 'Total Storage Usage (KBs)',
+            
             chartArea: { width: '90%', height: '80%' },
             legend: { position: 'bottom' }
           };
