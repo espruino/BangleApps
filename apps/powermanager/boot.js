@@ -1,9 +1,10 @@
+
 (function() {
   var settings = Object.assign(
     require('Storage').readJSON("powermanager.default.json", true) || {},
     require('Storage').readJSON("powermanager.json", true) || {}
   );
-  
+  var savedBatPercent=E.getBattery();
   if (settings.log) {
     let logFile = require('Storage').open("powermanager.log","a");
     let def = require('Storage').readJSON("powermanager.def.json", true) || {};
@@ -77,7 +78,7 @@
       })(Bangle[functionName]);
     }
 
-
+    let functions = {};
     let wrapDeferred = ((o,t) => (a) => {
       if (a == eval || typeof a == "string") {
         return o.apply(this, arguments);
@@ -133,25 +134,17 @@
     handleCharging(Bangle.isCharging());
   }
 
-  var savedBatPercent=E.getBattery();
+  
   if (settings.forceMonoPercentage){
-    var newPercent =Math.round((E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery())/6);
-    
+    var oldGetBattery=E.getBattery;
     E.getBattery = function() {
-
-      if(Bangle.isCharging()){
-        if(newPercent > savedBatPercent)
-          savedBatPercent = newPercent;
-      }else{
-        if(newPercent < savedBatPercent)
-          savedBatPercent = newPercent;
-      }
-      return savedBatPercent;
-  };
+      var newPercent =Math.round((oldGetBattery()+oldGetBattery()+oldGetBattery()+oldGetBattery()+oldGetBattery()+oldGetBattery())/6);
+      return newPercent;
+  }
   }
   
   if (settings.forceMonoVoltage){
-    var v = (NRF.getBattery()+NRF.getBattery()+NRF.getBattery()+NRF.getBattery()+NRF.getBattery()+NRF.getBattery())/6;
+    var v = (NRF.getBattery()+NRF.getBattery()+NRF.getBattery()+NRF.getBattery())/4;
     var ov = NRF.getBattery;
     NRF.getBattery = function() {
       var current = (ov()+ov()+ov()+ov())/4;
