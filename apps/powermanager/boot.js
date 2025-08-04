@@ -1,10 +1,9 @@
-
 (function() {
   var settings = Object.assign(
     require('Storage').readJSON("powermanager.default.json", true) || {},
     require('Storage').readJSON("powermanager.json", true) || {}
   );
-  var savedBatPercent=E.getBattery();
+
   if (settings.log) {
     let logFile = require('Storage').open("powermanager.log","a");
     let def = require('Storage').readJSON("powermanager.def.json", true) || {};
@@ -13,7 +12,7 @@
     let hw = require('Storage').readJSON("powermanager.hw.json", true) || {};
     if (!hw.start) hw.start = Date.now();
     if (!hw.power) hw.power = {};
-    
+
     const saveEvery = 1000 * 60 * 5;
     const TO_WRAP = ["GPS","Compass","Barometer","HRM","LCD"];
 
@@ -29,9 +28,7 @@
         require('Storage').writeJSON("powermanager.hw.json", hw);
       }
     }
-    
-    
-    
+
     setInterval(save, saveEvery);
 
     E.on("kill", ()=>{
@@ -134,13 +131,15 @@
     handleCharging(Bangle.isCharging());
   }
 
-  
   if (settings.forceMonoPercentage){
-    var oldGetBattery=E.getBattery;
+    var p = (E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery())/4;
+    var op = E.getBattery;
     E.getBattery = function() {
-      var newPercent =Math.round((oldGetBattery()+oldGetBattery()+oldGetBattery()+oldGetBattery()+oldGetBattery()+oldGetBattery())/6);
-      return newPercent;
-  }
+      var current = Math.round((op()+op()+op()+op())/4);
+      if (Bangle.isCharging() && current > p) p = current;
+      if (!Bangle.isCharging() && current < p) p = current;
+      return p;
+    };
   }
   
   if (settings.forceMonoVoltage){
