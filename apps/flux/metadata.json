@@ -25,8 +25,8 @@
             "url": "app.js"
         },
         {
-            "name": "settings.js",
-            "url": "flux.settings.js"
+            "name": "flux.settings.js",
+            "url": "settings.js"
         },
         {
             "name": "flux.img",
