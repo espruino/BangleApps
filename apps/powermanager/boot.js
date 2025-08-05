@@ -75,7 +75,6 @@
       })(Bangle[functionName]);
     }
 
-    let functions = {};
     let wrapDeferred = ((o,t) => (a) => {
       if (a == eval || typeof a == "string") {
         return o.apply(this, arguments);
