@@ -12,5 +12,6 @@
   "storage": [
     {"name":"sevenmin.app.js", "url":"app.js"},
     {"name":"sevenmin.img", "url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "thyttan"
 }
