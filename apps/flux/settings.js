@@ -1,9 +1,26 @@
 (function(back) {
-  const FILE = "flex.settings.json";
+  const FILE = "flux.settings.json";
+
+  // Color list shared across fields
+  const COLORS = [
+    "White", "Black", "Red", "Blue", "Green",
+    "Yellow", "Orange", "Purple", "Lime",
+    "Cyan", "Pink", "Light Blue"
+  ];
+
+  const directions = [
+    "Up > Down",
+    "Down > Up"
+  ];
+
+  function colorIndex(name) {
+    let i = COLORS.indexOf(name);
+    return i >= 0 ? i : 0;
+  }
 
   // Load existing settings with defaults
   let settings = Object.assign({
-    "24hour": false,
+    direction: 0,
     bg: "Black",
     fg: "White",
     bg2: "Lime",
@@ -15,12 +32,14 @@
   }
 
   E.showMenu({
-    "": { title: "Flex Watchface" },
+    "": { title: "Flux Watchface" },
     "< Back": back,
-    "24 Hour Time": {
-      value: !!settings["24hour"],
-      onchange: v => {
-        settings["24hour"] = v;
+    "Direction": {
+      value: settings.direction,
+      min: 0, max: 1,
+      format: i => directions[i],
+      onchange: i => {
+        settings.direction = i;
         writeSettings();
       }
     },
@@ -61,16 +80,4 @@
       }
     },
   });
-
-  // Color list shared across fields
-  const COLORS = [
-    "White", "Black", "Red", "Blue", "Green",
-    "Yellow", "Orange", "Purple", "Lime",
-    "Cyan", "Pink", "Light Blue"
-  ];
-
-  function colorIndex(name) {
-    let i = COLORS.indexOf(name);
-    return i >= 0 ? i : 0;
-  }
 });
