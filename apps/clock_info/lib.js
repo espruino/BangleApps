@@ -2,6 +2,7 @@
 
 let storage = require("Storage");
 let stepGoal = undefined;
+let stepUpdateInterval;
 // Load step goal from health app and pedometer widget
 let d = storage.readJSON("health.json", true) || {};
 stepGoal = d.stepGoal;
@@ -49,7 +50,8 @@ exports.load = function() {
     try {
       Bangle.getPressure().then(data=>{
         if (!data) return;
-        alt = Math.round(data.altitude) + "m";
+
+        alt =require("locale").distance(data.altitude);
         bangleItems.find(i=>i.name=="Altitude").emit("redraw");
       });
     } catch (e) {
@@ -85,8 +87,9 @@ exports.load = function() {
           text : v, v : v, min : 0, max : stepGoal,
         img : atob("GBiBAAcAAA+AAA/AAA/AAB/AAB/gAA/g4A/h8A/j8A/D8A/D+AfH+AAH8AHn8APj8APj8AHj4AHg4AADAAAHwAAHwAAHgAAHgAADAA==")
       };},
-      show : function() { Bangle.on("step", stepUpdateHandler); stepUpdateHandler(); },
-      hide : function() { Bangle.removeListener("step", stepUpdateHandler); },
+      show : function() { stepUpdateInterval=setInterval(stepUpdateHandler,150000); stepUpdateHandler(); },
+      hide : function() { clearInterval(stepUpdateInterval); },
+      run:stepUpdateHandler
     },
     { name : "HRM",
       hasRange : true,
