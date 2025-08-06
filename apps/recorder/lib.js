@@ -114,6 +114,28 @@ exports.getRecorders = function() {
         stop : () => {},
         draw : (x,y) => g.reset().drawImage(atob("DAwBAAMMeeeeeeeecOMMAAMMMMAA"),x,y)
       };
+    },
+    accel:function() {
+      var ax=0,ay=0,az=0,n=0;
+      function onAccel(a) {
+        ax += a.x;
+        ay += a.y;
+        az += a.z;
+        n++;
+      }
+      return {
+        name : "Accel",
+        fields : ["Accel X", "Accel Y", "Accel Z"],
+        getValues : () => {
+          if (n<1) n=1;
+          var r = [(ax/n).toFixed(2), (ay/n).toFixed(2), (az/n).toFixed(2)];
+          n = ax = ay = az = 0;
+          return r;
+        },
+        start : () => { Bangle.on('accel', onAccel); },
+        stop : () => { Bangle.removeListener('accel', onAccel); },
+        draw : (x,y) => g.reset().drawImage(atob("DAwBAAMMeeeeeeeecOMMAAMMMMAA"),x,y)
+      };
     }
   };
   if (Bangle.getPressure){

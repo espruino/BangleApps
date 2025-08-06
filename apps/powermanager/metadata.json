@@ -2,7 +2,7 @@
   "id": "powermanager",
   "name": "Power Manager",
   "shortName": "Power Manager",
-  "version": "0.12",
+  "version": "0.13",
   "description": "Allow configuration of warnings for battery charging, stabilization of voltage, stabilization of battery percentage, and battery logging.",
   "icon": "app.png",
   "type": "bootloader",
