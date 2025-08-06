@@ -57,7 +57,8 @@
     let drawSeconds = false;
 
     // If always showing, or the clock is visible
-    if (config.whenToShow === 0 || Bangle.CLOCK) {
+    if (config.whenToShow === 1 && !Bangle.CLOCK)
+        return;
       // Determine text and width
       if (next > 0 && next <= config.maxhours*60*60*1000) {
         const hours = Math.floor((next-1) / 3600000).toString();
