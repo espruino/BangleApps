@@ -101,23 +101,10 @@ const colors = {
   "Pink": [1,0.5,1]
 };
 
-
-const color_schemes = {
-  "Lime": [[0,0,0],[1,1,1],[0,1,0.5],[0,1,0.5]],
-  "Red": [[0,0,0],[1,1,1],[0,1,0.5],[0,1,0.5]]
-};
-
 let bg_color = [0,0,0];
 let fg_color = [1,1,1];
 let bg_color_topo = [1,0,0.5];
 let fg_color_topo = [0,1,0.5];
-
-function load_color_scheme(color_scheme) {
-  bg_color = color_scheme[0];
-  fg_color = color_scheme[1];
-  bg_color_topo = color_scheme[2];
-  fg_color_topo = color_scheme[3];
-}
 
 function randomize_numbers(){
   previous_corner_positions = JSON.parse(JSON.stringify(corner_positions));
