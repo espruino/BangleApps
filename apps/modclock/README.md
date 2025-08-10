@@ -18,7 +18,9 @@ A beautifully simple, modern clock with three Clock Infos, and a clean UI. Fast-
 * Uses rounded rectangles and a bold font for a simple, clean, modern look.
 * Has Fast Loading, for quicker access to launcher.
 
-
+## Settings
+### Accent Color
+- The color clockInfos draw as when focused (tapped or changed).
 ## Creator
 
 RKBoss6
