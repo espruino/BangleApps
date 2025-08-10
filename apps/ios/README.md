@@ -42,7 +42,7 @@ By using the `Shortcuts` app on your phone, you can send weather, calendar, and 
 While you may write your own shortcuts if you prefer (for example, to get weather from a different source), three are provided:
 
 - [Calendar shortcut](https://www.icloud.com/shortcuts/4eac12548b4c424dbcdb1bd58cff338f)
-- [Weather shortcut](https://www.icloud.com/shortcuts/106c68bfac3746fe9a55761a3be8d092)
+- [Weather shortcut](https://www.icloud.com/shortcuts/73be0ce1076446f3bdc45a5707de5c4d)
 - [Location shortcut](https://www.icloud.com/shortcuts/853c41e09a8e491f893a63b464d73ea1)
 
 Note: The shortcuts must keep the names defaulted by the shortcut in order for the watch to detect the weather, calender, or location data. If you rename it from `BangleDump...` to something else, it will no longer get the info, and just display it as a notification on the watch.
