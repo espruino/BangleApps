@@ -2,7 +2,6 @@
 
 let storage = require("Storage");
 let stepGoal = undefined;
-let stepUpdateInterval;
 // Load step goal from health app and pedometer widget
 let d = storage.readJSON("health.json", true) || {};
 stepGoal = d.stepGoal;
