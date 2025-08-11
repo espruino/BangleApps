@@ -87,9 +87,8 @@ exports.load = function() {
           text : v, v : v, min : 0, max : stepGoal,
         img : atob("GBiBAAcAAA+AAA/AAA/AAB/AAB/gAA/g4A/h8A/j8A/D8A/D+AfH+AAH8AHn8APj8APj8AHj4AHg4AADAAAHwAAHwAAHgAAHgAADAA==")
       };},
-      show : function() { stepUpdateInterval=setInterval(stepUpdateHandler,150000); stepUpdateHandler(); },
-      hide : function() { clearInterval(stepUpdateInterval); },
-      run:stepUpdateHandler
+      show : function() { Bangle.on("step", stepUpdateHandler); stepUpdateHandler(); },
+      hide : function() { Bangle.removeListener("step", stepUpdateHandler); },
     },
     { name : "HRM",
       hasRange : true,
