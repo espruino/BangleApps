@@ -8,7 +8,7 @@
 
     var daysLeft = hrsLeft / 24;
     daysLeft = Math.round(daysLeft);
-    else if(daysLeft >= 1) {
+    if(daysLeft >= 1) {
       return daysLeft+"d";
     }
 
