@@ -59,3 +59,7 @@ The generated function takes three arguments:
 `step` - +1 or -1
 `value` - the previous value the step acts on.
 `isReinit` - true/false, whether to draw all of the dial or just the indicator.
+
+Notes:
+======
+- It would be nice to choose what colors are used. Something for the future.
