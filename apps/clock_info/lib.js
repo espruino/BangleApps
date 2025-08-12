@@ -49,7 +49,8 @@ exports.load = function() {
     try {
       Bangle.getPressure().then(data=>{
         if (!data) return;
-        alt = Math.round(data.altitude) + "m";
+
+        alt =require("locale").distance(data.altitude);
         bangleItems.find(i=>i.name=="Altitude").emit("redraw");
       });
     } catch (e) {

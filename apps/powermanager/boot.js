@@ -3,7 +3,7 @@
     require('Storage').readJSON("powermanager.default.json", true) || {},
     require('Storage').readJSON("powermanager.json", true) || {}
   );
-  
+
   if (settings.log) {
     let logFile = require('Storage').open("powermanager.log","a");
     let def = require('Storage').readJSON("powermanager.def.json", true) || {};
@@ -12,7 +12,7 @@
     let hw = require('Storage').readJSON("powermanager.hw.json", true) || {};
     if (!hw.start) hw.start = Date.now();
     if (!hw.power) hw.power = {};
-    
+
     const saveEvery = 1000 * 60 * 5;
     const TO_WRAP = ["GPS","Compass","Barometer","HRM","LCD"];
 
@@ -28,9 +28,7 @@
         require('Storage').writeJSON("powermanager.hw.json", hw);
       }
     }
-    
-    
-    
+
     setInterval(save, saveEvery);
 
     E.on("kill", ()=>{
@@ -76,7 +74,6 @@
         return result;
       })(Bangle[functionName]);
     }
-
 
     let wrapDeferred = ((o,t) => (a) => {
       if (a == eval || typeof a == "string") {
@@ -133,25 +130,19 @@
     handleCharging(Bangle.isCharging());
   }
 
-  var savedBatPercent=E.getBattery();
   if (settings.forceMonoPercentage){
-    var newPercent =Math.round((E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery())/6);
-    
+    var p = Math.round((E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery())/4);
+    var op = E.getBattery;
     E.getBattery = function() {
-
-      if(Bangle.isCharging()){
-        if(newPercent > savedBatPercent)
-          savedBatPercent = newPercent;
-      }else{
-        if(newPercent < savedBatPercent)
-          savedBatPercent = newPercent;
-      }
-      return savedBatPercent;
-  };
+      var current = Math.round((op()+op()+op()+op())/4);
+      if (Bangle.isCharging() && current > p) p = current;
+      if (!Bangle.isCharging() && current < p) p = current;
+      return p;
+    };
   }
   
   if (settings.forceMonoVoltage){
-    var v = (NRF.getBattery()+NRF.getBattery()+NRF.getBattery()+NRF.getBattery()+NRF.getBattery()+NRF.getBattery())/6;
+    var v = (NRF.getBattery()+NRF.getBattery()+NRF.getBattery()+NRF.getBattery())/4;
     var ov = NRF.getBattery;
     NRF.getBattery = function() {
       var current = (ov()+ov()+ov()+ov())/4;

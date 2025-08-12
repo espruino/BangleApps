@@ -19,6 +19,7 @@ You can record
 * **BAT** Battery percentage and voltage
 * **Steps** Steps counted by the step counter
 * **Baro** (Bangle.js 2) Using the built-in barometer to record Temperature, Pressure and Altitude
+* **Accel**  Average acceleration values in X,Y and Z
 * **Core** CoreTemp body temperature *if* you have a CoreTemp device and the https://banglejs.com/apps/?id=coretemp app installed
 
 You can then start/stop recording from the Recorder app itself (and as long as widgets are
@@ -29,12 +30,29 @@ Some apps like the [Run app](https://banglejs.com/apps/?id=run) are able to auto
 as well. They need to define a `foobar.recorder.js` file - see the `getRecorders`
 function in `lib.js` for more information.
 
-## Graphing
+## Viewing and Downloading Data
 
-You can download the information to the PC using [the App Loader](https://banglejs.com/apps/?id=recorder). Connect
-to your Bangle, then in `My Apps` click the disk icon next to the `Recorder` app to download data.
+You can download and visualize the information using [the App Loader](https://banglejs.com/apps/?id=recorder). Connect
+to your Bangle, then in `My Apps` click the disk icon next to the `Recorder` app to access the download interface.
 
-You can also view some information on the watch.
+### Interactive Web Interface
+
+The download interface provides individual track visualization with:
+
+* **Interactive Leaflet maps** - Each GPS track gets its own map using OpenStreetMap tiles
+* **Track statistics** - Distance, duration, and track points automatically calculated
+* **Start/End markers** - Green circles mark track start, red circles mark end points
+* **Interactive track points** - Click anywhere along the GPS track to see detailed data at that point
+* **Data popups** - View available data for each point (time, heart rate, altitude, speed, steps, battery, barometer - if recorded)
+* **Interactive charts** - Collapsible graphs for heart rate, battery, steps, elevation, speed, and barometer data with PNG export
+* **Download options** - KML, GPX, and CSV formats for individual tracks or all at once
+* **Settings** - Option to include/exclude entries without GPS coordinates
+* **Unit preferences** - Choose between metric, imperial, or auto-detect based on your locale
+* **Mobile responsive** - Works well on all devices
+
+### On-Watch Visualization
+
+You can also view some information on the watch:
 
 * Tap `View Tracks`
 * Tap on the Track number you're interested in, and you'll see a page with information about that track...
