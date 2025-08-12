@@ -103,6 +103,9 @@ let volumeChangedThisGoAround = false;
 let knobTimeout;
 let dragHandler = function(e) {
 
+  let DialDisplay = require("Dial_Display");
+  let volumeKnobVisual = new DialDisplay();
+
   let cb = ud => {
       Bangle.musicControl(ud<0 ? "volumedown" : "volumeup");
       Bangle.buzz(20);
@@ -126,9 +129,10 @@ let dragHandler = function(e) {
 
   if (volumeChangedThisGoAround && Math.abs(dx)>32) {
       // setup volume knob here.
-    cb(Math.sign(dx))
+    let cbVisual = (step, value, reinit)=>{cb(step); volumeKnobVisual(step, value, reinit)};
+    cbVisual(Math.sign(dx)*Math.sign(g.getHeight()/2-e.y), 0, true)
     resetOuterScopeVariables();
-    let volumeKnob = require("Dial")(cb);
+    let volumeKnob = require("Dial")(cbVisual);
     let timingOutVolumeKnob = (e)=>{
         if (!e.b) {
           setKnobTimeout();
@@ -147,6 +151,7 @@ let dragHandler = function(e) {
           Bangle.removeListener("swipe", swipeMask);
           Bangle.buzz(40);
           setTimeout(Bangle.buzz, 150, 40, 0.8)
+          gfx();
           knobTimeout = undefined;
           print("removed volume knob")
         }, 350);
