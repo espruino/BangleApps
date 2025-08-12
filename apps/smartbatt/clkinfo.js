@@ -8,9 +8,6 @@
 
     var daysLeft = hrsLeft / 24;
     daysLeft = Math.round(daysLeft);
-    if (Bangle.isCharging()) {
-      return batt+"%";
-    }
     else if(daysLeft >= 1) {
       return daysLeft+"d";
     }
