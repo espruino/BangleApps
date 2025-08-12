@@ -20,11 +20,11 @@ let dialDisplayGenerator = function(options) {
     y: DIAL_RECT.y + DIAL_RECT.h / 2,
   };
 
-  let dialDisplay = function(step, value) {
+  let dialDisplay = function(step, value, isReinit) {
     let prevValue = this.value;
-    if (value) this.value = value;
+    if (value!==undefined) this.value = value;
     if (!this.value) this.value = 0;
-    if (this.isFirstDraw===undefined) this.isFirstDraw = true;
+    if (this.isFirstDraw===undefined || isReinit) this.isFirstDraw = true;
     this.value += step;
     //g.setFont("Vector:30");
     //g.drawString(this.value);
@@ -37,7 +37,7 @@ let dialDisplayGenerator = function(options) {
       if (isFill) g.fillCircle(x, y, rad);
     }
     if (this.isFirstDraw) {
-      g.clear();
+      g.setColor(0,0,0).fillCircle(CENTER.x, CENTER.y, 25);
       g.setColor(1,1,1).drawCircle(CENTER.x, CENTER.y, 25);
       for (let i=0; i<options.stepsPerWholeTurn; i++) {
         drawCircle(i, 1, 1, 1, 1, true);
@@ -47,8 +47,8 @@ let dialDisplayGenerator = function(options) {
 
     //drawCircle(this.value, 1, 1, 1, 2, false);
     //drawCircle(prevValue, 0, 0, 0, 2, false);
-    g.setColor(1,1,1).drawLine(CENTER.x, CENTER.y, CENTER.x+23*Math.sin(this.value*(2*Math.PI/options.stepsPerWholeTurn)), CENTER.y-23*Math.cos(this.value*(2*Math.PI/options.stepsPerWholeTurn)));
     g.setColor(0,0,0).drawLine(CENTER.x, CENTER.y, CENTER.x+23*Math.sin(prevValue*(2*Math.PI/options.stepsPerWholeTurn)), CENTER.y-23*Math.cos(prevValue*(2*Math.PI/options.stepsPerWholeTurn)));
+    g.setColor(1,1,1).drawLine(CENTER.x, CENTER.y, CENTER.x+23*Math.sin(this.value*(2*Math.PI/options.stepsPerWholeTurn)), CENTER.y-23*Math.cos(this.value*(2*Math.PI/options.stepsPerWholeTurn)));
     g.setColor(0,0,0).fillCircle(CENTER.x, CENTER.y, 9);
 
     return this.value;

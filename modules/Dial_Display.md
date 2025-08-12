@@ -10,6 +10,7 @@ Usage
 ```JS
 var DialDisplay = require("Dial_Display");
 var dialDisplay = new DialDisplay(options);
+var value = dialDisplay(-1, 0, true)
 ```
 
 For example in use with the Dial module:
@@ -29,7 +30,7 @@ var DialDisplay = require("Dial_Display");
 var dialDisplay = new DialDisplay(options);
 
 var cb = (step)=>{
-  var value = dialDisplay(step);
+  var value = dialDisplay(step, undefined, true);
 };
 
 var Dial = require("Dial");
@@ -54,3 +55,7 @@ Defaults:
 }
 ```
 
+The generated function takes three arguments:
+`step` - +1 or -1
+`value` - the previous value the step acts on.
+`isReinit` - true/false, whether to draw all of the dial or just the indicator.
