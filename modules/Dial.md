@@ -39,8 +39,8 @@ Bangle.on("drag", dial);
 
 `options` (second argument) (optional) is an object containing:
 
-stepsPerWholeTurn - how many steps there are in one complete turn of the dial.
-dialRect - decides the area of the screen the dial is set up on.
+`stepsPerWholeTurn` - how many steps there are in one complete turn of the dial.
+`dialRect` - decides the area of the screen the dial is set up on.
 
 Defaults:
 ```js
