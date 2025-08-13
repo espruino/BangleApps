@@ -10,8 +10,9 @@ This app is intended to see what AI models can run on the Bangle.js, and how it 
 ## Gestures
 
 * Twist wrist outward - Locks the Bangle.js
+* Agitate - Back? TBD
   
-  For a video of the gesture, go to the discussion above.
+  
 
 
 
