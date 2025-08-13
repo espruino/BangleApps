@@ -14,7 +14,7 @@ This is Bangle.js's main settings menu:
 * **Locale** Set whether you want 12 hour time, and what day of the week the week starts on.
 
 See below for options under each heading:
-  
+
 ## Apps - App-specific settings
 
 This is where you adjust settings for an individual app. (eg. Health app: Adjust how often heart rate tracking should fire.)
@@ -45,6 +45,8 @@ This is where you adjust settings for an individual app. (eg. Health app: Adjust
 * **Passkey** allows you to set a passkey that is required to connect and pair to Bangle.js.
 * **Whitelist** allows you to specify only specific devices that you will let connect to your Bangle.js. Simply choose the menu item, then `Add Device`, and then connect to Bangle.js with the device you want to add. If you are already connected you will have to disconnect first. Changes will take effect when you exit the `Settings` app.
   * **NOTE:** iOS devices and newer Android devices often implement Address Randomisation and change their Bluetooth address every so often. If you device's address changes, you will be unable to connect until you update the whitelist again.
+* **Privacy** - (Bangle.js 2 only) enables BLE privacy mode (see [NRF.setSecurity](https://www.espruino.com/Reference#l_NRF_setSecurity)). This randomises the Bangle's MAC address and can also
+remove advertising of its name. **This can cause connection issues with apps that expect to keep a permanent connection like iOS/Gadgetbridge**
 
 ## LCD
 

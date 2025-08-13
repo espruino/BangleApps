@@ -1,0 +1,154 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <script src="../../core/lib/customize.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>    
+
+    <!-- Toggle Buttons -->
+    <div class="btn-group" style="margin: 1em; display: flex; justify-content: center;">
+      <button id="tableButton" class="btn btn-primary">View Table</button>
+      <button id="pieChartButton" class="btn">View Pie Chart</button>
+    </div>
+
+    <!-- Table View -->
+    <div id="storageTable"></div>
+
+    <!-- Chart View -->
+    <div id="storagePieChart" style="display: none; flex-direction: column; align-items: center;">
+      <div id="piechart" style="width: 100%; max-width: 600px; height: 400px;"></div>
+      <div id="totalStoragePie" style="width: 100%; max-width: 600px; height: 300px;"></div>
+    </div>
+
+    <script>
+      let globalApps = [];
+      let storageStats = null;
+      
+      function onInit(device) {
+        Util.showModal("Reading Storage...");
+        Puck.eval(`(()=>{
+          let getApps = () => require("Storage").list(/\\.info$/).map(appInfoName => {
+            let appInfo = require("Storage").readJSON(appInfoName,1)||{};
+            var fileSize = 0, dataSize = 0;
+            appInfo.files.split(",").forEach(f => fileSize += require("Storage").read(f).length);
+            var data = (appInfo.data||"").split(";");
+            function wildcardToRegexp(wc) {
+              return new RegExp("^"+wc.replaceAll(".","\\\\.").replaceAll("?",".*")+"$");
+            }
+            if (data[0]) data[0].split(",").forEach(wc => {
+              require("Storage").list(wildcardToRegexp(wc), {sf:false}).forEach(f => {
+                dataSize += require("Storage").read(f).length
+              });
+            });
+            if (data[1]) data[1].split(",").forEach(wc => {
+              require("Storage").list(wildcardToRegexp(wc), {sf:true}).forEach(f => {
+                dataSize += require("Storage").open(f,"r").getLength();
+              });
+            });
+            return [appInfo.id, fileSize, dataSize];
+          });
+          return [getApps(), require(\"Storage\").getStats()]; })()`, function(result) {
+          Util.hideModal();
+          globalApps = result[0].sort((a,b) => (b[1]+b[2]) - (a[1]+a[2]));
+          storageStats = result[1];
+
+          if (globalApps.length === 0) {
+            document.getElementById("storageTable").innerHTML = "<p>No apps found</p>";
+            return;
+          }
+
+          drawTable();
+        });
+      }
+      function roundDecimal(num){
+        return Math.round(num * 10) / 10;
+      }
+      function drawTable() {
+        document.getElementById("storageTable").innerHTML = `
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>App</th>
+                <th>Code (kb)</th>
+                <th>Data (kb)</th>
+                <th>Total (kb)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${globalApps.map(app => `
+                <tr>
+                  <td>${app[0]}</td>
+                  <td>${(app[1]/1000).toFixed(1)}</td>
+                  <td>${(app[2]/1000).toFixed(1)}</td>
+                  <td>${((app[1]+app[2])/1000).toFixed(1)}</td>
+                </tr>`).join("")}
+            </tbody>
+          </table>`;
+      }
+
+      function drawChart() {
+        if (globalApps.length === 0) return;
+
+        // App-specific chart
+        const chartData = [
+          ['App', 'Total Size (KB)']
+        ].concat(globalApps.map(app => [app[0], roundDecimal((app[1] + app[2])/1000)]));
+
+        const data = google.visualization.arrayToDataTable(chartData);
+
+        const options = {
+          title: 'App Storage Breakdown (KBs)',
+          chartArea: { width: '90%', height: '80%' },
+          legend: { position: 'bottom' }
+        };
+
+        const chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        chart.draw(data, options);
+
+        // Total storage chart
+        if (storageStats) {
+          const usedKB = roundDecimal(storageStats.fileBytes / 1000);
+          const freeKB = roundDecimal(storageStats.freeBytes / 1000);
+          const trashKB =  roundDecimal(storageStats.trashBytes / 1000);
+          const totalData = google.visualization.arrayToDataTable([
+            ['Type', 'KB'],
+            ['Used', usedKB],
+            ['Free', freeKB],
+            ['Trash', trashKB],
+          ]);
+
+          const totalOptions = {
+            title: 'Total Storage Usage (KBs)',
+            
+            chartArea: { width: '90%', height: '80%' },
+            legend: { position: 'bottom' }
+          };
+
+          const totalChart = new google.visualization.PieChart(document.getElementById('totalStoragePie'));
+          totalChart.draw(totalData, totalOptions);
+        }
+      }
+
+      google.charts.load('current', {'packages':['corechart']});
+      
+
+      document.getElementById("pieChartButton").addEventListener("click", function () {
+        document.getElementById("storageTable").style.display = "none";
+        document.getElementById("storagePieChart").style.display = "flex";
+        drawChart();
+        this.classList.add("btn-primary");
+        document.getElementById("tableButton").classList.remove("btn-primary");
+      });
+
+      document.getElementById("tableButton").addEventListener("click", function () {
+        document.getElementById("storageTable").style.display = "block";
+        document.getElementById("storagePieChart").style.display = "none";
+        drawTable();
+        this.classList.add("btn-primary");
+        document.getElementById("pieChartButton").classList.remove("btn-primary");
+      });
+      
+    </script>
+  </body>
+</html>

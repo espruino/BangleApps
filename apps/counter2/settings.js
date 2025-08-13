@@ -70,6 +70,13 @@
             onchange: v => {
                 settings.buzz = v;
                 writeSettings();
+            },
+        };
+        appMenu['Keep unlocked'] = {
+            value: settings.keepunlocked,
+            onchange: v => {
+                settings.keepunlocked = v;
+                writeSettings();
         },
       };
       E.showMenu(appMenu);

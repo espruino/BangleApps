@@ -35,20 +35,21 @@ for now. It's just a few bucks/pounds/euro's.
 If you like to try a free app first, you can always use NRF Toolbox or
 Bluetooth BLE Device Finder to find and connect your Bangle.
 
-### Weather and Calendar
+### Weather, Calendar, and Location
 
-By using the `Shortcuts` app on your phone, you can send weather and calendar data to your watch. This works by sending a notification, which is read by the watch through ANCS. The watch then parses the notification for the data.
+By using the `Shortcuts` app on your phone, you can send weather, calendar, and location data to your watch. This works by sending a notification, which is read by the watch through ANCS. The watch then parses the notification for the data.
 
-While you may write your own shortcuts if you prefer (for example, to get weather from a different source), two are provided:
+While you may write your own shortcuts if you prefer (for example, to get weather from a different source), three are provided:
 
-- Calendar shortcut: https://www.icloud.com/shortcuts/4eac12548b4c424dbcdb1bd58cff338f
-- Weather shortcut: https://www.icloud.com/shortcuts/106c68bfac3746fe9a55761a3be8d092
+- [Calendar shortcut](https://www.icloud.com/shortcuts/4eac12548b4c424dbcdb1bd58cff338f)
+- [Weather shortcut](https://www.icloud.com/shortcuts/73be0ce1076446f3bdc45a5707de5c4d)
+- [Location shortcut](https://www.icloud.com/shortcuts/853c41e09a8e491f893a63b464d73ea1)
 
-The weather shortcut requires an OpenWeatherMap api key, which you can get for free from https://openweathermap.org/api. The shortcut will prompt you for this when you add it to your phone.
+Note: The shortcuts must keep the names defaulted by the shortcut in order for the watch to detect the weather, calender, or location data. If you rename it from `BangleDump...` to something else, it will no longer get the info, and just display it as a notification on the watch.
 
 These shortcuts can also be automated to run periodically, for example every hour, using the `Automation` tab in the Shortcuts app.
 
-The shortcuts will send a notification, which can be annoying. One potential workaround for this would be to create a focus mode, and have an automation:
+The shortcuts will send a notification. Even though the notification is deleted as soon as Bangle.js receives it, it can be quite annoying. One potential workaround for this would be to create a focus mode, and have an automation:
 - activate the focus mode (hiding notifications from the shortcut)
 - run the shortcut
 - deactivate the focus mode
@@ -60,4 +61,9 @@ Please file any issues on https://github.com/espruino/BangleApps/issues/new?titl
 
 ## Creator
 
-Gordon Williams
+- Gordon Williams
+
+## Contributors
+
+- RKBoss6
+- stweedo
