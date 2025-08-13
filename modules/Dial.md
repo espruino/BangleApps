@@ -57,4 +57,4 @@ Defaults:
 Notes
 -----
 
-A complementary library for drawing graphics for the dial would be neat and is being considered.
+A complementary library for drawing graphics is provided in the Dial_Display module.
