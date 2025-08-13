@@ -19,3 +19,6 @@ This app is intended to see what AI models can run on the Bangle.js, and how it 
 
 RKBoss6
 
+## Data Collectors
+Bobrippling
+Thyttan
