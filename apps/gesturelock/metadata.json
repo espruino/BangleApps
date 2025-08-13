@@ -1,10 +1,10 @@
 { 
   "id": "gesturelock",
   "name": "Gesture Lock",
-  "shortName":"Gesture Lk",
+  "shortName":"AI Lock",
   "icon":"icon.png",
   "version":"0.01",
-  "description": "Uses an AI model to detect a gesture to lock the Bangle",
+  "description": "Uses an AI model to detect a gesture that lock the Bangle",
   "type":"bootloader",    
   "tags": "tool",
   "supports": ["BANGLEJS2"],
