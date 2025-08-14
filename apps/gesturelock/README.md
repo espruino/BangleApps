@@ -18,8 +18,8 @@ This app is intended to see what AI models can run on the Bangle.js, and how it 
 
 ## Creator
 
-RKBoss6
+- RKBoss6
 
 ## Data Collectors
-Bobrippling
-Thyttan
+- Bobrippling
+- Thyttan
