@@ -7,7 +7,7 @@
   "description": "Uses an AI model to detect a gesture that locks the Bangle",
   "type":"bootloader",    
   "tags": "tool",
-  "supports": ["BANGLEJS1","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2"],
   "readme":"README.md",
   "storage": [
     {"name":"gesturelock.boot.js","url":"boot.js"},
