@@ -1,4 +1,4 @@
-(back) => {
+(function (back) {
   const storage = require("Storage");
   let settings = storage.readJSON("weatherSetting.json", 1);
 
@@ -21,7 +21,7 @@
 
   const DATA_TYPE = ["basic", "extended", "forecast"];
 
-  menuItems = {
+  let menuItems = {
     "": { "title": "Weather" },
     "Expiry": {
       value: "expiry" in settings ? settings.expiry : 2 * 3600000,
@@ -84,4 +84,4 @@
   }
 
   E.showMenu(menuItems);
-};
+})

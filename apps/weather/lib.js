@@ -97,8 +97,8 @@ function update(weatherEvent) {
     } else if (weather1.weather != null && weather1.weather.feels === undefined) {
       // Grab feels like temperature as we have it in v2
       weather1.weather.feels = decodeWeatherV2FeelsLike(weatherEvent);
-      storage.write("weather.json", weather);
-      exports.emit("update", weather);
+      storage.write("weather.json", weather1);
+      exports.emit("update", weather1);
     }
 
     cloned = undefined; // Clear memory
