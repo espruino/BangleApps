@@ -16,24 +16,24 @@ var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
         render: l => {
           if (!current || current.uv === undefined) return;
           const uv = Math.min(parseInt(current.uv), 11); // Cap at 11
-          
+
           // UV color thresholds: [max_value, color] based on WHO standards
           const colors = [[2,"#0F0"], [5,"#FF0"], [7,"#F80"], [10,"#F00"], [11,"#F0F"]];
           const color = colors.find(c => uv <= c[0])[1];
-          
+
           // Setup and measure label
           g.setFont("6x8").setFontAlign(-1, 0);
           const label = "UV: ";
           const labelW = g.stringWidth(label);
-          
+
           // Calculate centered position (4px block + 1px spacing) * blocks - last spacing
           const totalW = labelW + uv * 5 - (uv > 0 ? 1 : 0);
           const x = l.x + (l.w - totalW) / 2;
           const y = l.y + l.h+6;
-          
+
           // Draw label
           g.setColor(g.theme.fg).drawString(label, x, y);
-          
+
           // Draw UV blocks
           g.setColor(color);
           for (let i = 0; i < uv; i++) {
@@ -58,7 +58,7 @@ var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
         {type: "txt", font: "6x8", pad: 2, halign: 1, label: /*LANG*/"Hum:"},
         {type: "txt", font: "9%", pad: 2, halign: 1, id: "hum", label: "000%"},
       ]},
-      
+
       {filly: 1},
       {type: "txt", font: "6x8", pad: 2, halign: -1, label: /*LANG*/"Wind"},
       {type: "h", halign: -1, c: [
@@ -79,7 +79,7 @@ var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
 ]}, {lazy: true});
 
 function formatDuration(millis) {
-  let pluralize = (n, w) => n + " " + w + (n == 1 ? "" : "s");
+  let pluralize = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
   if (millis < 60000) return /*LANG*/"< 1 minute";
   if (millis < 3600000) return pluralize(Math.floor(millis/60000), /*LANG*/"minute");
   if (millis < 86400000) return pluralize(Math.floor(millis/3600000), /*LANG*/"hour");
@@ -98,11 +98,11 @@ function draw() {
   }else{
     layout.feelslike.label = feelsLikeTemp[1]+feelsLikeTemp[2];
   }
-  
-  layout.hum.label = current.hum+"%";
+
+  layout.hum.label = `${current.hum}%`;
   const wind = locale.speed(current.wind).match(/^(\D*\d*)(.*)$/);
   layout.wind.label = wind[1];
-  layout.windUnit.label = wind[2] + " " + (current.wrose||'').toUpperCase();
+  layout.windUnit.label = `${wind[2]} ${(current.wrose||'').toUpperCase()}`;
   layout.cond.label = current.txt.charAt(0).toUpperCase()+(current.txt||'').slice(1);
   layout.loc.label = current.loc;
   layout.updateTime.label = `${formatDuration(Date.now() - current.time)} ago`; // How to autotranslate this and similar?
