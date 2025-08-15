@@ -11,7 +11,7 @@
   "readme":"README.md",
   "storage": [
     {"name":"gesturelock.boot.js","url":"boot.js"},
-    {"name":".tfmodel","url":"model.js","evaluate":true},
+    {"name":".tfmodel","url":"model.lite"},
     {"name":".tfnames","url":"tfnames.txt"}
   ]
 }
