@@ -16,5 +16,6 @@
     { "name": "deko.app.js", "url": "app.js" },
     { "name": "deko.settings.js", "url": "settings.js" },
     { "name": "deko.img", "url": "app-icon.js", "evaluate": true }
-  ]
+  ],
+  "data": [{ "name": "deko.settings.json" }]
 }
