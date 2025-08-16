@@ -11,6 +11,7 @@ exports.hide = function() {
     w.area = "";
     if (w.x!=undefined) g.clearRect(w.x,w.y,w.x+w.width-1,w.y+23);
   }
+  Bangle.emit("widgets-hidden");
 };
 
 /// Show any hidden widgets
@@ -25,6 +26,7 @@ exports.show = function() {
     delete w._area;
     w.draw(w);
   }
+  Bangle.emit("widgets-shown");
 };
 
 /// Remove anything not needed if the overlay was removed
@@ -131,12 +133,31 @@ exports.swipeOn = function(autohide) {
     exports.animInterval = setInterval(function() {
       exports.offset += dir;
       let stop = false;
-      if (dir>0 && exports.offset>=0) { // fully down
-        stop = true;
-        exports.offset = 0;
-      } else if (dir<0 && exports.offset<-23) { // fully up
-        stop = true;
-        exports.offset = -24;
+      // exports.offset >=0              <0                     <-23
+      //     dir >0     shown, so stop.  in process of showing  start show
+      //         <0     start hide       in process of hiding   hidden, so stop
+      if (dir > 0) {
+        if (exports.offset >= 0) {
+          stop = true;
+          exports.offset = 0;
+          Bangle.emit("widgets-shown");
+        } else if (exports.offset <= -23) {
+          Bangle.emit("widgets-start-show");
+        } else {
+          Bangle.emit("widget-anim-step");
+        }
+      } else if (dir < 0) {
+        if (exports.offset >= 0) {
+          Bangle.emit("widget-start-hide");
+        } else if (exports.offset <= -23) {
+          stop = true;
+          exports.offset = -24;
+          Bangle.emit("widgets-hidden");
+        } else {
+          Bangle.emit("widget-anim-step");
+        }
+      } else {
+        // dir == 0??
       }
       if (stop) {
         clearInterval(exports.animInterval);
