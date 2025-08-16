@@ -96,7 +96,7 @@ function update(weatherEvent) {
       exports.emit("update", weather);
     } else if (weather1.weather != null && weather1.weather.feels === undefined) {
       // Grab feels like temperature as we have it in v2
-      weather1.weather.feels = decodeWeatherV2FeelsLike(weatherEvent);
+      weather1.weather.feels = decodeWeatherV2FeelsLike(weatherEvent) + 273;
       storage.write("weather.json", weather1);
       exports.emit("update", weather1);
     }
@@ -290,7 +290,7 @@ function downgradeWeatherV2(weather2) {
     wdir: weather2.wdir,
     wrose: weather2.wrose,
     loc: weather2.loc,
-    feels: weather2.feels,
+    feels: weather2.feels + 273,
   };
 
   return json;
