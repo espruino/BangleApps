@@ -57,6 +57,7 @@
     }
   }.init();
 
+  // We make clock info touch area active on the start of the animation
   Bangle.on("widgets-start-show", () => {
     var wi = WIDGETS["clkinfo"];
     if (wi) {
@@ -76,7 +77,7 @@
   Bangle.on("widgets-start-hide", () => {
     var wi = WIDGETS["clkinfo"];
     if (wi) {
-      if (wi.clockInfoMenu.focus) wi.clockInfoMenu.blur();
+      wi.clockInfoMenu.ensure_blur(); // let user see defocus cue before hiding
       wi.clockInfoMenu.y = -24;
       wi.draw(wi);
     }
@@ -85,7 +86,7 @@
   Bangle.on("widgets-hidden", () => {
     var wi = WIDGETS["clkinfo"];
     if (wi) {
-      if (wi.clockInfoMenu.focus) wi.clockInfoMenu.blur();
+      wi.clockInfoMenu.ensure_blur();
       wi.clockInfoMenu.y = -24;
       wi.draw(wi);
     }
