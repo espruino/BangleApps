@@ -1,11 +1,12 @@
 {
   "id": "ios",
   "name": "iOS Integration",
-  "version": "0.18",
-  "description": "Display notifications/music/etc from iOS devices",
+  "version": "0.21",
+  "description": "Display/pull notifications, music, weather, location, and agenda from iOS devices",
   "icon": "app.png",
   "tags": "tool,system,ios,apple,messages,notifications",
   "dependencies": {"messages":"module"},
+  "dependencies" : {"mylocation":"app" },
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [

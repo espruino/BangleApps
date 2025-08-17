@@ -2,7 +2,7 @@
   const SETTINGS_FILE = "pebblepp.json";
 
   // Initialize with default settings...
-  let settings = {'theme':'System', 'showdate':true, 'clkinfoborder':false}
+  let settings = {'theme':'System', 'showdate':true, 'clkinfoborder':true}
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
   const storage = require('Storage');

@@ -7,3 +7,7 @@
 0.13: Improve pattern rendering by HughB http://forum.espruino.com/profiles/167235/
 0.14: Update setUI to work with new Bangle.js 2v13 menu style
 0.15: Update to support clocks in custom setUI mode
+0.16: Fix issue adding new patterns (fix #3858)
+      Display message if tapping manage when there are no patterns
+      Speed improvements
+      Add widgets to app (work around E.showMenu(back) bug with no widgets in Espruino 2v27)

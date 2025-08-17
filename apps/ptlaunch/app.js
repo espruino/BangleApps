@@ -9,10 +9,10 @@ var showMainMenu = () => {
   var mainmenu = {
     "": {
       title: "Pattern Launcher",
-    },
-    "< Back": () => {
-      log("cancel");
-      load();
+      back: () => {
+        log("showMainMenu cancel");
+        load();
+      }
     },
     "Add Pattern": () => {
       log("creating pattern");
@@ -83,11 +83,11 @@ var showMainMenu = () => {
       var settingsmenu = {
         "": {
           title: "Pattern Settings",
-        },
-        "< Back": () => {
-          log("cancel");
-          load();
-        },
+          back: () => {
+            log("settings cancel");
+            showMainMenu();
+          },
+        }
       };
 
       if (settings.lockDisabled) {
@@ -116,12 +116,7 @@ var showMainMenu = () => {
 
 var recognizeAndDrawPattern = () => {
   return new Promise((resolve) => {
-    E.showMenu();
-    g.clear();
-    drawCirclesWithPattern([]);
-
     var pattern = [];
-
     var isFinished = false;
     var finishHandler = () => {
       if (pattern.length === 0 || isFinished) {
@@ -129,15 +124,14 @@ var recognizeAndDrawPattern = () => {
       }
       log("Pattern is finished.");
       isFinished = true;
-      Bangle.removeListener("drag", dragHandler);
-      Bangle.removeListener("tap", finishHandler);
+      g.clear();
+      require("widget_utils").show();
+      Bangle.setUI();
       resolve(pattern.join(""));
     };
-    setWatch(() => finishHandler(), BTN);
-    // setTimeout(() => Bangle.on("tap", finishHandler), 250);
 
     var positions = [];
-    var getPattern = (positions) => {
+    var getPattern = (positions) => { "ram";/*faster*/
       var circles = [
         { x: 25, y: 25, i: 0 },
         { x: 87, y: 25, i: 1 },
@@ -151,18 +145,8 @@ var recognizeAndDrawPattern = () => {
       ];
       return positions.reduce((pattern, p, i, arr) => {
         var idx = circles.findIndex((c) => {
-          var dx = p.x > c.x ? p.x - c.x : c.x - p.x;
-          if (dx > CIRCLE_RADIUS) {
-            return false;
-          }
-          var dy = p.y > c.y ? p.y - c.y : c.y - p.y;
-          if (dy > CIRCLE_RADIUS) {
-            return false;
-          }
-          if (dx + dy <= CIRCLE_RADIUS) {
-            return true;
-          }
-          return dx * dx + dy * dy <= CIRCLE_RADIUS_2;
+          var dx = p.x - c.x, dy = p.y - c.y;
+          return dx*dx + dy*dy <= CIRCLE_RADIUS_2;
         });
         if (idx >= 0) {
           pattern += circles[idx].i;
@@ -183,7 +167,10 @@ var recognizeAndDrawPattern = () => {
         positions = [];
       }
     };
-    Bangle.on("drag", dragHandler);
+    require("widget_utils").hide();
+    g.clear();
+    drawCirclesWithPattern([]);
+    Bangle.setUI({mode:"custom", drag:dragHandler, btn :finishHandler});
   });
 };
 
@@ -215,14 +202,14 @@ var getAppList = () => {
 };
 
 var getSelectedApp = () => {
-  E.showMessage("Loading apps...");
+  E.showMessage(/*LANG*/"Loading apps...");
   return new Promise((resolve) => {
     var selectAppMenu = {
       "": {
-        title: "Select App",
+        title: /*LANG*/"Select App",
       },
       "< Cancel": () => {
-        log("cancel");
+        log("getSelectedApp cancel");
         showMainMenu();
       },
     };
@@ -286,6 +273,8 @@ var drawAppWithPattern = (i, r, storedPatterns) => {
 
 var showScrollerContainingAppsWithPatterns = () => {
   var storedPatternsArray = getStoredPatternsArray();
+  if (!storedPatternsArray.length)
+    return E.showAlert(/*LANG*/"No Patterns",{title:/*LANG*/"Patterns"}).then(() => ({ pattern: "back", appName:"" }));
   log("drawing scroller for stored patterns");
   log(storedPatternsArray);
   log(storedPatternsArray.length);
@@ -485,4 +474,6 @@ var log = (message) => {
 // run main function
 //////
 
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 showMainMenu();

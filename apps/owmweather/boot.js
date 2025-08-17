@@ -18,6 +18,13 @@
     timeoutRef = setTimeout(loadIfDueAndReschedule, refreshMillis());
   };
 
+  let onError = function(e) {
+    console.log("owmweather error:", e);
+    loading = false;
+    if (timeoutRef) clearTimeout(timeoutRef);
+    timeoutRef = setTimeout(loadIfDueAndReschedule, refreshMillis());
+  };
+
   let loadIfDueAndReschedule = function () {
     // also check if the weather.json file has been updated (e.g. force refresh)
     let weather = require("Storage").readJSON('weather.json') || {};
@@ -30,7 +37,7 @@
     if (!MillisUntilDue || MillisUntilDue <= 0) {
       if (!loading) {
         loading = true;
-        require("owmweather").pull(onCompleted);
+        require("owmweather").pull(onCompleted, onError);
       }
     } else {
       // called to early, reschedule

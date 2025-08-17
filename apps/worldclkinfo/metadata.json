@@ -1,0 +1,17 @@
+{ "id": "worldclkinfo",
+  "name": "World Clock Info",
+  "version": "0.01",
+  "description": "Creates a ClockInfo List to view times around the world (London, Hong Kong, Delhi, New York, etc.)",
+  "icon": "app.png",
+  "type": "clkinfo",
+  "tags": "clkinfo",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"worldclkinfo.clkinfo.js","url":"clkinfo.js"},
+    {"name":"worldclkinfo.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"worldclkinfosettings.json"}
+  ]
+}

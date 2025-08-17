@@ -3,3 +3,4 @@
 0.03: Use Bangle.setBacklight()
 0.04: Add option to buzz after computer move
 0.05: Minor code improvements
+0.06: Use button rising edge for Menu

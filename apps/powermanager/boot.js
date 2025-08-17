@@ -75,7 +75,6 @@
       })(Bangle[functionName]);
     }
 
-    let functions = {};
     let wrapDeferred = ((o,t) => (a) => {
       if (a == eval || typeof a == "string") {
         return o.apply(this, arguments);
@@ -132,7 +131,7 @@
   }
 
   if (settings.forceMonoPercentage){
-    var p = (E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery())/4;
+    var p = Math.round((E.getBattery()+E.getBattery()+E.getBattery()+E.getBattery())/4);
     var op = E.getBattery;
     E.getBattery = function() {
       var current = Math.round((op()+op()+op()+op())/4);

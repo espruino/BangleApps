@@ -73,10 +73,9 @@ for (var i=0;i<10;i++)
     var mn = d.getMinutes().toString().padStart(2,0);
     var date = require("locale").date(new Date()).split(" ").slice(0,2).join(" ").toUpperCase();
     var x = 6, y = 16, w = 55, h = 67, datesz = 20, s=5;
-    g.reset();
     background.fillRect(x, y, x + w*2, y + h*2 + datesz);
     var dx = x+w, dy = y+h+datesz-10;
-    g.setFont("LECO1976Regular").setFontAlign(0,0);
+    g.reset().setFont("LECO1976Regular").setFontAlign(0,0);
     g.setColor(g.theme.bg).drawString(date, dx+3,dy-3).drawString(date, dx+3,dy+3);
     g.drawString(date, dx-3,dy-3).drawString(date, dx-3,dy+3);
     g.drawString(date, dx,dy-3).drawString(date, dx,dy+3);

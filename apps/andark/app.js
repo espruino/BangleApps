@@ -2,9 +2,18 @@
 const defaultSettings = {
   loadWidgets    : false,
   textAboveHands : false,
-  shortHrHand    : false
+  shortHrHand    : false,
+  weekdayNoYear  : false,
+  noBattery      : false,
+  darkTheme      : true
 };
 const settings = Object.assign(defaultSettings, require('Storage').readJSON('andark.json',1)||{});
+
+const origTheme = g.theme;
+if (settings.darkTheme) {
+  g.setTheme({bg: "#000"});
+  g.setTheme({fg: "#FFF"});
+}
 
 const c={"x":g.getWidth()/2,"y":g.getHeight()/2};
 
@@ -36,7 +45,7 @@ const zeiger = function(len,dia,tim) {
 
 const drawHands = function(d) {
   let m=d.getMinutes(), h=d.getHours(), s=d.getSeconds();
-  g.setColor(1,1,1);
+  g.setColor(g.theme.fg);
 
   if(h>12){
     h=h-12;
@@ -62,23 +71,31 @@ const drawHands = function(d) {
 };
 
 const drawText = function(d) {
-  g.setFont("Vector",10);
-  g.setBgColor(0,0,0);
-  g.setColor(1,1,1);
-  const dateStr = require("locale").date(d);
-  g.drawString(dateStr, c.x, c.y+20, true);
+//g.setFont("Vector",10);
+  g.setBgColor(g.theme.bg);
+  g.setColor(g.theme.fg);
+  const dateStr = settings.weekdayNoYear
+    ? require("locale").dow(d, 1)+" "+d.getDate()+" "+require("locale").month(d, 1)
+    : require("locale").date(d);
   const batStr = Math.round(E.getBattery()/5)*5+"%";
-  if (Bangle.isCharging()) {
-    g.setBgColor(1,0,0);
+  if (settings.noBattery) {
+    g.setFont("Vector",13);
+    g.drawString(dateStr, c.x, c.y+25, true);
+  } else {
+    g.setFont("Vector",10);
+    g.drawString(dateStr, c.x, c.y+20, true);
+    if (Bangle.isCharging()) {
+      g.setBgColor(1,0,0);
+    }
+    g.drawString(batStr, c.x, c.y+40, true);
   }
-  g.drawString(batStr, c.x, c.y+40, true);
 };
 
 const drawNumbers = function() {
   //draws the numbers on the screen
   g.setFont("Vector",20);
-  g.setColor(1,1,1);
-  g.setBgColor(0,0,0);
+  g.setColor(g.theme.fg);
+  g.setBgColor(g.theme.bg);
   for(let i = 0;i<12;i++){
     g.drawString(zahlpos[i][0],zahlpos[i][1],zahlpos[i][2],true);
   }
@@ -114,7 +131,7 @@ const queueDraw = function() {
 
 const draw = function() {
   // draw black rectangle in the middle to clear screen from scale and hands
-  g.setColor(0,0,0);
+  g.setColor(g.theme.bg);
   g.fillRect(10,10,2*c.x-10,2*c.x-10);
   // prepare for drawing the text
   g.setFontAlign(0,0);
@@ -132,7 +149,7 @@ const draw = function() {
 //draws the scale once the app is startet
 const drawScale = function() {
   // clear the screen
-  g.setBgColor(0,0,0);
+  g.setBgColor(g.theme.bg);
   g.clear();
   // draw the ticks of the scale
   for(let i=-14;i<47;i++){
@@ -140,9 +157,9 @@ const drawScale = function() {
     let d=2;
     if(i%5==0){d=5;}
     g.fillPoly(zeiger(300,d,win),true);
-    g.setColor(0,0,0);
+    g.setColor(g.theme.bg);
     g.fillRect(10,10,2*c.x-10,2*c.x-10);
-    g.setColor(1,1,1);
+    g.setColor(g.theme.fg);
   }
 };
 
@@ -152,6 +169,7 @@ const drawScale = function() {
 Bangle.setUI({
   mode: "clock",
   remove: function() {
+    if (settings.darkTheme) g.setTheme(origTheme);
     Bangle.removeListener('lcdPower', updateState);
     Bangle.removeListener('lock', updateState);
     Bangle.removeListener('charging', draw);

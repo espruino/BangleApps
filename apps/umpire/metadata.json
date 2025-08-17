@@ -1,0 +1,18 @@
+{ "id": "umpire",
+  "name": "Umpire Ball Counter",
+  "shortName":"Umpire",
+  "icon": "app.png",
+  "version": "0.01",
+  "description": "Cricket umpire ball counter and match event logger",
+  "tags": "outdoors,tool,health,sports,referee,judge,assistant",
+  "readme":"README.md",
+  "interface": "interface.html",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"umpire.app.js","url":"app.js"},
+    {"name":"umpire.settings.js","url":"settings.js"},
+    {"name":"umpire.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"umpire.json"}]
+}

@@ -33,3 +33,4 @@
 0.30: Fix possible bug in toggling an alarm to on, from clkinfo
 0.31: Ensure we reschedule alarms after setTimeZone has been called (fix #3791)
 0.32: clkinfo ensures an alarm won't trigger immediately (copying `alarm`'s behaviour)
+0.33: Ensure default vibration pattern is longer

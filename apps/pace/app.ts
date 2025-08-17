@@ -24,41 +24,87 @@ type Split = {
   time: Time,
 };
 
-const splits: Split[] = []; // times
+type LayoutWithGPS = Layout.RenderedHierarchy & { gps?: GPSFix };
+
+type PaceState = { splits: Split[] };
+
+const splits: PaceState["splits"] =
+  (S.readJSON("pace.json", 1) as PaceState | undefined)?.splits || [];
+
 let splitOffset = 0, splitOffsetPx = 0;
 
 const GPS_TIMEOUT_MS = 30000;
 
+const drawGpsLvl = (l: Layout.RenderedHierarchy) => {
+  const gps = (l as LayoutWithGPS).gps;
+  const nsats = gps?.satellites ?? 0;
+
+  if (!gps || !gps.fix)
+    g.setColor("#FF0000");
+  else if (gps.satellites < 4)
+    g.setColor("#FF5500");
+  else if (gps.satellites < 6)
+    g.setColor("#FF8800");
+  else if (gps.satellites < 8)
+    g.setColor("#FFCC00");
+  else
+    g.setColor("#00FF00");
+
+  g.fillRect(
+    l.x,
+    l.y + l.h - 10 - (l.h - 10) * ((nsats > 12 ? 12 : nsats) / 12),
+    l.x + l.w - 1,
+    l.y + l.h - 1
+  );
+};
+
 const layout = new Layout({
-  type: "v",
+  type: "h",
   c: [
+    ({
+      type: "custom",
+      render: drawGpsLvl,
+      id: "gpslvl",
+      filly: 1,
+      width: 10,
+      bgCol: g.theme.bg, // automatically clears before render()
+    } as unknown as {
+      // hack to avoid a more complex id-mapping Layout inference
+      type: "custom",
+      render: (_: Layout.RenderedHierarchy) => void
+    }),
     {
-      type: "txt",
-      font: "6x8:2",
-      label: "Pace",
-      id: "paceLabel",
-      pad: 4
-    },
-    {
-      type: "txt",
-      font: "Vector:40",
-      label: "",
-      id: "pace",
-      halign: 0
-    },
-    {
-      type: "txt",
-      font: "6x8:2",
-      label: "Time",
-      id: "timeLabel",
-      pad: 4
-    },
-    {
-      type: "txt",
-      font: "Vector:40",
-      label: "",
-      id: "time",
-      halign: 0
+      type: "v",
+      c: [
+        {
+          type: "txt",
+          font: "6x8:2",
+          label: "Pace",
+          id: "paceLabel",
+          pad: 4
+        },
+        {
+          type: "txt",
+          font: "Vector:40",
+          label: "",
+          id: "pace",
+          halign: 0
+        },
+        {
+          type: "txt",
+          font: "6x8:2",
+          label: "Time",
+          id: "timeLabel",
+          pad: 4
+        },
+        {
+          type: "txt",
+          font: "Vector:40",
+          label: "",
+          id: "time",
+          halign: 0
+        },
+      ]
     },
   ]
 }, {
@@ -203,7 +249,7 @@ exs.stats.dist.on("notify", (dist) => {
   // subtract <how much we're over> off the next split notify
   exs.state.notify.dist.next -= thisSplit;
 
-  S.writeJSON("pace.json", { splits });
+  S.writeJSON("pace.json", { splits } satisfies PaceState);
 });
 
 Bangle.on('lock', locked => {
@@ -260,9 +306,23 @@ Bangle.on('tap', e => {
 });
 
 Bangle.loadWidgets();
-Bangle.drawWidgets();
 Bangle.setGPSPower(1, "pace");
+Bangle.on("GPS", gps => {
+  const l = layout["gpslvl"] as unknown as LayoutWithGPS | undefined;
+  if(l) l.gps = gps; // force a redraw
+});
 
 g.clearRect(Bangle.appRect);
-draw();
+
+if(splits){
+  E.showMessage(`Restored splits\n(${splits.length})`, "Pace");
+  setTimeout(() => {
+    g.reset().clear();
+    Bangle.drawWidgets();
+    draw();
+  }, 1000);
+}else{
+  Bangle.drawWidgets();
+  draw();
+}
 }
