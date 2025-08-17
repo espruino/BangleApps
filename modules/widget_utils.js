@@ -161,9 +161,10 @@ exports.swipeOn = function(autohide) {
       if (stop) {
         clearInterval(exports.animInterval);
         delete exports.animInterval;
-        if (callback) callback();
-      }
-      else {
+        if (callback) {
+          callback();
+        }
+      } else {
         exports.offset += dir;
       }
       queueDraw();
