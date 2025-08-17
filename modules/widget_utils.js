@@ -157,6 +157,7 @@ exports.swipeOn = function(autohide) {
         } else {
           Bangle.emit("widgets-anim-step");
         }
+      }
       if (stop) {
         clearInterval(exports.animInterval);
         delete exports.animInterval;
