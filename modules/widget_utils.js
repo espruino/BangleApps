@@ -131,38 +131,39 @@ exports.swipeOn = function(autohide) {
   function anim(dir, callback) {
     if (exports.animInterval) clearInterval(exports.animInterval);
     exports.animInterval = setInterval(function() {
-      exports.offset += dir;
+// exports.offset < -23 + |dir|     > -|dir|         otherwise
+//     dir >0     start showing     shown this step  showing
+//         <0     hidden this step  start hiding     hiding
       let stop = false;
-      // exports.offset >=0              <0                     <-23
-      //     dir >0     shown, so stop.  in process of showing  start show
-      //         <0     start hide       in process of hiding   hidden, so stop
       if (dir > 0) {
-        if (exports.offset >= 0) {
+        if (exports.offset >= -dir) {
+          // nearly shown
           stop = true;
-          exports.offset = 0;
+          exports.offset = 0; // clamp
           Bangle.emit("widgets-shown");
-        } else if (exports.offset <= -23) {
+        } else if (exports.offset < -23 + dir) {
           Bangle.emit("widgets-start-show");
         } else {
-          Bangle.emit("widget-anim-step");
+          Bangle.emit("widgets-anim-step");
         }
       } else if (dir < 0) {
-        if (exports.offset >= 0) {
-          Bangle.emit("widget-start-hide");
-        } else if (exports.offset <= -23) {
+        if (exports.offset > dir) {
+          Bangle.emit("widgets-start-hide");
+        } else if (exports.offset < -23 - dir) {
+          // nearly hidden
           stop = true;
-          exports.offset = -24;
+          exports.offset = -24; // clamp
           Bangle.emit("widgets-hidden");
         } else {
-          Bangle.emit("widget-anim-step");
+          Bangle.emit("widgets-anim-step");
         }
-      } else {
-        // dir == 0??
-      }
       if (stop) {
         clearInterval(exports.animInterval);
         delete exports.animInterval;
         if (callback) callback();
+      }
+      else {
+        exports.offset += dir;
       }
       queueDraw();
     }, 50);
