@@ -231,7 +231,9 @@ Bangle.setUI({
     drawTimeout = undefined;
     delete Graphics.prototype.setFontAnton;
     delete Graphics.prototype.setFontAntonSmall;
-  }});
+  },
+  redraw: draw,
+});
 // Load widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
