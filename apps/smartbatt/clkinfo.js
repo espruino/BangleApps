@@ -3,7 +3,7 @@
   var batt;
   //updates values
 
-  
+
   function getHrsFormatted(hrsLeft){
 
     var daysLeft = hrsLeft / 24;
@@ -16,7 +16,7 @@
       return Math.round(hrsLeft)+"h";
     }
   }
-  
+
   //draws battery icon and fill bar
   function drawBatt(){
     batt =E.getBattery();
@@ -37,7 +37,7 @@
     items: [
       { name : "BattStatus",
         get : () => {
-          
+
           drawBatt();
           var data=require("smartbatt").get();
 
