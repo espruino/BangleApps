@@ -1,5 +1,4 @@
 (function() {
-  var img;
   var batt;
   //updates values
 
@@ -38,7 +37,7 @@
       { name : "BattStatus",
         get : () => {
 
-          drawBatt();
+          var img = drawBatt();
           var data=require("smartbatt").get();
 
           //update clock info according to batt state
@@ -64,7 +63,7 @@
       },
       { name : "AvgDrainage",
         get : () => {
-          drawBatt()
+          var img = drawBatt()
           var data=require("smartbatt").get();
           return { text: data.avgDrainage.toFixed(2)+"/h", img };
         },
