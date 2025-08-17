@@ -348,10 +348,15 @@ exports.addInteractive = function(menu, options) {
     if (redraw) options.redraw();
   };
   let touchHandler, lockHandler;
+// debug touch handler next
   if (options.x!==undefined && options.y!==undefined && options.w && options.h) {
     touchHandler = function(_,e) {
       if (e.x<options.x || e.y<options.y ||
-          e.x>(options.x+options.w) || e.y>(options.y+options.h)) {
+          e.x>(options.x+options.w-1) || e.y>(options.y+options.h-1)) {
+// touch at y=0 focuses when widclkinfo is off screen
+// may have off by one error here
+// options.y is -24
+// options.h is 24
         if (options.focus)
           blur();
         return; // outside area
