@@ -1,0 +1,17 @@
+{
+  "id": "widsmartbatt",
+  "name": "Smart Battery Widget",
+  "shortName":"Smart Batt Wid",
+  "icon": "icon.png",
+  "version":"0.01",
+  "type": "widget",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "dependencies" : { "smartbatt":"module" },
+  "description": "Simple and slim battery widget that shows days remaining, and uses the `smartbatt` module to learm from your usage and provide accurate predictions.",
+  "tags": "widget,battery",
+  "provides_widgets" : ["battery"],
+  "storage": [
+    {"name":"widsmartbatt.wid.js","url":"widget.js"}
+  ]
+}
