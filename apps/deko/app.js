@@ -84,4 +84,9 @@ Bangle.on('lock', (locked, reason) => {
 Bangle.setUI('clock');
 // Load widgets
 Bangle.loadWidgets();
-Bangle.drawWidgets();
+// Ensure widgets are correctly hidden on first boot or when coming from the launcher
+if (settings.loadWidgets === 0) {
+  widget_utils.hide();
+} else {
+  Bangle.drawWidgets();
+}
