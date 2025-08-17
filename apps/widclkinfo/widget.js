@@ -1,6 +1,5 @@
 (() => {
   if (!require("clock_info").loadCount) { // don't load if a clock_info was already loaded
-  //WIDGETS = {};
   const clock_info = require("clock_info");
 
   WIDGETS["clkinfo"] = {
