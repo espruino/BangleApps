@@ -43,10 +43,10 @@
 
           //update clock info according to batt state
           if (Bangle.isCharging()) {
-            return { text: batt+"%", img : img};
+            return { text: batt+"%", img };
           }
           else{
-            return { text: getHrsFormatted(data.hrsLeft), img : img};
+            return { text: getHrsFormatted(data.hrsLeft), img };
           }
         },
 
@@ -66,7 +66,7 @@
         get : () => {
           drawBatt()
           var data=require("smartbatt").get();
-          return { text: data.avgDrainage.toFixed(2)+"/h", img : img};
+          return { text: data.avgDrainage.toFixed(2)+"/h", img };
         },
 
         show : function() {
