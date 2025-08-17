@@ -92,11 +92,3 @@
     }
   });
 }})()
-
-/*
-const widget_utils = require("widget_utils");
-g.clear();
-Bangle.loadWidgets();
-widget_utils.swipeOn();
-Bangle.drawWidgets();
-*/
