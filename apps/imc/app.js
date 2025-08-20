@@ -75,8 +75,8 @@ var ImperialToMetricLiquid = {
 };
 var ImperialToMetricTemp = {
   "" : { title : "Select Measurement", },
-  "F-C" : () => { convertAndPrint("(E-32)/1.8", "F");},
-  "F-K" : () => { convertAndPrint("((E-32)/1.8)+273.15", "F");}
+  "F-C" : () => { convertAndPrint("(E-32)/1.8", "C");},
+  "F-K" : () => { convertAndPrint("((E-32)/1.8)+273.15", "K");}
 };
 E.showMenu(mainmenu);
 function convertAndPrint(equation, endText)
