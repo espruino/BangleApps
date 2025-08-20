@@ -5,6 +5,8 @@
   "version":"0.01",
   "allow_emulator": true,
   "description": "A tool for converting metric and imperial measurements",
+  "readme": "README.md",
+  "interface": "interface.html",
   "tags": "tool",
   "supports": ["BANGLEJS2"],
   "storage": [
