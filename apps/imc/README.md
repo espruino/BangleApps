@@ -1,6 +1,6 @@
 # Imperial Metric Converter
 
-A simple app for converting metric to imperial and imperial to metric.
+A simple app for converting measurements from metric to imperial and imperial to metric.
 
 ## Controls
 
