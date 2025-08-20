@@ -1,4 +1,4 @@
-{ "id": "IMC",
+{ "id": "MetricImperialConverter",
   "name": "Metric to Imperial Converter",
   "shortName":"IMC",
   "icon": "IMC.png",
