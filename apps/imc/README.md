@@ -1,8 +1,8 @@
-*Imperial Metric Converter
+# Imperial Metric Converter
 
 A simple app for converting metric to imperial and imperial to metric.
 
-*Controls
+## Controls
 
 Scroll through the menus and select the measurement you want to convert, choose it, and then type in the number you want to convert.
 Click the button (on the side of the watch) to confirm and then click it again if you want to go back to the main menu
