@@ -118,3 +118,4 @@
 0.86: Default to showing message scroller (with title, bigger icon)
 0.87: Make choosing of font size more repeatable
 0.88: Adjust padding calculation so messages are spaced out properly even when using international fonts
+0.89: Fix bugs related to empty titles and bodies
