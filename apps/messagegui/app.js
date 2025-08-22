@@ -392,6 +392,8 @@ function showMessage(msgid, persist) {
     }
     lines = g.setFont(bodyFont).wrapString(body, w);
   }
+  // By this point, `title` must be a string and `lines` must be an array of strings.
+  // Either or both can be empty, but neither can be `undefined` (#3969).
   let negHandler,posHandler,rowLeftDraw,rowRightDraw;
   if (msg.negative) {
     negHandler = ()=>{
