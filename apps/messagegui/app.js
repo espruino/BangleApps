@@ -361,12 +361,12 @@ function showMessage(msgid, persist) {
   active = "message";
   // Normal text message display
   let src=msg.src||/*LANG*/"Message", srcFont = fontSmall;
-  let title=msg.title, titleFont = fontLarge, lines;
+  let title=msg.title||"", titleFont = fontLarge, lines=[];
   let body=msg.body, bodyFont = fontLarge;
   // If no body, use the title text instead...
-  if (body===undefined) {
+  if (!body) {
     body = title;
-    title = undefined;
+    title = "";
   }
   if (g.setFont(srcFont).stringWidth(src) > g.getWidth()-52)
     srcFont = "4x6";
