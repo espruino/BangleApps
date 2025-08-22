@@ -9,5 +9,6 @@
   "storage": [
     {"name":"gbdiscon.app.js","url":"app.js"},
     {"name":"gbdiscon.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "thyttan"
 }
