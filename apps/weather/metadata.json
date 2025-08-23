@@ -4,7 +4,7 @@
   "version": "0.31",
   "description": "Show Gadgetbridge/iOS weather report",
   "icon": "icon.png",
-  "screenshots": [{"url":"screenshot.png"}],
+  "screenshots": [{"url":"Screenshot.png"}],
   "tags": "widget,outdoors,clkinfo",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
