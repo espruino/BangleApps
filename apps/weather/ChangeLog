@@ -32,3 +32,4 @@
       Add support to automatically fetch weather at time interval defined in settings (requires GadgetBridge version 0.86.0 or higher)
       Add button to settings to force fetch weather data (requires GadgetBridge version 0.86.0 or higher)
       Add new API to get weather from Weather App for other Apps
+0.31: Wind speed clockInfo now shows speed in local units (kph or mph)
