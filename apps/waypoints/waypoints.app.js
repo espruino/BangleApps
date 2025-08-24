@@ -1,5 +1,7 @@
 /* Thanks to pinsafe from BangleApps repository */
 
+/* create waypoint is unusable on watch -- button takes us back to menu */
+
 var Layout = require("Layout");
 
 /* fmt library v0.2.3 */

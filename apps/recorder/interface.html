@@ -1,74 +1,386 @@
 <html>
   <head>
     <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+      .leaflet-map { width: 100%; max-width: 600px; aspect-ratio: 1/1; margin: 0 auto; }
+      .chart-canvas { width: 100%; height: 100%; display: block; }
+      .chart-wrapper { position: relative; width: 100%; max-width: 600px; aspect-ratio: 1/1; margin: 0 auto 10px; }
+      .leaflet-map, .chart-container {
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .chart-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+      .track-stats { font-size: 0.9em; color: #666; margin-top: 10px; padding: 8px; background: #f8f9fa; border-radius: 4px; }
+      .charts-container { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 15px; }
+      @media (min-width: 768px) { .charts-container { grid-template-columns: 1fr 1fr; } }
+      .chart-container {
+        position: relative;
+        background: #fff;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .chart-header {
+        padding: 12px 15px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+        border-radius: 4px 4px 0 0;
+        cursor: pointer;
+        user-select: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .chart-header:hover { background: #e9ecef; }
+      .chart-title { font-weight: 600; color: #333; margin: 0; }
+      .chart-toggle { float: right; font-size: 14px; color: #666; }
+      .chart-content { padding: 15px; }
+      .chart-content.collapsed { display: none; }
+      .chart-export { text-align: right; margin-top: 10px; }
+      .chart-export button { font-size: 0.85em; padding: 4px 8px; }
+      .no-data-message { text-align: center; color: #666; font-style: italic; padding: 20px; }
+      #track-selector { margin-bottom: 20px; }
+      .text-center { text-align: center; }
+      .accordion-header i { transition: transform 0.2s; }
+      input:checked ~ .accordion-header i { transition: transform 0.2s; }
+      .accordion { margin-bottom: 20px; }
+      .accordion-item { position: relative; }
+      .accordion-header { cursor: pointer; padding: 10px; background: #f8f9fa; border-radius: 4px; margin-bottom: 5px; }
+      .accordion-header:hover { background: #e9ecef; }
+      .accordion-body { overflow: visible; }
+      .track-content-wrapper {
+        max-height: 85vh;
+        overflow-y: auto;
+        padding: 10px;
+        border-top: 1px solid #eee;
+      }
+      .track-loading { text-align: center; padding: 20px; color: #666; }
+      html, body { height: auto; min-height: 100%; }
+      body { margin: 0; padding-bottom: 50px; }
+    </style>
   </head>
   <body>
     <div id="tracks"></div>
-    <div class="container" id="toastcontainer" stlye="position:fixed; bottom:8px; left:0px; right:0px; z-index: 100;"></div>
+    <div class="container" id="toastcontainer" style="position:fixed; bottom:8px; left:0px; right:0px; z-index: 100;"></div>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-geometryutil@0.10.3/src/leaflet.geometryutil.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <script src="../../core/lib/interface.js"></script>
     <script src="../../core/js/ui.js"></script>
     <script src="../../core/js/utils.js"></script>
     <script>
-var domTracks = document.getElementById("tracks");
-var fileCache = new Map();
-
-function filterGPSCoordinates(track) {
-  // only include data points with GPS values
-  var allowNoGPS = localStorage.getItem("recorder-allow-no-gps")=="true";
-  if (!allowNoGPS)
-    return track.filter(pt=>pt.Latitude!="" && pt.Longitude!="");
-  return track.map(pt => {
-    if (!isFinite(parseFloat(pt.Latitude))) pt.Latitude=0;
-    if (!isFinite(parseFloat(pt.Longitude))) pt.Longitude=0;
-    if (!isFinite(parseFloat(pt.Altitude))) pt.Altitude=0;
-    return pt;
-  })
+const domTracks = document.getElementById("tracks"),fileCache = new Map();
+let leafletMaps = {},trackCharts = {};
+function getLocalizationSettings() {
+  const userLang = navigator.language || navigator.userLanguage || 'en-US';
+  const stored = localStorage.getItem('recorder-units');
+  if (stored) return JSON.parse(stored);
+  const isMetric = !['en-US', 'en-LR', 'en-MM'].includes(userLang) && !userLang.startsWith('en-US');
+  return {speed: isMetric ? 'kmh' : 'mph', distance: isMetric ? 'km' : 'mi', temperature: isMetric ? 'celsius' : 'fahrenheit', elevation: isMetric ? 'm' : 'ft', auto: true};
 }
 
+function saveLocalizationSettings(settings) {
+  settings.auto = false;
+  localStorage.setItem('recorder-units', JSON.stringify(settings));
+}
+
+const unitConversions = {
+  speed: {
+    metric: { unit: 'km/h', label: 'Speed (km/h)', convert: v => v },
+    imperial: { unit: 'mph', label: 'Speed (mph)', convert: v => v * 0.621371 }
+  },
+  distance: {
+    metric: { unit: 'km', label: 'km', convert: v => v },
+    imperial: { unit: 'mi', label: 'miles', convert: v => v * 0.621371 }
+  },
+  temperature: {
+    metric: { unit: '°C', label: 'Temperature (°C)', convert: v => v },
+    imperial: { unit: '°F', label: 'Temperature (°F)', convert: v => (v * 9/5) + 32 }
+  },
+  elevation: {
+    metric: { unit: 'm', label: 'Elevation (m)', convert: v => v },
+    imperial: { unit: 'ft', label: 'Elevation (ft)', convert: v => v * 3.28084 }
+  }
+};
+
+function convertUnit(type, value, targetUnit = null) {
+  const settings = getLocalizationSettings();
+  const unit = targetUnit || settings[type];
+  const isImperial = (type === 'temperature' ? unit === 'fahrenheit' : unit !== settings[type] || !['kmh', 'km', 'celsius', 'm'].includes(unit));
+  const conversion = unitConversions[type][isImperial ? 'imperial' : 'metric'];
+  return {value: conversion.convert(value), unit: conversion.unit, label: conversion.label};
+}
+
+const convertSpeed = (v, t) => convertUnit('speed', v, t),
+      convertDistance = (v, t) => convertUnit('distance', v, t),
+      convertTemperature = (v, t) => convertUnit('temperature', v, t),
+      convertElevation = (v, t) => convertUnit('elevation', v, t);
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371000, dLat = (lat2 - lat1) * Math.PI / 180, dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+function createChartContainer(chartId, title, collapsed = true) {
+  return `
+    <div class="chart-container">
+      <div class="chart-header" onclick="toggleChart('${chartId}')">
+        <div class="chart-title">${title}</div>
+        <div class="chart-toggle" id="toggle-${chartId}">${collapsed ? '▼' : '▲'}</div>
+      </div>
+      <div class="chart-content ${collapsed ? 'collapsed' : ''}" id="content-${chartId}">
+        <div class="chart-wrapper">
+          <canvas class="chart-canvas" id="canvas-${chartId}"></canvas>
+        </div>
+        <div class="chart-export">
+          <button class="btn btn-sm" onclick="exportChart('${chartId}')">Export PNG</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+const toggleChart = (chartId) => {
+  const content = document.getElementById(`content-${chartId}`);
+  const toggle = document.getElementById(`toggle-${chartId}`);
+  const chartContainer = content.closest('.chart-container');
+  const trackContainer = content.closest('.accordion-item');
+  const isCollapsed = content.classList.toggle('collapsed');
+  toggle.textContent = isCollapsed ? '▼' : '▲';
+
+  // Z-index management prevents expanded charts from being hidden behind other tracks
+  // When expanding: find highest z-index and place this track above it
+  // When collapsing: reset z-index unless other charts in this track are still expanded
+  if (!isCollapsed) {
+    let maxZ = 4;
+    document.querySelectorAll('.accordion-item').forEach(item => {
+      const z = parseInt(item.style.zIndex, 10);
+      if (!isNaN(z) && z > maxZ) maxZ = z;
+    });
+    if (trackContainer) trackContainer.style.zIndex = maxZ + 1;
+    if (chartContainer) chartContainer.style.zIndex = '10';
+  } else {
+    if (chartContainer) chartContainer.style.zIndex = '';
+    if (!trackContainer.querySelector('.chart-content:not(.collapsed)')) trackContainer.style.zIndex = '';
+  }
+
+  if (!isCollapsed) {
+    const parts = chartId.split('-'), trackNumber = parts[parts.length - 1], chartType = parts.slice(0, -1).join('-');
+    if (trackCharts[trackNumber]?.[chartType]) requestAnimationFrame(() => trackCharts[trackNumber][chartType].resize());
+  }
+};
+
+const exportChart = (chartId) => {
+  const canvas = document.getElementById(`canvas-${chartId}`);
+  if (canvas) {
+    const link = document.createElement('a');
+    link.download = `chart-${chartId}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('Chart exported successfully', 'success');
+  }
+};
+
+const chartTypes = {
+  heartrate: {
+    filter: d => (d.Heartrate && d.Heartrate !== "") || (d['BT Heartrate'] && d['BT Heartrate'] !== ""),
+    title: 'Heart Rate Over Time',
+    datasets: [
+      { key: 'Heartrate', label: 'Built-in HR (BPM)', color: '#dc3545', yAxis: 'y' },
+      { key: 'BT Heartrate', label: 'Bluetooth HR (BPM)', color: '#007bff', yAxis: 'y' }
+    ],
+    scales: { y: { title: 'Heart Rate (BPM)' } }
+  },
+  battery: {
+    filter: d => d['Battery Percentage'] !== undefined && d['Battery Percentage'] !== "",
+    title: 'Battery Level Over Time',
+    datasets: [
+      { key: 'Battery Percentage', label: 'Battery %', color: '#28a745', yAxis: 'y' },
+      { key: 'Battery Voltage', label: 'Voltage (V)', color: '#ffc107', yAxis: 'y1' }
+    ],
+    scales: { y: { min: 0, max: 100, title: 'Battery %' }, y1: { position: 'right', min: 3.0, max: 4.2, title: 'Voltage (V)', grid: false } }
+  },
+  steps: { filter: d => d.Steps !== undefined && d.Steps !== "", data: d => parseInt(d.Steps) || 0, label: 'Steps per Interval', color: '#36a2eb', title: 'Step Count Over Time', type: 'bar', cumulative: true },
+  elevation: {
+    filter: d => (d['Barometer Altitude'] !== undefined && d['Barometer Altitude'] !== "") || (d.Altitude !== undefined && d.Altitude !== ""),
+    title: 'Elevation Profile',
+    datasets: [
+      { key: 'Barometer Altitude', label: () => 'Barometer (' + convertElevation(1).unit + ')', color: '#14b8a6', yAxis: 'y', convert: convertElevation },
+      { key: 'Altitude', label: () => 'GPS (' + convertElevation(1).unit + ')', color: '#9333ea', yAxis: 'y', convert: convertElevation }
+    ],
+    scales: { y: { title: () => convertElevation(1).label } }
+  },
+  speed: { filter: d => d.Latitude && d.Longitude && d.Latitude !== "" && d.Longitude !== "", calculate: true, label: () => convertSpeed(1).label, color: '#10b981', title: 'Speed Over Time' },
+  barometer: {
+    filter: d => d['Barometer Temperature'] !== undefined || d['Barometer Pressure'] !== undefined,
+    title: 'Barometer Data Over Time',
+    datasets: [
+      { key: 'Barometer Temperature', label: () => convertTemperature(1).label, color: '#ef4444', yAxis: 'y', convert: convertTemperature },
+      { key: 'Barometer Pressure', label: 'Pressure (hPa)', color: '#3b82f6', yAxis: 'y1' }
+    ],
+    scales: { y: { title: () => convertTemperature(1).label }, y1: { position: 'right', title: 'Pressure (hPa)', grid: false } }
+  }
+};
+
+const createChart = (type, canvasId, trackData) => {
+  const config = chartTypes[type];
+  let data = trackData.filter(config.filter);
+
+  if (data.length === 0) {
+    document.getElementById(`content-${canvasId.replace('canvas-', '')}`).innerHTML = '<div class="no-data-message">No data available</div>';
+    return null;
+  }
+
+  const makeDataset = (label, data, color, opts = {}) => ({
+    label: typeof label === 'function' ? label() : label,
+    data, borderColor: color, backgroundColor: color + '20',
+    borderWidth: 2, fill: opts.fill !== false, tension: 0.1, ...opts
+  });
+
+  let datasets = [];
+  if (config.datasets) {
+    datasets = config.datasets
+      .filter(ds => data.some(pt => pt[ds.key] !== undefined && pt[ds.key] !== ""))
+      .map(ds => makeDataset(ds.label, data.map(pt => {
+        const val = parseFloat(pt[ds.key]);
+        return val ? (ds.convert ? parseFloat(ds.convert(val).value.toFixed(1)) : val) : null;
+      }), ds.color, { fill: false, yAxisID: ds.yAxis }));
+  } else if (type === 'speed') {
+    // Calculate speed from GPS coordinates
+    // Speed = distance between points / time between points
+    const speeds = [], times = [];
+    for (let i = 1; i < data.length; i++) {
+      const [prev, curr] = [data[i-1], data[i]];
+      if (prev.Time && curr.Time) {
+        const [lat1, lon1, lat2, lon2] = [prev.Latitude, prev.Longitude, curr.Latitude, curr.Longitude].map(parseFloat);
+        const distance = calculateDistance(lat1, lon1, lat2, lon2);
+        const timeSeconds = (curr.Time - prev.Time) / 1000;
+        const speedKmh = (distance / timeSeconds) * 3.6; // m/s to km/h
+        speeds.push(convertSpeed(speedKmh).value);
+        times.push(curr.Time.toLocaleTimeString());
+      }
+    }
+    datasets = [makeDataset(config.label, speeds, config.color)];
+    data = times.map(time => ({ Time: { toLocaleTimeString: () => time } }));
+  } else if (config.cumulative) {
+    let cumulative = 0;
+    const cumulativeData = data.map(point => cumulative += config.data(point));
+    datasets = [
+      makeDataset(config.label, data.map(config.data), config.color, { backgroundColor: config.color + 'A0', type: 'bar', yAxisID: 'y', fill: false }),
+      makeDataset('Cumulative Steps', cumulativeData, '#ff6384', { fill: false, type: 'line', yAxisID: 'y1' })
+    ];
+  } else {
+    datasets = [makeDataset(config.label, data.map(config.data), config.color)];
+  }
+
+  const chartConfig = {
+    type: config.type || 'line',
+    data: { labels: data.map(pt => pt.Time?.toLocaleTimeString() || ''), datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 300 },
+      interaction: { intersect: false, mode: 'point' },
+      plugins: {
+        title: { display: true, text: config.getTitle ? config.getTitle(data) : config.title },
+        legend: { display: true },
+        tooltip: { mode: 'nearest', intersect: false }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Time' } },
+        y: { beginAtZero: type !== 'heartrate', title: { display: true, text: typeof config.label === 'function' ? config.label() : config.label || 'Value' } }
+      },
+      elements: { point: { radius: 1, hoverRadius: 3 } }
+    }
+  };
+
+  if (config.scales) {
+    Object.entries(config.scales).forEach(([axis, scale]) => {
+      chartConfig.options.scales[axis] = { ...scale };
+      if (scale.title) chartConfig.options.scales[axis].title = { display: true, text: typeof scale.title === 'function' ? scale.title() : scale.title };
+      if (scale.grid === false) chartConfig.options.scales[axis].grid = { drawOnChartArea: false };
+    });
+  }
+
+  if (config.cumulative) {
+    chartConfig.options.scales.y1 = { type: 'linear', display: true, position: 'right', beginAtZero: true, title: { display: true, text: 'Cumulative Steps' }, grid: { drawOnChartArea: false } };
+  }
+
+  return new Chart(document.getElementById(canvasId).getContext('2d'), chartConfig);
+};
+const createChartsForTrack = (trackNumber, trackData) => {
+  const chartsContainer = document.getElementById(`charts-${trackNumber}`);
+  if (!chartsContainer || !trackData.length) return;
+  const chartDefs = [
+    {type:'heartrate',id:'hr',title:'Heart Rate'},{type:'battery',id:'battery',title:'Battery Level'},
+    {type:'steps',id:'steps',title:'Step Count'},{type:'elevation',id:'elevation',title:'Elevation Profile'},
+    {type:'speed',id:'speed',title:'Speed'},{type:'barometer',id:'barometer',title:'Barometer Data'}
+  ];
+  const availableCharts = chartDefs.filter(({type}) => trackData.some(chartTypes[type].filter));
+  if (!availableCharts.length) {
+    chartsContainer.innerHTML = '<div class="no-data-message">No sensor data available for visualization</div>';
+    return;
+  }
+  chartsContainer.innerHTML = availableCharts.map(({id,title}) => createChartContainer(`${id}-${trackNumber}`, title)).join('');
+  trackCharts[trackNumber] = {};
+  requestAnimationFrame(() => {
+    availableCharts.forEach(({type,id}) => {
+      try { trackCharts[trackNumber][id] = createChart(type, `canvas-${id}-${trackNumber}`, trackData); }
+      catch (e) { console.error(`Error creating ${type} chart:`, e); }
+    });
+  });
+};
+
+const cleanupCharts = (trackNumber = null) => {
+  const destroyCharts = charts => Object.values(charts).forEach(c => c?.destroy?.());
+  if (trackNumber && trackCharts[trackNumber]) {
+    destroyCharts(trackCharts[trackNumber]);
+    delete trackCharts[trackNumber];
+  } else {
+    Object.values(trackCharts).forEach(destroyCharts);
+    trackCharts = {};
+  }
+};
+
+const hasValidGPS = pt => pt.Latitude && pt.Longitude && pt.Latitude !== "" && pt.Longitude !== "";
+function filterGPSCoordinates(track) {
+  const allowNoGPS = localStorage.getItem("recorder-allow-no-gps")=="true";
+  if (!allowNoGPS) return track.filter(hasValidGPS);
+  return track.map(pt => {
+    ['Latitude', 'Longitude', 'Altitude'].forEach(k => { if (!isFinite(parseFloat(pt[k]))) pt[k] = 0; });
+    return pt;
+  });
+}
 function saveKML(track,title) {
-  // filter out coords with no GPS (or allow, but force to 0)
   track = filterGPSCoordinates(track);
-  // Now output KML
-  var kml = `<?xml version="1.0" encoding="UTF-8"?>
+  const fields = [
+    {key:'Heartrate', name:'heartrate', display:'Heart Rate'},
+    {key:'Steps', name:'steps', display:'Step Count'},
+    {key:'Core', name:'core', display:'Core Temp'},
+    {key:'Skin', name:'skin', display:'Skin Temp'}
+  ];
+  const hasField = f => track[0][f.key] !== undefined;
+  const kmlField = (f,type) => hasField(f) ? `<gx:${type} name="${f.name}"${type==='SimpleArrayField'?' type="int"':''}>${
+    type==='SimpleArrayField' ? `\n      <displayName>${f.display}</displayName>\n    ` :
+    track.map(pt=>`\n            <gx:value>${0|pt[f.key]}</gx:value>`).join("")+'\n              '
+  }</gx:${type}>` : '';
+
+  const kml = `<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
   <Document>
     <Schema id="schema">
-${track[0].Heartrate!==undefined ? `<gx:SimpleArrayField name="heartrate" type="int">
-      <displayName>Heart Rate</displayName>
-    </gx:SimpleArrayField>`:``}
-${track[0].Steps!==undefined ? `<gx:SimpleArrayField name="steps" type="int">
-      <displayName>Step Count</displayName>
-    </gx:SimpleArrayField>`:``}
-${track[0].Core!==undefined ? `<gx:SimpleArrayField name="core" type="int">
-      <displayName>Core Temp</displayName>
-    </gx:SimpleArrayField>`:``}
-${track[0].Skin!==undefined ? `<gx:SimpleArrayField name="skin" type="int">
-      <displayName>Skin Temp</displayName>
-    </gx:SimpleArrayField>`:``}
-
+${fields.map(f=>kmlField(f,'SimpleArrayField')).join('\n')}
     </Schema>
     <Folder>
       <name>Tracks</name>
       <Placemark>
         <name>${title}</name>
         <gx:Track>
-${track.map(pt=>`            <when>${pt.Time.toISOString()}</when>\n`).join("")}
-${track.map(pt=>`            <gx:coord>${pt.Longitude} ${pt.Latitude} ${pt.Altitude}</gx:coord>\n`).join("")}
+${track.map(pt=>`            <when>${pt.Time.toISOString()}</when>`).join('\n')}
+${track.map(pt=>`            <gx:coord>${pt.Longitude} ${pt.Latitude} ${pt.Altitude}</gx:coord>`).join('\n')}
           <ExtendedData>
             <SchemaData schemaUrl="#schema">
-${track[0].Heartrate!==undefined ? `<gx:SimpleArrayData name="heartrate">
-${track.map(pt=>`            <gx:value>${0|pt.Heartrate}</gx:value>\n`).join("")}
-              </gx:SimpleArrayData>`:``}
-${track[0].Steps!==undefined ? `<gx:SimpleArrayData name="steps">
-${track.map(pt=>`            <gx:value>${0|pt.Steps}</gx:value>\n`).join("")}
-              </gx:SimpleArrayData>`:``}
-${track[0].Core!==undefined ? `<gx:SimpleArrayData name="core">
-${track.map(pt=>`            <gx:value>${0|pt.Core}</gx:value>\n`).join("")}
-              </gx:SimpleArrayData>`:``}
-${track[0].Skin!==undefined ? `<gx:SimpleArrayData name="skin">
-${track.map(pt=>`            <gx:value>${0|pt.Skin}</gx:value>\n`).join("")}
-              </gx:SimpleArrayData>`:``}
+${fields.map(f=>kmlField(f,'SimpleArrayData')).join('\n')}
             </SchemaData>
           </ExtendedData>
         </gx:Track>
@@ -81,45 +393,28 @@ ${track.map(pt=>`            <gx:value>${0|pt.Skin}</gx:value>\n`).join("")}
 }
 
 function saveGPX(track, title) {
-  if (!track || !track[0] || !"Time" in track[0] || !track[0].Time) {
-    showToast("Error in trackfile.", "error");
-    return;
-  }
-  // filter out coords with no GPS (or allow, but force to 0)
+  if (!track?.[0]?.Time) return showToast("Error in trackfile.", "error");
   track = filterGPSCoordinates(track);
-  // Output GPX
-  var gpx = `<?xml version="1.0" encoding="UTF-8"?>
-<gpx creator="Bangle.js" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">
-  <metadata>
-    <time>${track[0].Time.toISOString()}</time>
-  </metadata>
-  <trk>
-    <name>${title}</name>
-    <trkseg>`;
   let lastTime = 0;
-  track.forEach(pt=>{
-    let cadence;
-    if (pt.Steps && lastTime != 0){
-      cadence = pt.Steps * 60000 / (pt.Time.getTime() - lastTime);
-      cadence = cadence / 2; /*Convert from rpm to spm (one cycle is two steps), see https://github.com/espruino/BangleApps/pull/3068#issuecomment-1790041058*/
-    }
+  const gpx = `<?xml version="1.0" encoding="UTF-8"?>
+<gpx creator="Bangle.js" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">
+  <metadata><time>${track[0].Time.toISOString()}</time></metadata>
+  <trk><name>${title}</name><trkseg>${track.map(pt => {
+    // Calculate cadence (steps per minute) from step count
+    // Formula: (steps in interval * 60 seconds * 1000ms) / time elapsed in ms
+    // Simplified to: steps * 30000 / time_ms (since 60 * 1000 / 2 = 30000)
+    const cadence = pt.Steps && lastTime ? pt.Steps * 30000 / (pt.Time.getTime() - lastTime) : 0;
     lastTime = pt.Time.getTime();
-
-    gpx += `
+    return `
       <trkpt lat="${pt.Latitude}" lon="${pt.Longitude}">
         <ele>${pt.Altitude}</ele>
         <time>${pt.Time.toISOString()}</time>
-        <extensions>
-            <gpxtpx:TrackPointExtension>
-                ${pt.Heartrate ? `<gpxtpx:hr>${pt.Heartrate}</gpxtpx:hr>`:``}
-                ${cadence ? `<gpxtpx:cad>${cadence}</gpxtpx:cad>`:``} ${""/*<gpxtpx:distance>...</gpxtpx:distance><gpxtpx:cad>65</gpxtpx:cad>*/}
-            </gpxtpx:TrackPointExtension>
-        </extensions>
+        <extensions><gpxtpx:TrackPointExtension>
+          ${pt.Heartrate ? `<gpxtpx:hr>${pt.Heartrate}</gpxtpx:hr>` : ''}
+          ${cadence ? `<gpxtpx:cad>${cadence}</gpxtpx:cad>` : ''}
+        </gpxtpx:TrackPointExtension></extensions>
       </trkpt>`;
-
-  });
-  // https://www8.garmin.com/xmlschemas/TrackPointExtensionv1.xsd
-  gpx += `
+  }).join('')}
     </trkseg>
   </trk>
 </gpx>`;
@@ -128,26 +423,18 @@ function saveGPX(track, title) {
 }
 
 function saveCSV(track, title) {
-  if(!track[0]){
-    showToast(`Can't save empty csv "${title}" (no headers)`, "error");
-    return;
-  }
-  var headers = Object.keys(track[0]);
-  var csv = headers.join(",")+"\n";
-  track.forEach(t=>{
-    csv += headers.map(k=>{
-      if (t[k] instanceof Date) return t[k].toISOString();
-      return t[k];
-    }).join(",")+"\n";
-  });
+  if(!track[0]) return showToast(`Can't save empty csv "${title}" (no headers)`, "error");
+  const headers = Object.keys(track[0]);
+  const csv = headers.join(",") + "\n" + track.map(t =>
+    headers.map(k => t[k] instanceof Date ? t[k].toISOString() : t[k]).join(",")
+  ).join("\n");
   Util.saveCSV(title, csv);
   showToast("Download finished.", "success");
 }
 
 function trackLineToObject(headers, l) {
   if (l===undefined) return {};
-  var t = l.trim().split(",");
-  var o = {};
+  const t = l.trim().split(","), o = {};
   headers.forEach((header,i) => o[header] = t[i]);
   if (o.Time) o.Time = new Date(o.Time*1000);
   return o;
@@ -155,16 +442,12 @@ function trackLineToObject(headers, l) {
 
 function downloadTrack(filename, callback) {
   function onData(data) {
-    var lines = data.trim().split("\n");
-    var headers = lines.shift().split(",");
-    var track = lines.map(l=>trackLineToObject(headers, l));
-    callback(track);
+    const lines = data.trim().split("\n"), headers = lines.shift().split(",");
+    callback(lines.map(l=>trackLineToObject(headers, l)).filter(t => t.Time));
   }
-
   const data = fileCache.get(filename);
-  if (data) {
-    onData(data);
-  } else {
+  if (data) onData(data);
+  else {
     Util.showModal(`Downloading ${filename}...`);
     Util.readStorageFile(filename, data => {
       fileCache.set(filename, data);
@@ -175,40 +458,209 @@ function downloadTrack(filename, callback) {
 }
 
 function downloadAll(trackList, cb) {
-  const tracks = trackList.slice();
-
+  const tracks = [...trackList];
   const downloadOne = () => {
     const track = tracks.pop();
-    if(!track) {
-      showToast("Finished downloading all.", "success");
-      return;
+    if(!track) return showToast("Finished downloading all.", "success");
+    downloadTrack(track.filename, lines => {
+      cb(lines, `Bangle.js Track ${track.number}`);
+      downloadOne();
+    });
+  };
+  downloadOne();
+}
+
+// ========================================
+// Map Visualization
+// ========================================
+function createLeafletMap(containerId, coordinates, fullTrack) {
+  try {
+    const map = L.map(containerId, {
+      scrollWheelZoom: false,
+      zoomControl: true
+    }).setView([0, 0], 13);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 19
+    }).addTo(map);
+
+    if (coordinates && coordinates.length > 0) {
+      const polyline = L.polyline(coordinates, {
+        color: '#2563eb',
+        weight: 3,
+        opacity: 0.8,
+        interactive: false
+      }).addTo(map);
+
+      // Get start and end times from full track data
+      const startTime = fullTrack && fullTrack[0] && fullTrack[0].Time ?
+        fullTrack[0].Time.toLocaleTimeString() : '';
+      const endTime = fullTrack && fullTrack[fullTrack.length-1] && fullTrack[fullTrack.length-1].Time ?
+        fullTrack[fullTrack.length-1].Time.toLocaleTimeString() : '';
+
+      // Create clickable markers for every GPS point
+      if (fullTrack && fullTrack.length > 0) {
+        const gpsPoints = fullTrack.filter(hasValidGPS);
+        const allMarkers = []; // Track all markers for style management
+        const allIndicators = []; // Track small indicator markers
+        let activeMarkerIndex = null; // Track which marker is currently active
+
+        // Generate popup content for any point
+        const generatePopupContent = (pointData, pointIndex) => {
+          const items = [];
+          if (pointData.Time) items.push(`<strong>🕐 ${pointData.Time.toLocaleTimeString()}</strong>`);
+          if (pointData.Heartrate) items.push(`❤️ ${pointData.Heartrate} BPM`);
+          if (pointData['Barometer Altitude'] && pointData['Barometer Altitude'] !== "" && !isNaN(parseFloat(pointData['Barometer Altitude']))) {
+            const e = convertElevation(parseFloat(pointData['Barometer Altitude']));
+            items.push(`⛰️ ${e.value.toFixed(0)} ${e.unit}`);
+          } else if (pointData.Altitude) {
+            const e = convertElevation(parseFloat(pointData.Altitude));
+            items.push(`⛰️ ${e.value.toFixed(0)} ${e.unit}`);
+          }
+          if (pointIndex > 0 && gpsPoints[pointIndex-1]?.Time && pointData.Time) {
+            const prev = gpsPoints[pointIndex-1];
+            const [lat1, lon1, lat2, lon2] = [prev.Latitude, prev.Longitude, pointData.Latitude, pointData.Longitude].map(parseFloat);
+            if ([lat1, lon1, lat2, lon2].every(v => !isNaN(v))) {
+              const speedKmh = (calculateDistance(lat1, lon1, lat2, lon2) / ((pointData.Time - prev.Time) / 1000)) * 3.6;
+              const s = convertSpeed(speedKmh);
+              items.push(`🏃 ${s.value.toFixed(1)} ${s.unit}`);
+            }
+          }
+          if (pointData['Battery Percentage']) {
+            let b = `🔋 ${pointData['Battery Percentage']}%`;
+            if (pointData['Battery Voltage']) b += ` (${parseFloat(pointData['Battery Voltage']).toFixed(2)}V)`;
+            items.push(b);
+          }
+          if (pointData.Steps) {
+            const cumSteps = fullTrack.reduce((sum, pt) => pt.Time?.getTime() <= pointData.Time.getTime() ? sum + (parseInt(pt.Steps) || 0) : sum, 0);
+            items.push(`👣 ${cumSteps.toLocaleString()} total steps`);
+          }
+          if (pointData['Barometer Temperature']) {
+            const t = convertTemperature(parseFloat(pointData['Barometer Temperature']));
+            items.push(`🌡️ ${t.value.toFixed(1)} ${t.unit}`);
+          }
+          if (pointData['Barometer Pressure']) items.push(`🌀 ${parseFloat(pointData['Barometer Pressure']).toFixed(1)} hPa`);
+          return `<div style="font-size: 12px; line-height: 1.4;">${items.join('<br>')}</div>`;
+        };
+
+        gpsPoints.forEach((point, index) => {
+          const lat = parseFloat(point.Latitude);
+          const lon = parseFloat(point.Longitude);
+
+          if (!isNaN(lat) && !isNaN(lon)) {
+            const marker = L.circleMarker([lat, lon], { radius: 10, weight: 1, fillOpacity: 0.01, opacity: 0.01, color: '#2563eb', fillColor: '#2563eb' }).addTo(map);
+            const indicator = L.circleMarker([lat, lon], { radius: 3, weight: 1, fillOpacity: 0.8, opacity: 1, color: '#999', fillColor: '#999', interactive: false }).addTo(map);
+            allMarkers.push(marker);
+            allIndicators.push(indicator);
+            Object.assign(marker, { _index: index, _pointData: point });
+          }
+        });
+
+        // Map click handler for marker selection
+        // We detect clicks in two ways:
+        // 1. Clicks within 20 pixels of the GPS track line (for clicking between points)
+        // 2. Clicks within 15 pixels of a marker (for precise point selection)
+        map.on('click', e => {
+          const clickLatLng = e.latlng;
+          // Check if click is near the GPS track line (within 20 pixels)
+          const closestPointOnLine = L.GeometryUtil.closest(map, polyline.getLatLngs(), clickLatLng);
+          const nearPolyline = closestPointOnLine?.distance <= 20;
+
+          // Find closest marker to click location
+          let [closestMarker, closestIndex, closestDistance] = [null, -1, Infinity];
+          allMarkers.forEach((marker, i) => {
+            const distance = map.distance(clickLatLng, marker.getLatLng());
+            if (distance < closestDistance) [closestMarker, closestIndex, closestDistance] = [marker, i, distance];
+          });
+
+          // Convert geographic distance to pixel distance based on current zoom level
+          // Formula: Earth's circumference (40075km) * cos(latitude) / (2^(zoom+8))
+          // This gives us meters per pixel, allowing accurate click detection
+          const zoom = map.getZoom();
+          const pixelDistance = closestDistance / (40075016.686 * Math.abs(Math.cos(clickLatLng.lat * Math.PI / 180)) / Math.pow(2, zoom + 8));
+
+          const setMarkerStyle = (idx, active) => idx !== null &&
+            allMarkers[idx].setStyle({ fillOpacity: active ? 0.5 : 0.01, opacity: active ? 0.8 : 0.01, radius: active ? 12 : 10 });
+
+          if (closestMarker && (nearPolyline || pixelDistance <= 15)) {
+            if (activeMarkerIndex !== null && activeMarkerIndex !== closestIndex) setMarkerStyle(activeMarkerIndex, false);
+            setMarkerStyle(closestIndex, true);
+            activeMarkerIndex = closestIndex;
+            closestMarker.bindPopup(generatePopupContent(closestMarker._pointData, closestIndex)).openPopup();
+          } else if (activeMarkerIndex !== null) {
+            setMarkerStyle(activeMarkerIndex, false);
+            activeMarkerIndex = null;
+          }
+        });
+
+        // Handle dragging near track line
+        map.on('mousemove', e => {
+          const nearLine = L.GeometryUtil.closest(map, polyline.getLatLngs(), e.latlng)?.distance <= 20;
+          map.dragging[nearLine ? 'disable' : 'enable']();
+          map._container.style.cursor = nearLine ? 'pointer' : '';
+        }).on('mouseout', () => {
+          map.dragging.enable();
+          map._container.style.cursor = '';
+        });
+      }
+
+      // Start/end markers
+      const markerStyle = { radius: 6, color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.8, bubblingMouseEvents: false };
+      const addMarker = (coord, color, text) => {
+        const marker = L.circleMarker(coord, { ...markerStyle, fillColor: color }).addTo(map).bindPopup(text);
+        marker.on('click dblclick mousedown mouseup touchstart touchend', L.DomEvent.stopPropagation);
+        return marker;
+      };
+
+      addMarker(coordinates[0], '#22c55e', startTime ? `Start - ${startTime}` : 'Start');
+      if (coordinates.length > 1) {
+        addMarker(coordinates[coordinates.length - 1], '#ef4444', endTime ? `End - ${endTime}` : 'End');
+      }
+
+      map.fitBounds(polyline.getBounds().pad(0.1));
     }
 
-    downloadTrack(
-      track.filename,
-      lines => {
-        cb(lines, `Bangle.js Track ${track.number}`);
-        downloadOne();
-      }
-    );
-  };
+    leafletMaps[containerId] = map;
+    return map;
+  } catch (error) {
+    console.error('Error creating map:', error);
+    return null;
+  }
+}
 
-  downloadOne();
+function cleanupMaps(mapId = null) {
+  const removeMaps = m => m?.remove?.();
+  if (mapId && leafletMaps[mapId]) {
+    removeMaps(leafletMaps[mapId]);
+    delete leafletMaps[mapId];
+  }
+  else {
+    Object.values(leafletMaps).forEach(removeMaps);
+    leafletMaps = {};
+  }
 }
 
 function getTrackList() {
   Util.showModal("Loading Track List...");
   domTracks.innerHTML = "";
+  cleanupMaps();
+  cleanupCharts();
+
   Puck.eval(`require("Storage").list(/^recorder\\.log.*\\.csv$/,{sf:1})`,files=>{
-    var trackList = [];
-    var promise = Promise.resolve();
-    /* For each file ask Bangle.js for info. Since we now start recording even
-    before we have a GPS trace, we get the Bangle to do a *quick* search for us
-    to see if it found any data first. */
+    let trackList = [];
+    // Use promise chain to load tracks sequentially - this prevents overwhelming the Bangle
+    // with too many concurrent requests and ensures stable Bluetooth communication
+    let promise = Promise.resolve();
+
     files.forEach(filename => {
       promise = promise.then(()=>new Promise(resolve => {
-        var trackNo = filename.match(/^recorder\.log(.*)\.csv$/)[1];
+        const matches = filename.match(/^recorder\.log(.*)\.csv$/);
+        const trackNo = matches ? matches[1] : '';
         Util.showModal(`Loading Track ${trackNo}...`);
+        // This function runs on the Bangle to quickly scan for valid GPS data
+        // Many tracks start recording before GPS lock, so we search up to 100 lines
+        // to find the first coordinate for the track preview
         Puck.eval(`(function(fn) {
   var f = require("Storage").open(fn,"r");
   var headers = f.readLine().trim();
@@ -217,14 +669,13 @@ function getTrackList() {
   if (lIdx >= 0) {
     var tries = 100;
     var l = data;
-    while (l && l.split(",")[lIdx]=="" && tries++)
+    while (l && l.split(",")[lIdx]=="" && tries--)
       l = f.readLine();
     if (l) data = l;
   }
   return {headers:headers,l:data};
 })(${JSON.stringify(filename)})`, trackInfo=>{
-          console.log(filename," => ",trackInfo);
-          if (!trackInfo || !"headers" in trackInfo) {
+          if (!trackInfo || !("headers" in trackInfo)) {
             showToast("Error loading track list.", "error");
             resolve();
           }
@@ -238,92 +689,170 @@ function getTrackList() {
         });
       }));
     });
-    // ================================================
-    // When 'promise' completes we now have all the info in trackList
+
     promise.then(() => {
-      var html = `
+      trackList.sort((a, b) => b.number.localeCompare(a.number));
+
+      let html = `
       <div class="container">
-      <h2>Tracks</h2>
-      <div class="columns">\n`;
-      trackList.forEach(track => {
-        console.log("track", track);
-        var trackData = trackLineToObject(track.info.headers, track.info.l);
-        console.log("trackData", trackData);
-        html += `
-         <div class="column col-12">
-           <div class="card-header">
-             <div class="card-title h5">Track ${track.number}</div>
-             <div class="card-subtitle text-gray">${trackData.Time?trackData.Time.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }):"No track data"}</div>
-           </div>
-${trackData.Latitude ? `
-           <div class="card-image">
-             <iframe
-               width="100%"
-               height="250"
-               frameborder="0" style="border:0"
-               src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBxTcwrrVOh2piz7EmIs1Xn4FsRxJWeVH4&q=${trackData.Latitude},${trackData.Longitude}&zoom=10" allowfullscreen>
-             </iframe>
-           </div><div class="card-body"></div>` : `<div class="card-body">No GPS info</div>`}
-           <div class="card-footer">
-             <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadkml">Download KML</button>
-             <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadgpx">Download GPX</button>
-             <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadcsv">Download CSV</button>
-             <button class="btn btn-default" filename="${track.filename}" trackid="${track.number}" task="delete">Delete</button>
-           </div>
-         </div>
-        `;
-      });
+      <h2>GPS Tracks</h2>`;
+
+      if (trackList.length > 0) {
+        html += `<div class="accordion">`;
+        trackList.forEach((track, index) => {
+          const trackData = trackLineToObject(track.info.headers, track.info.l);
+          const dateStr = trackData.Time ?
+            trackData.Time.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) +
+            ' at ' + trackData.Time.toLocaleTimeString() :
+            "No date info";
+
+          html += `
+          <div class="accordion-item">
+            <input type="checkbox" id="accordion-track-${track.number}" name="accordion-tracks" hidden>
+            <label class="accordion-header" for="accordion-track-${track.number}" data-track-index="${index}">
+              <i class="icon icon-arrow-right mr-1"></i>
+              <strong>Track ${track.number}</strong> - ${dateStr}
+            </label>
+            <div class="accordion-body" id="track-content-${track.number}">
+              <div class="track-loading">Click to load track data...</div>
+            </div>
+          </div>`;
+        });
+
+        html += `</div>`;
+      }
       if (trackList.length==0) {
         html += `
          <div class="column col-12">
-           <div class="card-header">
-             <div class="card-title h5">No tracks</div>
-             <div class="card-subtitle text-gray">No GPS tracks found</div>
+           <div class="card">
+             <div class="card-header">
+               <div class="card-title h5">No tracks</div>
+               <div class="card-subtitle text-gray">No GPS tracks found</div>
+             </div>
            </div>
-         </div>
-         `;
+         </div>`;
       }
+
       html += `
-        </div><!-- columns -->
-        <h2>Batch</h2>
+        <h2>Batch Operations</h2>
         <div class="form-group">
-          <button class="btn btn-primary" task="downloadkml_all">Download all KML</button>
-          <button class="btn btn-primary" task="downloadgpx_all">Download all GPX</button>
-          <button class="btn btn-primary" task="downloadcsv_all">Download all CSV</button>
+          ${['KML', 'GPX', 'CSV'].map(fmt => `<button class="btn btn-primary" task="download${fmt.toLowerCase()}_all">Download all ${fmt}</button>`).join(' ')}
         </div>
         <h2>Settings</h2>
         <div class="form-group">
           <label class="form-switch">
-            <input type="checkbox" id="settings-allow-no-gps" ${(localStorage.getItem("recorder-allow-no-gps")=="true")?"checked":""}>
+            <input type="checkbox" id="settings-allow-no-gps" ${localStorage.getItem("recorder-allow-no-gps")=="true" ? "checked" : ""}>
             <i class="form-icon"></i> Include GPX/KML entries even when there's no GPS info
           </label>
         </div>
-        </div>`;
-      domTracks.innerHTML = html;
-      document.getElementById("settings-allow-no-gps").addEventListener("change",event=>{
-        var allowNoGPS = event.target.checked;
-        localStorage.setItem("recorder-allow-no-gps", allowNoGPS);
-      });
-      Util.hideModal();
-      var buttons = domTracks.querySelectorAll("button");
-        for (var i=0;i<buttons.length;i++) {
-          buttons[i].addEventListener("click",event => {
-            var button = event.currentTarget;
-            var filename = button.getAttribute("filename");
-            var trackid = parseInt(button.getAttribute("trackid"));
-            var task = button.getAttribute("task");
+        <div class="form-group">
+          <label class="form-label">Units</label>
+          <select class="form-select" id="settings-units">
+            <option value="auto">Auto-detect from locale</option>
+            <option value="metric">Metric (km/h, °C, m)</option>
+            <option value="imperial">Imperial (mph, °F, ft)</option>
+          </select>
+        </div>
+      </div>`;  // Close container div here to include everything
 
-            if (!/_all$/.test(task) && (!filename || trackid===undefined)) return;
+      domTracks.innerHTML = html;
+
+      window.currentTrackList = trackList;
+      function displayTrack(trackIndex, trackNumber) {
+        const trackContainer = document.getElementById(`track-content-${trackNumber}`);
+        if (!trackContainer || trackIndex >= trackList.length) return;
+
+        if (trackContainer.dataset.loaded === 'true') return;
+        trackContainer.innerHTML = '<div class="track-loading">Loading track data...</div>';
+        const track = trackList[trackIndex];
+        const trackData = trackLineToObject(track.info.headers, track.info.l);
+        let trackHtml = `
+          <div class="track-content-wrapper">
+           <div class="card">
+             <div class="card-body">
+${trackData.Latitude ? `
+               <div id="map-${track.number}" class="leaflet-map"></div>
+               <div class="track-stats">
+                 <span id="stats-${track.number}">Loading...</span>
+               </div>` : ''}
+               <div id="charts-${track.number}" class="charts-container"></div>
+             </div>
+             <div class="card-footer">
+               <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadkml">Download KML</button>
+               <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadgpx">Download GPX</button>
+               <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadcsv">Download CSV</button>
+               <button class="btn btn-default" filename="${track.filename}" trackid="${track.number}" task="delete">Delete</button>
+             </div>
+           </div>
+          </div>`;
+
+        trackContainer.innerHTML = trackHtml;
+        trackContainer.dataset.loaded = 'true';
+        attachTrackButtonListeners(trackContainer);
+
+        downloadTrack(track.filename, fullTrack => {
+          if (trackData.Latitude) {
+            const coordinates = fullTrack
+              .filter(hasValidGPS)
+              .map(pt => [parseFloat(pt.Latitude), parseFloat(pt.Longitude)]);
+
+            if (coordinates.length > 0) {
+              createLeafletMap(`map-${track.number}`, coordinates, fullTrack);
+
+              let distance = 0;
+              for (let i = 1; i < coordinates.length; i++) distance += L.latLng(coordinates[i-1]).distanceTo(L.latLng(coordinates[i]));
+              const duration = fullTrack[fullTrack.length-1].Time - fullTrack[0].Time;
+              const hours = Math.floor(duration / 3600000), minutes = Math.floor((duration % 3600000) / 60000);
+              const statsEl = document.getElementById(`stats-${track.number}`);
+              if (statsEl) {
+                const d = convertDistance(distance/1000);
+                statsEl.innerHTML = `<strong>Distance:</strong> ${d.value.toFixed(2)} ${d.unit} | <strong>Duration:</strong> ${hours}h ${minutes}m | <strong>Points:</strong> ${coordinates.length}`;
+              }
+            }
+          }
+
+          createChartsForTrack(track.number, fullTrack);
+        });
+      }
+
+      function attachTrackButtonListeners(container) {
+        const buttons = container.querySelectorAll("button[task]");
+
+        buttons.forEach(button => {
+          button.addEventListener("click", event => {
+            const button = event.currentTarget;
+            const filename = button.getAttribute("filename");
+            const trackid = button.getAttribute("trackid");
+            const task = button.getAttribute("task");
+
+            if (!filename || !trackid) return;
 
             switch(task) {
               case "delete":
-                Util.showModal(`Deleting ${filename}...`);
-                Util.eraseStorageFile(filename,()=>{
-                  Util.hideModal();
-                  getTrackList();
-                });
+                if (button.dataset.confirmDelete === "true") {
+                  // Second click - proceed with deletion
+                  Util.showModal(`Deleting ${filename}...`);
+                  Util.eraseStorageFile(filename, () => {
+                    Util.hideModal();
+                    getTrackList();
+                  });
+                } else {
+                  // First click - change to confirm state
+                  const originalText = button.textContent;
+                  button.textContent = "Confirm Delete";
+                  button.classList.add("btn-error");
+                  button.dataset.confirmDelete = "true";
+                  
+                  // Reset after 3 seconds
+                  setTimeout(() => {
+                    if (button.dataset.confirmDelete === "true") {
+                      button.textContent = originalText;
+                      button.classList.remove("btn-error");
+                      delete button.dataset.confirmDelete;
+                    }
+                  }, 3000);
+                }
                 break;
-
               case "downloadkml":
                 downloadTrack(filename, track => saveKML(track, `Bangle.js Track ${trackid}`));
                 break;
@@ -333,25 +862,62 @@ ${trackData.Latitude ? `
               case "downloadcsv":
                 downloadTrack(filename, track => saveCSV(track, `Bangle.js Track ${trackid}`));
                 break;
-
-              case "downloadkml_all":
-                downloadAll(trackList, saveKML);
-                break;
-              case "downloadgpx_all":
-                downloadAll(trackList, saveGPX);
-                break;
-              case "downloadcsv_all":
-                downloadAll(trackList, saveCSV);
-                break;
             }
           });
-        }
+        });
+      }
+
+      if (trackList.length > 0) {
+        document.querySelectorAll('.accordion-header').forEach(header => {
+          header.addEventListener('click', e => {
+            const trackIndex = parseInt(header.dataset.trackIndex);
+            const trackNumber = trackList[trackIndex].number;
+            if (!document.getElementById(`accordion-track-${trackNumber}`).checked) {
+              setTimeout(() => displayTrack(trackIndex, trackNumber), 10);
+            }
+          });
+        });
+      }
+
+      document.getElementById("settings-allow-no-gps").addEventListener("change",event=>{
+        localStorage.setItem("recorder-allow-no-gps", event.target.checked);
       });
+
+      const unitsSelector = document.getElementById("settings-units");
+      const currentSettings = getLocalizationSettings();
+      unitsSelector.value = currentSettings.auto ? "auto" : (currentSettings.speed === 'kmh' ? "metric" : "imperial");
+      unitsSelector.addEventListener("change", e => {
+        const val = e.target.value;
+        if (val === "auto") localStorage.removeItem("recorder-units");
+        else saveLocalizationSettings({
+          speed: val === "metric" ? 'kmh' : 'mph',
+          distance: val === "metric" ? 'km' : 'mi',
+          temperature: val === "metric" ? 'celsius' : 'fahrenheit',
+          elevation: val === "metric" ? 'm' : 'ft'
+        });
+        getTrackList();
+      });
+      Util.hideModal();
+      domTracks.querySelectorAll("button[task$='_all']").forEach(button => {
+        button.addEventListener("click", e => {
+          const task = e.currentTarget.getAttribute("task");
+          downloadAll(trackList, task.includes('kml') ? saveKML : task.includes('gpx') ? saveGPX : saveCSV);
+        });
+      });
+    });
   });
 }
 
 function onInit() {
   getTrackList();
+  document.addEventListener('click', e => {
+    if (e.target.tagName === 'A' && (e.target.href.includes('leafletjs.com') || e.target.href.includes('openstreetmap.org'))) {
+      e.preventDefault();
+      alert(e.target.href.includes('openstreetmap.org') ?
+        'Map data from OpenStreetMap\nLicense: Open Database License (ODbL)\nWebsite: openstreetmap.org/copyright' :
+        'Leaflet © Volodymyr Agafonkin\nLicense: BSD 2-Clause\nWebsite: leafletjs.com');
+    }
+  }, true);
 }
 
     </script>

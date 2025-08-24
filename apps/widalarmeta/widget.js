@@ -8,6 +8,7 @@
       padHours: true,
       showSeconds: 0, // 0=never, 1=only when display is unlocked, 2=for less than a minute
       font: 1, // 0=segment style font, 1=teletext font, 2=6x8:1x2
+      whenToShow: 0, // 0=always, 1=on clock only
     }, require("Storage").readJSON("widalarmeta.json",1) || {});
 
       if (config.font == 0) {
@@ -38,6 +39,13 @@
   } // getNextAlarm
 
   function draw(_w, fromInterval) {
+
+    // If only show on clock and not on clock
+    if (config.whenToShow === 1 && !Bangle.CLOCK) {
+      this.nextAlarm = undefined; // make sure to reload later
+      return;
+    }
+
     if (this.nextAlarm === undefined) {
       let alarm = getNextAlarm();
       if (alarm === undefined) {
@@ -55,6 +63,7 @@
     let calcWidth = 0;
     let drawSeconds = false;
 
+    // Determine text and width
     if (next > 0 && next <= config.maxhours*60*60*1000) {
       const hours = Math.floor((next-1) / 3600000).toString();
       const minutes = Math.floor(((next-1) % 3600000) / 60000).toString();
@@ -133,5 +142,7 @@
     };
 
     Bangle.on("alarmReload", () => WIDGETS["widalarmeta"].reload());
+    Bangle.on("lock", () => WIDGETS["widalarmeta"].draw(WIDGETS["widalarmeta"]))
+    Bangle.on("lcdPower", () => WIDGETS["widalarmeta"].draw(WIDGETS["widalarmeta"]))
   }
 })();

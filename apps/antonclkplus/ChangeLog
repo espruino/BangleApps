@@ -14,3 +14,4 @@
 0.10: Use Bangle.setUI({remove:...}) to allow loading the launcher without a full reset on 2v16
       Modified to avoid leaving functions defined when using setUI({remove:...})
 0.11: Minor code improvements
+0.12: Pass in `redraw` to allow `Bangle.uiRedraw()` to redraw the clock

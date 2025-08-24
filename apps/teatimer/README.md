@@ -3,7 +3,7 @@
 A simple timer. You can easily set up the time. The initial time is 2:30
 
 On the first screen, you can
-- tap to get help
+- double tap to get help
 - swipe up/down to change the timer by +/- one minute
 - swipe left/right to change the time by +/- 15 seconds
 - press Btn1 to start
@@ -12,24 +12,31 @@ Press Btn1 again to stop the timer
 - when time is up, your Bangle will buzz for 15 seconds
 - and it will count up to 60 seconds and stop after that
 
-## Images
-_1. Startscreen_
+The time changes can be adjusted in the settings menu.
 
-![](TeatimerStart.jpg)
+## Images
+_1. Start screen_
+
+![](TeatimerStart.png)
 Current time is displayed below the Title. Initial time is 2:30.
 
 _2. Help Screen_
 
-![](TeatimerHelp.jpg)
+![](TeatimerHelp.png)
 
 _3. Tea Timer running_
 
-![](TeatimerRun.jpg)
-Remainig time is shown in big font size. Above the initial time is shown.
+![](TeatimerRun.png)
+Remainig time is shown in big font size.
 
-_4. When time is up_
+_4. Pause Timer
 
-![](TeatimerUp.jpg)
+![](TeatimerPause.png)
+While the timer is running, you can pause and unpause it by pressing BTN1.
+
+_5. When time is up_
+
+![](TeatimerUp.png)
 When time is up, the watch will buzz for 15 seconds. It will count up to 60 seconds.
 
 ## Requests

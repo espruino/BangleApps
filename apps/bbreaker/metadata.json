@@ -1,0 +1,15 @@
+ {  "id": "bbreaker",
+    "name": "BrickBreaker",
+    "shortName":"BrickBreaker",
+    "icon": "bbreaker.png",
+    "version":"0.04",
+    "description": "A simple BreakOut clone for the Banglejs",
+    "tags": "game",
+    "readme": "README.md",
+    "supports": ["BANGLEJS"],
+    "allow_emulator": true,
+    "storage": [
+      {"name":"bbreaker.app.js","url":"app.js"},
+      {"name":"bbreaker.img","url":"app-icon.js","evaluate":true}
+    ]
+  }

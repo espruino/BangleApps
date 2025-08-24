@@ -61,3 +61,4 @@
 0.47: Fix 'blip' on speed map on some recordings
       Ensure Battery voltage is only stored to 0.01v
       Add graphs for Steps+Battery
+0.48: Add ability to log average acceleration values

@@ -1,0 +1,21 @@
+{
+  "id": "smartbatt",
+  "name": "Smart Battery Module",
+  "shortName": "Smart Battery",
+  "version": "0.01",
+  "description": "Provides a `smartbatt` module that returns the battery in days, and learns from daily usage over time for accurate predictions.",
+  "icon": "icon.png",
+  "type": "module",
+  "tags": "tool,system,clkinfo",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "provides_modules" : ["smartbatt"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"smartbatt","url":"module.js"},
+    {"name":"smartbatt.settings.js","url":"settings.js"},
+    {"name":"smartbatt.clkinfo.js","url":"clkinfo.js"}
+  ],
+  "data": [
+    {"name":"smartbatt.settings.json"}
+  ]
+}

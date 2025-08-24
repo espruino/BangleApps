@@ -13,7 +13,12 @@ const prosettings = (require("Storage").readJSON("promenu.settings.json", true) 
 prosettings.naturalScroll ??= false;
 prosettings.wrapAround ??= true;
 
-E.showMenu = (items?: Menu): MenuInstance => {
+E.showMenu = ((items?: Menu): MenuInstance | void => {
+  if(items == null){
+    g.clearRect(Bangle.appRect);
+    return Bangle.setUI();
+  }
+
   const RectRnd = (x1: number, y1: number, x2: number, y2: number, r: number) => {
     const pp = [];
     pp.push(...g.quadraticBezier([x2 - r, y1, x2, y1, x2, y1 + r]));
@@ -167,7 +172,6 @@ E.showMenu = (items?: Menu): MenuInstance => {
           }, 300, name, v, item, idx, x, iy);
         }
 
-        g.setColor(g.theme.fg);
         iy += fontHeight;
         idx++;
       }
@@ -252,21 +256,47 @@ E.showMenu = (items?: Menu): MenuInstance => {
     else l.select(evt);
   };
 
-  Bangle.setUI({
-    mode: "updown",
-    back,
-    remove: () => {
-      if (nameScroller) clearInterval(nameScroller);
-      Bangle.removeListener("swipe", onSwipe);
-      options.remove?.();
-    },
-    touch: ((_button, xy) => {
+  const touchcb = ((_button, xy) => {
       // since we've specified options.touch,
       // we need to pass through all taps since the default
       // touchHandler isn't installed in setUI
       cb(void 0, xy);
-    }) satisfies TouchCallback,
-  } as SetUIArg<"updown">, cb);
+  }) satisfies TouchCallback;
+
+  const uiopts = {
+    mode: "updown",
+    back: back as () => void,
+    remove: () => {
+      if (nameScroller) clearInterval(nameScroller);
+      Bangle.removeListener("swipe", onSwipe);
+      if(setUITouch)
+          Bangle.removeListener("touch", touchcb);
+      options.remove?.();
+    },
+  } satisfies SetUIArg<"updown">;
+
+  // does setUI install its own touch handler?
+  const setUITouch = process.env.VERSION >= "2v26";
+  if (!setUITouch) {
+      // old firmware, we can use its touch handler - no need for workaround
+      (uiopts as any).touch = touchcb;
+  }
+
+  Bangle.setUI(uiopts, cb);
+
+  if(setUITouch){
+      // new firmware, remove setUI's touch handler and use just our own to
+      // avoid `cb` drawing the menu (as part of setUI's touch handler)
+      // followed by us drawing the menu (as part of our touch handler)
+      //
+      // work around details:
+      // - https://github.com/espruino/Espruino/issues/2648
+      // - https://github.com/orgs/espruino/discussions/7697#discussioncomment-13782299
+      Bangle.removeListener("touch", (Bangle as any).touchHandler);
+      delete (Bangle as any).touchHandler;
+
+      Bangle.on("touch", touchcb);
+  }
 
   return l;
-};
+}) as typeof E.showMenu;

@@ -11,8 +11,8 @@
     // threshold settings
     maxAwake: 36E5, //  [ms] maximal awake time to count for consecutive sleep
     minConsec: 18E5, // [ms] minimal time to count for consecutive sleep
-    deepTh: 100, //     threshold for deep sleep
-    lightTh: 200, //    threshold for light sleep
+    deepTh: 150, //     threshold for deep sleep
+    lightTh: 300, //    threshold for light sleep
     wearTemp: 19.5, //    temperature threshold to count as worn
     // app settings
     breakToD: 12, //    [h] time of day when to start/end graphs
@@ -324,9 +324,9 @@
       },
       /*LANG*/"Deep Sleep": {
         value: settings.deepTh,
-        step: 1,
+        step: 10,
         min: 30,
-        max: 200,
+        max: 500,
         wrap: true,
         noList: true,
         onchange: v => {
@@ -338,7 +338,7 @@
         value: settings.lightTh,
         step: 10,
         min: 100,
-        max: 400,
+        max: 800,
         wrap: true,
         noList: true,
         onchange: v => {
