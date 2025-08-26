@@ -1,3 +1,4 @@
 0.01: New Widget!
 0.02: Now also visible on Bangle.js 2
 0.03: Remove global declaration of BANGLEJS2 var (fix #2123)
+0.04: Updated readability on dark themes
