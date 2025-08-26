@@ -6,7 +6,7 @@ It adds a widget with a weather pictogram and the temperature.
 It also adds a ClockInfo list to Bangle.js.
 You can view the full report through the app:
 
-![Screenshot](screenshot.png)
+![Screenshot](Screenshot.png)
 
 ## iOS Setup
 

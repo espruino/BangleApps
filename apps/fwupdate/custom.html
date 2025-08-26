@@ -161,6 +161,12 @@ function checkForFileOnServer() {
     });
   }
 
+  function getDescription(name) {
+    if (name.includes("_iflash")) return " (BETA: using internal+external flash)";
+    if (name.includes("_noflash")) return " (BETA: using internal flash only)";
+    return "";
+  }
+
   var regex = new RegExp("_banglejs2.*zip$");
 
   var domFirmwareList = document.getElementById("latest-firmware-list");
@@ -171,14 +177,14 @@ function checkForFileOnServer() {
     releaseFiles.sort().reverse().forEach(function(f) {
       var name = f.substr(f.substr(0,f.length-1).lastIndexOf('/')+1);
       console.log("Found "+name);
-      domFirmwareList.innerHTML += '<li>Release: <a href="'+f+'" class="fw-link">'+name+'</a></li>';
+      domFirmwareList.innerHTML += `<li>Release${getDescription(name)}: <a href="${f}'" class="fw-link">${name}</a></li>`;
       domFirmware.style = "";
     });
     getFilesFromURL("https://www.espruino.com/binaries/travis/master/",regex, function(travisFiles) {
       travisFiles.forEach(function(f) {
         var name = f.substr(f.lastIndexOf('/')+1);
         console.log("Found "+name);
-        domFirmwareList.innerHTML += '<li>Cutting Edge build: <a href="'+f+'" class="fw-link">'+name+'</a></li>';
+        domFirmwareList.innerHTML += `<li>Cutting Edge build${getDescription(name)}: <a href="${f}" class="fw-link">${name}</a></li>`;
         domFirmware.style = "";
       });
       console.log("Finished check for firmware files...");

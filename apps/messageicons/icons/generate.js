@@ -40,19 +40,29 @@ icons.forEach(icon => {
       png.decode(function (pixels) {
         var rgba = new Uint8Array(pixels);
         var isTransparent = false;
-        for (var i=0;i<rgba.length;i+=4)
+        for (var i=0;i<rgba.length;i+=4) {          
           if (rgba[i+3]<255) isTransparent=true;
+        }
         if (!isTransparent) { // make it transparent
           for (var i=0;i<rgba.length;i+=4)
             rgba[i+3] = 255-rgba[i];
         }
+        var allSet = true, allUnset = true;
+        for (var i=0;i<rgba.length;i+=4) {
+          rgba[i+0] = 0; // ensure all pixels are black (data is in transparency)
+          rgba[i+1] = 0;
+          rgba[i+2] = 0;
+          if (rgba[i+3]>0) allUnset=false;
+          if (rgba[i+3]<255) allSet=false;
+        } 
 
         imgOptions.width = png.width;
         imgOptions.height = png.height;
         var img = imageconverter.RGBAtoString(rgba, imgOptions);
         iconImages[index] = img;
         console.log("Loaded "+icon.icon);
-        if (img.length != IMAGE_BYTES) throw new Error("Image size should be 76 bytes");
+        if (allSet || allUnset) throw new Error(icon.icon+" Image is blank! (is it saved as 8 bit RGB PNG?)");
+        if (img.length != IMAGE_BYTES) throw new Error(icon.icon+" Image size should be 76 bytes");
         r(); // done
       });
     }));
