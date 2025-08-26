@@ -9,7 +9,8 @@ On startup, a grid of 6 lines with 5 (empty) letter boxes is displayed. Swiping 
 The keyboad was inspired by the 'Scribble' app (it is a simplified version using the layout library). The letter group "Z ..." contains the delete key and
 the enter key. Hitting enter after the 5th letter will add the guess to the grid view and color mark it.
 
-The (English language) dictionary was derived from the the Unix ispell word list by filtering out plurals and past particples (and some hand editing) from all 5 letter words.
+The internal dictionary contains all valid Wordle words.
+
 It is contained in the file 'wordlencr.txt' which contains one long string (no newline characters) of all the words concatenated. It would not be too difficult to swap it
 out for a different language version. The keyboard currently only supports the 26 characters of the latin alphabet (no accents or umlauts).
 
