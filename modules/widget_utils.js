@@ -11,6 +11,7 @@ exports.hide = function() {
     w.area = "";
     if (w.x!=undefined) g.clearRect(w.x,w.y,w.x+w.width-1,w.y+23);
   }
+  Bangle.emit("widgets-hidden");
 };
 
 /// Show any hidden widgets
@@ -25,6 +26,7 @@ exports.show = function() {
     delete w._area;
     w.draw(w);
   }
+  Bangle.emit("widgets-shown");
 };
 
 /// Remove anything not needed if the overlay was removed
@@ -129,19 +131,41 @@ exports.swipeOn = function(autohide) {
   function anim(dir, callback) {
     if (exports.animInterval) clearInterval(exports.animInterval);
     exports.animInterval = setInterval(function() {
-      exports.offset += dir;
+// exports.offset < -23 + |dir|     > -|dir|         otherwise
+//     dir >0     start showing     shown this step  showing
+//         <0     hidden this step  start hiding     hiding
       let stop = false;
-      if (dir>0 && exports.offset>=0) { // fully down
-        stop = true;
-        exports.offset = 0;
-      } else if (dir<0 && exports.offset<-23) { // fully up
-        stop = true;
-        exports.offset = -24;
+      if (dir > 0) {
+        if (exports.offset >= -dir) {
+          // nearly shown
+          stop = true;
+          exports.offset = 0; // clamp
+          Bangle.emit("widgets-shown");
+        } else if (exports.offset < -23 + dir) {
+          Bangle.emit("widgets-start-show");
+        } else {
+          Bangle.emit("widgets-anim-step");
+        }
+      } else if (dir < 0) {
+        if (exports.offset > dir) {
+          Bangle.emit("widgets-start-hide");
+        } else if (exports.offset < -23 - dir) {
+          // nearly hidden
+          stop = true;
+          exports.offset = -24; // clamp
+          Bangle.emit("widgets-hidden");
+        } else {
+          Bangle.emit("widgets-anim-step");
+        }
       }
       if (stop) {
         clearInterval(exports.animInterval);
         delete exports.animInterval;
-        if (callback) callback();
+        if (callback) {
+          callback();
+        }
+      } else {
+        exports.offset += dir;
       }
       queueDraw();
     }, 50);
