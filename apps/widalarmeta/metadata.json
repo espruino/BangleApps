@@ -2,14 +2,14 @@
   "id": "widalarmeta",
   "name": "Alarm & Timer ETA",
   "shortName": "Alarm ETA",
-  "version": "0.13",
+  "version": "0.14",
   "description": "A widget that displays the time to the next Alarm or Timer in hours and minutes, maximum 24h (configurable).",
   "icon": "widget.png",
   "type": "widget",
   "tags": "widget",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "provides_widgets" : ["alarm"],
-  "screenshots" : [ { "url":"screenshot.png" } ],
+  "screenshots" : [ { "url":"screenshot.png" }, { "url":"screenshot2.png" } ],
   "storage": [
     {"name":"widalarmeta.wid.js","url":"widget.js"},
     {"name":"widalarmeta.settings.js","url":"settings.js"}
