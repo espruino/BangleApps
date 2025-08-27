@@ -126,12 +126,14 @@
         },
         run: function() {
           if (a.date) return; // ignore events
+          this.hide();
           a.on = !a.on;
           a.last = 0;
           if(a.on && a.timer) require('sched').resetTimer(a);
           this.emit("redraw");
           require('sched').setAlarms(all);
           require('sched').reload(); // schedule/unschedule the alarm
+          this.show();
         }
       })),
   };
