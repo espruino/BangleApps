@@ -19,6 +19,23 @@ function formatMS(ms) {
 function showSnoozeMenu(alarm){
 
   Bangle.buzz(40);
+
+  function onSnooze(snoozeTime) {
+    if (alarm.ot === undefined) {
+      alarm.ot = alarm.t;
+    }
+    let time = new Date();
+    let currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
+    alarm.t = currentTime + snoozeTime;
+    alarm.t %= 86400000;
+    Bangle.emit("alarmSnooze", alarm);
+
+    // The updated alarm is still a member of 'alarms'
+    // so writing to array writes changes back directly
+    require("sched").setAlarms(alarms);
+    load();
+  }
+
   if(alarm.timer){
     
     let timerLength=alarm.timer
@@ -29,44 +46,12 @@ function showSnoozeMenu(alarm){
     E.showPrompt("Choose snooze length", {
       title: "Snooze Options",
       buttons
-    }).then(function (snoozeTime) {
-
-
-      if (alarm.ot === undefined) {
-        alarm.ot = alarm.t;
-      }
-      let time = new Date();
-      let currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
-      alarm.t = currentTime + snoozeTime*1000;
-      alarm.t %= 86400000;
-      Bangle.emit("alarmSnooze", alarm);
-
-      // The updated alarm is still a member of 'alarms'
-      // so writing to array writes changes back directly
-      require("sched").setAlarms(alarms);
-      load();
-    });
+    }).then(snoozeTime => onSnooze(snoozeTime * 1000));
   }else{
     E.showPrompt("Choose snooze length", {
       title: "Snooze Options",
       buttons: { "1m": 1, "2m":2,"5m": 5,"10m":10 } 
-    }).then(function (snoozeTime) {
-
-
-      if (alarm.ot === undefined) {
-        alarm.ot = alarm.t;
-      }
-      let time = new Date();
-      let currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
-      alarm.t = currentTime + snoozeTime*60000;
-      alarm.t %= 86400000;
-      Bangle.emit("alarmSnooze", alarm);
-
-      // The updated alarm is still a member of 'alarms'
-      // so writing to array writes changes back directly
-      require("sched").setAlarms(alarms);
-      load();
-    });
+    }).then(snoozeTime => onSnooze(snoozeTime * 60000));
   }
 }
   
