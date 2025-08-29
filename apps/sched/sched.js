@@ -30,7 +30,6 @@ function showSnoozeMenu(alarm){
       title: "Snooze Options",
       buttons
     }).then(function (snoozeTime) {
-      buzzCount = 0;
 
 
       if (alarm.ot === undefined) {
@@ -52,7 +51,6 @@ function showSnoozeMenu(alarm){
       title: "Snooze Options",
       buttons: { "1m": 1, "2m":2,"5m": 5,"10m":10 } 
     }).then(function (snoozeTime) {
-      buzzCount = 0;
 
 
       if (alarm.ot === undefined) {
