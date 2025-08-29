@@ -17,9 +17,7 @@ function formatMS(ms) {
 }
 
 function showSnoozeMenu(alarm){
-  const alarmIndex = alarms.indexOf(alarm);
-  const settings = require("sched").getSettings();
-  let buzzCount = 0;
+
   Bangle.buzz(40);
   if(alarm.timer){
     
