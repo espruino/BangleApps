@@ -129,8 +129,11 @@ let dragHandler = function(e) {
 
   if (volumeChangedThisGoAround && Math.abs(dx)>32) {
       // setup volume knob here.
-    let cbVisual = (step, value, reinit)=>{cb(step); volumeKnobVisual(step, value, reinit)};
-    cbVisual(Math.sign(dx)*Math.sign(g.getHeight()/2-e.y), 0, true)
+    let cbVisual = (step)=>{
+      cb(step);
+      volumeKnobVisual.step(step);
+    };
+    cbVisual(Math.sign(dx)*Math.sign(g.getHeight()/2-e.y));
     resetOuterScopeVariables();
     let volumeKnob = require("Dial")(cbVisual);
     let timingOutVolumeKnob = (e)=>{

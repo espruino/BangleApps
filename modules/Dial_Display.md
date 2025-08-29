@@ -10,7 +10,14 @@ Usage
 ```JS
 var DialDisplay = require("Dial_Display");
 var dialDisplay = new DialDisplay(options);
-var value = dialDisplay(-1, 0, true)
+
+dialDisplay.step(-1);
+
+var value = dialDisplay.value;
+
+// ... after some time:
+dialDisplay.reset();
+dialDisplay.set(0);
 ```
 
 For example in use with the Dial module:
@@ -29,12 +36,12 @@ var options = {
 var DialDisplay = require("Dial_Display");
 var dialDisplay = new DialDisplay(options);
 
-var cb = (step)=>{
-  var value = dialDisplay(step, undefined, true);
+var cb = (step) => {
+  dialDisplay.reset();
+  dialDisplay.step(step);
 };
 
-var Dial = require("Dial");
-var dial = new Dial(cb, options)
+var dial = require("Dial")(cb, options)
 Bangle.on("drag", dial);
 ```
 
@@ -55,10 +62,10 @@ Defaults:
 }
 ```
 
-The generated function takes three arguments:
-`step` - +1 or -1
-`value` - the previous value the step acts on.
-`isReinit` - true/false, whether to draw all of the dial or just the indicator.
+The Dial Display has three functions:
+`step(amount)` - +1 or -1 to step the dial.
+`set(value)` - set the value for the next `step()` to act on.
+`reset()` - draw all of the dial (instead of just the indicator) on the next `step()`.
 
 Notes:
 ======
