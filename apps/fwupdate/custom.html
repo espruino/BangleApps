@@ -177,7 +177,7 @@ function checkForFileOnServer() {
     releaseFiles.sort().reverse().forEach(function(f) {
       var name = f.substr(f.substr(0,f.length-1).lastIndexOf('/')+1);
       console.log("Found "+name);
-      domFirmwareList.innerHTML += `<li>Release${getDescription(name)}: <a href="${f}'" class="fw-link">${name}</a></li>`;
+      domFirmwareList.innerHTML += `<li>Release${getDescription(name)}: <a href="${f}" class="fw-link">${name}</a></li>`;
       domFirmware.style = "";
     });
     getFilesFromURL("https://www.espruino.com/binaries/travis/master/",regex, function(travisFiles) {
