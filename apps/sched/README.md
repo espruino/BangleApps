@@ -1,21 +1,111 @@
-Sched: Scheduling library for alarms and timers
-====================================
+# Sched: Scheduling library for alarms and timers
+
 
 This provides boot code, a library and tools for alarms and timers.
 
 Other apps can use this to provide alarm functionality.
 
-App
----
+## App
 
-The **Alarms & Timers** app allows you to add/modify any running alarms and timers.
 
-When an alarm or timer is triggered, and you have the latest cutting edge firmware (will be 2v28 when released), you can long press on the snooze button that pops up to go to a snooze menu, for finer control over snooze amounts.
+The `Alarms & Timers` app allows you to add/modify any running alarms and timers.
 
-For timers, the last option in the snooze menu is the timer length itself.
 
-Global Settings
----------------
+### Snooze Menu
+
+With sched version 0.35 or later, when an alarm or timer is triggered, and you have the latest cutting-edge firmware (will be 2v28 when released), you can long press on the snooze button that pops up to go to a snooze menu, for finer control over snooze amounts. If you do not have the latest firmware or use the code below, you will not notice any changes.
+
+If you want the functionality, but don't want to use cutting-edge firmware, you can upload this code to the bangle from the Web IDE instead, as `2v28_sim.boot.js`:
+
+```
+E.showPrompt=(function(message,options) {
+  if (!options) options={};
+  if (!options.buttons)
+    options.buttons = {"Yes":true,"No":false};
+  var btns = Object.keys(options.buttons);
+  if (btns.length>6) throw new Error(">6 buttons");
+  var btnPos;
+  function draw(highlightedButton) {
+    g.reset().setFontAlign(0,0);
+    var R = Bangle.appRect, Y = R.y, W = R.w;
+    var title = g.findFont(options.title||"", {w:W-2,wrap:1,max:24});
+    if (title.text) {
+      g.setColor(g.theme.fgH).setBgColor(g.theme.bgH).
+        clearRect(0,Y,W-1,Y+4+title.h).
+        drawString(title.text,W/2,Y+4+title.h/2);
+      Y += title.h+4;
+    } else Y+=4;
+    var BX = 0|"0123233"[btns.length],
+        BY = Math.ceil(btns.length / BX),
+        BW = (W-1)/BX, BH = options.buttonHeight || ((BY>1 || options.img)?40:50);
+    var H = R.y2-(Y + BY*BH);
+    if (options.img) {
+      var im = g.imageMetrics(options.img);
+      g.drawImage(options.img,(W-im.width)/2, Y + 6);
+      H -= im.height;
+      Y += im.height;
+    }
+    var msg = g.findFont(message, {w:W-2,h:H,wrap:1,trim:1,min:16});
+    g.setColor(g.theme.fg).setBgColor(g.theme.bg).
+      drawString(msg.text,W/2,Y+H/2);
+    btnPos = [];
+    btns.forEach((btn,idx)=>{
+      var ix=idx%BX,iy=0|(idx/BX),x = ix*BW + 2, y = R.y2-(BY-iy)*BH + 1,
+          bw = BW-4, bh = BH-2, poly = [x+4,y,
+                  x+bw-4,y,
+                  x+bw,y+4,
+                  x+bw,y+bh-4,
+                  x+bw-4,y+bh,
+                  x+4,y+bh,
+                  x,y+bh-4,
+                  x,y+4,
+                  x+4,y];
+      btnPos.push({x1:x-2, x2:x+BW-2,
+                   y1:y, y2:y+BH});
+      var btnText = g.findFont(btn, {w:bw-4,h:BH-4,wrap:1});
+      g.setColor(idx===highlightedButton ? g.theme.bgH : g.theme.bg2).fillPoly(poly).
+        setColor(idx===highlightedButton ? g.theme.fgH : g.theme.fg2).drawPoly(poly).drawString(btnText.text,x+bw/2,y+2+BH/2);
+      if (idx&1) y+=BH;
+    });
+    Bangle.setLCDPower(1); // ensure screen is on
+  }
+  g.reset().clearRect(Bangle.appRect); // clear screen
+  if (!message) {
+    Bangle.setUI(); // remove watches
+    return Promise.resolve();
+  }
+  draw();
+  return new Promise(resolve=>{
+    var ui = {mode:"custom", remove: options.remove, redraw: draw, back:options.back, touch:(_,e)=>{
+      btnPos.forEach((b,i)=>{
+        if (e.x >= b.x1 && e.x <= b.x2 &&
+            e.y >= b.y1 && e.y <= b.y2 && !e.hit) {
+          e.hit = true; // ensure we don't call twice if the buttons overlap
+          draw(i); // highlighted button
+          g.flip(); // write to screen
+          E.showPrompt(); // remove
+          if (e.type===2 /*long press*/ && options.buttonsLong && options.buttonsLong[btns[i]])
+            resolve(options.buttonsLong[btns[i]]);
+           else
+            resolve(options.buttons[btns[i]]);
+        }
+      });
+    }};
+    if (btns.length==1 && !options.back) ui.btn = () => {
+      draw(0); // highlighted button
+      g.flip(); // write to screen
+      E.showPrompt(); // remove
+      resolve(options.buttons[btns[0]]);
+    };
+    Bangle.setUI(ui);
+  });
+})
+
+```
+That mimics the change in `E.showPrompt` needed to make the function work.
+
+## Global Settings
+
 
 - `Unlock at Buzz` - If `Yes` the alarm/timer will unlock the watch
 - `Delete Expired Timers` - Default for whether expired timers are removed after firing.
@@ -25,8 +115,8 @@ Global Settings
 - `Buzz Interval` - The interval between one buzz and the next
 - `Default Alarm/Timer Pattern` - Default vibration pattern for newly created alarms/timers
 
-Internals / Library
--------------------
+## Internals / Library
+
 
 Alarms are stored in an array in `sched.json`, and take the form:
 
