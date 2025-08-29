@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 // Chances are boot0.js got run already and scheduled *another*
 // 'load(sched.js)' - so let's remove it first!
 if (Bangle.SCHED) {
