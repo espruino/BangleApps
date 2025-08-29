@@ -31,7 +31,7 @@ function showSnoozeMenu(alarm){
     //different button lengths
     E.showPrompt("Choose snooze length", {
       title: "Snooze Options",
-      buttons: buttons
+      buttons
     }).then(function (snoozeTime) {
       buzzCount = 0;
 
