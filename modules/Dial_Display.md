@@ -1,8 +1,8 @@
-Bangle.js Dial Display Library
-======================
+Bangle.js Dial Display Module
+=============================
 
 
-> Take a look at README.md for hints on developing with this library.
+> Take a look at README.md for hints on developing with this module.
 
 Usage
 -----
