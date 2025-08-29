@@ -10,6 +10,10 @@ App
 
 The **Alarms & Timers** app allows you to add/modify any running alarms and timers.
 
+When an alarm or timer is triggered, and you have the latest cutting edge firmware (will be 2v28 when released), you can long press on the snooze button that pops up to go to a snooze menu, for finer control over snooze amounts.
+
+For timers, the last option in the snooze menu is the timer length itself.
+
 Global Settings
 ---------------
 
