@@ -19,16 +19,18 @@ function showSnoozeMenu(alarm){
   const alarmIndex = alarms.indexOf(alarm);
   const settings = require("sched").getSettings();
   let buzzCount = 0;
-
+  let buttons=
   Bangle.buzz(40);
   if(alarm.timer){
     
     let timerLength=alarm.timer
-    
+    let buttons={ "15s": 15, "30s":30,"1m":60 ,"2m":120,"5m":360};
+    let formattedLength = formatMS(timerLength)+"*";
+    buttons[formattedLength] = Math.round(timerLength/1000);
     //different button lengths
     E.showPrompt("Choose snooze length", {
       title: "Snooze Options",
-      buttons: { "15s": 15, "30s":30,"1m":60 ,"2m":120,"5m":360,[formatMS(timerLength)]:timerLength/1000} 
+      buttons: buttons
     }).then(function (snoozeTime) {
       buzzCount = 0;
 
