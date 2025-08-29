@@ -1,4 +1,4 @@
-function Dial(cb, options) {
+function dial(cb, options) {
   "ram";
   const SCREEN_W = g.getWidth();
   const SCREEN_H = g.getHeight();
@@ -72,4 +72,4 @@ function Dial(cb, options) {
   return onDrag;
 }
 
-exports = Dial;
+exports = dial;

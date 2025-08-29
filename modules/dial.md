@@ -1,19 +1,13 @@
-Bangle.js Dial Library
-======================
+Bangle.js Dial Module
+=====================
 
-> Take a look at README.md for hints on developing with this library.
+> Take a look at README.md for hints on developing with this module.
 
 Usage
 -----
 
 ```JS
-var Dial = require("Dial");
-var dial = new Dial(cb, options)
-Bangle.on("drag", dial);
-
-or
-
-var dial = require("Dial")(cb, options);
+var dial = require("dial")(cb, options);
 Bangle.on("drag", dial);
 ```
 
@@ -31,7 +25,7 @@ let options = {
   }
 }
 
-let dial = require("Dial")(cb, options);
+let dial = require("dial")(cb, options);
 Bangle.on("drag", dial);
 ```
 
@@ -57,4 +51,4 @@ Defaults:
 Notes
 -----
 
-A complementary library for drawing graphics is provided in the Dial_Display module.
+A complementary module for drawing graphics is provided in the Dial_Display module.
