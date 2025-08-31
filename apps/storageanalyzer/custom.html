@@ -1,6 +1,11 @@
 <html>
   <head>
     <link rel="stylesheet" href="../../css/spectre.min.css">
+    <style>
+      #errors {
+        overflow: scroll;
+      }
+    </style>
   </head>
   <body>
     <script src="../../core/lib/customize.js"></script>
@@ -21,45 +26,98 @@
       <div id="totalStoragePie" style="width: 100%; max-width: 600px; height: 300px;"></div>
     </div>
 
+    <pre id="errors"></pre>
+
     <script>
       let globalApps = [];
       let storageStats = null;
 
       function onInit(device) {
         Util.showModal("Reading Storage...");
-        Puck.eval(`(()=>{
-          let getApps = () => require("Storage").list(/\\.info$/).map(appInfoName => {
-            let appInfo = require("Storage").readJSON(appInfoName,1)||{};
-            var fileSize = 0, dataSize = 0;
-            appInfo.files.split(",").forEach(f => fileSize += require("Storage").read(f).length);
-            var data = (appInfo.data||"").split(";");
-            function wildcardToRegexp(wc) {
-              return new RegExp("^"+wc.replaceAll(".","\\\\.").replaceAll("?",".*")+"$");
+        Puck.eval(`
+          (()=>{
+            const output = {
+              stats: require("Storage").getStats(),
+              apps: [],
+              errors: [],
+            };
+
+            require("Storage")
+              .list(/\.info$/)
+              .forEach(appInfoName => {
+                try{
+                  let appInfo = require("Storage").readJSON(appInfoName, 1);
+
+                  if(appInfo == null){
+                    /* should never happen, since we just got the filename from list() */
+                    output.errors.push({ app: appInfoName, err: "no info file" });
+                    return null;
+                  }
+
+                  const fileSize = f => (require("Storage").read(f) || "").length;
+                  let fileTotal = 0;
+
+                  if(appInfo.files)
+                    appInfo.files
+                      .split(",")
+                      .forEach(f => fileTotal += fileSize(f));
+
+                  function wildcardToRegexp(wc) {
+                    return new RegExp("^"+wc.replaceAll(".","\\.").replaceAll("?",".*")+"$");
+                  }
+
+                  let dataSize = 0;
+
+                  if(appInfo.data){
+                    const sum = (a, b) => a + b;
+                    const sumFiles = (patterns, options) => (
+                        patterns
+                        .map(pattern =>
+                            require("Storage")
+                                .list(wildcardToRegexp(pattern), options)
+                                .map(fileSize)
+                                .reduce(sum, 0)
+                        )
+                        .reduce(sum, 0)
+                    );
+
+                    /* parse the datastring, see core/js/appinfo.js, makeDataString */
+                    const fileObj = appInfo.data.split(";").map(d => d.split(","));
+                    const files = fileObj[0];
+                    const storage = fileObj[1];
+                    if (files == null || (files.length === 1 && files[0] === "")) files = [];
+
+                    dataSize = sumFiles(files, {sf: false}) + sumFiles(storage || [], {sf: true});
+                  }
+
+                  output.apps.push([appInfo.id, fileTotal, dataSize]);
+                }catch(e){
+                  output.errors.push({ app: appInfoName, err: "" + e });
+                }
+              })
+
+            return output;
+          })()
+        `,
+          function({ apps, stats, errors}) {
+            Util.hideModal();
+            globalApps = apps.sort((a,b) => (b[1]+b[2]) - (a[1]+a[2]));
+            storageStats = stats;
+
+            if(errors.length){
+              document.getElementById("errors").innerText = errors
+                .map(({ app, err }) => `Error in app "${app}": ${err}`)
+                .join("\n");
             }
-            if (data[0]) data[0].split(",").forEach(wc => {
-              require("Storage").list(wildcardToRegexp(wc), {sf:false}).forEach(f => {
-                dataSize += require("Storage").read(f).length
-              });
-            });
-            if (data[1]) data[1].split(",").forEach(wc => {
-              require("Storage").list(wildcardToRegexp(wc), {sf:true}).forEach(f => {
-                dataSize += require("Storage").open(f,"r").getLength();
-              });
-            });
-            return [appInfo.id, fileSize, dataSize];
-          });
-          return [getApps(), require(\"Storage\").getStats()]; })()`, function(result) {
-          Util.hideModal();
-          globalApps = result[0].sort((a,b) => (b[1]+b[2]) - (a[1]+a[2]));
-          storageStats = result[1];
 
-          if (globalApps.length === 0) {
-            document.getElementById("storageTable").innerHTML = "<p>No apps found</p>";
-            return;
-          }
+            if (globalApps.length === 0) {
+              document.getElementById("storageTable").innerHTML = "<p>No apps found</p>";
+              return;
+            }
 
-          drawTable();
-        });
+            drawTable();
+          },
+        );
       }
       function roundDecimal(num){
         return Math.round(num * 10) / 10;
