@@ -4,7 +4,7 @@
   </head>
   <body>
     <script src="../../core/lib/customize.js"></script>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>    
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <!-- Toggle Buttons -->
     <div class="btn-group" style="margin: 1em; display: flex; justify-content: center;">
@@ -24,7 +24,7 @@
     <script>
       let globalApps = [];
       let storageStats = null;
-      
+
       function onInit(device) {
         Util.showModal("Reading Storage...");
         Puck.eval(`(()=>{
@@ -120,7 +120,7 @@
 
           const totalOptions = {
             title: 'Total Storage Usage (KBs)',
-            
+
             chartArea: { width: '90%', height: '80%' },
             legend: { position: 'bottom' }
           };
@@ -131,7 +131,7 @@
       }
 
       google.charts.load('current', {'packages':['corechart']});
-      
+
 
       document.getElementById("pieChartButton").addEventListener("click", function () {
         document.getElementById("storageTable").style.display = "none";
@@ -148,7 +148,7 @@
         this.classList.add("btn-primary");
         document.getElementById("pieChartButton").classList.remove("btn-primary");
       });
-      
+
     </script>
   </body>
 </html>
