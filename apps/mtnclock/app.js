@@ -1,5 +1,12 @@
 var data = require("Storage").readJSON("mtnclock.json", 1) || {};
 
+let weather;
+try {
+  weather = require('weather');
+} catch (_err) {
+  weather = undefined;
+}
+
 //seeded RNG to generate stars, snow, etc
 function sfc32(a, b, c, d) {
     return function() {
@@ -336,9 +343,25 @@ function readWeather() {
   }
 }
 
+function updateWeather() {
+  const current = weather.get();
+  if (current) {
+    data.temp = current.temp;
+    data.code = current.code;
+    data.time = Date.now();
+    require("Storage").writeJSON('mtnclock.json', data);
+    setWeather();
+  }
+}
+
+if (weather) {
+  weather.on("update", updateWeather);
+}
+
 const _GB = global.GB;
 global.GB = (event) => {
-  if (event.t==="weather") {
+  if (!weather && event.t==="weather" && event.v !== 2) {
+    // Fallback in case weather app is not installed
     data.temp = event.temp;
     data.code = event.code;
     data.time = Date.now();

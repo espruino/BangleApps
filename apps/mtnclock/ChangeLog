@@ -3,3 +3,4 @@
 0.03: Address unexpected undefined when reading weather.json
 0.04: Adding settings and the ability to show the widgets bar
 0.05: Fix the widgets disappearing on weather update
+0.06: Fix weather not correctly updating with Weather data v2
