@@ -654,9 +654,7 @@ Bangle.on('lock',locked => {
     require("messages").stopBuzz();
     isTimeoutSuspended = !!unreadTimeout;
     cancelReloadTimeout();
-  }
-  if (locked)
-    if (isTimeoutSuspended) {
+  } else if (isTimeoutSuspended) {
       resetReloadTimeout();
       isTimeoutSuspended = false;
     }
