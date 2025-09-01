@@ -101,8 +101,10 @@
         globalApps = apps.sort((a,b) => (b.fileSize + b.dataSize) - (a.fileSize + a.dataSize));
         storageStats = stats;
 
+        const errorEl = document.getElementById("errors");
+        errorEl.classList.toggle("d-hide", errors.length === 0);
         if(errors.length){
-          document.getElementById("errors").innerText = errors
+          errorEl.innerText = errors
             .map(({ app, err }) => `Error in app "${app}": ${err}`)
             .join("\n");
         }
