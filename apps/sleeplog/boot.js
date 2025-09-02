@@ -13,7 +13,9 @@ global.sleeplog = {
     minConsec: 18E5, // [ms] minimal time to count for consecutive sleep
     deepTh: 150, //     threshold for deep sleep
     lightTh: 300, //    threshold for light sleep
-    wearTemp: 19.5, //    temperature threshold to count as worn
+    wearTemp: 19.5,
+    hrmDeepTh: 60,
+    hrmLightTh: 74
   }, require("Storage").readJSON("sleeplog.json", true) || {})
 };
 
@@ -160,10 +162,28 @@ if (global.sleeplog.conf.enabled) {
 
       // add preliminary status depending on charging and movement thresholds
       // 1 = not worn, 2 = awake, 3 = light sleep, 4 = deep sleep
-      data.status = Bangle.isCharging() ? 1 :
-        data.movement <= global.sleeplog.conf.deepTh ? 4 :
-        data.movement <= global.sleeplog.conf.lightTh ? 3 : 2;
-
+      if(data.hrm){
+        
+        if (!Bangle.isCharging()) {
+          if (data.heartRate <= global.sleeplog.conf.hrDeepTh) {
+            status = 4; // deep sleep
+          } else if (data.heartRate <= global.sleeplog.conf.hrLightTh) {
+            status = 3; // light sleep
+          } else {
+            status = 2; // awake
+          }
+        } else {
+          status = 1; // not worn
+        }
+       
+          
+      }else{
+        data.status = Bangle.isCharging() ? 1 :
+          data.movement <= global.sleeplog.conf.deepTh ? 4 :
+          data.movement <= global.sleeplog.conf.lightTh ? 3 : 2;
+      }
+      
+      
       // check if changing to deep sleep from non sleeping
       if (data.status === 4 && global.sleeplog.status <= 2) {
         global.sleeplog.checkIsWearing((isWearing, data) => {
