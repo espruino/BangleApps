@@ -82,7 +82,7 @@
 
                 /* parse the datastring, see core/js/appinfo.js, makeDataString */
                 const fileObj = appInfo.data.split(";").map(d => d.split(","));
-                const files = fileObj[0];
+                let files = fileObj[0];
                 const storage = fileObj[1];
                 if (files == null || (files.length === 1 && files[0] === "")) files = [];
 
