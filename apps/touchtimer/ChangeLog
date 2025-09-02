@@ -4,3 +4,4 @@
 0.04: Add 5 second count down buzzer
 0.05: Fix 5 second count down buzzer to be only in the final 5 seconds
 0.06: Use default Bangle formatter for booleans
+0.07: Enable swipe to show widget top bar

@@ -230,7 +230,7 @@ and which gives information about the app for the Launcher.
   "src":"-myappid", // source file
   "type":"widget/clock/app/bootloader/...", // optional, default "app"
      // see 'type' in 'metadata.json format' below for more options/info
-  "version":"1.23",
+  "version":"0.01",
      // added by BangleApps loader on upload based on metadata.json
   "files:"file1,file2,file3",
      // added by BangleApps loader on upload - lists all files
@@ -249,7 +249,7 @@ and which gives information about the app for the Launcher.
 { "id": "appid",              // 7 character app id
   "name": "Readable name",    // readable name
   "shortName": "Short name",  // short name for launcher
-  "version": "0v01",          // the version of this app
+  "version": "0.01",          // the version of this app
   "description": "...",       // long description (can contain markdown)
   "icon": "icon.png",         // icon in apps/
   "screenshots" : [ { "url":"screenshot.png" } ], // optional screenshot for app

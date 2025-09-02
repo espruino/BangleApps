@@ -1,0 +1,19 @@
+{
+  "id": "jwalk",
+  "name": "Japanese Walking",
+  "shortName": "J-Walk",
+  "icon": "app.png",
+  "version": "0.01",
+  "description": "Alternating walk timer: 3 min Relax / 3 min Intense for a set time. Tap to pause/resume. Start mode, interval and total time configurable via Settings.",
+  "tags": "walk,timer,fitness",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "data": [
+    { "name": "jwalk.json" }
+  ],
+  "storage": [
+    { "name": "jwalk.app.js", "url": "app.js" },
+    { "name": "jwalk.settings.js", "url": "settings.js" },
+    { "name": "jwalk.img", "url": "app-icon.js", "evaluate": true }
+  ]
+}

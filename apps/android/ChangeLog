@@ -43,6 +43,7 @@
 0.40: Ensure we send health 'activity' message to gadgetbridge (added 2v26)
 0.41: When using `actfetch`, fetch historical activity type too
 0.42: Add handling for android STREAM_MUSIC volume level info, emitting on
-      arrival. (Needs Gadgetbridge nightly (either flavor) for now, or stable
+      arrival. (Needs Gadgetbridge nightly (either flavour) for now, or stable
       version 85 when it's out)
-
+0.43: Ensure listRecs doesn't list old-style recorded tracks (Otherwise Gadgetbridge fails parsing the filename)
+0.44: Pass HTTP request timeout to Gadgetbridge

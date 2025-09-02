@@ -13,3 +13,5 @@
 0.10: Use charging state on boot for auto calibration
       Log additional timestamp for trace log
 0.11: Minor code improvements
+0.12: Round monotonic percentage, rename to stable percentage/voltage
+0.13: Fix stable percentage not updating

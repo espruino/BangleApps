@@ -1,0 +1,11 @@
+{
+  "DEBUG" : false,
+  "SAVE_DEBUG": false,
+  "notifications" : true,
+  "record" : ["bat","steps","hrm","baro","acc"],
+  "filePrefix": "htst",
+  "GPS" : true,
+  "GPSAdaptiveTime" : 2,
+  "GPSInterval" : 30,
+  "GPSScanTime" : 5
+}

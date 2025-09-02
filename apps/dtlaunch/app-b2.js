@@ -16,14 +16,14 @@
 
   let s = require("Storage");
   // Borrowed caching from Icon Launcher, code by halemmerich.
-  let launchCache = s.readJSON("launch.cache.json", true)||{};
+  let launchCache = s.readJSON("dtlaunch.cache.json", true)||{};
   let launchHash = require("Storage").hash(/\.info/);
   if (launchCache.hash!=launchHash) {
   launchCache = {
     hash : launchHash,
     apps : s.list(/\.info$/)
       .map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};})
-      .filter(app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || !app.type))
+      .filter(app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || (app.type=="launch" && settings.showLaunchers) || !app.type))
       .sort((a,b)=>{
         var n=(0|a.sortorder)-(0|b.sortorder);
         if (n) return n; // do sortorder first
@@ -31,7 +31,7 @@
         if (a.name>b.name) return 1;
         return 0;
       }) };
-    s.writeJSON("launch.cache.json", launchCache);
+    s.writeJSON("dtlaunch.cache.json", launchCache);
   }
   let apps = launchCache.apps;
   let page = 0;

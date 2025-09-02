@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <style>
+        body {
+            overflow-x: auto;
+            margin: 0.5em;
+        }
+        .timer-block:nth-child(odd) {
+            background-color: #eee;
+        }
+        .timer-block:nth-child(even) {
+            background-color: #fff;
+        }
+        .timer-block div {
+            padding: 0.2em;
+        }
+        .timer-block label {
+            display: inline-block;
+        }
+        .timer-block .vibrate {
+            width: 5em;
+        }
+        .timer-block input[type="number"] {
+            width: 3em;
+        }
+        .timer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .timer-header button {
+            margin-left: 0.5em;
+        }
+        .btn-move-up, .btn-move-down {
+            width: 2em;
+        }
+        .timer-controls {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5em;
+        }
+        #main-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5em;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="../../core/lib/interface.js"></script>
+    <div id="content">Loading...</div>
+    <script>
+        const DATA_VERSION = 0;
+        const TIMERS_FILE = 'tevtimer.timers.json';
+        const APP_FILE = 'tevtimer.app.js';
+        const MAX_BUZZ_COUNT = 15;
+
+        var userTimers = [];
+
+        function onInit() {
+            document.getElementById("content").innerHTML = `
+            <h1>Timers</h1>
+            <div id="main-buttons">
+                <button id="btn-reload-timers" class="btn btn-primary">Reload Timers…</button>
+                <button id="btn-add-timer" class="btn btn-primary">Add Timer</button>
+                <button id="btn-save-timers" class="btn btn-primary">Save Timers</button>
+            </div>
+            <div id="timerblocks"></div>
+            `;
+            document.getElementById('btn-reload-timers').addEventListener('click', reloadTimers);
+            document.getElementById('btn-add-timer').addEventListener('click', addTimer);
+            document.getElementById('btn-save-timers').addEventListener('click', saveTimers);
+            loadTimers();
+        }
+
+        function loadTimers() {
+            Util.readStorageJSON(TIMERS_FILE, timers => {
+                userTimers = timers;
+                setTimeout(updateTimerBlocks, 100);
+            });
+        }
+
+        function getTimerById(timers, id) {
+            for (timer of timers) {
+                if (timer.id == id) {
+                    return timer;
+                }
+            }
+            console.warn(`Timer with ID ${id} not found`);
+            return null;
+        }
+
+        function find_nextId() {
+            let maxId = 0;
+            for (let timer of userTimers) {
+                if (timer.id > maxId) {
+                    maxId = timer.id;
+                }
+            }
+            return maxId + 1;
+        }
+
+        function splitHMS(hms) {
+            let h = Math.floor(hms / 3600);
+            let m = Math.floor((hms % 3600) / 60);
+            let s = Math.floor(hms % 60);
+            return [h, m, s];
+        }
+
+        function updateTimerBlocks() {
+            // Track the currently focused element
+            const activeElement = document.activeElement;
+            const activeElementId = activeElement ? activeElement.id : null;
+
+            // Re-render the table
+            document.getElementById('timerblocks').innerHTML = timerBlocks(userTimers);
+            updateAtEndDropdowns();
+
+            // Reattach button handlers
+            attachButtonHandlers();
+
+            // Handle input changes
+            attachInputHandlers();
+
+            // Restore focus to the previously focused element
+            if (activeElementId) {
+                let elementToFocus = document.getElementById(activeElementId);
+
+                // If the original element no longer exists, focus on a fallback
+                if (!elementToFocus) {
+                    // Extract the row index
+                    const index = parseInt(activeElementId.split('-')[1], 10);
+                    if (activeElementId.startsWith('delete-') && index < userTimers.length) {
+                        elementToFocus = document.getElementById(`delete-${index}`);
+                    } else if (index > 0) {
+                        elementToFocus = document.getElementById(`delete-${index - 1}`);
+                    }
+                }
+
+                // Restore focus if a valid element is found
+                if (elementToFocus) {
+                    elementToFocus.focus();
+                }
+            }
+        }
+
+        function timerBlocks(timers) {
+            let blocks = '';
+
+            for (let i = 0; i < timers.length; i++) {
+                let timer = timers[i];
+
+                // Assumes timer.rate is 0.001 (seconds), as this
+                // is the only rate used in the app
+                if (timer.rate != -0.001) {
+                    console.error('Unsupported timer rate');
+                    continue;
+                }
+                let [h, m, s] = splitHMS(timer.origin);
+                let atEndTimer = timer.chain_id ? getTimerById(timers, timer.chain_id) : null;
+                let atEndSelected = atEndTimer ? atEndTimer.id : 'null';
+
+                blocks += `
+                <div class="timer-block" id="timer-${i}">
+                    <div class="timer-header">
+                        <span>Timer ${i + 1}</span>
+                        <div class="timer-controls">
+                            ${i > 0
+                            ? `<button id="move-up-${i}" class="btn btn-primary btn-move-up" title="Move up">↑</button>`
+                            : ''}
+                            ${i < timers.length - 1
+                            ? `<button id="move-down-${i}" class="btn btn-primary btn-move-down" title="Move down">↓</button>`
+                            : ''}
+                            <button id="delete-${i}" class="btn btn-danger btn-delete" title="Delete">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="timer-name">
+                        <label>Name: <input type="text" id="name-${i}" value="${timer.name}" maxlength="25" /></label>
+                    </div>
+                    <div class="timer-start">
+                        <label>Hrs: <input type="number" id="hours-${i}" value="${h}" min="0" max="99" /></label>
+                        <label>Mins: <input type="number" id="minutes-${i}" value="${m}" min="0" max="59" /></label>
+                        <label>Secs: <input type="number" id="seconds-${i}" value="${s}" min="0" max="59" /></label>
+                    </div>
+                    <div class="timer-at-end">
+                        <label>At End:
+                            <select id="atend-${i}"></select>
+                        </label>
+                    </div>
+                    <div class="timer-settings">
+                        <label>Vibrate Pattern: <input type="text" class="vibrate" id="vibrate-${i}" value="${timer.vibrate_pattern}" maxlength="8" /></label>
+                        <label>Buzz Count: <input type="number" id="buzz-${i}" value="${timer.buzz_count}" min="0" max="${MAX_BUZZ_COUNT}" /></label>
+                    </div>
+                </div>
+                `;
+            }
+
+            return blocks;
+        }
+
+        function attachButtonHandlers() {
+            document.querySelectorAll('.btn-move-up').forEach((button, index) => {
+                button.addEventListener('click', () => moveTimerUp(index + 1));
+            });
+            document.querySelectorAll('.btn-move-down').forEach((button, index) => {
+                button.addEventListener('click', () => moveTimerDown(index));
+            });
+            document.querySelectorAll('.btn-delete').forEach((button, index) => {
+                button.addEventListener('click', () => deleteTimer(index));
+            });
+        }
+
+        function attachInputHandlers() {
+                        document.querySelectorAll('input[type="text"], input[type="number"], select').forEach((input) => {
+                input.addEventListener('change', (event) => {
+                    const [type, index] = event.target.id.split('-');
+                    const value = event.target.value;
+
+                    if (type === 'name') {
+                        userTimers[index].name = value;
+                        updateAtEndDropdowns();
+                    } else if (type === 'hours' || type === 'minutes' || type === 'seconds') {
+                        let hInput = document.getElementById(`hours-${index}`);
+                        let mInput = document.getElementById(`minutes-${index}`);
+                        let sInput = document.getElementById(`seconds-${index}`);
+                        let h = parseInt(hInput.value) || 0;
+                        let m = parseInt(mInput.value) || 0;
+                        let s = parseInt(sInput.value) || 0;
+                        userTimers[index].origin = Math.max(
+                            Math.min(h * 3600 + m * 60 + s, 99 * 3600 + 59 * 60 + 59),
+                            0);
+                        // Normalize the values in case minutes/seconds >59
+                        [h, m, s] = splitHMS(userTimers[index].origin);
+                        hInput.value = h;
+                        mInput.value = m;
+                        sInput.value = s;
+                    } else if (type === 'atend') {
+                        userTimers[index].chain_id = value == 'null' ? null : parseInt(value);
+                    } else if (type === 'vibrate') {
+                        userTimers[index].vibrate_pattern = value;
+                    } else if (type === 'buzz') {
+                        userTimers[index].buzz_count =
+                            Math.max(Math.min(MAX_BUZZ_COUNT, parseInt(value)), 0);
+                        event.target.value = userTimers[index].buzz_count;
+                    }
+                });
+            });
+        }
+
+        function moveTimerUp(index) {
+            if (index > 0) {
+                [userTimers[index - 1], userTimers[index]] = [userTimers[index], userTimers[index - 1]];
+
+                updateTimerBlocks();
+
+                // Move focus to the new position of the "Move up" button
+                const newFocusButton = document.getElementById(`move-up-${index - 1}`);
+                if (newFocusButton) {
+                    newFocusButton.focus();
+                }
+            }
+        }
+
+        function moveTimerDown(index) {
+            if (index < userTimers.length - 1) {
+                [userTimers[index], userTimers[index + 1]] = [userTimers[index + 1], userTimers[index]];
+
+                updateTimerBlocks();
+
+                // Move focus to the new position of the "Move down" button
+                const newFocusButton = document.getElementById(`move-down-${index + 1}`);
+                if (newFocusButton) {
+                    newFocusButton.focus();
+                }
+            }
+        }
+
+        function deleteTimer(index) {
+            // Warn user if a timer chain references the timer
+            for (timer of userTimers) {
+                if (timer.id != userTimers[index].id &&
+                        timer.chain_id == userTimers[index].id) {
+                    if (!confirm('This timer is part of a chain. Delete it anyway?')) {
+                        return;
+                    }
+                    break;
+                }
+            }
+
+            if (userTimers.length > 1) {
+                userTimers.splice(index, 1);
+                updateTimerBlocks();
+            }
+            if (userTimers.length == 1) {
+                // Disable the last delete button
+                let deleteButton = document.querySelectorAll('.btn-delete')[0];
+                deleteButton.disabled = true;
+            }
+        }
+
+        function addTimer() {
+            let newTimer = {
+                cls: "PrimitiveTimer",
+                version: DATA_VERSION,
+                origin: 0,
+                rate: -0.001,
+                name: "",
+                id: find_nextId(),
+                chain_id: null,
+                start_time: Date.now(),
+                pause_time: Date.now(),
+                vibrate_pattern: ";;;",
+                buzz_count: 4
+            };
+            userTimers.push(newTimer);
+            updateTimerBlocks();
+
+            // Enable delete buttons
+            let deleteButtons = document.querySelectorAll('.btn-delete');
+            deleteButtons.forEach(button => {
+                button.disabled = false;
+            });
+
+            // Move focus to the new timer's Name field
+            document.getElementById(`name-${userTimers.length - 1}`).focus();
+        }
+
+        function saveTimers() {
+            if (userTimers.length) {
+                // Guard in case the user manages to click Save before
+                // the timers are loaded, or something like that
+
+                // Ensure timer app is not running while we replace the timer file
+                Puck.write("if (global.__FILE__=='" + APP_FILE + "')load();\n", () => {
+                    setTimeout(() => {
+                        Util.writeStorage(TIMERS_FILE, JSON.stringify(userTimers), () => {
+                            alert('Timers saved successfully.');
+                        });
+                    }, 2000);
+                });
+            };
+        }
+
+        function reloadTimers() {
+            if (confirm("This will reload timer data from the Bangle.js and discard any unsaved changes. Reload?")) {
+                loadTimers();
+            }
+        }
+
+        function updateAtEndDropdowns() {
+            let timerNames = new Map();
+            timerNames.set(null, '&lt;Stop&gt;');
+            userTimers.forEach((timer, i) => {
+                let name = timer.name ? timer.name : `&lt;Timer ${i + 1}&gt;`;
+                timerNames.set(timer.id, name);
+            });
+
+            userTimers.forEach((timer, i) => {
+                let atEndDropdown = document.getElementById(`atend-${i}`);
+                if (atEndDropdown) {
+                    let atEndSelected = timer.chain_id ? timer.chain_id : 'null';
+                    atEndDropdown.innerHTML = Array.from(timerNames.entries())
+                        .map(([key, value]) =>
+                            `<option value="${key}" ${key == atEndSelected ? 'selected' : ''}>
+                                ${value}
+                            </option>`
+                        )
+                        .join('');
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

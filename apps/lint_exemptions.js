@@ -359,18 +359,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "apps/coretemp/settings.js": {
-    "hash": "b5aa84ecab587b444028b4491b2c2e8f3b2303aa33745265ab629c6ff5141cfb",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
-  "apps/coretemp/boot.js": {
-    "hash": "02ee3a04d7dc485367394a91e570affd712ab919bbb155bdafc00e534d3bcd4a",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "apps/configurable_clock/app.js": {
     "hash": "09d1d02b63abc4ecea5e00a7372de7150ccfe67c2502ff5d298ec7b8e29c353b",
     "rules": [
@@ -471,12 +459,6 @@ module.exports = {
   },
   "apps/widbgjs/widget.js": {
     "hash": "9852ce9aafb0a1ca3029d497282c8cdf07438ea36a3323313bad5b7569b1081b",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/warpdrive/app.js": {
-    "hash": "c2f9113c4d298a3021ec4bc0bc5f5d1bcd88267b4fa2acc03ae17d6447ed7d00",
     "rules": [
       "no-undef"
     ]
@@ -943,12 +925,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/fileman/fileman.app.js": {
-    "hash": "f378179e7dd3655ba7e9ce03e1f7fd5a2d1768ad7d9083b22e7d740405be842a",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/flappy/app.js": {
     "hash": "e24b0c5e0469070e02dae00887bf50569c2c141a80c7c356b36987ddf68ce9cc",
     "rules": [
@@ -987,12 +963,6 @@ module.exports = {
   },
   "apps/cprassist/cprassist.js": {
     "hash": "647f0a1b3dc52466079049a68c27448c18693df8deb1eb8e04ff84fcb93c323e",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/coretemp/coretemp.js": {
-    "hash": "7230802388f9cbb7026ce0e94ced6656dc79a411ef7740279ec82eb4fc892d48",
     "rules": [
       "no-undef"
     ]
@@ -1071,12 +1041,6 @@ module.exports = {
   },
   "apps/approxclock/app.js": {
     "hash": "675ce5f16bb26649a39c86561e9fa46bb31e369a465fac9b35e5debfe18672ec",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/altimeter/app.js": {
-    "hash": "054ac328db51034aa339f1d10b4d264badd49438b95f08bc6fbfb90bd88c6ae0",
     "rules": [
       "no-undef"
     ]

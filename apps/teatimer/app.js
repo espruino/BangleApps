@@ -1,237 +1,217 @@
-// Tea Timer 
-// Button press stops timer, next press restarts timer
-let drag;
-var counter = 0;
-var counterStart = 150; // 150 seconds
-var counterInterval;
-const states = {
-  init: 1, // unused
-  help: 2, // show help text
-  start: 4, // show/change initial counter
-  count: 8, // count down
-  countUp: 16, // count up after timer finished
-  stop: 32 // timer stopped
+const FILE = "teatimer.json";
+const DEFAULTS = {
+  timerDuration: 150,
+  bigJump: 60,
+  smallJump: 15,
+  finishBuzzDuration: 1500,
+  overtimeBuzzDuration: 100,
+  overtimeBuzzLimit: 60,
+  overtimeBuzzSeconds: 15
 };
-var state = states.start;
-let setting = require("Storage").readJSON("setting.json",1);
-E.setTimeZone(setting.timezone);
 
-// Title showing current time
-function appTitle() {
-  return "Tea Timer\n" + currentTime();
+// Enum for states
+const STATES = {
+  INIT:     "init",
+  RUNNING:  "running",
+  PAUSED:   "paused",
+  FINISHED: "finished",
+  OVERTIME: "overtime"
+};
+
+let savedSettings = require("Storage").readJSON(FILE, 1) || {};
+let settings = Object.assign({}, DEFAULTS, savedSettings);
+
+let state = STATES.INIT;
+let showHelp = false;
+
+let startTime = 0;
+let remaining = settings.timerDuration;
+let target = 0;
+
+let drag = null;
+let dragAdjusted = false;
+let lastTapTime = 0;
+
+// === Helpers ===
+function formatTime(s) {
+  let m = Math.floor(s / 60);
+  let sec = (s % 60).toString().padStart(2, '0');
+  return `${m}:${sec}`;
 }
 
-function currentTime() {
-  let min = Date().getMinutes();
-  if (min < 10) min = "0" + min;
-  return Date().getHours() + ":" + min;
+function getTimeStr() {
+  let d = new Date();
+  return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
 }
 
-function timeFormated(sec) {
-  let min = Math.floor(sec / 60);
-  sec = sec % 60;
-  if (sec < 10) sec = "0" + sec;
-  return min + ":" + sec;
+function isState(s) {
+  return state === s;
 }
 
-// initialize timer and show timer value => state: start
-function initTimer() {
-  counter = counterStart;
-  setState(states.start);
-  showCounter(true);
+function setState(s) {
+  state = s;
 }
 
-// timer value (counter) can be changed in state start
-function changeCounter(diff) {
-  if (state == states.start) {
-    if (counter + diff > 0) {
-      counter = counter + diff;
-      showCounter(true);
-    }
+// === UI Drawing ===
+function drawUI() {
+  g.reset();
+  g.setBgColor(g.theme.bg).clear();
+  g.setColor(g.theme.fg);
+  let cx = g.getWidth() / 2;
+
+  // Time (top right)
+  g.setFont("6x8", 2);
+  g.setFontAlign(1, 0);
+  g.drawString(getTimeStr(), g.getWidth() - 4, 10);
+
+  // Help text
+  if (showHelp) {
+    g.setFontAlign(0, 0);
+    g.setFont("Vector", 15);
+    g.drawString(
+        `Swipe up/down: ±${settings.bigJump}s\nSwipe left/right: ±${settings.smallJump}s\n\nBTN1: Start/Pause\nDouble Tap: Hide Help`,
+        cx, 80
+    );
+    return;
+  }
+
+  // Title
+  g.setFont("Vector", 20);
+  g.setFontAlign(0, 0);
+  let label = (isState(STATES.OVERTIME)) ? "Time's Up!" : "Tea Timer";
+  g.drawString(label, cx, 40);
+
+  // Time remaining / overtime
+  g.setFont("Vector", 60);
+  g.setColor(isState(STATES.OVERTIME) ? "#f00" : g.theme.fg);
+  g.drawString(formatTime(remaining), cx, 100);
+
+  // Bottom state text
+  g.setFontAlign(0, 0);
+  if (isState(STATES.PAUSED)) {
+    g.setFont("6x8", 2);
+    g.drawString("paused", cx, g.getHeight() - 20);
+  } else if (!isState(STATES.RUNNING) && !isState(STATES.OVERTIME)) {
+    g.setFont("Vector", 13);
+    g.drawString("double tap for help", cx, g.getHeight() - 20);
   }
 }
 
-// start or restart timer => state: count
+// === Timer Logic ===
 function startTimer() {
-  counterStart = counter;
-  setState(states.count);
-  countDown();
-  if (!counterInterval)
-    counterInterval = setInterval(countDown, 1000);
+  setState(STATES.RUNNING);
+  startTime = Date.now();
+  target = startTime + remaining * 1000;
 }
 
-/* show current counter value at start and while count down
-  Show
-  - Title with current time
-  - initial timer value
-  - remaining time
-  - hint for help in state start
-*/ 
-function showCounter(withHint) {
-  g.reset(); // workaround for E.showMessage bg color in 2v14 and earlier
-  E.showMessage("", appTitle());
-  g.reset().setFontAlign(0,0); // center font
-  // draw the current counter value
-  g.setBgColor(-1).setColor(0,0,1); // blue
-  g.setFont("Vector",20); // vector font, 20px  
-  g.drawString("Timer: " + timeFormated(counterStart),80,55);
-  g.setFont("Vector",60); // vector font, 60px  
-  g.drawString(timeFormated(counter),83,100);
-  if (withHint) {
-    g.setFont("Vector",20); // vector font, 80px
-    g.drawString("Tap for help",80,150);
+function pauseTimer() {
+  if (isState(STATES.RUNNING)) {
+    remaining = Math.max(0, Math.ceil((target - Date.now()) / 1000));
+    setState(STATES.PAUSED);
   }
 }
 
-// count down and update every second
-// when time is up, start counting up
-function countDown() {
-  counter--;
-  // Out of time
-  if (counter<=0) {
-    outOfTime();
-    countUp();
-    counterInterval = setInterval(countUp, 1000);
-    return;
+function resumeTimer() {
+  if (isState(STATES.PAUSED)) {
+    startTime = Date.now();
+    target = startTime + remaining * 1000;
+    setState(STATES.RUNNING);
   }
-  showCounter(false);
 }
 
-// 
-function outOfTime() {
-  E.showMessage("Time is up!",appTitle());
-  setState(states.countUp);
-  resetTimer();
-  Bangle.buzz();
-  Bangle.buzz();
-}
-
-/* this counts up (one minute), after time is up
-  Show
-  - Title with current time
-  - initial timer value
-  - "Time is up!"
-  - time since timer finished
-*/
-function countUp() {
-  // buzz for 15 seconds
-  counter++;
-  if (counter <=15) {
-    Bangle.buzz();
-  }
-  // stop counting up after 60 seconds
-  if (counter > 60) {
-    outOfTime();
-    return;
-  }
-  g.reset(); // workaround for E.showMessage bg color in 2v14 and earlier
-  E.showMessage("", appTitle());
-  g.reset().setFontAlign(0,0); // center font
-  g.setBgColor(-1).setColor(0,0,1); // blue
-  g.setFont("Vector",20); // vector font, 20px
-  g.drawString("Timer: " + timeFormated(counterStart),80,55);
-  g.setFont("Vector",30); // vector font, 80px  
-  g.setBgColor(-1).setColor(1,0,0); // red
-  g.drawString("Time is up!",85,85);
-  g.setFont("Vector",40); // vector font, 80px
-  // draw the current counter value
-  g.drawString(timeFormated(counter),80,130);
-}
-
-// reset when interupted by user oder 60 seconds after timer finished
 function resetTimer() {
-  clearInterval();
-  counterInterval = undefined;
+  setState(STATES.INIT);
+  remaining = settings.timerDuration;
 }
 
-// timer is stopped by user => state: stop
-function stopTimer() {
-  resetTimer();
-  E.showMessage("Timer stopped!", appTitle());
-  setState(states.stop);
-}
-
-// timer is stopped by user while counting up => state: start
-function stopTimer2() {
-  resetTimer();
-  initTimer();
-}
-
-
-function setState(st) {
-  state = st;
-}
-
-function buttonPressed() {
-  switch(state) {
-    case states.init:
-      initTimer();
-      break;
-    case states.help:
-      initTimer();
-      break;
-    case states.start:
-      startTimer();
-      break;
-    case states.count:
-      stopTimer();
-      break;
-    case states.countUp:
-      stopTimer2();
-      break;
-    case states.stop:
-      initTimer();
-      break;
-    default:
-      initTimer();
-      break;
-  }
-}
-
-/* Change initial counter value by swiping
-    swipe up: +1 minute
-    swipe down: -1 minute
-    swipe right: +15 seconds
-    swipe left: -15 seconds */
-function initDragEvents() {
-  Bangle.on("drag", e => {
-  if (state == states.start) {
-    if (!drag) { // start dragging
-      drag = {x: e.x, y: e.y};
-    } else if (!e.b) { // released
-      const dx = e.x-drag.x, dy = e.y-drag.y;
-      drag = null;
-      if (Math.abs(dx)>Math.abs(dy)+10) {
-        // horizontal
-        changeCounter(dx>0 ? 15 : -15);
-      } else if (Math.abs(dy)>Math.abs(dx)+10) {
-        // vertical
-        changeCounter(dy>0 ? -60 : 60);
-      }
+function tick() {
+  if (isState(STATES.RUNNING)) {
+    remaining -= 1;
+    if (remaining <= 0) {
+      remaining = 0;
+      setState(STATES.OVERTIME);
+      startTime = Date.now();
+      remaining = 0; // Start overtime count-up from 0
+      Bangle.buzz(settings.finishBuzzDuration);
+    }
+  } else if (isState(STATES.OVERTIME)) {
+    remaining += 1;
+    if (remaining <= settings.overtimeBuzzSeconds) {
+      Bangle.buzz(settings.overtimeBuzzDuration, 0.3);
+    }
+    if (remaining >= settings.overtimeBuzzLimit) {
+      resetTimer(); // Stop overtime after max duration
     }
   }
-});
+  drawUI();
 }
 
-// show help text while in start state (see initDragEvents())
-function showHelp() {
-  if (state == states.start) {
-    state = states.help;
-	g.setBgColor(g.theme.bg);
-	g.setColor(g.theme.fg);
-    E.showMessage("Swipe up/down\n+/- one minute\n\nSwipe left/right\n+/- 15 seconds\n\nPress Btn1 to start","Tea timer help");
+// === UI Controls ===
+function toggleTimer() {
+  if (showHelp) {
+    showHelp = false;
+  } else if (isState(STATES.OVERTIME)) {
+    resetTimer();
+  } else if (isState(STATES.INIT)) {
+    startTimer();
+  } else if (isState(STATES.PAUSED)) {
+    resumeTimer();
+  } else if (isState(STATES.RUNNING)) {
+    pauseTimer();
   }
-  // return to start
-  else if (state == states.help) {
-    counterStart = counter;
-    initTimer();
+
+  drawUI();
+}
+
+function handleDoubleTap() {
+  if (isState(STATES.INIT)) {
+    let now = Date.now();
+    if (now - lastTapTime < 400) {
+      showHelp = !showHelp;
+      drawUI();
+    }
+    lastTapTime = now;
   }
 }
 
-// drag events in start state (to change counter value)
-initDragEvents();
-// Show help test in start state
-Bangle.on('touch', function(button, xy) { showHelp(); });
-// event handling for button1
-setWatch(buttonPressed, BTN1, {repeat: true});
-initTimer();
+function adjustTimer(diff) {
+  if (isState(STATES.INIT)) {
+    remaining = Math.max(5, remaining + diff);
+    settings.timerDuration = remaining;
+    drawUI();
+  }
+}
+
+function handleDrag(e) {
+  if (isState(STATES.INIT) && !showHelp) {
+    if (e.b) {
+      if (!drag) {
+        drag = { x: e.x, y: e.y };
+        dragAdjusted = false;
+      } else if (!dragAdjusted) {
+        let dx = e.x - drag.x;
+        let dy = e.y - drag.y;
+
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > settings.smallJump) {
+          adjustTimer(dx > 0 ? settings.smallJump : -settings.smallJump);
+          dragAdjusted = true;
+        } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > settings.bigJump) {
+          adjustTimer(dy > 0 ? -settings.bigJump : settings.bigJump);
+          dragAdjusted = true;
+        }
+      }
+    } else {
+      drag = null;
+      dragAdjusted = false;
+    }
+  }
+}
+
+// === Init App ===
+setWatch(toggleTimer, BTN1, { repeat: true });
+Bangle.on("drag", handleDrag);
+Bangle.on("touch", handleDoubleTap);
+
+resetTimer();
+drawUI();
+setInterval(tick, 1000);

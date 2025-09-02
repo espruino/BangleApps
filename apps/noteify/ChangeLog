@@ -1,3 +1,4 @@
 0.01: Initial version
 0.02: Use default Bangle formatter for booleans
 0.03: Drop duplicate alarm widget
+0.04: Make notes available to clock info

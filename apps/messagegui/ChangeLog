@@ -115,3 +115,7 @@
 0.84: Fix: Assign show message entry to the settings menu and not the message itself.
 0.85: Use new Rebble fonts if available
       Remove workaround for 2v10 (>3 years ago) - assume everyone is on never firmware now
+0.86: Default to showing message scroller (with title, bigger icon)
+0.87: Make choosing of font size more repeatable
+0.88: Adjust padding calculation so messages are spaced out properly even when using international fonts
+0.89: Fix bugs related to empty titles and bodies

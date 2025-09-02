@@ -2,7 +2,7 @@
   "id": "widram",
   "name": "RAM Widget",
   "shortName": "RAM Widget",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Display your Bangle's RAM usage percentage in a widget",
   "icon": "widget.png",
   "type": "widget",

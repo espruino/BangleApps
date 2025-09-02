@@ -9,11 +9,16 @@ const enum Consts {
   NAME_SCROLL_PAD = 5,
 }
 
-const S = (require("Storage").readJSON("promenu.settings.json", true) || {}) as PromenuSettings;
-S.naturalScroll ??= false;
-S.wrapAround ??= true;
+const prosettings = (require("Storage").readJSON("promenu.settings.json", true) || {}) as PromenuSettings;
+prosettings.naturalScroll ??= false;
+prosettings.wrapAround ??= true;
 
-E.showMenu = (items?: Menu): MenuInstance => {
+E.showMenu = ((items?: Menu): MenuInstance | void => {
+  if(items == null){
+    g.clearRect(Bangle.appRect);
+    return Bangle.setUI();
+  }
+
   const RectRnd = (x1: number, y1: number, x2: number, y2: number, r: number) => {
     const pp = [];
     pp.push(...g.quadraticBezier([x2 - r, y1, x2, y1, x2, y1 + r]));
@@ -34,15 +39,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
 
   let selected = options.scroll || options.selected || 0;
 
-  const ar = Bangle.appRect;
-  g.reset().clearRect(ar);
-
-  const x = ar.x;
-  const x2 = ar.x2;
-  let y = ar.y;
-  const y2 = ar.y2 - 12; // padding at end for arrow
-  if (options.title)
-    y += 22;
+  g.reset().clearRect(Bangle.appRect);
 
   let lastIdx = 0;
   let selectEdit: undefined | ActualMenuItem = undefined;
@@ -61,6 +58,7 @@ E.showMenu = (items?: Menu): MenuInstance => {
     y: number,
     nameScroll: number = 0,
   ) => {
+    const { x2 } = Bangle.appRect;
     const hl = (idx === selected && !selectEdit);
     if(g.theme.dark){
       fillRectRnd(x, y, x2, y + fontHeight - 3, 7, hl ? g.theme.bgH : g.theme.bg + 40);
@@ -114,6 +112,13 @@ E.showMenu = (items?: Menu): MenuInstance => {
 
   const l = {
     draw: (rowmin?: number, rowmax?: number) => {
+      // always refresh appRect, a back button may have appeared
+      let { x, x2, y, y2 } = Bangle.appRect;
+      if(y === 0) y = 24; // always bump down for widgets/back button
+
+      if (options.title) y += 22;
+      y2 -= 12; // padding at end for arrow
+
       if (nameScroller) clearInterval(nameScroller), nameScroller = null;
       let rows = 0|Math.min((y2 - y) / fontHeight, menuItems.length);
       let idx = E.clip(selected - (rows>>1), 0, menuItems.length - rows);
@@ -167,7 +172,6 @@ E.showMenu = (items?: Menu): MenuInstance => {
           }, 300, name, v, item, idx, x, iy);
         }
 
-        g.setColor(g.theme.fg);
         iy += fontHeight;
         idx++;
       }
@@ -175,11 +179,11 @@ E.showMenu = (items?: Menu): MenuInstance => {
       g.setColor((idx < menuItems.length)?g.theme.fg:g.theme.bg).fillPoly([72, 166, 104, 166, 88, 174]);
       g.flip();
     },
-    select: () => {
+    select: (evt: TouchCallbackXY | undefined) => {
       const item = items![menuItems[selected]] as ActualMenuItem;
 
       if (typeof item === "function") {
-        item();
+        item(evt);
       } else if (typeof item === "object") {
         if (typeof item.value === "number") {
           selectEdit = selectEdit ? undefined : item;
@@ -188,12 +192,12 @@ E.showMenu = (items?: Menu): MenuInstance => {
             item.value = !item.value;
 
           if (item.onchange)
-            item.onchange(item.value as boolean);
+            item.onchange(item.value as boolean, evt);
         }
         l.draw();
       }
     },
-    move: (dir: number) => {
+    move: (dir: number, evt: TouchCallbackXY | undefined) => {
       const item = selectEdit;
 
       if (typeof item === "object" && typeof item.value === "number") {
@@ -209,14 +213,14 @@ E.showMenu = (items?: Menu): MenuInstance => {
 
         if (item.value !== orig) {
           if (item.onchange)
-            item.onchange(item.value);
+            item.onchange(item.value, evt);
 
           l.draw(selected, selected);
         }
 
       } else {
         const lastSelected = selected;
-        if (S.wrapAround) {
+        if (prosettings.wrapAround) {
           selected = (selected + dir + /*keep +ve*/menuItems.length) % menuItems.length;
         } else {
           selected = E.clip(selected + dir, 0, menuItems.length - 1);
@@ -247,19 +251,52 @@ E.showMenu = (items?: Menu): MenuInstance => {
     Bangle.on('swipe', onSwipe);
   }
 
-  Bangle.setUI({
+  const cb = (dir?: 1 | -1, evt?: TouchCallbackXY) => {
+    if (dir) l.move(prosettings.naturalScroll ? -dir : dir, evt);
+    else l.select(evt);
+  };
+
+  const touchcb = ((_button, xy) => {
+      // since we've specified options.touch,
+      // we need to pass through all taps since the default
+      // touchHandler isn't installed in setUI
+      cb(void 0, xy);
+  }) satisfies TouchCallback;
+
+  const uiopts = {
     mode: "updown",
-    back,
+    back: back as () => void,
     remove: () => {
       if (nameScroller) clearInterval(nameScroller);
       Bangle.removeListener("swipe", onSwipe);
+      if(setUITouch)
+          Bangle.removeListener("touch", touchcb);
       options.remove?.();
     },
-  } as SetUIArg<"updown">,
-  dir => {
-    if (dir) l.move(S.naturalScroll ? -dir : dir);
-    else l.select();
-  });
+  } satisfies SetUIArg<"updown">;
+
+  // does setUI install its own touch handler?
+  const setUITouch = process.env.VERSION >= "2v26";
+  if (!setUITouch) {
+      // old firmware, we can use its touch handler - no need for workaround
+      (uiopts as any).touch = touchcb;
+  }
+
+  Bangle.setUI(uiopts, cb);
+
+  if(setUITouch){
+      // new firmware, remove setUI's touch handler and use just our own to
+      // avoid `cb` drawing the menu (as part of setUI's touch handler)
+      // followed by us drawing the menu (as part of our touch handler)
+      //
+      // work around details:
+      // - https://github.com/espruino/Espruino/issues/2648
+      // - https://github.com/orgs/espruino/discussions/7697#discussioncomment-13782299
+      Bangle.removeListener("touch", (Bangle as any).touchHandler);
+      delete (Bangle as any).touchHandler;
+
+      Bangle.on("touch", touchcb);
+  }
 
   return l;
-};
+}) as typeof E.showMenu;

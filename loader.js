@@ -16,7 +16,7 @@ if (window.location.host=="banglejs.com") {
     'This is not the official Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
 }
 
-var RECOMMENDED_VERSION = "2v25";
+var RECOMMENDED_VERSION = "2v27";
 // could check http://www.espruino.com/json/BANGLEJS.json for this
 
 // We're only interested in Bangles
@@ -212,7 +212,7 @@ window.addEventListener('load', (event) => {
   el = document.getElementById("reinstallall");
   if (el) el.addEventListener("click",event=>{
     var promise =  showPrompt("Reinstall","Really re-install all apps?").then(() => {
-      Comms.reset().then(_ =>
+      startOperation({name:"Reinstall All Apps"}, () => Comms.reset().then(_ =>
         getInstalledApps()
       ).then(installedapps => {
         console.log(installedapps);
@@ -232,14 +232,14 @@ window.addEventListener('load', (event) => {
       ).catch(err=>{
         Progress.hide({sticky:true});
         showToast("App re-install failed, "+err,"error");
-      });
+      }));
     });
   });
 
   // Button to install all default apps in one go
   el = document.getElementById("installdefault");
   if (el) el.addEventListener("click", event=>{
-    getInstalledApps().then(() => {
+    startOperation({name:"Install Default Apps"}, () => getInstalledApps().then(() => {
       if (device.id == "BANGLEJS")
         return httpGet("defaultapps_banglejs1.json");
       if (device.id == "BANGLEJS2")
@@ -250,15 +250,16 @@ window.addEventListener('load', (event) => {
     }).catch(err=>{
       Progress.hide({sticky:true});
       showToast("App Install failed, "+err,"error");
-    });
+    }));
   });
 
   // Button to reset the Bangle's settings
   el = document.getElementById("defaultbanglesettings");
   if (el) el.addEventListener("click", event=>{
     showPrompt("Reset Settings","Really reset Bangle.js settings?").then(() => {
-      Comms.write("\x10require('Storage').erase('setting.json');load()\n");
-      showToast("Settings reset!", "success");
+      startOperation({name:"Reset Settings"}, () =>
+        Comms.write("\x10require('Storage').erase('setting.json');load()\n").then(() =>
+          showToast("Settings reset!", "success")));
     }, function() { /* cancelled */ });
   });
 
@@ -333,7 +334,7 @@ window.addEventListener('load', (event) => {
     reloadLanguage();
   });
 
-  if (!navigator.bluetooth) {
+  if ((typeof Android === "undefined") && !navigator.bluetooth) {
     console.warn("No Web Bluetooth on this platform");
     var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     if (iOS) {

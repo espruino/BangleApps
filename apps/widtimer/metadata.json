@@ -1,0 +1,14 @@
+{
+  "id": "widtimer",
+  "name": "Timer Widget",
+  "shortName": "WidTimer",
+  "version": "0.01",
+  "description": "Timer widget with swipe controls. Swipe a T (for timer) to start the timer and unlock the controls. Then single swipes adjust the time: right/left ±1min, up/down ±10min. Will buzz upon timer completion.",
+  "icon": "widtimer.png",
+  "type": "widget",
+  "tags": "widget,timer,gesture",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"widtimer.wid.js","url":"widget.js"}
+  ]
+}

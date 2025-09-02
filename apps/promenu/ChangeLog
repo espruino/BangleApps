@@ -14,3 +14,6 @@
 0.10: Trigger `remove` callbacks when ending the menu
 0.11: Add options for natural scroll and disabling wrap-around
 0.12: Fix bug where settings would behave as if all were set to false
+0.13: Update to new touch-event handling
+0.14: Fix bug in handling changes to `Bangle.appRect`
+0.15: Workaround bug in 2v26/2v27 firmware

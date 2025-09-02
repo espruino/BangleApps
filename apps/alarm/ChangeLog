@@ -55,3 +55,5 @@
 	to select an alarm in the main menu.
 0.50: Bangle.js 2: Long touch of alarm in main menu toggle it on/off. Touching the icon on
 	the right will do the same.
+0.51: Fix long-touch to enable alarm/timer not updating time (fix #3804)
+0.52: Allow deletion of alarms once they sound (like timers and events)

@@ -1,3 +1,4 @@
+var _a;
 {
     var Layout_1 = require("Layout");
     var time_utils_1 = require("time_utils");
@@ -10,39 +11,69 @@
     });
     var S_1 = require("Storage");
     var drawTimeout_1;
-    var splits_1 = [];
+    var menuShown_1 = false;
+    var splits_1 = ((_a = S_1.readJSON("pace.json", 1)) === null || _a === void 0 ? void 0 : _a.splits) || [];
     var splitOffset_1 = 0, splitOffsetPx_1 = 0;
     var GPS_TIMEOUT_MS_1 = 30000;
+    var drawGpsLvl = function (l) {
+        var _a;
+        var gps = l.gps;
+        var nsats = (_a = gps === null || gps === void 0 ? void 0 : gps.satellites) !== null && _a !== void 0 ? _a : 0;
+        if (!gps || !gps.fix)
+            g.setColor("#FF0000");
+        else if (gps.satellites < 4)
+            g.setColor("#FF5500");
+        else if (gps.satellites < 6)
+            g.setColor("#FF8800");
+        else if (gps.satellites < 8)
+            g.setColor("#FFCC00");
+        else
+            g.setColor("#00FF00");
+        g.fillRect(l.x, l.y + l.h - 10 - (l.h - 10) * ((nsats > 12 ? 12 : nsats) / 12), l.x + l.w - 1, l.y + l.h - 1);
+    };
     var layout_1 = new Layout_1({
-        type: "v",
+        type: "h",
         c: [
             {
-                type: "txt",
-                font: "6x8:2",
-                label: "Pace",
-                id: "paceLabel",
-                pad: 4
+                type: "custom",
+                render: drawGpsLvl,
+                id: "gpslvl",
+                filly: 1,
+                width: 10,
+                bgCol: g.theme.bg,
             },
             {
-                type: "txt",
-                font: "Vector:40",
-                label: "",
-                id: "pace",
-                halign: 0
-            },
-            {
-                type: "txt",
-                font: "6x8:2",
-                label: "Time",
-                id: "timeLabel",
-                pad: 4
-            },
-            {
-                type: "txt",
-                font: "Vector:40",
-                label: "",
-                id: "time",
-                halign: 0
+                type: "v",
+                c: [
+                    {
+                        type: "txt",
+                        font: "6x8:2",
+                        label: "Pace",
+                        id: "paceLabel",
+                        pad: 4
+                    },
+                    {
+                        type: "txt",
+                        font: "Vector:40",
+                        label: "",
+                        id: "pace",
+                        halign: 0
+                    },
+                    {
+                        type: "txt",
+                        font: "6x8:2",
+                        label: "Time",
+                        id: "timeLabel",
+                        pad: 4
+                    },
+                    {
+                        type: "txt",
+                        font: "Vector:40",
+                        label: "",
+                        id: "time",
+                        halign: 0
+                    },
+                ]
             },
         ]
     }, {
@@ -113,12 +144,10 @@
     };
     var pauseRun_1 = function () {
         exs_1.stop();
-        Bangle.setGPSPower(0, "pace");
         draw_1();
     };
     var resumeRun_1 = function () {
         exs_1.resume();
-        Bangle.setGPSPower(1, "pace");
         g.clearRect(Bangle.appRect);
         layout_1.forgetLazyState();
         draw_1();
@@ -128,6 +157,12 @@
             pauseRun_1();
         else
             resumeRun_1();
+    };
+    var hideMenu_1 = function () {
+        if (!menuShown_1)
+            return;
+        Bangle.setUI();
+        menuShown_1 = false;
     };
     exs_1.start();
     exs_1.stats.dist.on("notify", function (dist) {
@@ -140,10 +175,12 @@
         var totalDist = dist.getValue();
         var thisSplit = totalDist - prev.dist;
         var thisTime = exs_1.state.duration - prev.time;
-        while (thisSplit > 1000) {
-            splits_1.push({ dist: thisSplit, time: thisTime });
-            thisTime = 0;
-            thisSplit -= 1000;
+        if (thisSplit > 1000) {
+            if (thisTime > 0) {
+                if (splits_1.length || thisTime > 1000 * 60)
+                    splits_1.push({ dist: thisSplit, time: thisTime });
+            }
+            thisSplit %= 1000;
         }
         exs_1.state.notify.dist.next -= thisSplit;
         S_1.writeJSON("pace.json", { splits: splits_1 });
@@ -154,7 +191,7 @@
     });
     setWatch(function () { return onButton_1(); }, BTN1, { repeat: true });
     Bangle.on('drag', function (e) {
-        if (exs_1.state.active || e.b === 0)
+        if (exs_1.state.active || e.b === 0 || menuShown_1)
             return;
         splitOffsetPx_1 -= e.dy;
         if (splitOffsetPx_1 > 20) {
@@ -172,8 +209,49 @@
     Bangle.on('twist', function () {
         Bangle.setBacklight(1);
     });
+    Bangle.on('tap', function (e) {
+        if (exs_1.state.active || menuShown_1 || !e.double)
+            return;
+        menuShown_1 = true;
+        var menu = {
+            "": {
+                remove: function () {
+                    draw_1();
+                },
+            },
+            "< Back": function () {
+                hideMenu_1();
+            },
+            "Zero time": function () {
+                exs_1.start();
+                exs_1.stop();
+                hideMenu_1();
+            },
+            "Clear splits": function () {
+                splits_1.splice(0, splits_1.length);
+                hideMenu_1();
+            },
+        };
+        E.showMenu(menu);
+    });
     Bangle.loadWidgets();
-    Bangle.drawWidgets();
+    Bangle.setGPSPower(1, "pace");
+    Bangle.on("GPS", function (gps) {
+        var l = layout_1["gpslvl"];
+        if (l)
+            l.gps = gps;
+    });
     g.clearRect(Bangle.appRect);
-    draw_1();
+    if (splits_1) {
+        E.showMessage("Restored splits\n(".concat(splits_1.length, ")"), "Pace");
+        setTimeout(function () {
+            g.reset().clear();
+            Bangle.drawWidgets();
+            draw_1();
+        }, 1000);
+    }
+    else {
+        Bangle.drawWidgets();
+        draw_1();
+    }
 }

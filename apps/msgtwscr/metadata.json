@@ -1,0 +1,13 @@
+{ "id": "msgtwscr",
+  "name": "Message Twist to Scroll",
+  "version":"0.01",
+  "description": "Temporarily activate scroll on twist function when a new message triggers the message app.",
+  "icon": "app.png",
+  "tags": "messages,tweak,scroll",
+  "type": "bootloader",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"msgtwscr.boot.js","url":"boot.js"}
+  ]
+}

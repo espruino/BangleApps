@@ -7,6 +7,8 @@
   "icon": "icon.png",
   "supports": ["BANGLEJS2"],
   "allow_emulator": true,
+  "type": "clock",
+  "tags": "clock",
   "storage": [
     {"name":"drained.boot.js","url":"boot.js"},
     {"name":"drained.app.js","url":"app.js"},

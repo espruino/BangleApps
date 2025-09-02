@@ -7,6 +7,7 @@
     padHours: true,
     showSeconds: 0, // 0=never, 1=only when display is unlocked, 2=for less than a minute
     font: 1, // 0=segment style font, 1=teletext font, 2=6x8:1x2
+    whenToShow: 0, // 0=always, 1=on clock only
   }, require("Storage").readJSON(CONFIGFILE,1) || {});
 
   function writeSettings() {
@@ -52,10 +53,19 @@
     },
     /*LANG*/'Font': {
       value: settings.font,
-      min: 0, max: 2,
-      format: v => [/*LANG*/"Segment", /*LANG*/"Teletext", /*LANG*/"6x8"][v === undefined ? 1 : v],
+      min: 0, max: 3,
+      format: v => [/*LANG*/"Segment", /*LANG*/"Teletext", /*LANG*/"6x8", /*LANG*/"VGA8",][v === undefined ? 1 : v],
       onchange: v => {
         settings.font = v;
+        writeSettings();
+      }
+    },
+    /*LANG*/'When To Show': {
+      value: settings.whenToShow,
+      min: 0, max: 1,
+      format: v => [/*LANG*/"Always", /*LANG*/"On Clock Only"][v === undefined ? 0 : v],
+      onchange: v => {
+        settings.whenToShow = v;
         writeSettings();
       }
     },

@@ -7,3 +7,4 @@
 0.07: Use default Bangle formatter for booleans
 0.08: Better formula for the moon's phase
 0.09: Fix variable declaration
+0.10: Added ability to hide widget

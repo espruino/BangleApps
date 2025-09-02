@@ -41,48 +41,49 @@ exports.getDecoder = function(fileContents) {
     return {
       r : 10, // record length
       clr : "\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF",
-      decode : h => { var v = {
-          steps : (h.charCodeAt(0)<<8) | h.charCodeAt(1),
-          bpmMin : h.charCodeAt(2),
-          bpmMax : h.charCodeAt(3),
-          movement : h.charCodeAt(4)*8,
-          battery : h.charCodeAt(5)&127,
-          isCharging : !!(h.charCodeAt(5)&128),
-          temperature : h.charCodeAt(6)/2, // signed?
-          altitude : ((h.charCodeAt(7)&31)<<8)|h.charCodeAt(8), // signed?
-          activity : exports.ACTIVITY[h.charCodeAt(7)>>5]
+      decode : h => { "ram"; var d = h.charCodeAt.bind(h), v = {
+          steps : (d(0)<<8) | d(1),
+          bpmMin : d(2),
+          bpmMax : d(3),
+          movement : d(4)*8,
+          battery : d(5)&127,
+          isCharging : !!(d(5)&128),
+          temperature : d(6)/2, // signed?
+          altitude : ((d(7)&31)<<8)|d(8), // signed?
+          activity : exports.ACTIVITY[d(7)>>5]
         };
         if (v.temperature>80) v.temperature-=128;
         v.bpm = (v.bpmMin+v.bpmMax)/2;
         if (v.altitude > 7500) v.altitude-=8192;
         return v;
       },
-      encode : health => {var alt=health.altitude&8191;return String.fromCharCode(
+      encode : health => { "ram"; var alt=health.altitude&8191;return String.fromCharCode(
         health.steps>>8,health.steps&255, // 16 bit steps
         health.bpmMin || health.bpm, // 8 bit bpm
         health.bpmMax || health.bpm, // 8 bit bpm
-        Math.min(health.movement, 255),
+        Math.min(health.movement >> 3, 255),
         E.getBattery()|(Bangle.isCharging()&&128),
         0|Math.round(health.temperature*2),
         (alt>>8)|(Math.max(0,exports.ACTIVITY.indexOf(health.activity))<<5),alt&255,
         0 // tbd
-      )}
+      );}
     };
   } else { // HEALTH1
     return {
       r : 4, // record length
       clr : "\xFF\xFF\xFF\xFF",
-      decode : h => ({
+      decode : h => { "ram"; return {
         steps : (h.charCodeAt(0)<<8) | h.charCodeAt(1),
         bpm : h.charCodeAt(2),
         bpmMin : h.charCodeAt(2),
         bpmMax : h.charCodeAt(2),
         movement : h.charCodeAt(3)*8
-      }),
-      encode : health => String.fromCharCode(
+      };},
+      encode : health => { "ram"; return String.fromCharCode(
         health.steps>>8,health.steps&255, // 16 bit steps
         health.bpm, // 8 bit bpm
-        Math.min(health.movement, 255))
+        Math.min(health.movement >> 3, 255));
+      }
     };
   }
 };
@@ -111,12 +112,10 @@ exports.readAllRecords = function(d, cb) {
 // Read the entire database. There is no guarantee that the months are read in order.
 exports.readFullDatabase = function(cb) {
   require("Storage").list(/health-[0-9]+-[0-9]+.raw/).forEach(val => {
-    console.log(val);
     var parts = val.split('-');
     var y = parseInt(parts[1],10);
-    var mo = parseInt(parts[2].replace('.raw', ''),10);
-
-    exports.readAllRecords(new Date(y, mo, 1), (r) => {
+    var mo = parseInt(parts[2].replace('.raw', ''),10) - 1;
+    exports.readAllRecords(new Date(y, mo, 1), (r) => {"ram";
       r.date = new Date(y, mo, r.day, r.hr, r.min);
       cb(r);
     });
@@ -127,9 +126,9 @@ exports.readFullDatabase = function(cb) {
 // There may be some records for the day of the timestamp previous to the timestamp
 exports.readAllRecordsSince = function(d, cb) {
   var currentDate = new Date().getTime();
-  var di = d;
+  var di = new Date(d.toISOString().substr(0,10)); // copy date (ignore time)
   while (di.getTime() <= currentDate) {
-    exports.readDay(di, (r) => {
+    exports.readDay(di, (r) => {"ram";
       r.date = new Date(di.getFullYear(), di.getMonth(), di.getDate(), r.hr, r.min);
       cb(r);
     });
@@ -149,7 +148,7 @@ exports.readDailySummaries = function(d, cb) {
     if (h!=inf.clr) cb(Object.assign(inf.decode(h), {day:day+1}));
     idx += DB_RECORDS_PER_DAY*inf.r;
   }
-}
+};
 
 // Read all records from the given day
 exports.readDay = function(d, cb) {
@@ -167,4 +166,4 @@ exports.readDay = function(d, cb) {
       idx += inf.r;
     }
   }
-}
+};

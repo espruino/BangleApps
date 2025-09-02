@@ -1,0 +1,42 @@
+{
+    "id": "flux",
+    "name": "Flux Watchface",
+    "shortName": "Flux",
+    "version": "0.01",
+    "description": "A really simple imitation of Apples \"Flux\" Watchface, with different colors.",
+    "icon": "app.png",
+    "tags": "clock",
+    "type": "clock",
+    "supports": [
+        "BANGLEJS2"
+    ],
+    "screenshots": [
+        {
+            "url": "screenshot_1.png"
+        },
+        {
+            "url": "screenshot_2.png"
+        }
+    ],
+    "readme": "README.md",
+    "storage": [
+        {
+            "name": "flux.app.js",
+            "url": "app.js"
+        },
+        {
+            "name": "flux.settings.js",
+            "url": "settings.js"
+        },
+        {
+            "name": "flux.img",
+            "url": "app-icon.js",
+            "evaluate": true
+        }
+    ],
+    "data": [
+        {
+            "name": "flux.settings.json"
+        }
+    ]
+}

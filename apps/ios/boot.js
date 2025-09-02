@@ -78,28 +78,56 @@ E.on('notify',msg=>{
     "com.apple.reminders": "Reminders",
     "com.apple.shortcuts": "Shortcuts",
     "com.apple.TestFlight": "TestFlight",
-    "com.apple.ScreenTimeNotifications": "ScreenTime",
+    "com.apple.ScreenTimeNotifications": "Screen Time",
     "com.apple.wifid.usernotification": "WiFi",
+    "com.apple.Maps": "Maps",
+    "com.apple.Music": "Apple Music",
+    "com.apple.AppStore": "App Store",
+    "com.apple.Preferences": "Settings",
+    "com.apple.calculator": "Calculator",
+    "com.apple.camera": "Camera",
+    "com.apple.weather": "Weather",
+    "com.apple.VoiceMemos": "Voice Memos",
+    "com.apple.News": "News",
+    "com.apple.tv": "Apple TV",
+    "com.apple.findmy": "Find My",
+    "com.apple.compass": "Compass",
+    "com.apple.measure": "Measure",
     "com.atebits.Tweetie2": "Twitter",
-    "com.burbn.instagram" : "Instagram",
+    "com.burbn.instagram": "Instagram",
     "com.facebook.Facebook": "Facebook",
     "com.facebook.Messenger": "Messenger",
-    "com.google.Chromecast" : "Google Home",
-    "com.google.Gmail" : "GMail",
-    "com.google.hangouts" : "Hangouts",
-    "com.google.ios.youtube" : "YouTube",
-    "com.hammerandchisel.discord" : "Discord",
-    "com.ifttt.ifttt" : "IFTTT",
-    "com.jumbo.app" : "Jumbo",
-    "com.linkedin.LinkedIn" : "LinkedIn",
+    "com.google.Chromecast": "Google Home",
+    "com.google.Gmail": "GMail",
+    "com.google.hangouts": "Hangouts",
+    "com.google.ios.youtube": "YouTube",
+    "com.google.ios.chrome": "Google Chrome",
+    "com.google.Maps": "Google Maps",
+    "com.google.Drive": "Google Drive",
+    "com.google.GoogleMobile": "Google",
+    "com.hammerandchisel.discord": "Discord",
+    "com.ifttt.ifttt": "IFTTT",
+    "com.jumbo.app": "Jumbo",
+    "com.linkedin.LinkedIn": "LinkedIn",
     "com.marktplaats.iphone": "Marktplaats",
-    "com.microsoft.Office.Outlook" : "Outlook Mail",
-    "com.nestlabs.jasper.release" : "Nest",
-    "com.netflix.Netflix" : "Netflix",
-    "com.reddit.Reddit" : "Reddit",
+    "com.microsoft.Office.Outlook": "Outlook Mail",
+    "com.microsoft.Office.Word": "Microsoft Word",
+    "com.microsoft.Office.Excel": "Microsoft Excel",
+    "com.microsoft.Office.Powerpoint": "Microsoft PowerPoint",
+    "com.nestlabs.jasper.release": "Nest",
+    "com.netflix.Netflix": "Netflix",
+    "com.reddit.Reddit": "Reddit",
     "com.skype.skype": "Skype",
     "com.skype.SkypeForiPad": "Skype",
     "com.spotify.client": "Spotify",
+    "com.soundcloud.TouchApp": "SoundCloud",
+    "com.disney.disneyplus": "Disney+",
+    "com.hbo.hbonow": "HBO Max",
+    "com.amazon.Amazon": "Amazon Shopping",
+    "com.amazon.AmazonVideo": "Prime Video",
+    "com.dropbox.Dropbox": "Dropbox",
+    "com.evernote.iPhone.Evernote": "Evernote",
+    "com.trello": "Trello",
     "com.storytel.iphone": "Storytel",
     "com.strava.stravaride": "Strava",
     "com.tinyspeck.chatlyio": "Slack",
@@ -110,20 +138,22 @@ E.on('notify',msg=>{
     "com.valvesoftware.Steam": "Steam",
     "com.vilcsak.bitcoin2": "Coinbase",
     "com.wordfeud.free": "WordFeud",
-    "com.yourcompany.PPClient": "PayPal",
+    "com.paypal.PPClient": "PayPal",
     "com.zhiliaoapp.musically": "TikTok",
+    "com.pinterest": "Pinterest",
+    "com.tumblr.tumblr": "Tumblr",
     "de.no26.Number26": "N26",
     "io.robbie.HomeAssistant": "Home Assistant",
     "net.superblock.Pushover": "Pushover",
     "net.weks.prowl": "Prowl",
     "net.whatsapp.WhatsApp": "WhatsApp",
-    "nl.ah.Appie": "Albert Heijn",
     "nl.postnl.TrackNTrace": "PostNL",
     "org.whispersystems.signal": "Signal",
     "ph.telegra.Telegraph": "Telegram",
-    "tv.twitch": "Twitch",
-    // could also use NRF.ancsGetAppInfo(msg.appId) here
-  };
+    "tv.twitch": "Twitch"
+};
+
+  
 
   //if (appNames[msg.appId]) msg.a
   if (msg.title === "BangleDumpCalendar") {
@@ -180,6 +210,7 @@ E.on('notify',msg=>{
     let weatherEvent = {
         t: "weather",
         temp: d.temp,
+        feels: d.feels,
         hi: d.hi,
         lo: d.lo,
         hum: d.hum,
@@ -190,9 +221,55 @@ E.on('notify',msg=>{
         wind: d.wind,
         wdir: d.wdir,
         loc: d.loc
-    }
+    };
+    // Convert string fields to numbers for iOS weather shortcut
+    const numFields = ['code', 'wdir', 'temp','feels', 'hi', 'lo', 'hum', 'wind', 'uv', 'rain'];
+    numFields.forEach(field => {
+      if (weatherEvent[field] != null) weatherEvent[field] = +weatherEvent[field];
+    });
     require("weather").update(weatherEvent);
     NRF.ancsAction(msg.uid, false);
+    return;
+  }
+  
+  if (msg.title === "BangleDumpLocation") {
+    
+    const d = JSON.parse(msg.message);
+    
+    /* Example:
+    {"lat":"2912.0744", "lon":"2333.332", "city":"Chicago"}*/
+    let locationJson = {
+        t: "location",
+        lat:d.lat,
+        lon:d.lon,
+        city:d.city
+    
+    };
+    // Convert string fields to numbers
+    const numFields = ['lat', 'lon'];
+    numFields.forEach(field => {
+      if (locationJson[field] != null) locationJson[field] = +locationJson[field];
+    });
+   
+    //load mylocation file
+    let myLocationJson = Object.assign({
+      lat: d.lat,
+      lon: d.lon,
+      location:d.city
+    }, require("Storage").readJSON("mylocation.json", true) || {});    
+    //remove notification from phone
+    NRF.ancsAction(msg.uid, false);
+    if(Math.abs(myLocationJson.lat - locationJson.lat) < 0.0001	 && Math.abs(myLocationJson.lon -locationJson.lon) < 0.0001){
+      //same location, do not write
+      return;
+    }
+    
+    myLocationJson.lon=locationJson.lon;
+    myLocationJson.lat=locationJson.lat;
+    myLocationJson.location=locationJson.city;
+    require("Storage").write("mylocation.json",myLocationJson);
+    
+
     return;
   }
 

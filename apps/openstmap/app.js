@@ -1,20 +1,23 @@
 var m = require("openstmap");
-var HASWIDGETS = true;
 var R;
 var fix = {};
 var mapVisible = false;
-var hasScrolled = false;
 var settings = require("Storage").readJSON("openstmap.json",1)||{};
+var HASWIDGETS = !settings.noWidgets;
 var plotTrack;
 let checkMapPos = false; // Do we need to check the if the coordinates we have are valid
-var startDrag = 0;
+var startDrag = undefined; //< to detect a short tap when zooming
+var hasRecorder = require("Storage").read("recorder")!=undefined; // do we have the recorder library?
+var hasWaypoints = require("Storage").read("waypoints")!=undefined; // do we have the recorder library?
+var labelFont = g.getFonts().includes("17")?"17":"6x8:2";
+var imgLoc, ovLoc, ovSize = 30; /*Math.ceil(Math.sqrt(imgLoc[0]*imgLoc[0]+imgLoc[1]*imgLoc[1]))*/
+var locOnscreen = undefined; // is the GPS location currently onscreen?
 
 if (Bangle.setLCDOverlay) {
-  // Icon for current location+direction: https://icons8.com/icon/11932/gps 24x24, 1 Bit + transparency + inverted
-  var imgLoc = require("heatshrink").decompress(atob("jEYwINLAQk8AQl+AQn/AQcB/+AAQUD//AAQUH//gAQUP//wAQUf//4j8AvA9IA=="));
+  // Icon for current location + direction (icon_gps.png, 2 bit bw, transparent)
+  imgLoc = atob("EBiCAVVQBVVVU8VVVVPFVVVDwVVVT/FVVU/xVVUP8FVVP/xVVT/8VVQ//BVU//8VVP//FVD//wVT///FU///xUP//8FP///xD/AP8D/BQ/w/BVD8PxVU/AAVVABVVVVVVVVVVQ==");
   // overlay buffer for current location, a bit bigger then image so we can rotate
-  const ovSize = Math.ceil(Math.sqrt(imgLoc[0]*imgLoc[0]+imgLoc[1]*imgLoc[1]));
-  var ovLoc = Graphics.createArrayBuffer(ovSize,ovSize,imgLoc[2] & 0x7f,{msb:true});
+  ovLoc = Graphics.createArrayBuffer(ovSize,ovSize,2,{msb:true});
 }
 
 if (settings.lat !== undefined && settings.lon !== undefined && settings.scale !== undefined) {
@@ -53,9 +56,9 @@ function redraw() {
       g.setColor("#f00").flip(); // force immediate draw on double-buffered screens - track will update later
       WIDGETS["gpsrec"].plotTrack(m);
     }
-    if (HASWIDGETS && WIDGETS["recorder"] && WIDGETS["recorder"].plotTrack) {
+    if (hasRecorder) {
       g.setColor("#f00").flip(); // force immediate draw on double-buffered screens - track will update later
-      plotTrack = WIDGETS["recorder"].plotTrack(m, { async : true, callback : function() {
+      plotTrack = require("recorder").plotTrack(m, { async : true, callback : function() {
         plotTrack = undefined;
       }});
     }
@@ -65,6 +68,7 @@ function redraw() {
 
 // Draw the POIs
 function drawPOI() {
+  if (!hasWaypoints) return;
   let waypoints;
   try {
     waypoints = require("waypoints").load();
@@ -72,16 +76,15 @@ function drawPOI() {
     // Waypoints module not available.
     return;
   }
-  g.setFont("Vector", 18);
+  if (!waypoints) return;
+  g;
+   var img = atob("ERnCAQD4/////x8AVWqqVVWoAKlVoAAClaAAAClgAqACaAJWAKgCVWAKAJVYAoAlVgCoAlYApgAqACVgAAApWAAACVWAAApVYAACVVYAApVVgACVVVgApVVWACVVVeAtVVXcDdVV3s7dVd3i3dVd3t3VVd3d1UA="); // icon_place.png optimal 2 bit + transparent
+  g.setFont(labelFont).setFontAlign(-1,0);
   waypoints.forEach((wp, idx) => {
     if (wp.lat === undefined || wp.lon === undefined) return;
     var p = m.latLonToXY(wp.lat, wp.lon);
-    var sz = 2;
-    g.setColor(0,0,0);
-    g.fillRect(p.x-sz, p.y-sz, p.x+sz, p.y+sz);
-    g.setColor(0,0,0);
-    g.drawString(wp.name, p.x, p.y);
-    //print(wp.name);
+    g.setColor("#fff").drawImage(img, p.x-8, p.y-22);
+    g.setColor(0).drawString(wp.name, p.x+8, p.y);
   });
 }
 
@@ -115,19 +118,35 @@ function drawLocation() {
   }
 
   var p = m.latLonToXY(fix.lat, fix.lon);
-
-  ovLoc.clear();
-  if (isInside(R, p, ovLoc.getWidth(), ovLoc.getHeight())) { // avoid drawing over widget area
+  ovLoc.setBgColor(1/*transparent*/).clear().setBgColor(0);
+  locOnscreen = isInside(R, p, ovSize, ovSize);
+  if (locOnscreen) { // if we're onscreen, draw the course
     const angle = settings.dirSrc === 1 ? fix.course : Bangle.getCompass().heading;
-    if (!isNaN(angle)) {
-      ovLoc.drawImage(imgLoc, ovLoc.getWidth()/2, ovLoc.getHeight()/2, {rotate: angle*Math.PI/180});
+    if (isNaN(angle)) {
+      ovLoc.fillCircle(ovSize/2,ovSize/2,8);
+    } else {
+      ovLoc.drawImage(imgLoc, ovSize/2, ovSize/2, {rotate: angle*Math.PI/180});
     }
+  } else { // if off-screen, draw a blue circle on the edge
+    var mx = R.w/2, my = R.h/2;
+    var dy = p.y - (R.y+my), dx = p.x - mx;
+    ovLoc.fillCircle(ovSize/2,ovSize/2,13);
+    if (Math.abs(dx)>Math.abs(dy)) {
+      dy = my * dy / Math.abs(dx);
+      dx = mx * Math.sign(dx);
+    } else {
+      if (dy<0) ovLoc.setBgColor(1/*transparent*/).clearRect(0,0,ovSize, (ovSize/2)-1); // so we don't overlap widgets!
+      dx = mx * dx / Math.abs(dy);
+      dy = my * Math.sign(dy);
+    }
+    p.x = mx+dx;
+    p.y = R.y+my+dy;
   }
-  Bangle.setLCDOverlay({width:ovLoc.getWidth(), height:ovLoc.getHeight(),
-          bpp:ovLoc.getBPP(), transparent:0,
-          palette:new Uint16Array([0, g.toColor("#00F")]),
+  Bangle.setLCDOverlay({width:ovSize, height:ovSize,
+          bpp:ovLoc.getBPP(), transparent:1,
+          palette:new Uint16Array([g.toColor("#FFF"), 0, 0, g.toColor("#00F")]),
           buffer:ovLoc.buffer
-        }, p.x-ovLoc.getWidth()/2, p.y-ovLoc.getHeight()/2);
+        }, p.x-ovSize/2, p.y-ovSize/2);
 
   this.hasOverlay = true;
 }
@@ -135,7 +154,22 @@ function drawLocation() {
 Bangle.on('GPS',function(f) {
   fix=f;
   if (HASWIDGETS && WIDGETS["sats"]) WIDGETS["sats"].draw(WIDGETS["sats"]);
-  if (mapVisible) {
+  if (mapVisible) { // could be in settings
+    // Automatically scroll if GPS is going offscreen and not dragging
+    if (settings.autoscroll && fix.fix && startDrag===undefined) {
+      if (locOnscreen) { // if we were onscreen last time we drew the location
+        var p = m.latLonToXY(fix.lat, fix.lon); // where are we onscreen?
+        var sx=0,sy=0;
+        if (p.x<R.x+32) sx = 1;
+        if (p.y<R.y+32) sy = 1;
+        if (p.x>R.x2-32) sx = -1;
+        if (p.y>R.y2-32) sy = -1;
+        if (sx||sy) {
+          scroll(sx*80,sy*80);
+          redraw();
+        }
+      }
+    }
     drawMarker();
     drawLocation();
   }
@@ -196,7 +230,16 @@ function showMenu() {
     value : !!settings.drawMarker,
     onchange : v => { settings.drawMarker=v; writeSettings(); }
   },
+  /*LANG*/"Hide Widgets": {
+    value : !!settings.noWidgets,
+    onchange : v => { settings.noWidgets=v; writeSettings(); load("openstmap.app.js"); }
+  },
+  /*LANG*/"Autoscroll": {
+    value : !!settings.autoscroll,
+    onchange : v => { settings.autoscroll=v; writeSettings(); }
+  },
   });
+
 
   if (Bangle.setLCDOverlay) {
     menu[/*LANG*/"Direction source"] = {
@@ -223,17 +266,24 @@ function showMenu() {
   };
 
   // If we have the recorder widget, add a menu item to start/stop recording
-  if (WIDGETS.recorder) {
+  if (hasRecorder) {
     menu[/*LANG*/"Record"] = {
-      value : WIDGETS.recorder.isRecording(),
+      value : require("recorder").isRecording(),
       onchange : isOn => {
         E.showMessage(/*LANG*/"Please Wait...");
-        WIDGETS.recorder.setRecording(isOn).then(showMap);
+        require("recorder").setRecording(isOn).then(showMap);
       }
     };
   }
   menu[/*LANG*/"Exit"] = () => load();
   E.showMenu(menu);
+}
+
+function scroll(sx,sy) {
+  g.setClipRect(R.x,R.y,R.x2,R.y2);
+  g.scroll(sx,sy);
+  m.scroll(sx,sy);
+  g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1); // restore cliprect
 }
 
 function showMap() {
@@ -243,27 +293,26 @@ function showMap() {
   Bangle.setUI({mode:"custom",drag:e=>{
     if (plotTrack && plotTrack.stop) plotTrack.stop();
     if (e.b) {
-      if (!startDrag)
+      if (startDrag===undefined)
         startDrag = getTime();
-      g.setClipRect(R.x,R.y,R.x2,R.y2);
-      g.scroll(e.dx,e.dy);
-      m.scroll(e.dx,e.dy);
-      g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
-      hasScrolled = true;
+      if (e.dx || e.dy) {
+        scroll(e.dx,e.dy);
+      }
       drawLocation();
-    } else if (hasScrolled) {
+    } else if (startDrag!==undefined) {
       const delta = getTime() - startDrag;
-      startDrag = 0;
-      hasScrolled = false;
-      if (delta < 0.2) {
-        if (e.y > g.getHeight() / 2) {
-          if (e.x < g.getWidth() / 2) {
+      startDrag = undefined;
+      if (delta < 0.2) { // short tap?
+        if (e.y > g.getHeight() - 32) { // at bottom egde?
+          if (e.x < 32) { // zoom in/out
             m.scale /= 2;
-          } else {
+            g.reset().clearRect(R);
+          }
+          if (e.x > g.getHeight() - 32) {
             m.scale *= 2;
+            g.reset().clearRect(R);
           }
         }
-        g.reset().clearRect(R);
       }
       redraw();
     }

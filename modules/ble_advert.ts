@@ -21,6 +21,12 @@ const advertise = (options: SetAdvertisingOptions) => {
 		}
 		return obj;
 	};
+  /* 2v26 added manufacturer=0x0590 by default, but if we're advertising
+  extra stuff we'll want to explicitly remove that so there's space */
+  if (process.env.VERSION >= "2.26") {
+    options = options||{};
+    if (!options.manufacturer) options.manufacturer=false;
+  }
 
 	// clone the object, to avoid firmware behaving like so:
 	// bleAdvert = [Uint8Array, { [0x180f]: ... }]
@@ -35,7 +41,11 @@ const advertise = (options: SetAdvertisingOptions) => {
 	// taking effect for later calls.
 	//
 	// This also allows us to identify previous adverts correctly by id.
-	NRF.setAdvertising(clone((Bangle as BangleWithAdvert).bleAdvert), options);
+  try {
+		NRF.setAdvertising(clone((Bangle as BangleWithAdvert).bleAdvert), options);
+  } catch (e) {
+		console.log("ble_advert error", e);
+  }
 };
 
 const manyAdv = (bleAdvert: BleAdvert | BleAdvert[] | undefined): bleAdvert is BleAdvert[] => {

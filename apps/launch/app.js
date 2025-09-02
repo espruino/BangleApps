@@ -1,36 +1,35 @@
 { // must be inside our own scope here so that when we are unloaded everything disappears
   let s = require("Storage");
   // handle customised launcher
-  let scaleval = 1, vectorval = 20, fonts = g.getFonts();
-  let font = fonts.includes("12x20") ? "12x20" : "6x8:2";
-  if (fonts.includes("22")) font="22"; // 2v26+
   let settings = Object.assign({
     showClocks: true,
-    fullscreen: false
+    fullscreen: false,
+    height: 52
   }, s.readJSON("launch.json", true) || {});
-  if ("vectorsize" in settings)
-    vectorval = parseInt(settings.vectorsize);
-  if ("font" in settings){
-    if(settings.font == "Vector"){
-      scaleval = vectorval/20;
-      font = "Vector"+(vectorval).toString();
-    } else{
-      font = settings.font;
-      scaleval = (font.split("x")[1])/20;
-    }
+  let font = settings.font;
+  if (!font || font=="Vector"/*compat with old settings*/) {
+    let fonts = g.getFonts();
+    font = fonts.includes("12x20") ? "12x20" : "6x8:2";
+    if (fonts.includes("22")) font="22"; // 2v26+
   }
-  let height = 50*scaleval;
+  let height = 0|Math.max(settings.height,12), pad = 2;
+  let imgsize = height-pad*2, imgscale = imgsize/48;
 
-  // Now apps list is loaded - render
-  if (!settings.fullscreen)
+  // Load widgets if we need to
+  if (!settings.fullscreen) {
     Bangle.loadWidgets();
-  let R = Bangle.appRect;
-  g.reset().clearRect(R).setColor("#888");
-  for (var y=R.y;y<R.y2;y+=height) {
-    g.drawRect(5*scaleval,y+5*scaleval,49*scaleval,y+49*scaleval) // image
-     .drawRect(54*scaleval,y+20*scaleval,R.y2-16,y+34*scaleval); // text
+  } else if (global.WIDGETS) {
+    require("widget_utils").hide();
   }
-  g.flip();
+  { // Draw 'placeholder'
+    let R = Bangle.appRect, mid = height/2, th = g.setFont(font).stringMetrics("X").height/2;
+    g.reset().clearRect(R).setColor("#888");
+    for (var y=R.y;y<R.y2;y+=height) {
+      g.drawRect(pad*2,y+pad*2,imgsize-pad,y+imgsize-pad) // image
+      .drawRect(imgsize+pad*2,y+mid-th,R.y2-R.w/3, y+mid+th); // text
+    }
+    g.flip();
+  }
 
   // cache app list so launcher loads more quickly
   let launchCache = s.readJSON("launch.cache.json", true)||{};
@@ -59,10 +58,10 @@
       draw : (i, r) => {
         var app = apps[i];
         if (!app) return;
-        g.clearRect((r.x),(r.y),(r.x+r.w-1), (r.y+r.h-1)).setFont(font).setFontAlign(-1,0).drawString(app.name,54*scaleval,r.y+(27*scaleval));
+        g.clearRect(r).setFont(font).setFontAlign(-1,0).drawString(app.name,imgsize+pad*2,r.y+2+r.h/2);
         if (app.icon) {
           if (!app.img) app.img = s.read(app.icon); // load icon if it wasn't loaded
-          try {g.drawImage(app.img,3*scaleval, r.y+(3*scaleval), {scale: scaleval});} catch(e){}
+          try {g.drawImage(app.img, pad, r.y+pad, {scale: imgscale});} catch(e){}
         }
       },
       select : i => {
@@ -81,6 +80,8 @@
         // cleanup the timeout to not leave anything behind after being removed from ram
         if (lockTimeout) clearTimeout(lockTimeout);
         Bangle.removeListener("lock", lockHandler);
+        // Restore widgets if they were hidden by fullscreen setting
+        if (global.WIDGETS) require("widget_utils").show();
       }
     });
     g.flip(); // force a render before widgets have finished drawing
@@ -93,11 +94,12 @@
       lockTimeout = undefined;
       if (locked)
         lockTimeout = setTimeout(Bangle.showClock, 10000);
-    }
+    };
     Bangle.on("lock", lockHandler);
   };
+  // Now apps list is loaded - render
   drawMenu();
-
-  if (!settings.fullscreen) // finally draw widgets
+  // finally draw widgets
+  if (!settings.fullscreen)
     Bangle.drawWidgets();
-  }
+}

@@ -17,13 +17,13 @@
     "declaration": false,
     "emitDeclarationOnly": false,
     "removeComments": true,
-    "noImplicitUseStrict": true, // disable "use strict"
+    //REMOVED "noImplicitUseStrict": true, // disable "use strict"
 
     "newLine": "lf",
     "noEmitHelpers": true, // we link to specific banglejs implementations
     "noEmitOnError": false,
     "preserveConstEnums": false,
-    "importsNotUsedAsValues": "error",
+    //REMOVED "importsNotUsedAsValues": "error",
     "preserveValueImports": false,
 
     // interop constraints
@@ -43,9 +43,6 @@
     "strictBindCallApply": true,
     "strictFunctionTypes": true,
     "strictPropertyInitialization": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "useUnknownInCatchVariables": true,
 
     // simple type checking
     "noUnusedLocals": true,

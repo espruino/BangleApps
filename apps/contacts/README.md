@@ -1,6 +1,7 @@
 # Contacts
 
 View, edit and call contacts on your bangle.js. Calling is done via the bluetooth connection to your android phone.
+Requires allowing "intents" in GadgetBridge device settings.
 
 ## Contacts JSON file
 

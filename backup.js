@@ -7,7 +7,7 @@ function bangleDownload() {
   Progress.show({title:"Scanning...",sticky:true});
   var normalFiles, storageFiles;
   console.log("Listing normal files...");
-  Comms.reset()
+  return Comms.reset()
   .then(() => Comms.showMessage("Backing up..."))
   .then(() => Comms.listFiles({sf:false}))
   .then(f => {
@@ -66,70 +66,72 @@ function bangleDownload() {
 }
 
 function bangleUpload() {
-  Espruino.Core.Utils.fileOpenDialog({
-      id:"backup",
-      type:"arraybuffer",
-      mimeType:".zip,application/zip"}, function(data) {
-    if (data===undefined) return;
-    var promise = Promise.resolve();
-    var zip = new JSZip();
-    var cmds = "";
-    zip.loadAsync(data).then(function(zip) {
-      return showPrompt("Restore from ZIP","Are you sure? This will overwrite existing apps");
-    }).then(()=>{
-      Progress.show({title:`Reading ZIP`});
-      zip.forEach(function (path, file){
-        console.log("path");
-        promise = promise
-        .then(() => file.async("string"))
-        .then(data => {
-          console.log("decoded", path);
-          if (data.length==0) { // https://github.com/espruino/BangleApps/issues/1593
-            console.log("Can't restore files of length 0, ignoring "+path);
-          } else if (path.startsWith(BACKUP_STORAGEFILE_DIR)) {
-            path = path.substr(BACKUP_STORAGEFILE_DIR.length+1);
-            cmds += AppInfo.getStorageFileUploadCommands(path, data)+"\n";
-          } else if (!path.includes("/")) {
-            cmds += AppInfo.getFileUploadCommands(path, data)+"\n";
-          } else console.log("Ignoring "+path);
+  return new Promise(resolve =>
+    Espruino.Core.Utils.fileOpenDialog({
+        id:"backup",
+        type:"arraybuffer",
+        mimeType:".zip,application/zip"}, function(data) {
+      if (data===undefined) return;
+      var zip = new JSZip();
+      var cmds = "";
+      return zip.loadAsync(data).then(function(zip) {
+        return showPrompt("Restore from ZIP","Are you sure? This will overwrite existing apps");
+      }).then(()=>{
+        Progress.show({title:`Reading ZIP`});
+        var promise = Promise.resolve();
+        zip.forEach(function (path, file){
+          console.log("path");
+          promise = promise
+          .then(() => file.async("string"))
+          .then(data => {
+            console.log("decoded", path);
+            if (data.length==0) { // https://github.com/espruino/BangleApps/issues/1593
+              console.log("Can't restore files of length 0, ignoring "+path);
+            } else if (path.startsWith(BACKUP_STORAGEFILE_DIR)) {
+              path = path.substr(BACKUP_STORAGEFILE_DIR.length+1);
+              cmds += AppInfo.getStorageFileUploadCommands(path, data)+"\n";
+            } else if (!path.includes("/")) {
+              cmds += AppInfo.getFileUploadCommands(path, data)+"\n";
+            } else console.log("Ignoring "+path);
+          });
         });
-      });
-      return promise;
-    })
-    .then(()=>new Promise(resolve => {
-      showPrompt("Erase Storage","Erase Storage? If restoring a complete backup you should erase storage, but in some cases you may want to upload files from a ZIP while keeping your Bangle's existing data.").then(()=>resolve(true), ()=>resolve(false));
-    }))
-    .then(eraseStorage => {
-      if (eraseStorage) {
+        return promise;
+      })
+      .then(()=>new Promise(resolve => {
+        showPrompt("Erase Storage","Erase Storage? If restoring a complete backup you should erase storage, but in some cases you may want to upload files from a ZIP while keeping your Bangle's existing data.").then(()=>resolve(true), ()=>resolve(false));
+      }))
+      .then(eraseStorage => {
+        if (eraseStorage) {
+          Progress.hide({sticky:true});
+          Progress.show({title:`Erasing...`});
+          return Comms.removeAllApps();
+        }})
+      .then(() => {
         Progress.hide({sticky:true});
-        Progress.show({title:`Erasing...`});
-        return Comms.removeAllApps();
-      }})
-    .then(() => {
-      Progress.hide({sticky:true});
-      Progress.show({title:`Restoring...`, sticky:true});
-      return Comms.showMessage(`Restoring...`); })
-    .then(() => Comms.write("\x10"+Comms.getProgressCmd()+"\n"))
-    .then(() => Comms.uploadCommandList(cmds, 0, cmds.length))
-    .then(() => getInstalledApps(true))
-    .then(() => Comms.showMessage(Const.MESSAGE_RELOAD))
-    .then(() => {
-      Progress.hide({sticky:true});
-      showToast('Restore complete!', 'success');
-    })
-    .catch(err => {
-      Progress.hide({sticky:true});
-      showToast('Restore failed, ' + err, 'error');
-    });
-    return promise;
-  });
+        Progress.show({title:`Restoring...`, sticky:true});
+        return Comms.showMessage(`Restoring...`); })
+      .then(() => Comms.write("\x10"+Comms.getProgressCmd()+"\n"))
+      .then(() => Comms.uploadCommandList(cmds, 0, cmds.length))
+      .then(() => getInstalledApps(true))
+      .then(() => Comms.showMessage(Const.MESSAGE_RELOAD))
+      .then(() => {
+        Progress.hide({sticky:true});
+        showToast('Restore complete!', 'success');
+        resolve();
+      })
+      .catch(err => {
+        Progress.hide({sticky:true});
+        showToast('Restore failed, ' + err, 'error');
+        resolve();
+      });
+  }));
 }
 
 window.addEventListener('load', (event) => {
   document.getElementById("downloadallapps").addEventListener("click",event=>{
-    bangleDownload();
+    startOperation({name:"Backup Apps"}, () => bangleDownload());
   });
   document.getElementById("uploadallapps").addEventListener("click",event=>{
-    bangleUpload();
+    startOperation({name:"Restore Apps"}, () => bangleUpload());
   });
 });

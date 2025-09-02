@@ -9,7 +9,7 @@ const parameters = {
   "earthOrbitRadius": 80,
   "venusOrbitRadius": 60,
   "mercuryOrbitRadius": 40,
-  "earthRadius": 8,
+  "earthRadius": 6,
   "venusRadius": 6,
   "mercuryRadius": 4,
   "sunRadius": 12,

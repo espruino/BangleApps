@@ -3,8 +3,8 @@
 
   function loadSettings() {
     let settings = require('Storage').readJSON("messages.settings.json", true) || {};
-    if (settings.vibrate===undefined) settings.vibrate=":";
-    if (settings.vibrateCalls===undefined) settings.vibrateCalls=":";
+    if (settings.vibrate===undefined) settings.vibrate="=";
+    if (settings.vibrateCalls===undefined) settings.vibrateCalls="=";
     if (settings.repeat===undefined) settings.repeat=4;
     if (settings.repeatCalls===undefined) settings.repeatCalls=settings.repeat;
     if (settings.vibrateTimeout===undefined) settings.vibrateTimeout=60;
@@ -60,8 +60,8 @@
       onchange: v => updateSetting("fontSize", v)
     },
     /*LANG*/'Auto-Open Unread Msg': {
-      value: !!settings.ignoreUnread,
-      onchange: v => updateSetting("ignoreUnread", v)
+      value: !settings.ignoreUnread,
+      onchange: v => updateSetting("ignoreUnread", !v)
     },
     /*LANG*/'Auto-Open Music': {
       value: !!settings.openMusic,
@@ -88,6 +88,10 @@
       min: 0, max: 5,
       format: v => v ? v :/*LANG*/"Hide",
       onchange: v => updateSetting("maxMessages", v)
+    },
+    /*LANG*/'Show Widgets': {
+      value: !!settings.showWidgets,
+      onchange: v => updateSetting("showWidgets", v)
     },
     /*LANG*/'Icon color mode': {
       value: Math.max(0,iconColorModes.indexOf(settings.iconColorMode)),

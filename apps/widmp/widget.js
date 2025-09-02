@@ -3,6 +3,7 @@
   var lastCalculated = 0; // When we last calculated the phase
   var phase = 0; // The last phase we calculated
   var southernHemisphere = false; // when in southern hemisphere -- use the "My Location" App
+  var settings;
 
   // https://github.com/deirdreobyrne/LunarPhase
   function moonPhase(sec) {
@@ -39,14 +40,18 @@
       g.drawLine(CenterX-leftFactor*y,CenterY+x, CenterX+rightFactor*y,CenterY+x);
     }
   }
-  
-  function setMoonColour(g) {
-    var settings = Object.assign({
+
+  function reloadSettings() {
+    settings = Object.assign({
       default_colour: true,
+      hide: false,
       red: 0,
       green: 0,
       blue: 0,
     }, require('Storage').readJSON("widmp.json", true) || {});
+  }
+  
+  function setMoonColour(g) {
     if (settings.default_colour) {
       if (g.theme.dark) {
         g.setColor(0xffff); // white
@@ -62,6 +67,7 @@
 
 
   function draw() {
+    if (settings.hide) return;
     const CenterX = this.x + 12, CenterY = this.y + 12, Radius = 11;
     let leftFactor, rightFactor;
 
@@ -90,9 +96,11 @@
     drawMoonPhase(CenterX,CenterY, Radius, leftFactor,rightFactor);
   }
 
+  reloadSettings();
+  var wid = settings.hide ? 0 : 24;
   WIDGETS["widmp"] = {
     area: "tr",
-    width: 24,
+    width: wid,
     draw: draw
   };
 

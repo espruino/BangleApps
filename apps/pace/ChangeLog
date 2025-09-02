@@ -1,2 +1,7 @@
 0.01: New app!
 0.02: Show elapsed time on pause screen
+0.03: Avoid initial GPS skew and allow reset of time/splits
+0.04: Bump exstats module - show active time, not elapsed
+0.05: Fix menu display - don't draw over the menu and vice-versa. Require
+	double-tap for menu
+0.06: Show GPS strength bar on the left and restore splits from previous run

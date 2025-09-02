@@ -1,6 +1,6 @@
 0.01: First release
 0.02: clock_info now uses app name to maintain settings specifically for this clock face
-      ensure clockinfo text is usppercase (font doesn't render lowercase)
+      ensure clockinfo text is uppercase (font doesn't render lowercase)
 0.03: Use smaller font if clock_info test doesn't fit in area
 0.04: Ensure we only scale down clockinfo text if it really won't fit
 0.05: Minor code improvements
@@ -11,3 +11,5 @@
 0.10: Fix size of bottom bar after 0.09
       Make date toggleable with settings
       Optional border around clockinfos (available from settings)
+0.11: Make the border on clockinfos the default
+      Fix clockinfos when too long (previously just output '...')

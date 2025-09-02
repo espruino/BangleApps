@@ -40,19 +40,29 @@ icons.forEach(icon => {
       png.decode(function (pixels) {
         var rgba = new Uint8Array(pixels);
         var isTransparent = false;
-        for (var i=0;i<rgba.length;i+=4)
+        for (var i=0;i<rgba.length;i+=4) {          
           if (rgba[i+3]<255) isTransparent=true;
+        }
         if (!isTransparent) { // make it transparent
           for (var i=0;i<rgba.length;i+=4)
             rgba[i+3] = 255-rgba[i];
         }
+        var allSet = true, allUnset = true;
+        for (var i=0;i<rgba.length;i+=4) {
+          rgba[i+0] = 0; // ensure all pixels are black (data is in transparency)
+          rgba[i+1] = 0;
+          rgba[i+2] = 0;
+          if (rgba[i+3]>0) allUnset=false;
+          if (rgba[i+3]<255) allSet=false;
+        } 
 
         imgOptions.width = png.width;
         imgOptions.height = png.height;
         var img = imageconverter.RGBAtoString(rgba, imgOptions);
         iconImages[index] = img;
         console.log("Loaded "+icon.icon);
-        if (img.length != IMAGE_BYTES) throw new Error("Image size should be 76 bytes");
+        if (allSet || allUnset) throw new Error(icon.icon+" Image is blank! (is it saved as 8 bit RGB PNG?)");
+        if (img.length != IMAGE_BYTES) throw new Error(icon.icon+" Image size should be 76 bytes");
         r(); // done
       });
     }));
@@ -102,6 +112,7 @@ exports.getColor = function(msg,options) {
 */""}
     "bibel": "#54342c",
     "bring": "#455a64",
+    "davx⁵": "#8bc34a",
     "discord": "#5865f2", // https://discord.com/branding
     "etar": "#36a18b",
     "facebook": "#1877f2", // https://www.facebook.com/brand/resources/facebookapp/logo
@@ -111,7 +122,8 @@ exports.getColor = function(msg,options) {
     "google home": "#fbbc05",
 // "home assistant": "#41bdf5", // ha-blue is #41bdf5, but that's the background
     "instagram": "#ff0069", // https://about.instagram.com/brand/gradient
-    "jira": "#0052cc", //https://atlassian.design/resources/logo-library
+    "jira": "#0052cc", // https://atlassian.design/resources/logo-library
+    "kleinanzeigen": "#69bd2f", // https://themen.kleinanzeigen.de/medien/mediathek/kleinanzeigen-guideline-nutzung-logo/ 
     "leboncoin": "#fa7321",
     "lieferando": "#ff8000",
     "linkedin": "#0a66c2", // https://brand.linkedin.com/
@@ -121,6 +133,7 @@ exports.getColor = function(msg,options) {
     "mattermost": "#00f",
     "n26": "#36a18b",
     "nextbike": "#00f",
+    "nextcloud": "#0082c9", // https://nextcloud.com/brand/
     "newpipe": "#f00",
     "nina": "#e57004",
     "opentasks": "#409f8f",
@@ -137,6 +150,7 @@ exports.getColor = function(msg,options) {
     "teams": "#6264a7", // https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products
     "telegram": "#0088cc",
     "telegram foss": "#0088cc",
+    "thunderbird": "#1582e4",
     "to do": "#3999e5",
     "twitch": "#9146ff", // https://brand.twitch.tv/
     "twitter": "#1d9bf0", // https://about.twitter.com/en/who-we-are/brand-toolkit

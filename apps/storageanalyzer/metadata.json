@@ -1,0 +1,13 @@
+{
+  "id": "storageanalyzer",
+  "name": "Storage Analyzer",
+  "version": "0.03",
+  "description": "Analyzes Bangle.js storage and shows which apps are using storage space",
+  "icon": "icon.png",
+  "type": "RAM",
+  "tags": "tool,storage,flash,memory",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "custom": "custom.html",
+  "customConnect": true,
+  "storage": []
+}

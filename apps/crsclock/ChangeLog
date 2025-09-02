@@ -1,0 +1,6 @@
+0.01: Initial release – shows CRS, Steps, Mood, LightExp
+0.02: Added README.md and linked in metadata.json
+0.03: Added ChangeLog and linked in metadata.json
+0.04: Improved stats layout with 5px margins and truncation
+0.05: Added header color strip and shadowed time display
+0.06: Memory optimizations – history pruning and limited HRM sampling

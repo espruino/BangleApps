@@ -34,6 +34,7 @@ Graphics.prototype.setFontMadeSunflower = function () {
     // default values
     foregroundColor: 0
   }, require('Storage').readJSON("vpw_clock.settings.json", true) || {});
+  settings.is12Hour = (require("Storage").readJSON("setting.json",1)||{})["12hour"] || false;
 
   let foregroundColor;
 
@@ -105,6 +106,16 @@ Graphics.prototype.setFontMadeSunflower = function () {
     }, 60000 - (Date.now() % 60000));
   };
 
+  let getTimeStr = function(date) {
+    var hours = date.getHours();
+    const minutes = date.getMinutes();
+    if (settings.is12Hour) {
+      hours = hours % 12;
+      if (hours === 0) hours = 12;
+    }
+    return (" " + hours).slice(-2) + ":" + ("0" + minutes).slice(-2);
+  };
+
   let draw = function () {
     var x = g.getWidth() / 2;
     var y = 24 + 20;
@@ -132,7 +143,7 @@ Graphics.prototype.setFontMadeSunflower = function () {
 
     // work out locale-friendly date/time
     var date = new Date();
-    var timeStr = require("locale").time(date, 1);
+    var timeStr = getTimeStr(date);                            
     var dateStr = require("locale").date(date).toUpperCase();
     var dowStr = require("locale").dow(date).toUpperCase();
     // draw time

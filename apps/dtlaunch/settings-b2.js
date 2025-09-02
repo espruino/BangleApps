@@ -17,6 +17,10 @@
 
   const timeOutChoices = [/*LANG*/"Off", "10s", "15s", "20s", "30s"];
 
+  function clearCache() {
+    require("Storage").erase("dtlaunch.cache.json")
+  }
+
   E.showMenu({
     "" : { "title" : "Desktop launcher" },
     /*LANG*/"< Back" : () => back(),
@@ -25,6 +29,7 @@
       onchange: v => {
         settings.showClocks = v;
         writeSettings();
+        clearCache();
       }
     },
     /*LANG*/'Show launchers': {
@@ -32,6 +37,7 @@
       onchange: v => {
         settings.showLaunchers = v;
         writeSettings();
+        clearCache();
       }
     },
     /*LANG*/'Direct launch': {

@@ -17,3 +17,6 @@
 0.16: Always request Current Time service from iOS
 0.17: Default to passing full UTF8 strings into messages app (which can now process them with an international font)
 0.18: Fix UTF8 conversion (check for `font` library, not `fonts`)
+0.19: Convert numeric weather values to int from BangleDumpWeather shortcut
+0.20: Add feels-like temperature data field to weather parsing from BangleDumpWeather shortcut.
+0.21: Add BangleDumpLocation shortcut, to update location data on watch without needing to use the watch's GPS, and added more app names/ ids.

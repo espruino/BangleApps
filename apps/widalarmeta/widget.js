@@ -7,14 +7,19 @@
       drawBell: false,
       padHours: true,
       showSeconds: 0, // 0=never, 1=only when display is unlocked, 2=for less than a minute
-      font: 1, // 0=segment style font, 1=teletext font, 2=6x8:1x2
+      font: 1, // 0=segment style font, 1=teletext font, 2=6x8:1x2, 3=VGA8
+      whenToShow: 0, // 0=always, 1=on clock only
     }, require("Storage").readJSON("widalarmeta.json",1) || {});
 
       if (config.font == 0) {
         require("Font5x9Numeric7Seg").add(Graphics);
       } else if (config.font == 1) {
         require("FontTeletext5x9Ascii").add(Graphics);
-      }
+      } else if (config.font == 2) {
+        require("Font6x8").add(Graphics);
+      } else if (config.font == 3) {
+        require("FontVGA8").add(Graphics);
+      } 
   }
   loadSettings();
 
@@ -38,6 +43,13 @@
   } // getNextAlarm
 
   function draw(_w, fromInterval) {
+
+    // If only show on clock and not on clock
+    if (config.whenToShow === 1 && !Bangle.CLOCK) {
+      this.nextAlarm = undefined; // make sure to reload later
+      return;
+    }
+
     if (this.nextAlarm === undefined) {
       let alarm = getNextAlarm();
       if (alarm === undefined) {
@@ -55,6 +67,7 @@
     let calcWidth = 0;
     let drawSeconds = false;
 
+    // Determine text and width
     if (next > 0 && next <= config.maxhours*60*60*1000) {
       const hours = Math.floor((next-1) / 3600000).toString();
       const minutes = Math.floor(((next-1) % 3600000) / 60000).toString();
@@ -71,17 +84,18 @@
       } else {
         text += hours;
       }
-      text += ":" + minutes.padStart(2, '0');
+      text += (config.font == 3 ? "\n" : ":") + minutes.padStart(2, '0');
       if (drawSeconds) {
-        text += ":" + seconds.padStart(2, '0');
+        text += (config.font == 3 ? "\n" : ":") + seconds.padStart(2, '0');
       }
       if (config.font == 0) {
         g.setFont("5x9Numeric7Seg:1x2");
       } else if (config.font == 1) {
         g.setFont("Teletext5x9Ascii:1x2");
-      } else {
-        // Default to this if no other font is set.
+      } else if (config.font == 2) {
         g.setFont("6x8:1x2");
+      } else if (config.font == 3) {
+        g.setFont("VGA8");
       }
       g.drawString(text, this.x+1, this.y+12);
 
@@ -133,5 +147,7 @@
     };
 
     Bangle.on("alarmReload", () => WIDGETS["widalarmeta"].reload());
+    Bangle.on("lock", () => WIDGETS["widalarmeta"].draw(WIDGETS["widalarmeta"]))
+    Bangle.on("lcdPower", () => WIDGETS["widalarmeta"].draw(WIDGETS["widalarmeta"]))
   }
 })();

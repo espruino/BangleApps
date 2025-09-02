@@ -1,3 +1,4 @@
+
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
@@ -27,7 +28,8 @@ function pushMenu(menu) {
 function restoreMenu(menu) {
   // equivalent to pushMenu(null); popMenu(menu);
   if(!menu[""]) menu[""] = {};
-  menu[""].scroll = menuScroller.scroll;
+  if(menuScroller) // may be undefined on BangleJS1
+    menu[""].scroll = menuScroller.scroll;
   menuScroller = E.showMenu(menu).scroller;
 }
 
@@ -190,7 +192,7 @@ function BLEMenu() {
   var hidN = [/*LANG*/"Off", /*LANG*/"Kbrd & Media", /*LANG*/"Kbrd", /*LANG*/"Kbrd & Mouse", /*LANG*/"Joystick"];
   var privacy = [/*LANG*/"Off", /*LANG*/"Show name", /*LANG*/"Hide name"];
 
-  return {
+  var menu = {
     '': { 'title': /*LANG*/'Bluetooth' },
     '< Back': ()=>popMenu(mainMenu()),
     /*LANG*/'Make Connectable': ()=>makeConnectable(),
@@ -208,7 +210,32 @@ function BLEMenu() {
         updateSettings();
       }
     },
-    /*LANG*/'Privacy': {
+    /*LANG*/'HID': {
+      value: Math.max(0,0 | hidV.indexOf(settings.HID)),
+      min: 0, max: hidN.length-1,
+      format: v => hidN[v],
+      onchange: v => {
+        settings.HID = hidV[v];
+        updateSettings();
+      }
+    },
+    /*LANG*/'Passkey': {
+      value: settings.passkey?settings.passkey:/*LANG*/"none",
+      onchange: () => setTimeout(() => pushMenu(passkeyMenu())) // graphical_menu redraws after the call
+    },
+    /*LANG*/'Whitelist': {
+      value:
+        (
+          (settings.whitelist_disabled || !settings.whitelist) ? /*LANG*/"Off" : /*LANG*/"On"
+        ) + (
+          settings.whitelist
+          ? " (" + settings.whitelist.length + ")"
+          : ""
+        ),
+      onchange: () => setTimeout(() => pushMenu(whitelistMenu())) // graphical_menu redraws after the call
+    }
+  };
+  if (BANGLEJS2) menu[/*LANG*/'Privacy'] = {
       min: 0, max: privacy.length-1,
       format: v => privacy[v],
       value: (() => {
@@ -233,32 +260,8 @@ function BLEMenu() {
         }
         updateSettings();
       }
-    },
-    /*LANG*/'HID': {
-      value: Math.max(0,0 | hidV.indexOf(settings.HID)),
-      min: 0, max: hidN.length-1,
-      format: v => hidN[v],
-      onchange: v => {
-        settings.HID = hidV[v];
-        updateSettings();
-      }
-    },
-    /*LANG*/'Passkey': {
-      value: settings.passkey?settings.passkey:/*LANG*/"none",
-      onchange: () => setTimeout(() => pushMenu(passkeyMenu())) // graphical_menu redraws after the call
-    },
-    /*LANG*/'Whitelist': {
-      value:
-        (
-          (settings.whitelist_disabled || !settings.whitelist) ? /*LANG*/"off" : /*LANG*/"on"
-        ) + (
-          settings.whitelist
-          ? " (" + settings.whitelist.length + ")"
-          : ""
-        ),
-      onchange: () => setTimeout(() => pushMenu(whitelistMenu())) // graphical_menu redraws after the call
-    }
-  };
+    };
+  return menu;
 }
 
 function showThemeMenu(pop) {
@@ -473,11 +476,11 @@ function LCDMenu() {
   Object.assign(lcdMenu, {
     /*LANG*/'LCD Brightness': {
       value: settings.brightness,
-      min: 0.1,
+      min : BANGLEJS2 ? 0 : 0.1,
       max: 1,
       step: 0.1,
       onchange: v => {
-        settings.brightness = v || 1;
+        settings.brightness = v ?? 1;
         updateSettings();
         Bangle.setLCDBrightness(settings.brightness);
       }
@@ -1032,12 +1035,18 @@ function showTouchscreenCalibration() {
 // Calibrate altitude - Bangle.js2 only
 function showAltitude() {
   function onPressure(pressure) {
-    menuPressure.value = Math.round(pressure.pressure);
-    menuAltitude.value = Math.round(pressure.altitude);
+    menuPressure.value = Math.round(pressure.pressure).toString(); // toString stops tapping on the item bringing up an adjustment menu
+    menuAltitude.value = Math.round(pressure.altitude).toString();
     m.draw();
   }
+  function altitudeDone() {
+    settings.seaLevelPressure = seaLevelPressure;
+    updateSettings();
+  }
+
   Bangle.setBarometerPower(1,"settings");
   Bangle.on("pressure",onPressure);
+  E.on("kill", altitudeDone);
   var seaLevelPressure = Bangle.getOptions().seaLevelPressure;
   if (!isFinite(seaLevelPressure)) seaLevelPressure=1013.25;
   var menuPressure = {value:"-"};
@@ -1045,8 +1054,8 @@ function showAltitude() {
   var m = E.showMenu({ "" : {title:/*LANG*/"Altitude",back:() => {
       Bangle.setBarometerPower(0,"settings");
       Bangle.removeListener("pressure",onPressure);
-      settings.seaLevelPressure = seaLevelPressure;
-      updateSettings();
+      E.removeListener("kill",altitudeDone);
+      altitudeDone();
       popMenu(systemMenu());
     }},
     /*LANG*/"Pressure (hPa)" : menuPressure,
@@ -1054,17 +1063,17 @@ function showAltitude() {
     /*LANG*/"Adjust up" : function() {
       Bangle.buzz(80);
       seaLevelPressure++;
-      Bangle.setOptions({seaLevelPressure:seaLevelPressure});
+      Bangle.setOptions({seaLevelPressure});
     },
     /*LANG*/"Adjust down" : function() {
       Bangle.buzz(80);
       seaLevelPressure--;
-      Bangle.setOptions({seaLevelPressure:seaLevelPressure});
+      Bangle.setOptions({seaLevelPressure});
     },
     /*LANG*/"Set Default" : function() {
       Bangle.buzz();
       seaLevelPressure=1013.25;
-      Bangle.setOptions({seaLevelPressure:seaLevelPressure});
+      Bangle.setOptions({seaLevelPressure});
     }
   });
 }

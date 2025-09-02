@@ -1,7 +1,7 @@
 {
 	"id": "pace",
 	"name": "Pace",
-	"version": "0.02",
+	"version": "0.06",
 	"description": "Show pace and time running splits",
 	"icon": "app.png",
 	"tags": "run,running,fitness,outdoors",

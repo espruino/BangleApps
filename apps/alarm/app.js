@@ -87,11 +87,10 @@ function showMainMenu(scroll, group, scrollback) {
   };
   const getGroups = settings.showGroup && !group;
   const groups = getGroups ? {} : undefined;
-  var showAlarm;
   const getIcon = (e)=>{return e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff);};
 
   alarms.forEach((e, index) => {
-    showAlarm = !settings.showGroup || (group ? e.group === group : !e.group);
+    const showAlarm = !settings.showGroup || (group ? e.group === group : !e.group);
     if(showAlarm) {
       const label = trimLabel(getLabel(e),40);
       menu[label] = {
@@ -99,6 +98,7 @@ function showMainMenu(scroll, group, scrollback) {
         onchange: (v, touch) => {
           if (touch && (2==touch.type || 145<touch.x)) { // Long touch or touched icon.
             e.on = v;
+            if (e.on) prepareForSave(e, index);
             saveAndReload();
           } else {
             setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index, undefined, scroller?scroller.scroll:undefined, group);
@@ -293,7 +293,6 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate, scroll, group) {
     delete menu[/*LANG*/"Day"];
     delete menu[/*LANG*/"Month"];
     delete menu[/*LANG*/"Year"];
-    delete menu[/*LANG*/"Delete After Expiration"];
   }
 
   if (!isNew) {
@@ -325,6 +324,14 @@ function prepareAlarmForSave(alarm, alarmIndex, time, date, temp) {
     } else {
       alarms[alarmIndex] = alarm;
     }
+  }
+}
+
+function prepareForSave(alarm, alarmIndex) {
+  if (alarm.timer) {
+    prepareTimerForSave(alarm, alarmIndex, require("time_utils").decodeTime(alarm.timer));
+  } else {
+    prepareAlarmForSave(alarm, alarmIndex, require("time_utils").decodeTime(alarm.t));
   }
 }
 
@@ -574,13 +581,7 @@ function enableAll(on) {
       if (confirm) {
         alarms.forEach((alarm, i) => {
           alarm.on = on;
-          if (on) {
-            if (alarm.timer) {
-              prepareTimerForSave(alarm, i, require("time_utils").decodeTime(alarm.timer));
-            } else {
-              prepareAlarmForSave(alarm, i, require("time_utils").decodeTime(alarm.t));
-            }
-          }
+          if (on) prepareForSave(alarm, i);
         });
         saveAndReload();
         showMainMenu();

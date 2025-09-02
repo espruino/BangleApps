@@ -1,0 +1,76 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <div id="data"></div>
+    <button class="btn btn-default" id="btnSave">Download</button>
+    <button class="btn btn-default" id="btnDelete">Delete</button>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+var dataElement = document.getElementById("data");
+var csvData = "";
+
+function getData() {
+  // show loading window
+  Util.showModal("Loading...");
+  // get the data
+  dataElement.innerHTML = "";
+  Util.readStorageFile(`matchlog.csv`,data=>{
+    csvData = data.trim();
+    // remove window
+    Util.hideModal();
+    // If no data, report it and exit
+    if (data.length==0) {
+      dataElement.innerHTML = "<b>No data found</b>";
+      return;
+    }
+// Otherwise parse the data and output it as a table
+    dataElement.innerHTML = `<table style="border: 1px solid #cccccc">
+    <tr>
+      <th>Time</th>
+      <th>Over</th>
+      <th>Ball</th>
+      <th>Event</th>
+      <th>Metadata</th>  
+      <th>Steps</th>
+      <th>Battery %</th>
+      <th>Heart Rate</th>
+    </tr>`+data.trim().split("\n").map(l=>{
+      l = l.split(",");
+      return `<tr>
+      <td>${l[0]}</td>
+      <td align="center">${l[1]}</td>
+      <td align="center">${l[2]}</td>
+      <td>${l[3]}</td>
+      <td>${l[4]}</td>
+      <td>${l[5]}</td>
+      <td>${l[6]}</td>
+      <td>${l[7]}</td>
+      </tr>`
+    }).join("\n")+"</table>";
+  });
+}
+
+// You can call a utility function to save the data
+document.getElementById("btnSave").addEventListener("click", function() {
+  // TODO column headings in output
+  Util.saveCSV("matchdata", csvData);
+});
+// Or you can also delete the file
+document.getElementById("btnDelete").addEventListener("click", function() {
+  Util.showModal("Deleting...");
+  Util.eraseStorageFile("matchlog.csv", function() {
+    Util.hideModal();
+    getData();
+  });
+});
+// Called when app starts
+function onInit() {
+  getData();
+}
+
+    </script>
+  </body>
+</html>

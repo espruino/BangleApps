@@ -213,7 +213,7 @@ exports.buzz = function(msgSrc) {
     pattern = msgSettings.vibrate;
     repeat = msgSettings.repeat;
   }
-  if (pattern===undefined) { pattern = ":"; } // pattern may be "", so we can't use || ":" here
+  if (pattern===undefined) { pattern = "="; } // pattern may be "", so we can't use || "=" here
   if (!pattern) return Promise.resolve();
 
   if (repeat===undefined) repeat = 4; // repeat may be zero

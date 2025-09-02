@@ -3,3 +3,4 @@
 0.03: Add settings to configure prompt
 0.04: Minor code improvements
 0.05: Comment out unused function in settings.js
+0.06: Changed to use E.showMessage() instead of g.drawString() to display power off message. Looks better and is more coherent.

@@ -1,30 +1,32 @@
-(function() {
-  var settings = require("Storage").readJSON("health.json", 1) || {};
-  var hrm = 0|settings.hrm;
-  if (hrm == 1 || hrm == 2) {
-    function onHealth() {
-      Bangle.setHRMPower(1, "health");
-      setTimeout(() => Bangle.setHRMPower(0, "health"), hrm * 60000); // give it 1 minute detection time for 3 min setting and 2 minutes for 10 min setting
-      if (hrm == 1) {
-        function startMeasurement() {
-          Bangle.setHRMPower(1, "health");
-          setTimeout(() => {
-            Bangle.setHRMPower(0, "health");
-          }, 60000);
-        }
+{ // Handle turning HRM on/off at the right times
+  let settings = require("Storage").readJSON("health.json", 1) || {};
+  let hrm = 0|settings.hrm;
+  if (hrm == 1 || hrm == 2) { // 1=every 3 minutes, 2=every 10 minutes
+    let onHealth = function(h) {
+      function startMeasurement() {
+        // if is charging, or hardly moved and face up/down, don't start HRM
+        if (Bangle.isCharging() ||
+            (Bangle.getHealthStatus("last").movement<100 && Math.abs(Bangle.getAccel().z)>0.99)) return;
+        // otherwise turn HRM on
+        Bangle.setHRMPower(1, "health");
+        setTimeout(() => {
+          Bangle.setHRMPower(0, "health");
+        }, hrm * 60000); // give it 1 minute detection time for 3 min setting and 2 minutes for 10 min setting
+      }
+      startMeasurement();
+      if (hrm == 1) { // 3 minutes
         setTimeout(startMeasurement, 200000);
         setTimeout(startMeasurement, 400000);
       }
     }
     Bangle.on("health", onHealth);
     Bangle.on("HRM", (h) => {
+      // as soon as we have a decent HRM reading, turn it off
       if (h.confidence > 90 && Math.abs(Bangle.getHealthStatus().bpm - h.bpm) < 1) Bangle.setHRMPower(0, "health");
     });
-    if (Bangle.getHealthStatus().bpmConfidence > 90) return;
-    onHealth();
-  } else Bangle.setHRMPower(!!hrm, "health");
-})();
-
+    if (Bangle.getHealthStatus().bpmConfidence < 90) onHealth(); // if we didn't have a good HRM confidence already, start HRM now
+  } else Bangle.setHRMPower(!!hrm, "health"); // if HRM>2, keep it on permanently
+}
 Bangle.on("health", health => {
   (Bangle.getPressure?Bangle.getPressure():Promise.resolve({})).then(pressure => {
   Object.assign(health, pressure); // add temperature/pressure/altitude
@@ -79,12 +81,6 @@ Bangle.on("health", health => {
     require("Storage").write(fn, "HEALTH2\0", 0, DB_HEADER_LEN + DB_RECORDS_PER_MONTH*inf.r); // header (and allocate full new file)
   }
   var recordPos = DB_HEADER_LEN+(rec*inf.r);
-
-  // scale down reported movement value in order to fit it within a
-  // uint8 DB field
-  health = Object.assign({}, health);
-  health.movement /= 8;
-
   require("Storage").write(fn, inf.encode(health), recordPos);
   if (rec%DB_RECORDS_PER_DAY != DB_RECORDS_PER_DAY-2) return;
   // we're at the end of the day. Read in all of the data for the day and sum it up

@@ -2,6 +2,7 @@
 
   var settings = Object.assign({
     default_colour: true,
+    hide: false,
     red: 0,
     green: 0,
     blue: 0,
@@ -27,6 +28,13 @@
       value: (settings.default_colour !== undefined ? settings.default_colour : true),
       onchange: v => {
         settings.default_colour = v;
+        writeSettings();
+      }
+    },
+    "Hide Widget": {
+      value: settings.hide,
+      onchange: () => {
+        settings.hide = !settings.hide;
         writeSettings();
       }
     },

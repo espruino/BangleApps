@@ -1,36 +1,58 @@
-// make sure to enclose the function in parentheses
 (function(back) {
   let settings = Object.assign({
     showClocks: true,
-    fullscreen: false
+    fullscreen: false,
+    height: 52
   }, require("Storage").readJSON("launch.json", true) || {});
 
-  let fonts = g.getFonts();
-  function save(key, value) {
-    settings[key] = value;
+  let fonts = g.getFonts().filter(f=>f!="Vector");
+  for (var f=10;f<20;f++) fonts.push("Vector"+f);
+  let defaultfont = fonts.includes("12x20") ? "12x20" : "6x8:2";
+  if (fonts.includes("22")) defaultfont="22"; // 2v26+
+
+  let heights = [28,40,52,64,76];
+
+  function save() {
     require("Storage").write("launch.json",settings);
+  }
+  function clearCache() {
+    require("Storage").erase("launch.cache.json");
   }
   const appMenu = {
     "": { "title": /*LANG*/"Launcher" },
     /*LANG*/"< Back": back,
     /*LANG*/"Font": {
-      value: fonts.includes(settings.font)? fonts.indexOf(settings.font) : fonts.indexOf("12x20"),
+      value: fonts.includes(settings.font)? fonts.indexOf(settings.font) : fonts.indexOf(defaultfont),
       min:0, max:fonts.length-1, step:1,wrap:true,
-      onchange: (m) => {save("font", fonts[m])},
+      onchange: (m) => {
+        settings.font=fonts[m];
+        save();
+      },
       format: v => fonts[v]
      },
-    /*LANG*/"Vector Font Size": {
-      value: settings.vectorsize || 10,
-      min:10, max: 20,step:1,wrap:true,
-      onchange: (m) => {save("vectorsize", m)}
+    /*LANG*/"Height": {
+      value: heights.includes(settings.height) ? heights.indexOf(settings.height) : heights.indexOf(52),
+      min:0, max: heights.length-1,step:1,wrap:true,
+      format: v => heights[v]+"px",
+      onchange: (m) => {
+        settings.height=heights[m];
+        save();
+      }
     },
     /*LANG*/"Show Clocks": {
-      value: settings.showClocks == true,
-      onchange: (m) => { save("showClocks", m) }
+      value: !!settings.showClocks,
+      onchange: (m) => {
+        settings.showClocks=m;
+        save();
+        clearCache();
+      }
     },
     /*LANG*/"Fullscreen": {
-      value: settings.fullscreen == true,
-      onchange: (m) => { save("fullscreen", m) }
+      value: !!settings.fullscreen,
+      onchange: (m) => {
+        settings.fullscreen=m;
+        save();
+      }
     }
   };
   E.showMenu(appMenu);

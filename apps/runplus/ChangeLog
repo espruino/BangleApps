@@ -28,3 +28,8 @@ Write to correct settings file, fixing settings not working.
 0.25: Fix step count bug when runs are resumed after a long time
 0.26: Add ability to zoom in on a single stat by tapping it
 0.27: Allow setting to alway resume an activity
+0.28: Add vibration feedback on start/stop
+0.29: Optimise UI: only redraw if we showed a recorder menu and correctly
+	track screen state
+0.30: Change the "time" stat to show active time (duration) rather than
+	elapsed time (fix #3802), and sync with recorder on load

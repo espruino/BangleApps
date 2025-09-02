@@ -23,3 +23,8 @@
 0.21: Make the "App source not found" warning less buggy
 0.22: Add less padding between launcher items, use new font if available in 2v26+
 0.23: Draw a placeholder screen right at the start to speed up apparent boot time
+0.24: Fix Launcher when a custom font from 2v26+ is specified (fix #3787)
+      Fix fullscreen when fastloading the launcher. (TODO:fix back btn flicker)
+0.25: Fix showClocks setting not taking effect by now clearing cache when changing those settings.
+      Remove Vector Font size option (Vector fonts added as other font styles)
+      Add Height option to set menu item height independently of Font

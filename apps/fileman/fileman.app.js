@@ -15,7 +15,7 @@ function delete_file(fn) {
       }
       else STOR.erase(fn);
     }
-  }).then(function() { filed=[];files=get_pruned_file_list(); }).then(drawMenu);
+  }).then(function() { files=get_pruned_file_list(); }).then(drawMenu);
 }
 
 function get_length(fn) {
@@ -65,6 +65,30 @@ function visit_file(fn) {
   E.showMenu(menu);
 }
 
+function showFree() {
+  var free = (require("Storage").getFree() / (1024*1024)).toFixed(2) + " MB\n";
+  E.showAlert(free).then( function() { drawMenu(); } );
+}
+
+function jumpTo(v) {
+  nstart = Math.round((v/100)*files.length);
+  if (nstart >= files.length) { nstart = 0; }
+  drawMenu();
+}
+
+function drawUtilMenu() {
+  var menu = {
+    '' : {'title' : "Utils"}
+  };
+  menu['Show free'] = showFree;
+  for (let i=0; i<10; i++) {
+    let v = i*10;
+    menu['Jump to '+v+'%'] = function() { jumpTo(v); };
+  }
+  menu['< Back'] = drawMenu;
+  E.showMenu(menu);
+}
+
 function drawMenu() {
   nend = (nstart+n<files.length)?nstart+n : files.length;
   var menu = {
@@ -75,16 +99,19 @@ function drawMenu() {
     if (nstart<0) nstart = files.length-n>0 ? files.length-n : 0;
     menu = {};
     drawMenu();
-  }
-  for (var i=nstart; i<nend; ++i) {
-    menu[files[i]] = visit_file.bind(null, files[i]);
-  }
+  };
   menu["> next"] = function() {
     if (nstart+n<files.length) nstart += n;
     else nstart = 0;
     menu = {};
     drawMenu();
     m.move(-1);
+  };
+  menu["[utils...]"] = function() {
+    drawUtilMenu();
+  };
+  for (var i=nstart; i<nend; ++i) {
+    menu[files[i]] = visit_file.bind(null, files[i]);
   }
   m = E.showMenu(menu);
 }

@@ -2,3 +2,4 @@
 0.02: Internal id update to wid_* as per Gordon's request (2021/11/21)
 0.03: Support dark themes
 0.04: Increase screen update rate when charging
+0.05: Add support for all foreground and background colors (2025/7/5)

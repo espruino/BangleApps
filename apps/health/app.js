@@ -32,7 +32,7 @@ function menuStepCount() {
 }
 
 function menuDistance() {
-  const distMult = 1*require("locale").distance(myprofile.strideLength, 2); // hackish: this removes the distance suffix, e.g. 'm'
+  const distMult = parseFloat(require("locale").distance(myprofile.strideLength, 2)); // this removes the distance suffix, e.g. 'm'
   E.showMenu({
     "": { title:/*LANG*/"Distance" },
     /*LANG*/"< Back": () => menuStepCount(),

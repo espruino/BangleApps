@@ -3,3 +3,5 @@
 0.03: Fix lint warnings
 0.04: Fix lint warnings
 0.05: Fix on not reading counter defaults in Settings
+0.06: Added ability to display only one counter and fast-scrolling
+0.07: Add option to keep unlocked

@@ -31,8 +31,7 @@ In this mode any score increments will be decrements. To move back a set, reduce
 | `Sets per page`                    | How many sets should be shown in the app. Further sets will be available by scrolling (ignored if higher than `Sets to win`) |
 | `Score to win`                     | What score ends a given set                                                                                                  |
 | `2-point lead`                     | Does winning a set require a two-point lead                                                                                  |
-| `Maximum score?`                   | Should there be a maximum score, at which point the two-point lead rule falls away                                           |
-| `Maximum score`                    | At which score should the two-point lead rule fall away (ignored if lower than Sets to win)                                  |
+| `Maximum score`                    | Should there be a maximum score, at which point the two-point lead rule falls away (ignored if lower than Sets to win)       |
 | `Tennis scoring`                   | If enabled, each point in a set will require a full tennis game                                                              |
 | `TB sets?`                         | Should sets that have reached `(maxScore-1):(maxScore-1)` be decided with a tiebreak                                         |
 | All other options starting with TB | Equivalent to option with same name but applied to tiebreaks                                                                 |

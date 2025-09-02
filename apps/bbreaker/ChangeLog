@@ -1,0 +1,4 @@
+0.01: It works somehow, early version for testers and feedback :)
+0.02: Changed almost all code with Frederic version of Pong and adjusted to be a BrickBreaker!, still Alpha
+0.03: Rewrote the whole thing to have less code and better graphics, now it works.
+0.04: Rewrote part of the code to coupe with the flickering and added better logic to handle the graphics.

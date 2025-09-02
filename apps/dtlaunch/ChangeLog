@@ -32,3 +32,7 @@ when moving pages. Add caching for faster startups.
 0.25: Minor code improvements
 0.26: Bangle 2: Postpone loading icons that are not needed initially.
 0.27: Bangle 2: Add setting to remember and present the last open page between instances of dtlaunch.
+0.28: Bangle 2: Fix showClocks and showLaunchers settings not taking effect by
+      clearing cache when changing those settings.
+      Bangle 2: Use a separate cache file from the standard launcher.
+      Bangle 2: Don't leave cache file after uninstalling the app.

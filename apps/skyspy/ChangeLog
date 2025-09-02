@@ -3,3 +3,4 @@
 0.03: big rewrite, adding time-adjust and altitude-adjust functionality
 0.04: more refactoring, fix lat/lon display
 0.10: add screens with time to fixes and estimate of time to fix
+0.11: introduce graphical gps status

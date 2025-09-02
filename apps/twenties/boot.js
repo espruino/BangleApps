@@ -1,19 +1,22 @@
 (() => {
-  const move = 20 * 60 * 1000; // 20 minutes
-  const look = 20 * 1000;      // 20 seconds
+  const LOOP_INTERVAL = 1.2e6; // 20 minutes
+  const BUZZ_INTERVAL = 2e4; // 20 seconds
 
-  const buzz = _ => {
-    const date = new Date();
-    const day = date.getDay();
-    const hour = date.getHours();
-    // buzz at work
-    if (day >= 1 && day <= 5 &&
-      hour >= 8 && hour <= 17) {
-      Bangle.buzz().then(_ => {
-        setTimeout(Bangle.buzz, look);
-      });
+  const isWorkTime = (d) =>
+    d.getDay() % 6 && d.getHours() >= 8 && d.getHours() < 18;
+
+  const scheduleNext = () => {
+    const now = new Date();
+    if (isWorkTime(now)) {
+      Bangle.buzz().then(() => setTimeout(Bangle.buzz, BUZZ_INTERVAL));
+      setTimeout(scheduleNext, LOOP_INTERVAL);
+    } else {
+      const next = new Date(now);
+      next.setHours(8, 0, 0, 0);
+      while (!isWorkTime(next)) next.setDate(next.getDate() + 1);
+      setTimeout(scheduleNext, next - now);
     }
   };
 
-  setInterval(buzz, move); // buzz to stand / sit
+  scheduleNext();
 })();

@@ -1,0 +1,3 @@
+0.01: first release
+0.02: memory leak fix; color changes to better align with VSCode color scheme; logo is transparent
+0.03: Fixed redrawing of commas

@@ -3,6 +3,7 @@ For this widget to work and to get data from the phone, you need:
 - An Android phone
   - with xDrip and the <a href="https://codeberg.org/phrogg/BG2BangleJSApp/" target="_BLANK">helper app</a> installed.
   - the <a href="https://f-droid.org/en/packages/com.espruino.gadgetbridge.banglejs/" target="_BLANK">Gadgetbridge app (bangle version)</a> for the Android phone 
+  - Gadgetbridge `Allow Intents` setting enabled (click on the gear icon in the Bangle.js device's card, and scroll down)
 - A BangleJS
   - With this widget installed
 

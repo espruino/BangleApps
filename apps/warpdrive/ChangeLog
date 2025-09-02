@@ -1,3 +1,4 @@
 0.01: New app!
 0.02: Minor code improvements
 0.03: Minor code improvements
+0.04: Remove buffer finding code (which fails if screen rotated) and make dependent on fw 2v21's Bangle.getOptions().lcdBufferPtr (fix #3818)

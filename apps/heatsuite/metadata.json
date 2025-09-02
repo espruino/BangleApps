@@ -1,0 +1,30 @@
+{ "id": "heatsuite",
+  "name": "HeatSuite",
+  "shortName":"HeatSuite",
+  "version":"0.10",
+  "description": "The smartwatch software to integrate with HeatSuite",
+  "icon": "icon.png",
+  "type": "app",
+  "tags": "health,tool",
+  "supports" : ["BANGLEJS2"],  
+  "readme": "README.md",
+  "dependencies" : { "bthrm":"app", "gpssetup" : "app", "coretemp":"app"},
+  "customConnect": true,
+  "custom": "custom.html",
+  "storage": [
+    {"name":"heatsuite.img","url":"app-icon.js","evaluate":true},
+    {"name":"HSModule","url":"heatsuite.module.js"},
+    {"name":"heatsuite.app.js","url":"heatsuite.app.js"},
+    {"name":"heatsuite.settings.js","url":"heatsuite.settings.js"},
+    {"name":"heatsuite.wid.js","url":"heatsuite.wid.js"},
+    {"name":"heatsuite.survey.js","url":"heatsuite.survey.js"},
+    {"name":"heatsuite.bletemp.js","url":"heatsuite.bletemp.js"},
+    {"name":"heatsuite.bp.js","url":"heatsuite.bp.js"},
+    {"name":"heatsuite.mass.js","url":"heatsuite.mass.js"},
+    {"name":"heatsuite.urine.js","url":"heatsuite.urine.js"}
+  ],
+  "data": [
+    {"name":"heatsuite.settings.json"},
+    {"name":"heatsuite.cache.json"}
+  ]
+}

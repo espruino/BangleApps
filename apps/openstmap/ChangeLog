@@ -37,3 +37,8 @@
       Speed up latLonToXY for track rendering
 0.30: Minor code improvements
 0.31: Reset draw colours before rendering (to allow black and white maps)
+0.32: Move to non-deprecated track drawing using the recorder library
+      Add option to hide widgets
+0.33: Map zoom by tapping is now only when tapping at each corner (helps with accidental zooming)
+      When GPS location is offscreen, draw a blue circle showing the direction to scroll
+      Added 'Autoscroll' option to automatically scroll the map when GPS location moves off it

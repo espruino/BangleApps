@@ -14,6 +14,7 @@ const exs = require("exstats").getStats(
 const S = require("Storage");
 
 let drawTimeout: TimeoutId | undefined;
+let menuShown = false;
 
 type Dist = number & { brand: 'dist' };
 type Time = number & { brand: 'time' };
@@ -23,41 +24,87 @@ type Split = {
   time: Time,
 };
 
-const splits: Split[] = []; // times
+type LayoutWithGPS = Layout.RenderedHierarchy & { gps?: GPSFix };
+
+type PaceState = { splits: Split[] };
+
+const splits: PaceState["splits"] =
+  (S.readJSON("pace.json", 1) as PaceState | undefined)?.splits || [];
+
 let splitOffset = 0, splitOffsetPx = 0;
 
 const GPS_TIMEOUT_MS = 30000;
 
+const drawGpsLvl = (l: Layout.RenderedHierarchy) => {
+  const gps = (l as LayoutWithGPS).gps;
+  const nsats = gps?.satellites ?? 0;
+
+  if (!gps || !gps.fix)
+    g.setColor("#FF0000");
+  else if (gps.satellites < 4)
+    g.setColor("#FF5500");
+  else if (gps.satellites < 6)
+    g.setColor("#FF8800");
+  else if (gps.satellites < 8)
+    g.setColor("#FFCC00");
+  else
+    g.setColor("#00FF00");
+
+  g.fillRect(
+    l.x,
+    l.y + l.h - 10 - (l.h - 10) * ((nsats > 12 ? 12 : nsats) / 12),
+    l.x + l.w - 1,
+    l.y + l.h - 1
+  );
+};
+
 const layout = new Layout({
-  type: "v",
+  type: "h",
   c: [
+    ({
+      type: "custom",
+      render: drawGpsLvl,
+      id: "gpslvl",
+      filly: 1,
+      width: 10,
+      bgCol: g.theme.bg, // automatically clears before render()
+    } as unknown as {
+      // hack to avoid a more complex id-mapping Layout inference
+      type: "custom",
+      render: (_: Layout.RenderedHierarchy) => void
+    }),
     {
-      type: "txt",
-      font: "6x8:2",
-      label: "Pace",
-      id: "paceLabel",
-      pad: 4
-    },
-    {
-      type: "txt",
-      font: "Vector:40",
-      label: "",
-      id: "pace",
-      halign: 0
-    },
-    {
-      type: "txt",
-      font: "6x8:2",
-      label: "Time",
-      id: "timeLabel",
-      pad: 4
-    },
-    {
-      type: "txt",
-      font: "Vector:40",
-      label: "",
-      id: "time",
-      halign: 0
+      type: "v",
+      c: [
+        {
+          type: "txt",
+          font: "6x8:2",
+          label: "Pace",
+          id: "paceLabel",
+          pad: 4
+        },
+        {
+          type: "txt",
+          font: "Vector:40",
+          label: "",
+          id: "pace",
+          halign: 0
+        },
+        {
+          type: "txt",
+          font: "6x8:2",
+          label: "Time",
+          id: "timeLabel",
+          pad: 4
+        },
+        {
+          type: "txt",
+          font: "Vector:40",
+          label: "",
+          id: "time",
+          halign: 0
+        },
+      ]
     },
   ]
 }, {
@@ -151,13 +198,11 @@ const drawSplit = (i: number, y: number, pace: number | string) =>
 
 const pauseRun = () => {
   exs.stop();
-  Bangle.setGPSPower(0, "pace")
   draw();
 };
 
 const resumeRun = () => {
   exs.resume();
-  Bangle.setGPSPower(1, "pace");
 
   g.clearRect(Bangle.appRect); // splits -> layout, clear. layout -> splits, fine
   layout.forgetLazyState();
@@ -170,6 +215,12 @@ const onButton = () => {
   else
     resumeRun();
 };
+
+const hideMenu = () => {
+  if (!menuShown) return;
+  Bangle.setUI(); // calls `remove`, which handles redrawing
+  menuShown = false;
+}
 
 exs.start(); // aka reset
 
@@ -184,16 +235,21 @@ exs.stats.dist.on("notify", (dist) => {
   let thisSplit = totalDist - prev.dist;
   let thisTime = exs.state.duration - prev.time;
 
-  while(thisSplit > 1000) {
-    splits.push({ dist: thisSplit as Dist, time: thisTime as Time });
-    thisTime = 0; // if we've jumped more than 1k, credit the time to the first split
-    thisSplit -= 1000;
+  if (thisSplit > 1000) {
+    if (thisTime > 0) {
+      // if we have splits, or time isn't ridiculous, store the split
+      // (otherwise we're initialising GPS and it's inaccurate)
+      if (splits.length || thisTime > 1000 * 60)
+        splits.push({ dist: thisSplit as Dist, time: thisTime as Time });
+    }
+
+    thisSplit %= 1000;
   }
 
   // subtract <how much we're over> off the next split notify
   exs.state.notify.dist.next -= thisSplit;
 
-  S.writeJSON("pace.json", { splits });
+  S.writeJSON("pace.json", { splits } satisfies PaceState);
 });
 
 Bangle.on('lock', locked => {
@@ -204,7 +260,7 @@ Bangle.on('lock', locked => {
 setWatch(() => onButton(), BTN1, { repeat: true });
 
 Bangle.on('drag', e => {
-  if (exs.state.active || e.b === 0) return;
+  if (exs.state.active || e.b === 0 || menuShown) return;
 
   splitOffsetPx -= e.dy;
   if (splitOffsetPx > 20) {
@@ -221,9 +277,52 @@ Bangle.on('twist', () => {
   Bangle.setBacklight(1);
 });
 
+Bangle.on('tap', e => {
+  // require a double tap, to avoid picking up menu "< Back" taps
+  if(exs.state.active || menuShown || !e.double) return;
+
+  menuShown = true;
+  const menu: Menu = {
+    "": {
+      remove: () => {
+        draw();
+      },
+    },
+    "< Back": () => {
+      hideMenu();
+    },
+    "Zero time": () => {
+      exs.start(); // calls reset
+      exs.stop(); // re-pauses
+      hideMenu();
+    },
+    "Clear splits": () => {
+      splits.splice(0, splits.length);
+      hideMenu();
+    },
+  };
+
+  E.showMenu(menu);
+});
+
 Bangle.loadWidgets();
-Bangle.drawWidgets();
+Bangle.setGPSPower(1, "pace");
+Bangle.on("GPS", gps => {
+  const l = layout["gpslvl"] as unknown as LayoutWithGPS | undefined;
+  if(l) l.gps = gps; // force a redraw
+});
 
 g.clearRect(Bangle.appRect);
-draw();
+
+if(splits){
+  E.showMessage(`Restored splits\n(${splits.length})`, "Pace");
+  setTimeout(() => {
+    g.reset().clear();
+    Bangle.drawWidgets();
+    draw();
+  }, 1000);
+}else{
+  Bangle.drawWidgets();
+  draw();
+}
 }

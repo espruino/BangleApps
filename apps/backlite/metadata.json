@@ -1,0 +1,17 @@
+{
+  "id": "backlite",
+  "name": "BackLite",
+  "version": "0.02",
+  "description": "Conserves battery life by turning the backlight on only on a long press of the button from a locked state. **Requires the latest settings update (v0.80)**",
+  "icon": "icon.png",
+  "type": "bootloader",
+  "tags": "system",
+  "readme": "README.md",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"backlite.boot.js","url":"boot.js"},
+    {"name":"backlite.settings.js","url":"settings.js"}
+    
+  ],
+  "data": [{"name":"BackLite.settings.json"}]
+}

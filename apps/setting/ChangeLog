@@ -85,3 +85,9 @@ of 'Select Clock'
 0.74: Add extra layer of checks before allowing a factory reset (fix #3476)
 0.75: Restore previous menu's scroll positions
 0.76: Add altitude calibration menu (and update README after menu changed)
+0.77: Save altitude calibration when user exits via reset
+0.78: Fix menu scroll restore on BangleJS1
+0.79: Ensure that tapping on pressure/altitude doesn't cause a menu to display temporarily
+0.80: Add option to set LCD brightness to 0, keep default brightness at 1.
+0.81: Ensure 'Privacy' (address randomnisation) is only added for Bangle.js 2,
+      and add warnings in documentation that it can cause connection issues

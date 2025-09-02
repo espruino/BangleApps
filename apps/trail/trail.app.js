@@ -181,42 +181,72 @@ let gps = {
   },
 };
 
-/* ui library 0.1.2 */
+/* ui library 0.2.0 -- see skyspy */
+//Bangle.on("drag", (b) => ui.touchHandler(b));
 let ui = {
   display: 0,
   numScreens: 2,
+  name: ".oO busy",
+  screens: [ "Screen 1", "Screen 2", "Screen 3", "Screen 4", "Screen 5", "Screen 6" ],
+  help: [ "F1", "F2", "<", ">" ],
+  clear: function() {
+    g.reset()
+      .setColor(g.theme.bg)
+      .fillRect(0, this.wi, this.w, this.y2)
+      .setColor(g.theme.fg);
+  },
+  draw: function(screen) {},
   drawMsg: function(msg) {
-    g.reset().setFont("Vector", 35)
-      .setColor(1,1,1)
-      .fillRect(0, this.wi, 176, 176)
-      .setColor(0,0,0)
+    this.clear();
+    g.setFont("Vector", 35)
       .drawString(msg, 5, 30)
       .flip();
   },
   drawBusy: function() {
-    this.drawMsg("\n.oO busy");
+    this.clear();
+    g.setFont("Vector", 35);
+    let help = this.help;
+    g.setFontAlign(-1, -1).drawString(help[0], 0, this.wi);
+    g.setFontAlign(1, -1).drawString(help[1], this.w, this.wi);
+    g.setFontAlign(-1, 1).drawString(help[2], 0, this.h+this.wi);
+    g.setFontAlign(1, 1).drawString(help[3], this.w, this.h+this.wi);
+    g.setFontAlign(0, 0)
+      .drawString(this.name, this.w/2, this.h/2);
+    g.reset();
+  },
+  drawScreen: function() {
+    this.drawMsg(this.screens[this.display]);
+    let t1 = getTime();
+    this.draw();
+    let t = getTime() - t1;
+    if (t > 30) {
+      print("Draw took", t, "msec");
+    }
   },
   nextScreen: function() {
     print("nextS");
     this.display = this.display + 1;
     if (this.display == this.numScreens)
       this.display = 0;
-    this.drawBusy();
+    this.drawScreen();
   },
   prevScreen: function() {
     print("prevS");
     this.display = this.display - 1;
     if (this.display < 0)
       this.display = this.numScreens - 1;
-    this.drawBusy();
+    this.drawScreen();
   },
   onSwipe: function(dir) {
     this.nextScreen();
   },
-  h: 176,
+  wi: 24,
+  y2: 176,
+  h: 152,
   w: 176,
-  wi: 32,
   last_b: 0,
+  topLeft: function() { this.drawMsg("Unimpl"); },
+  topRight: function() { this.drawMsg("Unimpl"); },
   touchHandler: function(d) {
     let x = Math.floor(d.x);
     let y = Math.floor(d.y);
@@ -228,46 +258,85 @@ let ui = {
     
     print("touch", x, y, this.h, this.w);
 
-    /*
-      if ((x<this.h/2) && (y<this.w/2)) {
-      }
-      if ((x>this.h/2) && (y<this.w/2)) {
-      }
-    */
-
-    if ((x<this.h/2) && (y>this.w/2)) {
+    if ((x<this.w/2) && (y<this.y2/2))
+      this.topLeft();
+    if ((x>this.w/2) && (y<this.y2/2))
+      this.topRight();
+    if ((x<this.w/2) && (y>this.y2/2)) {
       print("prev");
       this.prevScreen();
     }
-    if ((x>this.h/2) && (y>this.w/2)) {
+    if ((x>this.w/2) && (y>this.y2/2)) {
       print("next");
       this.nextScreen();
     }
   },
   init: function() {
+    this.h = this.y2 - this.wi;
     this.drawBusy();
-  }
+  },
+  /* radial angle -- convert 0..1 to 0..2pi */
+  radA: function(p) { return p*(Math.PI*2); },
+  /* radial distance -- convert 0..1 to something that fits on screen */
+  radD: function(d) { return d*(ui.h/2); },
+
+  /* given angle/distance, get X coordinate */
+  radX: function(p, d) {
+    let a = this.radA(p);
+    return this.w/2 + Math.sin(a)*this.radD(d);
+  },
+  /* given angle/distance, get Y coordinate */
+  radY: function(p, d) {
+    let a = this.radA(p);
+    return this.h/2 - Math.cos(a)*this.radD(d) + this.wi;
+  },
+  radLine: function(a1, d1, a2, d2) {
+    g.drawLine(this.radX(a1, d1), this.radY(a1, d1), this.radX(a2, d2), this.radY(a2, d2));
+  },
+  radCircle: function(d) {
+    g.drawCircle(this.radX(0, 0), this.radY(0, 0), this.radD(d));
+    if (1)
+      return;
+    let step = 0.05;
+    for (let i = 0; i < 1; i += 0.05) {
+      this.radLine(i - step, d, i, d);
+    }
+  },
 };
 
-/* egt 0.0.1 */
+/* egt 0.0.3 */
 let egt = {
   init: function() {
   },
+  removeCRLF: function(s) {
+    let end = s.length;
+    while (end > 0) {
+        let ch = s[end - 1];
+        if (ch === '\n' || ch === '\r') {
+            end--;
+        } else {
+            break;
+        }
+    }
+    return s.slice(0, end);
+  },
+
   parse: function(l) {
+    l = this.removeCRLF(l);
     let r = {};
     let s = l.split(' ');
-    
+
     if (s === undefined)
       return r;
-    
+
     if (s[1] === undefined)
       return r;
-    
+
     if (s[1].split('=')[1] === undefined) {
       r.lat = 1 * s[0];
       r.lon = 1 * s[1];
       if (!r.lat || !r.lon) {
-        print("Parse error at ", l);
+        print("Parse error at ", l, "have (", s[0], s[1], ")");
       }
     }
 
@@ -281,6 +350,7 @@ let egt = {
     return r;
   },
 };
+
 
 /* zoom library v0.0.4 */
 var zoom = {
@@ -367,9 +437,8 @@ var zoom = {
   }
 };
 
-
 function toCartesian(v) {
-  const R = 6371; // Poloměr Země v km
+  const R = 6371; // Earth radius in km
   const latRad = v.lat * Math.PI / 180;
   const lonRad = v.lon * Math.PI / 180;
 
@@ -424,9 +493,13 @@ function angleDifference(angle1, angle2) {
   return difference;
 }
 
+/* Main code */
+
+/* These are initialized by read() function, below */
 var start = {}, destination = {}, num = 0, dist = 0;
 
-function read(pp, n) {
+/* pp .. Point, n .. filename, candy .. enable "eye candy" drawing */
+function read(pp, n, candy) {
   let f = require("Storage").open(n+".st", "r");
   let l = f.readLine();
   let prev = 0;
@@ -443,21 +516,26 @@ function read(pp, n) {
         if (pp.g)
           paint(pp, prev, p, 1);
       } else {
-        zoom.geoNew(p, 3000);
+        if (candy)
+          zoom.geoNew(p, 3000);
         start = p;
+        if (candy) {
         pp.lat = p.lat;
         pp.lon = p.lon;
+        }
+        /* FIXME: won't init destination */
+        //return;
       }
       prev = p;
     }
     l = f.readLine();
     if (!(num % 30)) {
       g.clear();
-      zoom.geoPaint(prev, 0, 1500);
-      g.drawString(num + "\n" + fmt.fmtDist(dist / 1000), 3, 3);
+      zoom.geoPaint(prev, 0, 2500);
+      g.drawString(num + "\n" + fmt.fmtDist(dist / 1000) + "\n" + track_name, 3, 3);
       g.flip();
       print(num, "points");
-      if (!(num % 300)) {
+      if (candy && !(num % 300)) {
         zoom.geoNew(prev, 3000);
       }
     }
@@ -467,7 +545,10 @@ function read(pp, n) {
   destination = prev;
 }
 
-function time_read(n) {
+/* Find out start/stop points (and display some eye-candy) */
+function time_read() {
+  let n = track_name;
+  ui.drawMsg("Converting");
   print("Converting...");
   to_storage(n);
   print("Running...");
@@ -478,15 +559,18 @@ function time_read(n) {
   pp.x = 176/2;
   pp.y = 176/2;
   pp.g = zoom.buf;
-  read(pp, n);
+  read(pp, n, 1);
   // { rotate: Math.PI / 4 + i/100, scale: 1-i/100 }
 
   let v2 = getTime();
   print("Read took", (v2-v1), "seconds");
   step_init();
+  zoom.geoNew(start, 3000);
   print(num, "points", dist, "distance");
   setTimeout(step, 100);
 }
+
+/* Main code for displaying track */
 
 var track_name = "", inf, point_num, track = [], track_points = 30, north = {}, point_drawn;
 
@@ -524,6 +608,7 @@ function paint(pp, p1, p2, thick) {
   zoom.geoLine(p1, p2);
 }
 
+/* Paint points in window around current position */
 function paint_all(pp) {
   let prev = 0;
   let mDist = 99999999999, m = 0;
@@ -557,10 +642,13 @@ function paint_all(pp) {
   if (fast)
     return { quiet: 0, offtrack : 0 };
   print("Best segment was", m, "dist", mDist);
-  if (fmt.distance(track[m], zoom.origin) > 1500) {
+  /* If we are too far from ... */
+  if (fmt.distance(track[m], zoom.origin) > 2500) {
     zoom.geoNew(track[m], 3000); // FIXME: this will flicker
     point_drawn = 0;
   }
+
+  /* Estimate distance to next turn/intersection */
   let ahead = 0, a = fmt.bearing(track[m-1], track[m]), quiet = -1;
   for (let i = m+1; i < track.length; i++) {
     let a2 = fmt.bearing(track[i-1], track[i]);
@@ -583,6 +671,8 @@ function drop_last() {
     track.shift();
 }
 
+/* Display data for given position -- pp.
+   Drop data that are more than 150 meters behind current position */
 function step_to(pp, pass_all) {    
   if (0) {
     g.setColor(0.5, 0.5, 1);
@@ -591,9 +681,7 @@ function step_to(pp, pass_all) {
     g.setColor(1, 0.5, 0.5);
     paint(pp, pp, north, 1);
   }
-
   let quiet = paint_all(pp);
-  
   while (distSegment(track[0], track[1], pp) > 150 &&
          track.length > 10) {
     drop_last();
@@ -601,46 +689,75 @@ function step_to(pp, pass_all) {
   return quiet;
 }
 
-var demo_mode = 0;
+var demo_mode = 0, zoom_mode = 0;
 
 function step() {
   const fast = 0;
+  let follow = 0;
+  switch (ui.display) {
+  case 0: follow = 1; break;
+  case 1: break;
+  case 2: follow = 1; break;
+  }
+  
   let v1 = getTime();
   g.reset().clear();
 
   let fix = gps.getGPSFix();
-
-  let have_more = load_next();
+  let have_more = 1;
+  if (follow)
+    have_more = load_next();
   
   let pp = fix;
   pp.ppm = 0.08 * 3; /* Pixels per meter */
   pp.g = g;
 
-  if (demo_mode || !fix.fix) {
+  if (follow && (demo_mode || !fix.fix)) {
     let i = 2;
     pp.lat = track[i].lat;
     pp.lon = track[i].lon;
     pp.course = fmt.bearing(track[i], track[i+1]);
   }
+  if (!follow && !fix.fix) {
+    pp.lat = 50.010507;  /* FIXME */
+    pp.lon = 14.765840;
+    pp.course = 0;
+  }
 
-  let quiet = step_to(pp, 1);
-  if (1) {
+  let quiet = {};
+  if (follow)
+    quiet = step_to(pp, 1);
+  let zoom_scale = 0;
+  switch (zoom_mode) {
+  case 0: zoom_scale = 500; break;
+  case 1: zoom_scale = 1500; break;
+  case 2: zoom_scale = 2500; break;
+  }  
+  switch (ui.display) {
+  case 0: break;
+  case 1: break;
+  case 2:
+    ui.drawMsg("Stats\n" + fmt.fmtDist(0 / 1000) + "\n" + point_num + "/" + num);
+    zoom_scale = 0;
+    break;
+  }
+  if (zoom_scale) {
     g.setColor(0, 0, 0);
-    zoom.geoPaint(pp, -pp.course, 500);
+    zoom.geoPaint(pp, -pp.course, zoom_scale);
   }
   
-  {
-  pp.x = ui.w/2;
-  pp.y = ui.h*0.5;
+  if (zoom_scale) {
+    /* Draw arrow representing current position */
+    pp.x = ui.w/2;
+    pp.y = ui.h*0.5;
 
-  g.setColor(0, 0, 1);
-  let sc = 2.5;
-  g.drawPoly([ pp.x, pp.y, pp.x - 5*sc, pp.y + 12*sc, pp.x + 5*sc, pp.y + 12*sc ], true);
-
+    g.setColor(0, 0, 1);
+    let sc = 2.5;
+    g.drawPoly([ pp.x, pp.y, pp.x - 5*sc, pp.y + 12*sc, pp.x + 5*sc, pp.y + 12*sc ], true);
   }
   
   g.setColor(0, 0, 0);
-  if (!fast) {
+  if (zoom_scale && !fast) {
     g.setFont("Vector", 31);
     g.setFontAlign(-1, -1);
     let msg = "\noff " + fmt.fmtDist(quiet.offtrack/1000);
@@ -649,7 +766,7 @@ function step() {
     }
     g.drawString(fmt.fmtFix(fix, getTime()-gps.gps_start) + msg, 3, 3);
   }
-  if (!fast) {
+  if (zoom_scale && !fast) {
     g.setFont("Vector", 23);
     g.setColor(0, 0, 0);
     g.setFontAlign(-1, 1);
@@ -668,6 +785,10 @@ function step() {
   setTimeout(step, 1000);
 }
 
+/* Recovery: If we get completely lost, we can do this.
+   It works similar to main loop, but faster.
+   It simply drop points until we are 400meters from the fix, then main code can take over.
+*/
 function recover() {
   ui.drawMsg("Recover...");
   step_init();
@@ -676,7 +797,7 @@ function recover() {
   pp.ppm = 0.08 * 3; /* Pixels per meter */
   if (!fix.fix) {
     print("Can't recover with no fix\n");
-    fix.lat = 50.010507;
+    fix.lat = 50.010507;  /* FIXME */
     fix.lon = 14.765840;
   }
   load_next();
@@ -693,10 +814,33 @@ function recover() {
       step_to(pp, 1);
     if (!load_next())
       break;
-    ui.drawMsg("Recover\n" + fmt.fmtDist(d / 1000));
+    if (!(point_num % 30))
+      ui.drawMsg("Recover\n" + fmt.fmtDist(d / 1000) + "\n" + point_num + "/" + num + "\n" + track_name);
   }
 }
 
+/* Draw map around current position */
+function draw_map() {
+  ui.drawMsg("Draw...");
+  let fix = gps.getGPSFix();
+  if (!fix.fix) {
+    print("Can't draw with no fix\n");
+    fix.lat = 50.010507;  /* FIXME */
+    fix.lon = 14.765840;
+  }
+  let pp = fix;
+  pp.ppm = 0.008 * 5; /* Pixels per meter */
+  pp.course = 0;
+  pp.x = 176/2;
+  pp.y = 176/2;
+  pp.g = zoom.buf;
+  let d = 0;
+  step_init();  
+  read(pp, track_name, 0);
+  ui.drawMsg("Drawn\n" + fmt.fmtDist(d / 1000) + "\n" + point_num + "/" + num);
+}
+
+/* Convert "normal" file to storagefile... so that we can read lines from it */
 function to_storage(n) {
   let f2 = require("Storage").open(n+".st", "w");
   let pos = 0;
@@ -711,7 +855,6 @@ function to_storage(n) {
   }
 }
 
-ui.init();
 fmt.init();
 egt.init();
 gps.init();
@@ -725,23 +868,45 @@ l = st.list(l, {sf:false});
 
 print(l);
 
+/* After user selected the track, we can switch to main interface */
 function load_track(x) {
+  ui.init();
+  ui.numScreens = 3;
+  ui.screens = [ "Follow", "Map", "Stats" ];
+
   Bangle.buzz(50, 1);
   ui.drawMsg("Loading\n"+x);
   track_name = x;
-  time_read(x);
-  
-  Bangle.setUI("clockupdown", btn => {
-    print("Button", btn);
-    if (btn == -1) {
-      recover();
-    }
-    if (btn == 1) {
-      demo_mode = 1;
-    }
+  time_read();
+
+  Bangle.on("drag", (b) => ui.touchHandler(b));
+  Bangle.setUI({
+  mode : "custom",
+  clock : 0
   });
+  ui.topLeft = () => {
+    switch (ui.display) {
+    case 0:
+    case 1:
+        zoom_mode++;
+        if (zoom_mode == 3)
+          zoom_mode = 0;
+        ui.drawMsg("Zoom\nmode\n" + zoom_mode);
+        break;
+    case 2: demo_mode = !demo_mode; 
+        ui.drawMsg("Demo\nmode\n" + demo_mode);
+        break;
+    }
+  }
+  ui.topRight = () => {
+    switch (ui.display) {
+    case 0: ui.drawMsg("Recover"); recover(); break;
+    case 1: ui.drawMsg("Draw map"); draw_map(); break;
+    }
+  };
 }
 
+/* Display menu with tracks. */
 var menu = {
     "< Back" : Bangle.load
 };

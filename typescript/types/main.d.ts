@@ -5,13 +5,18 @@
 
 // TYPES
 
+type AES_CCM_EncryptResult = {
+  data: ArrayBuffer,
+  tag: ArrayBuffer,
+};
+
 /**
  * Menu item that holds a boolean value.
  */
 type MenuBooleanItem = {
   value: boolean;
   format?: (value: boolean) => string;
-  onchange?: (value: boolean) => void;
+  onchange?: (value: boolean, evt?: TouchCallbackXY) => void;
 };
 
 /**
@@ -20,7 +25,7 @@ type MenuBooleanItem = {
 type MenuNumberItem = {
   value: number;
   format?: (value: number) => string;
-  onchange?: (value: number) => void;
+  onchange?: (value: number, evt?: TouchCallbackXY) => void;
   step?: number;
   min?: number;
   max?: number;
@@ -56,10 +61,10 @@ type Menu = {
   ""?: MenuOptions;
   [key: string]:
     | MenuOptions
-    | (() => void)
+    | ((e?: TouchCallbackXY) => void)
     | MenuBooleanItem
     | MenuNumberItem
-    | { value: string; onchange?: () => void }
+    | { value: string; onchange?: (value: unknown, evt?: TouchCallbackXY) => void }
     | undefined;
 };
 
@@ -68,8 +73,6 @@ type Menu = {
  */
 type MenuInstance = {
   draw: () => void;
-  move: (n: number) => void;
-  select: () => void;
   scroller?: MenuScroller; // BangleJS 2
 };
 
@@ -149,7 +152,8 @@ type TapAxis = -2 | -1 | 0 | 1 | 2;
 
 type SwipeCallback = (directionLR: -1 | 0 | 1, directionUD?: -1 | 0 | 1) => void;
 
-type TouchCallback = (button: number, xy?: { x: number, y: number }) => void;
+type TouchCallbackXY = { x: number, y: number, type: 0 | 2 };
+type TouchCallback = (button?: number, xy?: TouchCallbackXY) => void;
 
 type DragCallback = (event: {
   x: number;
@@ -376,130 +380,6 @@ type PipeOptions = {
 
 
 // CLASSES
-
-/**
- * A class to support some simple Queue handling for RTOS queues
- * @url http://www.espruino.com/Reference#Queue
- */
-declare class Queue {
-  /**
-   * Creates a Queue Object
-   * @constructor
-   *
-   * @param {any} queueName - Name of the queue
-   * @returns {any} A Queue object
-   * @url http://www.espruino.com/Reference#l_Queue_Queue
-   */
-  static new(queueName: any): any;
-
-  /**
-   * reads one character from queue, if available
-   * @url http://www.espruino.com/Reference#l_Queue_read
-   */
-  read(): void;
-
-  /**
-   * Writes one character to queue
-   *
-   * @param {any} char - char to be send
-   * @url http://www.espruino.com/Reference#l_Queue_writeChar
-   */
-  writeChar(char: any): void;
-
-  /**
-   * logs list of queues
-   * @url http://www.espruino.com/Reference#l_Queue_log
-   */
-  log(): void;
-}
-
-/**
- * A class to support some simple Task handling for RTOS tasks
- * @url http://www.espruino.com/Reference#Task
- */
-declare class Task {
-  /**
-   * Creates a Task Object
-   * @constructor
-   *
-   * @param {any} taskName - Name of the task
-   * @returns {any} A Task object
-   * @url http://www.espruino.com/Reference#l_Task_Task
-   */
-  static new(taskName: any): any;
-
-  /**
-   * Suspend task, be careful not to suspend Espruino task itself
-   * @url http://www.espruino.com/Reference#l_Task_suspend
-   */
-  suspend(): void;
-
-  /**
-   * Resumes a suspended task
-   * @url http://www.espruino.com/Reference#l_Task_resume
-   */
-  resume(): void;
-
-  /**
-   * returns name of actual task
-   * @returns {any} Name of current task
-   * @url http://www.espruino.com/Reference#l_Task_getCurrent
-   */
-  getCurrent(): any;
-
-  /**
-   * Sends a binary notify to task
-   * @url http://www.espruino.com/Reference#l_Task_notify
-   */
-  notify(): void;
-
-  /**
-   * logs list of tasks
-   * @url http://www.espruino.com/Reference#l_Task_log
-   */
-  log(): void;
-}
-
-/**
- * A class to handle Timer on base of ESP32 Timer
- * @url http://www.espruino.com/Reference#Timer
- */
-declare class Timer {
-  /**
-   * Creates a Timer Object
-   * @constructor
-   *
-   * @param {any} timerName - Timer Name
-   * @param {number} group - Timer group
-   * @param {number} index - Timer index
-   * @param {number} isrIndex - isr (0 = Espruino, 1 = test)
-   * @returns {any} A Timer Object
-   * @url http://www.espruino.com/Reference#l_Timer_Timer
-   */
-  static new(timerName: any, group: number, index: number, isrIndex: number): any;
-
-  /**
-   * Starts a timer
-   *
-   * @param {number} duration - duration of timmer in micro secs
-   * @url http://www.espruino.com/Reference#l_Timer_start
-   */
-  start(duration: number): void;
-
-  /**
-   * Reschedules a timer, needs to be started at least once
-   *
-   * @param {number} duration - duration of timmer in micro secs
-   * @url http://www.espruino.com/Reference#l_Timer_reschedule
-   */
-  reschedule(duration: number): void;
-
-  /**
-   * logs list of timers
-   * @url http://www.espruino.com/Reference#l_Timer_log
-   */
-  log(): void;
-}
 
 /**
  * Class containing utility functions for the
@@ -846,40 +726,2654 @@ declare class Nucleo {
 }
 
 /**
+ * This class provides functionality to recognise gestures drawn on a touchscreen.
+ * It is only built into Bangle.js 2.
+ * Usage:
+ * ```
+ * var strokes = {
+ *   stroke1 : Unistroke.new(new Uint8Array([x1, y1, x2, y2, x3, y3, ...])),
+ *   stroke2 : Unistroke.new(new Uint8Array([x1, y1, x2, y2, x3, y3, ...])),
+ *   stroke3 : Unistroke.new(new Uint8Array([x1, y1, x2, y2, x3, y3, ...]))
+ * };
+ * var r = Unistroke.recognise(strokes,new Uint8Array([x1, y1, x2, y2, x3, y3, ...]))
+ * print(r); // stroke1/stroke2/stroke3
+ * ```
+ * @url http://www.espruino.com/Reference#Unistroke
+ */
+declare class Unistroke {
+  /**
+   * Create a new Unistroke based on XY coordinates
+   *
+   * @param {any} xy - An array of interleaved XY coordinates
+   * @returns {any} A string of data representing this unistroke
+   * @url http://www.espruino.com/Reference#l_Unistroke_new
+   */
+  static new(xy: any): any;
+
+  /**
+   * Recognise based on an object of named strokes, and a list of XY coordinates
+   *
+   * @param {any} strokes - An object of named strokes : `{arrow:..., circle:...}`
+   * @param {any} xy - An array of interleaved XY coordinates
+   * @returns {any} The key name of the matched stroke
+   * @url http://www.espruino.com/Reference#l_Unistroke_recognise
+   */
+  static recognise(strokes: any, xy: any): any;
+
+
+}
+
+/**
+ * Class containing utility functions for the Qwiic connectors
+ * on the [Jolt.js Smart Bluetooth driver](http://www.espruino.com/Jolt.js).
+ * Each class (available from `Jolt.Q0`/`Jolt.Q1`/`Jolt.Q2`/`Jolt.Q3`)
+ * has `sda` and `scl` fields with the pins for SDA and SCL on them.
+ * On Jolt.js, the four Qwiic connectors can be individually powered:
+ * * Q0/Q1 - GND is switched with a 500mA FET. The `fet` field contains the pin that controls the FET
+ * * Q2/Q3 - all 4 pins are connected to GPIO. `gnd` and `vcc` fields contain the pins for GND and VCC
+ * To control the power, use `Qwiic.setPower`, for example: `Jolt.Q0.setPower(true)`
+ * @url http://www.espruino.com/Reference#Qwiic
+ */
+declare class Qwiic {
+
+
+  /**
+   * This turns power for the given Qwiic connector on or off. See `Qwiic` for more information.
+   *
+   * @param {boolean} isOn - Whether the Qwiic connector is to be on or not
+   * @returns {any} The same Qwiic object (for call chaining)
+   * @url http://www.espruino.com/Reference#l_Qwiic_setPower
+   */
+  setPower(isOn: ShortBoolean): any;
+
+  /**
+   * @returns {any} An I2C object using this Qwiic connector, already set up
+   * @url http://www.espruino.com/Reference#l_Qwiic_i2c
+   */
+  i2c: any;
+}
+
+/**
+ * Class containing AES encryption/decryption
+ * **Note:** This library is currently only included in builds for boards where
+ * there is space. For other boards there is `crypto.js` which implements SHA1 in
+ * JS.
+ * @url http://www.espruino.com/Reference#AES
+ */
+declare class AES {
+  /**
+   *
+   * @param {any} passphrase - Message to encrypt
+   * @param {any} key - Key to encrypt message - must be an `ArrayBuffer` of 128, 192, or 256 BITS
+   * @param {any} [options] - [optional] An object, may specify `{ iv : new Uint8Array(16), mode : 'CBC|CFB|CTR|OFB|ECB' }`
+   * @returns {any} Returns an `ArrayBuffer`
+   * @url http://www.espruino.com/Reference#l_AES_encrypt
+   */
+  static encrypt(passphrase: any, key: any, options?: any): ArrayBuffer;
+
+  /**
+   *
+   * @param {any} passphrase - Message to decrypt
+   * @param {any} key - Key to encrypt message - must be an `ArrayBuffer` of 128, 192, or 256 BITS
+   * @param {any} [options] - [optional] An object, may specify `{ iv : new Uint8Array(16), mode : 'CBC|CFB|CTR|OFB|ECB' }`
+   * @returns {any} Returns an `ArrayBuffer`
+   * @url http://www.espruino.com/Reference#l_AES_decrypt
+   */
+  static decrypt(passphrase: any, key: any, options?: any): ArrayBuffer;
+
+  /**
+   * Encrypt a message with a key using AES in CCM authenticated encryption mode.
+   * This returns an object with the encrypted data and a generated tag for message authentication.
+   * Usage example:
+   * ```
+   * let message = "Hello World!";
+   * let key = [0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff];
+   * let nonce = [0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66];
+   * let tagLength = 4;
+   * let result = AES.ccmEncrypt(message, key, nonce, tagLength);
+   * ```
+   * The `result` object should now have a `data` and `tag` attribute; both are needed for decrypting and verifying the message:
+   * ```
+   * {
+   *   data: [206, 98, 239, 219, 146, 157, 59, 123, 102, 92, 118, 209],
+   *   tag: [230, 153, 191, 142]
+   * }
+   * ```
+   *
+   * @param {any} message - Message to encrypt
+   * @param {any} key - Key to encrypt message - an `ArrayBuffer` of 128 BITS
+   * @param {any} iv - nonce (initialization vector) - an `ArrayBuffer` of 7 to 13 bytes
+   * @param {any} tagLen - Length of tag to generate in bytes - must be one of 4, 6, 8, 10, 12, 14 or 16
+   * @returns {any} An object
+   * @url http://www.espruino.com/Reference#l_AES_ccmEncrypt
+   */
+  static ccmEncrypt(message: any, key: any, iv: any, tagLen: any): AES_CCM_EncryptResult;
+
+  /**
+   * Decrypt and authenticate an AES CCM encrypted message with an associated tag.
+   * Usage example:
+   * ```
+   * let message = "Hello World!";
+   * let key = [0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff];
+   * let nonce = [0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66];
+   * let tagLength = 4;
+   * let result = AES.ccmEncrypt(message, key, nonce, tagLength);
+   * let decrypted = AES.ccmDecrypt(result.data, key, nonce, result.tag);
+   * let decryptedMessage = String.fromCharCode.apply(null, decrypted);
+   * ```
+   * The `decryptedMessage` variable should now contain "Hello World!".
+   *
+   * @param {any} message - Message to decrypt
+   * @param {any} key - Key to decrypt message - an `ArrayBuffer` of 128 BITS
+   * @param {any} iv - Nonce (initialization vector) - an `ArrayBuffer` of 7 to 13 bytes
+   * @param {any} tag - Tag that came with the message - an `ArrayBuffer`
+   * @returns {any} Decrypted message, or null on error (for example if the tag doesn't match)
+   * @url http://www.espruino.com/Reference#l_AES_ccmDecrypt
+   */
+  static ccmDecrypt(message: any, key: any, iv: any, tag: any): any;
+
+
+}
+
+/**
+ * Class containing utility functions for
+ * [Pixl.js](http://www.espruino.com/Pixl.js)
+ * @url http://www.espruino.com/Reference#Pixl
+ */
+declare class Pixl {
+  /**
+   * **DEPRECATED** - Please use `E.getBattery()` instead.
+   * Return an approximate battery percentage remaining based on a normal CR2032
+   * battery (2.8 - 2.2v)
+   * @returns {number} A percentage between 0 and 100
+   * @url http://www.espruino.com/Reference#l_Pixl_getBatteryPercentage
+   */
+  static getBatteryPercentage(): number;
+
+  /**
+   * Set the LCD's contrast
+   *
+   * @param {number} c - Contrast between 0 and 1
+   * @url http://www.espruino.com/Reference#l_Pixl_setContrast
+   */
+  static setContrast(c: number): void;
+
+  /**
+   * This function can be used to turn Pixl.js's LCD off or on.
+   * * With the LCD off, Pixl.js draws around 0.1mA
+   * * With the LCD on, Pixl.js draws around 0.25mA
+   *
+   * @param {boolean} isOn - True if the LCD should be on, false if not
+   * @url http://www.espruino.com/Reference#l_Pixl_setLCDPower
+   */
+  static setLCDPower(isOn: ShortBoolean): void;
+
+  /**
+   * Writes a command directly to the ST7567 LCD controller
+   *
+   * @param {number} c
+   * @url http://www.espruino.com/Reference#l_Pixl_lcdw
+   */
+  static lcdw(c: number): void;
+
+  /**
+   * Display a menu on Pixl.js's screen, and set up the buttons to navigate through
+   * it.
+   * DEPRECATED: Use `E.showMenu`
+   *
+   * @param {any} menu - An object containing name->function mappings to to be used in a menu
+   * @returns {any} A menu object with `draw`, `move` and `select` functions
+   * @url http://www.espruino.com/Reference#l_Pixl_menu
+   */
+  static menu(menu: Menu): MenuInstance;
+
+
+}
+
+/**
+ * This class helps to convert URLs into Objects of information ready for
+ * http.request/get
+ * @url http://www.espruino.com/Reference#url
+ */
+declare class url {
+  /**
+   * A utility function to split a URL into parts
+   * This is useful in web servers for instance when handling a request.
+   * For instance `url.parse("/a?b=c&d=e",true)` returns
+   * `{"method":"GET","host":"","path":"/a?b=c&d=e","pathname":"/a","search":"?b=c&d=e","port":80,"query":{"b":"c","d":"e"}}`
+   *
+   * @param {any} urlStr - A URL to be parsed
+   * @param {boolean} parseQuery - Whether to parse the query string into an object not (default = false)
+   * @returns {any} An object containing options for ```http.request``` or ```http.get```. Contains `method`, `host`, `path`, `pathname`, `search`, `port` and `query`
+   * @url http://www.espruino.com/Reference#l_url_parse
+   */
+  static parse(urlStr: any, parseQuery: ShortBoolean): any;
+
+
+}
+
+/**
+ * The socket server created by `require('net').createServer`
+ * @url http://www.espruino.com/Reference#Server
+ */
+declare class Server {
+
+
+  /**
+   * Start listening for new connections on the given port
+   *
+   * @param {number} port - The port to listen on
+   * @returns {any} The HTTP server instance that 'listen' was called on
+   * @url http://www.espruino.com/Reference#l_Server_listen
+   */
+  listen(port: number): any;
+
+  /**
+   * Stop listening for new connections
+   * @url http://www.espruino.com/Reference#l_Server_close
+   */
+  close(): void;
+}
+
+/**
+ * An actual socket connection - allowing transmit/receive of TCP data
+ * @url http://www.espruino.com/Reference#Socket
+ */
+declare class Socket {
+  /**
+   * The 'data' event is called when data is received. If a handler is defined with
+   * `X.on('data', function(data) { ... })` then it will be called, otherwise data
+   * will be stored in an internal buffer, where it can be retrieved with `X.read()`
+   * @param {string} event - The event to listen to.
+   * @param {(data: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `data` A string containing one or more characters of received data
+   * @url http://www.espruino.com/Reference#l_Socket_data
+   */
+  static on(event: "data", callback: (data: any) => void): void;
+
+  /**
+   * Called when the connection closes.
+   * @param {string} event - The event to listen to.
+   * @param {(had_error: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `had_error` A boolean indicating whether the connection had an error (use an error event handler to get error details).
+   * @url http://www.espruino.com/Reference#l_Socket_close
+   */
+  static on(event: "close", callback: (had_error: any) => void): void;
+
+  /**
+   * There was an error on this socket and it is closing (or wasn't opened in the
+   * first place). If a "connected" event was issued on this socket then the error
+   * event is always followed by a close event. The error codes are:
+   * * -1: socket closed (this is not really an error and will not cause an error
+   *   callback)
+   * * -2: out of memory (typically while allocating a buffer to hold data)
+   * * -3: timeout
+   * * -4: no route
+   * * -5: busy
+   * * -6: not found (DNS resolution)
+   * * -7: max sockets (... exceeded)
+   * * -8: unsent data (some data could not be sent)
+   * * -9: connection reset (or refused)
+   * * -10: unknown error
+   * * -11: no connection
+   * * -12: bad argument
+   * * -13: SSL handshake failed
+   * * -14: invalid SSL data
+   * @param {string} event - The event to listen to.
+   * @param {(details: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `details` An error object with an error code (a negative integer) and a message.
+   * @url http://www.espruino.com/Reference#l_Socket_error
+   */
+  static on(event: "error", callback: (details: any) => void): void;
+
+  /**
+   * An event that is fired when the buffer is empty and it can accept more data to
+   * send.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @url http://www.espruino.com/Reference#l_Socket_drain
+   */
+  static on(event: "drain", callback: () => void): void;
+
+  /**
+   * Return how many bytes are available to read. If there is already a listener for
+   * data, this will always return 0.
+   * @returns {number} How many bytes are available
+   * @url http://www.espruino.com/Reference#l_Socket_available
+   */
+  available(): number;
+
+  /**
+   * Return a string containing characters that have been received
+   *
+   * @param {number} chars - The number of characters to read, or undefined/0 for all available
+   * @returns {any} A string containing the required bytes.
+   * @url http://www.espruino.com/Reference#l_Socket_read
+   */
+  read(chars: number): any;
+
+  /**
+   * Pipe this to a stream (an object with a 'write' method)
+   *
+   * @param {any} destination - The destination file/stream that will receive content from the source.
+   * @param {any} [options]
+   * [optional] An object `{ chunkSize : int=32, end : bool=true, complete : function }`
+   * chunkSize : The amount of data to pipe from source to destination at a time
+   * complete : a function to call when the pipe activity is complete
+   * end : call the 'end' function on the destination when the source is finished
+   * @url http://www.espruino.com/Reference#l_Socket_pipe
+   */
+  pipe(destination: any, options?: PipeOptions): void
+
+  /**
+   * This function writes the `data` argument as a string. Data that is passed in
+   * (including arrays) will be converted to a string with the normal JavaScript
+   * `toString` method.
+   * If you wish to send binary data then you need to convert that data directly to a
+   * String. This can be done with `String.fromCharCode`, however it's often easier
+   * and faster to use the Espruino-specific `E.toString`, which will read its
+   * arguments as an array of bytes and convert that to a String:
+   * ```
+   * socket.write(E.toString([0,1,2,3,4,5]));
+   * ```
+   * If you need to send something other than bytes, you can use 'Typed Arrays', or
+   * even `DataView`:
+   * ```
+   * var d = new DataView(new ArrayBuffer(8)); // 8 byte array buffer
+   * d.setFloat32(0, 765.3532564); // write float at bytes 0-3
+   * d.setInt8(4, 42); // write int8 at byte 4
+   * socket.write(E.toString(d.buffer))
+   * ```
+   *
+   * @param {any} data - A string containing data to send
+   * @returns {boolean} For node.js compatibility, returns the boolean false. When the send buffer is empty, a `drain` event will be sent
+   * @url http://www.espruino.com/Reference#l_Socket_write
+   */
+  write(data: any): boolean;
+
+  /**
+   * Close this socket - optional data to append as an argument.
+   * See `Socket.write` for more information about the data argument
+   *
+   * @param {any} data - A string containing data to send
+   * @url http://www.espruino.com/Reference#l_Socket_end
+   */
+  end(data: any): void;
+}
+
+/**
+ * An actual socket connection - allowing transmit/receive of TCP data
+ * @url http://www.espruino.com/Reference#dgramSocket
+ */
+declare class dgramSocket {
+  /**
+   * The 'message' event is called when a datagram message is received. If a handler
+   * is defined with `X.on('message', function(msg) { ... })` then it will be called
+   * @param {string} event - The event to listen to.
+   * @param {(msg: any, rinfo: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `msg` A string containing the received message
+   * * `rinfo` Sender address,port containing information
+   * @url http://www.espruino.com/Reference#l_dgramSocket_message
+   */
+  static on(event: "message", callback: (msg: any, rinfo: any) => void): void;
+
+  /**
+   * Called when the connection closes.
+   * @param {string} event - The event to listen to.
+   * @param {(had_error: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `had_error` A boolean indicating whether the connection had an error (use an error event handler to get error details).
+   * @url http://www.espruino.com/Reference#l_dgramSocket_close
+   */
+  static on(event: "close", callback: (had_error: any) => void): void;
+
+  /**
+   *
+   * @param {any} buffer - A string containing message to send
+   * @param {any} offset - Offset in the passed string where the message starts [optional]
+   * @param {any} length - Number of bytes in the message [optional]
+   * @param {any} args - Destination port number, Destination IP address string
+   * @url http://www.espruino.com/Reference#l_dgramSocket_send
+   */
+  send(buffer: any, offset: any, length: any, ...args: any[]): void;
+
+  /**
+   *
+   * @param {number} port - The port to bind at
+   * @param {any} callback - A function(res) that will be called when the socket is bound. You can then call `res.on('message', function(message, info) { ... })` and `res.on('close', function() { ... })` to deal with the response.
+   * @returns {any} The dgramSocket instance that 'bind' was called on
+   * @url http://www.espruino.com/Reference#l_dgramSocket_bind
+   */
+  bind(port: number, callback: any): any;
+
+  /**
+   * Close the socket
+   * @url http://www.espruino.com/Reference#l_dgramSocket_close
+   */
+  close(): void;
+
+  /**
+   *
+   * @param {any} group - A string containing the group ip to join
+   * @param {any} ip - A string containing the ip to join with
+   * @url http://www.espruino.com/Reference#l_dgramSocket_addMembership
+   */
+  addMembership(group: any, ip: any): void;
+}
+
+/**
+ * The HTTP server created by `require('http').createServer`
+ * @url http://www.espruino.com/Reference#httpSrv
+ */
+declare class httpSrv {
+
+
+  /**
+   * Start listening for new HTTP connections on the given port
+   *
+   * @param {number} port - The port to listen on
+   * @returns {any} The HTTP server instance that 'listen' was called on
+   * @url http://www.espruino.com/Reference#l_httpSrv_listen
+   */
+  listen(port: number): any;
+
+  /**
+   * Stop listening for new HTTP connections
+   * @url http://www.espruino.com/Reference#l_httpSrv_close
+   */
+  close(): void;
+}
+
+/**
+ * The HTTP server request
+ * @url http://www.espruino.com/Reference#httpSRq
+ */
+declare class httpSRq {
+  /**
+   * The 'data' event is called when data is received. If a handler is defined with
+   * `X.on('data', function(data) { ... })` then it will be called, otherwise data
+   * will be stored in an internal buffer, where it can be retrieved with `X.read()`
+   * @param {string} event - The event to listen to.
+   * @param {(data: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `data` A string containing one or more characters of received data
+   * @url http://www.espruino.com/Reference#l_httpSRq_data
+   */
+  static on(event: "data", callback: (data: any) => void): void;
+
+  /**
+   * Called when the connection closes.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @url http://www.espruino.com/Reference#l_httpSRq_close
+   */
+  static on(event: "close", callback: () => void): void;
+
+  /**
+   * The headers to sent to the server with this HTTP request.
+   * @returns {any} An object mapping header name to value
+   * @url http://www.espruino.com/Reference#l_httpSRq_headers
+   */
+  headers: any;
+
+  /**
+   * The HTTP method used with this request. Often `"GET"`.
+   * @returns {any} A string
+   * @url http://www.espruino.com/Reference#l_httpSRq_method
+   */
+  method: any;
+
+  /**
+   * The URL requested in this HTTP request, for instance:
+   * * `"/"` - the main page
+   * * `"/favicon.ico"` - the web page's icon
+   * @returns {any} A string representing the URL
+   * @url http://www.espruino.com/Reference#l_httpSRq_url
+   */
+  url: any;
+
+  /**
+   * Return how many bytes are available to read. If there is already a listener for
+   * data, this will always return 0.
+   * @returns {number} How many bytes are available
+   * @url http://www.espruino.com/Reference#l_httpSRq_available
+   */
+  available(): number;
+
+  /**
+   * Return a string containing characters that have been received
+   *
+   * @param {number} chars - The number of characters to read, or undefined/0 for all available
+   * @returns {any} A string containing the required bytes.
+   * @url http://www.espruino.com/Reference#l_httpSRq_read
+   */
+  read(chars: number): any;
+
+  /**
+   * Pipe this to a stream (an object with a 'write' method)
+   *
+   * @param {any} destination - The destination file/stream that will receive content from the source.
+   * @param {any} [options]
+   * [optional] An object `{ chunkSize : int=32, end : bool=true, complete : function }`
+   * chunkSize : The amount of data to pipe from source to destination at a time
+   * complete : a function to call when the pipe activity is complete
+   * end : call the 'end' function on the destination when the source is finished
+   * @url http://www.espruino.com/Reference#l_httpSRq_pipe
+   */
+  pipe(dest: any, options?: PipeOptions): void
+}
+
+/**
+ * The HTTP server response
+ * @url http://www.espruino.com/Reference#httpSRs
+ */
+declare class httpSRs {
+  /**
+   * An event that is fired when the buffer is empty and it can accept more data to
+   * send.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @url http://www.espruino.com/Reference#l_httpSRs_drain
+   */
+  static on(event: "drain", callback: () => void): void;
+
+  /**
+   * Called when the connection closes.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @url http://www.espruino.com/Reference#l_httpSRs_close
+   */
+  static on(event: "close", callback: () => void): void;
+
+  /**
+   * The headers to send back along with the HTTP response.
+   * The default contents are:
+   * ```
+   * {
+   *   "Connection": "close"
+   *  }
+   * ```
+   * @returns {any} An object mapping header name to value
+   * @url http://www.espruino.com/Reference#l_httpSRs_headers
+   */
+  headers: any;
+
+  /**
+   * This function writes the `data` argument as a string. Data that is passed in
+   * (including arrays) will be converted to a string with the normal JavaScript
+   * `toString` method. For more information about sending binary data see
+   * `Socket.write`
+   *
+   * @param {any} data - A string containing data to send
+   * @returns {boolean} For node.js compatibility, returns the boolean false. When the send buffer is empty, a `drain` event will be sent
+   * @url http://www.espruino.com/Reference#l_httpSRs_write
+   */
+  write(data: any): boolean;
+
+  /**
+   * See `Socket.write` for more information about the data argument
+   *
+   * @param {any} data - A string containing data to send
+   * @url http://www.espruino.com/Reference#l_httpSRs_end
+   */
+  end(data: any): void;
+
+  /**
+   * Send the given status code and headers. If not explicitly called this will be
+   * done automatically the first time data is written to the response.
+   * This cannot be called twice, or after data has already been sent in the
+   * response.
+   *
+   * @param {number} statusCode - The HTTP status code
+   * @param {any} headers - An object containing the headers
+   * @url http://www.espruino.com/Reference#l_httpSRs_writeHead
+   */
+  writeHead(statusCode: number, headers: any): void;
+
+  /**
+   * Set a value to send in the header of this HTTP response. This updates the
+   * `httpSRs.headers` property.
+   * Any headers supplied to `writeHead` will overwrite any headers with the same
+   * name.
+   *
+   * @param {any} name - The name of the header as a String
+   * @param {any} value - The value of the header as a String
+   * @url http://www.espruino.com/Reference#l_httpSRs_setHeader
+   */
+  setHeader(name: any, value: any): void;
+}
+
+/**
+ * The HTTP client request, returned by `http.request()` and `http.get()`.
+ * @url http://www.espruino.com/Reference#httpCRq
+ */
+declare class httpCRq {
+  /**
+   * An event that is fired when the buffer is empty and it can accept more data to
+   * send.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @url http://www.espruino.com/Reference#l_httpCRq_drain
+   */
+  static on(event: "drain", callback: () => void): void;
+
+  /**
+   * An event that is fired if there is an error making the request and the response
+   * callback has not been invoked. In this case the error event concludes the
+   * request attempt. The error event function receives an error object as parameter
+   * with a `code` field and a `message` field.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @url http://www.espruino.com/Reference#l_httpCRq_error
+   */
+  static on(event: "error", callback: () => void): void;
+
+  /**
+   * This function writes the `data` argument as a string. Data that is passed in
+   * (including arrays) will be converted to a string with the normal JavaScript
+   * `toString` method. For more information about sending binary data see
+   * `Socket.write`
+   *
+   * @param {any} data - A string containing data to send
+   * @returns {boolean} For node.js compatibility, returns the boolean false. When the send buffer is empty, a `drain` event will be sent
+   * @url http://www.espruino.com/Reference#l_httpCRq_write
+   */
+  write(data: any): boolean;
+
+  /**
+   * Finish this HTTP request - optional data to append as an argument
+   * See `Socket.write` for more information about the data argument
+   *
+   * @param {any} data - A string containing data to send
+   * @url http://www.espruino.com/Reference#l_httpCRq_end
+   */
+  end(data: any): void;
+}
+
+/**
+ * The HTTP client response, passed to the callback of `http.request()` an
+ * `http.get()`.
+ * @url http://www.espruino.com/Reference#httpCRs
+ */
+declare class httpCRs {
+  /**
+   * The 'data' event is called when data is received. If a handler is defined with
+   * `X.on('data', function(data) { ... })` then it will be called, otherwise data
+   * will be stored in an internal buffer, where it can be retrieved with `X.read()`
+   * @param {string} event - The event to listen to.
+   * @param {(data: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `data` A string containing one or more characters of received data
+   * @url http://www.espruino.com/Reference#l_httpCRs_data
+   */
+  static on(event: "data", callback: (data: any) => void): void;
+
+  /**
+   * Called when the connection closes with one `hadError` boolean parameter, which
+   * indicates whether an error occurred.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @url http://www.espruino.com/Reference#l_httpCRs_close
+   */
+  static on(event: "close", callback: () => void): void;
+
+  /**
+   * An event that is fired if there is an error receiving the response. The error
+   * event function receives an error object as parameter with a `code` field and a
+   * `message` field. After the error event the close even will also be triggered to
+   * conclude the HTTP request/response.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @url http://www.espruino.com/Reference#l_httpCRs_error
+   */
+  static on(event: "error", callback: () => void): void;
+
+  /**
+   * The headers received along with the HTTP response
+   * @returns {any} An object mapping header name to value
+   * @url http://www.espruino.com/Reference#l_httpCRs_headers
+   */
+  headers: any;
+
+  /**
+   * The HTTP response's status code - usually `"200"` if all went well
+   * @returns {any} The status code as a String
+   * @url http://www.espruino.com/Reference#l_httpCRs_statusCode
+   */
+  statusCode: any;
+
+  /**
+   * The HTTP response's status message - Usually `"OK"` if all went well
+   * @returns {any} An String Status Message
+   * @url http://www.espruino.com/Reference#l_httpCRs_statusMessage
+   */
+  statusMessage: any;
+
+  /**
+   * The HTTP version reported back by the server - usually `"1.1"`
+   * @returns {any} Th
+   * @url http://www.espruino.com/Reference#l_httpCRs_httpVersion
+   */
+  httpVersion: any;
+
+  /**
+   * Return how many bytes are available to read. If there is a 'data' event handler,
+   * this will always return 0.
+   * @returns {number} How many bytes are available
+   * @url http://www.espruino.com/Reference#l_httpCRs_available
+   */
+  available(): number;
+
+  /**
+   * Return a string containing characters that have been received
+   *
+   * @param {number} chars - The number of characters to read, or undefined/0 for all available
+   * @returns {any} A string containing the required bytes.
+   * @url http://www.espruino.com/Reference#l_httpCRs_read
+   */
+  read(chars: number): any;
+
+  /**
+   * Pipe this to a stream (an object with a 'write' method)
+   *
+   * @param {any} destination - The destination file/stream that will receive content from the source.
+   * @param {any} [options]
+   * [optional] An object `{ chunkSize : int=32, end : bool=true, complete : function }`
+   * chunkSize : The amount of data to pipe from source to destination at a time
+   * complete : a function to call when the pipe activity is complete
+   * end : call the 'end' function on the destination when the source is finished
+   * @url http://www.espruino.com/Reference#l_httpCRs_pipe
+   */
+  pipe(destination: any, options?: PipeOptions): void
+}
+
+/**
+ * An instantiation of an Ethernet network adaptor
+ * @url http://www.espruino.com/Reference#Ethernet
+ */
+declare class Ethernet {
+
+
+  /**
+   * Get the current IP address, subnet, gateway and mac address.
+   *
+   * @param {any} [options] - [optional] An `callback(err, ipinfo)` function to be called back with the IP information.
+   * @returns {any}
+   * @url http://www.espruino.com/Reference#l_Ethernet_getIP
+   */
+  getIP(options?: any): any;
+
+  /**
+   * Set the current IP address or get an IP from DHCP (if no options object is
+   * specified)
+   * If 'mac' is specified as an option, it must be a string of the form
+   * `"00:01:02:03:04:05"` The default mac is 00:08:DC:01:02:03.
+   *
+   * @param {any} options - Object containing IP address options `{ ip : '1.2.3.4', subnet : '...', gateway: '...', dns:'...', mac:':::::'  }`, or do not supply an object in order to force DHCP.
+   * @param {any} [callback] - [optional] An `callback(err)` function to invoke when ip is set. `err==null` on success, or a string on failure.
+   * @returns {boolean} True on success
+   * @url http://www.espruino.com/Reference#l_Ethernet_setIP
+   */
+  setIP(options: any, callback?: any): boolean;
+
+  /**
+   * Set hostname used during the DHCP request. Minimum 8 and maximum 12 characters,
+   * best set before calling `eth.setIP()`. Default is WIZnet010203, 010203 is the
+   * default nic as part of the mac.
+   *
+   * @param {any} hostname - hostname as string
+   * @param {any} [callback] - [optional] An `callback(err)` function to be called back with null or error text.
+   * @returns {boolean} True on success
+   * @url http://www.espruino.com/Reference#l_Ethernet_setHostname
+   */
+  setHostname(hostname: any, callback?: any): boolean;
+
+  /**
+   * Returns the hostname
+   *
+   * @param {any} [callback] - [optional] An `callback(err,hostname)` function to be called back with the status information.
+   * @returns {any}
+   * @url http://www.espruino.com/Reference#l_Ethernet_getHostname
+   */
+  getHostname(callback?: any): any;
+
+  /**
+   * Get the current status of the ethernet device
+   *
+   * @param {any} [options] - [optional] An `callback(err, status)` function to be called back with the status information.
+   * @returns {any}
+   * @url http://www.espruino.com/Reference#l_Ethernet_getStatus
+   */
+  getStatus(options?: any): any;
+}
+
+/**
+ * An instantiation of a WiFi network adaptor
+ * @url http://www.espruino.com/Reference#WLAN
+ */
+declare class WLAN {
+
+
+  /**
+   * Connect to a wireless network
+   *
+   * @param {any} ap - Access point name
+   * @param {any} key - WPA2 key (or undefined for unsecured connection)
+   * @param {any} callback - Function to call back with connection status. It has one argument which is one of 'connect'/'disconnect'/'dhcp'
+   * @returns {boolean} True if connection succeeded, false if it didn't.
+   * @url http://www.espruino.com/Reference#l_WLAN_connect
+   */
+  connect(ap: any, key: any, callback: any): boolean;
+
+  /**
+   * Completely uninitialise and power down the CC3000. After this you'll have to use
+   * ```require("CC3000").connect()``` again.
+   * @url http://www.espruino.com/Reference#l_WLAN_disconnect
+   */
+  disconnect(): void;
+
+  /**
+   * Completely uninitialise and power down the CC3000, then reconnect to the old
+   * access point.
+   * @url http://www.espruino.com/Reference#l_WLAN_reconnect
+   */
+  reconnect(): void;
+
+  /**
+   * Get the current IP address
+   * @returns {any}
+   * @url http://www.espruino.com/Reference#l_WLAN_getIP
+   */
+  getIP(): any;
+
+  /**
+   * Set the current IP address for get an IP from DHCP (if no options object is
+   * specified).
+   * **Note:** Changes are written to non-volatile memory, but will only take effect
+   * after calling `wlan.reconnect()`
+   *
+   * @param {any} options - Object containing IP address options `{ ip : '1,2,3,4', subnet, gateway, dns }`, or do not supply an object in otder to force DHCP.
+   * @returns {boolean} True on success
+   * @url http://www.espruino.com/Reference#l_WLAN_setIP
+   */
+  setIP(options: any): boolean;
+}
+
+/**
+ * Class containing [micro:bit's](https://www.espruino.com/MicroBit) utility
+ * functions.
+ * @url http://www.espruino.com/Reference#Microbit
+ */
+declare class Microbit {
+  /**
+   * The micro:bit's speaker pin
+   * @returns {Pin}
+   * @url http://www.espruino.com/Reference#l_Microbit_SPEAKER
+   */
+  static SPEAKER: Pin;
+
+  /**
+   * The micro:bit's microphone pin
+   * `MIC_ENABLE` should be set to 1 before using this
+   * @returns {Pin}
+   * @url http://www.espruino.com/Reference#l_Microbit_MIC
+   */
+  static MIC: Pin;
+
+  /**
+   * The micro:bit's microphone enable pin
+   * @returns {Pin}
+   * @url http://www.espruino.com/Reference#l_Microbit_MIC_ENABLE
+   */
+  static MIC_ENABLE: Pin;
+
+  /**
+   * Called when the Micro:bit is moved in a deliberate fashion, and includes data on
+   * the detected gesture.
+   * @param {string} event - The event to listen to.
+   * @param {(gesture: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `gesture` An Int8Array containing the accelerations (X,Y,Z) from the last gesture detected by the accelerometer
+   * @url http://www.espruino.com/Reference#l_Microbit_gesture
+   */
+  static on(event: "gesture", callback: (gesture: any) => void): void;
+
+  /**
+   * @returns {any} An Object `{x,y,z}` of magnetometer readings as integers
+   * @url http://www.espruino.com/Reference#l_Microbit_mag
+   */
+  static mag(): any;
+
+  /**
+   * @returns {any} An Object `{x,y,z}` of acceleration readings in G
+   * @url http://www.espruino.com/Reference#l_Microbit_accel
+   */
+  static accel(): any;
+
+  /**
+   * **Note:** This function is only available on the [BBC micro:bit](/MicroBit)
+   * board
+   * Write the given value to the accelerometer
+   *
+   * @param {number} addr - Accelerometer address
+   * @param {number} data - Data to write
+   * @url http://www.espruino.com/Reference#l_Microbit_accelWr
+   */
+  static accelWr(addr: number, data: number): void;
+
+  /**
+   * Turn on the accelerometer, and create `Microbit.accel` and `Microbit.gesture`
+   * events.
+   * **Note:** The accelerometer is currently always enabled - this code just
+   * responds to interrupts and reads
+   * @url http://www.espruino.com/Reference#l_Microbit_accelOn
+   */
+  static accelOn(): void;
+
+  /**
+   * Turn off events from the accelerometer (started with `Microbit.accelOn`)
+   * @url http://www.espruino.com/Reference#l_Microbit_accelOff
+   */
+  static accelOff(): void;
+
+  /**
+   * Play a waveform on the Micro:bit's speaker
+   *
+   * @param {any} waveform - An array of data to play (unsigned 8 bit)
+   * @param {any} samplesPerSecond - The number of samples per second for playback default is 4000
+   * @param {any} callback - A function to call when playback is finished
+   * @url http://www.espruino.com/Reference#l_Microbit_play
+   */
+  static play(waveform: any, samplesPerSecond: any, callback: any): void;
+
+  /**
+   * Records sound from the micro:bit's onboard microphone and returns the result
+   *
+   * @param {any} samplesPerSecond - The number of samples per second for recording - 4000 is recommended
+   * @param {any} callback - A function to call with the result of recording (unsigned 8 bit ArrayBuffer)
+   * @param {any} [samples] - [optional] How many samples to record (6000 default)
+   * @url http://www.espruino.com/Reference#l_Microbit_record
+   */
+  static record(samplesPerSecond: any, callback: any, samples?: any): void;
+
+
+}
+
+interface FileConstructor {
+
+}
+
+interface File {
+  /**
+   * Close an open file.
+   * @url http://www.espruino.com/Reference#l_File_close
+   */
+  close(): void;
+
+  /**
+   * Write data to a file.
+   * **Note:** By default this function flushes all changes to the SD card, which
+   * makes it slow (but also safe!). You can use `E.setFlags({unsyncFiles:1})` to
+   * disable this behaviour and really speed up writes - but then you must be sure to
+   * close all files you are writing before power is lost or you will cause damage to
+   * your SD card's filesystem.
+   *
+   * @param {any} buffer - A string containing the bytes to write
+   * @returns {number} the number of bytes written
+   * @url http://www.espruino.com/Reference#l_File_write
+   */
+  write(buffer: any): number;
+
+  /**
+   * Read data in a file in byte size chunks
+   *
+   * @param {number} length - is an integer specifying the number of bytes to read.
+   * @returns {any} A string containing the characters that were read
+   * @url http://www.espruino.com/Reference#l_File_read
+   */
+  read(length: number): any;
+
+  /**
+   * Skip the specified number of bytes forward in the file
+   *
+   * @param {number} nBytes - is a positive integer specifying the number of bytes to skip forwards.
+   * @url http://www.espruino.com/Reference#l_File_skip
+   */
+  skip(nBytes: number): void;
+
+  /**
+   * Seek to a certain position in the file
+   *
+   * @param {number} nBytes - is an integer specifying the number of bytes to skip forwards.
+   * @url http://www.espruino.com/Reference#l_File_seek
+   */
+  seek(nBytes: number): void;
+
+  /**
+   * Pipe this file to a stream (an object with a 'write' method)
+   *
+   * @param {any} destination - The destination file/stream that will receive content from the source.
+   * @param {any} [options]
+   * [optional] An object `{ chunkSize : int=32, end : bool=true, complete : function }`
+   * chunkSize : The amount of data to pipe from source to destination at a time
+   * complete : a function to call when the pipe activity is complete
+   * end : call the 'end' function on the destination when the source is finished
+   * @url http://www.espruino.com/Reference#l_File_pipe
+   */
+  pipe(destination: any, options?: PipeOptions): void
+}
+
+/**
+ * This is the File object - it allows you to stream data to and from files (As
+ * opposed to the `require('fs').readFile(..)` style functions that read an entire
+ * file).
+ * To create a File object, you must type ```var fd =
+ * E.openFile('filepath','mode')``` - see [E.openFile](#l_E_openFile) for more
+ * information.
+ * **Note:** If you want to remove an SD card after you have started using it, you
+ * *must* call `E.unmountSD()` or you may cause damage to the card.
+ * @url http://www.espruino.com/Reference#File
+ */
+declare const File: FileConstructor
+
+/**
+ * Class containing [Puck.js's](http://www.puck-js.com) utility functions.
+ * @url http://www.espruino.com/Reference#Puck
+ */
+declare class Puck {
+  /**
+   * Turn on the magnetometer, take a single reading, and then turn it off again.
+   * If the magnetometer is already on (with `Puck.magOn()`) then the last reading
+   * is returned.
+   * An object of the form `{x,y,z}` is returned containing magnetometer readings.
+   * Due to residual magnetism in the Puck and magnetometer itself, with no magnetic
+   * field the Puck will not return `{x:0,y:0,z:0}`.
+   * Instead, it's up to you to figure out what the 'zero value' is for your Puck in
+   * your location and to then subtract that from the value returned. If you're not
+   * trying to measure the Earth's magnetic field then it's a good idea to just take
+   * a reading at startup and use that.
+   * With the aerial at the top of the board, the `y` reading is vertical, `x` is
+   * horizontal, and `z` is through the board.
+   * Readings are in increments of 0.1 micro Tesla (uT). The Earth's magnetic field
+   * varies from around 25-60 uT, so the reading will vary by 250 to 600 depending on
+   * location.
+   * @returns {any} An Object `{x,y,z}` of magnetometer readings as integers
+   * @url http://www.espruino.com/Reference#l_Puck_mag
+   */
+  static mag(): any;
+
+  /**
+   * Turn on the magnetometer, take a single temperature reading from the MAG3110
+   * chip, and then turn it off again.
+   * (If the magnetometer is already on, this just returns the last reading obtained)
+   * `E.getTemperature()` uses the microcontroller's temperature sensor, but this
+   * uses the magnetometer's.
+   * The reading obtained is an integer (so no decimal places), but the sensitivity
+   * is factory trimmed. to 1&deg;C, however the temperature offset isn't - so
+   * absolute readings may still need calibrating.
+   * @returns {number} Temperature in degrees C
+   * @url http://www.espruino.com/Reference#l_Puck_magTemp
+   */
+  static magTemp(): number;
+
+  /**
+   * Called after `Puck.magOn()` every time magnetometer data is sampled. There is
+   * one argument which is an object of the form `{x,y,z}` containing magnetometer
+   * readings as integers (for more information see `Puck.mag()`).
+   * Check out [the Puck.js page on the
+   * magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
+   * information.
+   * ```
+   * Puck.magOn(10); // 10 Hz
+   * Puck.on('mag', function(e) {
+   *   print(e);
+   * });
+   * // { "x": -874, "y": -332, "z": -1938 }
+   * ```
+   * @param {string} event - The event to listen to.
+   * @param {(xyz: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `xyz` an object of the form `{x,y,z}`
+   * @url http://www.espruino.com/Reference#l_Puck_mag
+   */
+  static on(event: "mag", callback: (xyz: any) => void): void;
+
+  /**
+   * Only on Puck.js v2.0
+   * Called after `Puck.accelOn()` every time accelerometer data is sampled. There is
+   * one argument which is an object of the form `{acc:{x,y,z}, gyro:{x,y,z}}`
+   * containing the data.
+   * ```
+   * Puck.accelOn(12.5); // default 12.5Hz
+   * Puck.on('accel', function(e) {
+   *   print(e);
+   * });
+   * //{
+   * //  "acc": { "x": -525, "y": -112, "z": 8160 },
+   * //  "gyro": { "x": 154, "y": -152, "z": -34 }
+   * //}
+   * ```
+   * The data is as it comes off the accelerometer and is not scaled to 1g. For more
+   * information see `Puck.accel()` or [the Puck.js page on the
+   * magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals).
+   * @param {string} event - The event to listen to.
+   * @param {(e: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `e` an object of the form `{acc:{x,y,z}, gyro:{x,y,z}}`
+   * @url http://www.espruino.com/Reference#l_Puck_accel
+   */
+  static on(event: "accel", callback: (e: any) => void): void;
+
+  /**
+   * Turn the magnetometer on and start periodic sampling. Samples will then cause a
+   * 'mag' event on 'Puck':
+   * ```
+   * Puck.magOn();
+   * Puck.on('mag', function(xyz) {
+   *   console.log(xyz);
+   *   // {x:..., y:..., z:...}
+   * });
+   * // Turn events off with Puck.magOff();
+   * ```
+   * This call will be ignored if the sampling is already on.
+   * If given an argument, the sample rate is set (if not, it's at 0.63 Hz). The
+   * sample rate must be one of the following (resulting in the given power
+   * consumption):
+   * * 80 Hz - 900uA
+   * * 40 Hz - 550uA
+   * * 20 Hz - 275uA
+   * * 10 Hz - 137uA
+   * * 5 Hz - 69uA
+   * * 2.5 Hz - 34uA
+   * * 1.25 Hz - 17uA
+   * * 0.63 Hz - 8uA
+   * * 0.31 Hz - 8uA
+   * * 0.16 Hz - 8uA
+   * * 0.08 Hz - 8uA
+   * When the battery level drops too low while sampling is turned on, the
+   * magnetometer may stop sampling without warning, even while other Puck functions
+   * continue uninterrupted.
+   * Check out [the Puck.js page on the
+   * magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
+   * information.
+   *
+   * @param {number} samplerate - The sample rate in Hz, or undefined
+   * @url http://www.espruino.com/Reference#l_Puck_magOn
+   */
+  static magOn(samplerate: number): void;
+
+  /**
+   * Turn the magnetometer off
+   * @url http://www.espruino.com/Reference#l_Puck_magOff
+   */
+  static magOff(): void;
+
+  /**
+   * Writes a register on the LIS3MDL / MAX3110 Magnetometer. Can be used for
+   * configuring advanced functions.
+   * Check out [the Puck.js page on the
+   * magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
+   * information and links to modules that use this function.
+   *
+   * @param {number} reg
+   * @param {number} data
+   * @url http://www.espruino.com/Reference#l_Puck_magWr
+   */
+  static magWr(reg: number, data: number): void;
+
+  /**
+   * Reads a register from the LIS3MDL / MAX3110 Magnetometer. Can be used for
+   * configuring advanced functions.
+   * Check out [the Puck.js page on the
+   * magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
+   * information and links to modules that use this function.
+   *
+   * @param {number} reg
+   * @returns {number}
+   * @url http://www.espruino.com/Reference#l_Puck_magRd
+   */
+  static magRd(reg: number): number;
+
+  /**
+   * On Puck.js v2.0 this will use the on-board PCT2075TP temperature sensor, but on
+   * Puck.js the less accurate on-chip Temperature sensor is used.
+   * @returns {number} Temperature in degrees C
+   * @url http://www.espruino.com/Reference#l_Puck_getTemperature
+   */
+  static getTemperature(): number;
+
+  /**
+   * Accepted values are:
+   * * 1.6 Hz (no Gyro) - 40uA (2v05 and later firmware)
+   * * 12.5 Hz (with Gyro)- 350uA
+   * * 26 Hz (with Gyro) - 450 uA
+   * * 52 Hz (with Gyro) - 600 uA
+   * * 104 Hz (with Gyro) - 900 uA
+   * * 208 Hz (with Gyro) - 1500 uA
+   * * 416 Hz (with Gyro) (not recommended)
+   * * 833 Hz (with Gyro) (not recommended)
+   * * 1660 Hz (with Gyro) (not recommended)
+   * Once `Puck.accelOn()` is called, the `Puck.accel` event will be called each time
+   * data is received. `Puck.accelOff()` can be called to turn the accelerometer off.
+   * For instance to light the red LED whenever Puck.js is face up:
+   * ```
+   * Puck.on('accel', function(a) {
+   *  digitalWrite(LED1, a.acc.z > 0);
+   * });
+   * Puck.accelOn();
+   * ```
+   * Check out [the Puck.js page on the
+   * accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
+   * information.
+   * **Note:** Puck.js cannot currently read every sample from the
+   * accelerometer at sample rates above 208Hz.
+   *
+   * @param {number} samplerate - The sample rate in Hz, or `undefined` (default is 12.5 Hz)
+   * @url http://www.espruino.com/Reference#l_Puck_accelOn
+   */
+  static accelOn(samplerate: number): void;
+
+  /**
+   * Turn the accelerometer off after it has been turned on by `Puck.accelOn()`.
+   * Check out [the Puck.js page on the
+   * accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
+   * information.
+   * @url http://www.espruino.com/Reference#l_Puck_accelOff
+   */
+  static accelOff(): void;
+
+  /**
+   * Turn on the accelerometer, take a single reading, and then turn it off again.
+   * The values reported are the raw values from the chip. In normal configuration:
+   * * accelerometer: full-scale (32768) is 4g, so you need to divide by 8192 to get
+   *   correctly scaled values
+   * * gyro: full-scale (32768) is 245 dps, so you need to divide by 134 to get
+   *   correctly scaled values
+   * If taking more than one reading, we'd suggest you use `Puck.accelOn()` and the
+   * `Puck.accel` event.
+   * @returns {any} An Object `{acc:{x,y,z}, gyro:{x,y,z}}` of accelerometer/gyro readings
+   * @url http://www.espruino.com/Reference#l_Puck_accel
+   */
+  static accel(): any;
+
+  /**
+   * Writes a register on the LSM6DS3TR-C Accelerometer. Can be used for configuring
+   * advanced functions.
+   * Check out [the Puck.js page on the
+   * accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
+   * information and links to modules that use this function.
+   *
+   * @param {number} reg
+   * @param {number} data
+   * @url http://www.espruino.com/Reference#l_Puck_accelWr
+   */
+  static accelWr(reg: number, data: number): void;
+
+  /**
+   * Reads a register from the LSM6DS3TR-C Accelerometer. Can be used for configuring
+   * advanced functions.
+   * Check out [the Puck.js page on the
+   * accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
+   * information and links to modules that use this function.
+   *
+   * @param {number} reg
+   * @returns {number}
+   * @url http://www.espruino.com/Reference#l_Puck_accelRd
+   */
+  static accelRd(reg: number): number;
+
+  /**
+   * Transmit the given set of IR pulses - data should be an array of pulse times in
+   * milliseconds (as `[on, off, on, off, on, etc]`).
+   * For example `Puck.IR(pulseTimes)` - see http://www.espruino.com/Puck.js+Infrared
+   * for a full example.
+   * You can also attach an external LED to Puck.js, in which case you can just
+   * execute `Puck.IR(pulseTimes, led_cathode, led_anode)`
+   * It is also possible to just supply a single pin for IR transmission with
+   * `Puck.IR(pulseTimes, led_anode)` (on 2v05 and above).
+   *
+   * @param {any} data - An array of pulse lengths, in milliseconds
+   * @param {Pin} [cathode] - [optional] pin to use for IR LED cathode - if not defined, the built-in IR LED is used
+   * @param {Pin} [anode] - [optional] pin to use for IR LED anode - if not defined, the built-in IR LED is used
+   * @url http://www.espruino.com/Reference#l_Puck_IR
+   */
+  static IR(data: any, cathode?: Pin, anode?: Pin): void;
+
+  /**
+   * Capacitive sense - the higher the capacitance, the higher the number returned.
+   * If called without arguments, a value depending on the capacitance of what is
+   * attached to pin D11 will be returned. If you attach a length of wire to D11,
+   * you'll be able to see a higher value returned when your hand is near the wire
+   * than when it is away.
+   * You can also supply pins to use yourself, however if you do this then the TX pin
+   * must be connected to RX pin and sense plate via a roughly 1MOhm resistor.
+   * When not supplying pins, Puck.js uses an internal resistor between D12(tx) and
+   * D11(rx).
+   *
+   * @param {Pin} tx
+   * @param {Pin} rx
+   * @returns {number} Capacitive sense counter
+   * @url http://www.espruino.com/Reference#l_Puck_capSense
+   */
+  static capSense(tx: Pin, rx: Pin): number;
+
+  /**
+   * Return a light value based on the light the red LED is seeing.
+   * **Note:** If called more than 5 times per second, the received light value may
+   * not be accurate.
+   * @returns {number} A light value from 0 to 1
+   * @url http://www.espruino.com/Reference#l_Puck_light
+   */
+  static light(): number;
+
+  /**
+   * **DEPRECATED** - Please use `E.getBattery()` instead.
+   * Return an approximate battery percentage remaining based on a normal CR2032
+   * battery (2.8 - 2.2v).
+   * @returns {number} A percentage between 0 and 100
+   * @url http://www.espruino.com/Reference#l_Puck_getBatteryPercentage
+   */
+  static getBatteryPercentage(): number;
+
+  /**
+   * Run a self-test, and return true for a pass. This checks for shorts between
+   * pins, so your Puck shouldn't have anything connected to it.
+   * **Note:** This self-test auto starts if you hold the button on your Puck down
+   * while inserting the battery, leave it pressed for 3 seconds (while the green LED
+   * is lit) and release it soon after all LEDs turn on. 5 red blinks is a fail, 5
+   * green is a pass.
+   * If the self test fails, it'll set the Puck.js Bluetooth advertising name to
+   * `Puck.js !ERR` where ERR is a 3 letter error code.
+   * @returns {boolean} True if the self-test passed
+   * @url http://www.espruino.com/Reference#l_Puck_selfTest
+   */
+  static selfTest(): boolean;
+
+
+}
+
+/**
+ * Class containing utility functions for the [Jolt.js Smart Bluetooth driver](http://www.espruino.com/Jolt.js)
+ * @url http://www.espruino.com/Reference#Jolt
+ */
+declare class Jolt {
+  /**
+   * `Q0` and `Q1` Qwiic connectors can have their power controlled by a 500mA FET (`Jolt.Q0.fet`) which switches GND.
+   * The `sda` and `scl` pins on this port are also analog inputs - use `analogRead(Jolt.Q0.sda)`/etc
+   * To turn this connector on run `Jolt.Q0.setPower(1)`
+   * @returns {any} An object containing the pins for the Q0 connector on Jolt.js `{sda,scl,fet}`
+   * @url http://www.espruino.com/Reference#l_Jolt_Q0
+   */
+  static Q0: Qwiic;
+
+  /**
+   * `Q0` and `Q1` Qwiic connectors can have their power controlled by a 500mA FET  (`Jolt.Q1.fet`) which switches GND.
+   * The `sda` and `scl` pins on this port are also analog inputs - use `analogRead(Jolt.Q1.sda)`/etc
+   * To turn this connector on run `Jolt.Q1.setPower(1)`
+   * @returns {any} An object containing the pins for the Q1 connector on Jolt.js `{sda,scl,fet}`
+   * @url http://www.espruino.com/Reference#l_Jolt_Q1
+   */
+  static Q1: Qwiic;
+
+  /**
+   * `Q2` and `Q3` have all 4 pins connected to Jolt.js's GPIO (including those usually used for power).
+   * As such only around 8mA of power can be supplied to any connected device.
+   * To use this as a normal Qwiic connector, run `Jolt.Q2.setPower(1)`
+   * @returns {any} An object containing the pins for the Q2 connector on Jolt.js `{sda,scl,gnd,vcc}`
+   * @url http://www.espruino.com/Reference#l_Jolt_Q2
+   */
+  static Q2: Qwiic;
+
+  /**
+   * `Q2` and `Q3` have all 4 pins connected to Jolt.js's GPIO (including those usually used for power).
+   * As such only around 8mA of power can be supplied to any connected device.
+   * To use this as a normal Qwiic connector, run `Jolt.Q3.setPower(1)`
+   * @returns {any} An object containing the pins for the Q3 connector on Jolt.js `{sda,scl,gnd,vcc}`
+   * @url http://www.espruino.com/Reference#l_Jolt_Q3
+   */
+  static Q3: Qwiic;
+
+  /**
+   * Sets the mode of the motor drivers. Jolt.js has two motor drivers,
+   * one (`0`) for outputs H0..H3, and one (`1`) for outputs H4..H7. They
+   * can be controlled independently.
+   * Mode can be:
+   * * `undefined` / `false` / `"off"` - the motor driver is off, all motor driver pins are open circuit (the motor driver still has a ~2.5k pulldown to GND)
+   * * `"auto"` - (default) - if any pin in the set of 4 pins (H0..H3, H4..H7) is set as an output, the driver is turned on. Eg `H0.set()` will
+   * turn the driver on with a high output, `H0.reset()` will pull the output to GND and `H0.read()` (or `H0.mode("input")` to set the state explicitly) is needed to
+   * turn the motor driver off.
+   * * `true` / `"output"` - **[recommended]** driver is set to "Independent bridge" mode. All 4 outputs in the bank are enabled
+   * * `"motor"` - driver is set to "4 pin interface" mode where pins are paired up (H0+H1, H2+H3, etc). If both
+   * in a pair are 0 the output is open circuit (motor coast), if both are 1 both otputs are 0 (motor brake), and
+   * if both are different, those values are on the output:
+   * `output`/`auto` mode:
+   * | H0 | H1 | Out 0 | Out 1 |
+   * |----|----|-------|-------|
+   * | 0  | 0  | Low   | Low   |
+   * | 0  | 1  | Low   | High  |
+   * | 1  | 0  | High  | Low   |
+   * | 1  | 1  | High  | High  |
+   * `motor` mode
+   * | H0 | H1 | Out 0 | Out 1 |
+   * |----|----|-------|-------|
+   * | 0  | 0  | Open  | Open  |
+   * | 0  | 1  | Low   | High  |
+   * | 1  | 0  | High  | Low   |
+   * | 1  | 1  | Low   | Low   |
+   *
+   * @param {number} driver - The number of the motor driver (0 or 1)
+   * @param {any} mode - The mode of the motor driver (see below)
+   * @url http://www.espruino.com/Reference#l_Jolt_setDriverMode
+   */
+  static setDriverMode(driver: number, mode: any): void;
+
+  /**
+   * Run a self-test, and return true for a pass. This checks for shorts between
+   * pins, so your Jolt shouldn't have anything connected to it.
+   * **Note:** This self-test auto starts if you hold the button on your Jolt down
+   * while inserting the battery, leave it pressed for 3 seconds (while the green LED
+   * is lit) and release it soon after all LEDs turn on. 5 red blinks is a fail, 5
+   * green is a pass.
+   * If the self test fails, it'll set the Jolt.js Bluetooth advertising name to
+   * `Jolt.js !ERR` where ERR is a 3 letter error code.
+   * @returns {boolean} True if the self-test passed
+   * @url http://www.espruino.com/Reference#l_Jolt_selfTest
+   */
+  static selfTest(): boolean;
+
+
+}
+
+/**
+ * Class containing utility functions for the [Bangle.js Smart
+ * Watch](http://www.espruino.com/Bangle.js)
+ * @url http://www.espruino.com/Reference#Bangle
+ */
+declare class Bangle {
+  /**
+   * Accelerometer data available with `{x,y,z,diff,mag}` object as a parameter.
+   * * `x` is X axis (left-right) in `g`
+   * * `y` is Y axis (up-down) in `g`
+   * * `z` is Z axis (in-out) in `g`
+   * * `diff` is difference between this and the last reading in `g`
+   * * `mag` is the magnitude of the acceleration in `g`
+   * You can also retrieve the most recent reading with `Bangle.getAccel()`.
+   * @param {string} event - The event to listen to.
+   * @param {(xyz: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `xyz`
+   * @url http://www.espruino.com/Reference#l_Bangle_accel
+   */
+  static on(event: "accel", callback: (xyz: AccelData) => void): void;
+
+  /**
+   * Called whenever a step is detected by Bangle.js's pedometer.
+   * @param {string} event - The event to listen to.
+   * @param {(up: number) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `up` The number of steps since Bangle.js was last reset
+   * @url http://www.espruino.com/Reference#l_Bangle_step
+   */
+  static on(event: "step", callback: (up: number) => void): void;
+
+  /**
+   * See `Bangle.getHealthStatus()` for more information. This is used for health
+   * tracking to allow Bangle.js to record historical exercise data.
+   * @param {string} event - The event to listen to.
+   * @param {(info: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `info` An object containing the last 10 minutes health data
+   * @url http://www.espruino.com/Reference#l_Bangle_health
+   */
+  static on(event: "health", callback: (info: HealthStatus) => void): void;
+
+  /**
+   * Has the watch been moved so that it is face-up, or not face up?
+   * @param {string} event - The event to listen to.
+   * @param {(up: ShortBoolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `up` `true` if face-up
+   * @url http://www.espruino.com/Reference#l_Bangle_faceUp
+   */
+  static on(event: "faceUp", callback: (up: ShortBoolean) => void): void;
+
+  /**
+   * This event happens when the watch has been twisted around it's axis - for
+   * instance as if it was rotated so someone could look at the time.
+   * To tweak when this happens, see the `twist*` options in `Bangle.setOptions()`
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @url http://www.espruino.com/Reference#l_Bangle_twist
+   */
+  static on(event: "twist", callback: () => void): void;
+
+  /**
+   * Is the battery charging or not?
+   * @param {string} event - The event to listen to.
+   * @param {(charging: ShortBoolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `charging` `true` if charging
+   * @url http://www.espruino.com/Reference#l_Bangle_charging
+   */
+  static on(event: "charging", callback: (charging: ShortBoolean) => void): void;
+
+  /**
+   * Magnetometer/Compass data available with `{x,y,z,dx,dy,dz,heading}` object as a
+   * parameter
+   * * `x/y/z` raw x,y,z magnetometer readings
+   * * `dx/dy/dz` readings based on calibration since magnetometer turned on
+   * * `heading` in degrees based on calibrated readings (will be NaN if magnetometer
+   *   hasn't been rotated around 360 degrees).
+   * **Note:** In 2v15 firmware and earlier the heading is inverted (360-heading). There's
+   * a fix in the bootloader which will apply a fix for those headings, but old apps may
+   * still expect an inverted value.
+   * To get this event you must turn the compass on with `Bangle.setCompassPower(1)`.
+   * You can also retrieve the most recent reading with `Bangle.getCompass()`.
+   * @param {string} event - The event to listen to.
+   * @param {(xyz: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `xyz`
+   * @url http://www.espruino.com/Reference#l_Bangle_mag
+   */
+  static on(event: "mag", callback: (xyz: CompassData) => void): void;
+
+  /**
+   * Raw NMEA GPS / u-blox data messages received as a string
+   * To get this event you must turn the GPS on with `Bangle.setGPSPower(1)`.
+   * @param {string} event - The event to listen to.
+   * @param {(nmea: any, dataLoss: ShortBoolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `nmea` A string containing the raw NMEA data from the GPS
+   * * `dataLoss` This is set to true if some lines of GPS data have previously been lost (eg because system was too busy to queue up a GPS-raw event)
+   * @url http://www.espruino.com/Reference#l_Bangle_GPS-raw
+   */
+  static on(event: "GPS-raw", callback: (nmea: string, dataLoss: boolean) => void): void;
+
+  /**
+   * GPS data, as an object. Contains:
+   * ```
+   * { "lat": number,      // Latitude in degrees
+   *   "lon": number,      // Longitude in degrees
+   *   "alt": number,      // altitude in M
+   *   "speed": number,    // Speed in kph
+   *   "course": number,   // Course in degrees
+   *   "time": Date,       // Current Time (or undefined if not known)
+   *   "satellites": 7,    // Number of satellites
+   *   "fix": 1            // NMEA Fix state - 0 is no fix
+   *   "hdop": number,     // Horizontal Dilution of Precision
+   * }
+   * ```
+   * If a value such as `lat` is not known because there is no fix, it'll be `NaN`.
+   * `hdop` is a value from the GPS receiver that gives a rough idea of accuracy of
+   * lat/lon based on the geometry of the satellites in range. Multiply by 5 to get a
+   * value in meters. This is just a ballpark estimation and should not be considered
+   * remotely accurate.
+   * To get this event you must turn the GPS on with `Bangle.setGPSPower(1)`.
+   * @param {string} event - The event to listen to.
+   * @param {(fix: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `fix` An object with fix info (see below)
+   * @url http://www.espruino.com/Reference#l_Bangle_GPS
+   */
+  static on(event: "GPS", callback: (fix: GPSFix) => void): void;
+
+  /**
+   * Heat rate data, as an object. Contains:
+   * ```
+   * { "bpm": number,             // Beats per minute
+   *   "confidence": number,      // 0-100 percentage confidence in the heart rate
+   *   "raw": Uint8Array,         // raw samples from heart rate monitor
+   * }
+   * ```
+   * To get this event you must turn the heart rate monitor on with
+   * `Bangle.setHRMPower(1)`.
+   * @param {string} event - The event to listen to.
+   * @param {(hrm: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `hrm` An object with heart rate info (see below)
+   * @url http://www.espruino.com/Reference#l_Bangle_HRM
+   */
+  static on(event: "HRM", callback: (hrm: { bpm: number, confidence: number, raw: Uint8Array }) => void): void;
+
+  /**
+   * Called when heart rate sensor data is available - see `Bangle.setHRMPower(1)`.
+   * `hrm` is of the form:
+   * ```
+   * { "raw": -1,       // raw value from sensor
+   *   "filt": -1,      // bandpass-filtered raw value from sensor
+   *   "bpm": 88.9,     // last BPM value measured
+   *   "confidence": 0  // confidence in the BPM value
+   * }
+   * ```
+   * @param {string} event - The event to listen to.
+   * @param {(hrm: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `hrm` A object containing instant readings from the heart rate sensor
+   * @url http://www.espruino.com/Reference#l_Bangle_HRM-raw
+   */
+  static on(event: "HRM-raw", callback: (hrm: { raw: number, filt: number, bpm: number, confidence: number }) => void): void;
+
+  /**
+   * Called when an environment sample heart rate sensor data is available (this is the amount of light received by the HRM sensor from the environment when its LED is off). On the newest VC31B based watches this is only 4 bit (0..15).
+   * To get it you need to turn the HRM on with `Bangle.setHRMPower(1)` and also set `Bangle.setOptions({hrmPushEnv:true})`.
+   * It is also possible to poke registers with `Bangle.hrmWr` to increase the poll rate if needed. See https://banglejs.com/apps/?id=flashcount for an example of this.
+   * @param {string} event - The event to listen to.
+   * @param {(env: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `env` An integer containing current environment reading (light level)
+   * @url http://www.espruino.com/Reference#l_Bangle_HRM-env
+   */
+  static on(event: "HRM-env", callback: (env: any) => void): void;
+
+  /**
+   * When `Bangle.setBarometerPower(true)` is called, this event is fired containing
+   * barometer readings.
+   * Same format as `Bangle.getPressure()`
+   * @param {string} event - The event to listen to.
+   * @param {(e: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `e` An object containing `{temperature,pressure,altitude}`
+   * @url http://www.espruino.com/Reference#l_Bangle_pressure
+   */
+  static on(event: "pressure", callback: (e: PressureData) => void): void;
+
+  /**
+   * Has the screen been turned on or off? Can be used to stop tasks that are no
+   * longer useful if nothing is displayed. Also see `Bangle.isLCDOn()`
+   * @param {string} event - The event to listen to.
+   * @param {(on: ShortBoolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `on` `true` if screen is on
+   * @url http://www.espruino.com/Reference#l_Bangle_lcdPower
+   */
+  static on(event: "lcdPower", callback: (on: ShortBoolean) => void): void;
+
+  /**
+   * Has the backlight been turned on or off? Can be used to stop tasks that are no
+   * longer useful if want to see in sun screen only. Also see `Bangle.isBacklightOn()`
+   * @param {string} event - The event to listen to.
+   * @param {(on: ShortBoolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `on` `true` if backlight is on
+   * @url http://www.espruino.com/Reference#l_Bangle_backlight
+   */
+  static on(event: "backlight", callback: (on: ShortBoolean) => void): void;
+
+  /**
+   * Has the screen been locked? Also see `Bangle.isLocked()`
+   * @param {string} event - The event to listen to.
+   * @param {(on: ShortBoolean, reason: string) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `on` `true` if screen is locked, `false` if it is unlocked and touchscreen/buttons will work
+   * * `reason` (2v20 onwards) If known, the reason for locking/unlocking - 'button','js','tap','doubleTap','faceUp','twist','timeout'
+   * @url http://www.espruino.com/Reference#l_Bangle_lock
+   */
+  static on(event: "lock", callback: (on: ShortBoolean, reason: string) => void): void;
+
+  /**
+   * If the watch is tapped, this event contains information on the way it was
+   * tapped.
+   * `dir` reports the side of the watch that was tapped (not the direction it was
+   * tapped in).
+   * ```
+   * {
+   *   dir : "left/right/top/bottom/front/back",
+   *   double : true/false // was this a double-tap?
+   *   x : -2 .. 2, // the axis of the tap
+   *   y : -2 .. 2, // the axis of the tap
+   *   z : -2 .. 2 // the axis of the tap
+   * ```
+   * @param {string} event - The event to listen to.
+   * @param {(data: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `data` `{dir, double, x, y, z}`
+   * @url http://www.espruino.com/Reference#l_Bangle_tap
+   */
+  static on(event: "tap", callback: (data: { dir: "left" | "right" | "top" | "bottom" | "front" | "back", double: boolean, x: TapAxis, y: TapAxis, z: TapAxis }) => void): void;
+
+  /**
+   * Emitted when a 'gesture' (fast movement) is detected
+   * @param {string} event - The event to listen to.
+   * @param {(xyz: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `xyz` An Int8Array of XYZXYZXYZ data
+   * @url http://www.espruino.com/Reference#l_Bangle_gesture
+   */
+  static on(event: "gesture", callback: (xyz: Int8Array) => void): void;
+
+  /**
+   * Emitted when a 'gesture' (fast movement) is detected, and a Tensorflow model is
+   * in storage in the `".tfmodel"` file.
+   * If a `".tfnames"` file is specified as a comma-separated list of names, it will
+   * be used to decode `gesture` from a number into a string.
+   * @param {string} event - The event to listen to.
+   * @param {(gesture: any, weights: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `gesture` The name of the gesture (if '.tfnames' exists, or the index. 'undefined' if not matching
+   * * `weights` An array of floating point values output by the model
+   * @url http://www.espruino.com/Reference#l_Bangle_aiGesture
+   */
+  static on(event: "aiGesture", callback: (gesture: string | undefined, weights: number[]) => void): void;
+
+  /**
+   * Emitted when a swipe on the touchscreen is detected (a movement from
+   * left->right, right->left, down->up or up->down)
+   * Bangle.js 1 is only capable of detecting left/right swipes as it only contains a
+   * 2 zone touchscreen.
+   * @param {string} event - The event to listen to.
+   * @param {(directionLR: number, directionUD: number) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `directionLR` `-1` for left, `1` for right, `0` for up/down
+   * * `directionUD` `-1` for up, `1` for down, `0` for left/right (Bangle.js 2 only)
+   * @url http://www.espruino.com/Reference#l_Bangle_swipe
+   */
+  static on(event: "swipe", callback: SwipeCallback): void;
+
+  /**
+   * Emitted when the touchscreen is pressed
+   * @param {string} event - The event to listen to.
+   * @param {(button: number, xy: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `button` `1` for left, `2` for right
+   * * `xy` Object of form `{x,y,type}` containing touch coordinates (if the device supports full touch). Clipped to 0..175 (LCD pixel coordinates) on firmware 2v13 and later.`type` is only available on Bangle.js 2 and is an integer, either 0 for swift touches or 2 for longer ones.
+   * @url http://www.espruino.com/Reference#l_Bangle_touch
+   */
+  static on(event: "touch", callback: TouchCallback): void;
+
+  /**
+   * Emitted when the touchscreen is dragged or released
+   * The touchscreen extends past the edge of the screen and while `x` and `y`
+   * coordinates are arranged such that they align with the LCD's pixels, if your
+   * finger goes towards the edge of the screen, `x` and `y` could end up larger than
+   * 175 (the screen's maximum pixel coordinates) or smaller than 0. Coordinates from
+   * the `touch` event are clipped.
+   * @param {string} event - The event to listen to.
+   * @param {(event: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `event` Object of form `{x,y,dx,dy,b}` containing touch coordinates, difference in touch coordinates, and an integer `b` containing number of touch points (currently 1 or 0)
+   * @url http://www.espruino.com/Reference#l_Bangle_drag
+   */
+  static on(event: "drag", callback: DragCallback): void;
+
+  /**
+   * Emitted when the touchscreen is dragged for a large enough distance to count as
+   * a gesture.
+   * If Bangle.strokes is defined and populated with data from `Unistroke.new`, the
+   * `event` argument will also contain a `stroke` field containing the most closely
+   * matching stroke name.
+   * For example:
+   * ```
+   * Bangle.strokes = {
+   *   up : Unistroke.new(new Uint8Array([57, 151, ... 158, 137])),
+   *   alpha : Unistroke.new(new Uint8Array([161, 55, ... 159, 161])),
+   * };
+   * Bangle.on('stroke',o=>{
+   *   print(o.stroke);
+   *   g.clear(1).drawPoly(o.xy);
+   * });
+   * // Might print something like
+   * {
+   *   "xy": new Uint8Array([149, 50, ... 107, 136]),
+   *   "stroke": "alpha"
+   * }
+   * ```
+   * @param {string} event - The event to listen to.
+   * @param {(event: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
+   * * `event` Object of form `{xy:Uint8Array([x1,y1,x2,y2...])}` containing touch coordinates
+   * @url http://www.espruino.com/Reference#l_Bangle_stroke
+   */
+  static on(event: "stroke", callback: (event: { xy: Uint8Array, stroke?: string }) => void): void;
+
+  /**
+   * Emitted at midnight (at the point the `day` health info is reset to 0).
+   * Can be used for housekeeping tasks that don't want to be run during the day.
+   * @param {string} event - The event to listen to.
+   * @param {() => void} callback - A function that is executed when the event occurs.
+   * @url http://www.espruino.com/Reference#l_Bangle_midnight
+   */
+  static on(event: "midnight", callback: () => void): void;
+
+  /**
+   * This function can be used to turn Bangle.js's LCD backlight off or on.
+   * This function resets the Bangle's 'activity timer' (like pressing a button or
+   * the screen would) so after a time period of inactivity set by
+   * `Bangle.setOptions({backlightTimeout: X});` the backlight will turn off.
+   * If you want to keep the backlight on permanently (until apps are changed) you can
+   * do:
+   * ```
+   * Bangle.setOptions({backlightTimeout: 0}) // turn off the timeout
+   * Bangle.setBacklight(1); // keep screen on
+   * ```
+   * Of course, the backlight depends on `Bangle.setLCDPower` too, so any lcdPowerTimeout/setLCDTimeout will
+   * also turn the backlight off. The use case is when you require the backlight timeout
+   * to be shorter than the power timeout.
+   *
+   * @param {boolean} isOn - True if the LCD backlight should be on, false if not
+   * @url http://www.espruino.com/Reference#l_Bangle_setBacklight
+   */
+  static setBacklight(isOn: ShortBoolean): void;
+
+  /**
+   * This function can be used to turn Bangle.js's LCD off or on.
+   * This function resets the Bangle's 'activity timer' (like pressing a button or
+   * the screen would) so after a time period of inactivity set by
+   * `Bangle.setLCDTimeout` the screen will turn off.
+   * If you want to keep the screen on permanently (until apps are changed) you can
+   * do:
+   * ```
+   * Bangle.setLCDTimeout(0); // turn off the timeout
+   * Bangle.setLCDPower(1); // keep screen on
+   * ```
+   * **When on full, the LCD draws roughly 40mA.** You can adjust When brightness
+   * using `Bangle.setLCDBrightness`.
+   *
+   * @param {boolean} isOn - True if the LCD should be on, false if not
+   * @url http://www.espruino.com/Reference#l_Bangle_setLCDPower
+   */
+  static setLCDPower(isOn: ShortBoolean): void;
+
+  /**
+   * This function can be used to adjust the brightness of Bangle.js's display, and
+   * hence prolong its battery life.
+   * Due to hardware design constraints on Bangle.js 1, software PWM has to be used which means that
+   * the display may flicker slightly when Bluetooth is active and the display is not
+   * at full power.
+   * **Power consumption**
+   * * 0 = 7mA
+   * * 0.1 = 12mA
+   * * 0.2 = 18mA
+   * * 0.5 = 28mA
+   * * 0.9 = 40mA (switching overhead)
+   * * 1 = 40mA
+   * In 2v21 and earlier, this function would erroneously turn the LCD backlight on. 2v22 and later
+   * fix this, and if you want the backlight on your should use `Bangle.setLCDPowerBacklight()`
+   *
+   * @param {number} brightness - The brightness of Bangle.js's display - from 0(off) to 1(on full)
+   * @url http://www.espruino.com/Reference#l_Bangle_setLCDBrightness
+   */
+  static setLCDBrightness(brightness: number): void;
+
+  /**
+   * This function can be used to change the way graphics is handled on Bangle.js.
+   * Available options for `Bangle.setLCDMode` are:
+   * * `Bangle.setLCDMode()` or `Bangle.setLCDMode("direct")` (the default) - The
+   *   drawable area is 240x240 16 bit. Unbuffered, so draw calls take effect
+   *   immediately. Terminal and vertical scrolling work (horizontal scrolling
+   *   doesn't).
+   * * `Bangle.setLCDMode("doublebuffered")` - The drawable area is 240x160 16 bit,
+   *   terminal and scrolling will not work. `g.flip()` must be called for draw
+   *   operations to take effect.
+   * * `Bangle.setLCDMode("120x120")` - The drawable area is 120x120 8 bit,
+   *   `g.getPixel`, terminal, and full scrolling work. Uses an offscreen buffer
+   *   stored on Bangle.js, `g.flip()` must be called for draw operations to take
+   *   effect.
+   * * `Bangle.setLCDMode("80x80")` - The drawable area is 80x80 8 bit, `g.getPixel`,
+   *   terminal, and full scrolling work. Uses an offscreen buffer stored on
+   *   Bangle.js, `g.flip()` must be called for draw operations to take effect.
+   * You can also call `Bangle.setLCDMode()` to return to normal, unbuffered
+   * `"direct"` mode.
+   *
+   * @param {any} mode - The LCD mode (See below)
+   * @url http://www.espruino.com/Reference#l_Bangle_setLCDMode
+   */
+  static setLCDMode(mode?: LCDMode): void;
+
+  /**
+   * The current LCD mode.
+   * See `Bangle.setLCDMode` for examples.
+   * @returns {any} The LCD mode as a String
+   * @url http://www.espruino.com/Reference#l_Bangle_getLCDMode
+   */
+  static getLCDMode(): LCDMode;
+
+  /**
+   * This can be used to move the displayed memory area up or down temporarily. It's
+   * used for displaying notifications while keeping the main display contents
+   * intact.
+   *
+   * @param {number} y - The amount of pixels to shift the LCD up or down
+   * @url http://www.espruino.com/Reference#l_Bangle_setLCDOffset
+   */
+  static setLCDOffset(y: number): void;
+
+  /**
+   * Overlay an image or graphics instance on top of the contents of the graphics buffer.
+   * This only works on Bangle.js 2 because Bangle.js 1 doesn't have an offscreen buffer accessible from the CPU.
+   * ```
+   * // display an alarm clock icon on the screen
+   * var img = require("heatshrink").decompress(atob(`lss4UBvvv///ovBlMyqoADv/VAwlV//1qtfAQX/BINXDoPVq/9DAP
+   * /AYIKDrWq0oREAYPW1QAB1IWCBQXaBQWq04WCAQP6BQeqA4P1AQPq1WggEK1WrBAIkBBQJsCBYO///fBQOoPAcqCwP3BQnwgECCwP9
+   * GwIKCngWC14sB7QKCh4CBCwN/64KDgfACwWn6vWGwYsBCwOputWJgYsCgGqytVBQYsCLYOlqtqwAsFEINVrR4BFgghBBQosDEINWIQ
+   * YsDEIQ3DFgYhCG4msSYeVFgnrFhMvOAgsEkE/FhEggYWCFgIhDkEACwQKBEIYKBCwSGFBQJxCQwYhBBQTKDqohCBQhCCEIJlDXwrKE
+   * BQoWHBQdaCwuqJoI4CCwgKECwJ9CJgIKDq+qBYUq1WtBQf+BYIAC3/VBQX/tQKDz/9BQY5BAAVV/4WCBQJcBKwVf+oHBv4wCAAYhB`));
+   * Bangle.setLCDOverlay(img,66,66, {id: "myOverlay", remove: () => print("Removed")});
+   * ```
+   * Or use a `Graphics` instance:
+   * ```
+   * var ovr = Graphics.createArrayBuffer(100,100,2,{msb:true});
+   * ovr.transparent = 0; // (optional) set a transparent color
+   * ovr.palette = new Uint16Array([0,0,g.toColor("#F00"),g.toColor("#FFF")]); // (optional) set a color palette
+   * ovr.setColor(1).fillRect({x:0,y:0,w:99,h:99,r:8});
+   * ovr.setColor(3).fillRect({x:2,y:2,w:95,h:95,r:7});
+   * ovr.setColor(2).setFont("Vector:30").setFontAlign(0,0).drawString("Hi",50,50);
+   * Bangle.setLCDOverlay(ovr,38,38, {id: "myOverlay", remove: () => print("Removed")});
+   * ```
+   * To remove an overlay, simply call:
+   * ```
+   * Bangle.setLCDOverlay(undefined, {id: "myOverlay"});
+   * ```
+   * Before 2v22 the `options` object isn't parsed, and as a result
+   * the remove callback won't be called, and `Bangle.setLCDOverlay(undefined)` will
+   * remove *any* active overlay.
+   * The `remove` callback is called when the current overlay is removed or replaced with
+   * another, but *not* if setLCDOverlay is called again with an image and the same ID.
+   *
+   * @param {any} img - An image, or undefined to clear
+   * @param {any} x - The X offset the graphics instance should be overlaid on the screen with
+   * @param {number} y - The Y offset the graphics instance should be overlaid on the screen with
+   * @param {any} options - [Optional] object `{remove:fn, id:"str"}`
+   * @url http://www.espruino.com/Reference#l_Bangle_setLCDOverlay
+   */
+  static setLCDOverlay(img: any, x: number, y: number): void;
+  static setLCDOverlay(): void;
+  static setLCDOverlay(img: any, x: number, y: number, options: { id : string, remove: () => void }): void;
+  static setLCDOverlay(img: any, options: { id : string }): void;
+
+  /**
+   * This function can be used to turn Bangle.js's LCD power saving on or off.
+   * With power saving off, the display will remain in the state you set it with
+   * `Bangle.setLCDPower`.
+   * With power saving on, the display will turn on if a button is pressed, the watch
+   * is turned face up, or the screen is updated (see `Bangle.setOptions` for
+   * configuration). It'll turn off automatically after the given timeout.
+   * **Note:** This function also sets the Backlight and Lock timeout (the time at
+   * which the touchscreen/buttons start being ignored). To set both separately, use
+   * `Bangle.setOptions`
+   *
+   * @param {number} isOn - The timeout of the display in seconds, or `0`/`undefined` to turn power saving off. Default is 10 seconds.
+   * @url http://www.espruino.com/Reference#l_Bangle_setLCDTimeout
+   */
+  static setLCDTimeout(isOn: number): void;
+
+  /**
+   * Set how often the watch should poll its sensors (accel/hr/mag) for new data and kick the
+   * Watchdog timer. It isn't recommended that you make this interval much larger
+   * than 1000ms, but values up to 4000ms are allowed.
+   * Calling this will set `Bangle.setOptions({powerSave: false})` - disabling the
+   * dynamic adjustment of poll interval to save battery power when Bangle.js is
+   * stationary.
+   *
+   * @param {number} interval - Polling interval in milliseconds (Default is 80ms - 12.5Hz to match accelerometer)
+   * @url http://www.espruino.com/Reference#l_Bangle_setPollInterval
+   */
+  static setPollInterval(interval: number): void;
+
+  /**
+   * Set internal options used for gestures, etc...
+   * * `wakeOnBTN1` should the LCD turn on when BTN1 is pressed? default = `true`
+   * * `wakeOnBTN2` (Bangle.js 1) should the LCD turn on when BTN2 is pressed?
+   *   default = `true`
+   * * `wakeOnBTN3` (Bangle.js 1) should the LCD turn on when BTN3 is pressed?
+   *   default = `true`
+   * * `wakeOnFaceUp` should the LCD turn on when the watch is turned face up?
+   *   default = `false`
+   * * `wakeOnTouch` should the LCD turn on when the touchscreen is pressed? On Bangle.js 1 this
+   * is a physical press on the touchscreen, on Bangle.js 2 we have to use the accelerometer as
+   * the touchscreen cannot be left powered without running the battery down. default = `false`
+   * * `wakeOnDoubleTap` (2v20 onwards) should the LCD turn on when the watch is double-tapped on the screen?
+   * This uses the accelerometer, not the touchscreen itself. default = `false`
+   * * `wakeOnTwist` should the LCD turn on when the watch is twisted? default =
+   *   `true`
+   * * `twistThreshold` How much acceleration to register a twist of the watch strap?
+   *   Can be negative for opposite direction. default = `800`
+   * * `twistMaxY` Maximum acceleration in Y to trigger a twist (low Y means watch is
+   *   facing the right way up). default = `-800`
+   * * `twistTimeout` How little time (in ms) must a twist take from low->high
+   *   acceleration? default = `1000`
+   * * `gestureStartThresh` how big a difference before we consider a gesture
+   *   started? default = `sqr(800)`
+   * * `gestureEndThresh` how small a difference before we consider a gesture ended?
+   *   default = `sqr(2000)`
+   * * `gestureInactiveCount` how many samples do we keep after a gesture has ended?
+   *   default = `4`
+   * * `gestureMinLength` how many samples must a gesture have before we notify about
+   *   it? default = `10`
+   * * `powerSave` after a minute of not being moved, Bangle.js will change the
+   *    accelerometer poll interval down to 800ms (10x accelerometer samples). On
+   *    movement it'll be raised to the default 80ms. If `Bangle.setPollInterval` is
+   *    used this is disabled, and for it to work the poll interval must be either
+   *    80ms or 800ms. default = `true`. Setting `powerSave:false` will disable this
+   *    automatic power saving, but will **not** change the poll interval from its
+   *    current value. If you desire a specific interval (e.g. the default 80ms) you
+   *    must set it manually with `Bangle.setPollInterval(80)` after setting
+   *    `powerSave:false`.
+   * * `lowResistanceFix` (Bangle.js 2, 2v22+) In the very rare case that your watch button
+   * gets damaged such that it has a low resistance and always stays on, putting the watch
+   * into a boot loop, setting this flag may improve matters (by forcing the input low
+   * before reading and disabling the hardware watch on BTN1).
+   * * `lockTimeout` how many milliseconds before the screen locks
+   * * `lcdPowerTimeout` how many milliseconds before the screen turns off
+   * * `backlightTimeout` how many milliseconds before the screen's backlight turns
+   *   off
+   * * `btnLoadTimeout` how many milliseconds does the home button have to be pressed
+   * for before the clock is reloaded? 1500ms default, or 0 means never.
+   * * `manualWatchdog` if set, this disables automatic kicking of the watchdog timer
+   * from the interrupt (when the button isn't held). You will then have to manually
+   * call `E.kickWatchdog()` from your code or the watch will reset after ~5 seconds.
+   * * `hrmPollInterval` set the requested poll interval (in milliseconds) for the
+   *   heart rate monitor. On Bangle.js 2 only 10,20,40,80,160,200 ms are supported,
+   *   and polling rate may not be exact. The algorithm's filtering is tuned for
+   *   20-40ms poll intervals, so higher/lower intervals may effect the reliability
+   *   of the BPM reading. You must call this *before* `Bangle.setHRMPower` - calling
+   *   when the HRM is already on will not affect the poll rate.
+   * * `hrmSportMode` - on the newest Bangle.js 2 builds with with the proprietary
+   *   heart rate algorithm, this is the sport mode passed to the algorithm. See `libs/misc/vc31_binary/algo.h`
+   *   for more info. -1 = auto, 0 = normal (default), 1 = running, 2 = ...
+   * * `hrmGreenAdjust` - (Bangle.js 2, 2v19+) if false (default is true) the green LED intensity won't be adjusted to get the HRM sensor 'exposure' correct. This is reset when the HRM is initialised with `Bangle.setHRMPower`.
+   * * `hrmWearDetect` - (Bangle.js 2, 2v19+) if false (default is true) HRM readings won't be turned off if the watch isn't on your arm (based on HRM proximity sensor). This is reset when the HRM is initialised with `Bangle.setHRMPower`.
+   * * `hrmPushEnv` - (Bangle.js 2, 2v19+) if true (default is false) HRM environment readings will be produced as `Bangle.on(`HRM-env`, ...)` events. This is reset when the HRM is initialised with `Bangle.setHRMPower`.
+   * * `seaLevelPressure` (Bangle.js 2) Default 1013.25 millibars - this is used when calculating altitude from pressure sensor values from `Bangle.getPressure`/`pressure` events.
+   * * `lcdBufferPtr` (Bangle.js 2 2v21+) Return a pointer to the first pixel of the 3 bit graphics buffer used by Bangle.js for the screen (stride = 178 bytes)
+   * * `lcdDoubleRefresh` (Bangle.js 2 2v22+) If enabled, pulses EXTCOMIN twice per poll interval (avoids off-axis flicker)
+   * Where accelerations are used they are in internal units, where `8192 = 1g`
+   *
+   * @param {any} options
+   * @url http://www.espruino.com/Reference#l_Bangle_setOptions
+   */
+  static setOptions(options: { [key in keyof BangleOptions]?: BangleOptions<ShortBoolean>[key] }): void;
+
+  /**
+   * Return the current state of options as set by `Bangle.setOptions`
+   * @returns {any} The current state of all options
+   * @url http://www.espruino.com/Reference#l_Bangle_getOptions
+   */
+  static getOptions(): BangleOptions;
+
+  /**
+   * Also see the `Bangle.lcdPower` event
+   * You can use `Bangle.setLCDPower` to turn on the LCD (on Bangle.js 2 the LCD is normally on, and draws very little power so can be left on).
+   * @returns {boolean} Is the display on or not?
+   * @url http://www.espruino.com/Reference#l_Bangle_isLCDOn
+   */
+  static isLCDOn(): boolean;
+
+  /**
+   * Also see the `Bangle.backlight` event
+   * You can use `Bangle.setLCDPowerBacklight` to turn on the LCD backlight.
+   * @returns {boolean} Is the backlight on or not?
+   * @url http://www.espruino.com/Reference#l_Bangle_isBacklightOn
+   */
+  static isBacklightOn(): boolean;
+
+  /**
+   * This function can be used to lock or unlock Bangle.js (e.g. whether buttons and
+   * touchscreen work or not)
+   *
+   * @param {boolean} isLocked - `true` if the Bangle is locked (no user input allowed)
+   * @url http://www.espruino.com/Reference#l_Bangle_setLocked
+   */
+  static setLocked(isLocked: ShortBoolean): void;
+
+  /**
+   * Also see the `Bangle.lock` event
+   * @returns {boolean} Is the screen locked or not?
+   * @url http://www.espruino.com/Reference#l_Bangle_isLocked
+   */
+  static isLocked(): boolean;
+
+  /**
+   * @returns {boolean} Is the battery charging or not?
+   * @url http://www.espruino.com/Reference#l_Bangle_isCharging
+   */
+  static isCharging(): boolean;
+
+  /**
+   * Writes a command directly to the ST7735 LCD controller
+   *
+   * @param {number} cmd
+   * @param {any} data
+   * @url http://www.espruino.com/Reference#l_Bangle_lcdWr
+   */
+  static lcdWr(cmd: number, data: any): void;
+
+  /**
+   * Set the power to the Heart rate monitor
+   * When on, data is output via the `HRM` event on `Bangle`:
+   * ```
+   * Bangle.setHRMPower(true, "myapp");
+   * Bangle.on('HRM',print);
+   * ```
+   * *When on, the Heart rate monitor draws roughly 5mA*
+   *
+   * @param {boolean} isOn - True if the heart rate monitor should be on, false if not
+   * @param {any} appID - A string with the app's name in, used to ensure one app can't turn off something another app is using
+   * @returns {boolean} Is HRM on?
+   * @url http://www.espruino.com/Reference#l_Bangle_setHRMPower
+   */
+  static setHRMPower(isOn: ShortBoolean, appID: string): boolean;
+
+  /**
+   * Is the Heart rate monitor powered?
+   * Set power with `Bangle.setHRMPower(...);`
+   * @returns {boolean} Is HRM on?
+   * @url http://www.espruino.com/Reference#l_Bangle_isHRMOn
+   */
+  static isHRMOn(): boolean;
+
+  /**
+   * Set the power to the GPS.
+   * When on, data is output via the `GPS` event on `Bangle`:
+   * ```
+   * Bangle.setGPSPower(true, "myapp");
+   * Bangle.on('GPS',print);
+   * ```
+   * *When on, the GPS draws roughly 20mA*
+   *
+   * @param {boolean} isOn - True if the GPS should be on, false if not
+   * @param {any} appID - A string with the app's name in, used to ensure one app can't turn off something another app is using
+   * @returns {boolean} Is the GPS on?
+   * @url http://www.espruino.com/Reference#l_Bangle_setGPSPower
+   */
+  static setGPSPower(isOn: ShortBoolean, appID: string): boolean;
+
+  /**
+   * Is the GPS powered?
+   * Set power with `Bangle.setGPSPower(...);`
+   * @returns {boolean} Is the GPS on?
+   * @url http://www.espruino.com/Reference#l_Bangle_isGPSOn
+   */
+  static isGPSOn(): boolean;
+
+  /**
+   * Get the last available GPS fix info (or `undefined` if GPS is off).
+   * The fix info received is the same as you'd get from the `Bangle.GPS` event.
+   * @returns {any} A GPS fix object with `{lat,lon,...}`
+   * @url http://www.espruino.com/Reference#l_Bangle_getGPSFix
+   */
+  static getGPSFix(): GPSFix;
+
+  /**
+   * Set the power to the Compass
+   * When on, data is output via the `mag` event on `Bangle`:
+   * ```
+   * Bangle.setCompassPower(true, "myapp");
+   * Bangle.on('mag',print);
+   * ```
+   * *When on, the compass draws roughly 2mA*
+   *
+   * @param {boolean} isOn - True if the Compass should be on, false if not
+   * @param {any} appID - A string with the app's name in, used to ensure one app can't turn off something another app is using
+   * @returns {boolean} Is the Compass on?
+   * @url http://www.espruino.com/Reference#l_Bangle_setCompassPower
+   */
+  static setCompassPower(isOn: ShortBoolean, appID: string): boolean;
+
+  /**
+   * Is the compass powered?
+   * Set power with `Bangle.setCompassPower(...);`
+   * @returns {boolean} Is the Compass on?
+   * @url http://www.espruino.com/Reference#l_Bangle_isCompassOn
+   */
+  static isCompassOn(): boolean;
+
+  /**
+   * Resets the compass minimum/maximum values. Can be used if the compass isn't
+   * providing a reliable heading any more.
+   *
+   * @url http://www.espruino.com/Reference#l_Bangle_resetCompass
+   */
+  static resetCompass(): void;
+
+  /**
+   * Set the power to the barometer IC. Once enabled, `Bangle.pressure` events are
+   * fired each time a new barometer reading is available.
+   * When on, the barometer draws roughly 50uA
+   *
+   * @param {boolean} isOn - True if the barometer IC should be on, false if not
+   * @param {any} appID - A string with the app's name in, used to ensure one app can't turn off something another app is using
+   * @returns {boolean} Is the Barometer on?
+   * @url http://www.espruino.com/Reference#l_Bangle_setBarometerPower
+   */
+  static setBarometerPower(isOn: ShortBoolean, appID: string): boolean;
+
+  /**
+   * Is the Barometer powered?
+   * Set power with `Bangle.setBarometerPower(...);`
+   * @returns {boolean} Is the Barometer on?
+   * @url http://www.espruino.com/Reference#l_Bangle_isBarometerOn
+   */
+  static isBarometerOn(): boolean;
+
+  /**
+   * Returns the current amount of steps recorded by the step counter
+   * @returns {number} The number of steps recorded by the step counter
+   * @url http://www.espruino.com/Reference#l_Bangle_getStepCount
+   */
+  static getStepCount(): number;
+
+  /**
+   * Sets the current value of the step counter
+   *
+   * @param {number} count - The value with which to reload the step counter
+   * @url http://www.espruino.com/Reference#l_Bangle_setStepCount
+   */
+  static setStepCount(count: number): void;
+
+  /**
+   * Get the most recent Magnetometer/Compass reading. Data is in the same format as
+   * the `Bangle.on('mag',` event.
+   * Returns an `{x,y,z,dx,dy,dz,heading}` object
+   * * `x/y/z` raw x,y,z magnetometer readings
+   * * `dx/dy/dz` readings based on calibration since magnetometer turned on
+   * * `heading` in degrees based on calibrated readings (will be NaN if magnetometer
+   *   hasn't been rotated around 360 degrees).
+   * **Note:** In 2v15 firmware and earlier the heading is inverted (360-heading). There's
+   * a fix in the bootloader which will apply a fix for those headings, but old apps may
+   * still expect an inverted value.
+   * To get this event you must turn the compass on with `Bangle.setCompassPower(1)`.
+   * @returns {any} An object containing magnetometer readings (as below)
+   * @url http://www.espruino.com/Reference#l_Bangle_getCompass
+   */
+  static getCompass(): CompassData;
+
+  /**
+   * Get the most recent accelerometer reading. Data is in the same format as the
+   * `Bangle.on('accel',` event.
+   * * `x` is X axis (left-right) in `g`
+   * * `y` is Y axis (up-down) in `g`
+   * * `z` is Z axis (in-out) in `g`
+   * * `diff` is difference between this and the last reading in `g` (calculated by
+   *   comparing vectors, not magnitudes)
+   * * `td` is the elapsed
+   * * `mag` is the magnitude of the acceleration in `g`
+   * @returns {any} An object containing accelerometer readings (as below)
+   * @url http://www.espruino.com/Reference#l_Bangle_getAccel
+   */
+  static getAccel(): AccelData & { td: number };
+
+  /**
+   * `range` is one of:
+   * * `undefined` or `'10min'` - health data so far in this 10 minute block (eg. 9:00.00 - 9:09.59)
+   * * `'last'` - health data during the last 10 minute block
+   * * `'day'` - the health data so far for the day
+   * `getHealthStatus` returns an object containing:
+   * * `movement` is the 32 bit sum of all `acc.diff` readings since power on (and
+   *   rolls over). It is the difference in accelerometer values as `g*8192`
+   * * `steps` is the number of steps during this period
+   * * `bpm` the best BPM reading from HRM sensor during this period
+   * * `bpmConfidence` best BPM confidence (0-100%) during this period
+   * * `bpmMin`/`bpmMax` (2v26+) the minimum/maximum BPM reading from HRM sensor during this period (where confidence is over 90)
+   * * `activity` (2v26+) the currently assumed activity, one of "UNKNOWN","NOT_WORN","WALKING","EXERCISE"
+   *
+   * @param {any} range - What time period to return data for, see below:
+   * @returns {any} Returns an object containing various health info
+   * @url http://www.espruino.com/Reference#l_Bangle_getHealthStatus
+   */
+  static getHealthStatus(range?: "current" | "last" | "day"): HealthStatus;
+
+  /**
+   * Reads debug info. Exposes the current values of `accHistoryIdx`, `accGestureCount`, `accIdleCount`, `pollInterval` and others.
+   * Please see the declaration of this function for more information (click the `==>` link above [this description](http://www.espruino.com/Reference#l_Bangle_dbg))
+   * @returns {any}
+   * @url http://www.espruino.com/Reference#l_Bangle_dbg
+   */
+  static dbg(): any;
+
+  /**
+   * Writes a register on the touch controller
+   *
+   * @param {number} reg
+   * @param {number} data
+   * @url http://www.espruino.com/Reference#l_Bangle_touchWr
+   */
+  static touchWr(reg: number, data: number): void;
+
+  /**
+   * Reads a register from the touch controller. See https://github.com/espruino/Espruino/issues/2146#issuecomment-2554296721 for a list
+   * of registers. When the touchscreen is off (eg the Bangle is locked) then reading from any register will return `255` (`0xFF`) -
+   * so ensure the Bangle is unlocked with `Bangle.setLocked(false)` before trying to read or write.
+   * For example `print(Bangle.touchRd(0xa7).toString(16))` returns the `ChipID` register, which is `0xB4` (CST816S) on older Bangles or `0xB6` (CST816D) on newer ones.
+   * **Note:** On Espruino 2v06 and before this function only returns a number (`cnt` is ignored).
+   *
+   * @param {number} reg - Register number to read
+   * @param {number} cnt - If specified, returns an array of the given length (max 128). If not (or 0) it returns a number
+   * @returns {any}
+   * @url http://www.espruino.com/Reference#l_Bangle_touchRd
+   */
+  static touchRd(reg: number, cnt?: 0): number;
+  static touchRd(reg: number, cnt: number): number[];
+
+  /**
+   * Writes a register on the accelerometer
+   *
+   * @param {number} reg - Register number to write
+   * @param {number} data - An integer value to write to the register
+   * @url http://www.espruino.com/Reference#l_Bangle_accelWr
+   */
+  static accelWr(reg: number, data: number): void;
+
+  /**
+   * Reads a register from the accelerometer
+   * **Note:** On Espruino 2v06 and before this function only returns a number (`cnt`
+   * is ignored).
+   *
+   * @param {number} reg
+   * @param {number} cnt - If specified, returns an array of the given length (max 128). If not (or 0) it returns a number
+   * @returns {any}
+   * @url http://www.espruino.com/Reference#l_Bangle_accelRd
+   */
+  static accelRd(reg: number, cnt?: 0): number;
+  static accelRd(reg: number, cnt: number): number[];
+
+  /**
+   * Writes a register on the barometer IC
+   *
+   * @param {number} reg
+   * @param {number} data
+   * @url http://www.espruino.com/Reference#l_Bangle_barometerWr
+   */
+  static barometerWr(reg: number, data: number): void;
+
+  /**
+   * Reads a register from the barometer IC
+   *
+   * @param {number} reg
+   * @param {number} cnt - If specified, returns an array of the given length (max 128). If not (or 0) it returns a number
+   * @returns {any}
+   * @url http://www.espruino.com/Reference#l_Bangle_barometerRd
+   */
+  static barometerRd(reg: number, cnt?: 0): number;
+  static barometerRd(reg: number, cnt: number): number[];
+
+  /**
+   * Writes a register on the Magnetometer/Compass
+   *
+   * @param {number} reg
+   * @param {number} data
+   * @url http://www.espruino.com/Reference#l_Bangle_compassWr
+   */
+  static compassWr(reg: number, data: number): void;
+
+  /**
+   * Read a register on the Magnetometer/Compass
+   *
+   * @param {number} reg
+   * @param {number} cnt - If specified, returns an array of the given length (max 128). If not (or 0) it returns a number
+   * @returns {any}
+   * @url http://www.espruino.com/Reference#l_Bangle_compassRd
+   */
+  static compassRd(reg: number, cnt?: 0): number;
+  static compassRd(reg: number, cnt: number): number[];
+
+  /**
+   * Writes a register on the Heart rate monitor
+   *
+   * @param {number} reg
+   * @param {number} data
+   * @url http://www.espruino.com/Reference#l_Bangle_hrmWr
+   */
+  static hrmWr(reg: number, data: number): void;
+
+  /**
+   * Read a register on the Heart rate monitor
+   *
+   * @param {number} reg
+   * @param {number} cnt - If specified, returns an array of the given length (max 128). If not (or 0) it returns a number
+   * @returns {any}
+   * @url http://www.espruino.com/Reference#l_Bangle_hrmRd
+   */
+  static hrmRd(reg: number, cnt?: 0): number;
+  static hrmRd(reg: number, cnt: number): number[];
+
+  /**
+   * Changes a pin state on the IO expander
+   *
+   * @param {number} mask
+   * @param {number} isOn
+   * @url http://www.espruino.com/Reference#l_Bangle_ioWr
+   */
+  static ioWr(mask: number, isOn: number): void;
+
+  /**
+   * Read temperature, pressure and altitude data. A promise is returned which will
+   * be resolved with `{temperature (C), pressure (hPa), altitude (meters)}`.
+   * If the Barometer has been turned on with `Bangle.setBarometerPower` then this
+   * will return with the *next* reading as of 2v21 (or the existing reading on 2v20 or earlier). If the Barometer is off,
+   * conversions take between 500-750ms.
+   * Altitude assumes a sea-level pressure of 1013.25 hPa, but this cal be adjusted with
+   * a call to `Bangle.setOptions({ seaLevelPressure : 1013.25 })` - the Bangle.js Settings
+   * app contains a tool to adjust it.
+   * If there's no pressure device (for example, the emulator),
+   * this returns `undefined`, rather than a Promise.
+   * ```
+   * Bangle.getPressure().then(d=>{
+   *   console.log(d);
+   *   // {temperature, pressure, altitude}
+   * });
+   * ```
+   * @returns {any} A promise that will be resolved with `{temperature, pressure, altitude}`
+   * @url http://www.espruino.com/Reference#l_Bangle_getPressure
+   */
+  static getPressure(): Promise<PressureData> | undefined;
+
+  /**
+   * Perform a Spherical [Web Mercator
+   * projection](https://en.wikipedia.org/wiki/Web_Mercator_projection) of latitude
+   * and longitude into `x` and `y` coordinates, which are roughly equivalent to
+   * meters from `{lat:0,lon:0}`.
+   * This is the formula used for most online mapping and is a good way to compare
+   * GPS coordinates to work out the distance between them.
+   *
+   * @param {any} latlong - `{lat:..., lon:...}`
+   * @returns {any} {x:..., y:...}
+   * @url http://www.espruino.com/Reference#l_Bangle_project
+   */
+  static project(latlong: { lat: number, lon: number }): { x: number, y: number };
+
+  /**
+   * Use the piezo speaker to Beep for a certain time period and frequency
+   *
+   * @param {number} [time] - [optional] Time in ms (default 200)
+   * @param {number} [freq] - [optional] Frequency in hz (default 4000)
+   * @returns {any} A promise, completed when beep is finished
+   * @url http://www.espruino.com/Reference#l_Bangle_beep
+   */
+  static beep(time?: number, freq?: number): Promise<void>;
+
+  /**
+   * Use the vibration motor to buzz for a certain time period
+   *
+   * @param {number} [time] - [optional] Time in ms (default 200)
+   * @param {number} [strength] - [optional] Power of vibration from 0 to 1 (Default 1)
+   * @returns {any} A promise, completed when vibration is finished
+   * @url http://www.espruino.com/Reference#l_Bangle_buzz
+   */
+  static buzz(time?: number, strength?: number): Promise<void>;
+
+  /**
+   * Turn Bangle.js off. It can only be woken by pressing BTN1.
+   * @url http://www.espruino.com/Reference#l_Bangle_off
+   */
+  static off(): void;
+
+  /**
+   * Turn Bangle.js (mostly) off, but keep the CPU in sleep mode until BTN1 is
+   * pressed to preserve the RTC (current time).
+   * @url http://www.espruino.com/Reference#l_Bangle_softOff
+   */
+  static softOff(): void;
+
+  /**
+   * * On platforms with an LCD of >=8bpp this is 222 x 104 x 2 bits
+   * * Otherwise it's 119 x 56 x 1 bits
+   * @returns {any} An image to be used with `g.drawImage` (as a String)
+   * @url http://www.espruino.com/Reference#l_Bangle_getLogo
+   */
+  static getLogo(): string;
+
+  /**
+   * Load all widgets from flash Storage. Call this once at the beginning of your
+   * application if you want any on-screen widgets to be loaded.
+   * They will be loaded into a global `WIDGETS` array, and can be rendered with
+   * `Bangle.drawWidgets`.
+   * @url http://www.espruino.com/Reference#l_Bangle_loadWidgets
+   */
+  static loadWidgets(): void;
+
+  /**
+   * Draw any onscreen widgets that were loaded with `Bangle.loadWidgets()`.
+   * Widgets should redraw themselves when something changes - you'll only need to
+   * call drawWidgets if you decide to clear the entire screen with `g.clear()`.
+   * @url http://www.espruino.com/Reference#l_Bangle_drawWidgets
+   */
+  static drawWidgets(): void;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_Bangle_drawWidgets
+   */
+  static drawWidgets(): void;
+
+  /**
+   * Load the Bangle.js app launcher, which will allow the user to select an
+   * application to launch.
+   * @url http://www.espruino.com/Reference#l_Bangle_showLauncher
+   */
+  static showLauncher(): void;
+
+  /**
+   * Load the Bangle.js clock - this has the same effect as calling `Bangle.load()`.
+   * @url http://www.espruino.com/Reference#l_Bangle_showClock
+   */
+  static showClock(): void;
+
+  /**
+   * Show a 'recovery' menu that allows you to perform certain tasks on your Bangle.
+   * You can also enter this menu by restarting your Bangle while holding down the button.
+   * @url http://www.espruino.com/Reference#l_Bangle_showRecoveryMenu
+   */
+  static showRecoveryMenu(): void;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_Bangle_showRecoveryMenu
+   */
+  static showRecoveryMenu(): void;
+
+  /**
+   * (2v20 and later) Show a test screen that lights green when each sensor on the Bangle
+   * works and reports within range.
+   * Swipe on the screen when all items are green and the Bangle will turn bluetooth off
+   * and display a `TEST PASS` screen for 60 minutes, after which it will turn off.
+   * You can enter this menu by restarting your Bangle while holding down the button,
+   * then choosing `Test` from the recovery menu.
+   * @url http://www.espruino.com/Reference#l_Bangle_showTestScreen
+   */
+  static showTestScreen(): void;
+
+  /**
+   * This behaves the same as the global `load()` function, but if fast
+   * loading is possible (`Bangle.setUI` was called with a `remove` handler)
+   * then instead of a complete reload, the `remove` handler will be
+   * called and the new app will be loaded straight after with `eval`.
+   * **This should only be used if the app being loaded also uses widgets**
+   * (eg it contains a `Bangle.loadWidgets()` call).
+   * `load()` is slower, but safer. As such, care should be taken
+   * when using `Bangle.load()` with `Bangle.setUI({..., remove:...})`
+   * as if your remove handler doesn't completely clean up after your app,
+   * memory leaks or other issues could occur - see `Bangle.setUI` for more
+   * information.
+   *
+   * @param {any} [file] - [optional] A string containing the file name for the app to be loaded
+   * @url http://www.espruino.com/Reference#l_Bangle_load
+   */
+  static load(file: string): void;
+  static load(): void;
+
+  /**
+   * This puts Bangle.js into the specified UI input mode, and calls the callback
+   * provided when there is user input.
+   * Currently supported interface types are:
+   * * 'updown' - UI input with upwards motion `cb(-1)`, downwards motion `cb(1)`,
+   *   and select `cb()`
+   *   * Bangle.js 1 uses BTN1/3 for up/down and BTN2 for select
+   *   * Bangle.js 2 uses touchscreen swipe up/down and tap
+   * * 'leftright' - UI input with left motion `cb(-1)`, right motion `cb(1)`, and
+   *   select `cb()`
+   *   * Bangle.js 1 uses BTN1/3 for left/right and BTN2 for select
+   *   * Bangle.js 2 uses touchscreen swipe left/right and tap/BTN1 for select
+   * * 'clock' - called for clocks. Sets `Bangle.CLOCK=1` and allows a button to
+   *   start the launcher
+   *   * Bangle.js 1 BTN2 starts the launcher
+   *   * Bangle.js 2 BTN1 starts the launcher
+   * * 'clockupdown' - called for clocks. Sets `Bangle.CLOCK=1`, allows a button to
+   *   start the launcher, but also provides up/down functionality
+   *   * Bangle.js 1 BTN2 starts the launcher, BTN1/BTN3 call `cb(-1)` and `cb(1)`
+   *   * Bangle.js 2 BTN1 starts the launcher, touchscreen tap in top/bottom right
+   *     hand side calls `cb(-1)` and `cb(1)`
+   * * `{mode:"custom", ...}` allows you to specify custom handlers for different
+   *   interactions. See below.
+   * * `undefined` removes all user interaction code
+   * While you could use setWatch/etc manually, the benefit here is that you don't
+   * end up with multiple `setWatch` instances, and the actual input method (touch,
+   * or buttons) is implemented dependent on the watch (Bangle.js 1 or 2)
+   * ```
+   * Bangle.setUI("updown", function (dir) {
+   *   // dir is +/- 1 for swipes up/down
+   *   // dir is 0 when button pressed
+   * });
+   * ```
+   * The first argument can also be an object, in which case more options can be
+   * specified with `mode:"custom"`:
+   * ```
+   * Bangle.setUI({
+   *   mode : "custom",
+   *   back : function() {}, // optional - add a 'back' icon in top-left widget area and call this function when it is pressed , also call it when the hardware button is clicked (does not override btn if defined)
+   *   remove : function() {}, // optional - add a handler for when the UI should be removed (eg stop any intervals/timers here)
+   *   redraw : function() {}, // optional - add a handler to redraw the UI. Not needed but it can allow widgets/etc to provide other functionality that requires the screen to be redrawn
+   *   touch : function(n,e) {}, // optional - (mode:custom only) handler for 'touch' events
+   *   swipe : function(dir) {}, // optional - (mode:custom only) handler for 'swipe' events
+   *   drag : function(e) {}, // optional - (mode:custom only) handler for 'drag' events (Bangle.js 2 only)
+   *   btn : function(n) {}, // optional - (mode:custom only) handler for 'button' events (n==1 on Bangle.js 2, n==1/2/3 depending on button for Bangle.js 1)
+   *   clock : 0 // optional - if set the behavior of 'clock' mode is added (does not override btn if defined)
+   * });
+   * ```
+   * If `remove` is specified, `Bangle.showLauncher`, `Bangle.showClock`, `Bangle.load` and some apps
+   * may choose to just call the `remove` function and then load a new app without resetting Bangle.js.
+   * As a result, **if you specify 'remove' you should make sure you test that after calling `Bangle.setUI()`
+   * without arguments your app is completely unloaded**, otherwise you may end up with memory leaks or
+   * other issues when switching apps. Please see the [Bangle.js Fast Load Tutorial](https://www.espruino.com/Bangle.js+Fast+Load) for more details on this.
+   * **Note:** You can override this function in boot code to change the interaction
+   * mode with the watch. For instance you could make all clocks start the launcher
+   * with a swipe by using:
+   * ```
+   * (function() {
+   *   var sui = Bangle.setUI;
+   *   Bangle.setUI = function(mode, cb) {
+   *     var m = ("object"==typeof mode) ? mode.mode : mode;
+   *     if (m!="clock") return sui(mode,cb);
+   *     sui(); // clear
+   *     Bangle.CLOCK=1;
+   *     Bangle.swipeHandler = Bangle.showLauncher;
+   *     Bangle.on("swipe", Bangle.swipeHandler);
+   *   };
+   * })();
+   * ```
+   *
+   * @param {any} type - The type of UI input: 'updown', 'leftright', 'clock', 'clockupdown' or undefined to cancel. Can also be an object (see below)
+   * @param {any} callback - A function with one argument which is the direction
+   * @url http://www.espruino.com/Reference#l_Bangle_setUI
+   */
+  static setUI(type?: undefined): void;
+  static setUI(type: SetUIArg<"updown" | "leftright">, callback: (direction?: -1 | 1) => void): void;
+  static setUI(type: SetUIArg<"clock">): void;
+  static setUI(type: SetUIArg<"clockupdown">, callback?: (direction: -1 | 1) => void): void;
+  static setUI(type: SetUIArg<"custom"> & { touch?: TouchCallback; swipe?: SwipeCallback; drag?: DragCallback; btn?: (n: 1 | 2 | 3) => void; clock?: boolean | 0 | 1 }): void;
+
+  /**
+   * @url http://www.espruino.com/Reference#l_Bangle_setUI
+   */
+  static setUI(): void;
+
+  /**
+   * Erase all storage and reload it with the default contents.
+   * This is only available on Bangle.js 2.0. On Bangle.js 1.0 you need to use
+   * `Install Default Apps` under the `More...` tab of http://banglejs.com/apps
+   *
+   * @param {boolean} noReboot - Do not reboot the watch when done (default false, so will reboot)
+   * @url http://www.espruino.com/Reference#l_Bangle_factoryReset
+   */
+  static factoryReset(noReboot: ShortBoolean): void;
+
+  /**
+   * Returns the rectangle on the screen that is currently reserved for the app.
+   * @returns {any} An object of the form `{x,y,w,h,x2,y2}`
+   * @url http://www.espruino.com/Reference#l_Bangle_appRect
+   */
+  static appRect: { x: number, y: number, w: number, h: number, x2: number, y2: number };
+
+  static CLOCK: ShortBoolean;
+  static strokes: undefined | { [key: string]: Unistroke };
+}
+
+/**
  * The NRF class is for controlling functionality of the Nordic nRF51/nRF52 chips.
  * Most functionality is related to Bluetooth Low Energy, however there are also
  * some functions related to NFC that apply to NRF52-based devices.
  * @url http://www.espruino.com/Reference#NRF
  */
 declare class NRF {
-  /**
-   * @returns {any} An object
-   * @url http://www.espruino.com/Reference#l_NRF_getSecurityStatus
-   */
-  static getSecurityStatus(): NRFSecurityStatus;
-
-  /**
-   * @returns {any} An object
-   * @url http://www.espruino.com/Reference#l_NRF_getAddress
-   */
-  static getAddress(): any;
-
-  /**
-   *
-   * @param {any} data - The service (and characteristics) to advertise
-   * @param {any} options - Optional object containing options
-   * @url http://www.espruino.com/Reference#l_NRF_setServices
-   */
-  static setServices(data: any, options: any): void;
-
-  /**
-   *
-   * @param {any} data - The data to advertise as an object - see below for more info
-   * @param {any} [options] - [optional] An object of options
-   * @url http://www.espruino.com/Reference#l_NRF_setAdvertising
-   */
-  static setAdvertising(data: any, options?: any): void;
-
   /**
    * Called when a host device connects to Espruino. The first argument contains the
    * address.
@@ -1962,7 +4456,7 @@ declare class NRF {
    * * `namePrefix` - starting characters of device name
    * * `id` - exact device address (`id:"e9:53:86:09:89:99 random"`) (this is
    *   Espruino-specific, and is not part of the Web Bluetooth spec)
-   * * `serviceData` - an object containing service characteristics which must all
+   * * `serviceData` - an object containing **lowercase** service characteristics which must all
    *   match (`serviceData:{"1809":{}}`). Matching of actual service data is not
    *   supported yet.
    * * `manufacturerData` - an object containing manufacturer UUIDs which must all
@@ -2256,2928 +4750,6 @@ declare class NRF {
    * @url http://www.espruino.com/Reference#l_NRF_startBonding
    */
   static startBonding(forceRepair: ShortBoolean): any;
-
-
-}
-
-/**
- * This class provides functionality to recognise gestures drawn on a touchscreen.
- * It is only built into Bangle.js 2.
- * Usage:
- * ```
- * var strokes = {
- *   stroke1 : Unistroke.new(new Uint8Array([x1, y1, x2, y2, x3, y3, ...])),
- *   stroke2 : Unistroke.new(new Uint8Array([x1, y1, x2, y2, x3, y3, ...])),
- *   stroke3 : Unistroke.new(new Uint8Array([x1, y1, x2, y2, x3, y3, ...]))
- * };
- * var r = Unistroke.recognise(strokes,new Uint8Array([x1, y1, x2, y2, x3, y3, ...]))
- * print(r); // stroke1/stroke2/stroke3
- * ```
- * @url http://www.espruino.com/Reference#Unistroke
- */
-declare class Unistroke {
-  /**
-   * Create a new Unistroke based on XY coordinates
-   *
-   * @param {any} xy - An array of interleaved XY coordinates
-   * @returns {any} A string of data representing this unistroke
-   * @url http://www.espruino.com/Reference#l_Unistroke_new
-   */
-  static new(xy: any): any;
-
-  /**
-   * Recognise based on an object of named strokes, and a list of XY coordinates
-   *
-   * @param {any} strokes - An object of named strokes : `{arrow:..., circle:...}`
-   * @param {any} xy - An array of interleaved XY coordinates
-   * @returns {any} The key name of the matched stroke
-   * @url http://www.espruino.com/Reference#l_Unistroke_recognise
-   */
-  static recognise(strokes: any, xy: any): any;
-
-
-}
-
-/**
- * Class containing AES encryption/decryption
- * **Note:** This library is currently only included in builds for boards where
- * there is space. For other boards there is `crypto.js` which implements SHA1 in
- * JS.
- * @url http://www.espruino.com/Reference#AES
- */
-declare class AES {
-  /**
-   *
-   * @param {any} passphrase - Message to encrypt
-   * @param {any} key - Key to encrypt message - must be an `ArrayBuffer` of 128, 192, or 256 BITS
-   * @param {any} [options] - [optional] An object, may specify `{ iv : new Uint8Array(16), mode : 'CBC|CFB|CTR|OFB|ECB' }`
-   * @returns {any} Returns an `ArrayBuffer`
-   * @url http://www.espruino.com/Reference#l_AES_encrypt
-   */
-  static encrypt(passphrase: any, key: any, options?: any): ArrayBuffer;
-
-  /**
-   *
-   * @param {any} passphrase - Message to decrypt
-   * @param {any} key - Key to encrypt message - must be an `ArrayBuffer` of 128, 192, or 256 BITS
-   * @param {any} [options] - [optional] An object, may specify `{ iv : new Uint8Array(16), mode : 'CBC|CFB|CTR|OFB|ECB' }`
-   * @returns {any} Returns an `ArrayBuffer`
-   * @url http://www.espruino.com/Reference#l_AES_decrypt
-   */
-  static decrypt(passphrase: any, key: any, options?: any): ArrayBuffer;
-
-
-}
-
-/**
- * Class containing utility functions for
- * [Pixl.js](http://www.espruino.com/Pixl.js)
- * @url http://www.espruino.com/Reference#Pixl
- */
-declare class Pixl {
-  /**
-   * **DEPRECATED** - Please use `E.getBattery()` instead.
-   * Return an approximate battery percentage remaining based on a normal CR2032
-   * battery (2.8 - 2.2v)
-   * @returns {number} A percentage between 0 and 100
-   * @url http://www.espruino.com/Reference#l_Pixl_getBatteryPercentage
-   */
-  static getBatteryPercentage(): number;
-
-  /**
-   * Set the LCD's contrast
-   *
-   * @param {number} c - Contrast between 0 and 1
-   * @url http://www.espruino.com/Reference#l_Pixl_setContrast
-   */
-  static setContrast(c: number): void;
-
-  /**
-   * This function can be used to turn Pixl.js's LCD off or on.
-   * * With the LCD off, Pixl.js draws around 0.1mA
-   * * With the LCD on, Pixl.js draws around 0.25mA
-   *
-   * @param {boolean} isOn - True if the LCD should be on, false if not
-   * @url http://www.espruino.com/Reference#l_Pixl_setLCDPower
-   */
-  static setLCDPower(isOn: ShortBoolean): void;
-
-  /**
-   * Writes a command directly to the ST7567 LCD controller
-   *
-   * @param {number} c
-   * @url http://www.espruino.com/Reference#l_Pixl_lcdw
-   */
-  static lcdw(c: number): void;
-
-  /**
-   * Display a menu on Pixl.js's screen, and set up the buttons to navigate through
-   * it.
-   * DEPRECATED: Use `E.showMenu`
-   *
-   * @param {any} menu - An object containing name->function mappings to to be used in a menu
-   * @returns {any} A menu object with `draw`, `move` and `select` functions
-   * @url http://www.espruino.com/Reference#l_Pixl_menu
-   */
-  static menu(menu: Menu): MenuInstance;
-
-
-}
-
-/**
- * This class exists in order to interface Espruino with fast-moving trigger
- * wheels. Trigger wheels are physical discs with evenly spaced teeth cut into
- * them, and often with one or two teeth next to each other missing. A sensor sends
- * a signal whenever a tooth passed by, and this allows a device to measure not
- * only RPM, but absolute position.
- * This class is currently in testing - it is NOT AVAILABLE on normal boards.
- * @url http://www.espruino.com/Reference#Trig
- */
-declare class Trig {
-  /**
-   * Get the position of the trigger wheel at the given time (from getTime)
-   *
-   * @param {number} time - The time at which to find the position
-   * @returns {number} The position of the trigger wheel in degrees - as a floating point number
-   * @url http://www.espruino.com/Reference#l_Trig_getPosAtTime
-   */
-  static getPosAtTime(time: number): number;
-
-  /**
-   * Initialise the trigger class
-   *
-   * @param {Pin} pin - The pin to use for triggering
-   * @param {any} options - Additional options as an object. defaults are: ```{teethTotal:60,teethMissing:2,minRPM:30,keyPosition:0}```
-   * @url http://www.espruino.com/Reference#l_Trig_setup
-   */
-  static setup(pin: Pin, options: any): void;
-
-  /**
-   * Set a trigger for a certain point in the cycle
-   *
-   * @param {number} num - The trigger number (0..7)
-   * @param {number} pos - The position (in degrees) to fire the trigger at
-   * @param {any} pins - An array of pins to pulse (max 4)
-   * @param {number} pulseLength - The time (in msec) to pulse for
-   * @url http://www.espruino.com/Reference#l_Trig_setTrigger
-   */
-  static setTrigger(num: number, pos: number, pins: any, pulseLength: number): void;
-
-  /**
-   * Disable a trigger
-   *
-   * @param {number} num - The trigger number (0..7)
-   * @url http://www.espruino.com/Reference#l_Trig_killTrigger
-   */
-  static killTrigger(num: number): void;
-
-  /**
-   * Get the current state of a trigger
-   *
-   * @param {number} num - The trigger number (0..7)
-   * @returns {any} A structure containing all information about the trigger
-   * @url http://www.espruino.com/Reference#l_Trig_getTrigger
-   */
-  static getTrigger(num: number): any;
-
-  /**
-   * Get the RPM of the trigger wheel
-   * @returns {number} The current RPM of the trigger wheel
-   * @url http://www.espruino.com/Reference#l_Trig_getRPM
-   */
-  static getRPM(): number;
-
-  /**
-   * Get the current error flags from the trigger wheel - and zero them
-   * @returns {number} The error flags
-   * @url http://www.espruino.com/Reference#l_Trig_getErrors
-   */
-  static getErrors(): number;
-
-  /**
-   * Get the current error flags from the trigger wheel - and zero them
-   * @returns {any} An array of error strings
-   * @url http://www.espruino.com/Reference#l_Trig_getErrorArray
-   */
-  static getErrorArray(): any;
-
-
-}
-
-/**
- * @url http://www.espruino.com/Reference#Dickens
- */
-declare class Dickens {
-
-
-
-}
-
-/**
- * This class helps to convert URLs into Objects of information ready for
- * http.request/get
- * @url http://www.espruino.com/Reference#url
- */
-declare class url {
-  /**
-   * A utility function to split a URL into parts
-   * This is useful in web servers for instance when handling a request.
-   * For instance `url.parse("/a?b=c&d=e",true)` returns
-   * `{"method":"GET","host":"","path":"/a?b=c&d=e","pathname":"/a","search":"?b=c&d=e","port":80,"query":{"b":"c","d":"e"}}`
-   *
-   * @param {any} urlStr - A URL to be parsed
-   * @param {boolean} parseQuery - Whether to parse the query string into an object not (default = false)
-   * @returns {any} An object containing options for ```http.request``` or ```http.get```. Contains `method`, `host`, `path`, `pathname`, `search`, `port` and `query`
-   * @url http://www.espruino.com/Reference#l_url_parse
-   */
-  static parse(urlStr: any, parseQuery: ShortBoolean): any;
-
-
-}
-
-/**
- * The socket server created by `require('net').createServer`
- * @url http://www.espruino.com/Reference#Server
- */
-declare class Server {
-
-
-  /**
-   * Start listening for new connections on the given port
-   *
-   * @param {number} port - The port to listen on
-   * @returns {any} The HTTP server instance that 'listen' was called on
-   * @url http://www.espruino.com/Reference#l_Server_listen
-   */
-  listen(port: number): any;
-
-  /**
-   * Stop listening for new connections
-   * @url http://www.espruino.com/Reference#l_Server_close
-   */
-  close(): void;
-}
-
-/**
- * An actual socket connection - allowing transmit/receive of TCP data
- * @url http://www.espruino.com/Reference#Socket
- */
-declare class Socket {
-  /**
-   * The 'data' event is called when data is received. If a handler is defined with
-   * `X.on('data', function(data) { ... })` then it will be called, otherwise data
-   * will be stored in an internal buffer, where it can be retrieved with `X.read()`
-   * @param {string} event - The event to listen to.
-   * @param {(data: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `data` A string containing one or more characters of received data
-   * @url http://www.espruino.com/Reference#l_Socket_data
-   */
-  static on(event: "data", callback: (data: any) => void): void;
-
-  /**
-   * Called when the connection closes.
-   * @param {string} event - The event to listen to.
-   * @param {(had_error: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `had_error` A boolean indicating whether the connection had an error (use an error event handler to get error details).
-   * @url http://www.espruino.com/Reference#l_Socket_close
-   */
-  static on(event: "close", callback: (had_error: any) => void): void;
-
-  /**
-   * There was an error on this socket and it is closing (or wasn't opened in the
-   * first place). If a "connected" event was issued on this socket then the error
-   * event is always followed by a close event. The error codes are:
-   * * -1: socket closed (this is not really an error and will not cause an error
-   *   callback)
-   * * -2: out of memory (typically while allocating a buffer to hold data)
-   * * -3: timeout
-   * * -4: no route
-   * * -5: busy
-   * * -6: not found (DNS resolution)
-   * * -7: max sockets (... exceeded)
-   * * -8: unsent data (some data could not be sent)
-   * * -9: connection reset (or refused)
-   * * -10: unknown error
-   * * -11: no connection
-   * * -12: bad argument
-   * * -13: SSL handshake failed
-   * * -14: invalid SSL data
-   * @param {string} event - The event to listen to.
-   * @param {(details: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `details` An error object with an error code (a negative integer) and a message.
-   * @url http://www.espruino.com/Reference#l_Socket_error
-   */
-  static on(event: "error", callback: (details: any) => void): void;
-
-  /**
-   * An event that is fired when the buffer is empty and it can accept more data to
-   * send.
-   * @param {string} event - The event to listen to.
-   * @param {() => void} callback - A function that is executed when the event occurs.
-   * @url http://www.espruino.com/Reference#l_Socket_drain
-   */
-  static on(event: "drain", callback: () => void): void;
-
-  /**
-   * Return how many bytes are available to read. If there is already a listener for
-   * data, this will always return 0.
-   * @returns {number} How many bytes are available
-   * @url http://www.espruino.com/Reference#l_Socket_available
-   */
-  available(): number;
-
-  /**
-   * Return a string containing characters that have been received
-   *
-   * @param {number} chars - The number of characters to read, or undefined/0 for all available
-   * @returns {any} A string containing the required bytes.
-   * @url http://www.espruino.com/Reference#l_Socket_read
-   */
-  read(chars: number): any;
-
-  /**
-   * Pipe this to a stream (an object with a 'write' method)
-   *
-   * @param {any} destination - The destination file/stream that will receive content from the source.
-   * @param {any} [options]
-   * [optional] An object `{ chunkSize : int=32, end : bool=true, complete : function }`
-   * chunkSize : The amount of data to pipe from source to destination at a time
-   * complete : a function to call when the pipe activity is complete
-   * end : call the 'end' function on the destination when the source is finished
-   * @url http://www.espruino.com/Reference#l_Socket_pipe
-   */
-  pipe(destination: any, options?: PipeOptions): void
-
-  /**
-   * This function writes the `data` argument as a string. Data that is passed in
-   * (including arrays) will be converted to a string with the normal JavaScript
-   * `toString` method.
-   * If you wish to send binary data then you need to convert that data directly to a
-   * String. This can be done with `String.fromCharCode`, however it's often easier
-   * and faster to use the Espruino-specific `E.toString`, which will read its
-   * arguments as an array of bytes and convert that to a String:
-   * ```
-   * socket.write(E.toString([0,1,2,3,4,5]));
-   * ```
-   * If you need to send something other than bytes, you can use 'Typed Arrays', or
-   * even `DataView`:
-   * ```
-   * var d = new DataView(new ArrayBuffer(8)); // 8 byte array buffer
-   * d.setFloat32(0, 765.3532564); // write float at bytes 0-3
-   * d.setInt8(4, 42); // write int8 at byte 4
-   * socket.write(E.toString(d.buffer))
-   * ```
-   *
-   * @param {any} data - A string containing data to send
-   * @returns {boolean} For node.js compatibility, returns the boolean false. When the send buffer is empty, a `drain` event will be sent
-   * @url http://www.espruino.com/Reference#l_Socket_write
-   */
-  write(data: any): boolean;
-
-  /**
-   * Close this socket - optional data to append as an argument.
-   * See `Socket.write` for more information about the data argument
-   *
-   * @param {any} data - A string containing data to send
-   * @url http://www.espruino.com/Reference#l_Socket_end
-   */
-  end(data: any): void;
-}
-
-/**
- * An actual socket connection - allowing transmit/receive of TCP data
- * @url http://www.espruino.com/Reference#dgramSocket
- */
-declare class dgramSocket {
-  /**
-   * The 'message' event is called when a datagram message is received. If a handler
-   * is defined with `X.on('message', function(msg) { ... })` then it will be called
-   * @param {string} event - The event to listen to.
-   * @param {(msg: any, rinfo: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `msg` A string containing the received message
-   * * `rinfo` Sender address,port containing information
-   * @url http://www.espruino.com/Reference#l_dgramSocket_message
-   */
-  static on(event: "message", callback: (msg: any, rinfo: any) => void): void;
-
-  /**
-   * Called when the connection closes.
-   * @param {string} event - The event to listen to.
-   * @param {(had_error: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `had_error` A boolean indicating whether the connection had an error (use an error event handler to get error details).
-   * @url http://www.espruino.com/Reference#l_dgramSocket_close
-   */
-  static on(event: "close", callback: (had_error: any) => void): void;
-
-  /**
-   *
-   * @param {any} buffer - A string containing message to send
-   * @param {any} offset - Offset in the passed string where the message starts [optional]
-   * @param {any} length - Number of bytes in the message [optional]
-   * @param {any} args - Destination port number, Destination IP address string
-   * @url http://www.espruino.com/Reference#l_dgramSocket_send
-   */
-  send(buffer: any, offset: any, length: any, ...args: any[]): void;
-
-  /**
-   *
-   * @param {number} port - The port to bind at
-   * @param {any} callback - A function(res) that will be called when the socket is bound. You can then call `res.on('message', function(message, info) { ... })` and `res.on('close', function() { ... })` to deal with the response.
-   * @returns {any} The dgramSocket instance that 'bind' was called on
-   * @url http://www.espruino.com/Reference#l_dgramSocket_bind
-   */
-  bind(port: number, callback: any): any;
-
-  /**
-   * Close the socket
-   * @url http://www.espruino.com/Reference#l_dgramSocket_close
-   */
-  close(): void;
-
-  /**
-   *
-   * @param {any} group - A string containing the group ip to join
-   * @param {any} ip - A string containing the ip to join with
-   * @url http://www.espruino.com/Reference#l_dgramSocket_addMembership
-   */
-  addMembership(group: any, ip: any): void;
-}
-
-/**
- * The HTTP server created by `require('http').createServer`
- * @url http://www.espruino.com/Reference#httpSrv
- */
-declare class httpSrv {
-
-
-  /**
-   * Start listening for new HTTP connections on the given port
-   *
-   * @param {number} port - The port to listen on
-   * @returns {any} The HTTP server instance that 'listen' was called on
-   * @url http://www.espruino.com/Reference#l_httpSrv_listen
-   */
-  listen(port: number): any;
-
-  /**
-   * Stop listening for new HTTP connections
-   * @url http://www.espruino.com/Reference#l_httpSrv_close
-   */
-  close(): void;
-}
-
-/**
- * The HTTP server request
- * @url http://www.espruino.com/Reference#httpSRq
- */
-declare class httpSRq {
-  /**
-   * The 'data' event is called when data is received. If a handler is defined with
-   * `X.on('data', function(data) { ... })` then it will be called, otherwise data
-   * will be stored in an internal buffer, where it can be retrieved with `X.read()`
-   * @param {string} event - The event to listen to.
-   * @param {(data: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `data` A string containing one or more characters of received data
-   * @url http://www.espruino.com/Reference#l_httpSRq_data
-   */
-  static on(event: "data", callback: (data: any) => void): void;
-
-  /**
-   * Called when the connection closes.
-   * @param {string} event - The event to listen to.
-   * @param {() => void} callback - A function that is executed when the event occurs.
-   * @url http://www.espruino.com/Reference#l_httpSRq_close
-   */
-  static on(event: "close", callback: () => void): void;
-
-  /**
-   * The headers to sent to the server with this HTTP request.
-   * @returns {any} An object mapping header name to value
-   * @url http://www.espruino.com/Reference#l_httpSRq_headers
-   */
-  headers: any;
-
-  /**
-   * The HTTP method used with this request. Often `"GET"`.
-   * @returns {any} A string
-   * @url http://www.espruino.com/Reference#l_httpSRq_method
-   */
-  method: any;
-
-  /**
-   * The URL requested in this HTTP request, for instance:
-   * * `"/"` - the main page
-   * * `"/favicon.ico"` - the web page's icon
-   * @returns {any} A string representing the URL
-   * @url http://www.espruino.com/Reference#l_httpSRq_url
-   */
-  url: any;
-
-  /**
-   * Return how many bytes are available to read. If there is already a listener for
-   * data, this will always return 0.
-   * @returns {number} How many bytes are available
-   * @url http://www.espruino.com/Reference#l_httpSRq_available
-   */
-  available(): number;
-
-  /**
-   * Return a string containing characters that have been received
-   *
-   * @param {number} chars - The number of characters to read, or undefined/0 for all available
-   * @returns {any} A string containing the required bytes.
-   * @url http://www.espruino.com/Reference#l_httpSRq_read
-   */
-  read(chars: number): any;
-
-  /**
-   * Pipe this to a stream (an object with a 'write' method)
-   *
-   * @param {any} destination - The destination file/stream that will receive content from the source.
-   * @param {any} [options]
-   * [optional] An object `{ chunkSize : int=32, end : bool=true, complete : function }`
-   * chunkSize : The amount of data to pipe from source to destination at a time
-   * complete : a function to call when the pipe activity is complete
-   * end : call the 'end' function on the destination when the source is finished
-   * @url http://www.espruino.com/Reference#l_httpSRq_pipe
-   */
-  pipe(dest: any, options?: PipeOptions): void
-}
-
-/**
- * The HTTP server response
- * @url http://www.espruino.com/Reference#httpSRs
- */
-declare class httpSRs {
-  /**
-   * An event that is fired when the buffer is empty and it can accept more data to
-   * send.
-   * @param {string} event - The event to listen to.
-   * @param {() => void} callback - A function that is executed when the event occurs.
-   * @url http://www.espruino.com/Reference#l_httpSRs_drain
-   */
-  static on(event: "drain", callback: () => void): void;
-
-  /**
-   * Called when the connection closes.
-   * @param {string} event - The event to listen to.
-   * @param {() => void} callback - A function that is executed when the event occurs.
-   * @url http://www.espruino.com/Reference#l_httpSRs_close
-   */
-  static on(event: "close", callback: () => void): void;
-
-  /**
-   * The headers to send back along with the HTTP response.
-   * The default contents are:
-   * ```
-   * {
-   *   "Connection": "close"
-   *  }
-   * ```
-   * @returns {any} An object mapping header name to value
-   * @url http://www.espruino.com/Reference#l_httpSRs_headers
-   */
-  headers: any;
-
-  /**
-   * This function writes the `data` argument as a string. Data that is passed in
-   * (including arrays) will be converted to a string with the normal JavaScript
-   * `toString` method. For more information about sending binary data see
-   * `Socket.write`
-   *
-   * @param {any} data - A string containing data to send
-   * @returns {boolean} For node.js compatibility, returns the boolean false. When the send buffer is empty, a `drain` event will be sent
-   * @url http://www.espruino.com/Reference#l_httpSRs_write
-   */
-  write(data: any): boolean;
-
-  /**
-   * See `Socket.write` for more information about the data argument
-   *
-   * @param {any} data - A string containing data to send
-   * @url http://www.espruino.com/Reference#l_httpSRs_end
-   */
-  end(data: any): void;
-
-  /**
-   * Send the given status code and headers. If not explicitly called this will be
-   * done automatically the first time data is written to the response.
-   * This cannot be called twice, or after data has already been sent in the
-   * response.
-   *
-   * @param {number} statusCode - The HTTP status code
-   * @param {any} headers - An object containing the headers
-   * @url http://www.espruino.com/Reference#l_httpSRs_writeHead
-   */
-  writeHead(statusCode: number, headers: any): void;
-
-  /**
-   * Set a value to send in the header of this HTTP response. This updates the
-   * `httpSRs.headers` property.
-   * Any headers supplied to `writeHead` will overwrite any headers with the same
-   * name.
-   *
-   * @param {any} name - The name of the header as a String
-   * @param {any} value - The value of the header as a String
-   * @url http://www.espruino.com/Reference#l_httpSRs_setHeader
-   */
-  setHeader(name: any, value: any): void;
-}
-
-/**
- * The HTTP client request, returned by `http.request()` and `http.get()`.
- * @url http://www.espruino.com/Reference#httpCRq
- */
-declare class httpCRq {
-  /**
-   * An event that is fired when the buffer is empty and it can accept more data to
-   * send.
-   * @param {string} event - The event to listen to.
-   * @param {() => void} callback - A function that is executed when the event occurs.
-   * @url http://www.espruino.com/Reference#l_httpCRq_drain
-   */
-  static on(event: "drain", callback: () => void): void;
-
-  /**
-   * An event that is fired if there is an error making the request and the response
-   * callback has not been invoked. In this case the error event concludes the
-   * request attempt. The error event function receives an error object as parameter
-   * with a `code` field and a `message` field.
-   * @param {string} event - The event to listen to.
-   * @param {() => void} callback - A function that is executed when the event occurs.
-   * @url http://www.espruino.com/Reference#l_httpCRq_error
-   */
-  static on(event: "error", callback: () => void): void;
-
-  /**
-   * This function writes the `data` argument as a string. Data that is passed in
-   * (including arrays) will be converted to a string with the normal JavaScript
-   * `toString` method. For more information about sending binary data see
-   * `Socket.write`
-   *
-   * @param {any} data - A string containing data to send
-   * @returns {boolean} For node.js compatibility, returns the boolean false. When the send buffer is empty, a `drain` event will be sent
-   * @url http://www.espruino.com/Reference#l_httpCRq_write
-   */
-  write(data: any): boolean;
-
-  /**
-   * Finish this HTTP request - optional data to append as an argument
-   * See `Socket.write` for more information about the data argument
-   *
-   * @param {any} data - A string containing data to send
-   * @url http://www.espruino.com/Reference#l_httpCRq_end
-   */
-  end(data: any): void;
-}
-
-/**
- * The HTTP client response, passed to the callback of `http.request()` an
- * `http.get()`.
- * @url http://www.espruino.com/Reference#httpCRs
- */
-declare class httpCRs {
-  /**
-   * The 'data' event is called when data is received. If a handler is defined with
-   * `X.on('data', function(data) { ... })` then it will be called, otherwise data
-   * will be stored in an internal buffer, where it can be retrieved with `X.read()`
-   * @param {string} event - The event to listen to.
-   * @param {(data: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `data` A string containing one or more characters of received data
-   * @url http://www.espruino.com/Reference#l_httpCRs_data
-   */
-  static on(event: "data", callback: (data: any) => void): void;
-
-  /**
-   * Called when the connection closes with one `hadError` boolean parameter, which
-   * indicates whether an error occurred.
-   * @param {string} event - The event to listen to.
-   * @param {() => void} callback - A function that is executed when the event occurs.
-   * @url http://www.espruino.com/Reference#l_httpCRs_close
-   */
-  static on(event: "close", callback: () => void): void;
-
-  /**
-   * An event that is fired if there is an error receiving the response. The error
-   * event function receives an error object as parameter with a `code` field and a
-   * `message` field. After the error event the close even will also be triggered to
-   * conclude the HTTP request/response.
-   * @param {string} event - The event to listen to.
-   * @param {() => void} callback - A function that is executed when the event occurs.
-   * @url http://www.espruino.com/Reference#l_httpCRs_error
-   */
-  static on(event: "error", callback: () => void): void;
-
-  /**
-   * The headers received along with the HTTP response
-   * @returns {any} An object mapping header name to value
-   * @url http://www.espruino.com/Reference#l_httpCRs_headers
-   */
-  headers: any;
-
-  /**
-   * The HTTP response's status code - usually `"200"` if all went well
-   * @returns {any} The status code as a String
-   * @url http://www.espruino.com/Reference#l_httpCRs_statusCode
-   */
-  statusCode: any;
-
-  /**
-   * The HTTP response's status message - Usually `"OK"` if all went well
-   * @returns {any} An String Status Message
-   * @url http://www.espruino.com/Reference#l_httpCRs_statusMessage
-   */
-  statusMessage: any;
-
-  /**
-   * The HTTP version reported back by the server - usually `"1.1"`
-   * @returns {any} Th
-   * @url http://www.espruino.com/Reference#l_httpCRs_httpVersion
-   */
-  httpVersion: any;
-
-  /**
-   * Return how many bytes are available to read. If there is a 'data' event handler,
-   * this will always return 0.
-   * @returns {number} How many bytes are available
-   * @url http://www.espruino.com/Reference#l_httpCRs_available
-   */
-  available(): number;
-
-  /**
-   * Return a string containing characters that have been received
-   *
-   * @param {number} chars - The number of characters to read, or undefined/0 for all available
-   * @returns {any} A string containing the required bytes.
-   * @url http://www.espruino.com/Reference#l_httpCRs_read
-   */
-  read(chars: number): any;
-
-  /**
-   * Pipe this to a stream (an object with a 'write' method)
-   *
-   * @param {any} destination - The destination file/stream that will receive content from the source.
-   * @param {any} [options]
-   * [optional] An object `{ chunkSize : int=32, end : bool=true, complete : function }`
-   * chunkSize : The amount of data to pipe from source to destination at a time
-   * complete : a function to call when the pipe activity is complete
-   * end : call the 'end' function on the destination when the source is finished
-   * @url http://www.espruino.com/Reference#l_httpCRs_pipe
-   */
-  pipe(destination: any, options?: PipeOptions): void
-}
-
-/**
- * An instantiation of an Ethernet network adaptor
- * @url http://www.espruino.com/Reference#Ethernet
- */
-declare class Ethernet {
-
-
-  /**
-   * Get the current IP address, subnet, gateway and mac address.
-   *
-   * @param {any} [options] - [optional] An `callback(err, ipinfo)` function to be called back with the IP information.
-   * @returns {any}
-   * @url http://www.espruino.com/Reference#l_Ethernet_getIP
-   */
-  getIP(options?: any): any;
-
-  /**
-   * Set the current IP address or get an IP from DHCP (if no options object is
-   * specified)
-   * If 'mac' is specified as an option, it must be a string of the form
-   * `"00:01:02:03:04:05"` The default mac is 00:08:DC:01:02:03.
-   *
-   * @param {any} options - Object containing IP address options `{ ip : '1.2.3.4', subnet : '...', gateway: '...', dns:'...', mac:':::::'  }`, or do not supply an object in order to force DHCP.
-   * @param {any} [callback] - [optional] An `callback(err)` function to invoke when ip is set. `err==null` on success, or a string on failure.
-   * @returns {boolean} True on success
-   * @url http://www.espruino.com/Reference#l_Ethernet_setIP
-   */
-  setIP(options: any, callback?: any): boolean;
-
-  /**
-   * Set hostname used during the DHCP request. Minimum 8 and maximum 12 characters,
-   * best set before calling `eth.setIP()`. Default is WIZnet010203, 010203 is the
-   * default nic as part of the mac.
-   *
-   * @param {any} hostname - hostname as string
-   * @param {any} [callback] - [optional] An `callback(err)` function to be called back with null or error text.
-   * @returns {boolean} True on success
-   * @url http://www.espruino.com/Reference#l_Ethernet_setHostname
-   */
-  setHostname(hostname: any, callback?: any): boolean;
-
-  /**
-   * Returns the hostname
-   *
-   * @param {any} [callback] - [optional] An `callback(err,hostname)` function to be called back with the status information.
-   * @returns {any}
-   * @url http://www.espruino.com/Reference#l_Ethernet_getHostname
-   */
-  getHostname(callback?: any): any;
-
-  /**
-   * Get the current status of the ethernet device
-   *
-   * @param {any} [options] - [optional] An `callback(err, status)` function to be called back with the status information.
-   * @returns {any}
-   * @url http://www.espruino.com/Reference#l_Ethernet_getStatus
-   */
-  getStatus(options?: any): any;
-}
-
-/**
- * An instantiation of a WiFi network adaptor
- * @url http://www.espruino.com/Reference#WLAN
- */
-declare class WLAN {
-
-
-  /**
-   * Connect to a wireless network
-   *
-   * @param {any} ap - Access point name
-   * @param {any} key - WPA2 key (or undefined for unsecured connection)
-   * @param {any} callback - Function to call back with connection status. It has one argument which is one of 'connect'/'disconnect'/'dhcp'
-   * @returns {boolean} True if connection succeeded, false if it didn't.
-   * @url http://www.espruino.com/Reference#l_WLAN_connect
-   */
-  connect(ap: any, key: any, callback: any): boolean;
-
-  /**
-   * Completely uninitialise and power down the CC3000. After this you'll have to use
-   * ```require("CC3000").connect()``` again.
-   * @url http://www.espruino.com/Reference#l_WLAN_disconnect
-   */
-  disconnect(): void;
-
-  /**
-   * Completely uninitialise and power down the CC3000, then reconnect to the old
-   * access point.
-   * @url http://www.espruino.com/Reference#l_WLAN_reconnect
-   */
-  reconnect(): void;
-
-  /**
-   * Get the current IP address
-   * @returns {any}
-   * @url http://www.espruino.com/Reference#l_WLAN_getIP
-   */
-  getIP(): any;
-
-  /**
-   * Set the current IP address for get an IP from DHCP (if no options object is
-   * specified).
-   * **Note:** Changes are written to non-volatile memory, but will only take effect
-   * after calling `wlan.reconnect()`
-   *
-   * @param {any} options - Object containing IP address options `{ ip : '1,2,3,4', subnet, gateway, dns }`, or do not supply an object in otder to force DHCP.
-   * @returns {boolean} True on success
-   * @url http://www.espruino.com/Reference#l_WLAN_setIP
-   */
-  setIP(options: any): boolean;
-}
-
-/**
- * Class containing [micro:bit's](https://www.espruino.com/MicroBit) utility
- * functions.
- * @url http://www.espruino.com/Reference#Microbit
- */
-declare class Microbit {
-  /**
-   * The micro:bit's speaker pin
-   * @returns {Pin}
-   * @url http://www.espruino.com/Reference#l_Microbit_SPEAKER
-   */
-  static SPEAKER: Pin;
-
-  /**
-   * The micro:bit's microphone pin
-   * `MIC_ENABLE` should be set to 1 before using this
-   * @returns {Pin}
-   * @url http://www.espruino.com/Reference#l_Microbit_MIC
-   */
-  static MIC: Pin;
-
-  /**
-   * The micro:bit's microphone enable pin
-   * @returns {Pin}
-   * @url http://www.espruino.com/Reference#l_Microbit_MIC_ENABLE
-   */
-  static MIC_ENABLE: Pin;
-
-  /**
-   * Called when the Micro:bit is moved in a deliberate fashion, and includes data on
-   * the detected gesture.
-   * @param {string} event - The event to listen to.
-   * @param {(gesture: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `gesture` An Int8Array containing the accelerations (X,Y,Z) from the last gesture detected by the accelerometer
-   * @url http://www.espruino.com/Reference#l_Microbit_gesture
-   */
-  static on(event: "gesture", callback: (gesture: any) => void): void;
-
-  /**
-   * @returns {any} An Object `{x,y,z}` of magnetometer readings as integers
-   * @url http://www.espruino.com/Reference#l_Microbit_mag
-   */
-  static mag(): any;
-
-  /**
-   * @returns {any} An Object `{x,y,z}` of acceleration readings in G
-   * @url http://www.espruino.com/Reference#l_Microbit_accel
-   */
-  static accel(): any;
-
-  /**
-   * **Note:** This function is only available on the [BBC micro:bit](/MicroBit)
-   * board
-   * Write the given value to the accelerometer
-   *
-   * @param {number} addr - Accelerometer address
-   * @param {number} data - Data to write
-   * @url http://www.espruino.com/Reference#l_Microbit_accelWr
-   */
-  static accelWr(addr: number, data: number): void;
-
-  /**
-   * Turn on the accelerometer, and create `Microbit.accel` and `Microbit.gesture`
-   * events.
-   * **Note:** The accelerometer is currently always enabled - this code just
-   * responds to interrupts and reads
-   * @url http://www.espruino.com/Reference#l_Microbit_accelOn
-   */
-  static accelOn(): void;
-
-  /**
-   * Turn off events from the accelerometer (started with `Microbit.accelOn`)
-   * @url http://www.espruino.com/Reference#l_Microbit_accelOff
-   */
-  static accelOff(): void;
-
-  /**
-   * Play a waveform on the Micro:bit's speaker
-   *
-   * @param {any} waveform - An array of data to play (unsigned 8 bit)
-   * @param {any} samplesPerSecond - The number of samples per second for playback default is 4000
-   * @param {any} callback - A function to call when playback is finished
-   * @url http://www.espruino.com/Reference#l_Microbit_play
-   */
-  static play(waveform: any, samplesPerSecond: any, callback: any): void;
-
-  /**
-   * Records sound from the micro:bit's onboard microphone and returns the result
-   *
-   * @param {any} samplesPerSecond - The number of samples per second for recording - 4000 is recommended
-   * @param {any} callback - A function to call with the result of recording (unsigned 8 bit ArrayBuffer)
-   * @param {any} [samples] - [optional] How many samples to record (6000 default)
-   * @url http://www.espruino.com/Reference#l_Microbit_record
-   */
-  static record(samplesPerSecond: any, callback: any, samples?: any): void;
-
-
-}
-
-interface FileConstructor {
-
-}
-
-interface File {
-  /**
-   * Close an open file.
-   * @url http://www.espruino.com/Reference#l_File_close
-   */
-  close(): void;
-
-  /**
-   * Write data to a file.
-   * **Note:** By default this function flushes all changes to the SD card, which
-   * makes it slow (but also safe!). You can use `E.setFlags({unsyncFiles:1})` to
-   * disable this behaviour and really speed up writes - but then you must be sure to
-   * close all files you are writing before power is lost or you will cause damage to
-   * your SD card's filesystem.
-   *
-   * @param {any} buffer - A string containing the bytes to write
-   * @returns {number} the number of bytes written
-   * @url http://www.espruino.com/Reference#l_File_write
-   */
-  write(buffer: any): number;
-
-  /**
-   * Read data in a file in byte size chunks
-   *
-   * @param {number} length - is an integer specifying the number of bytes to read.
-   * @returns {any} A string containing the characters that were read
-   * @url http://www.espruino.com/Reference#l_File_read
-   */
-  read(length: number): any;
-
-  /**
-   * Skip the specified number of bytes forward in the file
-   *
-   * @param {number} nBytes - is a positive integer specifying the number of bytes to skip forwards.
-   * @url http://www.espruino.com/Reference#l_File_skip
-   */
-  skip(nBytes: number): void;
-
-  /**
-   * Seek to a certain position in the file
-   *
-   * @param {number} nBytes - is an integer specifying the number of bytes to skip forwards.
-   * @url http://www.espruino.com/Reference#l_File_seek
-   */
-  seek(nBytes: number): void;
-
-  /**
-   * Pipe this file to a stream (an object with a 'write' method)
-   *
-   * @param {any} destination - The destination file/stream that will receive content from the source.
-   * @param {any} [options]
-   * [optional] An object `{ chunkSize : int=32, end : bool=true, complete : function }`
-   * chunkSize : The amount of data to pipe from source to destination at a time
-   * complete : a function to call when the pipe activity is complete
-   * end : call the 'end' function on the destination when the source is finished
-   * @url http://www.espruino.com/Reference#l_File_pipe
-   */
-  pipe(destination: any, options?: PipeOptions): void
-}
-
-/**
- * This is the File object - it allows you to stream data to and from files (As
- * opposed to the `require('fs').readFile(..)` style functions that read an entire
- * file).
- * To create a File object, you must type ```var fd =
- * E.openFile('filepath','mode')``` - see [E.openFile](#l_E_openFile) for more
- * information.
- * **Note:** If you want to remove an SD card after you have started using it, you
- * *must* call `E.unmountSD()` or you may cause damage to the card.
- * @url http://www.espruino.com/Reference#File
- */
-declare const File: FileConstructor
-
-/**
- * Class containing [Puck.js's](http://www.puck-js.com) utility functions.
- * @url http://www.espruino.com/Reference#Puck
- */
-declare class Puck {
-  /**
-   * Turn on the magnetometer, take a single reading, and then turn it off again.
-   * An object of the form `{x,y,z}` is returned containing magnetometer readings.
-   * Due to residual magnetism in the Puck and magnetometer itself, with no magnetic
-   * field the Puck will not return `{x:0,y:0,z:0}`.
-   * Instead, it's up to you to figure out what the 'zero value' is for your Puck in
-   * your location and to then subtract that from the value returned. If you're not
-   * trying to measure the Earth's magnetic field then it's a good idea to just take
-   * a reading at startup and use that.
-   * With the aerial at the top of the board, the `y` reading is vertical, `x` is
-   * horizontal, and `z` is through the board.
-   * Readings are in increments of 0.1 micro Tesla (uT). The Earth's magnetic field
-   * varies from around 25-60 uT, so the reading will vary by 250 to 600 depending on
-   * location.
-   * @returns {any} An Object `{x,y,z}` of magnetometer readings as integers
-   * @url http://www.espruino.com/Reference#l_Puck_mag
-   */
-  static mag(): any;
-
-  /**
-   * Turn on the magnetometer, take a single temperature reading from the MAG3110
-   * chip, and then turn it off again.
-   * (If the magnetometer is already on, this just returns the last reading obtained)
-   * `E.getTemperature()` uses the microcontroller's temperature sensor, but this
-   * uses the magnetometer's.
-   * The reading obtained is an integer (so no decimal places), but the sensitivity
-   * is factory trimmed. to 1&deg;C, however the temperature offset isn't - so
-   * absolute readings may still need calibrating.
-   * @returns {number} Temperature in degrees C
-   * @url http://www.espruino.com/Reference#l_Puck_magTemp
-   */
-  static magTemp(): number;
-
-  /**
-   * Called after `Puck.magOn()` every time magnetometer data is sampled. There is
-   * one argument which is an object of the form `{x,y,z}` containing magnetometer
-   * readings as integers (for more information see `Puck.mag()`).
-   * Check out [the Puck.js page on the
-   * magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
-   * information.
-   * ```JS
-   * Puck.magOn(10); // 10 Hz
-   * Puck.on('mag', function(e) {
-   *   print(e);
-   * });
-   * // { "x": -874, "y": -332, "z": -1938 }
-   * ```
-   * @param {string} event - The event to listen to.
-   * @param {(xyz: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `xyz` an object of the form `{x,y,z}`
-   * @url http://www.espruino.com/Reference#l_Puck_mag
-   */
-  static on(event: "mag", callback: (xyz: any) => void): void;
-
-  /**
-   * Only on Puck.js v2.0
-   * Called after `Puck.accelOn()` every time accelerometer data is sampled. There is
-   * one argument which is an object of the form `{acc:{x,y,z}, gyro:{x,y,z}}`
-   * containing the data.
-   * ```JS
-   * Puck.accelOn(12.5); // default 12.5Hz
-   * Puck.on('accel', function(e) {
-   *   print(e);
-   * });
-   * //{
-   * //  "acc": { "x": -525, "y": -112, "z": 8160 },
-   * //  "gyro": { "x": 154, "y": -152, "z": -34 }
-   * //}
-   * ```
-   * The data is as it comes off the accelerometer and is not scaled to 1g. For more
-   * information see `Puck.accel()` or [the Puck.js page on the
-   * magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals).
-   * @param {string} event - The event to listen to.
-   * @param {(e: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `e` an object of the form `{acc:{x,y,z}, gyro:{x,y,z}}`
-   * @url http://www.espruino.com/Reference#l_Puck_accel
-   */
-  static on(event: "accel", callback: (e: any) => void): void;
-
-  /**
-   * Turn the magnetometer on and start periodic sampling. Samples will then cause a
-   * 'mag' event on 'Puck':
-   * ```
-   * Puck.magOn();
-   * Puck.on('mag', function(xyz) {
-   *   console.log(xyz);
-   *   // {x:..., y:..., z:...}
-   * });
-   * // Turn events off with Puck.magOff();
-   * ```
-   * This call will be ignored if the sampling is already on.
-   * If given an argument, the sample rate is set (if not, it's at 0.63 Hz). The
-   * sample rate must be one of the following (resulting in the given power
-   * consumption):
-   * * 80 Hz - 900uA
-   * * 40 Hz - 550uA
-   * * 20 Hz - 275uA
-   * * 10 Hz - 137uA
-   * * 5 Hz - 69uA
-   * * 2.5 Hz - 34uA
-   * * 1.25 Hz - 17uA
-   * * 0.63 Hz - 8uA
-   * * 0.31 Hz - 8uA
-   * * 0.16 Hz - 8uA
-   * * 0.08 Hz - 8uA
-   * When the battery level drops too low while sampling is turned on, the
-   * magnetometer may stop sampling without warning, even while other Puck functions
-   * continue uninterrupted.
-   * Check out [the Puck.js page on the
-   * magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
-   * information.
-   *
-   * @param {number} samplerate - The sample rate in Hz, or undefined
-   * @url http://www.espruino.com/Reference#l_Puck_magOn
-   */
-  static magOn(samplerate: number): void;
-
-  /**
-   * Turn the magnetometer off
-   * @url http://www.espruino.com/Reference#l_Puck_magOff
-   */
-  static magOff(): void;
-
-  /**
-   * Writes a register on the LIS3MDL / MAX3110 Magnetometer. Can be used for
-   * configuring advanced functions.
-   * Check out [the Puck.js page on the
-   * magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
-   * information and links to modules that use this function.
-   *
-   * @param {number} reg
-   * @param {number} data
-   * @url http://www.espruino.com/Reference#l_Puck_magWr
-   */
-  static magWr(reg: number, data: number): void;
-
-  /**
-   * Reads a register from the LIS3MDL / MAX3110 Magnetometer. Can be used for
-   * configuring advanced functions.
-   * Check out [the Puck.js page on the
-   * magnetometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
-   * information and links to modules that use this function.
-   *
-   * @param {number} reg
-   * @returns {number}
-   * @url http://www.espruino.com/Reference#l_Puck_magRd
-   */
-  static magRd(reg: number): number;
-
-  /**
-   * On Puck.js v2.0 this will use the on-board PCT2075TP temperature sensor, but on
-   * Puck.js the less accurate on-chip Temperature sensor is used.
-   * @returns {number} Temperature in degrees C
-   * @url http://www.espruino.com/Reference#l_Puck_getTemperature
-   */
-  static getTemperature(): number;
-
-  /**
-   * Accepted values are:
-   * * 1.6 Hz (no Gyro) - 40uA (2v05 and later firmware)
-   * * 12.5 Hz (with Gyro)- 350uA
-   * * 26 Hz (with Gyro) - 450 uA
-   * * 52 Hz (with Gyro) - 600 uA
-   * * 104 Hz (with Gyro) - 900 uA
-   * * 208 Hz (with Gyro) - 1500 uA
-   * * 416 Hz (with Gyro) (not recommended)
-   * * 833 Hz (with Gyro) (not recommended)
-   * * 1660 Hz (with Gyro) (not recommended)
-   * Once `Puck.accelOn()` is called, the `Puck.accel` event will be called each time
-   * data is received. `Puck.accelOff()` can be called to turn the accelerometer off.
-   * For instance to light the red LED whenever Puck.js is face up:
-   * ```
-   * Puck.on('accel', function(a) {
-   *  digitalWrite(LED1, a.acc.z > 0);
-   * });
-   * Puck.accelOn();
-   * ```
-   * Check out [the Puck.js page on the
-   * accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
-   * information.
-   * **Note:** Puck.js cannot currently read every sample from the
-   * accelerometer at sample rates above 208Hz.
-   *
-   * @param {number} samplerate - The sample rate in Hz, or `undefined` (default is 12.5 Hz)
-   * @url http://www.espruino.com/Reference#l_Puck_accelOn
-   */
-  static accelOn(samplerate: number): void;
-
-  /**
-   * Turn the accelerometer off after it has been turned on by `Puck.accelOn()`.
-   * Check out [the Puck.js page on the
-   * accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
-   * information.
-   * @url http://www.espruino.com/Reference#l_Puck_accelOff
-   */
-  static accelOff(): void;
-
-  /**
-   * Turn on the accelerometer, take a single reading, and then turn it off again.
-   * The values reported are the raw values from the chip. In normal configuration:
-   * * accelerometer: full-scale (32768) is 4g, so you need to divide by 8192 to get
-   *   correctly scaled values
-   * * gyro: full-scale (32768) is 245 dps, so you need to divide by 134 to get
-   *   correctly scaled values
-   * If taking more than one reading, we'd suggest you use `Puck.accelOn()` and the
-   * `Puck.accel` event.
-   * @returns {any} An Object `{acc:{x,y,z}, gyro:{x,y,z}}` of accelerometer/gyro readings
-   * @url http://www.espruino.com/Reference#l_Puck_accel
-   */
-  static accel(): any;
-
-  /**
-   * Writes a register on the LSM6DS3TR-C Accelerometer. Can be used for configuring
-   * advanced functions.
-   * Check out [the Puck.js page on the
-   * accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
-   * information and links to modules that use this function.
-   *
-   * @param {number} reg
-   * @param {number} data
-   * @url http://www.espruino.com/Reference#l_Puck_accelWr
-   */
-  static accelWr(reg: number, data: number): void;
-
-  /**
-   * Reads a register from the LSM6DS3TR-C Accelerometer. Can be used for configuring
-   * advanced functions.
-   * Check out [the Puck.js page on the
-   * accelerometer](http://www.espruino.com/Puck.js#on-board-peripherals) for more
-   * information and links to modules that use this function.
-   *
-   * @param {number} reg
-   * @returns {number}
-   * @url http://www.espruino.com/Reference#l_Puck_accelRd
-   */
-  static accelRd(reg: number): number;
-
-  /**
-   * Transmit the given set of IR pulses - data should be an array of pulse times in
-   * milliseconds (as `[on, off, on, off, on, etc]`).
-   * For example `Puck.IR(pulseTimes)` - see http://www.espruino.com/Puck.js+Infrared
-   * for a full example.
-   * You can also attach an external LED to Puck.js, in which case you can just
-   * execute `Puck.IR(pulseTimes, led_cathode, led_anode)`
-   * It is also possible to just supply a single pin for IR transmission with
-   * `Puck.IR(pulseTimes, led_anode)` (on 2v05 and above).
-   *
-   * @param {any} data - An array of pulse lengths, in milliseconds
-   * @param {Pin} [cathode] - [optional] pin to use for IR LED cathode - if not defined, the built-in IR LED is used
-   * @param {Pin} [anode] - [optional] pin to use for IR LED anode - if not defined, the built-in IR LED is used
-   * @url http://www.espruino.com/Reference#l_Puck_IR
-   */
-  static IR(data: any, cathode?: Pin, anode?: Pin): void;
-
-  /**
-   * Capacitive sense - the higher the capacitance, the higher the number returned.
-   * If called without arguments, a value depending on the capacitance of what is
-   * attached to pin D11 will be returned. If you attach a length of wire to D11,
-   * you'll be able to see a higher value returned when your hand is near the wire
-   * than when it is away.
-   * You can also supply pins to use yourself, however if you do this then the TX pin
-   * must be connected to RX pin and sense plate via a roughly 1MOhm resistor.
-   * When not supplying pins, Puck.js uses an internal resistor between D12(tx) and
-   * D11(rx).
-   *
-   * @param {Pin} tx
-   * @param {Pin} rx
-   * @returns {number} Capacitive sense counter
-   * @url http://www.espruino.com/Reference#l_Puck_capSense
-   */
-  static capSense(tx: Pin, rx: Pin): number;
-
-  /**
-   * Return a light value based on the light the red LED is seeing.
-   * **Note:** If called more than 5 times per second, the received light value may
-   * not be accurate.
-   * @returns {number} A light value from 0 to 1
-   * @url http://www.espruino.com/Reference#l_Puck_light
-   */
-  static light(): number;
-
-  /**
-   * **DEPRECATED** - Please use `E.getBattery()` instead.
-   * Return an approximate battery percentage remaining based on a normal CR2032
-   * battery (2.8 - 2.2v).
-   * @returns {number} A percentage between 0 and 100
-   * @url http://www.espruino.com/Reference#l_Puck_getBatteryPercentage
-   */
-  static getBatteryPercentage(): number;
-
-  /**
-   * Run a self-test, and return true for a pass. This checks for shorts between
-   * pins, so your Puck shouldn't have anything connected to it.
-   * **Note:** This self-test auto starts if you hold the button on your Puck down
-   * while inserting the battery, leave it pressed for 3 seconds (while the green LED
-   * is lit) and release it soon after all LEDs turn on. 5 red blinks is a fail, 5
-   * green is a pass.
-   * If the self test fails, it'll set the Puck.js Bluetooth advertising name to
-   * `Puck.js !ERR` where ERR is a 3 letter error code.
-   * @returns {boolean} True if the self-test passed
-   * @url http://www.espruino.com/Reference#l_Puck_selfTest
-   */
-  static selfTest(): boolean;
-
-
-}
-
-/**
- * Class containing utility functions for the [Jolt.js Smart Bluetooth driver](http://www.espruino.com/Jolt.js)
- * @url http://www.espruino.com/Reference#Jolt
- */
-declare class Jolt {
-  /**
-   * `Q0` and `Q1` Qwiic connectors can have their power controlled by a 500mA FET (`Jolt.Q0.fet`) which switches GND.
-   * The `sda` and `scl` pins on this port are also analog inputs - use `analogRead(Jolt.Q0.sda)`/etc
-   * To turn this connector on run `Jolt.Q0.setPower(1)`
-   * @returns {any} An object containing the pins for the Q0 connector on Jolt.js `{sda,scl,fet}`
-   * @url http://www.espruino.com/Reference#l_Jolt_Q0
-   */
-  static Q0: Qwiic;
-
-  /**
-   * `Q0` and `Q1` Qwiic connectors can have their power controlled by a 500mA FET  (`Jolt.Q1.fet`) which switches GND.
-   * The `sda` and `scl` pins on this port are also analog inputs - use `analogRead(Jolt.Q1.sda)`/etc
-   * To turn this connector on run `Jolt.Q1.setPower(1)`
-   * @returns {any} An object containing the pins for the Q1 connector on Jolt.js `{sda,scl,fet}`
-   * @url http://www.espruino.com/Reference#l_Jolt_Q1
-   */
-  static Q1: Qwiic;
-
-  /**
-   * `Q2` and `Q3` have all 4 pins connected to Jolt.js's GPIO (including those usually used for power).
-   * As such only around 8mA of power can be supplied to any connected device.
-   * To use this as a normal Qwiic connector, run `Jolt.Q2.setPower(1)`
-   * @returns {any} An object containing the pins for the Q2 connector on Jolt.js `{sda,scl,gnd,vcc}`
-   * @url http://www.espruino.com/Reference#l_Jolt_Q2
-   */
-  static Q2: Qwiic;
-
-  /**
-   * `Q2` and `Q3` have all 4 pins connected to Jolt.js's GPIO (including those usually used for power).
-   * As such only around 8mA of power can be supplied to any connected device.
-   * To use this as a normal Qwiic connector, run `Jolt.Q3.setPower(1)`
-   * @returns {any} An object containing the pins for the Q3 connector on Jolt.js `{sda,scl,gnd,vcc}`
-   * @url http://www.espruino.com/Reference#l_Jolt_Q3
-   */
-  static Q3: Qwiic;
-
-  /**
-   * Sets the mode of the motor drivers. Jolt.js has two motor drivers,
-   * one (`0`) for outputs H0..H3, and one (`1`) for outputs H4..H7. They
-   * can be controlled independently.
-   * Mode can be:
-   * * `undefined` / `false` / `"off"` - the motor driver is off, all motor driver pins are open circuit (the motor driver still has a ~2.5k pulldown to GND)
-   * * `"auto"` - (default) - if any pin in the set of 4 pins (H0..H3, H4..H7) is set as an output, the driver is turned on. Eg `H0.set()` will
-   * turn the driver on with a high output, `H0.reset()` will pull the output to GND and `H0.read()` (or `H0.mode("input")` to set the state explicitly) is needed to
-   * turn the motor driver off.
-   * * `true` / `"output"` - **[recommended]** driver is set to "Independent bridge" mode. All 4 outputs in the bank are enabled
-   * * `"motor"` - driver is set to "4 pin interface" mode where pins are paired up (H0+H1, H2+H3, etc). If both
-   * in a pair are 0 the output is open circuit (motor coast), if both are 1 both otputs are 0 (motor brake), and
-   * if both are different, those values are on the output:
-   * `output`/`auto` mode:
-   * | H0 | H1 | Out 0 | Out 1 |
-   * |----|----|-------|-------|
-   * | 0  | 0  | Low   | Low   |
-   * | 0  | 1  | Low   | High  |
-   * | 1  | 0  | High  | Low   |
-   * | 1  | 1  | High  | High  |
-   * `motor` mode
-   * | H0 | H1 | Out 0 | Out 1 |
-   * |----|----|-------|-------|
-   * | 0  | 0  | Open  | Open  |
-   * | 0  | 1  | Low   | High  |
-   * | 1  | 0  | High  | Low   |
-   * | 1  | 1  | Low   | Low   |
-   *
-   * @param {number} driver - The number of the motor driver (0 or 1)
-   * @param {any} mode - The mode of the motor driver (see below)
-   * @url http://www.espruino.com/Reference#l_Jolt_setDriverMode
-   */
-  static setDriverMode(driver: number, mode: any): void;
-
-  /**
-   * Run a self-test, and return true for a pass. This checks for shorts between
-   * pins, so your Jolt shouldn't have anything connected to it.
-   * **Note:** This self-test auto starts if you hold the button on your Jolt down
-   * while inserting the battery, leave it pressed for 3 seconds (while the green LED
-   * is lit) and release it soon after all LEDs turn on. 5 red blinks is a fail, 5
-   * green is a pass.
-   * If the self test fails, it'll set the Jolt.js Bluetooth advertising name to
-   * `Jolt.js !ERR` where ERR is a 3 letter error code.
-   * @returns {boolean} True if the self-test passed
-   * @url http://www.espruino.com/Reference#l_Jolt_selfTest
-   */
-  static selfTest(): boolean;
-
-
-}
-
-/**
- * Class containing utility functions for the Qwiic connectors
- * on the [Jolt.js Smart Bluetooth driver](http://www.espruino.com/Jolt.js).
- * Each class (available from `Jolt.Q0`/`Jolt.Q1`/`Jolt.Q2`/`Jolt.Q3`)
- * has `sda` and `scl` fields with the pins for SDA and SCL on them.
- * On Jolt.js, the four Qwiic connectors can be individually powered:
- * * Q0/Q1 - GND is switched with a 500mA FET. The `fet` field contains the pin that controls the FET
- * * Q2/Q3 - all 4 pins are connected to GPIO. `gnd` and `vcc` fields contain the pins for GND and VCC
- * To control the power, use `Qwiic.setPower`, for example: `Jolt.Q0.setPower(true)`
- * @url http://www.espruino.com/Reference#Qwiic
- */
-declare class Qwiic {
-
-
-  /**
-   * This turns power for the given Qwiic connector on or off. See `Qwiic` for more information.
-   *
-   * @param {boolean} isOn - Whether the Qwiic connector is to be on or not
-   * @returns {any} The same Qwiic object (for call chaining)
-   * @url http://www.espruino.com/Reference#l_Qwiic_setPower
-   */
-  setPower(isOn: ShortBoolean): any;
-
-  /**
-   * @returns {any} An I2C object using this Qwiic connector, already set up
-   * @url http://www.espruino.com/Reference#l_Qwiic_i2c
-   */
-  i2c: any;
-}
-
-/**
- * @url http://www.espruino.com/Reference#Pip
- */
-declare class Pip {
-  /**
-   * The video had started
-   * @param {string} event - The event to listen to.
-   * @param {() => void} callback - A function that is executed when the event occurs.
-   * @url http://www.espruino.com/Reference#l_Pip_streamStarted
-   */
-  static on(event: "streamStarted", callback: () => void): void;
-
-  /**
-   * The video had ended
-   * @param {string} event - The event to listen to.
-   * @param {() => void} callback - A function that is executed when the event occurs.
-   * @url http://www.espruino.com/Reference#l_Pip_streamStopped
-   */
-  static on(event: "streamStopped", callback: () => void): void;
-
-  /**
-   * The video had looped
-   * @param {string} event - The event to listen to.
-   * @param {() => void} callback - A function that is executed when the event occurs.
-   * @url http://www.espruino.com/Reference#l_Pip_streamLooped
-   */
-  static on(event: "streamLooped", callback: () => void): void;
-
-  /**
-   *
-   * @param {any} fn - Filename
-   * @param {any} options - [Optional] object `{x:0, y:0, debug:false, repeat:false}`
-   * @url http://www.espruino.com/Reference#l_Pip_videoStart
-   */
-  static videoStart(fn: any, options: any): void;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Pip_videoStop
-   */
-  static videoStop(): void;
-
-  /**
-   *
-   * @param {any} fn - Filename
-   * @param {any} options - [Optional] object `{debug:false, repeat:false}`
-   * @url http://www.espruino.com/Reference#l_Pip_audioStart
-   */
-  static audioStart(fn: any, options: any): void;
-
-  /**
-   * Read the given WAV file into RAM
-   *
-   * @param {any} fn - Filename
-   * @returns {any} The raw sound data as a flat string
-   * @url http://www.espruino.com/Reference#l_Pip_audioRead
-   */
-  static audioRead(fn: any): any;
-
-  /**
-   * Return the builtin sound
-   *
-   * @param {any} id - OK/NEXT/COLUMN
-   * @returns {any} The sound as a native string
-   * @url http://www.espruino.com/Reference#l_Pip_audioBuiltin
-   */
-  static audioBuiltin(id: any): any;
-
-  /**
-   * Return how many samples are free in the ring buffer
-   * @returns {number} How many samples are left free in the ring buffer
-   * @url http://www.espruino.com/Reference#l_Pip_audioGetFree
-   */
-  static audioGetFree(): number;
-
-  /**
-   * Play audio straight from a variable of raw WAV data - this adds everything to the buffer at once so blocks
-   *
-   * @param {any} wav - Raw 16 bit sound data
-   * @param {any} options - [Optional] object
-   * @url http://www.espruino.com/Reference#l_Pip_audioStartVar
-   */
-  static audioStartVar(wav: any, options: any): void;
-
-  /**
-   *
-   * @param {number} vol
-   * @url http://www.espruino.com/Reference#l_Pip_setVol
-   */
-  static setVol(vol: number): void;
-
-  /**
-   * Writes a DAC register with a value
-   *
-   * @param {number} reg
-   * @param {number} value
-   * @url http://www.espruino.com/Reference#l_Pip_writeDACReg
-   */
-  static writeDACReg(reg: number, value: number): void;
-
-  /**
-   * Returns the current value of a DAC register
-   *
-   * @param {number} reg
-   * @returns {number} The current register value
-   * @url http://www.espruino.com/Reference#l_Pip_readDACReg
-   */
-  static readDACReg(reg: number): number;
-
-  /**
-   * Enable/disabled the DAC power supply (which also powers the audio amp and SD card)
-   *
-   * @param {boolean} isOn
-   * @url http://www.espruino.com/Reference#l_Pip_setDACPower
-   */
-  static setDACPower(isOn: ShortBoolean): void;
-
-  /**
-   * Initialise the ES8388 audio codec IC
-   * @url http://www.espruino.com/Reference#l_Pip_initDAC
-   */
-  static initDAC(): void;
-
-  /**
-   * * 'off'/undefined -> off
-   * * 'out' -> output
-   *
-   * @param {any} mode - Mode string - see below
-   * @url http://www.espruino.com/Reference#l_Pip_setDACMode
-   */
-  static setDACMode(mode: any): void;
-
-  /**
-   *
-   * @param {boolean} isOn
-   * @url http://www.espruino.com/Reference#l_Pip_setLCDPower
-   */
-  static setLCDPower(isOn: ShortBoolean): void;
-
-  /**
-   * Enter standby mode - can only be started by pressing the power button (PA0).
-   * @url http://www.espruino.com/Reference#l_Pip_off
-   */
-  static off(): void;
-
-  /**
-   * Enter sleep mode - JS is still executed
-   * @url http://www.espruino.com/Reference#l_Pip_sleep
-   */
-  static sleep(): void;
-
-  /**
-   * Wake up the pipboy
-   * @url http://www.espruino.com/Reference#l_Pip_wake
-   */
-  static wake(): void;
-
-  /**
-   * If `height` isn't specified the image height is used, otherwise only part of the image can be rendered.
-   *
-   * @param {any} img
-   * @param {number} x
-   * @param {number} y
-   * @param {any} options - scale(int) or { scale:int, noScanEffect:bool, height:int }
-   * @url http://www.espruino.com/Reference#l_Pip_blitImage
-   */
-  static blitImage(img: any, x: number, y: number, options: any): void;
-
-  /**
-   * This copies the contents of the current I2S audio buffer out to an array
-   * that can be rendered to the screen with drawPoly.
-   * Because the array is meant to be `x,y,x,y,x,y` only the second elements are
-   * touched.
-   *
-   * @param {any} dst
-   * @param {number} y1
-   * @param {number} y2
-   * @url http://www.espruino.com/Reference#l_Pip_getAudioWaveform
-   */
-  static getAudioWaveform(dst: any, y1: number, y2: number): void;
-
-  /**
-   * @returns {boolean} True if audio is currently playing
-   * @url http://www.espruino.com/Reference#l_Pip_audioIsPlaying
-   */
-  static audioIsPlaying(): boolean;
-
-  /**
-   * @returns {any} Returns `'video'` if a video is playing, or `'audio'` if audio is playing, `undefined` otherwise.
-   * @url http://www.espruino.com/Reference#l_Pip_streamPlaying
-   */
-  static streamPlaying(): any;
-
-
-}
-
-/**
- * Class containing utility functions for the [Bangle.js Smart
- * Watch](http://www.espruino.com/Bangle.js)
- * @url http://www.espruino.com/Reference#Bangle
- */
-declare class Bangle {
-  /**
-   * @url http://www.espruino.com/Reference#l_Bangle_drawWidgets
-   */
-  static drawWidgets(): void;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Bangle_setUI
-   */
-  static setUI(): void;
-
-  /**
-   * Sets the rotation of the LCD display (relative to its nominal orientation)
-   *
-   * @param {number} d - The number of degrees to the LCD display (0, 90, 180 or 270)
-   * @url http://www.espruino.com/Reference#l_Bangle_setLCDRotation
-   */
-  static setLCDRotation(d: number): void;
-
-  /**
-   * Accelerometer data available with `{x,y,z,diff,mag}` object as a parameter.
-   * * `x` is X axis (left-right) in `g`
-   * * `y` is Y axis (up-down) in `g`
-   * * `z` is Z axis (in-out) in `g`
-   * * `diff` is difference between this and the last reading in `g`
-   * * `mag` is the magnitude of the acceleration in `g`
-   * You can also retrieve the most recent reading with `Bangle.getAccel()`.
-   * @param {string} event - The event to listen to.
-   * @param {(xyz: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `xyz`
-   * @url http://www.espruino.com/Reference#l_Bangle_accel
-   */
-  static on(event: "accel", callback: (xyz: AccelData) => void): void;
-
-  /**
-   * Called whenever a step is detected by Bangle.js's pedometer.
-   * @param {string} event - The event to listen to.
-   * @param {(up: number) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `up` The number of steps since Bangle.js was last reset
-   * @url http://www.espruino.com/Reference#l_Bangle_step
-   */
-  static on(event: "step", callback: (up: number) => void): void;
-
-  /**
-   * See `Bangle.getHealthStatus()` for more information. This is used for health
-   * tracking to allow Bangle.js to record historical exercise data.
-   * @param {string} event - The event to listen to.
-   * @param {(info: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `info` An object containing the last 10 minutes health data
-   * @url http://www.espruino.com/Reference#l_Bangle_health
-   */
-  static on(event: "health", callback: (info: HealthStatus) => void): void;
-
-  /**
-   * Has the watch been moved so that it is face-up, or not face up?
-   * @param {string} event - The event to listen to.
-   * @param {(up: ShortBoolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `up` `true` if face-up
-   * @url http://www.espruino.com/Reference#l_Bangle_faceUp
-   */
-  static on(event: "faceUp", callback: (up: ShortBoolean) => void): void;
-
-  /**
-   * This event happens when the watch has been twisted around it's axis - for
-   * instance as if it was rotated so someone could look at the time.
-   * To tweak when this happens, see the `twist*` options in `Bangle.setOptions()`
-   * @param {string} event - The event to listen to.
-   * @param {() => void} callback - A function that is executed when the event occurs.
-   * @url http://www.espruino.com/Reference#l_Bangle_twist
-   */
-  static on(event: "twist", callback: () => void): void;
-
-  /**
-   * Is the battery charging or not?
-   * @param {string} event - The event to listen to.
-   * @param {(charging: ShortBoolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `charging` `true` if charging
-   * @url http://www.espruino.com/Reference#l_Bangle_charging
-   */
-  static on(event: "charging", callback: (charging: ShortBoolean) => void): void;
-
-  /**
-   * Magnetometer/Compass data available with `{x,y,z,dx,dy,dz,heading}` object as a
-   * parameter
-   * * `x/y/z` raw x,y,z magnetometer readings
-   * * `dx/dy/dz` readings based on calibration since magnetometer turned on
-   * * `heading` in degrees based on calibrated readings (will be NaN if magnetometer
-   *   hasn't been rotated around 360 degrees).
-   * **Note:** In 2v15 firmware and earlier the heading is inverted (360-heading). There's
-   * a fix in the bootloader which will apply a fix for those headings, but old apps may
-   * still expect an inverted value.
-   * To get this event you must turn the compass on with `Bangle.setCompassPower(1)`.
-   * You can also retrieve the most recent reading with `Bangle.getCompass()`.
-   * @param {string} event - The event to listen to.
-   * @param {(xyz: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `xyz`
-   * @url http://www.espruino.com/Reference#l_Bangle_mag
-   */
-  static on(event: "mag", callback: (xyz: CompassData) => void): void;
-
-  /**
-   * Raw NMEA GPS / u-blox data messages received as a string
-   * To get this event you must turn the GPS on with `Bangle.setGPSPower(1)`.
-   * @param {string} event - The event to listen to.
-   * @param {(nmea: any, dataLoss: ShortBoolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `nmea` A string containing the raw NMEA data from the GPS
-   * * `dataLoss` This is set to true if some lines of GPS data have previously been lost (eg because system was too busy to queue up a GPS-raw event)
-   * @url http://www.espruino.com/Reference#l_Bangle_GPS-raw
-   */
-  static on(event: "GPS-raw", callback: (nmea: string, dataLoss: boolean) => void): void;
-
-  /**
-   * GPS data, as an object. Contains:
-   * ```
-   * { "lat": number,      // Latitude in degrees
-   *   "lon": number,      // Longitude in degrees
-   *   "alt": number,      // altitude in M
-   *   "speed": number,    // Speed in kph
-   *   "course": number,   // Course in degrees
-   *   "time": Date,       // Current Time (or undefined if not known)
-   *   "satellites": 7,    // Number of satellites
-   *   "fix": 1            // NMEA Fix state - 0 is no fix
-   *   "hdop": number,     // Horizontal Dilution of Precision
-   * }
-   * ```
-   * If a value such as `lat` is not known because there is no fix, it'll be `NaN`.
-   * `hdop` is a value from the GPS receiver that gives a rough idea of accuracy of
-   * lat/lon based on the geometry of the satellites in range. Multiply by 5 to get a
-   * value in meters. This is just a ballpark estimation and should not be considered
-   * remotely accurate.
-   * To get this event you must turn the GPS on with `Bangle.setGPSPower(1)`.
-   * @param {string} event - The event to listen to.
-   * @param {(fix: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `fix` An object with fix info (see below)
-   * @url http://www.espruino.com/Reference#l_Bangle_GPS
-   */
-  static on(event: "GPS", callback: (fix: GPSFix) => void): void;
-
-  /**
-   * Heat rate data, as an object. Contains:
-   * ```
-   * { "bpm": number,             // Beats per minute
-   *   "confidence": number,      // 0-100 percentage confidence in the heart rate
-   *   "raw": Uint8Array,         // raw samples from heart rate monitor
-   * }
-   * ```
-   * To get this event you must turn the heart rate monitor on with
-   * `Bangle.setHRMPower(1)`.
-   * @param {string} event - The event to listen to.
-   * @param {(hrm: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `hrm` An object with heart rate info (see below)
-   * @url http://www.espruino.com/Reference#l_Bangle_HRM
-   */
-  static on(event: "HRM", callback: (hrm: { bpm: number, confidence: number, raw: Uint8Array }) => void): void;
-
-  /**
-   * Called when heart rate sensor data is available - see `Bangle.setHRMPower(1)`.
-   * `hrm` is of the form:
-   * ```
-   * { "raw": -1,       // raw value from sensor
-   *   "filt": -1,      // bandpass-filtered raw value from sensor
-   *   "bpm": 88.9,     // last BPM value measured
-   *   "confidence": 0  // confidence in the BPM value
-   * }
-   * ```
-   * @param {string} event - The event to listen to.
-   * @param {(hrm: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `hrm` A object containing instant readings from the heart rate sensor
-   * @url http://www.espruino.com/Reference#l_Bangle_HRM-raw
-   */
-  static on(event: "HRM-raw", callback: (hrm: { raw: number, filt: number, bpm: number, confidence: number }) => void): void;
-
-  /**
-   * Called when an environment sample heart rate sensor data is available (this is the amount of light received by the HRM sensor from the environment when its LED is off). On the newest VC31B based watches this is only 4 bit (0..15).
-   * To get it you need to turn the HRM on with `Bangle.setHRMPower(1)` and also set `Bangle.setOptions({hrmPushEnv:true})`.
-   * It is also possible to poke registers with `Bangle.hrmWr` to increase the poll rate if needed. See https://banglejs.com/apps/?id=flashcount for an example of this.
-   * @param {string} event - The event to listen to.
-   * @param {(env: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `env` An integer containing current environment reading (light level)
-   * @url http://www.espruino.com/Reference#l_Bangle_HRM-env
-   */
-  static on(event: "HRM-env", callback: (env: any) => void): void;
-
-  /**
-   * When `Bangle.setBarometerPower(true)` is called, this event is fired containing
-   * barometer readings.
-   * Same format as `Bangle.getPressure()`
-   * @param {string} event - The event to listen to.
-   * @param {(e: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `e` An object containing `{temperature,pressure,altitude}`
-   * @url http://www.espruino.com/Reference#l_Bangle_pressure
-   */
-  static on(event: "pressure", callback: (e: PressureData) => void): void;
-
-  /**
-   * Has the screen been turned on or off? Can be used to stop tasks that are no
-   * longer useful if nothing is displayed. Also see `Bangle.isLCDOn()`
-   * @param {string} event - The event to listen to.
-   * @param {(on: ShortBoolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `on` `true` if screen is on
-   * @url http://www.espruino.com/Reference#l_Bangle_lcdPower
-   */
-  static on(event: "lcdPower", callback: (on: ShortBoolean) => void): void;
-
-  /**
-   * Has the backlight been turned on or off? Can be used to stop tasks that are no
-   * longer useful if want to see in sun screen only. Also see `Bangle.isBacklightOn()`
-   * @param {string} event - The event to listen to.
-   * @param {(on: ShortBoolean) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `on` `true` if backlight is on
-   * @url http://www.espruino.com/Reference#l_Bangle_backlight
-   */
-  static on(event: "backlight", callback: (on: ShortBoolean) => void): void;
-
-  /**
-   * Has the screen been locked? Also see `Bangle.isLocked()`
-   * @param {string} event - The event to listen to.
-   * @param {(on: ShortBoolean, reason: string) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `on` `true` if screen is locked, `false` if it is unlocked and touchscreen/buttons will work
-   * * `reason` (2v20 onwards) If known, the reason for locking/unlocking - 'button','js','tap','doubleTap','faceUp','twist','timeout'
-   * @url http://www.espruino.com/Reference#l_Bangle_lock
-   */
-  static on(event: "lock", callback: (on: ShortBoolean, reason: string) => void): void;
-
-  /**
-   * If the watch is tapped, this event contains information on the way it was
-   * tapped.
-   * `dir` reports the side of the watch that was tapped (not the direction it was
-   * tapped in).
-   * ```
-   * {
-   *   dir : "left/right/top/bottom/front/back",
-   *   double : true/false // was this a double-tap?
-   *   x : -2 .. 2, // the axis of the tap
-   *   y : -2 .. 2, // the axis of the tap
-   *   z : -2 .. 2 // the axis of the tap
-   * ```
-   * @param {string} event - The event to listen to.
-   * @param {(data: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `data` `{dir, double, x, y, z}`
-   * @url http://www.espruino.com/Reference#l_Bangle_tap
-   */
-  static on(event: "tap", callback: (data: { dir: "left" | "right" | "top" | "bottom" | "front" | "back", double: boolean, x: TapAxis, y: TapAxis, z: TapAxis }) => void): void;
-
-  /**
-   * Emitted when a 'gesture' (fast movement) is detected
-   * @param {string} event - The event to listen to.
-   * @param {(xyz: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `xyz` An Int8Array of XYZXYZXYZ data
-   * @url http://www.espruino.com/Reference#l_Bangle_gesture
-   */
-  static on(event: "gesture", callback: (xyz: Int8Array) => void): void;
-
-  /**
-   * Emitted when a 'gesture' (fast movement) is detected, and a Tensorflow model is
-   * in storage in the `".tfmodel"` file.
-   * If a `".tfnames"` file is specified as a comma-separated list of names, it will
-   * be used to decode `gesture` from a number into a string.
-   * @param {string} event - The event to listen to.
-   * @param {(gesture: any, weights: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `gesture` The name of the gesture (if '.tfnames' exists, or the index. 'undefined' if not matching
-   * * `weights` An array of floating point values output by the model
-   * @url http://www.espruino.com/Reference#l_Bangle_aiGesture
-   */
-  static on(event: "aiGesture", callback: (gesture: string | undefined, weights: number[]) => void): void;
-
-  /**
-   * Emitted when a swipe on the touchscreen is detected (a movement from
-   * left->right, right->left, down->up or up->down)
-   * Bangle.js 1 is only capable of detecting left/right swipes as it only contains a
-   * 2 zone touchscreen.
-   * @param {string} event - The event to listen to.
-   * @param {(directionLR: number, directionUD: number) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `directionLR` `-1` for left, `1` for right, `0` for up/down
-   * * `directionUD` `-1` for up, `1` for down, `0` for left/right (Bangle.js 2 only)
-   * @url http://www.espruino.com/Reference#l_Bangle_swipe
-   */
-  static on(event: "swipe", callback: SwipeCallback): void;
-
-  /**
-   * Emitted when the touchscreen is pressed
-   * @param {string} event - The event to listen to.
-   * @param {(button: number, xy: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `button` `1` for left, `2` for right
-   * * `xy` Object of form `{x,y,type}` containing touch coordinates (if the device supports full touch). Clipped to 0..175 (LCD pixel coordinates) on firmware 2v13 and later.`type` is only available on Bangle.js 2 and is an integer, either 0 for swift touches or 2 for longer ones.
-   * @url http://www.espruino.com/Reference#l_Bangle_touch
-   */
-  static on(event: "touch", callback: TouchCallback): void;
-
-  /**
-   * Emitted when the touchscreen is dragged or released
-   * The touchscreen extends past the edge of the screen and while `x` and `y`
-   * coordinates are arranged such that they align with the LCD's pixels, if your
-   * finger goes towards the edge of the screen, `x` and `y` could end up larger than
-   * 175 (the screen's maximum pixel coordinates) or smaller than 0. Coordinates from
-   * the `touch` event are clipped.
-   * @param {string} event - The event to listen to.
-   * @param {(event: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `event` Object of form `{x,y,dx,dy,b}` containing touch coordinates, difference in touch coordinates, and an integer `b` containing number of touch points (currently 1 or 0)
-   * @url http://www.espruino.com/Reference#l_Bangle_drag
-   */
-  static on(event: "drag", callback: DragCallback): void;
-
-  /**
-   * Emitted when the touchscreen is dragged for a large enough distance to count as
-   * a gesture.
-   * If Bangle.strokes is defined and populated with data from `Unistroke.new`, the
-   * `event` argument will also contain a `stroke` field containing the most closely
-   * matching stroke name.
-   * For example:
-   * ```
-   * Bangle.strokes = {
-   *   up : Unistroke.new(new Uint8Array([57, 151, ... 158, 137])),
-   *   alpha : Unistroke.new(new Uint8Array([161, 55, ... 159, 161])),
-   * };
-   * Bangle.on('stroke',o=>{
-   *   print(o.stroke);
-   *   g.clear(1).drawPoly(o.xy);
-   * });
-   * // Might print something like
-   * {
-   *   "xy": new Uint8Array([149, 50, ... 107, 136]),
-   *   "stroke": "alpha"
-   * }
-   * ```
-   * @param {string} event - The event to listen to.
-   * @param {(event: any) => void} callback - A function that is executed when the event occurs. Its arguments are:
-   * * `event` Object of form `{xy:Uint8Array([x1,y1,x2,y2...])}` containing touch coordinates
-   * @url http://www.espruino.com/Reference#l_Bangle_stroke
-   */
-  static on(event: "stroke", callback: (event: { xy: Uint8Array, stroke?: string }) => void): void;
-
-  /**
-   * Emitted at midnight (at the point the `day` health info is reset to 0).
-   * Can be used for housekeeping tasks that don't want to be run during the day.
-   * @param {string} event - The event to listen to.
-   * @param {() => void} callback - A function that is executed when the event occurs.
-   * @url http://www.espruino.com/Reference#l_Bangle_midnight
-   */
-  static on(event: "midnight", callback: () => void): void;
-
-  /**
-   * This function can be used to turn Bangle.js's LCD backlight off or on.
-   * This function resets the Bangle's 'activity timer' (like pressing a button or
-   * the screen would) so after a time period of inactivity set by
-   * `Bangle.setOptions({backlightTimeout: X});` the backlight will turn off.
-   * If you want to keep the backlight on permanently (until apps are changed) you can
-   * do:
-   * ```
-   * Bangle.setOptions({backlightTimeout: 0}) // turn off the timeout
-   * Bangle.setBacklight(1); // keep screen on
-   * ```
-   * Of course, the backlight depends on `Bangle.setLCDPower` too, so any lcdPowerTimeout/setLCDTimeout will
-   * also turn the backlight off. The use case is when you require the backlight timeout
-   * to be shorter than the power timeout.
-   *
-   * @param {boolean} isOn - True if the LCD backlight should be on, false if not
-   * @url http://www.espruino.com/Reference#l_Bangle_setBacklight
-   */
-  static setBacklight(isOn: ShortBoolean): void;
-
-  /**
-   * This function can be used to turn Bangle.js's LCD off or on.
-   * This function resets the Bangle's 'activity timer' (like pressing a button or
-   * the screen would) so after a time period of inactivity set by
-   * `Bangle.setLCDTimeout` the screen will turn off.
-   * If you want to keep the screen on permanently (until apps are changed) you can
-   * do:
-   * ```
-   * Bangle.setLCDTimeout(0); // turn off the timeout
-   * Bangle.setLCDPower(1); // keep screen on
-   * ```
-   * **When on full, the LCD draws roughly 40mA.** You can adjust When brightness
-   * using `Bangle.setLCDBrightness`.
-   *
-   * @param {boolean} isOn - True if the LCD should be on, false if not
-   * @url http://www.espruino.com/Reference#l_Bangle_setLCDPower
-   */
-  static setLCDPower(isOn: ShortBoolean): void;
-
-  /**
-   * This function can be used to adjust the brightness of Bangle.js's display, and
-   * hence prolong its battery life.
-   * Due to hardware design constraints on Bangle.js 1, software PWM has to be used which means that
-   * the display may flicker slightly when Bluetooth is active and the display is not
-   * at full power.
-   * **Power consumption**
-   * * 0 = 7mA
-   * * 0.1 = 12mA
-   * * 0.2 = 18mA
-   * * 0.5 = 28mA
-   * * 0.9 = 40mA (switching overhead)
-   * * 1 = 40mA
-   * In 2v21 and earlier, this function would erroneously turn the LCD backlight on. 2v22 and later
-   * fix this, and if you want the backlight on your should use `Bangle.setLCDPowerBacklight()`
-   *
-   * @param {number} brightness - The brightness of Bangle.js's display - from 0(off) to 1(on full)
-   * @url http://www.espruino.com/Reference#l_Bangle_setLCDBrightness
-   */
-  static setLCDBrightness(brightness: number): void;
-
-  /**
-   * This function can be used to change the way graphics is handled on Bangle.js.
-   * Available options for `Bangle.setLCDMode` are:
-   * * `Bangle.setLCDMode()` or `Bangle.setLCDMode("direct")` (the default) - The
-   *   drawable area is 240x240 16 bit. Unbuffered, so draw calls take effect
-   *   immediately. Terminal and vertical scrolling work (horizontal scrolling
-   *   doesn't).
-   * * `Bangle.setLCDMode("doublebuffered")` - The drawable area is 240x160 16 bit,
-   *   terminal and scrolling will not work. `g.flip()` must be called for draw
-   *   operations to take effect.
-   * * `Bangle.setLCDMode("120x120")` - The drawable area is 120x120 8 bit,
-   *   `g.getPixel`, terminal, and full scrolling work. Uses an offscreen buffer
-   *   stored on Bangle.js, `g.flip()` must be called for draw operations to take
-   *   effect.
-   * * `Bangle.setLCDMode("80x80")` - The drawable area is 80x80 8 bit, `g.getPixel`,
-   *   terminal, and full scrolling work. Uses an offscreen buffer stored on
-   *   Bangle.js, `g.flip()` must be called for draw operations to take effect.
-   * You can also call `Bangle.setLCDMode()` to return to normal, unbuffered
-   * `"direct"` mode.
-   *
-   * @param {any} mode - The LCD mode (See below)
-   * @url http://www.espruino.com/Reference#l_Bangle_setLCDMode
-   */
-  static setLCDMode(mode?: LCDMode): void;
-
-  /**
-   * The current LCD mode.
-   * See `Bangle.setLCDMode` for examples.
-   * @returns {any} The LCD mode as a String
-   * @url http://www.espruino.com/Reference#l_Bangle_getLCDMode
-   */
-  static getLCDMode(): LCDMode;
-
-  /**
-   * This can be used to move the displayed memory area up or down temporarily. It's
-   * used for displaying notifications while keeping the main display contents
-   * intact.
-   *
-   * @param {number} y - The amount of pixels to shift the LCD up or down
-   * @url http://www.espruino.com/Reference#l_Bangle_setLCDOffset
-   */
-  static setLCDOffset(y: number): void;
-
-  /**
-   * Overlay an image or graphics instance on top of the contents of the graphics buffer.
-   * This only works on Bangle.js 2 because Bangle.js 1 doesn't have an offscreen buffer accessible from the CPU.
-   * ```
-   * // display an alarm clock icon on the screen
-   * var img = require("heatshrink").decompress(atob(`lss4UBvvv///ovBlMyqoADv/VAwlV//1qtfAQX/BINXDoPVq/9DAP
-   * /AYIKDrWq0oREAYPW1QAB1IWCBQXaBQWq04WCAQP6BQeqA4P1AQPq1WggEK1WrBAIkBBQJsCBYO///fBQOoPAcqCwP3BQnwgECCwP9
-   * GwIKCngWC14sB7QKCh4CBCwN/64KDgfACwWn6vWGwYsBCwOputWJgYsCgGqytVBQYsCLYOlqtqwAsFEINVrR4BFgghBBQosDEINWIQ
-   * YsDEIQ3DFgYhCG4msSYeVFgnrFhMvOAgsEkE/FhEggYWCFgIhDkEACwQKBEIYKBCwSGFBQJxCQwYhBBQTKDqohCBQhCCEIJlDXwrKE
-   * BQoWHBQdaCwuqJoI4CCwgKECwJ9CJgIKDq+qBYUq1WtBQf+BYIAC3/VBQX/tQKDz/9BQY5BAAVV/4WCBQJcBKwVf+oHBv4wCAAYhB`));
-   * Bangle.setLCDOverlay(img,66,66, {id: "myOverlay", remove: () => print("Removed")});
-   * ```
-   * Or use a `Graphics` instance:
-   * ```
-   * var ovr = Graphics.createArrayBuffer(100,100,2,{msb:true});
-   * ovr.transparent = 0; // (optional) set a transparent color
-   * ovr.palette = new Uint16Array([0,0,g.toColor("#F00"),g.toColor("#FFF")]); // (optional) set a color palette
-   * ovr.setColor(1).fillRect({x:0,y:0,w:99,h:99,r:8});
-   * ovr.setColor(3).fillRect({x:2,y:2,w:95,h:95,r:7});
-   * ovr.setColor(2).setFont("Vector:30").setFontAlign(0,0).drawString("Hi",50,50);
-   * Bangle.setLCDOverlay(ovr,38,38, {id: "myOverlay", remove: () => print("Removed")});
-   * ```
-   * To remove an overlay, simply call:
-   * ```
-   * Bangle.setLCDOverlay(undefined, {id: "myOverlay"});
-   * ```
-   * Before 2v22 the `options` object isn't parsed, and as a result
-   * the remove callback won't be called, and `Bangle.setLCDOverlay(undefined)` will
-   * remove *any* active overlay.
-   * The `remove` callback is called when the current overlay is removed or replaced with
-   * another, but *not* if setLCDOverlay is called again with an image and the same ID.
-   *
-   * @param {any} img - An image, or undefined to clear
-   * @param {any} x - The X offset the graphics instance should be overlaid on the screen with
-   * @param {number} y - The Y offset the graphics instance should be overlaid on the screen with
-   * @param {any} options - [Optional] object `{remove:fn, id:"str"}`
-   * @url http://www.espruino.com/Reference#l_Bangle_setLCDOverlay
-   */
-  static setLCDOverlay(img: any, x: number, y: number): void;
-  static setLCDOverlay(): void;
-  static setLCDOverlay(img: any, x: number, y: number, options: { id : string, remove: () => void }): void;
-  static setLCDOverlay(img: any, options: { id : string }): void;
-
-  /**
-   * This function can be used to turn Bangle.js's LCD power saving on or off.
-   * With power saving off, the display will remain in the state you set it with
-   * `Bangle.setLCDPower`.
-   * With power saving on, the display will turn on if a button is pressed, the watch
-   * is turned face up, or the screen is updated (see `Bangle.setOptions` for
-   * configuration). It'll turn off automatically after the given timeout.
-   * **Note:** This function also sets the Backlight and Lock timeout (the time at
-   * which the touchscreen/buttons start being ignored). To set both separately, use
-   * `Bangle.setOptions`
-   *
-   * @param {number} isOn - The timeout of the display in seconds, or `0`/`undefined` to turn power saving off. Default is 10 seconds.
-   * @url http://www.espruino.com/Reference#l_Bangle_setLCDTimeout
-   */
-  static setLCDTimeout(isOn: number): void;
-
-  /**
-   * Set how often the watch should poll its sensors (accel/hr/mag) for new data and kick the
-   * Watchdog timer. It isn't recommended that you make this interval much larger
-   * than 1000ms, but values up to 4000ms are allowed.
-   * Calling this will set `Bangle.setOptions({powerSave: false})` - disabling the
-   * dynamic adjustment of poll interval to save battery power when Bangle.js is
-   * stationary.
-   *
-   * @param {number} interval - Polling interval in milliseconds (Default is 80ms - 12.5Hz to match accelerometer)
-   * @url http://www.espruino.com/Reference#l_Bangle_setPollInterval
-   */
-  static setPollInterval(interval: number): void;
-
-  /**
-   * Set internal options used for gestures, etc...
-   * * `wakeOnBTN1` should the LCD turn on when BTN1 is pressed? default = `true`
-   * * `wakeOnBTN2` (Bangle.js 1) should the LCD turn on when BTN2 is pressed?
-   *   default = `true`
-   * * `wakeOnBTN3` (Bangle.js 1) should the LCD turn on when BTN3 is pressed?
-   *   default = `true`
-   * * `wakeOnFaceUp` should the LCD turn on when the watch is turned face up?
-   *   default = `false`
-   * * `wakeOnTouch` should the LCD turn on when the touchscreen is pressed? On Bangle.js 1 this
-   * is a physical press on the touchscreen, on Bangle.js 2 we have to use the accelerometer as
-   * the touchscreen cannot be left powered without running the battery down. default = `false`
-   * * `wakeOnDoubleTap` (2v20 onwards) should the LCD turn on when the watch is double-tapped on the screen?
-   * This uses the accelerometer, not the touchscreen itself. default = `false`
-   * * `wakeOnTwist` should the LCD turn on when the watch is twisted? default =
-   *   `true`
-   * * `twistThreshold` How much acceleration to register a twist of the watch strap?
-   *   Can be negative for opposite direction. default = `800`
-   * * `twistMaxY` Maximum acceleration in Y to trigger a twist (low Y means watch is
-   *   facing the right way up). default = `-800`
-   * * `twistTimeout` How little time (in ms) must a twist take from low->high
-   *   acceleration? default = `1000`
-   * * `gestureStartThresh` how big a difference before we consider a gesture
-   *   started? default = `sqr(800)`
-   * * `gestureEndThresh` how small a difference before we consider a gesture ended?
-   *   default = `sqr(2000)`
-   * * `gestureInactiveCount` how many samples do we keep after a gesture has ended?
-   *   default = `4`
-   * * `gestureMinLength` how many samples must a gesture have before we notify about
-   *   it? default = `10`
-   * * `powerSave` after a minute of not being moved, Bangle.js will change the
-   *    accelerometer poll interval down to 800ms (10x accelerometer samples). On
-   *    movement it'll be raised to the default 80ms. If `Bangle.setPollInterval` is
-   *    used this is disabled, and for it to work the poll interval must be either
-   *    80ms or 800ms. default = `true`. Setting `powerSave:false` will disable this
-   *    automatic power saving, but will **not** change the poll interval from its
-   *    current value. If you desire a specific interval (e.g. the default 80ms) you
-   *    must set it manually with `Bangle.setPollInterval(80)` after setting
-   *    `powerSave:false`.
-   * * `lowResistanceFix` (Bangle.js 2, 2v22+) In the very rare case that your watch button
-   * gets damaged such that it has a low resistance and always stays on, putting the watch
-   * into a boot loop, setting this flag may improve matters (by forcing the input low
-   * before reading and disabling the hardware watch on BTN1).
-   * * `lockTimeout` how many milliseconds before the screen locks
-   * * `lcdPowerTimeout` how many milliseconds before the screen turns off
-   * * `backlightTimeout` how many milliseconds before the screen's backlight turns
-   *   off
-   * * `btnLoadTimeout` how many milliseconds does the home button have to be pressed
-   * for before the clock is reloaded? 1500ms default, or 0 means never.
-   * * `manualWatchdog` if set, this disables automatic kicking of the watchdog timer
-   * from the interrupt (when the button isn't held). You will then have to manually
-   * call `E.kickWatchdog()` from your code or the watch will reset after ~5 seconds.
-   * * `hrmPollInterval` set the requested poll interval (in milliseconds) for the
-   *   heart rate monitor. On Bangle.js 2 only 10,20,40,80,160,200 ms are supported,
-   *   and polling rate may not be exact. The algorithm's filtering is tuned for
-   *   20-40ms poll intervals, so higher/lower intervals may effect the reliability
-   *   of the BPM reading. You must call this *before* `Bangle.setHRMPower` - calling
-   *   when the HRM is already on will not affect the poll rate.
-   * * `hrmSportMode` - on the newest Bangle.js 2 builds with with the proprietary
-   *   heart rate algorithm, this is the sport mode passed to the algorithm. See `libs/misc/vc31_binary/algo.h`
-   *   for more info. -1 = auto, 0 = normal (default), 1 = running, 2 = ...
-   * * `hrmGreenAdjust` - (Bangle.js 2, 2v19+) if false (default is true) the green LED intensity won't be adjusted to get the HRM sensor 'exposure' correct. This is reset when the HRM is initialised with `Bangle.setHRMPower`.
-   * * `hrmWearDetect` - (Bangle.js 2, 2v19+) if false (default is true) HRM readings won't be turned off if the watch isn't on your arm (based on HRM proximity sensor). This is reset when the HRM is initialised with `Bangle.setHRMPower`.
-   * * `hrmPushEnv` - (Bangle.js 2, 2v19+) if true (default is false) HRM environment readings will be produced as `Bangle.on(`HRM-env`, ...)` events. This is reset when the HRM is initialised with `Bangle.setHRMPower`.
-   * * `seaLevelPressure` (Bangle.js 2) Normally 1013.25 millibars - this is used for
-   *   calculating altitude with the pressure sensor
-   * * `lcdBufferPtr` (Bangle.js 2 2v21+) Return a pointer to the first pixel of the 3 bit graphics buffer used by Bangle.js for the screen (stride = 178 bytes)
-   * * `lcdDoubleRefresh` (Bangle.js 2 2v22+) If enabled, pulses EXTCOMIN twice per poll interval (avoids off-axis flicker)
-   * Where accelerations are used they are in internal units, where `8192 = 1g`
-   *
-   * @param {any} options
-   * @url http://www.espruino.com/Reference#l_Bangle_setOptions
-   */
-  static setOptions(options: { [key in keyof BangleOptions]?: BangleOptions<ShortBoolean>[key] }): void;
-
-  /**
-   * Return the current state of options as set by `Bangle.setOptions`
-   * @returns {any} The current state of all options
-   * @url http://www.espruino.com/Reference#l_Bangle_getOptions
-   */
-  static getOptions(): BangleOptions;
-
-  /**
-   * Also see the `Bangle.lcdPower` event
-   * You can use `Bangle.setLCDPower` to turn on the LCD (on Bangle.js 2 the LCD is normally on, and draws very little power so can be left on).
-   * @returns {boolean} Is the display on or not?
-   * @url http://www.espruino.com/Reference#l_Bangle_isLCDOn
-   */
-  static isLCDOn(): boolean;
-
-  /**
-   * Also see the `Bangle.backlight` event
-   * You can use `Bangle.setLCDPowerBacklight` to turn on the LCD backlight.
-   * @returns {boolean} Is the backlight on or not?
-   * @url http://www.espruino.com/Reference#l_Bangle_isBacklightOn
-   */
-  static isBacklightOn(): boolean;
-
-  /**
-   * This function can be used to lock or unlock Bangle.js (e.g. whether buttons and
-   * touchscreen work or not)
-   *
-   * @param {boolean} isLocked - `true` if the Bangle is locked (no user input allowed)
-   * @url http://www.espruino.com/Reference#l_Bangle_setLocked
-   */
-  static setLocked(isLocked: ShortBoolean): void;
-
-  /**
-   * Also see the `Bangle.lock` event
-   * @returns {boolean} Is the screen locked or not?
-   * @url http://www.espruino.com/Reference#l_Bangle_isLocked
-   */
-  static isLocked(): boolean;
-
-  /**
-   * @returns {boolean} Is the battery charging or not?
-   * @url http://www.espruino.com/Reference#l_Bangle_isCharging
-   */
-  static isCharging(): boolean;
-
-  /**
-   * Writes a command directly to the ST7735 LCD controller
-   *
-   * @param {number} cmd
-   * @param {any} data
-   * @url http://www.espruino.com/Reference#l_Bangle_lcdWr
-   */
-  static lcdWr(cmd: number, data: any): void;
-
-  /**
-   * Set the power to the Heart rate monitor
-   * When on, data is output via the `HRM` event on `Bangle`:
-   * ```
-   * Bangle.setHRMPower(true, "myapp");
-   * Bangle.on('HRM',print);
-   * ```
-   * *When on, the Heart rate monitor draws roughly 5mA*
-   *
-   * @param {boolean} isOn - True if the heart rate monitor should be on, false if not
-   * @param {any} appID - A string with the app's name in, used to ensure one app can't turn off something another app is using
-   * @returns {boolean} Is HRM on?
-   * @url http://www.espruino.com/Reference#l_Bangle_setHRMPower
-   */
-  static setHRMPower(isOn: ShortBoolean, appID: string): boolean;
-
-  /**
-   * Is the Heart rate monitor powered?
-   * Set power with `Bangle.setHRMPower(...);`
-   * @returns {boolean} Is HRM on?
-   * @url http://www.espruino.com/Reference#l_Bangle_isHRMOn
-   */
-  static isHRMOn(): boolean;
-
-  /**
-   * Set the power to the GPS.
-   * When on, data is output via the `GPS` event on `Bangle`:
-   * ```
-   * Bangle.setGPSPower(true, "myapp");
-   * Bangle.on('GPS',print);
-   * ```
-   * *When on, the GPS draws roughly 20mA*
-   *
-   * @param {boolean} isOn - True if the GPS should be on, false if not
-   * @param {any} appID - A string with the app's name in, used to ensure one app can't turn off something another app is using
-   * @returns {boolean} Is the GPS on?
-   * @url http://www.espruino.com/Reference#l_Bangle_setGPSPower
-   */
-  static setGPSPower(isOn: ShortBoolean, appID: string): boolean;
-
-  /**
-   * Is the GPS powered?
-   * Set power with `Bangle.setGPSPower(...);`
-   * @returns {boolean} Is the GPS on?
-   * @url http://www.espruino.com/Reference#l_Bangle_isGPSOn
-   */
-  static isGPSOn(): boolean;
-
-  /**
-   * Get the last available GPS fix info (or `undefined` if GPS is off).
-   * The fix info received is the same as you'd get from the `Bangle.GPS` event.
-   * @returns {any} A GPS fix object with `{lat,lon,...}`
-   * @url http://www.espruino.com/Reference#l_Bangle_getGPSFix
-   */
-  static getGPSFix(): GPSFix;
-
-  /**
-   * Set the power to the Compass
-   * When on, data is output via the `mag` event on `Bangle`:
-   * ```
-   * Bangle.setCompassPower(true, "myapp");
-   * Bangle.on('mag',print);
-   * ```
-   * *When on, the compass draws roughly 2mA*
-   *
-   * @param {boolean} isOn - True if the Compass should be on, false if not
-   * @param {any} appID - A string with the app's name in, used to ensure one app can't turn off something another app is using
-   * @returns {boolean} Is the Compass on?
-   * @url http://www.espruino.com/Reference#l_Bangle_setCompassPower
-   */
-  static setCompassPower(isOn: ShortBoolean, appID: string): boolean;
-
-  /**
-   * Is the compass powered?
-   * Set power with `Bangle.setCompassPower(...);`
-   * @returns {boolean} Is the Compass on?
-   * @url http://www.espruino.com/Reference#l_Bangle_isCompassOn
-   */
-  static isCompassOn(): boolean;
-
-  /**
-   * Resets the compass minimum/maximum values. Can be used if the compass isn't
-   * providing a reliable heading any more.
-   *
-   * @url http://www.espruino.com/Reference#l_Bangle_resetCompass
-   */
-  static resetCompass(): void;
-
-  /**
-   * Set the power to the barometer IC. Once enabled, `Bangle.pressure` events are
-   * fired each time a new barometer reading is available.
-   * When on, the barometer draws roughly 50uA
-   *
-   * @param {boolean} isOn - True if the barometer IC should be on, false if not
-   * @param {any} appID - A string with the app's name in, used to ensure one app can't turn off something another app is using
-   * @returns {boolean} Is the Barometer on?
-   * @url http://www.espruino.com/Reference#l_Bangle_setBarometerPower
-   */
-  static setBarometerPower(isOn: ShortBoolean, appID: string): boolean;
-
-  /**
-   * Is the Barometer powered?
-   * Set power with `Bangle.setBarometerPower(...);`
-   * @returns {boolean} Is the Barometer on?
-   * @url http://www.espruino.com/Reference#l_Bangle_isBarometerOn
-   */
-  static isBarometerOn(): boolean;
-
-  /**
-   * Returns the current amount of steps recorded by the step counter
-   * @returns {number} The number of steps recorded by the step counter
-   * @url http://www.espruino.com/Reference#l_Bangle_getStepCount
-   */
-  static getStepCount(): number;
-
-  /**
-   * Sets the current value of the step counter
-   *
-   * @param {number} count - The value with which to reload the step counter
-   * @url http://www.espruino.com/Reference#l_Bangle_setStepCount
-   */
-  static setStepCount(count: number): void;
-
-  /**
-   * Get the most recent Magnetometer/Compass reading. Data is in the same format as
-   * the `Bangle.on('mag',` event.
-   * Returns an `{x,y,z,dx,dy,dz,heading}` object
-   * * `x/y/z` raw x,y,z magnetometer readings
-   * * `dx/dy/dz` readings based on calibration since magnetometer turned on
-   * * `heading` in degrees based on calibrated readings (will be NaN if magnetometer
-   *   hasn't been rotated around 360 degrees).
-   * **Note:** In 2v15 firmware and earlier the heading is inverted (360-heading). There's
-   * a fix in the bootloader which will apply a fix for those headings, but old apps may
-   * still expect an inverted value.
-   * To get this event you must turn the compass on with `Bangle.setCompassPower(1)`.
-   * @returns {any} An object containing magnetometer readings (as below)
-   * @url http://www.espruino.com/Reference#l_Bangle_getCompass
-   */
-  static getCompass(): CompassData;
-
-  /**
-   * Get the most recent accelerometer reading. Data is in the same format as the
-   * `Bangle.on('accel',` event.
-   * * `x` is X axis (left-right) in `g`
-   * * `y` is Y axis (up-down) in `g`
-   * * `z` is Z axis (in-out) in `g`
-   * * `diff` is difference between this and the last reading in `g` (calculated by
-   *   comparing vectors, not magnitudes)
-   * * `td` is the elapsed
-   * * `mag` is the magnitude of the acceleration in `g`
-   * @returns {any} An object containing accelerometer readings (as below)
-   * @url http://www.espruino.com/Reference#l_Bangle_getAccel
-   */
-  static getAccel(): AccelData & { td: number };
-
-  /**
-   * `range` is one of:
-   * * `undefined` or `'10min'` - health data so far in this 10 minute block (eg. 9:00.00 - 9:09.59)
-   * * `'last'` - health data during the last 10 minute block
-   * * `'day'` - the health data so far for the day
-   * `getHealthStatus` returns an object containing:
-   * * `movement` is the 32 bit sum of all `acc.diff` readings since power on (and
-   *   rolls over). It is the difference in accelerometer values as `g*8192`
-   * * `steps` is the number of steps during this period
-   * * `bpm` the best BPM reading from HRM sensor during this period
-   * * `bpmConfidence` best BPM confidence (0-100%) during this period
-   *
-   * @param {any} range - What time period to return data for, see below:
-   * @returns {any} Returns an object containing various health info
-   * @url http://www.espruino.com/Reference#l_Bangle_getHealthStatus
-   */
-  static getHealthStatus(range?: "current" | "last" | "day"): HealthStatus;
-
-  /**
-   * Reads debug info. Exposes the current values of `accHistoryIdx`, `accGestureCount`, `accIdleCount`, `pollInterval` and others.
-   * Please see the declaration of this function for more information (click the `==>` link above [this description](http://www.espruino.com/Reference#l_Bangle_dbg))
-   * @returns {any}
-   * @url http://www.espruino.com/Reference#l_Bangle_dbg
-   */
-  static dbg(): any;
-
-  /**
-   * Writes a register on the touch controller
-   *
-   * @param {number} reg
-   * @param {number} data
-   * @url http://www.espruino.com/Reference#l_Bangle_touchWr
-   */
-  static touchWr(reg: number, data: number): void;
-
-  /**
-   * Reads a register from the touch controller
-   * **Note:** On Espruino 2v06 and before this function only returns a number (`cnt`
-   * is ignored).
-   *
-   * @param {number} reg - Register number to read
-   * @param {number} cnt - If specified, returns an array of the given length (max 128). If not (or 0) it returns a number
-   * @returns {any}
-   * @url http://www.espruino.com/Reference#l_Bangle_touchRd
-   */
-  static touchRd(reg: number, cnt?: 0): number;
-  static touchRd(reg: number, cnt: number): number[];
-
-  /**
-   * Writes a register on the accelerometer
-   *
-   * @param {number} reg - Register number to write
-   * @param {number} data - An integer value to write to the register
-   * @url http://www.espruino.com/Reference#l_Bangle_accelWr
-   */
-  static accelWr(reg: number, data: number): void;
-
-  /**
-   * Reads a register from the accelerometer
-   * **Note:** On Espruino 2v06 and before this function only returns a number (`cnt`
-   * is ignored).
-   *
-   * @param {number} reg
-   * @param {number} cnt - If specified, returns an array of the given length (max 128). If not (or 0) it returns a number
-   * @returns {any}
-   * @url http://www.espruino.com/Reference#l_Bangle_accelRd
-   */
-  static accelRd(reg: number, cnt?: 0): number;
-  static accelRd(reg: number, cnt: number): number[];
-
-  /**
-   * Writes a register on the barometer IC
-   *
-   * @param {number} reg
-   * @param {number} data
-   * @url http://www.espruino.com/Reference#l_Bangle_barometerWr
-   */
-  static barometerWr(reg: number, data: number): void;
-
-  /**
-   * Reads a register from the barometer IC
-   *
-   * @param {number} reg
-   * @param {number} cnt - If specified, returns an array of the given length (max 128). If not (or 0) it returns a number
-   * @returns {any}
-   * @url http://www.espruino.com/Reference#l_Bangle_barometerRd
-   */
-  static barometerRd(reg: number, cnt?: 0): number;
-  static barometerRd(reg: number, cnt: number): number[];
-
-  /**
-   * Writes a register on the Magnetometer/Compass
-   *
-   * @param {number} reg
-   * @param {number} data
-   * @url http://www.espruino.com/Reference#l_Bangle_compassWr
-   */
-  static compassWr(reg: number, data: number): void;
-
-  /**
-   * Read a register on the Magnetometer/Compass
-   *
-   * @param {number} reg
-   * @param {number} cnt - If specified, returns an array of the given length (max 128). If not (or 0) it returns a number
-   * @returns {any}
-   * @url http://www.espruino.com/Reference#l_Bangle_compassRd
-   */
-  static compassRd(reg: number, cnt?: 0): number;
-  static compassRd(reg: number, cnt: number): number[];
-
-  /**
-   * Writes a register on the Heart rate monitor
-   *
-   * @param {number} reg
-   * @param {number} data
-   * @url http://www.espruino.com/Reference#l_Bangle_hrmWr
-   */
-  static hrmWr(reg: number, data: number): void;
-
-  /**
-   * Read a register on the Heart rate monitor
-   *
-   * @param {number} reg
-   * @param {number} cnt - If specified, returns an array of the given length (max 128). If not (or 0) it returns a number
-   * @returns {any}
-   * @url http://www.espruino.com/Reference#l_Bangle_hrmRd
-   */
-  static hrmRd(reg: number, cnt?: 0): number;
-  static hrmRd(reg: number, cnt: number): number[];
-
-  /**
-   * Changes a pin state on the IO expander
-   *
-   * @param {number} mask
-   * @param {number} isOn
-   * @url http://www.espruino.com/Reference#l_Bangle_ioWr
-   */
-  static ioWr(mask: number, isOn: number): void;
-
-  /**
-   * Read temperature, pressure and altitude data. A promise is returned which will
-   * be resolved with `{temperature, pressure, altitude}`.
-   * If the Barometer has been turned on with `Bangle.setBarometerPower` then this
-   * will return with the *next* reading as of 2v21 (or the existing reading on 2v20 or earlier). If the Barometer is off,
-   * conversions take between 500-750ms.
-   * Altitude assumes a sea-level pressure of 1013.25 hPa
-   * If there's no pressure device (for example, the emulator),
-   * this returns `undefined`, rather than a Promise.
-   * ```
-   * Bangle.getPressure().then(d=>{
-   *   console.log(d);
-   *   // {temperature, pressure, altitude}
-   * });
-   * ```
-   * @returns {any} A promise that will be resolved with `{temperature, pressure, altitude}`
-   * @url http://www.espruino.com/Reference#l_Bangle_getPressure
-   */
-  static getPressure(): Promise<PressureData> | undefined;
-
-  /**
-   * Perform a Spherical [Web Mercator
-   * projection](https://en.wikipedia.org/wiki/Web_Mercator_projection) of latitude
-   * and longitude into `x` and `y` coordinates, which are roughly equivalent to
-   * meters from `{lat:0,lon:0}`.
-   * This is the formula used for most online mapping and is a good way to compare
-   * GPS coordinates to work out the distance between them.
-   *
-   * @param {any} latlong - `{lat:..., lon:...}`
-   * @returns {any} {x:..., y:...}
-   * @url http://www.espruino.com/Reference#l_Bangle_project
-   */
-  static project(latlong: { lat: number, lon: number }): { x: number, y: number };
-
-  /**
-   * Use the piezo speaker to Beep for a certain time period and frequency
-   *
-   * @param {number} [time] - [optional] Time in ms (default 200)
-   * @param {number} [freq] - [optional] Frequency in hz (default 4000)
-   * @returns {any} A promise, completed when beep is finished
-   * @url http://www.espruino.com/Reference#l_Bangle_beep
-   */
-  static beep(time?: number, freq?: number): Promise<void>;
-
-  /**
-   * Use the vibration motor to buzz for a certain time period
-   *
-   * @param {number} [time] - [optional] Time in ms (default 200)
-   * @param {number} [strength] - [optional] Power of vibration from 0 to 1 (Default 1)
-   * @returns {any} A promise, completed when vibration is finished
-   * @url http://www.espruino.com/Reference#l_Bangle_buzz
-   */
-  static buzz(time?: number, strength?: number): Promise<void>;
-
-  /**
-   * Turn Bangle.js off. It can only be woken by pressing BTN1.
-   * @url http://www.espruino.com/Reference#l_Bangle_off
-   */
-  static off(): void;
-
-  /**
-   * Turn Bangle.js (mostly) off, but keep the CPU in sleep mode until BTN1 is
-   * pressed to preserve the RTC (current time).
-   * @url http://www.espruino.com/Reference#l_Bangle_softOff
-   */
-  static softOff(): void;
-
-  /**
-   * * On platforms with an LCD of >=8bpp this is 222 x 104 x 2 bits
-   * * Otherwise it's 119 x 56 x 1 bits
-   * @returns {any} An image to be used with `g.drawImage` (as a String)
-   * @url http://www.espruino.com/Reference#l_Bangle_getLogo
-   */
-  static getLogo(): string;
-
-  /**
-   * Load all widgets from flash Storage. Call this once at the beginning of your
-   * application if you want any on-screen widgets to be loaded.
-   * They will be loaded into a global `WIDGETS` array, and can be rendered with
-   * `Bangle.drawWidgets`.
-   * @url http://www.espruino.com/Reference#l_Bangle_loadWidgets
-   */
-  static loadWidgets(): void;
-
-  /**
-   * Draw any onscreen widgets that were loaded with `Bangle.loadWidgets()`.
-   * Widgets should redraw themselves when something changes - you'll only need to
-   * call drawWidgets if you decide to clear the entire screen with `g.clear()`.
-   * @url http://www.espruino.com/Reference#l_Bangle_drawWidgets
-   */
-  static drawWidgets(): void;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Bangle_drawWidgets
-   */
-  static drawWidgets(): void;
-
-  /**
-   * Load the Bangle.js app launcher, which will allow the user to select an
-   * application to launch.
-   * @url http://www.espruino.com/Reference#l_Bangle_showLauncher
-   */
-  static showLauncher(): void;
-
-  /**
-   * Load the Bangle.js clock - this has the same effect as calling `Bangle.load()`.
-   * @url http://www.espruino.com/Reference#l_Bangle_showClock
-   */
-  static showClock(): void;
-
-  /**
-   * Show a 'recovery' menu that allows you to perform certain tasks on your Bangle.
-   * You can also enter this menu by restarting your Bangle while holding down the button.
-   * @url http://www.espruino.com/Reference#l_Bangle_showRecoveryMenu
-   */
-  static showRecoveryMenu(): void;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Bangle_showRecoveryMenu
-   */
-  static showRecoveryMenu(): void;
-
-  /**
-   * (2v20 and later) Show a test screen that lights green when each sensor on the Bangle
-   * works and reports within range.
-   * Swipe on the screen when all items are green and the Bangle will turn bluetooth off
-   * and display a `TEST PASS` screen for 60 minutes, after which it will turn off.
-   * You can enter this menu by restarting your Bangle while holding down the button,
-   * then choosing `Test` from the recovery menu.
-   * @url http://www.espruino.com/Reference#l_Bangle_showTestScreen
-   */
-  static showTestScreen(): void;
-
-  /**
-   * This behaves the same as the global `load()` function, but if fast
-   * loading is possible (`Bangle.setUI` was called with a `remove` handler)
-   * then instead of a complete reload, the `remove` handler will be
-   * called and the new app will be loaded straight after with `eval`.
-   * **This should only be used if the app being loaded also uses widgets**
-   * (eg it contains a `Bangle.loadWidgets()` call).
-   * `load()` is slower, but safer. As such, care should be taken
-   * when using `Bangle.load()` with `Bangle.setUI({..., remove:...})`
-   * as if your remove handler doesn't completely clean up after your app,
-   * memory leaks or other issues could occur - see `Bangle.setUI` for more
-   * information.
-   *
-   * @param {any} [file] - [optional] A string containing the file name for the app to be loaded
-   * @url http://www.espruino.com/Reference#l_Bangle_load
-   */
-  static load(file: string): void;
-  static load(): void;
-
-  /**
-   * This puts Bangle.js into the specified UI input mode, and calls the callback
-   * provided when there is user input.
-   * Currently supported interface types are:
-   * * 'updown' - UI input with upwards motion `cb(-1)`, downwards motion `cb(1)`,
-   *   and select `cb()`
-   *   * Bangle.js 1 uses BTN1/3 for up/down and BTN2 for select
-   *   * Bangle.js 2 uses touchscreen swipe up/down and tap
-   * * 'leftright' - UI input with left motion `cb(-1)`, right motion `cb(1)`, and
-   *   select `cb()`
-   *   * Bangle.js 1 uses BTN1/3 for left/right and BTN2 for select
-   *   * Bangle.js 2 uses touchscreen swipe left/right and tap/BTN1 for select
-   * * 'clock' - called for clocks. Sets `Bangle.CLOCK=1` and allows a button to
-   *   start the launcher
-   *   * Bangle.js 1 BTN2 starts the launcher
-   *   * Bangle.js 2 BTN1 starts the launcher
-   * * 'clockupdown' - called for clocks. Sets `Bangle.CLOCK=1`, allows a button to
-   *   start the launcher, but also provides up/down functionality
-   *   * Bangle.js 1 BTN2 starts the launcher, BTN1/BTN3 call `cb(-1)` and `cb(1)`
-   *   * Bangle.js 2 BTN1 starts the launcher, touchscreen tap in top/bottom right
-   *     hand side calls `cb(-1)` and `cb(1)`
-   * * `{mode:"custom", ...}` allows you to specify custom handlers for different
-   *   interactions. See below.
-   * * `undefined` removes all user interaction code
-   * While you could use setWatch/etc manually, the benefit here is that you don't
-   * end up with multiple `setWatch` instances, and the actual input method (touch,
-   * or buttons) is implemented dependent on the watch (Bangle.js 1 or 2)
-   * ```
-   * Bangle.setUI("updown", function (dir) {
-   *   // dir is +/- 1 for swipes up/down
-   *   // dir is 0 when button pressed
-   * });
-   * ```
-   * The first argument can also be an object, in which case more options can be
-   * specified with `mode:"custom"`:
-   * ```
-   * Bangle.setUI({
-   *   mode : "custom",
-   *   back : function() {}, // optional - add a 'back' icon in top-left widget area and call this function when it is pressed , also call it when the hardware button is clicked (does not override btn if defined)
-   *   remove : function() {}, // optional - add a handler for when the UI should be removed (eg stop any intervals/timers here)
-   *   redraw : function() {}, // optional - add a handler to redraw the UI. Not needed but it can allow widgets/etc to provide other functionality that requires the screen to be redrawn
-   *   touch : function(n,e) {}, // optional - (mode:custom only) handler for 'touch' events
-   *   swipe : function(dir) {}, // optional - (mode:custom only) handler for 'swipe' events
-   *   drag : function(e) {}, // optional - (mode:custom only) handler for 'drag' events (Bangle.js 2 only)
-   *   btn : function(n) {}, // optional - (mode:custom only) handler for 'button' events (n==1 on Bangle.js 2, n==1/2/3 depending on button for Bangle.js 1)
-   *   clock : 0 // optional - if set the behavior of 'clock' mode is added (does not override btn if defined)
-   * });
-   * ```
-   * If `remove` is specified, `Bangle.showLauncher`, `Bangle.showClock`, `Bangle.load` and some apps
-   * may choose to just call the `remove` function and then load a new app without resetting Bangle.js.
-   * As a result, **if you specify 'remove' you should make sure you test that after calling `Bangle.setUI()`
-   * without arguments your app is completely unloaded**, otherwise you may end up with memory leaks or
-   * other issues when switching apps. Please see the [Bangle.js Fast Load Tutorial](https://www.espruino.com/Bangle.js+Fast+Load) for more details on this.
-   * **Note:** You can override this function in boot code to change the interaction
-   * mode with the watch. For instance you could make all clocks start the launcher
-   * with a swipe by using:
-   * ```
-   * (function() {
-   *   var sui = Bangle.setUI;
-   *   Bangle.setUI = function(mode, cb) {
-   *     var m = ("object"==typeof mode) ? mode.mode : mode;
-   *     if (m!="clock") return sui(mode,cb);
-   *     sui(); // clear
-   *     Bangle.CLOCK=1;
-   *     Bangle.swipeHandler = Bangle.showLauncher;
-   *     Bangle.on("swipe", Bangle.swipeHandler);
-   *   };
-   * })();
-   * ```
-   *
-   * @param {any} type - The type of UI input: 'updown', 'leftright', 'clock', 'clockupdown' or undefined to cancel. Can also be an object (see below)
-   * @param {any} callback - A function with one argument which is the direction
-   * @url http://www.espruino.com/Reference#l_Bangle_setUI
-   */
-  static setUI(type?: undefined): void;
-  static setUI(type: SetUIArg<"updown" | "leftright">, callback: (direction?: -1 | 1) => void): void;
-  static setUI(type: SetUIArg<"clock">): void;
-  static setUI(type: SetUIArg<"clockupdown">, callback?: (direction: -1 | 1) => void): void;
-  static setUI(type: SetUIArg<"custom"> & { touch?: TouchCallback; swipe?: SwipeCallback; drag?: DragCallback; btn?: (n: 1 | 2 | 3) => void; clock?: boolean | 0 | 1 }): void;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_Bangle_setUI
-   */
-  static setUI(): void;
-
-  /**
-   * Erase all storage and reload it with the default contents.
-   * This is only available on Bangle.js 2.0. On Bangle.js 1.0 you need to use
-   * `Install Default Apps` under the `More...` tab of http://banglejs.com/apps
-   *
-   * @param {boolean} noReboot - Do not reboot the watch when done (default false, so will reboot)
-   * @url http://www.espruino.com/Reference#l_Bangle_factoryReset
-   */
-  static factoryReset(noReboot: ShortBoolean): void;
-
-  /**
-   * Returns the rectangle on the screen that is currently reserved for the app.
-   * @returns {any} An object of the form `{x,y,w,h,x2,y2}`
-   * @url http://www.espruino.com/Reference#l_Bangle_appRect
-   */
-  static appRect: { x: number, y: number, w: number, h: number, x2: number, y2: number };
-
-  static CLOCK: ShortBoolean;
-  static strokes: undefined | { [key: string]: Unistroke };
-}
-
-/**
- * Class containing utility functions for accessing IO on the hexagonal badge
- * @url http://www.espruino.com/Reference#Badge
- */
-declare class Badge {
-  /**
-   * Capacitive sense - the higher the capacitance, the higher the number returned.
-   * Supply a corner number between 1 and 6, and an integer value will be returned
-   * that is proportional to the capacitance
-   *
-   * @param {number} corner - The corner to use
-   * @returns {number} Capacitive sense counter
-   * @url http://www.espruino.com/Reference#l_Badge_capSense
-   */
-  static capSense(corner: number): number;
-
-  /**
-   * **DEPRECATED** - Please use `E.getBattery()` instead.
-   * Return an approximate battery percentage remaining based on a normal CR2032
-   * battery (2.8 - 2.2v)
-   * @returns {number} A percentage between 0 and 100
-   * @url http://www.espruino.com/Reference#l_Badge_getBatteryPercentage
-   */
-  static getBatteryPercentage(): number;
-
-  /**
-   * Set the LCD's contrast
-   *
-   * @param {number} c - Contrast between 0 and 1
-   * @url http://www.espruino.com/Reference#l_Badge_setContrast
-   */
-  static setContrast(c: number): void;
 
 
 }
@@ -5726,101 +5298,31 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
   static createImage(str: string): ImageObject;
 
   /**
-   * Draw a filled arc between two angles
+   * Set the current font
    *
-   * @param {number} a1 - Angle 1 (radians)
-   * @param {number} a2 - Angle 2 (radians)
-   * @param {number} r - Radius
+   * @param {number} scale - The scale factor, default=1 (2=2x size)
    * @returns {any} The instance of Graphics this was called on, to allow call chaining
-   * @url http://www.espruino.com/Reference#l_Graphics_fillArc
+   * @url http://www.espruino.com/Reference#l_Graphics_setFont17
    */
-  fillArc(a1: number, a2: number, r: number): Graphics;
+  setFont17(scale: number): Graphics;
 
   /**
-   * Draw rectangle between angles a-ar and a+ar, and radius r1/r2
+   * Set the current font
    *
-   * @param {number} a - Angle (radians)
-   * @param {number} ar - Angle either side (radians)
-   * @param {number} r1 - Radius
-   * @param {number} r2 - Radius
+   * @param {number} scale - The scale factor, default=1 (2=2x size)
    * @returns {any} The instance of Graphics this was called on, to allow call chaining
-   * @url http://www.espruino.com/Reference#l_Graphics_fillSeg
+   * @url http://www.espruino.com/Reference#l_Graphics_setFont28
    */
-  fillSeg(a: number, ar: number, r1: number, r2: number): Graphics;
+  setFont28(scale: number): Graphics;
 
   /**
-   * Draw A line between angles a-ar and a+ar at radius r
+   * Set the current font
    *
-   * @param {number} a - Angle (radians)
-   * @param {number} ar - Angle either side (radians)
-   * @param {number} r - Radius
+   * @param {number} scale - The scale factor, default=1 (2=2x size)
    * @returns {any} The instance of Graphics this was called on, to allow call chaining
-   * @url http://www.espruino.com/Reference#l_Graphics_drawSeg
+   * @url http://www.espruino.com/Reference#l_Graphics_setFont22
    */
-  drawSeg(a: number, ar: number, r: number): Graphics;
-
-  /**
-   * Set the current font to Monofonto 23 (2 bpp, cap height = 22 px, total height = 27 px)
-   *
-   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
-   * @returns {any} The instance of Graphics this was called on, to allow call chaining
-   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto23
-   */
-  setFontMonofonto23(scale?: number): Graphics;
-
-  /**
-   * Set the current font to Monofonto 16 (4 bpp, cap height = 16 px)
-   *
-   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
-   * @returns {any} The instance of Graphics this was called on, to allow call chaining
-   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto16
-   */
-  setFontMonofonto16(scale?: number): Graphics;
-
-  /**
-   * Set the current font to Monofonto 18 (2 bpp, cap height = 17 px, total height = 21 px)
-   *
-   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
-   * @returns {any} The instance of Graphics this was called on, to allow call chaining
-   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto18
-   */
-  setFontMonofonto18(scale?: number): Graphics;
-
-  /**
-   * Set the current font to Monofonto 96 (digits and colon only, 2 bpp, cap height = 96 px)
-   *
-   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
-   * @returns {any} The instance of Graphics this was called on, to allow call chaining
-   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto96
-   */
-  setFontMonofonto96(scale?: number): Graphics;
-
-  /**
-   * Set the current font to Monofonto 28 (2 bpp, cap height = 26 px, total height = 33 px)
-   *
-   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
-   * @returns {any} The instance of Graphics this was called on, to allow call chaining
-   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto28
-   */
-  setFontMonofonto28(scale?: number): Graphics;
-
-  /**
-   * Set the current font to Monofonto 120 (digits and colon only, 2 bpp, cap height = 120 px)
-   *
-   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
-   * @returns {any} The instance of Graphics this was called on, to allow call chaining
-   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto120
-   */
-  setFontMonofonto120(scale?: number): Graphics;
-
-  /**
-   * Set the current font to Monofonto 36 (2 bpp, cap height = 34 px, total height = 43 px)
-   *
-   * @param {number} [scale] - [optional] If >1 the font will be scaled up by that amount
-   * @returns {any} The instance of Graphics this was called on, to allow call chaining
-   * @url http://www.espruino.com/Reference#l_Graphics_setFontMonofonto36
-   */
-  setFontMonofonto36(scale?: number): Graphics;
+  setFont22(scale: number): Graphics;
 
   /**
    * Set the current font
@@ -5839,6 +5341,15 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * @url http://www.espruino.com/Reference#l_Graphics_setFont6x15
    */
   setFont6x15(scale: number): Graphics;
+
+  /**
+   * Set the current font
+   *
+   * @param {number} scale - The scale factor, default=1 (2=2x size)
+   * @returns {any} The instance of Graphics this was called on, to allow call chaining
+   * @url http://www.espruino.com/Reference#l_Graphics_setFont14
+   */
+  setFont14(scale: number): Graphics;
 
   /**
    * On instances of graphics that drive a display with an offscreen buffer, calling
@@ -6283,7 +5794,7 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
 
   /**
    * Return the width and height in pixels of a string of text in the current font. The object returned contains:
-   * ```JS
+   * ```
    * {
    *   width,              // Width of the string in pixels
    *   height,             // Height of the string in pixels
@@ -6313,6 +5824,34 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * @url http://www.espruino.com/Reference#l_Graphics_wrapString
    */
   wrapString(str: string, maxWidth: number): string[];
+
+  /**
+   * Works out which font to use, and sets the current font to it.
+   * Usage:
+   * ```
+   * g.findFont("Hello World", {
+   *   w : 100,    // optional: width available (default = screen width)
+   *   h : 100,    // optional: height available (default = screen height)
+   *   min : 10,   // optional: min font height
+   *   max : 30,   // optional: max font height
+   *   wrap : true // optional: allow word wrap?
+   *   trim : true // optional: trim to the specified height, add '...'
+   * });
+   * ```
+   * Returns:
+   * ```
+   * {
+   *   text : "Hello\nWorld"
+   *   font : "..."
+   * }
+   * ```
+   *
+   * @param {any} text - The text to render
+   * @param {any} options - Options for finding the required font
+   * @returns {any} An object containing info about the font
+   * @url http://www.espruino.com/Reference#l_Graphics_findFont
+   */
+  findFont(text: any, options: any): any;
 
   /**
    * Draw a string of text in the current font.
@@ -6606,8 +6145,13 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * page](http://www.espruino.com/Graphics#images-bitmaps) for more information on
    * images.
    * Will return undefined if data can't be allocated for the image.
+   * `options` can be either:
+   * * `undefined` or `"object"` - return an image object
+   * * `string` - return the image as a string
+   * * (in 2v26 onwards) `{type:undefined/"object"/"string", x,y,w,h}` - Return only a part of the image as an object/string.
    * The image data itself will be referenced rather than copied if:
    * * An image `object` was requested (not `string`)
+   * * `x`/`y` are 0 and `w`/`h` are the graphics's height
    * * The `Graphics` instance was created with `Graphics.createArrayBuffer`
    * * Is 8 bpp *OR* the `{msb:true}` option was given
    * * No other format options (zigzag/etc) were given
@@ -6622,12 +6166,14 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * var im = gfx.asImage("string");
    * ```
    *
-   * @param {any} type - The type of image to return. Either `object`/undefined to return an image object, or `string` to return an image string
+   * @param {any} options - The type of image to return as a string, or an object `{x,y,w,h,type}` (see below)
    * @returns {any} An Image that can be used with `Graphics.drawImage`
    * @url http://www.espruino.com/Reference#l_Graphics_asImage
    */
   asImage(type?: "object"): ImageObject;
   asImage(type: "string"): string;
+  asImage(layers: { type?: "object", x?: number, y?: number, w?: number, h?: number }): ImageObject;
+  asImage(layers: { type: "string", x?: number, y?: number, w?: number, h?: number }): string;
 
   /**
    * Return the area of the Graphics canvas that has been modified, and optionally
@@ -6936,7 +6482,7 @@ declare class Waveform {
    * It has an internal variable called `buffer` (as well as `buffer2` when
    * double-buffered - see `options` below) which contains the data to input/output.
    * Options can contain:
-   * ```JS
+   * ```
    * {
    *   doubleBuffer : bool   // whether to allocate two buffers or not (default false)
    *   bits         : 8/16   // the amount of bits to use (default 8).
@@ -6945,7 +6491,7 @@ declare class Waveform {
    * When double-buffered, a 'buffer' event will be emitted each time a buffer is
    * finished with (the argument is that buffer). When the recording stops, a
    * 'finish' event will be emitted (with the first argument as the buffer).
-   * ```JS
+   * ```
    * // Output a sine wave
    * var w = new Waveform(1000);
    * for (var i=0;i<1000;i++) w.buffer[i]=128+120*Math.sin(i/2);
@@ -6953,7 +6499,7 @@ declare class Waveform {
    * w.on("finish", () => print("Done!"))
    * w.startOutput(H0,8000); // start playback
    * ```
-   * ```JS
+   * ```
    * // On 2v25, from Storage
    * var f = require("Storage").read("sound.pcm");
    * var w = new Waveform(E.toArrayBuffer(f));
@@ -8496,21 +8042,6 @@ declare class E {
   static showAlert(message?: string, options?: string): Promise<void>;
 
   /**
-   * @url http://www.espruino.com/Reference#l_E_showMenu
-   */
-  static showMenu(): void;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_E_showPrompt
-   */
-  static showPrompt(): void;
-
-  /**
-   * @url http://www.espruino.com/Reference#l_E_showMessage
-   */
-  static showMessage(): void;
-
-  /**
    * Setup the filesystem so that subsequent calls to `E.openFile` and
    * `require('fs').*` will use an SD card on the supplied SPI device and pin.
    * It can even work using software SPI - for instance:
@@ -8554,36 +8085,6 @@ declare class E {
    * @url http://www.espruino.com/Reference#l_E_openFile
    */
   static openFile(path: any, mode: any): File;
-
-  /**
-   * Change the parameters used for the flash filesystem. The default address is the
-   * last 1Mb of 4Mb Flash, 0x300000, with total size of 1Mb.
-   * Before first use the media needs to be formatted.
-   * ```
-   * fs=require("fs");
-   * try {
-   *   fs.readdirSync();
-   *  } catch (e) { //'Uncaught Error: Unable to mount media : NO_FILESYSTEM'
-   *   console.log('Formatting FS - only need to do once');
-   *   E.flashFatFS({ format: true });
-   * }
-   * fs.writeFileSync("bang.txt", "This is the way the world ends\nnot with a bang but a whimper.\n");
-   * fs.readdirSync();
-   * ```
-   * This will create a drive of 100 * 4096 bytes at 0x300000. Be careful with the
-   * selection of flash addresses as you can overwrite firmware! You only need to
-   * format once, as each will erase the content.
-   * `E.flashFatFS({ addr:0x300000,sectors:100,format:true });`
-   *
-   * @param {any} [options]
-   * [optional] An object `{ addr : int=0x300000, sectors : int=256, format : bool=false }`
-   * addr : start address in flash
-   * sectors: number of sectors to use
-   * format:  Format the media
-   * @returns {boolean} True on success, or false on failure
-   * @url http://www.espruino.com/Reference#l_E_flashFatFS
-   */
-  static flashFatFS(options?: any): boolean;
 
   /**
    * Display a menu on the screen, and set up the buttons to navigate through it.
@@ -8714,7 +8215,8 @@ declare class E {
    *   title: "Hello",                       // optional Title
    *   buttons : {"Ok":true,"Cancel":false}, // optional list of button text & return value
    *   img: "image_string"                   // optional image string to draw
-   *   remove: function() { }                // Bangle.js: optional function to be called when the prompt is removed
+   *   remove: function() { }                // Bangle.js: optional function to be called when the prompt is removed#
+   *   buttonHeight : 30,                    // Bangle.js2: optional height to force the buttons to be
    * }
    * ```
    *
@@ -8723,7 +8225,7 @@ declare class E {
    * @returns {any} A promise that is resolved when 'Ok' is pressed
    * @url http://www.espruino.com/Reference#l_E_showPrompt
    */
-  static showPrompt<T = boolean>(message: string, options?: { title?: string, buttons?: { [key: string]: T }, image?: string, remove?: () => void }): Promise<T>;
+  static showPrompt<T = boolean>(message: string, options?: { title?: string, buttons?: { [key: string]: T }, buttonHeight?: number, image?: string, remove?: () => void }): Promise<T>;
   static showPrompt(): void;
 
   /**
@@ -9101,7 +8603,7 @@ declare class E {
   /**
    * (Added 2v25) Enable the nRF52 chip's `LPCOMP` hardware. When enabled, it creates an `E.on("comparator", ...)`
    * event whenever the pin supplied rises or falls past the setpoint given (with 50mv hysteresis).
-   * ```JS
+   * ```
    * E.setComparator(D28, 8/16); // compare with VDD/2
    * E.on("comparator", e => {
    *   print(e); // 1 for up, or -1 for down
@@ -9109,7 +8611,7 @@ declare class E {
    * ```
    * **Note:** There is just one LPCOMP, so you can only enable the comparator on one pin.
    * **On [Jolt.js](https://www.espruino.com/Jolt.js):** when using `E.setComparator` on the analog pins on the
-   * Terminal block (`H0`/`H2`/`H4`/`H8`), the `level` you give needs to be in volts. Because the comparator only
+   * Terminal block (`H0`/`H2`/`H4`/`H6`), the `level` you give needs to be in volts. Because the comparator only
    * works in 16 steps, you can only detect multiples of 1.37v (1.37/2.74/4.11/etc)
    *
    * @param {Pin} pin - The `Pin` to enable the comparator on
@@ -9836,8 +9338,10 @@ declare class E {
   static reboot(): void;
 
   /**
-   * Forces a hard reboot of the microcontroller into the ST DFU mode
-   * **Note:** The device will stay in DFU mode until it is power-cycled or reset
+   * Forces a hard reboot of the microcontroller into DFU mode.
+   * If this is an ST device, this will be the ST DFU mode.
+   * If this device has an UF2 bootloader, it will reappear as a USB drive, onto which you can copy new firmware.
+   * **Note:** The device will stay in DFU mode until it is power-cycled or reset.
    * @url http://www.espruino.com/Reference#l_E_rebootToDFU
    */
   static rebootToDFU(): void;
@@ -12075,7 +11579,7 @@ declare class Pin {
 
   /**
    * (Added in 2v20) Get the analogue value of the given pin. See `analogRead` for more information.
-   * @returns {number} The analog Value of the Pin between 0 and 1
+   * @returns {number} The analog value of the `Pin` between 0(GND) and 1(VCC)
    * @url http://www.espruino.com/Reference#l_Pin_analog
    */
   analog(): number;
@@ -12142,67 +11646,6 @@ interface Boolean {
 declare const Boolean: BooleanConstructor
 
 // GLOBALS
-
-/**
- * @returns {any} An object containing the pins for the Qwiic connector on Curio `{sda,scl}`
- * @url http://www.espruino.com/Reference#l__global_Q
- */
-declare const Q: Qwiic;
-
-/**
- * @returns {Pin} The pin for the servo motor
- * @url http://www.espruino.com/Reference#l__global_SERVO
- */
-declare const SERVO: Pin;
-
-/**
- * @returns {Pin} The pin for the IR LED
- * @url http://www.espruino.com/Reference#l__global_IRLED
- */
-declare const IRLED: Pin;
-
-/**
- * @returns {Pin} The pin for the left IR sensor
- * @url http://www.espruino.com/Reference#l__global_IRL
- */
-declare const IRL: Pin;
-
-/**
- * @returns {Pin} The pin for the left motor
- * @url http://www.espruino.com/Reference#l__global_ML1
- */
-declare const ML1: Pin;
-
-/**
- * @returns {Pin} The pin for the left motor
- * @url http://www.espruino.com/Reference#l__global_ML2
- */
-declare const ML2: Pin;
-
-/**
- * @returns {Pin} The pin for the right IR sensor
- * @url http://www.espruino.com/Reference#l__global_IRR
- */
-declare const IRR: Pin;
-
-/**
- * @returns {Pin} The pin for the right motor
- * @url http://www.espruino.com/Reference#l__global_MR1
- */
-declare const MR1: Pin;
-
-/**
- * @returns {Pin} The pin for the right motor
- * @url http://www.espruino.com/Reference#l__global_MR2
- */
-declare const MR2: Pin;
-
-/**
- *
- * @param {any} col - The colours to use, a 24 element array (8 x RGB)
- * @url http://www.espruino.com/Reference#l__global_led
- */
-declare function led(col: any): void;
 
 /**
  * The pin marked SDA on the Arduino pin footprint. This is connected directly to
@@ -12278,6 +11721,13 @@ declare function compass(): any;
  * @url http://www.espruino.com/Reference#l__global_FET
  */
 declare const FET: Pin;
+
+/**
+ * In memory serial I/O device accessible via SWD debugger.
+ * Uses SEGGER RTT so it can be used with openocd and other SEGGER compatible tools.
+ * @url http://www.espruino.com/Reference#l__global_SWDCON
+ */
+declare const SWDCON: Serial;
 
 /**
  * `Q0` and `Q1` Qwiic connectors can have their power controlled by a 500mA FET (`Q0.fet`) which switches GND.
@@ -12356,143 +11806,11 @@ declare const LED1: any;
 declare const LED2: any;
 
 /**
- * The pin connected to the 'A' button. Reads as `1` when pressed, `0` when not
- * @returns {Pin}
- * @url http://www.espruino.com/Reference#l__global_BTNA
- */
-declare const BTNA: Pin;
-
-/**
- * The pin connected to the 'B' button. Reads as `1` when pressed, `0` when not
- * @returns {Pin}
- * @url http://www.espruino.com/Reference#l__global_BTNB
- */
-declare const BTNB: Pin;
-
-/**
- * The pin connected to the up button. Reads as `1` when pressed, `0` when not
- * @returns {Pin}
- * @url http://www.espruino.com/Reference#l__global_BTNU
- */
-declare const BTNU: Pin;
-
-/**
- * The pin connected to the down button. Reads as `1` when pressed, `0` when not
- * @returns {Pin}
- * @url http://www.espruino.com/Reference#l__global_BTND
- */
-declare const BTND: Pin;
-
-/**
- * The pin connected to the left button. Reads as `1` when pressed, `0` when not
- * @returns {Pin}
- * @url http://www.espruino.com/Reference#l__global_BTNL
- */
-declare const BTNL: Pin;
-
-/**
- * The pin connected to the right button. Reads as `1` when pressed, `0` when not
- * @returns {Pin}
- * @url http://www.espruino.com/Reference#l__global_BTNR
- */
-declare const BTNR: Pin;
-
-/**
- * The pin connected to Corner #1
- * @returns {Pin}
- * @url http://www.espruino.com/Reference#l__global_CORNER1
- */
-declare const CORNER1: Pin;
-
-/**
- * The pin connected to Corner #2
- * @returns {Pin}
- * @url http://www.espruino.com/Reference#l__global_CORNER2
- */
-declare const CORNER2: Pin;
-
-/**
- * The pin connected to Corner #3
- * @returns {Pin}
- * @url http://www.espruino.com/Reference#l__global_CORNER3
- */
-declare const CORNER3: Pin;
-
-/**
- * The pin connected to Corner #4
- * @returns {Pin}
- * @url http://www.espruino.com/Reference#l__global_CORNER4
- */
-declare const CORNER4: Pin;
-
-/**
- * The pin connected to Corner #5
- * @returns {Pin}
- * @url http://www.espruino.com/Reference#l__global_CORNER5
- */
-declare const CORNER5: Pin;
-
-/**
- * The pin connected to Corner #6
- * @returns {Pin}
- * @url http://www.espruino.com/Reference#l__global_CORNER6
- */
-declare const CORNER6: Pin;
-
-/**
  * The Bluetooth Serial port - used when data is sent or received over Bluetooth
  * Smart on nRF51/nRF52 chips.
  * @url http://www.espruino.com/Reference#l__global_Bluetooth
  */
 declare const Bluetooth: Serial;
-
-/**
- * @returns {Pin} A Pin
- * @url http://www.espruino.com/Reference#l__global_MOS1
- */
-declare const MOS1: Pin;
-
-/**
- * @returns {Pin} A Pin
- * @url http://www.espruino.com/Reference#l__global_MOS2
- */
-declare const MOS2: Pin;
-
-/**
- * @returns {Pin} A Pin
- * @url http://www.espruino.com/Reference#l__global_MOS3
- */
-declare const MOS3: Pin;
-
-/**
- * @returns {Pin} A Pin
- * @url http://www.espruino.com/Reference#l__global_MOS4
- */
-declare const MOS4: Pin;
-
-/**
- * @returns {Pin} A Pin
- * @url http://www.espruino.com/Reference#l__global_IOEXT0
- */
-declare const IOEXT0: Pin;
-
-/**
- * @returns {Pin} A Pin
- * @url http://www.espruino.com/Reference#l__global_IOEXT1
- */
-declare const IOEXT1: Pin;
-
-/**
- * @returns {Pin} A Pin
- * @url http://www.espruino.com/Reference#l__global_IOEXT2
- */
-declare const IOEXT2: Pin;
-
-/**
- * @returns {Pin} A Pin
- * @url http://www.espruino.com/Reference#l__global_IOEXT3
- */
-declare const IOEXT3: Pin;
 
 /**
  * A simple VT100 terminal emulator.
@@ -12830,6 +12148,9 @@ declare function poke32(addr: number, value: number | number[]): void;
 
 /**
  * Get the analogue value of the given pin.
+ * * The value is normally greater than or equal to 0, however in some cases nRF52-based boards can produce values
+ * less than 0 when the ADC voltage is slightly less than the chip's internal GND.
+ * * The value returned will always be *less* than 1, even when the ADC reads full range. For example a 12 bit ADC may return 4095 as a full-range value, but this is divided by 4096 to produce `analogRead`'s output value.
  * This is different to Arduino which only returns an integer between 0 and 1023
  * However only pins connected to an ADC will work (see the datasheet)
  * **Note:** if you didn't call `pinMode` beforehand then this function will also
@@ -12841,7 +12162,7 @@ declare function poke32(addr: number, value: number | number[]): void;
  * @param {Pin} pin
  * The pin to use
  * You can find out which pins to use by looking at [your board's reference page](#boards) and searching for pins with the `ADC` markers.
- * @returns {number} The Analog Value of the Pin between 0(GND) and 1(VCC). See below.
+ * @returns {number} The analog value of the `Pin` between 0(GND) and 1(VCC). See below.
  * @url http://www.espruino.com/Reference#l__global_analogRead
  */
 declare function analogRead(pin: Pin): number;
@@ -13085,22 +12406,13 @@ declare function clearWatch(id: number): void;
 declare function clearWatch(): void;
 
 declare const global: {
-  Q: typeof Q;
-  SERVO: typeof SERVO;
-  IRLED: typeof IRLED;
-  IRL: typeof IRL;
-  ML1: typeof ML1;
-  ML2: typeof ML2;
-  IRR: typeof IRR;
-  MR1: typeof MR1;
-  MR2: typeof MR2;
-  led: typeof led;
   SDA: typeof SDA;
   SCL: typeof SCL;
   show: typeof show;
   acceleration: typeof acceleration;
   compass: typeof compass;
   FET: typeof FET;
+  SWDCON: typeof SWDCON;
   Q0: typeof Q0;
   Q1: typeof Q1;
   Q2: typeof Q2;
@@ -13109,27 +12421,7 @@ declare const global: {
   LED: typeof LED;
   LED1: typeof LED1;
   LED2: typeof LED2;
-  BTNA: typeof BTNA;
-  BTNB: typeof BTNB;
-  BTNU: typeof BTNU;
-  BTND: typeof BTND;
-  BTNL: typeof BTNL;
-  BTNR: typeof BTNR;
-  CORNER1: typeof CORNER1;
-  CORNER2: typeof CORNER2;
-  CORNER3: typeof CORNER3;
-  CORNER4: typeof CORNER4;
-  CORNER5: typeof CORNER5;
-  CORNER6: typeof CORNER6;
   Bluetooth: typeof Bluetooth;
-  MOS1: typeof MOS1;
-  MOS2: typeof MOS2;
-  MOS3: typeof MOS3;
-  MOS4: typeof MOS4;
-  IOEXT0: typeof IOEXT0;
-  IOEXT1: typeof IOEXT1;
-  IOEXT2: typeof IOEXT2;
-  IOEXT3: typeof IOEXT3;
   Terminal: typeof Terminal;
   setBusyIndicator: typeof setBusyIndicator;
   setSleepIndicator: typeof setSleepIndicator;
@@ -14656,6 +13948,20 @@ declare module "fs" {
   function statSync(path: any): any;
 
   /**
+   * Get the number of free sectors on the volume. This returns an object with the following
+   * fields:
+   * freeSectors: the number of free sectors
+   * totalSectors: the total number of sectors on the volume
+   * sectorSize: the number of bytes per sector
+   * clusterSize: the number of sectors per cluster
+   *
+   * @param {any} path - The path specifying the logical drive
+   * @returns {any} An object describing the drive, or undefined on failure
+   * @url http://www.espruino.com/Reference#l_fs_getFree
+   */
+  function getFree(path: any): any;
+
+  /**
    * Create the directory
    * NOTE: Espruino does not yet support Async file IO, so this function behaves like
    * the 'Sync' version.
@@ -14674,6 +13980,13 @@ declare module "fs" {
    * @url http://www.espruino.com/Reference#l_fs_mkdirSync
    */
   function mkdirSync(path: any): boolean;
+
+  /**
+   * Reformat the connected media to a FAT filesystem
+   * @returns {boolean} True on success, or false on failure
+   * @url http://www.espruino.com/Reference#l_fs_mkfs
+   */
+  function mkfs(): boolean;
 
   /**
    * Pipe this file to a destination stream (object which has a `.write(data)` method).

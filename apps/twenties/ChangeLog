@@ -2,3 +2,4 @@
 0.02: Fix calling null on draw
 0.03: Only vibrate during work
 0.04: Convert to boot code
+0.05: Improve energy efficiency
