@@ -12,5 +12,6 @@
   "storage": [
     {"name":"widhrzone.wid.js","url":"widget.js"}
   ],
-  "dependencies": {"myprofile":"app"}
+  "dependencies": {"myprofile":"app"},
+  "author": "nxdefiant"
 }

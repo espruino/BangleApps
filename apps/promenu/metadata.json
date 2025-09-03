@@ -15,5 +15,6 @@
     {"name":"promenu.img","url":"promenuIcon.js","evaluate":true},
     {"name":"promenu.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"promenu.settings.json"}]
+  "data": [{"name":"promenu.settings.json"}],
+  "author": "bobrippling"
 }

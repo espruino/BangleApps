@@ -13,6 +13,6 @@
     {"name":"swipeinv.boot.js","url":"boot.js"},
     {"name":"swipeinv.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"swipeinv.json"}]
+  "data": [{"name":"swipeinv.json"}],
+  "author": "nxdefiant"
 }
-

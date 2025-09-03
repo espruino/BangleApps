@@ -9,5 +9,6 @@
   "readme": "README.md",
   "storage": [
     {"name":"msgwakefup.boot.js","url":"boot.js"}
-  ]
+  ],
+  "author": "thyttan"
 }

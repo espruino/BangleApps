@@ -9,5 +9,6 @@
   "supports" : ["BANGLEJS2", "BANGLEJS"],
   "storage": [
     {"name":"widminbate.wid.js","url":"widget.js"}
-  ]
+  ],
+  "author": "thyttan"
 }

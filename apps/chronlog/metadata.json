@@ -10,5 +10,6 @@
   "storage": [
     {"name":"chronlog.app.js","url":"app.js"},
     {"name":"chronlog.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "thyttan"
 }

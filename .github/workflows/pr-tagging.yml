@@ -1,0 +1,58 @@
+name: Tag app authors
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  mention-app-authors:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      - name: Fetch relevant refs
+        run: |
+          # fetch master and unshallow HEAD
+          git fetch origin --unshallow
+
+      - name: Tag app authors
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #PR_NUMBER: ${{ github.event.pull_request.number }}
+          #REPO: ${{ github.repository }} # this is the slug, so user/repo
+          COMMENT_URL: https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments
+        run: |
+          git diff --name-only origin/master... -- apps/ \
+            | grep -o 'apps/[^/]*' \
+            | sort \
+            | uniq \
+            | while read d
+            do
+              author=$(jq -r '.author // ""' < "$d/metadata.json")
+              if test -z "$author"
+              then continue
+              fi
+
+              echo "tagging @$author for \`$d\`"
+            done \
+            > comment.txt
+
+      - uses: actions/github-script@v7
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const fs = require("fs");
+            const comment = fs.readFileSync("comment.txt", "utf8");
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment,
+            })

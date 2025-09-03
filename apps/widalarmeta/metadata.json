@@ -14,5 +14,6 @@
     {"name":"widalarmeta.wid.js","url":"widget.js"},
     {"name":"widalarmeta.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"widalarmeta.json"}]
+  "data": [{"name":"widalarmeta.json"}],
+  "author": "nxdefiant"
 }
