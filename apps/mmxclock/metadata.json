@@ -1,7 +1,7 @@
 { "id": "mmxclock",
   "name": "Megaman X clock",
   "shortName":"MMXCLOCK",
-  "icon": "app.PNG",
+  "icon": "app.png",
   "version":"0.01",
   "description": "My Megaman X themed clock, by soulmaze.neocities.org",
   "tags": "",
