@@ -17,3 +17,4 @@
 0.13: Add option to only show when on clock
 0.14: New font VGA8 for a more compact display
 0.15: New font options 5x7:2x2, 5x9:2x2
+      Change only on clock setting to a checkbox

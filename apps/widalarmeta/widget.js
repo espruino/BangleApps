@@ -8,7 +8,7 @@
       padHours: true,
       showSeconds: 0, // 0=never, 1=only when display is unlocked, 2=for less than a minute
       font: 1, // 0=segment style font, 1=teletext font, 2=6x8:1x2, 3=VGA8
-      whenToShow: 0, // 0=always, 1=on clock only
+      whenToShow: false, // false=always, true=only on clock
     }, require("Storage").readJSON("widalarmeta.json",1) || {});
 
       if (config.font == 0 || config.font == 5) {
@@ -47,7 +47,7 @@
   function draw(_w, fromInterval) {
 
     // If only show on clock and not on clock
-    if (config.whenToShow === 1 && !Bangle.CLOCK) {
+    if (!!config.whenToShow && !Bangle.CLOCK) {
       this.nextAlarm = undefined; // make sure to reload later
       return;
     }

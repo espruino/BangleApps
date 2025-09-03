@@ -66,10 +66,8 @@
         writeSettings();
       }
     },
-    /*LANG*/'When To Show': {
-      value: settings.whenToShow,
-      min: 0, max: 1,
-      format: v => [/*LANG*/"Always", /*LANG*/"On Clock Only"][v === undefined ? 0 : v],
+    /*LANG*/'Only on clock': {
+      value: !!settings.whenToShow,
       onchange: v => {
         settings.whenToShow = v;
         writeSettings();
