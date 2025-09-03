@@ -4,6 +4,7 @@
   "version":"0.01",
   "description": "Display a QR code that when scanned by a phone will load the app loader, set up to connect to just this device",
   "icon": "app.png",
+  "screenshots" : [ { "url":"screenshot.png" } ],
   "tags": "tool,bluetooth",
   "supports" : ["BANGLEJS2"],
   "storage": [
