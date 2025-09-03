@@ -36,15 +36,9 @@
         "ram"
         const APP_ID = getAppIdFromCurrentFile();
         if (SETTINGS.global ^ Object.keys(SETTINGS.apps).includes(APP_ID)) {
-          if (!e.inverted) {
-            E.stopEventPropagation();
-            e.inverted = true;
-
-            if (SETTINGS.global ^ (SETTINGS.apps[APP_ID]&&SETTINGS.apps[APP_ID].dragH)) {e.dx *= -1;}
-            if (SETTINGS.global ^ (SETTINGS.apps[APP_ID]&&SETTINGS.apps[APP_ID].dragV)) {e.dy *= -1;}
-
-            Bangle.emit("drag", e);
-          }
+          e.inverted = true;
+          if (SETTINGS.global ^ (SETTINGS.apps[APP_ID]&&SETTINGS.apps[APP_ID].dragH)) {e.dx *= -1;}
+          if (SETTINGS.global ^ (SETTINGS.apps[APP_ID]&&SETTINGS.apps[APP_ID].dragV)) {e.dy *= -1;}
         }
       }
 
