@@ -9,7 +9,8 @@
         weather.feels = require("locale").temp(weather.feels-273.15);
         weather.hum = `${weather.hum}%`;
         weather.wind = require("locale").speed(weather.wind).match(/^(\D*\d*)(.*)$/);
-        weather.wind = `${Math.round(weather.wind[1])}kph`;
+        weather.wind = Math.round(weather.wind[1]) +" "+ weather.wind[2];
+
       } else {
         weather = {
           temp: "?",

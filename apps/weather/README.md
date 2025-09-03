@@ -6,7 +6,7 @@ It adds a widget with a weather pictogram and the temperature.
 It also adds a ClockInfo list to Bangle.js.
 You can view the full report through the app:
 
-![Screenshot](screenshot.png)
+![Screenshot](Screenshot.png)
 
 ## iOS Setup
 
@@ -21,6 +21,10 @@ Use the iOS shortcut [here](https://www.icloud.com/shortcuts/73be0ce1076446f3bdc
 
 There are multiple weather apps for Android that can connect with Gadgetbridge:
 
+* Breezy Weather
+  * F-Droid - https://f-droid.org/en/packages/org.breezyweather/
+  * Source code - https://github.com/breezy-weather/breezy-weather
+
 * Tiny Weather Forecast Germany
   * F-Droid - https://f-droid.org/en/packages/de.kaffeemitkoffein.tinyweatherforecastgermany/
   * Source code - https://codeberg.org/Starfish/TinyWeatherForecastGermany
@@ -30,9 +34,14 @@ There are multiple weather apps for Android that can connect with Gadgetbridge:
   * Google Play - https://play.google.com/store/apps/details?id=com.ominous.quickweather
   * Source code - https://github.com/TylerWilliamson/QuickWeather
 
-* Breezy Weather
-  * F-Droid - https://f-droid.org/en/packages/org.breezyweather/
-  * Source code - https://github.com/breezy-weather/breezy-weather
+
+### Breezy Weather
+
+Enabling connection to Gadgetbridge:
+
+1. Tap on the three dots in the top right hand corner and go to settings
+2. Find "Widgets & Live wallpaper" settings
+3. Under "Data sharing" tap on "Send Gadgetbridge data" and enable for Gadgetbridge flavor you are using
 
 ### Tiny Weather Forecast Germany
 
@@ -50,14 +59,6 @@ QuickWeather uses Open-Meteo or the OpenWeatherMap API.
 If you're using OpenWeatherMap you will need the "One Call By Call" plan, which is free if you're not making too many calls. Sign up or get more information at https://openweathermap.org/api
 
 When you first load QuickWeather, it will take you through the setup process. You will fill out all the required information as well as put your API key in. If you do not have the "One Call By Call", or commonly known as "One Call", API, you will need to sign up for that. QuickWeather will work automatically with both the main version of Gadgetbridge and Gadgetbridge for Bangle.JS.
-
-### Breezy Weather
-
-Enabling connection to Gadgetbridge:
-
-1. Tap on the three dots in the top right hand corner and go to settings
-2. Find "Widgets & Live wallpaper" settings
-3. Under "Data sharing" tap on "Send Gadgetbridge data" and enable for Gadgetbridge flavor you are using
 
 ### Weather Notification
 

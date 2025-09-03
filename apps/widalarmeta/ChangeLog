@@ -15,3 +15,4 @@
 0.11: Bugfix: handle changes in alarms (e.g. done without a load, such as via fastload)
 0.12: Redraw when screen turns on or watch is unlocked
 0.13: Add option to only show when on clock
+0.14: New font VGA8 for a more compact display

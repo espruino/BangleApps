@@ -49,7 +49,7 @@ var bg_code = [
     '< Back': back,
     'Row 1': {
       value: 0 | dataOptions.indexOf(settings.dataRow1),
-      min: 0, max: 8,
+      min: 0, max: dataOptions.length - 1,
       format: v => dataOptions[v],
       onchange: v => {
         settings.dataRow1 = dataOptions[v];
@@ -58,7 +58,7 @@ var bg_code = [
     },
     'Row 2': {
       value: 0 | dataOptions.indexOf(settings.dataRow2),
-      min: 0, max: 8,
+      min: 0, max: dataOptions.length - 1,
       format: v => dataOptions[v],
       onchange: v => {
         settings.dataRow2 = dataOptions[v];
@@ -67,7 +67,7 @@ var bg_code = [
     },
     'Row 3': {
       value: 0 | dataOptions.indexOf(settings.dataRow3),
-      min: 0, max: 8,
+      min: 0, max: dataOptions.length - 1,
       format: v => dataOptions[v],
       onchange: v => {
         settings.dataRow3 = dataOptions[v];

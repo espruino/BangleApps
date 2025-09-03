@@ -37,7 +37,9 @@ Bangle.setUI({
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
     delete Graphics.prototype.setFontAnton;
-  }});
+  },
+  redraw: draw,
+});
 // Load widgets
 Bangle.loadWidgets();
 draw();

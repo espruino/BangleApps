@@ -169,7 +169,8 @@ Bangle.setUI({
     delete clockInfoMenu;
     clockInfoMenu2.remove();
     delete clockInfoMenu2;
-  }
+  },
+  redraw: draw,
 });
 // Load widgets
 Bangle.loadWidgets();

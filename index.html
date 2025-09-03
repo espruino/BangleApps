@@ -218,7 +218,13 @@
     <script src="core/js/utils.js"></script>
     <script>
       UART.ports = UART.ports.filter(e => e.includes("Bluetooth")); // all watches are Bluetooth
-      Const.CONNECTION_DEVICE = "Bluetooth"; // force Bluetooth because we know (don't look it up)
+      Const.CONNECTION_DEVICE = "Bluetooth"; // force Bluetooth because we know (don't look it up)#
+      // If "?dev=Bangle.js abcd" specified in URL, filter by that name
+      if (window.location.search) {
+        let searchParams = new URLSearchParams(window.location.search);
+        if (searchParams.has("dev"))
+          UART.optionsBluetooth.filters=[{name:searchParams.get("dev")}];
+      }
     </script>
     <script src="webtools/heatshrink.js"></script>
     <script src="core/lib/marked.min.js"></script>

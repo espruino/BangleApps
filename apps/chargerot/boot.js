@@ -5,9 +5,14 @@
     Bangle.on('charging', (charging) => {
         if (charging) {
             g.setRotation(chargingRotation&3,chargingRotation>>2).clear();
-            Bangle.showClock();
         } else {
             g.setRotation(defaultRotation&3,defaultRotation>>2).clear();
+        }
+
+        if (Bangle.uiRedraw) {
+            Bangle.uiRedraw();
+            Bangle.drawWidgets();
+        } else {
             Bangle.showClock();
         }
     });
