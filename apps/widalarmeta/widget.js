@@ -47,7 +47,7 @@
   function draw(_w, fromInterval) {
 
     // If only show on clock and not on clock
-    if (!!config.whenToShow && !Bangle.CLOCK) {
+    if (config.whenToShow && !Bangle.CLOCK) {
       this.nextAlarm = undefined; // make sure to reload later
       return;
     }
