@@ -37,6 +37,56 @@ const reps = storeReps.map((r: StoreRep, i: number, a: Rep[]): Rep => {
 	return r2;
 });
 
+class State {
+	paused: boolean = true;
+	begin: number = Date.now(); // only valid if !paused
+	accumulated: number = 0;
+
+	toggle() {
+		if(this.paused){
+			this.begin = Date.now();
+		}else{
+			const diff = Date.now() - this.begin;
+			this.accumulated += diff;
+		}
+
+		this.paused = !this.paused;
+	}
+
+	getElapsedTotal() {
+		return (this.paused ? 0 : Date.now() - this.begin) + this.accumulated;
+	}
+
+	getElapsedForRep() {
+		return this.currentRepPair()[1];
+	}
+
+	currentRepPair(): [number | null, number] {
+		const elapsed = this.getElapsedTotal();
+		const i = this.currentRepIndex();
+		const repElapsed = elapsed - (i! > 0 ? reps[i!-1]!.accDur : 0);
+
+		return [i, repElapsed];
+	}
+
+	currentRepIndex() {
+		const elapsed = this.getElapsedTotal();
+		let ent;
+		for(let i = 0; (ent = reps[i]); i++)
+			if(elapsed < ent.accDur)
+				return i;
+		return null;
+	}
+
+	forward() {
+		this.accumulated += ffStep;
+	}
+
+	rewind() {
+		this.accumulated -= ffStep;
+	}
+}
+
 const settings = (require("Storage").readJSON("rep.setting.json", true) || {}) as RepSettings;
 settings.record ??= false;
 settings.recordStopOnExit ??= false;
@@ -197,56 +247,6 @@ const layout = new L({
 		}
 	]
 } as const, {lazy: true});
-
-class State {
-	paused: boolean = true;
-	begin: number = Date.now(); // only valid if !paused
-	accumulated: number = 0;
-
-	toggle() {
-		if(this.paused){
-			this.begin = Date.now();
-		}else{
-			const diff = Date.now() - this.begin;
-			this.accumulated += diff;
-		}
-
-		this.paused = !this.paused;
-	}
-
-	getElapsedTotal() {
-		return (this.paused ? 0 : Date.now() - this.begin) + this.accumulated;
-	}
-
-	getElapsedForRep() {
-		return this.currentRepPair()[1];
-	}
-
-	currentRepPair(): [number | null, number] {
-		const elapsed = this.getElapsedTotal();
-		const i = this.currentRepIndex();
-		const repElapsed = elapsed - (i! > 0 ? reps[i!-1]!.accDur : 0);
-
-		return [i, repElapsed];
-	}
-
-	currentRepIndex() {
-		const elapsed = this.getElapsedTotal();
-		let ent;
-		for(let i = 0; (ent = reps[i]); i++)
-			if(elapsed < ent.accDur)
-				return i;
-		return null;
-	}
-
-	forward() {
-		this.accumulated += ffStep;
-	}
-
-	rewind() {
-		this.accumulated -= ffStep;
-	}
-}
 
 const repToLabel = (i: number, id: "cur" | "next") => {
 	const rep = reps[i];
