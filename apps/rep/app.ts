@@ -94,9 +94,9 @@ settings.record ??= false;
 settings.recordStopOnExit ??= false;
 settings.stepMs ??= 5 * 1000;
 
-const fontSzMain = 54;
+const fontSzMain = 48;
 const fontScaleRep = 2;
-const fontSzRep = 20;
+const fontSzRep = 26;
 const fontSzRepDesc = 12;
 const blue = "#205af7";
 const ffStep = settings.stepMs;
@@ -172,16 +172,10 @@ const layout = new L({
 			]
 		},
 		{
-			type: "txt",
-			font: `Vector:${fontSzRepDesc}`,
-			label: "Activity / Duration",
-		},
-		{
 			id: "cur_name",
 			type: "txt",
 			font: `Vector:${fontSzRep}`,
 			label: "",
-			col: blue,
 			//pad: 4,
 			fillx: 1,
 		},
@@ -197,6 +191,7 @@ const layout = new L({
 			label: "",
 			//pad: 4,
 			fillx: 1,
+			col: blue,
 		},
 		{
 			type: "h",
