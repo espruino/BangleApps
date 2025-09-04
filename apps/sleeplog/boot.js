@@ -166,14 +166,14 @@ if (global.sleeplog.conf.enabled) {
         
         if (!Bangle.isCharging()) {
           if (data.heartRate <= global.sleeplog.conf.hrDeepTh) {
-            status = 4; // deep sleep
+            data.status = 4; // deep sleep
           } else if (data.heartRate <= global.sleeplog.conf.hrLightTh) {
-            status = 3; // light sleep
+            data.status = 3; // light sleep
           } else {
-            status = 2; // awake
+            data.status = 2; // awake
           }
         } else {
-          status = 1; // not worn
+          data.status = 1; // not worn
         }
        
           
