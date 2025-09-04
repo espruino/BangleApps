@@ -64,6 +64,8 @@ class State {
 	currentRepPair(): [number | null, number] {
 		const elapsed = this.getElapsedTotal();
 		const i = this.currentRepIndex();
+		// `i!` - if `i` is null then the condition is false, which is what we want
+		// (and we avoid the extra `i != null` check)
 		const repElapsed = elapsed - (i! > 0 ? reps[i!-1]!.accDur : 0);
 
 		return [i, repElapsed];
