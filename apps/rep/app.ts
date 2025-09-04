@@ -105,6 +105,7 @@ let state: State | undefined;
 let drawInterval: IntervalId | undefined;
 let lastRepIndex: number | null = null;
 let firstTime = true;
+let buzzing = false;
 
 const renderDuration = (l: Layout.RenderedHierarchy) => {
 	let lbl;
@@ -297,12 +298,19 @@ const drawRep = () => {
 	layout.render();
 };
 
-const buzzInteraction = () => Bangle.buzz(250);
+const bz = (n: number) => {
+	if(buzzing) return Promise.resolve();
+
+	buzzing = true;
+	return Bangle.buzz(n).then(() => buzzing = false);
+};
+
+const buzzInteraction = () => bz(250);
 const buzzNewRep = () => {
 	let n = firstTime ? 1 : 3;
 	firstTime = false;
 	const buzz = () => {
-		Bangle.buzz(1000).then(() => {
+		bz(1000).then(() => {
 			if (--n <= 0)
 				return;
 			setTimeout(buzz, 250);
