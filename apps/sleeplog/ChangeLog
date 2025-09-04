@@ -16,3 +16,4 @@
 0.18: Add back as a function to prevent translation making it a menu entry
 0.19: Write sleep state into health event's .activity field
 0.20: Increase default sleep thresholds, tweak settings to allow higher ones to be chosen
+0.21: Use HRM data is polling is enabled, and add appropriate thresholds in settings. Change settings to feel more intuitive, rather than copied settings in different pages.
