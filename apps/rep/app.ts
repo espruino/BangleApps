@@ -275,7 +275,7 @@ const drawRep = (initial?: true) => {
 		lastRepIndex = i;
 
 		const repIdx = layout["repIdx"]!;
-		repIdx.label = i !== null ? `Rep ${i+1}` : "Done";
+		repIdx.label = i !== null ? `[${i+1}]` : "Done";
 
 		// work around a bug in clearing a rotated txt(?)
 		layout.forgetLazyState();
