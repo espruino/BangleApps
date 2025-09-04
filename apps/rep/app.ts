@@ -101,7 +101,7 @@ const fontSzRepDesc = 12;
 const blue = "#205af7";
 const ffStep = settings.stepMs;
 
-let state: State | undefined;
+const state = new State();
 let drawInterval: IntervalId | undefined;
 let lastRepIndex: number | null = null;
 let firstTime = true;
@@ -112,7 +112,7 @@ const renderDuration = (l: Layout.RenderedHierarchy) => {
 
 	g.clearRect(l.x, l.y, l.x+l.w, l.y+l.h);
 
-	if(state){
+	if(!firstTime){
 		const [i, repElapsed] = state.currentRepPair();
 
 		if(i !== null){
@@ -215,8 +215,6 @@ const layout = new L({
 					fillx: 1,
 					cb: () => {
 						buzzInteraction();
-						if(!state)
-							state = new State();
 
 						state.toggle();
 
@@ -228,6 +226,7 @@ const layout = new L({
 						}
 
 						drawRep();
+						firstTime = false;
 					},
 				},
 				{
@@ -266,33 +265,31 @@ const msToMinSec = (ms: number) => {
 	return min.toFixed(0) + ":" + pad2(sec % 60);
 };
 
-const drawRep = () => {
+const drawRep = (initial?: true) => {
 	(layout["duration"] as any).lazyBuster ^= 1;
 
-	if(state){
-		const i = state.currentRepIndex();
+	const i = state.currentRepIndex();
 
-		if(i !== lastRepIndex){
-			buzzNewRep();
-			lastRepIndex = i;
+	if(i !== lastRepIndex){
+		if(!initial) buzzNewRep();
+		lastRepIndex = i;
 
-			const repIdx = layout["repIdx"]!;
-			repIdx.label = i !== null ? `Rep ${i+1}` : "Done";
+		const repIdx = layout["repIdx"]!;
+		repIdx.label = i !== null ? `Rep ${i+1}` : "Done";
 
-			// work around a bug in clearing a rotated txt(?)
-			layout.forgetLazyState();
-			layout.clear();
-		}
+		// work around a bug in clearing a rotated txt(?)
+		layout.forgetLazyState();
+		layout.clear();
+	}
 
-		layout["play"]!.label = state.paused ? "Play" : "Pause";
+	layout["play"]!.label = state.paused ? "Play" : "Pause";
 
-		if(i !== null){
-			repToLabel(i, "cur");
-			repToLabel(i+1, "next");
-		}else{
-			emptyLabel("cur");
-			emptyLabel("next");
-		}
+	if(i !== null){
+		repToLabel(i, "cur");
+		repToLabel(i+1, "next");
+	}else{
+		emptyLabel("cur");
+		emptyLabel("next");
 	}
 
 	layout.render();
@@ -308,7 +305,6 @@ const bz = (n: number) => {
 const buzzInteraction = () => bz(250);
 const buzzNewRep = () => {
 	let n = firstTime ? 1 : 3;
-	firstTime = false;
 	const buzz = () => {
 		bz(1000).then(() => {
 			if (--n <= 0)
@@ -322,7 +318,7 @@ const buzzNewRep = () => {
 const init = () => {
 	g.clear();
 	layout.setUI();
-	drawRep();
+	drawRep(true);
 
 	Bangle.drawWidgets();
 };
