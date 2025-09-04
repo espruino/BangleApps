@@ -1,2 +1,4 @@
 0.01: New app!
 0.02: Fixed interaction with recorder UI listeners
+0.03: UI: make current rep stand out, give more space to descriptions
+      Buzzing: avoid overlapping buzzes
