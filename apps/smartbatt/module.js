@@ -84,6 +84,20 @@
         reason: reason
       });
     }
+    clearInterval(interval)
+    if(data.totalCycles<=500){
+      //30m intervals
+      interval=setInterval(recordBattery, 600000);
+    }else if(data.totalCycles<=1000){
+      //30m intervals
+      interval=setInterval(recordBattery, 1800000);
+    }else if(data.totalCycles>=1550){
+      //1.5h intervals
+      interval=setInterval(recordBattery, 5400000);
+    }else{
+      //3h intervals
+      interval=setInterval(recordBattery, 10800000);
+    }
   }
 
   function weightedAverage(oldValue, oldWeight, newValue, newWeight) {
