@@ -1,7 +1,7 @@
 { "id": "mmxclock",
   "name": "Megaman X clock",
   "shortName":"MMXCLOCK",
-  "icon": "https://raw.githubusercontent.com/stratosphericcity/BangleApps/refs/heads/master/apps/mmxclock/app.PNG",
+  "icon": [{"url":"https://raw.githubusercontent.com/stratosphericcity/BangleApps/refs/heads/master/apps/mmxclock/app.PNG"}],
   "screenshots": [{"url":"https://raw.githubusercontent.com/stratosphericcity/BangleApps/refs/heads/master/apps/mmxclock/screenshot.png"}],
   "type": "clock",
   "tags": "clock",
