@@ -2,6 +2,7 @@
   "name": "Megaman X clock",
   "shortName":"MMXCLOCK",
   "icon": "app.png",
+  "type":"clock",
   "version":"0.01",
   "description": "My Megaman X themed clock, by soulmaze.neocities.org",
   "tags": "",
