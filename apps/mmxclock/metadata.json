@@ -7,8 +7,7 @@
   "tags": "clock",
   "version":"0.01",
   "description": "My Megaman X themed clock, by soulmaze.neocities.org",
-  "tags": "",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
     {"name":"mmxclock.app.js","url":"app.js"},
