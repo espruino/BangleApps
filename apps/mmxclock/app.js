@@ -90,7 +90,7 @@ function getMessage()
     }
     else if (h < 20)
     {
-      g.drawString("Afternoon",155, 140);
+      g.drawString("Afternoon",170, 140);
     }
     else if ( h < 24)
     {
