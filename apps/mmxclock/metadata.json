@@ -1,7 +1,7 @@
 { "id": "mmxclock",
   "name": "Megaman X clock",
   "shortName":"MMXCLOCK",
-  "icon":"app.png",
+  "icon":"app.PNG",
   "screenshots": [{"url":"img/screenshot (1).png"}],
   "type": "clock",
   "tags": "clock",
