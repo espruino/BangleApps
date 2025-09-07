@@ -2,7 +2,7 @@
   "name": "Megaman X clock",
   "shortName":"MMXCLOCK",
   "icon": "https://raw.githubusercontent.com/stratosphericcity/BangleApps/refs/heads/master/apps/mmxclock/app.PNG",
-  "screenshots": [{"url":"https://github.com/stratosphericcity/BangleApps/blob/master/apps/mmxclock/screenshot.png"}],
+  "screenshots": [{"url":"https://raw.githubusercontent.com/stratosphericcity/BangleApps/refs/heads/master/apps/mmxclock/screenshot.png"}],
   "type": "clock",
   "tags": "clock",
   "version":"0.01",
