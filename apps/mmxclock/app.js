@@ -48,6 +48,9 @@ function queueDraw() {
 function draw() {
   var x = g.getWidth() / 2;
   var y = 24 + 20;
+  
+  var d = new Date();
+  var h = d.getHours();
 
   g.reset().clearRect(0, 24, g.getWidth(), g.getHeight() - IMAGEHEIGHT);
   if (g.getWidth() == IMAGEWIDTH)
@@ -78,6 +81,22 @@ function drawBattery() {
   bigThenSmall(E.getBattery(), "%", 115, 111);
 }
 
+function getMessage()
+  {
+    g.setFont("megamanx");
+    if  (h < 12)
+    {
+      g.drawString("Morning",155, 140);
+    }
+    else if (h < 20)
+    {
+      g.drawString("Afternoon",155, 140);
+    }
+    else if ( h < 24)
+    {
+      g.drawString("Evening",155, 140);
+    }
+  }
 
   // work out locale-friendly date/time
   var date = new Date();
@@ -109,6 +128,13 @@ function drawBattery() {
   g.setFontAlign(-7, -10);
   g.setFont("megamanx");
   drawBattery();
+  //draw message
+  g.setFontAlign(4,-5);
+  g.setFont("megamanx");
+  g.drawString("Good",130, 125);
+  g.setFontAlign(4,-5);
+  g.setFont("megamanx");
+  getMessage();
 }
 
 // Clear the screen once, at startup
