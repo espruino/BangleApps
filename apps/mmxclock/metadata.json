@@ -2,7 +2,7 @@
   "name": "Megaman X clock",
   "shortName":"MMXCLOCK",
   "icon":"app.png",
-  "screenshots": [{"url":"img/screenshot.png"}],
+  "screenshots": [{"url":"img/screenshot (1).png"}],
   "type": "clock",
   "tags": "clock",
   "version":"0.01",
