@@ -79,6 +79,10 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
       - __App Timeout__ | app specific lock timeout
         __0s__ / _10s_ / ... / _120s_
       - __Wear Temperature__ | Set the minimum measured temperature of the wearable to consider it being worn. Can be disabled to use the HRM instead to detect if it's being worn.
+      - __Max Awake__ | maximal awake duration
+      _10min_ / _20min_ / ... / __60min__ / ... / _120min_
+    - __Min Consecutive__ | minimal consecutive sleep duration
+      _10min_ / _20min_ / ... / __30min__ / ... / _120min_
   - __Enabled__ | completely en-/disables the background service
     __on__ / _off_
   - __Debugging__ submenu
