@@ -6,7 +6,7 @@
   "description": "Provides stats, settings and power saving features",
   "icon": "app.png",
   "type": "app",
-  "tags": "tool,system, smartbatt",
+  "tags": "tool,system,smartbatt",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
