@@ -46,4 +46,5 @@ From any app, you can call `require("smartbatt")` and then one of the functions 
 ## Creator
 - RKBoss6
 ## Contributors
-- RelapsingCertainly
+- sonicityV
+
