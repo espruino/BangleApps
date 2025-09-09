@@ -1,0 +1,19 @@
+{
+  "id": "battapp",
+  "name": "Battery App",
+  "shortName": "Battery",
+  "version": "0.01",
+  "description": "Provides stats, settings and power saving features",
+  "icon": "app.png",
+  "type": "app",
+  "tags": "tool,system, smartbatt",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"battapp.app.js","url":"app.js"}
+  ],
+  "screenshots":[
+    {"url":"screenshot_1.png"},
+    {"url":"screenshot_2.png"}
+  ]
+}
