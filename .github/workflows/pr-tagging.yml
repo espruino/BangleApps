@@ -37,7 +37,8 @@ jobs:
               then continue
               fi
 
-              echo "tagging @$author for \`$d\`"
+              # disabled `@` for now to avoid spamming
+              echo "tagging $author for \`$d\`"
             done \
             > comment.txt
 
