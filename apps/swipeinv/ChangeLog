@@ -1,2 +1,6 @@
 0.01: New app!
 0.02: Minor code improvements
+0.03: Add inversion of drag events. Add per app, per direction setting.
+      Refactor to hijack and modify the events instead of the handling of them.
+      This should add compatibility with most apps, even if Bangle.setUI is not
+      used.
