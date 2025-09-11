@@ -8,6 +8,8 @@ Swipe input:
 
 Swipe left/right to go to previous/next track. Swipe up/down to change the volume.
 
+If you have changed the volume by swipe up/down, you can use a "volume knob" to continuously change the volume. Clock wise circle gesture on the screen increases volume and vice versa. The knob will deactivate shortly after you release the finger from the watch screen, indicated by a double buzz.
+
 It's possible to start tracks by searching with the remote. Search term without tags will override search with tags.
 
 To start playing 'from cold' the command for previous/next track via touch or swipe can be used. Pressing just play/pause is not guaranteed to initiate spotify in all circumstances (this will probably change with subsequent releases).
