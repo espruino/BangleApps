@@ -78,10 +78,17 @@ async function shouldSkip() {
 }
 
 function fetchPRDesc({ prNumber, repo, token }) {
+  return fetchGH({
+    path: `/repos/${repo}/pulls/${prNumber}`,
+    token
+  }).then(data => JSON.parse(data).body);
+}
+
+function fetchGH({ path, token }) {
   return new Promise((resolve, reject) => {
     const options = {
       hostname: "api.github.com",
-      path: `/repos/${repo}/pulls/${prNumber}`,
+      path,
       method: "GET",
       headers: {
         "User-Agent": "node.js",
@@ -96,7 +103,7 @@ function fetchPRDesc({ prNumber, repo, token }) {
       res.on("end", () => {
         if (res.statusCode === 200) {
           try {
-            resolve(JSON.parse(data).body);
+            resolve(data);
           } catch (e) {
             reject(e);
           }
