@@ -2,7 +2,7 @@
   "id": "smartbatt",
   "name": "Smart Battery Module",
   "shortName": "Smart Battery",
-  "version": "0.02",
+  "version": "0.03",
   "description": "Provides a `smartbatt` module that returns the battery in days, and learns from daily usage over time for accurate predictions.",
   "icon": "app.png",
   "type": "module",
