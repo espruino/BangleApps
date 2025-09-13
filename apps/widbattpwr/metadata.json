@@ -4,6 +4,7 @@
   "shortName": "Batt Pwr",
   "icon": "widget.png",
   "version": "0.03",
+  "author": "bobrippling",
   "type": "widget",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
@@ -15,6 +16,5 @@
       "name": "widbattpwr.wid.js",
       "url": "widget.js"
     }
-  ],
-  "author": "bobrippling"
+  ]
 }

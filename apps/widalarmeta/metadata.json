@@ -3,6 +3,7 @@
   "name": "Alarm & Timer ETA",
   "shortName": "Alarm ETA",
   "version": "0.15",
+  "author": "nxdefiant",
   "description": "A widget that displays the time to the next Alarm or Timer in hours and minutes, maximum 24h (configurable).",
   "icon": "widget.png",
   "type": "widget",
@@ -14,6 +15,5 @@
     {"name":"widalarmeta.wid.js","url":"widget.js"},
     {"name":"widalarmeta.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"widalarmeta.json"}],
-  "author": "nxdefiant"
+  "data": [{"name":"widalarmeta.json"}]
 }

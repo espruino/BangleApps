@@ -3,6 +3,7 @@
   "name": "Beep Test",
   "shortName": "Beep Test",
   "version": "0.01",
+  "author": "bb0x88",
   "description": "Aerobic fitness test created by Léger & Lambert",
   "icon": "beeptest.png",
   "tags": "health",
@@ -11,6 +12,5 @@
   "storage": [
     { "name": "beeptest.app.js", "url": "beeptest.js" },
     { "name": "beeptest.img", "url": "app-icon.js", "evaluate": true }
-  ],
-  "author": "bb0x88"
+  ]
 }

@@ -3,6 +3,7 @@
   "name": "Ship's bell Widget",
   "shortName": "Ship's bell",
   "version": "0.02",
+  "author": "nxdefiant",
   "description": "A widget that buzzes according to a nautical bell, one strike at 04:30, two strikes at 05:00, up to eight strikes at 08:00 and so on.",
   "icon": "widget.png",
   "type": "widget",
@@ -12,6 +13,5 @@
     {"name":"widshipbell.wid.js","url":"widget.js"},
     {"name":"widshipbell.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"widshipbell.json"}],
-  "author": "nxdefiant"
+  "data": [{"name":"widshipbell.json"}]
 }

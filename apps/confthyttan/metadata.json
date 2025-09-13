@@ -1,6 +1,7 @@
 { "id": "confthyttan",
   "name": "Thyttan's Default Config",
   "version":"0.06",
+  "author": "thyttan",
   "description": "A different default set of apps and configurations. Brings many quality of life improvements. Opinionated based on the creators taste. Read more below before installing.",
   "icon": "app.png",
   "type": "defaultconfig",
@@ -64,6 +65,5 @@
      "url":"edgeclk.settings.json"},
     {"name":"setting.json",
      "url":"setting.json"}
-  ],
-  "author": "thyttan"
+  ]
 }

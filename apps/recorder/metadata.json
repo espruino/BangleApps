@@ -3,6 +3,7 @@
   "name": "Recorder",
   "shortName": "Recorder",
   "version": "0.48",
+  "author": "bobrippling",
   "description": "Record GPS position, heart rate and more in the background, then download to your PC.",
   "icon": "app.png",
   "tags": "tool,outdoors,gps,widget,clkinfo",
@@ -21,6 +22,5 @@
   "data": [
     {"name":"recorder.json","url":"app-settings.json"},
     {"wildcard":"recorder.log?.csv","storageFile":true}
-  ],
-  "author": "bobrippling"
+  ]
 }

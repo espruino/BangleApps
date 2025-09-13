@@ -1,6 +1,7 @@
 { "id": "msgwakefup",
   "name": "Message wake on face up",
   "version":"0.02",
+  "author": "thyttan",
   "description": "Temporarily activate wake on face up function when a new message is auto displayed.",
   "icon": "app.png",
   "tags": "messages,tweak",
@@ -9,6 +10,5 @@
   "readme": "README.md",
   "storage": [
     {"name":"msgwakefup.boot.js","url":"boot.js"}
-  ],
-  "author": "thyttan"
+  ]
 }

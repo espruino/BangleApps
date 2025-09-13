@@ -4,6 +4,7 @@
   "shortName":"Sport mode",
   "icon": "app.png",
   "version":"0.01",
+  "author": "nxdefiant",
   "description": "Allows to set the sport mode of the Heart rate monitor in app settings.",
   "type": "bootloader",
   "tags": "health",
@@ -12,6 +13,5 @@
     {"name":"sportmode.boot.js","url":"boot.js"},
     {"name":"sportmode.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"sportmode.json"}],
-  "author": "nxdefiant"
+  "data": [{"name":"sportmode.json"}]
 }

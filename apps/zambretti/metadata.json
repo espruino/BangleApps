@@ -3,6 +3,7 @@
   "name": "Zambretti Weather Forecaster",
   "shortName": "Zn. Weather",
   "version": "0.01",
+  "author": "nxdefiant",
   "description": "Zambretti Forecaster by Negretti and Zambra, uses the Barometer for empirical weather forecast in the Northern Hemisphere (see https://web.archive.org/web/20110610213848/http://www.meteormetrics.com/zambretti.htm), similar to weather stations. Watch must be stationary and its height above sea level set.",
   "icon": "app.png",
   "tags": "outdoors,weather",
@@ -15,6 +16,5 @@
     {"name":"zambretti.boot.js","url":"boot.js"},
     {"name":"zambretti.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"zambretti.json"}, {"name":"zambretti.log.json"}],
-  "author": "nxdefiant"
+  "data": [{"name":"zambretti.json"}, {"name":"zambretti.log.json"}]
 }

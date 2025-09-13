@@ -3,10 +3,11 @@
   "name": "Podcast Addict Remote",
   "shortName": "PA Remote",
   "version": "0.11",
+  "author": "thyttan",
   "description": "Control Podcast Addict on your android device.",
   "readme": "README.md",
   "type": "app",
-  "tags": "remote,podcast,podcasts,radio,player,intent,intents,gadgetbridge,podadrem,pa remote", 
+  "tags": "remote,podcast,podcasts,radio,player,intent,intents,gadgetbridge,podadrem,pa remote",
   "icon": "app.png",
   "screenshots" : [ {"url":"screenshot1.png"}, {"url":"screenshot2.png"} ],
   "supports": ["BANGLEJS2"],
@@ -14,6 +15,5 @@
   "storage": [
     {"name":"podadrem.app.js","url":"app.js"},
     {"name":"podadrem.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "thyttan"
+  ]
 }

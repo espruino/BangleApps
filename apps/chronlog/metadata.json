@@ -1,6 +1,7 @@
 { "id": "chronlog",
   "name": "Chrono Logger",
   "version":"0.01",
+  "author": "thyttan",
   "description": "Record time active on a task, course, work or anything really.",
   "icon": "app.png",
   "tags": "logging,record,work,tasks",
@@ -10,6 +11,5 @@
   "storage": [
     {"name":"chronlog.app.js","url":"app.js"},
     {"name":"chronlog.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "thyttan"
+  ]
 }

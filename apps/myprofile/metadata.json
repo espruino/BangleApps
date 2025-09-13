@@ -4,6 +4,7 @@
   "icon": "app.png",
   "type": "settings",
   "version":"0.02",
+  "author": "nxdefiant",
   "description": "Configure your personal profile. All settings are optional and only stored on the watch.",
   "readme": "README.md",
   "tags": "tool,utility",
@@ -14,6 +15,5 @@
   ],
   "data": [
     {"name":"myprofile.json"}
-  ],
-  "author": "nxdefiant"
+  ]
 }

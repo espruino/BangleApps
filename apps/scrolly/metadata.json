@@ -5,6 +5,7 @@
   "icon": "app.png",
   "screenshots" : [ { "url":"screenshot.gif" } ],
   "version":"0.01",
+  "author": "retcurve",
   "description": "Scrolly is a simple app designed to display scrolling text across your screen in a clean and dynamic way. Perfect for announcements or just for fun!",
   "readme":"README.md",
   "type": "app",
@@ -15,8 +16,7 @@
     {"name":"scrolly.app.js","url":"app.js"},
     {"name":"scrolly.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [                   
+  "data": [
     {"name":"scrolly.json"}
-  ],
-  "author": "retcurve"
+  ]
 }

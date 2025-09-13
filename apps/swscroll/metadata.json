@@ -2,6 +2,7 @@
   "id": "swscroll",
   "name": "Swipe menus",
   "version": "0.08",
+  "author": "thyttan",
   "description": "Replace built in E.showScroller to act on swipe instead of drag. Navigate menus in discrete steps instead of a continuous motion.",
   "readme": "README.md",
   "icon": "app.png",
@@ -10,6 +11,5 @@
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"swscroll.boot.js","url":"boot.js"}
-  ],
-  "author": "thyttan"
+  ]
 }
