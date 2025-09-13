@@ -56,7 +56,15 @@ async function main() {
     }
   }
 
+  const prevTags = await previousTags();
+
   for(let [author, apps] of Object.entries(authorToApp)){
+    if(author in prevTags){
+      apps = apps.difference(prevTags[author]);
+      if(apps.size === 0)
+        continue;
+    }
+
     apps = [...apps].sort();
 
     console.log(`tagging ${author} for ${apps.join(", ")}`);
@@ -77,11 +85,49 @@ async function shouldSkip() {
     .length > 0;
 }
 
+// returns { author: Set(apps) }
+async function previousTags() {
+  const comments = await fetchPRComments({
+    prNumber: getenv("PR_NUM"),
+    repo: getenv("REPO"),
+    token: getenv("GITHUB_TOKEN"),
+  });
+
+  const tags = {};
+
+  comments
+    .filter(({ user: { login, type } }) => type === "Bot" && login === "github-actions[bot]")
+    .map(({ body }) => body)
+    .flatMap(body =>
+      body
+        .split("\n")
+        .map(line => {
+          const parts = line.split(" ");
+          if(parts.length === 4 && parts[0] === "tagging" && parts[2] === "for")
+            return { author: parts[1], app: parts[3].replace(/`/g, "") };
+        })
+        .filter(x => x)
+    )
+    .forEach(({ author, app }) => {
+      if(!tags[author]) tags[author] = new Set();
+      tags[author].add(app);
+    });
+
+  return tags;
+}
+
 function fetchPRDesc({ prNumber, repo, token }) {
   return fetchGH({
     path: `/repos/${repo}/pulls/${prNumber}`,
     token
   }).then(data => JSON.parse(data).body);
+}
+
+function fetchPRComments({ prNumber, repo, token }) {
+  return fetchGH({
+    path: `/repos/${repo}/issues/${prNumber}/comments`,
+    token
+  }).then(data => JSON.parse(data));
 }
 
 function fetchGH({ path, token }) {
