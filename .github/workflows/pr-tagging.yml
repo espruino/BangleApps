@@ -17,7 +17,7 @@ jobs:
       - name: Install jq
         run: |
           sudo apt-get update
-          sudo apt-get install -y jq
+          sudo apt-get install -y jq nodejs
 
       - name: Fetch relevant refs
         run: |
@@ -25,22 +25,7 @@ jobs:
           git fetch origin --unshallow
 
       - name: Tag app authors
-        run: |
-          git diff --name-only origin/master... -- apps/ \
-            | grep -o 'apps/[^/]*' \
-            | sort \
-            | uniq \
-            | while read d
-            do
-              author=$(jq -r '.author // ""' < "$d/metadata.json")
-              if test -z "$author"
-              then continue
-              fi
-
-              # disabled `@` for now to avoid spamming
-              echo "tagging $author for \`$d\`"
-            done \
-            > comment.txt
+        run: node bin/pr-tag.js > comment.txt
 
       - name: Post comment
         env:
