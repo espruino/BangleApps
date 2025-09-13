@@ -25,6 +25,10 @@ jobs:
           git fetch origin --unshallow
 
       - name: Tag app authors
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NUM: ${{ github.event.pull_request.number }}
         run: node bin/pr-tag.js > comment.txt
 
       - name: Post comment
