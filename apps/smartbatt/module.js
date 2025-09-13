@@ -119,7 +119,7 @@
 
 
   // Estimate hours remaining
-  function estimateBatteryLife() {
+  function getExportData() {
     let data = getData();
     var batt = E.getBattery();
     var hrsLeft = Math.abs(batt / data.avgBattDrainage);
@@ -128,7 +128,9 @@
       hrsLeft: hrsLeft,
       avgDrainage:data.avgBattDrainage,
       totalHours:data.totalHours,
-      cycles:data.totalCycles
+      cycles:data.totalCycles,
+      timeLastRecorded: data.timeLastRecorded,
+      battLastRecorded: data.battLastRecorded,
     };
   }
 
@@ -139,7 +141,7 @@
   // Expose public API
   exports.record = recordBattery;
   exports.deleteData = deleteData;
-  exports.get = estimateBatteryLife;
+  exports.get = getExportData;
   exports.changeInterval = function (newInterval) {
     clearInterval(interval);
     interval = setInterval(recordBattery, newInterval);

@@ -34,15 +34,17 @@ From any app, you can call `require("smartbatt")` and then one of the functions 
 * `require("smartbatt").get()` - Returns an object that contains:
 
   
-  * `hrsRemaining` - Hours remaining
+  * `hrsLeft` - Hours remaining
   * `avgDrainage` - Learned battery drainage per hour
-  * `totalCycles` - Total times the battery has been recorded and averaged
+  * `cycles` - Total times the battery has been recorded and averaged
+  * `timeLastRecorded` - The time when the module last updated the average, in unix seconds. (1757421612)
+  * `battLastRecorded` - The battery percent when the module last updated the average.
   * `totalHours` - Total hours recorded
   * `batt` - Current battery level
 
-    
 * `require("smartbatt").deleteData()` - Deletes all learned data. (Automatically re-learns)
 ## Creator
 - RKBoss6
 ## Contributors
-- RelapsingCertainly
+- sonicityV
+
