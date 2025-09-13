@@ -60,7 +60,7 @@ async function main() {
 
   for(let [author, apps] of Object.entries(authorToApp)){
     if(author in prevTags){
-      apps = apps.difference(prevTags[author]);
+      apps = new Set([...apps].filter(app => !prevTags[author].has(app)));
       if(apps.size === 0)
         continue;
     }
