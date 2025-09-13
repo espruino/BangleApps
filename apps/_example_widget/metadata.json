@@ -2,6 +2,7 @@
   "name": "My widget's human readable name",
   "shortName":"Short Name",
   "version":"0.01",
+  "author": "gfwilliams",
   "description": "A detailed description of my great widget",
   "icon": "icon.png",
   "type": "widget",

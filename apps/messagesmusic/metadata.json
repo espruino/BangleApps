@@ -3,6 +3,7 @@
   "name":"Messages Music",
   "shortName": "Music",
   "version":"0.05",
+  "author": "thyttan",
   "description": "Uses Messages library to push a music message which in turn displays Messages app music controls",
   "icon":"app.png",
   "type": "app",

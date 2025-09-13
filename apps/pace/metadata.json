@@ -2,6 +2,7 @@
 	"id": "pace",
 	"name": "Pace",
 	"version": "0.06",
+	"author": "bobrippling",
 	"description": "Show pace and time running splits",
 	"icon": "app.png",
 	"tags": "run,running,fitness,outdoors",

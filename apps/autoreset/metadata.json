@@ -1,6 +1,7 @@
 { "id": "autoreset",
   "name": "Auto Reset",
   "version":"0.02",
+  "author": "thyttan",
   "description": "Sets a timeout to load the clock face. The timeout is stopped and started again upon user input.",
   "icon": "app.png",
   "type": "bootloader",
