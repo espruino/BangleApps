@@ -25,7 +25,7 @@ async function main() {
   if(!rev) rev = "origin/master...";
 
   if(!local && await shouldSkip()){
-    console.log("Skipping PR");
+    console.error("Skipping PR");
     process.exit(0);
   }
 
