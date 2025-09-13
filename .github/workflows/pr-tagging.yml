@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install jq
+      - name: Install deps
         run: |
           sudo apt-get update
           sudo apt-get install -y jq nodejs
@@ -31,7 +31,7 @@ jobs:
           PR_NUM: ${{ github.event.pull_request.number }}
         run: node bin/pr-tag.js > comment.txt
 
-      - name: Post comment
+      - name: Post output
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMMENT_URL: https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments
