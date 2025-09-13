@@ -67,7 +67,7 @@ async function main() {
 
     apps = [...apps].sort();
 
-    console.log(`tagging ${author} for ${apps.join(", ")}`);
+    console.log(`tagging ${author} for ${apps.map(a => `\`${a}\``).join(", ")}`);
   }
 }
 
