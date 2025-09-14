@@ -68,10 +68,21 @@ async function main() {
       }
     }
 
-    apps = [...apps].sort();
-
-    console.log(`tagging ${author} for ${apps.map(a => `\`${a}\``).join(", ")}`);
+    console.log(makeLine({ author, apps }));
   }
+}
+
+function makeLine({ author, apps }) {
+  apps = [...apps].sort();
+
+  return `tagging ${author} for ${apps.map(a => `\`${a}\``).join(", ")}`
+}
+
+function parseLine(line) {
+  const parts = line.split(" ");
+
+  if(parts.length >= 4 && parts[0] === "tagging" && parts[2] === "for")
+    return { author: parts[1], apps: parts.slice(3).map(app => app.replace(/[,`]/g, "")) };
 }
 
 // allow skipping of tagging if the PR description contains a specific message
@@ -104,16 +115,13 @@ async function previousTags() {
     .flatMap(body =>
       body
         .split("\n")
-        .map(line => {
-          const parts = line.split(" ");
-          if(parts.length === 4 && parts[0] === "tagging" && parts[2] === "for")
-            return { author: parts[1], app: parts[3].replace(/`/g, "") };
-        })
+        .map(parseLine)
         .filter(x => x)
     )
-    .forEach(({ author, app }) => {
+    .forEach(({ author, apps }) => {
       if(!tags[author]) tags[author] = new Set();
-      tags[author].add(app);
+      for(const app of apps)
+        tags[author].add(app);
     });
 
   return tags;
