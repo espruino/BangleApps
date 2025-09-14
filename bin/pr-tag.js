@@ -25,7 +25,7 @@ async function main() {
   if(!rev) rev = "origin/master...";
 
   if(!local && await shouldSkip()){
-    console.error("Skipping PR");
+    debug("Skipping PR");
     process.exit(0);
   }
 
@@ -44,6 +44,7 @@ async function main() {
   for(const app of apps){
     const metadata = JSON.parse(readFileSync(`${app}/metadata.json`, "utf8"));
     let authorField = metadata.author;
+    debug(`Changed app: ${app}, author field: ${authorField}`);
     if(!authorField) continue;
 
     const authors = Array.isArray(authorField) ? authorField : [authorField];
@@ -61,8 +62,10 @@ async function main() {
   for(let [author, apps] of Object.entries(authorToApp)){
     if(author in prevTags){
       apps = new Set([...apps].filter(app => !prevTags[author].has(app)));
-      if(apps.size === 0)
+      if(apps.size === 0){
+        debug(`Skipping ${author} - no new apps`);
         continue;
+      }
     }
 
     apps = [...apps].sort();
@@ -168,6 +171,10 @@ function getenv(name) {
     process.exit(1);
   }
   return val;
+}
+
+function debug(...args) {
+  console.error(...args);
 }
 
 main().catch(e => {
