@@ -58,6 +58,7 @@ async function main() {
   }
 
   const prevTags = local ? {} : await previousTags();
+  const output = [];
 
   for(let [author, apps] of Object.entries(authorToApp)){
     if(author in prevTags){
@@ -68,7 +69,21 @@ async function main() {
       }
     }
 
-    console.log(makeLine({ author, apps }));
+    output.push(makeLine({ author, apps }));
+  }
+
+  if(output.length){
+    if(local){
+      for(const out of output)
+        console.log(out)
+    }else{
+      await postComment({
+        prNumber: getenv("PR_NUM"),
+        repo: getenv("REPO"),
+        token: getenv("GITHUB_TOKEN"),
+        comment: output.join("\n"),
+      });
+    }
   }
 }
 
@@ -141,18 +156,29 @@ function fetchPRComments({ prNumber, repo, token }) {
   }).then(data => JSON.parse(data));
 }
 
-function fetchGH({ path, token }) {
+function postComment({ prNumber, repo, token, comment }) {
+  return fetchGH({
+    path: `/repos/${repo}/issues/${prNumber}/comments`,
+    token,
+    data: { body: comment },
+  }).then(data => JSON.parse(data));
+}
+
+function fetchGH({ path, token, data }) {
   return new Promise((resolve, reject) => {
     const options = {
       hostname: "api.github.com",
       path,
-      method: "GET",
+      method: data ? "POST" : "GET",
       headers: {
         "User-Agent": "node.js",
         "Authorization": `Bearer ${token}`,
         "Accept": "application/vnd.github+json"
-      }
+      },
     };
+
+    if(data)
+      options.body = data;
 
     https.get(options, res => {
       let data = "";
