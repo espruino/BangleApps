@@ -4,7 +4,7 @@ const https = require("https");
 
 function usage(){
   console.log(`Usage: pr-tag.js [--local] [revision-range]`);
-  console.log(`--local: don't fetch the PR description - useful for local testing`);
+  console.log(`--local: don't fetch the PR description, etc, just show the changes apps/authors`);
   process.exit(2);
 }
 
@@ -57,7 +57,7 @@ async function main() {
     }
   }
 
-  const prevTags = await previousTags();
+  const prevTags = local ? {} : await previousTags();
 
   for(let [author, apps] of Object.entries(authorToApp)){
     if(author in prevTags){
