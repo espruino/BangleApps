@@ -94,7 +94,7 @@ async function main() {
 function makeLine({ author, apps }) {
   apps = [...apps].sort();
 
-  return `tagging ${author} for ${apps.map(a => `\`${a}\``).join(", ")}`
+  return `tagging @${author} for ${apps.map(a => `\`${a}\``).join(", ")}`
 }
 
 function parseLine(line) {
