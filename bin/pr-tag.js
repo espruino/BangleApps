@@ -3,17 +3,21 @@ const { readFileSync } = require("fs");
 const https = require("https");
 
 function usage(){
-  console.log(`Usage: pr-tag.js [--local] [revision-range]`);
+  console.log(`Usage: pr-tag.js [--local] [--dry] [revision-range]`);
   console.log(`--local: don't fetch the PR description, etc, just show the changes apps/authors`);
+  console.log(`--dry: don't perform the final comment`);
   process.exit(2);
 }
 
 async function main() {
   let local = false;
+  let dry = false;
   let rev;
   for(const arg of process.argv.slice(2)){
     if(arg === "--local")
       local = true;
+    else if(arg === "--dry")
+      dry = true;
     else if(/^-/.test(arg))
       usage();
     else if(!rev)
@@ -73,7 +77,7 @@ async function main() {
   }
 
   if(output.length){
-    if(local){
+    if(local || dry){
       for(const out of output)
         console.log(out)
     }else{
