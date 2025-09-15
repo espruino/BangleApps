@@ -3,6 +3,7 @@
   "name": "Tag Launcher",
   "shortName": "Taglauncher",
   "version": "0.08",
+  "author": "nxdefiant",
   "description": "Launcher that puts all applications into submenus based on their tag. With many applications installed this can result in a faster application selection than the linear access from the default launcher.",
   "readme": "README.md",
   "icon": "app.png",

@@ -4,6 +4,7 @@
   "shortName":"HRM MA removal",
   "icon": "app.png",
   "version":"0.02",
+  "author": "nxdefiant",
   "description": "Removes Motion Artifacts in Bangle.js's heart rate sensor data. **WARNING:** On Bangle.js 2 this has been found to make heart rate readings substantially less accurate in some cases.",
   "type": "bootloader",
   "tags": "health",

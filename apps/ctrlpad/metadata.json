@@ -3,6 +3,7 @@
   "name": "Control Panel",
   "shortName": "ctrlpad",
   "version": "0.02",
+  "author": "bobrippling",
   "description": "Fast access (via a downward swipe) to common functions, such as bluetooth/HRM power and Do Not Disturb",
   "icon": "icon.png",
   "readme": "README.md",
