@@ -4,6 +4,7 @@
   "shortName":"GPS/Compass course",
   "icon": "app.png",
   "version":"0.01",
+  "author": "nxdefiant",
   "description": "Replaces the GPS course with the compass heading when speed is slow or standing still to avoid the value from jumping randomly. For best experience also install \"Navigation Compass\", although not a requirement (see README).",
   "type": "bootloader",
   "tags": "outdoors,widget",
@@ -16,4 +17,3 @@
   ],
   "data": [{"name":"gpsmagcourse.json"}]
 }
-

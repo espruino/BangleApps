@@ -1,6 +1,7 @@
 { "id": "dragboard",
   "name": "Dragboard",
   "version":"0.10",
+  "author": "thyttan",
   "description": "A library for text input via swiping keyboard",
   "icon": "app.png",
   "type":"textinput",
