@@ -2,6 +2,7 @@
   "id": "sleepsummary",
   "name": "Sleep Summary",
   "shortName": "Sleep Summ.",
+  "author":"RKBoss6",
   "version": "0.01",
   "description": "Adds a module that learns sleeping habits over time and provides a sleep score based on how good of a sleep you got",
   "icon": "app.png",
