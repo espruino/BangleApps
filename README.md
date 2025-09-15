@@ -250,7 +250,7 @@ and which gives information about the app for the Launcher.
   "name": "Readable name",    // readable name
   "shortName": "Short name",  // short name for launcher
   "version": "0.01",          // the version of this app
-  "author": "name",           // name of app author (can be an array - ["author1", "author2"], used for tagging in PRs for the app)
+  "author": "github_username",// username of app author (can be an array - ["author1", "author2"], used for tagging in PRs for the app)
   "description": "...",       // long description (can contain markdown)
   "icon": "icon.png",         // icon in apps/
   "screenshots" : [ { "url":"screenshot.png" } ], // optional screenshot for app
