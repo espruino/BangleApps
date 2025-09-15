@@ -6,6 +6,7 @@
       showMessage:true,
       deepSleepHours:5,
       idealSleepHours:10,
+      timeSinceAwake: 1800000,
 
     }, require('Storage').readJSON(FILE, true) || {});
 
@@ -31,6 +32,23 @@
         writeSettings();
       }
       
+    },
+    'Message Time': {
+      value: 0|settings.timeAfterAwake,
+      min: 0, max: 7200000,
+      step:15,
+      onchange: v => {
+        settings.timeAfterAwake = v; //Convert minutes to hours
+        writeSettings();
+      },
+      format : v => {
+        let h = Math.floor(v/60000);
+        let m = v % 60;
+        let str = "";
+        if (h) str += h+"h";
+        if (m) str += " "+m+"m";
+        return str || "0m";
+      }
     },
     'Ideal Deep Sleep': {
       value: 0|settings.deepSleepHours*60,
