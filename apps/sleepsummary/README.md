@@ -15,10 +15,10 @@ The module takes in several data points:
 
 The module then averages those individual scores with a weight added to get a score out of 100.
 ## Settings
-- Show Message - Whether or not to show a good morning message / prompt when you wake up (this may not be exactly when you wake up, depending on how accurate your settings for Sleeplog are)
-- Ideal Deep Sleep - How much deep sleep per night should qualify as a deep sleep score of 100 (the highest)
-- Ideal duration - How much sleep per night should qualify as a sleep duration score of 100 (the highest)
-- Use True Sleep - Whether or not to use True Sleep from sleeplog. If not checked, uses consecutive sleep instead.
+- <b>Use True Sleep</b> - Whether or not to use True Sleep from sleeplog. If not checked, uses consecutive sleep instead
+- <b>Show Message</b> - Whether or not to show a good morning message / prompt when you wake up (this may not be exactly when you wake up, depending on how accurate your settings for Sleeplog are)
+- <b>Ideal Deep Sleep</b> - How much deep sleep per night should qualify as a deep sleep score of 100 (the highest)
+- <b>Ideal Sleep Time</b> - How much sleep per night should qualify as a sleep duration score of 100 (the highest)
 
 ## Development
 To use the module, do `require("sleepsummary")` followed by any function from the list below.
