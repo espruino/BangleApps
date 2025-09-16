@@ -17,8 +17,8 @@ The module then averages those individual scores with a weight added to get a sc
 ## Settings
 - <b>Use True Sleep</b> - Whether or not to use True Sleep from sleeplog. If not checked, uses consecutive sleep instead
 - <b>Show Message</b> - Whether or not to show a good morning message / prompt when you wake up (this may not be exactly when you wake up, depending on how accurate your settings for Sleeplog are)
-- <b>Ideal Deep Sleep</b> - How much deep sleep per night should qualify as a deep sleep score of 100 (the highest)
-- <b>Ideal Sleep Time</b> - How much sleep per night should qualify as a sleep duration score of 100 (the highest)
+- <b>Ideal Deep Sleep</b> - How much deep sleep per night should qualify as a deep sleep score of 95 (more than this gives you 100)
+- <b>Ideal Sleep Time</b> - How much sleep per night should qualify as a sleep duration score of 95 (more than this gives you 100)
 
 ## Development
 To use the module, do `require("sleepsummary")` followed by any function from the list below.
@@ -44,14 +44,14 @@ To use the module, do `require("sleepsummary")` followed by any function from th
    - `firstDate` - Unix timestamp of the first log entry in the stats
    - `lastDate`: Unix timestamp of the last log entry in the stats
    - `totalSleep`: Total minutes of sleep for this night using consecutive sleep or true sleep, depending on what's selected in settings
-   - `awakeSince` - Unix timestamp of the time you woke up at.
+   - `awakeSince` - Time you woke up at, in ms past midnight
      
  - `require("sleepsummary").getSleepScores();` - Returns the following sleep scores:
    - `durationScore` - Sleep duration compared to ideal duration set in settings.
    - `deepSleepScore` - Deep sleep length compared to ideal deep sleep set in settings
    - `avgWakeUpScore` - When you woke up compared to your average
    - `avgSleepTimeScore` - How long you slept compared to your average
-   - `overallScore`:The overall sleep score, calculated as a weighted average of all the other scores.
+   - `overallScore` - The overall sleep score, calculated as a weighted average of all the other scores
      
  - `require("sleepsummary").deleteData();` - Deletes learned data, automatically relearns the next time `recordData()` is called.
 
