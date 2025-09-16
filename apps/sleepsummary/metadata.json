@@ -15,10 +15,11 @@
     {"name":"sleepsummary.boot.js","url":"boot.js"},
     {"name":"sleepsummary","url":"module.js"},
     {"name":"sleepsummary.settings.js","url":"settings.js"},
+    {"name":"sleepsummary.img","url":"appicon.js","evaluate":true},
   ],
    "data":[
     {"name":"sleepsummarydata.json"},
-    {"name":"sleepsummary.settings.json"},
+    {"name":"sleepsummary.settings.json"}
   ],
   "screenshots":[
     {"url":"Screenshot.png"}
