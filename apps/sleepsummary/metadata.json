@@ -10,6 +10,8 @@
   "tags": "health",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
+  "dependencies" : { "sleeplog":"app" },
+  "provides_modules" : ["sleepsummary"],
   "storage": [
     {"name":"sleepsummary.app.js","url":"app.js"},
     {"name":"sleepsummary.boot.js","url":"boot.js"},
