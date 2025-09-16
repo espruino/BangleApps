@@ -2,11 +2,31 @@ var Layout = require("Layout");
 var sleepScore = require("sleepsummary").getSleepScores().overallScore;
 
 // Convert unix timestamp (s or ms) → HH:MM
-function unixToTime(ts) {
-  if (ts < 1e12) ts *= 1000; // seconds → ms
-  let d = new Date(ts);
-  return d.getHours() + ":" + ("0"+d.getMinutes()).slice(-2);
+function msToTimeStr(ms) {
+  // convert ms → minutes
+  let totalMins = Math.floor(ms / 60000);
+  let h = Math.floor(totalMins / 60) % 24;  // hours in 0–23
+  let m = totalMins % 60;                   // minutes
+  let ampm = h >= 12 ? "p" : "a";
+
+  // convert to 12-hour clock, where 0 → 12
+  let hour12 = h % 12;
+  if (hour12 === 0) hour12 = 12;
+
+  // pad minutes
+  let mm = m.toString().padStart(2, "0");
+
+  return `${hour12}:${mm}${ampm}`;
 }
+
+function minsToTimeStr(mins) {
+  let h = Math.floor(mins / 60) % 24; // hours 0–23
+  let m = mins % 60;                  // minutes 0–59
+  let mm = m.toString().padStart(2,"0");
+  return `${h}:${mm}`;
+}
+
+
 
 // Custom renderer for the battery bar
 function drawGraph(l) {
@@ -21,6 +41,7 @@ function drawGraph(l) {
 // Layout definition
 var pageLayout = new Layout({
   type: "v", c: [
+    {type:undefined, height:7}, // spacer
     {type:"txt",filly:0, label:"Sleep Summary", font:"Vector:17", halign:0, id:"title",height:17,pad:3},
     {
       type:"v", c: [
@@ -60,8 +81,13 @@ var pageLayout = new Layout({
 
 // Update function
 function draw() {
-  battery = E.getBattery();
+  var sleepData=require("sleepsummary").getSleepData();
+  var data=require("sleepsummary").getSummaryData();
   pageLayout.sleepScore.label = "Sleep score: "+sleepScore;
+  pageLayout.todayWakeupTime.label = msToTimeStr(sleepData.awakeSince);
+  pageLayout.avgWakeupTime.label = msToTimeStr(data.avgWakeUpTime);
+  pageLayout.todaySleepTime.label = minsToTimeStr(sleepData.totalSleep);
+  pageLayout.avgSleepTime.label = minsToTimeStr(data.avgSleepTime);
   pageLayout.render();
 }
 
