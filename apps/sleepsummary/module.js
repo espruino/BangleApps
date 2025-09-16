@@ -1,7 +1,7 @@
 {
   let getMsPastMidnight=function(unixTimestamp) {
-    const millisecondsSinceEpoch = unixTimestamp * 1000;
-    const dateObject = new Date(millisecondsSinceEpoch);
+    
+    const dateObject = new Date(unixTimestamp);
 
     const hours = dateObject.getHours();
     const minutes = dateObject.getMinutes();
@@ -23,7 +23,8 @@
       avgSleepTime: 0,
       totalCycles:0,
       avgWakeUpTime:0,
-      promptLastShownDay:""
+      promptLastShownDay:"",
+      timeSinceAwake: 1800000,
 
     }, require('Storage').readJSON("sleepsummarydata.json", true) || {});
   };
@@ -31,7 +32,6 @@
   let getSettings=function() {
     return Object.assign({
       useTrueSleep:true,
-      timeSinceAwake: 1800000,
       showMessage:true,
       deepSleepHours:5,
       idealSleepHours:10,
@@ -65,7 +65,7 @@
             firstDate: data.firstDate, 
             lastDate: data.lastDate, 
             totalSleep: totalSleep,
-            awakeSince:global.sleeplog.info.awakeSince
+            awakeSince:getMsPastMidnight(global.sleeplog.info.awakeSince)
            };
       
     
@@ -79,7 +79,7 @@
     var sleepData=getSleepData();
     var data=getData();
     //Wakeup time
-    var wakeUpTime=getMsPastMidnight(data.awakeSince);
+    var wakeUpTime=sleepData.awakeSince;
     var avgWakeUpTime=averageNumbers(data.avgWakeUpTime,data.totalCycles,wakeUpTime);
     data.avgWakeUpTime=avgWakeUpTime;
     
@@ -131,16 +131,9 @@
     var sleepData=getSleepData();
     var settings=getSettings();
     var summaryData=getData();
-    var deepSleepScore;
-    var totalSleepTimeScore;
+
     //only if enabled in Health
     //var hrmScore;
-  
-    
-    
-    
-    
-    
     
     return getWeightedScore({
       duration: 
