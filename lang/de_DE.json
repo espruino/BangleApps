@@ -151,7 +151,7 @@
         "Reset all widgets": "Alle Widgets zurücksetzen",
         "System": "System",
         "Alerts": "Alarme",
-        "Locale": "Ort",
+        "Locale": "Lokalisierung",
         "Whitelist": "Whitelist",
         "Select Clock": "Uhr auswählen",
         "Disable": "Deaktivieren",
@@ -208,7 +208,17 @@
         "Full Moon": "Vollmond,",
         "Waning Gibbous": "Abnehmender Mond",
         "Last Quater": "Abnehmender Halbmond",
-        "Waning Crescent": "Abnehmender Sichelmond"
+        "Waning Crescent": "Abnehmender Sichelmond",
+        "Clock": "Ziffernblatt",
+        "Altitude": "Höhe",
+        "Hidden": "Versteckt",
+        "Delete After Expiration": "Nach Ablauf löschen",
+        "Cancel": "Abbrechen",
+        "Confirm": "Bestätigen",
+        "Advanced": "Erweitert",
+        "Enable All": "Alle aktivieren",
+        "Disable All": "Alle deaktivieren",
+        "Delete All": "Alle löschen"
     },
     "alarm": {
         "//": "App-specific overrides",
