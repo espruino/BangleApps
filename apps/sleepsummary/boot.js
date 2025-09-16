@@ -65,7 +65,7 @@
     if(require("sleepsummary").getSummaryData().promptLastShownDay!=today){
       var settings=getSettings();
       var awakeSince=global.sleeplog.info.awakeSince;
-      if(awakeSince+settings.timeSinceAwake<Date.now()){
+      if(awakeSince+settings.timeSinceAwake<Date.now()&&awakeSince!=0){
         //show summary
         if(settings.showMessage) showSummary();
         
