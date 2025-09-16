@@ -91,15 +91,18 @@ function draw() {
   pageLayout.render();
 }
 
-// Setup custom back handler
-Bangle.setUI({
-  mode: "custom",
-  back: ()=>load()
-});
 
 // Initial draw
 g.clear();
 draw();
+
+
+// We want this app to behave like a clock:
+// i.e. show launcher when middle button pressed
+Bangle.setUI("clock");
+// But the app is not actually a clock
+// This matters for widgets that hide themselves for clocks, like widclk or widclose
+delete Bangle.CLOCK;
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
