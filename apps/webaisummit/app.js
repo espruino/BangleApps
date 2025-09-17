@@ -22,7 +22,7 @@ let draw = function() {
   var y = g.getHeight() / 2;
   g.reset().clearRect(Bangle.appRect); // clear whole background (w/o widgets)
   var date = new Date();
-  var timeStr = "22:22";//require("locale").time(date, 1); // Hour and minute
+  var timeStr = require("locale").time(date, 1); // Hour and minute
   g.setFontAlign(0, 0).setFont("WDXLLubrifontTC").drawString(timeStr, x, y);
   // Show date and day of week
   var dateStr = require("locale").date(date, 0).toUpperCase()+"\n"+
