@@ -10,6 +10,7 @@
   "dependencies" : { "libqr":"module", "qrconnect":"app" },
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
+  "interface": "interface.html",
   "storage": [
     {"name":".splash","url":"splash.img"},
     {"name":".bootPowerOn","url":"boot.js"},

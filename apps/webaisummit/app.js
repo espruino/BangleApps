@@ -46,12 +46,14 @@ let onTap = function(e) { // Show QR on double tap
     }, swipe : function() {
       Bangle.showClock();
     }, remove : function() { // this allows fast load
+      g.clear();
       require("widget_utils").show();
       Bangle.setLCDTimeout(require("Storage").readJSON("setting.json").timeout||10);
     }
   });
   require("widget_utils").hide();
-  let img = require("libqr").getImage("https://www.espruino.com");
+  let url = (require("Storage").readJSON("webaisummit.json",1)||{}).socialurl || "https://www.espruino.com";
+  let img = require("libqr").getImage(url);
   var scale = Math.floor(g.getHeight()/(g.imageMetrics(img).height+2));
   g.clear().drawImage(img,88,88,{rotate:0,scale:scale});
   Bangle.setLCDPower(1);
