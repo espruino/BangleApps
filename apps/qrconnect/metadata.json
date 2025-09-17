@@ -1,11 +1,12 @@
 { "id": "qrconnect",
   "name": "QR Code Connect",
   "shortName":"Connect",
-  "version":"0.01",
+  "version":"0.02",
   "description": "Display a QR code that when scanned by a phone will load the app loader, set up to connect to just this device",
   "icon": "app.png",
   "screenshots" : [ { "url":"screenshot.png" } ],
   "tags": "tool,bluetooth",
+  "dependencies" : { "libqr":"module" },
   "supports" : ["BANGLEJS2"],
   "storage": [
     {"name":"qrconnect.app.js","url":"app.js"},
