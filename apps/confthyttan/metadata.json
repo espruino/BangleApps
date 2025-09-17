@@ -9,6 +9,7 @@
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "dependencies" : {
+    "widbt_notify":"app",
     "sched":"app",
     "kbmulti":"app",
     "messageicons":"app",
@@ -25,7 +26,6 @@
     "backswipe":"app",
     "torch":"app",
     "calculator":"app",
-    "widbt_notify":"app",
     "smpltmr":"app",
     "clkinfostopw":"app",
     "runplus":"app",
