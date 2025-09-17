@@ -15,24 +15,69 @@ var _a, _b, _c;
             : r.dur;
         return r2;
     });
-    var settings = (require("Storage").readJSON("rep.setting.json", true) || {});
-    (_a = settings.record) !== null && _a !== void 0 ? _a : (settings.record = false);
-    (_b = settings.recordStopOnExit) !== null && _b !== void 0 ? _b : (settings.recordStopOnExit = false);
-    (_c = settings.stepMs) !== null && _c !== void 0 ? _c : (settings.stepMs = 5 * 1000);
-    var fontSzMain = 54;
+    var State = (function () {
+        function State() {
+            this.paused = true;
+            this.begin = Date.now();
+            this.accumulated = 0;
+        }
+        State.prototype.toggle = function () {
+            if (this.paused) {
+                this.begin = Date.now();
+            }
+            else {
+                var diff = Date.now() - this.begin;
+                this.accumulated += diff;
+            }
+            this.paused = !this.paused;
+        };
+        State.prototype.getElapsedTotal = function () {
+            return (this.paused ? 0 : Date.now() - this.begin) + this.accumulated;
+        };
+        State.prototype.getElapsedForRep = function () {
+            return this.currentRepPair()[1];
+        };
+        State.prototype.currentRepPair = function () {
+            var elapsed = this.getElapsedTotal();
+            var i = this.currentRepIndex();
+            var repElapsed = elapsed - (i > 0 ? reps_1[i - 1].accDur : 0);
+            return [i, repElapsed];
+        };
+        State.prototype.currentRepIndex = function () {
+            var elapsed = this.getElapsedTotal();
+            var ent;
+            for (var i = 0; (ent = reps_1[i]); i++)
+                if (elapsed < ent.accDur)
+                    return i;
+            return null;
+        };
+        State.prototype.forward = function () {
+            this.accumulated += ffStep_1;
+        };
+        State.prototype.rewind = function () {
+            this.accumulated -= ffStep_1;
+        };
+        return State;
+    }());
+    var settings_1 = (require("Storage").readJSON("rep.setting.json", true) || {});
+    (_a = settings_1.record) !== null && _a !== void 0 ? _a : (settings_1.record = false);
+    (_b = settings_1.recordStopOnExit) !== null && _b !== void 0 ? _b : (settings_1.recordStopOnExit = false);
+    (_c = settings_1.stepMs) !== null && _c !== void 0 ? _c : (settings_1.stepMs = 5 * 1000);
+    var fontSzMain = 48;
     var fontScaleRep = 2;
-    var fontSzRep = 20;
+    var fontSzRep = 26;
     var fontSzRepDesc = 12;
     var blue_1 = "#205af7";
-    var ffStep_1 = settings.stepMs;
-    var state_1;
+    var ffStep_1 = settings_1.stepMs;
+    var state_1 = new State();
     var drawInterval_1;
     var lastRepIndex_1 = null;
     var firstTime_1 = true;
+    var buzzing_1 = false;
     var renderDuration = function (l) {
         var lbl;
         g.clearRect(l.x, l.y, l.x + l.w, l.y + l.h);
-        if (state_1) {
+        if (!firstTime_1) {
             var _a = state_1.currentRepPair(), i = _a[0], repElapsed = _a[1];
             if (i !== null) {
                 var thisDur = reps_1[i].dur;
@@ -80,16 +125,10 @@ var _a, _b, _c;
                 ]
             },
             {
-                type: "txt",
-                font: "Vector:".concat(fontSzRepDesc),
-                label: "Activity / Duration",
-            },
-            {
                 id: "cur_name",
                 type: "txt",
                 font: "Vector:".concat(fontSzRep),
                 label: "",
-                col: blue_1,
                 fillx: 1,
             },
             {
@@ -103,6 +142,7 @@ var _a, _b, _c;
                 font: "Vector:".concat(fontSzRep),
                 label: "",
                 fillx: 1,
+                col: blue_1,
             },
             {
                 type: "h",
@@ -125,8 +165,6 @@ var _a, _b, _c;
                         fillx: 1,
                         cb: function () {
                             buzzInteraction_1();
-                            if (!state_1)
-                                state_1 = new State_1();
                             state_1.toggle();
                             if (state_1.paused) {
                                 clearInterval(drawInterval_1);
@@ -136,6 +174,7 @@ var _a, _b, _c;
                                 drawInterval_1 = setInterval(drawRep_1, 1000);
                             }
                             drawRep_1();
+                            firstTime_1 = false;
                         },
                     },
                     {
@@ -153,50 +192,6 @@ var _a, _b, _c;
             }
         ]
     }, { lazy: true });
-    var State_1 = (function () {
-        function State() {
-            this.paused = true;
-            this.begin = Date.now();
-            this.accumulated = 0;
-        }
-        State.prototype.toggle = function () {
-            if (this.paused) {
-                this.begin = Date.now();
-            }
-            else {
-                var diff = Date.now() - this.begin;
-                this.accumulated += diff;
-            }
-            this.paused = !this.paused;
-        };
-        State.prototype.getElapsedTotal = function () {
-            return (this.paused ? 0 : Date.now() - this.begin) + this.accumulated;
-        };
-        State.prototype.getElapsedForRep = function () {
-            return this.currentRepPair()[1];
-        };
-        State.prototype.currentRepPair = function () {
-            var elapsed = this.getElapsedTotal();
-            var i = this.currentRepIndex();
-            var repElapsed = elapsed - (i > 0 ? reps_1[i - 1].accDur : 0);
-            return [i, repElapsed];
-        };
-        State.prototype.currentRepIndex = function () {
-            var elapsed = this.getElapsedTotal();
-            var ent;
-            for (var i = 0; (ent = reps_1[i]); i++)
-                if (elapsed < ent.accDur)
-                    return i;
-            return null;
-        };
-        State.prototype.forward = function () {
-            this.accumulated += ffStep_1;
-        };
-        State.prototype.rewind = function () {
-            this.accumulated -= ffStep_1;
-        };
-        return State;
-    }());
     var repToLabel_1 = function (i, id) {
         var rep = reps_1[i];
         if (rep)
@@ -213,36 +208,40 @@ var _a, _b, _c;
         var min = Math.floor(sec / 60);
         return min.toFixed(0) + ":" + pad2_1(sec % 60);
     };
-    var drawRep_1 = function () {
+    var drawRep_1 = function (initial) {
         layout_1["duration"].lazyBuster ^= 1;
-        if (state_1) {
-            var i = state_1.currentRepIndex();
-            if (i !== lastRepIndex_1) {
+        var i = state_1.currentRepIndex();
+        if (i !== lastRepIndex_1) {
+            if (!initial)
                 buzzNewRep_1();
-                lastRepIndex_1 = i;
-                var repIdx = layout_1["repIdx"];
-                repIdx.label = i !== null ? "Rep ".concat(i + 1) : "Done";
-                layout_1.forgetLazyState();
-                layout_1.clear();
-            }
-            layout_1["play"].label = state_1.paused ? "Play" : "Pause";
-            if (i !== null) {
-                repToLabel_1(i, "cur");
-                repToLabel_1(i + 1, "next");
-            }
-            else {
-                emptyLabel_1("cur");
-                emptyLabel_1("next");
-            }
+            lastRepIndex_1 = i;
+            var repIdx = layout_1["repIdx"];
+            repIdx.label = i !== null ? "[".concat(i + 1, "]") : "Done";
+            layout_1.forgetLazyState();
+            layout_1.clear();
+        }
+        layout_1["play"].label = state_1.paused ? "Play" : "Pause";
+        if (i !== null) {
+            repToLabel_1(i, "cur");
+            repToLabel_1(i + 1, "next");
+        }
+        else {
+            emptyLabel_1("cur");
+            emptyLabel_1("next");
         }
         layout_1.render();
     };
-    var buzzInteraction_1 = function () { return Bangle.buzz(250); };
+    var bz_1 = function (n) {
+        if (buzzing_1)
+            return Promise.resolve();
+        buzzing_1 = true;
+        return Bangle.buzz(n).then(function () { return buzzing_1 = false; });
+    };
+    var buzzInteraction_1 = function () { return bz_1(250); };
     var buzzNewRep_1 = function () {
         var n = firstTime_1 ? 1 : 3;
-        firstTime_1 = false;
         var buzz = function () {
-            Bangle.buzz(1000).then(function () {
+            bz_1(1000).then(function () {
                 if (--n <= 0)
                     return;
                 setTimeout(buzz, 250);
@@ -253,15 +252,15 @@ var _a, _b, _c;
     var init = function () {
         g.clear();
         layout_1.setUI();
-        drawRep_1();
+        drawRep_1(true);
         Bangle.drawWidgets();
     };
     Bangle.loadWidgets();
-    if (settings.record && WIDGETS["recorder"]) {
+    if (settings_1.record && WIDGETS["recorder"]) {
         WIDGETS["recorder"]
             .setRecording(true)
             .then(init);
-        if (settings.recordStopOnExit)
+        if (settings_1.recordStopOnExit)
             E.on('kill', function () { return WIDGETS["recorder"].setRecording(false); });
     }
     else {

@@ -1,0 +1,15 @@
+{ "id": "imc",
+  "name": "Metric Imperial Converter",
+  "shortName":"imc",
+  "icon": "IMC.png",
+  "version":"0.01",
+  "allow_emulator": true,
+  "description": "A tool for converting metric and imperial measurements",
+  "readme": "README.md",
+  "tags": "tool",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"imc.app.js","url":"app.js"},
+    {"name":"imc.img","url":"app-icon.js","evaluate":true}
+  ]
+}

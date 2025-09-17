@@ -1,7 +1,8 @@
 {
 	"id": "rep",
 	"name": "Rep",
-	"version":"0.02",
+	"version":"0.03",
+	"author": "bobrippling",
 	"description": "Time running reps, using a rep schedule/program uploaded via the app loader",
 	"icon": "app.png",
 	"tags": "run,running,fitness,outdoors",

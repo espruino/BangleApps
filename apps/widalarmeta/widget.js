@@ -7,14 +7,20 @@
       drawBell: false,
       padHours: true,
       showSeconds: 0, // 0=never, 1=only when display is unlocked, 2=for less than a minute
-      font: 1, // 0=segment style font, 1=teletext font, 2=6x8:1x2
-      whenToShow: 0, // 0=always, 1=on clock only
+      font: 1, // 0=segment style font, 1=teletext font, 2=6x8:1x2, 3=VGA8
+      whenToShow: false, // false=always, true=only on clock
     }, require("Storage").readJSON("widalarmeta.json",1) || {});
 
-      if (config.font == 0) {
+      if (config.font == 0 || config.font == 5) {
         require("Font5x9Numeric7Seg").add(Graphics);
       } else if (config.font == 1) {
         require("FontTeletext5x9Ascii").add(Graphics);
+      } else if (config.font == 2) {
+        require("Font6x8").add(Graphics);
+      } else if (config.font == 3) {
+        require("FontVGA8").add(Graphics);
+      } else if (config.font == 4) {
+        require("Font5x7Numeric7Seg").add(Graphics);
       }
   }
   loadSettings();
@@ -41,7 +47,7 @@
   function draw(_w, fromInterval) {
 
     // If only show on clock and not on clock
-    if (config.whenToShow === 1 && !Bangle.CLOCK) {
+    if (config.whenToShow && !Bangle.CLOCK) {
       this.nextAlarm = undefined; // make sure to reload later
       return;
     }
@@ -80,17 +86,22 @@
       } else {
         text += hours;
       }
-      text += ":" + minutes.padStart(2, '0');
+      text += (config.font == 3 ? "\n" : ":") + minutes.padStart(2, '0');
       if (drawSeconds) {
-        text += ":" + seconds.padStart(2, '0');
+        text += (config.font == 3 ? "\n" : ":") + seconds.padStart(2, '0');
       }
       if (config.font == 0) {
         g.setFont("5x9Numeric7Seg:1x2");
       } else if (config.font == 1) {
         g.setFont("Teletext5x9Ascii:1x2");
-      } else {
-        // Default to this if no other font is set.
+      } else if (config.font == 2) {
         g.setFont("6x8:1x2");
+      } else if (config.font == 3) {
+        g.setFont("VGA8");
+      } else if (config.font == 4) {
+        g.setFont("5x7Numeric7Seg:2x2");
+      } else if (config.font == 5) {
+        g.setFont("5x9Numeric7Seg:2x2");
       }
       g.drawString(text, this.x+1, this.y+12);
 

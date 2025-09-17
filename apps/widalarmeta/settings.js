@@ -53,17 +53,21 @@
     },
     /*LANG*/'Font': {
       value: settings.font,
-      min: 0, max: 2,
-      format: v => [/*LANG*/"Segment", /*LANG*/"Teletext", /*LANG*/"6x8"][v === undefined ? 1 : v],
+      min: 0, max: 5,
+      format: v => [/*LANG*/"Segment", 
+                    /*LANG*/"Teletext", 
+                    /*LANG*/"6x8", 
+                    /*LANG*/"VGA8", 
+                    /*LANG*/"5x7", 
+                    /*LANG*/"5x9",
+                  ][v === undefined ? 1 : v],
       onchange: v => {
         settings.font = v;
         writeSettings();
       }
     },
-    /*LANG*/'When To Show': {
-      value: settings.whenToShow,
-      min: 0, max: 1,
-      format: v => [/*LANG*/"Always", /*LANG*/"On Clock Only"][v === undefined ? 0 : v],
+    /*LANG*/'Only on clock': {
+      value: !!settings.whenToShow,
       onchange: v => {
         settings.whenToShow = v;
         writeSettings();

@@ -1,17 +1,22 @@
-Sched: Scheduling library for alarms and timers
-====================================
+# Sched: Scheduling library for alarms and timers
+
 
 This provides boot code, a library and tools for alarms and timers.
 
 Other apps can use this to provide alarm functionality.
 
-App
----
+## App
 
-The **Alarms & Timers** app allows you to add/modify any running alarms and timers.
 
-Global Settings
----------------
+The `Alarms & Timers` app allows you to add/modify any running alarms and timers.
+
+
+### Snooze Menu
+
+With sched version 0.35 or later, when an alarm or timer is triggered, and you have the latest cutting-edge firmware (or 2v28 when released), you can long press on the snooze button that pops up to go to a snooze menu, for finer control over snooze amounts. If you do not have the latest firmware, you will not notice any changes.
+
+## Global Settings
+
 
 - `Unlock at Buzz` - If `Yes` the alarm/timer will unlock the watch
 - `Delete Expired Timers` - Default for whether expired timers are removed after firing.
@@ -21,8 +26,8 @@ Global Settings
 - `Buzz Interval` - The interval between one buzz and the next
 - `Default Alarm/Timer Pattern` - Default vibration pattern for newly created alarms/timers
 
-Internals / Library
--------------------
+## Internals / Library
+
 
 Alarms are stored in an array in `sched.json`, and take the form:
 

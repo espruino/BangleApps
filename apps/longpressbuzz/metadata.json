@@ -2,6 +2,7 @@
   "name": "Long Press, Buzz!",
   "shortName":"LPB",
   "version":"0.01",
+  "author": "thyttan",
   "description": "Buzz at boot after a long press to indicate the watch was reinitiated at your command.",
   "icon": "app.png",
   "type": "bootloader",

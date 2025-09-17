@@ -1,0 +1,32 @@
+name: Tag app authors
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  mention-app-authors:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq nodejs
+
+      - name: Fetch relevant refs
+        run: |
+          # fetch master and unshallow HEAD
+          git fetch origin --unshallow
+
+      - name: Tag app authors
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NUM: ${{ github.event.pull_request.number }}
+        run: node bin/pr-tag.js

@@ -222,12 +222,6 @@ module.exports = {
       "no-unused-vars"
     ]
   },
-  "apps/powermanager/boot.js": {
-    "hash": "662d9d29a80a4f2c2855097b4073a099604f4f6d444c13a33304346c788cc5cb",
-    "rules": [
-      "no-unused-vars"
-    ]
-  },
   "apps/ohmcalc/app.js": {
     "hash": "c7bdea47cb54ec00335d44968f1a4bb1869786584e247739828930b97e60b963",
     "rules": [

@@ -34,3 +34,5 @@
 0.31: Ensure we reschedule alarms after setTimeZone has been called (fix #3791)
 0.32: clkinfo ensures an alarm won't trigger immediately (copying `alarm`'s behaviour)
 0.33: Ensure default vibration pattern is longer
+0.34: Ensure ClockInfo updates if it's used to start a timer
+0.35: If you use 2v28 (or above) firmware, you can long-press on the snooze button to gain finer control over snooze lengths.

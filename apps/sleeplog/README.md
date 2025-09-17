@@ -1,10 +1,12 @@
 # Sleep Log
 
 This app logs and displays the following states:
-- sleepling status: _unknown, not worn, awake, light sleep, deep sleep_
+- sleeping status: _unknown, not worn, awake, light sleep, deep sleep_
 - consecutive sleep status: _unknown, not consecutive, consecutive_
 
-It is using the built in movement calculation to decide your sleeping state. While charging it is assumed that you are not wearing the watch and if the status changes to _deep sleep_ the internal heartrate sensor is used to detect if you are wearing the watch.
+It is using the built in movement calculation or HRM to decide your sleeping state. While charging it is assumed that you are not wearing the watch and if the status changes to _deep sleep_ the internal heartrate sensor is used to detect if you are wearing the watch.
+
+If HRM polling is enabled in the `Health` app, sleep tracking uses the much more accurate HRM sensor to detect sleep status instead. If not enabled in `Health`, uses movement calculations from the watch.
 
 #### Explanations
 * __Detection of Sleep__
@@ -55,23 +57,32 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
 ### Settings Usage
 ---
 
-  - __Thresholds__ submenu
-    Changes take effect from now on, not retrospective!
-    - __Max Awake__ | maximal awake duration
-      _10min_ / _20min_ / ... / __60min__ / ... / _120min_
-    - __Min Consecutive__ | minimal consecutive sleep duration
-      _10min_ / _20min_ / ... / __30min__ / ... / _120min_
+  - __HRM Thresholds__ submenu
+    
+    Changes take effect from now on, not retrospective! HRM works only if polling is enabled in `Health` settings
     - __Deep Sleep__ | deep sleep threshold
       _30_ / _31_ / ... / __100__ / ... / _200_
     - __Light Sleep__ | light sleep threshold
       _100_ / _110_ / ... / __200__ / ... / _400_
-    - __Wear Temperature__ | Set the minimum measured temperature of the wearable to consider it being worn. Can be disabled to use the HRM instead to detect if it's being worn.
-      __Disabled__ / _20.0°C_ / _20.5°C_ / ... / _40.0°C_
-    - __Reset to Default__ | reset to bold values above
-  - __BreakToD__ | time of day to break view
-    _0:00_ / _1:00_ / ... / __12:00__ / ... / _23:00_
-  - __App Timeout__ | app specific lock timeout
-    __0s__ / _10s_ / ... / _120s_
+     - __Reset to Default__ | reset to bold values above
+ - __Movement Thresholds__ submenu
+ 
+    Changes take effect from now on, not retrospective!
+    - __Deep Sleep__ | deep sleep threshold
+      _30_ / _31_ / ... / __100__ / ... / _200_
+    - __Light Sleep__ | light sleep threshold
+      _100_ / _110_ / ... / __200__ / ... / _400_
+     - __Reset to Default__ | reset to bold values above
+ - __Other Settings__ submenu  
+      - __BreakToD__ | time of day to break view
+        _0:00_ / _1:00_ / ... / __12:00__ / ... / _23:00_
+      - __App Timeout__ | app specific lock timeout
+        __0s__ / _10s_ / ... / _120s_
+      - __Wear Temperature__ | Set the minimum measured temperature of the wearable to consider it being worn. Can be disabled to use the HRM instead to detect if it's being worn.
+      - __Max Awake__ | maximal awake duration
+      _10min_ / _20min_ / ... / __60min__ / ... / _120min_
+    - __Min Consecutive__ | minimal consecutive sleep duration
+      _10min_ / _20min_ / ... / __30min__ / ... / _120min_
   - __Enabled__ | completely en-/disables the background service
     __on__ / _off_
   - __Debugging__ submenu
@@ -231,7 +242,8 @@ Please leave requests and bug reports by raising an issue at [github.com/storm64
 Storm64 ([mail](mailto:banglejs@storm64.de), [github](https://github.com/storm64))
 
 #### Contributors
-myxor ([github](https://github.com/myxor))
+- myxor ([github](https://github.com/myxor))
+- RKBoss6
 
 #### Attributions
 The app icon is downloaded from [https://icons8.com](https://icons8.com).

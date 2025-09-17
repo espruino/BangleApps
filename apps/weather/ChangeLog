@@ -26,3 +26,10 @@
 0.27: Add UV index display
 0.28: Fix UV positioning, hide when 0
 0.29: Add feels-like temperature data and clock_info
+0.30: Refactor code to more modern javascript style
+      Split settings and weather data into two files in storage
+      Add support for new version of weather data and forecast from GadgetBridge (requires version 0.86.0 or higher)
+      Add support to automatically fetch weather at time interval defined in settings (requires GadgetBridge version 0.86.0 or higher)
+      Add button to settings to force fetch weather data (requires GadgetBridge version 0.86.0 or higher)
+      Add new API to get weather from Weather App for other Apps
+0.31: Wind speed clockInfo now shows speed in local units (kph or mph)

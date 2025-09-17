@@ -1,3 +1,4 @@
+
 // Chances are boot0.js got run already and scheduled *another*
 // 'load(sched.js)' - so let's remove it first!
 if (Bangle.SCHED) {
@@ -5,6 +6,55 @@ if (Bangle.SCHED) {
   delete Bangle.SCHED;
 }
 
+function formatMS(ms) {
+  if (ms < 60000) {
+    // less than a minute → show seconds
+    return Math.round(ms / 1000) + "s";
+  } else {
+    // one minute or more → show minutes
+    return Math.round(ms / 60000) + "m";
+  }
+}
+
+function showSnoozeMenu(alarm){
+
+  Bangle.buzz(40);
+
+  function onSnooze(snoozeTime) {
+    if (alarm.ot === undefined) {
+      alarm.ot = alarm.t;
+    }
+    let time = new Date();
+    let currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
+    alarm.t = currentTime + snoozeTime;
+    alarm.t %= 86400000;
+    Bangle.emit("alarmSnooze", alarm);
+
+    // The updated alarm is still a member of 'alarms'
+    // so writing to array writes changes back directly
+    require("sched").setAlarms(alarms);
+    load();
+  }
+
+  if(alarm.timer){
+    
+    let timerLength=alarm.timer
+    let buttons={ "15s": 15, "30s":30,"1m":60 ,"2m":120,"5m":360};
+    let formattedLength = formatMS(timerLength)+"*";
+    buttons[formattedLength] = Math.round(timerLength/1000);
+    //different button lengths
+    E.showPrompt("Choose snooze length", {
+      title: "Snooze Options",
+      buttons
+    }).then(snoozeTime => onSnooze(snoozeTime * 1000));
+  }else{
+    E.showPrompt("Choose snooze length", {
+      title: "Snooze Options",
+      buttons: { "1m": 1, "2m":2,"5m": 5,"10m":10 } 
+    }).then(snoozeTime => onSnooze(snoozeTime * 60000));
+  }
+}
+  
 function showAlarm(alarm) {
   const alarmIndex = alarms.indexOf(alarm);
   const settings = require("sched").getSettings();
@@ -27,11 +77,16 @@ function showAlarm(alarm) {
 
   E.showPrompt(message, {
     title: alarm.timer ? /*LANG*/"TIMER!" : /*LANG*/"ALARM!",
-    buttons: { /*LANG*/"Snooze": true, /*LANG*/"Stop": false } // default is sleep so it'll come back in some mins
+    buttons: { /*LANG*/"Snooze": 1, /*LANG*/"Stop": 2 }, // default is sleep so it'll come back in some mins
+    buttonsLong:{/*LANG*/"Snooze":3},
   }).then(function (sleep) {
     buzzCount = 0;
-
-    if (sleep) {
+    //long press triggered
+    if(sleep==3){
+      showSnoozeMenu(alarm);
+      return;
+    }
+    if (sleep==1) {
       if (alarm.ot === undefined) {
         alarm.ot = alarm.t;
       }

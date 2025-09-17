@@ -1,0 +1,3 @@
+0.01: New App!
+0.02: Swapped to using libqr
+      Allow the URL to be specified by {url:""} in qrconnect.json

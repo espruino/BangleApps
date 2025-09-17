@@ -2,6 +2,7 @@
   "name": "My clock human readable name",
   "shortName":"Short Name",
   "version":"0.01",
+  "author": "gfwilliams",
   "description": "A detailed description of my clock",
   "icon": "icon.png",
   "screenshots": [{"url":"screenshot.png"}],
