@@ -1,0 +1,14 @@
+{ "id": "libqr",
+  "name": "QR Code Library",
+  "version":"0.01",
+  "description": "Library to allow apps to create an image of a QR code directly from a text string",
+  "icon": "app.png",
+  "tags": "tool",
+  "type": "module",
+  "provides_modules" : ["libqr"],
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"libqr","url":"lib.js"}
+  ]
+}

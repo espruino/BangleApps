@@ -1,0 +1,23 @@
+{
+  "id": "webaisummit",
+  "name": "WebAI Summit app",
+  "shortName": "WebAI",
+  "version": "0.01",
+  "description": "App/config preinstalled onto watches for the Web AI Summit 2025",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "dependencies" : { "libqr":"module", "qrconnect":"app" },
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "storage": [
+    {"name":".splash","url":"splash.img"},
+    {"name":".bootPowerOn","url":"boot.js"},
+    {"name":"qrconnect.json","url":"qrconnect.json"},
+    {"name":"webaisummit.wid.js","url":"widget.js"},
+    {"name":"webaisummit.img","url":"app-icon.js","evaluate":true},
+    {"name":"webaisummit.app.js","url":"app.js"},
+    {"name":"welcome.js","url":"welcome.js"}
+  ]
+}
