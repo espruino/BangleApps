@@ -4,3 +4,5 @@
 0.04: change app name "mysetup" -> "anotherconf"
 0.05: remove apps that are not "core" to the experience.
 0.06: change name "anotherconf" -> "confthyttan"
+0.07: change dependencies order to try avoiding prompts in app loader while
+      loading apps.
