@@ -14,11 +14,11 @@ function DialDisplay(options) {
     }, options);
 
   this.value = 0;
-  this.reset();
+  this.isFullDraw = true;
 }
 
-DialDisplay.prototype.reset = function() {
-  this.isFirstDraw = true;
+DialDisplay.prototype.queueRedraw = function() {
+  this.isFullDraw = true;
   this.prevDrawnValue = null;
 };
 
@@ -46,13 +46,13 @@ DialDisplay.prototype.step = function(step) {
     if (!isFill) g.drawCircle(x, y, rad);
     if (isFill) g.fillCircle(x, y, rad);
   }
-  if (this.isFirstDraw) {
+  if (this.isFullDraw) {
     g.setColor(0,0,0).fillCircle(CENTER.x, CENTER.y, 25);
     g.setColor(1,1,1).drawCircle(CENTER.x, CENTER.y, 25);
     for (let i=0; i<this.options.stepsPerWholeTurn; i++) {
       drawCircle(i, 1, 1, 1, 1, true);
     }
-    this.isFirstDraw = false;
+    this.isFullDraw = false;
   }
 
   //drawCircle(this.value, 1, 1, 1, 2, false);

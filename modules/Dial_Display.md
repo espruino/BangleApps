@@ -16,7 +16,7 @@ dialDisplay.step(-1);
 var value = dialDisplay.value;
 
 // ... after some time:
-dialDisplay.reset();
+dialDisplay.queueRedraw();
 dialDisplay.set(0);
 ```
 
@@ -37,7 +37,6 @@ var DialDisplay = require("Dial_Display");
 var dialDisplay = new DialDisplay(options);
 
 var cb = (step) => {
-  dialDisplay.reset();
   dialDisplay.step(step);
 };
 
@@ -65,7 +64,7 @@ Defaults:
 The Dial Display has three functions:
 `step(amount)` - +1 or -1 to step the dial.
 `set(value)` - set the value for the next `step()` to act on.
-`reset()` - draw all of the dial (instead of just the indicator) on the next `step()`.
+`queueRedraw()` - draw all of the dial (instead of just the indicator) on the next `step()`.
 
 Notes:
 ======
