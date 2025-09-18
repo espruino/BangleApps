@@ -14,7 +14,7 @@
   if (!("lcdTimeout" in s)) s.lcdTimeout = 5; // fallback so  logic doesn't break
   require("Storage").writeJSON("setting.json", s);
   //remove large settings object from memory
-  s=null;
+  delete s;
   const longPressTime=400; //(ms)
   var longPressTimer;
   Bangle.on('lock', function(isLocked) {
