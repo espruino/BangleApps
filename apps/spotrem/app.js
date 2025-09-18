@@ -135,7 +135,7 @@ let dragHandler = function(e) {
     };
     cbVisual(Math.sign(dx)*Math.sign(g.getHeight()/2-e.y));
     resetOuterScopeVariables();
-    let volumeKnob = require("Dial")(cbVisual);
+    let volumeKnob = require("dial")(cbVisual);
     let timingOutVolumeKnob = (e)=>{
         if (!e.b) {
           setKnobTimeout();
