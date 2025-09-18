@@ -1,6 +1,7 @@
 {
   // 1. Module dependencies and initial configurations
   let background = require("clockbg");
+  background.load(); // reload if we fast loaded into here
   let storage = require("Storage");
   let locale = require("locale");
   let widgets = require("widget_utils");
@@ -27,7 +28,7 @@
   let touchHandler = function(zone, e) {
     let boxTouched = false;
     let touchedBox = null;
-  
+
     for (let boxKey in boxes) {
       if (touchInText(e, boxes[boxKey])) {
         touchedBox = boxKey;
@@ -35,14 +36,14 @@
         break;
       }
     }
-  
+
     if (boxTouched) {
       // Toggle the selected state of the touched box
       boxes[touchedBox].selected = !boxes[touchedBox].selected;
-      
+
       // Update isDragging based on whether any box is selected
       isDragging = Object.values(boxes).some(box => box.selected);
-      
+
       if (isDragging) {
         widgets.hide();
       } else {
@@ -52,10 +53,10 @@
       // If tapped outside any box, deselect all boxes
       deselectAllBoxes();
     }
-  
+
     // Always redraw after a touch event
     draw();
-  
+
     // Handle double tap for saving
     if (!boxTouched && !isDragging) {
       if (doubleTapTimer) {
@@ -69,26 +70,26 @@
         displaySaveIcon();
         return;
       }
-  
+
       doubleTapTimer = setTimeout(() => {
         doubleTapTimer = null;
       }, 500);
     }
   };
-  
+
   let dragHandler = function(e) {
     if (!isDragging) return;
-  
+
     // Stop propagation of the drag event to prevent other handlers
     E.stopEventPropagation();
-  
+
     for (let key in boxes) {
       if (boxes[key].selected) {
         let boxItem = boxes[key];
         calcBoxSize(boxItem);
         let newX = boxItem.pos.x + e.dx;
         let newY = boxItem.pos.y + e.dy;
-  
+
         if (newX - boxItem.cachedSize.width / 2 >= 0 &&
             newX + boxItem.cachedSize.width / 2 <= w &&
             newY - boxItem.cachedSize.height / 2 >= 0 &&
@@ -98,10 +99,10 @@
         }
       }
     }
-  
+
     draw();
   };
-  
+
   let stepHandler = function(up) {
     if (boxes.step && !isDragging) {
       boxes.step.string = formatStr(boxes.step, Bangle.getHealthStatus("day").steps);
@@ -109,7 +110,7 @@
       draw();
     }
   };
-  
+
   let lockHandler = function(isLocked) {
     if (isLocked) {
       deselectAllBoxes();
@@ -211,7 +212,7 @@
     const day = date.getDate();
     const month = shortMonth ? locale.month(date, 1) : locale.month(date, 0);
     const year = date.getFullYear();
-  
+
     const getSuffix = (day) => {
       if (day >= 11 && day <= 13) return 'th';
       const lastDigit = day % 10;
@@ -222,7 +223,7 @@
         default: return 'th';
       }
     };
-  
+
     const dayStr = disableSuffix ? day : `${day}${getSuffix(day)}`;
     return `${month} ${dayStr}${short ? '' : `, ${year}`}`; // not including year for short version
   };
@@ -323,34 +324,34 @@
 
   let draw = function() {
     g.clear();
-  
+
     // Always draw backgrounds full screen
     if (bgImage) { // Check for bg in boxclk config
       g.drawImage(bgImage, 0, 0);
     } else { // Otherwise use clockbg module
       background.fillRect(0, 0, g.getWidth(), g.getHeight());
     }
-  
+
     if (!isDragging) {
       updateBoxData();
     }
-  
+
     for (let boxKey in boxes) {
       let boxItem = boxes[boxKey];
-  
+
       // Set font and alignment for each box individually
       g.setFont(boxItem.font, boxItem.fontSize);
       g.setFontAlign(0, 0);
-  
+
       calcBoxSize(boxItem);
-  
+
       const pos = calcBoxPos(boxItem);
-  
+
       if (boxItem.selected) {
         g.setColor(boxItem.border);
         g.drawRect(pos.x1, pos.y1, pos.x2, pos.y2);
       }
-  
+
       g.drawString(
         boxItem,
         boxItem.string,
@@ -358,7 +359,7 @@
         boxItem.pos.y + boxItem.yOffset
       );
     }
-  
+
     if (!isDragging) {
       if (drawTimeout) clearTimeout(drawTimeout);
       let updateInterval = boxes.time && !isBool(boxes.time.short, true) ? 1000 : 60000 - (Date.now() % 60000);
@@ -382,20 +383,20 @@
     if (boxItem.cachedSize) {
       return boxItem.cachedSize;
     }
-  
+
     g.setFont(boxItem.font, boxItem.fontSize);
     g.setFontAlign(0, 0);
-  
+
     let strWidth = g.stringWidth(boxItem.string) + 2 * boxItem.outline;
     let fontHeight = g.getFontHeight() + 2 * boxItem.outline;
     let totalWidth = strWidth + 2 * boxItem.xPadding;
     let totalHeight = fontHeight + 2 * boxItem.yPadding;
-  
+
     boxItem.cachedSize = {
       width: totalWidth,
       height: totalHeight
     };
-  
+
     return boxItem.cachedSize;
   };
 
@@ -424,18 +425,18 @@
     Bangle.on('lock', lockHandler);
     Bangle.on('touch', touchHandler);
     Bangle.on('drag', dragHandler);
-  
+
     if (boxes.step) {
       boxes.step.string = formatStr(boxes.step, Bangle.getHealthStatus("day").steps);
       Bangle.on('step', stepHandler);
     }
-  
+
     if (boxes.batt) {
       boxes.batt.lastLevel = E.getBattery();
       boxes.batt.string = formatStr(boxes.batt, boxes.batt.lastLevel);
       boxes.batt.lastUpdate = Date.now();
     }
-  
+
     Bangle.setUI({
       mode: "clock",
       remove: function() {
@@ -448,6 +449,7 @@
         }
         if (drawTimeout) clearTimeout(drawTimeout);
         drawTimeout = undefined;
+        background.unload(); // free memory from background
         delete Graphics.prototype.setFontBrunoAce;
         // Restore original drawString function (no outlines)
         g.drawString = g_drawString;
@@ -455,7 +457,7 @@
         widgets.show();
       }
     });
-  
+
     loadCustomFont();
     draw();
   };

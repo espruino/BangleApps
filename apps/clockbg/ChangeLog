@@ -7,3 +7,6 @@
 0.05: Random square+plasma speed improvements (~2x faster)
 0.06: 25% speed improvement if Math.randInt exists (2v25 fw)
 0.07: Added 'rings'and 'tris' background styles
+0.08: Allow backgrounds with a random choice of colour schemes
+      Default (solid colour) now uses a variety of shades
+      Added .load/.unload to allow changes when fast loading clocks

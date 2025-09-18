@@ -2,32 +2,64 @@
 if (!NRF.getSecurityStatus().connected) try { NRF.sleep(); } catch (e) {}
 
 Graphics.prototype.setFontWDXLLubrifontTC = function() {
-  // Actual height 69 (69 - 1)
+  // Actual height 35 (34 - 0)
   // 1 BPP
   return this.setFontCustom(
-    atob('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/wAAAAAAAAAAB/4AAAAAAAAAAB/4AAAAAAAAAAB/4AAAAAAAAAAB/4AAAAAAAAAAB/4AAAAAAAAAAB/4AAAAAAAAAAA/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAf8AAAAAAAAAAf/8AAAAAAAAAP//8AAAAAAAAP///8AAAAAAAH////8AAAAAAH/////8AAAAAD//////4AAAAD///////wAAAD///////4AAAB///////8AAAB///////8AAAAP//////+AAAAAP/////+AAAAAAf////+AAAAAAAf////AAAAAAAAf///AAAAAAAAAf//gAAAAAAAAAP/gAAAAAAAAAAPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB///////8AAAAD///////+AAAAH////////AAAAP////////gAAAf////////wAAA/////////4AAA/////////4AAA/4AAAAAA/4AAA/wAAAAAAf4AAA/wAAAAAAP4AAA/wAAAAAAP4AAA/wAAAAAAP4AAA/wAAAAAAP4AAA/wAAAAAAP4AAA/wAAAAAAP4AAA/wAAAAAAP4AAA/wAAAAAAP4AAA/wAAAAAAP4AAA/wAAAAAAP4AAA/wAAAAAAP4AAA/wAAAAAAP4AAA/wAAAAAAP4AAA/wAAAAAAf4AAA/wAAAAAAf4AAA/////////4AAA/////////4AAAf////////4AAAf////////wAAAP////////gAAAH////////AAAAD///////+AAAAA///////4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOAAAAAAADgAAA/gAAAAAAP4AAA/gAAAAAAP4AAA/wAAAAAAP4AAA/wAAAAAAf4AAA/wAAAAAAf4AAA/////////4AAA/////////4AAAf////////4AAAf////////4AAAP////////4AAAH////////4AAAD////////4AAAAf///////4AAAAAAAAAAAf4AAAAAAAAAAAP4AAAAAAAAAAAP4AAAAAAAAAAAHwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfAAAAf//+AAAA/gAAB////AAAA/gAAB////gAAA/wAAD////wAAA/wAAH////wAAA/wAAP////4AAA/wAAP////4AAA/wAAP+AA/4AAA/wAAf8AAf4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/////4AAP4AAA/////4AAP4AAAf////4AAP4AAAf////wAAP4AAAP////gAAP4AAAH////AAAP4AAAD///+AAAP4AAAA///4AAAHwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfAAAAAAAHwAAA/gAAPgAAP4AAA/gAAfwAAP4AAA/wAAfwAAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAAf4AAP4AAA/wAA/4AAf4AAA/8AB/+AA/4AAA/////////4AAA/////////4AAAf////////wAAAP////////gAAAH////////AAAAD///4///+AAAAB///wP//8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf////4AAAAAAA/////8AAAAAAA/////+AAAAAAA//////AAAAAAA//////gAAAAAA//////wAAAAAAf/////wAAAAAAH/////wAAAAAAAAAAA/4AAAAAAAAAAAf4AAAAAAAAAAAf4AAAAAAAAAAAf4AAAAAAAAAAAf4AAAAAAAAAAAf4AAAAAAAAAAAf4AAAAAAAAAAAf4AAAAAAAAAAAf4AAAAAAAAAAAf4AAAAAAAAAAAf4AAAAAAAAAAAf4AAAAAAAAAAAf4AAAAAAAAAAAf4AAAAAAAAAAAf4AAAAAAAAAAA/4AAAAAAAAAAB/+AAAAAAf////////wAAA/////////4AAA/////////4AAA/////////4AAA/////////4AAA/////////4AAAf////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB///4AAAHwAAAD///8AAAP4AAAH///+AAAP4AAAP////AAAP4AAAf////gAAP4AAA/////wAAP4AAA/////wAAP4AAA/4AB/wAAP4AAA/wAA/wAAP4AAA/wAAfwAAP4AAA/wAAfwAAP4AAA/wAAfwAAP4AAA/wAAfwAAP4AAA/wAAfwAAP4AAA/wAAfwAAP4AAA/wAAfwAAP4AAA/wAAfwAAP4AAA/wAAfwAAP4AAA/wAAfwAAP4AAA/wAAfwAAP4AAA/wAAfwAAP4AAA/wAAfwAAP4AAA/wAAf4AAf4AAA/wAAf4AAf4AAA/wAAf////4AAA/wAAf////4AAA/wAAP////4AAA/wAAP////wAAA/wAAH////gAAA/gAAD////AAAA/gAAB///+AAAAfAAAAf//4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB///////8AAAAD///////+AAAAH////////AAAAP////////gAAAf////////wAAA/////////4AAA/////////4AAA/4AP/gAA/4AAA/wAH/AAAf4AAA/wAD/AAAP4AAA/wAD/AAAP4AAA/wAD/AAAP4AAA/wAD/AAAP4AAA/wAD/AAAP4AAA/wAD/AAAP4AAA/wAD/AAAP4AAA/wAD/AAAP4AAA/wAD/AAAP4AAA/wAD/AAAP4AAA/wAD/AAAP4AAA/wAD/AAAP4AAA/wAD/AAAP4AAA/wAD/AAAf4AAA/wAD/AAAf4AAA/wAD/////4AAA/wAD/////4AAA/wAB/////4AAA/wAB/////wAAA/wAA/////gAAA/gAAf////AAAA/gAAP///+AAAAfAAAD///4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfAAAAAAAAAAAA/gAAAAAAAAAAA/gAAAAAAAAAAA/wAAAAAAAAAAA/wAAAAAAAAAAA/wAAAAAAAAAAA/wAAAAAAAAAAA/wAAAAAAAAAAA/wAAAAAAAAAAA/wAAAAAAAAAAA/wAAAAAAAAAAA/wAAAAAAAAAAA/wAAAAAAAAAAA/wAAAAAAAAAAA/wAAAAAAAAAAA/wAAAAAAAAAAA/wAAAAAAAAAAA/wAAAAAAAAAAA/8AAAAAAAAAAA/////////wAAA/////////4AAAf////////4AAAP////////4AAAH////////4AAAD////////4AAAB////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB///g///8AAAAD///x///+AAAAH////////AAAAP////////gAAAf////////wAAA/////////4AAA/////////4AAA/4AD/4AA/4AAA/wAB/wAAf4AAA/wAA/wAAP4AAA/wAA/wAAP4AAA/wAA/wAAP4AAA/wAA/wAAP4AAA/wAA/wAAP4AAA/wAA/wAAP4AAA/wAA/wAAP4AAA/wAA/wAAP4AAA/wAA/wAAP4AAA/wAA/wAAP4AAA/wAA/wAAP4AAA/wAA/wAAP4AAA/wAA/wAAP4AAA/wAA/wAAP4AAA/wAB/wAAf4AAA/////////4AAA/////////4AAAf////////4AAAf////////wAAAP////////gAAAH////////AAAAD///x///+AAAAA///Af//4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB////AAAHwAAAD////gAAP4AAAH////wAAP4AAAP////4AAP4AAAf////8AAP4AAA/////+AAP4AAA/////+AAP4AAA/4AAP+AAP4AAA/wAAH+AAP4AAA/gAAH+AAP4AAA/gAAD+AAP4AAA/gAAD+AAP4AAA/gAAD+AAP4AAA/gAAD+AAP4AAA/gAAD+AAP4AAA/gAAD+AAP4AAA/gAAD+AAP4AAA/gAAD+AAP4AAA/gAAD+AAP4AAA/gAAD+AAP4AAA/gAAD+AAP4AAA/gAAD+AAP4AAA/wAAH/AAf4AAA/wAAH/AAf4AAA/////////4AAA/////////4AAA/////////4AAAf////////wAAAP////////gAAAH////////AAAAD///////+AAAAA///////4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf4AAA/wAAAAAA/8AAB/4AAAAAA/8AAB/4AAAAAA/8AAB/4AAAAAA/8AAB/4AAAAAA/8AAB/4AAAAAA/8AAB/4AAAAAAf4AAA/wAAAAAAAAAAAAAAAA'),
+    atob('AAAAAAAAAAHwAAAAB8AAAAAfAAAAAHwAAAAAAAAAAAAAAAAAAAAAAAAP4AAAD/+AAA///gAH///wB////AH///wAD//+AAA//gAAAP4AAAAAAAAAAAAAAAAAAAAAAAAP///wAH///+AD////wA////8APAAAPADwAADwA8AAA8APAAAPADwAADwA8AAA8APAAAPADwAADwA////8AP////AB////gAP///gAAAAAAABgAABgA8AAA8APAAAPAD////wA////8AH////AA////wAAAAA8AAAAAHAAAAAAAAAAAAAAEAA/4ADwA//gA8Af/4APAP//ADwD4HwA8A8A8APAPAPADwDwDwA8A8A8APAPAPADwDwDwA8A8A8AP//APAD//wDwAf/4A8AD/8AHAAAAAAAAAAAAAAAAAACADwDgBwA8A8A8APAPAPADwDwDwA8A8A8APAPAPADwDwDwA8A8A8APAPAPADwDwDwA8A8A8APgfgfAD////wAf///4AD///8AAP8H8AAAAAAAAAAAAAAD//wAAA//+AAAP//wAAD//+AAAAAHgAAAAB4AAAAAeAAAAAHgAAAAB4AAAAAeAAAAAHgAAAAB4AAB////wA////8AP////AD////wAAAAAAAAAAAAAAAAAAAAP/gAcAH/8APAD//gDwA//8A8APAPAPADwDwDwA8A8A8APAPAPADwDwDwA8A8A8APAPAPADwDwDwA8A//8APAP//ADwB//gAYAP/gAAAAAAAAAAAAAAAAAAAAD///8AB////gA////8AP////ADwPgDwA8DwA8APA8APADwPADwA8DwA8APA8APADwPADwA8D4A8APA///ADwH//wA8A//4AGAH/4AAAAAAAA4AAAAAPAAAAADwAAAAA8AAAAAPAAAAADwAAAAA8AAAAAPAAAAADwAAAAA////8AP////AB////wAP///8AAAAAAAAAAAAAAAAAAAAD/x/8AB////gA////8AP////ADwHwDwA8B4A8APAeAPADwHgDwA8B4A8APAeAPADwHgDwA8B8A8AP////AD////wAf///4AD/x/4AAAAAAAAAAAAAAAAAAAAA//gBwAf/8A8AP//gPAD//4DwA8AeA8APAHgPADwB4DwA8AeA8APAHgPADwB4DwA8AeA8APAHwPAD////wA////8AH///+AA///+AAAAAAAAAAAAAAAAfAHwAAHwB8AAB8AfAAAfAHwAAAAAAAA='),
     46,
-    atob("DBklFCUkJCUlHCUlDA=="),
-    78|65536
+    atob("BgwTChITEhMTDhMTBg=="),
+    38|65536
   );
 };
 
 { // must be inside our own scope here so that when we are unloaded everything disappears
   // we also define functions using 'let fn = function() {..}' for the same reason. function decls are global
+
+let background = require("clockbg");
+background.load(); // reload if we fast loaded into here
 let drawTimeout;
+
+let shadow = Graphics.createArrayBuffer(88,40,1);
+shadow.transparent=0;
 
 // Actually draw the watch face
 let draw = function() {
   var x = g.getWidth() / 2;
   var y = g.getHeight() / 2;
-  g.reset().clearRect(Bangle.appRect); // clear whole background (w/o widgets)
+  g.reset(); // clear whole background (w/o widgets)
+  background.fillRect(Bangle.appRect);
   var date = new Date();
   var timeStr = require("locale").time(date, 1); // Hour and minute
-  g.setFontAlign(0, 0).setFont("WDXLLubrifontTC").drawString(timeStr, x, y);
-  // Show date and day of week
   var dateStr = require("locale").date(date, 0).toUpperCase()+"\n"+
                 require("locale").dow(date, 0).toUpperCase();
-  g.setFontAlign(0, 0).setFont("17").drawString(dateStr, x, y+48);
+  // draw shadow background and blur it to spread it out
+  shadow.clear().setFontAlign(0, 0).setFont("WDXLLubrifontTC");
+  shadow.drawString(timeStr, 44, 20);
+  shadow.filter([
+    1,6,15,20,15,6,1,
+    6,36,90,120,90,36,6,
+    15,90,225,300,225,90,15,
+    20,120,300,400,300,120,20,
+    15,90,225,300,225,90,15,
+    6,36,90,120,90,36,6,
+    1,6,15,20,15,6,1,
+  ], { w:7, h:7, div:4 });
+  // draw shadow
+  g.setFontAlign(0, 0).setFont("WDXLLubrifontTC:2").setColor(g.theme.bg)
+    .drawImage(shadow,x,y,{rotate:0,scale:2});
+  // draw main text in white
+  g.setColor(g.theme.fg).drawString(timeStr, x, y);
+  g.setFontAlign(0, 0).setFont("17");
+  y+=46;
+  g.setBgColor(g.theme.bg).clearRect({x:x-45,y:y-20,x2:x+46,y2:y+18,r:5});
+  g.drawString(dateStr, x, y);
+
+  // queue next draw
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, 60000 - (Date.now() % 60000));
 
   // queue next draw
   if (drawTimeout) clearTimeout(drawTimeout);
@@ -61,6 +93,17 @@ let onTap = function(e) { // Show QR on double tap
   Bangle.setLocked(0);
 };
 
+
+let oldTheme = g.theme;
+g.setTheme({
+  fg : 0xFFFF,  // foreground colour
+  bg : 0,       // background colour
+  fg2 : 0xFFFF,  // accented foreground colour
+  bg2 : 0x0007,  // accented background colour
+  fgH : 0xFFFF,  // highlighted foreground colour
+  bgH : 0x02F7,  // highlighted background colour
+  dark : true,  // Is background dark (e.g. foreground should be a light colour)
+});
 // Show launcher when middle button pressed
 Bangle.setUI({
   mode : "clock",
@@ -68,6 +111,8 @@ Bangle.setUI({
     // Called to unload all of the clock app
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
+    g.setTheme(oldTheme);
+    background.unload(); // free memory from background
     delete Graphics.prototype.setFontWDXLLubrifontTC;
     Bangle.removeListener("tap", onTap);
   },

@@ -1,7 +1,7 @@
 (function(back) {
   let settings = Object.assign({
     style : "randomcolor",
-    colors : ["#F00","#0F0","#00F"]
+    colors : ["#00f","#0bf","#0f7","#3f0","#ff0","#f30","#f07","#b0f"]
   },require("Storage").readJSON("clockbg.json",1)||{});
 
   function saveSettings() {
@@ -91,12 +91,24 @@
           ["#009","#039","#079","#098","#094","#091","#290","#590","#990","#950","#920","#901","#904","#908","#709","#309"],
           ["#0FF","#0CC","#088","#044"],
           ["#FFF","#FBB","#F66","#F44"],
-          ["#FFF","#BBB","#666","#000"],
           ["#fff","#bbf","#77f","#33f"],
-          ["#fff","#bff","#7fe","#3fd"]
+          ["#fff","#bff","#7fe","#3fd"],
+          ["#FFF","#BBB","#666","#000"]
           // Please add some more! 4 or 16 only!
         ];
-        var menu =  {"":{title:/*LANG*/"Squares", back:showModeMenu}};
+        var menu =  {"":{title:/*LANG*/"Squares", back:showModeMenu},
+        /*LANG*/"Random" : () => {
+          settings.style = "squares";
+          settings.colors = [
+            ["#00f","#05f","#0bf","#0fd","#0f7","#0f1","#3f0","#9f0","#ff0","#f90","#f30","#f01","#f07","#f0d","#b0f","#50f"],
+            ["#0FF","#0CC","#088","#044"],
+            ["#FFF","#FBB","#F66","#F44"],
+            ["#fff","#bbf","#77f","#33f"],
+            ["#fff","#bff","#7fe","#3fd"]
+          ];
+          saveSettings();
+          showMainMenu();
+        }};
         cols.forEach(col => {
           menu[getColorsImage(col)] = () => {
             settings.style = "squares";
@@ -117,7 +129,17 @@
           ["#000","#010","#020","#130","#140","#250","#260","#270","#380","#390","#4a0","#4b0","#5c0","#5d0","#5e0","#6f0"]
           // Please add some more!
         ];
-        var menu =  {"":{title:/*LANG*/"Plasma", back:showModeMenu}};
+        var menu =  {"":{title:/*LANG*/"Plasma", back:showModeMenu},
+        /*LANG*/"Random" : () => {
+          settings.style = "plasma";
+          settings.colors = [
+            ["#00f","#05f","#0bf","#0fd","#0f7","#0f1","#3f0","#9f0","#ff0","#f90","#f30","#f01","#f07","#f0d","#b0f","#50f"],
+            ["#fff","#fef","#fdf","#fcf","#fbf","#fae","#f9e","#f8e","#f7e","#f6e","#f5d","#f4d","#f3d","#f2d","#f1d","#f0c"],
+            ["#fff","#eff","#dff","#cef","#bef","#adf","#9df","#8df","#7cf","#6cf","#5bf","#4bf","#3bf","#2af","#1af","#09f"]
+          ];
+          saveSettings();
+          showMainMenu();
+        }};
         cols.forEach(col => {
           menu[getColorsImage(col)] = () => {
             settings.style = "plasma";
@@ -138,7 +160,13 @@
           ["#444","#f0f"], // grey/purple
           // Please add some more!
         ];
-        var menu =  {"":{title:/*LANG*/"Rings", back:showModeMenu}};
+        var menu =  {"":{title:/*LANG*/"Rings", back:showModeMenu},
+        /*LANG*/"Random" : () => {
+          settings.style = "rings";
+          settings.colors = cols; // all colours!
+          saveSettings();
+          showMainMenu();
+        }};
         cols.forEach(col => {
           menu[getColorsImage(col)] = () => {
             settings.style = "rings";
@@ -158,7 +186,13 @@
           ["#000","#444","#888","#fff"]
           // Please add some more!
         ];
-        var menu =  {"":{title:/*LANG*/"Colors", back:showModeMenu}};
+        var menu =  {"":{title:/*LANG*/"Colors", back:showModeMenu},
+        /*LANG*/"Random" : () => {
+          settings.style = "tris";
+          settings.colors = cols; // all colours!
+          saveSettings();
+          showMainMenu();
+        }};
         cols.forEach(col => {
           menu[getColorsImage(col)] = () => {
             settings.style = "tris";

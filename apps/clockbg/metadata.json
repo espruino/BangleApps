@@ -1,7 +1,7 @@
 { "id": "clockbg",
   "name": "Clock Backgrounds",
   "shortName":"Backgrounds",
-  "version": "0.07",
+  "version": "0.08",
   "description": "Library that allows clocks to include a custom background (generated on demand or uploaded).",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"},{"url":"screenshot2.png"},{"url":"screenshot3.png"},{"url":"screenshot4.png"},{"url":"screenshot5.png"}],
