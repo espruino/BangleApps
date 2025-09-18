@@ -40,7 +40,7 @@ var cb = (step) => {
   dialDisplay.step(step);
 };
 
-var dial = require("Dial")(cb, options)
+var dial = require("dial")(cb, options)
 Bangle.on("drag", dial);
 ```
 
