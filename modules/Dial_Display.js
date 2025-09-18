@@ -19,16 +19,15 @@ function DialDisplay(options) {
 
 DialDisplay.prototype.reset = function() {
   this.isFirstDraw = true;
+  this.prevDrawnValue = null;
 };
 
 DialDisplay.prototype.set = function(value) {
-  this.prevValue = this.value;
   this.value = value;
 };
 
 DialDisplay.prototype.step = function(step) {
   "ram";
-  let prevValue = this.prevValue != null ? this.prevValue : this.value;
   this.value += step;
   //g.setFont("Vector:30");
   //g.drawString(this.value);
@@ -58,11 +57,11 @@ DialDisplay.prototype.step = function(step) {
 
   //drawCircle(this.value, 1, 1, 1, 2, false);
   //drawCircle(prevValue, 0, 0, 0, 2, false);
-  g.setColor(0,0,0).drawLine(CENTER.x, CENTER.y, CENTER.x+23*Math.sin(prevValue*(2*Math.PI/this.options.stepsPerWholeTurn)), CENTER.y-23*Math.cos(prevValue*(2*Math.PI/this.options.stepsPerWholeTurn)));
+  g.setColor(0,0,0).drawLine(CENTER.x, CENTER.y, CENTER.x+23*Math.sin(this.prevDrawnValue*(2*Math.PI/this.options.stepsPerWholeTurn)), CENTER.y-23*Math.cos(this.prevDrawnValue*(2*Math.PI/this.options.stepsPerWholeTurn)));
   g.setColor(1,1,1).drawLine(CENTER.x, CENTER.y, CENTER.x+23*Math.sin(this.value*(2*Math.PI/this.options.stepsPerWholeTurn)), CENTER.y-23*Math.cos(this.value*(2*Math.PI/this.options.stepsPerWholeTurn)));
   g.setColor(0,0,0).fillCircle(CENTER.x, CENTER.y, 9);
 
-  delete this.prevValue;
+  this.prevDrawnValue = this.value;
 };
 
 exports = DialDisplay;
