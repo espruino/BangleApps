@@ -7,6 +7,7 @@
   "type": "bootloader",
   "tags": "system",
   "readme": "README.md",
+  "author":"RKBoss6",
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"backlite.boot.js","url":"boot.js"},
