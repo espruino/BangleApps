@@ -29,7 +29,7 @@
         } else {
           Bangle.setLCDBrightness(0);
         }
-        clearTimeout(longPressTimer)
+        longPressTimer = null;
       }, longPressTime); // Slight delay to allow unlock to settle
     }
   });
