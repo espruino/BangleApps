@@ -13,3 +13,4 @@
       Optional border around clockinfos (available from settings)
 0.11: Make the border on clockinfos the default
       Fix clockinfos when too long (previously just output '...')
+0.12: Use new clockbg to allow backgrounds to change when fast loading

@@ -4,8 +4,11 @@ exports.reload = function() {
   //let t = Date.now();
   settings = Object.assign({
     style : "randomcolor",
-    colors : ["#F00","#0F0","#00F"]
+    colors : ["#00f","#0bf","#0f7","#3f0","#ff0","#f30","#f07","#b0f"]
   },require("Storage").readJSON("clockbg.json",1)||{});
+  // if an array of arrays then we select one at random
+  if (settings.colors && settings.colors[0] instanceof Array)
+    settings.colors = settings.colors[Math.randInt(settings.colors.length)];
   if (settings.style=="image")
     settings.img = require("Storage").read(settings.fn);
   else if (settings.style=="randomcolor") {
@@ -68,10 +71,22 @@ exports.reload = function() {
   //console.log("bg",Date.now()-t);
 };
 
+/// Will load settings if they haven't already been loaded
+exports.load = function() {
+  if (settings===undefined)
+    exports.reload();
+}
+
+/// Remove settings and free memory - .load() must be called before drawing again
+exports.unload = function() {
+  settings = undefined;
+}
+
 // Fill a rectangle with the current background style, rect = {x,y,w,h}
 // eg require("clockbg").fillRect({x:10,y:10,w:50,h:50})
 //    require("clockbg").fillRect(Bangle.appRect)
 exports.fillRect = function(rect,y,x2,y2) {
+  if (!settings) return;
   if ("object"!=typeof rect) rect = {x:rect,y:y,w:1+x2-rect,h:1+y2-y};
   if (settings.img) {
     g.setClipRect(rect.x, rect.y, rect.x+rect.w-1, rect.y+rect.h-1).drawImage(settings.img,0,0,settings.imgOpt).setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);

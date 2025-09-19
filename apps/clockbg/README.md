@@ -36,6 +36,13 @@ background.fillRect(x1, y1, x2, y2);
 
 // if you ever need to reload to a new background (this could take ~100ms)
 background.reload();
+
+// Call this to unload (free memory - eg in .remove when fast loading)
+background.unload();
+
+// If .unload has been called and you might have fast-loaded back, call .load to ensure everything is loaded again!
+// It won't reload if it's already been loaded
+background.load();
 ```
 
 You should also add `"dependencies" : { "clockbg":"module" },` to your app's metadata to

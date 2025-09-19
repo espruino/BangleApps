@@ -2,6 +2,7 @@
   const W = g.getWidth();
   const H = g.getHeight();
   const background = require("clockbg"); // image backgrounds
+  background.load(); // reload if we fast loaded into here
   let drawTimeout; // timeout used to update every minute
   let date = new Date(); // date at last draw
   let lastModified = {x1:0,y1:0,x2:W-1,y2:H-1,first:true}; // rect that was covered by hands
@@ -106,6 +107,7 @@
     remove: function() {
       if (drawTimeout) clearTimeout(drawTimeout);
       drawTimeout = undefined;
+      background.unload(); // free memory from background
       if (clockInfoMenuA) clockInfoMenuA.remove();
       if (clockInfoMenuB) clockInfoMenuB.remove();
       if (clockInfoMenuC) clockInfoMenuC.remove();
