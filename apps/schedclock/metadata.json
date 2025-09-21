@@ -1,0 +1,19 @@
+{ "id": "schedclock",
+  "name": "Schedule Clock Faces",
+  "shortName":"Schedule Clock",
+  "version":"0.01",
+  "author": "thinkpoop",
+  "description": "Change clock faces on a schedule.",
+  "icon": "app.png",
+  "tags": "tool",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "dependencies": {"scheduler":"type"},
+  "storage": [
+    {"name":"schedclock.app.js","url":"app.js"},
+    {"name":"schedclock.settings.js","url":"settings.js"},
+    {"name":"schedclock.lib.js","url":"lib.js"},
+    {"name":"schedclock.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [{"name":"schedclock.settings.json"}]
+}
