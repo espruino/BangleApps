@@ -6,3 +6,4 @@
 0.06: change name "anotherconf" -> "confthyttan"
 0.07: change dependencies order to try avoiding prompts in app loader while
       loading apps.
+0.08: hide bt indicator when connected (`widbt_notify`)
