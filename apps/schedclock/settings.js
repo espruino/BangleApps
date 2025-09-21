@@ -48,7 +48,7 @@
     // After saving, tell the library to sync the alarms
     if (require("Storage").read("schedclock.lib.js")) {
       require("schedclock.lib.js").syncAlarms();
-    };
+    }
   };
 
   /** 
