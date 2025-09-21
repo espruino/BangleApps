@@ -23,7 +23,7 @@ exports.syncAlarms = function() {
   const settings = require("Storage").readJSON(SETTINGS_FILE, 1) || [];
 
   // Remove all existing alarms from the scheduler library
-  const alarms = require("sched")
+  require("sched")
     .getAlarms()
     .filter(a => a.appid && a.appid === "schedclock")
     .forEach(a => require("sched").setAlarm(a.id, undefined));
