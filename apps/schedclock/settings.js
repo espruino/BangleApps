@@ -54,11 +54,10 @@
     const settings = loadSettings();
     const clockFaces = getClockFaces();
     const menu = {
-      "": { "title": /*LANG*/"Scheduled Clock" },
+      "": { "title": /*LANG*/"Schedule Clock" },
       "< Back": () => back(),
-      /*LANG*/"Enable": {
-        value: !!settings.enabled,
-        format: v => v ? /*LANG*/"On" : /*LANG*/"Off",
+      /*LANG*/"Enabled": {
+        value: settings.enabled,
         onchange: v => {
           settings.enabled = v;
           saveSettings(settings);

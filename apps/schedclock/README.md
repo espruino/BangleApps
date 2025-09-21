@@ -9,7 +9,7 @@ For example: a fun clock face for weekends and after work; a detailed clock face
 ## Usage
 
 * Open the `Schedule Clock` app or find it in the `Settings` > `Apps` menu.
-* Set `Enable` to `on`
+* Set `Enabled` to checked
 * Select `Add New` to add a new scheduled face change
 * Select the `Day`, `Hour`, `Minute`, and what `Clock` to change to
 * Select `Save` to save the new (or changed) schedule
@@ -21,7 +21,7 @@ An entry in `Scheduler` will be created for each scheduled clock change.
 If the clockface you selected has been uninstalled, the schedule will still exist but won't do anything.
 
 ## To Uninstall
-Before uninstalling this app, clean up any scheduled alarms by setting the `Enable` toggle to `off`.
+Before uninstalling this app, clean up any scheduled alarms by setting the `Enabled` toggle to unchecked.
 
 If you skip this step, orphaned alarms may cause error logs but won't affect functionality.
 
