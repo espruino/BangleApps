@@ -1,6 +1,6 @@
 const SETTINGS_FILE = "schedclock.settings.json";
 
-// Simple function to be called directly by an alarm to load a specific clock face
+// Called directly by an alarm to load a specific clock face
 exports.loadFace = function(faceSrc) {
   const settings = require("Storage").readJSON("setting.json", 1) || {};
   // Only change the clock if it's different

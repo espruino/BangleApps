@@ -4,7 +4,7 @@ Change clock faces on a schedule.
 
 For example: a fun clock face for weekends and after work; a detailed clock face for work days.
 
-TODO: add screenshots
+![Screenshot](screenshot-1.png)
 
 ## Usage
 
@@ -14,7 +14,9 @@ TODO: add screenshots
 * Select the `Day`, `Hour`, `Minute`, and what `Clock` to change to
 * Select `Save` to save the new (or changed) schedule
 
-An entry in `Scheduler` will be created to set the clockface based on that schedule.
+![SaveButton](screenshot-2.png)
+
+An entry in `Scheduler` will be created for each scheduled clock change.
 
 If the clockface you selected has been uninstalled, the schedule will still exist but won't do anything.
 
@@ -23,7 +25,7 @@ Before uninstalling this app, clean up any scheduled alarms by setting the `Enab
 
 If you skip this step, orphaned alarms may cause error logs but won't affect functionality.
 
-You can also remove the extra `schedclock` alarms manually with the [Scheduler](https://banglejs.com/apps/?id=sched) app.
+You can also remove the extra `schedclock` alarms manually with the [Scheduler](/?id=sched) app.
 
 ## Requests
 
