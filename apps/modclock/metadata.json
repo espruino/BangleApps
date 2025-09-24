@@ -7,6 +7,7 @@
   "description": "A modern, simple clock, with three ClockInfos and Fast Loading",
   "type":"clock",    
   "tags": "clock,clkinfo",
+  "author":"RKBoss6",
   "supports": ["BANGLEJS2"],
   "screenshots" : [ { "url":"Scr1.png" }, 
     { "url":"Scr2.png" }  ],
