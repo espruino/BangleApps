@@ -1,15 +1,14 @@
 (function(back) {
   /**
-   * @typedef ScheduleItemType - Individual Schedule Item
-   * @member {number} hour - Hour (0-23)
-   * @member {number} minute - Minute (0-59)
-   * @member {string} face - Clock face source file (e.g. "myclock.js")
-   * @member {number} dow - Bitmask for days of week [see Sched documentation]
+   * @typedef {Object} ScheduleItemType - Individual Schedule Item
+   * @property {number} hour - Hour (0-23)
+   * @property {number} minute - Minute (0-59)
+   * @property {string} face - Clock face source file (e.g. "myclock.js")
+   * @property {number} dow - Bitmask for days of week [see Sched documentation]
    * 
-   * @typedef SettingsType - Overall Settings File/Object
-   * @member {boolean} enabled - Whether this app is enabled
-   * @member {Array<ScheduleItemType>} sched - Array of schedule items
-   *
+   * @typedef {Object} SettingsType - Overall Settings File/Object
+   * @property {boolean} enabled - Whether this app is enabled
+   * @property {Array<ScheduleItemType>} sched - Array of schedule items
    */
 
   const SETTINGS_FILE = "schedclock.settings.json";
@@ -22,22 +21,15 @@
   const IND_WORKDAYS = 8; 
   const IND_WEEKEND = 9;
 
-  const daysOfWeek = (function() {
-    const firstDayOfWeek = (require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0;
-    const daysOfWeek = require("date_utils").dows(1);
-    if (!firstDayOfWeek) {
-      // Move Sunday from end to start of week
-      daysOfWeek.unshift(daysOfWeek.splice(-1, 1)[0]);
-    }
-    return daysOfWeek.concat([/*LANG*/"Every Day", /*LANG*/"Weekdays", /*LANG*/"Weekends"]);
-  })();
+  // dows(0) = days of week starting at Sunday
+  const daysOfWeek = require("date_utils").dows(0).concat([/*LANG*/"Every Day", /*LANG*/"Weekdays", /*LANG*/"Weekends"]);
 
   /**
    * Function to load settings
    * @returns {SettingsType} settings object
    */
   const loadSettings = function() {
-    let settings = require("Storage").readJSON(SETTINGS_FILE, 1) || {};
+    const settings = require("Storage").readJSON(SETTINGS_FILE, 1) || {};
     settings.enabled = !!settings.enabled;
     if (!Array.isArray(settings.sched)) settings.sched = [];
 
@@ -54,10 +46,7 @@
    */
   const saveSettings = function(settings) {
     require("Storage").writeJSON(SETTINGS_FILE, settings);
-    // After saving, tell the library to sync the alarms
-    if (require("Storage").read("schedclock.lib.js")) {
-      require("schedclock.lib.js").syncAlarms();
-    }
+    require("schedclock.lib.js").syncAlarms();
   };
 
   /** 
@@ -106,7 +95,7 @@
     // Add existing schedule items to the menu
     settings.sched.forEach((item, index) => {
       const faceName = (clockFaces.find(f => f.src === item.face) || {name: /*LANG*/"Unknown"}).name;
-      const dow = binaryToDow(item.dow);
+      const dow = bitmaskToDowIndex(item.dow);
       const dayName = daysOfWeek[dow === undefined ? IND_EVERY_DAY : dow];
       const timeStr = require("locale").time(new Date(1999, 1, 1, item.hour, item.minute, 0),1)
       menu[`${dayName} ${timeStr} - ${faceName}`] = () => editScheduleItem(index);
@@ -122,13 +111,13 @@
    * @param {number} index index in daysOfWeek
    * @returns bitmask for day of week
    */
-  const dowToBinary = function(index) {
+  const dowIndexToBitmask = function(index) {
     switch(index) {
       case IND_EVERY_DAY: return BIN_EVERY_DAY;
       case IND_WORKDAYS:  return BIN_WORKDAYS;
       case IND_WEEKEND:   return BIN_WEEKEND;
       default:
-        return 1 << (index + 1); // Single day (0=Sun, 1=Mon, ..., 6=Sat)
+        return 1 << index; // Bitmask: Sun=1, Mon=2, Tue=4, Wed=8, Thu=16, Fri=32, Sat=64
     }
   };
 
@@ -137,11 +126,8 @@
    * @param {number} b binary number for day of week
    * @returns index in daysOfWeek
    */
-  const binaryToDow = function(b) {
+  const bitmaskToDowIndex = function(b) {
     switch(b) {
-      case BIN_EVERY_DAY: return IND_EVERY_DAY;
-      case BIN_WORKDAYS:  return IND_WORKDAYS;
-      case BIN_WEEKEND:   return IND_WEEKEND;
       case 1: return 0;
       case 2: return 1;
       case 4: return 2;
@@ -149,9 +135,11 @@
       case 16: return 4;
       case 32: return 5;
       case 64: return 6;
+      case BIN_WORKDAYS:  return IND_WORKDAYS;
+      case BIN_WEEKEND:   return IND_WEEKEND;
+      case BIN_EVERY_DAY:          
+      default: return IND_EVERY_DAY;
     }
-    // Bitmask was something we don't handle yet, default to everyday for now
-    return IND_EVERY_DAY;
   };
 
   /**
@@ -171,7 +159,7 @@
     // Default odd items to "Every Day"
     if (currentItem.dow === undefined) currentItem.dow = BIN_EVERY_DAY;
 
-    let dow = binaryToDow(currentItem.dow);
+    let dow = bitmaskToDowIndex(currentItem.dow);
 
     const menu = {
       "": { "title": isNew ? /*LANG*/"Add Schedule" : /*LANG*/"Edit Schedule" },
@@ -182,7 +170,7 @@
         max: daysOfWeek.length - 1,
         format: v => daysOfWeek[v],
         onchange: v => { 
-          currentItem.dow = dowToBinary(v); 
+          currentItem.dow = dowIndexToBitmask(v); 
         },
       },
       /*LANG*/"Hour": {
@@ -192,13 +180,7 @@
         format: v => {
           // Format as 12h time if user has that set
           const meridean = require("locale").meridian(new Date(1999, 1, 1, v, 0, 0),1);
-          if (meridean) {
-            return (v>12) 
-              ? v-12 + meridean
-              : ((v===0)?12:v) + meridean;
-          } else { 
-            return v;
-          }
+          return (!meridean) ? v : (v%12||12) + meridean;
         },
         onchange: v => { currentItem.hour = v; }
       },
