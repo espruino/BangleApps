@@ -13,7 +13,6 @@
    */
 
   const SETTINGS_FILE = "schedclock.settings.json";
-  const daysOfWeek = require("date_utils").dows(1).concat([/*LANG*/"Every Day", /*LANG*/"Weekdays", /*LANG*/"Weekends"]);
   // Bitmasks for special day selection for sched.json 
   const BIN_WORKDAYS = 0b0111110; // 62 - MTWTF
   const BIN_WEEKEND = 0b1000001; // 65 - SuSa
@@ -22,6 +21,16 @@
   const IND_EVERY_DAY = 7;
   const IND_WORKDAYS = 8; 
   const IND_WEEKEND = 9;
+
+  const daysOfWeek = (function() {
+    const firstDayOfWeek = (require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0;
+    const daysOfWeek = require("date_utils").dows(1);
+    if (!firstDayOfWeek) {
+      // Move Sunday from end to start of week
+      daysOfWeek.unshift(daysOfWeek.splice(-1, 1)[0]);
+    }
+    return daysOfWeek.concat([/*LANG*/"Every Day", /*LANG*/"Weekdays", /*LANG*/"Weekends"]);
+  })();
 
   /**
    * Function to load settings
@@ -99,7 +108,7 @@
       const faceName = (clockFaces.find(f => f.src === item.face) || {name: /*LANG*/"Unknown"}).name;
       const dow = binaryToDow(item.dow);
       const dayName = daysOfWeek[dow === undefined ? IND_EVERY_DAY : dow];
-      const timeStr = ("0"+item.hour).slice(-2) + ":" + ("0"+item.minute).slice(-2);
+      const timeStr = require("locale").time(new Date(1999, 1, 1, item.hour, item.minute, 0),1)
       menu[`${dayName} ${timeStr} - ${faceName}`] = () => editScheduleItem(index);
     });
 
@@ -119,9 +128,9 @@
       case IND_WORKDAYS:  return BIN_WORKDAYS;
       case IND_WEEKEND:   return BIN_WEEKEND;
       default:
-        return 1 << index; // Single day (0=Sun, 1=Mon, ..., 6=Sat)
+        return 1 << (index + 1); // Single day (0=Sun, 1=Mon, ..., 6=Sat)
     }
-  }
+  };
 
   /**
    * Get the index in daysOfWeek from a binary day-of-week bitmask
@@ -133,14 +142,17 @@
       case BIN_EVERY_DAY: return IND_EVERY_DAY;
       case BIN_WORKDAYS:  return IND_WORKDAYS;
       case BIN_WEEKEND:   return IND_WEEKEND;
-    }
-    // Check each single day (0=Sun, 1=Mon, ..., 6=Sat)
-    for (let i = 0; i < 7; i++) {
-      if (b === (1 << i)) return i;
+      case 1: return 0;
+      case 2: return 1;
+      case 4: return 2;
+      case 8: return 3;
+      case 16: return 4;
+      case 32: return 5;
+      case 64: return 6;
     }
     // Bitmask was something we don't handle yet, default to everyday for now
     return IND_EVERY_DAY;
-  }
+  };
 
   /**
    * Function to edit a schedule item (or add a new one if index is -1)
@@ -177,6 +189,17 @@
         value: currentItem.hour,
         min: 0,
         max: 23,
+        format: v => {
+          // Format as 12h time if user has that set
+          const meridean = require("locale").meridian(new Date(1999, 1, 1, v, 0, 0),1);
+          if (meridean) {
+            return (v>12) 
+              ? v-12 + meridean
+              : ((v===0)?12:v) + meridean;
+          } else { 
+            return v;
+          }
+        },
         onchange: v => { currentItem.hour = v; }
       },
       /*LANG*/"Minute": {
