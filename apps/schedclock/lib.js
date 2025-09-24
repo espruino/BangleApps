@@ -66,14 +66,14 @@ exports.syncAlarms = function() {
 
     const schedTime = (item.hour * 3600000) + (item.minute * 60000);
     const today = time.getDate();
-    const tomorrow = today + 1;
+    const yesterday = today - 1;
 
     // Create the new alarm object and save it using a unique ID.
     Sched.setAlarm(`${APP_ID}.${index}`, {
       t: schedTime, // time in milliseconds since midnight
       on: true,
       rp: true,
-      last: (schedTime > currentTime) ? today : tomorrow,
+      last: (schedTime > currentTime) ? yesterday : today,
       dow: item.dow,
       hidden: true,
       appid: APP_ID,
