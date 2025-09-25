@@ -41,6 +41,7 @@
         <option value="error">Diffusion Dither</option>
         <option value="random1">Random Dither</option>
         <option value="comic">'Comic' Dither</option>
+        <option value="floyd">Floyd-Steinberg</option>
       </select>
     </div>
 
@@ -105,7 +106,7 @@
         var img = IMAGES.find(img => img.path == imgPath) || {"dither":true}; // No IMAGES entry for custom images
         var zoom = document.getElementById("box_zoom").value;
         var dither = document.getElementById("box_dither").value;
-        if (dither=="" && img.dither) dither="bayer2";
+        if (dither=="" && img.dither) dither="floyd";
         if (dither=="no" || dither=="") dither=undefined;
         var mirror = document.getElementById("box_mirror").checked;
         var brightness = 0|document.getElementById("box_bright").value;

@@ -7,7 +7,7 @@
   "icon": "app.png",
   "type": "clock",
   "tags": "clock",
-  "dependencies" : { "libqr":"module", "qrconnect":"app" },
+  "dependencies" : { "libqr":"module","clockbg":"module","qrconnect":"app","trex":"app"  },
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "interface": "interface.html",
@@ -18,6 +18,6 @@
     {"name":"webaisummit.wid.js","url":"widget.js"},
     {"name":"webaisummit.img","url":"app-icon.js","evaluate":true},
     {"name":"webaisummit.app.js","url":"app.js"},
-    {"name":"welcome.js","url":"welcome.js"}
+    {"name":"welcome.app.js","url":"welcome.js"}
   ]
 }

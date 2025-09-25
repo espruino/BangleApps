@@ -22,6 +22,7 @@ Graphics.prototype.setFontLECO1976Regular14 = function() {
 const SETTINGS_FILE = "pebblepp.json";
 let settings = Object.assign({'theme':'System', 'showdate':true, 'clkinfoborder': true}, require("Storage").readJSON(SETTINGS_FILE,1)||{});
 let background = require("clockbg");
+background.load(); // reload if we fast loaded into here
 let theme;
 let drawTimeout;
 
@@ -132,6 +133,7 @@ Bangle.setUI({
     // Called to unload all of the clock app
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
+    background.unload(); // free memory from background
     clockInfoMenuA.remove();
     clockInfoMenuB.remove();
     delete Graphics.prototype.setFontLECO1976Regular22;

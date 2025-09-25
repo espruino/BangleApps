@@ -22,6 +22,7 @@ Graphics.prototype.setFontAudiowide12 = function() {
     ypos : 88
   }, require('Storage').readJSON("simplebgclock.json", 1) || {});
   const background = require("clockbg"); // image backgrounds
+  background.load(); // reload if we fast loaded into here
 
   // timeout used to update every minute
   let drawTimeout, widgetTimeout;
@@ -66,6 +67,7 @@ Graphics.prototype.setFontAudiowide12 = function() {
     var e = WIDGETS["simplebg"];
     g.reset().clearRect(e.x,e.y,e.x+63,e.y+23);
     delete WIDGETS["simplebg"];
+    background.unload(); // free memory from background
     require("widget_utils").show();
     delete Graphics.prototype.setFontAudiowide;
     delete Graphics.prototype.setFontAudiowide12;

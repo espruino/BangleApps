@@ -143,6 +143,12 @@ function setSavedDeviceId(deviceId) {
 
 // At boot, show a window to choose which type of device you have...
 window.addEventListener('load', (event) => {
+  if (window.location.search) {
+    let searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.has("dev_id")) // dev_id=BANGLEJS2 for example, to stop the popup
+      setSavedDeviceId(searchParams.get("dev_id"));
+  }
+
   let deviceId = getSavedDeviceId()
   if (deviceId !== undefined) return; // already chosen
 

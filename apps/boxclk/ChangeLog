@@ -5,7 +5,7 @@
 0.05: Fixes step count not resetting after a new day starts
 0.06: Added clockbackground app functionality
 0.07: Allow custom backgrounds per boxclk config and from the clockbg module
-0.08: Improves performance, responsiveness, and bug fixes 
+0.08: Improves performance, responsiveness, and bug fixes
 - [+] Added box size caching to reduce calculations
 - [+] Improved step count with real-time updates
 - [+] Improved battery level update logic to reduce unnecessary refreshes
@@ -14,3 +14,4 @@
 - [+] General code optimization and cleanup
 0.09: Revised event handler code
 0.10: Revised suffix formatting in getDate function
+0.11: Use new clockbg to allow backgrounds to change when fast loading

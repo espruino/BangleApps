@@ -95,6 +95,7 @@ for (var i=0;i<10;i++)
     remove: function() {
       if (drawTimeout) clearTimeout(drawTimeout);
       drawTimeout = undefined;
+      background.unload(); // free memory from background
       if (clockInfoMenuA) clockInfoMenuA.remove();
       if (clockInfoMenuB) clockInfoMenuB.remove();
       require("widget_utils").show(); // re-show widgets
@@ -105,6 +106,7 @@ for (var i=0;i<10;i++)
   require("widget_utils").swipeOn();
   let R = Bangle.appRect;
   let background = require("clockbg");
+  background.load(); // reload if we fast loaded into here
   background.fillRect(R);
   draw();
   g.flip();

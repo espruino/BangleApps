@@ -10,6 +10,8 @@ Graphics.prototype.setFontBebasNeue = function() {
 };
 
 {
+  let background = require("clockbg");
+  background.load(); // reload if we fast loaded into here
   // the font we're using
   const factFont = "6x15";
   // swap every 10 minutes
@@ -100,6 +102,7 @@ Graphics.prototype.setFontBebasNeue = function() {
     delete Graphics.prototype.setFontBebasNeue;
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
+    background.unload(); // free memory from background
     require('widget_utils').show(); // re-show widgets
   }});
   // Load widgets
