@@ -32,9 +32,6 @@ exports.onAlarm = function(index, clock) {
   const Sched = require("sched");
   const alarm = Sched.getAlarm(`${APP_ID}.${index}`);
   alarm.last = date.getDate(); // prevent second run on the same day
-  // -- Don't think alarm.date is required, but just in case
-  //date.setDate(alarm.last + 1);
-  //alarm.date = date.toLocalISOString().slice(0,10);
   Sched.setAlarm(alarm.id, alarm);
   setClock(clock);
 };
@@ -56,24 +53,28 @@ exports.syncAlarms = function() {
   // If the app is disabled, we're done.
   if (!settings.enabled) return;
 
-  const time = new Date();
-  const currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
-  
+  // Alarms need "last" set to let sched know they've already ran for the day
+  // So if an alarm is for before "now", set last to yesterday so it still triggers today
+  // else set last to today.
+  const currentDate = new Date();
+  const currentTime = (currentDate.getHours()*3600000)+(currentDate.getMinutes()*60000)+(currentDate.getSeconds()*1000);
+  const dayOfMonthToday = currentDate.getDate();
+  const dayOfMonthYesterday = dayOfMonthToday - 1;
+
   // Add a new alarm for each setting item
   settings.sched.forEach((item, index) => {
     
-    if (item.hour === undefined) return;
+    // Skip invalid records
+    if (item.hour === undefined || item.minute === undefined) return;
 
-    const schedTime = (item.hour * 3600000) + (item.minute * 60000);
-    const today = time.getDate();
-    const yesterday = today - 1;
+    const scheduledTime = (item.hour * 3600000) + (item.minute * 60000);
 
     // Create the new alarm object and save it using a unique ID.
     Sched.setAlarm(`${APP_ID}.${index}`, {
-      t: schedTime, // time in milliseconds since midnight
+      t: scheduledTime, // time in milliseconds since midnight
       on: true,
       rp: true,
-      last: (schedTime > currentTime) ? yesterday : today,
+      last: (scheduledTime > currentTime) ? dayOfMonthYesterday : dayOfMonthToday,
       dow: item.dow,
       hidden: true,
       appid: APP_ID,

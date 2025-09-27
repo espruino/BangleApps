@@ -29,11 +29,13 @@ You can also remove the extra `schedclock` alarms manually with the [Scheduler](
 
 ## Requests
 
-Send requests to [thinkpoop](https://github.com/thinkpoop) on GitHub
+Send requests to [kidneyhex](https://github.com/kidneyhex) on GitHub.
+
+Make whatever changes you'd like.
 
 ## Creator
 
-[thinkpoop](https://github.com/thinkpoop)
+[kidneyhex](https://github.com/kidneyhex)
 
 ## Attribution
 

@@ -213,10 +213,9 @@
 
         if (validationError) {
           E.showAlert(
-            /*LANG*/"Time conflict", 
-            /*LANG*/"An entry for this time already exists."
+            /*LANG*/"An entry for this time already exists.",
+            /*LANG*/"Time conflict"
           ).then(
-            // Note: not sure if this is the best way to return to the menu
             ()=>E.showMenu(menu)
           );
           return; // Prevent saving
