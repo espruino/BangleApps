@@ -4,7 +4,7 @@ Change clock faces on a schedule.
 
 For example: a fun clock face for weekends and after work; a detailed clock face for work days.
 
-![Screenshot](screenshot-1.png)
+![Screenshot](screenshot1.png)
 
 ## Usage
 
@@ -14,7 +14,7 @@ For example: a fun clock face for weekends and after work; a detailed clock face
 * Select the `Day`, `Hour`, `Minute`, and what `Clock` to change to
 * Select `Save` to save the new (or changed) schedule
 
-![SaveButton](screenshot-2.png)
+![SaveButton](screenshot2.png)
 
 An entry in `Scheduler` will be created for each scheduled clock change.
 
@@ -26,12 +26,6 @@ Before uninstalling this app, clean up any scheduled alarms by setting the `Enab
 If you skip this step, orphaned alarms may cause error logs but won't affect functionality.
 
 You can also remove the extra `schedclock` alarms manually with the [Scheduler](/?id=sched) app.
-
-## Requests
-
-Send requests to [kidneyhex](https://github.com/kidneyhex) on GitHub.
-
-Make whatever changes you'd like.
 
 ## Creator
 

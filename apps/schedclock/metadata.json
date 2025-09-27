@@ -1,10 +1,14 @@
 { "id": "schedclock",
   "name": "Schedule Clock Faces",
-  "shortName":"Schedule Clock",
+  "shortName":"Sched Clock",
   "version":"0.01",
   "author": "kidneyhex",
   "description": "Change clock faces on a schedule.",
   "icon": "app.png",
+  "screenshots": [
+    {"url":"screenshot1.png"},
+    {"url":"screenshot2.png"}
+  ],
   "tags": "tool",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
