@@ -5,6 +5,7 @@
   "icon": "app.png",
   "type": "clkinfo",
   "tags": "clkinfo",
+  "author":"RKBoss6",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
