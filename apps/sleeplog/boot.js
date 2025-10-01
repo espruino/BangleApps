@@ -163,10 +163,10 @@ if (global.sleeplog.conf.enabled) {
 
       // add preliminary status depending on charging and movement thresholds
       // 1 = not worn, 2 = awake, 3 = light sleep, 4 = deep sleep
-      if(data.hrm){
+      if(data.bpm){
           if (!Bangle.isCharging()) {
-              if (data.heartRate <= global.sleeplog.conf.hrmDeepTh) data.status = 4;
-              else if (data.heartRate <= global.sleeplog.conf.hrmLightTh) data.status = 3;
+              if (data.bpm <= global.sleeplog.conf.hrmDeepTh) data.status = 4;
+              else if (data.bpm <= global.sleeplog.conf.hrmLightTh) data.status = 3;
               else data.status = 2;
           } else data.status = 1;
       } else {
@@ -177,7 +177,7 @@ if (global.sleeplog.conf.enabled) {
           } else data.status = 1;
       }
 
-      console.log("HRM:", data.hrm, "HR:", data.heartRate, "Movement:", data.movement, "Status:", data.status);
+      
 
       
       // check if changing to deep sleep from non sleeping
