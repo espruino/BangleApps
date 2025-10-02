@@ -1,0 +1,6 @@
+0.01: Initial release with BMO character
+0.02: Added Finn and Jake characters
+0.03: Added settings menu for character selection
+0.04: Added temperature unit toggle (C/F)
+0.05: Fixed settings menu crash, added charging status indicators
+0.06: Fixed "Invalid Settings!" error with proper settings file handling

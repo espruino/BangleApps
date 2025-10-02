@@ -1,0 +1,23 @@
+{
+  "id": "bmoface",
+  "name": "BMO Face",
+  "shortName": "BMO",
+  "version": "1.0.6",
+  "description": "A watch face inspired by BMO that shows time, temp, steps and HR. Sleeps to -_- when locked.",
+  "icon": "app.png",
+  "tags": "clock",
+  "type": "clock",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "allow_emulator": true,
+  "readme": "README.md",
+  "screenshots": [
+    {"url": "screenshot1.png"},
+    {"url": "screenshot2.png"},
+    {"url": "screenshot3.png"},
+    {"url": "screenshot4.png"}
+  ],
+  "storage": [
+    { "name": "bmoface.app.js", "url": "app.js" },
+    { "name": "bmoface.settings.js", "url": "settings.js" }
+  ]
+}
