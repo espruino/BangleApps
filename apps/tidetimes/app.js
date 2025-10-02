@@ -5,7 +5,9 @@ function msToDayHours(ms) {
   return d.getHours()+d.getMinutes()/60;
 }
 function dayHoursToStr(t) {
-  return Math.floor(t) + ":" + Math.round((t-Math.floor(t))*60).toString().padStart(2,0);
+  t = Math.round(t*60)/60;
+  var hrs = Math.floor(t);
+  return hrs + ":" + Math.round((t-hrs)*60).toString().padStart(2,0);
 }
 function getDayStart() {
   return new Date((new Date()).toISOString().substr(0,10)).getTime();
@@ -57,7 +59,7 @@ function showTides() {
 }
 
 function showMenu() {
-  let step = 5/60;
+  let step = 20/60;
   E.showMenu({
     "":{title:"Tides", back : showTides },
     "Low Tide" : {
@@ -68,7 +70,7 @@ function showMenu() {
         let dayStart = getDayStart();
         let currHr = msToDayHours(Date.now());
         if (v+1<currHr) v+=24;
-        tide.offset = dayStart + (v + tide.period/2)*3600000;
+        tide.offset = dayStart + v*3600000 + tide.period/2;
         tide.save();
         showTides();
       }
