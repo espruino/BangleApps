@@ -125,7 +125,7 @@ function run() {
 
   Bangle.setGPSPower(1, "rungps");
   Bangle.setHRMPower(1, "rungps");
-  Bangle.on("HRM", (r) => { heart_rate = r; });
+  Bangle.on("HRM", (r) => { heart_rate = Number(r); });
 }
 
 function stopRun() {
@@ -134,7 +134,7 @@ function stopRun() {
 
   Bangle.setGPSPower(0, "rungps");
   Bangle.setHRMPower(0, "rungps");
-  Bangle.removeListener("HRM", (r) => { heart_rate = r; });
+  Bangle.removeListener("HRM", (r) => { heart_rate = Number(r); });
 }
 
 function parseFile(file) {
