@@ -11,29 +11,18 @@
             crossorigin=""></script>
 
     <script src="../../core/lib/interface.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.5/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="Home.css">
 </head>
 <body>
 <script src="calculations.js"></script>
 
 <div id="map"></div>
-<div id="charts">
-    <canvas id="heart_rateChart" class="Chart"></canvas>
-    <canvas id="speedChart" class="Chart"></canvas>
-    <canvas id="altitudeChart" class="Chart"></canvas>
-</div>
-<div class="data" id="tooltip">
-    <p id="heart_rate">heart rate: 0 bpm</p>
-    <p id="speed">speed: 0:0 min/km</p>
-    <p id="altitude">altitude: 0m</p>
-    <p id="time">time: 0:00:00</p>
-</div>
 <div class="data">
     <p id="distance">0km</p>
     <p id="averageSpeed">0:0min/km</p>
 </div>
 <div id="inputDiv">
+    <button id="download">Download</button>
     <button id="Read">Read</button>
     <label for="input"></label><input id="input" placeholder="gpspoilog.csv">
 </div>
@@ -42,13 +31,7 @@
 let text = "";
 let points = [];
 let place;
-let xTime;
 const groep = new L.featureGroup();
-
-const heart_rateData = document.getElementById("heart_rate");
-const speedData = document.getElementById("speed");
-const altData = document.getElementById("altitude");
-const timeData = document.getElementById("time");
 
 // --- Initialize Map ---
 let map = L.map('map').setView([0, 0], 0);
@@ -57,27 +40,8 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
-// --- Initialize Charts ---
-function createChart(canvasId, color, labelText) {
-    return new Chart(document.getElementById(canvasId).getContext("2d"), {
-        type: "line",
-        data: { labels: [], datasets: [{ borderColor: color, data: [], label: labelText, pointBackgroundColor: [], pointRadius: [] }] },
-        options: {
-            animation: false,
-            plugins: {
-                title: { display: true, text: labelText },
-                tooltip: { intersect: false, mode: "index" }
-            }
-        }
-    });
-}
-
-const heart_rateChart = createChart("heart_rateChart", "rgb(255,0,0)", "Heart rate");
-const speedChart = createChart("speedChart", "rgb(0,0,255)", "Speed");
-const altChart = createChart("altitudeChart", "rgb(112,112,112)", "Altitude");
-
 // --- Display points & update charts ---
-function show(map, heart_rateChart, speedChart, altChart) {
+function show(map) {
     points = window.calculations.translateData(text);
     let vorig = points[0];
 
@@ -91,30 +55,6 @@ function show(map, heart_rateChart, speedChart, altChart) {
         groep.addLayer(line);
         map.addLayer(line);
 
-        const time = window.calculations.convertSecondstoTime(point.time);
-
-        if (point.heart_rate) {
-            heart_rateChart.data.datasets[0].pointBackgroundColor.push("red");
-            heart_rateChart.data.datasets[0].pointRadius.push(1);
-            heart_rateChart.data.datasets[0].data.push(point.heart_rate);
-            heart_rateChart.data.labels.push(time);
-            heart_rateChart.update();
-        }
-        if (point.speed !== 0) {
-            speedChart.data.datasets[0].pointBackgroundColor.push("blue");
-            speedChart.data.datasets[0].pointRadius.push(1);
-            speedChart.data.datasets[0].data.push(60 / point.speed);
-            speedChart.data.labels.push(time);
-            speedChart.update();
-        }
-        if (point.alt) {
-            altChart.data.datasets[0].pointBackgroundColor.push("grey");
-            altChart.data.datasets[0].pointRadius.push(1);
-            altChart.data.datasets[0].data.push(point.alt);
-            altChart.data.labels.push(time);
-            altChart.update();
-        }
-
         vorig = point;
     }
 
@@ -122,32 +62,16 @@ function show(map, heart_rateChart, speedChart, altChart) {
     [document.getElementById("averageSpeed").innerText, document.getElementById("distance").innerText] = window.calculations.getAverageSpeedAndDistance(points);
 }
 
-// --- Tooltip update ---
-function labelMaker(tooltipData, chart) {
-    const values = tooltipData.dataset.data[tooltipData.dataIndex];
-    const xLabel = tooltipData.label.toString();
-    const index = window.calculations.getIndexByTime(xLabel, points);
-    const point = points[index];
-
-    heart_rateData.innerText = "heart rate: "+point.heart_rate+" bpm";
-    speedData.innerText = "speed: "+Math.floor(60 / point.speed)+":"+Math.floor(60 / point.speed * 60 % 60)+" min/km";
-    altData.innerText = "altitude: "+point.alt+"m";
-    timeData.innerText = "time: "+window.calculations.convertSecondstoTime(point.time);
-
-    if (place) place.removeFrom(map);
-    place = L.circle([point.lat, point.long], { color: 'blue', fillColor: '#0000ff', fillOpacity: 1, radius: 1 }).addTo(map);
-
-    return [values, tooltipData.dataset.label];
-}
-
-// --- Read GPS file ---
 document.getElementById("Read").addEventListener("click", () => {
     const fileName = "rungps."+document.getElementById("input").value+".csv" || "gpspoilog.csv";
     Util.readStorageFile(fileName, data => {
         if (!data) return console.log("File empty or not found:", fileName);
         text = data;
-        show(map, heart_rateChart, speedChart, altChart);
+        show(map);
     });
+});
+document.getElementById("download").addEventListener("click", () => {
+
 });
 </script>
 </body>
