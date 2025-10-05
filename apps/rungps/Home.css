@@ -1,27 +1,20 @@
-.Chart {
-    width: 100%;
-}
-
-#charts {
-    width: 50%;
-}
-
-#altitudeChart {
-    position: absolute;
-    left: 50%;
-    top: 1%;
-}
-
 .data {
     border-bottom: #838383 solid 2px;
     border-top: #838383 solid 2px;
     width: 50%;
+    position: absolute;
+    top: 50%;
 }
 
 #map {
     height: 50%;
     width: 50%;
     position: absolute;
-    left: 50%;
-    top: 50%;
+    left: 0;
+    top: 0;
+}
+
+#inputDiv {
+    position: absolute;
+    top: 60%;
 }
