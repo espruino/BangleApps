@@ -15,6 +15,7 @@
 </head>
 <body>
 <script src="calculations.js"></script>
+<script src="gpx_maker.js"></script>
 
 <div id="map"></div>
 <div class="data">
@@ -22,7 +23,8 @@
     <p id="averageSpeed">0:0min/km</p>
 </div>
 <div id="inputDiv">
-    <button id="download">Download</button>
+    <button id="download_gpx">Download GPX</button>
+    <button id="download_tcx">Download TCX</button>
     <button id="Read">Read</button>
     <label for="input"></label><input id="input" placeholder="gpspoilog.csv">
 </div>
@@ -70,8 +72,20 @@ document.getElementById("Read").addEventListener("click", () => {
         show(map);
     });
 });
-document.getElementById("download").addEventListener("click", () => {
+document.getElementById("download_gpx").addEventListener("click", () => {
+    if (!points || !points.length) {
+        points = window.calculations.translateData(text);
+    }
+    const distanceStr = (document.getElementById("distance").innerText || "0km");
+    window.gpx_manager.downloadGpxFile(points, [distanceStr], "km");
+});
 
+document.getElementById("download_tcx").addEventListener("click", () => {
+    if (!points || !points.length) {
+        points = window.calculations.translateData(text);
+    }
+    const distanceStr = (document.getElementById("distance").innerText || "0km");
+    window.gpx_manager.downloadTcxFile(points, [distanceStr], "km");
 });
 </script>
 </body>
