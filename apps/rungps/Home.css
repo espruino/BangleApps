@@ -16,5 +16,5 @@
 
 #inputDiv {
     position: absolute;
-    top: 60%;
+    top: calc(50% + 100px);
 }
