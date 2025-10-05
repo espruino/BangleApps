@@ -7,6 +7,7 @@
   "type": "widget",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
+  "author":"RKBoss6",
   "dependencies" : { "smartbatt":"module" },
   "description": "Simple and slim battery widget that shows days remaining, and uses the `smartbatt` module to learm from your usage and provide accurate predictions.",
   "tags": "widget,battery",

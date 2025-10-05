@@ -97,18 +97,83 @@ let swipeHandler = function(LR, _) {
   }
 };
 
+let dx = 0;
+let dy = 0;
+let volumeChangedThisGoAround = false;
+let knobTimeout;
+let dragHandler = function(e) {
+
+  let DialDisplay = require("Dial_Display");
+  let volumeKnobVisual = new DialDisplay();
+
+  let cb = ud => {
+      Bangle.musicControl(ud<0 ? "volumedown" : "volumeup");
+      Bangle.buzz(20);
+  }
+
+  let resetOuterScopeVariables = ()=>{
+    dy=0;
+    dx=0;
+    volumeChangedThisGoAround=false;
+  }
+
+  dx += e.dx;
+  dy += e.dy;
+  if (!e.b) {resetOuterScopeVariables();}
+
+  while (Math.abs(dy)>32) {
+    if (dy>0) { dy-=32; cb(-1) }
+    else { dy+=32; cb(1) }
+    volumeChangedThisGoAround = true;
+  }
+
+  if (volumeChangedThisGoAround && Math.abs(dx)>32) {
+      // setup volume knob here.
+    let cbVisual = (step)=>{
+      cb(step);
+      volumeKnobVisual.step(step);
+    };
+    cbVisual(Math.sign(dx)*Math.sign(g.getHeight()/2-e.y));
+    resetOuterScopeVariables();
+    let volumeKnob = require("dial")(cbVisual);
+    let timingOutVolumeKnob = (e)=>{
+        if (!e.b) {
+          setKnobTimeout();
+        } else if (knobTimeout) {
+          clearTimeout(knobTimeout);
+          knobTimeout = undefined;
+        }
+        volumeKnob(e);
+      }
+    let swipeMask = ()=>{
+        E.stopEventPropagation();
+      }
+    let setKnobTimeout = ()=>{
+        knobTimeout = setTimeout(()=>{
+          Bangle.removeListener("drag", timingOutVolumeKnob)
+          Bangle.removeListener("swipe", swipeMask);
+          Bangle.buzz(40);
+          setTimeout(Bangle.buzz, 150, 40, 0.8)
+          gfx();
+          knobTimeout = undefined;
+          print("removed volume knob")
+        }, 350);
+      }
+    Bangle.prependListener("drag", timingOutVolumeKnob);
+    Bangle.prependListener("swipe", swipeMask);
+  }
+};
+
 // Navigation input on the main layout
 let setUI = function() {
   Bangle.setUI(
-    {mode : "updown",
+    {mode : "custom",
      touch: touchHandler,
      swipe: swipeHandler,
+     drag: dragHandler,
      btn: ()=>load(),
      remove : ()=>widgetUtils.show(),
-    },
-      ud => {
-        if (ud) Bangle.musicControl(ud>0 ? "volumedown" : "volumeup");
-      }
+    }
   );
 };
 
