@@ -1,7 +1,7 @@
 { "id": "rungps",
   "name": "Running",
   "shortName":"Running",
-  "version":"0.01",
+  "version":"0.02",
   "description": "This app is a app for running and see your prestasion!",
   "icon": "app.png",
   "tags": "tool,outdoors,gps",
