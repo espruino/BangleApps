@@ -1,3 +1,4 @@
+/* eslint-disable */
 window.calculations = {
     "translateData": function (text) {
         var points = []

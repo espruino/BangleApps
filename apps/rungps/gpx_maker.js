@@ -1,3 +1,4 @@
+/* eslint-disable */
 const createXmlString = lines => {
   // Normalize input into an array of segments, each a list of point objects
   // Supported inputs:
