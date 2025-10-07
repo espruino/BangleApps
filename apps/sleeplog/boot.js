@@ -151,7 +151,7 @@ if (global.sleeplog.conf.enabled) {
     // define health listener function
     // - called by event listener: "this"-reference points to global
     health: function(data) {
-      print("Health data acquired");
+      print("Sleep Log - Health Data Acquired");
       // check if global variable accessable
       if (!global.sleeplog) return new Error("sleeplog: Can't process health event, global object missing!");
       
