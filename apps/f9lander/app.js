@@ -47,8 +47,10 @@ var exploded = false;
 var nExplosions = 0;
 //var landed = false;
 var lightning = 0;
+var timeOfDay=0;
 
-var settings = require("Storage").readJSON('f9settings.json', 1) || {};
+var settings = require("Storage").readJSON('f9settings.json', 1) || {
+};
 
 const gravity = 4;
 const dt = 0.1;
@@ -83,6 +85,12 @@ function drawFalcon(x, y, throttle, angle) {
   }
 }
 
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
 function drawLightning() {
   var c = {x:cloudOffs+50, y:30};
   var dx = c.x-booster.x;
@@ -98,15 +106,45 @@ function drawBG() {
     Bangle.buzz(200);
     return;
   }
-  g.setBgColor(0.2, 0.2, 1).clear();
-  g.setColor(0, 0, 1).fillRect(0, g.getHeight()-oceanHeight, g.getWidth()-1, g.getHeight()-1);
-  g.setColor(0.5, 0.5, 1).fillCircle(cloudOffs+34, 30, 15).fillCircle(cloudOffs+60, 35, 20).fillCircle(cloudOffs+75, 20, 10);
-  g.setColor(1, 1, 0).fillCircle(g.getWidth(), 0, 20);
+  
+  
+    
+  if(timeOfDay==0){
+    //day 
+    g.setBgColor(0.2, 0.2, 1).clear();
+    
+    g.setColor(0.5, 0.5, 1).fillCircle(cloudOffs+34, 30, 15).fillCircle(cloudOffs+60, 35, 20).fillCircle(cloudOffs+75, 20, 10);
+    g.setColor(1, 1, 0).fillCircle(g.getWidth(), 0, 20);
+    g.setColor(0, 0, 1).fillRect(0, g.getHeight()-oceanHeight, g.getWidth()-1, g.getHeight()-1);
+
+  }else if(timeOfDay==1){
+    //sunset
+    g.setBgColor(1, 0.5, 0.2).clear();
+    g.setColor(0.5, 0.5, 1).fillCircle(cloudOffs+34, 30, 15).fillCircle(cloudOffs+60, 35, 20).fillCircle(cloudOffs+75, 20, 10);
+      g.setColor(1, 0.3, 0).fillCircle(g.getWidth(), 0, 20);
+    g.setColor(0, 0, 1).fillRect(0, g.getHeight()-oceanHeight, g.getWidth()-1, g.getHeight()-1);
+
+  }else{
+    //night
+    g.setBgColor(0, 0, 0).clear();
+    g.setColor(0.5, 0.5, 1).fillCircle(cloudOffs+34, 30, 15).fillCircle(cloudOffs+60, 35, 20).fillCircle(cloudOffs+75, 20, 10);
+    g.setColor(1, 1, 1).fillCircle(g.getWidth(), 0, 20);
+    g.setColor(0, 0, 0.3).fillRect(0, g.getHeight()-oceanHeight, g.getWidth()-1, g.getHeight()-1);
+
+  }
+
+  
+  
   g.setColor(1, 1, 1).drawImage(droneShip, droneX, g.getHeight()-oceanHeight-1);
 }
 
 function showFuel() {
-  g.setColor(0, 0, 0).setFont("4x6:2").setFontAlign(-1, -1, 0).drawString("Fuel: "+Math.abs(booster.fuel).toFixed(0), 4, 4);
+  if(timeOfDay==2){
+    g.setColor(1, 1, 1)
+  }else{
+    g.setColor(0, 0, 0)
+  }
+ g.setFont("4x6:2").setFontAlign(-1, -1, 0).drawString("Fuel: "+Math.abs(booster.fuel).toFixed(0), 4, 4);
 }
 
 function renderScreen(input) {
@@ -128,7 +166,12 @@ function getInputs() {
 }
 
 function epilogue(str) {
-  g.setFont("Vector", 24).setFontAlign(0, 0, 0).setColor(0, 0, 0).drawString(str, g.getWidth()/2, g.getHeight()/2).flip();
+  if(timeOfDay==2){
+    g.setColor(1, 1, 1)
+  }else{
+    g.setColor(0, 0, 0)
+  }
+  g.setFont("Vector", 24).setFontAlign(0, 0, 0).drawString(str, g.getWidth()/2, g.getHeight()/2).flip();
   g.setFont("Vector", 16).drawString("<= again      exit =>", g.getWidth()/2, g.getHeight()/2+20);
   clearInterval(stepInterval);
   Bangle.on("swipe", (d) => { if (d>0) load(); else load('f9lander.app.js'); });
@@ -168,10 +211,19 @@ function gameStep() {
   }
 }
 
+if(settings.timeChange){
+  timeOfDay=getRandomInt(0,3)
+}
+
 var stepInterval;
 Bangle.setLCDTimeout(0);
 renderScreen({angle:0, throttle:0});
-g.setFont("Vector", 24).setFontAlign(0, 0, 0).setColor(0, 0, 0).drawString("Swipe to start", g.getWidth()/2, g.getHeight()/2);
+if(timeOfDay==2){
+  g.setColor(1, 1, 1)
+}else{
+  g.setColor(0, 0, 0)
+}
+g.setFont("Vector", 24).setFontAlign(0, 0, 0).drawString("Swipe to start", g.getWidth()/2, g.getHeight()/2);
 Bangle.on("swipe", () => {
   stepInterval = setInterval(gameStep, Math.floor(1000*dt));
   Bangle.removeListener("swipe");
