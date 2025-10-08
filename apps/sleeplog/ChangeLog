@@ -17,5 +17,5 @@
 0.19: Write sleep state into health event's .activity field
 0.20: Increase default sleep thresholds, tweak settings to allow higher ones to be chosen
 0.21: Use HRM data is polling is enabled, and add appropriate thresholds in settings. Change settings to feel more intuitive, rather than copied settings in different pages.
-0.22: Fix bug with HRM threshold not updating
-0.23: Fix important bug with HRM data being undefined, fix bug with movement thresholds being compared against the HRM thresholds.
+0.22: Fix bug with HRM threshold not updating, fix bug with movement thresholds being compared against the HRM thresholds.
+0.23: Fix important bug with HRM data being undefined
