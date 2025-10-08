@@ -7,6 +7,7 @@
   // initialize with default settings...
   let settings = {
     'lightning': false,
+    'timeChange':false
   }
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -23,11 +24,15 @@
     }
   }
   const menu = {
-    '': { 'title': 'OpenWind' },
+    '': { 'title': 'F9 Lander' },
     '< Back': back,
     'Lightning': {
       value: !!settings.lightning,
       onchange: save('lightning'),
+    },
+    'Time Change': {
+      value: !!settings.timeChange,
+      onchange: save('timeChange'),
     }
   }
   E.showMenu(menu);
