@@ -24,7 +24,6 @@
       totalCycles:0,
       avgWakeUpTime:0,
       promptLastShownDay:"",
-      timeSinceAwake: 1800000,
 
     }, require('Storage').readJSON("sleepsummarydata.json", true) || {});
   };
@@ -32,6 +31,7 @@
   let getSettings=function() {
     return Object.assign({
       useTrueSleep:true,
+      messageDelay: 1800000,
       showMessage:true,
       deepSleepHours:5,
       idealSleepHours:10,
@@ -160,7 +160,7 @@
       deepSleepScore:generateScore(sleepData.deepSleep/60,settings.deepSleepHours),
       avgWakeUpScore: generateScore(getMsPastMidnight(sleepData.awakeSince),data.avgWakeUpTime),
       avgSleepTimeScore:generateScore(sleepData.totalSleep,data.avgSleepTime),
-      overallScore:getSleepScore(),
+      overallScore:getSleepScore()
     }
   };
   
@@ -173,7 +173,8 @@
   exports.getSummaryData=getData;
   exports.recordData=recordSleepStats;
   exports.getSleepScores=getAllSleepScores;
-  exports.getSleepData=getSleepData; 
+  exports.getSleepData=getSleepData;
+  exports.getSettings=getSettings;
 
       
 
