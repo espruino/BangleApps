@@ -1,21 +1,13 @@
 (function(back) {
   var FILE = "sleepsummary.settings.json";
   // Load settings
-  var settings = Object.assign({
-      useTrueSleep:true,
-      showMessage:true,
-      deepSleepHours:5,
-      idealSleepHours:10,
-      timeSinceAwake: 1800000,
-
-    }, require('Storage').readJSON(FILE, true) || {});
+  var settings = require("sleepsummary").getSettings();
 
   function writeSettings() {
     require('Storage').writeJSON(FILE, settings);
   }
 
-  // Show the menu
-  E.showMenu({
+    E.showMenu({
     "" : { "title" : "Sleep Summary" },
     "< Back" : () => back(),
     'Use True Sleep': {
@@ -33,12 +25,12 @@
       }
       
     },
-    'Message Time': {
-      value: 0|settings.timeAfterAwake,
+    'Message Delay': {
+      value: 0|settings.messageDelay,
       min: 0, max: 7200000,
-      step:15,
+      step:5,
       onchange: v => {
-        settings.timeAfterAwake = v; //Convert minutes to hours
+        settings.messageDelay = v; 
         writeSettings();
       },
       format : v => {
@@ -55,7 +47,7 @@
       min: 60, max: 600,
       step:15,
       onchange: v => {
-        settings.deepSleepHours = v/60; //Convert minutes to hours
+        settings.deepSleepHours = v/60; 
         writeSettings();
       },
       format : v => {
@@ -84,6 +76,19 @@
         return str || "0m";
       }
     },
+    'Clear Data': function () {
+      E.showPrompt("Are you sure you want to delete all averaged data?", {title:"Confirmation"})
+      .then(function(v) {
+        if (v) {
+          require("sleepsummary").deleteData();
+          E.showAlert("Cleared data!",{title:"Cleared!"}).then(function(v) {eval(require("Storage").read("sleepsummary.settings.js"))(()=>load())});
+        } else {
+          eval(require("Storage").read("sleepsummary.settings.js"))(()=>load());
+
+        }
+      });     
+      },
   });
+                       
 })
 
