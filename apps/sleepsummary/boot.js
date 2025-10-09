@@ -1,4 +1,16 @@
 {
+  let getMsPastMidnight=function(unixTimestamp) {
+    
+    const dateObject = new Date(unixTimestamp);
+
+    const hours = dateObject.getHours();
+    const minutes = dateObject.getMinutes();
+    const seconds = dateObject.getSeconds();
+    const milliseconds = dateObject.getMilliseconds();
+
+    const msPastMidnight = (hours * 3600000) + (minutes * 60000) + (seconds * 1000) + milliseconds;
+    return msPastMidnight;
+  };
   function formatTime(hours) {
     let h = Math.floor(hours);             // whole hours
     let m = Math.round((hours - h) * 60);  // leftover minutes
@@ -15,7 +27,7 @@
   }
 
 
-  function logNow() {
+  function logNow(msg) {
     let filename="sleepsummarylog.json";
     let storage = require("Storage");
 
@@ -29,7 +41,7 @@
       ("0"+d.getDate()).slice(-2) + " " +
       ("0"+d.getHours()).slice(-2) + ":" +
       ("0"+d.getMinutes()).slice(-2) + ":" +
-      ("0"+d.getSeconds()).slice(-2);
+      ("0"+d.getSeconds()).slice(-2)+", MSG: "+msg;
 
     // push new entry
     log.push(timeStr);
@@ -42,6 +54,7 @@
   }
   
   let showSummary=function(){
+    logNow("shown")
     var sleepData=require("sleepsummary").getSleepData();
     var sleepScore=require("sleepsummary").getSleepScores().overallSleepScore;
     //sleepData.consecSleep
@@ -60,33 +73,47 @@
     });
   }
   
-  function checkIfAwake(){
+  
+  function checkIfAwake(data,thisTriggerEntry){
+    
+    logNow("checked, prev status: "+data.prevStatus+", current status: "+data.status+", promptLastShownDay: "+require("sleepsummary").getSummaryData().promptLastShownDay);
+    
     let today = new Date().getDay();
     if(require("sleepsummary").getSummaryData().promptLastShownDay!=today){
-      var settings=getSettings();
-      var awakeSince=global.sleeplog.info.awakeSince;
-      if(awakeSince+settings.timeSinceAwake<Date.now()&&awakeSince!=0){
-        //show summary
-        if(settings.showMessage) showSummary();
+      //if coming from sleep
+      if (data.status==2&&(data.previousStatus==3||data.previousStatus==4)) {
+        var settings=require("sleepsummary").getSettings();
+
+        //woke up
+        if(settings.showMessage){
+          setTimeout(showSummary,settings.messageDelay)
+        }
         
-        logNow()
         require("sleepsummary").recordData();
       }
       
     }
   }
-
-  let getSettings=function() {
-    return Object.assign({
-      useTrueSleep:true,
-      timeSinceAwake: 1800000,
-      showMessage:true,
-      deepSleepHours:5,
-      idealSleepHours:10,
-
-    }, require('Storage').readJSON("sleepsummary.settings.json", true) || {});
-  };
   
+  //Force-load module
+  require("sleeplog");
 
-  setInterval(checkIfAwake,1800000);
+  // first ensure that the sleeplog trigger object is available (sleeplog is enabled)
+  if (typeof (global.sleeplog || {}).trigger === "object") {
+    // then add your parameters with the function to call as object into the trigger object
+    sleeplog.trigger["sleepsummary"] = {
+      onChange: true,   // false as default, if true call fn only on a status change
+      from: 0,           // 0 as default, in ms, first time fn will be called
+      to: 24*60*60*1000, // 24h as default, in ms, last time fn will be called
+        // reference time to from & to is rounded to full minutes
+      fn: function(data, thisTriggerEntry) { 
+      
+        checkIfAwake(data,thisTriggerEntry);
+      
+      
+      
+      } // function to be executed
+    };
+  }
+  
 }
