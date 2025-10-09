@@ -6,7 +6,7 @@
   "description": "This app puts the Bangle's accelerometer into 100Hz mode and reads 2 seconds worth of data after movement starts. The data can then be exported back to the PC.",
   "icon": "app.png",
   "tags": "",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "interface": "interface.html",
   "storage": [
