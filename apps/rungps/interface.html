@@ -26,6 +26,7 @@
     <button id="download_gpx">Download GPX</button>
     <button id="download_tcx">Download TCX</button>
     <button id="Read">Read</button>
+    <button id="Delete">Delete</button>
     <label for="input"></label><input id="input" placeholder="gpspoilog.csv">
 </div>
 
@@ -86,6 +87,32 @@ document.getElementById("download_tcx").addEventListener("click", () => {
     }
     const distanceStr = (document.getElementById("distance").innerText || "0km");
     window.gpx_manager.downloadTcxFile(points, [distanceStr], "km");
+});
+
+// Delete selected file from watch storage
+// Uses same filename pattern as Read: "rungps.<input>.csv" with fallback to default
+// After delete, clear UI state
+function getSelectedFileName() {
+    const val = (document.getElementById("input").value || "").trim();
+    return val ? `rungps.${val}.csv` : "gpspoilog.csv";
+}
+
+document.getElementById("Delete").addEventListener("click", () => {
+    const fileName = getSelectedFileName();
+    Util.eraseStorageFile(fileName, function() {
+        console.log("Deleted:", fileName);
+        try { alert(`Deleted ${fileName}`); } catch (e) { /* ignore if alert not available */ }
+        // reset state
+        text = "";
+        points = [];
+        // clear polylines group from map
+        try {
+            groep.eachLayer(l => map.removeLayer(l));
+            if (groep.clearLayers) groep.clearLayers();
+        } catch(e) {}
+        document.getElementById("distance").innerText = "0km";
+        document.getElementById("averageSpeed").innerText = "0:0min/km";
+    });
 });
 </script>
 </body>

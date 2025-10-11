@@ -40,3 +40,10 @@ You can also view or download your results directly from the **App Loader**.
 - Make sure your **GPS** is active before starting a run. It is ready when the distance and speed starts changing.
 - Recorded data includes time, distance, heart rate, ...  
 - Results are saved on the watch and can be exported for analysis.
+
+---
+
+## See Also
+
+If you’re looking for more advanced running features like pace tracking, auto-pausing, or customizable screens,  
+check out the official **[Run+](https://banglejs.com/apps/?id=runplus)** app in the App Loader.

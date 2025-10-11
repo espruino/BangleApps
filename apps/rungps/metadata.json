@@ -1,18 +1,21 @@
 { "id": "rungps",
   "name": "Running",
-  "shortName":"Running",
-  "version":"0.02",
-  "description": "This app is a app for running and see your prestasion!",
+  "shortName": "Running",
+  "version": "0.02",
+  "description": "This app is an app for running and viewing your performance!",
   "icon": "app.png",
   "tags": "tool,outdoors,gps",
-  "supports" : ["BANGLEJS2"],
+  "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "interface": "interface.html",
   "storage": [
-    {"name":"rungps.app.js","url":"app.js"},
-    {"name":"rungps.img","url":"app-icon.js","evaluate":true}
+    { "name": "rungps.app.js", "url": "app.js" },
+    { "name": "rungps.img", "url": "app-icon.js", "evaluate": true }
   ],
   "data": [
-    {"wildcard":"rungps..?.csv","storageFile":true}
+    { "wildcard": "rungps..?.csv", "storageFile": true }
+  ],
+  "screenshots": [
+    { "url": "screenshot.png" }
   ]
 }
