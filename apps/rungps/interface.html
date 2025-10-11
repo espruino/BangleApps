@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home rungps loader</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+
+    <script src="../../core/lib/interface.js"></script>
+    <link rel="stylesheet" href="Home.css">
+</head>
+<body>
+<script src="calculations.js"></script>
+<script src="gpx_maker.js"></script>
+
+<div id="map"></div>
+<div class="data">
+    <p id="distance">0km</p>
+    <p id="averageSpeed">0:0min/km</p>
+</div>
+<div id="inputDiv">
+    <button id="download_gpx">Download GPX</button>
+    <button id="download_tcx">Download TCX</button>
+    <button id="Read">Read</button>
+    <button id="Delete">Delete</button>
+    <label for="input"></label><input id="input" placeholder="gpspoilog.csv">
+</div>
+
+<script>
+let text = "";
+let points = [];
+let place;
+const groep = new L.featureGroup();
+
+// --- Initialize Map ---
+let map = L.map('map').setView([0, 0], 0);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+
+// --- Display points & update charts ---
+function show(map) {
+    points = window.calculations.translateData(text);
+    let vorig = points[0];
+
+    // start and end points
+    L.circle([vorig.lat, vorig.long], { color: 'green', fillColor: '#00ff00', fillOpacity: 1, radius: 2 }).addTo(map);
+    L.circle([points[points.length-1].lat, points[points.length-1].long], { color: 'purple', fillColor: '#7300ff', fillOpacity: 1, radius: 2 }).addTo(map);
+
+    for (let i = 1; i < points.length; i++) {
+        const point = points[i];
+        const line = new L.Polyline([ [vorig.lat, vorig.long], [point.lat, point.long] ], { color: 'red', weight: 3, opacity: 0.5 });
+        groep.addLayer(line);
+        map.addLayer(line);
+
+        vorig = point;
+    }
+
+    map.fitBounds(groep.getBounds());
+    [document.getElementById("averageSpeed").innerText, document.getElementById("distance").innerText] = window.calculations.getAverageSpeedAndDistance(points);
+}
+
+document.getElementById("Read").addEventListener("click", () => {
+    const fileName = "rungps."+document.getElementById("input").value+".csv" || "gpspoilog.csv";
+    Util.readStorageFile(fileName, data => {
+        if (!data) return console.log("File empty or not found:", fileName);
+        text = data;
+        show(map);
+    });
+});
+document.getElementById("download_gpx").addEventListener("click", () => {
+    if (!points || !points.length) {
+        points = window.calculations.translateData(text);
+    }
+    const distanceStr = (document.getElementById("distance").innerText || "0km");
+    window.gpx_manager.downloadGpxFile(points, [distanceStr], "km");
+});
+
+document.getElementById("download_tcx").addEventListener("click", () => {
+    if (!points || !points.length) {
+        points = window.calculations.translateData(text);
+    }
+    const distanceStr = (document.getElementById("distance").innerText || "0km");
+    window.gpx_manager.downloadTcxFile(points, [distanceStr], "km");
+});
+
+// Delete selected file from watch storage
+// Uses same filename pattern as Read: "rungps.<input>.csv" with fallback to default
+// After delete, clear UI state
+function getSelectedFileName() {
+    const val = (document.getElementById("input").value || "").trim();
+    return val ? `rungps.${val}.csv` : "gpspoilog.csv";
+}
+
+document.getElementById("Delete").addEventListener("click", () => {
+    const fileName = getSelectedFileName();
+    Util.eraseStorageFile(fileName, function() {
+        console.log("Deleted:", fileName);
+        try { alert(`Deleted ${fileName}`); } catch (e) { /* ignore if alert not available */ }
+        // reset state
+        text = "";
+        points = [];
+        // clear polylines group from map
+        try {
+            groep.eachLayer(l => map.removeLayer(l));
+            if (groep.clearLayers) groep.clearLayers();
+        } catch(e) {}
+        document.getElementById("distance").innerText = "0km";
+        document.getElementById("averageSpeed").innerText = "0:0min/km";
+    });
+});
+</script>
+</body>
+</html>
