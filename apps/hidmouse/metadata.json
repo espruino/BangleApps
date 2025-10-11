@@ -6,7 +6,7 @@
 	"description": "A mouse app - use your watch as a bluetooth mouse",
 	"icon": "app.png",
 	"type": "app",
-	"tags": "mouse",
+	"tags": "mouse,bluetooth,hid",
 	"supports" : ["BANGLEJS2"],
 	"readme": "README.md",
 	"storage": [
