@@ -30,7 +30,6 @@ const tap = () => {
 };
 
 const initBLE = () => {
-	NRF.setSecurity({addr_cycle_s: 1000 * 30});
 	NRF.setServices(undefined, { hid: mouse.report });
 };
 
