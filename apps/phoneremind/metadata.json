@@ -3,6 +3,7 @@
   "name": "Phone Reminder",
   "shortName":"PhoneRemind",
   "version":"0.01",
+  "icon":"icon.png",
   "description": "Provides an alert when your phone disconnects, and allows you to set familiar locations where it will not alert. This uses `MyLocation` for location.",
   "type":"bootloader",    
   "tags": "tool,bluetooth",
