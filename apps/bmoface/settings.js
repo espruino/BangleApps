@@ -1,6 +1,6 @@
 (function(back) {
   var FILE = "bmoface.settings.json";
-  
+  )
   // Load settings with proper defaults
   var settings = Object.assign({
     character: "BMO",
