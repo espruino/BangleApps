@@ -56,6 +56,7 @@ There are several options to choose from:
 * **Vibrate timer** : How many seconds should we vibrate for?
 * **Unread timer** : How long should the Messages app show an unread message for before going back to the clock?
 * **Min Font** : Minimum font size for messages
+* **Auto-Open Unread Msg** : Should the first unread message be displayed immediately when opening the app?
 * **Auto-Open Music** : Should the messages music screen auto open when music is played?
 * **Unlock Watch** : When a message arrives should the watch be unlocked?
 * **Flash Icon** : Should the messages icon in the widget flash when a message arrives?
