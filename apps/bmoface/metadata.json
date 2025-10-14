@@ -2,7 +2,7 @@
   "id": "bmoface",
   "name": "BMO Face",
   "shortName": "BMO",
-  "version": "0.1.1",
+  "version": "0.11",
   "description": "A watch face inspired by BMO that shows time, temp, steps and HR. Sleeps to -_- when locked.",
   "icon": "app.png",
   "tags": ["clock"],
@@ -20,4 +20,5 @@
     { "name": "bmoface.app.js", "url": "app.js" },
     { "name": "bmoface.settings.js", "url": "settings.js" }
   ]
+
 }
