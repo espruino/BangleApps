@@ -58,6 +58,20 @@
       .track-loading { text-align: center; padding: 20px; color: #666; }
       html, body { height: auto; min-height: 100%; }
       body { margin: 0; padding-bottom: 50px; }
+      .download-checkbox {
+        /* TODO */
+      }
+      .vertical {
+        display: flex;
+        flex-direction: column;
+      }
+      .horizontal {
+        display: flex;
+        flex-direction: row;
+      }
+      .hidden {
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -441,34 +455,50 @@ function trackLineToObject(headers, l) {
   return o;
 }
 
-function downloadTrack(filename, callback) {
-  function onData(data) {
+async function downloadTrack(filename) {
+  function parse(data) {
     const lines = data.trim().split("\n"), headers = lines.shift().split(",");
-    callback(lines.map(l=>trackLineToObject(headers, l)).filter(t => t.Time));
+    return lines.map(l=>trackLineToObject(headers, l)).filter(t => t.Time);
   }
   const data = fileCache.get(filename);
-  if (data) onData(data);
-  else {
-    Util.showModal(`Downloading ${filename}...`);
-    Util.readStorageFile(filename, data => {
-      fileCache.set(filename, data);
-      onData(data);
-      Util.hideModal();
-    });
+  if (data) return parse(data);
+
+  Util.showModal(`Downloading ${filename}...`);
+  try {
+    const data = await new Promise(resolve => Util.readStorageFile(filename, resolve));
+    fileCache.set(filename, data);
+    return parse(data);
+  } finally {
+    Util.hideModal();
   }
 }
 
-function downloadAll(trackList, cb) {
-  const tracks = [...trackList];
-  const downloadOne = () => {
-    const track = tracks.pop();
-    if(!track) return showToast("Finished downloading all.", "success");
-    downloadTrack(track.filename, lines => {
-      cb(lines, `Bangle.js Track ${track.number}`);
-      downloadOne();
+function isSelected(track) {
+  const trackNumber = track.number;
+  return document.getElementById(`track-download-${trackNumber}`).checked;
+}
+
+async function downloadTracks(tracks, saveCb) {
+  for(const track of tracks){
+    const lines = await downloadTrack(track.filename);
+    const title = `Bangle.js Track ${track.number}`;
+
+    saveCb(lines, title);
+  }
+
+  showToast("Finished downloading.", "success");
+}
+
+async function deleteTrack(filename) {
+  Util.showModal(`Deleting ${filename}...`);
+
+  try {
+    await new Promise(resolve => {
+      Util.eraseStorageFile(filename, () => resolve());
     });
-  };
-  downloadOne();
+  } finally {
+    Util.hideModal();
+  }
 }
 
 // ========================================
@@ -709,13 +739,18 @@ function getTrackList() {
 
           html += `
           <div class="accordion-item">
-            <input type="checkbox" id="accordion-track-${track.number}" name="accordion-tracks" hidden>
-            <label class="accordion-header" for="accordion-track-${track.number}" data-track-index="${index}">
-              <i class="icon icon-arrow-right mr-1"></i>
-              <strong>Track ${track.number}</strong> - ${dateStr}
-            </label>
-            <div class="accordion-body" id="track-content-${track.number}">
-              <div class="track-loading">Click to load track data...</div>
+            <div class="horizontal">
+              <input type="checkbox" id="track-download-${track.number}" class="download-checkbox">
+              <div class="vertical">
+                <input type="checkbox" id="accordion-track-${track.number}" name="accordion-tracks" hidden>
+                <label class="accordion-header" for="accordion-track-${track.number}" data-track-index="${index}">
+                  <i class="icon icon-arrow-right mr-1"></i>
+                  <strong>Track ${track.number}</strong> - ${dateStr}
+                </label>
+                <div class="accordion-body" id="track-content-${track.number}">
+                  <div class="track-loading">Click to load track data...</div>
+                </div>
+              </div>
             </div>
           </div>`;
         });
@@ -735,9 +770,12 @@ function getTrackList() {
       }
 
       html += `
-        <h2>Batch Operations</h2>
-        <div class="form-group">
-          ${['KML', 'GPX', 'CSV'].map(fmt => `<button class="btn btn-primary" task="download${fmt.toLowerCase()}_all">Download all ${fmt}</button>`).join(' ')}
+        <div id="batch">
+          <h2>Batch Operations</h2>
+          <div class="form-group">
+            ${['KML', 'GPX', 'CSV'].map(fmt => `<button class="btn btn-primary" task="download${fmt.toLowerCase()}_selected">Download selected ${fmt}</button>`).join(' ')}
+            <button class="btn btn-primary" id="delete-selected">Delete selected</button>
+          </div>
         </div>
         <h2>Settings</h2>
         <div class="form-group">
@@ -791,7 +829,7 @@ ${trackData.Latitude ? `
         trackContainer.dataset.loaded = 'true';
         attachTrackButtonListeners(trackContainer);
 
-        downloadTrack(track.filename, fullTrack => {
+        downloadTrack(track.filename).then(fullTrack => {
           if (trackData.Latitude) {
             const coordinates = fullTrack
               .filter(hasValidGPS)
@@ -820,7 +858,7 @@ ${trackData.Latitude ? `
         const buttons = container.querySelectorAll("button[task]");
 
         buttons.forEach(button => {
-          button.addEventListener("click", event => {
+          button.addEventListener("click", async event => {
             const button = event.currentTarget;
             const filename = button.getAttribute("filename");
             const trackid = button.getAttribute("trackid");
@@ -832,18 +870,15 @@ ${trackData.Latitude ? `
               case "delete":
                 if (button.dataset.confirmDelete === "true") {
                   // Second click - proceed with deletion
-                  Util.showModal(`Deleting ${filename}...`);
-                  Util.eraseStorageFile(filename, () => {
-                    Util.hideModal();
-                    getTrackList();
-                  });
+                  await deleteTrack(filename);
+                  getTrackList();
                 } else {
                   // First click - change to confirm state
                   const originalText = button.textContent;
                   button.textContent = "Confirm Delete";
                   button.classList.add("btn-error");
                   button.dataset.confirmDelete = "true";
-                  
+
                   // Reset after 3 seconds
                   setTimeout(() => {
                     if (button.dataset.confirmDelete === "true") {
@@ -855,13 +890,13 @@ ${trackData.Latitude ? `
                 }
                 break;
               case "downloadkml":
-                downloadTrack(filename, track => saveKML(track, `Bangle.js Track ${trackid}`));
+                await downloadTracks([filename], track => saveKML(track, `Bangle.js Track ${trackid}`));
                 break;
               case "downloadgpx":
-                downloadTrack(filename, track => saveGPX(track, `Bangle.js Track ${trackid}`));
+                await downloadTracks([filename], track => saveGPX(track, `Bangle.js Track ${trackid}`));
                 break;
               case "downloadcsv":
-                downloadTrack(filename, track => saveCSV(track, `Bangle.js Track ${trackid}`));
+                await downloadTracks([filename], track => saveCSV(track, `Bangle.js Track ${trackid}`));
                 break;
             }
           });
@@ -869,6 +904,13 @@ ${trackData.Latitude ? `
       }
 
       if (trackList.length > 0) {
+        const handleCheckboxCheck = () => {
+          const checkboxes = [...document.querySelectorAll(".download-checkbox")];
+          const batch = document.querySelector("#batch");
+
+          batch.classList.toggle("hidden", !checkboxes.some(b => b.checked));
+        };
+
         document.querySelectorAll('.accordion-header').forEach(header => {
           header.addEventListener('click', e => {
             const trackIndex = parseInt(header.dataset.trackIndex);
@@ -877,6 +919,10 @@ ${trackData.Latitude ? `
               setTimeout(() => displayTrack(trackIndex, trackNumber), 10);
             }
           });
+
+          header.closest(".horizontal")
+            .querySelector(".download-checkbox")
+            .addEventListener('click', handleCheckboxCheck);
         });
       }
 
@@ -899,11 +945,20 @@ ${trackData.Latitude ? `
         getTrackList();
       });
       Util.hideModal();
-      domTracks.querySelectorAll("button[task$='_all']").forEach(button => {
-        button.addEventListener("click", e => {
+      domTracks.querySelectorAll("button[task$='_selected']").forEach(button => {
+        button.addEventListener("click", async e => {
           const task = e.currentTarget.getAttribute("task");
-          downloadAll(trackList, task.includes('kml') ? saveKML : task.includes('gpx') ? saveGPX : saveCSV);
+          await downloadTracks(
+            trackList.filter(isSelected),
+            task.includes('kml') ? saveKML : task.includes('gpx') ? saveGPX : saveCSV
+          );
         });
+      });
+      domTracks.querySelector("button#delete-selected").addEventListener("click", async e => {
+        const selected = trackList.filter(isSelected);
+
+        for(const track of selected)
+          await deleteTrack(track.filename);
       });
     });
   });
