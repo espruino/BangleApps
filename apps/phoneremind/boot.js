@@ -1,9 +1,9 @@
 {
     let locationsFile = "phoneremind.json";
-    let buzzInterval;
+    let connected;
+    let promptShown = false;
     let addLocation = function (location) {
-        let connected;
-        let promptShown = false;
+        
         let locs = require("Storage").readJSON(locationsFile, 1) || [];
         locs.push(location);
         require("Storage").writeJSON(locationsFile, locs);
