@@ -1,6 +1,7 @@
 {
     let locationsFile = "phoneremind.json";
     let connected;
+    let buzzInterval;
     let promptShown = false;
     let addLocation = function (location) {
         
@@ -51,9 +52,7 @@
         var locs = getAllLocations();
         print(locs);
         var useGPS = false;
-        if (useGPS) {
-
-        } else {
+        if (!useGPS) {
 
             myLocation = getMyLocation();
             var convLoc = convertCoordsToMeters(myLocation.lat, myLocation.lon)
