@@ -12,7 +12,7 @@
   function selectPrecisionLevel(lvl){
     settings.precision=lvl;
     writeSettings();
-    load("phoneremind.settings.js");
+    showMainMenu();
     
   }
   function formatTime(ms) {
