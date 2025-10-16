@@ -85,7 +85,7 @@
             require("Storage").erase("phoneremind.json");
             E.showMessage("Successfully deleted saved locations!","Cleared");
           } else {
-            eval(require("Storage").read("phoneremind.settings.js"))(()=>load());
+            showMainMenu();
 
           }
         });   
