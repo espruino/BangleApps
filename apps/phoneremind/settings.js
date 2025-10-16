@@ -70,13 +70,27 @@
     E.showMenu({
       "" : { "title" : "Phone Reminder" },
       "< Back" : () => back(),
-      'Precision Lvl': function(){
+      'Check Delay': {
+      value: 0|settings.timeDelay,
+      min: 0, max: 600000,
+      step:5000,
+      onchange: v => {
+        settings.timeDelay = v; 
+        writeSettings();
+      },
+      format : v => {
+        return formatTime(v)
+      }
+    },
+      'Precision Level': function(){
           showPrecisionMenu(showMainMenu);
         
         // format: ... may be specified as a function which converts the value to a string
         // if the value is a boolean, showMenu() will convert this automatically, which
         // keeps settings menus consistent
       },
+      
+      
       
       'Delete All Locations': function(){
           E.showPrompt("Are you sure you want to delete all familiar locations?", {title:"Confirm"})
@@ -90,19 +104,7 @@
           }
         });   
         
-      },
-      'Check Delay': {
-      value: 0|settings.timeDelay,
-      min: 0, max: 600000,
-      step:5000,
-      onchange: v => {
-        settings.timeDelay = v; 
-        writeSettings();
-      },
-      format : v => {
-        return formatTime(v)
       }
-    }
     });
   }
   showMainMenu()
