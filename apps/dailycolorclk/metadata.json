@@ -1,0 +1,26 @@
+{ 
+  "id": "dailycolorclk",
+  "name": "Daily Color Clock",
+  "shortName":"Daily Color",
+  "icon": "icon.png",
+  "version":"0.01",
+  "description": "A clock with 2 ClockInfos and a bar of color at the bottom that changes color every day. Forked from Slope Clock ++",
+  "type":"clock",    
+  "tags": "clock,clkinfo",
+  "author":"RKBoss6",
+  "supports": ["BANGLEJS2"],
+  "screenshots" : [ { "url":"Scr1.png" }, 
+    { "url":"Scr2.png" }  ],
+  "dependencies" : { "clock_info":"module"},
+  "allow_emulator":true,
+  "readme":"README.md",
+  "storage": [
+    {"name":"dailycolorclk.app.js","url":"app.js"},
+    {"name":"dailycolorclk.img","url":"app-icon.js","evaluate":true},
+    {"name":"dailycolorclk.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"dailycolorclk.settings.json"},
+    {"name":"dailycolorclk.json"} 
+  ]
+}
