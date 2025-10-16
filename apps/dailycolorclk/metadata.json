@@ -10,17 +10,20 @@
   "author":"RKBoss6",
   "supports": ["BANGLEJS2"],
   "screenshots" : [ { "url":"Scr1.png" }, 
-    { "url":"Scr2.png" }  ],
+    { "url":"Scr2.png" },{ "url":"Scr3.png" },{ "url":"Scr4.png" }],
   "dependencies" : { "clock_info":"module"},
   "allow_emulator":true,
   "readme":"README.md",
   "storage": [
     {"name":"dailycolorclk.app.js","url":"app.js"},
     {"name":"dailycolorclk.img","url":"app-icon.js","evaluate":true},
-    {"name":"dailycolorclk.settings.js","url":"settings.js"}
+    {"name":"dailycolorclk.settings.js","url":"settings.js"},
+    {"name":"dailycolorclk.default.json","url":"default.json"}
   ],
   "data": [
     {"name":"dailycolorclk.settings.json"},
     {"name":"dailycolorclk.json"} 
   ]
 }
+
+
