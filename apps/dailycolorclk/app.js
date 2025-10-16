@@ -28,7 +28,7 @@ const hoursYPos=68;
 const minOffset=4; //offset from slope
 const slopeBorder = 4;
 
-
+let R;
 let dateStr = "";
 let bgColor = settings.colorSaved;
 print(settings);
@@ -79,7 +79,7 @@ let draw = function() {
   
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(draw, 60000 - (Date.now() % 60000));
-
+  R = Bangle.appRect;
 
   var date = new Date();
   var local_time = require("locale").time(date, 1);
