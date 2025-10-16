@@ -21,8 +21,6 @@ Graphics.prototype.setFontPaytoneOne = function(scale) {
 
 let drawTimeout;
 
-let g2 = Graphics.createArrayBuffer(g.getWidth(),90,1,{msb:true});
-let g2img = {width:g2.getWidth(), height:g2.getHeight(), bpp:1, buffer:g2.buffer, transparent:0};
 
 const slopeHeight = 90;
 const fontBorder = 13;
