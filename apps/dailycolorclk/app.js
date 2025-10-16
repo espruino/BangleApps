@@ -28,7 +28,7 @@ const hoursYPos=68;
 const minOffset=4; //offset from slope
 const slopeBorder = 4;
 
-let R;
+let R,x,y;
 let dateStr = "";
 let bgColor = settings.colorSaved;
 print(settings);
