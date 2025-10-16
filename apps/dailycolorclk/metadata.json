@@ -2,7 +2,7 @@
   "id": "dailycolorclk",
   "name": "Daily Color Clock",
   "shortName":"Daily Color",
-  "icon": "icon.png",
+  "icon": "Icon.png",
   "version":"0.01",
   "description": "A clock with 2 ClockInfos and a bar of color at the bottom that changes color every day. Forked from Slope Clock ++",
   "type":"clock",    
