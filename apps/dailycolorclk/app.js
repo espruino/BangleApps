@@ -26,7 +26,7 @@ let g2img = {width:g2.getWidth(), height:g2.getHeight(), bpp:1, buffer:g2.buffer
 
 const slopeHeight = 90;
 const fontBorder = 13;
-const hoursYPos=68; //amount down for hours from offsy
+const hoursYPos=68; 
 const minOffset=4; //offset from slope
 const slopeBorder = 4;
 
@@ -97,7 +97,7 @@ let draw = function() {
 
   //clear old hour
   g.setColor(g.theme.bg);
-  g.fillRect(0,24,85,88);
+  g.fillRect(0,24,90,88);
   // Draw hour
   g.setColor(g.theme.fg)
   .setFontAlign(-1, 0)
@@ -107,7 +107,6 @@ let draw = function() {
   
   
 
-  // Draw minute into buffer (cheap)
  
 
   // draw minutes
@@ -115,7 +114,7 @@ let draw = function() {
   g.setColor(bgColor);
   g.fillRect(98,92,g.getWidth(),152);
   g.setFontAlign(-1, -1).setFont("PaytoneOne")
-    .setColor(g.theme.bg).drawString(minStr,100, yo);
+    .setColor(g.theme.bg).drawString(minStr,95, yo);
   
   // Transition bar
   g.setColor(g.theme.bg).fillRect(
