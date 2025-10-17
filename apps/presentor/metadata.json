@@ -5,7 +5,7 @@
   "description": "Use your Bangle to present!",
   "icon": "app.png",
   "type": "app",
-  "tags": "tool,bluetooth",
+  "tags": "tool,bluetooth,mouse,hid",
   "interface": "interface.html",
   "readme":"README.md",
   "supports": ["BANGLEJS", "BANGLEJS2"],
