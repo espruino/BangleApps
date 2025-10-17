@@ -9,17 +9,17 @@ try {
 
 //seeded RNG to generate stars, snow, etc
 function sfc32(a, b, c, d) {
-    return function() {
-      a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0; 
-      var t = (a + b) | 0;
-      a = b ^ b >>> 9;
-      b = c + (c << 3) | 0;
-      c = (c << 21 | c >>> 11);
-      d = d + 1 | 0;
-      t = t + d | 0;
-      c = c + t | 0;
-      return (t >>> 0) / 4294967296;
-    };
+  return function() {
+    a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
+    var t = (a + b) | 0;
+    a = b ^ b >>> 9;
+    b = c + (c << 3) | 0;
+    c = (c << 21 | c >>> 11);
+    d = d + 1 | 0;
+    t = t + d | 0;
+    c = c + t | 0;
+    return (t >>> 0) / 4294967296;
+  };
 }
 
 //scale x, y coords to screen
@@ -79,12 +79,11 @@ function drawSnow(color, coord, size) {
 }
 
 function draw(color) {
+  var seed;
+  var rand;
 
-var seed;
-var rand;
-
-g.clear();
-//background
+  g.clear();
+  //background
   g.setColor(color.bg1).fillRect(
     px(0),py(0),
     px(100),py(45)
@@ -96,20 +95,20 @@ g.clear();
   //lightning
   if (color.ltn) {
     g.setColor(color.ltn).fillPoly([
-    px(70),py(20),
-    px(60),py(28),
-    px(71),py(29),
-    px(63),py(40),
-    px(75),py(28),
-    px(64),py(27)
+      px(70),py(20),
+      px(60),py(28),
+      px(71),py(29),
+      px(63),py(40),
+      px(75),py(28),
+      px(64),py(27)
     ]);
     g.fillPoly([
-    px(40),py(20),
-    px(30),py(28),
-    px(41),py(29),
-    px(33),py(40),
-    px(45),py(28),
-    px(34),py(27)
+      px(40),py(20),
+      px(30),py(28),
+      px(41),py(29),
+      px(33),py(40),
+      px(45),py(28),
+      px(34),py(27)
     ]);
   }
   //stars
@@ -117,7 +116,7 @@ g.clear();
     seed = 4;
     rand = sfc32(0x9E3779B9, 0x243F6A88, 0xB7E15162, seed);
     for (let i = 0; i < 40; i++) {
-  g.setColor(color.star).drawCircle(Math.floor(rand() * px(100)),Math.floor(rand() * py(33)),Math.floor(rand() * 2));
+      g.setColor(color.star).drawCircle(Math.floor(rand() * px(100)),Math.floor(rand() * py(33)),Math.floor(rand() * 2));
     }
   }
   //birds
@@ -216,13 +215,13 @@ function setWeather() {
     if (new Date().getHours() >= 7 && new Date().getHours() <= 19) {
       //day-clear
       a = {
-      bg1:0x4FFF, bg2:0x03E0,
-      sun:0xFD20,
-      path:0x8200,
-      mtn1:0x045f, mtn2:0x000F,
-      lake:0x000F,
-      tree1:0x07E0, tree2:0, tree3:0x7BE0,
-      bird:0xFFFF
+        bg1:0x4FFF, bg2:0x03E0,
+        sun:0xFD20,
+        path:0x8200,
+        mtn1:0x045f, mtn2:0x000F,
+        lake:0x000F,
+        tree1:0x07E0, tree2:0, tree3:0x7BE0,
+        bird:0xFFFF
       };
       //day-cloudy
       if (data.code == 801 || data.code == 802) a.cloud1 = 0xFFFF;
@@ -230,13 +229,13 @@ function setWeather() {
     else {
       //night-clear
       a = {
-      bg1:0, bg2:0x0005,
-      sun:0xC618,
-      path:0,
-      mtn1:0x0210, mtn2:0x0010,
-      lake:0x000F,
-      tree1:0x0200, tree2:0, tree3:0x59E0,
-      star:0xFFFF
+        bg1:0, bg2:0x0005,
+        sun:0xC618,
+        path:0,
+        mtn1:0x0210, mtn2:0x0010,
+        lake:0x000F,
+        tree1:0x0200, tree2:0, tree3:0x59E0,
+        star:0xFFFF
       };
       //night-cloudy
       if (data.code == 801 || data.code == 802) a.cloud1 = 0x4208;
@@ -246,12 +245,12 @@ function setWeather() {
     if (new Date().getHours() >= 7 && new Date().getHours() <= 19) {
       //day-overcast
       a = {
-      bg1:0xC618, bg2:0x0200,
-      path:0x3000,
-      mtn1:0x3B38, mtn2:0x0005,
-      lake:0x000F,
-      tree1:0x03E0, tree2:0, tree3:0x59E0,
-      cloud1:0x7BEF, cloud2:1
+        bg1:0xC618, bg2:0x0200,
+        path:0x3000,
+        mtn1:0x3B38, mtn2:0x0005,
+        lake:0x000F,
+        tree1:0x03E0, tree2:0, tree3:0x59E0,
+        cloud1:0x7BEF, cloud2:1
       };
       //day-lightning
       if (data.code >= 200 && data.code < 300) a.ltn = 0xFFFF;
@@ -263,12 +262,12 @@ function setWeather() {
     else {
       //night-overcast
       a = {
-      bg1:0, bg2:0x0005,
-      path:0,
-      mtn1:0x0010, mtn2:0x000F,
-      lake:0x000F,
-      tree1:0x0200, tree2:0, tree3:0x59E0,
-      cloud1:0x4208, cloud2:1
+        bg1:0, bg2:0x0005,
+        path:0,
+        mtn1:0x0010, mtn2:0x000F,
+        lake:0x000F,
+        tree1:0x0200, tree2:0, tree3:0x59E0,
+        cloud1:0x4208, cloud2:1
       };
       //night-lightning
       if (data.code >= 200 && data.code < 300) a.ltn = 0xFFFF;
@@ -282,23 +281,23 @@ function setWeather() {
     if (new Date().getHours() >= 7 && new Date().getHours() <= 19) {
       //day-fog
       a = {
-      bg1:0xC618, bg2:0x0200,
-      path:0x3000,
-      mtn1:0x3B38, mtn2:0x0005,
-      lake:0x000F,
-      tree1:0x03E0, tree2:0, tree3:0x59E0,
-      fog:0xFFFF
+        bg1:0xC618, bg2:0x0200,
+        path:0x3000,
+        mtn1:0x3B38, mtn2:0x0005,
+        lake:0x000F,
+        tree1:0x03E0, tree2:0, tree3:0x59E0,
+        fog:0xFFFF
       };
     }
     else {
       //night-fog
       a = {
-      bg1:0, bg2:0x0005,
-      path:0,
-      mtn1:0x0010, mtn2:0x000F,
-      lake:0x000F,
-      tree1:0x0200, tree2:0, tree3:0x59E0,
-      fog:0x7BEF
+        bg1:0, bg2:0x0005,
+        path:0,
+        mtn1:0x0010, mtn2:0x000F,
+        lake:0x000F,
+        tree1:0x0200, tree2:0, tree3:0x59E0,
+        fog:0x7BEF
       };
     }
   }
@@ -306,26 +305,26 @@ function setWeather() {
     if (new Date().getHours() >= 7 && new Date().getHours() <= 19) {
       //day-snow
       a = {
-      bg1:0, bg2:0x7BEF,
-      path:0xC618,
-      mtn1:0xFFFF, mtn2:0x7BEF,
-      lake:0x07FF,
-      tree1:0xC618, tree2:0xC618, tree3:0x59E0,
-      cloud1:0x7BEF, cloud2:1,
-      snow:0xFFFF,
-      clock: 0
+        bg1:0, bg2:0x7BEF,
+        path:0xC618,
+        mtn1:0xFFFF, mtn2:0x7BEF,
+        lake:0x07FF,
+        tree1:0xC618, tree2:0xC618, tree3:0x59E0,
+        cloud1:0x7BEF, cloud2:1,
+        snow:0xFFFF,
+        clock: 0
       };
     }
     else {
       //night-snow
       a = {
-      bg1:0, bg2:0x0005,
-      path:0,
-      mtn1:0x0010, mtn2:0x000F,
-      lake:0x000F,
-      tree1:0x39E7, tree2:0x39E7, tree3:0x59E0,
-      cloud1:0x4208, cloud2:1,
-      snow:0xFFFF
+        bg1:0, bg2:0x0005,
+        path:0,
+        mtn1:0x0010, mtn2:0x000F,
+        lake:0x000F,
+        tree1:0x39E7, tree2:0x39E7, tree3:0x59E0,
+        cloud1:0x4208, cloud2:1,
+        snow:0xFFFF
       };
     }
   }
