@@ -1,0 +1,18 @@
+{
+  "id": "clockinfolist",
+  "name": "Clockinfo List",
+  "shortName": "ClockinfoList",
+  "version": "0.01",
+  "type": "app",
+  "description": "List Available Clockinfo Modules",
+  "icon": "app.png",
+  "allow_emulator": true,
+  "tags": "tool,clkinfo",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    { "name": "clockinfolist.app.js", "url": "app.js" },
+    { "name": "clockinfolist.img", "url": "app-icon.js", "evaluate": true }
+  ],
+  "dependencies" : { "clock_info":"module" }
+}
