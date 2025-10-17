@@ -46,7 +46,8 @@
           }
           return {
             text: txt,
-            short: odx
+            short: odx,
+            img: atob("GBiBAP///8AYEYB8MYA8IYA8IYA8QYA8IYA8HYO8A8J8A6I/85K/+ZO/+ZE/8bDAgZAwgYgQgYQQQYQQMYJgCYEgDYFABYDABf///w==")
           };
         }
       });
