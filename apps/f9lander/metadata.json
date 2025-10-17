@@ -4,7 +4,7 @@
   "version": "0.05",
   "description": "Land a rocket booster by tilting the watch",
   "icon": "f9lander.png",
-  "screenshots" : [ { "url":"f9lander_screenshot1.png" }, { "url":"f9lander_screenshot2.png" }, { "url":"f9lander_screenshot3.png" },{ "url":"f9Lander_screenshot4.png" }],
+  "screenshots" : [ { "url":"f9lander_screenshot1.png" }, { "url":"f9lander_screenshot2.png" }, { "url":"f9lander_screenshot3.png" },{ "url":"f9lander_screenshot4.png" }],
   "readme": "README.md",
   "tags": "game",
   "supports" : ["BANGLEJS", "BANGLEJS2"],
