@@ -106,9 +106,10 @@ let draw = function() {
   // draw minutes
   var yo = slopeHeight + minOffset;
   g.setColor(bgColor);
-  g.fillRect(98,92,g.getWidth(),152);
-  g.setFontAlign(-1, -1).setFont("PaytoneOne")
-    .setColor(g.theme.bg).drawString(minStr,95, yo);
+  //clear old minutes
+  g.fillRect(92,92,g.getWidth(),152);
+  g.setFontAlign(1, -1).setFont("PaytoneOne")
+    .setColor(g.theme.bg).drawString(minStr,g.getWidth()-7, yo);
   
   // Transition bar
   g.setColor(g.theme.bg).fillRect(
