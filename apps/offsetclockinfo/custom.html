@@ -1,0 +1,114 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+		<style>
+			input.offset {
+					width: 80px;
+			}
+			input.name {
+					width: 150px;
+			}
+		</style>
+  </head>
+  <body>    
+    <table id="rows" class="table table-scroll">
+      <tr>
+        <th>Name</th>
+        <th>UTC Offset</th>
+      </tr>
+    </table>
+
+    <button id="addrow" class="btn">+</button>
+    <button id="delrow" class="btn">-</button>
+    <br>
+    <button id="upload" class="btn btn-primary">Upload</button>
+		<template id="row-template">
+			<tr class="row">
+				<td>
+					<input type="text" class="name"></input>
+				</td>
+				<td>
+					<input type="number" class="offset"></input>
+				</td>
+			</tr>
+		</template>
+
+    <script src="../../core/lib/customize.js"></script>
+
+    <script>
+			var storedString = localStorage.getItem('offsetclockinfo-config');
+			var stored = {};
+			if (storedString) {
+				stored = JSON.parse(storedString);
+			}
+
+			if (!stored.rows) {
+				stored.rows = [
+					{
+						name: "London",
+						offset: 1,
+					},
+					{
+						name: "NYC",
+						offset: -4,
+					},
+					{
+						name: "Denver",
+						offset: -6,
+					}
+				];
+			}
+
+			var tbl = document.getElementById("rows");
+			var tmp = document.getElementById("row-template");
+			for (var i = 0; i < stored.rows.length; i++) {
+				var row = tmp.content.cloneNode(true);
+				var storedRow = stored.rows[i]
+				row.querySelector(".name").value = storedRow.name;
+				row.querySelector(".offset").value = storedRow.offset;
+				tbl.append(row);
+			}
+
+			document.getElementById("addrow").addEventListener("click", function() {
+				var tbl = document.getElementById("rows");
+				var tmp = document.getElementById("row-template");
+				var row = tmp.content.cloneNode(true);
+				tbl.append(row);
+			});
+
+			document.getElementById("delrow").addEventListener("click", function() {
+				var tbl = document.getElementById("rows");
+				tbl.deleteRow(tbl.rows.length -1);
+			});
+
+			document.getElementById("upload").addEventListener("click", function() {
+				var config = {
+					rows: []
+				};
+
+				document.querySelectorAll(".row").forEach((row) => {
+					var name = row.querySelector(".name").value;
+					var offset = row.querySelector(".offset").value;
+				        if ( name != "" && offset != "" ) {
+						config.rows.push({
+							name: name,
+							offset: offset,
+						});
+					}
+				});
+
+				localStorage.setItem('offsetclockinfo-config', JSON.stringify(config));
+
+				// send finished app (in addition to contents of app.json)
+				sendCustomizedApp({
+					storage:[
+						{
+							name: "offsetclockinfo.settings.json",
+							content: JSON.stringify(config)
+						},
+					]
+				});
+			});
+    </script>
+  </body>
+</html>
