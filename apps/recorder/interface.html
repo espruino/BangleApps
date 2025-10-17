@@ -393,8 +393,9 @@ ${fields.map(f=>kmlField(f,'SimpleArrayData')).join('\n')}
 }
 
 function saveGPX(track, title) {
-  if (!track?.[0]?.Time) return showToast("Error in trackfile.", "error");
   track = filterGPSCoordinates(track);
+  // check track validity after filtering
+  if (!track?.[0]?.Time) return showToast("Error in trackfile (no time or empty).", "error");
   let lastTime = 0;
   const gpx = `<?xml version="1.0" encoding="UTF-8"?>
 <gpx creator="Bangle.js" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">
