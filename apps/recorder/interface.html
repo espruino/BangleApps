@@ -775,7 +775,7 @@ function getTrackList() {
           <h2>Batch Operations</h2>
           <div class="form-group">
             ${['KML', 'GPX', 'CSV'].map(fmt => `<button class="btn btn-primary" task="download${fmt.toLowerCase()}_selected">Download selected ${fmt}</button>`).join(' ')}
-            <button class="btn btn-primary" id="delete-selected">Delete selected</button>
+            <button class="btn btn-error" id="delete-selected">Delete selected</button>
           </div>
         </div>
         <h2>Settings</h2>
@@ -960,11 +960,9 @@ ${trackData.Latitude ? `
           );
         });
       });
-      domTracks.querySelector("button#delete-selected").addEventListener("click", async e => {
-        const selected = trackList.filter(isSelected);
-
-        for(const track of selected)
-          await deleteTrack(track.filename);
+      domTracks.querySelector("button#delete-selected").addEventListener("click", e => {
+        const filenames = trackList.filter(isSelected).map(track => track.filename);
+        confirmDelete(e.target, filenames);
       });
     });
   });
