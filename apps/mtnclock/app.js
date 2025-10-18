@@ -1,5 +1,15 @@
 var data = require("Storage").readJSON("mtnclock.json", 1) || {};
 
+if (! Array.isArray(data.rows)) {
+  data.rows = [];
+  require("Storage").writeJSON("mtnclock.json", data);
+}
+
+let showingSettings = false;
+let clockinfosSettings = [];
+let clockinfosMain = [];
+let clockinfos = require("clock_info").load();
+
 let weather;
 try {
   weather = require('weather');
@@ -166,7 +176,7 @@ function draw(color) {
     }
   }
   //mountains
-  drawMtn({mtn1:color.mtn2, mtn2:color.mtn1}, {x:px(35), y:py(30)}, {w:px(38), h:py(17)});
+  drawMtn({mtn1:color.mtn2, mtn2:color.mtn1}, {x:px(43), y:py(28)}, {w:px(38), h:py(19)});
   drawMtn({mtn1:color.mtn2, mtn2:color.mtn1}, {x:px(10), y:py(20)}, {w:px(50), h:py(30)});
   drawMtn({mtn1:color.mtn1, mtn2:color.mtn2}, {x:px(90), y:py(20)}, {w:px(70), h:py(30)});
   //lake
@@ -200,8 +210,25 @@ function draw(color) {
 
   //clock text
   (color.clock == undefined) ? g.setColor(0xFFFF) : g.setColor(color.clock);
-  g.setFont("Vector", py(20)).setFontAlign(-1, -1).drawString((require("locale").time(new Date(), 1).replace(" ", "")), px(2), py(67));
-  g.setFont("Vector", py(10)).drawString(require('locale').dow(new Date(), 1)+" "+new Date().getDate()+" "+require('locale').month(new Date(), 1)+((data.temp == undefined) ? "" : " | "+require('locale').temp(Math.round(data.temp-273.15)).replace(".0", "")), px(2), py(87));
+  const start = 87;
+  for (let r = 0; r < data.rows.length; r++) {
+    let a = data.rows[r].menuA;
+    let b = data.rows[r].menuB;
+    if (clockinfos[a] && clockinfos[a].items[b]) {
+      let ci = clockinfos[a].items[b];
+      let text = ci.get().text;
+      if (!(clockinfosMain[a] && clockinfosMain[a][b])) {
+        clockinfosMain[a] = clockinfosMain[a] || [];
+        clockinfosMain[a][b] = true;
+        ci.show();
+        ci.on("redraw", clockinfoRedraw);
+      }
+      g.setFont("Vector", py(10)).setFontAlign(-1, -1).drawString(text, px(2), py((start - (data.rows.length - 1) * 10) + r * 10));
+    }
+  }
+
+  g.setFont("Vector", py(20)).setFontAlign(-1, -1).drawString((require("locale").time(new Date(), 1).replace(" ", "")), px(2), py(start - ((data.rows.length + 2)*10)));
+  g.setFont("Vector", py(10)).drawString(require('locale').dow(new Date(), 1)+" "+new Date().getDate()+" "+require('locale').month(new Date(), 1)+((data.temp == undefined) ? "" : " | "+require('locale').temp(Math.round(data.temp-273.15)).replace(".0", "")), px(2), py(start - data.rows.length * 10));
 
   if (data.showWidgets) {
     Bangle.drawWidgets();
@@ -209,6 +236,7 @@ function draw(color) {
 }
 
 function setWeather() {
+  if (showingSettings) return;
   var a = {};
   //clear day/night is default weather
   if ((data.code >= 800 && data.code <=802) || data.code == undefined) {
@@ -370,7 +398,73 @@ global.GB = (event) => {
   if (_GB) setTimeout(_GB, 0, event);
 };
 
+function drawClkinfoSettings() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  g.clear();
+  g.setColor(g.theme.fg);
+  g.setFont("Vector", py(10)).setFontAlign(-1, -1).drawString("<Back", px(2), py(9));
+  g.drawRect(1, 1, px(33), px(25)-1);
+  g.setFont("Vector", py(10)).setFontAlign(0, -1).drawString("-", px(50), py(9));
+  g.drawRect(px(33), 1, px(67), px(25)-1);
+  g.setFont("Vector", py(10)).setFontAlign(0, -1).drawString("+", px(83), py(9));
+  g.drawRect(px(67), 1, px(100)-1, px(25)-1);
+
+  for (let r = 0; r < data.rows.length; r++) {
+    let a = data.rows[r].menuA;
+    let b = data.rows[r].menuB;
+    let ci = clockinfos[a].items[b];
+    if (clockinfosMain[a] && clockinfosMain[a][b]) {
+      clockinfosMain[a][b] = false;
+      ci.hide();
+      ci.removeListener("redraw", clockinfoRedraw);
+    }
+    addClockinfo(r)
+  }
+  clockinfosMain = [];
+}
+
+function addClockinfo(r) {
+  let dr = data.rows[r];
+	// Check if the saved clockinfo indices still exist
+	let ma = (dr && dr.menuA && clockinfos[dr.menuA]) ? dr.menuA : 0;
+	let mb = (ma && dr && dr.menuB && clockinfos[ma].items[dr.menuB]) ? dr.menuB : 0;
+  clockinfosSettings[r] = require("clock_info").addInteractive(clockinfos, {
+    x : 2, y: py((r+1)*25)+1, w: px(100)-4, h: py(25)-2,
+    menuA: ma,
+    menuB: mb,
+    draw : (itm, info, options) => {
+      g.reset().clearRect(options.x-1, options.y, options.x+options.w+1, options.y+options.h);
+      if (options.focus) g.drawRect(options.x-1, options.y, options.x+options.w+1, options.y+options.h);
+      g.setFont("Vector", py(10)).setFontAlign(-1, 0).drawString(info.text, options.x, options.y+options.h/2);
+    }
+  });
+}
+
+function saveClockinfos() {
+  data.rows = [];
+  for (let r = 0; r < clockinfosSettings.length; r++) {
+    data.rows[r] = {
+      menuA: clockinfosSettings[r].menuA,
+      menuB: clockinfosSettings[r].menuB
+    }
+    clockinfosSettings[r].remove();
+  }
+  require("Storage").writeJSON("mtnclock.json", data);
+}
+
 var drawTimeout;
+var redrawTimeout;
+
+function clockinfoRedraw() {
+  // Limit redraws to every second
+  if (!redrawTimeout) {
+    redrawTimeout = setTimeout(function() {
+      setWeather();
+      clearTimeout(redrawTimeout);
+      redrawTimeout = undefined;
+    }, 1000);
+  }
+}
 
 //update watchface in next minute
 function queueDraw() {
@@ -382,6 +476,41 @@ function queueDraw() {
     queueDraw();
   }, 60000 - (Date.now() % 60000));
 }
+
+function checkTouchBack(xy) {
+  return xy.x <= px(33) && xy.y < py(25);
+}
+
+function checkTouchMinus(xy) {
+  return xy.x > px(33) && xy.x < px(67) && xy.y < px(25);
+}
+
+function checkTouchPlus(xy) {
+  return xy.x >= px(67) && xy.y < px(25);
+}
+
+Bangle.on('touch', function(b, xy) {
+  // Bangle.js 2 supports long touch (type 2)
+  // On other devices, any touch will show the settings
+  if (!showingSettings && (xy.type == 2 || process.env.HWVERSION != 2)) {
+    drawClkinfoSettings();
+    showingSettings = true;
+  } else if (checkTouchBack(xy)) {
+    showingSettings = false;
+    saveClockinfos();
+    queueDraw();
+    // call setWeather after a timeout because for some reason a clockinfo
+    //  can still draw for a little bit despite calling remove() on it
+    setTimeout(setWeather, 100);
+  } else if (checkTouchMinus(xy) && clockinfosSettings.length > 0) {
+    let cl = clockinfosSettings[clockinfosSettings.length - 1];
+    cl.remove();
+    g.reset().clearRect(cl.x, cl.y, cl.x+cl.w-2, cl.y+cl.h-1);
+    clockinfosSettings.pop();
+  } else if (checkTouchPlus(xy) && clockinfosSettings.length < 3) {
+    addClockinfo(clockinfosSettings.length)
+  }
+});
 
 queueDraw();
 readWeather();
