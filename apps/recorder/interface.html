@@ -672,6 +672,16 @@ function cleanupMaps(mapId = null) {
   }
 }
 
+function htmlCheckbox(id, text = "", extra = "", type = "checkbox") {
+  return `
+    <label class="form-${type}">
+      <input type="checkbox" id="${id}" ${extra}>
+      <i class="form-icon"></i>
+      ${text}
+    </label>
+  `;
+}
+
 function getTrackList() {
   Util.showModal("Loading Track List...");
   domTracks.innerHTML = "";
@@ -729,11 +739,7 @@ function getTrackList() {
       <h2>GPS Tracks</h2>`;
 
       if (trackList.length > 0) {
-        html += `
-          <input type="checkbox" id="select-all">
-          <i class="form-icon"></i>
-          <span>Select all</span>
-        `;
+        html += htmlCheckbox("select-all", "Select all");
         html += `<div class="accordion">`;
         trackList.forEach((track, index) => {
           const trackData = trackLineToObject(track.info.headers, track.info.l);
@@ -745,8 +751,7 @@ function getTrackList() {
           html += `
           <div class="accordion-item">
             <div class="horizontal">
-              <input type="checkbox" id="track-download-${track.number}" class="select-checkbox">
-              <i class="form-icon"></i>
+              ${htmlCheckbox("track-download-" + track.number, undefined, "class='select-checkbox'")}
               <div class="vertical">
                 <input type="checkbox" id="accordion-track-${track.number}" name="accordion-tracks" hidden>
                 <label class="accordion-header" for="accordion-track-${track.number}" data-track-index="${index}">
@@ -784,11 +789,12 @@ function getTrackList() {
         </div>
         <h2>Settings</h2>
         <div class="form-group">
-          <label class="form-switch">
-            <input type="checkbox" id="settings-allow-no-gps" ${localStorage.getItem("recorder-allow-no-gps")=="true" ? "checked" : ""}>
-            <i class="form-icon"></i>
-            Include GPX/KML entries even when there's no GPS info
-          </label>
+          ${htmlCheckbox(
+            "settings-allow-no-gps",
+            "Include GPX/KML entries even when there's no GPS info",
+            localStorage.getItem("recorder-allow-no-gps")=="true" ? "checked" : "",
+            "switch",
+          )}
         </div>
         <div class="form-group">
           <label class="form-label">Units</label>
