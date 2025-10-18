@@ -855,6 +855,30 @@ ${trackData.Latitude ? `
         });
       }
 
+      async function confirmDelete(button, filenames) {
+        if (button.dataset.confirmDelete === "true") {
+          // Second click - proceed with deletion
+          for(const filename of filenames)
+            await deleteTrack(filename);
+          getTrackList();
+        } else {
+          // First click - change to confirm state
+          const originalText = button.textContent;
+          button.textContent = "Confirm Delete";
+          button.classList.add("btn-error");
+          button.dataset.confirmDelete = "true";
+
+          // Reset after 3 seconds
+          setTimeout(() => {
+            if (button.dataset.confirmDelete === "true") {
+              button.textContent = originalText;
+              button.classList.remove("btn-error");
+              delete button.dataset.confirmDelete;
+            }
+          }, 3000);
+        }
+      }
+
       function attachTrackButtonListeners(container) {
         const buttons = container.querySelectorAll("button[task]");
 
@@ -869,26 +893,7 @@ ${trackData.Latitude ? `
 
             switch(task) {
               case "delete":
-                if (button.dataset.confirmDelete === "true") {
-                  // Second click - proceed with deletion
-                  await deleteTrack(filename);
-                  getTrackList();
-                } else {
-                  // First click - change to confirm state
-                  const originalText = button.textContent;
-                  button.textContent = "Confirm Delete";
-                  button.classList.add("btn-error");
-                  button.dataset.confirmDelete = "true";
-
-                  // Reset after 3 seconds
-                  setTimeout(() => {
-                    if (button.dataset.confirmDelete === "true") {
-                      button.textContent = originalText;
-                      button.classList.remove("btn-error");
-                      delete button.dataset.confirmDelete;
-                    }
-                  }, 3000);
-                }
+                confirmDelete(button, [filename]);
                 break;
               case "downloadkml":
                 await downloadTracks([filename], track => saveKML(track, `Bangle.js Track ${trackid}`));
