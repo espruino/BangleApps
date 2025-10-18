@@ -771,7 +771,7 @@ function getTrackList() {
       }
 
       html += `
-        <div id="batch">
+        <div id="batch" class="hidden">
           <h2>Batch Operations</h2>
           <div class="form-group">
             ${['KML', 'GPX', 'CSV'].map(fmt => `<button class="btn btn-primary" task="download${fmt.toLowerCase()}_selected">Download selected ${fmt}</button>`).join(' ')}
