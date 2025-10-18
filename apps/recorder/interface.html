@@ -728,7 +728,7 @@ function getTrackList() {
       <h2>GPS Tracks</h2>`;
 
       if (trackList.length > 0) {
-        html += `<input type="checkbox" id="select-all">`
+        html += `<input type="checkbox" id="select-all"><span>Select all</span>`
         html += `<div class="accordion">`;
         trackList.forEach((track, index) => {
           const trackData = trackLineToObject(track.info.headers, track.info.l);
