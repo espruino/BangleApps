@@ -731,6 +731,7 @@ function getTrackList() {
       <h2>GPS Tracks</h2>`;
 
       if (trackList.length > 0) {
+        html += `<input type="checkbox" id="select-all">`
         html += `<div class="accordion">`;
         trackList.forEach((track, index) => {
           const trackData = trackLineToObject(track.info.headers, track.info.l);
@@ -910,11 +911,14 @@ ${trackData.Latitude ? `
       }
 
       if (trackList.length > 0) {
+        const selectAll = document.querySelector("#select-all");
         const handleCheckboxCheck = () => {
           const checkboxes = [...document.querySelectorAll(".download-checkbox")];
           const batch = document.querySelector("#batch");
 
           batch.classList.toggle("hidden", !checkboxes.some(b => b.checked));
+          if (checkboxes.every(b => b.checked)) selectAll.checked = true;
+          else if (checkboxes.every(b => !b.checked)) selectAll.checked = false;
         };
 
         document.querySelectorAll('.accordion-header').forEach(header => {
@@ -929,6 +933,14 @@ ${trackData.Latitude ? `
           header.closest(".horizontal")
             .querySelector(".download-checkbox")
             .addEventListener('click', handleCheckboxCheck);
+        });
+
+        selectAll.addEventListener("click", e => {
+          const checkboxes = [...document.querySelectorAll(".download-checkbox")];
+          const { checked } = e.target;
+
+          for(const b of checkboxes)
+            b.checked = checked;
         });
       }
 
