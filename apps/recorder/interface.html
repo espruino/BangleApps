@@ -891,7 +891,7 @@ ${trackData.Latitude ? `
 
             switch(task) {
               case "delete":
-                confirmDelete(button, [filename]);
+                await confirmDelete(button, [filename]);
                 break;
               case "downloadkml":
                 await downloadTracks([filename], track => saveKML(track, `Bangle.js Track ${trackid}`));
