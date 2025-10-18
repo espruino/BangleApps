@@ -46,7 +46,9 @@
       input[name=accordion-tracks]:checked ~ .accordion-header i { transition: transform 0.2s; }
       .accordion { margin-bottom: 20px; }
       .accordion-item { position: relative; }
-      .accordion-header { cursor: pointer; padding: 10px; background: #f8f9fa; border-radius: 4px; margin-bottom: 5px; }
+      .accordion-header { cursor: pointer; padding: 10px; background: #f8f9fa; border-radius: 4px; }
+      /* only show margin on expanded entries */
+      input[name=accordion-tracks]:checked ~ .accordion-header { margin-bottom: 5px; }
       .accordion-header:hover { background: #e9ecef; }
       .accordion-body { overflow: visible; }
       .track-content-wrapper {
