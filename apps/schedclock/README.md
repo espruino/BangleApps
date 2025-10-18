@@ -27,6 +27,10 @@ If you skip this step, orphaned alarms may cause error logs but won't affect fun
 
 You can also remove the extra `schedclock` alarms manually with the [Scheduler](/?id=sched) app.
 
+## Known Issues
+
+If you have `Fastload Utils` installed, you may need to enable the "Detect settings changes" setting for new clocks to display properly when scheduled.
+
 ## Creator
 
 [kidneyhex](https://github.com/kidneyhex)
