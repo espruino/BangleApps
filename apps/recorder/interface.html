@@ -740,7 +740,7 @@ function getTrackList() {
           html += `
           <div class="accordion-item">
             <div class="horizontal">
-              <input type="checkbox" id="track-download-${track.number}" class="download-checkbox">
+              <input type="checkbox" id="track-download-${track.number}" class="select-checkbox">
               <div class="vertical">
                 <input type="checkbox" id="accordion-track-${track.number}" name="accordion-tracks" hidden>
                 <label class="accordion-header" for="accordion-track-${track.number}" data-track-index="${index}">
@@ -914,7 +914,7 @@ ${trackData.Latitude ? `
           batch.classList.toggle("hidden", !checkboxes.some(b => b.checked));
         };
         const handleCheckboxCheck = () => {
-          const checkboxes = [...document.querySelectorAll(".download-checkbox")];
+          const checkboxes = [...document.querySelectorAll(".select-checkbox")];
 
           selectAll.checked = checkboxes.every(b => b.checked);
           showOrHideBatch(checkboxes);
@@ -930,12 +930,12 @@ ${trackData.Latitude ? `
           });
 
           header.closest(".horizontal")
-            .querySelector(".download-checkbox")
+            .querySelector(".select-checkbox")
             .addEventListener('click', handleCheckboxCheck);
         });
 
         selectAll.addEventListener("click", e => {
-          const checkboxes = [...document.querySelectorAll(".download-checkbox")];
+          const checkboxes = [...document.querySelectorAll(".select-checkbox")];
           const { checked } = e.target;
 
           for(const b of checkboxes)
