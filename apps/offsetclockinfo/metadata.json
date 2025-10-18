@@ -1,0 +1,17 @@
+{ "id": "offsetclockinfo",
+  "name": "Offset World Clock Clockinfo",
+  "version": "0.01",
+  "description": "Create clockinfos for world clocks with a name and UTC offset",
+  "icon": "app.png",
+  "type": "clkinfo",
+  "tags": "clkinfo",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "custom": "custom.html",
+  "storage": [
+    {"name":"offsetclockinfo.clkinfo.js","url":"clkinfo.js"}
+  ],
+  "data": [
+    {"name":"offsetclockinfo.settings.json"}
+  ]
+}
