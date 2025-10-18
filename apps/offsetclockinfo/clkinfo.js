@@ -1,7 +1,7 @@
 (function() {
   let config = require("Storage").readJSON("offsetclockinfo.settings.json") || {};
 
-  var clocks = {
+  let clocks = {
     name: "Offset Clocks",
     items: []
   };
@@ -13,21 +13,21 @@
         show: () => {},
         hide: () => {},
         run: function() {
-          if ( config.rows[id].mode == 5 || config.rows[id].mode == null) {
-             config.rows[id].mode = 1
+          if ( config.rows[id].mode === 5 || config.rows[id].mode == null) {
+             config.rows[id].mode = 1;
           } else {
-             config.rows[id].mode += 1
+             config.rows[id].mode += 1;
           }
           this.emit("redraw");
-          require('Storage').writeJSON("offsetclockinfo.settings.json", config);
+          require("Storage").writeJSON("offsetclockinfo.settings.json", config);
         },
         get: () => {
-          var d = new Date();
-          var gmt = new Date(d.getTime() + d.getTimezoneOffset() * 60 * 1000);
-          var dx = new Date(gmt.getTime() + row.offset * 60 * 60 * 1000);
-          var odx = require("locale").time(dx, 1).replace(" ", "")
-          var odd = require('locale').dow(dx, 1)
-          var txt = ""
+          let d = new Date();
+          let gmt = new Date(d.getTime() + d.getTimezoneOffset() * 60 * 1000);
+          let dx = new Date(gmt.getTime() + row.offset * 60 * 60 * 1000);
+          let odx = require("locale").time(dx, 1).replace(" ", "");
+          let odd = require('locale').dow(dx, 1);
+          let txt = "";
           switch ( config.rows[id].mode) {
             case 2:
               txt = odx + " " + odd;
