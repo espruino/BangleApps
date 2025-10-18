@@ -21,6 +21,8 @@ Graphics.prototype.setFontPaytoneOne = function(scale) {
 
 let drawTimeout;
 
+let g2 = Graphics.createArrayBuffer(g.getWidth(),90,1,{msb:true});
+let g2img = {width:g2.getWidth(), height:g2.getHeight(), bpp:1, buffer:g2.buffer, transparent:0};
 
 const slopeHeight = 90;
 const fontBorder = 13;
@@ -28,10 +30,9 @@ const hoursYPos=68;
 const minOffset=4; //offset from slope
 const slopeBorder = 4;
 
-let R;
+let R, x, y;
 let dateStr = "";
 let bgColor = settings.colorSaved;
-print(settings);
 let changeBGColor = function() {
   let bgColors = [];
   if (settings.colorYellow) bgColors.push("#ff0");
@@ -46,15 +47,12 @@ let changeBGColor = function() {
   if (settings.colorBlack) bgColors.push("#000");
 
   let oldColorIdx = bgColors.indexOf(settings.colorSaved);
-  print("idx old color: ",oldColorIdx);
   if (oldColorIdx !== -1) bgColors.splice(oldColorIdx, 1);
   let col = bgColors[(Math.random()*bgColors.length)|0] || "#000";
-  print("Colors Available: "+bgColors);
   
   settings.colorSaved = col;
   writeSettings();
 }
-
 let checkForColorChange = function() {
   let dayNow = new Date().getDay();
   if (settings.dayChanged != dayNow) {
@@ -79,7 +77,11 @@ let draw = function() {
   
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(draw, 60000 - (Date.now() % 60000));
+
   R = Bangle.appRect;
+  x = R.w / 2;
+  y = R.y + R.h / 2 - 6;
+  if (!settings.hideWidgets) y -= 6;
 
   var date = new Date();
   var local_time = require("locale").time(date, 1);
@@ -91,7 +93,7 @@ let draw = function() {
 
   //clear old hour
   g.setColor(g.theme.bg);
-  g.fillRect(0,24,90,88);
+  g.fillRect(0,24,96,88);
   // Draw hour
   g.setColor(g.theme.fg)
   .setFontAlign(-1, 0)
@@ -146,7 +148,7 @@ let clockInfoDraw = (itm, info, options) => {
 
 let clockInfoItems = require("clock_info").load();
 let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {  
-  app:"slopeclockpp",x:102, y:38, w:70, h:50,
+  app:"slopeclockpp",x:98, y:38, w:70, h:50,
   draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : bgColor
 });
 let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, { 
