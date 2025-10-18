@@ -729,7 +729,11 @@ function getTrackList() {
       <h2>GPS Tracks</h2>`;
 
       if (trackList.length > 0) {
-        html += `<input type="checkbox" id="select-all"><span>Select all</span>`
+        html += `
+          <input type="checkbox" id="select-all">
+          <i class="form-icon"></i>
+          <span>Select all</span>
+        `;
         html += `<div class="accordion">`;
         trackList.forEach((track, index) => {
           const trackData = trackLineToObject(track.info.headers, track.info.l);
@@ -742,6 +746,7 @@ function getTrackList() {
           <div class="accordion-item">
             <div class="horizontal">
               <input type="checkbox" id="track-download-${track.number}" class="select-checkbox">
+              <i class="form-icon"></i>
               <div class="vertical">
                 <input type="checkbox" id="accordion-track-${track.number}" name="accordion-tracks" hidden>
                 <label class="accordion-header" for="accordion-track-${track.number}" data-track-index="${index}">
@@ -781,7 +786,8 @@ function getTrackList() {
         <div class="form-group">
           <label class="form-switch">
             <input type="checkbox" id="settings-allow-no-gps" ${localStorage.getItem("recorder-allow-no-gps")=="true" ? "checked" : ""}>
-            <i class="form-icon"></i> Include GPX/KML entries even when there's no GPS info
+            <i class="form-icon"></i>
+            Include GPX/KML entries even when there's no GPS info
           </label>
         </div>
         <div class="form-group">
