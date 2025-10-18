@@ -43,10 +43,13 @@
       #track-selector { margin-bottom: 20px; }
       .text-center { text-align: center; }
       .accordion-header i { transition: transform 0.2s; }
-      input:checked ~ .accordion-header i { transition: transform 0.2s; }
+      input[name=accordion-tracks]:checked ~ .accordion-header i { transition: transform 0.2s; }
       .accordion { margin-bottom: 20px; }
       .accordion-item { position: relative; }
-      .accordion-header { cursor: pointer; padding: 10px; background: #f8f9fa; border-radius: 4px; margin-bottom: 5px; }
+      .accordion-header { cursor: pointer; padding: 10px; background: #f8f9fa; border-radius: 4px; }
+      /* only show margin on expanded entries */
+      input[name=accordion-tracks]:checked ~ .accordion-header { margin-bottom: 5px; }
+      input.select-checkbox:checked ~ div > .accordion-body { background: #f0f8ff; }
       .accordion-header:hover { background: #e9ecef; }
       .accordion-body { overflow: visible; }
       .track-content-wrapper {
@@ -58,6 +61,17 @@
       .track-loading { text-align: center; padding: 20px; color: #666; }
       html, body { height: auto; min-height: 100%; }
       body { margin: 0; padding-bottom: 50px; }
+      .vertical {
+        display: flex;
+        flex-direction: column;
+      }
+      .horizontal {
+        display: flex;
+        flex-direction: row;
+      }
+      .hidden {
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -393,8 +407,9 @@ ${fields.map(f=>kmlField(f,'SimpleArrayData')).join('\n')}
 }
 
 function saveGPX(track, title) {
-  if (!track?.[0]?.Time) return showToast("Error in trackfile.", "error");
   track = filterGPSCoordinates(track);
+  // check track validity after filtering
+  if (!track?.[0]?.Time) return showToast("Error in trackfile (no time or empty).", "error");
   let lastTime = 0;
   const gpx = `<?xml version="1.0" encoding="UTF-8"?>
 <gpx creator="Bangle.js" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">
@@ -440,34 +455,50 @@ function trackLineToObject(headers, l) {
   return o;
 }
 
-function downloadTrack(filename, callback) {
-  function onData(data) {
+async function downloadTrack(filename) {
+  function parse(data) {
     const lines = data.trim().split("\n"), headers = lines.shift().split(",");
-    callback(lines.map(l=>trackLineToObject(headers, l)).filter(t => t.Time));
+    return lines.map(l=>trackLineToObject(headers, l)).filter(t => t.Time);
   }
   const data = fileCache.get(filename);
-  if (data) onData(data);
-  else {
-    Util.showModal(`Downloading ${filename}...`);
-    Util.readStorageFile(filename, data => {
-      fileCache.set(filename, data);
-      onData(data);
-      Util.hideModal();
-    });
+  if (data) return parse(data);
+
+  Util.showModal(`Downloading ${filename}...`);
+  try {
+    const data = await new Promise(resolve => Util.readStorageFile(filename, resolve));
+    fileCache.set(filename, data);
+    return parse(data);
+  } finally {
+    Util.hideModal();
   }
 }
 
-function downloadAll(trackList, cb) {
-  const tracks = [...trackList];
-  const downloadOne = () => {
-    const track = tracks.pop();
-    if(!track) return showToast("Finished downloading all.", "success");
-    downloadTrack(track.filename, lines => {
-      cb(lines, `Bangle.js Track ${track.number}`);
-      downloadOne();
+function isSelected(track) {
+  const trackNumber = track.number;
+  return document.getElementById(`track-download-${trackNumber}`).checked;
+}
+
+async function downloadTracks(tracks, saveCb) {
+  for(const track of tracks){
+    const lines = await downloadTrack(track.filename);
+    const title = `Bangle.js Track ${track.number}`;
+
+    saveCb(lines, title);
+  }
+
+  showToast("Finished downloading.", "success");
+}
+
+async function deleteTrack(filename) {
+  Util.showModal(`Deleting ${filename}...`);
+
+  try {
+    await new Promise(resolve => {
+      Util.eraseStorageFile(filename, () => resolve());
     });
-  };
-  downloadOne();
+  } finally {
+    Util.hideModal();
+  }
 }
 
 // ========================================
@@ -641,6 +672,16 @@ function cleanupMaps(mapId = null) {
   }
 }
 
+function htmlCheckbox(id, text = "", extra = "", type = "checkbox") {
+  return `
+    <label class="form-${type}">
+      <input type="checkbox" id="${id}" ${extra}>
+      <i class="form-icon"></i>
+      ${text}
+    </label>
+  `;
+}
+
 function getTrackList() {
   Util.showModal("Loading Track List...");
   domTracks.innerHTML = "";
@@ -698,6 +739,7 @@ function getTrackList() {
       <h2>GPS Tracks</h2>`;
 
       if (trackList.length > 0) {
+        html += htmlCheckbox("select-all", "Select all");
         html += `<div class="accordion">`;
         trackList.forEach((track, index) => {
           const trackData = trackLineToObject(track.info.headers, track.info.l);
@@ -708,20 +750,24 @@ function getTrackList() {
 
           html += `
           <div class="accordion-item">
-            <input type="checkbox" id="accordion-track-${track.number}" name="accordion-tracks" hidden>
-            <label class="accordion-header" for="accordion-track-${track.number}" data-track-index="${index}">
-              <i class="icon icon-arrow-right mr-1"></i>
-              <strong>Track ${track.number}</strong> - ${dateStr}
-            </label>
-            <div class="accordion-body" id="track-content-${track.number}">
-              <div class="track-loading">Click to load track data...</div>
+            <div class="horizontal">
+              ${htmlCheckbox("track-download-" + track.number, undefined, "class='select-checkbox'")}
+              <div class="vertical">
+                <input type="checkbox" id="accordion-track-${track.number}" name="accordion-tracks" hidden>
+                <label class="accordion-header" for="accordion-track-${track.number}" data-track-index="${index}">
+                  <i class="icon icon-arrow-right mr-1"></i>
+                  <strong>Track ${track.number}</strong> - ${dateStr}
+                </label>
+                <div class="accordion-body" id="track-content-${track.number}">
+                  <div class="track-loading">Click to load track data...</div>
+                </div>
+              </div>
             </div>
           </div>`;
         });
 
         html += `</div>`;
-      }
-      if (trackList.length==0) {
+      } else {
         html += `
          <div class="column col-12">
            <div class="card">
@@ -734,16 +780,21 @@ function getTrackList() {
       }
 
       html += `
-        <h2>Batch Operations</h2>
-        <div class="form-group">
-          ${['KML', 'GPX', 'CSV'].map(fmt => `<button class="btn btn-primary" task="download${fmt.toLowerCase()}_all">Download all ${fmt}</button>`).join(' ')}
+        <div id="batch" class="hidden">
+          <h2>Batch Operations</h2>
+          <div class="form-group">
+            ${['KML', 'GPX', 'CSV'].map(fmt => `<button class="btn btn-primary" task="download${fmt.toLowerCase()}_selected">Download selected ${fmt}</button>`).join(' ')}
+            <button class="btn btn-primary" id="delete-selected">Delete selected</button>
+          </div>
         </div>
         <h2>Settings</h2>
         <div class="form-group">
-          <label class="form-switch">
-            <input type="checkbox" id="settings-allow-no-gps" ${localStorage.getItem("recorder-allow-no-gps")=="true" ? "checked" : ""}>
-            <i class="form-icon"></i> Include GPX/KML entries even when there's no GPS info
-          </label>
+          ${htmlCheckbox(
+            "settings-allow-no-gps",
+            "Include GPX/KML entries even when there's no GPS info",
+            localStorage.getItem("recorder-allow-no-gps")=="true" ? "checked" : "",
+            "switch",
+          )}
         </div>
         <div class="form-group">
           <label class="form-label">Units</label>
@@ -790,7 +841,7 @@ ${trackData.Latitude ? `
         trackContainer.dataset.loaded = 'true';
         attachTrackButtonListeners(trackContainer);
 
-        downloadTrack(track.filename, fullTrack => {
+        downloadTrack(track.filename).then(fullTrack => {
           if (trackData.Latitude) {
             const coordinates = fullTrack
               .filter(hasValidGPS)
@@ -815,11 +866,35 @@ ${trackData.Latitude ? `
         });
       }
 
+      async function confirmDelete(button, filenames) {
+        if (button.dataset.confirmDelete === "true") {
+          // Second click - proceed with deletion
+          for(const filename of filenames)
+            await deleteTrack(filename);
+          getTrackList();
+        } else {
+          // First click - change to confirm state
+          const originalText = button.textContent;
+          button.textContent = "Confirm Delete";
+          button.classList.add("btn-error");
+          button.dataset.confirmDelete = "true";
+
+          // Reset after 3 seconds
+          setTimeout(() => {
+            if (button.dataset.confirmDelete === "true") {
+              button.textContent = originalText;
+              button.classList.remove("btn-error");
+              delete button.dataset.confirmDelete;
+            }
+          }, 3000);
+        }
+      }
+
       function attachTrackButtonListeners(container) {
         const buttons = container.querySelectorAll("button[task]");
 
         buttons.forEach(button => {
-          button.addEventListener("click", event => {
+          button.addEventListener("click", async event => {
             const button = event.currentTarget;
             const filename = button.getAttribute("filename");
             const trackid = button.getAttribute("trackid");
@@ -829,38 +904,16 @@ ${trackData.Latitude ? `
 
             switch(task) {
               case "delete":
-                if (button.dataset.confirmDelete === "true") {
-                  // Second click - proceed with deletion
-                  Util.showModal(`Deleting ${filename}...`);
-                  Util.eraseStorageFile(filename, () => {
-                    Util.hideModal();
-                    getTrackList();
-                  });
-                } else {
-                  // First click - change to confirm state
-                  const originalText = button.textContent;
-                  button.textContent = "Confirm Delete";
-                  button.classList.add("btn-error");
-                  button.dataset.confirmDelete = "true";
-                  
-                  // Reset after 3 seconds
-                  setTimeout(() => {
-                    if (button.dataset.confirmDelete === "true") {
-                      button.textContent = originalText;
-                      button.classList.remove("btn-error");
-                      delete button.dataset.confirmDelete;
-                    }
-                  }, 3000);
-                }
+                await confirmDelete(button, [filename]);
                 break;
               case "downloadkml":
-                downloadTrack(filename, track => saveKML(track, `Bangle.js Track ${trackid}`));
+                await downloadTracks([filename], track => saveKML(track, `Bangle.js Track ${trackid}`));
                 break;
               case "downloadgpx":
-                downloadTrack(filename, track => saveGPX(track, `Bangle.js Track ${trackid}`));
+                await downloadTracks([filename], track => saveGPX(track, `Bangle.js Track ${trackid}`));
                 break;
               case "downloadcsv":
-                downloadTrack(filename, track => saveCSV(track, `Bangle.js Track ${trackid}`));
+                await downloadTracks([filename], track => saveCSV(track, `Bangle.js Track ${trackid}`));
                 break;
             }
           });
@@ -868,6 +921,18 @@ ${trackData.Latitude ? `
       }
 
       if (trackList.length > 0) {
+        const selectAll = document.querySelector("#select-all");
+        const showOrHideBatch = checkboxes => {
+          const batch = document.querySelector("#batch");
+          batch.classList.toggle("hidden", !checkboxes.some(b => b.checked));
+        };
+        const handleCheckboxCheck = () => {
+          const checkboxes = [...document.querySelectorAll(".select-checkbox")];
+
+          selectAll.checked = checkboxes.every(b => b.checked);
+          showOrHideBatch(checkboxes);
+        };
+
         document.querySelectorAll('.accordion-header').forEach(header => {
           header.addEventListener('click', e => {
             const trackIndex = parseInt(header.dataset.trackIndex);
@@ -876,6 +941,19 @@ ${trackData.Latitude ? `
               setTimeout(() => displayTrack(trackIndex, trackNumber), 10);
             }
           });
+
+          header.closest(".horizontal")
+            .querySelector(".select-checkbox")
+            .addEventListener('click', handleCheckboxCheck);
+        });
+
+        selectAll.addEventListener("click", e => {
+          const checkboxes = [...document.querySelectorAll(".select-checkbox")];
+          const { checked } = e.target;
+
+          for(const b of checkboxes)
+            b.checked = checked;
+          showOrHideBatch(checkboxes);
         });
       }
 
@@ -898,11 +976,18 @@ ${trackData.Latitude ? `
         getTrackList();
       });
       Util.hideModal();
-      domTracks.querySelectorAll("button[task$='_all']").forEach(button => {
-        button.addEventListener("click", e => {
+      domTracks.querySelectorAll("button[task$='_selected']").forEach(button => {
+        button.addEventListener("click", async e => {
           const task = e.currentTarget.getAttribute("task");
-          downloadAll(trackList, task.includes('kml') ? saveKML : task.includes('gpx') ? saveGPX : saveCSV);
+          await downloadTracks(
+            trackList.filter(isSelected),
+            task.includes('kml') ? saveKML : task.includes('gpx') ? saveGPX : saveCSV
+          );
         });
+      });
+      domTracks.querySelector("button#delete-selected").addEventListener("click", e => {
+        const filenames = trackList.filter(isSelected).map(track => track.filename);
+        confirmDelete(e.target, filenames);
       });
     });
   });
