@@ -909,13 +909,15 @@ ${trackData.Latitude ? `
 
       if (trackList.length > 0) {
         const selectAll = document.querySelector("#select-all");
+        const showOrHideBatch = checkboxes => {
+          const batch = document.querySelector("#batch");
+          batch.classList.toggle("hidden", !checkboxes.some(b => b.checked));
+        };
         const handleCheckboxCheck = () => {
           const checkboxes = [...document.querySelectorAll(".download-checkbox")];
-          const batch = document.querySelector("#batch");
 
-          batch.classList.toggle("hidden", !checkboxes.some(b => b.checked));
-          if (checkboxes.every(b => b.checked)) selectAll.checked = true;
-          else if (checkboxes.every(b => !b.checked)) selectAll.checked = false;
+          selectAll.checked = checkboxes.every(b => b.checked);
+          showOrHideBatch(checkboxes);
         };
 
         document.querySelectorAll('.accordion-header').forEach(header => {
@@ -938,6 +940,7 @@ ${trackData.Latitude ? `
 
           for(const b of checkboxes)
             b.checked = checked;
+          showOrHideBatch(checkboxes);
         });
       }
 
