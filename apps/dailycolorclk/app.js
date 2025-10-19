@@ -44,7 +44,7 @@ let changeBGColor = function() {
   if (settings.colorPurple) bgColors.push("#B200ED");
   if (settings.colorBlack) bgColors.push("#000");
 
-  let oldColorId = bgColors.indeOf(settings.colorSaved);
+  let oldColorIdx = bgColors.indexOf(settings.colorSaved);
   if (oldColorIdx !== -1) bgColors.splice(oldColorIdx, 1);
   let col = bgColors[(Math.random()*bgColors.length)|0] || "#000";
   
