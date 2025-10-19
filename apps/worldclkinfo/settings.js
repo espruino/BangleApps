@@ -1,5 +1,5 @@
 (function(back) {
-  var FILE = "worldclkinfosettings.json";
+  var FILE = "worldclkinfo.settings.json";
   // Load settings
   var settings = Object.assign({
     shorten: false,

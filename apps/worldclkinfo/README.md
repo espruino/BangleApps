@@ -4,18 +4,6 @@ A clock info that creates a new ClockInfo list for world clocks, so you can see 
 ## Usage
 Use a clock with ClockInfo, then swipe left/right to get to the World Clock list. From there, swipe up/down to get to the city you want. To toggle between showing the city name and what time it is there, tap on the clock info when focused.
 
-## Cities
-* London
-* Mumbai
-* New York City
-* Tokyo
-* Dubai
-* Los Angeles
-* Paris
-* Hong Kong
-
-
-To add any more, consider opening a feature request, contacting [RKBoss6](https://github.com/RKBoss6) on GitHub, or fork the espruino/BangleApps repo and modify the app to your needs.
 ## Settings
 In app settings, there is a menu for World Clock Info
 #### Shorten Cities
