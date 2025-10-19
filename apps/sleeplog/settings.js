@@ -13,9 +13,9 @@
     maxAwake: 36E5, //  [ms] maximal awake time to count for consecutive sleep
     minConsec: 18E5, // [ms] minimal time to count for consecutive sleep
     deepTh: 150, //     threshold for deep sleep
-    lightTh: 300,//    threshold for light sleep
-    hrmLightTh: 74,//    threshold for light sleep
-    hrmDeepTh:60,//     threshold for deep sleep
+    lightTh: 300,
+    hrmLightTh: 74,
+    hrmDeepTh:60,//    threshold for light sleep
     wearTemp: 19.5, //    temperature threshold to count as worn
     // app settings
     breakToD: 12, //    [h] time of day when to start/end graphs
@@ -302,7 +302,7 @@
       },
       /*LANG*/"Deep Sleep": {
         value: settings.hrmDeepTh,
-        step: 2,
+        step: 1,
         min: 30,
         max: 100,
         wrap: true,
@@ -314,7 +314,7 @@
       },
       /*LANG*/"Light Sleep": {
         value: settings.hrmLightTh,
-        step: 2,
+        step: 1,
         min: 30,
         max: 100,
         wrap: true,
@@ -399,7 +399,7 @@
     } else {
       /*menu =*/ E.showMenu(thresholdsMenu);
     }
-    }
+    };
     
     function showOtherSettings() {
     // setup logging menu
