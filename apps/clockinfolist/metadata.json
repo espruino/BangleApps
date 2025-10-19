@@ -6,6 +6,11 @@
   "type": "app",
   "description": "List Available Clockinfo Modules",
   "icon": "app.png",
+  "screenshots": [
+    {"url":"scr1.png"},
+    {"url":"scr2.png"},
+    {"url":"scr3.png"}
+  ],
   "allow_emulator": true,
   "tags": "tool,clkinfo",
   "supports": ["BANGLEJS", "BANGLEJS2"],
