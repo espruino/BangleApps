@@ -44,7 +44,7 @@ let changeBGColor = function() {
   if (settings.colorPurple) bgColors.push("#B200ED");
   if (settings.colorBlack) bgColors.push("#000");
 
-  let oldColorIdx = bgColors.indexOf(settings.colorSaved);
+  let oldColorId = bgColors.indeOf(settings.colorSaved);
   if (oldColorIdx !== -1) bgColors.splice(oldColorIdx, 1);
   let col = bgColors[(Math.random()*bgColors.length)|0] || "#000";
   
@@ -77,9 +77,7 @@ let draw = function() {
   drawTimeout = setTimeout(draw, 60000 - (Date.now() % 60000));
 
   R = Bangle.appRect;
-  x = R.w / 2;
-  y = R.y + R.h / 2 - 6;
-  if (!settings.hideWidgets) y -= 6;
+
 
   var date = new Date();
   var local_time = require("locale").time(date, 1);
