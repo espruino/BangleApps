@@ -38,7 +38,7 @@
       }
     },
     'Simple Mode': {
-      value: !!settings.shortenMeridians,  // !! converts undefined to false
+      value: !!settings.simpleModes,  // !! converts undefined to false
       onchange: v => {
         settings.simpleModes = v;
         writeSettings();
