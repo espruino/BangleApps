@@ -1,6 +1,6 @@
 { "id": "worldclkinfo",
   "name": "World Clock Info",
-  "version": "0.01",
+  "version": "0.02",
   "description": "Create clockinfos for world clocks with a name and UTC offset",
   "icon": "app.png",
   "type": "clkinfo",
