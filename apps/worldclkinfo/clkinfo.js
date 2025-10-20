@@ -6,7 +6,8 @@
     // Default values
     shorten: false,
     showMeridians: true,
-    shortenMeridians:false,
+    shortenMeridians: false,
+    simpleModes: true
   }, require("Storage").readJSON("worldclkinfo.settings.json", true) || {});
 
   let clocks = {
@@ -34,8 +35,10 @@
         },
         run: function() {
           // Default to mode 1, and wrap when going past mode 5
-          if ( config.rows[id].mode === 5 || config.rows[id].mode == null) {
-             config.rows[id].mode = 1;
+          if ( ! config.rows[id].mode) {
+            config.rows[id].mode = 2;
+          } else if ( config.rows[id].mode == 5 || (settings.simpleModes && config.rows[id].mode == 2)) {
+            config.rows[id].mode = 1;
           } else {
              config.rows[id].mode += 1;
           }
@@ -70,18 +73,18 @@
           //   show the short version.
           let ln = ((settings.shorten && row.shortname) || (row.shortname && !row.name)) ? row.shortname : row.name;
           let txt = "";
-          switch ( config.rows[id].mode) {
+          switch (config.rows[id].mode) {
             case 2:
-              txt = odx + " " + odd;
+              txt = ln;
               break;
             case 3:
-              txt = ln + " " + odx;
+              txt = odx + " " + odd;
               break;
             case 4:
-              txt = ln + " " + odx + " " + odd;
+              txt = ln + " " + odx;
               break;
             case 5:
-              txt = ln;
+              txt = ln + " " + odx + " " + odd;
               break;
             default:
               txt = odx;
