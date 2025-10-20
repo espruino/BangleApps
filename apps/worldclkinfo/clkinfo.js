@@ -4,7 +4,7 @@
   // Read settings
   var settings = Object.assign({
     // Default values
-    shorten: true,
+    shorten: false,
     showMeridians: true,
     shortenMeridians:false,
   }, require("Storage").readJSON("worldclkinfo.settings.json", true) || {});
