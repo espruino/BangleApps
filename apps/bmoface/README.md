@@ -43,6 +43,11 @@ Bangle.emit("lock"); // Triggers "On Wake" randomizer
 Installation
 Upload via Bangle.js App Loader or manually install the files in the `bmoface` folder.
 
-Attribution
-Character inspiration: BMO, Finn, and Jake from Adventure Time (Cartoon Network)
+## Attribution
+
+**Character Inspiration**: BMO, Finn, and Jake from Adventure Time (Cartoon Network)
+
+**Code Base**: Based on the Advanced Casio Clock by [dotgreg](https://github.com/dotgreg/advCasioBangleClock)
+- Original template: [Advanced Casio Clock](https://github.com/dotgreg/advCasioBangleClock)
+- Creator: [dotgreg](https://github.com/dotgreg)
 

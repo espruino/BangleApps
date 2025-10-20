@@ -1,0 +1,13 @@
+0.01: Initial Doomguy watch face
+0.02: Added animated Doomguy face that changes with battery level
+0.03: Face animation - Doomguy looks left, right, and center
+0.04: Added heart icon in lower right corner
+0.05: Added yellow lightning bolt charging indicators in lower left
+0.06: Added "BATT" label above battery percentage in white text
+0.07: Changed date text color to yellow
+0.08: Optimized memory usage with 4-bit color sprites and heatshrink compression
+0.09: Added interactive tap feature - tap Doomguy's face to flash yellow and show damage, daily hit counter with persistent storage
+0.10: Added temperature unit settings (Fahrenheit/Celsius toggle)
+
+## Attribution
+Based on the Advanced Casio Clock by dotgreg (https://github.com/dotgreg/advCasioBangleClock)

@@ -1,0 +1,23 @@
+{ "id": "doomguy",
+  "name": "Doomguy Clock",
+  "shortName":"Doomguy",
+  "version":"0.11",
+  "description": "DOOM-inspired watch face with animated Doomguy face that reacts to battery level. Interactive tap feature lets you hit Doomguy with yellow flash effects and damage reactions. Features daily hit counter, battery-reactive faces, animated glances, heart rate, steps, temperature, and charging indicators.",
+  "icon": "app.png",
+  "tags": "clock,game,retro,doom",
+	"type": "clock",
+	"screenshots": [
+			{ "url": "screenshot01.png" }
+  ],
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+	"allow_emulator":true,
+  "storage": [
+			{"name":"doomguy.app.js","url":"app.js"},
+			{"name":"doomguy.img","url":"app-icon.js","evaluate":true},
+			{"name":"doomguy.settings.js","url":"doomguy.settings.js"}
+  ],
+  "data": [
+    { "name": "doomguy.settings.json" }
+  ]
+}
