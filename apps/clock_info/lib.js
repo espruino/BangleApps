@@ -23,6 +23,7 @@ exports.loadSettings = function() {
       hrmOn : 0, // 0(Always), 1(Tap)
       defocusOnLock : true,
       maxAltitude : 3000,
+      haptics:false,
       apps : {}
     },
     require("Storage").readJSON("clock_info.json",1)||{}
@@ -293,6 +294,7 @@ exports.addInteractive = function(menu, options) {
     var oldMenuItem;
     if (ud) {
       if (menu[options.menuA].items.length==1) return; // 1 item - can't move
+      Bangle.buzz(30);
       oldMenuItem = menu[options.menuA].items[options.menuB];
       options.menuB += ud;
       if (options.menuB<0) options.menuB = menu[options.menuA].items.length-1;
@@ -300,6 +302,7 @@ exports.addInteractive = function(menu, options) {
     } else if (lr) {
       if (menu.length==1) return; // 1 item - can't move
       oldMenuItem = menu[options.menuA].items[options.menuB];
+      Bangle.buzz(44);
       do {
         options.menuA += lr;
         if (options.menuA<0) options.menuA = menu.length-1;
@@ -317,9 +320,12 @@ exports.addInteractive = function(menu, options) {
     if (oldMenuItem) {
       menuHideItem(oldMenuItem);
       oldMenuItem.removeAllListeners("draw");
-      menuShowItem(menu[options.menuA].items[options.menuB]);
-    }
+      let name=menu[options.menuA].name;
+      let formattedName=name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+      let menuItem=menu[options.menuA].items[options.menuB]
+      menuShowItem(menuItem);
     // On 2v18+ firmware we can stop other event handlers from being executed since we handled this
+    }
     E.stopEventPropagation&&E.stopEventPropagation();
   }
   if (Bangle.prependListener) {Bangle.prependListener("swipe",swipeHandler);} else {Bangle.on("swipe",swipeHandler);}
