@@ -145,11 +145,13 @@ let clockInfoDraw = (itm, info, options) => {
 let clockInfoItems = require("clock_info").load();
 let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {  
   app:"slopeclockpp",x:98, y:38, w:70, h:50,
-  draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : bgColor
+  draw : clockInfoDraw, bg : g.theme.bg, fg : g.theme.fg, hl : 
+    (g.theme.fg===g.toColor(bgColor))?"#f00":bgColor
 });
 let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, { 
   app:"slopeclockpp",x:10, y:102, w:70, h:50,
-  draw : clockInfoDraw, bg : bgColor, fg : g.theme.bg, hl : (g.theme.fg===g.toColor(bgColor))?"#f00":g.theme.fg
+  draw : clockInfoDraw, bg : bgColor, fg : g.theme.bg, hl : 
+    (g.theme.fg===g.toColor(bgColor))?"#f00":g.theme.fg
 });
 
 // Show launcher when middle button pressed
