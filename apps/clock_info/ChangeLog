@@ -20,3 +20,4 @@
 0.19: Fix Altitude ClockInfo after BLE added
       Tapping Altitude now updates the reading
 0.20: Altitude ClockInfo now uses the distance units set in locale.
+0.21: Add option for haptics when changing infos (set to false by default)
