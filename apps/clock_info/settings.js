@@ -24,6 +24,10 @@
       min: 500, max: 10000, step: 500,
       format: v => v+"m",
       onchange: x => save('maxAltitude', x),
+    },
+    /*LANG*/'Haptics': {
+      value:  !!settings.haptics,
+      onchange: x => save('haptics', x),
     }
   };
   E.showMenu(menu);
