@@ -30,7 +30,7 @@
           }, 60000 - (Date.now() % 60000));
         },
         hide : function() {
-          clearInterval(this.interval);
+          if (this.interval) clearInterval(this.interval);
           this.interval = undefined;
         },
         run: function() {
