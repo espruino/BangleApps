@@ -21,3 +21,5 @@ Special thanks to Serj for testing this on the original Bangle.
 ![](screenshot3.png)
 ![](screenshot4.png)
 ![](screenshot5.png)
+![](screenshot6.png)
+![](screenshot7.png)
