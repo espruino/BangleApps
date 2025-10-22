@@ -23,6 +23,7 @@ exports.loadSettings = function() {
       hrmOn : 0, // 0(Always), 1(Tap)
       defocusOnLock : true,
       maxAltitude : 3000,
+      haptics:true,
       apps : {}
     },
     require("Storage").readJSON("clock_info.json",1)||{}
@@ -293,6 +294,7 @@ exports.addInteractive = function(menu, options) {
     var oldMenuItem;
     if (ud) {
       if (menu[options.menuA].items.length==1) return; // 1 item - can't move
+      if(settings.haptics) Bangle.buzz(30);
       oldMenuItem = menu[options.menuA].items[options.menuB];
       options.menuB += ud;
       if (options.menuB<0) options.menuB = menu[options.menuA].items.length-1;
@@ -300,6 +302,7 @@ exports.addInteractive = function(menu, options) {
     } else if (lr) {
       if (menu.length==1) return; // 1 item - can't move
       oldMenuItem = menu[options.menuA].items[options.menuB];
+      if(settings.haptics) Bangle.buzz(44);
       do {
         options.menuA += lr;
         if (options.menuA<0) options.menuA = menu.length-1;
@@ -355,7 +358,7 @@ exports.addInteractive = function(menu, options) {
       if (!options.focus) {
         focus();
       } else if (menu[options.menuA].items[options.menuB].run) {
-        Bangle.buzz(100, 0.7);
+        if(settings.haptics) Bangle.buzz(100, 0.7);
         menu[options.menuA].items[options.menuB].run(options); // allow tap on an item to run it (eg home assistant)
       }
     };
