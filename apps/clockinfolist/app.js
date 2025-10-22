@@ -32,13 +32,13 @@ for (let i = 0; i < ci.length; i++) {
     let menu_s = {}
     for (let ii = 0; ii < ci_s.length; ii++) {
       let i_s = ci_s[ii];
-      menu_s[i_s.name] = showItem.bind(this, i_s, menu_s)
+      menu_s[i_s.name] = showItem.bind(null, i_s, menu_s)
     }
     menu_s[""] = {
       back: function() { E.showMenu(menu); },
       title: n
     };
     E.showMenu(menu_s)
-  }.bind(this, n, i);
+  }.bind(null, n, i);
 }
 E.showMenu(menu)
