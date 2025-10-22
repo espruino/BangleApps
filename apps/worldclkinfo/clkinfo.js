@@ -7,7 +7,7 @@
     shorten: false,
     showMeridians: true,
     shortenMeridians: false,
-    simpleModes: true
+    simpleMode: true
   }, require("Storage").readJSON("worldclkinfo.settings.json", true) || {});
 
   let clocks = {
@@ -34,13 +34,18 @@
           this.interval = undefined;
         },
         run: function() {
+          let cr = config.rows[id];
+          if (settings.simpleMode) {
+						config.simpleRow = config.simpleRow || {};
+            cr = config.simpleRow;
+          }
           // Default to mode 1, and wrap when going past mode 5
-          if ( ! config.rows[id].mode) {
-            config.rows[id].mode = 2;
-          } else if ( config.rows[id].mode == 5 || (settings.simpleModes && config.rows[id].mode == 2)) {
-            config.rows[id].mode = 1;
+          if ( ! cr.mode) {
+            cr.mode = 2;
+          } else if ( cr.mode == 5 || (settings.simpleMode && cr.mode == 2)) {
+            cr.mode = 1;
           } else {
-             config.rows[id].mode += 1;
+            cr.mode += 1;
           }
           // Request a re-draw when tapped to display the new mode
           this.emit("redraw");
@@ -73,7 +78,11 @@
           //   show the short version.
           let ln = ((settings.shorten && row.shortname) || (row.shortname && !row.name)) ? row.shortname : row.name;
           let txt = "";
-          switch (config.rows[id].mode) {
+          let cr = config.rows[id];
+          if (settings.simpleMode) {
+            cr = config.simpleRow || {};
+          }
+          switch (cr.mode) {
             case 2:
               txt = ln;
               break;

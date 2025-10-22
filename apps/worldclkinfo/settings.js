@@ -5,7 +5,7 @@
     shorten: false,
     showMeridians: true,
     shortenMeridians: false,
-    simpleModes: true
+    simpleMode: true
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
@@ -38,9 +38,9 @@
       }
     },
     'Simple Mode': {
-      value: !!settings.simpleModes,  // !! converts undefined to false
+      value: !!settings.simpleMode,  // !! converts undefined to false
       onchange: v => {
-        settings.simpleModes = v;
+        settings.simpleMode = v;
         writeSettings();
       }
     },
