@@ -36,7 +36,7 @@
         run: function() {
           let cr = config.rows[id];
           if (settings.simpleMode) {
-						config.simpleRow = config.simpleRow || {};
+            config.simpleRow = config.simpleRow || {};
             cr = config.simpleRow;
           }
           // Default to mode 1, and wrap when going past mode 5
@@ -66,9 +66,9 @@
           if(settings.showMeridians && meridian){
             if(settings.shortenMeridians){
               //get A - am, or P - pm
-              odx = odx + meridian[0]
+              odx = odx + meridian[0];
             } else {
-              odx = odx + " " + meridian
+              odx = odx + " " + meridian;
             }
           }
 
