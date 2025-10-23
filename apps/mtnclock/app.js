@@ -211,9 +211,9 @@ function draw(color) {
   //clock text
   (color.clock == undefined) ? g.setColor(0xFFFF) : g.setColor(color.clock);
   const start = 87;
-  for (let r = 0; r < data.rows.length; r++) {
-    let a = data.rows[r].menuA;
-    let b = data.rows[r].menuB;
+  data.rows.forEach(function(row, r) {
+    let a = row.menuA;
+    let b = row.menuB;
     if (clockinfos[a] && clockinfos[a].items[b]) {
       let ci = clockinfos[a].items[b];
       let text = ci.get().text;
@@ -225,7 +225,7 @@ function draw(color) {
       }
       g.setFont("Vector", py(10)).setFontAlign(-1, -1).drawString(text, px(2), py((start - (data.rows.length - 1) * 10) + r * 10));
     }
-  }
+  });
 
   g.setFont("Vector", py(20)).setFontAlign(-1, -1).drawString((require("locale").time(new Date(), 1).replace(" ", "")), px(2), py(start - ((data.rows.length + 2)*10)));
   g.setFont("Vector", py(10)).drawString(require('locale').dow(new Date(), 1)+" "+new Date().getDate()+" "+require('locale').month(new Date(), 1)+((data.temp == undefined) ? "" : " | "+require('locale').temp(Math.round(data.temp-273.15)).replace(".0", "")), px(2), py(start - data.rows.length * 10));
@@ -409,9 +409,9 @@ function drawClkinfoSettings() {
   g.setFont("Vector", py(10)).setFontAlign(0, -1).drawString("+", px(83), py(9));
   g.drawRect(px(67), 1, px(100)-1, px(25)-1);
 
-  for (let r = 0; r < data.rows.length; r++) {
-    let a = data.rows[r].menuA;
-    let b = data.rows[r].menuB;
+  data.rows.forEach(function(row, r) {
+    let a = row.menuA;
+    let b = row.menuB;
     let ci = clockinfos[a].items[b];
     if (clockinfosMain[a] && clockinfosMain[a][b]) {
       clockinfosMain[a][b] = false;
@@ -419,7 +419,7 @@ function drawClkinfoSettings() {
       ci.removeListener("redraw", clockinfoRedraw);
     }
     addClockinfo(r)
-  }
+  });
   clockinfosMain = {};
 }
 
@@ -442,13 +442,13 @@ function addClockinfo(r) {
 
 function saveClockinfos() {
   data.rows = [];
-  for (let r = 0; r < clockinfosSettings.length; r++) {
+  clockinfosSettings.forEach(function(row, r) {
     data.rows[r] = {
-      menuA: clockinfosSettings[r].menuA,
-      menuB: clockinfosSettings[r].menuB
+      menuA: row.menuA,
+      menuB: row.menuB
     }
-    clockinfosSettings[r].remove();
-  }
+    row.remove();
+  });
   require("Storage").writeJSON("mtnclock.json", data);
 }
 
