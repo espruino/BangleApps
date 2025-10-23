@@ -3,6 +3,7 @@
     "name": "Oblique Strategies Clock",
     "shortName" : "Oblique Clock",
     "icon": "app.png",
+    "version": "0.01",
     "description": "Oblique Strategies are short prompts which can be used to overcome creative blocks",
     "type": "clock",
     "tags": "clock",

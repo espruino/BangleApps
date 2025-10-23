@@ -99,7 +99,6 @@ function panel(x1,y1,x2,y2,bg){
 }
 function draw(){
   g.reset(); g.clear();
-  if (global.WIDGETS){ Bangle.loadWidgets(); Bangle.drawWidgets(); }
   const R=Bangle.appRect, w=R.x2-R.x+1;
   const now=new Date(), G1="#F0F0F0", G2="#E0E0E0", G3="#D0D0D0";
 
