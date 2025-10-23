@@ -7,7 +7,7 @@ if (! Array.isArray(data.rows)) {
 
 let showingSettings = false;
 let clockinfosSettings = [];
-let clockinfosMain = [];
+let clockinfosMain = {};
 let clockinfos = require("clock_info").load();
 
 let weather;
@@ -218,7 +218,7 @@ function draw(color) {
       let ci = clockinfos[a].items[b];
       let text = ci.get().text;
       if (!(clockinfosMain[a] && clockinfosMain[a][b])) {
-        clockinfosMain[a] = clockinfosMain[a] || [];
+        clockinfosMain[a] = clockinfosMain[a] || {};
         clockinfosMain[a][b] = true;
         ci.show();
         ci.on("redraw", clockinfoRedraw);
@@ -420,7 +420,7 @@ function drawClkinfoSettings() {
     }
     addClockinfo(r)
   }
-  clockinfosMain = [];
+  clockinfosMain = {};
 }
 
 function addClockinfo(r) {
