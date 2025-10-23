@@ -1,0 +1,116 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <style>
+      input.offset {
+          width: 80px;
+      }
+      input.name {
+          width: 150px;
+      }
+    </style>
+  </head>
+  <body>
+    <p>The AQI and temp are sourced from IQAir, which requires "Allow Internet Access" to be enabled in Gadgetbridge.</p>
+    <p>To use AQI, you need an IQAir API key. To get one for free, create an IQAir account, then create an API key in <a target="_blank" href="https://dashboard.iqair.com/personal/api-keys">your user dashboard</a>.</p>
+    <p>To specify the IQAir source, find your city on the IQAir website, then copy and paste the URL. It should look something like https://www.iqair.com/usa/new-york/new-york-city</p>
+    <table id="rows" class="table table-scroll">
+      <tr>
+        <th>Name</th>
+        <th>IQAir URL</th>
+      </tr>
+    </table>
+
+    <button id="addrow" class="btn">+</button>
+    <button id="delrow" class="btn">-</button>
+    <br>
+    <input id="api-key" type="text" placeholder="IQAir API Key"></input>
+    <br>
+    <button id="upload" class="btn btn-primary">Upload</button>
+    <template id="row-template">
+      <tr class="row">
+        <td>
+          <input type="text" class="name"></input>
+        </td>
+        <td>
+          <input type="text" class="url"></input>
+        </td>
+      </tr>
+    </template>
+
+    <script src="../../core/lib/customize.js"></script>
+
+    <script>
+      let storedString = localStorage.getItem('airqualityclockinfo-config');
+      let stored = {};
+      if (storedString) {
+        stored = JSON.parse(storedString);
+      }
+
+      if (stored.apiKey) {
+        document.getElementById("api-key").value = stored.apiKey;
+      }
+
+      if (!stored.rows) {
+        stored.rows = [
+          {
+            name: "NYC",
+            url: "https://www.iqair.com/usa/new-york/new-york",
+          }
+        ];
+      }
+
+      let tbl = document.getElementById("rows");
+      let tmp = document.getElementById("row-template");
+      for (let i = 0; i < stored.rows.length; i++) {
+        let row = tmp.content.cloneNode(true);
+        let storedRow = stored.rows[i]
+        row.querySelector(".name").value = storedRow.name;
+        row.querySelector(".url").value = storedRow.url;
+        tbl.append(row);
+      }
+
+      document.getElementById("addrow").addEventListener("click", function() {
+        let tbl = document.getElementById("rows");
+        let tmp = document.getElementById("row-template");
+        let row = tmp.content.cloneNode(true);
+        tbl.append(row);
+      });
+
+      document.getElementById("delrow").addEventListener("click", function() {
+        let tbl = document.getElementById("rows");
+        tbl.deleteRow(tbl.rows.length -1);
+      });
+
+      document.getElementById("upload").addEventListener("click", function() {
+        let config = {
+          rows: [],
+          apiKey: document.getElementById("api-key").value
+        };
+
+        document.querySelectorAll(".row").forEach((row) => {
+          let name = row.querySelector(".name").value;
+          let url = row.querySelector(".url").value;
+          if ( name != "" && url != "" ) {
+            config.rows.push({
+              name: name,
+              url: url,
+            });
+          }
+        });
+
+        localStorage.setItem('airqualityclockinfo-config', JSON.stringify(config));
+
+        // send finished app (in addition to contents of app.json)
+        sendCustomizedApp({
+          storage:[
+            {
+              name: "airqualityci.settings.json",
+              content: JSON.stringify(config)
+            },
+          ]
+        });
+      });
+    </script>
+  </body>
+</html>
