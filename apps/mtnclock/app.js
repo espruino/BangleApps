@@ -1,5 +1,15 @@
 var data = require("Storage").readJSON("mtnclock.json", 1) || {};
 
+if (! Array.isArray(data.rows)) {
+  data.rows = [];
+  require("Storage").writeJSON("mtnclock.json", data);
+}
+
+let showingSettings = false;
+let clockinfosSettings = [];
+let clockinfosMain = {};
+let clockinfos = require("clock_info").load();
+
 let weather;
 try {
   weather = require('weather');
@@ -9,17 +19,17 @@ try {
 
 //seeded RNG to generate stars, snow, etc
 function sfc32(a, b, c, d) {
-    return function() {
-      a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0; 
-      var t = (a + b) | 0;
-      a = b ^ b >>> 9;
-      b = c + (c << 3) | 0;
-      c = (c << 21 | c >>> 11);
-      d = d + 1 | 0;
-      t = t + d | 0;
-      c = c + t | 0;
-      return (t >>> 0) / 4294967296;
-    };
+  return function() {
+    a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
+    var t = (a + b) | 0;
+    a = b ^ b >>> 9;
+    b = c + (c << 3) | 0;
+    c = (c << 21 | c >>> 11);
+    d = d + 1 | 0;
+    t = t + d | 0;
+    c = c + t | 0;
+    return (t >>> 0) / 4294967296;
+  };
 }
 
 //scale x, y coords to screen
@@ -79,12 +89,11 @@ function drawSnow(color, coord, size) {
 }
 
 function draw(color) {
+  var seed;
+  var rand;
 
-var seed;
-var rand;
-
-g.clear();
-//background
+  g.clear();
+  //background
   g.setColor(color.bg1).fillRect(
     px(0),py(0),
     px(100),py(45)
@@ -96,20 +105,20 @@ g.clear();
   //lightning
   if (color.ltn) {
     g.setColor(color.ltn).fillPoly([
-    px(70),py(20),
-    px(60),py(28),
-    px(71),py(29),
-    px(63),py(40),
-    px(75),py(28),
-    px(64),py(27)
+      px(70),py(20),
+      px(60),py(28),
+      px(71),py(29),
+      px(63),py(40),
+      px(75),py(28),
+      px(64),py(27)
     ]);
     g.fillPoly([
-    px(40),py(20),
-    px(30),py(28),
-    px(41),py(29),
-    px(33),py(40),
-    px(45),py(28),
-    px(34),py(27)
+      px(40),py(20),
+      px(30),py(28),
+      px(41),py(29),
+      px(33),py(40),
+      px(45),py(28),
+      px(34),py(27)
     ]);
   }
   //stars
@@ -117,7 +126,7 @@ g.clear();
     seed = 4;
     rand = sfc32(0x9E3779B9, 0x243F6A88, 0xB7E15162, seed);
     for (let i = 0; i < 40; i++) {
-  g.setColor(color.star).drawCircle(Math.floor(rand() * px(100)),Math.floor(rand() * py(33)),Math.floor(rand() * 2));
+      g.setColor(color.star).drawCircle(Math.floor(rand() * px(100)),Math.floor(rand() * py(33)),Math.floor(rand() * 2));
     }
   }
   //birds
@@ -167,7 +176,7 @@ g.clear();
     }
   }
   //mountains
-  drawMtn({mtn1:color.mtn2, mtn2:color.mtn1}, {x:px(35), y:py(30)}, {w:px(38), h:py(17)});
+  drawMtn({mtn1:color.mtn2, mtn2:color.mtn1}, {x:px(43), y:py(28)}, {w:px(38), h:py(19)});
   drawMtn({mtn1:color.mtn2, mtn2:color.mtn1}, {x:px(10), y:py(20)}, {w:px(50), h:py(30)});
   drawMtn({mtn1:color.mtn1, mtn2:color.mtn2}, {x:px(90), y:py(20)}, {w:px(70), h:py(30)});
   //lake
@@ -201,8 +210,25 @@ g.clear();
 
   //clock text
   (color.clock == undefined) ? g.setColor(0xFFFF) : g.setColor(color.clock);
-  g.setFont("Vector", py(20)).setFontAlign(-1, -1).drawString((require("locale").time(new Date(), 1).replace(" ", "")), px(2), py(67));
-  g.setFont("Vector", py(10)).drawString(require('locale').dow(new Date(), 1)+" "+new Date().getDate()+" "+require('locale').month(new Date(), 1)+((data.temp == undefined) ? "" : " | "+require('locale').temp(Math.round(data.temp-273.15)).replace(".0", "")), px(2), py(87));
+  const start = 87;
+  data.rows.forEach(function(row, r) {
+    let a = row.menuA;
+    let b = row.menuB;
+    if (clockinfos[a] && clockinfos[a].items[b]) {
+      let ci = clockinfos[a].items[b];
+      let text = ci.get().text;
+      if (!(clockinfosMain[a] && clockinfosMain[a][b])) {
+        clockinfosMain[a] = clockinfosMain[a] || {};
+        clockinfosMain[a][b] = true;
+        ci.show();
+        ci.on("redraw", clockinfoRedraw);
+      }
+      g.setFont("Vector", py(10)).setFontAlign(-1, -1).drawString(text, px(2), py((start - (data.rows.length - 1) * 10) + r * 10));
+    }
+  });
+
+  g.setFont("Vector", py(20)).setFontAlign(-1, -1).drawString((require("locale").time(new Date(), 1).replace(" ", "")), px(2), py(start - ((data.rows.length + 2)*10)));
+  g.setFont("Vector", py(10)).drawString(require('locale').dow(new Date(), 1)+" "+new Date().getDate()+" "+require('locale').month(new Date(), 1)+((data.temp == undefined) ? "" : " | "+require('locale').temp(Math.round(data.temp-273.15)).replace(".0", "")), px(2), py(start - data.rows.length * 10));
 
   if (data.showWidgets) {
     Bangle.drawWidgets();
@@ -210,19 +236,20 @@ g.clear();
 }
 
 function setWeather() {
+  if (showingSettings) return;
   var a = {};
   //clear day/night is default weather
   if ((data.code >= 800 && data.code <=802) || data.code == undefined) {
     if (new Date().getHours() >= 7 && new Date().getHours() <= 19) {
       //day-clear
       a = {
-      bg1:0x4FFF, bg2:0x03E0,
-      sun:0xFD20,
-      path:0x8200,
-      mtn1:0x045f, mtn2:0x000F,
-      lake:0x000F,
-      tree1:0x07E0, tree2:0, tree3:0x7BE0,
-      bird:0xFFFF
+        bg1:0x4FFF, bg2:0x03E0,
+        sun:0xFD20,
+        path:0x8200,
+        mtn1:0x045f, mtn2:0x000F,
+        lake:0x000F,
+        tree1:0x07E0, tree2:0, tree3:0x7BE0,
+        bird:0xFFFF
       };
       //day-cloudy
       if (data.code == 801 || data.code == 802) a.cloud1 = 0xFFFF;
@@ -230,13 +257,13 @@ function setWeather() {
     else {
       //night-clear
       a = {
-      bg1:0, bg2:0x0005,
-      sun:0xC618,
-      path:0,
-      mtn1:0x0210, mtn2:0x0010,
-      lake:0x000F,
-      tree1:0x0200, tree2:0, tree3:0x59E0,
-      star:0xFFFF
+        bg1:0, bg2:0x0005,
+        sun:0xC618,
+        path:0,
+        mtn1:0x0210, mtn2:0x0010,
+        lake:0x000F,
+        tree1:0x0200, tree2:0, tree3:0x59E0,
+        star:0xFFFF
       };
       //night-cloudy
       if (data.code == 801 || data.code == 802) a.cloud1 = 0x4208;
@@ -246,12 +273,12 @@ function setWeather() {
     if (new Date().getHours() >= 7 && new Date().getHours() <= 19) {
       //day-overcast
       a = {
-      bg1:0xC618, bg2:0x0200,
-      path:0x3000,
-      mtn1:0x3B38, mtn2:0x0005,
-      lake:0x000F,
-      tree1:0x03E0, tree2:0, tree3:0x59E0,
-      cloud1:0x7BEF, cloud2:1
+        bg1:0xC618, bg2:0x0200,
+        path:0x3000,
+        mtn1:0x3B38, mtn2:0x0005,
+        lake:0x000F,
+        tree1:0x03E0, tree2:0, tree3:0x59E0,
+        cloud1:0x7BEF, cloud2:1
       };
       //day-lightning
       if (data.code >= 200 && data.code < 300) a.ltn = 0xFFFF;
@@ -263,12 +290,12 @@ function setWeather() {
     else {
       //night-overcast
       a = {
-      bg1:0, bg2:0x0005,
-      path:0,
-      mtn1:0x0010, mtn2:0x000F,
-      lake:0x000F,
-      tree1:0x0200, tree2:0, tree3:0x59E0,
-      cloud1:0x4208, cloud2:1
+        bg1:0, bg2:0x0005,
+        path:0,
+        mtn1:0x0010, mtn2:0x000F,
+        lake:0x000F,
+        tree1:0x0200, tree2:0, tree3:0x59E0,
+        cloud1:0x4208, cloud2:1
       };
       //night-lightning
       if (data.code >= 200 && data.code < 300) a.ltn = 0xFFFF;
@@ -282,23 +309,23 @@ function setWeather() {
     if (new Date().getHours() >= 7 && new Date().getHours() <= 19) {
       //day-fog
       a = {
-      bg1:0xC618, bg2:0x0200,
-      path:0x3000,
-      mtn1:0x3B38, mtn2:0x0005,
-      lake:0x000F,
-      tree1:0x03E0, tree2:0, tree3:0x59E0,
-      fog:0xFFFF
+        bg1:0xC618, bg2:0x0200,
+        path:0x3000,
+        mtn1:0x3B38, mtn2:0x0005,
+        lake:0x000F,
+        tree1:0x03E0, tree2:0, tree3:0x59E0,
+        fog:0xFFFF
       };
     }
     else {
       //night-fog
       a = {
-      bg1:0, bg2:0x0005,
-      path:0,
-      mtn1:0x0010, mtn2:0x000F,
-      lake:0x000F,
-      tree1:0x0200, tree2:0, tree3:0x59E0,
-      fog:0x7BEF
+        bg1:0, bg2:0x0005,
+        path:0,
+        mtn1:0x0010, mtn2:0x000F,
+        lake:0x000F,
+        tree1:0x0200, tree2:0, tree3:0x59E0,
+        fog:0x7BEF
       };
     }
   }
@@ -306,26 +333,26 @@ function setWeather() {
     if (new Date().getHours() >= 7 && new Date().getHours() <= 19) {
       //day-snow
       a = {
-      bg1:0, bg2:0x7BEF,
-      path:0xC618,
-      mtn1:0xFFFF, mtn2:0x7BEF,
-      lake:0x07FF,
-      tree1:0xC618, tree2:0xC618, tree3:0x59E0,
-      cloud1:0x7BEF, cloud2:1,
-      snow:0xFFFF,
-      clock: 0
+        bg1:0, bg2:0x7BEF,
+        path:0xC618,
+        mtn1:0xFFFF, mtn2:0x7BEF,
+        lake:0x07FF,
+        tree1:0xC618, tree2:0xC618, tree3:0x59E0,
+        cloud1:0x7BEF, cloud2:1,
+        snow:0xFFFF,
+        clock: 0
       };
     }
     else {
       //night-snow
       a = {
-      bg1:0, bg2:0x0005,
-      path:0,
-      mtn1:0x0010, mtn2:0x000F,
-      lake:0x000F,
-      tree1:0x39E7, tree2:0x39E7, tree3:0x59E0,
-      cloud1:0x4208, cloud2:1,
-      snow:0xFFFF
+        bg1:0, bg2:0x0005,
+        path:0,
+        mtn1:0x0010, mtn2:0x000F,
+        lake:0x000F,
+        tree1:0x39E7, tree2:0x39E7, tree3:0x59E0,
+        cloud1:0x4208, cloud2:1,
+        snow:0xFFFF
       };
     }
   }
@@ -371,7 +398,73 @@ global.GB = (event) => {
   if (_GB) setTimeout(_GB, 0, event);
 };
 
+function drawClkinfoSettings() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  g.clear();
+  g.setColor(g.theme.fg);
+  g.setFont("Vector", py(10)).setFontAlign(-1, -1).drawString("<Back", px(2), py(9));
+  g.drawRect(1, 1, px(33), px(25)-1);
+  g.setFont("Vector", py(10)).setFontAlign(0, -1).drawString("-", px(50), py(9));
+  g.drawRect(px(33), 1, px(67), px(25)-1);
+  g.setFont("Vector", py(10)).setFontAlign(0, -1).drawString("+", px(83), py(9));
+  g.drawRect(px(67), 1, px(100)-1, px(25)-1);
+
+  data.rows.forEach(function(row, r) {
+    let a = row.menuA;
+    let b = row.menuB;
+    let ci = clockinfos[a].items[b];
+    if (clockinfosMain[a] && clockinfosMain[a][b]) {
+      clockinfosMain[a][b] = false;
+      ci.hide();
+      ci.removeListener("redraw", clockinfoRedraw);
+    }
+    addClockinfo(r)
+  });
+  clockinfosMain = {};
+}
+
+function addClockinfo(r) {
+  let dr = data.rows[r];
+	// Check if the saved clockinfo indices still exist
+	let ma = (dr && dr.menuA && clockinfos[dr.menuA]) ? dr.menuA : 0;
+	let mb = (ma && dr && dr.menuB && clockinfos[ma].items[dr.menuB]) ? dr.menuB : 0;
+  clockinfosSettings[r] = require("clock_info").addInteractive(clockinfos, {
+    x : 2, y: py((r+1)*25)+1, w: px(100)-4, h: py(25)-2,
+    menuA: ma,
+    menuB: mb,
+    draw : (itm, info, options) => {
+      g.reset().clearRect(options.x-1, options.y, options.x+options.w+1, options.y+options.h);
+      if (options.focus) g.drawRect(options.x-1, options.y, options.x+options.w+1, options.y+options.h);
+      g.setFont("Vector", py(10)).setFontAlign(-1, 0).drawString(info.text, options.x, options.y+options.h/2);
+    }
+  });
+}
+
+function saveClockinfos() {
+  data.rows = [];
+  clockinfosSettings.forEach(function(row, r) {
+    data.rows[r] = {
+      menuA: row.menuA,
+      menuB: row.menuB
+    }
+    row.remove();
+  });
+  require("Storage").writeJSON("mtnclock.json", data);
+}
+
 var drawTimeout;
+var redrawTimeout;
+
+function clockinfoRedraw() {
+  // Limit redraws to every second
+  if (!redrawTimeout) {
+    redrawTimeout = setTimeout(function() {
+      setWeather();
+      clearTimeout(redrawTimeout);
+      redrawTimeout = undefined;
+    }, 1000);
+  }
+}
 
 //update watchface in next minute
 function queueDraw() {
@@ -383,6 +476,41 @@ function queueDraw() {
     queueDraw();
   }, 60000 - (Date.now() % 60000));
 }
+
+function checkTouchBack(xy) {
+  return xy.x <= px(33) && xy.y < py(25);
+}
+
+function checkTouchMinus(xy) {
+  return xy.x > px(33) && xy.x < px(67) && xy.y < px(25);
+}
+
+function checkTouchPlus(xy) {
+  return xy.x >= px(67) && xy.y < px(25);
+}
+
+Bangle.on('touch', function(b, xy) {
+  // Bangle.js 2 supports long touch (type 2)
+  // On other devices, any touch will show the settings
+  if (!showingSettings && (xy.type == 2 || process.env.HWVERSION != 2)) {
+    drawClkinfoSettings();
+    showingSettings = true;
+  } else if (checkTouchBack(xy)) {
+    showingSettings = false;
+    saveClockinfos();
+    queueDraw();
+    // call setWeather after a timeout because for some reason a clockinfo
+    //  can still draw for a little bit despite calling remove() on it
+    setTimeout(setWeather, 100);
+  } else if (checkTouchMinus(xy) && clockinfosSettings.length > 0) {
+    let cl = clockinfosSettings[clockinfosSettings.length - 1];
+    cl.remove();
+    g.reset().clearRect(cl.x, cl.y, cl.x+cl.w-2, cl.y+cl.h-1);
+    clockinfosSettings.pop();
+  } else if (checkTouchPlus(xy) && clockinfosSettings.length < 3) {
+    addClockinfo(clockinfosSettings.length)
+  }
+});
 
 queueDraw();
 readWeather();
