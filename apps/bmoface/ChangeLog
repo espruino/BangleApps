@@ -8,7 +8,7 @@
 0.0.08: Fixed lock screen character variable error, separated lock screen logic
 0.0.09: Improved lock screen character-specific drawing and positioning
 0.0.1: Major release with all core features complete
-0.1.1: Code refactoring and lock screen improvements
+0.11: Code refactoring and lock screen improvements
 
 ## Attribution
 Based on the Advanced Casio Clock by dotgreg (https://github.com/dotgreg/advCasioBangleClock)
