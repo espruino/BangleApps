@@ -4,23 +4,30 @@
 
   function checkAQI(cb) {
     let d = new Date();
-    if (config.apiKey && config.rows && (data.aqiTime === undefined || data.aqiTime + 3600000 < d.getTime())) {
-      data.aqi = [];
+    if (config.apiKey && config.rows) {
       config.rows.forEach((row) => {
         if (row.url) {
           let el = row.url.replace(/\/$/, "").split("/").reverse();
           let url = `https://api.airvisual.com/v2/city?city=${el[0]}&state=${el[1]}&country=${el[2]}&key=${config.apiKey}`;
-          Bangle.http(url).then((r) => {
-            let resp = JSON.parse(r.resp);
-            data.aqiTime = d.getTime();
-            data.aqi.push({
-              url: row.url,
-              aqius: resp.data.current.pollution.aqius,
-              temp: resp.data.current.weather.tp
+          data[row.url] = data[row.url] || {};
+          // If neither attempt nor time are set, then we have never tried
+          // If attempt was set more than 1 minute ago, try again
+          // If time was set more than 1 hour ago, refresh
+          if ((!data[row.url].time && !data[row.url].attempt) ||
+              (data[row.url].attempt && data[row.url].attempt + 60000 < d.getTime()) ||
+              (data[row.url].time && data[row.url].time + 3600000 < d.getTime())) {
+            data[row.url].attempt = d.getTime();
+            Bangle.http(url).then((r) => {
+              let resp = JSON.parse(r.resp);
+              data[row.url] = {
+                aqius: resp.data.current.pollution.aqius,
+                temp: resp.data.current.weather.tp,
+                time: d.getTime()
+              }
+              cb();
+              require("Storage").writeJSON("airqualityci.json", data);
             });
-            cb();
-            require("Storage").writeJSON("airqualityci.json", data);
-          });
+          }
         }
       });
     }
@@ -50,7 +57,7 @@
         },
         get: function() {
           checkAQI(() => this.emit("redraw"));
-          let aqi = data.aqi.find((e) => e.url == config.rows[id].url);
+          let aqi = data[config.rows[id].url]
           let txt = "";
           switch ( config.rows[id].mode) {
             case 2:
