@@ -1,6 +1,6 @@
 {
   let getWidth = function() {
-    return E.getBattery() <= 10 || Bangle.isCharging() ? 40 : 0;
+    return E.getBattery() <= 20 || Bangle.isCharging() ? 40 : 0;
   };
   WIDGETS.minbate={area:"tr",width:getWidth(),draw:function() {
     if(this.width < 40) return;
