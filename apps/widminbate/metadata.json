@@ -1,7 +1,7 @@
 { "id": "widminbate",
   "name": "Extra Minimal Battery",
   "shortName":"ExtraMinBat",
-  "version":"0.06",
+  "version":"0.07",
   "author": "thyttan",
   "description": "An extra minimal (only use system theme foreground colour) version of the battery widget that only appears if the battery is running low (10% or less)",
   "icon": "widget.png",
