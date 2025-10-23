@@ -7,7 +7,7 @@
 0.07: Changed date text color to yellow
 0.08: Optimized memory usage with 4-bit color sprites and heatshrink compression
 0.09: Added interactive tap feature - tap Doomguy's face to flash yellow and show damage, daily hit counter with persistent storage
-0.10: Added temperature unit settings (Fahrenheit/Celsius toggle)
+0.11: Added temperature unit settings (Fahrenheit/Celsius toggle)
 
 ## Attribution
 Based on the Advanced Casio Clock by dotgreg (https://github.com/dotgreg/advCasioBangleClock)

@@ -4,7 +4,7 @@
   "version":"0.11",
   "description": "DOOM-inspired watch face with animated Doomguy face that reacts to battery level. Interactive tap feature lets you hit Doomguy with yellow flash effects and damage reactions. Features daily hit counter, battery-reactive faces, animated glances, heart rate, steps, temperature, and charging indicators.",
   "icon": "app.png",
-  "tags": "clock,game,retro,doom",
+  "tags": "clock,retro,doom",
 	"type": "clock",
 	"screenshots": [
 			{ "url": "screenshot01.png" }

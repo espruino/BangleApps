@@ -63,4 +63,4 @@
 
   // Show the menu
   showSettingsMenu();
-})(back);
+})(back)
