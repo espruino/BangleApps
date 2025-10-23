@@ -10,8 +10,6 @@ They can be used to overcome creative blocks or to approach challenges from a di
 
 ## Features
 - Time display rounded up to the next 5 minutes  
-- Silent – no vibrations or alerts  
 - Displays a new Oblique Strategy every 5 minutes or when tapped  
 - Information line: `Day N | Wed Oct. 22 | W43`  
-- Neutral grey layout with widget support  
-- Subtle motion indicator bar
+- Motion indicator bar
