@@ -150,10 +150,6 @@ Bangle.setUI({
   redraw:draw,
   remove:function(){
     if (boundaryTimeout) clearTimeout(boundaryTimeout);
-    Bangle.removeListener('accel', accelHandler);
-    Bangle.removeListener('touch', onTap);
-    Bangle.removeListener('tap', onTap);
-    Bangle.removeAllListeners('lcdPower');
   }
 });
 
