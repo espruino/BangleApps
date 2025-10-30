@@ -420,7 +420,9 @@ function saveGPX(track, title) {
       <link href="https://banglejs.com/" />
     </author>
   </metadata>
-  <trk><name>${title}</name><trkseg>${track.map(pt => {
+  <trk>
+    <name>${title}</name>
+    <trkseg>${track.map(pt => {
     // Calculate cadence (steps per minute) from step count
     // Formula: (steps in interval * 60 seconds * 1000ms) / time elapsed in ms
     // Simplified to: steps * 30000 / time_ms (since 60 * 1000 / 2 = 30000)
