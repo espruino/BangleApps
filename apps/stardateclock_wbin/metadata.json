@@ -1,0 +1,23 @@
+{
+  "id": "stardateclock_wbin",
+  "name": "Stardate Clock with Binary Time",
+  "shortName": "BinaryStardate",
+  "description": "A clock displaying a stardate along with a Binary clock in LCARS design",
+  "version": "0.08",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "allow_emulator": true,
+  "readme": "README.md",
+  "storage": [
+    { "name": "stardateclock_wbin.app.js", "url": "app.js" },
+    { "name": "stardateclock_wbin.img", "url": "app-icon.js", "evaluate": true }
+  ],
+  "screenshots": [
+    { "url": "screenshot1.png" },
+    { "url": "screenshot2.png" },
+    { "url": "screenshot3.png" },
+    { "url": "screenshot4.png" }
+  ]
+}
