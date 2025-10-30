@@ -9,3 +9,4 @@ declare function require(moduleName: "power_usage"): PowerUsageModule;
 declare function require(moduleName: "exstats"): typeof ExStats;
 declare function require(moduleName: "time_utils"): typeof TimeUtils;
 declare function require(moduleName: "textinput"): typeof TextInput;
+declare function require(moduleName: "messages"): typeof Messages;
