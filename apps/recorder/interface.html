@@ -710,7 +710,7 @@ function getTrackList() {
   if (lIdx >= 0) {
     var tries = 100;
     var l = data;
-    while (l && l.split(",")[lIdx]=="" && tries--)
+    while (l && l.split(",")[lIdx]==="" && tries--)
       l = f.readLine();
     if (l) data = l;
   }
@@ -719,6 +719,7 @@ function getTrackList() {
           if (!trackInfo || !("headers" in trackInfo)) {
             showToast("Error loading track list.", "error");
             resolve();
+            return;
           }
           trackInfo.headers = trackInfo.headers.split(",");
           trackList.push({
