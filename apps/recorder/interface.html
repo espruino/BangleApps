@@ -842,23 +842,21 @@ ${trackData.Latitude ? `
         attachTrackButtonListeners(trackContainer);
 
         downloadTrack(track.filename).then(fullTrack => {
-          if (trackData.Latitude) {
-            const coordinates = fullTrack
-              .filter(hasValidGPS)
-              .map(pt => [parseFloat(pt.Latitude), parseFloat(pt.Longitude)]);
+          const coordinates = fullTrack
+            .filter(hasValidGPS)
+            .map(pt => [parseFloat(pt.Latitude), parseFloat(pt.Longitude)]);
 
-            if (coordinates.length > 0) {
-              createLeafletMap(`map-${track.number}`, coordinates, fullTrack);
+          if (coordinates.length > 0) {
+            createLeafletMap(`map-${track.number}`, coordinates, fullTrack);
 
-              let distance = 0;
-              for (let i = 1; i < coordinates.length; i++) distance += L.latLng(coordinates[i-1]).distanceTo(L.latLng(coordinates[i]));
-              const duration = fullTrack[fullTrack.length-1].Time - fullTrack[0].Time;
-              const hours = Math.floor(duration / 3600000), minutes = Math.floor((duration % 3600000) / 60000);
-              const statsEl = document.getElementById(`stats-${track.number}`);
-              if (statsEl) {
-                const d = convertDistance(distance/1000);
-                statsEl.innerHTML = `<strong>Distance:</strong> ${d.value.toFixed(2)} ${d.unit} | <strong>Duration:</strong> ${hours}h ${minutes}m | <strong>Points:</strong> ${coordinates.length}`;
-              }
+            let distance = 0;
+            for (let i = 1; i < coordinates.length; i++) distance += L.latLng(coordinates[i-1]).distanceTo(L.latLng(coordinates[i]));
+            const duration = fullTrack[fullTrack.length-1].Time - fullTrack[0].Time;
+            const hours = Math.floor(duration / 3600000), minutes = Math.floor((duration % 3600000) / 60000);
+            const statsEl = document.getElementById(`stats-${track.number}`);
+            if (statsEl) {
+              const d = convertDistance(distance/1000);
+              statsEl.innerHTML = `<strong>Distance:</strong> ${d.value.toFixed(2)} ${d.unit} | <strong>Duration:</strong> ${hours}h ${minutes}m | <strong>Points:</strong> ${coordinates.length}`;
             }
           }
 
