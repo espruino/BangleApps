@@ -29,7 +29,7 @@
     : (days >= 1
       ? Math.round(Math.min(days, 99)) + "d"
       : Math.round(hrsLeft) + "h");
-  if(batt<=5) txt="!";
+  if(batt<=5&&!showPercent) txt="!";
   if(Bangle.isCharging()) txt=E.getBattery();
   let s = 29;
   let x = this.x, y = this.y;
