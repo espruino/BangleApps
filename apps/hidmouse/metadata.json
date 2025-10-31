@@ -1,0 +1,16 @@
+{
+	"id": "hidmouse",
+	"name": "BLE Mouse",
+	"version": "0.01",
+	"author": "bobrippling",
+	"description": "A mouse app - use your watch as a bluetooth mouse",
+	"icon": "app.png",
+	"type": "app",
+	"tags": "mouse,bluetooth,hid",
+	"supports" : ["BANGLEJS2"],
+	"readme": "README.md",
+	"storage": [
+		{"name": "hidmouse.app.js", "url": "app.js"},
+		{"name": "hidmouse.img", "url": "app-icon.js", "evaluate": true}
+	]
+}
