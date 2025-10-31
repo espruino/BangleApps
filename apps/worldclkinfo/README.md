@@ -37,7 +37,11 @@ With Simple Mode disabled, there are 5 available display modes:
 - `London 5:45 Mon`
 
 
-## Creators
+## Creator
 
 [RKBoss6](https://github.com/RKBoss6)
-[ChuckWagon Computing](https://github.com/chuckwagoncomputing)
+
+## Contributors
+
+- [ChuckWagon Computing](https://github.com/chuckwagoncomputing)
+
