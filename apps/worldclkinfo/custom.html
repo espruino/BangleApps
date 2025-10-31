@@ -106,7 +106,7 @@
 
       document.getElementById("delrow").addEventListener("click", function() {
         let tbl = document.getElementById("rows");
-        tbl.deleteRow(tbl.rows.length -1);
+        if (tbl.rows.length > 1) tbl.deleteRow(tbl.rows.length -1);
       });
 
       document.getElementById("upload").addEventListener("click", function() {
