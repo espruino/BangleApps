@@ -91,3 +91,4 @@ of 'Select Clock'
 0.80: Add option to set LCD brightness to 0, keep default brightness at 1.
 0.81: Ensure 'Privacy' (address randomnisation) is only added for Bangle.js 2,
       and add warnings in documentation that it can cause connection issues
+0.82: Fix Quiet Mode menu (could previously scroll up and have it show 'undefined')
