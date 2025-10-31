@@ -59,25 +59,27 @@
           checkAQI(() => this.emit("redraw"));
           let aqi = data[config.rows[id].url]
           let txt = "";
+					let aqius = (aqi && typeof(aqi.aqius) == "number") ? aqi.aqius : "...";
+					let temp = (aqi && typeof(aqi.temp) == "number") ? aqi.temp : "...";
           switch ( config.rows[id].mode) {
             case 2:
-              txt = ((aqi && aqi.aqius) || "...") + " " + ((aqi && aqi.temp) || "...") + "°";
+            txt = aqius + " " + temp + "°";
               break;
             case 3:
-              txt = row.name + " " + ((aqi && aqi.aqius) || "...");
+              txt = row.name + " " + aqius;
               break;
             case 4:
-              txt = row.name + " " + ((aqi && aqi.aqius) || "...") + " " + ((aqi && aqi.temp) || "...") + "°";
+              txt = row.name + " " + aqius + " " + temp + "°";
               break;
             case 5:
               txt = row.name;
               break;
             default:
-              txt = ((aqi && aqi.aqius) || "...");
+              txt = aqius;
           }
           return {
             text: txt,
-            short: ((aqi && aqi.aqius) || "..."),
+            short: aqius,
             img: atob("GBiBAAA4AAB8AAd+AA++QB/d8D/t8D/p+DvqcBUPsA7vgB9fwA7vgAXvgAH/AAHwgAD3wAbfwA9/wA+/gA/fAA/OAA/gAAfAAAAAAA==")
           };
         }
