@@ -1,2 +1,3 @@
 0.01: New app! (settings, boot.js).
 0.02: Fix settings defaulting brightness to 0
+0.03: When button is released, cancel long press check. (Remove false triggers)
