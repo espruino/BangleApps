@@ -23,7 +23,12 @@ if (!exports.settings) {
         longBreak: 900000,                  //15 minute long break
         numShortBreaks: 3,                  //3 short breaks for every long break
         pausedTimerExpireTime: 21600000,    //If the timer was left paused for >6 hours, reset it on next launch
-        widget: false                       //If a widget is added in the future, whether the user wants it
+        widget: false,                       //If a widget is added in the future, whether the user wants it
+        notifyShortPattern: "=",            // pattern for short break notification
+        notifyLongPattern: "=",             // pattern for long break notification
+        notifyWorkPattern: "==",            // pattern for work session notification
+        notifyReps: 2,                      // number of pattern repetitions
+        notifyRepsDelay: 50,                // delay between repetitions (in ms)
     };
 }
 
@@ -105,13 +110,30 @@ exports.nextPhase = function (vibrate) {
 
     if (vibrate) {
         if (exports.state.phase == exports.PHASE_WORKING) {
-            Bangle.buzz(800, 1);
+            exports.doNotify(exports.settings.notifyWorkPattern, exports.settings.notifyReps,exports.settings.notifyRepsDelay);  
+
         } else if (exports.state.phase == exports.PHASE_SHORT_BREAK) {
-            Bangle.buzz();
-            setTimeout(Bangle.buzz, 400);
+            exports.doNotify(exports.settings.notifyShortPattern, exports.settings.notifyReps,exports.settings.notifyRepsDelay);  
+      
         } else {
-            Bangle.buzz();
-            setTimeout(Bangle.buzz, 400, 400);
+            exports.doNotify(exports.settings.notifyLongPattern, exports.settings.notifyReps,exports.settings.notifyRepsDelay);  
         }
     }
+}
+
+exports.doNotify = function(pattern, repetitions, repeatDelay) {
+    const buzz = require("buzz");
+
+    let i = 0;
+
+    function doBuzz() {
+      buzz.pattern(pattern).then(() => {
+        i++;
+        if (i < repetitions) {
+          setTimeout(doBuzz, repeatDelay);
+        }
+      });
+    }
+
+    doBuzz();
 }
