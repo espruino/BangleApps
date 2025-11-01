@@ -85,13 +85,6 @@ exports.getNextPhase = function () {
 
 //Change to the next phase and update numShortBreaks, and optionally vibrate. DOES NOT WRITE STATE CHANGE TO STORAGE!
 exports.nextPhase = function (vibrate) {
-    a = {
-        startTime: 0,                   //When the timer was last started. Difference between this and now is how long timer has run continuously.
-        pausedTime: 0,                  //When the timer was last paused. Used for expiration and displaying timer while paused.
-        elapsedTime: 0,                 //How much time the timer had spent running before the current start time. Update on pause or user skipping stages.
-        phase: exports.PHASE_WORKING,   //What phase the timer is currently in
-        numShortBreaks: 0               //Number of short breaks that have occured so far
-    }
     let now = (new Date()).getTime();
     exports.state.startTime = now;  //The timer is being reset, so say it starts now.
     exports.state.pausedTime = now; //This prevents a paused timer from having the start time moved to the future and therefore having been run for negative time.
