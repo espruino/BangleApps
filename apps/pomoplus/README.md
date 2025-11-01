@@ -39,4 +39,4 @@ bruceblore
 
 ## Contributors
 
-notEvil, thyttan
+notEvil, thyttan, emvee381
