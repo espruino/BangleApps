@@ -25,12 +25,12 @@
             }
         }
     };
-    const quietMode= (require("Storage").readJSON("setting.json", 1) || {}).quiet && config.followQuietMode;
 
     let date;
     let fractionMs = 3600000 / config.fractions_of_hour;
 
     let chime = function () {
+        const quietMode= (require("Storage").readJSON("setting.json", 1) || {}).quiet && config.followQuietMode;
         if (quietMode) return;
         date = new Date();
         let hourFrac = Math.floor(date.getMinutes() / (60 / config.fractions_of_hour));
