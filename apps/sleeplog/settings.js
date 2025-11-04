@@ -399,7 +399,7 @@
     } else {
       /*menu =*/ E.showMenu(thresholdsMenu);
     }
-    };
+    }
     
     function showOtherSettings() {
     // setup logging menu
