@@ -12,7 +12,8 @@
         fractions_of_hour: 4, // 4 = 15min intervals, 6 = 10min intervals
         wait_ms: 500,
         meridian_buzz_ms: 50,
-        meridian_buzz_wait_ms: 300
+        meridian_buzz_wait_ms: 300,
+        followQuietMode: true
     }, require('Storage').readJSON("grandfatherclock.json", true) || {});
 
     let writeConfig = function() {
@@ -39,6 +40,12 @@
             value: config.swap_meridian,
             onchange: v => {
                 config.swap_meridian = v;
+                writeConfig();
+            }
+        },"Follow Quite Mode": {
+            value: config.followQuietMode,
+            onchange: v => {
+                config.followQuietMode = v;
                 writeConfig();
             }
         },"Hr attn. buzz length (ms)": {

@@ -172,8 +172,9 @@ function alertsMenu() {
       }
     },
     /*LANG*/"Quiet Mode": {
-      value: settings.quiet|0,
-      format: v => [/*LANG*/"Off", /*LANG*/"Alarms", /*LANG*/"Silent"][v%3],
+      value: (settings.quiet|0)%3,
+      min:0, max:2,
+      format: v => [/*LANG*/"Off", /*LANG*/"Alarms", /*LANG*/"Silent"][v],
       onchange: v => {
         settings.quiet = v%3;
         updateSettings();
