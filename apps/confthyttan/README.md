@@ -1,6 +1,6 @@
 # Thyttan's Default Config
 
-A different default set of apps and configurations. Brings many quality of life improvements. Opinionated based on the creators taste. Read more below before installing.
+A different default set of apps and configurations. Makes many quality of life changes. Opinionated based on the creators taste. Read more below before installing.
 
 ## Usage
 
