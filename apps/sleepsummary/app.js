@@ -81,12 +81,11 @@ var pageLayout = new Layout({
 
 // Update function
 function draw() {
-  var sleepData=require("sleepsummary").getSleepData();
   var data=require("sleepsummary").getSummaryData();
-  pageLayout.sleepScore.label = "Sleep score: "+sleepScore;
-  pageLayout.todayWakeupTime.label = msToTimeStr(sleepData.awakeSince);
+  pageLayout.sleepScore.label = "Sleep score: "+data.overallSleepScore;
+  pageLayout.todayWakeupTime.label = msToTimeStr(data.wkUpTime);
   pageLayout.avgWakeupTime.label = msToTimeStr(data.avgWakeUpTime);
-  pageLayout.todaySleepTime.label = minsToTimeStr(sleepData.totalSleep);
+  pageLayout.todaySleepTime.label = minsToTimeStr(data.sleepDuration);
   pageLayout.avgSleepTime.label = minsToTimeStr(data.avgSleepTime);
   pageLayout.render();
 }
