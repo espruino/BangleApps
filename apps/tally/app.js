@@ -35,7 +35,13 @@ function showTallies(tallies) {
             menu[s] = function () { };
             day = td;
         }
-        menu["".concat(tfmt(tally), ": ").concat(tally.name)] = function () { return editTally(tallies, i); };
+        var title = "".concat(tfmt(tally), ": ").concat(tally.name);
+        var n = 2;
+        while (title in menu) {
+            title = "".concat(tfmt(tally), " (").concat(n, "): ").concat(tally.name);
+            n++;
+        }
+        menu[title] = function () { return editTally(tallies, i); };
     });
     E.showMenu(menu);
 }
