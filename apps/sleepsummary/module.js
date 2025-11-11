@@ -201,7 +201,7 @@
     cachedData.consecSleep=slpData.consecSleep;
     cachedData.trueSleep=slpData.trueSleep;
     cachedData.dayLastUpdated=today;
-    
+    cachedData.wkUpTime=slpData.awakeSince;
     writeCachedData(cachedData);
 
 
@@ -238,6 +238,7 @@
   exports.getSummaryData=getSummaryData;
   exports.recordAvgData=recordSleepStats;
   exports.getSettings=getSettings;
+  exports.getSleepData=getSleepData;
   
 
       
