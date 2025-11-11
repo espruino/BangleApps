@@ -1,4 +1,8 @@
+
 {
+  //Creator: RKBoss6
+  //The calculations used are very resource-heavy, so we calculate once, and offload to a cache for the day.
+  
   let getMsPastMidnight=function(unixTimestamp) {
     
     const dateObject = new Date(unixTimestamp);
@@ -17,7 +21,7 @@
     
   };
   
-  let getData=function(){
+  let getAvgData=function(){
     return Object.assign({
 
       avgSleepTime: 0,
@@ -26,19 +30,19 @@
       promptLastShownDay:"",
 
     }, require('Storage').readJSON("sleepsummarydata.json", true) || {});
-  };
+  }
 
   let getSettings=function() {
     return Object.assign({
       useTrueSleep:true,
-      messageDelay: 1800000,
+      timeSinceAwake: 1800000,
       showMessage:true,
       deepSleepHours:5,
       idealSleepHours:10,
 
     }, require('Storage').readJSON("sleepsummary.settings.json", true) || {});
   };
-  
+  //l
   let writeData=function(data){
     require("Storage").writeJSON("sleepsummarydata.json", data);
 
@@ -65,6 +69,7 @@
             firstDate: data.firstDate, 
             lastDate: data.lastDate, 
             totalSleep: totalSleep,
+            trueSleep:data.deepSleep+data.lightSleep,
             awakeSince:getMsPastMidnight(global.sleeplog.info.awakeSince)
            };
       
@@ -74,10 +79,10 @@
   
 
   
-  let recordSleepStats=function(){
+  function recordSleepStats(){
     var today = new Date().getDay();
     var sleepData=getSleepData();
-    var data=getData();
+    var data=getAvgData();
     //Wakeup time
     var wakeUpTime=sleepData.awakeSince;
     var avgWakeUpTime=averageNumbers(data.avgWakeUpTime,data.totalCycles,wakeUpTime);
@@ -99,7 +104,7 @@
   };
   
   // takes in an object with {score, weight}
-  let getWeightedScore=function(components) {
+  function getWeightedScore(components) {
     // sum of weights
     let totalWeight = 0;
     for (let key in components) totalWeight += components[key].weight;
@@ -130,7 +135,7 @@
     
     var sleepData=getSleepData();
     var settings=getSettings();
-    var summaryData=getData();
+    var summaryData=getAvgData();
 
     //only if enabled in Health
     //var hrmScore;
@@ -152,7 +157,7 @@
   
   
   let getAllSleepScores=function(){
-    var data=getData();
+    var data=getAvgData();
     var sleepData=getSleepData();
     var settings=getSettings();
     return {
@@ -160,21 +165,80 @@
       deepSleepScore:generateScore(sleepData.deepSleep/60,settings.deepSleepHours),
       avgWakeUpScore: generateScore(getMsPastMidnight(sleepData.awakeSince),data.avgWakeUpTime),
       avgSleepTimeScore:generateScore(sleepData.totalSleep,data.avgSleepTime),
-      overallScore:getSleepScore()
+      overallScore:getSleepScore(),
     }
   };
+  let writeCachedData=function(data){
+    require("Storage").writeJSON("sleepsummarydatacache.json",data);
+  }
+  let getCachedData=function(){
+    var data=Object.assign({
+
+      wkUpTime:0,
+      overallSleepScore:0,
+      deepSleepScore:0,
+      wkUpSleepScore:0,
+      durationSleepScore:0,
+      consecSleep:0,
+      trueSleep:0,
+      dayLastUpdated:100,
+
+    }, require('Storage').readJSON("sleepsummarydatacache.json", true) || {});
+    data.sleepDuration=getSettings().useTrueSleep?data.trueSleep:data.consecSleep;
+    return data;
+  }
+  
+  let calcAndCache=function(){
+    let today=new Date().getDay();
+    let scores=getAllSleepScores();
+    let slpData=getSleepData();
+    let cachedData=getCachedData();
+    //cache data
+    cachedData.overallSleepScore=scores.overallScore;
+    cachedData.deepSleepScore=scores.deepSleepScore;
+    cachedData.wkUpSleepScore=scores.avgWakeUpScore;
+    cachedData.durationSleepScore=scores.avgSleepTimeScore;
+    cachedData.consecSleep=slpData.consecSleep;
+    cachedData.trueSleep=slpData.trueSleep;
+    cachedData.dayLastUpdated=today;
+    
+    writeCachedData(cachedData);
+
+
+    
+  }
   
   
-  
+  let getSummaryData=function(){
+    
+    
+    let avgData=getAvgData();
+    let cachedData=getCachedData()
+    let today = new Date().getDay();
+    // Check if data is up to date for today
+    if(cachedData.dayLastUpdated!=today){
+      //has not cached for today, do it now
+      calcAndCache();
+      //re-run this function to get the new data
+      cachedData= getCachedData();
+      
+    }
+      
+    // we now have up-to-date cache data, return merged cachedData and avgData to user
+
+    return Object.assign({}, avgData, cachedData);
+    
+    
+  }
   
   
   
   exports.deleteData = deleteData;
-  exports.getSummaryData=getData;
-  exports.recordData=recordSleepStats;
-  exports.getSleepScores=getAllSleepScores;
-  exports.getSleepData=getSleepData;
+  exports.recalculate=calcAndCache;
+  exports.getSummaryData=getSummaryData;
+  exports.recordAvgData=recordSleepStats;
   exports.getSettings=getSettings;
+  
 
       
 
