@@ -464,7 +464,7 @@ function trackLineToObject(headers, l) {
   return o;
 }
 
-async function downloadTrack(filename) {
+async function downloadTrack(filename) { // filename: string
   function parse(data) {
     const lines = data.trim().split("\n"), headers = lines.shift().split(",");
     return lines.map(l=>trackLineToObject(headers, l)).filter(t => t.Time);
@@ -487,7 +487,7 @@ function isSelected(track) {
   return document.getElementById(`track-download-${trackNumber}`).checked;
 }
 
-async function downloadTracks(tracks, saveCb) {
+async function downloadTracks(tracks, saveCb) { // tracks: [{ filename: string, number: number }]
   for(const track of tracks){
     const lines = await downloadTrack(track.filename);
     const title = `Bangle.js Track ${track.number}`;
@@ -910,18 +910,19 @@ ${trackData.Latitude ? `
 
             if (!filename || !trackid) return;
 
+            const tracks = [{ filename, number: trackid }];
             switch(task) {
               case "delete":
                 await confirmDelete(button, [filename]);
                 break;
               case "downloadkml":
-                await downloadTracks([filename], track => saveKML(track, `Bangle.js Track ${trackid}`));
+                await downloadTracks(tracks, track => saveKML(track, `Bangle.js Track ${trackid}`));
                 break;
               case "downloadgpx":
-                await downloadTracks([filename], track => saveGPX(track, `Bangle.js Track ${trackid}`));
+                await downloadTracks(tracks, track => saveGPX(track, `Bangle.js Track ${trackid}`));
                 break;
               case "downloadcsv":
-                await downloadTracks([filename], track => saveCSV(track, `Bangle.js Track ${trackid}`));
+                await downloadTracks(tracks, track => saveCSV(track, `Bangle.js Track ${trackid}`));
                 break;
             }
           });
