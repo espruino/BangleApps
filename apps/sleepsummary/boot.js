@@ -11,20 +11,7 @@
       const msPastMidnight = (hours * 3600000) + (minutes * 60000) + (seconds * 1000) + milliseconds;
       return msPastMidnight;
     };
-    function formatTime(hours) {
-      let h = Math.floor(hours);             // whole hours
-      let m = Math.round((hours - h) * 60);  // leftover minutes
-
-      // handle rounding like 1.9999 → 2h 0m
-      if (m === 60) {
-        h += 1;
-        m = 0;
-      }
-
-      if (h > 0 && m > 0) return h + "h " + m + "m";
-      if (h > 0) return h + "h";
-      return m + "m";
-    }
+    
 
 
     function logNow(msg) {
@@ -54,22 +41,9 @@
     }
 
     let showSummary=function(){
-      logNow("shown")
-      let summaryData=require("sleepsummary").getSummaryData()
-
-      var message="You slept for "+ formatTime(summaryData.sleepDuration/60) +", with a sleep score of "+summaryData.overallSleepScore+"!";
-
-      E.showPrompt(message, {
-          title: "Good Morning!",
-          buttons: { "Dismiss": 1, "Open App":2},
-
-      }).then(function (answer) {
-          if(answer==1){
-            Bangle.load();
-          }else{
-            Bangle.load("sleepsummary.app.js");
-          }
-      });
+      logNow("shown");
+      Bangle.load("sleepsummarymsg.app.js");
+      
     }
 
 
@@ -83,12 +57,14 @@
         if (data.status==2&&(data.previousStatus==3||data.previousStatus==4)) {
           var settings=require("sleepsummary").getSettings();
 
-          //woke up
+          //woke up for the first time
+          require("sleepsummary").recordData();
+          
           if(settings.showMessage){
             setTimeout(showSummary,settings.messageDelay)
           }
 
-          require("sleepsummary").recordData();
+          
         }
 
       }
