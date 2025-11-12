@@ -19,9 +19,9 @@ function formatTime(hours) {
 let summaryData=require("sleepsummary").getSummaryData()
 let score=summaryData.overallSleepScore;
 var message=""; //"You slept for "+ formatTime(summaryData.sleepDuration/60)
-if(summaryData.avgWakeUpTime-summaryData.wkUpTime>20){
+if(summaryData.avgWakeUpTime-summaryData.wakeUpTime>20){
   message+="You woke up earlier than usual today";
-}else if(summaryData.avgWakeUpTime-summaryData.wkUpTime<-20){
+}else if(summaryData.avgWakeUpTime-summaryData.wakeUpTime<-20){
   message+="You woke up later than usual today";
 }else{
   message+="You woke up around the same time as usual today";
