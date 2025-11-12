@@ -90,5 +90,4 @@
         } // function to be executed
       };
     }
-    showSummary();
   }
