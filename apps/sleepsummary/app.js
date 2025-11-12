@@ -38,7 +38,8 @@ function drawGraph(l) {
   g.setColor("#808080")
   g.fillRect({x:l.x+pad, y:l.y+pad, w:(w-(2*pad)), h:12-(pad*2),r:10000}); 
   g.setColor("#0F0");
-  if(score<75)g.setColor("#FF8000")
+  if(score<75)g.setColor("#FF0");
+  if(score<60)g.setColor("#FF8000");
   if(score<40)g.setColor("#F00")
   g.fillRect({x:l.x+pad, y:l.y+pad, w:score*((w-(2*pad))/100), h:12-(pad*2),r:10000}); 
 }
@@ -47,7 +48,7 @@ function drawGraph(l) {
 var pageLayout = new Layout({
   type: "v", c: [
     {type:undefined, height:7}, // spacer
-    {type:"txt",filly:0, label:"Sleep Summary", font:"Vector:17", halign:0, id:"title",height:17,pad:3},
+    {type:"txt"  ,filly:0, label:"Sleep Summary", font:"Vector:17", halign:0, id:"title",height:17,pad:3},
     {
       type:"v", c: [
         {type:"txt", label:"Sleep Score: --", font:"8%", pad:5, id:"sleepScore"},
@@ -87,7 +88,7 @@ var pageLayout = new Layout({
 // Update function
 function draw() {
   pageLayout.sleepScore.label = "Sleep score: "+score;
-  pageLayout.todayWakeupTime.label = msToTimeStr(data.wkUpTime);
+  pageLayout.todayWakeupTime.label = msToTimeStr(data.wakeUpTime);
   pageLayout.avgWakeupTime.label = msToTimeStr(data.avgWakeUpTime);
   pageLayout.todaySleepTime.label = minsToTimeStr(data.sleepDuration);
   pageLayout.avgSleepTime.label = minsToTimeStr(data.avgSleepTime);
