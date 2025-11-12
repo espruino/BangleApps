@@ -1,3 +1,4 @@
+
 {
   //Creator: RKBoss6
   //The calculations used are very resource-heavy, so we calculate once, and offload to a cache for the day.
@@ -78,29 +79,7 @@
   
 
   
-  function recordSleepStats(){
-    var today = new Date().getDay();
-    var sleepData=getSleepData();
-    var data=getAvgData();
-    //Wakeup time
-    var wakeUpTime=sleepData.awakeSince;
-    var avgWakeUpTime=averageNumbers(data.avgWakeUpTime,data.totalCycles,wakeUpTime);
-    data.avgWakeUpTime=avgWakeUpTime;
-    
-    //sleep time in minutes
-    var time=sleepData.totalSleep;
-    
-    
-    var avgSleepTime = averageNumbers(data.avgSleepTime, data.totalCycles, time);
-    data.avgSleepTime = avgSleepTime;
-    
-    data.promptLastShownDay=today;
-    
-    
-    data.totalCycles+=1;
-    writeData(data);
-    
-  };
+  
   
   // takes in an object with {score, weight}
   function getWeightedScore(components) {
@@ -230,7 +209,30 @@
     
   }
   
-  
+  function recordSleepStats(){
+    var today = new Date().getDay();
+    var sleepData=getSleepData();
+    var data=getAvgData();
+    //Wakeup time
+    var wakeUpTime=sleepData.awakeSince;
+    var avgWakeUpTime=averageNumbers(data.avgWakeUpTime,data.totalCycles,wakeUpTime);
+    data.avgWakeUpTime=avgWakeUpTime;
+    
+    //sleep time in minutes
+    var time=sleepData.totalSleep;
+    
+    
+    var avgSleepTime = averageNumbers(data.avgSleepTime, data.totalCycles, time);
+    data.avgSleepTime = avgSleepTime;
+    
+    data.promptLastShownDay=today;
+    
+    
+    data.totalCycles+=1;
+    writeData(data);
+    // recalculate new data for cache
+    calcAndCache();
+  };
   
   exports.deleteData = deleteData;
   exports.recalculate=calcAndCache;
