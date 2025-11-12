@@ -1,4 +1,3 @@
-
 {
   //Creator: RKBoss6
   //The calculations used are very resource-heavy, so we calculate once, and offload to a cache for the day.
@@ -174,7 +173,7 @@
   let getCachedData=function(){
     var data=Object.assign({
 
-      wkUpTime:0,
+      wakeUpTime:0,
       overallSleepScore:0,
       deepSleepScore:0,
       wkUpSleepScore:0,
@@ -201,7 +200,7 @@
     cachedData.consecSleep=slpData.consecSleep;
     cachedData.trueSleep=slpData.trueSleep;
     cachedData.dayLastUpdated=today;
-    cachedData.wkUpTime=slpData.awakeSince;
+    cachedData.wakeUpTime=slpData.awakeSince;
     writeCachedData(cachedData);
 
 
