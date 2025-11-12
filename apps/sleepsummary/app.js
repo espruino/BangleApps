@@ -1,6 +1,6 @@
 var Layout = require("Layout");
-var sleepScore = require("sleepsummary").getSleepScores().overallScore;
-
+var data=require("sleepsummary").getSummaryData();
+var score=data.overallSleepScore;
 // Convert unix timestamp (s or ms) → HH:MM
 function msToTimeStr(ms) {
   // convert ms → minutes
@@ -28,14 +28,19 @@ function minsToTimeStr(mins) {
 
 
 
-// Custom renderer for the battery bar
+// Custom renderer for the score bar
 function drawGraph(l) {
   let w = 160;
+  let pad=3;
+  
   g.setColor(g.theme.fg);
-  g.drawRect(l.x, l.y, l.x+w, l.y+10); // outline
-  g.setColor("#00F")
-  if(g.theme.dark)g.setColor("#0F0");
-  g.fillRect(l.x, l.y, l.x+(sleepScore*1.65), l.y+10); // fill
+  g.fillRect({x:l.x, y:l.y, w:w, h:12,r:1000}); //bg
+  g.setColor("#808080")
+  g.fillRect({x:l.x+pad, y:l.y+pad, w:(w-(2*pad)), h:12-(pad*2),r:10000}); 
+  g.setColor("#0F0");
+  if(score<75)g.setColor("#FF8000")
+  if(score<40)g.setColor("#F00")
+  g.fillRect({x:l.x+pad, y:l.y+pad, w:score*((w-(2*pad))/100), h:12-(pad*2),r:10000}); 
 }
 
 // Layout definition
@@ -54,7 +59,7 @@ var pageLayout = new Layout({
           {  
             type:"v", pad:3, c:[
               {type:"txt", label:"", font:"9%",halign:1,pad:4},
-              {type:"txt", label:"Wake Up:", font:"8%",halign:1},
+              {type:"txt", label:"Wk Up:", font:"8%",halign:1},
               {type:"txt", label:"Sleep:", font:"8%",halign:1},
             ]
           },
@@ -81,8 +86,7 @@ var pageLayout = new Layout({
 
 // Update function
 function draw() {
-  var data=require("sleepsummary").getSummaryData();
-  pageLayout.sleepScore.label = "Sleep score: "+data.overallSleepScore;
+  pageLayout.sleepScore.label = "Sleep score: "+score;
   pageLayout.todayWakeupTime.label = msToTimeStr(data.wkUpTime);
   pageLayout.avgWakeupTime.label = msToTimeStr(data.avgWakeUpTime);
   pageLayout.todaySleepTime.label = minsToTimeStr(data.sleepDuration);
@@ -93,7 +97,7 @@ function draw() {
 
 // Initial draw
 g.clear();
-draw();
+setTimeout(draw,200);
 
 
 // We want this app to behave like a clock:
