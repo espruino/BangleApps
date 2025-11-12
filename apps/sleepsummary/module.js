@@ -237,7 +237,7 @@
   exports.deleteData = deleteData;
   exports.recalculate=calcAndCache;
   exports.getSummaryData=getSummaryData;
-  exports.recordAvgData=recordSleepStats;
+  exports.recordData=recordSleepStats;
   exports.getSettings=getSettings;
   exports.getSleepData=getSleepData;
   
