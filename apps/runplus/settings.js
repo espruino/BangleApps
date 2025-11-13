@@ -19,6 +19,7 @@
     paceLength: 1000, // TODO: Default to either 1km or 1mi based on locale
     alwaysResume: false,
     vibrate: false,
+    showSats: false,
     notify: {
       dist: {
         increment: 0,
@@ -85,6 +86,13 @@
     value : settings.vibrate,
     onchange : v => {
       settings.vibrate = v;
+      saveSettings();
+    },
+  };
+  menu[/*LANG*/"Show satelite bar"] = {
+    value : settings.showSats,
+    onchange : v => {
+      settings.showSats = v;
       saveSettings();
     },
   };
