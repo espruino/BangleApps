@@ -1,0 +1,16 @@
+name: Greetings
+
+on: [pull_request_target, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: "Message that will be displayed on users' first issue"
+        pr-message: "Welcome to the BangleApps repository! As this is your first PR here, here are a few reminders for you to ensure a smooth contributing journey ahead. 1. Make sure the checks below are sucessful. This ensures that your code won't have any bugs or linting errors. 2. Be respectful. Make sure you don't say anything offensive to others. Think before you post. 3. Have fun! This marks the start of your contributing journey, and we hope it ushers in many more contributions in the future. A maintainer or fellow contributor will review your work and post something here!"
