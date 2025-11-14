@@ -293,7 +293,7 @@ if (global.sleeplog.conf.enabled) {
               timestamp: new Date(data.timestamp),
               status: data.status,
               consecutive: data.consecutive,
-              prevStatus: this.status,
+              prevStatus: data.status === this.status ? undefined : this.status,
               prevConsecutive: data.consecutive === this.consecutive ? undefined : this.consecutive
             }, (e => {delete e.fn; return e;})(entry.clone()));
         });
