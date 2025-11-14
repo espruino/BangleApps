@@ -155,7 +155,7 @@ if (global.sleeplog.conf.enabled) {
       // check if global variable accessable
       if (!global.sleeplog) return new Error("sleeplog: Can't process health event, global object missing!");
       // check if movement is available
-      if (!data.movement) return;
+      if (!data.movement&&!data.bpm) return;
       // add timestamp rounded to 10min, corrected to 10min ago
       data.timestamp = data.timestamp || ((Date.now() / 6E5 | 0) - 1) * 6E5;
       // add preliminary status depending on charging and movement thresholds
