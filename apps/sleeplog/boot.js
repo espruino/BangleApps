@@ -161,17 +161,13 @@ if (global.sleeplog.conf.enabled) {
       // add preliminary status depending on charging and movement thresholds
       // 1 = not worn, 2 = awake, 3 = light sleep, 4 = deep sleep
       if(data.bpm){
-          if (!Bangle.isCharging()) {
-              if (data.bpm <= global.sleeplog.conf.hrmDeepTh) data.status = 4;
-              else if (data.bpm <= global.sleeplog.conf.hrmLightTh) data.status = 3;
-              else data.status = 2;
-          } else data.status = 1;
-      } else {
-          if (!Bangle.isCharging()) {
-              if (data.movement <= global.sleeplog.conf.deepTh) data.status = 4;
-              else if (data.movement <= global.sleeplog.conf.lightTh) data.status = 3;
-              else data.status = 2;
-          } else data.status = 1;
+        data.status = Bangle.isCharging() ? 1 :
+          data.bpm <= global.sleeplog.conf.hrmDeepTh ? 4 :
+          data.bpm <= global.sleeplog.conf.hrmLightTh ? 3 : 2;
+      }else{
+        data.status = Bangle.isCharging() ? 1 :
+          data.movement <= global.sleeplog.conf.deepTh ? 4 :
+          data.movement <= global.sleeplog.conf.lightTh ? 3 : 2;
       }
 
       // check if changing to deep sleep from non sleeping
