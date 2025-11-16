@@ -852,10 +852,10 @@ return {headers:headers,l:data};
       </div>`;
 
     trackContainer.innerHTML = trackHtml;
-    trackContainer.dataset.loaded = 'true';
     attachTrackButtonListeners(trackContainer);
 
     const fullTrack = await downloadTrack(track.filename);
+    trackContainer.dataset.loaded = 'true';
 
     const coordinates = fullTrack
       .filter(hasValidGPS)
