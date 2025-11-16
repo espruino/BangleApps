@@ -829,17 +829,14 @@ return {headers:headers,l:data};
     trackContainer.innerHTML = '<div class="track-loading">Loading track data...</div>';
     const track = trackList[trackIndex];
     const trackData = trackLineToObject(track.info.headers, track.info.l);
-    let trackHtml = `
+    trackContainer.innerHTML = `
       <div class="track-content-wrapper">
        <div class="card">
          <div class="card-body">
-           ${trackData.Latitude
-           ? `
            <div id="map-${track.number}" class="leaflet-map"></div>
            <div class="track-stats">
              <span id="stats-${track.number}">Loading...</span>
-           </div>`
-           : ''}
+           </div>
            <div id="charts-${track.number}" class="charts-container"></div>
          </div>
          <div class="card-footer">
@@ -851,7 +848,6 @@ return {headers:headers,l:data};
        </div>
       </div>`;
 
-    trackContainer.innerHTML = trackHtml;
     attachTrackButtonListeners(trackContainer);
 
     const fullTrack = await downloadTrack(track.filename);
@@ -861,8 +857,10 @@ return {headers:headers,l:data};
       .filter(hasValidGPS)
       .map(pt => [parseFloat(pt.Latitude), parseFloat(pt.Longitude)]);
 
+    const containerId = `map-${track.number}`;
+
     if (coordinates.length > 0) {
-      createLeafletMap(`map-${track.number}`, coordinates, fullTrack);
+      createLeafletMap(containerId, coordinates, fullTrack);
 
       let distance = 0;
       for (let i = 1; i < coordinates.length; i++)
@@ -874,6 +872,14 @@ return {headers:headers,l:data};
         const d = convertDistance(distance/1000);
         statsEl.innerHTML = `<strong>Distance:</strong> ${d.value.toFixed(2)} ${d.unit} | <strong>Duration:</strong> ${hours}h ${minutes}m | <strong>Points:</strong> ${coordinates.length}`;
       }
+    } else {
+      const map = trackContainer.querySelector(`#${containerId}`);
+      const stats = trackContainer.querySelector(".track-stats");
+
+      map.style.display = "none";
+      stats.style.display = "none";
+
+      // but keep the charts
     }
 
     createChartsForTrack(track.number, fullTrack);
