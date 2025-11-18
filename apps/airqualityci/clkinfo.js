@@ -60,16 +60,16 @@
           let aqi = data[config.rows[id].url]
           let txt = "";
 					let aqius = (aqi && typeof(aqi.aqius) == "number") ? aqi.aqius : "...";
-					let temp = (aqi && typeof(aqi.temp) == "number") ? aqi.temp : "...";
+					let temp = (aqi && typeof(aqi.temp) == "number") ? require("locale").temp(aqi.temp) : "...";
           switch ( config.rows[id].mode) {
             case 2:
-            txt = aqius + " " + temp + "°";
+            txt = aqius + " " + temp;
               break;
             case 3:
               txt = row.name + " " + aqius;
               break;
             case 4:
-              txt = row.name + " " + aqius + " " + temp + "°";
+              txt = row.name + " " + aqius + " " + temp;
               break;
             case 5:
               txt = row.name;
