@@ -129,16 +129,28 @@ function installFromFiles() {
           });
         }
 
-        // Determine number of files that will actually be transferred
-        // This counts only files from storage[] that we found in the selected files
-        var transferCount = app.storage.filter(storageEntry => {
+        // Determine number of storage files that will actually be transferred
+        var storageTransferCount = app.storage.filter(storageEntry => {
           var url = storageEntry.url || storageEntry.name;
           return fileMap[url];
         }).length;
 
-        // Confirm with user, listing transfer count instead of raw selected file count
+        // Determine number of data files expected to be transferred (url/content present, not wildcard)
+        var dataTransferCount = 0;
+        if (app.data && Array.isArray(app.data)) {
+          app.data.forEach(dataEntry => {
+            if (dataEntry.wildcard) return; // pattern only
+            if (!dataEntry.url && !dataEntry.content) return; // no source specified
+            var url = dataEntry.url || dataEntry.name;
+            if (dataEntry.content || fileMap[url]) dataTransferCount++;
+          });
+        }
+
+        // Build breakdown string (omit data if zero)
+        var breakdown = `${storageTransferCount} storage file(s)` + (dataTransferCount>0 ? ` and ${dataTransferCount} data file(s)` : "");
+
         showPrompt("Install App from Files",
-          `Install app "${app.name}" (${app.id}) version ${app.version}?\n\nWill transfer ${transferCount} file(s) from metadata.\n\nThis will delete the existing version if installed.`
+          `Install app "${app.name}" (${app.id}) version ${app.version}?\n\nWill transfer ${breakdown} from metadata.\n\nThis will delete the existing version if installed.`
         ).then(() => {
           Progress.show({title:`Reading files...`});
 
