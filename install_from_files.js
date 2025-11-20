@@ -112,7 +112,11 @@ function installFromFiles() {
           tags: metadata.tags,
           sortorder: metadata.sortorder,
           storage: metadata.storage,
-          data: metadata.data || [] // NOTE: data[] files are NOT uploaded unless they have url/content
+          data: metadata.data || [], // NOTE: data[] files are NOT uploaded unless they have url/content
+          dependencies: metadata.dependencies, // Dependencies on other apps/modules/widgets
+          provides_modules: metadata.provides_modules, // Modules this app provides
+          provides_widgets: metadata.provides_widgets, // Widgets this app provides
+          provides_features: metadata.provides_features // Features this app provides
         };
 
         // SOURCE: core/js/appinfo.js getFiles() - filter by device support
@@ -148,9 +152,15 @@ function installFromFiles() {
 
         // Build breakdown string (omit data if zero)
         var breakdown = `${storageTransferCount} storage file(s)` + (dataTransferCount>0 ? ` and ${dataTransferCount} data file(s)` : "");
+        // Dependency note (if any declared in metadata)
+        var dependencyNote = "";
+        if (metadata && metadata.dependencies && typeof metadata.dependencies === 'object' && Object.keys(metadata.dependencies).length) {
+          var depNames = Object.keys(metadata.dependencies).join(", ");
+          dependencyNote = `\n\nRequires dependencies: ${depNames}. We'll attempt to install these if missing.`;
+        }
 
         showPrompt("Install App from Files",
-          `Install app "${app.name}" (${app.id}) version ${app.version}?\n\nWill transfer ${breakdown} from metadata.\n\nThis will delete the existing version if installed.`
+          `Install app "${app.name}" (${app.id}) version ${app.version}?\n\nWill transfer ${breakdown} from metadata.${dependencyNote}\n\nThis will delete the existing version if installed.`
         ).then(() => {
           Progress.show({title:`Reading files...`});
 
@@ -249,6 +259,10 @@ function installFromFiles() {
             type: app.type,
             tags: app.tags,
             sortorder: app.sortorder,
+            dependencies: app.dependencies, // Pass through dependencies for checking
+            provides_modules: app.provides_modules,
+            provides_widgets: app.provides_widgets,
+            provides_features: app.provides_features,
             storage: app.storage.map(storageEntry => {
               var url = storageEntry.url || storageEntry.name;
               var content = sourceContents[url];
@@ -291,7 +305,7 @@ function installFromFiles() {
 
           // SOURCE: core/js/index.js updateApp() lines 963-978
           // Check for noOverwrite files that exist on device
-          var noOverwriteChecks = Promise.resolve();
+          var noOverwriteChecks = Promise.resolve(appForUpload);
           var filesToCheck = appForUpload.storage.filter(f => f.noOverwrite);
           
           if (filesToCheck.length > 0) {
@@ -307,7 +321,7 @@ function installFromFiles() {
               Comms.eval(`[${checkCmd}]`, (result, err) => {
                 if (err) {
                   console.warn('Error checking noOverwrite files:', err);
-                  resolveCheck(); // Continue anyway
+                  resolveCheck(appForUpload); // Continue anyway, pass appForUpload through
                   return;
                 }
                 try {
@@ -322,10 +336,10 @@ function installFromFiles() {
                       }
                     }
                   });
-                  resolveCheck();
+                  resolveCheck(appForUpload); // Pass appForUpload through the promise chain
                 } catch(e) {
                   console.warn('Error parsing noOverwrite check results:', e);
-                  resolveCheck(); // Continue anyway
+                  resolveCheck(appForUpload); // Continue anyway, pass appForUpload through
                 }
               });
             });
@@ -349,6 +363,33 @@ function installFromFiles() {
                 return Comms.removeApp(remove, {containsFileList:true}).then(() => appForUpload);
               });
           }).then(appForUpload => {
+            // SOURCE: core/js/index.js uploadApp() line 839
+            // Check and install dependencies before uploading
+            Progress.hide({sticky:true});
+            Progress.show({title:`Checking dependencies...`});
+            return AppInfo.checkDependencies(appForUpload, device, {
+              apps: appJSON,
+              device: device,
+              language: LANGUAGE,
+              needsApp: (depApp, uploadOptions) => Comms.uploadApp(depApp, uploadOptions),
+              showQuery: (msg, appToRemove) => {
+                return showPrompt("App Dependencies", 
+                  `${msg}. What would you like to do?`,
+                  {options:["Replace","Keep Both","Cancel"]})
+                  .then(choice => {
+                    if (choice === "Replace") {
+                      return Comms.removeApp(appToRemove).then(() => {
+                        device.appsInstalled = device.appsInstalled.filter(a=>a.id!=appToRemove.id);
+                      });
+                    } else if (choice === "Keep Both") {
+                      return Promise.resolve();
+                    } else {
+                      return Promise.reject("User cancelled");
+                    }
+                  });
+              }
+            }).then(() => appForUpload);
+          }).then(appForUpload => {
             // SOURCE: core/js/index.js uploadApp() line 840 and updateApp() line 983
             // Upload using the standard pipeline
             Progress.hide({sticky:true});
@@ -363,9 +404,17 @@ function installFromFiles() {
             //   - Progress updates
             //   - Final success message via showUploadFinished()
             return Comms.uploadApp(appForUpload, {device: device, language: LANGUAGE});
-          }).then(() => {
+          }).then((appJSON) => {
             Progress.hide({sticky:true});
+            if (appJSON) {
+              // Keep device.appsInstalled in sync like the normal loader
+              device.appsInstalled = device.appsInstalled.filter(a=>a.id!=app.id);
+              device.appsInstalled.push(appJSON);
+            }
             showToast(`App "${app.name}" installed successfully!`, 'success');
+            // Refresh UI panels like normal loader flows
+            if (typeof refreshMyApps === 'function') refreshMyApps();
+            if (typeof refreshLibrary === 'function') refreshLibrary();
             resolve();
           }).catch(err => {
             Progress.hide({sticky:true});
