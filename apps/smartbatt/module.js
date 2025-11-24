@@ -65,8 +65,12 @@
       let newAvg = weightedAverage(data.avgBattDrainage, data.totalHours, currentDrainage, deltaHours * weightCoefficient);
       data.avgBattDrainage = newAvg;
       data.timeLastRecorded = now;
-      data.totalCycles += 1;
-      data.totalHours += deltaHours;
+      if(data.totalCycles<60){
+        data.totalCycles += 1;
+        data.totalHours += deltaHours;
+
+      }
+
       data.battLastRecorded = batt;
       storage.writeJSON(dataFile, data);
 
