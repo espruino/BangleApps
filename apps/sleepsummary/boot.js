@@ -1,4 +1,4 @@
-=  {
+  {
     let getMsPastMidnight=function(unixTimestamp) {
 
       const dateObject = new Date(unixTimestamp);
