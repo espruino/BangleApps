@@ -16,6 +16,12 @@ The module provides two clockInfos:
 ## Settings
 ### Clear Data - Clears all learned data. 
 Use this when you switch to a new clock or change the battery drainage in a fundamental way. The app averages drainage over time, and so you might just want to restart the learned data to be more accurate for the new configurations you have implemented.
+### Update Interval - The time that the module should record battery drainage
+This changes the interval when you record battery drainage. 
+
+Min: 30 minutes
+
+Max: 48 hours
 ### Logging - Enables logging for stats that this module uses. 
 To view the log file, go to the [Web IDE](https://www.espruino.com/ide/#), click on the storage icon (4 discs), and scroll to the file named `smartbattlog.json`. From there, you can view the file, copy to editor, or save it to your computer.
 Logs:
