@@ -20,6 +20,15 @@
     return ((runningAvg*totalCycles)+newData)/(totalCycles+1);
     
   };
+  let getDate=function(){
+    let d = new Date();
+      let timeStr = d.getFullYear() + "-" +
+        ("0"+(d.getMonth()+1)).slice(-2) + "-" +
+        ("0"+d.getDate()).slice(-2) + " " +
+        ("0"+d.getHours()).slice(-2) + ":" +
+        ("0"+d.getMinutes()).slice(-2) + ":" +
+        ("0"+d.getSeconds()).slice(-2);
+  }
   
   let getAvgData=function(){
     return Object.assign({
@@ -43,12 +52,12 @@
     }, require('Storage').readJSON("sleepsummary.settings.json", true) || {});
   };
   //l
-  let writeData=function(data){
+  let writeAvgData=function(data){
     require("Storage").writeJSON("sleepsummarydata.json", data);
 
   };
   
-  let deleteData=function(){
+  let deleteAvgData=function(){
     require("Storage").erase("sleepsummarydata.json");
   };
   
@@ -167,7 +176,7 @@
   }
   
   let calcAndCache=function(){
-    let today=new Date().getDay();
+    let today=new Date().getDate();
     let scores=getAllSleepScores();
     let slpData=getSleepData();
     let cachedData=getCachedData();
@@ -192,7 +201,7 @@
     
     let avgData=getAvgData();
     let cachedData=getCachedData()
-    let today = new Date().getDay();
+    let today=new Date().getDate();
     // Check if data is up to date for today
     if(cachedData.dayLastUpdated!=today){
       //has not cached for today, do it now
@@ -210,14 +219,14 @@
   }
   
   function recordSleepStats(){
-    var today = new Date().getDay();
+    var today = new Date().getDate();    
     var sleepData=getSleepData();
     var data=getAvgData();
     //Wakeup time
     var wakeUpTime=sleepData.awakeSince;
     var avgWakeUpTime=averageNumbers(data.avgWakeUpTime,data.totalCycles,wakeUpTime);
     data.avgWakeUpTime=avgWakeUpTime;
-    
+    var timeRecorded=getDate();
     //sleep time in minutes
     var time=sleepData.totalSleep;
     
@@ -226,15 +235,15 @@
     data.avgSleepTime = avgSleepTime;
     
     data.promptLastShownDay=today;
-    
+    data.dateLastRecorded=timeRecorded;
     
     data.totalCycles+=1;
-    writeData(data);
+    writeAvgData(data);
     // recalculate new data for cache
     calcAndCache();
   };
   
-  exports.deleteData = deleteData;
+  exports.deleteData = deleteAvgData;
   exports.recalculate=calcAndCache;
   exports.getSummaryData=getSummaryData;
   exports.recordData=recordSleepStats;
