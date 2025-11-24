@@ -5,6 +5,11 @@ The module also comes with an app to see detailed statistics of your sleep compa
 All data is stored only on your device.
 
 It is highly reccomended to use HRM with `sleeplog` for increased accuracy in sleep tracking, leading to a more accurate sleep score here. To enable this, turn on HRM intervals in the `Health` app.
+## App
+This module provides an app where you can see in-depth details about your sleep. There are two pages:
+1. Sleep score and description
+2. Detailed stats about all scores, and time asleep and wakeup time.
+   
 ## Formula
 
 The module takes in several data points:
