@@ -36,8 +36,8 @@
         var m = totalMinutes % 60;
 
         let result = '';
-        if (h > 0) result += `${h}h${m > 0 ? ' ' : ''}`;
-        if (m > 0) result += `${m}m`;
+        if (h > 0) result += h+"h";
+        if (m > 0) result += m+"m";
 
         return result || '0m';
       },
