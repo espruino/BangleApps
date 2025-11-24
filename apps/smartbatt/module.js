@@ -1,6 +1,5 @@
 {
   var dataFile = "smartbattdata.json";
-  var interval;
   var storage = require("Storage");
 
 
@@ -9,7 +8,8 @@
   function getSettings() {
     return Object.assign({
       //Record Interval stored in ms
-      doLogging: false
+      doLogging: false,
+      updateInterval:18000000 //default to 5 hours
     }, require('Storage').readJSON("smartbatt.settings.json", true) || {});
   }
 
@@ -84,20 +84,7 @@
         reason: reason
       });
     }
-    clearInterval(interval)
-    if(data.totalCycles<=200){
-      //5m intervals
-      interval=setInterval(recordBattery, 600000);
-    }else if(data.totalCycles<=300){
-      //30m intervals
-      interval=setInterval(recordBattery, 1800000);
-    }else if(data.totalCycles<=500){
-      //1h intervals
-      interval=setInterval(recordBattery, 3600000);
-    }else {
-      //3h intervals
-      interval=setInterval(recordBattery, 10800000);
-    }
+    setTimeout(recordBattery,getSettings().updateInterval);
   }
 
   function weightedAverage(oldValue, oldWeight, newValue, newWeight) {
@@ -139,14 +126,9 @@
     storage.erase(logFile);
   }
   // Expose public API
-  exports.record = recordBattery;
   exports.deleteData = deleteData;
   exports.get = getExportData;
-  exports.changeInterval = function (newInterval) {
-    clearInterval(interval);
-    interval = setInterval(recordBattery, newInterval);
-  };
-  // Start recording every 5 minutes
-  interval = setInterval(recordBattery, 600000);
+  
+  // Start recording every 8 hours for accurate long tracking
   recordBattery(); // Log immediately
 }
