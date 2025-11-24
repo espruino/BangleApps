@@ -1,4 +1,4 @@
-  {
+=  {
     let getMsPastMidnight=function(unixTimestamp) {
 
       const dateObject = new Date(unixTimestamp);
@@ -51,7 +51,7 @@
 
       logNow("checked, prev status: "+data.prevStatus+", current status: "+data.status+", promptLastShownDay: "+require("sleepsummary").getSummaryData().promptLastShownDay);
 
-      let today = new Date().getDay();
+      let today = new Date().getDate();
       if(require("sleepsummary").getSummaryData().promptLastShownDay!=today){
         //if coming from sleep
         if (data.status==2&&(data.previousStatus==3||data.previousStatus==4)) {
