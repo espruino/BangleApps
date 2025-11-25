@@ -17,7 +17,7 @@ The module provides two clockInfos:
 ### Clear Data - Clears all learned data. 
 Use this when you switch to a new clock or change the battery drainage in a fundamental way. The app averages drainage over time, and so you might just want to restart the learned data to be more accurate for the new configurations you have implemented.
 ### Update Interval - The time that the module should record battery drainage
-This changes the interval when you record battery drainage. 
+This changes the interval when you record battery drainage. Generally, a longer interval means more precise estimates, at the cost of quick updates.
 
 Min: 30 minutes
 
