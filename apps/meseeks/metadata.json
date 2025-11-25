@@ -1,7 +1,7 @@
 { "id": "meseeks",
   "name": "Mr Meeseeks",
   "shortName":"MeSeeks",
-  "version":"0.0.2",
+  "version":"0.02",
   "description": "Mr Meeseeks clock with random faces and battery-dependent freckles overlay.",
   "icon": "app.png",
   "tags": "clock",

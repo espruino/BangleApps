@@ -11,7 +11,7 @@ A Rick and Morty inspired watch face featuring Mr Meeseeks with multiple express
 
 ### Battery-Dependent Aging
 - **Aging Spots**: Blue spots appear on screen as battery decreases
-- **Progressive Aging**: 
+- **Progressive Aging**:
   - 100% battery: No spots
   - 80% battery: Few spots
   - 50% battery: Moderate spots
