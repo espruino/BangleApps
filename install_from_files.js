@@ -7,29 +7,25 @@
 function installFromFiles() {
   return new Promise(resolve => {
     
-    // Collect all files
-    const fileCollection = {
-      files: []
-    };
-    
     // Request multi-file selection from user
     Espruino.Core.Utils.fileOpenDialog({
-        id:"installappfiles",
-        type:"arraybuffer",
-        multi:true,
-        mimeType:"*/*",
-        onCancel: function() {
+      id:"installappfiles",
+      type:"arraybuffer",
+      multi:true,
+      mimeType:"*/*",
+      onComplete: function(files) {
+        try {
+          if (!files) return resolve(); // user cancelled
+          const mapped = files.map(function(f) {
+            return { name: f.fileName, data: f.contents };
+          });
+          processFiles(mapped, resolve);
+        } catch (err) {
+          showToast('Install failed: ' + err, 'error');
+          console.error(err);
           resolve();
-        },
-        onComplete: function() {
-          processFiles(fileCollection.files, resolve);
-        }}, function(fileData, mimeType, fileName) {
-
-      // Collect each file as callback is invoked
-      fileCollection.files.push({
-        name: fileName,
-        data: fileData
-      });
+        }
+      }
     });
   });
 }
