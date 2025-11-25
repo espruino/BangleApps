@@ -69,7 +69,11 @@
         data.totalCycles += 1;
         data.totalHours += deltaHours;
 
+      }else{
+        data.totalCycles=60;
+        data.totalHours=100;
       }
+      
 
       data.battLastRecorded = batt;
       storage.writeJSON(dataFile, data);
