@@ -8,6 +8,9 @@
   "tags": "clock",
   "supports": ["BANGLEJS2"],
   "allow_emulator": true,
+  "dependencies": {
+    "app_font.js": "module" 
+  },
   "storage": [
     {"name":"pure_numerals.app.js","url":"app.js"},
 	{"name":"pure_numerals.font.js","url":"app_font.js"},
