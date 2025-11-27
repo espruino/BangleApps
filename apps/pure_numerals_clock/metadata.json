@@ -4,7 +4,7 @@
   "icon": "pure_numerals.png",
   "version":"0.03",
   "author":"peter_buehler",
-  "description": "This is a description of my awesome pure numerals clock app",
+  "description": "The pure numerals clock is a very nice clock.",
   "tags": "clock",
   "supports": ["BANGLEJS2"],
   "allow_emulator": true,
