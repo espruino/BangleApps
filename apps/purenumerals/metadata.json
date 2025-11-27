@@ -9,6 +9,7 @@
   "type": "clock",
   "supports": ["BANGLEJS2"],
   "allow_emulator": true,
+  "readme":"README.md",
   "storage": [
     {"name":"purenumerals.app.js","url":"app.js"},
     {"name":"purenumerals.img","url":"app-icon.js","evaluate":true}
