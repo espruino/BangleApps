@@ -35,9 +35,23 @@ exports.pushMessage = function(event) {
     // combine musicinfo and musicstate events
     if (event.id==="music") {
       if (event.state==="play") event.new = true; // new track, or playback (re)started
-      // Merge new msg into current music to preserve info
-      exports.music = Object.assign(exports.music, event);
-      event = exports.music;
+      // Check if we have music info before combining
+      const hasMusicInfo = exports.music.track || exports.music.artist || exports.music.album || exports.music.dur;
+      event = Object.assign(exports.music, event);
+      
+      // If this is a musicstate message and we don't have any music message stored
+      // then set track to "Music" so we can trigger displaying music controls
+      if (event.state && !event.track) {
+        const messages = exports.getMessages();
+        const hasMusicMsg = messages.length && messages.findIndex(m => m.id === "music") >= 0;
+        
+        if (!hasMusicMsg && !hasMusicInfo) {
+          event.track = "Music";
+          event.title = event.title || "Music"; // ensure title is set for messagegui/lib.js check
+          exports.music.track = "Music";
+          exports.music.title = exports.music.title || "Music";
+        }
+      }
     }
   }
   // reset state (just in case)

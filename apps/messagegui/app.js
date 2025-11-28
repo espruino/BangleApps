@@ -90,7 +90,15 @@ var onMessagesModified = function(type,msg) {
     require("messages").buzz(msg.src);
   }
   if (msg && msg.id=="music") {
-    if (msg.state && msg.state!="play") openMusic = false; // no longer playing music to go back to
+    // Track when music actually played so we can expire old music messages
+    if (msg.state && msg.state=="play") {
+      // Update the stored music message (if present) with a last-played timestamp
+      var mm = MESSAGES.find(m=>m && m.id=="music");
+      if (mm) mm._lastPlayed = Date.now();
+      openMusic = true;
+    } else if (msg.state && msg.state!="play") {
+      openMusic = false; // no longer playing music to go back to
+    }
     if ((active!=undefined) && (active!="list") && (active!="music")) return; // don't open music over other screens (but do if we're in the main menu)
   }
   if (msg && msg.id=="nav" && msg.t=="modify" && active!="map")
@@ -531,6 +539,18 @@ function showMessage(msgid, persist) {
 */
 function checkMessages(options) {
   options=options||{};
+  // Remove/ignore stale music messages if they haven't played recently.
+  var musicTimeout = (settings && settings.musicTimeoutMinutes) ? settings.musicTimeoutMinutes : 5;
+  if (isFinite(musicTimeout) && musicTimeout>0) {
+    var now = Date.now();
+    MESSAGES = MESSAGES.filter(function(m) {
+      if (!m || m.id!="music") return true;
+      if (m.state=="play" || m.state=="show") return true;
+      if (m._lastPlayed && (now - m._lastPlayed) <= musicTimeout*60000) return true;
+      // otherwise drop the stale music message
+      return false;
+    });
+  }
   // If there's been some user interaction, it's time to stop repeated buzzing
   if (!options.dontStopBuzz)
     require("messages").stopBuzz();
