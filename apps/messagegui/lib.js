@@ -37,8 +37,11 @@ exports.listener = function(type, msg) {
   const appSettings = require("Storage").readJSON("messages.settings.json", 1) || {};
   let loadMessages = (Bangle.CLOCK || msg.important); // should we load the messages app?
   if (type==="music") {
-    if (Bangle.CLOCK && msg.state && msg.title && appSettings.openMusic) loadMessages = true;
-    else return;
+    if (Bangle.CLOCK && msg.state && msg.title && appSettings.openMusic) {
+      loadMessages = true;
+    } else {
+      if (persistMusicInfo(msg)) return; // handled
+    }
   }
   // Write the message to Bangle.MESSAGES. We'll deal with it in messageTimeout below
   if (!Bangle.MESSAGES) Bangle.MESSAGES = [];
@@ -48,7 +51,9 @@ exports.listener = function(type, msg) {
     // save messages from RAM to flash if we decide not to launch app
     // We apply all of Bangle.MESSAGES here in one write
     if (!Bangle.MESSAGES || !Bangle.MESSAGES.length) return;
-    let messages = require("messages").getMessages(msg);
+    // Load saved messages without applying the current msg to avoid
+    // applying it twice (getMessages(msg) would apply it already).
+    let messages = require("messages").getMessages();
     (Bangle.MESSAGES || []).forEach(m => require("messages").apply(m, messages));
     require("messages").write(messages);
     delete Bangle.MESSAGES;
@@ -105,3 +110,39 @@ exports.open = function(msg) {
 
   Bangle.load((msg && msg.new && msg.id!=="music") ? "messagegui.new.js" : "messagegui.app.js");
 };
+
+/**
+ * Persist info fields from music messages
+ * @param {*} msg Music message
+ * @returns true if the message was handled
+ */
+function persistMusicInfo(msg) {
+  msg.handled = true;
+  // if nothing to persist - return that it's handled
+  if (msg.artist === undefined && msg.track === undefined && msg.album === undefined && msg.dur === undefined) return true;
+
+  const a = msg.artist, t = msg.track, al = msg.album, d = msg.dur;
+
+  // try to find the last music message
+  const messagesMod = require("messages");
+  const messages = messagesMod.getMessages();
+  const mIdx = messages.findIndex(m => m.id === "music");
+  const stored = mIdx >= 0 ? messages[mIdx] : null;
+
+  if (!stored) {
+    // new msg, always write
+    const newEntry = { id: "music", artist: a, track: t, album: al, dur: d };
+    messages.unshift(Object.assign({}, newEntry));
+    messagesMod.write(messages);
+  } else {
+    // existing msg, only write if something changed
+    if (stored.artist !== a || stored.track !== t || stored.album !== al || stored.dur !== d) {
+      stored.artist = a;
+      stored.track = t;
+      stored.album = al;
+      stored.dur = d;
+      messagesMod.write(messages);
+    }
+  }
+  return true;
+}

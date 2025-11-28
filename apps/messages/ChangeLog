@@ -12,3 +12,4 @@
 0.66: Fix 'Auto-Open Unread Msg' polarity - previously checking the box would ignore unread messages
 0.67: Ensure default vibration pattern is longer
       Add Option to show widgets (Message GUI 0.86 removes them by default)
+0.68: Fix perserving music info between messages

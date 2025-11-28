@@ -24,14 +24,20 @@ exports.pushMessage = function(event) {
     if (event.t==="add") {
       if (event.new===undefined) event.new = true; // Assume it should be new
     } else if (event.t==="modify") {
-      const old = exports.getMessages().find(m => m.id===event.id);
-      if (old) event = Object.assign(old, event);
+      // For non-music messages, merge with stored message 
+      // For music, skip merging to avoid old info
+      if (event.id !== "music") {
+        const old = exports.getMessages().find(m => m.id===event.id);
+        if (old) event = Object.assign(old, event);
+      }
     }
 
     // combine musicinfo and musicstate events
     if (event.id==="music") {
       if (event.state==="play") event.new = true; // new track, or playback (re)started
-      event = Object.assign(exports.music, event);
+      // Merge new msg into current music to preserve info
+      exports.music = Object.assign(exports.music, event);
+      event = exports.music;
     }
   }
   // reset state (just in case)
@@ -72,7 +78,7 @@ exports.apply = function(event, messages) {
     messages.splice(mIdx, 1);
   } else if (event.t==="add") {
     if (mIdx>=0) messages.splice(mIdx, 1); // duplicate ID! erase previous version
-    messages.unshift(event); // add at the beginning
+    messages.unshift(Object.assign({}, event)); // add a copy at the beginning
   } else if (event.t==="modify") {
     if (mIdx>=0) messages[mIdx] = Object.assign(messages[mIdx], event);
     else messages.unshift(event);
