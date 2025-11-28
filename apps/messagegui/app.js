@@ -67,10 +67,23 @@ if (Bangle.MESSAGES) {
   delete Bangle.MESSAGES;
 }
 
+// Ensure any music message is always kept at the front of the list
+function moveMusicToFront() {
+  for (var i=0;i<MESSAGES.length;i++){
+    if (MESSAGES[i] && MESSAGES[i].id=="music"){
+      if (i!==0) MESSAGES.unshift(MESSAGES.splice(i,1)[0]);
+      return;
+    }
+  }
+}
+moveMusicToFront();
+
 var onMessagesModified = function(type,msg) {
   if (msg.handled) return;
   msg.handled = true;
   require("messages").apply(msg, MESSAGES);
+  // Keep music message at the front so it remains the first item
+  moveMusicToFront();
   // TODO: if new, show this new one
   if (msg && msg.id!=="music" && msg.id!=="nav" && msg.new &&
       !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
