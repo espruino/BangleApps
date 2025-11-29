@@ -1,0 +1,18 @@
+{
+  "id": "timeviz",
+  "name": "Time Viz",
+  "shortName": "Time Viz",
+  "version": "0.01",
+  "description": "Visual timer with radial countdown display to help with time blindness. Perfect for people with ADHD.",
+  "icon": "app.png",
+  "tags": "tool,timer,accessibility",
+  "supports": ["BANGLEJS2"],
+  "screenshots": [{"url": "screenshot.png"}],
+  "readme": "README.md",
+  "custom": "custom.html",
+  "storage": [
+    {"name": "timeviz.app.js", "url": "app.js"},
+    {"name": "timeviz.img", "url": "app-icon.js", "evaluate": true}
+  ],
+  "data": [{"name": "timeviz.settings.json"}]
+}

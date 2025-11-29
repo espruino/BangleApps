@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <p><b>Time Viz</b> - Visual timer with radial countdown display</p>
+    <p>This app helps with time blindness by providing a visual representation of time passing.</p>
+
+    <div class="form-group">
+      <label class="form-label" for="duration">Timer Duration (minutes)</label>
+      <input class="form-input" type="number" id="duration" value="25" min="1" max="60" />
+      <p class="form-input-hint">Set timer duration between 1 and 60 minutes. Default is 25 minutes (Pomodoro technique).</p>
+    </div>
+
+    <p><button id="upload" class="btn btn-primary">Upload Settings</button></p>
+
+    <script src="../../core/lib/customize.js"></script>
+    <script>
+      // Load saved settings from localStorage or use defaults
+      var settings = { duration: 25 }; // Default 25 minutes
+
+      try {
+        var stored = localStorage.getItem('timeviz-settings');
+        if (stored) {
+          settings = JSON.parse(stored);
+        }
+      } catch(e) {
+        console.log("No saved settings, using defaults");
+      }
+
+      // Set the input value
+      document.getElementById("duration").value = settings.duration;
+
+      // Handle upload button click
+      document.getElementById("upload").addEventListener("click", function() {
+        var duration = parseInt(document.getElementById("duration").value);
+
+        // Validate duration
+        if (duration < 1 || duration > 60 || isNaN(duration)) {
+          alert("Please enter a valid duration between 1 and 60 minutes");
+          return;
+        }
+
+        settings.duration = duration;
+
+        // Save to localStorage
+        localStorage.setItem('timeviz-settings', JSON.stringify(settings));
+
+        // Upload to watch
+        sendCustomizedApp({
+          storage: [
+            { name: "timeviz.settings.json", content: JSON.stringify(settings) }
+          ]
+        });
+      });
+    </script>
+  </body>
+</html>
