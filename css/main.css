@@ -248,6 +248,7 @@ a.btn.btn-link.dropdown-toggle {
   padding:1em;
   
 }
+
 .devicechooser{
 
   border-radius:1em;
@@ -273,7 +274,11 @@ a.btn.btn-link.dropdown-toggle {
   color : white !important;
   z-index: 2;
 }
-
+.toast{
+  border-radius: 0.5em;
+  margin: 0.7em;
+  max-width: 99%;
+}
 
 .icon.favoriteAnim {
   animation-name: squishAnim;
@@ -313,7 +318,7 @@ Not sure how to get 'normal' wrap behaviour (eg fill up until max-width, then wr
   border: 0;
   padding: 10px;
   overflow: auto; /* adds scrollbar if needed */
-
+  border-radius: 1em;
   position: absolute;
   left: 0px;
   top: 0px;
@@ -325,6 +330,7 @@ Not sure how to get 'normal' wrap behaviour (eg fill up until max-width, then wr
   -webkit-user-select: text;
   user-select: text;
 }
+
 
 .termLine {
   font-family: Fixed, monospace;
