@@ -158,9 +158,6 @@ a.btn.btn-link.dropdown-toggle {
   100% { transform: scale(1, 1); }
 }
 
-
-
-
 .pill-container {
   display: inline-flex;
   align-items: center;
@@ -244,6 +241,22 @@ a.btn.btn-link.dropdown-toggle {
   gap: 0.35rem;
 }
 
+.modal-container{
+  border-radius: 1.5em;
+  background-color: rgb(253, 253, 255);
+  padding:1em;
+  
+}
+.devicechooser{
+
+  border-radius:1em;
+  justify-content: center;
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center; /* Centers vertically */
+    text-align: left;
+
+}
 
 /* Support older index.js which puts the count inside the <i> as a span */
 .btn.btn-favourite .icon.icon-favourite span{
