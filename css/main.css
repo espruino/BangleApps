@@ -32,7 +32,8 @@
 }
 .panel{
   border-radius: 1em;
-  padding:0.7em
+  padding:0.7em;
+  border:none;
 }
 
 
