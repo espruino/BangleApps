@@ -46,11 +46,12 @@
   flex-wrap: wrap;
   gap: 0.75rem; /* spacing between tiles */
   align-items: stretch;
-  justify-content: flex-start;
+  justify-content: center;
+
 }
 
 .tile.column.col-6.col-sm-12.col-xs-12.app-tile {
-  background-color: rgba(87, 85, 217, 0.021);
+  background-color: rgba(87, 85, 217, 0.025);
   border: solid 1.3px #dadee47c;
   margin: 0; /* spacing handled by container gap */
   min-height: 150px;
@@ -165,7 +166,7 @@ a.btn.btn-link.dropdown-toggle {
   justify-content: flex-end; 
   padding: 0em 1em;
   margin-right: 0.05em;
-  background-color: rgba(87, 85, 217, 0.045);
+  background-color: rgba(87, 85, 217, 0.055);
   border-radius: 999px;
   font-family: sans-serif;
   height: auto;
@@ -248,7 +249,9 @@ a.btn.btn-link.dropdown-toggle {
   padding:1em;
   
 }
-
+.bar{
+  border-radius:1em;
+}
 .devicechooser{
 
   border-radius:1em;
