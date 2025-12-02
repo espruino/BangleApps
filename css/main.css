@@ -3,7 +3,9 @@
   color: #fff;
   font-weight: bold;
 }
-
+body {
+  color: #3c3c3c;
+}
 .container.apploader-tab, ul.tab.tab-block {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -52,13 +54,14 @@
 
 .tile.column.col-6.col-sm-12.col-xs-12.app-tile {
   background-color: rgba(87, 85, 217, 0.025);
+  
   border: solid 1.3px #dadee47c;
   margin: 0; /* spacing handled by container gap */
-  min-height: 150px;
   padding-top: 0.5rem;
   border-radius: 1em;
   box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.02);
   padding: 1.2em;
+  padding-bottom: 0em;
   box-sizing: border-box;
   /* allow tiles to be two columns on wide screens, collapse to one on small screens */
   flex: 0 1 calc(50% - 0.75rem);
@@ -131,12 +134,26 @@ a.btn.btn-link.dropdown-toggle {
   position: relative;
   border-bottom: 1px solid #EEE;
   margin-bottom: 4px;
-  min-height: 8em;
+  min-height: 11em; /* reduced so tiles can be thinner */
 }
 
 .tile-content {
   position: relative;
   overflow-wrap: anywhere; /* stop long text like links pushing the width out too far*/
+}
+
+
+.tile .tile-content br {
+  display: block;
+  line-height: 100;
+  padding: 2em;
+}
+
+
+.tile .tile-content p { margin: 0 0 0.2rem 0; }
+
+.tile.column.col-6.col-sm-12.col-xs-12.app-tile {
+  padding: 0.9em;
 }
 .link-github {
   position:absolute;
@@ -148,7 +165,7 @@ a.btn.btn-link.dropdown-toggle {
   width:4em;height:4em;
   padding:2px;border:1px solid black;
   cursor:pointer;
-  border-radius: 3px;
+  border-radius: 5px;
 }
 
 @keyframes squishAnim {
