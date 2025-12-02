@@ -3,16 +3,31 @@
   color: #fff;
   font-weight: bold;
 }
+body {
+  color: #3c3c3c;
+  padding-left: 1em;
+  padding-right: 1em;
+}
 
-.container.apploader-tab, ul.tab.tab-block {
-  padding-left: 1rem;
-  padding-right: 1rem;
+header.navbar, .navbar-primary {
+  margin-left: calc(-1em);
+  margin-right: calc(-1em);
+  width: calc(100% + 2rem);
+  box-sizing: border-box;
+}
+.container.apploader-tab {
+  padding-left: 0rem;
+  padding-right: 0rem;
   border-bottom: 0px;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   gap: 0.75rem;
 }
+
+
+
+
 
 .navbar-brand.mr-2 > img {
   margin-left: 0.3rem;
@@ -32,7 +47,9 @@
 }
 .panel{
   border-radius: 1em;
-  padding:0.7em;
+  padding-left: 0rem;
+  padding-right: 0rem;
+  margin:0px !important;
   border:none;
 }
 
@@ -80,7 +97,43 @@
   }
 }
 .tab.tab-block .tab-item  {
-  border-bottom: solid 1px #dadee4;
+  border-bottom: none;
+  border-radius: 1em; 
+}
+.tab.tab-item.active  {
+    background-color: rgba(87, 85, 217, 0.1);;
+  
+  border-bottom: none;
+  border-radius: 23m;
+}
+.tab.tab-block{
+  background-color: rgba(87, 85, 217, 0.1);;
+  margin:1em;
+  border-radius: 1.2em;
+  padding:0.3em;
+  padding-left: 0.3em !important;
+  padding-right: 0.3em !important;
+}
+
+
+
+.tab.tab-block .tab-item:focus { outline: none; box-shadow: none; }
+
+.tab.tab-block .tab-item.active{
+  background-color: #5755d923;
+}
+
+
+/* Ensure anchors inside tabs don't show the UA focus ring */
+.tab .tab-item a,
+.tab .tab-item a:focus,
+.tab .tab-item a:active,
+.tab .tab-item a:focus-visible,
+.tab.tab-block .tab-item a:focus,
+#tab-navigate .tab-item a:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-bottom-color: transparent !important;
 }
 
 a.mr-2{
@@ -93,8 +146,8 @@ a.mr-2{
 }
 
 .dropdown-container {
-  margin-bottom: 0.5rem;
-  margin-top: 0.5rem;
+  padding-left:1rem;
+  padding-right:1rem;
 }
 
 a.btn.btn-link.dropdown-toggle {
