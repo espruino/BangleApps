@@ -67,39 +67,51 @@ if (Bangle.MESSAGES) {
   delete Bangle.MESSAGES;
 }
 
-// Ensure any music message is always kept at the front of the list
-function moveMusicToFront() {
-  for (var i=0;i<MESSAGES.length;i++){
-    if (MESSAGES[i] && MESSAGES[i].id=="music"){
-      if (i!==0) MESSAGES.unshift(MESSAGES.splice(i,1)[0]);
-      return;
-    }
+// Update or add music message to MESSAGES array at front
+function updateMusicMessage(musicMsg) {
+  var existingMusicIdx = MESSAGES.findIndex(m => m.id === "music");
+  if (existingMusicIdx >= 0) {
+    MESSAGES[existingMusicIdx] = musicMsg;
+    if (existingMusicIdx !== 0) MESSAGES.unshift(MESSAGES.splice(existingMusicIdx, 1)[0]);
+  } else {
+    MESSAGES.unshift(musicMsg);
   }
 }
-moveMusicToFront();
+
+// Load music message from storage if it exists
+var musicMsg = require("messages").getMusic();
+if (musicMsg && (musicMsg.track || musicMsg.artist)) {
+  updateMusicMessage(musicMsg);
+}
 
 var onMessagesModified = function(type,msg) {
   if (msg.handled) return;
   msg.handled = true;
-  require("messages").apply(msg, MESSAGES);
-  // Keep music message at the front so it remains the first item
-  moveMusicToFront();
+  
+  if (msg.id === "music") {
+    // For music messages, get the complete state from messages module
+    updateMusicMessage(require("messages").getMusic());
+    var musicMsg = MESSAGES[0]; // music is now at front
+    
+    if (musicMsg.state && musicMsg.state=="play") {
+      openMusic = true;
+    } else if (musicMsg.state && musicMsg.state!="play") {
+      openMusic = false; // no longer playing music to go back to
+    }
+    if ((active!=undefined) && (active!="list") && (active!="music")) return; // don't open music over other screens (but do if we're in the main menu)
+  } else {
+    require("messages").apply(msg, MESSAGES);
+    // Move music back to front since apply() may have pushed it down
+    var musicIdx = MESSAGES.findIndex(m => m.id === "music");
+    if (musicIdx > 0) {
+      MESSAGES.unshift(MESSAGES.splice(musicIdx, 1)[0]);
+    }
+  }
+  
   // TODO: if new, show this new one
   if (msg && msg.id!=="music" && msg.id!=="nav" && msg.new &&
       !((require('Storage').readJSON('setting.json', 1) || {}).quiet)) {
     require("messages").buzz(msg.src);
-  }
-  if (msg && msg.id=="music") {
-    // Track when music actually played so we can expire old music messages
-    if (msg.state && msg.state=="play") {
-      // Update the stored music message (if present) with a last-played timestamp
-      var mm = MESSAGES.find(m=>m && m.id=="music");
-      if (mm) mm._lastPlayed = Date.now();
-      openMusic = true;
-    } else if (msg.state && msg.state!="play") {
-      openMusic = false; // no longer playing music to go back to
-    }
-    if ((active!=undefined) && (active!="list") && (active!="music")) return; // don't open music over other screens (but do if we're in the main menu)
   }
   if (msg && msg.id=="nav" && msg.t=="modify" && active!="map")
     return; // don't show an updated nav message if we're just in the menu
@@ -539,18 +551,8 @@ function showMessage(msgid, persist) {
 */
 function checkMessages(options) {
   options=options||{};
-  // Remove/ignore stale music messages if they haven't played recently.
-  var musicTimeout = (settings && settings.musicTimeoutMinutes) ? settings.musicTimeoutMinutes : 5;
-  if (isFinite(musicTimeout) && musicTimeout>0) {
-    var now = Date.now();
-    MESSAGES = MESSAGES.filter(function(m) {
-      if (!m || m.id!="music") return true;
-      if (m.state=="play" || m.state=="show") return true;
-      if (m._lastPlayed && (now - m._lastPlayed) <= musicTimeout*60000) return true;
-      // otherwise drop the stale music message
-      return false;
-    });
-  }
+  // Remove/ignore stale music messages if they haven't played recently
+  checkMusicExpired();
   // If there's been some user interaction, it's time to stop repeated buzzing
   if (!options.dontStopBuzz)
     require("messages").stopBuzz();
@@ -648,6 +650,20 @@ function returnToMain() {
 
 function returnToClockIfEmpty() {
   checkMessages({clockIfNoMsg:1,clockIfAllRead:0,ignoreUnread:1,openMusic});
+}
+
+function checkMusicExpired() {
+  var musicTimeout = (settings && settings.musicTimeoutMinutes) ? settings.musicTimeoutMinutes : 5;
+  if (!isFinite(musicTimeout) || musicTimeout <= 0) return;
+  
+  var now = Date.now();
+  MESSAGES = MESSAGES.filter(function(m) {
+    if (!m || m.id!="music") return true;
+    if (m.state=="play" || m.state=="show") return true;
+    if (m._lastPlayed && (now - m._lastPlayed) <= musicTimeout*60000) return true;
+    // otherwise drop the stale music message
+    return false;
+  });
 }
 
 function cancelReloadTimeout() {

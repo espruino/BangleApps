@@ -1,4 +1,10 @@
 exports.music = {};
+
+// Track if music has been modified and needs saving
+let musicLoaded = false;
+let musicDirty = false;
+let killHandlerSet = false;
+
 /**
  * Emit "message" event with appropriate type from Bangle
  * @param {object} msg
@@ -34,24 +40,8 @@ exports.pushMessage = function(event) {
 
     // combine musicinfo and musicstate events
     if (event.id==="music") {
-      if (event.state==="play") event.new = true; // new track, or playback (re)started
-      // Check if we have music info before combining
-      const hasMusicInfo = exports.music.track || exports.music.artist || exports.music.album || exports.music.dur;
-      event = Object.assign(exports.music, event);
-      
-      // If this is a musicstate message and we don't have any music message stored
-      // then set track to "Music" so we can trigger displaying music controls
-      if (event.state && !event.track) {
-        const messages = exports.getMessages();
-        const hasMusicMsg = messages.length && messages.findIndex(m => m.id === "music") >= 0;
-        
-        if (!hasMusicMsg && !hasMusicInfo) {
-          event.track = "Music";
-          event.title = event.title || "Music"; // ensure title is set for messagegui/lib.js check
-          exports.music.track = "Music";
-          exports.music.title = exports.music.title || "Music";
-        }
-      }
+      setMusic(event);
+      event = getMusic();
     }
   }
   // reset state (just in case)
@@ -255,3 +245,98 @@ exports.stopBuzz = function() {
   if (exports.stopTimeout) clearTimeout(exports.stopTimeout);
   delete exports.stopTimeout;
 };
+
+/**
+ * Lazy-load music from messages.music.json if not already loaded
+ */
+function loadMusic() {
+  if (musicLoaded) return;
+  const stored = require("Storage").readJSON("messages.music.json", true);
+  if (stored) {
+    exports.music = stored;
+  }
+  musicLoaded = true;
+}
+
+/**
+ * Save music info to messages.music.json if dirty
+ */
+function saveMusicToFlash() {
+  if (!musicDirty) return;
+  
+  // Debug counter to track saves
+  incrementSaveCounter("music");
+
+  // Only save if we have actual music data
+  if (Object.keys(exports.music).length > 0) {
+    require("Storage").writeJSON("messages.music.json", exports.music);
+  } else {
+    require("Storage").erase("messages.music.json");
+  }
+  
+  musicDirty = false;
+}
+
+/**
+ * Set music info - merges music message data into exports.music, saves to flash on kill
+ * @param {object} msg Music message
+ */
+function setMusic(msg) {
+  // Lazy-load existing music data
+  loadMusic();
+  
+  // Merge in artist/track/album/dur if provided
+  if (msg.artist !== undefined) exports.music.artist = msg.artist;
+  if (msg.track !== undefined) exports.music.track = msg.track;
+  if (msg.album !== undefined) exports.music.album = msg.album;
+  if (msg.dur !== undefined) exports.music.dur = msg.dur;
+  
+  // Merge in state and update _lastPlayed timestamp when playing
+  if (msg.state !== undefined) {
+    exports.music.state = msg.state;
+    if (msg.state === "play") {
+      exports.music._lastPlayed = Date.now();
+    }
+  }
+  
+  // If this is a musicstate message and we don't have track info yet,
+  // set track to "Music" so we can trigger displaying music controls
+  if (msg.state && !exports.music.track) {
+    exports.music.track = "Music";
+    exports.music.title = exports.music.title || "Music";
+  }
+  
+  // Mark as dirty so it gets saved on kill
+  musicDirty = true;
+  
+  // Set up kill handler only once
+  if (!killHandlerSet) {
+    E.on("kill", saveMusicToFlash);
+    killHandlerSet = true;
+  }
+}
+
+/**
+ * Get current music info with event metadata
+ * @returns {object} Music message object
+ */
+function getMusic() {
+  loadMusic();
+  const event = Object.assign({ id: "music" }, exports.music);
+  if (event.state === "play") event.new = true; // new track, or playback (re)started
+  return event;
+}
+
+/**
+ * Get current music message
+ * @returns {object} Music message object with id, state, track, artist, etc.
+ */
+exports.getMusic = getMusic;
+
+function incrementSaveCounter(name) {
+  const storage = require("Storage");
+  let stats = storage.readJSON("message_stats.json", true) || {};
+  if (!stats[name]) stats[name] = 0;
+  stats[name]++;
+  storage.writeJSON("message_stats.json", stats);
+}
