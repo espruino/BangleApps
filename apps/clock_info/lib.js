@@ -37,8 +37,7 @@ exports.load = function() {
   var settings = exports.loadSettings();
   delete settings.apps; // keep just the basic settings in memory
   // info used for drawing...
-  var hrm = 0;
-  var alt = "--";
+  var hrm = 0, alt = "--", stepDisabled = Bangle.getOptions().stepCounterDisabled;
   // callbacks (needed for easy removal of listeners)
   function batteryUpdateHandler() { bangleItems.find(i=>i.name=="Battery").emit("redraw"); }
   function stepUpdateHandler() { bangleItems.find(i=>i.name=="Steps").emit("redraw"); }
@@ -83,12 +82,21 @@ exports.load = function() {
     },
     { name : "Steps",
       hasRange : true,
-      get : () => { let v = Bangle.getHealthStatus("day").steps; return {
+      get : () => {
+        let v = Bangle.getHealthStatus("day").steps;
+        return {
           text : v, v : v, min : 0, max : stepGoal,
-        img : atob("GBiBAAcAAA+AAA/AAA/AAB/AAB/gAA/g4A/h8A/j8A/D8A/D+AfH+AAH8AHn8APj8APj8AHj4AHg4AADAAAHwAAHwAAHgAAHgAADAA==")
+        img : stepDisabled ? atob("GBiBAAcAAA+AAA/AHA/APB/AfB/g+A/h8A/j4A/nwA/PkA+fOAc+eAB88AD58AHz8APj8AfD4A+A4B8DAD4HwDwHwDgHgAAHgAADAA==") : atob("GBiBAAcAAA+AAA/AAA/AAB/AAB/gAA/g4A/h8A/j8A/D8A/D+AfH+AAH8AHn8APj8APj8AHj4AHg4AADAAAHwAAHwAAHgAAHgAADAA==")
       };},
       show : function() { Bangle.on("step", stepUpdateHandler); stepUpdateHandler(); },
       hide : function() { Bangle.removeListener("step", stepUpdateHandler); },
+      run : function() {
+        if (stepDisabled!==undefined) {
+          stepDisabled = !stepDisabled;
+          Bangle.setOptions({stepCounterDisabled:stepDisabled}); // 2v29
+        }
+        this.emit("redraw");
+      }
     },
     { name : "HRM",
       hasRange : true,
