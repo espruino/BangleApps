@@ -67,6 +67,12 @@
       value: !!settings.openMusic,
       onchange: v => updateSetting("openMusic", v)
     },
+    /*LANG*/'Music Msg Timeout': {
+      value: (settings && settings.musicTimeoutMinutes!=null) ? settings.musicTimeoutMinutes : 5,
+      min: 0, max: 240, step: 1,
+      format: v => v ? v+/*LANG*/"m" : /*LANG*/"Off",
+      onchange: v => updateSetting("musicTimeoutMinutes", v)
+    },
     /*LANG*/'Unlock Watch': {
       value: !!settings.unlockWatch,
       onchange: v => updateSetting("unlockWatch", v)

@@ -37,8 +37,13 @@ exports.listener = function(type, msg) {
   const appSettings = require("Storage").readJSON("messages.settings.json", 1) || {};
   let loadMessages = (Bangle.CLOCK || msg.important); // should we load the messages app?
   if (type==="music") {
-    if (Bangle.CLOCK && msg.state && msg.title && appSettings.openMusic) loadMessages = true;
-    else return;
+    // Music persistence is handled by messages module via pushMessage
+    msg.handled = true;
+    if (Bangle.CLOCK && msg.state && msg.title && appSettings.openMusic) {
+      loadMessages = true;
+    } else {
+      return; // handled
+    }
   }
   // Write the message to Bangle.MESSAGES. We'll deal with it in messageTimeout below
   if (!Bangle.MESSAGES) Bangle.MESSAGES = [];
@@ -48,7 +53,9 @@ exports.listener = function(type, msg) {
     // save messages from RAM to flash if we decide not to launch app
     // We apply all of Bangle.MESSAGES here in one write
     if (!Bangle.MESSAGES || !Bangle.MESSAGES.length) return;
-    let messages = require("messages").getMessages(msg);
+    // Load saved messages without applying the current msg to avoid
+    // applying it twice (getMessages(msg) would apply it already).
+    let messages = require("messages").getMessages();
     (Bangle.MESSAGES || []).forEach(m => require("messages").apply(m, messages));
     require("messages").write(messages);
     delete Bangle.MESSAGES;
