@@ -1,204 +1,583 @@
-.navbar { background-color: #5755d9; padding: 1em 1em 1em 1em; }
-.navbar .navbar-brand {
-  color: #fff;
-  font-weight: bold;
-}
+    /* NAVIGATION BAR AND GENERAL STYLES */
+    body {
+      color: #3c3c3c;
+      padding-left: 1em;
+      padding-right: 1em;
+    }
 
-.container.apploader-tab, ul.tab.tab-block {
-  padding-left: 1rem;
-  padding-right: 1rem;
-  border-bottom: 0px;
-}
+    .navbar {
+      background-color: #5755d9;
+      padding: 1em 1em 1em 1em;
+    }
 
-.navbar-brand.mr-2 > img {
-  margin-left: 0.3rem;
-}
+    .navbar .navbar-brand {
+      color: #fff;
+      font-weight: bold;
+    }
 
-.panel-body.columns {
-  margin: 1px;
-}
 
-.tile.column.col-6.col-sm-12.col-xs-12.app-tile {
-  border: solid 1px #dadee4;
-  margin: 0;
-  min-height: 150px;
-  padding-top: 0.5rem;
-}
 
-.tab.tab-block .tab-item  {
-  border-bottom: solid 1px #dadee4;
-}
+    header.navbar,
+    .navbar-primary {
+      margin-left: calc(-1em);
+      margin-right: calc(-1em);
+      width: calc(100% + 2rem);
+      box-sizing: border-box;
+    }
 
-a.mr-2{
-  display: flex;
-  align-items: center;
-}
+    a.mr-2 {
+      display: flex;
+      align-items: center;
+    }
 
-.navbar-section > a > div {
-   margin-left: 0.75rem;
-}
+    .navbar-section>a>div {
+      margin-left: 0.75rem;
+    }
 
-.dropdown-container {
-  margin-bottom: 0.5rem;
-  margin-top: 0.5rem;
-}
+    .container.apploader-tab {
+      padding-left: 0rem;
+      padding-right: 0rem;
+      border-bottom: 0px;
+      margin-bottom: 2em;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 0.75rem;
+    }
 
-a.btn.btn-link.dropdown-toggle {
-  padding-left: 0.01em;
-}
 
-.avatar img {
-  border-radius: 5px 5px 5px 5px;
-  background: #fff;
-}
-#toastcontainer {
-  position:fixed;
-  bottom:8px;left:0px;right:0px;
-  z-index: 500;
-}
-.hero {
-  padding-bottom: 1rem;
-  padding-top: 1rem;
-  text-align:center;
-}
-.chip {
-  cursor: pointer;
-}
-.filter-nav {
-  display: inline-block;
-}
-.device-nav {
-  display: inline-block;
-}
-.sort-nav {
-  float: right;
-}
 
-.app-tile {
-  position: relative;
-  border-bottom: 1px solid #EEE;
-  margin-bottom: 4px;
-  min-height: 8em;
-}
 
-.tile-content {
-  position: relative;
-  overflow-wrap: anywhere; /* stop long text like links pushing the width out too far*/
-}
-.link-github {
-  position:absolute;
-  top: 36px;
-  left: -24px;
-}
-.tile-screenshot {
-  position:absolute;bottom:1em;right:1em;
-  width:4em;height:4em;
-  padding:2px;border:1px solid black;
-  cursor:pointer;
-}
 
-.btn.btn-favourite { color: red; }
-.btn.btn-favourite:hover { color: red; }
+    .navbar-brand.mr-2>img {
+      margin-left: 0.3rem;
+    }
 
-.icon.icon-emulator { text-indent: 0px; } /*override spectre*/
-.icon.icon-emulator {
-  content: url("data:image/svg+xml,%3Csvg fill='rgb(87, 85, 217)' xmlns='http://www.w3.org/2000/svg' viewBox='4 4 40 40' width='1em' height='1em'%3E%3Cpath d='M 8.5 5 C 6.0324991 5 4 7.0324991 4 9.5 L 4 30.5 C 4 32.967501 6.0324991 35 8.5 35 L 17 35 L 17 40 L 13.5 40 A 1.50015 1.50015 0 1 0 13.5 43 L 18.253906 43 A 1.50015 1.50015 0 0 0 18.740234 43 L 29.253906 43 A 1.50015 1.50015 0 0 0 29.740234 43 L 34.5 43 A 1.50015 1.50015 0 1 0 34.5 40 L 31 40 L 31 35 L 39.5 35 C 41.967501 35 44 32.967501 44 30.5 L 44 9.5 C 44 7.0324991 41.967501 5 39.5 5 L 8.5 5 z M 8.5 8 L 39.5 8 C 40.346499 8 41 8.6535009 41 9.5 L 41 30.5 C 41 31.346499 40.346499 32 39.5 32 L 29.746094 32 A 1.50015 1.50015 0 0 0 29.259766 32 L 18.746094 32 A 1.50015 1.50015 0 0 0 18.259766 32 L 8.5 32 C 7.6535009 32 7 31.346499 7 30.5 L 7 9.5 C 7 8.6535009 7.6535009 8 8.5 8 z M 17.5 12 C 16.136406 12 15 13.136406 15 14.5 L 15 25.5 C 15 26.863594 16.136406 28 17.5 28 L 30.5 28 C 31.863594 28 33 26.863594 33 25.5 L 33 14.5 C 33 13.136406 31.863594 12 30.5 12 L 17.5 12 z M 18 18 L 30 18 L 30 25 L 18 25 L 18 18 z M 20 35 L 28 35 L 28 40 L 20 40 L 20 35 z'/%3E%3C/svg%3E");
-}
-.icon.icon-favourite { text-indent: 0px; } /*override spectre*/
-.icon.icon-favourite-active { text-indent: 0px; } /*override spectre*/
-.icon.icon-favourite::before {
-  content: url("data:image/svg+xml,%3Csvg fill='rgb(255, 0, 0)' xmlns='http://www.w3.org/2000/svg' viewBox='0 -3 50 47' width='1.5em' height='1.5em'%3E%3Cpath d='M 16.375 9 C 10.117188 9 5 14.054688 5 20.28125 C 5 33.050781 19.488281 39.738281 24.375 43.78125 L 25 44.3125 L 25.625 43.78125 C 30.511719 39.738281 45 33.050781 45 20.28125 C 45 14.054688 39.882813 9 33.625 9 C 30.148438 9 27.085938 10.613281 25 13.0625 C 22.914063 10.613281 19.851563 9 16.375 9 Z M 16.375 11 C 19.640625 11 22.480469 12.652344 24.15625 15.15625 L 25 16.40625 L 25.84375 15.15625 C 27.519531 12.652344 30.359375 11 33.625 11 C 38.808594 11 43 15.144531 43 20.28125 C 43 31.179688 30.738281 37.289063 25 41.78125 C 19.261719 37.289063 7 31.179688 7 20.28125 C 7 15.144531 11.1875 11 16.375 11 Z'/%3E%3C/svg%3E");
-}
-.icon.icon-favourite-active::before {
-  content: url("data:image/svg+xml,%3Csvg fill='rgb(255, 0, 0)' xmlns='http://www.w3.org/2000/svg' viewBox='0 -3 50 47' width='1.5em' height='1.5em'%3E%3Cpath d='M 25 44.296875 L 24.363281 43.769531 C 23.363281 42.941406 22.019531 42.027344 20.46875 40.96875 C 14.308594 36.765625 5 30.414063 5 20.285156 C 5 14.0625 10.097656 9 16.363281 9 C 19.714844 9 22.851563 10.457031 25 12.957031 C 27.148438 10.457031 30.289063 9 33.636719 9 C 39.902344 9 45 14.0625 45 20.285156 C 45 30.414063 35.691406 36.765625 29.53125 40.96875 C 27.976563 42.027344 26.636719 42.941406 25.636719 43.769531 Z'/%3E%3C/svg%3E");
-}
-.icon.icon-favourite span {
-  font-size: 50%;
-  color : #F66;
-  position:relative;
-  top:-0.8em;
-}
-.icon.icon-favourite-active span {
-  color : white;
-}
+    .form-input {
+      border-radius: 1em;
+      padding: 0.5em;
+      padding-left: 1em;
+      border: solid 1px #dadee4;
+      box-shadow: none;
+      margin: -1;
+      ;
+    }
 
-.icon.icon-interface {text-indent: 0px;} /*override spectre*/
-.icon.icon-interface::before {
-  position: absolute; left: 50%; top: 70%;
-  transform: translate(-50%,-50%);
-  content: url("data:image/svg+xml,%3C%3Fxml version='1.0'%3F%3E%3Csvg fill='rgb(87, 85, 217)' xmlns='http://www.w3.org/2000/svg' viewBox='2 2 28 28' width='1.5em' height='1.5em'%3E%3Cpath d='M 6 4 C 4.895 4 4 4.895 4 6 L 4 24 C 4 25.105 4.895 26 6 26 L 24 26 C 25.105 26 26 25.105 26 24 L 26 8 L 22 4 L 20 4 L 20 10 C 20 10.552 19.552 11 19 11 L 10 11 C 9.448 11 9 10.552 9 10 L 9 4 L 6 4 z M 16 4 L 16 9 L 18 9 L 18 4 L 16 4 z M 10 16 L 20 16 C 21.105 16 22 16.895 22 18 L 22 24 L 8 24 L 8 18 C 8 16.895 8.895 16 10 16 z'/%3E%3C/svg%3E");
-}
+    .panel-header {
+      padding-left: 0px;
 
-/* https://github.com/picturepan2/spectre/issues/595 */
-.chip.tooltip:hover {
-  overflow: visible;
-  overflow-y: unset;
-}
+    }
 
-/* Normally tooltips don't wrap, but if you enable it, then they wrap until they are really thin!
-Not sure how to get 'normal' wrap behaviour (eg fill up until max-width, then wrap) */
-/*.tooltip:hover::after {
-  white-space: normal;
-  min-width: 160px;
-}*/
+    .panel {
+      border-radius: 1em;
+      padding-left: 0rem;
+      padding-right: 0rem;
+      margin: 0px !important;
+      border: none;
+    }
 
-/* Terminal */
-/* ----------------------------------------------------- */
-.terminal
-{
-  font-size: 12px;
-  background-color: #222;
-  color: white;
-  display: block;
-  border: 0;
-  padding: 10px;
-  overflow: auto; /* adds scrollbar if needed */
+    .panel-body.columns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: stretch;
+      justify-content: center;
 
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  bottom: 0px;
-  right: 0px;
+    }
 
-  -o-user-select: text;
-  -moz-user-select: text;
-  -webkit-user-select: text;
-  user-select: text;
-}
+    /* BUTTONS */
 
-.termLine {
-  font-family: Fixed, monospace;
-  tab-size: 4;
-  min-height: 1em;
-}
+    @keyframes squishAnim {
+      0% {
+        transform: scale(1, 1);
+      }
 
-.terminal.focus
-{
-  background-color: #333;
-}
+      15% {
+        transform: scale(1.08, 1.24);
+      }
 
-.terminal__focus
-{
-  position: absolute;
-  top: -100px;  /* hide it */
-}
+      40% {
+        transform: scale(1.22, 1.08);
+      }
 
-.terminal a
-{
-  color:#88F;
-}
-.terminal a:visited
-{
-  color:#88F;
-}
+      65% {
+        transform: scale(1.15, 1.28);
+      }
 
-.terminal--connected.focus .terminal__cursor
-{
-  animation: blink 1s step-end 0s infinite;
-}
+      85% {
+        transform: scale(1.06, 1.12);
+      }
 
-.terminal--webcam.focus .terminal__cursor
-{
-  text-shadow: none;
-  animation: blink_webcam 1s step-end 0s infinite;
-}
+      100% {
+        transform: scale(1, 1);
+      }
+    }
+
+    .btn {
+      border-radius: 0.4em;
+    }
+
+    #connectmydevice {
+      margin-right: 1.5em;
+    }
+
+    .btn.input-group-btn {
+
+      border-bottom-right-radius: 1em;
+      border-top-right-radius: 1em;
+    }
+
+    .btn.btn-favourite:focus,
+    .btn.btn-favourite:focus-visible,
+    .btn-favourite:focus,
+    .btn-favourite:focus-visible,
+    .btn.btn-favourite:active,
+    .btn-favourite:active {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+    .btn.btn-favourite:focus .icon,
+    .btn-favourite:focus .icon {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+    .icon.icon-emulator {
+      text-indent: 0px;
+      /*override spectre*/
+      content: url("data:image/svg+xml,%3Csvg fill='rgb(87, 85, 217)' xmlns='http://www.w3.org/2000/svg' viewBox='4 4 40 40' width='1em' height='1em'%3E%3Cpath d='M 8.5 5 C 6.0324991 5 4 7.0324991 4 9.5 L 4 30.5 C 4 32.967501 6.0324991 35 8.5 35 L 17 35 L 17 40 L 13.5 40 A 1.50015 1.50015 0 1 0 13.5 43 L 18.253906 43 A 1.50015 1.50015 0 0 0 18.740234 43 L 29.253906 43 A 1.50015 1.50015 0 0 0 29.740234 43 L 34.5 43 A 1.50015 1.50015 0 1 0 34.5 40 L 31 40 L 31 35 L 39.5 35 C 41.967501 35 44 32.967501 44 30.5 L 44 9.5 C 44 7.0324991 41.967501 5 39.5 5 L 8.5 5 z M 8.5 8 L 39.5 8 C 40.346499 8 41 8.6535009 41 9.5 L 41 30.5 C 41 31.346499 40.346499 32 39.5 32 L 29.746094 32 A 1.50015 1.50015 0 0 0 29.259766 32 L 18.746094 32 A 1.50015 1.50015 0 0 0 18.259766 32 L 8.5 32 C 7.6535009 32 7 31.346499 7 30.5 L 7 9.5 C 7 8.6535009 7.6535009 8 8.5 8 z M 17.5 12 C 16.136406 12 15 13.136406 15 14.5 L 15 25.5 C 15 26.863594 16.136406 28 17.5 28 L 30.5 28 C 31.863594 28 33 26.863594 33 25.5 L 33 14.5 C 33 13.136406 31.863594 12 30.5 12 L 17.5 12 z M 18 18 L 30 18 L 30 25 L 18 25 L 18 18 z M 20 35 L 28 35 L 28 40 L 20 40 L 20 35 z'/%3E%3C/svg%3E");
+    }
+
+    .icon.icon-favourite {
+      text-indent: 0px;
+    }
+
+    /*override spectre*/
+    .icon.icon-favourite-active {
+      text-indent: 0px;
+      color: #EEE
+    }
+
+    /*override spectre*/
+    .icon.icon-favourite::before {
+      content: url("data:image/svg+xml,%3Csvg fill='rgb(255, 0, 0)' xmlns='http://www.w3.org/2000/svg' viewBox='0 -3 50 47' width='1.5em' height='1.5em'%3E%3Cpath d='M 16.375 9 C 10.117188 9 5 14.054688 5 20.28125 C 5 33.050781 19.488281 39.738281 24.375 43.78125 L 25 44.3125 L 25.625 43.78125 C 30.511719 39.738281 45 33.050781 45 20.28125 C 45 14.054688 39.882813 9 33.625 9 C 30.148438 9 27.085938 10.613281 25 13.0625 C 22.914063 10.613281 19.851563 9 16.375 9 Z M 16.375 11 C 19.640625 11 22.480469 12.652344 24.15625 15.15625 L 25 16.40625 L 25.84375 15.15625 C 27.519531 12.652344 30.359375 11 33.625 11 C 38.808594 11 43 15.144531 43 20.28125 C 43 31.179688 30.738281 37.289063 25 41.78125 C 19.261719 37.289063 7 31.179688 7 20.28125 C 7 15.144531 11.1875 11 16.375 11 Z'/%3E%3C/svg%3E");
+    }
+
+
+    .icon.icon-favourite-active::before {
+      content: url("data:image/svg+xml,%3Csvg fill='rgb(255, 0, 0)' xmlns='http://www.w3.org/2000/svg' viewBox='0 -3 50 47' width='1.5em' height='1.5em'%3E%3Cpath d='M 25 44.296875 L 24.363281 43.769531 C 23.363281 42.941406 22.019531 42.027344 20.46875 40.96875 C 14.308594 36.765625 5 30.414063 5 20.285156 C 5 14.0625 10.097656 9 16.363281 9 C 19.714844 9 22.851563 10.457031 25 12.957031 C 27.148438 10.457031 30.289063 9 33.636719 9 C 39.902344 9 45 14.0625 45 20.285156 C 45 30.414063 35.691406 36.765625 29.53125 40.96875 C 27.976563 42.027344 26.636719 42.941406 25.636719 43.769531 Z'/%3E%3C/svg%3E");
+    }
+
+    .icon.icon-favourite span {
+      font-size: 50%;
+      color: #F66;
+      position: relative;
+      top: -0.8em;
+    }
+
+    .icon.favoriteAnim {
+      animation-name: squishAnim;
+      animation-duration: 0.45s;
+      animation-timing-function: cubic-bezier(.2, .9, .3, 1);
+      animation-fill-mode: both;
+    }
+
+    .icon.icon-interface {
+      text-indent: 0px;
+    }
+    .fav-count {
+      display: inline-block;
+      margin-right: 0.3rem!important;
+      margin-left:0em!important;
+      font-size: 0.7rem;
+      vertical-align: middle;
+      text-align: center;
+      margin-top: -0.07rem;
+      color: #F66;
+    }
+
+    .btn-favourite .fav-count+.icon {
+      margin-left: 0;
+    }
+
+    .btn-favourite {
+      margin-right: 0.1em;
+      padding: 1em;
+    }
+
+
+
+    .btn.btn-favourite {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 0.01rem;
+      min-height: 1.9rem;
+      box-sizing: border-box;
+    }
+
+    .btn.btn-favourite.btn-lg {
+      width: auto;
+      height: auto;
+      padding-right: 0.25rem;
+    }
+
+    .btn.btn-favourite .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transform-origin: center;
+    }
+
+    .btn.btn-favourite .icon.icon-favourite {
+      gap: 0.35rem;
+    }
+
+
+    /* Collapse to one column for thinner screens */
+    @media (max-width: 720px) {
+      .tile.column.col-6.col-sm-12.col-xs-12.app-tile {
+        flex: 1 1 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+      }
+    }
+
+    @media (max-width: 440px) {
+      .tile.column.col-6.cosl-sm-12.col-xs-12.app-tile {
+        padding: 0.9em 0.9em;
+      }
+    }
+
+    /* TABS */
+    .tab.tab-block .tab-item {
+      border-bottom: none;
+      border-radius: 1em;
+    }
+
+    .tab.tab-item.active {
+
+      border-bottom: none;
+      border-radius: 23m;
+    }
+
+    .tab.tab-block {
+      margin: 1em;
+      padding: 0.3em;
+      padding-left: 0.3em !important;
+      padding-right: 0.3em !important;
+      gap: 1em
+    }
+
+
+    #tab-navigate {
+      position: relative;
+      display: flex;
+      padding: 0;
+    }
+
+    #tab-navigate .tab-item {
+      flex: 1 1 0;
+      text-align: center;
+      display: block;
+    }
+
+    #tab-navigate .tab-item a {
+      display: block;
+      padding: 0.6rem 0.8rem;
+    }
+
+    #tab-navigate::after {
+      content: "";
+      position: absolute;
+      bottom: -0.1rem;
+      left: 0;
+      height: 3px;
+      width: calc(100% / 3);
+      background: #5755d9;
+      border-radius: 100px;
+      transform: translateX(0%);
+      transition: transform 320ms cubic-bezier(.2, .9, .3, 1), width 320ms cubic-bezier(.2, .9, .3, 1);
+      will-change: transform, width;
+    }
+
+    /* Move the indicator to the second tab */
+    #tab-navigate:has(li:nth-child(2).active)::after {
+      transform: translateX(100%);
+    }
+
+    /* Move the indicator to the third tab */
+    #tab-navigate:has(li:nth-child(3).active)::after {
+      transform: translateX(200%);
+    }
+
+
+
+    .tab.tab-block .tab-item:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+
+
+    .tab .tab-item a,
+    .tab .tab-item a:focus,
+    .tab .tab-item a:active,
+    .tab .tab-item a:focus-visible,
+    .tab.tab-block .tab-item a:focus,
+    #tab-navigate .tab-item a:focus {
+      outline: none !important;
+      box-shadow: none !important;
+      border-bottom-color: transparent !important;
+    }
+
+
+
+    .dropdown-container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    a.btn.btn-link.dropdown-toggle {
+      padding-left: 0.01em;
+    }
+
+    .avatar img {
+      border-radius: 5px 5px 5px 5px;
+      background: #fff;
+    }
+
+    #toastcontainer {
+      position: fixed;
+      bottom: 8px;
+      left: 0px;
+      right: 0px;
+      z-index: 500;
+    }
+
+    .hero {
+      padding-bottom: 1rem;
+      padding-top: 1rem;
+      text-align: center;
+    }
+
+    .chip {
+      cursor: pointer;
+    }
+
+    .filter-nav {
+      display: inline-block;
+    }
+
+    .device-nav {
+      display: inline-block;
+    }
+
+    .sort-nav {
+      float: right;
+    }
+
+    /* APP TILES */
+    .app-tile {
+      position: relative;
+      border-bottom: 1px solid #EEE;
+      margin-bottom: 4px;
+      min-height: 11em;
+      /* reduced so tiles can be thinner */
+    }
+
+    .tile-content {
+      position: relative;
+      overflow-wrap: anywhere;
+      /* stop long text like links pushing the width out too far*/
+    }
+
+
+    .tile .tile-content br {
+      display: block;
+      line-height: 100;
+      padding: 2em;
+    }
+
+
+    .tile .tile-content p {
+      margin: 0 0 0.2rem 0;
+    }
+
+    .tile.column.col-6.col-sm-12.col-xs-12.app-tile {
+      background-color: rgba(87, 85, 217, 0.025);
+      border: solid 1.3px #dadee47c;
+      margin: 0;
+      /* spacing handled by container gap */
+      padding: 0.9em;
+      border-radius: 1em;
+      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.025);
+      box-sizing: border-box;
+      /* allow tiles to be two columns on wide screens, collapse to one on small screens */
+      flex: 1 1 calc(50% - 0.75rem);
+      max-width: calc(50% - 0.75rem);
+      min-width: 220px; /* ensures tiles wrap down to one column when viewport is too narrow */
+    }
+    .chip{
+      border-radius: 0.7em;
+
+    }
+    .link-github {
+      position: absolute;
+      top: 36px;
+      left: -24px;
+    }
+
+    .tile-screenshot {
+      position: absolute;
+      bottom: 1em;
+      right: 1em;
+      width: 4em;
+      height: 4em;
+      padding: 2px;
+      border: 1px solid rgba(87, 85, 217, 0.5);;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .pill-container {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0em 1em;
+      margin-right: 0.05em;
+      background-color: rgba(87, 85, 217, 0.055);
+      border-radius: 999px;
+      font-family: sans-serif;
+      height: auto;
+    }
+
+
+    .modal-container {
+      border-radius: 1.5em;
+      background-color: rgb(253, 253, 255);
+      padding: 1em;
+
+    }
+
+    .bar {
+      border-radius: 1em;
+    }
+
+    .devicechooser {
+
+      border-radius: 1em;
+      justify-content: center;
+      display: flex;
+      justify-content: center;
+      /* Centers horizontally */
+      align-items: center;
+      /* Centers vertically */
+      text-align: left;
+
+    }
+
+    /* Support older index.js which puts the count inside the <i> as a span */
+    .btn.btn-favourite .icon.icon-favourite span {
+      position: static;
+      top: auto;
+      margin-left: 0;
+      margin-right: 0;
+      font-size: 0.45rem;
+      vertical-align: middle;
+      color: #F66;
+    }
+
+    i.icon.icon-favourite.icon-favourite-active>span {
+      color: white !important;
+      z-index: 2;
+    }
+
+    .toast {
+      border-radius: 0.5em;
+      margin: 0.7em;
+      max-width: 99%;
+    }
+
+
+
+    /*override spectre*/
+    .icon.icon-interface::before {
+      position: absolute;
+      left: 50%;
+      top: 70%;
+      transform: translate(-50%, -50%);
+      content: url("data:image/svg+xml,%3C%3Fxml version='1.0'%3F%3E%3Csvg fill='rgb(87, 85, 217)' xmlns='http://www.w3.org/2000/svg' viewBox='2 2 28 28' width='1.5em' height='1.5em'%3E%3Cpath d='M 6 4 C 4.895 4 4 4.895 4 6 L 4 24 C 4 25.105 4.895 26 6 26 L 24 26 C 25.105 26 26 25.105 26 24 L 26 8 L 22 4 L 20 4 L 20 10 C 20 10.552 19.552 11 19 11 L 10 11 C 9.448 11 9 10.552 9 10 L 9 4 L 6 4 z M 16 4 L 16 9 L 18 9 L 18 4 L 16 4 z M 10 16 L 20 16 C 21.105 16 22 16.895 22 18 L 22 24 L 8 24 L 8 18 C 8 16.895 8.895 16 10 16 z'/%3E%3C/svg%3E");
+    }
+
+    /* https://github.com/picturepan2/spectre/issues/595 */
+    .chip.tooltip:hover {
+      overflow: visible;
+      overflow-y: unset;
+    }
+
+    /* Normally tooltips don't wrap, but if you enable it, then they wrap until they are really thin!
+    Not sure how to get 'normal' wrap behaviour (eg fill up until max-width, then wrap) */
+    /*.tooltip:hover::after {
+      white-space: normal;
+      min-width: 160px;
+    }*/
+
+    /* Terminal */
+    /* ----------------------------------------------------- */
+    .terminal {
+      font-size: 12px;
+      background-color: #222;
+      color: white;
+      display: block;
+      border: 0;
+      padding: 10px;
+      overflow: auto;
+      /* adds scrollbar if needed */
+      border-radius: 1em;
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      bottom: 0px;
+      right: 0px;
+
+      -o-user-select: text;
+      -moz-user-select: text;
+      -webkit-user-select: text;
+      user-select: text;
+    }
+
+
+    .termLine {
+      font-family: Fixed, monospace;
+      tab-size: 4;
+      min-height: 1em;
+    }
+
+    .terminal.focus {
+      background-color: #333;
+    }
+
+    .terminal__focus {
+      position: absolute;
+      top: -100px;
+      /* hide it */
+    }
+
+    .terminal a {
+      color: #88F;
+    }
+
+    .terminal a:visited {
+      color: #88F;
+    }
+
+    .terminal--connected.focus .terminal__cursor {
+      animation: blink 1s step-end 0s infinite;
+    }
+
+    .terminal--webcam.focus .terminal__cursor {
+      text-shadow: none;
+      animation: blink_webcam 1s step-end 0s infinite;
+    }
