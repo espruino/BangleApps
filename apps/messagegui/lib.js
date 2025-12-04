@@ -35,7 +35,7 @@ exports.listener = function(type, msg) {
   }
 
   const appSettings = require("Storage").readJSON("messages.settings.json", 1) || {};
-  const autoOpen = appSettings.autoOpen;
+  const autoOpen = appSettings.autoOpen ?? 1;
   let loadMessages = (
     (autoOpen === 1 && Bangle.CLOCK) || (autoOpen === 2 && Bangle.isLocked()) || autoOpen === 3 ||
       msg.important
