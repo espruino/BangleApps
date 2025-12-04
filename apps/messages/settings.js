@@ -12,6 +12,7 @@
     if (settings.maxMessages===undefined) settings.maxMessages=3;
     if (settings.iconColorMode === undefined) settings.iconColorMode = iconColorModes[0];
     if (settings.ignoreUnread === undefined) settings.ignoreUnread = 0;
+    if (settings.autoOpen === undefined) settings.autoOpen = 1;
     settings.unlockWatch=!!settings.unlockWatch;
     settings.openMusic=!!settings.openMusic;
     settings.maxUnreadTimeout=240;
@@ -84,18 +85,26 @@
     // Auto-open:
     // - Never show new messages
     // - Show new messages over clock
-    // - Show new messages over clock and all apps when locked
-    // - Show new messages over all apps
+    // - Always show new messages when locked
+    // - Always show new messages
     //
     // Open a sub-menu to select among the options.
-    // In main mene display the current selection in a friendly format.
+    // In main menu display the current selection in a friendly format.
     // Use numbers 0-3 as representation under the hood.
     // Add defaults to the top of this file.
     // Translate the Disable auto-open setting to the new style.
     //
-    /*LANG*/'Disable auto-open': {
-      value: !!settings.noAutOpn,
-      onchange: v => updateSetting("noAutOpn", v)
+    // Amend README to reflect changes.
+
+    /*LANG*/'Auto-open new msg': {
+      value: settings.autoOpen,
+      min:0,max:3,step:1,
+      format: v =>
+        v===0 ? "Never" :
+          v===1 ? "On clock" :
+            v===2 ? "If locked" :
+              "Always",
+      onchange: v => updateSetting("autoOpen", v)
     },
     /*LANG*/'Widget messages': {
       value:0|settings.maxMessages,
