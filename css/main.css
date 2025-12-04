@@ -60,6 +60,7 @@
       border: solid 1px #dadee4;
       box-shadow: none;
       margin: -1;
+      ;
     }
 
     .panel-header {
@@ -155,7 +156,7 @@
     /*override spectre*/
     .icon.icon-favourite-active {
       text-indent: 0px;
-      color: #EEE;
+      color: #EEE
     }
 
     /*override spectre*/
@@ -243,11 +244,7 @@
       }
     }
 
-    @media (max-width: 440px) {
-      .tile.column.col-6.cosl-sm-12.col-xs-12.app-tile {
-        padding: 0.9em 0.9em;
-      }
-    }
+ 
 
     /* TABS */
     .tab.tab-block .tab-item {
@@ -435,7 +432,7 @@
       width: 4em;
       height: 4em;
       padding: 2px;
-      border: 1px solid rgba(87, 85, 217, 0.5);;
+      border: 1.2px solid rgba(87, 85, 217, 0.5);;
       cursor: pointer;
       border-radius: 5px;
     }
