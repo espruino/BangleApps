@@ -80,22 +80,6 @@
       value: !!settings.quietNoAutOpn,
       onchange: v => updateSetting("quietNoAutOpn", v)
     },
-    // Refactor Disable auto-open to a setting with more granularity.
-    //
-    // Auto-open:
-    // - Never show new messages
-    // - Show new messages over clock
-    // - Always show new messages when locked
-    // - Always show new messages
-    //
-    // Open a sub-menu to select among the options.
-    // In main menu display the current selection in a friendly format.
-    // Use numbers 0-3 as representation under the hood.
-    // Add defaults to the top of this file.
-    // Translate the Disable auto-open setting to the new style.
-    //
-    // Amend README to reflect changes.
-
     /*LANG*/'Auto-open new msg': {
       value: settings.autoOpen,
       min:0,max:3,step:1,
