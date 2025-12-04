@@ -62,3 +62,5 @@
       Ensure Battery voltage is only stored to 0.01v
       Add graphs for Steps+Battery
 0.48: Add ability to log average acceleration values
+0.49: Log average high confidence (>=80) HR reading for each interval, instead of logging the last 
+      reading. If none pass confidence threshold, fall back to highest low confidence reading.

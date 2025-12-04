@@ -22,3 +22,4 @@
 0.20: Fix issue where step count would randomly reset
 0.21: Memory usage improvements, fix widget initial width (fix #1170)
 0.22: Fix 'stps' regression for 0.21 (fix #1233)
+0.23: Allow tapping on the widget to disable step counting (2v29+ needed)

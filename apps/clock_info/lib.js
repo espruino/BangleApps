@@ -23,6 +23,7 @@ exports.loadSettings = function() {
       hrmOn : 0, // 0(Always), 1(Tap)
       defocusOnLock : true,
       maxAltitude : 3000,
+      haptics:true,
       apps : {}
     },
     require("Storage").readJSON("clock_info.json",1)||{}
@@ -36,8 +37,7 @@ exports.load = function() {
   var settings = exports.loadSettings();
   delete settings.apps; // keep just the basic settings in memory
   // info used for drawing...
-  var hrm = 0;
-  var alt = "--";
+  var hrm = 0, alt = "--", stepDisabled = Bangle.getOptions().stepCounterDisabled;
   // callbacks (needed for easy removal of listeners)
   function batteryUpdateHandler() { bangleItems.find(i=>i.name=="Battery").emit("redraw"); }
   function stepUpdateHandler() { bangleItems.find(i=>i.name=="Steps").emit("redraw"); }
@@ -82,12 +82,21 @@ exports.load = function() {
     },
     { name : "Steps",
       hasRange : true,
-      get : () => { let v = Bangle.getHealthStatus("day").steps; return {
+      get : () => {
+        let v = Bangle.getHealthStatus("day").steps;
+        return {
           text : v, v : v, min : 0, max : stepGoal,
-        img : atob("GBiBAAcAAA+AAA/AAA/AAB/AAB/gAA/g4A/h8A/j8A/D8A/D+AfH+AAH8AHn8APj8APj8AHj4AHg4AADAAAHwAAHwAAHgAAHgAADAA==")
+        img : stepDisabled ? atob("GBiBAAcAAA+AAA/AHA/APB/AfB/g+A/h8A/j4A/nwA/PkA+fOAc+eAB88AD58AHz8APj8AfD4A+A4B8DAD4HwDwHwDgHgAAHgAADAA==") : atob("GBiBAAcAAA+AAA/AAA/AAB/AAB/gAA/g4A/h8A/j8A/D8A/D+AfH+AAH8AHn8APj8APj8AHj4AHg4AADAAAHwAAHwAAHgAAHgAADAA==")
       };},
       show : function() { Bangle.on("step", stepUpdateHandler); stepUpdateHandler(); },
       hide : function() { Bangle.removeListener("step", stepUpdateHandler); },
+      run : function() {
+        if (stepDisabled!==undefined) {
+          stepDisabled = !stepDisabled;
+          Bangle.setOptions({stepCounterDisabled:stepDisabled}); // 2v29
+        }
+        this.emit("redraw");
+      }
     },
     { name : "HRM",
       hasRange : true,
@@ -293,6 +302,7 @@ exports.addInteractive = function(menu, options) {
     var oldMenuItem;
     if (ud) {
       if (menu[options.menuA].items.length==1) return; // 1 item - can't move
+      if(settings.haptics) Bangle.buzz(30);
       oldMenuItem = menu[options.menuA].items[options.menuB];
       options.menuB += ud;
       if (options.menuB<0) options.menuB = menu[options.menuA].items.length-1;
@@ -300,6 +310,7 @@ exports.addInteractive = function(menu, options) {
     } else if (lr) {
       if (menu.length==1) return; // 1 item - can't move
       oldMenuItem = menu[options.menuA].items[options.menuB];
+      if(settings.haptics) Bangle.buzz(44);
       do {
         options.menuA += lr;
         if (options.menuA<0) options.menuA = menu.length-1;
@@ -355,7 +366,7 @@ exports.addInteractive = function(menu, options) {
       if (!options.focus) {
         focus();
       } else if (menu[options.menuA].items[options.menuB].run) {
-        Bangle.buzz(100, 0.7);
+        if(settings.haptics) Bangle.buzz(100, 0.7);
         menu[options.menuA].items[options.menuB].run(options); // allow tap on an item to run it (eg home assistant)
       }
     };

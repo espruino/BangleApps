@@ -16,6 +16,6 @@
     {"name":"boot_messages_light.boot.js","url":"messages_light.boot.js"},
     {"name":"messages_light.listener.js","url":"messages_light.listener.js"}
   ],
-  "data": [{"name":"messages_light.settings.json"},{"name":"messages_light.NewMessage.json"}],
+  "data": [{"name":"messages_light.settings.json"},{"name":"messages_light.NewEvent.json"}],
   "screenshots": [{"url":"screenshot-notify.png"} ,{"url":"screenshot-long-text1.png"},{"url":"screenshot-long-text2.png"}, {"url":"screenshot-call.png"} ]
 }

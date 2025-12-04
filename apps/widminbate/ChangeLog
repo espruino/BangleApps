@@ -4,3 +4,5 @@
 0.04: Fork `widminbat`->`widminbate`. Only use the system theme foreground
 	colour.
 0.05: Fix broken fork which removed the `update` function
+0.06: The widget now shows only when battery level is 10% or lower
+0.07: The widget now shows when battery level is 20% or lower

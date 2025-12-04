@@ -1,0 +1,22 @@
+{ 
+  "id": "phoneremind",
+  "name": "Phone Reminder",
+  "shortName":"PhoneRemind",
+  "version":"0.01",
+  "icon":"icon.png",
+  "description": "Provides an alert when your phone disconnects, and allows you to set familiar locations where it will not alert. This uses `MyLocation` for location.",
+  "type":"bootloader",    
+  "tags": "tool,bluetooth",
+  "author":"RKBoss6",
+  "supports": ["BANGLEJS2"],
+  "screenshots" : [ { "url":"scr.png" }],
+  "dependencies" : { "mylocation":"app"},
+  "readme":"README.md",
+  "storage": [
+    {"name":"phoneremind.boot.js","url":"boot.js"},
+    {"name":"phoneremind.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"phoneremind.json"} 
+  ]
+}
