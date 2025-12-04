@@ -38,6 +38,7 @@
       padding-left: 0rem;
       padding-right: 0rem;
       border-bottom: 0px;
+      margin-bottom: 2em;
       flex-wrap: wrap;
       justify-content: center;
       align-items: center;
@@ -187,7 +188,8 @@
     }
     .fav-count {
       display: inline-block;
-      margin-right: 0.3rem;
+      margin-right: 0.3rem!important;
+      margin-left:0em!important;
       font-size: 0.7rem;
       vertical-align: middle;
       text-align: center;
@@ -410,7 +412,7 @@
       /* spacing handled by container gap */
       padding: 0.9em;
       border-radius: 1em;
-      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.02);
+      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.025);
       box-sizing: border-box;
       /* allow tiles to be two columns on wide screens, collapse to one on small screens */
       flex: 1 1 calc(50% - 0.75rem);
