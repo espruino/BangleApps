@@ -83,11 +83,7 @@
     /*LANG*/'Auto-open new msg': {
       value: settings.autoOpen,
       min:0,max:3,step:1,
-      format: v =>
-        v===0 ? "Never" :
-          v===1 ? "On clock" :
-            v===2 ? "If locked" :
-              "Always",
+      format: v=>["Never","On clock","If locked","Always"][v],
       onchange: v => updateSetting("autoOpen", v)
     },
     /*LANG*/'Widget messages': {
