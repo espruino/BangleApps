@@ -35,7 +35,11 @@ exports.listener = function(type, msg) {
   }
 
   const appSettings = require("Storage").readJSON("messages.settings.json", 1) || {};
-  let loadMessages = (Bangle.CLOCK || msg.important); // should we load the messages app?
+  const autoOpen = appSettings.autoOpen ?? 1;
+  let loadMessages = (
+    (autoOpen === 1 && Bangle.CLOCK) || (autoOpen === 2 && (Bangle.isLocked() || Bangle.CLOCK)) || autoOpen === 3 ||
+      msg.important
+  ); // should we load the messages app?
   if (type==="music") {
     if (Bangle.CLOCK && msg.state && msg.title && appSettings.openMusic) loadMessages = true;
     else return;
@@ -60,7 +64,7 @@ exports.listener = function(type, msg) {
   const quiet = (require("Storage").readJSON("setting.json", 1) || {}).quiet;
   const unlockWatch = appSettings.unlockWatch;
   // don't auto-open messages in quiet mode if quietNoAutOpn is true
-  if ((quiet && appSettings.quietNoAutOpn) || appSettings.noAutOpn)
+  if (quiet && appSettings.quietNoAutOpn)
     loadMessages = false;
   // after a delay load the app, to ensure we have all the messages
   if (exports.messageTimeout) clearTimeout(exports.messageTimeout);
