@@ -3,6 +3,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 const R = Bangle.appRect;
+const MS_PER_DAY = 86400000;
 let layer;
 let drag;
 let timerInt1 = [];
@@ -15,6 +16,20 @@ function getCurrentTime() {
     time.getMinutes() * 60000 +
     time.getSeconds() * 1000
   );
+}
+
+function getTimeRemaining(alarm) {
+  let rem = require('sched').getTimeToAlarm(alarm);
+  if (rem === undefined) {
+    // fallback: compute time difference
+    const now = getCurrentTime();
+    if (alarm.t > now) {
+      rem = alarm.t - now;
+    } else {
+      rem = MS_PER_DAY - (now - alarm.t);
+    }
+  }
+  return rem;
 }
 
 function decodeTime(t) {
@@ -100,7 +115,7 @@ function drawTimers() {
       }
       else if (idx > 0 && idx < timers.length+1) {
         if (timers[idx-1].on == true) {
-          drawMenuItem(formatTime(timers[idx-1].t-getCurrentTime()));
+          drawMenuItem(formatTime(getTimeRemaining(timers[idx-1])));
           updateTimers(idx-1);
         }
         else drawMenuItem(formatTime(timers[idx-1].timer));
@@ -156,7 +171,7 @@ function timerMenu(idx) {
         let msg = "";
         if (a.msg) msg = "\n"+(a.msg.length > 10 ? a.msg.substring(0, 10)+"..." : a.msg);
         if (a.on == true) {
-          drawMenuItem(formatTime(a.t-getCurrentTime())+msg);
+          drawMenuItem(formatTime(getTimeRemaining(a))+msg);
           updateTimer();
         }
         else {
@@ -184,7 +199,7 @@ function timerMenu(idx) {
       if (i == 1) {
         if (a.on == true) {
           clearInt();
-          a.timer = a.t-getCurrentTime();
+          a.timer = getTimeRemaining(a);
           a.on = false;
           timers[timerIdx[idx]] = a;
           saveAndReload();
@@ -694,8 +709,7 @@ function setUI() {
   const origRemove = Bangle.uiRemove;
   Bangle.uiRemove = () => {
     Bangle.removeListener("drag", onDrag);
-    Object.values(timerInt1).forEach(clearTimeout);
-    Object.values(timerInt2).forEach(clearTimeout);
+    clearInt();
     if (origRemove) origRemove();
   };
 }
