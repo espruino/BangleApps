@@ -23,13 +23,23 @@ function getTimeRemaining(alarm) {
   if (rem === undefined) {
     // fallback: compute time difference
     const now = getCurrentTime();
-    if (alarm.t > now) {
+    if (alarm.t >= now) {
       rem = alarm.t - now;
     } else {
       rem = MS_PER_DAY - (now - alarm.t);
     }
   }
   return rem;
+}
+
+function formatAlarmTime(t) {
+  // t is milliseconds since local midnight
+  const dt = decodeTime(t);
+  // Use locale.time so formatting respects 12h/24h user settings
+  const d = new Date(1999, 1, 1, dt.hrs, dt.mins, 0);
+  const timeStr = require("locale").time(d, 1);
+  const mer = require("locale").meridian(d, 1);
+  return timeStr + mer;
 }
 
 function decodeTime(t) {
@@ -561,8 +571,7 @@ function drawAlarms() {
         .setColor(g.theme.fg).setFont("6x8:2").setFontAlign(0,0).drawString("<   Swipe   >",r.x+(r.w/2),r.y+(r.h/2));
       }
       else if (idx > 0 && idx < alarms.length+1){
-        const str = formatTime(alarms[idx-1].t);
-        drawMenuItem(str.slice(0, -3));
+        drawMenuItem(formatAlarmTime(alarms[idx-1].t));
       }
     },
     select : (idx) => {
@@ -646,6 +655,11 @@ function editAlarm(idx, a) {
     },
     "Hours": {
       value: t.hrs, min: 0, max: 23, wrap: true,
+      format: v => {
+        // Show 12h or 24h based on locale settings
+        const mer = require("locale").meridian(new Date(1999,1,1,v,0,0), 1);
+        return (!mer) ? v : (v%12||12) + mer;
+      },
       onchange: v => {
         t.hrs = v;
         a.t = encodeTime(t);
