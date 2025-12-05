@@ -400,17 +400,25 @@
 
     .tile.column.col-6.col-sm-12.col-xs-12.app-tile {
       background-color: rgba(87, 85, 217, 0.025);
+      
+      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.025);
+      
       border: solid 1.3px #dadee47c;
       margin: 0;
       /* spacing handled by container gap */
       padding: 0.9em;
       border-radius: 1em;
-      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.025);
+      
+
       box-sizing: border-box;
       /* allow tiles to be two columns on wide screens, collapse to one on small screens */
       flex: 1 1 calc(50% - 0.75rem);
       max-width: calc(50% - 0.75rem);
       min-width: 220px; /* ensures tiles wrap down to one column when viewport is too narrow */
+    }
+    .tile.column.col-6.col-sm-12.col-xs-12.app-tile.updateTile {
+      background-color: rgba(255, 149, 0, 0.069) !important;
+      box-shadow: 0px 3px 6px rgba(151, 111, 0, 0.036);
     }
     .chip{
       border-radius: 0.7em;
