@@ -64,7 +64,7 @@ There are several options to choose from:
 * **Auto-open new msg** : Should we open the messages app for new messages?
   * **Never** : Never open for new messages
   * **On clock** : Open if a clock face is showing (default)
-  * **If locked** : Open if the screen is locked
+  * **If locked** : Open if the screen is locked or clock face is showing
   * **Always** : Always open new messages
 * **Widget messages** : How many message icons should the widget show?
 * **Show Widgets** : Should widgets be shown when a message is being displayed (default of disabled leaves more room for the message text)
