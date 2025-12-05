@@ -81,7 +81,7 @@
       onchange: v => updateSetting("quietNoAutOpn", v)
     },
     /*LANG*/'Auto-open new msg': {
-      value: settings.autoOpen,
+      value: settings.autoOpen&3,
       min:0,max:3,step:1,
       format: v=>["Never","On clock","If locked","Always"][v],
       onchange: v => updateSetting("autoOpen", v)
