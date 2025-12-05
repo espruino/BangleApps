@@ -646,8 +646,16 @@ setTimeout(() => {
 }, 10); // if checkMessages wants to 'load', do that
 
 /* If the Bangle is unlocked by the user, treat that
-as a queue to stop repeated buzzing */
+as a cue to stop repeated buzzing.
+Also suspend the reload timeout while the watch is unlocked. */
+let isTimeoutSuspended;
 Bangle.on('lock',locked => {
-  if (!locked)
+  if (!locked) {
     require("messages").stopBuzz();
+    isTimeoutSuspended = !!unreadTimeout;
+    cancelReloadTimeout();
+  } else if (isTimeoutSuspended) {
+      resetReloadTimeout();
+      isTimeoutSuspended = false;
+    }
 });
