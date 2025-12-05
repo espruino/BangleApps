@@ -64,7 +64,7 @@ exports.listener = function(type, msg) {
   const quiet = (require("Storage").readJSON("setting.json", 1) || {}).quiet;
   const unlockWatch = appSettings.unlockWatch;
   // don't auto-open messages in quiet mode if quietNoAutOpn is true
-  if ((quiet && appSettings.quietNoAutOpn))
+  if (quiet && appSettings.quietNoAutOpn)
     loadMessages = false;
   // after a delay load the app, to ensure we have all the messages
   if (exports.messageTimeout) clearTimeout(exports.messageTimeout);
