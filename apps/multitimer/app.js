@@ -38,7 +38,7 @@ function formatAlarmTime(t) {
   // Use locale.time so formatting respects 12h/24h user settings
   const d = new Date(1999, 1, 1, dt.hrs, dt.mins, 0);
   const timeStr = require("locale").time(d, 1);
-  const mer = require("locale").meridian(d, 1);
+  const mer = require("locale").meridian(d);
   return timeStr + mer;
 }
 
@@ -657,7 +657,7 @@ function editAlarm(idx, a) {
       value: t.hrs, min: 0, max: 23, wrap: true,
       format: v => {
         // Show 12h or 24h based on locale settings
-        const mer = require("locale").meridian(new Date(1999,1,1,v,0,0), 1);
+        const mer = require("locale").meridian(new Date(1999,1,1,v,0,0));
         return (!mer) ? v : (v%12||12) + mer;
       },
       onchange: v => {
