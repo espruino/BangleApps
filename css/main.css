@@ -248,13 +248,11 @@
     /* TABS */
     .tab.tab-block .tab-item {
       border-bottom: none;
-      border-radius: 1em;
     }
 
     .tab.tab-item.active {
 
       border-bottom: none;
-      border-radius: 23m;
     }
 
     .tab.tab-block {
