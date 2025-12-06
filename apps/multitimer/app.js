@@ -658,7 +658,7 @@ function editAlarm(idx, a) {
       format: v => {
         // Show 12h or 24h based on locale settings
         const mer = require("locale").meridian(new Date(1999,1,1,v,0,0));
-        return (!mer) ? v : (v%12||12) + mer;
+        return mer ? (v%12||12) + mer : v;
       },
       onchange: v => {
         t.hrs = v;
