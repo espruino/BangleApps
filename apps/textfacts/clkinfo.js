@@ -9,7 +9,7 @@
           this.emit('redraw');
         },
         hide: function(){
-          
+          // Intentionally left blank: no action needed when hiding
         },
         run : function() { // tapped - cycle between start and stop
           E.showPrompt(require('textsource').getRandomText().txt,{
