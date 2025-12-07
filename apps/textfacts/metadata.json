@@ -12,6 +12,6 @@
   "storage": [
     {"name":"textsource.txt","url":"facts.txt"},
     {"name":"textsource","url":"lib.js"},
-    {"name":"textsource.clkinfo.js","url":"clkinfo.js"},
+    {"name":"textsource.clkinfo.js","url":"clkinfo.js"}
   ]
 }
