@@ -15,7 +15,6 @@
           E.showPrompt(require('textsource').getRandomText().txt,{
             title: "Fun Fact",
             buttons:{"Ok":true}
-                                                            
           }).then(function(v){
             Bangle.load();
           });
