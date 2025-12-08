@@ -85,6 +85,7 @@ right-click and save the image shown in the terminal (this only works on Bangle.
 unable to read data back from the LCD controller).
 * Run your code in the emulator and use the screenshot button in the bottom right of the window.
 
+You can also take multiple screenshots and use a website like [this](https://ezgif.com/maker) to turn it into an animated `.gif` file, and provide that instead in order to show motion in an app (flashing images, animations, etc).
 
 ## Testing
 
