@@ -1,4 +1,3 @@
-This list of facts was created by asking the Google Gemini AI
 Black holes are regions of spacetime where gravity is so strong that nothing can escape
 Blue whales are filter feeders that eat krill
 Blue whales are the largest animals on Earth
@@ -159,5 +158,160 @@ The ureters are two tubes that carry urine from the kidneys to the bladder
 The urethra is a tube that carries urine out of the body
 The Venus flytrap is native to North and South Carolina
 Uranus rotates on its side
-Venus is the hottest planet in our solar system
-Viruses are smaller than bacteria and can only replicate inside living cells
+A group of lemurs is called a conspiracy
+The human heart can squirt blood up to 30 feet
+Australia is wider than the Moon
+The only letter not in the periodic table is J
+There are more fake flamingos than real ones
+Sharks are older than trees
+Your tongue is not a single muscle
+There are more stars in the universe than grains of sand on Earth
+Lightning is hotter than the surface of the Sun
+There’s a diamond planet called 55 Cancri e
+Hawaii is drifting toward Japan
+The smell of rain is called petrichor
+Some fungi can turn insects into zombies
+Honey never spoils
+There are more trees on Earth than stars in the Milky Way
+A whip crack is a tiny sonic boom
+Over 2,000 thunderstorms occur at any time on Earth
+A group of ravens is an unkindness
+The masseter is the strongest muscle
+You can’t sneeze with your eyes open
+Space smells like seared steak and metal
+A flock of flamingos is a flamboyance
+The dot over “i” and “j” is a tittle
+A group of ferrets is a business
+The longest single-word palindrome is “rotator”
+Vending machines kill more people than sharks
+Fresh-cut grass smell is a distress signal
+Cows don’t have upper front teeth
+Switzerland bans owning just one guinea pig
+The universe has no center
+Some cats are allergic to humans
+A glass of water contains more atoms than there are glasses of water in all the oceans
+Ketchup was once medicine
+Chewing gum dates back 9,000 years
+A group of unicorns is a blessing
+Wombat poop is cube-shaped
+The Pringles inventor is buried in a Pringles can
+There are more artificial trees than real ones
+A group of rhinos is a crash
+“Go” is the shortest complete English sentence
+Hot water can freeze faster than cold
+The Moon has moonquakes
+The quietest room is at Microsoft
+Polar bears have black skin
+Humans can remember 50,000 scents
+Six months of life is spent waiting at red lights
+The oldest tree is over 5,000 years old
+A group of owls is a parliament
+Cows have regional accents
+Chess has more permutations than atoms
+A “butt” was a wine unit
+Humans are the only animals that blush
+Chickens can fly for 13 seconds
+Pigs can’t look up
+A group of hippos is a bloat
+The shortest flight is under two minutes
+Fear of long words is ironically named
+The brain uses 20% of body energy
+Orange was named after the fruit
+Newborn pandas are mouse-sized
+Australia has no active volcanoes
+Sound travels faster in water
+Challenger Deep is Earth’s deepest ocean point
+A group of kangaroos is a mob
+Coconuts kill more than sharks
+Greenland sharks live over 500 years
+Earth’s core is as hot as the Sun
+A group of sloths is a bed
+Lifetime saliva fills two pools
+The stapes is the smallest bone
+The largest snowflake was 15 inches wide
+Deck shuffles exceed atoms on Earth
+A group of hedgehogs is an array
+Ocean plastic exceeds 150 million tons
+There are more chickens than humans
+People average 7,500 steps daily
+North Korea’s animal is the Chollima
+Sloths digest food for two weeks
+The longest yawn was 1 hour 15 minutes
+Some fungi glow
+A woman invented the stop sign
+The atmosphere is ~100 km thick
+A group of armadillos is a roll
+The oldest instrument was a vulture-bone flute
+The brain is more active at night
+Two weeks of life is spent kissing
+The shortest war lasted under an hour
+Bats are the only true flying mammals
+Mount Everest isn’t farthest from Earth’s center
+Bacteria outweigh all animals
+The universe is expanding faster
+Scotland’s national animal is the unicorn
+Butterflies taste with feet
+Most people can’t lick their elbow
+A jiffy is real
+The Great Wall isn’t visible from space
+Books smell: bibliosmia
+Phones are checked ~150 times daily
+Humans contain enough iron for a nail
+Go has more positions than atoms
+Microwaves bake potatoes in 6 minutes
+Earth is an oblate spheroid
+Earth’s rotation is slowing
+Images process faster than text
+Red blood cells live 120 days
+The biggest hot dog was 60 feet
+There are 400+ shark species
+Humans sleep 26 years total
+“Hello” became common in 1827
+Human lungs equal a tennis court
+A group of pugs is a grumble
+A group of moles is a labor
+A group of squid is a squad
+A group of crocodiles is a bask
+A group of cats is a clowder
+A group of platypuses is a paddle
+Venus flytraps count how many times their trigger hairs are touched before closing.
+Bananas are berries, but strawberries are not.
+The human brain has no pain receptors.
+Water can boil and freeze at the same time at its triple point.
+Tardigrades can survive the vacuum of space.
+The average cloud can weigh over a million tons.
+Trees communicate and share nutrients through underground fungal networks called the “wood wide web.”
+The Sun contains about 99.8% of the total mass of the solar system.
+Your bones are stronger than steel by weight.
+There are more neurons in the human gut than in a cat’s brain.
+Some spiders travel long distances by riding electric fields in the air.
+The color magenta does not exist on the visible light spectrum.
+Gold is edible and used in some luxury foods.
+Ancient Romans used urine as a cleaning agent.
+The Moon is slowly moving away from Earth each year.
+Hot peppers evolved their spiciness to deter mammals, not birds.
+The Eiffel Tower grows taller during the summer due to heat expansion.
+Human fingerprints and koala fingerprints are extremely similar.
+Penguins propose to their mates by offering pebbles.
+Oxygen itself does not burn; it only supports combustion.
+A day on Mercury lasts longer than a year on Mercury.
+The human eye can distinguish around ten million colors.
+Slime molds can find the most efficient path through a maze.
+Jellyfish existed before trees.
+Diamonds can burn at high temperatures.
+A teaspoon of neutron star material would weigh billions of tons.
+Music activates the brain’s reward system in the same way food does.
+Some frogs can freeze solid and revive when thawed.
+The Moon has traces of rust on its surface.
+There are bacteria that can feed on radiation.
+Your brain slightly predicts the future to compensate for processing delay.
+Birds do not urinate; waste exits in a single combined form.
+Glass is an amorphous solid, not a liquid.
+A single human hair can support several ounces of weight.
+Ants produce their distinctive smell using formic acid.
+Saturn is less dense than water and could theoretically float.
+Humans share about 60% of their DNA with bananas.
+There are taste receptors in your lungs and intestines.
+Some metals can “remember” and return to a previous shape.
+A cockroach can survive for weeks without its head.
+The human body is slightly bioluminescent.
