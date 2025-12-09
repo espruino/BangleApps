@@ -5,7 +5,6 @@
   "author": "thyttan",
   "description": "One single big clock info. Full screen.",
   "icon": "icon.png",
-  "screenshots": [{"url":"screenshot.png"}],
   "type": "clock",
   "tags": "clock, clkinfo, clk_info",
   "supports" : ["BANGLEJS2"],
