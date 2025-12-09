@@ -6,7 +6,7 @@
   "description": "One single big clock info. Full screen.",
   "icon": "icon.png",
   "type": "clock",
-  "tags": "clock, clkinfo, clk_info",
+  "tags": "clock,clkinfo,clk_info",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "dependencies" : { "clock_info":"module",
