@@ -2,7 +2,13 @@
 // Add setting to decide if the app shoud set Bangle.CLOCK=1 ?
 // Make an updating analog clock info entry to use as start card. (update clkinfoclk or make a new one?)
 
-Bangle.CLOCK = 1; // TODO: make optional.
+let isClock = true; // TODO: make optional via setting.
+if (isClock) {
+  Bangle.CLOCK = 1;
+  setWatch(() => {
+    Bangle.showLauncher();
+  }, BTN);
+}
 
 // Load the clock infos
 let clockInfoItems = require("clock_info").load();
@@ -28,5 +34,5 @@ let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {
   }
 });
 clockInfoMenu.menuA = 0;
-clockInfoMenu.menuB = 6; // Assume clkinfoclk is at indices (0,6)
-clockInfoMenu.redraw();
+if (clockInfoItems[0].items[6]) clockInfoMenu.menuB = 6; // Assume clkinfoclk is at indices (0,6)
+setTimeout(clockInfoMenu.redraw,0); // Make sure correct item is set before redraw.
