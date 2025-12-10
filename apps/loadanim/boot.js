@@ -15,7 +15,7 @@ function animateExpandCircle(x, y, startR, endR, duration,color) {
     }
   },1/fps)
   
-};
+}
 
 Bangle.load=(function(name) {
   if (Bangle.uiRemove) {
