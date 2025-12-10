@@ -1,0 +1,16 @@
+{ 
+  "id": "loadanim",
+  "name": "Loading Animation",
+  "shortName":"Load Anim",
+  "icon": "icon.png",
+  "version":"0.01",
+  "description": "Shows an animation to transition into the next loaded app (beta)",
+  "type":"bootloader",    
+  "tags": "tool,system",
+  "author":"RKBoss6",
+  "supports": ["BANGLEJS2"],
+  "readme":"README.md",
+  "storage": [
+    {"name":"loadanim.boot.js","url":"boot.js"}
+  ]
+}
