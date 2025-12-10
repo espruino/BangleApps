@@ -13,7 +13,7 @@ function animateExpandCircle(x, y, startR, endR, duration,color) {
     if(Math.round(r)==Math.round(endR)||time>duration){
       clearInterval(interval)
     }
-  },1/fps)
+  },1000/fps)
   
 }
 
