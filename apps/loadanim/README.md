@@ -5,6 +5,12 @@ This modifies the boot code for `Bangle.load()` function, and first shows a 0.3 
 
 Give it a try, and tag `@RKBoss6` with any improvements or ideas!
 
+You should see an animation:
+* If you have a clock that supports fast-loading
+* From a launcher that also supports fast-loading or calls Bangle.load
+
+If you don't see an animation, try using a clock with fast loading, or install fastload utils and see if that works.
+
 ## Known bugs
 * Memory can run out slightly faster
 * A hang will result in a blank screen until the user long-presses the button
