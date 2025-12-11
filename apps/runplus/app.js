@@ -28,6 +28,7 @@ let settings = Object.assign({
   paceLength: 1000,
   alwaysResume: false,
   vibrate: false,
+  showSats: false,
   notify: {
     dist: {
       value: 0,
@@ -197,9 +198,48 @@ lc.push({ type:"h", id:"bottom", filly:1, c:[
   {type:"txt", font:fontHeading, label:"---", id:"status", fillx:1 }
 ]});
 // Now calculate the layout
-let layout = new Layout( {
-  type:"v", c: lc
-},{lazy:true, btns:[{ label:"---", cb: onStartStop, id:"button"}]});
+let topLevel = { type:"v", c: lc };
+if(settings.showSats){
+  const drawGpsLvl = l => {
+    const gps = l.gps;
+    const nsats = gps && gps.satellites || 0;
+
+    if (!gps || !gps.fix)
+      g.setColor("#FF0000");
+    else if (nsats < 4)
+      g.setColor("#FF5500");
+    else if (nsats < 6)
+      g.setColor("#FF8800");
+    else if (nsats < 8)
+      g.setColor("#FFCC00");
+    else
+      g.setColor("#00FF00");
+
+    g.fillRect(
+      l.x,
+      l.y + l.h - 10 - (l.h - 10) * ((nsats > 12 ? 12 : nsats) / 12),
+      l.x + l.w - 1,
+      l.y + l.h - 1
+    );
+  };
+
+  topLevel = {
+    type: "h",
+    c: [
+      {
+        type: "custom",
+        render: drawGpsLvl,
+        id: "gpslvl",
+        filly: 1,
+        width: 5,
+        bgCol: g.theme.bg, // automatically clears before render()
+      },
+      topLevel,
+    ]
+  }
+}
+let layout = new Layout(topLevel, {lazy:true, btns:[{ label:"---", cb: onStartStop, id:"button"}]});
+delete topLevel;
 delete lc;
 setStatus(exs.state.active);
 layout.render();
