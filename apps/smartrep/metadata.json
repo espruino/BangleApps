@@ -1,0 +1,21 @@
+{
+  "id": "smartrep",
+  "name": "SmartRep",
+  "type": "app",
+  "icon": "smartrep-icon.png",
+  "tags": "fitness,exercise,health",
+  "supports": ["BANGLEJS"],
+  "description": "SmartRep tracks and counts reps for 8 exercises using accelerometer data. Animated UI and feedback included.",
+  "storage": [
+    { "name": "smartrep.app.js", "url": "smartrep.app.js" },
+    { "name": "smartrep-icon.png", "url": "smartrep-icon.png" },
+    { "name": "logic/benchpress.js" },
+    { "name": "logic/bicepcurl.js" },
+    { "name": "logic/cable_rows.js" },
+    { "name": "logic/lateralraise.js" },
+    { "name": "logic/pushup.js" },
+    { "name": "logic/shoulderpress.js" },
+    { "name": "logic/tricepspushdown.js" },
+    { "name": "logic/squats.js" }
+  ]
+}
