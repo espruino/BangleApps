@@ -183,6 +183,7 @@ let showMainMenu = () => {
           loadShortcut(2)
         }
       }else{
+        if(settings.buzz)Bangle.buzz(25);
         let tag = tagKeys[i];
         showTagMenu(tag);
       }
