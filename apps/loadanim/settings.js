@@ -27,7 +27,7 @@
               gl.flip(1);
             }
           },
-          time:100,
+          time:20,
           interval:100,
         });
         let done = function() {
@@ -56,7 +56,7 @@
               gl.flip(1);
             }
           },
-          time:100,
+          time:20,
           interval:100,
         });
         let done = function() {
@@ -116,9 +116,9 @@
           if (a.loading)
             g.drawImage(a.loading,g.getWidth()/2,g.getHeight()/2,{rotate:0/*center*/});
           a.code();
-          let t=getTime()+0.5;while(getTime()<t);
+          let t=getTime()+0.5;while(getTime()<t); // wait for 0.5s (easiest way to) demo
+          // draw widgets and menu
           E.showPrompt("Choose this?",{title:a.name,back:showAnimChooser}).then(ok => {
-            print(ok);
             if (ok) {
               settings.anim = idx;
               saveBootAnim();
@@ -127,6 +127,7 @@
             } else showAnimChooser();
           });
           Bangle.drawWidgets();
+          // wait for another 0.5s for rest of load screen to complete
           t=getTime()+0.5;while(getTime()<t);
         },10);
       };
