@@ -176,7 +176,7 @@ let showMainMenu = () => {
       if(!noShortcuts)i-=1;
       if(i==-1){
         if(e.x<g.getWidth()/3){
-          loadShortcut(0) 
+          loadShortcut(0)
         }else if(e.x<(g.getWidth()/3)*2){    
           loadShortcut(1)
         }else{     
