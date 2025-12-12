@@ -153,11 +153,11 @@ let showMainMenu = () => {
       
       if(!noShortcuts)i-=1;
       if(i==-1){
-        for(i=0;i<3;i++){
-          const img = s.read(shortcuts[i]+".img");
+        for(let j=0;j<3;j++){
+          const img = s.read(shortcuts[j]+".img");
           if (img) {
             try {
-              g.drawImage(img,8*scaleval+((g.getWidth()/3)*i), r.y+(8*scaleval), {scale: scaleval});} 
+              g.drawImage(img,8*scaleval+((g.getWidth()/3)*j), r.y+(8*scaleval), {scale: scaleval});} 
             catch(e){}
           }
         }
