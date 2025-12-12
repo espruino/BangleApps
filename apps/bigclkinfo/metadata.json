@@ -1,7 +1,7 @@
 { "id": "bigclkinfo",
   "name": "Big Clock Info app",
   "shortName":"Big Clkinfo",
-  "version":"0.01",
+  "version":"0.02",
   "author": "thyttan",
   "description": "One single big clock info. Full screen.",
   "icon": "icon.png",
