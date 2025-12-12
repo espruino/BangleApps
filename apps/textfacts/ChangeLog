@@ -1,3 +1,4 @@
 0.01: New Module!
 0.02: Removed many non-interesting facts
 0.03: Removed redundant facts, added many new facts and added a clkinfo to get random facts from a clock face.
+0.04: Don't create a whole new Clockinfo Category just for Facts - put it in the normal Bangle.js one
