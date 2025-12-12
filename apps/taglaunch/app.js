@@ -147,7 +147,7 @@ let showTagMenu = (tag) => {
 
 let showMainMenu = () => {
   E.showScroller({
-    h : 64*scaleval, c : tagKeys.length+1,
+    h : 64*scaleval, c : noShortcuts ? tagKeys.length : tagKeys.length+1,
     draw : (i, r) => {
       g.clearRect((r.x),(r.y),(r.x+r.w-1), (r.y+r.h-1));
       
