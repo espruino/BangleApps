@@ -27,14 +27,14 @@
         o.palette = new Uint16Array(2);//all black
         o.fillCircle(88,88,n);
         Bangle.setLCDOverlay(o,0,0,{id:"loadanim"});
-        gl.clear(1).flip(1);
+        gl.clear(1).flip(2);
         let id = timer.add({
           type:"EXEC", fn: () => { "ram";
             n+=10;
             if (n>170) done();
             else {
               o.fillCircle(88,88,n);
-              gl.flip(1);
+              gl.flip(2);
             }
           },
           time:20,
@@ -56,14 +56,14 @@
         g.clear();
         let n = 10, gl = g;
         Bangle.setLCDOverlay(o,n,0,{id:"loadanim"});
-        gl.flip(1);
+        gl.flip(2);
         let id = timer.add({
           type:"EXEC", fn: () => {"ram";
             n+=10;
             if (n>170) done();
             else {
               Bangle.setLCDOverlay(o,n,0,{id:"loadanim"});
-              gl.flip(1);
+              gl.flip(2);
             }
           },
           time:20,
@@ -86,13 +86,13 @@
         o.drawRect(2,2,117,27).drawRect(3,3,116,26);
         o.fillRect(7,7,7+n,22);
         Bangle.setLCDOverlay(o,28,96,{id:"loadanim"});
-        gl.flip(1);
+        gl.flip(2);
         let id = timer.add({
           type:"EXEC", fn: () => { "ram";
             if (n>=105)return;
             n+=5;
             o.fillRect(7,7,7+n,22);
-            gl.flip(1);
+            gl.flip(2);
           },
           time:100,
           interval:100,
@@ -118,12 +118,12 @@
         o.setColor(3).fillCircle(m,m,m-2);
         o.setColor(0).fillCircle(m,m,m-6);
         Bangle.setLCDOverlay(o,88-m,88-m,{id:"loadanim"});
-        gl.flip(1);
+        gl.flip(2);
         let id = timer.add({
           type:"EXEC", fn: () => { "ram";
             n++;
             o.setColor(3).drawImage(img,m,m,{rotate:n/5, scale:1.5});
-            gl.flip(1);
+            gl.flip(2);
           },
           time:100,
           interval:100,
