@@ -37,8 +37,8 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
     let scale = 4;
     if (info.img) clock_info.drawBorderedImage(info.img, midx-12*scale,options.y+10, {scale:scale}); // draw the image
     let foundFontText = g.findFont(info.text, {
-      w : Bangle.appRect.w-9,    // optional: width available (default = screen width)
-      h : Bangle.appRect.h*2/5,    // optional: height available (default = screen height)
+      w : options.w-9,    // optional: width available (default = screen width)
+      h : options.h*2/5,    // optional: height available (default = screen height)
       min : 10,   // optional: min font height
       max : 60,   // optional: max font height
       wrap : true, // optional: allow word wrap?
