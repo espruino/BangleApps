@@ -1,7 +1,7 @@
 { // must be inside our own scope here so that when we are unloaded everything disappears
 let s = require("Storage");
-
 // TODO: Allow to change sortorder in settings
+
 let tags = {"clock": {name: /*LANG*/"Clocks", icon: () =>  atob("MDCEBERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERESIiIiIREREREREREREREREREREREREiIiIiIiIiIhERERERERERERERERERESIiIiIiIiIiIiIREREREREREREREREREiIiIiIiIiIiIiIhERERERERERERERESIiIiIgz//8ziIiIiIREREREREREREREiIiIg////////ziIiIhERERERERERERIiIiD//////////84iIiERERERERERESIiIg/////8A/////ziIiIRERERERERESIiI//////8A//////+IiIREREREREREiIiP//////8A///////4iIhERERERERIiIg///////8A///////ziIiERERERERIiIP///////8A////////OIiERERERESIiI////////8A////////+IiIRERERESIiD////////8A////////84iIRERERESIiP////////8A/////////4iIRERERESIiP////////8A/////////4iIREREREiIg/////////8A/////////ziIhEREREiIg/////////IAL////////ziIhEREREiIj////////yAAAv////////iIhEREREiIgiIv/////wCIAP/////yIiiIhEREREiIgiIv/////wCIAP/////yIiiIhEREREiIj////////yAAAD////////iIhEREREiIg/////////IAABP//////ziIhEREREiIg///////////IAE//////ziIhERERESIiP//////////8gAT/////4iIRERERESIiP///////////yABP////4iIRERERESIiD////////////IAL///84iIRERERESIiI////////////8i////+IiIRERERERIiIP/////////////////OIiERERERERIiIg////////////////ziIiEREREREREiIiP///////////////4iIhERERERERESIiI//////////////+IiIRERERERERESIiIg/////8i/////ziIiIRERERERERERIiIiD////8i////84iIiEREREREREREREiIiIg///8i///ziIiIhERERERERERERESIiIiIgz8i8ziIiIiIREREREREREREREREiIiIiIiIiIiIiIhERERERERERERERERESIiIiIiIiIiIiIREREREREREREREREREREiIiIiIiIiIhERERERERERERERERERERERESIiIiIRERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERA==")},
             "game": {name: /*LANG*/"Games", sortorder: 1, icon: () => atob("MDCEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzMzMzMzMzMzMzMzMzMzMzMwAAAAAAAAAzMzMzMzMzMzMzMzMzMzMzMwAAAAAAAAAzIiIiIiIiIiIiIiIiIiIiMwAAAAAAAAAzL///IiIi////IiIi///yMwAAAAAAAAAzL///IiIi////IiIi///yMwAAAAAAAAAzL///IiIi////IiIi///yMwAAAAAAAAAzL///IiIi////IiIi///yMwAAAAAAAAAzL///IiIi////IiIi///yMwAAAAAAAAAzIiIi////IiIi////IiIiMwAAAAAAAAAzIiIi////IiIi////IiIiMwAAAAAAAAAzIiIi////IiIi////IiIiMwAAAAAAAAAzIiIi////IiIi////IiIiMwAAAAAAAAAzIiIi////IiIi////IiIiMwAAAAAAAAAzIiIi////IiIi////IiIiMwAAAAAAAAAzL///IiIi////IiIi///yMwAAAAAAAAAzL///IiIi////IiIi///yMwAAAAAAAAAzL///IiIi////IiIi8R/xERABEAAAAAAzL///IiIi////IiIi8R/xERABEAAAAAAzL///IiIi////IiIi8R/xERABEAAAAAAzL///IiIi////IiIi8RMxERABEAAAAAAzIiIi////IiIi////IREREREREAAAAAAzIiIi////IiIi////IREREREREAAAAAAzIiIi////IiIi////IREREREREAAAAAAzIiIi////IiIi////IhERERERAAAAAAAzIiIi////IiIi////IiMzMzMwAAAAAAAzIiIi////IiIi////IiMzMzMwAAAAAAAzL///IiIi////IiIi///xERAAAAAAAAAzL///IiIi////IiIi//8xERAAAAAAAAAzL///IiIi////IiIi//8hEREAAAAAAAAzL///IiIi////IiIi//8REREAAAAAAAAzL///IiIi////IiIi//MREREAAAAAAAAzIiIiIiIiIiIiIiIiIzMzMzMzMAAAAAAzMzMzMzMzMzMzMzMzMzMzMzMzMAAAAAAzMzMzMzMzMzMzMzMzMhEREREREAAAAAAAAAAAAAAAAAAAAAAAEREREREREQAAAAAAAAAAAAAAAAAAAAAAEREREREREQAAAAAAAAAAAAAAAAAAAAAAEREREREREQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==")},
             "tool": {name: /*LANG*/"Tools", sortorder: -1, icon: () => atob("MDCEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMwAAAAAAAAAAAAAAIiIgAAAAAAAAAAADMzMAAAAAAAAAAAAiIiIgAAAAAAAAAAADMzMwAAAAAAAAAAIiIiIAAAAAAAAAAAAAMzMzAAAAAAAAACIiIiAAAAAAAAAAAAAAMzMzMAAAAAAAACIiIgAAAAAAAAAAAAAAAzMzMAAAAAAAAiIiIAAAAAAAAAAAAAAAADMzMwAAAAAAAiIiIAAAAAIgAAAAAAAAAAMzMzAAAAAAAiIiIgAAACIgAAAAAAAAAAADMzMAAAAAAiIiIiAAAiIgAAAAAAAAAAAAMzMwAAAAAiIiIiIAIiIgAAAAAAAAAAAAAzMzAAAAACIiIiIiIiIgAAAAAAAAAAAAADMzMAAAAiIiIiIiIiIAAAAAAAAAAAAAAAMzMwDdQiIiIiIiIiIAAAAAAAAAAAAAAAAzMz3d0iIiIiIiIiAAAAAAAAAAAAAAAAADM93d1CIiIiIiIgAAAAAAAAAAAAAAAAAAPd3d3iIiACIiAAAAAAAAAAAAAAAAAAAA3d3d7kIgAAAAAAAAAAAAAAAAAAAAAAAN3d3e7uQAAAAAAAAAAAAAAAAAAAAAAAAN3d3u7u4AAAAAAAAAAAAAAAAAAAAAAAAC3d7u7u7gAAAAAAAAAAAAAAAAAAAAAAAiJO7u7u7uAAAAAAAAAAAAAAAAAAAAAAIiIiTu7u7u7gAAAAAAAAAAAAAAAAAAACIiIiIu7u7u7uAAAAAAAAAAAAAAAAAAAiIiIiIA7u7u7u4AAAAAAAAAAAAAAAAAIiIiIiAADu7u7u7uAAAAAAAAAAAAAAACIiIiIgAAAO7u7u7u4AAAAAAAAAAAAAAiIiIiIAAAAO7u7u7u7gAAAAAAAAAAAAIiIiIiAAAAAA7u7u7u7uAAAAAAAAAAAiIiIiIgAAAAAADu7u7u7u4AAAAAAAAAIiIiIiIAAAAAAAAO7u7u7u7gAAAAAAAAIiIiIiAAAAAAAAAO7u7u7u7gAAAAAAACIgAiIgAAAAAAAAAA7u7u7u7gAAAAAAACIgAiIAAAAAAAAAAADu7u7u7gAAAAAAACIiIiIAAAAAAAAAAAAO7u7u4AAAAAAAAAIiIiAAAAAAAAAAAAAO7u7uAAAAAAAAAAAiIAAAAAAAAAAAAAAADu7gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==")},
@@ -84,6 +84,15 @@ const unload = () => {
     Bangle.removeListener("lock", lockHandler);
 };
 
+let shortcuts=settings.shortcuts;
+let noShortcuts=shortcuts[0]==""&&shortcuts[1]==""&&shortcuts[2]=="";
+  
+let loadShortcut=function(idx){
+  if(shortcuts[idx]!=""){
+    if(settings.buzz)Bangle.buzz(25);
+    Bangle.load(shortcuts[idx]+".app.js");
+  }
+}
 // 10s of inactivity goes back to clock
 Bangle.setLocked(false); // unlock initially
 let lockTimeout;
@@ -117,7 +126,7 @@ let showTagMenu = (tag) => {
           E.showMessage(/*LANG*/"App Source\nNot found");
           setTimeout(showMainMenu, 2000);
         } else {
-          load(app.src);
+          Bangle.load(app.src);
         }
       };    
       if(settings.buzz){
@@ -137,21 +146,45 @@ let showTagMenu = (tag) => {
 
 let showMainMenu = () => {
   E.showScroller({
-    h : 64*scaleval, c : tagKeys.length,
+    h : 64*scaleval, c : tagKeys.length+1,
     draw : (i, r) => {
-      let tag = tagKeys[i];
       g.clearRect((r.x),(r.y),(r.x+r.w-1), (r.y+r.h-1));
-      g.setFont(font).setFontAlign(-1,0).drawString(tags[tag].name,64*scaleval,r.y+(32*scaleval));
+      
+      if(!noShortcuts)i-=1;
+      if(i==-1){
+        for(i=0;i<3;i++){
+          const img = s.read(shortcuts[i]+".img");
+          if (img) {
+            try {
+              g.drawImage(img,8*scaleval+((g.getWidth()/3)*i), r.y+(8*scaleval), {scale: scaleval});} 
+            catch(e){}
+          }
+        }
 
-      const img = tags[tag].icon ? tags[tag].icon() : s.read("taglaunch." + tag + ".img");
-      if (img) {
-        try {g.drawImage(img,8*scaleval, r.y+(8*scaleval), {scale: scaleval});} catch(e){}
+        
+      }else{
+        let tag = tagKeys[i]; g.setFont(font).setFontAlign(-1,0).drawString(tags[tag].name,64*scaleval,r.y+(32*scaleval));
+
+        const img = tags[tag].icon ? tags[tag].icon() : s.read("taglaunch." + tag + ".img");
+        if (img) {
+          try {g.drawImage(img,8*scaleval, r.y+(8*scaleval), {scale: scaleval});} catch(e){}
+        }
       }
     },
-    select : i => {
-      if(settings.buzz)Bangle.buzz(25);
-      let tag = tagKeys[i];
-      showTagMenu(tag);
+    select : (i,e) => {
+      if(!noShortcuts)i-=1;
+      if(i==-1){
+        if(e.x<g.getWidth()/3){
+          loadShortcut(0) 
+        }else if(e.x<(g.getWidth()/3)*2){    
+          loadShortcut(1)
+        }else{     
+          loadShortcut(2)
+        }
+      }else{
+        let tag = tagKeys[i];
+        showTagMenu(tag);
+      }
     },
     back : Bangle.showClock, // button press or tap in top left shows clock now
     remove : unload
