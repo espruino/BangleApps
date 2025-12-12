@@ -9,8 +9,12 @@
   "tags": "clock,clkinfo,clk_info",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
-  "dependencies" : { "clock_info":"module",
-    "clkinfoclk":"app" },
+  "dependencies" : {
+    "clock_info":"module",
+    "clkinfoclk":"app",
+    "clockbg":"module"
+  },
+
   "storage": [
     {"name":"bigclkinfo.app.js","url":"app.js"},
     {"name":"bigclkinfo.img","url":"app-icon.js","evaluate":true}
