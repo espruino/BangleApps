@@ -93,7 +93,7 @@ let loadShortcut=function(idx){
     if(settings.buzz)Bangle.buzz(25);
     load(shortcuts[idx]+".app.js");
   }
-}
+};
 // 10s of inactivity goes back to clock
 Bangle.setLocked(false); // unlock initially
 let lockTimeout;
