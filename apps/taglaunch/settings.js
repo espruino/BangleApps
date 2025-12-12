@@ -18,7 +18,7 @@
     let shortcuts=settings.shortcuts;
     shortcuts[spot]=id;
     save("shortcuts",shortcuts);
-    bk()
+    bk();
   }
   
   function showAppList(spot,bk){
