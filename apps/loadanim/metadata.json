@@ -1,0 +1,21 @@
+{ "id": "loadanim",
+  "name": "Loading Animations",
+  "shortName":"Load Anim",
+  "version":"0.01",
+  "author": "gfwilliams",
+  "description": "Add an animation that happens while Bangle.js is loading an app. Requires 2v29+ (or 2v28 cutting edge) firmware to work.",
+  "icon": "app.png",
+  "screenshots" : [ { "url":"screenshot.png" } ],
+  "type": "settings",
+  "tags": "loading,animate,anim,load,progress",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"loadanim.0.boot.js","url":"boot.js"},
+    {"name":"loadanim.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"loadanim.json"},
+    {"name":".loading"}
+  ]
+}
