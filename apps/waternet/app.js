@@ -383,7 +383,7 @@ function randomjs(value) {
 }
 
 function srand(seed) {
-  "RAM";
+  "ram";
   if(USECCODE)
     c.srand(seed);
   else
@@ -391,7 +391,7 @@ function srand(seed) {
 }
 
 function random(value) {
-  "RAM";
+  "ram";
   if(USECCODE)
     return c.random(value);
   else
@@ -510,7 +510,7 @@ function initCursors() {
 // helper funcs
 // --------------------------------------------------------------------------------------------------
 function set_bkg_tile_xy(x, y, tile, noScreenOffset) {
-  "RAM";
+  "ram";
   if(!noScreenOffset)
     g.drawImage(currentTiles, SCREENOFFSETX + x * TILESIZE, screenOffsetY + y * TILESIZE, {
       frame: tile
@@ -522,7 +522,7 @@ function set_bkg_tile_xy(x, y, tile, noScreenOffset) {
 }
 
 function set_bkg_tile_xy_sixteen(x, y, tile) {
-  "RAM";
+  "ram";
     g.drawImage(BLOCKTILESSIXTEEN, 8 + x * 16, 12+ y * 16, {
       frame: tile
     });
@@ -540,7 +540,7 @@ function get_bkg_data() {
 
 /*
 function set_bkg_tiles(x, y, map) {
-  "RAM";
+  "ram";
   g.drawImage(map, SCREENOFFSETX + x, screenOffsetY + y);
 }
 */
@@ -1056,7 +1056,7 @@ function generateLeveljs() {
 
 function generateLevel()
 {
-  "RAM";
+  "ram";
   if(USECCODE)
   {
     //var cellstack = new Uint8Array(MAXBOARDSIZE + 1);
@@ -1526,7 +1526,7 @@ function drawLevelSelect(partial) {
     }
   }
 
-  //only draw right and bottom arrows 
+  //only draw right and bottom arrows
   if (partial == 2) {
     //Draw arrows for vertical / horizontal movement
     if (gameMode != GMROTATE) {
@@ -1626,13 +1626,13 @@ function levelSelect() {
 // --------------------------------------------------------------------------------------------------
 /*
 function setCharAt(str, index, chr) {
-  "RAM";
+  "ram";
   if (index > str.length - 1) return str;
   return str.substring(0, index) + chr + str.substring(index + 1);
 }
 
 function formatInteger(valinteger) {
-  "RAM";
+  "ram";
   const maxDigits = 10;
   let array = "          ";
 
@@ -1667,7 +1667,7 @@ function formatInteger(valinteger) {
 
 //print a number on levelselect or game screen
 function printNumber(ax, ay, aNumber, maxDigits, noScreenOffset) {
-  "RAM";
+  "ram";
   const buffSize = 10;
 
   let ret = formatInteger(aNumber);
@@ -1684,7 +1684,7 @@ function printNumber(ax, ay, aNumber, maxDigits, noScreenOffset) {
 
 //print a message on the title screen on ax,ay, the tileset from titlescreen contains an alphabet
 function printMessage(ax, ay, amsg, noScreenOffset) {
-  "RAM";
+  "ram";
   let aCode = 'A'.charCodeAt(0);
   let zCode = 'Z'.charCodeAt(0);
   let zeroCode = '0'.charCodeAt(0);
