@@ -637,12 +637,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/pomoplus/common.js": {
-    "hash": "52d7d91b6e5107158b78e5707d6a078490a9a09569669ea8f7c2eb88461b1004",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/pomodo/pomodoro.js": {
     "hash": "7321de537188d707844da5150e36c6d83db53d95226cc4ec275a6f62988df38e",
     "rules": [
