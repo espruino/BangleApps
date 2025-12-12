@@ -132,7 +132,7 @@ let levelLocks = new Uint8Array(GMCOUNT * DIFFCOUNT);
 let options = new Uint8Array(OPCOUNT);
 
 //sound
-let soundon = 1; // TODO: Should this be 'soundOn' ?
+let soundOn = 1;
 
 //game
 let paused;
@@ -1804,7 +1804,7 @@ function validateSaveState() {
 function initSaveState() {
   //read from file
   let file = require("Storage").open("waternet.data.dat", "r");
-  let index = 0;
+  let tmp, index = 0;
   for (index = 0; index < GMCOUNT * DIFFCOUNT; index++) {
     tmp = file.readLine();
     if (tmp !== undefined)
