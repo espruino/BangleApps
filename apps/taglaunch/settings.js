@@ -53,7 +53,7 @@
     if(spot==1)spotText+="Center ";
     if(spot==2)spotText+="Right ";
     spotText+="App";
-    menu[""] = { "title" : spotText}, // Title for the menu
+    menu[""] = { "title" : spotText }; // Title for the menu
 
     menu["None"] = function(){
       
