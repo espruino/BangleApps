@@ -91,7 +91,7 @@ let noShortcuts=shortcuts[0]==""&&shortcuts[1]==""&&shortcuts[2]=="";
 let loadShortcut=function(idx){
   if(shortcuts[idx]!=""){
     if(settings.buzz)Bangle.buzz(25);
-    Bangle.load(shortcuts[idx]+".app.js");
+    load(shortcuts[idx]+".app.js");
   }
 }
 // 10s of inactivity goes back to clock
@@ -127,7 +127,7 @@ let showTagMenu = (tag) => {
           E.showMessage(/*LANG*/"App Source\nNot found");
           setTimeout(showMainMenu, 2000);
         } else {
-          Bangle.load(app.src);
+          load(app.src);
         }
       };    
       if(settings.buzz){
