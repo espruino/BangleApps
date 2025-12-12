@@ -18,7 +18,8 @@ let font = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
 let settings = Object.assign({
   showClocks: true,
   fullscreen: false,
-  buzz:false
+  buzz:false,
+  shortcuts:["","",""]
 }, s.readJSON("taglaunch.json", true) || {});
 if ("vectorsize" in settings)
   vectorval = parseInt(settings.vectorsize);
