@@ -15,7 +15,7 @@ let clockInfoItems = require("clock_info").load();
 // Add the
 let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {
   // Add the dimensions we're rendering to here - these are used to detect taps on the clock info area
-  x : 0, y: 0, w: Bangle.appRect.w, h: Bangle.appRect.h,
+  x : 0, y: 0, w: Bangle.appRect.w, h: Bangle.appRect.h, app: "bigclkinfo",
   // You can add other information here you want to be passed into 'options' in 'draw'
   // This function draws the info
   draw : (itm, info, options) => {
@@ -33,6 +33,11 @@ let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {
     g.setFont("6x8:2").setFontAlign(0,1).drawString(info.text, midx,options.y+160); // draw the text
   }
 });
-clockInfoMenu.menuA = 0;
-if (clockInfoItems[0].items[6]) clockInfoMenu.menuB = 6; // Assume clkinfoclk is at indices (0,6)
-setTimeout(clockInfoMenu.redraw,0); // Make sure correct item is set before redraw.
+setTimeout(
+  ()=>{
+    clockInfoMenu.menuA = 0;
+    if (clockInfoItems[0].items[6]) clockInfoMenu.menuB = 6; // Assume clkinfoclk is at indices (0,6)
+    clockInfoMenu.redraw()
+  }, 5
+)
+E.prependListener("kill", ()=>{clockInfoMenu.menuA = 0; clockInfoMenu.menuB = 6;}) // reset to initial menu state to prepare for next launch.
