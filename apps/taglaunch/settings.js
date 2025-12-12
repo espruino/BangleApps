@@ -1,7 +1,5 @@
 // make sure to enclose the function in parentheses
 (function(back) {
-  
-  let storedBackFn=function(){};
   let launchCache;
   let settings = Object.assign({
     showClocks: true,
@@ -52,7 +50,15 @@
     spotText+="App";
     menu[""] = { "title" : spotText}, // Title for the menu
 
-    menu["None"] = () => setShortcut("",spot,bk);
+    menu["None"] = function(){
+      E.showPrompt("Remove the "+spotText+" shortcut?",{
+          title:"Confirm",
+          buttons: {"Cancel":false,"Ok":true}
+        }).then(function(a){
+          if(a)setShortcut("",spot,bk);
+          else showAppList(spot,bk)
+        })
+    }
     apps.forEach(a => {
       menu[a.name] = function(){
         E.showPrompt("Set "+a.name+" as the "+spotText+"?",{
