@@ -9,30 +9,19 @@ if (isClock) {
 
 // once at the start
 let background = require("clockbg");
-
-// to fill the whole area
-background.fillRect(Bangle.appRect.x+3, Bangle.appRect.y+3, Bangle.appRect.x+Bangle.appRect.w-5, Bangle.appRect.y+Bangle.appRect.h-5);
-// if you ever need to reload to a new background (this could take ~100ms)
-//background.reload();
-
-// Call this to unload (free memory - eg in .remove when fast loading)
-//background.unload();
-
-// If .unload has been called and you might have fast-loaded back, call .load to ensure everything is loaded again!
-// It won't reload if it's already been loaded
-//background.load();
+let clock_info = require("clock_info");
 
 // Load the clock infos
-let clockInfoItems = require("clock_info").load();
+let clockInfoItems = clock_info.load();
 if (clockInfoItems[0].items[6]) { // TODO: Should maybe be more robust against changes to clock info, i.e. search for "clock" among items.
   let clockItem = clockInfoItems[0].items.pop();
   clockInfoItems[0].items.unshift(clockItem);
 }
 // Add the
-let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {
+let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
+  app: "bigclkinfo",
   // Add the dimensions we're rendering to here - these are used to detect taps on the clock info area
-  x : 0, y: 0, w: Bangle.appRect.w, h: Bangle.appRect.h, app: "bigclkinfo",
-  // You can add other information here you want to be passed into 'options' in 'draw'
+  x : 0, y: 0, w: Bangle.appRect.w, h: Bangle.appRect.h,  // You can add other information here you want to be passed into 'options' in 'draw'
   // This function draws the info
   draw : (itm, info, options) => {
     // itm: the item containing name/hasRange/etc
@@ -46,8 +35,8 @@ let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {
     // we're drawing center-aligned here
     var midx = options.x+options.w/2;
     let scale = 4;
-    if (info.img) require("clock_info").drawBorderedImage(info.img, midx-12*scale,options.y+10, {scale:scale}); // draw the image
-    let foundFontText = g.findFont(info.text, { 
+    if (info.img) clock_info.drawBorderedImage(info.img, midx-12*scale,options.y+10, {scale:scale}); // draw the image
+    let foundFontText = g.findFont(info.text, {
       w : Bangle.appRect.w-9,    // optional: width available (default = screen width)
       h : Bangle.appRect.h*2/5,    // optional: height available (default = screen height)
       min : 10,   // optional: min font height
