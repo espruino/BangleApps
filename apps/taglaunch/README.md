@@ -1,14 +1,15 @@
 Tag Launcher
 ========
 
-Based on the default launcher but puts all applications in a submenu by their tag.
+Based on the default launcher but puts all applications in a submenu by their tag. There are three customizable spots at the top of the launcher for quicker access to your favorite apps.
+
 With many applications installed this can result in a faster applications selection than the linear access of the default launcher.
 
 Currently the following tags are supported: clock, game, tool, bluetooth, outdoors, health and misc.
 
 Settings
 --------
-
+- `Shortcuts` - Change the app shortcuts at the top of the launcher. If no apps are set as the shortcut, the launcher will not have a section at the top, instead beginning with the first tag. (Default: No shortcuts)
 - `Font` - The font used (`4x6`, `6x8`, `12x20`, `6x15` or `Vector`). Default `12x20`.
 - `Vector Font Size` - The size of the font if `Font` is set to `Vector`. Default `10`.
 - `Haptic Feedback` - Whether or not to vibrate slightly when selecting an app or category in the launcher. Default `No`.
