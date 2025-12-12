@@ -1,5 +1,6 @@
 // make sure to enclose the function in parentheses
 (function(back) {
+  
   let launchCache;
   let settings = Object.assign({
     showClocks: true,
@@ -51,11 +52,12 @@
     menu[""] = { "title" : spotText}, // Title for the menu
 
     menu["None"] = function(){
+      
       E.showPrompt("Remove the "+spotText+" shortcut?",{
           title:"Confirm",
           buttons: {"Cancel":false,"Ok":true}
-        }).then(function(a){
-          if(a)setShortcut("",spot,bk);
+        }).then(function(v){
+          if(v)setShortcut("",spot,bk);
           else showAppList(spot,bk)
         })
     }
@@ -64,8 +66,8 @@
         E.showPrompt("Set "+a.name+" as the "+spotText+"?",{
           title:"Confirm",
           buttons: {"Cancel":false,"Ok":true}
-        }).then(function(a){
-          if(a)setShortcut(a.id,spot,bk);
+        }).then(function(v){
+          if(v)setShortcut(a.id,spot,bk);
           else showAppList(spot,bk)
         })
       }
