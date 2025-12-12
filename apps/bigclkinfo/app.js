@@ -4,10 +4,7 @@
 
 let isClock = true; // TODO: make optional via setting.
 if (isClock) {
-  Bangle.CLOCK = 1;
-  setWatch(() => {
-    Bangle.showLauncher();
-  }, BTN);
+  Bangle.setUI("clock");
 }
 
 // Load the clock infos
@@ -23,9 +20,9 @@ let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {
     // info: data returned from itm.get() containing text/img/etc
     // options: options passed into addInteractive
     // Clear the background
-    g.reset().clearRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1);
+    g.reset().clearRect(options.x, options.y, options.x+options.w-1, options.y+options.h-1);
     // indicate focus - we're using a border, but you could change color?
-    if (options.focus) g.drawRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1); // show if focused
+    if (options.focus) g.drawRect(options.x, options.y, options.x+options.w-1, options.y+options.h-1); // show if focused
     // we're drawing center-aligned here
     var midx = options.x+options.w/2;
     let scale = 5;
