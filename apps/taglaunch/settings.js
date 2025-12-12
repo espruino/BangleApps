@@ -89,9 +89,9 @@
        "< Back":function(){
          eval(require("Storage").read("taglaunch.settings.js"))(()=>load());
        },
-       "Left" : function() { showAppList(0,showSpotMenu); }, 
-      "Center" : function() { showAppList(1,showSpotMenu); }, 
-      "Right" : function() { showAppList(2,showSpotMenu);} 
+       "Left": function() { showAppList(0,showSpotMenu); }, 
+      "Center": function() { showAppList(1,showSpotMenu); }, 
+      "Right": function() { showAppList(2,showSpotMenu);} 
     })
   }
   const appMenu = {
