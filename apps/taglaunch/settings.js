@@ -1,19 +1,93 @@
 // make sure to enclose the function in parentheses
 (function(back) {
+  
+  let storedBackFn=function(){};
+  let launchCache;
   let settings = Object.assign({
     showClocks: true,
     fullscreen: false,
-    buzz:false
+    buzz:false,
+    shortcuts:["","",""]
   }, require("Storage").readJSON("taglaunch.json", true) || {});
-
   let fonts = g.getFonts();
   function save(key, value) {
     settings[key] = value;
     require("Storage").write("taglaunch.json",settings);
   }
+  
+  function setShortcut(id,spot,bk){
+    let shortcuts=settings.shortcuts;
+    shortcuts[spot]=id;
+    save("shortcuts",shortcuts);
+    bk()
+  }
+  
+  function showAppList(spot,bk){
+    //make sure cache is present
+    launchCache=require("Storage").readJSON("taglaunch.cache.json")
+    if (!launchCache || !launchCache.appsByTag) {
+      E.showAlert("Caching apps, returning to launcher","Loading").then(function(v){
+        Bangle.load("taglaunch.app.js");
+      });
+    } else {
+      var apps = [];
+      var appsByTag = launchCache.appsByTag;
+      for (var tag in appsByTag) {
+        var list = appsByTag[tag];
+        for (var i = 0; i < list.length; i++) {
+          var app = list[i];
+          apps.push({
+            name: app.name,
+            src: app.src || app.name,
+            id: app.id
+          });
+        }
+      }
+
+    var menu = {};
+    var spotText="";
+    if(spot==0)spotText+="Left ";
+    if(spot==1)spotText+="Center ";
+    if(spot==2)spotText+="Right ";
+    spotText+="App";
+    menu[""] = { "title" : spotText}, // Title for the menu
+
+    menu["None"] = () => setShortcut("",spot,bk);
+    apps.forEach(a => {
+      menu[a.name] = function(){
+        E.showPrompt("Set "+a.name+" as the "+spotText+"?",{
+          title:"Confirm",
+          buttons: {"Cancel":false,"Ok":true}
+        }).then(function(a){
+          if(a)setShortcut(a.id,spot,bk);
+          else showAppList(spot,bk)
+        })
+      }
+    });
+    menu["< Back"] = bk;
+
+    // Show it
+    E.showMenu(menu);
+    }
+  }
+
+  function showSpotMenu(){
+    E.showMenu({
+      "":{ "title" : "Select Spot"}, // Title for the menu
+       "< Back":function(){
+         eval(require("Storage").read("taglaunch.settings.js"))(()=>load());
+       },
+       "Left" : function() { showAppList(0,showSpotMenu); }, 
+      "Center" : function() { showAppList(1,showSpotMenu); }, 
+      "Right" : function() { showAppList(2,showSpotMenu);} 
+    })
+  }
   const appMenu = {
     "": { "title": /*LANG*/"Tag Launcher" },
     "< Back": back,
+    /*LANG*/"Shortcuts": function(){
+        showSpotMenu()
+     },
     /*LANG*/"Font": {
       value: fonts.includes(settings.font)? fonts.indexOf(settings.font) : fonts.indexOf("12x20"),
       min:0, max:fonts.length-1, step:1,wrap:true,
