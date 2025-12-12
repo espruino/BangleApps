@@ -12,6 +12,8 @@ Interact with it like one big clock info, which it is!
 
 ## Settings
 
+Change the background from `Settings -> Apps -> Backgrounds`
+
 TBA: Should the app be treated as a clock face app?
 TBA: Should the app remember last open clock info menu position between launches?
 
