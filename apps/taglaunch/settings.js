@@ -29,19 +29,23 @@
         Bangle.load("taglaunch.app.js");
       });
     } else {
-      var apps = [];
       var appsByTag = launchCache.appsByTag;
+      var appsById = {};
       for (var tag in appsByTag) {
         var list = appsByTag[tag];
         for (var i = 0; i < list.length; i++) {
           var app = list[i];
-          apps.push({
-            name: app.name,
-            src: app.src || app.name,
-            id: app.id
-          });
+          // Use app.id as key to deduplicate
+          if (!appsById[app.id]) {
+            appsById[app.id] = {
+              name: app.name,
+              src: app.src || app.name,
+              id: app.id
+            };
+          }
         }
       }
+      var apps = Object.values(appsById);
 
     var menu = {};
     var spotText="";
