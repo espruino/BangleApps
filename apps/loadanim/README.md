@@ -3,7 +3,7 @@
 This app adds an animation that happens while Bangle.js is loading an app. It requires 2v29+ (or 2v28 cutting edge) firmware to work.
 
 **Note:** loading time will be slightly negatively impacted because of the extra time
-taken to update the screen during the animation, but it's not likely to be more than 20% worse.
+taken to update the screen during the animation, but it's not likely to be more than 30% worse.
 
 ## Usage
 
