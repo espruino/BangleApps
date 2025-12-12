@@ -23,7 +23,7 @@
   
   function showAppList(spot,bk){
     //make sure cache is present
-    launchCache=require("Storage").readJSON("taglaunch.cache.json")
+    launchCache=require("Storage").readJSON("taglaunch.cache.json");
     if (!launchCache || !launchCache.appsByTag) {
       E.showAlert("Caching apps, returning to launcher","Loading").then(function(v){
         Bangle.load("taglaunch.app.js");
