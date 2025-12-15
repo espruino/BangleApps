@@ -5,6 +5,7 @@
   "author": "thyttan",
   "description": "One single big clock info. Full screen.",
   "icon": "icon.png",
+  "screenshots" : [ { "url":"screenshot.png" }],
   "type": "clock",
   "tags": "clock,clkinfo,clk_info",
   "supports" : ["BANGLEJS2"],
@@ -14,7 +15,6 @@
     "clkinfoclk":"app",
     "clockbg":"module"
   },
-
   "storage": [
     {"name":"bigclkinfo.app.js","url":"app.js"},
     {"name":"bigclkinfo.img","url":"app-icon.js","evaluate":true}
