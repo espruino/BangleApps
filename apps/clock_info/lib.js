@@ -234,7 +234,7 @@ clockInfoMenu is the 'options' parameter, with the following added:
 * `menuB` : int - index in 'menu[menuA].items' of showing clockInfo item
 * `remove` : function - remove this clockInfo item
 * `redraw` : function - force a redraw
-* `focus` : function - bool to show if menu is focused or not
+* `focus` : bool to show if menu is focused or not
 
 You can have more than one clock_info at once as well, for instance:
 
@@ -452,10 +452,19 @@ exports.drawBorderedImage = function(img,x,y,options) {
   if (!gfx) {
     gfx = exports.imgGfxB = Graphics.createArrayBuffer(28, 28, 2, {msb:true});
     gfx.transparent = 3;
-    gfx.palette = new Uint16Array([g.theme.bg, g.theme.fg, g.theme.bg/*border*/, g.toColor("#888")]);
+    gfx.palette = new Uint16Array([g.theme.bg, g.theme.bg/*border*/, g.theme.fg, g.toColor("#888")]);
   }
-  gfx.clear(1).setColor(2).drawImage(img, 1,1).drawImage(img, 3,1).drawImage(img, 1,3).drawImage(img, 3,3); // border
-  gfx.setColor(1).drawImage(img, 2,2); // main image
+  if (gfx.filter) { // if firmware supports it (2v22+) use filter which can give a much better border
+    gfx.clear(1).setColor(2).drawImage(img, 2,2); // main image
+    gfx.filter([ // a gaussian filter
+      1,1,1,
+      1,1,1,
+      1,1,1,
+    ], { w:3, h:3, div:1, max:1,filter:"max" });
+  } else {
+    gfx.clear(1).setColor(1).drawImage(img, 1,1).drawImage(img, 3,1).drawImage(img, 1,3).drawImage(img, 3,3); // border
+    gfx.setColor(2).drawImage(img, 2,2); // main image
+  }
   gfx.floodFill(27,27,3); // flood fill edge to transparent
   var o = ((options && options.scale) || 1)*2;
   return g.drawImage(gfx, x-o,y-o,options);
