@@ -7,10 +7,10 @@ taken to update the screen during the animation, but it's not likely to be more 
 
 ## Usage
 
-Once installed, any app you load that doesn't 'fast load' will cause the loading animation to be displayed. For instance swapping
+Once installed and set up, any app you load that doesn't 'fast load' will cause the loading animation to be displayed. For instance swapping
 between the clock and launcher may not put up the loading screen, but loading an app from the launcher will.
 
-To change the animation, go to `Settings -> Apps -> Load Anim`. There, you can tap on the `Anim` option
+To choose the animation, go to `Settings -> Apps -> Load Anim`. There, you can tap on the `Anim` option
 and can choose from different animations. Tap on one to view it, and answer `Yes` to the prompt if you wish
 to use it.
 

@@ -19,6 +19,108 @@
   }
   const ANIM = [
     {
+      name : "None",
+      code : function() {}
+    },
+    {
+      name : "Progress",
+      code : function() {
+        let o = Graphics.createArrayBuffer(120,30,1);
+        let n = 10, gl = g;
+        o.drawRect(2,2,117,27).drawRect(3,3,116,26);
+        o.fillRect(7,7,7+n,22);
+        Bangle.setLCDOverlay(o,28,96,{id:"loadanim"});
+        gl.flip(2);
+        let id = timer.add({
+          type:"EXEC", fn: () => { "ram";
+            if (n>=105)return;
+            n+=5;
+            o.fillRect(7,7,7+n,22);
+            gl.flip(2);
+          },
+          time:100,
+          interval:100,
+        });
+        let done = function() {
+          if (id===undefined) return;
+          require("timer").remove(id);
+          id = undefined;
+          Bangle.setLCDOverlay(undefined, {id: "loadanim"});
+        };
+        setTimeout(done, 0);
+      }, // 'loading' is an image that the OS displays as soon as it restarts
+      loading : () => require("heatshrink").decompress(atob("wFYwUBqoA/AH4A/AH4A/AH4A/AH4A/AH4AlqEAA4tUgAIGAB1AgEVE4wIGABwWBgonGBAcAgIfcMiUA+EFDQMQgEEgE8+A8BDwJkQD4QVCAAQfCAAYfRHQIfJh/AD6IeFD4IEDn4/SgED/kA/4ZBnkD5/Ah4JBD6UP/8D//A//8+f/+E/E4IfSn8P5/D+fwD4ICB/h/ULIPAgHz4E8AQXwBIIf1/4fFL6/DD43/T6jZDD4s/b4IABD6Z/GngeCIJwfRgofZh5fDD6E/h/P4fz+H8P4f/h7jBD5yzBh//gf/+H/D4bfB54fSgZVB/nwn5fD+BpBD6AALD4PAP6AALL4IfdT4K/RABbfTACAf/D44ZRABdVqgfditQD7sFD8EP/4Aa+AfiLzYf/D/4f/D/4f/D/4f/D/4f/D/4fj/4AaD8RebAAIfgqgfditVD7tVAH4A/"))
+    },
+     {
+      name : "Progress Fade",
+      code : function() {
+        let o = Graphics.createArrayBuffer(120,30,1);
+        let n = 10, gl = g;
+        o.drawRect(2,2,117,27).drawRect(3,3,116,26);
+        o.fillRect(7,7,7+n,22);
+        Bangle.setLCDOverlay(o,28,96,{id:"loadanim"});
+        gl.flip(2);
+        let id = timer.add({
+          type:"EXEC", fn: () => { "ram";
+            if (n>=105)return;
+            n+=5;
+            o.fillRect(7,7,7+n,22);
+            gl.flip(2);
+          },
+          time:100,
+          interval:100,
+        });
+        let done = function() {
+          if (id===undefined) return;
+          require("timer").remove(id);
+          id = undefined;
+          Bangle.setLCDOverlay(undefined, {id: "loadanim"});
+        };
+        setTimeout(done, 0);
+      }, // 'loading' is an image that the OS displays as soon as it restarts
+      loading : () => require("heatshrink").decompress(atob("2GwwUB+oAqvoAqr4Aq64AqV/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/ABFwgAHFvkABAyvaoEAj4HEqArBBAqvaEQMHA4nABAkAgavbEQMFA4grCBAP0AgKvbgHwhqGBmEAhkAnnwgEBFQMAnqvaFYMPEIQACFYQADWhyvN+EEFZUP4EXV7ZOFFYQEDn8AmqvcfYP8gH/EoM8gfP4EPBIKvdPAP/gf/4H//nz//wn4zBV7pSBh/P4fz+ArBAQP8V8B9B4EA+fAngCC+AJBV7wrMV7wrC/4rFQYSveFYPDFY3/bYKvg5/AFYs//kAAAKve56vGngqCgCxMV6IrMh6vdFY8PQYcHV7c/h/P4fz+H8V4f/h88+EFV7L7Bh//gf/+H/FYf8GoIrBhqvZFYMDPIP8+E/QYfwRoIDBV7QALFYPAV7gALQYIrCV7QALbYIECV7QALh65BAgSvlAAivmAAivmAAivTEqIALV5nUFbsXV5fwFbq1GRItwFbq1GRItQh//ADXwh6vL6Ardg6vMh6Cb+CvNFbqvOFbivOFbiv/V/6v/V/6v/V/6v/V/6v/V/6v/V/6vm/4AaV54rcV5qCbAAKvNFbqvMrgrdj6vL64rdEgyJFAEqJFAEqJFAEqKGAEiv/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/6v/V/4APA=="))
+    },
+    {
+      name : "Spinner",
+      code : function() {
+        let m = 28, o = Graphics.createArrayBuffer(m*2,m*2,2);
+        let n = 0, gl = g, img = atob("GBiCAVVVQAFVVVVQAAAFVVVAAAABVVU////8VVQ////8FVADwAPABUADwAPAAUADwAPAAUAA8A8AAQAA/D8AAAAAP/wAAAAAD/AAAAAAD/AAAAAAP/wAAAAA/D8AAEAA8A8AAUADwAPAAUADwAPAAVADw8PABVQ////8FVU////8VVVAAAABVVVQAAAFVVVVQAFVVQ==");
+        o.transparent = 1;
+        o.setBgColor(1).clear().setBgColor(0);
+        o.setColor(0).fillCircle(m,m,m);
+        o.setColor(3).fillCircle(m,m,m-2);
+        o.setColor(0).fillCircle(m,m,m-6);
+        Bangle.setLCDOverlay(o,88-m,88-m,{id:"loadanim"});
+        gl.flip(2);
+        let id = timer.add({
+          type:"EXEC", fn: () => { "ram";
+            n++;
+            o.setColor(3).drawImage(img,m,m,{rotate:n/5, scale:1.5});
+            gl.flip(2);
+          },
+          time:100,
+          interval:100,
+        });
+        let done = function() {
+          if (id===undefined) return;
+          require("timer").remove(id);
+          id = undefined;
+          Bangle.setLCDOverlay(undefined, {id: "loadanim"});
+        };
+        setTimeout(done, 0);
+      },
+      loading : () => getPattern(`
+XX..XX..
+.XX..XX.
+..XX..XX
+X..XX..X
+XX..XX..
+.XX..XX.
+..XX..XX
+X..XX..X
+`) // stripy background
+    },
+    {
       name : "Circle",
       code : function() {
         let o = Graphics.createArrayBuffer(g.getWidth(),g.getHeight(),1);
@@ -77,75 +179,6 @@
         };
         setTimeout(done, 0);
       }
-    },
-    {
-      name : "Progress",
-      code : function() {
-        let o = Graphics.createArrayBuffer(120,30,1);
-        let n = 10, gl = g;
-        o.drawRect(2,2,117,27).drawRect(3,3,116,26);
-        o.fillRect(7,7,7+n,22);
-        Bangle.setLCDOverlay(o,28,96,{id:"loadanim"});
-        gl.flip(2);
-        let id = timer.add({
-          type:"EXEC", fn: () => { "ram";
-            if (n>=105)return;
-            n+=5;
-            o.fillRect(7,7,7+n,22);
-            gl.flip(2);
-          },
-          time:100,
-          interval:100,
-        });
-        let done = function() {
-          if (id===undefined) return;
-          require("timer").remove(id);
-          id = undefined;
-          Bangle.setLCDOverlay(undefined, {id: "loadanim"});
-        };
-        setTimeout(done, 0);
-      }, // 'loading' is an image that the OS displays as soon as it restarts
-      loading : () => atob("gFiCAVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVQAFVVVVVVVVQAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVUAAFVVVVVVVUAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVAAAFVVVVVVVAAAAFVVUAAVVVVVVVVVVVVVVVVVVVVVUAAAVVVVVVVUAAAAVVVAAAVVVVVVVVVVVVVVVVVVVVVQDwBUAAEAAEADzwAAEAAAAVVVVVVVVVVVVVVVVVVVVVAPAFAAAAAAAAPPAAAAAAABVVVVVVVVVVVVVVVVVVVVUA8AQAAAAAAAA88AAAAA/AFVVVVVVVVVVVVVVVVVVVVQDwAAAAAAAAADwAAAAAPwAVVVVVVVVVVVVVVVVVVVVVAPAAA/wA/wA/PAPPwA/8ABVVVVVVVVVVVVVVVVVVVVUA8AAP/wP/wP/88//wP/8AFVVVVVVVVVVVVVVVVVVVVQDwAD8Pz8Pz8Pzz8Pz8D8AVVVVVVVVVVVVVVVVVVVVVAPAAPAPAAPPAPPPAPPADwBVVVVVVVVVVVVVVVVVVVVUA8AA8A8AA88A888A88APAFVVVVVVVVVVVVVVVVVVVVQDwADwDwP/zwDzzwDz8D8AVVVVVVVVVVVVVVVVVVVVVAPAAPAPD//PAPPPAPP//ABVVVVVVVVVVVVVVVVVVVVUA8AA8A8/A88A888A8P/wAAABVVVVVVVVVVVVVVVVVVQDwADwDzwDzwDzzwDw8AAAAABVVVVVVVVVVVVVVVVVVAPAAPAPPAPPAPPPAPDwAAAAABVVVVVVVVVVVVVVVVVUA8AA8A88A88A888A8D/wAAAAFVVVVVVVVVVVVVVVVVQDwAD8Pz8Pz8PzzwDw//w888AVVVVVVVVVVVVVVVVVVAP//D/8D//D//PPAPPwPzzzwBVVVVVVVVVVVVVVVVVUA//8D/AD88D8888A88APPPPAFVVVVVVVVVVVVVVVVVQAAAAAAAAAAAAAAAADwA8AAAAVVVVVVVVVVVVVVVVVVAAAAAAAAAAAAAAAAAPwPwAAABVVVVVVVVVVVVVVVVVUAAAAAAAAAAAAAAAAAP/8AAAAFVVVVVVVVVVVVVVVVVQAAAAAAAAAAAAAAAAAP/AAAAAVVVVVVVVVVVVVVVVVVAAAAAAAAAAAAAAAAAAAAAAAABVVVVVVVVVVVVVVVVVUAAAAAAAAAAAAAAAAAAAAAAAAFVVVVVVVVVVVVVVVVVQAAAAAAAAAAAAAAAAAAAAAAAAVVVVVVVVVVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVVQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABVAP//////////////////////////////////////AFUA//////////////////////////////////////8AVQDwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwBVAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAFUA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AVQDwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwBVAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAFUA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AVQDwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwBVAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAFUA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AVQDwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwBVAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAFUA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AVQDwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwBVAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAFUA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AVQDwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwBVAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAFUA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AVQDwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwBVAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAFUA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AVQDwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwBVAP//////////////////////////////////////AFUA//////////////////////////////////////8AVQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABVVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV")
-    },
-    {
-      name : "Spinner",
-      code : function() {
-        let m = 28, o = Graphics.createArrayBuffer(m*2,m*2,2);
-        let n = 0, gl = g, img = atob("GBiCAVVVQAFVVVVQAAAFVVVAAAABVVU////8VVQ////8FVADwAPABUADwAPAAUADwAPAAUAA8A8AAQAA/D8AAAAAP/wAAAAAD/AAAAAAD/AAAAAAP/wAAAAA/D8AAEAA8A8AAUADwAPAAUADwAPAAVADw8PABVQ////8FVU////8VVVAAAABVVVQAAAFVVVVQAFVVQ==");
-        o.transparent = 1;
-        o.setBgColor(1).clear().setBgColor(0);
-        o.setColor(0).fillCircle(m,m,m);
-        o.setColor(3).fillCircle(m,m,m-2);
-        o.setColor(0).fillCircle(m,m,m-6);
-        Bangle.setLCDOverlay(o,88-m,88-m,{id:"loadanim"});
-        gl.flip(2);
-        let id = timer.add({
-          type:"EXEC", fn: () => { "ram";
-            n++;
-            o.setColor(3).drawImage(img,m,m,{rotate:n/5, scale:1.5});
-            gl.flip(2);
-          },
-          time:100,
-          interval:100,
-        });
-        let done = function() {
-          if (id===undefined) return;
-          require("timer").remove(id);
-          id = undefined;
-          Bangle.setLCDOverlay(undefined, {id: "loadanim"});
-        };
-        setTimeout(done, 0);
-      },
-      loading : () => getPattern(`
-XX..XX..
-.XX..XX.
-..XX..XX
-X..XX..X
-XX..XX..
-.XX..XX.
-..XX..XX
-X..XX..X
-`) // stripy background
     }
   ];
 
