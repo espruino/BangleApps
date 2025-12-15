@@ -47,7 +47,14 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
       trim : true // optional: trim to the specified height, add '...'
     }); // TODO: g.findFont returns max size 28px. Would be nice with bigger font if there's room.
     //print(foundFontText);
-    g.setFont(foundFontText.font).setFontAlign(0,1).drawString(foundFontText.text, midx,options.y+165); // draw the text
+    g.setFont(foundFontText.font).setFontAlign(0,1);
+    let y = options.y+165;
+    // draw the text with a background
+    g.setColor(g.theme.bg).drawString(foundFontText.text, midx-2, y)
+      .drawString(foundFontText.text, midx+2, y)
+      .drawString(foundFontText.text, midx, y-2)
+      .drawString(foundFontText.text, midx, y+2); 
+    g.setColor(g.theme.fg).drawString(foundFontText.text, midx, y); 
   }
 });
 Bangle.on("lock", function(locked) {
