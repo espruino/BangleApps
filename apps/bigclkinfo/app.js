@@ -13,9 +13,11 @@ let clock_info = require("clock_info");
 
 // Load the clock infos
 let clockInfoItems = clock_info.load();
-if (clockInfoItems[0].items[6]) { // TODO: Should maybe be more robust against changes to clock info, i.e. search for "clock" among items.
-  let clockItem = clockInfoItems[0].items.pop();
-  clockInfoItems[0].items.unshift(clockItem);
+let clockInfoClockIdx = clockInfoItems[0].items.findIndex(c => c.name=="Clock");
+if (clockInfoClockIdx>0) { // pull the clock to the front (if it exists and not there already)
+  let clockInfoClock = clockInfoItems[0].items[clockInfoClockIdx];
+  clockInfoItems[0].items.splice(clockInfoClockIdx,1); // remove
+  clockInfoItems[0].items.unshift(clockInfoClock); // add to front
 }
 // Add the
 let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
