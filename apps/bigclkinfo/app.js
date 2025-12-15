@@ -1,7 +1,3 @@
-// TODO:
-// Add setting to decide if the app shoud set Bangle.CLOCK=1 ?
-// Make an updating analog clock info entry to use as start card. (update clkinfoclk or make a new one?)
-
 let isClock = true; // TODO: make optional via setting.
 if (isClock) {
   Bangle.setUI("clock");
@@ -10,11 +6,15 @@ if (isClock) {
 // once at the start
 let background = require("clockbg");
 let clock_info = require("clock_info");
+const R = Bangle.appRect;
+let txtg = Graphics.createArrayBuffer(R.w>>1, 32, 2);
+txtg.transparent = 0;
+txtg.palette = new Uint16Array([0,g.theme.bg,g.theme.bg,g.theme.fg]);
 
 // Load the clock infos
 let clockInfoItems = clock_info.load();
-let clockInfoClockIdx = clockInfoItems[0].items.findIndex(c => c.name=="Clock");
-if (clockInfoClockIdx>0) { // pull the clock to the front (if it exists and not there already)
+let clockInfoClockIdx = clockInfoItems[0].items.findIndex(c => c.name=="HRM");
+if (clockInfoClockIdx>=0) { // pull the clock to the front
   let clockInfoClock = clockInfoItems[0].items[clockInfoClockIdx];
   clockInfoItems[0].items.splice(clockInfoClockIdx,1); // remove
   clockInfoItems[0].items.unshift(clockInfoClock); // add to front
@@ -23,7 +23,7 @@ if (clockInfoClockIdx>0) { // pull the clock to the front (if it exists and not 
 let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
   app: "bigclkinfo",
   // Add the dimensions we're rendering to here - these are used to detect taps on the clock info area
-  x : 0, y: 0, w: Bangle.appRect.w, h: Bangle.appRect.h,  // You can add other information here you want to be passed into 'options' in 'draw'
+  x : 0, y: 0, w: R.w, h: R.h,  // You can add other information here you want to be passed into 'options' in 'draw'
   // This function draws the info
   draw : (itm, info, options) => {
     // itm: the item containing name/hasRange/etc
@@ -38,27 +38,31 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
     var midx = options.x+options.w/2;
     let scale = 4;
     if (info.img) clock_info.drawBorderedImage(info.img, midx-12*scale,options.y+10, {scale:scale}); // draw the image
-    let foundFontText = g.findFont(info.text, {
-      w : options.w-9,    // optional: width available (default = screen width)
-      h : options.h*2/5,    // optional: height available (default = screen height)
+    let foundFontText = txtg.findFont(info.text, {
+      w : txtg.getWidth()-4,    // optional: width available (default = screen width)
+      h : txtg.getHeight()-4,    // optional: height available (default = screen height)
       min : 10,   // optional: min font height
-      max : 60,   // optional: max font height
+      max : 24,   // optional: max font height
       wrap : true, // optional: allow word wrap?
       trim : true // optional: trim to the specified height, add '...'
     }); // TODO: g.findFont returns max size 28px. Would be nice with bigger font if there's room.
     //print(foundFontText);
-    g.setFont(foundFontText.font).setFontAlign(0,1);
-    let y = options.y+165;
-    // draw the text with a background
-    g.setColor(g.theme.bg).drawString(foundFontText.text, midx-2, y)
-      .drawString(foundFontText.text, midx+2, y)
-      .drawString(foundFontText.text, midx, y-2)
-      .drawString(foundFontText.text, midx, y+2); 
-    g.setColor(g.theme.fg).drawString(foundFontText.text, midx, y); 
+    txtg.clear(1);
+    txtg.setFont(foundFontText.font).setFontAlign(0,1);
+    txtg.drawString(foundFontText.text, txtg.getWidth()/2, txtg.getHeight()-2); 
+    txtg.filter([ // a gaussian filter
+        0, 1, 1, 1, 0,
+        1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1,
+        0, 1, 1, 1, 0,
+    ], { w:5, h:5, div:1, max:1, filter:"max" });
+    g.drawImage(txtg, 0, R.h - txtg.getHeight()*2-4, {scale:2});
   }
 });
+
 Bangle.on("lock", function(locked) {
-  // ensure that when unlocked, we automatically focus the clockinfo by faking a tap on it
+  // ensure that when unlocked, we automaticlly focus the clockinfo
   if (!locked && !clockInfoMenu.focus)
     Bangle.emit("touch",0,{x:100,y:100});
 });
