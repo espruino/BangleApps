@@ -50,5 +50,9 @@ let clockInfoMenu = clock_info.addInteractive(clockInfoItems, {
     g.setFont(foundFontText.font).setFontAlign(0,1).drawString(foundFontText.text, midx,options.y+165); // draw the text
   }
 });
-
+Bangle.on("lock", function(locked) {
+  // ensure that when unlocked, we automatically focus the clockinfo by faking a tap on it
+  if (!locked && !clockInfoMenu.focus)
+    Bangle.emit("touch",0,{x:100,y:100});
+});
 E.prependListener("kill", ()=>{clockInfoMenu.menuA = 0; clockInfoMenu.menuB = 0;}) // reset to initial menu state to prepare for next launch.
