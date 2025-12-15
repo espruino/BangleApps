@@ -17,7 +17,7 @@ txtg.palette = new Uint16Array([0,g.theme.bg,g.theme.bg,g.theme.fg]);
 
 // Load the clock infos
 let clockInfoItems = clock_info.load();
-let clockInfoClockIdx = clockInfoItems[0].items.findIndex(c => c.name=="HRM");
+let clockInfoClockIdx = clockInfoItems[0].items.findIndex(c => c.name=="Clock");
 if (clockInfoClockIdx>=0) { // pull the clock to the front
   let clockInfoClock = clockInfoItems[0].items[clockInfoClockIdx];
   clockInfoItems[0].items.splice(clockInfoClockIdx,1); // remove
