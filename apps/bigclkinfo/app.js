@@ -1,3 +1,7 @@
+// TODO:
+// Add setting to decide if the app shoud set Bangle.CLOCK=1 ?
+// Make an updating analog clock info entry to use as start card. (update clkinfoclk or make a new one?)
+
 let isClock = true; // TODO: make optional via setting.
 if (isClock) {
   Bangle.setUI("clock");
