@@ -37,9 +37,9 @@ const saveState = function() {
     require("Storage").writeJSON(CONFIGFILE, config);
 };
 
-const log_debug = function(o) {
-  //console.log(o);
-};
+//const log_debug = function(o) {
+//  console.log(o);
+//};
 
 const timeToText = function(t) {
   let hrs = Math.floor(t/3600000);
@@ -48,7 +48,7 @@ const timeToText = function(t) {
   let tnth = Math.floor(t/100)%10;
   let text;
 
-  if (hrs === 0) 
+  if (hrs === 0)
     text = ("0"+mins).substr(-2) + ":" + ("0"+secs).substr(-2) + "." + tnth;
   else
     text = ("0"+hrs) + ":" + ("0"+mins).substr(-2) + ":" + ("0"+secs).substr(-2);
@@ -58,7 +58,7 @@ const timeToText = function(t) {
 };
 
 const drawButtons = function() {
-  log_debug("drawButtons()");
+  // log_debug("drawButtons()");
   if (!running && tCurrent == tTotal) {
     bigPlayPauseBtn.draw();
   } else if (!running && tCurrent != tTotal) {
@@ -72,7 +72,7 @@ const drawButtons = function() {
 };
 
 const drawTime = function() {
-  log_debug("drawTime()");
+  // log_debug("drawTime()");
   let Tt = tCurrent-tTotal;
   let Ttxt = timeToText(Tt);
 
@@ -80,7 +80,7 @@ const drawTime = function() {
   g.setFont("Vector",38);  // check
   g.setFontAlign(0,0);
   g.clearRect(0, timeY - 21, w, timeY + 21);
-  g.setColor(g.theme.fg); 
+  g.setColor(g.theme.fg);
   g.drawString(Ttxt, w/2, timeY);
 };
 
@@ -93,13 +93,13 @@ const draw = function() {
 };
 
 const startTimer = function() {
-  log_debug("startTimer()");
+  // log_debug("startTimer()");
   draw();
   displayInterval = setInterval(draw, 100);
 };
 
 const stopTimer = function() {
-  log_debug("stopTimer()");
+  // log_debug("stopTimer()");
   if (displayInterval) {
     clearInterval(displayInterval);
     displayInterval = undefined;
@@ -108,7 +108,7 @@ const stopTimer = function() {
 
 // BTN stop start
 const stopStart = function() {
-  log_debug("stopStart()");
+  // log_debug("stopStart()");
 
   if (running)
     stopTimer();
@@ -117,7 +117,7 @@ const stopStart = function() {
   Bangle.buzz();
 
   if (running)
-    tStart = Date.now() + tStart- tCurrent;  
+    tStart = Date.now() + tStart- tCurrent;
   tTotal = Date.now() + tTotal - tCurrent;
   tCurrent = Date.now();
 
@@ -145,7 +145,7 @@ const setButtonImages = function() {
 
 // lap or reset
 const lapReset = function() {
-  log_debug("lapReset()");
+  // log_debug("lapReset()");
   if (!running && tStart != tCurrent) {
     redrawButtons = true;
     Bangle.buzz();
@@ -177,7 +177,7 @@ BUTTON.prototype.check = function(x,y) {
   //console.log(this.name + ":check() x=" + x + " y=" + y +"\n");
 
   if (x>= this.x && x<= (this.x + this.w) && y>= this.y && y<= (this.y + this.h)) {
-    log_debug(this.name + ":callback\n");
+    // log_debug(this.name + ":callback\n");
     this.callback();
     return true;
   }
@@ -192,8 +192,8 @@ BUTTON.prototype.draw = function() {
     let iw = iconScale * 24;  // the images were loaded as 24 pixels, we will scale
     let ix = this.x + ((this.w - iw) /2);
     let iy = this.y + ((this.h - iw) /2);
-    log_debug("g.drawImage(" + ix + "," + iy + "{scale: " + iconScale + "})");
-    g.drawImage(this.img, ix, iy, {scale: iconScale}); 
+    // log_debug("g.drawImage(" + ix + "," + iy + "{scale: " + iconScale + "})");
+    g.drawImage(this.img, ix, iy, {scale: iconScale});
   }
   g.drawRect(this.x, this.y, this.x + this.w, this.y + this.h);
 };
