@@ -89,8 +89,8 @@ let noShortcuts=shortcuts[0]==""&&shortcuts[1]==""&&shortcuts[2]=="";
   
 let loadShortcut=function(idx){
   if(shortcuts[idx]!=""){
-    if(settings.buzz)Bangle.buzz(25);
-    setTimeout(function(){load(shortcuts[idx]+".app.js")},27); //let buzz have effect
+    const p = settings.buzz ? Bangle.buzz(25) : Promise.resolve();
+    p.then(() => load(shortcuts[idx]+".app.js"));
   }
 };
 // 10s of inactivity goes back to clock
