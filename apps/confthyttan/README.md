@@ -24,6 +24,7 @@ On the clock face:
 
 Miscellaneous:
 - The bluetooth indicator will be hidden when connected, visible if not (`widbt_notify`).
+- Messages can be scrolled by a twist of the arm (if they were auto-displayed).
 
 ## Requests
 
