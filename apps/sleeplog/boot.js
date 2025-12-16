@@ -151,39 +151,25 @@ if (global.sleeplog.conf.enabled) {
     // define health listener function
     // - called by event listener: "this"-reference points to global
     health: function(data) {
+      print("Sleep Log - Health Data Acquired");
       // check if global variable accessable
       if (!global.sleeplog) return new Error("sleeplog: Can't process health event, global object missing!");
-
       // check if movement is available
-      if (!data.movement) return;
-
+      if (!data.movement&&!data.bpm) return;
       // add timestamp rounded to 10min, corrected to 10min ago
       data.timestamp = data.timestamp || ((Date.now() / 6E5 | 0) - 1) * 6E5;
-
       // add preliminary status depending on charging and movement thresholds
       // 1 = not worn, 2 = awake, 3 = light sleep, 4 = deep sleep
-      if(data.hrm){
-        
-        if (!Bangle.isCharging()) {
-          if (data.heartRate <= global.sleeplog.conf.hrDeepTh) {
-            data.status = 4; // deep sleep
-          } else if (data.heartRate <= global.sleeplog.conf.hrLightTh) {
-            data.status = 3; // light sleep
-          } else {
-            data.status = 2; // awake
-          }
-        } else {
-          data.status = 1; // not worn
-        }
-       
-          
+      if(data.bpm){
+        data.status = Bangle.isCharging() ? 1 :
+          data.bpm <= global.sleeplog.conf.hrmDeepTh ? 4 :
+          data.bpm <= global.sleeplog.conf.hrmLightTh ? 3 : 2;
       }else{
         data.status = Bangle.isCharging() ? 1 :
           data.movement <= global.sleeplog.conf.deepTh ? 4 :
           data.movement <= global.sleeplog.conf.lightTh ? 3 : 2;
       }
-      
-      
+
       // check if changing to deep sleep from non sleeping
       if (data.status === 4 && global.sleeplog.status <= 2) {
         global.sleeplog.checkIsWearing((isWearing, data) => {

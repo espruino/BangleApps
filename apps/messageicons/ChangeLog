@@ -9,3 +9,4 @@
 0.08: Add more icons including GMail, Google Messages, Google Agenda
 0.09: Add Bereal, Nextcloud, Thunderbird, Davx⁵, Kleinanzeigen, Element X
 0.10: Fix broken PNG icons
+0.11: Add icons for Meshtastic, Gotify. Update icon for Home Assistant. Add icon for "Element Classic" after "Element" has been renamed. (Keeping "Element" as well for backwards compatibility.)

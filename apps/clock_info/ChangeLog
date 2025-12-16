@@ -20,3 +20,6 @@
 0.19: Fix Altitude ClockInfo after BLE added
       Tapping Altitude now updates the reading
 0.20: Altitude ClockInfo now uses the distance units set in locale.
+0.21: Add haptics when changing infos and a setting to toggle it on or off
+0.22: Tapping on step counter now disable step counting on 2v29+ firmwares
+0.23: Use filter function for better image borders if it exists (2v22)

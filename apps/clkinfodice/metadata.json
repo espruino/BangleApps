@@ -1,0 +1,13 @@
+{ "id": "clkinfodice",
+  "name": "Dice Clockinfo",
+  "version":"0.01",
+  "author": "gfwilliams",
+  "description": "A ClockInfo that shows a random dice face. Tap to roll.",
+  "icon": "icon.png",
+  "type": "clkinfo",
+  "tags": "clkinfo,gaming,game",
+  "supports" : ["BANGLEJS2"],
+  "storage": [
+    {"name":"clkinfodice.clkinfo.js","url":"clkinfo.js"}
+  ]
+}

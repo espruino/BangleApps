@@ -5,6 +5,7 @@
   var lastStepCount;
   let stp_today = 0;
   let settings;
+  let stepDisabled = Bangle.getOptions().stepCounterDisabled; // 2v29+
 
   function loadSettings() {
     const d = require('Storage').readJSON("wpedom.json", 1) || {};
@@ -109,6 +110,7 @@
         }
         g.reset();
       }
+      if (stepDisabled) g.setColor("#888"); // dim down step count
       if (settings.large) {
         g.setFont("6x8",2);
         g.setFontAlign(-1, 0);
@@ -141,4 +143,14 @@
     delete pedomData;
   }
   WIDGETS["wpedom"].width = WIDGETS["wpedom"].getWidth();
+  if (!settings.hide) Bangle.on("touch", (_,e) => { // allow disabling steps on tap
+    if (!e || WIDGETS["back"]) return; // ignore taps if back widget shown - it's too close
+    let w = WIDGETS["wpedom"];
+    if (w._draw || e.y<w.y || e.y >= (w.y+24) || e.x<w.x || e.x>(w.x+w.width)) return; // ignore out of bounds or if hidden (w._draw set)
+    if (stepDisabled===undefined) return; // 2v28 or before, disable steps not supported
+    Bangle.buzz(50); // feedback
+    stepDisabled = !stepDisabled;
+    Bangle.setOptions({stepCounterDisabled:stepDisabled}); // 2v29
+    w.draw();
+  });
 })()

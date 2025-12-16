@@ -40,6 +40,7 @@ and previously focussed Clock Infos
   progress/percent indicator may be shown. The percentage for altitude will be how far towards
   the Max Altitude you are. If you go higher than `Max Altitude` the correct altitude will still
   be shown - the percent indicator will just read 100%
+* `Haptics` - Whether or not to use a slight vibration when cycling between different infos, or lists (with a slightly stronger buzz). 
 
 ## API (Software development)
 

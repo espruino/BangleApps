@@ -11,7 +11,8 @@
         fractions_of_hour: 4, // 4 = 15min intervals, 6 = 10min intervals
         wait_ms: 500,
         meridian_buzz_ms: 50,
-        meridian_buzz_wait_ms: 300
+        meridian_buzz_wait_ms: 300,
+        followQuietMode: false
     }, require('Storage').readJSON("grandfatherclock.json", true) || {}); // or, load the app settings file.
 
     WIDGETS["grandfatherclock"] = {
@@ -29,6 +30,13 @@
     let fractionMs = 3600000 / config.fractions_of_hour;
 
     let chime = function () {
+
+        const quietMode= (require("Storage").readJSON("setting.json", 1) || {}).quiet && config.followQuietMode;
+        if (quietMode){
+          queueNextChime();
+          return;
+        }
+
         date = new Date();
         let hourFrac = Math.floor(date.getMinutes() / (60 / config.fractions_of_hour));
 

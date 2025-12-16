@@ -1,3 +1,4 @@
 v0.01: New app!
 v0.02: Add dynamic intervals, depending on total cycles recorded
 v0.03: Return more data inside of .get();
+v0.04: Return to fixed update intervals, added setting to change update interval, limit cycles to 60 for greater precision over longer period of time

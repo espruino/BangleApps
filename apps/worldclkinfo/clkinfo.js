@@ -1,363 +1,112 @@
-
 (function() {
-  
-  
-  //read settings
+  let config = require("Storage").readJSON("worldclkinfo.config.json") || {};
+
+  // Read settings
   var settings = Object.assign({
-  // default values
-  shorten: true,
-  showMeridians: true,
-  shortenMeridians:false,
-  }, require("Storage").readJSON("worldclkinfosettings.json", true) || {});
-  
-  //All offsets from UTC in minutes. Positive: behind UTC. Negative: Ahead of UTC. 
+    // Default values
+    shorten: false,
+    showMeridians: true,
+    shortenMeridians: false,
+    simpleMode: true
+  }, require("Storage").readJSON("worldclkinfo.settings.json", true) || {});
 
-  const londonTimeOffset=60;
-  const mumbaiTimeOffset=330;
-  const nycTimeOffset=-240;
-  const tokyoTimeOffset=540;
-  const dubaiTimeOffset=240;
-  const laTimeOffset=-420;
-  const parisTimeOffset=120;
-  const hongKongTimeOffset=480
-
-  var showCityName=false;
-  
-  function getWorldDateString(cityName){
-    //Gets difference between UTC and local time
-    var date=new Date();
-    var currOffset = date.getTimezoneOffset();
-    
-    var timeOffset;
-    
-    switch (cityName) {
-      case "London":
-        timeOffset=londonTimeOffset;
-        break; 
-      case "Mumbai":
-        timeOffset=mumbaiTimeOffset;
-        break;
-      case "New York":
-        timeOffset=nycTimeOffset;
-        break;
-      case "Tokyo":
-        timeOffset=tokyoTimeOffset;
-        break;
-      case "Dubai":
-        timeOffset=dubaiTimeOffset;
-        break;
-      case "Los Angeles":
-        timeOffset=laTimeOffset;
-        break;
-      case "Paris":
-        timeOffset=parisTimeOffset;
-        break;
-      case "Hong Kong":
-        timeOffset=hongKongTimeOffset;
-        break;
-      default:
-        //Nothing else matches
-        timeOffset=0
-
-    }
-    
-    //go to UTC time
-    date.setMinutes(date.getMinutes() + currOffset);
-    //from there, go to city time
-    date.setMinutes(date.getMinutes() + timeOffset);
-    
-    var meridian=require("locale").meridian(date);
-    
-    var clockStr;
-    if(settings.showMeridians==true){
-      if(settings.shortenMeridians==true){
-        //get A - am, or P - pm
-        clockStr = require("locale").time(date, 1 /*omit seconds*/)+meridian[0];
-        
-      }else{
-        clockStr = require("locale").time(date, 1 /*omit seconds*/)+" "+meridian;
-      }
-
-    }else{
-      
-      clockStr = require("locale").time(date, 1 /*omit seconds*/);
-      
-    }
-    
-    
-    var finalCityStr;
-    
-    if(settings.shorten==true){
-      
-      switch (cityName) {
-      case "Los Angeles":
-        finalCityStr="LA";
-        break; 
-      case "New York":
-        finalCityStr="NYC";
-        break;
-      case "Hong Kong":
-        finalCityStr="HK";
-        break;
-      default:
-        //Nothing else matches
-        finalCityStr=cityName;
-      }
-      
-    }else{
-      
-      finalCityStr=cityName;   
-      
-      
-    }
-    
-    
-    
-    //var finalStr=finalCityStr+"\n"+clockStr+"\n";
-    if(showCityName){
-      //show city
-      var finalStr=finalCityStr;
-    }else{
-      var finalStr=clockStr;
-    }
-    return finalStr;
-    
-    
-  }
-  
-  
-  
-  
-  
-  return {
+  let clocks = {
     name: "World Clocks",
-    items: [
-      
-      { name : "London",
-        get : () => {
-          return {
-            text : getWorldDateString("London"),
-            //blank image
-            img : atob("GBiBAAD/AAPnwAbDYBiBGBEAiD///H///kMAwsIAQ4IAQYIAQf///////4IAQYIAQcIAQ0MAwn///j///BEAiBiBGAbDYAPnwAD/AA==")
-          };
-        },
-        show : function() {
-          this.interval = setTimeout(()=>{
-            this.emit("redraw");
-            this.interval = setInterval(()=>{
-              this.emit("redraw");
-            }, 60000);
-          }, 60000 - (Date.now() % 60000));
-        },
-       hide : function() {
-          clearInterval(this.interval);
-          this.interval = undefined;
-        },
-       run : function() {
-         //toggle showCityName
-          
-          showCityName=!showCityName;
-          this.emit("redraw");
-        }
-       
-      },
-      
-      { name : "Mumbai",
-        get : () => {
-          return {
-            text : getWorldDateString("Mumbai"),
-            //blank image
-            img : atob("GBiBAAD/AAPnwAbDYBiBGBEAiD///H///kMAwsIAQ4IAQYIAQf///////4IAQYIAQcIAQ0MAwn///j///BEAiBiBGAbDYAPnwAD/AA==")
-          };
-        },
-        show : function() {
-          this.interval = setTimeout(()=>{
-            this.emit("redraw");
-            this.interval = setInterval(()=>{
-              this.emit("redraw");
-            }, 60000);
-          }, 60000 - (Date.now() % 60000));
-        },
-       hide : function() {
-          clearInterval(this.interval);
-          this.interval = undefined;
-        },
-       run : function() {
-         //toggle showCityName
-          
-          showCityName=!showCityName;
-          this.emit("redraw");
-        }
-      },
-      
-      { name : "New York",
-        get : () => {
-          return {
-            text : getWorldDateString("New York"),
-            //blank image
-            img : atob("GBiBAAD/AAPnwAbDYBiBGBEAiD///H///kMAwsIAQ4IAQYIAQf///////4IAQYIAQcIAQ0MAwn///j///BEAiBiBGAbDYAPnwAD/AA==")
-          };
-        },
-        show : function() {
-          this.interval = setTimeout(()=>{
-            this.emit("redraw");
-            this.interval = setInterval(()=>{
-              this.emit("redraw");
-            }, 60000);
-          }, 60000 - (Date.now() % 60000));
-        },
-       hide : function() {
-          clearInterval(this.interval);
-          this.interval = undefined;
-        },
-       run : function() {
-         //toggle showCityName
-          
-          showCityName=!showCityName;
-          this.emit("redraw");
-        }
-      },
-      
-      { name : "Tokyo",
-        get : () => {
-          return {
-            text : getWorldDateString("Tokyo"),
-            //blank image
-            img : atob("GBiBAAD/AAPnwAbDYBiBGBEAiD///H///kMAwsIAQ4IAQYIAQf///////4IAQYIAQcIAQ0MAwn///j///BEAiBiBGAbDYAPnwAD/AA==")
-          };
-        },
-        show : function() {
-          this.interval = setTimeout(()=>{
-            this.emit("redraw");
-            this.interval = setInterval(()=>{
-              this.emit("redraw");
-            }, 60000);
-          }, 60000 - (Date.now() % 60000));
-        },
-       hide : function() {
-          clearInterval(this.interval);
-          this.interval = undefined;
-        },
-       run : function() {
-         //toggle showCityName
-          
-          showCityName=!showCityName;
-          this.emit("redraw");
-        }
-      },
-      
-      { name : "Dubai",
-        get : () => {
-          return {
-            text : getWorldDateString("Dubai"),
-            //blank image
-            img : atob("GBiBAAD/AAPnwAbDYBiBGBEAiD///H///kMAwsIAQ4IAQYIAQf///////4IAQYIAQcIAQ0MAwn///j///BEAiBiBGAbDYAPnwAD/AA==")
-          };
-        },
-        show : function() {
-          this.interval = setTimeout(()=>{
-            this.emit("redraw");
-            this.interval = setInterval(()=>{
-              this.emit("redraw");
-            }, 60000);
-          }, 60000 - (Date.now() % 60000));
-        },
-       hide : function() {
-          clearInterval(this.interval);
-          this.interval = undefined;
-        },
-       run : function() {
-         //toggle showCityName
-          
-          showCityName=!showCityName;
-          this.emit("redraw");
-        }
-      },
-      { name : "Los Angeles",
-        get : () => {
-          return {
-            text : getWorldDateString("Los Angeles"),
-            //blank image
-            img : atob("GBiBAAD/AAPnwAbDYBiBGBEAiD///H///kMAwsIAQ4IAQYIAQf///////4IAQYIAQcIAQ0MAwn///j///BEAiBiBGAbDYAPnwAD/AA==")
-          };
-        },
-        show : function() {
-          this.interval = setTimeout(()=>{
-            this.emit("redraw");
-            this.interval = setInterval(()=>{
-              this.emit("redraw");
-            }, 60000);
-          }, 60000 - (Date.now() % 60000));
-        },
-       hide : function() {
-          clearInterval(this.interval);
-          this.interval = undefined;
-        },
-       run : function() {
-         //toggle showCityName
-          
-          showCityName=!showCityName;
-          this.emit("redraw");
-        }
-      },
-      
-      { name : "Paris",
-        get : () => {
-          return {
-            text : getWorldDateString("Paris"),
-            //blank image
-            img : atob("GBiBAAD/AAPnwAbDYBiBGBEAiD///H///kMAwsIAQ4IAQYIAQf///////4IAQYIAQcIAQ0MAwn///j///BEAiBiBGAbDYAPnwAD/AA==")
-          };
-        },
-        show : function() {
-          this.interval = setTimeout(()=>{
-            this.emit("redraw");
-            this.interval = setInterval(()=>{
-              this.emit("redraw");
-            }, 60000);
-          }, 60000 - (Date.now() % 60000));
-        },
-       hide : function() {
-          clearInterval(this.interval);
-          this.interval = undefined;
-        },
-       run : function() {
-         //toggle showCityName
-          
-          showCityName=!showCityName;
-          this.emit("redraw");
-        }
-      },
-      { name : "Hong Kong",
-        get : () => {
-          return {
-            text : getWorldDateString("Hong Kong"),
-            //blank image
-            img : atob("GBiBAAD/AAPnwAbDYBiBGBEAiD///H///kMAwsIAQ4IAQYIAQf///////4IAQYIAQcIAQ0MAwn///j///BEAiBiBGAbDYAPnwAD/AA==")
-          };
-        },
-        show : function() {
-          this.interval = setTimeout(()=>{
-            this.emit("redraw");
-            this.interval = setInterval(()=>{
-              this.emit("redraw");
-            }, 60000);
-          }, 60000 - (Date.now() % 60000));
-        },
-       hide : function() {
-          clearInterval(this.interval);
-          this.interval = undefined;
-        },
-       run : function() {
-         //toggle showCityName
-          
-          showCityName=!showCityName;
-          this.emit("redraw");
-        }
-      }
-      
-      
-      
-    ]
+    items: []
   };
+
+  if (config.rows) {
+    config.rows.forEach((row, id) => {
+      clocks.items.push({
+        // Use the short name if the user hasn't set a long name
+        name: "WC " + (row.name || row.shortname),
+        show: function() {
+          this.interval = setTimeout(() => {
+            // Request a re-draw
+            this.emit("redraw");
+            // Call ourself to request again in a minute
+            this.show();
+          // Time between now and the next minute mark
+          }, 60000 - (Date.now() % 60000));
+        },
+        hide : function() {
+          if (this.interval) clearInterval(this.interval);
+          this.interval = undefined;
+        },
+        run: function() {
+          let cr = config.rows[id];
+          if (settings.simpleMode) {
+            config.simpleRow = config.simpleRow || {};
+            cr = config.simpleRow;
+          }
+          // Default to mode 1, and wrap when going past mode 5
+          if ( ! cr.mode) {
+            cr.mode = 2;
+          } else if ( cr.mode == 5 || (settings.simpleMode && cr.mode == 2)) {
+            cr.mode = 1;
+          } else {
+            cr.mode += 1;
+          }
+          // Request a re-draw when tapped to display the new mode
+          this.emit("redraw");
+          require("Storage").writeJSON("worldclkinfo.config.json", config);
+        },
+        get: () => {
+          let d = new Date();
+          // Get UTC/GMT by adding our current offset.
+          let gmt = new Date(d.getTime() + d.getTimezoneOffset() * 60 * 1000);
+          // Add the row's offset
+          let dx = new Date(gmt.getTime() + row.offset * 60 * 60 * 1000);
+          // Get the meridian if our locale has it (24h locales won't)
+          var meridian = require("locale").meridian(dx);
+          // Strip the extra spaces
+          let odx = require("locale").time(dx, 1).replace(" ", "");
+
+          // If the setting is enabled and our locale has a meridian text
+          if(settings.showMeridians && meridian){
+            if(settings.shortenMeridians){
+              //get A - am, or P - pm
+              odx = odx + meridian[0];
+            } else {
+              odx = odx + " " + meridian;
+            }
+          }
+
+          // Day of week
+          let odd = require('locale').dow(dx, 1);
+          // If we should shorten the cityname and a short version exists, or if only a short version exists,
+          //   show the short version.
+          let ln = ((settings.shorten && row.shortname) || (row.shortname && !row.name)) ? row.shortname : row.name;
+          let txt = "";
+          let cr = config.rows[id];
+          if (settings.simpleMode) {
+            cr = config.simpleRow || {};
+          }
+          switch (cr.mode) {
+            case 2:
+              txt = ln;
+              break;
+            case 3:
+              txt = odx + " " + odd;
+              break;
+            case 4:
+              txt = ln + " " + odx;
+              break;
+            case 5:
+              txt = ln + " " + odx + " " + odd;
+              break;
+            default:
+              txt = odx;
+          }
+          return {
+            text: txt,
+            short: odx,
+            img: atob("GBiBAAD/AAPnwAbDYBiBGBEAiD///H///kMAwsIAQ4IAQYIAQf///////4IAQYIAQcIAQ0MAwn///j///BEAiBiBGAbDYAPnwAD/AA==")
+          };
+        }
+      });
+    });
+  }
+
+  return clocks;
 })

@@ -2,7 +2,7 @@
   "name": "OpenWind",
   "shortName":"OpenWind",
   "version": "0.04",
-  "description": "OpenWind",
+  "description": "Receive and display data from a wireless OpenWind sailing wind instrument on the Bangle",
   "icon": "openwind.png",
   "readme": "README.md",
   "tags": "ble,outdoors,gps,sailing",

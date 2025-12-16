@@ -71,9 +71,6 @@ loadThemeColors();
 // Load the clock infos
 let clockInfoW = 0|(w/2);
 let clockInfoH = 0|(h/2);
-let clockInfoG = Graphics.createArrayBuffer(26, 26, 2, {msb:true});
-clockInfoG.transparent = 3;
-clockInfoG.palette = new Uint16Array([g.theme.bg, g.theme.fg, g.toColor("#888"), g.toColor("#888")]);
 let clockInfoItems = require("clock_info").load();
 let clockInfoDraw = (itm, info, options) => {
   // itm: the item containing name/hasRange/etc

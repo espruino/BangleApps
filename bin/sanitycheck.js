@@ -113,6 +113,7 @@ var KNOWN_ERRORS = [
 var KNOWN_WARNINGS = [
   "App gpsrec data file wildcard .gpsrc? does not include app ID",
   "App owmweather data file weather.json is also listed as data file for app weather",
+  "App loadanim data file .loading is also listed as data file for app loadingscreen",
   "App carcrazy has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"carcrazy.settings.json\"}]`)",
   "App loadingscreen has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"loadingscreen.settings.json\"}]`)",
   "App trex has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"trex.settings.json\"}]`)",
@@ -171,6 +172,7 @@ const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluat
 const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
 const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","textinput","module","clkinfo","defaultconfig"]; // values allowed for "type" field - listed in README.md
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
+const MAX_FILE_NAME_LENGTH = 28
 const VALID_DUPLICATES = [ '.tfmodel', '.tfnames' ];
 const GRANDFATHERED_ICONS = ["s7clk",  "snek", "astral", "alpinenav", "slomoclock", "arrow", "pebble", "rebble"];
 const INTERNAL_FILES_IN_APP_TYPE = { // list of app types and files they SHOULD provide...
@@ -287,6 +289,7 @@ apps.forEach((app,appIdx) => {
   app.storage.forEach((file) => {
     if (!file.name) ERROR(`App ${app.id} has a file with no name`, {file:metadataFile});
     if (isGlob(file.name)) ERROR(`App ${app.id} storage file ${file.name} contains wildcards`, {file:metadataFile});
+    if (file.name.length > MAX_FILE_NAME_LENGTH) ERROR(`App ${app.id} storage file name ${file.name} is longer than ${MAX_FILE_NAME_LENGTH} characters}`, {file:metadataFile})
     let char = file.name.match(FORBIDDEN_FILE_NAME_CHARS)
     if (char) ERROR(`App ${app.id} storage file ${file.name} contains invalid character "${char[0]}"`, {file:metadataFile})
     if (fileNames.includes(file.name) && !file.supports)  // assume that there aren't duplicates if 'supports' is set
@@ -410,6 +413,8 @@ apps.forEach((app,appIdx) => {
       ERROR(`App ${app.id} data file ${data.name} has both name and wildcard`, {file:metadataFile});
     if (isGlob(data.name))
       ERROR(`App ${app.id} data file name ${data.name} contains wildcards`, {file:metadataFile});
+    if (data.name && data.name.length > MAX_FILE_NAME_LENGTH)
+      ERROR(`App ${app.id} data file name ${data.name} is longer than ${MAX_FILE_NAME_LENGTH} characters}`, {file:metadataFile})
     if (data.wildcard) {
       if (!isGlob(data.wildcard))
         ERROR(`App ${app.id} data file wildcard ${data.wildcard} does not actually contains wildcard`, {file:metadataFile});

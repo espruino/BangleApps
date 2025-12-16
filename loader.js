@@ -16,7 +16,7 @@ if (window.location.host=="banglejs.com") {
     'This is not the official Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
 }
 
-var RECOMMENDED_VERSION = "2v27";
+var RECOMMENDED_VERSION = "2v28";
 // could check http://www.espruino.com/json/BANGLEJS.json for this
 
 // We're only interested in Bangles
@@ -143,6 +143,12 @@ function setSavedDeviceId(deviceId) {
 
 // At boot, show a window to choose which type of device you have...
 window.addEventListener('load', (event) => {
+  if (window.location.search) {
+    let searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.has("dev_id")) // dev_id=BANGLEJS2 for example, to stop the popup
+      setSavedDeviceId(searchParams.get("dev_id"));
+  }
+
   let deviceId = getSavedDeviceId()
   if (deviceId !== undefined) return; // already chosen
 

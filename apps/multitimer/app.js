@@ -3,6 +3,7 @@ Bangle.loadWidgets();
 Bangle.drawWidgets();
 
 const R = Bangle.appRect;
+const MS_PER_DAY = 86400000;
 let layer;
 let drag;
 let timerInt1 = [];
@@ -15,6 +16,30 @@ function getCurrentTime() {
     time.getMinutes() * 60000 +
     time.getSeconds() * 1000
   );
+}
+
+function getTimeRemaining(alarm) {
+  let rem = require('sched').getTimeToAlarm(alarm);
+  if (rem === undefined) {
+    // fallback: compute time difference
+    const now = getCurrentTime();
+    if (alarm.t >= now) {
+      rem = alarm.t - now;
+    } else {
+      rem = MS_PER_DAY - (now - alarm.t);
+    }
+  }
+  return rem;
+}
+
+function formatAlarmTime(t) {
+  // t is milliseconds since local midnight
+  const dt = decodeTime(t);
+  // Use locale.time so formatting respects 12h/24h user settings
+  const d = new Date(1999, 1, 1, dt.hrs, dt.mins, 0);
+  const timeStr = require("locale").time(d, 1);
+  const mer = require("locale").meridian(d);
+  return timeStr + mer;
 }
 
 function decodeTime(t) {
@@ -100,7 +125,7 @@ function drawTimers() {
       }
       else if (idx > 0 && idx < timers.length+1) {
         if (timers[idx-1].on == true) {
-          drawMenuItem(formatTime(timers[idx-1].t-getCurrentTime()));
+          drawMenuItem(formatTime(getTimeRemaining(timers[idx-1])));
           updateTimers(idx-1);
         }
         else drawMenuItem(formatTime(timers[idx-1].timer));
@@ -156,7 +181,7 @@ function timerMenu(idx) {
         let msg = "";
         if (a.msg) msg = "\n"+(a.msg.length > 10 ? a.msg.substring(0, 10)+"..." : a.msg);
         if (a.on == true) {
-          drawMenuItem(formatTime(a.t-getCurrentTime())+msg);
+          drawMenuItem(formatTime(getTimeRemaining(a))+msg);
           updateTimer();
         }
         else {
@@ -184,7 +209,7 @@ function timerMenu(idx) {
       if (i == 1) {
         if (a.on == true) {
           clearInt();
-          a.timer = a.t-getCurrentTime();
+          a.timer = getTimeRemaining(a);
           a.on = false;
           timers[timerIdx[idx]] = a;
           saveAndReload();
@@ -546,8 +571,7 @@ function drawAlarms() {
         .setColor(g.theme.fg).setFont("6x8:2").setFontAlign(0,0).drawString("<   Swipe   >",r.x+(r.w/2),r.y+(r.h/2));
       }
       else if (idx > 0 && idx < alarms.length+1){
-        const str = formatTime(alarms[idx-1].t);
-        drawMenuItem(str.slice(0, -3));
+        drawMenuItem(formatAlarmTime(alarms[idx-1].t));
       }
     },
     select : (idx) => {
@@ -631,6 +655,11 @@ function editAlarm(idx, a) {
     },
     "Hours": {
       value: t.hrs, min: 0, max: 23, wrap: true,
+      format: v => {
+        // Show 12h or 24h based on locale settings
+        const mer = require("locale").meridian(new Date(1999,1,1,v,0,0));
+        return mer ? (v%12||12) + mer : v;
+      },
       onchange: v => {
         t.hrs = v;
         a.t = encodeTime(t);
@@ -694,8 +723,7 @@ function setUI() {
   const origRemove = Bangle.uiRemove;
   Bangle.uiRemove = () => {
     Bangle.removeListener("drag", onDrag);
-    Object.values(timerInt1).forEach(clearTimeout);
-    Object.values(timerInt2).forEach(clearTimeout);
+    clearInt();
     if (origRemove) origRemove();
   };
 }
