@@ -29,6 +29,6 @@ TBA: Should the app remember last open clock info menu position between launches
 
 Open an issue on the espruino/BangleApps issue tracker mentioning @thyttan.
 
-## Creator
+## Creators
 
-thyttan
+thyttan and Gordon Williams.
