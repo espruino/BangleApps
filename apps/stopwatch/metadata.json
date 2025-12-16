@@ -10,6 +10,7 @@
   "readme": "README.md",
   "storage": [
     {"name":"stopwatch.app.js","url":"stopwatch.app.js"},
+    {"name":"stopwatch.settings.js","url":"stopwatch.settings.js"},
     {"name":"stopwatch.img","url":"stopwatch.icon.js","evaluate":true}
   ],
   "data": [
