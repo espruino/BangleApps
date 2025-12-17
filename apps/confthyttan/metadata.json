@@ -42,6 +42,7 @@
     "fastload":"app",
     "boot":"app",
     "ateatimer":"app",
+    "bigclkinfo":"app",
     "drained":"app"
   },
   "storage": [
