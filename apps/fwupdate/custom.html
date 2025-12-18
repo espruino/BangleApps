@@ -381,6 +381,7 @@ function createJS_app(binary, startAddress, endAddress) {
 function createJS_bootloader(binary, startAddress, endAddress) {
   var crc = CRC32(binary);
   console.log("CRC 0x"+crc.toString(16));
+  // it is possible to do E.memoryArea(0xF7000,0x7000).match(/BL (2v[^\n]*)/) - can take 1s
   hexJS = `\x10if (E.CRC32(E.memoryArea(${startAddress},${endAddress-startAddress}))==${crc}) { print("DFU UP TO DATE!"); load();}\n`;
   hexJS += `\x10var _fw = new Uint8Array(${binary.length})\n`;
   var CHUNKSIZE = 1024;
