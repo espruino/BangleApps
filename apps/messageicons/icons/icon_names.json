@@ -78,6 +78,7 @@
   { "app":"nextbike", "icon":"nextbike.png" },
   { "app":"nextcloud", "icon":"nextcloud.png" },
   { "app":"nina", "icon":"nina.png" },
+  { "app":"ntfy", "icon":"ntfy.png" },
   { "app":"outlook mail", "icon":"outlook.png" },
   { "app":"paypal", "icon":"paypal.png" },
   { "app":"phone", "icon":"phone.png" },
