@@ -8,3 +8,4 @@
       loading apps.
 0.08: hide bt indicator when connected (`widbt_notify`). Add "Message Twist to
       Scroll". Add "Big Clock Info app".
+      Auto open messages if locked.
