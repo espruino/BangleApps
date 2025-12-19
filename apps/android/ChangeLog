@@ -47,3 +47,4 @@
       version 85 when it's out)
 0.43: Ensure listRecs doesn't list old-style recorded tracks (Otherwise Gadgetbridge fails parsing the filename)
 0.44: Pass HTTP request timeout to Gadgetbridge
+0.45: Don't pass on music messages if nothing has changed
