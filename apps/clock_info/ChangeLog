@@ -23,3 +23,5 @@
 0.21: Add haptics when changing infos and a setting to toggle it on or off
 0.22: Tapping on step counter now disable step counting on 2v29+ firmwares
 0.23: Use filter function for better image borders if it exists (2v22)
+0.24: Only save settings once (not once per clockinfo)
+      Add .setFocus function to allow a clockinfo to be focused without faking a click on it
