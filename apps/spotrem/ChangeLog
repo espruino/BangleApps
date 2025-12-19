@@ -13,4 +13,4 @@ when fastloading.
 0.12: Fix some warnings from the linter.
 0.13: Move ui-handlers inside setUI-call.
 0.14: Add volume knob.
-
+0.15: Enable fast load with Bangle.load

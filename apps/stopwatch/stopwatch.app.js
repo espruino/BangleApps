@@ -48,7 +48,7 @@ const timeToText = function(t) {
   let tnth = Math.floor(t/100)%10;
   let text;
 
-  if (hrs === 0) 
+  if (hrs === 0)
     text = ("0"+mins).substr(-2) + ":" + ("0"+secs).substr(-2) + "." + tnth;
   else
     text = ("0"+hrs) + ":" + ("0"+mins).substr(-2) + ":" + ("0"+secs).substr(-2);
@@ -80,7 +80,7 @@ const drawTime = function() {
   g.setFont("Vector",38);  // check
   g.setFontAlign(0,0);
   g.clearRect(0, timeY - 21, w, timeY + 21);
-  g.setColor(g.theme.fg); 
+  g.setColor(g.theme.fg);
   g.drawString(Ttxt, w/2, timeY);
 };
 
@@ -117,7 +117,7 @@ const stopStart = function() {
   Bangle.buzz();
 
   if (running)
-    tStart = Date.now() + tStart- tCurrent;  
+    tStart = Date.now() + tStart- tCurrent;
   tTotal = Date.now() + tTotal - tCurrent;
   tCurrent = Date.now();
 
@@ -193,7 +193,7 @@ BUTTON.prototype.draw = function() {
     let ix = this.x + ((this.w - iw) /2);
     let iy = this.y + ((this.h - iw) /2);
     log_debug("g.drawImage(" + ix + "," + iy + "{scale: " + iconScale + "})");
-    g.drawImage(this.img, ix, iy, {scale: iconScale}); 
+    g.drawImage(this.img, ix, iy, {scale: iconScale});
   }
   g.drawRect(this.x, this.y, this.x + this.w, this.y + this.h);
 };
@@ -207,7 +207,7 @@ bigPlayPauseBtn.setImage(play_img);
 smallPlayPauseBtn.setImage(play_img);
 resetBtn.setImage(pause_img);
 
-Bangle.setUI({mode:"custom", btn:() => load(), touch: (button,xy) => {
+Bangle.setUI({mode:"custom", btn:() => Bangle.load(), touch: (button,xy) => {
     let x = xy.x;
     let y = xy.y;
 
