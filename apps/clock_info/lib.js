@@ -235,6 +235,7 @@ clockInfoMenu is the 'options' parameter, with the following added:
 * `remove` : function - remove this clockInfo item
 * `redraw` : function - force a redraw
 * `focus` : bool to show if menu is focused or not
+* `setFocus(f)` function - set if we're focussed or not
 
 You can have more than one clock_info at once as well, for instance:
 
@@ -255,27 +256,21 @@ exports.addInteractive = function(menu, options) {
   if ("function" == typeof options) options = {draw:options}; // backwards compatibility
   options.index = 0|exports.loadCount;
   exports.loadCount = options.index+1;
+  if (!exports.clockInfos.length)
+    E.on("kill", exports.save); // only need one save handler
   exports.clockInfos[options.index] = options;
   options.focus = options.index==0 && options.x===undefined; // focus if we're the first one loaded and no position has been defined
-  const appName = (options.app||"default")+":"+options.index;
-
+  options.appName = (options.app||"default")+":"+options.index;
   // load the currently showing clock_infos
   let settings = exports.loadSettings();
-  if (settings.apps[appName]) {
-    let a = settings.apps[appName].a|0;
-    let b = settings.apps[appName].b|0;
+  if (settings.apps[options.appName]) {
+    let a = settings.apps[options.appName].a|0;
+    let b = settings.apps[options.appName].b|0;
     if (menu[a] && menu[a].items[b]) { // all ok
       options.menuA = a;
       options.menuB = b;
     }
   }
-  const save = () => {
-    // save the currently showing clock_info
-    const settings = exports.loadSettings();
-    settings.apps[appName] = {a:options.menuA, b:options.menuB};
-    require("Storage").writeJSON("clock_info.json",settings);
-  };
-  E.on("kill", save);
 
   if (options.menuA===undefined) options.menuA = 0;
   if (options.menuB===undefined) options.menuB = Math.min(exports.loadCount, menu[options.menuA].items.length)-1;
@@ -307,6 +302,7 @@ exports.addInteractive = function(menu, options) {
       options.menuB += ud;
       if (options.menuB<0) options.menuB = menu[options.menuA].items.length-1;
       if (options.menuB>=menu[options.menuA].items.length) options.menuB = 0;
+      options.modified = true;
     } else if (lr) {
       if (menu.length==1) return; // 1 item - can't move
       oldMenuItem = menu[options.menuA].items[options.menuB];
@@ -324,6 +320,7 @@ exports.addInteractive = function(menu, options) {
       while ((options.menuB < menu[options.menuA].items.length-1) &&
              exports.clockInfos.some(m => (m!=options) && m.menuA==options.menuA && m.menuB==options.menuB))
           options.menuB++;
+      options.modified = true;
     }
     if (oldMenuItem) {
       menuHideItem(oldMenuItem);
@@ -383,8 +380,7 @@ exports.addInteractive = function(menu, options) {
   menuShowItem(menu[options.menuA].items[options.menuB]);
   // return an object with info that can be used to remove the info
   options.remove = function() {
-    save();
-    E.removeListener("kill", save);
+    exports.save();
     Bangle.removeListener("swipe",swipeHandler);
     if (touchHandler) Bangle.removeListener("touch",touchHandler);
     if (lockHandler) Bangle.removeListener("lock", lockHandler);
@@ -392,6 +388,8 @@ exports.addInteractive = function(menu, options) {
     menuHideItem(menu[options.menuA].items[options.menuB]);
     exports.loadCount--;
     delete exports.clockInfos[options.index];
+    if (!exports.clockInfos.length) // if no more clockinfos, no need to save
+      E.removeListener("kill", exports.save);
     // If nothing loaded now, clear our list of loaded menus
     if (exports.loadCount==0)
       exports.clockInfoMenus = undefined;
@@ -416,12 +414,16 @@ exports.addInteractive = function(menu, options) {
 
     return true;
   };
+  options.setFocus = function(f) {
+    if (f==options.focus) return;
+    if (f) focus(); else blur();
+  };
   if (options.focus) focus();
   delete settings; // don't keep settings in RAM - save space
   return options;
 };
 
-/* clockinfos usually return a 24x24 image. This draws that image but
+/** clockinfos usually return a 24x24 image. This draws that image but
 recolors it such that it is transparent, with the middle of the image as background
 and the image itself as foreground. options is passed to g.drawImage */
 exports.drawFilledImage = function(img,x,y,options) {
@@ -442,7 +444,7 @@ exports.drawFilledImage = function(img,x,y,options) {
   return g.drawImage(gfx, x-scale,y-scale,options);
 };
 
-/* clockinfos usually return a 24x24 image. This creates a 26x26 gfx of the image but
+/** clockinfos usually return a 24x24 image. This creates a 26x26 gfx of the image but
 recolors it such that it is transparent, with the middle and border of the image as background
 and the image itself as foreground. options is passed to g.drawImage */
 exports.drawBorderedImage = function(img,x,y,options) {
@@ -468,6 +470,17 @@ exports.drawBorderedImage = function(img,x,y,options) {
   gfx.floodFill(27,27,3); // flood fill edge to transparent
   var o = ((options && options.scale) || 1)*2;
   return g.drawImage(gfx, x-o,y-o,options);
+};
+
+/** Save clockinfos if modified */
+exports.save = function() {
+  if (!exports.clockInfos.some(ci=>ci.modified)) return; // all written?
+  const settings = exports.loadSettings();
+  exports.clockInfos.forEach(ci => {
+    settings.apps[ci.appName] = {a:ci.menuA, b:ci.menuB};
+    ci.modified = false;
+  });
+  require("Storage").writeJSON("clock_info.json",settings);
 };
 
 // Code for testing (plots all elements from first list)
