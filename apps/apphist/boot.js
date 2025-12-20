@@ -3,14 +3,14 @@
 // Seems like `apphist` must be placed before `Fastload Utils` in execution order at boot for compatibility. Otherwise the Bangle.js 2 craps out, freezed up and soon reboots extra hard before loading the clock face again. This is ensured by metadata placing apphist at order 4 and Fastload Utils at order 5 in the boot sequence.
 
 const s = require("Storage");
-const SETTINGS = s.readJSON("apphist.json") || {};
+const SETTINGS = s.readJSON("apphist.settings.json") || {};
 
 global._load = global.load;
 Bangle._load = Bangle.load;
 
-let appHistory  = s.readJSON("apphist.history.json",true)||[];
-const resetHistory = ()=>{appHistory=[];s.writeJSON("apphist.history.json",appHistory);};
-const recordHistory = ()=>{s.writeJSON("apphist.history.json",appHistory);};
+let appHistory  = s.readJSON("apphist.json",true)||[];
+const resetHistory = ()=>{appHistory=[];s.writeJSON("apphist.json",appHistory);};
+const recordHistory = ()=>{s.writeJSON("apphist.json",appHistory);};
 
 const traverseHistory = (name)=>{
   if (name && name!=".bootcde" && !(name=="quicklaunch.app.js" && SETTINGS.disregardQuicklaunch)) {
