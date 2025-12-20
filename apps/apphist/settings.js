@@ -1,5 +1,5 @@
 (function(back) {
-  var FILE="appHist.json";
+  var FILE="apphist.settings.json";
   var settings;
   var isQuicklaunchPresent = !!require('Storage').read("quicklaunch.app.js", 0, 1);
 
