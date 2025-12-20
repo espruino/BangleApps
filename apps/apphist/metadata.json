@@ -8,7 +8,7 @@
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name":"apphist.5.boot.js","url":"boot.js"},
+    {"name":"apphist.6.boot.js","url":"boot.js"},
     {"name":"apphist.settings.js","url":"settings.js"}
   ],
   "data": [{"name":"apphist.json"}]
