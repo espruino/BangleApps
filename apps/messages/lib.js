@@ -152,6 +152,9 @@ exports.clearAll = function() {
  * that aren't yet written) apply them to the messages we read so we get
  * up to date info.
  *
+ * If were in the messages app and it's defined `MESSAGES` then we just use that
+ * as it contains all the messages that are already loaded.
+ *
  * Optionally pass in a message to apply to the list, this is for event handlers:
  * By passing the message from the event, you can make sure the list is up-to-date,
  * even if the message has not been saved (yet)
@@ -165,7 +168,11 @@ exports.clearAll = function() {
  * @returns {array} All messages
  */
 exports.getMessages = function(withMessage) {
-  let messages = require("Storage").readJSON("messages.json", true);
+  let messages;
+  if (global.MESSAGES!==undefined)
+    messages = global.MESSAGES.slice(); // we're in the messages app, just use the messages list that it's keeping (clone the array)
+  else
+    messages = require("Storage").readJSON("messages.json", true);
   messages = Array.isArray(messages) ? messages : []; // make sure we always return an array
   (Bangle.MESSAGES || []).forEach(m => require("messages").apply(m, messages)); // apply any usaved messages
   if (withMessage && withMessage.id) exports.apply(withMessage, messages);

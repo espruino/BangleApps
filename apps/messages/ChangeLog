@@ -16,3 +16,4 @@
       default, if locked, always)
 0.69: Remove .music field (which is not used - require("messages").getMessages().find(m=>m.id=="music") works fine)
       Ensure .getMessages uses Bangle.MESSAGES to return the most up to date message info
+0.70: Fix message app not showing latest music messages
