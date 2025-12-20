@@ -25,19 +25,19 @@ const traverseHistory = (name)=>{
     name = appHistory[appHistory.length-1];
   }
   return name;
-}
+};
 
 const addHistoryTraversal = (loadFn => (name) => {
   name = traverseHistory(name);
   loadFn(name);
-})
+});
 
 const addHistoryTraversalFastload = (loadFn => (name) => {
   global.load = global._load; // Only run through traverseHistory once, not both for Bangle.load and global.load.
   name = traverseHistory(name);
   loadFn(name);
   global.load = globalLoadWithHistory;
-})
+});
 
 const globalLoadWithHistory = addHistoryTraversal(global.load);
 global.load = globalLoadWithHistory;
@@ -46,5 +46,5 @@ Bangle.load = addHistoryTraversalFastload(Bangle._load);
 E.on('kill', ()=>{
   // Usually record history, but reset it if long press of HW button was used. May be tricky to release button quick enough to not trigger resetHistory.
   if (!BTN.read()) recordHistory(); else resetHistory();
-})
+});
 }
