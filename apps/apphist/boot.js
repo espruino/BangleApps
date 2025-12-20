@@ -1,99 +1,50 @@
 {
+// Things that use `eval` instead of `load` or `Bangle.load` (e.g. auto displaying new messages - `messagegui.new.js`) can affect the app history record unexpectedly. They don't themselves get added to the history (since we don't override `eval`) and if they use one of the other two mentioned load functions they may remove the last recorded entry.
+
 const s = require("Storage");
 const SETTINGS = s.readJSON("fastload.json") || {};
 
-let loadingScreen = function(){
-  g.reset();
+global._load = global.load;
+Bangle._load = Bangle.load;
 
-  let x = g.getWidth()/2;
-  let y = g.getHeight()/2;
-  g.setColor(g.theme.bg);
-  g.fillRect(x-49, y-19, x+49, y+19);
-  g.setColor(g.theme.fg);
-  g.drawRect(x-50, y-20, x+50, y+20);
-  g.setFont("6x8");
-  g.setFontAlign(0,0);
-  g.drawString("Fastloading...", x, y);
-  g.flip(true);
-};
+let appHistory  = s.readJSON("fastload.history.json",true)||[];
+const resetHistory = ()=>{appHistory=[];s.writeJSON("fastload.history.json",appHistory);};
+const recordHistory = ()=>{s.writeJSON("fastload.history.json",appHistory);};
 
-let cache = s.readJSON("fastload.cache") || {};
-
-const SYS_SETTINGS="setting.json";
-
-let appFastloadPossible = function(n){
-  if(SETTINGS.detectSettingsChange && (!cache[SYS_SETTINGS] || s.hash(SYS_SETTINGS) != cache[SYS_SETTINGS])){
-    cache[SYS_SETTINGS] = s.hash(SYS_SETTINGS);
-    s.writeJSON("fastload.cache", cache);
-    return false;
+const traverseHistory = (name)=>{
+  if (name && name!=".bootcde" && !(name=="quicklaunch.app.js" && SETTINGS.disregardQuicklaunch)) {
+    // store the name of the app to launch
+    appHistory.push(name);
+  } else if (name==".bootcde") { // when Bangle.showClock is called
+    resetHistory();
+  } else if (name=="quicklaunch.app.js" && SETTINGS.disregardQuicklaunch) {
+    // do nothing with history
+  } else {
+    // go back in history
+    appHistory.pop();
+    name = appHistory[appHistory.length-1];
   }
-
-  // no widgets, no problem
-  if (!global.WIDGETS) return true;
-  let hash = s.hash(n);
-  if (cache[n] && hash == cache[n].hash)
-    return cache[n].fast;
-  let app = s.read(n);
-  cache[n] = {};
-  cache[n].fast = app.includes("Bangle.loadWidgets");
-  cache[n].hash = hash;
-  s.writeJSON("fastload.cache", cache);
-  return cache[n].fast;
-};
-
-global._load = load;
-
-let slowload = function(n){
-  global._load(n);
-};
-
-let fastload = function(n){
-  if (!n || appFastloadPossible(n)){
-    // Bangle.load can call load, to prevent recursion this must be the system load
-    global.load = slowload;
-    Bangle.load(n);
-    // if fastloading worked, we need to set load back to this method
-    global.load = fastload;
-  }
-  else
-    slowload(n);
-};
-global.load = fastload;
-
-let appHistory, resetHistory, recordHistory;
-if (SETTINGS.useAppHistory){
-  appHistory  = s.readJSON("fastload.history.json",true)||[];
-  resetHistory = ()=>{appHistory=[];s.writeJSON("fastload.history.json",appHistory);};
-  recordHistory = ()=>{s.writeJSON("fastload.history.json",appHistory);};
+  return name;
 }
 
-Bangle.load = (o => (name) => {
-  if (Bangle.uiRemove && !SETTINGS.hideLoading) loadingScreen();
-  if (SETTINGS.useAppHistory){
-    if (name && name!=".bootcde" && !(name=="quicklaunch.app.js" && SETTINGS.disregardQuicklaunch)) {
-      // store the name of the app to launch
-      appHistory.push(name);
-    } else if (name==".bootcde") { // when Bangle.showClock is called
-      resetHistory();
-    } else if (name=="quicklaunch.app.js" && SETTINGS.disregardQuicklaunch) {
-      // do nothing with history
-    } else {
-      // go back in history
-      appHistory.pop();
-      name = appHistory[appHistory.length-1];
-    }
-  }
-  if (SETTINGS.autoloadLauncher && !name){
-    let orig = Bangle.load;
-    Bangle.load = (n)=>{
-      Bangle.load = orig;
-      fastload(n);
-    };
-    Bangle.showLauncher();
-    Bangle.load = orig;
-  } else
-    o(name);
-})(Bangle.load);
+const addHistoryTraversal = (loadFn => (name) => {
+  name = traverseHistory(name);
+  loadFn(name);
+})
 
-if (SETTINGS.useAppHistory) E.on('kill', ()=>{if (!BTN.read()) recordHistory(); else resetHistory();}); // Usually record history, but reset it if long press of HW button was used.
+const addHistoryTraversalFastload = (loadFn => (name) => {
+  global.load = global._load; // Only run through traverseHistory once, not both for Bangle.load and global.load.
+  name = traverseHistory(name);
+  loadFn(name);
+  global.load = globalLoadWithHistory;
+})
+
+const globalLoadWithHistory = addHistoryTraversal(global.load);
+global.load = globalLoadWithHistory;
+Bangle.load = addHistoryTraversalFastload(Bangle._load);
+
+E.on('kill', ()=>{
+  // Usually record history, but reset it if long press of HW button was used. May be tricky to release button quick enough to not trigger resetHistory.
+  if (!BTN.read()) recordHistory(); else resetHistory();
+})
 }
