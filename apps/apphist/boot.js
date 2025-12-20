@@ -1,5 +1,6 @@
 {
 // Things that use `eval` instead of `load` or `Bangle.load` (e.g. auto displaying new messages - `messagegui.new.js`) can affect the app history record unexpectedly. They don't themselves get added to the history (since we don't override `eval`) and if they use one of the other two mentioned load functions they may remove the last recorded entry.
+// Seems like `apphist` must be placed before `Fastload Utils` in execution order at boot for compatibility. Otherwise the Bangle.js 2 craps out, freezed up and soon reboots extra hard before loading the clock face again. This is ensured by metadata placing apphist at order 4 and Fastload Utils at order 5 in the boot sequence.
 
 const s = require("Storage");
 const SETTINGS = s.readJSON("apphist.json") || {};
