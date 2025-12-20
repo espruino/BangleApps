@@ -11,5 +11,8 @@
     {"name":"apphist.4.boot.js","url":"boot.js"},
     {"name":"apphist.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"apphist.json"}]
+  "data": [
+    {"name":"apphist.json"},
+    {"name":"apphist.settings.json"}
+  ]
 }
