@@ -2,14 +2,14 @@
 // Things that use `eval` instead of `load` or `Bangle.load` (e.g. auto displaying new messages - `messagegui.new.js`) can affect the app history record unexpectedly. They don't themselves get added to the history (since we don't override `eval`) and if they use one of the other two mentioned load functions they may remove the last recorded entry.
 
 const s = require("Storage");
-const SETTINGS = s.readJSON("fastload.json") || {};
+const SETTINGS = s.readJSON("apphist.json") || {};
 
 global._load = global.load;
 Bangle._load = Bangle.load;
 
-let appHistory  = s.readJSON("fastload.history.json",true)||[];
-const resetHistory = ()=>{appHistory=[];s.writeJSON("fastload.history.json",appHistory);};
-const recordHistory = ()=>{s.writeJSON("fastload.history.json",appHistory);};
+let appHistory  = s.readJSON("apphist.history.json",true)||[];
+const resetHistory = ()=>{appHistory=[];s.writeJSON("apphist.history.json",appHistory);};
+const recordHistory = ()=>{s.writeJSON("apphist.history.json",appHistory);};
 
 const traverseHistory = (name)=>{
   if (name && name!=".bootcde" && !(name=="quicklaunch.app.js" && SETTINGS.disregardQuicklaunch)) {
