@@ -116,7 +116,7 @@ let bootFiles = require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
 // precalculate file size
 bootPost += "}";
 let fileOffset,fileSize;
-/* code to output a file, plus preable and postable
+/* code to output a file, plus preamble and postamble
 when called with dst==undefined it just increments
 fileOffset so we can see ho wbig the file has to be */
 let outputFile = (dst,src,pre,post) => {"ram";
