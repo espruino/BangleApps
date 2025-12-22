@@ -65,7 +65,7 @@
       border: solid 1px light-dark(#dadee4, #3a386f);
       box-shadow: none;
       margin: -1;
-      color:light-dark(#3c3c3c, #cacaca);
+      color: light-dark(#3c3c3c, #cacaca);
     }
 
     .panel-header {
