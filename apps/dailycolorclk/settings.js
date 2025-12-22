@@ -2,8 +2,7 @@
   const SETTINGS_FILE = "dailycolorclk.json";
   const storage = require('Storage');
   let settings = Object.assign(
-    storage.readJSON("dailycolorclk.default.json", true) || {},
-    storage.readJSON(SETTINGS_FILE, true) || {}
+      require("Storage").readJSON(SETTINGS_FILE, true) || {}
   );
 
   if (!settings.bgColors) settings.bgColors = ["#0F0", "#FF0", "#F00", "#0FF"];
@@ -43,9 +42,7 @@
       }
 
     }
-    print(settings.bgColors);
     writeSettings();
-
   }
 
   function colorSelected(name) {
