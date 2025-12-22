@@ -34,7 +34,7 @@
   ];
 
   function modifyColor(name, val) {
-    color = colors.find(obj => obj.name === name);
+    let color = colors.find(obj => obj.name === name);
     if (color) {
       if (val == true) {
         settings.bgColors.push(color.color);
