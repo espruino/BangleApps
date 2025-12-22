@@ -2,7 +2,6 @@
   let settings;
   let getSettings = function () {
     settings = Object.assign(
-      require("Storage").readJSON("dailycolorclk.default.json", true) || {},
       require("Storage").readJSON("dailycolorclk.json", true) || {}
     );
     if (!settings.bgColors) settings.bgColors = ["#0F0", "#FF0", "#F00", "#0FF"];
