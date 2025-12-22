@@ -12,7 +12,7 @@
   }
 
   const colors = [
-    { "name": "Red", "color": "#0F0", "dithered": false },
+    { "name": "Red", "color": "#F00", "dithered": false },
     { "name": "Yellow", "color": "#FF0", "dithered": false },
     { "name": "Green", "color": "#0F0", "dithered": false },
     { "name": "Blue", "color": "#00F", "dithered": false },
