@@ -78,7 +78,7 @@
       /*LANG*/'Regenerate Queue': function () {
         settings.regenerate = true;
         writeSettings();
-        E.showAlert("Regenerated Queue!", "Sucess")
+        E.showAlert("Regenerated Queue!", "Success")
           .then(function (v) {
             eval(require("Storage").read("dailycolorclk.settings.js"))(() => load());
           }
