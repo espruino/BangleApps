@@ -35,6 +35,7 @@
       const j = Math.floor(Math.random() * (i + 1));
       const t = array[i]; array[i] = array[j]; array[j] = t;
     }
+    return array;
   }
 
   let generateQueue = function () {
