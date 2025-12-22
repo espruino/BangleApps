@@ -45,7 +45,8 @@ global.load = globalLoadWithHistory;
 Bangle.load = addHistoryTraversalFastload(Bangle._load);
 
 E.on('kill', ()=>{
-  // Usually record history, but reset it if long press of HW button was used. May be tricky to release button quick enough to not trigger resetHistory.
+  // Usually record history, but reset it if long press of HW button was used.
+  // FIXME: May be tricky for user to release button quickly enough to not trigger resetHistory.
   if (!BTN.read()) recordHistory(); else resetHistory();
 });
 }
