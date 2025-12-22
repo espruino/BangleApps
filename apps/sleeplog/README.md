@@ -32,7 +32,7 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
 #### Controls:
   - __swipe left & right__
     to change the displayed day
-  - __touch the "title"__ (e.g. `Night to Fri 20/05/2022`)
+  - __touch the "title"__ (e.g. `Thu to Fri 20/05/2022`)
     to enter day selection prompt
   - __touch the info area__
     to change the displayed information
@@ -56,14 +56,22 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
 ---
 ### Settings Usage
 ---
+#### Tuning guide
+To make sure the app accurately provides sleep information, it's a good idea to change the default thresholds to find one that works for you. A step-by step process would be:
+- Set the thresholds (movement or hrm, depending on what you use) to be high.
+- Every day, look at the sleep it tracked and see if it's accurate or not.
+- If it doesn't detect much, reduce the thresholds.
+- If it detects more than it should, increase slightly until you find an accurate setting.
+#### Settings
 
+  
   - __HRM Thresholds__ submenu
     
     Changes take effect from now on, not retrospective! HRM works only if polling is enabled in `Health` settings
     - __Deep Sleep__ | deep sleep threshold
-      _30_ / _31_ / ... / __100__ / ... / _200_
+      _40_ / _41_ / ... / __60__ / ... / _80_
     - __Light Sleep__ | light sleep threshold
-      _100_ / _110_ / ... / __200__ / ... / _400_
+      _50_ / _51_ / ... / __74__ / ... / _90_
      - __Reset to Default__ | reset to bold values above
  - __Movement Thresholds__ submenu
  
