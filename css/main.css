@@ -1,12 +1,16 @@
     /* NAVIGATION BAR AND GENERAL STYLES */
+    :root {
+      color-scheme: light dark; /* Informs the browser the site supports both schemes */
+    }
     body {
-      color: #3c3c3c;
+      background-color: light-dark(#ffffff, #232323);
+      color: light-dark(#3c3c3c, #cacaca);
       padding-left: 1em;
       padding-right: 1em;
     }
 
     .navbar {
-      background-color: #5755d9;
+      background-color: light-dark(#5755d9, #3a386f);
       padding: 1em 1em 1em 1em;
     }
 
@@ -57,9 +61,11 @@
       border-radius: 1em;
       padding: 0.5em;
       padding-left: 1em;
-      border: solid 1px #dadee4;
+      background-color: light-dark(#fff, #2d2d2d);
+      border: solid 1px light-dark(#dadee4, #3a386f);
       box-shadow: none;
       margin: -1;
+      color:light-dark(#3c3c3c, #cacaca);
     }
 
     .panel-header {
@@ -111,21 +117,39 @@
         transform: scale(1, 1);
       }
     }
-
+    .modal-overlay {
+      background: light-dark(#ffffff4b,#5e5e5ebc)!important;
+          /* Add the blur effect */
+      /* Apply the blur to the backdrop */
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px); /* Safari support */
+    }
     .btn {
       border-radius: 0.4em;
+      background-color: light-dark(#ffffff, #232323);
     }
 
     #connectmydevice {
       margin-right: 1.5em;
+      background-color:#fff
     }
-
+    .menu{
+      background-color:light-dark(#ffffff, #313131);
+      color: light-dark(#3c3c3c, #cacaca);
+    }
+    
     .btn.input-group-btn {
 
       border-bottom-right-radius: 1em;
       border-top-right-radius: 1em;
     }
-
+    .btn.btn-clear{
+      color:light-dark(#000000,#FFFFFF);
+    }
+    .form-select{
+      background-color:light-dark(#ffffff, #232323)!important;
+      border-radius:0.4em;
+    }
     .btn.btn-favourite:focus,
     .btn.btn-favourite:focus-visible,
     .btn-favourite:focus,
@@ -336,9 +360,12 @@
       padding-left: 0.01em;
     }
 
+    .avatar {
+      background-color: transparent!important;
+    }
     .avatar img {
-      border-radius: 5px 5px 5px 5px;
-      background: #fff;
+      background-color: transparent!important;
+      border-radius: 0.3em!important;
     }
 
     #toastcontainer {
@@ -403,7 +430,7 @@
       
       box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.025);
       
-      border: solid 1.3px #dadee47c;
+      border: solid 1.3px light-dark(#dadee47c,#484848);
       margin: 0;
       /* spacing handled by container gap */
       padding: 0.9em;
@@ -422,7 +449,25 @@
     }
     .chip{
       border-radius: 0.7em;
-
+      background-color: light-dark(#EEF0F3,#424242);
+    }
+    code{
+      background-color: light-dark(#fdf2f2,#2f2e2e);
+    }
+    .hero-img {
+      filter: invert(0%);
+    }
+    @media (prefers-color-scheme: dark) {
+      .hero-img {
+        filter: invert(100%);
+      }
+      .modal-title{
+        color: #FFFFFF;
+      }
+    }
+    .hero.bg-gray{
+      background-color: light-dark(#F7F7F9,#2C2C2C)!important;
+      border-radius:1em;
     }
     .link-github {
       position: absolute;
@@ -448,7 +493,7 @@
       justify-content: flex-end;
       padding: 0em 1em;
       margin-right: 0.05em;
-      background-color: rgba(87, 85, 217, 0.055);
+      background-color: light-dark(rgba(87, 85, 217, 0.055), rgba(87, 85, 217, 0.152));
       border-radius: 999px;
       font-family: sans-serif;
       height: auto;
@@ -457,7 +502,7 @@
 
     .modal-container {
       border-radius: 1.5em;
-      background-color: rgb(253, 253, 255);
+      background-color: light-dark(rgb(253, 253, 255), rgb(44, 44, 44));
       padding: 1em;
 
     }
@@ -476,6 +521,7 @@
       align-items: center;
       /* Centers vertically */
       text-align: left;
+      color:light-dark(#3c3c3c, #cacaca);
 
     }
 
