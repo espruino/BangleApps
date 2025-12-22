@@ -1,4 +1,4 @@
-(function (back) {
+(function(back) {
   const SETTINGS_FILE = "dailycolorclk.json";
   const storage = require('Storage');
   let settings = Object.assign(
@@ -35,12 +35,12 @@
   function modifyColor(name, val) {
     let color = colors.find(obj => obj.name === name);
     if (color) {
-      if (val == true) {
+      if (val === true) {
         settings.bgColors.push(color.color);
       } else {
         settings.bgColors = settings.bgColors.filter(item => item !== color.color);
       }
-
+      print(settings)
     }
     writeSettings();
   }
@@ -55,7 +55,7 @@
       "< Back": () => back,
     }
     colors.forEach((c, i) => {
-      if (c.dithered == true) {
+      if (c.dithered === true) {
         menu[c.name] = {
           value: !!colorSelected(c.name),
           onchange: x => modifyColor(c.name, x)
@@ -88,7 +88,7 @@
       /*LANG*/'Dithered Colors': () => { showDitheringMenu(showMainMenu) },
     };
     colors.forEach((c, i) => {
-      if (c.dithered == false) {
+      if (c.dithered === false) {
         menu[c.name] = {
           value: !!colorSelected(c.name),
           onchange: x => modifyColor(c.name, x)
@@ -100,4 +100,4 @@
 
 
   showMainMenu();
-})
+})(load)
