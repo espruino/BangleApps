@@ -57,7 +57,7 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
 ### Settings Usage
 ---
 #### Tuning guide
-To make sure the app accurately provides sleep information, it's a good idea to change the default thresholds to find one that works for you. A step-by step process would be:
+To make sure the app accurately provides sleep information, it's a good idea to change the default thresholds to find one that works for you. A step-by-step process would be:
 - Set the thresholds (movement or hrm, depending on what you use) to be high.
 - Every day, look at the sleep it tracked and see if it's accurate or not.
 - If it doesn't detect much, reduce the thresholds.
