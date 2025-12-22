@@ -7,3 +7,4 @@
 0.06: Fixed a crash if an app has no tags (app.tags is undefined)
 0.07: Clear cached app list when updating showClocks setting
 0.08: Add haptic feedback option when selecting app or category in menu, increase vector size limit in settings
+0.09: Add option to set up to 3 shortcut apps that you can access straight from the tag menu for quicker access

@@ -41,10 +41,18 @@ const advertise = (options: SetAdvertisingOptions) => {
 	// taking effect for later calls.
 	//
 	// This also allows us to identify previous adverts correctly by id.
+  let adv = clone((Bangle as BangleWithAdvert).bleAdvert);
   try {
-		NRF.setAdvertising(clone((Bangle as BangleWithAdvert).bleAdvert), options);
+		NRF.setAdvertising(adv, options);
   } catch (e) {
-		console.log("ble_advert error", e);
+    if ((e as Error).toString().includes("INVALID_LENGTH")) {
+      options.showName=false; // if the advertising is too long, automatically remove the Bangle's name from advertisements
+      try {
+        NRF.setAdvertising(adv, options);
+      } catch (e) {
+        console.log("ble_advert error", e);
+      }
+    }
   }
 };
 

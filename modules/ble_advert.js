@@ -17,11 +17,20 @@ var advertise = function (options) {
         if (!options.manufacturer)
             options.manufacturer = false;
     }
+    var adv = clone(Bangle.bleAdvert);
     try {
-        NRF.setAdvertising(clone(Bangle.bleAdvert), options);
+        NRF.setAdvertising(adv, options);
     }
     catch (e) {
-        console.log("ble_advert error", e);
+        if (e.toString().includes("INVALID_LENGTH")) {
+            options.showName = false;
+            try {
+                NRF.setAdvertising(adv, options);
+            }
+            catch (e) {
+                console.log("ble_advert error", e);
+            }
+        }
     }
 };
 var manyAdv = function (bleAdvert) {

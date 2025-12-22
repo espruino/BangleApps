@@ -13,7 +13,7 @@
 
   // Get id number for button that is sent to bthome
   function getNewIdNumber(){
-    return [1, 2, 3, 4, 5, 6, 7, 8, 9].find(id => settings.buttons.every(button => id != button.n));
+    return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].find(id => settings.buttons.every(button => id != button.n));
   }
 
   function showButtonMenu(button, isNew) {
