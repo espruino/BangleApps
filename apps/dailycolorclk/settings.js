@@ -71,7 +71,7 @@
       /*LANG*/'Hide Widgets': {
         value: !!settings.hideWidgets,
         onchange: x => {
-          settings.hideWidget = x;
+          settings.hideWidgets = x;
           writeSettings();
         },
       },
