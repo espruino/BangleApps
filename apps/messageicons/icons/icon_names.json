@@ -1,5 +1,6 @@
 [
   { "app":"default", "icon":"default.png" },
+  { "app":"adp", "icon":"adp.png" },
   { "app":"airbnb", "icon":"airbnb.png" },
   { "app":"agenda", "icon":"agenda.png" },
   { "app":"alarm", "icon":"alarm.png" },

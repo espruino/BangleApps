@@ -4,7 +4,7 @@ exports.getImage = function(msg) {
   if (msg.img) return atob(msg.img);
   let s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
   if (msg.id=="music") s="music";
-  let match = ",default|0,airbnb|1,agenda|2,alarm|3,alarmclockreceiver|3,amazon shopping|4,bereal.|5,bibel|6,bitwarden|7,1password|7,lastpass|7,dashlane|7,bring|8,calendar|9,etar|9,chat|10,chrome|11,clock|3,corona-warn|12,bmo|13,desjardins|13,rbc mobile|13,nbc|13,rabobank|13,scotiabank|13,td (canada)|13,davx⁵|14,discord|15,drive|16,element|17,element classic|17,element x|17,facebook|18,messenger|19,firefox|20,firefox beta|20,firefox nightly|20,f-droid|7,neo store|7,aurora droid|7,github|21,gitlab|22,gmail|23,gmx|24,google|25,google home|26,google play store|27,gotify|28,home assistant|29,instagram|30,jira|31,kalender|32,keep notes|33,kleinanzeigen|34,leboncoin|35,lieferando|36,linkedin|37,maps|38,meshtastic|39,organic maps|38,osmand|38,mastodon|40,fedilab|40,tooot|40,tusky|40,mattermost|41,messages|42,n26|43,netflix|44,news|45,cbc news|45,rc info|45,reuters|45,ap news|45,la presse|45,nbc news|45,nextbike|46,nextcloud|47,nina|48,ntfy|49,outlook mail|50,paypal|51,phone|52,plex|53,pocket|54,post & dhl|55,proton mail|56,reddit|57,sync pro|57,sync dev|57,boost|57,infinity|57,slide|57,signal|58,molly|58,skype|59,slack|60,snapchat|61,shortcuts|62,starbucks|63,steam|64,teams|65,telegram|66,telegram foss|66,threema|67,threema libre|67,thunderbird|68,tiktok|69,to do|70,opentasks|70,tasks|70,transit|71,twitch|72,twitter|73,uber|74,lyft|74,vlc|75,warnapp|76,whatsapp|77,wordfeud|78,youtube|79,newpipe|79,zoom|80,meet|80,music|81,sms message|0,mail|0,".match(new RegExp(`,${s}\\|(\\d+)`))
+  let match = ",default|0,adp|1,airbnb|2,agenda|3,alarm|4,alarmclockreceiver|4,amazon shopping|5,bereal.|6,bibel|7,bitwarden|8,1password|8,lastpass|8,dashlane|8,bring|9,calendar|10,etar|10,chat|11,chrome|12,clock|4,corona-warn|13,bmo|14,desjardins|14,rbc mobile|14,nbc|14,rabobank|14,scotiabank|14,td (canada)|14,davx⁵|15,discord|16,drive|17,element|18,element classic|18,element x|18,facebook|19,messenger|20,firefox|21,firefox beta|21,firefox nightly|21,f-droid|8,neo store|8,aurora droid|8,github|22,gitlab|23,gmail|24,gmx|25,google|26,google home|27,google play store|28,gotify|29,home assistant|30,instagram|31,jira|32,kalender|33,keep notes|34,kleinanzeigen|35,leboncoin|36,lieferando|37,linkedin|38,maps|39,meshtastic|40,organic maps|39,osmand|39,mastodon|41,fedilab|41,tooot|41,tusky|41,mattermost|42,messages|43,n26|44,netflix|45,news|46,cbc news|46,rc info|46,reuters|46,ap news|46,la presse|46,nbc news|46,nextbike|47,nextcloud|48,nina|49,ntfy|50,outlook mail|51,paypal|52,phone|53,plex|54,pocket|55,post & dhl|56,proton mail|57,reddit|58,sync pro|58,sync dev|58,boost|58,infinity|58,slide|58,signal|59,molly|59,skype|60,slack|61,snapchat|62,shortcuts|63,starbucks|64,steam|65,teams|66,telegram|67,telegram foss|67,threema|68,threema libre|68,thunderbird|69,tiktok|70,to do|71,opentasks|71,tasks|71,transit|72,twitch|73,twitter|74,uber|75,lyft|75,vlc|76,warnapp|77,whatsapp|78,wordfeud|79,youtube|80,newpipe|80,zoom|81,meet|81,music|82,sms message|0,mail|0,".match(new RegExp(`,${s}\\|(\\d+)`))
   return require("Storage").read("messageicons.img", (match===null)?0:match[1]*76, 76);
 };
 
@@ -16,6 +16,7 @@ exports.getColor = function(msg,options) {
   const s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
   return {
     /* generic colors, using B2-safe colors */ 
+    "adp": "#f00",
     "agenda": "#206cd5",
     "airbnb": "#ff385c", // https://news.airbnb.com/media-assets/category/brand/
     "mail": "#ff0",
@@ -58,7 +59,6 @@ exports.getColor = function(msg,options) {
     "skype": "#0078d4", // https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products
     "slack": "#e51670",
     "snapchat": "#ff0",
-    "shortcuts": "#ff46a9", // https://developer.apple.com/design/human-interface-guidelines/ios/icons-and-images/app-icon/
     "steam": "#171a21",
     "teams": "#6264a7", // https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products
     "telegram": "#0088cc",
