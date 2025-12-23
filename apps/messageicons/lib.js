@@ -58,7 +58,7 @@ exports.getColor = function(msg,options) {
     "skype": "#0078d4", // https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products
     "slack": "#e51670",
     "snapchat": "#ff0",
-    "shortcuts": "#ff46a9ff", // https://developer.apple.com/design/human-interface-guidelines/ios/icons-and-images/app-icon/
+    "shortcuts": "#ff46a9", // https://developer.apple.com/design/human-interface-guidelines/ios/icons-and-images/app-icon/
     "steam": "#171a21",
     "teams": "#6264a7", // https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products
     "telegram": "#0088cc",
