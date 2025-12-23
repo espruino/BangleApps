@@ -49,10 +49,10 @@
     return settings.bgColors.includes(colors.find(obj => obj.name === name).color)
   }
 
-  function showDitheringMenu(back) {
+  function showDitheringMenu(bk) {
     var menu = {
       '': { 'title': 'Dithered Colors' },
-      "< Back": () => back,
+      "< Back": bk,
     }
     colors.forEach((c, i) => {
       if (c.dithered === true) {
@@ -100,4 +100,4 @@
 
 
   showMainMenu();
-})(load)
+})
