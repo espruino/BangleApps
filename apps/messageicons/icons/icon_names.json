@@ -97,6 +97,7 @@
   { "app":"skype", "icon":"skype.png" },
   { "app":"slack", "icon":"slack.png" },
   { "app":"snapchat", "icon":"snapchat.png" },
+  { "app":"shortcuts", "icon":"shortcuts.png" },
   { "app":"starbucks", "icon":"cafe.png" },
   { "app":"steam", "icon":"steam.png" },
   { "app":"teams", "icon":"teams.png" },
