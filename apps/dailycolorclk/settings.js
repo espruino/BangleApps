@@ -76,14 +76,19 @@
         },
       },
       /*LANG*/'Regenerate Queue': function () {
-        settings.regenerate = true;
-        writeSettings();
-        E.showAlert("Regenerated Queue!", "Success")
-          .then(function (v) {
-            eval(require("Storage").read("dailycolorclk.settings.js"))(() => load());
-          }
+        E.showPrompt("Are you sure you want to regenerate queue?",{title:"Confirm",buttons:{"Cancel":false, "Yes":true}}).then(function(v){
+          if(v===true){
+            settings.regenerate = true;
+            writeSettings();
+            E.showAlert("Regenerated Queue!", "Success")
+              .then(function (v) {
+                eval(require("Storage").read("dailycolorclk.settings.js"))(() => load());
+              })     
+            }else{
+              eval(require("Storage").read("dailycolorclk.settings.js"))(() => load());   
+            }
 
-          );
+        })
       },
       /*LANG*/'Dithered Colors': () => { showDitheringMenu(showMainMenu) },
     };
