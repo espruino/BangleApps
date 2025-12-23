@@ -1,6 +1,7 @@
     /* NAVIGATION BAR AND GENERAL STYLES */
     :root {
       color-scheme: light dark; /* Informs the browser the site supports both schemes */
+      --hero-img-filter: invert(0%);
     }
     body {
       background-color: light-dark(#ffffff, #232323);
@@ -457,13 +458,16 @@
     .hero-img {
       filter: invert(0%);
     }
-    @media (prefers-color-scheme: dark) {
-      .hero-img {
-        filter: invert(100%);
-      }
-      .modal-title{
-        color: #FFFFFF;
-      }
+    
+
+    html[data-theme="dark"] {
+      --hero-img-filter: invert(100%);
+    }
+    .hero-img {
+      filter: var(--hero-img-filter);
+    }
+    .modal-title{
+      color: light-dark(#000000,#FFFFFF);
     }
     .hero.bg-gray{
       background-color: light-dark(#F7F7F9,#2C2C2C)!important;
