@@ -22,7 +22,7 @@ exports.getColor = function(msg,options) {
     "mail": "#ff0",
     "music": "#f0f",
     "phone": "#0f0",
-    "duolingo": "#58cc02", // https://design.duolingo.com/identity/color#core-brand-colors 
+    "duolingo": "#58cc02", // https://design.duolingo.com/identity/color#core-brand-colors
     "sms message": "#0ff", 
     "bibel": "#54342c",
     "bring": "#455a64",
