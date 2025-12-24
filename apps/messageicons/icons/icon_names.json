@@ -21,6 +21,7 @@
   { "app":"corona-warn", "icon":"coronavirus.png" },
   { "app":"bmo", "icon":"bank.png" },
   { "app":"desjardins", "icon":"bank.png" },
+  { "app":"duolingo", "icon":"duolingo.png" },
   { "app":"rbc mobile", "icon":"bank.png" },
   { "app":"nbc", "icon":"bank.png" },
   { "app":"rabobank", "icon":"bank.png" },

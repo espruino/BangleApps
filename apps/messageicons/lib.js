@@ -4,7 +4,7 @@ exports.getImage = function(msg) {
   if (msg.img) return atob(msg.img);
   let s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
   if (msg.id=="music") s="music";
-  let match = ",default|0,adp|1,airbnb|2,agenda|3,alarm|4,alarmclockreceiver|4,amazon shopping|5,bereal.|6,bibel|7,bitwarden|8,1password|8,lastpass|8,dashlane|8,bring|9,calendar|10,etar|10,chat|11,chrome|12,clock|4,corona-warn|13,bmo|14,desjardins|14,rbc mobile|14,nbc|14,rabobank|14,scotiabank|14,td (canada)|14,davx⁵|15,discord|16,drive|17,element|18,element classic|18,element x|18,facebook|19,messenger|20,firefox|21,firefox beta|21,firefox nightly|21,f-droid|8,neo store|8,aurora droid|8,github|22,gitlab|23,gmail|24,gmx|25,google|26,google home|27,google play store|28,gotify|29,home assistant|30,instagram|31,jira|32,kalender|33,keep notes|34,kleinanzeigen|35,leboncoin|36,lieferando|37,linkedin|38,maps|39,meshtastic|40,organic maps|39,osmand|39,mastodon|41,fedilab|41,tooot|41,tusky|41,mattermost|42,messages|43,n26|44,netflix|45,news|46,cbc news|46,rc info|46,reuters|46,ap news|46,la presse|46,nbc news|46,nextbike|47,nextcloud|48,nina|49,ntfy|50,outlook mail|51,paypal|52,phone|53,plex|54,pocket|55,post & dhl|56,proton mail|57,reddit|58,sync pro|58,sync dev|58,boost|58,infinity|58,slide|58,signal|59,molly|59,roborock|60,skype|61,slack|62,snapchat|63,shortcuts|64,starbucks|65,steam|66,teams|67,telegram|68,telegram foss|68,threema|69,threema libre|69,thunderbird|70,tiktok|71,to do|72,opentasks|72,tasks|72,transit|73,twitch|74,twitter|75,uber|76,lyft|76,vlc|77,warnapp|78,whatsapp|79,wordfeud|80,youtube|81,newpipe|81,zoom|82,meet|82,music|83,sms message|0,mail|0,".match(new RegExp(`,${s}\\|(\\d+)`))
+  let match = ",default|0,adp|1,airbnb|2,agenda|3,alarm|4,alarmclockreceiver|4,amazon shopping|5,bereal.|6,bibel|7,bitwarden|8,1password|8,lastpass|8,dashlane|8,bring|9,calendar|10,etar|10,chat|11,chrome|12,clock|4,corona-warn|13,bmo|14,desjardins|14,duolingo|15,rbc mobile|14,nbc|14,rabobank|14,scotiabank|14,td (canada)|14,davx⁵|16,discord|17,drive|18,element|19,element classic|19,element x|19,facebook|20,messenger|21,firefox|22,firefox beta|22,firefox nightly|22,f-droid|8,neo store|8,aurora droid|8,github|23,gitlab|24,gmail|25,gmx|26,google|27,google home|28,google play store|29,gotify|30,home assistant|31,instagram|32,jira|33,kalender|34,keep notes|35,kleinanzeigen|36,leboncoin|37,lieferando|38,linkedin|39,maps|40,meshtastic|41,organic maps|40,osmand|40,mastodon|42,fedilab|42,tooot|42,tusky|42,mattermost|43,messages|44,n26|45,netflix|46,news|47,cbc news|47,rc info|47,reuters|47,ap news|47,la presse|47,nbc news|47,nextbike|48,nextcloud|49,nina|50,ntfy|51,outlook mail|52,paypal|53,phone|54,plex|55,pocket|56,post & dhl|57,proton mail|58,reddit|59,sync pro|59,sync dev|59,boost|59,infinity|59,slide|59,signal|60,molly|60,roborock|61,skype|62,slack|63,snapchat|64,shortcuts|65,starbucks|66,steam|67,teams|68,telegram|69,telegram foss|69,threema|70,threema libre|70,thunderbird|71,tiktok|72,to do|73,opentasks|73,tasks|73,transit|74,twitch|75,twitter|76,uber|77,lyft|77,vlc|78,warnapp|79,whatsapp|80,wordfeud|81,youtube|82,newpipe|82,zoom|83,meet|83,music|84,sms message|0,mail|0,".match(new RegExp(`,${s}\\|(\\d+)`))
   return require("Storage").read("messageicons.img", (match===null)?0:match[1]*76, 76);
 };
 
@@ -21,6 +21,7 @@ exports.getColor = function(msg,options) {
     "mail": "#ff0",
     "music": "#f0f",
     "phone": "#0f0",
+    "duolingo": "#58cc02", // https://design.duolingo.com/identity/color#core-brand-colors 
     "sms message": "#0ff", 
     "bibel": "#54342c",
     "bring": "#455a64",
@@ -54,7 +55,6 @@ exports.getColor = function(msg,options) {
     "pocket": "#ef4154f", // https://blog.getpocket.com/press/
     "post & dhl": "#f2c101",
     "reddit": "#ff4500", // https://www.redditinc.com/brand
-    "roborock": "#f00",
     "signal": "#3a76f0", // https://github.com/signalapp/Signal-Desktop/blob/main/images/signal-logo.svg
     "skype": "#0078d4", // https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products
     "slack": "#e51670",
