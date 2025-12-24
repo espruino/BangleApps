@@ -17,6 +17,7 @@ exports.getColor = function(msg,options) {
   return {
     /* generic colors, using B2-safe colors */ 
     "agenda": "#206cd5",
+    "adp": "#f00",
     "airbnb": "#ff385c", // https://news.airbnb.com/media-assets/category/brand/
     "mail": "#ff0",
     "music": "#f0f",
@@ -55,10 +56,12 @@ exports.getColor = function(msg,options) {
     "pocket": "#ef4154f", // https://blog.getpocket.com/press/
     "post & dhl": "#f2c101",
     "reddit": "#ff4500", // https://www.redditinc.com/brand
+    "roborock": "#f00",
     "signal": "#3a76f0", // https://github.com/signalapp/Signal-Desktop/blob/main/images/signal-logo.svg
     "skype": "#0078d4", // https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products
     "slack": "#e51670",
     "snapchat": "#ff0",
+    "shortcuts": "#cc00ff",
     "steam": "#171a21",
     "teams": "#6264a7", // https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products
     "telegram": "#0088cc",
