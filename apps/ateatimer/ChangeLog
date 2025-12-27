@@ -1,2 +1,3 @@
 0.01: First release
 0.02: Fix icon, utilize sched, show running timer on app relaunch
+0.03: Flash time in green when starting the timer.

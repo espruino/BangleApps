@@ -1,5 +1,10 @@
 // Tea Timer Application for Bangle.js 2 using sched library
 
+let appRect = Bangle.appRect;
+let middleY = appRect.y+appRect.w/2;
+let middleRect = {x:appRect.x, y:middleY-20, w:appRect.w, h:40}
+let GREEN = g.theme.dark?0x07E0:0x03E0;
+
 let timerDuration = (() => {
   let file = require("Storage").open("ateatimer.data", "r");
   let data = file.read(4); // Assuming 4 bytes for storage
@@ -14,7 +19,7 @@ function saveDefaultDuration() {
 }
 
 function drawTime() {
-  g.clear();
+  g.clearRect(middleRect);
   g.setFont("Vector", 40);
   g.setFontAlign(0, 0); // Center align
 
@@ -25,6 +30,10 @@ function drawTime() {
 
   g.drawString(timeStr, g.getWidth() / 2, g.getHeight() / 2);
 
+  g.flip();
+}
+
+function drawButtons() {
   // Draw Increase button (triangle pointing up)
   g.fillPoly([
     g.getWidth() / 2, g.getHeight() / 2 - 80, // Top vertex
@@ -42,6 +51,18 @@ function drawTime() {
   g.flip();
 }
 
+function drawInit() {
+  g.clear(true);
+  drawButtons();
+  drawTime();
+}
+
+let updateIntervalID;
+let clearUpdateInterval = ()=>{
+  clearInterval(updateIntervalID);
+  updateIntervalID = undefined;
+}
+
 function startTimer() {
   if (timerRunning) return;
   if (timeRemaining == 0) return;
@@ -52,8 +73,13 @@ function startTimer() {
   saveDefaultDuration();
   scheduleTimer();
 
+  // Flash the time in green to indicate the timer started
+  g.setColor(GREEN);
+  drawTime();
+  g.reset();
+
   // Start the secondary timer to update the display
-  setInterval(updateDisplay, 1000);
+  updateIntervalID = setInterval(updateDisplay, 1000);
 }
 
 function scheduleTimer() {
@@ -73,6 +99,7 @@ function resetTimer() {
   require("sched").setAlarm("ateatimer", undefined);
   require("sched").reload();
 
+  clearUpdateInterval();
   timerRunning = false;
   timeRemaining = timerDuration;
   drawTime();
@@ -125,7 +152,7 @@ function updateDisplay() {
     drawTime();
     if (timeRemaining <= 0) {
       timeRemaining = 0;
-      clearInterval(updateDisplay);
+      clearUpdateInterval();
       timerRunning = false;
     }
   }
@@ -146,11 +173,10 @@ Bangle.on("touch", (zone, xy) => {
 });
 
 let isRunning = require("sched").getAlarm("ateatimer");
+// Draw the initial timer display
+drawInit();
 if (isRunning) {
   timerRunning = true;
   // Start the timer to update the display
-  setInterval(updateDisplay, 1000);
-} else {
-  // Draw the initial timer display
-  drawTime();
+  updateIntervalID = setInterval(updateDisplay, 1000);
 }
