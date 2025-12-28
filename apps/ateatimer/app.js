@@ -79,6 +79,8 @@ function startTimer() {
   drawTime();
   g.reset();
 
+  Bangle.buzz(50);
+
   // Start the secondary timer to update the display
   updateIntervalID = setInterval(updateDisplay, 1000);
 }
@@ -104,6 +106,7 @@ function resetTimer() {
   timerRunning = false;
   timeRemaining = timerDuration;
   drawTime();
+  Bangle.buzz(75);
 }
 
 function adjustTime(amount) {
