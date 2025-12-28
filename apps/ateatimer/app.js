@@ -1,8 +1,9 @@
 // Tea Timer Application for Bangle.js 2 using sched library
 
 let appRect = Bangle.appRect;
-let middleY = appRect.y+appRect.w/2;
-let middleRect = {x:appRect.x, y:middleY-20, w:appRect.w, h:40}
+let centerY = appRect.y+appRect.w/2;
+let centerX = appRect.x+appRect.h/2;
+let middleRect = {x:appRect.x, y:centerY-20, w:appRect.w, h:40}
 let GREEN = g.theme.dark?0x07E0:0x03E0;
 
 let timerDuration = (() => {
@@ -28,7 +29,7 @@ function drawTime() {
   const sign = timeRemaining < 0 ? "-" : "";
   const timeStr = `${sign}${minutes}:${seconds.toString().padStart(2, '0')}`;
 
-  g.drawString(timeStr, g.getWidth() / 2, g.getHeight() / 2);
+  g.drawString(timeStr, centerX, centerY);
 
   g.flip();
 }
@@ -36,16 +37,16 @@ function drawTime() {
 function drawButtons() {
   // Draw Increase button (triangle pointing up)
   g.fillPoly([
-    g.getWidth() / 2, g.getHeight() / 2 - 80, // Top vertex
-    g.getWidth() / 2 - 20, g.getHeight() / 2 - 60, // Bottom-left vertex
-    g.getWidth() / 2 + 20, g.getHeight() / 2 - 60  // Bottom-right vertex
+    centerX, centerY - 80, // Top vertex
+    centerX - 20, centerY - 60, // Bottom-left vertex
+    centerX + 20, centerY - 60  // Bottom-right vertex
   ]);
 
   // Draw Decrease button (triangle pointing down)
   g.fillPoly([
-    g.getWidth() / 2, g.getHeight() / 2 + 80, // Bottom vertex
-    g.getWidth() / 2 - 20, g.getHeight() / 2 + 60, // Top-left vertex
-    g.getWidth() / 2 + 20, g.getHeight() / 2 + 60  // Top-right vertex
+    centerX, centerY + 80, // Bottom vertex
+    centerX - 20, centerY + 60, // Top-left vertex
+    centerX + 20, centerY + 60  // Top-right vertex
   ]);
 
   g.flip();
@@ -128,7 +129,6 @@ function adjustTime(amount) {
 }
 
 function handleTouch(x, y) {
-  const centerY = g.getHeight() / 2;
 
   if (y < centerY - 40) {
     // Increase button area
