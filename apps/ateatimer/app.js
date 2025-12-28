@@ -1,10 +1,8 @@
 // Tea Timer Application for Bangle.js 2 using sched library
 
-let appRect = Bangle.appRect;
-let centerY = appRect.y+appRect.w/2;
-let centerX = appRect.x+appRect.h/2;
-let middleRect = {x:appRect.x, y:centerY-20, w:appRect.w, h:40}
-let GREEN = g.theme.dark?0x07E0:0x03E0;
+const APP_RECT = Bangle.appRect;
+const CENTER_Y = APP_RECT.y+APP_RECT.w/2;
+const CENTER_X = APP_RECT.x+APP_RECT.h/2;
 
 let timerDuration = (() => {
   let file = require("Storage").open("ateatimer.data", "r");
@@ -20,7 +18,8 @@ function saveDefaultDuration() {
 }
 
 function drawTime() {
-  g.clearRect(middleRect);
+  const TIME_RECT = {x:APP_RECT.x, y:CENTER_Y-20, w:APP_RECT.w, h:40}
+  g.clearRect(TIME_RECT);
   g.setFont("Vector", 40);
   g.setFontAlign(0, 0); // Center align
 
@@ -29,7 +28,7 @@ function drawTime() {
   const sign = timeRemaining < 0 ? "-" : "";
   const timeStr = `${sign}${minutes}:${seconds.toString().padStart(2, '0')}`;
 
-  g.drawString(timeStr, centerX, centerY);
+  g.drawString(timeStr, CENTER_X, CENTER_Y);
 
   g.flip();
 }
@@ -37,16 +36,16 @@ function drawTime() {
 function drawButtons() {
   // Draw Increase button (triangle pointing up)
   g.fillPoly([
-    centerX, centerY - 80, // Top vertex
-    centerX - 20, centerY - 60, // Bottom-left vertex
-    centerX + 20, centerY - 60  // Bottom-right vertex
+    CENTER_X, CENTER_Y - 80, // Top vertex
+    CENTER_X - 20, CENTER_Y - 60, // Bottom-left vertex
+    CENTER_X + 20, CENTER_Y - 60  // Bottom-right vertex
   ]);
 
   // Draw Decrease button (triangle pointing down)
   g.fillPoly([
-    centerX, centerY + 80, // Bottom vertex
-    centerX - 20, centerY + 60, // Top-left vertex
-    centerX + 20, centerY + 60  // Top-right vertex
+    CENTER_X, CENTER_Y + 80, // Bottom vertex
+    CENTER_X - 20, CENTER_Y + 60, // Top-left vertex
+    CENTER_X + 20, CENTER_Y + 60  // Top-right vertex
   ]);
 
   g.flip();
@@ -75,6 +74,7 @@ function startTimer() {
   scheduleTimer();
 
   // Flash the time in green to indicate the timer started
+  const GREEN = g.theme.dark?0x07E0:0x03E0;
   g.setColor(GREEN);
   drawTime();
   g.reset();
@@ -130,10 +130,10 @@ function adjustTime(amount) {
 
 function handleTouch(x, y) {
 
-  if (y < centerY - 40) {
+  if (y < CENTER_Y - 40) {
     // Increase button area
     adjustTime(60);
-  } else if (y > centerY + 40) {
+  } else if (y > CENTER_Y + 40) {
     // Decrease button area
     adjustTime(-60);
   } else {
