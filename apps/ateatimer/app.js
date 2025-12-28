@@ -79,6 +79,8 @@ function startTimer() {
   drawTime();
   g.reset();
 
+  Bangle.buzz(50);
+
   // Start the secondary timer to update the display
   updateIntervalID = setInterval(updateDisplay, 1000);
 }
@@ -104,6 +106,7 @@ function resetTimer() {
   timerRunning = false;
   timeRemaining = timerDuration;
   drawTime();
+  Bangle.buzz(75);
 }
 
 function adjustTime(amount) {
@@ -144,11 +147,15 @@ function handleTouch(x, y) {
   }
 }
 
+let updateTimeRemaining = ()=>{
+  let alarm = require("sched").getAlarm("ateatimer");
+  timeRemaining = Math.floor(require("sched").getTimeToAlarm(alarm) / 1000);
+}
+
 // Function to update the display every second
 function updateDisplay() {
   if (timerRunning) {
-    let alarm = require("sched").getAlarm("ateatimer");
-    timeRemaining = Math.floor(require("sched").getTimeToAlarm(alarm) / 1000);
+    updateTimeRemaining();
     drawTime();
     if (timeRemaining <= 0) {
       timeRemaining = 0;
@@ -173,10 +180,11 @@ Bangle.on("touch", (zone, xy) => {
 });
 
 let isRunning = require("sched").getAlarm("ateatimer");
-// Draw the initial timer display
-drawInit();
 if (isRunning) {
   timerRunning = true;
   // Start the timer to update the display
   updateIntervalID = setInterval(updateDisplay, 1000);
+  updateTimeRemaining();
 }
+// Draw the initial timer display
+drawInit();
