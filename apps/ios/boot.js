@@ -65,8 +65,8 @@ E.on('notify',msg=>{
   "negAction" : string,
   "name" : string,
 */
+  //Exceptions that the prettier won't catch.
   var appNames = {
-    "ch.publisheria.bring": "Bring",
     "com.apple.facetime": "FaceTime",
     "com.apple.mobilecal": "Calendar",
     "com.apple.mobilemail": "Mail",
@@ -74,83 +74,54 @@ E.on('notify',msg=>{
     "com.apple.mobileslideshow": "Pictures",
     "com.apple.MobileSMS": "SMS Message",
     "com.apple.Passbook": "iOS Wallet",
-    "com.apple.podcasts": "Podcasts",
-    "com.apple.reminders": "Reminders",
-    "com.apple.shortcuts": "Shortcuts",
-    "com.apple.TestFlight": "TestFlight",
     "com.apple.ScreenTimeNotifications": "Screen Time",
     "com.apple.wifid.usernotification": "WiFi",
-    "com.apple.Maps": "Maps",
     "com.apple.Music": "Apple Music",
-    "com.apple.AppStore": "App Store",
     "com.apple.Preferences": "Settings",
-    "com.apple.calculator": "Calculator",
-    "com.apple.camera": "Camera",
-    "com.apple.weather": "Weather",
-    "com.apple.VoiceMemos": "Voice Memos",
-    "com.apple.News": "News",
     "com.apple.tv": "Apple TV",
     "com.apple.findmy": "Find My",
-    "com.apple.compass": "Compass",
-    "com.apple.measure": "Measure",
     "com.atebits.Tweetie2": "Twitter",
-    "com.burbn.instagram": "Instagram",
-    "com.facebook.Facebook": "Facebook",
-    "com.facebook.Messenger": "Messenger",
     "com.google.Chromecast": "Google Home",
-    "com.google.Gmail": "GMail",
-    "com.google.hangouts": "Hangouts",
     "com.google.ios.youtube": "YouTube",
     "com.google.ios.chrome": "Google Chrome",
     "com.google.Maps": "Google Maps",
     "com.google.Drive": "Google Drive",
     "com.google.GoogleMobile": "Google",
-    "com.hammerandchisel.discord": "Discord",
+    "com.ecobee.athenamobile":"Ecobee",
     "com.ifttt.ifttt": "IFTTT",
     "com.jumbo.app": "Jumbo",
     "com.linkedin.LinkedIn": "LinkedIn",
     "com.marktplaats.iphone": "Marktplaats",
+    "com.duolingo.DuolingoMobile": "Duolingo",
+    "com.roborock.smart":"Roborock",
     "com.microsoft.Office.Outlook": "Outlook Mail",
     "com.microsoft.Office.Word": "Microsoft Word",
     "com.microsoft.Office.Excel": "Microsoft Excel",
     "com.microsoft.Office.Powerpoint": "Microsoft PowerPoint",
     "com.nestlabs.jasper.release": "Nest",
     "com.netflix.Netflix": "Netflix",
-    "com.reddit.Reddit": "Reddit",
-    "com.skype.skype": "Skype",
     "com.skype.SkypeForiPad": "Skype",
     "com.spotify.client": "Spotify",
     "com.soundcloud.TouchApp": "SoundCloud",
     "com.disney.disneyplus": "Disney+",
     "com.hbo.hbonow": "HBO Max",
+    "com.adp.adpmobile":"ADP",
     "com.amazon.Amazon": "Amazon Shopping",
     "com.amazon.AmazonVideo": "Prime Video",
-    "com.dropbox.Dropbox": "Dropbox",
-    "com.evernote.iPhone.Evernote": "Evernote",
-    "com.trello": "Trello",
     "com.storytel.iphone": "Storytel",
     "com.strava.stravaride": "Strava",
     "com.tinyspeck.chatlyio": "Slack",
     "com.toyopagroup.picaboo": "Snapchat",
     "com.ubercab.UberClient": "Uber",
-    "com.ubercab.UberEats": "UberEats",
     "com.unitedinternet.mmc.mobile.gmx.iosmailer": "GMX",
-    "com.valvesoftware.Steam": "Steam",
     "com.vilcsak.bitcoin2": "Coinbase",
     "com.wordfeud.free": "WordFeud",
     "com.paypal.PPClient": "PayPal",
     "com.zhiliaoapp.musically": "TikTok",
-    "com.pinterest": "Pinterest",
-    "com.tumblr.tumblr": "Tumblr",
     "de.no26.Number26": "N26",
-    "io.robbie.HomeAssistant": "Home Assistant",
-    "net.superblock.Pushover": "Pushover",
-    "net.weks.prowl": "Prowl",
     "net.whatsapp.WhatsApp": "WhatsApp",
     "nl.postnl.TrackNTrace": "PostNL",
-    "org.whispersystems.signal": "Signal",
     "ph.telegra.Telegraph": "Telegram",
-    "tv.twitch": "Twitch"
 };
 
   
@@ -272,11 +243,29 @@ E.on('notify',msg=>{
 
     return;
   }
-
+  let settings = require("Storage").readJSON("ios.settings.json",1)||{};
+  var name=""
+  if(settings.detectNames==true&&(!appNames[msg.appId]&&msg.appId)){
+    l = msg.appId.split(".");
+    name = l[l.length - 1]
+    //capitalize
+    name=name
+    // Space between lower->upper (AppName → App Name)
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      // Space between acronym->word (SMSMessage → SMS Message)
+      .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+      // Correct duplicate spacing
+      .replaceAll("  "," ");
+    //capitalize
+    name= name[0].toUpperCase() + name.slice(1);
+    name+="*" // mark that it's auto-generated
+  }else{
+    name=msg.appId;
+  }
   require("messages").pushMessage({
     t : msg.event,
     id : msg.uid,
-    src : appNames[msg.appId] || msg.appId,
+    src : name,
     new : msg.new,
     title : msg.title&&Bangle.ancsConvertUTF8(msg.title),
     subject : msg.subtitle&&Bangle.ancsConvertUTF8(msg.subtitle),
