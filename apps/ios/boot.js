@@ -251,15 +251,14 @@ E.on('notify',msg=>{
     let l = msg.appId.split(".");
     // get the last part of the ID
     name = l[l.length - 1]
-    // Space between lower->upper (AppName → App Name)
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      // Space between acronym->word (SMSMessage → SMS Message)
-      .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
-      // Correct duplicate spacing
-      .replaceAll("  "," ");
+    // apply detection methods
+    name=name
+      .replace(/([a-z])([A-Z])/g, '$1 $2')  // Space between lower->upper (AppName → App Name)
+      .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2') // Space between acronym->word (SMSMessage → SMS Message)
+      .replaceAll("  "," ");  // Correct duplicate spacing
     //capitalize
     name= name[0].toUpperCase() + name.slice(1);
-    name+="*" // mark that it's auto-generated
+    name+="*"; // mark that it's auto-generated
   }else{
     // use exception or app id itself
     name=appNames[msg.appId]||msg.appId;
