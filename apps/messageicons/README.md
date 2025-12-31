@@ -10,3 +10,5 @@ Provides icons for phone apps that are utilized by `message gui` and any other m
 - Run the `generate.js` script. Be sure you have the `png-js` dependency needed. (you can install it by running `npm install png-js` in the terminal)
 - 
 **Don't modify the Lib.js file at all. When someone adds new icons, your old ones will be wiped**
+
+The app removes the following special characters at the end: `*!?.-_`, and also removes extra whitespaces, for better matching of 'marked' app names. All other characters not listed there will not be removed at the end.
