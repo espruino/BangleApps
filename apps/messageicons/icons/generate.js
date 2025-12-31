@@ -4,7 +4,7 @@
 
 // Install the dependency first before running: npm install png-js
 
-// The icon image and name must come first in icon_names
+// The default icon image and name must come first in icon_names.json
 
 /* eslint-env node */
 
