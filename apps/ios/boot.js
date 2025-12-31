@@ -257,8 +257,9 @@ E.on('notify',msg=>{
       .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2') // Space between acronym->word (SMSMessage → SMS Message)
       .replaceAll("  "," ");  // Correct duplicate spacing
     //capitalize
-    name= name[0].toUpperCase() + name.slice(1);
-    name+="*"; // mark that it's auto-generated
+    //capitalize (only if non-empty)
+    if (name.length > 0)
+      name = name[0].toUpperCase() + name.slice(1);
   }else{
     // use exception or app id itself
     name=appNames[msg.appId]||msg.appId;
