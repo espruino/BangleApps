@@ -244,9 +244,9 @@ E.on('notify',msg=>{
     return;
   }
   let settings = require("Storage").readJSON("ios.settings.json",1)||{};
-  var name=""
-  if (settings.detectNames==true&&(!appNames[msg.appId]&&msg.appId)){
-    l = msg.appId.split(".");
+  let name = "";
+  if(settings.detectNames==true&&(!appNames[msg.appId]&&msg.appId)){
+    let l = msg.appId.split(".");
     name = l[l.length - 1]
     //capitalize
     name=name
