@@ -245,11 +245,12 @@ E.on('notify',msg=>{
   }
   let settings = require("Storage").readJSON("ios.settings.json",1)||{};
   let name = "";
-  if(settings.detectNames==true&&(!appNames[msg.appId]&&msg.appId)){
+  // If setting is on and there is no exception to the detector
+  if(settings.detectNames==true&&!appNames[msg.appId]){
+    
     let l = msg.appId.split(".");
+    // get the last part of the ID
     name = l[l.length - 1]
-    //capitalize
-    name=name
     // Space between lower->upper (AppName → App Name)
       .replace(/([a-z])([A-Z])/g, '$1 $2')
       // Space between acronym->word (SMSMessage → SMS Message)
@@ -260,8 +261,10 @@ E.on('notify',msg=>{
     name= name[0].toUpperCase() + name.slice(1);
     name+="*" // mark that it's auto-generated
   }else{
-    name=msg.appId;
+    // use exception or app id itself
+    name=appNames[msg.appId]||msg.appId;
   }
+  
   require("messages").pushMessage({
     t : msg.event,
     id : msg.uid,
