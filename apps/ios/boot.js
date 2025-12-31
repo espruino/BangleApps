@@ -65,7 +65,7 @@ E.on('notify',msg=>{
   "negAction" : string,
   "name" : string,
 */
-  //Exceptions that the prettier won't catch.
+  //Exceptions that the app name detector won't catch.
   var appNames = {
     "com.apple.facetime": "FaceTime",
     "com.apple.mobilecal": "Calendar",
