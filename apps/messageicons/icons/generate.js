@@ -2,7 +2,7 @@
 
 // Creates lib.js from icons
 
-// Install the depencency first before running: npm install png-js
+// Install the dependency first before running: npm install png-js
 
 // The icon image and name must come first in icon_names
 
