@@ -12,4 +12,4 @@
 0.11: Add icons for Meshtastic, Gotify. Update icon for Home Assistant. Add icon for "Element Classic" after "Element" has been renamed. (Keeping "Element" as well for backwards compatibility.)
 0.12: Add message icon for 'ntfy'
 0.13: Add icons for 'shortcuts', 'roborock', 'adp', and 'duolingo'
-0.14: Screen for special characters (*!,-_) at the end of an app and remove them for better matching. (Slack* --> Slack (with the correct icon) )
+0.14: Screen for special characters (*!?.-_) at the end of an app and remove them for better matching. (Slack* --> Slack (with the correct icon) )
