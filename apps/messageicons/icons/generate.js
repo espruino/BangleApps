@@ -1,10 +1,12 @@
 #!/usr/bin/node
 
-// Creates lib.js from icons
+// Creates lib.js from icons. 
 
 // Install the depencency first before running: npm install png-js
 
 // The icon image and name must come first in icon_names
+
+// Once the image is added, add a color entry in the getColor function below.
 
 /* eslint-env node */
 
@@ -103,7 +105,7 @@ exports.getColor = function(msg,options) {
   if (st.iconColorMode == 'mono') return options.default;
   const s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
   return {
-    /* generic colors, using B2-safe colors */ ${ /* DO NOT USE BLACK OR WHITE HERE, just leave the declaration out and then the theme's fg color will be used */"" }
+    ${ /* ADD THE COLOR FOR YOUR ICON HERE. DO NOT USE BLACK OR WHITE, just leave the declaration out and then the theme's fg color will be used */"" }/* generic colors, using B2-safe colors */ 
     "adp": "#f00",
     "agenda": "#206cd5",
     "airbnb": "#ff385c", // https://news.airbnb.com/media-assets/category/brand/
