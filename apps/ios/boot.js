@@ -271,7 +271,7 @@ E.on('notify',msg=>{
   let settings = require("Storage").readJSON("ios.settings.json",1)||{};
   let name = "";
   // If setting is on and there is no exception to the detector
-  if(settings.detectNames==true&&!appNames[msg.appId]){
+  if (settings.detectNames && !appNames[msg.appId]) {
     
     let l = msg.appId.split(".");
     // get the last part of the ID
