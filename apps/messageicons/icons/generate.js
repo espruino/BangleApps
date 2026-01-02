@@ -146,7 +146,7 @@ exports.getColor = function(msg,options) {
     "opentasks": "#409f8f",
     "outlook mail": "#0078d4", // https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products
     "paypal": "#003087",
-    "pocket": "#ef4154f", // https://blog.getpocket.com/press/
+    "pocket": "#ef4154", // https://blog.getpocket.com/press/
     "post & dhl": "#f2c101",
     "reddit": "#ff4500", // https://www.redditinc.com/brand
     "roborock": "#f00",
