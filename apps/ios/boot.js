@@ -65,7 +65,7 @@ E.on('notify',msg=>{
   "negAction" : string,
   "name" : string,
 */
-  //Exceptions that the app name detector won't catch.
+  // Exceptions that the app name detector won't catch.
   var appNames = {
     "com.apple.facetime": "FaceTime",
     "com.apple.mobilecal": "Calendar",
@@ -277,17 +277,16 @@ E.on('notify',msg=>{
     // get the last part of the ID
     name = l[l.length - 1]
     // apply detection methods
-    name=name
+    name = name
       .replace(/([a-z])([A-Z])/g, '$1 $2')  // Space between lower->upper (AppName → App Name)
       .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2') // Space between acronym->word (SMSMessage → SMS Message)
       .replaceAll("  "," ");  // Correct duplicate spacing
-    //capitalize
-    //capitalize (only if non-empty)
-    if (name.length > 0)
-      name = name[0].toUpperCase() + name.slice(1);
+    // capitalize (only if non-empty)
+    if (name.length > 0) name = name[0].toUpperCase() + name.slice(1);
+    name+="*";
   }else{
     // use exception or app id itself
-    name=appNames[msg.appId]||msg.appId;
+    name = appNames[msg.appId]||msg.appId;
   }
   
   require("messages").pushMessage({
