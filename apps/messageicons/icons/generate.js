@@ -93,7 +93,7 @@ exports.getImage = function(msg) {
   let s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
   if (msg.id=="music") s="music";
   // trim special characters at end for better matching. Trims: *!?.-_ and whitespaces
-  s = s.replace(/[*!?.\-_\s]+$/i, '');
+  s = s.replace(/[*!?._\s-]+$/i, '');
   let match = ${JSON.stringify(","+icons.map(icon=>icon.app+"|"+icon.index).join(",")+",")}.match(new RegExp(\`,\${s}\\\\|(\\\\d+)\`))
   return require("Storage").read("messageicons.img", (match===null)?0:match[1]*${IMAGE_BYTES}, ${IMAGE_BYTES});
 };
