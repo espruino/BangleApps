@@ -275,7 +275,7 @@ E.on('notify',msg=>{
     
     let l = msg.appId.split(".");
     // get the last part of the ID
-    name = l[l.length - 1]
+    name = l[l.length - 1];
     // apply detection methods
     name = name
       .replace(/([a-z])([A-Z])/g, '$1 $2')  // Space between lower->upper (AppName → App Name)
