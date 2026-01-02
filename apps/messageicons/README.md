@@ -8,7 +8,9 @@ Provides icons for phone apps that are utilized by `message gui` and any other m
 - Add your app name and the corresponding image you added to the `icon_names.json` file
 - Go lower in the `generate.js` code, and find the color definitions. There, add the color for the foreground of the icon, and the corresponding app.
 - Run the `generate.js` script. Be sure you have the `png-js` dependency needed. (you can install it by running `npm install png-js` in the terminal)
-- 
-**Don't modify the Lib.js file at all. When someone adds new icons, your old ones will be wiped**
 
-The app removes the following special characters at the end: `*!?.-_`, and also removes extra whitespaces, for better matching of 'marked' app names. All other characters not listed there will not be removed at the end.
+  
+<i><b>Don't modify the Lib.js file at all. When someone adds new icons, your old ones will be wiped</b></i>
+
+The app now removes the following special characters at the end: `*!?.-_`, and also removes extra whitespaces, for better matching of 'marked' app names (eg. Slack* ). All other characters not listed there will not be removed at the end.
+
