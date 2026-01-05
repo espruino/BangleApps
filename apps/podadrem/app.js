@@ -3,7 +3,7 @@
   Bluetooth.println(JSON.stringify({t:"intent", action:"", flags:["flag1", "flag2",...], categories:["category1","category2",...], mimetype:"", data:"",  package:"", class:"", target:"", extra:{someKey:"someValueOrString"}}));
 
   Podcast Addict is developed by Xavier Guillemane and can be downloaded on Google Play Store: https://play.google.com/store/apps/details?id=com.bambuna.podcastaddict&hl=en_US&gl=US
-  
+
   How to use intents to control Podcast Addict: https://podcastaddict.com/faq/130
 */
 
@@ -20,7 +20,7 @@ let gfx = function() {
   // g.drawString(str, x, y, solid)
   g.clearRect(R);
   g.reset();
-  
+
   if (dark) {g.setColor(0xFD20);} else {g.setColor(0xF800);} // Orange on dark theme, RED on light theme.
   g.setFont("4x6:2");
   g.setFontAlign(1, 0, 0);
@@ -56,7 +56,7 @@ let touchHandler = function(_, xy) {
   let x = xy.x;
   let y = xy.y;
   let len = (R.w<R.h+1)?(R.w/3):(R.h/3);
-  
+
   // doing a<b+1 seemed faster than a<=b, also using a>b-1 instead of a>=b.
   if ((R.x-1<x && x<R.x+len) && (R.y-1<y && y<R.y+len)) {
     //Menu
@@ -65,7 +65,7 @@ let touchHandler = function(_, xy) {
     backToMenu = true;
     E.showMenu(paMenu);
   } else if ((R.x-1<x && x<R.x+len) && (R.y2-len<y && y<R.y2+1)) {
-    //Wake 
+    //Wake
     gadgetbridgeWake();
   } else if ((R.x2-len<x && x<R.x2+1) && (R.y-1<y && y<R.y+len)) {
     //Srch
@@ -73,12 +73,12 @@ let touchHandler = function(_, xy) {
     Bangle.removeListener("swipe", swipeHandler);
     E.showMenu(searchMenu);
   } else if ((R.x2-len<x && x<R.x2+1) && (R.y2-len<y && y<R.y2+1)) {
-    //Speed 
+    //Speed
     Bangle.removeListener("touch", touchHandler);
     Bangle.removeListener("swipe", swipeHandler);
     E.showMenu(speedMenu);
   } else if ((R.x-1<x && x<R.x+len) && (R.y+R.h/2-len/2<y && y<R.y+R.h/2+len/2)) {
-    //Previous 
+    //Previous
     btMsg("service", standardCls, "player.previoustrack");
   } else if ((R.x2-len+1<x && x<R.x2+1) && (R.y+R.h/2-len/2<y && y<R.y+R.h/2+len/2)) {
     //Next
@@ -117,7 +117,7 @@ let setUI = function() {
   );
   Bangle.on("touch", touchHandler);
   Bangle.on("swipe", swipeHandler);
-  let buttonHandler = setWatch(()=>{load();}, BTN, {edge:'falling'});
+  let buttonHandler = setWatch(()=>{Bangle.load();}, BTN, {edge:'falling'});
 };
 
 /*
@@ -218,7 +218,7 @@ let paMenu = {
     gadgetbridgeWake();
     gadgetbridgeWake();
   },
-  "Exit PA Remote": ()=>{load();}
+  "Exit PA Remote": ()=>{Bangle.load();}
 };
 
 
@@ -257,7 +257,7 @@ let controlMenu = {
     btMsg("service", updateCls, "update");
   },
   "Messages Music Controls": () => {
-    load("messagesmusic.app.js");
+    Bangle.load("messagesmusic.app.js");
   },
 };
 

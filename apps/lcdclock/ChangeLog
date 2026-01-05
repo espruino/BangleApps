@@ -7,3 +7,4 @@
 0.07: fix special characters in clockinfo menus
 0.08: Allow - and . in clockinfo menus (fix #4007)
       Use slightly narrower clockinfo font
+0.09: Use custom 7 segment font
