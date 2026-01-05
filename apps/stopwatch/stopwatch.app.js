@@ -8,8 +8,12 @@ const config = Object.assign({
         start: now,
         current: now,
         running: false,
-    }
+        laps: [],
+    },
+    lapSupport: false,
 }, require("Storage").readJSON(CONFIGFILE,1) || {});
+
+if(config.state.laps == null) config.state.laps = [];
 
 let w = g.getWidth();
 let h = g.getHeight();
@@ -37,9 +41,9 @@ const saveState = function() {
     require("Storage").writeJSON(CONFIGFILE, config);
 };
 
-const log_debug = function(o) {
-  //console.log(o);
-};
+//const log_debug = function(o) {
+//  console.log(o);
+//};
 
 const timeToText = function(t) {
   let hrs = Math.floor(t/3600000);
@@ -58,21 +62,26 @@ const timeToText = function(t) {
 };
 
 const drawButtons = function() {
-  log_debug("drawButtons()");
-  if (!running && tCurrent == tTotal) {
+  // log_debug("drawButtons()");
+  if (!running && tCurrent === tTotal) {
     bigPlayPauseBtn.draw();
-  } else if (!running && tCurrent != tTotal) {
+  } else if (!running && tCurrent !== tTotal) {
     resetBtn.draw();
     smallPlayPauseBtn.draw();
   } else {
-    bigPlayPauseBtn.draw();
+    if (config.lapSupport) {
+      resetBtn.draw();
+      smallPlayPauseBtn.draw();
+    } else {
+      bigPlayPauseBtn.draw();
+    }
   }
 
   redrawButtons = false;
 };
 
 const drawTime = function() {
-  log_debug("drawTime()");
+  // log_debug("drawTime()");
   let Tt = tCurrent-tTotal;
   let Ttxt = timeToText(Tt);
 
@@ -82,6 +91,16 @@ const drawTime = function() {
   g.clearRect(0, timeY - 21, w, timeY + 21);
   g.setColor(g.theme.fg);
   g.drawString(Ttxt, w/2, timeY);
+
+  if (config.lapSupport) {
+    g.clearRect(0, timeY + 21, w, 3*h/4);
+    const laps = config.state.laps;
+    let window = laps.length - 2; // space for last two laps
+    if (window < 0) window = 0;
+    for(let i = window; i < laps.length; i++){
+      g.setFont("Vector", 20).drawString(timeToText(laps[i]), w/2, timeY + 26 + 20 * (i - window));
+    }
+  }
 };
 
 const draw = function() {
@@ -93,13 +112,13 @@ const draw = function() {
 };
 
 const startTimer = function() {
-  log_debug("startTimer()");
+  // log_debug("startTimer()");
   draw();
   displayInterval = setInterval(draw, 100);
 };
 
 const stopTimer = function() {
-  log_debug("stopTimer()");
+  // log_debug("stopTimer()");
   if (displayInterval) {
     clearInterval(displayInterval);
     displayInterval = undefined;
@@ -108,7 +127,7 @@ const stopTimer = function() {
 
 // BTN stop start
 const stopStart = function() {
-  log_debug("stopStart()");
+  // log_debug("stopStart()");
 
   if (running)
     stopTimer();
@@ -135,23 +154,31 @@ const setButtonImages = function() {
   if (running) {
     bigPlayPauseBtn.setImage(pause_img);
     smallPlayPauseBtn.setImage(pause_img);
-    resetBtn.setImage(reset_img);
   } else {
     bigPlayPauseBtn.setImage(play_img);
     smallPlayPauseBtn.setImage(play_img);
-    resetBtn.setImage(reset_img);
   }
+  resetBtn.setImage(reset_img);
 };
 
 // lap or reset
 const lapReset = function() {
-  log_debug("lapReset()");
-  if (!running && tStart != tCurrent) {
-    redrawButtons = true;
+  // log_debug("lapReset()");
+  if (!running) {
+    if (tStart !== tCurrent) {
+      redrawButtons = true;
+      Bangle.buzz();
+      tStart = tCurrent = tTotal = Date.now();
+      config.state.laps = [];
+      g.clearRect(0,24,w,h);
+      draw();
+    }
+    // else nothing to reset
+  } else {
+    // running, new lap
     Bangle.buzz();
-    tStart = tCurrent = tTotal = Date.now();
-    g.clearRect(0,24,w,h);
-    draw();
+    const lap = tCurrent - tTotal;
+    config.state.laps.push(lap);
   }
   saveState();
 };
@@ -177,7 +204,7 @@ BUTTON.prototype.check = function(x,y) {
   //console.log(this.name + ":check() x=" + x + " y=" + y +"\n");
 
   if (x>= this.x && x<= (this.x + this.w) && y>= this.y && y<= (this.y + this.h)) {
-    log_debug(this.name + ":callback\n");
+    // log_debug(this.name + ":callback\n");
     this.callback();
     return true;
   }
@@ -188,11 +215,11 @@ BUTTON.prototype.draw = function() {
   g.setColor(this.color);
   g.fillRect(this.x, this.y, this.x + this.w, this.y + this.h);
   g.setColor("#000"); // the icons and boxes are drawn black
-  if (this.img != undefined) {
+  if (this.img !== undefined) {
     let iw = iconScale * 24;  // the images were loaded as 24 pixels, we will scale
     let ix = this.x + ((this.w - iw) /2);
     let iy = this.y + ((this.h - iw) /2);
-    log_debug("g.drawImage(" + ix + "," + iy + "{scale: " + iconScale + "})");
+    // log_debug("g.drawImage(" + ix + "," + iy + "{scale: " + iconScale + "})");
     g.drawImage(this.img, ix, iy, {scale: iconScale});
   }
   g.drawRect(this.x, this.y, this.x + this.w, this.y + this.h);
@@ -202,10 +229,6 @@ BUTTON.prototype.draw = function() {
 const bigPlayPauseBtn = new BUTTON("big",0, 3*h/4 ,w, h/4, "#0ff", stopStart, play_img);
 const smallPlayPauseBtn = new BUTTON("small",w/2, 3*h/4 ,w/2, h/4, "#0ff", stopStart, play_img);
 const resetBtn = new BUTTON("rst",0, 3*h/4, w/2, h/4, "#ff0", lapReset, pause_img);
-
-bigPlayPauseBtn.setImage(play_img);
-smallPlayPauseBtn.setImage(play_img);
-resetBtn.setImage(pause_img);
 
 Bangle.setUI({mode:"custom", btn:() => Bangle.load(), touch: (button,xy) => {
     let x = xy.x;
@@ -218,17 +241,26 @@ Bangle.setUI({mode:"custom", btn:() => Bangle.load(), touch: (button,xy) => {
     if (x > w) x = w;
     if (x < 0) x = 0;
 
-    // not running, and reset
-    if (!running && tCurrent == tTotal && bigPlayPauseBtn.check(x, y)) return;
+    if (!running) {
+      if (tCurrent === tTotal) {
+        // paused and reset
+        if (bigPlayPauseBtn.check(x, y)) return;
+      } else {
+        // paused and hit play
+        if (smallPlayPauseBtn.check(x, y)) return;
 
-    // paused and hit play
-    if (!running && tCurrent != tTotal && smallPlayPauseBtn.check(x, y)) return;
+        // paused and press reset
+        if (resetBtn.check(x, y)) return;
+      }
+    } else {
+      if (config.lapSupport) {
+        if (smallPlayPauseBtn.check(x, y)) return;
 
-    // paused and press reset
-    if (!running && tCurrent != tTotal && resetBtn.check(x, y)) return;
-
-    // must be running
-    if (running && bigPlayPauseBtn.check(x, y)) return;
+        if (resetBtn.check(x, y)) return;
+      } else {
+        if (bigPlayPauseBtn.check(x, y)) return;
+      }
+    }
   }, remove: () => {
   if (displayInterval) {
     clearInterval(displayInterval);

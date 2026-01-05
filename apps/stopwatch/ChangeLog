@@ -4,4 +4,5 @@
 0.04: Keep running in background by saving state
 0.05: Fast Loading support
 0.06: Minor code improvements
-0.07: Enable fast load with Bangle.load
+0.07: Add setting for lap tracking
+      Enable fast load with Bangle.load
