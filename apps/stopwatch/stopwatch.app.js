@@ -230,7 +230,7 @@ const bigPlayPauseBtn = new BUTTON("big",0, 3*h/4 ,w, h/4, "#0ff", stopStart, pl
 const smallPlayPauseBtn = new BUTTON("small",w/2, 3*h/4 ,w/2, h/4, "#0ff", stopStart, play_img);
 const resetBtn = new BUTTON("rst",0, 3*h/4, w/2, h/4, "#ff0", lapReset, pause_img);
 
-Bangle.setUI({mode:"custom", btn:() => load(), touch: (button,xy) => {
+Bangle.setUI({mode:"custom", btn:() => Bangle.load(), touch: (button,xy) => {
     let x = xy.x;
     let y = xy.y;
 

@@ -5,3 +5,4 @@
 0.05: Fast Loading support
 0.06: Minor code improvements
 0.07: Add setting for lap tracking
+      Enable fast load with Bangle.load
