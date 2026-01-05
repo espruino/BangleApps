@@ -44,6 +44,7 @@ exports.gbHandler = (event) => {
     },
     // {t:"musicinfo", artist,album,track,dur,c(track count),n(track num}
     "musicinfo" : function() {
+      event.album = event.album||"";
       require("messages").pushMessage(Object.assign(event, {t:"modify",id:"music",title:"Music"}));
     },
     // {t:"audio", v:(percentage of max volume for android STREAM_MUSIC)}
