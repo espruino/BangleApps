@@ -175,13 +175,11 @@ function onFileSelected(file) {
       currentPage++;
       history.push({ offset: currentOffset, linesDisplayed: nextOffset.linesDisplayed });
       displayText(currentOffset, currentPage);
-      savePagePosition(file, currentOffset, currentPage);
     } else {
       currentOffset = 0;
       currentPage = 1;
       let result = displayText(currentOffset, currentPage);
       history = [{ offset: currentOffset, linesDisplayed: result.linesDisplayed }];
-      savePagePosition(file, currentOffset, currentPage);
     }
   }
 
@@ -192,7 +190,6 @@ function onFileSelected(file) {
       currentOffset = previousPage.offset;
       currentPage--;
       displayText(currentOffset, currentPage);
-      savePagePosition(file, currentOffset, currentPage);
     }
   // It may be possible to elegantly go back beyond the first saved offset but this is a problem for future me
   }
@@ -200,7 +197,6 @@ function onFileSelected(file) {
   function zoom() {
     g.clear();
     big = !big;
-    savePagePosition(file, currentOffset, currentPage);
     firstDraw();
   }
 
@@ -215,7 +211,6 @@ function onFileSelected(file) {
         history = [];
         var result = displayText(currentOffset, currentPage);
         history.push({ offset: currentOffset, linesDisplayed: result.linesDisplayed });
-        savePagePosition(file, currentOffset, currentPage);
       } else {
         displayText(currentOffset, currentPage);
       }
@@ -237,6 +232,10 @@ function onFileSelected(file) {
   firstDraw();
 
   Bangle.on("drag", (b) => ui.touchHandler(b));
+
+  E.on('kill', () => {
+  savePagePosition(file, currentOffset, currentPage);
+});
 }
 
 showFileSelector();
