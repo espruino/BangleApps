@@ -17,6 +17,10 @@ Bangle.js 2
 - tap the top right corner of the screen to go back to the first page
 - exit by pressing the physical button 
 
+## TODO
+
+- It is currently not possible to go backwards after continuing from a saved page. Instead, press the top right to go back to page one. 
+
 ## Creator
 
 <https://topkekker.rip/>
