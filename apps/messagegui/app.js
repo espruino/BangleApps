@@ -61,11 +61,15 @@ to the clock. */
 var unreadTimeout;
 /// List of all our messages
 var MESSAGES = require("messages").getMessages();
-if (Bangle.MESSAGES) {
-  // fast loading messages
-  Bangle.MESSAGES.forEach(m => require("messages").apply(m, MESSAGES));
-  delete Bangle.MESSAGES;
+delete Bangle.MESSAGES; // now we're storing all messages and handling them ourselves
+if (Bangle.MESSAGES_KILL_HANDLER) {
+  E.removeListener("kill", Bangle.MESSAGES_KILL_HANDLER);
+  delete Bangle.MESSAGES_KILL_HANDLER;
 }
+E.on("kill", function() { // now ensure we write messages on exit
+  // if we write the exact same data it's ok - Bangle.js won't create a new file
+  require("messages").write(MESSAGES, true/*force*/);
+});
 
 var onMessagesModified = function(type,msg) {
   if (msg.handled) return;
@@ -86,10 +90,6 @@ var onMessagesModified = function(type,msg) {
 };
 Bangle.on("message", onMessagesModified);
 
-function saveMessages() {
-  require("messages").write(MESSAGES);
-}
-E.on("kill", saveMessages);
 
 /* Listens to drag events to allow the user to swipe up/down to change message on Bangle.js 2
 returns dragHandler which should then be removed with Bangle.removeListener("drah", dragHandler); on exit */
