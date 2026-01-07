@@ -12,5 +12,3 @@ Provides icons for phone apps that are utilized by `message gui` and any other m
   
 <i><b>Don't modify the Lib.js file at all. When someone adds new icons, your old ones will be wiped</b></i>
 
-The app now removes the following special characters at the end: `*!?.-_`, and also removes extra whitespaces, for better matching of 'marked' app names (eg. Slack* ). All other characters not listed there will not be removed at the end.
-
