@@ -3,6 +3,7 @@ A clock that randomly changes the accent color every day to freshen up the clock
 
 ![](Scr4.png)
 
+The app is designed to be as battery-friendly as possible, and clears certain areas and utilizes string background to remove the need for full screen clears/draws. If any problems arise where the background has another app/terminal behind it, simply reload the clock.
 ## Settings
 ### Show/hide widgets
 Choose whether widgets are shown or hidden
