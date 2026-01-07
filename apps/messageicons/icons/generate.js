@@ -125,6 +125,7 @@ exports.getColor = function(msg,options) {
     "gmx": "#1c449b",
     "google": "#4285F4",
     "google home": "#fbbc05",
+    "health": "#ff3d71",
 // "home assistant": "#41bdf5", // ha-blue is #41bdf5, but that's the background
     "instagram": "#ff0069", // https://about.instagram.com/brand/gradient
     "jira": "#0052cc", // https://atlassian.design/resources/logo-library
