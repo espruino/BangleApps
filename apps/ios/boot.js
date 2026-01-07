@@ -283,7 +283,6 @@ E.on('notify',msg=>{
       .replaceAll("  "," ");  // Correct duplicate spacing
     // capitalize (only if non-empty)
     if (name.length > 0) name = name[0].toUpperCase() + name.slice(1);
-    name+="*";
   }else{
     // use exception or app id itself
     name = appNames[msg.appId]||msg.appId;
