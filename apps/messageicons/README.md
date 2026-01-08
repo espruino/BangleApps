@@ -10,5 +10,5 @@ Provides icons for phone apps that are utilized by `message gui` and any other m
 - Run the `generate.js` script. Be sure you have the `png-js` dependency needed. (you can install it by running `npm install png-js` in the terminal)
 
   
-<i><b>Don't modify the Lib.js file at all. When someone adds new icons, your old ones will be wiped</b></i>
+<i><b>Don't modify the `lib.js` file at all. When someone adds new icons, your old ones will be wiped</b></i>
 
