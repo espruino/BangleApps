@@ -1,9 +1,12 @@
 #!/usr/bin/node
 
-// Creates lib.js from icons
-// npm install png-js
+// Creates lib.js from icons. 
 
-// default icon must come first in icon_names
+// Install the dependency first before running: npm install png-js
+
+// The default icon image and name must come first in icon_names.json
+
+// Once the image is added, add a color entry in the getColor function below.
 
 /* eslint-env node */
 
@@ -83,8 +86,8 @@ Promise.all(promises).then(function() {
   require("fs").writeFileSync(__dirname+"/../icons.img", Buffer.from(iconData,"binary"));
 
   console.log("Saving library");
-  require("fs").writeFileSync(__dirname+"/../lib.js", `// This file is auto-generated - DO NOT MODIFY
-// If you want to add icons, change icons/icon_names.json and re-run icons/generate.js
+  require("fs").writeFileSync(__dirname+"/../lib.js", `// This file is auto-generated. --- DO NOT MODIFY AT ALL ---
+// If you want to add icons, import your icon as a 24x24 png, change icons/icon_names.json and re-run icons/generate.js
 exports.getImage = function(msg) {
   if (msg.img) return atob(msg.img);
   let s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
@@ -100,7 +103,8 @@ exports.getColor = function(msg,options) {
   if (st.iconColorMode == 'mono') return options.default;
   const s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
   return {
-    /* generic colors, using B2-safe colors */ ${ /* DO NOT USE BLACK OR WHITE HERE, just leave the declaration out and then the theme's fg color will be used */"" }
+    ${ /* ADD THE COLOR FOR YOUR ICON HERE. DO NOT USE BLACK OR WHITE, just leave the declaration out and then the theme's fg color will be used */"" }/* generic colors, using B2-safe colors */ 
+    "adp": "#f00",
     "agenda": "#206cd5",
     "airbnb": "#ff385c", // https://news.airbnb.com/media-assets/category/brand/
     "mail": "#ff0",
@@ -113,6 +117,7 @@ exports.getColor = function(msg,options) {
     "bibel": "#54342c",
     "bring": "#455a64",
     "davx⁵": "#8bc34a",
+    "duolingo": "#58cc02", // https://design.duolingo.com/identity/color#core-brand-colors
     "discord": "#5865f2", // https://discord.com/branding
     "etar": "#36a18b",
     "facebook": "#1877f2", // https://www.facebook.com/brand/resources/facebookapp/logo
@@ -120,6 +125,7 @@ exports.getColor = function(msg,options) {
     "gmx": "#1c449b",
     "google": "#4285F4",
     "google home": "#fbbc05",
+    "health": "#ff3d71",
 // "home assistant": "#41bdf5", // ha-blue is #41bdf5, but that's the background
     "instagram": "#ff0069", // https://about.instagram.com/brand/gradient
     "jira": "#0052cc", // https://atlassian.design/resources/logo-library
@@ -139,12 +145,14 @@ exports.getColor = function(msg,options) {
     "opentasks": "#409f8f",
     "outlook mail": "#0078d4", // https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products
     "paypal": "#003087",
-    "pocket": "#ef4154f", // https://blog.getpocket.com/press/
+    "pocket": "#ef4154", // https://blog.getpocket.com/press/
     "post & dhl": "#f2c101",
     "reddit": "#ff4500", // https://www.redditinc.com/brand
+    "roborock": "#f00",
     "signal": "#3a76f0", // https://github.com/signalapp/Signal-Desktop/blob/main/images/signal-logo.svg
     "skype": "#0078d4", // https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products
     "slack": "#e51670",
+    "shortcuts": "#8000ff",
     "snapchat": "#ff0",
     "steam": "#171a21",
     "teams": "#6264a7", // https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products
