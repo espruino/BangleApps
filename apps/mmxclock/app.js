@@ -1,6 +1,5 @@
 Bangle.setLCDPower(1);
 Bangle.setLCDTimeout(1);
-const storage = require('Storage');
 
 //draw clock image
 function getImg() {
