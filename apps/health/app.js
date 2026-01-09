@@ -38,6 +38,7 @@ function menuStepCount() {
 }
 function finish() {
   Bangle.setHRMPower(0);
+  Bangle.removeListener('health', onRHRHrm);
   if (rhrData.length > 0) {
     // Calculate average, ignoring outliers
     let avgRHR = Math.round(rhrData.reduce((a, b) => a + b) / rhrData.length);
@@ -62,7 +63,7 @@ function finish() {
           E.showMessage("No reliable data. Try again?");
         }
   }
-Bangle.on('HRM', function(hrm) {
+function onRHRHrm(hrm) {
     // Only record if the watch is confident in the reading
     if (hrm.confidence > 80) {
       rhrData.push(hrm.bpm);
@@ -82,7 +83,8 @@ Bangle.on('HRM', function(hrm) {
     if(hrm.confidence<=80){
     g.setFont("Vector", 14).drawString("Low confidence\nKeep still", g.getWidth()/2, g.getHeight() - 20);
     }
-  });
+  }
+Bangle.on('HRM',onRHRHrm);
 function startRHR(){
     // Start the process
   
