@@ -47,7 +47,7 @@ function finish() {
       buttonHeight:35,
       buttons:{"Back":true}
     }).then(function(v){
-      menuMain()
+      menuMain();
     })
     var a=Bangle.appRect
 
