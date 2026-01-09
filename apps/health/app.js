@@ -54,7 +54,7 @@ function finish() {
     g.setFont("Vector", 25).setFontAlign(0,0);
         g.drawString("Saved!", g.getWidth()/2, 35);
     g.setFont("Vector", 30).setFontAlign(0,0);
-        g.drawString(56, g.getWidth()/2-30, g.getHeight()/2);
+        g.drawString(avgRHR, g.getWidth()/2-30, g.getHeight()/2);
     g.setFont("Vector", 18).setFontAlign(0,0);
         g.drawString("RHR", g.getWidth()/2-30, g.getHeight()/2+20);
 
