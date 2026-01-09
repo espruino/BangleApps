@@ -101,7 +101,7 @@ function startRHR(){
         finish();
       }
     }, 1000);
-  }
+  };
 function RHRReading(){
   E.showPrompt("Resting Heart Rate reading requires you to be resting and still. Takes approx. 1 minute.",{
       title:"Continue?",
