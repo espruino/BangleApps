@@ -41,7 +41,7 @@ mainMenu[''] = {
   remove: () => {
   },
 };
-mainMenu['< Back'] = ()=>{load();};
+mainMenu['< Back'] = ()=>{Bangle.load();};
 
 Bangle.loadWidgets();
 menu = E.showMenu(mainMenu);

@@ -121,3 +121,6 @@
 0.89: Fix bugs related to empty titles and bodies
 0.90: New settings for when to auto show new message (never, on clocks -
       default, if locked, always)
+0.91: Ensure music messages are actually saved in the messages list so the currently playing track persists
+      Use E.on("kill" event to ensure we always save messages before changing app
+      Simplify message handling now messages lib automatically applies Bangle.messages
