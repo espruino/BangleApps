@@ -85,10 +85,13 @@ Bangle.on('HRM', function(hrm) {
   });
 function startRHR(){
     // Start the process
+  
     g.clearRect(Bangle.appRect)
     g.setColor(g.theme.fg); 
     g.setFont("Vector", 20).setFontAlign(0,0);
     g.drawString("Starting...", g.getWidth()/2, g.getHeight()/2);
+    rhrData = [];
+    counter = seconds;
     Bangle.setHRMPower(1);
     let interval = setInterval(() => {
       counter--;
