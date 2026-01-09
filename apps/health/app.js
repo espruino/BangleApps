@@ -64,26 +64,26 @@ function finish() {
 }
 
 function onRHRHrm(hrm) {
-    // Only record if the watch is confident in the reading
-    if (hrm.confidence > 80) {
-      rhrData.push(hrm.bpm);
-    }
+  // Only record if the watch is confident in the reading
+  if (hrm.confidence > 80) {
+    rhrData.push(hrm.bpm);
+  }
 
-    // UI Update
-    g.clearRect(Bangle.appRect);
-    g.setColor(g.theme.fg); 
-    g.setFont("Vector", 20).setFontAlign(0,0);
-    g.drawString("Measuring...", g.getWidth()/2, 40);
-    g.setFont("Vector", 40);
-    g.drawString(hrm.bpm, g.getWidth()/2-30, g.getHeight()/2-5);
+  // UI Update
+  g.clearRect(Bangle.appRect);
+  g.setColor(g.theme.fg); 
+  g.setFont("Vector", 20).setFontAlign(0,0);
+  g.drawString("Measuring...", g.getWidth()/2, 40);
+  g.setFont("Vector", 40);
+  g.drawString(hrm.bpm, g.getWidth()/2-30, g.getHeight()/2-5);
   g.setColor("#f00"); g.drawImage(atob("Mi2BAAAAAAAAAAAP4AAf4AAf/wAf/gAP/+Af/+AH//wP//wD//+H//+B///z///w///+///8P///////n///////5///////+f///////3///////9////////f///////3///////9////////f///////j///////4///////+P///////B///////wf//////4D//////+Af//////AH//////gA//////4AH/////8AA/////+AAH/////AAB/////gAAP////wAAA////4AAAH///8AAAA///+AAAAH///AAAAA///AAAAAH//gAAAAAf/wAAAAAD/4AAAAAAf4AAAAAAB8AAAAAAAOAAAAAAAAAAAAAAAAAAAAAA=="),g.getWidth()-80,60)
   g.setColor(g.theme.fg); 
-    g.setFont("Vector", 16);
-    g.drawString(counter + "s remaining", g.getWidth()/2, g.getHeight() - 55);
-    if(hrm.confidence<=80){
+  g.setFont("Vector", 16);
+  g.drawString(counter + "s remaining", g.getWidth()/2, g.getHeight() - 55);
+  if(hrm.confidence<=80){
     g.setFont("Vector", 14).drawString("Low confidence\nKeep still", g.getWidth()/2, g.getHeight() - 20);
-    }
   }
+}
 Bangle.on('HRM',onRHRHrm);
 function startRHR(){
     // Start the process
@@ -102,7 +102,7 @@ function startRHR(){
         finish();
       }
     }, 1000);
-  };
+  }
 function RHRReading(){
   E.showPrompt("Resting Heart Rate reading requires you to be resting and still. Takes approx. 1 minute.",{
       title:"Continue?",
