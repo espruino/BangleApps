@@ -58,11 +58,10 @@ function finish() {
           g.drawString(avgRHR, g.getWidth()/2-30, g.getHeight()/2);
       g.setFont("Vector", 18).setFontAlign(0,0);
           g.drawString("RHR", g.getWidth()/2-30, g.getHeight()/2+20);
-  
-        } else {
-          E.showMessage("No reliable data. Try again?");
-        }
-  }
+    });
+  } 
+}
+
 function onRHRHrm(hrm) {
     // Only record if the watch is confident in the reading
     if (hrm.confidence > 80) {
