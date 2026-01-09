@@ -5,7 +5,7 @@
   "version": "0.38",
   "description": "Logs health data and provides an app to view it",
   "icon": "app.png",
-  "screenshots" : [ { "url":"screenshot.png" } ],
+  "screenshots" : [ { "url":"screenshot.png" },{ "url":"screenshot2.png" } ],
   "tags": "tool,system,health",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
