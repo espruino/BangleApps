@@ -10,11 +10,14 @@ To view data, run the `Health` app from your watch.
 
 ## Features
 
-Stores:
-
+### Stores:
 * Heart rate
 * Step count (can calculate distance if myprofile is installed and stride length is set)
 * Movement
+
+You can also take a Resting Heart Rate measurement, which can be indicative of your cardiovascular health and overall fitness. To do so, you must be very still and have the watch snug around your wrist (light leaking in can affect the reading). You must also take the measurement when you are resting (e. in bed for 10 minutes) to provide the best results. 
+
+To take it, navigate to the health app and find the `Take RHR reading` button to start the test.
 
 ## Settings
 
