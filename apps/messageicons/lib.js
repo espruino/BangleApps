@@ -10,71 +10,11 @@ exports.getImage = function(msg) {
 
 exports.getColor = function(msg,options) {
   options = options||{};
-  var st = options.settings || require('Storage').readJSON("messages.settings.json", 1) || {};
+  var st = options.settings || require('Storage').readJSON("messages.settings.json", 1) || {}; // TODO: should we really be loading settings each time we want an icon color? Shouldn't this messageicons users' job?
   if (options.default===undefined) options.default=g.theme.fg;
   if (st.iconColorMode == 'mono') return options.default;
   const s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
-  return {
-    /* generic colors, using B2-safe colors */ 
-    "adp": "#f00",
-    "agenda": "#206cd5",
-    "airbnb": "#ff385c", // https://news.airbnb.com/media-assets/category/brand/
-    "mail": "#ff0",
-    "music": "#f0f",
-    "phone": "#0f0",
-    "sms message": "#0ff", 
-    "bibel": "#54342c",
-    "bring": "#455a64",
-    "davx⁵": "#8bc34a",
-    "duolingo": "#58cc02", // https://design.duolingo.com/identity/color#core-brand-colors
-    "discord": "#5865f2", // https://discord.com/branding
-    "etar": "#36a18b",
-    "facebook": "#1877f2", // https://www.facebook.com/brand/resources/facebookapp/logo
-    "gmail": "#ea4335",
-    "gmx": "#1c449b",
-    "google": "#4285F4",
-    "google home": "#fbbc05",
-    "health": "#ff3d71",
-// "home assistant": "#41bdf5", // ha-blue is #41bdf5, but that's the background
-    "instagram": "#ff0069", // https://about.instagram.com/brand/gradient
-    "jira": "#0052cc", // https://atlassian.design/resources/logo-library
-    "kleinanzeigen": "#69bd2f", // https://themen.kleinanzeigen.de/medien/mediathek/kleinanzeigen-guideline-nutzung-logo/ 
-    "leboncoin": "#fa7321",
-    "lieferando": "#ff8000",
-    "linkedin": "#0a66c2", // https://brand.linkedin.com/
-    "messages": "#0a5cce",
-    "messenger": "#0078ff",
-    "mastodon": "#563acc", // https://www.joinmastodon.org/branding
-    "mattermost": "#00f",
-    "n26": "#36a18b",
-    "nextbike": "#00f",
-    "nextcloud": "#0082c9", // https://nextcloud.com/brand/
-    "newpipe": "#f00",
-    "nina": "#e57004",
-    "opentasks": "#409f8f",
-    "outlook mail": "#0078d4", // https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products
-    "paypal": "#003087",
-    "pocket": "#ef4154", // https://blog.getpocket.com/press/
-    "post & dhl": "#f2c101",
-    "reddit": "#ff4500", // https://www.redditinc.com/brand
-    "roborock": "#f00",
-    "signal": "#3a76f0", // https://github.com/signalapp/Signal-Desktop/blob/main/images/signal-logo.svg
-    "skype": "#0078d4", // https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products
-    "slack": "#e51670",
-    "shortcuts": "#8000ff",
-    "snapchat": "#ff0",
-    "steam": "#171a21",
-    "teams": "#6264a7", // https://developer.microsoft.com/en-us/fluentui#/styles/web/colors/products
-    "telegram": "#0088cc",
-    "telegram foss": "#0088cc",
-    "thunderbird": "#1582e4",
-    "to do": "#3999e5",
-    "twitch": "#9146ff", // https://brand.twitch.tv/
-    "twitter": "#1d9bf0", // https://about.twitter.com/en/who-we-are/brand-toolkit
-    "vlc": "#ff8800",
-    "whatsapp": "#4fce5d",
-    "wordfeud": "#e7d3c7",
-    "youtube": "#f00", // https://www.youtube.com/howyoutubeworks/resources/brand-resources/#logos-icons-and-colors
-  }[s]||options.default;
+  let match = ",adp|F00,agenda|26D,airbnb|F35,mail|FF0,music|F0F,phone|0F0,sms message|0FF,bibel|532,bring|456,davx⁵|8C4,duolingo|5C0,discord|56F,etar|3A8,facebook|17F,gmail|E43,gmx|149,google|48F,google home|FB0,health|F37,instagram|F06,jira|05C,kleinanzeigen|6B2,leboncoin|F72,lieferando|F80,linkedin|06C,messages|05C,messenger|07F,mastodon|53C,mattermost|00F,n26|3A8,nextbike|00F,nextcloud|08C,newpipe|F00,nina|E70,opentasks|498,outlook mail|07D,paypal|038,pocket|E45,post & dhl|FC0,reddit|F40,roborock|F00,signal|37F,skype|07D,slack|E17,shortcuts|80F,snapchat|FF0,steam|112,teams|66A,telegram|08C,telegram foss|08C,thunderbird|18E,to do|39E,twitch|94F,twitter|19F,vlc|F80,whatsapp|4C5,wordfeud|EDC,youtube|F00,".match(new RegExp(`,${s}\\|(...)`))
+  return (match===null)?options.default:match[1]
 };
   

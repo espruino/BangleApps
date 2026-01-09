@@ -1,6 +1,6 @@
-#!/usr/bin/node
+#!/usr/bin/env node
 
-// Creates lib.js from icons. 
+// Creates lib.js from icons.
 
 // Install the dependency first before running: npm install png-js
 
@@ -20,100 +20,16 @@ const imgOptions = {
 };
 var PNG = require('png-js');
 var IMAGE_BYTES = 76;
-
-var iconImages = []; // array of converted icons
-var iconIndices = {}; // maps filename -> index in iconImages
-
-var promises = [];
-
-icons.forEach(icon => {
-  var index = iconIndices[icon.icon];
-  if (index===undefined) { // need a new icon
-    index = iconImages.length;
-    iconIndices[icon.icon] = index;
-    iconImages.push(""); // placeholder
-    // create image
-    console.log("Loading "+icon.icon);
-    var png = new PNG(require("fs").readFileSync(__dirname+"/"+icon.icon));
-    if (png.width!=24 || png.height!=24) {
-      console.warn(icon.icon+" should be 24x24px");
-    }
-
-    promises.push(new Promise(r => {
-      png.decode(function (pixels) {
-        var rgba = new Uint8Array(pixels);
-        var isTransparent = false;
-        for (var i=0;i<rgba.length;i+=4) {          
-          if (rgba[i+3]<255) isTransparent=true;
-        }
-        if (!isTransparent) { // make it transparent
-          for (var i=0;i<rgba.length;i+=4)
-            rgba[i+3] = 255-rgba[i];
-        }
-        var allSet = true, allUnset = true;
-        for (var i=0;i<rgba.length;i+=4) {
-          rgba[i+0] = 0; // ensure all pixels are black (data is in transparency)
-          rgba[i+1] = 0;
-          rgba[i+2] = 0;
-          if (rgba[i+3]>0) allUnset=false;
-          if (rgba[i+3]<255) allSet=false;
-        } 
-
-        imgOptions.width = png.width;
-        imgOptions.height = png.height;
-        var img = imageconverter.RGBAtoString(rgba, imgOptions);
-        iconImages[index] = img;
-        console.log("Loaded "+icon.icon);
-        if (allSet || allUnset) throw new Error(icon.icon+" Image is blank! (is it saved as 8 bit RGB PNG?)");
-        if (img.length != IMAGE_BYTES) throw new Error(icon.icon+" Image size should be 76 bytes");
-        r(); // done
-      });
-    }));
-    //
-  }
-  icon.index = index;
-});
-
-Promise.all(promises).then(function() {
-  // Allocate a big array of icons
-  var iconData = new Uint8Array(IMAGE_BYTES * iconImages.length);
-  iconImages.forEach((img,idx) => {
-    // Yay, more JS. Why is it so hard to get the bytes???
-    iconData.set(Array.prototype.slice.call(Buffer.from(img,"binary")), idx*IMAGE_BYTES)
-  });
-
-  console.log("Saving images");
-  require("fs").writeFileSync(__dirname+"/../icons.img", Buffer.from(iconData,"binary"));
-
-  console.log("Saving library");
-  require("fs").writeFileSync(__dirname+"/../lib.js", `// This file is auto-generated. --- DO NOT MODIFY AT ALL ---
-// If you want to add icons, import your icon as a 24x24 png, change icons/icon_names.json and re-run icons/generate.js
-exports.getImage = function(msg) {
-  if (msg.img) return atob(msg.img);
-  let s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
-  if (msg.id=="music") s="music";
-  let match = ${JSON.stringify(","+icons.map(icon=>icon.app+"|"+icon.index).join(",")+",")}.match(new RegExp(\`,\${s}\\\\|(\\\\d+)\`))
-  return require("Storage").read("messageicons.img", (match===null)?0:match[1]*${IMAGE_BYTES}, ${IMAGE_BYTES});
-};
-
-exports.getColor = function(msg,options) {
-  options = options||{};
-  var st = options.settings || require('Storage').readJSON("messages.settings.json", 1) || {};
-  if (options.default===undefined) options.default=g.theme.fg;
-  if (st.iconColorMode == 'mono') return options.default;
-  const s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
-  return {
-    ${ /* ADD THE COLOR FOR YOUR ICON HERE. DO NOT USE BLACK OR WHITE, just leave the declaration out and then the theme's fg color will be used */"" }/* generic colors, using B2-safe colors */ 
+const COLORS = {
+  /* ADD THE COLOR FOR YOUR ICON HERE. DO NOT USE BLACK OR WHITE, just leave the declaration out and then the theme's fg color will be used */
+  /* generic colors, using B2-safe colors */
     "adp": "#f00",
     "agenda": "#206cd5",
     "airbnb": "#ff385c", // https://news.airbnb.com/media-assets/category/brand/
     "mail": "#ff0",
     "music": "#f0f",
     "phone": "#0f0",
-    "sms message": "#0ff", ${ /*
-    brands, according to https://www.schemecolor.com/?s (picking one for multicolored logos)
-    all dithered on B2, but we only use the color for the icons.  (Could maybe pick the closest 3-bit color for B2?)
-*/""}
+    "sms message": "#0ff", /* brands, according to https://www.schemecolor.com/?s (picking one for multicolored logos) */
     "bibel": "#54342c",
     "bring": "#455a64",
     "davx⁵": "#8bc34a",
@@ -129,7 +45,7 @@ exports.getColor = function(msg,options) {
 // "home assistant": "#41bdf5", // ha-blue is #41bdf5, but that's the background
     "instagram": "#ff0069", // https://about.instagram.com/brand/gradient
     "jira": "#0052cc", // https://atlassian.design/resources/logo-library
-    "kleinanzeigen": "#69bd2f", // https://themen.kleinanzeigen.de/medien/mediathek/kleinanzeigen-guideline-nutzung-logo/ 
+    "kleinanzeigen": "#69bd2f", // https://themen.kleinanzeigen.de/medien/mediathek/kleinanzeigen-guideline-nutzung-logo/
     "leboncoin": "#fa7321",
     "lieferando": "#ff8000",
     "linkedin": "#0a66c2", // https://brand.linkedin.com/
@@ -166,7 +82,101 @@ exports.getColor = function(msg,options) {
     "whatsapp": "#4fce5d",
     "wordfeud": "#e7d3c7",
     "youtube": "#f00", // https://www.youtube.com/howyoutubeworks/resources/brand-resources/#logos-icons-and-colors
-  }[s]||options.default;
+};
+
+/// Convert a colour "#rrggbb" or "#rgb" to "rgb""
+function convertCol(col) {
+  col = col.toUpperCase();
+  if (col[0]!="#") throw new Error("Expecting color #rrggbb or #rgb");
+  if (col.length==4) return col.substr(1);
+  if (col.length!=7) throw new Error("Expecting color #rrggbb or #rgb");
+  return col[1]+col[3]+col[5];
+}
+
+var iconImages = []; // array of converted icons
+var iconIndices = {}; // maps filename -> index in iconImages
+
+var promises = [];
+
+icons.forEach(icon => {
+  var index = iconIndices[icon.icon];
+  if (index===undefined) { // need a new icon
+    index = iconImages.length;
+    iconIndices[icon.icon] = index;
+    iconImages.push(""); // placeholder
+    // create image
+    console.log("Loading "+icon.icon);
+    var png = new PNG(require("fs").readFileSync(__dirname+"/"+icon.icon));
+    if (png.width!=24 || png.height!=24) {
+      console.warn(icon.icon+" should be 24x24px");
+    }
+
+    promises.push(new Promise(r => {
+      png.decode(function (pixels) {
+        var rgba = new Uint8Array(pixels);
+        var isTransparent = false;
+        for (var i=0;i<rgba.length;i+=4) {
+          if (rgba[i+3]<255) isTransparent=true;
+        }
+        if (!isTransparent) { // make it transparent
+          for (var i=0;i<rgba.length;i+=4)
+            rgba[i+3] = 255-rgba[i];
+        }
+        var allSet = true, allUnset = true;
+        for (var i=0;i<rgba.length;i+=4) {
+          rgba[i+0] = 0; // ensure all pixels are black (data is in transparency)
+          rgba[i+1] = 0;
+          rgba[i+2] = 0;
+          if (rgba[i+3]>0) allUnset=false;
+          if (rgba[i+3]<255) allSet=false;
+        }
+
+        imgOptions.width = png.width;
+        imgOptions.height = png.height;
+        var img = imageconverter.RGBAtoString(rgba, imgOptions);
+        iconImages[index] = img;
+        console.log("Loaded "+icon.icon);
+        if (allSet || allUnset) throw new Error(icon.icon+" Image is blank! (is it saved as 8 bit RGB PNG?)");
+        if (img.length != IMAGE_BYTES) throw new Error(icon.icon+" Image size should be 76 bytes");
+        r(); // done
+      });
+    }));
+    //
+  }
+  icon.index = index;
+});
+
+Promise.all(promises).then(function() {
+  // Allocate a big array of icons
+  var iconData = new Uint8Array(IMAGE_BYTES * iconImages.length);
+  iconImages.forEach((img,idx) => {
+    // Yay, more JS. Why is it so hard to get the bytes???
+    iconData.set(Array.prototype.slice.call(Buffer.from(img,"binary")), idx*IMAGE_BYTES)
+  });
+
+
+  console.log("Saving images");
+  require("fs").writeFileSync(__dirname+"/../icons.img", Buffer.from(iconData,"binary"));
+
+  console.log("Saving library");
+  require("fs").writeFileSync(__dirname+"/../lib.js", `// This file is auto-generated. --- DO NOT MODIFY AT ALL ---
+// If you want to add icons, import your icon as a 24x24 png, change icons/icon_names.json and re-run icons/generate.js
+exports.getImage = function(msg) {
+  if (msg.img) return atob(msg.img);
+  let s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
+  if (msg.id=="music") s="music";
+  let match = ${JSON.stringify(","+icons.map(icon=>icon.app+"|"+icon.index).join(",")+",")}.match(new RegExp(\`,\${s}\\\\|(\\\\d+)\`))
+  return require("Storage").read("messageicons.img", (match===null)?0:match[1]*${IMAGE_BYTES}, ${IMAGE_BYTES});
+};
+
+exports.getColor = function(msg,options) {
+  options = options||{};
+  var st = options.settings || require('Storage').readJSON("messages.settings.json", 1) || {}; // TODO: should we really be loading settings each time we want an icon color? Shouldn't this messageicons users' job?
+  if (options.default===undefined) options.default=g.theme.fg;
+  if (st.iconColorMode == 'mono') return options.default;
+  const s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
+  let match = ${JSON.stringify(","+Object.keys(COLORS).map(app=>app+"|"+convertCol(COLORS[app])).join(",")+",")}.match(new RegExp(\`,\${s}\\\\|(...)\`))
+  return (match===null)?options.default:match[1]
 };
   `);
 });
