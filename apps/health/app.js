@@ -1,5 +1,5 @@
 let settings;
-const data = require("Storage").readJSON("myprofile.json",1)||{};
+const myprofile = require("Storage").readJSON("myprofile.json",1)||{};
 
 //RHR reading vars
 let rhrData = [];
