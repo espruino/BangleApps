@@ -197,7 +197,7 @@ function getDetailedDayData(data, selectedDay) {
           var record = Object.assign({
             day : day + 1,
             hr : hr,
-            min :  m * 10
+            min : m * 10
           }, inf.decode(h));
           records.push(record);
         }
@@ -572,8 +572,7 @@ chartInstances.chartSteps = new Chart(document.getElementById("chartSteps"), {
           }
         });
 
-       chartInstances.chartMovement =
-       new Chart(document.getElementById("chartMovement"), {
+       chartInstances.chartMovement = new Chart(document.getElementById("chartMovement"), {
           type: 'bar',
           data: {
             labels: labels,
