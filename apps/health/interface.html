@@ -153,7 +153,7 @@ function getDailyData(data) {
   var inf = exports.getDecoder(data);
   var idx = DB_HEADER_LEN;
   for (var day = 0; day < 31; day++) {
-    var dayData = {steps: 0, bpm:  0, movement: 0};
+    var dayData = {steps: 0, bpm: 0, movement: 0};
     let bpmCnt = 0;
     for (var hr = 0; hr < 24; hr++) { // actually 25, see below
       for (var m = 0; m < DB_RECORDS_PER_HR; m++) {
