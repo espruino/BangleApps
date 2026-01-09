@@ -687,6 +687,8 @@ const getBleAdvert = <T>(map: (s: BleServ) => T, all = false) => {
 const updateServices = () => {
   const newAdvert = getBleAdvert(serviceToAdvert);
 
+  // might get "Can't update services until BLE restart"
+  // but we're only called from setInterval, so fine to ignore
   NRF.updateServices(newAdvert);
 };
 
@@ -771,10 +773,16 @@ enableSensors();
     const serv = ad[id as BleServ];
     let value;
 
-    // pick the first characteristic to advertise
-    for(const ch in serv){
-      value = serv[ch as BleChar]!.value;
-      break;
+    // for HRM, some apps only pick it up if
+    // there's nothing in the advert
+    if (id === BleServ.HRM) {
+      value = undefined;
+    } else {
+      // pick the first characteristic to advertise
+      for(const ch in serv){
+        value = serv[ch as BleChar]!.value;
+        break;
+      }
     }
 
     require("ble_advert").set(id, value || []);

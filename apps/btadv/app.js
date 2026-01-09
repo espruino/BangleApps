@@ -414,12 +414,12 @@
         if (connected === void 0) { connected = NRF.getSecurityStatus().connected; }
         changeInterval(redrawInterval_1, locked ? 15000 : 5000);
         if (connected) {
-            var interval = btnsShown_1 ? 5000 : 1000;
+            var interval_1 = btnsShown_1 ? 5000 : 1000;
             if (bleInterval_1) {
-                changeInterval(bleInterval_1, interval);
+                changeInterval(bleInterval_1, interval_1);
             }
             else {
-                bleInterval_1 = setInterval(updateServices_1, interval);
+                bleInterval_1 = setInterval(updateServices_1, interval_1);
             }
         }
         else if (bleInterval_1) {
@@ -443,9 +443,14 @@
         for (var id in ad) {
             var serv = ad[id];
             var value = void 0;
-            for (var ch in serv) {
-                value = serv[ch].value;
-                break;
+            if (id === "0x180d") {
+                value = undefined;
+            }
+            else {
+                for (var ch in serv) {
+                    value = serv[ch].value;
+                    break;
+                }
             }
             require("ble_advert").set(id, value || []);
         }
