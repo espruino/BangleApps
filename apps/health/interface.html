@@ -79,7 +79,7 @@ function getMonthList() {
     files = files.map(f => {
       var m = f.match(/^health-([^\.]+)\.raw$/);
       return {
-        filename :  f,
+        filename : f,
         date : m[1], // eg 2021-9
         str : new Date(m[1]).toLocaleString(undefined, {month:'long',year:'numeric'})
       }
