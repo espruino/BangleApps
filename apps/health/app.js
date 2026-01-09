@@ -41,8 +41,8 @@ function finish() {
   if (rhrData.length > 0) {
     // Calculate average, ignoring outliers
     let avgRHR = Math.round(rhrData.reduce((a, b) => a + b) / rhrData.length);
-    profile.restingHr = avgRHR;
-    require("Storage").writeJSON("myprofile.json", profile);
+    myprofile.restingHr = avgRHR;
+    require("Storage").writeJSON("myprofile.json", myprofile);
     E.showPrompt(" ",{
       buttonHeight:35,
       buttons:{"Back":true}
