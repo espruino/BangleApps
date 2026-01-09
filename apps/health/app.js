@@ -51,7 +51,6 @@ function finish() {
     })
     var a=Bangle.appRect
 
-    print(a)
     g.clearRect(0,a.y,g.getWidth(),g.getHeight-40)
 
     g.setColor("#f00"); g.drawImage(atob("Mi2BAAAAAAAAAAAP4AAf4AAf/wAf/gAP/+Af/+AH//wP//wD//+H//+B///z///w///+///8P///////n///////5///////+f///////3///////9////////f///////3///////9////////f///////j///////4///////+P///////B///////wf//////4D//////+Af//////AH//////gA//////4AH/////8AA/////+AAH/////AAB/////gAAP////wAAA////4AAAH///8AAAA///+AAAAH///AAAAA///AAAAAH//gAAAAAf/wAAAAAD/4AAAAAAf4AAAAAAB8AAAAAAAOAAAAAAAAAAAAAAAAAAAAAA=="),g.getWidth()-80,70)
