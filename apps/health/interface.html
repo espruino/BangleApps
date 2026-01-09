@@ -162,7 +162,7 @@ function getDailyData(data) {
           var h = Object.assign({
             day : day + 1,
             hr : hr,
-            min :  m * 10
+            min : m * 10
           }, inf.decode(h));
           dayData.steps += h.steps; // sum
           if (h.bpm > 0) {
