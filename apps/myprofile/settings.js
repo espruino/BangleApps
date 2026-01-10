@@ -112,7 +112,7 @@
           writeProfile();
         },
       },
-
+              
       /*LANG*/'HR max': {
         format: v => /*LANG*/`${v} BPM`,
         value: myprofile.maxHrm,
@@ -122,18 +122,7 @@
           writeProfile();
         }
       },
-
-      
-      /*LANG*/"Weight": {
-        value: myprofile.weight,
-        min:0,
-        step:1,
-        format: v => v ? v + "kg" : '-',
-        onchange: v => {
-          myprofile.weight=v;
-          writeProfile();
-        },
-      },
+              
       /*LANG*/"Stride length": {
         value: myprofile.strideLength,
         min:0.00,
@@ -145,8 +134,9 @@
         },
       }
     }
+    
     menu[restingHrStr]=function(){
-          E.showPrompt("To take a RHR reading, go to the health app.",{
+      E.showPrompt("To take a RHR reading, go to the health app.",{
         buttons:{"Go to Health":true,"Back":false,}
       }).then(function(v){
            if(v==true){
@@ -155,7 +145,8 @@
              mainMenu()
            }
          })
-      },
+      }
+      
     E.showMenu(menu);
   };
 
