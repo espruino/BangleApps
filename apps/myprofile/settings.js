@@ -72,7 +72,6 @@
   };
 
   const mainMenu = () => {
-    var restingHrStr=`Resting Hr: ${myprofile.restingHr?myprofile.restingHr:"--"}`;
     var menu={
       "" : { "title" : /*LANG*/"My Profile" },
 
@@ -145,19 +144,19 @@
         },
       },
     };
-  };
-  menu[restingHrStr]=function(){
-          E.showPrompt("To take a RHR reading, go to the health app.",{
+  
+  menu[/*LANG*/`Resting Hr: ${myprofile.restingHr?myprofile.restingHr:"--"}`]=function(){
+          E.showPrompt("To take a RHR reading, go to the Health app.",{
         buttons:{"Go to Health":true,"Back":false,}
       }).then(function(v){
            if(v==true){
-             load("health.app.js")
+             load("health.app.js");
            }else{
-             mainMenu()
+             mainMenu();
            }
-         })
-      },
-    E.showMenu(menu);
-  E.showMenu(menu)
+         });
+      }
+  };
+  E.showMenu(menu);
   mainMenu();
 })
