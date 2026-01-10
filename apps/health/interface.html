@@ -534,7 +534,7 @@ function viewMonthDataAsGraph(filename, date, monthstr) {
            dataMovement.push(dayData.movement);
         }
       }
-chartInstances.chartSteps = new Chart(document.getElementById("chartSteps"), {
+      chartInstances.chartSteps = new Chart(document.getElementById("chartSteps"), {
           type: 'bar',
           data: {
             labels: labels,
