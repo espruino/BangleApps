@@ -72,8 +72,8 @@
   };
 
   const mainMenu = () => {
-    E.showMenu({
-      "" : { "title" : /*LANG*/"My Profile" },
+    var restingHrStr=`Resting Hr: ${myprofile.restingHr?myprofile.restingHr:"--"}`;
+    var menu={"" : { "title" : /*LANG*/"My Profile" },
 
       "< Back" : () => back(),
 
@@ -123,16 +123,17 @@
         }
       },
 
-      /*LANG*/'HR min': {
-        format: v => /*LANG*/`${v} BPM`,
-        value: myprofile.minHrm,
-        min: 30, max: 220,
+      
+      /*LANG*/"Weight": {
+        value: myprofile.weight,
+        min:0,
+        step:1,
+        format: v => v ? v + "kg" : '-',
         onchange: v => {
-          myprofile.minHrm = v;
+          myprofile.weight=v;
           writeProfile();
-        }
+        },
       },
-
       /*LANG*/"Stride length": {
         value: myprofile.strideLength,
         min:0.00,
@@ -142,8 +143,20 @@
           myprofile.strideLength=v;
           writeProfile();
         },
+      }
+    }
+    menu[restingHrStr]=function(){
+          E.showPrompt("To take a RHR reading, go to the health app.",{
+        buttons:{"Go to Health":true,"Back":false,}
+      }).then(function(v){
+           if(v==true){
+             load("health.app.js")
+           }else{
+             mainMenu()
+           }
+         })
       },
-    });
+    E.showMenu(menu);
   };
 
   mainMenu();
