@@ -115,7 +115,7 @@ function RHRReading(){
           buttons:{"Continue":true}
         }).then(function(v){
             startRHR();
-      })
+      });
 
     }else{
       menuMain()
