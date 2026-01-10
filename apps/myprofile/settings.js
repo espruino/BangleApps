@@ -73,7 +73,8 @@
 
   const mainMenu = () => {
     var restingHrStr=`Resting Hr: ${myprofile.restingHr?myprofile.restingHr:"--"}`;
-    var menu={"" : { "title" : /*LANG*/"My Profile" },
+    var menu={
+      "" : { "title" : /*LANG*/"My Profile" },
 
       "< Back" : () => back(),
 
@@ -112,15 +113,7 @@
           writeProfile();
         },
       },
-      /*LANG*/'HR min': {
-        format: v => /*LANG*/`${v} BPM`,
-        value: myprofile.minHrm,
-        min: 30, max: 220,
-        onchange: v => {
-          myprofile.minHrm = v;
-          writeProfile();
-        }
-      },      
+
       /*LANG*/'HR max': {
         format: v => /*LANG*/`${v} BPM`,
         value: myprofile.maxHrm,
@@ -130,7 +123,17 @@
           writeProfile();
         }
       },
-              
+
+      /*LANG*/'HR min': {
+        format: v => /*LANG*/`${v} BPM`,
+        value: myprofile.minHrm,
+        min: 30, max: 220,
+        onchange: v => {
+          myprofile.minHrm = v;
+          writeProfile();
+        }
+      },
+
       /*LANG*/"Stride length": {
         value: myprofile.strideLength,
         min:0.00,
@@ -140,11 +143,11 @@
           myprofile.strideLength=v;
           writeProfile();
         },
-      }
-    }
-    
-    menu[restingHrStr]=function(){
-      E.showPrompt("To take a RHR reading, go to the health app.",{
+      },
+    };
+  };
+  menu[restingHrStr]=function(){
+          E.showPrompt("To take a RHR reading, go to the health app.",{
         buttons:{"Go to Health":true,"Back":false,}
       }).then(function(v){
            if(v==true){
@@ -153,10 +156,8 @@
              mainMenu()
            }
          })
-      }
-      
+      },
     E.showMenu(menu);
-  };
-
+  E.showMenu(menu)
   mainMenu();
 })
