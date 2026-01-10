@@ -149,7 +149,7 @@
           E.showPrompt("To take a RHR reading, go to the Health app.",{
         buttons:{"Go to Health":true,"Back":false,}
       }).then(function(v){
-           if(v==true){
+           if (v === true) {
              load("health.app.js");
            }else{
              mainMenu();
