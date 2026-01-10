@@ -112,7 +112,15 @@
           writeProfile();
         },
       },
-              
+      /*LANG*/'HR min': {
+        format: v => /*LANG*/`${v} BPM`,
+        value: myprofile.minHrm,
+        min: 30, max: 220,
+        onchange: v => {
+          myprofile.minHrm = v;
+          writeProfile();
+        }
+      },      
       /*LANG*/'HR max': {
         format: v => /*LANG*/`${v} BPM`,
         value: myprofile.maxHrm,
