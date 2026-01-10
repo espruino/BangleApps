@@ -83,7 +83,7 @@ function onRHRHrm(hrm) {
   if(hrm.confidence<=80){
     g.setFont("Vector", 14).drawString("Low confidence\nKeep still", g.getWidth()/2, g.getHeight() - 20);
   }
-}
+};
 Bangle.on('HRM',onRHRHrm);
 function startRHR(){
     // Start the process
