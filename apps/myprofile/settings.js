@@ -158,7 +158,7 @@
              mainMenu();
            }
          });
-      }
+      };
   };
   E.showMenu(menu);
   mainMenu();
