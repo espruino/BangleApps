@@ -38,7 +38,7 @@ function menuStepCount() {
 }
 function finish() {
   Bangle.setHRMPower(0);
-  Bangle.removeListener('health', onRHRHrm);
+  Bangle.removeListener('HRM', onRHRHrm);
   if (rhrData.length > 0) {
     // Calculate average, ignoring outliers
     let avgRHR = Math.round(rhrData.reduce((a, b) => a + b) / rhrData.length);
