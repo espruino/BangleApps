@@ -86,3 +86,31 @@ exports.push = function (adv, options) {
     }
     advertise(options);
 };
+exports.remove = function (id, options) {
+    var bangle = Bangle;
+    if (manyAdv(bangle.bleAdvert)) {
+        var i = 0;
+        for (var _i = 0, _a = bangle.bleAdvert; _i < _a.length; _i++) {
+            var ad = _a[_i];
+            if (Array.isArray(ad))
+                continue;
+            if (ad[id]) {
+                delete ad[id];
+                var empty = true;
+                for (var _ in ad) {
+                    empty = false;
+                    break;
+                }
+                if (empty)
+                    bangle.bleAdvert.splice(i, 1);
+                break;
+            }
+            i++;
+        }
+    }
+    else if (bangle.bleAdvert) {
+        if (!Array.isArray(bangle.bleAdvert))
+            delete bangle.bleAdvert[id];
+    }
+    advertise(options);
+};
