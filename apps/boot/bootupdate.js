@@ -116,7 +116,7 @@ let bootFiles = require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
 // precalculate file size
 bootPost += "}";
 let fileOffset,fileSize;
-/* code to output a file, plus preable and postable
+/* code to output a file, plus preamble and postamble
 when called with dst==undefined it just increments
 fileOffset so we can see ho wbig the file has to be */
 let outputFile = (dst,src,pre,post) => {"ram";
@@ -192,8 +192,10 @@ delete widget,widgetPost,widgetFiles;
 // ================================================== .clkinfocache for clockinfos
 let ciFiles = require("Storage").list(/\.clkinfo\.js$/);
 let ci = `// Made by bootupdate.js\n`;
+let ci_exclude = (require("Storage").readJSON("clock_info.json", 1) || {}).exclude;
 if (DEBUG) ci+="var _tm=Date.now();";
 outputFileComplete = (dst,fn) => {
+  if (ci_exclude && ci_exclude[fn]) return;
   outputFile(dst,fn,"try{let fn=",`;let a=fn(),b=menu.find(x=>x.name===a.name);if(b)b.items=b.items.concat(a.items)else menu=menu.concat(a);}catch(e){print(${E.toJS(fn)},e,e.stack)}\n`);
 };
 fileOffset = ci.length;
