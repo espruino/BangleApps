@@ -59,13 +59,17 @@
           };
         });
 
+      let changed = false;
       // clean up stale entries
       Object
         .keys(settings.exclude)
         .filter(k => !(k.replace(re, "") in filterMenu))
         .forEach(k => {
           delete settings.exclude[k];
+          changed = true;
         });
+
+      if(changed) save();
 
       E.showMenu(filterMenu);
     },
