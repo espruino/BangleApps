@@ -432,6 +432,7 @@
     var bleInterval_1;
     NRF.on("connect", function () { return setIntervals_1(undefined, true); });
     NRF.on("disconnect", function () { return setIntervals_1(undefined, false); });
+    NRF.wake();
     setIntervals_1();
     setBtnsShown_1(true);
     enableSensors_1();

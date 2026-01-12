@@ -750,6 +750,7 @@ Bangle.on("lock", locked => setIntervals(locked));
 let bleInterval: undefined | IntervalId;
 NRF.on("connect", () => setIntervals(undefined, true));
 NRF.on("disconnect", () => setIntervals(undefined, false));
+NRF.wake();
 
 setIntervals();
 
