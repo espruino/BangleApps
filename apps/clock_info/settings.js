@@ -7,6 +7,17 @@
     require('Storage').write("clock_info.json", settings);
   }
 
+  let forced = false;
+  function forceBootUpdate() {
+    if(forced) return;
+
+    const fname = "setting.json";
+    const j = require("Storage").readJSON(fname);
+    j.toggle = !j.toggle;
+    require("Storage").writeJSON(fname);
+    forced = true;
+  }
+
   let menu = {
     '': { 'title': 'Clock Info' },
     /*LANG*/'< Back': back,
@@ -55,6 +66,7 @@
                   delete settings.exclude[file];
               }
               save();
+              forceBootUpdate();
             },
           };
         });
