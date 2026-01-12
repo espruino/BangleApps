@@ -3,3 +3,4 @@
 0.03: Sort selected items to bottom and enable Widgets
 0.04: Add settings to edit list on device
 0.05: Drop app customiser as it is redundant with download interface
+0.06: Enable fast load with Bangle.load

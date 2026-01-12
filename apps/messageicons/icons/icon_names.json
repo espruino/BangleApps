@@ -49,6 +49,7 @@
   { "app":"google home", "icon":"google home.png" },
   { "app":"google play store", "icon":"google play store.png" },
   { "app":"gotify", "icon":"gotify.png" },
+  { "app":"health", "icon":"health.png" },
   { "app":"home assistant", "icon":"home assistant.png" },
   { "app":"instagram", "icon":"instagram.png" },
   { "app":"jira", "icon":"jira.png" },

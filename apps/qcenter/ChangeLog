@@ -3,3 +3,4 @@
 0.03: Adds a setting for going back to clock on a timeout
 0.04: Fix timeouts closing fast loaded apps
 0.05: Minor code improvements
+0.06: Enable fast load with Bangle.load

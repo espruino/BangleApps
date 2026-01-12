@@ -2,7 +2,7 @@
   "id": "txtreader",
   "name": "txtreader",
   "shortName": "txtreader",
-  "version": "0.02",
+  "version": "0.03",
   "author": "tonykakuuu",
   "description": "Basic text reader with pages and a file selector.",
   "icon": "txtreader.png",
