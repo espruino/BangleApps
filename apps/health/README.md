@@ -14,8 +14,15 @@ To view data, run the `Health` app from your watch.
 * Heart rate
 * Step count (can calculate distance if myprofile is installed and stride length is set)
 * Movement
+### Calorie Tracking: 
+The app can calculate calories burned. To do so, you need to set up a few things first:
+1. Weight in `myprofile`
+2. Take a RHR reading to determine energy spent by your heart rate.
+
+The formula calculates the energy taken from both steps and heart rate in an interval, and scales it by your weight (more mass = more energy to move)
+Since the app always uses a function to calculate calories, any changes you make to `myprofile` affects calorie calculations for all the stored data.
 ### RHR Reading: 
-You can also take a Resting Heart Rate measurement, which can be indicative of your cardiovascular health and overall fitness. To do so, you must be very still and have the watch snug around your wrist (light leaking in can affect the reading). For best results, lie or sit quietly and rest for about 10 minutes before starting the measurement.
+You can take a Resting Heart Rate measurement, which can be indicative of your cardiovascular health and overall fitness, and is needed for proper calorie calculations. To do so, you must be very still and have the watch snug around your wrist (light leaking in can affect the reading). For best results, lie or sit quietly and rest for about 10 minutes before starting the measurement. It is reccomended to take the measurement right before you go to sleep or as soon as you wake up.
 
 To take it, navigate to the health app and find the `Take RHR reading` button to start the test. The app does not enforce or time this resting period, so ensure you have already been resting for around 10 minutes before pressing the button.
 
@@ -76,6 +83,14 @@ require("health").readDailySummaries(d, cb)
 
 // Read all records from the given day
 require("health").readDay(d, cb)
+
+// Returns calories burned from a health object formatted as follows:
+// Using Bangle.getHealthStatus('last') will provide all this info for the last health duration except the duration itself, which you need to add. 
+require("health").calcCalories({
+  "steps":39, //total steps for this duration
+  "bpm":89, //bpm in this duration
+  "duration":10, //duration in minutes
+})
 ```
 
 
