@@ -4,8 +4,6 @@ Displays distance, time, steps, cadence, pace and heart rate for runners. Based 
 It requires the input of your minimum and maximum heart rate in the settings for the app to work. You can come back to the initial run screen anytime by swiping left.
 To use it, start the app and press the middle button so that the red STOP in the bottom right turns to a green `RUN`.
 
-To focus on a single stat, tap on the stat and it will take up the full screen. Tap again to return to the main screen.
-
 ## Display 1st screen
 
 * `DIST` - the distance travelled based on the GPS (if you have a GPS lock).
@@ -22,6 +20,8 @@ To focus on a single stat, tap on the stat and it will take up the full screen. 
 so if you have no GPS lock you just need to wait.
 * The current time is displayed right at the bottom of the screen
 * `RUN/STOP` - whether the distance for your run is being displayed or not
+
+To focus on a single stat, tap on the stat and it will take up the full screen. Tap again to return to the main screen.
 
 ## Display 2nd screen
 
@@ -75,6 +75,7 @@ app loader, the module is automatically included in the app's source. However
 when developing via the IDE the module won't get pulled in by default.
 
 There are some options to fix this easily - please check out the [modules README.md file](https://github.com/espruino/BangleApps/blob/master/modules/README.md)
+
 ## Contributors (Run and Run+)
 gfwilliams
 hughbarney
@@ -82,3 +83,4 @@ GrandVizierOlaf
 BartS23
 f-teacher
 thyttan
+bobrippling
