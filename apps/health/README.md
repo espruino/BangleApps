@@ -84,9 +84,9 @@ require("health").readDailySummaries(d, cb)
 // Read all records from the given day
 require("health").readDay(d, cb)
 
-// Returns calories burned from a health object formatted as follows:
+// Returns calories burned from myprofile data and a health object formatted as follows:
 // Using Bangle.getHealthStatus('last') will provide all this info for the last health duration except the duration itself, which you need to add. 
-require("health").calcCalories({
+require("health").calcCalories(myprofile,{
   "steps":39, //total steps for this duration
   "bpm":89, //bpm in this duration
   "duration":10, //duration in minutes
