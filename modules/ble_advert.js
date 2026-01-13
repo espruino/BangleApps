@@ -96,12 +96,7 @@ exports.remove = function (id, options) {
                 continue;
             if (ad[id]) {
                 delete ad[id];
-                var empty = true;
-                for (var _ in ad) {
-                    empty = false;
-                    break;
-                }
-                if (empty)
+                if (Object.keys(ad).length === 0)
                     bangle.bleAdvert.splice(i, 1);
                 break;
             }

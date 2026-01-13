@@ -132,13 +132,8 @@ exports.remove = (id: string | number, options?: SetAdvertisingOptions) => {
 			if(Array.isArray(ad)) continue;
 			if(ad[id]){
 				delete ad[id];
-				let empty = true;
-				// eslint-disable-next-line no-unused-vars
-				for(const _ in ad){
-					empty = false;
-					break;
-				}
-				if(empty) bangle.bleAdvert.splice(i, 1);
+				if(Object.keys(ad).length === 0)
+				  bangle.bleAdvert.splice(i, 1);
 				break;
 			}
 			i++;
