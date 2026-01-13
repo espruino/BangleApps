@@ -42,5 +42,8 @@
 0.36: Fix Distance graphs that used '1*' to remove the suffix
 0.37: Reduce movement limit for HRM off from 400 to 100
       Fix daily summary for movement (was not scaling down correctly)
-0.38: Add the ability for Resting Heart Rate measurement, and added an option to go to my profile settings from the health settings page
+0.38: Add calories burned metric and a data view in the app
+      Add the ability for Resting Heart Rate measurement, 
+      Added an option to go to my profile settings from the health settings page
       Add detailed daily view in interface
+      
