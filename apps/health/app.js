@@ -11,6 +11,7 @@ function menuMain() {
     "": { title: /*LANG*/"Health Tracking" },
     /*LANG*/"< Back": () => load(),
     /*LANG*/"Step Counting": () => menuStepCount(),
+    /*LANG*/"Calories": () => menuCalories(),
     /*LANG*/"Movement": () => menuMovement(),
     /*LANG*/"Heart Rate": () => menuHRM(),
     /*LANG*/"Battery": () => menuBattery(),
@@ -19,7 +20,20 @@ function menuMain() {
     /*LANG*/"Settings": () => eval(require("Storage").read("health.settings.js"))(()=>{loadSettings();menuMain();})
   });
 }
+function menuCalories() {
+  const menu = {
+    "": { title:/*LANG*/"Calories" },
+    /*LANG*/"< Back": () => menuMain(),
+    /*LANG*/"per hour": () => showGraph({id:"calsPerHour",range:"hour",field:"calories", back:menuCalories}),
+    /*LANG*/"per day": () => {
+      showGraph({id:"calsPerDay",range:"day",field:"calories", back:menuCalories})
+      // TODO: Can add a calories goal here;
+      //drawHorizontalLine(settings.calorieGoal) 
+    }
+  };
 
+  E.showMenu(menu);
+}
 function menuStepCount() {
   const menu = {
     "": { title:/*LANG*/"Steps" },
@@ -84,16 +98,17 @@ function onRHRHrm(hrm) {
     g.setFont("Vector", 14).drawString("Low confidence\nKeep still", g.getWidth()/2, g.getHeight() - 20);
   }
 };
-Bangle.on('HRM',onRHRHrm);
+
 function startRHR(){
     // Start the process
-  
+    
     g.clearRect(Bangle.appRect)
     g.setColor(g.theme.fg); 
     g.setFont("Vector", 20).setFontAlign(0,0);
     g.drawString("Starting...", g.getWidth()/2, g.getHeight()/2);
     rhrData = [];
     counter = seconds;
+    Bangle.on('HRM',onRHRHrm);
     Bangle.setHRMPower(1);
     let interval = setInterval(() => {
       counter--;
@@ -184,6 +199,15 @@ function menuTemperature() {
     back: fn() // callback for back button
   }
 */
+function getFieldValue(h, field, duration) {
+  if (field === "calories") {
+    let hd=h;
+    hd.duration=duration;
+    return require("health").calcCalories(hd); // ← your custom function
+  }
+  return h[field];
+}
+
 function showGraph(options) {
   E.showMessage(/*LANG*/"Loading...");
   current_selection = options.id;
@@ -193,7 +217,8 @@ function showGraph(options) {
     data = new Uint16Array(24);
     cnt = new Uint8Array(24);
     require("health").readDay(new Date(), h=>{
-      data[h.hr]+=h[options.field];
+      print(h)
+      data[h.hr]+=getFieldValue(h,options.field,10);
       if (!options.ignoreZero || h[options.field]) cnt[h.hr]++;
     });
   } else if (options.range=="day") {
@@ -201,7 +226,7 @@ function showGraph(options) {
     var data = new Uint16Array(32);
     var cnt = new Uint8Array(32);
     require("health").readDailySummaries(new Date(), h=>{
-      data[h.day]+=h[options.field];
+      data[h.day]+=getFieldValue(h,options.field,60*24);
       if (!options.ignoreZero || h[options.field]) cnt[h.day]++;
     });
     // Include data for today
