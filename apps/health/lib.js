@@ -37,8 +37,8 @@ function getRecordIdx(d) {
 }
 // takes object with bpm, movement (in duration), steps (in duration), and duration in minutes
 exports.calcCalories = function(healthData) {
-  if (!healthData || !healthData.bpm) return;
-  if(myProfile=={}||!myProfile.weight||!myProfile.restingHr||!myProfile.minHrm||!myProfile.maxHrm) return;
+  if (!healthData || !healthData.bpm||!healthData.duration) return;
+  if(myProfile=={}||!myProfile.weight||!myProfile.restingHr||!myProfile.maxHrm) return;
   let weight = myProfile.weight;
     //current HR-rest HR)/(max HR - rest HR) )
   let hrr=(healthData.bpm - myProfile.restingHr)/(myProfile.maxHrm - myProfile.restingHr);
