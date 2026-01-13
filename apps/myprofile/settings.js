@@ -29,7 +29,7 @@
             }).then(() => ageMenu());
           } else {
             const age = (new Date()).getFullYear() - date.getFullYear();
-            const newMaxHRM = 220-age;
+            const newMaxHRM = 208-0.7*age;
             E.showPrompt(/*LANG*/`Set HR max to ${newMaxHRM} calculated from age?`).then(function(v) {
               myprofile.birthday = date.getFullYear() + "-" + (date.getMonth() + 1).toString().padStart(2, '0') + "-" + date.getDate().toString().padStart(2, '0');
               if (v) {
@@ -146,20 +146,21 @@
     };
   
   menu[/*LANG*/`Resting Hr: ${myprofile.restingHr?myprofile.restingHr:"--"}`]=function(){
-          E.showPrompt("To take a RHR reading, go to the Health app.",{
-        buttons: {
-          "Go to Health": true,
-          "Back": false
-        }
-      }).then(function(v){
-           if (v === true) {
-             load("health.app.js");
-           }else{
-             mainMenu();
-           }
-         });
-      };
+    E.showPrompt("To take a RHR reading, go to the Health app.",{
+      buttons: {
+        "Go to Health": true,
+        "Back": false
+      }
+    }).then(function(v){
+      if (v === true) {
+        load("health.app.js");
+      }else{
+        mainMenu();
+      }
+    });
   };
   E.showMenu(menu);
+};
+  
   mainMenu();
-})
+});
