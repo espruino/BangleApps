@@ -3,7 +3,6 @@ const DB_RECORDS_PER_DAY = DB_RECORDS_PER_HR*24 + 1/*summary*/;
 //const DB_RECORDS_PER_MONTH = DB_RECORDS_PER_DAY*31;
 const DB_HEADER_LEN = 8;
 //const DB_FILE_LEN = DB_HEADER_LEN + DB_RECORDS_PER_MONTH*DB_RECORD_LEN;
-let myProfile = require("Storage").readJSON("myprofile.json", 1) || {};
 
 /*
 HEALTH1 (4 bytes):
@@ -36,7 +35,7 @@ function getRecordIdx(d) {
          (0|(d.getMinutes()*DB_RECORDS_PER_HR/60));
 }
 // takes object with bpm, movement (in duration), steps (in duration), and duration in minutes
-exports.calcCalories = function(healthData) {
+exports.calcCalories = function(myProfile,healthData) {
   if (!healthData || !healthData.bpm||!healthData.duration) return;
   if(myProfile=={}||!myProfile.weight||!myProfile.restingHr||!myProfile.maxHrm) return;
   let weight = myProfile.weight;
