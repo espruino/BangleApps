@@ -176,7 +176,7 @@ exports.getColor = function(msg,options) {
   if (st.iconColorMode == 'mono') return options.default;
   const s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
   let match = ${JSON.stringify(","+Object.keys(COLORS).map(app=>app+"|"+convertCol(COLORS[app])).join(",")+",")}.match(new RegExp(\`,\${s}\\\\|(...)\`))
-  return (match===null)?options.default:match[1]
+  return (match===null)?options.default:"#"+match[1]
 };
   `);
 });

@@ -14,3 +14,4 @@
 0.13: Add icons for 'shortcuts', 'roborock', 'adp', and 'duolingo'
 0.14: Add 'health' icon, fix color placement for previously added icons
 0.15: Use faster .getColor with string search that doesn't have to parse a big JSON struct
+0.16: Fix regression caused by returning "RGB" not "#RGB" (fix #4126)
