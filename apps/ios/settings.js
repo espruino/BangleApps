@@ -19,6 +19,13 @@
         settings.no_utf8 = v;
         updateSettings();
       }
+    },
+    /*LANG*/"Auto-Detect App Names" : {
+      value : !!settings.detectNames,
+      onchange: v => {
+        settings.detectNames = v;
+        updateSettings();
+      }
     }
   };
   E.showMenu(mainmenu);
