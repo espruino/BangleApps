@@ -203,7 +203,7 @@ function getFieldValue(h, field, duration) {
   if (field === "calories") {
     let hd=h;
     hd.duration=duration;
-    return require("health").calcCalories(hd); // ← your custom function
+    return require("health").calcCalories(myprofile,hd); // ← your custom function
   }
   return h[field];
 }
@@ -217,7 +217,6 @@ function showGraph(options) {
     data = new Uint16Array(24);
     cnt = new Uint8Array(24);
     require("health").readDay(new Date(), h=>{
-      print(h)
       data[h.hr]+=getFieldValue(h,options.field,10);
       if (!options.ignoreZero || h[options.field]) cnt[h.hr]++;
     });
