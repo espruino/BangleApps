@@ -5,7 +5,7 @@
   "type": "settings",
   "version":"0.03",
   "author": "nxdefiant",
-  "description": "Configure your personal profile. All settings are optional and only stored on the watch.",
+  "description": "Configure and store your personal profile. Used by `Health` for calorie calculations. All settings are optional and only stored on the watch.",
   "readme": "README.md",
   "tags": "tool,utility",
   "supports": ["BANGLEJS", "BANGLEJS2"],
