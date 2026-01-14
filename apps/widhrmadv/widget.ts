@@ -2,6 +2,10 @@
 type WidHrmAdv = Widget & { userReq?: boolean };
 let serviceRegistered = false;
 
+const enum Consts {
+	WIDTH = 14,
+}
+
 Bangle.on('touch', (_btn, xy) => {
 	const oversize = 5;
 
@@ -11,7 +15,7 @@ Bangle.on('touch', (_btn, xy) => {
 	const x = xy!.x;
 	const y = xy!.y;
 
-	if(w.x! - oversize <= x && x < w.x! + 14 + oversize
+	if(w.x! - oversize <= x && x < w.x! + Consts.WIDTH + oversize
 	&& w.y! - oversize <= y && y < w.y! + 24 + oversize)
 	{
 		E.stopEventPropagation();
@@ -89,7 +93,7 @@ const register = () => {
 WIDGETS["hrmadv"] = {
 	area: "tr",
 	sortorder: -10,
-	width: 14,
+	width: Consts.WIDTH,
 	draw: function(w) {
 		const hrm = Bangle.isHRMOn();
 		const { userReq } = w as WidHrmAdv;
