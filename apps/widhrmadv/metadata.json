@@ -1,0 +1,15 @@
+{
+  "id": "widhrmadv",
+  "name": "widhrmadv",
+  "version": "0.01",
+  "author": "bobrippling",
+  "description": "Allows toggleable advertisement of HRM over BLE",
+  "readme": "README.md",
+  "supports": ["BANGLEJS2"],
+  "icon": "icon.png",
+  "type": "widget",
+  "tags": "widget,hrm,ble",
+  "storage": [
+    { "name": "widhrmadv.wid.js", "url": "widget.js" }
+  ]
+}
