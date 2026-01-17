@@ -12,3 +12,4 @@
 0.12: Fix ClockInfo so it updates after leaving +5min/etc by blurring
       ClockInfo now shows time left in icon, updates more often the closer to the time
       Tapping clockinfo adds 1 min, added +30min option too
+0.13: Fix trigger happy buzzing.
