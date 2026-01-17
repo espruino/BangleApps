@@ -34,7 +34,6 @@ const imgPause = atob("GBiBAP+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B/
 const imgPlay = atob("GBiBAIAAAOAAAPgAAP4AAP+AAP/gAP/4AP/+AP//gP//4P//+P///v///v//+P//4P//gP/+AP/4AP/gAP+AAP4AAPgAAOAAAIAAAA==");
 
 let lastDragB;
-let cumulativeDiff = 0;
 function onDrag(event) {
   if (!timerRunning()) {
     var diff = -Math.round(event.dy/5);
@@ -43,11 +42,9 @@ function onDrag(event) {
     } else if (event.x > timePickerLayout.mins.x && event.x < timePickerLayout.secs.x) {
       diff *= 60;
     }
-    cumulativeDiff += diff;
-    if (cumulativeDiff && event.b && lastDragB) {
+    if (diff && event.b && lastDragB) {
       Bangle.buzz(40, 0.3);
-      updateTimePicker(cumulativeDiff);
-      cumulativeDiff = 0;
+      updateTimePicker(diff);
     }
   }
   lastDragB = event.b;
