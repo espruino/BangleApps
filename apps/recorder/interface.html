@@ -358,17 +358,30 @@ const cleanupCharts = (trackNumber = null) => {
 
 const hasValidGPS = pt => pt.Latitude && pt.Longitude && pt.Latitude !== "" && pt.Longitude !== "";
 
-function filterGPSCoordinates(track) {
+function filterGPSCoordinates(track, { zeroInvalidPoints }) {
   const allowNoGPS = localStorage.getItem("recorder-allow-no-gps")=="true";
-  if (!allowNoGPS) return track.filter(hasValidGPS);
-  return track.map(pt => {
-    ['Latitude', 'Longitude', 'Altitude'].forEach(k => { if (!isFinite(parseFloat(pt[k]))) pt[k] = 0; });
-    return pt;
-  });
+
+  if (allowNoGPS) {
+    if (zeroInvalidPoints) {
+      return track.map(pt => {
+        ['Latitude', 'Longitude', 'Altitude']
+          .forEach(k => {
+            if (!isFinite(parseFloat(pt[k])))
+              options.onInvalid(pt, k);
+          });
+
+        return pt;
+      });
+    } else {
+      return track;
+    }
+  }
+
+  return track.filter(hasValidGPS);
 }
 
 function saveKML(track,title) {
-  track = filterGPSCoordinates(track);
+  track = filterGPSCoordinates(track, { zeroInvalidPoints: true });
   const fields = [
     {key:'Heartrate', name:'heartrate', display:'Heart Rate'},
     {key:'Steps', name:'steps', display:'Step Count'},
@@ -409,7 +422,8 @@ ${fields.map(f=>kmlField(f,'SimpleArrayData')).join('\n')}
 }
 
 function saveGPX(track, title) {
-  track = filterGPSCoordinates(track);
+  // we handle invalid points ourselves
+  track = filterGPSCoordinates(track, { zeroInvalidPoints: false });
 
   // check track validity after filtering
   if (!track?.[0]?.Time) return showToast("Error in trackfile (no time or empty).", "error");
