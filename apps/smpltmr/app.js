@@ -33,17 +33,25 @@ const imgArrow = atob("CQmBAAgOBwfD47ndx+OA");
 const imgPause = atob("GBiBAP+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B/w==");
 const imgPlay = atob("GBiBAIAAAOAAAPgAAP4AAP+AAP/gAP/4AP/+AP//gP//4P//+P///v///v//+P//4P//gP/+AP/4AP/gAP+AAP4AAPgAAOAAAIAAAA==");
 
+let lastDragB;
+let cumulativeDiff = 0;
 function onDrag(event) {
+  print(event)
   if (!timerRunning()) {
-    Bangle.buzz(40, 0.3);
     var diff = -Math.round(event.dy/5);
     if (event.x < timePickerLayout.hours.w) {
       diff *= 3600;
     } else if (event.x > timePickerLayout.mins.x && event.x < timePickerLayout.secs.x) {
       diff *= 60;
     }
-    updateTimePicker(diff);
+    cumulativeDiff += diff;
+    if (cumulativeDiff && event.b && lastDragB) {
+      Bangle.buzz(40, 0.3);
+      updateTimePicker(cumulativeDiff);
+      cumulativeDiff = 0;
+    }
   }
+  lastDragB = event.b;
 }
 
 function onTouch(button, xy) {
