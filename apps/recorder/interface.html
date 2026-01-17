@@ -436,7 +436,12 @@ function saveGPX(track, title) {
       // Formula: (steps in interval * 60 seconds * 1000ms) / time elapsed in ms
       // Simplified to: steps * 30000 / time_ms (since 60 * 1000 / 2 = 30000)
       const cadence = pt.Steps && lastTime ? pt.Steps * 30000 / (pt.Time.getTime() - lastTime) : 0;
+
       lastTime = pt.Time.getTime();
+
+      if (isNaN(parseFloat(pt.Latitude)) || isNaN(parseFloat(pt.Longitude)))
+        return null;
+
       return `
         <trkpt lat="${pt.Latitude}" lon="${pt.Longitude}">
           <ele>${pt.Altitude}</ele>
@@ -446,7 +451,9 @@ function saveGPX(track, title) {
             ${cadence ? `<gpxtpx:cad>${cadence}</gpxtpx:cad>` : ''}
           </gpxtpx:TrackPointExtension></extensions>
         </trkpt>`;
-    });
+    })
+    .filter(Boolean);
+
   const gpx = `<?xml version="1.0" encoding="UTF-8"?>
 <gpx creator="Bangle.js" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">
   <metadata><time>${track[0].Time.toISOString()}</time></metadata>
