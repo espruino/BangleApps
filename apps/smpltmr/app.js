@@ -36,7 +36,6 @@ const imgPlay = atob("GBiBAIAAAOAAAPgAAP4AAP+AAP/gAP/4AP/+AP//gP//4P//+P///v///v
 let lastDragB;
 let cumulativeDiff = 0;
 function onDrag(event) {
-  print(event)
   if (!timerRunning()) {
     var diff = -Math.round(event.dy/5);
     if (event.x < timePickerLayout.hours.w) {
