@@ -55,6 +55,7 @@ function onDrag(event) {
 }
 
 function onTouch(button, xy) {
+  if (xy.type==2) return;
   if (xy.y > (timePickerLayout.btnStart.y||timerLayout.btnStart.y)) {
     Bangle.buzz(40, 0.3);
     onButton();
