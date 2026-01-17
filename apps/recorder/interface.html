@@ -357,6 +357,7 @@ const cleanupCharts = (trackNumber = null) => {
 };
 
 const hasValidGPS = pt => pt.Latitude && pt.Longitude && pt.Latitude !== "" && pt.Longitude !== "";
+
 function filterGPSCoordinates(track) {
   const allowNoGPS = localStorage.getItem("recorder-allow-no-gps")=="true";
   if (!allowNoGPS) return track.filter(hasValidGPS);
@@ -365,6 +366,7 @@ function filterGPSCoordinates(track) {
     return pt;
   });
 }
+
 function saveKML(track,title) {
   track = filterGPSCoordinates(track);
   const fields = [
@@ -408,6 +410,7 @@ ${fields.map(f=>kmlField(f,'SimpleArrayData')).join('\n')}
 
 function saveGPX(track, title) {
   track = filterGPSCoordinates(track);
+
   // check track validity after filtering
   if (!track?.[0]?.Time) return showToast("Error in trackfile (no time or empty).", "error");
   let lastTime = 0;
