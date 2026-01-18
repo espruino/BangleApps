@@ -340,20 +340,29 @@ const setUI = function() {
     },
     touch: (n,e) => {
       events.sort((a,b) => a.date - b.date);
-      const menu = events.filter(ev => ev.date.getFullYear() === date.getFullYear() && ev.date.getMonth() === date.getMonth()).map(e => {
-        const dateStr = require("locale").date(e.date, 1);
-        const timeStr = require("locale").time(e.date, 1);
-        return { title: `${dateStr} ${e.type === "e" ? timeStr : ""}` + (e.msg ? " " + e.msg : "") };
-      });
-      if (menu.length === 0) {
-        menu.push({title: /*LANG*/"No events"});
-      }
-      menu[""] = { title: require("locale").month(date) + " " + date.getFullYear() };
-      menu["< Back"] = () => {
-        require("widget_utils").hide();
-        E.showMenu();
-        setUI();
+      const filteredEvents = events.filter(ev => ev.date.getFullYear() === date.getFullYear() && ev.date.getMonth() === date.getMonth());
+      const menu = {
+        "" : { title: require("locale").month(date) + " " + date.getFullYear() },
+        "< Back": () => {
+          require("widget_utils").hide();
+          E.showMenu();
+          setUI();
+        }
       };
+      if (filteredEvents.length === 0) {
+        menu[/*LANG*/"No events"] = () => {
+          require("widget_utils").hide();
+          E.showMenu();
+          setUI();
+        };
+      } else {
+        filteredEvents.forEach(e => {
+          const dateStr = require("locale").date(e.date, 1);
+          const timeStr = require("locale").time(e.date, 1);
+          const label = `${dateStr} ${e.type === "e" ? timeStr : ""}` + (e.msg ? " " + e.msg : "");
+          menu[label] = () => {}; // Placeholder action - could show event details
+        });
+      }
       require("widget_utils").show();
       E.showMenu(menu);
     }

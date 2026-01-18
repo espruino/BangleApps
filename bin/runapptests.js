@@ -88,6 +88,18 @@ if (!require("fs").existsSync(DIR_IDE)) {
 
 const verbose = process.argv.includes("--verbose") || process.argv.includes("-v");
 
+// Timeout for each test (ms) - prevents infinite loops from hanging CI
+const TEST_TIMEOUT_MS = 60000;
+
+function withTimeout(promise, ms, testName) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`Test "${testName}" timed out after ${ms}ms`)), ms)
+    )
+  ]);
+}
+
 var AppInfo = require(BASE_DIR+"/core/js/appinfo.js");
 var apploader = require(BASE_DIR+"/core/lib/apploader.js");
 apploader.init({
@@ -427,12 +439,21 @@ function runTest(test, testState) {
       });
 
       p = p.finally(()=>{
+        // Check for uncaught errors detected during test
+        const uncaughtError = getUncaughtError();
+        if (uncaughtError.detected) {
+          console.log("> UNCAUGHT ERROR DETECTED:", uncaughtError.message);
+          state.ok = false;
+        }
+        resetUncaughtError();
+
         console.log("> RESULT -",  (state.ok ? "OK": "FAIL") , "- " + test.app + (subtest.description ? (" - " + subtest.description) : ""));
         testState.push({
           app: test.app,
           number: subtestIdx,
           result: state.ok ? "SUCCESS": "FAILURE",
-          description: subtest.description
+          description: subtest.description,
+          error: uncaughtError.detected ? uncaughtError.message : null
         });
       });
     });
@@ -445,10 +466,39 @@ function runTest(test, testState) {
 
 
 let handleRx = ()=>{};
-let handleConsoleOutput = () => {};
+
+// Uncaught error detection
+let uncaughtErrorDetected = false;
+let uncaughtErrorMessage = "";
+
+function checkForUncaughtError(text) {
+  if (text && (
+    text.includes("Uncaught") ||
+    text.includes("ERROR:") ||
+    text.includes("ASSERT") ||
+    text.match(/^\s*at\s+/) // Stack trace line
+  )) {
+    uncaughtErrorDetected = true;
+    uncaughtErrorMessage = text;
+  }
+}
+
+function resetUncaughtError() {
+  uncaughtErrorDetected = false;
+  uncaughtErrorMessage = "";
+}
+
+function getUncaughtError() {
+  return { detected: uncaughtErrorDetected, message: uncaughtErrorMessage };
+}
+
+let handleConsoleOutput = (d) => {
+  checkForUncaughtError(d);
+};
 if (verbose){
   handleConsoleOutput = (d) => {
     console.log("<", d);
+    checkForUncaughtError(d);
   }
 }
 
@@ -476,7 +526,7 @@ emu.init({
     apps = apps.filter(e=>e.id==f);
     if (apps.length == 0){
       console.log("No apps left after filtering for " + f);
-      process.exitCode(255);
+      process.exit(255);
     }
   }
 
@@ -489,17 +539,51 @@ emu.init({
       test.app = app.id;
     }
     p = p.then(()=>{
-      return runTest(test, testState);
+      const testName = test.app + (test.description ? ` - ${test.description}` : '');
+      return withTimeout(runTest(test, testState), TEST_TIMEOUT_MS, testName)
+        .catch(err => {
+          if (err.message && err.message.includes('timed out')) {
+            console.log("> TIMEOUT:", err.message);
+            testState.push({
+              app: test.app,
+              number: -1,
+              result: "TIMEOUT",
+              description: "Test timed out",
+              error: err.message
+            });
+          } else {
+            throw err;
+          }
+        });
     });
   });
   p.finally(()=>{
-    console.log("\n\n");
-    console.log("Overall results:");
+    // Summary output
+    console.log("\n");
+    console.log("═".repeat(60));
+    console.log("TEST RESULTS SUMMARY");
+    console.log("═".repeat(60));
     console.table(testState);
 
-    process.exit(testState.reduce((a,c)=>{
-      return a || ((c.result == "SUCCESS") ? 0 : 1);
-    }, 0))
+    // Count results
+    const passed = testState.filter(t => t.result === "SUCCESS").length;
+    const failed = testState.filter(t => t.result === "FAILURE").length;
+    const timedOut = testState.filter(t => t.result === "TIMEOUT").length;
+    const total = testState.length;
+
+    console.log("─".repeat(60));
+    console.log(`Total: ${total} | Passed: ${passed} | Failed: ${failed} | Timeout: ${timedOut}`);
+    console.log("═".repeat(60));
+
+    // Exit with appropriate code
+    const exitCode = (failed > 0 || timedOut > 0) ? 1 : 0;
+    if (exitCode === 0) {
+      console.log("✓ All tests passed!");
+    } else {
+      console.log("✗ Some tests failed.");
+    }
+
+    process.exit(exitCode);
   });
   return p;
 });
