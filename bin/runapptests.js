@@ -135,7 +135,8 @@ function assertArray(step){
   let isOK;
   switch (step.is.toLowerCase()){
     case "notempty": isOK = getValue(`${step.js} && ${step.js}.length > 0`); break;
-    case "undefinedorempty": isOK = getValue(`!${step.js} || (${step.js} && ${step.js}.length === 0)`); break;
+    // Check if undefined, null, empty array, or array containing only undefined/null values
+    case "undefinedorempty": isOK = getValue(`!${step.js} || (${step.js} && (${step.js}.length === 0 || (Array.isArray(${step.js}) && ${step.js}.every(function(x){return x===undefined||x===null}))))`); break;
   }
 
   if (isOK) {

@@ -7,13 +7,13 @@
       {"t":"cmd", "js": "Bangle.loadWidgets()", "text": "Load widgets"},
       {"t":"assertArray", "js": "Bangle['#onswipe']", "is":"undefinedOrEmpty", "text": "No swipe handlers"},
       {"t":"cmd", "js": "require('widget_utils').swipeOn(0)", "text": "Store widgets in overlay"},
-      {"t":"assert", "js": "Bangle['#onswipe']", "is":"function", "text": "One swipe handler for widgets"},
+      {"t":"assert", "js": "require('widget_utils').swipeHandler", "is":"function", "text": "Swipe handler registered on widget_utils"},
       {"t":"emit", "event":"swipe", "paramsArray": [ 0, 1 ], "text": "Show widgets"},
-      {"t":"assert", "js": "Bangle['#onswipe']", "is":"function", "text": "One swipe handler for widgets"},
+      {"t":"assert", "js": "require('widget_utils').swipeHandler", "is":"function", "text": "Swipe handler still registered"},
       {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
       {"t":"assertArray", "js": "Bangle['#onswipe']", "is":"undefinedOrEmpty", "text": "No swipe handlers while message overlay is on screen"},
       {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
-      {"t":"assert", "js": "Bangle['#onswipe']", "is":"function", "text": "One swipe handler restored"}
+      {"t":"assert", "js": "require('widget_utils').swipeHandler", "is":"function", "text": "Swipe handler restored on widget_utils"}
     ]
   },{
     "description": "Test swipe handler backgrounding with fastloading (setUI)", 

@@ -48,6 +48,7 @@ const isQuiet = function(){
 let eventQueue = [];
 let callInProgress = false;
 let buzzing = false;
+let overlayShowing = false;
 
 const show = function(){
   let img = ovr.asImage();
@@ -55,7 +56,14 @@ const show = function(){
   if (ovr.getBPP() == 1) {
     img.palette = new Uint16Array([g.theme.fg,g.theme.bg]);
   }
-  Bangle.setLCDOverlay(img, ovrx, ovry, {id:"messagesoverlay", remove:cleanup});
+  // Only register remove callback on first show to avoid premature cleanup
+  // when setLCDOverlay replaces existing overlay with same ID
+  const opts = {id:"messagesoverlay"};
+  if (!overlayShowing) {
+    opts.remove = cleanup;
+    overlayShowing = true;
+  }
+  Bangle.setLCDOverlay(img, ovrx, ovry, opts);
 };
 
 const manageEvent = function(event) {
@@ -620,6 +628,7 @@ const cleanup = function(){
 
   Bangle.setLCDOverlay(undefined, {id: "messagesoverlay"});
   ovr = undefined;
+  overlayShowing = false;
 };
 
 const backup = {};
