@@ -131,17 +131,17 @@ Tests run automatically in GitHub Actions:
 
 The test runner detects uncaught errors in the emulator console output. If any of these patterns are found, the test fails:
 
-- `Uncaught`
-- `ERROR:`
-- `ASSERT`
-- Stack trace lines (starting with `at`)
+- `Uncaught ` (with trailing space)
+- `ERROR:` at the start of a line
+- `ASSERT FAILED`
+- Stack trace lines (pattern: `  at file:line:col`)
 
 ## Apps with Tests
 
 Currently, these apps have functional tests:
 
 - `android` - GPS power management (5 tests)
-- `messagesoverlay` - Handler backgrounding (3 tests)
+- `messagesoverlay` - Handler backgrounding (4 tests)
 - `measuretime` - Memory usage
 - `antonclk` - Memory usage
 

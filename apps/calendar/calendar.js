@@ -350,12 +350,21 @@ const setUI = function() {
         }
       };
       if (filteredEvents.length === 0) {
-        menu[/*LANG*/"No events"] = undefined; // Non-selectable label
+        // undefined value creates a non-selectable menu item (Bangle.js convention)
+        menu[/*LANG*/"No events"] = undefined;
       } else {
-        filteredEvents.forEach(e => {
-          const dateStr = require("locale").date(e.date, 1);
-          const timeStr = require("locale").time(e.date, 1);
-          const label = `${dateStr} ${e.type === "e" ? timeStr : ""}` + (e.msg ? " " + e.msg : "");
+        const usedLabels = {};
+        filteredEvents.forEach(evt => {
+          const dateStr = require("locale").date(evt.date, 1);
+          const timeStr = require("locale").time(evt.date, 1);
+          let label = `${dateStr} ${evt.type === "e" ? timeStr : ""}` + (evt.msg ? " " + evt.msg : "");
+          // Handle duplicate labels by appending a counter
+          if (usedLabels[label]) {
+            usedLabels[label]++;
+            label = `${label} (${usedLabels[label]})`;
+          } else {
+            usedLabels[label] = 1;
+          }
           menu[label] = () => {}; // Placeholder action - could show event details
         });
       }

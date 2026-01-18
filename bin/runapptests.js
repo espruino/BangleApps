@@ -134,9 +134,10 @@ function assertArray(step){
   console.log(`> ASSERT ARRAY ${step.js} IS`,step.is.toUpperCase(), step.text ? "- " + step.text : "");
   let isOK;
   switch (step.is.toLowerCase()){
-    case "notempty": isOK = getValue(`${step.js} && ${step.js}.length > 0`); break;
+    // Evaluate expression once to avoid side effects from multiple evaluations
+    case "notempty": isOK = getValue(`(function(v){return v && v.length > 0})(${step.js})`); break;
     // Check if undefined, null, empty array, or array containing only undefined/null values
-    case "undefinedorempty": isOK = getValue(`!${step.js} || (${step.js} && (${step.js}.length === 0 || (Array.isArray(${step.js}) && ${step.js}.every(function(x){return x===undefined||x===null}))))`); break;
+    case "undefinedorempty": isOK = getValue(`(function(v){return !v || v.length === 0 || (Array.isArray(v) && v.every(function(x){return x==null}))})(${step.js})`); break;
   }
 
   if (isOK) {
@@ -473,11 +474,12 @@ let uncaughtErrorDetected = false;
 let uncaughtErrorMessage = "";
 
 function checkForUncaughtError(text) {
+  // Use precise patterns to avoid false positives (e.g., "ASSERT" matching "assertArray")
   if (text && (
-    text.includes("Uncaught") ||
-    text.includes("ERROR:") ||
-    text.includes("ASSERT") ||
-    text.match(/^\s*at\s+/) // Stack trace line
+    text.includes("Uncaught ") ||              // Space after to avoid "UncaughtFoo"
+    text.match(/^ERROR:\s/m) ||                // ERROR: at start of line only
+    text.includes("ASSERT FAILED") ||          // Full assertion failure message
+    text.match(/^\s+at\s+\S+:\d+:\d+/)         // Stack trace: "  at file:line:col"
   )) {
     uncaughtErrorDetected = true;
     uncaughtErrorMessage = text;
@@ -542,6 +544,12 @@ emu.init({
         .catch(err => {
           if (err.message && err.message.includes('timed out')) {
             console.log("> TIMEOUT:", err.message);
+            // Clean up emulator state after timeout
+            try {
+              emu.stopIdle();
+            } catch (e) {
+              console.error("Failed to stop emulator after timeout:", e.message);
+            }
             testState.push({
               app: test.app,
               number: -1,

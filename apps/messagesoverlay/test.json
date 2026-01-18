@@ -28,7 +28,21 @@
       {"t":"assert", "js": "Bangle['#onswipe']", "is":"function", "text": "One swipe handler restored"}
     ]
   },{
-    "description": "Test watch backgrounding", 
+    "description": "Test overlay update does not trigger premature cleanup",
+    "steps" : [
+      {"t":"cmd", "js": "Bangle.on('swipe',print)", "text": "Create listener for swipes"},
+      {"t":"assert", "js": "Bangle['#onswipe']", "is":"truthy", "text": "Swipe handler registered"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Test',t:'add',type:'text',id:'msg1',title:'First',body:'Message 1'})", "text": "Show first message"},
+      {"t":"assertArray", "js": "Bangle['#onswipe']", "is":"undefinedOrEmpty", "text": "Handlers backgrounded after first message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Test',t:'add',type:'text',id:'msg2',title:'Second',body:'Message 2'})", "text": "Show second message (triggers overlay update)"},
+      {"t":"assertArray", "js": "Bangle['#onswipe']", "is":"undefinedOrEmpty", "text": "Handlers still backgrounded after overlay update"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close first message"},
+      {"t":"assertArray", "js": "Bangle['#onswipe']", "is":"undefinedOrEmpty", "text": "Handlers still backgrounded with message in queue"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close second message"},
+      {"t":"assert", "js": "Bangle['#onswipe']", "is":"truthy", "text": "Handler restored after all messages closed"}
+    ]
+  },{
+    "description": "Test watch backgrounding",
     "steps" : [
       {"t":"cmd", "js": "setWatch(print,BTN)", "text": "Create watch"},
       {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},

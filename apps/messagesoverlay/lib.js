@@ -59,11 +59,15 @@ const show = function(){
   // Only register remove callback on first show to avoid premature cleanup
   // when setLCDOverlay replaces existing overlay with same ID
   const opts = {id:"messagesoverlay"};
-  if (!overlayShowing) {
+  const isFirstShow = !overlayShowing;
+  if (isFirstShow) {
     opts.remove = cleanup;
-    overlayShowing = true;
   }
   Bangle.setLCDOverlay(img, ovrx, ovry, opts);
+  // Set flag after successful call to prevent state corruption if setLCDOverlay throws
+  if (isFirstShow) {
+    overlayShowing = true;
+  }
 };
 
 const manageEvent = function(event) {
