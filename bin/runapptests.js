@@ -493,14 +493,11 @@ function getUncaughtError() {
 }
 
 let handleConsoleOutput = (d) => {
+  if (verbose) {
+    console.log("<", d);
+  }
   checkForUncaughtError(d);
 };
-if (verbose){
-  handleConsoleOutput = (d) => {
-    console.log("<", d);
-    checkForUncaughtError(d);
-  }
-}
 
 let testState = [];
 

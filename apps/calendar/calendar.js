@@ -350,11 +350,7 @@ const setUI = function() {
         }
       };
       if (filteredEvents.length === 0) {
-        menu[/*LANG*/"No events"] = () => {
-          require("widget_utils").hide();
-          E.showMenu();
-          setUI();
-        };
+        menu[/*LANG*/"No events"] = undefined; // Non-selectable label
       } else {
         filteredEvents.forEach(e => {
           const dateStr = require("locale").date(e.date, 1);
