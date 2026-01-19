@@ -21,7 +21,7 @@
       value: settings.showClocks == true,
       onchange: (m) => {
         save("showClocks", m);
-        s.erase("iconlaunch.cache.json"); //delete the cache app list
+        s.erase("launch.cache.json"); //delete the cache app list
      }
     },
     /*LANG*/"Fullscreen": {

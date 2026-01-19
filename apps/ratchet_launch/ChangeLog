@@ -1,3 +1,4 @@
 0.01: Initial release
 0.02: Cache the app-launch info
 0.03: Fix bugs that would make the launcher unusable on most watches
+0.04: Use launcher_utils library for app cacheing

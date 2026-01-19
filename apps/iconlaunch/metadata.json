@@ -2,7 +2,7 @@
 	"id": "iconlaunch",
 	"name": "Icon Launcher",
 	"shortName" : "Icon launcher",
-	"version": "0.21",
+	"version": "0.22",
 	"icon": "app.png",
 	"description": "A launcher inspired by smartphones, with an icon-only scrollable menu.",
 	"tags": "tool,system,launcher",
@@ -13,7 +13,7 @@
 		{ "name": "iconlaunch.settings.js", "url": "settings.js" },
 		{ "name": "iconlaunch.na.img", "url": "na.img" }
 	],
-	"data": [{"name":"iconlaunch.json"},{"name":"iconlaunch.cache.json"}],
+	"data": [{"name":"iconlaunch.json"},{"name":"launch.cache.json"}],
 	"screenshots": [{ "url": "screenshot1.png" }, { "url": "screenshot2.png" }],
 	"readme": "README.md"
 }

@@ -28,3 +28,4 @@
 0.25: Fix showClocks setting not taking effect by now clearing cache when changing those settings.
       Remove Vector Font size option (Vector fonts added as other font styles)
       Add Height option to set menu item height independently of Font
+0.26: Use launcher_utils library for app cacheing  and fast load

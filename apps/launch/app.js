@@ -31,26 +31,8 @@
     g.flip();
   }
 
-  // cache app list so launcher loads more quickly
-  let launchCache = s.readJSON("launch.cache.json", true)||{};
-  let launchHash = require("Storage").hash(/\.info/);
-  if (launchCache.hash!=launchHash) {
-    launchCache = {
-      hash : launchHash,
-      apps : s.list(/\.info$/)
-              .map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};})
-              .filter(app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || !app.type))
-              .sort((a,b)=>{
-                var n=(0|a.sortorder)-(0|b.sortorder);
-                if (n) return n; // do sortorder first
-                if (a.name<b.name) return -1;
-                if (a.name>b.name) return 1;
-                return 0;
-              }) };
-    s.writeJSON("launch.cache.json", launchCache);
-  }
-  let apps = launchCache.apps;
-
+  let launchCache = require("launch_utils").cache(settings);
+  let apps = launchCache.apps; // get a list of apps to show
 
   const drawMenu = () => {
     E.showScroller({
@@ -72,7 +54,7 @@
           E.showMessage(/*LANG*/"App Source\nNot found");
           setTimeout(drawMenu, 2000);
         } else {
-          load(app.src);
+          require("launch_utils").loadApp(app);
         }
       },
       back : Bangle.showClock, // button press or tap in top left shows clock now

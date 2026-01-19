@@ -36,3 +36,4 @@ when moving pages. Add caching for faster startups.
       clearing cache when changing those settings.
       Bangle 2: Use a separate cache file from the standard launcher.
       Bangle 2: Don't leave cache file after uninstalling the app.
+0.29: Use launcher_utils library for app cacheing  and fast load

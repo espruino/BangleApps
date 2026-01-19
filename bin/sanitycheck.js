@@ -511,7 +511,7 @@ while(fileA=allFiles.pop()) {
     if (globA.test(nameB)||globB.test(nameA)) {
       if (isGlob(nameA)||isGlob(nameB))
         ERROR(`App ${fileB.app} ${typeB} file ${nameB} matches app ${fileA.app} ${typeB} file ${nameA}`);
-      else if (fileA.app != fileB.app && (!fileA.internal) && (!fileB.internal))
+      else if (fileA.app != fileB.app && (!fileA.internal) && (!fileB.internal) && nameB!="launch.cache.json")
         WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`, {file:APPSDIR_RELATIVE+fileB.app+"/metadata.json"});
     }
   })
