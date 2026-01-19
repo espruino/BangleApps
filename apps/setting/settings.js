@@ -67,6 +67,7 @@ function resetSettings() {
     timeout: 10,                    // Default LCD timeout in seconds
     vibrate: true,                  // Vibration enabled by default. App must support
     beep: BANGLEJS2 ? true : "vib", // Beep enabled by default. App must support
+    chargeBuzz: true,               // Vibrate on connect charger
     timezone: 0,                    // Set the timezone for the device
     HID: false,                     // BLE HID mode, off by default
     clock: null,                    // a string for the default clock's name
@@ -177,9 +178,15 @@ function alertsMenu() {
       format: v => [/*LANG*/"Off", /*LANG*/"Alarms", /*LANG*/"Silent"][v],
       onchange: v => {
         settings.quiet = v%3;
-        updateSettings();
         updateOptions();
         if ("qmsched" in WIDGETS) WIDGETS["qmsched"].draw();
+      },
+    },
+    /*LANG*/"Charge Vibration": {
+      value: !!settings.chargeBuzz,
+      onchange: v => {
+        settings.chargeBuzz = v;
+        updateSettings();
       },
     }
   };

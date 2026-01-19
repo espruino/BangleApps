@@ -61,11 +61,13 @@ if (!NRF.getSecurityStatus().connected) LoopbackA.setConsole();\n`;
 }
 // we just reset, so BLE should be on.
 // Don't disconnect if something is already connected to us
-if (s.ble===false) boot += `if (!NRF.getSecurityStatus().connected) NRF.sleep();\n`;
+if (s.ble===false) boot += `if(!NRF.getSecurityStatus().connected)NRF.sleep();`;
 // Set time
-if (s.timeout!==undefined) boot += `Bangle.setLCDTimeout(${s.timeout});\n`;
-if (!s.timeout) boot += `Bangle.setLCDPower(1);\n`;
+if (s.timeout!==undefined) boot += `Bangle.setLCDTimeout(${s.timeout});`;
+if (!s.timeout) boot += `Bangle.setLCDPower(1);`;
 boot += `E.setTimeZone(${s.timezone});`;
+// Handle charge buzz
+if (s.chargeBuzz!==false) boot += `Bangle.on('charging',c=>c&&Bangle.buzz());\n`;
 // Draw out of memory errors onto the screen if logging enabled
 if (s.log) boot += `E.on('errorFlag', function(errorFlags) {
   g.reset(1).setColor("#ff0000").setFont("6x8").setFontAlign(0,1).drawString(errorFlags,g.getWidth()/2,g.getHeight()-1).flip();
