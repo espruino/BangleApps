@@ -6,3 +6,4 @@
 0.07: Memory usage improvements
 0.08: Disable LCD on, on bluetooth status change
 0.09: Fix widget not showing on blue background
+0.10: Add .remove handler to allow widget removal

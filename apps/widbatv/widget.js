@@ -1,12 +1,11 @@
 Bangle.on('charging',function(charging) {
-  if(charging) Bangle.buzz();
   WIDGETS["batv"].draw();
 });
 setInterval(()=>WIDGETS["batv"].draw(), 60000);
 Bangle.on('lcdPower', function(on) {
   if (on) WIDGETS["batv"].draw(); // refresh at power on
 });
-WIDGETS["batv"]={area:"tr",width:14,draw:function() {
+WIDGETS["batv"]={area:"tr",width:14,draw() {
   var x = this.x, y = this.y;
   g.reset();
   if (Bangle.isCharging()) {

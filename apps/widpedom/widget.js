@@ -1,62 +1,33 @@
-(() => {
-  // Last time Bangle.on('step' was called
-  let lastUpdate = new Date();
+{
   // Last step count when Bangle.on('step' was called
-  var lastStepCount;
-  let stp_today = 0;
+  let stepCount = Bangle.getHealthStatus("day").steps;
   let settings;
   let stepDisabled = Bangle.getOptions().stepCounterDisabled; // 2v29+
-
-  function loadSettings() {
-    const d = require('Storage').readJSON("wpedom.json", 1) || {};
+  let loadSettings = function() {
     settings = Object.assign({
       'goal': 10000,
       'progress': false,
       'large': false,
       'hide': false
-    }, d.settings || {});
-    return d;
+    }, (require('Storage').readJSON("wpedom.json", 1)||{}).settings || {});
   }
-
-  Bangle.on('step', stepCount => {
-    var steps = stepCount-lastStepCount;
-    if (lastStepCount===undefined || steps<0) steps=1;
-    lastStepCount = stepCount;
-    let date = new Date();
-    if (lastUpdate.getDate() == date.getDate()){
-      stp_today += steps;
-    } else {
-      // TODO: could save this to "wpedom.json" for lastUpdate's day?
-      stp_today = steps;
-    }
-    if (stp_today === settings.goal
+  loadSettings();
+  let onStepCount = function() {
+    var newStepCount = Bangle.getHealthStatus("day").steps;
+    if (stepCount<settings.goal && newStepCount >= settings.goal
         && !(require('Storage').readJSON('setting.json',1)||{}).quiet) {
       let b = 3, buzz = () => {
         if (b--) Bangle.buzz().then(() => setTimeout(buzz, 100))
       }
       buzz()
     }
-    lastUpdate = date
-    //console.log("up: " + up + " stp: " + stp_today + " " + date.toString());
+    stepCount = newStepCount;
     WIDGETS["wpedom"].redraw();
-  });
-  // redraw when the LCD turns on
-  Bangle.on('lcdPower', function(on) {
-    if (on) WIDGETS["wpedom"].redraw();
-  });
-  // When unloading, save state
-  E.on('kill', () => {
-    require("Storage").writeJSON("wpedom.json",{
-      lastUpdate : lastUpdate.valueOf(),
-      stepsToday : stp_today,
-      settings   : settings,
-    });
-  });
-
-  // add your widget
+  }
+  Bangle.on('step', onStepCount);
   WIDGETS["wpedom"]={area:"tl",width:0,
-    getWidth:function() {
-      let stps = stp_today.toString();
+    getWidth() {
+      let stps = stepCount.toString();
       let newWidth = 24;
       if (settings.hide)
         newWidth = 0;
@@ -69,7 +40,7 @@
       }
       return newWidth;
     },
-    redraw:function() { // work out the width, and queue a full redraw if needed
+    redraw() { // work out the width, and queue a full redraw if needed
       let newWidth = this.getWidth();
       if (newWidth!=this.width) {
         // width has changed, re-layout all widgets
@@ -80,11 +51,11 @@
         WIDGETS["wpedom"].draw();
       }
     },
-    draw:function() {
+    draw() {
       if (settings.hide) return;
-      if (stp_today > 99999)
-        stp_today = stp_today % 100000; // cap to five digits + comma = 6 characters
-      let stps = stp_today.toString();
+      if (stepCount > 99999)
+        stepCount = stepCount % 100000; // cap to five digits + comma = 6 characters
+      let stps = stepCount.toString();
       g.reset().clearRect(this.x, this.y, this.x + this.width, this.y + 23); // erase background
       if (settings.progress) {
         const width = 23, half = 11;
@@ -128,22 +99,19 @@
         g.drawImage(atob("CgoCLguH9f2/7+v6/79f56CtAAAD9fw/n8Hx9A=="),this.x+(w-10)/2,this.y+2);
       }
     },
-    reload:function() {
+    reload() {
       loadSettings();
       WIDGETS["wpedom"].redraw();
     },
-    getSteps:()=>stp_today
+    getSteps() { return stepCount; },
+    remove() {
+      Bangle.removeListener('step', onStepCount);
+      Bangle.removeListener("touch", onTouch);
+      delete WIDGETS["wpedom"];
+    }
   };
-  // Load data at startup
-  let pedomData = loadSettings();
-  if (pedomData) {
-    if (pedomData.lastUpdate)
-      lastUpdate = new Date(pedomData.lastUpdate);
-    stp_today = pedomData.stepsToday|0;
-    delete pedomData;
-  }
   WIDGETS["wpedom"].width = WIDGETS["wpedom"].getWidth();
-  if (!settings.hide) Bangle.on("touch", (_,e) => { // allow disabling steps on tap
+  let onTouch = function(_, e) { // allow disabling steps on tap
     if (!e || WIDGETS["back"]) return; // ignore taps if back widget shown - it's too close
     let w = WIDGETS["wpedom"];
     if (w._draw || e.y<w.y || e.y >= (w.y+24) || e.x<w.x || e.x>(w.x+w.width)) return; // ignore out of bounds or if hidden (w._draw set)
@@ -152,5 +120,6 @@
     stepDisabled = !stepDisabled;
     Bangle.setOptions({stepCounterDisabled:stepDisabled}); // 2v29
     w.draw();
-  });
-})()
+  }
+  if (!settings.hide) Bangle.on("touch", onTouch);
+}

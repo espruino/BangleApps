@@ -3,7 +3,7 @@ if ((require("Storage").readJSON("messages.settings.json", true) || {}).maxMessa
   // the name still needs to be "messages": the library calls WIDGETS["messages'].hide()/show()
   // see e.g. widmsggrid
   WIDGETS["messages"] = {
-    area: "tl", width: 0, srcs: [], draw: function(_w, recall) {
+    area: "tl", width: 0, srcs: [], draw(_w, recall) {
       // If we had a setTimeout queued from the last time we were called, remove it
       if (WIDGETS["messages"].i) {
         clearTimeout(WIDGETS["messages"].i);
@@ -36,18 +36,19 @@ if ((require("Storage").readJSON("messages.settings.json", true) || {}).maxMessa
       }
       WIDGETS["messages"].i = setTimeout(() => WIDGETS["messages"].draw(WIDGETS["messages"], true), 1000);
       if (process.env.HWVERSION>1) Bangle.on("touch", this.touch);
-    }, onMsg: function(type, msg) {
-      if (this.hidden) return;
+    }, onMsg(type, msg) {
+      let wid = WIDGETS["messages"];
+      if (wid.hidden) return;
       if (type==="music") return;
       if (msg.id && !msg.new && msg.t!=="remove") return;
       let filterMessages = msgs => msgs.filter(msg => msg.new && msg.id != "music")
         .filter((msg, i, arr) => arr.findIndex(nmsg => msg.src == nmsg.src) == i) // only include one of each type
         .map(m => m.src); // we only need this for icon/color;
-      this.srcs = filterMessages(require("messages").getMessages(msg));
+      wid.srcs = filterMessages(require("messages").getMessages(msg));
       const settings =  Object.assign({maxMessages:3},require('Storage').readJSON("messages.settings.json", true) || {});
-      this.width = 24 * E.clip(this.srcs.length, 0, settings.maxMessages);
+      wid.width = 24 * E.clip(wid.srcs.length, 0, settings.maxMessages);
       if (type!=="init") Bangle.drawWidgets(); // "init" is not a real message type: see below
-    }, touch: function(b, c) {
+    }, touch(b, c) {
       var w = WIDGETS["messages"];
       if (!w || !w.width || c.x<w.x || c.x>w.x+w.width || c.y<w.y || c.y>w.y+24) return;
       require("messages").openGUI();
@@ -63,9 +64,18 @@ if ((require("Storage").readJSON("messages.settings.json", true) || {}).maxMessa
     }, show() {
       delete this.hidden;
       this.onMsg("show", {}); // reload messages+redraw
+    },
+    remove() {
+      Bangle.removeListener("message", this.onMsg);
+      Bangle.removeListener("touch", this.touch);
+      if (this.i) {
+        clearTimeout(this.i);
+        delete this.i;
+      }
+      delete WIDGETS["messages"];
     }
   };
-  Bangle.on("message", WIDGETS["messages"].onMsg.bind(WIDGETS["messages"]));
+  Bangle.on("message", WIDGETS["messages"].onMsg);
   if (require("Storage").read("messages.json")!==undefined) // only call init if we've got messages - otherwise we can avoid loading messages lib (saves 30ms)
     WIDGETS["messages"].onMsg("init", {}); // abuse type="init" to prevent Bangle.drawWidgets();
 }

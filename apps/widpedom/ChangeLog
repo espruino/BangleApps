@@ -23,3 +23,5 @@
 0.21: Memory usage improvements, fix widget initial width (fix #1170)
 0.22: Fix 'stps' regression for 0.21 (fix #1233)
 0.23: Allow tapping on the widget to disable step counting (2v29+ needed)
+0.24: Avoid doing own step calculations and just use Bangle.js's own step counter
+      Add .remove method

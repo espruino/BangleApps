@@ -1,3 +1,4 @@
 0.01: New widget
 0.02: Make color depend on level
 0.03: Stop battery widget clearing too far down
+0.04: Remove buzz on charge (now global)

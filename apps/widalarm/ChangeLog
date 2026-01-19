@@ -1,2 +1,3 @@
 0.01: Moved out of 'alarm' app
 0.02: Decouple reloading of widget when alarms change
+0.03: Add '.remove' method
