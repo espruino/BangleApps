@@ -1,3 +1,4 @@
+{
 // force colours - don't invert if theme different as this can break readers
 g.setColor("#000").setBgColor("#fff").clear();
 // get URL base
@@ -21,9 +22,13 @@ NRF.ignoreWhitelist = 1;
 // Button to return
 Bangle.setUI({
   mode : "custom",
-  btn : function(n) { load(); }
+  btn(n) { Bangle.load(); },
+  remove() {
+    // nothing to do, but we define this to show we can fast load
+  }
 });
 // force unlocked and backlight on
 Bangle.setLocked(0);
 Bangle.setLCDPower(1);
 Bangle.setLCDTimeout(0);
+}
