@@ -136,6 +136,7 @@ Bangle.setUI({
     delete Graphics.prototype.setFontLECO1976Regular22;
     delete Graphics.prototype.setFontLECO1976Regular42;
     delete Graphics.prototype.setFontLECO1976Regular14;
+    g.reset().clearRect(0,0,g.getWidth(),24); // clear the rect where the widgets are
     require("widget_utils").show(); // re-show widgets
   }});
 
