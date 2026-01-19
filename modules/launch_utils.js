@@ -28,8 +28,8 @@ exports.cache = function(settings) {
       hash : launchHash,
       apps : s.list(/\.info$/)
               .map(app=>{
-                let a=s.readJSON(app,1), src=a.src&&s.read(a.src);
-                return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src,wid:src&&src.includes("Bangle.loadWidgets")};
+                let a=s.readJSON(app,1);
+                return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};
               }).filter(app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || !app.type))
               .sort((a,b)=>{
                 var n=(0|a.sortorder)-(0|b.sortorder);
@@ -49,8 +49,20 @@ exports.cache = function(settings) {
 
 /** Call with app object from .cache() */
 exports.loadApp = function(app) {
-  // TODO: If there's a load screen boot app, we could call it? Or maybe Bangle.load should do that?
   if (!app.src) return E.showMessage(/*LANG*/ "App Source\nNot found"); // sanity check
+  if (app.wid===undefined) { // If we hadn't stored whether the app uses widgets before, check now
+    let s = require("Storage");
+    let src = s.read(app.src)
+    app.wid = (src!==undefined)&&src.includes("Bangle.loadWidgets");
+    // Now update the launch cache to save having to do this again
+    let launchCache = s.readJSON("launch.cache.json", true)||{};
+    let a = launchCache.apps.find(a=>a.src===app.src);
+    if (a) {
+      a.wid = app.wid;
+      require("Storage").writeJSON("launch.cache.json", launchCache);
+    }
+  }
+  // TODO: If there's a load screen boot app, we could call it? Or maybe Bangle.load should do that?
   if (app.wid) Bangle.load(app.src) // if app uses widgets, we can fast load into it
   else if (Object.keys(WIDGETS).every(w=>!!WIDGETS[w].remove)) { // are widgets unloadable? !! needed before 2v29 fw
     WIDGETS.forEach(w=>w.remove());
