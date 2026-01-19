@@ -1,5 +1,4 @@
 // Note: this won't currently fast load as no 'remove' handler is set
-var Storage = require("Storage");
 var Layout = require("Layout");
 
 var font = g.getFonts().includes("6x15") ? "6x15" : "6x8:2";
