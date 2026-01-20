@@ -7,3 +7,5 @@
       Instead of text, use icons instead
       Make menu slightly wider to feel more spacious without losing the overlay feel
       Change toggle styles/colors slightly
+      Migrate DnD functionality to global setting
+      Update toggle calls for speed and precision
