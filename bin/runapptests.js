@@ -136,8 +136,9 @@ function assertArray(step){
   switch (step.is.toLowerCase()){
     // Evaluate expression once to avoid side effects from multiple evaluations
     case "notempty": isOK = getValue(`(function(v){return v && v.length > 0})(${step.js})`); break;
-    // Check if undefined, null, empty array, or array containing only undefined/null values
-    case "undefinedorempty": isOK = getValue(`(function(v){return !v || v.length === 0 || (Array.isArray(v) && v.every(function(x){return x==null}))})(${step.js})`); break;
+    case "undefinedorempty": isOK = getValue(`(function(v){return !v || v.length === 0})(${step.js})`); break;
+    // For arrays that may contain only null/undefined (e.g., sparse arrays from backgrounded handlers)
+    case "allnullish": isOK = getValue(`(function(v){return !v || v.length === 0 || (Array.isArray(v) && v.every(function(x){return x==null}))})(${step.js})`); break;
   }
 
   if (isOK) {
