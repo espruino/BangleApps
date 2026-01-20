@@ -91,7 +91,7 @@
 
               ctrl.text = from.text;
               ctrl.img = from.img;
-              Object.assign(ctrl, {}, ctrl.cb(false) ? colour.on : colour.off);
+              Object.assign(ctrl, ctrl.cb(false) ? colour.on : colour.off);
 
               return ctrl;
             });
