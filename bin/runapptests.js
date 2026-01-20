@@ -94,9 +94,13 @@ const TEST_TIMEOUT_MS = 60000;
 function withTimeout(promise, ms, testName) {
   return Promise.race([
     promise,
-    new Promise((_, reject) =>
-      setTimeout(() => reject(new Error(`Test "${testName}" timed out after ${ms}ms`)), ms)
-    )
+    new Promise((_, reject) => {
+      setTimeout(() => {
+        const error = new Error(`Test "${testName}" timed out after ${ms}ms`);
+        error.isTimeout = true;
+        reject(error);
+      }, ms);
+    })
   ]);
 }
 
@@ -138,6 +142,7 @@ function assertArray(step){
     case "notempty": isOK = getValue(`(function(v){return v && v.length > 0})(${step.js})`); break;
     case "undefinedorempty": isOK = getValue(`(function(v){return !v || v.length === 0})(${step.js})`); break;
     // For arrays that may contain only null/undefined (e.g., sparse arrays from backgrounded handlers)
+    // Separate assertion type as suggested in code review - [null] would not intuitively pass "undefinedorempty"
     case "allnullish": isOK = getValue(`(function(v){return !v || v.length === 0 || (Array.isArray(v) && v.every(function(x){return x==null}))})(${step.js})`); break;
   }
 
@@ -444,8 +449,8 @@ function runTest(test, testState) {
       p = p.finally(()=>{
         // Check for uncaught errors detected during test
         const uncaughtError = getUncaughtError();
-        if (uncaughtError.detected) {
-          console.log("> UNCAUGHT ERROR DETECTED:", uncaughtError.message);
+        if (uncaughtError) {
+          console.log("> UNCAUGHT ERROR DETECTED:", uncaughtError);
           state.ok = false;
         }
         resetUncaughtError();
@@ -456,7 +461,7 @@ function runTest(test, testState) {
           number: subtestIdx,
           result: state.ok ? "SUCCESS": "FAILURE",
           description: subtest.description,
-          error: uncaughtError.detected ? uncaughtError.message : null
+          error: uncaughtError || null
         });
       });
     });
@@ -470,30 +475,27 @@ function runTest(test, testState) {
 
 let handleRx = ()=>{};
 
-// Uncaught error detection
-let uncaughtErrorDetected = false;
-let uncaughtErrorMessage = "";
+// Uncaught error detection - null means no error, non-empty string contains the error message
+let uncaughtError = null;
 
 function checkForUncaughtError(text) {
   // Use precise patterns to avoid false positives (e.g., "ASSERT" matching "assertArray")
   if (text && (
-    text.includes("Uncaught ") ||              // Space after to avoid "UncaughtFoo"
+    text.match(/Uncaught\b/) ||                // Uncaught followed by word boundary
     text.match(/^ERROR:\s/m) ||                // ERROR: at start of line only
     text.includes("ASSERT FAILED") ||          // Full assertion failure message
     text.match(/^\s+at\s+\S+:\d+:\d+/)         // Stack trace: "  at file:line:col"
   )) {
-    uncaughtErrorDetected = true;
-    uncaughtErrorMessage = text;
+    uncaughtError = text;
   }
 }
 
 function resetUncaughtError() {
-  uncaughtErrorDetected = false;
-  uncaughtErrorMessage = "";
+  uncaughtError = null;
 }
 
 function getUncaughtError() {
-  return { detected: uncaughtErrorDetected, message: uncaughtErrorMessage };
+  return uncaughtError;
 }
 
 let handleConsoleOutput = (d) => {
@@ -543,7 +545,7 @@ emu.init({
       const testName = test.app + (test.description ? ` - ${test.description}` : '');
       return withTimeout(runTest(test, testState), TEST_TIMEOUT_MS, testName)
         .catch(err => {
-          if (err.message && err.message.includes('timed out')) {
+          if (err.isTimeout) {
             console.log("> TIMEOUT:", err.message);
             // Clean up emulator state after timeout
             try {
@@ -565,30 +567,14 @@ emu.init({
     });
   });
   p.finally(()=>{
-    // Summary output
-    console.log("\n");
-    console.log("═".repeat(60));
-    console.log("TEST RESULTS SUMMARY");
-    console.log("═".repeat(60));
+    console.log("\n\n");
+    console.log("Overall results:");
     console.table(testState);
 
-    // Count results
-    const passed = testState.filter(t => t.result === "SUCCESS").length;
-    const failed = testState.filter(t => t.result === "FAILURE").length;
-    const timedOut = testState.filter(t => t.result === "TIMEOUT").length;
-    const total = testState.length;
-
-    console.log("─".repeat(60));
-    console.log(`Total: ${total} | Passed: ${passed} | Failed: ${failed} | Timeout: ${timedOut}`);
-    console.log("═".repeat(60));
-
-    // Exit with appropriate code
-    const exitCode = (failed > 0 || timedOut > 0) ? 1 : 0;
-    if (exitCode === 0) {
-      console.log("✓ All tests passed!");
-    } else {
-      console.log("✗ Some tests failed.");
-    }
+    // Exit with appropriate code - count failures and timeouts
+    const exitCode = testState.reduce((a, c) => {
+      return a || ((c.result === "SUCCESS") ? 0 : 1);
+    }, 0);
 
     process.exit(exitCode);
   });

@@ -52,11 +52,11 @@ jobs:
         id: detect-apps
         run: |
           set -e  # Exit on error, but handle grep specially
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
             # PR: test only changed apps
             CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha }}..HEAD)
             APPS=$(echo "$CHANGED" | grep '^apps/' | cut -d'/' -f2 | sort -u) || APPS=""
-          elif [ "${{ github.ref }}" == "refs/heads/master" ]; then
+          elif [ "${{ github.ref }}" = "refs/heads/master" ]; then
             # Push to master: test all apps
             APPS=$(ls apps/*/test.json 2>/dev/null | cut -d'/' -f2) || APPS=""
           else
