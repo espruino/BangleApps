@@ -30,7 +30,7 @@
             Bangle.setLCDOverlay();
         };
         Overlay.prototype.renderG2 = function () {
-          var border = 3; 
+          var border = 3;
           this.g2
               .reset()
               .setColor(13)
