@@ -298,7 +298,6 @@ var controls = [
         if (e.b)
             touchDown = true;
     });
-  var origBuzz;
     var onCtrlTap = function(ctrl) {
       Bangle.buzz(20);
 
