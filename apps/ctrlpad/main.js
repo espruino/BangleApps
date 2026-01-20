@@ -140,7 +140,10 @@ var controls = [
   {
     text: "BLE",
     img:atob("GBiBAAAAAAAYAAAcAAAfAAAbgAAZ4AYYYAcY4AOZwAH/AAB+AAA8AAA8AAB+AAD/AAOZwAcY4A4YYAQZ4AAbgAAfAAAcAAAYAAAAAA=="),
-    get: () => NRF.getSecurityStatus().advertising||NRF.getSecurityStatus().connected, 
+    get: () => {
+      const status = NRF.getSecurityStatus();
+      return status.advertising || status.connected;
+    },
     toggle: () => {
       if (NRF.getSecurityStatus().advertising||NRF.getSecurityStatus().connected) NRF.sleep(); else NRF.wake();
     }
