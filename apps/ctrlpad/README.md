@@ -1,9 +1,10 @@
 # Description
 
-A control pad app to provide fast access to common functions, such as bluetooth power, HRM and Do Not Disturb.
+A control pad app to provide fast access to common functions, such as bluetooth power, HRM and Do Not Disturb, as well as shortcuts to load the clock, launcher, and settings app.
+
 By dragging from the top of the watch, you have this control without leaving your current app (e.g. on a run, bike ride or just watching the clock).
 
-The app is designed to not conflict with other gestures - when the control pad is visible, it'll prevent propagation of events past it (touch, drag and swipe specifically). When the control pad is hidden, it'll ignore touch, drag and swipe events with the exception of an event dragging from the top 40 pixels of the screen.
+The app is designed to not conflict with other gestures - when the control pad is visible, it'll prevent propagation of events past it (touch, drag and swipe specifically). When the control pad is hidden, it'll ignore touch, drag and swipe events with the exception of an event dragging from the top 10 pixels of the screen.
 
 
 # Usage
