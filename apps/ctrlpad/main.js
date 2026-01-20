@@ -149,7 +149,7 @@ var controls = [
     text: "DnD",
     img:atob("GBiBAAAAAAAAAAA8AAAYAAAYAAD/AAH/gAH/gAP/wAP/wAP/wAP/wAP/wAP/wAP/wAf/4Af/4A//8B//+A//8AAAAAA8AAAAAAAAAA=="),
     get: () => {
-      return require("Storage").readJSON("setting.json", 1).quiet === 1 ;
+      return require("Storage").readJSON("setting.json", 1).quiet === 1;
     },
     toggle: () => {
       let s = require("Storage").readJSON("setting.json", 1);
