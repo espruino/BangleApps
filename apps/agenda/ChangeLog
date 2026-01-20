@@ -19,3 +19,4 @@
 0.17: Fixed "Today" and "Tomorrow" labels displaying in non-current weeks
 0.18: Correct date in clockinfo for all-day events in negative timezones
 0.19: Change clockinfo title truncation to preserve images
+0.20: Add back button support to "No events" screen
