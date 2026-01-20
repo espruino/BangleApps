@@ -310,7 +310,7 @@ var controls = [
       });
 
       // Clear and Redraw the buffer
-      ui.overlay.renderG2(); 
+      ui.overlay.renderG2();
       ui.ctrls.draw(ui.overlay.g2);
       
       // Force an update through the overlay
