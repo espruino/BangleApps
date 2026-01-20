@@ -300,7 +300,7 @@ var controls = [
       Bangle.buzz(20);
 
       var result=ctrl.cb(true); 
-      if(result=="close"){
+      if (result === "close") {
         terminateUI();
         return;
       }
