@@ -13,10 +13,13 @@
             var wasOn = w.userReq;
             if (wasOn) {
                 require("ble_advert").remove(0x180d);
+                if (!NRF.getSecurityStatus().connected)
+                    NRF.sleep();
             }
             else {
                 require("ble_advert").set(0x180d);
                 register_1();
+                NRF.wake();
             }
             w.userReq = !wasOn;
             apply_1(!wasOn && NRF.getSecurityStatus().connected);
