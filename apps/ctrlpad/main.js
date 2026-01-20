@@ -299,7 +299,7 @@ var controls = [
     var onCtrlTap = function(ctrl) {
       Bangle.buzz(20);
 
-      var result=ctrl.cb(true); 
+      var result = ctrl.cb(true); 
       if (result === "close") {
         terminateUI();
         return;
