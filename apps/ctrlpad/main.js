@@ -301,7 +301,7 @@ var controls = [
 
       var result=ctrl.cb(true); 
       if(result=="close"){
-        terminateUI()
+        terminateUI();
         return;
       }
       ui.ctrls.controls.forEach(function(c) {
