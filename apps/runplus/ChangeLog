@@ -33,3 +33,5 @@ Write to correct settings file, fixing settings not working.
 	track screen state
 0.30: Change the "time" stat to show active time (duration) rather than
 	elapsed time (fix #3802), and sync with recorder on load
+0.31: "Always resume run" will start a new run at app launch, and resume this
+	run for the duration of the app
