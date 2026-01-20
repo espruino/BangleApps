@@ -15,28 +15,45 @@
     }
     var Overlay = (function () {
         function Overlay() {
-            this.width = g.getWidth() - 10 * 2;
+            this.width = g.getWidth() - 2 * 2;
             this.height = g.getHeight() - 24 - 10;
             this.g2 = Graphics.createArrayBuffer(this.width, this.height, 4, { msb: true });
+            this.g2.transparent = 13;
             this.renderG2();
         }
         Overlay.prototype.setBottom = function (bottom) {
             var g2 = this.g2;
             var y = bottom - this.height;
-            Bangle.setLCDOverlay(g2, 10, y - 10);
+            Bangle.setLCDOverlay(g2, 2, y - 10);
         };
         Overlay.prototype.hide = function () {
             Bangle.setLCDOverlay();
         };
         Overlay.prototype.renderG2 = function () {
-            this.g2
-                .reset()
-                .setColor(g.theme.bg)
-                .fillRect(0, 0, this.width, this.height)
-                .setColor(colour.on.bg)
-                .drawRect(0, 0, this.width - 1, this.height - 1)
-                .drawRect(1, 1, this.width - 2, this.height - 2);
-        };
+          var border = 3; 
+          this.g2
+              .reset()
+              .setColor(13)
+              .fillRect(0, 0, this.width, this.height) // Background (Transparent)
+
+              .setColor(colour.on.bg)
+              .fillRect({
+                  x: 0, 
+                  y: 0, 
+                  w: this.width, 
+                  h: this.height, 
+                  r: 20
+              }) // The Outer Shape
+
+              .setColor(g.theme.bg == "0" ? "#000" : g.theme.bg)
+              .fillRect({
+                  x: border, 
+                  y: border, 
+                  w: this.width - (border * 2), 
+                  h: this.height - (border * 2), 
+                  r: 16 
+              });
+      };
         return Overlay;
     }());
     var colour = {
@@ -46,7 +63,7 @@
         },
         off: {
             fg: "#000",
-            bg: "#bbb",
+            bg: g.theme.dark?"#fff":"#bbb",
         },
     };
     var Controls = (function () {
@@ -59,15 +76,24 @@
                 { x: width / 4 - 10, y: centreY - circleGapY },
                 { x: width / 2, y: centreY - circleGapY },
                 { x: width * 3 / 4 + 10, y: centreY - circleGapY },
-                { x: width / 3, y: centreY + circleGapY },
-                { x: width * 2 / 3, y: centreY + circleGapY },
+                { x: width / 4 - 10, y: centreY + circleGapY },
+                { x: width / 2, y: centreY + circleGapY },
+                { x: width * 3 / 4 + 10, y: centreY + circleGapY },
             ].map(function (xy, i) {
-                var ctrl = xy;
-                var from = controls[i];
-                ctrl.text = from.text;
-                ctrl.cb = from.cb;
-                Object.assign(ctrl, from.cb(false) ? colour.on : colour.off);
-                return ctrl;
+              var ctrl = xy;
+              var from = controls[i];
+
+              // Wrap into a cb function
+              ctrl.cb = function(tap) {
+                if (tap) return from.toggle();
+                return from.get();
+              };
+
+              ctrl.text = from.text;
+              ctrl.img = from.img;
+              Object.assign(ctrl, {}, ctrl.cb(false) ? colour.on : colour.off);
+
+              return ctrl;
             });
         }
         Controls.prototype.draw = function (g, single) {
@@ -80,7 +106,7 @@
                     .setColor(ctrl.bg)
                     .fillCircle(ctrl.x, ctrl.y, 23)
                     .setColor(ctrl.fg)
-                    .drawString(ctrl.text, ctrl.x, ctrl.y);
+                    .drawImage(ctrl.img,ctrl.x-12,ctrl.y-12)
             }
         };
         Controls.prototype.hitTest = function (x, y) {
@@ -109,79 +135,59 @@
     var initUI = function () {
         if (ui)
             return;
-        var controls = [
-            {
-                text: "BLE",
-                cb: function (tap) {
-                    var on = NRF.getSecurityStatus().advertising;
-                    if (tap) {
-                        if (on)
-                            NRF.sleep();
-                        else
-                            NRF.wake();
-                    }
-                    return on !== tap;
-                }
-            },
-            {
-                text: "DnD",
-                cb: function (tap) {
-                    var on;
-                    if ((on = !!origBuzz)) {
-                        if (tap) {
-                            Bangle.buzz = origBuzz;
-                            origBuzz = undefined;
-                        }
-                    }
-                    else {
-                        if (tap) {
-                            origBuzz = Bangle.buzz;
-                            Bangle.buzz = function () { return Promise.resolve(); };
-                            setTimeout(function () {
-                                if (!origBuzz)
-                                    return;
-                                Bangle.buzz = origBuzz;
-                                origBuzz = undefined;
-                            }, 1000 * 60 * 10);
-                        }
-                    }
-                    return on !== tap;
-                }
-            },
-            {
-                text: "HRM",
-                cb: function (tap) {
-                    var _a;
-                    var id = "widhid";
-                    var hrm = (_a = Bangle._PWR) === null || _a === void 0 ? void 0 : _a.HRM;
-                    var off = !hrm || hrm.indexOf(id) === -1;
-                    if (off) {
-                        if (tap)
-                            Bangle.setHRMPower(1, id);
-                    }
-                    else if (tap) {
-                        Bangle.setHRMPower(0, id);
-                    }
-                    return !off !== tap;
-                }
-            },
-            {
-                text: "clk",
-                cb: function (tap) {
-                    if (tap)
-                        Bangle.showClock(), terminateUI();
-                    return true;
-                },
-            },
-            {
-                text: "lch",
-                cb: function (tap) {
-                    if (tap)
-                        Bangle.showLauncher(), terminateUI();
-                    return true;
-                },
-            },
-        ];
+        // ... inside initUI ...
+var controls = [
+  {
+    text: "BLE",
+    img:atob("GBiBAAAAAAAYAAAcAAAfAAAbgAAZ4AYYYAcY4AOZwAH/AAB+AAA8AAA8AAB+AAD/AAOZwAcY4A4YYAQZ4AAbgAAfAAAcAAAYAAAAAA=="),
+    get: () => NRF.getSecurityStatus().advertising||NRF.getSecurityStatus().connected, 
+    toggle: () => {
+      if (NRF.getSecurityStatus().advertising||NRF.getSecurityStatus().connected) NRF.sleep(); else NRF.wake();
+    }
+  },
+  {
+    text: "DnD",
+    img:atob("GBiBAAAAAAAAAAA8AAAYAAAYAAD/AAH/gAH/gAP/wAP/wAP/wAP/wAP/wAP/wAP/wAf/4Af/4A//8B//+A//8AAAAAA8AAAAAAAAAA=="),
+    get: () => {
+      return require("Storage").readJSON("setting.json", 1).quiet === 1 ;
+    },
+    toggle: () => {
+      let s = require("Storage").readJSON("setting.json", 1);
+      s.quiet = s.quiet ? 0 : 1;
+      require("Storage").writeJSON("setting.json", s);
+      //if qm widget is present, update that
+      if (typeof WIDGETS === "object" && "qmsched" in WIDGETS) WIDGETS["qmsched"].draw();
+      if (global.setAppQuietMode) setAppQuietMode(s.quiet);
+    }
+  },
+  {
+    text: "HRM",
+    img:atob("GBiBAAAAAA+B8B/D+D/n/H///v/////////P///P///H/3+WQAC2Xj82HB86uA/48Af54AP9wAH9gAD/AAB+AAA8AAAYAAAAAAAAAA=="),
+    get: () => Bangle.isHRMOn(),
+    toggle: () => {
+      Bangle.setHRMPower(!Bangle.isHRMOn(), "widhid");
+    }
+  },
+  {
+    text: "clock",
+    img:atob("GBiBAAB+AAP/wAeB4A4AcBgAGDAADHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA=="),
+    get: () => false, // Always looks "off" until pressed
+    toggle: () => {Bangle.showClock(); return "close";}
+  },
+  {
+    text: "launch",
+    img:atob("GBiBAAAAAAAAAAAAAA/AwB/gwBhgwBhn+Bhn+BhgwB/gwA/AwAAAAAAAAA/D8B/n+BhmGBhmGBhmGBhmGB/n+A/D8AAAAAAAAAAAAA=="),
+    get: () => false,
+    toggle: () => {Bangle.showLauncher(); return "close";}
+  },
+  {
+    text: "settings",
+    img:atob("GBiBAAA8AAB+AAR+IA7/cB//+D///B//+A/D8B8A+H8A/v4Af/4Af/4Af/4Af38A/h8A+A/D8B//+D///B//+A7/cAR+IAB+AAA8AA=="),
+    get: () => false,
+    toggle: () => {Bangle.load("setting.app.js"); return "close";}
+  }
+];
+
         var overlay = new Overlay();
         ui = {
             overlay: overlay,
@@ -218,7 +224,7 @@
                 break;
             case 0:
                 if (e.b && !touchDown) {
-                    if (e.y <= 40) {
+                    if (e.y <= 10) {
                         state = 1;
                         startY = e.y;
                         (_a = E.stopEventPropagation) === null || _a === void 0 ? void 0 : _a.call(E);
@@ -289,6 +295,31 @@
         if (e.b)
             touchDown = true;
     });
+  var origBuzz;
+    var onCtrlTap = function(ctrl) {
+      Bangle.buzz(20);
+
+      var result=ctrl.cb(true); 
+      if(result=="close"){
+        terminateUI()
+        return;
+      }
+      ui.ctrls.controls.forEach(function(c) {
+          var isActive = c.cb(false);
+          Object.assign(c, isActive ? colour.on : colour.off);
+      });
+
+      // Clear and Redraw the buffer
+      ui.overlay.renderG2(); 
+      ui.ctrls.draw(ui.overlay.g2);
+      
+      // Force an update through the overlay
+      var y = g.getHeight() - ui.overlay.height; 
+      Bangle.setLCDOverlay(ui.overlay.g2, 2, y - 10);
+      Bangle.buzz(10);
+      
+  };
+
     var onTouch = (function (_btn, xy) {
         var _a;
         if (!ui || !xy)
@@ -301,14 +332,7 @@
             (_a = E.stopEventPropagation) === null || _a === void 0 ? void 0 : _a.call(E);
         }
     });
-    var origBuzz;
-    var onCtrlTap = function (ctrl, ui) {
-        Bangle.buzz(20);
-        var col = ctrl.cb(true) ? colour.on : colour.off;
-        ctrl.fg = col.fg;
-        ctrl.bg = col.bg;
-        ui.ctrls.draw(ui.overlay.g2, ctrl);
-    };
+    
     Bangle.prependListener("drag", onDrag);
     Bangle.on("lock", terminateUI);
 })();
