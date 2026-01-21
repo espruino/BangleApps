@@ -76,7 +76,7 @@ if (s.log) boot += `E.on('errorFlag', function(errorFlags) {
 if (global.save) boot += `global.save = function() { throw new Error("You can't use save() on Bangle.js without overwriting the bootloader!"); }\n`;
 // Apply any settings-specific stuff
 if (s.options) boot+=`Bangle.setOptions(${E.toJS(s.options)});\n`;
-if (s.brightness && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightness});\n`;
+if (s.brightness!==undefined && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightness});\n`;
 if (s.bleprivacy || (s.passkey!==undefined && s.passkey.length==6)) {
   let passkey = s.passkey ? `passkey:${E.toJS(s.passkey.toString())},display:1,mitm:1,` : "";
   let privacy = s.bleprivacy ? `privacy:${E.toJS(s.bleprivacy)},` : "";

@@ -78,3 +78,4 @@
 0.65: Only display interpreter errors if log is nonzero
 0.66: Ensure __FILE__ is set even after a fresh boot (fix #3857)
 0.67: When generating .clkinfocache, apply configured exclusions
+0.68: Allow setting screen brightness to 0

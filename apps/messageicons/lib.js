@@ -15,6 +15,6 @@ exports.getColor = function(msg,options) {
   if (st.iconColorMode == 'mono') return options.default;
   const s = (("string"=== typeof msg) ? msg : (msg.src || "")).toLowerCase();
   let match = ",adp|F00,agenda|26D,airbnb|F35,mail|FF0,music|F0F,phone|0F0,sms message|0FF,bibel|532,bring|456,davx⁵|8C4,duolingo|5C0,discord|56F,etar|3A8,facebook|17F,gmail|E43,gmx|149,google|48F,google home|FB0,health|F37,instagram|F06,jira|05C,kleinanzeigen|6B2,leboncoin|F72,lieferando|F80,linkedin|06C,messages|05C,messenger|07F,mastodon|53C,mattermost|00F,n26|3A8,nextbike|00F,nextcloud|08C,newpipe|F00,nina|E70,opentasks|498,outlook mail|07D,paypal|038,pocket|E45,post & dhl|FC0,reddit|F40,roborock|F00,signal|37F,skype|07D,slack|E17,shortcuts|80F,snapchat|FF0,steam|112,teams|66A,telegram|08C,telegram foss|08C,thunderbird|18E,to do|39E,twitch|94F,twitter|19F,vlc|F80,whatsapp|4C5,wordfeud|EDC,youtube|F00,".match(new RegExp(`,${s}\\|(...)`))
-  return (match===null)?options.default:match[1]
+  return (match===null)?options.default:"#"+match[1]
 };
   
