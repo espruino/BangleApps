@@ -73,7 +73,7 @@ E.on('notify',msg=>{
     "com.apple.mobilephone": "Phone",
     "com.apple.mobileslideshow": "Pictures",
     "com.apple.MobileSMS": "SMS Message",
-    "com.apple.Passbook": "iOS Wallet",
+    "com.apple.Passbook": "Wallet",
     "com.apple.ScreenTimeNotifications": "Screen Time",
     "com.apple.wifid.usernotification": "WiFi",
     "com.apple.Music": "Apple Music",
