@@ -72,7 +72,7 @@ let appButtons = groupBy3(pinnedApps).map((appGroup, i) => {
       pad: 5,
       src: require("Storage").read(app.icon),
       scale: 0.75,
-      cb: l => setTimeout(() => Bangle.load(app.src), 0),
+      cb: l => setTimeout(() => load(app.src), 0),
     };
   });
 });
