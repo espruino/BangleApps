@@ -87,6 +87,7 @@ E.on('notify',msg=>{
     "com.google.Maps": "Google Maps",
     "com.google.Drive": "Google Drive",
     "com.google.GoogleMobile": "Google",
+    "com.google.Gmail": "GMail",
     "com.ecobee.athenamobile":"Ecobee",
     "com.ifttt.ifttt": "IFTTT",
     "com.jumbo.app": "Jumbo",
