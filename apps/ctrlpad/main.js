@@ -325,7 +325,7 @@ var controls = [
       ui.ctrls.draw(ui.overlay.g2);
       
       // Force an update through the overlay
-      var y = g.getHeight() - ui.overlay.height; 
+      var y = g.getHeight() - ui.overlay.height;
       Bangle.setLCDOverlay(ui.overlay.g2, 2, y - 10);
       Bangle.buzz(10);
       
