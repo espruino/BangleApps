@@ -24,6 +24,7 @@ The control pad disables drag and touch event handlers while active, preventing 
 - Handle notifications (sharing of `setLCDOverlay`)
 
 ## Creator
-Bobrippling
+[bobrippling](https://github.com/bobrippling)
+
 ## Contributors
-RKBoss6
+[RKBoss6](https://github.com/rkboss6)
