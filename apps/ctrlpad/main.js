@@ -175,19 +175,28 @@ var controls = [
     text: "clock",
     img:atob("GBiBAAB+AAP/wAeB4A4AcBgAGDAADHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA=="),
     get: () => false, // Always looks "off" until pressed
-    toggle: () => {Bangle.showClock(); return "close";}
+    toggle: () => {
+      Bangle.showClock();
+      return "close";
+    }
   },
   {
     text: "launch",
     img:atob("GBiBAAAAAAAAAAAAAA/AwB/gwBhgwBhn+Bhn+BhgwB/gwA/AwAAAAAAAAA/D8B/n+BhmGBhmGBhmGBhmGB/n+A/D8AAAAAAAAAAAAA=="),
     get: () => false,
-    toggle: () => {Bangle.showLauncher(); return "close";}
+    toggle: () => {
+      Bangle.showLauncher();
+      return "close";
+    }
   },
   {
     text: "settings",
     img:atob("GBiBAAA8AAB+AAR+IA7/cB//+D///B//+A/D8B8A+H8A/v4Af/4Af/4Af/4Af38A/h8A+A/D8B//+D///B//+A7/cAR+IAB+AAA8AA=="),
     get: () => false,
-    toggle: () => {Bangle.load("setting.app.js"); return "close";}
+    toggle: () => {
+      Bangle.load("setting.app.js");
+      return "close";
+    }
   }
 ];
 
