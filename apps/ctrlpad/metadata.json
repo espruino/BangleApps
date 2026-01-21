@@ -9,6 +9,7 @@
   "readme": "README.md",
   "type": "bootloader",
   "tags": "bluetooth",
+  "screenshots": [{ "url":"scr.png" }],
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"ctrlpad.boot.js","url":"main.js"},
