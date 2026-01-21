@@ -45,7 +45,7 @@
                   r: 20
               }) // The Outer Shape
 
-              .setColor(g.theme.bg == "0" ? "#000" : g.theme.bg)
+              .setColor(g.theme.bg)
               .fillRect({
                   x: border, 
                   y: border, 
