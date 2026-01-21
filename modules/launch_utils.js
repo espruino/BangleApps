@@ -63,7 +63,7 @@ exports.loadApp = function(app) {
     }
   }
   // TODO: If there's a load screen boot app, we could call it? Or maybe Bangle.load should do that?
-  if (app.wid) Bangle.load(app.src) // if app uses widgets, we can fast load into it
+  if (app.wid || !global.WIDGETS) Bangle.load(app.src) // if app uses widgets or we don't have any, we can fast load into it
   else if (Object.keys(WIDGETS).every(w=>!!WIDGETS[w].remove)) { // are widgets unloadable? !! needed before 2v29 fw
     Object.keys(WIDGETS).forEach(w=>WIDGETS[w].remove());
     delete global.WIDGETS;
