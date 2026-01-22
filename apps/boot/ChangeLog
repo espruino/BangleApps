@@ -80,3 +80,5 @@
 0.67: When generating .clkinfocache, apply configured exclusions
 0.68: Allow setting screen brightness to 0
       Implement "Charge Vibration" option in Settings (was in widbat before)
+      Allow fast load to clock if WIDGETS are not defined.
+
