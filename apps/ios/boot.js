@@ -268,13 +268,9 @@ E.on('notify',msg=>{
   }
   let settings = require("Storage").readJSON("ios.settings.json",1)||{};
   let name = "";
-  // If we don't have setting, set it to true by default
-  if(settings.detectNames===undefined){
-    settings.detectNames=true;
-    require('Storage').writeJSON('setting.json',settings);
-  }
-  // If setting is on and there is no exception to the detector
-  if (settings.detectNames && !appNames[msg.appId]) {
+
+  // If setting is on/undefined and there is no exception to the detector
+  if (!settings.dontDetectNames && !appNames[msg.appId]) {
     
     let l = msg.appId.split(".");
     // get the last part of the ID
