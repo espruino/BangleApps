@@ -21,9 +21,10 @@
       }
     },
     /*LANG*/"Auto-Detect App Names" : {
-      value : !!settings.detectNames,
+      value : !! !settings.dontDetectNames,
       onchange: v => {
-        settings.detectNames = v;
+        settings.dontDetectNames = !v;
+        print(settings.dontDetectNames)
         updateSettings();
       }
     }
