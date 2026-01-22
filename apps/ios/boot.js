@@ -100,7 +100,6 @@ E.on('notify',msg=>{
     "com.microsoft.Office.Excel": "Microsoft Excel",
     "com.microsoft.Office.Powerpoint": "Microsoft PowerPoint",
     "com.nestlabs.jasper.release": "Nest",
-    "com.skype.SkypeForiPad": "Skype",
     "com.spotify.client": "Spotify",
     "com.soundcloud.TouchApp": "SoundCloud",
     "com.disney.disneyplus": "Disney+",
@@ -131,11 +130,9 @@ E.on('notify',msg=>{
     "com.google.translate": "Google Translate",
     "com.kik.chat": "Kik",
     "com.groupme.GroupMeApplication": "GroupMe",
-    "com.skype.SkypeForiPhone": "Skype",
     "com.tencent.mobileqq": "QQ",
     "com.google.ios.youtubemusic": "YouTube Music",
     "com.paramountplus.app": "Paramount+",
-    "com.chimebank.Chime": "Chime",
     "com.wise.payments": "Wise",
     "com.logitech.circle": "Logi Circle",
     "com.tplink.tapo": "TP-Link Tapo",
@@ -271,6 +268,11 @@ E.on('notify',msg=>{
   }
   let settings = require("Storage").readJSON("ios.settings.json",1)||{};
   let name = "";
+  // If we don't have setting, set it to true by default
+  if(settings.detectNames===undefined){
+    settings.detectNames=true;
+    require('Storage').writeJSON('setting.json',settings);
+  }
   // If setting is on and there is no exception to the detector
   if (settings.detectNames && !appNames[msg.appId]) {
     
