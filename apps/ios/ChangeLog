@@ -20,4 +20,4 @@
 0.19: Convert numeric weather values to int from BangleDumpWeather shortcut
 0.20: Add feels-like temperature data field to weather parsing from BangleDumpWeather shortcut.
 0.21: Add BangleDumpLocation shortcut, to update location data on watch without needing to use the watch's GPS, and added more app names/ ids.
-0.22: Add setting to auto-detect app names from their bundle IDs instead of displaying the ID as the source
+0.22: Add setting to auto-detect app names from their bundle IDs instead of displaying the ID as the source (on by default)
