@@ -4,3 +4,4 @@
 0.04: Fix timeouts closing fast loaded apps
 0.05: Minor code improvements
 0.06: Enable fast load with Bangle.load
+0.07: Undo fast load change as this may not work for apps without widgets
