@@ -21,7 +21,7 @@
       }
     },
     /*LANG*/"Auto-Detect App Names" : {
-      value : !! !settings.dontDetectNames,
+      value : !settings.dontDetectNames,
       onchange: v => {
         settings.dontDetectNames = !v;
         print(settings.dontDetectNames)
