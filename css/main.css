@@ -132,11 +132,10 @@
       border-radius: 1em;
     }
     .dropdowns-pill{
-      background-color: rgba(87, 85, 217, 0.116);
+      background-color: rgba(87, 85, 217, 0.066);
       border-radius: 1em;
       padding-left: 1em;
       padding-right: 1em;
-      box-shadow: 0px 3px 6px rgba(151, 111, 0, 0.036);
 
     }
     .btn.btn-favourite:focus,
@@ -361,7 +360,7 @@
 
     #searchform {
       flex: 1;
-      min-width: 300px !important;
+      min-width: 450px !important;
     }
 
     #searchform .form-input {
