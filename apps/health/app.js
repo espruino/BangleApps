@@ -1,19 +1,48 @@
 let settings;
 const myprofile = require("Storage").readJSON("myprofile.json",1)||{};
 
+//RHR reading vars
+let rhrData = [];
+let seconds = 60;
+let counter = seconds;
+
 function menuMain() {
   E.showMenu({
     "": { title: /*LANG*/"Health Tracking" },
     /*LANG*/"< Back": () => load(),
     /*LANG*/"Step Counting": () => menuStepCount(),
+    /*LANG*/"Calories": () => menuCalories(),
     /*LANG*/"Movement": () => menuMovement(),
     /*LANG*/"Heart Rate": () => menuHRM(),
     /*LANG*/"Battery": () => menuBattery(),
     /*LANG*/"Temperature": () => menuTemperature(),
+    /*LANG*/"Take RHR Reading": () => RHRReading(),
     /*LANG*/"Settings": () => eval(require("Storage").read("health.settings.js"))(()=>{loadSettings();menuMain();})
   });
 }
+function menuCalories() {
+  if((!myprofile.restingHr||myprofile.restingHr==0)||(!myprofile.weight||myprofile.weight==0)){
+    E.showPrompt("Calories need resting heart rate data and weight. Take an RHR reading or configure your profile first.",{
+      buttonHeight:40,
+      buttons:{"Back":false}
+    }).then(function(v){
+      menuMain();
+    })
+  }else{
+    const menu = {
+      "": { title:/*LANG*/"Calories" },
+      /*LANG*/"< Back": () => menuMain(),
+      /*LANG*/"per hour": () => showGraph({id:"calsPerHour",range:"hour",field:"calories", back:menuCalories}),
+      /*LANG*/"per day": () => {
+        showGraph({id:"calsPerDay",range:"day",field:"calories", back:menuCalories})
+        // TODO: Can add a calories goal here;
+        //drawHorizontalLine(settings.calorieGoal) 
+      }
+    };
 
+    E.showMenu(menu);
+  }
+}
 function menuStepCount() {
   const menu = {
     "": { title:/*LANG*/"Steps" },
@@ -30,7 +59,93 @@ function menuStepCount() {
 
   E.showMenu(menu);
 }
+function finish() {
+  Bangle.setHRMPower(0);
+  Bangle.removeListener('HRM', onRHRHrm);
+  if (rhrData.length > 0) {
+    // Calculate average, ignoring outliers
+    let avgRHR = Math.round(rhrData.reduce((a, b) => a + b) / rhrData.length);
+    myprofile.restingHr = avgRHR;
+    require("Storage").writeJSON("myprofile.json", myprofile);
+    E.showPrompt(" ",{
+      buttonHeight:35,
+      buttons:{"Back":true}
+    }).then(function(v){
+      menuMain();
+    })
+      g.clearRect(0,Bangle.appRect.y,g.getWidth(),g.getHeight()-40)
+      g.setColor("#f00"); g.drawImage(atob("Mi2BAAAAAAAAAAAP4AAf4AAf/wAf/gAP/+Af/+AH//wP//wD//+H//+B///z///w///+///8P///////n///////5///////+f///////3///////9////////f///////3///////9////////f///////j///////4///////+P///////B///////wf//////4D//////+Af//////AH//////gA//////4AH/////8AA/////+AAH/////AAB/////gAAP////wAAA////4AAAH///8AAAA///+AAAAH///AAAAA///AAAAAH//gAAAAAf/wAAAAAD/4AAAAAAf4AAAAAAB8AAAAAAAOAAAAAAAAAAAAAAAAAAAAAA=="),g.getWidth()-80,70);
+      g.setColor(g.theme.fg); 
+      g.setFont("Vector", 25).setFontAlign(0,0);
+          g.drawString("Saved!", g.getWidth()/2, 35);
+      g.setFont("Vector", 30).setFontAlign(0,0);
+          g.drawString(avgRHR, g.getWidth()/2-30, g.getHeight()/2);
+      g.setFont("Vector", 18).setFontAlign(0,0);
+          g.drawString("RHR", g.getWidth()/2-30, g.getHeight()/2+20);
+    
+  } 
+}
 
+function onRHRHrm(hrm) {
+  // Only record if the watch is confident in the reading
+  if (hrm.confidence > 80) {
+    rhrData.push(hrm.bpm);
+  }
+
+  // UI Update
+  g.clearRect(Bangle.appRect);
+  g.setColor(g.theme.fg); 
+  g.setFont("Vector", 20).setFontAlign(0,0);
+  g.drawString("Measuring...", g.getWidth()/2, 40);
+  g.setFont("Vector", 40);
+  g.drawString(hrm.bpm, g.getWidth()/2-30, g.getHeight()/2-5);
+  g.setColor("#f00"); g.drawImage(atob("Mi2BAAAAAAAAAAAP4AAf4AAf/wAf/gAP/+Af/+AH//wP//wD//+H//+B///z///w///+///8P///////n///////5///////+f///////3///////9////////f///////3///////9////////f///////j///////4///////+P///////B///////wf//////4D//////+Af//////AH//////gA//////4AH/////8AA/////+AAH/////AAB/////gAAP////wAAA////4AAAH///8AAAA///+AAAAH///AAAAA///AAAAAH//gAAAAAf/wAAAAAD/4AAAAAAf4AAAAAAB8AAAAAAAOAAAAAAAAAAAAAAAAAAAAAA=="),g.getWidth()-80,60)
+  g.setColor(g.theme.fg); 
+  g.setFont("Vector", 16);
+  g.drawString(counter + "s remaining", g.getWidth()/2, g.getHeight() - 55);
+  if(hrm.confidence<=80){
+    g.setFont("Vector", 14).drawString("Low confidence\nKeep still", g.getWidth()/2, g.getHeight() - 20);
+  }
+};
+
+function startRHR(){
+    // Start the process
+    
+    g.clearRect(Bangle.appRect)
+    g.setColor(g.theme.fg); 
+    g.setFont("Vector", 20).setFontAlign(0,0);
+    g.drawString("Starting...", g.getWidth()/2, g.getHeight()/2);
+    rhrData = [];
+    counter = seconds;
+    Bangle.on('HRM',onRHRHrm);
+    Bangle.setHRMPower(1);
+    let interval = setInterval(() => {
+      counter--;
+      if (counter <= 0) {
+        clearInterval(interval);
+        finish();
+      }
+    }, 1000);
+  };
+function RHRReading(){
+  E.showPrompt("Resting Heart Rate reading requires you to be resting and still. Takes approx. 1 minute.",{
+      title:"Continue?",
+      buttonHeight:40,
+      buttons:{"Continue":true,"Back":false}
+    }).then(function(v){
+    if(v){
+          E.showPrompt("Make sure Bangle.js is snug around your wrist, about 1 cm under your wrist bone.",{
+          buttonHeight:40,
+          buttons:{"Continue":true}
+        }).then(function(v){
+            startRHR();
+      });
+
+    }else{
+      menuMain()
+    }
+  });
+}
 function menuDistance() {
   const distMult = parseFloat(require("locale").distance(myprofile.strideLength, 2)); // this removes the distance suffix, e.g. 'm'
   E.showMenu({
@@ -93,6 +208,15 @@ function menuTemperature() {
     back: fn() // callback for back button
   }
 */
+function getFieldValue(h, field, duration) {
+  if (field === "calories") {
+    let hd=h;
+    hd.duration=duration;
+    return require("health").calcCalories(hd,myprofile); 
+  }
+  return h[field];
+}
+
 function showGraph(options) {
   E.showMessage(/*LANG*/"Loading...");
   current_selection = options.id;
@@ -102,7 +226,7 @@ function showGraph(options) {
     data = new Uint16Array(24);
     cnt = new Uint8Array(24);
     require("health").readDay(new Date(), h=>{
-      data[h.hr]+=h[options.field];
+      data[h.hr]+=getFieldValue(h,options.field,10);
       if (!options.ignoreZero || h[options.field]) cnt[h.hr]++;
     });
   } else if (options.range=="day") {
@@ -110,7 +234,7 @@ function showGraph(options) {
     var data = new Uint16Array(32);
     var cnt = new Uint8Array(32);
     require("health").readDailySummaries(new Date(), h=>{
-      data[h.day]+=h[options.field];
+      data[h.day]+=getFieldValue(h,options.field,60*24);
       if (!options.ignoreZero || h[options.field]) cnt[h.day]++;
     });
     // Include data for today
