@@ -2,15 +2,10 @@ let myProfile = require("Storage").readJSON("myprofile.json",1)||{};
 let savedData = require("Storage").readJSON("calories.json",1)||{};
 //init global var
 global.calories = {
-  activeCaloriesBurned:0,
-  totalCaloriesBurned:0,
-  bmrCaloriesBurned:0
+  activeCaloriesBurned:savedData.activeCaloriesBurned||0,
+  totalCaloriesBurned:savedData.totalCaloriesBurned||0,
+  bmrCaloriesBurned:savedData.bmrCaloriesBurned||0
 };
-
-global.calories.totalCaloriesBurned=savedData.totalCaloriesBurned||0;
-global.calories.activeCaloriesBurned=savedData.activeCaloriesBurned||0;
-global.calories.bmrCaloriesBurned=savedData.bmrCaloriesBurned||0;
-
 
 
 function writeData() {
@@ -40,4 +35,3 @@ E.on('kill', function() {
 
   writeData()
 });
-
