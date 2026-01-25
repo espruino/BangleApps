@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: Add weight
 0.03: Change min HRM to be RHR, coupled with Health v0.38 (still backwards-compatible with minHR)
+      Add gender setting
