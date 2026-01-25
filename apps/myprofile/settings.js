@@ -13,8 +13,8 @@
     require('Storage').writeJSON(FILE, myprofile);
   }
   const genderOpts = ["Male","Female","Not Set"];
-  
-  if(myprofile.minHrm||!myprofile.restingHrm)myprofile.restingHrm=myprofile.minHrm;
+  // if we have old min hr data and no resting hr data, upgrade minHRM to restingHRM
+  if(myprofile.minHrm&&!myprofile.restingHrm)myprofile.restingHrm=myprofile.minHrm;
   
   const ageMenu = () => {
     const date = new Date(myprofile.birthday);
@@ -31,7 +31,7 @@
             }).then(() => ageMenu());
           } else {
             const age = (new Date()).getFullYear() - date.getFullYear();
-            const newMaxHRM = 208-0.7*age;
+            const newMaxHRM = Math.round(208-0.7*age);
             E.showPrompt(/*LANG*/`Set HR max to ${newMaxHRM} calculated from age?`).then(function(v) {
               myprofile.birthday = date.getFullYear() + "-" + (date.getMonth() + 1).toString().padStart(2, '0') + "-" + date.getDate().toString().padStart(2, '0');
               if (v) {
@@ -165,4 +165,4 @@
 };
   
   mainMenu();
-})(load);
+});

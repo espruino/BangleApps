@@ -7,11 +7,13 @@ Configure your personal profile. All settings are optional and are only stored o
 | Setting       | Description                     | Displayed in        | Stored in    | Default value | How to measure                                                    |
 | ------------- | ------------------------------- | ------------------- | ------------ | ------------- | ----------------------------------------------------------------- |
 | Birthday      | Used to calculate age           | year, month, day    | 'YYYY-MM-DD' | 01.01.1970    | -                                                                 |
-| HR max        | maximum heart rate              | BPM                 | BPM          | 60            | Use maximum value when exercising.<br/> If unsure set to 220-age. |
-| HR min        | minimum heart rate              | BPM                 | BPM          | 200           | Measure your heart rate after waking up                           |
+| HR max        | Maximum heart rate              | BPM                 | BPM          | 60            | Use maximum value when exercising.<br/> If unsure set to 220-age. |
 | Height        | Body height                     | local length unit   | meter        | 0 (=not set)  | -                                                                 |
 | Weight        | Body weight                     | kg                  | kf           | 0 (=not set)  | -                                                                 |
-| Stride length | distance traveled with one step | local length unit   | meter        | 0 (=not set)  | Walk 10 steps and divide the travelled distance by 10             |
+| Gender        | Your gender, for metabolism purposes (used by Calories app)| --           | 0=male, 1=female, 2=not set           | 2 (=not set)  | - |
+| Stride length | Distance traveled with one step | local length unit   | meter        | 0 (=not set)  | Walk 10 steps and divide the travelled distance by 10             |
+| Resting Hr (used to be HR min)   | The minimum heart rate your body beats while resting              | BPM                 | BPM          | Not set (uses old min HR value if available           | Take an RHR reading in Health (v0.38) |
+
 
 ## Developer notes
 

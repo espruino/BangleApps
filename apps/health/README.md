@@ -15,7 +15,10 @@ Stores:
 * Heart rate
 * Step count (can calculate distance if myprofile is installed and stride length is set)
 * Movement
+### RHR Reading: 
+You can take a Resting Heart Rate measurement, which can be indicative of your cardiovascular health and overall fitness. RHR is the heart rate when you are resting, and is the lowest heart rate you can possibly beat. Generally, a lower RHR indicates better cardiovascular health and endurance. To take a reading, you must be very still and have the watch snug around your wrist (light leaking in can affect the reading). For best results, lie or sit quietly and rest for about 10 minutes before starting the measurement. It is reccomended to take the measurement right before you go to sleep or as soon as you wake up.
 
+To take it, navigate to the health app and find the `Take RHR reading` button to start the test. The app does not enforce or time this resting period, so ensure you have already been resting for around 10 minutes before pressing the button.
 ## Settings
 
 * **Heart Rt** - Whether to monitor heart rate or not
