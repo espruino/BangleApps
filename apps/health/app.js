@@ -7,7 +7,7 @@ let seconds = 60;
 let counter = seconds;
 
 function menuMain() {
-  E.showMenu({
+  var menu={
     "": { title: /*LANG*/"Health Tracking" },
     /*LANG*/"< Back": () => load(),
     /*LANG*/"Step Counting": () => menuStepCount(),
@@ -15,9 +15,11 @@ function menuMain() {
     /*LANG*/"Heart Rate": () => menuHRM(),
     /*LANG*/"Battery": () => menuBattery(),
     /*LANG*/"Temperature": () => menuTemperature(),
-    /*LANG*/"Take RHR Reading": () => RHRReading(),
-    /*LANG*/"Settings": () => eval(require("Storage").read("health.settings.js"))(()=>{loadSettings();menuMain();})
-  });
+    /*LANG*/"Take RHR Reading": () => RHRReading()
+  }
+  if(global.calories)menu[/*LANG*/"Calories"]=() => load("calories.app.js");
+  menu[/*LANG*/"Settings"]= () => eval(require("Storage").read("health.settings.js"))(()=>loadSettings());
+  E.showMenu(menu);
 }
 
 function menuStepCount() {
@@ -106,7 +108,7 @@ function startRHR(){
     }, 1000);
   };
 function RHRReading(){
-  E.showPrompt("Resting Heart Rate reading requires you to be resting and still. Takes approx. 1 minute.",{
+  E.showPrompt("Resting Heart Rate reading requires you to be resting and still. Takes ~1 minute.",{
       title:"Continue?",
       buttonHeight:40,
       buttons:{"Continue":true,"Back":false}
