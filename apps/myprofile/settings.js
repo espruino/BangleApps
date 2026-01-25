@@ -2,7 +2,6 @@
   const FILE = "myprofile.json";
 
   const myprofile = Object.assign({
-    minHrm: 60,
     maxHrm: 200,
     strideLength: 0, // 0 = not set
     birthday: '1970-01-01',
@@ -13,7 +12,10 @@
   function writeProfile() {
     require('Storage').writeJSON(FILE, myprofile);
   }
-
+  const genderOpts = ["Male","Female","Not Set"];
+  
+  if(myprofile.minHrm||!myprofile.restingHrm)myprofile.restingHrm=myprofile.minHrm;
+  
   const ageMenu = () => {
     const date = new Date(myprofile.birthday);
 
@@ -29,7 +31,7 @@
             }).then(() => ageMenu());
           } else {
             const age = (new Date()).getFullYear() - date.getFullYear();
-            const newMaxHRM = 220-age;
+            const newMaxHRM = 208-0.7*age;
             E.showPrompt(/*LANG*/`Set HR max to ${newMaxHRM} calculated from age?`).then(function(v) {
               myprofile.birthday = date.getFullYear() + "-" + (date.getMonth() + 1).toString().padStart(2, '0') + "-" + date.getDate().toString().padStart(2, '0');
               if (v) {
@@ -72,7 +74,7 @@
   };
 
   const mainMenu = () => {
-    E.showMenu({
+    var menu={
       "" : { "title" : /*LANG*/"My Profile" },
 
       "< Back" : () => back(),
@@ -113,6 +115,17 @@
         },
       },
 
+      /*LANG*/"Gender": {
+        value: 2|myprofile.gender%genderOpts.length,
+        min:0,
+        max: genderOpts.length-1,
+        format: v => genderOpts[v],
+        onchange: v => {
+          myprofile.gender = v;
+          writeProfile();
+        },
+      },
+
       /*LANG*/'HR max': {
         format: v => /*LANG*/`${v} BPM`,
         value: myprofile.maxHrm,
@@ -122,17 +135,6 @@
           writeProfile();
         }
       },
-
-      /*LANG*/'HR min': {
-        format: v => /*LANG*/`${v} BPM`,
-        value: myprofile.minHrm,
-        min: 30, max: 220,
-        onchange: v => {
-          myprofile.minHrm = v;
-          writeProfile();
-        }
-      },
-
       /*LANG*/"Stride length": {
         value: myprofile.strideLength,
         min:0.00,
@@ -143,8 +145,24 @@
           writeProfile();
         },
       },
+    };
+  
+  menu[/*LANG*/`Resting/min Hr: ${myprofile.restingHrm?myprofile.restingHrm:"--"}`]=function(){
+    E.showPrompt("To take an RHR reading, go to the Health app.",{
+      buttons: {
+        "Go to Health": true,
+        "Back": false
+      }
+    }).then(function(v){
+      if (v === true) {
+        load("health.app.js");
+      }else{
+        mainMenu();
+      }
     });
   };
-
+  E.showMenu(menu);
+};
+  
   mainMenu();
-})
+})(load);
