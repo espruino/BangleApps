@@ -11,7 +11,7 @@
   "supports": ["BANGLEJS2"],
   "dependencies" : { "myprofile":"app"},
   "readme":"README.md",
-  "provides_features" : ["calories"],
+  "provides_modules" : ["calories"],
   "storage": [
     {"name":"calories.app.js","url":"app.js"},
     {"name":"calories.img","url":"app-icon.js","evaluate":true},
