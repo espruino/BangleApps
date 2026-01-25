@@ -9,6 +9,22 @@ let calcAge=function(rawBday){
   // Age in decimal years
   return diffInDays / 365.2425;
 }
+// returns cals/minute
+exports.calcBMR=function(myProfile){
+  let bmr=0;
+  let weight = myProfile.weight;
+  let age=calcAge(myProfile.birthday);
+
+  if(myProfile.gender!=undefined){
+      //male=0, female=1
+      bmr=myProfile.gender==0?(10*weight)+(6.25*(myProfile.height*100))-(5*age)+5:(10*weight)+(6.25*(myProfile.height*100))-(5*age)-161;
+  }else{
+    //not defined, so we'll use an avg formula
+    bmr=(10*weight)+(6.25*(myProfile.height*100))-(5*age)-78;
+  }
+  return bmr/1440;
+}
+
 // Main formula for calculating calories. Takes health data with duration in minutes, and a myprofile data set.
 exports.calcCalories = function(healthData,myProfile) {
   
@@ -18,19 +34,11 @@ exports.calcCalories = function(healthData,myProfile) {
   let age=calcAge(myProfile.birthday);
   let stepsPerMin = healthData.steps / healthData.duration;
   //calc bmr
+  let bmr=exports.calcBMR(myProfile);
   
-  let bmr=0;
-  if(myProfile.gender!=undefined){
-      //male=0, female=1
-      bmr=myProfile.gender==0?(10*weight)+(6.25*(myProfile.height*100))-(5*age)+5:(10*weight)+(6.25*(myProfile.height*100))-(5*age)-161;
-  }else{
-    //not defined, so we'll use an avg formula
-    bmr=(10*weight)+(6.25*(myProfile.height*100))-(5*age)-78;
-  }
   
   // Calculate active calories burned
   
-  let keytel=0;
   let hrKcalMin=0
   let hr=healthData.bpm;
   let stepsMet = 1 + (0.0175 * stepsPerMin);
@@ -59,18 +67,16 @@ exports.calcCalories = function(healthData,myProfile) {
     finalActiveKcalMin = (hrKcalMin * 0.5) + (stepsKcalMin * 0.5);
   } else {
     // Sedentary or non-step activity (weights)
-    finalActiveKcalMin = hrKcalMin;
+    finalActiveKcalMin = hrKcalMin/2;
   }
 
   // Final Outputs
-  let bmrPerMin = bmr / 1440;
   let activeTotal = finalActiveKcalMin * healthData.duration;
-  let bmrTotal = bmrPerMin * healthData.duration;
+  let bmrTotal = bmr * healthData.duration;
 
   return {
-    totalCalories: Math.round(activeTotal + bmrTotal),
-    bmrCalories: Math.round(bmrTotal),
-    activeCalories: Math.round(Math.max(0, activeTotal))
+    activeCalories: Math.round(Math.max(0, activeTotal)),
+    bmrCalories: Math.round(bmrTotal)
   };
 }
 
