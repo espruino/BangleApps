@@ -5,11 +5,12 @@
   "icon": "icon.png",
   "version":"0.01",
   "description": "A health-integrated calorie tracker using `MyProfile`",
-  "type":"module",    
+  "type":"app",    
   "tags": "health,clkinfo",
   "author":"RKBoss6",
   "supports": ["BANGLEJS2"],
   "dependencies" : { "myprofile":"app"},
+  "dependencies" : { "health":"type"},
   "readme":"README.md",
   "provides_modules" : ["calories"],
   "storage": [
