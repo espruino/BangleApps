@@ -1,7 +1,12 @@
 var Layout = require("Layout");
 g.clear();
 var calData=global.calories;
-var goal=2000;
+var storedData=require("Storage").readJSON("calories.json",1);
+var settings=require("Storage").readJSON("calories.settings.json",1)||{calGoal:500};
+var goal=settings.calGoal;
+var pageActive=1;
+//0=total, 1=active,2=bmr
+var dataOnDayDisp=0;
 function renderActive(l){
   g.setFont("Vector",25).
   setFontAlign(0,0).
@@ -17,8 +22,8 @@ function drawRingMeter(x, y, radius, progress, thickness, color) {
 
   g.setColor(color);
 
-  // We draw the ring in small chunks (steps) to keep it smooth
-  let step = Math.PI / 20; 
+  // We draw the ring in chunks (steps) to keep it smooth
+  let step = Math.PI / 8; 
   for (let a = startAngle; a < endAngle; a += step) {
     let nextA = Math.min(a + step, endAngle);
     
@@ -37,15 +42,17 @@ function drawRingMeter(x, y, radius, progress, thickness, color) {
 function drawCalIconMeter(l){
   var col="#f00";
   var prog=calData.activeCaloriesBurned/goal;
-  if(prog>0.6)col="#FFA500";
-  if(prog>0.9)col="#0f0";
-  drawRingMeter(l.x+(l.w/2)-8,l.y+(l.h/2),30,1,5,"#fff")
+  if(prog>0.6)col="#FC6A03";
+  if(prog>0.8)col="#ff0";
+  if(prog>0.95)col="#0f0";
+  drawRingMeter(l.x+(l.w/2)-8,l.y+(l.h/2),30,1,5,"#808080")
   drawRingMeter(l.x+(l.w/2)-8,l.y+(l.h/2),30,prog,5,col);
     g.drawImage(require("heatshrink").decompress(atob("mEw4MA///4H0CpsD+AFDh4FEj/gAoc/4AFDv4FKGgIFEDogFGF4n//AjE/gFE/wFIg5lBJgYFBwBYCOIQREGwQFIHgQFCHgUH/1/AoUP/0/IQQFFj/8j5CCBIINBAoX4AoYhBAongJIKODAoZRBAomAj1/AoUAngFEgE+AQImCAoV+Ao88BAgFFvACBjwCBuBlCAQKDDAQKVCgOAgKzDAB4=")),l.x+(l.w/2)-(48*0.7/2)-8,l.y+(l.h/2)-(48*0.7/2),{scale:0.7})
 }
 Bangle.loadWidgets()
 Bangle.drawWidgets()
-var layout = new Layout( {
+
+var pg1Layout = new Layout( {
   type:"v", c: [
     {type:"h", c:[
       {type:"v", c:[
@@ -81,17 +88,135 @@ var layout = new Layout( {
     
   ]
 }, {lazy:true});
-layout.update(); // work out positions
+pg1Layout.update(); // work out positions
 
 
-// update the screen
-function draw() {
-  layout.bmrCal.label=calData.bmrCaloriesBurned;
-  layout.totalCal.label=calData.totalCaloriesBurned;
-  layout.render();
+var pg2Layout = new Layout( {
+  type:"v", c: [
+    {type:"",pad:4},
+    {type:"txt", font:"9%", label:"Total Calories", id:"dataTitle",fillx:1 },
+    {type:"h", id:"dayDisp",c:[
+      {type:"v",pad:5, c:[
+        {type:"txt", font:"7%", label:"--", id:"day1Ago" },
+        {type:"txt", font:"10%", label:"---", id:"day1AgoVal",pad:2,fillx:1 },
+      ]},
+      {type:"v", pad:5,c:[
+        {type:"txt", font:"7%", label:"--", id:"day2Ago" },
+        {type:"txt", font:"10%", label:"---", id:"day2AgoVal",pad:2 ,fillx:1},
+      ]},
+      {type:"v",pad:5, c:[
+        {type:"txt", font:"7%", label:"--", id:"day3Ago" },
+        {type:"txt", font:"10%", label:"---", id:"day3AgoVal",pad:2,fillx:1 },
+      ]},
+    ]},
+    {type:"h", c:[
+      {type:"v",pad:5, c:[
+        {type:"txt", font:"6.5%", label:"Most Active",pad:5},
+        {type:"txt", font:"10%", label:"1320", id:"mostActiveVal"},
+        {type:"txt", font:"7%", label:"Jan 6 2021", id:"mostActiveDate",pad:5 },
+      ]},
+      {type:"v", pad:5,c:[
+        {type:"txt", font:"6.5%", label:"Highest Total",pad:5},
+        {type:"txt", font:"10%", label:"3234", id:"highestEverVal" },
+        {type:"txt", font:"7%", label:"Feb 8 2023", id:"highestEverDate",pad:5 },
+      ]},
+    ]},
+    {type:"",filly:1},
+    {type:"h", c:[
+        {type:"txt", font:"7%", label:"Since Midnight", id:"ts",halign:-1,fillx:1 },
+        
+        {type:"txt", font:"7%", label:"2 of 2", id:"pg",halign:1,fillx:1 },
+      
+    ]},
+    
+  ]
+}, {lazy:true});
+pg2Layout.update(); // work out positions
+function updateDayDisp(){
+  if(dataOnDayDisp===0){
+    pg2Layout.dataTitle.label="Total Calories";
+    storedData.prevData.slice(0, 3).forEach((day, i) => {
+      // Only runs for the first 3 items
+      pg2Layout[`day${i+1}AgoVal`].label=day.activeCals+day.bmrCals;
+    });
+  }
+  else if(dataOnDayDisp===1){
+     pg2Layout.dataTitle.label="Active Calories";
+
+    storedData.prevData.slice(0, 3).forEach((day, i) => {
+      // Only runs for the first 3 items
+      pg2Layout[`day${i+1}AgoVal`].label=day.activeCals
+    });
+  }
+  else if(dataOnDayDisp===2){
+        pg2Layout.dataTitle.label="BMR Calories";
+
+    storedData.prevData.slice(0, 3).forEach((day, i) => {
+      // Only runs for the first 3 items
+      pg2Layout[`day${i+1}AgoVal`].label=day.bmrCals;
+    });
+  }
+}
+function updateLabels(){
+  var locale=require("locale");
+  pg2Layout.day1Ago.label=locale.dow(new Date(Date.now() - (86400000*1)), 1);
+  pg2Layout.day2Ago.label=locale.dow(new Date(Date.now() - (86400000*2)), 1);
+  pg2Layout.day3Ago.label=locale.dow(new Date(Date.now() - (86400000*3)), 1);
+  pg1Layout.bmrCal.label=calData.bmrCaloriesBurned;
+  pg1Layout.totalCal.label=calData.totalCaloriesBurned;
   
 }
+updateDayDisp();
+// update the screen
+function draw() {
+  g.clearRect(Bangle.appRect)
+  if(pageActive==1){
+    pg1Layout.forgetLazyState()
+    pg1Layout.render();
+  }
+  else if(pageActive==2){
+    pg2Layout.forgetLazyState()
+    pg2Layout.render();
+  }
+  
+}
+Bangle.on('swipe', (direction) => {
+  // direction == -1 is usually swipe right (next page)
+  
+  if (direction === -1) { 
+    if(pageActive!=2){
+      Bangle.buzz(40);
+      pageActive=2;
+      draw();
+    }
+  // direction == 1 is usually swipe left (previous page)
+  } else if (direction === 1) { 
+    if(pageActive!=1){
+      Bangle.buzz(40);
+      pageActive=1;
+      draw();
+    }
+  }
+  print("pg: "+pageActive)
+  print("dir: "+direction)
+});
+
+Bangle.on('touch', function(button, xy) {
+  if(pageActive===2){
+     if(xy.y<pg2Layout.dayDisp.y+pg2Layout.dayDisp.h&&xy.y>pg2Layout.dayDisp.y){
+       dataOnDayDisp=(dataOnDayDisp + 1) % 3
+       print(dataOnDayDisp);
+       Bangle.buzz(40)
+       updateDayDisp();
+       pg2Layout.render()
+     }
+  }
+});
+
 
 Bangle.on("calories",draw);
 
-draw();
+setTimeout(function(){
+  updateLabels()
+  draw()
+},200)
