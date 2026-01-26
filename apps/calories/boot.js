@@ -2,7 +2,10 @@ let myProfile = require("Storage").readJSON("myprofile.json",1)||{};
 let savedData = require("Storage").readJSON("calories.json",1)||{};
 let settings = require("Storage").readJSON("calories.settings.json",1)||{};
 if(!savedData.prevData)savedData.prevData=[];
-if(savedData.dayLastUpdated==undefined)savedData.dayLastUpdated=new Date().getDate();
+if(savedData.dayLastUpdated==undefined)savedData.dayLastUpdated=new Date().toDateString();
+if(!savedData.mostActiveDay)savedData.mostActiveDay={cals:0,date:0}
+if(!savedData.mostCalorieDay)savedData.mostCalorieDay={cals:0,date:0}
+
 //init global var
 global.calories = {
   activeCaloriesBurned:savedData.activeCaloriesBurned||0,
@@ -29,6 +32,7 @@ savedData.prevData=[
 ]
   */
 let onNewDay=function(){
+  //either happens at midnight, or after midnight, so prev day is new Date(Date.now() - 86400000)
   savedData.prevData.unshift({
     activeCals:calData.activeCaloriesBurned,
     bmrCals:calData.bmrCaloriesBurned
@@ -36,7 +40,17 @@ let onNewDay=function(){
   //limit to 7 days ago
   savedData.prevData=savedData.prevData.slice(0,6);
   // update to a new day
-  savedData.dayLastUpdated=new Date().getDate();
+  savedData.dayLastUpdated=new Date().toDateString();
+  if(savedData.mostActiveDay.cals<calData.activeCaloriesBurned){
+    // new most active day
+    savedData.mostActiveDay={cals:calData.activeCaloriesBurned,date:Math.floor(new Date(Date.now() - 86400000).getTime() / 1000)}
+    
+  }
+  if(savedData.mostCalorieDay.cals<calData.totalCaloriesBurned){
+    // new most calories day
+    savedData.mostCalorieDay={cals:calData.totalCaloriesBurned,date:Math.floor(new Date(Date.now() - 86400000).getTime() / 1000)}
+    
+  }
   calData.activeCaloriesBurned=0;
   calData.totalCaloriesBurned=0;
   calData.bmrCaloriesBurned=0
@@ -66,9 +80,9 @@ Bangle.on('health',function(hd){
     // day has changed
     onNewDay();
   }
-  let calData=require("calories").calcCalories(Object.assign(hd,{duration:10}),myProfile)
-  calData.activeCaloriesBurned+=calData.activeCalories;
-  calData.totalCaloriesBurned+=calData.activeCalories;
+  let cd=require("calories").calcCalories(Object.assign(hd,{duration:10}),myProfile)
+  calData.activeCaloriesBurned+=cd.activeCalories;
+  calData.totalCaloriesBurned+=cd.activeCalories;
   if(calData.activeCaloriesBurned>=savedData.calGoal&&!savedData.goalShownToday&&settings.showGoalReached){
     savedData.goalShownToday=true;
     writeData();

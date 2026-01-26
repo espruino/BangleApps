@@ -38,7 +38,17 @@ function drawRingMeter(x, y, radius, progress, thickness, color) {
     g.fillPoly(poly);
   }
 }
+function getDateStr(date){
+  let locale = require("locale");
+  let d = date; // Jan 6, 2020
 
+  // locale.month(date, shorthand)
+  let month = locale.month(d, true); 
+  let day = d.getDate();
+  let year = d.getFullYear();
+
+  return `${month} ${day} ${year}`;
+}
 function drawCalIconMeter(l){
   var col="#f00";
   var prog=calData.activeCaloriesBurned/goal;
@@ -113,12 +123,12 @@ var pg2Layout = new Layout( {
       {type:"v",pad:5, c:[
         {type:"txt", font:"6.5%", label:"Most Active",pad:5},
         {type:"txt", font:"10%", label:"1320", id:"mostActiveVal"},
-        {type:"txt", font:"7%", label:"Jan 6 2021", id:"mostActiveDate",pad:5 },
+        {type:"txt", font:"7%", label:"Jan 6, 2021", id:"mostActiveDate",pad:5 },
       ]},
       {type:"v", pad:5,c:[
         {type:"txt", font:"6.5%", label:"Highest Total",pad:5},
         {type:"txt", font:"10%", label:"3234", id:"highestEverVal" },
-        {type:"txt", font:"7%", label:"Feb 8 2023", id:"highestEverDate",pad:5 },
+        {type:"txt", font:"7%", label:"Feb 8, 2023", id:"highestEverDate",pad:5 },
       ]},
     ]},
     {type:"",filly:1},
@@ -133,28 +143,20 @@ var pg2Layout = new Layout( {
 }, {lazy:true});
 pg2Layout.update(); // work out positions
 function updateDayDisp(){
-  if(dataOnDayDisp===0){
-    pg2Layout.dataTitle.label="Total Calories";
-    storedData.prevData.slice(0, 3).forEach((day, i) => {
-      // Only runs for the first 3 items
-      pg2Layout[`day${i+1}AgoVal`].label=day.activeCals+day.bmrCals;
-    });
-  }
-  else if(dataOnDayDisp===1){
-     pg2Layout.dataTitle.label="Active Calories";
+  const titles = ["Total Calories", "Active Calories", "BMR Calories"];
+  pg2Layout.dataTitle.label = titles[dataOnDayDisp];
 
-    storedData.prevData.slice(0, 3).forEach((day, i) => {
-      // Only runs for the first 3 items
-      pg2Layout[`day${i+1}AgoVal`].label=day.activeCals
-    });
-  }
-  else if(dataOnDayDisp===2){
-        pg2Layout.dataTitle.label="BMR Calories";
-
-    storedData.prevData.slice(0, 3).forEach((day, i) => {
-      // Only runs for the first 3 items
-      pg2Layout[`day${i+1}AgoVal`].label=day.bmrCals;
-    });
+  for (let i = 0; i < 3; i++) {
+    let day = storedData.prevData[i];
+    let labelId = `day${i+1}AgoVal`;
+    
+    if (day) { // Check if the day actually exists in history
+      if (dataOnDayDisp === 0) pg2Layout[labelId].label = Math.round(day.activeCals + day.bmrCals);
+      if (dataOnDayDisp === 1) pg2Layout[labelId].label = Math.round(day.activeCals);
+      if (dataOnDayDisp === 2) pg2Layout[labelId].label = Math.round(day.bmrCals);
+    } else {
+      pg2Layout[labelId].label = "---"; // Fallback if no history yet
+    }
   }
 }
 function updateLabels(){
@@ -164,6 +166,12 @@ function updateLabels(){
   pg2Layout.day3Ago.label=locale.dow(new Date(Date.now() - (86400000*3)), 1);
   pg1Layout.bmrCal.label=calData.bmrCaloriesBurned;
   pg1Layout.totalCal.label=calData.totalCaloriesBurned;
+  pg2Layout.mostActiveDate.label=getDateStr(new Date(storedData.mostActiveDay.date*1000))||"--- -- ----"
+  pg2Layout.highestEverDate.label=getDateStr(new Date(storedData.mostCalorieDay.date*1000))||"--- -- ----"
+  
+  pg2Layout.mostActiveVal.label=storedData.mostActiveDay.cals||"---";
+  pg2Layout.highestEverVal.label=storedData.mostCalorieDay.cals||"---";
+
   
 }
 updateDayDisp();
