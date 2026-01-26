@@ -22,8 +22,12 @@ This app provides a set of ClockInfos:
 * BMR Calories (Cycle Flame Icon)
 * Active Calories (Person Silhouette)
 ## Health Integration
-todo: add details on health integration
+The `Health` app shows a menu option to go directly to the calories app if installed. 
 ## App:
-todo: add details on using the app, and its features
+The app has two screens. To navigate between them, swipe left or right. The first screen is the today view, which shows the active calories and goal, and total/bmr calories for today. The second screen shows calorie data from three days ago, and you can tap on the top half of the screen to change what data is shown. At the bottom are displays for your most active date ever, and the date of the most calories ever burned. 
+## Settings:
+The app provides an app settings page in `Settings`
+* **Show goal reached notification**: Show a notification upon reaching your active calorie goal?
+* **Calorie Goal**: The active calorie goal that determines the daily progress towards acheiving that goal. Default:500
 ## Creator:
 [RKBoss6](https://github.com/rkboss6)
