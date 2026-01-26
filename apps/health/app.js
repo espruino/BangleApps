@@ -86,7 +86,7 @@ function onRHRHrm(hrm) {
   if(hrm.confidence<=80){
     g.setFont("Vector", 14).drawString("Low confidence\nKeep still", g.getWidth()/2, g.getHeight() - 20);
   }
-};
+}
 
 function startRHR(){
     // Start the process
@@ -106,7 +106,7 @@ function startRHR(){
         finish();
       }
     }, 1000);
-  };
+  }
 function RHRReading(){
   E.showPrompt("Resting Heart Rate reading requires you to be resting and still. Takes ~1 minute.",{
       title:"Continue?",
