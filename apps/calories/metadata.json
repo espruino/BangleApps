@@ -12,6 +12,7 @@
   "dependencies" : { "myprofile":"app", "health":"app"},
   "readme":"README.md",
   "provides_modules" : ["calories"],
+  "screenshots" : [{ "url":"screenshot1.png" }],
   "storage": [
     {"name":"calories.app.js","url":"app.js"},
     {"name":"calories.img","url":"app-icon.js","evaluate":true},
