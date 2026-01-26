@@ -15,7 +15,7 @@
     /*LANG*/"< Back": () => back(),
 
     /*LANG*/"My Profile": function(){
-      eval(require("Storage").read("myprofile.settings.js"))(()=>load());
+      eval(require("Storage").read("myprofile.settings.js"))(back);
     },
     /*LANG*/"HRM Interval": {
       value: settings.hrm,

@@ -51,7 +51,9 @@ function getDateStr(date){
 }
 function drawCalIconMeter(l){
   var col="#f00";
-  var prog=calData.activeCaloriesBurned/goal;
+  // Ensure goal is a positive, non-zero value to avoid division by zero / Infinity
+  var safeGoal = (goal && goal > 0) ? goal : 1;
+  var prog=calData.activeCaloriesBurned/safeGoal;
   if(prog>0.6)col="#FC6A03";
   if(prog>0.8)col="#ff0";
   if(prog>0.95)col="#0f0";

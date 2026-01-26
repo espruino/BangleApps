@@ -116,7 +116,9 @@
       },
 
       /*LANG*/"Gender": {
-        value: 2|myprofile.gender%genderOpts.length,
+        value: (typeof myprofile.gender === "number" &&
+                myprofile.gender >= 0 &&
+                myprofile.gender < genderOpts.length) ? myprofile.gender : 2,
         min:0,
         max: genderOpts.length-1,
         format: v => genderOpts[v],

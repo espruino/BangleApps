@@ -18,7 +18,7 @@ function menuMain() {
     /*LANG*/"Take RHR Reading": () => RHRReading()
   }
   if(global.calories)menu[/*LANG*/"Calories"]=() => load("calories.app.js");
-  menu[/*LANG*/"Settings"]= () => eval(require("Storage").read("health.settings.js"))(()=>loadSettings());
+  menu[/*LANG*/"Settings"]= () => eval(require("Storage").read("health.settings.js"))(() => { loadSettings(); menuMain(); });
   E.showMenu(menu);
 }
 
@@ -79,7 +79,7 @@ function onRHRHrm(hrm) {
   g.drawString("Measuring...", g.getWidth()/2, 40);
   g.setFont("Vector", 40);
   g.drawString(hrm.bpm, g.getWidth()/2-30, g.getHeight()/2-5);
-  g.setColor("#f00"); g.drawImage(atob("Mi2BAAAAAAAAAAAP4AAf4AAf/wAf/gAP/+Af/+AH//wP//wD//+H//+B///z///w///+///8P///////n///////5///////+f///////3///////9////////f///////3///////9////////f///////j///////4///////+P///////B///////wf//////4D//////+Af//////AH//////gA//////4AH/////8AA/////+AAH/////AAB/////gAAP////wAAA////4AAAH///8AAAA///+AAAAH///AAAAA///AAAAAH//gAAAAAf/wAAAAAD/4AAAAAAf4AAAAAAB8AAAAAAAOAAAAAAAAAAAAAAAAAAAAAA=="),g.getWidth()-80,60)
+  g.setColor("#f00"); g.drawImage(atob("Mi2BAAAAAAAAAAAP4AAf4AAf/wAf/gAP/+Af/+AH//wP//wD//+H//+B///z///w///+///8P///////n///////5///////+f///////3///////9////////f///////3///////9////////f///////j///////4///////+P///////B///////wf//////4D//////+Af//////AH//////gA//////4AH/////8AA/////+AAH/////AAB/////gAAP////wAAA////4AAAH///8AAAA///+AAAAH///AAAAA///AAAAAH//gAAAAAf/wAAAAAD/4AAAAAAf4AAAAAAB8AAAAAAAOAAAAAAAAAAAAAAAAAAAAAA=="),g.getWidth()-80,60);
   g.setColor(g.theme.fg); 
   g.setFont("Vector", 16);
   g.drawString(counter + "s remaining", g.getWidth()/2, g.getHeight() - 55);

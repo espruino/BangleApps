@@ -28,6 +28,6 @@ The app has two screens. To navigate between them, swipe left or right. The firs
 ## Settings:
 The app provides an app settings page in `Settings`
 * **Show goal reached notification**: Show a notification upon reaching your active calorie goal?
-* **Calorie Goal**: The active calorie goal that determines the daily progress towards acheiving that goal. Default:500
+* **Calorie Goal**: The active calorie goal that determines the daily progress towards achieving that goal. Default:500
 ## Creator:
 [RKBoss6](https://github.com/rkboss6)

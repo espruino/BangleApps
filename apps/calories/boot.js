@@ -1,10 +1,16 @@
 let myProfile = require("Storage").readJSON("myprofile.json",1)||{};
 let savedData = require("Storage").readJSON("calories.json",1)||{};
 let settings = require("Storage").readJSON("calories.settings.json",1)||{};
+// Apply defaults matching calories.settings.js for robustness on fresh installs
+settings = Object.assign({
+  calGoal : 500,
+  showGoalReached : true
+}, settings);
 if(!savedData.prevData)savedData.prevData=[];
 if(savedData.dayLastUpdated==undefined)savedData.dayLastUpdated=new Date().toISOString().slice(0,10);
 if(!savedData.mostActiveDay)savedData.mostActiveDay={cals:0,date:0}
 if(!savedData.mostCalorieDay)savedData.mostCalorieDay={cals:0,date:0}
+if(savedData.calGoal==undefined)savedData.calGoal=settings.calGoal;
 
 //init global var
 global.calories = {
@@ -81,6 +87,7 @@ Bangle.on('health',function(hd){
     onNewDay();
   }
   let cd=require("calories").calcCalories(Object.assign(hd,{duration:10}),myProfile)
+  if (!cd) return;
   calData.activeCaloriesBurned+=cd.activeCalories;
   calData.totalCaloriesBurned+=cd.activeCalories;
   if(calData.activeCaloriesBurned>=savedData.calGoal&&!savedData.goalShownToday&&settings.showGoalReached){

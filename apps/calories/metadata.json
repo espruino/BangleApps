@@ -9,8 +9,7 @@
   "tags": "health,clkinfo",
   "author":"RKBoss6",
   "supports": ["BANGLEJS2"],
-  "dependencies" : { "myprofile":"app"},
-  "dependencies" : { "health":"app"},
+  "dependencies" : { "myprofile":"app", "health":"app"},
   "readme":"README.md",
   "provides_modules" : ["calories"],
   "storage": [
