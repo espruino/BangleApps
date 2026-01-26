@@ -60,7 +60,7 @@ let onNewDay=function(){
 }
 
 function intermittentBMRUpdate(){
-  if(new Date().getDate()!=savedData.dayLastUpdated){
+  if(new Date().toISOString().slice(0,10)!=savedData.dayLastUpdated){
     // day has changed
     onNewDay();
   }
@@ -76,7 +76,7 @@ function intermittentBMRUpdate(){
 }
 
 Bangle.on('health',function(hd){
-  if(new Date().getDate()!=savedData.dayLastUpdated){
+  if(new Date().toISOString().slice(0,10)!=savedData.dayLastUpdated){
     // day has changed
     onNewDay();
   }
