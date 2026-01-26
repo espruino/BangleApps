@@ -73,9 +73,10 @@ exports.calcCalories = function(healthData,myProfile) {
   // Final Outputs
   let activeTotal = finalActiveKcalMin * healthData.duration;
   let bmrTotal = bmr * healthData.duration;
-
+  // boot.js adds bmr separately
+  let netActiveBurn = activeTotal - bmrTotal;
   return {
-    activeCalories: Math.round(Math.max(0, activeTotal)),
+    activeCalories: Math.round(Math.max(0, netActiveBurn)),
     bmrCalories: Math.round(bmrTotal)
   };
 }
