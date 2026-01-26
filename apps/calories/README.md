@@ -1,5 +1,5 @@
 # Calorie Tracker
-Tracks calories using [`MyProfile`](https://banglejs.com/apps/?id=myprofile) data, and a sophisticated formula that takes age, gender, weight, height, heart rate, and steps into account. 
+Tracks calories using [`MyProfile`](https://banglejs.com/apps/?id=myprofile) data and a complex formula that takes age, gender, weight, height, heart rate, and steps into account. 
 This app also ties in with the [`Health App`](https://banglejs.com/apps/?id=health) for greater integration within the Bangle.js ecosystem.
 ## Formula
 The app uses the algorithm below:
@@ -16,6 +16,11 @@ The app uses the algorithm below:
 4. Blends the two according to the steps taken (Higher steps per min --> steps weighted more due to potential HRM inaccuracy)
 5. Returns the total calories burned in that interval, active calories (calories actively burned), and BMR calories (calories passively burned)
 
+## Clock Info
+This app provides a set of ClockInfos:
+* Total Calories (Flame Icon)
+* BMR Calories (Cycle Flame Icon)
+* Active Calories (Person Silhouette)
 ## Health Integration
 todo: add details on health integration
 ## App:
