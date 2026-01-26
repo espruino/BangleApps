@@ -29,7 +29,7 @@ exports.calcBMR=function(myProfile){
 exports.calcCalories = function(healthData,myProfile) {
   
   if (!healthData || !healthData.duration) return;
-  if(myProfile=={}||!myProfile.weight||!myProfile.restingHr||!myProfile.maxHrm||!myProfile.birthday) return;
+  if (!myProfile || !myProfile.weight || !myProfile.restingHrm || !myProfile.maxHrm || !myProfile.birthday) return;
   let weight = myProfile.weight;
   let age=calcAge(myProfile.birthday);
   let stepsPerMin = healthData.steps / healthData.duration;
