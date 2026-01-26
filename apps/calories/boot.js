@@ -2,7 +2,7 @@ let myProfile = require("Storage").readJSON("myprofile.json",1)||{};
 let savedData = require("Storage").readJSON("calories.json",1)||{};
 let settings = require("Storage").readJSON("calories.settings.json",1)||{};
 if(!savedData.prevData)savedData.prevData=[];
-if(savedData.dayLastUpdated==undefined)savedData.dayLastUpdated=new Date().toDateString();
+if(savedData.dayLastUpdated==undefined)savedData.dayLastUpdated=new Date().toISOString().slice(0,10);
 if(!savedData.mostActiveDay)savedData.mostActiveDay={cals:0,date:0}
 if(!savedData.mostCalorieDay)savedData.mostCalorieDay={cals:0,date:0}
 
@@ -40,7 +40,7 @@ let onNewDay=function(){
   //limit to 7 days ago
   savedData.prevData=savedData.prevData.slice(0,6);
   // update to a new day
-  savedData.dayLastUpdated=new Date().toDateString();
+  savedData.dayLastUpdated=new Date().toISOString().slice(0,10);
   if(savedData.mostActiveDay.cals<calData.activeCaloriesBurned){
     // new most active day
     savedData.mostActiveDay={cals:calData.activeCaloriesBurned,date:Math.floor(new Date(Date.now() - 86400000).getTime() / 1000)}
@@ -102,7 +102,6 @@ E.on('kill', function() {
  //save cals counted
   captureChanges()
   writeData()
-  
 });
 
 intermittentBMRUpdate();

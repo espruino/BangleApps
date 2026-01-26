@@ -166,8 +166,10 @@ function updateLabels(){
   pg2Layout.day3Ago.label=locale.dow(new Date(Date.now() - (86400000*3)), 1);
   pg1Layout.bmrCal.label=calData.bmrCaloriesBurned;
   pg1Layout.totalCal.label=calData.totalCaloriesBurned;
-  pg2Layout.mostActiveDate.label=getDateStr(new Date(storedData.mostActiveDay.date*1000))||"--- -- ----"
-  pg2Layout.highestEverDate.label=getDateStr(new Date(storedData.mostCalorieDay.date*1000))||"--- -- ----"
+  pg2Layout.mostActiveDate.label=storedData.mostActiveDay.date==undefined||storedData.mostActiveDay.date==0?
+    getDateStr(new Date(storedData.mostActiveDay.date*1000)):"--- -- ----";
+  pg2Layout.highestEverDate.label=storedData.mostCalorieDay.date==undefined||storedData.mostCalorieDay.date==0?
+    getDateStr(new Date(storedData.mostCalorieDay.date*1000)):"--- -- ----";
   
   pg2Layout.mostActiveVal.label=storedData.mostActiveDay.cals||"---";
   pg2Layout.highestEverVal.label=storedData.mostCalorieDay.cals||"---";
