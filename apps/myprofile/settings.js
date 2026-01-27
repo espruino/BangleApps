@@ -255,4 +255,4 @@ function RHRReading(){
    E.showMenu(menu)
   };
   mainMenu();
-})(load)
+})
