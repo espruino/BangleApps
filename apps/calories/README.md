@@ -29,5 +29,21 @@ The app has two screens. To navigate between them, swipe left or right. The firs
 The app provides an app settings page in `Settings`
 * **Show goal reached notification**: Show a notification upon reaching your active calorie goal?
 * **Calorie Goal**: The active calorie goal that determines the daily progress towards achieving that goal. Default:500
+## Developer Info
+Calorie data for the day can be accessed through `global.calories`, which is an object that contains `bmrCaloriesBurned`,`activeCaloriesBurned`, and `totalCaloriesBurned`.
+The app also provides a module for calculations that can be loaded using `require("calories")`.
+
+* **require("calories").calcCalories**: Takes in health data and myProfile data, and returns an object with `activeCalories` and `bmrCalories`. Total calories are found by adding the two. **Note: The health data must contain heart rate (bpm), steps, and a duration in minutes**
+```
+// This code uses the latest health data, injects a duration of 10 minutes to that object, and passes in myProfile data
+require("calories").calcCalories(Object.assign(Bangle.getHealthStatus('last'),{duration:10}),
+   require("Storage").readJSON("myprofile.json",1));
+```
+
+* **require("calories").calcBMR**: Takes in myProfile data, and returns a bmr rate (calories/minute) from that data. The rate is unrounded for accuracy, so you must handle rounding accordingly.
+```
+// This code passes in myProfile data to get BMR rate.
+require("calories").calcBMR(require("Storage").readJSON("myprofile.json",1));
+```
 ## Creator:
 [RKBoss6](https://github.com/rkboss6)
