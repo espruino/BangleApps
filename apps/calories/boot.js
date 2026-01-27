@@ -99,7 +99,7 @@ Bangle.on('health',function(hd){
   if (!cd) return;
   calData.activeCaloriesBurned+=cd.activeCalories;
   calData.totalCaloriesBurned+=cd.activeCalories;
-  if(calData.activeCaloriesBurned>=savedData.calGoal&&!savedData.goalShownToday&&settings.showGoalReached){
+  if(calData.activeCaloriesBurned>=settings.calGoal&&!savedData.goalShownToday&&settings.showGoalReached){
     savedData.goalShownToday=true;
     writeData();
     Bangle.buzz(100);
