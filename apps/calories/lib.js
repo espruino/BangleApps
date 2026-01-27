@@ -15,7 +15,7 @@ exports.calcBMR=function(myProfile){
   let weight = myProfile.weight;
   let age=calcAge(myProfile.birthday);
 
-  if(myProfile.gender!=undefined||myProfile.gender!=2/*not set*/){
+  if(myProfile.gender!=undefined&&myProfile.gender!=2/*not set*/){
       //male=0, female=1
       bmr=myProfile.gender==0?(10*weight)+(6.25*(myProfile.height*100))-(5*age)+5:(10*weight)+(6.25*(myProfile.height*100))-(5*age)-161;
   }else{
@@ -42,7 +42,7 @@ exports.calcCalories = function(healthData,myProfile) {
   let hrKcalMin=0
   let hr=healthData.bpm;
   let stepsMet = 1 + (0.0175 * stepsPerMin);
-  if(myProfile.gender!=undefined||myProfile.gender!=2/*not set*/){
+  if(myProfile.gender!=undefined&&myProfile.gender!=2/*not set*/){
     if(myProfile.gender==0){
       //male
       hrKcalMin=(-55.0969+(0.6309*hr)+(0.1988*weight)+(0.2017*age))/4.184
