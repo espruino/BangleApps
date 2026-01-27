@@ -279,7 +279,8 @@ E.on('notify',msg=>{
     name = name
       .replace(/([a-z])([A-Z])/g, '$1 $2')  // Space between lower->upper (AppName → App Name)
       .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2') // Space between acronym->word (SMSMessage → SMS Message)
-      .replaceAll("  "," ");  // Correct duplicate spacing
+      .replaceAll("  "," ")  // Correct duplicate spacing
+      .trim();
     // capitalize (only if non-empty)
     if (name.length > 0) name = name[0].toUpperCase() + name.slice(1);
   }else{
