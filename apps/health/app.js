@@ -10,7 +10,6 @@ function menuMain() {
     /*LANG*/"Heart Rate": () => menuHRM(),
     /*LANG*/"Battery": () => menuBattery(),
     /*LANG*/"Temperature": () => menuTemperature(),
-    /*LANG*/"Take RHR Reading": () => RHRReading()
   }
   if(global.calories)menu[/*LANG*/"Calories"]=() => load("calories.app.js");
   menu[/*LANG*/"Settings"]= () => eval(require("Storage").read("health.settings.js"))(() => { loadSettings(); menuMain(); });
