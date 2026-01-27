@@ -135,6 +135,7 @@ function showList() {
   }
   if(CALENDAR.length == 0) {
     E.showMessage(/*LANG*/"No events");
+    Bangle.setUI({mode: "custom", back: load});
     return;
   }
   E.showScroller({
