@@ -1,6 +1,6 @@
 (function() {
   return {
-    name: "Calories",
+    name: "Health",
     items: [
       { name : "TotalCalories",
         get : () => ({ 
