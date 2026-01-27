@@ -1,16 +1,25 @@
 let myProfile = require("Storage").readJSON("myprofile.json",1)||{};
 let savedData = require("Storage").readJSON("calories.json",1)||{};
 let settings = require("Storage").readJSON("calories.settings.json",1)||{};
+let calModule=require("calories");
 // Apply defaults matching calories.settings.js for robustness on fresh installs
 settings = Object.assign({
   calGoal : 500,
   showGoalReached : true
 }, settings);
+function getLocalDate() {
+  let d = new Date();
+  // getMonth is 0-indexed, so we add 1. 
+  // We use .slice(-2) to ensure leading zeros (e.g., "05" instead of "5")
+  let y = d.getFullYear();
+  let m = ("0" + (d.getMonth() + 1)).slice(-2);
+  let day = ("0" + d.getDate()).slice(-2);
+  return `${y}-${m}-${day}`;
+}
 if(!savedData.prevData)savedData.prevData=[];
-if(savedData.dayLastUpdated==undefined)savedData.dayLastUpdated=new Date().toISOString().slice(0,10);
+if(savedData.dayLastUpdated==undefined)savedData.dayLastUpdated=getLocalDate()
 if(!savedData.mostActiveDay)savedData.mostActiveDay={cals:0,date:0}
 if(!savedData.mostCalorieDay)savedData.mostCalorieDay={cals:0,date:0}
-if(savedData.calGoal==undefined)savedData.calGoal=settings.calGoal;
 
 //init global var
 global.calories = {
@@ -46,7 +55,7 @@ let onNewDay=function(){
   //limit to 7 days ago
   savedData.prevData=savedData.prevData.slice(0,6);
   // update to a new day
-  savedData.dayLastUpdated=new Date().toISOString().slice(0,10);
+  savedData.dayLastUpdated=getLocalDate();
   if(savedData.mostActiveDay.cals<calData.activeCaloriesBurned){
     // new most active day
     savedData.mostActiveDay={cals:calData.activeCaloriesBurned,date:Math.floor(new Date(Date.now() - 86400000).getTime() / 1000)}
@@ -66,13 +75,13 @@ let onNewDay=function(){
 }
 
 function intermittentBMRUpdate(){
-  if(new Date().toISOString().slice(0,10)!=savedData.dayLastUpdated){
+  if(getLocalDate()!=savedData.dayLastUpdated){
     // day has changed
     onNewDay();
   }
   // update BMR every 2 minutes
   let now=Date.now();
-  let bmr=Math.round(require("calories").calcBMR(myProfile)*((now - lastBMRWrite) / 60000));
+  let bmr=Math.round(calModule.calcBMR(myProfile)*((now - lastBMRWrite) / 60000));
   calData.totalCaloriesBurned+=bmr;
   calData.bmrCaloriesBurned+=bmr;
   // schedule next update
@@ -82,17 +91,18 @@ function intermittentBMRUpdate(){
 }
 
 Bangle.on('health',function(hd){
-  if(new Date().toISOString().slice(0,10)!=savedData.dayLastUpdated){
+  if(getLocalDate()!=savedData.dayLastUpdated){
     // day has changed
     onNewDay();
   }
-  let cd=require("calories").calcCalories(Object.assign(hd,{duration:10}),myProfile)
+  let cd=calModule.calcCalories(Object.assign(hd,{duration:10}),myProfile)
   if (!cd) return;
   calData.activeCaloriesBurned+=cd.activeCalories;
   calData.totalCaloriesBurned+=cd.activeCalories;
   if(calData.activeCaloriesBurned>=savedData.calGoal&&!savedData.goalShownToday&&settings.showGoalReached){
     savedData.goalShownToday=true;
     writeData();
+    Bangle.buzz(100);
     require("notify").show({
       title : calData.activeCaloriesBurned+/*LANG*/ "Calories",
       body : /*LANG*/ "You reached your calorie goal!",
