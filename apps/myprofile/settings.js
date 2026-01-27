@@ -5,6 +5,7 @@
   let seconds = 60;
   let counter = seconds;
   const myprofile = Object.assign({
+    minHrm: 60,
     maxHrm: 200,
     strideLength: 0, // 0 = not set
     birthday: '1970-01-01',
