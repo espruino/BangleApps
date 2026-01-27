@@ -24,7 +24,7 @@
     let avgRHR = Math.round(rhrData.reduce((a, b) => a + b) / rhrData.length);
     myprofile.restingHrm = avgRHR;
     myprofile.minHrm = avgRHR;
-    require("Storage").writeJSON("myprofile.json", myprofile);
+    writeProfile();
     E.showPrompt(" ",{
       buttonHeight:35,
       buttons:{"Back":true}
