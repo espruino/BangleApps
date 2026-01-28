@@ -1,0 +1,16 @@
+{
+  "id": "ahrm",
+  "name": "AHRM",
+  "shortName": "AHRM",
+  "version": "0.30",
+  "description": "AHRM: Logs health data in the background with an adaptive algorithm.",
+  "tags": "tool,system,health",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"ahrm.boot.js","url":"boot.js"},
+    {"name":"ahrm.settings.js","url":"settings.js"},
+    {"name":"ahrm.adaptivemode.js","url":"adaptivemode.js"}
+  ],
+  "data": [{"name":"ahrm.json"}]
+}
