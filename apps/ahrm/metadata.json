@@ -4,6 +4,7 @@
   "shortName": "AHRM",
   "version": "0.30",
   "description": "AHRM: Logs health data in the background with an adaptive algorithm.",
+  "icon": "ahrm.png",
   "tags": "tool,system,health",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
