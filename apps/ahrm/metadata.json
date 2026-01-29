@@ -8,6 +8,8 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [
+    {"name":"ahrm.app.js","url":"app.js"},
+    {"name":"ahrm.img","url":"app-icon.js","evaluate":true},
     {"name":"ahrm.boot.js","url":"boot.js"},
     {"name":"ahrm.settings.js","url":"settings.js"},
     {"name":"ahrm.adaptivemode.js","url":"adaptivemode.js"}
