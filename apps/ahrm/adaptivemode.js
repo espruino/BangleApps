@@ -174,7 +174,7 @@ function accelDataProcessing(){
    var mv_sd= movementHistory.sd();
    var hr_sd=hrHistory.sd();
    var mv_avg=movementHistory.avg();
-   var hr_avg= hrHistory.avg();
+   //var hr_avg= hrHistory.avg();  will be used in a future version 
 
 //----------Check on movementHistory--------------
  if(!changed){
@@ -231,3 +231,4 @@ Bangle.on('accel',accelHandler);
 
 setInterval(accelDataProcessing,10*1000);
 pickid=setTimeout(pickdata,600*1000);
+
