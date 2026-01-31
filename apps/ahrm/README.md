@@ -47,6 +47,6 @@ Since the app has no graphical interface, to view the data you need to connect t
 
 The only available setting allows you to enable or disable data recording.
 
-*   **Path**: It is located in the main Bangle.js menu, under `Settings -> App Settings -> Health`.
+*   **Path**: It is located in the main Bangle.js menu, under `Settings -> App Settings -> AHRM`.
 *   **Option**:
     *   **ADAPTIVE HRM**: Select to enable (✓) or disable the feature.
