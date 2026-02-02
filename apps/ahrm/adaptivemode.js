@@ -118,7 +118,7 @@ function HRMPOWER(){
     Bangle.setHRMPower(1,"ahrm");
     start_time=new Date();
     setTimeout(function(){
-        if(Bangle.isHRMOn&&Math.abs(new Date()-start_time)>=69*1000){ //turns off after one minute from power on
+        if(Bangle.isHRMOn()&&Math.abs(new Date()-start_time)>=69*1000){ //turns off after one minute from power on
             Bangle.setHRMPower(0,"ahrm");
         }
     },70*1000);
