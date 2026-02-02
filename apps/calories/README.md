@@ -17,7 +17,7 @@ The app uses the algorithm below:
 5. Returns the total calories burned in that interval, active calories (calories actively burned), and BMR calories (calories passively burned)
 
 ## Clock Info
-This app provides a set of ClockInfos:
+This app adds a set of ClockInfos in the `Health` list.:
 * Total Calories (Flame Icon)
 * BMR Calories (Cycle Flame Icon)
 * Active Calories (Person Silhouette)
@@ -35,6 +35,7 @@ The app also provides a module for calculations that can be loaded using `requir
 
 * **require("calories").calcCalories**: Takes in health data and myProfile data, and returns an object with `activeCalories` and `bmrCalories`. Total calories are found by adding the two. **Note: The health data must contain heart rate (bpm), steps, and a duration in minutes**
 ```
+
 // This code uses the latest health data, injects a duration of 10 minutes to that object, and passes in myProfile data
 require("calories").calcCalories(Object.assign(Bangle.getHealthStatus('last'),{duration:10}),
    require("Storage").readJSON("myprofile.json",1));
@@ -42,8 +43,19 @@ require("calories").calcCalories(Object.assign(Bangle.getHealthStatus('last'),{d
 
 * **require("calories").calcBMR**: Takes in myProfile data, and returns a bmr rate (calories/minute) from that data. The rate is unrounded for accuracy, so you must handle rounding accordingly.
 ```
+
 // This code passes in myProfile data to get BMR rate.
 require("calories").calcBMR(require("Storage").readJSON("myprofile.json",1));
+
+```
+When new calories are calculated for that health interval, the event `calories` is emitted:
+```
+
+// Upon event, print calories burned. (Data returned is the same as what's in global.calories)
+Bangle.on("calories",function(calorieData){
+   print(calorieData.activeCaloriesBurned);
+});
+
 ```
 ## Creator:
 [RKBoss6](https://github.com/rkboss6)
