@@ -185,10 +185,6 @@ exports.load = function() {
       hide : function() { clearInterval(this.interval); delete this.interval; },
     });
   }
-  
-  
-  
-  
   var clkInfoCache = require('Storage').read('.clkinfocache');
   if (clkInfoCache!==undefined) {
     // note: code below is included in clkinfocache by bootupdate.js
