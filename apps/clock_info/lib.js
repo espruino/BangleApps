@@ -23,6 +23,7 @@ exports.loadSettings = function() {
       hrmOn : 0, // 0(Always), 1(Tap)
       defocusOnLock : true,
       maxAltitude : 3000,
+      healthCategory : false,
       haptics:true,
       apps : {}
     },
@@ -35,15 +36,17 @@ exports.load = function() {
   if (exports.clockInfoMenus)
     return exports.clockInfoMenus;
   var settings = exports.loadSettings();
+  
   delete settings.apps; // keep just the basic settings in memory
   // info used for drawing...
+  var healthMenuIndex = settings.healthCategory ? 1 : 0;
   var hrm = 0, alt = "--", stepDisabled = Bangle.getOptions().stepCounterDisabled;
   // callbacks (needed for easy removal of listeners)
   function batteryUpdateHandler() { bangleItems.find(i=>i.name=="Battery").emit("redraw"); }
-  function stepUpdateHandler() { bangleItems.find(i=>i.name=="Steps").emit("redraw"); }
+  function stepUpdateHandler() { menu[healthMenuIndex].items.find(i=>i.name=="Steps").emit("redraw"); }
   function hrmUpdateHandler(e) {
     if (e && e.confidence>60) hrm = Math.round(e.bpm);
-    bangleItems.find(i=>i.name=="HRM").emit("redraw");
+     menu[healthMenuIndex].items.find(i=>i.name=="HRM").emit("redraw");
   }
   function altUpdateHandler() {
     try {
@@ -80,7 +83,33 @@ exports.load = function() {
       show : function() { this.interval = setInterval(()=>this.emit('redraw'), 60000); Bangle.on("charging", batteryUpdateHandler); batteryUpdateHandler(); },
       hide : function() { clearInterval(this.interval); delete this.interval; Bangle.removeListener("charging", batteryUpdateHandler); },
     },
-    { name : "Steps",
+    { name: "BLE",
+      isOn: () => {
+        const s = NRF.getSecurityStatus();
+        return s.advertising || s.connected;
+      },
+      get: function() {
+        return {
+          text: this.isOn() ? "On" : "Off",
+          img: atob("GBiBAAAAAAAAAAAYAAAcAAAWAAATAAARgAMRgAGTAADGAAB8AAA4AAA4AAB8AADGAAGTAAMRgAARgAATAAAWAAAcAAAYAAAAAAAAAA==")
+          // small gaps added to BLE icon to ensure middle of B isn't filled
+        };
+      },
+      run: function() {
+        if (this.isOn()) {
+          NRF.sleep();
+        } else {
+          NRF.wake();
+          Bluetooth.setConsole(1);
+        }
+        setTimeout(() => this.emit("redraw"), 250);
+      },
+      show: function(){},
+      hide: function(){},
+    }
+  ],
+  }];
+  let healthItems=[{ name : "Steps",
       hasRange : true,
       get : () => {
         let v = Bangle.getHealthStatus("day").steps;
@@ -129,33 +158,21 @@ exports.load = function() {
         }
         hrm = 0;
       },
-    },
-    { name: "BLE",
-      isOn: () => {
-        const s = NRF.getSecurityStatus();
-        return s.advertising || s.connected;
-      },
-      get: function() {
-        return {
-          text: this.isOn() ? "On" : "Off",
-          img: atob("GBiBAAAAAAAAAAAYAAAcAAAWAAATAAARgAMRgAGTAADGAAB8AAA4AAA4AAB8AADGAAGTAAMRgAARgAATAAAWAAAcAAAYAAAAAAAAAA==")
-          // small gaps added to BLE icon to ensure middle of B isn't filled
-        };
-      },
-      run: function() {
-        if (this.isOn()) {
-          NRF.sleep();
-        } else {
-          NRF.wake();
-          Bluetooth.setConsole(1);
-        }
-        setTimeout(() => this.emit("redraw"), 250);
-      },
-      show: function(){},
-      hide: function(){},
+    }]
+  
+  if(settings.healthCategory){
+    menu.push(
+      {
+        name: "Health",
+        img: atob("GBiBAAAAAAcA4B/D+D/n/H///n///v///////////3///n///n///j///B//+A//8A//8Af/4AH/gAD/AAB+AAA8AAAYAAAAAAAAAA=="),
+        items: healthItems
+      })
+    }else{
+      menu[0].items=menu[0].items.concat(healthItems);
     }
-  ],
-  }];
+
+      
+      
   var bangleItems = menu[0].items;
 
   if (Bangle.getPressure){  // Altimeter may not exist
@@ -171,6 +188,10 @@ exports.load = function() {
       hide : function() { clearInterval(this.interval); delete this.interval; },
     });
   }
+  
+  
+  
+  
   var clkInfoCache = require('Storage').read('.clkinfocache');
   if (clkInfoCache!==undefined) {
     // note: code below is included in clkinfocache by bootupdate.js
