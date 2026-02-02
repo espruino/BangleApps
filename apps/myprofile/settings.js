@@ -25,7 +25,7 @@
     
     E.showPrompt(" ",{
       buttonHeight:35,
-      buttons:{"Yes":true,"No":true}
+      buttons:{"Yes":true,"No":false}
     }).then(function(v){
     if(v){
       myprofile.restingHrm = avgRHR;
