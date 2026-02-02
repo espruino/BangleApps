@@ -170,9 +170,6 @@ exports.load = function() {
     }else{
       menu[0].items=menu[0].items.concat(healthItems);
     }
-
-      
-      
   var bangleItems = menu[0].items;
 
   if (Bangle.getPressure){  // Altimeter may not exist
