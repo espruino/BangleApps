@@ -68,11 +68,11 @@ function getMonthList() {
   Puck.eval(`require("Storage").list(/^health-.*\\.raw$/)`,files=>{
     files = files.map(f => {
       var m = f.match(/^health-([^\.]+)\.raw$/);
-      var [y, d] = m[1].split("-");
+      var [year, month] = m[1].split("-");
       return {
         filename : f,
-        date : m[1], // eg 2021-9
-        str : new Date(y, d-1).toLocaleString(undefined, {month:'long',year:'numeric'})
+        date : m[1], // eg "2021-9"
+        str : new Date(year, month-1).toLocaleString(undefined, {month:'long',year:'numeric'})
       }
     })
     var htmlOverview = `<table class="table table-striped table-hover">
