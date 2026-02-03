@@ -3,4 +3,4 @@
 0.03: Added small inline Clock Info next to date
 0.04: Fix date not clearing
 0.05: Add settings menu with option for accent color when focusing on clockInfo
-0.06: Cut down memory consumption by only using font in 1-9.:/ range instead of all 96 chars
+0.06: Cut down memory consumption by only using font in 0-9.:/ range instead of all 96 chars
