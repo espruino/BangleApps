@@ -90,6 +90,8 @@ You can also take multiple screenshots and use a website like [this](https://ezg
 
 ## Testing
 
+For functional testing of apps using the Bangle.js emulator, see [TESTING.md](TESTING.md).
+
 ### Online
 
 This is the best way to test...

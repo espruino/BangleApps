@@ -88,6 +88,22 @@ if (!require("fs").existsSync(DIR_IDE)) {
 
 const verbose = process.argv.includes("--verbose") || process.argv.includes("-v");
 
+// Timeout for each test (ms) - prevents infinite loops from hanging CI
+const TEST_TIMEOUT_MS = 60000;
+
+function withTimeout(promise, ms, testName) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      setTimeout(() => {
+        const error = new Error(`Test "${testName}" timed out after ${ms}ms`);
+        error.isTimeout = true;
+        reject(error);
+      }, ms);
+    })
+  ]);
+}
+
 var AppInfo = require(BASE_DIR+"/core/js/appinfo.js");
 var apploader = require(BASE_DIR+"/core/lib/apploader.js");
 apploader.init({
@@ -122,8 +138,8 @@ function assertArray(step){
   console.log(`> ASSERT ARRAY ${step.js} IS`,step.is.toUpperCase(), step.text ? "- " + step.text : "");
   let isOK;
   switch (step.is.toLowerCase()){
-    case "notempty": isOK = getValue(`${step.js} && ${step.js}.length > 0`); break;
-    case "undefinedorempty": isOK = getValue(`!${step.js} || (${step.js} && ${step.js}.length === 0)`); break;
+    case "notempty": isOK = getValue(`(function(v){return v && v.length > 0})(${step.js})`); break;
+    case "undefinedorempty": isOK = getValue(`(function(v){return !v || v.length === 0})(${step.js})`); break;
   }
 
   if (isOK) {
@@ -427,12 +443,21 @@ function runTest(test, testState) {
       });
 
       p = p.finally(()=>{
+        // Check for uncaught errors detected during test
+        const uncaughtError = getUncaughtError();
+        if (uncaughtError) {
+          console.log("> UNCAUGHT ERROR DETECTED:", uncaughtError);
+          state.ok = false;
+        }
+        resetUncaughtError();
+
         console.log("> RESULT -",  (state.ok ? "OK": "FAIL") , "- " + test.app + (subtest.description ? (" - " + subtest.description) : ""));
         testState.push({
           app: test.app,
           number: subtestIdx,
           result: state.ok ? "SUCCESS": "FAILURE",
-          description: subtest.description
+          description: subtest.description,
+          error: uncaughtError || null
         });
       });
     });
@@ -445,12 +470,36 @@ function runTest(test, testState) {
 
 
 let handleRx = ()=>{};
-let handleConsoleOutput = () => {};
-if (verbose){
-  handleConsoleOutput = (d) => {
-    console.log("<", d);
+
+// Uncaught error detection - null means no error, non-empty string contains the error message
+let uncaughtError = null;
+
+function checkForUncaughtError(text) {
+  // Use precise patterns to avoid false positives (e.g., "ASSERT" matching "assertArray")
+  if (text && (
+    text.match(/Uncaught\b/) ||                // Uncaught followed by word boundary
+    text.match(/^ERROR:\s/m) ||                // ERROR: at start of line only
+    text.includes("ASSERT FAILED") ||          // Full assertion failure message
+    text.match(/^\s+at\s+\S+:\d+:\d+/)         // Stack trace: "  at file:line:col"
+  )) {
+    uncaughtError = text;
   }
 }
+
+function resetUncaughtError() {
+  uncaughtError = null;
+}
+
+function getUncaughtError() {
+  return uncaughtError;
+}
+
+let handleConsoleOutput = (d) => {
+  if (verbose) {
+    console.log("<", d);
+  }
+  checkForUncaughtError(d);
+};
 
 let testState = [];
 
@@ -476,7 +525,7 @@ emu.init({
     apps = apps.filter(e=>e.id==f);
     if (apps.length == 0){
       console.log("No apps left after filtering for " + f);
-      process.exitCode(255);
+      process.exit(255);
     }
   }
 
@@ -489,7 +538,28 @@ emu.init({
       test.app = app.id;
     }
     p = p.then(()=>{
-      return runTest(test, testState);
+      const testName = test.app + (test.description ? ` - ${test.description}` : '');
+      return withTimeout(runTest(test, testState), TEST_TIMEOUT_MS, testName)
+        .catch(err => {
+          if (err.isTimeout) {
+            console.log("> TIMEOUT:", err.message);
+            // Clean up emulator state after timeout
+            try {
+              emu.stopIdle();
+            } catch (e) {
+              console.error("Failed to stop emulator after timeout:", e.message);
+            }
+            testState.push({
+              app: test.app,
+              number: -1,
+              result: "TIMEOUT",
+              description: "Test timed out",
+              error: err.message
+            });
+          } else {
+            throw err;
+          }
+        });
     });
   });
   p.finally(()=>{
@@ -497,9 +567,12 @@ emu.init({
     console.log("Overall results:");
     console.table(testState);
 
-    process.exit(testState.reduce((a,c)=>{
-      return a || ((c.result == "SUCCESS") ? 0 : 1);
-    }, 0))
+    // Exit with appropriate code - count failures and timeouts
+    const exitCode = testState.reduce((a, c) => {
+      return a || ((c.result === "SUCCESS") ? 0 : 1);
+    }, 0);
+
+    process.exit(exitCode);
   });
   return p;
 });
