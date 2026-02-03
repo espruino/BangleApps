@@ -138,12 +138,8 @@ function assertArray(step){
   console.log(`> ASSERT ARRAY ${step.js} IS`,step.is.toUpperCase(), step.text ? "- " + step.text : "");
   let isOK;
   switch (step.is.toLowerCase()){
-    // Evaluate expression once to avoid side effects from multiple evaluations
     case "notempty": isOK = getValue(`(function(v){return v && v.length > 0})(${step.js})`); break;
     case "undefinedorempty": isOK = getValue(`(function(v){return !v || v.length === 0})(${step.js})`); break;
-    // For arrays that may contain only null/undefined (e.g., sparse arrays from backgrounded handlers)
-    // Separate assertion type as suggested in code review - [null] would not intuitively pass "undefinedorempty"
-    case "allnullish": isOK = getValue(`(function(v){return !v || v.length === 0 || (Array.isArray(v) && v.every(function(x){return x==null}))})(${step.js})`); break;
   }
 
   if (isOK) {
