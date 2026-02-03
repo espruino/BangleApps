@@ -36,7 +36,6 @@ exports.load = function() {
   if (exports.clockInfoMenus)
     return exports.clockInfoMenus;
   var settings = exports.loadSettings();
-  
   delete settings.apps; // keep just the basic settings in memory
   // info used for drawing...
   var healthMenuIndex = settings.healthCategory ? 1 : 0;
