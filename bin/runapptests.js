@@ -46,7 +46,7 @@ const DEMOTEST = {
       {"t":"eval", "js": "'test' + 'value'", "eq": "testvalue", "text": "Evals code on the device and compares the resulting string to the value in 'eq'"},
 //      {"t":"console", "text": "Starts an interactive console for debugging"},
       {"t":"saveMemoryUsage", "text": "Gets and stores the current memory usage"},
-      {"t":"checkMemoryUsage", "text": "Checks the current memory to be equal to the stored value"},
+      {"t":"checkMemoryUsage", "text": "Checks current memory is not higher than stored value (detects leaks)"},
       {"t":"assert", "js": "0", "is":"falsy", "text": "Evaluates the content of 'js' on the device and asserts if the result is falsy"},
       {"t":"assert", "js": "1", "is":"truthy", "text": "Evaluates the content of 'js' on the device and asserts if the result is truthy"},
       {"t":"assert", "js": "false", "is":"false", "text": "Evaluates the content of 'js' on the device and asserts if the result is false"},
@@ -333,8 +333,8 @@ function runStep(step, subtest, test, state){
         emu.tx(`\x10print(process.memory().usage)\n`);
         var memUsage =  parseInt(getSanitizedLastLine());
         console.log("> COMPARE MEMORY USAGE", memUsage);
-        if (subtest.memUsage != memUsage ) {
-          console.log("> FAIL: EXPECTED MEMORY USAGE OF "+subtest.memUsage);
+        if (memUsage > subtest.memUsage) {
+          console.log("> FAIL: MEMORY USAGE "+memUsage+" EXCEEDS BASELINE "+subtest.memUsage);
           state.ok = false;
         }
       });
