@@ -18,7 +18,7 @@ Configure your personal profile. All settings are optional and are only stored o
 ### RHR Reading: 
 You can take a Resting Heart Rate measurement, which can be indicative of your cardiovascular health and overall fitness. RHR is the heart rate when you are resting, and is the lowest heart rate you can possibly beat. Generally, a lower RHR indicates better cardiovascular health and endurance. To take a reading, you must be very still and have the watch snug around your wrist (light leaking in can affect the reading). For best results, lie or sit quietly and rest for about 10 minutes before starting the measurement. It is recommended to take the measurement right before you go to sleep or as soon as you wake up.
 
-Take a reading in the settings page, follow the prompted instructions, and start the test. The app does not enforce or time the resting period that you should take prior, so ensure you have already been resting for around 10 minutes before pressing the button.
+Take a reading in the settings page, follow the prompted instructions, and start the test. The app does not enforce or time the resting period that you should take prior, so ensure you have already been resting for around 10 minutes before pressing the button. Upon completion, check if the reading looks accurate, and choose whether to save it or not. A normal RHR for adults is 55-80 BPM.
 
 ## Developer notes
 
