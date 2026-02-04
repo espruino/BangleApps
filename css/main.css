@@ -431,7 +431,7 @@
       position: absolute;     /* use fixed instead if your parent clips */
       top: 100%;
       left: 0;
-      z-index: 10000;         
+      z-index: 600;
     }
 
     /* Note:
