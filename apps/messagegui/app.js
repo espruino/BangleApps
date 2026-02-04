@@ -495,7 +495,6 @@ function showMessage(msgid, persist) {
         if (!settings.showWidgets && Bangle.isLocked()) g.drawImage(atob("DhABH+D/wwMMDDAwwMf/v//4f+H/h/8//P/z///f/g=="), r.x+1,r.y+4); // locked symbol
         var mid = (r.w-48)/2;
         g.setColor(g.theme.fg2).setFont(srcFont).setFontAlign(0,-1).drawString(src, mid, r.y+2);
-        //if(date!="")g.setFontAlign(1,-1).drawString(date, r.x+r.w-5, r.y+2);
         let srcHeight = g.getFontHeight();
         g.setFont(titleFont).setFontAlign(0,0).drawString(title, mid, r.y+ (r.h+srcHeight+2)/2);
         //g.setColor(g.theme.bgH).fillRect({x:r.x+r.w-47, y:r.y+3, w:44, h:44, r:6});
