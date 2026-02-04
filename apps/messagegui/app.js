@@ -493,7 +493,7 @@ function showMessage(msgid, persist) {
         if (idx!=1) return;
         if (rowLeftDraw) rowLeftDraw(r);
         if (rowRightDraw) rowRightDraw(r);
-        if(date!="") drawDate(r);
+        if(date) drawDate(r);
       } else { // idx==0 => header
         g.setBgColor(g.theme.bg2).setColor(g.theme.fg).clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
         if (!settings.showWidgets && Bangle.isLocked()) g.drawImage(atob("DhABH+D/wwMMDDAwwMf/v//4f+H/h/8//P/z///f/g=="), r.x+1,r.y+4); // locked symbol
