@@ -428,12 +428,18 @@
     .dropdown { position: relative; }
 
     .dropdown .menu {
-      position: absolute;     /* or fixed if your parent clips, see note below */
+      position: absolute;     /* use fixed instead if your parent clips */
       top: 100%;
       left: 0;
       z-index: 10000;         
     }
 
+    /* Note:
+       Use position: fixed instead of absolute for the dropdown menu
+       when its parent or an ancestor has overflow: hidden, auto,
+       or scroll and clips the menu. Fixed positioning anchors the
+       menu to the viewport so it is not cut off by the clipping
+       container, but it will no longer scroll with the parent. */
     /* Right-align when needed */
     .dropdown .menu.align-right {
       left: auto;
