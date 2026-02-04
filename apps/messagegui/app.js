@@ -375,7 +375,7 @@ function showMessage(msgid, persist) {
   if (!msg) return returnToClockIfEmpty(); // go home if no message found
   redrawMsgInterval=setInterval(function(){
     showMessage(msgid, persist);
-  },60000) // redraw message every minute to update "time ago"
+  },60000); // redraw message every minute to update "time ago"
   if (msg.id=="music") {
     cancelReloadTimeout(); // don't auto-reload to clock now
     return showMusicMessage(msg);
