@@ -25,3 +25,70 @@ jobs:
       - name: Build all TS apps and widgets
         working-directory: ./typescript
         run: npm run build
+
+  functional-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
+      - name: Clone EspruinoWebIDE (pinned)
+        run: |
+          git clone --depth 1 https://github.com/espruino/EspruinoWebIDE ../EspruinoWebIDE
+          cd ../EspruinoWebIDE
+          git fetch --depth 1 origin a62beceec317f6744e58aaa2d1a19447d9458035
+          git checkout a62beceec317f6744e58aaa2d1a19447d9458035
+
+      - name: Detect changed apps
+        id: detect-apps
+        run: |
+          set -e  # Exit on error, but handle grep specially
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            # PR: test only changed apps
+            CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha }}..HEAD)
+            APPS=$(echo "$CHANGED" | grep '^apps/' | cut -d'/' -f2 | sort -u) || APPS=""
+          elif [ "${{ github.ref }}" = "refs/heads/master" ]; then
+            # Push to master: test all apps
+            APPS=$(ls apps/*/test.json 2>/dev/null | cut -d'/' -f2) || APPS=""
+          else
+            # Push to other branches: test only changed apps since master
+            CHANGED=$(git diff --name-only origin/master...HEAD)
+            APPS=$(echo "$CHANGED" | grep '^apps/' | cut -d'/' -f2 | sort -u) || APPS=""
+          fi
+          # Filter to apps with test.json
+          TESTABLE=""
+          for app in $APPS; do
+            if [ -f "apps/$app/test.json" ]; then
+              TESTABLE="$TESTABLE $app"
+            fi
+          done
+          echo "apps=$TESTABLE" >> $GITHUB_OUTPUT
+          echo "Detected testable apps:$TESTABLE"
+
+      - name: Run app tests
+        run: |
+          APPS="${{ steps.detect-apps.outputs.apps }}"
+          if [ -z "$APPS" ]; then
+            echo "No apps with tests to run"
+            exit 0
+          fi
+          FAILED=0
+          for app in $APPS; do
+            echo ""
+            echo "========================================="
+            echo "Testing $app..."
+            echo "========================================="
+            if ! node bin/runapptests.js --id "$app" --verbose; then
+              FAILED=1
+            fi
+          done
+          exit $FAILED

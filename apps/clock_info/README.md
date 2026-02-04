@@ -36,11 +36,12 @@ and previously focussed Clock Infos
 * `HRM` - (default=always) when does the HRM stay on?
   * `Always` - When a HRM ClockInfo is shown, keep the HRM on
   * `Tap` - When a HRM ClockInfo is shown, turn HRM on for 1 minute. Turn on again when tapped.
+* `Health Category` - (default=false) Whether or not to move built-in health clockInfo items (hrm, steps) from `Bangle` to the `Health` category, to be more organized with many items in the `Bangle` list. Other apps that add Health clockInfos like [Calories](https://banglejs.com/apps/?id=calories) can also add their own items to the Health list.
 * `Max Altitude` - on clocks like [Circles Clock](https://banglejs.com/apps/?id=circlesclock) a
   progress/percent indicator may be shown. The percentage for altitude will be how far towards
   the Max Altitude you are. If you go higher than `Max Altitude` the correct altitude will still
   be shown - the percent indicator will just read 100%
-* `Haptics` - Whether or not to use a slight vibration when cycling between different infos, or lists (with a slightly stronger buzz). 
+* `Haptics` - (default=true) Whether or not to use a slight vibration when cycling between different infos, or lists (with a slightly stronger buzz). 
 
 ## API (Software development)
 
