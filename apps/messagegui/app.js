@@ -122,7 +122,9 @@ function addDragHandlerToChangeMessage(idx, scroller) {
 
 function getTimeAgo(isoString) {
   var date = new Date(isoString);
-  var totalMin = Math.floor((Date.now() - date.getTime()) / 60000);
+  var time = date.getTime();
+  if (isNaN(time)) return "";
+  var totalMin = Math.floor((Date.now() - time) / 60000);
 
   if (totalMin < 1) return "Now";
 
