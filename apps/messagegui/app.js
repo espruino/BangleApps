@@ -370,8 +370,10 @@ function showMessage(msgid, persist) {
   if(!persist) resetReloadTimeout();
   let idx = MESSAGES.findIndex(m=>m.id==msgid);
   let msg = MESSAGES[idx];
-  if(redrawMsgInterval)clearInterval(redrawMsgInterval);
-  redrawMsgInterval=null;
+  if(redrawMsgInterval){
+    clearInterval(redrawMsgInterval);
+    redrawMsgInterval=null;
+}
   if (!msg) return returnToClockIfEmpty(); // go home if no message found
   redrawMsgInterval=setInterval(function(){
     showMessage(msgid, persist);
