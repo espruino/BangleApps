@@ -3,7 +3,7 @@ bleServiceOptions.cts = true;
 if (NRF.amsIsActive) bleServiceOptions.ams = true; // amsIsActive was added at the same time as the "am" option
 Bangle.ancsMessageQueue = [];
 function formatANCSDate(d) {
-  if (!d || d.length < 13) return "No Date";
+  if (!d || d.length < 13) return null;
 
   const year = d.substring(0, 4);
   const month = parseInt(d.substring(4, 6)) - 1;
