@@ -433,7 +433,7 @@ function showMessage(msgid, persist) {
     rowLeftDraw = function(r) {g.setColor("#f00").drawImage(atob("PhAB4A8AAAAAAAPAfAMAAAAAD4PwHAAAAAA/H4DwAAAAAH78B8AAAAAA/+A/AAAAAAH/Af//////w/gP//////8P4D///////H/Af//////z/4D8AAAAAB+/AfAAAAAA/H4DwAAAAAPg/AcAAAAADwHwDAAAAAA4A8AAAAAAAA=="),r.x+2,r.y+2);};
   }
   let drawDate=function(r){
-  g.setColor(g.theme.fg).setBgColor(g.theme.bg).setFont(srcFont).setFontAlign(0,-1).clearRect(r.x+(r.w/2)-(g.stringWidth("--"+date)/2),r.y+2,r.x+(r.w/2)+(g.stringWidth("--"+date)/2),r.y+g.stringMetrics(" "+date).height).drawString(date,r.x+(r.w/2),r.y+3,1);
+    g.setColor(g.theme.fg).setBgColor(g.theme.bg).setFont(srcFont).setFontAlign(0,-1).clearRect(r.x+(r.w/2)-(g.stringWidth("--"+date)/2),r.y+2,r.x+(r.w/2)+(g.stringWidth("--"+date)/2),r.y+g.stringMetrics(" "+date).height).drawString(date,r.x+(r.w/2),r.y+3,1);
   }
   if (msg.reply && reply) {
     posHandler = ()=>{
