@@ -93,7 +93,7 @@ To make sure the app accurately provides sleep information, it's a good idea to 
       _10min_ / _20min_ / ... / __30min__ / ... / _120min_
   - __Enabled__ | completely en-/disables the background service
     __on__ / _off_
-  - __Prefer HRM__ | en-/disables use of HRM readings if they are available for determining sleep states.
+  - __Prefer HRM__ | En-/disables use of HRM readings if they are available for determining sleep states.
     __on__ / _off_
   - __Debugging__ submenu
     - __View log__ | display logfile data
@@ -241,7 +241,7 @@ If you want to use other variables or functions from the trigger object inside t
   - Open logfile through require("Storage") instead of require("sleeplog").
   - Give feedback how much files have been deleted on "delete all logfiles before".
 - Check translations.
-- Add more functionallities to interface.html.
+- Add more functionalities to interface.html.
 - Enable receiving data on the Gadgetbridge side + testing.
   __Help appreciated!__
 
