@@ -20,3 +20,6 @@
 0.22: Fix bug with HRM threshold not updating due to movement thresholds being incorrectly compared against the HRM thresholds.
 0.23: Fix important bug with HRM data being undefined when compared - broken apps should work properly now
 0.24: Change day title to be easier to read, capitalization, and improved documentation/tuning guide in README.
+0.25: Put HRM mode behind the setting `Prefer HRM` which defaults to `false`.
+      Please turn it on if you want the recent HRM behavior. The new default
+      will be more in line with how version 0.20 worked.

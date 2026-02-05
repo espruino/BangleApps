@@ -6,7 +6,7 @@ This app logs and displays the following states:
 
 It is using the built in movement calculation or HRM to decide your sleeping state. While charging it is assumed that you are not wearing the watch and if the status changes to _deep sleep_ the internal heartrate sensor is used to detect if you are wearing the watch.
 
-If HRM polling is enabled in the `Health` app, sleep tracking uses the much more accurate HRM sensor to detect sleep status instead. If not enabled in `Health`, uses movement calculations from the watch.
+If HRM polling is enabled in the `Health` app, sleep tracking can use the HRM sensor to detect sleep status instead. Set `Prefer HRM` in settings to enable. Falls back to using movement calculations if HRM is not available.
 
 #### Explanations
 * __Detection of Sleep__
@@ -92,6 +92,8 @@ To make sure the app accurately provides sleep information, it's a good idea to 
     - __Min Consecutive__ | minimal consecutive sleep duration
       _10min_ / _20min_ / ... / __30min__ / ... / _120min_
   - __Enabled__ | completely en-/disables the background service
+    __on__ / _off_
+  - __Prefer HRM__ | en-/disables use of HRM readings if they are available for determining sleep states.
     __on__ / _off_
   - __Debugging__ submenu
     - __View log__ | display logfile data
