@@ -44,8 +44,6 @@ E.on('ANCS',msg=>{
   // don't need info for remove events - pass these on
   if (msg.event=="remove")
     return E.emit("notify", msg);
-  
-  
 
   // not a remove - we need to get the message info first
   function ancsHandler() {
