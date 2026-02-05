@@ -375,9 +375,6 @@ function showMessage(msgid, persist) {
     redrawMsgInterval=null;
 }
   if (!msg) return returnToClockIfEmpty(); // go home if no message found
-  redrawMsgInterval=setInterval(function(){
-    showMessage(msgid, persist);
-  },60000); // redraw message every minute to update "time ago"
   if (msg.id=="music") {
     cancelReloadTimeout(); // don't auto-reload to clock now
     return showMusicMessage(msg);
@@ -386,6 +383,9 @@ function showMessage(msgid, persist) {
     cancelReloadTimeout(); // don't auto-reload to clock now
     return showMapMessage(msg);
   }
+  redrawMsgInterval=setInterval(function(){
+    showMessage(msgid, persist);
+  },60000); // redraw message every minute to update "time ago"
   // remove widgets here as we need to check the height when choosing a font
   Bangle.setUI(); // force last UI to be removed (will call require("widget_utils").show(); if last displaying a message)
   if (!settings.showWidgets) require("widget_utils").hide();
