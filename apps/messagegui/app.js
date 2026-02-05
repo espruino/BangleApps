@@ -514,8 +514,10 @@ function showMessage(msgid, persist) {
       Bangle.removeListener("drag", dragHandler);
       Bangle.removeListener("swipe", swipeHandler);
       Bangle.removeListener("lock", lockHandler);
-      if(redrawMsgInterval)clearInterval(redrawMsgInterval);
-      redrawMsgInterval=null;
+      if(redrawMsgInterval){
+        clearInterval(redrawMsgInterval);
+        redrawMsgInterval=null;
+      }
       if (!settings.showWidgets) require("widget_utils").show();
     },
     back : function() {
