@@ -308,7 +308,6 @@ E.on('notify',msg=>{
     // use exception or app id itself
     name = appNames[msg.appId]||msg.appId;
   }
- 
   require("messages").pushMessage({
     t : msg.event,
     id : msg.uid,
@@ -321,7 +320,6 @@ E.on('notify',msg=>{
     positive : msg.positive,
     negative : msg.negative
   });
-  
   // TODO: posaction/negaction?
 });
 
