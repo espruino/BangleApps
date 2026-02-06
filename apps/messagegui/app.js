@@ -436,8 +436,28 @@ function showMessage(msgid, persist) {
     };
     rowLeftDraw = function(r) {g.setColor("#f00").drawImage(atob("PhAB4A8AAAAAAAPAfAMAAAAAD4PwHAAAAAA/H4DwAAAAAH78B8AAAAAA/+A/AAAAAAH/Af//////w/gP//////8P4D///////H/Af//////z/4D8AAAAAB+/AfAAAAAA/H4DwAAAAAPg/AcAAAAADwHwDAAAAAA4A8AAAAAAAA=="),r.x+2,r.y+2);};
   }
-  let drawDate=function(r){
-    g.setColor(g.theme.fg).setBgColor(g.theme.bg).setFont(srcFont).setFontAlign(0,-1).clearRect(r.x+(r.w/2)-(g.stringWidth("--"+date)/2),r.y+2,r.x+(r.w/2)+(g.stringWidth("--"+date)/2),r.y+g.stringMetrics(" "+date).height).drawString(date,r.x+(r.w/2),r.y+3,1);
+  let drawDate=function(r,rd,ld){
+   // draws time ago. If there's nothing in one of the columns, take that space.
+    if((rd&&ld)||(!rd&&!ld)) {
+     g.setColor(g.theme.fg)
+       .setBgColor(g.theme.bg)
+       .setFont(srcFont)
+       .setFontAlign(0,-1)
+       .clearRect(r.x+(r.w/2)-(g.stringWidth("--"+date)/2),r.y+2,r.x+(r.w/2)+(g.stringWidth("--"+date)/2),r.y+g.stringMetrics(" "+date).height)
+       .drawString(date,r.x+(r.w/2),r.y+5,1);
+    }else if (!rd){
+      g.setColor(g.theme.fg)
+       .setBgColor(g.theme.bg)
+       .setFont(srcFont)
+       .setFontAlign(1,-1)
+       .drawString(date,r.x+r.w-6,r.y+5);
+    }else if (!ld){
+      g.setColor(g.theme.fg)
+       .setBgColor(g.theme.bg)
+       .setFont(srcFont)
+       .setFontAlign(-1,-1)
+       .drawString(date,r.x+6,r.y+5);
+    }
   }
   if (msg.reply && reply) {
     posHandler = ()=>{
@@ -493,7 +513,7 @@ function showMessage(msgid, persist) {
         if (idx!=1) return;
         if (rowLeftDraw) rowLeftDraw(r);
         if (rowRightDraw) rowRightDraw(r);
-        if (date) drawDate(r);
+        if (date) drawDate(r,rowRightDraw,rowLeftDraw);
       } else { // idx==0 => header
         g.setBgColor(g.theme.bg2).setColor(g.theme.fg).clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
         if (!settings.showWidgets && Bangle.isLocked()) g.drawImage(atob("DhABH+D/wwMMDDAwwMf/v//4f+H/h/8//P/z///f/g=="), r.x+1,r.y+4); // locked symbol
