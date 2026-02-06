@@ -438,26 +438,15 @@ function showMessage(msgid, persist) {
   }
   let drawDate=function(r,rd,ld){
    // draws time ago. If there's nothing in one of the columns, take that space.
-    if((rd&&ld)||(!rd&&!ld)) {
-     g.setColor(g.theme.fg)
-       .setBgColor(g.theme.bg)
-       .setFont(srcFont)
-       .setFontAlign(0,-1)
+    g.setColor(g.theme.fg).setBgColor(g.theme.bg).setFont(srcFont);
+    if ((rd&&ld)||(!rd&&!ld))
+      g.setFontAlign(0,-1)
        .clearRect(r.x+(r.w/2)-(g.stringWidth("--"+date)/2),r.y+2,r.x+(r.w/2)+(g.stringWidth("--"+date)/2),r.y+g.stringMetrics(" "+date).height)
        .drawString(date,r.x+(r.w/2),r.y+5,1);
-    }else if (!rd){
-      g.setColor(g.theme.fg)
-       .setBgColor(g.theme.bg)
-       .setFont(srcFont)
-       .setFontAlign(1,-1)
-       .drawString(date,r.x+r.w-6,r.y+5);
-    }else if (!ld){
-      g.setColor(g.theme.fg)
-       .setBgColor(g.theme.bg)
-       .setFont(srcFont)
-       .setFontAlign(-1,-1)
-       .drawString(date,r.x+6,r.y+5);
-    }
+    else if (!rd)
+      g.setFontAlign(1,-1).drawString(date,r.x+r.w-6,r.y+5);
+    else if (!ld)
+      g.setFontAlign(-1,-1).drawString(date,r.x+6,r.y+5);
   }
   if (msg.reply && reply) {
     posHandler = ()=>{
