@@ -16,7 +16,7 @@
   function writeProfile() {
     require('Storage').writeJSON(FILE, myprofile);
   }
-  function finish() {
+  function finishRHRReading() {
   Bangle.setHRMPower(0);
   Bangle.removeListener('HRM', onRHRHrm);
   if (rhrData.length > 0) {
@@ -104,7 +104,7 @@ function startRHR(){
       counter--;
       if (counter <= 0) {
         clearInterval(interval);
-        finish();
+        finishRHRReading();
       }
     }, 1000);
   }
@@ -143,8 +143,10 @@ function RHRReading(){
           // Birthday changed
           if (date > new Date()) {
             E.showPrompt(/*LANG*/"Birthday must not be in future!", {
+              
               buttons : {"Ok":true},
             }).then(() => ageMenu());
+            
           } else {
             const age = (new Date()).getFullYear() - date.getFullYear();
             const newMaxHRM = Math.round(208-0.7*age);
@@ -253,6 +255,7 @@ function RHRReading(){
           writeProfile();
         }
       },
+      
       /*LANG*/'HR min': {
         format: v => /*LANG*/`${v} BPM`,
         value: myprofile.minHrm,
@@ -262,6 +265,7 @@ function RHRReading(){
           writeProfile();
         }
       },
+      
       /*LANG*/"Stride length": {
         value: myprofile.strideLength,
         min:0.00,
@@ -277,5 +281,6 @@ function RHRReading(){
   menu[/*LANG*/`Resting HR: ${myprofile.restingHrm?myprofile.restingHrm:"--"}`]=RHRReading;
    E.showMenu(menu)
   };
+  
   mainMenu();
 })
