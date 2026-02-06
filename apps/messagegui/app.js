@@ -439,11 +439,12 @@ function showMessage(msgid, persist) {
   let drawDate=function(r,rd,ld){
    // draws time ago. If there's nothing in one of the columns, take that space.
     g.setColor(g.theme.fg).setBgColor(g.theme.bg).setFont(srcFont);
-    if ((rd&&ld)||(!rd&&!ld))
+    if ((rd&&ld)||(!rd&&!ld)) {
+      let m = g.stringMetrics("--"+date), x = r.x+(r.w/2);
       g.setFontAlign(0,-1)
-       .clearRect(r.x+(r.w/2)-(g.stringWidth("--"+date)/2),r.y+2,r.x+(r.w/2)+(g.stringWidth("--"+date)/2),r.y+g.stringMetrics(" "+date).height)
-       .drawString(date,r.x+(r.w/2),r.y+5,1);
-    else if (!rd)
+       .clearRect(x-(m.width/2),r.y+2,x+(m.width/2),r.y+m.height)
+       .drawString(date,x,r.y+5,1);
+    } else if (!rd)
       g.setFontAlign(1,-1).drawString(date,r.x+r.w-6,r.y+5);
     else if (!ld)
       g.setFontAlign(-1,-1).drawString(date,r.x+6,r.y+5);
