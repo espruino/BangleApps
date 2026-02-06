@@ -22,3 +22,4 @@
 0.21: Add BangleDumpLocation shortcut, to update location data on watch without needing to use the watch's GPS, and added more app names/ ids.
 0.22: Add setting to auto-detect app names from their bundle IDs instead of displaying the ID as the source (on by default)
 0.23: Fix bug where a space would be automatically appended to the start of an auto-detected name.
+0.24: Pass notification time to Message GUI where it can be displayed in v0.92 like "13m ago"
