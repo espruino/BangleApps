@@ -58,6 +58,13 @@ Logfiles are not removed on un-/reinstall to prevent data loss.
 ---
 #### Tuning guide
 To make sure the app accurately provides sleep information, it's a good idea to change the default thresholds to find one that works for you. A step-by-step process would be:
+##### Simple version
+- Set the thresholds (movement or hrm, depending on what you use) to be high.
+- Every day, look at the sleep it tracked and see if it's accurate or not.
+- If it doesn't detect much, reduce the thresholds.
+- If it detects more than it should, increase slightly until you find an accurate setting.
+
+##### More involved version, quicker to figure out accurate thresholds
 - Enable debugging and check "write file"; make sure to give it a long enough duration (the default is 12h, but you'll want to cover both times when you're awake and when you're asleep).
 - Fetch the debug log with the [web ide](https://www.espruino.com/ide/), by clicking the "Access device storage" button (best done on a computer - disconnect the watch from GadgetBridge, and use a browser with WebBluetooth capability).
 - Import the CSV into a spreadsheet; in order to see dates, set the formatting for the timestamp column to Date, and it will display the UTC date and time of the entry.
