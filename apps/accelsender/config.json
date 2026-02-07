@@ -1,4 +1,5 @@
 {
   "enabled": false,
-  "interval": 10000
+  "interval": 5000,
+  "widget": 0
 }

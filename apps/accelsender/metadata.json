@@ -2,11 +2,11 @@
   "id": "accelsender",
   "name": "Acceleration Data Provider",
   "shortName": "Accel Data Provider",
-  "version": "0.01",
+  "version": "0.02",
   "description": "This app sends accelerometer and heart rate data from your Bangle.js via Bluetooth.",
   "icon": "bluetooth.png",
   "type": "bootloader",
-  "tags": "accel",
+  "tags": "accel,widget",
   "supports": [
     "BANGLEJS",
     "BANGLEJS2"
@@ -16,6 +16,14 @@
     {
       "name": "accelsender.boot.js",
       "url": "boot.min.js"
+    },
+    {
+      "name": "accelsender.settings.js",
+      "url": "settings.js"
+    },
+    {
+      "name": "accelsender.wid.js",
+      "url": "widget.js"
     }
   ],
   "data": [
