@@ -68,12 +68,12 @@ function drawCalIconMeter(l) {
   g.drawImage(
     require("heatshrink").decompress(
       atob(
-        "mEw4MA///4H0CpsD+AFDh4FEj/gAoc/4AFDv4FKGgIFEDogFGF4n//AjE/gFE/wFIg5lBJgYFBwBYCOIQREGwQFIHgQFCHgUH/1/AoUP/0/IQQFFj/8j5CCBIINBAoX4AoYhBAongJIKODAoZRBAomAj1/AoUAngFEgE+AQImCAoV+Ao88BAgFFvACBjwCBuBlCAQKDDAQKVCgOAgKzDAB4=",
-      ),
+        "mEw4MA///4H0CpsD+AFDh4FEj/gAoc/4AFDv4FKGgIFEDogFGF4n//AjE/gFE/wFIg5lBJgYFBwBYCOIQREGwQFIHgQFCHgUH/1/AoUP/0/IQQFFj/8j5CCBIINBAoX4AoYhBAongJIKODAoZRBAomAj1/AoUAngFEgE+AQImCAoV+Ao88BAgFFvACBjwCBuBlCAQKDDAQKVCgOAgKzDAB4="
+      )
     ),
     l.x + l.w / 2 - (48 * 0.7) / 2 - 8,
     l.y + l.h / 2 - (48 * 0.7) / 2,
-    { scale: 0.7 },
+    { scale: 0.7 }
   );
 }
 Bangle.loadWidgets();
@@ -157,7 +157,7 @@ var pg1Layout = new Layout(
       },
     ],
   },
-  { lazy: true },
+  { lazy: true }
 );
 pg1Layout.update(); // work out positions
 
@@ -284,7 +284,7 @@ var pg2Layout = new Layout(
       },
     ],
   },
-  { lazy: true },
+  { lazy: true }
 );
 pg2Layout.update(); // work out positions
 function updateDayDisp() {
