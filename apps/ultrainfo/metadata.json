@@ -4,7 +4,7 @@
   "shortName":"Ultra Info",
   "icon": "icon.png",
   "version":"0.01",
-  "description": "A clock made entirely of 10 different ClockInfos - for those who crave as much information as possible on their wrist.",
+  "description": "The ultimate information clock with 10 clockinfos - for those who crave as much information as possible on their wrists.",
   "type":"clock",    
   "tags": "clock,clkinfo",
   "author":"RKBoss6",
