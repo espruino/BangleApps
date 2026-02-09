@@ -10,8 +10,7 @@
   "author":"RKBoss6",
   "supports": ["BANGLEJS2"],
   "screenshots" : [],
-  "dependencies" : { "clock_info":"module"},
-  "dependencies" : { "clockbg":"module" },
+  "dependencies" : { "clockbg":"module","clkinfoclk":"app", "clock_info":"module"},
   "allow_emulator":true,
   "readme":"README.md",
   "storage": [
