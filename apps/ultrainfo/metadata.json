@@ -9,13 +9,11 @@
   "tags": "clock,clkinfo",
   "author":"RKBoss6",
   "supports": ["BANGLEJS2"],
-  "screenshots" : [],
   "dependencies" : { "clockbg":"module","clkinfoclk":"app", "clock_info":"module"},
   "allow_emulator":true,
   "readme":"README.md",
   "storage": [
     {"name":"ultrainfo.app.js","url":"app.js"},
     {"name":"ultrainfo.img","url":"app-icon.js","evaluate":true},
-  ],
- 
+  ]
 }
