@@ -5,18 +5,13 @@ var settings = Object.assign({
 }, require('Storage').readJSON("ultrainfo.json", true) || {});
 
 require("Font7x11Numeric7Seg").add(Graphics);
-// X/Y are the position of the bottom right of the HH:MM text - make it central!
-const X = g.getWidth()/2 + 45,
-      Y = g.getHeight()/2 + 20;
 
 let drawTimeout;
 
 
 let draw = function() {
-  var x = g.getWidth() / 2;
-  var y = g.getHeight() / 2;
-  var date =new Date()
-  background.fillRect(0,62,g.getWidth(),110);
+  var date =new Date();
+  background.fillRect(0,62,g.getWidth()-1,110);
   
   var timeStr = require("locale").time(date, 1); // Hour and minute
   g.setFontAlign(0, -1).setColor(g.theme.bg).setFont("Vector",30).drawString(timeStr, g.getWidth()/2,62+3);
@@ -63,7 +58,7 @@ let drawInlineClockInfo = function(itm, info, options, left) {
   g.setFont(font.font)
     .setColor(options.focus ? settings.accentColor : g.theme.bg)
     .drawImage(info.img,
-      left ? options.x + options.w - 24-3 : options.x+3,
+      left ? options.x + options.w - 27 : options.x+3,
       mid - 12)
     .setFontAlign(left ? 1 : -1, 0)
     .drawString(font.text,
@@ -87,7 +82,7 @@ let drawRectClockInfo=function(itm,info,options,top){
                            })
     g.setFont(font.font)
         .setColor(options.focus?settings.accentColor:g.theme.bg)
-        .drawImage(info.img,options.x+(options.w/2)-12,options.y+(options.h/2)+(top?-3:2),)
+        .drawImage(info.img,options.x+(options.w/2)-12,options.y+(options.h/2)+(top?-3:2))
         .setFontAlign(0,0)
         .drawString(font.text,options.x+(options.w/2),options.y+(options.h/2)+(top?-15:2-10))
 }
