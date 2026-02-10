@@ -34,7 +34,7 @@ g.clear();
 
 background.fillRect(Bangle.appRect);
 
-draw()
+draw();
 
 // CLOCKINFOS:
 
