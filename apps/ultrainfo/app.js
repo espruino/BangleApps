@@ -28,7 +28,7 @@ let clockInfoItems = require("clock_info").load();
 
 function drawProgBar(x,y,w,val,col){
   g.setColor(col)
-    .fillRect({x:x,y:y-2,w:w*val,h:3,r:8})
+    .fillRect({x:x,y:y-2,w:w*Math.max(1,val),h:3,r:8})
 }
 
 let drawInlineClockInfo = function(itm, info, options, left) {
