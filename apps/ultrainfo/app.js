@@ -2,7 +2,8 @@
 let background = require("clockbg");
 var settings = Object.assign(
   {
-    accentColor: "#f00"
+    accentColor: "#f00",
+    mainColor:"#000"
   },
   require("Storage").readJSON("ultrainfo.json", true) || {}
 );
@@ -17,7 +18,7 @@ let draw = function () {
 
   var timeStr = require("locale").time(date, 1); // Hour and minute
   g.setFontAlign(0, -1)
-    .setColor(g.theme.bg)
+    .setColor(settings.mainColor)
     .setFont("Vector", 30)
     .drawString(timeStr, g.getWidth() / 2, 62 + 3);
 
@@ -77,7 +78,7 @@ let drawRectClockInfo = function (itm, info, options, top) {
     top ? options.y + options.h - 3 : options.y + 3,
     options.w - 6,
     1,
-    "#000"
+    settings.mainColor
   );
   if (info.max) {
     drawProgBar(
@@ -96,7 +97,7 @@ let drawRectClockInfo = function (itm, info, options, top) {
     trim: true
   });
   g.setFont(font.font)
-    .setColor(options.focus ? settings.accentColor : g.theme.bg)
+    .setColor(options.focus ? settings.accentColor : settings.mainColor)
     .drawImage(
       info.img,
       options.x + options.w / 2 - 12,

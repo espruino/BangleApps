@@ -3,6 +3,7 @@
   // Load settings
   var settings = Object.assign({
     accentColor: "#f00",
+    mainColor:"#000"
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
@@ -41,13 +42,33 @@
       });
     E.showMenu(menu);
   }
+  
+function showMainColor(){
+    var menu={
+    "" : { "title" : "Main Color" },
+    "< Back" : showMainMenu,
+
+    }
+    var cols = ["#F00","#0F0","#FF0",
+                    "#00F","#F0F","#0FF",
+                    "#000","#888","#fff",];
+    cols.forEach(col => {
+        menu[" "+getColorsImage([col])] = () => {
+          settings.mainColor=col;
+          writeSettings();
+          showMainMenu();
+        };
+      });
+    E.showMenu(menu);
+  }
+  
   function showMainMenu(){
   // Show the menu
     E.showMenu({
       "" : { "title" : "Ultra Info" },
       "< Back" : () => back(),
+      'Main Color': showMainColor,
       'Accent Color': showAccentColor
-
     });
   }
   showMainMenu()
