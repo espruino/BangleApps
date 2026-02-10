@@ -1,4 +1,5 @@
-(() => {
+setTimeout( // make other boot code run first, so we can override android.boot.js
+  () => {
     /**
      * Sends a message to the gadgetbridge via Bluetooth.
      * @param {Object} message - The message to be sent.
@@ -12,8 +13,12 @@
         }
     }
 
+    var storage = require("Storage");
     var max_acceleration = { x: 0, y: 0, z: 0, diff: 0, td: 0, mag: 0 };
     var hasData = false;
+    var intervalId;
+    var config = storage.readJSON("accelsender.json", 1) || {};
+    var configChanged = false;
 
     /**
      * Updates the maximum acceleration if the current acceleration is greater.
@@ -46,10 +51,59 @@
         hasData = false;
     }
 
-    var config = require("Storage").readJSON("accelsender.json") || {};
-    if (config.enabled) { // Gadgetbridge needs to enable and disable tracking by writing {enabled: true} to "accelsender.json" and reloading
-        setInterval(sendAccelerationData, config.interval);
-        Bangle.on("accel", updateAcceleration); // Log all acceleration events
+    function onConfigChanged() {
+        if (config.enabled) startTracking();
+        else stopTracking();
+        Bangle.emit("accelsender", config);
     }
 
-})();
+    function setConfig(n, v) {
+        if (config[n] !== v) {
+            config[n] = v;
+            configChanged = true;
+            onConfigChanged();
+        }
+    }
+
+    // Provide global ways to access in-memory config
+    globalThis.accelSender = {
+        setEnabled: (v) => setConfig("enabled", v),
+        setWidget: (v) => setConfig("widget", v),
+        setInterval: (v) => setConfig("interval", v),
+        isEnabled: () => config.enabled,
+        getInterval: () => config.interval || 5000,
+        getWidget: () => config.widget || 0
+    };
+
+    // Wrap the GB handler to listen for messages from gadgetbridge
+    globalThis.GB = (_GB => e => {
+        switch (e.t) {
+            case "accelsender":
+                // Note: GB sends "enable" instead of "enabled"
+                globalThis.accelSender.setEnabled(e.enable);
+                // Note: this is ignoring interval variable from GB and prefering watch settings
+                break;
+            default:
+                if (_GB) setTimeout(_GB, 0, e);
+        }
+    })(globalThis.GB);
+
+    function startTracking() {
+        if (intervalId) stopTracking();
+        intervalId = setInterval(sendAccelerationData, globalThis.accelSender.getInterval());
+        Bangle.on("accel", updateAcceleration);
+    }
+
+    function stopTracking() {
+        if (intervalId) { clearInterval(intervalId); intervalId = undefined; }
+        Bangle.removeListener("accel", updateAcceleration);
+    }
+
+    // On kill, save config if changed
+    Bangle.on("kill", () => {
+        if (configChanged) storage.writeJSON("accelsender.json", config);
+    });
+
+    // On initial load, apply config
+    onConfigChanged();
+}, 1);
