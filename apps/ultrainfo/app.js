@@ -45,27 +45,7 @@ function drawProgBar(x,y,w,val,col){
     .fillRect({x:x,y:y-2,w:w*Math.min(1,val),h:3,r:8})
 }
 
-let drawInlineClockInfo = function(itm, info, options, left) {
-  background.fillRect(options.x, options.y, options.x + options.w, options.y + options.h);
-  let font = g.findFont(info.text, {
-    w: options.w - 28,
-    h: 40,
-    max: 35,
-    wrap: true,
-    trim: true
-  });
-  const mid = options.y + (options.h /2);
-  g.setFont(font.font)
-    .setColor(options.focus ? settings.accentColor : g.theme.bg)
-    .drawImage(info.img,
-      left ? options.x + options.w - 27 : options.x+3,
-      mid - 12)
-    .setFontAlign(left ? 1 : -1, 0)
-    .drawString(font.text,
-      left ? options.x + options.w - 28  // right-aligned: just before icon
-           : options.x + 28,             // left-aligned: just after icon
-      mid);
-};
+
 let drawRectClockInfo=function(itm,info,options,top){
     background.fillRect(options.x, options.y, options.x+options.w, options.y+options.h)
   
