@@ -115,7 +115,7 @@ const edge = 0;
 const gap = 2;
 const itemW = (g.getWidth() - 2 * edge - 2 * gap) / 3;
 
-let tlClkInfo = require("clock_info").addInteractive(clockInfoItems, {
+require("clock_info").addInteractive(clockInfoItems, {
   x: edge,
   y: 3,
   w: itemW,
@@ -125,7 +125,7 @@ let tlClkInfo = require("clock_info").addInteractive(clockInfoItems, {
   }
 });
 
-let tmClkInfo = require("clock_info").addInteractive(clockInfoItems, {
+require("clock_info").addInteractive(clockInfoItems, {
   x: edge + itemW + gap,
   y: 3,
   w: itemW,
@@ -135,7 +135,7 @@ let tmClkInfo = require("clock_info").addInteractive(clockInfoItems, {
   }
 });
 
-let trClkInfo = require("clock_info").addInteractive(clockInfoItems, {
+require("clock_info").addInteractive(clockInfoItems, {
   x: edge + itemW + gap + itemW + gap,
   y: 3,
   w: itemW,
@@ -145,7 +145,7 @@ let trClkInfo = require("clock_info").addInteractive(clockInfoItems, {
   }
 });
 
-let blClkInfo = require("clock_info").addInteractive(clockInfoItems, {
+require("clock_info").addInteractive(clockInfoItems, {
   x: edge,
   y: g.getHeight() - 60 - 3,
   w: itemW,
@@ -155,7 +155,7 @@ let blClkInfo = require("clock_info").addInteractive(clockInfoItems, {
   }
 });
 
-let bmClkInfo = require("clock_info").addInteractive(clockInfoItems, {
+require("clock_info").addInteractive(clockInfoItems, {
   x: edge + itemW + gap,
   y: g.getHeight() - 60 - 3,
   w: itemW,
@@ -165,7 +165,7 @@ let bmClkInfo = require("clock_info").addInteractive(clockInfoItems, {
   }
 });
 
-let brClkInfo = require("clock_info").addInteractive(clockInfoItems, {
+require("clock_info").addInteractive(clockInfoItems, {
   x: edge + itemW + gap + itemW + gap,
   y: g.getHeight() - 60 - 3,
   w: itemW,
