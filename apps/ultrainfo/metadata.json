@@ -18,6 +18,10 @@
   ],
   "storage": [
     {"name":"ultrainfo.app.js","url":"app.js"},
+    {"name":"ultrainfo.settings.js","url":"settings.js"},
     {"name":"ultrainfo.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [
+    {"name":"ultrainfo.json"}
   ]
 }
