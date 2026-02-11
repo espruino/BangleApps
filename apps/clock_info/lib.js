@@ -87,15 +87,14 @@ exports.load = function() {
       hide : function() { clearInterval(this.interval); delete this.interval; Bangle.removeListener("charging", batteryUpdateHandler); },
     },
     { name: "BLE",
-      getText: () => {
-        const s = NRF.getSecurityStatus();
-        if (s.connected) return "Conn.";
-        else if (s.advertising) return "On";
-        else return "Off";
-      },
       get: function() {
+        const s = NRF.getSecurityStatus();
+        let text;
+        if (s.connected) text="Conn";
+        else if (s.advertising) text="On";
+        else text="Off";
         return {
-          text: this.getText(),
+          text: text,
           img: atob("GBiBAAAAAAAAAAAYAAAcAAAWAAATAAARgAMRgAGTAADGAAB8AAA4AAA4AAB8AADGAAGTAAMRgAARgAATAAAWAAAcAAAYAAAAAAAAAA==")
           // small gaps added to BLE icon to ensure middle of B isn't filled
         };
