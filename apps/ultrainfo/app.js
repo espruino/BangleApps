@@ -111,7 +111,6 @@ let drawRectClockInfo = function (itm, info, options, top) {
     );
 };
 
-// Option 2: Larger edge gaps (3px), smaller internal gaps (2px)
 const edge = 0;
 const gap = 2;
 const itemW = (g.getWidth() - 2 * edge - 2 * gap) / 3;
