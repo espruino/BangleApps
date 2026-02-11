@@ -102,7 +102,7 @@ exports.load = function() {
       },
       run: function() {
         const state = NRF.getSecurityStatus();
-        if (state.connected||state.advertising) {
+        if (state.connected || state.advertising) {
           NRF.sleep();
         } else {
           NRF.wake();
