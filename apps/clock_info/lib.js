@@ -89,9 +89,9 @@ exports.load = function() {
     { name: "BLE",
       state: () => {
         const s = NRF.getSecurityStatus();
-        if(s.advertising)return "On"
-        else if(s.connected) return "Conn."
-        else return "Off"
+        if (s.connected) return "Conn.";
+        else if (s.advertising) return "On";
+        else return "Off";
       },
       get: function() {
         return {
