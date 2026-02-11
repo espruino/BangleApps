@@ -101,7 +101,7 @@ exports.load = function() {
         };
       },
       run: function() {
-        var state=NRF.getSecurityStatus();
+        const state = NRF.getSecurityStatus();
         if (state.connected||state.advertising) {
           NRF.sleep();
         } else {
