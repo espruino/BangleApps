@@ -8,6 +8,7 @@
   "type": "bootloader",
   "tags": "tool",
   "supports": ["BANGLEJS2"],
+  "author": "kyleplo",
   "storage": [
     {"name":"powersave.boot.js","url":"boot.js"},
     {"name":"powersave.screen.js","url":"screen.js"}

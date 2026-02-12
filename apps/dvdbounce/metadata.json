@@ -10,6 +10,7 @@
     "BANGLEJS",
     "BANGLEJS2"
   ],
+  "author": "TrinTragula",
   "readme": "README.md",
   "allow_emulator": true,
   "storage": [
