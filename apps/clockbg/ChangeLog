@@ -10,4 +10,4 @@
 0.08: Allow backgrounds with a random choice of colour schemes
       Default (solid colour) now uses a variety of shades
       Added .load/.unload to allow changes when fast loading clocks
-0.09: Add more plasma colours, random plasma color uses all the available colours
+0.09: Add more plasma and ring bg colours, random plasma color uses all the available colours
