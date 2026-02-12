@@ -286,7 +286,7 @@ const showMenu = function() {
       E.showMenu();
       setUI();
     },
-    /*LANG*/"Exit": () => load(),
+    /*LANG*/"Exit": () => Bangle.load(),
     /*LANG*/"Settings": () =>
       eval(require('Storage').read('calendar.settings.js'))(() => {
         loadSettings();
@@ -296,7 +296,7 @@ const showMenu = function() {
   };
   if (require("Storage").read("alarm.app.js")) {
     menu[/*LANG*/"Launch Alarms"] = () => {
-      load("alarm.app.js");
+      Bangle.load("alarm.app.js");
     };
   }
   require("widget_utils").show();

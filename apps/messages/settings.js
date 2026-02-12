@@ -12,6 +12,7 @@
     if (settings.maxMessages===undefined) settings.maxMessages=3;
     if (settings.iconColorMode === undefined) settings.iconColorMode = iconColorModes[0];
     if (settings.ignoreUnread === undefined) settings.ignoreUnread = 0;
+    if (settings.autoOpen === undefined) settings.autoOpen = 1;
     settings.unlockWatch=!!settings.unlockWatch;
     settings.openMusic=!!settings.openMusic;
     settings.maxUnreadTimeout=240;
@@ -79,9 +80,11 @@
       value: !!settings.quietNoAutOpn,
       onchange: v => updateSetting("quietNoAutOpn", v)
     },
-    /*LANG*/'Disable auto-open': {
-      value: !!settings.noAutOpn,
-      onchange: v => updateSetting("noAutOpn", v)
+    /*LANG*/'Auto-open new msg': {
+      value: settings.autoOpen&3,
+      min:0,max:3,step:1,
+      format: v=>["Never","On clock","If locked","Always"][v],
+      onchange: v => updateSetting("autoOpen", v)
     },
     /*LANG*/'Widget messages': {
       value:0|settings.maxMessages,

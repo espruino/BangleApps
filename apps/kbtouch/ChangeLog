@@ -3,3 +3,4 @@
 0.03: Convert Yes/No On/Off in settings to checkboxes
 0.04: Catch and discard swipe events on fw2v19 and up (as well as some cutting
 	edge 2v18 ones), allowing compatability with the Back Swipe app.
+0.05: Ensure we can't drag the cursor to a column on the right that doesn't exist

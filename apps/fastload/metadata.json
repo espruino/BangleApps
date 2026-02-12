@@ -3,7 +3,7 @@
   "shortName" : "Fastload Utils",
   "version": "0.06",
   "icon": "icon.png",
-  "description": "Enable experimental fastloading for more apps",
+  "description": "Enable experimental fastloading for more apps. ⚠️ Use with extreme caution - many apps are not compatible with fastload and will cause memory leaks and instability.",
   "type":"bootloader",
   "tags": "system",
   "supports": ["BANGLEJS2"],

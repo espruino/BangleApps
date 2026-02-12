@@ -21,18 +21,18 @@ const advertise = (options: SetAdvertisingOptions) => {
 		}
 		return obj;
 	};
-  /* 2v26 added manufacturer=0x0590 by default, but if we're advertising
-  extra stuff we'll want to explicitly remove that so there's space */
-  if (process.env.VERSION >= "2.26") {
-    options = options||{};
-    if (!options.manufacturer) options.manufacturer=false;
-  }
+	/* 2v26 added manufacturer=0x0590 by default, but if we're advertising
+	extra stuff we'll want to explicitly remove that so there's space */
+	if (process.env.VERSION >= "2.26") {
+		options = options||{};
+		if (!options.manufacturer) options.manufacturer=false;
+	}
 
 	// clone the object, to avoid firmware behaving like so:
 	// bleAdvert = [Uint8Array, { [0x180f]: ... }]
-	//              ^           ^
-	//              |           |
-	//              |           +- added by this call
+	//              ^            ^
+	//              |            |
+	//              |            +- added by this call
 	//              +- modified from a previous setAdvertising()
 	//
 	// The firmware (jswrap_ble_setAdvertising) will convert arrays within
@@ -41,11 +41,19 @@ const advertise = (options: SetAdvertisingOptions) => {
 	// taking effect for later calls.
 	//
 	// This also allows us to identify previous adverts correctly by id.
-  try {
-		NRF.setAdvertising(clone((Bangle as BangleWithAdvert).bleAdvert), options);
-  } catch (e) {
-		console.log("ble_advert error", e);
-  }
+	let adv = clone((Bangle as BangleWithAdvert).bleAdvert);
+	try {
+		NRF.setAdvertising(adv, options);
+	} catch (e) {
+		if ((e as Error).toString().includes("INVALID_LENGTH")) {
+			options.showName=false; // if the advertising is too long, automatically remove the Bangle's name from advertisements
+			try {
+				NRF.setAdvertising(adv, options);
+			} catch (e) {
+				console.log("ble_advert error", e);
+			}
+		}
+	}
 };
 
 const manyAdv = (bleAdvert: BleAdvert | BleAdvert[] | undefined): bleAdvert is BleAdvert[] => {
@@ -65,7 +73,7 @@ exports.set = (id: string | number, advert: number[], options?: SetAdvertisingOp
 				ad[id] = advert;
 				found = true;
 				// if(typeof BLE_DEBUG !== "undefined")
-				// 	console.log(`bleAdvert is array, found existing entry for ${id}, replaced`)
+				//	console.log(`bleAdvert is array, found existing entry for ${id}, replaced`)
 				break;
 			}
 		}
@@ -75,11 +83,11 @@ exports.set = (id: string | number, advert: number[], options?: SetAdvertisingOp
 			else
 				bangle.bleAdvert.push({ [id]: advert });
 			// if(typeof BLE_DEBUG !== "undefined")
-			// 	console.log(`bleAdvert is array, no entry for ${id}, created`)
+			//	console.log(`bleAdvert is array, no entry for ${id}, created`)
 		}
 	}else if(bangle.bleAdvert){
 		// if(typeof BLE_DEBUG !== "undefined")
-		// 	console.log(`bleAdvert is object, ${id} entry ${id in bangle.bleAdvert ? "replaced" : "created"}`);
+		//	console.log(`bleAdvert is object, ${id} entry ${id in bangle.bleAdvert ? "replaced" : "created"}`);
 		if(Array.isArray(bangle.bleAdvert)){
 			bangle.bleAdvert = [bangle.bleAdvert, { [id]: advert }];
 		}else{
@@ -87,12 +95,12 @@ exports.set = (id: string | number, advert: number[], options?: SetAdvertisingOp
 		}
 	}else{
 		// if(typeof BLE_DEBUG !== "undefined")
-		// 	console.log(`bleAdvert not present, created`);
+		//	console.log(`bleAdvert not present, created`);
 		bangle.bleAdvert = { [id]: advert };
 	}
 
 	// if(typeof BLE_DEBUG !== "undefined")
-	// 	console.log(`NRF.setAdvertising({ ${Object.keys(bangle.bleAdvert).join(", ")} }, ${JSON.stringify(options)})`);
+	//	console.log(`NRF.setAdvertising({ ${Object.keys(bangle.bleAdvert).join(", ")} }, ${JSON.stringify(options)})`);
 
 	advertise(options);
 };
@@ -112,12 +120,11 @@ exports.push = (adv: number[], options?: SetAdvertisingOptions) => {
 	advertise(options);
 };
 
-/*
 exports.remove = (id: string | number, options?: SetAdvertisingOptions) => {
 	const bangle = Bangle as BangleWithAdvert;
 
 	// if(typeof BLE_DEBUG !== "undefined")
-	// 	console.log(`ble_advert.remove(${id}, ${JSON.stringify(options)})`);
+	//	console.log(`ble_advert.remove(${id}, ${JSON.stringify(options)})`);
 
 	if(manyAdv(bangle.bleAdvert)){
 		let i = 0;
@@ -125,13 +132,8 @@ exports.remove = (id: string | number, options?: SetAdvertisingOptions) => {
 			if(Array.isArray(ad)) continue;
 			if(ad[id]){
 				delete ad[id];
-				let empty = true;
-				// eslint-disable-next-line no-unused-vars
-				for(const _ in ad){
-					empty = false;
-					break;
-				}
-				if(empty) bangle.bleAdvert.splice(i, 1);
+				if(Object.keys(ad).length === 0)
+					bangle.bleAdvert.splice(i, 1);
 				break;
 			}
 			i++;
@@ -143,4 +145,3 @@ exports.remove = (id: string | number, options?: SetAdvertisingOptions) => {
 
 	advertise(options);
 };
-*/

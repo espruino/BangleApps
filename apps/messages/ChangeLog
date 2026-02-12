@@ -12,3 +12,8 @@
 0.66: Fix 'Auto-Open Unread Msg' polarity - previously checking the box would ignore unread messages
 0.67: Ensure default vibration pattern is longer
       Add Option to show widgets (Message GUI 0.86 removes them by default)
+0.68: New settings for when to auto show new message (never, on clocks -
+      default, if locked, always)
+0.69: Remove .music field (which is not used - require("messages").getMessages().find(m=>m.id=="music") works fine)
+      Ensure .getMessages uses Bangle.MESSAGES to return the most up to date message info
+0.70: Fix message app not showing latest music messages

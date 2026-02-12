@@ -13,11 +13,11 @@
 /* For example for maps:
 
 // a message
-require("messages").pushMessage({"t":"add","id":1575479849,"src":"WhatsApp","title":"My Friend","body":"Hey! How's everything going?",reply:1,negative:1})
-require("messages").pushMessage({"t":"add","id":1575479850,"src":"Skype","title":"My Friend","body":"Hey! How's everything going? This is a really really long message that is really so super long you'll have to scroll it lots and lots",positive:1,negative:1})
-require("messages").pushMessage({"t":"add","id":23232,"src":"Skype","title":"Mr. Bobby McBobFace","body":"Boopedy-boop",positive:1,negative:1})
-require("messages").pushMessage({"t":"add","id":23233,"src":"Skype","title":"Thyttan test","body":"Nummerplåtsbelysning trodo",positive:1,negative:1})
-require("messages").pushMessage({"t":"add","id":23234,"src":"Skype","title":"Thyttan test 2","body":"Nummerplåtsbelysning trodo Nummerplåtsbelysning trodo Nummerplåtsbelysning trodo Nummerplåtsbelysning trodo Nummerplåtsbelysning trodo Nummerplåtsbelysning trodo",positive:1,negative:1})
+require("messages").pushMessage({"t":"add","id":1575479849,"src":"WhatsApp","title":"My Friend","body":"Hey! How's everything going?","date":new Date().toISOString(),reply:1,negative:1})
+require("messages").pushMessage({"t":"add","id":1575479850,"src":"Skype","title":"My Friend","body":"Hey! How's everything going? This is a really really long message that is really so super long you'll have to scroll it lots and lots","date":new Date().toISOString(),positive:1,negative:1})
+require("messages").pushMessage({"t":"add","id":23232,"src":"Skype","title":"Mr. Bobby McBobFace","body":"Boopedy-boop","date":new Date().toISOString(),positive:1,negative:1})
+require("messages").pushMessage({"t":"add","id":23233,"src":"Skype","title":"Thyttan test","body":"Nummerplåtsbelysning trodo","date":new Date().toISOString(),positive:1,negative:1})
+require("messages").pushMessage({"t":"add","id":23234,"src":"Skype","title":"Thyttan test 2","body":"Nummerplåtsbelysning trodo Nummerplåtsbelysning trodo Nummerplåtsbelysning trodo Nummerplåtsbelysning trodo Nummerplåtsbelysning trodo Nummerplåtsbelysning trodo","date":new Date().toISOString(),positive:1,negative:1})
 // maps
 GB({t:"nav",src:"maps",title:"Navigation",instr:"High St towards Tollgate Rd",distance:"966m",action:"continue",eta:"08:39"})
 GB({t:"nav",src:"maps",title:"Navigation",instr:"High St",distance:"12km",action:"left_slight",eta:"08:39"})
@@ -36,7 +36,7 @@ var fontMedium = fontList.includes("17")?"17":(fontList.includes("6x15")?"6x15":
 var fontBig = fontList.includes("22")?"22":(fontList.includes("12x20")?"12x20":"6x8:2");
 var fontLarge = fontList.includes("28")?"28":(fontList.includes("6x15")?"6x15:2":"6x8:4");
 var fontVLarge = fontList.includes("22")?"22:2":(fontList.includes("6x15")?"12x20:2":"6x8:5");
-
+var redrawMsgInterval;
 // If a font library is installed, just switch to using that for everything in messages
 if (Graphics.prototype.setFontIntl) {
   fontSmall = "Intl";
@@ -61,11 +61,15 @@ to the clock. */
 var unreadTimeout;
 /// List of all our messages
 var MESSAGES = require("messages").getMessages();
-if (Bangle.MESSAGES) {
-  // fast loading messages
-  Bangle.MESSAGES.forEach(m => require("messages").apply(m, MESSAGES));
-  delete Bangle.MESSAGES;
+delete Bangle.MESSAGES; // now we're storing all messages and handling them ourselves
+if (Bangle.MESSAGES_KILL_HANDLER) {
+  E.removeListener("kill", Bangle.MESSAGES_KILL_HANDLER);
+  delete Bangle.MESSAGES_KILL_HANDLER;
 }
+E.on("kill", function() { // now ensure we write messages on exit
+  // if we write the exact same data it's ok - Bangle.js won't create a new file
+  require("messages").write(MESSAGES, true/*force*/);
+});
 
 var onMessagesModified = function(type,msg) {
   if (msg.handled) return;
@@ -86,10 +90,6 @@ var onMessagesModified = function(type,msg) {
 };
 Bangle.on("message", onMessagesModified);
 
-function saveMessages() {
-  require("messages").write(MESSAGES);
-}
-E.on("kill", saveMessages);
 
 /* Listens to drag events to allow the user to swipe up/down to change message on Bangle.js 2
 returns dragHandler which should then be removed with Bangle.removeListener("drah", dragHandler); on exit */
@@ -118,6 +118,30 @@ function addDragHandlerToChangeMessage(idx, scroller) {
   };
   Bangle.on("drag", dragHandler);
   return dragHandler;
+}
+
+function getTimeAgo(isoString) {
+  var date = new Date(isoString);
+  var time = date.getTime();
+  if (isNaN(time)) return "";
+  var totalMin = Math.floor((Date.now() - time) / 60000);
+
+  if (totalMin < 1) return "Now";
+
+  if (totalMin < 60) {
+    return totalMin + "m ago";
+  }
+
+  if (totalMin < 1440) { // Under 24h
+    var h = Math.floor(totalMin / 60);
+    var m = totalMin % 60;
+    return h + "h " + m + "m ago";
+  }
+
+  // Days and hours
+  var d = Math.floor(totalMin / 1440);
+  var h = Math.floor((totalMin % 1440) / 60);
+  return d + "d " + h + "h ago";
 }
 
 function showMapMessage(msg) {
@@ -346,6 +370,10 @@ function showMessage(msgid, persist) {
   if(!persist) resetReloadTimeout();
   let idx = MESSAGES.findIndex(m=>m.id==msgid);
   let msg = MESSAGES[idx];
+  if(redrawMsgInterval){
+    clearInterval(redrawMsgInterval);
+    redrawMsgInterval=null;
+}
   if (!msg) return returnToClockIfEmpty(); // go home if no message found
   if (msg.id=="music") {
     cancelReloadTimeout(); // don't auto-reload to clock now
@@ -355,6 +383,9 @@ function showMessage(msgid, persist) {
     cancelReloadTimeout(); // don't auto-reload to clock now
     return showMapMessage(msg);
   }
+  redrawMsgInterval=setInterval(function(){
+    showMessage(msgid, persist);
+  },60000); // redraw message every minute to update "time ago"
   // remove widgets here as we need to check the height when choosing a font
   Bangle.setUI(); // force last UI to be removed (will call require("widget_utils").show(); if last displaying a message)
   if (!settings.showWidgets) require("widget_utils").hide();
@@ -363,6 +394,7 @@ function showMessage(msgid, persist) {
   let src=msg.src||/*LANG*/"Message", srcFont = fontSmall;
   let title=msg.title||"", titleFont = fontLarge, lines=[];
   let body=msg.body, bodyFont = fontLarge;
+  let date=msg.date?getTimeAgo(msg.date):"";
   // If no body, use the title text instead...
   if (!body) {
     body = title;
@@ -404,6 +436,19 @@ function showMessage(msgid, persist) {
     };
     rowLeftDraw = function(r) {g.setColor("#f00").drawImage(atob("PhAB4A8AAAAAAAPAfAMAAAAAD4PwHAAAAAA/H4DwAAAAAH78B8AAAAAA/+A/AAAAAAH/Af//////w/gP//////8P4D///////H/Af//////z/4D8AAAAAB+/AfAAAAAA/H4DwAAAAAPg/AcAAAAADwHwDAAAAAA4A8AAAAAAAA=="),r.x+2,r.y+2);};
   }
+  let drawDate=function(r,rd,ld){
+   // draws time ago. If there's nothing in one of the columns, take that space.
+    g.setColor(g.theme.fg).setBgColor(g.theme.bg).setFont(srcFont);
+    if ((rd&&ld)||(!rd&&!ld)) {
+      let m = g.stringMetrics("--"+date), x = r.x+(r.w/2);
+      g.setFontAlign(0,-1)
+       .clearRect(x-(m.width/2),r.y+2,x+(m.width/2),r.y+m.height)
+       .drawString(date,x,r.y+5,1);
+    } else if (!rd)
+      g.setFontAlign(1,-1).drawString(date,r.x+r.w-6,r.y+5);
+    else if (!ld)
+      g.setFontAlign(-1,-1).drawString(date,r.x+6,r.y+5);
+  }
   if (msg.reply && reply) {
     posHandler = ()=>{
       replying = true;
@@ -430,6 +475,7 @@ function showMessage(msgid, persist) {
     };
     rowRightDraw = function(r) {g.setColor("#0f0").drawImage(atob("QRABAAAAAAAAAAOAAAAABgAAA8AAAAADgAAD4AAAAAHgAAPgAAAAAPgAA+AAAAAAfgAD4///////gAPh///////gA+D///////AD4H//////8cPgAAAAAAPw8+AAAAAAAfB/4AAAAAAA8B/gAAAAAABwB+AAAAAAADAB4AAAAAAAAABgAA=="),r.x+r.w-64,r.y+2);};
   }
+  
   let fontHeight = g.setFont(bodyFont).getFontHeight();
   let lineHeight = (fontHeight>25)?fontHeight:25;
   if (title.includes("\n") && lineHeight<25) lineHeight=25; // ensure enough room for 2 lines of title in header
@@ -457,6 +503,7 @@ function showMessage(msgid, persist) {
         if (idx!=1) return;
         if (rowLeftDraw) rowLeftDraw(r);
         if (rowRightDraw) rowRightDraw(r);
+        if (date) drawDate(r,rowRightDraw,rowLeftDraw);
       } else { // idx==0 => header
         g.setBgColor(g.theme.bg2).setColor(g.theme.fg).clearRect(r.x,r.y,r.x+r.w, r.y+r.h);
         if (!settings.showWidgets && Bangle.isLocked()) g.drawImage(atob("DhABH+D/wwMMDDAwwMf/v//4f+H/h/8//P/z///f/g=="), r.x+1,r.y+4); // locked symbol
@@ -477,6 +524,10 @@ function showMessage(msgid, persist) {
       Bangle.removeListener("drag", dragHandler);
       Bangle.removeListener("swipe", swipeHandler);
       Bangle.removeListener("lock", lockHandler);
+      if(redrawMsgInterval){
+        clearInterval(redrawMsgInterval);
+        redrawMsgInterval=null;
+      }
       if (!settings.showWidgets) require("widget_utils").show();
     },
     back : function() {
@@ -644,7 +695,7 @@ setTimeout(() => {
     openMusic: ((musicMsg&&musicMsg.new) && settings.openMusic) || (musicMsg&&musicMsg.state=="show"),
     dontStopBuzz: 1 });
 }, 10); // if checkMessages wants to 'load', do that
-
+  
 /* If the Bangle is unlocked by the user, treat that
 as a queue to stop repeated buzzing */
 Bangle.on('lock',locked => {

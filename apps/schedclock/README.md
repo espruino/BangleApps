@@ -27,6 +27,12 @@ If you skip this step, orphaned alarms may cause error logs but won't affect fun
 
 You can also remove the extra `schedclock` alarms manually with the [Scheduler](/?id=sched) app.
 
+## Fastload Utils
+
+If you are using `Fastload Utils` (https://banglejs.com/apps/?id=fastload) it may not load the new face until the next time it does a full load.
+
+You may be able to work around this by enabling FastLoad's setting to detect settings changes.
+
 ## Creator
 
 [kidneyhex](https://github.com/kidneyhex)

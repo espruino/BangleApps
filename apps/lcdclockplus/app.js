@@ -1,6 +1,25 @@
 Graphics.prototype.setFont7Seg = function() {
-  return this.setFontCustom(atob("AAAAAAAAAAAACAQCAAAAAAIAd0BgMBdwAAAAAAAADuAAAB0RiMRcAAAAAiMRiLuAAAcAQCAQdwAADgiMRiIOAAAd0RiMRBwAAAAgEAgDuAAAd0RiMRdwAADgiMRiLuAAAABsAAAd0QiEQdwAADuCIRCIOAAAd0BgMBAAAAAOCIRCLuAAAd0RiMRAAAADuiEQiAAAAAd0BgMBBwAADuCAQCDuAAAdwAAAAAAAAAAAIBALuAAAdwQCAQdwAADuAIBAIAAAAd0AgEAcEAgEAdwAd0AgEAdwAADugMBgLuAAAd0QiEQcAAADgiEQiDuAAAd0AgEAAAAADgiMRiIOAAAAEAgEAdwAADuAIBALuAAAdwBAIBdwAADuAIBAIOAIBALuADuCAQCDuAAAcAQCAQdwAAAOiMRiLgAAAA=="), 32, atob("BwAAAAAAAAAAAAAAAAcCAAcHBwcHBwcHBwcEAAAAAAAABwcHBwcHBwcHBwcHCgcHBwcHBwcHBwoHBwc="), 9);
+  return this.setFontCustom(atob("AAAAAAAAACAQAAAAIAd0BgLuAAAAAAdwAB0RiLgAAAiMRdwAcAQCDuADgiMRBwAd0RiIOAAAgEAdwAd0RiLuADgiMRdwAABsADuiEQdwAdwRCIOADugMBAAABwRCLuADuiMRAAAd0QiAAADugMBBwAdwQCDuADuAAAAAAAABALuADuCAQdwAdwBAIAADugEAcEAdwAd0AgDuADugMBdwAd0QiDgADgiEQdwAd0AgAAADgiMRBwAAEAgDuADuAIBdwAdwBALuADuAIBBwBdwAdwQCDuADgCAQdwAB0RiLgAA="), 32, atob("BQAAAAAAAAAAAAAAAAUCAAUFBQUFBQUFBQUDAAAAAAAABQUFBQUFBQUFBQUFBwUFBQUFBQUFBQcFBQU="), 9);
 };
+/* font created with:
+require("sevenseg_font_tools").createFont({
+  img : `
+ aa j
+f  b i
+fx b i
+fx b i
+ gg
+ex c i
+ex c i
+e  c i
+odd h`,
+  width : 5, // width +1 for empty column
+  colonWidth : 3, // width of colon
+  doubleWidth : 7, // width for double-size (eg 'W' and 'M')
+  height : 9,
+  export : "alphanum"
+});
+*/
 
 
 { // must be inside our own scope here so that when we are unloaded everything disappears
@@ -48,10 +67,8 @@ let clockInfoDraw = (itm, info, options) => {
   if (options.focus) g.setBgColor("#FF0");
   g.clearRect({x:options.x,y:options.y,w:options.w,h:options.h,r:8});
 
-  if (info.img) {
-    g.drawImage(info.img, options.x+1,options.y+2);
-  }
-  var text = info.text.toString().toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (info.img) g.drawImage(info.img, options.x+1,options.y+2);
+  var text = info.text.toString().toUpperCase().replace(/[^A-Z0-9-.]/g, "");
   if (g.setFont("7Seg:2").stringWidth(text)+24-2>options.w) g.setFont("7Seg");
   g.setFontAlign(0,-1).drawString(text, options.x+options.w/2+13, options.y+6);
 };

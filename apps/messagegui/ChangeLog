@@ -119,3 +119,9 @@
 0.87: Make choosing of font size more repeatable
 0.88: Adjust padding calculation so messages are spaced out properly even when using international fonts
 0.89: Fix bugs related to empty titles and bodies
+0.90: New settings for when to auto show new message (never, on clocks -
+      default, if locked, always)
+0.91: Ensure music messages are actually saved in the messages list so the currently playing track persists
+      Use E.on("kill" event to ensure we always save messages before changing app
+      Simplify message handling now messages lib automatically applies Bangle.messages
+0.92: Add support for displaying the time since the message was received using the 'date' parameter when pushing a message.
