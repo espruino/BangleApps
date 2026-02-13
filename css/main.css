@@ -277,13 +277,6 @@
       padding-right: 0.3em !important;
       gap: 1em;
     }
-    .inline-icon {
-      display: inline-block; /* Ensures the image behaves inline but allows width/height adjustments */
-      width: 1em;           /* Set the desired width */
-      height: 1em;          /* Set the desired height */
-      vertical-align:sub;
-      margin-right: 5px;
-    }
 
 
     #tab-navigate {
