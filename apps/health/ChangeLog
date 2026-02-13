@@ -42,3 +42,4 @@
 0.36: Fix Distance graphs that used '1*' to remove the suffix
 0.37: Reduce movement limit for HRM off from 400 to 100
       Fix daily summary for movement (was not scaling down correctly)
+0.38: Add quick menu option for the 'Calories' app, if installed.
