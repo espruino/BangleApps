@@ -8,6 +8,7 @@
   "supports" : ["BANGLEJS2"],
   "readme":"README.md",
   "type": "bootloader",
+  "author": "Kedlub",
   "storage": [
     {"name":"backswipe.boot.js","url":"boot.js"},
     {"name":"backswipe.settings.js","url":"settings.js"}

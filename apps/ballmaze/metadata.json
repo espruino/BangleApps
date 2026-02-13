@@ -6,6 +6,7 @@
   "icon": "icon.png",
   "type": "app",
   "tags": "game",
+  "author": "rigrig",
   "supports": ["BANGLEJS"],
   "readme": "README.md",
   "storage": [
