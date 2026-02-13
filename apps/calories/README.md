@@ -66,6 +66,7 @@ require("calories").calcCalories(
 ```
 
 * **require("calories").calcBMR**: Takes in myProfile data, and returns a bmr rate (calories/minute) from that data. The rate is unrounded for accuracy, so you must handle rounding accordingly.
+
 ```javascript
 // This code passes in myProfile data to get BMR rate.
 require("calories").calcBMR(require("Storage").
