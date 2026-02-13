@@ -54,6 +54,7 @@ Calorie data for the day can be accessed through `global.calories`, which is an 
 The app also provides a module for calculations that can be loaded using `require("calories")`.
 
 * **require("calories").calcCalories**: Takes in health data and myProfile data, and returns an object with `activeCalories` and `bmrCalories`. Total calories are found by adding the two. **Note: The health data must contain heart rate (bpm), steps, and a duration in minutes**
+
 ```javascript
 
 // This code uses the latest health data
