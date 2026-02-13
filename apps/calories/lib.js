@@ -7,8 +7,30 @@ let calcAge=function(rawBday){
   // Age in decimal years
   return diffInDays / 365.2425;
 }
+let showSetMyProfilePrompt=function(){
+  var file=global.__FILE__
+  E.showPrompt("'Calories' doesn't have MyProfile data needed to calculate calories burned!",{
+      title:"Unable to calculate",
+      buttons:{"Set data":true,"Cancel":false}
+  }).then(function(v){
+    if(v){
+      eval(require("Storage").read("myprofile.settings.js"))(()=>load());
+    }else{
+      if(file)load(file)
+      else load();
+    }
+  })
+}
 // returns cals/minute
 exports.calcBMR=function(myProfile){
+  if (!myProfile || 
+      !myProfile.weight || 
+      !myProfile.restingHrm || 
+      !myProfile.maxHrm || 
+      !myProfile.birthday){
+    showSetMyProfilePrompt();
+    return;
+  }
   let bmr=0;
   let weight = myProfile.weight;
   let age=calcAge(myProfile.birthday);
@@ -49,7 +71,8 @@ exports.calcCalories = function(healthData,myProfile) {
   
   if (!healthData || !healthData.duration) return;
   if (!myProfile || !myProfile.weight || !myProfile.restingHrm || !myProfile.maxHrm || !myProfile.birthday){
-    throw new Error("Calories: Not enough myProfile data to calculate!"); 
+    showSetMyProfilePrompt();
+    return; 
   }
   let weight = myProfile.weight;
   let age=calcAge(myProfile.birthday);
