@@ -56,7 +56,6 @@ The app also provides a module for calculations that can be loaded using `requir
 * **require("calories").calcCalories**: Takes in health data and myProfile data, and returns an object with `activeCalories` and `bmrCalories`. Total calories are found by adding the two. **Note: The health data must contain heart rate (bpm), steps, and a duration in minutes**
 
 ```javascript
-
 // This code uses the latest health data
 // It injects a duration of 10 minutes to that object, and passes
 // in myProfile data
@@ -74,6 +73,7 @@ require("calories").calcBMR(require("Storage").
 ```
 
 When new calories are calculated for that health interval, the `calories` event is emitted:
+
 ```javascript
 // Upon event, print calories burned.
 // (Data returned is the same as what's in global.calories)
