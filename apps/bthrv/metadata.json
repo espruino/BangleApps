@@ -9,6 +9,7 @@
   "tags": "health,bluetooth",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
+  "author": "halemmerich",
   "storage": [
     {"name":"bthrv.app.js","url":"app.js"},
     {"name":"bthrv.recorder.js","url":"recorder.js"},
