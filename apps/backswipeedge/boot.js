@@ -30,7 +30,6 @@
   let trig = false;
 
   Bangle.prependListener("drag", (e) => {
-    "jit";
     // do nothing when showing the clock
     if (Bangle.CLOCK === 1) {
       drag = false;

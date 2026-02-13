@@ -7,6 +7,7 @@
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
   "type": "bootloader",
+  "author": "rigrig",
   "tags": "widget,tool",
   "storage": [
     {"name":"wid_edit.boot.js","url":"boot.js"},

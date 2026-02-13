@@ -60,6 +60,10 @@ exports.load = function() {
       bangleItems.find(i=>i.name=="Altitude").emit('redraw');
     }
   }
+  function bleUpdateHandler() {
+      bangleItems.find(i=>i.name=="BLE").emit("redraw");
+
+  }
   // actual menu
   var menu = [{
     name: "Bangle",
@@ -83,28 +87,38 @@ exports.load = function() {
       hide : function() { clearInterval(this.interval); delete this.interval; Bangle.removeListener("charging", batteryUpdateHandler); },
     },
     { name: "BLE",
-      isOn: () => {
-        const s = NRF.getSecurityStatus();
-        return s.advertising || s.connected;
-      },
       get: function() {
+        const s = NRF.getSecurityStatus();
+        let text;
+        if (s.connected) text="Conn";
+        else if (s.advertising) text="On";
+        else text="Off";
         return {
-          text: this.isOn() ? "On" : "Off",
+          text: text,
           img: atob("GBiBAAAAAAAAAAAYAAAcAAAWAAATAAARgAMRgAGTAADGAAB8AAA4AAA4AAB8AADGAAGTAAMRgAARgAATAAAWAAAcAAAYAAAAAAAAAA==")
           // small gaps added to BLE icon to ensure middle of B isn't filled
         };
       },
       run: function() {
-        if (this.isOn()) {
+        const state = NRF.getSecurityStatus();
+        if (state.connected || state.advertising) {
           NRF.sleep();
         } else {
           NRF.wake();
           Bluetooth.setConsole(1);
         }
-        setTimeout(() => this.emit("redraw"), 250);
       },
-      show: function(){},
-      hide: function(){},
+      show: function(){
+        NRF.on("advertising", bleUpdateHandler);
+        NRF.on("connect", bleUpdateHandler);
+        NRF.on("disconnect", bleUpdateHandler);
+        bleUpdateHandler();
+      },
+      hide: function(){
+        NRF.removeListener("advertising", bleUpdateHandler);
+        NRF.removeListener("connect", bleUpdateHandler);
+        NRF.removeListener("disconnect", bleUpdateHandler);
+      }
     }
   ],
   }];
