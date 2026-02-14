@@ -11,9 +11,14 @@ Currently this app is used to enable Sleep as Android tracking for your Banglejs
 
 [Gadgetbridge - Sleep as Android integration](https://gadgetbridge.org/basics/integrations/sleep-as-android/)
 
-## Widget
+## Settings
 
-Enable the widget in the app settings to show when `accelsender` is active. Because sleep tracking is the primary use, the widget shows a bed icon in the top-right.
+- **Enabled**: Turns acceleration reporting on or off.
+- **Interval**: How often the app sends the latest acceleration data to the phone. Shorter intervals use more power.
+- **Widget**:
+  - None: No widget is shown.
+  - Sleep Icon: A bed icon appears in the top-right while `accelsender` is enabled.
+- **Stop on Disconnect**: If Bluetooth disconnects, automatically disables `accelsender` so it does not keep running in the background.
 
 ## Troubleshooting
 
