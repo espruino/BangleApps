@@ -2,7 +2,7 @@
   "id": "accelsender",
   "name": "Acceleration Data Provider",
   "shortName": "Accel Data Provider",
-  "version": "0.02",
+  "version": "0.03",
   "description": "This app sends accelerometer and heart rate data from your Bangle.js via Bluetooth.",
   "icon": "bluetooth.png",
   "type": "bootloader",
