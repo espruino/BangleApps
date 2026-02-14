@@ -177,8 +177,8 @@ function wordsFromDayMonth(day, date, month)
 
 function draw() {
   const R = Bangle.appRect;
-  const midX = (R.x + R.x2) / 2;
-  const midY = (R.y + R.y2) / 2;
+  const midX = g.getHeight() / 2;
+  const midY = g.getWidth() / 2;
   const wrapW = g.getWidth();
   g.reset();
   
