@@ -16,6 +16,7 @@
     lightTh: 300,//    threshold for light sleep
     hrmLightTh: 74,//    threshold for light sleep with HRM
     hrmDeepTh:60,//     threshold for deep sleep with HRM
+    preferHRM: false, // prefer hrm based sleep state determination
     wearTemp: 19.5, //    temperature threshold to count as worn
     // app settings
     breakToD: 12, //    [h] time of day when to start/end graphs
@@ -516,6 +517,13 @@
         onchange: v => {
           settings.enabled = v;
           require("sleeplog").setEnabled(v);
+        }
+      },
+      /*LANG*/"Prefer HRM": {
+        value: settings.preferHRM,
+        onchange: v => {
+          settings.preferHRM = v;
+          writeSetting();
         }
       },
       /*LANG*/"Debugging": {
