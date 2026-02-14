@@ -6,6 +6,7 @@
   "icon": "lazybones.png",
   "screenshots": [{"url":"screenshot_lazybones.png"}],
   "readme": "README.md",
+  "author": "HughBarney",
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS","BANGLEJS2"],

@@ -2,7 +2,7 @@
     "id": "backswipeedge",
     "name": "Backswipe from edge",
     "shortName": "Backswipe edge",
-    "version": "0.01",
+    "version": "0.02",
     "description": "Go back by swiping from the right edge of the screen, Android style.",
     "author": "ssievert42",
     "icon": "icon.png",

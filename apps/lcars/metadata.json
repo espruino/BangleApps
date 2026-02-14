@@ -9,6 +9,7 @@
   "description": "Library Computer Access Retrieval System (LCARS) clock.",
   "type": "clock",
   "tags": "clock",
+  "author": "peerdavid",
   "screenshots": [
     {"url":"screenshot_1.png"},
     {"url":"screenshot_3.png"}],
