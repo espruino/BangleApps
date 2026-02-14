@@ -13,6 +13,7 @@
                     { "url":"2358.png" } ],
   "tags": "clock",
   "type": "clock",
+  "author": "bmsleight",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
