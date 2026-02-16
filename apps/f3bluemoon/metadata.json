@@ -1,0 +1,16 @@
+{ "id": "f3bluemoon",
+  "name": "F3 Blue Moon Widget",
+  "shortName":"F3 Blue Moon Widget",
+  "version":"1.00",
+  "author": "mdoggydog",
+  "description": "A simple, delightful, and accurate moon-phase widget, brought to you by the Fat Finger Federation.",
+  "icon": "f3bluemoon-icon.png",
+  "type": "widget",
+  "tags": "widget",
+  "supports" : ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [ {"name": "f3bluemoon.wid.js", "url": "f3bluemoon.wid.js"},
+               {"name": "f3bluemoon.settings.js", "url": "f3bluemoon.settings.js"}
+             ],
+  "data": [ {"name": "f3bluemoon.json"} ]
+}
