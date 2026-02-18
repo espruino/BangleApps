@@ -176,8 +176,10 @@ function wordsFromDayMonth(day, date, month)
 }
 
 function draw() {
-  var x = g.getWidth()/2;
-  var y = g.getHeight()/2;
+  const R = Bangle.appRect;
+  const midX = g.getHeight() / 2;
+  const midY = g.getWidth() / 2;
+  const wrapW = g.getWidth();
   g.reset();
   
   var d = new Date();
@@ -193,21 +195,20 @@ function draw() {
   // draw time
   g.setBgColor(g.theme.bg);
   g.setColor(g.theme.fg);
-  g.clear();
+  g.clearRect(R);
   g.setFontAlign(0,0).setFont("Vector",24);
-  g.drawString(g.wrapString(timeStr, g.getWidth()).join("\n"),x,y-24*0);
+  g.drawString(g.wrapString(timeStr, wrapW).join("\n"),midX,midY);
   // draw date
   
-  g.setFontAlign(0,0).setFont("Vector",12);
-  g.drawString(g.wrapString(dateStr, g.getWidth()).join("\n"),x,y+12*6);
+  g.setFontAlign(0,1).setFont("Vector",12);
+  g.drawString(g.wrapString(dateStr, wrapW).join("\n"),midX,R.y2);
   // queue draw in one minute
   queueDraw();
 }
 
 // Clear the screen once/, at startup
 g.clear();
-// draw immediately at first, queue update
-draw();
+
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower',on=>{
   if (on) {
@@ -223,3 +224,5 @@ Bangle.setUI("clock");
 // Load widgets
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+// draw immediately at first, queue update
+draw();
