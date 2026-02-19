@@ -305,7 +305,7 @@ E.on('notify',msg=>{
     // capitalize (only if non-empty)
     if (name.length > 0) name = name[0].toUpperCase() + name.slice(1);
   }else{
-    // use exception or app id itself
+    // use exception, app id itself, or fallback to a blank string
     name = appNames[msg.appId]||msg.appId||"";
   }
   require("messages").pushMessage({
