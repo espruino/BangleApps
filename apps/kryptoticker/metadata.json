@@ -1,0 +1,30 @@
+{
+  "id": "kryptoticker",
+  "name": "Krypto Ticker",
+  "version": "1.0.0",
+  "description": "Displays XMR (Monero), XTM (Minotari), BTC (Bitcoin) prices in EUR with 24h change percentage. Features auto-refresh every 5 minutes and price change alerts.",
+  "icon": "kryptoticker.png",
+  "type": "app",
+  "tags": "crypto,currency,bitcoin,monero,minotari,price,ticker,finance",
+  "supports": ["BANGLEJS2"],
+  "dependencies": {
+    "android": "app"
+  },
+  "readme": "README.md",
+  "storage": [
+    {
+      "name": "kryptoticker.app.js",
+      "url": "kryptoticker.app.js"
+    },
+    {
+      "name": "kryptoticker.img",
+      "url": "kryptoticker.img",
+      "evaluate": true
+    }
+  ],
+  "data": [
+    {
+      "name": "kryptoticker.json"
+    }
+  ]
+}
