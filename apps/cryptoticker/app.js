@@ -69,56 +69,52 @@ function checkAlarm(coin) {
 
 function drawScreen() {
   g.clear(1);
-  g.setFont("6x8:2");
+  g.setFont("Vector:22");
   g.setFontAlign(0, -1);
   g.setColor("#fff");
-  g.drawString("CRYPTO TICKER", g.getWidth() / 2, 5);
+  g.drawString("CRYPTO", g.getWidth() / 2, 5);
 
-  g.setFont("6x8:2");
-  g.setFontAlign(-1, -1);
-
-  var y = 35;
-  var lineHeight = 40;
+  var y = 40;
+  var lineHeight = 45;
 
   coins.forEach(function(coin) {
     g.setColor("#fff");
-    var nameStr = coin.name + " (" + coin.symbol + ")";
-    g.drawString(nameStr, 5, y);
+    g.setFont("Vector:18");
+    g.setFontAlign(-1, -1);
+    g.drawString(coin.symbol, 5, y);
 
+    g.setFont("Vector:18");
     g.setFontAlign(1, -1);
     var priceStr = coin.price > 0 ? formatPrice(coin.price) : "---";
     g.drawString(priceStr, g.getWidth() - 5, y);
 
-    g.setFont("6x8");
+    g.setFont("Vector:14");
     var changeStr = formatChange(coin.change24h);
     g.setColor(getChangeColor(coin.change24h));
-    g.drawString(changeStr, g.getWidth() - 5, y + 20);
-
-    g.setFont("6x8:2");
-    g.setFontAlign(-1, -1);
+    g.drawString(changeStr, g.getWidth() - 5, y + 22);
 
     y += lineHeight;
   });
 
-  g.setFont("6x8");
+  g.setFont("Vector:12");
   g.setColor("#888");
   g.setFontAlign(0, 1);
-  g.drawString(lastUpdate || "Tap to refresh", g.getWidth() / 2, g.getHeight() - 15);
+  g.drawString(lastUpdate || "Tap to refresh", g.getWidth() / 2, g.getHeight() - 8);
 
   if (isLoading) {
     g.setColor("#ff0");
-    g.drawString("Loading...", g.getWidth() / 2, g.getHeight() - 30);
+    g.drawString("Loading...", g.getWidth() / 2, g.getHeight() - 24);
   }
 }
 
 function drawLoading() {
   g.clear(1);
-  g.setFont("Vector", 20);
+  g.setFont("Vector:22");
   g.setFontAlign(0, 0);
   g.setColor("#fff");
   g.drawString("Loading...", g.getWidth() / 2, g.getHeight() / 2);
-  g.setFont("6x8");
-  g.drawString("Fetching prices", g.getWidth() / 2, g.getHeight() / 2 + 25);
+  g.setFont("Vector:14");
+  g.drawString("Fetching prices", g.getWidth() / 2, g.getHeight() / 2 + 28);
 }
 
 function buildApiUrl() {
@@ -167,12 +163,12 @@ function fetchPrices() {
 
 function showError(msg) {
   g.clear(1);
-  g.setFont("Vector", 16);
+  g.setFont("Vector:20");
   g.setFontAlign(0, 0);
   g.setColor("#f00");
-  g.drawString("ERROR", g.getWidth() / 2, g.getHeight() / 2 - 15);
+  g.drawString("ERROR", g.getWidth() / 2, g.getHeight() / 2 - 20);
   g.setColor("#fff");
-  g.setFont("6x8");
+  g.setFont("Vector:14");
   g.drawString(msg, g.getWidth() / 2, g.getHeight() / 2 + 10);
   g.drawString("Tap to retry", g.getWidth() / 2, g.getHeight() / 2 + 30);
 }

@@ -1,3 +1,4 @@
 0.01: New App
 0.02: Configurable coins and fiat currency via web interface
 0.03: Changed default coins to BTC, ETH, XMR
+0.04: Improved readability with larger Vector fonts, simplified coin display
