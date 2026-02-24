@@ -75,8 +75,9 @@ function drawScreen() {
   g.setFontAlign(0, -1);
   g.setColor(g.theme.fg);
   g.drawString("CRYPTO", g.getWidth() / 2, 2);
+  g.drawLine(10, 26, g.getWidth() - 10, 26);
 
-  var y = 28;
+  var y = 36;
   var lineHeight = 38;
 
   coins.forEach(function(coin) {
