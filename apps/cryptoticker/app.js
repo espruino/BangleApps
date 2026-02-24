@@ -1,9 +1,9 @@
 const DEFAULT_SETTINGS = {
   fiat: "eur",
   coins: [
-    { id: "monero", symbol: "XMR", name: "Monero", price: 0, change24h: 0, lastPrice: 0 },
-    { id: "minotari", symbol: "XTM", name: "Minotari", price: 0, change24h: 0, lastPrice: 0 },
-    { id: "bitcoin", symbol: "BTC", name: "Bitcoin", price: 0, change24h: 0, lastPrice: 0 }
+    { id: "bitcoin", symbol: "BTC", name: "Bitcoin", price: 0, change24h: 0, lastPrice: 0 },
+    { id: "ethereum", symbol: "ETH", name: "Ethereum", price: 0, change24h: 0, lastPrice: 0 },
+    { id: "monero", symbol: "XMR", name: "Monero", price: 0, change24h: 0, lastPrice: 0 }
   ]
 };
 
