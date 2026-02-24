@@ -37,9 +37,9 @@ Visit [coingecko.com/en/coins](https://www.coingecko.com/en/coins) to find the c
 ### Default Configuration
 
 If no settings are saved, the app uses:
-- Monero (XMR)
-- Minotari (XTM)
 - Bitcoin (BTC)
+- Ethereum (ETH)
+- Monero (XMR)
 - Fiat: EUR
 
 ## Setup
