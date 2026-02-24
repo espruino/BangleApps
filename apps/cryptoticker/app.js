@@ -46,7 +46,7 @@ function drawScreen() {
   g.setFont("6x8:2");
   g.setFontAlign(0, -1);
   g.setColor("#fff");
-  g.drawString("KRYPTO TICKER", g.getWidth() / 2, 5);
+  g.drawString("CRYPTO TICKER", g.getWidth() / 2, 5);
 
   g.setFont("6x8:2");
   g.setFontAlign(-1, -1);

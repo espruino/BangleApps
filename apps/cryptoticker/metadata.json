@@ -1,9 +1,11 @@
 {
   "id": "kryptoticker",
-  "name": "Krypto Ticker",
-  "version": "1.0.0",
+  "name": "Crypto Ticker",
+  "shortName": "CryptoTicker",
+  "version": "0.01",
+  "author": "Qu4ndo",
   "description": "Displays XMR (Monero), XTM (Minotari), BTC (Bitcoin) prices in EUR with 24h change percentage. Features auto-refresh every 5 minutes and price change alerts.",
-  "icon": "kryptoticker.png",
+  "icon": "app.png",
   "type": "app",
   "tags": "crypto,currency,bitcoin,monero,minotari,price,ticker,finance",
   "supports": ["BANGLEJS2"],
@@ -14,11 +16,11 @@
   "storage": [
     {
       "name": "kryptoticker.app.js",
-      "url": "kryptoticker.app.js"
+      "url": "app.js"
     },
     {
       "name": "kryptoticker.img",
-      "url": "kryptoticker.img",
+      "url": "app-icon.js",
       "evaluate": true
     }
   ],
