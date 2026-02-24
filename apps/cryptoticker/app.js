@@ -73,14 +73,14 @@ function drawScreen() {
   g.clear(1);
   g.setFont("Vector", 20);
   g.setFontAlign(0, -1);
-  g.setColor("#fff");
+  g.setColor(g.theme.fg);
   g.drawString("CRYPTO", g.getWidth() / 2, 2);
 
   var y = 28;
   var lineHeight = 38;
 
   coins.forEach(function(coin) {
-    g.setColor("#fff");
+    g.setColor(g.theme.fg);
     g.setFont("Vector", 16);
     g.setFontAlign(-1, -1);
     g.drawString(coin.symbol, 3, y);
@@ -104,16 +104,16 @@ function drawScreen() {
   if (errorMsg) {
     g.setColor("#f00");
     g.drawString(errorMsg, g.getWidth() / 2, g.getHeight() - 2);
-    g.setColor("#888");
+    g.setColor(g.theme.fg);
     g.drawString("Tap to retry", g.getWidth() / 2, g.getHeight() - 14);
   } else if (isLoading) {
     g.setColor("#ff0");
     g.drawString("Loading...", g.getWidth() / 2, g.getHeight() - 2);
   } else if (hasData) {
-    g.setColor("#888");
-    g.drawString(lastUpdate + " - tap to refresh", g.getWidth() / 2, g.getHeight() - 2);
+    g.setColor(g.theme.fg);
+    g.drawString("Updated: " + lastUpdate, g.getWidth() / 2, g.getHeight() - 2);
   } else {
-    g.setColor("#888");
+    g.setColor(g.theme.fg);
     g.drawString("Tap to load prices", g.getWidth() / 2, g.getHeight() - 2);
   }
 }
@@ -194,6 +194,9 @@ Bangle.setUI({
   mode: "custom",
   touch: function() {
     fetchPrices();
+  },
+  btn: function() {
+    Bangle.showClock();
   }
 });
 
