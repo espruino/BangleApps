@@ -192,7 +192,7 @@ module.exports = {
         "bleServiceOptions": "writable", // available in boot.js code that's called ad part of bootupdate
     },
     "parserOptions": {
-        "ecmaVersion": 11
+        "ecmaVersion": 2022
     },
     "rules": {
         "indent": [
