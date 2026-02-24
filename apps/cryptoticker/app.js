@@ -1,26 +1,52 @@
-const CONFIG = {
-  refreshInterval: 300000,
-  alarmThreshold: 5,
-  apiUrl: "https://api.coingecko.com/api/v3/simple/price?ids=monero,minotari,bitcoin&vs_currencies=eur&include_24hr_change=true"
+const DEFAULT_SETTINGS = {
+  fiat: "eur",
+  coins: [
+    { id: "monero", symbol: "XMR", name: "Monero", price: 0, change24h: 0, lastPrice: 0 },
+    { id: "minotari", symbol: "XTM", name: "Minotari", price: 0, change24h: 0, lastPrice: 0 },
+    { id: "bitcoin", symbol: "BTC", name: "Bitcoin", price: 0, change24h: 0, lastPrice: 0 }
+  ]
 };
 
-const coins = [
-  { id: "monero", symbol: "XMR", icon: "M", price: 0, change24h: 0, lastPrice: 0 },
-  { id: "minotari", symbol: "XTM", icon: "T", price: 0, change24h: 0, lastPrice: 0 },
-  { id: "bitcoin", symbol: "BTC", icon: "B", price: 0, change24h: 0, lastPrice: 0 }
-];
+var settings = require("Storage").readJSON("cryptoticker.settings.json", 1) || DEFAULT_SETTINGS;
+
+var coins = settings.coins.map(function(c) {
+  return {
+    id: c.id,
+    symbol: c.symbol,
+    name: c.name || c.id.charAt(0).toUpperCase() + c.id.slice(1),
+    price: 0,
+    change24h: 0,
+    lastPrice: 0
+  };
+});
+var fiat = settings.fiat || "eur";
 
 var lastUpdate = "";
 var isLoading = false;
 var refreshTimer = null;
 
+function getCurrencySymbol() {
+  var symbols = {
+    eur: "\x80",
+    usd: "$",
+    gbp: "\x9C",
+    jpy: "\xA5",
+    chf: "Fr",
+    aud: "A$",
+    cad: "C$",
+    cny: "\xA5"
+  };
+  return symbols[fiat] || fiat.toUpperCase();
+}
+
 function formatPrice(price) {
+  var sym = getCurrencySymbol();
   if (price >= 1000) {
-    return price.toFixed(0) + "\x80";
+    return price.toFixed(0) + sym;
   } else if (price >= 1) {
-    return price.toFixed(2) + "\x80";
+    return price.toFixed(2) + sym;
   } else {
-    return price.toFixed(5) + "\x80";
+    return price.toFixed(5) + sym;
   }
 }
 
@@ -38,7 +64,7 @@ function getChangeColor(change) {
 function checkAlarm(coin) {
   if (coin.lastPrice === 0 || coin.price === 0) return false;
   var changePercent = Math.abs((coin.price - coin.lastPrice) / coin.lastPrice * 100);
-  return changePercent >= CONFIG.alarmThreshold;
+  return changePercent >= 5;
 }
 
 function drawScreen() {
@@ -56,10 +82,8 @@ function drawScreen() {
 
   coins.forEach(function(coin) {
     g.setColor("#fff");
-    var iconStr = "[" + coin.icon + "]";
-    g.drawString(iconStr, 5, y);
-
-    g.drawString(coin.symbol, 35, y);
+    var nameStr = coin.name + " (" + coin.symbol + ")";
+    g.drawString(nameStr, 5, y);
 
     g.setFontAlign(1, -1);
     var priceStr = coin.price > 0 ? formatPrice(coin.price) : "---";
@@ -97,13 +121,21 @@ function drawLoading() {
   g.drawString("Fetching prices", g.getWidth() / 2, g.getHeight() / 2 + 25);
 }
 
+function buildApiUrl() {
+  var ids = coins.map(function(c) { return c.id; }).join(",");
+  return "https://api.coingecko.com/api/v3/simple/price?ids=" + ids + 
+         "&vs_currencies=" + fiat + 
+         "&include_24hr_change=true";
+}
+
 function fetchPrices() {
   if (isLoading) return;
 
   isLoading = true;
   drawScreen();
 
-  Bangle.http(CONFIG.apiUrl).then(function(data) {
+  var apiUrl = buildApiUrl();
+  Bangle.http(apiUrl).then(function(data) {
     var response;
     try {
       response = JSON.parse(data.resp);
@@ -115,8 +147,8 @@ function fetchPrices() {
     coins.forEach(function(coin) {
       if (response[coin.id]) {
         coin.lastPrice = coin.price;
-        coin.price = response[coin.id].eur || 0;
-        coin.change24h = response[coin.id].eur_24h_change || 0;
+        coin.price = response[coin.id][fiat] || 0;
+        coin.change24h = response[coin.id][fiat + "_24h_change"] || 0;
 
         if (checkAlarm(coin)) {
           Bangle.buzz(200);
@@ -160,4 +192,4 @@ drawLoading();
 fetchPrices();
 
 if (refreshTimer) clearInterval(refreshTimer);
-refreshTimer = setInterval(fetchPrices, CONFIG.refreshInterval);
+refreshTimer = setInterval(fetchPrices, 300000);

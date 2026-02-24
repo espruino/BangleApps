@@ -1,10 +1,11 @@
-# Crypto Ticker for Bangle.js 2
+# Crypto Ticker
 
-Displays real-time cryptocurrency prices for Monero (XMR), Minotari (XTM), and Bitcoin (BTC) in EUR.
+Displays real-time cryptocurrency prices with configurable coins and fiat currency.
 
 ## Features
 
-- **3 Cryptocurrencies**: XMR, XTM, BTC prices in EUR
+- **Configurable Coins**: Choose up to 3 cryptocurrencies
+- **Configurable Fiat**: EUR, USD, GBP, JPY, CHF, AUD, CAD, CNY
 - **24h Change**: Shows percentage change (green = up, red = down)
 - **Auto-Refresh**: Updates every 5 minutes
 - **Manual Refresh**: Tap screen or press button
@@ -15,6 +16,31 @@ Displays real-time cryptocurrency prices for Monero (XMR), Minotari (XTM), and B
 - **Bangle.js 2** smartwatch
 - **Android phone** with Bangle.js Gadgetbridge app
 - **Gadgetbridge**: "Allow Internet Access" must be enabled
+
+## Configuration
+
+### Via App Loader
+
+1. Open the [Bangle.js App Loader](https://banglejs.com/apps/)
+2. Connect your Bangle.js
+3. Find "Crypto Ticker" and click the settings icon
+4. Configure your coins:
+   - **CoinGecko ID**: The coin's API identifier (e.g., `bitcoin`, `monero`, `ethereum`)
+   - **Symbol**: Display symbol (e.g., `BTC`, `XMR`, `ETH`)
+5. Select your preferred fiat currency
+6. Click "Save & Upload"
+
+### Finding CoinGecko IDs
+
+Visit [coingecko.com/en/coins](https://www.coingecko.com/en/coins) to find the correct ID for your cryptocurrency.
+
+### Default Configuration
+
+If no settings are saved, the app uses:
+- Monero (XMR)
+- Minotari (XTM)
+- Bitcoin (BTC)
+- Fiat: EUR
 
 ## Setup
 
@@ -31,20 +57,6 @@ Download the Bangle.js version of Gadgetbridge:
 
 ### 3. Install Android Integration
 On your Bangle.js, install the "Android Integration" app from the App Loader.
-
-### 4. Upload Crypto Ticker
-1. Open [Web IDE](https://www.espruino.com/ide/)
-2. Connect to your Bangle.js
-3. Upload `cryptoticker.app.js` as a new file named `cryptoticker.app.js`
-4. Upload the info file by running in the IDE console:
-```javascript
-require("Storage").write("cryptoticker.info",{
-  "id":"cryptoticker",
-  "name":"Crypto Ticker",
-  "src":"cryptoticker.app.js",
-  "icon":"cryptoticker.img"
-});
-```
 
 ## Usage
 
