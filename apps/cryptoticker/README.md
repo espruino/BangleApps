@@ -63,6 +63,12 @@ On your Bangle.js, install the "Android Integration" app from the App Loader.
 - **Refresh prices**: Tap screen or press button
 - **Auto-refresh**: Every 5 minutes when connected to phone
 
+## Important Notes
+
+- **No auto-start**: The app does not start automatically when the watch boots. You need to manually launch it from the app menu.
+- **Foreground only**: The auto-refresh and price alarms only work while the app is open. If you exit the app or open another app, updates and notifications will stop.
+- **No background alerts**: Price change alerts (>5% vibration) will only trigger while you are actively viewing the app. You will not receive notifications when the app is closed.
+
 ## API
 
 Uses the free CoinGecko API:
