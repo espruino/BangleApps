@@ -23,6 +23,8 @@ var fiat = settings.fiat || "eur";
 
 var lastUpdate = "";
 var isLoading = false;
+var hasData = false;
+var errorMsg = "";
 var refreshTimer = null;
 
 function getCurrencySymbol() {
@@ -85,7 +87,7 @@ function drawScreen() {
 
     g.setFont("Vector", 16);
     g.setFontAlign(1, -1);
-    var priceStr = coin.price > 0 ? formatPrice(coin.price) : "---";
+    var priceStr = coin.price > 0 ? formatPrice(coin.price) : (isLoading ? "..." : "---");
     g.drawString(priceStr, g.getWidth() - 3, y);
 
     g.setFont("Vector", 12);
@@ -97,24 +99,23 @@ function drawScreen() {
   });
 
   g.setFont("Vector", 10);
-  g.setColor("#888");
   g.setFontAlign(0, 1);
-  g.drawString(lastUpdate || "Tap to refresh", g.getWidth() / 2, g.getHeight() - 2);
-
-  if (isLoading) {
+  
+  if (errorMsg) {
+    g.setColor("#f00");
+    g.drawString(errorMsg, g.getWidth() / 2, g.getHeight() - 2);
+    g.setColor("#888");
+    g.drawString("Tap to retry", g.getWidth() / 2, g.getHeight() - 14);
+  } else if (isLoading) {
     g.setColor("#ff0");
-    g.drawString("Loading...", g.getWidth() / 2, g.getHeight() - 14);
+    g.drawString("Loading...", g.getWidth() / 2, g.getHeight() - 2);
+  } else if (hasData) {
+    g.setColor("#888");
+    g.drawString(lastUpdate + " - tap to refresh", g.getWidth() / 2, g.getHeight() - 2);
+  } else {
+    g.setColor("#888");
+    g.drawString("Tap to load prices", g.getWidth() / 2, g.getHeight() - 2);
   }
-}
-
-function drawLoading() {
-  g.clear(1);
-  g.setFont("Vector", 22);
-  g.setFontAlign(0, 0);
-  g.setColor("#fff");
-  g.drawString("Loading...", g.getWidth() / 2, g.getHeight() / 2);
-  g.setFont("Vector", 14);
-  g.drawString("Fetching prices", g.getWidth() / 2, g.getHeight() / 2 + 28);
 }
 
 function buildApiUrl() {
@@ -126,8 +127,12 @@ function buildApiUrl() {
 
 function fetchPrices() {
   if (isLoading) return;
+  
+  errorMsg = "";
+  
   if (!Bangle.http) {
-    showError("No Android connection");
+    errorMsg = "Connect Gadgetbridge";
+    drawScreen();
     return;
   }
 
@@ -140,12 +145,16 @@ function fetchPrices() {
     try {
       response = JSON.parse(data.resp);
     } catch (e) {
-      showError("Parse error");
+      isLoading = false;
+      errorMsg = "API parse error";
+      drawScreen();
       return;
     }
 
+    var gotData = false;
     coins.forEach(function(coin) {
       if (response[coin.id]) {
+        gotData = true;
         coin.lastPrice = coin.price;
         coin.price = response[coin.id][fiat] || 0;
         coin.change24h = response[coin.id][fiat + "_24h_change"] || 0;
@@ -156,25 +165,29 @@ function fetchPrices() {
       }
     });
 
+    if (!gotData) {
+      isLoading = false;
+      errorMsg = "No data received";
+      drawScreen();
+      return;
+    }
+
     lastUpdate = require("locale").time(new Date(), 1);
+    hasData = true;
     isLoading = false;
     drawScreen();
   }).catch(function(err) {
     isLoading = false;
-    showError(err.toString().substring(0, 20));
+    var errStr = err.toString();
+    if (errStr.indexOf("timeout") >= 0 || errStr.indexOf("Timeout") >= 0) {
+      errorMsg = "Request timeout";
+    } else if (errStr.indexOf("network") >= 0 || errStr.indexOf("Network") >= 0) {
+      errorMsg = "Network error";
+    } else {
+      errorMsg = errStr.substring(0, 18);
+    }
+    drawScreen();
   });
-}
-
-function showError(msg) {
-  g.clear(1);
-  g.setFont("Vector", 20);
-  g.setFontAlign(0, 0);
-  g.setColor("#f00");
-  g.drawString("ERROR", g.getWidth() / 2, g.getHeight() / 2 - 20);
-  g.setColor("#fff");
-  g.setFont("Vector", 14);
-  g.drawString(msg, g.getWidth() / 2, g.getHeight() / 2 + 10);
-  g.drawString("Tap to retry", g.getWidth() / 2, g.getHeight() / 2 + 30);
 }
 
 Bangle.setUI({
@@ -185,7 +198,7 @@ Bangle.setUI({
 });
 
 g.clear(1);
-drawLoading();
+drawScreen();
 fetchPrices();
 
 if (refreshTimer) clearInterval(refreshTimer);
