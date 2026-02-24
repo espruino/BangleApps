@@ -3,3 +3,4 @@
 0.03: Changed default coins to BTC, ETH, XMR
 0.04: Improved readability with larger Vector fonts, simplified coin display
 0.05: Fixed Vector font syntax for proper font sizing
+0.06: Fixed layout overflow, added Android connection check and HTTP timeout

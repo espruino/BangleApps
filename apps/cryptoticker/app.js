@@ -69,41 +69,41 @@ function checkAlarm(coin) {
 
 function drawScreen() {
   g.clear(1);
-  g.setFont("Vector", 22);
+  g.setFont("Vector", 20);
   g.setFontAlign(0, -1);
   g.setColor("#fff");
-  g.drawString("CRYPTO", g.getWidth() / 2, 5);
+  g.drawString("CRYPTO", g.getWidth() / 2, 2);
 
-  var y = 40;
-  var lineHeight = 45;
+  var y = 28;
+  var lineHeight = 38;
 
   coins.forEach(function(coin) {
     g.setColor("#fff");
-    g.setFont("Vector", 18);
+    g.setFont("Vector", 16);
     g.setFontAlign(-1, -1);
-    g.drawString(coin.symbol, 5, y);
+    g.drawString(coin.symbol, 3, y);
 
-    g.setFont("Vector", 18);
+    g.setFont("Vector", 16);
     g.setFontAlign(1, -1);
     var priceStr = coin.price > 0 ? formatPrice(coin.price) : "---";
-    g.drawString(priceStr, g.getWidth() - 5, y);
+    g.drawString(priceStr, g.getWidth() - 3, y);
 
-    g.setFont("Vector", 14);
+    g.setFont("Vector", 12);
     var changeStr = formatChange(coin.change24h);
     g.setColor(getChangeColor(coin.change24h));
-    g.drawString(changeStr, g.getWidth() - 5, y + 22);
+    g.drawString(changeStr, g.getWidth() - 3, y + 18);
 
     y += lineHeight;
   });
 
-  g.setFont("Vector", 12);
+  g.setFont("Vector", 10);
   g.setColor("#888");
   g.setFontAlign(0, 1);
-  g.drawString(lastUpdate || "Tap to refresh", g.getWidth() / 2, g.getHeight() - 8);
+  g.drawString(lastUpdate || "Tap to refresh", g.getWidth() / 2, g.getHeight() - 2);
 
   if (isLoading) {
     g.setColor("#ff0");
-    g.drawString("Loading...", g.getWidth() / 2, g.getHeight() - 24);
+    g.drawString("Loading...", g.getWidth() / 2, g.getHeight() - 14);
   }
 }
 
@@ -126,12 +126,16 @@ function buildApiUrl() {
 
 function fetchPrices() {
   if (isLoading) return;
+  if (!Bangle.http) {
+    showError("No Android connection");
+    return;
+  }
 
   isLoading = true;
   drawScreen();
 
   var apiUrl = buildApiUrl();
-  Bangle.http(apiUrl).then(function(data) {
+  Bangle.http(apiUrl, {timeout: 15000}).then(function(data) {
     var response;
     try {
       response = JSON.parse(data.resp);
