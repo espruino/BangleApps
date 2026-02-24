@@ -177,9 +177,6 @@ Bangle.setUI({
   mode: "custom",
   touch: function() {
     fetchPrices();
-  },
-  btn: function() {
-    fetchPrices();
   }
 });
 

@@ -8,7 +8,7 @@ Displays real-time cryptocurrency prices with configurable coins and fiat curren
 - **Configurable Fiat**: EUR, USD, GBP, JPY, CHF, AUD, CAD, CNY
 - **24h Change**: Shows percentage change (green = up, red = down)
 - **Auto-Refresh**: Updates every 5 minutes
-- **Manual Refresh**: Tap screen or press button
+- **Manual Refresh**: Tap screen to refresh prices
 - **Price Alarms**: Vibrates when price changes >5%
 
 ## Requirements
@@ -60,7 +60,7 @@ On your Bangle.js, install the "Android Integration" app from the App Loader.
 
 ## Usage
 
-- **Refresh prices**: Tap screen or press button
+- **Refresh prices**: Tap screen
 - **Auto-refresh**: Every 5 minutes when connected to phone
 
 ## Important Notes
