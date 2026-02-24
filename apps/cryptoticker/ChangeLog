@@ -6,3 +6,4 @@
 0.06: Fixed layout overflow, added Android connection check and HTTP timeout
 0.07: Improved error handling, better loading states, clearer status messages
 0.08: Fixed theme support for light backgrounds, added button to return to clock, updated app icon
+0.09: Added separator line between title and coin list for better visual separation
