@@ -2,7 +2,7 @@
   "id": "cryptoticker",
   "name": "Crypto Ticker",
   "shortName": "CryptoTicker",
-  "version": "0.04",
+  "version": "0.05",
   "author": "Qu4ndo",
   "description": "Displays configurable cryptocurrency prices with 24h change percentage. Features auto-refresh every 5 minutes and price change alerts.",
   "icon": "app.png",
