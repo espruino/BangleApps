@@ -14,6 +14,7 @@
     "android": "app"
   },
   "readme": "README.md",
+  "screenshots": [{"url": "screenshot.png"}],
   "storage": [
     {
       "name": "cryptoticker.app.js",
