@@ -1,4 +1,4 @@
-# Krypto Ticker for Bangle.js 2
+# Crypto Ticker for Bangle.js 2
 
 Displays real-time cryptocurrency prices for Monero (XMR), Minotari (XTM), and Bitcoin (BTC) in EUR.
 
@@ -32,17 +32,17 @@ Download the Bangle.js version of Gadgetbridge:
 ### 3. Install Android Integration
 On your Bangle.js, install the "Android Integration" app from the App Loader.
 
-### 4. Upload Krypto Ticker
+### 4. Upload Crypto Ticker
 1. Open [Web IDE](https://www.espruino.com/ide/)
 2. Connect to your Bangle.js
-3. Upload `kryptoticker.app.js` as a new file named `kryptoticker.app.js`
+3. Upload `cryptoticker.app.js` as a new file named `cryptoticker.app.js`
 4. Upload the info file by running in the IDE console:
 ```javascript
-require("Storage").write("kryptoticker.info",{
-  "id":"kryptoticker",
-  "name":"Krypto Ticker",
-  "src":"kryptoticker.app.js",
-  "icon":"kryptoticker.img"
+require("Storage").write("cryptoticker.info",{
+  "id":"cryptoticker",
+  "name":"Crypto Ticker",
+  "src":"cryptoticker.app.js",
+  "icon":"cryptoticker.img"
 });
 ```
 

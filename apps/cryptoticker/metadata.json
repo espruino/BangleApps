@@ -1,5 +1,5 @@
 {
-  "id": "kryptoticker",
+  "id": "cryptoticker",
   "name": "Crypto Ticker",
   "shortName": "CryptoTicker",
   "version": "0.01",
@@ -15,18 +15,18 @@
   "readme": "README.md",
   "storage": [
     {
-      "name": "kryptoticker.app.js",
+      "name": "cryptoticker.app.js",
       "url": "app.js"
     },
     {
-      "name": "kryptoticker.img",
+      "name": "cryptoticker.img",
       "url": "app-icon.js",
       "evaluate": true
     }
   ],
   "data": [
     {
-      "name": "kryptoticker.json"
+      "name": "cryptoticker.json"
     }
   ]
 }
