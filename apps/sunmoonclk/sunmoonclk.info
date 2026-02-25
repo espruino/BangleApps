@@ -1,6 +1,0 @@
-require("Storage").write("sunmoonclk.info",{
-  "id":"sunmoonclk",
-  "name":"Sun Moon",
-  "type":"clock",
-  "src":"sunmoonclk.app.js"
-});
