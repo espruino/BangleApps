@@ -61,14 +61,14 @@ timePattern / datePattern:
     %H	hour (00..23)
     %M	minute (00..59)
     %S	second (00..60)
-    
-    
+
+
 in locales:
 
   abmonth: short months (must be <5 chars, ideally 3)
   month: normal month names
-  abday: short days (must be <5 chars, ideally 3)  
-  day: normal day names  
+  abday: short days (must be <5 chars, ideally 3)
+  day: normal day names
 */
 
 var locales = {
@@ -77,11 +77,28 @@ var locales = {
     decimal_point: ".",
     thousands_sep: ",",
     speed: 'mph',
+    distance: { "0": "m", "1": "mi" }, // virtually nobody uses "yd" in the UK, but it is technically an imperial units, so split them into "en_GB imperial"
+    temperature: '°C',
+    ampm: { 0: "am", 1: "pm" },
+    timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
+    datePattern: { 0: "%b %d %Y", 1: "%d/%m/%Y" }, // Feb 28 2020" // "28/02/2020"(short)
+    abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
+    month: "January,February,March,April,May,June,July,August,September,October,November,December",
+    abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
+    day: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday",
+    // No translation for english...
+  },
+  "en_GB imperial": {
+    lang: "en_GB imperial", icon:"🇬🇧",
+    notes: "Yards for small distances, not meters",
+    decimal_point: ".",
+    thousands_sep: ",",
+    speed: 'mph',
     distance: { "0": "yd", "1": "mi" },
     temperature: '°C',
     ampm: { 0: "am", 1: "pm" },
     timePattern: { 0: "%HH:%MM:%SS", 1: "%HH:%MM" },
-    datePattern: { 0: "%b %d %Y", 1: "%d/%m/%Y" }, // Feb 28 2020" // "01/03/2020"(short)
+    datePattern: { 0: "%b %d %Y", 1: "%d/%m/%Y" }, // Feb 28 2020" // "28/02/2020"(short)
     abmonth: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
     month: "January,February,March,April,May,June,July,August,September,October,November,December",
     abday: "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
@@ -757,7 +774,7 @@ var locales = {
   * These test strings are designed to be as wide and tall as real locale strings can be.
   * All apps should be able to display them properly, to ensure that they work with all locales.
   * To make the strings as long as possible, wide characters like "w" and "m" is used,
-  * and to make them taller, "k" and "g" are used together. 
+  * and to make them taller, "k" and "g" are used together.
   */
  "test": {
     lang: "test",

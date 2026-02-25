@@ -1,0 +1,9 @@
+0.01: New App
+0.02: Configurable coins and fiat currency via web interface
+0.03: Changed default coins to BTC, ETH, XMR
+0.04: Improved readability with larger Vector fonts, simplified coin display
+0.05: Fixed Vector font syntax for proper font sizing
+0.06: Fixed layout overflow, added Android connection check and HTTP timeout
+0.07: Improved error handling, better loading states, clearer status messages
+0.08: Fixed theme support for light backgrounds, added button to return to clock, updated app icon
+0.09: Added separator line between title and coin list for better visual separation
