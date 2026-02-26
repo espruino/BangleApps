@@ -3,7 +3,7 @@
   "shortName":"My Profile",
   "icon": "app.png",
   "type": "settings",
-  "version":"0.02",
+  "version":"0.03",
   "author": "nxdefiant",
   "description": "Configure your personal profile. All settings are optional and only stored on the watch.",
   "readme": "README.md",
