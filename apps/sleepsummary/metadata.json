@@ -1,0 +1,31 @@
+ {
+  "id": "sleepsummary",
+  "name": "Sleep Summary",
+  "shortName": "Sleep Summ.",
+  "author":"RKBoss6",
+  "version": "0.01",
+  "description": "Adds a module that learns sleeping habits over time and provides a sleep score based on how good of a sleep you got",
+  "icon": "app.png",
+  "type": "app",
+  "tags": "health",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "dependencies" : { "sleeplog":"app" },
+  "provides_modules" : ["sleepsummary"],
+  "storage": [
+    {"name":"sleepsummary.app.js","url":"app.js"},
+    {"name":"sleepsummary.boot.js","url":"boot.js"},
+    {"name":"sleepsummary","url":"module.js"},
+    {"name":"sleepsummary.settings.js","url":"settings.js"},
+    {"name":"sleepsummarymsg.app.js","url":"msgapp.js"},
+    {"name":"sleepsummary.img","url":"appicon.js","evaluate":true}
+  ],
+   "data":[
+    {"name":"sleepsummarydata.json"},
+    {"name":"sleepsummary.settings.json"},
+    {"name":"sleepsummarydatacache.json"}
+  ],
+  "screenshots":[
+    {"url":"Screenshot.png"}
+  ]
+}
