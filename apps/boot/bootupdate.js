@@ -82,7 +82,7 @@ if (Bangle.haptic) {
     // if enabled or the setting doesn't exist yet (new fw, old setting json), use default of 25
     hapticVal = s.hapticStrength || 25;
   }
-  boot+=`Bangle.setOptions({hapticTime: ${hapticVal});\n`;
+  boot+=`Bangle.setOptions({hapticTime: ${hapticVal}});\n`;
 }
 if (s.bleprivacy || (s.passkey!==undefined && s.passkey.length==6)) {
   let passkey = s.passkey ? `passkey:${E.toJS(s.passkey.toString())},display:1,mitm:1,` : "";
