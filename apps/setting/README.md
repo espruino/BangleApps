@@ -27,6 +27,7 @@ This is where you adjust settings for an individual app. (eg. Health app: Adjust
 * **Clock** if you have more than one clock face, select the default one
 * **Launcher** if you have more than one app launcher, select the default one
 * **Date & Time** Configure the current time - Note that this can be done much more easily by choosing 'Set Time' from the App Loader
+* **Haptics** On devices with 2v29.14+ firmwae version, this allows you to enable/disable system haptics in menus, prompts, back, etc. It also allows you to customize the strength of the haptic.
 * **Altitude** On Bangle.js 2, calibrate the altitude (which varies depending on Air Pressure). Tap `Adjust Up`/`Adjust Down` to move the reported altitude by around 10m
 
 ## Alerts
