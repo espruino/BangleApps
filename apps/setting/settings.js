@@ -123,7 +123,7 @@ function systemMenu() {
     /*LANG*/'Launcher': ()=>pushMenu(launcherMenu()),
     /*LANG*/'Date & Time': ()=>pushMenu(setTimeMenu())
   };
-  if(Bangle.haptic)mainmenu[/*LANG*/"Haptics"]= ()=>pushMenu(hapticsMenu())
+  if (Bangle.haptic) mainmenu[/*LANG*/"Haptics"]= ()=>pushMenu(hapticsMenu())
   if (Bangle.getPressure) mainmenu[/*LANG*/"Altitude"] = ()=>pushMenu(showAltitude());
 
   return mainmenu;
