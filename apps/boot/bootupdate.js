@@ -77,7 +77,7 @@ if (global.save) boot += `global.save = function() { throw new Error("You can't 
 if (s.options) boot+=`Bangle.setOptions(${E.toJS(s.options)});\n`;
 if (s.brightness!==undefined && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightness});\n`;
 if (Bangle.haptic) {
-  let hapticVal = 0; // Default to off
+  let hapticVal = 0; // Default to off unless enabled or undefined (for backwards compatibility)
   if (s.hapticsEnabled === true || s.hapticsEnabled === undefined) {
     // if enabled or the setting doesn't exist yet (new fw, old setting json), use default of 25
     hapticVal = s.hapticStrength || 25;
