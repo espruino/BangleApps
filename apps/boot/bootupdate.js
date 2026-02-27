@@ -76,6 +76,14 @@ if (global.save) boot += `global.save = function() { throw new Error("You can't 
 // Apply any settings-specific stuff
 if (s.options) boot+=`Bangle.setOptions(${E.toJS(s.options)});\n`;
 if (s.brightness!==undefined && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightness});\n`;
+if (Bangle.haptic) {
+  let hapticVal = 0; // Default to off
+  if (s.hapticsEnabled === true || s.hapticsEnabled === undefined) {
+    // if enabled or the setting doesn't exist yet (new fw, old setting json), use default of 25
+    hapticVal = s.hapticStrength || 25;
+  }
+  boot+=`Bangle.setOptions({hapticTime: ${hapticVal});\n`;
+}
 if (s.bleprivacy || (s.passkey!==undefined && s.passkey.length==6)) {
   let passkey = s.passkey ? `passkey:${E.toJS(s.passkey.toString())},display:1,mitm:1,` : "";
   let privacy = s.bleprivacy ? `privacy:${E.toJS(s.bleprivacy)},` : "";
