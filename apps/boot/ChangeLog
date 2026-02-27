@@ -80,3 +80,4 @@
 0.67: When generating .clkinfocache, apply configured exclusions
 0.68: Allow setting screen brightness to 0
 0.69: Small tidyup to help reduce time spent executing JS in old .boot0 file
+0.70: Add support for the new Bangle.haptic() settings in 2v29.14+
