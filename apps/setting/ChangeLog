@@ -92,3 +92,4 @@ of 'Select Clock'
 0.81: Ensure 'Privacy' (address randomnisation) is only added for Bangle.js 2,
       and add warnings in documentation that it can cause connection issues
 0.82: Fix Quiet Mode menu (could previously scroll up and have it show 'undefined')
+0.83: Add 'Haptics' section in system settings on 2v29.14+

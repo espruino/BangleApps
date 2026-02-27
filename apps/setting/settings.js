@@ -72,7 +72,9 @@ function resetSettings() {
     clock: null,                    // a string for the default clock's name
     // clockHasWidgets: false,      // Does the clock in 'clock' contain the string 'Bangle.loadWidgets'
     "12hour" : false,               // 12 or 24 hour clock?
-    firstDayOfWeek: 0,              // 0 -> Sunday (default), 1 -> Monday
+    firstDayOfWeek: 0, // 0 -> Sunday (default), 1 -> Monday
+    hapticsEnabled: true,    // sets hapticTime options to 0 if false
+    hapticStrength: 25, // uses Bangle.setOptions({hapticTime:x})
     brightness: 1,                  // LCD brightness from 0 to 1
     // welcomed : undefined/true (whether welcome app should show)
     options: {
@@ -121,6 +123,7 @@ function systemMenu() {
     /*LANG*/'Launcher': ()=>pushMenu(launcherMenu()),
     /*LANG*/'Date & Time': ()=>pushMenu(setTimeMenu())
   };
+  if (Bangle.haptic) mainmenu[/*LANG*/"Haptics"]= ()=>pushMenu(hapticsMenu());
   if (Bangle.getPressure) mainmenu[/*LANG*/"Altitude"] = ()=>pushMenu(showAltitude());
 
   return mainmenu;
@@ -890,6 +893,39 @@ function setTimeMenu() {
     }
   };
   return timemenu;
+}
+
+function hapticsMenu() {
+  const hapticmenu = {
+    '': { 'title': /*LANG*/'Haptics' },
+    '< Back': function () {
+        popMenu(systemMenu());
+    },
+    /*LANG*/'Use Haptics': {
+      value: !!settings.hapticsEnabled, // strength 0 = disabled
+      onchange: function (v) {
+        settings.hapticsEnabled = v;
+        if (!v) {
+          Bangle.setOptions({hapticTime:0})
+        } else {
+          Bangle.setOptions({hapticTime:settings.hapticStrength||25})
+        }
+        updateSettings();
+      }
+    },
+    /*LANG*/'Strength': {
+      value: settings.hapticStrength||25,
+      min: 10,
+      max: 70,
+      step: 5,
+      onchange: v => {
+        settings.hapticStrength = v;
+        Bangle.setOptions({ hapticTime: settings.hapticsEnabled ? v : 0 })
+        updateSettings();
+      }
+    }
+  };
+  return hapticmenu;
 }
 
 function appSettingsMenu() {
