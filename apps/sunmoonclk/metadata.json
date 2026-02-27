@@ -1,0 +1,19 @@
+{
+  "id": "sunmoonclk",
+  "name": "Sun and Moon Clock",
+  "version": "0.1",
+  "description": "A basic clock with sun and moon images to represent day and night hours. Day is set from 6:00 AM to 5:59 PM and night is set from 6:00 PM to 5:59 AM.",
+  "icon": "sunmoonclk.png",
+  "screenshots": [{"url":"screenshot_sun.png"},
+                  {"url":"screenshot_moon.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"sunmoonclk.app.js","url":"app.js"},
+    {"name":"sunmoonclk.img","url":"app-icon.js","evaluate":true}
+  ]
+
+}
+
