@@ -9,6 +9,7 @@
         {"name":"nostt.app.js","url":"nostt.app.js"},
         {"name":"nostt.img","url":"nostt.icon.js","evaluate":true}
     ],
+    "author": "avandermeer",
     "readme": "README.md",
     "icon":"nostt_logo.png",
     "supports": ["BANGLEJS2"],

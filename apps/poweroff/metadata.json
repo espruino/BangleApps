@@ -8,6 +8,7 @@
 "supports" : ["BANGLEJS", "BANGLEJS2"],
 "readme": "README.md",
 "allow_emulator": true,
+"author": "myxor",
 "storage": [
   {"name":"poweroff.app.js","url":"app.js"},
   {"name":"poweroff.img","url":"app-icon.js","evaluate":true},

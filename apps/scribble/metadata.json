@@ -8,6 +8,7 @@
   "allow_emulator": true,
   "tags": "tools,keyboard,text,scribble",
   "supports" : ["BANGLEJS2"],
+  "author": "enricorov",
   "readme": "README.md",
   "storage": [
     {"name":"scribble.app.js","url":"app.js"},

@@ -230,7 +230,7 @@ window.addEventListener('load', (event) => {
           app = appJSON.find(a => a.id==oldApp.id);
           if (!app)
             return console.log(`Ignoring ${oldApp.id} as not found`);
-          promise = promise.then(() => updateApp(app, {noReset:true, noFinish:true}));
+          promise = promise.then(() => updateApp(app, {noReset:true, noFinish:true, noNewOperation: true}));
         });
         return promise;
       }).then( _ =>
