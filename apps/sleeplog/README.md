@@ -75,36 +75,33 @@ To make sure the app accurately provides sleep information, it's a good idea to 
 
 #### Settings
 
-  
-  - __HRM Thresholds__ submenu
-    
-    Changes take effect from now on, not retrospective! HRM works only if polling is enabled in `Health` settings
-    - __Deep Sleep__ | deep sleep threshold
-      _40_ / _41_ / ... / __60__ / ... / _80_
-    - __Light Sleep__ | light sleep threshold
-      _50_ / _51_ / ... / __74__ / ... / _90_
-     - __Reset to Default__ | reset to bold values above
- - __Movement Thresholds__ submenu
- 
+  - __Movement Thresholds__ submenu
     Changes take effect from now on, not retrospective!
     - __Deep Sleep__ | deep sleep threshold
       _30_ / _31_ / ... / __100__ / ... / _200_
     - __Light Sleep__ | light sleep threshold
       _100_ / _110_ / ... / __200__ / ... / _400_
      - __Reset to Default__ | reset to bold values above
- - __Other Settings__ submenu  
+  - __Other Settings__ submenu  
       - __BreakToD__ | time of day to break view
         _0:00_ / _1:00_ / ... / __12:00__ / ... / _23:00_
       - __App Timeout__ | app specific lock timeout
         __0s__ / _10s_ / ... / _120s_
+      - __Prefer HRM__ | En-/disables use of HRM readings if they are available for determining sleep states.
+        _on_ / __off__
+      - __HRM Thresholds__ submenu
+        Changes take effect from now on, not retrospective! HRM works only if polling is enabled in `Health` settings
+        - __Deep Sleep__ | deep sleep threshold
+          _40_ / _41_ / ... / __60__ / ... / _80_
+        - __Light Sleep__ | light sleep threshold
+          _50_ / _51_ / ... / __74__ / ... / _90_
+         - __Reset to Default__ | reset to bold values above
       - __Wear Temperature__ | Set the minimum measured temperature of the wearable to consider it being worn. Can be disabled to use the HRM instead to detect if it's being worn.
       - __Max Awake__ | maximal awake duration
       _10min_ / _20min_ / ... / __60min__ / ... / _120min_
     - __Min Consecutive__ | minimal consecutive sleep duration
       _10min_ / _20min_ / ... / __30min__ / ... / _120min_
   - __Enabled__ | completely en-/disables the background service
-    __on__ / _off_
-  - __Prefer HRM__ | En-/disables use of HRM readings if they are available for determining sleep states.
     __on__ / _off_
   - __Debugging__ submenu
     - __View log__ | display logfile data

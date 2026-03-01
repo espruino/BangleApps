@@ -436,6 +436,14 @@
             writeSetting();
           }
         },
+        /*LANG*/"Prefer HRM": {
+          value: settings.preferHRM,
+          onchange: v => {
+            settings.preferHRM = v;
+            writeSetting();
+          }
+        },
+        /*LANG*/"HRM Thresholds": () => showHRMThresholds(),
         /*LANG*/"Wear Temp": {
           value: settings.wearTemp,
           step: 0.5,
@@ -509,7 +517,6 @@
         selected: selected
       },
       /*LANG*/"Movement Thresholds": () => showMovementThresholds(),
-      /*LANG*/"HRM Thresholds": () => showHRMThresholds(),
       /*LANG*/"Other Settings": () => showOtherSettings(),
       
       /*LANG*/"Enabled": {
@@ -517,13 +524,6 @@
         onchange: v => {
           settings.enabled = v;
           require("sleeplog").setEnabled(v);
-        }
-      },
-      /*LANG*/"Prefer HRM": {
-        value: settings.preferHRM,
-        onchange: v => {
-          settings.preferHRM = v;
-          writeSetting();
         }
       },
       /*LANG*/"Debugging": {
