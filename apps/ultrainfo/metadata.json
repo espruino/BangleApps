@@ -17,6 +17,7 @@
     {"url":"screenshot2.png"},
     {"url":"screenshot3.png"},
     {"url":"screenshot4.png"},
+    {"url":"screenshot5.png"}
   ],
   "storage": [
     {"name":"ultrainfo.app.js","url":"app.js"},
