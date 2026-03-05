@@ -13,9 +13,10 @@
   "allow_emulator":true,
   "readme":"README.md",
   "screenshots": [
-    {"url":"scr1.png"},
-    {"url":"scr2.png"},
-    {"url":"scr3.png"}
+    {"url":"screenshot1.png"},
+    {"url":"screenshot2.png"},
+    {"url":"screenshot3.png"},
+    {"url":"screenshot4.png"},
   ],
   "storage": [
     {"name":"ultrainfo.app.js","url":"app.js"},
