@@ -5,25 +5,24 @@ const SETTINGS_FILE = "harvester.json";
 const global_settings = storage.readJSON("setting.json", true) || {};
 const H = g.getHeight();
 const W = g.getWidth();
-const rad = H / 2;
-const hyp = Math.sqrt(Math.pow(rad, 2) + Math.pow(rad, 2));
 
-// TODO: Update count to adapt to variable number of segments
-// TODO: Split for better memory efficiency?
-var pals = Array(3).fill().map(() => (
-  {
-    pal1: null, // palette for 0-49%
-    pal2: null  // palette for 50-100%
-  }));
+const FALLOW_IDX = -1;
 
-let palbg;
-const infoLineDefault = (3 * H / 4) - 10;
-const infoWidthDefault = 40;
-const infoHeightDefault = 12;
-const ringEdge = 4;
+// TODO: Remove
+const DECENTER_IDX = -2;
+
+var palCat, totalMin, startCat, endCat;
+
+const CM_Y = (3 * H / 4) - 10;
+const CM_W = 40;
+const CM_H = 12;
+const ringEdge = 2;
 const ringIterOffset = 10;
 const ringThick = 6;
 const nextUpdateMs = 60000;
+const halfWidthInscribed = W / 2 - ringEdge;
+const halfHeightInscribed = H / 2 - ringEdge;
+const radiusOuterRing = Math.min(halfWidthInscribed, halfHeightInscribed);
 // TODO: Add back in some sort of previous state record to avoid needless redraws
 //const { getDefaultSettings, color_options, fg_code, gy_code, fg_code_font } = require('./modules/set-def');
 
@@ -36,8 +35,14 @@ function log_debug(o) {
 function getFruitfulMin(i) {
   return Math.floor(settings.total_sec_by_cat[i] / 60);
 }
+function getFallowMin() {
+  return Math.floor(settings.fallow_buffer_sec / 60);
+}
+function getFallowUsedMin() {
+  return Math.floor(settings.fallow_used_sec / 60);
+}
 function getDecenterMin(i) {
-  if (i >= -1) { log_debug("can't treat " + i + " as decentering"); return; }
+  if (i >= FALLOW_IDX) { log_debug("can't treat " + i + " as decentering"); return; }
   return Math.floor(settings.total_sec_by_cat[settings.total_sec_by_cat.length + i] / 60);
 }
 function addFruitful(i, sec) {
@@ -60,19 +65,12 @@ function useRecenter(sec) {
   return sec - fallow_used_sec;
 }
 function useDecenter(i, sec) {
-  if (i >= -1) { log_debug("can't treat " + i + " as decentering"); return; }
+  if (i >= FALLOW_IDX) { log_debug("can't treat " + i + " as decentering"); return; }
   var excess_sec = useRecenter(sec);
-  return settings.total_sec_by_cat[settings.total_sec_by_cat.length + i] += sec;
+  return settings.total_sec_by_cat[settings.total_sec_by_cat.length + i] += excess_sec;
 }
 
 // https://www.1001fonts.com/rounded-fonts.html?page=3
-// TODO: Remove one/two-ring fns
-//one ring
-Graphics.prototype.setFontBloggerSansLight46 = function (scale) {
-  // Actual height 46 (45 - 0)
-  this.setFontCustom(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB4AAAAAAAA/AAAAAAAAPwAAAAAAAD4AAAAAAAAeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/AAAAAAAH/gAAAAAAP/wAAAAAAf/gAAAAAAf/AAAAAAA//AAAAAAB/+AAAAAAD/8AAAAAAH/4AAAAAAH/wAAAAAAP/gAAAAAAf/gAAAAAA//AAAAAAB/+AAAAAAA/8AAAAAAAP4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///8AAAAP////4AAAP/////AAAH/////4AAD+AAAB/AAA8AAAAHwAAeAAAAA+AAHgAAAAHgADwAAAAB4AA8AAAAAPAAPAAAAADwADwAAAAA8AA8AAAAAPAAPAAAAADwAB4AAAAB4AAeAAAAAeAAHwAAAAPgAA/AAAAPwAAH/////4AAA/////8AAAH////+AAAAf///+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAPAAAAAAAAHwAAAAAAAB4AAAAAAAA+AAAAAAAAfAAAAAAAAHgAAAAAAAD4AAAAAAAB8AAAAAAAAeAAAAAAAAPgAAAAAAADwAAAAAAAB//////4AAf//////AAH//////gAA//////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAD4AAHAAAAD+AAD4AAAB/gAA8AAAB/4AAfAAAA/+AAHgAAAf3gAB4AAAPx4AA8AAAH4eAAPAAAD4HgADwAAB8B4AA8AAA+AeAAPAAAfAHgADwAAPgB4AA8AAHwAeAAHgAD4AHgAB4AD8AB4AAfAB+AAeAAD8B/AAHgAAf//gAB4AAH//wAAeAAAf/wAAHgAAB/wAAA4AAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4AADgAAAAPAAB4AAAADwAAeAAAAA+AAHgAAAAHgAB4ABgAB4AAeAA8AAeAAHgA/AADwAB4AfwAA8AAeAP8AAPAAHgH/AADwAB4H7wAA8AAeD48AAPAAHh8PAAHgAB5+BwAB4AAe/AeAA+AAH/AHwAfAAB/gA/AfgAAfwAH//wAAHwAA//4AAA4AAH/8AAAAAAAf4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwAAAAAAAD+AAAAAAAD/gAAAAAAH/4AAAAAAH/+AAAAAAP/ngAAAAAP/h4AAAAAf/AeAAAAAf/AHgAAAA/+AB4AAAA/+AAeAAAB/8AAHgAAA/8AAB4AAAP4AAAeAAAB4AAAHgAAAAAAAB4AAAAAAAAeAAAAAAP///4AAAAH////AAAAA////gAAAAP///4AAAAAAB4AAAAAAAAeAAAAAAAAHgAAAAAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgAAAAD4AA8AAD///gAPAAB///4AD4AAf//+AAeAAH+APAAHgAB4AHgAA4AAeAB4AAOAAHgAcAADwAB4AHAAA8AAeADwAAPAAHgAcAADwAB4AHAAA8AAeAB4AAeAAHgAeAAHgAB4AHwAD4AAeAA+AB8AAHgAP4B+AAB4AB///gAAOAAP//gAABAAA//wAAAAAAD/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/gAAAAAB///4AAAAD////wAAAD////+AAAB/////4AAA/gPgB/AAAfgDwAHwAAPgA8AA+AADwAeAAHgAB4AHgAB4AAeAB4AAfAAHgAeAADwABwAHgAA8AAcAB4AAPAAHAAeAAHwAB4AHgAB4AAeAB8AAeAAHgAPAAPgAB4AD8APwAAOAAfwP4AADgAD//8AAAAAAf/+AAAAAAB/+AAAAAAAH8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgAAAAAAAB4AAAAAAAAeAAAAAAAAHgAAAAAAAB4AAAAA4AAeAAAAB/AAHgAAAB/wAB4AAAB/4AAeAAAD/4AAHgAAD/wAAB4AAH/wAAAeAAH/gAAAHgAP/gAAAB4AP/AAAAAeAf/AAAAAHgf+AAAAAB4/+AAAAAAe/8AAAAAAH/8AAAAAAB/4AAAAAAAf4AAAAAAADwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/gAAAA/AB/+AAAA/8B//wAAA//gf/+AAAf/8PgPgAAH4fngB8AAD4B/wAPgAA8AP8AB4AAeAB+AAeAAHgAfgADwAB4ADwAA8AAcAA8AAPAAHAAPAADwAB4ADwAA8AAeAB+AAPAAHgAfgAHgAB8AP8AB4AAPgH/AA+AAD8H54AfAAAf/8fgPwAAD/+D//4AAAf/Af/8AAAB/AD/+AAAAAAAP+AAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHwAAAAAAAf/wAAAAAAf/+AAAAAAP//4AAwAAH//+AAeAAD+APwAHgAA+AA+AB4AAfAAHgAOAAHgAB4ADwAB4AAPAA8AAeAADwAPAAHgAA8ADwAB4AAPAA8AAeAADwAPAAHgAA8AHgAB8AAeAB4AAPgAHgA+AAD8ADwA/AAAfwA8A/gAAD/wef/wAAAf////4AAAB////4AAAAH///wAAAAAD/+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AB4AAAAAfgA/AAAAAH4APwAAAAB+AD4AAAAAPAAeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="), 46, atob("DRAcHBwcHBwcHBwcDQ=="), 56 + (scale << 8) + (1 << 16));
-  return this;
-};
 
 //Two Rings
 Graphics.prototype.setFontBloggerSansLight42 = function () {
@@ -104,55 +102,33 @@ Graphics.prototype.setFontRoboto20 = function (scale) {
   return this;
 };
 
-// TODO: Finish fixing this for different settings structure?
-function palette(a, b) {
-  log_debug('Pal: ' + a + ', ' + b);
-  return new Uint16Array([g.theme.bg, a, b, g.toColor("#00f")]);
+function palette(dim, bright) {
+  log_debug('Pal: ' + dim + ', ' + bright);
+  return new Uint16Array([g.theme.bg, dim, bright, g.theme.fg]);
 }
-function assignPalettes() {
-  palbg = new Uint16Array([g.toColor(g.theme.bg)]);
+function updateDerivedRingVars() {
+  totalMin = 0;
+  startCat = new Uint16Array(settings.fruitful.length);
+  endCat = new Uint16Array(settings.fruitful.length);
+  palCat = new Array(settings.fruitful.length + 1); // TODO: Decentering categories
   for (let i = 0; i < settings.fruitful.length; i++) {
     let fruitful = settings.fruitful[i];
+    startCat[i] = totalMin;
+    totalMin += fruitful.target_min;
+    endCat[i] = totalMin;
     log_debug('Setting palette for ' + fruitful.title);
     if (fruitful.color == 'Blk/Wht') {
       // BLK/WHT is the outside in light mode, so all of it gets filled in.
       // Using the dark theme stops it from being a one-color circle.
-      pals[i].pal1 = palette(g.toColor(fruitful.gy), g.toColor(fruitful.fg));
-      pals[i].pal2 = palette(g.toColor(fruitful.fg), g.toColor(fruitful.gy));
+      palCat[i] = palette(g.toColor(fruitful.gy), g.toColor(fruitful.fg));
     } else if (g.theme.dark) {
-      // palette for 0-49%
-      pals[i].pal1 = palette(g.toColor(fruitful.gy), g.toColor(fruitful.fg));
-      // palette for 50-100%
-      pals[i].pal2 = palette(g.toColor(fruitful.fg), g.toColor(fruitful.gy));
+      palCat[i] = palette(g.toColor(fruitful.gy), g.toColor(fruitful.fg));
     } else {
-      // palette for 0-49%
-      pals[i].pal1 = palette(g.theme.fg, g.toColor(fruitful.fg));
-      // palette for 50-100%
-      pals[i].pal2 = palette(g.toColor(fruitful.fg), g.theme.fg);
+      palCat[i] = palette(g.theme.fg, g.toColor(fruitful.fg));
     }
   }
-}
-
-function rotate_points(end, max) {
-  const midH = H / 2;
-  const midW = W / 2;
-  const off = 5;
-  const points = [midW - off, 0, midW + off, 0, midW + off, midH, midW - off, midH];
-  var rotate = (2 * Math.PI) / (max / end);
-  var rotated_arr = [];
-  for (let i = 0; i < points.length; i += 2) {
-    let x = points[i];
-    let y = points[i + 1];
-    x -= midW;
-    y -= midH;
-    let x_new = x * Math.cos(rotate) - y * Math.sin(rotate);
-    let y_new = x * Math.sin(rotate) + y * Math.cos(rotate);
-    x = x_new + midW;
-    y = y_new + midH;
-    rotated_arr.push(x);
-    rotated_arr.push(y);
-  }
-  return rotated_arr;
+  // TODO: Set palettes for decentering, with theming
+  palCat[palCat.length + DECENTER_IDX + 1] = palette(g.toColor('#f00'), g.toColor('#200'));
 }
 
 function setSmallFont() {
@@ -163,10 +139,6 @@ function setLargeFont() {
   g.setFontBloggerSansLight38();
 }
 
-function setTinyFont() {
-  g.setFont('Vector', 12);
-}
-
 function ymd(date) {
   return date.toLocalISOString().substring(0, 10);
 }
@@ -175,28 +147,21 @@ function loadSettings() {
   settings = require("Storage").readJSON(SETTINGS_FILE, 1) || {};
   settings.fruitful = settings.fruitful ||
     [{ title: "Work", target_min: 480, fg: '#0f0', gy: '#020', color: 'Green' }];
-  settings.hour_color = settings.hour_color || 'Magenta';
+  settings.hour_color = settings.hour_color || 'Pink';
   settings.hour_fg = settings.hour_fg || '#f8f';
   // TODO: Allow actually changing this
   settings.fallow_denominator = 3;
   settings.hr_12 = (global_settings["12hour"] === undefined ? false : global_settings["12hour"]);
   // Converts from JSON or supplies size
   settings.total_sec_by_cat = new Uint16Array(settings.total_sec_by_cat || 15);
-  settings.fallow_buffer_sec = settings.fallow_buffer_sec || 0.0;
-  settings.cur_mode = settings.cur_mode || -1;
+  settings.fallow_buffer_sec = settings.fallow_buffer_sec || 0;
+  settings.fallow_used_sec = settings.fallow_used_sec || 0;
+  settings.cur_mode = settings.cur_mode || FALLOW_IDX;
   settings.last_reset = settings.last_reset || ymd(new Date());
-  assignPalettes();
+  updateDerivedRingVars();
 }
 
 var drawCount = 0;
-
-// TODO: Rework these (?) for different purpose of captioning mode
-function getInfoDims() {
-  var line = infoLineDefault;
-  var width = infoWidthDefault;
-  var height = infoHeightDefault;
-  return [line, width, height];
-}
 
 function drawHour(date) {
   var hh = date.getHours();
@@ -225,43 +190,77 @@ function draw() {
 }
 
 // TODO: Finish reworking (?) for stacking gauge segments etc
-function getGaugeImage(start, totalMin, amtMin, targetMin, invertRing) {
+function getGaugeImage(start, amtMin, targetMin, invertRing) {
   // Cap end var so the ring doesn't need to update if already full
-  let ringFill = Math.min(targetMin, amtMin) / totalMin;
-  let end = start + Math.round(ringFill);
+  let ringFill = Math.round(Math.min(targetMin, amtMin)), mid;
+  let ringGray = Math.round(targetMin), end;
   if (invertRing) {
-    start = totalMin - end;
+    start = totalMin - ringGray - ringFill;
+    mid = totalMin - ringFill;
     end = totalMin;
+  } else {
+    mid = start + ringFill;
+    end = start + ringGray;
   }
-  log_debug("Start: " + start + "  end: " + end);
-  return [start, end];
+  
+  log_debug("Start: " + start + " endFill: " + mid + " grayFill: " + end);
+  return [start, mid, end];
 }
 
-function drawIfChanged(start, end, totalMin, idxRing) {
+function drawIfChanged(start, endFill, endGray, idxCat, idxRing) {
+  // TODO: Actually optimize away redraws
   //if (end === prevRing[idx].end && start === prevRing[idx].start && totalMin === prevRing[idx].max) return;
-  drawSegment(start, end, totalMin, idxRing);
+  var pal;
+  if (FALLOW_IDX == idxCat) {
+    pal = palette(g.toColor('#202'), g.toColor('#80f'));
+  } else if (idxCat < 0) {
+    pal = palCat[palCat.length + idxCat + 1];
+  } else {
+    pal = palCat[idxCat];
+  }
+  drawSegment(start, endFill, endGray, pal, idxRing);
   //prevRing[idx].start = start;
   //prevRing[idx].end = end;
   //prevRing[idx].max = totalMin;
-  log_debug("Redrew part of ring #" + idxRing);
+  log_debug("Redrew part #" + idxCat + " in ring #" + idxRing);
+  return true;
 }
 
-// TODO: Rewrite to focus on drawing all segments of two or three rings
-function drawAllSegments(date, drawOnlyThisTitle) {
+function drawAllSegments() {
+  var result, anyChanged = false;
   for (let i = 0; i < settings.fruitful.length; i++) {
     let fruitful = settings.fruitful[i];
-    if (drawOnlyThisTitle != null && fruitful.title != drawOnlyThisTitle) continue;
-    var result = getGaugeImage(date, fruitful.ring, fruitful.step_target);
-    drawIfChanged(result[0], result[1], result[2], 0);
+    //if (drawOnlyThisTitle != null && fruitful.title != drawOnlyThisTitle) continue;
+    result = getGaugeImage(startCat[i], getFruitfulMin(i), fruitful.target_min, false);
+    if (drawIfChanged(result[0], result[1], result[2], i, 0)) anyChanged = true;
+  }
+
+  result = getGaugeImage(0, getDecenterMin(DECENTER_IDX), Math.round(totalMin / 4), true);
+  if (drawIfChanged(result[0], result[1], result[2], DECENTER_IDX, 1)) anyChanged = true;
+
+  var fallowScale = Math.round(totalMin / 4);
+  var fallowAmt = getFallowMin() * settings.fallow_denominator;
+  result = getGaugeImage(fallowScale * 1.5, fallowAmt, fallowScale, false);
+  if (drawIfChanged(result[0], result[1], result[2], FALLOW_IDX, 1)) anyChanged = true;
+
+  if (anyChanged) { // Draw trimming circles
+    g.setColor(g.theme.bg);
+    for (let iRing = 0; iRing < 2; iRing++) {
+      let radiusBase = radiusOuterRing - ringIterOffset * iRing;
+      g.drawCircle(W / 2, H / 2, radiusBase + 1);
+      //g.drawCircle(W / 2, H / 2, radiusBase);
+      g.drawCircle(W / 2, H / 2, radiusBase - ringThick);
+      g.drawCircle(W / 2, H / 2, radiusBase - ringThick - 1);
+    }
   }
 }
 
 function drawCurMode() {
   var text, bg;
-  if (-1 == settings.cur_mode) {
+  if (FALLOW_IDX == settings.cur_mode) {
     text = '-> * <-';
     bg = '#80f';
-  } else if (settings.cur_mode < -1) {
+  } else if (settings.cur_mode < FALLOW_IDX) {
     text = '<- ->';
     bg = '#f00';
   } else {
@@ -269,17 +268,13 @@ function drawCurMode() {
     text = f.title;
     bg = f.fg;
   }
-  var dims = getInfoDims();
-  var line = dims[0];
-  var width = dims[1];
-  var height = dims[2];
   g.setColor(bg);
-  g.fillRect((W / 2) - width, line - height - 2, (W / 2) + width, line + height - 2);
+  g.fillRect((W / 2) - CM_W, CM_Y - CM_H - 2, (W / 2) + CM_W, CM_Y + CM_H - 2);
 
   g.setColor(g.theme.fg);
   setSmallFont();
   g.setFontAlign(0, 0);
-  g.drawString(text, W / 2, line);
+  g.drawString(text, W / 2, CM_Y);
 }
 
 function drawClock() {
@@ -292,23 +287,21 @@ function drawClock() {
   drawCurMode();
 
   // TODO: Disable once totals are clear
-  var dims = getInfoDims();
-  var yStride = dims[2] + 5;
-  g.setColor(g.theme.fg);
-  setSmallFont();
+  /* g.setColor(g.theme.fg);
+  setSmallFont(); */
 
-  g.setFontAlign(-1, -1);
+  /* g.setFontAlign(-1, -1);
   for (let i = 0; i < settings.fruitful.length; i++) {
     let f = settings.fruitful[i], totalMin = getFruitfulMin(i);
     g.drawString(f.title + ': ' + totalMin, ringEdge, i * yStride + ringEdge);
-  }
-  g.setFontAlign(1, 1);
-  g.drawString(Math.floor(settings.fallow_buffer_sec / 60), W - 20, H - 20);
-  g.setFontAlign(-1, 1);
-  g.drawString(getDecenterMin(-2), 20, H - 20);
+  } */
+  /* g.setFontAlign(1, 1);
+  g.drawString(Math.floor(settings.fallow_buffer_sec / 60), W - 20, H - 20); */
+  /* g.setFontAlign(-1, 1);
+  g.drawString(getDecenterMin(DECENTER_IDX), 20, H - 20); */
 
   // TODO: Reenable once totals are clear
-  //drawAllSegments(date, null);
+  drawAllSegments();
 
   drawHour(date);
   drawMin(date);
@@ -317,119 +310,52 @@ function drawClock() {
   drawCount++;
 }
 
-function addPoint(loc, max) {
-  var angle = ((2 * Math.PI) / max) * loc;
-  var x = hyp * Math.sin(angle);
-  var y = hyp * Math.cos(angle + Math.PI);
-  x += rad;
-  y += rad;
-  return [Math.round(x), Math.round(y)];
+function addPoint(arr, qty, radius, scaleMax) {
+  var angle = ((2 * Math.PI) / scaleMax) * qty;
+  var x = W/2 + radius * Math.sin(angle);
+  var y = H/2 + radius * Math.cos(angle + Math.PI);
+  arr.push(Math.round(x), Math.round(y));
 }
 
-function polyArray(start, end, max) {
-  const eighth = max / 8;
+function polyArray(start, end, radius, scaleMax) {
+  const subsegment = scaleMax / 32;
   if (start == end) return []; // No array to draw if the points are the same.
   let startOrigin = start;
   let endOrigin = end;
-  start %= max;
-  end %= max;
-  if (start == 0 && startOrigin != 0) start = max;
-  if (end == 0 && endOrigin != 0) end = max;
-  if (start > end) end += max;
-  var array = [g.getHeight() / 2, g.getHeight() / 2];
-  var pt = addPoint(start, max);
-  array.push(pt[0], pt[1]);
-
-  for (let i = start + eighth; i < end; i += eighth) {
-    pt = addPoint(i, max);
-    array.push(pt[0], pt[1]);
+  start %= scaleMax;
+  end %= scaleMax;
+  if (start == 0 && startOrigin != 0) start = scaleMax;
+  if (end == 0 && endOrigin != 0) end = scaleMax;
+  if (start > end) end += scaleMax;
+  var array = [];
+  for (let i = start; i < end; i += subsegment) {
+    addPoint(array, i, radius, scaleMax);
   }
-  pt = addPoint(end, max);
-  array.push(pt[0], pt[1]);
-  log_debug("Poly Arr: " + array);
+  addPoint(array, end, radius, scaleMax);
+  // Inner side
+  for (let i = end; i > start; i -= subsegment) {
+    addPoint(array, i, radius - ringThick, scaleMax);
+  }
+  addPoint(array, start, radius - ringThick, scaleMax);
+  //log_debug("Poly Arr: " + array);
   return array;
 }
 
-function drawRing(start, end, max, idx) {
-  const buf = drawRing._buf;
-  let img = {
-    width: W, height: H, transparent: 0,
-    bpp: 2, palette: pals[idx].pal1, buffer: buf.buffer
-  };
-  let edge = ringEdge + (idx * ringIterOffset);
-  buf.clear();
-  buf.setColor(1).fillEllipse(edge, edge, W - edge, H - edge);
-  buf.setColor(0).fillEllipse(edge + ringThick, edge + ringThick, W - edge - ringThick, H - edge - ringThick);
-  img.palette = pals[idx].pal2;
-  g.drawImage(img, 0, 0);  // Draws a filled-in circle
-  if ((end - start) >= max) return;  // No need to add the unfilled circle
-  buf.clear();
-  buf.setColor(1).fillEllipse(edge, edge, W - edge, H - edge);
-  buf.setColor(0).fillEllipse(edge + ringThick, edge + ringThick, W - edge - ringThick, H - edge - ringThick);
-  buf.setColor(0).fillPoly(polyArray(start, end, max)); // Masks the filled-in part of the segment over the unfilled part
-  img.palette = pals[idx].pal1;
-  g.drawImage(img, 0, 0);  // Draws the unfilled-in segment
-  return;
-}
-// Create persistent `buf` inside the function scope
-drawRing._buf = Graphics.createArrayBuffer(W, H, 2, { msb: true });
-
-// TODO: Adapt??
-function drawSemi(start, end, max, idx) {
+function drawSegment(start, endFill, endGray, palette, idxRing) {
   // Create persistent `buf` inside the function scope
-  var fullCircle = (end - start) >= max;
-  if (!drawSemi._buf) {
-    drawSemi._buf = Graphics.createArrayBuffer(W, H, 2, { msb: true });
+  if (!drawSegment._buf) {
+    drawSegment._buf = Graphics.createArrayBuffer(W, H, 2, {});
   }
-  const buf = drawSemi._buf;
+  const buf = drawSegment._buf;
   let img = {
-    width: W, height: H, transparent: 0,
-    bpp: 2, palette: pals[idx].pal2, buffer: buf.buffer
+    width: W, height: H, transparent: 0, bpp: 2, palette: palette, buffer: buf.buffer
   };
-  let edge = ringEdge + (idx * ringIterOffset);
+  let radius = radiusOuterRing - (idxRing * ringIterOffset);
   buf.clear();
-  buf.setColor(1).fillEllipse(edge, edge, W - edge, H - edge);
-  buf.setColor(0).fillEllipse(edge + ringThick, edge + ringThick, W - edge - ringThick, H - edge - ringThick);
-  if (fullCircle)
-    img.palette = pals[idx].pal2;
-  else
-    img.palette = palbg;
-  g.drawImage(img, 0, 0);  // Draws a filled-in circle with the bg color, clearing it
-  if (end == start) return; //If the ring should be completely empty
-  if (fullCircle) return;  // No need to add the unfilled circle
-  buf.clear();
-  buf.setColor(1).fillEllipse(edge, edge, W - edge, H - edge);
-  buf.setColor(0).fillEllipse(edge + ringThick, edge + ringThick, W - edge - ringThick, H - edge - ringThick);
-  buf.setColor(0).fillPoly(polyArray(end, start, max)); // Masks the filled-in part of the segment over the unfilled part
-  img.palette = pals[idx].pal2;
-  g.drawImage(img, 0, 0);  // Draws the unfilled-in segment
-  return;
-}
-
-function drawC(end, max, idx) {
-  // Create persistent `buf` inside the function scope
-  if (!drawC._buf) {
-    drawC._buf = Graphics.createArrayBuffer(W, H, 2, { msb: true });
-  }
-  const buf = drawC._buf;
-  let img = {
-    width: W, height: H, transparent: 0,
-    bpp: 2, palette: pals[idx].pal2, buffer: buf.buffer
-  };
-  let edge = ringEdge + (idx * ringIterOffset);
-  buf.clear();
-  buf.setColor(1).fillEllipse(edge, edge, W - edge, H - edge);
-  buf.setColor(0).fillEllipse(edge + ringThick, edge + ringThick, W - edge - ringThick, H - edge - ringThick);
-  img.palette = palbg;
-  g.drawImage(img, 0, 0);  // Draws a filled-in circle with the bg color, clearing it
-  buf.clear();
-  buf.setColor(1).fillEllipse(edge, edge, W - edge, H - edge);
-  buf.setColor(0).fillEllipse(edge + ringThick, edge + ringThick, W - edge - ringThick, H - edge - ringThick);
-  if (end > max) end = max;
-  var vertices = rotate_points(end, max);
-  buf.setColor(0).fillPoly(vertices);
-  img.palette = pals[idx].pal2;
-  g.drawImage(img, 0, 0);  // Draws the unfilled-in segment  
+  buf.setColor(2).fillPolyAA(polyArray(start, endFill, radius, totalMin));
+  //if (endFill >= endGray) return;  // No need to add the unfilled arc
+  buf.setColor(1).fillPolyAA(polyArray(endFill, endGray, radius, totalMin));
+  g.drawImage(img, 0, 0);
   return;
 }
 
@@ -516,8 +442,8 @@ function pickFruitful() {
 
 // TODO: Add menu to select decentering subcategory
 var buttons = [new Button('fruitful', 'tr', 40, '#0f0', pickFruitful),
-               new Button('recenter', 'br', 40, '#80f', () => setCurMode(-1)),
-               new Button('decenter', 'bl', 40, '#f00', () => setCurMode(-2))];
+               new Button('recenter', 'br', 40, '#80f', () => setCurMode(FALLOW_IDX)),
+               new Button('decenter', 'bl', 40, '#f00', () => setCurMode(DECENTER_IDX))];
 buttons.forEach(b => b.draw());
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -531,7 +457,7 @@ function resetTotals() {
   // TODO: Save to historical file before clearing
   settings.fallow_buffer_sec = 0;
   settings.total_sec_by_cat.fill(0);
-  settings.cur_mode = -1;
+  settings.cur_mode = FALLOW_IDX;
   totals_updated_at = now;
   settings.last_reset = ymd(now);
 }
@@ -539,13 +465,13 @@ function resetTotals() {
 function updateTotals() {
   const now = new Date();
   var ymdNow = ymd(now), hrNow = now.getHours();
-  if (ymdNow != settings.last_reset && resetHour == hrNow) {
+  if (ymdNow != settings.last_reset && resetHour >= hrNow) {
     resetTotals();
   } else {
     if (!totals_updated_at) totals_updated_at = now;
     let update_sec = Math.round((now.getTime() - totals_updated_at.getTime()) / 1000);
     totals_updated_at = now;
-    if (-1 == settings.cur_mode) {
+    if (FALLOW_IDX == settings.cur_mode) {
       useRecenter(update_sec);
     } else if (settings.cur_mode >= 0) {
       addFruitful(settings.cur_mode, update_sec);
