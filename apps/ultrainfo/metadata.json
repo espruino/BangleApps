@@ -3,7 +3,7 @@
   "name": "Ultra Info Clock",
   "shortName":"Ultra Info",
   "icon": "icon.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "The ultimate information clock with not 2, not 4, but <i>6 ClockInfos</i> - for those who crave as much information as possible on their wrists.",
   "type":"clock",    
   "tags": "clock,clkinfo",
@@ -13,8 +13,9 @@
   "allow_emulator":true,
   "readme":"README.md",
   "screenshots": [
-    {"url":"screenshot1.png"},
-    {"url":"screenshot2.png"}
+    {"url":"scr1.png"},
+    {"url":"scr2.png"},
+    {"url":"scr3.png"}
   ],
   "storage": [
     {"name":"ultrainfo.app.js","url":"app.js"},
