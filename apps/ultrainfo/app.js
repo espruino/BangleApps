@@ -15,7 +15,7 @@ let drawTimeout;
 let draw = function () {
   var date = new Date();
   let locked=Bangle.isLocked()
-  background.fillRect(0, 62, g.getWidth() - 1, 110);
+  background.fillRect(36, 62, g.getWidth() - 36, 110);
   var timeStr = require("locale").time(date, 1); // Hour and minute
   g.setFontAlign(0, -1)
     .setColor(settings.mainColor)
