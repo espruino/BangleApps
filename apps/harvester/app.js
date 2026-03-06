@@ -1,5 +1,6 @@
 const storage = require('Storage');
 const widget_utils = require('widget_utils');
+const buzz = require('buzz');
 var settings;
 const SETTINGS_FILE = "harvester.json";
 const global_settings = storage.readJSON("setting.json", true) || {};
@@ -46,14 +47,10 @@ function getDecenterMin(i) {
   return Math.floor(settings.total_sec_by_cat[settings.total_sec_by_cat.length + i] / 60);
 }
 function addFruitful(i, sec) {
-  // TODO: Remove once confident in correctness
-  if (0 != sec % settings.fallow_denominator) {
-    log_debug('Invalid call to addFruitful: uneven fallow accumulation; i=' +
-              i + '; sec=' + sec + '; denom=' + settings.fallow_denominator);
-    return;
+  if (result >= targetMin * MIN && result < (targetMin + 1) * MIN) {
+    // TODO: Improve
+    buzz.pattern('=-;,:.');
   }
-  settings.fallow_buffer_sec += sec / settings.fallow_denominator;
-  return settings.total_sec_by_cat[i] += sec;
 }
 function useRecenter(sec) {
   /* sec=60, buf=120; used=60
@@ -66,8 +63,20 @@ function useRecenter(sec) {
 }
 function useDecenter(i, sec) {
   if (i >= FALLOW_IDX) { log_debug("can't treat " + i + " as decentering"); return; }
-  var excess_sec = useRecenter(sec);
-  return settings.total_sec_by_cat[settings.total_sec_by_cat.length + i] += excess_sec;
+  var excess_sec = useRecenter(sec), remaining = settings.fallow_buffer_sec;
+  let newTotal = settings.total_sec_by_cat[settings.total_sec_by_cat.length + i] + excess_sec;
+  // Assumes it will only be called every minute
+  // TODO: Allow configuring times
+  if (remaining <= 5 * MIN && remaining > 4 * MIN) {
+    buzz.pattern(':  :');
+  } else if (remaining <= 1 * MIN && remaining > 0) {
+    buzz.pattern(';  ;');
+  } else if (0 == remaining && excess_sec < 1 * MIN) {
+    buzz.pattern('==  ==');
+  } else if (0 == remaining && 0 == (newTotal % (5 * MIN))) {
+    buzz.pattern('= = = = =');
+  }
+  return settings.total_sec_by_cat[settings.total_sec_by_cat.length + i] = newTotal;
 }
 
 // https://www.1001fonts.com/rounded-fonts.html?page=3
