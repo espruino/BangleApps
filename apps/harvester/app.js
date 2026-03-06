@@ -17,6 +17,7 @@ var totalMin;
 var palCat, modeCat, targetMinCat, startCat, endCat;
 
 const CLK_Y = H / 2 - 10;
+const CLK_HALF_W = 112 / 2, CLK_HALF_H = 48 / 2, CLK_BG_Y = H / 2 - 17;
 
 const CM_Y = (3 * H / 4) - 20;
 const CM_W = 54;
@@ -26,7 +27,9 @@ const ringIterOffset = 10;
 const ringThick = 6;
 const nextUpdateMs = 60000;
 const radiusOuterRing = Math.min((W / 2 - ringEdge), (H / 2 - ringEdge));
-// TODO: Add back in some sort of previous state record to avoid needless redraws
+
+var prevDrawnMode, prevDrawnTime, prevDrawnSegment = [];
+
 //const { getDefaultSettings, color_options, fg_code, gy_code, fg_code_font } = require('./modules/set-def');
 
 const HR_RESET = 3; // Reset (and eventually save) totals at a time few will be awake
@@ -140,6 +143,7 @@ function updateDerivedRingVars() {
   modeCat = new Array(displayedLen);
 
   palCat[FALLOW_IDX] = palette(autoGray('#202'), '#80f');
+  // TODO: Draw out a nice circle and arrows properly
   modeCat[FALLOW_IDX] = '» × «';
   for (let i = 0; i < settings.fruitful.length; i++) {
     let fruitful = settings.fruitful[i];
@@ -154,7 +158,7 @@ function updateDerivedRingVars() {
   for (let j = 0; j < settings.decentering.length; j++) {
     let i = displayedLen + DECENTER_IDX - j, decentering = settings.decentering[j];
     palCat[i] = palette(decentering.fg, autoGray(decentering.gy));
-    modeCat[i] = '«' + decentering.title + '»';
+    modeCat[i] = decentering.title;
   }
 }
 
@@ -186,19 +190,23 @@ function drawTime(date) {
     if (hh == 0) hh = 12;
   }
   hh = hh.toString().padStart(2, '0');
-  setLargeFont();
-  g.setColor(settings.hour_fg);
-  g.setFontAlign(1, 0);  // right aligned
-  g.drawString(hh, (W / 2) - 1, CLK_Y);
-
   var mm = date.getMinutes().toString().padStart(2, '0');
-  g.setColor(g.theme.fg);
-  g.setFontAlign(-1, 0); // left aligned
-  g.drawString(mm, (W / 2) + 1, CLK_Y);
+  if (prevDrawnTime == hh + mm) return;
+  prevDrawnTime = hh + mm;
+
+  setLargeFont();
+  const wHalfS = W / 2;
+  g.clearRect(wHalfS - CLK_HALF_W, CLK_BG_Y - CLK_HALF_H,
+              wHalfS + CLK_HALF_W, CLK_BG_Y + CLK_HALF_H);
+  g.setColor(settings.hour_fg).setFontAlign(1, 0);  // right aligned
+  g.drawString(hh, wHalfS - 1, CLK_Y);
+
+  g.setColor(g.theme.fg).setFontAlign(-1, 0);       // left aligned
+  g.drawString(mm, wHalfS + 1, CLK_Y);
 }
 
 function draw() {
-  drawClock();
+  drawFace();
   queueDraw();
 }
 
@@ -214,28 +222,33 @@ function getGaugeSpans(start, amtMin, targetMin, invertRing) {
     result.mid = start + amtMin;
     result.end = start + targetMin;
   }
-  
+
   //log_debug(result);
   return result;
 }
 
 function drawIfChanged(gaugeSpans, idxCat, idxRing) {
-  // TODO: Actually optimize away redraws
-  var pal;
-  if (idxCat < FALLOW_IDX) {
-    pal = palCat[palCat.length + idxCat];
+  if (idxCat < FALLOW_IDX) idxCat += palCat.length;
+  var prevSpans = prevDrawnSegment[idxCat];
+  var endpointsMatch = prevSpans && prevSpans.start == gaugeSpans.start &&
+                       prevSpans.end == gaugeSpans.end;
+  if (endpointsMatch && prevSpans.mid == gaugeSpans.mid) return false;
+  prevDrawnSegment[idxCat] = gaugeSpans;
+  var pal = palCat[idxCat];
+  if (endpointsMatch && prevSpans.mid < gaugeSpans.mid) {
+    // Cheat by only drawing the progressed amount
+    log_debug("Redrew advanced subsection of part #" + idxCat + " in ring #" + idxRing +
+              ' from ' + prevSpans.mid + ' to ' + gaugeSpans.mid);
+    drawSegment(prevSpans.mid, gaugeSpans.mid, gaugeSpans.mid, pal, idxRing);
   } else {
-    pal = palCat[idxCat];
+    log_debug("Redrew part #" + idxCat + " in ring #" + idxRing);
+    drawSegment(gaugeSpans.start, gaugeSpans.mid, gaugeSpans.end, pal, idxRing);
   }
-  drawSegment(gaugeSpans.start, gaugeSpans.mid, gaugeSpans.end, pal, idxRing);
-  //prevRing[idx].start = start;
-  //prevRing[idx].end = end;
-  //prevRing[idx].max = totalMin;
-  //log_debug("Redrew part #" + idxCat + " in ring #" + idxRing);
   return true;
 }
 
 function drawTrimmingCircles() {
+  log_debug('Trimming circle edges');
   g.setColor(g.theme.bg);
   for (let iRing = 0; iRing < 2; iRing++) {
     let radiusBase = radiusOuterRing - ringIterOffset * iRing;
@@ -282,30 +295,34 @@ function drawAllSegments() {
 
 function drawCurMode() {
   var i = settings.cur_mode;
+  if (prevDrawnMode == i) return;
+  prevDrawnMode = i;
   if (i < FALLOW_IDX) i += modeCat.length;
   var text = modeCat[i], bg = palCat[i][2];
-  g.setColor(bg);
+  g.reset().setColor(bg);
   g.fillRect((W / 2) - CM_W, CM_Y - CM_H - 2, (W / 2) + CM_W, CM_Y + CM_H - 2);
 
-  g.setColor(g.theme.fg);
   setSmallFont();
-  g.setFontAlign(0, 0);
-  g.drawString(text, W / 2, CM_Y);
+  g.setColor(g.theme.fg).setFontAlign(0, 0).drawString(text, W / 2, CM_Y);
 }
 
-function drawClock() {
+function drawFace() {
   var date = new Date();
 
-  // TODO: Reduce affected area
-  g.clear(true);
-
-  buttons.forEach(b => b.draw());
   drawCurMode();
+  var modeDone = new Date();
   drawAllSegments();
+  var segmentsDone = new Date();
 
   drawTime(date);
+  var timeDone = new Date();
 
   drawCount++;
+  var overallMs = Math.round((new Date()).valueOf() - date.valueOf());
+  var modeMs = Math.round(modeDone.valueOf() - date.valueOf());
+  var segmentsMs = Math.round(segmentsDone.valueOf() - modeDone.valueOf());
+  var timeMs = Math.round(timeDone.valueOf() - segmentsDone.valueOf());
+  log_debug(overallMs + 'ms for drawing (mode: ' + modeMs + ', segments: ' + segmentsMs + ', time: ' + timeMs + ')');
   if (DEBUGGING) storage.write(SETTINGS_FILE, settings);
 }
 
@@ -351,11 +368,24 @@ function drawSegment(start, endFill, endGray, palette, idxRing) {
   };
   let radius = radiusOuterRing - (idxRing * ringIterOffset);
   buf.clear();
-  buf.setColor(2).fillPolyAA(polyArray(start, endFill, radius, totalMin));
+  buf.setColor(2).fillPoly(polyArray(start, endFill, radius, totalMin));
   //if (endFill >= endGray) return;  // No need to add the unfilled arc
-  buf.setColor(1).fillPolyAA(polyArray(endFill, endGray, radius, totalMin));
+  buf.setColor(1).fillPoly(polyArray(endFill, endGray, radius, totalMin));
   g.drawImage(img, 0, 0);
   return;
+}
+
+function clearDrawingCache() {
+  prevDrawnMode = null;
+  prevDrawnTime = null;
+  prevDrawnSegment.fill(null);
+}
+
+function redrawWholeFace() {
+  clearDrawingCache();
+  g.clear();
+  buttons.forEach(b => b.draw());
+  draw();
 }
 
 ///////////////   BUTTON CLASS ///////////////////////////////////////////
@@ -397,12 +427,6 @@ Button.prototype.draw = function () {
       g.fillPoly([W, H, W - this.size, H, W, H - this.size]); break;
   }
 };
-
-function redrawWholeFace() {
-  // TODO: Reset any previous data to force a full redraw
-  g.clear();
-  draw();
-}
 
 var inMenu = false;
 Bangle.on('touch', function (button, xy) {
@@ -453,7 +477,6 @@ function pickDecenter() {
 var buttons = [new Button('fruitful', 'tr', 40, '#0f0', pickFruitful),
                new Button('recenter', 'br', 40, '#80f', () => setCurMode(FALLOW_IDX)),
                new Button('decenter', 'bl', 40, '#f00', pickDecenter)];
-buttons.forEach(b => b.draw());
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -463,8 +486,8 @@ var totals_updated_at;
 
 function resetTotals() {
   const now = new Date();
+  clearDrawingCache();
   // TODO: Save to historical file before clearing
-  //settings.fallow_buffer_sec = 0;
   settings.total_sec_by_cat.fill(0);
   settings.cur_mode = FALLOW_IDX;
   totals_updated_at = now;
@@ -516,7 +539,7 @@ Bangle.on('lcdPower', on => {
 Bangle.setUI("clockupdown", btn => {
   updateTotals();
   log_debug('clockupdown');
-  draw();
+  redrawWholeFace();
   storage.write(SETTINGS_FILE, settings);  // Retains data when leaving the face
 });
 
