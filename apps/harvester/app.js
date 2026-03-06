@@ -423,6 +423,7 @@ Bangle.on('touch', function (button, xy) {
 
 function setCurMode(newMode) {
   //log_debug('Setting cur_mode to ' + newMode);
+  updateTotals();
   settings.cur_mode = newMode;
   E.showMenu();
   storage.write(SETTINGS_FILE, settings);
@@ -504,6 +505,7 @@ function queueDraw() {
 // Stop updates when LCD is off, restart when on
 Bangle.on('lcdPower', on => {
   if (on) {
+    updateTotals();
     draw(); // draw immediately, queue redraw
   } else { // stop draw timer
     if (drawTimeout) clearTimeout(drawTimeout);
@@ -512,6 +514,7 @@ Bangle.on('lcdPower', on => {
 });
 
 Bangle.setUI("clockupdown", btn => {
+  updateTotals();
   log_debug('clockupdown');
   draw();
   storage.write(SETTINGS_FILE, settings);  // Retains data when leaving the face
