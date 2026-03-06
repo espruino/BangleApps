@@ -7,64 +7,75 @@ const global_settings = storage.readJSON("setting.json", true) || {};
 const H = g.getHeight();
 const W = g.getWidth();
 
-const FALLOW_IDX = -1;
+const FALLOW_IDX = 0;
 
 // TODO: Remove
-const DECENTER_IDX = -2;
+const DECENTER_IDX = -1;
 
-var palCat, totalMin, startCat, endCat;
+// TODO: Distinguish startCat + endCat from others with different indexing, or make them consistent
+var totalMin;
+var palCat, modeCat, targetMinCat, startCat, endCat;
 
-const CM_Y = (3 * H / 4) - 10;
-const CM_W = 40;
+const CLK_Y = H / 2 - 10;
+
+const CM_Y = (3 * H / 4) - 20;
+const CM_W = 54;
 const CM_H = 12;
 const ringEdge = 2;
 const ringIterOffset = 10;
 const ringThick = 6;
 const nextUpdateMs = 60000;
-const halfWidthInscribed = W / 2 - ringEdge;
-const halfHeightInscribed = H / 2 - ringEdge;
-const radiusOuterRing = Math.min(halfWidthInscribed, halfHeightInscribed);
+const radiusOuterRing = Math.min((W / 2 - ringEdge), (H / 2 - ringEdge));
 // TODO: Add back in some sort of previous state record to avoid needless redraws
 //const { getDefaultSettings, color_options, fg_code, gy_code, fg_code_font } = require('./modules/set-def');
 
-const resetHour = 3; // Reset (and eventually save) totals at a time few will be awake
+const HR_RESET = 3; // Reset (and eventually save) totals at a time few will be awake
 
+const DEBUGGING = true; // TODO:
 function log_debug(o) {
-  print(o);
+  if (DEBUGGING) print(o);
 }
 
-function getFruitfulMin(i) {
-  return Math.floor(settings.total_sec_by_cat[i] / 60);
+const MIN = 60;
+
+function at(arr, i) {
+  if (i < 0) i += arr.length;
+  return arr[i];
 }
-function getFallowMin() {
-  return Math.floor(settings.fallow_buffer_sec / 60);
+
+function getMin(i) {
+  if (i < 0) i += settings.total_sec_by_cat.length;
+  return Math.floor(settings.total_sec_by_cat[i] / MIN);
 }
 function getFallowUsedMin() {
-  return Math.floor(settings.fallow_used_sec / 60);
-}
-function getDecenterMin(i) {
-  if (i >= FALLOW_IDX) { log_debug("can't treat " + i + " as decentering"); return; }
-  return Math.floor(settings.total_sec_by_cat[settings.total_sec_by_cat.length + i] / 60);
+  return Math.floor(settings.fallow_used_sec / MIN);
 }
 function addFruitful(i, sec) {
+  if (i <= FALLOW_IDX) throw new Error("Can't track fruitful time with i=" + i);
+  settings.total_sec_by_cat[FALLOW_IDX] += sec / settings.fallow_denominator;
+  const result = settings.total_sec_by_cat[i] += sec;
+  const targetMin = targetMinCat[i];
   if (result >= targetMin * MIN && result < (targetMin + 1) * MIN) {
     // TODO: Improve
     buzz.pattern('=-;,:.');
   }
+  return result;
 }
 function useRecenter(sec) {
   /* sec=60, buf=120; used=60
      sec=60, buf=30; used=30
      sec=60, buf=0; used=0
    */
-  var fallow_used_sec = E.clip(settings.fallow_buffer_sec, 0, sec);
-  settings.fallow_buffer_sec -= fallow_used_sec;
+  var fallow_used_sec = E.clip(settings.total_sec_by_cat[FALLOW_IDX], 0, sec);
+  settings.total_sec_by_cat[FALLOW_IDX] -= fallow_used_sec;
   return sec - fallow_used_sec;
 }
 function useDecenter(i, sec) {
-  if (i >= FALLOW_IDX) { log_debug("can't treat " + i + " as decentering"); return; }
-  var excess_sec = useRecenter(sec), remaining = settings.fallow_buffer_sec;
-  let newTotal = settings.total_sec_by_cat[settings.total_sec_by_cat.length + i] + excess_sec;
+  if (i >= FALLOW_IDX) throw new Error("can't treat " + i + " as decentering");
+  var excess_sec = useRecenter(sec);
+  var remaining = settings.total_sec_by_cat[FALLOW_IDX];
+  const j = settings.total_sec_by_cat.length + i;
+  let newTotal = settings.total_sec_by_cat[j] + excess_sec;
   // Assumes it will only be called every minute
   // TODO: Allow configuring times
   if (remaining <= 5 * MIN && remaining > 4 * MIN) {
@@ -76,33 +87,14 @@ function useDecenter(i, sec) {
   } else if (0 == remaining && 0 == (newTotal % (5 * MIN))) {
     buzz.pattern('= = = = =');
   }
-  return settings.total_sec_by_cat[settings.total_sec_by_cat.length + i] = newTotal;
+  return settings.total_sec_by_cat[j] = newTotal;
 }
 
 // https://www.1001fonts.com/rounded-fonts.html?page=3
-
-//Two Rings
-Graphics.prototype.setFontBloggerSansLight42 = function () {
-  // Actual height 28 (31 - 4)
-  // 1 BPP
-  return this.setFontCustom(
-    atob('AAAAAAAAAAAAAAAAAAAAAAAAAHwAAAAAHwAAAAAHwAAAAAHwAAAAADgAAAAAAAAAAAAAwAAAAAHwAAAAA/wAAAAH+AAAAA/wAAAAH+AAAAA/wAAAAH+AAAAA/wAAAAD+AAAAADwAAAAACAAAAAAAAAAAAAAAAAAAAAAP8AAAAD//wAAAP//8AAA////AAB////gAB4AAPgADwAADwADgAAAwADAAAAwADAAAAwADAAAAwADgAAAwADwAADwAB8AAPgAB////gAA////AAAP//8AAAD//wAAAAP4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAMAAAQAAYAAAwAAYAAAwAA4AAAwAAwAAAwAB////wAD////wAD////wAD////wAAAAAAwAAAAAAwAAAAAAwAAAAAAwAAAAAAQAAAAAAQAAAAAAAAAAAAAAAAAAAAAAB8AADwAB+AAHwAD8AAPwADgAAfwADAAA7wADAABzwADAABzwADAAHjwADAAPDwADAAeDwADgA8DwAD4H4DwAB//wDwAB//gDwAA/+ADwAAP8ADwAAAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAfgAB8AAfwAD8AABwADgAABwADAAAAwADADAAwADADAAwADADAAwADADAAwADAHAAwADgHgBwADwfgBwAB//4DgAB/8//gAA/4//AAAfwf+AAAAAP8AAAAABgAAAAAAAAAAAAAAAAAAADwAAAAAPwAAAAAfwAAAAA9wAAAADxwAAAAHhwAAAAeBwAAAA8BwAAADwBwAAAHgBwAAAfABwAAA8ABwAAB////wAD////wAD////wAD////wAAAABwAAAAABwAAAAABwAAAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAfgAD//AfgAD//AHwAD//ABwADwHAAwADwHAAwADwGAAwADwGAAwADwGAAwADwHAAwADwHABwADwHABwADwDgDgADwD//gADwB//AADgB/+AAAAAf8AAAAADAAAAAAAAAAAAAAAAAAAAAAAAAA//gAAAH//8AAAP//+AAAf///AAA/DAfgAB4DAHwABwHABwADgGAAwADgGAAwADAGAAwADAHAAwADAHAAwADAHgBwADgH8fgAD4D//gAD8D//AAAAA/+AAAAAf4AAAAAAAAAAAAAAAAAAAAAAAD8AAAAAD+AAAAAD8AAAAADwAAAwADwAADwADwAAPwADwAA/gADwAD8AADwAPwAADwA/AAADwD8AAADwPwAAADw/AAAADz4AAAAD/gAAAAD+AAAAAD4AAAAADgAAAAAAAAAAAAAAAAAAAAAADgAAAHgP8AAAf4f/AAA/8//gAB////gAD8/wDwADgHgBwADAHAAwADADAAwADADAAwADADAAwADAHAAwADgHgBwAB8/wDwAB////gAA/8//gAAf4f/AAAHgP8AAAAADgAAAAAAAAAAAAAAAAAD8AAAAAP/AHgAA//gPwAB//wDwAB/f4AwADwB4AwADgA4AwADAAYAwADAAYAwADAAYAwADAAYBwADgA4DwADwAwHgAB+Aw/gAB////AAA///+AAAf//4AAAD//gAAAADgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMADgAAAeAHwAAA/AHwAAA/AHwAAAeAHwAAAAABAAAAAAAAAA'),
-    46,
-    atob("CQ0VFBQVFhUVFRUVCg=="),
-    42 | 65536
-  );
-};
-
-// Three rings
-Graphics.prototype.setFontBloggerSansLight38 = function () {
-  // Actual height 25 (28 - 4)
-  // 1 BPP
-  return this.setFontCustom(
-    atob('AAAAAAAAAAAAAAAAAwAAAAAeAAAAAPgAAAAD4AAAAAcAAAAAAAAAAAAYAAAAA+AAAAB/AAAAD+AAAAH8AAAAP4AAAAP4AAAAfwAAAA/gAAAAPAAAAACAAAAAAAAAAAAAAAAAAAA/4AAAB//wAAB///AAA///8AAfgA/AAPAAB4ADAAAGAAwAABgAMAAAYADAAAGAA4AABgAPAAB4AB+AD8AAP//+AAB///AAAH//gAAAP+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAACAAGAAAgABgAAYAAwAAGAAcAABgAH///4AD///+AA////gAP///4AAAAAGAAAAABgAAAAAYAAAAACAAAAAAgAAAAAAAAAAAAAAAAADgAHwAB4AD8AA+AA4AAfgAMAAG4ADAADOAAwABjgAMAA44ADAAcOAAwAeDgAOAPA4AB8/gOAAf/wDgAD/4A4AAf4AOAAB4ADgAAAAAAAAAAAAAAAAAAAAHwAH4AD8AA+AA8AABgAMAAAYADAGAGAAwBgBgAMAYAYADAGAGAAwDgBgAOA4AYAD5/AOAAf+8PAAH/n/wAA/x/4AABgP8AAAAA8AAAAAAAAAAABgAAAAA8AAAAA/AAAAAdwAAAAecAAAAPHAAAAHBwAAAHgcAAADgHAAADwBwAAB4AcAAA8AHAAA////gAP///4AD///+AAAABwAAAAAcAAAAAHAAAAABwAAAAAAAAAAAAAAAAAAAAAAAAHwAD/8B+AA//ADgAOAwAYADgMAGAA4DABgAOAwAYADgMAGAA4DABgAOA4A4ADgOAOAA4B4PAAOAf/wADgD/4AAAAf8AAAAB4AAAAAAAAAAAAAAAAA+AAAAD//AAAD//8AAB///gAA/2f8AAfBgHAAHAwA4ADgMAGAAwDABgAMAwAYADAMAGAAwDgDgAMA8B4ADwP/8AA+B//AAHgP/AAAAA/AAAAAAAAAAAAAAAAAAAAAA/AAAAAPwAAAADwAACAA4AADgAOAAD4ADgAD8AA4AD8AAOAD8AADgD8AAA4D8AAAOD8AAADj4AAAA74AAAAP4AAAAD4AAAAA4AAAAAAAAAAAAAAAAAAAAHwAAB8H/AAA/z/4AAf+//AAH/+B4ADgeAOAAwDgBgAMAwAYADAMAGAAwDABgAMA4AYADgeAOAAf/4PgAH/v/wAA/z/8AAHwP8AAAAB8AAAAAAAAAAAAAAAAfgAAAAf+A+AAP/wPgAH/8AYADwHgGAA4A4BgAMAOAYADABgGAAwAYBgAMAGA4ADgDgeAA8AwPAAH+N/wAA///4AAH//4AAAf/8AAAAfwAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgBwAAB8A+AAAfAPgAAHgB4AAAwAMAAAAAAAAA=='),
-    46,
-    atob("CAwTEhITFBMTExMTCQ=="),
-    38 | 65536
-  );
+Graphics.prototype.setFontBloggerSansLight46 = function (scale) {
+  // Actual height 46 (45 - 0)
+  this.setFontCustom(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB4AAAAAAAA/AAAAAAAAPwAAAAAAAD4AAAAAAAAeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/AAAAAAAH/gAAAAAAP/wAAAAAAf/gAAAAAAf/AAAAAAA//AAAAAAB/+AAAAAAD/8AAAAAAH/4AAAAAAH/wAAAAAAP/gAAAAAAf/gAAAAAA//AAAAAAB/+AAAAAAA/8AAAAAAAP4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///8AAAAP////4AAAP/////AAAH/////4AAD+AAAB/AAA8AAAAHwAAeAAAAA+AAHgAAAAHgADwAAAAB4AA8AAAAAPAAPAAAAADwADwAAAAA8AA8AAAAAPAAPAAAAADwAB4AAAAB4AAeAAAAAeAAHwAAAAPgAA/AAAAPwAAH/////4AAA/////8AAAH////+AAAAf///+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAPAAAAAAAAHwAAAAAAAB4AAAAAAAA+AAAAAAAAfAAAAAAAAHgAAAAAAAD4AAAAAAAB8AAAAAAAAeAAAAAAAAPgAAAAAAADwAAAAAAAB//////4AAf//////AAH//////gAA//////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAD4AAHAAAAD+AAD4AAAB/gAA8AAAB/4AAfAAAA/+AAHgAAAf3gAB4AAAPx4AA8AAAH4eAAPAAAD4HgADwAAB8B4AA8AAA+AeAAPAAAfAHgADwAAPgB4AA8AAHwAeAAHgAD4AHgAB4AD8AB4AAfAB+AAeAAD8B/AAHgAAf//gAB4AAH//wAAeAAAf/wAAHgAAB/wAAA4AAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4AADgAAAAPAAB4AAAADwAAeAAAAA+AAHgAAAAHgAB4ABgAB4AAeAA8AAeAAHgA/AADwAB4AfwAA8AAeAP8AAPAAHgH/AADwAB4H7wAA8AAeD48AAPAAHh8PAAHgAB5+BwAB4AAe/AeAA+AAH/AHwAfAAB/gA/AfgAAfwAH//wAAHwAA//4AAA4AAH/8AAAAAAAf4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwAAAAAAAD+AAAAAAAD/gAAAAAAH/4AAAAAAH/+AAAAAAP/ngAAAAAP/h4AAAAAf/AeAAAAAf/AHgAAAA/+AB4AAAA/+AAeAAAB/8AAHgAAA/8AAB4AAAP4AAAeAAAB4AAAHgAAAAAAAB4AAAAAAAAeAAAAAAP///4AAAAH////AAAAA////gAAAAP///4AAAAAAB4AAAAAAAAeAAAAAAAAHgAAAAAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgAAAAD4AA8AAD///gAPAAB///4AD4AAf//+AAeAAH+APAAHgAB4AHgAA4AAeAB4AAOAAHgAcAADwAB4AHAAA8AAeADwAAPAAHgAcAADwAB4AHAAA8AAeAB4AAeAAHgAeAAHgAB4AHwAD4AAeAA+AB8AAHgAP4B+AAB4AB///gAAOAAP//gAABAAA//wAAAAAAD/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/gAAAAAB///4AAAAD////wAAAD////+AAAB/////4AAA/gPgB/AAAfgDwAHwAAPgA8AA+AADwAeAAHgAB4AHgAB4AAeAB4AAfAAHgAeAADwABwAHgAA8AAcAB4AAPAAHAAeAAHwAB4AHgAB4AAeAB8AAeAAHgAPAAPgAB4AD8APwAAOAAfwP4AADgAD//8AAAAAAf/+AAAAAAB/+AAAAAAAH8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgAAAAAAAB4AAAAAAAAeAAAAAAAAHgAAAAAAAB4AAAAA4AAeAAAAB/AAHgAAAB/wAB4AAAB/4AAeAAAD/4AAHgAAD/wAAB4AAH/wAAAeAAH/gAAAHgAP/gAAAB4AP/AAAAAeAf/AAAAAHgf+AAAAAB4/+AAAAAAe/8AAAAAAH/8AAAAAAB/4AAAAAAAf4AAAAAAADwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/gAAAA/AB/+AAAA/8B//wAAA//gf/+AAAf/8PgPgAAH4fngB8AAD4B/wAPgAA8AP8AB4AAeAB+AAeAAHgAfgADwAB4ADwAA8AAcAA8AAPAAHAAPAADwAB4ADwAA8AAeAB+AAPAAHgAfgAHgAB8AP8AB4AAPgH/AA+AAD8H54AfAAAf/8fgPwAAD/+D//4AAAf/Af/8AAAB/AD/+AAAAAAAP+AAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHwAAAAAAAf/wAAAAAAf/+AAAAAAP//4AAwAAH//+AAeAAD+APwAHgAA+AA+AB4AAfAAHgAOAAHgAB4ADwAB4AAPAA8AAeAADwAPAAHgAA8ADwAB4AAPAA8AAeAADwAPAAHgAA8AHgAB8AAeAB4AAPgAHgA+AAD8ADwA/AAAfwA8A/gAAD/wef/wAAAf////4AAAB////4AAAAH///wAAAAAD/+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AB4AAAAAfgA/AAAAAH4APwAAAAB+AD4AAAAAPAAeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="), 46, atob("DRAcHBwcHBwcHBwcDQ=="), 56 + (scale << 8) + (1 << 16));
+  return this;
 };
 
 Graphics.prototype.setFontRoboto20 = function (scale) {
@@ -111,60 +103,75 @@ Graphics.prototype.setFontRoboto20 = function (scale) {
   return this;
 };
 
-function palette(dim, bright) {
-  log_debug('Pal: ' + dim + ', ' + bright);
-  return new Uint16Array([g.theme.bg, dim, bright, g.theme.fg]);
-}
-function updateDerivedRingVars() {
-  totalMin = 0;
-  startCat = new Uint16Array(settings.fruitful.length);
-  endCat = new Uint16Array(settings.fruitful.length);
-  palCat = new Array(settings.fruitful.length + 1); // TODO: Decentering categories
-  for (let i = 0; i < settings.fruitful.length; i++) {
-    let fruitful = settings.fruitful[i];
-    startCat[i] = totalMin;
-    totalMin += fruitful.target_min;
-    endCat[i] = totalMin;
-    log_debug('Setting palette for ' + fruitful.title);
-    if (fruitful.color == 'Blk/Wht') {
-      // BLK/WHT is the outside in light mode, so all of it gets filled in.
-      // Using the dark theme stops it from being a one-color circle.
-      palCat[i] = palette(g.toColor(fruitful.gy), g.toColor(fruitful.fg));
-    } else if (g.theme.dark) {
-      palCat[i] = palette(g.toColor(fruitful.gy), g.toColor(fruitful.fg));
-    } else {
-      palCat[i] = palette(g.theme.fg, g.toColor(fruitful.fg));
-    }
-  }
-  // TODO: Set palettes for decentering, with theming
-  palCat[palCat.length + DECENTER_IDX + 1] = palette(g.toColor('#f00'), g.toColor('#200'));
-}
-
 function setSmallFont() {
-  g.setFontRoboto20();
+  g.setFont('Vector', 18);
 }
 
 function setLargeFont() {
-  g.setFontBloggerSansLight38();
+  g.setFontBloggerSansLight46();
 }
 
 function ymd(date) {
   return date.toLocalISOString().substring(0, 10);
 }
 
+function palette(dim, bright) {
+  //log_debug('Pal: ' + dim + ', ' + bright);
+  return new Uint16Array([g.theme.bg, g.toColor(dim), g.toColor(bright), g.theme.fg]);
+}
+function autoGray(fruitful) {
+  if (g.theme.dark || fruitful.color == 'Blk/Wht') {
+    // TODO: Recheck this comment
+    // BLK/WHT is the outside in light mode, so all of it gets filled in.
+    // Using the dark theme stops it from being a one-color circle.
+    return g.toColor(fruitful.gy || fruitful);
+  } else {
+    return g.theme.fg;
+  }
+}
+function updateDerivedRingVars() {
+  totalMin = 0;
+  var fixedPosLen = settings.fruitful.length;
+  var displayedLen = settings.fruitful.length + 1 + settings.decentering.length;
+  startCat = new Uint16Array(fixedPosLen);
+  endCat = new Uint16Array(fixedPosLen);
+  targetMinCat = new Uint16Array(fixedPosLen);
+  palCat = new Array(displayedLen);
+  modeCat = new Array(displayedLen);
+
+  palCat[FALLOW_IDX] = palette(autoGray('#202'), '#80f');
+  modeCat[FALLOW_IDX] = '» × «';
+  for (let i = 0; i < settings.fruitful.length; i++) {
+    let fruitful = settings.fruitful[i];
+    startCat[i] = totalMin;
+    targetMinCat[i] = fruitful.target_min;
+    totalMin += fruitful.target_min;
+    endCat[i] = totalMin;
+    //log_debug('Setting palette for ' + fruitful.title);
+    palCat[i + 1] = palette(autoGray(fruitful), g.toColor(fruitful.fg));
+    modeCat[i + 1] = fruitful.title;
+  }
+  for (let j = 0; j < settings.decentering.length; j++) {
+    let i = displayedLen + DECENTER_IDX - j, decentering = settings.decentering[j];
+    palCat[i] = palette(decentering.fg, autoGray(decentering.gy));
+    modeCat[i] = '«' + decentering.title + '»';
+  }
+}
+
 function loadSettings() {
   settings = require("Storage").readJSON(SETTINGS_FILE, 1) || {};
   settings.fruitful = settings.fruitful ||
     [{ title: "Work", target_min: 480, fg: '#0f0', gy: '#020', color: 'Green' }];
-  settings.hour_color = settings.hour_color || 'Pink';
-  settings.hour_fg = settings.hour_fg || '#f8f';
+  settings.decentering = settings.decentering ||
+    [{ title: "Social Media", fg: '#f00', gy: '#200', color: 'Red' }];
+  settings.hour_color = settings.hour_color || 'Light Green';
+  settings.hour_fg = settings.hour_fg || '#8f8';
   // TODO: Allow actually changing this
   settings.fallow_denominator = 3;
   settings.hr_12 = (global_settings["12hour"] === undefined ? false : global_settings["12hour"]);
   // Converts from JSON or supplies size
-  settings.total_sec_by_cat = new Uint16Array(settings.total_sec_by_cat || 15);
-  settings.fallow_buffer_sec = settings.fallow_buffer_sec || 0;
-  settings.fallow_used_sec = settings.fallow_used_sec || 0;
+  settings.total_sec_by_cat = new Uint16Array(settings.total_sec_by_cat || 16);
+  //settings.fallow_used_sec = settings.fallow_used_sec || 0;
   settings.cur_mode = settings.cur_mode || FALLOW_IDX;
   settings.last_reset = settings.last_reset || ymd(new Date());
   updateDerivedRingVars();
@@ -172,7 +179,7 @@ function loadSettings() {
 
 var drawCount = 0;
 
-function drawHour(date) {
+function drawTime(date) {
   var hh = date.getHours();
   if (settings.hr_12) {
     hh = hh % 12;
@@ -182,15 +189,12 @@ function drawHour(date) {
   setLargeFont();
   g.setColor(settings.hour_fg);
   g.setFontAlign(1, 0);  // right aligned
-  g.drawString(hh, (W / 2) - 1, H / 2);
-}
+  g.drawString(hh, (W / 2) - 1, CLK_Y);
 
-/// NOTE: Needs font size set properly beforehand
-function drawMin(date) {
   var mm = date.getMinutes().toString().padStart(2, '0');
   g.setColor(g.theme.fg);
   g.setFontAlign(-1, 0); // left aligned
-  g.drawString(mm, (W / 2) + 1, H / 2);
+  g.drawString(mm, (W / 2) + 1, CLK_Y);
 }
 
 function draw() {
@@ -198,85 +202,88 @@ function draw() {
   queueDraw();
 }
 
-// TODO: Finish reworking (?) for stacking gauge segments etc
-function getGaugeImage(start, amtMin, targetMin, invertRing) {
-  // Cap end var so the ring doesn't need to update if already full
-  let ringFill = Math.round(Math.min(targetMin, amtMin)), mid;
-  let ringGray = Math.round(targetMin), end;
+function getGaugeSpans(start, amtMin, targetMin, invertRing) {
+  let result = {};
   if (invertRing) {
-    start = totalMin - ringGray - ringFill;
-    mid = totalMin - ringFill;
-    end = totalMin;
+    result.end = totalMin;
+    result.mid = result.end - amtMin;
+    result.start = result.mid - 5; // TODO: Tweak visual buffer
   } else {
-    mid = start + ringFill;
-    end = start + ringGray;
+    result.start = start;
+    // Cap end var so the ring doesn't need to update if already full
+    result.mid = start + amtMin;
+    result.end = start + targetMin;
   }
   
-  log_debug("Start: " + start + " endFill: " + mid + " grayFill: " + end);
-  return [start, mid, end];
+  //log_debug(result);
+  return result;
 }
 
-function drawIfChanged(start, endFill, endGray, idxCat, idxRing) {
+function drawIfChanged(gaugeSpans, idxCat, idxRing) {
   // TODO: Actually optimize away redraws
-  //if (end === prevRing[idx].end && start === prevRing[idx].start && totalMin === prevRing[idx].max) return;
   var pal;
-  if (FALLOW_IDX == idxCat) {
-    pal = palette(g.toColor('#202'), g.toColor('#80f'));
-  } else if (idxCat < 0) {
-    pal = palCat[palCat.length + idxCat + 1];
+  if (idxCat < FALLOW_IDX) {
+    pal = palCat[palCat.length + idxCat];
   } else {
     pal = palCat[idxCat];
   }
-  drawSegment(start, endFill, endGray, pal, idxRing);
+  drawSegment(gaugeSpans.start, gaugeSpans.mid, gaugeSpans.end, pal, idxRing);
   //prevRing[idx].start = start;
   //prevRing[idx].end = end;
   //prevRing[idx].max = totalMin;
-  log_debug("Redrew part #" + idxCat + " in ring #" + idxRing);
+  //log_debug("Redrew part #" + idxCat + " in ring #" + idxRing);
   return true;
 }
 
-function drawAllSegments() {
-  var result, anyChanged = false;
-  for (let i = 0; i < settings.fruitful.length; i++) {
-    let fruitful = settings.fruitful[i];
-    //if (drawOnlyThisTitle != null && fruitful.title != drawOnlyThisTitle) continue;
-    result = getGaugeImage(startCat[i], getFruitfulMin(i), fruitful.target_min, false);
-    if (drawIfChanged(result[0], result[1], result[2], i, 0)) anyChanged = true;
-  }
-
-  result = getGaugeImage(0, getDecenterMin(DECENTER_IDX), Math.round(totalMin / 4), true);
-  if (drawIfChanged(result[0], result[1], result[2], DECENTER_IDX, 1)) anyChanged = true;
-
-  var fallowScale = Math.round(totalMin / 4);
-  var fallowAmt = getFallowMin() * settings.fallow_denominator;
-  result = getGaugeImage(fallowScale * 1.5, fallowAmt, fallowScale, false);
-  if (drawIfChanged(result[0], result[1], result[2], FALLOW_IDX, 1)) anyChanged = true;
-
-  if (anyChanged) { // Draw trimming circles
-    g.setColor(g.theme.bg);
-    for (let iRing = 0; iRing < 2; iRing++) {
-      let radiusBase = radiusOuterRing - ringIterOffset * iRing;
-      g.drawCircle(W / 2, H / 2, radiusBase + 1);
-      //g.drawCircle(W / 2, H / 2, radiusBase);
-      g.drawCircle(W / 2, H / 2, radiusBase - ringThick);
-      g.drawCircle(W / 2, H / 2, radiusBase - ringThick - 1);
-    }
+function drawTrimmingCircles() {
+  g.setColor(g.theme.bg);
+  for (let iRing = 0; iRing < 2; iRing++) {
+    let radiusBase = radiusOuterRing - ringIterOffset * iRing;
+    g.drawCircle(W / 2, H / 2, radiusBase + 1);
+    //g.drawCircle(W / 2, H / 2, radiusBase);
+    g.drawCircle(W / 2, H / 2, radiusBase - ringThick);
+    g.drawCircle(W / 2, H / 2, radiusBase - ringThick - 1);
   }
 }
 
-function drawCurMode() {
-  var text, bg;
-  if (FALLOW_IDX == settings.cur_mode) {
-    text = '-> * <-';
-    bg = '#80f';
-  } else if (settings.cur_mode < FALLOW_IDX) {
-    text = '<- ->';
-    bg = '#f00';
-  } else {
-    f = settings.fruitful[settings.cur_mode];
-    text = f.title;
-    bg = f.fg;
+function drawAllSegments() {
+  var anyChanged = false, start = 0;
+  for (let i = 0; i < settings.fruitful.length; i++) {
+    let targetMin = targetMinCat[i];
+    let fruitful = getMin(i + 1), overwork = Math.max(fruitful - targetMin, 0);
+    if (drawIfChanged(getGaugeSpans(startCat[i], fruitful - overwork, targetMin), i + 1, 0)) {
+      anyChanged = true;
+    }
+    if (0 == overwork) continue;
+    if (drawIfChanged(getGaugeSpans(start, overwork, overwork + 5), i + 1, 1)) {
+      anyChanged = true;
+    }
+    start += overwork + 5;
   }
+
+  start = 0;
+  for (let j = 0; j < settings.decentering.length; j++) {
+    let i = DECENTER_IDX - j; decenter = getMin(i);
+    if (0 == decenter) continue;
+    if (drawIfChanged(getGaugeSpans(start, decenter, decenter + 5, true), i, 1)) {
+      anyChanged = true;
+    }
+    start += decenter + 5;
+  }
+
+  var fallowScale = Math.round(totalMin / 4);
+  var fallowAmt = getMin(FALLOW_IDX) * settings.fallow_denominator;
+  if (drawIfChanged(getGaugeSpans(fallowScale * 1.5, fallowAmt, fallowScale), FALLOW_IDX, 1)) {
+    anyChanged = true;
+  }
+
+  if (anyChanged) drawTrimmingCircles();
+}
+
+function drawCurMode() {
+  var i = settings.cur_mode;
+  if (i < FALLOW_IDX) i += modeCat.length;
+  var text = modeCat[i], bg = palCat[i][2];
   g.setColor(bg);
   g.fillRect((W / 2) - CM_W, CM_Y - CM_H - 2, (W / 2) + CM_W, CM_Y + CM_H - 2);
 
@@ -294,35 +301,18 @@ function drawClock() {
 
   buttons.forEach(b => b.draw());
   drawCurMode();
-
-  // TODO: Disable once totals are clear
-  /* g.setColor(g.theme.fg);
-  setSmallFont(); */
-
-  /* g.setFontAlign(-1, -1);
-  for (let i = 0; i < settings.fruitful.length; i++) {
-    let f = settings.fruitful[i], totalMin = getFruitfulMin(i);
-    g.drawString(f.title + ': ' + totalMin, ringEdge, i * yStride + ringEdge);
-  } */
-  /* g.setFontAlign(1, 1);
-  g.drawString(Math.floor(settings.fallow_buffer_sec / 60), W - 20, H - 20); */
-  /* g.setFontAlign(-1, 1);
-  g.drawString(getDecenterMin(DECENTER_IDX), 20, H - 20); */
-
-  // TODO: Reenable once totals are clear
   drawAllSegments();
 
-  drawHour(date);
-  drawMin(date);
+  drawTime(date);
 
-  //drawInfo();
   drawCount++;
+  if (DEBUGGING) storage.write(SETTINGS_FILE, settings);
 }
 
 function addPoint(arr, qty, radius, scaleMax) {
   var angle = ((2 * Math.PI) / scaleMax) * qty;
-  var x = W/2 + radius * Math.sin(angle);
-  var y = H/2 + radius * Math.cos(angle + Math.PI);
+  var x = W / 2 + radius * Math.sin(angle);
+  var y = H / 2 + radius * Math.cos(angle + Math.PI);
   arr.push(Math.round(x), Math.round(y));
 }
 
@@ -442,17 +432,26 @@ function setCurMode(newMode) {
 function pickFruitful() {
   var menu = { "": { title: '-- Fruitful --', remove: () => { inMenu = false; } } };
   for (let i = 0; i < settings.fruitful.length; i++) {
-    let f = settings.fruitful[i], newMode = i;
-    menu[f.title] = () => setCurMode(newMode);
+    let newMode = i + 1, title = modeCat[newMode];
+    menu[title] = () => setCurMode(newMode);
   }
   inMenu = true;
   E.showMenu(menu);
 }
 
-// TODO: Add menu to select decentering subcategory
+function pickDecenter() {
+  var menu = { "": { title: '-- Decentering --', remove: () => { inMenu = false; } } };
+  for (let i = 0; i < settings.decentering.length; i++) {
+    let newMode = DECENTER_IDX - i, title = modeCat[modeCat.length + newMode];
+    menu[title] = () => setCurMode(newMode);
+  }
+  inMenu = true;
+  E.showMenu(menu);
+}
+
 var buttons = [new Button('fruitful', 'tr', 40, '#0f0', pickFruitful),
                new Button('recenter', 'br', 40, '#80f', () => setCurMode(FALLOW_IDX)),
-               new Button('decenter', 'bl', 40, '#f00', () => setCurMode(DECENTER_IDX))];
+               new Button('decenter', 'bl', 40, '#f00', pickDecenter)];
 buttons.forEach(b => b.draw());
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -464,7 +463,7 @@ var totals_updated_at;
 function resetTotals() {
   const now = new Date();
   // TODO: Save to historical file before clearing
-  settings.fallow_buffer_sec = 0;
+  //settings.fallow_buffer_sec = 0;
   settings.total_sec_by_cat.fill(0);
   settings.cur_mode = FALLOW_IDX;
   totals_updated_at = now;
@@ -474,7 +473,7 @@ function resetTotals() {
 function updateTotals() {
   const now = new Date();
   var ymdNow = ymd(now), hrNow = now.getHours();
-  if (ymdNow != settings.last_reset && resetHour >= hrNow) {
+  if (ymdNow != settings.last_reset && HR_RESET <= hrNow) {
     resetTotals();
   } else {
     if (!totals_updated_at) totals_updated_at = now;
@@ -482,7 +481,7 @@ function updateTotals() {
     totals_updated_at = now;
     if (FALLOW_IDX == settings.cur_mode) {
       useRecenter(update_sec);
-    } else if (settings.cur_mode >= 0) {
+    } else if (settings.cur_mode > FALLOW_IDX) {
       addFruitful(settings.cur_mode, update_sec);
     } else {
       useDecenter(settings.cur_mode, update_sec);
@@ -513,8 +512,9 @@ Bangle.on('lcdPower', on => {
 });
 
 Bangle.setUI("clockupdown", btn => {
+  log_debug('clockupdown');
   draw();
-  storage.write(SETTINGS_FILE, settings);  // Retains idxInfo when leaving the face
+  storage.write(SETTINGS_FILE, settings);  // Retains data when leaving the face
 });
 
 loadSettings();
@@ -524,5 +524,5 @@ Bangle.loadWidgets();
  * we are not drawing the widgets as we are taking over the whole screen
  */
 widget_utils.hide();
-E.showMenu(); // Dumb hack to try to reduce first-time flickering
+E.showMenu(); // Dumb hack to reduce first-time flickering
 redrawWholeFace();
