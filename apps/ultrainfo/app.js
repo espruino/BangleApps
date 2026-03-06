@@ -1,5 +1,6 @@
 // Load fonts
 let background = require("clockbg");
+let lockIcon=atob("DhABH+D/wwMMDDAwwMf/v//4f+H/h/8//P/z///f/g==");
 var settings = Object.assign(
   {
     accentColor: "#f00",
@@ -34,7 +35,7 @@ let draw = function () {
     .drawString(dateStr,locked? g.getWidth() / 2- 24 : g.getWidth() / 2, 110 - 2);
 
   if(locked){
-      g.drawImage(atob("DhABH+D/wwMMDDAwwMf/v//4f+H/h/8//P/z///f/g=="),49,91,{scale:0.85})
+      g.drawImage(lockIcon,49,91,{scale:0.85})
 
   }
   // queue next draw
@@ -179,7 +180,7 @@ let brClkInfo=require("clock_info").addInteractive(clockInfoItems, {
     drawRectClockInfo(itm, info, options, false);
   }
 });
-
+Bangle.on("lock",draw);
 Bangle.setUI({
   mode : "clock",
   remove : function() {
@@ -187,6 +188,7 @@ Bangle.setUI({
       clearTimeout(drawTimeout);
       drawTimeout = undefined;
     }
+    Bangle.removeListener("lock",draw);
     if (background && background.unload) background.unload();
     if (tlClkInfo && tlClkInfo.remove) tlClkInfo.remove();
     if (tmClkInfo && tmClkInfo.remove) tmClkInfo.remove();
@@ -197,4 +199,4 @@ Bangle.setUI({
   }
 });
 
-Bangle.on("lock",draw)
+
