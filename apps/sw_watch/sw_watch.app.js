@@ -1,5 +1,5 @@
-const storage = require('Storage');
-const locale = require("locale");
+// const storage = require('Storage');
+// const locale = require("locale");
 
 
 
@@ -30,9 +30,9 @@ function drawBg() {
   g.drawImage(bgImg,0,0);
 }
 
-function square(x,y,w,e) {
-  g.setColor("#000").fillRect(x,y,x+w,y+w);
-  g.setColor("#fff").fillRect(x+e,y+e,x+w-e,y+w-e);
+//function square(x,y,w,e) {
+//  g.setColor("#000").fillRect(x,y,x+w,y+w);
+//  g.setColor("#fff").fillRect(x+e,y+e,x+w-e,y+w-e);
 }
 
 function draw() {
