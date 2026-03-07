@@ -33,7 +33,7 @@ function drawBg() {
 //function square(x,y,w,e) {
 //  g.setColor("#000").fillRect(x,y,x+w,y+w);
 //  g.setColor("#fff").fillRect(x+e,y+e,x+w-e,y+w-e);
-}
+//}
 
 function draw() {
   var d = new Date();
