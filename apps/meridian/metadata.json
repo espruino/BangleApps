@@ -7,6 +7,7 @@
   "screenshots": [{ "url": "screenshot.png" }],
   "icon": "icon.png",
   "type": "clock",
+  "author": "Spioune",
   "tags": "clock,clkinfo",
   "supports": ["BANGLEJS2"],
   "dependencies" : { "clock_info":"module" },

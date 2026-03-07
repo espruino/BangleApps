@@ -2,6 +2,27 @@ bleServiceOptions.ancs = true;
 bleServiceOptions.cts = true;
 if (NRF.amsIsActive) bleServiceOptions.ams = true; // amsIsActive was added at the same time as the "am" option
 Bangle.ancsMessageQueue = [];
+function formatANCSDate(d) {
+  if (!d || d.length < 13) return null;
+
+  const year = d.substring(0, 4);
+  const month = parseInt(d.substring(4, 6)) - 1;
+  const day = d.substring(6, 8);
+  const hour = d.substring(9, 11);
+  const min = d.substring(11, 13);
+  const sec = d.substring(13, 15) || "00";
+
+  const dateObj = new Date(year, month, day, hour, min, sec);
+
+  // Calculate offset in milliseconds
+  const offset = dateObj.getTimezoneOffset() * 60000;
+  
+  // Create a new date adjusted to match local time in UTC form
+  const localISODate = new Date(dateObj.getTime() - offset);
+
+  // Return the ISO string without the 'Z' (which denotes UTC)
+  return localISODate.toISOString().slice(0, -1);
+}
 
 /* Handle ANCS events coming in, and fire off 'notify' events
 when we actually have all the information we need */
@@ -65,92 +86,86 @@ E.on('notify',msg=>{
   "negAction" : string,
   "name" : string,
 */
+  // Exceptions that the app name detector won't catch.
   var appNames = {
-    "ch.publisheria.bring": "Bring",
     "com.apple.facetime": "FaceTime",
     "com.apple.mobilecal": "Calendar",
     "com.apple.mobilemail": "Mail",
     "com.apple.mobilephone": "Phone",
     "com.apple.mobileslideshow": "Pictures",
     "com.apple.MobileSMS": "SMS Message",
-    "com.apple.Passbook": "iOS Wallet",
-    "com.apple.podcasts": "Podcasts",
-    "com.apple.reminders": "Reminders",
-    "com.apple.shortcuts": "Shortcuts",
-    "com.apple.TestFlight": "TestFlight",
+    "com.apple.Passbook": "Wallet",
     "com.apple.ScreenTimeNotifications": "Screen Time",
     "com.apple.wifid.usernotification": "WiFi",
-    "com.apple.Maps": "Maps",
     "com.apple.Music": "Apple Music",
-    "com.apple.AppStore": "App Store",
     "com.apple.Preferences": "Settings",
-    "com.apple.calculator": "Calculator",
-    "com.apple.camera": "Camera",
-    "com.apple.weather": "Weather",
-    "com.apple.VoiceMemos": "Voice Memos",
-    "com.apple.News": "News",
     "com.apple.tv": "Apple TV",
     "com.apple.findmy": "Find My",
-    "com.apple.compass": "Compass",
-    "com.apple.measure": "Measure",
     "com.atebits.Tweetie2": "Twitter",
-    "com.burbn.instagram": "Instagram",
-    "com.facebook.Facebook": "Facebook",
-    "com.facebook.Messenger": "Messenger",
     "com.google.Chromecast": "Google Home",
-    "com.google.Gmail": "GMail",
-    "com.google.hangouts": "Hangouts",
     "com.google.ios.youtube": "YouTube",
     "com.google.ios.chrome": "Google Chrome",
     "com.google.Maps": "Google Maps",
     "com.google.Drive": "Google Drive",
     "com.google.GoogleMobile": "Google",
-    "com.hammerandchisel.discord": "Discord",
+    "com.google.Gmail": "GMail",
+    "com.ecobee.athenamobile":"Ecobee",
     "com.ifttt.ifttt": "IFTTT",
     "com.jumbo.app": "Jumbo",
     "com.linkedin.LinkedIn": "LinkedIn",
     "com.marktplaats.iphone": "Marktplaats",
+    "com.duolingo.DuolingoMobile": "Duolingo",
+    "com.roborock.smart":"Roborock",
     "com.microsoft.Office.Outlook": "Outlook Mail",
     "com.microsoft.Office.Word": "Microsoft Word",
     "com.microsoft.Office.Excel": "Microsoft Excel",
     "com.microsoft.Office.Powerpoint": "Microsoft PowerPoint",
     "com.nestlabs.jasper.release": "Nest",
-    "com.netflix.Netflix": "Netflix",
-    "com.reddit.Reddit": "Reddit",
-    "com.skype.skype": "Skype",
-    "com.skype.SkypeForiPad": "Skype",
     "com.spotify.client": "Spotify",
     "com.soundcloud.TouchApp": "SoundCloud",
     "com.disney.disneyplus": "Disney+",
     "com.hbo.hbonow": "HBO Max",
+    "com.adp.adpmobile":"ADP",
     "com.amazon.Amazon": "Amazon Shopping",
     "com.amazon.AmazonVideo": "Prime Video",
-    "com.dropbox.Dropbox": "Dropbox",
-    "com.evernote.iPhone.Evernote": "Evernote",
-    "com.trello": "Trello",
     "com.storytel.iphone": "Storytel",
     "com.strava.stravaride": "Strava",
     "com.tinyspeck.chatlyio": "Slack",
     "com.toyopagroup.picaboo": "Snapchat",
     "com.ubercab.UberClient": "Uber",
-    "com.ubercab.UberEats": "UberEats",
     "com.unitedinternet.mmc.mobile.gmx.iosmailer": "GMX",
-    "com.valvesoftware.Steam": "Steam",
     "com.vilcsak.bitcoin2": "Coinbase",
     "com.wordfeud.free": "WordFeud",
     "com.paypal.PPClient": "PayPal",
     "com.zhiliaoapp.musically": "TikTok",
-    "com.pinterest": "Pinterest",
-    "com.tumblr.tumblr": "Tumblr",
     "de.no26.Number26": "N26",
-    "io.robbie.HomeAssistant": "Home Assistant",
-    "net.superblock.Pushover": "Pushover",
-    "net.weks.prowl": "Prowl",
+    "com.philips.lighting.hue2": "Philips Hue",
+    "com.ring.ring": "Ring",
     "net.whatsapp.WhatsApp": "WhatsApp",
     "nl.postnl.TrackNTrace": "PostNL",
-    "org.whispersystems.signal": "Signal",
     "ph.telegra.Telegraph": "Telegram",
-    "tv.twitch": "Twitch"
+    "com.apple.garageband10": "GarageBand",
+    "com.google.authenticator": "Google Authenticator",
+    "com.google.earth": "Google Earth",
+    "com.google.keep": "Google Keep",
+    "com.google.translate": "Google Translate",
+    "com.kik.chat": "Kik",
+    "com.groupme.GroupMeApplication": "GroupMe",
+    "com.tencent.mobileqq": "QQ",
+    "com.google.ios.youtubemusic": "YouTube Music",
+    "com.paramountplus.app": "Paramount+",
+    "com.wise.payments": "Wise",
+    "com.logitech.circle": "Logi Circle",
+    "com.tplink.tapo": "TP-Link Tapo",
+    "com.apple.mobileaddressbook": "Contacts", // fallback for older iOS versions
+    "com.apple.mobilesafari": "Safari",
+    "com.apple.webapp": "Web App",
+    "com.apple.trustd": "System Services",
+    "com.apple.sharingd": "Sharing Services",
+    "com.apple.accountsd": "iOS Accounts",
+    "com.apple.coreauthd": "Authentication Services",
+    "com.apple.purplebuddy": "iOS Setup",
+    "com.apple.datadetectors.DDActionsService": "System Services",
 };
 
   
@@ -272,11 +287,32 @@ E.on('notify',msg=>{
 
     return;
   }
+  let settings = require("Storage").readJSON("ios.settings.json",1)||{};
+  let name = "";
 
+  // If setting is on/undefined and there is no exception to the detector
+  if (!settings.dontDetectNames && !appNames[msg.appId]) {
+    
+    let l = msg.appId.split(".");
+    // get the last part of the ID
+    name = l[l.length - 1];
+    // apply detection methods
+    name = name
+      .replace(/([a-z])([A-Z])/g, '$1 $2')  // Space between lower->upper (AppName → App Name)
+      .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2') // Space between acronym->word (SMSMessage → SMS Message)
+      .replaceAll("  "," ")  // Correct duplicate spacing
+      .trim();
+    // capitalize (only if non-empty)
+    if (name.length > 0) name = name[0].toUpperCase() + name.slice(1);
+  }else{
+    // use exception or app id itself
+    name = appNames[msg.appId]||msg.appId;
+  }
   require("messages").pushMessage({
     t : msg.event,
     id : msg.uid,
-    src : appNames[msg.appId] || msg.appId,
+    date : formatANCSDate(msg.date),
+    src : name,
     new : msg.new,
     title : msg.title&&Bangle.ancsConvertUTF8(msg.title),
     subject : msg.subtitle&&Bangle.ancsConvertUTF8(msg.subtitle),

@@ -9,6 +9,7 @@
   "description": "An analog watch face for people that can not read analog watch faces.",
   "type": "clock",
   "tags": "clock",
+  "author": "peerdavid",
   "screenshots": [
     {"url":"screenshot_1.png"},
     {"url":"screenshot_2.png"}

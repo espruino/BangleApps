@@ -8,3 +8,5 @@
 0.08: Allow - and . in clockinfo menus (fix #4007)
       Use slightly narrower clockinfo font
 0.09: Use custom 7 segment font
+0.10: Allow colon : in clockinfo
+      Escape hyphen - in clockinfo regexp

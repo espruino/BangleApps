@@ -23,9 +23,12 @@ Bangle.on('touch', (_btn, xy) => {
 		const wasOn = w.userReq;
 		if(wasOn){
 			require("ble_advert").remove(0x180d);
+			if(!NRF.getSecurityStatus().connected)
+				NRF.sleep();
 		}else{
 			require("ble_advert").set(0x180d /*, undefined*/);
 			register();
+			NRF.wake();
 		}
 
 		w.userReq = !wasOn;

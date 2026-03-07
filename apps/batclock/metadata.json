@@ -8,6 +8,7 @@
   "screenshots": [{"url":"screenshot.png"}],
   "type": "clock",
   "tags": "clock",
+  "author": "ra101",
   "supports": ["BANGLEJS"],
   "readme": "README.md",
   "storage": [

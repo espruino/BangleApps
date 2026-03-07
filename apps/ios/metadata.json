@@ -1,8 +1,8 @@
 {
   "id": "ios",
   "name": "iOS Integration",
-  "version": "0.21",
-  "description": "Display/pull notifications, music, weather, location, and agenda from iOS devices",
+  "version": "0.24",
+  "description": "Show and dismiss iOS notifications, and pull music, weather, location, and agenda from iOS devices",
   "icon": "app.png",
   "tags": "tool,system,ios,apple,messages,notifications",
   "dependencies": {"messages":"module"},

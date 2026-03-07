@@ -16,6 +16,7 @@
     lightTh: 300,//    threshold for light sleep
     hrmLightTh: 74,//    threshold for light sleep with HRM
     hrmDeepTh:60,//     threshold for deep sleep with HRM
+    preferHRM: false, // prefer hrm based sleep state determination
     wearTemp: 19.5, //    temperature threshold to count as worn
     // app settings
     breakToD: 12, //    [h] time of day when to start/end graphs
@@ -435,6 +436,14 @@
             writeSetting();
           }
         },
+        /*LANG*/"Prefer HRM": {
+          value: settings.preferHRM,
+          onchange: v => {
+            settings.preferHRM = v;
+            writeSetting();
+          }
+        },
+        /*LANG*/"HRM Thresholds": () => showHRMThresholds(),
         /*LANG*/"Wear Temp": {
           value: settings.wearTemp,
           step: 0.5,
@@ -508,7 +517,6 @@
         selected: selected
       },
       /*LANG*/"Movement Thresholds": () => showMovementThresholds(),
-      /*LANG*/"HRM Thresholds": () => showHRMThresholds(),
       /*LANG*/"Other Settings": () => showOtherSettings(),
       
       /*LANG*/"Enabled": {

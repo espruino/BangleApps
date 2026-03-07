@@ -357,16 +357,31 @@ const cleanupCharts = (trackNumber = null) => {
 };
 
 const hasValidGPS = pt => pt.Latitude && pt.Longitude && pt.Latitude !== "" && pt.Longitude !== "";
-function filterGPSCoordinates(track) {
+
+function filterGPSCoordinates(track, { zeroInvalidPoints }) {
   const allowNoGPS = localStorage.getItem("recorder-allow-no-gps")=="true";
-  if (!allowNoGPS) return track.filter(hasValidGPS);
-  return track.map(pt => {
-    ['Latitude', 'Longitude', 'Altitude'].forEach(k => { if (!isFinite(parseFloat(pt[k]))) pt[k] = 0; });
-    return pt;
-  });
+
+  if (allowNoGPS) {
+    if (zeroInvalidPoints) {
+      return track.map(pt => {
+        ['Latitude', 'Longitude', 'Altitude']
+          .forEach(k => {
+            if (!isFinite(parseFloat(pt[k])))
+              options.onInvalid(pt, k);
+          });
+
+        return pt;
+      });
+    } else {
+      return track;
+    }
+  }
+
+  return track.filter(hasValidGPS);
 }
+
 function saveKML(track,title) {
-  track = filterGPSCoordinates(track);
+  track = filterGPSCoordinates(track, { zeroInvalidPoints: true });
   const fields = [
     {key:'Heartrate', name:'heartrate', display:'Heart Rate'},
     {key:'Steps', name:'steps', display:'Step Count'},
@@ -407,11 +422,38 @@ ${fields.map(f=>kmlField(f,'SimpleArrayData')).join('\n')}
 }
 
 function saveGPX(track, title) {
-  track = filterGPSCoordinates(track);
+  // we handle invalid points ourselves
+  track = filterGPSCoordinates(track, { zeroInvalidPoints: false });
+
   // check track validity after filtering
   if (!track?.[0]?.Time) return showToast("Error in trackfile (no time or empty).", "error");
   let lastTime = 0;
   //const trackType = ... -> `<type>${trackType}</type>`
+
+  const trkpts = track
+    .map(pt => {
+      // Calculate cadence (steps per minute) from step count
+      // Formula: (steps in interval * 60 seconds * 1000ms) / time elapsed in ms
+      // Simplified to: steps * 30000 / time_ms (since 60 * 1000 / 2 = 30000)
+      const cadence = pt.Steps && lastTime ? pt.Steps * 30000 / (pt.Time.getTime() - lastTime) : 0;
+
+      lastTime = pt.Time.getTime();
+
+      if (isNaN(parseFloat(pt.Latitude)) || isNaN(parseFloat(pt.Longitude)))
+        return null;
+
+      return `
+        <trkpt lat="${pt.Latitude}" lon="${pt.Longitude}">
+          <ele>${pt.Altitude}</ele>
+          <time>${pt.Time.toISOString()}</time>
+          <extensions><gpxtpx:TrackPointExtension>
+            ${pt.Heartrate ? `<gpxtpx:hr>${pt.Heartrate}</gpxtpx:hr>` : ''}
+            ${cadence ? `<gpxtpx:cad>${cadence}</gpxtpx:cad>` : ''}
+          </gpxtpx:TrackPointExtension></extensions>
+        </trkpt>`;
+    })
+    .filter(Boolean);
+
   const gpx = `<?xml version="1.0" encoding="UTF-8"?>
 <gpx creator="Bangle.js" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3">
   <metadata><time>${track[0].Time.toISOString()}</time></metadata>
@@ -423,22 +465,7 @@ function saveGPX(track, title) {
   </metadata>
   <trk>
     <name>${title}</name>
-    <trkseg>${track.map(pt => {
-    // Calculate cadence (steps per minute) from step count
-    // Formula: (steps in interval * 60 seconds * 1000ms) / time elapsed in ms
-    // Simplified to: steps * 30000 / time_ms (since 60 * 1000 / 2 = 30000)
-    const cadence = pt.Steps && lastTime ? pt.Steps * 30000 / (pt.Time.getTime() - lastTime) : 0;
-    lastTime = pt.Time.getTime();
-    return `
-      <trkpt lat="${pt.Latitude}" lon="${pt.Longitude}">
-        <ele>${pt.Altitude}</ele>
-        <time>${pt.Time.toISOString()}</time>
-        <extensions><gpxtpx:TrackPointExtension>
-          ${pt.Heartrate ? `<gpxtpx:hr>${pt.Heartrate}</gpxtpx:hr>` : ''}
-          ${cadence ? `<gpxtpx:cad>${cadence}</gpxtpx:cad>` : ''}
-        </gpxtpx:TrackPointExtension></extensions>
-      </trkpt>`;
-  }).join('')}
+    <trkseg>${trkpts.join('')}
     </trkseg>
   </trk>
 </gpx>`;

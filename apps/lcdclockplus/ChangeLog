@@ -3,3 +3,5 @@
 0.03: fix special characters in clockinfo menus
 0.04: Allow - and . in clockinfo menus (fix #4007)
       Use slightly narrower clockinfo font
+0.05: Allow colon : in clockinfo
+      Escape hyphen - in clockinfo regexp

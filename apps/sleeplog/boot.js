@@ -15,7 +15,8 @@ global.sleeplog = {
     lightTh: 300, //    threshold for light sleep
     wearTemp: 19.5,
     hrmDeepTh: 60,
-    hrmLightTh: 74
+    hrmLightTh: 74,
+    preferHRM: false
   }, require("Storage").readJSON("sleeplog.json", true) || {})
 };
 
@@ -160,7 +161,7 @@ if (global.sleeplog.conf.enabled) {
       data.timestamp = data.timestamp || ((Date.now() / 6E5 | 0) - 1) * 6E5;
       // add preliminary status depending on charging and movement thresholds
       // 1 = not worn, 2 = awake, 3 = light sleep, 4 = deep sleep
-      if(data.bpm){
+      if(data.bpm && global.sleeplog.conf.preferHRM){
         data.status = Bangle.isCharging() ? 1 :
           data.bpm <= global.sleeplog.conf.hrmDeepTh ? 4 :
           data.bpm <= global.sleeplog.conf.hrmLightTh ? 3 : 2;

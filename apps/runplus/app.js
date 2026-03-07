@@ -49,6 +49,7 @@ let settings = Object.assign({
 }, require("Storage").readJSON("runplus.json", 1) || {});
 let statIDs = [settings.B1,settings.B2,settings.B3,settings.B4,settings.B5,settings.B6].filter(s=>s!=="");
 let exs = ExStats.getStats(statIDs, settings);
+let recordMode = settings.alwaysResume ? "new" : undefined; // if always resuming, start a new track then resume into it for subsequent onStartStop()s
 // ---------------------------
 
 // handle the case where we were stopped outside of the app
@@ -98,7 +99,9 @@ function onStartStop() {
       promise = promise.
         then(() => {
           screen = "menu";
-          return WIDGETS["recorder"].setRecording(true, { force : shouldResume?"append":undefined });
+          const ret = WIDGETS["recorder"].setRecording(true, { force : recordMode });
+          if(shouldResume) recordMode = "append"; // subsequent onStartStop()s resume the new recording
+          return ret;
         }).then(() => {
           screen = "main";
           if(!shouldResume){
