@@ -1,0 +1,7 @@
+require("Storage").write("sw_watch.info",{
+  "id":"sw_watch",
+  "name":"sw_watch",
+  "src":"sw_watch.app.js",
+  "type":"clock",
+  "icon":"sw_watch.png"
+});
