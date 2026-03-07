@@ -1,14 +1,16 @@
 { "id": "sw_watch",
-  "name": "sw_watch",
+  "name": "Star Wars Watch",
   "shortName":"sw_watch",
   "icon": "sw_watch.png",
   "version":"0.01",
   "author":"ZubaZ21",
   "description": "A watch face based on a rebellious film",
-  "tags": "",
+  "type": "clock",
+  "tags": "clock",
   "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
   "storage": [
-    {"name":"sw_watch.app.js","url":"app.js"},
-    {"name":"sw_watch.img","url":"app-icon.js","evaluate":true}
+    {"name":"sw_watch.app.js","url":"sw_watch.app.js"},
+    {"name":"sw_watch.img","url":"sw_watch.img","evaluate":true}
   ]
 }
