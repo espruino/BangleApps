@@ -4,7 +4,7 @@
   "icon": "sw_watch.png",
   "version":"0.01",
   "author":"ZubaZ21",
-  "description": "A watch face based on a rebellious film",
+  "description": "A simple watch face based on a rebellious film",
   "type": "clock",
   "tags": "clock",
   "screenshots" : [ { "url":"sw_watch_screenshot.png" }],
