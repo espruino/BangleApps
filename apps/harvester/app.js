@@ -389,45 +389,41 @@ function redrawWholeFace() {
   draw();
 }
 
-///////////////   BUTTON CLASS ///////////////////////////////////////////
-
-// simple on screen button class
-function Button(name, corner, size, color, callback) {
-  this.name = name;
-  this.corner = corner;
-  this.size = size;
-  this.color = color;
-  this.callback = callback;
+class Button {
+  constructor(name, corner, size, color, callback) {
+    this.name = name;
+    this.corner = corner;
+    this.size = size;
+    this.color = color;
+    this.callback = callback;
+  }
+  // if pressed, fire the callback
+  check(x, y) {
+    //log_debug(this.name + ":check() x=" + x + " y=" + y);
+    x_dist = this.corner == 'bl' || this.corner == 'tl' ? W - x : x;
+    y_dist = this.corner == 'tr' || this.corner == 'tl' ? H - y : y;
+    if (y_dist + x_dist >= H + W - 2 * this.size) {
+      //log_debug(this.name + " callback\n");
+      this.callback();
+      return true;
+    }
+    return false;
+  }
+  draw() {
+    g.setColor(this.color);
+    // TODO: Improve appearance (curves? corner frames?)
+    switch (this.corner) {
+      case 'tl':
+        g.fillPoly([0, 0, 0, this.size, this.size, 0]); break;
+      case 'bl':
+        g.fillPoly([0, H, 0, H - this.size, this.size, H]); break;
+      case 'tr':
+        g.fillPoly([W, 0, W - this.size, 0, W, this.size]); break;
+      case 'br':
+        g.fillPoly([W, H, W - this.size, H, W, H - this.size]); break;
+    }
+  }
 }
-
-// if pressed, fire the callback
-Button.prototype.check = function (x, y) {
-  //log_debug(this.name + ":check() x=" + x + " y=" + y);
-
-  x_dist = this.corner == 'bl' || this.corner == 'tl' ? W - x : x;
-  y_dist = this.corner == 'tr' || this.corner == 'tl' ? H - y : y;
-  if (y_dist + x_dist >= H + W - 2 * this.size) {
-    //log_debug(this.name + " callback\n");
-    this.callback();
-    return true;
-  }
-  return false;
-};
-
-Button.prototype.draw = function () {
-  g.setColor(this.color);
-  // TODO: Improve appearance (curves? outlines?)
-  switch (this.corner) {
-    case 'tl':
-      g.fillPoly([0, 0, 0, this.size, this.size, 0]); break;
-    case 'bl':
-      g.fillPoly([0, H, 0, H - this.size, this.size, H]); break;
-    case 'tr':
-      g.fillPoly([W, 0, W - this.size, 0, W, this.size]); break;
-    case 'br':
-      g.fillPoly([W, H, W - this.size, H, W, H - this.size]); break;
-  }
-};
 
 var inMenu = false;
 Bangle.on('touch', function (button, xy) {
@@ -478,8 +474,6 @@ function pickDecenter() {
 var buttons = [new Button('fruitful', 'tr', 40, '#0f0', pickFruitful),
                new Button('recenter', 'br', 40, '#80f', () => setCurMode(FALLOW_IDX)),
                new Button('decenter', 'bl', 40, '#f00', pickDecenter)];
-
-///////////////////////////////////////////////////////////////////////////////
 
 // timeout used to update every minute
 var drawTimeout;
