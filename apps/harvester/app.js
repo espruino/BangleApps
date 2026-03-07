@@ -57,8 +57,9 @@ function addFruitful(i, sec) {
   if (i <= FALLOW_IDX) throw new Error("Can't track fruitful time with i=" + i);
   settings.total_sec_by_cat[FALLOW_IDX] += sec / settings.fallow_denominator;
   const result = settings.total_sec_by_cat[i] += sec;
-  const targetMin = targetMinCat[i];
+  const targetMin = targetMinCat[i - 1]; // XXX
   if (result >= targetMin * MIN && result < (targetMin + 1) * MIN) {
+    log_debug('Reached target for ' + modeCat[i] + ' (' + targetMin + ' min)');
     // TODO: Improve
     buzz.pattern('=-;,:.');
   }
