@@ -1,0 +1,237 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../css/spectre.min.css">
+
+<style>
+.dragrow{ cursor:move; }
+.folder{ font-weight:bold; }
+.breadcrumb{ margin-bottom:10px; }
+</style>
+
+</head>
+
+<body class="container">
+
+<h3>Intentional Editor</h3>
+
+<div class="breadcrumb" id="breadcrumb"></div>
+
+<table class="table" id="taskTable">
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+<th>Intent</th>
+<th></th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<button class="btn btn-primary" onclick="addTask()">Add Task</button>
+<button class="btn" onclick="addFolder()">Add Folder</button>
+<button class="btn" onclick="addSeparator()">Add Separator</button>
+<button class="btn btn-success" onclick="upload()">Upload to Watch</button>
+
+<script src="../../core/lib/customize.js"></script>
+
+<script>
+
+let data = {items:[]};
+let path = []; // navigation stack
+let dragIndex = null;
+
+
+// ---------- Utility ----------
+function getCurrentItems(){
+
+  let items = data.items;
+
+  path.forEach(i=>{
+    items = items[i].items;
+  });
+
+  return items;
+}
+
+
+// ---------- Breadcrumb ----------
+function drawBreadcrumb(){
+
+  let bc = document.getElementById("breadcrumb");
+
+  let html = `<button class="btn btn-sm" onclick="goRoot()">Root</button>`;
+
+  let items = data.items;
+
+  path.forEach((index,i)=>{
+
+    let name = items[index].name;
+
+    html += ` / <button class="btn btn-sm" onclick="goLevel(${i})">${name}</button>`;
+
+    items = items[index].items;
+
+  });
+
+  bc.innerHTML = html;
+}
+
+
+// ---------- Draw Table ----------
+function drawTable(){
+
+  drawBreadcrumb();
+
+  let tbody = document.querySelector("#taskTable tbody");
+  tbody.innerHTML="";
+
+  let items = getCurrentItems();
+
+  items.forEach((item,i)=>{
+
+    let row = document.createElement("tr");
+    row.className="dragrow";
+    row.draggable=true;
+
+    row.ondragstart = ()=>dragIndex=i;
+    row.ondragover = e=>e.preventDefault();
+    row.ondrop = ()=>dropRow(i);
+
+    // TASK
+    if(item.type==="task"){
+
+      row.innerHTML=`
+      <td>☰</td>
+      <td><input class="form-input" value="${item.name}" onchange="items[${i}].name=this.value"></td>
+      <td><input class="form-input" value="${item.intent}" onchange="items[${i}].intent=this.value"></td>
+      <td><button class="btn btn-error btn-sm" onclick="removeItem(${i})">Delete</button></td>
+      `;
+
+    }
+
+    // FOLDER
+    if(item.type==="folder"){
+
+      row.innerHTML=`
+      <td>☰</td>
+      <td class="folder">📁 ${item.name}</td>
+      <td></td>
+      <td>
+      <button class="btn btn-primary btn-sm" onclick="openFolder(${i})">Open</button>
+      <button class="btn btn-error btn-sm" onclick="removeItem(${i})">Delete</button>
+      </td>
+      `;
+
+    }
+
+    // SEPARATOR
+    if(item.type==="separator"){
+
+      row.innerHTML=`
+      <td>☰</td>
+      <td colspan="2"><b>==============</b></td>
+      <td><button class="btn btn-error btn-sm" onclick="removeItem(${i})">Delete</button></td>
+      `;
+
+    }
+
+    tbody.appendChild(row);
+
+  });
+
+}
+
+
+// ---------- Drag Sort ----------
+function dropRow(newIndex){
+
+  let items = getCurrentItems();
+
+  let item = items.splice(dragIndex,1)[0];
+  items.splice(newIndex,0,item);
+
+  drawTable();
+}
+
+
+// ---------- Navigation ----------
+function openFolder(i){
+
+  path.push(i);
+  drawTable();
+}
+
+function goRoot(){
+
+  path=[];
+  drawTable();
+}
+
+function goLevel(level){
+
+  path = path.slice(0,level+1);
+  drawTable();
+}
+
+
+// ---------- Actions ----------
+function addTask(){
+
+  getCurrentItems().push({
+    type:"task",
+    name:"New Task",
+    intent:"com.example.INTENT"
+  });
+
+  drawTable();
+}
+
+function addFolder(){
+
+  getCurrentItems().push({
+    type:"folder",
+    name:"New Folder",
+    items:[]
+  });
+
+  drawTable();
+}
+
+function addSeparator(){
+
+  getCurrentItems().push({
+    type:"separator"
+  });
+
+  drawTable();
+}
+
+function removeItem(i){
+
+  getCurrentItems().splice(i,1);
+  drawTable();
+}
+
+
+// ---------- Upload ----------
+function upload(){
+
+  sendCustomizedApp({
+    storage:[
+      {
+        name:"intentional.json",
+        content:JSON.stringify(data)
+      }
+    ]
+  });
+
+}
+
+
+drawTable();
+
+</script>
+
+</body>
+</html>
