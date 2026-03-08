@@ -145,12 +145,14 @@ function showAlarm(alarm) {
   buzz();
 }
 
+
 let alarms = require("sched").getAlarms();
-let active = require("sched").getActiveAlarms(alarms);
-if (active.length) {
-  // if there's an alarm, show it
-  showAlarm(active[0]);
+let activeAlarm = require("sched").getActiveAlarms(alarms).find(
+  alarm => alarm.appid === 'tevtimer'
+);
+
+if (activeAlarm !== undefined) {
+  showAlarm(activeAlarm);
 } else {
-  // otherwise just go back to default app
   setTimeout(load, 100);
 }
