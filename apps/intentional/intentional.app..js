@@ -50,7 +50,7 @@ function showMenu(items,title){
     // FOLDER
     if(item.type==="folder"){
 
-      let label = (item.name || "Folder") + " >";
+      let label = "▶ " + (item.name || "Folder");
 
       menu[label] = ()=>{
         showMenu(item.items || [], item.name || "Folder");
@@ -64,7 +64,7 @@ function showMenu(items,title){
 
       sepCount++;
 
-      let label = "=============="+("\u200B".repeat(sepCount));
+      let label = "────────────"+("\u200B".repeat(sepCount));
 
       menu[label] = {value:""};
 

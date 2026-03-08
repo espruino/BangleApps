@@ -3,9 +3,9 @@
 <link rel="stylesheet" href="../../css/spectre.min.css">
 
 <style>
-.dragrow{ cursor:move; }
-.folder{ font-weight:bold; }
-.breadcrumb{ margin-bottom:10px; }
+.dragrow { cursor:move; }
+.folder { font-weight:bold; }
+.breadcrumb { margin-bottom:10px; }
 </style>
 
 </head>
@@ -38,8 +38,24 @@
 <script>
 
 let data = {items:[]};
-let path = []; // navigation stack
+let path = [];
 let dragIndex = null;
+
+
+// ---------- Load existing data ----------
+function loadData(json) {
+  if (json && json.items) {
+    data = json;
+  } else {
+    data = {items:[]};
+  }
+  drawTable();
+}
+
+customizeApp({
+  storage:[{name:"intentional.json"}],
+  onInit:loadData
+});
 
 
 // ---------- Utility ----------
@@ -48,7 +64,8 @@ function getCurrentItems(){
   let items = data.items;
 
   path.forEach(i=>{
-    items = items[i].items;
+    if(items[i] && items[i].items)
+      items = items[i].items;
   });
 
   return items;
@@ -66,7 +83,7 @@ function drawBreadcrumb(){
 
   path.forEach((index,i)=>{
 
-    let name = items[index].name;
+    let name = items[index].name || "Folder";
 
     html += ` / <button class="btn btn-sm" onclick="goLevel(${i})">${name}</button>`;
 
@@ -98,24 +115,24 @@ function drawTable(){
     row.ondragover = e=>e.preventDefault();
     row.ondrop = ()=>dropRow(i);
 
-    // TASK
+
     if(item.type==="task"){
 
       row.innerHTML=`
       <td>☰</td>
-      <td><input class="form-input" value="${item.name}" onchange="items[${i}].name=this.value"></td>
-      <td><input class="form-input" value="${item.intent}" onchange="items[${i}].intent=this.value"></td>
+      <td><input class="form-input" value="${item.name||""}" onchange="getCurrentItems()[${i}].name=this.value"></td>
+      <td><input class="form-input" value="${item.intent||""}" onchange="getCurrentItems()[${i}].intent=this.value"></td>
       <td><button class="btn btn-error btn-sm" onclick="removeItem(${i})">Delete</button></td>
       `;
 
     }
 
-    // FOLDER
+
     if(item.type==="folder"){
 
       row.innerHTML=`
       <td>☰</td>
-      <td class="folder">📁 ${item.name}</td>
+      <td class="folder">📁 ${item.name||"Folder"}</td>
       <td></td>
       <td>
       <button class="btn btn-primary btn-sm" onclick="openFolder(${i})">Open</button>
@@ -125,7 +142,7 @@ function drawTable(){
 
     }
 
-    // SEPARATOR
+
     if(item.type==="separator"){
 
       row.innerHTML=`
@@ -143,7 +160,7 @@ function drawTable(){
 }
 
 
-// ---------- Drag Sort ----------
+// ---------- Drag Sorting ----------
 function dropRow(newIndex){
 
   let items = getCurrentItems();
@@ -157,19 +174,16 @@ function dropRow(newIndex){
 
 // ---------- Navigation ----------
 function openFolder(i){
-
   path.push(i);
   drawTable();
 }
 
 function goRoot(){
-
   path=[];
   drawTable();
 }
 
 function goLevel(level){
-
   path = path.slice(0,level+1);
   drawTable();
 }
@@ -227,9 +241,6 @@ function upload(){
   });
 
 }
-
-
-drawTable();
 
 </script>
 
