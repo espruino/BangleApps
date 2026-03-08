@@ -1,0 +1,28 @@
+{
+  "items":[
+    {
+      "type":"task",
+      "name":"Take Photo",
+      "intent":"com.lyrion.TASKER_PHOTO"
+    },
+    {
+      "type":"separator"
+    },
+    {
+      "type":"folder",
+      "name":"Media",
+      "items":[
+        {
+          "type":"task",
+          "name":"Take Video",
+          "intent":"com.lyrion.TASKER_SECRET"
+        },
+        {
+          "type":"task",
+          "name":"Find Phone",
+          "intent":"com.bangle.find_phone"
+        }
+      ]
+    }
+  ]
+}
