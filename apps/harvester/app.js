@@ -442,6 +442,21 @@ function redrawWholeFace() {
   draw();
 }
 
+var cachedFace = null;
+function saveMenuFaceCache() {
+  cachedFace = g.asImage('string');
+}
+function restoreCachedFace() {
+  if (cachedFace) {
+    inMenu = false;
+    g.drawImage(cachedFace);
+    cachedFace = null;
+    drawFace();
+  } else {
+    redrawWholeFace();
+  }
+}
+
 class Button {
   constructor(name, corner, size, color, callback) {
     this.name = name;
@@ -502,7 +517,7 @@ function setCurMode(newMode) {
   settings.cur_mode = newMode;
   E.showMenu();
   storage.write(SETTINGS_FILE, settings);
-  redrawWholeFace();
+  restoreCachedFace();
 }
 
 function fixLateStart(sec) {
@@ -515,7 +530,7 @@ function fixLateStart(sec) {
   var msgTime = ss != 0 ? `${mm} min and ${ss} sec` : `${mm} min`;
   var msg = `Added ${msgTime} to ${modeCat[curMode]} from ${modeCat[prevSpentMode]}`;
   //E.showMenu();
-  E.showPrompt(msg, {title: 'Moved Start Earlier', buttons: {OK:true}}).then(redrawWholeFace);
+  E.showPrompt(msg, {title: 'Moved Start Earlier', buttons: {OK:true}}).then(restoreCachedFace);
 }
 
 function pickLateStartAmt(back) {
@@ -535,7 +550,7 @@ function pickLateStartAmt(back) {
 }
 
 function pickFruitful() {
-  var menu = { "": { title: '-- Fruitful --', back: redrawWholeFace /* remove: () => { inMenu = false; } */ } };
+  var menu = { "": { title: '-- Fruitful --', back: restoreCachedFace /* remove: () => { inMenu = false; } */ } };
   for (let i = 0; i < settings.fruitful.length; i++) {
     let newMode = i + 1, title = modeCat[newMode];
     menu[title] = () => setCurMode(newMode);
@@ -543,13 +558,15 @@ function pickFruitful() {
   if (settings.cur_mode > FALLOW_IDX && prevSpentMode != undefined) {
     menu['(Fix start...)'] = () => pickLateStartAmt(() => E.showMenu(menu));
   }
+  saveMenuFaceCache();
   inMenu = true;
   E.showMenu(menu);
 }
 
 function pickRecenter() {
+  saveMenuFaceCache();
   if (settings.cur_mode == FALLOW_IDX && prevSpentMode != undefined) {
-    pickLateStartAmt(redrawWholeFace);
+    pickLateStartAmt(restoreCachedFace);
   } else {
     setCurMode(FALLOW_IDX);
   }
@@ -564,6 +581,7 @@ function pickDecenter() {
   if (settings.cur_mode < FALLOW_IDX && prevSpentMode != undefined) {
     menu['(Fix start...)'] = () => pickLateStartAmt(() => E.showMenu(menu));
   }
+  saveMenuFaceCache();
   inMenu = true;
   E.showMenu(menu);
 }
