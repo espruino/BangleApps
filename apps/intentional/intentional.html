@@ -41,7 +41,15 @@ let data = {items:[]};
 let path = [];
 let dragIndex = null;
 
+// ---------- download JSON data  ----------
+function downloadJSONFile(filename, callback) {
+  Util.readStorageJSON(filename, data => {
+    if (!data) data = {};
+    callback(data);
+  });
+}
 
+  
 // ---------- Load existing data ----------
 function loadData(appData) {
 
@@ -54,9 +62,15 @@ function loadData(appData) {
   drawTable();
 }
 
-customizeApp({
-  storage:[{name:"intentional.json"}],
-  onInit:loadData
+downloadJSONFile("intentional.json", function(json) {
+
+  if (json && json.items) {
+    data = json;
+  } else {
+    data = {items:[]};
+  }
+
+  drawTable();
 });
 
 
