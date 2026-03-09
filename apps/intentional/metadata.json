@@ -7,6 +7,7 @@
   "description": "An app that allows a user to add intents that can be sent to Tasker or other recipients through GadgetBridge to perform aftions on a linked device.",
   "readme": "README.md",
   "type": "app",
+  "tags": "tool",
   "screenshots" : [ {"url":"screenshot1.png"}, {"url":"screenshot2.png"} ],
   "supports": ["BANGLEJS2"],
   "allow_emulator": true,
