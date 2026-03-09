@@ -55,16 +55,23 @@ function downloadJSONFile(filename, callback) {
 
 function onInit() {
 
-  Puck.eval('require("Storage").readJSON("intentional.json",1)', function(json) {
+  // attach button handler
+  const btn = document.getElementById("addAction");
+  if (btn) btn.onclick = addAction;
 
-    if (json && json.items) {
-      data = json;
+  // load JSON from the watch
+  Puck.eval('require("Storage").read("intentional.json")', function(d) {
+
+    if (d) {
+      data = JSON.parse(d);
+    } else {
+      data = [];
     }
 
+    // draw UI table
     drawTable();
 
   });
-
 }
   
 // ---------- Load existing data ----------
