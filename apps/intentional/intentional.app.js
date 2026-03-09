@@ -29,18 +29,19 @@ function sendIntent(action) {
 
 
 // ---------- Menu Builder ----------
-function showMenu(items,title,parent){
+function showMenu(items,title){
 
   let menu = {
-    "":{title:title},
+    "": {title:title},
     "< Back": () => {
       if (menuStack.length) {
         let prev = menuStack.pop();
         showMenu(prev.items, prev.title);
       } else {
         load();
-  }
-}
+      }
+    }
+  };
 
   let sepCount = 0;
 
@@ -48,45 +49,35 @@ function showMenu(items,title,parent){
 
     // TASK
     if(item.type==="task"){
-
       let label = item.name || "Task";
-
       menu[label] = ()=>sendIntent(item.intent);
-
     }
-
 
     // FOLDER
     if(item.type==="folder"){
       let label = item.name || "Folder";
-        menu[label] = () => {
-          menuStack.push({
+      menu[label] = () => {
+
+        menuStack.push({
           items: items,
           title: title
         });
 
-      showMenu(item.items || [], item.name || "Folder");
-  };
-
-}
-
+        showMenu(item.items || [], item.name || "Folder");
+      };
+    }
 
     // SEPARATOR
     if(item.type==="separator"){
-
       sepCount++;
-
       let label = "------------" + " ".repeat(sepCount);
-
       menu[label] = { value:"" };
-
     }
 
   });
 
   E.showMenu(menu);
 }
-
 
 // ---------- Init ----------
 Bangle.loadWidgets();
