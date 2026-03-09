@@ -50,9 +50,6 @@ function getMin(i) {
   if (i < 0) i += settings.total_sec_by_cat.length;
   return Math.floor(settings.total_sec_by_cat[i] / MIN);
 }
-function getFallowUsedMin() {
-  return Math.floor(settings.fallow_used_sec / MIN);
-}
 function addFruitful(i, sec) {
   if (i <= FALLOW_IDX) throw new Error("Can't track fruitful time with i=" + i);
   settings.total_sec_by_cat[FALLOW_IDX] += sec / settings.fallow_denominator;
@@ -92,6 +89,56 @@ function useDecenter(i, sec) {
     buzz.pattern('= = = = =');
   }
   return settings.total_sec_by_cat[j] = newTotal;
+}
+
+/** Generically picks the right method to use for the mode class. Accepts even
+ *  negative time spent.
+ */
+function spendTime(mode, sec) {
+  if (mode < FALLOW_IDX) {
+    useDecenter(mode, sec);
+  } else if (FALLOW_IDX == mode) {
+    useRecenter(mode, sec);
+  } else {
+    addFruitful(mode, sec);
+  }
+}
+
+/** For correcting human error in switching modes later than one should have.
+ *  Does not include additional fallow accumulations/usage.
+ *  @returns 2-tuple with the amount to be added to current and the amount to be
+ *           subtracted from previous.
+ */
+function lateStartAdjustments(totalSecByCat, curMode, prevMode, secDesired) {
+  let amt = Math.min(at(totalSecByCat, prevMode), secDesired);
+  if (FALLOW_IDX == curMode && prevMode > FALLOW_IDX) {
+    // Subtract fruitful time not spent (plus additional fallow time not accumulated)
+    // TODO: Test
+    return [-amt, amt];
+  } else if (curMode > FALLOW_IDX && prevMode > FALLOW_IDX) {
+    // Subtract fruitful time spent in other category
+    // TODO: Test
+    return [amt, amt];
+  } else if (curMode > FALLOW_IDX && FALLOW_IDX == prevMode) {
+    // (Will re-accumulate additional fallow time)
+    // TODO: Test
+    amt = secDesired; // No bound currently possible
+    return [amt, -amt];
+  } else if (curMode < FALLOW_IDX && prevMode > FALLOW_IDX) {
+    // Subtract fruitful time and use up fallow time
+    // TODO: Test
+    return [amt, amt];
+  } else if (curMode < FALLOW_IDX && FALLOW_IDX == prevMode) {
+    // Use up as much fallow time as possible
+    // TODO: Test
+    return [amt, 0];
+  } else if (curMode < FALLOW_IDX && prevMode < FALLOW_IDX) {
+    // Subtract divergent time spent in other category
+    // TODO: Test
+    return [amt, amt];
+  }
+  // Other possibilities are technically sane but should be rare and aren't worth testing
+  return [0, 0];
 }
 
 // https://www.1001fonts.com/rounded-fonts.html?page=3
@@ -447,23 +494,65 @@ Bangle.on('touch', function (button, xy) {
   }
 });
 
+var prevSpentMode; // TODO: Reunify with prevDrawnMode? Probably not
 function setCurMode(newMode) {
   //log_debug('Setting cur_mode to ' + newMode);
   updateTotals();
+  prevSpentMode = settings.cur_mode;
   settings.cur_mode = newMode;
   E.showMenu();
   storage.write(SETTINGS_FILE, settings);
   redrawWholeFace();
 }
 
+function fixLateStart(sec) {
+  const totalSecByCat = settings.total_sec_by_cat;
+  const curMode = settings.cur_mode;
+  var amts = lateStartAdjustments(totalSecByCat, curMode, prevSpentMode, sec);
+  spendTime(curMode, amts[0]);
+  spendTime(prevSpentMode, -amts[1]);
+  var mm = Math.floor(amts[0] / MIN), ss = amts[0] % MIN;
+  var msgTime = ss != 0 ? `${mm} min and ${ss} sec` : `${mm} min`;
+  var msg = `Added ${msgTime} to ${modeCat[curMode]} from ${modeCat[prevSpentMode]}`;
+  //E.showMenu();
+  E.showPrompt(msg, {title: 'Moved Start Earlier', buttons: {OK:true}}).then(redrawWholeFace);
+}
+
+function pickLateStartAmt(back) {
+  let submenu = [ { title: 'By 1 min', onchange: () => fixLateStart(MIN)} ];
+  submenu[""] = { title: 'Move start earlier', back: back };
+  // TODO: Limit to actual possibilities?
+  let arrMinOptions = [];
+  for (let i = 2; i < 10; i++) arrMinOptions.push(i);
+  for (let i = 10; i <= 60; i+= 5) arrMinOptions.push(i);
+  for (let j = 0; j < arrMinOptions.length; j++) {
+    let secsDesired = arrMinOptions[j] * MIN;
+    submenu.push({ title: 'By ' + arrMinOptions[j] + ' mins',
+                    onchange: () => fixLateStart(secsDesired)});
+  }
+  E.showMenu(submenu);
+  inMenu = true;
+}
+
 function pickFruitful() {
-  var menu = { "": { title: '-- Fruitful --', remove: () => { inMenu = false; } } };
+  var menu = { "": { title: '-- Fruitful --', back: redrawWholeFace /* remove: () => { inMenu = false; } */ } };
   for (let i = 0; i < settings.fruitful.length; i++) {
     let newMode = i + 1, title = modeCat[newMode];
     menu[title] = () => setCurMode(newMode);
   }
+  if (settings.cur_mode > FALLOW_IDX && prevSpentMode != undefined) {
+    menu['(Fix start...)'] = () => pickLateStartAmt(() => E.showMenu(menu));
+  }
   inMenu = true;
   E.showMenu(menu);
+}
+
+function pickRecenter() {
+  if (settings.cur_mode == FALLOW_IDX && prevSpentMode != undefined) {
+    pickLateStartAmt(redrawWholeFace);
+  } else {
+    setCurMode(FALLOW_IDX);
+  }
 }
 
 function pickDecenter() {
@@ -472,12 +561,15 @@ function pickDecenter() {
     let newMode = DECENTER_IDX - i, title = modeCat[modeCat.length + newMode];
     menu[title] = () => setCurMode(newMode);
   }
+  if (settings.cur_mode < FALLOW_IDX && prevSpentMode != undefined) {
+    menu['(Fix start...)'] = () => pickLateStartAmt(() => E.showMenu(menu));
+  }
   inMenu = true;
   E.showMenu(menu);
 }
 
 var buttons = [new Button('fruitful', 'tr', 40, '#0f0', pickFruitful),
-               new Button('recenter', 'br', 40, '#80f', () => setCurMode(FALLOW_IDX)),
+               new Button('recenter', 'br', 40, '#80f', pickRecenter),
                new Button('decenter', 'bl', 40, '#f00', pickDecenter)];
 
 // timeout used to update every minute
