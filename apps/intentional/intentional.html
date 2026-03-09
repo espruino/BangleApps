@@ -28,7 +28,7 @@
 <tbody></tbody>
 </table>
 
-<button class="btn btn-primary" onclick="addTask()">Add Task</button>
+<button class="btn btn-primary" onclick="addTask()">Add Action</button>
 <button class="btn" onclick="addFolder()">Add Folder</button>
 <button class="btn" onclick="addSeparator()">Add Separator</button>
 <button class="btn btn-success" onclick="upload()">Upload to Watch</button>
@@ -194,7 +194,7 @@ function addTask(){
 
   getCurrentItems().push({
     type:"task",
-    name:"New Task",
+    name:"Action Name",
     intent:"com.example.INTENT"
   });
 
