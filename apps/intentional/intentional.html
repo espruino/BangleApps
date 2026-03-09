@@ -122,8 +122,18 @@ function drawTable(){
 
       row.innerHTML=`
       <td>☰</td>
-      <td><input class="form-input" value="${item.name||""}" onchange="getCurrentItems()[${i}].name=this.value"></td>
-      <td><input class="form-input" value="${item.intent||""}" onchange="getCurrentItems()[${i}].intent=this.value"></td>
+      <td>
+        <input class="form-input"
+        value="${item.name||""}"
+        onfocus="if(!this.dataset.cleared){this.value='';this.dataset.cleared=1;}"
+        onchange="getCurrentItems()[${i}].name=this.value">
+      </td>
+      <td>
+        <input class="form-input"
+        value="${item.intent||""}"
+        onfocus="if(!this.dataset.cleared){this.value='';this.dataset.cleared=1;}"
+        onchange="getCurrentItems()[${i}].intent=this.value">
+      </td>
       <td><button class="btn btn-error btn-sm" onclick="removeItem(${i})">Delete</button></td>
       `;
 
@@ -135,7 +145,9 @@ if(item.type==="folder"){
   row.innerHTML=`
   <td>☰</td>
   <td>
-    📁 <input class="form-input" value="${item.name||"Folder"}"
+    📁 <input class="form-input"
+    value="${item.name||"Folder"}"
+    onfocus="if(!this.dataset.cleared){this.value='';this.dataset.cleared=1;}"
     onchange="getCurrentItems()[${i}].name=this.value">
   </td>
   <td></td>
