@@ -43,12 +43,14 @@ let dragIndex = null;
 
 
 // ---------- Load existing data ----------
-function loadData(json) {
-  if (json && json.items) {
-    data = json;
+function loadData(appData) {
+
+  if (appData && appData["intentional.json"]) {
+    data = JSON.parse(appData["intentional.json"]);
   } else {
     data = {items:[]};
   }
+
   drawTable();
 }
 
@@ -128,19 +130,21 @@ function drawTable(){
     }
 
 
-    if(item.type==="folder"){
+if(item.type==="folder"){
 
-      row.innerHTML=`
-      <td>☰</td>
-      <td class="folder">📁 ${item.name||"Folder"}</td>
-      <td></td>
-      <td>
-      <button class="btn btn-primary btn-sm" onclick="openFolder(${i})">Open</button>
-      <button class="btn btn-error btn-sm" onclick="removeItem(${i})">Delete</button>
-      </td>
-      `;
-
-    }
+  row.innerHTML=`
+  <td>☰</td>
+  <td>
+    📁 <input class="form-input" value="${item.name||"Folder"}"
+    onchange="getCurrentItems()[${i}].name=this.value">
+  </td>
+  <td></td>
+  <td>
+  <button class="btn btn-primary btn-sm" onclick="openFolder(${i})">Open</button>
+  <button class="btn btn-error btn-sm" onclick="removeItem(${i})">Delete</button>
+  </td>
+  `;
+}
 
 
     if(item.type==="separator"){
