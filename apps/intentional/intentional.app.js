@@ -64,7 +64,7 @@ function showMenu(items,title){
 
       sepCount++;
 
-      let label = "────────────"+("\u200B".repeat(sepCount));
+      let label = "------------"+("\u200B".repeat(sepCount));
 
       menu[label] = {value:""};
 
