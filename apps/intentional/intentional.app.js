@@ -5,6 +5,9 @@ Send Android intents via Gadgetbridge
 
 const storage = require("Storage");
 
+
+let menuStack = [];
+
 // ---------- Load Data Safely ----------
 let data = storage.readJSON("intentional.json",1);
 
@@ -26,12 +29,18 @@ function sendIntent(action) {
 
 
 // ---------- Menu Builder ----------
-function showMenu(items,title){
+function showMenu(items,title,parent){
 
   let menu = {
     "":{title:title},
-    "< Back":()=>load()
-  };
+    "< Back": () => {
+      if (menuStack.length) {
+        let prev = menuStack.pop();
+        showMenu(prev.items, prev.title);
+      } else {
+        load();
+  }
+}
 
   let sepCount = 0;
 
@@ -49,14 +58,17 @@ function showMenu(items,title){
 
     // FOLDER
     if(item.type==="folder"){
+      let label = item.name || "Folder";
+        menu[label] = () => {
+          menuStack.push({
+          items: items,
+          title: title
+        });
 
-      let label = "▶ " + (item.name || "Folder");
+      showMenu(item.items || [], item.name || "Folder");
+  };
 
-      menu[label] = ()=>{
-        showMenu(item.items || [], item.name || "Folder");
-      };
-
-    }
+}
 
 
     // SEPARATOR
@@ -64,9 +76,9 @@ function showMenu(items,title){
 
       sepCount++;
 
-      let label = "------------"+("\u200B".repeat(sepCount));
+      let label = "------------" + " ".repeat(sepCount);
 
-      menu[label] = {value:""};
+      menu[label] = { value:"" };
 
     }
 
