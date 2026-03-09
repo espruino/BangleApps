@@ -9,7 +9,7 @@ const storage = require("Storage");
 let menuStack = [];
 
 // ---------- Load Data Safely ----------
-let data = storage.readJSON("intentional.json",1);
+let data = storage.readJSON("intentional.json", true) || {items:[]};
 
 if (!data || !data.items) {
   data = {items:[]};
@@ -40,7 +40,7 @@ function showMenu(items,title){
       } else {
         load();
       }
-    }
+    },
   };
 
   let sepCount = 0;
