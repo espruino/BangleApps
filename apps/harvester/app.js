@@ -190,7 +190,7 @@ function updateDerivedRingVars() {
   palCat = new Array(displayedLen);
   modeCat = new Array(displayedLen);
 
-  palCat[FALLOW_IDX] = palette(autoGray('#202'), '#80f');
+  palCat[FALLOW_IDX] = palette(autoGray('#220'), '#860');
   // TODO: Draw out a nice circle and arrows properly
   modeCat[FALLOW_IDX] = '» × «';
   for (let i = 0; i < settings.fruitful.length; i++) {
@@ -352,7 +352,7 @@ function drawCurMode() {
   g.reset().setColor(bg);
   g.fillRect((W / 2) - CM_W, CM_Y - CM_H - 2, (W / 2) + CM_W, CM_Y + CM_H - 2);
 
-  setSmallFont();
+    setSmallFont();
   g.setColor(g.theme.fg).setFontAlign(0, 0).drawString(text, W / 2, CM_Y);
 }
 
@@ -587,7 +587,7 @@ function pickDecenter() {
 }
 
 var buttons = [new Button('fruitful', 'tr', 40, '#0f0', pickFruitful),
-               new Button('recenter', 'br', 40, '#80f', pickRecenter),
+               new Button('recenter', 'br', 40, '#860', pickRecenter),
                new Button('decenter', 'bl', 40, '#f00', pickDecenter)];
 
 // timeout used to update every minute
