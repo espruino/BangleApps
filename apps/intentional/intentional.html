@@ -34,11 +34,13 @@
 <button class="btn btn-success" onclick="upload()">Upload to Watch</button>
 
 <script src="../../core/lib/customize.js"></script>
+<script src="../../core/lib/interface.js"></script>
 
 <script>
 
 let data = {items:[]};
 let path = [];
+let dragItem = null;
 let dragIndex = null;
 
 // ---------- download JSON data  ----------
@@ -49,6 +51,21 @@ function downloadJSONFile(filename, callback) {
   });
 }
 
+  let data = {items:[]};
+
+function onInit() {
+
+  Puck.eval('require("Storage").readJSON("intentional.json",1)', function(json) {
+
+    if (json && json.items) {
+      data = json;
+    }
+
+    drawTable();
+
+  });
+
+}
   
 // ---------- Load existing data ----------
 function loadData(appData) {
@@ -119,7 +136,8 @@ function drawTable(){
   let tbody = document.querySelector("#taskTable tbody");
   tbody.innerHTML="";
 
-  let items = getCurrentItems();
+ let items = getCurrentItems();
+ let currentItems = items;
 
   items.forEach((item,i)=>{
 
@@ -127,7 +145,10 @@ function drawTable(){
     row.className="dragrow";
     row.draggable=true;
 
-    row.ondragstart = ()=>dragIndex=i;
+    row.ondragstart = () => {
+  dragIndex = i;
+  dragItem = items[i];
+};
     row.ondragover = e=>e.preventDefault();
     row.ondrop = ()=>dropRow(i);
 
@@ -140,13 +161,13 @@ function drawTable(){
         <input class="form-input"
         value="${item.name||""}"
         onfocus="if(!this.dataset.cleared){this.value='';this.dataset.cleared=1;}"
-        onchange="getCurrentItems()[${i}].name=this.value">
+        onchange="currentItems[${i}].name=this.value"
       </td>
       <td>
         <input class="form-input"
         value="${item.intent||""}"
         onfocus="if(!this.dataset.cleared){this.value='';this.dataset.cleared=1;}"
-        onchange="getCurrentItems()[${i}].intent=this.value">
+        onchange="currentItems[${i}].intent=this.value"
       </td>
       <td><button class="btn btn-error btn-sm" onclick="removeItem(${i})">Delete</button></td>
       `;
@@ -195,8 +216,13 @@ function dropRow(newIndex){
 
   let items = getCurrentItems();
 
-  let item = items.splice(dragIndex,1)[0];
-  items.splice(newIndex,0,item);
+  if(dragItem===null) return;
+
+  items.splice(dragIndex,1);
+  items.splice(newIndex,0,dragItem);
+
+  dragItem = null;
+  dragIndex = null;
 
   drawTable();
 }
