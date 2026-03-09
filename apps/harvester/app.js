@@ -158,7 +158,7 @@ function updateDerivedRingVars() {
   }
   for (let j = 0; j < settings.decentering.length; j++) {
     let i = displayedLen + DECENTER_IDX - j, decentering = settings.decentering[j];
-    palCat[i] = palette(decentering.fg, autoGray(decentering.gy));
+    palCat[i] = palette(autoGray(decentering), g.toColor(decentering.fg));
     modeCat[i] = decentering.title;
   }
 }
@@ -229,13 +229,15 @@ function getGaugeSpans(start, amtMin, targetMin, invertRing) {
 }
 
 function drawIfChanged(gaugeSpans, idxCat, idxRing) {
-  if (idxCat < FALLOW_IDX) idxCat += palCat.length;
-  var prevSpans = prevDrawnSegment[idxCat];
+  var i = idxCat < FALLOW_IDX ? idxCat + palCat.length : idxCat;
+  var j = idxRing > 0 ? idxCat + 16 : idxCat; // Treat original/overflow separately
+  var prevSpans = prevDrawnSegment[j];
   var endpointsMatch = prevSpans && prevSpans.start == gaugeSpans.start &&
                        prevSpans.end == gaugeSpans.end;
   if (endpointsMatch && prevSpans.mid == gaugeSpans.mid) return false;
-  prevDrawnSegment[idxCat] = gaugeSpans;
-  var pal = palCat[idxCat];
+  prevDrawnSegment[j] = gaugeSpans;
+  var pal = palCat[i];
+  if (idxCat < FALLOW_IDX) pal = palette(pal[2], pal[1]);
   if (endpointsMatch && prevSpans.mid < gaugeSpans.mid) {
     // Cheat by only drawing the progressed amount
     log_debug("Redrew advanced subsection of part #" + idxCat + " in ring #" + idxRing +
@@ -307,22 +309,25 @@ function drawCurMode() {
   g.setColor(g.theme.fg).setFontAlign(0, 0).drawString(text, W / 2, CM_Y);
 }
 
+var inMenu = false;
 function drawFace() {
+  if (inMenu) return;
   var date = new Date();
 
   drawCurMode();
   var modeDone = new Date();
-  drawAllSegments();
-  var segmentsDone = new Date();
 
   drawTime(date);
   var timeDone = new Date();
 
+  drawAllSegments();
+  var segmentsDone = new Date();
+
   drawCount++;
   var overallMs = Math.round((new Date()).valueOf() - date.valueOf());
   var modeMs = Math.round(modeDone.valueOf() - date.valueOf());
-  var segmentsMs = Math.round(segmentsDone.valueOf() - modeDone.valueOf());
-  var timeMs = Math.round(timeDone.valueOf() - segmentsDone.valueOf());
+  var segmentsMs = Math.round(segmentsDone.valueOf() - timeDone.valueOf());
+  var timeMs = Math.round(timeDone.valueOf() - modeDone.valueOf());
   log_debug(overallMs + 'ms for drawing (mode: ' + modeMs + ', segments: ' + segmentsMs + ', time: ' + timeMs + ')');
   if (DEBUGGING) storage.write(SETTINGS_FILE, settings);
 }
@@ -383,6 +388,7 @@ function clearDrawingCache() {
 }
 
 function redrawWholeFace() {
+  inMenu = false;
   clearDrawingCache();
   g.clear();
   buttons.forEach(b => b.draw());
@@ -425,7 +431,6 @@ class Button {
   }
 }
 
-var inMenu = false;
 Bangle.on('touch', function (button, xy) {
   if (inMenu) return;
   var x = xy.x;
@@ -481,6 +486,7 @@ var totals_updated_at;
 
 function resetTotals() {
   const now = new Date();
+  g.setColor(g.theme.bg).fillCircle(W / 2, H / 2, radiusOuterRing - ringIterOffset);
   clearDrawingCache();
   // TODO: Save to historical file before clearing
   settings.total_sec_by_cat.fill(0);
