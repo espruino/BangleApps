@@ -2,7 +2,7 @@
   "name": "Time Harvester",
   "allow_emulator": true,
   "version": "0.0.1",
-  "dependencies": {},
+  "dependencies": {"clock_info":"module"},
   "description": "Elegant digital clock with large ring gauge to show accumulated fruitful time spent",
   "icon": "app.png",
   "type": "clock",

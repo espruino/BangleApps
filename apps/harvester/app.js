@@ -22,6 +22,9 @@ const CLK_HALF_W = 112 / 2, CLK_HALF_H = 46 / 2, CLK_BG_Y = H / 2 - 17;
 const CM_Y = (3 * H / 4) - 19;
 const CM_W = 53;
 const CM_H = 34;
+
+const CI_Y = 34, CI_W = 44, CI_X = W / 2 - CI_W / 2, CI_H = 14;
+
 const ringEdge = 2;
 const ringIterOffset = 10;
 const ringThick = 6;
@@ -37,6 +40,12 @@ const HR_RESET = 3; // Reset (and eventually save) totals at a time few will be 
 const DEBUGGING = true; // TODO:
 function log_debug(o) {
   if (DEBUGGING) print(o);
+}
+function curMs() { return Math.round(Date.now()); }
+function measureEffectDuration(f) {
+  var s = curMs();
+  f();
+  return curMs() - s;
 }
 
 const MIN = 60;
@@ -352,31 +361,26 @@ function drawCurMode() {
   g.reset().setColor(bg);
   g.fillRect((W / 2) - CM_W, CM_Y - CM_H/2, (W / 2) + CM_W, CM_Y + CM_H/2);
 
-    setSmallFont();
+  setSmallFont();
   text = g.wrapString(text, CM_W * 2).join("\n");
   g.setColor(g.theme.fg).setFontAlign(0, 0).drawString(text, W / 2, CM_Y);
 }
 
-var inMenu = false;
+var inMenu = false, curClockInfo;
 function drawFace() {
   if (inMenu) return;
   var date = new Date();
 
-  drawCurMode();
-  var modeDone = new Date();
-
-  drawTime(date);
-  var timeDone = new Date();
-
-  drawAllSegments();
-  var segmentsDone = new Date();
-
+  let msTime = measureEffectDuration(() => drawTime(date));
+  let msSegments = measureEffectDuration(() => drawAllSegments());
+  let msCurMode = measureEffectDuration(() => drawCurMode());
+  let msClockInfo = measureEffectDuration(() => {
+    if (curClockInfo) curClockInfo.redraw();
+  });
   drawCount++;
-  var overallMs = Math.round((new Date()).valueOf() - date.valueOf());
-  var modeMs = Math.round(modeDone.valueOf() - date.valueOf());
-  var segmentsMs = Math.round(segmentsDone.valueOf() - timeDone.valueOf());
-  var timeMs = Math.round(timeDone.valueOf() - modeDone.valueOf());
-  log_debug(overallMs + 'ms for drawing (mode: ' + modeMs + ', segments: ' + segmentsMs + ', time: ' + timeMs + ')');
+  var overallMs = curMs() - Math.round(date.valueOf());
+  log_debug(`${overallMs}ms for drawing` +
+            ` (mode: ${msCurMode}, segments: ${msSegments}, time: ${msTime}, CI: ${msClockInfo})`);
   if (DEBUGGING) storage.write(SETTINGS_FILE, settings);
 }
 
@@ -433,6 +437,7 @@ function clearDrawingCache() {
   prevDrawnMode = null;
   prevDrawnTime = null;
   prevDrawnSegment.fill(null);
+  lastCIMid = null;
 }
 
 function redrawWholeFace() {
@@ -440,6 +445,7 @@ function redrawWholeFace() {
   clearDrawingCache();
   g.clear();
   buttons.forEach(b => b.draw());
+  if (curClockInfo) curClockInfo.redraw();
   draw();
 }
 
@@ -675,3 +681,46 @@ Bangle.loadWidgets();
 widget_utils.hide();
 E.showMenu(); // Dumb hack to reduce first-time flickering
 redrawWholeFace();
+
+var clockInfo = require("clock_info");
+function eligibleClockInfoItems() {
+  var raw = clockInfo.load(), ret = [];
+  for (let i = 0; i < raw.length; i++) {
+    let items = raw[i].items.filter(itm => itm.hasRange);
+    if (items.length > 0) {
+      raw[i].items = items;
+      ret.push(raw[i]);
+    }
+  }
+  return ret;
+}
+
+var lastCIMid, lastCIName;
+function drawGaugeClockInfo (itm, info, options) {
+  var newItem = itm.name != lastCIName;
+  lastCIName = itm.name;
+  g.reset();
+  // TODO: Improve L&F
+  if (options.focus) { g.setColor(autoGray('#222')); } else { g.setColor(g.theme.bg); }
+  g.fillRect(options.x, options.y, options.x+options.w-2, options.y+options.h-1);
+  var midx = options.x+options.w/2;
+  var disp = g.findFont(itm.name, {w: options.w, h: options.h, wrap: true, trim: true});
+  g.setColor(g.theme.fg).setFontAlign(0,-1).drawString(disp.text, midx, CI_Y + 1);
+  // TODO: Optimize redraws
+  const maxSpan = info.max - info.min;
+  var maxNormalizer = maxSpan / (totalMin / 4);
+  var normalValue = Math.round((info.v - info.min) / maxNormalizer)
+  // Make the gauge span 1/4 circle centered across the top
+  var spans = getGaugeSpans(Math.round(-0.125 * totalMin), normalValue, Math.round(totalMin / 4));
+  if (lastCIMid == spans.mid) return;
+  lastCIMid = spans.mid;
+  log_debug(spans);
+  // TODO: Set up palette options properly
+  drawSegment(spans.start, spans.mid, spans.end, palette('#020', '#0f0'), 2);
+};
+
+var clockInfoItems = eligibleClockInfoItems();
+curClockInfo = clockInfo.addInteractive(clockInfoItems, {
+  x: CI_X, y: CI_Y, w: CI_W, h: CI_H, // For automatic tap detection
+  draw: drawGaugeClockInfo
+});
