@@ -282,7 +282,7 @@ E.on('notify',msg=>{
     myLocationJson.lon=locationJson.lon;
     myLocationJson.lat=locationJson.lat;
     myLocationJson.location=locationJson.city;
-    require("Storage").write("mylocation.json",myLocationJson);
+    require("Storage").writeJSON("mylocation.json",myLocationJson);
     
 
     return;
@@ -291,7 +291,7 @@ E.on('notify',msg=>{
   let name = "";
 
   // If setting is on/undefined and there is no exception to the detector
-  if (!settings.dontDetectNames && !appNames[msg.appId]) {
+  if (!settings.dontDetectNames && msg.appId && !appNames[msg.appId]) {
     
     let l = msg.appId.split(".");
     // get the last part of the ID
@@ -305,8 +305,8 @@ E.on('notify',msg=>{
     // capitalize (only if non-empty)
     if (name.length > 0) name = name[0].toUpperCase() + name.slice(1);
   }else{
-    // use exception or app id itself
-    name = appNames[msg.appId]||msg.appId;
+    // use exception, app id itself, or fallback to a blank string
+    name = appNames[msg.appId]||msg.appId||"";
   }
   require("messages").pushMessage({
     t : msg.event,
