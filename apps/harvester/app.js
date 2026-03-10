@@ -2,7 +2,52 @@ const storage = require('Storage');
 const widget_utils = require('widget_utils');
 const buzz = require('buzz');
 var settings;
+
+// *** XXX: Ensure these are kept in sync with settings.js ***
 const SETTINGS_FILE = "harvester.json";
+function getDefaultSettings () {
+  return {
+    fruitful: [
+      {
+        color: 'Green', fg: '#0f0', gy: '#020',
+        title: 'Work',
+        target_min: 480,
+      },
+    ],
+    hour_color: 'Green',
+    hour_fg: '#0f0',
+    cur_mode: 0,
+    last_reset: null,
+    decentering: [
+      {
+        title: 'Social Media',
+        fg: '#f00', gy: '#200', color: 'Red',
+      }
+    ],
+    fallow_denominator: 3,
+  };
+}
+function loadSettings () {
+  var def = getDefaultSettings();
+  var settings = storage.readJSON(SETTINGS_FILE, 1) || {};
+  // TODO: Add per-item normalizer fns
+  settings.fruitful = settings.fruitful || def.fruitful;
+  settings.decentering = settings.decentering || def.decentering;
+
+  settings.hour_color = settings.hour_color || def.hour_color;
+  settings.hour_fg = settings.hour_fg || def.hour_fg;
+  settings.fallow_denominator = settings.fallow_denominator || def.fallow_denominator;
+  // Converts from JSON or supplies size
+  settings.total_sec_by_cat = new Uint16Array(settings.total_sec_by_cat || 16);
+  settings.cur_mode = settings.cur_mode || def.cur_mode;
+  return settings;
+}
+function saveSettings (s) {
+  delete s.hr_12; // TODO: Allow setting this independently
+  storage.write(SETTINGS_FILE, s);
+}
+// *** End manual sync area ***
+
 const global_settings = storage.readJSON("setting.json", true) || {};
 const H = g.getHeight();
 const W = g.getWidth();
@@ -33,7 +78,6 @@ const radiusOuterRing = Math.min((W / 2 - ringEdge), (H / 2 - ringEdge));
 
 var prevDrawnMode, prevDrawnTime, prevDrawnSegment = [];
 
-//const { getDefaultSettings, color_options, fg_code, gy_code, fg_code_font } = require('./modules/set-def');
 
 const HR_RESET = 3; // Reset (and eventually save) totals at a time few will be awake
 
@@ -219,21 +263,11 @@ function updateDerivedRingVars() {
   }
 }
 
-function loadSettings() {
-  settings = require("Storage").readJSON(SETTINGS_FILE, 1) || {};
-  settings.fruitful = settings.fruitful ||
-    [{ title: "Work", target_min: 480, fg: '#0f0', gy: '#020', color: 'Green' }];
-  settings.decentering = settings.decentering ||
-    [{ title: "Social Media", fg: '#f00', gy: '#200', color: 'Red' }];
-  settings.hour_color = settings.hour_color || 'Light Green';
-  settings.hour_fg = settings.hour_fg || '#8f8';
-  // TODO: Allow actually changing this
-  settings.fallow_denominator = 3;
+function loadRuntimeSettings() {
+  settings = loadSettings();
+
   settings.hr_12 = (global_settings["12hour"] === undefined ? false : global_settings["12hour"]);
-  // Converts from JSON or supplies size
-  settings.total_sec_by_cat = new Uint16Array(settings.total_sec_by_cat || 16);
-  //settings.fallow_used_sec = settings.fallow_used_sec || 0;
-  settings.cur_mode = settings.cur_mode || FALLOW_IDX;
+
   settings.last_reset = settings.last_reset || ymd(new Date());
   updateDerivedRingVars();
 }
@@ -380,7 +414,8 @@ function drawFace() {
   var overallMs = curMs() - Math.round(date.valueOf());
   log_debug(`${overallMs}ms for drawing` +
             ` (mode: ${msCurMode}, segments: ${msSegments}, time: ${msTime}, CI: ${msClockInfo})`);
-  if (DEBUGGING) storage.write(SETTINGS_FILE, settings);
+  // Expensive if you aren't resetting the watch all the time
+  if (DEBUGGING) saveSettings(settings);
 }
 
 function addPoint(arr, qty, radius, scaleMax) {
@@ -522,7 +557,7 @@ function setCurMode(newMode) {
   prevSpentMode = settings.cur_mode;
   settings.cur_mode = newMode;
   E.showMenu();
-  storage.write(SETTINGS_FILE, settings);
+  saveSettings(settings);
   restoreCachedFace();
 }
 
@@ -664,14 +699,14 @@ Bangle.on('lcdPower', on => {
   }
 });
 
-Bangle.setUI("clockupdown", btn => {
+Bangle.setUI("clock", () => {
   updateTotals();
-  log_debug('clockupdown');
+  //log_debug('clock');
   redrawWholeFace();
-  storage.write(SETTINGS_FILE, settings);  // Retains data when leaving the face
+  saveSettings(settings);  // Retains data when leaving the face
 });
 
-loadSettings();
+loadRuntimeSettings();
 
 Bangle.loadWidgets();
 /*
@@ -708,7 +743,7 @@ function drawGaugeClockInfo (itm, info, options) {
   // TODO: Optimize redraws
   const maxSpan = info.max - info.min;
   var maxNormalizer = maxSpan / (totalMin / 4);
-  var normalValue = Math.round((info.v - info.min) / maxNormalizer)
+  var normalValue = Math.round((info.v - info.min) / maxNormalizer);
   // Make the gauge span 1/4 circle centered across the top
   var spans = getGaugeSpans(Math.round(-0.125 * totalMin), normalValue, Math.round(totalMin / 4));
   if (lastCIMid == spans.mid) return;
@@ -716,7 +751,7 @@ function drawGaugeClockInfo (itm, info, options) {
   log_debug(spans);
   // TODO: Set up palette options properly
   drawSegment(spans.start, spans.mid, spans.end, palette('#020', '#0f0'), 2);
-};
+}
 
 var clockInfoItems = eligibleClockInfoItems();
 curClockInfo = clockInfo.addInteractive(clockInfoItems, {

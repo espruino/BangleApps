@@ -1,112 +1,182 @@
-const { getDefaultSettings, color_options, fg_code, gy_code, fg_code_font } = require('./modules/set-def');
 (function(back) {
+  // *** XXX: Ensure these are kept in sync with settings.js ***
   const SETTINGS_FILE = "harvester.json";
-
-  let s = getDefaultSettings();
-  // ...and overwrite them with any saved values
-  // This way saved values are preserved if a new version adds more settings
-  const storage = require('Storage');
-  let settings = storage.readJSON(SETTINGS_FILE, 1) || s;
-  const saved = settings || {};
-  for (const key in saved) {
-    s[key] = saved[key];
-  }
-
-  function save() {
-    settings = s;
-    storage.write(SETTINGS_FILE, settings);
-  }
-
-  // TODO: Fix all this
-  function showRingMenu(ringIndex) {
-    const ring = s.rings[ringIndex];
-    let ringMenu = {
-      '': { title: `Ring ${ringIndex + 1}` },
-      '< Back': showMainMenu,
-      'Type': {
-        value: ring_types.indexOf(ring.type),
-        min: 0, max: ring_types.length - 1,
-        format: v => ring_types[v],
-        onchange: v => {
-          let prev = ring.type;
-          ring.type = ring_types[v];
-          save();
-          if (prev != ring.type && (prev === 'None' || ring.type === 'None')) {
-            setTimeout(showRingMenu, 0, ringIndex);
-          }
+  function getDefaultSettings () {
+    return {
+      fruitful: [
+        {
+          color: 'Green', fg: '#0f0', gy: '#020',
+          title: 'Work',
+          target_min: 480,
+        },
+      ],
+      hour_color: 'Green',
+      hour_fg: '#0f0',
+      cur_mode: 0,
+      last_reset: null,
+      decentering: [
+        {
+          title: 'Social Media',
+          fg: '#f00', gy: '#200', color: 'Red',
         }
-      },
+      ],
+      fallow_denominator: 3,
     };
-    if (ring.type != 'None') {
-      ringMenu['Color'] = {
-        value: 0 | color_options.indexOf(ring.color),
+  }
+  function loadSettings () {
+    var def = getDefaultSettings();
+    var settings = storage.readJSON(SETTINGS_FILE, 1) || {};
+    // TODO: Add per-item normalizer fns
+    settings.fruitful = settings.fruitful || def.fruitful;
+    settings.decentering = settings.decentering || def.decentering;
+
+    settings.hour_color = settings.hour_color || def.hour_color;
+    settings.hour_fg = settings.hour_fg || def.hour_fg;
+    settings.fallow_denominator = settings.fallow_denominator || def.fallow_denominator;
+    // Converts from JSON or supplies size
+    settings.total_sec_by_cat = new Uint16Array(settings.total_sec_by_cat || 16);
+    settings.cur_mode = settings.cur_mode || def.cur_mode;
+    return settings;
+  }
+  function saveSettings (s) {
+    delete s.hr_12; // TODO: Allow setting this independently
+    storage.write(SETTINGS_FILE, s);
+  }
+  // *** End manual sync area ***
+
+  const color_options = [
+        'Lavender', 'Purple', 'Deep Blue', 'Medium Blue', 'Cyan', 'Dark Green', 'Green',
+        'Yellow', 'Orange', 'Red', 'Brick', 'Gray', 'Blk/Wht' ];
+  const fg_code = [
+        '#f0f', '#80f', '#00f', '#08f', '#0ff', '#080', '#0f0',
+        '#ff0', '#f80', '#f00', '#800', '#888', null ];
+  const gy_code = [
+        '#202', '#202', '#002', '#022', '#022', '#020', '#020',
+        '#220', '#220', '#200', '#200', '#222', null ];
+
+  function showFruitfulMenu(curCategories) {
+    let submenu = { '': { title: 'Fruitful Modes', back: showMainMenu } };
+    let reshow = () => E.showMenu(submenu);
+
+    function categoryMenu(category) {
+      return {
+        '': { title: category.title, back: reshow },
+        'Color': {
+          value: 0 | color_options.indexOf(category.color),
+          min: 0, max: color_options.length - 1,
+          format: v => color_options[v],
+          onchange: v => {
+            category.color = color_options[v];
+            category.fg = fg_code[v];
+            category.gy = gy_code[v];
+            saveSettings(settings);
+          }
+        },
+        'Target': {
+          value: 0 | category.target_min, min: 15, max: 600, step: 15, wrap: true,
+          onchange: v => {
+            category.target_min = v;
+            saveSettings(settings);
+          },
+        },
+      };
+    }
+
+    for (let category of curCategories) {
+      let menuCat = categoryMenu(category);
+      menuCat['Delete'] = () => {
+        E.showPrompt('Delete this category?', { title: category.title }).then(v => {
+          if (v) {
+            settings.fruitful = settings.fruitful.filter(c => c.title != category.title);
+            saveSettings(settings);
+          }
+        });
+      };
+      submenu[category.title] = () => E.showMenu(menuCat);
+    }
+    let iLastColor = 0 | color_options.indexOf(curCategories[curCategories.length - 1].color);
+    // TODO: Allow editing category titles here
+    let defaultTitle = `Category ${curCategories.length}`;
+    let newCat = { color: color_options[iLastColor + 1], title: defaultTitle };
+    let addMenu = categoryMenu(newCat);
+    addMenu['Save'] = () => {
+      settings.fruitful.push(newCat);
+      saveSettings(settings);
+      showFruitfulMenu(settings.fruitful);
+    };
+    submenu['(Add...)'] = () => E.showMenu(addMenu);
+    E.showMenu(submenu);
+  }
+
+  function showDivergentMenu(curCategories) {
+    let submenu = { '': { title: 'Divergent Modes', back: showMainMenu } };
+    let reshow = () => E.showMenu(submenu);
+
+    function categoryMenu(category) {
+      return {
+        '': { title: category.title, back: reshow },
+        'Color': {
+          value: 0 | color_options.indexOf(category.color),
+          min: 0, max: color_options.length - 1,
+          format: v => color_options[v],
+          onchange: v => {
+            category.color = color_options[v];
+            category.fg = fg_code[v];
+            category.gy = gy_code[v];
+            saveSettings(settings);
+          }
+        },
+      };
+    }
+
+    for (let category of curCategories) {
+      let menuCat = categoryMenu(category);
+      menuCat['Delete'] = () => {
+        E.showPrompt('Delete this category?', { title: category.title }).then(v => {
+          if (v) {
+            settings.decentering = settings.decentering.filter(c => c.title != category.title);
+            saveSettings(settings);
+          }
+        });
+      };
+      submenu[category.title] = () => E.showMenu(menuCat);
+    }
+    let iLastColor = 0 | color_options.indexOf(curCategories[0].color);
+    // TODO: Allow editing category titles here
+    let defaultTitle = `Category ${curCategories.length}`;
+    let newCat = { color: color_options[iLastColor - 1], title: defaultTitle };
+    let addMenu = categoryMenu(newCat);
+    addMenu['Save'] = () => {
+      settings.decentering.push(newCat);
+      saveSettings(settings);
+      showDivergentMenu(settings.decentering);
+    };
+    submenu['(Add...)'] = () => E.showMenu(addMenu);
+    E.showMenu(submenu);
+  }
+
+  var settings = loadSettings();
+  function showMainMenu() {
+    let appMenu = {
+      '': { title: 'Time Harvester', back: back },
+      'Fruitful...': () => showFruitfulMenu(settings.fruitful),
+      'Divergent...': () => showDivergentMenu(settings.decentering),
+      'Hour Color': {
+        value: 0 | color_options.indexOf(settings.color),
         min: 0, max: color_options.length - 1,
         format: v => color_options[v],
         onchange: v => {
-          ring.color = color_options[v];
-          ring.fg = fg_code[v];
-          ring.gy = gy_code[v];
-          save();
-        }
-      };
-      ringMenu['Display'] = {
-        value: 0 | ring_options.indexOf(ring.ring),
-        min: 0, max: ring_options.length - 1,
-        format: v => ring_options[v],
-        onchange: v => {
-          let prev = ring.ring;
-          ring.ring = ring_options[v];
-          save();
-          if (prev != ring.ring && (prev === 'Steps' || ring.ring === 'Steps')) {
-            setTimeout(showRingMenu, 0, ringIndex);
-          }
-        },
-      };
-      if (ring.ring == 'Steps') {
-        ringMenu[/*LANG*/"Step Target"] = {
-          value: 0 | step_options.indexOf(ring.step_target),
-          min: 0, max: step_options.length - 1,
-          format: v => step_options[v],
-          onchange: v => {
-            ring.step_target = step_options[v];
-            save();
-          },
-        };
-      }
-    }
-    E.showMenu(ringMenu);
-  }
-
-  function showMainMenu() {
-    let appMenu = {
-      '': { title: 'Time Harvester' },
-      '< Back': back,
-      'Ring 1': () => showRingMenu(0),
-      'Ring 2': () => showRingMenu(1),
-      'Ring 3': () => showRingMenu(2),
-      'Hour Color': {
-        value: 0 | color_options_font.indexOf(s.color),
-        min: 0, max: color_options_font.length - 1,
-        format: v => color_options_font[v],
-        onchange: v => {
-          s.color = color_options_font[v];
-          s.fg = fg_code_font[v];
-          save();
+          settings.hour_color = color_options[v];
+          settings.hour_fg = fg_code[v];
+          saveSettings(settings);
         },
       },
-      'Battery Life Format' : {
-        value: !!s.batt_hours,
-        format: value => value?"Days":"%",
+      'Fallow Ratio': {
+        value: 0 | settings.fallow_denominator, min: 2, max: 6, step: 0.5,
+        format: v => `1:${v}`,
         onchange: v => {
-          s.batt_hours = v;
-          save();
-        },
-      },
-      'Idle Warning' : {
-        value: !!s.idle_check,
-        onchange: v => {
-          s.idle_check = v;
-          save();
+          settings.fallow_denominator = v;
+          saveSettings(settings);
         },
       },
     };
