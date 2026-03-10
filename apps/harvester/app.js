@@ -16,12 +16,12 @@ const DECENTER_IDX = -1;
 var totalMin;
 var palCat, modeCat, targetMinCat, startCat, endCat;
 
-const CLK_Y = H / 2 - 10;
-const CLK_HALF_W = 112 / 2, CLK_HALF_H = 48 / 2, CLK_BG_Y = H / 2 - 17;
+const CLK_Y = H / 2 - 12;
+const CLK_HALF_W = 112 / 2, CLK_HALF_H = 46 / 2, CLK_BG_Y = H / 2 - 17;
 
-const CM_Y = (3 * H / 4) - 20;
-const CM_W = 54;
-const CM_H = 12;
+const CM_Y = (3 * H / 4) - 19;
+const CM_W = 53;
+const CM_H = 34;
 const ringEdge = 2;
 const ringIterOffset = 10;
 const ringThick = 6;
@@ -350,9 +350,10 @@ function drawCurMode() {
   if (i < FALLOW_IDX) i += modeCat.length;
   var text = modeCat[i], bg = palCat[i][2];
   g.reset().setColor(bg);
-  g.fillRect((W / 2) - CM_W, CM_Y - CM_H - 2, (W / 2) + CM_W, CM_Y + CM_H - 2);
+  g.fillRect((W / 2) - CM_W, CM_Y - CM_H/2, (W / 2) + CM_W, CM_Y + CM_H/2);
 
     setSmallFont();
+  text = g.wrapString(text, CM_W * 2).join("\n");
   g.setColor(g.theme.fg).setFontAlign(0, 0).drawString(text, W / 2, CM_Y);
 }
 
