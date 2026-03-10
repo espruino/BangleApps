@@ -127,11 +127,11 @@ function lateStartAdjustments(totalSecByCat, curMode, prevMode, secDesired) {
   } else if (curMode < FALLOW_IDX && prevMode > FALLOW_IDX) {
     // Subtract fruitful time and use up fallow time
     // TODO: Test
-    return [amt, amt];
+    return [secDesired, amt];
   } else if (curMode < FALLOW_IDX && FALLOW_IDX == prevMode) {
     // Use up as much fallow time as possible
     // TODO: Test
-    return [amt, 0];
+    return [secDesired, 0];
   } else if (curMode < FALLOW_IDX && prevMode < FALLOW_IDX) {
     // Subtract divergent time spent in other category
     // TODO: Test
@@ -525,13 +525,24 @@ function fixLateStart(sec) {
   const totalSecByCat = settings.total_sec_by_cat;
   const curMode = settings.cur_mode;
   var amts = lateStartAdjustments(totalSecByCat, curMode, prevSpentMode, sec);
+  const curTotalBefore = at(totalSecByCat, curMode);
+  const prevTotalBefore = at(totalSecByCat, prevSpentMode);
+  const fallowTotalBefore = totalSecByCat[FALLOW_IDX];
   spendTime(curMode, amts[0]);
   spendTime(prevSpentMode, -amts[1]);
-  var mm = Math.floor(amts[0] / MIN), ss = amts[0] % MIN;
-  var msgTime = ss != 0 ? `${mm} min and ${ss} sec` : `${mm} min`;
-  var msg = `Added ${msgTime} to ${modeCat[curMode]} from ${modeCat[prevSpentMode]}`;
+  const curDiff = at(settings.total_sec_by_cat, curMode) - curTotalBefore;
+  const prevDiff = at(settings.total_sec_by_cat, prevSpentMode) - prevTotalBefore;
+  const fallowDiff = settings.total_sec_by_cat[FALLOW_IDX] - fallowTotalBefore;
+  // var mm = Math.floor(amts[0] / MIN), ss = amts[0] % MIN;
+  // var msgTime = ss != 0 ? `${mm} min and ${ss} sec` : `${mm} min`;
+  // var msg = `Added ${msgTime} to ${modeCat[curMode]} from ${modeCat[prevSpentMode]}`;
   //E.showMenu();
-  E.showPrompt(msg, {title: 'Moved Start Earlier', buttons: {OK:true}}).then(restoreCachedFace);
+  log_debug(`${curDiff}s to ${at(modeCat, curMode)}`
+            + ` from ${prevDiff}s in ${at(modeCat, prevSpentMode)}`
+            + (fallowDiff != 0 ? ` and ${fallowDiff}s fallow` : ''));
+  //E.showPrompt(msg, {title: 'Moved Start Earlier', buttons: {OK:true}}).then(restoreCachedFace);
+  E.showMenu();
+  restoreCachedFace();
 }
 
 function pickLateStartAmt(back) {
