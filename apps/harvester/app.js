@@ -270,12 +270,11 @@ function draw() {
 function getGaugeSpans(start, amtMin, targetMin, invertRing) {
   let result = {};
   if (invertRing) {
-    result.end = totalMin;
+    result.end = totalMin - start;
     result.mid = result.end - amtMin;
-    result.start = result.mid - 5; // TODO: Tweak visual buffer
+    result.start = result.end - targetMin;
   } else {
     result.start = start;
-    // Cap end var so the ring doesn't need to update if already full
     result.mid = start + amtMin;
     result.end = start + targetMin;
   }
