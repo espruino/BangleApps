@@ -4,7 +4,7 @@
   var SunCalc = require("suncalc"); // from modules folder
   const locale = require("locale");
   var settings=require("Storage").readJSON("clkinfosunrise.settings.json",1)||{
-    auto:false
+    followSunPhase:false
   };
   function calculate(calcDate) {
     var location = require("Storage").readJSON("mylocation.json",1)||{};
@@ -68,7 +68,7 @@
     ]
   };
   
-  if(!settings.auto){
+  if(!settings.followSunPhase){
     menu.items.push({ name : "Sunrise",
           get : () => { calculate(new Date());
                       return { text : locale.time(sunrise,1),
@@ -86,7 +86,7 @@
           get : () => { 
                       calculate(new Date());
                       let showSunset=date>sunrise&&date<sunset;
-                      // if it's the end of the day, show sunrise of tomorrow.
+                      // if it's night, show sunrise of tomorrow.
                       if(date>sunset){
                         calculate(new Date(Date.now() + 86400000));
                       }
