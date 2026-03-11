@@ -82,7 +82,7 @@
     
      menu.items.push({ name : "Auto Sunrise",
           get : () => { calculate();
-                       showSunset=new Date()>sunrise;
+                       let showSunset=new Date()>sunrise;
                       return { text : showSunset?locale.time(sunset,1):locale.time(sunrise,1),
                         img : showSunset?atob("GBiBAAAAAAAAAAAAAAB+AAA8AAAYAAAYAAAAAAAAAAAAAAAYAAAYAAQYIA4AcAYAYAA8AAB+AAD/AAH/gD///D///AAAAAAAAAAAAA=="):
 atob("GBiBAAAAAAAAAAAAAAAYAAA8AAB+AAD/AAAAAAAAAAAAAAAYAAAYAAQYIA4AcAYAYAA8AAB+AAD/AAH/gD///D///AAAAAAAAAAAAA==")                           }},
