@@ -4,4 +4,4 @@
 0.03: Change 3rd mode to show the time to next sunrise/sunset time (not actual time)
 0.04: Minor code improvements
 0.05: Minor code improvements
-0.06: Add settings menu with option to make the clock info automatic, where if the time is after sunset, it shows sunrise, and vice versa.
+0.06: Add settings menu with option to make the clock info follow sun phase, where if the time is after sunset, it shows next sunrise, and vice versa.
