@@ -3,7 +3,9 @@
   var sunrise, sunset, date;
   var SunCalc = require("suncalc"); // from modules folder
   const locale = require("locale");
-
+  var settings=require("Storage").readJSON("clkinfosunrise.settings.json",1)||{
+    auto:false
+  };
   function calculate() {
     var location = require("Storage").readJSON("mylocation.json",1)||{};
     location.lat = location.lat||51.5072;
@@ -28,21 +30,10 @@
     clearInterval(this.interval);
     this.interval = undefined;
   }
-
-  return {
+  var menu= {
     name: "Bangle",
     items: [
-      { name : "Sunrise",
-        get : () => { calculate();
-                     return { text : locale.time(sunrise,1),
-                       img : atob("GBiBAAAAAAAAAAAAAAAYAAA8AAB+AAD/AAAAAAAAAAAAAAAYAAAYAAQYIA4AcAYAYAA8AAB+AAD/AAH/gD///D///AAAAAAAAAAAAA==") }},
-        show : show, hide : hide
-      }, { name : "Sunset",
-        get : () => { calculate();
-                     return { text : locale.time(sunset,1),
-                       img : atob("GBiBAAAAAAAAAAAAAAB+AAA8AAAYAAAYAAAAAAAAAAAAAAAYAAAYAAQYIA4AcAYAYAA8AAB+AAD/AAH/gD///D///AAAAAAAAAAAAA==") }},
-        show : show, hide : hide
-      }, { name : "Sunrise/set", // Time in day (uses v/min/max to show percentage through day)
+       { name : "Sunrise/set", // Time in day (uses v/min/max to show percentage through day)
         hasRange : true,
         get : () => {
           calculate();
@@ -74,4 +65,30 @@
       }
     ]
   };
+  
+  if(!settings.auto){
+    menu.items.push({ name : "Sunrise",
+          get : () => { calculate();
+                      return { text : locale.time(sunrise,1),
+                        img : atob("GBiBAAAAAAAAAAAAAAAYAAA8AAB+AAD/AAAAAAAAAAAAAAAYAAAYAAQYIA4AcAYAYAA8AAB+AAD/AAH/gD///D///AAAAAAAAAAAAA==") }},
+          show : show, hide : hide
+        }, { name : "Sunset",
+          get : () => { calculate();
+                      return { text : locale.time(sunset,1),
+                        img : atob("GBiBAAAAAAAAAAAAAAB+AAA8AAAYAAAYAAAAAAAAAAAAAAAYAAAYAAQYIA4AcAYAYAA8AAB+AAD/AAH/gD///D///AAAAAAAAAAAAA==") }},
+          show : show, hide : hide
+        })
+  }else{
+    
+     menu.items.push({ name : "Auto Sunrise",
+          get : () => { calculate();
+                       showSunset=new Date()>sunrise;
+                      return { text : showSunset?locale.time(sunset,1):locale.time(sunrise,1),
+                        img : showSunset?atob("GBiBAAAAAAAAAAAAAAB+AAA8AAAYAAAYAAAAAAAAAAAAAAAYAAAYAAQYIA4AcAYAYAA8AAB+AAD/AAH/gD///D///AAAAAAAAAAAAA=="):
+atob("GBiBAAAAAAAAAAAAAAAYAAA8AAB+AAD/AAAAAAAAAAAAAAAYAAAYAAQYIA4AcAYAYAA8AAB+AAD/AAH/gD///D///AAAAAAAAAAAAA==")                           }},
+          show : show, hide : hide
+        })
+  }
+  return menu;
+  
 })
