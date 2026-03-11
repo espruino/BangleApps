@@ -105,7 +105,7 @@ function getMin(i) {
 }
 function addFruitful(i, sec) {
   if (i <= FALLOW_IDX) throw new Error("Can't track fruitful time with i=" + i);
-  settings.total_sec_by_cat[FALLOW_IDX] += sec / settings.fallow_denominator;
+  settings.total_sec_by_cat[FALLOW_IDX] += Math.ceil(sec / settings.fallow_denominator);
   const result = settings.total_sec_by_cat[i] += sec;
   const targetMin = targetMinCat[i - 1]; // XXX
   if (result >= targetMin * MIN && result < (targetMin + 1) * MIN) {
@@ -124,23 +124,36 @@ function useRecenter(sec) {
   settings.total_sec_by_cat[FALLOW_IDX] -= fallow_used_sec;
   return sec - fallow_used_sec;
 }
+var lastBuzzCheck = 0;
 function useDecenter(i, sec) {
   if (i >= FALLOW_IDX) throw new Error("can't treat " + i + " as decentering");
   var excess_sec = useRecenter(sec);
   var remaining = settings.total_sec_by_cat[FALLOW_IDX];
   const j = settings.total_sec_by_cat.length + i;
   let newTotal = settings.total_sec_by_cat[j] + excess_sec;
-  // Assumes it will only be called every minute
-  // TODO: Allow configuring times
-  if (remaining <= 5 * MIN && remaining > 4 * MIN) {
-    buzz.pattern(':  :');
-  } else if (remaining <= 1 * MIN && remaining > 0) {
-    buzz.pattern(';  ;');
-  } else if (0 == remaining && excess_sec < 1 * MIN) {
-    buzz.pattern('==  ==');
-  } else if (0 == remaining && 0 == (newTotal % (5 * MIN))) {
-    buzz.pattern('= = = = =');
-  }
+  let secCheckWindow = Math.round((new Date().valueOf() - lastBuzzCheck) / 1000);
+  if (0 === remaining) {
+    log_debug(`${sec} - ${remaining} = ${excess_sec} (vs ${secCheckWindow}) => ${newTotal}`);
+    if (excess_sec > 0 && excess_sec < secCheckWindow) {
+      buzz.pattern('==  ==');
+    } else if (newTotal % (5 * MIN) < secCheckWindow) {
+      buzz.pattern('= = = = =');
+    }
+  } else {
+    // TODO: Allow configuring times
+    var earlyWarning = [
+      {threshold: 5 * MIN, pattern: ':  :'},
+      {threshold: 1 * MIN, pattern: ';  ;'},
+    ];
+    for (let warn of earlyWarning) {
+      if (remaining <= warn.threshold && remaining > warn.threshold - secCheckWindow) {
+        log_debug(`${remaining} just dropped below ${warn.threshold} (by < ${secCheckWindow})`);
+        buzz.pattern(warn.pattern);
+        break;
+      }
+    }
+  } 
+  lastBuzzCheck = new Date().valueOf();
   return settings.total_sec_by_cat[j] = newTotal;
 }
 
@@ -270,6 +283,7 @@ function loadRuntimeSettings() {
 
   settings.last_reset = settings.last_reset || ymd(new Date());
   updateDerivedRingVars();
+  setInterval(updateTotals, settings.fallow_denominator * 1000);
 }
 
 var drawCount = 0;
@@ -553,8 +567,9 @@ Bangle.on('touch', function (button, xy) {
 var prevSpentMode; // TODO: Reunify with prevDrawnMode? Probably not
 function setCurMode(newMode) {
   //log_debug('Setting cur_mode to ' + newMode);
-  updateTotals();
   prevSpentMode = settings.cur_mode;
+  if (prevSpentMode > FALLOW_IDX) lastBuzzCheck = new Date().valueOf();
+  updateTotals();
   settings.cur_mode = newMode;
   E.showMenu();
   saveSettings(settings);
@@ -683,7 +698,7 @@ function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function () {
     drawTimeout = undefined;
-    updateTotals();
+    //updateTotals();
     draw();
   }, delay);
 }
