@@ -6,12 +6,14 @@
   var settings=require("Storage").readJSON("clkinfosunrise.settings.json",1)||{
     auto:false
   };
-  function calculate() {
+  function calculate(calcDate) {
     var location = require("Storage").readJSON("mylocation.json",1)||{};
     location.lat = location.lat||51.5072;
     location.lon = location.lon||0.1276; // London
+    // keep global date the same for time left in day, night, etc.
     date = new Date(Date.now());
-    var times = SunCalc.getTimes(date, location.lat, location.lon);
+    
+    var times = SunCalc.getTimes(calcDate, location.lat, location.lon);
     sunrise = times.sunrise;
     sunset = times.sunset;
     /* do we want to re-calculate this every day? Or we just assume
@@ -36,7 +38,7 @@
        { name : "Sunrise/set", // Time in day (uses v/min/max to show percentage through day)
         hasRange : true,
         get : () => {
-          calculate();
+          calculate(new Date());
           let day = true;
           let d = date.getTime();
           let dayLength = sunset.getTime()-sunrise.getTime();
@@ -68,12 +70,12 @@
   
   if(!settings.auto){
     menu.items.push({ name : "Sunrise",
-          get : () => { calculate();
+          get : () => { calculate(new Date());
                       return { text : locale.time(sunrise,1),
                         img : atob("GBiBAAAAAAAAAAAAAAAYAAA8AAB+AAD/AAAAAAAAAAAAAAAYAAAYAAQYIA4AcAYAYAA8AAB+AAD/AAH/gD///D///AAAAAAAAAAAAA==") }},
           show : show, hide : hide
         }, { name : "Sunset",
-          get : () => { calculate();
+          get : () => { calculate(new Date());
                       return { text : locale.time(sunset,1),
                         img : atob("GBiBAAAAAAAAAAAAAAB+AAA8AAAYAAAYAAAAAAAAAAAAAAAYAAAYAAQYIA4AcAYAYAA8AAB+AAD/AAH/gD///D///AAAAAAAAAAAAA==") }},
           show : show, hide : hide
@@ -81,8 +83,13 @@
   }else{
     
      menu.items.push({ name : "Auto rise/set",
-          get : () => { calculate();
-                      let showSunset=new Date()>sunrise&&new Date()<sunset;
+          get : () => { 
+                      calculate(new Date());
+                      let showSunset=date>sunrise&&date<sunset;
+                      // if it's the end of the day, show sunrise of tomorrow.
+                      if(date>sunset){
+                        calculate(new Date(Date.now() + 86400000));
+                      }
                       return { text : showSunset?locale.time(sunset,1):locale.time(sunrise,1),
                         img : showSunset?atob("GBiBAAAAAAAAAAAAAAB+AAA8AAAYAAAYAAAAAAAAAAAAAAAYAAAYAAQYIA4AcAYAYAA8AAB+AAD/AAH/gD///D///AAAAAAAAAAAAA=="):
 atob("GBiBAAAAAAAAAAAAAAAYAAA8AAB+AAD/AAAAAAAAAAAAAAAYAAAYAAQYIA4AcAYAYAA8AAB+AAD/AAH/gD///D///AAAAAAAAAAAAA==")                           }},
