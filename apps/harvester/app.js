@@ -426,7 +426,7 @@ function addPoint(arr, qty, radius, scaleMax) {
 }
 
 function polyArray(start, end, radius, scaleMax) {
-  const subsegment = scaleMax / 32;
+  const subsegment = scaleMax / 30;
   if (start == end) return []; // No array to draw if the points are the same.
   let startOrigin = start;
   let endOrigin = end;
