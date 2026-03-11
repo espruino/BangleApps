@@ -2,7 +2,7 @@
   const FILE = "clkinfosunrise.settings.json";
   // Load settings
   var settings = Object.assign({
-    auto: false,
+    followSunPhase: false,
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
@@ -14,10 +14,10 @@
   E.showMenu({
     "" : { "title" : "Sunrise Clock Info" },
     "< Back" : () => back(),
-    'Auto Rise & Set': {
-      value: !!settings.auto,  // !! converts undefined to false
+    'Follow Sun Phase': {
+      value: !!settings.followSunPhase,  // !! converts undefined to false
       onchange: v => {
-        settings.auto = v;
+        settings.followSunPhase = v;
         writeSettings();
       }
     }
