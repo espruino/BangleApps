@@ -8,6 +8,7 @@ const SETTINGS_FILE = "harvester.json";
 function getDefaultSettings () {
   return {
     fruitful: [
+      {},
       {
         color: 'Green', fg: '#0f0', gy: '#020',
         title: 'Work',
@@ -19,6 +20,7 @@ function getDefaultSettings () {
     cur_mode: 0,
     last_reset: null,
     decentering: [
+      {},
       {
         title: 'Social Media',
         fg: '#f00', gy: '#200', color: 'Red',
@@ -29,18 +31,18 @@ function getDefaultSettings () {
 }
 function loadSettings () {
   var def = getDefaultSettings();
-  var settings = storage.readJSON(SETTINGS_FILE, 1) || {};
+  var s = storage.readJSON(SETTINGS_FILE, 1) || {};
   // TODO: Add per-item normalizer fns
-  settings.fruitful = settings.fruitful || def.fruitful;
-  settings.decentering = settings.decentering || def.decentering;
+  s.fruitful = s.fruitful || def.fruitful;
+  s.decentering = s.decentering || def.decentering;
 
-  settings.hour_color = settings.hour_color || def.hour_color;
-  settings.hour_fg = settings.hour_fg || def.hour_fg;
-  settings.fallow_denominator = settings.fallow_denominator || def.fallow_denominator;
+  s.hour_color = s.hour_color || def.hour_color;
+  s.hour_fg = s.hour_fg || def.hour_fg;
+  s.fallow_denominator = s.fallow_denominator || def.fallow_denominator;
   // Converts from JSON or supplies size
-  settings.total_sec_by_cat = new Uint16Array(settings.total_sec_by_cat || 16);
-  settings.cur_mode = settings.cur_mode || def.cur_mode;
-  return settings;
+  s.total_sec_by_cat = new Uint16Array(s.total_sec_by_cat || 16);
+  s.cur_mode = s.cur_mode || def.cur_mode;
+  return s;
 }
 function saveSettings (s) {
   delete s.hr_12; // TODO: Allow setting this independently
@@ -52,14 +54,12 @@ const global_settings = storage.readJSON("setting.json", true) || {};
 const H = g.getHeight();
 const W = g.getWidth();
 
-const FALLOW_IDX = 0;
+const FIRST_DECENTER_IDX = -1, FALLOW_IDX = 0, FIRST_FRUITFUL_IDX = 1;
 
-// TODO: Remove
-const DECENTER_IDX = -1;
-
-// TODO: Distinguish startCat + endCat from others with different indexing, or make them consistent
 var totalMin;
-var palCat, modeCat, targetMinCat, startCat, endCat;
+var palCat, modeCat;
+// FCat arrays are shorter than others but have synchronized indexing as far as possible
+var targetMinFCat, startFCat, endFCat;
 
 const CLK_Y = H / 2 - 12;
 const CLK_HALF_W = 112 / 2, CLK_HALF_H = 46 / 2, CLK_BG_Y = H / 2 - 17;
@@ -77,7 +77,6 @@ const nextUpdateMs = 60000;
 const radiusOuterRing = Math.min((W / 2 - ringEdge), (H / 2 - ringEdge));
 
 var prevDrawnMode, prevDrawnTime, prevDrawnSegment = [];
-
 
 const HR_RESET = 3; // Reset (and eventually save) totals at a time few will be awake
 
@@ -98,16 +97,20 @@ function at(arr, i) {
   if (i < 0) i += arr.length;
   return arr[i];
 }
+function setAt(arr, i, v) {
+  if (i < 0) i += arr.length;
+  return arr[i] = v;
+}
 
 function getMin(i) {
   if (i < 0) i += settings.total_sec_by_cat.length;
   return Math.floor(settings.total_sec_by_cat[i] / MIN);
 }
 function addFruitful(i, sec) {
-  if (i <= FALLOW_IDX) throw new Error("Can't track fruitful time with i=" + i);
+  if (i < FIRST_FRUITFUL_IDX) throw new Error("Can't track fruitful time with i=" + i);
   settings.total_sec_by_cat[FALLOW_IDX] += Math.ceil(sec / settings.fallow_denominator);
   const result = settings.total_sec_by_cat[i] += sec;
-  const targetMin = targetMinCat[i - 1]; // XXX
+  const targetMin = targetMinFCat[i];
   if (result >= targetMin * MIN && result < (targetMin + 1) * MIN) {
     log_debug('Reached target for ' + modeCat[i] + ' (' + targetMin + ' min)');
     // TODO: Improve
@@ -126,7 +129,7 @@ function useRecenter(sec) {
 }
 var lastBuzzCheck = 0;
 function useDecenter(i, sec) {
-  if (i >= FALLOW_IDX) throw new Error("can't treat " + i + " as decentering");
+  if (i > FIRST_DECENTER_IDX) throw new Error("can't treat " + i + " as decentering");
   var excess_sec = useRecenter(sec);
   var remaining = settings.total_sec_by_cat[FALLOW_IDX];
   const j = settings.total_sec_by_cat.length + i;
@@ -161,12 +164,12 @@ function useDecenter(i, sec) {
  *  negative time spent.
  */
 function spendTime(mode, sec) {
-  if (mode < FALLOW_IDX) {
+  if (mode <= FIRST_DECENTER_IDX) {
     useDecenter(mode, sec);
-  } else if (FALLOW_IDX == mode) {
-    useRecenter(mode, sec);
-  } else {
+  } else if (mode >= FIRST_FRUITFUL_IDX) {
     addFruitful(mode, sec);
+  } else {
+    useRecenter(mode, sec);
   }
 }
 
@@ -177,28 +180,28 @@ function spendTime(mode, sec) {
  */
 function lateStartAdjustments(totalSecByCat, curMode, prevMode, secDesired) {
   let amt = Math.min(at(totalSecByCat, prevMode), secDesired);
-  if (FALLOW_IDX == curMode && prevMode > FALLOW_IDX) {
+  if (FALLOW_IDX === curMode && prevMode >= FIRST_FRUITFUL_IDX) {
     // Subtract fruitful time not spent (plus additional fallow time not accumulated)
     // TODO: Test
     return [-amt, amt];
-  } else if (curMode > FALLOW_IDX && prevMode > FALLOW_IDX) {
+  } else if (curMode >= FIRST_FRUITFUL_IDX && prevMode >= FIRST_FRUITFUL_IDX) {
     // Subtract fruitful time spent in other category
     // TODO: Test
     return [amt, amt];
-  } else if (curMode > FALLOW_IDX && FALLOW_IDX == prevMode) {
+  } else if (curMode >= FIRST_FRUITFUL_IDX && FALLOW_IDX === prevMode) {
     // (Will re-accumulate additional fallow time)
     // TODO: Test
     amt = secDesired; // No bound currently possible
     return [amt, -amt];
-  } else if (curMode < FALLOW_IDX && prevMode > FALLOW_IDX) {
+  } else if (curMode <= FIRST_DECENTER_IDX && prevMode >= FIRST_FRUITFUL_IDX) {
     // Subtract fruitful time and use up fallow time
     // TODO: Test
     return [secDesired, amt];
-  } else if (curMode < FALLOW_IDX && FALLOW_IDX == prevMode) {
+  } else if (curMode <= FIRST_DECENTER_IDX && FALLOW_IDX === prevMode) {
     // Use up as much fallow time as possible
     // TODO: Test
     return [secDesired, 0];
-  } else if (curMode < FALLOW_IDX && prevMode < FALLOW_IDX) {
+  } else if (curMode <= FIRST_DECENTER_IDX && prevMode <= FIRST_DECENTER_IDX) {
     // Subtract divergent time spent in other category
     // TODO: Test
     return [amt, amt];
@@ -236,12 +239,12 @@ function palette(dim, bright) {
   //log_debug('Pal: ' + dim + ', ' + bright);
   return new Uint16Array([g.theme.bg, g.toColor(dim), g.toColor(bright), g.theme.fg]);
 }
-function autoGray(fruitful) {
-  if (g.theme.dark || fruitful.color == 'Blk/Wht') {
+function autoGray(category) {
+  if (g.theme.dark || category.color == 'Blk/Wht') {
     // TODO: Recheck this comment
     // BLK/WHT is the outside in light mode, so all of it gets filled in.
     // Using the dark theme stops it from being a one-color circle.
-    return g.toColor(fruitful.gy || fruitful);
+    return g.toColor(category.gy || category);
   } else {
     return g.theme.fg;
   }
@@ -249,30 +252,30 @@ function autoGray(fruitful) {
 function updateDerivedRingVars() {
   totalMin = 0;
   var fixedPosLen = settings.fruitful.length;
-  var displayedLen = settings.fruitful.length + 1 + settings.decentering.length;
-  startCat = new Uint16Array(fixedPosLen);
-  endCat = new Uint16Array(fixedPosLen);
-  targetMinCat = new Uint16Array(fixedPosLen);
+  var displayedLen = settings.fruitful.length + settings.decentering.length;
+  startFCat = new Uint16Array(fixedPosLen);
+  endFCat = new Uint16Array(fixedPosLen);
+  targetMinFCat = new Uint16Array(fixedPosLen);
   palCat = new Array(displayedLen);
   modeCat = new Array(displayedLen);
 
   palCat[FALLOW_IDX] = palette(autoGray('#220'), '#860');
   // TODO: Draw out a nice circle and arrows properly
   modeCat[FALLOW_IDX] = '» × «';
-  for (let i = 0; i < settings.fruitful.length; i++) {
+  for (let i = FIRST_FRUITFUL_IDX; i < settings.fruitful.length; i++) {
     let fruitful = settings.fruitful[i];
-    startCat[i] = totalMin;
-    targetMinCat[i] = fruitful.target_min;
+    startFCat[i] = totalMin;
+    targetMinFCat[i] = fruitful.target_min;
     totalMin += fruitful.target_min;
-    endCat[i] = totalMin;
+    endFCat[i] = totalMin;
     //log_debug('Setting palette for ' + fruitful.title);
-    palCat[i + 1] = palette(autoGray(fruitful), g.toColor(fruitful.fg));
-    modeCat[i + 1] = fruitful.title;
+    palCat[i] = palette(autoGray(fruitful), g.toColor(fruitful.fg));
+    modeCat[i] = fruitful.title;
   }
-  for (let j = 0; j < settings.decentering.length; j++) {
-    let i = displayedLen + DECENTER_IDX - j, decentering = settings.decentering[j];
-    palCat[i] = palette(autoGray(decentering), g.toColor(decentering.fg));
-    modeCat[i] = decentering.title;
+  for (let i = -FIRST_DECENTER_IDX; i < settings.decentering.length; i++) {
+    let decentering = settings.decentering[i];
+    setAt(palCat, -i, palette(autoGray(decentering), g.toColor(decentering.fg)));
+    setAt(modeCat, -i, decentering.title);
   }
 }
 
@@ -332,15 +335,14 @@ function getGaugeSpans(start, amtMin, targetMin, invertRing) {
 }
 
 function drawIfChanged(gaugeSpans, idxCat, idxRing) {
-  var i = idxCat < FALLOW_IDX ? idxCat + palCat.length : idxCat;
   var j = idxRing > 0 ? idxCat + 16 : idxCat; // Treat original/overflow separately
   var prevSpans = prevDrawnSegment[j];
   var endpointsMatch = prevSpans && prevSpans.start == gaugeSpans.start &&
                        prevSpans.end == gaugeSpans.end;
   if (endpointsMatch && prevSpans.mid == gaugeSpans.mid) return false;
   prevDrawnSegment[j] = gaugeSpans;
-  var pal = palCat[i];
-  if (idxCat < FALLOW_IDX) pal = palette(pal[2], pal[1]);
+  var pal = at(palCat, idxCat);
+  if (idxCat <= FIRST_DECENTER_IDX) pal = palette(pal[2], pal[1]);
   if (endpointsMatch && prevSpans.mid < gaugeSpans.mid) {
     // Cheat by only drawing the progressed amount
     log_debug("Redrew advanced subsection of part #" + idxCat + " in ring #" + idxRing +
@@ -367,24 +369,24 @@ function drawTrimmingCircles() {
 
 function drawAllSegments() {
   var anyChanged = false, start = 0;
-  for (let i = 0; i < settings.fruitful.length; i++) {
-    let targetMin = targetMinCat[i];
-    let fruitful = getMin(i + 1), overwork = Math.max(fruitful - targetMin, 0);
-    if (drawIfChanged(getGaugeSpans(startCat[i], fruitful - overwork, targetMin), i + 1, 0)) {
+  for (let i = FIRST_FRUITFUL_IDX; i < settings.fruitful.length; i++) {
+    let targetMin = targetMinFCat[i];
+    let fruitful = getMin(i), overwork = Math.max(fruitful - targetMin, 0);
+    if (drawIfChanged(getGaugeSpans(startFCat[i], fruitful - overwork, targetMin), i, 0)) {
       anyChanged = true;
     }
     if (0 == overwork) continue;
-    if (drawIfChanged(getGaugeSpans(start, overwork, overwork + 5), i + 1, 1)) {
+    if (drawIfChanged(getGaugeSpans(start, overwork, overwork + 5), i, 1)) {
       anyChanged = true;
     }
     start += overwork + 5;
   }
 
   start = 0;
-  for (let j = 0; j < settings.decentering.length; j++) {
-    let i = DECENTER_IDX - j; decenter = getMin(i);
-    if (0 == decenter) continue;
-    if (drawIfChanged(getGaugeSpans(start, decenter, decenter + 5, true), i, 1)) {
+  for (let i = -FIRST_DECENTER_IDX; i < settings.decentering.length; i++) {
+    let decenter = getMin(-i);
+    if (0 === decenter) continue;
+    if (drawIfChanged(getGaugeSpans(start, decenter, decenter + 5, true), -i, 1)) {
       anyChanged = true;
     }
     start += decenter + 5;
@@ -403,8 +405,7 @@ function drawCurMode() {
   var i = settings.cur_mode;
   if (prevDrawnMode == i) return;
   prevDrawnMode = i;
-  if (i < FALLOW_IDX) i += modeCat.length;
-  var text = modeCat[i], bg = palCat[i][2];
+  var text = at(modeCat, i), bg = at(palCat, i)[2];
   g.reset().setColor(bg);
   g.fillRect((W / 2) - CM_W, CM_Y - CM_H/2, (W / 2) + CM_W, CM_Y + CM_H/2);
 
@@ -568,7 +569,7 @@ var prevSpentMode; // TODO: Reunify with prevDrawnMode? Probably not
 function setCurMode(newMode) {
   //log_debug('Setting cur_mode to ' + newMode);
   prevSpentMode = settings.cur_mode;
-  if (prevSpentMode > FALLOW_IDX) lastBuzzCheck = new Date().valueOf();
+  if (prevSpentMode >= FIRST_FRUITFUL_IDX) lastBuzzCheck = new Date().valueOf();
   updateTotals();
   settings.cur_mode = newMode;
   E.showMenu();
@@ -617,12 +618,12 @@ function pickLateStartAmt(back) {
 }
 
 function pickFruitful() {
-  var menu = { "": { title: '-- Fruitful --', back: restoreCachedFace /* remove: () => { inMenu = false; } */ } };
-  for (let i = 0; i < settings.fruitful.length; i++) {
-    let newMode = i + 1, title = modeCat[newMode];
+  var menu = { "": { title: '-- Fruitful --', back: restoreCachedFace } };
+  for (let i = FIRST_FRUITFUL_IDX; i < settings.fruitful.length; i++) {
+    let newMode = i, title = modeCat[newMode];
     menu[title] = () => setCurMode(newMode);
   }
-  if (settings.cur_mode > FALLOW_IDX && prevSpentMode != undefined) {
+  if (settings.cur_mode >= FIRST_FRUITFUL_IDX && prevSpentMode != undefined) {
     menu['(Fix start...)'] = () => pickLateStartAmt(() => E.showMenu(menu));
   }
   saveMenuFaceCache();
@@ -632,7 +633,7 @@ function pickFruitful() {
 
 function pickRecenter() {
   saveMenuFaceCache();
-  if (settings.cur_mode == FALLOW_IDX && prevSpentMode != undefined) {
+  if (settings.cur_mode === FALLOW_IDX && prevSpentMode != undefined) {
     pickLateStartAmt(restoreCachedFace);
   } else {
     setCurMode(FALLOW_IDX);
@@ -641,11 +642,11 @@ function pickRecenter() {
 
 function pickDecenter() {
   var menu = { "": { title: '-- Decentering --', remove: () => { inMenu = false; } } };
-  for (let i = 0; i < settings.decentering.length; i++) {
-    let newMode = DECENTER_IDX - i, title = modeCat[modeCat.length + newMode];
+  for (let i = -FIRST_DECENTER_IDX; i < settings.decentering.length; i++) {
+    let newMode = -i, title = at(modeCat, newMode);
     menu[title] = () => setCurMode(newMode);
   }
-  if (settings.cur_mode < FALLOW_IDX && prevSpentMode != undefined) {
+  if (settings.cur_mode <= FIRST_DECENTER_IDX && prevSpentMode != undefined) {
     menu['(Fix start...)'] = () => pickLateStartAmt(() => E.showMenu(menu));
   }
   saveMenuFaceCache();
@@ -681,13 +682,7 @@ function updateTotals() {
     if (!totals_updated_at) totals_updated_at = now;
     let update_sec = Math.round((now.getTime() - totals_updated_at.getTime()) / 1000);
     totals_updated_at = now;
-    if (FALLOW_IDX == settings.cur_mode) {
-      useRecenter(update_sec);
-    } else if (settings.cur_mode > FALLOW_IDX) {
-      addFruitful(settings.cur_mode, update_sec);
-    } else {
-      useDecenter(settings.cur_mode, update_sec);
-    }
+    spendTime(settings.cur_mode, update_sec);
   }
 }
 

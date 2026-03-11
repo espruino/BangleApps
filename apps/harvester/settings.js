@@ -4,6 +4,7 @@
   function getDefaultSettings () {
     return {
       fruitful: [
+        {},
         {
           color: 'Green', fg: '#0f0', gy: '#020',
           title: 'Work',
@@ -15,6 +16,7 @@
       cur_mode: 0,
       last_reset: null,
       decentering: [
+        {},
         {
           title: 'Social Media',
           fg: '#f00', gy: '#200', color: 'Red',
@@ -25,18 +27,18 @@
   }
   function loadSettings () {
     var def = getDefaultSettings();
-    var settings = storage.readJSON(SETTINGS_FILE, 1) || {};
+    var s = storage.readJSON(SETTINGS_FILE, 1) || {};
     // TODO: Add per-item normalizer fns
-    settings.fruitful = settings.fruitful || def.fruitful;
-    settings.decentering = settings.decentering || def.decentering;
+    s.fruitful = s.fruitful || def.fruitful;
+    s.decentering = s.decentering || def.decentering;
 
-    settings.hour_color = settings.hour_color || def.hour_color;
-    settings.hour_fg = settings.hour_fg || def.hour_fg;
-    settings.fallow_denominator = settings.fallow_denominator || def.fallow_denominator;
+    s.hour_color = s.hour_color || def.hour_color;
+    s.hour_fg = s.hour_fg || def.hour_fg;
+    s.fallow_denominator = s.fallow_denominator || def.fallow_denominator;
     // Converts from JSON or supplies size
-    settings.total_sec_by_cat = new Uint16Array(settings.total_sec_by_cat || 16);
-    settings.cur_mode = settings.cur_mode || def.cur_mode;
-    return settings;
+    s.total_sec_by_cat = new Uint16Array(s.total_sec_by_cat || 16);
+    s.cur_mode = s.cur_mode || def.cur_mode;
+    return s;
   }
   function saveSettings (s) {
     delete s.hr_12; // TODO: Allow setting this independently
@@ -83,6 +85,7 @@
     }
 
     for (let category of curCategories) {
+      if (!category.title) continue;
       let menuCat = categoryMenu(category);
       menuCat['Delete'] = () => {
         E.showPrompt('Delete this category?', { title: category.title }).then(v => {
@@ -130,6 +133,7 @@
     }
 
     for (let category of curCategories) {
+      if (!category.title) continue;
       let menuCat = categoryMenu(category);
       menuCat['Delete'] = () => {
         E.showPrompt('Delete this category?', { title: category.title }).then(v => {
