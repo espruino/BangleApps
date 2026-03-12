@@ -76,7 +76,7 @@
       brightness: 1,                  // LCD brightness from 0 to 1
       // welcomed : undefined/true (whether welcome app should show)
       options: {
-        hapticTime:25,
+        hapticTime: 25,
         wakeOnBTN1: true,
         wakeOnBTN2: true,
         wakeOnBTN3: true,
