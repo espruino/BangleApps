@@ -1,5 +1,6 @@
 (function(back) {
-  // *** XXX: Ensure these are kept in sync with settings.js ***
+  // *** XXX: Ensure these are kept in sync between settings.js and app.js ***
+  const storage = require('Storage');
   const SETTINGS_FILE = "harvester.json";
   function getDefaultSettings () {
     return {

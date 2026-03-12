@@ -1,9 +1,9 @@
-const storage = require('Storage');
 const widget_utils = require('widget_utils');
 const buzz = require('buzz');
 var settings;
 
-// *** XXX: Ensure these are kept in sync with settings.js ***
+// *** XXX: Ensure these are kept in sync between settings.js and app.js ***
+const storage = require('Storage');
 const SETTINGS_FILE = "harvester.json";
 function getDefaultSettings () {
   return {
@@ -80,7 +80,7 @@ var prevDrawnMode, prevDrawnTime, prevDrawnSegment = [];
 
 const HR_RESET = 3; // Reset (and eventually save) totals at a time few will be awake
 
-const DEBUGGING = false;
+const DEBUGGING = true;
 function log_debug(o) {
   if (DEBUGGING) print(o);
 }
@@ -291,7 +291,7 @@ function loadRuntimeSettings() {
   setInterval(updateTotals, settings.fallow_denominator * 1000);
 }
 
-var drawCount = 0;
+//var drawCount = 0;
 
 function drawTime(date) {
   var hh = date.getHours();
@@ -427,7 +427,7 @@ function drawFace() {
   let msClockInfo = measureEffectDuration(() => {
     if (curClockInfo) curClockInfo.redraw();
   });
-  drawCount++;
+  //drawCount++;
   var overallMs = curMs() - Math.round(date.valueOf());
   log_debug(`${overallMs}ms for drawing` +
             ` (mode: ${msCurMode}, segments: ${msSegments}, time: ${msTime}, CI: ${msClockInfo})`);
@@ -526,8 +526,8 @@ class Button {
   // if pressed, fire the callback
   check(x, y) {
     //log_debug(this.name + ":check() x=" + x + " y=" + y);
-    x_dist = this.corner == 'bl' || this.corner == 'tl' ? W - x : x;
-    y_dist = this.corner == 'tr' || this.corner == 'tl' ? H - y : y;
+    var x_dist = this.corner == 'bl' || this.corner == 'tl' ? W - x : x;
+    var y_dist = this.corner == 'tr' || this.corner == 'tl' ? H - y : y;
     if (y_dist + x_dist >= H + W - 2 * this.size) {
       //log_debug(this.name + " callback\n");
       this.callback();
@@ -741,10 +741,10 @@ function eligibleClockInfoItems() {
   return ret;
 }
 
-var lastCIMid, lastCIName;
+var lastCIMid/* , lastCIName */;
 function drawGaugeClockInfo (itm, info, options) {
-  var newItem = itm.name != lastCIName;
-  lastCIName = itm.name;
+  //var newItem = itm.name != lastCIName;
+  //lastCIName = itm.name;
   g.reset();
   // TODO: Improve L&F
   if (options.focus) { g.setColor(autoGray('#222')); } else { g.setColor(g.theme.bg); }
