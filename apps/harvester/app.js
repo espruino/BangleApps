@@ -80,7 +80,7 @@ var prevDrawnMode, prevDrawnTime, prevDrawnSegment = [];
 
 const HR_RESET = 3; // Reset (and eventually save) totals at a time few will be awake
 
-const DEBUGGING = true;
+const DEBUGGING = false;
 function log_debug(o) {
   if (DEBUGGING) print(o);
 }
@@ -171,7 +171,7 @@ function spendTime(mode, sec) {
   } else if (mode >= FIRST_FRUITFUL_IDX) {
     addFruitful(mode, sec);
   } else {
-    useRecenter(mode, sec);
+    useRecenter(sec);
   }
 }
 
