@@ -80,7 +80,7 @@ var prevDrawnMode, prevDrawnTime, prevDrawnSegment = [];
 
 const HR_RESET = 3; // Reset (and eventually save) totals at a time few will be awake
 
-const DEBUGGING = true; // TODO:
+const DEBUGGING = false;
 function log_debug(o) {
   if (DEBUGGING) print(o);
 }
@@ -106,16 +106,19 @@ function getMin(i) {
   if (i < 0) i += settings.total_sec_by_cat.length;
   return Math.floor(settings.total_sec_by_cat[i] / MIN);
 }
+var lastBuzzCheck = 0;
 function addFruitful(i, sec) {
   if (i < FIRST_FRUITFUL_IDX) throw new Error("Can't track fruitful time with i=" + i);
   settings.total_sec_by_cat[FALLOW_IDX] += Math.ceil(sec / settings.fallow_denominator);
   const result = settings.total_sec_by_cat[i] += sec;
-  const targetMin = targetMinFCat[i];
-  if (result >= targetMin * MIN && result < (targetMin + 1) * MIN) {
+  const targetMin = targetMinFCat[i], secThreshold = targetMin * MIN;
+  const secCheckWindow = Math.round((new Date().valueOf() - lastBuzzCheck) / 1000);
+  if (result >= secThreshold && result < secThreshold + secCheckWindow) {
     log_debug('Reached target for ' + modeCat[i] + ' (' + targetMin + ' min)');
     // TODO: Improve
-    buzz.pattern('=-;,:.');
+    buzz.pattern('=');
   }
+  lastBuzzCheck = new Date().valueOf();
   return result;
 }
 function useRecenter(sec) {
@@ -127,7 +130,6 @@ function useRecenter(sec) {
   settings.total_sec_by_cat[FALLOW_IDX] -= fallow_used_sec;
   return sec - fallow_used_sec;
 }
-var lastBuzzCheck = 0;
 function useDecenter(i, sec) {
   if (i > FIRST_DECENTER_IDX) throw new Error("can't treat " + i + " as decentering");
   var excess_sec = useRecenter(sec);
