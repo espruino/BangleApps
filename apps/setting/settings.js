@@ -386,7 +386,7 @@ function hapticsMenu() {
       value: settings.options.hapticTime ?? 25,  // ?? 25 converts null or undefined to 25
       min: 0, max: 50,
       step:5,
-      format: v => v==0?"Off":v,
+      format: v => v==0?/*LANG*/"Off":v,
       onchange: v => {
         settings.options.hapticTime = v;
         updateOptions();
