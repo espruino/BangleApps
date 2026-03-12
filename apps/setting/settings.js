@@ -76,6 +76,7 @@ function resetSettings() {
     brightness: 1,                  // LCD brightness from 0 to 1
     // welcomed : undefined/true (whether welcome app should show)
     options: {
+      hapticTime:25,
       wakeOnBTN1: true,
       wakeOnBTN2: true,
       wakeOnBTN3: true,
@@ -121,6 +122,7 @@ function systemMenu() {
     /*LANG*/'Launcher': ()=>pushMenu(launcherMenu()),
     /*LANG*/'Date & Time': ()=>pushMenu(setTimeMenu())
   };
+  if (Bangle.haptic) mainmenu[/*LANG*/"Haptics"] = ()=>pushMenu(hapticsMenu());
   if (Bangle.getPressure) mainmenu[/*LANG*/"Altitude"] = ()=>pushMenu(showAltitude());
 
   return mainmenu;
@@ -375,6 +377,23 @@ function showThemeMenu(pop) {
     });
     m = pushMenu(menu);
   }
+}
+
+function hapticsMenu() {
+  var menu = {
+    "< Back" : ()=>popMenu(systemMenu()),
+    /*LANG*/'Strength': {
+      value: settings.options.hapticTime ?? 25,  // ?? 25 converts null or undefined to 25
+      min: 0, max: 50,
+      step:5,
+      format: v => v==0?"Off":v,
+      onchange: v => {
+        settings.options.hapticTime = v;
+        updateOptions();
+      }
+    },
+  };
+  return menu;
 }
 
 function passkeyMenu() {
