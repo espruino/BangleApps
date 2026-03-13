@@ -125,7 +125,22 @@
       border-bottom-right-radius: 1em;
       border-top-right-radius: 1em;
     }
-
+    .menu-item{
+      cursor: pointer;
+    }
+    .menu .menu-item>a{
+      border-radius: 0.9em;
+      padding-left:1em;
+    }
+    .menu{
+      border-radius: 1em;
+    }
+    .dropdowns-pill{
+      background-color: rgba(87, 85, 217, 0.066);
+      border-radius: 1em;
+      padding-left: 1em;
+      padding-right: 1em;
+    }
     .btn.btn-favourite:focus,
     .btn.btn-favourite:focus-visible,
     .btn-favourite:focus,
@@ -330,6 +345,22 @@
     .dropdown-container {
       padding-left: 1rem;
       padding-right: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-left:0.7em;
+      margin-right:0.7em;
+    }
+
+    #searchform {
+      flex: 1;
+      min-width: 450px !important;
+    }
+
+    #searchform .form-input {
+      width: 100%;
     }
 
     a.btn.btn-link.dropdown-toggle {
@@ -386,7 +417,27 @@
       /* stop long text like links pushing the width out too far*/
     }
 
+    /* Base dropdown alignment */
+    .dropdown { position: relative; }
 
+    .dropdown .menu {
+      position: absolute;     /* use fixed instead if your parent clips */
+      top: 100%;
+      left: 0;
+      z-index: 600;
+    }
+
+    /* Note:
+       Use position: fixed instead of absolute for the dropdown menu
+       when its parent or an ancestor has overflow: hidden, auto,
+       or scroll and clips the menu. Fixed positioning anchors the
+       menu to the viewport so it is not cut off by the clipping
+       container, but it will no longer scroll with the parent. */
+    /* Right-align when needed */
+    .dropdown .menu.align-right {
+      left: auto;
+      right: 0;
+    }
     .tile .tile-content br {
       display: block;
       line-height: 100;
