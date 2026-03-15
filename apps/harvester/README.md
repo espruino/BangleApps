@@ -29,6 +29,11 @@ each of three divergent categories I set up.)
 
 ![](divergent.png)
 
+You can configure categories from the App Loader’s web interface using the floppy 
+disk icon near the favorite/heart, or from the watch’s normal settings, although 
+the latter can’t currently set category names, so it will just put in placeholders. 
+Other settings are all handled from the watch currently.
+
 Switch modes by using the three corner buttons. If you realize you should have 
 switched sooner, tap the correct button again and scroll through the menu if 
 needed to find the last option, `(Fix start...)`. This will let you select the 
