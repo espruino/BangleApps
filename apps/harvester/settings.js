@@ -1,15 +1,31 @@
 (function(back) {
-  // *** XXX: Ensure these are kept in sync between settings.js and app.js ***
+  var pendingTimeCat = null; // XXX: Slight hack; only populated in app.js
+  // #region XXX: Ensure these are kept in sync between settings.js and app.js
   const storage = require('Storage');
+  function readSettings() {
+    return storage.readJSON(SETTINGS_FILE, 1) || {};
+  }
+  function writeSettings (s) {
+    storage.write(SETTINGS_FILE, s);
+  }
+  function loadSettings() {
+    return normalizeSettings(readSettings());
+  }
+  function saveSettings(s) {
+    writeSettings(denormalizeSettings(s, pendingTimeCat));
+  }
+  // #endregion
+  // #region XXX: Ensure these are kept in sync between settings.js, loader-settings.js, and app.js
   const SETTINGS_FILE = "harvester.json";
-  function getDefaultSettings () {
+  function getDefaultSettings() {
+    var id1 = Math.round(Date.now()), id2 = id1 + 1; // XXX: Use proper UUIDs, probably with TS
     return {
       fruitful: [
         {},
         {
           color: 'Green', fg: '#0f0', gy: '#020',
           title: 'Work',
-          target_min: 480,
+          target_min: 480, sec_today: 0, id: id1,
         },
       ],
       hour_color: 'Green',
@@ -19,34 +35,79 @@
       decentering: [
         {},
         {
-          title: 'Social Media',
+          title: 'Social Media', sec_today: 0, id: id2,
           fg: '#f00', gy: '#200', color: 'Red',
         }
       ],
       fallow_denominator: 3,
+      fallow_buffer: 0,
     };
   }
-  function loadSettings () {
+  function normalizeCat(cat, i, _arr) {
+    if (0 === i) return cat; // XXX: Skip sentinels
+    // TODO: Normalize or guess at next colors?
+    cat.fg = cat.fg || g.theme.fg;
+    cat.gy = cat.gy || '#222';
+    cat.title = cat.title || '??';
+    cat.sec_today = 0 | cat.sec_today;
+    if (cat.target_min) cat.target_min = 0 | cat.target_min;
+    if (!cat.id) {
+      // TODO: Use proper UUID, probably via TS library
+      if (!normalizeCat._seq) {
+        normalizeCat._seq = 0;
+      }
+      cat.id = Math.round(Date.now()) + normalizeCat._seq++;
+    }
+    return cat;
+  }
+  function normalizeSettings(s) {
     var def = getDefaultSettings();
-    var s = storage.readJSON(SETTINGS_FILE, 1) || {};
-    // TODO: Add per-item normalizer fns
-    s.fruitful = s.fruitful || def.fruitful;
-    s.decentering = s.decentering || def.decentering;
+    if (s.fruitful) {
+      s.fruitful = s.fruitful.map(normalizeCat);
+    } else {
+      s.fruitful = def.fruitful;
+    }
+    if (s.decentering) {
+      s.decentering = s.decentering.map(normalizeCat);
+    } else {
+      s.decentering = def.decentering;
+    }
+    if (s.total_sec_by_cat) {
+      for (let i = 1; i < s.fruitful.length; i++) {
+        s.fruitful[i].sec_today = s.total_sec_by_cat[i];
+      }
+      for (let i = 1; i < s.decentering.length; i++) {
+        s.decentering[i].sec_today = s.total_sec_by_cat[s.total_sec_by_cat.length - i];
+      }
+      s.fallow_buffer = s.total_sec_by_cat[0];
+    }
 
     s.hour_color = s.hour_color || def.hour_color;
     s.hour_fg = s.hour_fg || def.hour_fg;
     s.fallow_denominator = s.fallow_denominator || def.fallow_denominator;
-    // Converts from JSON or supplies size
-    s.total_sec_by_cat = new Uint16Array(s.total_sec_by_cat || 16);
     s.cur_mode = s.cur_mode || def.cur_mode;
+    s.fallow_buffer = s.fallow_buffer || def.fallow_buffer;
     return s;
   }
-  function saveSettings (s) {
+  function denormalizeSettings(s, pendingTimeCat) {
     delete s.hr_12; // TODO: Allow setting this independently
-    storage.write(SETTINGS_FILE, s);
+    if (pendingTimeCat) {
+      for (let i = 1; i < s.fruitful.length; i++) {
+        s.fruitful[i].sec_today = pendingTimeCat[i];
+      }
+      for (let i = 1; i < s.decentering.length; i++) {
+        s.decentering[i].sec_today = pendingTimeCat[pendingTimeCat.length - i];
+      }
+      s.fallow_buffer = pendingTimeCat[0];
+    }
+    if (s.total_sec_by_cat) {
+      delete s.total_sec_by_cat;
+    }
+    return s;
   }
-  // *** End manual sync area ***
+  // #endregion
 
+  // #region XXX: Ensure these are kept in sync between settings.js and loader-settings.js
   const color_options = [
         'Lavender', 'Purple', 'Deep Blue', 'Medium Blue', 'Cyan', 'Dark Green', 'Green',
         'Yellow', 'Orange', 'Red', 'Brick', 'Gray', 'Blk/Wht' ];
@@ -56,6 +117,7 @@
   const gy_code = [
         '#202', '#202', '#002', '#022', '#022', '#020', '#020',
         '#220', '#220', '#200', '#200', '#222', null ];
+  // #endregion
 
   function showFruitfulMenu(curCategories) {
     let submenu = { '': { title: 'Fruitful Modes', back: showMainMenu } };

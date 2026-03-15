@@ -2,17 +2,32 @@ const widget_utils = require('widget_utils');
 const buzz = require('buzz');
 var settings;
 
-// *** XXX: Ensure these are kept in sync between settings.js and app.js ***
+// #region XXX: Ensure these are kept in sync between settings.js and app.js
 const storage = require('Storage');
+function readSettings() {
+  return storage.readJSON(SETTINGS_FILE, 1) || {};
+}
+function writeSettings(s) {
+  storage.write(SETTINGS_FILE, s);
+}
+function loadSettings() {
+  return normalizeSettings(readSettings());
+}
+function saveSettings(s) {
+  writeSettings(denormalizeSettings(s, pendingTimeCat));
+}
+// #endregion
+// #region XXX: Ensure these are kept in sync between settings.js, loader-settings.js, and app.js
 const SETTINGS_FILE = "harvester.json";
-function getDefaultSettings () {
+function getDefaultSettings() {
+  var id1 = Math.round(Date.now()), id2 = id1 + 1; // XXX: Use proper UUIDs, probably with TS
   return {
     fruitful: [
       {},
       {
         color: 'Green', fg: '#0f0', gy: '#020',
         title: 'Work',
-        target_min: 480,
+        target_min: 480, sec_today: 0, id: id1,
       },
     ],
     hour_color: 'Green',
@@ -22,33 +37,104 @@ function getDefaultSettings () {
     decentering: [
       {},
       {
-        title: 'Social Media',
+        title: 'Social Media', sec_today: 0, id: id2,
         fg: '#f00', gy: '#200', color: 'Red',
       }
     ],
     fallow_denominator: 3,
+    fallow_buffer: 0,
   };
 }
-function loadSettings () {
+function normalizeCat(cat, i, _arr) {
+  if (0 === i) return cat; // XXX: Skip sentinels
+  // TODO: Normalize or guess at next colors?
+  cat.fg = cat.fg || g.theme.fg;
+  cat.gy = cat.gy || '#222';
+  cat.title = cat.title || '??';
+  cat.sec_today = 0 | cat.sec_today;
+  if (cat.target_min) cat.target_min = 0 | cat.target_min;
+  if (!cat.id) {
+    // TODO: Use proper UUID, probably via TS library
+    if (!normalizeCat._seq) {
+      normalizeCat._seq = 0;
+    }
+    cat.id = Math.round(Date.now()) + normalizeCat._seq++;
+  }
+  return cat;
+}
+function normalizeSettings(s) {
   var def = getDefaultSettings();
-  var s = storage.readJSON(SETTINGS_FILE, 1) || {};
-  // TODO: Add per-item normalizer fns
-  s.fruitful = s.fruitful || def.fruitful;
-  s.decentering = s.decentering || def.decentering;
+  if (s.fruitful) {
+    s.fruitful = s.fruitful.map(normalizeCat);
+  } else {
+    s.fruitful = def.fruitful;
+  }
+  if (s.decentering) {
+    s.decentering = s.decentering.map(normalizeCat);
+  } else {
+    s.decentering = def.decentering;
+  }
+  if (s.total_sec_by_cat) {
+    for (let i = 1; i < s.fruitful.length; i++) {
+      s.fruitful[i].sec_today = s.total_sec_by_cat[i];
+    }
+    for (let i = 1; i < s.decentering.length; i++) {
+      s.decentering[i].sec_today = s.total_sec_by_cat[s.total_sec_by_cat.length - i];
+    }
+    s.fallow_buffer = s.total_sec_by_cat[0];
+  }
 
   s.hour_color = s.hour_color || def.hour_color;
   s.hour_fg = s.hour_fg || def.hour_fg;
   s.fallow_denominator = s.fallow_denominator || def.fallow_denominator;
-  // Converts from JSON or supplies size
-  s.total_sec_by_cat = new Uint16Array(s.total_sec_by_cat || 16);
   s.cur_mode = s.cur_mode || def.cur_mode;
+  s.fallow_buffer = s.fallow_buffer || def.fallow_buffer;
   return s;
 }
-function saveSettings (s) {
+function denormalizeSettings(s, pendingTimeCat) {
   delete s.hr_12; // TODO: Allow setting this independently
-  storage.write(SETTINGS_FILE, s);
+  if (pendingTimeCat) {
+    for (let i = 1; i < s.fruitful.length; i++) {
+      s.fruitful[i].sec_today = pendingTimeCat[i];
+    }
+    for (let i = 1; i < s.decentering.length; i++) {
+      s.decentering[i].sec_today = pendingTimeCat[pendingTimeCat.length - i];
+    }
+    s.fallow_buffer = pendingTimeCat[0];
+  }
+  if (s.total_sec_by_cat) {
+    delete s.total_sec_by_cat;
+  }
+  return s;
 }
-// *** End manual sync area ***
+// #endregion
+
+function reloadFromWeb() {
+  setTimeout(() => {
+    // Best-effort attempt to match pendingTimeCat by "ID" (creation TS)
+    let prev = {};
+    for (let i = 1; i < settings.fruitful.length; i++) {
+      let id = settings.fruitful[i].id;
+      if (id) prev[id] = at(pendingTimeCat, i);
+    }
+    for (let i = 1; i < settings.decentering.length; i++) {
+      let id = settings.decentering[i].id;
+      if (id) prev[id] = at(pendingTimeCat, -i);
+    }
+    loadRuntimeSettings();
+    for (let i = 1; i < settings.fruitful.length; i++) {
+      let id = settings.fruitful[i].id;
+      if (id) setAt(pendingTimeCat, i, 0 | prev[id]);
+    }
+    for (let i = 1; i < settings.decentering.length; i++) {
+      let id = settings.decentering[i].id;
+      if (id) setAt(pendingTimeCat, -i, 0 | prev[id]);
+    }
+    clearDrawingCache();
+    drawFace();
+  }, 10);
+  return true;
+}
 
 const global_settings = storage.readJSON("setting.json", true) || {};
 const H = g.getHeight();
@@ -57,7 +143,7 @@ const W = g.getWidth();
 const FIRST_DECENTER_IDX = -1, FALLOW_IDX = 0, FIRST_FRUITFUL_IDX = 1;
 
 var totalMin;
-var palCat, modeCat;
+var palCat, modeCat, pendingTimeCat;
 // FCat arrays are shorter than others but have synchronized indexing as far as possible
 var targetMinFCat, startFCat, endFCat;
 
@@ -103,14 +189,13 @@ function setAt(arr, i, v) {
 }
 
 function getMin(i) {
-  if (i < 0) i += settings.total_sec_by_cat.length;
-  return Math.floor(settings.total_sec_by_cat[i] / MIN);
+  return Math.floor(at(pendingTimeCat, i) / MIN);
 }
 var lastBuzzCheck = 0;
 function addFruitful(i, sec) {
   if (i < FIRST_FRUITFUL_IDX) throw new Error("Can't track fruitful time with i=" + i);
-  settings.total_sec_by_cat[FALLOW_IDX] += Math.ceil(sec / settings.fallow_denominator);
-  const result = settings.total_sec_by_cat[i] += sec;
+  pendingTimeCat[FALLOW_IDX] += Math.ceil(sec / settings.fallow_denominator);
+  const result = pendingTimeCat[i] += sec;
   const targetMin = targetMinFCat[i], secThreshold = targetMin * MIN;
   const secCheckWindow = Math.round((new Date().valueOf() - lastBuzzCheck) / 1000);
   if (result >= secThreshold && result < secThreshold + secCheckWindow) {
@@ -126,16 +211,15 @@ function useRecenter(sec) {
      sec=60, buf=30; used=30
      sec=60, buf=0; used=0
    */
-  var fallow_used_sec = E.clip(settings.total_sec_by_cat[FALLOW_IDX], 0, sec);
-  settings.total_sec_by_cat[FALLOW_IDX] -= fallow_used_sec;
+  var fallow_used_sec = E.clip(pendingTimeCat[FALLOW_IDX], 0, sec);
+  pendingTimeCat[FALLOW_IDX] -= fallow_used_sec;
   return sec - fallow_used_sec;
 }
 function useDecenter(i, sec) {
   if (i > FIRST_DECENTER_IDX) throw new Error("can't treat " + i + " as decentering");
   var excess_sec = useRecenter(sec);
-  var remaining = settings.total_sec_by_cat[FALLOW_IDX];
-  const j = settings.total_sec_by_cat.length + i;
-  let newTotal = settings.total_sec_by_cat[j] + excess_sec;
+  var remaining = pendingTimeCat[FALLOW_IDX];
+  let newTotal = at(pendingTimeCat, i) + excess_sec;
   let secCheckWindow = Math.round((new Date().valueOf() - lastBuzzCheck) / 1000);
   if (0 === remaining) {
     log_debug(`${sec} - ${remaining} = ${excess_sec} (vs ${secCheckWindow}) => ${newTotal}`);
@@ -159,7 +243,7 @@ function useDecenter(i, sec) {
     }
   } 
   lastBuzzCheck = new Date().valueOf();
-  return settings.total_sec_by_cat[j] = newTotal;
+  return setAt(pendingTimeCat, i, newTotal);
 }
 
 /** Generically picks the right method to use for the mode class. Accepts even
@@ -254,16 +338,18 @@ function autoGray(category) {
 function updateDerivedRingVars() {
   totalMin = 0;
   var fixedPosLen = settings.fruitful.length;
-  var displayedLen = settings.fruitful.length + settings.decentering.length;
+  var displayedLen = 1 + settings.fruitful.length + settings.decentering.length - 2;
   startFCat = new Uint16Array(fixedPosLen);
   endFCat = new Uint16Array(fixedPosLen);
   targetMinFCat = new Uint16Array(fixedPosLen);
   palCat = new Array(displayedLen);
   modeCat = new Array(displayedLen);
+  pendingTimeCat = new Uint16Array(displayedLen);
 
   palCat[FALLOW_IDX] = palette(autoGray('#220'), '#860');
   // TODO: Draw out a nice circle and arrows properly
   modeCat[FALLOW_IDX] = '» × «';
+  pendingTimeCat[FALLOW_IDX] = settings.fallow_buffer;
   for (let i = FIRST_FRUITFUL_IDX; i < settings.fruitful.length; i++) {
     let fruitful = settings.fruitful[i];
     startFCat[i] = totalMin;
@@ -273,11 +359,13 @@ function updateDerivedRingVars() {
     //log_debug('Setting palette for ' + fruitful.title);
     palCat[i] = palette(autoGray(fruitful), g.toColor(fruitful.fg));
     modeCat[i] = fruitful.title;
+    setAt(pendingTimeCat, i, fruitful.sec_today);
   }
   for (let i = -FIRST_DECENTER_IDX; i < settings.decentering.length; i++) {
     let decentering = settings.decentering[i];
     setAt(palCat, -i, palette(autoGray(decentering), g.toColor(decentering.fg)));
     setAt(modeCat, -i, decentering.title);
+    setAt(pendingTimeCat, -i, decentering.sec_today);
   }
 }
 
@@ -580,17 +668,16 @@ function setCurMode(newMode) {
 }
 
 function fixLateStart(sec) {
-  const totalSecByCat = settings.total_sec_by_cat;
   const curMode = settings.cur_mode;
-  var amts = lateStartAdjustments(totalSecByCat, curMode, prevSpentMode, sec);
-  const curTotalBefore = at(totalSecByCat, curMode);
-  const prevTotalBefore = at(totalSecByCat, prevSpentMode);
-  const fallowTotalBefore = totalSecByCat[FALLOW_IDX];
+  var amts = lateStartAdjustments(pendingTimeCat, curMode, prevSpentMode, sec);
+  const curTotalBefore = at(pendingTimeCat, curMode);
+  const prevTotalBefore = at(pendingTimeCat, prevSpentMode);
+  const fallowTotalBefore = at(pendingTimeCat, FALLOW_IDX);
   spendTime(curMode, amts[0]);
   spendTime(prevSpentMode, -amts[1]);
-  const curDiff = at(settings.total_sec_by_cat, curMode) - curTotalBefore;
-  const prevDiff = at(settings.total_sec_by_cat, prevSpentMode) - prevTotalBefore;
-  const fallowDiff = settings.total_sec_by_cat[FALLOW_IDX] - fallowTotalBefore;
+  const curDiff = at(pendingTimeCat, curMode) - curTotalBefore;
+  const prevDiff = at(pendingTimeCat, prevSpentMode) - prevTotalBefore;
+  const fallowDiff = at(pendingTimeCat, FALLOW_IDX) - fallowTotalBefore;
   // var mm = Math.floor(amts[0] / MIN), ss = amts[0] % MIN;
   // var msgTime = ss != 0 ? `${mm} min and ${ss} sec` : `${mm} min`;
   // var msg = `Added ${msgTime} to ${modeCat[curMode]} from ${modeCat[prevSpentMode]}`;
@@ -669,10 +756,11 @@ function resetTotals() {
   g.setColor(g.theme.bg).fillCircle(W / 2, H / 2, radiusOuterRing - ringIterOffset);
   clearDrawingCache();
   // TODO: Save to historical file before clearing
-  settings.total_sec_by_cat.fill(0);
+  pendingTimeCat.fill(0);
   settings.cur_mode = FALLOW_IDX;
   totals_updated_at = now;
   settings.last_reset = ymd(now);
+  saveSettings(settings);
 }
 
 function updateTotals() {
@@ -695,7 +783,6 @@ function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function () {
     drawTimeout = undefined;
-    //updateTotals();
     draw();
   }, delay);
 }
