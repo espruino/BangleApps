@@ -143,7 +143,8 @@ function saveToBangle() {
 
   if (needsNewLogFile) {
     console.log('Writing new log file for altered category list');
-    Puck.eval('logStartNew(logCurFilenames()); true', () => {});
+    Puck.eval('logStartNew(logCurFilenames()) != undefined', () => {});
+    needsNewLogFile = false;
   }
   
   Util.writeStorage(SETTINGS_FILE, JSON.stringify(settings), _data => {
@@ -175,7 +176,6 @@ function loadFromBangle() {
       ul.appendChild(li);
     }
     Util.readStorageJSON(SETTINGS_FILE, data => {
-      console.log('yo!');
       settings = normalizeSettings(data);
       fruitfulElement.innerHTML = '';
       for (let i = FIRST_CAT_IDX; i < settings.fruitful.length; i++) {
@@ -201,7 +201,7 @@ function deleteCategory(evt) {
   }
   var elemContainer = elemCat.parentNode;
   elemContainer.removeChild(elemCat);
-  registerChange();
+  registerChange(true);
 }
 
 function createCategoryEdit(idx, {title, color, target_min}) {
@@ -241,7 +241,7 @@ function addNewCategory(isFruitful) {
   let skeleton = {title: 'Category ' + i, color: newColor};
   if (isFruitful) skeleton.target_min = 15;
   elemContainer.appendChild(createCategoryEdit(i, skeleton));
-  registerChange();
+  registerChange(true);
 }
 
 btnSave.addEventListener("click", saveToBangle);

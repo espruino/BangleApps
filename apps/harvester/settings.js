@@ -1,4 +1,5 @@
 (function(back) {
+  var needsNewLogFile = false;
   var pendingTimeCat = null; // XXX: Slight hack; only populated in app.js
   // #region XXX: Ensure these are kept in sync between settings.js and app.js
   const storage = require('Storage');
@@ -13,6 +14,38 @@
   }
   function saveSettings(s) {
     writeSettings(denormalizeSettings(s, pendingTimeCat));
+  }
+
+  function ym(date) {
+    return date.toLocalISOString().substring(0, 7);
+  }
+  function logCurFilenameBase() {
+    return `harvester-${ym(new Date())}`;
+  }
+
+  /** @returns Sorted list of disjoint filenames for historical logs, most current last */
+  function logCurFilenames() {
+    return storage.list(new RegExp(logCurFilenameBase() + `.*\.csv`), { sf: true }).sort();
+  }
+
+  function logHeader() {
+    var cats = settings.fruitful.slice(1).concat(
+      settings.decentering.slice(1).reverse()
+    ).map(c=>c.title);
+    // TODO: Include targets? Probably requires triggering changeovers more often
+    return 'Date,' + cats.join(',') + "\n";
+  }
+
+  function logStartNew(prevList) {
+    var nextSuffix = '';
+    if (prevList.length > 0) {
+      let last = at(prevList, -1);
+      let m = last.match(/_([0-9A-Z])\./), suffix = m ? m[1] : '0';
+      nextSuffix = '_' + (parseInt(suffix, 36) + 1).toString(36);
+    }
+    let sf = storage.open((logCurFilenameBase() + nextSuffix + '.csv'), 'w');
+    sf.write(logHeader());
+    return sf;
   }
   // #endregion
   // #region XXX: Ensure these are kept in sync between settings.js, loader-settings.js, and app.js
@@ -154,6 +187,7 @@
         E.showPrompt('Delete this category?', { title: category.title }).then(v => {
           if (v) {
             settings.fruitful = settings.fruitful.filter(c => c.title != category.title);
+            needsNewLogFile = true;
             saveSettings(settings);
           }
         });
@@ -167,6 +201,7 @@
     let addMenu = categoryMenu(newCat);
     addMenu['Save'] = () => {
       settings.fruitful.push(newCat);
+      needsNewLogFile = true;
       saveSettings(settings);
       showFruitfulMenu(settings.fruitful);
     };
@@ -202,6 +237,7 @@
         E.showPrompt('Delete this category?', { title: category.title }).then(v => {
           if (v) {
             settings.decentering = settings.decentering.filter(c => c.title != category.title);
+            needsNewLogFile = true;
             saveSettings(settings);
           }
         });
@@ -215,6 +251,7 @@
     let addMenu = categoryMenu(newCat);
     addMenu['Save'] = () => {
       settings.decentering.push(newCat);
+      needsNewLogFile = true;
       saveSettings(settings);
       showDivergentMenu(settings.decentering);
     };
@@ -225,7 +262,12 @@
   var settings = loadSettings();
   function showMainMenu() {
     let appMenu = {
-      '': { title: 'Time Harvester', back: back },
+      '': { title: 'Time Harvester',
+            back: () => {
+              if (needsNewLogFile) { logStartNew(logCurFilenames()); }
+              back();
+            }
+          },
       'Fruitful...': () => showFruitfulMenu(settings.fruitful),
       'Divergent...': () => showDivergentMenu(settings.decentering),
       'Hour Color': {

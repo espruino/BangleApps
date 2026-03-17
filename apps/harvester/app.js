@@ -16,6 +16,38 @@ function loadSettings() {
 function saveSettings(s) {
   writeSettings(denormalizeSettings(s, pendingTimeCat));
 }
+
+function ym(date) {
+  return date.toLocalISOString().substring(0, 7);
+}
+function logCurFilenameBase() {
+  return `harvester-${ym(new Date())}`;
+}
+
+/** @returns Sorted list of disjoint filenames for historical logs, most current last */
+function logCurFilenames() {
+  return storage.list(new RegExp(logCurFilenameBase() + `.*\.csv`), { sf: true }).sort();
+}
+
+function logHeader() {
+  var cats = settings.fruitful.slice(1).concat(
+    settings.decentering.slice(1).reverse()
+  ).map(c=>c.title);
+  // TODO: Include targets? Probably requires triggering changeovers more often
+  return 'Date,' + cats.join(',') + "\n";
+}
+
+function logStartNew(prevList) {
+  var nextSuffix = '';
+  if (prevList.length > 0) {
+    let last = at(prevList, -1);
+    let m = last.match(/_([0-9A-Z])\./), suffix = m ? m[1] : '0';
+    nextSuffix = '_' + (parseInt(suffix, 36) + 1).toString(36);
+  }
+  let sf = storage.open((logCurFilenameBase() + nextSuffix + '.csv'), 'w');
+  sf.write(logHeader());
+  return sf;
+}
 // #endregion
 // #region XXX: Ensure these are kept in sync between settings.js, loader-settings.js, and app.js
 const SETTINGS_FILE = "harvester.json";
@@ -106,6 +138,18 @@ function denormalizeSettings(s, pendingTimeCat) {
     delete s.total_sec_by_cat;
   }
   return s;
+}
+
+function ym(date) {
+  return date.toLocalISOString().substring(0, 7);
+}
+function logCurFilenameBase() {
+  return `harvester-${ym(new Date())}`;
+}
+
+/** @returns Sorted list of disjoint filenames for historical logs, most current last */
+function logCurFilenames() {
+  return storage.list(new RegExp(logCurFilenameBase() + `.*\.csv`), { sf: true }).sort();
 }
 // #endregion
 
@@ -241,7 +285,7 @@ function useDecenter(i, sec) {
         break;
       }
     }
-  } 
+  }
   lastBuzzCheck = new Date().valueOf();
   return setAt(pendingTimeCat, i, newTotal);
 }
@@ -751,11 +795,24 @@ var buttons = [new Button('fruitful', 'tr', 40, '#0f0', pickFruitful),
 var drawTimeout;
 var totals_updated_at;
 
+/** Logs current totals to CSV format, assuming most current file has the same
+ *  set of categories (which should be maintained by settings and the web interface).
+ */
+function logWriteCurTotals() {
+  var candidates = logCurFilenames(), sf;
+  if (candidates.length === 0) {
+    sf = logStartNew(candidates);
+  } else {
+    sf = storage.open(at(candidates, -1), 'a');
+  }
+  sf.write(settings.last_reset + ',' + pendingTimeCat.slice(FIRST_FRUITFUL_IDX).join(',') + "\n");
+}
+
 function resetTotals() {
   const now = new Date();
   g.setColor(g.theme.bg).fillCircle(W / 2, H / 2, radiusOuterRing - ringIterOffset);
   clearDrawingCache();
-  // TODO: Save to historical file before clearing
+  logWriteCurTotals();
   pendingTimeCat.fill(0);
   settings.cur_mode = FALLOW_IDX;
   totals_updated_at = now;

@@ -49,7 +49,9 @@ There is one slot in the upper middle for a clock-info gauge, which you can choo
 by tapping on it to highlight and using swipes left and right for lists, up and 
 down for items (standard behavior). It will not include any non-gauge items.
 
-All times reset at the end of the day, which is currently assumed to be 3 AM local.
+All times reset at the end of the day, which is currently assumed to be 3 AM 
+local. Total times for each category will be logged into CSVs by month (with new 
+files generated when you change categories).
 
 Written by: [Nathan Tuggy](https://github.com/tuggyne). For support and discussion, 
 please post in [this fork’s issues](https://github.com/TuggyNE/BangleApps/issues).
@@ -60,7 +62,6 @@ please post in [this fork’s issues](https://github.com/TuggyNE/BangleApps/issu
 * Uses the [BloggerSansLight](https://www.1001fonts.com/rounded-fonts.html?page=3) font, which is free for commercial use
 
 ## Future Development
-* Record statistics for later viewing/summaries
 * Add per-weekday scheduling for different targets
 * Remove triangle buttons in favor of something less visually noisy
 * Support fast loading
