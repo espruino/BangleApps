@@ -105,7 +105,7 @@ function mainMenu() {
     /*LANG*/'Apps': ()=>pushMenu(appSettingsMenu()),
     /*LANG*/'System': ()=>pushMenu(systemMenu()),
     /*LANG*/'Bluetooth': ()=>pushMenu(BLEMenu()),
-    /*LANG*/'Alerts': ()=>pushMenu(alertsMenu()),
+    /*LANG*/'Sound/Vibration': ()=>pushMenu(vibrateMenu()),
     /*LANG*/'Utils': ()=>pushMenu(utilMenu())
   };
 
@@ -128,7 +128,7 @@ function systemMenu() {
   return mainmenu;
 }
 
-function alertsMenu() {
+function vibrateMenu() {
   var beepMenuItem;
   if (BANGLEJS2) {
     beepMenuItem = {
@@ -159,7 +159,7 @@ function alertsMenu() {
   }
 
   let mainmenu = {
-    '': { 'title': /*LANG*/'Alerts' },
+    '': { 'title': /*LANG*/'Sound/Vibration' },
     '< Back': ()=>popMenu(mainMenu()),
     /*LANG*/'Beep': beepMenuItem,
     /*LANG*/'Vibration': {

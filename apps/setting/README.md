@@ -5,7 +5,7 @@ This is Bangle.js's main settings menu:
 * **Apps** - Settings for installed apps/widgets
 * **System** - Settings related to themes, default apps, date & time, etc
 * **Bluetooth** - Bluetooth Settings menu - see below.
-* **Alerts** - Set how Bangle.js alerts you (including Quiet mode)
+* **Sound/Vibration** - Set how Bangle.js makes noise and vibrates (including Quiet mode)
 * **Utils** - Utilities, including resetting settings
 
 **New Users:** these are some settings you'll probably want to change right away:
@@ -29,7 +29,7 @@ This is where you adjust settings for an individual app. (eg. Health app: Adjust
 * **Date & Time** Configure the current time - Note that this can be done much more easily by choosing 'Set Time' from the App Loader
 * **Altitude** On Bangle.js 2, calibrate the altitude (which varies depending on Air Pressure). Tap `Adjust Up`/`Adjust Down` to move the reported altitude by around 10m
 
-## Alerts
+## Sound/Vibration
 
 * **Beep** most Bangle.js do not have a speaker inside, but they can use the vibration motor to beep in different pitches. You can change the behaviour here to use a Piezo speaker if one is connected
 * **Vibration** enable/disable the vibration motor

@@ -93,3 +93,4 @@ of 'Select Clock'
       and add warnings in documentation that it can cause connection issues
 0.82: Fix Quiet Mode menu (could previously scroll up and have it show 'undefined')
 0.83: Add 'Haptic Strength' option for 2v29.14 or higher
+      Rename Alerts -> Sound/Vibration
