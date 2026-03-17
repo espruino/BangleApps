@@ -33,6 +33,7 @@ This is where you adjust settings for an individual app. (eg. Health app: Adjust
 
 * **Beep** most Bangle.js do not have a speaker inside, but they can use the vibration motor to beep in different pitches. You can change the behaviour here to use a Piezo speaker if one is connected
 * **Vibration** enable/disable the vibration motor
+* **Haptic Strength** For devices that have firmware versions 2v29.14 or higher, this will show a menu where you can customize the strength of the vibration in response to user input, or turn  off.
 * **Quiet Mode** prevent notifications/alarms from vibrating/beeping/turning the screen on - see below
 
 ## Bluetooth

@@ -87,6 +87,8 @@ function resetSettings() {
       twistTimeout: 1000
     },
   };
+  if (Bangle.haptic) // don't add by default as it'll break 2v29 and earlier firmwares
+    settings.options.hapticTime = 25;
   updateSettings();
 }
 
@@ -156,7 +158,7 @@ function alertsMenu() {
     };
   }
 
-  const mainmenu = {
+  let mainmenu = {
     '': { 'title': /*LANG*/'Alerts' },
     '< Back': ()=>popMenu(mainMenu()),
     /*LANG*/'Beep': beepMenuItem,
@@ -170,7 +172,22 @@ function alertsMenu() {
           setTimeout(() => VIBRATE.write(0), 10);
         }
       }
-    },
+    }
+  };
+  if (Bangle.haptic)
+    mainmenu = Object.assign(mainmenu, {
+      /*LANG*/'Haptic Strength': {
+        value: settings.options.hapticTime ?? 25,  // ?? 25 converts null or undefined to 25
+        min: 0, max: 50,
+        step:5,
+        format: v => v==0?/*LANG*/"Off":v,
+        onchange: v => {
+          settings.options.hapticTime = v;
+          updateOptions();
+        }
+      }
+    });
+  return Object.assign(mainmenu, {
     /*LANG*/"Quiet Mode": {
       value: (settings.quiet|0)%3,
       min:0, max:2,
@@ -182,9 +199,7 @@ function alertsMenu() {
         if ("qmsched" in WIDGETS) WIDGETS["qmsched"].draw();
       },
     }
-  };
-
-  return mainmenu;
+  });
 }
 
 
