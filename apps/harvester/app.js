@@ -210,7 +210,7 @@ var prevDrawnMode, prevDrawnTime, prevDrawnSegment = [];
 
 const HR_RESET = 3; // Reset (and eventually save) totals at a time few will be awake
 
-const DEBUGGING = false;
+var DEBUGGING = false;
 function log_debug(o) {
   if (DEBUGGING) print(o);
 }
@@ -255,7 +255,8 @@ function useRecenter(sec) {
      sec=60, buf=30; used=30
      sec=60, buf=0; used=0
    */
-  var fallow_used_sec = E.clip(pendingTimeCat[FALLOW_IDX], 0, sec);
+  var fallow_used_sec = sec;
+  if (sec > 0) fallow_used_sec = E.clip(pendingTimeCat[FALLOW_IDX], 0, sec);
   pendingTimeCat[FALLOW_IDX] -= fallow_used_sec;
   return sec - fallow_used_sec;
 }
@@ -309,35 +310,27 @@ function spendTime(mode, sec) {
  *           subtracted from previous.
  */
 function lateStartAdjustments(totalSecByCat, curMode, prevMode, secDesired) {
-  let amt = Math.min(at(totalSecByCat, prevMode), secDesired);
+  let secAvailable = Math.min(at(totalSecByCat, prevMode), secDesired);
   if (FALLOW_IDX === curMode && prevMode >= FIRST_FRUITFUL_IDX) {
     // Subtract fruitful time not spent (plus additional fallow time not accumulated)
-    // TODO: Test
-    return [-amt, amt];
   } else if (curMode >= FIRST_FRUITFUL_IDX && prevMode >= FIRST_FRUITFUL_IDX) {
     // Subtract fruitful time spent in other category
-    // TODO: Test
-    return [amt, amt];
   } else if (curMode >= FIRST_FRUITFUL_IDX && FALLOW_IDX === prevMode) {
     // (Will re-accumulate additional fallow time)
-    // TODO: Test
-    amt = secDesired; // No bound currently possible
-    return [amt, -amt];
+    secAvailable = secDesired; // No bound currently possible
   } else if (curMode <= FIRST_DECENTER_IDX && prevMode >= FIRST_FRUITFUL_IDX) {
     // Subtract fruitful time and use up fallow time
-    // TODO: Test
-    return [secDesired, amt];
+    return [secDesired, secAvailable];
   } else if (curMode <= FIRST_DECENTER_IDX && FALLOW_IDX === prevMode) {
-    // Use up as much fallow time as possible
-    // TODO: Test
-    return [secDesired, 0];
-  } else if (curMode <= FIRST_DECENTER_IDX && prevMode <= FIRST_DECENTER_IDX) {
-    // Subtract divergent time spent in other category
-    // TODO: Test
-    return [amt, amt];
+    // Leave as much fallow time as possible in place, adding only the difference
+    secAvailable = secDesired - secAvailable;
+    return [secAvailable, 0];
+  } else {
+    // Other possibilities are technically sane but should be rare and aren't worth testing (yet?)
+    return [0, 0];
   }
-  // Other possibilities are technically sane but should be rare and aren't worth testing
-  return [0, 0];
+  // Normally this is all that's needed
+  return [secAvailable, secAvailable];
 }
 
 // https://www.1001fonts.com/rounded-fonts.html?page=3
@@ -415,6 +408,8 @@ function updateDerivedRingVars() {
 
 function loadRuntimeSettings() {
   settings = loadSettings();
+
+  if (settings.DEBUGGING) DEBUGGING = true;
 
   settings.hr_12 = (global_settings["12hour"] === undefined ? false : global_settings["12hour"]);
 
