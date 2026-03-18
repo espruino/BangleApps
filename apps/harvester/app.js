@@ -197,6 +197,7 @@ const CLK_HALF_W = 112 / 2, CLK_HALF_H = 46 / 2, CLK_BG_Y = H / 2 - 17;
 const CM_Y = (3 * H / 4) - 19;
 const CM_W = 53;
 const CM_H = 34;
+const CM_SUB_W = 30, CM_SUB_H = 20;
 
 const CI_Y = 34, CI_W = 44, CI_X = W / 2 - CI_W / 2, CI_H = 14;
 
@@ -244,6 +245,7 @@ function addFruitful(i, sec) {
   const secCheckWindow = Math.round((new Date().valueOf() - lastBuzzCheck) / 1000);
   if (result >= secThreshold && result < secThreshold + secCheckWindow) {
     log_debug('Reached target for ' + modeCat[i] + ' (' + targetMin + ' min)');
+    drawCurSubMode('Done!');
     // TODO: Improve
     buzz.pattern('=');
   }
@@ -269,8 +271,10 @@ function useDecenter(i, sec) {
   if (0 === remaining) {
     log_debug(`${sec} - ${remaining} = ${excess_sec} (vs ${secCheckWindow}) => ${newTotal}`);
     if (excess_sec > 0 && excess_sec < secCheckWindow) {
+      drawCurSubMode('<0min');
       buzz.pattern('==  ==');
     } else if (newTotal % (5 * MIN) < secCheckWindow) {
+      drawCurSubMode('-5m!');
       buzz.pattern('= = = = =');
     }
   } else {
@@ -282,6 +286,7 @@ function useDecenter(i, sec) {
     for (let warn of earlyWarning) {
       if (remaining <= warn.threshold && remaining > warn.threshold - secCheckWindow) {
         log_debug(`${remaining} just dropped below ${warn.threshold} (by < ${secCheckWindow})`);
+        drawCurSubMode(`${warn.threshold / MIN}min`);
         buzz.pattern(warn.pattern);
         break;
       }
@@ -523,9 +528,26 @@ function drawAllSegments() {
   if (anyChanged) drawTrimmingCircles();
 }
 
+var subModeDrawnAt;
+function clearCurSubMode() {
+  g.reset().setColor(g.theme.bg);
+  var y = CM_Y + CM_H / 2 + 1;
+  g.fillRect((W / 2) - CM_SUB_W, y, (W / 2) + CM_SUB_W, y + CM_SUB_H);
+}
+function drawCurSubMode(text) {
+  subModeDrawnAt = Date.now();
+  clearCurSubMode();
+  g.setFont('Vector', 18).setColor(g.theme.fg).setFontAlign(0, 0);
+  g.drawString(text, W / 2, CM_Y + CM_H - 3);
+}
+
 function drawCurMode() {
   var i = settings.cur_mode;
-  if (prevDrawnMode == i) return;
+  if (prevDrawnMode !== i || subModeDrawnAt && subModeDrawnAt < Date.now() + (MIN * 1000)) {
+    subModeDrawnAt = null;
+    clearCurSubMode();
+  }
+  if (prevDrawnMode === i) return;
   prevDrawnMode = i;
   var text = at(modeCat, i), bg = at(palCat, i)[2];
   g.reset().setColor(bg);
