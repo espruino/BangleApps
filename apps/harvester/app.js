@@ -2,17 +2,64 @@ const widget_utils = require('widget_utils');
 const buzz = require('buzz');
 var settings;
 
-// *** XXX: Ensure these are kept in sync between settings.js and app.js ***
+// #region XXX: Ensure these are kept in sync between settings.js and app.js
 const storage = require('Storage');
+function readSettings() {
+  return storage.readJSON(SETTINGS_FILE, 1) || {};
+}
+function writeSettings(s) {
+  storage.write(SETTINGS_FILE, s);
+}
+function loadSettings() {
+  return normalizeSettings(readSettings());
+}
+function saveSettings(s) {
+  writeSettings(denormalizeSettings(s, pendingTimeCat));
+}
+
+function ym(date) {
+  return date.toLocalISOString().substring(0, 7);
+}
+function logCurFilenameBase() {
+  return `harvester-${ym(new Date())}`;
+}
+
+/** @returns Sorted list of disjoint filenames for historical logs, most current last */
+function logCurFilenames() {
+  return storage.list(new RegExp(logCurFilenameBase() + `.*\.csv`), { sf: true }).sort();
+}
+
+function logHeader() {
+  var cats = settings.fruitful.slice(1).concat(
+    settings.decentering.slice(1).reverse()
+  ).map(c=>c.title);
+  // TODO: Include targets? Probably requires triggering changeovers more often
+  return 'Date,' + cats.join(',') + "\n";
+}
+
+function logStartNew(prevList) {
+  var nextSuffix = '';
+  if (prevList.length > 0) {
+    let last = prevList[prevList.length - 1];
+    let m = last.match(/_([0-9A-Z])\./), suffix = m ? m[1] : '0';
+    nextSuffix = '_' + (parseInt(suffix, 36) + 1).toString(36);
+  }
+  let sf = storage.open((logCurFilenameBase() + nextSuffix + '.csv'), 'w');
+  sf.write(logHeader());
+  return sf;
+}
+// #endregion
+// #region XXX: Ensure these are kept in sync between settings.js, loader-settings.js, and app.js
 const SETTINGS_FILE = "harvester.json";
-function getDefaultSettings () {
+function getDefaultSettings() {
+  var id1 = Math.round(Date.now()), id2 = id1 + 1; // XXX: Use proper UUIDs, probably with TS
   return {
     fruitful: [
       {},
       {
         color: 'Green', fg: '#0f0', gy: '#020',
         title: 'Work',
-        target_min: 480,
+        target_min: 480, sec_today: 0, id: id1,
       },
     ],
     hour_color: 'Green',
@@ -22,33 +69,117 @@ function getDefaultSettings () {
     decentering: [
       {},
       {
-        title: 'Social Media',
+        title: 'Social Media', sec_today: 0, id: id2,
         fg: '#f00', gy: '#200', color: 'Red',
       }
     ],
     fallow_denominator: 3,
+    fallow_buffer: 0,
   };
 }
-function loadSettings () {
+function normalizeCat(cat, i, _arr) {
+  if (0 === i) return cat; // XXX: Skip sentinels
+  // TODO: Normalize or guess at next colors?
+  cat.fg = cat.fg || g.theme.fg;
+  cat.gy = cat.gy || '#222';
+  cat.title = cat.title || '??';
+  cat.sec_today = 0 | cat.sec_today;
+  if (cat.target_min) cat.target_min = 0 | cat.target_min;
+  if (!cat.id) {
+    // TODO: Use proper UUID, probably via TS library
+    if (!normalizeCat._seq) {
+      normalizeCat._seq = 0;
+    }
+    cat.id = Math.round(Date.now()) + normalizeCat._seq++;
+  }
+  return cat;
+}
+function normalizeSettings(s) {
   var def = getDefaultSettings();
-  var s = storage.readJSON(SETTINGS_FILE, 1) || {};
-  // TODO: Add per-item normalizer fns
-  s.fruitful = s.fruitful || def.fruitful;
-  s.decentering = s.decentering || def.decentering;
+  if (s.fruitful) {
+    s.fruitful = s.fruitful.map(normalizeCat);
+  } else {
+    s.fruitful = def.fruitful;
+  }
+  if (s.decentering) {
+    s.decentering = s.decentering.map(normalizeCat);
+  } else {
+    s.decentering = def.decentering;
+  }
+  if (s.total_sec_by_cat) {
+    for (let i = 1; i < s.fruitful.length; i++) {
+      s.fruitful[i].sec_today = s.total_sec_by_cat[i];
+    }
+    for (let i = 1; i < s.decentering.length; i++) {
+      s.decentering[i].sec_today = s.total_sec_by_cat[s.total_sec_by_cat.length - i];
+    }
+    s.fallow_buffer = s.total_sec_by_cat[0];
+  }
 
   s.hour_color = s.hour_color || def.hour_color;
   s.hour_fg = s.hour_fg || def.hour_fg;
   s.fallow_denominator = s.fallow_denominator || def.fallow_denominator;
-  // Converts from JSON or supplies size
-  s.total_sec_by_cat = new Uint16Array(s.total_sec_by_cat || 16);
   s.cur_mode = s.cur_mode || def.cur_mode;
+  s.fallow_buffer = s.fallow_buffer || def.fallow_buffer;
   return s;
 }
-function saveSettings (s) {
+function denormalizeSettings(s, pendingTimeCat) {
   delete s.hr_12; // TODO: Allow setting this independently
-  storage.write(SETTINGS_FILE, s);
+  if (pendingTimeCat) {
+    for (let i = 1; i < s.fruitful.length; i++) {
+      s.fruitful[i].sec_today = pendingTimeCat[i];
+    }
+    for (let i = 1; i < s.decentering.length; i++) {
+      s.decentering[i].sec_today = pendingTimeCat[pendingTimeCat.length - i];
+    }
+    s.fallow_buffer = pendingTimeCat[0];
+  }
+  if (s.total_sec_by_cat) {
+    delete s.total_sec_by_cat;
+  }
+  return s;
 }
-// *** End manual sync area ***
+
+function ym(date) {
+  return date.toLocalISOString().substring(0, 7);
+}
+function logCurFilenameBase() {
+  return `harvester-${ym(new Date())}`;
+}
+
+/** @returns Sorted list of disjoint filenames for historical logs, most current last */
+function logCurFilenames() {
+  return storage.list(new RegExp(logCurFilenameBase() + `.*\.csv`), { sf: true }).sort();
+}
+// #endregion
+
+/* exported reloadFromWeb */
+function reloadFromWeb() {
+  setTimeout(() => {
+    // Best-effort attempt to match pendingTimeCat by "ID" (creation TS)
+    let prev = {};
+    for (let i = 1; i < settings.fruitful.length; i++) {
+      let id = settings.fruitful[i].id;
+      if (id) prev[id] = at(pendingTimeCat, i);
+    }
+    for (let i = 1; i < settings.decentering.length; i++) {
+      let id = settings.decentering[i].id;
+      if (id) prev[id] = at(pendingTimeCat, -i);
+    }
+    loadRuntimeSettings();
+    for (let i = 1; i < settings.fruitful.length; i++) {
+      let id = settings.fruitful[i].id;
+      if (id) setAt(pendingTimeCat, i, 0 | prev[id]);
+    }
+    for (let i = 1; i < settings.decentering.length; i++) {
+      let id = settings.decentering[i].id;
+      if (id) setAt(pendingTimeCat, -i, 0 | prev[id]);
+    }
+    clearDrawingCache();
+    drawFace();
+  }, 10);
+  return true;
+}
 
 const global_settings = storage.readJSON("setting.json", true) || {};
 const H = g.getHeight();
@@ -57,7 +188,7 @@ const W = g.getWidth();
 const FIRST_DECENTER_IDX = -1, FALLOW_IDX = 0, FIRST_FRUITFUL_IDX = 1;
 
 var totalMin;
-var palCat, modeCat;
+var palCat, modeCat, pendingTimeCat;
 // FCat arrays are shorter than others but have synchronized indexing as far as possible
 var targetMinFCat, startFCat, endFCat;
 
@@ -67,6 +198,7 @@ const CLK_HALF_W = 112 / 2, CLK_HALF_H = 46 / 2, CLK_BG_Y = H / 2 - 17;
 const CM_Y = (3 * H / 4) - 19;
 const CM_W = 53;
 const CM_H = 34;
+const CM_SUB_W = 30, CM_SUB_H = 20;
 
 const CI_Y = 34, CI_W = 44, CI_X = W / 2 - CI_W / 2, CI_H = 14;
 
@@ -80,7 +212,9 @@ var prevDrawnMode, prevDrawnTime, prevDrawnSegment = [];
 
 const HR_RESET = 3; // Reset (and eventually save) totals at a time few will be awake
 
-const DEBUGGING = false;
+const BANGLEJS2 = process.env.HWVERSION == 2;
+
+var DEBUGGING = false;
 function log_debug(o) {
   if (DEBUGGING) print(o);
 }
@@ -103,18 +237,18 @@ function setAt(arr, i, v) {
 }
 
 function getMin(i) {
-  if (i < 0) i += settings.total_sec_by_cat.length;
-  return Math.floor(settings.total_sec_by_cat[i] / MIN);
+  return Math.floor(at(pendingTimeCat, i) / MIN);
 }
 var lastBuzzCheck = 0;
 function addFruitful(i, sec) {
   if (i < FIRST_FRUITFUL_IDX) throw new Error("Can't track fruitful time with i=" + i);
-  settings.total_sec_by_cat[FALLOW_IDX] += Math.ceil(sec / settings.fallow_denominator);
-  const result = settings.total_sec_by_cat[i] += sec;
+  pendingTimeCat[FALLOW_IDX] += Math.ceil(sec / settings.fallow_denominator);
+  const result = pendingTimeCat[i] += sec;
   const targetMin = targetMinFCat[i], secThreshold = targetMin * MIN;
   const secCheckWindow = Math.round((new Date().valueOf() - lastBuzzCheck) / 1000);
   if (result >= secThreshold && result < secThreshold + secCheckWindow) {
     log_debug('Reached target for ' + modeCat[i] + ' (' + targetMin + ' min)');
+    drawCurSubMode('Done!');
     // TODO: Improve
     buzz.pattern('=');
   }
@@ -126,22 +260,24 @@ function useRecenter(sec) {
      sec=60, buf=30; used=30
      sec=60, buf=0; used=0
    */
-  var fallow_used_sec = E.clip(settings.total_sec_by_cat[FALLOW_IDX], 0, sec);
-  settings.total_sec_by_cat[FALLOW_IDX] -= fallow_used_sec;
+  var fallow_used_sec = sec;
+  if (sec > 0) fallow_used_sec = E.clip(pendingTimeCat[FALLOW_IDX], 0, sec);
+  pendingTimeCat[FALLOW_IDX] -= fallow_used_sec;
   return sec - fallow_used_sec;
 }
 function useDecenter(i, sec) {
   if (i > FIRST_DECENTER_IDX) throw new Error("can't treat " + i + " as decentering");
   var excess_sec = useRecenter(sec);
-  var remaining = settings.total_sec_by_cat[FALLOW_IDX];
-  const j = settings.total_sec_by_cat.length + i;
-  let newTotal = settings.total_sec_by_cat[j] + excess_sec;
+  var remaining = pendingTimeCat[FALLOW_IDX];
+  let newTotal = at(pendingTimeCat, i) + excess_sec;
   let secCheckWindow = Math.round((new Date().valueOf() - lastBuzzCheck) / 1000);
   if (0 === remaining) {
     log_debug(`${sec} - ${remaining} = ${excess_sec} (vs ${secCheckWindow}) => ${newTotal}`);
     if (excess_sec > 0 && excess_sec < secCheckWindow) {
+      drawCurSubMode('<0min');
       buzz.pattern('==  ==');
     } else if (newTotal % (5 * MIN) < secCheckWindow) {
+      drawCurSubMode('-5m!');
       buzz.pattern('= = = = =');
     }
   } else {
@@ -153,13 +289,14 @@ function useDecenter(i, sec) {
     for (let warn of earlyWarning) {
       if (remaining <= warn.threshold && remaining > warn.threshold - secCheckWindow) {
         log_debug(`${remaining} just dropped below ${warn.threshold} (by < ${secCheckWindow})`);
+        drawCurSubMode(`${warn.threshold / MIN}min`);
         buzz.pattern(warn.pattern);
         break;
       }
     }
-  } 
+  }
   lastBuzzCheck = new Date().valueOf();
-  return settings.total_sec_by_cat[j] = newTotal;
+  return setAt(pendingTimeCat, i, newTotal);
 }
 
 /** Generically picks the right method to use for the mode class. Accepts even
@@ -181,35 +318,27 @@ function spendTime(mode, sec) {
  *           subtracted from previous.
  */
 function lateStartAdjustments(totalSecByCat, curMode, prevMode, secDesired) {
-  let amt = Math.min(at(totalSecByCat, prevMode), secDesired);
+  let secAvailable = Math.min(at(totalSecByCat, prevMode), secDesired);
   if (FALLOW_IDX === curMode && prevMode >= FIRST_FRUITFUL_IDX) {
     // Subtract fruitful time not spent (plus additional fallow time not accumulated)
-    // TODO: Test
-    return [-amt, amt];
   } else if (curMode >= FIRST_FRUITFUL_IDX && prevMode >= FIRST_FRUITFUL_IDX) {
     // Subtract fruitful time spent in other category
-    // TODO: Test
-    return [amt, amt];
   } else if (curMode >= FIRST_FRUITFUL_IDX && FALLOW_IDX === prevMode) {
     // (Will re-accumulate additional fallow time)
-    // TODO: Test
-    amt = secDesired; // No bound currently possible
-    return [amt, -amt];
+    secAvailable = secDesired; // No bound currently possible
   } else if (curMode <= FIRST_DECENTER_IDX && prevMode >= FIRST_FRUITFUL_IDX) {
     // Subtract fruitful time and use up fallow time
-    // TODO: Test
-    return [secDesired, amt];
+    return [secDesired, secAvailable];
   } else if (curMode <= FIRST_DECENTER_IDX && FALLOW_IDX === prevMode) {
-    // Use up as much fallow time as possible
-    // TODO: Test
-    return [secDesired, 0];
-  } else if (curMode <= FIRST_DECENTER_IDX && prevMode <= FIRST_DECENTER_IDX) {
-    // Subtract divergent time spent in other category
-    // TODO: Test
-    return [amt, amt];
+    // Leave as much fallow time as possible in place, adding only the difference
+    secAvailable = secDesired - secAvailable;
+    return [secAvailable, 0];
+  } else {
+    // Other possibilities are technically sane but should be rare and aren't worth testing (yet?)
+    return [0, 0];
   }
-  // Other possibilities are technically sane but should be rare and aren't worth testing
-  return [0, 0];
+  // Normally this is all that's needed
+  return [secAvailable, secAvailable];
 }
 
 // https://www.1001fonts.com/rounded-fonts.html?page=3
@@ -218,16 +347,6 @@ Graphics.prototype.setFontBloggerSansLight46 = function (scale) {
   this.setFontCustom(atob("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB4AAAAAAAA/AAAAAAAAPwAAAAAAAD4AAAAAAAAeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/AAAAAAAH/gAAAAAAP/wAAAAAAf/gAAAAAAf/AAAAAAA//AAAAAAB/+AAAAAAD/8AAAAAAH/4AAAAAAH/wAAAAAAP/gAAAAAAf/gAAAAAA//AAAAAAB/+AAAAAAA/8AAAAAAAP4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///8AAAAP////4AAAP/////AAAH/////4AAD+AAAB/AAA8AAAAHwAAeAAAAA+AAHgAAAAHgADwAAAAB4AA8AAAAAPAAPAAAAADwADwAAAAA8AA8AAAAAPAAPAAAAADwAB4AAAAB4AAeAAAAAeAAHwAAAAPgAA/AAAAPwAAH/////4AAA/////8AAAH////+AAAAf///+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAPAAAAAAAAHwAAAAAAAB4AAAAAAAA+AAAAAAAAfAAAAAAAAHgAAAAAAAD4AAAAAAAB8AAAAAAAAeAAAAAAAAPgAAAAAAADwAAAAAAAB//////4AAf//////AAH//////gAA//////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAD4AAHAAAAD+AAD4AAAB/gAA8AAAB/4AAfAAAA/+AAHgAAAf3gAB4AAAPx4AA8AAAH4eAAPAAAD4HgADwAAB8B4AA8AAA+AeAAPAAAfAHgADwAAPgB4AA8AAHwAeAAHgAD4AHgAB4AD8AB4AAfAB+AAeAAD8B/AAHgAAf//gAB4AAH//wAAeAAAf/wAAHgAAB/wAAA4AAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4AADgAAAAPAAB4AAAADwAAeAAAAA+AAHgAAAAHgAB4ABgAB4AAeAA8AAeAAHgA/AADwAB4AfwAA8AAeAP8AAPAAHgH/AADwAB4H7wAA8AAeD48AAPAAHh8PAAHgAB5+BwAB4AAe/AeAA+AAH/AHwAfAAB/gA/AfgAAfwAH//wAAHwAA//4AAA4AAH/8AAAAAAAf4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwAAAAAAAD+AAAAAAAD/gAAAAAAH/4AAAAAAH/+AAAAAAP/ngAAAAAP/h4AAAAAf/AeAAAAAf/AHgAAAA/+AB4AAAA/+AAeAAAB/8AAHgAAA/8AAB4AAAP4AAAeAAAB4AAAHgAAAAAAAB4AAAAAAAAeAAAAAAP///4AAAAH////AAAAA////gAAAAP///4AAAAAAB4AAAAAAAAeAAAAAAAAHgAAAAAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgAAAAD4AA8AAD///gAPAAB///4AD4AAf//+AAeAAH+APAAHgAB4AHgAA4AAeAB4AAOAAHgAcAADwAB4AHAAA8AAeADwAAPAAHgAcAADwAB4AHAAA8AAeAB4AAeAAHgAeAAHgAB4AHwAD4AAeAA+AB8AAHgAP4B+AAB4AB///gAAOAAP//gAABAAA//wAAAAAAD/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/gAAAAAB///4AAAAD////wAAAD////+AAAB/////4AAA/gPgB/AAAfgDwAHwAAPgA8AA+AADwAeAAHgAB4AHgAB4AAeAB4AAfAAHgAeAADwABwAHgAA8AAcAB4AAPAAHAAeAAHwAB4AHgAB4AAeAB8AAeAAHgAPAAPgAB4AD8APwAAOAAfwP4AADgAD//8AAAAAAf/+AAAAAAB/+AAAAAAAH8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgAAAAAAAB4AAAAAAAAeAAAAAAAAHgAAAAAAAB4AAAAA4AAeAAAAB/AAHgAAAB/wAB4AAAB/4AAeAAAD/4AAHgAAD/wAAB4AAH/wAAAeAAH/gAAAHgAP/gAAAB4AP/AAAAAeAf/AAAAAHgf+AAAAAB4/+AAAAAAe/8AAAAAAH/8AAAAAAB/4AAAAAAAf4AAAAAAADwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/gAAAA/AB/+AAAA/8B//wAAA//gf/+AAAf/8PgPgAAH4fngB8AAD4B/wAPgAA8AP8AB4AAeAB+AAeAAHgAfgADwAB4ADwAA8AAcAA8AAPAAHAAPAADwAB4ADwAA8AAeAB+AAPAAHgAfgAHgAB8AP8AB4AAPgH/AA+AAD8H54AfAAAf/8fgPwAAD/+D//4AAAf/Af/8AAAB/AD/+AAAAAAAP+AAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHwAAAAAAAf/wAAAAAAf/+AAAAAAP//4AAwAAH//+AAeAAD+APwAHgAA+AA+AB4AAfAAHgAOAAHgAB4ADwAB4AAPAA8AAeAADwAPAAHgAA8ADwAB4AAPAA8AAeAADwAPAAHgAA8AHgAB8AAeAB4AAPgAHgA+AAD8ADwA/AAAfwA8A/gAAD/wef/wAAAf////4AAAB////4AAAAH///wAAAAAD/+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AB4AAAAAfgA/AAAAAH4APwAAAAB+AD4AAAAAPAAeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="), 46, atob("DRAcHBwcHBwcHBwcDQ=="), 56 + (scale << 8) + (1 << 16));
   return this;
 };
-
-Graphics.prototype.setFontRoboto20 = function (scale) {
-  // Actual height 21 (20 - 0)
-  this.setFontCustom(atob("AAAAAAAAAAAAAAAAAAAAAAAAH/zA/+YAAAAAAAHwAAwAAHwAA+AAAAAAAAAAAQACDAAYbADP4B/8A/zAGYZADH4A/+A/7AHYYADCAAAAAAAQAeHgH4eBzgwMMHnhw88GGBw4wHj+AcPgAAAAAAAAAAB4AA/gAGMAAwhwGMcAfuABzgABzgAc+AOMYBhBAAMYAB/AAHwAAAAAHwD5+A/8YGPDAw8YGPzA/HYD4fAADwAB/AAOYAABAAAAHwAA4AAAAAAAAAAH/gD//B8A+cAA7AADAAAAAAAYAAbwAHHgHwf/4A/8AAAAEAABiAAGwAA8AA/AAH+AAGwAByAAEAAAAAAAMAABgAAMAABgAH/wA/+AAMAABgAAMAABgAAAAAAAIAAfAADwAAAABgAAMAABgAAMAABgAAAAAAAAAAAAADAAAYAAAAAAAAADgAB8AB+AA+AA+AA/AAHAAAgAAAAAAB8AB/8Af/wHAHAwAYGADAwAYHAHAf/wB/8AAAAAAAAAAABgAAcAADAAAYAAH//A//4AAAAAAAAAAAAAAAAAAAAABwDAeA4HAPAwHYGBzAwcYHHDAfwYB8DAAAYAAAAAAABgOAcBwHADAwwYGGDAwwYHPHAf/wB58AAAAAAAAADAAB4AAfAAPYAHjAB4YA8DAH//A//4AAYAADAAAAAAAAAEMA/xwH+HAxgYGMDAxgYGODAw/4GD+AAHAAAAAAAAAf8AP/wD2HA5wYGMDAxgYGOHAA/wAD8AAAAAAAAAAAGAAAwAAGADAwB4GB+Aw+AGfAA/gAHwAAwAAAAAAADAB5+Af/wHPDAwwYGGDAwwYHPHAfvwB58AAAAAAAAAAAB+AAf4AHDjAwMYGBjAwM4HDOAf/gB/4AAAAAAAAAAAAYDADAYAAAAAAAAAAYDAfAYHwAAAABAAAcAADgAA+AAGwAB3AAMYABjgAYMAAAAAAAAAAAAAAABmAAMwABmAAMwABmAAMwABmAAMwAAiAAAAAAAAAYMADjgAMYAB3AAGwAA2AADgAAcAABAAAAAAAAAMAADgAA4AAGBzAweYGHAA/wAD8AAEAAAAwAB/4A/PwOAGDgAYYPxmH/Mw4ZmMDMxgZmM+Mx/5mHDAYAIDgDAPBwAf8AAMAAAAAAAYAAfAAPwAP4AH+AH4wA8GAH4wAP2AAPwAAfwAAfAAAYAAAAAAAAAAA//4H//AwwYGGDAwwYGGDAwwYH/HAf/wB58AAAAADAAH/AD/+AcBwHADAwAYGADAwAYGADA4A4DweAODgAAAAAAAAAAAAAAH//A//4GADAwAYGADAwAYGADAYAwD4+AP/gAfwAAAAAAAAAAAH//A//4GDDAwYYGDDAwYYGDDAwYYGCDAgAYAAAAAAAH//A//4GDAAwYAGDAAwYAGDAAwYAGAAAAAAAAAAH/AD/8AcBwHAHAwAYGADAwYYGDDA4YYDz/AOfwAAAAAAAAAAA//4H//A//4ADAAAYAADAAAYAADAAAYAADAA//4H//AAAAAAAAAAAAAAA//4H//AAAAAAAAABAAAeAAB4AADAAAYAADAAAYAAHA//wH/8AAAAAAAAAAAAAAA//4H//AAcAAPAAD4AA/wAOPADg8A4B4GAHAgAYAAAAAAAH//A//4AADAAAYAADAAAYAADAAAYAADAAAAAAAA//4H//A+AAB+AAD8AAD8AAH4AAPAAH4AH4AD8AD8AA+AAH//A//4AAAAAAAH//A//4H//AeAAB8AADwAAPgAAeAAA8AADwH//A//4AAAAAAAAAAAH/AB/8AeDwHAHAwAYGADAwAYGADA4A4DweAP/gA/4AAAAAAAAAAAH//A//4GBgAwMAGBgAwMAGBgAwcAH/AAfwAA8AAAAAA/4AP/gDgOA4A4GADAwAYGADAwAYHAHgeD+B/8wD+GAAAAAAAAAAA//4H//AwYAGDAAwYAGDgAweAHH8Afz4B8HAAAIAAYAPDwD8OA5w4GGDAwwYGHDAwYYHDnAePwBw8AAAAGAAAwAAGAAAwAAGAAA//4H//AwAAGAAAwAAGAAAwAAAAAAAAAH/4A//wAAPAAAYAADAAAYAADAAAYAAPA//wH/8AAAAAAAAgAAHAAA/AAB/AAD+AAD+AAD4AAfAAfwAfwAfwAH4AA4AAEAAA+AAH/AAH/gAD/AAD4AD+AH+AH8AA+AAH+AAD+AAD/AAD4AH/AP/AH+AA8AAAAAAAAAGADA4A4HweAPPgA/wAB8AAfwAPvgDweA8B4GADAAAIGAAA4AAHwAAPgAAfAAA/4AH/AD4AB8AA+AAHgAAwAAAAAAAAAGADAwB4GAfAwPYGDzAx4YGeDA/AYHwDA4AYGADAAAAAAAA///3//+wAA2AAGAAAGAAA+AAD8AAD8AAD4AAH4AAHgAAMAAAAwAA2AAG///3//+AAAAAAAAAAAOAAHwAD4AA8AAD8AADwAAGAAAAAAABgAAMAABgAAMAABgAAMAABgAAMAABgAAAEAAAwAADAAAIAAAAAAAAAAEeABn4Ad3ADMYAZjADMYAZmAB/4AP/AAAAAAAA//4H//ABgwAYDADAYAYDADg4AP+AA/gABwAAAAAAAAA/gAP+ADg4AYDADAYAYDADAYAOOABxwAAAAAEAAH8AB/wAcHADAYAYDADAYAcDA//4H//AAAAAAAAAAAAH8AB/wAdnADMYAZjADMYAZjAB84AHmAAMAAMAABgAB//gf/8HMAAxgAGIAAAAAAH8IB/zAcHMDAZgYDMDAZgcHcD//Af/wAAAAAAAAAAH//A//4AMAADAAAYAADAAAcAAD/4AP/AAAAAAAAAAAGf/Az/4AAAAAAAAAAMz//mf/4AAAAAAAAAAH//A//4ABwAAeAAH4ABzwAcPACAYAABAAAAAAAA//4H//AAAAAAAAAAAAf/AD/4AMAADAAAYAADAAAcAAD/4AP/ABgAAYAADAAAYAADgAAP/AA/4AAAAAAAAf/AD/4AMAADAAAYAADAAAcAAD/4AP/AAAAAAAAAAAAH8AB/wAcHADAYAYDADAYAYDADx4AP+AA/gAAAAAAAAf/8D//gYDADAYAYDADAYAcHAB/wAH8AAEAAAAAAEAAH8AB/wAcHADAYAYDADAYAYDAD//gf/8AAAAAAAAAAAf/AD/4AcAADAAAYAACAAAAEAB5wAfnADMYAZjADGYAYzADn4AOeAAAAAAAADAAAYAAf/wD//ADAYAYDAAAAAAAAD/gAf/AAA4AADAAAYAADAAAwAf/AD/4AAAAAAAAYAAD4AAP4AAP4AAPAAH4AH4AD8AAcAAAAAAQAADwAAf4AAf4AAPAAP4AP4ADwAAfgAA/gAA/AAD4AH+AD+AAeAAAAAAAAACAYAcHADzwAH8AAfAAH8ADx4AcHACAIAcAMD4BgP4MAP/AAPwAP4AP4AD4AAcAAAAAAAAADAYAYHADD4AY7ADOYAfjADwYAcDADAYAAAAADAAA4AH//B/v8cABzAACAAAH//w//+AAAAAAACAACcAAx/n+H//AA4AAHAAAAAAAAAAAAAOAADgAAYAADAAAcAABgAAGAAAwAAGAADwAAcAAAAA"), 32, atob("BQUHDQwPDQQHBwkMBAYGCQwMDAwMDAwMDAwFBAsMCwoTDg0ODgwMDg8GDA0LEg8ODQ4NDA0ODRMNDQ0GCQYJCQYLDAsMCwcMDAUFCwUSDAwMDAcLBwwKEAoKCgcFBw4A"), 21 + (scale << 8) + (1 << 16));
-  return this;
-};
-
-function setSmallFont() {
-  g.setFont('Vector', 18);
-}
 
 function setLargeFont() {
   g.setFontBloggerSansLight46();
@@ -254,16 +373,18 @@ function autoGray(category) {
 function updateDerivedRingVars() {
   totalMin = 0;
   var fixedPosLen = settings.fruitful.length;
-  var displayedLen = settings.fruitful.length + settings.decentering.length;
+  var displayedLen = 1 + settings.fruitful.length + settings.decentering.length - 2;
   startFCat = new Uint16Array(fixedPosLen);
   endFCat = new Uint16Array(fixedPosLen);
   targetMinFCat = new Uint16Array(fixedPosLen);
   palCat = new Array(displayedLen);
   modeCat = new Array(displayedLen);
+  pendingTimeCat = new Uint16Array(displayedLen);
 
   palCat[FALLOW_IDX] = palette(autoGray('#220'), '#860');
   // TODO: Draw out a nice circle and arrows properly
   modeCat[FALLOW_IDX] = '» × «';
+  pendingTimeCat[FALLOW_IDX] = settings.fallow_buffer;
   for (let i = FIRST_FRUITFUL_IDX; i < settings.fruitful.length; i++) {
     let fruitful = settings.fruitful[i];
     startFCat[i] = totalMin;
@@ -273,16 +394,20 @@ function updateDerivedRingVars() {
     //log_debug('Setting palette for ' + fruitful.title);
     palCat[i] = palette(autoGray(fruitful), g.toColor(fruitful.fg));
     modeCat[i] = fruitful.title;
+    setAt(pendingTimeCat, i, fruitful.sec_today);
   }
   for (let i = -FIRST_DECENTER_IDX; i < settings.decentering.length; i++) {
     let decentering = settings.decentering[i];
     setAt(palCat, -i, palette(autoGray(decentering), g.toColor(decentering.fg)));
     setAt(modeCat, -i, decentering.title);
+    setAt(pendingTimeCat, -i, decentering.sec_today);
   }
 }
 
 function loadRuntimeSettings() {
   settings = loadSettings();
+
+  if (settings.DEBUGGING) DEBUGGING = true;
 
   settings.hr_12 = (global_settings["12hour"] === undefined ? false : global_settings["12hour"]);
 
@@ -321,6 +446,7 @@ function draw() {
 }
 
 function getGaugeSpans(start, amtMin, targetMin, invertRing) {
+  "jit";
   let result = {};
   if (invertRing) {
     result.end = totalMin - start;
@@ -337,6 +463,7 @@ function getGaugeSpans(start, amtMin, targetMin, invertRing) {
 }
 
 function drawIfChanged(gaugeSpans, idxCat, idxRing) {
+  "jit";
   var j = idxRing > 0 ? idxCat + 16 : idxCat; // Treat original/overflow separately
   var prevSpans = prevDrawnSegment[j];
   var endpointsMatch = prevSpans && prevSpans.start == gaugeSpans.start &&
@@ -358,6 +485,7 @@ function drawIfChanged(gaugeSpans, idxCat, idxRing) {
 }
 
 function drawTrimmingCircles() {
+  "jit";
   log_debug('Trimming circle edges');
   g.setColor(g.theme.bg);
   for (let iRing = 0; iRing < 2; iRing++) {
@@ -377,7 +505,7 @@ function drawAllSegments() {
     if (drawIfChanged(getGaugeSpans(startFCat[i], fruitful - overwork, targetMin), i, 0)) {
       anyChanged = true;
     }
-    if (0 == overwork) continue;
+    if (0 === overwork) continue;
     if (drawIfChanged(getGaugeSpans(start, overwork, overwork + 5), i, 1)) {
       anyChanged = true;
     }
@@ -403,16 +531,32 @@ function drawAllSegments() {
   if (anyChanged) drawTrimmingCircles();
 }
 
+var subModeDrawnAt;
+function clearCurSubMode() {
+  g.reset().setColor(g.theme.bg);
+  var y = CM_Y + CM_H / 2 + 1;
+  g.fillRect((W / 2) - CM_SUB_W, y, (W / 2) + CM_SUB_W, y + CM_SUB_H);
+}
+function drawCurSubMode(text) {
+  subModeDrawnAt = Date.now();
+  clearCurSubMode();
+  g.setFont('Vector', 18).setColor(g.theme.fg).setFontAlign(0, 0);
+  g.drawString(text, W / 2, CM_Y + CM_H - 3);
+}
+
 function drawCurMode() {
   var i = settings.cur_mode;
-  if (prevDrawnMode == i) return;
+  if (prevDrawnMode !== i || subModeDrawnAt && subModeDrawnAt < Date.now() + (MIN * 1000)) {
+    subModeDrawnAt = null;
+    clearCurSubMode();
+  }
+  if (prevDrawnMode === i) return;
   prevDrawnMode = i;
   var text = at(modeCat, i), bg = at(palCat, i)[2];
   g.reset().setColor(bg);
   g.fillRect((W / 2) - CM_W, CM_Y - CM_H/2, (W / 2) + CM_W, CM_Y + CM_H/2);
 
-  setSmallFont();
-  text = g.wrapString(text, CM_W * 2).join("\n");
+  text = g.findFont(text, {w: CM_W * 2, h: CM_H }).text;
   g.setColor(g.theme.fg).setFontAlign(0, 0).drawString(text, W / 2, CM_Y);
 }
 
@@ -580,17 +724,16 @@ function setCurMode(newMode) {
 }
 
 function fixLateStart(sec) {
-  const totalSecByCat = settings.total_sec_by_cat;
   const curMode = settings.cur_mode;
-  var amts = lateStartAdjustments(totalSecByCat, curMode, prevSpentMode, sec);
-  const curTotalBefore = at(totalSecByCat, curMode);
-  const prevTotalBefore = at(totalSecByCat, prevSpentMode);
-  const fallowTotalBefore = totalSecByCat[FALLOW_IDX];
+  var amts = lateStartAdjustments(pendingTimeCat, curMode, prevSpentMode, sec);
+  const curTotalBefore = at(pendingTimeCat, curMode);
+  const prevTotalBefore = at(pendingTimeCat, prevSpentMode);
+  const fallowTotalBefore = at(pendingTimeCat, FALLOW_IDX);
   spendTime(curMode, amts[0]);
   spendTime(prevSpentMode, -amts[1]);
-  const curDiff = at(settings.total_sec_by_cat, curMode) - curTotalBefore;
-  const prevDiff = at(settings.total_sec_by_cat, prevSpentMode) - prevTotalBefore;
-  const fallowDiff = settings.total_sec_by_cat[FALLOW_IDX] - fallowTotalBefore;
+  const curDiff = at(pendingTimeCat, curMode) - curTotalBefore;
+  const prevDiff = at(pendingTimeCat, prevSpentMode) - prevTotalBefore;
+  const fallowDiff = at(pendingTimeCat, FALLOW_IDX) - fallowTotalBefore;
   // var mm = Math.floor(amts[0] / MIN), ss = amts[0] % MIN;
   // var msgTime = ss != 0 ? `${mm} min and ${ss} sec` : `${mm} min`;
   // var msg = `Added ${msgTime} to ${modeCat[curMode]} from ${modeCat[prevSpentMode]}`;
@@ -664,15 +807,29 @@ var buttons = [new Button('fruitful', 'tr', 40, '#0f0', pickFruitful),
 var drawTimeout;
 var totals_updated_at;
 
+/** Logs current totals to CSV format, assuming most current file has the same
+ *  set of categories (which should be maintained by settings and the web interface).
+ */
+function logWriteCurTotals() {
+  var candidates = logCurFilenames(), sf;
+  if (candidates.length === 0) {
+    sf = logStartNew(candidates);
+  } else {
+    sf = storage.open(at(candidates, -1), 'a');
+  }
+  sf.write(settings.last_reset + ',' + pendingTimeCat.slice(FIRST_FRUITFUL_IDX).join(',') + "\n");
+}
+
 function resetTotals() {
   const now = new Date();
   g.setColor(g.theme.bg).fillCircle(W / 2, H / 2, radiusOuterRing - ringIterOffset);
   clearDrawingCache();
-  // TODO: Save to historical file before clearing
-  settings.total_sec_by_cat.fill(0);
+  logWriteCurTotals();
+  pendingTimeCat.fill(0);
   settings.cur_mode = FALLOW_IDX;
   totals_updated_at = now;
   settings.last_reset = ymd(now);
+  saveSettings(settings);
 }
 
 function updateTotals() {
@@ -695,7 +852,6 @@ function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function () {
     drawTimeout = undefined;
-    //updateTotals();
     draw();
   }, delay);
 }
@@ -711,11 +867,16 @@ Bangle.on('lcdPower', on => {
   }
 });
 
-Bangle.setUI("clock", () => {
-  updateTotals();
-  //log_debug('clock');
-  redrawWholeFace();
-  saveSettings(settings);  // Retains data when leaving the face
+Bangle.setUI({
+  mode: 'clock',
+  btn: (btn) => {
+    // TODO: Handle eventual B3 appropriately
+    if (BANGLEJS2 || btn === 2) {
+      updateTotals();
+      saveSettings(settings);  // Retains data when leaving the face
+      Bangle.showLauncher();
+    }
+  },
 });
 
 loadRuntimeSettings();
