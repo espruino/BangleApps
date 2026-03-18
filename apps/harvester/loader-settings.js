@@ -1,3 +1,6 @@
+/* global document, Util, Puck, Set */
+/* exported denormalizeSettings */
+
 var fruitfulElement = document.querySelector("#fruitful tbody");
 var decenteringElement = document.querySelector("#decentering tbody");
 var btnSave = document.getElementById("btnSave");
@@ -193,6 +196,7 @@ function loadFromBangle() {
   });
 }
 
+/* exported deleteCategory */
 function deleteCategory(evt) {
   var elemCat = evt.target.closest('[data-idx]');
   if (!elemCat) {
@@ -249,6 +253,7 @@ btnCancel.addEventListener("click", loadFromBangle);
 document.getElementById('addFruitful').addEventListener("click", () => addNewCategory(true));
 document.getElementById('addDecentering').addEventListener("click", () => addNewCategory(false));
 // Called by app loader on start
+/* exported onInit */
 function onInit() {
   loadFromBangle();
 }

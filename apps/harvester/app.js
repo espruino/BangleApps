@@ -40,7 +40,7 @@ function logHeader() {
 function logStartNew(prevList) {
   var nextSuffix = '';
   if (prevList.length > 0) {
-    let last = at(prevList, -1);
+    let last = prevList[prevList.length - 1];
     let m = last.match(/_([0-9A-Z])\./), suffix = m ? m[1] : '0';
     nextSuffix = '_' + (parseInt(suffix, 36) + 1).toString(36);
   }
@@ -153,6 +153,7 @@ function logCurFilenames() {
 }
 // #endregion
 
+/* exported reloadFromWeb */
 function reloadFromWeb() {
   setTimeout(() => {
     // Best-effort attempt to match pendingTimeCat by "ID" (creation TS)
