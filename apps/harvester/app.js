@@ -211,6 +211,8 @@ var prevDrawnMode, prevDrawnTime, prevDrawnSegment = [];
 
 const HR_RESET = 3; // Reset (and eventually save) totals at a time few will be awake
 
+const BANGLEJS2 = process.env.HWVERSION == 2;
+
 var DEBUGGING = false;
 function log_debug(o) {
   if (DEBUGGING) print(o);
@@ -864,11 +866,16 @@ Bangle.on('lcdPower', on => {
   }
 });
 
-Bangle.setUI("clock", () => {
-  updateTotals();
-  //log_debug('clock');
-  redrawWholeFace();
-  saveSettings(settings);  // Retains data when leaving the face
+Bangle.setUI({
+  mode: 'clock',
+  btn: (btn) => {
+    // TODO: Handle eventual B3 appropriately
+    if (BANGLEJS2 || btn === 2) {
+      updateTotals();
+      saveSettings(settings);  // Retains data when leaving the face
+      Bangle.showLauncher();
+    }
+  },
 });
 
 loadRuntimeSettings();
