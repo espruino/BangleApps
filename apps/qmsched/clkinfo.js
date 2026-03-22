@@ -22,7 +22,7 @@
         show : function() {},
         hide : function() {},
         run : function() {
-          mode=require("qmsched").getMode();
+          let mode=require("qmsched").getMode();
           mode=(mode+=1) % 3
           require("qmsched").setMode(mode);
           this.emit("redraw");
