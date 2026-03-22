@@ -7,7 +7,7 @@
   "icon": "app.png",
   "screenshots": [{"url":"screenshot_b1_main.png"},{"url":"screenshot_b1_edit.png"},{"url":"screenshot_b1_lcd.png"},
                   {"url":"screenshot_b2_main.png"},{"url":"screenshot_b2_edit.png"},{"url":"screenshot_b2_lcd.png"}],
-  "tags": "tool,widget",
+  "tags": "tool,widget,clkinfo",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [
