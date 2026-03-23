@@ -1,11 +1,8 @@
 exports.show = function(options) {
-  Bangle.removeAllListeners("touch");
-  Bangle.removeAllListeners("drag");
-
   var colors;
   var isPicking=true;
-  if (!options.colors) {
-    // use default 25 colors
+
+  if (!options.colors||options.colors.length==0) {
     colors = [
       "#000000", "#555555", "#AAAAAA", "#FFFFFF",
       "#FF9999", "#FFCC99", "#FFFF99", "#99FF99", "#99FFFF", "#9999FF", "#FF99FF",
@@ -42,6 +39,7 @@ exports.show = function(options) {
   }
 
   function colorAt(x, y) {
+    if(y<rect.y)return null;
     var col = ((x - rect.x) / CW) | 0;
     var row = ((y - rect.y) / CH) | 0;
     var i = row * COLS + col;
@@ -59,15 +57,16 @@ exports.show = function(options) {
 
   function onTouch(btn, xy) {
     if(isPicking){
-      Bangle.haptic();
-      isPicking=false;
       var col = colorAt(xy.x, xy.y);
       if (!col) return;
-      options.onSelect(col);
+      isPicking=false;
+      Bangle.haptic();
+      if(options.onSelect) options.onSelect(col);
+      else throw new Error("No onSelect function provided")
       if (options.showPreview === undefined || options.showPreview) {
         g.setColor(col);
         g.fillRect(rect);
-        setTimeout(remove, 0.8 * 1000);
+        setTimeout(remove, 0.7 * 1000);
       } else {
         remove();
     }
