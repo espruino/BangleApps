@@ -89,6 +89,7 @@ exports.setMode = function(mode) {
     require("Storage").readJSON("setting.json", 1) || {},
     {quiet:mode}
   ));
+  Bangle.emit("qmchange",mode);
   exports.applyOptions(mode);
   if (typeof WIDGETS === "object" && "qmsched" in WIDGETS) WIDGETS["qmsched"].draw();
   if (global.setAppQuietMode) setAppQuietMode(mode); // current app knows how to update itself
