@@ -1,5 +1,8 @@
 # Color Picker
-A module for showing a color picker for easy picking and setting of colors
+A module for showing a color picker for easy picking and setting of colors.
+
+<img width="176" height="176" alt="d" src="https://github.com/user-attachments/assets/1fbde2f8-e25a-4a9b-9ce8-40803ae14adb" />
+
 ## Usage
 Example usage:
 ```javascript
