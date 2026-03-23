@@ -1,8 +1,4 @@
 exports.show = function(options) {
-  /*
-  Bangle.removeAllListeners("touch");
-  Bangle.removeAllListeners("drag");
-  */
   var colors;
   var isPicking=true;
   var previewTimeout;
@@ -27,7 +23,8 @@ exports.show = function(options) {
   var ROWS = Math.ceil(n / COLS);
   var CW = (W / COLS) | 0;
   var CH = (H / ROWS) | 0;
-
+  var selectedColors=options.startingSelection?options.startingSelection:[];
+  
   function draw() {
     g.clearRect(rect);
     for (var i = 0; i < n; i++) {
@@ -35,11 +32,25 @@ exports.show = function(options) {
       var row = (i / COLS) | 0;
       var x = rect.x + col * CW;
       var y = rect.y + row * CH;
+      var oldCH=CH;
+      var oldCW=CW;
+      if(options.multiSelect){
+        if(selectedColors.includes(colors[i])){
+          //selected
+          x+=4
+          y+=4
+          CH-=8
+          CW-=8
+        }
+      }
       g.setColor(colors[i])
        .fillRect(x + 1, y + 1, x + CW - 1, y + CH - 1)
        .setColor(g.theme.fg)
        .drawRect(x, y, x + CW, y + CH);
+      CH=oldCH;
+      CW=oldCW;
     }
+    
   }
 
   function colorAt(x, y) {
@@ -64,17 +75,29 @@ exports.show = function(options) {
     if(isPicking){
       var col = colorAt(xy.x, xy.y);
       if (!col) return;
-      isPicking=false;
-      Bangle.haptic();
-      if(options.onSelect) options.onSelect(col);
-      else throw new Error("No onSelect function provided")
-      if (options.showPreview === undefined || options.showPreview) {
-        g.setColor(col);
-        g.fillRect(rect);
-        previewTimeout=setTimeout(remove, 0.7 * 1000);
-      } else {
-        remove();
-    }
+      if(!options.multiSelect){
+        isPicking=false;
+        Bangle.haptic();
+        if(options.onSelect) options.onSelect(col);
+        else throw new Error("No onSelect function provided")
+        if (options.showPreview === undefined || options.showPreview) {
+          g.setColor(col);
+          g.fillRect(rect);
+          previewTimeout=setTimeout(remove, 0.7 * 1000);
+        } else {
+          remove();
+        }
+      }else{
+        Bangle.haptic()
+        options.onSelect(selectedColors);
+        if(selectedColors.includes(col)){
+          //unselect
+          selectedColors=selectedColors.filter(color => color !== col);
+        }else{
+          selectedColors.push(col)
+        }
+        draw()
+      }
     }
   }
 
@@ -85,4 +108,4 @@ exports.show = function(options) {
   });
 
   draw();
-}
+};
