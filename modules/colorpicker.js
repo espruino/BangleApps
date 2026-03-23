@@ -1,7 +1,11 @@
 exports.show = function(options) {
+  /*
+  Bangle.removeAllListeners("touch");
+  Bangle.removeAllListeners("drag");
+  */
   var colors;
   var isPicking=true;
-
+  var previewTimeout;
   if (!options.colors||options.colors.length==0) {
     colors = [
       "#000000", "#555555", "#AAAAAA", "#FFFFFF",
@@ -48,6 +52,7 @@ exports.show = function(options) {
   }
 
   function remove() {
+    if(previewTimeout)clearTimeout(previewTimeout);
     if(options.back){
       options.back();
     }else{
@@ -66,7 +71,7 @@ exports.show = function(options) {
       if (options.showPreview === undefined || options.showPreview) {
         g.setColor(col);
         g.fillRect(rect);
-        setTimeout(remove, 0.7 * 1000);
+        previewTimeout=setTimeout(remove, 0.7 * 1000);
       } else {
         remove();
     }
@@ -80,4 +85,4 @@ exports.show = function(options) {
   });
 
   draw();
-};
+}
