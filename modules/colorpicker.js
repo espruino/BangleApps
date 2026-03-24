@@ -78,7 +78,7 @@ exports.show = function(options) {
       if (!col) return;
       if(!options.multiSelect){
         isPicking=false;
-        Bangle.haptic();
+        if(Bangle.haptic) Bangle.haptic();
         options.onSelect(col);
         if (options.showPreview === undefined || options.showPreview) {
           g.setColor(col);
