@@ -12,9 +12,10 @@ exports.show = function(options) {
   } else {
     colors = options.colors;
   }
-  if(colors.length>36){
-    throw new Error("More than 36 colors provided, cannot display")
-  }
+  if(colors.length>36) throw new Error("More than 36 colors provided, cannot display")
+  
+  if(!options.onSelect) throw new Error("No onSelect function provided")
+  
   var rect = Bangle.appRect;
   var W = rect.w;
   var H = rect.h;
@@ -78,8 +79,7 @@ exports.show = function(options) {
       if(!options.multiSelect){
         isPicking=false;
         Bangle.haptic();
-        if(options.onSelect) options.onSelect(col);
-        else throw new Error("No onSelect function provided")
+        options.onSelect(col);
         if (options.showPreview === undefined || options.showPreview) {
           g.setColor(col);
           g.fillRect(rect);
