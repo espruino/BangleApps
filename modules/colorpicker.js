@@ -4,7 +4,7 @@ exports.show = function(options) {
   var previewTimeout;
   if (!options.colors||options.colors.length==0) {
     colors = [
-      "#000000", "#555555", "#AAAAAA", "#FFFFFF",
+      "#000000", "#808080", "#AAAAAA", "#FFFFFF",
       "#FF9999", "#FFCC99", "#FFFF99", "#99FF99", "#99FFFF", "#9999FF", "#FF99FF",
       "#FF0000", "#FF8800", "#FFFF00", "#00FF00", "#00FFFF", "#0000FF", "#FF00FF",
       "#880000", "#884400", "#888800", "#008800", "#008888", "#000088", "#880088"
