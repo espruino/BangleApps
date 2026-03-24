@@ -12,9 +12,9 @@ exports.show = function(options) {
   } else {
     colors = options.colors;
   }
-  if(colors.length>36) throw new Error("More than 36 colors provided, cannot display")
+  if(colors.length>36) throw new Error("More than 36 colors provided, cannot display");
   
-  if(!options.onSelect) throw new Error("No onSelect function provided")
+  if(!options.onSelect) throw new Error("No onSelect function provided");
   
   var rect = Bangle.appRect;
   var W = rect.w;
@@ -25,7 +25,8 @@ exports.show = function(options) {
   var CW = (W / COLS) | 0;
   var CH = (H / ROWS) | 0;
   var selectedColors=options.startingSelection?options.startingSelection:[];
-  
+  var insetX = (CW * 0.15) | 0;
+  var insetY = (CH * 0.15) | 0;
   function draw() {
     g.clearRect(rect);
     for (var i = 0; i < n; i++) {
@@ -37,11 +38,10 @@ exports.show = function(options) {
       var oldCW=CW;
       if(options.multiSelect){
         if(selectedColors.includes(colors[i])){
-          //selected
-          x+=4
-          y+=4
-          CH-=8
-          CW-=8
+          x += insetX;
+          y += insetY;
+          CW -= insetX * 2;
+          CH -= insetY * 2;
         }
       }
       g.setColor(colors[i])
@@ -89,13 +89,13 @@ exports.show = function(options) {
         }
       }else{
         Bangle.haptic()
-        options.onSelect(selectedColors);
         if(selectedColors.includes(col)){
           //unselect
           selectedColors=selectedColors.filter(color => color !== col);
         }else{
           selectedColors.push(col)
         }
+        options.onSelect(selectedColors);
         draw()
       }
     }
