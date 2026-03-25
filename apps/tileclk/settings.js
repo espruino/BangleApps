@@ -7,7 +7,6 @@
   }, require("Storage").readJSON("tileclk.json", true) || {});
 
   const writeSettings = () => {
-    delete appSettings.haptics;
     require("Storage").writeJSON("tileclk.json", appSettings);
   }
 
