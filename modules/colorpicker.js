@@ -104,7 +104,10 @@ exports.show = function(options) {
   Bangle.setUI({
     mode: "custom",
     touch: function(n, e) { onTouch(n, e); },
-    btn: function(n) { remove(); }
+    btn: function(n) { remove(); },
+    back: remove,
+    remove: remove,
+    redraw: draw
   });
 
   draw();
