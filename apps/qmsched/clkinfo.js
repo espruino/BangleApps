@@ -23,7 +23,7 @@
         hide : function() {},
         run : function() {
           let mode=require("qmsched").getMode();
-          mode=(mode+=1) % 3
+          mode = (mode + 1) % 3;
           require("qmsched").setMode(mode);
           this.emit("redraw");
         }
