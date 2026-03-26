@@ -15,6 +15,7 @@ exports.show = function(options) {
   if(colors.length>36) throw new Error("More than 36 colors provided, cannot display");
   
   if(!options.onSelect) throw new Error("No onSelect function provided");
+  if(!options.back) throw new Error("No back function provided");
   
   var rect = Bangle.appRect;
   var W = rect.w;
