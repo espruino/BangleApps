@@ -156,7 +156,7 @@ function showMainMenu() {
   };
   scheds.sort((a, b) => (a.hr-b.hr));
   scheds.forEach((sched, idx) => {
-    const label = formatTime(sched.hr) + " " + formatDays(sched.days || allDays);
+    const label = formatTime(sched.hr) + " " + formatDays(sched.days ?? allDays);
     menu[label] = () => { showEditMenu(idx); }; 
   });
   menu[/*LANG*/"Add Schedule"] = () => showEditMenu(-1);
