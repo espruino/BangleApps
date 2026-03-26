@@ -1,10 +1,9 @@
 (function(back){
   let appSettings = Object.assign({
     widgets: "show",
-    seconds: "hide",
+    seconds: "dynamic",
     borders: true,
-    borderColor: "theme",
-    haptics: true
+    borderColor: "theme"
   }, require("Storage").readJSON("tileclk.json", true) || {});
 
   const writeSettings = () => {
@@ -65,13 +64,6 @@
           writeSettings();
         },
         format: v => Object.keys(colorOptions)[v]
-      },
-      "Haptic Feedback:": {
-        value: appSettings.haptics !== false,
-        onchange: v => {
-          appSettings.haptics = v;
-          writeSettings();
-        }
       }
     });
   }
