@@ -28,7 +28,7 @@ E.showMenu(menu);
 `require("colorpicker").show(opts)` takes in an object of options, listed below:
 * `colors`: (Optional), specify a select list of colors to show instead of the default. Must not exceed 36 colors.
 * `showPreview`: (Optional), choose whether or not to show a full-screen preview of the color you selected.
-* `onSelect`: (Required), function that is called when user selects a color. Saving logic goes here. If in multi-select mode, this is called every time a new color is selected.
+* `onSelect`: (Required), function that is called whenever the user changes the selection (selects or unselects a color). Saving logic goes here. In multi-select mode, this is called on every toggle and is passed the current list of selected colors.
 * `back`: (Required), function that is called to return to previous state. Color picker listeners are automatically removed.
 * `multiSelect` (Optional), if true, then the color picker allows the user to select multiple colors and returns a list of colors in `onSelect`
 * `startingSelection` (Optional, only for multi-select mode), array of colors selected at the start, for setting restoration.
