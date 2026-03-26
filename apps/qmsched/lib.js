@@ -99,4 +99,4 @@ exports.setMode = function(mode) {
  */
 exports.getMode = function(){
   return (require("Storage").readJSON("setting.json", 1) || {}).quiet|0;
-}
+};
