@@ -66,6 +66,101 @@ exports.reload = function() {
     bg.palette.set(settings.colors.map(c=>g.toColor(c)));
     settings.img = bg;
     settings.imgOpt = {scale:g.getWidth()/16};
+  } else if (settings.style=="blobs") { // ~25ms
+    settings.style = "image";
+    const S=11; // image size
+    const Z=88,W=Z/S,H=Z/S;
+/*
+function rotate(img,n) {
+  var res = [],r = Graphics.createArrayBuffer(S,S,1);
+  n=n||4;
+  for (var i=0;i<n;i++) {
+    r.setRotation(i);
+    r.clear().drawImage(img);
+    r.setRotation(0);
+    res.push(r.asImage("string"));
+  }
+  return res;
+}
+const IM_ANGLE = rotate(Graphics.createImage(`
+
+
+
+
+        ###
+      #####
+    ######
+    ###
+    ###
+    ###
+    ###
+`)), IM_STRAIGHT = rotate(Graphics.createImage(`
+
+
+
+
+###########
+###########
+###########
+`),2), IM_DOUBLE = rotate(Graphics.createImage(`
+    ###
+    ###
+    ###
+  ###
+######  ###
+##### #####
+###  ######
+    ###
+    ####
+    ###
+    ###
+`),2), IM_BLANK = "\1\1\2\0";*/
+    const IM_ANGLE = [
+      "\v\v\1\0\0\0\0\0\0\x0E\7\xC1\xF88\x0E\1\xC08\0",
+      "\v\v\1\0\0\0\0\0\x0E\1\xF0?\0\xE0\x0E\1\xC08\0",
+      "\v\v\1\x0E\1\xC08\x0E\x0F\xC1\xF08\0\0\0\0\0\0\0",
+      "\v\v\1\x0E\1\xC08\3\x80~\7\xC08\0\0\0\0\0\0"
+    ], IM_STRAIGHT = [
+      "\v\v\1\0\0\0\0\0\x0F\xFF\xFF\xFF\xF8\0\0\0\0\0\0",
+      "\v\v\1\x0E\1\xC08\7\0\xE0\x1C\3\x80p\x0E\1\xC08\0"
+    ], IM_DOUBLE = [
+      "\v\v\1\x0E\1\xC08\x0E\x0F\xCF\xF7\xF9\xF88\x0F\1\xC08\0",
+      "\v\v\1\x0E\1\xC08\3\x8E\x7F\xF7\xFF9\xE0\x0E\1\xC08\0"
+    ], IM_BLANK = "\1\1\2\0";
+    const IM = { // [ TL TR BL BR ]
+      "0000" : IM_BLANK,
+      "1000" : IM_ANGLE[2],
+      "0100" : IM_ANGLE[3],
+      "1100" : IM_STRAIGHT[0],
+      "0010" : IM_ANGLE[1],
+      "1010" : IM_STRAIGHT[1],
+      "0110" : IM_DOUBLE[1],
+      "1110" : IM_ANGLE[0],
+      "0001" : IM_ANGLE[0],
+      "1001" : IM_DOUBLE[0],
+      "0101" : IM_STRAIGHT[1],
+      "1101" : IM_ANGLE[1],
+      "0011" : IM_STRAIGHT[0],
+      "1011" : IM_ANGLE[3],
+      "0111" : IM_ANGLE[2],
+      "1111" : IM_BLANK,
+    };
+
+    let bg = Graphics.createArrayBuffer(Z,Z,2);
+    bg.palette = new Uint16Array(4);
+    bg.palette.set(settings.colors.map(c=>g.toColor(c)));
+    let m = new Uint8Array(W*(H+1)+1);
+    E.mapInPlace(m,m,Math.randInt.bind(Math,2));
+    let n,x,y;
+    for (y=n=0;y<Z;y+=S)
+      for (x=0;x<Z;x+=S) bg.drawImage(IM[""+m[n]+m[n+1]+m[n+W]+m[++n+W]],x,y);
+    let c=0
+    for (y=n=0;y<Z;y+=S)
+      for (x=0;x<Z;x+=S)
+        if (m[n++] && !bg.getPixel(x,y))
+          bg.floodFill(x,y,1+(c=!c));
+    settings.img = bg;
+    settings.imgOpt = {scale:2};
   }
   delete settings.colors; // not needed now
   //console.log("bg",Date.now()-t);
