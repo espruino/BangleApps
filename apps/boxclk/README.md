@@ -22,13 +22,11 @@ You do not need to edit JSON for the normal workflow. The web editor is the main
 
 ## Layouts
 
-Box Clock ships with these starter layouts:
+Box Clock stores its face as named layouts.
 
-- `Default`
-- `Space`
-- `Classic`
+It installs with a default layout. The customizer also includes optional example layouts that you can add separately.
 
-The intended workflow is to duplicate one of those, tweak it, and keep as many named layouts as you want. You can switch layouts from the watch without rebuilding the rest of your setup.
+Each saved layout is independent, so you can keep multiple layouts and switch between them from the watch.
 
 ## Background Options
 

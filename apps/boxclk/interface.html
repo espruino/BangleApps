@@ -87,7 +87,7 @@
       align-items: start;
     }
 
-    .panel {
+    .editor-card {
       background: var(--panel);
       border: 1px solid var(--line);
       box-shadow: var(--shadow);
@@ -95,25 +95,25 @@
       backdrop-filter: blur(18px);
     }
 
-    .panel-inner {
+    .editor-card-inner {
       padding: 18px;
     }
 
-    .panel h2,
-    .panel h3,
-    details summary {
+    .editor-card h2,
+    .editor-card h3,
+    details.editor-card > summary {
       margin: 0 0 12px;
       font-size: 0.95rem;
       letter-spacing: 0.04em;
       font-weight: 700;
     }
 
-    details summary {
+    details.editor-card > summary {
       cursor: pointer;
       list-style: none;
     }
 
-    details summary::-webkit-details-marker {
+    details.editor-card > summary::-webkit-details-marker {
       display: none;
     }
 
@@ -187,7 +187,7 @@
       gap: 18px;
     }
 
-    .preview-panel .panel-inner {
+    .preview-panel .editor-card-inner {
       display: grid;
       gap: 16px;
       width: 100%;
@@ -276,13 +276,14 @@
       line-height: 1;
     }
 
-    details.panel > summary.panel-inner {
+    details.editor-card > summary.editor-card-inner {
       margin: 0;
     }
 
-    .panel-body {
+    .editor-card-body {
       display: grid;
       gap: 16px;
+      align-content: start;
       padding-top: 0;
       padding-bottom: 24px;
     }
@@ -291,7 +292,7 @@
       gap: 14px;
     }
 
-    .panel-body > *,
+    .editor-card-body > *,
     .field-grid > *,
     .color-field > *,
     .editor-section .section-body > *,
@@ -763,11 +764,11 @@
       top: 20px;
     }
 
-    .inspector .panel {
+    .inspector .editor-card {
       overflow: hidden;
     }
 
-    .inspector .panel-inner {
+    .inspector .editor-card-inner {
       display: grid;
       gap: 16px;
     }
@@ -965,7 +966,7 @@
         padding: 12px;
       }
 
-      .preview-panel .panel-inner {
+      .preview-panel .editor-card-inner {
         padding: 12px;
       }
 
@@ -999,8 +1000,8 @@
   <body>
   <div class="app-shell">
     <main class="workflow">
-      <section class="panel preview-panel stage-shell">
-        <div class="panel-inner">
+      <section class="editor-card preview-panel stage-shell">
+        <div class="editor-card-inner">
           <div class="preview-stack">
             <div class="preview-meta">
               <div class="preview-help subtle">Tap a box to edit it, drag it on the face, drag its border to resize the boundary, and use the text size controls.</div>
@@ -1067,9 +1068,9 @@
       </section>
 
       <div class="panel-stack">
-        <details class="panel" open>
-          <summary class="panel-inner">Focused Box</summary>
-          <div class="panel-inner panel-body">
+        <details class="editor-card" open>
+          <summary class="editor-card-inner">Focused Box</summary>
+          <div class="editor-card-inner editor-card-body">
             <div class="focus-head">
               <div id="focus-note" class="focus-chip">Select a box to edit it.</div>
             </div>
@@ -1170,9 +1171,9 @@
           </div>
         </details>
 
-        <details class="panel" open>
-          <summary class="panel-inner">Layout</summary>
-          <div class="panel-inner panel-body manage-layout-body">
+        <details class="editor-card" open>
+          <summary class="editor-card-inner">Layout</summary>
+          <div class="editor-card-inner editor-card-body manage-layout-body">
             <div class="field">
               <label for="config-select">Layout</label>
               <select id="config-select" class="form-select"></select>
@@ -1188,9 +1189,9 @@
           </div>
         </details>
 
-        <details class="panel">
-          <summary class="panel-inner">Face</summary>
-          <div class="panel-inner panel-body">
+        <details class="editor-card">
+          <summary class="editor-card-inner">Face</summary>
+          <div class="editor-card-inner editor-card-body">
             <div class="subtle">Choose the overall face styling here. Theme and background changes render directly in the preview and on the watch.</div>
 
             <div class="field">
@@ -1241,9 +1242,9 @@
           </div>
         </details>
 
-        <details class="panel">
-          <summary class="panel-inner">Fonts</summary>
-          <div class="panel-inner panel-body">
+        <details class="editor-card">
+          <summary class="editor-card-inner">Fonts</summary>
+          <div class="editor-card-inner editor-card-body">
             <div class="subtle">Import PBF fonts from the Espruino Font Converter. Fonts sync to the watch as native reusable Box Clock font assets.</div>
             <div class="field">
               <label for="font-upload">Import Font</label>
@@ -1253,9 +1254,9 @@
           </div>
         </details>
 
-        <details class="panel">
-          <summary class="panel-inner">Advanced JSON</summary>
-          <div class="panel-inner panel-body">
+        <details class="editor-card">
+          <summary class="editor-card-inner">Advanced JSON</summary>
+          <div class="editor-card-inner editor-card-body">
             <div class="subtle">Direct access to the selected layout for edge cases and manual tweaks.</div>
             <textarea id="raw-json" class="form-input raw-json"></textarea>
             <div class="button-row compact">

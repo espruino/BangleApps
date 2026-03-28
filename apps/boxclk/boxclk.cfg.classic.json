@@ -1,7 +1,6 @@
 {
   "background": {
-    "type": "solid",
-    "color": "bg"
+    "type": "clockbg"
   },
   "items": [
     {
@@ -101,29 +100,6 @@
         "boundary": {
           "x": 0,
           "y": 0
-        }
-      },
-      "options": {}
-    },
-    {
-      "name": "Battery",
-      "type": "battery",
-      "prefix": "",
-      "suffix": "%",
-      "position": {
-        "x": 0.863,
-        "y": 0.475
-      },
-      "appearance": {
-        "font": "4x6",
-        "fontSize": 3,
-        "outline": 2,
-        "textColor": "bgH",
-        "outlineColor": "fg",
-        "borderColor": "#f0f",
-        "boundary": {
-          "x": 0.5,
-          "y": 0.5
         }
       },
       "options": {}

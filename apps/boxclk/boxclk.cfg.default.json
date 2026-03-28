@@ -22,8 +22,8 @@
         "outlineColor": "#fff",
         "borderColor": "#000",
         "boundary": {
-          "x": 1.5,
-          "y": -2.5
+          "x": 3.27,
+          "y": -0.73
         }
       },
       "options": {
@@ -48,8 +48,8 @@
         "outlineColor": "#fff",
         "borderColor": "#000",
         "boundary": {
-          "x": 0,
-          "y": 1
+          "x": 1.76,
+          "y": 2.76
         }
       },
       "options": {
@@ -73,8 +73,8 @@
         "outlineColor": "#fff",
         "borderColor": "#000",
         "boundary": {
-          "x": 0.5,
-          "y": 1
+          "x": 1.73,
+          "y": 2.23
         }
       },
       "options": {
@@ -90,7 +90,7 @@
       "suffix": "%",
       "position": {
         "x": 0.864,
-        "y": 0.957
+        "y": 0.953
       },
       "appearance": {
         "font": "Vector",
@@ -100,8 +100,8 @@
         "outlineColor": "#000",
         "borderColor": "#fff",
         "boundary": {
-          "x": 1,
-          "y": 1
+          "x": 1.72,
+          "y": 1.72
         }
       },
       "options": {}
