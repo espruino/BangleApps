@@ -1,6 +1,7 @@
 (function (back) {
   var settings = Object.assign({
     hrm: 0,
+    hrmTimeout: 0,
     stepGoal: 10000,
     stepGoalNotification: false
   }, require("Storage").readJSON("health.json", true) || {});
@@ -26,6 +27,18 @@
       ][v],
       onchange: v => {
         settings.hrm = v;
+        setSettings();
+      }
+    },
+
+    /*LANG*/"HRM Stop Delay": {
+      value: settings.hrmTimeout,
+      min: 0,
+      max: 60,
+      step: 1,
+      format: v => v === 0 ? /*LANG*/"None" : v + "s",
+      onchange: v => {
+        settings.hrmTimeout = v;
         setSettings();
       }
     },
