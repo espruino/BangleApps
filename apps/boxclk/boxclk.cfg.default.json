@@ -1,0 +1,110 @@
+{
+  "background": {
+    "type": "image",
+    "image": "boxclk.beachhouse.img"
+  },
+  "items": [
+    {
+      "name": "Time",
+      "type": "time",
+      "prefix": "",
+      "suffix": "",
+      "position": {
+        "x": 0.633,
+        "y": 0.168
+      },
+      "appearance": {
+        "font": "BrunoAce",
+        "fontFile": "boxclk-brunoace.pbf",
+        "fontSize": 1,
+        "outline": 2,
+        "textColor": "#000",
+        "outlineColor": "#fff",
+        "borderColor": "#000",
+        "boundary": {
+          "x": 1.5,
+          "y": -2.5
+        }
+      },
+      "options": {
+        "timeMode": "system",
+        "showSeconds": false
+      }
+    },
+    {
+      "name": "Day",
+      "type": "day",
+      "prefix": "",
+      "suffix": "",
+      "position": {
+        "x": 0.638,
+        "y": 0.299
+      },
+      "appearance": {
+        "font": "6x8",
+        "fontSize": 2,
+        "outline": 1,
+        "textColor": "#000",
+        "outlineColor": "#fff",
+        "borderColor": "#000",
+        "boundary": {
+          "x": 0,
+          "y": 1
+        }
+      },
+      "options": {
+        "short": false
+      }
+    },
+    {
+      "name": "Date",
+      "type": "date",
+      "prefix": "",
+      "suffix": "",
+      "position": {
+        "x": 0.641,
+        "y": 0.389
+      },
+      "appearance": {
+        "font": "6x8",
+        "fontSize": 1,
+        "outline": 1,
+        "textColor": "#000",
+        "outlineColor": "#fff",
+        "borderColor": "#000",
+        "boundary": {
+          "x": 0.5,
+          "y": 1
+        }
+      },
+      "options": {
+        "longMonth": true,
+        "showYear": true,
+        "suffix": true
+      }
+    },
+    {
+      "name": "Battery",
+      "type": "battery",
+      "prefix": "",
+      "suffix": "%",
+      "position": {
+        "x": 0.864,
+        "y": 0.957
+      },
+      "appearance": {
+        "font": "Vector",
+        "fontSize": 12,
+        "outline": 1,
+        "textColor": "#0ff",
+        "outlineColor": "#000",
+        "borderColor": "#fff",
+        "boundary": {
+          "x": 1,
+          "y": 1
+        }
+      },
+      "options": {}
+    }
+  ]
+}
