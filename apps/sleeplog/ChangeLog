@@ -23,3 +23,4 @@
 0.25: Put HRM mode behind the setting `Prefer HRM` which defaults to `false`.
       Please enable if you want the HRM behavior from v0.21. The new default
       will be more in line with how version 0.20 worked.
+0.26: Replaced 'Prefer HRM' with 'Sleep Mode' setting, adding an option to require both movement and HRM to detect sleep (prevents false sleep while sitting still).

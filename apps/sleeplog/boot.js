@@ -16,7 +16,7 @@ global.sleeplog = {
     wearTemp: 19.5,
     hrmDeepTh: 60,
     hrmLightTh: 74,
-    preferHRM: false
+    sleepMode: 0
   }, require("Storage").readJSON("sleeplog.json", true) || {})
 };
 
@@ -159,16 +159,26 @@ if (global.sleeplog.conf.enabled) {
       if (!data.movement&&!data.bpm) return;
       // add timestamp rounded to 10min, corrected to 10min ago
       data.timestamp = data.timestamp || ((Date.now() / 6E5 | 0) - 1) * 6E5;
-      // add preliminary status depending on charging and movement thresholds
+      // add preliminary status depending on charging, movement, and HRM thresholds
       // 1 = not worn, 2 = awake, 3 = light sleep, 4 = deep sleep
-      if(data.bpm && global.sleeplog.conf.preferHRM){
-        data.status = Bangle.isCharging() ? 1 :
-          data.bpm <= global.sleeplog.conf.hrmDeepTh ? 4 :
-          data.bpm <= global.sleeplog.conf.hrmLightTh ? 3 : 2;
-      }else{
-        data.status = Bangle.isCharging() ? 1 :
-          data.movement <= global.sleeplog.conf.deepTh ? 4 :
-          data.movement <= global.sleeplog.conf.lightTh ? 3 : 2;
+      var conf = global.sleeplog.conf;
+      if (Bangle.isCharging()) {
+        data.status = 1;
+      } else {
+        // Calculate theoretical status for both sensors independently
+        var hStatus = data.bpm ? (data.bpm <= conf.hrmDeepTh ? 4 : (data.bpm <= conf.hrmLightTh ? 3 : 2)) : 0;
+        var mStatus = data.movement <= conf.deepTh ? 4 : (data.movement <= conf.lightTh ? 3 : 2);
+
+        if (conf.sleepMode === 1 && data.bpm) {
+          // 1: HRM only (Fallback to movement if HRM fails)
+          data.status = hStatus;
+        } else if (conf.sleepMode === 2 && data.bpm) {
+          // 2: Require Both (The "more awake" sensor wins)
+          data.status = Math.min(hStatus, mStatus);
+        } else {
+          // 0: Movement only (or fallback if HRM fails in mode 1/2)
+          data.status = mStatus;
+        }
       }
 
       // check if changing to deep sleep from non sleeping
