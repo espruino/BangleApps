@@ -18,11 +18,12 @@ Stores:
 
 ## Settings
 
-* **Heart Rt** - Whether to monitor heart rate or not
+* **Heart Interval** - Whether to monitor heart rate or not
   * **Off** - Don't turn HRM on, but record heart rate if the HRM was turned on by another app/widget
   * **3 Min** - Turn HRM on every 3 minutes (for each heath entry) and turn it off after 1 minute, or when a good reading is found
   * **10 Min** - Turn HRM on every 10 minutes (for each heath entry) and turn it off after 2 minutes, or when a good reading is found
   * **Always** - Keep HRM on all the time (more accurate recording, but reduces battery life to ~36 hours)
+* **HRM Stop Delay** - Default None. Adds a delay (in seconds) before turning the heart rate monitor off after a good reading is found. The initial reading at 90% confidence can sometimes be inaccurate. Adding a 10-30 second delay allows the sensor to settle and may provide a more accurate heart rate value.
 * **Daily Step Goal** - Default 10000, daily step goal for pedometer apps to use and for the step goal notification
 * **Step Goal Notification** - True if you want a notification when the daily step goal is reached
 

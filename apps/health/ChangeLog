@@ -43,3 +43,4 @@
 0.37: Reduce movement limit for HRM off from 400 to 100
       Fix daily summary for movement (was not scaling down correctly)
 0.38: Calculate daily summaries for temperature, battery, charging and altitude
+0.39: Added setting to delay turning off HRM after a good reading to improve accuracy
