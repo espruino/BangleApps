@@ -139,9 +139,9 @@ function draw(){
   fillLine(mid+Math.cos(rmin)*10, mid+Math.sin(rmin)*10, mid+Math.cos(rmin)*76, mid+Math.sin(rmin)*76,7);
   
   
-  if(new Date().getMinutes()==0){
-    Bangle.buzz();
-  }
+  //if(new Date().getMinutes()==0){
+  //  Bangle.buzz();
+  //}
 
   timeout = setTimeout(()=>{
     timeout = undefined;
