@@ -71,6 +71,7 @@ exports.reload = function() {
     const S=11; // image size
     const Z=88,W=Z/S,H=Z/S;
 /*
+const S=11; // image size
 function rotate(img,n) {
   var res = [],r = Graphics.createArrayBuffer(S,S,1);
   n=n||4;
@@ -82,19 +83,32 @@ function rotate(img,n) {
   }
   return res;
 }
-const IM_ANGLE = rotate(Graphics.createImage(`
+print("const IM_ANGLE = ",rotate(Graphics.createImage(`
+
 
 
 
 
         ###
+       ####
       #####
-    ######
-    ###
-    ###
-    ###
-    ###
-`)), IM_STRAIGHT = rotate(Graphics.createImage(`
+     ######
+     ######
+     ######
+`)),", IM_FANGLE = ",rotate(Graphics.createImage(`
+###########
+###########
+###########
+###########
+###########
+###########
+##########
+########
+#######
+######
+######
+`)),", IM_STRAIGHT = ",rotate(Graphics.createImage(`
+
 
 
 
@@ -102,48 +116,59 @@ const IM_ANGLE = rotate(Graphics.createImage(`
 ###########
 ###########
 ###########
-`),2), IM_DOUBLE = rotate(Graphics.createImage(`
-    ###
-    ###
-    ###
-  ###
-######  ###
-##### #####
-###  ######
-    ###
-    ####
-    ###
-    ###
-`),2), IM_BLANK = "\1\1\2\0";*/
-    const IM_ANGLE = [
-      "\v\v\1\0\0\0\0\0\0\x0E\7\xC1\xF88\x0E\1\xC08\0",
-      "\v\v\1\0\0\0\0\0\x0E\1\xF0?\0\xE0\x0E\1\xC08\0",
-      "\v\v\1\x0E\1\xC08\x0E\x0F\xC1\xF08\0\0\0\0\0\0\0",
-      "\v\v\1\x0E\1\xC08\3\x80~\7\xC08\0\0\0\0\0\0"
-    ], IM_STRAIGHT = [
-      "\v\v\1\0\0\0\0\0\x0F\xFF\xFF\xFF\xF8\0\0\0\0\0\0",
-      "\v\v\1\x0E\1\xC08\7\0\xE0\x1C\3\x80p\x0E\1\xC08\0"
-    ], IM_DOUBLE = [
-      "\v\v\1\x0E\1\xC08\x0E\x0F\xCF\xF7\xF9\xF88\x0F\1\xC08\0",
-      "\v\v\1\x0E\1\xC08\3\x8E\x7F\xF7\xFF9\xE0\x0E\1\xC08\0"
-    ], IM_BLANK = "\1\1\2\0";
+###########
+###########
+###########
+`)),", IM_DOUBLE = ",rotate(Graphics.createImage(`
+######
+######
+#####
+#####
+####
+##       ##
+       ####
+      #####
+      #####
+     ######
+     ######
+`),2),", IM_BLANK = ",E.toJS("\1\1\2\0"),", IM_FILL = ", E.toJS("\v\v\1\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80"),";");*/
+    const IM_ANGLE =  [
+  "\v\v\1\0\0\0\0\0\0\0\1\xC0x\x1F\7\xE0\xFC\x1F\x80",
+  "\v\v\1\0\0\0\0\0\0\1\xC0<\7\xC0\xFC\x1F\x83\xF0\0",
+  "\v\v\1\xFC\x1F\x83\xF0|\x0F\1\xC0\0\0\0\0\0\0\0\0",
+  "\v\v\1\7\xE0\xFC\x1F\x81\xF0\x1E\1\xC0\0\0\0\0\0\0\0"
+ ] , IM_FANGLE =  [
+  "\v\v\1\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xF7\xF8\xFE\x1F\x83\xF0\0",
+  "\v\v\1\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xCF\xF8\xFF\x0F\xE1\xFC\x1F\x80",
+  "\v\v\1\7\xE0\xFC?\x8F\xF7\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80",
+  "\v\v\1\xFC\x1F\xC3\xF8\x7F\x8F\xF9\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80"
+ ] , IM_STRAIGHT =  [
+  "\v\v\1\0\0\0\0\0\0\1\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80",
+  "\v\v\1\xFC\x1F\x83\xF0~\x0F\xC1\xF8?\7\xE0\xFC\x1F\x83\xF0\0",
+  "\v\v\1\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xC0\0\0\0\0\0\0\0",
+  "\v\v\1\7\xE0\xFC\x1F\x83\xF0~\x0F\xC1\xF8?\7\xE0\xFC\x1F\x80"
+ ] , IM_DOUBLE =  [
+  "\v\v\1\xFC\x1F\x83\xE0|\x0F\1\x80\xC0x\x1F\3\xE0\xFC\x1F\x80",
+  "\v\v\1\7\xE0\xFC\x0F\x81\xF0\x1F\x80\xFC\7\xC0\xF8\x1F\x83\xF0\0"
+ ] , IM_BLANK =  "\1\1\2\0" , IM_FILL =  "\v\v\1\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80" ;
+
     const IM = { // [ TL TR BL BR ]
       "0000" : IM_BLANK,
       "1000" : IM_ANGLE[2],
       "0100" : IM_ANGLE[3],
-      "1100" : IM_STRAIGHT[0],
+      "1100" : IM_STRAIGHT[2],
       "0010" : IM_ANGLE[1],
       "1010" : IM_STRAIGHT[1],
       "0110" : IM_DOUBLE[1],
-      "1110" : IM_ANGLE[0],
+      "1110" : IM_FANGLE[0],
       "0001" : IM_ANGLE[0],
       "1001" : IM_DOUBLE[0],
-      "0101" : IM_STRAIGHT[1],
-      "1101" : IM_ANGLE[1],
+      "0101" : IM_STRAIGHT[3],
+      "1101" : IM_FANGLE[1],
       "0011" : IM_STRAIGHT[0],
-      "1011" : IM_ANGLE[3],
-      "0111" : IM_ANGLE[2],
-      "1111" : IM_BLANK,
+      "1011" : IM_FANGLE[3],
+      "0111" : IM_FANGLE[2],
+      "1111" : IM_FILL,
     };
 
     let bg = Graphics.createArrayBuffer(Z,Z,2);
@@ -154,11 +179,13 @@ const IM_ANGLE = rotate(Graphics.createImage(`
     let n,x,y;
     for (y=n=0;y<Z;y+=S)
       for (x=0;x<Z;x+=S) bg.drawImage(IM[""+m[n]+m[n+1]+m[n+W]+m[++n+W]],x,y);
-    let c=0
-    for (y=n=0;y<Z;y+=S)
-      for (x=0;x<Z;x+=S)
-        if (m[n++] && !bg.getPixel(x,y))
-          bg.floodFill(x,y,1+(c=!c));
+    bg.filter([ // a gaussian filter to smooth out
+        1, 4, 7, 4, 1,
+        4,16,26,16, 4,
+        7,26,41,26, 7,
+        4,16,26,16, 4,
+        1, 4, 7, 4, 1
+    ], { w:5, h:5, div:273, offset:0 });
     settings.img = bg;
     settings.imgOpt = {scale:2};
   }
