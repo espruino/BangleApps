@@ -65,12 +65,11 @@ exports.show = function(options) {
   }
 
   function remove() {
-    if(previewTimeout)clearTimeout(previewTimeout);
-    if(options.back){
-      options.back();
-    }else{
-      throw new Error("No back function provided");
+    if(previewTimeout){
+      clearTimeout(previewTimeout);
+      previewTimeout=null;
     }
+    options.back();
   }
 
   function onTouch(btn, xy) {
@@ -82,14 +81,18 @@ exports.show = function(options) {
         if(Bangle.haptic) Bangle.haptic();
         options.onSelect(col);
         if (options.showPreview === undefined || options.showPreview) {
-          g.setColor(col);
-          g.fillRect(rect);
+          g.setColor(col)
+          .fillRect(rect);
+          if(previewTimeout){
+            clearTimeout(previewTimeout);
+            previewTimeout=null;
+          }
           previewTimeout=setTimeout(remove, 0.7 * 1000);
         } else {
           remove();
         }
       }else{
-        Bangle.haptic()
+        if(Bangle.haptic) Bangle.haptic();
         if(selectedColors.includes(col)){
           //unselect
           selectedColors=selectedColors.filter(color => color !== col);
