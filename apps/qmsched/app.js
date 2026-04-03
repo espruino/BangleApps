@@ -9,6 +9,15 @@ let bSettings = STORAGE.readJSON('setting.json',true)||{};
 let current = 0|bSettings.quiet;
 delete bSettings; // we don't need any other global settings
 
+const allDays = 0b1111111; // bits 0–6 = Sun, Mon, Tue, Wed, Thu, Fri, Sat
+const dayNames = ["Su","Mo","Tu","We","Th","Fr","Sa"];
+
+function formatDays(mask) {
+  if (!mask || mask === allDays) return "Every day";
+  if (mask === 0b0111110) return "Mon-Fri";
+  if (mask === 0b1000001) return "Weekends";
+  return dayNames.filter((_, i) => mask & (1 << i)).join(",");
+}
 
 
 
@@ -49,6 +58,7 @@ function loadSettings() {
       scheds: settings,
     };
     // store new format
+    
     save();
     // and clean up qmOptions from global settings file
     delete bOptions.qmOptions;
@@ -146,8 +156,8 @@ function showMainMenu() {
   };
   scheds.sort((a, b) => (a.hr-b.hr));
   scheds.forEach((sched, idx) => {
-    menu[formatTime(sched.hr)] = () => { showEditMenu(idx); };
-    menu[formatTime(sched.hr)].format = () => modeNames[sched.mode]+' >'; // this does nothing :-(
+    const label = formatTime(sched.hr) + " " + formatDays(sched.days ?? allDays);
+    menu[label] = () => { showEditMenu(idx); }; 
   });
   menu[/*LANG*/"Add Schedule"] = () => showEditMenu(-1);
   menu[/*LANG*/"Switch Theme"] = {
@@ -155,60 +165,71 @@ function showMainMenu() {
     onchange: v => v ? set("switchTheme", v) : unset("switchTheme"),
   };
   menu[/*LANG*/"Options"] = () => showOptionsMenu();
+  
   m = E.showMenu(menu);
-}
 
+}
+function showDaysMenu(mask, onDone) {
+  let cur = mask;
+  let menu = {"": {title: "Active Days"}};
+  menu["< Back"] = () => onDone(cur);
+  dayNames.forEach((name, i) => {
+    menu[name] = {
+      value: !!(cur & (1 << i)),
+      onchange: v => {
+        if (v) cur |= (1 << i);
+        else   cur &= ~(1 << i);
+      },
+    };
+  });
+  E.showMenu(menu);
+}
 function showEditMenu(index) {
   const isNew = index<0;
   let hrs = 12, mins = 0;
   let mode = 1;
+  let days = allDays;
   if (!isNew) {
     const s = scheds[index];
     hrs = 0|s.hr;
     mins = Math.round((s.hr-hrs)*60);
     mode = s.mode;
+    days = ("days" in s) ? s.days : allDays;
   }
-  let menu = {"": {"title": (isNew ? /*LANG*/"Add Schedule" : /*LANG*/"Edit Schedule")}};
-  menu[B2 ? "< Back" : /*LANG*/"< Cancel"] =  () => showMainMenu();
-  menu[/*LANG*/"Hours"] = {
-    value: hrs,
-    min:0, max:23, wrap:true,
-    onchange: v => {hrs = v;},
-  };
-  menu[/*LANG*/"Minutes"] = {
-    value: mins,
-    min:0, max:55, step:5, wrap:true,
-    onchange: v => {mins = v;},
-  };
-  menu[/*LANG*/"Switch to"] = {
-    value: mode,
-    min:0, max:2, wrap:true,
-    format: v => modeNames[v],
-    onchange: v => {mode = v;},
-  };
-  function getSched() {
-    return {
-      hr: hrs+(mins/60),
-      mode: mode,
+
+  function show() {
+    let menu = {"": {"title": (isNew ? "Add Schedule" : "Edit Schedule")}};
+    menu[B2 ? "< Back" : "< Cancel"] = () => showMainMenu();
+    menu[/*LANG*/"Hours"] = { value: hrs, min:0, max:23, wrap:true, onchange: v => {hrs = v;} };
+    menu[/*LANG*/"Minutes"] = { value: mins, min:0, max:55, step:5, wrap:true, onchange: v => {mins = v;} };
+    menu[/*LANG*/"Days: "+formatDays(days)] = () => {
+      showDaysMenu(days, newDays => {
+        days = newDays || allDays;
+        show(); // rebuild with updated days key
+      });
     };
-  }
-  menu[B2 ? /*LANG*/"Save" : /*LANG*/"> Save"] = function() {
-    if (isNew) {
-      scheds.push(getSched());
-    } else {
-      scheds[index] = getSched();
+    menu[/*LANG*/"Switch to"] = { value: mode, min:0, max:2, wrap:true, format: v => modeNames[v], onchange: v => {mode = v;} };
+    
+    function getSched() {
+      return { hr: hrs+(mins/60), mode: mode, days: days };
     }
-    save();
-    showMainMenu();
-  };
-  if (!isNew) {
-    menu[B2 ? /*LANG*/"Delete" : /*LANG*/"> Delete"] = function() {
-      scheds.splice(index, 1);
+    menu[B2 ? "Save" : "> Save"] = function() {
+      if (isNew) scheds.push(getSched());
+      else scheds[index] = getSched();
       save();
       showMainMenu();
     };
+    if (!isNew) {
+      menu[B2 ? "Delete" : "> Delete"] = function() {
+        scheds.splice(index, 1);
+        save();
+        showMainMenu();
+      };
+    }
+    m = E.showMenu(menu);
   }
-  m = E.showMenu(menu);
+
+  show();
 }
 
 function showOptionsMenu() {
