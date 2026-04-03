@@ -61,17 +61,66 @@
 
     <div class="container apploader-tab" id="librarycontainer">
       <div class="dropdown-container">
-        <div class="dropdown devicetype-nav">
-          <a href="#" class="btn btn-link dropdown-toggle" tabindex="0">
-            <span>All apps</span><i class="icon icon-caret"></i>
-          </a>
-          <!-- menu component -->
-          <ul class="menu">
-            <li class="menu-item"><a>All apps</a></li>
-            <li class="menu-item"><a dt="BANGLEJS">Bangle.js 1</a></li>
-            <li class="menu-item"><a dt="BANGLEJS2">Bangle.js 2</a></li>
-          </ul>
+        <div class="dropdowns-pill">
+          <div class="dropdown devicetype-nav">
+            <a href="#" class="btn btn-link dropdown-toggle" tabindex="0">
+              <span>All apps</span><i class="icon icon-caret"></i>
+            </a>
+            <!-- menu component -->
+            <ul class="menu">
+              <li class="menu-item"><a>All apps</a></li>
+              <li class="menu-item"><a dt="BANGLEJS">Bangle.js 1</a></li>
+              <li class="menu-item"><a dt="BANGLEJS2">Bangle.js 2</a></li>
+            </ul>
+          </div>
+          <div class="dropdown filter-nav">
+            <a href="#" class="btn btn-link dropdown-toggle" tabindex="0">
+              <span>All apps</span><i class="icon icon-caret"></i>
+            </a>
+            <!-- menu component -->
+            <ul class="menu">
+              <li class="menu-item"><a dt="">All apps</a></li>
+              <li class="menu-item"><a dt="favourites">Favourites</a></li>
+              <li class="menu-item"><a dt="clock">Clocks</a></li>
+              <li class="menu-item"><a dt="launch">Launchers</a></li>
+              <li class="menu-item"><a dt="game">Games</a></li>
+              <li class="menu-item"><a dt="tool">Tools</a></li>
+              <li class="menu-item"><a dt="textinput">Keyboards</a></li>
+              <li class="menu-item"><a dt="widget">Widgets</a></li>
+              <li class="menu-item"><a dt="bluetooth">Bluetooth</a></li>
+              <li class="menu-item"><a dt="outdoors">Outdoors</a></li>
+              <li class="menu-item"><a dt="ram">Online</a></li>
+              <li class="menu-item"><a dt="clkinfo">Clock Info</a></li>
+              <li class="menu-item"><a dt="health">Health</a></li>
+              <li class="menu-item"><a dt="fonts">Fonts</a></li>
+            </ul>
+          </div>
+          <div class="dropdown sort-nav">
+            <a href="#" class="btn btn-link dropdown-toggle" tabindex="0">
+              <span>Sort by:</span><i class="icon icon-caret"></i>
+            </a>
+            <!-- menu component -->
+            <ul class="menu">
+              <li class="menu-item"><a sortid="">None</a></li>
+              <li class="menu-item"><a sortid="created">New</a></li>
+              <li class="menu-item"><a sortid="modified">Updated</a></li>
+              <li class="menu-item"><a sortid="installs">Installed</a></li>
+              <li class="menu-item"><a sortid="favourites">Favourited</a></li>
+              <li class="menu-item"><a sortid="random">Random</a></li>
+            </ul>
+          </div>
         </div>
+        <div class="input-group" id="searchform">
+            <input class="form-input" type="text" placeholder="Search by app name, ID, author, or description...">
+            <button class="btn btn-primary input-group-btn">Search</button>
+        </div>
+      </div>
+      <div class="panel" style="clear:both">
+        <div class="panel-header"></div>
+        <div class="panel-body columns"><!-- apps go here --></div>
+      </div>
+        <!-- Old chip-based filtering UI (replaced by dropdowns above). Kept for reference.
+
         <div class="filter-nav">
           <label class="chip active" filterid="" data-tooltip="Show all apps">All</label>
           <label class="chip tooltip" filterid="clock" data-tooltip="To tell the time!">Clocks</label>
@@ -96,17 +145,9 @@
           <label class="chip hidden tooltip" sortid="installs" data-tooltip="Most installed by users">Installed</label>
           <label class="chip hidden tooltip" sortid="favourites" data-tooltip="Most liked by users">Favourited</label>
         </div>
+      -->
       </div>
 
-      <div class="panel" style="clear:both">
-        <div class="panel-header">
-        <div class="input-group" id="searchform">
-            <input class="form-input" type="text" placeholder="Keywords...">
-            <button class="btn btn-primary input-group-btn">Search</button>
-        </div>
-        </div>
-        <div class="panel-body columns"><!-- apps go here --></div>
-      </div>
     </div>
 
     <div class="container apploader-tab" id="myappscontainer" style="display:none">
