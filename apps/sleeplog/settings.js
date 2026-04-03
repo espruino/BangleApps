@@ -321,7 +321,7 @@
         value: settings.hrmDeepTh,
         step: 1,
         min: 30,
-        max: 100,
+        max: 200,
         wrap: true,
         noList: true,
         onchange: v => {
@@ -333,7 +333,7 @@
         value: settings.hrmLightTh,
         step: 1,
         min: 30,
-        max: 100,
+        max: 200,
         wrap: true,
         noList: true,
         onchange: v => {
@@ -373,7 +373,7 @@
       
       /*LANG*/"Deep Sleep": {
         value: settings.deepTh,
-        step: 10,
+        step: 1,
         min: 30,
         max: 500,
         wrap: true,
@@ -385,7 +385,7 @@
       },
       /*LANG*/"Light Sleep": {
         value: settings.lightTh,
-        step: 10,
+        step: 1,
         min: 100,
         max: 800,
         wrap: true,
