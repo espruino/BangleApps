@@ -24,6 +24,9 @@ Stores:
   * **10 Min** - Turn HRM on every 10 minutes (for each heath entry) and turn it off after 2 minutes, or when a good reading is found
   * **Always** - Keep HRM on all the time (more accurate recording, but reduces battery life to ~36 hours)
 * **HRM Stop Delay** - Default None. Adds a delay (in seconds) before turning the heart rate monitor off after a good reading is found. The initial reading at 90% confidence can sometimes be inaccurate. Adding a 10-30 second delay allows the sensor to settle and may provide a more accurate heart rate value.
+* **Wear Check** - Defaults to 'Movement'. Determines how the watch checks if it is being worn before turning on the heart rate monitor (to save battery).
+  * **Movement** - Uses accelerometer data (Z-axis orientation and last movement reading) to check if the watch is hardly moved and if the watch faces up.
+  * **Temperature (e.g., 25.0°C)** - Uses the internal temperature sensor. If the watch is warmer than this value (due to body heat), it assumes it is worn. This may give more accurate results for sleep tracking, as lying perfectly still in bed can falsely trigger the "Movement" check and prevent nighttime HRM readings.
 * **Daily Step Goal** - Default 10000, daily step goal for pedometer apps to use and for the step goal notification
 * **Step Goal Notification** - True if you want a notification when the daily step goal is reached
 
@@ -86,6 +89,7 @@ require("health").readDay(d, cb)
   * Calendar view showing steps per day
   * Yearly view
   * Heart rate 'zone' graph
+  * REM sleep detection: if the watch's movement is very low, but the heart rate is high (above a certain threshold, e.g. movement <= 55 and heartRate >= 100), then we can assume the user is in REM sleep. This is because during REM sleep, the body is mostly still, but the brain is active, leading to an elevated heart rate. This is just an approximation and may not be accurate for everyone, but it could provide some insight into sleep patterns without needing a dedicated sleep tracking algorithm.
   * .. other
 
 ## License
