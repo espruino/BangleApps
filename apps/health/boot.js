@@ -2,13 +2,22 @@
   let settings = require("Storage").readJSON("health.json", 1) || {};
   let hrm = 0|settings.hrm;
   let hrmTimeout = settings.hrmTimeout|0;
+  let wearCheckTemp = settings.wearCheckTemp|0;
   let accTimeout = false;
   if (hrm == 1 || hrm == 2) { // 1=every 3 minutes, 2=every 10 minutes
     let onHealth = function(h) {
       function startMeasurement() {
-        // if is charging, or hardly moved and face up/down, don't start HRM
-        if (Bangle.isCharging() ||
-            (Bangle.getHealthStatus("last").movement<100 && Math.abs(Bangle.getAccel().z)>0.99)) return;
+        if (Bangle.isCharging()) return; // if watch is charging => no need to start HRM
+        // Check if the watch is actually worn before starting the HRM
+        // As defined in health/settings.js: wearCheckTemp: 0 = Movement/Z-Axis, > 0 = Temperature check
+        if (wearCheckTemp > 0) {
+          // Temperature based check
+          if (E.getTemperature() < wearCheckTemp) return;
+        } else {
+          // Movement & Z-Axis based check: If the watch is hardly moved and faces up => assume not worn
+          if (Bangle.getHealthStatus("last").movement<100 && Math.abs(Bangle.getAccel().z)>0.99) return;
+        }
+
         // otherwise turn HRM on
         Bangle.setHRMPower(1, "health");
         setTimeout(() => {

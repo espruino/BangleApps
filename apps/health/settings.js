@@ -2,6 +2,7 @@
   var settings = Object.assign({
     hrm: 0,
     hrmTimeout: 0,
+    wearCheckTemp: 0, // 0 = Movement/Z-Axis, > 0 = Temperature check
     stepGoal: 10000,
     stepGoalNotification: false
   }, require("Storage").readJSON("health.json", true) || {});
@@ -39,6 +40,18 @@
       format: v => v === 0 ? /*LANG*/"None" : v + "s",
       onchange: v => {
         settings.hrmTimeout = v;
+        setSettings();
+      }
+    },
+
+    /*LANG*/"Wear Check": {
+      value: settings.wearCheckTemp || 0,
+      min: 0,
+      max: 40,
+      step: 0.5,
+      format: v => v === 0 ? /*LANG*/"Movement" : v.toFixed(1) + "°C",
+      onchange: v => {
+        settings.wearCheckTemp = v;
         setSettings();
       }
     },
