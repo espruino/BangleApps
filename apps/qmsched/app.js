@@ -213,14 +213,14 @@ function showEditMenu(index) {
     function getSched() {
       return { hr: hrs+(mins/60), mode: mode, days: days };
     }
-    menu[B2 ? "Save" : "> Save"] = function() {
+    menu[B2 ? /*LANG*/"Save" : /*LANG*/"> Save"] = function() {
       if (isNew) scheds.push(getSched());
       else scheds[index] = getSched();
       save();
       showMainMenu();
     };
     if (!isNew) {
-      menu[B2 ? "Delete" : "> Delete"] = function() {
+      menu[B2 ? /*LANG*/"Delete" : /*LANG*/"> Delete"] = function() {
         scheds.splice(index, 1);
         save();
         showMainMenu();
