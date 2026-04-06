@@ -25,6 +25,10 @@
       value:  !!settings.defocusOnLock,
       onchange: x => save('defocusOnLock', x),
     },
+    /*LANG*/'Health Category': {
+      value: !!settings.healthCategory,
+      onchange: x => save('healthCategory', x),
+    },
     /*LANG*/'HRM': {
       value: settings.hrmOn,
       min: 0, max: 1, step: 1,

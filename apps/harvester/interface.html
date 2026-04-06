@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <h2>Logs</h2>
+    <ul id="logs"></ul>
+
+    <h2>Categories</h2>
+    <table id="fruitful" class="my-2">
+      <caption style="caption-side: top;">Fruitful Categories</caption>
+      <thead><tr><th>Color</th><th>Title</th><th>Target</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <button id="addFruitful">Add New Fruitful</button>
+    <table id="decentering" class="my-2">
+      <caption style="caption-side: top;">Divergent Categories</caption>
+      <thead><tr><th>Color</th><th>Title</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <button id="addDecentering">Add New Divergent</button>
+    <div class="my-2">
+      <button disabled class="btn btn-default" id="btnSave">Save</button>
+      <button disabled class="btn btn-default" id="btnCancel">Cancel</button>
+    </div>
+    <datalist id="targets">
+      <option>5</option>
+      <option>10</option>
+      <option>15</option>
+      <option>20</option>
+      <option>25</option>
+      <option>30</option>
+      <option>45</option>
+      <option value="60">1:00</option>
+      <option value="75">1:15</option>
+      <option value="90">1:30</option>
+      <option value="105">1:45</option>
+      <option value="120">2:00</option>
+      <option value="150">2:30</option>
+      <option value="180">3:00</option>
+      <option value="210">3:30</option>
+      <option value="240">4:00</option>
+      <option value="270">4:30</option>
+      <option value="300">5:00</option>
+      <option value="360">6:00</option>
+      <option value="420">7:00</option>
+      <option value="480">8:00</option>
+      <option value="540">9:00</option>
+    </datalist>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script src="./loader-settings.js"></script>
+    <style>
+      input:invalid {
+        border: 2px solid red;
+      }
+    </style>
+  </body>
+</html>

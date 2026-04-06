@@ -33,20 +33,25 @@ const imgArrow = atob("CQmBAAgOBwfD47ndx+OA");
 const imgPause = atob("GBiBAP+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B//+B/w==");
 const imgPlay = atob("GBiBAIAAAOAAAPgAAP4AAP+AAP/gAP/4AP/+AP//gP//4P//+P///v///v//+P//4P//gP/+AP/4AP/gAP+AAP4AAPgAAOAAAIAAAA==");
 
+let lastDragB;
 function onDrag(event) {
   if (!timerRunning()) {
-    Bangle.buzz(40, 0.3);
     var diff = -Math.round(event.dy/5);
     if (event.x < timePickerLayout.hours.w) {
       diff *= 3600;
     } else if (event.x > timePickerLayout.mins.x && event.x < timePickerLayout.secs.x) {
       diff *= 60;
     }
-    updateTimePicker(diff);
+    if (diff && event.b && lastDragB) {
+      Bangle.buzz(40, 0.3);
+      updateTimePicker(diff);
+    }
   }
+  lastDragB = event.b;
 }
 
 function onTouch(button, xy) {
+  if (xy.type==2) return;
   if (xy.y > (timePickerLayout.btnStart.y||timerLayout.btnStart.y)) {
     Bangle.buzz(40, 0.3);
     onButton();
@@ -55,7 +60,6 @@ function onTouch(button, xy) {
   if (!timerRunning()) {
     var touchMidpoint = timePickerLayout.hours.y + timePickerLayout.hours.h/2;
     var diff = 0;
-    Bangle.buzz(40, 0.3);
     if (xy.y > 24 && xy.y < touchMidpoint - 10) {
       diff = 1;
     } else if (xy.y > touchMidpoint + 10 && xy.y < timePickerLayout.btnStart.y) {
@@ -66,7 +70,10 @@ function onTouch(button, xy) {
     } else if (xy.x > timePickerLayout.mins.x && xy.x < timePickerLayout.secs.x) {
       diff *= 60;
     }
-    updateTimePicker(diff);
+    if (diff) {
+      Bangle.buzz(40, 0.3);
+      updateTimePicker(diff);
+    }
   }
   
 }

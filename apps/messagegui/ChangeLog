@@ -124,3 +124,4 @@
 0.91: Ensure music messages are actually saved in the messages list so the currently playing track persists
       Use E.on("kill" event to ensure we always save messages before changing app
       Simplify message handling now messages lib automatically applies Bangle.messages
+0.92: Add support for displaying the time since the message was received using the 'date' parameter when pushing a message.

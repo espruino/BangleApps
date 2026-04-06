@@ -8,6 +8,7 @@
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "custom": "custom.html",
+  "author": "jdekarske",
   "storage": [
     {"name":"golfview.app.js","url":"golfview.js"},
     {"name":"golfview.img","url":"golfview-icon.js","evaluate":true}

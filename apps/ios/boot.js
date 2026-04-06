@@ -2,6 +2,27 @@ bleServiceOptions.ancs = true;
 bleServiceOptions.cts = true;
 if (NRF.amsIsActive) bleServiceOptions.ams = true; // amsIsActive was added at the same time as the "am" option
 Bangle.ancsMessageQueue = [];
+function formatANCSDate(d) {
+  if (!d || d.length < 13) return null;
+
+  const year = d.substring(0, 4);
+  const month = parseInt(d.substring(4, 6)) - 1;
+  const day = d.substring(6, 8);
+  const hour = d.substring(9, 11);
+  const min = d.substring(11, 13);
+  const sec = d.substring(13, 15) || "00";
+
+  const dateObj = new Date(year, month, day, hour, min, sec);
+
+  // Calculate offset in milliseconds
+  const offset = dateObj.getTimezoneOffset() * 60000;
+  
+  // Create a new date adjusted to match local time in UTC form
+  const localISODate = new Date(dateObj.getTime() - offset);
+
+  // Return the ISO string without the 'Z' (which denotes UTC)
+  return localISODate.toISOString().slice(0, -1);
+}
 
 /* Handle ANCS events coming in, and fire off 'notify' events
 when we actually have all the information we need */
@@ -261,7 +282,7 @@ E.on('notify',msg=>{
     myLocationJson.lon=locationJson.lon;
     myLocationJson.lat=locationJson.lat;
     myLocationJson.location=locationJson.city;
-    require("Storage").write("mylocation.json",myLocationJson);
+    require("Storage").writeJSON("mylocation.json",myLocationJson);
     
 
     return;
@@ -270,7 +291,7 @@ E.on('notify',msg=>{
   let name = "";
 
   // If setting is on/undefined and there is no exception to the detector
-  if (!settings.dontDetectNames && !appNames[msg.appId]) {
+  if (!settings.dontDetectNames && msg.appId && !appNames[msg.appId]) {
     
     let l = msg.appId.split(".");
     // get the last part of the ID
@@ -284,13 +305,13 @@ E.on('notify',msg=>{
     // capitalize (only if non-empty)
     if (name.length > 0) name = name[0].toUpperCase() + name.slice(1);
   }else{
-    // use exception or app id itself
-    name = appNames[msg.appId]||msg.appId;
+    // use exception, app id itself, or fallback to a blank string
+    name = appNames[msg.appId]||msg.appId||"";
   }
-  
   require("messages").pushMessage({
     t : msg.event,
     id : msg.uid,
+    date : formatANCSDate(msg.date),
     src : name,
     new : msg.new,
     title : msg.title&&Bangle.ancsConvertUTF8(msg.title),

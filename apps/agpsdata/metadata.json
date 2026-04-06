@@ -8,6 +8,7 @@
   "allow_emulator":true, 
   "supports": ["BANGLEJS2"],
   "readme":"README.md",
+  "author": "pidajo",
   "screenshots" : [ { "url":"screenshot.png" }, { "url":"screenshot2.png" } ],
   "storage": [
     {"name":"agpsdata.app.js","url":"app.js"},

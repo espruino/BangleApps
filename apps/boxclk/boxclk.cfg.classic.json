@@ -1,0 +1,108 @@
+{
+  "background": {
+    "type": "clockbg"
+  },
+  "items": [
+    {
+      "name": "Time",
+      "type": "time",
+      "prefix": "",
+      "suffix": "",
+      "position": {
+        "x": 0.507,
+        "y": 0.72
+      },
+      "appearance": {
+        "font": "6x8",
+        "fontSize": 5,
+        "outline": 3,
+        "textColor": "bgH",
+        "outlineColor": "fg",
+        "borderColor": "#f0f",
+        "boundary": {
+          "x": 0.5,
+          "y": -3.5
+        }
+      },
+      "options": {
+        "timeMode": "system",
+        "showSeconds": false
+      }
+    },
+    {
+      "name": "Day",
+      "type": "day",
+      "prefix": "",
+      "suffix": "",
+      "position": {
+        "x": 0.505,
+        "y": 0.225
+      },
+      "appearance": {
+        "font": "6x8",
+        "fontSize": 3,
+        "outline": 2,
+        "textColor": "bgH",
+        "outlineColor": "fg",
+        "borderColor": "#f0f",
+        "boundary": {
+          "x": 0.5,
+          "y": 1.5
+        }
+      },
+      "options": {
+        "short": false
+      }
+    },
+    {
+      "name": "Date",
+      "type": "date",
+      "prefix": "",
+      "suffix": "",
+      "position": {
+        "x": 0.5,
+        "y": 0.076
+      },
+      "appearance": {
+        "font": "6x8",
+        "fontSize": 2,
+        "outline": 2,
+        "textColor": "bgH",
+        "outlineColor": "fg",
+        "borderColor": "#f0f",
+        "boundary": {
+          "x": 0.5,
+          "y": 1
+        }
+      },
+      "options": {
+        "longMonth": true,
+        "showYear": false,
+        "suffix": true
+      }
+    },
+    {
+      "name": "Steps",
+      "type": "steps",
+      "prefix": "Steps: ",
+      "suffix": "",
+      "position": {
+        "x": 0.502,
+        "y": 0.926
+      },
+      "appearance": {
+        "font": "4x6",
+        "fontSize": 3,
+        "outline": 2,
+        "textColor": "bgH",
+        "outlineColor": "fg",
+        "borderColor": "#f0f",
+        "boundary": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "options": {}
+    }
+  ]
+}
