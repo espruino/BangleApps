@@ -9,7 +9,6 @@
   const CONFIG_PREFIX = "boxclk.cfg.";
   const CONFIG_SUFFIX = ".json";
   const DEFAULT_CONFIG = "default";
-  const CLKINFO_PLACEHOLDER = "clkinfo";
   const MULTI_TAP_MS = 500;
   const EDIT_ENTRY_TAPS = 3;
   const SAVE_EXIT_TAPS = 2;
@@ -109,11 +108,6 @@
 
   const normalizeBool = (value, defaultValue) => value === undefined ? defaultValue : !!value;
   const isClockInfoItem = item => item && item.type === "clkinfo";
-  const defaultItemName = type => {
-    if (type === "text") return "Custom Text";
-    if (type === "clkinfo") return "Clockinfo";
-    return type.charAt(0).toUpperCase() + type.slice(1);
-  };
 
   const uniqueItemName = (base, usedNames) => {
     base = (base || "Item").toString().trim() || "Item";
@@ -150,7 +144,7 @@
     }
     if (type === "clkinfo") {
       return {
-        font: "6x8",
+        font: "Vector",
         fontSize: 1,
         outline: 0,
         textColor: "#000",
@@ -234,7 +228,7 @@
     item = item || {};
     const type = ["time", "date", "day", "meridian", "battery", "steps", "text", "clkinfo"].includes(item.type) ? item.type : "text";
     const normalized = {
-      name: uniqueItemName(item.name || defaultItemName(type), usedNames),
+      name: uniqueItemName(item.name || (type === "clkinfo" ? "Clockinfo" : type.charAt(0).toUpperCase() + type.slice(1)), usedNames),
       type: type,
       prefix: type === "clkinfo" ? "" : (item.prefix || ""),
       suffix: type === "clkinfo" ? "" : (item.suffix || ""),
@@ -386,11 +380,10 @@
     } else if (item.type === "steps") {
       value = liveSteps;
     } else if (item.type === "clkinfo") {
-      value = CLKINFO_PLACEHOLDER;
+      return "clkinfo";
     } else {
       value = item.text || "";
     }
-    if (item.type === "clkinfo") return value;
     return (item.prefix || "") + value + (item.suffix || "");
   };
 
@@ -514,7 +507,7 @@
   };
 
   const getClockInfoRegion = item => {
-    const metrics = getItemMetrics(item, CLKINFO_PLACEHOLDER);
+    const metrics = getItemMetrics(item);
     const x1 = Math.max(0, Math.ceil(item._x + metrics.boundaryX1));
     const y1 = Math.max(0, Math.ceil(item._y + metrics.boundaryY1));
     const x2 = Math.min(width - 1, Math.floor(item._x + metrics.boundaryX2));
@@ -587,7 +580,7 @@
   };
 
   const drawClockInfo = (itm, info, options) => {
-    if (editMode) return;
+    if (editMode && !options.placeholder) return;
     const item = options.item;
     const x2 = options.x + options.w - 1;
     const y2 = options.y + options.h - 1;
@@ -746,7 +739,12 @@
 
     for (let i = 0; i < config.items.length; i++) {
       const item = config.items[i];
-      if (isClockInfoItem(item) && !editMode) continue;
+      if (isClockInfoItem(item)) {
+        if (!editMode) continue;
+        const region = getClockInfoRegion(item);
+        drawClockInfo(null, { text: "clkinfo" }, { item: item, x: region.x, y: region.y, w: region.w, h: region.h, focus: item === selectedItem, placeholder: true });
+        continue;
+      }
       const text = getDisplayText(item, now, !editMode);
       let layout;
       if (item === selectedItem) {

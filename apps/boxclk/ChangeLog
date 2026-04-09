@@ -22,5 +22,3 @@
 - [+] Keep on-watch drag editing with double-tap save
 - [+] Remove global Graphics monkeypatching to fix newer-firmware startup
 0.13: Add `clkinfo` boxes
-- [+] Use normal `clock_info` in watch mode
-- [+] Show `clkinfo` placeholder in layout mode

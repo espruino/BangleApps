@@ -2774,7 +2774,7 @@
       }
       if (type === "clkinfo") {
         return {
-          font: "6x8",
+          font: "Vector",
           fontSize: 1,
           outline: 0,
           textColor: "#000",
@@ -3842,6 +3842,7 @@
     }
 
     function getBaseTextMetrics(item, text) {
+      item = getPreviewRenderItem(item, text);
       const fontHeight = getFontHeight(item.appearance.font, item.appearance.fontSize || 1, item.appearance.fontFile);
       const indicator = hasPreviewChargeIndicator(item) ? getPreviewChargeIndicatorMetrics(fontHeight) : null;
       const stringWidth = getStringWidth(item, text);
@@ -3852,6 +3853,25 @@
         rawFontHeight: fontHeight,
         indicator: indicator
       };
+    }
+
+    function getPreviewRenderItem(item, text) {
+      if (!item || item.type !== "clkinfo") return item;
+      text = text == null ? "" : String(text);
+      const renderItem = { appearance: { font: "Vector", fontSize: 6 } };
+      const maxWidth = Math.max(8, Math.round((item.appearance.boundary && item.appearance.boundary.x) || 1) - 2);
+      const maxHeight = Math.max(8, Math.round((item.appearance.boundary && item.appearance.boundary.y) || 1) - 2);
+      const lineCount = text.split("\n").length;
+      let min = 6;
+      let max = Math.max(min, Math.min(32, maxHeight));
+      while (min < max) {
+        const size = (min + max + 1) >> 1;
+        renderItem.appearance.fontSize = size;
+        if (getStringWidth(renderItem, text) <= maxWidth && getFontHeight("Vector", size) * lineCount <= maxHeight) min = size;
+        else max = size - 1;
+      }
+      renderItem.appearance.fontSize = min;
+      return renderItem;
     }
 
     function measureRenderedTextBounds(item, text, textBoxWidth, textBoxHeight) {
@@ -4239,6 +4259,7 @@
     }
 
     function drawPreviewString(item, text, centerX, centerY, color) {
+      item = getPreviewRenderItem(item, text);
       const localMetrics = getBaseTextMetrics(item, text);
       const left = Math.trunc(-localMetrics.textWidth / 2);
       const top = Math.trunc(-localMetrics.fontHeight / 2);
