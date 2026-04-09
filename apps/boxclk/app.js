@@ -681,6 +681,16 @@
     widgets.swipeOn();
   };
 
+  const exitEditMode = save => {
+    resetTapSequence();
+    if (save) {
+      storage.writeJSON(configFilename(activeConfigName), serialiseConfig());
+    } else if (editMode) {
+      loadConfig(activeConfigName);
+    }
+    setEditMode(false);
+  };
+
   const setEditMode = value => {
     editMode = value;
     if (editMode) removeClockInfoMenus();
@@ -807,12 +817,10 @@
     if (editMode) {
       Bangle.setUI({
         mode: "custom",
-        clock: 1,
-        btn: process.env.HWVERSION === 2 ? function() {
+        back: function() {
           if (editPromptOpen) return;
-          resetTapSequence();
-          setEditMode(false);
-        } : undefined,
+          exitEditMode(false);
+        },
         redraw: draw,
         remove: removeClockUI
       });
@@ -865,8 +873,7 @@
     }
 
     registerTap(SAVE_EXIT_TAPS, () => {
-      storage.writeJSON(configFilename(activeConfigName), serialiseConfig());
-      setEditMode(false);
+      exitEditMode(true);
       g.drawImage(saveIcon, width / 2 - 24, height / 2 - 24);
       setTimeout(() => draw(), 1200);
     });
@@ -900,7 +907,7 @@
     if (!locked) return;
     resetTapSequence();
     if (editPromptOpen) editPromptOpen = false;
-    if (editMode || selectedItem) setEditMode(false);
+    if (editMode || selectedItem) exitEditMode(false);
   };
 
   const onStep = function() {
