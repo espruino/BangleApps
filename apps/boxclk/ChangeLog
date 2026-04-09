@@ -21,3 +21,4 @@
 - [+] Simplify watch settings to config selection and layout help
 - [+] Keep on-watch drag editing with double-tap save
 - [+] Remove global Graphics monkeypatching to fix newer-firmware startup
+0.13: Add `clkinfo` boxes

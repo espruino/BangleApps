@@ -30,12 +30,9 @@
   let liveBattery = 0;
   let liveSteps = 0;
   let liveCharging = false;
-  let touchHandler;
-  let dragHandler;
-  let lockHandler;
-  let stepHandler;
-  let chargingHandler;
   let fontCache = {};
+  let loadedBuiltinFonts = {};
+  let clockInfoMenus = [];
   let suppressRemoveCleanup = false;
   let cleanedUp = false;
 
@@ -110,6 +107,7 @@
   };
 
   const normalizeBool = (value, defaultValue) => value === undefined ? defaultValue : !!value;
+  const isClockInfoItem = item => item && item.type === "clkinfo";
 
   const uniqueItemName = (base, usedNames) => {
     base = (base || "Item").toString().trim() || "Item";
@@ -144,6 +142,17 @@
         boundary: { x: -0.5, y: -0.5 }
       };
     }
+    if (type === "clkinfo") {
+      return {
+        font: "Vector",
+        fontSize: 1,
+        outline: 0,
+        textColor: "#000",
+        outlineColor: "#fff",
+        borderColor: "#000",
+        boundary: { x: 70, y: 50 }
+      };
+    }
     return {
       font: "6x8",
       fontSize: type === "date" ? 1 : 2,
@@ -162,17 +171,17 @@
   };
 
   const syncDataListeners = () => {
-    if (stepHandler) Bangle.removeListener("step", stepHandler);
-    if (chargingHandler) Bangle.removeListener("charging", chargingHandler);
+    Bangle.removeListener("step", onStep);
+    Bangle.removeListener("charging", onCharging);
     if (config.f & 2) {
-      Bangle.on("step", stepHandler);
+      Bangle.on("step", onStep);
     }
     if (config.f & 4) {
-      Bangle.on("charging", chargingHandler);
+      Bangle.on("charging", onCharging);
     }
   };
 
-  const normalizeAppearance = appearance => {
+  const normalizeAppearance = (appearance, type) => {
     appearance = appearance || {};
     const font = appearance.font || "6x8";
     const boundaryX = appearance.boundary && isFinite(appearance.boundary.x) ? appearance.boundary.x : 0;
@@ -181,7 +190,7 @@
       font: font,
       fontFile: typeof appearance.fontFile === "string" && appearance.fontFile ? appearance.fontFile : undefined,
       fontSize: clampFontSize(font, appearance.fontSize),
-      outline: clamp(toInt(appearance.outline, 0), 0, 6),
+      outline: type === "clkinfo" ? 0 : clamp(toInt(appearance.outline, 0), 0, 6),
       textColor: appearance.textColor || "fg",
       outlineColor: appearance.outlineColor || "bg",
       borderColor: appearance.borderColor || "bgH",
@@ -217,18 +226,18 @@
 
   const normalizeItem = (item, usedNames) => {
     item = item || {};
-    const type = ["time", "date", "day", "meridian", "battery", "steps", "text"].includes(item.type) ? item.type : "text";
+    const type = ["time", "date", "day", "meridian", "battery", "steps", "text", "clkinfo"].includes(item.type) ? item.type : "text";
     const normalized = {
-      name: uniqueItemName(item.name || (type === "text" ? "Custom Text" : type.charAt(0).toUpperCase() + type.slice(1)), usedNames),
+      name: uniqueItemName(item.name || (type === "clkinfo" ? "Clockinfo" : type.charAt(0).toUpperCase() + type.slice(1)), usedNames),
       type: type,
-      prefix: item.prefix || "",
-      suffix: item.suffix || "",
+      prefix: type === "clkinfo" ? "" : (item.prefix || ""),
+      suffix: type === "clkinfo" ? "" : (item.suffix || ""),
       text: item.text || "",
       position: {
         x: clamp(item.position && isFinite(item.position.x) ? item.position.x : 0.5, 0, 1),
         y: clamp(item.position && isFinite(item.position.y) ? item.position.y : 0.5, 0, 1)
       },
-      appearance: normalizeAppearance(item.appearance || defaultAppearanceForType(type)),
+      appearance: normalizeAppearance(item.appearance || defaultAppearanceForType(type), type),
       options: normalizeOptions(type, item.options),
       _x: 0,
       _y: 0,
@@ -266,8 +275,8 @@
       return {
         name: item.name,
         type: item.type,
-        prefix: item.prefix || "",
-        suffix: item.suffix || "",
+        prefix: item.type === "clkinfo" ? undefined : (item.prefix || ""),
+        suffix: item.type === "clkinfo" ? undefined : (item.suffix || ""),
         text: item.type === "text" ? (item.text || "") : undefined,
         position: {
           x: +(clamp(item._x / width, 0, 1)).toFixed(3),
@@ -281,6 +290,7 @@
 
   const loadConfig = name => {
     name = sanitizeConfigName(name);
+    removeClockInfoMenus();
     fontCache = {};
     config = normalizeConfig(storage.readJSON(configFilename(name), 1));
     activeConfigName = name;
@@ -289,10 +299,23 @@
       config = normalizeConfig(storage.readJSON(DEFAULT_CONFIG_FILE, 1));
     }
     if (!config) throw new Error("Missing or invalid " + DEFAULT_CONFIG_FILE);
+    config.items.forEach(item => {
+      const font = item.appearance && item.appearance.font;
+      if (loadedBuiltinFonts[font] || !/^(?:5x7Numeric7Seg|6x12|7x11Numeric7Seg|8x12)$/.test(font)) return;
+      try {
+        if (font === "5x7Numeric7Seg") require("Font5x7Numeric7Seg").add(Graphics);
+        else if (font === "6x12") require("Font6x12").add(Graphics);
+        else if (font === "7x11Numeric7Seg") require("Font7x11Numeric7Seg").add(Graphics);
+        else if (font === "8x12") require("Font8x12").add(Graphics);
+        loadedBuiltinFonts[font] = true;
+      } catch (error) {
+      }
+    });
     bgImage = config.background && config.background.type === "image" && config.background.image ?
       storage.read(config.background.image) :
       null;
     systemTimeMode = (storage.readJSON("setting.json", 1) || {})["12hour"] ? 12 : 24;
+    if (!editMode) ensureClockInfoMenus();
   };
 
   const applyLiveState = data => {
@@ -356,6 +379,8 @@
       value = liveBattery;
     } else if (item.type === "steps") {
       value = liveSteps;
+    } else if (item.type === "clkinfo") {
+      return "clkinfo";
     } else {
       value = item.text || "";
     }
@@ -427,16 +452,16 @@
     const textY1 = getSpanStart(textHeight);
     const textX2 = getSpanEnd(textWidth);
     const textY2 = getSpanEnd(textHeight);
-    const boundaryWidth = Math.max(1, textWidth + boundary.x * 2);
-    const boundaryHeight = Math.max(1, textHeight + boundary.y * 2);
+    const boundaryWidth = isClockInfoItem(item) ? Math.max(1, toInt(boundary.x, 1)) : Math.max(1, textWidth + boundary.x * 2);
+    const boundaryHeight = isClockInfoItem(item) ? Math.max(1, toInt(boundary.y, 1)) : Math.max(1, textHeight + boundary.y * 2);
     const boundaryX1 = getSpanStart(boundaryWidth);
     const boundaryY1 = getSpanStart(boundaryHeight);
     const boundaryX2 = getSpanEnd(boundaryWidth);
     const boundaryY2 = getSpanEnd(boundaryHeight);
-    const unionX1 = Math.min(textX1, boundaryX1);
-    const unionY1 = Math.min(textY1, boundaryY1);
-    const unionX2 = Math.max(textX2, boundaryX2);
-    const unionY2 = Math.max(textY2, boundaryY2);
+    const unionX1 = isClockInfoItem(item) ? boundaryX1 : Math.min(textX1, boundaryX1);
+    const unionY1 = isClockInfoItem(item) ? boundaryY1 : Math.min(textY1, boundaryY1);
+    const unionX2 = isClockInfoItem(item) ? boundaryX2 : Math.max(textX2, boundaryX2);
+    const unionY2 = isClockInfoItem(item) ? boundaryY2 : Math.max(textY2, boundaryY2);
     item._metrics = {
       key: metricsKey,
       layout: layout,
@@ -481,6 +506,154 @@
     drawTextContent(item, text, x, y, textColor, layout);
   };
 
+  const getClockInfoRegion = item => {
+    const metrics = getItemMetrics(item);
+    const x1 = Math.max(0, Math.ceil(item._x + metrics.boundaryX1));
+    const y1 = Math.max(0, Math.ceil(item._y + metrics.boundaryY1));
+    const x2 = Math.min(width - 1, Math.floor(item._x + metrics.boundaryX2));
+    const y2 = Math.min(height - 1, Math.floor(item._y + metrics.boundaryY2));
+    return { x: x1, y: y1, w: Math.max(1, x2 - x1 + 1), h: Math.max(1, y2 - y1 + 1) };
+  };
+
+  const fillBackgroundRect = (x1, y1, x2, y2) => {
+    x1 = Math.max(0, x1 | 0);
+    y1 = Math.max(0, y1 | 0);
+    x2 = Math.min(width - 1, x2 | 0);
+    y2 = Math.min(height - 1, y2 | 0);
+    if (x1 > x2 || y1 > y2) return;
+    const bg = config.background || {};
+    if (bg.type === "image" && bgImage) {
+      g.setClipRect(x1, y1, x2, y2);
+      g.drawImage(bgImage, 0, 0);
+      g.setClipRect(0, 0, width - 1, height - 1);
+    } else if (bg.type === "solid") {
+      g.setBgColor(resolveColor(bg.color || "bg")).clearRect(x1, y1, x2, y2);
+    } else if (bg.type === "clockbg") {
+      background.fillRect(x1, y1, x2, y2);
+    } else {
+      g.setBgColor(g.theme.bg).clearRect(x1, y1, x2, y2);
+    }
+  };
+
+  const contrastColor = color => {
+    color = resolveColor(color);
+    const r = ((color >> 11) & 31) * 255 / 31;
+    const gValue = ((color >> 5) & 63) * 255 / 63;
+    const b = (color & 31) * 255 / 31;
+    return (r * 299 + gValue * 587 + b * 114) / 1000 >= 140 ? 0 : 65535;
+  };
+
+  const drawFocusBorder = (x1, y1, x2, y2, color) => {
+    g.setColor(resolveColor(color));
+    g.drawRect(x1, y1, x2, y2);
+    if (x2 - x1 > 2 && y2 - y1 > 2) {
+      g.setColor(contrastColor(color));
+      g.drawRect(x1 + 1, y1 + 1, x2 - 1, y2 - 1);
+    }
+  };
+
+  const clockInfoText = text => text == null ? "" : String(text);
+
+  const fitClockInfoText = (text, maxWidth, maxHeight) => {
+    text = clockInfoText(text);
+    const source = text;
+    const fits = candidate => g.stringWidth(candidate) <= maxWidth && g.getFontHeight() * candidate.split("\n").length <= maxHeight;
+    const wrap = () => {
+      let candidate = source;
+      if (candidate.indexOf(" ") >= 0) {
+        const lines = g.wrapString(candidate, maxWidth);
+        candidate = lines.slice(0, 2).join("\n") + (lines.length > 2 ? "..." : "");
+      }
+      return candidate;
+    };
+    let min = 6;
+    let max = Math.max(min, Math.min(32, maxHeight));
+    while (min < max) {
+      const size = (min + max + 1) >> 1;
+      g.setFontVector(size);
+      const candidate = wrap();
+      if (fits(candidate)) min = size;
+      else max = size - 1;
+    }
+    g.setFontVector(min);
+    return wrap();
+  };
+
+  const drawClockInfo = (itm, info, options) => {
+    if (editMode && !options.placeholder) return;
+    const item = options.item;
+    const x2 = options.x + options.w - 1;
+    const y2 = options.y + options.h - 1;
+    const innerX = options.x;
+    const innerY = options.y;
+    const innerX2 = x2;
+    const innerY2 = y2;
+    const innerW = innerX2 - innerX + 1;
+    const innerH = innerY2 - innerY + 1;
+    fillBackgroundRect(innerX, innerY, innerX2, innerY2);
+    g.setClipRect(innerX, innerY, innerX2, innerY2);
+    g.setColor(resolveColor(item.appearance.textColor)).setFontAlign(0, 0, 0);
+    let text = clockInfoText(info.text);
+    if (innerW > innerH * 1.35) {
+      const padding = 6;
+      const imgW = info.img ? 24 : 0;
+      const midY = innerY + Math.round(innerH / 2);
+      text = fitClockInfoText(text, Math.max(8, innerW - imgW - padding * (info.img ? 3 : 2)), Math.max(8, innerH - 4));
+      const startX = innerX + Math.max(0, Math.round((innerW - (imgW ? imgW + padding + g.stringWidth(text) : g.stringWidth(text))) / 2));
+      if (info.img) g.drawImage(info.img, startX, midY - 12);
+      g.setFontAlign(-1, 0, 0).drawString(text, startX + (imgW ? imgW + padding : 0), midY);
+    } else {
+      let textTop = innerY;
+      if (info.img) {
+        const scale = innerW >= 60 && innerH >= 68 ? 2 : 1;
+        require("clock_info").drawBorderedImage(info.img, innerX + Math.round((innerW - 24 * scale) / 2), innerY + 2, { scale: scale });
+        textTop = innerY + 24 * scale + 4;
+      }
+      const textAreaH = Math.max(8, innerY2 - textTop + 1);
+      text = fitClockInfoText(text, Math.max(8, innerW - 2), textAreaH);
+      g.setFontAlign(0, 0, 0).drawString(text, innerX + Math.round(innerW / 2), textTop + Math.round(textAreaH / 2));
+    }
+    g.setClipRect(0, 0, width - 1, height - 1);
+    if (options.focus) drawFocusBorder(options.x, options.y, x2, y2, item.appearance.borderColor);
+    g.setFontAlign(-1, -1, 0);
+  };
+
+  const removeClockInfoMenus = () => {
+    if (!clockInfoMenus.length) return;
+    const menus = clockInfoMenus;
+    clockInfoMenus = [];
+    menus.forEach(menu => menu.remove());
+    if ((0 | Bangle.CLKINFO_FOCUS) < 0) Bangle.CLKINFO_FOCUS = 0;
+  };
+
+  const ensureClockInfoMenus = () => {
+    if (editMode || clockInfoMenus.length) return;
+    const items = config.items.filter(isClockInfoItem);
+    if (!items.length) return;
+    const clockInfoItems = require("clock_info").load();
+    items.forEach(item => {
+      const region = getClockInfoRegion(item);
+      const menu = require("clock_info").addInteractive(clockInfoItems, {
+        app: "boxclk",
+        item: item,
+        x: region.x,
+        y: region.y,
+        w: region.w,
+        h: region.h,
+        draw: drawClockInfo
+      });
+      if (menu) clockInfoMenus.push(menu);
+    });
+  };
+
+  const touchHitsClockInfo = event => {
+    for (let i = 0; i < clockInfoMenus.length; i++) {
+      const menu = clockInfoMenus[i];
+      if (event.x >= menu.x && event.x <= menu.x + menu.w - 1 && event.y >= menu.y && event.y <= menu.y + menu.h - 1) return true;
+    }
+    return false;
+  };
+
   const resetTapSequence = () => {
     if (tapTimer) clearTimeout(tapTimer);
     tapTimer = null;
@@ -508,9 +681,22 @@
     widgets.swipeOn();
   };
 
+  const exitEditMode = save => {
+    resetTapSequence();
+    if (save) {
+      storage.writeJSON(configFilename(activeConfigName), serialiseConfig());
+    } else if (editMode) {
+      loadConfig(activeConfigName);
+    }
+    setEditMode(false);
+  };
+
   const setEditMode = value => {
     editMode = value;
+    if (editMode) removeClockInfoMenus();
     clearSelection();
+    if (!editMode) ensureClockInfoMenus();
+    installClockUI();
     draw();
   };
 
@@ -527,10 +713,12 @@
       }
     ).then(ok => {
       suppressRemoveCleanup = false;
-      installClockUI();
       editPromptOpen = false;
       if (ok) setEditMode(true);
-      else draw();
+      else {
+        installClockUI();
+        draw();
+      }
     });
   };
 
@@ -555,18 +743,29 @@
     }
     g.setFontAlign(-1, -1, 0);
 
+    let clockInfoMenuIndex = 0;
     for (let i = 0; i < config.items.length; i++) {
       const item = config.items[i];
+      if (isClockInfoItem(item)) {
+        if (!editMode) {
+          const menu = clockInfoMenus[clockInfoMenuIndex++];
+          if (menu) menu.redraw();
+          continue;
+        }
+        const region = getClockInfoRegion(item);
+        drawClockInfo(null, { text: "clkinfo" }, { item: item, x: region.x, y: region.y, w: region.w, h: region.h, focus: item === selectedItem, placeholder: true });
+        continue;
+      }
       const text = getDisplayText(item, now, !editMode);
       let layout;
       if (item === selectedItem) {
         const metrics = getItemMetrics(item, text);
-        g.setColor(resolveColor(item.appearance.borderColor));
-        g.drawRect(
+        drawFocusBorder(
           Math.max(0, Math.ceil(item._x + metrics.boundaryX1)),
           Math.max(0, Math.ceil(item._y + metrics.boundaryY1)),
           Math.min(width - 1, Math.floor(item._x + metrics.boundaryX2)),
-          Math.min(height - 1, Math.floor(item._y + metrics.boundaryY2))
+          Math.min(height - 1, Math.floor(item._y + metrics.boundaryY2)),
+          item.appearance.borderColor
         );
         layout = metrics.layout;
       }
@@ -586,13 +785,14 @@
     if (cleanedUp) return;
     cleanedUp = true;
     E.removeListener("kill", cleanupApp);
-    if (touchHandler) Bangle.removeListener("touch", touchHandler);
-    if (dragHandler) Bangle.removeListener("drag", dragHandler);
-    if (lockHandler) Bangle.removeListener("lock", lockHandler);
-    if (stepHandler) Bangle.removeListener("step", stepHandler);
-    if (chargingHandler) Bangle.removeListener("charging", chargingHandler);
+    Bangle.removeListener("touch", onTouch);
+    Bangle.removeListener("drag", onDrag);
+    Bangle.removeListener("lock", onLock);
+    Bangle.removeListener("step", onStep);
+    Bangle.removeListener("charging", onCharging);
     if (drawTimeout) clearTimeout(drawTimeout);
     if (tapTimer) clearTimeout(tapTimer);
+    removeClockInfoMenus();
     drawTimeout = undefined;
     tapTimer = null;
     tapCount = 0;
@@ -602,30 +802,42 @@
     suppressRemoveCleanup = false;
     widgets.show();
     background.unload();
-    touchHandler = undefined;
-    dragHandler = undefined;
-    lockHandler = undefined;
-    stepHandler = undefined;
-    chargingHandler = undefined;
     fontCache = {};
     delete global.__boxclkApply;
   };
 
-  const installClockUI = () => {
-    Bangle.setUI({
-      mode: "clock",
-      redraw: draw,
-      remove: function() {
-        if (suppressRemoveCleanup) return;
-        cleanupApp();
-      }
-    });
+  const removeClockUI = function() {
+    if (suppressRemoveCleanup) return;
+    cleanupApp();
   };
 
-  touchHandler = (_, event) => {
+  const installClockUI = () => {
+    const previousSuppressRemoveCleanup = suppressRemoveCleanup;
+    suppressRemoveCleanup = true;
+    if (editMode) {
+      Bangle.setUI({
+        mode: "custom",
+        back: function() {
+          if (editPromptOpen) return;
+          exitEditMode(false);
+        },
+        redraw: draw,
+        remove: removeClockUI
+      });
+    } else {
+      Bangle.setUI({
+        mode: "clock",
+        remove: removeClockUI
+      });
+    }
+    suppressRemoveCleanup = previousSuppressRemoveCleanup;
+  };
+
+  const onTouch = function(_, event) {
     if (editPromptOpen) return;
 
     if (!editMode) {
+      if (touchHitsClockInfo(event)) return;
       registerTap(EDIT_ENTRY_TAPS, showEditModePrompt);
       return;
     }
@@ -661,14 +873,13 @@
     }
 
     registerTap(SAVE_EXIT_TAPS, () => {
-      storage.writeJSON(configFilename(activeConfigName), serialiseConfig());
-      setEditMode(false);
+      exitEditMode(true);
       g.drawImage(saveIcon, width / 2 - 24, height / 2 - 24);
       setTimeout(() => draw(), 1200);
     });
   };
 
-  dragHandler = event => {
+  const onDrag = function(event) {
     if (!editMode) return;
     const item = selectedItem;
     if (!item || !event.b) return;
@@ -692,18 +903,18 @@
     draw();
   };
 
-  lockHandler = locked => {
+  const onLock = function(locked) {
     if (!locked) return;
     resetTapSequence();
     if (editPromptOpen) editPromptOpen = false;
-    if (editMode || selectedItem) setEditMode(false);
+    if (editMode || selectedItem) exitEditMode(false);
   };
 
-  stepHandler = () => {
+  const onStep = function() {
     if (!editMode && !selectedItem) draw();
   };
 
-  chargingHandler = () => {
+  const onCharging = function() {
     if (!editMode && !selectedItem) draw();
   };
 
@@ -719,9 +930,9 @@
 
   Bangle.loadWidgets();
   widgets.swipeOn();
-  Bangle.on("touch", touchHandler);
-  Bangle.on("drag", dragHandler);
-  Bangle.on("lock", lockHandler);
+  Bangle.on("touch", onTouch);
+  Bangle.on("drag", onDrag);
+  Bangle.on("lock", onLock);
   syncDataListeners();
   draw();
 }
