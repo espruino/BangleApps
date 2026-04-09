@@ -5965,18 +5965,26 @@
         selectedConfig: sanitizeConfigName(state.selectedConfig || DEFAULT_CONFIG)
       });
       const changedConfig = !configExistsOnWatch(configName) || serializedConfig !== JSON.stringify(baselineConfigs[configName] || null);
+      const backgroundImage = config.background && config.background.type === "image" ? config.background.image : null;
       const currentUpload = state.backgroundUploads[configName];
+      const effectiveUpload = currentUpload && currentUpload.fileName ? currentUpload :
+        (backgroundImage && !bundledImageInfo(backgroundImage) ? Object.values(state.backgroundUploads).find(upload => {
+          return upload && upload.fileName === backgroundImage && upload.data !== undefined;
+        }) : null);
       const baselineUpload = baselineUploads[configName];
-      const needsBackgroundUpload = !!(currentUpload && currentUpload.fileName && !bundledImageInfo(currentUpload.fileName) && (
-        !isBackgroundFileOnWatch(currentUpload.fileName) ||
-        !baselineUpload ||
-        baselineUpload.fileName !== currentUpload.fileName ||
-        baselineUpload.data !== currentUpload.data
+      const matchingBaselineUpload = effectiveUpload ? Object.values(baselineUploads).find(upload => {
+        return upload && upload.fileName === effectiveUpload.fileName && upload.data === effectiveUpload.data;
+      }) : null;
+      const baselineReferenceUpload = baselineUpload || matchingBaselineUpload;
+      const needsBackgroundUpload = !!(effectiveUpload && effectiveUpload.fileName && !bundledImageInfo(effectiveUpload.fileName) && (
+        !isBackgroundFileOnWatch(effectiveUpload.fileName) ||
+        !baselineReferenceUpload ||
+        baselineReferenceUpload.fileName !== effectiveUpload.fileName ||
+        baselineReferenceUpload.data !== effectiveUpload.data
       ));
       const shouldSetTheme = !selectedThemeMatchesWatch();
       const tasks = [];
       const bundledImagesToWrite = {};
-      const backgroundImage = config.background && config.background.type === "image" ? config.background.image : null;
       if (backgroundImage && bundledImageInfo(backgroundImage) && !isBackgroundFileOnWatch(backgroundImage)) {
         bundledImagesToWrite[backgroundImage] = true;
       }
@@ -6011,8 +6019,8 @@
         });
       });
 
-      if (needsBackgroundUpload && currentUpload && currentUpload.fileName) {
-        tasks.push(next => writeStorageChecked(currentUpload.fileName, currentUpload.data, next));
+      if (needsBackgroundUpload && effectiveUpload && effectiveUpload.fileName) {
+        tasks.push(next => writeStorageChecked(effectiveUpload.fileName, effectiveUpload.data, next));
       }
 
       customFontsToWrite.forEach(font => {
@@ -6063,7 +6071,7 @@
         const deletedBackgroundFiles = state.deletedBackgroundFiles.slice();
         const deletedFontFiles = state.deletedFontFiles.slice();
         const uploadedBackgroundFiles = []
-          .concat(needsBackgroundUpload && currentUpload && currentUpload.fileName ? [currentUpload.fileName] : [])
+          .concat(needsBackgroundUpload && effectiveUpload && effectiveUpload.fileName ? [effectiveUpload.fileName] : [])
           .concat(Object.keys(bundledImagesToWrite));
         const uploadedFontFiles = customFontsToWrite.map(font => font.fileName);
         state.deletedConfigFiles = [];

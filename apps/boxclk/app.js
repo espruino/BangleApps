@@ -646,10 +646,6 @@
     });
   };
 
-  const redrawClockInfoMenus = () => {
-    clockInfoMenus.forEach(menu => menu.redraw());
-  };
-
   const touchHitsClockInfo = event => {
     for (let i = 0; i < clockInfoMenus.length; i++) {
       const menu = clockInfoMenus[i];
@@ -737,10 +733,15 @@
     }
     g.setFontAlign(-1, -1, 0);
 
+    let clockInfoMenuIndex = 0;
     for (let i = 0; i < config.items.length; i++) {
       const item = config.items[i];
       if (isClockInfoItem(item)) {
-        if (!editMode) continue;
+        if (!editMode) {
+          const menu = clockInfoMenus[clockInfoMenuIndex++];
+          if (menu) menu.redraw();
+          continue;
+        }
         const region = getClockInfoRegion(item);
         drawClockInfo(null, { text: "clkinfo" }, { item: item, x: region.x, y: region.y, w: region.w, h: region.h, focus: item === selectedItem, placeholder: true });
         continue;
@@ -760,8 +761,6 @@
       }
       drawItemText(item, text, layout);
     }
-
-    if (!editMode) redrawClockInfoMenus();
 
     if (drawTimeout) clearTimeout(drawTimeout);
     if (editMode || selectedItem || editPromptOpen) return;
