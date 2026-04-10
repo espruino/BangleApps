@@ -87,8 +87,10 @@ To make sure the app accurately provides sleep information, it's a good idea to 
         _0:00_ / _1:00_ / ... / __12:00__ / ... / _23:00_
       - __App Timeout__ | app specific lock timeout
         __0s__ / _10s_ / ... / _120s_
-      - __Prefer HRM__ | En-/disables use of HRM readings if they are available for determining sleep states.
-        _on_ / __off__
+      - __Sleep Mode__ | Defines which sensors are used to determine your sleeping state.
+        - **Movement:** Uses only the accelerometer (default).
+        - **HRM:** Uses the heart rate monitor if available (falls back to movement if no pulse is found).
+        - **Both:** Requires *both* the movement and HRM thresholds to indicate sleep. Helps prevent false positives when sitting quietly at a desk.
       - __HRM Thresholds__ submenu
         Changes take effect from now on, not retrospective! HRM works only if polling is enabled in `Health` settings
         - __Deep Sleep__ | deep sleep threshold
