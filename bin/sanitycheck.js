@@ -49,7 +49,7 @@ var jsparse = (() => {
     return str => {throw new Error("no acorn")};
   }
 
-  return str => acorn.parse(str, { ecmaVersion: 2020 });
+  return str => acorn.parse(str, { ecmaVersion: 2022 });
 })();
 
 

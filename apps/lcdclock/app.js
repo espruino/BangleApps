@@ -87,7 +87,6 @@ e  dddddddddddddd  c
 });
 */
 
-
 { // must be inside our own scope here so that when we are unloaded everything disappears
   // we also define functions using 'let fn = function() {..}' for the same reason. function decls are global
 let drawTimeout;
@@ -123,7 +122,7 @@ let clockInfoDraw = (itm, info, options) => {
 
   if (info.img) g.drawImage(info.img, options.x+2, options.y+2);
   var title = clockInfoItems[options.menuA].name;
-  var text = info.text.toString().toUpperCase().replace(/[^A-Z0-9-.]/g, "");
+  var text = info.text.toString().toUpperCase().replace(/[^A-Z0-9.:-]/g, "");
   if (title!="Bangle") g.setFontAlign(1,0).drawString(title.toUpperCase(), options.x+options.w-2, options.y+14);
   if (g.setFont("7Seg:2").stringWidth(text)+8>options.w) g.setFont("7Seg");
   g.setFontAlign(0,0).drawString(text, options.x+options.w/2, options.y+40);
@@ -169,5 +168,3 @@ let clockInfoItems = require("clock_info").load();
 let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, { app:"lcdclock", x:R.x, y:R.y, w:midX-2, h:barY-R.y-2, draw : clockInfoDraw});
 let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, {  app:"lcdclock", x:midX+2, y:R.y, w:midX-3, h:barY-R.y-2, draw : clockInfoDraw});
 }
-
-

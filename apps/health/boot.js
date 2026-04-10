@@ -89,8 +89,8 @@ Bangle.on("health", health => {
     print("HEALTH ERR: Daily summary already written!");
     return;
   }
-  health = { steps:0, bpm:0, movement:0, movCnt:0, bpmCnt:0};
-  var records = DB_RECORDS_PER_HR*24;
+  health = { steps:0, bpm:0, movement:0, bpmCnt:0, battery:0, temperature:0, altitude:0, isCharging:false };
+  var records = DB_RECORDS_PER_HR*24, cnt = 0;
   for (var i=0;i<records;i++) {
     var dt = f.substr(recordPos, inf.r);
     if (dt!=inf.clr) {
@@ -98,14 +98,22 @@ Bangle.on("health", health => {
       health.steps += h.steps
       health.bpm += h.bpm;
       health.movement += h.movement;
-      health.movCnt++;
+      health.battery += h.battery;
+      health.temperature += h.temperature;
+      health.altitude += h.altitude;
+      health.isCharging |= h.isCharging;
+      cnt++;
       if (h.bpm) health.bpmCnt++;
     }
     recordPos -= inf.r;
   }
   if (health.bpmCnt)
     health.bpm /= health.bpmCnt;
-  if (health.movCnt)
-    health.movement /= health.movCnt;
+  if (cnt) {
+    health.movement /= cnt;
+    health.battery  /= cnt;
+    health.temperature /= cnt;
+    health.altitude /= cnt;
+  }
   require("Storage").write(fn, inf.encode(health), sumPos);
 })});

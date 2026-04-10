@@ -9,6 +9,7 @@
   "screenshots": [{"url":"screenshot.png"}],
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
+  "author": "pancake",
   "storage": [
     {"name":"inspire.app.js","url":"app.js"},
     {"name":"inspire.img","url":"app-icon.js","evaluate":true}

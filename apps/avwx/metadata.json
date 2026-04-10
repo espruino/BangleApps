@@ -7,6 +7,7 @@
   "icon": "avwx.png",
   "type": "module",
   "tags": "outdoors",
+  "author": "Flaparoo",
   "supports": ["BANGLEJS2"],
   "provides_modules": ["avwx"],
   "readme": "README.md",

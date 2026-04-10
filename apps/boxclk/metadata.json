@@ -1,8 +1,8 @@
 {
   "id": "boxclk",
   "name": "Box Clock",
-  "version": "0.11",
-  "description": "A customizable clock with configurable text boxes that can be positioned to show your favorite background",
+  "version": "0.12",
+  "description": "A customizable clock with multiple layouts, clockbg support, and a web editor",
   "icon": "app.png",
   "dependencies" : { "clockbg":"module" },
   "screenshots": [
@@ -11,17 +11,23 @@
     {"url":"screenshot-2.png"}
   ],
   "type": "clock",
-  "tags": "clock",
+  "tags": "clock,clockbg",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
+  "interface": "interface.html",
   "allow_emulator": true,
   "storage": [
     {"name":"boxclk.app.js","url":"app.js"},
     {"name":"boxclk.settings.js","url":"settings.js"},
+    {"name":"boxclk-brunoace.pbf","url":"boxclk-brunoace.pbf"},
     {"name":"boxclk.img","url":"icon.js","evaluate":true},
     {"name":"boxclk.beachhouse.img","url":"beachhouse.js","evaluate":true}
   ],
   "data": [
-    {"name":"boxclk.json","url":"boxclk.json"}
+    {"name":"boxclk.settings.json","url":"boxclk.settings.json"},
+    {"name":"boxclk.default-cfg.json","url":"boxclk.cfg.default.json"},
+    {"wildcard":"boxclk.cfg.*.json"},
+    {"wildcard":"boxclk.bg.*.img"},
+    {"wildcard":"boxclk.*.pbf"}
   ]
 }

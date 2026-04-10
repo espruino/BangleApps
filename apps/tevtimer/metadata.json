@@ -3,7 +3,7 @@
   "name": "tev's timer",
   "shortName":"tev's timer",
   "icon": "app.png",
-  "version": "0.01",
+  "version": "0.02",
   "description": "A countdown timer app with interval and repeat features",
   "screenshots": [ {"url": "screenshot.png" } ],
   "readme": "README.md",

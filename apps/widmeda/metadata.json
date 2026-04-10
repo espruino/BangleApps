@@ -9,6 +9,7 @@
   "tags": "health,medical,tools,widget",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
+  "author": "jt-nti",
   "screenshots": [{"url":"screenshot_light.png"}],
   "storage": [
     {"name":"widmeda.wid.js","url":"widget.js"}
