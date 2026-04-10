@@ -20,6 +20,23 @@ global.sleeplog = {
   }, require("Storage").readJSON("sleeplog.json", true) || {})
 };
 
+// --- MIGRATION LOGIC (Added in v0.26) ---
+// Catch users who updated from <=v0.25 but haven't opened the settings app yet.
+// Translates the old boolean preference to the new sleepMode in RAM.
+// WHY: In v0.25 and earlier, the HRM setting was a simple boolean called 'preferHRM'.
+// In v0.26, this was replaced by a 3-state 'sleepMode' (0=Movement, 1=HRM, 2=Both).
+// WHAT: This block silently migrates existing users who haven't opened the settings page, yet
+// to the new format, ensuring they don't lose their preference and the app doesn't crash.
+// REMOVAL: This block can be safely removed in a future major update (e.g., v1.0 or 
+// after ~1 year), once we can assume all active users have updated past v0.25.
+// CONSEQUENCE: If removed, users updating directly from <=v0.25 to that future version 
+// will simply lose their old 'preferHRM' preference and default to sleepMode 0.
+if ("preferHRM" in global.sleeplog.conf) {
+  global.sleeplog.conf.sleepMode = global.sleeplog.conf.preferHRM ? 1 : 0;
+  delete global.sleeplog.conf.preferHRM; // clean up RAM
+}
+// ---------------------------------------
+
 // check if service is enabled
 if (global.sleeplog.conf.enabled) {
   // assign functions to global object
