@@ -17,6 +17,7 @@ let colorData = {
   Silver: { multiplier: 0.01, tolerance: 10, hex: '#C0C0C0' },
   None: { tolerance: 20 },
 };
+let validTolerances = [1, 2, 0.5, 0.25, 0.1, 0.05, 5, 10];
 
 function clearScreen() { // Except Back Button
   g.clearRect(24, 0, 176, 24);
@@ -88,9 +89,7 @@ function resistanceToColorBands(resistance, tolerance) {
 
 // Helper function to get color band based on property and value
 function getBandColor(property, value) {
-  let entry = Object.entries(colorData).find(function (entry) {
-    return entry[1][property] === value;
-  });
+  let entry = Object.entries(colorData).find(entry => entry[1][property] === value);
   return entry ? entry[1].hex : undefined;
 }
 
@@ -107,8 +106,6 @@ function drawResistor(colorBands, tolerance) {
   let bandWidth = (resistorBodyWidth - (numColorBands * 2 - 1)) / numColorBands; // width of each band, accounting for the spacing
   let bandHeight = resistorBodyHeight; // height of each band
   let currentX = resistorStartX; // starting point for the first band
-  // Define the tolerance values that will trigger the fourth band
-  let validTolerances = [1, 2, 0.5, 0.25, 0.1, 0.05, 5, 10];
   for (let i = 0; i < numColorBands; i++) {
     // Skip the fourth band and its outlines if the tolerance is not in the valid list
     if (i === 3 && !validTolerances.includes(tolerance)) continue;
@@ -172,8 +169,6 @@ function drawResistance(resistance, tolerance) {
   // Draw the Ohm symbol to the right of the unit
   g.drawImage(omega(), omegaX, y - 13, { scale: 0.45 });
   g.setFontAlign(1, 0).setFont("Vector", 27);
-  // Define the tolerance values that will trigger the fourth band
-  let validTolerances = [1, 2, 0.5, 0.25, 0.1, 0.05, 5, 10];
   // Check if the tolerance is not in the valid list, and if it's not, set it to 20
   if (!validTolerances.includes(tolerance)) {
     tolerance = 20;
@@ -186,6 +181,10 @@ function drawResistance(resistance, tolerance) {
 (function () {
   let colorBands;
   let inputColorBands;
+  let mainMenu;
+  let pickerBandNumber;
+  let pickerNames;
+  let pickerColors;
   let settings = {
     resistance: 0,
     tolerance: 0,
@@ -203,56 +202,86 @@ function drawResistance(resistance, tolerance) {
     inputColorBands = null;
   }
 
-  function showColorBandMenu(bandNumber) {
-    let colorBandMenu = {
-      '': {
-        'title': `Band ${bandNumber}`
-      },
-      '< Back': function () {
-        E.showMenu(colorEntryMenu);
-      },
-    };
-
-    // Populate colorBandMenu with colors from colorData
-    for (let color in colorData) {
-      if (bandNumber === 1 || bandNumber === 2) {
-        if (color !== 'None' && color !== 'Gold' && color !== 'Silver') {
-          (function (color) {
-            colorBandMenu[color] = function () {
-              setBandColor(bandNumber, color);
-            };
-          })(color);
-        }
-      } else if (bandNumber === 3) {
-        if (color !== 'None') {
-          (function (color) {
-            colorBandMenu[color] = function () {
-              setBandColor(bandNumber, color);
-            };
-          })(color);
-        }
-      } else if (bandNumber === 4) {
-        if (colorData[color].hasOwnProperty('tolerance')) {
-          (function (color) {
-            colorBandMenu[color] = function () {
-              setBandColor(bandNumber, color);
-            };
-          })(color);
-        }
-      }
-    }
-    return E.showMenu(colorBandMenu);
+  function openColorBandPicker(bandNumber) {
+    E.showMenu();
+    showColorBandPicker(bandNumber);
   }
 
   function setBandColor(bandNumber, color) {
     settings.colorBands[bandNumber - 1] = color; // arrays are 0-indexed
-    // Update the color band in the colorEntryMenu
-    colorEntryMenu[`${bandNumber}:`].value = color;
-    showColorEntryMenu();
+  }
+
+  function closeColorBandPicker() {
+    // Wait until the picker touch handler unwinds before rebuilding the menu.
+    setTimeout(showColorEntryMenu, 0);
+  }
+
+  function setBandColorFromPicker(color) {
+    setBandColor(pickerBandNumber, pickerNames[pickerColors.indexOf(color)]);
+  }
+
+  function getPickerColors(bandNumber) {
+    let names = [];
+    let colors = [];
+    for (let name in colorData) {
+      if ((bandNumber < 3 && name !== 'None' && name !== 'Gold' && name !== 'Silver') ||
+          (bandNumber === 3 && name !== 'None') ||
+          (bandNumber === 4 && colorData[name].tolerance !== undefined)) {
+        names.push(name);
+        // Pass "None" through as the picker's empty tile sentinel.
+        colors.push(colorData[name].hex || name);
+      }
+    }
+    return {
+      names: names,
+      colors: colors
+    };
+  }
+
+  function showColorBandPicker(bandNumber) {
+    let pickerColorsData = getPickerColors(bandNumber);
+    pickerBandNumber = bandNumber;
+    pickerNames = pickerColorsData.names;
+    pickerColors = pickerColorsData.colors;
+    require("colorpicker").show({
+      colors: pickerColors,
+      emptyColor: 'None',
+      showPreview: false,
+      back: closeColorBandPicker,
+      onSelect: setBandColorFromPicker
+    });
+  }
+
+  function getColorSwatch(hexColor, filled, crossed) {
+    let b = Graphics.createArrayBuffer(16, 16, 4, { msb: true });
+    // Palette slots: background, fill, border, red X.
+    b.palette = new Uint16Array([g.toColor(g.theme.bg), g.toColor(hexColor), g.toColor(g.theme.fg), g.toColor("#f00")]);
+    if (filled) {
+      b.setColor(1).fillRect(1, 1, 14, 14);
+    }
+    b.setColor(2).drawRect(0, 0, 15, 15);
+    if (crossed) {
+      b.setColor(3).drawLine(2, 2, 13, 13);
+      b.drawLine(13, 2, 2, 13);
+    }
+    // Menus treat "\0" + image data as an inline icon in the label.
+    return "\0" + b.asImage("string");
+  }
+
+  function formatBandMenuItem(bandNumber) {
+    let colorName = settings.colorBands[bandNumber - 1];
+    let color = colorData[colorName];
+    if (color && color.hex) return getColorSwatch(color.hex, true, false);
+    if (colorName === 'None') return getColorSwatch(g.theme.bg, false, true);
+    return "";
+  }
+
+  function getBandMenuLabel(bandNumber) {
+    return bandNumber + ": " + formatBandMenuItem(bandNumber);
   }
 
   function showColorEntryMenu() {
-    colorEntryMenu = {
+    let menu = {
       '': {
         'title': 'Band Color'
       },
@@ -260,48 +289,30 @@ function drawResistance(resistance, tolerance) {
         clearScreen();
         E.showMenu(mainMenu);
       },
-      '1:': {
-        value: settings.colorBands[0] || "",
-        format: (v) => `${v}`,
-        onchange: () => {
-          clearScreen();
-          setTimeout(() => showColorBandMenu(1), 5);
-        }
-      },
-      '2:': {
-        value: settings.colorBands[1] || "",
-        format: (v) => `${v}`,
-        onchange: () => {
-          clearScreen();
-          setTimeout(() => showColorBandMenu(2), 5);
-        }
-      },
-      '3:': {
-        value: settings.colorBands[2] || "",
-        format: (v) => `${v}`,
-        onchange: () => {
-          clearScreen();
-          setTimeout(() => showColorBandMenu(3), 5);
-        }
-      },
-      '4:': {
-        value: settings.colorBands[3] || "",
-        format: (v) => `${v}`,
-        onchange: () => {
-          clearScreen();
-          setTimeout(() => showColorBandMenu(4), 5);
-        }
-      },
       'Draw Resistor': function () {
-        inputColorBands = settings.colorBands;
+        if (!settings.colorBands[0] || !settings.colorBands[1] || !settings.colorBands[2]) {
+          return;
+        }
+        inputColorBands = settings.colorBands.slice();
         let values = colorBandsToResistance(inputColorBands);
         settings.resistance = values[0];
         settings.tolerance = values[1];
         showDrawingMenu();
       }
     };
-
-    E.showMenu(colorEntryMenu);
+    menu[getBandMenuLabel(1)] = function () {
+      openColorBandPicker(1);
+    };
+    menu[getBandMenuLabel(2)] = function () {
+      openColorBandPicker(2);
+    };
+    menu[getBandMenuLabel(3)] = function () {
+      openColorBandPicker(3);
+    };
+    menu[getBandMenuLabel(4)] = function () {
+      openColorBandPicker(4);
+    };
+    E.showMenu(menu);
   }
 
   function showMultiplierMenu() {
@@ -316,15 +327,11 @@ function drawResistance(resistance, tolerance) {
 
     // Generate menu items for each Multiplier value in colorData
     for (let color in colorData) {
-      if (colorData[color].hasOwnProperty('multiplier')) {
+      if (colorData[color].multiplier !== undefined) {
         let multiplierValue = parseFloat(colorData[color].multiplier); // Parse the multiplier as a float
         let formattedMultiplier = formatMultiplier(multiplierValue);
         multiplierMenu[`${formattedMultiplier}`] = () => {
           settings.multiplier = multiplierValue;
-          // Update the value of 'Multiplier' in resistanceEntryMenu
-          resistanceEntryMenu["Multiplier"] = function () {
-            showMultiplierMenu();
-          };
           showResistanceEntryMenu();
         };
       }
@@ -355,14 +362,10 @@ function drawResistance(resistance, tolerance) {
 
     // Generate menu items for each tolerance value in colorData
     for (let color in colorData) {
-      if (colorData[color].hasOwnProperty('tolerance')) {
+      if (colorData[color].tolerance !== undefined) {
         let tolerance = parseFloat(colorData[color].tolerance); // Parse the tolerance as a float
         toleranceMenu[`${tolerance}%`] = () => {
           settings.tolerance = tolerance;
-          // Update the value of 'Tolerance (%)' in resistanceEntryMenu
-          resistanceEntryMenu["Tolerance (%)"] = function () {
-            showToleranceMenu();
-          };
           showResistanceEntryMenu();
         };
       }
@@ -373,7 +376,7 @@ function drawResistance(resistance, tolerance) {
   function drawResistorAndResistance(resistance, tolerance) {
     if (inputColorBands) {
       colorBands = inputColorBands.map(color => {
-        if (colorData.hasOwnProperty(color)) {
+        if (colorData[color]) {
           return colorData[color].hex;
         } else {
           return;
@@ -448,7 +451,7 @@ function drawResistance(resistance, tolerance) {
     drawResistorAndResistance(resistance, tolerance);
   }
 
-  let mainMenu = {
+  mainMenu = {
     '': {
       'title': 'Resistor Calc'
     },
