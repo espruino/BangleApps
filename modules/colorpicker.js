@@ -2,6 +2,7 @@ exports.show = function(options) {
   var colors;
   var isPicking=true;
   var previewTimeout;
+  var emptyColor = options.emptyColor;
   if (!options.colors||options.colors.length==0) {
     colors = [
       "#000000", "#808080", "#AAAAAA", "#FFFFFF",
@@ -28,6 +29,17 @@ exports.show = function(options) {
   var selectedColors=options.startingSelection?options.startingSelection:[];
   var insetX = (CW * 0.15) | 0;
   var insetY = (CH * 0.15) | 0;
+
+  function drawEmptyTile(x1, y1, x2, y2) {
+    g.setColor(g.theme.bg)
+     .fillRect(x1 + 1, y1 + 1, x2 - 1, y2 - 1)
+     .setColor(g.theme.fg)
+     .drawRect(x1, y1, x2, y2)
+     .setColor("#f00")
+     .drawLine(x1 + 2, y1 + 2, x2 - 2, y2 - 2)
+     .drawLine(x2 - 2, y1 + 2, x1 + 2, y2 - 2);
+  }
+
   function draw() {
     g.clearRect(rect);
     for (var i = 0; i < n; i++) {
@@ -45,10 +57,14 @@ exports.show = function(options) {
           CH -= insetY * 2;
         }
       }
-      g.setColor(colors[i])
-       .fillRect(x + 1, y + 1, x + CW - 1, y + CH - 1)
-       .setColor(g.theme.fg)
-       .drawRect(x, y, x + CW, y + CH);
+      if (colors[i] === emptyColor) {
+        drawEmptyTile(x, y, x + CW, y + CH);
+      } else {
+        g.setColor(colors[i])
+         .fillRect(x + 1, y + 1, x + CW - 1, y + CH - 1)
+         .setColor(g.theme.fg)
+         .drawRect(x, y, x + CW, y + CH);
+      }
       CH=oldCH;
       CW=oldCW;
     }
