@@ -13,8 +13,7 @@
   };
 
   const prettifyConfigName = name => {
-    if (name === DEFAULT_CONFIG) return "Default";
-    return name.replace(/[-_]+/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+    return (name || DEFAULT_CONFIG).replace(/[-_]+/g, " ");
   };
 
   const compareConfigNames = (a, b) => {
@@ -87,7 +86,7 @@
       addMenuItem(menu, (name === selectedConfig ? "* " : "") + prettifyConfigName(name), () => {
         selectedConfig = name;
         saveSettings();
-        showConfigMenu();
+        showMenu();
       });
     });
 
