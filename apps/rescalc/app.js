@@ -182,6 +182,8 @@ function drawResistance(resistance, tolerance) {
   let colorBands;
   let inputColorBands;
   let mainMenu;
+  let colorEntryMenu;
+  let colorEntryMenuScroll = 0;
   let pickerBandNumber;
   let pickerNames;
   let pickerColors;
@@ -200,9 +202,14 @@ function drawResistance(resistance, tolerance) {
     settings = emptySettings;
     colorBands = null;
     inputColorBands = null;
+    colorEntryMenu = undefined;
+    colorEntryMenuScroll = 0;
   }
 
   function openColorBandPicker(bandNumber) {
+    if (colorEntryMenu && colorEntryMenu.scroller) {
+      colorEntryMenuScroll = colorEntryMenu.scroller.scroll;
+    }
     E.showMenu();
     showColorBandPicker(bandNumber);
   }
@@ -265,24 +272,16 @@ function drawResistance(resistance, tolerance) {
     return bandNumber + ": " + formatBandMenuItem(bandNumber);
   }
 
-  function showColorEntryMenu() {
+  function showColorEntryMenu(scroll) {
+    if (scroll !== undefined) colorEntryMenuScroll = scroll;
     let menu = {
       '': {
-        'title': 'Band Color'
+        'title': 'Band Color',
+        'scroll': colorEntryMenuScroll
       },
       '< Back': function () {
         clearScreen();
         E.showMenu(mainMenu);
-      },
-      'Draw Resistor': function () {
-        if (!settings.colorBands[0] || !settings.colorBands[1] || !settings.colorBands[2]) {
-          return;
-        }
-        inputColorBands = settings.colorBands.slice();
-        let values = colorBandsToResistance(inputColorBands);
-        settings.resistance = values[0];
-        settings.tolerance = values[1];
-        showDrawingMenu();
       }
     };
     menu[getBandMenuLabel(1)] = function () {
@@ -297,7 +296,17 @@ function drawResistance(resistance, tolerance) {
     menu[getBandMenuLabel(4)] = function () {
       openColorBandPicker(4);
     };
-    E.showMenu(menu);
+    menu['Draw Resistor'] = function () {
+      if (!settings.colorBands[0] || !settings.colorBands[1] || !settings.colorBands[2]) {
+        return;
+      }
+      inputColorBands = settings.colorBands.slice();
+      let values = colorBandsToResistance(inputColorBands);
+      settings.resistance = values[0];
+      settings.tolerance = values[1];
+      showDrawingMenu();
+    };
+    colorEntryMenu = E.showMenu(menu);
   }
 
   function showMultiplierMenu() {
