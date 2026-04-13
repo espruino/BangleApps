@@ -211,11 +211,6 @@ function drawResistance(resistance, tolerance) {
     settings.colorBands[bandNumber - 1] = color; // arrays are 0-indexed
   }
 
-  function closeColorBandPicker() {
-    // Wait until the picker touch handler unwinds before rebuilding the menu.
-    setTimeout(showColorEntryMenu, 0);
-  }
-
   function setBandColorFromPicker(color) {
     setBandColor(pickerBandNumber, pickerNames[pickerColors.indexOf(color)]);
   }
@@ -226,10 +221,9 @@ function drawResistance(resistance, tolerance) {
     for (let name in colorData) {
       if ((bandNumber < 3 && name !== 'None' && name !== 'Gold' && name !== 'Silver') ||
           (bandNumber === 3 && name !== 'None') ||
-          (bandNumber === 4 && colorData[name].tolerance !== undefined)) {
+          (bandNumber === 4 && name !== 'None' && colorData[name].tolerance !== undefined)) {
         names.push(name);
-        // Pass "None" through as the picker's empty tile sentinel.
-        colors.push(colorData[name].hex || name);
+        colors.push(colorData[name].hex);
       }
     }
     return {
@@ -245,25 +239,17 @@ function drawResistance(resistance, tolerance) {
     pickerColors = pickerColorsData.colors;
     require("colorpicker").show({
       colors: pickerColors,
-      emptyColor: 'None',
       showPreview: false,
-      back: closeColorBandPicker,
+      back: showColorEntryMenu,
       onSelect: setBandColorFromPicker
     });
   }
 
-  function getColorSwatch(hexColor, filled, crossed) {
-    let b = Graphics.createArrayBuffer(16, 16, 4, { msb: true });
-    // Palette slots: background, fill, border, red X.
-    b.palette = new Uint16Array([g.toColor(g.theme.bg), g.toColor(hexColor), g.toColor(g.theme.fg), g.toColor("#f00")]);
-    if (filled) {
-      b.setColor(1).fillRect(1, 1, 14, 14);
-    }
+  function getColorSwatch(hexColor) {
+    let b = Graphics.createArrayBuffer(16, 16, 2, { msb: true });
+    b.palette = new Uint16Array([g.toColor(g.theme.bg), g.toColor(hexColor), g.toColor(g.theme.fg), g.toColor(g.theme.fg)]);
+    b.setColor(1).fillRect(1, 1, 14, 14);
     b.setColor(2).drawRect(0, 0, 15, 15);
-    if (crossed) {
-      b.setColor(3).drawLine(2, 2, 13, 13);
-      b.drawLine(13, 2, 2, 13);
-    }
     // Menus treat "\0" + image data as an inline icon in the label.
     return "\0" + b.asImage("string");
   }
@@ -271,8 +257,7 @@ function drawResistance(resistance, tolerance) {
   function formatBandMenuItem(bandNumber) {
     let colorName = settings.colorBands[bandNumber - 1];
     let color = colorData[colorName];
-    if (color && color.hex) return getColorSwatch(color.hex, true, false);
-    if (colorName === 'None') return getColorSwatch(g.theme.bg, false, true);
+    if (color && color.hex) return getColorSwatch(color.hex);
     return "";
   }
 
