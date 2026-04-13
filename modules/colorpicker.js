@@ -1,8 +1,8 @@
 exports.show = function(options) {
   var colors;
   var isPicking=true;
+  var isClosing=false;
   var previewTimeout;
-  var emptyColor = options.emptyColor;
   if (!options.colors||options.colors.length==0) {
     colors = [
       "#000000", "#808080", "#AAAAAA", "#FFFFFF",
@@ -29,17 +29,6 @@ exports.show = function(options) {
   var selectedColors=options.startingSelection?options.startingSelection:[];
   var insetX = (CW * 0.15) | 0;
   var insetY = (CH * 0.15) | 0;
-
-  function drawEmptyTile(x1, y1, x2, y2) {
-    g.setColor(g.theme.bg)
-     .fillRect(x1 + 1, y1 + 1, x2 - 1, y2 - 1)
-     .setColor(g.theme.fg)
-     .drawRect(x1, y1, x2, y2)
-     .setColor("#f00")
-     .drawLine(x1 + 2, y1 + 2, x2 - 2, y2 - 2)
-     .drawLine(x2 - 2, y1 + 2, x1 + 2, y2 - 2);
-  }
-
   function draw() {
     g.clearRect(rect);
     for (var i = 0; i < n; i++) {
@@ -57,14 +46,10 @@ exports.show = function(options) {
           CH -= insetY * 2;
         }
       }
-      if (colors[i] === emptyColor) {
-        drawEmptyTile(x, y, x + CW, y + CH);
-      } else {
-        g.setColor(colors[i])
-         .fillRect(x + 1, y + 1, x + CW - 1, y + CH - 1)
-         .setColor(g.theme.fg)
-         .drawRect(x, y, x + CW, y + CH);
-      }
+      g.setColor(colors[i])
+       .fillRect(x + 1, y + 1, x + CW - 1, y + CH - 1)
+       .setColor(g.theme.fg)
+       .drawRect(x, y, x + CW, y + CH);
       CH=oldCH;
       CW=oldCW;
     }
@@ -80,11 +65,17 @@ exports.show = function(options) {
     return colors[i];
   }
 
-  function remove() {
+  function cleanup() {
     if(previewTimeout){
       clearTimeout(previewTimeout);
       previewTimeout=null;
     }
+  }
+
+  function closePicker() {
+    if (isClosing) return;
+    isClosing = true;
+    Bangle.setUI();
     options.back();
   }
 
@@ -103,9 +94,9 @@ exports.show = function(options) {
             clearTimeout(previewTimeout);
             previewTimeout=null;
           }
-          previewTimeout=setTimeout(remove, 0.7 * 1000);
+          previewTimeout=setTimeout(closePicker, 0.7 * 1000);
         } else {
-          remove();
+          closePicker();
         }
       }else{
         if(Bangle.haptic) Bangle.haptic();
@@ -123,10 +114,10 @@ exports.show = function(options) {
 
   Bangle.setUI({
     mode: "custom",
-    touch: function(n, e) { onTouch(n, e); },
-    btn: function(n) { remove(); },
-    back: remove,
-    remove: remove,
+    touch: onTouch,
+    btn: closePicker,
+    back: closePicker,
+    remove: cleanup,
     redraw: draw
   });
 
