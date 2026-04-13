@@ -89,7 +89,6 @@ require("health").readDay(d, cb)
   * Calendar view showing steps per day
   * Yearly view
   * Heart rate 'zone' graph
-  * REM sleep detection: if the watch's movement is very low, but the heart rate is high (above a certain threshold, e.g. movement <= 55 and heartRate >= 100), then we can assume the user is in REM sleep. This is because during REM sleep, the body is mostly still, but the brain is active, leading to an elevated heart rate. This is just an approximation and may not be accurate for everyone, but it could provide some insight into sleep patterns without needing a dedicated sleep tracking algorithm.
   * .. other
 
 ## License
