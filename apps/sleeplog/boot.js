@@ -16,9 +16,26 @@ global.sleeplog = {
     wearTemp: 19.5,
     hrmDeepTh: 60,
     hrmLightTh: 74,
-    preferHRM: false
+    sleepMode: 0
   }, require("Storage").readJSON("sleeplog.json", true) || {})
 };
+
+// --- MIGRATION LOGIC (Added in v0.26) ---
+// Catch users who updated from <=v0.25 but haven't opened the settings app yet.
+// Translates the old boolean preference to the new sleepMode in RAM.
+// WHY: In v0.25 and earlier, the HRM setting was a simple boolean called 'preferHRM'.
+// In v0.26, this was replaced by a 3-state 'sleepMode' (0=Movement, 1=HRM, 2=Both).
+// WHAT: This block silently migrates existing users who haven't opened the settings page, yet
+// to the new format, ensuring they don't lose their preference and the app doesn't crash.
+// REMOVAL: This block can be safely removed in a future major update (e.g., v1.0 or 
+// after ~1 year), once we can assume all active users have updated past v0.25.
+// CONSEQUENCE: If removed, users updating directly from <=v0.25 to that future version 
+// will simply lose their old 'preferHRM' preference and default to sleepMode 0.
+if ("preferHRM" in global.sleeplog.conf) {
+  global.sleeplog.conf.sleepMode = global.sleeplog.conf.preferHRM ? 1 : 0;
+  delete global.sleeplog.conf.preferHRM; // clean up RAM
+}
+// ---------------------------------------
 
 // check if service is enabled
 if (global.sleeplog.conf.enabled) {
@@ -159,16 +176,26 @@ if (global.sleeplog.conf.enabled) {
       if (!data.movement&&!data.bpm) return;
       // add timestamp rounded to 10min, corrected to 10min ago
       data.timestamp = data.timestamp || ((Date.now() / 6E5 | 0) - 1) * 6E5;
-      // add preliminary status depending on charging and movement thresholds
+      // add preliminary status depending on charging, movement, and HRM thresholds
       // 1 = not worn, 2 = awake, 3 = light sleep, 4 = deep sleep
-      if(data.bpm && global.sleeplog.conf.preferHRM){
-        data.status = Bangle.isCharging() ? 1 :
-          data.bpm <= global.sleeplog.conf.hrmDeepTh ? 4 :
-          data.bpm <= global.sleeplog.conf.hrmLightTh ? 3 : 2;
-      }else{
-        data.status = Bangle.isCharging() ? 1 :
-          data.movement <= global.sleeplog.conf.deepTh ? 4 :
-          data.movement <= global.sleeplog.conf.lightTh ? 3 : 2;
+      var conf = global.sleeplog.conf;
+      if (Bangle.isCharging()) {
+        data.status = 1;
+      } else {
+        // Calculate theoretical status for both sensors independently
+        var hStatus = data.bpm ? (data.bpm <= conf.hrmDeepTh ? 4 : (data.bpm <= conf.hrmLightTh ? 3 : 2)) : 0;
+        var mStatus = data.movement <= conf.deepTh ? 4 : (data.movement <= conf.lightTh ? 3 : 2);
+
+        if (conf.sleepMode === 1 && data.bpm) {
+          // 1: HRM only (Fallback to movement if HRM fails)
+          data.status = hStatus;
+        } else if (conf.sleepMode === 2 && data.bpm) {
+          // 2: Require Both (The "more awake" sensor wins)
+          data.status = Math.min(hStatus, mStatus);
+        } else {
+          // 0: Movement only (or fallback if HRM fails in mode 1/2)
+          data.status = mStatus;
+        }
       }
 
       // check if changing to deep sleep from non sleeping

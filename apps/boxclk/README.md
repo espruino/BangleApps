@@ -1,6 +1,6 @@
 # Box Clock
 
-Box Clock is a customizable Bangle.js 2 clock built around named layouts. Use the App Loader customizer to arrange boxes in a live preview, save multiple layouts, and switch between them on the watch.
+Box Clock is a customizable Bangle.js 2 clock built around named layouts. Use the App Loader interface to arrange boxes and `clkinfo` regions in a live preview, save multiple layouts, and switch between them on the watch.
 
 ## Why Use It
 
@@ -12,7 +12,7 @@ Box Clock is a customizable Bangle.js 2 clock built around named layouts. Use th
 ## Quick Start
 
 1. Install Box Clock from the App Loader.
-2. Open the `Customizer`.
+2. Open the interface.
 3. Pick a layout, or create a new one from an existing preset.
 4. Drag boxes on the preview, edit their text and appearance, and choose a background.
 5. Upload the result to the watch.
@@ -24,7 +24,7 @@ You do not need to edit JSON for the normal workflow. The web editor is the main
 
 Box Clock stores its face as named layouts.
 
-It installs with a default layout. The customizer also includes optional example layouts that you can add separately.
+It installs with a default layout. The interface also includes optional example layouts that you can add separately.
 
 Each saved layout is independent, so you can keep multiple layouts and switch between them from the watch.
 
@@ -48,13 +48,21 @@ If you want a layout-specific look instead, you can pick:
 
 In the web editor you can:
 
-- add boxes for time, date, day, meridian, battery, steps, or custom text
+- add boxes for time, date, day, meridian, battery, steps, `clkinfo`, or custom text
 - drag boxes directly on the watch preview
 - resize text and box boundaries
 - duplicate, reorder, and delete boxes
 - rename layouts
 - duplicate layouts
+- import custom `.pbf` font files
 - upload backgrounds and preview them before sending them to the watch
+
+## Font Tools
+
+If you want to build your own `.pbf` fonts for Box Clock, these are the main resources:
+
+- [Google Fonts](https://fonts.google.com/)
+- [Espruino Font Converter](https://www.espruino.com/Font+Converter)
 
 ## On-Watch Editing
 
@@ -66,6 +74,8 @@ If you only need a quick position tweak on the watch:
 - double-tap the background to save and exit
 
 The web editor is still the better option for full customization.
+
+`clkinfo` boxes work normally on the watch and show a `clkinfo` placeholder while layout mode is active.
 
 ## Compatibility
 
