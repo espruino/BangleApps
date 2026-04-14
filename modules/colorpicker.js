@@ -1,6 +1,7 @@
 exports.show = function(options) {
   var colors;
   var isPicking=true;
+  var isClosing=false;
   var previewTimeout;
   if (!options.colors||options.colors.length==0) {
     colors = [
@@ -64,11 +65,17 @@ exports.show = function(options) {
     return colors[i];
   }
 
-  function remove() {
+  function cleanup() {
     if(previewTimeout){
       clearTimeout(previewTimeout);
       previewTimeout=null;
     }
+  }
+
+  function closePicker() {
+    if (isClosing) return;
+    isClosing = true;
+    Bangle.setUI();
     options.back();
   }
 
@@ -87,9 +94,9 @@ exports.show = function(options) {
             clearTimeout(previewTimeout);
             previewTimeout=null;
           }
-          previewTimeout=setTimeout(remove, 0.7 * 1000);
+          previewTimeout=setTimeout(closePicker, 0.7 * 1000);
         } else {
-          remove();
+          closePicker();
         }
       }else{
         if(Bangle.haptic) Bangle.haptic();
@@ -107,10 +114,10 @@ exports.show = function(options) {
 
   Bangle.setUI({
     mode: "custom",
-    touch: function(n, e) { onTouch(n, e); },
-    btn: function(n) { remove(); },
-    back: remove,
-    remove: remove,
+    touch: onTouch,
+    btn: closePicker,
+    back: closePicker,
+    remove: cleanup,
     redraw: draw
   });
 
