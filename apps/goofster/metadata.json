@@ -14,5 +14,6 @@
     {"name":"goofster.app.js","url":"app.js"},
     {"name":"goofster.settings.js","url":"settings.js"},
     {"name":"goofster.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "data": [{"name":"goofster.settings.json"}]
 }
