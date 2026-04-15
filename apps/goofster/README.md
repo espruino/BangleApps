@@ -1,4 +1,5 @@
-# Goofster by LochieDoesStuff
+# Goofster
+##### By LochieDoesStuff
 
 ## What is a Goofster
 
