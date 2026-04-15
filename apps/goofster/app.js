@@ -124,7 +124,6 @@ function draw() {
   
   // display widgets
   if (s.widgetsOn==true){
-   // Bangle.loadWidgets();
     Bangle.drawWidgets();
   }
 }
