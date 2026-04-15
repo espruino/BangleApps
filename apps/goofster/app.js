@@ -104,16 +104,12 @@ function draw() {
   var mEye = { w: width*3/4, h: height/2.5, r:width/4.5 };
 
 
-  // Reset the state of the graphics library
   g.reset();
-  // Clear the area where we want to draw the time
-  //g.setBgColor('#9BFF77');
   g.setBgColor(s.bgColor);
-  //g.setBgColor('#5BFF84');
   g.clearRect(0,0,width,height);
   //g.setBgColor('#55FFAA');
   // draw the current time
-  g.drawString(time, 50, 50);
+  //g.drawString(time, 50, 50);
   //g.drawCircleAA(60, 80, 20);
   //hour
   //drawCircleStroke(hEye.w,hEye.h,hEye.r,2,"#FFFFFF");
@@ -126,9 +122,9 @@ function draw() {
   //nose
   noseDraw();
   
-  // Load and display widgets
+  // display widgets
   if (s.widgetsOn==true){
-    Bangle.loadWidgets();
+   // Bangle.loadWidgets();
     Bangle.drawWidgets();
   }
 }
@@ -148,3 +144,7 @@ var secondInterval = setInterval(draw, 1000);
 
 // Show launcher when middle button pressed
 Bangle.setUI("clock");
+if (s.widgetsOn==true){
+    Bangle.loadWidgets();
+    //Bangle.drawWidgets();
+}
