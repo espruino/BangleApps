@@ -11,8 +11,6 @@
         require('Storage').writeJSON(FILE, settings);
     }
 
-    const CHOICES = ["Zero", "One", "Two", "Three"];
-
     var color_options = [
         'Green', 'Orange', 'Cyan', 'Purple', 'Red', 'Blue', 'Yellow', 'White',
         'Purple', 'Pink', 'Light Green', 'Brown', 'Turquoise', 'Magenta', 'Lime',
