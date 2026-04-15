@@ -1,0 +1,16 @@
+{
+  "id": "goofster",
+  "name": "Goofster",
+  "type":"clock",
+  "icon":"goofster.img",
+  "version":"1.00",
+  "description": "This is Goofster, his left eye knows hours, his right eye knows minutes and he does not know what seconds are.",
+  "tags": "clock",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "src":"goofster.app.js",
+  "storage": [
+    {"name":"goofster.app.js","url":"app.js"},
+    {"name":"goofster.settings.js","url":"settings.js"},
+    {"name":"goofster.img","url":"app-icon.js","evaluate":true}
+  ]
+}
