@@ -8,6 +8,7 @@
   "tags": "clock",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "src":"goofster.app.js",
+  "readme":"README.md",
   "storage": [
     {"name":"goofster.app.js","url":"app.js"},
     {"name":"goofster.settings.js","url":"settings.js"},
