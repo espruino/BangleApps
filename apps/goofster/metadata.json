@@ -9,6 +9,11 @@
   "tags": "clock",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme":"README.md",
+  "screenshots": [
+    {"url":"screenshot_1.png"},
+    {"url":"screenshot_2.png"},
+    {"url":"screenshot_3.png"},
+    {"url":"screenshot_4.png"}],
   "storage": [
     {"name":"goofster.app.js","url":"app.js"},
     {"name":"goofster.settings.js","url":"settings.js"},
