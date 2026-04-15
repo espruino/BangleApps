@@ -18,7 +18,7 @@
         setTimeout(startMeasurement, 200000);
         setTimeout(startMeasurement, 400000);
       }
-    }
+    };
     Bangle.on("health", onHealth);
     Bangle.on("HRM", (h) => {
       // as soon as we have a decent HRM reading, turn it off
@@ -67,11 +67,11 @@ Bangle.on("health", health => {
 
   var rec = getRecordIdx(d);
   var fn = getRecordFN(d);
-  var inf, f = require("Storage").read(fn);
+  var inf, dt, f = require("Storage").read(fn);
 
   if (f!==undefined) {
     inf = require("health").getDecoder(f);
-    var dt = f.substr(DB_HEADER_LEN+(rec*inf.r), inf.r);
+    dt = f.substr(DB_HEADER_LEN+(rec*inf.r), inf.r);
     if (dt!=inf.clr) {
       print("HEALTH ERR: Already written!");
       return;
@@ -92,10 +92,10 @@ Bangle.on("health", health => {
   health = { steps:0, bpm:0, movement:0, bpmCnt:0, battery:0, temperature:0, altitude:0, isCharging:false };
   var records = DB_RECORDS_PER_HR*24, cnt = 0;
   for (var i=0;i<records;i++) {
-    var dt = f.substr(recordPos, inf.r);
+    dt = f.substr(recordPos, inf.r);
     if (dt!=inf.clr) {
       var h = inf.decode(dt);
-      health.steps += h.steps
+      health.steps += h.steps;
       health.bpm += h.bpm;
       health.movement += h.movement;
       health.battery += h.battery;
