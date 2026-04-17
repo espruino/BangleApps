@@ -1,5 +1,3 @@
-const storage = require('Storage');
-
 // Try to load fonts, but don't fail if they're not available (emulator compatibility)
 try { require("Font6x12").add(Graphics); } catch(e) {}
 try { require("Font8x12").add(Graphics); } catch(e) {}
@@ -11,11 +9,6 @@ function bigThenSmall(big, small, x, y) {
   x += g.stringWidth(big);
   g.setFont("6x8", 2);
   g.drawString(small, x, y);
-}
-
-function getBackgroundImage() {
-  // Cartoon face background - we'll create this
-  return null; // Placeholder for now
 }
 
 function drawSmileShape(x, y, width, height, thickness) {
