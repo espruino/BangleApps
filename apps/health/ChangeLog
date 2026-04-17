@@ -44,3 +44,4 @@
       Fix daily summary for movement (was not scaling down correctly)
 0.38: Calculate daily summaries for temperature, battery, charging and altitude
 0.39: Update minified JS, so changes from 0.38 take effect
+0.40: Added setting to delay turning off HRM after a good reading to improve accuracy
