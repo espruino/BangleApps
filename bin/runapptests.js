@@ -114,8 +114,67 @@ var emu = require(BASE_DIR+"/core/lib/emulator.js");
 // Last set of text received
 var lastTxt;
 
+// Track whether emulator is ready (has output a response to the last command)
+var emuReady = true;
+
 function getSanitizedLastLine(){
   return emu.getLastLine().replaceAll("\r", "");
+}
+
+// Check if a line indicates the emulator has finished processing a command
+function isResponseLine(line) {
+  return line.startsWith('=') || line.startsWith('Uncaught') || line.startsWith('ERROR');
+}
+
+// Wait for emulator to finish processing by running idle loop
+// For commands that produce a response (=value), checks for that
+// For other operations, just ensures idle loop has run enough times
+function waitForResponse(maxIterations = 50) {
+  let lastLine = '';
+  for (let i = 0; i < maxIterations; i++) {
+    emu.idle();
+    const line = getSanitizedLastLine();
+    if (isResponseLine(line)) {
+      emuReady = true;
+      return line;
+    }
+    lastLine = line;
+  }
+  // Even if we didn't see a response line, mark as ready after running idle
+  emuReady = true;
+  return lastLine;
+}
+
+// Mark emulator as busy (command sent, waiting for response)
+function markBusy() {
+  emuReady = false;
+}
+
+// Send a command and wait for response
+function txAndWait(data) {
+  if (data.includes('\n')) {
+    markBusy();
+  }
+  emu.tx(data);
+  waitForResponse();
+}
+
+// Factory reset with safety checks
+function safeFactoryReset() {
+  // Ensure emulator is ready before resetting (previous commands complete)
+  if (!emuReady) {
+    waitForResponse();
+  }
+  if (!emuReady) {
+    throw new Error(
+      "safeFactoryReset() called while emulator is still processing. " +
+      "Previous commands did not complete in time."
+    );
+  }
+  
+  emu.factoryReset();
+  // factoryReset sends reset(), wait for it to complete
+  waitForResponse();
 }
 
 function ERROR(s) {
@@ -187,6 +246,7 @@ function wrap(func, id){
   }(${func}));\n`;
 
   emu.tx(wrappingCode);
+  waitForResponse();
 }
 
 function assertCall(step){
@@ -241,12 +301,14 @@ function runStep(step, subtest, test, state){
       p = p.then(() => {
         console.log(`> LOADING FILE "${step.fn}"`);
         emu.tx(`load(${JSON.stringify(step.fn)})\n`);
+        waitForResponse();
       });
       break;
     case "cmd" :
       p = p.then(() => {
         console.log(`> SENDING JS \`${step.js}\``, step.text ? "- " + step.text : "");
         emu.tx(`${step.js}\n`);
+        waitForResponse();
       });
       break;
     case "wrap" :
@@ -266,6 +328,7 @@ function runStep(step, subtest, test, state){
         }, step.obj || {});
         console.log(`> GB with`, verbose ? "event " + JSON.stringify(obj, null, null) : "type " + obj.t);
         emu.tx(`GB(${JSON.stringify(obj)})\n`);
+        waitForResponse();
       });
       break;
     case "emit" :
@@ -276,6 +339,7 @@ function runStep(step, subtest, test, state){
         console.log(`> EMIT "${step.event}" on ${parent} with parameters ${JSON.stringify(step.paramsArray, null, null)}`);
         
         emu.tx(`${parent}.emit.apply(${parent}, ${args})\n`);
+        waitForResponse();
       });
       break;
     case "eval" :
@@ -302,9 +366,13 @@ function runStep(step, subtest, test, state){
       });
       break;
     case "resetCall":
-      console.log(`> RESET CALL ${step.id}`, step.text ? "- " + step.text : "");
-      emu.tx(`global.APPTESTS.funcCalls.${step.id} = 0;\n`);
-      emu.tx(`global.APPTESTS.funcArgs.${step.id} = undefined;\n`);
+      p = p.then(() => {
+        console.log(`> RESET CALL ${step.id}`, step.text ? "- " + step.text : "");
+        emu.tx(`global.APPTESTS.funcCalls.${step.id} = 0;\n`);
+        waitForResponse();
+        emu.tx(`global.APPTESTS.funcArgs.${step.id} = undefined;\n`);
+        waitForResponse();
+      });
       break;
     case "assertCall":
       p = p.then(() => {
@@ -345,14 +413,17 @@ function runStep(step, subtest, test, state){
         emu.tx(`for(let c of global["\xff"].timers){
           if(c) c.time -= ${step.ms * 1000};
         }\n`);
+        waitForResponse();
       });
       break;
     case "upload" :
       p = p.then(()=>{
         console.log("> UPLOADING" + (step.load ? " AND LOADING" : ""), step.file);
         emu.tx(AppInfo.getFileUploadCommands(step.as, require("fs").readFileSync(BASE_DIR + "/" + step.file).toString()));
+        waitForResponse();
         if (step.load){
           emu.tx(`\x10load("${step.as}")\n`);
+          waitForResponse();
         }
       });
       break;
@@ -423,12 +494,12 @@ function runTest(test, testState) {
         if (test.description)
           console.log(`"${test.description}`);
         console.log(`==============================`);
-        emu.factoryReset();
+        safeFactoryReset();
         console.log("> SENDING APP "+test.app);
-        emu.tx(command);
+        txAndWait(command);
         if (verbose)
           console.log("> SENT APP");
-        emu.tx("reset()\n");
+        txAndWait("reset()\n");
         console.log("> RESET");
 
       });
