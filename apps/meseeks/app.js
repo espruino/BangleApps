@@ -1,5 +1,3 @@
-const storage = require('Storage');
-
 require("Font6x12").add(Graphics);
 require("Font8x12").add(Graphics);
 require("Font7x11Numeric7Seg").add(Graphics);

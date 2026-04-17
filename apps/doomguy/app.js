@@ -12,12 +12,6 @@ function loadSettings() {
   };
 }
 
-// Reset hit counter
-function resetHitCounter() {
-  hitCount = 0;
-  saveHitCounter();
-}
-
 function bigThenSmall(big, small, x, y) {
   g.setFont("7x11Numeric7Seg", 2);
   g.drawString(big, x, y);
