@@ -153,16 +153,16 @@ function drawingCycle(calcDate, thisID, cycle, log) {
     infoData = slMod.getStats(calcDate, 0, log);
     infoData = [
       [
-        [ /*LANG*/"consecutive\nsleeping", infoData.consecSleep],
-        [ /*LANG*/"true\nsleeping", infoData.deepSleep + infoData.lightSleep]
+        [ /*LANG*/"Consec.\nsleep", infoData.consecSleep],
+        [ /*LANG*/"True\nsleep", infoData.deepSleep + infoData.lightSleep]
       ],
       [
-        [ /*LANG*/"deep\nsleep", infoData.deepSleep],
-        [ /*LANG*/"light\nsleep", infoData.lightSleep]
+        [ /*LANG*/"Deep\nsleep", infoData.deepSleep],
+        [ /*LANG*/"Light\nsleep", infoData.lightSleep]
       ],
       [
-        [ /*LANG*/"awake", infoData.awakeTime],
-        [ /*LANG*/"not worn", infoData.notWornTime]
+        [ /*LANG*/"Awake", infoData.awakeTime],
+        [ /*LANG*/"Not worn", infoData.notWornTime]
       ]
     ];
     // draw info
@@ -235,10 +235,11 @@ function draw() {
 
   // set date to calculate data for
   var calcDate = new Date(startDate - prevDays * 864E5);
-
+  var oneDayAgo = new Date(startDate - prevDays * 864E5);
+  oneDayAgo.setDate(oneDayAgo.getDate() - 1);
   // draw title
   g.setFont("12x20").setFontAlign(0, -1)
-    .drawString( /*LANG*/"Night to " + require('locale').dow(calcDate, 1) + "\n" +
+    .drawString(require('locale').dow(oneDayAgo, 1)+" to " + require('locale').dow(calcDate, 1) + "\n" +
       require('locale').date(calcDate, 1), 87, 28);
 
   // reset graphics and define image string
@@ -262,7 +263,7 @@ function draw() {
   // show loading info with progresss bar
   g.reset().drawRect(7, 117, width - 8, 157)
     .setFont("6x8").setFontAlign(0, 0)
-    .drawString( /*LANG*/ "calculating data ...\nplease be patient :)", 87, 133)
+    .drawString( /*LANG*/ "Calculating...\nPlease be patient :)", 87, 133)
     .drawRect(17, 145, 157, 151);
 
   // draw first progress

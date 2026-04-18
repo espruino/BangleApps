@@ -198,11 +198,13 @@ const drawSplit = (i: number, y: number, pace: number | string) =>
 
 const pauseRun = () => {
   exs.stop();
+  (WIDGETS["recorder"] as RecorderWidget | undefined)?.setRecording(true, { force: "append" });
   draw();
 };
 
 const resumeRun = () => {
   exs.resume();
+  (WIDGETS["recorder"] as RecorderWidget | undefined)?.setRecording(false);
 
   g.clearRect(Bangle.appRect); // splits -> layout, clear. layout -> splits, fine
   layout.forgetLazyState();

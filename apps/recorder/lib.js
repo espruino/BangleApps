@@ -61,18 +61,45 @@ exports.getRecorders = function() {
       };
     },
     hrm:function() {
-      var bpm = "", bpmConfidence = "", src="";
+      const CONFIDENCE_THRESHOLD = 80;
+      var avgBpm = 0, avgBpmConfidence = 0, src="", nAvgReadings=0, lowConfBpm=null, lowConfBpmConfidence=-1;
+
       function onHRM(h) {
-        bpmConfidence = h.confidence;
-        bpm = h.bpm;
+        let newBpmConfidence = h.confidence;
+        let newBpm = h.bpm;
         src = h.src;
+
+        if (newBpmConfidence >= CONFIDENCE_THRESHOLD){
+          nAvgReadings++;
+          avgBpm = avgBpm + (newBpm-avgBpm)/nAvgReadings;
+          avgBpmConfidence = avgBpmConfidence + (newBpmConfidence-avgBpmConfidence)/nAvgReadings;
+
+        } else if (newBpmConfidence > lowConfBpmConfidence) {
+          lowConfBpmConfidence = newBpmConfidence;
+          lowConfBpm = newBpm;
+        }
       }
+
       return {
         name : "HR",
         fields : ["Heartrate", "Confidence", "Source"],
         getValues : () => {
-          var r = [bpm,bpmConfidence,src];
-          bpm = ""; bpmConfidence = ""; src="";
+          let r;
+
+          if (nAvgReadings === 0) {
+            if (lowConfBpm === null) r = ["","",""];
+            else r = [lowConfBpm,lowConfBpmConfidence,src];
+          } else {
+            r = [Math.round(avgBpm),Math.round(avgBpmConfidence),src];
+          }
+
+          avgBpm = 0; 
+          avgBpmConfidence = 0; 
+          nAvgReadings=0; 
+          lowConfBpm=null; 
+          lowConfBpmConfidence=-1;
+          src=""; 
+
           return r;
         },
         start : () => {

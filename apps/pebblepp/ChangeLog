@@ -14,3 +14,5 @@
 0.11: Make the border on clockinfos the default
       Fix clockinfos when too long (previously just output '...')
 0.12: Use new clockbg to allow backgrounds to change when fast loading
+0.13: Minor fixes - don't allocate un-needed buffer
+0.14: Clear the rect where the widgets are - avoids flicker when unloading

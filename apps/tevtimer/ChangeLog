@@ -1,1 +1,2 @@
 0.01: Official release
+0.02: Fix misbehavior if multiple alarms become active at once

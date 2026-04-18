@@ -171,7 +171,7 @@ let setUI = function() {
      touch: touchHandler,
      swipe: swipeHandler,
      drag: dragHandler,
-     btn: ()=>load(),
+     btn: ()=>Bangle.load(),
      remove : ()=>widgetUtils.show(),
     }
   );
@@ -268,7 +268,7 @@ let spotifyMenu = {
   "Search and play" : ()=>{E.showMenu(searchMenu);},
   "Saved music" : ()=>{E.showMenu(savedMenu);},
   "Wake the android" : function() {gadgetbridgeWake();gadgetbridgeWake();},
-  "Exit Spotify Remote" : ()=>{load();}
+  "Exit Spotify Remote" : ()=>{Bangle.load();}
 };
 
 let menuBackFunc = ()=>{
@@ -284,7 +284,7 @@ let controlMenu = {
   "Previous" : ()=>{spotifyWidget("PREVIOUS");},
   "Next" : ()=>{spotifyWidget("NEXT");},
   "Play (widget, next then previous)" : ()=>{spotifyWidget("NEXT"); spotifyWidget("PREVIOUS");},
-  "Messages Music Controls" : ()=>{load("messagesmusic.app.js");},
+  "Messages Music Controls" : ()=>{Bangle.load("messagesmusic.app.js");},
 };
 
 let searchMenu = {

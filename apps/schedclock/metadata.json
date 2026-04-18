@@ -1,7 +1,7 @@
 { "id": "schedclock",
   "name": "Schedule Clock Faces",
   "shortName":"Sched Clock",
-  "version":"0.01",
+  "version":"0.02",
   "author": "kidneyhex",
   "description": "Change clock faces on a schedule.",
   "icon": "app.png",

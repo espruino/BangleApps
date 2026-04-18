@@ -45,7 +45,13 @@ function showTallies(tallies: Tally[]) {
       day = td;
     }
 
-    menu[`${tfmt(tally)}: ${tally.name}`] = () => editTally(tallies, i);
+    let title = `${tfmt(tally)}: ${tally.name}`;
+    let n = 2;
+    while(title in menu){
+      title = `${tfmt(tally)} (${n}): ${tally.name}`
+      n++;
+    }
+    menu[title] = () => editTally(tallies, i);
   });
 
   E.showMenu(menu);

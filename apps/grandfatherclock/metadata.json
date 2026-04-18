@@ -1,7 +1,7 @@
 { "id": "grandfatherclock",
   "name": "Grandfather Clock Widget",
   "shortName":"Grandfather Clock",
-  "version":"0.02",
+  "version":"0.03",
   "description": "A widget that chimes every fraction of an hour (similar to Chimer), and counts out the fractions and the o'clock hour.",
   "icon": "icon.png",
   "type": "widget",

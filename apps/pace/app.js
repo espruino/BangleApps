@@ -143,11 +143,15 @@ var _a;
             .drawString("".concat(i + 1 + splitOffset_1, " ").concat(typeof pace === "number" ? pace.toFixed(2) : pace), 0, y);
     };
     var pauseRun_1 = function () {
+        var _a;
         exs_1.stop();
+        (_a = WIDGETS["recorder"]) === null || _a === void 0 ? void 0 : _a.setRecording(true, { force: "append" });
         draw_1();
     };
     var resumeRun_1 = function () {
+        var _a;
         exs_1.resume();
+        (_a = WIDGETS["recorder"]) === null || _a === void 0 ? void 0 : _a.setRecording(false);
         g.clearRect(Bangle.appRect);
         layout_1.forgetLazyState();
         draw_1();

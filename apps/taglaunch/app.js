@@ -1,6 +1,5 @@
 { // must be inside our own scope here so that when we are unloaded everything disappears
 let s = require("Storage");
-
 // TODO: Allow to change sortorder in settings
 let tags = {"clock": {name: /*LANG*/"Clocks", icon: () =>  atob("MDCEBERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERESIiIiIREREREREREREREREREREREREiIiIiIiIiIhERERERERERERERERERESIiIiIiIiIiIiIREREREREREREREREREiIiIiIiIiIiIiIhERERERERERERERESIiIiIgz//8ziIiIiIREREREREREREREiIiIg////////ziIiIhERERERERERERIiIiD//////////84iIiERERERERERESIiIg/////8A/////ziIiIRERERERERESIiI//////8A//////+IiIREREREREREiIiP//////8A///////4iIhERERERERIiIg///////8A///////ziIiERERERERIiIP///////8A////////OIiERERERESIiI////////8A////////+IiIRERERESIiD////////8A////////84iIRERERESIiP////////8A/////////4iIRERERESIiP////////8A/////////4iIREREREiIg/////////8A/////////ziIhEREREiIg/////////IAL////////ziIhEREREiIj////////yAAAv////////iIhEREREiIgiIv/////wCIAP/////yIiiIhEREREiIgiIv/////wCIAP/////yIiiIhEREREiIj////////yAAAD////////iIhEREREiIg/////////IAABP//////ziIhEREREiIg///////////IAE//////ziIhERERESIiP//////////8gAT/////4iIRERERESIiP///////////yABP////4iIRERERESIiD////////////IAL///84iIRERERESIiI////////////8i////+IiIRERERERIiIP/////////////////OIiERERERERIiIg////////////////ziIiEREREREREiIiP///////////////4iIhERERERERESIiI//////////////+IiIRERERERERESIiIg/////8i/////ziIiIRERERERERERIiIiD////8i////84iIiEREREREREREREiIiIg///8i///ziIiIhERERERERERERESIiIiIgz8i8ziIiIiIREREREREREREREREiIiIiIiIiIiIiIhERERERERERERERERESIiIiIiIiIiIiIREREREREREREREREREREiIiIiIiIiIhERERERERERERERERERERERESIiIiIRERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERA==")},
             "game": {name: /*LANG*/"Games", sortorder: 1, icon: () => atob("MDCEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzMzMzMzMzMzMzMzMzMzMzMwAAAAAAAAAzMzMzMzMzMzMzMzMzMzMzMwAAAAAAAAAzIiIiIiIiIiIiIiIiIiIiMwAAAAAAAAAzL///IiIi////IiIi///yMwAAAAAAAAAzL///IiIi////IiIi///yMwAAAAAAAAAzL///IiIi////IiIi///yMwAAAAAAAAAzL///IiIi////IiIi///yMwAAAAAAAAAzL///IiIi////IiIi///yMwAAAAAAAAAzIiIi////IiIi////IiIiMwAAAAAAAAAzIiIi////IiIi////IiIiMwAAAAAAAAAzIiIi////IiIi////IiIiMwAAAAAAAAAzIiIi////IiIi////IiIiMwAAAAAAAAAzIiIi////IiIi////IiIiMwAAAAAAAAAzIiIi////IiIi////IiIiMwAAAAAAAAAzL///IiIi////IiIi///yMwAAAAAAAAAzL///IiIi////IiIi///yMwAAAAAAAAAzL///IiIi////IiIi8R/xERABEAAAAAAzL///IiIi////IiIi8R/xERABEAAAAAAzL///IiIi////IiIi8R/xERABEAAAAAAzL///IiIi////IiIi8RMxERABEAAAAAAzIiIi////IiIi////IREREREREAAAAAAzIiIi////IiIi////IREREREREAAAAAAzIiIi////IiIi////IREREREREAAAAAAzIiIi////IiIi////IhERERERAAAAAAAzIiIi////IiIi////IiMzMzMwAAAAAAAzIiIi////IiIi////IiMzMzMwAAAAAAAzL///IiIi////IiIi///xERAAAAAAAAAzL///IiIi////IiIi//8xERAAAAAAAAAzL///IiIi////IiIi//8hEREAAAAAAAAzL///IiIi////IiIi//8REREAAAAAAAAzL///IiIi////IiIi//MREREAAAAAAAAzIiIiIiIiIiIiIiIiIzMzMzMzMAAAAAAzMzMzMzMzMzMzMzMzMzMzMzMzMAAAAAAzMzMzMzMzMzMzMzMzMhEREREREAAAAAAAAAAAAAAAAAAAAAAAEREREREREQAAAAAAAAAAAAAAAAAAAAAAEREREREREQAAAAAAAAAAAAAAAAAAAAAAEREREREREQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==")},
@@ -18,7 +17,8 @@ let font = g.getFonts().includes("12x20") ? "12x20" : "6x8:2";
 let settings = Object.assign({
   showClocks: true,
   fullscreen: false,
-  buzz:false
+  buzz:false,
+  shortcuts:["","",""]
 }, s.readJSON("taglaunch.json", true) || {});
 if ("vectorsize" in settings)
   vectorval = parseInt(settings.vectorsize);
@@ -84,6 +84,15 @@ const unload = () => {
     Bangle.removeListener("lock", lockHandler);
 };
 
+let shortcuts=settings.shortcuts;
+let noShortcuts=shortcuts[0]==""&&shortcuts[1]==""&&shortcuts[2]=="";
+  
+let loadShortcut=function(idx){
+  if(shortcuts[idx]!=""){
+    const p = settings.buzz ? Bangle.buzz(25) : Promise.resolve();
+    p.then(() => load(shortcuts[idx]+".app.js"));
+  }
+};
 // 10s of inactivity goes back to clock
 Bangle.setLocked(false); // unlock initially
 let lockTimeout;
@@ -137,21 +146,46 @@ let showTagMenu = (tag) => {
 
 let showMainMenu = () => {
   E.showScroller({
-    h : 64*scaleval, c : tagKeys.length,
+    h : 64*scaleval, c : noShortcuts ? tagKeys.length : tagKeys.length+1,
     draw : (i, r) => {
-      let tag = tagKeys[i];
       g.clearRect((r.x),(r.y),(r.x+r.w-1), (r.y+r.h-1));
-      g.setFont(font).setFontAlign(-1,0).drawString(tags[tag].name,64*scaleval,r.y+(32*scaleval));
+      
+      if(!noShortcuts)i-=1;
+      if(i==-1){
+        for(let j=0;j<3;j++){
+          const img = s.read(shortcuts[j]+".img");
+          if (img) {
+            try {
+              g.drawImage(img,8*scaleval+((g.getWidth()/3)*j), r.y+(8*scaleval), {scale: scaleval});} 
+            catch(e){}
+          }
+        }
 
-      const img = tags[tag].icon ? tags[tag].icon() : s.read("taglaunch." + tag + ".img");
-      if (img) {
-        try {g.drawImage(img,8*scaleval, r.y+(8*scaleval), {scale: scaleval});} catch(e){}
+        
+      }else{
+        let tag = tagKeys[i]; g.setFont(font).setFontAlign(-1,0).drawString(tags[tag].name,64*scaleval,r.y+(32*scaleval));
+
+        const img = tags[tag].icon ? tags[tag].icon() : s.read("taglaunch." + tag + ".img");
+        if (img) {
+          try {g.drawImage(img,8*scaleval, r.y+(8*scaleval), {scale: scaleval});} catch(e){}
+        }
       }
     },
-    select : i => {
-      if(settings.buzz)Bangle.buzz(25);
-      let tag = tagKeys[i];
-      showTagMenu(tag);
+    select : (i,e) => {
+      if(!noShortcuts)i-=1;
+      if(i==-1){
+        if(e.x<g.getWidth()/3){
+          loadShortcut(0)
+        }else if(e.x<(g.getWidth()/3)*2){    
+          loadShortcut(1)
+        }else{     
+          loadShortcut(2)
+        }
+      }else{
+        if(settings.buzz)Bangle.buzz(25);
+        let tag = tagKeys[i];
+        showTagMenu(tag);
+      }
     },
     back : Bangle.showClock, // button press or tap in top left shows clock now
     remove : unload

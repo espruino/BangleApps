@@ -22,6 +22,10 @@ On the clock face:
   - (Do a subsequent left or right swipe to enter the listed apps)
 - (Check out the "Quick Launch" app readme for more info)
 
+Miscellaneous:
+- The bluetooth indicator will be hidden when connected, visible if not (`widbt_notify`).
+- Messages can be scrolled by a twist of the arm (if they were auto-displayed).
+
 ## Requests
 
 Add to the espruino/BangleApps issue tracker and mention @thyttan for bug reports and suggestions.

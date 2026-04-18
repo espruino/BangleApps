@@ -25,15 +25,32 @@ const setClock = function(faceSrc) {
 /**
  * Handle alarms and resetting them
  * @param {number} index Index of the alarm that went off
- * @param {string} clock Clockface
  */
-exports.onAlarm = function(index, clock) {
+exports.onAlarm = function(index) {
   const date = new Date();
   const Sched = require("sched");
   const alarm = Sched.getAlarm(`${APP_ID}.${index}`);
   alarm.last = date.getDate(); // prevent second run on the same day
   Sched.setAlarm(alarm.id, alarm);
-  setClock(clock);
+  
+  // Look up the entry in the settings file
+  const settings = require("Storage").readJSON(SETTINGS_FILE, 1) || {};
+  const item = settings.sched && settings.sched[index];
+  if (!item) {
+    console.log("schedclock: Schedule item not found for index", index);
+    return;
+  }
+  
+  // Handle both 'faces' array and legacy 'face' string for backwards compatibility
+  const faces = item.faces || (item.face ? [item.face] : []);
+  if (faces.length === 0) {
+    console.log("schedclock: No clock faces found for schedule item", index);
+    return;
+  }
+  
+  // Randomly select one face from the list
+  const selectedFace = faces[Math.floor(Math.random() * faces.length)];
+  setClock(selectedFace);
 };
 
 /**
@@ -78,7 +95,7 @@ exports.syncAlarms = function() {
       dow: item.dow,
       hidden: true,
       appid: APP_ID,
-      js: `require('${APP_ID}.lib.js').onAlarm(${index},'${item.face}')`,
+      js: `require('${APP_ID}.lib.js').onAlarm(${index})`,
     });
   });
 };

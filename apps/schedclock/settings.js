@@ -3,7 +3,7 @@
    * @typedef {Object} ScheduleItemType - Individual Schedule Item
    * @property {number} hour - Hour (0-23)
    * @property {number} minute - Minute (0-59)
-   * @property {string} face - Clock face source file (e.g. "myclock.js")
+   * @property {Array<string>} faces - Clock face source files (e.g. ["myclock.js", "otherclock.js"])
    * @property {number} dow - Bitmask for days of week [see Sched documentation]
    * 
    * @typedef {Object} SettingsType - Overall Settings File/Object
@@ -94,7 +94,12 @@
 
     // Add existing schedule items to the menu
     settings.sched.forEach((item, index) => {
-      const faceName = (clockFaces.find(f => f.src === item.face) || {name: /*LANG*/"Unknown"}).name;
+      const faces = item.faces || (item.face ? [item.face] : []);
+      const faceName = faces.length > 1
+        ? `${faces.length} ${/*LANG*/"faces"}` // multiple faces
+        : (faces.length === 1
+          ? (clockFaces.find(f => f.src === faces[0]) || {name: /*LANG*/"Unknown"}).name // single face
+          : /*LANG*/"Unknown"); // no faces
       const dow = bitmaskToDowIndex(item.dow);
       const dayName = daysOfWeek[dow === undefined ? IND_EVERY_DAY : dow];
       const timeStr = require("locale").time(new Date(1999, 1, 1, item.hour, item.minute, 0),1)
@@ -143,6 +148,43 @@
   };
 
   /**
+   * Function to edit clock face selection for a schedule item
+   * @param {Object} currentItem The schedule item being edited
+   * @param {Array} clockFaces Array of available clock faces
+   * @param {Object} parentMenu The parent menu to return to
+   */
+  const editClockFaceSelection = function(currentItem, clockFaces, parentMenu) {
+    const menu = {
+      "": { "title": /*LANG*/"Select Clock Faces" },
+      "< Back": () => E.showMenu(parentMenu),
+    };
+
+    // Add checkbox for each clock face
+    clockFaces.forEach(face => {
+      const isSelected = currentItem.faces.includes(face.src);
+      menu[face.name] = {
+        value: isSelected,
+        onchange: v => {
+          if (v) {
+            // Add to selection if not already present
+            if (!currentItem.faces.includes(face.src)) {
+              currentItem.faces.push(face.src);
+            }
+          } else {
+            // Remove from selection
+            const idx = currentItem.faces.indexOf(face.src);
+            if (idx !== -1) {
+              currentItem.faces.splice(idx, 1);
+            }
+          }
+        }
+      };
+    });
+
+    E.showMenu(menu);
+  };
+
+  /**
    * Function to edit a schedule item (or add a new one if index is -1)
    * @param {number} index index of item to edit, or -1 to add a new item
    */
@@ -153,10 +195,17 @@
     const defaultFaceSrc = clockFaces.length > 0 ? clockFaces[0].src : "";
 
     const currentItem = isNew ?
-      { hour: 8, minute: 0, face: defaultFaceSrc, dow: BIN_EVERY_DAY } :
+      { hour: 8, minute: 0, faces: [defaultFaceSrc], dow: BIN_EVERY_DAY } :
       Object.assign({}, settings.sched[index]);
 
-    // Default odd items to "Every Day"
+    // Handle backwards compatibility: convert single 'face' to 'faces' array
+    if (currentItem.face && !currentItem.faces) {
+      currentItem.faces = [currentItem.face];
+      delete currentItem.face;
+    }
+    if (!currentItem.faces) currentItem.faces = [];
+
+    // Default invalid items to "Every Day"
     if (currentItem.dow === undefined) currentItem.dow = BIN_EVERY_DAY;
 
     let dow = bitmaskToDowIndex(currentItem.dow);
@@ -179,8 +228,8 @@
         max: 23,
         format: v => {
           // Format as 12h time if user has that set
-          const meridean = require("locale").meridian(new Date(1999, 1, 1, v, 0, 0),1);
-          return (!meridean) ? v : (v%12||12) + meridean;
+          const meridian = require("locale").meridian(new Date(1999, 1, 1, v, 0, 0));
+          return (!meridian) ? v : (v%12||12) + meridian;
         },
         onchange: v => { currentItem.hour = v; }
       },
@@ -190,17 +239,11 @@
         max: 59,
         onchange: v => { currentItem.minute = v; }
       },
-      /*LANG*/"Clock Face": {
-        value: Math.max(0, clockFaces.findIndex(f => f.src === currentItem.face)),
-        min: 0,
-        max: clockFaces.length - 1,
-        format: v => (clockFaces[v] && clockFaces[v].name) || /*LANG*/"None",
-        onchange: v => {
-          if (clockFaces[v]) currentItem.face = clockFaces[v].src;
-        }
-      },
+      /*LANG*/"Clock Faces": () => editClockFaceSelection(currentItem, clockFaces, menu),
       /*LANG*/"Save": () => {
-        const validationError = settings.sched.some((item, i) => {
+
+        // Check for schedule conflicts with duplicate times and overlapping days
+        const hasScheduleConflict = settings.sched.some((item, i) => {
           if (!isNew && i === index) return false; // Don't check against self when editing
 
           const timesMatch = item.hour === currentItem.hour 
@@ -211,10 +254,21 @@
           return (item.dow & currentItem.dow) !== 0;
         });
 
-        if (validationError) {
+        if (hasScheduleConflict) {
           E.showAlert(
             /*LANG*/"An entry for this time already exists.",
             /*LANG*/"Time conflict"
+          ).then(
+            ()=>E.showMenu(menu)
+          );
+          return; // Prevent saving
+        }
+
+        // Ensure at least one face is selected before saving
+        if (!Array.isArray(currentItem.faces) || currentItem.faces.length === 0) {
+          E.showAlert(
+            /*LANG*/"Select at least one clock face.",
+            /*LANG*/"No faces"
           ).then(
             ()=>E.showMenu(menu)
           );

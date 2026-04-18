@@ -1,0 +1,16 @@
+{ "id": "mmxclock",
+  "name": "Megaman X clock",
+  "shortName":"MMXCLOCK",
+  "icon":"app.PNG",
+  "screenshots": [{"url":"img/screenshot (1).png"}],
+  "type": "clock",
+  "tags": "clock",
+  "version":"0.01",
+  "description": "My Megaman X themed clock, by soulmaze.neocities.org",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"mmxclock.app.js","url":"app.js"},
+    {"name":"mmxclock.img","url":"app-icon.js","evaluate":true}
+  ]
+}

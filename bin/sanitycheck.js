@@ -49,7 +49,7 @@ var jsparse = (() => {
     return str => {throw new Error("no acorn")};
   }
 
-  return str => acorn.parse(str, { ecmaVersion: 2020 });
+  return str => acorn.parse(str, { ecmaVersion: 2022 });
 })();
 
 
@@ -113,6 +113,7 @@ var KNOWN_ERRORS = [
 var KNOWN_WARNINGS = [
   "App gpsrec data file wildcard .gpsrc? does not include app ID",
   "App owmweather data file weather.json is also listed as data file for app weather",
+  "App loadanim data file .loading is also listed as data file for app loadingscreen",
   "App carcrazy has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"carcrazy.settings.json\"}]`)",
   "App loadingscreen has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"loadingscreen.settings.json\"}]`)",
   "App trex has a setting file but no corresponding data entry (add `\"data\":[{\"name\":\"trex.settings.json\"}]`)",

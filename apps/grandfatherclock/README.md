@@ -16,6 +16,7 @@ Defaults:
 - The time between count buzzes is 500ms.
 - The meridian buzzes are 50ms long.
 - The time between meridian buzzes is 300ms.
+- Follow system quiet mode is DISABLED
 
 ## Requests
 

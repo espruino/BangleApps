@@ -59,18 +59,19 @@ exports.formatTime = (value) => {
 /**
  * @param {object|int} value {d, h, m, s} object or milliseconds
  * @param {boolean} compact `true` to remove all whitespaces between the values
+ * @param {int} limit the max number of values to display (eg default might be "3d 1h 10m 45s" but 2 => "3d 1h"
  * @returns an human-readable duration string like "3d 1h 10m 45s" (or "3d1h10m45s" if `compact` is `true`)
  */
-exports.formatDuration = (value, compact) => {
-  compact = compact || false;
+exports.formatDuration = (value, compact, limit) => {
+  compact = !!compact;
+  limit = limit||4;
   var duration = "";
   var time = safeTime(typeof value === "object" ? value : exports.decodeTime(value));
-  if (time.d > 0) duration += time.d + "d ";
-  if (time.h > 0) duration += time.h + "h ";
-  if (time.m > 0) duration += time.m + "m ";
-  if (time.s > 0) duration += time.s + "s"
-  duration = duration.trim()
-  return compact ? duration.replace(" ", "") : duration;
+  if (time.d > 0 && limit-->0) duration += time.d + "d ";
+  if (time.h > 0 && limit-->0) duration += time.h + "h ";
+  if (time.m > 0 && limit-->0) duration += time.m + "m ";
+  if (time.s > 0 && limit-->0) duration += time.s + "s";
+  return compact ? duration.replaceAll(" ", "") : duration.trim();
 }
 
 exports.getCurrentTimeMillis = () => {

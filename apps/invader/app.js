@@ -13,6 +13,7 @@
 
 
 // - variables -----------------------------------------
+var fgCol = g.theme.fg;
 // invader variables
 var inv_x             = 77;
 var inv_y             = 20;
@@ -207,7 +208,7 @@ function gameStart() {
 function onFrame() {
 
   // game not started state (title screen) ***************************
-  if(game_state == 0) {    
+  if(game_state == 0) {
     g.clear();
 
 
@@ -217,10 +218,14 @@ function onFrame() {
 
 
     // draw text during game over state
-    g.setFont("4x6", 4);  // set font and size x 2
-    g.setColor(0,1,0);    // set color (black)
+    g.setFont("4x6", 4);  // set font and size x 4
+    g.setColor("#0f0");    // set color (green)
     g.drawString("INVADER", 33, 55);
 
+    g.setColor(fgCol).setFont("6x8").drawString("TAP TO START", 53, 125);
+    if (Bangle.isLocked()) {
+      g.drawString("[SCREEN LOCKED]", 43, 145);
+    }
 
     // just animate invader
     // invader anim code
@@ -247,7 +252,7 @@ function onFrame() {
     }
 
     // reset stuff
-    if(BTNS.read() && !(start_been_pressed)) {
+    if(tap.b && !(start_been_pressed)) {
       turret_been_hit  = false;
       tur_x            = 77;       // reset turret to center of screen
       tur_y            = 148;      // reset turret y
@@ -272,7 +277,7 @@ function onFrame() {
 
     // draw text during game over state
     g.setFont("4x6", 2);  // set font and size x 2
-    g.setColor(0,0,0);    // set color (black)
+    g.setColor(fgCol);    // set color (black)
     g.drawString("SCORE:" + score ,5, 5);
     g.drawString("LIVES:" + lives ,117, 5);
     g.drawString("GAME OVER", 52, 80);
@@ -404,7 +409,7 @@ function onFrame() {
       g.drawImage(inv_shot, inv_shot_x, inv_shot_y, {scale:2});
     }
     else {
-      g.drawImage(inv_shot, -32, -32, {scale:2}); 
+      g.drawImage(inv_shot, -32, -32, {scale:2});
     }
 
     // turret sprites
@@ -436,7 +441,7 @@ function onFrame() {
 
     // - draw text -------------------------------------
     g.setFont("4x6", 2);  // set font and size x 2
-    g.setColor(0,0,0);    // set color (black)
+    g.setColor(fgCol);    // set color (black)
     g.drawString("SCORE:" + score ,5,5);
     g.drawString("LIVES:" + lives ,117,5);
 
@@ -448,5 +453,3 @@ function onFrame() {
 
 
 gameStart();
-
-

@@ -2,7 +2,7 @@
   "id": "tally",
   "name": "Tally Keeper",
   "shortName": "Tally",
-  "version": "0.01",
+  "version": "0.02",
   "author": "bobrippling",
   "description": "Add to a tally from clock info",
   "icon": "app.png",

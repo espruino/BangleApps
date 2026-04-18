@@ -1,27 +1,36 @@
 {
   "id": "boxclk",
   "name": "Box Clock",
-  "version": "0.11",
-  "description": "A customizable clock with configurable text boxes that can be positioned to show your favorite background",
+  "version": "0.13",
+  "description": "A customizable clock with multiple layouts, clkinfo and clockbg support, and a web editor",
   "icon": "app.png",
-  "dependencies" : { "clockbg":"module" },
+  "dependencies" : { "clockbg":"module", "clock_info":"module" },
   "screenshots": [
     {"url":"screenshot.png"},
     {"url":"screenshot-1.png"},
-    {"url":"screenshot-2.png"}
+    {"url":"screenshot-2.png"},
+    {"url":"screenshot-3.png"}
   ],
   "type": "clock",
-  "tags": "clock",
+  "tags": "clock,clockbg,clkinfo,background,image",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
-  "allow_emulator": true,
+  "interface": "interface.html",
+  "allow_emulator": false,
   "storage": [
     {"name":"boxclk.app.js","url":"app.js"},
     {"name":"boxclk.settings.js","url":"settings.js"},
+    {"name":"boxclk-brunoace.pbf","url":"boxclk-brunoace.pbf"},
     {"name":"boxclk.img","url":"icon.js","evaluate":true},
     {"name":"boxclk.beachhouse.img","url":"beachhouse.js","evaluate":true}
   ],
   "data": [
-    {"name":"boxclk.json","url":"boxclk.json"}
+    {"name":"boxclk.settings.json","url":"boxclk.settings.json"},
+    {"name":"boxclk.default-cfg.json","url":"boxclk.cfg.default.json"},
+    {"wildcard":"boxclk.cfg.*.json"},
+    {"name":"boxclk.retro.img"},
+    {"name":"boxclk.space.img"},
+    {"wildcard":"boxclk.bg.*.img"},
+    {"wildcard":"boxclk.*.pbf"}
   ]
 }

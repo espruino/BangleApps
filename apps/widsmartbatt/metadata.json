@@ -3,7 +3,7 @@
   "name": "Smart Battery Widget",
   "shortName":"Smart Batt Wid",
   "icon": "icon.png",
-  "version":"0.01",
+  "version":"0.02",
   "type": "widget",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",

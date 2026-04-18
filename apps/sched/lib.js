@@ -108,7 +108,7 @@ exports.newDefaultTimer = function () {
 exports.getSettings = function () {
   return Object.assign(
     {
-      unlockAtBuzz: false,
+      unlockAtBuzz: true,
       defaultSnoozeMillis: 600000, // 10 minutes
       defaultAutoSnooze: false,
       defaultDeleteExpiredTimers: true, // Always

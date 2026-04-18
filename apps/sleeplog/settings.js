@@ -14,8 +14,9 @@
     minConsec: 18E5, // [ms] minimal time to count for consecutive sleep
     deepTh: 150, //     threshold for deep sleep
     lightTh: 300,//    threshold for light sleep
-    hrmLightTh: 74,//    threshold for light sleep
-    hrmDeepTh:60,//     threshold for deep sleep
+    hrmLightTh: 74,//    threshold for light sleep with HRM
+    hrmDeepTh:60,//     threshold for deep sleep with HRM
+    sleepMode: 0, // 0=Movement, 1=HRM, 2=Both
     wearTemp: 19.5, //    temperature threshold to count as worn
     // app settings
     breakToD: 12, //    [h] time of day when to start/end graphs
@@ -24,6 +25,22 @@
 
   // assign loaded settings to default values
   var settings = Object.assign({},defaults, require("Storage").readJSON(filename, true));
+
+  // --- MIGRATION LOGIC (Added in v0.26) ---
+  // WHY: In v0.25 and earlier, the HRM setting was a simple boolean called 'preferHRM'.
+  // In v0.26, this was replaced by a 3-state 'sleepMode' (0=Movement, 1=HRM, 2=Both).
+  // WHAT: This block silently migrates existing users to the new format upon opening
+  // the settings, ensuring they don't lose their preference and the app doesn't crash.
+  // REMOVAL: This block can be safely removed in a future major update (e.g., v1.0 or 
+  // after ~1 year), once we can assume all active users have updated past v0.25.
+  // CONSEQUENCE: If removed, users updating directly from <=v0.25 to that future version 
+  // will simply lose their old 'preferHRM' preference and default to sleepMode 0.
+  if ("preferHRM" in settings) {
+    settings.sleepMode = settings.preferHRM ? 1 : 0;
+    delete settings.preferHRM;
+    require("Storage").writeJSON(filename, settings);
+  }
+  // ----------------------------------------
 
   // write change to storage
   function writeSetting() {
@@ -302,9 +319,9 @@
       },
       /*LANG*/"Deep Sleep": {
         value: settings.hrmDeepTh,
-        step: 2,
+        step: 1,
         min: 30,
-        max: 100,
+        max: 200,
         wrap: true,
         noList: true,
         onchange: v => {
@@ -314,9 +331,9 @@
       },
       /*LANG*/"Light Sleep": {
         value: settings.hrmLightTh,
-        step: 2,
+        step: 1,
         min: 30,
-        max: 100,
+        max: 200,
         wrap: true,
         noList: true,
         onchange: v => {
@@ -356,7 +373,7 @@
       
       /*LANG*/"Deep Sleep": {
         value: settings.deepTh,
-        step: 10,
+        step: 1,
         min: 30,
         max: 500,
         wrap: true,
@@ -368,7 +385,7 @@
       },
       /*LANG*/"Light Sleep": {
         value: settings.lightTh,
-        step: 10,
+        step: 1,
         min: 100,
         max: 800,
         wrap: true,
@@ -435,6 +452,17 @@
             writeSetting();
           }
         },
+        /*LANG*/"Sleep Mode": {
+          value: settings.sleepMode,
+          min: 0,
+          max: 2,
+          format: v => [/*LANG*/"Movement", /*LANG*/"HRM", /*LANG*/"Both"][v],
+          onchange: v => {
+            settings.sleepMode = v;
+            writeSetting();
+          }
+        },
+        /*LANG*/"HRM Thresholds": () => showHRMThresholds(),
         /*LANG*/"Wear Temp": {
           value: settings.wearTemp,
           step: 0.5,
@@ -508,7 +536,6 @@
         selected: selected
       },
       /*LANG*/"Movement Thresholds": () => showMovementThresholds(),
-      /*LANG*/"HRM Thresholds": () => showHRMThresholds(),
       /*LANG*/"Other Settings": () => showOtherSettings(),
       
       /*LANG*/"Enabled": {

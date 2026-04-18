@@ -1,0 +1,18 @@
+{ "id": "airqualityci",
+  "name": "Air Quality Clockinfo",
+  "version": "0.01",
+  "description": "Create clockinfos for air quality and temperature",
+  "icon": "app.png",
+  "type": "clkinfo",
+  "tags": "clkinfo",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "custom": "custom.html",
+  "storage": [
+    {"name":"airqualityci.clkinfo.js","url":"clkinfo.js"}
+  ],
+  "data": [
+    {"name":"airqualityci.json"},
+    {"name":"airqualityci.settings.json"}
+  ]
+}

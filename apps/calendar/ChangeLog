@@ -21,3 +21,4 @@
 0.18: Minor code improvements
 0.19: Read events synchronized from Gadgetbridge
 0.20: Correct start time of all-day events synchronized from Gadgetbridge
+0.21: Enable fast load with Bangle.load

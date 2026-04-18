@@ -3,13 +3,13 @@
 
 /// Get an icon based on a name from getIconNames that can be drawn with g.drawImage
 exports.getIcon = function(name) {
-  let match = ",home|0,bike|1,car|2,fan|3,light|4,plug|5,rocket|6,switch|7,sync|8,up|9,down|10,left|11,right|12,close|13,".match(new RegExp(`,${name.toLowerCase()}\\|(\\d+)`))
+  let match = ",add|0,agenda|1,alarm|2,android|3,bangle|4,battery|5,bell|6,bike|7,bin|8,calendar|9,camera|10,car|11,close|12,connected|13,dice|14,down|15,ebike|16,fan|17,ffwd|18,game|19,gear|20,graph|21,hills|22,home2|23,home|24,left|25,light|26,lock|27,mail|28,map|29,phone|30,play|31,plug2|32,plug|33,power|34,rewind|35,right|36,rocket|37,steps|38,sun|39,switch|40,sync|41,terminal|42,timer|43,up|44,wrench|45,".match(new RegExp(`,${name.toLowerCase()}\\|(\\d+)`))
   return require("Storage").read("icons.img", (match===null)?0:match[1]*76, 76);
 };
 
 /// Get a list of available icon names
 exports.getIconNames = function() {
-  return ["home","bike","car","fan","light","plug","rocket","switch","sync","up","down","left","right","close"];
+  return ["add","agenda","alarm","android","bangle","battery","bell","bike","bin","calendar","camera","car","close","connected","dice","down","ebike","fan","ffwd","game","gear","graph","hills","home2","home","left","light","lock","mail","map","phone","play","plug2","plug","power","rewind","right","rocket","steps","sun","switch","sync","terminal","timer","up","wrench"];
 };
 
 /// Show a menu to allow an icon to be chosen - its name is returned

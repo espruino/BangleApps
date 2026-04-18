@@ -27,12 +27,12 @@ let ui = {
   touchHandler: function(d) {
     let x = Math.floor(d.x);
     let y = Math.floor(d.y);
-    
+
     if (d.b != 1 || this.last_b != 0) {
       this.last_b = d.b;
       return;
     }
-    
+
     print("touch", x, y, this.h, this.w);
 
     if ((x<this.w/2) && (y<this.y2/2))
@@ -55,6 +55,41 @@ let ui = {
 };
 
 ui.init();
+
+function savePagePosition(file, offset, page) {
+  let config = {};
+  try {
+    let configData = require("Storage").read("txtreader.config.json");
+    if (configData) {
+      config = JSON.parse(configData);
+    }
+  } catch(e) {
+    config = {};
+  }
+
+  config[file] = {
+    offset: offset,
+    page: page,
+    timestamp: Date.now()
+  };
+
+  require("Storage").write("txtreader.config.json", JSON.stringify(config));
+}
+
+function loadPagePosition(file) {
+  try {
+    let configData = require("Storage").read("txtreader.config.json");
+    if (configData) {
+      let config = JSON.parse(configData);
+      if (config[file]) {
+        return config[file];
+      }
+    }
+  } catch(e) {
+    print("No config found or invalid config");
+  }
+  return null;
+}
 
 function showFileSelector() {
   let files = require("Storage").list().filter(f => f.endsWith('.txt'));
@@ -84,6 +119,13 @@ function onFileSelected(file) {
   let currentPage = 1;
   let history = []; 
 
+  let savedPosition = loadPagePosition(file);
+  if (savedPosition) {
+    currentOffset = savedPosition.offset;
+    currentPage = savedPosition.page;
+    print(`Loading saved position: page ${currentPage}, offset ${currentOffset}`);
+  }
+
   function displayText(offset, pageNumber) {
     let border = 10;
     let char_h = 10;
@@ -96,7 +138,7 @@ function onFileSelected(file) {
     }
     char_h = g.getFontHeight();
     char_w = g.stringWidth("w");
-    
+
     g.setColor(g.theme.fg);
     g.drawString("Page " + pageNumber, border, 2);
     //g.drawString("Offset " + offset, 60, 2);
@@ -142,13 +184,14 @@ function onFileSelected(file) {
   }
 
   function prevPage() {
-      if (currentPage > 1) {
-        history.pop(); // Remove current page from history
-        var previousPage = history[history.length - 1];
-        currentOffset = previousPage.offset;
-        currentPage--;
-        displayText(currentOffset, currentPage);
-      }
+    if (currentPage > 1 && history.length > 1) {
+      history.pop();
+      var previousPage = history[history.length - 1];
+      currentOffset = previousPage.offset;
+      currentPage--;
+      displayText(currentOffset, currentPage);
+    }
+  // It may be possible to elegantly go back beyond the first saved offset but this is a problem for future me
   }
 
   function zoom() {
@@ -156,24 +199,43 @@ function onFileSelected(file) {
     big = !big;
     firstDraw();
   }
-  
-  function firstDraw() {
-    currentOffset = 0;
-    currentPage = 1;
-    history = []; 
 
-    // Initial display
+  function goToBeginning() {
+    E.showPrompt("Return to beginning?", {
+      title: "Confirm",
+      buttons: {"Yes": true, "No": false}
+    }).then(function(confirm) {
+      if (confirm) {
+        currentOffset = 0;
+        currentPage = 1;
+        history = [];
+        var result = displayText(currentOffset, currentPage);
+        history.push({ offset: currentOffset, linesDisplayed: result.linesDisplayed });
+      } else {
+        displayText(currentOffset, currentPage);
+      }
+    });
+  }
+
+  function firstDraw() {
+    history = []; 
     var result = displayText(currentOffset, currentPage);
     history.push({ offset: currentOffset, linesDisplayed: result.linesDisplayed });
+    savePagePosition(file, currentOffset, currentPage);
   }
-  
+
   ui.init();
   ui.prevScreen = prevPage;
   ui.nextScreen = nextPage;
   ui.topLeft = zoom;
+  ui.topRight = goToBeginning;  // Assign the new function to topRight
   firstDraw();
-  
+
   Bangle.on("drag", (b) => ui.touchHandler(b));
+
+  E.on('kill', () => {
+  savePagePosition(file, currentOffset, currentPage);
+});
 }
 
 showFileSelector();

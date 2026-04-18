@@ -27,4 +27,8 @@ use whichever one is installed.
 
 ## Adding new facts
 
-Add then to `facts.txt`, then re-run the code from inside the `getText` function in `lib.js`, paste the base64 code produced in an update the value in `getCount()`
+Add then to `facts.txt`, then re-run the code from inside the `getText` function in `lib.js`, paste the base64 code produced in an update the value in `getCount()`, and change the count number in the module as well.
+
+## Clock Info
+
+This module provides a clockInfo. In any clock, you can tap the clockInfo to open a prompt with a new fact.

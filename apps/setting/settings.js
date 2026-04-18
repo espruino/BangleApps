@@ -87,6 +87,8 @@ function resetSettings() {
       twistTimeout: 1000
     },
   };
+  if (Bangle.haptic) // don't add by default as it'll break 2v29 and earlier firmwares
+    settings.options.hapticTime = 25;
   updateSettings();
 }
 
@@ -103,7 +105,7 @@ function mainMenu() {
     /*LANG*/'Apps': ()=>pushMenu(appSettingsMenu()),
     /*LANG*/'System': ()=>pushMenu(systemMenu()),
     /*LANG*/'Bluetooth': ()=>pushMenu(BLEMenu()),
-    /*LANG*/'Alerts': ()=>pushMenu(alertsMenu()),
+    /*LANG*/'Sound/Vibration': ()=>pushMenu(vibrateMenu()),
     /*LANG*/'Utils': ()=>pushMenu(utilMenu())
   };
 
@@ -126,7 +128,7 @@ function systemMenu() {
   return mainmenu;
 }
 
-function alertsMenu() {
+function vibrateMenu() {
   var beepMenuItem;
   if (BANGLEJS2) {
     beepMenuItem = {
@@ -156,8 +158,8 @@ function alertsMenu() {
     };
   }
 
-  const mainmenu = {
-    '': { 'title': /*LANG*/'Alerts' },
+  let mainmenu = {
+    '': { 'title': /*LANG*/'Sound/Vibration' },
     '< Back': ()=>popMenu(mainMenu()),
     /*LANG*/'Beep': beepMenuItem,
     /*LANG*/'Vibration': {
@@ -170,10 +172,26 @@ function alertsMenu() {
           setTimeout(() => VIBRATE.write(0), 10);
         }
       }
-    },
+    }
+  };
+  if (Bangle.haptic)
+    mainmenu = Object.assign(mainmenu, {
+      /*LANG*/'Haptic Strength': {
+        value: settings.options.hapticTime ?? 25,  // ?? 25 converts null or undefined to 25
+        min: 0, max: 50,
+        step:5,
+        format: v => v==0?/*LANG*/"Off":v,
+        onchange: v => {
+          settings.options.hapticTime = v;
+          updateOptions();
+        }
+      }
+    });
+  return Object.assign(mainmenu, {
     /*LANG*/"Quiet Mode": {
-      value: settings.quiet|0,
-      format: v => [/*LANG*/"Off", /*LANG*/"Alarms", /*LANG*/"Silent"][v%3],
+      value: (settings.quiet|0)%3,
+      min:0, max:2,
+      format: v => [/*LANG*/"Off", /*LANG*/"Alarms", /*LANG*/"Silent"][v],
       onchange: v => {
         settings.quiet = v%3;
         updateSettings();
@@ -181,9 +199,7 @@ function alertsMenu() {
         if ("qmsched" in WIDGETS) WIDGETS["qmsched"].draw();
       },
     }
-  };
-
-  return mainmenu;
+  });
 }
 
 

@@ -1,19 +1,16 @@
-
 (function(back) {
   var FILE = "smartbatt.settings.json";
-  // Load settings
   var settings = Object.assign({
-    //Record Interval stored in ms
-      doLogging:false
+      doLogging:false,
+      updateInterval:18000000 
   }, require('Storage').readJSON(FILE, true) || {});
 
   function writeSettings() {
     require('Storage').writeJSON(FILE, settings);
   }
 
-  // Show the menu
   E.showMenu({
-    "" : { "title" : "Smart Day Battery" },
+    "" : { "title" : "Smart Battery" },
     "< Back" : () => back(),
     
     'Clear Data': function () {
@@ -28,15 +25,33 @@
         }
       });     
       },
-    'Log Battery': {
-      value: !!settings.doLogging,  // !! converts undefined to false
+    'Update Interval': {
+      value: 0|settings.updateInterval,
+      min:1800000,
+      max:172800000,
+      step:1800000,
+      format: v=>{
+        var totalMinutes = Math.floor(v / 60000); 
+        var h = Math.floor(totalMinutes / 60);
+        var m = totalMinutes % 60;
+
+        let result = '';
+        if (h > 0) result += h+"h";
+        if (m > 0) result += m+"m";
+
+        return result || '0m';
+      },
+      onchange: v => {
+        settings.updateInterval = v;
+        writeSettings();
+      }
+    }, 
+    'Log Battery': { 
+      value: !!settings.doLogging,  
       onchange: v => {
         settings.doLogging = v;
         writeSettings();
       }
-      // format: ... may be specified as a function which converts the value to a string
-      // if the value is a boolean, showMenu() will convert this automatically, which
-      // keeps settings menus consistent
-    },
+    }
   });
 })
