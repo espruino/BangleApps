@@ -18,9 +18,9 @@
           let g = Graphics.createArrayBuffer(24,24,1,{msb:true});
           g.transparent = 0;
           g.drawImage(atob("FhgBDADAMAMP/////////////////////8AADwAAPAAA8AADwAAPAAA8AADwAAPAAA8AADwAAPAAA8AADwAAP///////"),1,0);
-          g.setFont("6x15").setFontAlign(0,0).drawString('CW',11,17);
+          g.setFont("6x15").setFontAlign(0,0).drawString(getCW(date),11,17);
           return {
-            text : getDateString(getCW(date)),
+            text : 'CW',
             img : g.asImage("string")
           };
         },
