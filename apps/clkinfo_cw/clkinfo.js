@@ -15,13 +15,9 @@
             return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
           };
 
-          let g = Graphics.createArrayBuffer(24,24,1,{msb:true});
-          g.transparent = 0;
-          g.drawImage(atob("FhgBDADAMAMP/////////////////////8AADwAAPAAA8AADwAAPAAA8AADwAAPAAA8AADwAAPAAA8AADwAAP///////"),1,0);
-          g.setFont("6x15").setFontAlign(0,0).drawString(getCW(date),11,17);
           return {
-            text : 'CW',
-            img : g.asImage("string")
+            text : getCW(date),
+            img : atob("GBiBAAAAAAGAMAf//Af//Af//AYxjAYxjAYxjAf//Cf//DYxjP4xjP4xjDf//Cf//AYxjAYxjAYxjAf//Af//AAAAAAAAAAAAAAAAA==")
           };
         },
         show : function() {
