@@ -17,10 +17,17 @@ function getLocalDate() {
   return `${y}-${m}-${day}`;
 }
 if(!savedData.prevData)savedData.prevData=[];
-if(savedData.dayLastUpdated==undefined)savedData.dayLastUpdated=getLocalDate()
-if(!savedData.mostActiveDay)savedData.mostActiveDay={cals:0,date:0}
-if(!savedData.mostCalorieDay)savedData.mostCalorieDay={cals:0,date:0}
+if(savedData.dayLastUpdated==undefined)savedData.dayLastUpdated=getLocalDate();
+if(!savedData.mostActiveDay)savedData.mostActiveDay={cals:0,date:0};
+if(!savedData.mostCalorieDay)savedData.mostCalorieDay={cals:0,date:0};
+if(!savedData.cachedBMR)savedData.cachedBMR=calModule.calcBMR(myProfile);
+if(!savedData.cachedMyProfile)savedData.cachedMyProfile=myProfile;
 
+if(JSON.stringify(savedData.cachedMyProfile) !== JSON.stringify(myProfile)){
+  //recalculate static myprofile dependent variables
+  savedData.cachedBMR=calModule.calcBMR(myProfile);
+  savedData.cachedMyProfile=myProfile;
+}
 //init global var
 global.calories = {
   activeCaloriesBurned:savedData.activeCaloriesBurned||0,
@@ -81,7 +88,7 @@ function intermittentBMRUpdate(){
   }
   // update BMR every 2 minutes
   let now=Date.now();
-  let bmr=Math.round(calModule.calcBMR(myProfile)*((now - lastBMRWrite) / 60000));
+  let bmr=Math.round(savedData.cachedBMR*((now - lastBMRWrite) / 60000));
   calData.totalCaloriesBurned+=bmr;
   calData.bmrCaloriesBurned+=bmr;
   // schedule next update
@@ -122,4 +129,6 @@ E.on('kill', function() {
 });
 
 intermittentBMRUpdate();
+
+//test: require("calories").calcBMR(require("Storage").readJSON("myprofile.json",1)||{};)
 
