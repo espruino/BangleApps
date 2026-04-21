@@ -1,4 +1,7 @@
-// Takes object with bpm, movement (in duration), steps (in duration), and duration in minutes
+// Calories Module
+// Since these calculations are quite heavy, boot.js offloads BMR to a cache to avoid calculating every 2 minutes
+
+
 let calcAge=function(rawBday){
   let birth = new Date(rawBday);
   let now = new Date();
@@ -21,11 +24,26 @@ let showSetMyProfilePrompt=function(){
     }
   })
 }
+let showNeedHRPrompt=function(){
+  var file=global.__FILE__
+  E.showPrompt("'Calories' needs heart rate data in order to calculate!",{
+      title:"Unable to calculate",
+      buttons:{"Enable HR":true,"Cancel":false}
+  }).then(function(v){
+    if(v){
+      eval(require("Storage").read("health.settings.js"))(()=>load());
+    }else{
+      if(file)load(file)
+      else load();
+    }
+  })
+}
+
 // returns cals/minute
 exports.calcBMR=function(myProfile){
+  if(!myProfile)print("No MyProfile data received")
   if (!myProfile || 
       !myProfile.weight || 
-      !myProfile.restingHrm || 
       !myProfile.maxHrm || 
       !myProfile.birthday){
     showSetMyProfilePrompt();
@@ -70,9 +88,9 @@ exports.calcBMR=function(myProfile){
 exports.calcCalories = function(healthData,myProfile) {
   
   if (!healthData || !healthData.duration) return;
-  if (!myProfile || !myProfile.weight || !myProfile.restingHrm || !myProfile.maxHrm || !myProfile.birthday){
+  if (!myProfile || !myProfile.weight || !myProfile.minHrm || !myProfile.maxHrm || !myProfile.birthday){
     showSetMyProfilePrompt();
-    return; 
+    return;
   }
   let weight = myProfile.weight;
   let age=calcAge(myProfile.birthday);
@@ -88,7 +106,9 @@ exports.calcCalories = function(healthData,myProfile) {
   
   // Validate heart rate
   if (!hr || hr < 40 || hr > myProfile.maxHrm) {
-    throw new Error("Invalid or missing heart rate data");
+    if(hr==undefined) showNeedHRPrompt();
+    print("Invalid or missing heart rate data");
+    return;
   }
   
   // Age-adjusted MET values for better accuracy across age groups
