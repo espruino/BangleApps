@@ -6,7 +6,7 @@ This app logs and displays the following states:
 
 It is using the built in movement calculation or HRM to decide your sleeping state. While charging it is assumed that you are not wearing the watch and if the status changes to _deep sleep_ the internal heartrate sensor is used to detect if you are wearing the watch.
 
-If HRM polling is enabled in the `Health` app, sleep tracking uses the much more accurate HRM sensor to detect sleep status instead. If not enabled in `Health`, uses movement calculations from the watch.
+If HRM polling is enabled in the `Health` app, sleep tracking can use the HRM sensor to detect sleep status instead. Set `Prefer HRM` in settings to enable. Falls back to using movement calculations if HRM is not available.
 
 #### Explanations
 * __Detection of Sleep__
@@ -75,28 +75,29 @@ To make sure the app accurately provides sleep information, it's a good idea to 
 
 #### Settings
 
-  
-  - __HRM Thresholds__ submenu
-    
-    Changes take effect from now on, not retrospective! HRM works only if polling is enabled in `Health` settings
-    - __Deep Sleep__ | deep sleep threshold
-      _40_ / _41_ / ... / __60__ / ... / _80_
-    - __Light Sleep__ | light sleep threshold
-      _50_ / _51_ / ... / __74__ / ... / _90_
-     - __Reset to Default__ | reset to bold values above
- - __Movement Thresholds__ submenu
- 
+  - __Movement Thresholds__ submenu
     Changes take effect from now on, not retrospective!
     - __Deep Sleep__ | deep sleep threshold
       _30_ / _31_ / ... / __100__ / ... / _200_
     - __Light Sleep__ | light sleep threshold
       _100_ / _110_ / ... / __200__ / ... / _400_
      - __Reset to Default__ | reset to bold values above
- - __Other Settings__ submenu  
+  - __Other Settings__ submenu  
       - __BreakToD__ | time of day to break view
         _0:00_ / _1:00_ / ... / __12:00__ / ... / _23:00_
       - __App Timeout__ | app specific lock timeout
         __0s__ / _10s_ / ... / _120s_
+      - __Sleep Mode__ | Defines which sensors are used to determine your sleeping state.
+        - **Movement:** Uses only the accelerometer (default).
+        - **HRM:** Uses the heart rate monitor if available (falls back to movement if no pulse is found).
+        - **Both:** Requires *both* the movement and HRM thresholds to indicate sleep. Helps prevent false positives when sitting quietly at a desk.
+      - __HRM Thresholds__ submenu
+        Changes take effect from now on, not retrospective! HRM works only if polling is enabled in `Health` settings
+        - __Deep Sleep__ | deep sleep threshold
+          _40_ / _41_ / ... / __60__ / ... / _80_
+        - __Light Sleep__ | light sleep threshold
+          _50_ / _51_ / ... / __74__ / ... / _90_
+         - __Reset to Default__ | reset to bold values above
       - __Wear Temperature__ | Set the minimum measured temperature of the wearable to consider it being worn. Can be disabled to use the HRM instead to detect if it's being worn.
       - __Max Awake__ | maximal awake duration
       _10min_ / _20min_ / ... / __60min__ / ... / _120min_
@@ -250,7 +251,7 @@ If you want to use other variables or functions from the trigger object inside t
   - Open logfile through require("Storage") instead of require("sleeplog").
   - Give feedback how much files have been deleted on "delete all logfiles before".
 - Check translations.
-- Add more functionallities to interface.html.
+- Add more functionalities to interface.html.
 - Enable receiving data on the Gadgetbridge side + testing.
   __Help appreciated!__
 

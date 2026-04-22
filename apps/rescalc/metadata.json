@@ -3,7 +3,7 @@
   "name": "Resistor Calculator",
   "shortName": "Resistor Calc",
   "icon": "rescalc.png",
-  "version":"0.04",
+  "version":"0.05",
   "screenshots": [
     {"url": "screenshot.png"},
     {"url": "screenshot-1.png"},

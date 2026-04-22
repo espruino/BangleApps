@@ -17,7 +17,12 @@ setTimeout( // make other boot code run first, so we can override android.boot.j
     var max_acceleration = { x: 0, y: 0, z: 0, diff: 0, td: 0, mag: 0 };
     var hasData = false;
     var intervalId;
-    var config = storage.readJSON("accelsender.json", 1) || {};
+    var config = Object.assign({
+        enabled: false,
+        interval: 5000,
+        widget: 0,
+        stopOnDc: true
+    }, storage.readJSON("accelsender.json", 1) || {});
     var configChanged = false;
 
     /**
@@ -70,9 +75,11 @@ setTimeout( // make other boot code run first, so we can override android.boot.j
         setEnabled: (v) => setConfig("enabled", v),
         setWidget: (v) => setConfig("widget", v),
         setInterval: (v) => setConfig("interval", v),
+        setStopOnDc: (v) => setConfig("stopOnDc", v),
         isEnabled: () => config.enabled,
-        getInterval: () => config.interval || 5000,
-        getWidget: () => config.widget || 0
+        getInterval: () => config.interval,
+        getWidget: () => config.widget,
+        getStopOnDc: () => config.stopOnDc
     };
 
     // Wrap the GB handler to listen for messages from gadgetbridge
@@ -99,8 +106,13 @@ setTimeout( // make other boot code run first, so we can override android.boot.j
         Bangle.removeListener("accel", updateAcceleration);
     }
 
+    // On Bluetooth disconnect, disable if config says to
+    NRF.on('disconnect', () => {
+        if (config.enabled && config.stopOnDc) setConfig('enabled', false);
+    });
+
     // On kill, save config if changed
-    Bangle.on("kill", () => {
+    E.on("kill", () => {
         if (configChanged) storage.writeJSON("accelsender.json", config);
     });
 
