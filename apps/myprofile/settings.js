@@ -28,7 +28,7 @@
       buttons:{"Yes":true,"No":false}
     }).then(function(v){
     if(v){
-      myprofile.restingHrm = avgRHR;
+      myprofile.minHrm = avgRHR;
       writeProfile();
       E.showPrompt(" ",{
         buttonHeight:35,
@@ -129,9 +129,7 @@ function RHRReading(){
 }
   
   const genderOpts = ["Male","Female","Not Set"];
-  // if we have old min hr data and no resting hr data, upgrade minHRM to restingHRM
-  if(myprofile.minHrm&&!myprofile.restingHrm)myprofile.restingHrm=myprofile.minHrm;
-  
+
   const ageMenu = () => {
     const date = new Date(myprofile.birthday);
 
@@ -246,7 +244,7 @@ function RHRReading(){
         },
       },
 
-      /*LANG*/'HR max': {
+      /*LANG*/'Max HR': {
         format: v => /*LANG*/`${v} BPM`,
         value: myprofile.maxHrm,
         min: 30, max: 220,
@@ -255,18 +253,10 @@ function RHRReading(){
           writeProfile();
         }
       },
-      
-      /*LANG*/'HR min': {
-        format: v => /*LANG*/`${v} BPM`,
-        value: myprofile.minHrm,
-        min: 30, max: 220,
-        onchange: v => {
-          myprofile.minHrm = v;
-          writeProfile();
-        }
-      },
-      
-      /*LANG*/"Stride length": {
+    };
+  
+  menu[/*LANG*/`Resting/Min HR: ${myprofile.minHrm?myprofile.minHrm:"--"}`]=RHRReading;
+  menu[/*LANG*/"Stride length"]= {
         value: myprofile.strideLength,
         min:0.00,
         step:0.01,
@@ -275,11 +265,8 @@ function RHRReading(){
           myprofile.strideLength=v;
           writeProfile();
         },
-      },
-    };
-  
-  menu[/*LANG*/`Resting HR: ${myprofile.restingHrm?myprofile.restingHrm:"--"}`]=RHRReading;
-   E.showMenu(menu)
+      }
+  E.showMenu(menu)
   };
   
   mainMenu();
