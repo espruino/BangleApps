@@ -124,13 +124,7 @@ exports.calcCalories = function (healthData, myProfile) {
     return;
   }
 
-  // Age-adjusted MET values for better accuracy across age groups
   let ageMultiplier = 1.0;
-  if (age < 18) {
-    ageMultiplier = 0.9; // Children naturally more active, lower relative effort
-  } else if (age > 65) {
-    ageMultiplier = 1.2; // Same pace = higher effort for elderly
-  }
 
   let stepsMet =
     (stepsPerMin < 5 ? 1.0 : 2.0 + 0.05 * stepsPerMin) * ageMultiplier; // More realistic scaling with age adjustment
