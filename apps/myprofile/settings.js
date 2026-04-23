@@ -147,7 +147,7 @@ function RHRReading(){
             
           } else {
             const age = (new Date()).getFullYear() - date.getFullYear();
-            const newMaxHRM = Math.round(208-0.7*age);
+            const newMaxHRM = Math.round(208-0.7*age); // Tanaka formula: https://my.clevelandclinic.org/health/articles/24649-heart-rate-reserve
             E.showPrompt(/*LANG*/`Set HR max to ${newMaxHRM} calculated from age?`).then(function(v) {
               myprofile.birthday = date.getFullYear() + "-" + (date.getMonth() + 1).toString().padStart(2, '0') + "-" + date.getDate().toString().padStart(2, '0');
               if (v) {
