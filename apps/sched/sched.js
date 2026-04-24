@@ -37,7 +37,7 @@ function showSnoozeMenu(alarm){
   }
 
   if(alarm.timer){
-    
+
     let timerLength=alarm.timer
     let buttons={ "15s": 15, "30s":30,"1m":60 ,"2m":120,"5m":360};
     let formattedLength = formatMS(timerLength)+"*";
@@ -50,11 +50,11 @@ function showSnoozeMenu(alarm){
   }else{
     E.showPrompt("Choose snooze length", {
       title: "Snooze Options",
-      buttons: { "1m": 1, "2m":2,"5m": 5,"10m":10 } 
+      buttons: { "1m": 1, "2m":2,"5m": 5,"10m":10 }
     }).then(snoozeTime => onSnooze(snoozeTime * 60000));
   }
 }
-  
+
 function showAlarm(alarm) {
   const alarmIndex = alarms.indexOf(alarm);
   const settings = require("sched").getSettings();
@@ -177,7 +177,14 @@ let alarms = require("sched").getAlarms();
 let active = require("sched").getActiveAlarms(alarms);
 if (active.length) {
   // if there's an alarm, show it
-  showAlarm(active[0]);
+  if (active[0].js) {
+    // If there's custom JS, run it after a short delay, since it likely contains `load()` which we can't call from while loading *this* app
+    E.showMessage(/*LANG*/"Loading...", /*LANG*/"ALARM");
+    setTimeout(active[0].js, 10);
+    setTimeout(load, 1000); // ensure that if the JS didn't load anything, we reload back to the clock
+  } else { // normal alarm - show menu
+    showAlarm(active[0]);
+  }
 } else {
   // otherwise just go back to default app
   setTimeout(load, 100);
