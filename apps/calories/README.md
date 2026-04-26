@@ -1,7 +1,8 @@
 # Calorie Tracker
 Tracks calories using [`MyProfile`](https://banglejs.com/apps/?id=myprofile) data and a complex formula that takes age, gender, weight, height, heart rate, and steps into account. 
 This app also ties in with the [`Health App`](https://banglejs.com/apps/?id=health) for greater integration within the Bangle.js ecosystem.
-
+## Beta Testing:
+This app is in beta testing. Any feedback is appreciated on performance, improvements, etc. Additionally, we are looking for users who can test the accuracy of this formula against other smartwatches' calorie tracking formulas. Simply tag `@RKBoss6` in any GitHub discussion/thread and help improve accuracy and performance!
 ## Setup:
 The app needs the data below to function properly:
 
