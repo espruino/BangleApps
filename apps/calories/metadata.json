@@ -1,10 +1,10 @@
 { 
   "id": "calories",
-  "name": "Calorie Tracker",
+  "name": "Calorie Tracker (BETA)",
   "shortName":"Calories",
   "icon": "icon.png",
   "version":"0.01",
-  "description": "A health-integrated calorie tracker using `MyProfile`",
+  "description": "A health-integrated calorie tracker using `MyProfile`. Currently in Beta Testing - see README for more details.",
   "type":"app",    
   "tags": "health,clkinfo",
   "author":"RKBoss6",
