@@ -1,93 +1,112 @@
-  {
-    let getMsPastMidnight=function(unixTimestamp) {
-
-      const dateObject = new Date(unixTimestamp);
-
-      const hours = dateObject.getHours();
-      const minutes = dateObject.getMinutes();
-      const seconds = dateObject.getSeconds();
-      const milliseconds = dateObject.getMilliseconds();
-
-      const msPastMidnight = (hours * 3600000) + (minutes * 60000) + (seconds * 1000) + milliseconds;
-      return msPastMidnight;
-    };
+{
+  let storage = require("Storage");
+  let settings = require("sleepsummary").getSettings();
+  function logNow(msg) {
     
+    let log = storage.readJSON("sleepsummarylog.json", 1) || [];
+    let d = new Date();
+    log.push(
+      d.getFullYear() + "-" +
+      ("0"+(d.getMonth()+1)).slice(-2) + "-" +
+      ("0"+d.getDate()).slice(-2) + " " +
+      ("0"+d.getHours()).slice(-2) + ":" +
+      ("0"+d.getMinutes()).slice(-2) + ":" +
+      ("0"+d.getSeconds()).slice(-2) + " | " + msg
+    );
+    if (log.length > 200) log = log.slice(-200);
+    storage.writeJSON("sleepsummarylog.json", log);
+  }
 
+  // Minimum consecutive sleep (minutes) before the prompt can fire.
+  // Prevents naps or brief readings from triggering it.
+  // After detecting a wake transition, wait this long and confirm
+  // the user is *still* awake before showing the prompt.
 
-    function logNow(msg) {
-      let filename="sleepsummarylog.json";
-      let storage = require("Storage");
+  let wakeConfirmTimer = null;
 
-      // load existing log (or empty array if file doesn't exist)
-      let log = storage.readJSON(filename,1) || [];
+  function showSummary() {
+    logNow("prompt shown");
+    Bangle.load("sleepsummarymsg.app.js");
+  }
 
-      // get human-readable time
-      let d = new Date();
-      let timeStr = d.getFullYear() + "-" +
-        ("0"+(d.getMonth()+1)).slice(-2) + "-" +
-        ("0"+d.getDate()).slice(-2) + " " +
-        ("0"+d.getHours()).slice(-2) + ":" +
-        ("0"+d.getMinutes()).slice(-2) + ":" +
-        ("0"+d.getSeconds()).slice(-2)+", MSG: "+msg;
+  function confirmWakeAndShow() {
+    wakeConfirmTimer = null;
 
-      // push new entry
-      log.push(timeStr);
-
-      // keep file from growing forever
-      if (log.length > 200) log = log.slice(-200);
-
-      // save back
-      storage.writeJSON(filename, log);
+    // Re-check: still awake?
+    let currentStatus = ((global.sleeplog || {}).info || {}).status;
+    logNow("wake confirm check, status now: " + currentStatus);
+    if (currentStatus !== 2) {
+      logNow("went back to sleep — cancelled");
+      return;
     }
 
-    let showSummary=function(){
-      logNow("shown");
-      Bangle.load("sleepsummarymsg.app.js");
-      
+    // Re-check: not already shown today?
+    let today = new Date().getDate();
+    if (require("sleepsummary").getSummaryData().promptLastShownDay == today) {
+      logNow("already shown today — skipped");
+      return;
     }
 
+    let settings = require("sleepsummary").getSettings();
+    require("sleepsummary").recordData();
 
-    function checkIfAwake(data,thisTriggerEntry){
-
-      logNow("checked, prev status: "+data.prevStatus+", current status: "+data.status+", promptLastShownDay: "+require("sleepsummary").getSummaryData().promptLastShownDay);
-
-      let today = new Date().getDate();
-      if(require("sleepsummary").getSummaryData().promptLastShownDay!=today){
-        //if coming from sleep
-        if (data.status==2&&(data.previousStatus==3||data.previousStatus==4)) {
-          var settings=require("sleepsummary").getSettings();
-
-          //woke up for the first time
-          require("sleepsummary").recordData();
-          
-          if(settings.showMessage){
-            setTimeout(showSummary,settings.messageDelay)
-          }
-
-          
-        }
-
-      }
-    }
-
-    //Force-load module
-    require("sleeplog");
-
-    // first ensure that the sleeplog trigger object is available (sleeplog is enabled)
-    if (typeof (global.sleeplog || {}).trigger === "object") {
-      // then add your parameters with the function to call as object into the trigger object
-      sleeplog.trigger["sleepsummary"] = {
-        onChange: true,   // false as default, if true call fn only on a status change
-        from: 0,           // 0 as default, in ms, first time fn will be called
-        to: 24*60*60*1000, // 24h as default, in ms, last time fn will be called
-          // reference time to from & to is rounded to full minutes
-        fn: function(data, thisTriggerEntry) { 
-
-          checkIfAwake(data,thisTriggerEntry);
-
-
-
-        } // function to be executed
-      };
+    if (settings.showMessage) {
+      // messageDelay is an *additional* delay on top of the confirm delay
+      setTimeout(showSummary, settings.messageDelay || 0);
     }
   }
+
+  function checkIfAwake(data) {
+    logNow("trigger: status=" + data.status + " prevStatus=" + data.prevStatus);
+
+    // Only act on transitions FROM sleep (3=light, 4=deep) TO awake (2)
+    if (data.status !== 2) {
+      // If they went back to sleep, cancel any pending confirm timer
+      if (wakeConfirmTimer !== null) {
+        clearTimeout(wakeConfirmTimer);
+        wakeConfirmTimer = null;
+        logNow("went back to sleep — confirm timer cleared");
+      }
+      return;
+    }
+
+    if (data.prevStatus !== 3 && data.prevStatus !== 4) {
+      logNow("not waking from sleep (prevStatus=" + data.prevStatus + ") — ignored");
+      return;
+    }
+
+    // Already shown today?
+    let today = new Date().getDate();
+    if (require("sleepsummary").getSummaryData().promptLastShownDay == today) {
+      logNow("already shown today — skipped");
+      return;
+    }
+
+    // Enough consecutive sleep to count as a real night?
+    let sleepData = require("sleepsummary").getSleepData();
+    logNow("consecSleep: " + sleepData.consecSleep + " mins");
+    if (sleepData.consecSleep < settings.minConsecSleep) {
+      logNow("not enough consecutive sleep — ignored");
+      return;
+    }
+
+    // Only schedule once — ignore repeated status-change calls
+    if (wakeConfirmTimer !== null) {
+      logNow("confirm timer already running — ignored");
+      return;
+    }
+
+    logNow("wake detected from sleep — scheduling confirm in " + (settings.messageDelay/60000) + " min");
+    wakeConfirmTimer = setTimeout(confirmWakeAndShow, settings.messageDelay);
+  }
+
+  require("sleeplog");
+  if (typeof (global.sleeplog || {}).trigger === "object") {
+    sleeplog.trigger["sleepsummary"] = {
+      onChange: true,
+      from: 0,
+      to: 24 * 60 * 60 * 1000,
+      fn: function(data) { checkIfAwake(data); }
+    };
+  }
+}

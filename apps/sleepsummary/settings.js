@@ -25,6 +25,24 @@
       }
       
     },
+    'Min Consec Sleep': {
+      value: 0|settings.minConsecSleep,
+      min: 30, max: 60*8,
+      step:30,
+      onchange: v => {
+        settings.minConsecSleep = v; 
+        writeSettings();
+      },
+      format : v => {
+        let h = Math.floor(v/60);
+        let m = v % 60;
+        let str = "";
+        if (h) str += h+"h";
+        if (m) str += " "+m+"m";
+        return str || "0m";
+      },
+      noList:true
+    },
     'Message Delay': {
       value: 0|settings.messageDelay,
       min: 0, max: 7200000,

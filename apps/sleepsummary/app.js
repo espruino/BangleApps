@@ -4,7 +4,7 @@ var data = require("sleepsummary").getSummaryData();
 var score = data.overallSleepScore; // The overall score used for the bar graph
 var pageActive = 1; // Start on page 1
 var txtInfo="";
-// Convert milliseconds → 12-hour time string (H:MMa/p)
+// Convert milliseconds 12-hour time string (H:MMa/p)
 function msToTimeStr(ms) {
   ms = Math.round(ms);
   let totalMins = Math.floor(ms / 60000);
@@ -20,7 +20,7 @@ function msToTimeStr(ms) {
   return `${hour12}:${mm}${ampm}`;
 }
 
-// Convert total minutes → H:MM time duration string
+// Convert total minutes â H:MM time duration string
 function minsToTimeStr(mins) {
   mins = Math.round(mins);
   if (!mins || mins < 0) return "--:--";
@@ -84,12 +84,12 @@ var page1Layout = new Layout({
     {
       type:"v", c: [
         {type:undefined, height:5},
-        {type:"txt" ,filly:0, label:"Sleep Summary", font:"Vector:17", halign:0, id:"title",pad:3},
+        {type:"txt" ,filly:0, label:"Sleep Summary", font:"22", halign:0, id:"title",pad:3},
         // Display initial score value
-        {type:"txt", label:`Sleep Score: ${score}%`, font:"9%", pad:5, id:"sleepScore"},
+        {type:"txt", label:`Sleep Score: ${score}%`, font:"17", pad:5, id:"sleepScore"},
         {type:"custom", render:drawGraph, height:15, width:165, id:"scoreBar",pad:7},
         {type:undefined, height:37}, // spacer
-        {type:"txt", label:txtInfo, font:"8%", pad:5, id:"infoTxt",wrap:true,width:g.getWidth()-10},
+        {type:"txt", label:txtInfo, font:"14", pad:5, id:"infoTxt",wrap:true,width:g.getWidth()-10},
         {type:undefined, filly:1},
       ]
     }
@@ -100,46 +100,46 @@ var page1Layout = new Layout({
 var page2Layout = new Layout({
   type: "v", c: [
     {type:undefined, height:7}, // spacer
-    {type:"txt" ,filly:0, label:"Time Stats", font:"Vector:17", halign:0, id:"title",height:14,pad:1},
+    {type:"txt" ,filly:0, label:"Time Stats", font:"17", halign:0, id:"title",height:14,pad:1},
     {
       type:"v", c: [
         {type:"h", c:[
           {  
             type:"v", pad:3, c:[
-              {type:"txt", label:"", font:"8%",halign:1,pad:4},
-              {type:"txt", label:"Wk Up:", font:"8%",halign:1},
-              {type:"txt", label:"Sleep:", font:"8%",halign:1},
+              {type:"txt", label:"", font:"14",halign:1,pad:4},
+              {type:"txt", label:"Wk Up:", font:"14",halign:1},
+              {type:"txt", label:"Sleep:", font:"14",halign:1},
             ]
           },
           {  
             type:"v", pad:3, c:[
-              {type:"txt", label:"Today", font:"8%",pad:4},
-              {type:"txt", label:"--:--", font:"8%", id:"todayWakeupTime"},
-              {type:"txt", label:"--:--", font:"8%", id:"todaySleepTime"},
+              {type:"txt", label:"Today", font:"14",pad:4},
+              {type:"txt", label:"--:--", font:"14", id:"todayWakeupTime"},
+              {type:"txt", label:"--:--", font:"14", id:"todaySleepTime"},
             ]
           },
           {  
             type:"v", pad:3, c:[
-              {type:"txt", label:"Avg", font:"8%",pad:4},
-              {type:"txt", label:"--:--", font:"8%", id:"avgWakeupTime"},
-              {type:"txt", label:"--:--", font:"8%", id:"avgSleepTime"},
+              {type:"txt", label:"Avg", font:"14",pad:4},
+              {type:"txt", label:"--:--", font:"14", id:"avgWakeupTime"},
+              {type:"txt", label:"--:--", font:"14", id:"avgSleepTime"},
             ]
           }
         ]},
-        {type:"txt" ,filly:0, label:"Scores", font:"Vector:17", halign:0, id:"title",height:17,pad:1},
+        {type:"txt" ,filly:0, label:"Scores", font:"17", halign:0, id:"title",height:17,pad:1},
        {type:"h", c:[
           {  
             type:"v", pad:2, c:[
-              {type:"txt", label:"Wake Up:", font:"8%",halign:1},
-              {type:"txt", label:"Deep Sleep:", font:"8%",halign:1},
-              {type:"txt", label:"Duration:", font:"8%",halign:1}
+              {type:"txt", label:"Wake Up:", font:"14",halign:1},
+              {type:"txt", label:"Deep Sleep:", font:"14",halign:1},
+              {type:"txt", label:"Duration:", font:"14",halign:1}
             ]
           },
           {  
             type:"v", pad:2, c:[
-              {type:"txt", label:"---", font:"8%",halign:1,id:"wkUpScore"},
-              {type:"txt", label:"---", font:"8%",halign:1,id:"deepSleepScore"},
-              {type:"txt", label:"---", font:"8%",halign:1,id:"durationScore"},
+              {type:"txt", label:"---", font:"14",halign:1,id:"wkUpScore"},
+              {type:"txt", label:"---", font:"14",halign:1,id:"deepSleepScore"},
+              {type:"txt", label:"---", font:"14",halign:1,id:"durationScore"},
             ]  
         }]}
       ]
@@ -153,31 +153,30 @@ var page2Layout = new Layout({
 
     
 
+function reloadInfo(){
+  page1Layout.sleepScore.label=`Sleep Score: ${score}`;
+  page1Layout.infoTxt=txtInfo;
+  page2Layout.todayWakeupTime.label = msToTimeStr(data.wakeUpTime || 0); 
+  page2Layout.avgWakeupTime.label = msToTimeStr(data.avgWakeUpTime || 0);
+  page2Layout.todaySleepTime.label = minsToTimeStr(data.sleepDuration || 0);
 
+  page2Layout.avgSleepTime.label = minsToTimeStr(data.avgSleepTime || 0); 
+
+  page2Layout.wkUpScore.label = data.wkUpSleepScore || "---";
+  page2Layout.deepSleepScore.label = data.deepSleepScore || "---";
+  page2Layout.durationScore.label = data.durationSleepScore || "---";
+}
 function draw() {
   g.clear(); 
   Bangle.drawWidgets();
 
   if(pageActive==1){
-    // Update the label and render Page 1
-    page1Layout.sleepScore.label=`Sleep Score: ${score}`;
-    page1Layout.infoTxt=txtInfo;
-    
-    page1Layout.render(); 
+    page1Layout.forgetLazyState();
+    page1Layout.render();
   }
   else{
-    // Update all labels for Page 2
-    page2Layout.todayWakeupTime.label = msToTimeStr(data.wakeUpTime || 0); 
-    page2Layout.avgWakeupTime.label = msToTimeStr(data.avgWakeUpTime || 0);
-    page2Layout.todaySleepTime.label = minsToTimeStr(data.sleepDuration || 0);
-    
-    page2Layout.avgSleepTime.label = minsToTimeStr(data.avgSleepTime || 0); 
-    
-    page2Layout.wkUpScore.label = data.wkUpSleepScore || "---";
-    page2Layout.deepSleepScore.label = data.deepSleepScore || "---";
-    page2Layout.durationScore.label = data.durationSleepScore || "---";
-    
-    page2Layout.render(); 
+    page2Layout.forgetLazyState();
+    page2Layout.render();
   }
 }
 
@@ -200,7 +199,10 @@ Bangle.on('swipe', (direction) => {
 });
 
 // Initial draw, wrapped in a timeout
-setTimeout(draw,200);
+setTimeout(function(){
+  reloadInfo()
+  draw()
+},200);
 
 
 // Set up the app to behave like a clock
