@@ -154,6 +154,9 @@ Bangle.on("charging", charging => {
   draw(); // redraw to update charging status on screen
 });
 
+// set this as a fallback in case we missed the "charging" event
+drainedInterval = setInterval(checkCharge, interval * 60 * 1000);
+
 if(!keepStartup){
   const storage = require("Storage");
   for(const boot of exceptions){
