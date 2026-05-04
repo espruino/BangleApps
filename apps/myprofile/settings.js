@@ -16,82 +16,86 @@
   function writeProfile() {
     require('Storage').writeJSON(FILE, myprofile);
   }
+  
   function finishRHRReading() {
-  Bangle.setHRMPower(0);
-  Bangle.removeListener('HRM', onRHRHrm);
-  if (rhrData.length > 0) {
-    // Calculate average, ignoring outliers
-    let avgRHR = Math.round(rhrData.reduce((a, b) => a + b) / rhrData.length);
-    
-    E.showPrompt(" ",{
-      buttonHeight:35,
-      buttons:{"Yes":true,"No":false}
-    }).then(function(v){
-    if(v){
-      myprofile.minHrm = avgRHR;
-      writeProfile();
+    Bangle.setHRMPower(0);
+    Bangle.removeListener('HRM', onRHRHrm);
+    if (rhrData.length > 0) {
+      // Calculate average, ignoring outliers
+      let avgRHR = Math.round(rhrData.reduce((a, b) => a + b) / rhrData.length);
+      
       E.showPrompt(" ",{
         buttonHeight:35,
-        buttons:{"Back":true}
+        buttons:{"Yes":true,"No":false}
       }).then(function(v){
-        mainMenu();
-      })
+        if(v){
+          myprofile.minHrm = avgRHR;
+          writeProfile();
+          
+          E.showPrompt(" ",{
+            buttonHeight:35,
+            buttons:{"Back":true}
+          }).then(function(v){
+            mainMenu();
+          })
+          
+          g.clearRect(0,Bangle.appRect.y,g.getWidth(),g.getHeight()-40)
+            .setColor("#f00")
+            .drawImage(atob("Mi2BAAAAAAAAAAAP4AAf4AAf/wAf/gAP/+Af/+AH//wP//wD//+H//+B///z///w///+///8P///////n///////5///////+f///////3///////9////////f///////3///////9////////f///////j///////4///////+P///////B///////wf//////4D//////+Af//////AH//////gA//////4AH/////8AA/////+AAH/////AAB/////gAAP////wAAA////4AAAH///8AAAA///+AAAAH///AAAAA///AAAAAH//gAAAAAf/wAAAAAD/4AAAAAAf4AAAAAAB8AAAAAAAOAAAAAAAAAAAAAAAAAAAAAA=="),g.getWidth()-80,70)
+            .setColor(g.theme.fg)
+            .setFont("Vector", 25).setFontAlign(0,0)
+            .drawString("Saved!", g.getWidth()/2, 35)
+            .setFont("Vector", 30).setFontAlign(0,0)
+            .drawString(avgRHR, g.getWidth()/2-30, g.getHeight()/2)
+            .setFont("Vector", 18).setFontAlign(0,0)
+            .drawString("RHR", g.getWidth()/2-30, g.getHeight()/2+20);
+          
+        }else{
+          mainMenu();
+        }
+    }) 
+  
+    g.clearRect(0,Bangle.appRect.y,g.getWidth(),g.getHeight()-40)
+      .setColor("#f00")
+      .drawImage(atob("Mi2BAAAAAAAAAAAP4AAf4AAf/wAf/gAP/+Af/+AH//wP//wD//+H//+B///z///w///+///8P///////n///////5///////+f///////3///////9////////f///////3///////9////////f///////j///////4///////+P///////B///////wf//////4D//////+Af//////AH//////gA//////4AH/////8AA/////+AAH/////AAB/////gAAP////wAAA////4AAAH///8AAAA///+AAAAH///AAAAA///AAAAAH//gAAAAAf/wAAAAAD/4AAAAAAf4AAAAAAB8AAAAAAAOAAAAAAAAAAAAAAAAAAAAAA=="),g.getWidth()-80,70-15)
+      .setColor(g.theme.fg)
+      .setFont("Vector", 25).setFontAlign(0,0)
+      .drawString("Finished!", g.getWidth()/2, 35)
+      .setFont("Vector", 30).setFontAlign(0,0)
+      .drawString(avgRHR, g.getWidth()/2-30, g.getHeight()/2-15)
+      .setFont("Vector", 18).setFontAlign(0,0)
+      .drawString("RHR", g.getWidth()/2-30, g.getHeight()/2+20-15)
+      .drawString("Save?", g.getWidth()/2, g.getHeight()/2+30)
       
-        g.clearRect(0,Bangle.appRect.y,g.getWidth(),g.getHeight()-40)
-        g.setColor("#f00"); g.drawImage(atob("Mi2BAAAAAAAAAAAP4AAf4AAf/wAf/gAP/+Af/+AH//wP//wD//+H//+B///z///w///+///8P///////n///////5///////+f///////3///////9////////f///////3///////9////////f///////j///////4///////+P///////B///////wf//////4D//////+Af//////AH//////gA//////4AH/////8AA/////+AAH/////AAB/////gAAP////wAAA////4AAAH///8AAAA///+AAAAH///AAAAA///AAAAAH//gAAAAAf/wAAAAAD/4AAAAAAf4AAAAAAB8AAAAAAAOAAAAAAAAAAAAAAAAAAAAAA=="),g.getWidth()-80,70);
-        g.setColor(g.theme.fg); 
-        g.setFont("Vector", 25).setFontAlign(0,0);
-            g.drawString("Saved!", g.getWidth()/2, 35);
-        g.setFont("Vector", 30).setFontAlign(0,0);
-            g.drawString(avgRHR, g.getWidth()/2-30, g.getHeight()/2);
-        g.setFont("Vector", 18).setFontAlign(0,0);
-            g.drawString("RHR", g.getWidth()/2-30, g.getHeight()/2+20);
-    }else{
-      mainMenu();
+    } 
+  }
+
+  function onRHRHrm(hrm) {
+    // Only record if the watch is confident in the reading
+    if (hrm.confidence > 80) {
+      rhrData.push(hrm.bpm);
     }
+  
+    // Update UI
+    g.clearRect(Bangle.appRect)
+      .setColor(g.theme.fg)
+      .setFont("Vector", 20).setFontAlign(0,0)
+      .drawString("Measuring...", g.getWidth()/2, 40)
+      .setFont("Vector", 40)
+      .drawString(hrm.bpm, g.getWidth()/2-30, g.getHeight()/2-5)
+      .setColor("#f00")
+      .drawImage(atob("Mi2BAAAAAAAAAAAP4AAf4AAf/wAf/gAP/+Af/+AH//wP//wD//+H//+B///z///w///+///8P///////n///////5///////+f///////3///////9////////f///////3///////9////////f///////j///////4///////+P///////B///////wf//////4D//////+Af//////AH//////gA//////4AH/////8AA/////+AAH/////AAB/////gAAP////wAAA////4AAAH///8AAAA///+AAAAH///AAAAA///AAAAAH//gAAAAAf/wAAAAAD/4AAAAAAf4AAAAAAB8AAAAAAAOAAAAAAAAAAAAAAAAAAAAAA=="),g.getWidth()-80,60)
+      .setColor(g.theme.fg)
+      .setFont("Vector", 16)
+      .drawString(counter + "s remaining", g.getWidth()/2, g.getHeight() - 55)
     
-  }) 
-
-g.clearRect(0,Bangle.appRect.y,g.getWidth(),g.getHeight()-40)
-      g.setColor("#f00"); g.drawImage(atob("Mi2BAAAAAAAAAAAP4AAf4AAf/wAf/gAP/+Af/+AH//wP//wD//+H//+B///z///w///+///8P///////n///////5///////+f///////3///////9////////f///////3///////9////////f///////j///////4///////+P///////B///////wf//////4D//////+Af//////AH//////gA//////4AH/////8AA/////+AAH/////AAB/////gAAP////wAAA////4AAAH///8AAAA///+AAAAH///AAAAA///AAAAAH//gAAAAAf/wAAAAAD/4AAAAAAf4AAAAAAB8AAAAAAAOAAAAAAAAAAAAAAAAAAAAAA=="),g.getWidth()-80,70-15);
-      g.setColor(g.theme.fg); 
-      g.setFont("Vector", 25).setFontAlign(0,0);
-          g.drawString("Finished!", g.getWidth()/2, 35);
-      g.setFont("Vector", 30).setFontAlign(0,0);
-          g.drawString(avgRHR, g.getWidth()/2-30, g.getHeight()/2-15);
-      g.setFont("Vector", 18).setFontAlign(0,0);
-      g.drawString("RHR", g.getWidth()/2-30, g.getHeight()/2+20-15);
-      g.drawString("Save?", g.getWidth()/2, g.getHeight()/2+30);
-
-    
-  } 
-}
-
-function onRHRHrm(hrm) {
-  // Only record if the watch is confident in the reading
-  if (hrm.confidence > 80) {
-    rhrData.push(hrm.bpm);
+    if(hrm.confidence<=80){
+      g.setFont("Vector", 14).drawString("Low confidence\nKeep still", g.getWidth()/2, g.getHeight() - 20);
+    }
   }
 
-  // UI Update
-  g.clearRect(Bangle.appRect);
-  g.setColor(g.theme.fg); 
-  g.setFont("Vector", 20).setFontAlign(0,0);
-  g.drawString("Measuring...", g.getWidth()/2, 40);
-  g.setFont("Vector", 40);
-  g.drawString(hrm.bpm, g.getWidth()/2-30, g.getHeight()/2-5);
-  g.setColor("#f00"); g.drawImage(atob("Mi2BAAAAAAAAAAAP4AAf4AAf/wAf/gAP/+Af/+AH//wP//wD//+H//+B///z///w///+///8P///////n///////5///////+f///////3///////9////////f///////3///////9////////f///////j///////4///////+P///////B///////wf//////4D//////+Af//////AH//////gA//////4AH/////8AA/////+AAH/////AAB/////gAAP////wAAA////4AAAH///8AAAA///+AAAAH///AAAAA///AAAAAH//gAAAAAf/wAAAAAD/4AAAAAAf4AAAAAAB8AAAAAAAOAAAAAAAAAAAAAAAAAAAAAA=="),g.getWidth()-80,60)
-  g.setColor(g.theme.fg); 
-  g.setFont("Vector", 16);
-  g.drawString(counter + "s remaining", g.getWidth()/2, g.getHeight() - 55);
-  if(hrm.confidence<=80){
-    g.setFont("Vector", 14).drawString("Low confidence\nKeep still", g.getWidth()/2, g.getHeight() - 20);
-  }
-}
-
-function startRHR(){
-    // Start the process
-    
+  function startRHR(){
+    // Start the reading
     g.clearRect(Bangle.appRect)
     g.setColor(g.theme.fg); 
     g.setFont("Vector", 20).setFontAlign(0,0);
@@ -108,25 +112,25 @@ function startRHR(){
       }
     }, 1000);
   }
-function RHRReading(){
-  E.showPrompt("Resting Heart Rate reading requires you to be resting and still. Takes approx. 1 minute.",{
-      title:"Continue?",
-      buttonHeight:50,
-      buttons:{"Continue":true,"Back":false}
-    }).then(function(v){
-    if(v){
+  
+  function RHRReading(){
+      E.showPrompt("Resting Heart Rate reading requires you to be resting and still. Takes approx. 1 minute.",{
+        title:"Continue?",
+        buttonHeight:50,
+        buttons:{"Continue":true,"Back":false}
+      }).then(function(v){
+      if(v){
           E.showPrompt("Make sure Bangle.js is snug around your wrist, about 1 cm under your wrist bone.",{
-          buttonHeight:40,
-          buttons:{"Continue":true}
-        }).then(function(v){
-            startRHR();
-      });
-
-    }else{
-      mainMenu()
-    }
-  });
-}
+            buttonHeight:40,
+            buttons:{"Continue":true}
+          }).then(function(v){
+              startRHR();
+          });
+      }else{
+        mainMenu()
+      }
+    });
+  }
   
   const genderOpts = ["Male","Female","Not Set"];
 
