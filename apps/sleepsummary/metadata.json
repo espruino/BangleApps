@@ -4,7 +4,7 @@
   "shortName": "Sleep Summ.",
   "author":"RKBoss6",
   "version": "0.01",
-  "description": "Adds a module that learns sleeping habits over time and provides a sleep score based on how good of a sleep you got",
+  "description": "A module that learns sleeping habits over time and provides a sleep score based on how beneficial of a sleep you had.",
   "icon": "app.png",
   "type": "app",
   "tags": "health",
@@ -17,7 +17,6 @@
     {"name":"sleepsummary.boot.js","url":"boot.js"},
     {"name":"sleepsummary","url":"module.js"},
     {"name":"sleepsummary.settings.js","url":"settings.js"},
-    {"name":"sleepsummarymsg.app.js","url":"msgapp.js"},
     {"name":"sleepsummary.img","url":"appicon.js","evaluate":true}
   ],
    "data":[
@@ -26,6 +25,7 @@
     {"name":"sleepsummarydatacache.json"}
   ],
   "screenshots":[
-    {"url":"Screenshot.png"}
+    {"url":"scr1.png"},
+    {"url":"scr2.png"}
   ]
 }

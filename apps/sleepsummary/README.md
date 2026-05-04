@@ -9,6 +9,8 @@ It is highly reccomended to use HRM with `sleeplog` for increased accuracy in sl
 This module provides an app where you can see in-depth details about your sleep. There are two pages:
 1. Sleep score and description
 2. Detailed stats about all scores, and time asleep and wakeup time.
+
+Swipe left or right to navigate between the two pages.
    
 ## Formula
 

@@ -43,23 +43,23 @@
       },
       noList:true
     },
-    'Message Delay': {
-      value: 0|settings.messageDelay,
-      min: 0, max: 7200000,
-      step:5,
-      onchange: v => {
-        settings.messageDelay = v; 
-        writeSettings();
-      },
-      format : v => {
-        let h = Math.floor(v/60000);
-        let m = v % 60;
-        let str = "";
-        if (h) str += h+"h";
-        if (m) str += " "+m+"m";
-        return str || "0m";
-      }
+    'Message Delay': { 
+      value: settings.messageDelay || 0, 
+      min: 0, 
+      max: 7200000, 
+      step: 300000, 
+      onchange: v => { settings.messageDelay = v; writeSettings(); }, 
+      format: v => { 
+          let totalMinutes = Math.floor(v / 60000);
+          let h = Math.floor(totalMinutes / 60);
+          let m = totalMinutes % 60;
+          let str = "";
+          if (h) str += h + "h";
+          if (m) str += (h ? " " : "") + m + "m";
+          return str || "0m";
+      } 
     },
+
     'Ideal Deep Sleep': {
       value: 0|settings.deepSleepHours*60,
       min: 60, max: 600,

@@ -20,7 +20,6 @@ function msToTimeStr(ms) {
   return `${hour12}:${mm}${ampm}`;
 }
 
-// Convert total minutes â H:MM time duration string
 function minsToTimeStr(mins) {
   mins = Math.round(mins);
   if (!mins || mins < 0) return "--:--";
@@ -28,7 +27,7 @@ function minsToTimeStr(mins) {
   let h = Math.floor(mins / 60);
   let m = mins % 60;
   let mm = m.toString().padStart(2,"0");
-  return `${h}:${mm}`;
+  return `${h}h ${mm==0?0:mm}m`;
 }
 
 // Custom renderer for the score bar
@@ -98,50 +97,65 @@ var page1Layout = new Layout({
 
 // Layout definition for Page 2 (Stats)
 var page2Layout = new Layout({
-  type: "v", c: [
-    {type:undefined, height:7}, // spacer
-    {type:"txt" ,filly:0, label:"Time Stats", font:"17", halign:0, id:"title",height:14,pad:1},
+  type: "v",valign:0, c: [
+    {type:"txt" ,filly:0, label:"Time Stats", font:"17", halign:0, id:"title",height:12,pad:1},
     {
       type:"v", c: [
         {type:"h", c:[
           {  
-            type:"v", pad:3, c:[
+            type:"v", pad:2, c:[
               {type:"txt", label:"", font:"14",halign:1,pad:4},
               {type:"txt", label:"Wk Up:", font:"14",halign:1},
               {type:"txt", label:"Sleep:", font:"14",halign:1},
             ]
           },
+          {type:undefined,pad:2},
           {  
-            type:"v", pad:3, c:[
+            type:"v", pad:2, c:[
               {type:"txt", label:"Today", font:"14",pad:4},
               {type:"txt", label:"--:--", font:"14", id:"todayWakeupTime"},
               {type:"txt", label:"--:--", font:"14", id:"todaySleepTime"},
             ]
           },
+          {type:undefined,pad:2},
           {  
-            type:"v", pad:3, c:[
+            type:"v", pad:2, c:[
               {type:"txt", label:"Avg", font:"14",pad:4},
               {type:"txt", label:"--:--", font:"14", id:"avgWakeupTime"},
               {type:"txt", label:"--:--", font:"14", id:"avgSleepTime"},
             ]
           }
         ]},
+        {type:undefined,pad:4},
         {type:"txt" ,filly:0, label:"Scores", font:"17", halign:0, id:"title",height:17,pad:1},
        {type:"h", c:[
           {  
             type:"v", pad:2, c:[
-              {type:"txt", label:"Wake Up:", font:"14",halign:1},
-              {type:"txt", label:"Deep Sleep:", font:"14",halign:1},
-              {type:"txt", label:"Duration:", font:"14",halign:1}
+              {type:"h", c:[
+                {type:"txt", label:"Wk Up: ", font:"14",halign:1},
+                {type:"txt", label:"---", font:"14",halign:1,id:"wkUpScore"},
+              ]},
+              {type:"h", c:[
+                {type:"txt", label:"Deep Slp: ", font:"14",halign:1},
+                {type:"txt", label:"---", font:"14",halign:1,id:"deepSleepScore"},
+              ]}
             ]
           },
-          {  
+         {type:undefined,pad:5},
+         {  
             type:"v", pad:2, c:[
-              {type:"txt", label:"---", font:"14",halign:1,id:"wkUpScore"},
-              {type:"txt", label:"---", font:"14",halign:1,id:"deepSleepScore"},
-              {type:"txt", label:"---", font:"14",halign:1,id:"durationScore"},
-            ]  
-        }]}
+              {type:"h", c:[
+                {type:"txt", label:"Ideal Slp: ", font:"14",halign:1},
+                {type:"txt", label:"---", font:"14",halign:1,id:"idealDurationScore"},
+              ]},
+              {type:"h", c:[
+                {type:"txt", label:"Usual Slp: ", font:"14",halign:1},
+                {type:"txt", label:"---", font:"14",halign:1,id:"usualDurationScore"},
+              ]}
+            ]
+          }
+          
+        ]}
       ]
     }
   ]
@@ -164,7 +178,8 @@ function reloadInfo(){
 
   page2Layout.wkUpScore.label = data.wkUpSleepScore || "---";
   page2Layout.deepSleepScore.label = data.deepSleepScore || "---";
-  page2Layout.durationScore.label = data.durationSleepScore || "---";
+  page2Layout.idealDurationScore.label = data.durationSleepScore || "---";
+  page2Layout.usualDurationScore.label = data.usualDurationScore || "---";
 }
 function draw() {
   g.clear(); 
