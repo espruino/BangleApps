@@ -11,7 +11,7 @@ function menuMain() {
     /*LANG*/"Battery": () => menuBattery(),
     /*LANG*/"Temperature": () => menuTemperature(),
   }
-  if(global.calories)menu[/*LANG*/"Calories"]=() => load("calories.app.js");
+  if(global.calories) menu[/*LANG*/"Calories"] = () => load("calories.app.js");
   menu[/*LANG*/"Settings"]= () => eval(require("Storage").read("health.settings.js"))(() => { loadSettings(); menuMain(); });
   E.showMenu(menu);
 }
