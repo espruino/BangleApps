@@ -184,5 +184,6 @@
   exports.getSummaryData = getSummaryData;
   exports.recordData     = recordSleepStats;
   exports.getSettings    = getSettings;
+  exports.getSleepScores = getAllSleepScores;
   exports.getSleepData   = getSleepData;
 }
