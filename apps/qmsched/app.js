@@ -111,7 +111,6 @@ function applyTheme() {
  */
 function showThemeMenu(back, quiet){
   const option = quiet ? "quietTheme" : "normalTheme";
-  function cl(x) { return g.setColor(x).getColor(); }
   var themesMenu = {
     '':{title:/*LANG*/'Theme', back: back},
     /*LANG*/'Default': ()=>{
@@ -136,6 +135,7 @@ function showThemeMenu(back, quiet){
  * Library uses this to make the app update itself
  * @param {int} mode New Quite Mode
  */
+//eslint-disable-next-line no-unused-vars
 function setAppQuietMode(mode) {
   if (mode === current) return;
   current = mode;

@@ -91,6 +91,7 @@ exports.setMode = function(mode) {
   ));
   exports.applyOptions(mode);
   if (typeof WIDGETS === "object" && "qmsched" in WIDGETS) WIDGETS["qmsched"].draw();
+  //eslint-disable-next-line no-undef
   if (global.setAppQuietMode) setAppQuietMode(mode); // current app knows how to update itself
 };
 /**
