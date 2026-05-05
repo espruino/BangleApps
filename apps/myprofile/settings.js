@@ -120,14 +120,14 @@
       buttons: { "Continue": true, "Back": false }
     }).then(function (v) {
       if (v) {
-        E.showPrompt("Make sure Bangle.js is snug around your wrist, about 1 cm under your wrist bone.", {
+        E.showPrompt("Make sure Bangle.js is snug on your wrist, about 1 cm away from your wrist bone.", {
           buttonHeight: 40,
           buttons: { "Continue": true }
-        }).then(function (v) {
+        }).then(function () {
           startRHR();
         });
       } else {
-        mainMenu()
+        minHrmMenu()
       }
     });
   }
@@ -190,6 +190,24 @@
       },
     });
   };
+
+  const minHrmMenu = () => E.showMenu({
+    "": {
+      title: /*LANG*/'Resting/Min HR',
+      back: mainMenu
+    },
+      /*LANG*/'Set manually': {
+      format: v => /*LANG*/`${v} BPM`,
+      value: myprofile.minHrm,
+      min: 30, max: 220,
+      onchange: v => {
+        myprofile.minHrm = v;
+        writeProfile();
+      }
+    },
+      /*LANG*/'Measure resting HR': RHRReading
+  });
+
 
   const mainMenu = () => {
     var menu = {
@@ -256,8 +274,8 @@
         }
       },
     };
-
-    menu[/*LANG*/`Resting/Min HR: ${myprofile.minHrm ? myprofile.minHrm : "--"}`] = RHRReading;
+ 
+    menu[/*LANG*/`Resting/Min HR: ${myprofile.minHrm ? myprofile.minHrm : "--"}`] = minHrmMenu;
     menu[/*LANG*/"Stride length"] = {
       value: myprofile.strideLength,
       min: 0.00,
