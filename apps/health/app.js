@@ -2,7 +2,7 @@ let settings;
 const myprofile = require("Storage").readJSON("myprofile.json",1)||{};
 
 function menuMain() {
-  var menu={
+  var menu = {
     "": { title: /*LANG*/"Health Tracking" },
     /*LANG*/"< Back": () => load(),
     /*LANG*/"Step Counting": () => menuStepCount(),
@@ -11,7 +11,7 @@ function menuMain() {
     /*LANG*/"Battery": () => menuBattery(),
     /*LANG*/"Temperature": () => menuTemperature(),
   }
-  if(global.calories) menu[/*LANG*/"Calories"] = () => load("calories.app.js");
+  if (global.calories) menu[/*LANG*/"Calories"] = () => load("calories.app.js");
   menu[/*LANG*/"Settings"] = () => eval(require("Storage").read("health.settings.js"))(() => { loadSettings(); menuMain(); });
   E.showMenu(menu);
 }
