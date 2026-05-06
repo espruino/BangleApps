@@ -30,7 +30,7 @@ The on-screen menu button displays the following menu items:
 The following parameters can be adjusted individually for each timer by displaying that timer on the main screen and then selecting **Edit** from the menu:
 
 * **Name:** (available when a keyboard app is installed) Allows you to assign a custom name to the timer to display in menus
-* **Start:** Set the starting time of the timer
+* **Start:** Set the starting time of the countdown timer. You can also set this to zero to create a simple stopwatch that counts upward instead of downward (when the timer is running, a dash will appear to the left of the time to indicate this).
 * **At end:** Allows for creating interval or repeat timers. Selecting “Stop” causes the timer to simply stop when it expires and the resulting alert is dismissed. Selecting a timer here will cause the selected timer to reset and automatically begin counting down once this timer expires. See “Chained timers” below.
 * **Vibrate pattern:** Choose the vibration pattern for the alert when the timer expires
 * **Buzz count:** Choose the number of times the vibration pattern signals when the timer expires before silencing itself

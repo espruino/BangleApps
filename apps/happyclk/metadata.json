@@ -9,6 +9,7 @@
   "description": "A happy clock :)",
   "type": "clock",
   "tags": "clock",
+  "author": "peerdavid",
   "screenshots": [
     {"url":"screenshot_1.png"},
     {"url":"screenshot_2.png"},

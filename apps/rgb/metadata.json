@@ -8,6 +8,7 @@
   "icon": "app.png",
   "allow_emulator": true,
   "tags": "tools",
+  "author": "pancake",
   "supports": [
     "BANGLEJS2"
   ],

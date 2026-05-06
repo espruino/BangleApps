@@ -9,7 +9,8 @@
   let s = {
     enabled: globalThis.accelSender.isEnabled(),
     interval: globalThis.accelSender.getInterval(),
-    widget: globalThis.accelSender.getWidget()
+    widget: globalThis.accelSender.getWidget(),
+    stopOnDc: globalThis.accelSender.getStopOnDc()
   };
 
   function save(key, value) {
@@ -24,6 +25,9 @@
         break;
       case "enabled":
         globalThis.accelSender.setEnabled(value);
+        break;
+      case "stopOnDc":
+        globalThis.accelSender.setStopOnDc(value);
         break;
     }
   }
@@ -48,6 +52,10 @@
       min: 1, max: 10, step: 1,
       onchange: (v) => save("interval", v * 1000)
     },
+    "Stop on Disconnect": {
+      value: s.stopOnDc,
+      onchange: (v) => save("stopOnDc", v)
+    }
   };
   E.showMenu(menu);
 })

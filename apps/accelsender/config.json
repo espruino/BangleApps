@@ -1,5 +1,6 @@
 {
   "enabled": false,
   "interval": 5000,
-  "widget": 0
+  "widget": 0,
+  "stopOnDc": true
 }

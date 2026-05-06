@@ -55,10 +55,10 @@
   const drawMenu = () => {
     E.showScroller({
       h : height, c : apps.length,
-      draw : (i, r) => {
+      draw : (i, r, sel) => {
         var app = apps[i];
         if (!app) return;
-        g.clearRect(r).setFont(font).setFontAlign(-1,0).drawString(app.name,imgsize+pad*2,r.y+2+r.h/2);
+        g.setBgColor(sel?g.theme.bgH:g.theme.bg).clearRect(r).setFont(font).setFontAlign(-1,0).drawString(app.name,imgsize+pad*2,r.y+2+r.h/2);
         if (app.icon) {
           if (!app.img) app.img = s.read(app.icon); // load icon if it wasn't loaded
           try {g.drawImage(app.img, pad, r.y+pad, {scale: imgscale});} catch(e){}

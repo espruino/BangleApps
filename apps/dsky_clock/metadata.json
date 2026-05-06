@@ -7,6 +7,7 @@
     "tags": "clock",
     "type": "clock",
     "supports":["BANGLEJS2"],
+    "author": "carlchan",
     "readme": "README.md",
     "allow_emulator": true,
     "storage": [

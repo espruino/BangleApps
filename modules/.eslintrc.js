@@ -170,7 +170,7 @@ module.exports = {
         "D31": "readonly",
     },
     "parserOptions": {
-        "ecmaVersion": 11,
+        "ecmaVersion": 2022,
     },
     "rules": {
         "no-delete-var": "off",
