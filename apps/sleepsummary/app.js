@@ -51,29 +51,30 @@ function drawGraph(l) {
   g.fillRect({x:l.x+pad, y:l.y+pad, w:currentScore*((w-(2*pad))/100), h:12-(pad*2),r:10000}); 
 }
 
-
-if(data.avgWakeUpTime-data.wakeUpTime>20){
+wakeTimeThreshold=20 * 60 * 1000;
+if(data.avgWakeUpTime-data.wakeUpTime>wakeTimeThreshold){
   txtInfo+="You woke up earlier than usual today";
-}else if(data.avgWakeUpTime-data.wakeUpTime<-20){
+}else if(data.avgWakeUpTime-data.wakeUpTime<-wakeTimeThreshold){
   txtInfo+="You woke up later than usual today";
 }else{
   txtInfo+="You woke up around the same time as usual today";
 }
+
 if(score>90){
-  if(data.avgWakeUpTime-data.wakeUpTime<-20) txtInfo+=",and ";
-  else txtInfo+=",but ";
-  txtInfo+="Your sleep was likely to be restful and restorative"
+  if(data.avgWakeUpTime-data.wakeUpTime<-wakeTimeThreshold) txtInfo+=", and ";
+  else txtInfo+=", but ";
+  txtInfo+="your sleep was likely to be restful and restorative";
 }else if(score<60){
-  if(data.avgWakeUpTime-data.wakeUpTime>20) txtInfo+=",and ";
-  else txtInfo+=",but ";
+  if(data.avgWakeUpTime-data.wakeUpTime>wakeTimeThreshold) txtInfo+=", and ";
+  else txtInfo+=", but ";
     //difference in wakeup Time
-  txtInfo+="Your sleep was not likely to be restful"
+  txtInfo+="your sleep was not likely to be restful";
 }else{
 
     //difference in wakeup Time
-  txtInfo+=", and you likely had a moderately restorative sleep."
+  txtInfo+=", and you likely had a moderately restorative sleep";
 }
-
+txtInfo+=".";
 
 
 // Layout definition for Page 1 (Score)

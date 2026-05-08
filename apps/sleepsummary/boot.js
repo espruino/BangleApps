@@ -60,9 +60,10 @@
     let summaryData = require("sleepsummary").getSummaryData();
     let score = summaryData.overallSleepScore;
     let message = "";
-    if (summaryData.avgWakeUpTime - summaryData.wakeUpTime > 20) {
+    let wakeTimeThreshold=20 * 60 * 1000;
+    if (summaryData.avgWakeUpTime - summaryData.wakeUpTime > wakeTimeThreshold) {
       message += "You woke up earlier than usual today";
-    } else if (summaryData.avgWakeUpTime - summaryData.wakeUpTime < -20) {
+    } else if (summaryData.avgWakeUpTime - summaryData.wakeUpTime < -wakeTimeThreshold) {
       message += "You woke up later than usual today";
     } else {
       message += "You woke up around the same time as usual today";

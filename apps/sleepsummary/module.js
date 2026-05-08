@@ -98,7 +98,7 @@
 
   let getSleepScore = function(sleepData, settings, summaryData) {
     var components = {
-      duration:  { score: generateScore(sleepData.consecSleep / 60, settings.idealSleepHours), weight: 0.6 },
+      duration:  { score: generateScore(sleepData.totalSleep / 60, settings.idealSleepHours), weight: 0.6 },
       deepSleep: { score: generateScore(sleepData.deepSleep / 60, settings.deepSleepHours),    weight: 0.3 },
     };
     if (summaryData.avgSleepTime > 0) {
@@ -116,7 +116,7 @@ let getAllSleepScores = function() {
     var settings  = getSettings();
     // pass already-fetched data in — no redundant nested calls
     return {
-      durationScore:     generateScore(sleepData.consecSleep / 60, settings.idealSleepHours),
+      durationScore:     generateScore(sleepData.totalSleep / 60, settings.idealSleepHours),
       deepSleepScore:    generateScore(sleepData.deepSleep / 60, settings.deepSleepHours),
       avgWakeUpScore:    data.avgWakeUpTime > 0 ? generateScore(sleepData.awakeSince,   data.avgWakeUpTime) : 0,
       avgSleepTimeScore: data.avgSleepTime  > 0 ? generateScore(sleepData.totalSleep,   data.avgSleepTime)  : 0,
