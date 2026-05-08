@@ -1,4 +1,3 @@
-/* global sleeplog */
 {
   let storage = require("Storage");
   let settings = require("sleepsummary").getSettings();
@@ -46,11 +45,18 @@
     }
 
     logNow("prompt shown");
+    
     savedData.promptPending = true;
-    savePersistent();
-
+    // automatically recalculates with the new data
     require("sleepsummary").recordData();
-
+    if (!settings.showMessage) {
+      savedData.promptDayShown = getDayString();
+      savedData.promptPending = false;     // ← clear it
+      savePersistent();
+      return;
+    }
+    
+    savePersistent();
     let summaryData = require("sleepsummary").getSummaryData();
     let score = summaryData.overallSleepScore;
     let message = "";
@@ -78,7 +84,7 @@
     });
   }
 
-  function confirmWakeAndShow() {
+  function confirmWakeAndUpdate() {
     if (wakeConfirmInterval !== null) {
       clearInterval(wakeConfirmInterval);
       wakeConfirmInterval = null;
@@ -96,14 +102,13 @@
       logNow("already shown today — skipped");
       return;
     }
-    if (settings.showMessage) {
-      setTimeout(showSummary, 0);
-    }
+    showSummary()
+    
   }
 
   function checkWithSavedData() {
     if (Date.now() - savedData.checkStartTime > settings.messageDelay) {
-      confirmWakeAndShow();
+      confirmWakeAndUpdate();
     }
   }
 
@@ -177,9 +182,7 @@
     checkWithSavedData();
   }
 
-  E.on("kill", function() {
-    storage.writeJSON("sleepsummary.bootdata.json", savedData);
-  });
+  
 
   require("sleeplog");
   if (typeof (global.sleeplog || {}).trigger === "object") {

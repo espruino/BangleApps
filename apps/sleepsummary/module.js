@@ -96,30 +96,33 @@
     }
   };
 
-  let getSleepScore = function() {
-    var sleepData = getSleepData();
-    var settings = getSettings();
-    var summaryData = getAvgData();
-    return getWeightedScore({
-      duration:      { score: generateScore(sleepData.consecSleep / 60, settings.idealSleepHours), weight: 0.6 },
-      deepSleep:     { score: generateScore(sleepData.deepSleep / 60, settings.deepSleepHours),    weight: 0.3 },
-      averageSleep:  { score: generateScore(sleepData.totalSleep, summaryData.avgSleepTime),        weight: 0.15 },
-      averageWakeup: { score: generateScore(sleepData.awakeSince, summaryData.avgWakeUpTime),       weight: 0.1 },
-    });
-  };
+  let getSleepScore = function(sleepData, settings, summaryData) {
+    var components = {
+      duration:  { score: generateScore(sleepData.consecSleep / 60, settings.idealSleepHours), weight: 0.6 },
+      deepSleep: { score: generateScore(sleepData.deepSleep / 60, settings.deepSleepHours),    weight: 0.3 },
+    };
+    if (summaryData.avgSleepTime > 0) {
+      components.averageSleep  = { score: generateScore(sleepData.totalSleep, summaryData.avgSleepTime),  weight: 0.15 };
+    }
+    if (summaryData.avgWakeUpTime > 0) {
+      components.averageWakeup = { score: generateScore(sleepData.awakeSince, summaryData.avgWakeUpTime), weight: 0.1  };
+    }
+    return getWeightedScore(components);
+};
 
-  let getAllSleepScores = function() {
-    var data = getAvgData();
+let getAllSleepScores = function() {
+    var data     = getAvgData();
     var sleepData = getSleepData();
-    var settings = getSettings();
+    var settings  = getSettings();
+    // pass already-fetched data in — no redundant nested calls
     return {
       durationScore:     generateScore(sleepData.consecSleep / 60, settings.idealSleepHours),
       deepSleepScore:    generateScore(sleepData.deepSleep / 60, settings.deepSleepHours),
-      avgWakeUpScore:    generateScore(sleepData.awakeSince, data.avgWakeUpTime),
-      avgSleepTimeScore: generateScore(sleepData.totalSleep, data.avgSleepTime),
-      overallScore:      getSleepScore(),
+      avgWakeUpScore:    data.avgWakeUpTime > 0 ? generateScore(sleepData.awakeSince,   data.avgWakeUpTime) : 0,
+      avgSleepTimeScore: data.avgSleepTime  > 0 ? generateScore(sleepData.totalSleep,   data.avgSleepTime)  : 0,
+      overallScore:      getSleepScore(sleepData, settings, data),
     };
-  };
+};
 
   let writeCachedData = function(data) {
     require("Storage").writeJSON("sleepsummarydatacache.json", data);
@@ -157,15 +160,16 @@
     writeCachedData(cachedData);
   };
 
-  let getSummaryData = function() {
+  let getSummaryData = function(autoCalculate) {
     let avgData = getAvgData();
     let cachedData = getCachedData();
+    let bootData = require('Storage').readJSON("sleepsummary.bootdata.json", true) || {};
     let today = new Date().getDate();
-    if (cachedData.dayLastUpdated != today) {
+    if (cachedData.dayLastUpdated != today&&autoCalculate) {
       calcAndCache();
       cachedData = getCachedData();
     }
-    return Object.assign({}, avgData, cachedData);
+    return Object.assign({}, avgData, cachedData, {scoreLastUpdated:bootData.promptDayShown||""});
   };
 
   let recordSleepStats = function() {

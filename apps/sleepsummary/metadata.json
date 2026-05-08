@@ -1,7 +1,7 @@
  {
   "id": "sleepsummary",
   "name": "Sleep Summary",
-  "shortName": "Sleep Summ.",
+  "shortName": "Sleep Summ",
   "author":"RKBoss6",
   "version": "0.01",
   "description": "A module that learns sleeping habits over time and provides a sleep score based on how beneficial of a sleep you had.",
@@ -17,12 +17,14 @@
     {"name":"sleepsummary.boot.js","url":"boot.js"},
     {"name":"sleepsummary","url":"module.js"},
     {"name":"sleepsummary.settings.js","url":"settings.js"},
+    {"name":"sleepsummary.clkinfo.js","url":"clkinfo.js"},
     {"name":"sleepsummary.img","url":"appicon.js","evaluate":true}
   ],
    "data":[
     {"name":"sleepsummarydata.json"},
     {"name":"sleepsummary.settings.json"},
-    {"name":"sleepsummarydatacache.json"}
+    {"name":"sleepsummarydatacache.json"},
+    {"name":"sleepsummary.bootdata.json"}
   ],
   "screenshots":[
     {"url":"scr1.png"},
