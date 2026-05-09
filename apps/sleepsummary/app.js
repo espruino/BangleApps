@@ -51,7 +51,7 @@ function drawGraph(l) {
   g.fillRect({x:l.x+pad, y:l.y+pad, w:currentScore*((w-(2*pad))/100), h:12-(pad*2),r:10000}); 
 }
 
-wakeTimeThreshold=20 * 60 * 1000;
+let wakeTimeThreshold=20 * 60 * 1000;
 if(data.avgWakeUpTime-data.wakeUpTime>wakeTimeThreshold){
   txtInfo+="You woke up earlier than usual today";
 }else if(data.avgWakeUpTime-data.wakeUpTime<-wakeTimeThreshold){

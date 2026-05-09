@@ -1,3 +1,4 @@
+/* global sleeplog */
 {
   let storage = require("Storage");
   let settings = require("sleepsummary").getSettings();

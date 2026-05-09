@@ -7,7 +7,7 @@
     require("Storage").writeJSON(FILE, settings);
   }
   function showMsgSettings() {
-    menu = {
+    let menu = {
       "": { title: "Message" },
       "< Back": () => mainMenu(),
 
