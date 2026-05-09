@@ -7,7 +7,7 @@
   "description": "A module that learns sleeping habits over time and provides a sleep score based on how beneficial of a sleep you had.",
   "icon": "app.png",
   "type": "app",
-  "tags": "health",
+  "tags": "health,clkinfo",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "dependencies" : { "sleeplog":"app" },

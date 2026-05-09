@@ -43,7 +43,7 @@ To use the module, do `require("sleepsummary")` followed by any function from th
    - `deepSleep` - How long in minutes you spent in deep sleep
    - `lightSleep` - How long in minutes you spent in light sleep
    - `awakeSleep` - How long you spent awake during sleep periods
-   - `consecSleep` - How long in minutes your consecutive sleep is
+   - `consecSleep` - How long in minutes your consecutive sleep is (*Note: primarily use `totalSleep` for sleep time, as it's affected by settings*)
    - `awakeTime` -  How long you are awake for
    - `notWornTime` - How long the watch was detected as not worn
    - `unknownTime` - Time spent unknown
