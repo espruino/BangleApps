@@ -49,8 +49,9 @@
     require("Storage").writeJSON("sleepsummarydata.json", data);
   };
 
-  let deleteAvgData = function() {
+  let deleteData = function() {
     require("Storage").erase("sleepsummarydata.json");
+    require("Storage").erase("sleepsummarydatacache.json");
   };
 
   let getSleepData = function() {
@@ -183,7 +184,7 @@ let getAllSleepScores = function() {
     calcAndCache();
   };
 
-  exports.deleteData     = deleteAvgData;
+  exports.deleteData     = deleteData;
   exports.recalculate    = calcAndCache;
   exports.getSummaryData = getSummaryData;
   exports.recordData     = recordSleepStats;

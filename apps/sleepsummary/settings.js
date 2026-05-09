@@ -109,7 +109,7 @@
         }
       },
       "Clear Data": function () {
-        E.showPrompt("Are you sure you want to delete all averaged data?", {
+        E.showPrompt("Are you sure you want to delete all saved data?", {
           title: "Confirmation"
         }).then(function (v) {
           if (v) {
