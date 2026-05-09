@@ -14,10 +14,19 @@
     let log = storage.readJSON("sleepsummarylog.json", 1) || [];
     let d = new Date();
     log.push(
-      d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +
-      ("0"+d.getDate()).slice(-2) + " " +
-      ("0"+d.getHours()).slice(-2) + ":" + ("0"+d.getMinutes()).slice(-2) + ":" +
-      ("0"+d.getSeconds()).slice(-2) + " | " + msg
+      d.getFullYear() +
+        "-" +
+        ("0" + (d.getMonth() + 1)).slice(-2) +
+        "-" +
+        ("0" + d.getDate()).slice(-2) +
+        " " +
+        ("0" + d.getHours()).slice(-2) +
+        ":" +
+        ("0" + d.getMinutes()).slice(-2) +
+        ":" +
+        ("0" + d.getSeconds()).slice(-2) +
+        " | " +
+        msg
     );
     if (log.length > 200) log = log.slice(-200);
     storage.writeJSON("sleepsummarylog.json", log);
@@ -30,7 +39,7 @@
   function getDayString() {
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60000;
-    return new Date(now - offset).toISOString().split('T')[0];
+    return new Date(now - offset).toISOString().split("T")[0];
   }
 
   let wakeConfirmInterval = null;
@@ -38,7 +47,11 @@
   function showSummary() {
     // Use savedData.lastStatus — global.sleeplog.info.status is unreliable outside trigger
     if (savedData.lastStatus !== 2) {
-      logNow("showSummary: not awake (lastStatus=" + savedData.lastStatus + ") — resetting");
+      logNow(
+        "showSummary: not awake (lastStatus=" +
+          savedData.lastStatus +
+          ") — resetting"
+      );
       savedData.promptPending = false;
       savedData.isCheckingForAwake = false;
       savePersistent();
@@ -46,25 +59,31 @@
     }
 
     logNow("prompt shown");
-    
+
     savedData.promptPending = true;
     // automatically recalculates with the new data
     require("sleepsummary").recordData();
     if (!settings.showMessage) {
       savedData.promptDayShown = getDayString();
-      savedData.promptPending = false;     // ← clear it
+      savedData.promptPending = false; // ← clear it
       savePersistent();
       return;
     }
-    
+
     savePersistent();
     let summaryData = require("sleepsummary").getSummaryData();
     let score = summaryData.overallSleepScore;
     let message = "";
-    let wakeTimeThreshold=20 * 60 * 1000;
-    if (summaryData.avgWakeUpTime - summaryData.wakeUpTime > wakeTimeThreshold) {
+    let wakeTimeThreshold = 20 * 60 * 1000;
+    if (
+      summaryData.avgWakeUpTime - summaryData.wakeUpTime >
+      wakeTimeThreshold
+    ) {
       message += "You woke up earlier than usual today";
-    } else if (summaryData.avgWakeUpTime - summaryData.wakeUpTime < -wakeTimeThreshold) {
+    } else if (
+      summaryData.avgWakeUpTime - summaryData.wakeUpTime <
+      -wakeTimeThreshold
+    ) {
       message += "You woke up later than usual today";
     } else {
       message += "You woke up around the same time as usual today";
@@ -73,8 +92,8 @@
 
     E.showPrompt(message, {
       title: "Good Morning!",
-      buttons: { "Dismiss": 1, "Open App": 2 },
-    }).then(function(answer) {
+      buttons: { Dismiss: 1, "Open App": 2 }
+    }).then(function (answer) {
       savedData.promptDayShown = getDayString();
       savedData.promptPending = false;
       savePersistent();
@@ -104,8 +123,7 @@
       logNow("already shown today — skipped");
       return;
     }
-    showSummary()
-    
+    showSummary();
   }
 
   function checkWithSavedData() {
@@ -146,7 +164,9 @@
     }
 
     if (data.prevStatus !== 3 && data.prevStatus !== 4) {
-      logNow("not waking from sleep (prevStatus=" + data.prevStatus + ") — ignored");
+      logNow(
+        "not waking from sleep (prevStatus=" + data.prevStatus + ") — ignored"
+      );
       return;
     }
 
@@ -167,7 +187,11 @@
       return;
     }
 
-    logNow("wake detected — waiting " + (settings.messageDelay/60000) + " min to confirm");
+    logNow(
+      "wake detected — waiting " +
+        settings.messageDelay / 60000 +
+        " min to confirm"
+    );
     savedData.isCheckingForAwake = true;
     savedData.checkStartTime = Date.now();
     savePersistent();
@@ -184,15 +208,15 @@
     checkWithSavedData();
   }
 
-  
-
   require("sleeplog");
   if (typeof (global.sleeplog || {}).trigger === "object") {
     sleeplog.trigger["sleepsummary"] = {
       onChange: true,
       from: 0,
       to: 24 * 60 * 60 * 1000,
-      fn: function(data) { checkIfAwake(data); }
+      fn: function (data) {
+        checkIfAwake(data);
+      }
     };
   }
 }

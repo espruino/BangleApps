@@ -40,7 +40,7 @@
     };
     E.showMenu(menu);
   }
-  
+
   function mainMenu() {
     E.showMenu({
       "": { title: "Sleep Summary" },
@@ -72,7 +72,7 @@
         },
         noList: true
       },
-      
+
       "Ideal Deep Sleep": {
         value: 0 | (settings.deepSleepHours * 60),
         min: 60,
@@ -130,5 +130,5 @@
       }
     });
   }
-  mainMenu()
-})
+  mainMenu();
+});

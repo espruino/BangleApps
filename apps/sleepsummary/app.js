@@ -3,21 +3,25 @@ var Layout = require("Layout");
 var data = require("sleepsummary").getSummaryData();
 var score = data.overallSleepScore; // The overall score used for the bar graph
 var pageActive = 1; // Start on page 1
-var txtInfo="";
+var txtInfo = "";
 // Convert milliseconds 12-hour time string (H:MMa/p)
 function msToTimeStr(ms) {
-  ms = Math.round(ms);
-  let totalMins = Math.floor(ms / 60000);
-  let h = Math.floor(totalMins / 60) % 24;
-  let m = totalMins % 60;
-  let ampm = h >= 12 ? "p" : "a";
+  if (!ms) {
+    return "--:--";
+  } else {
+    ms = Math.round(ms);
+    let totalMins = Math.floor(ms / 60000);
+    let h = Math.floor(totalMins / 60) % 24;
+    let m = totalMins % 60;
+    let ampm = h >= 12 ? "p" : "a";
 
-  let hour12 = h % 12;
-  if (hour12 === 0) hour12 = 12;
+    let hour12 = h % 12;
+    if (hour12 === 0) hour12 = 12;
 
-  let mm = m.toString().padStart(2, "0");
+    let mm = m.toString().padStart(2, "0");
 
-  return `${hour12}:${mm}${ampm}`;
+    return `${hour12}:${mm}${ampm}`;
+  }
 }
 
 function minsToTimeStr(mins) {
@@ -26,71 +30,114 @@ function minsToTimeStr(mins) {
 
   let h = Math.floor(mins / 60);
   let m = mins % 60;
-  let mm = m.toString().padStart(2,"0");
-  return `${h}h ${mm==0?0:mm}m`;
+  let mm = m.toString().padStart(2, "0");
+  return `${h}h ${mm == 0 ? 0 : mm}m`;
 }
 
 // Custom renderer for the score bar
 function drawGraph(l) {
   let w = 160;
-  let pad=3;
-  let currentScore = score; 
-  
+  let pad = 3;
+  let currentScore = score;
+
   g.setColor(g.theme.fg);
-  g.fillRect({x:l.x, y:l.y, w:w, h:12,r:1000}); // Draw background container
+  g.fillRect({ x: l.x, y: l.y, w: w, h: 12, r: 1000 }); // Draw background container
   g.setColor("#808080");
-  g.fillRect({x:l.x+pad, y:l.y+pad, w:(w-(2*pad)), h:12-(pad*2),r:10000}); 
-  
+  g.fillRect({
+    x: l.x + pad,
+    y: l.y + pad,
+    w: w - 2 * pad,
+    h: 12 - pad * 2,
+    r: 10000
+  });
+
   // Set color based on score (Green > Yellow > Orange > Red)
   g.setColor("#0F0");
-  if(currentScore < 75) g.setColor("#FF0");
-  if(currentScore < 60) g.setColor("#FF8000");
-  if(currentScore < 40) g.setColor("#F00");
-  
+  if (currentScore < 75) g.setColor("#FF0");
+  if (currentScore < 60) g.setColor("#FF8000");
+  if (currentScore < 40) g.setColor("#F00");
+
   // Draw the score bar fill
-  g.fillRect({x:l.x+pad, y:l.y+pad, w:currentScore*((w-(2*pad))/100), h:12-(pad*2),r:10000}); 
+  g.fillRect({
+    x: l.x + pad,
+    y: l.y + pad,
+    w: currentScore * ((w - 2 * pad) / 100),
+    h: 12 - pad * 2,
+    r: 10000
+  });
 }
 
-let wakeTimeThreshold=20 * 60 * 1000;
-if(data.avgWakeUpTime-data.wakeUpTime>wakeTimeThreshold){
-  txtInfo+="You woke up earlier than usual today";
-}else if(data.avgWakeUpTime-data.wakeUpTime<-wakeTimeThreshold){
-  txtInfo+="You woke up later than usual today";
-}else{
-  txtInfo+="You woke up around the same time as usual today";
+let wakeTimeThreshold = 20 * 60 * 1000;
+if (data.avgWakeUpTime - data.wakeUpTime > wakeTimeThreshold) {
+  txtInfo += "You woke up earlier than usual today";
+} else if (data.avgWakeUpTime - data.wakeUpTime < -wakeTimeThreshold) {
+  txtInfo += "You woke up later than usual today";
+} else {
+  txtInfo += "You woke up around the same time as usual today";
 }
 
-if(score>90){
-  if(data.avgWakeUpTime-data.wakeUpTime<-wakeTimeThreshold) txtInfo+=", and ";
-  else txtInfo+=", but ";
-  txtInfo+="your sleep was likely to be restful and restorative";
-}else if(score<60){
-  if(data.avgWakeUpTime-data.wakeUpTime>wakeTimeThreshold) txtInfo+=", and ";
-  else txtInfo+=", but ";
-    //difference in wakeup Time
-  txtInfo+="your sleep was not likely to be restful";
-}else{
-
-    //difference in wakeup Time
-  txtInfo+=", and you likely had a moderately restorative sleep";
+if (score > 90) {
+  if (data.avgWakeUpTime - data.wakeUpTime < -wakeTimeThreshold)
+    txtInfo += ", and ";
+  else txtInfo += ", but ";
+  txtInfo += "your sleep was likely to be restful and restorative";
+} else if (score < 60) {
+  if (data.avgWakeUpTime - data.wakeUpTime > wakeTimeThreshold)
+    txtInfo += ", and ";
+  else txtInfo += ", but ";
+  //difference in wakeup Time
+  txtInfo += "your sleep was not likely to be restful";
+} else {
+  //difference in wakeup Time
+  txtInfo += ", and you likely had a moderately restorative sleep";
 }
-txtInfo+=".";
-
+txtInfo += ".";
 
 // Layout definition for Page 1 (Score)
 var page1Layout = new Layout({
-  type: "v",valign:1, c: [
-    
+  type: "v",
+  valign: 1,
+  c: [
     {
-      type:"v", c: [
-        {type:undefined, height:5},
-        {type:"txt" ,filly:0, label:"Sleep Summary", font:"22", halign:0, id:"title",pad:3},
+      type: "v",
+      c: [
+        { type: undefined, height: 5 },
+        {
+          type: "txt",
+          filly: 0,
+          label: "Sleep Summary",
+          font: "22",
+          halign: 0,
+          id: "title",
+          pad: 3
+        },
         // Display initial score value
-        {type:"txt", label:`Sleep Score: ${score}%`, font:"17", pad:5, id:"sleepScore"},
-        {type:"custom", render:drawGraph, height:15, width:165, id:"scoreBar",pad:7},
-        {type:undefined, height:37}, // spacer
-        {type:"txt", label:txtInfo, font:"14", pad:5, id:"infoTxt",wrap:true,width:g.getWidth()-10},
-        {type:undefined, filly:1},
+        {
+          type: "txt",
+          label: `Sleep Score: ${score}%`,
+          font: "17",
+          pad: 5,
+          id: "sleepScore"
+        },
+        {
+          type: "custom",
+          render: drawGraph,
+          height: 15,
+          width: 165,
+          id: "scoreBar",
+          pad: 7
+        },
+        { type: undefined, height: 37 }, // spacer
+        {
+          type: "txt",
+          label: txtInfo,
+          font: "14",
+          pad: 5,
+          id: "infoTxt",
+          wrap: true,
+          width: g.getWidth() - 10
+        },
+        { type: undefined, filly: 1 }
       ]
     }
   ]
@@ -98,84 +145,175 @@ var page1Layout = new Layout({
 
 // Layout definition for Page 2 (Stats)
 var page2Layout = new Layout({
-  type: "v",valign:0, c: [
-    {type:"txt" ,filly:0, label:"Time Stats", font:"17", halign:0, id:"title",height:12,pad:1},
+  type: "v",
+  valign: 0,
+  c: [
     {
-      type:"v", c: [
-        {type:"h", c:[
-          {  
-            type:"v", pad:2, c:[
-              {type:"txt", label:"", font:"14",halign:1,pad:4},
-              {type:"txt", label:"Wk Up:", font:"14",halign:1},
-              {type:"txt", label:"Sleep:", font:"14",halign:1},
-            ]
-          },
-          {type:undefined,pad:2},
-          {  
-            type:"v", pad:2, c:[
-              {type:"txt", label:"Today", font:"14",pad:4},
-              {type:"txt", label:"--:--", font:"14", id:"todayWakeupTime"},
-              {type:"txt", label:"--:--", font:"14", id:"todaySleepTime"},
-            ]
-          },
-          {type:undefined,pad:2},
-          {  
-            type:"v", pad:2, c:[
-              {type:"txt", label:"Avg", font:"14",pad:4},
-              {type:"txt", label:"--:--", font:"14", id:"avgWakeupTime"},
-              {type:"txt", label:"--:--", font:"14", id:"avgSleepTime"},
-            ]
-          }
-        ]},
-        {type:undefined,pad:4},
-        {type:"txt" ,filly:0, label:"Scores", font:"17", halign:0, id:"title",height:17,pad:1},
-       {type:"h", c:[
-          {  
-            type:"v", pad:2, c:[
-              {type:"h", c:[
-                {type:"txt", label:"Wk Up: ", font:"14",halign:1},
-                {type:"txt", label:"---", font:"14",halign:1,id:"wkUpScore"},
-              ]},
-              {type:"h", c:[
-                {type:"txt", label:"Deep Slp: ", font:"14",halign:1},
-                {type:"txt", label:"---", font:"14",halign:1,id:"deepSleepScore"},
-              ]}
-            ]
-          },
-         {type:undefined,pad:5},
-         {  
-            type:"v", pad:2, c:[
-              {type:"h", c:[
-                {type:"txt", label:"Ideal Slp: ", font:"14",halign:1},
-                {type:"txt", label:"---", font:"14",halign:1,id:"idealDurationScore"},
-              ]},
-              {type:"h", c:[
-                {type:"txt", label:"Usual Slp: ", font:"14",halign:1},
-                {type:"txt", label:"---", font:"14",halign:1,id:"usualDurationScore"},
-              ]}
-            ]
-          }
-          
-        ]}
+      type: "txt",
+      filly: 0,
+      label: "Time Stats",
+      font: "17",
+      halign: 0,
+      id: "title",
+      height: 12,
+      pad: 1
+    },
+    {
+      type: "v",
+      c: [
+        {
+          type: "h",
+          c: [
+            {
+              type: "v",
+              pad: 2,
+              c: [
+                { type: "txt", label: "", font: "14", halign: 1, pad: 4 },
+                { type: "txt", label: "Wk Up:", font: "14", halign: 1 },
+                { type: "txt", label: "Sleep:", font: "14", halign: 1 }
+              ]
+            },
+            { type: undefined, pad: 2 },
+            {
+              type: "v",
+              pad: 2,
+              c: [
+                { type: "txt", label: "Today", font: "14", pad: 4 },
+                {
+                  type: "txt",
+                  label: "--:--",
+                  font: "14",
+                  id: "todayWakeupTime"
+                },
+                {
+                  type: "txt",
+                  label: "--:--",
+                  font: "14",
+                  id: "todaySleepTime"
+                }
+              ]
+            },
+            { type: undefined, pad: 2 },
+            {
+              type: "v",
+              pad: 2,
+              c: [
+                { type: "txt", label: "Avg", font: "14", pad: 4 },
+                {
+                  type: "txt",
+                  label: "--:--",
+                  font: "14",
+                  id: "avgWakeupTime"
+                },
+                { type: "txt", label: "--:--", font: "14", id: "avgSleepTime" }
+              ]
+            }
+          ]
+        },
+        { type: undefined, pad: 4 },
+        {
+          type: "txt",
+          filly: 0,
+          label: "Scores",
+          font: "17",
+          halign: 0,
+          id: "title",
+          height: 17,
+          pad: 1
+        },
+        {
+          type: "h",
+          c: [
+            {
+              type: "v",
+              pad: 2,
+              c: [
+                {
+                  type: "h",
+                  c: [
+                    { type: "txt", label: "Wk Up: ", font: "14", halign: 1 },
+                    {
+                      type: "txt",
+                      label: "---",
+                      font: "14",
+                      halign: 1,
+                      id: "wkUpScore"
+                    }
+                  ]
+                },
+                {
+                  type: "h",
+                  c: [
+                    { type: "txt", label: "Deep Slp: ", font: "14", halign: 1 },
+                    {
+                      type: "txt",
+                      label: "---",
+                      font: "14",
+                      halign: 1,
+                      id: "deepSleepScore"
+                    }
+                  ]
+                }
+              ]
+            },
+            { type: undefined, pad: 5 },
+            {
+              type: "v",
+              pad: 2,
+              c: [
+                {
+                  type: "h",
+                  c: [
+                    {
+                      type: "txt",
+                      label: "Ideal Slp: ",
+                      font: "14",
+                      halign: 1
+                    },
+                    {
+                      type: "txt",
+                      label: "---",
+                      font: "14",
+                      halign: 1,
+                      id: "idealDurationScore"
+                    }
+                  ]
+                },
+                {
+                  type: "h",
+                  c: [
+                    {
+                      type: "txt",
+                      label: "Usual Slp: ",
+                      font: "14",
+                      halign: 1
+                    },
+                    {
+                      type: "txt",
+                      label: "---",
+                      font: "14",
+                      halign: 1,
+                      id: "usualDurationScore"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
       ]
     }
   ]
 });
 
-
-    
-    
-
-    
-
-function reloadInfo(){
-  page1Layout.sleepScore.label=`Sleep Score: ${score}`;
-  page1Layout.infoTxt=txtInfo;
-  page2Layout.todayWakeupTime.label = msToTimeStr(data.wakeUpTime || 0); 
+function reloadInfo() {
+  page1Layout.sleepScore.label = `Sleep Score: ${score}`;
+  page1Layout.infoTxt.label = txtInfo;
+  page2Layout.todayWakeupTime.label = msToTimeStr(data.wakeUpTime || 0);
   page2Layout.avgWakeupTime.label = msToTimeStr(data.avgWakeUpTime || 0);
   page2Layout.todaySleepTime.label = minsToTimeStr(data.sleepDuration || 0);
 
-  page2Layout.avgSleepTime.label = minsToTimeStr(data.avgSleepTime || 0); 
+  page2Layout.avgSleepTime.label = minsToTimeStr(data.avgSleepTime || 0);
 
   page2Layout.wkUpScore.label = data.wkUpSleepScore || "---";
   page2Layout.deepSleepScore.label = data.deepSleepScore || "---";
@@ -183,46 +321,44 @@ function reloadInfo(){
   page2Layout.usualDurationScore.label = data.usualDurationScore || "---";
 }
 function draw() {
-  g.clear(); 
+  g.clear();
   Bangle.drawWidgets();
 
-  if(pageActive==1){
+  if (pageActive == 1) {
     page1Layout.forgetLazyState();
     page1Layout.render();
-  }
-  else{
+  } else {
     page2Layout.forgetLazyState();
     page2Layout.render();
   }
 }
 
-Bangle.on('swipe', (direction) => {
+Bangle.on("swipe", (direction) => {
   // direction == -1 is usually swipe right (next page)
-  if (direction == -1) { 
-    if(pageActive!=2){
+  if (direction == -1) {
+    if (pageActive != 2) {
       Bangle.buzz(40);
-      pageActive=2;
+      pageActive = 2;
       draw();
     }
-  // direction == 1 is usually swipe left (previous page)
-  } else if (direction == 1) { 
-    if(pageActive!=1){
+    // direction == 1 is usually swipe left (previous page)
+  } else if (direction == 1) {
+    if (pageActive != 1) {
       Bangle.buzz(40);
-      pageActive=1;
+      pageActive = 1;
       draw();
     }
   }
 });
 
 // Initial draw, wrapped in a timeout
-setTimeout(function(){
-  reloadInfo()
-  draw()
-},200);
-
+setTimeout(function () {
+  reloadInfo();
+  draw();
+}, 200);
 
 // Set up the app to behave like a clock
 Bangle.setUI("clock");
-delete Bangle.CLOCK; 
+delete Bangle.CLOCK;
 
 Bangle.loadWidgets();
