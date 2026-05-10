@@ -5,6 +5,7 @@ The module also comes with an app to see detailed statistics of your sleep compa
 
 All data is stored only on your device.
 
+Note: For the best experience, it is highly recommended to ensure your sleep from `sleeplog` is accurate. If not, follow the tuning guides in the sleeplog readme to ensure you have accurate data, and thus an accurate and well-timed sleep score and message.
 
 ## App
 This module provides an app where you can see in-depth details about your sleep. There are two pages:
@@ -31,8 +32,9 @@ The module then averages those individual scores with weights added to get a sco
 - <b>Show Message</b> - Whether or not to show a good morning message / prompt when you wake up (this may not be exactly when you wake up, depending on how accurate your settings for Sleeplog are)
 - <b>Ideal Deep Sleep</b> - How much deep sleep per night should qualify as a deep sleep score of 95 (more than this gives you 100)
 - <b>Ideal Sleep Time</b> - How much sleep per night should qualify as a sleep duration score of 95 (more than this gives you 100)
+- <b>Logging Enabled</b> - Whether or not to log triggers from sleeplog and the relavant state changes from boot.js.
 - <b>Min Consec Sleep</b> - The minimum consecutive sleep (in minutes) required before the module considers you to have properly woken up
-- <b>Message Delay</b> - How long after waking the module waits to confirm you are actually awake before showing the prompt
+- <b>Message Delay</b> - How long after waking the module waits to confirm you are actually awake before showing the prompt.
 
 ## Development
 To use the module, do `require("sleepsummary")` followed by any function from the list below.

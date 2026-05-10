@@ -11,25 +11,27 @@
   };
 
   function logNow(msg) {
-    let log = storage.readJSON("sleepsummarylog.json", 1) || [];
-    let d = new Date();
-    log.push(
-      d.getFullYear() +
-        "-" +
-        ("0" + (d.getMonth() + 1)).slice(-2) +
-        "-" +
-        ("0" + d.getDate()).slice(-2) +
-        " " +
-        ("0" + d.getHours()).slice(-2) +
-        ":" +
-        ("0" + d.getMinutes()).slice(-2) +
-        ":" +
-        ("0" + d.getSeconds()).slice(-2) +
-        " | " +
-        msg
-    );
-    if (log.length > 200) log = log.slice(-200);
-    storage.writeJSON("sleepsummarylog.json", log);
+    if(settings.logging){
+      let log = storage.readJSON("sleepsummarylog.json", 1) || [];
+      let d = new Date();
+      log.push(
+        d.getFullYear() +
+          "-" +
+          ("0" + (d.getMonth() + 1)).slice(-2) +
+          "-" +
+          ("0" + d.getDate()).slice(-2) +
+          " " +
+          ("0" + d.getHours()).slice(-2) +
+          ":" +
+          ("0" + d.getMinutes()).slice(-2) +
+          ":" +
+          ("0" + d.getSeconds()).slice(-2) +
+          " | " +
+          msg
+      );
+      if (log.length > 200) log = log.slice(-200);
+      storage.writeJSON("sleepsummarylog.json", log);
+    }
   }
 
   function savePersistent() {

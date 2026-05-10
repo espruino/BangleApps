@@ -52,7 +52,8 @@
         deepSleepHours: 5,
         idealSleepHours: 10,
         messageDelay: 1200000,
-        minConsecSleep: 120
+        minConsecSleep: 120,
+        logging: false
       },
       require("Storage").readJSON("sleepsummary.settings.json", true) || {}
     );

@@ -108,6 +108,13 @@
           return str || "0m";
         }
       },
+      "Logging Enabled": {
+        value: !!settings.logging,
+        onchange: (v) => {
+          settings.logging = v;
+          writeSettings();
+        },
+      },
       "Clear Data": function () {
         E.showPrompt("Are you sure you want to delete all saved data?", {
           title: "Confirmation"
