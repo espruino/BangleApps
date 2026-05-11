@@ -57,3 +57,5 @@
 	the right will do the same.
 0.51: Fix long-touch to enable alarm/timer not updating time (fix #3804)
 0.52: Allow deletion of alarms once they sound (like timers and events)
+0.53: Ensure `Advanced` has a link to the app's settings, and README documents them.
+      Also fix groups when going back from 'showNewMenu'

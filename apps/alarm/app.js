@@ -122,7 +122,7 @@ function showMainMenu(scroll, group, scrollback) {
 function showNewMenu(group) {
   const newMenu = {
     "": { "title": /*LANG*/"New..." },
-    "< Back": () => showMainMenu(group),
+    "< Back": () => showMainMenu(null, group),
     /*LANG*/"Alarm": () => showEditAlarmMenu(undefined, undefined, false, null, group),
     /*LANG*/"Timer": () => showEditTimerMenu(undefined, undefined),
     /*LANG*/"Event": () => showEditAlarmMenu(undefined, undefined, true, null, group)
@@ -563,6 +563,7 @@ function showAdvancedMenu() {
   E.showMenu({
     "": { "title": /*LANG*/"Advanced" },
     "< Back": () => showMainMenu(),
+    /*LANG*/"App Settings": () => eval(require("Storage").read("alarm.settings.js"))(() => showAdvancedMenu()),
     /*LANG*/"Scheduler Settings": () => eval(require("Storage").read("sched.settings.js"))(() => showAdvancedMenu()),
     /*LANG*/"Enable All": () => enableAll(true),
     /*LANG*/"Disable All": () => enableAll(false),

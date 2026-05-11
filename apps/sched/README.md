@@ -55,6 +55,8 @@ Alarms are stored in an array in `sched.json`, and take the form:
                        // Supported intervals: day, week, month, year
   vibrate : "...",     // OPTIONAL pattern of '.', '-' and ' ' to use for when buzzing out this alarm (defaults to '..' if not set)
   hidden : false,      // OPTIONAL if true, the widget should not show an icon for this alarm
+  group : "Foo",       // OPTIONAL if set to a string, and `Show Menu Group` is shown in the `Alarms` app, alarms will be
+                       // grouped into a submenu of the same name.
   as : false,          // auto snooze
   timer : 5*60*1000,   // OPTIONAL - if set, this is a timer and it's the time in ms
   del : false,         // OPTIONAL - if true, delete the timer after expiration
