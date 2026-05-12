@@ -7,7 +7,6 @@
   "readme": "README.md",
   "icon": "icon.png",
   "supports": ["BANGLEJS2"],
-  "allow_emulator": true,
   "type": "clock",
   "tags": "clock",
   "storage": [
