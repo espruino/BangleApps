@@ -49,7 +49,7 @@ Alarms are stored in an array in `sched.json`, and take the form:
   date : "2022-04-04", // OPTIONAL date for the alarm, in YYYY-MM-DD format
                        // eg (new Date()).toISOString().substr(0,10)
   msg : "Eat food",    // message to display.
-  last : 0,            // last day of the month we alarmed on - so we don't alarm twice in one day! (No change from 0 on timers)
+  last : 0,            // last day of the month we alarmed on - so we don't alarm twice in one day! (always 0 on timers)
   rp : true,           // repeat the alarm every day? If date is given, pass an object instead of a boolean,
                        // e.g. repeat every 2 months: { interval: "month", num: 2 }.
                        // Supported intervals: day, week, month, year

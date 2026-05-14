@@ -26,7 +26,7 @@ exports.getActiveAlarms = function (alarms, time) {
       && (!a.date || a.date == time.toLocalISOString().substr(0, 10)) // is allowed on this date
     )
     .sort((a, b) => a.t - b.t);
-}
+};
 // Set an alarm object based on ID. Leave 'alarm' undefined to remove it
 exports.setAlarm = function(id, alarm) {
   var alarms = exports.getAlarms().filter(a=>a.id!=id);
@@ -40,15 +40,18 @@ exports.setAlarm = function(id, alarm) {
     alarms.push(alarm);
   }
   exports.setAlarms(alarms);
+  return alarm;
 };
-/// Set a timer's firing time based off the timer's `timer` property + the given time (or now)
-exports.resetTimer = function(alarm, time) {
-  time = time || new Date();
-  var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
-  alarm.t = (currentTime + alarm.timer) % 86400000;
-  alarm.last = "timer" in alarm || alarm.t >= require("time_utils").getCurrentTimeMillis()
-    ? 0
-    : new Date().getDate();
+/// Set a timer's firing time based off the timer's `timer` property
+exports.resetTimer = function(alarm) {
+  var time = new Date(), // current time
+      currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
+  alarm.t = (currentTime + alarm.timer) % 86400000; // alarm time in day
+  alarm.last = 0; // don't need to specify a last day for alarms
+  // if timer would have gone on until a later day, set a date (fix #4220)
+  if (alarm.t < currentTime || alarm.timer>86400000/*24h*/)
+    alarm.date = new Date(time.getTime() + alarm.timer).toLocalISOString().substr(0, 10);
+  else delete alarm.date;
 };
 /// Get time until the given alarm (object). Return undefined if alarm not enabled, or if 86400000 or more, alarm could be *more* than a day in the future
 exports.getTimeToAlarm = function(alarm, time) {
@@ -68,9 +71,8 @@ exports.reload = function() {
 };
 // Factory that creates a new alarm with default values
 exports.newDefaultAlarm = function () {
-  const settings = exports.getSettings();
-
-  var alarm = {
+  var settings = exports.getSettings(),
+      alarm = {
     t: 12 * 3600000, // Default to 12:00
     del: false, // Never delete an alarm when it expires
     on: true,
@@ -80,16 +82,12 @@ exports.newDefaultAlarm = function () {
     last: 0,
     vibrate: settings.defaultAlarmPattern,
   };
-
-  delete settings;
-
   return alarm;
-}
+};
 // Factory that creates a new timer with default values
 exports.newDefaultTimer = function () {
-  const settings = exports.getSettings();
-
-  var timer = {
+  var settings = exports.getSettings(),
+      timer = {
     timer: 5 * 60 * 1000, // 5 minutes
     del: settings.defaultDeleteExpiredTimers,
     on: true,
@@ -98,16 +96,12 @@ exports.newDefaultTimer = function () {
     dow: 0b1111111,
     last: 0,
     vibrate: settings.defaultTimerPattern
-  }
-
-  delete settings;
-
+  };
   return timer;
 };
 // Return the scheduler settings
 exports.getSettings = function () {
-  return Object.assign(
-    {
+  return Object.assign({
       unlockAtBuzz: true,
       defaultSnoozeMillis: 600000, // 10 minutes
       defaultAutoSnooze: false,
@@ -119,7 +113,7 @@ exports.getSettings = function () {
     },
     require("Storage").readJSON("sched.settings.json", true) || {}
   );
-}
+};
 // Write the updated settings back to storage
 exports.setSettings = function(settings) {
   require("Storage").writeJSON("sched.settings.json", settings);
