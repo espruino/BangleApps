@@ -9,11 +9,16 @@ window.addEventListener('message', function(e) {
   switch (event.type) {
     case "init":
       console.log("EMU frame initialised");
-      emu.addEventListener('unload', function(e) {
-        console.log("EMU frame closed");
-        if (UART.getConnection())
-          UART.getConnection().closeHandler();
-      });
+      try {
+        emu.addEventListener('unload', function(e) {
+          console.log("EMU frame closed (unload handler called)");
+          if (UART.getConnection())
+            UART.getConnection().closeHandler();
+        });
+      } catch (e) {
+        // Fails if cross-origin - not sure we can detect closure?
+        console.log("Unable to emu.addEventListener('unload', ...)", e);
+      }
       if (UART.getConnection())
           UART.getConnection().openHandler();
       if (emuConnectedCallback) { // actually the promise resolver for connections
@@ -27,6 +32,13 @@ window.addEventListener('message', function(e) {
       for (var i=0;i<d.length;i++) a[i]=d.charCodeAt(i);
       if (UART.getConnection())
         UART.getConnection().rxDataHandler(a.buffer);
+      break;
+    }
+    case "pagehide":
+    case "unload": {
+      console.log("EMU frame closed (event received)");
+      if (UART.getConnection())
+        UART.getConnection().closeHandler();
       break;
     }
   }
@@ -75,10 +87,13 @@ function startEmulator() {
           emulatorWin : "innerWidth=290,innerHeight=268,location=0"
         };
 
-        var url = window.location.pathname;
+        var url;/* = window.location.pathname;
         if (url.includes("/"))
-          url = url.substr(0,url.lastIndexOf("/"));
-        url = "http://localhost/ide" + emuDevice.emulatorURL; // FIXME
+          url = url.substr(0,url.lastIndexOf("/"));*/
+        if (window.location.hostname=="localhost")
+          url = "http://localhost/ide" + emuDevice.emulatorURL; // development only
+        else // otherwise use online IDE
+          url = "https://www.espruino.com/ide" + emuDevice.emulatorURL;
         console.log("Opening Emulator",url);
         emuConnectedCallback = resolve;
         emu = window.emu = window.open(url, "banglewindow", emuDevice.emulatorWin);
