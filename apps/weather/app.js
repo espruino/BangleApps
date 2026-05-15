@@ -80,7 +80,7 @@ var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
 
 function formatDuration(millis) {
   let pluralize = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
-  if (millis < 60000) return /*LANG*/"< 1 minute";
+  if (millis < 60000) return /*LANG*/"Now";
   if (millis < 3600000) return pluralize(Math.floor(millis/60000), /*LANG*/"minute");
   if (millis < 86400000) return pluralize(Math.floor(millis/3600000), /*LANG*/"hour");
   return pluralize(Math.floor(millis/86400000), /*LANG*/"day");
