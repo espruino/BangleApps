@@ -18,5 +18,14 @@
     }
   };
 
-  scheduleNext();
+  // Align so we fire at whole hour, 20 min past and 40 min past - not at arbitrary times.
+  const TIME_AT_BOOT = new Date();
+  const TIME_SINCE_WHOLE_THIRD_OF_HOUR = (TIME_AT_BOOT.getMinutes() % 20) * 6e4 + TIME_AT_BOOT.getSeconds() * 1e3;
+  setTimeout(scheduleNext,
+    LOOP_INTERVAL - TIME_SINCE_WHOLE_THIRD_OF_HOUR);
+  // Make sure we don't miss the 2nd buzz after 20 seconds if we rebooted during that interval.
+  if (TIME_SINCE_WHOLE_THIRD_OF_HOUR <= BUZZ_INTERVAL) {
+    setTimeout(Bangle.buzz, 
+      BUZZ_INTERVAL - TIME_SINCE_WHOLE_THIRD_OF_HOUR);
+  }
 })();
