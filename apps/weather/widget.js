@@ -4,7 +4,7 @@
   var dirty = false;
 
   let settings;
-
+  let buffer=Graphics.createArrayBuffer(15,15,1,{msb:true});
   function loadSettings() {
     settings = require("Storage").readJSON("weatherSetting.json", 1) || {};
   }
@@ -81,9 +81,9 @@
     g.reset();
     if (w.code||w.txt) {
       if(setting("widgetMonochrome")){
-        var ovr = Graphics.createArrayBuffer(15,15,1,{msb:true});
-        weather.drawIcon(w,7.5,7.5,7.5,ovr,true);
-        var img = ovr.asImage();
+        buffer.clear();
+        weather.drawIcon(w,7.5,7.5,7.5,buffer,true);
+        var img = buffer.asImage();
         img.transparent = 0;
         g.drawImage(img,this.x+10-7.5, this.y+8-7.5)
       }else{
