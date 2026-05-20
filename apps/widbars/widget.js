@@ -44,7 +44,7 @@
   }
   let batColor=Bangle.isCharging()?'#ff0':'#0f0';
   function draw() {
-    g.reset();
+    g.reset("widget");
     const x = this.x, y = this.y,
       m = process.memory(false);
     let b=0;
@@ -60,7 +60,7 @@
     batColor=charging?'#ff0':'#0f0';
     WIDGETS["bars"].draw();
   });
-  
+
   Bangle.on('lcdPower', on => {
     if (redraw) clearInterval(redraw)
     redraw = undefined;

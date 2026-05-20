@@ -1,3 +1,4 @@
 0.01: Initial version
 0.02: Minor code improvements
 0.03: Default update interval now 60s, timing code improved
+0.04: Adding .reset("widget") to support different colour widget bars

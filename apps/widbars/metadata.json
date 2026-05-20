@@ -1,14 +1,14 @@
 {
   "id": "widbars",
   "name": "Bars Widget",
-  "version": "0.03",
-  "description": "Display several measurements as vertical bars.",
+  "version": "0.04",
+  "description": "Display several measurements (storage, memory, battery) as vertical bars.",
   "icon": "icon.png",
   "screenshots": [{"url":"screenshot.png"}],
   "readme": "README.md",
   "type": "widget",
   "tags": "widget",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "storage": [
     {"name":"widbars.wid.js","url":"widget.js"}
 ]

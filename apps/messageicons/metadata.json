@@ -6,7 +6,7 @@
   "icon": "app.png",
   "type": "module",
   "tags": "tool,system",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "readme":"README.md",
   "provides_modules" : ["messageicons"],
   "default": true,

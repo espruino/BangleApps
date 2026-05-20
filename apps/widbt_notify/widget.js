@@ -24,7 +24,7 @@
 
     draw: function() {
       if (this.showWidget) {
-        g.reset();
+        g.reset("widget");
         if (NRF.getSecurityStatus().connected) {
           if (!this.hideConnected) {
             g.setColor((g.getBPP() > 8) ? "#07f" : (g.theme.dark ? "#0ff" : "#00f"));
