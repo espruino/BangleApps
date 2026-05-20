@@ -27,10 +27,17 @@ if (DEVICEID=="BANGLEJS") {
     "boot","launch","antonclk","setting",
     "about","alarm","sched","health","widlock","widbat","widbt","widid","welcome"
   ];
+} else if (DEVICEID=="BANGLEJS3") {
+  var OUTFILE = path.join(ROOTDIR, '../Espruino/libs/banglejs/banglejs3_storage_default.c');
+  var APPS = [ // IDs of apps to install
+    "boot","launch","antonclk","setting",
+    "about","alarm","sched","health","widlock","widbat","widbt","widid"//,"welcome"
+  ];
 } else {
   console.log("USAGE:");
   console.log("  bin/firmwaremaker_c.js BANGLEJS");
   console.log("  bin/firmwaremaker_c.js BANGLEJS2");
+  console.log("  bin/firmwaremaker_c.js BANGLEJS3");
   process.exit(1);
 }
 console.log("Device = ",DEVICEID);
