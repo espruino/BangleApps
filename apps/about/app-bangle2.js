@@ -62,7 +62,6 @@ function drawInfo() {
 }
 
 function drawImage() {
-  let x = (W-176)/2;
   g.setClipRect(0,imgTop,W-1,imgMaxY);
   g.drawImage(img,imgX,imgTop-imgScroll);
   g.drawImage(img,imgX,imgTop+imgHeight-imgScroll);
