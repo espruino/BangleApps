@@ -5,7 +5,8 @@
   "description": "Show currently installed apps, free space, and allow their deletion from the watch",
   "icon": "files.png",
   "tags": "tool,system,files",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
+  "allow_emulator":true,
   "storage": [
     {"name":"files.app.js","url":"files.js"},
     {"name":"files.img","url":"files-icon.js","evaluate":true}

@@ -6,7 +6,7 @@
   "icon": "app.png",
   "type": "scheduler",
   "tags": "tool,system,alarm,clkinfo",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "provides_modules" : ["sched"],
   "default" : true,
   "readme": "README.md",

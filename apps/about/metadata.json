@@ -5,7 +5,7 @@
   "description": "Bangle.js About page - showing software version, stats, and a collaborative mural from the Bangle.js KickStarter backers",
   "icon": "app.png",
   "tags": "tool,system",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "screenshots": [{"url":"bangle1-about-screenshot.png"}],
   "allow_emulator": true,
   "storage": [

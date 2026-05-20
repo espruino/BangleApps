@@ -7,7 +7,7 @@
   "screenshots": [{"url":"screenshot.png"}],
   "type": "clock",
   "tags": "clock",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "allow_emulator": true,
   "storage": [
     {"name":"antonclk.app.js","url":"app.js"},

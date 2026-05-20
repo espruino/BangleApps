@@ -9,7 +9,8 @@
   "type": "launch",
   "default": true,
   "tags": "tool,system,launcher",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
+  "allow_emulator": true,
   "storage": [
     {"name":"launch.app.js","url":"app.js"},
     {"name":"launch.settings.js","url":"settings.js"}

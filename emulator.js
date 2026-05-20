@@ -78,14 +78,9 @@ function startEmulator() {
       connection.openHandler();
       return new Promise( resolve => {
 
-        var emuDevice = {
-          id : "BANGLEJS2",
-          name : "Bangle.js 2",
-          description : 'Bangle.js 2 Emulator',
-          link : "https://www.espruino.com/Bangle.js2",
-          emulatorURL : "/emu/emu_banglejs2.html",
-          emulatorWin : "innerWidth=290,innerHeight=268,location=0"
-        };
+        var emuDevice = CHOSENDEVICE;
+        if (!CHOSENDEVICE.id)
+          CHOSENDEVICE = DEVICEINFO.find(d=>d.id.startsWith("BANGLEJS2")); /* default */
 
         var url;/* = window.location.pathname;
         if (url.includes("/"))
