@@ -14,7 +14,7 @@ if ((require("Storage").readJSON("messages.settings.json", true) || {}).maxMessa
       let settings = Object.assign({flash: true, maxMessages: 3}, require("Storage").readJSON("messages.settings.json", true) || {});
       if (recall!==true || settings.flash) {
         const msgsShown = E.clip(this.srcs.length, 0, settings.maxMessages);
-        g.reset().clearRect(this.x, this.y, this.x+this.width, this.y+23);
+        g.reset("widget").clearRect(this.x, this.y, this.x+this.width, this.y+23);
         for(let i = 0; i<msgsShown; i++) {
           const src = this.srcs[i];
           const colors = [
