@@ -1,3 +1,5 @@
 0.01: New App!
 0.02: Load widgets after setUI so widclk knows when to hide
 0.03: Show the day of the week
+0.04: Tweaks for 2v30 firmware which natively allows different widget bar colours
+      Allow fast loading
