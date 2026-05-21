@@ -88,12 +88,15 @@ let drawRectClockInfo = function (itm, info, options, top) {
   );
   
   if (info.max&&info.v) {
-    let min=info.min?info.min:0
+    let min=info.min?info.min:0;
+    let val=(info.v-min) / (info.max-min);
+    val=Math.max(0,val);
+    val=Math.min(1,val);
     drawProgBar(
       options.x + 3,
       top ? options.y + options.h - 3 : options.y + 3,
       options.w - 6,
-      +(info.v-min) / (info.max-min),
+      val,
       settings.accentColor
     );
   }
