@@ -9,37 +9,29 @@
   function writeSettings() {
     require('Storage').writeJSON(FILE, settings);
   }
-  
+  function showClMenu(settingsKey){
+    require("colorpicker").show({
+        onSelect:function(color){
+          settings[settingsKey]=color;
+          writeSettings();
+        },
+        showPreview:true,
+        back:function(){
+          showMainMenu()
+        }
+
+      });
+  }
   function showMainMenu(){
   // Show the menu
     E.showMenu({
       "" : { "title" : "Ultra Info" },
       "< Back" : () => back(),
       'Main Color': function(){
-        require("colorpicker").show({
-          onSelect:function(color){
-            settings.mainColor=color;
-            writeSettings();
-          },
-          showPreview:true,
-          back:function(){
-            showMainMenu()
-          }
-
-        });
+          showClMenu("mainColor")
        },
       'Accent Color': function(){
-        require("colorpicker").show({
-          onSelect:function(color){
-            settings.accentColor=color;
-            writeSettings();
-          },
-          showPreview:true,
-          back:function(){
-            showMainMenu()
-          }
-
-        });
+          showClMenu("accentColor")
        },
     });
   }
