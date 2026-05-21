@@ -1,6 +1,6 @@
 WIDGETS["recorder"]={area:"tl",width:0,draw() {
   if (!this.width) return;
-  g.reset().drawImage(atob("DRSBAAGAHgDwAwAAA8B/D/hvx38zzh4w8A+AbgMwGYDMDGBjAA=="),this.x+1,this.y+2);
+  g.reset("widget").drawImage(atob("DRSBAAGAHgDwAwAAA8B/D/hvx38zzh4w8A+AbgMwGYDMDGBjAA=="),this.x+1,this.y+2);
   require("recorder").activeRecorders.forEach((recorder,i)=>{
     recorder.draw(this.x+15+(i>>1)*12, this.y+(i&1)*12);
   });

@@ -6,7 +6,7 @@
   "icon": "app.png",
   "type": "module",
   "tags": "clkinfo,clockinfo",
-  "supports" : ["BANGLEJS2"],
+  "supports" : ["BANGLEJS2","BANGLEJS3"],
   "provides_modules" : ["clock_info"],
   "readme": "README.md",
   "storage": [

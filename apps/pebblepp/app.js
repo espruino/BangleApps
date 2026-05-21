@@ -29,8 +29,7 @@ let drawTimeout;
 const h = g.getHeight();
 const w = g.getWidth();
 //const ha = 2*h/5 - 4;
-const h2 = Math.round(3*h/5) - 10;
-const h3 = Math.round(7*h/8);
+const h2 = Math.round(3*h/5) - 10, h3 = h2+56
 
 let draw = function() {
   let locale = require("locale");
@@ -40,7 +39,7 @@ let draw = function() {
   g.reset();
   g.setBgColor(theme.bg).clearRect(0, h2, w, h3); // clear area where clock is
   if (settings.showdate) {
-    g.setColor(theme.fg).fillRect(w / 2 - 30, h3 + 5, w / 2 + 30, h); // refresh date background
+    g.setColor(theme.fg).fillRect(w / 2 - 30, h3 + 5, w / 2 + 30, h3+24); // refresh date background
     g.setFontLECO1976Regular22().setFontAlign(0, -1);
     g.setColor(theme.bg).drawString(date.getDate() + "." + (date.getMonth() + 1), w / 2, h3 + 5);
   }
@@ -69,8 +68,8 @@ let loadThemeColors = function() {
 loadThemeColors();
 
 // Load the clock infos
-let clockInfoW = 0|(w/2);
-let clockInfoH = 0|(h/2);
+let clockInfoW = 88;
+let clockInfoH = 88;
 let clockInfoItems = require("clock_info").load();
 let clockInfoDraw = (itm, info, options) => {
   // itm: the item containing name/hasRange/etc
@@ -113,12 +112,12 @@ let clockInfoDraw = (itm, info, options) => {
 
 let clockInfoMenuA = require("clock_info").addInteractive(clockInfoItems, {
   app:"pebblepp",
-  x : 0, y: 0, w: clockInfoW, h:clockInfoH,
+  x : (w/2)-clockInfoH, y: h/2 - clockInfoH, w: clockInfoW, h:clockInfoH,
   draw : clockInfoDraw
 });
 let clockInfoMenuB = require("clock_info").addInteractive(clockInfoItems, {
   app:"pebblepp",
-  x : w/2, y: 0, w: clockInfoW, h:clockInfoH,
+  x : w/2, y: h/2 - clockInfoH, w: clockInfoW, h:clockInfoH,
   draw : clockInfoDraw
 });
 

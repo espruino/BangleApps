@@ -7,7 +7,7 @@
   "icon": "app.png",
   "type": "app",
   "tags": "tool,boot,health",
-  "supports": ["BANGLEJS2"],
+  "supports": ["BANGLEJS2", "BANGLEJS3_COMPAT"],
   "readme": "README.md",
   "interface": "interface.html",
   "storage": [

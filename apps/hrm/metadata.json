@@ -6,7 +6,7 @@
   "icon": "heartrate.png",
   "screenshots" : [ { "url":"screenshot.png" } ],
   "tags": "health",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3_COMPAT"],
   "storage": [
     {"name":"hrm.app.js","url":"heartrate.js"},
     {"name":"hrm.img","url":"heartrate-icon.js","evaluate":true}
