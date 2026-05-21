@@ -10,7 +10,7 @@ try {
 //seeded RNG to generate stars, snow, etc
 function sfc32(a, b, c, d) {
     return function() {
-      a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0; 
+      a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
       var t = (a + b) | 0;
       a = b ^ b >>> 9;
       b = c + (c << 3) | 0;
@@ -201,8 +201,14 @@ g.clear();
 
   //clock text
   (color.clock == undefined) ? g.setColor(0xFFFF) : g.setColor(color.clock);
-  g.setFont("Vector", py(20)).setFontAlign(-1, -1).drawString((require("locale").time(new Date(), 1).replace(" ", "")), px(2), py(67));
-  g.setFont("Vector", py(10)).drawString(require('locale').dow(new Date(), 1)+" "+new Date().getDate()+" "+require('locale').month(new Date(), 1)+((data.temp == undefined) ? "" : " | "+require('locale').temp(Math.round(data.temp-273.15)).replace(".0", "")), px(2), py(87));
+  let textx = px(2), textalign=-1, datesize = py(10);
+  if (process.env.BOARD=="BANGLEJS3") {
+    textx = 120;
+    textalign = 0;
+    datesize = py(7);
+  }
+  g.setFont("Vector", py(20)).setFontAlign(textalign, -1).drawString((require("locale").time(new Date(), 1).replace(" ", "")), textx, py(67));
+  g.setFont("Vector", datesize).drawString(require('locale').dow(new Date(), 1)+" "+new Date().getDate()+" "+require('locale').month(new Date(), 1)+((data.temp == undefined) ? "" : " | "+require('locale').temp(Math.round(data.temp-273.15)).replace(".0", "")), textx, py(87));
 
   if (data.showWidgets) {
     Bangle.drawWidgets();

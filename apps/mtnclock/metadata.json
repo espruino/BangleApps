@@ -2,7 +2,7 @@
   "id": "mtnclock",
   "name": "Mountain Pass Clock",
   "shortName": "Mtn Clock",
-  "version": "0.06",
+  "version": "0.07",
   "description": "A clock that changes scenery based on time and weather.",
   "readme":"README.md",
   "icon": "app.png",
@@ -15,7 +15,7 @@
   ],
   "type": "clock",
   "tags": "clock",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "allow_emulator": true,
   "storage": [
     {"name":"mtnclock.app.js","url":"app.js"},
