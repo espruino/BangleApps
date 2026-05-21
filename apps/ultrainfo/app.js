@@ -86,12 +86,14 @@ let drawRectClockInfo = function (itm, info, options, top) {
     1,
     settings.mainColor
   );
-  if (info.max) {
+  
+  if (info.max&&info.v) {
+    let min=info.min?info.min:0
     drawProgBar(
       options.x + 3,
       top ? options.y + options.h - 3 : options.y + 3,
       options.w - 6,
-      +parseFloat(("" + info.text).match(/[\d.]+/)) / info.max,
+      +(info.v-min) / (info.max-min),
       settings.accentColor
     );
   }
@@ -198,5 +200,3 @@ Bangle.setUI({
     if (brClkInfo && brClkInfo.remove) brClkInfo.remove();
   }
 });
-
-
