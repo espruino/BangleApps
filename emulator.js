@@ -1,3 +1,12 @@
+/* Code to handle loading the Bangle.js emulator and setting up a UART connection
+to it as if it was a real device.
+
+The emulator that's loaded depends on the currently chosen device in the UI
+(top left), but you can force it to be a specific one by changing the code below
+if you want to check if an app can work:
+
+CHOSENDEVICE = DEVICEINFO.find(d=>d.id.startsWith("BANGLEJS3"));
+*/
 var emu, emuConnectedCallback;
 
 
