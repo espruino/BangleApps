@@ -9,6 +9,7 @@
   }, {
     "url": "screenshot-1.png"
   }],
+  "author": "stweedo",
   "type": "clock",
   "tags": "clock",
   "supports": ["BANGLEJS", "BANGLEJS2"],

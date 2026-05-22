@@ -1,0 +1,123 @@
+<html>
+<head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <style>
+        .coin-row { margin-bottom: 10px; }
+        .coin-row input { width: 45%; margin-right: 5px; }
+        .coin-row input:last-child { width: 20%; margin-right: 0; }
+    </style>
+</head>
+<body>
+    <h3>Crypto Ticker Settings</h3>
+    <p>Configure up to 3 cryptocurrencies to display on your Bangle.js</p>
+
+    <div class="coin-row">
+        <strong>Coin 1:</strong><br>
+        <input type="text" id="coin1_id" placeholder="CoinGecko ID (e.g. bitcoin)">
+        <input type="text" id="coin1_symbol" placeholder="Symbol (e.g. BTC)" maxlength="5">
+    </div>
+
+    <div class="coin-row">
+        <strong>Coin 2:</strong><br>
+        <input type="text" id="coin2_id" placeholder="CoinGecko ID (e.g. monero)">
+        <input type="text" id="coin2_symbol" placeholder="Symbol (e.g. XMR)" maxlength="5">
+    </div>
+
+    <div class="coin-row">
+        <strong>Coin 3:</strong><br>
+        <input type="text" id="coin3_id" placeholder="CoinGecko ID (e.g. ethereum)">
+        <input type="text" id="coin3_symbol" placeholder="Symbol (e.g. ETH)" maxlength="5">
+    </div>
+
+    <div style="margin-top: 15px;">
+        <label><strong>Fiat Currency:</strong></label><br>
+        <select id="fiat" style="width: 100px;">
+            <option value="eur">EUR</option>
+            <option value="usd">USD</option>
+            <option value="gbp">GBP</option>
+            <option value="jpy">JPY</option>
+            <option value="chf">CHF</option>
+            <option value="aud">AUD</option>
+            <option value="cad">CAD</option>
+            <option value="cny">CNY</option>
+        </select>
+    </div>
+
+    <p><button id="upload" class="btn btn-primary">Save & Upload</button></p>
+
+    <p class="text-gray">
+        <strong>Info:</strong> Find CoinGecko IDs at <a href="https://www.coingecko.com/en/coins" target="_blank">coingecko.com/en/coins</a><br>
+        Leave fields empty to skip a coin slot.
+    </p>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+        var settings = {
+            fiat: "eur",
+            coins: [
+                { id: "monero", symbol: "XMR" },
+                { id: "bitcoin", symbol: "BTC" },
+                { id: "minotari", symbol: "XTM" }
+            ]
+        };
+
+        function onInit() {
+            Util.readStorageJSON("cryptoticker.settings.json", function(data) {
+                if (data) {
+                    settings = data;
+                    if (settings.coins && settings.coins[0]) {
+                        document.getElementById("coin1_id").value = settings.coins[0].id || "";
+                        document.getElementById("coin1_symbol").value = settings.coins[0].symbol || "";
+                    }
+                    if (settings.coins && settings.coins[1]) {
+                        document.getElementById("coin2_id").value = settings.coins[1].id || "";
+                        document.getElementById("coin2_symbol").value = settings.coins[1].symbol || "";
+                    }
+                    if (settings.coins && settings.coins[2]) {
+                        document.getElementById("coin3_id").value = settings.coins[2].id || "";
+                        document.getElementById("coin3_symbol").value = settings.coins[2].symbol || "";
+                    }
+                    if (settings.fiat) {
+                        document.getElementById("fiat").value = settings.fiat;
+                    }
+                }
+            });
+        }
+
+        document.getElementById("upload").addEventListener("click", function() {
+            settings.coins = [];
+            
+            var id1 = document.getElementById("coin1_id").value.trim();
+            var sym1 = document.getElementById("coin1_symbol").value.trim().toUpperCase();
+            if (id1 && sym1) {
+                settings.coins.push({ id: id1, symbol: sym1 });
+            }
+
+            var id2 = document.getElementById("coin2_id").value.trim();
+            var sym2 = document.getElementById("coin2_symbol").value.trim().toUpperCase();
+            if (id2 && sym2) {
+                settings.coins.push({ id: id2, symbol: sym2 });
+            }
+
+            var id3 = document.getElementById("coin3_id").value.trim();
+            var sym3 = document.getElementById("coin3_symbol").value.trim().toUpperCase();
+            if (id3 && sym3) {
+                settings.coins.push({ id: id3, symbol: sym3 });
+            }
+
+            settings.fiat = document.getElementById("fiat").value;
+
+            if (settings.coins.length === 0) {
+                alert("Please configure at least one coin!");
+                return;
+            }
+
+            Util.showModal("Saving...");
+            Util.writeStorage("cryptoticker.settings.json", JSON.stringify(settings), function() {
+                Util.hideModal();
+                alert("Settings saved!");
+            });
+        });
+    </script>
+</body>
+</html>

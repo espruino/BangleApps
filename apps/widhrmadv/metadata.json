@@ -1,7 +1,7 @@
 {
   "id": "widhrmadv",
   "name": "widhrmadv",
-  "version": "0.01",
+  "version": "0.02",
   "author": "bobrippling",
   "description": "Allows toggleable advertisement of HRM over BLE",
   "readme": "README.md",

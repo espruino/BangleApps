@@ -66,6 +66,128 @@ exports.reload = function() {
     bg.palette.set(settings.colors.map(c=>g.toColor(c)));
     settings.img = bg;
     settings.imgOpt = {scale:g.getWidth()/16};
+  } else if (settings.style=="blobs") { // ~25ms
+    settings.style = "image";
+    const S=11; // image size
+    const Z=88,W=Z/S,H=Z/S;
+/*
+const S=11; // image size
+function rotate(img,n) {
+  var res = [],r = Graphics.createArrayBuffer(S,S,1);
+  n=n||4;
+  for (var i=0;i<n;i++) {
+    r.setRotation(i);
+    r.clear().drawImage(img);
+    r.setRotation(0);
+    res.push(r.asImage("string"));
+  }
+  return res;
+}
+print("const IM_ANGLE = ",rotate(Graphics.createImage(`
+
+
+
+
+
+        ###
+       ####
+      #####
+     ######
+     ######
+     ######
+`)),", IM_FANGLE = ",rotate(Graphics.createImage(`
+###########
+###########
+###########
+###########
+###########
+###########
+##########
+########
+#######
+######
+######
+`)),", IM_STRAIGHT = ",rotate(Graphics.createImage(`
+
+
+
+
+
+###########
+###########
+###########
+###########
+###########
+###########
+`)),", IM_DOUBLE = ",rotate(Graphics.createImage(`
+######
+######
+#####
+#####
+####
+##       ##
+       ####
+      #####
+      #####
+     ######
+     ######
+`),2),", IM_BLANK = ",E.toJS("\1\1\2\0"),", IM_FILL = ", E.toJS("\v\v\1\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80"),";");*/
+    const IM_ANGLE =  [
+  "\v\v\1\0\0\0\0\0\0\0\1\xC0x\x1F\7\xE0\xFC\x1F\x80",
+  "\v\v\1\0\0\0\0\0\0\1\xC0<\7\xC0\xFC\x1F\x83\xF0\0",
+  "\v\v\1\xFC\x1F\x83\xF0|\x0F\1\xC0\0\0\0\0\0\0\0\0",
+  "\v\v\1\7\xE0\xFC\x1F\x81\xF0\x1E\1\xC0\0\0\0\0\0\0\0"
+ ] , IM_FANGLE =  [
+  "\v\v\1\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xF7\xF8\xFE\x1F\x83\xF0\0",
+  "\v\v\1\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xCF\xF8\xFF\x0F\xE1\xFC\x1F\x80",
+  "\v\v\1\7\xE0\xFC?\x8F\xF7\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80",
+  "\v\v\1\xFC\x1F\xC3\xF8\x7F\x8F\xF9\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80"
+ ] , IM_STRAIGHT =  [
+  "\v\v\1\0\0\0\0\0\0\1\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80",
+  "\v\v\1\xFC\x1F\x83\xF0~\x0F\xC1\xF8?\7\xE0\xFC\x1F\x83\xF0\0",
+  "\v\v\1\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xC0\0\0\0\0\0\0\0",
+  "\v\v\1\7\xE0\xFC\x1F\x83\xF0~\x0F\xC1\xF8?\7\xE0\xFC\x1F\x80"
+ ] , IM_DOUBLE =  [
+  "\v\v\1\xFC\x1F\x83\xE0|\x0F\1\x80\xC0x\x1F\3\xE0\xFC\x1F\x80",
+  "\v\v\1\7\xE0\xFC\x0F\x81\xF0\x1F\x80\xFC\7\xC0\xF8\x1F\x83\xF0\0"
+ ] , IM_BLANK =  "\1\1\2\0" , IM_FILL =  "\v\v\1\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x80" ;
+
+    const IM = { // [ TL TR BL BR ]
+      "0000" : IM_BLANK,
+      "1000" : IM_ANGLE[2],
+      "0100" : IM_ANGLE[3],
+      "1100" : IM_STRAIGHT[2],
+      "0010" : IM_ANGLE[1],
+      "1010" : IM_STRAIGHT[1],
+      "0110" : IM_DOUBLE[1],
+      "1110" : IM_FANGLE[0],
+      "0001" : IM_ANGLE[0],
+      "1001" : IM_DOUBLE[0],
+      "0101" : IM_STRAIGHT[3],
+      "1101" : IM_FANGLE[1],
+      "0011" : IM_STRAIGHT[0],
+      "1011" : IM_FANGLE[3],
+      "0111" : IM_FANGLE[2],
+      "1111" : IM_FILL,
+    };
+
+    let bg = Graphics.createArrayBuffer(Z,Z,2);
+    bg.palette = new Uint16Array(4);
+    bg.palette.set(settings.colors.map(c=>g.toColor(c)));
+    let m = new Uint8Array(W*(H+1)+1);
+    E.mapInPlace(m,m,Math.randInt.bind(Math,2));
+    let n,x,y;
+    for (y=n=0;y<Z;y+=S)
+      for (x=0;x<Z;x+=S) bg.drawImage(IM[""+m[n]+m[n+1]+m[n+W]+m[++n+W]],x,y);
+    bg.filter([ // a gaussian filter to smooth out
+        0,1,2,3,0,
+        1,2,3,2,1,
+        2,3,4,2,1,
+        1,2,3,2,1,
+        0,1,2,3,0,
+    ], { w:5, h:5, div:42, offset:0 });
+    settings.img = bg;
+    settings.imgOpt = {scale:2};
   }
   delete settings.colors; // not needed now
   //console.log("bg",Date.now()-t);

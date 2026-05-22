@@ -6,7 +6,7 @@
   "icon": "app.png",
   "type": "widget",
   "tags": "tool,system",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "screenshots": [{"url": "screenshot.gif"}],
   "dependencies" : { "messageicons":"module" },
   "provides_widgets" : ["message"],

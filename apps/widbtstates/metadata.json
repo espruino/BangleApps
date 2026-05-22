@@ -1,7 +1,7 @@
 {
   "id": "widbtstates",
   "name": "Bluetooth States",
-  "version": "0.02",
+  "version": "0.03",
   "author": "bobrippling",
   "description": "If active, shows a white bluetooth icon, if connected, a blue one (nothing if sleeping)",
   "icon": "widget.png",

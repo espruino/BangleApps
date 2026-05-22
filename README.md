@@ -90,6 +90,8 @@ You can also take multiple screenshots and use a website like [this](https://ezg
 
 ## Testing
 
+For functional testing of apps using the Bangle.js emulator, see [TESTING.md](TESTING.md).
+
 ### Online
 
 This is the best way to test...
@@ -285,7 +287,7 @@ and which gives information about the app for the Launcher.
                               //   'system' - used by the system
                               //   'clkinfo' - provides or uses clock_info module for data on your clock face or clocks that support it (see apps/clock_info/README.md)
                               //   'health' - e.g. heart rate monitors or step counting
-  "supports": ["BANGLEJS2"],  // List of device IDs supported, either BANGLEJS or BANGLEJS2
+  "supports": ["BANGLEJS2"],  // List of device IDs supported, either BANGLEJS, BANGLEJS2, BANGLEJS3 or BANGLEJS3_COMPAT(faking the 176x176 LCD)
   "dependencies" : { "notify":"type" } // optional, app 'types' we depend on (see "type" above)
   "dependencies" : { "messages":"app" } // optional, depend on a specific app ID
                               // for instance this will use notify/notifyfs is they exist, or will pull in 'notify'

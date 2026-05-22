@@ -7,7 +7,7 @@
   "icon": "app.png",
   "tags": "tool,system,messages,notifications,gadgetbridge",
   "dependencies": {"messages":"module"},
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "readme": "README.md",
   "storage": [
     {"name":"android.app.js","url":"app.js"},

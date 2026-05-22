@@ -6,7 +6,7 @@
   "icon": "app.png",
   "type": "widget",
   "tags": "tool,alarm,widget",
-  "supports": [ "BANGLEJS", "BANGLEJS2" ],
+  "supports": [ "BANGLEJS", "BANGLEJS2", "BANGLEJS3" ],
   "provides_widgets" : ["alarm"],
   "default" : true,
   "storage": [

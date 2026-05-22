@@ -8,7 +8,7 @@
   "tags": "widget,bluetooth",
   "provides_widgets" : ["bluetooth"],
   "default" : true,
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "storage": [
     {"name":"widbt.wid.js","url":"widget.js"}
   ]

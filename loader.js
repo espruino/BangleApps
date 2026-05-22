@@ -16,11 +16,13 @@ if (window.location.host=="banglejs.com") {
     'This is not the official Bangle.js App Loader - you can try the <a href="https://banglejs.com/apps/">Official Version</a> here.';
 }
 
-var RECOMMENDED_VERSION = "2v28";
+var RECOMMENDED_VERSION = "2v29";
 // could check http://www.espruino.com/json/BANGLEJS.json for this
 
 // We're only interested in Bangles
 DEVICEINFO = DEVICEINFO.filter(x=>x.id.startsWith("BANGLEJS"));
+// The device object (from DEVICEINFO) for the device that's been chosen
+CHOSENDEVICE = {};
 // Where we get our usage data from
 Const.APP_USAGE_JSON = "https://banglejs.com/apps/appusage.json";
 Const.APP_DATES_CSV = "appdates.csv";
@@ -45,8 +47,13 @@ function onFoundDeviceInfo(deviceId, deviceVersion) {
     fwURL = "https://www.espruino.com/Bangle.js2#firmware-updates";
     Const.MESSAGE_RELOAD = 'Hold button\nto reload';
   }
+  if (deviceId == "BANGLEJS3") {
+    fwExtraText = "with the <b>Firmware Update</b> app in this App Loader, or "
+    fwURL = "https://www.espruino.com/Bangle.js3#firmware-updates";
+    Const.MESSAGE_RELOAD = 'Hold middle button\nto reload';
+  }
 
-  if (deviceId != "BANGLEJS" && deviceId != "BANGLEJS2") {
+  if (deviceId != "BANGLEJS" && deviceId != "BANGLEJS2" && deviceId != "BANGLEJS3") {
     showToast(`You're using ${deviceId}, not a Bangle.js. Did you want <a href="https://espruino.com/apps">espruino.com/apps</a> instead?` ,"warning", 20000);
   } else if (versionLess(deviceVersion, RECOMMENDED_VERSION)) {
     showToast(`You're using an old Bangle.js firmware (${deviceVersion}) and ${RECOMMENDED_VERSION} is available (<a href="https://www.espruino.com/ChangeLog" target="_blank">see changes</a>). You can update ${fwExtraText}<a href="${fwURL}" target="_blank">with the instructions here</a>` ,"warning", 20000);
@@ -104,6 +111,7 @@ function filterAppsForDevice(deviceId) {
     originalAppJSON = appJSON;
 
   var device = DEVICEINFO.find(d=>d.id==deviceId);
+  CHOSENDEVICE = device;
   // set the device dropdown
   document.querySelector(".devicetype-nav span").innerText = device ? device.name : "All apps";
 
@@ -120,7 +128,7 @@ function filterAppsForDevice(deviceId) {
           console.log(`App ${app.id} doesn't include a 'supports' field - ignoring`);
           return false;
         }
-        if (app.supports.includes(deviceId)) return true;
+        if (app.supports.includes(deviceId) || app.supports.includes(deviceId+"_COMPAT")) return true;
         //console.log(`Dropping ${app.id} because ${deviceId} is not in supported list ${app.supports.join(",")}`);
         return false;
       });
@@ -148,6 +156,12 @@ window.addEventListener('load', (event) => {
     if (searchParams.has("dev_id")) // dev_id=BANGLEJS2 for example, to stop the popup
       setSavedDeviceId(searchParams.get("dev_id"));
   }
+
+  // set up the device chooser dropdown
+  var deviceChooser = document.getElementById("device-dropdown");
+  DEVICEINFO.forEach(d=>{
+    deviceChooser.innerHTML += `<li class="menu-item"><a dt="${d.id}">${d.name}</a></li>`;
+  });
 
   let deviceId = getSavedDeviceId()
   if (deviceId !== undefined) return; // already chosen
@@ -230,7 +244,7 @@ window.addEventListener('load', (event) => {
           app = appJSON.find(a => a.id==oldApp.id);
           if (!app)
             return console.log(`Ignoring ${oldApp.id} as not found`);
-          promise = promise.then(() => updateApp(app, {noReset:true, noFinish:true}));
+          promise = promise.then(() => updateApp(app, {noReset:true, noFinish:true, noNewOperation: true}));
         });
         return promise;
       }).then( _ =>
@@ -250,6 +264,8 @@ window.addEventListener('load', (event) => {
         return httpGet("defaultapps_banglejs1.json");
       if (device.id == "BANGLEJS2")
         return httpGet("defaultapps_banglejs2.json");
+      if (device.id == "BANGLEJS3")
+        return httpGet("defaultapps_banglejs3.json");
       throw new Error("Unknown device "+device.id);
     }).then(json=>{
       return installMultipleApps(JSON.parse(json), "default");

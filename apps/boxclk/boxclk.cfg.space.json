@@ -1,0 +1,107 @@
+{
+  "background": {
+    "type": "image",
+    "image": "boxclk.space.img"
+  },
+  "items": [
+    {
+      "name": "Time",
+      "type": "time",
+      "prefix": "",
+      "suffix": "",
+      "position": {
+        "x": 0.33,
+        "y": 0.29
+      },
+      "appearance": {
+        "font": "Vector",
+        "fontSize": 24,
+        "outline": 2,
+        "textColor": "#0ff",
+        "outlineColor": "#00f",
+        "borderColor": "#0f0",
+        "boundary": {
+          "x": 3.08,
+          "y": -0.92
+        }
+      },
+      "options": {
+        "timeMode": "system",
+        "showSeconds": false
+      }
+    },
+    {
+      "name": "Meridian",
+      "type": "meridian",
+      "prefix": "",
+      "suffix": "",
+      "position": {
+        "x": 0.34,
+        "y": 0.46
+      },
+      "appearance": {
+        "font": "Vector",
+        "fontSize": 16,
+        "outline": 1,
+        "textColor": "#ff9900",
+        "outlineColor": "fg",
+        "borderColor": "#0ff",
+        "boundary": {
+          "x": 1.83,
+          "y": 2.83
+        }
+      },
+      "options": {
+        "short": false
+      }
+    },
+    {
+      "name": "Day",
+      "type": "day",
+      "prefix": "",
+      "suffix": "",
+      "position": {
+        "x": 0.5,
+        "y": 0.82
+      },
+      "appearance": {
+        "font": "Vector",
+        "fontSize": 16,
+        "outline": 1,
+        "textColor": "#000",
+        "outlineColor": "#fff",
+        "borderColor": "#0f0",
+        "boundary": {
+          "x": 2.46,
+          "y": 3.46
+        }
+      },
+      "options": {
+        "short": false
+      }
+    },
+    {
+      "name": "Battery",
+      "type": "battery",
+      "prefix": "",
+      "suffix": "%",
+      "position": {
+        "x": 0.873,
+        "y": 0.872
+      },
+      "appearance": {
+        "font": "Vector",
+        "fontSize": 12,
+        "outline": 1,
+        "textColor": "#0ff",
+        "outlineColor": "#00f",
+        "borderColor": "#0f0",
+        "boundary": {
+          "x": 2.39,
+          "y": 2.39
+        }
+      },
+      "options": {}
+    }
+  ]
+}

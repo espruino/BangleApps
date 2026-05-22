@@ -7,12 +7,12 @@
   "icon": "notify.png",
   "type": "notify",
   "tags": "widget",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "provides_modules" : ["notify"],
   "default" : true,
   "readme": "README.md",
   "storage": [
     {"name":"notify","url":"notify_bjs1.js", "supports": ["BANGLEJS"]},
-    {"name":"notify","url":"notify_bjs2.js", "supports": ["BANGLEJS2"]}
+    {"name":"notify","url":"notify_bjs2.js", "supports": ["BANGLEJS2","BANGLEJS3"]}
   ]
 }

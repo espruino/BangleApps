@@ -88,6 +88,8 @@ function resetSettings() {
       twistTimeout: 1000
     },
   };
+  if (Bangle.haptic) // don't add by default as it'll break 2v29 and earlier firmwares
+    settings.options.hapticTime = 25;
   updateSettings();
 }
 
@@ -104,7 +106,7 @@ function mainMenu() {
     /*LANG*/'Apps': ()=>pushMenu(appSettingsMenu()),
     /*LANG*/'System': ()=>pushMenu(systemMenu()),
     /*LANG*/'Bluetooth': ()=>pushMenu(BLEMenu()),
-    /*LANG*/'Alerts': ()=>pushMenu(alertsMenu()),
+    /*LANG*/'Sound/Vibration': ()=>pushMenu(vibrateMenu()),
     /*LANG*/'Utils': ()=>pushMenu(utilMenu())
   };
 
@@ -127,7 +129,7 @@ function systemMenu() {
   return mainmenu;
 }
 
-function alertsMenu() {
+function vibrateMenu() {
   var beepMenuItem;
   if (BANGLEJS2) {
     beepMenuItem = {
@@ -157,8 +159,8 @@ function alertsMenu() {
     };
   }
 
-  const mainmenu = {
-    '': { 'title': /*LANG*/'Alerts' },
+  let mainmenu = {
+    '': { 'title': /*LANG*/'Sound/Vibration' },
     '< Back': ()=>popMenu(mainMenu()),
     /*LANG*/'Beep': beepMenuItem,
     /*LANG*/'Vibration': {
@@ -171,7 +173,22 @@ function alertsMenu() {
           setTimeout(() => VIBRATE.write(0), 10);
         }
       }
-    },
+    }
+  };
+  if (Bangle.haptic)
+    mainmenu = Object.assign(mainmenu, {
+      /*LANG*/'Haptic Strength': {
+        value: settings.options.hapticTime ?? 25,  // ?? 25 converts null or undefined to 25
+        min: 0, max: 50,
+        step:5,
+        format: v => v==0?/*LANG*/"Off":v,
+        onchange: v => {
+          settings.options.hapticTime = v;
+          updateOptions();
+        }
+      }
+    });
+  return Object.assign(mainmenu, {
     /*LANG*/"Quiet Mode": {
       value: (settings.quiet|0)%3,
       min:0, max:2,
@@ -189,9 +206,7 @@ function alertsMenu() {
         updateSettings();
       },
     }
-  };
-
-  return mainmenu;
+  });
 }
 
 
@@ -295,6 +310,7 @@ function showThemeMenu(pop) {
         fg:cl("#fff"), bg:cl("#000"),
         fg2:cl("#fff"), bg2:cl("#004"),
         fgH:cl("#fff"), bgH:cl("#00f"),
+        fgW:cl("#fff"), bgW:cl("#000"),
         dark:true
       });
     },
@@ -303,6 +319,7 @@ function showThemeMenu(pop) {
         fg:cl("#000"), bg:cl("#fff"),
         fg2:cl("#000"), bg2:cl("#cff"),
         fgH:cl("#000"), bgH:cl("#0ff"),
+        fgW:cl("#000"), bgW:cl("#fff"),
         dark:false
       });
     }
@@ -316,6 +333,7 @@ function showThemeMenu(pop) {
           fg:cl(newTheme.fg), bg:cl(newTheme.bg),
           fg2:cl(newTheme.fg2), bg2:cl(newTheme.bg2),
           fgH:cl(newTheme.fgH), bgH:cl(newTheme.bgH),
+          fgW:cl(newTheme.fgW), bgW:cl(newTheme.bgW),
           dark:newTheme.dark
         });
       };
@@ -363,8 +381,9 @@ function showThemeMenu(pop) {
       fg: /*LANG*/'Foreground', bg: /*LANG*/'Background',
       fg2: /*LANG*/'Foreground 2', bg2: /*LANG*/'Background 2',
       fgH: /*LANG*/'Highlight FG', bgH: /*LANG*/'Highlight BG',
+      fgW: /*LANG*/'Widget FG', bgW: /*LANG*/'Widget BG',
     };
-    ["fg", "bg", "fg2", "bg2", "fgH", "bgH"].forEach(t => {
+    ["fg", "bg", "fg2", "bg2", "fgH", "bgH", "fgW", "bgW"].forEach(t => {
       menu[labels[t]] = {
           min : 0, max : colors.length-1, wrap : true,
           value: Math.max(colors.indexOf(g.theme[t]),0),

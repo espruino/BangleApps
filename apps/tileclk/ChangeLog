@@ -1,1 +1,5 @@
 0.01: New App!
+0.02: Reduce memory use by loading clock info on demand instead of at startup.
+0.03: Respect the global vibration and haptic strength settings instead of using an app-specific haptics toggle.
+0.04: Fix clock info values of 0 rendering as blank by stringifying non-null text.
+0.05: Make Dynamic the default seconds mode.

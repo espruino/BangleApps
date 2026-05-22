@@ -2,7 +2,7 @@
   "id": "tileclk",
   "name": "Tile Clock",
   "shortName": "Tile Clock",
-  "version": "0.01",
+  "version": "0.05",
   "description": "A tile-based digital clock with animated transitions, customizable borders, and clock info integration.",
   "icon": "icon.png",
   "dependencies" : { "clock_info":"module" },

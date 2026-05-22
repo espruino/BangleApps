@@ -1,7 +1,7 @@
 { "id": "exactwords",
   "name": "Exact Words Clock",
   "shortName":"Exact Words",
-  "version":"0.1",
+  "version":"0.2",
   "description": "Each minute of the day has a different phrase. ",
   "icon": "app.png",
   "screenshots" : [ { "url":"1517.png" },
@@ -13,6 +13,8 @@
                     { "url":"2358.png" } ],
   "tags": "clock",
   "type": "clock",
+  "author": "bmsleight",
+  "allow_emulator":true,  
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [

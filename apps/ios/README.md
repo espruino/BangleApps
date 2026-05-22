@@ -18,6 +18,7 @@ then the messages app will be able to use that to render characters from iOS. Wi
 installed, non-european (ISO8859-1) characters won't be displayed. If `Disable UTF8`
 is true *or no fonts library is installed*, text from iOS is converted to ISO8859-1, and known characters with equivalents
 within that range are converted (so text will display without a font library).
+* `Auto-Detect App Names` - Enables automatic detection of app names from the last item of the Bundle Identifier (`com.Apple.AppStore` --> `App Store`).
 
 ### Connecting your Bangle.js to your iPhone
 

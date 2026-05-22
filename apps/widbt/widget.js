@@ -1,5 +1,5 @@
 WIDGETS["bluetooth"]={area:"tr",width:15,draw() {
-  g.reset();
+  g.reset("widget");
   if (NRF.getSecurityStatus().connected) {
     if (g.getBgColor() === 31) { // If background color is blue use cyan instead
       g.setColor("#0ff");

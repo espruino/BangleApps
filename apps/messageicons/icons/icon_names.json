@@ -120,6 +120,7 @@
   { "app":"uber", "icon":"taxi.png" },
   { "app":"lyft", "icon":"taxi.png" },
   { "app":"vlc", "icon":"vlc.png" },
+  { "app":"wallet", "icon":"wallet.png" },
   { "app":"warnapp", "icon":"warnapp.png" },
   { "app":"whatsapp", "icon":"whatsapp.png" },
   { "app":"wordfeud", "icon":"wordfeud.png" },

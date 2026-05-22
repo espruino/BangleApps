@@ -7,7 +7,7 @@
   "type": "widget",
   "tags": "widget,battery",
   "provides_widgets" : ["battery"],
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "storage": [
     {"name":"widbatv.wid.js","url":"widget.js"}
   ]

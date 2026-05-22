@@ -1,14 +1,15 @@
 (function () {
     "ram";
     var _a;
-    var state = (function () {
+    var getState = function () {
         var status = NRF.getSecurityStatus();
         if (status.connected)
             return 2;
         if (status.advertising)
             return 1;
         return 0;
-    })();
+    };
+    var state = getState();
     var width = function () { return state > 0 ? 15 : 0; };
     var update = function (newState) {
         state = newState;
@@ -29,11 +30,13 @@
         area: "tl",
         sortorder: -1,
         draw: function () {
+            state = getState();
             if (state == 0)
                 return;
-            g.reset();
-            g.setColor(colours[state][g.theme.dark]);
-            g.drawImage(atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="), this.x + 2, this.y + 2);
+            g
+                .reset()
+                .setColor(colours[state][g.theme.dark])
+                .drawImage(atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="), this.x + 2, this.y + 2);
         },
         width: width(),
     };

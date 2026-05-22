@@ -11,3 +11,4 @@
 0.12: Use black flash instead of green fork to indicate charging
 0.13: Add .remove handler for widget
       Remove .buzz when charging (now handled by system)
+      Avoid separate scope, just define interval inside widget object

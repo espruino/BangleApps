@@ -29,3 +29,4 @@
       Remove Vector Font size option (Vector fonts added as other font styles)
       Add Height option to set menu item height independently of Font
 0.26: Use launcher_utils library for app cacheing  and fast load
+      Highlight each item if showScroller calls draw(selected=true)

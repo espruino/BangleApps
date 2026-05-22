@@ -66,10 +66,8 @@
             <span>All apps</span><i class="icon icon-caret"></i>
           </a>
           <!-- menu component -->
-          <ul class="menu">
+          <ul class="menu" id="device-dropdown">
             <li class="menu-item"><a>All apps</a></li>
-            <li class="menu-item"><a dt="BANGLEJS">Bangle.js 1</a></li>
-            <li class="menu-item"><a dt="BANGLEJS2">Bangle.js 2</a></li>
           </ul>
         </div>
         <div class="filter-nav">
@@ -190,6 +188,10 @@
               <i class="form-icon"></i> Always show "reinstall app" button <i class="icon icon-refresh"></i> regardless of the version
             </label>
             <label class="form-switch">
+              <input type="checkbox" id="settings-alwaysAllowEmulator">
+              <i class="form-icon"></i> Always show "emulator" button <i class="icon icon-emulator"></i> regardless of whether it's supported by the app
+            </label>
+            <label class="form-switch">
               <input type="checkbox" id="settings-autoReload">
               <i class="form-icon"></i> Automatically reload watch after app App Loader actions (removes "Hold button" prompt)
             </label>
@@ -241,5 +243,6 @@
     <script src="core/js/index.js"></script>
     <script src="core/js/pwa.js" defer></script>
     <script src="gadgetbridge.js"></script>
+    <script src="emulator.js"></script>
   </body>
 </html>

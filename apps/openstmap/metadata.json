@@ -10,6 +10,7 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "screenshots": [{"url":"screenshot.png"}],
   "interface": "interface.html",
+  "allow_emulator":true,
   "storage": [
     {"name":"openstmap","url":"openstmap.js"},
     {"name":"openstmap.app.js","url":"app.js"},

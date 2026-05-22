@@ -14,3 +14,4 @@
 0.14: Add automatic translation of more strings
 0.15: Minor code improvements
 0.16: Make able to fast-load back to clock
+      Changes to remove hard-coded pixel offsets

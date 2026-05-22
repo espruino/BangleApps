@@ -8,7 +8,7 @@
   "tags": "widget,battery",
   "provides_widgets" : ["battery"],
   "default" : true,
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "storage": [
     {"name":"widbat.wid.js","url":"widget.js"}
   ]
