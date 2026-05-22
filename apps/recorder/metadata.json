@@ -2,7 +2,7 @@
   "id": "recorder",
   "name": "Recorder",
   "shortName": "Recorder",
-  "version": "0.49",
+  "version": "0.50",
   "author": "bobrippling",
   "description": "Record GPS position, heart rate and more in the background, then download to your PC.",
   "icon": "app.png",

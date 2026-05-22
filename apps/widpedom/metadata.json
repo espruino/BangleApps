@@ -1,7 +1,7 @@
 {
   "id": "widpedom",
   "name": "Pedometer widget",
-  "version": "0.23",
+  "version": "0.24",
   "description": "Daily pedometer widget that can display steps in large/small size, and also your progress towards a step goal.",
   "icon": "widget.png",
   "type": "widget",
