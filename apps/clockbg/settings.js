@@ -9,10 +9,70 @@
       delete settings.fn;
     if (settings.style!="color")
       delete settings.color;
-    if (!["randomcolor","squares","plasma","rings","tris","blobs"].includes(settings.style))
+    if (!["randomcolor","squares","plasma","rings","tris","blobs","gradient"].includes(settings.style))
       delete settings.colors;
     require("Storage").writeJSON("clockbg.json", settings);
   }
+  
+function colorRange(from, to, steps) {
+    function parse(hex) {
+      hex = hex.replace("#", "");
+      if (hex.length === 3)
+        hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+      return [
+        parseInt(hex.slice(0,2), 16),
+        parseInt(hex.slice(2,4), 16),
+        parseInt(hex.slice(4,6), 16)
+      ];
+    }
+    function toHex(r, g, b) {
+      return "#" +
+        Math.round(r).toString(16).padStart(2,"0") +
+        Math.round(g).toString(16).padStart(2,"0") +
+        Math.round(b).toString(16).padStart(2,"0");
+    }
+    var a = parse(from);
+    var b = parse(to);
+    var result = [];
+    for (var i = 0; i < steps; i++) {
+      var t = i / (steps - 1);
+      result.push(toHex(
+        a[0] + (b[0] - a[0]) * t,
+        a[1] + (b[1] - a[1]) * t,
+        a[2] + (b[2] - a[2]) * t
+      ));
+    }
+    return result;
+  }
+let customMenu=function(style, col1name, col2name, bck) {
+            var col1 = "", col2 = "";
+            function buildMenu() {
+              var menu = {"":{title:/*LANG*/"Custom", back:bck}};
+              menu[/*LANG*/col1name] = function() {
+                require("colorpicker").show({
+                  back: buildMenu,
+                  onSelect: function(c) { col1 = c }
+                });
+              };
+              menu[col2name] = function() {
+                require("colorpicker").show({
+                  back: function() { buildMenu(); },
+                  onSelect: function(c) { col2 = c}
+                });
+              };
+              if (col1 !== "" && col2 !== "") {
+                menu[/*LANG*/"Save"] = function() {
+                  settings.style = style;
+                  settings.colors=[col1,col2]
+                  if(style=="plasma")settings.colors = colorRange(col1, col2, 16);
+                  saveSettings();
+                  showMainMenu();
+                };
+              }
+              E.showMenu(menu);
+            }
+            buildMenu();
+}
 
   function getColorsImage(cols) {
     var bpp = 1;
@@ -32,40 +92,53 @@
     E.showMenu({
       "" : {title:/*LANG*/"Background", back:showMainMenu},
       /*LANG*/"Solid Color" : function() {
-        var cols = ["#F00","#0F0","#FF0",
-                    "#00F","#F0F","#0FF",
-                    "#000","#888","#fff",];
-        var menu =  {"":{title:/*LANG*/"Colors", back:showModeMenu}};
-        cols.forEach(col => {
-          menu["-"+getColorsImage([col])] = () => {
+         
+        require("colorpicker").show({
+          back:showMainMenu,
+          onSelect:function(col){
             settings.style = "color";
             settings.color = col;
             saveSettings();
-            showMainMenu();
-          };
-        });
-        E.showMenu(menu);
+          }
+        })
       },
       /*LANG*/"Random Color" : function() {
-        var cols = [
-          ["#F00","#0F0","#FF0","#00F","#F0F","#0FF"],
-          ["#F00","#0F0","#00F"],
-          ["#FF0","#F0F","#0FF"],
-          ["#00f","#0bf","#0f7","#3f0","#ff0","#f30","#f07","#b0f"],
-          ["#66f","#6df","#6fb","#8f6","#ff6","#f86","#f6b","#d6f"],
-          ["#007","#057","#073","#170","#770","#710","#703","#507"]
-          // Please add some more!
-        ];
-        var menu =  {"":{title:/*LANG*/"Colors", back:showModeMenu}};
-        cols.forEach(col => {
-          menu[getColorsImage(col)] = () => {
-            settings.style = "randomcolor";
-            settings.colors = col;
-            saveSettings();
-            showMainMenu();
+        if(process.env.BOARD=="BANGLEJS2"){
+          opts={
+            onSelect:function(colors){
+              settings.style = "randomcolor";
+              settings.colors = colors;
+              saveSettings();
+            },
+            back:showMainMenu,
+            multiSelect:true,
           };
-        });
-        E.showMenu(menu);
+          if(settings.style=="randomcolor"){
+            opts.startingSelection=settings.colors;
+          }
+          require("colorpicker").show(opts);
+        }else{
+          var cols = [
+            ["#F00","#0F0","#FF0","#00F","#F0F","#0FF"],
+            ["#F00","#0F0","#00F"],
+            ["#FF0","#F0F","#0FF"],
+            ["#00f","#0bf","#0f7","#3f0","#ff0","#f30","#f07","#b0f"],
+            ["#66f","#6df","#6fb","#8f6","#ff6","#f86","#f6b","#d6f"],
+            ["#007","#057","#073","#170","#770","#710","#703","#507"]
+            // Please add some more!
+          ];
+          var menu =  {"":{title:/*LANG*/"Colors", back:showModeMenu}};
+          cols.forEach(col => {
+            menu[getColorsImage(col)] = () => {
+              settings.style = "randomcolor";
+              settings.colors = col;
+              saveSettings();
+              showMainMenu();
+            }
+          })
+          E.showMenu(menu);;
+        }
+
       },
       /*LANG*/"Image" : function() {
         let images = require("Storage").list(/clockbg\..*\.img/);
@@ -120,36 +193,43 @@
         E.showMenu(menu);
       },
       /*LANG*/"Plasma" : function() {
-        var cols = [ // list of color palettes used as possible square colours - 16 entries
-          ["#00f","#05f","#0bf","#0fd","#0f7","#0f1","#3f0","#9f0","#ff0","#f90","#f30","#f01","#f07","#f0d","#b0f","#50f"],
-          ["#44f","#48f","#4df","#4fe","#4fa","#4f6","#7f4","#bf4","#ff4","#fb4","#f74","#f46","#f4a","#f4e","#d4f","#84f"],
-          ["#009","#039","#079","#098","#094","#091","#290","#590","#990","#950","#920","#901","#904","#908","#709","#309"],
-          ["#fff","#fef","#fdf","#fcf","#fbf","#fae","#f9e","#f8e","#f7e","#f6e","#f5d","#f4d","#f3d","#f2d","#f1d","#f0c"],
-          ["#fff","#eff","#dff","#cef","#bef","#adf","#9df","#8df","#7cf","#6cf","#5bf","#4bf","#3bf","#2af","#1af","#09f"],
-          ["#000","#110","#220","#330","#440","#550","#660","#770","#880","#990","#aa0","#bb0","#cc0","#dd0","#ee0","#ff0"],
-          ["#000","#010","#020","#130","#140","#250","#260","#270","#380","#390","#4a0","#4b0","#5c0","#5d0","#5e0","#6f0"],
-          ["#fff","#efe","#dfd","#cfc","#bfb","#afa","#9f9","#8f8","#7f7","#6f6","#5f5","#4f4","#3f3","#2f2","#1f1","#0f0"],
-          ["#fff","#fee","#fdd","#fcc","#fbb","#faa","#f99","#f88","#f77","#f66","#f55","#f44","#f33","#f22","#f11","#f00"],
+        let showMenu = () => {
+          var cols = [ // list of color palettes used as possible square colours - 16 entries
+            ["#00f","#05f","#0bf","#0fd","#0f7","#0f1","#3f0","#9f0","#ff0","#f90","#f30","#f01","#f07","#f0d","#b0f","#50f"],
+            ["#44f","#48f","#4df","#4fe","#4fa","#4f6","#7f4","#bf4","#ff4","#fb4","#f74","#f46","#f4a","#f4e","#d4f","#84f"],
+            ["#009","#039","#079","#098","#094","#091","#290","#590","#990","#950","#920","#901","#904","#908","#709","#309"],
+            ["#fff","#fef","#fdf","#fcf","#fbf","#fae","#f9e","#f8e","#f7e","#f6e","#f5d","#f4d","#f3d","#f2d","#f1d","#f0c"],
+            ["#fff","#eff","#dff","#cef","#bef","#adf","#9df","#8df","#7cf","#6cf","#5bf","#4bf","#3bf","#2af","#1af","#09f"],
+            ["#000","#110","#220","#330","#440","#550","#660","#770","#880","#990","#aa0","#bb0","#cc0","#dd0","#ee0","#ff0"],
+            ["#000","#010","#020","#130","#140","#250","#260","#270","#380","#390","#4a0","#4b0","#5c0","#5d0","#5e0","#6f0"],
+            ["#fff","#efe","#dfd","#cfc","#bfb","#afa","#9f9","#8f8","#7f7","#6f6","#5f5","#4f4","#3f3","#2f2","#1f1","#0f0"],
+            ["#fff","#fee","#fdd","#fcc","#fbb","#faa","#f99","#f88","#f77","#f66","#f55","#f44","#f33","#f22","#f11","#f00"],
 
-          // Please add some more!
-        ];
-        var menu =  {"":{title:/*LANG*/"Plasma", back:showModeMenu},
-        /*LANG*/"Random" : () => {
-          settings.style = "plasma";
-          settings.colors = cols;
-          saveSettings();
-          showMainMenu();
-        }};
-        cols.forEach(col => {
-          menu[getColorsImage(col)] = () => {
-            settings.style = "plasma";
-            settings.colors = col;
-            saveSettings();
-            showMainMenu();
+            // Please add some more!
+          ];
+
+          var plasmaMenu = {"":{title:/*LANG*/"Plasma", back:showModeMenu},
+            /*LANG*/"Random" : () => {
+              settings.style = "plasma";
+              settings.colors = cols;
+              saveSettings();
+              showMainMenu();
+            },
           };
-        });
-        E.showMenu(menu);
+          if(process.env.BOARD === "BANGLEJS2")plasmaMenu[/*LANG*/"Custom"]= () => customMenu("plasma", /*LANG*/"Background",/*LANG*/"Foreground", showMenu );
+          cols.forEach(col => {
+            plasmaMenu[getColorsImage(col)] = () => {
+              settings.style = "plasma";
+              settings.colors = col;
+              saveSettings();
+              showMainMenu();
+            };
+          });
+          E.showMenu(plasmaMenu);
+        }
+        showMenu()
       },
+      
       /*LANG*/"Rings" : function() {
         var cols = [ // list of color palettes used as possible square colours - 2 entries
           ["#ff0","#f00"], // yellow/red
@@ -232,6 +312,42 @@
         });
         E.showMenu(menu);
       },
+      /*LANG*/"Gradient" : function() {
+        showMenu=()=>{
+          var cols = [ // list of color palettes used as gradient colors
+            ["#0ff","#00f"],
+            ["#ff0","#0f0"],
+            ["#0f0","#f00"],
+            ["#0ff","#f0f"],
+            ["#fff","#0ff"]
+
+
+            // Please add some more!
+          ];
+
+          var menu = {"":{title:/*LANG*/"Gradient", back:showModeMenu},
+            /*LANG*/"Random" : () => {
+              settings.style = "gradient";
+              settings.colors = cols;
+              saveSettings();
+              showMainMenu();
+            },
+          };
+          if(process.env.BOARD === "BANGLEJS2")menu[/*LANG*/"Custom"]= () => customMenu("gradient", /*LANG*/"Top",/*LANG*/"Bottom",showMenu);
+          cols.forEach(col => {
+            menu[getColorsImage(col)] = () => {
+              settings.style = "gradient";
+              settings.colors = col;
+              print(col)
+              saveSettings();
+              showMainMenu();
+            };
+          });
+          E.showMenu(menu);
+        }
+        showMenu()
+      }
+      
     });
   }
 
@@ -250,6 +366,8 @@
     });
   }
 
+  showMainMenu();
+  
   /* Scripts for generating colors. Change the values in HSBtoRGB to generate different effects
 
 
@@ -270,6 +388,6 @@
   }).join(","))
 
   */
-
-  showMainMenu();
-  })
+  
+  
+})
