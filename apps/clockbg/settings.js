@@ -338,7 +338,6 @@ let customMenu=function(style, col1name, col2name, bck) {
             menu[getColorsImage(col)] = () => {
               settings.style = "gradient";
               settings.colors = col;
-              print(col)
               saveSettings();
               showMainMenu();
             };
