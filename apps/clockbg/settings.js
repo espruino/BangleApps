@@ -48,7 +48,7 @@ let customMenu=function(style, col1name, col2name, bck) {
             var col1 = "", col2 = "";
             function buildMenu() {
               var menu = {"":{title:/*LANG*/"Custom", back:bck}};
-              menu[/*LANG*/col1name] = function() {
+              menu[col1name] = function() {
                 require("colorpicker").show({
                   back: buildMenu,
                   onSelect: function(c) { col1 = c }
