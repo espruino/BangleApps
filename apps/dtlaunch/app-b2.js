@@ -67,8 +67,7 @@
   };
 
   let drawPage = function(p){
-    g.reset();
-    g.clearRect(0,24,175,175);
+    g.reset().clearRect(0,24,175,175);
     let O = 88+YOFF/2-12*(Npages/2);
     for (let j=0;j<Npages;j++){
       let y = O+j*12;
@@ -147,6 +146,7 @@
     for (i=0;i<4;i++){
       if((page*4+i)<Napps){
         if (isTouched(p,i)) {
+          g.reset();
           drawIcon(page,i,true && !settings.direct);
           if (selected>=0 || settings.direct) {
             if (selected!=i && !settings.direct){
