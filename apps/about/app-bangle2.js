@@ -33,7 +33,7 @@ let interval;
 let drawInfo = function() {
   let R = Bangle.appRect, x = (W-176)/2;
   g.reset().clearRect(Bangle.appRect);
-  g.drawImage(logo,x+116,R.y);print(R.y);
+  g.drawImage(logo,x+116,R.y);
   g.setFont("4x6").setFontAlign(0,0).drawString("BANGLEJS.COM",x+146,R.y+32);
   var h=8, y = R.y-h;
   g.setFont("6x8").setFontAlign(-1,-1);
