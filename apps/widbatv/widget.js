@@ -1,10 +1,3 @@
-Bangle.on('charging',function(charging) {
-  WIDGETS["batv"].draw();
-});
-setInterval(()=>WIDGETS["batv"].draw(), 60000);
-Bangle.on('lcdPower', function(on) {
-  if (on) WIDGETS["batv"].draw(); // refresh at power on
-});
 WIDGETS["batv"]={area:"tr",width:14,draw() {
   var x = this.x, y = this.y;
   g.reset("widget");
@@ -19,4 +12,12 @@ WIDGETS["batv"]={area:"tr",width:14,draw() {
     else {g.setColor("#0f0");}
     g.fillRect(x+4,y+20-(E.getBattery()*16/100),x+10,y+20);
   }
-}};
+}, remove() {
+  Bangle.removeListener('charging', WIDGETS["batv"].onCharging);
+  clearInterval(WIDGETS["batv"].interval);
+  delete WIDGETS["batv"];
+}, onCharging(charging) {
+  WIDGETS["batv"].draw();
+  g.flip();
+}, interval : setInterval(()=>WIDGETS["batv"].draw(), 60000)};
+Bangle.on('charging', WIDGETS["batv"].onCharging);
