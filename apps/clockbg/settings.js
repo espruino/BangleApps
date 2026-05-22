@@ -104,7 +104,7 @@ let customMenu=function(style, col1name, col2name, bck) {
       },
       /*LANG*/"Random Color" : function() {
         if(process.env.BOARD=="BANGLEJS2"){
-          opts={
+          let opts={
             onSelect:function(colors){
               settings.style = "randomcolor";
               settings.colors = colors;
@@ -136,7 +136,7 @@ let customMenu=function(style, col1name, col2name, bck) {
               showMainMenu();
             }
           })
-          E.showMenu(menu);;
+          E.showMenu(menu);
         }
 
       },
@@ -313,7 +313,7 @@ let customMenu=function(style, col1name, col2name, bck) {
         E.showMenu(menu);
       },
       /*LANG*/"Gradient" : function() {
-        showMenu=()=>{
+        let showMenu=()=>{
           var cols = [ // list of color palettes used as gradient colors
             ["#0ff","#00f"],
             ["#ff0","#0f0"],
