@@ -36,6 +36,7 @@
       t: TIME_AT_NEXT_BUZZ,
       dow: 0b0111110,
       hidden: true,
+      group: "Hidden",
       js: "require('twenties').buzzRearmOrDeleteAlarm()"
     });
     S.setAlarms(alarms);
