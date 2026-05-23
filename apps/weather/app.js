@@ -81,9 +81,9 @@ var layout = new Layout({type:"v", bgCol: g.theme.bg, c: [
 function formatDuration(millis) {
   let pluralize = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
   if (millis < 60000) return /*LANG*/"Now";
-  if (millis < 3600000) return pluralize(Math.floor(millis/60000), /*LANG*/"minute")+" ago";
-  if (millis < 86400000) return pluralize(Math.floor(millis/3600000), /*LANG*/"hour")+" ago";
-  return pluralize(Math.floor(millis/86400000), /*LANG*/"day")+" ago";
+  if (millis < 3600000) return pluralize(Math.floor(millis/60000), /*LANG*/"minute")+/*LANG*/" ago";
+  if (millis < 86400000) return pluralize(Math.floor(millis/3600000), /*LANG*/"hour")+/*LANG*/" ago";
+  return pluralize(Math.floor(millis/86400000), /*LANG*/"day")+/*LANG*/" ago";
 }
 
 function draw() {
