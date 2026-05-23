@@ -12,5 +12,6 @@
   "provides_widgets" : ["battery"],
   "storage": [
     {"name":"wid_a_battery_widget.wid.js","url":"widget.js"}
-  ]
+  ],
+  "author": "alainsaas"
 }

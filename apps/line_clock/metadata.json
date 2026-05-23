@@ -15,5 +15,6 @@
     {"name":"line_clock.img","url":"app-icon.js","evaluate":true},
     {"name":"line_clock.settings.js","url":"settings.js"}
   ],
-  "data":[{"name":"line_clock.setting.json"}]
+  "data":[{"name":"line_clock.setting.json"}],
+  "author": "deepDiverPaul"
 }

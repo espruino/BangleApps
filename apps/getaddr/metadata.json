@@ -13,5 +13,6 @@
     "storage": [
       {"name":"getaddr.app.js","url":"getaddr.app.js"},
       {"name":"getaddr.img","url":"getaddr-icon.js","evaluate":true}
-    ]
-  }
+    ],
+    "author": "gellnerm"
+}

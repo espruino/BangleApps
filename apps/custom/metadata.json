@@ -10,5 +10,6 @@
   "custom": "custom.html",
   "storage": [
     {"name":"custom"}
-  ]
+  ],
+  "author": "MaBecker"
 }

@@ -15,5 +15,6 @@
     {"name":"gpsrec.wid.js","url":"widget.js"},
     {"name":"gpsrec.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"gpsrec.json"},{"wildcard":".gpsrc?","storageFile":true}]
+  "data": [{"name":"gpsrec.json"},{"wildcard":".gpsrc?","storageFile":true}],
+  "author": "gfwilliams"
 }

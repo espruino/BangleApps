@@ -11,5 +11,6 @@
   "default" : true,
   "storage": [
     { "name": "widalarm.wid.js", "url": "widget.js" }
-  ]
+  ],
+  "author": "gfwilliams"
 }

@@ -12,5 +12,6 @@
   "storage": [
     {"name":"pisteinen.app.js","url":"app.js"},
     {"name":"pisteinen.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "jukioo"
 }

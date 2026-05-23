@@ -9,5 +9,6 @@
   "supports": ["BANGLEJS"],
   "storage": [
     {"name":"widnceu.wid.js","url":"widget.js"}
-  ]
+  ],
+  "author": "gfwilliams"
 }

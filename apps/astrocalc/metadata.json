@@ -19,5 +19,6 @@
     {"name":"new.img","url":"new-icon.js","evaluate":true},
     {"name":"waxing-gibbous.img","url":"waxing-gibbous-icon.js","evaluate":true},
     {"name":"waxing-crescent.img","url":"waxing-crescent-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "paulcht"
 }

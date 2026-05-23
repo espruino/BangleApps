@@ -19,5 +19,6 @@
     {"name":"openstmap.json"},
     {"wildcard":"openstmap.*.json"},
     {"wildcard":"openstmap.*.img"}
-  ]
+  ],
+  "author": "gfwilliams"
 }

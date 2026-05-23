@@ -9,5 +9,6 @@
   "storage": [
     {"name":"gpstime.app.js","url":"gpstime.js"},
     {"name":"gpstime.img","url":"gpstime-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "ra100"
 }

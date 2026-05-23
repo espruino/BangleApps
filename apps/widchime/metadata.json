@@ -11,5 +11,6 @@
     {"name":"widchime.wid.js","url":"widget.js"},
     {"name":"widchime.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"widchime.json"}]
+  "data": [{"name":"widchime.json"}],
+  "author": "rigrig"
 }

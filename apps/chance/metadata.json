@@ -13,5 +13,6 @@
     {"name":"chance.app.js","url":"chance.app.js"},
     {"name":"chance.img","url":"chance.img.js","evaluate":true}
   ],
-  "screenshots": [{"url":"chance-coin.png"},{"url":"chance-dice.png"}]
+  "screenshots": [{"url":"chance-coin.png"},{"url":"chance-dice.png"}],
+  "author": "Mcsquarex"
 }

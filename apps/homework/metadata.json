@@ -16,5 +16,6 @@
   "storage": [
     {"name":"homework.app.js","url":"app.js"},
     {"name":"homework.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "dronesflier"
 }

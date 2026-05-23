@@ -15,5 +15,6 @@
             "name": "batterybooster.boot.js",
             "url": "boot.js"
         }
-    ]
+    ],
+    "author": "kkayam"
 }

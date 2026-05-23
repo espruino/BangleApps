@@ -11,5 +11,6 @@
   "storage": [
     {"name":"osmpoi.app.js"},
     {"name":"osmpoi.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "renaudgweb"
 }

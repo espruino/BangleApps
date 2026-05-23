@@ -13,5 +13,6 @@
   "storage": [
     {"name":"colorful_clock.app.js","url":"app.js"},
     {"name":"colorful_clock.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "rozek"
 }

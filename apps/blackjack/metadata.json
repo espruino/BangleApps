@@ -13,5 +13,6 @@
     {"name":"blackjack.app.js","url":"blackjack.app.js","supports": ["BANGLEJS"]},
     {"name":"blackjack.app.js","url":"appb2.js","supports": ["BANGLEJS2"]},
     {"name":"blackjack.img","url":"blackjack-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "lixas"
 }

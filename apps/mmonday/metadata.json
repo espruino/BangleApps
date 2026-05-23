@@ -9,5 +9,6 @@
   "storage": [
     {"name":"mmonday.app.js","url":"manic-monday.js"},
     {"name":"mmonday.img","url":"manic-monday-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "ra100"
 }

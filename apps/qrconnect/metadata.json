@@ -12,5 +12,6 @@
     {"name":"qrconnect.app.js","url":"app.js"},
     {"name":"qrconnect.img","url":"app-icon.js","evaluate":true}
   ],
-  "sortorder": -5
+  "sortorder": -5,
+  "author": "gfwilliams"
 }

@@ -12,5 +12,6 @@
   "storage": [
     {"name":"sunclock.app.js","url":"app.js"},
     {"name":"sunclock.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "bernschneider"
 }

@@ -11,5 +11,6 @@
   "storage": [
     {"name":"imc.app.js","url":"app.js"},
     {"name":"imc.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "only-meeps"
 }

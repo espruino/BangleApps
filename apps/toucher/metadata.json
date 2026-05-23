@@ -14,5 +14,6 @@
     {"name":"toucher.app.js","url":"app.js"},
     {"name":"toucher.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"toucher.json"}]
+  "data": [{"name":"toucher.json"}],
+  "author": "dimlucky"
 }

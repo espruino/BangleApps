@@ -12,5 +12,6 @@
   "storage": [
     {"name":"dotclock.app.js","url":"clock-dot.js"},
     {"name":"dotclock.img","url":"clock-dot-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "articnet"
 }

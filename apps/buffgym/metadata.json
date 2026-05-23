@@ -19,5 +19,6 @@
     {"name":"buffgym-workout-b.json","url":"buffgym-workout-b.json"},
     {"name":"buffgym-workout-index.json","url":"buffgym-workout-index.json"},
     {"name":"buffgym.img","url":"buffgym-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "paulcockrell"
 }

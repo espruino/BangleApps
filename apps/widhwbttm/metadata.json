@@ -12,5 +12,6 @@
   "readme": "README.md",
   "storage": [
     {"name":"widhwbttm.wid.js","url":"widhwbttm.wid.js"}
-  ]
+  ],
+  "author": "dapgo"
 }

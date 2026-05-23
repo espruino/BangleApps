@@ -10,5 +10,6 @@
   "storage": [
     {"name":"legoremote.app.js","url":"app.js"},
     {"name":"legoremote.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "gfwilliams"
 }

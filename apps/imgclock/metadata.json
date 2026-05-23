@@ -16,5 +16,6 @@
     {"name":"imgclock.face.img"},
     {"name":"imgclock.face.json"},
     {"name":"imgclock.face.bg","content":"X"}
-  ]
+  ],
+  "author": "gfwilliams"
 }

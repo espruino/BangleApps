@@ -17,5 +17,6 @@
     {"name":"welcome.settings.js","url":"settings.js"},
     {"name":"welcome.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"welcome.json"}]
+  "data": [{"name":"welcome.json"}],
+  "author": "gfwilliams"
 }

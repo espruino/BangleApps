@@ -12,5 +12,6 @@
   "storage": [
     {"name":"rinkulainen.app.js","url":"app.js"},
     {"name":"rinkulainen.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "jukioo"
 }

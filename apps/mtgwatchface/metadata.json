@@ -25,5 +25,6 @@
       "url": "app-icon.js",
       "evaluate":true
     }
-  ]
+  ],
+  "author": "brantpeery"
 }

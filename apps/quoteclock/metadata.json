@@ -11,5 +11,6 @@
     "storage": [
       {"name":"quoteclock.app.js","url":"app.js"},
       {"name":"quoteclock.img","url":"app-icon.js","evaluate":true}
-    ]
-  }
+    ],
+    "author": "pglez82"
+}

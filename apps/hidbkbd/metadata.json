@@ -10,5 +10,6 @@
   "storage": [
     {"name":"hidbkbd.app.js","url":"hid-binary-keyboard.js"},
     {"name":"hidbkbd.img","url":"hid-binary-keyboard-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "ra100"
 }

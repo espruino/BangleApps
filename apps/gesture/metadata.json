@@ -12,5 +12,6 @@
     {"name":".tfnames","url":"gesture-tfnames.js","evaluate":true},
     {"name":".tfmodel","url":"gesture-tfmodel.js","evaluate":true},
     {"name":"gesture.img","url":"gesture-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "ra100"
 }

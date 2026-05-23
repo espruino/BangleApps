@@ -13,5 +13,6 @@
   "storage": [
     {"name":"lazyclock.app.js","url":"lazyclock-app.js"},
     {"name":"lazyclock.img","url":"lazyclock-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "ollyollyollyltd"
 }

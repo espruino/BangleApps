@@ -12,5 +12,6 @@
   "storage": [
     {"name":"demoapp.app.js","url":"app.js"},
     {"name":"demoapp.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "gfwilliams"
 }

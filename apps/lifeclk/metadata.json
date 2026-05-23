@@ -12,5 +12,6 @@
   "storage": [
     {"name":"lifeclk.app.js","url":"app.min.js"},
     {"name":"lifeclk.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "SamuelVilz"
 }

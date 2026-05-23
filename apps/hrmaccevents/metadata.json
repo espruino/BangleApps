@@ -11,5 +11,6 @@
   "custom": "custom.html",
   "customConnect": true,
   "readme": "README.md",
-  "storage": [ ]
+  "storage": [ ],
+  "author": "halemmerich"
 }

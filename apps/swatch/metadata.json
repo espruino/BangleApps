@@ -13,5 +13,6 @@
   "storage": [
     {"name":"swatch.app.js","url":"stopwatch.js"},
     {"name":"swatch.img","url":"stopwatch-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "ra100"
 }

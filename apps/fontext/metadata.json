@@ -13,5 +13,6 @@
     {"name":"font","url":"lib.js"},
     {"name":"fontext.boot.js","url":"boot.js"},
     {"name":"fontext.pbf","url":"font.pbf"}
-  ]
+  ],
+  "author": "gfwilliams"
 }

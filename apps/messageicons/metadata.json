@@ -13,5 +13,6 @@
   "storage": [
     {"name":"messageicons","url":"lib.js"},
     {"name":"messageicons.img","url":"icons.img"}
-  ]
+  ],
+  "author": "gfwilliams"
 }

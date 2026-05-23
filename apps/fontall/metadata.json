@@ -12,5 +12,6 @@
     {"name":"font","url":"lib.js"},
     {"name":"fontall.boot.js","url":"boot.js"},
     {"name":"fontall.pbf","url":"font.pbf"}
-  ]
+  ],
+  "author": "gfwilliams"
 }

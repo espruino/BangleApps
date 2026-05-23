@@ -14,5 +14,6 @@
     {"name":"tetra.stl","url":"tetra.stl"},
     {"name":"cube.stl","url":"cube.stl"},
     {"name":"icosa.stl","url":"icosa.stl"}
-  ]
+  ],
+  "author": "berkenbu"
 }

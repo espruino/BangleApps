@@ -13,5 +13,6 @@
   "storage": [
     {"name":"marioclock.app.js","url":"marioclock-app.js"},
     {"name":"marioclock.img","url":"marioclock-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "paulcht"
 }

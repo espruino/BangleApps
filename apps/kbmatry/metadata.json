@@ -10,5 +10,6 @@
   "readme": "README.md",
   "storage": [
     {"name":"textinput","url":"lib.js"}
-  ]
+  ],
+  "author": "philipandresen"
 }

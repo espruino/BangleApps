@@ -11,5 +11,6 @@
   "storage": [
     {"name":"HRV.app.js","url":"app.js"},
     {"name":"HRV.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "jabituyaben"
 }

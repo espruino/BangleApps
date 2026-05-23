@@ -16,5 +16,6 @@
     { "name":"hadash.app.js", "url":"hadash.app.js" },
     { "name":"hadash.img",    "url":"hadash-icon.js", "evaluate":true }
   ],
-  "data": [{ "name":"hadash.json" }]
+  "data": [{ "name":"hadash.json" }],
+  "author": "flaparoo"
 }

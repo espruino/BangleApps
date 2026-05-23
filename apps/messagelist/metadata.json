@@ -24,5 +24,6 @@
     {"name":"messagelist.img","url":"app-icon.js","evaluate":true}
   ],
   "data": [{"name":"messagelist.settings.json"}],
-  "sortorder": -9
+  "sortorder": -9,
+  "author": "rigrig"
 }

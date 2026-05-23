@@ -15,5 +15,6 @@
     {"name":"getup.settings.js","url":"settings.js"},
     {"name":"getup.img","url":"app-icon.js","evaluate":true}
   ],
-  "data":[{"name":"getup.settings.json"}]
+  "data":[{"name":"getup.settings.json"}],
+  "author": "v1nc"
 }

@@ -10,5 +10,6 @@
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"widagps.wid.js","url":"widget.js"}
-  ]
+  ],
+  "author": "pidajo"
 }

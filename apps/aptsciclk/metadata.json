@@ -15,5 +15,6 @@
       {"name":"aptsciclkquotes.txt","url":"quotes.txt"},
       {"name":"aptsciclk.app.js","url":"app.js"},
       {"name":"aptsciclk.img","url":"app-icon.js","evaluate":true}
-    ]
+    ],
+    "author": "midnight4577"
 }

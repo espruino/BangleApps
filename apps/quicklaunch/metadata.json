@@ -13,5 +13,6 @@
     {"name": "quicklaunch.boot.js", "url": "boot.js"},
     {"name": "quicklaunch.app.js", "url": "app.js"}
   ],
-  "data": [{"name": "quicklaunch.json"}]
+  "data": [{"name": "quicklaunch.json"}],
+  "author": "frigis1"
 }

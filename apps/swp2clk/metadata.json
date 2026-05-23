@@ -13,5 +13,6 @@
     { "name": "swp2clk.boot.js", "url": "boot.js" },
     {"name":"swp2clk.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"swp2clk.data.json"}]
+  "data": [{"name":"swp2clk.data.json"}],
+  "author": "crazysaem"
 }

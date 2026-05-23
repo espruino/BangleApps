@@ -14,5 +14,6 @@
   "storage": [
     {"name":"notify","url":"notify_bjs1.js", "supports": ["BANGLEJS"]},
     {"name":"notify","url":"notify_bjs2.js", "supports": ["BANGLEJS2","BANGLEJS3"]}
-  ]
+  ],
+  "author": "gfwilliams"
 }

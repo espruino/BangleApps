@@ -11,5 +11,6 @@
     {"name":"widmp.wid.js","url":"widget.js"},
     {"name":"widmp.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"widmp.json"}]
+  "data": [{"name":"widmp.json"}],
+  "author": "MaBecker"
 }

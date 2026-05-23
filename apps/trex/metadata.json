@@ -14,5 +14,6 @@
     {"name":"trex.img","url":"trex-icon.js","evaluate":true},
     {"name":"trex.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"trex.score","storageFile":true}]
+  "data": [{"name":"trex.score","storageFile":true}],
+  "author": "ra100"
 }

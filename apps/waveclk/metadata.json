@@ -13,5 +13,6 @@
   "storage": [
     {"name":"waveclk.app.js","url":"app.js"},
     {"name":"waveclk.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "gfwilliams"
 }

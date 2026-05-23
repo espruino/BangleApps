@@ -13,5 +13,6 @@
     {"name":"timecal.app.js","url":"timecal.app.js"},
     {"name":"timecal.settings.js","url":"timecal.settings.js"}
   ],
-  "data":[{"name":"timecal.settings.json"}]
+  "data":[{"name":"timecal.settings.json"}],
+  "author": "madman2021"
 }

@@ -20,5 +20,6 @@
   "data": [
     {"name":"dtlaunch.json"},
     {"name":"launch.cache.json"}
-  ]
+  ],
+  "author": "jeffmer"
 }

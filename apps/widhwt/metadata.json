@@ -12,5 +12,6 @@
   "storage": [
     {"name":"widhwt.app.js","url":"app.js"},
     {"name":"widhwt.wid.js","url":"widget.js"}
-  ]
+  ],
+  "author": "MaBecker"
 }

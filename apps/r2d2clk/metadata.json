@@ -12,5 +12,6 @@
   "storage": [
     {"name":"r2d2clk.app.js","url":"app.js"},
     {"name":"r2d2clk.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "nh-99"
 }

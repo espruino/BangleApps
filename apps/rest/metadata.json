@@ -11,5 +11,6 @@
   "storage": [
     {"name":"rest.app.js","url":"rest.app.js"},
     {"name":"rest.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "devsnd"
 }

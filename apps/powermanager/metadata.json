@@ -22,5 +22,6 @@
     {"name":"powermanager.def.json"},
     {"name":"powermanager.json"},
     {"name":"powermanager.log"}
-  ]
+  ],
+  "author": "halemmerich"
 }

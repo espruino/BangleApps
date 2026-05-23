@@ -12,5 +12,6 @@
   "storage": [
     {"name":"beebclock.app.js","url":"beebclock.js"},
     {"name":"beebclock.img","url":"beebclock-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "tomgidden"
 }

@@ -9,5 +9,6 @@
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"widcasiologo.wid.js","url":"widget.js"}
-  ]
+  ],
+  "author": "neris"
 }

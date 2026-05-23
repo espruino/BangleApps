@@ -32,5 +32,6 @@
     {"name":"boxclk.space.img"},
     {"wildcard":"boxclk.bg.*.img"},
     {"wildcard":"boxclk.*.pbf"}
-  ]
+  ],
+  "author": "stweedo"
 }

@@ -11,5 +11,6 @@
   "storage": [
     {"name":"intervals.app.js","url":"intervals.app.js"},
     {"name":"intervals.img","url":"intervals-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "pglez82"
 }

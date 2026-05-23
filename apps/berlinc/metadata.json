@@ -15,5 +15,6 @@
     {"name":"berlinc.settings.js","url":"settings.js"},
     {"name":"berlinc.img","url":"berlin-clock-icon.js","evaluate":true}
   ],
-  "data": [{"name":"berlinc.json"}]
+  "data": [{"name":"berlinc.json"}],
+  "author": "eska-muc"
 }

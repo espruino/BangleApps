@@ -9,5 +9,6 @@
   "storage": [
       {"name":"skyspy.app.js","url":"skyspy.app.js"},
       {"name":"skyspy.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "pavelmachek"
 }

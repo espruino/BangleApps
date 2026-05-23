@@ -12,5 +12,6 @@
     {"name":"barcode.img","url":"barcode.icon.js","evaluate":true}
   ],
   "readme":"README.md",
-  "screenshots": [{"url":"barcode.clock.png"}]
+  "screenshots": [{"url":"barcode.clock.png"}],
+  "author": "matrixes"
 }

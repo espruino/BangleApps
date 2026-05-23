@@ -10,5 +10,6 @@
   "storage": [
       {"name":"eliteclock.app.js","url":"eliteclock.app.js"},
       {"name":"eliteclock.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "pavelmachek"
 }

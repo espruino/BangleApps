@@ -12,5 +12,6 @@
   "storage": [
     {"name":"scicalc.app.js","url":"app.js"},
     {"name":"scicalc.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "berkenbu"
 }

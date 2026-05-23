@@ -11,5 +11,6 @@
    "storage": [
     {"name":"rellotge.app.js","url":"rellotge.js"},
     {"name":"rellotge.img","url":"icona.js","evaluate":true}
-  ]
+  ],
+  "author": "enricpineda"
 }

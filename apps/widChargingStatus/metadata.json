@@ -10,5 +10,6 @@
   "readme":"README.md",
   "storage": [
     {"name":"widChargingStatus.wid.js","url":"widget.js"}
-   ]
+   ],
+  "author": "maybeanerd"
 }

@@ -17,5 +17,6 @@
     {"name": "cc_astro.app.js", "url": "app.js"},
     {"name": "cc_astro.img", "url": "app_icon.js", "evaluate":true}
   ],
-  "data": [{"name":"cc_astro.json"}]
+  "data": [{"name":"cc_astro.json"}],
+  "author": "czeppi"
 }

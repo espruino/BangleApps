@@ -13,5 +13,6 @@
     {"name":"slpquiet.boot.js","url":"boot.js"},
     {"name":"slpquiet.img","url":"app-icon.js","evaluate":true},
     {"name":"slpquiet.wid.js","url":"widget.js"}
-  ]
+  ],
+  "author": "jla-42"
 }

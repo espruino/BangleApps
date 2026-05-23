@@ -10,5 +10,6 @@
   "readme": "README.md",
   "storage": [
     {"name":"gpstimeserver.wid.js","url":"widget.js"}
-  ]
+  ],
+  "author": "gfwilliams"
 }

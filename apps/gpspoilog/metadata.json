@@ -11,5 +11,6 @@
   "storage": [
     {"name":"gpspoilog.app.js","url":"app.js"},
     {"name":"gpspoilog.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "gfwilliams"
 }

@@ -13,5 +13,6 @@
   "storage": [
     {"name":"meseeks.app.js","url":"app.js"},
     {"name":"meseeks.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "LucienStorm"
 }

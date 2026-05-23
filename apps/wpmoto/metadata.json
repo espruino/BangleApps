@@ -13,5 +13,6 @@
   "storage": [
     {"name":"wpmoto.app.js","url":"app.js"},
     {"name":"wpmoto.img","url":"icon.js","evaluate":true}
-  ]
+  ],
+  "author": "jes"
 }

@@ -16,5 +16,6 @@
     {"name":"antonclkplus.settings.js","url":"settings.js"},
     {"name":"antonclkplus.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"antonclkplus.json"}]
+  "data": [{"name":"antonclkplus.json"}],
+  "author": "gfwilliams"
 }

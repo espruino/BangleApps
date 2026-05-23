@@ -14,5 +14,6 @@
   "storage": [
     {"name":"cliock.app.js","url":"app.js"},
     {"name":"cliock.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "unnamed1337"
 }

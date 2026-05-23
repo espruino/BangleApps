@@ -8,5 +8,6 @@
   "supports" : ["BANGLEJS2"],
   "storage": [
     {"name":"clkinfomag.clkinfo.js","url":"clkinfo.js"}
-  ]
+  ],
+  "author": "gfwilliams"
 }

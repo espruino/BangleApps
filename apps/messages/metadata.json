@@ -18,5 +18,6 @@
     {"name":"messages","url":"lib.js"},
     {"name":"messages.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"messages.json"},{"name":"messages.settings.json"}]
+  "data": [{"name":"messages.json"},{"name":"messages.settings.json"}],
+  "author": "gfwilliams"
 }

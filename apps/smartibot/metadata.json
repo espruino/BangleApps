@@ -10,5 +10,6 @@
   "storage": [
     {"name":"smartibot.app.js","url":"app.js"},
     {"name":"smartibot.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "gfwilliams"
 }

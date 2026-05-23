@@ -12,5 +12,6 @@
   "storage": [
     {"name":"svclock.app.js","url":"vclock-simple.js"},
     {"name":"svclock.img","url":"vclock-simple-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "tebarius"
 }

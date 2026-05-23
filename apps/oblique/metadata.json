@@ -9,5 +9,6 @@
   "storage": [
     {"name":"oblique.app.js","url":"app.js"},
     {"name":"oblique.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "smcalilly"
 }

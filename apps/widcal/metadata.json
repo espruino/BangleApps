@@ -9,5 +9,6 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
     {"name":"widcal.wid.js","url":"widget.js"}
-  ]
+  ],
+  "author": "rigrig"
 }

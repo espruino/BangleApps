@@ -11,5 +11,6 @@
   "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "storage": [
     {"name":"widbars.wid.js","url":"widget.js"}
-]
+],
+  "author": "rigrig"
 }

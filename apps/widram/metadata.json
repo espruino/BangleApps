@@ -10,5 +10,6 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
     {"name":"widram.wid.js","url":"widget.js"}
-  ]
+  ],
+  "author": "gfwilliams"
 }

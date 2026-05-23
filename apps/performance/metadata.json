@@ -10,5 +10,6 @@
   "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "custom": "custom.html",
   "customConnect": true,
-  "storage": []
+  "storage": [],
+  "author": "gfwilliams"
 }

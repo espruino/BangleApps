@@ -20,5 +20,6 @@
     {"name":"multitimer.img","url":"app-icon.js","evaluate":true}
   ],
   "data": [{"name":"multitimer.json"}],
-  "dependencies": {"scheduler":"type"}
+  "dependencies": {"scheduler":"type"},
+  "author": "frigis1"
 }

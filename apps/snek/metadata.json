@@ -10,5 +10,6 @@
   "storage": [
     {"name":"snek.app.js","url":"snek.js"},
     {"name":"snek.img","url":"snek.icon.js","evaluate":true}
-  ]
+  ],
+  "author": "CynderR"
 }

@@ -16,5 +16,6 @@
     {"name":"bthome.app.js","url":"app.js"},
     {"name":"bthome.settings.js","url":"settings.js"}
   ],
-  "data":[{"name":"bthome.json"}]
+  "data":[{"name":"bthome.json"}],
+  "author": "gfwilliams"
 }

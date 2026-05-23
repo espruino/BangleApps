@@ -12,5 +12,6 @@
   "storage": [
     {"name":"3dclock.app.js","url":"app.js"},
     {"name":"3dclock.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "ainegil"
 }

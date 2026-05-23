@@ -12,5 +12,6 @@
   "storage": [
     {"name":"bclock.app.js","url":"clock-binary.js"},
     {"name":"bclock.img","url":"clock-binary-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "ra100"
 }

@@ -19,5 +19,6 @@
     {"name":"dk.face.js","url":"dk.face.js"},
     {"name":"nifty.face.js","url":"nifty.face.js"},
     {"name":"multiclock.img","url":"multiclock-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "jeffmer"
 }

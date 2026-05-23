@@ -15,5 +15,6 @@
     {"name":"widbaroalarm.settings.js","url":"settings.js"},
     {"name":"widbaroalarm.default.json","url":"default.json"}
   ],
-  "data": [{"name":"widbaroalarm.json"}, {"name":"widbaroalarm.log"}]
+  "data": [{"name":"widbaroalarm.json"}, {"name":"widbaroalarm.log"}],
+  "author": "myxor"
 }

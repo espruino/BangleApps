@@ -13,5 +13,6 @@
     {"name":"mclock.app.js","url":"clock-morphing.js"},
     {"name":"mclock.img","url":"clock-morphing-icon.js","evaluate":true}
   ],
-  "sortorder": -9
+  "sortorder": -9,
+  "author": "ra100"
 }

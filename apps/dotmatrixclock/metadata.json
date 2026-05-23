@@ -12,5 +12,6 @@
   "storage": [
     {"name":"dotmatrixclock.app.js","url":"app.js"},
     {"name":"dotmatrixclock.img","url":"dotmatrixclock-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "paulcockrell"
 }

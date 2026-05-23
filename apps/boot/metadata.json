@@ -15,5 +15,6 @@
     {"name":".widcache"},
     {"name":".clkinfocache"}
   ],
-  "sortorder": -10
+  "sortorder": -10,
+  "author": "ra100"
 }

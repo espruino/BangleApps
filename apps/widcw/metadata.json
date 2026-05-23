@@ -9,5 +9,6 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
     {"name":"widcw.wid.js","url":"widget.js"}
-  ]
+  ],
+  "author": "avanc"
 }

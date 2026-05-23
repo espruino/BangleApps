@@ -12,5 +12,6 @@
   "storage": [
     {"name":"mclockplus.app.js","url":"mclockplus.app.js"},
     {"name":"mclockplus.img","url":"mclockplus-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "skauertz"
 }

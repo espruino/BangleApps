@@ -13,5 +13,6 @@
     {"name":"calibration.settings.js","url":"settings.js"},
     {"name":"calibration.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"calibration.json"}]
+  "data": [{"name":"calibration.json"}],
+  "author": "Yarg-mirror"
 }

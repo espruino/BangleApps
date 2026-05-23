@@ -14,5 +14,6 @@
   "data": [
     {"name":"airqualityci.json"},
     {"name":"airqualityci.settings.json"}
-  ]
+  ],
+  "author": "chuckwagoncomputing"
 }

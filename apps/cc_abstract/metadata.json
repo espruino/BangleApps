@@ -13,5 +13,6 @@
     {"name": "cc_abstract.app.js", "url": "app.js"},
     {"name": "cc_abstract.img", "url": "app_icon.js", "evaluate": true}
   ],
-  "data": [{"name":"cc_abstract.json"}]
+  "data": [{"name":"cc_abstract.json"}],
+  "author": "czeppi"
 }

@@ -11,5 +11,6 @@
   "storage": [
     {"name":"bthrmlite.boot.js","url":"boot.js"},
     {"name":"bthrmlite.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "gfwilliams"
 }

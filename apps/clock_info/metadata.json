@@ -14,5 +14,6 @@
     {"name":"clock_info.settings.js","url":"settings.js"}
   ], "data": [
     {"name":"clock_info.json","url":"lib.js"}
-  ]
+  ],
+  "author": "gfwilliams"
 }

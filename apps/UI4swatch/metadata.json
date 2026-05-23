@@ -12,5 +12,6 @@
   "storage": [
     {"name":"UI4swatch.app.js","url":"app.js"},
     {"name":"UI4swatch.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "dapgo"
 }

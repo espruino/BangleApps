@@ -13,5 +13,6 @@
   "storage": [
     {"name":"verticalface.app.js","url":"app.js"},
     {"name":"verticalface.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "eaydev"
 }

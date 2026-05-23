@@ -20,5 +20,6 @@
   "data": [
     {"name":"gpstrek.state.json"},
     {"name":"gpstrek.json"}
-  ]
+  ],
+  "author": "halemmerich"
 }

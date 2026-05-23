@@ -14,5 +14,6 @@
     {"name":"gassist.settings.js","url":"settings.js"},
     {"name":"gassist.img","url":"icon.js","evaluate":true}
   ],
-  "data": [{"name":"gassist.json"}]
+  "data": [{"name":"gassist.json"}],
+  "author": "stweedo"
 }

@@ -14,5 +14,6 @@
   "screenshots": [
     {"url":"screenshot_locked.png"},
     {"url":"screenshot_unlocked.png"}
-  ]
+  ],
+  "author": "yogsoy"
 }

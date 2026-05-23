@@ -12,5 +12,6 @@
   "storage": [
     {"name":"espruinoctrl.app.js"},
     {"name":"espruinoctrl.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "gfwilliams"
 }

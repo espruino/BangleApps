@@ -15,5 +15,6 @@
     {"name":"dwm-clock.app.js","url":"app.js"},
     {"name":"dwm-clock.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"dwm-clock.json"}]
+  "data": [{"name":"dwm-clock.json"}],
+  "author": "g-rden"
 }

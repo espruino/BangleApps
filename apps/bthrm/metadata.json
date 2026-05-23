@@ -19,5 +19,6 @@
     {"name":"bthrm","url":"lib.js"},
     {"name":"bthrm.default.json","url":"default.json"}
   ],
-  "data": [{"name":"bthrm.json"}]
+  "data": [{"name":"bthrm.json"}],
+  "author": "gfwilliams"
 }

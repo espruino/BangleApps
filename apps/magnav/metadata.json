@@ -14,5 +14,6 @@
     {"name":"magnav","url":"lib.js"},
     {"name":"magnav.img","url":"magnav-icon.js","evaluate":true}
   ],
-  "data": [{"name":"magnav.json"}]
+  "data": [{"name":"magnav.json"}],
+  "author": "jeffmer"
 }

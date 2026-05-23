@@ -22,5 +22,6 @@
     {"name":"flower_b.img","url":"flower_b.js","evaluate":true},
     {"name":"mario_wh.img","url":"mario_wh.js","evaluate":true},
     {"name":"pipe.img","url":"pipe.js","evaluate":true}
-  ]
+  ],
+  "author": "abhigkar"
 }

@@ -11,5 +11,6 @@
   "storage": [
     {"name":"lcdclock.app.js","url":"app.js"},
     {"name":"lcdclock.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "gfwilliams"
 }

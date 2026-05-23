@@ -12,5 +12,6 @@
     {"name":"setting.img","url":"settings-icon.js","evaluate":true}
   ],
   "data": [{"name":"setting.json","url":"settings.min.json","evaluate":true}],
-  "sortorder": -5
+  "sortorder": -5,
+  "author": "ra100"
 }

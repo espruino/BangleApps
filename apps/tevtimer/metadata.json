@@ -20,5 +20,6 @@
   "data": [
     {"name": "tevtimer.json"},
     {"name": "tevtimer.timers.json"}
-  ]
+  ],
+  "author": "ticalc-travis"
 }

@@ -12,5 +12,6 @@
   "storage": [
     {"name":"cubescramble.app.js","url":"cube-scramble.js"},
     {"name":"cubescramble.img","url":"cube-scramble-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "nlisgo"
 }

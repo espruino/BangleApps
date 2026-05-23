@@ -11,5 +11,6 @@
   "storage": [
     {"name":"messagesdebug.boot.js","url":"boot.js"}
   ],
-  "data": [{"name":"messagesdebug.log"}]
+  "data": [{"name":"messagesdebug.log"}],
+  "author": "rigrig"
 }

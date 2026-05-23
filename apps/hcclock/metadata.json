@@ -13,5 +13,6 @@
   "storage": [
     {"name":"hcclock.app.js","url":"hcclock.app.js"},
     {"name":"hcclock.img","url":"hcclock-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "peeweek"
 }

@@ -10,5 +10,6 @@
   "storage": [
     {"name":"beer.app.js"},
     {"name":"beer.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "ra100"
 }

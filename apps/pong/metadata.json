@@ -14,5 +14,6 @@
   "storage": [
     {"name":"pong.app.js","url":"app.js"},
     {"name":"pong.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "fredericrous"
 }

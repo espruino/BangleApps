@@ -20,5 +20,6 @@
     {"name":"webaisummit.app.js","url":"app.js"},
     {"name":"welcome.app.js","url":"welcome.js"},
     {"name":"tapfix.boot.js","url":"tapfix.js"}
-  ]
+  ],
+  "author": "gfwilliams"
 }

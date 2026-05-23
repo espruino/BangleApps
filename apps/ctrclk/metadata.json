@@ -12,5 +12,6 @@
   "storage": [
     {"name":"ctrclk.app.js","url":"app.js"},
     {"name":"ctrclk.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "gfwilliams"
 }

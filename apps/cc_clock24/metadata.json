@@ -14,5 +14,6 @@
     {"name": "cc_clock24.settings.js", "url": "settings.js"},
     {"name": "cc_clock24.img", "url": "app_icon.js", "evaluate": true}
   ],
-  "data": [{"name": "cc_clock24.json"}]
+  "data": [{"name": "cc_clock24.json"}],
+  "author": "czeppi"
 }

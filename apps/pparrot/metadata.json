@@ -12,5 +12,6 @@
   "storage": [
     {"name":"pparrot.app.js","url":"party-parrot.js"},
     {"name":"pparrot.img","url":"party-parrot-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "ra100"
 }

@@ -11,5 +11,6 @@
   "readme": "README.md",
   "storage": [
     {"name":"gatthrm.boot.js","url":"boot.js"}
-  ]
+  ],
+  "author": "AnotherStranger"
 }

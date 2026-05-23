@@ -16,5 +16,6 @@
     {"name":"weather.settings.js","url":"settings.js"},
     {"name":"weather.clkinfo.js","url":"clkinfo.js"}
   ],
-  "data": [{"name":"weatherSetting.json"},{"name":"weather.json"},{"name":"weather2.json"}]
+  "data": [{"name":"weatherSetting.json"},{"name":"weather.json"},{"name":"weather2.json"}],
+  "author": "rigrig"
 }

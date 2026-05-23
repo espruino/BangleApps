@@ -19,5 +19,6 @@
   "data": [
     {"name": "timestamplog.settings"},
     {"name": "timestamplog.json"}
-  ]
+  ],
+  "author": "ticalc-travis"
 }

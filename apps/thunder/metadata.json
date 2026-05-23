@@ -14,5 +14,6 @@
     {"name":"thunder.settings.js","url":"settings.js"},
     {"name":"thunder.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"thunder.json"}]
+  "data": [{"name":"thunder.json"}],
+  "author": "jt-nti"
 }

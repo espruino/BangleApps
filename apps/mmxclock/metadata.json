@@ -12,5 +12,6 @@
   "storage": [
     {"name":"mmxclock.app.js","url":"app.js"},
     {"name":"mmxclock.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "stratosphericcity"
 }

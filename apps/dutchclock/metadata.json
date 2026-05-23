@@ -23,6 +23,7 @@
   "data": [
     {"name":"dutchclock.json"}
   ],
-  "readme":"README.md"
+  "readme":"README.md",
+  "author": "whenlit"
 }
   

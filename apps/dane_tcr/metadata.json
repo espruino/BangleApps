@@ -12,5 +12,6 @@
     {"name":"dane_tcr.app.js","url":"app.js"},
     {"name":"dane_tcr.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"dane_tcr.json"}]
+  "data": [{"name":"dane_tcr.json"}],
+  "author": "OmegaRogue"
 }

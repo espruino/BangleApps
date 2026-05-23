@@ -12,5 +12,6 @@
     {"name":"bluetoothdock.app.js","url":"app.js"},
     {"name":"bluetoothdock.boot.js","url":"boot.js"},
     {"name":"bluetoothdock.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "gfwilliams"
 }

@@ -9,5 +9,6 @@
   "type": "bootloader",
   "storage": [
     {"name":"alarmqm.boot.js","url":"boot.js"}
-  ]
+  ],
+  "author": "Kedlub"
 }

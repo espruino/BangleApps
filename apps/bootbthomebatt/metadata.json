@@ -11,5 +11,6 @@
   "readme": "README.md",
   "storage": [
     {"name":"bthomebat.boot.js","url":"boot.js"}
-  ]
+  ],
+  "author": "deirdreobyrne"
 }

@@ -19,5 +19,6 @@
   "storage": [
     {"name":"aiclock.app.js","url":"aiclock.app.js"},
     {"name":"aiclock.img","url":"aiclock.icon.js","evaluate":true}
-  ]
+  ],
+  "author": "peerdavid"
 }

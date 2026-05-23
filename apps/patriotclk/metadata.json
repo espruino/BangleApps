@@ -14,5 +14,6 @@
     {"name":"patriotclk.bg.img"},
     {"name":"patriotclk.opts"},
     {"name":"patriotclk.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "gfwilliams"
 }

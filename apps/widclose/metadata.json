@@ -11,5 +11,6 @@
   "screenshots": [{"url":"screenshot_light.png"},{"url":"screenshot_dark.png"}],
   "storage": [
     {"name":"widclose.wid.js","url":"widget.js"}
-  ]
+  ],
+  "author": "rigrig"
 }

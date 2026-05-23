@@ -11,5 +11,6 @@
   "storage": [
     {"name":"hidcam.app.js","url":"app.js"},
     {"name":"hidcam.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "paul-chrlt"
 }

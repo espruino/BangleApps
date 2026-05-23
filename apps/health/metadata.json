@@ -18,5 +18,6 @@
     {"name":"health.settings.js","url":"settings.js"}
   ],
   "data": [{"name":"health.json"}],
-  "dependencies": {"notify":"type"}
+  "dependencies": {"notify":"type"},
+  "author": "gfwilliams"
 }

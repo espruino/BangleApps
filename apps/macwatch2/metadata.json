@@ -13,5 +13,6 @@
   "storage": [
     {"name":"macwatch2.app.js","url":"app.js"},
     {"name":"macwatch2.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "blogmywiki"
 }

@@ -11,5 +11,6 @@
   "storage": [
     {"name":"astral.app.js","url":"app.js"},
     {"name":"astral.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "jabituyaben"
 }

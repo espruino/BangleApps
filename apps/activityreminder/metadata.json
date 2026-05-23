@@ -20,5 +20,6 @@
   "data": [
     {"name": "activityreminder.s.json"},
     {"name": "activityreminder.data.json", "storageFile": true}
-  ]
+  ],
+  "author": "Stiralbios"
 }

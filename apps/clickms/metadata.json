@@ -9,5 +9,6 @@
   "storage": [
     {"name":"clickms.app.js","url":"click-master.js"},
     {"name":"clickms.img","url":"click-master-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "ra100"
 }

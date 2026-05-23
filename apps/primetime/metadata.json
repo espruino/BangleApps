@@ -11,5 +11,6 @@
   "storage": [
     {"name":"primetime.app.js","url":"primetime.js"},
     {"name":"primetime.img","url":"primetime-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "Eveeeon"
 }

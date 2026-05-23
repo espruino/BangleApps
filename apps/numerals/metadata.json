@@ -16,5 +16,6 @@
     {"name":"numerals.img","url":"numerals-icon.js","evaluate":true},
     {"name":"numerals.settings.js","url":"numerals.settings.js"}
   ],
-  "data": [{"name":"numerals.json"}]
+  "data": [{"name":"numerals.json"}],
+  "author": "ps-igel"
 }

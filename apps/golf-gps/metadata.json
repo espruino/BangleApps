@@ -11,5 +11,6 @@
     {"name":"golf-gps.app.js","url":"golf-gps.js"},
     {"name":"golf-gps.img","url":"golf-gps-icon.js","evaluate":true}
   ],
-  "readme":"README.md"
+  "readme":"README.md",
+  "author": "jeonlab"
 }

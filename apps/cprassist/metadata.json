@@ -14,5 +14,6 @@
     {"name":"cprassist.img","url":"cprassist-icon.js","evaluate":true},
     {"name":"cprassist.settings.js","url":"settings.js"}
   ],
-  "data":[{"name":"cprassist.settings.json"}]
+  "data":[{"name":"cprassist.settings.json"}],
+  "author": "capybara1"
 }

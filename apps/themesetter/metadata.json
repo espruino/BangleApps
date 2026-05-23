@@ -13,5 +13,6 @@
   "storage": [
     {"name":"themesetter.app.js","url":"app.js"},
     {"name":"themesetter.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "rozek"
 }

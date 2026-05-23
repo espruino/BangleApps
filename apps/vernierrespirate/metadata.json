@@ -13,5 +13,6 @@
     {"name":"vernierrespirate.app.js","url":"app.js"},
     {"name":"vernierrespirate.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"vernierrespirate.json"}]
+  "data": [{"name":"vernierrespirate.json"}],
+  "author": "gfwilliams"
 }

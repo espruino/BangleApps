@@ -12,5 +12,6 @@
   "storage": [
     { "name": "crsclock.app.js", "url": "crsclock.js" },
     { "name": "crsclock.img", "url":"app-icon.js","evaluate":true }
-  ]
+  ],
+  "author": "spycat111"
 }

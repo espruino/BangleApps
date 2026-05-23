@@ -15,5 +15,6 @@
     {"name":"widbatwarn.wid.js","url":"widget.js"},
     {"name":"widbatwarn.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"widbatwarn.json"}]
+  "data": [{"name":"widbatwarn.json"}],
+  "author": "rigrig"
 }

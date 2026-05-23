@@ -12,5 +12,6 @@
   "storage": [
     {"name":"scolor.app.js","url":"show-color.js"},
     {"name":"scolor.img","url":"show-color-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "ra100"
 }

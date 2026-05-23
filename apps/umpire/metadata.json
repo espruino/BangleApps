@@ -14,5 +14,6 @@
     {"name":"umpire.settings.js","url":"settings.js"},
     {"name":"umpire.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"umpire.json"}]
+  "data": [{"name":"umpire.json"}],
+  "author": "AndySmee"
 }

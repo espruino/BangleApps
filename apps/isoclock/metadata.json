@@ -11,5 +11,6 @@
   "storage": [
     {"name":"isoclock.app.js","url":"isoclock.js"},
     {"name":"isoclock.img","url":"isoclock-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "Fscked-In-The-Head"
 }

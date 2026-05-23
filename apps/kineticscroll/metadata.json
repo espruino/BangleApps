@@ -10,5 +10,6 @@
   "readme": "README.md",
   "storage": [
     {"name":"kineticscroll.boot.js","url":"boot.min.js"}
-  ]
+  ],
+  "author": "halemmerich"
 }

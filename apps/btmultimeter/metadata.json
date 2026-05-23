@@ -11,5 +11,6 @@
   "storage": [
     {"name":"btmultimeter.app.js","url":"app.js"},
     {"name":"btmultimeter.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "gfwilliams"
 }

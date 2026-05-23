@@ -10,5 +10,6 @@
   "readme": "README.md",
   "storage": [
     {"name":"widmnth.wid.js","url":"widget.js"}
-  ]
+  ],
+  "author": "N-Onorato"
 }

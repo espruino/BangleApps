@@ -10,5 +10,6 @@
   "storage": [
     {"name":"bthometemp.app.js","url":"app.js"},
     {"name":"bthometemp.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "gfwilliams"
 }

@@ -17,5 +17,6 @@
     {"name":"qmsched.img","url":"icon.js","evaluate":true},
     {"name":"qmsched.wid.js","url":"widget.js"}
   ],
-  "data": [{"name":"qmsched.json"}]
+  "data": [{"name":"qmsched.json"}],
+  "author": "rigrig"
 }

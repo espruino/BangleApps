@@ -26,5 +26,6 @@
   "data": [
     {"name":"heatsuite.settings.json"},
     {"name":"heatsuite.cache.json"}
-  ]
+  ],
+  "author": "nravanelli"
 }

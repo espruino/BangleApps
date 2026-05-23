@@ -11,5 +11,6 @@
   "storage": [
     {"name":"henkinen.app.js","url":"app.js"},
     {"name":"henkinen.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "jukioo"
 }

@@ -13,5 +13,6 @@
     "allow_emulator":false,
     "storage": [
       {"name":"widstep.wid.js","url":"widstep.wid.js"}
-    ]
-  }
+    ],
+    "author": "sir-indy"
+}

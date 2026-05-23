@@ -12,5 +12,6 @@
   "storage": [
     {"name":"palikkainen.app.js","url":"app.js"},
     {"name":"palikkainen.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "jukioo"
 }

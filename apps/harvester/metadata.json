@@ -16,5 +16,6 @@
     {"name":"harvester.img","url":"app-icon.js","evaluate":true},
     {"name":"harvester.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"harvester.json"}]
+  "data": [{"name":"harvester.json"}],
+  "author": "TuggyNE"
 }

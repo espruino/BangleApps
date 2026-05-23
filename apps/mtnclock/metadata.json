@@ -22,5 +22,6 @@
     {"name":"mtnclock.settings.js","url":"settings.js"},
     {"name":"mtnclock.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"mtnclock.json"}]
+  "data": [{"name":"mtnclock.json"}],
+  "author": "frigis1"
 }

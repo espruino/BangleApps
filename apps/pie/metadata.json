@@ -10,5 +10,6 @@
   "storage": [
     {"name":"pie.app.js","url":"app.js"},
     {"name":"pie.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "2taras"
 }

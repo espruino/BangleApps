@@ -9,5 +9,6 @@
   "storage": [
     {"name":"speedo.app.js","url":"speedo.js"},
     {"name":"speedo.img","url":"speedo-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "ra100"
 }

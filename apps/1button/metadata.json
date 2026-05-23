@@ -12,5 +12,6 @@
   "storage": [
     {"name":"1button.wid.js","url":"widget.js"}
   ],
-  "data": [{"name":"one_button_presses.csv","storageFile":true}]
+  "data": [{"name":"one_button_presses.csv","storageFile":true}],
+  "author": "gedankenstuecke"
 }

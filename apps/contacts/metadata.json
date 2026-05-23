@@ -15,5 +15,6 @@
   ],
   "data": [
     {"name":"contacts.json","url":"contacts.json"}
-  ]
+  ],
+  "author": "pavelmachek"
 }

@@ -11,5 +11,6 @@
   "storage": [
     {"name":"binclock.app.js","url":"app.js"},
     {"name":"binclock.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "Taffaz"
 }

@@ -11,5 +11,6 @@
     {"name":"bordle.app.js","url":"bordle.app.js"},
     {"name":"wordlencr.txt","url":"wordlencr.txt"},
     {"name":"bordle.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "berkenbu"
 }

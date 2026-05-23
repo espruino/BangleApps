@@ -10,5 +10,6 @@
   "storage": [
     {"name":"petrock.app.js","url":"app.js"},
     {"name":"petrock.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "singintime"
 }

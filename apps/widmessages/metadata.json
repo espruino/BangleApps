@@ -14,5 +14,6 @@
   "readme": "README.md",
   "storage": [
     {"name":"widmessages.wid.js","url":"widget.js"}
-  ]
+  ],
+  "author": "rigrig"
 }

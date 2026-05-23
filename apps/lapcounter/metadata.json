@@ -13,5 +13,6 @@
   "storage": [
     {"name":"lapcounter.app.js","url":"app.js"},
     {"name":"lapcounter.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "author": "thedod"
 }

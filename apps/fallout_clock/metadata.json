@@ -14,5 +14,6 @@
   ],
   "screenshots": [
     {"url":"./screenshot.png", "name":"Fallout Clock Screenshot"}
-  ]
+  ],
+  "author": "zskelton"
 }
