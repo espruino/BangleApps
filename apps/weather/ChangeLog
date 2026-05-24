@@ -33,3 +33,4 @@
       Add button to settings to force fetch weather data (requires GadgetBridge version 0.86.0 or higher)
       Add new API to get weather from Weather App for other Apps
 0.31: Wind speed clockInfo now shows speed in local units (kph or mph)
+0.32: Add widget configuration settings menu for icon style, data displayed, etc.
