@@ -34,7 +34,6 @@
       dow: 0b0111110,
       hidden: true,
       group: "Hidden",
-      del: true,
       js: JS_DELETE_ALARM_THEN_BUZZ_AND_SETUP
     });
     S.reload();
