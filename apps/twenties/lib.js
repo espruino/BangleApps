@@ -1,5 +1,4 @@
 {
-
   exports.getTimeAtNextBuzz = () => {
     const isWorkTime = (d) =>
       d.getDay() % 6 && d.getHours() >= 8 && d.getHours() < 18;
@@ -19,27 +18,14 @@
     return t;
   };
 
-  const S = require("sched");
-
-  exports.buzzAndRearm = function () {
+  exports.buzzAndSetup = function () {
     Bangle.buzz();
-    let twentiesAlarm = S.getAlarm("twenties");
-    twentiesAlarm.t = exports.getTimeAtNextBuzz();
-    S.setAlarm("twenties", twentiesAlarm);
-    S.reload();
+    exports.setup();
   };
 
-  // If twenties is not installed anymore the alarm is deleted (catch block). Otherwise buzz and rearm as usual (try block).
-  const JS_BUZZ_REARM_OR_DELETE_ALARM = `{
-    try {
-      require('twenties').buzzAndRearm();
-      // require("twenties").setup(); // For DEBUGGING as to regenerate the javascript string to evaluate in the alarm.
-    } catch(e) {
-      require("sched").setAlarm("twenties", undefined);
-      require("sched").reload();
-      throw(e);
-    }
-  }`;
+  const JS_DELETE_ALARM_THEN_BUZZ_AND_SETUP = `require("sched").setAlarm("twenties", undefined); require("sched").reload(); require('twenties').buzzAndSetup();`;
+
+  const S = require("sched");
 
   exports.setup = function () {
     S.setAlarm("twenties", {
@@ -48,9 +34,9 @@
       dow: 0b0111110,
       hidden: true,
       group: "Hidden",
-      js: JS_BUZZ_REARM_OR_DELETE_ALARM
+      del: true,
+      js: JS_DELETE_ALARM_THEN_BUZZ_AND_SETUP
     });
     S.reload();
-    require("Storage").erase("twenties.boot.js");
   };
 }
