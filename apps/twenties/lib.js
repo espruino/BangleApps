@@ -1,10 +1,10 @@
-{ // this code is called from `twenties.boot.js` in a scope where the `alarms` variable is defined.
+{
 
   exports.getTimeAtNextBuzz = () => {
     const isWorkTime = (d) =>
       d.getDay() % 6 && d.getHours() >= 8 && d.getHours() < 18;
     const isLookAwayTime = (d) => {
-      d.getMinutes() % 20 === 0 && d.getseconds < 20
+      d.getMinutes() % 20 === 0 && d.getSeconds() < 20
     }
     const NOW = new Date();
     let t = 8 * 3600000;
