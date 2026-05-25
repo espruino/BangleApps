@@ -7,8 +7,6 @@
       d.getMinutes() % 20 === 0 && d.getSeconds() < 20;
     const NOW = new Date();
     let t = 8 * 3600000;
-    print(NOW);
-    print(NOW.getSeconds());
     if (isWorkTime(NOW)) {
       if (isLookAwayTime(NOW)) {
         t = NOW.getHours() * 3600000 +
@@ -24,11 +22,11 @@
   const S = require("sched");
 
   exports.buzzAndRearm = function () {
-    print("buzz");
     Bangle.buzz();
     let twentiesAlarm = S.getAlarm("twenties");
     twentiesAlarm.t = exports.getTimeAtNextBuzz();
     S.setAlarm("twenties", twentiesAlarm);
+    S.reload();
   };
 
   // If twenties is not installed anymore the alarm is deleted (catch block). Otherwise buzz and rearm as usual (try block).
