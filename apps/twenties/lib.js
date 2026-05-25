@@ -22,20 +22,23 @@
 
   const S = require("sched");
 
-  exports.buzzRearmOrDeleteAlarm = function () {
-    try { // Verify that twenties is still installed. If not delete its alarm.
-      require("twenties");
-    } catch (e) {
-      S.setAlarm("twenties", undefined);
-      S.reload();
-      return;
-    }
-    Bangle.buzz()
+  exports.buzzAndRearm = function () {
+    Bangle.buzz();
     let twentiesAlarm = S.getAlarm("twenties");
     twentiesAlarm.t = exports.getTimeAtNextBuzz();
     S.setAlarm("twenties", twentiesAlarm);
-    S.setTimer()
+    S.setTimer();
   }
+
+  // If twenties is not installed anymore the alarm is deleted (catch block). Otherwise buzz and rearm as usual (try block).
+  const JS_BUZZ_REARM_OR_DELETE_ALARM = `{
+    try {
+      require('twenties').buzzAndRearm();
+    } catch(e) {
+      S.setAlarm("twenties", undefined);
+      S.reload();
+    }
+  }`
 
   exports.setup = function (alarms) {
     const TIME_AT_NEXT_BUZZ = exports.getTimeAtNextBuzz()
@@ -46,7 +49,7 @@
       dow: 0b0111110,
       hidden: true,
       group: "Hidden",
-      js: "require('twenties').buzzRearmOrDeleteAlarm()"
+      js: JS_BUZZ_REARM_OR_DELETE_ALARM
     });
     S.setAlarms(alarms);
     S.reload();
