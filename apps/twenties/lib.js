@@ -23,7 +23,7 @@
     exports.setup();
   };
 
-  const JS_DELETE_ALARM_THEN_BUZZ_AND_SETUP = `require("sched").setAlarm("twenties", undefined); require("sched").reload(); require('twenties').buzzAndSetup();`;
+  const JS_DELETE_ALARM_THEN_BUZZ_AND_SETUP = `require("sched").setAlarm("twenties", undefined); require('twenties').buzzAndSetup();`;
 
   const S = require("sched");
 
