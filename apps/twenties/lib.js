@@ -7,6 +7,8 @@
       d.getMinutes() % 20 === 0 && d.getSeconds() < 20;
     const NOW = new Date();
     let t = 8 * 3600000;
+    print(NOW);
+    print(NOW.getSeconds());
     if (isWorkTime(NOW)) {
       if (isLookAwayTime(NOW)) {
         t = NOW.getHours() * 3600000 +
@@ -17,41 +19,40 @@
       }
     }
     return t;
-  }
+  };
 
   const S = require("sched");
 
   exports.buzzAndRearm = function () {
+    print("buzz");
     Bangle.buzz();
     let twentiesAlarm = S.getAlarm("twenties");
     twentiesAlarm.t = exports.getTimeAtNextBuzz();
     S.setAlarm("twenties", twentiesAlarm);
-    S.setTimer();
-  }
+  };
 
   // If twenties is not installed anymore the alarm is deleted (catch block). Otherwise buzz and rearm as usual (try block).
   const JS_BUZZ_REARM_OR_DELETE_ALARM = `{
     try {
       require('twenties').buzzAndRearm();
+      // require("twenties").setup(); // For DEBUGGING as to regenerate the javascript string to evaluate in the alarm.
     } catch(e) {
-      S.setAlarm("twenties", undefined);
-      S.reload();
+      require("sched").setAlarm("twenties", undefined);
+      require("sched").reload();
+      throw(e);
     }
-  }`
+  }`;
 
-  exports.setup = function (alarms) {
-    const TIME_AT_NEXT_BUZZ = exports.getTimeAtNextBuzz()
-    alarms.push({
-      id: "twenties",
+  exports.setup = function () {
+    S.setAlarm("twenties", {
       on: true,
-      t: TIME_AT_NEXT_BUZZ,
+      t: exports.getTimeAtNextBuzz(),
       dow: 0b0111110,
       hidden: true,
       group: "Hidden",
       js: JS_BUZZ_REARM_OR_DELETE_ALARM
     });
-    S.setAlarms(alarms);
     S.reload();
     require("Storage").erase("twenties.boot.js");
-  }
+  };
 }
