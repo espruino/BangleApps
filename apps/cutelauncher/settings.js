@@ -24,7 +24,7 @@
             onchange: () => {
                 settings.showClocks = !settings.showClocks;
                 save();
-                storage.erase("launch.cache.json"); //delete the cache app list
+                require("launch_utils").clearCache(); //delete the cache app list
             }
         },
         'Scrollbar': {

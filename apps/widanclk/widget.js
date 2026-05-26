@@ -7,7 +7,7 @@ WIDGETS["wdanclk"]={area:"tl",width:Bangle.CLOCK?0:24,draw:function() {
     return setTimeout(Bangle.drawWidgets,1); // widget changed size - redraw
   }
   if (!this.width) return; // if size not right, return
-  g.reset();
+  g.reset("widget");
   let d = new Date();
   let dd = d.getDate();
   let x=this.x+12, y=this.y+12,

@@ -67,6 +67,7 @@ function resetSettings() {
     timeout: 10,                    // Default LCD timeout in seconds
     vibrate: true,                  // Vibration enabled by default. App must support
     beep: BANGLEJS2 ? true : "vib", // Beep enabled by default. App must support
+    chargeBuzz: true,               // Vibrate on connect charger
     timezone: 0,                    // Set the timezone for the device
     HID: false,                     // BLE HID mode, off by default
     clock: null,                    // a string for the default clock's name
@@ -194,9 +195,15 @@ function vibrateMenu() {
       format: v => [/*LANG*/"Off", /*LANG*/"Alarms", /*LANG*/"Silent"][v],
       onchange: v => {
         settings.quiet = v%3;
-        updateSettings();
         updateOptions();
         if ("qmsched" in WIDGETS) WIDGETS["qmsched"].draw();
+      },
+    },
+    /*LANG*/"Charge Vibration": {
+      value: !!settings.chargeBuzz,
+      onchange: v => {
+        settings.chargeBuzz = v;
+        updateSettings();
       },
     }
   });
@@ -303,6 +310,7 @@ function showThemeMenu(pop) {
         fg:cl("#fff"), bg:cl("#000"),
         fg2:cl("#fff"), bg2:cl("#004"),
         fgH:cl("#fff"), bgH:cl("#00f"),
+        fgW:cl("#fff"), bgW:cl("#000"),
         dark:true
       });
     },
@@ -311,6 +319,7 @@ function showThemeMenu(pop) {
         fg:cl("#000"), bg:cl("#fff"),
         fg2:cl("#000"), bg2:cl("#cff"),
         fgH:cl("#000"), bgH:cl("#0ff"),
+        fgW:cl("#000"), bgW:cl("#fff"),
         dark:false
       });
     }
@@ -324,6 +333,7 @@ function showThemeMenu(pop) {
           fg:cl(newTheme.fg), bg:cl(newTheme.bg),
           fg2:cl(newTheme.fg2), bg2:cl(newTheme.bg2),
           fgH:cl(newTheme.fgH), bgH:cl(newTheme.bgH),
+          fgW:cl(newTheme.fgW), bgW:cl(newTheme.bgW),
           dark:newTheme.dark
         });
       };
@@ -371,8 +381,9 @@ function showThemeMenu(pop) {
       fg: /*LANG*/'Foreground', bg: /*LANG*/'Background',
       fg2: /*LANG*/'Foreground 2', bg2: /*LANG*/'Background 2',
       fgH: /*LANG*/'Highlight FG', bgH: /*LANG*/'Highlight BG',
+      fgW: /*LANG*/'Widget FG', bgW: /*LANG*/'Widget BG',
     };
-    ["fg", "bg", "fg2", "bg2", "fgH", "bgH"].forEach(t => {
+    ["fg", "bg", "fg2", "bg2", "fgH", "bgH", "fgW", "bgW"].forEach(t => {
       menu[labels[t]] = {
           min : 0, max : colors.length-1, wrap : true,
           value: Math.max(colors.indexOf(g.theme[t]),0),

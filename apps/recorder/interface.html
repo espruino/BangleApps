@@ -4,22 +4,26 @@
     <link rel="stylesheet" href="../../css/spectre-icons.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-      .leaflet-map { width: 100%; max-width: 600px; aspect-ratio: 1/1; margin: 0 auto; }
-      .chart-canvas { width: 100%; height: 100%; display: block; }
+      .leaflet-map { width: 100%; max-width: 600px; aspect-ratio: 1/1; margin: 0 auto; overflow: hidden; flex: none; }
+      .leaflet-map.leaflet-container img,
+      .leaflet-map .leaflet-tile,
+      .leaflet-map .leaflet-marker-icon,
+      .leaflet-map .leaflet-marker-shadow {
+        max-width: none !important;
+        max-height: none !important;
+      }
+      .chart-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
       .chart-wrapper { position: relative; width: 100%; max-width: 600px; aspect-ratio: 1/1; margin: 0 auto 10px; }
       .leaflet-map, .chart-container {
         border-radius: 4px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       }
-      .chart-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
       .track-stats { font-size: 0.9em; color: #666; margin-top: 10px; padding: 8px; background: #f8f9fa; border-radius: 4px; }
       .charts-container { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 15px; }
       @media (min-width: 768px) { .charts-container { grid-template-columns: 1fr 1fr; } }
       .chart-container {
         position: relative;
         background: #fff;
-        border-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       }
       .chart-header {
         padding: 12px 15px;
@@ -42,16 +46,46 @@
       .no-data-message { text-align: center; color: #666; font-style: italic; padding: 20px; }
       #track-selector { margin-bottom: 20px; }
       .text-center { text-align: center; }
-      .accordion-header i { transition: transform 0.2s; }
-      input[name=accordion-tracks]:checked ~ .accordion-header i { transition: transform 0.2s; }
-      .accordion { margin-bottom: 20px; }
-      .accordion-item { position: relative; }
-      .accordion-header { cursor: pointer; padding: 10px; background: #f8f9fa; border-radius: 4px; }
+      input[name=accordion-tracks]:checked ~ .accordion-header .track-header-arrow { transform: rotate(90deg); }
+      .accordion { margin-bottom: 20px; width: 100%; }
+      .accordion .accordion-item { position: relative; width: 100%; }
+      .accordion .accordion-header { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; box-sizing: border-box; cursor: pointer; padding: 10px; background: #f8f9fa; border-radius: 4px; }
+      .track-header-text {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 8px;
+        flex: 1;
+        min-width: 0;
+        line-height: 1.25;
+      }
+      .track-header-arrow { flex: 0 0 auto; align-self: center; transition: transform 0.2s; }
+      .track-header-title { white-space: nowrap; }
+      .track-header-date {
+        color: #666;
+      }
+      .track-preview {
+        position: relative;
+        display: block;
+        flex: 0 0 48px;
+        width: 48px;
+        height: 48px;
+        border-radius: 4px;
+        border: 1px solid rgba(15,23,42,.12);
+        background-color: #dbeafe;
+        overflow: hidden;
+      }
+      .track-preview-pin {
+        position: absolute;
+        transform: translate(-50%, -100%);
+        color: #dc2626;
+        font-size: .5rem;
+      }
       /* only show margin on expanded entries */
       input[name=accordion-tracks]:checked ~ .accordion-header { margin-bottom: 5px; }
       input.select-checkbox:checked ~ div > .accordion-body { background: #f0f8ff; }
-      .accordion-header:hover { background: #e9ecef; }
-      .accordion-body { overflow: visible; }
+      .accordion .accordion-header:hover { background: #e9ecef; }
+      input[name=accordion-tracks]:checked ~ .accordion-body { overflow: visible; }
       .track-content-wrapper {
         max-height: 85vh;
         overflow-y: auto;
@@ -64,10 +98,17 @@
       .vertical {
         display: flex;
         flex-direction: column;
+        flex: 1;
+        min-width: 0;
       }
       .horizontal {
         display: flex;
         flex-direction: row;
+        width: 100%;
+        align-items: flex-start;
+      }
+      .horizontal > .form-checkbox {
+        align-self: center;
       }
       .hidden {
         display: none;
@@ -131,11 +172,29 @@ const convertSpeed = (v, t) => convertUnit('speed', v, t),
       convertDistance = (v, t) => convertUnit('distance', v, t),
       convertTemperature = (v, t) => convertUnit('temperature', v, t),
       convertElevation = (v, t) => convertUnit('elevation', v, t);
+
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371000, dLat = (lat2 - lat1) * Math.PI / 180, dLon = (lon2 - lon1) * Math.PI / 180;
   const a = Math.sin(dLat/2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
+
+function renderTrackPreview(trackData) {
+  // Project the first valid GPS point into an OpenStreetMap tile for the compact list preview.
+  const lat = parseFloat(trackData.Latitude);
+  const lon = parseFloat(trackData.Longitude);
+  if (!isFinite(lat) || !isFinite(lon)) return null;
+  const zoom = 14, tileCount = 1 << zoom;
+  const latRad = lat * Math.PI / 180;
+  // tileX/tileY are floating-point tile coordinates: floor(...) picks the tile image,
+  // and the decimal part places the pin inside it. Keep tile indices valid at the map edges.
+  const tileX = Math.min(tileCount - 1e-6, Math.max(0, (lon + 180) / 360 * tileCount));
+  const tileY = Math.min(tileCount - 1e-6, Math.max(0, (1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2 * tileCount));
+  const x = Math.floor(tileX);
+  const y = Math.floor(tileY);
+  return `<span class="track-preview" title="Approximate start location" style="background-image:url('https://tile.openstreetmap.org/${zoom}/${x}/${y}.png');background-position:center;background-size:cover;background-repeat:no-repeat;"><i class="icon icon-location track-preview-pin" style="left:${((tileX - x) * 100).toFixed(1)}%;top:${((tileY - y) * 100).toFixed(1)}%;"></i></span>`;
+}
+
 function createChartContainer(chartId, title, collapsed = true) {
   return `
     <div class="chart-container">
@@ -210,7 +269,7 @@ const chartTypes = {
     title: 'Battery Level Over Time',
     datasets: [
       { key: 'Battery Percentage', label: 'Battery %', color: '#28a745', yAxis: 'y' },
-      { key: 'Battery Voltage', label: 'Voltage (V)', color: '#ffc107', yAxis: 'y1' }
+      { key: 'Battery Voltage', label: 'Voltage (V)', color: '#2563eb', yAxis: 'y1' }
     ],
     scales: { y: { min: 0, max: 100, title: 'Battery %' }, y1: { position: 'right', min: 3.0, max: 4.2, title: 'Voltage (V)', grid: false } }
   },
@@ -225,6 +284,16 @@ const chartTypes = {
     scales: { y: { title: () => convertElevation(1).label } }
   },
   speed: { filter: d => d.Latitude && d.Longitude && d.Latitude !== "" && d.Longitude !== "", calculate: true, label: () => convertSpeed(1).label, color: '#10b981', title: 'Speed Over Time' },
+  accel: {
+    filter: d => d['Accel X'] !== undefined || d['Accel Y'] !== undefined || d['Accel Z'] !== undefined,
+    title: 'Acceleration Over Time',
+    datasets: [
+      { key: 'Accel X', label: 'X', color: '#ef4444', yAxis: 'y' },
+      { key: 'Accel Y', label: 'Y', color: '#22c55e', yAxis: 'y' },
+      { key: 'Accel Z', label: 'Z', color: '#3b82f6', yAxis: 'y' }
+    ],
+    scales: { y: { title: 'Acceleration (g)' } }
+  },
   barometer: {
     filter: d => d['Barometer Temperature'] !== undefined || d['Barometer Pressure'] !== undefined,
     title: 'Barometer Data Over Time',
@@ -257,7 +326,8 @@ const createChart = (type, canvasId, trackData) => {
       .filter(ds => data.some(pt => pt[ds.key] !== undefined && pt[ds.key] !== ""))
       .map(ds => makeDataset(ds.label, data.map(pt => {
         const val = parseFloat(pt[ds.key]);
-        return val ? (ds.convert ? parseFloat(ds.convert(val).value.toFixed(1)) : val) : null;
+        if (!Number.isFinite(val)) return null;
+        return ds.convert ? parseFloat(ds.convert(val).value.toFixed(1)) : val;
       }), ds.color, { fill: false, yAxisID: ds.yAxis }));
   } else if (type === 'speed') {
     // Calculate speed from GPS coordinates
@@ -328,7 +398,8 @@ const createChartsForTrack = (trackNumber, trackData) => {
   const chartDefs = [
     {type:'heartrate',id:'hr',title:'Heart Rate'},{type:'battery',id:'battery',title:'Battery Level'},
     {type:'steps',id:'steps',title:'Step Count'},{type:'elevation',id:'elevation',title:'Elevation Profile'},
-    {type:'speed',id:'speed',title:'Speed'},{type:'barometer',id:'barometer',title:'Barometer Data'}
+    {type:'speed',id:'speed',title:'Speed'},{type:'accel',id:'accel',title:'Acceleration'},
+    {type:'barometer',id:'barometer',title:'Barometer Data'}
   ];
   const availableCharts = chartDefs.filter(({type}) => trackData.some(chartTypes[type].filter));
   if (!availableCharts.length) {
@@ -561,19 +632,22 @@ function createLeafletMap(containerId, coordinates, fullTrack) {
       }).addTo(map);
 
       // Get start and end times from full track data
-      const startTime = fullTrack && fullTrack[0] && fullTrack[0].Time ?
-        fullTrack[0].Time.toLocaleTimeString() : '';
-      const endTime = fullTrack && fullTrack[fullTrack.length-1] && fullTrack[fullTrack.length-1].Time ?
-        fullTrack[fullTrack.length-1].Time.toLocaleTimeString() : '';
+      const startTime = fullTrack?.[0]?.Time?.toLocaleTimeString() || '';
+      const endTime = fullTrack?.[fullTrack.length - 1]?.Time?.toLocaleTimeString() || '';
 
       // Create clickable markers for every GPS point
       if (fullTrack && fullTrack.length > 0) {
         const gpsPoints = fullTrack.filter(hasValidGPS);
+        const cumulativeStepsByTime = new Map();
+        let cumulativeSteps = 0;
+        for (const point of fullTrack) {
+          cumulativeSteps += parseInt(point.Steps) || 0;
+          const time = point.Time?.getTime?.();
+          if (Number.isFinite(time)) cumulativeStepsByTime.set(time, cumulativeSteps);
+        }
         const allMarkers = []; // Track all markers for style management
-        const allIndicators = []; // Track small indicator markers
         let activeMarkerIndex = null; // Track which marker is currently active
 
-        // Generate popup content for any point
         const generatePopupContent = (pointData, pointIndex) => {
           const items = [];
           if (pointData.Time) items.push(`<strong>🕐 ${pointData.Time.toLocaleTimeString()}</strong>`);
@@ -600,8 +674,12 @@ function createLeafletMap(containerId, coordinates, fullTrack) {
             items.push(b);
           }
           if (pointData.Steps) {
-            const cumSteps = fullTrack.reduce((sum, pt) => pt.Time?.getTime() <= pointData.Time.getTime() ? sum + (parseInt(pt.Steps) || 0) : sum, 0);
-            items.push(`👣 ${cumSteps.toLocaleString()} total steps`);
+            const cumSteps = cumulativeStepsByTime.get(pointData.Time?.getTime?.());
+            if (Number.isFinite(cumSteps)) items.push(`👣 ${cumSteps.toLocaleString()} total steps`);
+          }
+          const accel = ['Accel X', 'Accel Y', 'Accel Z'].map(key => parseFloat(pointData[key]));
+          if (accel.some(Number.isFinite)) {
+            items.push(`<span style="color:#ef4444">X</span>${Number.isFinite(accel[0]) ? accel[0].toFixed(2) : '-'} <span style="color:#22c55e">Y</span>${Number.isFinite(accel[1]) ? accel[1].toFixed(2) : '-'} <span style="color:#3b82f6">Z</span>${Number.isFinite(accel[2]) ? accel[2].toFixed(2) : '-'}`);
           }
           if (pointData['Barometer Temperature']) {
             const t = convertTemperature(parseFloat(pointData['Barometer Temperature']));
@@ -617,9 +695,8 @@ function createLeafletMap(containerId, coordinates, fullTrack) {
 
           if (!isNaN(lat) && !isNaN(lon)) {
             const marker = L.circleMarker([lat, lon], { radius: 10, weight: 1, fillOpacity: 0.01, opacity: 0.01, color: '#2563eb', fillColor: '#2563eb' }).addTo(map);
-            const indicator = L.circleMarker([lat, lon], { radius: 3, weight: 1, fillOpacity: 0.8, opacity: 1, color: '#999', fillColor: '#999', interactive: false }).addTo(map);
+            L.circleMarker([lat, lon], { radius: 3, weight: 1, fillOpacity: 0.8, opacity: 1, color: '#999', fillColor: '#999', interactive: false }).addTo(map);
             allMarkers.push(marker);
-            allIndicators.push(indicator);
             Object.assign(marker, { _index: index, _pointData: point });
           }
         });
@@ -786,6 +863,7 @@ return {headers:headers,l:data};
         trackData.Time.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) +
         ' at ' + trackData.Time.toLocaleTimeString() :
         "No date info";
+      const previewHtml = renderTrackPreview(trackData);
 
       html += `
       <div class="accordion-item">
@@ -794,8 +872,12 @@ return {headers:headers,l:data};
           <div class="vertical">
             <input type="checkbox" id="accordion-track-${track.number}" name="accordion-tracks" hidden>
             <label class="accordion-header" for="accordion-track-${track.number}" data-track-index="${index}">
-              <i class="icon icon-arrow-right mr-1"></i>
-              <strong>Track ${track.number}</strong> - ${dateStr}
+              <span class="track-header-text">
+                <i class="icon icon-arrow-right mr-1 track-header-arrow"></i>
+                <strong class="track-header-title">Track ${track.number}</strong>
+                <span class="track-header-date">${dateStr}</span>
+              </span>
+              ${previewHtml || ''}
             </label>
             <div class="accordion-body" id="track-content-${track.number}">
               <div class="track-loading">Click to load track data...</div>

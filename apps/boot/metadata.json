@@ -6,7 +6,7 @@
   "icon": "bootloader.png",
   "type": "bootloader",
   "tags": "tool,system",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "storage": [
     {"name":".boot0","url":"boot0.js"},
     {"name":".bootcde","url":"bootloader.js"},

@@ -9,7 +9,7 @@
   "readme": "README.md",
   "provides_modules" : ["clockbg"],
   "tags": "module,background",
-  "supports" : ["BANGLEJS2"],
+  "supports" : ["BANGLEJS2","BANGLEJS3"],
   "interface": "interface.html",
   "storage": [
     {"name":"clockbg","url":"lib.js"},

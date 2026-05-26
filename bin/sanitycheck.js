@@ -169,7 +169,7 @@ const APP_KEYS = [
 ];
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports', 'noOverwrite'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
-const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
+const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2","BANGLEJS3","BANGLEJS3_COMPAT"]; // device IDs allowed for 'supports'
 const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","textinput","module","clkinfo","defaultconfig"]; // values allowed for "type" field - listed in README.md
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const MAX_FILE_NAME_LENGTH = 28
@@ -511,7 +511,7 @@ while(fileA=allFiles.pop()) {
     if (globA.test(nameB)||globB.test(nameA)) {
       if (isGlob(nameA)||isGlob(nameB))
         ERROR(`App ${fileB.app} ${typeB} file ${nameB} matches app ${fileA.app} ${typeB} file ${nameA}`);
-      else if (fileA.app != fileB.app && (!fileA.internal) && (!fileB.internal))
+      else if (fileA.app != fileB.app && (!fileA.internal) && (!fileB.internal) && nameB!="launch.cache.json")
         WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`, {file:APPSDIR_RELATIVE+fileB.app+"/metadata.json"});
     }
   })

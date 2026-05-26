@@ -1,0 +1,40 @@
+{
+  "id": "countdown",
+  "name": "Countdown",
+  "author": "rawyler",
+  "version": "0.01",
+  "type": "app",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "icon": "countdown.png",
+  "description": "Counts down to a user-selected goal date",
+  "readme": "README.md",
+  "storage": [
+    {
+      "name": "countdown.app.js",
+      "url": "countdown.app.js"
+    },
+    {
+      "name": "countdown.png",
+      "url": "countdown.png"
+    },
+    {
+      "name": "countdown.img",
+      "url": "countdown-icon.js",
+      "evaluate": true
+    }
+  ],
+  "screenshots": [
+    {
+      "url": "countdown-screenshot-1.png"
+    },
+    {
+      "url": "countdown-screenshot-2.png"
+    }
+  ],
+  "data": [
+    {
+      "name": "countdown.json"
+    }
+  ]
+}
+

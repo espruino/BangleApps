@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Box Clock Customizer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="screen-orientation" content="portrait">
+  <title>Box Clock Interface</title>
   <link rel="stylesheet" href="../../css/spectre.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -216,6 +220,62 @@
 
     .modal-overlay[hidden] {
       display: none;
+    }
+
+    .orientation-guard[hidden] {
+      display: none;
+    }
+
+    .orientation-guard {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at top left, rgba(219, 136, 95, 0.2) 0, transparent 26%),
+        linear-gradient(180deg, rgba(237, 232, 222, 0.98), rgba(246, 242, 234, 0.98));
+      text-align: center;
+    }
+
+    body.portrait-lock-blocked {
+      overflow: hidden;
+    }
+
+    body.portrait-lock-blocked .app-shell {
+      display: none;
+    }
+
+    body.portrait-lock-blocked .orientation-guard {
+      display: grid;
+    }
+
+    .orientation-guard-card {
+      width: min(100%, 28rem);
+      display: grid;
+      gap: 12px;
+      padding: 24px 20px;
+      border-radius: var(--radius-xl);
+      background: var(--panel-strong);
+      border: 1px solid rgba(19, 28, 38, 0.12);
+      box-shadow: var(--shadow);
+    }
+
+    .orientation-guard-card h2 {
+      margin: 0;
+      font-size: 1.3rem;
+      letter-spacing: -0.03em;
+    }
+
+    .orientation-guard-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .orientation-guard-card .btn {
+      justify-self: center;
     }
 
     .modal-overlay {
@@ -514,6 +574,7 @@
       background: transparent;
       box-shadow: none;
       transform: translateX(-1.6%);
+      overflow: hidden;
       pointer-events: none;
     }
 
@@ -867,14 +928,24 @@
       border-radius: 18px;
       border: 1px solid var(--line);
       background: rgba(255, 255, 255, 0.84);
-      cursor: pointer;
-      text-align: left;
     }
 
     .bg-card.active {
       border-color: rgba(210, 97, 56, 0.42);
       background: rgba(210, 97, 56, 0.08);
       box-shadow: inset 0 0 0 1px rgba(210, 97, 56, 0.18);
+    }
+
+    .bg-card-select {
+      display: grid;
+      gap: 8px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
     }
 
     .bg-card img,
@@ -898,6 +969,10 @@
     .bg-card-meta {
       color: var(--muted);
       font-size: 0.78rem;
+    }
+
+    .bg-card-delete {
+      justify-self: start;
     }
 
     .font-library {
@@ -992,12 +1067,20 @@
       }
 
       .device-shell {
-        width: 100%;
+        width: min(100%, calc(100svh * 40.266 / 52.49));
       }
     }
   </style>
 </head>
   <body>
+  <div id="orientation-guard" class="orientation-guard" hidden>
+    <div class="orientation-guard-card">
+      <h2>Rotate Back to Portrait</h2>
+      <p>Box Clock's editor is portrait-only on mobile so the live preview keeps a stable size.</p>
+      <p>If your browser supports it, you can try locking the page to portrait again.</p>
+      <button id="orientation-lock-button" class="btn btn-primary" type="button">Lock to Portrait</button>
+    </div>
+  </div>
   <div class="app-shell">
     <main class="workflow">
       <section class="editor-card preview-panel stage-shell">
@@ -1285,6 +1368,7 @@
         <button class="add-chip" data-add-type="meridian" type="button">Meridian</button>
         <button class="add-chip" data-add-type="battery" type="button">Battery</button>
         <button class="add-chip" data-add-type="steps" type="button">Steps</button>
+        <button class="add-chip" data-add-type="clkinfo" type="button">ClockInfo</button>
         <button class="add-chip" data-add-type="text" type="button">Custom Text</button>
       </div>
       <div class="button-row">
@@ -1308,6 +1392,7 @@
       </div>
       <div class="button-row">
         <button id="cancel-config-dialog" class="btn" type="button">Cancel</button>
+        <button id="alternate-config-dialog" class="btn" type="button" hidden></button>
         <button id="confirm-config-dialog" class="btn btn-primary" type="button">Save</button>
       </div>
     </div>
@@ -1334,6 +1419,40 @@
     window.BoxclkPreviewFontData = {
       font4x6: "alXqH0ItwEdCXwAEliQWcwNTBgOHBAAAABAAEAIgx0ESRCAAkj11UpVUFXP6HQAA3yVkWnY0qRqWJAAAAAAAAJIuABGSLiAAlixpW3pN4FtaLQAA/lclWbV7JVs+VwAAT1mKeYp5anlXfwAAlWVvW29br28VVwAAe1tUW1J7UX/WVQAA7U9tSLooFRnVHwAAFwgpZAEQAXDHcQAARBDeJGV/ZSneJgAAoEQzUK1tq1TpVQYIBgCyZXpbelt/ZQBAAATrXrVVZVSjMwEAAABte70qf0d6cwAMk3eSfNZwknCTcQBwAwAEAAYABgAEAAMA",
       font6x8: "QAGSCUQppxVEfSoIBChHGgSogiQA/LokBCg3GwAAAgBEIAAAhBAAAAQJRQAACUIAAIn/AQAJQgiAEEUIQCAAEAAEAAAACEccAIjJIgCQSgMfkEocgKBMIIAg9z8AQAAAAAAAAE588x3RQBQiRnkvHEGGSCLxx4giTjiHHAAAAAAAAAAADgABIJEQAhCREPQJDwAIBIEQ9AmOEAIQACABIMABAAAuEu84cZIYJaIqDyOkuggjYMYYJQRG7zjgAQAAAAAAAP+76A4QwkgCnMNPAhDeSCIQxkgiH7roHAAAAAAAAAAAEcboPBLuHCMU1hojHMYZPRLGGCHxx+ggAAAAAAAAAADOux8jMUISI9E7EiMxBhIVMkYSFS064ggBAAAAAADgIDHGjxBRRYEQlSiCCFURhAguEogEKpKPBAAA4AKOAAQgggACIEIB4DxCARAiIgLwIgIAECMCAPA8DnwAACCAAyAgAAQg7jn/PDBGFCMwfhQjMEL0Iu89FCIAAOAAREAGAABAAgDMRaI9REhSI0RwUiNESFIjTkRTI4ADAAAAAAAQAAAAEM4/6zwxxgwRMUboENE/GBAOBugPAAYAAAAAAAAAAAAAMcYYPzFGFQVRVRIJUVX1EI+oGD4AAOAAg2AADIQQABKEEAA4mIwEEJiMCjiEEAkShBAADINgAAAADAAAABAACAAQAAgAOAA+ABAACICRDQiAkFQJAGEJCARkAgCEaAceXxEoKAQgRywEwIAoH+xIKARsJx4EAAAAgABAGOADgAhPAMAQlAAAABYBAAAUAgAA7wMAAAAAAABpAwAAMgEAGlsSACwAOAAAAHz3AQA4AAAAEAAAAAAAAIAAAAgfAAAAy0EFPguiCgTAEQsIICAKEMDDBT4AAAAAAAACABEAYgAREIciCgDKHQQQihQEkIccBBByIwAQAgCROOUYkUAQBYowUB0fSJAlBCSQHZ8YUAGEBBABgHjgAAAA9xkAgAgkBYAOJAqADRjUgw4ASoANAEWACAAAAAcAgDEBAEQIkh6EEJA6HwmQGsQx0AoEAKAKHwCACgAAAAsAEAYkADAJJAAQSSkMEKkIDDhWEgABoBaAAEAvAAMAIhICZhxSAQAAVBJCCIQBpRSLEuccKaEYI3LFGCMzOgAAVhEAGISA4z6EEBYhSikLOc45DiExRhohMcbrPgAAQABGAWYc/3/nHBBCQgicc0IIEEJCCBBCQgj/f+ccAAAAAApYZhSOReccROUYI6TXGCMkzRgjRMUYI45F5xwAAAAAVoHADM4BFyMxghkjMaoaIzGSGiMxqhwjzgHnHAAACABKEQAYMUbIADFGLx0xqkgDMZI4HzESHyPOEWgfAAAAAMRZpQAAAEAAzjnnPCGEEArvvfc+McYYKe+99xYAAAAAgBmlGAAAAADOOecYMMYYCdB77wkQQggJ7733HAQAAABGKWUZAAAGAIwx4R2EEBcjhJAYI4SQGCPOORcdAAAAAEZZBQAAAAACzjlHHDHGCCYxxvgrMcYIMs45RxwAAAAgzChFIAAAACAxxhgtMcYYMzHGGDMxxvgs770XIAAA4CAKAAAAAAAAABEAAAARAAAAEQAAAA8AAAABAAAADgAAAA==",
+      builtinModuleFonts: {
+        "5x7Numeric7Seg": {
+          source: "https://www.espruino.com/modules/Font5x7Numeric7Seg.js",
+          font: "DSZLAAAECAAACAbQYLYAAAAGwANJksAACTJbAGAgQ2AMJMkMAbSZIYAAgQGwBtJktgDCTJbACgBtIkNgDYSJDAG0GCAABhIlsAbSZIAA2kSAAAA=",
+          firstChar: 32,
+          widths: "BQAAAAAAAAAAAAAAAAUCAAUFBQUFBQUFBQUCAAAAAAAABQUFBQUF",
+          height: 7,
+          bpp: 1
+        },
+        "6x12": {
+          source: "https://www.espruino.com/modules/Font6x12.js",
+          font: "AAAAAAAAfkAAwAAAwAAAEQf8EQf8EQAAGIJEf+JEE4AAMMMQBgCMMMAAM4TEMkB8AEwAgAAAHwIIQEAAQEIIHwAAFQDgBADgFQBABAHwBABAACAMAABABABABAAAAEAAAcBgGAYAAAP4RESEP4EEIEf8AEMMQUQkPEIIREREO4DwEQIQf8eISESER4P4SESEB4YAQcTgcAO4REREO4PEQkQoPwCIAAACCMAABACgEQIIAACQCQCQCQIIEQCgBAAAMAQ0RAOAP4TkUUP0P8RARAP8f8REREO4P4QEQEIIf8QEIIHwf8REREQEf8RARAQAP4QEREJ4f8BABAf8QEf8QEAYAEQEf4f8CgEQYMf8AEAEAEf8MADAMAf8f8GABgf8P4QEQEP4f8RARAOAP4QEQEP6f8RQRIOEOIREREI4QAQAf8QAQAAAf4AEAEf4eABwAMBweAf8AYBgAYf8YMGwBAGwYMYAGAB8GAYAQcRkWEYEf8QEAAYAGABgAcQEf8AAIAQAgAQAIAACACACACgAwAAAAYCkCkB8f8CECEB4B4CECEBIB4CECEf8B4CUCUBwCAP8SAQAB4CFCFD+f8CACAB8CET8AEACABT+AAf8BQCIAEQEf8AED8CAD8CAB8D8CACAB8B4CECEB4D/CECEB4B4CECED/D8BACAAABICkCkAYCAP4CECED4AEAED8DAAwAMAwDAD4AEA4AED4CMBQAgBQCMD4AFAFD+CMCUCkDEBAO4QEQEf8AAQEQEO4BAYAwAYAwA",
+          firstChar: 32,
+          widths: "BAIEBgYGBQMEBAUFAwUCBQQEBAQEBAQEBAQCAwUEBQQEBAQEBAQEBAQDBAQEBQQEBAQEBAQGBQUFBQQDBAMFBAMEBAQEBAQEBAMEBAMFBAQEBAQEBAQFBQUEBAQCBAQ=",
+          height: 12,
+          bpp: 1
+        },
+        "7x11Numeric7Seg": {
+          source: "https://www.espruino.com/modules/Font7x11Numeric7Seg.js",
+          font: "AAAAAAAAAAAAAAAEAIAQAgAAAAAIAHvQBgDAGAL3gAAAAAAAAAAHvAAA9CGEMIYQvAAAACEMIYQwhe8AB4AIAQAgBA94ADwIQwhhDCEDwAHvQhhDCGEIHgAAAgBACAEAHvAAe9CGEMIYQveAA8CEMIYQwhe8AAABjDGAAAA96EEIIQQge8AB7wIQQghBCB4AD3oAwBgDAEAAAAPAhBCCEEL3gAPehDCGEMIQAAAe9CCEEIIQAAAA",
+          firstChar: 32,
+          widths: "BwAAAAAAAAAAAAAAAAcCAAcHBwcHBwcHBwcFAAAAAAAABwcHBwcH",
+          height: 11,
+          bpp: 1
+        },
+        "8x12": {
+          source: "https://www.espruino.com/modules/Font8x12.js",
+          font: "AAAAAAAAAAfkAAwAAAwAAACQf8CQf8CQAAGIJEf+JEE4AAMMMQBgCMMMAAAYMkTEMkAYBkAAwAgAAAHwIIQEAAQEIIHwAABAFQDgBADgFQBABABAHwBABAAAACAMAABABABABABAAAAEAAAEAYAgDAEAYAAAP4QkRESEP4AAEEIEf8AEAAMMQUQUQkPEAAIIQEREREO4AABwCQEQIQf8AAeISESESER4AAH4KESESEB4AAYAQAQcTgcAAAO4REREREO4AAPAQkQkQoPwAACIAAACCMAABACgEQIIAACQCQCQCQCQAAIIEQCgBAAAMAQAQ0RAOAAAP4QETkUUUUP0AAP8RARARAP8AAf8REREREO4AAP4QEQEQEIIAAf8QEQEIIHwAAf8REREREQEAAf8RARARAQAAAP4QEQEREJ4AAf8BABABAf8AAQEf8QEAAAYAEQEf4QAAAf8BACgEQYMAAf8AEAEAEAEAAf8IAEACAEAIAf8AAf8EACABAf8AAP4QEQEQEP4AAf8RARARAOAAAP4QEQEQGP6AAf8RgRQRIOEAAOIREREREI4AAQAQAf8QAQAAAf4AEAEAEf4AAeABwAMBweAAAf8AIAQAgAQAIf8AAYMGwBAGwYMAAYAGAB8GAYAAAQMQ0REWEYEAAf8QEAAMACABgAQAMAAQEf8AAIAQAgAQAIAAAACACACACACAAgAwAAAAYCkCkCkB8AAf8CECECEB4AAB4CECECEBIAAB4CECECEf8AAB4CUCUCUBwAACAP8SAQAAAB4CFCFCFD+AAf8CACACAB8AACET8AEAAACABT+AAf8AgBQCIAEAAQEf8AEAAD8CACAD8CACAB8AAD8CACACAB8AAB4CECECEB4AAD/CECECEB4AAB4CECECED/AAD8BACACACAAABICkCkCkAYAACAP4CECEAAD4AEAEAED8AADAAwAMAwDAAAD4AEAEA4AEAED4AACMBQAgBQCMAAD4AFAFAFD+AACMCUCkDECEAABAO4QEQEAAf8AAQEQEO4BAAAYAgAQAQAIAwAAAAAAAAAAAAA",
+          firstChar: 32,
+          widths: "BQIEBgYGBwMEBAcGAwYCBwYFBgYGBgYGBgYCAwUGBQYHBgYGBgYGBgYEBgYGCAYGBgYGBgYGBggGBgYDBgMGBgMGBgYGBgUGBgQEBgQIBgYGBgYGBQYGCAYGBgUCBQcF",
+          height: 12,
+          bpp: 1
+        }
+      },
       vector: {
         firstChar: 33,
         lastChar: 255,
@@ -1359,22 +1478,25 @@
     const CONFIG_ADD_BLANK_VALUE = "__add_blank__";
     const CONFIG_ADD_DEFAULT_VALUE = "__add_default__";
     const CONFIG_ADD_CLASSIC_VALUE = "__add_classic__";
+    const CONFIG_ADD_RETRO_VALUE = "__add_retro__";
     const CONFIG_ADD_SPACE_VALUE = "__add_space__";
     const PREVIEW_HISTORY_LIMIT = 48;
     const THEME_COLOR_KEYS = ["fg", "bg", "fg2", "bg2", "fgH", "bgH"];
     const PRESET_CONFIG_FILES = {
       default: "boxclk.cfg.default.json",
       classic: "boxclk.cfg.classic.json",
+      retro: "boxclk.cfg.retro.json",
       space: "boxclk.cfg.space.json"
     };
     const BUNDLED_IMAGES = [
       { name: "boxclk.beachhouse.img", label: "Beach House", source: "beachhouse.js", kind: "heatshrink" },
+      { name: "boxclk.retro.img", label: "Retro", source: "boxclk.retro.img", kind: "raw" },
       { name: "boxclk.space.img", label: "Space", source: "boxclk.space.img", kind: "raw" }
     ];
     const BUNDLED_FONT_FILES = [
       { name: "BrunoAce", fileName: "boxclk-brunoace.pbf", source: "boxclk-brunoace.pbf" }
     ];
-    const BUILTIN_FONT_NAMES = ["6x8", "4x6", "Vector"];
+    const BUILTIN_FONT_NAMES = ["6x8", "4x6", "Vector", "5x7Numeric7Seg", "6x12", "7x11Numeric7Seg", "8x12"];
     const CLOCKBG_DEFAULT_COLORS = ["#00f", "#0bf", "#0f7", "#3f0", "#ff0", "#f30", "#f07", "#b0f"];
     const PREVIEW_THEME = {
       light: { fg: "#000000", bg: "#ffffff", fg2: "#000000", bg2: "#ccffff", fgH: "#000000", bgH: "#00ffff", dark: false },
@@ -1397,6 +1519,7 @@
       backgroundPreviewLoads: {},
       backgroundDataCache: {},
       backgroundDataLoads: {},
+      fontLoads: {},
       customFonts: {},
       clockbgGeneratedPreviewKey: null,
       clockbgGeneratedPreviewCanvas: null,
@@ -1425,6 +1548,8 @@
     let suppressFormUpdates = false;
     let previewCanvas = document.getElementById("preview-canvas");
     let previewCtx = previewCanvas.getContext("2d");
+    let orientationGuardEl = document.getElementById("orientation-guard");
+    let orientationLockButton = document.getElementById("orientation-lock-button");
     const previewWidth = () => previewCanvas.width;
     const previewHeight = () => previewCanvas.height;
     let metricCanvas = document.createElement("canvas");
@@ -1434,6 +1559,8 @@
     let previewRefreshTimer = null;
     let draftSaveTimer;
     let configDialogResolve = null;
+    let configDialogConfirmValue = true;
+    let configDialogAlternateValue = null;
     let storageSyncError = "";
 
     function clone(value) {
@@ -1442,6 +1569,83 @@
 
     function clamp(value, min, max) {
       return Math.min(max, Math.max(min, value));
+    }
+
+    function usesMobilePortraitGuard() {
+      const touchDevice = (navigator.maxTouchPoints || 0) > 0 || (window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
+      const shortestSide = Math.min(window.innerWidth || 0, window.innerHeight || 0);
+      return touchDevice && shortestSide <= 900;
+    }
+
+    function isLandscapeViewport() {
+      if (window.matchMedia) return window.matchMedia("(orientation: landscape)").matches;
+      return (window.innerWidth || 0) > (window.innerHeight || 0);
+    }
+
+    function updatePortraitGuard() {
+      const blocked = usesMobilePortraitGuard() && isLandscapeViewport();
+      document.body.classList.toggle("portrait-lock-blocked", blocked);
+      if (orientationGuardEl) orientationGuardEl.hidden = !blocked;
+    }
+
+    function getOrientationLockTarget() {
+      const candidates = [];
+      if (window.top && window.top !== window && window.top.screen && window.top.screen.orientation) {
+        candidates.push(window.top.screen.orientation);
+      }
+      if (window.screen && window.screen.orientation) candidates.push(window.screen.orientation);
+      return candidates.find(target => target && typeof target.lock === "function") || null;
+    }
+
+    function tryLockPortrait() {
+      const orientationTarget = getOrientationLockTarget();
+      if (!orientationTarget) {
+        updatePortraitGuard();
+        return Promise.resolve(false);
+      }
+      return orientationTarget.lock("portrait").then(() => {
+        updatePortraitGuard();
+        return true;
+      }).catch(error => {
+        console.debug("Box Clock portrait lock unavailable", error);
+        updatePortraitGuard();
+        return false;
+      });
+    }
+
+    function bindPortraitLock() {
+      let lockQueued = false;
+      const refresh = () => {
+        updatePortraitGuard();
+        if (!document.hidden) renderPreview();
+      };
+      const queueLockAttempt = () => {
+        if (lockQueued) return;
+        lockQueued = true;
+        window.requestAnimationFrame(() => {
+          lockQueued = false;
+          tryLockPortrait();
+        });
+      };
+
+      if (orientationLockButton) {
+        orientationLockButton.addEventListener("click", () => {
+          tryLockPortrait();
+        });
+      }
+
+      window.addEventListener("resize", refresh, { passive: true });
+      window.addEventListener("orientationchange", refresh, { passive: true });
+      window.addEventListener("pageshow", queueLockAttempt, { passive: true });
+      if (window.visualViewport) window.visualViewport.addEventListener("resize", refresh, { passive: true });
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) queueLockAttempt();
+        refresh();
+      });
+      document.addEventListener("pointerdown", queueLockAttempt, { passive: true });
+
+      updatePortraitGuard();
+      queueLockAttempt();
     }
 
     function toInt(value, fallback) {
@@ -1454,26 +1658,20 @@
       state.previewFuture = [];
     }
 
-    function capturePreviewBackgroundUpload(configName) {
-      const upload = configName ? state.backgroundUploads[configName] : null;
-      if (!upload || !upload.fileName) return null;
-      const cachedPreview = getBackgroundPreviewRecord(upload.fileName);
-      return {
-        fileName: upload.fileName,
-        previewSrc: upload.preview && upload.preview.src ? upload.preview.src :
-          (cachedPreview && cachedPreview.url ? cachedPreview.url : null)
-      };
-    }
-
     function capturePreviewState() {
       const config = getSelectedConfig();
+      const upload = state.backgroundUploads[state.selectedConfig];
+      const cachedPreview = upload && upload.fileName ? getBackgroundPreviewRecord(upload.fileName) : null;
       if (!config || !state.selectedConfig) return null;
       return {
         configName: state.selectedConfig,
         config: clone(config),
         selectedItemName: state.selectedItemName,
         selectedPart: state.selectedPart,
-        backgroundUpload: capturePreviewBackgroundUpload(state.selectedConfig),
+        backgroundUpload: upload && upload.fileName ? {
+          fileName: upload.fileName,
+          previewSrc: backgroundUploadPreviewSrc(upload) || (cachedPreview && cachedPreview.url ? cachedPreview.url : null)
+        } : null,
         deletedBackgroundFiles: state.deletedBackgroundFiles.slice(),
         bgFiles: (state.bgFiles || []).slice()
       };
@@ -1503,6 +1701,45 @@
       return snapshotUpload ? (snapshotUpload.data || "") : null;
     }
 
+    function backgroundUploadPreviewSrc(upload) {
+      return upload && upload.preview && upload.preview.src ? upload.preview.src : null;
+    }
+
+    function serialiseBackgroundUpload(upload, includePreviewSrc) {
+      if (!upload || !upload.fileName) return null;
+      const serialized = {
+        fileName: upload.fileName,
+        data: upload.data || ""
+      };
+      if (includePreviewSrc) serialized.previewSrc = backgroundUploadPreviewSrc(upload);
+      return serialized;
+    }
+
+    function setBackgroundUpload(configName, fileName, data, preview) {
+      if (!configName || !fileName) return null;
+      state.backgroundUploads[configName] = {
+        fileName: fileName,
+        data: data || "",
+        preview: preview || null
+      };
+      return state.backgroundUploads[configName];
+    }
+
+    function setSharedBackgroundUpload(fileName, data, preview) {
+      if (!fileName) return;
+      const previewValue = preview && preview.src ? { src: preview.src } : null;
+      cacheBackgroundData(fileName, data || "");
+      if (previewValue) cacheBackgroundPreview(fileName, previewValue.src);
+      Object.keys(state.configs).forEach(name => {
+        const config = state.configs[name];
+        const upload = state.backgroundUploads[name];
+        if (!(config && config.background && config.background.image === fileName) && !(upload && upload.fileName === fileName)) return;
+        setBackgroundUpload(name, fileName, data || "", previewValue || (upload && upload.preview ? upload.preview : null));
+      });
+      state.bgFiles = Array.from(new Set((state.bgFiles || []).concat([fileName]))).sort();
+      clearPendingBackgroundDelete(fileName);
+    }
+
     function restorePreviewBackgroundUpload(configName, snapshotUpload) {
       if (!configName) return;
       delete state.backgroundUploads[configName];
@@ -1514,11 +1751,7 @@
         (cachedPreview && cachedPreview.url ? cachedPreview.url : null) ||
         decodeBackgroundDataToUrl(data || "");
       if (previewSrc) cacheBackgroundPreview(snapshotUpload.fileName, previewSrc);
-      state.backgroundUploads[configName] = {
-        fileName: snapshotUpload.fileName,
-        data: data !== null ? (data || "") : "",
-        preview: previewSrc ? { src: previewSrc } : null
-      };
+      setBackgroundUpload(configName, snapshotUpload.fileName, data !== null ? (data || "") : "", previewSrc ? { src: previewSrc } : null);
     }
 
     function recordPreviewEdit(before, after) {
@@ -1622,7 +1855,11 @@
       return FONT_PREFIX + sanitizeFontStorageName(name) + FONT_SUFFIX;
     }
 
-    function isCustomFontFile(filename) {
+    function isPbfFile(filename) {
+      return /\.pbf$/i.test(filename || "");
+    }
+
+    function isBoxclkFontFile(filename) {
       return /^boxclk\..+\.pbf$/i.test(filename || "");
     }
 
@@ -1633,9 +1870,9 @@
     function fontNameFromFilename(filename) {
       const bundled = bundledFontInfo(filename);
       if (bundled) return bundled.name;
-      if (!isCustomFontFile(filename)) return null;
+      if (!isPbfFile(filename)) return null;
       return filename
-        .replace(/^boxclk\./, "")
+        .replace(/^boxclk\./i, "")
         .replace(/\.pbf$/i, "")
         .replace(/[-_]+/g, " ")
         .replace(/\b\w/g, character => character.toUpperCase());
@@ -1751,7 +1988,8 @@
         fileName: fileName,
         data: base64FromBytes(bytes),
         preview: preview,
-        bundled: !!options.bundled
+        bundled: !!options.bundled,
+        external: !!options.external
       };
     }
 
@@ -1774,6 +2012,92 @@
       return name ? state.customFonts[name] || null : null;
     }
 
+    function getCustomFontRecordByFile(fileName) {
+      if (!fileName) return null;
+      const names = Object.keys(state.customFonts);
+      for (let i = 0; i < names.length; i++) {
+        const record = state.customFonts[names[i]];
+        if (record && record.fileName === fileName) return record;
+      }
+      return null;
+    }
+
+    function isLoadedCustomFontRecord(record) {
+      return !!(record && record.fileName && record.preview && typeof record.data === "string" && record.data.length);
+    }
+
+    function getWatchFontName(fileName) {
+      const existing = getCustomFontRecordByFile(fileName);
+      if (existing && existing.name) return existing.name;
+      let name = normalizeFontName(fontNameFromFilename(fileName), "Custom Font");
+      if (state.customFonts[name] && state.customFonts[name].fileName !== fileName) name = uniqueFontName(name);
+      return name;
+    }
+
+    function registerWatchFont(fileName) {
+      if (!fileName) return null;
+      const existing = getCustomFontRecordByFile(fileName);
+      if (existing) return existing;
+      return setCustomFontRecord({
+        name: getWatchFontName(fileName),
+        fileName: fileName,
+        data: "",
+        preview: null,
+        bundled: !!bundledFontInfo(fileName),
+        external: !bundledFontInfo(fileName) && !isBoxclkFontFile(fileName)
+      });
+    }
+
+    function loadWatchFont(fileName) {
+      if (!fileName) return Promise.resolve(null);
+      const existing = getCustomFontRecordByFile(fileName);
+      if (existing && existing.preview) return Promise.resolve(existing);
+      if (state.fontLoads[fileName]) return state.fontLoads[fileName];
+      state.fontLoads[fileName] = new Promise(resolve => {
+        readWatchStorage(fileName).then(fontData => {
+          let record = existing || registerWatchFont(fileName);
+          try {
+            if (fontData) {
+              record = setCustomFontRecord(createCustomFontRecord(fontData, {
+                fileName: fileName,
+                name: (record && record.name) || getWatchFontName(fileName),
+                bundled: !!bundledFontInfo(fileName),
+                external: !bundledFontInfo(fileName) && !isBoxclkFontFile(fileName)
+              }));
+            }
+          } catch (error) {
+            console.warn("Unable to load Box Clock font", fileName, error);
+          }
+          delete state.fontLoads[fileName];
+          resolve(record || null);
+        }).catch(error => {
+          console.warn("Unable to read Box Clock font", fileName, error);
+          delete state.fontLoads[fileName];
+          resolve(existing || null);
+        });
+      });
+      return state.fontLoads[fileName];
+    }
+
+    function getConfigFontFiles(config) {
+      const files = [];
+      if (!config || !Array.isArray(config.items)) return files;
+      config.items.forEach(item => {
+        const fileName = item && item.appearance && item.appearance.fontFile;
+        if (fileName && files.indexOf(fileName) < 0) files.push(fileName);
+      });
+      return files;
+    }
+
+    function ensureConfigFontsLoaded(config) {
+      const files = getConfigFontFiles(config);
+      return Promise.all(files.map(fileName => {
+        const existing = registerWatchFont(fileName);
+        if (existing && existing.preview) return false;
+        return loadWatchFont(fileName).then(record => !!(record && record.preview));
+      })).then(results => results.some(Boolean));
+    }
+
     function getCustomFontNames() {
       return Object.keys(state.customFonts).sort((a, b) => {
         const aBundled = state.customFonts[a] && state.customFonts[a].bundled;
@@ -1792,6 +2116,8 @@
         names.push(name);
       });
       getCustomFontNames().forEach(name => {
+        const record = state.customFonts[name];
+        if (!isLoadedCustomFontRecord(record) && name !== currentFont) return;
         if (seen[name]) return;
         seen[name] = true;
         names.push(name);
@@ -1827,6 +2153,10 @@
       return fontName === "Vector" ? 96 : 8;
     }
 
+    function getBuiltinBitmapFont(fontName) {
+      return PREVIEW_FONT_DATA.bitmapFonts[fontName] || null;
+    }
+
     function clampFontSize(fontName, value) {
       return clamp(toInt(value, 1), 1, maxFontSize(fontName));
     }
@@ -1835,10 +2165,12 @@
       return fontName === "Vector" ? 4 : 18;
     }
 
-    function sizeForFontHeight(fontName, height) {
-      const custom = getPreviewCustomFont(fontName);
+    function sizeForFontHeight(fontName, height, fontFile) {
+      const custom = getPreviewCustomFont(fontName, fontFile);
+      const builtin = getBuiltinBitmapFont(fontName);
       if (fontName === "Vector") return clampFontSize(fontName, Math.round(height || 1));
       if (custom) return clampFontSize(fontName, Math.round((height || custom.lineHeight) / custom.lineHeight));
+      if (builtin) return clampFontSize(fontName, Math.round((height || builtin.height) / builtin.height));
       if (fontName === "4x6") return clampFontSize(fontName, Math.round((height || 6) / 6));
       return clampFontSize(fontName, Math.round((height || 8) / 8));
     }
@@ -1854,7 +2186,7 @@
     }
 
     function defaultItemName(type) {
-      if (type === "text") return "Custom Text";
+      if (type === "clkinfo") return "Clockinfo";
       return prettyConfigName(type);
     }
 
@@ -1887,6 +2219,82 @@
         .replace(/\b\w/g, character => character.toUpperCase());
     }
 
+    function getConfigBackgroundFile(config) {
+      return config && config.background && config.background.type === "image" && config.background.image ? config.background.image : null;
+    }
+
+    function getReferencedBackgroundFiles(configs) {
+      const files = [];
+      Object.keys(configs || {}).forEach(name => {
+        const fileName = getConfigBackgroundFile(configs[name]);
+        if (fileName && files.indexOf(fileName) < 0) files.push(fileName);
+      });
+      if (state.clockbgSettings && state.clockbgSettings.style === "image" && state.clockbgSettings.fn && files.indexOf(state.clockbgSettings.fn) < 0) {
+        files.push(state.clockbgSettings.fn);
+      }
+      return files;
+    }
+
+    function getAvailableBackgroundFiles() {
+      return Array.from(new Set((state.bgFiles || [])
+        .concat(getReferencedBackgroundFiles(state.configs))
+        .concat(Object.keys(state.backgroundUploads).map(name => {
+          const upload = state.backgroundUploads[name];
+          return upload && upload.fileName ? upload.fileName : null;
+        }).filter(Boolean))));
+    }
+
+    function addKnownBackgroundFile(fileName, onWatch) {
+      if (!fileName) return;
+      if ((state.bgFiles || []).indexOf(fileName) < 0) {
+        state.bgFiles = (state.bgFiles || []).concat([fileName]).sort();
+      }
+      if (onWatch && !isBackgroundFileOnWatch(fileName)) {
+        state.watchBgFiles = (state.watchBgFiles || []).concat([fileName]).sort();
+      }
+    }
+
+    function isBackgroundFileOnWatch(fileName) {
+      return !!(fileName && (state.watchBgFiles || []).indexOf(fileName) >= 0);
+    }
+
+    function ensureConfigBackgroundLoaded(configName, config) {
+      const fileName = getConfigBackgroundFile(config);
+      const onWatch = !!(configName && configExistsOnWatch(configName));
+      if (!fileName) return Promise.resolve(false);
+
+      addKnownBackgroundFile(fileName, onWatch);
+      if (bundledImageInfo(fileName)) return Promise.resolve(false);
+
+      const existing = configName ? state.backgroundUploads[configName] : null;
+      if (existing && existing.fileName && existing.fileName !== fileName) return Promise.resolve(false);
+      if (existing && existing.data) return Promise.resolve(false);
+
+      const sharedUpload = Object.values(state.backgroundUploads).find(upload => upload && upload.fileName === fileName && upload.data);
+      if (sharedUpload && configName) {
+        const preview = getBackgroundPreviewRecord(fileName);
+        setBackgroundUpload(configName, fileName, sharedUpload.data, sharedUpload.preview || (preview && preview.url ? { src: preview.url } : null));
+        cacheBackgroundData(fileName, sharedUpload.data);
+        return Promise.resolve(false);
+      }
+
+      return readBackgroundData(fileName).then(data => {
+        if (data === null) return false;
+        if (configName) {
+          const preview = getBackgroundPreviewRecord(fileName);
+          setBackgroundUpload(configName, fileName, data || "", preview && preview.url ? { src: preview.url } : (existing && existing.preview ? existing.preview : null));
+        }
+        return !!data;
+      }).catch(error => {
+        console.warn("Unable to load Box Clock background", fileName, error);
+        return false;
+      });
+    }
+
+    function ensureWatchConfigBackgroundsLoaded() {
+      return Promise.all(getWatchConfigNames().map(name => ensureConfigBackgroundLoaded(name, state.configs[name]))).then(results => results.some(Boolean));
+    }
+
     function binaryStringFromBytes(bytes) {
       if (!bytes || !bytes.length) return "";
       const chunkSize = 0x4000;
@@ -1901,6 +2309,19 @@
       const bytes = new Uint8Array(binary.length);
       for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
       return bytes;
+    }
+
+    let watchStorageReadQueue = Promise.resolve();
+
+    function readWatchStorage(filename) {
+      if (!filename) return Promise.resolve(null);
+      const read = watchStorageReadQueue.catch(() => {}).then(() => {
+        return new Promise(resolve => {
+          Util.readStorage(filename, data => resolve(data || null));
+        });
+      });
+      watchStorageReadQueue = read.catch(() => {});
+      return read;
     }
 
     function decodeBase64Bytes(value) {
@@ -1950,6 +2371,16 @@
       return offsets;
     }
 
+    function buildBitmapFontOffsets(widths, height, bpp) {
+      const offsets = new Uint32Array(widths.length);
+      let offset = 0;
+      for (let i = 0; i < widths.length; i++) {
+        offsets[i] = offset;
+        offset += widths[i] * height * bpp;
+      }
+      return offsets;
+    }
+
     function buildPreviewFontData() {
       const source = window.BoxclkPreviewFontData || {};
       const vector = source.vector ? {
@@ -1969,9 +2400,25 @@
         vector.charOffsets = buildOffsets(vector.charLengths);
       }
 
+      const bitmapFonts = {};
+      Object.keys(source.builtinModuleFonts || {}).forEach(name => {
+        const font = source.builtinModuleFonts[name];
+        const widths = decodeBase64Bytes(font.widths);
+        const bpp = font.bpp || 1;
+        bitmapFonts[name] = {
+          firstChar: font.firstChar,
+          height: font.height,
+          bpp: bpp,
+          widths: widths,
+          bitmap: decodeBase64Bytes(font.font),
+          bitOffsets: buildBitmapFontOffsets(widths, font.height, bpp)
+        };
+      });
+
       return {
         font4x6: decodeUint16Array(source.font4x6),
         font6x8: decodeUint32Array(source.font6x8),
+        bitmapFonts: bitmapFonts,
         vector: vector
       };
     }
@@ -2040,7 +2487,7 @@
     function ensureBundledFontsPresent() {
       return Promise.all(BUNDLED_FONT_FILES.map(bundled => {
         const existing = getCustomFontRecord(bundled.name);
-        if (existing && existing.bundled) return Promise.resolve(existing);
+        if (existing && existing.bundled && existing.preview) return Promise.resolve(existing);
         return loadBundledFontData(bundled.fileName).then(data => {
           if (!data) return null;
           return upsertCustomFont(new Uint8Array(data), {
@@ -2073,10 +2520,7 @@
       }
       if (state.backgroundDataLoads[filename]) return state.backgroundDataLoads[filename];
       const bundled = bundledImageInfo(filename);
-      const onWatch = (state.watchBgFiles || []).indexOf(filename) >= 0;
-      let loader;
-      if (bundled && !onWatch) loader = loadBundledBackgroundData(filename);
-      else loader = new Promise(resolve => Util.readStorage(filename, data => resolve(data || null)));
+      const loader = bundled && !isBackgroundFileOnWatch(filename) ? loadBundledBackgroundData(filename) : readWatchStorage(filename);
       state.backgroundDataLoads[filename] = Promise.resolve(loader).then(data => {
         cacheBackgroundData(filename, data || "");
         delete state.backgroundDataLoads[filename];
@@ -2088,21 +2532,27 @@
       return state.backgroundDataLoads[filename];
     }
 
-    function findMatchingBackgroundFile(data) {
-      if (!data) return Promise.resolve(null);
-      const localMatch = Object.values(state.backgroundUploads).find(upload => upload && upload.fileName && upload.data === data);
-      if (localMatch) return Promise.resolve(localMatch.fileName);
-      const candidates = Array.from(new Set((state.bgFiles || []).filter(Boolean)));
-      let index = 0;
-      function next() {
-        if (index >= candidates.length) return Promise.resolve(null);
-        const filename = candidates[index++];
-        return readBackgroundData(filename).then(existingData => {
-          if (existingData === data) return filename;
-          return next();
-        }, () => next());
+    function backgroundFileStem(filename) {
+      const match = /^boxclk\.bg\.(.+)\.img$/i.exec(filename || "");
+      return sanitizeConfigName(match ? match[1] : "image") || "image";
+    }
+
+    function backgroundFilenameFromStem(stem) {
+      return "boxclk.bg." + (sanitizeConfigName(stem) || "image") + ".img";
+    }
+
+    function backgroundFilenameFromUploadName(filename) {
+      return backgroundFilenameFromStem((filename || "").replace(/\.[^.]+$/, ""));
+    }
+
+    function nextBackgroundFilename(filename) {
+      const stem = backgroundFileStem(filename);
+      let candidate = filename || backgroundFilenameFromStem(stem);
+      let index = 2;
+      while (getAvailableBackgroundFiles().indexOf(candidate) >= 0) {
+        candidate = backgroundFilenameFromStem(stem + "-" + index++);
       }
-      return next();
+      return candidate;
     }
 
     function ensureBackgroundPreview(filename) {
@@ -2125,7 +2575,7 @@
       if (bundled) {
         loader = loadBundledBackgroundData(filename);
       } else {
-        loader = new Promise(resolve => Util.readStorage(filename, data => resolve(data || null)));
+        loader = readWatchStorage(filename);
       }
 
       state.backgroundPreviewLoads[filename] = loader.then(data => {
@@ -2153,11 +2603,6 @@
         hash = Math.imul(hash, 16777619);
       }
       return hash >>> 0;
-    }
-
-    function backgroundFilenameForData(data) {
-      data = String(data || "");
-      return "boxclk.bg." + hashString(data).toString(16) + "-" + data.length.toString(36) + ".img";
     }
 
     function createSeededRandom(seed) {
@@ -2327,6 +2772,17 @@
           boundary: { x: -0.5, y: -0.5 }
         };
       }
+      if (type === "clkinfo") {
+        return {
+          font: "Vector",
+          fontSize: 1,
+          outline: 0,
+          textColor: "#000",
+          outlineColor: "#fff",
+          borderColor: "#000",
+          boundary: { x: 70, y: 50 }
+        };
+      }
       return {
         font: "6x8",
         fontSize: type === "date" ? 1 : 2,
@@ -2341,14 +2797,16 @@
     function normalizeAppearance(appearance, type) {
       const base = defaultAppearanceForType(type);
       appearance = appearance || {};
-      const font = appearance.font || base.font;
+      const fontFile = typeof appearance.fontFile === "string" && appearance.fontFile ? appearance.fontFile : undefined;
+      const fontRecord = fontFile ? (getCustomFontRecordByFile(fontFile) || registerWatchFont(fontFile)) : null;
+      const font = (fontRecord && fontRecord.name) || fontNameFromFilename(fontFile) || appearance.font || base.font;
       const boundaryX = appearance.boundary && Number.isFinite(appearance.boundary.x) ? appearance.boundary.x : base.boundary.x;
       const boundaryY = appearance.boundary && Number.isFinite(appearance.boundary.y) ? appearance.boundary.y : base.boundary.y;
       return {
         font: font,
-        fontFile: typeof appearance.fontFile === "string" && appearance.fontFile ? appearance.fontFile : undefined,
+        fontFile: fontFile,
         fontSize: clampFontSize(font, appearance.fontSize === undefined ? base.fontSize : appearance.fontSize),
-        outline: clamp(toInt(appearance.outline, 0), 0, 6),
+        outline: type === "clkinfo" ? 0 : clamp(toInt(appearance.outline, 0), 0, 6),
         textColor: appearance.textColor || base.textColor,
         outlineColor: appearance.outlineColor || base.outlineColor,
         borderColor: appearance.borderColor || base.borderColor,
@@ -2414,9 +2872,9 @@
         item.suffix = "%";
       } else if (type === "steps") {
         item.prefix = "Steps: ";
+      } else if (type === "clkinfo") {
       } else {
         item.type = "text";
-        item.text = "Custom Text";
       }
 
       return item;
@@ -2437,9 +2895,9 @@
         items: []
       };
 
-      raw.items.forEach((item, index) => {
+      raw.items.forEach(item => {
         item = item || {};
-        const type = ["time", "date", "day", "meridian", "battery", "steps", "text"].includes(item.type) ? item.type : "text";
+        const type = ["time", "date", "day", "meridian", "battery", "steps", "text", "clkinfo"].includes(item.type) ? item.type : "text";
         const baseName = (item.name || defaultItemName(type)).toString().trim() || defaultItemName(type);
         let name = baseName;
         let suffix = 2;
@@ -2448,8 +2906,8 @@
         normalized.items.push({
           name: name,
           type: type,
-          prefix: item.prefix || "",
-          suffix: item.suffix || "",
+          prefix: type === "clkinfo" ? "" : (item.prefix || ""),
+          suffix: type === "clkinfo" ? "" : (item.suffix || ""),
           text: item.text || "",
           position: {
             x: clamp(Number.isFinite(item.position && item.position.x) ? item.position.x : 0.5, 0, 1),
@@ -2497,8 +2955,8 @@
           return {
             name: item.name,
             type: item.type,
-            prefix: item.prefix || "",
-            suffix: item.suffix || "",
+            prefix: item.type === "clkinfo" ? undefined : (item.prefix || ""),
+            suffix: item.type === "clkinfo" ? undefined : (item.suffix || ""),
             text: item.type === "text" ? (item.text || "") : undefined,
             position: {
               x: +clamp(item.position.x, 0, 1).toFixed(3),
@@ -2529,7 +2987,7 @@
 
     function isExampleConfigName(name) {
       name = sanitizeConfigName(name);
-      return name === DEFAULT_CONFIG || name === "classic" || name === "space";
+      return name === DEFAULT_CONFIG || name === "classic" || name === "retro" || name === "space";
     }
 
     function getLocalConfigNames() {
@@ -2572,7 +3030,7 @@
       delete state.configs[name];
       state.watchConfigNames = state.watchConfigNames.filter(entry => entry !== name);
       if (localBackgroundFile && !backgroundFileUsageCount(localBackgroundFile)) {
-        if ((state.watchBgFiles || []).indexOf(localBackgroundFile) >= 0) addDeletedFile(state.deletedBackgroundFiles, localBackgroundFile);
+        if (isBackgroundFileOnWatch(localBackgroundFile)) addDeletedFile(state.deletedBackgroundFiles, localBackgroundFile);
         else removeDeletedFile(state.deletedBackgroundFiles, localBackgroundFile);
         state.bgFiles = (state.bgFiles || []).filter(file => file !== localBackgroundFile);
         delete state.backgroundPreviewCache[localBackgroundFile];
@@ -2589,7 +3047,7 @@
         const config = state.configs[configName];
         if (config && config.background && config.background.image === filename) return count + 1;
         return count;
-      }, 0);
+      }, 0) + ((state.clockbgSettings && state.clockbgSettings.style === "image" && state.clockbgSettings.fn === filename) ? 1 : 0);
     }
 
     function releaseCustomBackground(configName, filename) {
@@ -2602,64 +3060,91 @@
       }
     }
 
-    function fontUsageCount(fontName, ignoreConfigName) {
-      if (!fontName) return 0;
+    function fontUsageCount(fontName, ignoreConfigName, fontFile) {
+      if (!fontName && !fontFile) return 0;
       return getConfigNames().reduce((count, configName) => {
         if (configName === ignoreConfigName) return count;
         const config = state.configs[configName];
         if (!config || !config.items) return count;
         return count + config.items.reduce((itemCount, item) => {
-          return itemCount + (item && item.appearance && item.appearance.font === fontName ? 1 : 0);
+          if (!item || !item.appearance) return itemCount;
+          const sameFile = fontFile && item.appearance.fontFile === fontFile;
+          const sameName = fontName && item.appearance.font === fontName;
+          return itemCount + (sameFile || sameName ? 1 : 0);
         }, 0);
       }, 0);
     }
 
+    function isFontFileOnWatch(fileName) {
+      if (!fileName) return false;
+      if ((state.watchFontFiles || []).indexOf(fileName) >= 0) return true;
+      return getWatchConfigNames().some(name => getConfigFontFiles(state.configs[name]).indexOf(fileName) >= 0);
+    }
+
+    function isFontOnWatch(record) {
+      return !!(record && isFontFileOnWatch(record.fileName));
+    }
+
     function shouldPersistCustomFont(record) {
       if (!record || !record.fileName) return false;
+      if (!isLoadedCustomFontRecord(record)) return false;
+      if (record.external) return false;
       if (!record.bundled) return true;
-      return fontUsageCount(record.name) > 0 || (state.watchFontFiles || []).indexOf(record.fileName) >= 0;
+      return fontUsageCount(record.name, undefined, record.fileName) > 0 || isFontOnWatch(record);
+    }
+
+    function shouldCaptureWatchCustomFont(record) {
+      return !!(isLoadedCustomFontRecord(record) && !record.external && isFontOnWatch(record));
     }
 
     function removeCustomFont(name) {
       const record = getCustomFontRecord(name);
-      if (!record || record.bundled) return false;
-      if (fontUsageCount(name) > 0) return false;
-      if ((state.watchFontFiles || []).indexOf(record.fileName) >= 0) addDeletedFile(state.deletedFontFiles, record.fileName);
+      if (!record || record.bundled || record.external) return false;
+      if (fontUsageCount(name, undefined, record.fileName) > 0) return false;
+      if (isFontOnWatch(record)) addDeletedFile(state.deletedFontFiles, record.fileName);
       else removeDeletedFile(state.deletedFontFiles, record.fileName);
       delete state.customFonts[name];
       return true;
     }
 
-    function captureSyncState() {
+    function serialiseCurrentConfigs(configNames) {
       const configs = {};
-      getConfigNames().forEach(name => {
+      configNames.forEach(name => {
         configs[name] = serialiseConfig(state.configs[name]);
       });
+      return configs;
+    }
 
-      const uploadedBackgrounds = {};
-      Object.keys(state.backgroundUploads).sort().forEach(name => {
-        const upload = state.backgroundUploads[name];
-        uploadedBackgrounds[name] = upload ? {
-          fileName: upload.fileName,
-          data: upload.data || ""
-        } : null;
+    function serialiseCurrentBackgroundUploads(configNames, includePreviewSrc) {
+      const uploads = {};
+      (configNames || Object.keys(state.backgroundUploads).sort()).forEach(name => {
+        const upload = serialiseBackgroundUpload(state.backgroundUploads[name], includePreviewSrc);
+        if (!upload) return;
+        uploads[name] = upload;
       });
+      return uploads;
+    }
 
+    function serialiseCurrentCustomFonts(includeRecord) {
       const customFonts = {};
       getCustomFontNames().forEach(name => {
         const record = state.customFonts[name];
-        if (!shouldPersistCustomFont(record)) return;
+        if (!includeRecord(record)) return;
         customFonts[name] = {
           fileName: record.fileName,
           data: record.data || "",
-          bundled: !!record.bundled
+          bundled: !!record.bundled,
+          external: !!record.external
         };
       });
+      return customFonts;
+    }
 
+    function captureSyncState() {
       return {
-        configs: configs,
-        uploadedBackgrounds: uploadedBackgrounds,
-        customFonts: customFonts,
+        configs: serialiseCurrentConfigs(getConfigNames()),
+        uploadedBackgrounds: serialiseCurrentBackgroundUploads(),
+        customFonts: serialiseCurrentCustomFonts(shouldPersistCustomFont),
         deletedConfigFiles: state.deletedConfigFiles.slice().sort(),
         deletedBackgroundFiles: state.deletedBackgroundFiles.slice().sort(),
         deletedFontFiles: state.deletedFontFiles.slice().sort()
@@ -2667,36 +3152,12 @@
     }
 
     function captureWatchSnapshot() {
-      const configs = {};
-      getWatchConfigNames().forEach(name => {
-        configs[name] = serialiseConfig(state.configs[name]);
-      });
-
-      const uploadedBackgrounds = {};
-      getWatchConfigNames().forEach(name => {
-        const upload = state.backgroundUploads[name];
-        if (!upload || !upload.fileName) return;
-        uploadedBackgrounds[name] = {
-          fileName: upload.fileName,
-          data: upload.data || ""
-        };
-      });
-
-      const customFonts = {};
-      getCustomFontNames().forEach(name => {
-        const record = state.customFonts[name];
-        if (!record || !record.fileName || (state.watchFontFiles || []).indexOf(record.fileName) < 0) return;
-        customFonts[name] = {
-          fileName: record.fileName,
-          data: record.data || "",
-          bundled: !!record.bundled
-        };
-      });
+      const watchConfigNames = getWatchConfigNames();
 
       return {
-        configs: configs,
-        uploadedBackgrounds: uploadedBackgrounds,
-        customFonts: customFonts,
+        configs: serialiseCurrentConfigs(watchConfigNames),
+        uploadedBackgrounds: serialiseCurrentBackgroundUploads(watchConfigNames),
+        customFonts: serialiseCurrentCustomFonts(shouldCaptureWatchCustomFont),
         deletedConfigFiles: [],
         deletedBackgroundFiles: [],
         deletedFontFiles: []
@@ -2707,19 +3168,17 @@
       return JSON.stringify(captureSyncState());
     }
 
-    function restoreBackgroundUploadsFromSnapshot(previousUploads) {
-      const baselineUploads = state.watchSnapshot && state.watchSnapshot.uploadedBackgrounds ? state.watchSnapshot.uploadedBackgrounds : {};
+    function restoreSerializedBackgroundUploads(sourceUploads, previousUploads) {
       state.backgroundUploads = {};
-      Object.keys(baselineUploads).sort().forEach(name => {
-        const upload = baselineUploads[name];
-        if (!upload || !upload.fileName) return;
-        const previous = previousUploads && previousUploads[name];
-        state.backgroundUploads[name] = {
-          fileName: upload.fileName,
-          data: upload.data || "",
-          preview: previous && previous.fileName === upload.fileName ? previous.preview : null
-        };
-        cacheBackgroundData(upload.fileName, upload.data || "");
+      Object.keys(sourceUploads || {}).sort().forEach(name => {
+        const upload = serialiseBackgroundUpload(sourceUploads[name], true);
+        if (!upload) return;
+        const configName = sanitizeConfigName(name);
+        const previous = previousUploads && previousUploads[configName];
+        setBackgroundUpload(configName, upload.fileName, upload.data, upload.previewSrc ? { src: upload.previewSrc } :
+          (previous && previous.fileName === upload.fileName ? previous.preview : null));
+        cacheBackgroundData(upload.fileName, upload.data);
+        if (upload.previewSrc) cacheBackgroundPreview(upload.fileName, upload.previewSrc);
       });
     }
 
@@ -2733,7 +3192,8 @@
             fileName: entry.fileName,
             name: name,
             base64: true,
-            bundled: !!entry.bundled
+            bundled: !!entry.bundled,
+            external: !!entry.external
           }));
         } catch (error) {
           console.warn("Skipping invalid Box Clock font", name, error);
@@ -2759,7 +3219,7 @@
         restoredConfigs[DEFAULT_CONFIG] = getPresetConfig(DEFAULT_CONFIG) || createBlankConfig();
       }
       state.configs = restoredConfigs;
-      restoreBackgroundUploadsFromSnapshot(previousUploads);
+      restoreSerializedBackgroundUploads(state.watchSnapshot.uploadedBackgrounds, previousUploads);
       restoreCustomFontsFromState(state.watchSnapshot.customFonts, previousFonts);
       state.deletedConfigFiles = [];
       state.deletedBackgroundFiles = [];
@@ -2800,31 +3260,10 @@
         deletedConfigFiles: state.deletedConfigFiles.slice(),
         deletedBackgroundFiles: state.deletedBackgroundFiles.slice(),
         deletedFontFiles: state.deletedFontFiles.slice(),
-        configs: {},
-        backgroundUploads: {},
-        customFonts: {}
+        configs: serialiseCurrentConfigs(getConfigNames()),
+        backgroundUploads: serialiseCurrentBackgroundUploads(null, true),
+        customFonts: serialiseCurrentCustomFonts(shouldPersistCustomFont)
       };
-      getConfigNames().forEach(name => {
-        draft.configs[name] = serialiseConfig(state.configs[name]);
-      });
-      Object.keys(state.backgroundUploads).sort().forEach(name => {
-        const upload = state.backgroundUploads[name];
-        if (!upload || !upload.fileName) return;
-        draft.backgroundUploads[name] = {
-          fileName: upload.fileName,
-          data: upload.data || "",
-          previewSrc: upload.preview && upload.preview.src ? upload.preview.src : null
-        };
-      });
-      getCustomFontNames().forEach(name => {
-        const record = state.customFonts[name];
-        if (!shouldPersistCustomFont(record)) return;
-        draft.customFonts[name] = {
-          fileName: record.fileName,
-          data: record.data || "",
-          bundled: !!record.bundled
-        };
-      });
       try {
         localStorage.setItem(LOCAL_DRAFT_KEY, JSON.stringify(draft));
       } catch (error) {
@@ -2848,6 +3287,48 @@
       }
     }
 
+    function comparableWatchStateSignature(configs, uploads, fonts, clampToPreview) {
+      const comparableConfigs = {};
+      sortConfigNames(Object.keys(configs || {})).forEach(name => {
+        const normalized = normalizeConfig(configs[name]);
+        if (!normalized) return;
+        if (clampToPreview) clampConfigToPreview(normalized);
+        comparableConfigs[name] = serialiseConfig(normalized);
+      });
+
+      const comparableUploads = {};
+      Object.keys(uploads || {}).sort().forEach(name => {
+        const upload = serialiseBackgroundUpload(uploads[name]);
+        if (!upload) return;
+        comparableUploads[sanitizeConfigName(name)] = upload;
+      });
+
+      const comparableFonts = {};
+      Object.keys(fonts || {}).sort().forEach(name => {
+        const record = fonts[name];
+        if (!record || !record.fileName || !record.data) return;
+        comparableFonts[record.fileName] = {
+          data: record.data || "",
+          bundled: !!record.bundled,
+          external: !!record.external
+        };
+      });
+
+      return JSON.stringify({
+        configs: comparableConfigs,
+        uploadedBackgrounds: comparableUploads,
+        customFonts: comparableFonts
+      });
+    }
+
+    function draftMatchesWatchSnapshot(configs, uploads, fonts) {
+      const watchSnapshot = state.watchSnapshot || {};
+      return comparableWatchStateSignature(configs, uploads, fonts, false) ===
+        comparableWatchStateSignature(watchSnapshot.configs, watchSnapshot.uploadedBackgrounds, watchSnapshot.customFonts, false) ||
+        comparableWatchStateSignature(configs, uploads, fonts, true) ===
+        comparableWatchStateSignature(watchSnapshot.configs, watchSnapshot.uploadedBackgrounds, watchSnapshot.customFonts, true);
+    }
+
     function restoreLocalDraftIfCompatible() {
       const draft = loadLocalDraft();
       if (!draft || draft.watchSignature !== state.watchSignature) return false;
@@ -2863,21 +3344,15 @@
       });
       if (!Object.keys(restoredConfigs).length) return false;
 
+      const restoredPreviewTheme = draft.previewTheme === "dark" ? "dark" : "light";
+      if (restoredPreviewTheme === state.watchTheme && draftMatchesWatchSnapshot(restoredConfigs, draft.backgroundUploads, draft.customFonts)) {
+        clearLocalDraft();
+        return false;
+      }
+
       const previousFonts = state.customFonts;
       state.configs = restoredConfigs;
-      state.backgroundUploads = {};
-      Object.keys(draft.backgroundUploads || {}).forEach(name => {
-        const upload = draft.backgroundUploads[name];
-        if (!upload || !upload.fileName) return;
-        const normalizedName = sanitizeConfigName(name);
-        state.backgroundUploads[normalizedName] = {
-          fileName: upload.fileName,
-          data: upload.data || "",
-          preview: upload.previewSrc ? { src: upload.previewSrc } : null
-        };
-        cacheBackgroundData(upload.fileName, upload.data || "");
-        if (upload.previewSrc) cacheBackgroundPreview(upload.fileName, upload.previewSrc);
-      });
+      restoreSerializedBackgroundUploads(draft.backgroundUploads);
       restoreCustomFontsFromState(draft.customFonts, previousFonts);
 
       state.deletedConfigFiles = Array.isArray(draft.deletedConfigFiles) ? draft.deletedConfigFiles.slice() : [];
@@ -2885,7 +3360,7 @@
       state.deletedFontFiles = Array.isArray(draft.deletedFontFiles) ? draft.deletedFontFiles.slice() : [];
       state.selectedConfig = sanitizeConfigName(draft.selectedConfig || state.selectedConfig);
       if (!state.configs[state.selectedConfig]) state.selectedConfig = getConfigNames()[0];
-      state.previewTheme = draft.previewTheme === "dark" ? "dark" : "light";
+      state.previewTheme = restoredPreviewTheme;
       state.selectedItemName = null;
       state.selectedPart = null;
       resetPreviewHistory();
@@ -3223,9 +3698,12 @@
         value = Number.isFinite(state.watchBattery) ? String(state.watchBattery) : "";
       } else if (item.type === "steps") {
         value = Number.isFinite(state.watchSteps) ? String(state.watchSteps) : "";
+      } else if (item.type === "clkinfo") {
+        value = "clkinfo";
       } else {
         value = item.text || "";
       }
+      if (item.type === "clkinfo") return value;
       return (item.prefix || "") + value + (item.suffix || "");
     }
 
@@ -3268,8 +3746,8 @@
       }, delay);
     }
 
-    function getPreviewCustomFont(fontName) {
-      const localFont = getCustomFontRecord(fontName);
+    function getPreviewCustomFont(fontName, fontFile) {
+      const localFont = getCustomFontRecordByFile(fontFile) || getCustomFontRecord(fontName);
       return localFont && localFont.preview ? localFont.preview : null;
     }
 
@@ -3302,19 +3780,26 @@
       return (((widestVertex + 1 + vector.charSpacing) * size * 16 / vector.scale + 7) >> 4);
     }
 
-    function getFontHeight(fontName, size) {
-      const custom = getPreviewCustomFont(fontName);
+    function getFontHeight(fontName, size, fontFile) {
+      const custom = getPreviewCustomFont(fontName, fontFile);
+      const builtin = getBuiltinBitmapFont(fontName);
       if (custom) return custom.lineHeight * size;
+      if (builtin) return builtin.height * size;
       if (fontName === "4x6") return 6 * size;
       if (fontName === "Vector") return size;
       return 8 * size;
     }
 
-    function getCharWidth(fontName, size, codePoint) {
-      const custom = getPreviewCustomFont(fontName);
+    function getCharWidth(fontName, size, codePoint, fontFile) {
+      const custom = getPreviewCustomFont(fontName, fontFile);
+      const builtin = getBuiltinBitmapFont(fontName);
       if (custom) {
         const glyph = getPbfGlyph(custom, codePoint);
         return glyph ? glyph.advance * size : 0;
+      }
+      if (builtin) {
+        const index = codePoint - builtin.firstChar;
+        return index >= 0 && index < builtin.widths.length ? builtin.widths[index] * size : 0;
       }
       if (fontName === "4x6") return codePoint < 256 ? 4 * size : 0;
       if (fontName === "6x8") return codePoint < 256 ? 6 * size : 0;
@@ -3323,8 +3808,10 @@
     }
 
     function getStringWidth(item, text) {
-      const fontName = item.appearance.font;
-      const size = item.appearance.fontSize || 1;
+      const appearance = item.appearance || {};
+      const fontName = appearance.font;
+      const fontFile = appearance.fontFile;
+      const size = appearance.fontSize || 1;
       let width = 0;
       let maxWidth = 0;
       for (const character of (text || "")) {
@@ -3334,7 +3821,7 @@
           width = 0;
           continue;
         }
-        width += getCharWidth(fontName, size, codePoint);
+        width += getCharWidth(fontName, size, codePoint, fontFile);
       }
       return Math.max(maxWidth, width);
     }
@@ -3355,7 +3842,8 @@
     }
 
     function getBaseTextMetrics(item, text) {
-      const fontHeight = getFontHeight(item.appearance.font, item.appearance.fontSize || 1);
+      item = getPreviewRenderItem(item, text);
+      const fontHeight = getFontHeight(item.appearance.font, item.appearance.fontSize || 1, item.appearance.fontFile);
       const indicator = hasPreviewChargeIndicator(item) ? getPreviewChargeIndicatorMetrics(fontHeight) : null;
       const stringWidth = getStringWidth(item, text);
       return {
@@ -3365,6 +3853,25 @@
         rawFontHeight: fontHeight,
         indicator: indicator
       };
+    }
+
+    function getPreviewRenderItem(item, text) {
+      if (!item || item.type !== "clkinfo") return item;
+      text = text == null ? "" : String(text);
+      const renderItem = { appearance: { font: "Vector", fontSize: 6 } };
+      const maxWidth = Math.max(8, Math.round((item.appearance.boundary && item.appearance.boundary.x) || 1) - 2);
+      const maxHeight = Math.max(8, Math.round((item.appearance.boundary && item.appearance.boundary.y) || 1) - 2);
+      const lineCount = text.split("\n").length;
+      let min = 6;
+      let max = Math.max(min, Math.min(32, maxHeight));
+      while (min < max) {
+        const size = (min + max + 1) >> 1;
+        renderItem.appearance.fontSize = size;
+        if (getStringWidth(renderItem, text) <= maxWidth && getFontHeight("Vector", size) * lineCount <= maxHeight) min = size;
+        else max = size - 1;
+      }
+      renderItem.appearance.fontSize = min;
+      return renderItem;
     }
 
     function measureRenderedTextBounds(item, text, textBoxWidth, textBoxHeight) {
@@ -3452,16 +3959,16 @@
       const textBoxWidth = textMetrics.textWidth + outline * 2;
       const textBoxHeight = textMetrics.fontHeight + outline * 2;
       const rendered = measureRenderedTextBounds(item, text, textBoxWidth, textBoxHeight);
-      const boundaryWidth = Math.max(1, textBoxWidth + (item.appearance.boundary.x || 0) * 2);
-      const boundaryHeight = Math.max(1, textBoxHeight + (item.appearance.boundary.y || 0) * 2);
+      const boundaryWidth = item.type === "clkinfo" ? Math.max(1, Math.round(item.appearance.boundary.x || 1)) : Math.max(1, textBoxWidth + (item.appearance.boundary.x || 0) * 2);
+      const boundaryHeight = item.type === "clkinfo" ? Math.max(1, Math.round(item.appearance.boundary.y || 1)) : Math.max(1, textBoxHeight + (item.appearance.boundary.y || 0) * 2);
       const boundaryX1 = rendered.centerX + spanStart(boundaryWidth);
       const boundaryY1 = rendered.centerY + spanStart(boundaryHeight);
       const boundaryX2 = rendered.centerX + spanEnd(boundaryWidth);
       const boundaryY2 = rendered.centerY + spanEnd(boundaryHeight);
-      const unionX1 = Math.min(rendered.x1, boundaryX1);
-      const unionY1 = Math.min(rendered.y1, boundaryY1);
-      const unionX2 = Math.max(rendered.x2, boundaryX2);
-      const unionY2 = Math.max(rendered.y2, boundaryY2);
+      const unionX1 = item.type === "clkinfo" ? boundaryX1 : Math.min(rendered.x1, boundaryX1);
+      const unionY1 = item.type === "clkinfo" ? boundaryY1 : Math.min(rendered.y1, boundaryY1);
+      const unionX2 = item.type === "clkinfo" ? boundaryX2 : Math.max(rendered.x2, boundaryX2);
+      const unionY2 = item.type === "clkinfo" ? boundaryY2 : Math.max(rendered.y2, boundaryY2);
       return {
         width: unionX2 - unionX1,
         height: unionY2 - unionY1,
@@ -3675,10 +4182,41 @@
       previewCtx.globalAlpha = alphaBase;
     }
 
-    function drawGlyph(fontName, size, codePoint, x, y) {
-      const custom = getPreviewCustomFont(fontName);
+    function readBitmapFontValue(font, bitOffset) {
+      const mask = (1 << font.bpp) - 1;
+      const byte = font.bitmap[bitOffset >> 3];
+      const shift = 8 - font.bpp - (bitOffset & 7);
+      return (byte >> shift) & mask;
+    }
+
+    function drawBitmapFontGlyph(font, codePoint, x, y, size) {
+      const index = codePoint - font.firstChar;
+      if (index < 0 || index >= font.widths.length) return;
+      const glyphWidth = font.widths[index];
+      if (!glyphWidth) return;
+      const alphaBase = previewCtx.globalAlpha;
+      const alphaRange = (1 << font.bpp) - 1;
+      const bitOffset = font.bitOffsets[index];
+      for (let column = 0; column < glyphWidth; column++) {
+        for (let row = 0; row < font.height; row++) {
+          const value = readBitmapFontValue(font, bitOffset + (column * font.height + row) * font.bpp);
+          if (!value) continue;
+          previewCtx.globalAlpha = alphaBase * (value / alphaRange);
+          previewCtx.fillRect(x + column * size, y + row * size, size, size);
+        }
+      }
+      previewCtx.globalAlpha = alphaBase;
+    }
+
+    function drawGlyph(fontName, size, codePoint, x, y, fontFile) {
+      const custom = getPreviewCustomFont(fontName, fontFile);
+      const builtin = getBuiltinBitmapFont(fontName);
       if (custom) {
         drawPbfGlyph(custom, codePoint, x, y, size);
+        return;
+      }
+      if (builtin) {
+        drawBitmapFontGlyph(builtin, codePoint, x, y, size);
         return;
       }
       if (fontName === "4x6") {
@@ -3710,16 +4248,18 @@
     function drawPreviewTextRun(item, text, x, y) {
       const appearance = item.appearance || {};
       const fontName = appearance.font;
+      const fontFile = appearance.fontFile;
       const size = appearance.fontSize || 1;
       let cursorX = x;
       for (const character of (text || "")) {
         const codePoint = character.codePointAt(0);
-        drawGlyph(fontName, size, codePoint, cursorX, y);
-        cursorX += getCharWidth(fontName, size, codePoint);
+        drawGlyph(fontName, size, codePoint, cursorX, y, fontFile);
+        cursorX += getCharWidth(fontName, size, codePoint, fontFile);
       }
     }
 
     function drawPreviewString(item, text, centerX, centerY, color) {
+      item = getPreviewRenderItem(item, text);
       const localMetrics = getBaseTextMetrics(item, text);
       const left = Math.trunc(-localMetrics.textWidth / 2);
       const top = Math.trunc(-localMetrics.fontHeight / 2);
@@ -3800,6 +4340,14 @@
       previewCtx.globalAlpha = 1;
     }
 
+    function previewContrastColor(color) {
+      color = normalizeHexColor(color, "#000000");
+      const r = parseInt(color.slice(1, 3), 16);
+      const g = parseInt(color.slice(3, 5), 16);
+      const b = parseInt(color.slice(5, 7), 16);
+      return (r * 299 + g * 587 + b * 114) / 1000 >= 140 ? "#000000" : "#ffffff";
+    }
+
     function drawPreviewOutline(bounds, color) {
       const x1 = Math.trunc(bounds.x1);
       const y1 = Math.trunc(bounds.y1);
@@ -3812,6 +4360,13 @@
       previewCtx.fillRect(x1, y2, width, 1);
       previewCtx.fillRect(x1, y1, 1, height);
       previewCtx.fillRect(x2, y1, 1, height);
+      if (width > 2 && height > 2) {
+        previewCtx.fillStyle = previewContrastColor(color);
+        previewCtx.fillRect(x1 + 1, y1 + 1, width - 2, 1);
+        previewCtx.fillRect(x1 + 1, y2 - 1, width - 2, 1);
+        previewCtx.fillRect(x1 + 1, y1 + 1, 1, height - 2);
+        previewCtx.fillRect(x2 - 1, y1 + 1, 1, height - 2);
+      }
     }
 
     function renderPreview() {
@@ -3822,6 +4377,11 @@
       previewCtx.clearRect(0, 0, previewWidth(), previewHeight());
 
       if (!config) return;
+      ensureConfigFontsLoaded(config).then(loaded => {
+        if (loaded) renderPreview();
+      }).catch(error => {
+        console.warn("Unable to load Box Clock config fonts", error);
+      });
 
       if (config.background.type === "solid") {
         previewCtx.fillStyle = parseColor(config.background.color, "#ffffff");
@@ -3892,7 +4452,7 @@
       const fontControls = document.getElementById("preview-font-controls");
       const fontHandle = document.getElementById("preview-font-handle");
       const item = getSelectedItem();
-      if (!fontHandle || !item) {
+      if (!fontHandle || !item || item.type === "clkinfo") {
         if (fontControls) fontControls.style.display = "none";
         if (fontHandle) fontHandle.style.display = "none";
         return;
@@ -3966,22 +4526,20 @@
     function beginPreviewDrag(mode, item, event) {
       const point = previewPoint(event);
       const bounds = itemBounds(item, formatItem(item));
-      const boundaryCenterX = (bounds.x1 + bounds.x2) / 2;
-      const boundaryCenterY = (bounds.y1 + bounds.y2) / 2;
+      const resizeCenterX = (bounds.x1 + bounds.x2) / 2;
+      const resizeCenterY = (bounds.y1 + bounds.y2) / 2;
       state.selectedItemName = item.name;
       state.drag = {
         mode: mode,
         name: item.name,
-        startX: point.x,
-        startY: point.y,
         dx: point.x - item.position.x * previewWidth(),
         dy: point.y - item.position.y * previewHeight(),
         startFontSize: item.appearance.fontSize,
         startBoundaryX: item.appearance.boundary.x,
         startBoundaryY: item.appearance.boundary.y,
-        boundaryCenterX: boundaryCenterX,
-        boundaryCenterY: boundaryCenterY,
-        startBoundaryRadius: Math.hypot(point.x - boundaryCenterX, point.y - boundaryCenterY),
+        resizeCenterX: resizeCenterX,
+        resizeCenterY: resizeCenterY,
+        startResizeRadius: Math.hypot(point.x - resizeCenterX, point.y - resizeCenterY),
         startSnapshot: capturePreviewState()
       };
       previewCanvas.classList.remove("dragging", "resizing-font", "resizing-boundary");
@@ -3999,7 +4557,7 @@
 
     function stepSelectedFont(delta) {
       const item = getSelectedItem();
-      if (!item) return;
+      if (!item || item.type === "clkinfo") return;
       state.selectedPart = "text";
       const before = capturePreviewState();
       item.appearance.fontSize = clampFontSize(item.appearance.font, item.appearance.fontSize + delta);
@@ -4009,9 +4567,33 @@
       renderAll();
     }
 
+    function getResizeRadiusDelta(point, drag) {
+      return Math.hypot(point.x - drag.resizeCenterX, point.y - drag.resizeCenterY) - drag.startResizeRadius;
+    }
+
+    function applyFontResizeDrag(item, drag, point) {
+      const delta = getResizeRadiusDelta(point, drag);
+      item.appearance.fontSize = clampFontSize(item.appearance.font, Math.round(drag.startFontSize + delta / fontResizeDivisor(item.appearance.font)));
+      clampItemToPreview(item);
+    }
+
+    function applyBoundaryResizeDrag(item, drag, point) {
+      if (item.type === "clkinfo") {
+        item.appearance.boundary.x = Math.max(24, Math.min(previewWidth(), Math.round(Math.abs(point.x - drag.resizeCenterX) * 2)));
+        item.appearance.boundary.y = Math.max(24, Math.min(previewHeight(), Math.round(Math.abs(point.y - drag.resizeCenterY) * 2)));
+        clampItemToPreview(item);
+        return;
+      }
+      const delta = getResizeRadiusDelta(point, drag) / 3;
+      item.appearance.boundary.x = Math.max(-20, Math.min(20, +(drag.startBoundaryX + delta).toFixed(2)));
+      item.appearance.boundary.y = Math.max(-20, Math.min(20, +(drag.startBoundaryY + delta).toFixed(2)));
+      clampItemToPreview(item);
+    }
+
     function selectedConfigOptionValue() {
       if (state.selectedConfig === DEFAULT_CONFIG && !configExistsOnWatch(DEFAULT_CONFIG)) return CONFIG_ADD_DEFAULT_VALUE;
       if (state.selectedConfig === "classic" && !configExistsOnWatch("classic")) return CONFIG_ADD_CLASSIC_VALUE;
+      if (state.selectedConfig === "retro" && !configExistsOnWatch("retro")) return CONFIG_ADD_RETRO_VALUE;
       if (state.selectedConfig === "space" && !configExistsOnWatch("space")) return CONFIG_ADD_SPACE_VALUE;
       return state.selectedConfig;
     }
@@ -4044,6 +4626,7 @@
       const exampleOptions = [];
       if (!configExistsOnWatch(DEFAULT_CONFIG)) exampleOptions.push(`<option value="${CONFIG_ADD_DEFAULT_VALUE}">Default</option>`);
       if (!configExistsOnWatch("classic")) exampleOptions.push(`<option value="${CONFIG_ADD_CLASSIC_VALUE}">Classic</option>`);
+      if (!configExistsOnWatch("retro")) exampleOptions.push(`<option value="${CONFIG_ADD_RETRO_VALUE}">Retro</option>`);
       if (!configExistsOnWatch("space")) exampleOptions.push(`<option value="${CONFIG_ADD_SPACE_VALUE}">Space</option>`);
       if (exampleOptions.length) {
         groups.push(`<optgroup label="Examples">${exampleOptions.join("")}</optgroup>`);
@@ -4146,32 +4729,39 @@
       BUNDLED_IMAGES.forEach(image => {
         seen[image.name] = true;
         ensureBackgroundPreview(image.name);
-        options.push({ name: image.name, label: image.label, custom: false });
+        options.push({ name: image.name, label: image.label, custom: false, usage: 0 });
       });
-      (state.bgFiles || []).forEach(file => {
+      getAvailableBackgroundFiles().forEach(file => {
         if (seen[file]) return;
         seen[file] = true;
         ensureBackgroundPreview(file);
-        options.push({ name: file, label: prettyBackgroundName(file), custom: isCustomBackgroundFile(file) });
+        const usage = backgroundFileUsageCount(file);
+        options.push({
+          name: file,
+          label: prettyBackgroundName(file),
+          custom: isCustomBackgroundFile(file),
+          usage: usage
+        });
       });
-      const currentUpload = state.backgroundUploads[state.selectedConfig];
-      if (currentUpload && !seen[currentUpload.fileName]) {
-        ensureBackgroundPreview(currentUpload.fileName);
-        options.push({ name: currentUpload.fileName, label: prettyBackgroundName(currentUpload.fileName), custom: true });
-      }
 
       gallery.innerHTML = options.map(option => {
         const active = option.name === config.background.image ? " active" : "";
         const preview = getBackgroundPreviewRecord(option.name);
+        const meta = option.custom ?
+          ("Custom image" + (option.usage ? ", " + option.usage + " layout" + (option.usage === 1 ? "" : "s") : "")) :
+          "Bundled image";
         const artwork = preview && preview.url
           ? `<img src="${preview.url}" alt="${escapeHtml(option.label)}">`
           : `<span class="bg-card-fill"></span>`;
         return `
-          <button class="bg-card${active}" data-bg-file="${escapeHtml(option.name)}" type="button">
-            ${artwork}
-            <span class="bg-card-label">${escapeHtml(option.label)}</span>
-            <span class="bg-card-meta">${option.custom ? "Custom image" : "Bundled image"}</span>
-          </button>
+          <div class="bg-card${active}">
+            <button class="bg-card-select" data-bg-file="${escapeHtml(option.name)}" type="button">
+              ${artwork}
+              <span class="bg-card-label">${escapeHtml(option.label)}</span>
+              <span class="bg-card-meta">${escapeHtml(meta)}</span>
+            </button>
+            ${option.custom && !option.usage ? `<button class="btn btn-sm bg-card-delete" data-bg-delete="${escapeHtml(option.name)}" type="button">Remove</button>` : ""}
+          </div>
         `;
       }).join("");
     }
@@ -4184,6 +4774,7 @@
         const record = getCustomFontRecord(name);
         let label = name;
         if (record && record.bundled) label += " (Bundled)";
+        else if (record && record.external) label += " (On watch)";
         else if (record) label += " (Custom)";
         else if (BUILTIN_FONT_NAMES.indexOf(name) < 0) label += " (Missing)";
         return `<option value="${escapeHtml(name)}">${escapeHtml(label)}</option>`;
@@ -4198,7 +4789,7 @@
     function renderFontLibrary() {
       const container = document.getElementById("font-library");
       if (!container) return;
-      const names = getCustomFontNames();
+      const names = getCustomFontNames().filter(name => isLoadedCustomFontRecord(state.customFonts[name]));
       if (!names.length) {
         container.innerHTML = `<div class="subtle">No custom fonts loaded yet.</div>`;
         return;
@@ -4206,19 +4797,21 @@
       container.innerHTML = names.map(name => {
         const record = state.customFonts[name];
         if (!record) return "";
-        const usage = fontUsageCount(name);
-        const onWatch = (state.watchFontFiles || []).indexOf(record.fileName) >= 0;
+        const usage = fontUsageCount(name, undefined, record.fileName);
+        const onWatch = isFontOnWatch(record);
         const lineHeight = record.preview && record.preview.lineHeight ? record.preview.lineHeight : "?";
         const glyphCount = record.preview && record.preview.glyphCount ? record.preview.glyphCount : "?";
         const meta = [
           lineHeight + "px line height",
           glyphCount + " glyphs",
-          onWatch ? "On watch" : (record.bundled ? "Bundled asset" : "Local only")
+          onWatch ? (record.external ? "Watch font" : "On watch") : (record.bundled ? "Bundled asset" : "Local only")
         ].join(" · ");
         const usageText = usage ? ("Used by " + usage + " layout item" + (usage === 1 ? "" : "s") + ".") : "Not used by any layout yet.";
         const action = record.bundled ?
           `<button class="btn" type="button" disabled>Bundled</button>` :
-          `<button class="btn${usage ? "" : " btn-error"}" data-remove-font="${escapeHtml(name)}" type="button"${usage ? " disabled" : ""}>Remove</button>`;
+          (record.external ?
+            `<button class="btn" type="button" disabled>On watch</button>` :
+            `<button class="btn${usage ? "" : " btn-error"}" data-remove-font="${escapeHtml(name)}" type="button"${usage ? " disabled" : ""}>Remove</button>`);
         return `
           <div class="font-card">
             <div class="font-card-head">
@@ -4298,13 +4891,11 @@
         seen[image.name] = true;
         imageOptions.push(`<option value="${escapeHtml(image.name)}">${escapeHtml(image.label)}</option>`);
       });
-      (state.bgFiles || []).forEach(file => {
-        if (!seen[file]) imageOptions.push(`<option value="${escapeHtml(file)}">${escapeHtml(prettyBackgroundName(file))}</option>`);
+      getAvailableBackgroundFiles().forEach(file => {
+        if (seen[file]) return;
+        seen[file] = true;
+        imageOptions.push(`<option value="${escapeHtml(file)}">${escapeHtml(prettyBackgroundName(file))}</option>`);
       });
-      const currentUpload = state.backgroundUploads[state.selectedConfig];
-      if (currentUpload && !seen[currentUpload.fileName]) {
-        imageOptions.push(`<option value="${escapeHtml(currentUpload.fileName)}">${escapeHtml(prettyBackgroundName(currentUpload.fileName))}</option>`);
-      }
       document.getElementById("bg-image-name").innerHTML = imageOptions.join("");
       document.getElementById("bg-image-name").value = config.background.image || BUNDLED_IMAGES[0].name;
       document.getElementById("bg-solid-fields").style.display = config.background.type === "solid" ? "grid" : "none";
@@ -4325,12 +4916,12 @@
       document.getElementById("item-prefix").value = item.prefix || "";
       document.getElementById("item-suffix").value = item.suffix || "";
       document.getElementById("item-text").value = item.text || "";
-      document.getElementById("item-font-row").style.display = "grid";
-      document.getElementById("item-outline-row").style.display = "grid";
-      document.getElementById("item-affix-row").style.display = "grid";
+      document.getElementById("item-font-row").style.display = item.type === "clkinfo" ? "none" : "grid";
+      document.getElementById("item-outline-row").style.display = item.type === "clkinfo" ? "none" : "grid";
+      document.getElementById("item-affix-row").style.display = item.type === "clkinfo" ? "none" : "grid";
       document.getElementById("item-appearance-section").style.display = "";
       document.getElementById("item-text-color-row").style.display = "";
-      document.getElementById("item-outline-color-row").style.display = "";
+      document.getElementById("item-outline-color-row").style.display = item.type === "clkinfo" ? "none" : "";
       document.getElementById("item-border-color-row").style.display = "";
       document.getElementById("item-text-color-label").textContent = "Text Color";
       document.getElementById("text-field-row").style.display = item.type === "text" ? "grid" : "none";
@@ -4353,7 +4944,8 @@
     }
 
     function renderAll() {
-      clampConfigToPreview(getSelectedConfig());
+      const config = getSelectedConfig();
+      if (config) clampConfigToPreview(config);
       renderConfigSelect();
       syncSelectedItem();
       renderInspector();
@@ -4441,9 +5033,26 @@
       }
     }
 
+    function deleteUnusedBackgroundFile(filename) {
+      if (!isCustomBackgroundFile(filename) || backgroundFileUsageCount(filename)) return false;
+      Object.keys(state.backgroundUploads).forEach(name => {
+        const upload = state.backgroundUploads[name];
+        if (upload && upload.fileName === filename) delete state.backgroundUploads[name];
+      });
+      if (isBackgroundFileOnWatch(filename)) addDeletedFile(state.deletedBackgroundFiles, filename);
+      else removeDeletedFile(state.deletedBackgroundFiles, filename);
+      state.bgFiles = (state.bgFiles || []).filter(file => file !== filename);
+      delete state.backgroundPreviewCache[filename];
+      delete state.backgroundPreviewLoads[filename];
+      clearBackgroundData(filename);
+      return true;
+    }
+
     function resolveConfigDialog(result) {
       const resolve = configDialogResolve;
       configDialogResolve = null;
+      configDialogConfirmValue = true;
+      configDialogAlternateValue = null;
       setConfigDialogOpen(false);
       if (resolve) resolve(result);
     }
@@ -4455,6 +5064,8 @@
       const message = document.getElementById("config-dialog-message");
       const inputRow = document.getElementById("config-dialog-input-row");
       const input = document.getElementById("config-dialog-input");
+      const cancelButton = document.getElementById("cancel-config-dialog");
+      const alternateButton = document.getElementById("alternate-config-dialog");
       const confirmButton = document.getElementById("confirm-config-dialog");
       title.textContent = options.title || "Layout";
       const bodyText = options.message || "";
@@ -4462,8 +5073,13 @@
       message.hidden = !bodyText;
       inputRow.style.display = options.showInput === false ? "none" : "";
       input.value = options.value || "";
+      cancelButton.textContent = options.cancelLabel || "Cancel";
+      alternateButton.hidden = !options.alternateLabel;
+      alternateButton.textContent = options.alternateLabel || "";
       confirmButton.textContent = options.confirmLabel || "Save";
       confirmButton.className = "btn " + (options.danger ? "btn-error" : "btn-primary");
+      configDialogConfirmValue = options.confirmValue === undefined ? true : options.confirmValue;
+      configDialogAlternateValue = options.alternateValue === undefined ? null : options.alternateValue;
       setConfigDialogOpen(true);
       requestAnimationFrame(() => {
         const focusTarget = options.showInput === false ? confirmButton : input;
@@ -4497,6 +5113,43 @@
         danger: true,
         showInput: false
       }).then(response => !!response);
+    }
+
+    function promptForBackgroundCollision(filename) {
+      return showConfigDialog({
+        title: "Image Name Conflict",
+        message: prettyBackgroundName(filename) + " already exists. Replace that image for every layout that uses it, keep both, or cancel?",
+        confirmLabel: "Replace",
+        confirmValue: "replace",
+        alternateLabel: "Keep Both",
+        alternateValue: "keep",
+        cancelLabel: "Cancel",
+        showInput: false
+      });
+    }
+
+    function confirmBackgroundDelete(filename) {
+      return showConfigDialog({
+        title: "Remove Image",
+        message: "Remove unused image " + prettyBackgroundName(filename) + "? This deletes it from Box Clock on the next upload.",
+        confirmLabel: "Remove",
+        danger: true,
+        showInput: false
+      }).then(response => !!response);
+    }
+
+    function resolveUploadedBackgroundFilename(uploadName, data) {
+      const fileName = backgroundFilenameFromUploadName(uploadName);
+      if (getAvailableBackgroundFiles().indexOf(fileName) < 0) return Promise.resolve(fileName);
+      return readBackgroundData(fileName).then(existingData => {
+        if (existingData === null) return fileName;
+        if (existingData === data) return fileName;
+        return promptForBackgroundCollision(fileName).then(action => {
+          if (action === "replace") return fileName;
+          if (action === "keep") return nextBackgroundFilename(fileName);
+          return null;
+        });
+      });
     }
 
     function normaliseConfigStorageName(input, currentName) {
@@ -4573,11 +5226,7 @@
         state.configs[configName] = duplicate;
         if (state.backgroundUploads[state.selectedConfig]) {
           const source = state.backgroundUploads[state.selectedConfig];
-          state.backgroundUploads[configName] = {
-            fileName: source.fileName,
-            data: source.data,
-            preview: source.preview
-          };
+          setBackgroundUpload(configName, source.fileName, source.data, source.preview);
           if (duplicate.background && duplicate.background.type === "image") {
             duplicate.background.image = state.backgroundUploads[configName].fileName;
           }
@@ -4689,8 +5338,8 @@
       const duplicate = {
         name: uniqueItemName(source.name, config),
         type: source.type,
-        prefix: source.prefix || "",
-        suffix: source.suffix || "",
+        prefix: source.type === "clkinfo" ? "" : (source.prefix || ""),
+        suffix: source.type === "clkinfo" ? "" : (source.suffix || ""),
         text: source.text || "",
         position: {
           x: Math.min(0.95, source.position.x + 0.03),
@@ -4750,13 +5399,20 @@
       byId("item-text").addEventListener("input", event => updateSelectedItem(item => { item.text = event.target.value; }));
       byId("item-pos-x").addEventListener("change", event => updateSelectedItem(item => { item.position.x = Math.max(0, Math.min(1, parseFloat(event.target.value) || 0)); }));
       byId("item-pos-y").addEventListener("change", event => updateSelectedItem(item => { item.position.y = Math.max(0, Math.min(1, parseFloat(event.target.value) || 0)); }));
-      byId("item-font").addEventListener("change", event => updateSelectedItem(item => {
-        const previousFont = item.appearance.font;
-        const previousHeight = getFontHeight(previousFont, item.appearance.fontSize);
-        item.appearance.font = event.target.value;
-        item.appearance.fontFile = fontFileForName(item.appearance.font);
-        item.appearance.fontSize = sizeForFontHeight(item.appearance.font, previousHeight);
-      }));
+      byId("item-font").addEventListener("change", event => {
+        const fontName = event.target.value;
+        updateSelectedItem(item => {
+          const previousFont = item.appearance.font;
+          const previousHeight = getFontHeight(previousFont, item.appearance.fontSize, item.appearance.fontFile);
+          item.appearance.font = fontName;
+          item.appearance.fontFile = fontFileForName(item.appearance.font);
+          item.appearance.fontSize = sizeForFontHeight(item.appearance.font, previousHeight, item.appearance.fontFile);
+        });
+        const record = getCustomFontRecord(fontName);
+        if (record && record.fileName && !record.preview) {
+          loadWatchFont(record.fileName).then(() => renderAll());
+        }
+      });
       byId("item-font-size").addEventListener("change", event => updateSelectedItem(item => {
         item.appearance.fontSize = clampFontSize(item.appearance.font, parseInt(event.target.value, 10) || 1);
       }));
@@ -4828,6 +5484,7 @@
       byId("bg-image-upload").addEventListener("change", event => {
         const file = event.target.files[0];
         if (!file) return;
+        event.target.value = "";
         const reader = new FileReader();
         reader.onload = function() {
           const image = new Image();
@@ -4852,25 +5509,19 @@
             });
             const previewImage = new Image();
             previewImage.onload = function() {
-              findMatchingBackgroundFile(raw).then(fileName => {
+              resolveUploadedBackgroundFilename(file.name, raw).then(fileName => {
+                if (!fileName) return;
                 applyPreviewMutation(() => {
                   const configName = state.selectedConfig;
                   const config = state.configs[configName];
                   if (!config) return;
-                  fileName = fileName || backgroundFilenameForData(raw);
-                  state.backgroundUploads[configName] = {
-                    fileName: fileName,
-                    data: raw,
-                    preview: previewImage
-                  };
-                  cacheBackgroundData(fileName, raw);
-                  cacheBackgroundPreview(fileName, previewImage.src);
-                  state.bgFiles = Array.from(new Set((state.bgFiles || []).concat([fileName]))).sort();
-                  if (config.background.image && isCustomBackgroundFile(config.background.image) && config.background.image !== fileName) {
-                    releaseCustomBackground(configName, config.background.image);
-                  }
+                  const previousImage = config.background.image;
                   config.background.type = "image";
                   config.background.image = fileName;
+                  setSharedBackgroundUpload(fileName, raw, previewImage);
+                  if (previousImage && isCustomBackgroundFile(previousImage) && previousImage !== fileName) {
+                    releaseCustomBackground(configName, previousImage);
+                  }
                   clearPendingDeletesForConfig(configName);
                 });
               }).catch(error => {
@@ -4966,6 +5617,11 @@
           handleExampleConfig("classic", "classic");
           return;
         }
+        if (value === CONFIG_ADD_RETRO_VALUE) {
+          event.target.value = selectedConfigOptionValue();
+          handleExampleConfig("retro", "retro");
+          return;
+        }
         if (value === CONFIG_ADD_SPACE_VALUE) {
           event.target.value = selectedConfigOptionValue();
           handleExampleConfig("space", "space");
@@ -4986,10 +5642,11 @@
       });
       document.getElementById("close-config-dialog").addEventListener("click", () => resolveConfigDialog(null));
       document.getElementById("cancel-config-dialog").addEventListener("click", () => resolveConfigDialog(null));
+      document.getElementById("alternate-config-dialog").addEventListener("click", () => resolveConfigDialog(configDialogAlternateValue));
       document.getElementById("confirm-config-dialog").addEventListener("click", () => {
         const inputRow = document.getElementById("config-dialog-input-row");
         const input = document.getElementById("config-dialog-input");
-        resolveConfigDialog(inputRow.style.display === "none" ? true : input.value);
+        resolveConfigDialog(inputRow.style.display === "none" ? configDialogConfirmValue : input.value);
       });
       document.getElementById("config-dialog-modal").addEventListener("click", event => {
         if (event.target.id === "config-dialog-modal") resolveConfigDialog(null);
@@ -5034,6 +5691,17 @@
         select.dispatchEvent(new Event("change"));
       });
       document.getElementById("background-gallery").addEventListener("click", event => {
+        const deleteButton = event.target.closest("[data-bg-delete]");
+        if (deleteButton) {
+          const fileName = deleteButton.getAttribute("data-bg-delete");
+          confirmBackgroundDelete(fileName).then(confirmed => {
+            if (!confirmed) return;
+            applyPreviewMutation(() => {
+              deleteUnusedBackgroundFile(fileName);
+            });
+          });
+          return;
+        }
         const button = event.target.closest("[data-bg-file]");
         if (!button) return;
         const select = document.getElementById("bg-image-name");
@@ -5121,7 +5789,7 @@
       fontHandle.addEventListener("pointerdown", event => {
         if (event.button !== undefined && event.button !== 0) return;
         const item = getSelectedItem();
-        if (!item) return;
+        if (!item || item.type === "clkinfo") return;
         state.selectedPart = "text";
         beginPreviewDrag("resize-font", item, event);
       });
@@ -5142,21 +5810,15 @@
           item.position.y = (point.y - state.drag.dy) / previewHeight();
           clampItemToPreview(item);
         } else if (state.drag.mode === "resize-font") {
-          const delta = Math.max(point.x - state.drag.startX, state.drag.startY - point.y);
-          item.appearance.fontSize = clampFontSize(item.appearance.font, Math.round(state.drag.startFontSize + delta / fontResizeDivisor(item.appearance.font)));
-          clampItemToPreview(item);
+          applyFontResizeDrag(item, state.drag, point);
         } else if (state.drag.mode === "resize-boundary") {
-          const currentRadius = Math.hypot(point.x - state.drag.boundaryCenterX, point.y - state.drag.boundaryCenterY);
-          const delta = (currentRadius - state.drag.startBoundaryRadius) / 3;
-          item.appearance.boundary.x = Math.max(-20, Math.min(20, +(state.drag.startBoundaryX + delta).toFixed(2)));
-          item.appearance.boundary.y = Math.max(-20, Math.min(20, +(state.drag.startBoundaryY + delta).toFixed(2)));
-          clampItemToPreview(item);
+          applyBoundaryResizeDrag(item, state.drag, point);
         }
 
         renderDragState();
       });
 
-      const stopDrag = event => {
+      const stopDrag = () => {
         if (!state.drag) return;
         const drag = state.drag;
         const item = getSelectedItem();
@@ -5229,7 +5891,7 @@
 
       const deletedBackgroundFiles = [];
       const backgroundImage = config && config.background && config.background.type === "image" ? config.background.image : null;
-      if (backgroundImage && isCustomBackgroundFile(backgroundImage) && !backgroundFileUsageCount(backgroundImage, configName) && (state.watchBgFiles || []).indexOf(backgroundImage) >= 0) {
+      if (backgroundImage && isCustomBackgroundFile(backgroundImage) && !backgroundFileUsageCount(backgroundImage, configName) && isBackgroundFileOnWatch(backgroundImage)) {
         deletedBackgroundFiles.push(backgroundImage);
       }
 
@@ -5296,19 +5958,34 @@
       const config = getSelectedConfig();
       if (!configName || !config) return;
       const baselineConfigs = state.watchSnapshot && state.watchSnapshot.configs ? state.watchSnapshot.configs : {};
+      const baselineUploads = state.watchSnapshot && state.watchSnapshot.uploadedBackgrounds ? state.watchSnapshot.uploadedBackgrounds : {};
       const baselineFonts = state.watchSnapshot && state.watchSnapshot.customFonts ? state.watchSnapshot.customFonts : {};
       const serializedConfig = JSON.stringify(serialiseConfig(config));
       const selectedConfigSettings = JSON.stringify({
         selectedConfig: sanitizeConfigName(state.selectedConfig || DEFAULT_CONFIG)
       });
       const changedConfig = !configExistsOnWatch(configName) || serializedConfig !== JSON.stringify(baselineConfigs[configName] || null);
+      const backgroundImage = config.background && config.background.type === "image" ? config.background.image : null;
       const currentUpload = state.backgroundUploads[configName];
-      const needsBackgroundUpload = !!(currentUpload && currentUpload.fileName && !bundledImageInfo(currentUpload.fileName) && (state.watchBgFiles || []).indexOf(currentUpload.fileName) < 0);
+      const effectiveUpload = currentUpload && currentUpload.fileName ? currentUpload :
+        (backgroundImage && !bundledImageInfo(backgroundImage) ? Object.values(state.backgroundUploads).find(upload => {
+          return upload && upload.fileName === backgroundImage && upload.data !== undefined;
+        }) : null);
+      const baselineUpload = baselineUploads[configName];
+      const matchingBaselineUpload = effectiveUpload ? Object.values(baselineUploads).find(upload => {
+        return upload && upload.fileName === effectiveUpload.fileName && upload.data === effectiveUpload.data;
+      }) : null;
+      const baselineReferenceUpload = baselineUpload || matchingBaselineUpload;
+      const needsBackgroundUpload = !!(effectiveUpload && effectiveUpload.fileName && !bundledImageInfo(effectiveUpload.fileName) && (
+        !isBackgroundFileOnWatch(effectiveUpload.fileName) ||
+        !baselineReferenceUpload ||
+        baselineReferenceUpload.fileName !== effectiveUpload.fileName ||
+        baselineReferenceUpload.data !== effectiveUpload.data
+      ));
       const shouldSetTheme = !selectedThemeMatchesWatch();
       const tasks = [];
       const bundledImagesToWrite = {};
-      const backgroundImage = config.background && config.background.type === "image" ? config.background.image : null;
-      if (backgroundImage && bundledImageInfo(backgroundImage) && (state.watchBgFiles || []).indexOf(backgroundImage) < 0) {
+      if (backgroundImage && bundledImageInfo(backgroundImage) && !isBackgroundFileOnWatch(backgroundImage)) {
         bundledImagesToWrite[backgroundImage] = true;
       }
       const customFontsToWrite = [];
@@ -5317,7 +5994,7 @@
         if (!shouldPersistCustomFont(record)) return;
         const payload = record.data || "";
         const baseline = baselineFonts[name];
-        const onWatch = (state.watchFontFiles || []).indexOf(record.fileName) >= 0;
+        const onWatch = isFontOnWatch(record);
         if (baseline && baseline.fileName === record.fileName && baseline.data === payload && onWatch) return;
         customFontsToWrite.push({
           fileName: record.fileName,
@@ -5342,8 +6019,8 @@
         });
       });
 
-      if (needsBackgroundUpload && currentUpload && currentUpload.fileName) {
-        tasks.push(next => writeStorageChecked(currentUpload.fileName, currentUpload.data, next));
+      if (needsBackgroundUpload && effectiveUpload && effectiveUpload.fileName) {
+        tasks.push(next => writeStorageChecked(effectiveUpload.fileName, effectiveUpload.data, next));
       }
 
       customFontsToWrite.forEach(font => {
@@ -5394,7 +6071,7 @@
         const deletedBackgroundFiles = state.deletedBackgroundFiles.slice();
         const deletedFontFiles = state.deletedFontFiles.slice();
         const uploadedBackgroundFiles = []
-          .concat(needsBackgroundUpload && currentUpload && currentUpload.fileName ? [currentUpload.fileName] : [])
+          .concat(needsBackgroundUpload && effectiveUpload && effectiveUpload.fileName ? [effectiveUpload.fileName] : [])
           .concat(Object.keys(bundledImagesToWrite));
         const uploadedFontFiles = customFontsToWrite.map(font => font.fileName);
         state.deletedConfigFiles = [];
@@ -5494,8 +6171,8 @@
           name:fn,
           data:s.readJSON(fn,1)
         })),
-        bgFiles:s.list(/^boxclk\\.(?:beachhouse|space|bg\\..+)\\.img$/).sort(),
-        fontFiles:s.list(/^(?:boxclk\\..+\\.pbf|boxclk-brunoace\\.pbf)$/).sort()
+        bgFiles:s.list(/^boxclk\\.(?:beachhouse|retro|space|bg\\..+)\\.img$/).sort(),
+        fontFiles:s.list().filter(fn=>/\\.pbf$/i.test(fn)).sort()
       };})()`, data => {
         state.configs = {};
         state.backgroundUploads = {};
@@ -5503,6 +6180,7 @@
         state.backgroundPreviewLoads = {};
         state.backgroundDataCache = {};
         state.backgroundDataLoads = {};
+        state.fontLoads = {};
         state.customFonts = {};
         state.clockbgGeneratedPreviewKey = null;
         state.clockbgGeneratedPreviewCanvas = null;
@@ -5535,7 +6213,7 @@
         }
         state.watchConfigNames = sortConfigNames(Array.from(new Set(watchConfigNames)));
 
-        state.bgFiles = data && data.bgFiles ? data.bgFiles : BUNDLED_IMAGES.map(image => image.name);
+        state.bgFiles = Array.isArray(data && data.bgFiles) ? data.bgFiles.slice() : BUNDLED_IMAGES.map(image => image.name);
         state.watchBgFiles = state.bgFiles.slice();
         state.watchFontFiles = data && data.fontFiles ? data.fontFiles.slice() : [];
         state.watchSelectedConfig = sanitizeConfigName(data && data.settings ? data.settings.selectedConfig : DEFAULT_CONFIG);
@@ -5543,28 +6221,18 @@
         state.selectedConfig = state.watchSelectedConfig;
         state.previewTheme = state.watchTheme;
 
-        const loadFonts = Promise.all((state.watchFontFiles || []).map(filename => {
-          return new Promise(resolve => {
-            Util.readStorage(filename, fontData => {
-              if (!fontData) {
-                resolve();
-                return;
-              }
-              try {
-                setCustomFontRecord(createCustomFontRecord(fontData, {
-                  fileName: filename,
-                  name: fontNameFromFilename(filename),
-                  bundled: !!bundledFontInfo(filename)
-                }));
-              } catch (error) {
-                console.warn("Unable to load Box Clock font", filename, error);
-              }
-              resolve();
-            });
-          });
-        }));
+        const loadWatchConfigBackgrounds = () => ensureWatchConfigBackgroundsLoaded().catch(error => {
+          console.warn("Unable to load Box Clock config backgrounds", error);
+        });
+        const loadConfigFonts = config => ensureConfigFontsLoaded(config).catch(error => {
+          console.warn("Unable to load Box Clock config fonts", error);
+        });
+        const loadWatchAssets = () => Promise.all([
+          loadWatchConfigBackgrounds(),
+          Promise.all(getWatchConfigNames().map(name => loadConfigFonts(state.configs[name])))
+        ]);
 
-        loadFonts.then(() => ensureBundledFontsPresent()).catch(error => {
+        ensureBundledFontsPresent().catch(error => {
           console.warn("Unable to load bundled Box Clock fonts", error);
           return ensureBundledFontsPresent();
         }).then(() => {
@@ -5573,19 +6241,27 @@
           state.selectedItemName = null;
           state.selectedPart = null;
           BUNDLED_IMAGES.forEach(image => ensureBackgroundPreview(image.name));
-          if (state.clockbgSettings && state.clockbgSettings.style === "image" && state.clockbgSettings.fn) {
-            ensureBackgroundPreview(state.clockbgSettings.fn);
-          }
-          if (state.configs[state.selectedConfig] && state.configs[state.selectedConfig].background.type === "image") {
-            ensureBackgroundPreview(state.configs[state.selectedConfig].background.image);
-          }
+          if (state.clockbgSettings && state.clockbgSettings.style === "image" && state.clockbgSettings.fn) ensureBackgroundPreview(state.clockbgSettings.fn);
+          const selectedBackground = getConfigBackgroundFile(getSelectedConfig());
+          if (selectedBackground) ensureBackgroundPreview(selectedBackground);
+          return loadWatchAssets();
+        }).then(() => {
           setClean("Loaded from watch.", allowDraftRestore);
-          if (allowDraftRestore && restoreLocalDraftIfCompatible()) {
-            state.cleanStatusText = "Restored unsynced local changes.";
-            refreshSyncStatus();
-          } else {
+          if (!(allowDraftRestore && restoreLocalDraftIfCompatible())) {
             clearLocalDraft();
+            return false;
           }
+          state.cleanStatusText = "Restored unsynced local changes.";
+          return Promise.all([loadWatchConfigBackgrounds(), loadConfigFonts(getSelectedConfig())]).then(() => true);
+        }).then(restoredDraft => {
+          const syncState = currentWatchStateSignature();
+          if (restoredDraft && syncState === state.watchSignature) {
+            clearLocalDraft();
+            state.cleanStatusText = "Loaded from watch.";
+          } else if (!restoredDraft && syncState !== state.watchSignature) {
+            state.watchSignature = syncState;
+          }
+          refreshSyncStatus();
           Util.hideModal();
           renderAll();
         });
@@ -5593,6 +6269,7 @@
     }
 
     function onInit() {
+      bindPortraitLock();
       bindConfigEvents();
       bindInspectorEvents();
       bindPreviewEvents();

@@ -2,7 +2,7 @@
   "id": "widadjust",
   "name": "Adjust Clock",
   "icon": "icon.png",
-  "version": "0.04",
+  "version": "0.05",
   "description": "Adjusts clock continually in the background to counter clock drift",
   "tags": "widget",
   "supports": [ "BANGLEJS", "BANGLEJS2" ],

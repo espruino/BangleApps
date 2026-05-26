@@ -1,3 +1,5 @@
 0.01: New Widget!
 0.02: Tweaks for variable size widget system
 0.03: Tweaking colors for dark/light themes
+0.04: Add .remove handler to allow widget removal
+      use reset("widget") to allow separate widget bar colour in 2v30. Also some efficiency tweaks.

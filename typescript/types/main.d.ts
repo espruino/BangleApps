@@ -5424,7 +5424,7 @@ declare class Graphics<IsBuffer extends boolean = boolean> {
    * @returns {any} The instance of Graphics this was called on, to allow call chaining
    * @url http://www.espruino.com/Reference#l_Graphics_reset
    */
-  reset(): Graphics;
+  reset(reason?: String): Graphics;
 
   /**
    * Clear the LCD with the Background Color

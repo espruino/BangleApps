@@ -570,12 +570,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/rescalc/app.js": {
-    "hash": "925f00a439817fadf92f4e7a7fcd509eb9d9c7e1e4309e315ea92a6881e18b4b",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/regattatimer/app.js": {
     "hash": "8d579cc62d82599f776e5e230651f03481f18c3934f35f4fedfb6382a46db861",
     "rules": [

@@ -1,12 +1,12 @@
 {
   "id": "weather",
   "name": "Weather",
-  "version": "0.31",
+  "version": "0.32",
   "description": "Show Gadgetbridge/iOS weather report",
   "icon": "icon.png",
   "screenshots": [{"url":"Screenshot.png"}],
   "tags": "widget,outdoors,clkinfo",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "readme": "README.md",
   "storage": [
     {"name":"weather.app.js","url":"app.js"},

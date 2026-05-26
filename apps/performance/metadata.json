@@ -1,0 +1,14 @@
+{
+  "id": "performance",
+  "name": "Performance checkup",
+  "version": "0.01",
+  "description": "Run tests on your Bangle.js to check performance and identify any issues",
+  "sortorder": -1,
+  "icon": "app.png",
+  "type": "RAM",
+  "tags": "tool,performance,speed",
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
+  "custom": "custom.html",
+  "customConnect": true,
+  "storage": []
+}

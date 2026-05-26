@@ -8,7 +8,7 @@
   Bangle.setBarometerPower(true, "widalt");
   Bangle.on("pressure", (p) => {
     if (timeout) return;
-    //some other app is using the barometer - ignore new readings until our interval is up 
+    //some other app is using the barometer - ignore new readings until our interval is up
     if (Math.floor(p.altitude) != lastAlt) {
       lastAlt = Math.floor(p.altitude);
       alt = p.altitude.toFixed(0);
@@ -23,8 +23,7 @@
 
   function draw() {
     if (!Bangle.isLCDOn()) return;
-    g.reset();
-    g.clearRect(this.x, this.y, this.x + this.width, this.y + 23);
+    g.reset("widget").clearRect(this.x, this.y, this.x + this.width, this.y + 23);
     var w = this.width;
     this.width = 1 + (alt.length) * 12 + 16;
     if (w != this.width) Bangle.drawWidgets();

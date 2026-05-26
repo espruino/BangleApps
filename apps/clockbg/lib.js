@@ -180,12 +180,12 @@ print("const IM_ANGLE = ",rotate(Graphics.createImage(`
     for (y=n=0;y<Z;y+=S)
       for (x=0;x<Z;x+=S) bg.drawImage(IM[""+m[n]+m[n+1]+m[n+W]+m[++n+W]],x,y);
     bg.filter([ // a gaussian filter to smooth out
-        1, 4, 7, 4, 1,
-        4,16,26,16, 4,
-        7,26,41,26, 7,
-        4,16,26,16, 4,
-        1, 4, 7, 4, 1
-    ], { w:5, h:5, div:273, offset:0 });
+        0,1,2,3,0,
+        1,2,3,2,1,
+        2,3,4,2,1,
+        1,2,3,2,1,
+        0,1,2,3,0,
+    ], { w:5, h:5, div:42, offset:0 });
     settings.img = bg;
     settings.imgOpt = {scale:2};
   }

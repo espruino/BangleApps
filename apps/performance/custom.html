@@ -1,0 +1,178 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+    <style>
+      li span {
+        display:inline-block;
+        font-weight: bold;
+        padding-right: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <p>These tests give you an idea what performance is like on your Bangle.js,
+      and are designed to give you some idea of what apps could be causing you
+      performance issues.</p>
+    <p>If boot times are slow, look at the table to get an idea
+      which apps take a long time. Ideally nothing should be over 50ms.
+    </p>
+    <ul>
+      <li id="test-storage-hash"><span>? </span>Storage hash speed</li>
+      <li id="test-clock-fastload"><span>? </span>Clock supports Fast Load</li>
+      <li id="test-launcher-fastload"><span>? </span>Launcher supports Fast Load</li>
+      <li id="test-widgets-fastload"><span>? </span>Widgets support Fast Load (<code>.remove</code> method)</li>
+      <li id="test-boot0"><span>? </span>Test boot times (takes ~10sec) <div id="test-boot0-times"></div></li>
+      <li id="test-clock-load"><span>? </span>Clock load time</li>
+      <li id="test-launcher-load"><span>? </span>Launcher load time</li>
+      <li id="test-widget-load"><span>? </span>Widget load time</li>
+    </ul>
+    <p>Click <button id="starttest" class="btn btn-primary">Start Test</button></p>
+
+    <script src="../../core/lib/customize.js"></script>
+
+    <script>
+
+let puckData = "";
+Puck.on("data", d => puckData+=d);
+
+var TESTS = [
+  { id : "test-storage-hash", run : function() {
+    return new Promise(function(resolve) {
+      Puck.eval("((__TM=getTime()),require('Storage').hash(/\.js$/),(getTime()-__TM))", function(time) {
+        console.log("storage hash time", time);
+        time = +time;
+        let isOk = time<0.2;
+        resolve([isOk, time.toFixed(2)+"sec" + (isOk ? "" : "(over 0.2sec - lots of files?)")]);
+      });
+    });
+  }},
+  { id : "test-clock-fastload", run : function() {
+    return new Promise(function(resolve) {
+      Puck.write("\x10load()\n", function() {
+        Puck.eval("Bangle.uiRemove!==undefined", function(result) {
+          resolve([result]);
+        });
+      });
+    });
+  }},
+  { id : "test-launcher-fastload", run : function() {
+    return new Promise(function(resolve) {
+      Puck.write("\x10Bangle.showLauncher()\n", function() {
+        Puck.eval("Bangle.uiRemove!==undefined", function(result) {
+          resolve([result]);
+        });
+      });
+    });
+  }},
+  { id : "test-widgets-fastload", run : function() {
+    return new Promise(function(resolve) {
+      Puck.write("\x10reset()\n", function() {
+        Puck.write("\x10Bangle.loadWidgets()\n", function() {
+          Puck.eval("Object.keys(WIDGETS).filter(w=>!WIDGETS[w].remove)", function(result) {
+            resolve([result.length==0, result.join(", ")]);
+          });
+        });
+      });
+    });
+  }},
+  { id : "test-boot0", run : function() { // find how long each .boot0 item takes
+    return new Promise(function(resolve) {
+      puckData = "";
+      Puck.write(`\x10require("Storage").writeJSON("setting.json",Object.assign(require("Storage").readJSON("setting.json",1)||{},{bootDebug:1}));load()\n`, function() {
+        setTimeout(function() {
+          console.log("boot0 puckData", JSON.stringify(puckData));
+          puckData = puckData.replaceAll("\u001b[J","").trim();
+          let times = puckData.split("\r").map(l=>{l=l.trim().split(" ");return l[2]=="ms" ? [l[0],l[1]] : null}).filter(l=>l!==null);
+          console.log("times", JSON.stringify(times));
+          let total = times.find(t=>t[0]==".boot0");
+          times = times.filter(t=>t[0]!=".boot0");
+          let div = document.getElementById("test-boot0-times");
+          div.innerHTML = (total ? `(Total: ${total[1]}ms)` : "") +
+            (times.length?"<table><tr><th>File</th><th>Time</th></tr>" + times.map(t=>`<tr><td>${t[0]}</td><td>${t[1]}ms</td></tr>`).join("") + "</table>":"");
+          // back to normal
+          Puck.write(`\x10require("Storage").writeJSON("setting.json",Object.assign(require("Storage").readJSON("setting.json",1)||{},{bootDebug:0}));load()\n`, function() {
+            setTimeout(function() {
+              let isOk = total && total[1] < 200;
+              resolve([isOk, isOk ? "" : "over 0.2sec"]);
+            }, 5000); // can take a while to rewrite
+          });
+        }, 5000); // can take a while to rewrite
+      });
+    });
+  }},
+  { id : "test-clock-load", run : function() {
+    return new Promise(function(resolve) {
+      Puck.write("\x10reset()\n", function() {
+        Puck.eval(`((__TM=getTime()),eval(require("Storage").read((require("Storage").readJSON("setting.json",1)||{}).clock)),(getTime()-__TM))`, function(time) {
+          console.log("clock load time", time);
+          time = +time;
+          let isOk = time<1;
+          resolve([isOk, time.toFixed(2)+"sec" + (isOk ? "" : "(over 1sec)")]);
+        });
+      });
+    });
+  }},
+  { id : "test-launcher-load", run : function() {
+    return new Promise(function(resolve) {
+      Puck.write("\x10reset()\n", function() {
+        Puck.eval(`((__TM=getTime()),eval(require("Storage").read((require("Storage").readJSON("setting.json",1)||{}).launcher)),(getTime()-__TM))`, function(time) {
+          console.log("launcher load time", time);
+          time = +time;
+          let isOk = time<0.5;
+          resolve([isOk, time.toFixed(2)+"sec" + (isOk ? "" : "(over 0.5sec)")]);
+        });
+      });
+    });
+  }},
+  { id : "test-widget-load", run : function() {
+    return new Promise(function(resolve) {
+      Puck.write("\x10reset()\n", function() {
+        Puck.eval(`((__TM=getTime()),Bangle.loadWidgets(),(getTime()-__TM))`, function(time) {
+          console.log("widget load time", time);
+          time = +time;
+          let isOk = time<0.3;
+          resolve([isOk, time.toFixed(2)+"sec" + (isOk ? "" : "(over 0.3sec)")]);
+        });
+      });
+    });
+  }},
+
+  /* Add more tests here...
+
+
+
+  Maybe:
+
+  * Check if Storage reads are taking a long time (eg check '.hash' call .boot0 uses)
+  * Check load time of individual widgets
+  * Check load time of individual ClockInfos
+  */
+];
+  function resetTests() {
+    document.querySelectorAll("li").forEach(li => {
+      li.querySelector("span").textContent = "? ";
+    });
+  }
+
+  resetTests();
+  document.getElementById("starttest").addEventListener("click", function() {
+    document.getElementById("starttest").disabled = true;
+    let promise = Promise.resolve();
+    resetTests();
+    TESTS.forEach(function(test) {
+      promise = promise.then(function() {
+        document.querySelector(`#${test.id} span`).textContent = "...";
+        return test.run().then(result => {
+          document.querySelector(`#${test.id} span`).textContent = (result[0] ? "✓" : "✗") + (result[1] ? " ("+result[1]+") " : " ");
+        });
+      });
+    });
+    promise = promise.then(function() {
+      Puck.write("\x10load()\n", function() { // back to normal
+        document.getElementById("starttest").disabled = false;
+      });
+    });
+  });
+    </script>
+  </body>
+</html>

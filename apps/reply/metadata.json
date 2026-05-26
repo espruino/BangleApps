@@ -6,7 +6,7 @@
   "type": "module",
   "provides_modules" : ["reply"],
   "tags": "",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "readme": "README.md",
   "interface": "interface.html",
   "storage": [

@@ -1,0 +1,17 @@
+{ "id": "meseeks",
+  "name": "Mr Meeseeks",
+  "shortName":"MeSeeks",
+  "version":"0.02",
+  "description": "Mr Meeseeks clock with random faces and battery-dependent freckles overlay.",
+  "icon": "app.png",
+  "tags": "clock",
+  "type": "clock",
+  "supports" : ["BANGLEJS", "BANGLEJS2"],
+  "screenshots": [{"url":"screenshot01.png"}, {"url":"screenshot02.png"}, {"url":"screenshot03.png"}],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name":"meseeks.app.js","url":"app.js"},
+    {"name":"meseeks.img","url":"app-icon.js","evaluate":true}
+  ]
+}

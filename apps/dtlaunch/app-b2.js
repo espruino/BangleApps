@@ -15,25 +15,8 @@
   }, require('Storage').readJSON("dtlaunch.json", true) || {});
 
   let s = require("Storage");
-  // Borrowed caching from Icon Launcher, code by halemmerich.
-  let launchCache = s.readJSON("dtlaunch.cache.json", true)||{};
-  let launchHash = require("Storage").hash(/\.info/);
-  if (launchCache.hash!=launchHash) {
-  launchCache = {
-    hash : launchHash,
-    apps : s.list(/\.info$/)
-      .map(app=>{var a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};})
-      .filter(app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || (app.type=="launch" && settings.showLaunchers) || !app.type))
-      .sort((a,b)=>{
-        var n=(0|a.sortorder)-(0|b.sortorder);
-        if (n) return n; // do sortorder first
-        if (a.name<b.name) return -1;
-        if (a.name>b.name) return 1;
-        return 0;
-      }) };
-    s.writeJSON("dtlaunch.cache.json", launchCache);
-  }
-  let apps = launchCache.apps;
+  let launchCache = require("launch_utils").cache(settings);
+  let apps = launchCache.apps; // get a list of apps to show
   let page = 0;
   let initPageAppZeroth = 0;
   let initPageAppLast = 3;
@@ -84,8 +67,7 @@
   };
 
   let drawPage = function(p){
-    g.reset();
-    g.clearRect(0,24,175,175);
+    g.reset().clearRect(0,24,175,175);
     let O = 88+YOFF/2-12*(Npages/2);
     for (let j=0;j<Npages;j++){
       let y = O+j*12;
@@ -164,6 +146,7 @@
     for (i=0;i<4;i++){
       if((page*4+i)<Napps){
         if (isTouched(p,i)) {
+          g.reset();
           drawIcon(page,i,true && !settings.direct);
           if (selected>=0 || settings.direct) {
             if (selected!=i && !settings.direct){
@@ -172,7 +155,7 @@
             } else {
               buzzLong();
               global.dtlaunch.handlePagePersist(page);
-              load(apps[page*4+i].src);
+              require("launch_utils").loadApp(apps[page*4+i]);
             }
           }
           selected=i;

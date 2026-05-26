@@ -7,7 +7,7 @@
   "icon": "app.png",
   "type": "app",
   "tags": "tool,system",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "dependencies" : { "messageicons":"module", "reply": "module" },
   "provides_modules": ["messagegui"],
   "default": true,
