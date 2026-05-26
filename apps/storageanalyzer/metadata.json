@@ -1,7 +1,7 @@
 {
   "id": "storageanalyzer",
   "name": "Storage Analyzer",
-  "version": "0.03",
+  "version": "0.04",
   "description": "Analyzes Bangle.js storage and shows which apps are using storage space",
   "icon": "icon.png",
   "type": "RAM",

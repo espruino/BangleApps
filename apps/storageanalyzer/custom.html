@@ -1,10 +1,15 @@
 <html>
   <head>
     <link rel="stylesheet" href="../../css/spectre.min.css">
+    <style>
+      #errors {
+        overflow: scroll;
+      }
+    </style>
   </head>
   <body>
     <script src="../../core/lib/customize.js"></script>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>    
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <!-- Toggle Buttons -->
     <div class="btn-group" style="margin: 1em; display: flex; justify-content: center;">
@@ -21,45 +26,95 @@
       <div id="totalStoragePie" style="width: 100%; max-width: 600px; height: 300px;"></div>
     </div>
 
+    <pre id="errors"></pre>
+
     <script>
       let globalApps = [];
       let storageStats = null;
-      
-      function onInit(device) {
+
+      async function onInit(device) {
+        const puckRequest = js => new Promise(resolve => Puck.eval(js, resolve));
+        const wildcardToRegexp = wc => new RegExp("^" + wc.replaceAll(".", "\\.").replaceAll("?", ".*") + "$");
+        const fileSize = async f => await puckRequest(`(require("Storage").read("${f}") || "").length`);
+        const sum = (a, b) => a + b;
+
         Util.showModal("Reading Storage...");
-        Puck.eval(`(()=>{
-          let getApps = () => require("Storage").list(/\\.info$/).map(appInfoName => {
-            let appInfo = require("Storage").readJSON(appInfoName,1)||{};
-            var fileSize = 0, dataSize = 0;
-            appInfo.files.split(",").forEach(f => fileSize += require("Storage").read(f).length);
-            var data = (appInfo.data||"").split(";");
-            function wildcardToRegexp(wc) {
-              return new RegExp("^"+wc.replaceAll(".","\\\\.").replaceAll("?",".*")+"$");
+
+        const apps = [];
+        let stats;
+        const errors = [];
+        try{
+          stats = await puckRequest('require("Storage").getStats()');
+
+          const infos = await puckRequest('require("Storage").list(/\\.info$/)');
+
+          for(const appInfoName of infos){
+            try{
+              const appInfo = await puckRequest(`require("Storage").readJSON("${appInfoName}", 1)`);
+
+              if(appInfo == null){
+                errors.push({ app: appInfoName, err: "no info file" });
+                continue;
+              }
+
+              let fileTotal = 0;
+
+              if(appInfo.files){
+                for(const f of appInfo.files.split(",")){
+                  fileTotal += await fileSize(f);
+                }
+              }
+
+              let dataSize = 0;
+
+              if(appInfo.data){
+                const sumFiles = async (patterns, options) => (
+                  (await Promise.all(
+                    patterns
+                    .map(async pattern => {
+                      const names = await puckRequest(`require("Storage").list(${wildcardToRegexp(pattern)}, ${JSON.stringify(options)})`);
+
+                      return (await Promise.all(names.map(fileSize))).reduce(sum, 0)
+                    })
+                  ))
+                  .reduce(sum, 0)
+                );
+
+                /* parse the datastring, see core/js/appinfo.js, makeDataString */
+                const fileObj = appInfo.data.split(";").map(d => d.split(","));
+                let files = fileObj[0];
+                const storage = fileObj[1];
+                if (files == null || (files.length === 1 && files[0] === "")) files = [];
+
+                dataSize = await sumFiles(files, {sf: false}) + await sumFiles(storage || [], {sf: true});
+              }
+
+              apps.push({ id: appInfo.id, fileSize: fileTotal, dataSize });
+            }catch(e){
+              errors.push({ app: appInfoName, err: "" + e });
             }
-            if (data[0]) data[0].split(",").forEach(wc => {
-              require("Storage").list(wildcardToRegexp(wc), {sf:false}).forEach(f => {
-                dataSize += require("Storage").read(f).length
-              });
-            });
-            if (data[1]) data[1].split(",").forEach(wc => {
-              require("Storage").list(wildcardToRegexp(wc), {sf:true}).forEach(f => {
-                dataSize += require("Storage").open(f,"r").getLength();
-              });
-            });
-            return [appInfo.id, fileSize, dataSize];
-          });
-          return [getApps(), require(\"Storage\").getStats()]; })()`, function(result) {
-          Util.hideModal();
-          globalApps = result[0].sort((a,b) => (b[1]+b[2]) - (a[1]+a[2]));
-          storageStats = result[1];
-
-          if (globalApps.length === 0) {
-            document.getElementById("storageTable").innerHTML = "<p>No apps found</p>";
-            return;
           }
+        }finally{
+          Util.hideModal();
+        }
 
-          drawTable();
-        });
+        globalApps = apps.sort((a,b) => (b.fileSize + b.dataSize) - (a.fileSize + a.dataSize));
+        storageStats = stats;
+
+        const errorEl = document.getElementById("errors");
+        errorEl.classList.toggle("d-hide", errors.length === 0);
+        if(errors.length){
+          errorEl.innerText = errors
+            .map(({ app, err }) => `Error in app "${app}": ${err}`)
+            .join("\n");
+        }
+
+        if (globalApps.length === 0) {
+          document.getElementById("storageTable").innerHTML = "<p>No apps found</p>";
+          return;
+        }
+
+        drawTable();
       }
       function roundDecimal(num){
         return Math.round(num * 10) / 10;
@@ -78,10 +133,10 @@
             <tbody>
               ${globalApps.map(app => `
                 <tr>
-                  <td>${app[0]}</td>
-                  <td>${(app[1]/1000).toFixed(1)}</td>
-                  <td>${(app[2]/1000).toFixed(1)}</td>
-                  <td>${((app[1]+app[2])/1000).toFixed(1)}</td>
+                  <td>${app.id}</td>
+                  <td>${(app.fileSize/1000).toFixed(1)}</td>
+                  <td>${(app.dataSize/1000).toFixed(1)}</td>
+                  <td>${((app.fileSize+app.dataSize)/1000).toFixed(1)}</td>
                 </tr>`).join("")}
             </tbody>
           </table>`;
@@ -93,7 +148,7 @@
         // App-specific chart
         const chartData = [
           ['App', 'Total Size (KB)']
-        ].concat(globalApps.map(app => [app[0], roundDecimal((app[1] + app[2])/1000)]));
+        ].concat(globalApps.map(app => [app.id, roundDecimal((app.fileSize + app.dataSize)/1000)]));
 
         const data = google.visualization.arrayToDataTable(chartData);
 
@@ -120,7 +175,7 @@
 
           const totalOptions = {
             title: 'Total Storage Usage (KBs)',
-            
+
             chartArea: { width: '90%', height: '80%' },
             legend: { position: 'bottom' }
           };
@@ -131,7 +186,7 @@
       }
 
       google.charts.load('current', {'packages':['corechart']});
-      
+
 
       document.getElementById("pieChartButton").addEventListener("click", function () {
         document.getElementById("storageTable").style.display = "none";
@@ -148,7 +203,7 @@
         this.classList.add("btn-primary");
         document.getElementById("pieChartButton").classList.remove("btn-primary");
       });
-      
+
     </script>
   </body>
 </html>
