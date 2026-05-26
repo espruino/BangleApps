@@ -2,12 +2,12 @@
   "id": "qmsched",
   "name": "Quiet Mode Schedule and Widget",
   "shortName": "Quiet Mode",
-  "version": "0.10",
-  "description": "Automatically turn Quiet Mode on or off at set times, change theme and LCD options while Quiet Mode is active.",
+  "version": "0.11",
+  "description": "Schedule quiet modes and options to activate at certain times, and provides a clockinfo and widget for changing/viewing modes.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot_b1_main.png"},{"url":"screenshot_b1_edit.png"},{"url":"screenshot_b1_lcd.png"},
                   {"url":"screenshot_b2_main.png"},{"url":"screenshot_b2_edit.png"},{"url":"screenshot_b2_lcd.png"}],
-  "tags": "tool,widget",
+  "tags": "tool,widget,clkinfo",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [
@@ -15,7 +15,8 @@
     {"name":"qmsched.app.js","url":"app.js"},
     {"name":"qmsched.boot.js","url":"boot.js"},
     {"name":"qmsched.img","url":"icon.js","evaluate":true},
-    {"name":"qmsched.wid.js","url":"widget.js"}
+    {"name":"qmsched.wid.js","url":"widget.js"},
+    {"name":"qmsched.clkinfo.js","url":"clkinfo.js"}
   ],
   "data": [{"name":"qmsched.json"}]
 }
