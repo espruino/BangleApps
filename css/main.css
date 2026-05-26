@@ -408,6 +408,9 @@
     .filter-nav .menu {
       overflow: visible;
     }
+    .sort-nav .menu {
+      overflow: visible;
+    }
 
     .tile .tile-content br {
       display: block;
