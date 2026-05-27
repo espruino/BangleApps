@@ -9,7 +9,7 @@
   "tags": "clock,clkinfo",
   "author":"RKBoss6",
   "supports": ["BANGLEJS2"],
-  "dependencies" : { "clockbg":"module", "clock_info":"module","colorpicker":"module"},
+  "dependencies" : { "clockbg":"module", "clock_info":"module"},
   "allow_emulator":true,
   "readme":"README.md",
   "screenshots": [
