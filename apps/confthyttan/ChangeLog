@@ -10,4 +10,4 @@
       Scroll". Add "Big Clock Info app".
       Auto open messages if locked.
 0.09: remove fastload utils as it's functionality is more or less included in
-      firmware now.
+      firmware now. Fix to handle the new widget theme colors.
