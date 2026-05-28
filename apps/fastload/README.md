@@ -1,6 +1,8 @@
-#### ⚠️EXPERIMENTAL⚠️
+#### ⚠️DEPRECATED⚠️ ⚠️EXPERIMENTAL⚠️
 
 # Fastload Utils
+
+**Deprecated.** This app's functionality has to a large extent been integrated into firmware, with slight adjustments.
 
 **Use this with caution.** When you find something misbehaving please check if the problem actually persists without Fastload Utils
 before filing an issue.
