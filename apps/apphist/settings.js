@@ -1,3 +1,5 @@
+//Settings has been disabled for apphist. But we leave this file for potential future use.
+
 (function(back) {
   var FILE="apphist.settings.json";
   var settings;
