@@ -1,0 +1,18 @@
+{ "id": "apphist",
+  "name": "App History",
+  "version": "0.01",
+  "icon": "icon.png",
+  "description": "Lets you navigate back trough the series of apps since last you were on the clock face.  Works with the software back button and hardware button.",
+  "type":"bootloader",
+  "tags": "system",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {"name":"apphist.4.boot.js","url":"boot.js"},
+    {"name":"apphist.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"apphist.json"},
+    {"name":"apphist.settings.json"}
+  ]
+}
