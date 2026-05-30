@@ -1,3 +1,5 @@
+let hebrewCalendar = require("Storage").readJSON("hebrew_calendar.json", 1) || [];
+
 const dayInMS = 86400000;
 
 const DateProvider = { now: () => Date.now() };
@@ -48,7 +50,10 @@ function getUpcomingEvents() {
       type: "txt",
       font: "4x6",
       id: "warning",
-      label: "only " + eventsLeft + " events left in calendar; update soon",
+      label:
+        eventsLeft === 0
+          ? "no events; Customize this app in the app loader to set your location"
+          : "only " + eventsLeft + " events left in calendar; update soon",
       pad: 2,
       bgCol: g.theme.bg,
     };
