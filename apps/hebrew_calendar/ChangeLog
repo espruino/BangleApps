@@ -4,3 +4,4 @@
 0.04: removing TS
 0.05: major overhaul; now you customize your calendar based on your location for candle lighting times
 0.06: bug fixes and improvements
+0.07: fix customizer (skypack CDN 404/CORS - switched to esm.sh), crash from undefined "Upcoming" list item, duplicate layout ids, crash when calendar is exhausted, and non-numeric Location lat/lon

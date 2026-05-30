@@ -61,13 +61,13 @@ function getUpcomingEvents() {
         startEvent: event.startEvent,
         type: "txt",
         font: "6x8",
-        id: "upcomingEvents" + 1,
+        id: "upcomingEvents" + i,
         label: event.desc + " at " + Locale.time(new Date(event.startEvent), 1),
         pad: 2,
         bgCol: g.theme.bg,
       };
     })
-    .concat(warning)
+    .concat(warning ? [warning] : [])
     .sort(function (a, b) {
       return a.startEvent - b.startEvent;
     });
@@ -168,10 +168,13 @@ function updateCalendar() {
   layout.forgetLazyState();
   layout.render();
 
+  const next = findNextEvent();
   let nextChange = Math.min(
-    findNextEvent().startEvent - DateProvider.now() + 5000,
+    next ? next.startEvent - DateProvider.now() + 5000 : Infinity,
     nextEndingEvent - DateProvider.now() + 5000
   );
+  // when the calendar is exhausted both values are Infinity; check again in a day
+  if (!isFinite(nextChange)) nextChange = dayInMS;
   setTimeout(updateCalendar, nextChange);
   console.log("updated events");
 }
