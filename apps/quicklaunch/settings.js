@@ -38,7 +38,7 @@ var apps = launchCache.apps;
 
 // Add required launch_utils properties to settings object from versions older than 0.17
 //delete settings.trace;
-var settingsKeys = settings.keys();
+var settingsKeys = Object.keys(settings);
 settingsKeys.forEach(entry => {
   let name = settings[entry].name; 
   let app  = apps.find(app=>app.name === name);
