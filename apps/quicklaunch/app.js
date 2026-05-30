@@ -31,7 +31,7 @@
           else if (!storage.read(settings[trace+"app"].src)) {
             E.showMessage(settings[trace+"app"].src+"\n"+/*LANG*/"was not found"+".", "Quick Launch");
             settings[trace+"app"] = {"name":"(none)"}; // reset entry.
-          } else load(settings[trace+"app"].src);
+          } else require("launch_utils").loadApp(settings[trace+"app"]);
     }
   };
 
@@ -79,7 +79,7 @@
   const updateTimeoutToClock = function(){
     let time = 1500; // milliseconds
     if (timeoutToClock) clearTimeout(timeoutToClock);
-    timeoutToClock = setTimeout(load,time);
+    timeoutToClock = setTimeout(Bangle.showClock,time);
   };
   updateTimeoutToClock();
 

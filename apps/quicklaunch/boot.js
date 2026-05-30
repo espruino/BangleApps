@@ -21,7 +21,7 @@
         settings[trace+"app"] = {"name":"(none)"}; // reset entry.
         storage.write("quicklaunch.json", settings);
         setTimeout(load, 2000);
-      } else {load(settings[trace+"app"].src);}
+      } else {require("launch_utils").launchApp(settings[trace+"app"]);}
     }
   };
 

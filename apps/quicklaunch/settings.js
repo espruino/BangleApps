@@ -33,8 +33,18 @@ for (let d of ["extleftapp","extrightapp","extupapp","extdownapp","exttapapp"]){
   if (settings[d]) delete settings[d];
 }
 
+var launchCache = require("launch_utils").cache({showClocks:true,showLaunchers:true});
+var apps = launchCache.apps;
 
-var apps = storage.list(/\.info$/).map(app=>{var a=storage.readJSON(app,1);return a&&{name:a.name,type:a.type,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="launch" || app.type=="clock" || !app.type));
+// Add required launch_utils properties to settings object from versions older than 0.17
+//delete settings.trace;
+var settingsKeys = settings.keys();
+settingsKeys.forEach(entry => {
+  let name = settings[entry].name; 
+  let app  = apps.find(app=>app.name === name);
+  if (app) settings[entry].wid = app.wid;
+});
+storage.writeJSON("quicklaunch.json",settings);
 
 // Add psuedo app to trigger Bangle.showLauncher later
 apps.push({
@@ -49,7 +59,8 @@ let extension = {
     "name": "Extension",
     "type": "app",
     "sortorder": -11,
-    "src": "quicklaunch.app.js"
+    "src": "quicklaunch.app.js",
+    "wid": true // // Hack: Fool launch_utils that extension screen uses widgets. This way we get the fastest possibe loading in whichever environment we find ourselves.
    };
 apps.push(extension);
 
