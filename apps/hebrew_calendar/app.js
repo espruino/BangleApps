@@ -157,6 +157,8 @@ function draw() {
 
 // update time and draw
 g.clear();
+// register as a clock before loading widgets so they know a clock app is running
+Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 draw();
@@ -185,5 +187,3 @@ function updateCalendar() {
 }
 
 updateCalendar();
-
-Bangle.setUI("clock");
