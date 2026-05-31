@@ -34,6 +34,7 @@ for (let d of ["extleftapp","extrightapp","extupapp","extdownapp","exttapapp"]){
 }
 
 var launchCache = require("launch_utils").cache({showClocks:true,showLaunchers:true});
+launchCache = require("launch_utils").cacheWidgetsCheck(launchCache.apps);
 var apps = launchCache.apps;
 
 // Add required launch_utils properties to settings object from versions older than 0.17
