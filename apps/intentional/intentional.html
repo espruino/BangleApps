@@ -92,7 +92,11 @@ function drawTable(){
 
       row.innerHTML=`
       <td>☰</td>
-      <td class="folder">📁 ${item.name||"Folder"}</td>
+      <td>
+        <input class="form-input"
+          value="${item.name||'Folder'}"
+          onchange="getCurrentItems()[${i}].name=this.value">
+      </td>
       <td></td>
       <td>
       <button class="btn btn-primary btn-sm" onclick="openFolder(${i})">Open</button>
@@ -129,9 +133,27 @@ if(item.type==="app"){
     </button>
   </td>
   `;
-
 }
     tbody.appendChild(row);
+    let sel = row.querySelector(`#app_${i}`);
+
+getLaunchableApps().forEach(app => {
+
+  let opt = document.createElement("option");
+
+  opt.value = app.id + ".app.js";
+  opt.textContent = app.name || app.id;
+
+  if (item.app === opt.value)
+    opt.selected = true;
+
+  sel.appendChild(opt);
+
+});
+
+sel.onchange = function() {
+  getCurrentItems()[i].app = this.value;
+};
 
   });
 
