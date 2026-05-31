@@ -41,6 +41,10 @@ let data = {items:[]};
 let path = [];
 let dragIndex = null;
 
+  window.addEventListener("message", event => {
+  console.log("MESSAGE RECEIVED");
+  console.log(event.data);
+});
 
 // ---------- Draw Table ----------
 function drawTable(){
