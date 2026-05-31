@@ -3,4 +3,5 @@ require("Storage").write("intentional.info",{
   "name":"intentional",
   "src":"intentional.app.js",
   "icon":"intentional.png"
+  "data":"intentional.json"
 });
