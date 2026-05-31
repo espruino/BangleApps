@@ -42,60 +42,6 @@ let path = [];
 let dragIndex = null;
 
 
-// ---------- Load existing data ----------
-function loadData(json) {
-
-  console.log("loadData called");
-  console.log("Received:", json);
-  alert("JSON received: " + JSON.stringify(json));
-
-  if (json && json.items) {
-    data = json;
-  } else {
-    data = {items:[]};
-  }
-
-  drawTable();
-}
-
-
-// ---------- Utility ----------
-function getCurrentItems(){
-
-  let items = data.items;
-
-  path.forEach(i=>{
-    if(items[i] && items[i].items)
-      items = items[i].items;
-  });
-
-  return items;
-}
-
-
-// ---------- Breadcrumb ----------
-function drawBreadcrumb(){
-
-  let bc = document.getElementById("breadcrumb");
-
-  let html = `<button class="btn btn-sm" onclick="goRoot()">Root</button>`;
-
-  let items = data.items;
-
-  path.forEach((index,i)=>{
-
-    let name = items[index].name || "Folder";
-
-    html += ` / <button class="btn btn-sm" onclick="goLevel(${i})">${name}</button>`;
-
-    items = items[index].items;
-
-  });
-
-  bc.innerHTML = html;
-}
-
-
 // ---------- Draw Table ----------
 function drawTable(){
 
@@ -158,6 +104,65 @@ function drawTable(){
 
   });
 
+}
+
+
+// ---------- Load existing data ----------
+function loadData(json) {
+
+  console.log("loadData called");
+  console.log("Received:", json);
+  alert("JSON received: " + JSON.stringify(json));
+
+  if (json && json.items) {
+    data = json;
+  } else {
+    data = {items:[]};
+  }
+
+  drawTable();
+}
+
+customizeApp({
+  storage:[{name:"intentional.json"}],
+  onInit:loadData
+});
+
+
+// ---------- Utility ----------
+function getCurrentItems(){
+
+  let items = data.items;
+
+  path.forEach(i=>{
+    if(items[i] && items[i].items)
+      items = items[i].items;
+  });
+
+  return items;
+}
+
+
+// ---------- Breadcrumb ----------
+function drawBreadcrumb(){
+
+  let bc = document.getElementById("breadcrumb");
+
+  let html = `<button class="btn btn-sm" onclick="goRoot()">Root</button>`;
+
+  let items = data.items;
+
+  path.forEach((index,i)=>{
+
+    let name = items[index].name || "Folder";
+
+    html += ` / <button class="btn btn-sm" onclick="goLevel(${i})">${name}</button>`;
+
+    items = items[index].items;
+
+  });
+
+  bc.innerHTML = html;
 }
 
 
