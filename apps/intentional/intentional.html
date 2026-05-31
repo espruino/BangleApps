@@ -30,6 +30,7 @@
 
 <button class="btn btn-primary" onclick="addTask()">Add Task</button>
 <button class="btn" onclick="addFolder()">Add Folder</button>
+<button class="btn" onclick="addApp()">Add App</button>
 <button class="btn" onclick="addSeparator()">Add Separator</button>
 <button class="btn btn-success" onclick="upload()">Upload to Watch</button>
 
@@ -40,10 +41,18 @@
 let data = {items:[]};
 let path = [];
 let dragIndex = null;
+let installedApps = [];
 
-  window.addEventListener("message", event => {
-  console.log("MESSAGE RECEIVED");
-  console.log(event.data);
+window.addEventListener("message", event => {
+
+  if (event.data.type === "init") {
+
+    installedApps = event.data.data.appsInstalled || [];
+
+    console.log("Installed apps:", installedApps);
+
+  }
+
 });
 
 // ---------- Draw Table ----------
@@ -103,7 +112,25 @@ function drawTable(){
       `;
 
     }
+if(item.type==="app"){
 
+  row.innerHTML=`
+  <td>☰</td>
+  <td>
+    <input class="form-input"
+      value="${item.name||""}"
+      onchange="getCurrentItems()[${i}].name=this.value">
+  </td>
+  <td>${item.id||""}</td>
+  <td>
+    <button class="btn btn-error btn-sm"
+      onclick="removeItem(${i})">
+      Delete
+    </button>
+  </td>
+  `;
+
+}
     tbody.appendChild(row);
 
   });
@@ -123,6 +150,42 @@ function gotStored(stored) {
   drawTable();
 }
 
+function getLaunchableApps() {
+
+  return installedApps.filter(app => {
+
+    if (!app.files) return false;
+
+    if (!app.files.includes(".app.js")) return false;
+
+    if (app.type === "widget") return false;
+    if (app.type === "module") return false;
+    if (app.type === "bootloader") return false;
+
+    return true;
+  });
+
+}
+
+function fillAppList() {
+
+  let sel = document.getElementById("appSelect");
+
+  sel.innerHTML = "";
+
+  getLaunchableApps().forEach(app => {
+
+    let opt = document.createElement("option");
+
+    opt.value = app.id;
+    opt.textContent = app.name || app.id;
+
+    sel.appendChild(opt);
+
+  });
+
+}
+  
 function onInit() {
   downloadJSONfile("intentional.json", gotStored);
 }
@@ -235,7 +298,27 @@ function addFolder(){
 
   drawTable();
 }
+function addApp() {
 
+  let apps = getLaunchableApps();
+
+  let list = apps.map(a => a.id).join("\n");
+
+  let appId = prompt(
+    "Choose App ID:\n\n" + list,
+    apps[0] ? apps[0].id : ""
+  );
+
+  if (!appId) return;
+
+  getCurrentItems().push({
+    type:"app",
+    name:appId,
+    id:appId
+  });
+
+  drawTable();
+}
 function addSeparator(){
 
   getCurrentItems().push({
