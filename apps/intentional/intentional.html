@@ -300,13 +300,22 @@ function addFolder(){
 }
 function addApp() {
 
-  console.log("installedApps =", installedApps);
-  console.log("launchableApps =", getLaunchableApps());
+  let apps = getLaunchableApps();
 
-  alert(
-    "Installed: " + installedApps.length +
-    "\nLaunchable: " + getLaunchableApps().length
-  );
+  if (!apps.length) {
+    alert("No launchable apps found");
+    return;
+  }
+
+  let app = apps[0];
+
+  getCurrentItems().push({
+    type:"app",
+    name: app.name || app.id,
+    app: app.id + ".app.js"
+  });
+
+  drawTable();
 }
 
 function addSeparator(){
