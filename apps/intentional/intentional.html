@@ -121,7 +121,7 @@ if(item.type==="app"){
       value="${item.name||""}"
       onchange="getCurrentItems()[${i}].name=this.value">
   </td>
-  <td>${item.id||""}</td>
+  <td>${item.app||""}</td>
   <td>
     <button class="btn btn-error btn-sm"
       onclick="removeItem(${i})">
