@@ -28,73 +28,33 @@
 <tbody></tbody>
 </table>
 
-<button class="btn btn-primary" onclick="addTask()">Add Action</button>
+<button class="btn btn-primary" onclick="addTask()">Add Task</button>
 <button class="btn" onclick="addFolder()">Add Folder</button>
 <button class="btn" onclick="addSeparator()">Add Separator</button>
 <button class="btn btn-success" onclick="upload()">Upload to Watch</button>
 
 <script src="../../core/lib/customize.js"></script>
-<script src="../../core/lib/interface.js"></script>
 
 <script>
 
 let data = {items:[]};
 let path = [];
-let dragItem = null;
 let dragIndex = null;
 
-// ---------- download JSON data  ----------
-function downloadJSONFile(filename, callback) {
-  Util.readStorageJSON(filename, data => {
-    if (!data) data = {};
-    callback(data);
-  });
-}
 
-  let data = {items:[]};
-
-function onInit() {
-
-  // attach button handler
-  const btn = document.getElementById("addAction");
-  if (btn) btn.onclick = addAction;
-
-  // load JSON from the watch
-  Puck.eval('require("Storage").read("intentional.json")', function(d) {
-
-    if (d) {
-      data = JSON.parse(d);
-    } else {
-      data = [];
-    }
-
-    // draw UI table
-    drawTable();
-
-  });
-}
-  
 // ---------- Load existing data ----------
-function loadData(appData) {
-
-  if (appData && appData["intentional.json"]) {
-    data = JSON.parse(appData["intentional.json"]);
-  } else {
-    data = {items:[]};
-  }
-
-  drawTable();
-}
-
-downloadJSONFile("intentional.json", function(json) {
-
+function loadData(json) {
   if (json && json.items) {
     data = json;
   } else {
     data = {items:[]};
   }
-
   drawTable();
+}
+
+customizeApp({
+  storage:[{name:"intentional.json"}],
+  onInit:loadData
 });
 
 
@@ -143,8 +103,7 @@ function drawTable(){
   let tbody = document.querySelector("#taskTable tbody");
   tbody.innerHTML="";
 
- let items = getCurrentItems();
- let currentItems = items;
+  let items = getCurrentItems();
 
   items.forEach((item,i)=>{
 
@@ -152,10 +111,7 @@ function drawTable(){
     row.className="dragrow";
     row.draggable=true;
 
-    row.ondragstart = () => {
-  dragIndex = i;
-  dragItem = items[i];
-};
+    row.ondragstart = ()=>dragIndex=i;
     row.ondragover = e=>e.preventDefault();
     row.ondrop = ()=>dropRow(i);
 
@@ -164,41 +120,27 @@ function drawTable(){
 
       row.innerHTML=`
       <td>☰</td>
-      <td>
-        <input class="form-input"
-        value="${item.name||""}"
-        onfocus="if(!this.dataset.cleared){this.value='';this.dataset.cleared=1;}"
-        onchange="currentItems[${i}].name=this.value"
-      </td>
-      <td>
-        <input class="form-input"
-        value="${item.intent||""}"
-        onfocus="if(!this.dataset.cleared){this.value='';this.dataset.cleared=1;}"
-        onchange="currentItems[${i}].intent=this.value"
-      </td>
+      <td><input class="form-input" value="${item.name||""}" onchange="getCurrentItems()[${i}].name=this.value"></td>
+      <td><input class="form-input" value="${item.intent||""}" onchange="getCurrentItems()[${i}].intent=this.value"></td>
       <td><button class="btn btn-error btn-sm" onclick="removeItem(${i})">Delete</button></td>
       `;
 
     }
 
 
-if(item.type==="folder"){
+    if(item.type==="folder"){
 
-  row.innerHTML=`
-  <td>☰</td>
-  <td>
-    📁 <input class="form-input"
-    value="${item.name||"Folder"}"
-    onfocus="if(!this.dataset.cleared){this.value='';this.dataset.cleared=1;}"
-    onchange="getCurrentItems()[${i}].name=this.value">
-  </td>
-  <td></td>
-  <td>
-  <button class="btn btn-primary btn-sm" onclick="openFolder(${i})">Open</button>
-  <button class="btn btn-error btn-sm" onclick="removeItem(${i})">Delete</button>
-  </td>
-  `;
-}
+      row.innerHTML=`
+      <td>☰</td>
+      <td class="folder">📁 ${item.name||"Folder"}</td>
+      <td></td>
+      <td>
+      <button class="btn btn-primary btn-sm" onclick="openFolder(${i})">Open</button>
+      <button class="btn btn-error btn-sm" onclick="removeItem(${i})">Delete</button>
+      </td>
+      `;
+
+    }
 
 
     if(item.type==="separator"){
@@ -223,13 +165,8 @@ function dropRow(newIndex){
 
   let items = getCurrentItems();
 
-  if(dragItem===null) return;
-
-  items.splice(dragIndex,1);
-  items.splice(newIndex,0,dragItem);
-
-  dragItem = null;
-  dragIndex = null;
+  let item = items.splice(dragIndex,1)[0];
+  items.splice(newIndex,0,item);
 
   drawTable();
 }
@@ -257,7 +194,7 @@ function addTask(){
 
   getCurrentItems().push({
     type:"task",
-    name:"Action Name",
+    name:"New Task",
     intent:"com.example.INTENT"
   });
 
@@ -298,7 +235,7 @@ function upload(){
     storage:[
       {
         name:"intentional.json",
-        content:JSON.stringify(data, null, 4)
+        content:JSON.stringify(data)
       }
     ]
   });

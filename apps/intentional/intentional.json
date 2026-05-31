@@ -1,28 +1,91 @@
 {
   "items":[
+
     {
       "type":"task",
-      "name":"Take Photo",
-      "intent":"com.lyrion.TASKER_PHOTO"
+      "name":"Play/Pause",
+      "intent":"com.lyrion.TASKER_PLAY_PAUSE"
+    },
+    {
+      "type":"task",
+      "name":"ZuPower Off",
+      "intent":"com.lyrion.TASKER_POWER"
+    },
+    {
+      "type":"folder",
+      "name":"ZuStations",
+      "items":[
+        {
+          "type":"task",
+          "name":"KXT",
+          "intent":"com.lyrion.TASKER_PLAY_KXT"
+        },
+        {
+          "type":"task",
+          "name":"Pandora",
+          "intent":"com.lyrion.TASKER_PLAY_PANDORA"
+        },
+        {
+          "type":"task",
+          "name":"Squeeze",
+          "intent":"com.lyrion.TASKER_PLAY_SQUEEZE"
+        },
+        {
+          "type":"task",
+          "name":"CO Sound",
+          "intent":"com.lyrion.TASKER_PLAY_ColoradoSound"
+        },
+        {
+          "type":"task",
+          "name":"WYEP",
+          "intent":"com.lyrion.TASKER_PLAY_WYEP"
+        },
+        {
+          "type":"task",
+          "name":"KUZU",
+          "intent":"com.lyrion.TASKER_PLAY_KUZU"
+        },
+        {
+          "type":"task",
+          "name":"WRCJ",
+          "intent":"com.lyrion.TASKER_PLAY_WRCJ"
+        }
+      ]
+    },
+    {
+    "type":"app",
+    "name":"Lyrion",
+    "app":"lyrionctrl.app.js"
     },
     {
       "type":"separator"
     },
     {
       "type":"folder",
-      "name":"Media",
+      "name":"Camera",
       "items":[
         {
           "type":"task",
-          "name":"Take Video",
-          "intent":"com.lyrion.TASKER_SECRET"
+          "name":"Photo",
+          "intent":"com.bangle.tasker_photo"
         },
         {
           "type":"task",
-          "name":"Find Phone",
-          "intent":"com.bangle.find_phone"
+          "name":"Video",
+          "intent":"com.bangle.tasker_video"
         }
       ]
+    },
+    {
+      "type":"task",
+      "name":"Flashlight",
+      "intent":"com.bangle.tasker_flashlight"
+    },
+    {
+      "type":"task",
+      "name":"Find my phone",
+      "intent":"com.bangle.find_phone"
     }
+
   ]
 }
