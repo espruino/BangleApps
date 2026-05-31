@@ -11,3 +11,4 @@
       Auto open messages if locked.
 0.09: remove fastload utils as it's functionality is more or less included in
       firmware now. Fix to handle the new widget theme colors.
+      Disable "loading..." message.
