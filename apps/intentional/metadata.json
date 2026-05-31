@@ -15,5 +15,10 @@
   "storage": [
     {"name":"intentional.app.js","url":"intentional.app.js"},
     {"name":"intentional.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data": [
+    {
+      "name":"intentional.json"
+    }
   ]
 }
