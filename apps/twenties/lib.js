@@ -1,5 +1,5 @@
 {
-  exports.getTimeAtNextBuzz = () => {
+  const getTimeAtNextBuzz = () => {
     const isWorkTime = (d) =>
       d.getDay() % 6 && d.getHours() >= 8 && d.getHours() < 18;
     const isLookAwayTime = (d) =>
@@ -15,7 +15,6 @@
           (NOW.getMinutes() + (20 - NOW.getMinutes() % 20)) * 60000;
       }
     }
-    print(t);
     return t;
   };
 
@@ -31,7 +30,7 @@
   const S = require("sched");
 
   exports.setup = function () {
-    const TIME_AT_NEXT_BUZZ = exports.getTimeAtNextBuzz();
+    const TIME_AT_NEXT_BUZZ = getTimeAtNextBuzz();
     const TIME_AT_SETUP = new Date();
     let alarm = {
       on: true,
