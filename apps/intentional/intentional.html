@@ -108,26 +108,40 @@ function drawTable(){
 
 
 // ---------- Load existing data ----------
-function loadData(json) {
+function gotStored(stored) {
+  console.log("gotStored", stored);
 
-  console.log("loadData called");
-  console.log("Received:", json);
-  alert("JSON received: " + JSON.stringify(json));
+  data = stored || { items: [] };
 
-  if (json && json.items) {
-    data = json;
-  } else {
-    data = {items:[]};
-  }
+  if (!data.items)
+    data = { items: [] };
 
   drawTable();
 }
 
-customizeApp({
-  storage:[{name:"intentional.json"}],
-  onInit:loadData
-});
+function onInit() {
+  downloadJSONfile("intentional.json", gotStored);
+}
 
+function downloadJSONfile(fileid, callback) {
+  Puck.write(`\x10(function() {
+    var data = require("Storage").readJSON("${fileid}",1) || {items:[]};
+    Bluetooth.print(JSON.stringify(data));
+  })()\n`, contents => {
+
+    console.log("Downloaded:", contents);
+
+    let stored;
+
+    try {
+      stored = JSON.parse(contents);
+    } catch(e) {
+      stored = {items:[]};
+    }
+
+    callback(stored);
+  });
+}
 
 // ---------- Utility ----------
 function getCurrentItems(){
