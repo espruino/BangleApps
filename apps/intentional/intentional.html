@@ -129,9 +129,8 @@ function drawTable(){
       </td>
   
       <td>
-        <input class="form-input"
-        value="${item.app||""}"
-        onchange="getCurrentItems()[${i}].app=this.value">
+      <select class="form-select" id="app_${i}">
+      </select>
       </td>
 
       <td>
@@ -142,23 +141,6 @@ function drawTable(){
 
 }
     
-    tbody.appendChild(row);
-    let sel = row.querySelector(`#app_${i}`);
-
-getLaunchableApps().forEach(app => {
-
-  let opt = document.createElement("option");
-
-  opt.value = app.id + ".app.js";
-  opt.textContent = app.name || app.id;
-
-  if (item.app === opt.value)
-    opt.selected = true;
-
-  sel.appendChild(opt);
-
-});
-
 sel.onchange = function() {
   getCurrentItems()[i].app = this.value;
 };
