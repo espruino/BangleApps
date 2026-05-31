@@ -2,6 +2,11 @@
   "items":[
 
     {
+      "type":"app",
+      "name":"about",
+      "app":"about.app.js"
+    },
+    {
       "type":"task",
       "name":"Play/Pause",
       "intent":"com.lyrion.TASKER_PLAY_PAUSE"
