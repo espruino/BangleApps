@@ -106,7 +106,6 @@ function drawTable(){
 
     }
 
-
     if(item.type==="separator"){
 
       row.innerHTML=`
@@ -117,35 +116,34 @@ function drawTable(){
 
     }
     
-    if(item.type==="app"){
+if(item.type==="app"){
 
-      row.innerHTML=`
-      <td>☰</td>
+  row.innerHTML=`
+  <td>☰</td>
 
-      <td>
-      <input class="form-input"
-        value="${item.name||""}"
-        onchange="getCurrentItems()[${i}].name=this.value">
-      </td>
-  
-      <td>
-      <select class="form-select" id="app_${i}">
-      </select>
-      </td>
+  <td>
+  <input class="form-input"
+    value="${item.name||""}"
+    onchange="getCurrentItems()[${i}].name=this.value">
+  </td>
 
-      <td>
-        <button class="btn btn-error btn-sm"
-        onclick="removeItem(${i})">Delete</button>
-      </td>
+  <td>
+    <input class="form-input"
+    value="${item.app||''}"
+    onchange="getCurrentItems()[${i}].app=this.value">
+  </td>
+
+  <td>
+    <button class="btn btn-error btn-sm"
+    onclick="removeItem(${i})">Delete</button>
+  </td>
   `;
 
 }
-    
-sel.onchange = function() {
-  getCurrentItems()[i].app = this.value;
-};
 
-  });
+  tbody.appendChild(row);
+
+});
 
 }
 
