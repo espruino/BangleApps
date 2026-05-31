@@ -2,9 +2,9 @@
   "items":[
 
     {
-      "type":"app",
-      "name":"about",
-      "app":"about.app.js"
+    "type":"app",
+    "name":"About",
+    "app":"about.app.js"
     },
     {
       "type":"task",
