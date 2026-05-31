@@ -300,22 +300,15 @@ function addFolder(){
 }
 function addApp() {
 
-  let apps = getLaunchableApps();
+  console.log("installedApps =", installedApps);
+  console.log("launchableApps =", getLaunchableApps());
 
-  let list = apps.map(a => a.id).join("\n");
-
-  let appId = prompt(
-    "Choose App ID:\n\n" + list,
-    apps[0] ? apps[0].id : ""
+  alert(
+    "Installed: " + installedApps.length +
+    "\nLaunchable: " + getLaunchableApps().length
   );
 
-  if (!appId) return;
-
-  getCurrentItems().push({
-    type:"app",
-    name:appId,
-    id:appId
-  });
+});
 
   drawTable();
 }
