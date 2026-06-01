@@ -438,10 +438,26 @@ function addSeparator(){
 
 function removeItem(i){
 
-  getCurrentItems().splice(i,1);
-  drawTable();
-}
+  let items = getCurrentItems();
+  let item = items[i];
 
+  if (
+    item.type === "folder" &&
+    item.items &&
+    item.items.length
+  ) {
+
+    if (!confirm(
+      `Folder "${item.name}" contains ${item.items.length} item(s).\n\nDelete folder and all contents?`
+    )) return;
+
+  }
+
+  items.splice(i,1);
+
+  drawTable();
+
+}
 
 // ---------- Upload ----------
 function upload(){
