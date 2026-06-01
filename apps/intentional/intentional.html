@@ -31,6 +31,7 @@
 
   <div style="margin-bottom:8px">
     <button class="btn btn-primary" onclick="addTask()">Add Task</button>
+    <button class="btn" onclick="addApp()">Add App</button>
     <button class="btn" onclick="addFolder()">Add Folder</button>
     <button class="btn" onclick="addSeparator()">Add Separator</button>
   </div>
@@ -111,30 +112,34 @@ function drawTable(){
     }
 
 
-    if(item.type==="folder"){
+if(item.type==="folder"){
 
-      row.innerHTML=`
-      <td>☰</td>
-      <td>
-        <input class="form-input"
-          value="${item.name||'Folder'}"
-          onchange="getCurrentItems()[${i}].name=this.value">
-      </td>
-      <td>
-        <button class="btn btn-primary btn-sm"
-          style="width:100%">
-          Open
-        </button>
-      </td>
+  row.innerHTML=`
+  <td>☰</td>
 
-      <td>
-        <button class="btn btn-error btn-sm">
-          Delete
-        </button>
-      </td>
-      `;
+  <td>
+    <input class="form-input"
+      value="${item.name||'Folder'}"
+      onchange="getCurrentItems()[${i}].name=this.value">
+  </td>
 
-    }
+  <td>
+    <button class="btn btn-primary btn-sm"
+      style="width:100%"
+      onclick="openFolder(${i})">
+      Open
+    </button>
+  </td>
+
+  <td>
+    <button class="btn btn-error btn-sm"
+      onclick="removeItem(${i})">
+      Delete
+    </button>
+  </td>
+  `;
+
+}
 
 if(item.type==="separator"){
 
