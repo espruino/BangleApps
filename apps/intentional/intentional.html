@@ -115,16 +115,25 @@ function drawTable(){
 
     }
 
-    if(item.type==="separator"){
+if(item.type==="separator"){
 
-      row.innerHTML=`
-      <td>☰</td>
-      <td><b>----------------</b></td>
-      <td>Divider/Label</td>
-      <td><button class="btn btn-error btn-sm" onclick="removeItem(${i})">Delete</button></td>
-      `;
+  row.innerHTML=`
+  <td>☰</td>
 
-    }
+  <td>
+    <input class="form-input"
+      value="${item.label||''}"
+      onchange="getCurrentItems()[${i}].label=this.value">
+  </td>
+
+  <td>Separator</td>
+
+  <td>
+    <button class="btn btn-error btn-sm"
+      onclick="removeItem(${i})">Delete</button>
+  </td>
+  `;
+}
     
 if(item.type==="app"){
 
@@ -392,7 +401,8 @@ function addApp() {
 function addSeparator(){
 
   getCurrentItems().push({
-    type:"separator"
+    type:"separator",
+    label:"========="
   });
 
   drawTable();
