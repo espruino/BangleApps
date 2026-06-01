@@ -11,7 +11,7 @@
       Bangle.buzz().then(() => setTimeout(Bangle.buzz, BUZZ_INTERVAL));
       setTimeout(scheduleNext, LOOP_INTERVAL);
     } else {
-      const next = new Date();
+      const next = new Date(now+864e5); // 24 hours
       next.setHours(8, 0, 0, 0);
       while (!isWorkTime(next)) next.setDate(next.getDate() + 1);
       setTimeout(scheduleNext, next - now);
