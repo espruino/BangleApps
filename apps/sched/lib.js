@@ -36,6 +36,10 @@ exports.setAlarm = function(id, alarm) {
     if (alarm.on!==false) alarm.on=true;
     if (alarm.timer) { // if it's a timer, set the start time as a time from *now*
       exports.resetTimer(alarm);
+    } else { // If it's an alarm, default to triggering tomorrow if time < current time of day
+      if (alarm.last===undefined) {
+        alarm.last = alarm.t < require("time_utils").getCurrentTimeMillis() ? new Date().getDate() : 0;
+      }
     }
     alarms.push(alarm);
   }
