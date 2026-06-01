@@ -109,8 +109,8 @@ function drawTable(){
           value="${item.name||'Folder'}"
           onchange="getCurrentItems()[${i}].name=this.value">
       </td>
-      <td><button class="btn btn-primary btn-sm" onclick="openFolder(${i})">Open</button></td>
-      <td><button class="btn btn-error btn-sm" onclick="removeItem(${i})">Delete</button></td>
+      <td style="text-align: right;"><button class="btn btn-primary btn-sm" onclick="openFolder(${i})">Open</button></td>
+      <td style="text-align: right;"><button class="btn btn-error btn-sm" onclick="removeItem(${i})">Delete</button></td>
       `;
 
     }
@@ -120,7 +120,7 @@ function drawTable(){
       row.innerHTML=`
       <td>☰</td>
       <td><b>----------------</b></td>
-      <td>Seperator bar</td>
+      <td>Divider/Label</td>
       <td><button class="btn btn-error btn-sm" onclick="removeItem(${i})">Delete</button></td>
       `;
 
