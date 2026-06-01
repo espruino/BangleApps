@@ -27,18 +27,29 @@
 </thead>
 <tbody></tbody>
 </table>
+<div style="margin-top:12px">
 
-<button class="btn btn-primary" onclick="addTask()">Add Task</button>
-<button class="btn" onclick="addFolder()">Add Folder</button>
-<button class="btn" onclick="addSeparator()">Add Separator</button>
-<p>
-  
-<button class="btn" onclick="downloadJSON()">Download JSON</button>
-<button class="btn" onclick="document.getElementById('loadJSON').click()">Load JSON</button>
-<p>
-  
-<button class="btn btn-success" onclick="upload()">Save to Watch</button>
+  <div style="margin-bottom:8px">
+    <button class="btn btn-primary" onclick="addTask()">Add Task</button>
+    <button class="btn" onclick="addFolder()">Add Folder</button>
+    <button class="btn" onclick="addSeparator()">Add Separator</button>
+  </div>
 
+  <div style="margin-bottom:12px">
+    <button class="btn" onclick="downloadJSON()">Download JSON</button>
+    <button class="btn"
+            onclick="document.getElementById('loadJSON').click()">
+      Load JSON
+    </button>
+  </div>
+
+  <button class="btn btn-success"
+          style="width:100%"
+          onclick="upload()">
+    Save to Watch
+  </button>
+
+</div>
 <input
   type="file"
   id="loadJSON"
@@ -136,7 +147,9 @@ if(item.type==="separator"){
       onchange="getCurrentItems()[${i}].label=this.value">
   </td>
 
-  <td>Separator</td>
+  <td style="text-align:center;font-weight:bold;">
+  ----- Separator -----
+  </td>
 
   <td>
     <button class="btn btn-error btn-sm"
