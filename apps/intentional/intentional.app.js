@@ -81,16 +81,18 @@ function showMenu(items,title){
 
     }
 
-    // SEPARATOR
-    if(item.type==="separator"){
+// SEPARATOR
+if(item.type==="separator"){
 
-      sepCount++;
+  sepCount++;
 
-      let label = "------------" + " ".repeat(sepCount);
+  let label =
+    (item.label || "------------") +
+    " ".repeat(sepCount);
 
-      menu[label] = {value:""};
+  menu[label] = {value:""};
 
-    }
+}
 
   });
 
