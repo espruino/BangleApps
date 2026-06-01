@@ -307,6 +307,7 @@ apps.forEach((app,appIdx) => {
       if (INTERNAL_FILES_IN_APP_TYPE[app.type].includes(file.name))
         fileInternal = true;
     }
+    if(!app.author) ERROR(`App ${app.id} doesn't have an author field`, {file:metadataFile});
     if (!app.type=="defaultconfig")
       allFiles.push({app: app.id, file: file.name, internal:fileInternal});
     if (file.url) if (!fs.existsSync(appDir+file.url)) ERROR(`App ${app.id} file ${file.url} doesn't exist`, {file:metadataFile});
