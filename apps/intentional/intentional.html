@@ -174,11 +174,10 @@ if(item.type==="app"){
     onchange="getCurrentItems()[${i}].name=this.value">
   </td>
 
-  <td>
-    <input class="form-input"
-    value="${item.app||''}"
-    onchange="getCurrentItems()[${i}].app=this.value">
-  </td>
+<td>
+  <select class="form-select" id="app_${i}">
+  </select>
+</td>
 
   <td>
     <button class="btn btn-error btn-sm"
@@ -189,7 +188,31 @@ if(item.type==="app"){
 }
 
   tbody.appendChild(row);
+if(item.type==="app") {
 
+  let sel = document.getElementById(`app_${i}`);
+
+  getLaunchableApps().forEach(app => {
+
+    let opt = document.createElement("option");
+
+    opt.value = app.id + ".app.js";
+    opt.textContent = app.name || app.id;
+
+    if (opt.value === item.app)
+      opt.selected = true;
+
+    sel.appendChild(opt);
+
+  });
+
+  sel.onchange = function() {
+
+    getCurrentItems()[i].app = this.value;
+
+  };
+
+}
 });
 
 }
