@@ -30,9 +30,26 @@
 
 <button class="btn btn-primary" onclick="addTask()">Add Task</button>
 <button class="btn" onclick="addFolder()">Add Folder</button>
-<button class="btn" onclick="addApp()">Add App</button>
 <button class="btn" onclick="addSeparator()">Add Separator</button>
-<button class="btn btn-success" onclick="upload()">Upload to Watch</button>
+
+<button class="btn" onclick="downloadJSON()">Download JSON</button>
+
+<button class="btn"
+        onclick="document.getElementById('loadJSON').click()">
+  Load JSON
+</button>
+
+<button class="btn btn-success"
+        onclick="upload()">
+  Save to Watch
+</button>
+
+<input
+  type="file"
+  id="loadJSON"
+  accept=".json"
+  style="display:none"
+  onchange="loadJSON(event)">
 
 <script src="../../core/lib/customize.js"></script>
 
@@ -194,6 +211,57 @@ function fillAppList() {
 
   });
 
+}
+// ---------- download/Load Json ----------
+function downloadJSON() {
+
+  const blob = new Blob(
+    [JSON.stringify(data, null, 2)],
+    { type: "application/json" }
+  );
+
+  const a = document.createElement("a");
+
+  a.href = URL.createObjectURL(blob);
+  a.download = "intentional.json";
+
+  a.click();
+
+  URL.revokeObjectURL(a.href);
+}
+
+  function loadJSON(event) {
+
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+
+    try {
+
+      const imported = JSON.parse(e.target.result);
+
+      if (!imported.items)
+        throw new Error("Invalid format");
+
+      data = imported;
+
+      drawTable();
+
+      alert("JSON loaded successfully");
+
+    } catch(err) {
+
+      alert("Invalid JSON file");
+
+    }
+
+  };
+
+  reader.readAsText(file);
 }
   
 function onInit() {
