@@ -10,6 +10,5 @@
   "storage": [
     {"name":"clockswitch.app.js","url":"app.js"},
     {"name":"clockswitch.img","url":"icon.js","evaluate":true}
-  ],
-  "author": "rigrig"
+  ]
 }

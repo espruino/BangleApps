@@ -13,6 +13,5 @@
     {"name":"sudoku.easy.txt","url":"sudoku.easy.txt"},
     {"name":"sudoku.medium.txt","url":"sudoku.medium.txt"},
     {"name":"sudoku.hard.txt","url":"sudoku.hard.txt"}
-  ],
-  "author": "gfwilliams"
+  ]
 }

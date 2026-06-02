@@ -40,6 +40,5 @@
   ],
   "dependencies": {
     "weather": "app"
-  },
-  "author": "bruceblore"
+  }
 }

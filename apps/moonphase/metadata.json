@@ -11,6 +11,5 @@
   "storage": [
     {"name":"moonphase.app.js","url":"app.js"},
     {"name":"moonphase.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "Purple-Tentacle"
+  ]
 }

@@ -17,6 +17,5 @@
     {"name":"animals-pig.img","url":"animals-pig.js","evaluate":true},
     {"name":"animals-sheep.img","url":"animals-sheep.js","evaluate":true},
     {"name":"animals-mouse.img","url":"animals-mouse.js","evaluate":true}
-  ],
-  "author": "ra100"
+  ]
 }

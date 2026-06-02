@@ -10,6 +10,5 @@
   "storage": [
     {"name":"morse.app.js","url":"morse-code.js"},
     {"name":"morse.img","url":"morse-code-icon.js","evaluate":true}
-  ],
-  "author": "ra100"
+  ]
 }

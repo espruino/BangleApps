@@ -18,6 +18,5 @@
     {"name":"owmweather.boot.js","url":"boot.js"},
     {"name":"owmweather","url":"lib.js"},
     {"name":"owmweather.settings.js","url":"settings.js"}
-  ],
-  "author": "halemmerich"
+  ]
 }

@@ -18,6 +18,5 @@
     {"name":"coretemp.0.boot.js","url":"boot.js"}
   ],
   "data": [{"name":"coretemp.json","url":"app-settings.json"}],
-  "screenshots": [{"url":"screenshot.png"}],
-  "author": "ihewitt"
+  "screenshots": [{"url":"screenshot.png"}]
 }

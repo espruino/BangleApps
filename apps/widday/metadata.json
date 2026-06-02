@@ -11,6 +11,5 @@
   "screenshots" : [ { "url":"screenshot.png" } ],
   "storage": [
     {"name":"widday.wid.js","url":"widget.js"}
-  ],
-  "author": "pidajo"
+  ]
 }

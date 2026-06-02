@@ -11,6 +11,5 @@
     {"name":"widhrm.wid.js","url":"widget.js"},
     {"name":"widhrm.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"widhrm.json"}],
-  "author": "gfwilliams"
+  "data": [{"name":"widhrm.json"}]
 }

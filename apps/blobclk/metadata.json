@@ -13,6 +13,5 @@
   "storage": [
     {"name":"blobclk.app.js","url":"clock-blob.js"},
     {"name":"blobclk.img","url":"clock-blob-icon.js","evaluate":true}
-  ],
-  "author": "ra100"
+  ]
 }

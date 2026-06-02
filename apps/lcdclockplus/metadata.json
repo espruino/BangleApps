@@ -12,6 +12,5 @@
   "storage": [
     {"name":"lcdclockplus.app.js","url":"app.js"},
     {"name":"lcdclockplus.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "neris"
+  ]
 }

@@ -15,6 +15,5 @@
     {"name":"widbatpc.wid.js","url":"widget.js"},
     {"name":"widbatpc.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"widbatpc.json"}],
-  "author": "gfwilliams"
+  "data": [{"name":"widbatpc.json"}]
 }

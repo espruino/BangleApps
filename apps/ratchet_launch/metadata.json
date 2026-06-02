@@ -11,6 +11,5 @@
   "storage": [
     {"name":"ratchet_launch.app.js","url":"app.js"}
   ],
-  "readme":"README.md",
-  "author": "jsphpl"
+  "readme":"README.md"
 }

@@ -10,6 +10,5 @@
   "storage": [
     {"name":"gpsinfo.app.js","url":"gps-info.js"},
     {"name":"gpsinfo.img","url":"gps-info-icon.js","evaluate":true}
-  ],
-  "author": "ra100"
+  ]
 }

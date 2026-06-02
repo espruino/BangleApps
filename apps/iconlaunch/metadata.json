@@ -15,6 +15,5 @@
 	],
 	"data": [{"name":"iconlaunch.json"},{"name":"launch.cache.json"}],
 	"screenshots": [{ "url": "screenshot1.png" }, { "url": "screenshot2.png" }],
-	"readme": "README.md",
-	"author": "TheGLander"
+	"readme": "README.md"
 }

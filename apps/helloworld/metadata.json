@@ -12,6 +12,5 @@
   "storage": [
     {"name":"helloworld.app.js","url":"helloworld.app.js"},
     {"name":"helloworld.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "dapgo"
+  ]
 }

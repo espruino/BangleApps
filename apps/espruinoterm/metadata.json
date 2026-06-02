@@ -16,6 +16,5 @@
     {"name":"espruinoterm.img","url":"app-icon.js","evaluate":true}
   ],"data": [
     {"name":"espruinoterm.json","url":"app.json"}
-  ],
-  "author": "gfwilliams"
+  ]
 }

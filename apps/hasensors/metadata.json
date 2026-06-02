@@ -14,6 +14,5 @@
   "storage": [
     {"name":"hasensors","url":"lib.js"},
     {"name":"hasensors.boot.js","url":"boot.js"}
-  ],
-  "author": "rigrig"
+  ]
 }

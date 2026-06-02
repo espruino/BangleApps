@@ -13,6 +13,5 @@
   "storage": [
     {"name":"calculator.app.js","url":"app.js"},
     {"name":"calculator.img","url":"calculator-icon.js","evaluate":true}
-  ],
-  "author": "fredericrous"
+  ]
 }

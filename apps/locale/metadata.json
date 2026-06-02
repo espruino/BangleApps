@@ -12,6 +12,5 @@
   "storage": [
     {"name":"locale"}
   ],
-  "sortorder": -10,
-  "author": "gfwilliams"
+  "sortorder": -10
 }

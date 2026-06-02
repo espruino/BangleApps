@@ -17,6 +17,5 @@
     { "name":"flightdash.settings.js", "url":"flightdash.settings.js" },
     { "name":"flightdash.img",         "url":"flightdash-icon.js", "evaluate":true }
   ],
-  "data": [{ "name":"flightdash.json" },{ "name":"flightdash.airports.json" }],
-  "author": "flaparoo"
+  "data": [{ "name":"flightdash.json" },{ "name":"flightdash.airports.json" }]
 }

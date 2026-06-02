@@ -11,6 +11,5 @@
     {"name":"thmswtch.app.js","url":"app.js"},
     {"name":"thmswtch.boot.js","url":"boot.js"},
     {"name":"thmswtch.img","url":"app-icon.js","evaluate":true}   
-  ],
-  "author": "jla-42"
+  ]
 }

@@ -9,6 +9,5 @@
   "storage": [
     {"name":"flashcount.app.js","url":"app.js"},
     {"name":"flashcount.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "gfwilliams"
+  ]
 }

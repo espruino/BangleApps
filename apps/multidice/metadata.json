@@ -13,6 +13,5 @@
     {"name":"multidice.settings.js","url":"settings.js"},
     {"name":"multidice.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name": "multidice.json"}],
-  "author": "Le-Kat"
+  "data": [{"name": "multidice.json"}]
 }

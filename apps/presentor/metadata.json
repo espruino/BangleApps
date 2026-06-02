@@ -15,6 +15,5 @@
     {"name":"presentor.img","url":"app-icon.js","evaluate":true}
   ], "data": [
     {"name":"presentor.json","url":"settings.json"}
-  ],
-  "author": "7kasper"
+  ]
 }

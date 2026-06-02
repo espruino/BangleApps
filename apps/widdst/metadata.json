@@ -12,6 +12,5 @@
     {"name":"widdst.0.boot.js","url":"boot.js"},
     {"name":"widdst.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"widdst.json"}],
-  "author": "deirdreobyrne"
+  "data": [{"name":"widdst.json"}]
 }

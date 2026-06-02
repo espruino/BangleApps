@@ -10,6 +10,5 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
     {"name":"openhaystack.boot.js" }
-  ],
-  "author": "gfwilliams"
+  ]
 }

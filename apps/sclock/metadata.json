@@ -12,6 +12,5 @@
   "storage": [
     {"name":"sclock.app.js","url":"clock-simple.js"},
     {"name":"sclock.img","url":"clock-simple-icon.js","evaluate":true}
-  ],
-  "author": "ra100"
+  ]
 }

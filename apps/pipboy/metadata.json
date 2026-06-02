@@ -13,6 +13,5 @@
   "storage": [
     {"name":"pipboy.app.js","url":"app.js"},
     {"name":"pipboy.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "detached"
+  ]
 }

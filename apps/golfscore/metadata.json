@@ -11,6 +11,5 @@
   "storage": [
     {"name":"golfscore.app.js","url":"app.js"},
     {"name":"golfscore.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "barakplasma"
+  ]
 }

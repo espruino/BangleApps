@@ -14,6 +14,5 @@
   "storage": [
     {"name":"supf.app.js","url":"app.js"},
     {"name":"supf.img","url":"icon.js","evaluate":true}
-  ],
-  "author": "M14aAUI"
+  ]
 }

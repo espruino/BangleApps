@@ -16,6 +16,5 @@
   "storage": [
     {"name":"info.app.js","url":"info.app.js"},
     {"name":"info.img","url":"info.icon.js","evaluate":true}
-  ],
-  "author": "peerdavid"
+  ]
 }

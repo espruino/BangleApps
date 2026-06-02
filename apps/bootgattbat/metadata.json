@@ -11,6 +11,5 @@
   "readme": "README.md",
   "storage": [
     {"name":"gattbat.boot.js","url":"boot.js"}
-  ],
-  "author": "jjok"
+  ]
 }

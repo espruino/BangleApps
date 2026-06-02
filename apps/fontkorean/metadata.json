@@ -12,6 +12,5 @@
     {"name":"font","url":"lib.js"},
     {"name":"fontkorean.boot.js","url":"boot.js"},
     {"name":"fontkorean.pbf","url":"font.pbf"}
-  ],
-  "author": "jeonlab"
+  ]
 }

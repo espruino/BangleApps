@@ -16,6 +16,5 @@
   "data": [
     {"name":"pacer.json"},
     {"wildcard":".pacer*.csv","storageFile":true}
-  ],
-  "author": "smulrine"
+  ]
 }

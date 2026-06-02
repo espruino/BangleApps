@@ -15,6 +15,5 @@
     {"name":"pebbled.settings.js","url":"pebbled.settings.js"},
     {"name":"pebbled.img","url":"pebbled.icon.js","evaluate":true}
   ],
-  "data":[{"name":"pebbleDistance.json"}],
-  "author": "RomanistHere"
+  "data":[{"name":"pebbleDistance.json"}]
 }

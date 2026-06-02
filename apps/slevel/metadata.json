@@ -10,6 +10,5 @@
   "storage": [
     {"name":"slevel.app.js","url":"spiritlevel.js"},
     {"name":"slevel.img","url":"spiritlevel-icon.js","evaluate":true}
-  ],
-  "author": "ra100"
+  ]
 }

@@ -16,6 +16,5 @@
     {"name":"xxlmessage.lib.js","url":"lib.js"},
     {"name":"xxlmessage.boot.js","url":"boot.js"},
     {"name":"xxlmessage.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "gfwilliams"
+  ]
 }

@@ -8,6 +8,5 @@
   "storage": [
     {"name":"altimeter.app.js","url":"app.js"},
     {"name":"altimeter.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "gfwilliams"
+  ]
 }

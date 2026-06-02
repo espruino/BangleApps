@@ -15,6 +15,5 @@
     {"name":"authentiwatch.app.js","url":"app.js"},
     {"name":"authentiwatch.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"authentiwatch.json"}],
-  "author": "andrewgoz"
+  "data": [{"name":"authentiwatch.json"}]
 }

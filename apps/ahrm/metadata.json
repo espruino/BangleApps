@@ -15,6 +15,5 @@
     {"name":"ahrm.settings.js","url":"settings.js"},
     {"name":"ahrm.adaptivemode.js","url":"adaptivemode.js"}
   ],
-  "data": [{"name":"ahrm.json"}],
-  "author": "antimo0f"
+  "data": [{"name":"ahrm.json"}]
 }

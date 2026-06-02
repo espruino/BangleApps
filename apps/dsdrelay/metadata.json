@@ -11,6 +11,5 @@
   "storage": [
     {"name":"dsdrelay.app.js","url":"dsdrelay.app.js"},
     {"name":"dsdrelay.img","url":"dsdrelay-icon.js","evaluate":true}
-  ],
-  "author": "berkenbu"
+  ]
 }

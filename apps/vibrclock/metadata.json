@@ -12,6 +12,5 @@
   "storage": [
     {"name":"vibrclock.app.js","url":"app.js"},
     {"name":"vibrclock.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "gfwilliams"
+  ]
 }

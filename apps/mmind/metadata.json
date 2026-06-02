@@ -14,6 +14,5 @@
   "storage": [
     {"name":"mmind.app.js","url":"mmind.app.js"},
     {"name":"mmind.img","url":"mmind.icon.js","evaluate":true}
-   ],
-  "author": "psbest"
+   ]
 }

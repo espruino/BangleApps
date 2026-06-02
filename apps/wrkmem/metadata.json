@@ -23,6 +23,5 @@
     {"name": "wrkmem.app.js", "url": "app.js"},
     {"name": "wrkmem.img", "url": "app-icon.js", "evaluate": true}
   ],
-  "data"          : [{"name": "wrkmem.json"}],
-  "author": "philipandresen"
+  "data"          : [{"name": "wrkmem.json"}]
 }

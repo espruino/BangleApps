@@ -10,6 +10,5 @@
  "storage": [
    {"name":"bradbury.app.js","url":"app.js"},
    {"name":"bradbury.img","url":"app-icon.js","evaluate":true}
- ],
- "author": "nomusictuesdays"
+ ]
 }

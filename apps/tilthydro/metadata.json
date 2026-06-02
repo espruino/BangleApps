@@ -10,6 +10,5 @@
   "storage": [
     {"name":"tilthydro.app.js","url":"app.js"},
     {"name":"tilthydro.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "gfwilliams"
+  ]
 }

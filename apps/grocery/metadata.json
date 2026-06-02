@@ -15,6 +15,5 @@
     {"name":"grocery.settings.js","url":"settings.js"},
     {"name":"grocery.img","url":"grocery-icon.js","evaluate":true}
   ],
-  "data": [{"name":"grocery_list.json"}],
-  "author": "dimlucky"
+  "data": [{"name":"grocery_list.json"}]
 }

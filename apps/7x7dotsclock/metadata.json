@@ -15,6 +15,5 @@
     {"name":"7x7dotsclock.img","url":"7x7dotsclock.img.js","evaluate":true}
   ],
   "data": [{"name":"7x7dotsclock.json"}],
-  "screenshots": [{"url":"dotsfontclock.png"},{"url":"dotsfontclock-scr1.png"},{"url":"dotsfontclock-scr2.png"}],
-  "author": "pkkpp"
+  "screenshots": [{"url":"dotsfontclock.png"},{"url":"dotsfontclock-scr1.png"},{"url":"dotsfontclock-scr2.png"}]
 }

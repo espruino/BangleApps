@@ -14,6 +14,5 @@
     {"name":"gbridge.img","url":"app-icon.js","evaluate":true},
     {"name":"gbridge.wid.js","url":"widget.js"}
   ],
-  "data": [{"name":"gbridge.json"}],
-  "author": "gfwilliams"
+  "data": [{"name":"gbridge.json"}]
 }

@@ -9,6 +9,5 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
     {"name":"widtbat.wid.js","url":"widget.js"}
-  ],
-  "author": "MaBecker"
+  ]
 }

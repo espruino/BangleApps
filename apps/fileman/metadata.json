@@ -12,6 +12,5 @@
   "storage": [
     {"name":"fileman.app.js","url":"fileman.app.js"},
     {"name":"fileman.img","url":"fileman-icon.js","evaluate":true}
-  ],
-  "author": "berkenbu"
+  ]
 }

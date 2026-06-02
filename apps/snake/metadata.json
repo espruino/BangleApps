@@ -11,6 +11,5 @@
   "storage": [
     {"name":"snake.app.js","url":"snake.js"},
     {"name":"snake.img","url":"snake-icon.js","evaluate":true}
-  ],
-  "author": "Fabio286"
+  ]
 }

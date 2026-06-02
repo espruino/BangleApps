@@ -12,6 +12,5 @@
   "storage": [
     {"name":"battleship.app.js","url":"battleship.js"},
     {"name":"battleship.img","url":"battleship-icon.js","evaluate":true}
-  ],
-  "author": "capybara1"
+  ]
 }

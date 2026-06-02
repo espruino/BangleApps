@@ -12,6 +12,5 @@
     {"name":"chargerot.boot.js","url":"boot.js"},
     {"name":"chargerot.settings.js","url":"settings.js"}
   ],
-  "data":[{"name":"chargerot.settings.json"}],
-  "author": "kamilkrz"
+  "data":[{"name":"chargerot.settings.json"}]
 }

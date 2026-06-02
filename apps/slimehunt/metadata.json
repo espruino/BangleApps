@@ -10,6 +10,5 @@
   "storage": [
     {"name":"slimehunt.app.js","url":"app.js"},
     {"name":"slimehunt.img","url":"app-icon.js","evaluate":true}
-],
-  "author": "ColtJLaCh"
+]
 }

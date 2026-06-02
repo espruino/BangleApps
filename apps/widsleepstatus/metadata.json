@@ -12,6 +12,5 @@
     {"name":"widsleepstatus.wid.js","url":"widget.js"},
     {"name":"widsleepstatus.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"widsleepstatus.json"}],
-  "author": "myxor"
+  "data": [{"name":"widsleepstatus.json"}]
 }

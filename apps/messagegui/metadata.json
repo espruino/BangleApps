@@ -20,6 +20,5 @@
     {"name":"messagegui.img","url":"app-icon.js","evaluate":true}
   ],
   "screenshots": [{"url":"screenshot.png"}],
-  "sortorder": -9,
-  "author": "rigrig"
+  "sortorder": -9
 }

@@ -10,6 +10,5 @@
   "storage": [
     {"name":"snaky.app.js","url":"snaky.js"},
     {"name":"snaky.img","url":"snaky-icon.js","evaluate":true}
-  ],
-  "author": "nxs47"
+  ]
 }

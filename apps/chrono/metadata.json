@@ -10,6 +10,5 @@
   "storage": [
     {"name":"chrono.app.js","url":"chrono.js"},
     {"name":"chrono.img","url":"chrono-icon.js","evaluate":true}
-  ],
-  "author": "marcocastignoli"
+  ]
 }

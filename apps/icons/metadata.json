@@ -13,6 +13,5 @@
   "storage": [
     {"name":"icons","url":"lib.js"},
     {"name":"icons.img","url":"icons.img"}
-  ],
-  "author": "gfwilliams"
+  ]
 }

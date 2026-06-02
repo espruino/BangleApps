@@ -10,6 +10,5 @@
   "storage": [
     {"name":"files.app.js","url":"files.js"},
     {"name":"files.img","url":"files-icon.js","evaluate":true}
-  ],
-  "author": "ra100"
+  ]
 }

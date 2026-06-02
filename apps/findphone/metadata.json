@@ -12,6 +12,5 @@
   "storage": [
     {"name":"findphone.app.js","url":"app.js"},
     {"name":"findphone.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "v1nc"
+  ]
 }

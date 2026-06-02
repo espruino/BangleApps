@@ -12,6 +12,5 @@
   "storage": [
     {"name":"wristlight.app.js","url":"app.js"},
     {"name":"wristlight.img","url":"wristlight-icon.js","evaluate":true}
-  ],
-  "author": "pidajo"
+  ]
 }

@@ -17,6 +17,5 @@
   ], "data": [
     {"wildcard":"clockbg.bg*.img"},
     {"name":"clockbg.json"}
-  ],
-  "author": "gfwilliams"
+  ]
 }

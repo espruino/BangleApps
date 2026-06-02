@@ -11,6 +11,5 @@
   "storage": [
     {"name":"edisonsball.app.js","url":"app.js"},
     {"name":"edisonsball.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "jabituyaben"
+  ]
 }

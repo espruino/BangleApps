@@ -15,6 +15,5 @@
     {"name":".tfmodel","url":"gesture-tfmodel.js","evaluate":true},
     {"name":"simpletimer.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"simpletimer.json"}],
-  "author": "gfwilliams"
+  "data": [{"name":"simpletimer.json"}]
 }

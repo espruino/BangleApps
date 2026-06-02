@@ -11,6 +11,5 @@
   "dependencies" : { "messages":"app" },
   "storage": [
     {"name":"clkinfomsg.clkinfo.js","url":"clkinfo.js"}
-  ],
-  "author": "kamilkrz"
+  ]
 }

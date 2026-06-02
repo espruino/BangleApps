@@ -13,6 +13,5 @@
   "storage": [
     {"name":"widmsggrid.wid.js","url":"widget.js"}
   ],
-  "screenshots": [{"url":"screenshot.png"}],
-  "author": "rigrig"
+  "screenshots": [{"url":"screenshot.png"}]
 }

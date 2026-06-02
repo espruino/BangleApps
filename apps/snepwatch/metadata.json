@@ -15,6 +15,5 @@
     {"name":"snepwatch.settings.js","url":"settings.js"},
     {"name":"snepwatch.img","url":"snepwatch.img","evaluate":false}
   ],
-  "data":[{"name":"snepwatch.settings.json"}],
-  "author": "JoppyFurr"
+  "data":[{"name":"snepwatch.settings.json"}]
 }

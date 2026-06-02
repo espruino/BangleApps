@@ -11,6 +11,5 @@
   "storage": [
     {"name":"angles.app.js","url":"app.js"},
     {"name":"angles.img","url":"icon.js","evaluate":true}
-  ],
-  "author": "gfwilliams"
+  ]
 }

@@ -27,6 +27,5 @@
             "url":"settings.js"
         }
     ],
-    "data": [{"name":"gallery.json"}],
-    "author": "bruceblore"
+    "data": [{"name":"gallery.json"}]
 }

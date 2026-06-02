@@ -18,6 +18,5 @@
     {"name":"gbmusic.boot.js","url":"boot.js"},
     {"name":"gbmusic.img","url":"icon.js","evaluate":true}
   ],
-  "data": [{"name":"gbmusic.json"},{"name":"gbmusic.load.json"}],
-  "author": "rigrig"
+  "data": [{"name":"gbmusic.json"},{"name":"gbmusic.load.json"}]
 }

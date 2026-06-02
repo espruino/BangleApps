@@ -10,6 +10,5 @@
   "storage": [
     {"name":"jbells.app.js","url":"jbells.js"},
     {"name":"jbells.img","url":"jbells-icon.js","evaluate":true}
-  ],
-  "author": "ra100"
+  ]
 }

@@ -11,6 +11,5 @@
     {"name":"bee.app.js","url":"bee.app.js"},
     {"name":"bee.words","url":"bee_words_2of12"},
     {"name":"bee.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "berkenbu"
+  ]
 }

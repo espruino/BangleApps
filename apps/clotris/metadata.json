@@ -12,6 +12,5 @@
     {"name":"clotris.app.js","url":"clock-tris.js"},
     {"name":"clotris.img","url":"clock-tris-icon.js","evaluate":true},
     {"name":".trishig","url":"clock-tris-high"}
-  ],
-  "author": "ra100"
+  ]
 }

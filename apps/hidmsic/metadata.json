@@ -10,6 +10,5 @@
   "storage": [
     {"name":"hidmsic.app.js","url":"hid-music.js"},
     {"name":"hidmsic.img","url":"hid-music-icon.js","evaluate":true}
-  ],
-  "author": "ra100"
+  ]
 }

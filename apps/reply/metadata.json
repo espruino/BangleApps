@@ -12,6 +12,5 @@
   "storage": [
     {"name":"reply","url":"lib.js"}
   ],
-  "data": [{"name":"replies.json"}],
-  "author": "WhelanB"
+  "data": [{"name":"replies.json"}]
 }

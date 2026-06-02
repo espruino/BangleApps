@@ -10,6 +10,5 @@
   "readme": "README.md",
   "storage": [
     {"name":"libqr","url":"lib.js"}
-  ],
-  "author": "gfwilliams"
+  ]
 }

@@ -16,6 +16,5 @@
     {"name":"ios.settings.js","url":"settings.js"}
   ],
   "data": [{"name":"ios.settings.json"}],
-  "sortorder": -8,
-  "author": "gfwilliams"
+  "sortorder": -8
 }

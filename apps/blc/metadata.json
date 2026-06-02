@@ -15,6 +15,5 @@
     {"name":"blc.settings.js","url":"blc.settings.js"},
     {"name":"blc.img","url":"blc-icon.js","evaluate":true}
   ],
-  "data": [{"name":"blc.settings.json"}],
-  "author": "aemkai"
+  "data": [{"name":"blc.settings.json"}]
 }

@@ -19,6 +19,5 @@
     {"name":"sched.settings.js","url":"settings.js"},
     {"name":"sched.clkinfo.js","url":"clkinfo.js"}
   ],
-  "data": [{"name":"sched.json"}, {"name":"sched.settings.json"}],
-  "author": "gfwilliams"
+  "data": [{"name":"sched.json"}, {"name":"sched.settings.json"}]
 }

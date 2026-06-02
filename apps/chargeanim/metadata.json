@@ -17,6 +17,5 @@
     {"name":"chargeanim.settings.js","url":"settings.js"},
     {"name":"chargeanim.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"chargeAnimSettings.json"}],
-  "author": "gfwilliams"
+  "data": [{"name":"chargeAnimSettings.json"}]
 }

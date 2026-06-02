@@ -11,6 +11,5 @@
   "readme": "README.md",
   "storage": [
     {"name":"openseizure.wid.js","url":"widget.js"}
-  ],
-  "author": "gfwilliams"
+  ]
 }

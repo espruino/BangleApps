@@ -14,6 +14,5 @@
 		{"name":"binaryclk.settings.js","url":"settings.js"},
 		{"name":"binaryclk.img","url":"app-icon.js","evaluate":true}
 	],
-	"data": [{"name":"binaryclk.json"}],
-	"author": "shansou504"
+	"data": [{"name":"binaryclk.json"}]
 }

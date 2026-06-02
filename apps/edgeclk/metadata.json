@@ -16,6 +16,5 @@
     {"name":"edgeclk.settings.js", "url": "settings.js"},
     {"name":"edgeclk.img", "url": "app-icon.js", "evaluate": true}
   ],
-  "data": [{"name":"edgeclk.settings.json"}],
-  "author": "tinxx"
+  "data": [{"name":"edgeclk.settings.json"}]
 }

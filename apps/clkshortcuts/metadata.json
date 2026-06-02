@@ -14,6 +14,5 @@
     { "name": "clkshortcuts.img", "url": "app-icon.js", "evaluate": true },
     { "name": "clkshortcuts.clkinfo.js","url":"clkinfo.js"}
   ],
-  "data": [{"name":"clkshortcuts.json"}],
-  "author": "WhelanB"
+  "data": [{"name":"clkshortcuts.json"}]
 }

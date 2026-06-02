@@ -9,6 +9,5 @@
   "storage": [
     {"name":"stressless.app.js","url":"app.js"},
     {"name":"stressless.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "hanna0616"
+  ]
 }

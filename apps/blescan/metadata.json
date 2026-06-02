@@ -9,6 +9,5 @@
   "storage": [
     {"name":"blescan.app.js","url":"blescan.js"},
     {"name":"blescan.img","url":"blescan-icon.js","evaluate":true}
-  ],
-  "author": "ra100"
+  ]
 }

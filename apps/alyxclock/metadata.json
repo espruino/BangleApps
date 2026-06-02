@@ -13,6 +13,5 @@
   "storage": [
     {"name":"alyxclock.app.js","url":"alyxclock.app.js"},
     {"name":"alyxclock.img","url":"alyxclock.icon.js","evaluate":true}
-  ],
-  "author": "devsnd"
+  ]
 }

@@ -13,6 +13,5 @@
   "storage": [
     {"name":"boldclk.app.js","url":"bold_clock.js"},
     {"name":"boldclk.img","url":"bold_clock-icon.js","evaluate":true}
-  ],
-  "author": "shunyas"
+  ]
 }

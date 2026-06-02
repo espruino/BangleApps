@@ -12,6 +12,5 @@
   "storage": [
     {"name":"miclock.app.js","url":"clock-mixed.js"},
     {"name":"miclock.img","url":"clock-mixed-icon.js","evaluate":true}
-  ],
-  "author": "ra100"
+  ]
 }

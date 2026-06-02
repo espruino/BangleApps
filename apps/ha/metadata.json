@@ -22,6 +22,5 @@
     {"name":"ha.lib.js","url":"ha.lib.js"},
     {"name":"ha.clkinfo.js","url":"ha.clkinfo.js"},
     {"name":"ha.img","url":"ha.icon.js","evaluate":true}
-  ],
-  "author": "peerdavid"
+  ]
 }

@@ -28,6 +28,5 @@
     { "url": "screenshot-10.png" },
     { "url": "screenshot-11.png" }
   ],
-  "data":[ {"name":"alarm.settings.json"} ],
-  "author": "gfwilliams"
+  "data":[ {"name":"alarm.settings.json"} ]
 }

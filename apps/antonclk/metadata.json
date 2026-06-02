@@ -12,6 +12,5 @@
   "storage": [
     {"name":"antonclk.app.js","url":"app.js"},
     {"name":"antonclk.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "gfwilliams"
+  ]
 }

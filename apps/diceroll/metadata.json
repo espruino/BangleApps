@@ -10,6 +10,5 @@
     "storage": [
       {"name":"diceroll.app.js","url":"app.js"},
       {"name":"diceroll.img","url":"app-icon.js","evaluate":true}
-    ],
-    "author": "kirktrekkie"
-}
+    ]
+  }

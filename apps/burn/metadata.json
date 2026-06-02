@@ -12,6 +12,5 @@
   "storage": [
     {"name":"burn.app.js","url":"app.js"},
     {"name":"burn.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "slynchDev"
+  ]
 }

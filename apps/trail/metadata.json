@@ -9,6 +9,5 @@
   "storage": [
       {"name":"trail.app.js","url":"trail.app.js"},
       {"name":"trail.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "pavelmachek"
+  ]
 }

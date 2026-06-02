@@ -12,6 +12,5 @@
     {"name":"jclock.app.js","url":"app.js"},
     {"name":"jclock.img","url":"app-icon.js","evaluate":true}
   ],
-  "readme":"README.md",
-  "author": "jeonlab"
+  "readme":"README.md"
 }

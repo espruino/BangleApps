@@ -11,6 +11,5 @@
   "storage": [
     {"name":"loadingscreen.settings.js","url":"settings.js"}
   ],
-  "data":[{"name":".loading"}],
-  "author": "gfwilliams"
+  "data":[{"name":".loading"}]
 }

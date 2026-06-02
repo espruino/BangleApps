@@ -11,6 +11,5 @@
   "storage": [
     {"name":"mandel.app.js","url":"mandel.min.js"},
     {"name":"mandel.img","url":"mandel-icon.js","evaluate":true}
-  ],
-  "author": "berkenbu"
+  ]
 }

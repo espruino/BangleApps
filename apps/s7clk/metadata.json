@@ -13,6 +13,5 @@
   "storage": [
     {"name":"s7clk.app.js","url":"app.js"},
     {"name":"s7clk.img","url":"icon.js","evaluate":true}
-  ],
-  "author": "gfwilliams"
+  ]
 }

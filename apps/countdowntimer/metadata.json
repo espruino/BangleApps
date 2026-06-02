@@ -10,6 +10,5 @@
   "storage": [
     {"name":"countdowntimer.app.js","url":"countdowntimer.js"},
     {"name":"countdowntimer.img","url":"countdowntimer-icon.js","evaluate":true}
-  ],
-  "author": "Shaylin"
+  ]
 }

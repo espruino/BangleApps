@@ -13,6 +13,5 @@
     {"name":"calclock.app.js","url":"calclock.js"},
     {"name":"calclock.img","url":"calclock-icon.js","evaluate":true}
   ],
-  "screenshots": [{"url":"screenshot.png"}],
-  "author": "LeonMatthes"
+  "screenshots": [{"url":"screenshot.png"}]
 }

@@ -13,6 +13,5 @@
     {"name":"about.app.js","url":"app-bangle2.js","supports": ["BANGLEJS2","BANGLEJS3"]},
     {"name":"about.img","url":"app-icon.js","evaluate":true}
   ],
-  "sortorder": -4,
-  "author": "gfwilliams"
+  "sortorder": -4
 }

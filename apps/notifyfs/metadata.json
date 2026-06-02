@@ -11,6 +11,5 @@
   "provides_modules" : ["notify"],
   "storage": [
     {"name":"notify","url":"notify.js"}
-  ],
-  "author": "gfwilliams"
+  ]
 }

@@ -15,6 +15,5 @@
     {"name":"90sclk.img","url":"app-icon.js","evaluate":true},
     {"name":"90sclk.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"90sclk.setting.json"}],
-  "author": "peerdavid"
+  "data": [{"name":"90sclk.setting.json"}]
 }

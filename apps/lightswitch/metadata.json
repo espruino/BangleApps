@@ -24,6 +24,5 @@
   "data": [
     {"name": "lightswitch.json"},
     {"name": "lightswitch.images.json", "url": "images.json"}
-  ],
-  "author": "storm64"
+  ]
 }

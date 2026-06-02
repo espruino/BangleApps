@@ -24,6 +24,5 @@
   ],
   "data": [
     { "name": "sensible.data.json", "url": "settings.json", "storageFile": true }
-  ],
-  "author": "jeffyactive"
+  ]
 }

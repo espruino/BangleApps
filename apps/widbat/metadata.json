@@ -11,6 +11,5 @@
   "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "storage": [
     {"name":"widbat.wid.js","url":"widget.js"}
-  ],
-  "author": "gfwilliams"
+  ]
 }

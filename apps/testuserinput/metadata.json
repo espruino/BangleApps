@@ -11,6 +11,5 @@
   "storage": [
     {"name":"testuserinput.app.js","url":"app.js"},
     {"name":"testuserinput.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "gfwilliams"
+  ]
 }

@@ -9,6 +9,5 @@
   "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "storage": [
     {"name":"widclk.wid.js","url":"widget.js"}
-  ],
-  "author": "gfwilliams"
+  ]
 }

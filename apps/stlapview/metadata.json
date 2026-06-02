@@ -23,6 +23,5 @@
   ],
   "dependencies": {
     "stlap": "app"
-  },
-  "author": "bruceblore"
+  }
 }

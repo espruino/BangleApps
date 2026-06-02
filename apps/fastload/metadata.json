@@ -12,6 +12,5 @@
     {"name":"fastload.5.boot.js","url":"boot.js"},
     {"name":"fastload.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"fastload.json"}],
-  "author": "halemmerich"
+  "data": [{"name":"fastload.json"}]
 }

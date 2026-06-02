@@ -12,6 +12,5 @@
     {"name":"breath.app.js","url":"app.js"},
     {"name":"breath.img","url":"app-icon.js","evaluate":true}
   ],
-  "data": [{"name":"breath.settings.json","url":"settings.json"}],
-  "author": "jabituyaben"
+  "data": [{"name":"breath.settings.json","url":"settings.json"}]
 }

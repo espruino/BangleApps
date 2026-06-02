@@ -11,6 +11,5 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
     {"name":"widviztime.wid.js","url":"widget.js"}
-  ],
-  "author": "sphrases"
+  ]
 }

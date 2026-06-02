@@ -13,6 +13,5 @@
   "storage": [
     {"name":"geminiclock.app.js","url":"gemini-watch-app.js"},
     {"name":"geminiclock.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "blogmywiki"
+  ]
 }

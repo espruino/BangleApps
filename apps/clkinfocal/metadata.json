@@ -11,6 +11,5 @@
     {"name":"clkinfocal.clkinfo.js","url":"clkinfo.js"},
     {"name":"clkinfocal.settings.js","url":"settings.js"}
   ],
-  "data": [{"name":"clkinfocal.json"}],
-  "author": "gfwilliams"
+  "data": [{"name":"clkinfocal.json"}]
 }

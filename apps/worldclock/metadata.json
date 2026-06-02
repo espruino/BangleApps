@@ -15,6 +15,5 @@
     {"name":"worldclock.app.js","url":"app.js"},
     {"name":"worldclock.img","url":"worldclock-icon.js","evaluate":true}
   ],
-  "data": [{"name":"worldclock.settings.json"}],
-  "author": "computermacgyver"
+  "data": [{"name":"worldclock.settings.json"}]
 }

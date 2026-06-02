@@ -17,6 +17,5 @@
   "data": [
     {"name":"medicalinfo.json","url":"medicalinfo.json"}
   ],
-  "dependencies": {"myprofile":"app"},
-  "author": "jt-nti"
+  "dependencies": {"myprofile":"app"}
 }

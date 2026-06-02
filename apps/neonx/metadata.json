@@ -16,6 +16,5 @@
     {"name": "neonx.img", "url": "neonx-icon.js", "evaluate": true},
     {"name": "neonx.settings.js", "url": "neonx.settings.js"}
   ],
-  "data": [{"name": "neonx.json"}],
-  "author": "bundyo"
+  "data": [{"name": "neonx.json"}]
 }

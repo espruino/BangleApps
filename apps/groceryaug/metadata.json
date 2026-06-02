@@ -13,6 +13,5 @@
   "storage": [
     {"name":"groceryaug.app.js","url":"app.js"},
     {"name":"groceryaug.img","url":"groceryaug-icon.js","evaluate":true}
-  ],
-  "author": "fapeg"
+  ]
 }

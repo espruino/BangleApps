@@ -12,6 +12,5 @@
 "storage": [
   {"name":"a_speech_timer.app.js","url":"app.js"},
   {"name":"a_speech_timer.img","url":"app-icon.js","evaluate":true}
-],
-  "author": "alainsaas"
+]
 }

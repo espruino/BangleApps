@@ -11,6 +11,5 @@
   "storage": [
     {"name":"counter.app.js","url":"counter.js"},
     {"name":"counter.img","url":"counter-icon.js","evaluate":true}
-  ],
-  "author": "bengwalker"
+  ]
 }

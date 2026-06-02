@@ -9,6 +9,5 @@
   "supports": ["BANGLEJS"],
   "storage": [
     {"name":"widncr.wid.js","url":"widget.js"}
-  ],
-  "author": "nicokaiser"
+  ]
 }

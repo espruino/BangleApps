@@ -10,6 +10,5 @@
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"widtimer.wid.js","url":"widget.js"}
-  ],
-  "author": "leonweber"
+  ]
 }

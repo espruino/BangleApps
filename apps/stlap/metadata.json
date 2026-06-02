@@ -24,6 +24,5 @@
   "data": [
     {"name":"stlap.state.json"},
     {"wildcard":"stlap-*.json"}
-  ],
-  "author": "bruceblore"
+  ]
 }

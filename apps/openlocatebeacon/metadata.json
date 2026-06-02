@@ -15,6 +15,5 @@
     { "name": "openlocatebeacon.app.js", "url": "openlocatebeacon.js" },
     { "name": "openlocatebeacon.img", "url": "openlocatebeacon-icon.js",
       "evaluate": true }
-  ],
-  "author": "jeffyactive"
+  ]
 }

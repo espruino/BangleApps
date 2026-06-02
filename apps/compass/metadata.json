@@ -11,6 +11,5 @@
   "storage": [
     {"name":"compass.app.js","url":"compass.js"},
     {"name":"compass.img","url":"compass-icon.js","evaluate":true}
-  ],
-  "author": "ra100"
+  ]
 }

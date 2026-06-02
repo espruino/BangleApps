@@ -11,6 +11,5 @@
   "screenshots": [{"url":"screenshot.png"}],
   "storage": [
     {"name":"textinput","url":"lib.js"}
-  ],
-  "author": "frigis1"
+  ]
 }

@@ -12,6 +12,5 @@
   "storage": [
     {"name":"ltherm.app.js","url":"app.js"},
     {"name":"ltherm.img","url":"icon.js","evaluate":true}
-  ],
-  "author": "elrod16"
+  ]
 }

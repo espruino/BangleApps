@@ -17,6 +17,5 @@
     {"name":"android","url":"lib.js"}
   ],
   "data": [{"name":"android.settings.json"}, {"name":"android.calendar.json"}, {"name":"android.cards.json"}],
-  "sortorder": -8,
-  "author": "gfwilliams"
+  "sortorder": -8
 }

@@ -11,6 +11,5 @@
   "storage": [
     {"name":"bblobface.app.js","url":"app.js"},
     {"name":"bblobface.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "PastaRhythm"
+  ]
 }

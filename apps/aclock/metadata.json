@@ -13,6 +13,5 @@
   "storage": [
     {"name":"aclock.app.js","url":"clock-analog.js"},
     {"name":"aclock.img","url":"clock-analog-icon.js","evaluate":true}
-  ],
-  "author": "ra100"
+  ]
 }

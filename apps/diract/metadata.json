@@ -13,6 +13,5 @@
   "storage": [
     { "name": "diract.app.js", "url": "diract.js" },
     { "name": "diract.img", "url": "diract-icon.js", "evaluate": true }
-  ],
-  "author": "jeffyactive"
+  ]
 }

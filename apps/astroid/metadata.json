@@ -11,6 +11,5 @@
   "storage": [
     {"name":"astroid.app.js","url":"asteroids.js"},
     {"name":"astroid.img","url":"asteroids-icon.js","evaluate":true}
-  ],
-  "author": "ra100"
+  ]
 }

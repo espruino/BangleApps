@@ -13,6 +13,5 @@
   "storage": [
     { "name":"coloursdemo.app.js", "url":"coloursdemo.app.js" },
     { "name":"coloursdemo.img",    "url":"coloursdemo-icon.js", "evaluate":true }
-  ],
-  "author": "flaparoo"
+  ]
 }

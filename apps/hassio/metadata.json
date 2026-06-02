@@ -14,6 +14,5 @@
     {"name":"hassio.boot.js","url":"hassio.boot.js"},
     {"name":"hassio.img","url":"hassio.img"}
   ],
-  "data": [{"name":"hassio.json"}],
-  "author": "ellabellla"
+  "data": [{"name":"hassio.json"}]
 }

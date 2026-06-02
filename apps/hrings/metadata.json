@@ -12,6 +12,5 @@
   "storage": [
     {"name":"hrings.app.js","url":"hypno-rings.js"},
     {"name":"hrings.img","url":"hypno-rings-icon.js","evaluate":true}
-  ],
-  "author": "ra100"
+  ]
 }

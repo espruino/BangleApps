@@ -10,6 +10,5 @@
   "storage": [
     {"name":"hidmsicswipe.app.js","url":"hidmsicswipe.js"},
     {"name":"hidmsicswipe.img","url":"hidmsicswipe-icon.js","evaluate":true}
-  ],
-  "author": "t0m1o1"
+  ]
 }

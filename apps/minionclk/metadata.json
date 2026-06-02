@@ -12,6 +12,5 @@
   "storage": [
     {"name":"minionclk.app.js","url":"app.js"},
     {"name":"minionclk.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "singintime"
+  ]
 }

@@ -15,6 +15,5 @@
     {"name":"andark.settings.js","url":"settings.js"},
     {"name":"andark.img","url":"app_icon.js","evaluate":true}
   ],
-  "data": [{"name":"andark.json"}],
-  "author": "HeiLaut"
+  "data": [{"name":"andark.json"}]
 }

@@ -11,6 +11,5 @@
   "storage": [
     {"name":"megadenti.app.js","url":"app.js"},
     {"name":"megadenti.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "gfwilliams"
+  ]
 }

@@ -12,6 +12,5 @@
   "storage": [
     {"name":"BLEcontroller.app.js","url":"app.js"},
     {"name":"BLEcontroller.img","url":"app-icon.js","evaluate":true}
-  ],
-  "author": "hopkira"
+  ]
 }

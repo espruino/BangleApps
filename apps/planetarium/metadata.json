@@ -16,6 +16,5 @@
     {"name":"planetarium.settings.js","url":"settings.js"},
     {"name":"planetarium.img","url":"planetarium-icon.js","evaluate":true}
   ],
-  "data": [{"name":"planetarium.json"}],
-  "author": "pglez82"
+  "data": [{"name":"planetarium.json"}]
 }

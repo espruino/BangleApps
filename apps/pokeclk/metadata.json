@@ -13,6 +13,5 @@
     "storage": [
       {"name":"pokeclk.app.js","url":"app.js"},
       {"name":"pokeclk.img","url":"app-icon.js","evaluate":true}
-    ],
-    "author": "elykittytee"
+    ]
 }
