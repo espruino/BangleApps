@@ -2,6 +2,7 @@
   "id": "petrock",
   "name": "Pet rock",
   "version": "0.02",
+  "author": "singintime",
   "description": "A virtual pet rock with wobbly eyes",
   "icon": "petrock.png",
   "type": "app",

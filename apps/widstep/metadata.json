@@ -2,6 +2,7 @@
     "id": "widstep",
     "name": "Step counter widget",
     "version": "0.01",
+    "author": "sir-indy",
     "description": "Step counter widget, narrow but clearly readable",
     "readme": "README.md",
     "icon": "icons8-winter-boots-48.png",

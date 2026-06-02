@@ -2,6 +2,7 @@
   "id": "geissclk",
   "name": "Geiss Clock",
   "version": "0.05",
+  "author": "gfwilliams",
   "description": "7 segment clock with animated background in the style of Ryan Geiss' music visualisation. NOTE: The first run will take ~1 minute to do some precalculation",
   "icon": "clock.png",
   "type": "clock",

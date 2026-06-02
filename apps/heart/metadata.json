@@ -3,6 +3,7 @@
   "name": "Heart Rate Recorder",
   "shortName": "HRM Record",
   "version": "0.09",
+  "author": "sebi5361",
   "description": "Application that allows you to record your heart rate. Can run in background",
   "icon": "app.png",
   "tags": "tool,health,widget",

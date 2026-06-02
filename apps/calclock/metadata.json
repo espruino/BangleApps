@@ -3,6 +3,7 @@
   "name": "Calendar Clock",
   "shortName": "CalClock",
   "version": "0.09",
+  "author": "LeonMatthes",
   "description": "Show the current and upcoming events synchronized from Gadgetbridge",
   "icon": "calclock.png",
   "type": "clock",

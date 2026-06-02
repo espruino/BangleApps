@@ -3,6 +3,7 @@
   "name": "Xiaomi Plant Sensor",
   "shortName": "Mi Plant",
   "version": "0.03",
+  "author": "gfwilliams",
   "description": "Reads and displays data from Xiaomi bluetooth plant moisture sensors",
   "icon": "app.png",
   "tags": "xiaomi,mi,plant,ble,bluetooth",

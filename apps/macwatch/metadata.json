@@ -3,6 +3,7 @@
   "shortName":"MacWatch",
   "icon": "app.png",
   "version": "0.02",
+  "author": "blogmywiki",
   "description": "Simple clock with classic Mac font",
   "type": "clock",
   "tags": "clock",

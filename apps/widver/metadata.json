@@ -2,6 +2,7 @@
   "id": "widver",
   "name": "Firmware Version Widget",
   "version": "0.03",
+  "author": "MaBecker",
   "description": "Display the version of the installed firmware in the top widget section.",
   "icon": "widget.png",
   "type": "widget",

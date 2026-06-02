@@ -2,6 +2,7 @@
   "id": "ctrclk",
   "name": "Centerclock",
   "version": "0.03",
+  "author": "gfwilliams",
   "description": "Watch-centered digital 24h clock with date in dd.mm.yyyy format.",
   "icon": "app.png",
   "type": "clock",

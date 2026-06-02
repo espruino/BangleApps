@@ -3,6 +3,7 @@
   "name": "GPS Adventure Sports II",
   "shortName":"GPS Adv Sport II",
   "version": "0.20",
+  "author": "nujw",
   "description": "GPS speed, altitude and distance to waypoint display. Designed for easy viewing and use during outdoor activities such as para-gliding, hang-gliding, sailing, cycling etc.",
   "icon": "app.png",
   "type": "app",

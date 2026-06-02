@@ -2,6 +2,7 @@
   "name": "Rebble Agenda",
   "shortName":"Agenda",
   "version": "0.02",
+  "author": "SarahAlroe",
   "description": "A pebble-inspired animated agenda",
   "icon": "app.png",
   "screenshots" : [ 

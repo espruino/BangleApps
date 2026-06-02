@@ -4,6 +4,7 @@
   "shortName":"Master Mind",
   "icon": "mmind.png",
   "version":"0.02",
+  "author": "psbest",
   "description": "This is the classic game for masterminds",
   "screenshots": [{"url":"screenshot_mmind.png"}],
   "type": "app",

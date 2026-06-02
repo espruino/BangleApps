@@ -3,6 +3,7 @@
   "name": "Quick Center",
   "shortName": "QCenter",
   "version": "0.07",
+  "author": "Kedlub",
   "description": "An app for quickly launching your favourite apps, inspired by the control centres of other watches.",
   "icon": "app.png",
   "tags": "",

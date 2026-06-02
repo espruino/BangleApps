@@ -3,6 +3,7 @@
   "name": "Chrono Widget",
   "shortName": "Chrono Widget",
   "version": "0.06",
+  "author": "Purple-Tentacle",
   "description": "Chronometer (timer) which runs as widget.",
   "icon": "app.png",
   "tags": "tool,widget",

@@ -3,6 +3,7 @@
   "name": "Tilt Hydrometer Display",
   "shortName": "Tilt Hydro",
   "version": "0.02",
+  "author": "gfwilliams",
   "description": "A display for the [Tilt Hydrometer](https://tilthydrometer.com/) - [more info here](http://www.espruino.com/Tilt+Hydrometer+Display)",
   "icon": "app.png",
   "tags": "tools,bluetooth",

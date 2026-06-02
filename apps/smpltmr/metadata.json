@@ -3,6 +3,7 @@
   "name": "Simple Timer",
   "shortName": "Simple Timer",
   "version": "0.13",
+  "author": "peerdavid",
   "description": "A very simple app to start a timer.",
   "icon": "app.png",
   "tags": "tool,alarm,timer,clkinfo",

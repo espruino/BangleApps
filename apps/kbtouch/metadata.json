@@ -1,6 +1,7 @@
 { "id": "kbtouch",
   "name": "Touch keyboard",
   "version":"0.05",
+  "author": "gfwilliams",
   "description": "A library for text input via onscreen keyboard",
   "icon": "app.png",
   "type":"textinput",

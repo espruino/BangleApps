@@ -3,6 +3,7 @@
   "name": "Nixie Clock",
   "shortName": "Nixie",
   "version": "0.03",
+  "author": "yngv27",
   "description": "A nixie tube clock for both Bangle 1 and 2.",
   "icon": "nixie.png",
   "type": "clock",

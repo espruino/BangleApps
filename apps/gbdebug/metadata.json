@@ -2,6 +2,7 @@
   "name": "Gadgetbridge Debug",
   "shortName":"GB Debug",
   "version":"0.01",
+  "author": "gfwilliams",
   "description": "Debug info for Gadgetbridge. Run this app and when Gadgetbridge messages arrive they are displayed on-screen.",
   "icon": "app.png",
   "tags": "",

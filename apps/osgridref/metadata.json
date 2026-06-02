@@ -3,6 +3,7 @@
   "name": "Ordnance Survey Grid Reference",
   "shortName": "OS Grid ref",
   "version": "0.01",
+  "author": "gfwilliams",
   "description": "Displays the UK Ordnance Survey grid reference of your current GPS location. Useful when in the United Kingdom with an Ordnance Survey map",
   "icon": "app.png",
   "tags": "outdoors,gps",

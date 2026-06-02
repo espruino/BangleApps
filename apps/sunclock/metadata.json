@@ -2,6 +2,7 @@
   "id": "sunclock",
   "name": "Sun Clock",
   "version": "0.03",
+  "author": "bernschneider",
   "description": "A clock with sunset/sunrise, sun height/azimuth",
   "icon": "app.png",
   "type": "clock",

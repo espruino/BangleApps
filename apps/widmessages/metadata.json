@@ -2,6 +2,7 @@
   "id": "widmessages",
   "name": "Message Widget",
   "version": "0.08",
+  "author": "rigrig",
   "description": "Widget showing new messages",
   "icon": "app.png",
   "type": "widget",

@@ -2,6 +2,7 @@
   "id": "pinsafe",
   "name": "PIN safe",
   "version": "0.01",
+  "author": "xxDUxx",
   "description": "Store encrypted numerical PINs on your Watch.",
   "icon": "app.png",
   "tags": "tool",

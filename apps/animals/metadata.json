@@ -2,6 +2,7 @@
   "id": "animals",
   "name": "Animals Game",
   "version": "0.01",
+  "author": "ra100",
   "description": "Simple toddler's game - displays a different number of animals each time the screen is pressed",
   "icon": "animals.png",
   "tags": "game",

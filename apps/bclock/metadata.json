@@ -2,6 +2,7 @@
   "id": "bclock",
   "name": "Binary Clock",
   "version": "0.04",
+  "author": "ra100",
   "description": "A simple binary clock watch face",
   "icon": "clock-binary.png",
   "type": "clock",

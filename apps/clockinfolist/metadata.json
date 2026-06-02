@@ -4,6 +4,7 @@
   "shortName": "ClockinfoList",
   "version": "0.01",
   "type": "app",
+  "author": "chuckwagoncomputing",
   "description": "List Available Clockinfo Modules",
   "icon": "app.png",
   "screenshots": [

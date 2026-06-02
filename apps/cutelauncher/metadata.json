@@ -3,6 +3,7 @@
     "name": "Cute Launcher",
     "shortName": "Cute Launcher",
     "version": "0.03",
+    "author": "kkayam",
     "description": "A simple launcher app for Bangle.js 2 that makes use of the full touchscreen",
     "icon": "app.png",
     "type": "launch",

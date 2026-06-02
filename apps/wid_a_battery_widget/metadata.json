@@ -7,6 +7,7 @@
   "type": "widget",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",
+  "author": "alainsaas",
   "description": "Simple and slim battery widget with charge status and percentage",
   "tags": "widget,battery",
   "provides_widgets" : ["battery"],

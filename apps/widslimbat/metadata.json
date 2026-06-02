@@ -2,6 +2,7 @@
   "name": "Slim battery widget with cells",
   "shortName":"Slim battery with cells",
   "version":"0.01",
+  "author": "idavydov",
   "description": "A small (13px wide) battery widget with cells",
   "icon": "widget.png",
   "type": "widget",

@@ -2,6 +2,7 @@
   "id": "stlap",
   "name": "Stopwatch",
   "version": "0.04",
+  "author": "bruceblore",
   "description": "A stopwatch that remembers its state, with a lap timer and a gesture mode (enable by swiping)",
   "icon": "icon.png",
   "type": "app",

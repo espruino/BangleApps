@@ -3,6 +3,7 @@
   "name": "Digital Assistant, not EDITH",
   "shortName": "DANE",
   "version": "0.16",
+  "author": "OmegaRogue",
   "description": "A Watchface inspired by Tony Stark's EDITH and based on https://arwes.dev/",
   "icon": "app.png",
   "type": "clock",

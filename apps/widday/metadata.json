@@ -4,6 +4,7 @@
   "icon": "widget.png",
   "type": "widget",
   "version":"0.01",
+  "author": "pidajo",
   "description": "Just the day of the current date as widget",
   "readme": "README.md",
   "tags": "widget,say,date",

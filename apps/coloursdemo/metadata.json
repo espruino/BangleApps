@@ -3,6 +3,7 @@
   "name": "Colours Demo",
   "shortName":"Colours Demo",
   "version":"1.00",
+  "author": "flaparoo",
   "description": "Simple app to demonstrate colours",
   "icon": "coloursdemo.png",
   "screenshots": [{ "url": "screenshot.png" }],

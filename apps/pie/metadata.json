@@ -2,6 +2,7 @@
   "name": "In this game you need to make highest pie",
   "shortName":"Pie maker",
   "version":"0.01",
+  "author": "2taras",
   "description": "In this game you will be making pie out of different pieces",
   "icon": "app.png",
   "type": "app",
