@@ -3,6 +3,7 @@
   "name": "Geek Squad Appointment Timer",
   "shortName": "gsat",
   "version": "0.02",
+  "author": "gncnpk",
   "description": "Starts a 20 minute timer for appointments at Geek Squad.",
   "icon": "app.png",
   "tags": "tool",

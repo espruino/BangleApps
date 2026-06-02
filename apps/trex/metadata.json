@@ -2,6 +2,7 @@
   "id": "trex",
   "name": "T-Rex",
   "version": "0.05",
+  "author": "ra100",
   "description": "T-Rex game in the style of Chrome's offline game",
   "icon": "trex.png",
   "screenshots": [{"url":"screenshot_trex.png"}],

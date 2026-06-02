@@ -3,6 +3,7 @@
   "name": "Binary Bluetooth Keyboard",
   "shortName": "Binary BT Kbd",
   "version": "0.03",
+  "author": "ra100",
   "description": "Enable HID in settings, pair with your phone/PC, then type messages using the onscreen keyboard by tapping repeatedly on the key you want",
   "icon": "hid-binary-keyboard.png",
   "tags": "bluetooth",

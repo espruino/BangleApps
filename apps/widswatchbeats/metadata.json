@@ -4,6 +4,7 @@
   "icon": "widget-icon.png",
   "type": "widget",
   "version": "0.01",
+  "author": "npbreland",
   "description": "Displays the current .beat (e.g. @500 for midday)",
   "tags": "widget,time,swatch,internet,beat,.beat,clock",
   "supports": ["BANGLEJS","BANGLEJS2"],

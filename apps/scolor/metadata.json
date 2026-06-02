@@ -2,6 +2,7 @@
   "id": "scolor",
   "name": "Show Color",
   "version": "0.01",
+  "author": "ra100",
   "description": "Display all available Colors and Names",
   "icon": "show-color.png",
   "type": "app",

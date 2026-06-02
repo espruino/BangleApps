@@ -2,6 +2,7 @@
   "id":"fallout_clock",
   "name":"Fallout Clock",
   "version":"0.21",
+  "author": "zskelton",
   "description":"A simple clock for the Fallout fan",
   "icon":"icon.png",
   "type":"clock",

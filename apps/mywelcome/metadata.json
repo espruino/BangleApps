@@ -3,6 +3,7 @@
   "name": "Customised Welcome",
   "shortName": "My Welcome",
   "version": "0.14",
+  "author": "gfwilliams",
   "description": "Appears at first boot and explains how to use Bangle.js. Like 'Welcome', but can be customised with a greeting for Christmas or Birthdays!",
   "icon": "app.png",
   "tags": "start,welcome,birthday,christmas,xmas",

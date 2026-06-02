@@ -3,6 +3,7 @@
     "name": "Poketch Clock",
     "shortName":"Poketch Clock",
     "version": "0.04",
+    "author": "elykittytee",
     "description": "A clock based on the Poketch electronic device found in Sinnoh",
     "icon": "app.png",
     "type": "clock",

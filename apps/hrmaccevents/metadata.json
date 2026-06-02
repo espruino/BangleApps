@@ -4,6 +4,7 @@
   "shortName": "HRM ACC recorder",
   "version": "0.03",
   "type": "RAM",
+  "author": "halemmerich",
   "description": "Record HRM and accelerometer events in high resolution to CSV files in your browser",
   "icon": "app.png",
   "tags": "debug",

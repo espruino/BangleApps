@@ -2,6 +2,7 @@
   "id": "widanclk",
   "name": "Analog clock widget",
   "version": "0.04",
+  "author": "gfwilliams",
   "description": "A simple analog clock widget that appears when not showing a fullscreen clock. Todays date sits behind the clock hands.",
   "icon": "widget.png",
   "type": "widget",

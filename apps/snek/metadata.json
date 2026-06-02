@@ -2,6 +2,7 @@
   "name": "The snek game",
   "shortName":"Snek",
   "version": "0.02",
+  "author": "CynderR",
   "description": "A snek game where you control a snek to eat all the apples!",
   "screenshots": [{"url":"screenshot_snek.png"}],
   "icon": "snek.png",

@@ -7,6 +7,7 @@
   "readme": "README.md",
   "supports": ["BANGLEJS2"],
   "dependencies" : { "clock_info":"module" },
+  "author": "peerdavid",
   "description": "A watch face that was designed by an AI (stable diffusion) and implemented by a human.",
   "type": "clock",
   "tags": "clock,clkinfo",

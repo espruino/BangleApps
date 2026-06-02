@@ -2,6 +2,7 @@
   "name": "Colorful Analog Clock",
   "shortName":"Colorful Clock",
   "version": "0.05",
+  "author": "rozek",
   "description": "a colorful analog clock",
   "icon": "app-icon.png",
   "type": "clock",

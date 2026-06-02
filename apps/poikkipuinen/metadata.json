@@ -2,6 +2,7 @@
   "name": "Poikkipuinen - Minimal watch face",
   "shortName":"Poikkipuinen",
   "version":"0.01",
+  "author": "jukioo",
   "description": "A minimal digital watch face.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot1.png"}],

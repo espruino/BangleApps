@@ -34,3 +34,5 @@
       Add new API to get weather from Weather App for other Apps
 0.31: Wind speed clockInfo now shows speed in local units (kph or mph)
 0.32: Add widget configuration settings menu for icon style, data displayed, etc.
+      ClockInfos now show the high/low temp as the min/max for displaying a percent bar.
+0.33: Fix bugs with weather app and clock info

@@ -2,6 +2,7 @@
   "id": "gassist",
   "name": "Google Assist",
   "version": "0.01",
+  "author": "stweedo",
   "description": "A simple way to initiate Google Assistant on Android. Intents must be enabled in  Gadgetbridge.",
   "icon": "app.png",
   "type": "app",

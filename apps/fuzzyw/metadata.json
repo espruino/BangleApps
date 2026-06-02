@@ -3,6 +3,7 @@
   "name":"Fuzzy Text Clock",
   "shortName": "Fuzzy Text",
   "version": "0.05",
+  "author": "sir-indy",
   "description": "An imprecise clock for when you're not in a rush",
   "readme": "README.md",
   "icon":"fuzzyw.png",

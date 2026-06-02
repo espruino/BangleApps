@@ -4,6 +4,7 @@
     "icon": "rolex.png",
     "screenshots": [{"url":"screenshot1.png"}],
     "version": "0.06",
+    "author": "gfwilliams",
     "description": "A rolex like watch face",
     "tags": "clock",
     "type": "clock",

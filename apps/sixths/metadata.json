@@ -1,6 +1,7 @@
 { "id": "sixths",
   "name": "Sixth sense",
   "version": "0.11",
+  "author": "pavelmachek",
   "description": "Clock for outdoor use with GPS support",
   "icon": "app.png",
   "readme": "README.md",

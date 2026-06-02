@@ -3,6 +3,7 @@
   "name": "SloMo Clock",
   "shortName": "SloMo Clock",
   "version": "0.20",
+  "author": "nujw",
   "description": "Simple 24h clock face with large digits, hour above minute. Uses Layout library.",
   "icon": "watch.png",
   "type": "clock",

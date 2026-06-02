@@ -3,6 +3,7 @@
   "shortName":"Ruuvi Watch",
   "icon": "ruuviwatch.png",
   "version": "0.06",
+  "author": "emarc",
   "description": "Keep an eye on RuuviTag devices (https://ruuvi.com). For RuuviTags using the v5 format.",
   "readme":"README.md",
   "tags": "bluetooth",

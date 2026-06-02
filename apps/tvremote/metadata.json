@@ -3,6 +3,7 @@
   "shortName":"TV Remote",
   "icon": "app.png",
   "version":"0.01",
+  "author": "Guptilious",
   "description": "remote for controlling your tv, using a webserver and the bangle Gadget Bridge (https://www.espruino.com/Gadgetbridge).",
   "icon": "app.png",
   "tags": "remote",

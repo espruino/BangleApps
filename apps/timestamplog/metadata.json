@@ -4,6 +4,7 @@
   "shortName":"Timestamp log",
   "icon": "app.png",
   "version": "0.01",
+  "author": "ticalc-travis",
   "description": "Conveniently record a series of date/time stamps",
   "screenshots": [ {"url": "screenshot.png" } ],
   "readme": "README.md",

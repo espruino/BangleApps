@@ -2,6 +2,7 @@
   "name": "multiple dice roller",
   "shortName":"multidice",
   "version":"1.44",
+  "author": "Le-Kat",
   "description": "roll anywhere from 1-8 dice at the same time",
   "icon": "app.png",
   "tags": "tool,game",
