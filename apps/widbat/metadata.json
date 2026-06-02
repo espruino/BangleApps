@@ -2,6 +2,7 @@
   "id": "widbat",
   "name": "Battery Level Widget",
   "version": "0.13",
+  "author": "gfwilliams",
   "description": "Show the current battery level and charging status in the top right of the clock",
   "icon": "widget.png",
   "type": "widget",

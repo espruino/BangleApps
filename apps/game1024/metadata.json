@@ -5,6 +5,7 @@
     "icon": "game1024.png",
     "screenshots": [ {"url":"screenshot.png" } ],
     "readme":"README.md",
+    "author": "chiefdaft",
     "description": "Swipe the squares up, down, to the left or right, join the numbers and get to the 10 (2^1024), J or X tile!",
     "type": "app",
     "tags": "game,puzzle",

@@ -1,6 +1,7 @@
 { "id": "eliteclock",
   "name": "Elite clock",
   "version": "0.01",
+  "author": "pavelmachek",
   "description": "Simple binary clock for leet haxorz",
   "icon": "app.png",
   "readme": "README.md",

@@ -3,6 +3,7 @@
   "name": "Message UI",
   "shortName": "Messages",
   "version": "0.92",
+  "author": "rigrig",
   "description": "Default app to display notifications from iOS and Gadgetbridge/Android",
   "icon": "app.png",
   "type": "app",

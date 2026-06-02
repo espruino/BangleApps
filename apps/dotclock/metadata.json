@@ -2,6 +2,7 @@
   "id": "dotclock",
   "name": "Dot Clock",
   "version": "0.04",
+  "author": "articnet",
   "description": "A Minimal Dot Analog Clock",
   "icon": "clock-dot.png",
   "type": "clock",

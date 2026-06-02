@@ -2,6 +2,7 @@
 	"id": "binaryclk",
 	"name": "Bin Clock",
 	"version": "0.12",
+	"author": "shansou504",
 	"description": "Binary clock with date and battery",
 	"icon": "app-icon.png",
 	"screenshots": [{"url":"screenshot.png"}],

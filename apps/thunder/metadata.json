@@ -2,6 +2,7 @@
   "name": "Come on Thunder",
   "shortName":"Thunder",
   "version":"0.03",
+  "author": "jt-nti",
   "description": "Simple timer to calculate how far away lightning is",
   "icon": "app.png",
   "tags": "tool,weather",

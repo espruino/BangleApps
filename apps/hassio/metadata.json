@@ -3,6 +3,7 @@
   "shortName":"Hassio",
   "icon": "hassio.png",
   "version":"0.02",
+  "author": "ellabellla",
   "description": "This app gives access to viewing Home Assistant data and sends health, compass, accelerometer, and battery information to Home Assistant as a sensor through the Home Assistant REST API.",
   "tags": "tool,sensors",
   "supports": ["BANGLEJS2"],

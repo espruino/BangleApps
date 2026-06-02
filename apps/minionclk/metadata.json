@@ -2,6 +2,7 @@
   "id": "minionclk",
   "name": "Minion clock",
   "version": "0.06",
+  "author": "singintime",
   "description": "Minion themed clock.",
   "icon": "minionclk.png",
   "type": "clock",

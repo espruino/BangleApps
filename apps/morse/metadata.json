@@ -2,6 +2,7 @@
   "id": "morse",
   "name": "Morse Code",
   "version": "0.02",
+  "author": "ra100",
   "description": "Learn morse code by hearing/seeing/feeling the code. Tap to toggle buzz!",
   "icon": "morse-code.png",
   "type": "app",

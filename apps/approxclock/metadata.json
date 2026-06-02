@@ -3,6 +3,7 @@
   "shortName" : "Approx Clock",
   "version": "0.04",
   "icon": "app.png",
+  "author": "charlestietjen",
   "description": "A really basic spelled out time display for people looking for the vague time at a glance.",
   "readme": "readme.md",
   "type": "clock",

@@ -1,6 +1,7 @@
 { "id": "draguboard",
   "name": "DragUboard",
   "version":"0.03",
+  "author": "lauzonhomeschool",
   "description": "A library for text input via swiping U-shaped keyboard.",
   "icon": "app.png",
   "type":"textinput",

@@ -2,6 +2,7 @@
   "id": "mandelbrotclock",
   "name": "Mandelbrot Clock",
   "version": "0.02",
+  "author": "JamesLMilner",
   "description": "A mandelbrot set themed clock cool",
   "icon": "mandelbrotclock.png",
   "screenshots": [{ "url": "screenshot_mandelbrotclock.png" }],

@@ -2,6 +2,7 @@
   "id": "rpgdice",
   "name": "RPG dice",
   "version": "0.02",
+  "author": "singintime",
   "description": "Simple RPG dice rolling app.",
   "icon": "rpgdice.png",
   "type": "app",

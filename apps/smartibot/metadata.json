@@ -3,6 +3,7 @@
   "name": "Smartibot controller",
   "shortName": "Smartibot",
   "version": "0.01",
+  "author": "gfwilliams",
   "description": "Control a [Smartibot Robot](https://thecraftyrobot.net/) straight from your Bangle.js",
   "icon": "app.png",
   "tags": "",

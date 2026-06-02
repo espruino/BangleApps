@@ -3,6 +3,7 @@
   "shortName":"SlimeHunt",
   "icon": "app.png",
   "version":"0.02",
+  "author": "ColtJLaCh",
   "description": "Fight against slimes in turn based combat, try to get the highscore!",
   "tags": "rpg,slime",
   "supports" : ["BANGLEJS"],

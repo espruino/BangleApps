@@ -1,6 +1,7 @@
 { "id": "kbmulti",
   "name": "Multitap keyboard",
   "version": "0.09",
+  "author": "sir-indy",
   "description": "A library for text input via multitap/T9 style keypad",
   "icon": "app.png",
   "type":"textinput",

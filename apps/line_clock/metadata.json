@@ -2,6 +2,7 @@
   "name": "Line Clock",
   "shortName":"Line Clock",
   "version":"0.1",
+  "author": "deepDiverPaul",
   "description": "a readable analog clock",
   "icon": "app-icon.png",
   "type": "clock",

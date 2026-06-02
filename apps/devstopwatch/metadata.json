@@ -3,6 +3,7 @@
   "name": "Dev Stopwatch",
   "shortName": "Dev Stopwatch",
   "version": "0.06",
+  "author": "ukaoskid",
   "description": "Stopwatch with 5 laps supported (cyclically replaced)",
   "icon": "app.png",
   "tags": "stopwatch,chrono,timer,chronometer",

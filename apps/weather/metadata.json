@@ -2,6 +2,7 @@
   "id": "weather",
   "name": "Weather",
   "version": "0.31",
+  "author": "rigrig",
   "description": "Show Gadgetbridge/iOS weather report",
   "icon": "icon.png",
   "screenshots": [{"url":"Screenshot.png"}],

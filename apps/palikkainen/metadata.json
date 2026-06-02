@@ -2,6 +2,7 @@
   "name": "Palikkainen - A blocky watch face",
   "shortName":"Palikkainen",
   "version":"0.01",
+  "author": "jukioo",
   "description": "A minimal watch face consisting of blocks.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot1.png"}],

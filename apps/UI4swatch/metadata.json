@@ -3,6 +3,7 @@
   "name": "UI 4 swatch",
   "shortName": "UI 4 swatch",
   "version": "0.02",
+  "author": "dapgo",
   "description": "A UI/UX for espruino smartwatches, displays dinamically calc. x,y coordinates.",
   "icon": "app.png",
   "tags": "color,input,buttons,touch,ui",

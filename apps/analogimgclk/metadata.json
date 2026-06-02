@@ -3,6 +3,7 @@
   "name": "Analog Clock (Image background)",
   "shortName": "Analog Clock",
   "version": "0.03",
+  "author": "gfwilliams",
   "description": "An analog clock with an image background",
   "icon": "app.png",
   "type": "clock",

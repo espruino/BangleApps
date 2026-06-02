@@ -2,6 +2,7 @@
     "id": "gallery",
     "name": "Gallery",
     "version": "0.04",
+    "author": "bruceblore",
     "description": "A gallery that lets you view images uploaded with the IDE (see README)",
     "readme": "README.md",
     "icon": "icon.png",

@@ -2,6 +2,7 @@
   "name": "HeatSuite",
   "shortName":"HeatSuite",
   "version":"0.10",
+  "author": "nravanelli",
   "description": "The smartwatch software to integrate with HeatSuite",
   "icon": "icon.png",
   "type": "app",

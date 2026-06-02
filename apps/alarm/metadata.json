@@ -3,6 +3,7 @@
   "name": "Alarms & Timers",
   "shortName": "Alarms",
   "version": "0.53",
+  "author": "gfwilliams",
   "description": "Set alarms and timers on your Bangle",
   "icon": "app.png",
   "tags": "tool,alarm",

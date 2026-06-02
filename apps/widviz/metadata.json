@@ -3,6 +3,7 @@
   "name": "Widget Visibility Widget",
   "shortName": "Viz Widget",
   "version": "0.04",
+  "author": "jeffmer",
   "description": "Swipe left to hide top bar widgets, swipe right to redisplay.",
   "icon": "eye.png",
   "type": "widget",
