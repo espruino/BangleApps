@@ -56,6 +56,7 @@ exports.setAlarm = function(id, alarm) {
     alarm.id = id;
     if (alarm.dow===undefined) alarm.dow = 0b1111111;
     if (alarm.on!==false) alarm.on=true;
+    if (alarm.hidden && !alarm.group) alarm.group = "Hidden";
     exports.updateAlarm(alarm);
     alarms.push(alarm);
   }

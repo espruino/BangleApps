@@ -41,3 +41,4 @@
 0.38: Fix timer going off immediately if it was long enough it went to the next day (#4220)
 0.39: Allow a press of the button to stop/snooze the alarm when it's gone off
 0.40: Prevent time-of-day alarms set via setAlarm() that have a time earlier than the current time triggering immediately after #4220 fix; schedule them for tomorrow by default to match original behavior
+0.41: If alarm.hidden is set and not alarm.group then set group to "Hidden".
