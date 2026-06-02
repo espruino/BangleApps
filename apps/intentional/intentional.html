@@ -232,18 +232,28 @@ function gotStored(stored) {
 
 function getLaunchableApps() {
 
-  return installedApps.filter(app => {
+  return installedApps
+    .filter(app => {
 
-    if (!app.files) return false;
+      if (!app.files) return false;
 
-    if (!app.files.includes(".app.js")) return false;
+      if (!app.files.includes(".app.js")) return false;
 
-    if (app.type === "widget") return false;
-    if (app.type === "module") return false;
-    if (app.type === "bootloader") return false;
+      if (app.type === "widget") return false;
+      if (app.type === "module") return false;
+      if (app.type === "bootloader") return false;
 
-    return true;
-  });
+      return true;
+
+    })
+    .sort((a,b) => {
+
+      let an = (a.name || a.id).toLowerCase();
+      let bn = (b.name || b.id).toLowerCase();
+
+      return an.localeCompare(bn);
+
+    });
 
 }
 
