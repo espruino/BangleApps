@@ -257,24 +257,7 @@ function getLaunchableApps() {
 
 }
 
-function fillAppList() {
 
-  let sel = document.getElementById("appSelect");
-
-  sel.innerHTML = "";
-
-  getLaunchableApps().forEach(app => {
-
-    let opt = document.createElement("option");
-
-    opt.value = app.id;
-    opt.textContent = app.name || app.id;
-
-    sel.appendChild(opt);
-
-  });
-
-}
 // ---------- download/Load Json ----------
 function downloadJSON() {
 
@@ -441,7 +424,11 @@ function addFolder(){
 }
 function addApp() {
 
+  console.log("installedApps =", installedApps);
+
   let apps = getLaunchableApps();
+
+  console.log("launchable =", apps);
 
   if (!apps.length) {
     alert("No launchable apps found");
