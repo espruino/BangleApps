@@ -61,7 +61,7 @@
     {"name":"recorder.json",
      "url":"recorder.json"},
     {"name":"edgeclk.settings.json",
-     "url":"loading-screen.txt"},
+     "url":"loading_screen.txt"},
     {"name":".loading",
      "url":"edgeclk.settings.json"},
     {"name":"setting.json",
