@@ -19,7 +19,12 @@ You can either:
   * `Rings` - Randomly generated rings in the selected color palette
   * `Tris` - Randomly generated overlapping triangles in the selected color palette
   * `Blobs` - Randomly generated blobs of color in the selected color palette
-  * `Gradient` - A gradient from top to bottom with the selected colors
+  * `Gradient` - A gradient with one of the styles below:
+    * Horizontal
+    * Vertical
+    * Diagonal from Top Left to Bottom Right
+    * Diagonal from Top Right to Bottom Left
+    * Radial
 
 ## Usage in code
 
