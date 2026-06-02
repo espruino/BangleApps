@@ -234,11 +234,8 @@ function on_gps(fix) {
 
   msg += "\n" + updateTime(fix, now);
 
-  g.reset().clear().setFont("Vector", 31)
-    .setColor(1,1,1)
-    .fillRect(0, 24, 176, 100)
-    .setColor(0,0,0)
-    .drawString(msg, 3, 25);
+  g.reset().clear().setFont("Vector", 20)
+    .drawString(msg, 3, 3);
 }
 
 fmt.init();
