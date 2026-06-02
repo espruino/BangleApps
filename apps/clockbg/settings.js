@@ -44,7 +44,7 @@ function colorRange(from, to, steps) {
     }
     return result;
   }
-let customMenu=function(style, col1name, col2name, bck) {
+let customMenu=function(style, col1name, col2name, bck, img) {
             var col1 = "", col2 = "";
             function buildMenu() {
               var menu = {"":{title:/*LANG*/"Custom", back:bck}};
@@ -65,6 +65,7 @@ let customMenu=function(style, col1name, col2name, bck) {
                   settings.style = style;
                   settings.colors=[col1,col2]
                   if(style=="plasma")settings.colors = colorRange(col1, col2, 16);
+                  if(style=="gradient")settings.image = img;
                   saveSettings();
                   showMainMenu();
                 };
@@ -216,7 +217,7 @@ let customMenu=function(style, col1name, col2name, bck) {
               showMainMenu();
             },
           };
-          if(process.env.BOARD === "BANGLEJS2")plasmaMenu[/*LANG*/"Custom"]= () => customMenu("plasma", /*LANG*/"Background",/*LANG*/"Foreground", showMenu );
+          if(process.env.BOARD === "BANGLEJS2")plasmaMenu[/*LANG*/"Custom"]= () => customMenu("plasma", /*LANG*/"Background",/*LANG*/"Foreground", showMenu,undefined );
           cols.forEach(col => {
             plasmaMenu[getColorsImage(col)] = () => {
               settings.style = "plasma";
@@ -313,6 +314,8 @@ let customMenu=function(style, col1name, col2name, bck) {
         E.showMenu(menu);
       },
       /*LANG*/"Gradient" : function() {
+        let img=""
+        
         let showMenu=()=>{
           var cols = [ // list of color palettes used as gradient colors
             ["#0ff","#00f"],
@@ -325,26 +328,54 @@ let customMenu=function(style, col1name, col2name, bck) {
             // Please add some more!
           ];
 
-          var menu = {"":{title:/*LANG*/"Gradient", back:showModeMenu},
+          var menu = {"":{title:/*LANG*/"Gradient", back:showTypeMenu},
             /*LANG*/"Random" : () => {
               settings.style = "gradient";
               settings.colors = cols;
+              settings.image= img;
               saveSettings();
-              showMainMenu();
+              showMainMenu()
             },
           };
-          if(process.env.BOARD === "BANGLEJS2")menu[/*LANG*/"Custom"]= () => customMenu("gradient", /*LANG*/"Top",/*LANG*/"Bottom",showMenu);
+          if(process.env.BOARD === "BANGLEJS2")menu[/*LANG*/"Custom"]= () => customMenu("gradient", /*LANG*/"Color 1",/*LANG*/"Color 2",showMenu,img);
           cols.forEach(col => {
             menu[getColorsImage(col)] = () => {
               settings.style = "gradient";
               settings.colors = col;
+              settings.image= img;
               saveSettings();
               showMainMenu();
             };
           });
           E.showMenu(menu);
         }
-        showMenu()
+        let showTypeMenu= () => {
+          let typeMenu={
+            "":{title:/*LANG*/"Select Type", back:showMainMenu},
+            /*LANG*/"Vertical":function(){
+              img="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAERESISEREhEiMyMjIzMjMkRERERERERUVWZWVVVWZVZ3d2d3dnd3dpiIiYmIiIiImamqmpqqqamru7u7u7u7u8zdzN3czczM3u3e7d7t7e3///////////////////////////////8=";
+              showMenu()
+            },
+            /*LANG*/"Horizontal":function(){
+              img="//7LqHVDEAD//tqYdUIQAP/9y5h1QyAA//7LqHZDEAD//tqodUMQAP/+y6l2QyAA//7LmHZTIAD//cupdUMQAP/+y6l1QxAA//7bqHVDEAD//cuoZlIQAP/+y5h1UxAA//7bqXVDEAD//cuYdkMQAP/+y6h1QhAA//7LmHZCEAA=";
+              showMenu()
+            },
+            /*LANG*/"Diagonal TL-BR":function(){
+              img="////7cy6mYj///7dy6qYd///7cu6mYd2/+7cy6qYhmX+7dy6qYh2Ve7cy6qYh3VU7du6mYd2VFPcy6mYd2VUM8u7qIhmZUMiy7qYh2VUQyG7mYdnVEQiIKmYh2VEQyEAqYh2VUMyEQCYd3VUMyEQAJd2ZUMyEQAAd2ZUMyIAAAA=";
+              showMenu()
+            },
+            /*LANG*/"Diagonal TR-BL":function(){
+              img="d2VUQiIQAACIdlVEMhEAAJiHZVQzIQAAqZdnVUMiIQCpmYZlRDIiELuph3ZVRDIRy7qYh2ZUQyHMupmIdmVDIty7qoh3ZlRD3cy6mYh2VUTu3buqmHdlRP/tzLqph3Zl/+7dy6qZh2b//u3Lu6mHZv//7dzLupl2///+3du6qYc=";
+              showMenu()
+            },
+            /*LANG*/"Radial":function(){
+              img="AAEiMzMiEAAAEjRVVUMhAAE0Vnd3ZUMQEkV4mZmHVCEjV4mruph1MiRom83cuYZCNXms7/7Kl1M1eb3//9uXUzV5vf//25dTNXms7/7Kl1MkaJvN3LmGQiNXiau6mHUyEkV4mZmHVCEBNFZ3d2VDEAASNFVVQyEAAAEiMzMiEAA=";
+              showMenu()
+            }
+          }
+          E.showMenu(typeMenu)
+        }
+        showTypeMenu()
       }
       
     });
