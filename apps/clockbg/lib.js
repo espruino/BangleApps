@@ -67,35 +67,19 @@ exports.reload = function() {
     settings.img = bg;
     settings.imgOpt = {scale:g.getWidth()/16};
     
-  } else if (settings.style=="gradient") { // ~60ms
+  } else if (settings.style=="gradient") { // ~20ms
+    let images=[
+    "AAEBEQARABEiIiEhESEiITIjMjIyMzIyRDMzQ0QzM0RVRVRFVVRUVFVWVWZmZVVWd2Znd2d2Z2eIh3h4eIh3h5iJiZiZmYiIqaqZqZmqmpm6qrqqq6uqqsy7zLu8vLu83N3dzd3M3d3u3u7u7u3d3u7u/u/u7////+/+7u7+//8=",
+    "ERABERAQAAARESIiERISITMjIiMyIjMjREMzMzNEQ0NFRVRURFVURVZmVWZWVWZWZ2Z3dmdnZneHeIeId3d4h5mIiJmImYiIqpmZmZmaqamqqrq7q6u7u7vLvLzMvLvM3d3dzc3d3c3t7t7t7u7t3e/u7u/u/+7//u/+7u7//v8=",
+    "EREAERERAREhIiEhESEiIjIiIjIjIzMyQzNENEQzNDNEREVFVURERVZWZWZlVWZWd3Znd2d3ZmZ3eHiIeHd4h4mYiYmYmZmImampmZqpmpqrurqrqqurqrvMu7zMvLy83d3dzNzdzMzu3t7t7e7u3u/u7u7u7u/+/v7+/////+4="
+    ]
     settings.style = "image";
     let c = settings.colors;
-    function pc(s) {
-      if (typeof s==="number") return s;
-      s=s.replace('#','');
-      if (s.length==3) s=s[0]+s[0]+s[1]+s[1]+s[2]+s[2];
-      return parseInt(s,16);
-    }
-    let a=pc(c[0]), b=pc(c[1]);
-    let bg=Graphics.createArrayBuffer(16,16,4,{msb:true});
-    bg.palette=new Uint16Array(16);
-    let ar=(a>>16)&255,ag=(a>>8)&255,ab=a&255;
-    let br=(b>>16)&255,bgv=(b>>8)&255,bb=b&255;
-    for (let i=0;i<5;i++) {
-      let t=i/4;
-      bg.palette[i]=g.toColor((ar+(br-ar)*t)/255,(ag+(bgv-ag)*t)/255,(ab+(bb-ab)*t)/255);
-    }
-    // 4bpp, 8 bytes/row. boundaries always at rows 3,6,9,12 for 16 rows/5 colors
-    let buf=new Uint8Array(bg.buffer), r;
-    buf.fill(0x00,  0, 24); // rows 0-2: color 0
-    r=Math.random()*65536|0; for(let x=24;x<32;x++,r>>=2) buf[x]=((r&1?1:0)<<4)|(r&2?1:0);
-    buf.fill(0x11, 32, 48); // rows 4-5: color 1
-    r=Math.random()*65536|0; for(let x=48;x<56;x++,r>>=2) buf[x]=((r&1?2:1)<<4)|(r&2?2:1);
-    buf.fill(0x22, 56, 72); // rows 7-8: color 2
-    r=Math.random()*65536|0; for(let x=72;x<80;x++,r>>=2) buf[x]=((r&1?3:2)<<4)|(r&2?3:2);
-    buf.fill(0x33, 80, 96); // rows 10-11: color 3
-    r=Math.random()*65536|0; for(let x=96;x<104;x++,r>>=2) buf[x]=((r&1?4:3)<<4)|(r&2?4:3);
-    buf.fill(0x44,104,128); // rows 13-15: color 4
+    let bg = {
+      width: 16, height: 16, bpp: 4,
+      palette: (new Uint16Array(16)).map((n, i) => g.blendColor(c[0], c[1], i / 15)),
+      buffer: E.toArrayBuffer(atob(images[Math.floor(Math.random() * 3)]))
+    };
     settings.img=bg;
     settings.imgOpt={scale:g.getWidth()/16};
   }else if (settings.style=="blobs") { // ~25ms
