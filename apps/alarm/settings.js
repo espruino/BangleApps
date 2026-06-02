@@ -2,7 +2,8 @@
   let settings = Object.assign({
     showConfirm : true,
     showAutoSnooze : true,
-    showHidden : true
+    showHiddenToggle : false,
+    showHiddenAlarms : false
   }, require('Storage').readJSON('alarm.json',1)||{});
 
   const save = () => require('Storage').write('alarm.json', settings);
@@ -33,13 +34,17 @@
         value : !!settings.showConfirm,
         onchange : v => { settings.showConfirm=v; save();}
       },
-      /*LANG*/'Show Menu Hidden': {
-        value : !!settings.showHidden,
-        onchange : v => { settings.showHidden=v; save();}
+      /*LANG*/'Show Menu Hidden Toggle': {
+        value : !!settings.showHiddenToggle,
+        onchange : v => { settings.showHiddenToggle=v; save();}
       },
       /*LANG*/'Show Menu Group': {
         value : !!settings.showGroup,
         onchange : v => { settings.showGroup=v; save();}
+      },
+      /*LANG*/'Show Hidden Alarms': {
+        value : !!settings.showHiddenAlarms,
+        onchange : v => { settings.showHiddenAlarms=v; save();}
       },
       /*LANG*/'Show Text Overflow': {
         value : !!settings.showOverflow,

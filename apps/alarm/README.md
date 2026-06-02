@@ -30,8 +30,9 @@ Accessible from `Alarms -> Advanced -> App Settings` or `Settings -> Apps -> Ala
 - `Menu Date Format` Set the way dates are displayed (`Default`, or `MMDD`). If `Default` the current locale is used for formatting
 - `Show Menu Auto Snooze` (default true) Whether to show the menu options for `Auto Snooze` when editing/creating an alarm. See `Internals -> as` in the [shed library README](https://github.com/espruino/BangleApps/blob/master/apps/sched/README.md) for more info.
 - `Show Menu Confirm` (default true) Whether to show the the menu options for `Confirm` when editing/creating an alarm (just going 'back' will save the alarm so `Confirm` is not required)
-- `Show Menu Hidden` (default true) Whether to show the menu options for `Hidden` when editing/creating an alarm. See `Internals -> hidden` in the [shed library README](https://github.com/espruino/BangleApps/blob/master/apps/sched/README.md) for more info.
+- `Show Menu Hidden Toggle` (default false) Whether to show the menu options for `Hidden` when editing/creating an alarm. See `Internals -> hidden` in the [shed library README](https://github.com/espruino/BangleApps/blob/master/apps/sched/README.md) for more info.
 - `Show Menu Group` (default false) Whether to group alarms by their `group` field, as well as whether show the menu options for `Group` when editing/creating an alarm. See `Internals -> group` in the [shed library README](https://github.com/espruino/BangleApps/blob/master/apps/sched/README.md) for more info.
+- `Show Hidden Alarms` (default false) Whether to show `hidden` alarms in the main menu. They will show in group menus either way. See `Internals -> hidden` in the [shed library README](https://github.com/espruino/BangleApps/blob/master/apps/sched/README.md) for more info.
 - `Show Text Overflow` (default false) When displaying the alarm's menu item, don't crop the alarm title or message if it's too long.
 
 ## Creator
