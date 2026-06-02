@@ -3,6 +3,7 @@
   "name"          : "Working Memory Helper",
   "shortName"     : "Work Mem",
   "version": "1.02",
+  "author": "philipandresen",
   "description"   : "Externalize your working memory to help stay on task.",
   "dependencies"  : {"textinput": "type"},
   "icon"          : "icon.png",

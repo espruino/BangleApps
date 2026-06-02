@@ -2,6 +2,7 @@
   "id": "messagesdebug",
   "name": "Messages Debug",
   "version": "0.01",
+  "author": "rigrig",
   "description": "Write all messages to a file, for debugging purposes",
   "icon": "app.png",
   "type": "bootloader",

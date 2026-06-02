@@ -4,6 +4,7 @@
   "shortName": "football",
   "version": "1.01",
   "type": "app",
+  "author": "radare",
   "description": "Classic football game of the CASIO chronometer",
   "icon": "app.png",
   "allow_emulator": true,

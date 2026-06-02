@@ -3,6 +3,7 @@
   "name": "Bluetooth Music Controls",
   "shortName": "Music Control",
   "version": "0.02",
+  "author": "ra100",
   "description": "Enable HID in settings, pair with your phone, then use this app to control music from your watch!",
   "icon": "hid-music.png",
   "tags": "bluetooth",

@@ -3,6 +3,7 @@
   "name": "Xiaomi Mijia Temperature and Humidity display",
   "shortName": "MiTherm",
   "version": "0.01",
+  "author": "dashavoo",
   "description": "Reads and displays data from Xiaomi temperature/humidity sensors running custom firmware",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

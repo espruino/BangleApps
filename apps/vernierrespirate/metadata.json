@@ -3,6 +3,7 @@
   "name": "Vernier Go Direct Respiration Belt",
   "shortName": "Respiration Belt",
   "version": "0.02",
+  "author": "gfwilliams",
   "description": "Connects to a Go Direct Respiration Belt and shows respiration rate",
   "icon": "app.png",
   "tags": "health,bluetooth",

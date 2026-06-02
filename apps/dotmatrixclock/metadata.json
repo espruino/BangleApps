@@ -2,6 +2,7 @@
   "id": "dotmatrixclock",
   "name": "Dotmatrix Clock",
   "version": "0.02",
+  "author": "paulcockrell",
   "description": "A clear white-on-blue dotmatrix simulated clock",
   "icon": "dotmatrixclock.png",
   "type": "clock",

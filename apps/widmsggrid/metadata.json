@@ -2,6 +2,7 @@
   "id": "widmsggrid",
   "name": "Messages Grid Widget",
   "version": "0.07",
+  "author": "rigrig",
   "description": "Widget that displays notification icons in a grid",
   "icon": "widget.png",
   "type": "widget",

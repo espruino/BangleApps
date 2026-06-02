@@ -3,6 +3,7 @@
   "name": "BarWatch",
   "shortName":"BarWatch",
   "version":"0.01",
+  "author": "kirktrekkie",
   "description": "A watch that displays the time using bars. One bar for each hour.",
   "readme": "README.md",
   "icon": "screenshot.png",

@@ -2,6 +2,7 @@
   "id": "blescan",
   "name": "BLE Scanner",
   "version": "0.01",
+  "author": "ra100",
   "description": "Scan for advertising BLE devices",
   "icon": "blescan.png",
   "tags": "bluetooth",

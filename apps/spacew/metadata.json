@@ -1,6 +1,7 @@
 { "id": "spacew",
   "name": "Space Weaver",
   "version":"0.02",
+  "author": "pavelmachek",
   "description": "Application for displaying vector maps",
   "icon": "app.png",
   "readme": "README.md",

@@ -2,6 +2,7 @@
   "name": "TwoTwo Clock",
   "shortName":"22 Clock",
   "version":"0.04",
+  "author": "gfwilliams",
   "description": "A clock with the time split over two lines, with custom backgrounds and two ClockInfos",
   "icon": "icon.png",
   "type": "clock",

@@ -1,6 +1,7 @@
 { "id": "run",
   "name": "Run",
   "version": "0.20",
+  "author": "gfwilliams",
   "description": "Displays distance, time, steps, cadence, pace and more for runners. The **Run+** app for Bangle.js 2 provides additional features.",
   "icon": "app.png",
   "tags": "run,running,fitness,outdoors,gps",

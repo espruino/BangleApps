@@ -3,6 +3,7 @@
   "shortName":"3DClock",
   "icon": "app.png",
   "version":"0.01",
+  "author": "ainegil",
   "description": "This is a simple 3D scaling demo based on Anton Clock",
  "screenshots" : [ { "url":"screenshot.png" }],
  "type":"clock",   

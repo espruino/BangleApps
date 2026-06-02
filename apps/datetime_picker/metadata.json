@@ -2,6 +2,7 @@
   "name": "Datetime picker",
   "shortName":"Datetime picker",
   "version":"0.01",
+  "author": "lauzonhomeschool",
   "description": "A library that allows to pick a date and time by swiping.",
   "icon":"app.png",
   "type":"module",

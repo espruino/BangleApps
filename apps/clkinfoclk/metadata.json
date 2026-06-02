@@ -1,6 +1,7 @@
 { "id": "clkinfoclk",
   "name": "Clockinfo Clock",
   "version":"0.01",
+  "author": "gfwilliams",
   "description": "This displays a clock *inside* a ClockInfo. This can be really handy for the [Clock Info Widget](https://banglejs.com/apps/?id=widclkinfo) where you might want the option to show a clock in the top bar of a non-clock app.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

@@ -106,6 +106,7 @@ exports.getSettings = function () {
       defaultSnoozeMillis: 600000, // 10 minutes
       defaultAutoSnooze: false,
       defaultDeleteExpiredTimers: true, // Always
+      btnToStop: false, // pressing the button on the alarm screen will stop the alarm instead of snoozing it
       buzzCount: 10,
       buzzIntervalMillis: 3000, // 3 seconds
       defaultAlarmPattern: "==",

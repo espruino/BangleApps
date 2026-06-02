@@ -3,6 +3,7 @@
   "name": "BLE Detector",
   "shortName": "BLE Detector",
   "version": "0.04",
+  "author": "Fabio286",
   "description": "Detect BLE devices and show some informations.",
   "icon": "bledetect.png",
   "tags": "app,bluetooth,tool",

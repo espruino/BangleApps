@@ -2,6 +2,7 @@
   "name": "CC Clock 24",
   "shortName": "CC-Clock24",
   "version": "0.02",
+  "author": "czeppi",
   "description": "analog clock face with 24 hour pointer",
   "icon": "app_icon.png",
   "type": "clock",

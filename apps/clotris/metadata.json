@@ -2,6 +2,7 @@
   "id": "clotris",
   "name": "Clock-Tris",
   "version": "0.01",
+  "author": "ra100",
   "description": "A fully functional clone of a classic game of falling blocks",
   "icon": "clock-tris.png",
   "tags": "game",

@@ -3,6 +3,7 @@
   "shortName":"Wrist Light",
   "icon": "wristlight48.png",
   "version": "0.03",
+  "author": "pidajo",
   "description": "A flash light with different colors on your wrist",
   "tags": "flash,light",
   "allow_emulator":true, 

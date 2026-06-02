@@ -2,6 +2,7 @@
   "id": "widalarm",
   "name": "Alarms Widget",
   "version": "0.03",
+  "author": "gfwilliams",
   "description": "Displays an alarm icon in the widgets bar if any alarm is active",
   "icon": "app.png",
   "type": "widget",
