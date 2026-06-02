@@ -68,17 +68,12 @@ exports.reload = function() {
     settings.imgOpt = {scale:g.getWidth()/16};
     
   } else if (settings.style=="gradient") { // ~20ms
-    let images=[
-    "AAEBEQARABEiIiEhESEiITIjMjIyMzIyRDMzQ0QzM0RVRVRFVVRUVFVWVWZmZVVWd2Znd2d2Z2eIh3h4eIh3h5iJiZiZmYiIqaqZqZmqmpm6qrqqq6uqqsy7zLu8vLu83N3dzd3M3d3u3u7u7u3d3u7u/u/u7////+/+7u7+//8=",
-    "ERABERAQAAARESIiERISITMjIiMyIjMjREMzMzNEQ0NFRVRURFVURVZmVWZWVWZWZ2Z3dmdnZneHeIeId3d4h5mIiJmImYiIqpmZmZmaqamqqrq7q6u7u7vLvLzMvLvM3d3dzc3d3c3t7t7t7u7t3e/u7u/u/+7//u/+7u7//v8=",
-    "EREAERERAREhIiEhESEiIjIiIjIjIzMyQzNENEQzNDNEREVFVURERVZWZWZlVWZWd3Znd2d3ZmZ3eHiIeHd4h4mYiYmYmZmImampmZqpmpqrurqrqqurqrvMu7zMvLy83d3dzNzdzMzu3t7t7e7u3u/u7u7u7u/+/v7+/////+4="
-    ]
     settings.style = "image";
-    let c = settings.colors;
+    let c = settings.colors.reverse();
     let bg = {
       width: 16, height: 16, bpp: 4,
       palette: (new Uint16Array(16)).map((n, i) => g.blendColor(c[0], c[1], i / 15)),
-      buffer: E.toArrayBuffer(atob(images[Math.floor(Math.random() * 3)]))
+      buffer: E.toArrayBuffer(atob(settings.image||"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAERESISEREhEiMyMjIzMjMkRERERERERUVWZWVVVWZVZ3d2d3dnd3dpiIiYmIiIiImamqmpqqqamru7u7u7u7u8zdzN3czczM3u3e7d7t7e3///////////////////////////////8="))
     };
     settings.img=bg;
     settings.imgOpt={scale:g.getWidth()/16};
