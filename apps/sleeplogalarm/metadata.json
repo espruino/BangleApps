@@ -3,6 +3,7 @@
   "name":"Sleep Log Alarm",
   "shortName": "SleepLogAlarm",
   "version": "0.06",
+  "author": "storm64",
   "description": "Enhance your morning and let your alarms wake you up when you are in light sleep.",
   "icon": "app.png",
   "type": "widget",

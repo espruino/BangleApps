@@ -3,6 +3,7 @@
     "name": "Flux Watchface",
     "shortName": "Flux",
     "version": "0.01",
+    "author": "sossinayDev",
     "description": "A really simple imitation of Apples \"Flux\" Watchface, with different colors.",
     "icon": "app.png",
     "tags": "clock",

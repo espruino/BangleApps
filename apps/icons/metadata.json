@@ -2,6 +2,7 @@
   "id": "icons",
   "name": "Icons",
   "version": "0.03",
+  "author": "gfwilliams",
   "description": "Library containing useful icons for apps",
   "icon": "app.png",
   "type": "module",

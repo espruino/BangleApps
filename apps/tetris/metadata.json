@@ -2,6 +2,7 @@
   "name": "Tetris",
   "shortName":"Tetris",
   "version": "0.12",
+  "author": "berkenbu",
   "description": "Tetris",
   "icon": "tetris.png",
   "readme": "README.md",

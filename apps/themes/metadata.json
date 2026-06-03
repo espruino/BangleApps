@@ -3,6 +3,7 @@
     "name": "Themes",
     "shortName": "Themes",
     "version": "0.01",
+    "author": "kkayam",
     "description": "Color palettes at your disposal",
     "type": "app",
     "tags": "tool",

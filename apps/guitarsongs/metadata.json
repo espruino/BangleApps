@@ -2,6 +2,7 @@
   "name": "Guitar Songs",
   "shortName":"Guitar Songs",
   "version": "0.04",
+  "author": "devsnd",
   "description": "Songs lyrics and guitar chords",
   "icon": "app.png",
   "screenshots": [{"url": "screenshot.png"}],

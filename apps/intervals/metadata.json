@@ -3,6 +3,7 @@
   "name": "Intervals App",
   "shortName": "Intervals",
   "version": "0.02",
+  "author": "pglez82",
   "description": "Intervals for training. It is possible to configure work time and rest time and number of sets.",
   "icon": "intervals.png",
   "tags": "",

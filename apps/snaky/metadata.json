@@ -2,6 +2,7 @@
   "name": "Snaky",
   "shortName":"Snaky",
   "version":"0.01",
+  "author": "nxs47",
   "description": "The classic snake game. Eat apples and don't bite your tail. Control the snake with the touch screen.",
   "tags": "game,fun",
   "icon": "snaky.png",

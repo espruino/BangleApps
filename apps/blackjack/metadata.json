@@ -3,6 +3,7 @@
   "name": "Black Jack game",
   "shortName": "Black Jack game",
   "version": "0.03",
+  "author": "lixas",
   "description": "Simple implementation of card game Black Jack",
   "icon": "blackjack.png",
   "tags": "game",

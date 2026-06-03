@@ -2,6 +2,7 @@
   "id": "golf-gps",
   "name": "Golf GPS",
   "version": "0.01",
+  "author": "jeonlab",
   "description": "Golf GPS for Banglejs 2, using manually saved golf course data (latitudes and longitudes of holes, see README for instructions), provides distance to center of green and distance from previous shot, keeps score",
   "icon": "golf-gps.png",
   "type": "app",

@@ -2,6 +2,7 @@
   "id": "tempmonitor",
   "name": "Temperature monitor",
   "version": "0.06",
+  "author": "dapgo",
   "description": "Another thermometer, besides displaying current temperature, stores it in a CSV file",
   "icon": "app.png",
   "tags": "tool",

@@ -2,6 +2,7 @@
   "id": "puzzle15",
   "name": "15 puzzle",
   "version": "0.05",
+  "author": "dirkhillbrecht",
   "description": "A 15 puzzle game with drag gesture interface",
   "readme":"README.md",
   "icon": "puzzle15.app.png",

@@ -75,11 +75,7 @@ function showAlarm(alarm) {
 
   let buzzCount = settings.buzzCount;
 
-  E.showPrompt(message, {
-    title: alarm.timer ? /*LANG*/"TIMER!" : /*LANG*/"ALARM!",
-    buttons: { /*LANG*/"Snooze": 1, /*LANG*/"Stop": 2 }, // default is sleep so it'll come back in some mins
-    buttonsLong:{/*LANG*/"Snooze":3},
-  }).then(function (sleep) {
+  function stopOrSleep(sleep) {
     buzzCount = 0;
     //long press triggered
     if(sleep==3){
@@ -95,7 +91,7 @@ function showAlarm(alarm) {
       alarm.t = currentTime + settings.defaultSnoozeMillis;
       alarm.t %= 86400000;
       Bangle.emit("alarmSnooze", alarm);
-    } else {
+    } else { // sleep=2, stop the alarm
       let del = alarm.del === undefined ? settings.defaultDeleteExpiredTimers : alarm.del;
       if (del) {
         alarms.splice(alarmIndex, 1);
@@ -120,7 +116,14 @@ function showAlarm(alarm) {
     // so writing to array writes changes back directly
     require("sched").setAlarms(alarms);
     load();
-  });
+  }
+
+  E.showPrompt(message, {
+    title: alarm.timer ? /*LANG*/"TIMER!" : /*LANG*/"ALARM!",
+    buttons: { /*LANG*/"Snooze": 1, /*LANG*/"Stop": 2 }, // default is sleep so it'll come back in some mins
+    buttonsLong:{/*LANG*/"Snooze":3},
+    back: () => stopOrSleep(settings.btnToStop ? 2 : 1)
+  }).then(stopOrSleep);
 
   function buzz() {
     if (settings.unlockAtBuzz) {

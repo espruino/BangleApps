@@ -3,6 +3,7 @@
   "name": "Metronome",
   "version": "0.07",
   "readme": "README.md",
+  "author": "bengwalker",
   "description": "Makes the watch blinking and vibrating with a given rate",
   "icon": "metronome_icon.png",
   "tags": "tool",

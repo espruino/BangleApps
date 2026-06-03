@@ -3,6 +3,7 @@
   "name": "Espruino Control",
   "shortName": "Espruino Ctrl",
   "version": "0.03",
+  "author": "gfwilliams",
   "description": "Send commands to other Espruino devices via the Bluetooth UART interface. Customisable commands!",
   "icon": "app.png",
   "tags": "tool,bluetooth",

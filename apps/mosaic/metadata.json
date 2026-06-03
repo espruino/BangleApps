@@ -3,6 +3,7 @@
     "name":"Mosaic Clock",
     "shortName": "Mosaic Clock",
     "version": "0.04",
+    "author": "sir-indy",
     "description": "A fabulously colourful clock",
     "readme": "README.md",
     "icon":"mosaic.png",

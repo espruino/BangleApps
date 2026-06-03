@@ -7,6 +7,7 @@
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "allow_emulator":true,
+  "author": "gfwilliams",
   "description": "Famous binary watch",
   "tags": "clock",
   "type": "clock",

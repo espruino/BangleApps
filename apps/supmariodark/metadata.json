@@ -3,6 +3,7 @@
   "name": "Super mario clock night mode",
   "shortName": "supmariodark",
   "version": "0.02",
+  "author": "abhigkar",
   "description": "Super mario clock in night mode",
   "icon": "supmariodark.png",
   "type": "clock",

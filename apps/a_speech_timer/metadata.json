@@ -3,6 +3,7 @@
 "name":"Speech Timer",
 "icon": "app.png",
 "version": "1.03",
+  "author": "alainsaas",
 "description": "A timer designed to help keeping your speeches and presentations to time.",
 "tags": "tool,timer",
 "readme":"README.md",

@@ -3,6 +3,7 @@
     "name": "Distort Clock",
     "shortName":"Distort Clock",
     "version": "0.03",
+    "author": "elykittytee",
     "description": "A clockface",
     "icon": "app.png",
     "type": "clock",

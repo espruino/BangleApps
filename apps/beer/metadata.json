@@ -2,6 +2,7 @@
   "id": "beer",
   "name": "Beer Compass",
   "version": "0.02",
+  "author": "ra100",
   "description": "Uploads all the pubs in an area onto your watch, so it can always point you at the nearest one",
   "icon": "app.png",
   "tags": "",

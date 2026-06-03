@@ -1,6 +1,7 @@
 { "id": "dedreckon",
   "name": "Ded Reckon",
   "version": "0.01",
+  "author": "pavelmachek",
   "description": "Dead Reckoning using compass and step counter",
   "icon": "app.png",
   "readme": "README.md",

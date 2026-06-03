@@ -2,6 +2,7 @@
   "id": "fwupdate",
   "name": "Firmware Update",
   "version": "0.07",
+  "author": "gfwilliams",
   "description": "Uploads new Espruino firmwares to Bangle.js 2",
   "icon": "app.png",
   "type": "RAM",

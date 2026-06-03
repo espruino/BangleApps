@@ -2,6 +2,7 @@
   "name": "QR Code Connect",
   "shortName":"Connect",
   "version":"0.03",
+  "author": "gfwilliams",
   "description": "Display a QR code that when scanned by a phone will load the app loader, set up to connect to just this device",
   "icon": "app.png",
   "screenshots" : [ { "url":"screenshot.png" } ],

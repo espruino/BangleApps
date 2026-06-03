@@ -4,6 +4,7 @@
   "icon": "IMC.png",
   "version":"0.01",
   "allow_emulator": true,
+  "author": "only-meeps",
   "description": "A tool for converting metric and imperial measurements",
   "readme": "README.md",
   "tags": "tool",

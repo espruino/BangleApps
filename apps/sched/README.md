@@ -21,6 +21,7 @@ With sched version 0.35 or later, when an alarm or timer is triggered, and you h
 - `Unlock at Buzz` - If `Yes` the alarm/timer will unlock the watch
 - `Delete Expired Timers` - Default for whether expired timers are removed after firing.
 - `Default Auto Snooze` - Default _Auto Snooze_ value for newly created alarms (_Alarms_ only)
+- `Button Stops Alarm` - When the alarm screen is showing, pressing the button will stop the alarm (instead of snoozing it)
 - `Default Snooze` - Default _Snooze_ value for newly created alarms/timers
 - `Buzz Count` - The number of buzzes before the watch goes silent, or "forever" to buzz until stopped.
 - `Buzz Interval` - The interval between one buzz and the next

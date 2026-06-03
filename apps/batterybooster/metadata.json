@@ -3,6 +3,7 @@
     "name": "Battery Booster",
     "icon": "app.png",
     "version": "0.01",
+    "author": "kkayam",
     "description": "A bootloader app which adds scripts to boost battery life of your Bangle.js 2",
     "type": "bootloader",
     "tags": "tools,system",

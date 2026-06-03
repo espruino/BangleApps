@@ -2,6 +2,7 @@
   "id": "vibrclock",
   "name": "Vibrate Clock",
   "version": "0.03",
+  "author": "gfwilliams",
   "description": "When BTN1 is pressed, vibrate out the time as a series of buzzes, one digit at a time. Hours, then Minutes. Zero is signified by one long buzz. Otherwise a simple digital clock.",
   "icon": "app.png",
   "type": "clock",

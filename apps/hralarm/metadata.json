@@ -3,6 +3,7 @@
   "name": "Heart rate alarm",
   "shortName":"HR Alarm",
   "version":"0.02",
+  "author": "halemmerich",
   "description": "This invisible widget vibrates whenever the heart rate gets close to the upper limit or goes over or under the configured limits",
   "icon": "widget.png",
   "type": "widget",

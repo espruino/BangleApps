@@ -2,6 +2,7 @@
   "id": "pacer",
   "name": "Pacer",
   "version": "0.01",
+  "author": "smulrine",
   "description": "Run with a virtual partner",
   "icon": "app.png",
   "tags": "run,running,fitness,outdoors,gps",

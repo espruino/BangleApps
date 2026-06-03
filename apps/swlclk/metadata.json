@@ -3,6 +3,7 @@
   "name": "SWL Clock / Short Wave Listner Clock",
   "shortName": "SWL Clock",
   "version": "0.02",
+  "author": "gfwilliams",
   "description": "Display Local, UTC time and some programs on the shorts waves along the day, with the frequencies",
   "icon": "swlclk.png",
   "type": "clock",

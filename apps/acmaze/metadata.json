@@ -2,6 +2,7 @@
   "name": "AccelaMaze",
   "shortName":"AccelaMaze",
   "version": "0.05",
+  "author": "thedod",
   "description": "Tilt the watch to roll a ball through a maze.",
   "icon": "app.png",
   "tags": "game",

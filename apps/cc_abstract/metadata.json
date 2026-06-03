@@ -2,6 +2,7 @@
   "name": "CC Abstract",
   "shortName": "CC-Abstract",
   "version": "0.01",
+  "author": "czeppi",
   "description": "analog clock abstract face",
   "icon": "app_icon.png",
   "type": "clock",

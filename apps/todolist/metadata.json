@@ -4,6 +4,7 @@
   "shortName": "TodoList",
   "version": "0.01",
   "type": "app",
+  "author": "francoislanc",
   "description": "Simple Todo List",
   "icon": "app.png",
   "allow_emulator": true,
