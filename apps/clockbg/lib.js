@@ -66,14 +66,14 @@ exports.reload = function() {
     bg.palette.set(settings.colors.map(c=>g.toColor(c)));
     settings.img = bg;
     settings.imgOpt = {scale:g.getWidth()/16};
-    
+
   } else if (settings.style=="gradient") { // ~20ms
     settings.style = "image";
     let c = settings.colors.reverse();
     let bg = {
       width: 16, height: 16, bpp: 4,
       palette: (new Uint16Array(16)).map((n, i) => g.blendColor(c[0], c[1], i / 15)),
-      buffer: E.toArrayBuffer(atob(settings.image||"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAERESISEREhEiMyMjIzMjMkRERERERERUVWZWVVVWZVZ3d2d3dnd3dpiIiYmIiIiImamqmpqqqamru7u7u7u7u8zdzN3czczM3u3e7d7t7e3///////////////////////////////8="))
+      buffer: E.toArrayBuffer(atob(settings.image))
     };
     settings.img=bg;
     settings.imgOpt={scale:g.getWidth()/16};
