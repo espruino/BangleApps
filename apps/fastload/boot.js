@@ -60,29 +60,8 @@ let fastload = function(n){
 };
 global.load = fastload;
 
-let appHistory, resetHistory, recordHistory;
-if (SETTINGS.useAppHistory){
-  appHistory  = s.readJSON("fastload.history.json",true)||[];
-  resetHistory = ()=>{appHistory=[];s.writeJSON("fastload.history.json",appHistory);};
-  recordHistory = ()=>{s.writeJSON("fastload.history.json",appHistory);};
-}
-
 Bangle.load = (o => (name) => {
   if (Bangle.uiRemove && !SETTINGS.hideLoading) loadingScreen();
-  if (SETTINGS.useAppHistory){
-    if (name && name!=".bootcde" && !(name=="quicklaunch.app.js" && SETTINGS.disregardQuicklaunch)) {
-      // store the name of the app to launch
-      appHistory.push(name);
-    } else if (name==".bootcde") { // when Bangle.showClock is called
-      resetHistory();
-    } else if (name=="quicklaunch.app.js" && SETTINGS.disregardQuicklaunch) {
-      // do nothing with history
-    } else {
-      // go back in history
-      appHistory.pop();
-      name = appHistory[appHistory.length-1];
-    }
-  }
   if (SETTINGS.autoloadLauncher && !name){
     let orig = Bangle.load;
     Bangle.load = (n)=>{
@@ -94,6 +73,4 @@ Bangle.load = (o => (name) => {
   } else
     o(name);
 })(Bangle.load);
-
-if (SETTINGS.useAppHistory) E.on('kill', ()=>{if (!BTN.read()) recordHistory(); else resetHistory();}); // Usually record history, but reset it if long press of HW button was used.
 }
