@@ -163,7 +163,7 @@ let customMenu=function(style, col1name, col2name, bck, img) {
         });
         E.showMenu(menu);
       },
-      /*LANG*/"Plasma" : function() {
+      /*LANG*/"Plasma" : function showPlasmaMenu() {
         var cols = [ // list of color palettes used as possible square colours - 16 entries
           ["#00f","#05f","#0bf","#0fd","#0f7","#0f1","#3f0","#9f0","#ff0","#f90","#f30","#f01","#f07","#f0d","#b0f","#50f"],
           ["#44f","#48f","#4df","#4fe","#4fa","#4f6","#7f4","#bf4","#ff4","#fb4","#f74","#f46","#f4a","#f4e","#d4f","#84f"],
@@ -183,7 +183,7 @@ let customMenu=function(style, col1name, col2name, bck, img) {
           saveSettings();
           showMainMenu();
         }, /*LANG*/"Custom" : () =>
-          customMenu("plasma", /*LANG*/"Background",/*LANG*/"Foreground", showMenu, undefined )
+          customMenu("plasma", /*LANG*/"Background",/*LANG*/"Foreground", showPlasmaMenu, undefined )
         };
         cols.forEach(col => {
           menu[getColorsImage(col)] = () => {
