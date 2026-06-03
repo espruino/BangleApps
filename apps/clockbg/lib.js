@@ -66,7 +66,18 @@ exports.reload = function() {
     bg.palette.set(settings.colors.map(c=>g.toColor(c)));
     settings.img = bg;
     settings.imgOpt = {scale:g.getWidth()/16};
-  } else if (settings.style=="blobs") { // ~25ms
+
+  } else if (settings.style=="gradient") { // ~20ms
+    settings.style = "image";
+    let c = settings.colors.reverse();
+    let bg = {
+      width: 16, height: 16, bpp: 4,
+      palette: (new Uint16Array(16)).map((n, i) => g.blendColor(c[0], c[1], i / 15)),
+      buffer: E.toArrayBuffer(atob(settings.image))
+    };
+    settings.img=bg;
+    settings.imgOpt={scale:g.getWidth()/16};
+  }else if (settings.style=="blobs") { // ~25ms
     settings.style = "image";
     const S=11; // image size
     const Z=88,W=Z/S,H=Z/S;
