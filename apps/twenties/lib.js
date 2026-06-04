@@ -31,7 +31,6 @@
 
   exports.setup = function () {
     const TIME_AT_NEXT_BUZZ = getTimeAtNextBuzz();
-    const TIME_AT_SETUP = new Date();
     let alarm = {
       on: true,
       t: TIME_AT_NEXT_BUZZ,
@@ -40,12 +39,6 @@
       group: "Hidden",
       js: JS_DELETE_ALARM_THEN_BUZZ_AND_SETUP
     };
-    if (TIME_AT_NEXT_BUZZ <
-      TIME_AT_SETUP.getHours() * 3600000 +
-      TIME_AT_SETUP.getMinutes() * 60000 +
-      TIME_AT_SETUP.getSeconds() * 1000) { // FIXME: this is done to work around a behavior in sched library. I think that is maybe a :BUG: that we should fix there. But unsure. It's around https://github.com/espruino/BangleApps/blob/master/apps/sched/boot.js#L21-L21
-      alarm.last = Date().getDate();
-    }
     S.setAlarm("twenties", alarm);
     S.reload();
   };
