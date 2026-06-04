@@ -19,10 +19,8 @@
   };
 
   exports.buzzAndSetup = function () {
-    setTimeout(() => { // Timeout to try and not interfere with `edgeclk` redrawing the time.
-      Bangle.buzz();
-      exports.setup();
-    }, 10)
+    Bangle.buzz();
+    exports.setup();
   };
 
   const JS_DELETE_ALARM_THEN_BUZZ_AND_SETUP = `require("sched").setAlarm("twenties", undefined); require('twenties').buzzAndSetup();`;
