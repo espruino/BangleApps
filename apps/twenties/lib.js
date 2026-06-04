@@ -34,7 +34,8 @@
       t: TIME_AT_NEXT_BUZZ,
       dow: 0b0111110,
       hidden: true,
-      group: "Hidden",
+      msg: "Twenties",
+      group: "Twenties",
       js: JS_DELETE_ALARM_THEN_BUZZ_AND_SETUP
     };
     S.setAlarm("twenties", alarm);
