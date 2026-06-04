@@ -12,6 +12,7 @@ Vibrates to remind you to stand up and look away for healthy living.
 
 Only vibrates during work days and hours.
 
-## Creator
+## Contributors
 
-[@splch](https://github.com/splch/)
+[@splch](https://github.com/splch/) (Creator)
+[@thyttan](https://github.com/thyttan/)
