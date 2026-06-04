@@ -1,3 +1,7 @@
+function timeToMillis(time) {
+  return (time.getHours() * 3600000) + (time.getMinutes() * 60000) + (time.getSeconds() * 1000);
+}
+
 // Return an array of all alarms
 exports.getAlarms = function() {
   // we do this direct in clkinfo.js to avoid loading the library
@@ -16,7 +20,7 @@ exports.getAlarm = function(id) {
 exports.getActiveAlarms = function (alarms, time) {
   if (!time) time = new Date();
   // get current time 10s in future to ensure we alarm if we've started the app a tad early
-  var currentTime = (time.getHours() * 3600000) + (time.getMinutes() * 60000) + (time.getSeconds() * 1000) + 10000;
+  var currentTime = timeToMillis(time) + 10000;
   return alarms
     .filter(a =>
       a.on // enabled
@@ -27,6 +31,24 @@ exports.getActiveAlarms = function (alarms, time) {
     )
     .sort((a, b) => a.t - b.t);
 };
+// Set up a modified alarm/timer so it's ready to insert into the list of alarms. For timers, they fire the set time from now, and alarms are set to fire at the right time on the right day
+exports.updateAlarm = function(alarm) {
+  var time = new Date(), currentTime = timeToMillis(time);
+  if (alarm.timer) { // if it's a timer, set the start time as a time from *now*
+    alarm.t = (currentTime + alarm.timer) % 86400000; // alarm time in day
+    alarm.last = 0; // don't need to specify a last day for alarms
+    // if timer would have gone on until a later day, set a date (fix #4220)
+    if (alarm.t < currentTime || alarm.timer>86400000/*24h*/)
+      alarm.date = new Date(time.getTime() + alarm.timer).toLocalISOString().substr(0, 10);
+    else delete alarm.date;
+  } else { // If it's an alarm, default to triggering tomorrow if time < current time of day (#4232)
+    if (alarm.last===undefined) {
+      var time = new Date();
+      alarm.last = alarm.t < currentTime ? new Date().getDate() : 0;
+    }
+  }
+}
+
 // Set an alarm object based on ID. Leave 'alarm' undefined to remove it
 exports.setAlarm = function(id, alarm) {
   var alarms = exports.getAlarms().filter(a=>a.id!=id);
@@ -34,34 +56,18 @@ exports.setAlarm = function(id, alarm) {
     alarm.id = id;
     if (alarm.dow===undefined) alarm.dow = 0b1111111;
     if (alarm.on!==false) alarm.on=true;
-    if (alarm.timer) { // if it's a timer, set the start time as a time from *now*
-      exports.resetTimer(alarm);
-    } else { // If it's an alarm, default to triggering tomorrow if time < current time of day
-      if (alarm.last===undefined) {
-        alarm.last = alarm.t < require("time_utils").getCurrentTimeMillis() ? new Date().getDate() : 0;
-      }
-    }
+    exports.updateAlarm(alarm);
     alarms.push(alarm);
   }
   exports.setAlarms(alarms);
   return alarm;
 };
-/// Set a timer's firing time based off the timer's `timer` property
-exports.resetTimer = function(alarm) {
-  var time = new Date(), // current time
-      currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
-  alarm.t = (currentTime + alarm.timer) % 86400000; // alarm time in day
-  alarm.last = 0; // don't need to specify a last day for alarms
-  // if timer would have gone on until a later day, set a date (fix #4220)
-  if (alarm.t < currentTime || alarm.timer>86400000/*24h*/)
-    alarm.date = new Date(time.getTime() + alarm.timer).toLocalISOString().substr(0, 10);
-  else delete alarm.date;
-};
+
 /// Get time until the given alarm (object). Return undefined if alarm not enabled, or if 86400000 or more, alarm could be *more* than a day in the future
 exports.getTimeToAlarm = function(alarm, time) {
   if (!alarm) return undefined;
   if (!time) time = new Date();
-  var currentTime = (time.getHours()*3600000)+(time.getMinutes()*60000)+(time.getSeconds()*1000);
+  var currentTime = timeToMillis(time);
   var active = alarm.on && (alarm.dow>>((time.getDay()+(alarm.t<currentTime))%7))&1 && (!alarm.date || alarm.date==time.toLocalISOString().substr(0,10));
   if (!active) return undefined;
   var t = alarm.t-currentTime;

@@ -129,7 +129,7 @@
           this.hide();
           a.on = !a.on;
           a.last = 0;
-          if(a.on && a.timer) require('sched').resetTimer(a);
+          if(a.on && a.timer) require('sched').updateAlarm(a);
           this.emit("redraw");
           require('sched').setAlarms(all);
           require('sched').reload(); // schedule/unschedule the alarm
