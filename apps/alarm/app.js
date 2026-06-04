@@ -95,7 +95,7 @@ function showMainMenu(scroll, group, scrollback) {
     const showAlarmInMainMenu = (!e.hidden===true || settings.showHiddenAlarms) &&
       !(group && settings.showGroup);
     const showAlarmInGroupMenu = settings.showGroup  &&
-      (group ? getGroup(e) === group : false);
+      (group ? e.group === group : false);
     if(showAlarmInMainMenu || showAlarmInGroupMenu) {
       const label = trimLabel(getLabel(e),40);
       menu[label] = {
