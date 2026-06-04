@@ -91,10 +91,11 @@ function showMainMenu(scroll, group, scrollback) {
   const getIcon = (e)=>{return e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff);};
 
   alarms.forEach((e, index) => {
+    e.group = e.group||(e.hidden?"Hidden":undefined);
     const showAlarmInMainMenu = (!e.hidden===true || settings.showHiddenAlarms) &&
       !(group && settings.showGroup);
     const showAlarmInGroupMenu = settings.showGroup  &&
-      (group ? e.group === group : false);
+      (group ? getGroup(e) === group : false);
     if(showAlarmInMainMenu || showAlarmInGroupMenu) {
       const label = trimLabel(getLabel(e),40);
       menu[label] = {
