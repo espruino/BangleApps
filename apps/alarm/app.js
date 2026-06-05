@@ -4,7 +4,7 @@ Bangle.drawWidgets();
 const settings = Object.assign({
   showConfirm : true,
   showAutoSnooze : true,
-  showHiddenToggle : false,
+  showHidden : false,
   showHiddenAlarms : false
 }, require('Storage').readJSON('alarm.json',1)||{});
 // 0 = Sunday (default), 1 = Monday
@@ -293,7 +293,7 @@ function showEditAlarmMenu(selectedAlarm, alarmIndex, withDate, scroll, group) {
   if (!keyboard || !settings.showGroup) delete menu[/*LANG*/"Group"];
   if (!settings.showConfirm) delete menu[/*LANG*/"Confirm"];
   if (!settings.showAutoSnooze) delete menu[/*LANG*/"Auto Snooze"];
-  if (!settings.showHiddenToggle) delete menu[/*LANG*/"Hidden"];
+  if (!settings.showHidden) delete menu[/*LANG*/"Hidden"];
   if (!alarm.date) {
     delete menu[/*LANG*/"Day"];
     delete menu[/*LANG*/"Month"];
@@ -531,7 +531,7 @@ function showEditTimerMenu(selectedTimer, timerIndex) {
 
   if (!keyboard) delete menu[/*LANG*/"Message"];
   if (!settings.showConfirm) delete menu[/*LANG*/"Confirm"];
-  if (!settings.showHiddenToggle) delete menu[/*LANG*/"Hidden"];
+  if (!settings.showHidden) delete menu[/*LANG*/"Hidden"];
   if (!isNew) {
     menu[/*LANG*/"Delete"] = () => {
       E.showPrompt(getLabel(timer) + "\n" + /*LANG*/"Are you sure?", { title: /*LANG*/"Delete Timer" }).then((confirm) => {
