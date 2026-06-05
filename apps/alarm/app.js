@@ -91,11 +91,11 @@ function showMainMenu(scroll, group, scrollback) {
   const getIcon = (e)=>{return e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff);};
 
   alarms.forEach((e, index) => {
-    e.group = e.group||(e.hidden?"Hidden":undefined);
+    const E_GROUP = e.group||(e.hidden?"Hidden":undefined);
     const showAlarmInMainMenu = (!e.hidden===true || settings.showHiddenAlarms) &&
       !(group && settings.showGroup);
     const showAlarmInGroupMenu = settings.showGroup  &&
-      (group ? e.group === group : false);
+      (group ? E_GROUP === group : false);
     if(showAlarmInMainMenu || showAlarmInGroupMenu) {
       const label = trimLabel(getLabel(e),40);
       menu[label] = {
@@ -112,7 +112,7 @@ function showMainMenu(scroll, group, scrollback) {
         format: v=>getIcon(e)
       };
     } else if (getGroups) {
-      groups[e.group] = undefined;
+      groups[E_GROUP] = undefined;
     }
   });
 
