@@ -54,15 +54,14 @@
       <div class="dropdown-container">
         <div class="dropdowns-pill">
           <div class="dropdown devicetype-nav">
-            <a href="#" class="btn btn-link dropdown-toggle" tabindex="0">
-              <span>All apps</span><i class="icon icon-caret"></i>
-            </a>
-            <ul class="menu">
-              <li class="menu-item"><a>All apps</a></li>
-              <li class="menu-item"><a dt="BANGLEJS">Bangle.js 1</a></li>
-              <li class="menu-item"><a dt="BANGLEJS2">Bangle.js 2</a></li>
-            </ul>
-          </div>
+          <a href="#" class="btn btn-link dropdown-toggle" tabindex="0">
+            <span>All apps</span><i class="icon icon-caret"></i>
+          </a>
+          <!-- menu component -->
+          <ul class="menu" id="device-dropdown">
+            <li class="menu-item"><a>All apps</a></li>
+          </ul>
+        </div>
           <div class="dropdown filter-nav">
             <a href="#" class="btn btn-link dropdown-toggle" tabindex="0">
               <span>All apps</span><i class="icon icon-caret"></i>
@@ -102,7 +101,8 @@
           <input class="form-input" type="text" placeholder="Search by app name, ID, author, or description...">
           <button class="btn btn-primary input-group-btn">Search</button>
         </div>
-      </div>
+      
+      
       <div class="panel" style="clear:both">
         <div class="panel-header"></div>
         <div class="panel-body columns"><!-- apps go here --></div>
