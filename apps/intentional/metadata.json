@@ -4,7 +4,7 @@
   "icon": "intentional.png",
   "version":"0.8",
   "author":"ZubaZ21",
-  "description": "Intentional is a configurable launcher that can launch: Android intents through Gadgetbridge;Installed Bangle.js applications; Nested folders containing tasks and apps",
+  "description": "Intentional is a configurable launcher that can launch Android intents through Gadgetbridge;Installed Bangle.js applications; Nested folders containing tasks and apps",
   "readme": "README.md",
   "type": "app",
   "tags": "tool",
