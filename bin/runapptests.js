@@ -456,13 +456,14 @@ function runTest(test, testState) {
         resetUncaughtError();
 
         console.log("> RESULT -",  (state.ok ? "OK": "FAIL") , "- " + test.app + (subtest.description ? (" - " + subtest.description) : ""));
-        testState.push({
+        let result = {
           app: test.app,
           number: subtestIdx,
           result: state.ok ? "SUCCESS": "FAILURE",
           description: subtest.description,
-          error: uncaughtError || null
-        });
+        };
+        if (uncaughtError) result.error = uncaughtError;
+        testState.push(result);
       });
     });
     p = p.then(()=>{
