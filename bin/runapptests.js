@@ -36,7 +36,8 @@ const DEMOTEST = {
     "id": "arbitraryid",
     "steps" : [
       {"t":"cmd", "js": "global.testfunction = ()=>{}", "text": "Runs some code on the device"},
-      {"t":"wrap", "fn": "global.testfunction", "id": "testfunc", text:"Wraps a function to count calls and store the last set of arguments on the device"}
+      {"t":"wrap", "fn": "global.testfunction", "id": "testfunc", text:"Wraps a function to count calls and store the last set of arguments on the device"},
+      {"t":"jsonfile", "name": "filename.json", "json": {"key":"value"}, text:"Write a JSON object into a file"}
     ]
   }],
   "tests" : [{
@@ -247,6 +248,12 @@ function runStep(step, subtest, test, state){
       p = p.then(() => {
         console.log(`> SENDING JS \`${step.js}\``, step.text ? "- " + step.text : "");
         emu.tx(`${step.js}\n`);
+      });
+      break;
+    case "jsonfile" :
+      p = p.then(() => {
+        console.log(`> SENDING JSON FILE \`${step.name}\``, step.text ? "- " + step.text : "");
+        emu.tx(`require('Storage').writeJSON('${step.name}', ${JSON.stringify(step.json)})\n`);
       });
       break;
     case "wrap" :
