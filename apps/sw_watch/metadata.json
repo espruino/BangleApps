@@ -1,6 +1,6 @@
 { "id": "sw_watch",
-  "name": "Star Wars Watch",
-  "shortName":"sw_watch",
+  "name": "Star Wars Clock",
+  "shortName":"Star Clock",
   "icon": "sw_watch.png",
   "version":"0.01",
   "author":"ZubaZ21",
