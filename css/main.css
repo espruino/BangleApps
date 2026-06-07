@@ -64,7 +64,7 @@
       border-radius: 1em;
       padding-left: 0rem;
       padding-right: 0rem;
-      margin: -1em !important;
+
       border: none;
     }
 
@@ -118,6 +118,7 @@
       border-radius: 1em;
       padding-left: 1em;
       padding-right: 1em;
+
     }
 
     .btn.btn-favourite:focus,
