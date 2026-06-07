@@ -25,6 +25,12 @@ node bin/runapptests.js --verbose
 node bin/runapptests.js --id android --verbose
 ```
 
+### Filter tests by index
+
+```bash
+node bin/runapptests.js --id android --testindex 1
+```
+
 ## Writing Tests
 
 Create a `test.json` file in your app's directory (e.g., `apps/myapp/test.json`).
