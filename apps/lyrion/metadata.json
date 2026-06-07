@@ -10,7 +10,7 @@
   "supports": ["BANGLEJS2"],
   "allow_emulator": true,
   "storage": [
-    {"name":"Lyrion.app.js","url":"Lyrion.app.js"},
+    {"name":"lyrion.app.js","url":"lyrion.app.js"},
     {"name":"lyrion.img","url":"app-icon.js","evaluate":true}
   ]
 }
