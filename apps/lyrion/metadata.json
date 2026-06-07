@@ -5,6 +5,7 @@
   "version":"0.01",
   "author":"ZubaZ21",
   "description": "An app to control a Lyrion Music Server using intents.",
+  "readme": "README.md",
   "type": "app",
   "tags": "tool",
   "supports": ["BANGLEJS2"],
