@@ -50,5 +50,86 @@
       {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
       {"t":"assert", "js": "global[\"\\xff\"].watches.length", "is":"equal", "to": "2", "text": "One watch restored, first entry is always empty"}
     ]
+  },{
+    "description": "Test handling of multiple messages, closing each one",
+    "steps" : [
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"saveMemoryUsage", "text": "Gets and stores the current memory usage"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"checkMemoryUsage", "text": "Checks current memory is not higher than stored value (detects leaks)"}
+    ]
+  },{
+    "description": "Test handling of multiple messages, let accumulate and then close all manually",
+    "steps" : [
+      {"t":"jsonfile", "name": "messagesoverlay.json", "json": {"autoclear": 600}, "text": "Force autoclear setting off"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay to initialize all structures"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"saveMemoryUsage", "text": "Gets and stores the current memory usage"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"checkMemoryUsage", "text": "Checks current memory is not higher than stored value (detects leaks)"}
+    ]
+  },{
+    "description": "Test handling of single messages, wait for automatic cleanup",
+    "steps" : [
+      {"t":"jsonfile", "name": "messagesoverlay.json", "json": {"autoclear": 600}, "text": "Force autoclear setting on"},
+      {"t":"cmd", "js": "Bangle.setLocked(true)", "text": "Lock the bangle to force autoclear to become active"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'baseline',body:'body'})", "text": "Show a message overlay to set baseline"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"saveMemoryUsage", "text": "Gets and stores the current memory usage"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage',body:'body'})", "text": "Show a message overlay"},
+      {"t":"advanceTimers", "ms":700000, "text": "Advance timers to get the timer to fire in the next idle period"},
+      {"t":"checkMemoryUsage", "text": "Checks current memory is not higher than stored value (detects leaks)"}
+    ]
+  },{
+    "description": "Test handling of multiple messages, let accumulate and wait for automatic cleanup",
+    "steps" : [
+      {"t":"jsonfile", "name": "messagesoverlay.json", "json": {"autoclear": 600}, "text": "Force autoclear setting on"},
+      {"t":"cmd", "js": "Bangle.setLocked(true)", "text": "Lock the bangle to force autoclear to become active"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'baseline',body:'body'})", "text": "Show a message overlay to set baseline"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"saveMemoryUsage", "text": "Gets and stores the current memory usage"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage 1',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage 2',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage 3',body:'body'})", "text": "Show a message overlay"},
+      {"t":"advanceTimers", "ms":700000, "text": "Advance timers to get the timer to fire in the next idle period"},
+      {"t":"advanceTimers", "ms":700000, "text": "Advance timers to get the timer to fire in the next idle period"},
+      {"t":"advanceTimers", "ms":700000, "text": "Advance timers to get the timer to fire in the next idle period"},
+      {"t":"checkMemoryUsage", "text": "Checks current memory is not higher than stored value (detects leaks)"}
+    ]
   }]
 }
