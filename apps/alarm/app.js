@@ -111,7 +111,8 @@ function showMainMenu(scroll, group, scrollback) {
         },
         format: v=>getIcon(e)
       };
-    } else if (getGroups) {
+    }
+    if (getGroups) {
       groups[E_GROUP] = undefined;
     }
   });
