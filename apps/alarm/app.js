@@ -92,8 +92,8 @@ function showMainMenu(scroll, group, scrollback) {
 
   alarms.forEach((e, index) => {
     const E_GROUP = e.group||(e.hidden?"Hidden":undefined);
-    const showAlarmInMainMenu = (!e.hidden===true || settings.showHiddenAlarms) &&
-      !(group && settings.showGroup);
+    const showAlarmInMainMenu = (!e.hidden===true || (settings.showHiddenAlarms && !settings.showGroup)) &&
+      !(E_GROUP && settings.showGroup);
     const showAlarmInGroupMenu = settings.showGroup  &&
       (group ? E_GROUP === group : false);
     if(showAlarmInMainMenu || showAlarmInGroupMenu) {
