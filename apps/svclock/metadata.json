@@ -2,6 +2,7 @@
   "id": "svclock",
   "name": "Simple V-Clock",
   "version": "0.04",
+  "author": "tebarius",
   "description": "Modification of Simple Clock 0.04 to use Vectorfont",
   "icon": "vclock-simple.png",
   "type": "clock",

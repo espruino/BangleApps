@@ -2,6 +2,7 @@
   "id":"blc",
   "name":"Binary LED Clock",
   "version": "0.40",
+  "author": "aemkai",
   "description": "a binary LED-Clock with time and date and customizable LED-colors",
   "icon":"blc-icon.png",
   "screenshots": [{"url":"screenshot_blc_1.bmp"},{"url":"screenshot_blc_2.bmp"}],

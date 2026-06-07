@@ -3,6 +3,7 @@
   "name": "Edge Clock",
   "shortName": "Edge Clock",
   "version": "0.05",
+  "author": "tinxx",
   "description": "Crisp clock with perfect readability.",
   "readme": "README.md",
   "icon": "app.png",

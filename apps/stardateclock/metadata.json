@@ -2,6 +2,7 @@
   "id": "stardateclock",
   "name":"Stardate Clock",
   "shortName":"Stardate Clock",
+  "author": "KaiRo-at",
   "description": "A clock displaying a stardate along with a 'standard' digital/analog clock in LCARS design",
   "version": "0.04",
   "icon": "app.png",

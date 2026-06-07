@@ -2,6 +2,7 @@
   "id": "teatimer",
   "name": "Tea Timer",
   "version": "0.07",
+  "author": "ThFGG",
   "description": "A simple timer. You can easily set up the time.",
   "icon": "teatimer.png",
   "type": "app",

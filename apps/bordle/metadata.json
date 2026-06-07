@@ -3,6 +3,7 @@
   "shortName":"Bordle",
   "icon": "app.png",
   "version":"0.04",
+  "author": "berkenbu",
   "description": "Bangle version of a popular word search game",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",

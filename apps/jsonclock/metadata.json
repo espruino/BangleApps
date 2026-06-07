@@ -1,6 +1,7 @@
 { "id": "jsonclock",
   "name": "JsonClock",
   "version": "0.03",
+  "author": "voloved",
   "description": "JSON view of the time, date, steps, battery, and sunrise and sunset times",
   "icon": "app.png",
   "screenshots": [{"url":"dark.png"}],

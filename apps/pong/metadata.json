@@ -3,6 +3,7 @@
   "name": "Pong",
   "shortName": "Pong",
   "version": "0.04",
+  "author": "fredericrous",
   "description": "A clone of the Atari game Pong",
   "icon": "pong.png",
   "type": "app",

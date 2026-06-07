@@ -3,6 +3,7 @@
   "name": "Light Switch Widget",
   "shortName": "Light Switch",
   "version": "0.11",
+  "author": "storm64",
   "description": "A fast way to switch LCD backlight on/off, change the brightness and show the lock status. All in one widget.",
   "icon": "images/app.png",
   "screenshots": [

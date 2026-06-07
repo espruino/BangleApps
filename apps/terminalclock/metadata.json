@@ -2,6 +2,7 @@
   "id": "terminalclock",
   "name": "Terminal Clock",
   "shortName": "Terminal Clock",
+  "author": "Stiralbios",
   "description": "A terminal CLI like clock displaying configurable, multiple sensor data",
   "version": "0.13",
   "icon": "app.png",

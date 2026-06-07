@@ -4,6 +4,7 @@
   "icon": "app.png",
   "type": "clock",
   "version": "0.12",
+  "author": "dronesflier",
   "description": "A clock inspired by the Kirby series",
   "tags": "clock",
   "supports": ["BANGLEJS2"],

@@ -2,6 +2,7 @@
   "id": "aclock",
   "name": "Analog Clock",
   "version": "0.15",
+  "author": "ra100",
   "description": "An Analog Clock",
   "icon": "clock-analog.png",
   "screenshots": [{"url":"screenshot_analog.png"}],

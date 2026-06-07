@@ -2,6 +2,7 @@
   "name": "DayMoon Circadian Clock",
   "version": "0.05",
   "dependencies":  {"mylocation":"app"},
+  "author": "MomentumV",
   "description": "A 24 hour clockface showing the Moon Phase and portion of the day that the Sun is up inspired by Matthew Clark's *Fair Circadian* Pebble watchface",
   "icon": "daymoon.png",
   "screenshots": [{"url":"s1.png"},{"url":"s2.png"},{"url":"s3.png"},{"url":"s4.png"}],

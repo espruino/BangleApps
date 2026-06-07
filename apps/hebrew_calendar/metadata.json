@@ -3,6 +3,7 @@
   "name": "Hebrew Calendar",
   "shortName": "HebCal",
   "version": "0.06",
+  "author": "barakplasma",
   "description": "lists the date & holidays according to the hebrew calendar",
   "icon": "app.png",
   "allow_emulator": false,

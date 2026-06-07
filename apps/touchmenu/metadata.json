@@ -2,6 +2,7 @@
   "id": "touchmenu",
   "name": "TouchMenu",
   "version": "0.02",
+  "author": "kyleplo",
   "description": "Redesigned menu that uses the full touchscreen on the Bangle.js 2",
   "screenshots": [{"url":"touchmenu.gif"}],
   "icon": "touchmenu.png",

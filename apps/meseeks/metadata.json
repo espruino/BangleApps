@@ -2,6 +2,7 @@
   "name": "Mr Meeseeks",
   "shortName":"MeSeeks",
   "version":"0.02",
+  "author": "LucienStorm",
   "description": "Mr Meeseeks clock with random faces and battery-dependent freckles overlay.",
   "icon": "app.png",
   "tags": "clock",

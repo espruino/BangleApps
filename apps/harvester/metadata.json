@@ -3,6 +3,7 @@
   "allow_emulator": true,
   "version": "0.2",
   "dependencies": {"clock_info":"module"},
+  "author": "TuggyNE",
   "description": "Digital clock with large segmented ring gauges to show accumulated fruitful time spent by category, and 'fallow' rest time available, as well as over-rested time",
   "icon": "app.png",
   "interface": "interface.html",

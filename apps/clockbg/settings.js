@@ -9,10 +9,47 @@
       delete settings.fn;
     if (settings.style!="color")
       delete settings.color;
-    if (!["randomcolor","squares","plasma","rings","tris","blobs"].includes(settings.style))
+    if (!["randomcolor","squares","plasma","rings","tris","blobs","gradient"].includes(settings.style))
       delete settings.colors;
     require("Storage").writeJSON("clockbg.json", settings);
   }
+
+function colorRange(from, to, steps) {
+  var result = [];
+  for (var i = 0; i < steps; i++)
+    result.push(g.blendColor(from,to,i / (steps - 1)));
+  return result;
+}
+let customMenu=function(style, col1name, col2name, bck, img) {
+  var col1 = "", col2 = "";
+  function buildMenu() {
+    var menu = {"":{title:/*LANG*/"Custom", back:bck}};
+    menu[col1name] = function() {
+      require("colorpicker").show({
+        back: buildMenu,
+        onSelect: function(c) { col1 = c; }
+      });
+    };
+    menu[col2name] = function() {
+      require("colorpicker").show({
+        back: function() { buildMenu(); },
+        onSelect: function(c) { col2 = c; }
+      });
+    };
+    if (col1 !== "" && col2 !== "") {
+      menu[/*LANG*/"Save"] = function() {
+        settings.style = style;
+        settings.colors=[col1,col2];
+        if(style=="plasma")settings.colors = colorRange(col1, col2, 16);
+        if(style=="gradient")settings.image = img;
+        saveSettings();
+        showMainMenu();
+      };
+    }
+    E.showMenu(menu);
+  }
+  buildMenu();
+}
 
   function getColorsImage(cols) {
     var bpp = 1;
@@ -32,19 +69,14 @@
     E.showMenu({
       "" : {title:/*LANG*/"Background", back:showMainMenu},
       /*LANG*/"Solid Color" : function() {
-        var cols = ["#F00","#0F0","#FF0",
-                    "#00F","#F0F","#0FF",
-                    "#000","#888","#fff",];
-        var menu =  {"":{title:/*LANG*/"Colors", back:showModeMenu}};
-        cols.forEach(col => {
-          menu["-"+getColorsImage([col])] = () => {
+        require("colorpicker").show({
+          back:showMainMenu,
+          onSelect:function(col){
             settings.style = "color";
             settings.color = col;
             saveSettings();
-            showMainMenu();
-          };
-        });
-        E.showMenu(menu);
+          }
+        })
       },
       /*LANG*/"Random Color" : function() {
         var cols = [
@@ -56,7 +88,19 @@
           ["#007","#057","#073","#170","#770","#710","#703","#507"]
           // Please add some more!
         ];
-        var menu =  {"":{title:/*LANG*/"Colors", back:showModeMenu}};
+        var menu =  {"":{title:/*LANG*/"Colors", back:showModeMenu},
+          /*LANG*/"Custom" : () => {
+          require("colorpicker").show({
+            onSelect:function(colors){
+              settings.style = "randomcolor";
+              settings.colors = colors;
+              saveSettings();
+            },
+            back:showMainMenu,
+            multiSelect:true,
+            startingSelection : settings.style=="randomcolor" ? settings.colors : []
+          });
+	}};
         cols.forEach(col => {
           menu[getColorsImage(col)] = () => {
             settings.style = "randomcolor";
@@ -119,7 +163,7 @@
         });
         E.showMenu(menu);
       },
-      /*LANG*/"Plasma" : function() {
+      /*LANG*/"Plasma" : function showPlasmaMenu() {
         var cols = [ // list of color palettes used as possible square colours - 16 entries
           ["#00f","#05f","#0bf","#0fd","#0f7","#0f1","#3f0","#9f0","#ff0","#f90","#f30","#f01","#f07","#f0d","#b0f","#50f"],
           ["#44f","#48f","#4df","#4fe","#4fa","#4f6","#7f4","#bf4","#ff4","#fb4","#f74","#f46","#f4a","#f4e","#d4f","#84f"],
@@ -130,7 +174,6 @@
           ["#000","#010","#020","#130","#140","#250","#260","#270","#380","#390","#4a0","#4b0","#5c0","#5d0","#5e0","#6f0"],
           ["#fff","#efe","#dfd","#cfc","#bfb","#afa","#9f9","#8f8","#7f7","#6f6","#5f5","#4f4","#3f3","#2f2","#1f1","#0f0"],
           ["#fff","#fee","#fdd","#fcc","#fbb","#faa","#f99","#f88","#f77","#f66","#f55","#f44","#f33","#f22","#f11","#f00"],
-
           // Please add some more!
         ];
         var menu =  {"":{title:/*LANG*/"Plasma", back:showModeMenu},
@@ -139,7 +182,9 @@
           settings.colors = cols;
           saveSettings();
           showMainMenu();
-        }};
+        }, /*LANG*/"Custom" : () =>
+          customMenu("plasma", /*LANG*/"Background",/*LANG*/"Foreground", showPlasmaMenu, undefined )
+        };
         cols.forEach(col => {
           menu[getColorsImage(col)] = () => {
             settings.style = "plasma";
@@ -232,6 +277,66 @@
         });
         E.showMenu(menu);
       },
+      /*LANG*/"Gradient" : function() {
+        let img="";
+        let showMenu=()=>{
+          var cols = [ // list of color palettes used as gradient colors
+            ["#0ff","#00f"],
+            ["#ff0","#0f0"],
+            ["#0f0","#f00"],
+            ["#0ff","#f0f"],
+            ["#fff","#0ff"]
+            // Please add some more!
+          ];
+          var menu = {"":{title:/*LANG*/"Gradient", back:showTypeMenu},
+            /*LANG*/"Random" : () => {
+              settings.style = "gradient";
+              settings.colors = cols;
+              settings.image= img;
+              saveSettings();
+              showMainMenu();
+            }, /*LANG*/"Custom" : () =>
+              customMenu("gradient", /*LANG*/"Color 1",/*LANG*/"Color 2",showMenu,img)
+          };
+          cols.forEach(col => {
+            menu[getColorsImage(col)] = () => {
+              settings.style = "gradient";
+              settings.colors = col;
+              settings.image= img;
+              saveSettings();
+              showMainMenu();
+            };
+          });
+          E.showMenu(menu);
+        };
+        let showTypeMenu= () => {
+          let typeMenu={
+            "":{title:/*LANG*/"Select Type", back:showMainMenu},
+            /*LANG*/"Vertical":function(){
+              img="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAERESISEREhEiMyMjIzMjMkRERERERERUVWZWVVVWZVZ3d2d3dnd3dpiIiYmIiIiImamqmpqqqamru7u7u7u7u8zdzN3czczM3u3e7d7t7e3///////////////////////////////8=";
+              showMenu();
+            },
+            /*LANG*/"Horizontal":function(){
+              img="//7LqHVDEAD//tqYdUIQAP/9y5h1QyAA//7LqHZDEAD//tqodUMQAP/+y6l2QyAA//7LmHZTIAD//cupdUMQAP/+y6l1QxAA//7bqHVDEAD//cuoZlIQAP/+y5h1UxAA//7bqXVDEAD//cuYdkMQAP/+y6h1QhAA//7LmHZCEAA=";
+              showMenu();
+            },
+            /*LANG*/"Diagonal TL-BR":function(){
+              img="////7cy6mYj///7dy6qYd///7cu6mYd2/+7cy6qYhmX+7dy6qYh2Ve7cy6qYh3VU7du6mYd2VFPcy6mYd2VUM8u7qIhmZUMiy7qYh2VUQyG7mYdnVEQiIKmYh2VEQyEAqYh2VUMyEQCYd3VUMyEQAJd2ZUMyEQAAd2ZUMyIAAAA=";
+              showMenu();
+            },
+            /*LANG*/"Diagonal TR-BL":function(){
+              img="d2VUQiIQAACIdlVEMhEAAJiHZVQzIQAAqZdnVUMiIQCpmYZlRDIiELuph3ZVRDIRy7qYh2ZUQyHMupmIdmVDIty7qoh3ZlRD3cy6mYh2VUTu3buqmHdlRP/tzLqph3Zl/+7dy6qZh2b//u3Lu6mHZv//7dzLupl2///+3du6qYc=";
+              showMenu();
+            },
+            /*LANG*/"Radial":function(){
+              img="AAEiMzMiEAAAEjRVVUMhAAE0Vnd3ZUMQEkV4mZmHVCEjV4mruph1MiRom83cuYZCNXms7/7Kl1M1eb3//9uXUzV5vf//25dTNXms7/7Kl1MkaJvN3LmGQiNXiau6mHUyEkV4mZmHVCEBNFZ3d2VDEAASNFVVQyEAAAEiMzMiEAA=";
+              showMenu();
+            }
+          };
+          E.showMenu(typeMenu);
+        };
+        showTypeMenu();
+      }
     });
   }
 
@@ -252,7 +357,6 @@
 
   /* Scripts for generating colors. Change the values in HSBtoRGB to generate different effects
 
-
   a = new Array(16);
   a.fill(0);
   g.clear();
@@ -272,4 +376,4 @@
   */
 
   showMainMenu();
-  })
+})

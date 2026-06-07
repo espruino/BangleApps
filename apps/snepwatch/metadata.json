@@ -2,6 +2,7 @@
   "id": "snepwatch",
   "name": "Snepwatch",
   "version": "1.00",
+  "author": "JoppyFurr",
   "description": "A configurable watch face using the Terminus font",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot-dark.png"}, {"url":"screenshot-light.png"}],

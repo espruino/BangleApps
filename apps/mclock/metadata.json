@@ -2,6 +2,7 @@
   "id": "mclock",
   "name": "Morphing Clock",
   "version": "0.08",
+  "author": "ra100",
   "description": "7 segment clock that morphs between minutes and hours",
   "icon": "clock-morphing.png",
   "type": "clock",

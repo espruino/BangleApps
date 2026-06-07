@@ -2,6 +2,7 @@
   "id": "floralclk",
   "name": "Floral Clock",
   "version": "0.01",
+  "author": "gfwilliams",
   "description": "A clock with a flower background by [Lillith May](https://www.instagram.com/_lilustrations_/)",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot_floral.png"}],

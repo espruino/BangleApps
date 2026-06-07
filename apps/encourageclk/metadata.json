@@ -3,6 +3,7 @@
     "name": "Encouragement & Positivity Clock",
     "shortName":"Encouragement Clock",
     "version": "0.04",
+    "author": "elykittytee",
     "description": "Tap on the watch for a note of encouragement",
     "icon": "app.png",
     "type": "clock",

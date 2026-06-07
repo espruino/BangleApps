@@ -1,6 +1,7 @@
 { "id": "libqr",
   "name": "QR Code Library",
   "version":"0.01",
+  "author": "gfwilliams",
   "description": "Library to allow apps to create an image of a QR code directly from a text string",
   "icon": "app.png",
   "tags": "tool",

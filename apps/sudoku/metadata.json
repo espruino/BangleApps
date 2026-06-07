@@ -2,6 +2,7 @@
   "name": "Sudoku",
   "shortName":"Sudoku",
   "version":"0.01",
+  "author": "gfwilliams",
   "description": "A Sudoku game that allows you to play one of 600 pre-made puzzles",
   "icon": "app.png",
   "screenshots" : [ { "url":"screenshot.png" } ],

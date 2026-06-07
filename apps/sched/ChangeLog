@@ -39,3 +39,5 @@
 0.36: Make 'Unlock At Buzz' (unlocking the watch when the alarm goes off) default to true
 0.37: Ensure we always execute an alarm, even if it was >1 minute in the past. This fixes missed alarms when >1 alarm is scheduled next to each other (fix #2712)
 0.38: Fix timer going off immediately if it was long enough it went to the next day (#4220)
+0.39: Allow a press of the button to stop/snooze the alarm when it's gone off
+0.40: Prevent time-of-day alarms set via setAlarm() that have a time earlier than the current time triggering immediately after #4220 fix; schedule them for tomorrow by default to match original behavior

@@ -2,6 +2,7 @@
   "name": "LEGO Remote control",
   "shortName":"LEGO Remote",
   "version": "0.03",
+  "author": "gfwilliams",
   "description": "Use your Bangle.js to control LEGO models. See the README for compatibility",
   "icon": "app.png",
   "tags": "toy,lego,bluetooth",
