@@ -70,10 +70,6 @@ Bangle.on('lcdPower',on=>{
   }
 });
 
-Bangle.setUI("clock");  // Show launcher when middle button pressed
-
-Bangle.loadWidgets();
-require("widget_utils").swipeOn();
 
 function drawOutlinedText(txt, x, y) {
   // 8-direction outline offsets
@@ -95,5 +91,9 @@ function drawOutlinedText(txt, x, y) {
 }
 
 
-
 draw();
+
+Bangle.setUI("clock");  // Show launcher when middle button pressed
+
+//Bangle.loadWidgets();
+//require("widget_utils").swipeOn();
