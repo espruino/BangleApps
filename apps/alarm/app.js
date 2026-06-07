@@ -4,7 +4,8 @@ Bangle.drawWidgets();
 const settings = Object.assign({
   showConfirm : true,
   showAutoSnooze : true,
-  showHidden : true
+  showHidden : false,
+  showHiddenAlarms : false
 }, require('Storage').readJSON('alarm.json',1)||{});
 // 0 = Sunday (default), 1 = Monday
 const firstDayOfWeek = (require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0;
@@ -90,8 +91,12 @@ function showMainMenu(scroll, group, scrollback) {
   const getIcon = (e)=>{return e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff);};
 
   alarms.forEach((e, index) => {
-    const showAlarm = !settings.showGroup || (group ? e.group === group : !e.group);
-    if(showAlarm) {
+    const E_GROUP = e.group||(e.hidden?"Hidden":undefined);
+    const showAlarmInMainMenu = (!e.hidden===true || settings.showHiddenAlarms) &&
+      !(group && settings.showGroup);
+    const showAlarmInGroupMenu = settings.showGroup  &&
+      (group ? E_GROUP === group : false);
+    if(showAlarmInMainMenu || showAlarmInGroupMenu) {
       const label = trimLabel(getLabel(e),40);
       menu[label] = {
         value: e.on,
@@ -107,7 +112,7 @@ function showMainMenu(scroll, group, scrollback) {
         format: v=>getIcon(e)
       };
     } else if (getGroups) {
-      groups[e.group] = undefined;
+      groups[E_GROUP] = undefined;
     }
   });
 
