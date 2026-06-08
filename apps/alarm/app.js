@@ -4,8 +4,6 @@ Bangle.drawWidgets();
 const settings = Object.assign({
   showConfirm : true,
   showAutoSnooze : true,
-  showHidden : false,
-  showHiddenAlarms : false
 }, require('Storage').readJSON('alarm.json',1)||{});
 // 0 = Sunday (default), 1 = Monday
 const firstDayOfWeek = (require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0;

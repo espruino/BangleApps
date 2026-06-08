@@ -2,8 +2,6 @@
   let settings = Object.assign({
     showConfirm : true,
     showAutoSnooze : true,
-    showHidden : false,
-    showHiddenAlarms : false
   }, require('Storage').readJSON('alarm.json',1)||{});
 
   const save = () => require('Storage').write('alarm.json', settings);
