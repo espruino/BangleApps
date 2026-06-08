@@ -116,6 +116,7 @@ function showMainMenu(scroll, group, scrollback) {
   });
 
   if (!group) {
+    if (!settings.showHiddenAlarms) delete groups.Hidden;
     Object.keys(groups).sort().forEach(g => menu[g] = () => showMainMenu(null, g, scroller?scroller.scroll:undefined));
     menu[/*LANG*/"Advanced"] = () => showAdvancedMenu();
   }
