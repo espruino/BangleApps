@@ -90,7 +90,7 @@ function showMainMenu(scroll, group, scrollback) {
 
   alarms.forEach((e, index) => {
     const E_GROUP = e.group||(e.hidden?"Hidden":undefined);
-    const showAlarmInMainMenu = (!e.hidden===true || (settings.showHiddenAlarms && !settings.showGroup)) &&
+    const showAlarmInMainMenu = (!e.hidden===true || (settings.showHidden && !settings.showGroup)) &&
       !(group && settings.showGroup);
     const showAlarmInGroupMenu = settings.showGroup  &&
       (group ? E_GROUP === group : false);
@@ -116,7 +116,7 @@ function showMainMenu(scroll, group, scrollback) {
   });
 
   if (!group) {
-    if (!settings.showHiddenAlarms && groups) delete groups.Hidden;
+    if (!settings.showHidden && groups) delete groups.Hidden;
     Object.keys(groups).sort().forEach(g => menu[g] = () => showMainMenu(null, g, scroller?scroller.scroll:undefined));
     menu[/*LANG*/"Advanced"] = () => showAdvancedMenu();
   }

@@ -40,10 +40,6 @@
         value : !!settings.showGroup,
         onchange : v => { settings.showGroup=v; save();}
       },
-      /*LANG*/'Show Hidden Alarms': {
-        value : !!settings.showHiddenAlarms,
-        onchange : v => { settings.showHiddenAlarms=v; save();}
-      },
       /*LANG*/'Show Text Overflow': {
         value : !!settings.showOverflow,
         onchange : v => { settings.showOverflow=v; save();}
