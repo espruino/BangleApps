@@ -147,9 +147,14 @@
           <button class="btn tooltip" id="installfavourite" data-tooltip="Delete everything, install your favourites">Install favourite apps</button>
           <button class="btn tooltip" id="defaultbanglesettings" data-tooltip="Reset your Bangle's settings to the defaults">Reset Settings</button>
         </p><p>
-          <button class="btn tooltip" id="installappfromfiles" data-tooltip="Install an app by selecting its files">Install App from Files</button>
+          <button class="btn tooltip" id="removeall" data-tooltip="Delete everything, leave it blank">Remove all Apps</button>
+          <button class="btn tooltip" id="reinstallall" data-tooltip="Re-install every app, leave all data">Reinstall apps</button>
+          <button class="btn tooltip" id="installdefault" data-tooltip="Delete everything, install default apps">Install default apps</button>
+          <button class="btn tooltip" id="installfavourite" data-tooltip="Delete everything, install your favourites">Install favourite apps</button>
+          <button class="btn tooltip" id="defaultbanglesettings" data-tooltip="Reset your Bangle's settings to the defaults">Reset Settings</button>
         </p><p>
           <button class="btn tooltip" id="newGithubIssue" data-tooltip="Create a new issue on GitHub">New issue on GitHub</button>
+          <button class="btn tooltip" id="webideremote" data-tooltip="Enable the Web IDE remote server">Web IDE Remote</button>
         </p>
         <h3>Settings</h3>
         <div class="form-group">
@@ -160,10 +165,6 @@
           <label class="form-switch">
             <input type="checkbox" id="settings-settime">
             <i class="form-icon"></i> Always update time when we connect
-          </label>
-          <label class="form-switch">
-            <input type="checkbox" id="settings-ble-compat">
-            <i class="form-icon"></i> Bluetooth Compatibility mode (limit to 20 byte writes)
           </label>
           <label class="form-switch">
             <input type="checkbox" id="settings-nopacket">
@@ -188,10 +189,6 @@
             <label class="form-switch">
               <input type="checkbox" id="settings-alwaysAllowUpdate">
               <i class="form-icon"></i> Always show "reinstall app" button <i class="icon icon-refresh"></i> regardless of the version
-            </label>
-            <label class="form-switch">
-              <input type="checkbox" id="settings-alwaysAllowEmulator">
-              <i class="form-icon"></i> Always show "emulator" button <i class="icon icon-emulator"></i> regardless of whether it's supported by the app
             </label>
             <label class="form-switch">
               <input type="checkbox" id="settings-autoReload">
