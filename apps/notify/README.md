@@ -12,16 +12,16 @@ same way from code, but they look different to the user.
 
 ```JS
 options = {
-  on : bool // turn screen on, default true (But not if Quiet Mode is enabled)
-  size : int // height of notification, default is fit to height (80 max)  
-  title : string // optional title
-  id // optional notification ID, used with hide()
-  src : string // optional source name
-  body : string // optional body text
-  icon : string // optional icon (image string)
-  render : function(y) // function callback to render in area{x,y,w,h}
-  bgColor : int/string // background color (optional)
-  titleBgColor : int/string // optional background color for title (default black)
+  on : bool, // turn screen on, default true (But not if Quiet Mode is enabled)
+  size : int, // height of notification, default is fit to height (80 max)  
+  title : string, // optional title
+  id : string, // optional notification ID, used with hide()
+  src : string, // optional source name
+  body : string, // optional body text
+  icon : string, // optional icon (image string)
+  render : function(opts), // function callback to render in area{x,y,w,h}
+  bgColor : int/string, // background color (optional)
+  titleBgColor : int/string, // optional background color for title (default black)
   onHide : function() // callback when notification is hidden
 };
 
