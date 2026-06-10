@@ -93,6 +93,7 @@ function showMainMenu(scroll, group, scrollback) {
       const E_GROUP = e.group||(e.hidden?"Hidden":undefined);
       const showAlarmInMainMenu = !(E_GROUP && settings.showGroup) && !group;
       const showAlarmInGroupMenu = settings.showGroup && (group ? E_GROUP === group : false);
+      if (showAlarmInMainMenu && showAlarmInGroupMenu) throw new Error("Alarm should not belong to both main and group menu."); // To catch if future changes mess it up.
       if(showAlarmInMainMenu || showAlarmInGroupMenu) {
         const label = trimLabel(getLabel(e),40);
         menu[label] = {
