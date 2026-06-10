@@ -89,35 +89,33 @@ function showMainMenu(scroll, group, scrollback) {
   const getIcon = (e)=>{return e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff);};
 
   alarms.forEach((e, index) => {
-    const E_GROUP = e.group||(e.hidden?"Hidden":undefined);
-    const IS_E_NOT_HIDDEN = (!e.hidden || settings.showHidden);
-    const showAlarmInMainMenu = IS_E_NOT_HIDDEN &&
-      !(E_GROUP && settings.showGroup) && !group;
-    const showAlarmInGroupMenu = IS_E_NOT_HIDDEN &&
-      settings.showGroup && (group ? E_GROUP === group : false);
-    if(showAlarmInMainMenu || showAlarmInGroupMenu) {
-      const label = trimLabel(getLabel(e),40);
-      menu[label] = {
-        value: e.on,
-        onchange: (v, touch) => {
-          if (touch && (2==touch.type || 145<touch.x)) { // Long touch or touched icon.
-            e.on = v;
-            if (e.on) prepareForSave(e, index);
-            saveAndReload();
-          } else {
-            setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index, undefined, scroller?scroller.scroll:undefined, group);
-          }
-        },
-        format: v=>getIcon(e)
-      };
-    }
-    if (getGroups && IS_E_NOT_HIDDEN && E_GROUP) {
-      groups[E_GROUP] = undefined;
+    if (!e.hidden || settings.showHidden) {
+      const E_GROUP = e.group||(e.hidden?"Hidden":undefined);
+      const showAlarmInMainMenu = !(E_GROUP && settings.showGroup) && !group;
+      const showAlarmInGroupMenu = settings.showGroup && (group ? E_GROUP === group : false);
+      if(showAlarmInMainMenu || showAlarmInGroupMenu) {
+        const label = trimLabel(getLabel(e),40);
+        menu[label] = {
+          value: e.on,
+          onchange: (v, touch) => {
+            if (touch && (2==touch.type || 145<touch.x)) { // Long touch or touched icon.
+              e.on = v;
+              if (e.on) prepareForSave(e, index);
+              saveAndReload();
+            } else {
+              setTimeout(e.timer ? showEditTimerMenu : showEditAlarmMenu, 10, e, index, undefined, scroller?scroller.scroll:undefined, group);
+            }
+          },
+          format: v=>getIcon(e)
+        };
+      }
+      if (getGroups && E_GROUP) {
+        groups[E_GROUP] = undefined;
+      }
     }
   });
 
   if (!group) {
-    //if (!settings.showHidden && groups) delete groups.Hidden;
     Object.keys(groups).sort().forEach(g => menu[g] = () => showMainMenu(null, g, scroller?scroller.scroll:undefined));
     menu[/*LANG*/"Advanced"] = () => showAdvancedMenu();
   }
