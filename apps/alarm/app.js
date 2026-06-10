@@ -90,10 +90,11 @@ function showMainMenu(scroll, group, scrollback) {
 
   alarms.forEach((e, index) => {
     const E_GROUP = e.group||(e.hidden?"Hidden":undefined);
-    const showAlarmInMainMenu = (!e.hidden===true || (settings.showHidden && !settings.showGroup)) &&
-      !(group && settings.showGroup);
-    const showAlarmInGroupMenu = settings.showGroup  &&
-      (group ? E_GROUP === group : false);
+    const IS_E_NOT_HIDDEN = (!e.hidden || settings.showHidden);
+    const showAlarmInMainMenu = IS_E_NOT_HIDDEN &&
+      !(E_GROUP && settings.showGroup) && !group;
+    const showAlarmInGroupMenu = IS_E_NOT_HIDDEN &&
+      settings.showGroup && (group ? E_GROUP === group : false);
     if(showAlarmInMainMenu || showAlarmInGroupMenu) {
       const label = trimLabel(getLabel(e),40);
       menu[label] = {
@@ -110,13 +111,13 @@ function showMainMenu(scroll, group, scrollback) {
         format: v=>getIcon(e)
       };
     }
-    if (getGroups && E_GROUP) {
+    if (getGroups && IS_E_NOT_HIDDEN && E_GROUP) {
       groups[E_GROUP] = undefined;
     }
   });
 
   if (!group) {
-    if (!settings.showHidden && groups) delete groups.Hidden;
+    //if (!settings.showHidden && groups) delete groups.Hidden;
     Object.keys(groups).sort().forEach(g => menu[g] = () => showMainMenu(null, g, scroller?scroller.scroll:undefined));
     menu[/*LANG*/"Advanced"] = () => showAdvancedMenu();
   }
