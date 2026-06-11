@@ -1,6 +1,0 @@
-require("Storage").write("lyrion.info",{
-  "id":"lyrion",
-  "name":"lyrion",
-  "src":"lyrion.app.js",
-  "icon":"lyrion.png"
-});
