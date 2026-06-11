@@ -22,3 +22,4 @@
 - [+] Keep on-watch drag editing with double-tap save
 - [+] Remove global Graphics monkeypatching to fix newer-firmware startup
 0.13: Add `clkinfo` boxes
+0.14: Fix date day suffix display

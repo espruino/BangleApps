@@ -347,11 +347,6 @@
     return g.theme.fg;
   };
 
-  const usesEnglishOrdinals = (() => {
-    const name = ((locale.name || "system") + "").toLowerCase();
-    return name === "system" || /^en(?:[_ -]|$)/.test(name);
-  })();
-
   const formatItemValue = (item, date) => {
     let value = "";
     if (item.type === "time") {
@@ -371,7 +366,7 @@
     } else if (item.type === "date") {
       const month = locale.month(date, item.options.longMonth ? 0 : 1);
       const day = date.getDate();
-      const dayString = String(day) + (item.options.suffix && usesEnglishOrdinals ? (day > 10 && day < 14 ? "th" : day % 10 === 1 ? "st" : day % 10 === 2 ? "nd" : day % 10 === 3 ? "rd" : "th") : "");
+      const dayString = String(day) + (item.options.suffix ? (day > 10 && day < 14 ? "th" : day % 10 === 1 ? "st" : day % 10 === 2 ? "nd" : day % 10 === 3 ? "rd" : "th") : "");
       value = month + " " + dayString + (item.options.showYear ? ", " + date.getFullYear() : "");
     } else if (item.type === "day") {
       value = locale.dow(date, item.options.short ? 1 : 0);
