@@ -52,18 +52,43 @@ jobs:
         id: detect-apps
         run: |
           set -e  # Exit on error, but handle grep specially
+          
+          # Files that should trigger running all tests
+          # Note: "core" is the submodule - when its commit hash changes, "core" appears in the diff
+          TEST_INFRA_FILES="bin/runapptests.js .github/workflows/nodejs.yml core"
+          
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            # PR: test only changed apps
             CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha }}..HEAD)
-            APPS=$(echo "$CHANGED" | grep '^apps/' | cut -d'/' -f2 | sort -u) || APPS=""
           elif [ "${{ github.ref }}" = "refs/heads/master" ]; then
-            # Push to master: test all apps
-            APPS=$(ls apps/*/test.json 2>/dev/null | cut -d'/' -f2) || APPS=""
+            # Push to master: always test all apps
+            APPS=$(ls apps/*/test.json 2>/dev/null | cut -d'/' -f2 | tr '\n' ' ') || APPS=""
+            echo "apps=$APPS" >> $GITHUB_OUTPUT
+            echo "Push to master - testing all apps:$APPS"
+            exit 0
           else
-            # Push to other branches: test only changed apps since master
             CHANGED=$(git diff --name-only origin/master...HEAD)
-            APPS=$(echo "$CHANGED" | grep '^apps/' | cut -d'/' -f2 | sort -u) || APPS=""
           fi
+          
+          # Check if test infrastructure changed - if so, run all tests
+          RUN_ALL=false
+          for f in $TEST_INFRA_FILES; do
+            if echo "$CHANGED" | grep -q "^$f$"; then
+              RUN_ALL=true
+              echo "Test infrastructure changed: $f"
+              break
+            fi
+          done
+          
+          if [ "$RUN_ALL" = "true" ]; then
+            APPS=$(ls apps/*/test.json 2>/dev/null | cut -d'/' -f2 | tr '\n' ' ') || APPS=""
+            echo "apps=$APPS" >> $GITHUB_OUTPUT
+            echo "Test infrastructure changed - testing all apps:$APPS"
+            exit 0
+          fi
+          
+          # Otherwise, test only changed apps
+          APPS=$(echo "$CHANGED" | grep '^apps/' | cut -d'/' -f2 | sort -u) || APPS=""
+          
           # Filter to apps with test.json
           TESTABLE=""
           for app in $APPS; do
