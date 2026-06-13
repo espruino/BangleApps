@@ -22,6 +22,8 @@ Menu items are stored in `intentional.json` and can be edited using the built-in
 
 ## Set-Up
 
+All about intents: https://www.espruino.com/Gadgetbridge#intents
+
 ### Android Intents
 
 To launch Android intents:
