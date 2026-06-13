@@ -1,7 +1,6 @@
 { "id": "intentional",
   "name": "Intentional",
-  "shortName": "Intentional",
-  "icon": "intentional.png",
+  "icon": "app.png",
   "version":"0.8",
   "author":"ZubaZ21",
   "description": "Intentional is a configurable launcher that can launch Android intents through Gadgetbridge;Installed Bangle.js applications; Nested folders containing tasks and apps",
@@ -11,9 +10,9 @@
   "screenshots": [ {"url":"screenshot1.png"}, {"url":"screenshot2.png"} ],
   "supports": ["BANGLEJS2"],
   "allow_emulator": true,
-  "custom": "intentional.html",
+  "custom": "custom.html",
   "storage": [
-    {"name":"intentional.app.js","url":"intentional.app.js"},
+    {"name":"intentional.app.js","url":"app.js"},
     {"name":"intentional.img","url":"app-icon.js","evaluate":true}
   ],
   "data": [
