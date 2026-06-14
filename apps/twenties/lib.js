@@ -1,4 +1,9 @@
 {
+  // TODO:
+  // - Add settings page.
+  // - Add setting for active days and hours.
+  // - Add setting for buzz strength/pattern.
+
   const getTimeAtNextBuzz = () => {
     const isWorkTime = (d) =>
       d.getDay() % 6 && d.getHours() >= 8 && d.getHours() < 18;
