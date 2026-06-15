@@ -17,6 +17,7 @@ Only vibrates during work days and hours.
 Add settings page.
 Add setting for active days and hours.
 Add setting for buzz strength/pattern.
+Add entry in settings to re-run setup.
 
 ## Contributors
 
