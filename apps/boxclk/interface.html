@@ -703,6 +703,11 @@
       overflow-wrap: anywhere;
     }
 
+    .focus-type-select {
+      width: min(100%, 13rem);
+      font-weight: 700;
+    }
+
     .editor-section {
       padding: 14px;
       border-radius: var(--radius-md);
@@ -990,14 +995,10 @@
           <div class="editor-card-inner editor-card-body">
             <div class="focus-head">
               <div id="focus-note" class="focus-chip">Select a box to edit it.</div>
+              <select id="item-type" class="form-select focus-type-select" aria-label="Box type" hidden></select>
             </div>
 
             <div id="item-editor" style="display:none">
-              <div class="field">
-                <label for="item-name">Name</label>
-                <input id="item-name" class="form-input" type="text">
-              </div>
-
               <details id="item-content-section" class="editor-section">
                 <summary>Content</summary>
                 <div class="section-body">
@@ -1316,6 +1317,7 @@
     const CONFIG_ADD_SPACE_VALUE = "__add_space__";
     const PREVIEW_HISTORY_LIMIT = 48;
     const THEME_COLOR_KEYS = ["fg", "bg", "fg2", "bg2", "fgH", "bgH"];
+    const ITEM_TYPES = ["time", "date", "day", "meridian", "battery", "steps", "clkinfo", "text"];
     const OUTLINE_OFFSETS_X = [-1, 0, 1, -1, 1, -1, 0, 1];
     const OUTLINE_OFFSETS_Y = [-1, -1, -1, 0, 0, 1, 1, 1];
     const PRESET_CONFIG_FILES = {
@@ -1333,6 +1335,7 @@
       { name: "BrunoAce", fileName: "boxclk-brunoace.pbf", source: "boxclk-brunoace.pbf" }
     ];
     const BUILTIN_FONT_NAMES = ["6x8", "4x6", "Vector", "5x7Numeric7Seg", "6x12", "7x11Numeric7Seg", "8x12"];
+    const NUMERIC_ONLY_FONT_NAMES = ["5x7Numeric7Seg", "7x11Numeric7Seg"];
     const PREVIEW_THEME = {
       light: { fg: "#000000", bg: "#ffffff", fg2: "#000000", bg2: "#ccffff", fgH: "#000000", bgH: "#00ffff", dark: false },
       dark: { fg: "#ffffff", bg: "#000000", fg2: "#ffffff", bg2: "#001144", fgH: "#ffffff", bgH: "#3366ff", dark: true }
@@ -1955,10 +1958,11 @@
       });
     }
 
-    function getAvailableFontNames(currentFont) {
+    function getAvailableFontNames(currentFont, type) {
       const seen = {};
       const names = [];
       BUILTIN_FONT_NAMES.forEach(name => {
+        if (!canUseFontForType(name, type)) return;
         seen[name] = true;
         names.push(name);
       });
@@ -1969,7 +1973,7 @@
         seen[name] = true;
         names.push(name);
       });
-      if (currentFont && !seen[currentFont]) names.push(currentFont);
+      if (currentFont && !seen[currentFont] && canUseFontForType(currentFont, type)) names.push(currentFont);
       return names;
     }
 
@@ -2035,6 +2039,14 @@
     function defaultItemName(type) {
       if (type === "clkinfo") return "Clockinfo";
       return prettyConfigName(type);
+    }
+
+    function normalizeItemType(type) { return ITEM_TYPES.includes(type) ? type : "text"; }
+
+    function canReuseAppearanceForTypeChange(previousType, type) { return (previousType === "clkinfo") === (type === "clkinfo"); }
+
+    function canUseFontForType(fontName, type) {
+      return type === "time" || type === "battery" || type === "steps" || NUMERIC_ONLY_FONT_NAMES.indexOf(fontName) < 0;
     }
 
     function uniqueItemName(base, config) {
@@ -3030,12 +3042,14 @@
       appearance = appearance || {};
       const fontFile = typeof appearance.fontFile === "string" && appearance.fontFile ? appearance.fontFile : undefined;
       const fontRecord = fontFile ? (getCustomFontRecordByFile(fontFile) || registerWatchFont(fontFile)) : null;
-      const font = (fontRecord && fontRecord.name) || fontNameFromFilename(fontFile) || appearance.font || base.font;
+      let font = (fontRecord && fontRecord.name) || fontNameFromFilename(fontFile) || appearance.font || base.font;
+      const compatibleFont = canUseFontForType(font, type);
+      if (!compatibleFont) font = base.font;
       const boundaryX = appearance.boundary && Number.isFinite(appearance.boundary.x) ? appearance.boundary.x : base.boundary.x;
       const boundaryY = appearance.boundary && Number.isFinite(appearance.boundary.y) ? appearance.boundary.y : base.boundary.y;
       return {
         font: font,
-        fontFile: fontFile,
+        fontFile: compatibleFont ? fontFile : undefined,
         fontSize: clampFontSize(font, appearance.fontSize === undefined ? base.fontSize : appearance.fontSize),
         outline: type === "clkinfo" ? 0 : clamp(toInt(appearance.outline, 0), 0, 6),
         textColor: appearance.textColor || base.textColor,
@@ -3081,6 +3095,7 @@
     }
 
     function createItem(type, config) {
+      type = normalizeItemType(type);
       const targetConfig = config || getSelectedConfig();
       const item = {
         name: uniqueItemName(defaultItemName(type), targetConfig),
@@ -3101,8 +3116,6 @@
         item.options = normalizeOptions(type, {});
       } else if (type === "battery") {
         item.suffix = "%";
-      } else if (type === "steps") {
-        item.prefix = "Steps: ";
       } else if (type === "clkinfo") {
       } else {
         item.type = "text";
@@ -3128,7 +3141,7 @@
 
       raw.items.forEach(item => {
         item = item || {};
-        const type = ["time", "date", "day", "meridian", "battery", "steps", "text", "clkinfo"].includes(item.type) ? item.type : "text";
+        const type = normalizeItemType(item.type);
         const baseName = (item.name || defaultItemName(type)).toString().trim() || defaultItemName(type);
         let name = baseName;
         let suffix = 2;
@@ -5011,10 +5024,10 @@
       }).join("");
     }
 
-    function renderFontSelect(currentFont) {
+    function renderFontSelect(currentFont, type) {
       const select = document.getElementById("item-font");
       if (!select) return;
-      const options = getAvailableFontNames(currentFont);
+      const options = getAvailableFontNames(currentFont, type);
       select.innerHTML = options.map(name => {
         const record = getCustomFontRecord(name);
         let label = name;
@@ -5119,6 +5132,8 @@
       const item = getSelectedItem();
       const editor = document.getElementById("item-editor");
       const config = getSelectedConfig();
+      const focusNote = document.getElementById("focus-note");
+      const itemTypeSelect = document.getElementById("item-type");
 
       if (!config) return;
 
@@ -5139,15 +5154,22 @@
 
       if (!item) {
         editor.style.display = "none";
-        document.getElementById("focus-note").textContent = "Select a box to edit it.";
+        focusNote.hidden = false;
+        itemTypeSelect.hidden = true;
         renderTypeOptions();
         suppressFormUpdates = false;
         return;
       }
 
       editor.style.display = "block";
+      focusNote.hidden = true;
+      itemTypeSelect.hidden = false;
 
-      document.getElementById("item-name").value = item.name;
+      itemTypeSelect.innerHTML = ITEM_TYPES.map(type => {
+        const label = type === item.type ? (item.name || defaultItemName(type)) : defaultItemName(type);
+        return `<option value="${escapeHtml(type)}">${escapeHtml(label)}</option>`;
+      }).join("");
+      itemTypeSelect.value = normalizeItemType(item.type);
       document.getElementById("item-prefix").value = item.prefix || "";
       document.getElementById("item-suffix").value = item.suffix || "";
       document.getElementById("item-text").value = item.text || "";
@@ -5162,8 +5184,7 @@
       document.getElementById("text-field-row").style.display = item.type === "text" ? "grid" : "none";
       document.getElementById("item-pos-x").value = item.position.x;
       document.getElementById("item-pos-y").value = item.position.y;
-      document.getElementById("focus-note").textContent = item.name;
-      renderFontSelect(item.appearance.font);
+      renderFontSelect(item.appearance.font, item.type);
       document.getElementById("item-font").value = item.appearance.font;
       document.getElementById("item-font-size").value = item.appearance.fontSize;
       document.getElementById("item-font-size").max = maxFontSize(item.appearance.font);
@@ -5594,21 +5615,33 @@
       commitPreviewEdit(before);
     }
 
+    function changeSelectedItemType(type) {
+      type = normalizeItemType(type);
+      const item = getSelectedItem();
+      const config = getSelectedConfig();
+      if (!item || !config || item.type === type) return false;
+      const previousType = item.type;
+      return updateSelectedItem(selected => {
+        const appearance = canReuseAppearanceForTypeChange(previousType, type) ? selected.appearance : defaultAppearanceForType(type);
+        let prefix = previousType === "clkinfo" ? "" : (selected.prefix || "");
+        let suffix = previousType === "clkinfo" ? "" : (selected.suffix || "");
+        if (previousType === "battery" && suffix === "%") suffix = "";
+        selected.type = type;
+        selected.prefix = type === "clkinfo" ? "" : prefix;
+        selected.suffix = type === "clkinfo" ? "" : suffix;
+        if (type === "battery" && !selected.suffix) selected.suffix = "%";
+        selected.appearance = normalizeAppearance(appearance, type);
+        selected.options = normalizeOptions(type, {});
+        selected.name = uniqueItemName(defaultItemName(type), {
+          items: config.items.filter(other => other !== selected)
+        });
+        state.selectedItemName = selected.name;
+      });
+    }
+
     function bindInspectorEvents() {
       const byId = id => document.getElementById(id);
-      byId("item-name").addEventListener("change", event => {
-        const item = getSelectedItem();
-        const config = getSelectedConfig();
-        if (!item) return;
-        const newName = uniqueItemName(event.target.value || defaultItemName(item.type), {
-          items: config.items.filter(other => other !== item)
-        });
-        updateSelectedItem(selected => {
-          selected.name = newName;
-          state.selectedItemName = newName;
-        });
-      });
-
+      byId("item-type").addEventListener("change", event => changeSelectedItemType(event.target.value));
       byId("item-prefix").addEventListener("input", event => updateSelectedItem(item => { item.prefix = event.target.value; }));
       byId("item-suffix").addEventListener("input", event => updateSelectedItem(item => { item.suffix = event.target.value; }));
       byId("item-text").addEventListener("input", event => updateSelectedItem(item => { item.text = event.target.value; }));
