@@ -3,6 +3,7 @@
   "name": "De-Stress",
   "shortName": "De-Stress",
   "version": "0.02",
+  "author": "motorfiets",
   "description": "Simple haptic heartbeat",
   "icon": "app.png",
   "tags": "",

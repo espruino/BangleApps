@@ -2,6 +2,7 @@
   "id": "a_clock_timer",
   "name": "A Clock with Timer",
   "version": "1.01",
+  "author": "alainsaas",
   "description": "A Clock with Timer, Map and Time Zones",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"},{"url":"screenshot-1.png"}],

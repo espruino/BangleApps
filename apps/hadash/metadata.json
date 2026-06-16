@@ -3,6 +3,7 @@
   "name": "Home-Assistant Dashboard",
   "shortName":"HA-Dash",
   "version":"1.01",
+  "author": "flaparoo",
   "description": "Interact with Home-Assistant (query states, call services)",
   "icon": "hadash.png",
   "screenshots": [{ "url": "screenshot.png" }],

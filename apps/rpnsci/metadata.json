@@ -4,6 +4,7 @@
     "shortName": "Calculator",
     "icon": "icon.png",
     "version": "0.04",
+    "author": "bruceblore",
     "description": "RPN scientific calculator with memory function.",
     "tags": "",
     "supports": [

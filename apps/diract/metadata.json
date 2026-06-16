@@ -3,6 +3,7 @@
   "name": "DirAct",
   "shortName": "DirAct",
   "version": "0.03",
+  "author": "jeffyactive",
   "description": "Proximity interaction detection.",
   "icon": "diract.png",
   "type": "app",

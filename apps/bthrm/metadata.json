@@ -3,6 +3,7 @@
   "name": "Bluetooth Heart Rate Monitor",
   "shortName": "BT HRM",
   "version": "0.19",
+  "author": "gfwilliams",
   "description": "Overrides Bangle.js's build in heart rate monitor with an external Bluetooth one.",
   "icon": "app.png",
   "screenshots": [{"url":"screen.png"}],

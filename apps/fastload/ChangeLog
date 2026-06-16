@@ -4,3 +4,5 @@
 0.04: (WIP) Allow use of app history when going back (`load()` or `Bangle.load()` calls without specified app).
 0.05: Check for changes in setting.js and force real reload if needed
 0.06: Fix caching whether an app is fastloadable
+0.07: Break out app history to a separate app: App History, `apphist`.
+      App is deprecated as it's function has been integrated in fw.

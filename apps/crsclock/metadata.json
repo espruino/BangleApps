@@ -3,6 +3,7 @@
   "name": "Circadian Rhythm Clock",
   "shortName":"Circadian",
   "version": "0.06",
+  "author": "spycat111",
   "description": "Shows CRS (Circadian Rhythm Score), steps, mood, and light exposure.",
   "icon": "icon.png",
   "type": "clock",

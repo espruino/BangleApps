@@ -2,6 +2,7 @@
   "id": "intclock",
   "name": "Interlaced Clock",
   "version": "0.01",
+  "author": "gfwilliams",
   "description": "A lightweight digital clock using an 'interlaced' font",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

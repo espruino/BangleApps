@@ -3,6 +3,7 @@
   "name": "CLI complete clock",
   "shortName":"CLI cmplt clock",
   "version": "0.04",
+  "author": "myxor",
   "description": "Command line styled clock with lots of information",
   "icon": "app.png",
   "allow_emulator": true,

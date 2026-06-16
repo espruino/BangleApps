@@ -2,6 +2,7 @@
   "name": "Rellotge en catala",
   "shortName":"Rellotge",
   "version": "0.85",
+  "author": "enricpineda",
   "description": "A clock with traditional naming of hours in Catalan",
   "icon": "icona.png",
   "readme": "README.md",

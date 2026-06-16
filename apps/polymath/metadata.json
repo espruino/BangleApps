@@ -3,6 +3,7 @@
   "shortName":"Polymath",
   "icon": "app.png",
   "version": "0.02",
+  "author": "ainegil",
   "description": "This is a graphical clock based on Anton Clock with date, day and moon phase. Beta",
  "screenshots" : [ { "url":"screenshot.png" }, { "url":"polymathclock.jpg" } ],
  "type":"clock",   

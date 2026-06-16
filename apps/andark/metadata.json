@@ -2,6 +2,7 @@
   "name": "Analog Dark",
   "shortName":"AnDark",
   "version":"0.09",
+  "author": "HeiLaut",
   "description": "analog clock face without disturbing widgets",
   "icon": "andark_icon.png",
   "type": "clock",

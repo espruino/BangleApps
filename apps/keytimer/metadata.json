@@ -2,6 +2,7 @@
   "id": "keytimer",
   "name": "Keypad Timer",
   "version": "0.04",
+  "author": "bruceblore",
   "description": "A timer with a keypad that runs in the background",
   "icon": "icon.png",
   "type": "app",

@@ -3,6 +3,7 @@
   "name": "HW stats (Bottom) widget",
   "shortName": "Digital clock Bottom Widget",
   "version": "0.05",
+  "author": "dapgo",
   "description": "Displays technical info, such as model, ver, temperatura or mem stats in the bottom of the screen (may not be compatible with some apps)",
   "icon": "widhwbttm.png",
   "type": "widget",

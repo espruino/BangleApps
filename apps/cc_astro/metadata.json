@@ -2,6 +2,7 @@
   "name": "CC Astro",
   "shortName": "CC-Astro",
   "version": "0.01",
+  "author": "czeppi",
   "description": "A clock with planets as clock hands",
   "icon": "app_icon.png",
   "type": "clock",

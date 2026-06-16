@@ -3,6 +3,7 @@
   "name": "Cycling speed sensor",
   "shortName": "CSCSensor",
   "version": "0.13",
+  "author": "berkenbu",
   "description": "Read BLE enabled cycling speed and cadence sensor and display readings on watch",
   "icon": "icons8-cycling-48.png",
   "tags": "outdoors,exercise,ble,bluetooth,bike,cycle,bicycle",

@@ -3,6 +3,7 @@
   "name": "Flight Dashboard",
   "shortName":"Flight-Dash",
   "version": "1.01",
+  "author": "flaparoo",
   "description": "Basic flight and navigation instruments",
   "icon": "flightdash.png",
   "screenshots": [{ "url": "screenshot.png" }],

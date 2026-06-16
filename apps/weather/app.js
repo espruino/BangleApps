@@ -105,7 +105,7 @@ function draw() {
   layout.windUnit.label = `${wind[2]} ${(current.wrose||'').toUpperCase()}`;
   layout.cond.label = current.txt.charAt(0).toUpperCase()+(current.txt||'').slice(1);
   layout.loc.label = current.loc;
-  layout.updateTime.label = `${formatDuration(Date.now() - current.time)} ago`; // How to autotranslate this and similar?
+  layout.updateTime.label = `${formatDuration(Date.now() - current.time)}`; // How to autotranslate this and similar?
   layout.update();
   layout.render();
 }

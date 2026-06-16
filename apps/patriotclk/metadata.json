@@ -2,6 +2,7 @@
   "name": "Patriotic Clock",
   "shortName":"Patriot",
   "version": "0.03",
+  "author": "gfwilliams",
   "description": "Show your Patriotism with your Country's flag as a clock face (configurable). Swipe down to show widgets and date.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

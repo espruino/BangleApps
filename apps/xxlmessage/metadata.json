@@ -3,6 +3,7 @@
   "name": "XXL Message",
   "version": "0.03",
   "shortName": "XXL Msg",
+  "author": "gfwilliams",
   "description": "App to display large notifications from iOS and Gadgetbridge/Android",
   "icon": "app.png",
   "type": "app",

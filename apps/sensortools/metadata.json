@@ -3,6 +3,7 @@
   "name": "Sensor tools",
   "shortName": "Sensor tools",
   "version": "0.06",
+  "author": "halemmerich",
   "description": "Tools for testing and debugging apps that use sensor input",
   "icon": "icon.png",
   "type": "bootloader",

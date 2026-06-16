@@ -3,6 +3,7 @@
   "shortName":"Bee",
   "icon": "app.png",
   "version":"0.03",
+  "author": "berkenbu",
   "description": "Spelling bee",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",

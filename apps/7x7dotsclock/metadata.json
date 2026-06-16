@@ -2,6 +2,7 @@
   "name": "7x7 Dots Clock",
   "shortName":"7x7 Dots Clock",
   "version": "0.04",
+  "author": "pkkpp",
   "description": "A clock with a big 7x7 dots Font",
   "icon": "dotsfontclock.png",
   "tags": "clock",

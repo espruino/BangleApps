@@ -2,6 +2,7 @@
   "name": "GPS Speed Clockinfo",
   "shortName":"GPS Speed",
   "version":"0.01",
+  "author": "gfwilliams",
   "description": "A Clockinfo that displays your current speed according to the GPS",
   "icon": "icon.png",
   "type": "clkinfo",

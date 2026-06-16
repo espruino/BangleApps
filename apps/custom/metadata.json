@@ -2,6 +2,7 @@
   "id": "custom",
   "name": "Custom Boot Code ",
   "version": "0.01",
+  "author": "MaBecker",
   "description": "Add code you want to run at boot time",
   "icon": "custom.png",
   "type": "bootloader",

@@ -2,6 +2,7 @@
   "name": "Scientific Calculator",
   "shortName":"SciCalc",
   "version":"0.03",
+  "author": "berkenbu",
   "description": "Scientific calculator",
   "icon": "scicalc.png",
   "screenshots" : [ { "url":"scicalc_screenshot1.png" }, { "url":"scicalc_screenshot2.png" }, { "url":"scicalc_screenshot3.png" } ],

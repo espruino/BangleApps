@@ -3,6 +3,7 @@
   "name": "Regatta Timer",
   "shortName": "RegattaTimer",
   "version": "0.41",
+  "author": "naden",
   "description": "Regatta Timer with 5-4-1 Countdown",
   "icon": "icon.png",
   "tags": "tool,outdoors,sailing,race,regatta,boat,timer",

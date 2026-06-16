@@ -2,6 +2,7 @@
   "name": "BanglExercise",
   "shortName":"BanglExercise",
   "version": "0.06",
+  "author": "myxor",
   "description": "Automatically tracks exercises while wearing the Bangle.js watch.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

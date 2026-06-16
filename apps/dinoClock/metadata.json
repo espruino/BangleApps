@@ -1,6 +1,7 @@
 {
   "id": "dinoClock",
   "name": "Dino Clock",
+  "author": "idavydov",
   "description": "Clock with dino from Chrome",
   "screenshots": [{"url":"screens/screen1.png"}],
   "icon": "app.png",
