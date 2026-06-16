@@ -1,4 +1,3 @@
-
 var interval;
 
 NRF.setAdvertising({}, { connectable: true });
@@ -24,8 +23,9 @@ function updateWeatherAndLocation(){
 function setUpdateIntervals(){
   locInterval=setInterval(updateWeatherAndLocation,10*60*1000)
   weatherInterval=setInterval(blueWatch.sendSystemData,60*1000);
+  systemDataInterval=setInterval(blueWatch.sendSystemData,60*1000);
 }
-Bangle.on("bluewatchConnected",function(){
+Bangle.on("BlueWatchConnected",function(){
   blueWatch.sendSystemData();
   updateWeatherAndLocation();
   blueWatch.sendHealthData();

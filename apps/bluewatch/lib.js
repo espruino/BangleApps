@@ -1,4 +1,3 @@
-
 let interval;
 let rxBuffer = "";  // accumulates incoming chunks
 
@@ -59,7 +58,7 @@ auto-adds steps cumulative and battery
 function sendRawHealthData(data){
   let sendableData = {
       type: "health",
-      steps: Bangle.getStepCount(),
+      steps: Bangle.getHealthStatus("day").steps,
       start: Date.now(),
       end: Date.now(),
       battery:E.getBattery(),
@@ -85,7 +84,7 @@ function sendHealthData() {
 
 function onConnect(){
   global.phoneConnected=true;
-  Bangle.emit("bluewatchConnected");
+  Bangle.emit("BlueWatchConnected");
   setTimeout(sendHealthData,1000);
   
 }
@@ -152,7 +151,6 @@ function processMessage(raw){
 
 function messageReceived(data) {
   // 1. Force conversion to string if it's a byte array
-  print("BlueWatch: Received but not ended with |")
   if (typeof data !== 'string') {
     data = String(data);
   }
@@ -162,6 +160,7 @@ function messageReceived(data) {
   let idx = rxBuffer.indexOf("|");
   
   while (idx !== -1) {
+    print("BlueWatch: Received but not ended with |")
     let complete = rxBuffer.substring(0, idx);
     rxBuffer = rxBuffer.substring(idx + 1);
 
