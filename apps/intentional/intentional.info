@@ -1,0 +1,7 @@
+require("Storage").write("intentional.info",{
+  "id":"intentional",
+  "name":"intentional",
+  "src":"intentional.app.js",
+  "icon":"intentional.png"
+  "data":"intentional.json"
+});

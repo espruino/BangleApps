@@ -13,7 +13,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --paper: #f3efe7;
       --panel: rgba(255, 250, 242, 0.92);
       --panel-strong: #fffdf9;
       --ink: #1a1d21;
@@ -24,7 +23,6 @@
       --accent-strong: #9a3b19;
       --shadow: 0 22px 60px rgba(34, 28, 20, 0.12);
       --radius-xl: 28px;
-      --radius-lg: 22px;
       --radius-md: 16px;
     }
 
@@ -42,53 +40,6 @@
       max-width: 1520px;
       margin: 0 auto;
       padding: 28px 24px 36px;
-    }
-
-    .topbar {
-      display: grid;
-      grid-template-columns: minmax(280px, 1.3fr) minmax(480px, 2fr);
-      gap: 18px;
-      align-items: start;
-      margin-bottom: 22px;
-    }
-
-    .brand {
-      display: grid;
-      gap: 8px;
-    }
-
-    .brand h1 {
-      margin: 0;
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      line-height: 0.92;
-      letter-spacing: -0.04em;
-      font-weight: 700;
-    }
-
-    .brand p {
-      margin: 0;
-      max-width: 720px;
-      color: var(--muted);
-      font-size: 0.98rem;
-      line-height: 1.5;
-    }
-
-    .toolbar {
-      display: grid;
-      gap: 14px;
-      padding: 18px;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
-    }
-
-    .toolbar-row {
-      display: grid;
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-      gap: 12px;
-      align-items: start;
     }
 
     .editor-card {
@@ -136,18 +87,6 @@
       flex: 0 0 auto;
     }
 
-    .toolbar .field {
-      gap: 6px;
-    }
-
-    .toolbar .field label {
-      font-size: 0.72rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-weight: 700;
-    }
-
     .btn {
       border-radius: 999px;
       border-color: transparent;
@@ -180,10 +119,6 @@
       color: var(--accent-strong);
       border-color: rgba(154, 59, 25, 0.12);
       background: rgba(210, 97, 56, 0.12);
-    }
-
-    .brand-shell {
-      margin-bottom: 18px;
     }
 
     .workflow {
@@ -362,44 +297,8 @@
       min-width: 0;
     }
 
-    .studio {
-      display: grid;
-      grid-template-columns: minmax(0, 1.5fr) minmax(320px, 390px);
-      gap: 24px;
-      align-items: start;
-    }
-
     .stage-shell {
       padding: 18px;
-    }
-
-    .stage-head {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 14px;
-      align-items: start;
-      margin-bottom: 16px;
-    }
-
-    .stage-head h2 {
-      margin-bottom: 6px;
-      font-size: 1.1rem;
-    }
-
-    .stage-head p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.5;
-      max-width: 520px;
-    }
-
-    .preview-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 220px;
-      gap: 18px;
-      align-items: start;
-      margin-bottom: 18px;
     }
 
     .preview-stack {
@@ -426,21 +325,6 @@
       margin: 0 auto;
       display: grid;
       gap: 8px;
-    }
-
-    .preview-layout-picker {
-      width: 100%;
-      margin: 0;
-      display: grid;
-      gap: 6px;
-    }
-
-    .preview-layout-picker label {
-      text-align: left;
-    }
-
-    .preview-layout-picker .form-select {
-      background: rgba(255, 255, 255, 0.96);
     }
 
     .preview-controls-group {
@@ -637,19 +521,6 @@
       color: #fff;
     }
 
-    .add-palette {
-      display: grid;
-      gap: 10px;
-      padding: 16px;
-      background: rgba(255, 255, 255, 0.56);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--line);
-    }
-
-    .add-palette h3 {
-      margin-bottom: 2px;
-    }
-
     .add-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -754,10 +625,6 @@
       color: var(--accent-strong);
     }
 
-    .preview-handle-boundary {
-      color: var(--ink);
-    }
-
     .preview-handle.is-active {
       border-color: rgba(210, 97, 56, 0.42);
       background: rgba(255, 244, 238, 0.98);
@@ -768,10 +635,6 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
-    }
-
-    .field-grid.three {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .field {
@@ -818,22 +681,6 @@
       font-size: 12px;
     }
 
-    .inspector {
-      display: grid;
-      gap: 18px;
-      position: sticky;
-      top: 20px;
-    }
-
-    .inspector .editor-card {
-      overflow: hidden;
-    }
-
-    .inspector .editor-card-inner {
-      display: grid;
-      gap: 16px;
-    }
-
     .focus-head {
       display: grid;
       gap: 8px;
@@ -854,6 +701,11 @@
       font-size: 0.8rem;
       font-weight: 700;
       overflow-wrap: anywhere;
+    }
+
+    .focus-type-select {
+      width: min(100%, 13rem);
+      font-weight: 700;
     }
 
     .editor-section {
@@ -1020,18 +872,6 @@
       border: 0;
     }
 
-    @media (max-width: 1280px) {
-      .topbar,
-      .studio,
-      .preview-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .inspector {
-        position: static;
-      }
-    }
-
     @media (max-width: 720px) {
       .app-shell {
         padding: 18px 14px 26px;
@@ -1045,9 +885,7 @@
         padding: 12px;
       }
 
-      .toolbar-row,
       .field-grid,
-      .field-grid.three,
       .mode-toggle,
       .background-gallery,
       .add-grid {
@@ -1093,6 +931,7 @@
               <div class="device-shell">
                 <svg class="device-body" viewBox="0 0 40.266 52.490" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
                   <defs>
+                    <path id="boxclk-body-shape" d="M 7.46 50.49 L 9.74 50.49 L 9.89 47.45 L 29.77 47.45 L 29.92 50.49 L 32.20 50.49 L 32.96 49.73 L 32.96 46.54 L 34.47 45.63 L 36.45 43.35 L 37.66 40.15 L 37.66 28.45 L 38.27 27.39 L 38.27 25.11 L 37.66 24.04 L 37.66 12.34 L 36.14 8.69 L 32.96 5.95 L 32.96 2.76 L 32.50 2.15 L 29.92 2.00 L 29.77 5.04 L 9.89 5.04 L 9.74 2.00 L 7.46 2.00 L 6.70 2.91 L 6.70 5.95 L 4.88 7.17 L 3.21 9.14 L 2.00 12.49 L 2.00 40.00 L 3.52 43.80 L 6.70 46.54 L 6.70 49.58 Z"></path>
                     <linearGradient id="boxclk-body-fill" x1="0.18" y1="0.06" x2="0.82" y2="0.96">
                       <stop offset="0%" stop-color="#232930"></stop>
                       <stop offset="46%" stop-color="#15191e"></stop>
@@ -1104,8 +943,8 @@
                       <stop offset="100%" stop-color="#000000" stop-opacity="0.38"></stop>
                     </linearGradient>
                   </defs>
-                  <path fill="url(#boxclk-body-fill)" d="M 7.46 50.49 L 9.74 50.49 L 9.89 47.45 L 29.77 47.45 L 29.92 50.49 L 32.20 50.49 L 32.96 49.73 L 32.96 46.54 L 34.47 45.63 L 36.45 43.35 L 37.66 40.15 L 37.66 28.45 L 38.27 27.39 L 38.27 25.11 L 37.66 24.04 L 37.66 12.34 L 36.14 8.69 L 32.96 5.95 L 32.96 2.76 L 32.50 2.15 L 29.92 2.00 L 29.77 5.04 L 9.89 5.04 L 9.74 2.00 L 7.46 2.00 L 6.70 2.91 L 6.70 5.95 L 4.88 7.17 L 3.21 9.14 L 2.00 12.49 L 2.00 40.00 L 3.52 43.80 L 6.70 46.54 L 6.70 49.58 Z"></path>
-                  <path fill="none" stroke="url(#boxclk-body-rim)" stroke-width="0.7" stroke-linejoin="round" d="M 7.46 50.49 L 9.74 50.49 L 9.89 47.45 L 29.77 47.45 L 29.92 50.49 L 32.20 50.49 L 32.96 49.73 L 32.96 46.54 L 34.47 45.63 L 36.45 43.35 L 37.66 40.15 L 37.66 28.45 L 38.27 27.39 L 38.27 25.11 L 37.66 24.04 L 37.66 12.34 L 36.14 8.69 L 32.96 5.95 L 32.96 2.76 L 32.50 2.15 L 29.92 2.00 L 29.77 5.04 L 9.89 5.04 L 9.74 2.00 L 7.46 2.00 L 6.70 2.91 L 6.70 5.95 L 4.88 7.17 L 3.21 9.14 L 2.00 12.49 L 2.00 40.00 L 3.52 43.80 L 6.70 46.54 L 6.70 49.58 Z"></path>
+                  <use href="#boxclk-body-shape" fill="url(#boxclk-body-fill)"></use>
+                  <use href="#boxclk-body-shape" fill="none" stroke="url(#boxclk-body-rim)" stroke-width="0.7" stroke-linejoin="round"></use>
                 </svg>
                 <div class="device-screen-shell">
                   <div id="preview-overlay">
@@ -1156,14 +995,10 @@
           <div class="editor-card-inner editor-card-body">
             <div class="focus-head">
               <div id="focus-note" class="focus-chip">Select a box to edit it.</div>
+              <select id="item-type" class="form-select focus-type-select" aria-label="Box type" hidden></select>
             </div>
 
             <div id="item-editor" style="display:none">
-              <div class="field">
-                <label for="item-name">Name</label>
-                <input id="item-name" class="form-input" type="text">
-              </div>
-
               <details id="item-content-section" class="editor-section">
                 <summary>Content</summary>
                 <div class="section-body">
@@ -1482,6 +1317,9 @@
     const CONFIG_ADD_SPACE_VALUE = "__add_space__";
     const PREVIEW_HISTORY_LIMIT = 48;
     const THEME_COLOR_KEYS = ["fg", "bg", "fg2", "bg2", "fgH", "bgH"];
+    const ITEM_TYPES = ["time", "date", "day", "meridian", "battery", "steps", "clkinfo", "text"];
+    const OUTLINE_OFFSETS_X = [-1, 0, 1, -1, 1, -1, 0, 1];
+    const OUTLINE_OFFSETS_Y = [-1, -1, -1, 0, 0, 1, 1, 1];
     const PRESET_CONFIG_FILES = {
       default: "boxclk.cfg.default.json",
       classic: "boxclk.cfg.classic.json",
@@ -1497,7 +1335,7 @@
       { name: "BrunoAce", fileName: "boxclk-brunoace.pbf", source: "boxclk-brunoace.pbf" }
     ];
     const BUILTIN_FONT_NAMES = ["6x8", "4x6", "Vector", "5x7Numeric7Seg", "6x12", "7x11Numeric7Seg", "8x12"];
-    const CLOCKBG_DEFAULT_COLORS = ["#00f", "#0bf", "#0f7", "#3f0", "#ff0", "#f30", "#f07", "#b0f"];
+    const NUMERIC_ONLY_FONT_NAMES = ["5x7Numeric7Seg", "7x11Numeric7Seg"];
     const PREVIEW_THEME = {
       light: { fg: "#000000", bg: "#ffffff", fg2: "#000000", bg2: "#ccffff", fgH: "#000000", bgH: "#00ffff", dark: false },
       dark: { fg: "#ffffff", bg: "#000000", fg2: "#ffffff", bg2: "#001144", fgH: "#ffffff", bgH: "#3366ff", dark: true }
@@ -1521,8 +1359,14 @@
       backgroundDataLoads: {},
       fontLoads: {},
       customFonts: {},
-      clockbgGeneratedPreviewKey: null,
-      clockbgGeneratedPreviewCanvas: null,
+      clockbgModuleSource: null,
+      clockbgModuleSourceLoad: null,
+      clockbgModuleSourceError: null,
+      clockbgModulePreviewKey: null,
+      clockbgModulePreviewCanvas: null,
+      clockbgModulePreviewLoad: null,
+      clockbgModulePreviewLoadKey: null,
+      clockbgModulePreviewErrorKey: null,
       clockbgPreviewRevision: 0,
       clockbgSettings: null,
       watchBattery: null,
@@ -1763,6 +1607,12 @@
       if (state.previewHistory.length > PREVIEW_HISTORY_LIMIT) state.previewHistory.shift();
       state.previewFuture = [];
       return true;
+    }
+
+    function commitPreviewEdit(before) {
+      recordPreviewEdit(before, capturePreviewState());
+      setDirty();
+      renderAll();
     }
 
     function restorePreviewEdit(snapshot) {
@@ -2108,10 +1958,11 @@
       });
     }
 
-    function getAvailableFontNames(currentFont) {
+    function getAvailableFontNames(currentFont, type) {
       const seen = {};
       const names = [];
       BUILTIN_FONT_NAMES.forEach(name => {
+        if (!canUseFontForType(name, type)) return;
         seen[name] = true;
         names.push(name);
       });
@@ -2122,7 +1973,7 @@
         seen[name] = true;
         names.push(name);
       });
-      if (currentFont && !seen[currentFont]) names.push(currentFont);
+      if (currentFont && !seen[currentFont] && canUseFontForType(currentFont, type)) names.push(currentFont);
       return names;
     }
 
@@ -2190,6 +2041,14 @@
       return prettyConfigName(type);
     }
 
+    function normalizeItemType(type) { return ITEM_TYPES.includes(type) ? type : "text"; }
+
+    function canReuseAppearanceForTypeChange(previousType, type) { return (previousType === "clkinfo") === (type === "clkinfo"); }
+
+    function canUseFontForType(fontName, type) {
+      return type === "time" || type === "battery" || type === "steps" || NUMERIC_ONLY_FONT_NAMES.indexOf(fontName) < 0;
+    }
+
     function uniqueItemName(base, config) {
       base = (base || "Item").toString().trim() || "Item";
       let candidate = base;
@@ -2242,6 +2101,27 @@
           const upload = state.backgroundUploads[name];
           return upload && upload.fileName ? upload.fileName : null;
         }).filter(Boolean))));
+    }
+
+    function getBackgroundImageOptions(includeUsage) {
+      const withUsage = includeUsage !== false;
+      const options = [];
+      const seen = {};
+      BUNDLED_IMAGES.forEach(image => {
+        seen[image.name] = true;
+        options.push({ name: image.name, label: image.label, custom: false, usage: 0 });
+      });
+      getAvailableBackgroundFiles().forEach(file => {
+        if (seen[file]) return;
+        seen[file] = true;
+        options.push({
+          name: file,
+          label: prettyBackgroundName(file),
+          custom: isCustomBackgroundFile(file),
+          usage: withUsage ? backgroundFileUsageCount(file) : 0
+        });
+      });
+      return options;
     }
 
     function addKnownBackgroundFile(fileName, onWatch) {
@@ -2513,6 +2393,29 @@
       delete state.backgroundDataLoads[filename];
     }
 
+    function clearBackgroundPreview(filename) {
+      delete state.backgroundPreviewCache[filename];
+      delete state.backgroundPreviewLoads[filename];
+    }
+
+    function clearBackgroundAsset(filename) {
+      clearBackgroundPreview(filename);
+      clearBackgroundData(filename);
+    }
+
+    function resetClockbgModulePreview() {
+      state.clockbgModulePreviewKey = null;
+      state.clockbgModulePreviewCanvas = null;
+      state.clockbgModulePreviewLoad = null;
+      state.clockbgModulePreviewLoadKey = null;
+      state.clockbgModulePreviewErrorKey = null;
+    }
+
+    function refreshClockbgModulePreview() {
+      state.clockbgPreviewRevision++;
+      resetClockbgModulePreview();
+    }
+
     function readBackgroundData(filename) {
       if (!filename) return Promise.resolve(null);
       if (Object.prototype.hasOwnProperty.call(state.backgroundDataCache, filename)) {
@@ -2615,117 +2518,456 @@
       };
     }
 
-    function normaliseClockbgColors(settings, random) {
-      let colors = settings && Array.isArray(settings.colors) ? settings.colors.slice() : CLOCKBG_DEFAULT_COLORS.slice();
-      if (Array.isArray(colors[0])) {
-        const index = Math.floor(random() * colors.length);
-        colors = (colors[index] || colors[0] || CLOCKBG_DEFAULT_COLORS).slice();
-      }
-      return colors.map(color => parseColor(color, "#000000"));
+    function loadClockbgModuleSource() {
+      if (state.clockbgModuleSource) return Promise.resolve(state.clockbgModuleSource);
+      if (state.clockbgModuleSourceError) return Promise.reject(state.clockbgModuleSourceError);
+      if (state.clockbgModuleSourceLoad) return state.clockbgModuleSourceLoad;
+
+      const sourceUrl = "../clockbg/lib.js";
+      state.clockbgModuleSourceLoad = fetch(sourceUrl, { cache: "no-cache" }).then(response => {
+        if (!response.ok) throw new Error("HTTP " + response.status + " for " + sourceUrl);
+        return response.text();
+      }).then(source => {
+        if (!/exports\.reload/.test(source) || !/exports\.fillRect/.test(source)) {
+          throw new Error("Unexpected clockbg module source at " + sourceUrl);
+        }
+        state.clockbgModuleSource = source;
+        return source;
+      }).catch(error => {
+        state.clockbgModuleSourceError = error;
+        throw error;
+      }).finally(() => {
+        state.clockbgModuleSourceLoad = null;
+      });
+      return state.clockbgModuleSourceLoad;
     }
 
-    function buildClockbgGeneratedPreview(settings) {
-      if (!settings) return null;
-      const key = JSON.stringify({ settings: settings, theme: state.previewTheme, revision: state.clockbgPreviewRevision });
-      if (state.clockbgGeneratedPreviewKey === key && state.clockbgGeneratedPreviewCanvas) {
-        return state.clockbgGeneratedPreviewCanvas;
+    function rgb888To565(r, g, b) {
+      return ((r & 0xf8) << 8) | ((g & 0xfc) << 3) | (b >> 3);
+    }
+
+    function rgb565ToRgb888(color) {
+      color = color || 0;
+      return {
+        r: ((color >> 8) & 0xf8) | ((color >> 13) & 0x07),
+        g: ((color >> 3) & 0xfc) | ((color >> 9) & 0x03),
+        b: ((color << 3) & 0xf8) | ((color >> 2) & 0x07)
+      };
+    }
+
+    function colorValueToRgb565(value, fallback) {
+      if (typeof value === "number" && isFinite(value)) return value & 0xffff;
+      const color = normalizeHexColor(parseColor(value, fallback || "#000000"), fallback || "#000000");
+      return rgb888To565(
+        parseInt(color.slice(1, 3), 16),
+        parseInt(color.slice(3, 5), 16),
+        parseInt(color.slice(5, 7), 16)
+      );
+    }
+
+    function blendRgb565(from, to, amount) {
+      const amt = clamp(Math.floor((Number(amount) || 0) * 256), 0, 256);
+      const br = (from >> 11) & 0x1f;
+      const bg = (from >> 5) & 0x3f;
+      const bb = from & 0x1f;
+      const fr = (to >> 11) & 0x1f;
+      const fg = (to >> 5) & 0x3f;
+      const fb = to & 0x1f;
+      return (
+        (((br * (256 - amt) + fr * amt) >> 8) << 11) |
+        (((bg * (256 - amt) + fg * amt) >> 8) << 5) |
+        ((bb * (256 - amt) + fb * amt) >> 8)
+      );
+    }
+
+    function memLcdIndexToRgb565(index) {
+      return (index & 1 ? 0xf800 : 0) | (index & 2 ? 0x07e0 : 0) | (index & 4 ? 0x001f : 0);
+    }
+
+    function rgb565ToMemLcdIndex(color, x, y) {
+      const bayer = ((y & 1) ? ((x & 1) ? 3 : 7) : ((x & 1) ? 5 : 1));
+      const dithered = (color & 0xe71c) + ((bayer << 13) | (bayer << 8) | (bayer << 2));
+      return (dithered & 0x10000 ? 1 : 0) | (dithered & 0x00800 ? 2 : 0) | (dithered & 0x00020 ? 4 : 0);
+    }
+
+    function rgb565ToPackedIndex(bpp, color) {
+      if (bpp === 16) return color & 0xffff;
+      const rgb = rgb565ToRgb888(color);
+      if (bpp === 3) {
+        return (rgb.r >= 128 ? 4 : 0) | (rgb.g >= 128 ? 2 : 0) | (rgb.b >= 128 ? 1 : 0);
       }
+      if (bpp === 1) return (rgb.r + rgb.g + rgb.b) >= 384 ? 1 : 0;
+      if (bpp === 2) return clamp(Math.round((rgb.r + rgb.g + rgb.b) / 255), 0, 3);
+      if (bpp === 4) return clamp(Math.round((rgb.r + rgb.g + rgb.b) / 48), 0, 15);
+      return 0;
+    }
 
-      const canvas = document.createElement("canvas");
-      canvas.width = previewWidth();
-      canvas.height = previewHeight();
-      const ctx = canvas.getContext("2d");
-      ctx.imageSmoothingEnabled = false;
+    function packedIndexToRgb565(graphics, value) {
+      value = value || 0;
+      if (graphics.palette && graphics.palette.length) return graphics.palette[value] || 0;
+      if (graphics.bpp === 16) return value & 0xffff;
+      if (graphics.bpp === 3) {
+        return rgb888To565(value & 4 ? 255 : 0, value & 2 ? 255 : 0, value & 1 ? 255 : 0);
+      }
+      if (graphics.bpp === 1) return value ? 0xffff : 0;
+      if (graphics.bpp === 2) {
+        const grey = value * 85;
+        return rgb888To565(grey, grey, grey);
+      }
+      if (graphics.bpp === 4) {
+        const grey = value * 17;
+        return rgb888To565(grey, grey, grey);
+      }
+      return 0;
+    }
 
-      const style = settings.style || "randomcolor";
-      const random = createSeededRandom(hashString(key));
-      const colors = normaliseClockbgColors(settings, random);
-      const pickColor = () => colors[Math.floor(random() * colors.length)] || colors[0] || "#000000";
+    function bytesFromBuffer(buffer) {
+      if (buffer instanceof Uint8Array) return buffer;
+      if (buffer instanceof ArrayBuffer) return new Uint8Array(buffer);
+      if (ArrayBuffer.isView(buffer)) return new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength);
+      if (typeof buffer === "string") return bytesFromBinaryString(buffer);
+      return new Uint8Array(0);
+    }
 
-      if (style === "color") {
-        ctx.fillStyle = parseColor(settings.color, "#000000");
-        ctx.fillRect(0, 0, previewWidth(), previewHeight());
-      } else if (style === "randomcolor") {
-        ctx.fillStyle = pickColor();
-        ctx.fillRect(0, 0, previewWidth(), previewHeight());
-      } else if (style === "squares") {
-        for (let y = 0; y < 11; y++) {
-          for (let x = 0; x < 11; x++) {
-            ctx.fillStyle = pickColor();
-            ctx.fillRect(x * 16, y * 16, 16, 16);
+    function readPackedPixel(bytes, width, bpp, x, y) {
+      let bit = (y * width + x) * bpp;
+      let value = 0;
+      for (let i = 0; i < bpp; i++) {
+        value = (value << 1) | ((bytes[(bit + i) >> 3] >> (7 - ((bit + i) & 7))) & 1);
+      }
+      return value;
+    }
+
+    function writePackedPixel(bytes, width, bpp, x, y, value) {
+      let bit = (y * width + x) * bpp;
+      for (let i = 0; i < bpp; i++) {
+        const bitValue = (value >> (bpp - 1 - i)) & 1;
+        const byteIndex = (bit + i) >> 3;
+        const mask = 1 << (7 - ((bit + i) & 7));
+        if (bitValue) bytes[byteIndex] |= mask;
+        else bytes[byteIndex] &= ~mask;
+      }
+    }
+
+    function parseClockbgImageSource(image) {
+      if (!image) return null;
+      if (typeof image === "string") {
+        let offset = 0;
+        const width = image.charCodeAt(offset++);
+        const height = image.charCodeAt(offset++);
+        let bpp = image.charCodeAt(offset++);
+        let transparent = -1;
+        if (bpp & 128) {
+          bpp &= 127;
+          transparent = image.charCodeAt(offset++);
+        }
+        return {
+          width: width,
+          height: height,
+          bpp: bpp,
+          transparent: transparent,
+          palette: null,
+          bytes: bytesFromBinaryString(image.slice(offset))
+        };
+      }
+      const width = image.width || (image.getWidth && image.getWidth()) || 0;
+      const height = image.height || (image.getHeight && image.getHeight()) || 0;
+      const bpp = image.bpp || 1;
+      return {
+        width: width,
+        height: height,
+        bpp: bpp,
+        transparent: image.transparent === undefined ? -1 : image.transparent,
+        palette: image.palette || null,
+        bytes: bytesFromBuffer(image.buffer)
+      };
+    }
+
+    function createClockbgPreviewGraphics(width, height, bpp, options) {
+      options = options || {};
+      const packedByteLength = Math.ceil(width * height * bpp / 8);
+      const byteLength = packedByteLength + ((4 - (packedByteLength & 3)) & 3);
+      const bytes = new Uint8Array(byteLength);
+      const theme = options.theme || PREVIEW_THEME.light;
+      const isMemLcd = !!options.memlcd;
+      let color = bpp >= 32 ? 0xffffffff : (1 << bpp) - 1;
+      let bgColor = 0;
+      let clip = { x1: 0, y1: 0, x2: width - 1, y2: height - 1 };
+      const graphics = {
+        width: width,
+        height: height,
+        bpp: bpp,
+        buffer: bytes.buffer,
+        palette: null,
+        theme: {
+          fg: colorValueToRgb565(theme.fg, "#ffffff"),
+          bg: colorValueToRgb565(theme.bg, "#000000"),
+          fg2: colorValueToRgb565(theme.fg2, "#ffffff"),
+          bg2: colorValueToRgb565(theme.bg2, "#000000"),
+          fgH: colorValueToRgb565(theme.fgH, "#ffffff"),
+          bgH: colorValueToRgb565(theme.bgH, "#000000"),
+          dark: !!theme.dark
+        },
+        getWidth: () => width,
+        getHeight: () => height,
+        toColor: value => colorValueToRgb565(value, "#000000"),
+        blendColor: (from, to, amount) => {
+          return blendRgb565(colorValueToRgb565(from, "#000000"), colorValueToRgb565(to, "#000000"), amount);
+        },
+        setColor: value => {
+          color = colorToIndex(value);
+          return graphics;
+        },
+        setBgColor: value => {
+          bgColor = colorToIndex(value);
+          return graphics;
+        },
+        setClipRect: (x1, y1, x2, y2) => {
+          clip = {
+            x1: clamp(Math.floor(x1), 0, width - 1),
+            y1: clamp(Math.floor(y1), 0, height - 1),
+            x2: clamp(Math.floor(x2), 0, width - 1),
+            y2: clamp(Math.floor(y2), 0, height - 1)
+          };
+          return graphics;
+        },
+        clearRect: (rect, y, x2, y2) => {
+          const area = rectFromArgs(rect, y, x2, y2);
+          fillRectRaw(area.x1, area.y1, area.x2, area.y2, bgColor);
+          return graphics;
+        },
+        fillRect: (rect, y, x2, y2) => {
+          const area = rectFromArgs(rect, y, x2, y2);
+          fillRectRaw(area.x1, area.y1, area.x2, area.y2, color);
+          return graphics;
+        },
+        drawCircle: (cx, cy, radius) => {
+          cx = Math.round(cx);
+          cy = Math.round(cy);
+          radius = Math.round(radius);
+          let x = radius;
+          let y = 0;
+          let err = 0;
+          while (x >= y) {
+            setPixel(cx + x, cy + y, color);
+            setPixel(cx + y, cy + x, color);
+            setPixel(cx - y, cy + x, color);
+            setPixel(cx - x, cy + y, color);
+            setPixel(cx - x, cy - y, color);
+            setPixel(cx - y, cy - x, color);
+            setPixel(cx + y, cy - x, color);
+            setPixel(cx + x, cy - y, color);
+            y++;
+            if (err <= 0) err += 2 * y + 1;
+            if (err > 0) {
+              x--;
+              err -= 2 * x + 1;
+            }
           }
-        }
-      } else if (style === "plasma") {
-        const kernel = [
-          [1, 4, 7, 4, 1],
-          [4, 16, 26, 16, 4],
-          [7, 26, 41, 26, 7],
-          [4, 16, 26, 16, 4],
-          [1, 4, 7, 4, 1]
-        ];
-        const values = [];
-        const filtered = [];
-        const maxIndex = Math.max(0, colors.length - 1);
-        for (let y = 0; y < 16; y++) {
-          values[y] = [];
-          filtered[y] = [];
-          for (let x = 0; x < 16; x++) values[y][x] = random() * maxIndex;
-        }
-        for (let y = 0; y < 16; y++) {
-          for (let x = 0; x < 16; x++) {
-            let sum = 0;
-            for (let ky = 0; ky < 5; ky++) {
-              for (let kx = 0; kx < 5; kx++) {
-                const px = clamp(x + kx - 2, 0, 15);
-                const py = clamp(y + ky - 2, 0, 15);
-                sum += values[py][px] * kernel[ky][kx];
+          return graphics;
+        },
+        fillPoly: points => {
+          if (!points || points.length < 6) return graphics;
+          const xs = [];
+          const ys = [];
+          for (let i = 0; i < points.length; i += 2) {
+            xs.push(points[i]);
+            ys.push(points[i + 1]);
+          }
+          const minY = clamp(Math.floor(Math.min.apply(null, ys)), 0, height - 1);
+          const maxY = clamp(Math.ceil(Math.max.apply(null, ys)), 0, height - 1);
+          for (let y = minY; y <= maxY; y++) {
+            const intersections = [];
+            for (let i = 0, j = xs.length - 1; i < xs.length; j = i++) {
+              if ((ys[i] > y) !== (ys[j] > y)) {
+                intersections.push(xs[i] + (y - ys[i]) * (xs[j] - xs[i]) / (ys[j] - ys[i]));
               }
             }
-            filtered[y][x] = clamp(sum / 120, 0, maxIndex);
+            intersections.sort((a, b) => a - b);
+            for (let i = 0; i < intersections.length; i += 2) {
+              fillRectRaw(Math.ceil(intersections[i]), y, Math.floor(intersections[i + 1]), y, color);
+            }
           }
-        }
-        for (let y = 0; y < 16; y++) {
-          for (let x = 0; x < 16; x++) {
-            ctx.fillStyle = colors[Math.round(filtered[y][x])] || colors[0] || "#000000";
-            ctx.fillRect(x * 11, y * 11, 11, 11);
+          return graphics;
+        },
+        drawImage: (image, x, y, drawOptions) => {
+          const source = parseClockbgImageSource(image);
+          if (!source || !source.width || !source.height) return graphics;
+          drawOptions = drawOptions || {};
+          const scale = drawOptions.scale || 1;
+          const drawWidth = Math.max(1, Math.round(source.width * scale));
+          const drawHeight = Math.max(1, Math.round(source.height * scale));
+          x = Math.round(x || 0);
+          y = Math.round(y || 0);
+          for (let dy = 0; dy < drawHeight; dy++) {
+            const sy = clamp(Math.floor(dy / scale), 0, source.height - 1);
+            for (let dx = 0; dx < drawWidth; dx++) {
+              const sx = clamp(Math.floor(dx / scale), 0, source.width - 1);
+              const index = readPackedPixel(source.bytes, source.width, source.bpp, sx, sy);
+              if (index === source.transparent) continue;
+              setPixelColor(x + dx, y + dy, packedIndexToRgb565(source, index));
+            }
           }
-        }
-      } else if (style === "rings") {
-        ctx.fillStyle = colors[0] || "#000000";
-        ctx.fillRect(0, 0, previewWidth(), previewHeight());
-        ctx.strokeStyle = colors[1] || colors[0] || "#ffffff";
-        ctx.lineWidth = 1;
-        for (let i = 0; i < 10; i++) {
-          const x = 10 + Math.floor(random() * 156);
-          const y = 10 + Math.floor(random() * 156);
-          const r = 10 + Math.floor(random() * 40);
-          for (let j = 0; j < 4; j++) {
-            ctx.beginPath();
-            ctx.arc(x, y, Math.max(1, r - j), 0, Math.PI * 2);
-            ctx.stroke();
+          return graphics;
+        },
+        filter: (kernel, filterOptions) => {
+          filterOptions = filterOptions || {};
+          const kernelWidth = filterOptions.w || Math.sqrt(kernel.length);
+          const kernelHeight = filterOptions.h || kernelWidth;
+          const divisor = filterOptions.div || kernel.reduce((sum, value) => sum + value, 0) || 1;
+          const offset = (filterOptions.offset || 0) / 256;
+          const source = new Uint8Array(bytes);
+          for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+              let sum = 0;
+              for (let ky = 0; ky < kernelHeight; ky++) {
+                for (let kx = 0; kx < kernelWidth; kx++) {
+                  const px = clamp(x + kx - Math.floor(kernelWidth / 2), 0, width - 1);
+                  const py = clamp(y + ky - Math.floor(kernelHeight / 2), 0, height - 1);
+                  sum += readPackedPixel(source, width, bpp, px, py) * kernel[ky * kernelWidth + kx];
+                }
+              }
+              setPixel(x, y, clamp(Math.round(sum / divisor + offset), 0, (1 << bpp) - 1));
+            }
           }
+          return graphics;
+        },
+        toCanvas: () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          const imageData = ctx.getImageData(0, 0, width, height);
+          const rgba = imageData.data;
+          let out = 0;
+          for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+              const color = packedIndexToRgb565(graphics, getPixel(x, y));
+              const rgb = rgb565ToRgb888(isMemLcd ? memLcdIndexToRgb565(rgb565ToMemLcdIndex(color, x, y)) : color);
+              rgba[out++] = rgb.r;
+              rgba[out++] = rgb.g;
+              rgba[out++] = rgb.b;
+              rgba[out++] = 255;
+            }
+          }
+          ctx.putImageData(imageData, 0, 0);
+          return canvas;
         }
-      } else if (style === "tris") {
-        const rotateBy = Math.floor(random() * colors.length);
-        const rotated = colors.slice(rotateBy).concat(colors.slice(0, rotateBy));
-        ctx.fillStyle = rotated[0] || "#000000";
-        ctx.fillRect(0, 0, previewWidth(), previewHeight());
-        for (let i = 0; i < 8; i++) {
-          ctx.fillStyle = rotated[1 + Math.floor(random() * Math.max(1, rotated.length - 1))] || rotated[rotated.length - 1] || rotated[0] || "#ffffff";
-          ctx.beginPath();
-          ctx.moveTo((random() * 108 - 10) * 2, (random() * 108 - 10) * 2);
-          ctx.lineTo((random() * 108 - 10) * 2, (random() * 108 - 10) * 2);
-          ctx.lineTo((random() * 108 - 10) * 2, (random() * 108 - 10) * 2);
-          ctx.closePath();
-          ctx.fill();
-        }
-      } else {
-        return null;
+      };
+
+      function colorToIndex(value) {
+        if (typeof value === "number" && value >= 0 && value < (1 << bpp)) return value | 0;
+        return rgb565ToPackedIndex(bpp, colorValueToRgb565(value, "#000000"));
       }
 
-      state.clockbgGeneratedPreviewKey = key;
-      state.clockbgGeneratedPreviewCanvas = canvas;
-      return canvas;
+      function getPixel(x, y) {
+        if (x < 0 || y < 0 || x >= width || y >= height) return 0;
+        return readPackedPixel(bytes, width, bpp, x, y);
+      }
+
+      function setPixel(x, y, value) {
+        if (x < clip.x1 || y < clip.y1 || x > clip.x2 || y > clip.y2 || x < 0 || y < 0 || x >= width || y >= height) return;
+        writePackedPixel(bytes, width, bpp, x, y, value);
+      }
+
+      function setPixelColor(x, y, rgb565) {
+        setPixel(x, y, rgb565ToPackedIndex(bpp, rgb565));
+      }
+
+      function fillRectRaw(x1, y1, x2, y2, value) {
+        x1 = clamp(Math.floor(x1), clip.x1, clip.x2);
+        y1 = clamp(Math.floor(y1), clip.y1, clip.y2);
+        x2 = clamp(Math.floor(x2), clip.x1, clip.x2);
+        y2 = clamp(Math.floor(y2), clip.y1, clip.y2);
+        if (x2 < x1 || y2 < y1) return;
+        for (let yy = y1; yy <= y2; yy++) {
+          for (let xx = x1; xx <= x2; xx++) setPixel(xx, yy, value);
+        }
+      }
+
+      function rectFromArgs(rect, y, x2, y2) {
+        if (rect && typeof rect === "object") {
+          return {
+            x1: rect.x || 0,
+            y1: rect.y || 0,
+            x2: (rect.x || 0) + (rect.w || 1) - 1,
+            y2: (rect.y || 0) + (rect.h || 1) - 1
+          };
+        }
+        return { x1: rect || 0, y1: y || 0, x2: x2 || 0, y2: y2 || 0 };
+      }
+
+      return graphics;
+    }
+
+    function mapInPlace(from, to, map) {
+      for (let i = 0; i < to.length && i < from.length; i++) {
+        const value = from[i];
+        to[i] = typeof map === "function" ? map(value, i) : (map ? map[value] : value);
+      }
+    }
+
+    function runClockbgModulePreview(source, settings, key) {
+      const random = createSeededRandom(hashString(key));
+      const moduleMath = Object.create(Math);
+      moduleMath.random = random;
+      moduleMath.randInt = range => range > 0 ? Math.floor(random() * range) : ((random() * 0x100000000) | 0);
+
+      const target = createClockbgPreviewGraphics(previewWidth(), previewHeight(), 16, {
+        theme: getCurrentThemePalette(),
+        memlcd: true
+      });
+      const storage = {
+        readJSON: filename => filename === "clockbg.json" ? clone(settings || {}) : null,
+        read: filename => Object.prototype.hasOwnProperty.call(state.backgroundDataCache, filename) ? state.backgroundDataCache[filename] : null
+      };
+      const moduleExports = {};
+      const moduleRequire = name => {
+        if (name === "Storage") return storage;
+        throw new Error("Unsupported clockbg preview module: " + name);
+      };
+      const graphics = {
+        createArrayBuffer: (width, height, bpp, options) => createClockbgPreviewGraphics(width, height, bpp, options)
+      };
+      const E = {
+        mapInPlace: mapInPlace,
+        toArrayBuffer: value => bytesFromBinaryString(value || "").buffer
+      };
+      const execute = new Function("exports", "require", "Graphics", "g", "E", "Math", "Uint8Array", "Uint16Array", "Uint32Array", "ArrayBuffer", "atob", "console", source + "\nreturn exports;");
+      const clockbg = execute(moduleExports, moduleRequire, graphics, target, E, moduleMath, Uint8Array, Uint16Array, Uint32Array, ArrayBuffer, atob, console);
+      clockbg.fillRect({ x: 0, y: 0, w: previewWidth(), h: previewHeight() });
+      return target.toCanvas();
+    }
+
+    function buildClockbgModulePreview(settings) {
+      settings = settings || {};
+      const key = JSON.stringify({ settings: settings, theme: state.previewTheme, revision: state.clockbgPreviewRevision });
+      if (state.clockbgModulePreviewKey === key && state.clockbgModulePreviewCanvas) {
+        return state.clockbgModulePreviewCanvas;
+      }
+      if (state.clockbgModulePreviewErrorKey === key) return null;
+      if (state.clockbgModulePreviewLoad && state.clockbgModulePreviewLoadKey === key) return null;
+
+      state.clockbgModulePreviewLoadKey = key;
+      state.clockbgModulePreviewLoad = loadClockbgModuleSource().then(source => {
+        const canvas = runClockbgModulePreview(source, settings, key);
+        if (state.clockbgModulePreviewLoadKey === key) {
+          state.clockbgModulePreviewKey = key;
+          state.clockbgModulePreviewCanvas = canvas;
+          state.clockbgModulePreviewErrorKey = null;
+        }
+      }).catch(error => {
+        console.warn("Unable to render clockbg module preview", error);
+        if (state.clockbgModulePreviewLoadKey === key) state.clockbgModulePreviewErrorKey = key;
+      }).then(() => {
+        if (state.clockbgModulePreviewLoadKey === key) {
+          state.clockbgModulePreviewLoad = null;
+          state.clockbgModulePreviewLoadKey = null;
+        }
+        renderPreview();
+      });
+
+      return null;
     }
 
     function drawClockbgPreview() {
@@ -2740,12 +2982,13 @@
         drawBackgroundLoading();
         return;
       }
-      const generatedPreview = buildClockbgGeneratedPreview(settings);
-      if (generatedPreview) {
-        previewCtx.drawImage(generatedPreview, 0, 0, previewWidth(), previewHeight());
+      const modulePreview = buildClockbgModulePreview(settings);
+      if (modulePreview) {
+        previewCtx.drawImage(modulePreview, 0, 0, previewWidth(), previewHeight());
         return;
       }
-      drawClockbgPlaceholder();
+      if (state.clockbgModulePreviewErrorKey) drawClockbgPlaceholder();
+      else drawBackgroundLoading();
     }
 
     function defaultAppearanceForType(type) {
@@ -2799,12 +3042,14 @@
       appearance = appearance || {};
       const fontFile = typeof appearance.fontFile === "string" && appearance.fontFile ? appearance.fontFile : undefined;
       const fontRecord = fontFile ? (getCustomFontRecordByFile(fontFile) || registerWatchFont(fontFile)) : null;
-      const font = (fontRecord && fontRecord.name) || fontNameFromFilename(fontFile) || appearance.font || base.font;
+      let font = (fontRecord && fontRecord.name) || fontNameFromFilename(fontFile) || appearance.font || base.font;
+      const compatibleFont = canUseFontForType(font, type);
+      if (!compatibleFont) font = base.font;
       const boundaryX = appearance.boundary && Number.isFinite(appearance.boundary.x) ? appearance.boundary.x : base.boundary.x;
       const boundaryY = appearance.boundary && Number.isFinite(appearance.boundary.y) ? appearance.boundary.y : base.boundary.y;
       return {
         font: font,
-        fontFile: fontFile,
+        fontFile: compatibleFont ? fontFile : undefined,
         fontSize: clampFontSize(font, appearance.fontSize === undefined ? base.fontSize : appearance.fontSize),
         outline: type === "clkinfo" ? 0 : clamp(toInt(appearance.outline, 0), 0, 6),
         textColor: appearance.textColor || base.textColor,
@@ -2850,6 +3095,7 @@
     }
 
     function createItem(type, config) {
+      type = normalizeItemType(type);
       const targetConfig = config || getSelectedConfig();
       const item = {
         name: uniqueItemName(defaultItemName(type), targetConfig),
@@ -2870,8 +3116,6 @@
         item.options = normalizeOptions(type, {});
       } else if (type === "battery") {
         item.suffix = "%";
-      } else if (type === "steps") {
-        item.prefix = "Steps: ";
       } else if (type === "clkinfo") {
       } else {
         item.type = "text";
@@ -2897,7 +3141,7 @@
 
       raw.items.forEach(item => {
         item = item || {};
-        const type = ["time", "date", "day", "meridian", "battery", "steps", "text", "clkinfo"].includes(item.type) ? item.type : "text";
+        const type = normalizeItemType(item.type);
         const baseName = (item.name || defaultItemName(type)).toString().trim() || defaultItemName(type);
         let name = baseName;
         let suffix = 2;
@@ -3033,9 +3277,7 @@
         if (isBackgroundFileOnWatch(localBackgroundFile)) addDeletedFile(state.deletedBackgroundFiles, localBackgroundFile);
         else removeDeletedFile(state.deletedBackgroundFiles, localBackgroundFile);
         state.bgFiles = (state.bgFiles || []).filter(file => file !== localBackgroundFile);
-        delete state.backgroundPreviewCache[localBackgroundFile];
-        delete state.backgroundPreviewLoads[localBackgroundFile];
-        clearBackgroundData(localBackgroundFile);
+        clearBackgroundAsset(localBackgroundFile);
       }
       return true;
     }
@@ -3463,10 +3705,6 @@
       return normalizeLocaleTag(state.watchLocale || browserLocale);
     }
 
-    function previewUsesEnglishOrdinals() {
-      return /^en(?:-|$)/i.test(getPreviewLocale());
-    }
-
     function theme565ToHex(value) {
       if (typeof value === "string") {
         if (/^#[0-9a-f]{6}$/i.test(value)) return value.toLowerCase();
@@ -3538,6 +3776,25 @@
       };
     }
 
+    function selectedConfigSettingsJson(configName) {
+      return JSON.stringify({
+        selectedConfig: sanitizeConfigName(configName || DEFAULT_CONFIG)
+      });
+    }
+
+    function watchSystemSettingsJsonWithTheme(mode) {
+      const nextSettings = clone(state.watchSystemSettings || {});
+      nextSettings.theme = themeSettingsForMode(mode);
+      return JSON.stringify(nextSettings);
+    }
+
+    function boxclkLivePayload(selectedConfig, themeMode) {
+      return {
+        selectedConfig: selectedConfig,
+        theme: themeSettingsForMode(themeMode)
+      };
+    }
+
     function applyLiveBoxclkPayload(payload, done) {
       if (typeof Puck === "undefined") {
         if (done) done(false);
@@ -3549,10 +3806,7 @@
     }
 
     function applyLiveBoxclkState(done) {
-      applyLiveBoxclkPayload({
-        selectedConfig: state.selectedConfig,
-        theme: themeSettingsForMode(state.previewTheme)
-      }, done);
+      applyLiveBoxclkPayload(boxclkLivePayload(state.selectedConfig, state.previewTheme), done);
     }
 
     function syncColorPicker(textInput, pickerInput) {
@@ -3645,23 +3899,16 @@
       const options = item.options || {};
       const showYear = options.showYear !== false;
       const useSuffix = options.suffix !== false;
-      const formatOptions = {
-        month: options.longMonth !== false ? "long" : "short",
-        day: "numeric",
-        year: showYear ? "numeric" : undefined
-      };
-
+      const monthStyle = options.longMonth !== false ? "long" : "short";
       try {
-        const formatter = new Intl.DateTimeFormat(getPreviewLocale(), formatOptions);
-        if (!useSuffix || !previewUsesEnglishOrdinals() || !formatter.formatToParts) {
-          return formatter.format(now);
-        }
-        const dayValue = String(now.getDate()) + daySuffix(now.getDate());
-        return formatter.formatToParts(now).map(part => part.type === "day" ? dayValue : part.value).join("");
+        const month = new Intl.DateTimeFormat(getPreviewLocale(), { month: monthStyle }).format(now);
+        const day = now.getDate();
+        const dayString = String(day) + (useSuffix ? daySuffix(day) : "");
+        return month + " " + dayString + (showYear ? ", " + now.getFullYear() : "");
       } catch (error) {
-        const month = now.toLocaleDateString(undefined, { month: formatOptions.month });
+        const month = now.toLocaleDateString(undefined, { month: monthStyle });
         let value = month + " " + now.getDate();
-        if (useSuffix && previewUsesEnglishOrdinals()) value += daySuffix(now.getDate());
+        if (useSuffix) value += daySuffix(now.getDate());
         if (showYear) value += ", " + now.getFullYear();
         return value;
       }
@@ -3889,14 +4136,7 @@
       const originalCtx = previewCtx;
       previewCtx = metricCtx;
       try {
-        if (outline > 0) {
-          const dx = [-outline, 0, outline, -outline, outline, -outline, 0, outline];
-          const dy = [-outline, -outline, -outline, 0, 0, outline, outline, outline];
-          for (let i = 0; i < dx.length; i++) {
-            drawPreviewString(item, text, centerX + dx[i], centerY + dy[i], "#000000");
-          }
-        }
-        drawPreviewString(item, text, centerX, centerY, "#000000");
+        drawOutlinedPreviewString(item, text, centerX, centerY, "#000000", "#000000");
       } finally {
         previewCtx = originalCtx;
       }
@@ -4029,6 +4269,16 @@
         );
       }
       return Math.max(Math.abs(x - clampedX), Math.abs(y - clampedY));
+    }
+
+    function resizeAxesForBounds(bounds, x, y) {
+      const edgeTolerance = 6;
+      const resizeX = Math.min(Math.abs(x - bounds.x1), Math.abs(x - bounds.x2)) <= edgeTolerance;
+      const resizeY = Math.min(Math.abs(y - bounds.y1), Math.abs(y - bounds.y2)) <= edgeTolerance;
+      return {
+        x: resizeX || !resizeY,
+        y: resizeY || !resizeX
+      };
     }
 
     function hitPartForItem(item, x, y, text) {
@@ -4263,16 +4513,26 @@
       const localMetrics = getBaseTextMetrics(item, text);
       const left = Math.trunc(-localMetrics.textWidth / 2);
       const top = Math.trunc(-localMetrics.fontHeight / 2);
-      let cursorX = left;
+      let cursorX = Math.trunc(centerX + left);
+      const drawTop = Math.trunc(centerY + top);
       previewCtx.save();
-      previewCtx.translate(centerX, centerY);
       previewCtx.fillStyle = color;
       if (localMetrics.indicator) {
-        drawPreviewChargeIndicator(cursorX, top + Math.trunc((localMetrics.fontHeight - localMetrics.indicator.height) / 2), localMetrics.indicator, color);
+        drawPreviewChargeIndicator(cursorX, drawTop + Math.trunc((localMetrics.fontHeight - localMetrics.indicator.height) / 2), localMetrics.indicator, color);
         cursorX += localMetrics.indicator.width + localMetrics.indicator.gap;
       }
-      drawPreviewTextRun(item, text, cursorX, top + Math.trunc((localMetrics.fontHeight - localMetrics.rawFontHeight) / 2));
+      drawPreviewTextRun(item, text, cursorX, drawTop + Math.trunc((localMetrics.fontHeight - localMetrics.rawFontHeight) / 2));
       previewCtx.restore();
+    }
+
+    function drawOutlinedPreviewString(item, text, centerX, centerY, textColor, outlineColor) {
+      const outline = item.appearance.outline || 0;
+      if (outline > 0) {
+        for (let i = 0; i < OUTLINE_OFFSETS_X.length; i++) {
+          drawPreviewString(item, text, centerX + OUTLINE_OFFSETS_X[i] * outline, centerY + OUTLINE_OFFSETS_Y[i] * outline, outlineColor);
+        }
+      }
+      drawPreviewString(item, text, centerX, centerY, textColor);
     }
 
     function clampItemToPreview(item) {
@@ -4410,15 +4670,7 @@
 
         const x = item.position.x * previewWidth();
         const y = item.position.y * previewHeight();
-        const outline = appearance.outline || 0;
-        if (outline > 0) {
-          const dx = [-outline, 0, outline, -outline, outline, -outline, 0, outline];
-          const dy = [-outline, -outline, -outline, 0, 0, outline, outline, outline];
-          for (let i = 0; i < dx.length; i++) {
-            drawPreviewString(item, text, x + dx[i], y + dy[i], parseColor(appearance.outlineColor, "#ffffff"));
-          }
-        }
-        drawPreviewString(item, text, x, y, parseColor(appearance.textColor, "#000000"));
+        drawOutlinedPreviewString(item, text, x, y, parseColor(appearance.textColor, "#000000"), parseColor(appearance.outlineColor, "#ffffff"));
         previewCtx.restore();
       });
       schedulePreviewRefresh(config);
@@ -4528,6 +4780,7 @@
       const bounds = itemBounds(item, formatItem(item));
       const resizeCenterX = (bounds.x1 + bounds.x2) / 2;
       const resizeCenterY = (bounds.y1 + bounds.y2) / 2;
+      const resizeAxes = resizeAxesForBounds(bounds, point.x, point.y);
       state.selectedItemName = item.name;
       state.drag = {
         mode: mode,
@@ -4537,8 +4790,14 @@
         startFontSize: item.appearance.fontSize,
         startBoundaryX: item.appearance.boundary.x,
         startBoundaryY: item.appearance.boundary.y,
+        startBoundaryWidth: bounds.width,
+        startBoundaryHeight: bounds.height,
         resizeCenterX: resizeCenterX,
         resizeCenterY: resizeCenterY,
+        resizeX: resizeAxes.x,
+        resizeY: resizeAxes.y,
+        startResizeX: Math.abs(point.x - resizeCenterX),
+        startResizeY: Math.abs(point.y - resizeCenterY),
         startResizeRadius: Math.hypot(point.x - resizeCenterX, point.y - resizeCenterY),
         startSnapshot: capturePreviewState()
       };
@@ -4562,13 +4821,28 @@
       const before = capturePreviewState();
       item.appearance.fontSize = clampFontSize(item.appearance.font, item.appearance.fontSize + delta);
       clampItemToPreview(item);
-      recordPreviewEdit(before, capturePreviewState());
-      setDirty();
-      renderAll();
+      commitPreviewEdit(before);
     }
 
     function getResizeRadiusDelta(point, drag) {
       return Math.hypot(point.x - drag.resizeCenterX, point.y - drag.resizeCenterY) - drag.startResizeRadius;
+    }
+
+    function clampBoundarySizeToPreview(item) {
+      if (!item || !item.appearance || !item.appearance.boundary) return;
+      if (item.type === "clkinfo") {
+        item.appearance.boundary.x = clamp(Math.round(item.appearance.boundary.x || 1), 24, previewWidth());
+        item.appearance.boundary.y = clamp(Math.round(item.appearance.boundary.y || 1), 24, previewHeight());
+        return;
+      }
+      const textMetrics = getBaseTextMetrics(item, formatItem(item));
+      const outline = item.appearance.outline || 0;
+      const textBoxWidth = textMetrics.textWidth + outline * 2;
+      const textBoxHeight = textMetrics.fontHeight + outline * 2;
+      const maxBoundaryX = (previewWidth() - textBoxWidth) / 2;
+      const maxBoundaryY = (previewHeight() - textBoxHeight) / 2;
+      item.appearance.boundary.x = clamp(+(item.appearance.boundary.x || 0), Math.min(-20, maxBoundaryX), maxBoundaryX);
+      item.appearance.boundary.y = clamp(+(item.appearance.boundary.y || 0), Math.min(-20, maxBoundaryY), maxBoundaryY);
     }
 
     function applyFontResizeDrag(item, drag, point) {
@@ -4578,15 +4852,16 @@
     }
 
     function applyBoundaryResizeDrag(item, drag, point) {
+      const width = drag.resizeX ? drag.startBoundaryWidth + (Math.abs(point.x - drag.resizeCenterX) - drag.startResizeX) * 2 : drag.startBoundaryWidth;
+      const height = drag.resizeY ? drag.startBoundaryHeight + (Math.abs(point.y - drag.resizeCenterY) - drag.startResizeY) * 2 : drag.startBoundaryHeight;
       if (item.type === "clkinfo") {
-        item.appearance.boundary.x = Math.max(24, Math.min(previewWidth(), Math.round(Math.abs(point.x - drag.resizeCenterX) * 2)));
-        item.appearance.boundary.y = Math.max(24, Math.min(previewHeight(), Math.round(Math.abs(point.y - drag.resizeCenterY) * 2)));
-        clampItemToPreview(item);
-        return;
+        item.appearance.boundary.x = Math.round(width);
+        item.appearance.boundary.y = Math.round(height);
+      } else {
+        item.appearance.boundary.x = +((width - (drag.startBoundaryWidth - drag.startBoundaryX * 2)) / 2).toFixed(2);
+        item.appearance.boundary.y = +((height - (drag.startBoundaryHeight - drag.startBoundaryY * 2)) / 2).toFixed(2);
       }
-      const delta = getResizeRadiusDelta(point, drag) / 3;
-      item.appearance.boundary.x = Math.max(-20, Math.min(20, +(drag.startBoundaryX + delta).toFixed(2)));
-      item.appearance.boundary.y = Math.max(-20, Math.min(20, +(drag.startBoundaryY + delta).toFixed(2)));
+      clampBoundarySizeToPreview(item);
       clampItemToPreview(item);
     }
 
@@ -4715,7 +4990,7 @@
       populateTypeOptionValues();
     }
 
-    function renderBackgroundGallery() {
+    function renderBackgroundGallery(options) {
       const gallery = document.getElementById("background-gallery");
       const config = getSelectedConfig();
       if (!gallery || !config) return;
@@ -4724,25 +4999,8 @@
         return;
       }
 
-      const options = [];
-      const seen = {};
-      BUNDLED_IMAGES.forEach(image => {
-        seen[image.name] = true;
-        ensureBackgroundPreview(image.name);
-        options.push({ name: image.name, label: image.label, custom: false, usage: 0 });
-      });
-      getAvailableBackgroundFiles().forEach(file => {
-        if (seen[file]) return;
-        seen[file] = true;
-        ensureBackgroundPreview(file);
-        const usage = backgroundFileUsageCount(file);
-        options.push({
-          name: file,
-          label: prettyBackgroundName(file),
-          custom: isCustomBackgroundFile(file),
-          usage: usage
-        });
-      });
+      options = options || getBackgroundImageOptions();
+      options.forEach(option => ensureBackgroundPreview(option.name));
 
       gallery.innerHTML = options.map(option => {
         const active = option.name === config.background.image ? " active" : "";
@@ -4766,10 +5024,10 @@
       }).join("");
     }
 
-    function renderFontSelect(currentFont) {
+    function renderFontSelect(currentFont, type) {
       const select = document.getElementById("item-font");
       if (!select) return;
-      const options = getAvailableFontNames(currentFont);
+      const options = getAvailableFontNames(currentFont, type);
       select.innerHTML = options.map(name => {
         const record = getCustomFontRecord(name);
         let label = name;
@@ -4874,6 +5132,8 @@
       const item = getSelectedItem();
       const editor = document.getElementById("item-editor");
       const config = getSelectedConfig();
+      const focusNote = document.getElementById("focus-note");
+      const itemTypeSelect = document.getElementById("item-type");
 
       if (!config) return;
 
@@ -4885,34 +5145,31 @@
         button.classList.toggle("active", button.getAttribute("data-bg-mode") === config.background.type);
       });
 
-      const imageOptions = [];
-      const seen = {};
-      BUNDLED_IMAGES.forEach(image => {
-        seen[image.name] = true;
-        imageOptions.push(`<option value="${escapeHtml(image.name)}">${escapeHtml(image.label)}</option>`);
-      });
-      getAvailableBackgroundFiles().forEach(file => {
-        if (seen[file]) return;
-        seen[file] = true;
-        imageOptions.push(`<option value="${escapeHtml(file)}">${escapeHtml(prettyBackgroundName(file))}</option>`);
-      });
-      document.getElementById("bg-image-name").innerHTML = imageOptions.join("");
+      const imageOptions = getBackgroundImageOptions(config.background.type === "image");
+      document.getElementById("bg-image-name").innerHTML = imageOptions.map(option => `<option value="${escapeHtml(option.name)}">${escapeHtml(option.label)}</option>`).join("");
       document.getElementById("bg-image-name").value = config.background.image || BUNDLED_IMAGES[0].name;
       document.getElementById("bg-solid-fields").style.display = config.background.type === "solid" ? "grid" : "none";
       document.getElementById("bg-image-fields").style.display = config.background.type === "image" ? "grid" : "none";
-      renderBackgroundGallery();
+      renderBackgroundGallery(imageOptions);
 
       if (!item) {
         editor.style.display = "none";
-        document.getElementById("focus-note").textContent = "Select a box to edit it.";
+        focusNote.hidden = false;
+        itemTypeSelect.hidden = true;
         renderTypeOptions();
         suppressFormUpdates = false;
         return;
       }
 
       editor.style.display = "block";
+      focusNote.hidden = true;
+      itemTypeSelect.hidden = false;
 
-      document.getElementById("item-name").value = item.name;
+      itemTypeSelect.innerHTML = ITEM_TYPES.map(type => {
+        const label = type === item.type ? (item.name || defaultItemName(type)) : defaultItemName(type);
+        return `<option value="${escapeHtml(type)}">${escapeHtml(label)}</option>`;
+      }).join("");
+      itemTypeSelect.value = normalizeItemType(item.type);
       document.getElementById("item-prefix").value = item.prefix || "";
       document.getElementById("item-suffix").value = item.suffix || "";
       document.getElementById("item-text").value = item.text || "";
@@ -4927,8 +5184,7 @@
       document.getElementById("text-field-row").style.display = item.type === "text" ? "grid" : "none";
       document.getElementById("item-pos-x").value = item.position.x;
       document.getElementById("item-pos-y").value = item.position.y;
-      document.getElementById("focus-note").textContent = item.name;
-      renderFontSelect(item.appearance.font);
+      renderFontSelect(item.appearance.font, item.type);
       document.getElementById("item-font").value = item.appearance.font;
       document.getElementById("item-font-size").value = item.appearance.fontSize;
       document.getElementById("item-font-size").max = maxFontSize(item.appearance.font);
@@ -5042,9 +5298,7 @@
       if (isBackgroundFileOnWatch(filename)) addDeletedFile(state.deletedBackgroundFiles, filename);
       else removeDeletedFile(state.deletedBackgroundFiles, filename);
       state.bgFiles = (state.bgFiles || []).filter(file => file !== filename);
-      delete state.backgroundPreviewCache[filename];
-      delete state.backgroundPreviewLoads[filename];
-      clearBackgroundData(filename);
+      clearBackgroundAsset(filename);
       return true;
     }
 
@@ -5162,18 +5416,24 @@
       return name;
     }
 
+    function configNameFromPrompt(requestedName, currentName) {
+      if (!requestedName) return null;
+      const configName = normaliseConfigStorageName(requestedName, currentName);
+      if (!configName) {
+        alert("That name is reserved.");
+        return null;
+      }
+      if (configName !== currentName && state.configs[configName]) {
+        alert("That config name already exists.");
+        return null;
+      }
+      return configName;
+    }
+
     function promptCreateConfigFromTemplate(defaultName, title, templateFactory) {
       promptForConfigName(defaultName, title, "Create").then(requestedName => {
-        if (!requestedName) return;
-        const configName = normaliseConfigStorageName(requestedName);
-        if (!configName) {
-          alert("That name is reserved.");
-          return;
-        }
-        if (state.configs[configName]) {
-          alert("That config name already exists.");
-          return;
-        }
+        const configName = configNameFromPrompt(requestedName);
+        if (!configName) return;
         createConfigFromTemplate(configName, templateFactory());
       });
     }
@@ -5211,16 +5471,8 @@
       const current = getSelectedConfig();
       if (!current) return;
       promptForConfigName(prettyConfigName(state.selectedConfig) + " Copy", "Duplicate config name", "Duplicate").then(requestedName => {
-        if (!requestedName) return;
-        const configName = normaliseConfigStorageName(requestedName);
-        if (!configName) {
-          alert("That name is reserved.");
-          return;
-        }
-        if (state.configs[configName]) {
-          alert("That config name already exists.");
-          return;
-        }
+        const configName = configNameFromPrompt(requestedName);
+        if (!configName) return;
         resetPreviewHistory();
         const duplicate = normalizeConfig(serialiseConfig(current));
         state.configs[configName] = duplicate;
@@ -5245,16 +5497,8 @@
       const current = getSelectedConfig();
       if (!current) return;
       promptForConfigName(prettyConfigName(state.selectedConfig), "Rename config", "Rename").then(requestedName => {
-        if (!requestedName) return;
-        const configName = normaliseConfigStorageName(requestedName, state.selectedConfig);
-        if (!configName) {
-          alert("That name is reserved.");
-          return;
-        }
-        if (configName !== state.selectedConfig && state.configs[configName]) {
-          alert("That config name already exists.");
-          return;
-        }
+        const configName = configNameFromPrompt(requestedName, state.selectedConfig);
+        if (!configName) return;
 
         const oldName = state.selectedConfig;
         const oldExistsOnWatch = configExistsOnWatch(oldName);
@@ -5324,9 +5568,7 @@
       const before = capturePreviewState();
       const item = config.items.splice(index, 1)[0];
       config.items.splice(target, 0, item);
-      recordPreviewEdit(before, capturePreviewState());
-      setDirty();
-      renderAll();
+      commitPreviewEdit(before);
     }
 
     function duplicateItem(itemName) {
@@ -5351,9 +5593,7 @@
       config.items.splice(index + 1, 0, duplicate);
       state.selectedItemName = duplicate.name;
       state.selectedPart = "text";
-      recordPreviewEdit(before, capturePreviewState());
-      setDirty();
-      renderAll();
+      commitPreviewEdit(before);
     }
 
     function deleteItem(itemName) {
@@ -5362,9 +5602,7 @@
       config.items = config.items.filter(item => item.name !== itemName);
       state.selectedItemName = null;
       state.selectedPart = null;
-      recordPreviewEdit(before, capturePreviewState());
-      setDirty();
-      renderAll();
+      commitPreviewEdit(before);
     }
 
     function addItem(type) {
@@ -5374,26 +5612,36 @@
       config.items.push(item);
       state.selectedItemName = item.name;
       state.selectedPart = "text";
-      recordPreviewEdit(before, capturePreviewState());
-      setDirty();
-      renderAll();
+      commitPreviewEdit(before);
+    }
+
+    function changeSelectedItemType(type) {
+      type = normalizeItemType(type);
+      const item = getSelectedItem();
+      const config = getSelectedConfig();
+      if (!item || !config || item.type === type) return false;
+      const previousType = item.type;
+      return updateSelectedItem(selected => {
+        const appearance = canReuseAppearanceForTypeChange(previousType, type) ? selected.appearance : defaultAppearanceForType(type);
+        let prefix = previousType === "clkinfo" ? "" : (selected.prefix || "");
+        let suffix = previousType === "clkinfo" ? "" : (selected.suffix || "");
+        if (previousType === "battery" && suffix === "%") suffix = "";
+        selected.type = type;
+        selected.prefix = type === "clkinfo" ? "" : prefix;
+        selected.suffix = type === "clkinfo" ? "" : suffix;
+        if (type === "battery" && !selected.suffix) selected.suffix = "%";
+        selected.appearance = normalizeAppearance(appearance, type);
+        selected.options = normalizeOptions(type, {});
+        selected.name = uniqueItemName(defaultItemName(type), {
+          items: config.items.filter(other => other !== selected)
+        });
+        state.selectedItemName = selected.name;
+      });
     }
 
     function bindInspectorEvents() {
       const byId = id => document.getElementById(id);
-      byId("item-name").addEventListener("change", event => {
-        const item = getSelectedItem();
-        const config = getSelectedConfig();
-        if (!item) return;
-        const newName = uniqueItemName(event.target.value || defaultItemName(item.type), {
-          items: config.items.filter(other => other !== item)
-        });
-        updateSelectedItem(selected => {
-          selected.name = newName;
-          state.selectedItemName = newName;
-        });
-      });
-
+      byId("item-type").addEventListener("change", event => changeSelectedItemType(event.target.value));
       byId("item-prefix").addEventListener("input", event => updateSelectedItem(item => { item.prefix = event.target.value; }));
       byId("item-suffix").addEventListener("input", event => updateSelectedItem(item => { item.suffix = event.target.value; }));
       byId("item-text").addEventListener("input", event => updateSelectedItem(item => { item.text = event.target.value; }));
@@ -5682,9 +5930,7 @@
         const button = event.target.closest("[data-bg-mode]");
         if (!button) return;
         if (button.getAttribute("data-bg-mode") === "clockbg") {
-          state.clockbgPreviewRevision++;
-          state.clockbgGeneratedPreviewKey = null;
-          state.clockbgGeneratedPreviewCanvas = null;
+          refreshClockbgModulePreview();
         }
         const select = document.getElementById("bg-type");
         select.value = button.getAttribute("data-bg-mode");
@@ -5895,14 +6141,11 @@
         deletedBackgroundFiles.push(backgroundImage);
       }
 
-      const selectedConfigSettings = JSON.stringify({
-        selectedConfig: sanitizeConfigName(nextWatchSelectedConfig || DEFAULT_CONFIG)
-      });
       const tasks = [next => eraseStorageChecked(configFilename(configName), next)];
       deletedBackgroundFiles.forEach(filename => {
         tasks.push(next => eraseStorageChecked(filename, next));
       });
-      tasks.push(next => writeStorageChecked(SETTINGS_FILE, selectedConfigSettings, next));
+      tasks.push(next => writeStorageChecked(SETTINGS_FILE, selectedConfigSettingsJson(nextWatchSelectedConfig), next));
 
       Util.showModal("Deleting Box Clock layout...");
       sequence(tasks.slice(), success => {
@@ -5928,9 +6171,7 @@
             if (upload && deletedBackgroundFiles.indexOf(upload.fileName) >= 0) delete state.backgroundUploads[name];
           });
           deletedBackgroundFiles.forEach(file => {
-            delete state.backgroundPreviewCache[file];
-            delete state.backgroundPreviewLoads[file];
-            clearBackgroundData(file);
+            clearBackgroundAsset(file);
           });
         }
 
@@ -5942,10 +6183,7 @@
         };
 
         if (deletedActiveConfig) {
-          applyLiveBoxclkPayload({
-            selectedConfig: nextWatchSelectedConfig,
-            theme: themeSettingsForMode(state.watchTheme)
-          }, finishDelete);
+          applyLiveBoxclkPayload(boxclkLivePayload(nextWatchSelectedConfig, state.watchTheme), finishDelete);
           return;
         }
 
@@ -5961,9 +6199,6 @@
       const baselineUploads = state.watchSnapshot && state.watchSnapshot.uploadedBackgrounds ? state.watchSnapshot.uploadedBackgrounds : {};
       const baselineFonts = state.watchSnapshot && state.watchSnapshot.customFonts ? state.watchSnapshot.customFonts : {};
       const serializedConfig = JSON.stringify(serialiseConfig(config));
-      const selectedConfigSettings = JSON.stringify({
-        selectedConfig: sanitizeConfigName(state.selectedConfig || DEFAULT_CONFIG)
-      });
       const changedConfig = !configExistsOnWatch(configName) || serializedConfig !== JSON.stringify(baselineConfigs[configName] || null);
       const backgroundImage = config.background && config.background.type === "image" ? config.background.image : null;
       const currentUpload = state.backgroundUploads[configName];
@@ -6043,12 +6278,10 @@
         tasks.push(next => eraseStorageChecked(filename, next));
       });
 
-      tasks.push(next => writeStorageChecked(SETTINGS_FILE, selectedConfigSettings, next));
+      tasks.push(next => writeStorageChecked(SETTINGS_FILE, selectedConfigSettingsJson(state.selectedConfig), next));
 
       if (shouldSetTheme) {
-        const nextSettings = clone(state.watchSystemSettings || {});
-        nextSettings.theme = themeSettingsForMode(state.previewTheme);
-        tasks.push(next => writeStorageChecked("setting.json", JSON.stringify(nextSettings), next));
+        tasks.push(next => writeStorageChecked("setting.json", watchSystemSettingsJsonWithTheme(state.previewTheme), next));
       }
 
       if (!tasks.length) {
@@ -6087,9 +6320,7 @@
         if (deletedBackgroundFiles.length) {
           state.bgFiles = (state.bgFiles || []).filter(file => deletedBackgroundFiles.indexOf(file) < 0);
           deletedBackgroundFiles.forEach(file => {
-            delete state.backgroundPreviewCache[file];
-            delete state.backgroundPreviewLoads[file];
-            clearBackgroundData(file);
+            clearBackgroundAsset(file);
           });
         }
         if (uploadedBackgroundFiles.length) {
@@ -6112,16 +6343,11 @@
     function applyWatchSettings() {
       if (!canApplyWatchSettings(state.watchSignature !== null && currentWatchStateSignature() !== state.watchSignature)) return;
       const tasks = [];
-      const selectedConfigSettings = JSON.stringify({
-        selectedConfig: sanitizeConfigName(state.selectedConfig || DEFAULT_CONFIG)
-      });
       if (state.selectedConfig !== state.watchSelectedConfig && selectedConfigMatchesWatch()) {
-        tasks.push(next => writeStorageChecked(SETTINGS_FILE, selectedConfigSettings, next));
+        tasks.push(next => writeStorageChecked(SETTINGS_FILE, selectedConfigSettingsJson(state.selectedConfig), next));
       }
       if (!selectedThemeMatchesWatch()) {
-        const nextSettings = clone(state.watchSystemSettings || {});
-        nextSettings.theme = themeSettingsForMode(state.previewTheme);
-        tasks.push(next => writeStorageChecked("setting.json", JSON.stringify(nextSettings), next));
+        tasks.push(next => writeStorageChecked("setting.json", watchSystemSettingsJsonWithTheme(state.previewTheme), next));
       }
       if (!tasks.length) {
         refreshSyncStatus();
@@ -6182,8 +6408,7 @@
         state.backgroundDataLoads = {};
         state.fontLoads = {};
         state.customFonts = {};
-        state.clockbgGeneratedPreviewKey = null;
-        state.clockbgGeneratedPreviewCanvas = null;
+        resetClockbgModulePreview();
         state.clockbgPreviewRevision = 0;
         state.clockbgSettings = data && data.clockbgSettings ? data.clockbgSettings : null;
         state.watchBattery = data && Number.isFinite(data.battery) ? data.battery : null;
