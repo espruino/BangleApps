@@ -61,3 +61,4 @@
       Also fix groups when going back from 'showNewMenu'
 0.54: Hide hidden alarms from main menu by default, change in settings, see readme.
       Hide the `Hidden` setting from "New..." menu by default, change in settings.
+0.55: Fix alarms with same label overlapping in menu only showing one of them.

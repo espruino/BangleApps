@@ -94,8 +94,11 @@ function showMainMenu(scroll, group, scrollback) {
     const showAlarmInGroupMenu = settings.showGroup && (group ? E_GROUP === group : false);
     if (showAlarmInMainMenu && showAlarmInGroupMenu) throw new Error("Alarm should not belong to both main and group menu."); // To catch if future changes mess it up.
     if(showAlarmInMainMenu || showAlarmInGroupMenu) {
-      const label = trimLabel(getLabel(e),40);
-      menu[label] = {
+      const LABEL = trimLabel(getLabel(e),40);
+      let i = 0;
+      const addSuffix = (word, i) => i ? word + " ("+i+")" : word;
+      while (menu[addSuffix(LABEL, i)]) {i++;}
+      menu[addSuffix(LABEL, i)] = {
         value: e.on,
         onchange: (v, touch) => {
           if (touch && (2==touch.type || 145<touch.x)) { // Long touch or touched icon.
