@@ -2,6 +2,7 @@
   "id": "beebclock",
   "name": "Beeb Clock",
   "version": "0.06",
+  "author": "tomgidden",
   "description": "Clock face that may be coincidentally familiar to BBC viewers",
   "icon": "beebclock.png",
   "type": "clock",

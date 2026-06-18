@@ -2,6 +2,7 @@
   "id": "life",
   "name": "Game of Life",
   "version": "0.04",
+  "author": "jeffmer",
   "description": "Conway's Game of Life - 16x16 board",
   "icon": "life.png",
   "tags": "game",

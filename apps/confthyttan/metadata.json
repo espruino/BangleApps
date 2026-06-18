@@ -1,6 +1,6 @@
 { "id": "confthyttan",
   "name": "Thyttan's Default Config",
-  "version":"0.08",
+  "version":"0.09",
   "author": "thyttan",
   "description": "A different default set of apps and configurations. Makes many quality of life changes. Opinionated based on the creators taste. Read more below before installing.",
   "icon": "app.png",
@@ -39,10 +39,10 @@
     "autoreset":"app",
     "chargent":"app",
     "setting":"app",
-    "fastload":"app",
     "boot":"app",
     "ateatimer":"app",
     "bigclkinfo":"app",
+    "apphist":"app",
     "drained":"app"
   },
   "storage": [
@@ -52,8 +52,6 @@
      "url":"autoreset.json"},
     {"name":"dtlaunch.json",
      "url":"dtlaunch.json"},
-    {"name":"fastload.json",
-     "url":"fastload.json"},
     {"name":"quicklaunch.json",
      "url":"quicklaunch.json"},
     {"name":"messages.settings.json",
@@ -63,6 +61,8 @@
     {"name":"recorder.json",
      "url":"recorder.json"},
     {"name":"edgeclk.settings.json",
+     "url":"loading_screen.txt"},
+    {"name":".loading",
      "url":"edgeclk.settings.json"},
     {"name":"setting.json",
      "url":"setting.json"}

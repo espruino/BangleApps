@@ -3,6 +3,7 @@
   "name": "ISO Compliant Clock Face",
   "shortName": "ISO Clock",
   "version": "0.04",
+  "author": "Fscked-In-The-Head",
   "description": "Tweaked fork of digiclock for ISO date and time",
   "icon": "isoclock.png",
   "type": "clock",

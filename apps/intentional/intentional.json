@@ -1,0 +1,35 @@
+{
+  "items": [
+    {
+      "type": "task",
+      "name": "Turn on flashlight",
+      "intent": "com.bangle_Flashlight"
+    },
+    {
+      "type": "separator",
+      "label": "*********************"
+    },
+    {
+      "type": "app",
+      "name": "Bangle.js 2 About",
+      "app": "lyrionctrl.app.js"
+    },
+    {
+      "type": "folder",
+      "name": "Sub-menu",
+      "items": [
+        {
+          "type": "task",
+          "name": "Take Photo",
+          "intent": "com.bangle.tasker_photo"
+        },
+        {
+          "type": "task",
+          "name": "Take Video",
+          "intent": "com.bangle.tasker_video"
+        }
+      ]
+    },
+
+  ]
+}

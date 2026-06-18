@@ -1,6 +1,7 @@
 { "id": "bad",
   "name": "Bad Apple",
   "version":"0.01",
+  "author": "pavelmachek",
   "description": "Bad Apple demo",
   "icon": "app.png",
   "readme": "README.md",

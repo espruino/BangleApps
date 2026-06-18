@@ -6,6 +6,7 @@
   "type": "clock",
   "tags": "clock",
   "version":"0.01",
+  "author": "stratosphericcity",
   "description": "My Megaman X themed clock, by soulmaze.neocities.org",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",

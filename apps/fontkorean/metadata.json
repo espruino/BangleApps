@@ -1,6 +1,7 @@
 { "id": "fontkorean",
   "name": "Fonts (Korean)",
   "version":"0.02",
+  "author": "jeonlab",
   "description": "Installs a font data, Unifont characters for Korean **Requires 420 KB storage**",
   "icon": "app.png",
   "tags": "font,fonts,language",

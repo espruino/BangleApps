@@ -3,6 +3,7 @@
   "name": "Homework",
   "shortName":"Homework",
   "version": "0.12",
+  "author": "dronesflier",
   "description": "A simple app to manage homework",
   "icon": "app.png",
   "tags": "tool",

@@ -2,6 +2,7 @@
   "id": "antonclk",
   "name": "Anton Clock",
   "version": "0.12",
+  "author": "gfwilliams",
   "description": "A simple clock using the bold Anton font. See `Anton Clock Plus` for an enhanced version",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

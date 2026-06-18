@@ -3,6 +3,7 @@
   "name": "Get Up",
   "shortName": "Get Up",
   "version": "0.01",
+  "author": "v1nc",
   "description": "Reminds you to getup every x minutes. Sitting to long is dangerous!",
   "icon": "app.png",
   "tags": "tools,health",

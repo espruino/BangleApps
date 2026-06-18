@@ -2,6 +2,7 @@
   "name": "Pisteinen - Dotted watch face",
   "shortName":"Pisteinen",
   "version":"0.01",
+  "author": "jukioo",
   "description": "A minimal digital watch face made with dots.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot1.png"}],

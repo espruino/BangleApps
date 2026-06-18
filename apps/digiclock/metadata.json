@@ -3,6 +3,7 @@
   "name": "Digital Clock Face",
   "shortName": "Digi Clock",
   "version": "0.02",
+  "author": "SpyGuy0215",
   "description": "A simple digital clock with the time, day, month, and year",
   "icon": "digiclock.png",
   "type": "clock",

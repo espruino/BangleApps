@@ -2,6 +2,7 @@
   "id": "ffcniftyapp",
   "name": "Nifty-A Clock ++",
   "version": "0.02",
+  "author": "jla-42",
   "description": "A nifty clock with time and date and more",
   "dependencies": {"weather":"app"},
   "icon": "app.png",

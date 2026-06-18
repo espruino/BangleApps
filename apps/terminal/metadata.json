@@ -2,6 +2,7 @@
   "name": "VT100 Terminal",
   "shortName":"Terminal",
   "version": "0.02",
+  "author": "gfwilliams",
   "description": "Terminal and Keyboard that can be used as a REPL. You can type JS commands into Bangle.js's own REPL and execute them, or you can connect to other Bluetooth LE UART devices (like other Espruinos) and issue commands.",
   "icon": "app.png",
   "tags": "terminal,tool,bluetooth",

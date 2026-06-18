@@ -9,3 +9,6 @@
 0.08: hide bt indicator when connected (`widbt_notify`). Add "Message Twist to
       Scroll". Add "Big Clock Info app".
       Auto open messages if locked.
+0.09: remove fastload utils as it's functionality is more or less included in
+      firmware now. Fix to handle the new widget theme colors.
+      Disable "loading..." message.

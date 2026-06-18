@@ -4,7 +4,6 @@ Bangle.drawWidgets();
 const settings = Object.assign({
   showConfirm : true,
   showAutoSnooze : true,
-  showHidden : true
 }, require('Storage').readJSON('alarm.json',1)||{});
 // 0 = Sunday (default), 1 = Monday
 const firstDayOfWeek = (require("Storage").readJSON("setting.json", true) || {}).firstDayOfWeek || 0;
@@ -89,11 +88,17 @@ function showMainMenu(scroll, group, scrollback) {
   const groups = getGroups ? {} : undefined;
   const getIcon = (e)=>{return e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff);};
 
-  alarms.forEach((e, index) => {
-    const showAlarm = !settings.showGroup || (group ? e.group === group : !e.group);
-    if(showAlarm) {
-      const label = trimLabel(getLabel(e),40);
-      menu[label] = {
+  alarms.forEach((e, index) => {if (!e.hidden || settings.showHidden) {
+    const E_GROUP = e.group||(e.hidden?"Hidden":undefined);
+    const showAlarmInMainMenu = !(E_GROUP && settings.showGroup) && !group;
+    const showAlarmInGroupMenu = settings.showGroup && (group ? E_GROUP === group : false);
+    if (showAlarmInMainMenu && showAlarmInGroupMenu) throw new Error("Alarm should not belong to both main and group menu."); // To catch if future changes mess it up.
+    if(showAlarmInMainMenu || showAlarmInGroupMenu) {
+      const LABEL = trimLabel(getLabel(e),40);
+      let i = 0;
+      const addSuffix = (word, i) => i ? word + " ("+i+")" : word;
+      while (menu[addSuffix(LABEL, i)]) {i++;}
+      menu[addSuffix(LABEL, i)] = {
         value: e.on,
         onchange: (v, touch) => {
           if (touch && (2==touch.type || 145<touch.x)) { // Long touch or touched icon.
@@ -106,9 +111,11 @@ function showMainMenu(scroll, group, scrollback) {
         },
         format: v=>getIcon(e)
       };
-    } else if (getGroups) {
-      groups[e.group] = undefined;
     }
+    if (getGroups && E_GROUP) {
+      groups[E_GROUP] = undefined;
+    }
+  }
   });
 
   if (!group) {

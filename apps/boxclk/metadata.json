@@ -1,7 +1,8 @@
 {
   "id": "boxclk",
   "name": "Box Clock",
-  "version": "0.13",
+  "version": "0.14",
+  "author": "stweedo",
   "description": "A customizable clock with multiple layouts, clkinfo and clockbg support, and a web editor",
   "icon": "app.png",
   "dependencies" : { "clockbg":"module", "clock_info":"module" },

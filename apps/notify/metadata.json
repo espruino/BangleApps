@@ -3,6 +3,7 @@
   "name": "Notifications (default)",
   "shortName": "Notifications",
   "version": "0.14",
+  "author": "gfwilliams",
   "description": "Provides the default `notify` module used by applications to display notifications on the screen. This module is installed by default by client applications such as the Gadgetbridge app.  Installing `Fullscreen Notifications` replaces this module with a version that displays the notifications using the full screen",
   "icon": "notify.png",
   "type": "notify",

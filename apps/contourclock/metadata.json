@@ -4,6 +4,7 @@
   "version": "0.33",
   "icon": "app.png",
   "readme": "README.md",
+  "author": "xxDUxx",
   "description": "A Minimalist clockface with large Digits.",
   "screenshots" : [{"url":"cc-screenshot-1.png"},{"url":"cc-screenshot-2.png"}],
   "tags": "clock",

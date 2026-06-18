@@ -3,6 +3,7 @@
   "name": "Bowser Watchface",
   "shortName": "Bowser Watchface",
   "version": "0.04",
+  "author": "nerdmaennchen",
   "description": "Let bowser show you the time",
   "icon": "app.png",
   "type": "clock",

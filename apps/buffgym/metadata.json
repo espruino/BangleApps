@@ -2,6 +2,7 @@
   "id": "buffgym",
   "name": "BuffGym",
   "version": "0.02",
+  "author": "paulcockrell",
   "description": "BuffGym is the famous 5x5 workout program for the BangleJS",
   "icon": "buffgym.png",
   "type": "app",

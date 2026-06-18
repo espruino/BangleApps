@@ -2,6 +2,7 @@
   "name": "Flash Counter",
   "shortName":"FlashCount",
   "version":"0.01",
+  "author": "gfwilliams",
   "description": "Count flashes/pulses of light using the heart rate monitor. Requires a VC31B HRM sensor, which should be in most watches except those produced for the original KickStarter campaign.",
   "icon": "app.png",
   "tags": "",

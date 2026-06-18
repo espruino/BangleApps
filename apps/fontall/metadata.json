@@ -1,6 +1,7 @@
 { "id": "fontall",
   "name": "Fonts (all languages)",
   "version":"0.02",
+  "author": "gfwilliams",
   "description": "Installs a font containing over 50,000 Unifont characters for Chinese, Japanese, Korean, Russian, and more. **Requires 2MB storage**",
   "icon": "app.png",
   "tags": "font,fonts,language",

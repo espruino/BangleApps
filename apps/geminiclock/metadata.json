@@ -3,6 +3,7 @@
   "shortName":"Gemini Clock",
   "icon": "app.png",
   "version":"0.01",
+  "author": "blogmywiki",
   "description": "Watch face using retro Gemini font",
   "type": "clock",
   "tags": "clock",

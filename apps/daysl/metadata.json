@@ -2,6 +2,7 @@
   "id": "daysl",
   "name": "Days left",
   "version": "0.03",
+  "author": "Purple-Tentacle",
   "description": "Shows you the days left until a certain date. Date can be set with a settings app and is written to a file.",
   "icon": "app.png",
   "tags": "",

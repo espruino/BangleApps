@@ -2,6 +2,7 @@
   "name": "Number Chaser",
   "shortName":"Number Chaser",
   "version":"0.01",
+  "author": "fearlessgeekmedia",
   "description": "A number guessing game, but the number goes up or down based on if you're guessing too high or too low.",
   "icon": "numberchaser.png",
   "tags": "game,fun",

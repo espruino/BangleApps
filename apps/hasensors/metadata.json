@@ -3,6 +3,7 @@
   "name": "Home Assistant Sensors",
   "shortName": "HA sensors",
   "version": "0.03",
+  "author": "rigrig",
   "description": "Send sensor values to Home Assistant using Android Integration/Gadgetbridge",
   "icon": "ha.png",
   "type": "bootloader",

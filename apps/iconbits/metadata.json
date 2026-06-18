@@ -1,6 +1,7 @@
 { "id": "iconbits",
   "name": "Icon bits",
   "version": "0.02",
+  "author": "pavelmachek",
   "description": "Bitmap editor suitable for creating icons",
   "icon": "app.png",
   "readme": "README.md",

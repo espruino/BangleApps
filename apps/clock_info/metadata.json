@@ -2,6 +2,7 @@
   "name": "Clock Info Module",
   "shortName": "Clock Info",
   "version":"0.27",
+  "author": "gfwilliams",
   "description": "A library used by clocks to provide extra information on the clock face (Altitude, BPM, etc)",
   "icon": "app.png",
   "type": "module",

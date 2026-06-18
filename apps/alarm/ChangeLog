@@ -59,3 +59,6 @@
 0.52: Allow deletion of alarms once they sound (like timers and events)
 0.53: Ensure `Advanced` has a link to the app's settings, and README documents them.
       Also fix groups when going back from 'showNewMenu'
+0.54: Hide hidden alarms from main menu by default, change in settings, see readme.
+      Hide the `Hidden` setting from "New..." menu by default, change in settings.
+0.55: Fix alarms with same label overlapping in menu only showing one of them.

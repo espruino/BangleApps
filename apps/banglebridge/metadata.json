@@ -3,6 +3,7 @@
   "name": "BangleBridge",
   "shortName": "BangleBridge",
   "version": "0.03",
+  "author": "gfwilliams",
   "description": "Widget that allows Bangle.js to record pair and end data using Bluetooth Low Energy in combination with the BangleBridge Android App (**Note:** this has nothing to do with Gadgetbridge)",
   "icon": "widget.png",
   "type": "widget",

@@ -2,6 +2,7 @@
   "name": "Simple analog clock",
   "shortName":"Analog clock",
   "version":"0.03", 
+  "author": "rigrig",
   "description": "A very basic analog clock",
   "screenshots": [
     {"url":"screenshot1.png"},

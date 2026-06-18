@@ -2,6 +2,7 @@
   "id": "hrings",
   "name": "Hypno Rings",
   "version": "0.01",
+  "author": "ra100",
   "description": "Experiment with trippy rings, press buttons for change",
   "icon": "hypno-rings.png",
   "type": "app",
