@@ -155,12 +155,12 @@ function assertValue(step){
   console.log("> ASSERT " + `\`${step.js}\``, "IS", step.is.toUpperCase() + (step.to !== undefined ? " TO " + `\`${step.to}\`` : ""), step.text ? "- " + step.text : "");
   let isOK;
   switch (step.is.toLowerCase()){
-    case "truthy": isOK = getValue(`!!${step.js}`); break;
-    case "falsy": isOK = getValue(`!${step.js}`); break;
-    case "true": isOK = getValue(`${step.js} === true`); break;
-    case "false": isOK = getValue(`${step.js} === false`); break;
-    case "equal": isOK = getValue(`${step.js} == ${step.to}`); break;
-    case "function": isOK = getValue(`typeof ${step.js} === "function"`); break;
+    case "truthy": isOK = getValue(`!!(${step.js})`); break;
+    case "falsy": isOK = getValue(`!(${step.js})`); break;
+    case "true": isOK = getValue(`(${step.js}) === true`); break;
+    case "false": isOK = getValue(`(${step.js}) === false`); break;
+    case "equal": isOK = getValue(`(${step.js}) == ${step.to}`); break;
+    case "function": isOK = getValue(`typeof (${step.js}) === "function"`); break;
   }
 
   if (isOK){
