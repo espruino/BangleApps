@@ -493,6 +493,13 @@ ${fields.map(f=>kmlField(f,'SimpleArrayData')).join('\n')}
 }
 
 function saveGPX(track, title) {
+
+  let metadataJSON = track.find(t => t.Metadata)?.Metadata;
+  let metadata = {};
+  try {
+    if (metadataJSON)
+      metadata = JSON.parse(metadataJSON);
+  } catch {}
   // we handle invalid points ourselves
   track = filterGPSCoordinates(track, { zeroInvalidPoints: false });
 
@@ -536,6 +543,7 @@ function saveGPX(track, title) {
   </metadata>
   <trk>
     <name>${title}</name>
+    ${metadata.activity ? `<type>${metadata.activity.toLowerCase()}</type>` : ``}
     <trkseg>${trkpts.join('')}
     </trkseg>
   </trk>
@@ -556,7 +564,8 @@ function saveCSV(track, title) {
 
 function trackLineToObject(headers, l) {
   if (l===undefined) return {};
-  const t = l.trim().split(","), o = {};
+  // Splits by commas, but only if they are followed by an even number of quotes
+  const t = l.trim().split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(n => n.startsWith('"') ? JSON.parse(n) : n), o = {};
   headers.forEach((header,i) => o[header] = t[i]);
   if (o.Time) o.Time = new Date(o.Time*1000);
   return o;
@@ -864,6 +873,8 @@ return {headers:headers,l:data};
         ' at ' + trackData.Time.toLocaleTimeString() :
         "No date info";
       const previewHtml = renderTrackPreview(trackData);
+      let metadata = {};
+      try { if (trackData.Metadata) metadata = JSON.parse(trackData.Metadata); } catch {}
 
       html += `
       <div class="accordion-item">
@@ -875,6 +886,7 @@ return {headers:headers,l:data};
               <span class="track-header-text">
                 <i class="icon icon-arrow-right mr-1 track-header-arrow"></i>
                 <strong class="track-header-title">Track ${track.number}</strong>
+                ${metadata.activity?`<span class="track-header-activity">(${metadata.activity})</span>`:``}
                 <span class="track-header-date">${dateStr}</span>
               </span>
               ${previewHtml || ''}
