@@ -288,7 +288,7 @@ var locales = {
     lang: "sv_SE",
     decimal_point: ",",
     thousands_sep: ".",
-    speed: "km/tim",
+    speed: "km/h",
     distance: { 0: "m", 1: "km" },
     temperature: "°C",
     ampm: { 0: "fm", 1: "em" },

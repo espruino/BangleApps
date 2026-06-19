@@ -1,7 +1,7 @@
-if (window.location.host=="banglejs.com") {
+if (window.location.host==="banglejs.com") {
   document.getElementById("apploaderlinks").innerHTML =
     'This is the official Bangle.js App Loader - you can also try the <a href="https://espruino.github.io/BangleApps/">Development Version</a> for the most recent apps.';
-} else if (window.location.host=="espruino.github.io") {
+} else if (window.location.host==="espruino.github.io") {
   document.title += " [Development]";
   document.getElementById("apploaderlinks").innerHTML =
     'This is the development Bangle.js App Loader - you can also try the <a href="https://banglejs.com/apps/">Official Version</a> for stable apps.';
@@ -76,7 +76,7 @@ function onRefreshMyApps() {
 
 var submittedUsageInfo = "";
 /* Send usage stats to servers if it has changed */
-function sendUsageStats() {
+async function sendUsageStats() {
   if (!SETTINGS.sendUsageStats) return; // not allowed!
   if (device.uid === undefined) return; // no data yet!
   if (!device.appsInstalled.length) return; // no installed apps or disconnected
@@ -90,18 +90,21 @@ function sendUsageStats() {
   // Do a quick check for unchanged data to reduce server load
   if (usageInfo != submittedUsageInfo) {
     console.log("sendUsageStats: Submitting usage stats...");
-    var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
-    xmlhttp.open("POST", "https://banglejs.com/submit_app_stats.php", true /*async*/);
-    xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xmlhttp.onload = (e) => {
-      if (xmlhttp.readyState === 4)
-        console.log(`sendUsageStats (${xmlhttp.status}): ${xmlhttp.responseText}`);
-    };
-    xmlhttp.onerror = (e) => {
-      console.error("sendUsageStats ERROR: "+xmlhttp.statusText);
-    };
-    xmlhttp.send(usageInfo);
-    submittedUsageInfo = usageInfo;
+    try {
+      const response = await fetch("https://banglejs.com/submit_app_stats.php", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: usageInfo
+      });
+      if (response.ok) {
+        console.log(`sendUsageStats (${response.status}): ${await response.text()}`);
+        submittedUsageInfo = usageInfo; // Only update on success
+      } else {
+        console.error(`sendUsageStats ERROR (${response.status}): ${response.statusText}`);
+      }
+    } catch (e) {
+      console.error("sendUsageStats ERROR: " + e.message);
+    }
   }
 }
 
