@@ -180,5 +180,16 @@
       {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage',body:'body'})", "text": "Show a message overlay"},
       {"t":"assertCall", "id": "buzz", "count": 2, "text": "This message buzzes as well"}
     ]
+  },{
+    "description": "Test removeAllListeners during overlay does not remove all listeners",
+    "steps" : [
+      {"t":"cmd", "js": "Bangle.on('canary', ()=>{})", "text": "This is the canary for detecting if other events stayed untouched"},
+      {"t":"assert", "js": "Bangle['#oncanary'].length", "is": "equal", "to": 1, "text": "Expect one canary listener"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "Bangle.removeAllListeners('swipe')", "text": "Remove unrelated listeners"},
+      {"t":"assert", "js": "Bangle['#oncanary'].length", "is": "equal", "to": 1, "text": "Expect one listener, they are not backgrounded"},
+      {"t":"emit", "event": "touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message to restore message listener"},
+      {"t":"assert", "js": "Bangle['#oncanary'].length", "is": "equal", "to": 1, "text": "Expect one listener, removing one category of listeners should leave others untouched"}
+    ]
   }]
 }
