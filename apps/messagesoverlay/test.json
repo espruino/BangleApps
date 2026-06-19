@@ -191,5 +191,17 @@
       {"t":"emit", "event": "touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message to restore message listener"},
       {"t":"assert", "js": "Bangle['#oncanary'].length", "is": "equal", "to": 1, "text": "Expect one listener, removing one category of listeners should leave others untouched"}
     ]
+  },{
+    "description": "Test setWatch/clearWatch during overlay works",
+    "steps" : [
+      {"t":"cmd", "js": "setWatch(()=>{}, BTN)", "text": "Set a watch"},
+      {"t":"cmd", "js": "setWatch(()=>{}, BTN)", "text": "Set a second watch"},
+      {"t":"assert", "js": "global[\"\\xff\"].watches.filter(w=>w).length", "is": "equal", "to": 2, "text": "Expect our watches"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "var overlayWatch = setWatch(()=>{}, BTN); clearWatch(overlayWatch);", "text": "Set and clear a watch during overlay"},
+      {"t":"cmd", "js": "Bangle.removeAllListeners('swipe')", "text": "Remove unrelated listeners"},
+      {"t":"emit", "event": "touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message to restore message listener"},
+      {"t":"assert", "js": "global[\"\\xff\"].watches.filter(w=>w).length", "is": "equal", "to": 2, "text": "Expect our watches and nothing else"}
+    ]
   }]
 }
