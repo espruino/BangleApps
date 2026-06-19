@@ -2,11 +2,11 @@
   "id": "hebrew_calendar",
   "name": "Hebrew Calendar",
   "shortName": "HebCal",
-  "version": "0.06",
+  "version": "0.08",
   "author": "barakplasma",
   "description": "lists the date & holidays according to the hebrew calendar",
   "icon": "app.png",
-  "allow_emulator": false,
+  "allow_emulator": true,
   "tags": "clocks,tools",
   "custom": "customizer.html",
   "supports": [
@@ -17,9 +17,18 @@
   "readme": "README.md",
   "storage": [
     {
+      "name": "hebrew_calendar.app.js",
+      "url": "app.js"
+    },
+    {
       "name": "hebrew_calendar.img",
       "url": "app-icon.js",
       "evaluate": true
+    }
+  ],
+  "data": [
+    {
+      "name": "hebrew_calendar.json"
     }
   ]
 }
