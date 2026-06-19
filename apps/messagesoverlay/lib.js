@@ -246,7 +246,7 @@ const showMessage = function(msg) {
     msg.new = false;
     if (!buzzing){
       buzzing = true;
-      Bangle.buzz().then(()=>{setTimeout(()=>{buzzing = false;},2000);});
+      Bangle.buzz().then(()=>{buzzing = false;});
     }
     Bangle.setLCDPower(1);
   }
