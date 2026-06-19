@@ -167,5 +167,18 @@
       {"t":"emit", "event": "touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
       {"t":"assert", "js": "Bangle['#onswipe'][0]===testfunc", "is":"true", "text": "The swipe handler has been restored"}
     ]
+  },{
+    "description": "Test buzzing state switches correctly on overlay close",
+    "steps" : [
+      {"t":"jsonfile", "name": "messagesoverlay.json", "json": {"autoclear": 600}, "text": "Force autoclear setting on"},
+      {"t":"cmd", "js": "Bangle.setLocked(true)", "text": "Lock the bangle to force autoclear to become active"},
+      {"t":"jsonfile", "name": "setting.json", "json": {"quiet": 0}, "text": "Disable quiet mode"},
+      {"t":"wrap", "fn": "Bangle.buzz", "id": "buzz", "name": "Count attempts to buzz"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage',body:'body'})", "text": "Show a message overlay"},
+      {"t":"assertCall", "id": "buzz", "count": 1, "text": "First message buzzes, enabled cooldown timeout"},
+      {"t":"emit", "event": "touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message to disable cooldown"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage',body:'body'})", "text": "Show a message overlay"},
+      {"t":"assertCall", "id": "buzz", "count": 2, "text": "This message buzzes as well"}
+    ]
   }]
 }
