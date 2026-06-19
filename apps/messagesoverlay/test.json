@@ -155,5 +155,17 @@
       {"t":"advanceTimers", "ms":700000, "text": "Advance timers to get the timer to fire in the next idle period"},
       {"t":"checkMemoryUsage", "text": "Checks current memory is not higher than stored value (detects leaks)"}
     ]
+  },{
+    "description": "Test call state can be cleaned up by autoclear",
+    "steps" : [
+      {"t":"jsonfile", "name": "messagesoverlay.json", "json": {"autoclear": 600}, "text": "Force autoclear setting on"},
+      {"t":"cmd", "js": "Bangle.setLocked(true)", "text": "Lock the bangle to force autoclear to become active"},
+      {"t":"cmd", "js": "var testfunc = ()=>{}; Bangle.on('swipe', testfunc)", "text": "This is the canary for detecting if the call prevented proper restoration by the later text message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('call', {src:'Caller',t:'add',id:'call',title:'title',body:'body'})", "text": "Show call"},
+      {"t":"advanceTimers", "ms":700000, "text": "Advance timers to get the timer to fire in the next idle period"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage',body:'body'})", "text": "Show a message overlay after call"},
+      {"t":"emit", "event": "touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"assert", "js": "Bangle['#onswipe'][0]===testfunc", "is":"true", "text": "The swipe handler has been restored"}
+    ]
   }]
 }
