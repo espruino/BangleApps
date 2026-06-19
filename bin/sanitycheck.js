@@ -84,11 +84,15 @@ function WARN(msg, opt) {
   console.log(`::warning${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
   warningCount++;
 }
+function NOTIFY(msg, opt) {
+  // file=app.js,line=1,col=5,endColumn=7
+  opt = opt||{};
+  console.log(`::notice${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
+}
 /* These are errors that we temporarily allow */
 var KNOWN_ERRORS = [
   "In locale en_CA, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
   "In locale fr_FR, long date output must be shorter than 15 characters (10 septembre 2024 -> 17)",
-  "In locale sv_SE, speed must be shorter than 5 characters",
   "In locale en_SE, long date output must be shorter than 15 characters (September 10 2024 -> 17)",
   "In locale en_NZ, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
   "In locale en_AU, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
@@ -540,11 +544,11 @@ function sanityCheckLocales(){
 promise.then(function() {
   KNOWN_ERRORS.forEach(msg => {
     if (!errorList.includes(msg))
-      WARN(`Known error '${msg}' no longer occurs`);
+      NOTIFY(`Known error '${msg}' no longer occurs`);
   });
   KNOWN_WARNINGS.forEach(msg => {
     if (!warningList.includes(msg))
-      WARN(`Known warning '${msg}' no longer occurs`);
+      NOTIFY(`Known warning '${msg}' no longer occurs`);
   });
   console.log("==================================");
   console.log(`${errorCount} errors, ${warningCount} warnings`);
