@@ -278,8 +278,9 @@ const showCall = function(msg) {
   if (!isQuiet()) {
     if (msg.new) {
       msg.new = false;
-      if (callBuzzTimer) clearInterval(callBuzzTimer);
-      callBuzzTimer = setInterval(function() {
+      LOG("Setting call buzz interval")
+      callBuzzInterval = setInterval(function() {
+        LOG("Buzzing now");
         Bangle.buzz(500);
       }, 1000);
 
@@ -307,11 +308,12 @@ const next = function() {
   return true;
 };
 
-let callBuzzTimer = null;
+let callBuzzInterval = null;
 const stopCallBuzz = function() {
-  if (callBuzzTimer) {
-    clearInterval(callBuzzTimer);
-    callBuzzTimer = undefined;
+  if (callBuzzInterval) {
+    LOG("Stopping call buzz interval");
+    clearInterval(callBuzzInterval);
+    callBuzzInterval = undefined;
   }
 };
 
@@ -492,7 +494,7 @@ const backupPrependListener = function(event, handler){
 const origClearWatch = clearWatch;
 const backupClearWatch = function(w) {
   if (w)
-    backup.watches[w] = null;
+    backup.watches[w-1] = null;
   else
     backup.watches = [];
 };
@@ -519,9 +521,10 @@ const backupRemove = function(event, handler){
 
 const origRemoveAll = Bangle.removeAllListeners;
 const backupRemoveAll = function(event){
-  if (backup[event])
+  if (EVENTS.includes[event])
     backup[event] = undefined;
-  origRemoveAll.call(Bangle);
+  else
+    origRemoveAll.call(Bangle, event);
 };
 
 const restoreHandlers = function(){
@@ -533,9 +536,15 @@ const restoreHandlers = function(){
   for (const event of EVENTS){
     LOG("Restore", backup[event]);
     origRemoveAll.call(Bangle, event);
-    if (backup[event] && backup[event].length == 1)
-      backup[event] = backup[event][0];
-    Bangle["#on" + event]=backup[event];
+    //if (backup[event] && backup[event].length == 1)
+   //   backup[event] = backup[event][0];
+   // Bangle["#on" + event]=backup[event];
+    let handlers = backup[event];
+    if (handlers) {
+      if(typeof handlers == "function") handlers =[handlers];
+      for (const h of handlers) origOn.call(Bangle, event, h);
+    }
+
     backup[event] = undefined;
   }
 
@@ -624,15 +633,23 @@ const backupHandlers = function(){
 };
 
 const cleanup = function(){
+  LOG("Cleanup")
   if (lockListener) {
     Bangle.removeListener("lock", lockListener);
     lockListener = undefined;
+  }
+  stopCallBuzz();
+  if (clearingTimeout) {
+    clearTimeout(clearingTimeout);
+    clearingTimeout = undefined;
   }
   restoreHandlers();
 
   Bangle.setLCDOverlay(undefined, {id: "messagesoverlay"});
   ovr = undefined;
   overlayShowing = false;
+  callInProgress = false;
+  buzzing=false; 
 };
 
 const backup = {};
@@ -671,9 +688,10 @@ const updateClearingTimeout = ()=>{
   LOG("Remove clearing timeout", clearingTimeout);
   if (clearingTimeout) clearTimeout(clearingTimeout);
   if (Bangle.isLocked()){
-    LOG("Set new clearing timeout");
+    let clearingTimeoutValue = settings.autoclear * 1000;
+    LOG("Set new clearing timeout " + clearingTimeoutValue);
     clearingTimeout = setTimeout(()=>{
-      LOG("setNewTimeout");
+      LOG("Clearing timeout triggered");
       const event = eventQueue.pop();
       if (event)
         showMessage(event);
@@ -683,7 +701,7 @@ const updateClearingTimeout = ()=>{
       } else {
         cleanup();
       }
-    }, settings.autoclear * 1000);
+    }, clearingTimeoutValue);
   } else {
     clearingTimeout = undefined;
   }
