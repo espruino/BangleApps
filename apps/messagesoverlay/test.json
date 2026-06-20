@@ -51,6 +51,30 @@
       {"t":"assert", "js": "global[\"\\xff\"].watches.length", "is":"equal", "to": "2", "text": "One watch restored, first entry is always empty"}
     ]
   },{
+    "description": "Test call buzz interval is cleared on cleanup",
+    "steps" : [
+      {"t":"jsonfile", "name": "messagesoverlay.json", "json": {"autoclear": 600}, "text": "Force autoclear setting on"},
+      {"t":"cmd", "js": "Bangle.setLocked(true)", "text": "Lock the bangle to force autoclear to become active"},
+      {"t":"jsonfile", "name": "setting.json", "json": {"quiet": 0}, "text": "Disable quiet mode"},
+      {"t":"cmd", "js": "global.__TEST_NUMBER_OF_TIMERS__ = global[\"\\xff\"].timers.filter(t=>t&&t.intr).length", "text": "Store number of intervals"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('call', {src:'Caller',t:'add',id:'call',title:'title',body:'body'})", "text": "Show call"},
+      {"t":"assert", "js": "global[\"\\xff\"].timers.filter(t=>t&&t.intr).length > global.__TEST_NUMBER_OF_TIMERS__", "is":"truthy", "text": "Interval for buzz is active"},
+      {"t":"advanceTimers", "ms": "610000", "text": "Force overlay cleanup by autoclear"},
+      {"t":"assert", "js": "global[\"\\xff\"].timers.filter(t=>t&&t.intr).length", "is":"equal", "to":"global.__TEST_NUMBER_OF_TIMERS__", "text": "Interval for buzz has been removed"}
+    ]
+  },{
+    "description": "Test autoclear timer is cleared on overlay close",
+    "steps" : [
+      {"t":"jsonfile", "name": "messagesoverlay.json", "json": {"autoclear": 600}, "text": "Force autoclear setting on"},
+      {"t":"cmd", "js": "Bangle.setLocked(true)", "text": "Lock the bangle to force autoclear to become active"},
+      {"t":"jsonfile", "name": "setting.json", "json": {"quiet": 1}, "text": "Prevent buzz interval by means of quiet mode"},
+      {"t":"cmd", "js": "global.__TEST_NUMBER_OF_TIMERS__ = global[\"\\xff\"].timers.length", "text": "Store number of timers"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show message"},
+      {"t":"assert", "js": "global[\"\\xff\"].timers.length > global.__TEST_NUMBER_OF_TIMERS__", "is":"truthy", "text": "Timer for autoclear is active"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"assert", "js": "global[\"\\xff\"].timers.length", "is":"equal", "to":"global.__TEST_NUMBER_OF_TIMERS__", "text": "Timer for autoclear has been removed"}
+    ]
+  },{
     "description": "Test handling of multiple messages, closing each one",
     "steps" : [
       {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
