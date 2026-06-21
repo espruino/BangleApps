@@ -2,26 +2,6 @@ let lockListener;
 let ovr;
 let clearingTimeout;
 
-// Converts a espruino version to a semantiv versioning object
-const toSemantic = function (v){
-  return {
-    major: v.substring(0,v.indexOf("v")),
-    minor: v.substring(v.indexOf("v") + 1, v.includes(".") ? v.indexOf(".") : v.length),
-    patch: v.includes(".") ? v.substring(v.indexOf(".") + 1, v.length) : 0
-  };
-};
-
-const isNewer = function(espruinoVersion, baseVersion){
-  const s = toSemantic(espruinoVersion);
-  const b = toSemantic(baseVersion);
-
-  return s.major >= b.major &&
-    s.minor >= b.major &&
-    s.patch > b.patch;
-};
-
-let needsWorkaround;
-
 let settings = Object.assign(
   require('Storage').readJSON("messagesoverlay.default.json", true) || {},
   require('Storage').readJSON("messagesoverlay.json", true) || {}
@@ -351,10 +331,6 @@ const drawMessage = function(msg) {
   const getStringHeight = function(str){
     "jit";
     const metrics = ovr.stringMetrics(str);
-    if (needsWorkaround === undefined)
-      needsWorkaround = isNewer("2v21.13", process.version);
-    if (needsWorkaround && metrics.maxImageHeight > 16)
-      metrics.maxImageHeight = metrics.height;
     return Math.max(metrics.height, metrics.maxImageHeight);
   };
 
