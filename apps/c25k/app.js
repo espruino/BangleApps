@@ -1,5 +1,6 @@
-var week = 1; // Stock plan: programme week
-var day = 1; // Stock plan: programe day
+var settings = require('Storage').readJSON("c25k.json", true) || {week: 1, day: 1};
+var week = settings.week; // Stock plan: programme week
+var day = settings.day; // Stock plan: programe day
 var run = 1; // Custom plan: running time
 var walk = 0; // Custom plan: walking time
 var reps = 1; // Custom plan: repetition count
@@ -18,6 +19,18 @@ var pauseOrResumeWatch; // Watch for button presses to pause/resume countdown
 var defaultFontSize = (process.env.HWVERSION == 2) ? 7 : 9; // Default font size, Banglejs 2 has smaller
 var activityBgColour; // Background colour of current activity
 var currentActivity; // To store the current activity
+
+function incrementDay() {
+  if (day == 3) {
+    week = week < 8 ? week+1 : 1;
+    day = 1;
+  } else {
+    day += 1;
+  }
+  settings.week = week;
+  settings.day = day;
+  require('Storage').writeJSON("c25k.json", settings);
+}
 
 function outOfTime() {
   buzz();
@@ -226,6 +239,7 @@ var mainmenu = {
   "Custom run": function() { E.showMenu(custommenu); },
   "Start": function() {
     currentActivity = PLAN[week - 1][day -1];
+    incrementDay();
     startActivity();
   },
   "Exit": function() { load(); },
