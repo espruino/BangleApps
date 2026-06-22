@@ -411,7 +411,7 @@ function runTest(test, testState) {
   apploader.reset();
   var app = apploader.apps.find(a=>a.id==test.app);
   if (!app) ERROR(`App ${JSON.stringify(test.app)} not found`);
-  if (app.custom) ERROR(`App ${JSON.stringify(appId)} requires HTML customisation`);
+  if (app.custom && !test.allowCustomApp) ERROR(`App ${JSON.stringify(app.id)} requires HTML customisation`);
   
   return apploader.getAppFilesString(app).then(command => {
     let p = Promise.resolve();
