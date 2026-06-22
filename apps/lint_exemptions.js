@@ -810,12 +810,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/hebrew_calendar/app.js": {
-    "hash": "3077d581b9fcf73816e265e61105a0692356b89e8ed41a82be51960ae26fc8de",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/heartzone/app.js": {
     "hash": "0eab7e375ba25992b335a2589f80ce341b830cf0ae206c21eec664883f4e7de0",
     "rules": [
