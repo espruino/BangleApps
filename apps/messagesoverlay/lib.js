@@ -512,9 +512,7 @@ const restoreHandlers = function(){
   for (const event of EVENTS){
     LOG("Restore", backup[event]);
     origRemoveAll.call(Bangle, event);
-    //if (backup[event] && backup[event].length == 1)
-   //   backup[event] = backup[event][0];
-   // Bangle["#on" + event]=backup[event];
+    
     let handlers = backup[event];
     if (handlers) {
       if(typeof handlers == "function") handlers =[handlers];
