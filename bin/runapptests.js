@@ -423,13 +423,17 @@ function runTest(test, testState) {
         if (test.description)
           console.log(`"${test.description}`);
         console.log(`==============================`);
-        emu.factoryReset();
-        console.log("> SENDING APP "+test.app);
-        emu.tx(command);
-        if (verbose)
-          console.log("> SENT APP");
-        emu.tx("reset()\n");
-        console.log("> RESET");
+
+        emu.stopIdle();
+        return emu.init(EMU_OPTIONS).then(() => {
+          console.log("> SENDING APP " + test.app);
+          emu.tx(command);
+          if (verbose)
+            console.log("> SENT APP");
+          emu.tx("reset()\n");
+          console.log("> RESET");
+        });
+
 
       });
 
@@ -465,7 +469,7 @@ function runTest(test, testState) {
       emu.stopIdle();
     });
     return p;
-  });
+  }).catch(err => console.log("Error during getAppFilesString:" + err));
 }
 
 
@@ -503,7 +507,7 @@ let handleConsoleOutput = (d) => {
 
 let testState = [];
 
-emu.init({
+const EMU_OPTIONS = {
   EMULATOR : EMULATOR,
   DEVICEID : DEVICEID,
   rxCallback : (ch)=>{
@@ -512,69 +516,68 @@ emu.init({
   consoleOutputCallback: (d)=>{
     handleConsoleOutput(d);
   }
-}).then(function() {
-  // Emulator is now loaded
-  console.log("Loading tests");
-  let p = Promise.resolve();
-  let apps = apploader.apps;
+};
 
-  apps.push(DEMOAPP);
+console.log("Loading tests");
+let p = Promise.resolve();
+let apps = apploader.apps;
 
-  if (process.argv.includes("--id")) {
-    let f = process.argv[process.argv.indexOf("--id") + 1];
-    apps = apps.filter(e=>e.id==f);
-    if (apps.length == 0){
-      console.log("No apps left after filtering for " + f);
-      process.exit(255);
-    }
+apps.push(DEMOAPP);
+
+if (process.argv.includes("--id")) {
+  let f = process.argv[process.argv.indexOf("--id") + 1];
+  apps = apps.filter(e=>e.id==f);
+  if (apps.length == 0){
+    console.log("No apps left after filtering for " + f);
+    process.exit(255);
+  }
+}
+
+apps.forEach(app => {
+  let test = DEMOTEST;
+  if (app.id != DEMOAPP.id){
+    let testFile = APP_DIR+"/"+app.id+"/test.json";
+    if (!require("fs").existsSync(testFile)) return;
+    test = JSON.parse(require("fs").readFileSync(testFile).toString());
+    test.app = app.id;
   }
 
-  apps.forEach(app => {
-    let test = DEMOTEST;
-    if (app.id != DEMOAPP.id){
-      let testFile = APP_DIR+"/"+app.id+"/test.json";
-      if (!require("fs").existsSync(testFile)) return;
-      test = JSON.parse(require("fs").readFileSync(testFile).toString());
-      test.app = app.id;
-    }
-    p = p.then(()=>{
-      const testName = test.app + (test.description ? ` - ${test.description}` : '');
-      return withTimeout(runTest(test, testState), TEST_TIMEOUT_MS, testName)
-        .catch(err => {
-          if (err.isTimeout) {
-            console.log("> TIMEOUT:", err.message);
-            // Clean up emulator state after timeout
-            try {
-              emu.stopIdle();
-            } catch (e) {
-              console.error("Failed to stop emulator after timeout:", e.message);
-            }
-            testState.push({
-              app: test.app,
-              number: -1,
-              result: "TIMEOUT",
-              description: "Test timed out",
-              error: err.message
-            });
-          } else {
-            throw err;
+  p = p.then(()=>{
+    const testName = test.app + (test.description ? ` - ${test.description}` : '');
+    return withTimeout(runTest(test, testState), TEST_TIMEOUT_MS, testName)
+      .catch(err => {
+        if (err.isTimeout) {
+          console.log("> TIMEOUT:", err.message);
+          // Clean up emulator state after timeout
+          try {
+            emu.stopIdle();
+          } catch (e) {
+            console.error("Failed to stop emulator after timeout:", e.message);
           }
-        });
+          testState.push({
+            app: test.app,
+            number: -1,
+            result: "TIMEOUT",
+            description: "Test timed out",
+            error: err.message
+          });
+        } else {
+          throw err;
+        }
+      });
     });
-  });
-  p.finally(()=>{
-    console.log("\n\n");
-    console.log("Overall results:");
-    console.table(testState);
+});
+p.finally(()=>{
+  console.log("\n\n");
+  console.log("Overall results:");
+  console.table(testState);
 
-    // Exit with appropriate code - count failures and timeouts
-    const exitCode = testState.reduce((a, c) => {
-      return a || ((c.result === "SUCCESS") ? 0 : 1);
-    }, 0);
+  // Exit with appropriate code - count failures and timeouts
+  const exitCode = testState.reduce((a, c) => {
+    return a || ((c.result === "SUCCESS") ? 0 : 1);
+  }, 0);
 
-    process.exit(exitCode);
-  });
-  return p;
+  process.exit(exitCode);
 });
 
 /*
