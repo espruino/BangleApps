@@ -185,4 +185,3 @@ exports.sendHealthData=sendHealthData;
 exports.sendRawHealthData=sendRawHealthData;
 exports.receive=messageReceived;
 
-

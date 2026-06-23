@@ -3,7 +3,7 @@
   "name": "iOS Integration",
   "version": "0.25",
   "author": "gfwilliams",
-  "description": "Show and dismiss iOS notifications, and pull music, weather, location, and agenda from iOS devices",
+  "description": "Show and dismiss iOS notifications, and pull music, weather, location, and agenda from iOS devices. For more features and deeper integration, use the BlueWatch app.",
   "icon": "app.png",
   "tags": "tool,system,ios,apple,messages,notifications",
   "dependencies": {"messages":"module"},
