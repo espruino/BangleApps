@@ -45,8 +45,9 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/espruino/EspruinoWebIDE ../EspruinoWebIDE
           cd ../EspruinoWebIDE
-          git fetch --depth 1 origin a62beceec317f6744e58aaa2d1a19447d9458035
-          git checkout a62beceec317f6744e58aaa2d1a19447d9458035
+          # This is pinned to ensure a stable environment for the tests
+          git fetch --depth 1 origin fb9f890377f45851577c658bcfc8b60e973a2d6a
+          git checkout fb9f890377f45851577c658bcfc8b60e973a2d6a
 
       - name: Detect changed apps
         id: detect-apps
