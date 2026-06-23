@@ -4,6 +4,7 @@
   "shortName":"tinycmc",
   "icon": "icon.png",
   "version": "0.02",
+  "author": "Espruino",
   "description": "TinyCMC is a bangle.js Coinmarketcap API client",
   "type": "app",
   "tags": "tools",

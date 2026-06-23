@@ -2,6 +2,7 @@
   "id": "sweepclock",
   "name": "Sweep Clock",
   "version": "0.04",
+  "author": "Espruino",
   "description": "Smooth sweep secondhand with single hour numeral. Use button 1 to toggle the numeral font, button 3 to change the colour theme and button 4 to change the date placement",
   "icon": "sweepclock.png",
   "type": "clock",

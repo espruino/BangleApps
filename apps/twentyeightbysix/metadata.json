@@ -3,6 +3,7 @@
   "shortName": "28x6",
   "icon": "app.png",
   "version":"0.04",
+  "author": "Espruino",
   "description": "A 28 Hour, 6 Day Week Clock. Lines up with a 24 hour, 7 Day Week Clock every Monday.",
   "tags": "clock",
   "storage": [

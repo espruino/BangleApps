@@ -2,6 +2,7 @@
     "id": "widtemp",
     "name": "Temperature widget",
     "version": "0.02",
+    "author": "Espruino",
     "description": "A temperature widget, showing the current internal temperature",
     "readme": "README.md",
     "icon": "widtemp.png",

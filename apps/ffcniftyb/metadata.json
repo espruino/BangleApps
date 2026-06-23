@@ -2,6 +2,7 @@
   "id": "ffcniftyb",
   "name": "Nifty-B Clock",
   "version": "0.04",
+  "author": "Espruino",
   "description": "A nifty clock (series B) with time, date and colour configuration",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

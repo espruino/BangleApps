@@ -2,6 +2,7 @@
   "id": "blockclock",
   "name": "Block Clock",
   "version": "0.1",
+  "author": "Espruino",
   "description": "This is a simple clock using minimalist 2x2 pixel numerical digits",
   "icon": "app.png",
   "type": "clock",

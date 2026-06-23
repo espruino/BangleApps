@@ -3,6 +3,7 @@
   "name": "Drink Counter",
   "shortName": "Drink Counter",
   "version": "0.26",
+  "author": "Espruino",
   "description": "Counts drinks you had for science. Calculates blood alcohol content (BAC)",
   "allow_emulator":true,
   "icon": "drinkcounter.png",

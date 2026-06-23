@@ -2,6 +2,7 @@
   "id": "pomodo",
   "name": "Pomodoro",
   "version": "0.02",
+  "author": "Espruino",
   "description": "A simple pomodoro timer.",
   "icon": "pomodoro.png",
   "type": "app",

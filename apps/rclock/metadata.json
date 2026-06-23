@@ -3,6 +3,7 @@
   "name": "Round clock with seconds,  minutes and date",
   "shortName": "Round Clock",
   "version": "0.08",
+  "author": "Espruino",
   "description": "Designed round clock with ticks for minutes and seconds and heart rate indication",
   "icon": "app.png",
   "type": "clock",

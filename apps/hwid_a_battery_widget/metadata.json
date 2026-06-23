@@ -4,6 +4,7 @@
   "shortName":"H Battery Widget",
   "icon": "widget.png",
   "version":"0.11",
+  "author": "Espruino",
   "type": "widget",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",

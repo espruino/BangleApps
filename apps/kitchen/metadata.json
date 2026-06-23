@@ -2,6 +2,7 @@
   "id": "kitchen",
   "name": "Kitchen Combo",
   "version": "0.15",
+  "author": "Espruino",
   "description": "Combination of the Stepo, Walkersclock, Arrow and Waypointer apps into a multiclock format. 'Everything but the kitchen sink'",
   "icon": "kitchen.png",
   "type": "clock",

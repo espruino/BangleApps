@@ -4,6 +4,7 @@
     "icon": "seiko-5actus.png",
     "screenshots": [{"url":"screenshot.png"}],
     "version": "0.04",
+    "author": "Espruino",
     "description": "A watch designed after then Seiko 5actus from the 1970's",
     "tags": "clock",
     "type": "clock",

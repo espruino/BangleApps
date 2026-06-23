@@ -3,6 +3,7 @@
   "name": "GPS Setup",
   "shortName": "GPS Setup",
   "version": "0.04",
+  "author": "Espruino",
   "description": "Configure the GPS power options and store them in the GPS nvram",
   "icon": "gpssetup.png",
   "tags": "gps,tools,outdoors",

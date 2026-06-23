@@ -2,6 +2,7 @@
   "id": "largeclock",
   "name": "Large Clock",
   "version": "0.11",
+  "author": "Espruino",
   "description": "A readable and informational digital watch, with date, seconds and moon phase",
   "icon": "largeclock.png",
   "type": "clock",

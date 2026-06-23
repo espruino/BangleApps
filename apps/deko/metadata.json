@@ -2,6 +2,7 @@
   "id": "deko",
   "name": "Deko Clock",
   "version": "0.02",
+  "author": "Espruino",
   "description": "Clock with Art Deko font",
   "readme": "README.md",
   "icon": "app.png",
