@@ -36,7 +36,8 @@ const DEMOTEST = {
     "id": "arbitraryid",
     "steps" : [
       {"t":"cmd", "js": "global.testfunction = ()=>{}", "text": "Runs some code on the device"},
-      {"t":"wrap", "fn": "global.testfunction", "id": "testfunc", text:"Wraps a function to count calls and store the last set of arguments on the device"}
+      {"t":"wrap", "fn": "global.testfunction", "id": "testfunc", text:"Wraps a function to count calls and store the last set of arguments on the device"},
+      {"t":"jsonfile", "name": "filename.json", "json": {"key":"value"}, text:"Write a JSON object into a file"}
     ]
   }],
   "tests" : [{
@@ -154,12 +155,12 @@ function assertValue(step){
   console.log("> ASSERT " + `\`${step.js}\``, "IS", step.is.toUpperCase() + (step.to !== undefined ? " TO " + `\`${step.to}\`` : ""), step.text ? "- " + step.text : "");
   let isOK;
   switch (step.is.toLowerCase()){
-    case "truthy": isOK = getValue(`!!${step.js}`); break;
-    case "falsy": isOK = getValue(`!${step.js}`); break;
-    case "true": isOK = getValue(`${step.js} === true`); break;
-    case "false": isOK = getValue(`${step.js} === false`); break;
-    case "equal": isOK = getValue(`${step.js} == ${step.to}`); break;
-    case "function": isOK = getValue(`typeof ${step.js} === "function"`); break;
+    case "truthy": isOK = getValue(`!!(${step.js})`); break;
+    case "falsy": isOK = getValue(`!(${step.js})`); break;
+    case "true": isOK = getValue(`(${step.js}) === true`); break;
+    case "false": isOK = getValue(`(${step.js}) === false`); break;
+    case "equal": isOK = getValue(`(${step.js}) == ${step.to}`); break;
+    case "function": isOK = getValue(`typeof (${step.js}) === "function"`); break;
   }
 
   if (isOK){
@@ -247,6 +248,12 @@ function runStep(step, subtest, test, state){
       p = p.then(() => {
         console.log(`> SENDING JS \`${step.js}\``, step.text ? "- " + step.text : "");
         emu.tx(`${step.js}\n`);
+      });
+      break;
+    case "jsonfile" :
+      p = p.then(() => {
+        console.log(`> SENDING JSON FILE \`${step.name}\``, step.text ? "- " + step.text : "");
+        emu.tx(`require('Storage').writeJSON('${step.name}', ${JSON.stringify(step.json)})\n`);
       });
       break;
     case "wrap" :
@@ -456,13 +463,14 @@ function runTest(test, testState) {
         resetUncaughtError();
 
         console.log("> RESULT -",  (state.ok ? "OK": "FAIL") , "- " + test.app + (subtest.description ? (" - " + subtest.description) : ""));
-        testState.push({
+        let result = {
           app: test.app,
           number: subtestIdx,
           result: state.ok ? "SUCCESS": "FAILURE",
           description: subtest.description,
-          error: uncaughtError || null
-        });
+        };
+        if (uncaughtError) result.error = uncaughtError;
+        testState.push(result);
       });
     });
     p = p.then(()=>{
@@ -542,41 +550,51 @@ apps.forEach(app => {
     test.app = app.id;
   }
 
-  p = p.then(()=>{
-    const testName = test.app + (test.description ? ` - ${test.description}` : '');
-    return withTimeout(runTest(test, testState), TEST_TIMEOUT_MS, testName)
-      .catch(err => {
-        if (err.isTimeout) {
-          console.log("> TIMEOUT:", err.message);
-          // Clean up emulator state after timeout
-          try {
-            emu.stopIdle();
-          } catch (e) {
-            console.error("Failed to stop emulator after timeout:", e.message);
+  if (process.argv.includes("--testindex")) {
+    let f = process.argv[process.argv.indexOf("--testindex") + 1];
+    if (test.tests.length - 1 < f){
+      console.log("No test with index " + f);
+      test.tests = [];
+    } else {
+      test.tests = [ test.tests[f] ];
+    }
+  }
+
+  if (test.tests.length > 0) {
+    p = p.then(()=>{
+      const testName = test.app + (test.description ? ` - ${test.description}` : '');
+      return withTimeout(runTest(test, testState), TEST_TIMEOUT_MS, testName)
+        .catch(err => {
+          if (err.isTimeout) {
+            console.log("> TIMEOUT:", err.message);
+            // Clean up emulator state after timeout
+            try {
+              emu.stopIdle();
+            } catch (e) {
+              console.error("Failed to stop emulator after timeout:", e.message);
+            }
+            testState.push({
+              app: test.app,
+              number: -1,
+              result: "TIMEOUT",
+              description: "Test timed out",
+              error: err.message
+            });
+          } else {
+            throw err;
           }
-          testState.push({
-            app: test.app,
-            number: -1,
-            result: "TIMEOUT",
-            description: "Test timed out",
-            error: err.message
-          });
-        } else {
-          throw err;
-        }
+        });
       });
-    });
-});
+    }
+  });
 p.finally(()=>{
   console.log("\n\n");
   console.log("Overall results:");
   console.table(testState);
-
   // Exit with appropriate code - count failures and timeouts
   const exitCode = testState.reduce((a, c) => {
     return a || ((c.result === "SUCCESS") ? 0 : 1);
   }, 0);
-
   process.exit(exitCode);
 });
 

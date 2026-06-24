@@ -2,26 +2,6 @@ let lockListener;
 let ovr;
 let clearingTimeout;
 
-// Converts a espruino version to a semantiv versioning object
-const toSemantic = function (v){
-  return {
-    major: v.substring(0,v.indexOf("v")),
-    minor: v.substring(v.indexOf("v") + 1, v.includes(".") ? v.indexOf(".") : v.length),
-    patch: v.includes(".") ? v.substring(v.indexOf(".") + 1, v.length) : 0
-  };
-};
-
-const isNewer = function(espruinoVersion, baseVersion){
-  const s = toSemantic(espruinoVersion);
-  const b = toSemantic(baseVersion);
-
-  return s.major >= b.major &&
-    s.minor >= b.major &&
-    s.patch > b.patch;
-};
-
-let needsWorkaround;
-
 let settings = Object.assign(
   require('Storage').readJSON("messagesoverlay.default.json", true) || {},
   require('Storage').readJSON("messagesoverlay.json", true) || {}
@@ -246,7 +226,7 @@ const showMessage = function(msg) {
     msg.new = false;
     if (!buzzing){
       buzzing = true;
-      Bangle.buzz().then(()=>{setTimeout(()=>{buzzing = false;},2000);});
+      Bangle.buzz().then(()=>{buzzing = false;});
     }
     Bangle.setLCDPower(1);
   }
@@ -278,8 +258,9 @@ const showCall = function(msg) {
   if (!isQuiet()) {
     if (msg.new) {
       msg.new = false;
-      if (callBuzzTimer) clearInterval(callBuzzTimer);
-      callBuzzTimer = setInterval(function() {
+      LOG("Setting call buzz interval")
+      callBuzzInterval = setInterval(function() {
+        LOG("Buzzing now");
         Bangle.buzz(500);
       }, 1000);
 
@@ -307,11 +288,12 @@ const next = function() {
   return true;
 };
 
-let callBuzzTimer = null;
+let callBuzzInterval = null;
 const stopCallBuzz = function() {
-  if (callBuzzTimer) {
-    clearInterval(callBuzzTimer);
-    callBuzzTimer = undefined;
+  if (callBuzzInterval) {
+    LOG("Stopping call buzz interval");
+    clearInterval(callBuzzInterval);
+    callBuzzInterval = undefined;
   }
 };
 
@@ -349,10 +331,6 @@ const drawMessage = function(msg) {
   const getStringHeight = function(str){
     "jit";
     const metrics = ovr.stringMetrics(str);
-    if (needsWorkaround === undefined)
-      needsWorkaround = isNewer("2v21.13", process.version);
-    if (needsWorkaround && metrics.maxImageHeight > 16)
-      metrics.maxImageHeight = metrics.height;
     return Math.max(metrics.height, metrics.maxImageHeight);
   };
 
@@ -492,7 +470,7 @@ const backupPrependListener = function(event, handler){
 const origClearWatch = clearWatch;
 const backupClearWatch = function(w) {
   if (w)
-    backup.watches[w] = null;
+    backup.watches[w-1] = null;
   else
     backup.watches = [];
 };
@@ -519,9 +497,10 @@ const backupRemove = function(event, handler){
 
 const origRemoveAll = Bangle.removeAllListeners;
 const backupRemoveAll = function(event){
-  if (backup[event])
+  if (EVENTS.includes[event])
     backup[event] = undefined;
-  origRemoveAll.call(Bangle);
+  else
+    origRemoveAll.call(Bangle, event);
 };
 
 const restoreHandlers = function(){
@@ -533,9 +512,13 @@ const restoreHandlers = function(){
   for (const event of EVENTS){
     LOG("Restore", backup[event]);
     origRemoveAll.call(Bangle, event);
-    if (backup[event] && backup[event].length == 1)
-      backup[event] = backup[event][0];
-    Bangle["#on" + event]=backup[event];
+    
+    let handlers = backup[event];
+    if (handlers) {
+      if(typeof handlers == "function") handlers =[handlers];
+      for (const h of handlers) origOn.call(Bangle, event, h);
+    }
+
     backup[event] = undefined;
   }
 
@@ -624,15 +607,23 @@ const backupHandlers = function(){
 };
 
 const cleanup = function(){
+  LOG("Cleanup")
   if (lockListener) {
     Bangle.removeListener("lock", lockListener);
     lockListener = undefined;
+  }
+  stopCallBuzz();
+  if (clearingTimeout) {
+    clearTimeout(clearingTimeout);
+    clearingTimeout = undefined;
   }
   restoreHandlers();
 
   Bangle.setLCDOverlay(undefined, {id: "messagesoverlay"});
   ovr = undefined;
   overlayShowing = false;
+  callInProgress = false;
+  buzzing=false; 
 };
 
 const backup = {};
@@ -671,9 +662,10 @@ const updateClearingTimeout = ()=>{
   LOG("Remove clearing timeout", clearingTimeout);
   if (clearingTimeout) clearTimeout(clearingTimeout);
   if (Bangle.isLocked()){
-    LOG("Set new clearing timeout");
+    let clearingTimeoutValue = settings.autoclear * 1000;
+    LOG("Set new clearing timeout " + clearingTimeoutValue);
     clearingTimeout = setTimeout(()=>{
-      LOG("setNewTimeout");
+      LOG("Clearing timeout triggered");
       const event = eventQueue.pop();
       if (event)
         showMessage(event);
@@ -683,7 +675,7 @@ const updateClearingTimeout = ()=>{
       } else {
         cleanup();
       }
-    }, settings.autoclear * 1000);
+    }, clearingTimeoutValue);
   } else {
     clearingTimeout = undefined;
   }
