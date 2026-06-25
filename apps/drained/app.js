@@ -120,12 +120,13 @@ Bangle.on("charging", function (charging) {
         drainedInterval = setInterval(checkCharge, interval * 60 * 1000);
     draw();
 });
+drainedInterval = setInterval(checkCharge, interval * 60 * 1000);
 if (!keepStartup) {
-    var storage = require("Storage");
+    var storage_1 = require("Storage");
     for (var _i = 0, exceptions_1 = exceptions; _i < exceptions_1.length; _i++) {
         var boot = exceptions_1[_i];
         try {
-            var js = storage.read("".concat(boot, ".boot.js"));
+            var js = storage_1.read("".concat(boot, ".boot.js"));
             if (js)
                 eval(js);
         }
