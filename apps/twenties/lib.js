@@ -7,8 +7,8 @@
 
   const getTimeAtNextBuzz = () => {
     let workStart = new Date().setHours(8, 0, 0, 0);
-    let workdEnd = new Date().setHours(18, 0, 20, 0);
-    const isWorkTime = (d) => d.getDay() % 6 && d >= workStart && d < workdEnd;
+    let workEnd = new Date().setHours(18, 0, 20, 0);
+    const isWorkTime = (d) => d.getDay() % 6 && d >= workStart && d < workEnd;
     const isLookAwayTime = (d) =>
       d.getMinutes() % 20 === 0 && d.getSeconds() < 20;
     const NOW = new Date();
