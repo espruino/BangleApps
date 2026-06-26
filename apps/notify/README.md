@@ -15,12 +15,16 @@ options = {
   on : bool, // turn screen on, default true (But not if Quiet Mode is enabled)
   size : int, // height of notification, default is fit to height (80 max)  
   title : string, // optional title
-  id // optional notification ID, used with hide()
+  id : string, // optional notification ID, used with hide()
   src : string, // optional source name
   body : string, // optional body text
   icon : string, // optional icon (image string)
-  render function(area) {} // function callback to render in area{x,y,w,h}
+  render : function(opts), // function callback to render in area{x,y,w,h}
+  bgColor : int/string, // background color (optional)
+  titleBgColor : int/string, // optional background color for title (default black)
+  onHide : function() // callback when notification is hidden
 };
+
 // eg... show notification
 require("notify").show({title:"Test", body:"Hello"});
 // or display lots of text, with a phone icon

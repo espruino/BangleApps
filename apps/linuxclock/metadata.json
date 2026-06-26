@@ -2,6 +2,7 @@
   "id": "linuxclock",
   "name": "Linux Clock",
   "version": "0.06",
+  "author": "peerdavid",
   "description": "A Linux inspired clock.",
   "readme": "README.md",
   "icon": "app.png",

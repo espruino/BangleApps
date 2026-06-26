@@ -2,6 +2,7 @@
   "id": "gesture",
   "name": "Gesture Test",
   "version": "0.01",
+  "author": "ra100",
   "description": "BETA! Uploads a basic Tensorflow Gesture model, and then outputs each gesture as a message",
   "icon": "gesture.png",
   "type": "app",

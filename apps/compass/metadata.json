@@ -2,6 +2,7 @@
   "id": "compass",
   "name": "Compass",
   "version": "0.09",
+  "author": "ra100",
   "description": "Simple compass that points North",
   "icon": "compass.png",
   "screenshots": [{"url":"screenshot_compass.png"}],

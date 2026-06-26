@@ -3,6 +3,7 @@
   "name": "Where in the World?",
   "shortName": "Where World",
   "version": "0.01",
+  "author": "SebTee",
   "description": "Shows your current location on the world map",
   "icon": "app.png",
   "tags": "gps",

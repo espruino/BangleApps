@@ -3,6 +3,7 @@
   "name": "WebAI Summit app",
   "shortName": "WebAI",
   "version": "0.02",
+  "author": "gfwilliams",
   "description": "App/config preinstalled onto watches for the Web AI Summit 2025",
   "icon": "app.png",
   "type": "clock",

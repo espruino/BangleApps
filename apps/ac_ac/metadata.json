@@ -2,6 +2,7 @@
   "name": "A Configurable Analog Clock",
   "shortName":"Configurable Clock",
   "version":"1.00",
+  "author": "rozek",
   "description": "AC-AC, a highly customizable analog clock with several clock faces, hands and complications to choose from",
   "icon": "app-icon.png",
   "type": "clock",

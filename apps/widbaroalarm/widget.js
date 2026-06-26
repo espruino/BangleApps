@@ -253,12 +253,10 @@ function turnOff() {
 }
 
 function draw() {
-  g.reset();
-
   if (this.x == undefined || this.y != 0)
     return; // widget not yet there
 
-  g.clearRect(this.x, this.y, this.x + this.width - 1, this.y + 23);
+  g.reset("widget").clearRect(this.x, this.y, this.x + this.width - 1, this.y + 23);
 
   if (setting("show")) {
     g.setFont("6x8", 1).setFontAlign(1, 0);

@@ -3,6 +3,7 @@
   "name": "SensiBLE",
   "shortName": "SensiBLE",
   "version": "0.07",
+  "author": "jeffyactive",
   "description": "Collect, display and advertise real-time sensor data.",
   "icon": "sensible.png",
   "screenshots": [

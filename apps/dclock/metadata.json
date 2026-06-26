@@ -2,6 +2,7 @@
   "id": "dclock",
   "name": "Dev Clock",
   "version": "0.10",
+  "author": "oli-sanders",
   "description": "A Digital Clock including timestamp (tst), beats(@), days in current month (dm) and days since new moon (l)",
   "icon": "clock-dev.png",
   "type": "clock",

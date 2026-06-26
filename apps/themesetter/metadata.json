@@ -2,6 +2,7 @@
   "name": "Theme Setter",
   "shortName":"Theme Setter",
   "version": "0.05",
+  "author": "rozek",
   "description": "a comfortable way to configure theme colors",
   "icon": "app-icon.png",
   "type": "app",

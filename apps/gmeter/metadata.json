@@ -3,6 +3,7 @@
   "name": "G-Meter",
   "shortName": "G-Meter",
   "version": "0.01",
+  "author": "gfwilliams",
   "description": "Simple G-Meter",
   "icon": "app.png",
   "tags": "",

@@ -5,6 +5,7 @@
   "icon": "app.png",
   "screenshots" : [ { "url":"screenshot.png" } ],
   "version":"0.01",
+  "author": "clicktech-ian",
   "description": "For those lazy days when the exact time doesn't matter. Small square shows the hour, large square shows the fifteen minute period, and centre square shows the battery level.",
   "type": "clock",
   "tags": "clock",

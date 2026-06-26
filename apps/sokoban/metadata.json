@@ -3,6 +3,7 @@
   "name": "Sokoban",
   "shortName": "Sokoban",
   "version": "0.03",
+  "author": "wagnerf42",
   "description": "Classic Sokoban game (microban levels).",
   "allow_emulator":false,
   "icon": "sokoban.png",

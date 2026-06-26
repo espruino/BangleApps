@@ -3,6 +3,7 @@
   "name": "BLE Cycling Speed Sensor Library",
   "shortName": "BLE CSC",
   "version": "0.05",
+  "author": "gfwilliams",
   "description": "Module to get live values from a BLE Cycle Speed (CSC) sensor. Includes recorder and clockinfo plugins",
   "icon": "icons8-cycling-48.png",
   "tags": "outdoors,exercise,ble,bluetooth,clkinfo",

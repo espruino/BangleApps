@@ -5,6 +5,7 @@
   "readme":"README.md",
   "icon": "app.png",
   "version":"0.06",
+  "author": "ki9us",
   "description": "A blinds timer for use with Texas Hold 'Em",
   "tags": "poker",
   "supports": ["BANGLEJS2"],

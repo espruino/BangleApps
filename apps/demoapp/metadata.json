@@ -2,6 +2,7 @@
   "id": "demoapp",
   "name": "Demo Loop",
   "version": "0.02",
+  "author": "gfwilliams",
   "description": "Simple demo app - displays Bangle.js, JS logo, graphics, and Bangle.js information",
   "icon": "app.png",
   "type": "app",

@@ -4,6 +4,7 @@
   "shortName": "Sunrise",
   "version": "0.08",
   "type": "clock",
+  "author": "radare",
   "description": "Show sunrise and sunset times",
   "icon": "app.png",
   "allow_emulator": true,

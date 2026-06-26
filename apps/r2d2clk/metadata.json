@@ -2,6 +2,7 @@
   "name": "R2D2 Clock",
   "shortName":"R2D2 Clock",
   "version":"0.01",
+  "author": "nh-99",
   "description": "A clock with R2D2's shiny metal face on it. :)",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

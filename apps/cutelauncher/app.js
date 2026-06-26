@@ -8,30 +8,8 @@
         s.readJSON('cutelauncher.settings.json', true) || {}
     );
 
-    // Borrowed caching from Icon Launcher, code by halemmerich.
-    let launchCache = s.readJSON('launch.cache.json', true) || {};
-    let launchHash = s.hash(/\.info/) + JSON.stringify(settings).length;
-    if (launchCache.hash != launchHash) {
-        launchCache = {
-            hash: launchHash,
-            apps: s
-                .list(/\.info$/)
-                .map((app) => {
-                    var a = s.readJSON(app, 1);
-                    return a && { name: a.name, type: a.type, icon: a.icon, sortorder: a.sortorder, src: a.src };
-                })
-                .filter((app) => app && (app.type == 'app' || (app.type == 'clock' && settings.showClocks) || !app.type))
-                .sort((a, b) => {
-                    var n = (0 | a.sortorder) - (0 | b.sortorder);
-                    if (n) return n; // do sortorder first
-                    if (a.name < b.name) return -1;
-                    if (a.name > b.name) return 1;
-                    return 0;
-                }),
-        };
-        s.writeJSON('launch.cache.json', launchCache);
-    }
-    let apps = launchCache.apps;
+    let launchCache = require("launch_utils").cache(settings);
+    let apps = launchCache.apps; // get a list of apps to show
     apps.forEach((app) => {
         if (app.icon) app.icon = s.read(app.icon);
         else app.icon = s.read('placeholder.img');
@@ -181,7 +159,7 @@
             }
             let textY = rect.y + iconPadding + iconSize + 15;
             g.drawString(text, rectX + rectSize / 2, textY);
-            if (idx != prev_idx && !second_call && settings.scrollbar) {  
+            if (idx != prev_idx && !second_call && settings.scrollbar) {
                 updateScrollIndicator(idx);
                 if (prev_idx == -1) second_call = true;
                 prev_idx = idx;
@@ -189,7 +167,7 @@
         },
         select: (idx) => {
             // Launch the selected app
-            load(apps[idx].src);
+            require("launch_utils").loadApp(apps[idx]);
         },
         remove: () => {
             // Remove button handler

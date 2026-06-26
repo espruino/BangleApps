@@ -32,23 +32,7 @@
       g.drawRect(x+16,y+16,x+32,y+32);
   g.flip();
 
-  let launchCache = s.readJSON("iconlaunch.cache.json", true)||{};
-  let launchHash = s.hash(/\.info/);
-  if (launchCache.hash!=launchHash) {
-    launchCache = {
-      hash : launchHash,
-      apps : s.list(/\.info$/)
-      .map(app=>{let a=s.readJSON(app,1);return a&&{name:a.name,type:a.type,icon:a.icon,sortorder:a.sortorder,src:a.src};})
-      .filter(app=>app && (app.type=="app" || (app.type=="clock" && settings.showClocks) || !app.type))
-      .sort((a,b)=>{
-        let n=(0|a.sortorder)-(0|b.sortorder);
-        if (n) return n; // do sortorder first
-        if (a.name<b.name) return -1;
-        if (a.name>b.name) return 1;
-        return 0;
-      }) };
-    s.writeJSON("iconlaunch.cache.json", launchCache);
-  }
+  let launchCache = require("launch_utils").cache(settings); // get a list of apps to show
 
   // cache items
   const ICON_MISSING = s.read("iconlaunch.na.img");
@@ -115,18 +99,10 @@
     const iconN = E.clip(Math.floor((e.x - R.x) / itemSize), 0, appsN - 1);
     const appId = id * appsN + iconN;
     if( settings.direct && launchCache.apps[appId])
-    {
-      load(launchCache.apps[appId].src);
-      return;
-    }
-    if (appId == selectedItem && launchCache.apps[appId]) {
-      const app = launchCache.apps[appId];
-      if (!app.src || s.read(app.src) === undefined) {
-        E.showMessage( /*LANG*/ "App Source\nNot found");
-      } else {
-        load(app.src);
-      }
-    }
+      return require("launch_utils").loadApp(launchCache.apps[appId]);
+    if (appId == selectedItem && launchCache.apps[appId])
+      return require("launch_utils").loadApp(launchCache.apps[appId]);
+
     selectedItem = appId;
     if (scroller) scroller.draw();
   };

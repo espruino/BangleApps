@@ -1,22 +1,22 @@
 {
   "app" : "messagesoverlay",
   "tests" : [{
-    "description": "Test handler backgrounding", 
+    "description": "Test handler backgrounding",
     "steps" : [
       {"t":"upload", "file": "modules/widget_utils.js", "as": "widget_utils"},
       {"t":"cmd", "js": "Bangle.loadWidgets()", "text": "Load widgets"},
       {"t":"assertArray", "js": "Bangle['#onswipe']", "is":"undefinedOrEmpty", "text": "No swipe handlers"},
       {"t":"cmd", "js": "require('widget_utils').swipeOn(0)", "text": "Store widgets in overlay"},
-      {"t":"assert", "js": "Bangle['#onswipe']", "is":"function", "text": "One swipe handler for widgets"},
+      {"t":"assert", "js": "require('widget_utils').swipeHandler", "is":"function", "text": "Swipe handler registered on widget_utils"},
       {"t":"emit", "event":"swipe", "paramsArray": [ 0, 1 ], "text": "Show widgets"},
-      {"t":"assert", "js": "Bangle['#onswipe']", "is":"function", "text": "One swipe handler for widgets"},
+      {"t":"assert", "js": "require('widget_utils').swipeHandler", "is":"function", "text": "Swipe handler still registered"},
       {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
       {"t":"assertArray", "js": "Bangle['#onswipe']", "is":"undefinedOrEmpty", "text": "No swipe handlers while message overlay is on screen"},
       {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
-      {"t":"assert", "js": "Bangle['#onswipe']", "is":"function", "text": "One swipe handler restored"}
+      {"t":"assert", "js": "require('widget_utils').swipeHandler", "is":"function", "text": "Swipe handler restored on widget_utils"}
     ]
   },{
-    "description": "Test swipe handler backgrounding with fastloading (setUI)", 
+    "description": "Test swipe handler backgrounding with fastloading (setUI)",
     "steps" : [
       {"t":"cmd", "js": "Bangle.on('swipe',print)", "text": "Create listener for swipes"},
       {"t":"cmd", "js": "Bangle.setUI({mode: 'clock',remove: ()=>{}})", "text": "Init UI for clock"},
@@ -25,16 +25,195 @@
       {"t":"cmd", "js": "Bangle.setUI()", "text": "Trigger removal of UI"},
       {"t":"assertArray", "js": "Bangle['#onswipe']", "is":"undefinedOrEmpty", "text": "Still no swipe handlers"},
       {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
-      {"t":"assert", "js": "Bangle['#onswipe']", "is":"function", "text": "One swipe handler restored"}
+      {"t":"assert", "js": "Bangle['#onswipe']", "is":"truthy", "text": "Swipe handler restored"}
     ]
   },{
-    "description": "Test watch backgrounding", 
+    "description": "Test overlay update does not trigger premature cleanup",
+    "steps" : [
+      {"t":"cmd", "js": "Bangle.on('swipe',print)", "text": "Create listener for swipes"},
+      {"t":"assert", "js": "Bangle['#onswipe']", "is":"truthy", "text": "Swipe handler registered"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Test',t:'add',type:'text',id:'msg1',title:'First',body:'Message 1'})", "text": "Show first message"},
+      {"t":"assertArray", "js": "Bangle['#onswipe']", "is":"undefinedOrEmpty", "text": "Handlers backgrounded after first message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Test',t:'add',type:'text',id:'msg2',title:'Second',body:'Message 2'})", "text": "Show second message (triggers overlay update)"},
+      {"t":"assertArray", "js": "Bangle['#onswipe']", "is":"undefinedOrEmpty", "text": "Handlers still backgrounded after overlay update"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close first message"},
+      {"t":"assertArray", "js": "Bangle['#onswipe']", "is":"undefinedOrEmpty", "text": "Handlers still backgrounded with message in queue"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close second message"},
+      {"t":"assert", "js": "Bangle['#onswipe']", "is":"truthy", "text": "Handler restored after all messages closed"}
+    ]
+  },{
+    "description": "Test watch backgrounding",
     "steps" : [
       {"t":"cmd", "js": "setWatch(print,BTN)", "text": "Create watch"},
       {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
       {"t":"assertArray", "js": "global[\"\\xff\"].watches", "is":"undefinedOrEmpty", "text": "No watches while message overlay is on screen"},
       {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
       {"t":"assert", "js": "global[\"\\xff\"].watches.length", "is":"equal", "to": "2", "text": "One watch restored, first entry is always empty"}
+    ]
+  },{
+    "description": "Test call buzz interval is cleared on cleanup",
+    "steps" : [
+      {"t":"jsonfile", "name": "messagesoverlay.json", "json": {"autoclear": 600}, "text": "Force autoclear setting on"},
+      {"t":"cmd", "js": "Bangle.setLocked(true)", "text": "Lock the bangle to force autoclear to become active"},
+      {"t":"jsonfile", "name": "setting.json", "json": {"quiet": 0}, "text": "Disable quiet mode"},
+      {"t":"cmd", "js": "global.__TEST_NUMBER_OF_TIMERS__ = global[\"\\xff\"].timers.filter(t=>t&&t.intr).length", "text": "Store number of intervals"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('call', {src:'Caller',t:'add',id:'call',title:'title',body:'body'})", "text": "Show call"},
+      {"t":"assert", "js": "global[\"\\xff\"].timers.filter(t=>t&&t.intr).length > global.__TEST_NUMBER_OF_TIMERS__", "is":"truthy", "text": "Interval for buzz is active"},
+      {"t":"advanceTimers", "ms": "610000", "text": "Force overlay cleanup by autoclear"},
+      {"t":"assert", "js": "global[\"\\xff\"].timers.filter(t=>t&&t.intr).length", "is":"equal", "to":"global.__TEST_NUMBER_OF_TIMERS__", "text": "Interval for buzz has been removed"}
+    ]
+  },{
+    "description": "Test autoclear timer is cleared on overlay close",
+    "steps" : [
+      {"t":"jsonfile", "name": "messagesoverlay.json", "json": {"autoclear": 600}, "text": "Force autoclear setting on"},
+      {"t":"cmd", "js": "Bangle.setLocked(true)", "text": "Lock the bangle to force autoclear to become active"},
+      {"t":"jsonfile", "name": "setting.json", "json": {"quiet": 1}, "text": "Prevent buzz interval by means of quiet mode"},
+      {"t":"cmd", "js": "global.__TEST_NUMBER_OF_TIMERS__ = global[\"\\xff\"].timers.length", "text": "Store number of timers"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show message"},
+      {"t":"assert", "js": "global[\"\\xff\"].timers.length > global.__TEST_NUMBER_OF_TIMERS__", "is":"truthy", "text": "Timer for autoclear is active"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"assert", "js": "global[\"\\xff\"].timers.length", "is":"equal", "to":"global.__TEST_NUMBER_OF_TIMERS__", "text": "Timer for autoclear has been removed"}
+    ]
+  },{
+    "description": "Test handling of multiple messages, closing each one",
+    "steps" : [
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"saveMemoryUsage", "text": "Gets and stores the current memory usage"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"checkMemoryUsage", "text": "Checks current memory is not higher than stored value (detects leaks)"}
+    ]
+  },{
+    "description": "Test handling of multiple messages, let accumulate and then close all manually",
+    "steps" : [
+      {"t":"jsonfile", "name": "messagesoverlay.json", "json": {"autoclear": 600}, "text": "Force autoclear setting off"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay to initialize all structures"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"saveMemoryUsage", "text": "Gets and stores the current memory usage"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'title',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"checkMemoryUsage", "text": "Checks current memory is not higher than stored value (detects leaks)"}
+    ]
+  },{
+    "description": "Test handling of single messages, wait for automatic cleanup",
+    "steps" : [
+      {"t":"jsonfile", "name": "messagesoverlay.json", "json": {"autoclear": 600}, "text": "Force autoclear setting on"},
+      {"t":"cmd", "js": "Bangle.setLocked(true)", "text": "Lock the bangle to force autoclear to become active"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'baseline',body:'body'})", "text": "Show a message overlay to set baseline"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"saveMemoryUsage", "text": "Gets and stores the current memory usage"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage',body:'body'})", "text": "Show a message overlay"},
+      {"t":"advanceTimers", "ms":700000, "text": "Advance timers to get the timer to fire in the next idle period"},
+      {"t":"checkMemoryUsage", "text": "Checks current memory is not higher than stored value (detects leaks)"}
+    ]
+  },{
+    "description": "Test handling of multiple messages, let accumulate and wait for automatic cleanup",
+    "steps" : [
+      {"t":"jsonfile", "name": "messagesoverlay.json", "json": {"autoclear": 600}, "text": "Force autoclear setting on"},
+      {"t":"cmd", "js": "Bangle.setLocked(true)", "text": "Lock the bangle to force autoclear to become active"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'baseline',body:'body'})", "text": "Show a message overlay to set baseline"},
+      {"t":"emit", "event":"touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"saveMemoryUsage", "text": "Gets and stores the current memory usage"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage 1',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage 2',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage 3',body:'body'})", "text": "Show a message overlay"},
+      {"t":"advanceTimers", "ms":700000, "text": "Advance timers to get the timer to fire in the next idle period"},
+      {"t":"advanceTimers", "ms":700000, "text": "Advance timers to get the timer to fire in the next idle period"},
+      {"t":"advanceTimers", "ms":700000, "text": "Advance timers to get the timer to fire in the next idle period"},
+      {"t":"checkMemoryUsage", "text": "Checks current memory is not higher than stored value (detects leaks)"}
+    ]
+  },{
+    "description": "Test call state can be cleaned up by autoclear",
+    "steps" : [
+      {"t":"jsonfile", "name": "messagesoverlay.json", "json": {"autoclear": 600}, "text": "Force autoclear setting on"},
+      {"t":"cmd", "js": "Bangle.setLocked(true)", "text": "Lock the bangle to force autoclear to become active"},
+      {"t":"cmd", "js": "var testfunc = ()=>{}; Bangle.on('swipe', testfunc)", "text": "This is the canary for detecting if the call prevented proper restoration by the later text message"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('call', {src:'Caller',t:'add',id:'call',title:'title',body:'body'})", "text": "Show call"},
+      {"t":"advanceTimers", "ms":700000, "text": "Advance timers to get the timer to fire in the next idle period"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage',body:'body'})", "text": "Show a message overlay after call"},
+      {"t":"emit", "event": "touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message"},
+      {"t":"assert", "js": "Bangle['#onswipe'][0]===testfunc", "is":"true", "text": "The swipe handler has been restored"}
+    ]
+  },{
+    "description": "Test buzzing state switches correctly on overlay close",
+    "steps" : [
+      {"t":"jsonfile", "name": "messagesoverlay.json", "json": {"autoclear": 600}, "text": "Force autoclear setting on"},
+      {"t":"cmd", "js": "Bangle.setLocked(true)", "text": "Lock the bangle to force autoclear to become active"},
+      {"t":"jsonfile", "name": "setting.json", "json": {"quiet": 0}, "text": "Disable quiet mode"},
+      {"t":"wrap", "fn": "Bangle.buzz", "id": "buzz", "name": "Count attempts to buzz"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage',body:'body'})", "text": "Show a message overlay"},
+      {"t":"assertCall", "id": "buzz", "count": 1, "text": "First message buzzes, enabled cooldown timeout"},
+      {"t":"emit", "event": "touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message to disable cooldown"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage',body:'body'})", "text": "Show a message overlay"},
+      {"t":"assertCall", "id": "buzz", "count": 2, "text": "This message buzzes as well"}
+    ]
+  },{
+    "description": "Test removeAllListeners during overlay does not remove all listeners",
+    "steps" : [
+      {"t":"cmd", "js": "Bangle.on('canary', ()=>{})", "text": "This is the canary for detecting if other events stayed untouched"},
+      {"t":"assert", "js": "Bangle['#oncanary'].length", "is": "equal", "to": 1, "text": "Expect one canary listener"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "Bangle.removeAllListeners('swipe')", "text": "Remove unrelated listeners"},
+      {"t":"assert", "js": "Bangle['#oncanary'].length", "is": "equal", "to": 1, "text": "Expect one listener, they are not backgrounded"},
+      {"t":"emit", "event": "touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message to restore message listener"},
+      {"t":"assert", "js": "Bangle['#oncanary'].length", "is": "equal", "to": 1, "text": "Expect one listener, removing one category of listeners should leave others untouched"}
+    ]
+  },{
+    "description": "Test setWatch/clearWatch during overlay works",
+    "steps" : [
+      {"t":"cmd", "js": "setWatch(()=>{}, BTN)", "text": "Set a watch"},
+      {"t":"cmd", "js": "setWatch(()=>{}, BTN)", "text": "Set a second watch"},
+      {"t":"assert", "js": "global[\"\\xff\"].watches.filter(w=>w).length", "is": "equal", "to": 2, "text": "Expect our watches"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage',body:'body'})", "text": "Show a message overlay"},
+      {"t":"cmd", "js": "var overlayWatch = setWatch(()=>{}, BTN); clearWatch(overlayWatch);", "text": "Set and clear a watch during overlay"},
+      {"t":"cmd", "js": "Bangle.removeAllListeners('swipe')", "text": "Remove unrelated listeners"},
+      {"t":"emit", "event": "touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message to restore message listener"},
+      {"t":"assert", "js": "global[\"\\xff\"].watches.filter(w=>w).length", "is": "equal", "to": 2, "text": "Expect our watches and nothing else"}
+    ]
+  },{
+    "description": "Test setWatch/clearWatch during overlay works",
+    "steps" : [
+      {"t":"cmd", "js": "var canary = ()=>{}; Bangle.on('touch', canary);", "text": "Set a touch handler"},
+      {"t":"cmd", "js": "require('messagesoverlay').message('text', {src:'Messenger',t:'add',type:'text',id:Date.now().toFixed(0),title:'testmessage',body:'body'})", "text": "Show a message overlay"},
+      {"t":"emit", "event": "touch", "paramsArray": [ 1, { "x": 10, "y": 10, "type": 0 } ], "text": "Close message to restore message listener"},
+      {"t":"cmd", "js": "Bangle.removeListener('touch', canary);", "text": "Remove the touch handler"},
+
+      {"t":"cmd", "js": "var overlayWatch = setWatch(()=>{}, BTN); clearWatch(overlayWatch);", "text": "Set and clear a watch during overlay"},
+      {"t":"cmd", "js": "Bangle.removeAllListeners('swipe')", "text": "Remove unrelated listeners"},
+      {"t":"assert", "js": "Bangle['#ontouch'].length", "is": "equal", "to": 0, "text": "Expect no listeners to remain"}
     ]
   }]
 }

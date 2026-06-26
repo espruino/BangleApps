@@ -8,6 +8,7 @@
   "tags": "walk,timer,fitness",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
+  "author": "Koell",
   "data": [
     { "name": "jwalk.json" }
   ],

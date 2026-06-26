@@ -10,6 +10,7 @@
     { "url": "screenshot-swipe.png" },
     { "url": "screenshot-welcome.png" }
   ],
+  "author": "jeffyactive",
   "type": "app",
   "tags": "emoji",
   "supports" : [ "BANGLEJS2" ],

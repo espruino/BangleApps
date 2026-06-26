@@ -2,6 +2,7 @@
   "name": "Tyreid",
   "shortName":"Tyreid",
   "version":"0.01",
+  "author": "th10111",
   "description": "Bluetooth war-driving app for Bangle.js 2",
   "icon": "small_logo.png",
   "tags": "",

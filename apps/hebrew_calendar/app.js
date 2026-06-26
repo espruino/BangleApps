@@ -1,3 +1,5 @@
+let hebrewCalendar = require("Storage").readJSON("hebrew_calendar.json", 1) || [];
+
 const dayInMS = 86400000;
 
 const DateProvider = { now: () => Date.now() };
@@ -48,7 +50,10 @@ function getUpcomingEvents() {
       type: "txt",
       font: "4x6",
       id: "warning",
-      label: "only " + eventsLeft + " events left in calendar; update soon",
+      label:
+        eventsLeft === 0
+          ? "no events; Customize this app in the app loader to set your location"
+          : "only " + eventsLeft + " events left in calendar; update soon",
       pad: 2,
       bgCol: g.theme.bg,
     };
@@ -61,13 +66,13 @@ function getUpcomingEvents() {
         startEvent: event.startEvent,
         type: "txt",
         font: "6x8",
-        id: "upcomingEvents" + 1,
+        id: "upcomingEvents" + i,
         label: event.desc + " at " + Locale.time(new Date(event.startEvent), 1),
         pad: 2,
         bgCol: g.theme.bg,
       };
     })
-    .concat(warning)
+    .concat(warning ? [warning] : [])
     .sort(function (a, b) {
       return a.startEvent - b.startEvent;
     });
@@ -152,6 +157,8 @@ function draw() {
 
 // update time and draw
 g.clear();
+// register as a clock before loading widgets so they know a clock app is running
+Bangle.setUI("clock");
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 draw();
@@ -168,14 +175,15 @@ function updateCalendar() {
   layout.forgetLazyState();
   layout.render();
 
+  const next = findNextEvent();
   let nextChange = Math.min(
-    findNextEvent().startEvent - DateProvider.now() + 5000,
+    next ? next.startEvent - DateProvider.now() + 5000 : Infinity,
     nextEndingEvent - DateProvider.now() + 5000
   );
+  // when the calendar is exhausted both values are Infinity; check again in a day
+  if (!isFinite(nextChange)) nextChange = dayInMS;
   setTimeout(updateCalendar, nextChange);
   console.log("updated events");
 }
 
 updateCalendar();
-
-Bangle.setUI("clock");

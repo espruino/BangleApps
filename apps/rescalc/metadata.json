@@ -3,12 +3,13 @@
   "name": "Resistor Calculator",
   "shortName": "Resistor Calc",
   "icon": "rescalc.png",
-  "version":"0.04",
+  "version":"0.05",
   "screenshots": [
     {"url": "screenshot.png"},
     {"url": "screenshot-1.png"},
     {"url": "screenshot-2.png"}
   ],
+  "author": "stweedo",
   "description": "An intuitive, easy-to-use app that aids in the interpretation of resistor color codes and calculation of resistance values.",
   "tags": "app,tool,electricity,ohms,converter",
   "supports": ["BANGLEJS2"],

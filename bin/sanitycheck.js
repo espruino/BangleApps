@@ -49,7 +49,7 @@ var jsparse = (() => {
     return str => {throw new Error("no acorn")};
   }
 
-  return str => acorn.parse(str, { ecmaVersion: 2020 });
+  return str => acorn.parse(str, { ecmaVersion: 2022 });
 })();
 
 
@@ -84,11 +84,15 @@ function WARN(msg, opt) {
   console.log(`::warning${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
   warningCount++;
 }
+function NOTIFY(msg, opt) {
+  // file=app.js,line=1,col=5,endColumn=7
+  opt = opt||{};
+  console.log(`::notice${Object.keys(opt).length?" ":""}${Object.keys(opt).map(k=>k+"="+opt[k]).join(",")}::${msg}`);
+}
 /* These are errors that we temporarily allow */
 var KNOWN_ERRORS = [
   "In locale en_CA, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
   "In locale fr_FR, long date output must be shorter than 15 characters (10 septembre 2024 -> 17)",
-  "In locale sv_SE, speed must be shorter than 5 characters",
   "In locale en_SE, long date output must be shorter than 15 characters (September 10 2024 -> 17)",
   "In locale en_NZ, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
   "In locale en_AU, long date output must be shorter than 15 characters (Wednesday, September 10, 2024 -> 29)",
@@ -169,7 +173,7 @@ const APP_KEYS = [
 ];
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports', 'noOverwrite'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
-const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2"]; // device IDs allowed for 'supports'
+const SUPPORTS_DEVICES = ["BANGLEJS","BANGLEJS2","BANGLEJS3","BANGLEJS3_COMPAT"]; // device IDs allowed for 'supports'
 const METADATA_TYPES = ["app","clock","widget","bootloader","RAM","launch","scheduler","notify","locale","settings","textinput","module","clkinfo","defaultconfig"]; // values allowed for "type" field - listed in README.md
 const FORBIDDEN_FILE_NAME_CHARS = /[,;]/; // used as separators in appid.info
 const MAX_FILE_NAME_LENGTH = 28
@@ -511,7 +515,7 @@ while(fileA=allFiles.pop()) {
     if (globA.test(nameB)||globB.test(nameA)) {
       if (isGlob(nameA)||isGlob(nameB))
         ERROR(`App ${fileB.app} ${typeB} file ${nameB} matches app ${fileA.app} ${typeB} file ${nameA}`);
-      else if (fileA.app != fileB.app && (!fileA.internal) && (!fileB.internal))
+      else if (fileA.app != fileB.app && (!fileA.internal) && (!fileB.internal) && nameB!="launch.cache.json")
         WARN(`App ${fileB.app} ${typeB} file ${nameB} is also listed as ${typeA} file for app ${fileA.app}`, {file:APPSDIR_RELATIVE+fileB.app+"/metadata.json"});
     }
   })
@@ -540,11 +544,11 @@ function sanityCheckLocales(){
 promise.then(function() {
   KNOWN_ERRORS.forEach(msg => {
     if (!errorList.includes(msg))
-      WARN(`Known error '${msg}' no longer occurs`);
+      NOTIFY(`Known error '${msg}' no longer occurs`);
   });
   KNOWN_WARNINGS.forEach(msg => {
     if (!warningList.includes(msg))
-      WARN(`Known warning '${msg}' no longer occurs`);
+      NOTIFY(`Known warning '${msg}' no longer occurs`);
   });
   console.log("==================================");
   console.log(`${errorCount} errors, ${warningCount} warnings`);

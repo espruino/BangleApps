@@ -2,6 +2,7 @@
   "id": "jbells",
   "name": "Jingle Bells",
   "version": "0.01",
+  "author": "ra100",
   "description": "Play Jingle Bells",
   "icon": "jbells.png",
   "type": "app",

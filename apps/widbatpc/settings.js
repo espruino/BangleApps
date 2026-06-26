@@ -15,8 +15,7 @@
     'charger': true,
     'hideifmorethan': 100,
     'alwaysoncharge': false,
-    'removejitter': 0,
-    'buzzoncharge': true,
+    'removejitter': 0
   }
   // ...and overwrite them with any saved values
   // This way saved values are preserved if a new version adds more settings
@@ -78,11 +77,6 @@
       value: s.alwaysoncharge,
       format: onOffFormat,
       onchange: save('alwaysoncharge'),
-    },
-    /*LANG*/'Buzz on charge': {
-      value: s.buzzoncharge,
-      format: onOffFormat,
-      onchange: save('buzzoncharge'),
     },
     /*LANG*/'Remove Jitter': {
       value: s.removejitter,

@@ -2,6 +2,7 @@
   "id": "alyxclock",
   "name": "Alyx Clock",
   "version": "0.01",
+  "author": "devsnd",
   "description": "A clock in the style of half-life alyx gravity gloves",
   "icon": "alyxclock.png",
   "screenshots": [{"url":"screenshot_alyxclock.png"}],

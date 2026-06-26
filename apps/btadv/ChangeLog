@@ -2,3 +2,4 @@
 0.02: Advertise accelerometer data and sensor location
 0.03: Use the bleAdvert module
 0.04: Actually use the ble_advert module
+0.05: Don't advertise HRM's BPM - allows apps like Strava to connect

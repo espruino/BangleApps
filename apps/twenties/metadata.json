@@ -2,13 +2,17 @@
   "id": "twenties",
   "name": "Twenties",
   "shortName": "Twenties",
-  "version": "0.05",
+  "version": "0.08",
   "description": "Buzzes every 20m to stand / sit and look 20ft away for 20s.",
   "icon": "app.png",
   "type": "bootloader",
+  "author": "splch",
   "tags": "alarm,tool,health",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "allow_emulator": true,
   "readme": "README.md",
-  "storage": [{ "name": "twenties.boot.js", "url": "boot.js" }]
+  "storage": [
+    { "name": "twenties.boot.js", "url": "boot.js" },
+    { "name": "twenties", "url": "lib.js" }
+  ]
 }

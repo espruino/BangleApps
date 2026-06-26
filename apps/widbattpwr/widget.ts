@@ -25,11 +25,9 @@
 		const { usage, hrsLeft, batt } = require("power_usage").get();
 		const pwrColour = powerColour(usage);
 
-		g.reset()
-			.setBgColor(g.theme.bg)
+		g.reset("widget")
 			.clearRect(x, y, x + width - 1, y + height - 1);
 
-		g.setColor(g.theme.fg);
 		drawBar(x, y, 100);
 		g.setColor(pwrColour);
 		drawBar(x, y, batt);

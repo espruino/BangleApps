@@ -22,10 +22,8 @@
         var y = this.y;
         var _a = require("power_usage").get(), usage = _a.usage, hrsLeft = _a.hrsLeft, batt = _a.batt;
         var pwrColour = powerColour(usage);
-        g.reset()
-            .setBgColor(g.theme.bg)
+        g.reset("widget")
             .clearRect(x, y, x + width - 1, y + height - 1);
-        g.setColor(g.theme.fg);
         drawBar(x, y, 100);
         g.setColor(pwrColour);
         drawBar(x, y, batt);

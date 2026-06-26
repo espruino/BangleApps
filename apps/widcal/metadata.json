@@ -2,6 +2,7 @@
   "id": "widcal",
   "name": "Calendar Widget",
   "version": "0.02",
+  "author": "rigrig",
   "description": "Widget with the current date",
   "icon": "widget.png",
   "type": "widget",

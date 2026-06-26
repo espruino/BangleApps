@@ -3,6 +3,7 @@
   "name": "Localized Thermometer",
   "shortName": "Thermometer",
   "version": "0.02",
+  "author": "elrod16",
   "description": "Displays the current temperature in localized units.",
   "icon": "thermf.png",
   "tags": "tool",

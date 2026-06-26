@@ -2,6 +2,7 @@
   "name": "Bluetooth Multimeter",
   "shortName":"BT Meter",
   "version":"0.01",
+  "author": "gfwilliams",
   "description": "Connect to compatible a Bluetooth Multimeters and display the result on your wrist!",
   "icon": "app.png",
   "tags": "bluetooth,tool",

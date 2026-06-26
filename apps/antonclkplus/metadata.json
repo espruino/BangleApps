@@ -3,6 +3,7 @@
   "name": "Anton Clock Plus",
   "shortName": "Anton Clock+",
   "version": "0.12",
+  "author": "gfwilliams",
   "description": "A clock using the bold Anton font, optionally showing seconds and date in ISO-8601 format.",
   "readme":"README.md",
   "icon": "app.png",

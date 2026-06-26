@@ -2,6 +2,7 @@
   "id": "sonicclk",
   "name": "Sonic Clock",
   "version": "0.06",
+  "author": "Johoseph",
   "description": "A classic sonic clock featuring run, stop and wait animations.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

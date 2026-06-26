@@ -2,6 +2,7 @@
   "id": "pipboy",
   "name": "Pipboy",
   "version": "0.04",
+  "author": "detached",
   "description": "Pipboy themed clock",
   "icon": "app.png",
   "type": "clock",

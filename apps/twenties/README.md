@@ -12,6 +12,14 @@ Vibrates to remind you to stand up and look away for healthy living.
 
 Only vibrates during work days and hours.
 
-## Creator
+## Todo
 
-[@splch](https://github.com/splch/)
+Add settings page.
+Add setting for active days and hours.
+Add setting for buzz strength/pattern.
+Add entry in settings to re-run setup.
+
+## Contributors
+
+[@splch](https://github.com/splch/) (Creator)
+[@thyttan](https://github.com/thyttan/)

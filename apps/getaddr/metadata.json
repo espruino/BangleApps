@@ -2,6 +2,7 @@
     "id": "getaddr",
     "name": "Get Addr",
     "version": "0.01",
+    "author": "gellnerm",
     "description": "An app that shows the address of the current location",
     "readme": "README.md",
     "icon": "getaddr.png",

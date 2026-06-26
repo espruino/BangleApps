@@ -2,6 +2,7 @@
   "name": "Accelerometer Graph",
   "shortName":"Accel Graph",
   "version":"0.01",
+  "author": "gfwilliams",
   "description": "A simple app to draw a graph of data from the accelerometer on the screen",
   "icon": "app.png",
   "tags": "tool,debug",

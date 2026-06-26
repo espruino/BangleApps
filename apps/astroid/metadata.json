@@ -2,6 +2,7 @@
   "id": "astroid",
   "name": "Asteroids!",
   "version": "0.06",
+  "author": "ra100",
   "description": "Retro asteroids game",
   "icon": "asteroids.png",
   "screenshots": [{"url":"screenshot.png"}],

@@ -11,6 +11,7 @@
   ],
   "icon": "icon.png",
   "tags": "health",
+  "author": "Uberi",
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"heartzone.app.js","url":"app.js"},

@@ -570,12 +570,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/rescalc/app.js": {
-    "hash": "925f00a439817fadf92f4e7a7fcd509eb9d9c7e1e4309e315ea92a6881e18b4b",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/regattatimer/app.js": {
     "hash": "8d579cc62d82599f776e5e230651f03481f18c3934f35f4fedfb6382a46db861",
     "rules": [
@@ -812,12 +806,6 @@ module.exports = {
   },
   "apps/hrmmar/fftelim.js": {
     "hash": "96fa4fd14ff0f6dc5eeda903c6a7b27e71a8e845ed3f0c2b1cafb8e1e53bb405",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/hebrew_calendar/app.js": {
-    "hash": "3077d581b9fcf73816e265e61105a0692356b89e8ed41a82be51960ae26fc8de",
     "rules": [
       "no-undef"
     ]

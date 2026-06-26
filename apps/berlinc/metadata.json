@@ -2,6 +2,7 @@
   "id": "berlinc",
   "name": "Berlin Clock",
   "version": "0.08",
+  "author": "eska-muc",
   "description": "Berlin Clock (see https://en.wikipedia.org/wiki/Mengenlehreuhr)",
   "icon": "berlin-clock.png",
   "type": "clock",

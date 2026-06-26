@@ -18,9 +18,8 @@ if (FWVERSION < 216) {
 }
 let CRC = E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\.js$/)+E.CRC32(process.env.GIT_COMMIT);
 boot += `if(E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\\.js$/)+E.CRC32(process.env.GIT_COMMIT)!=${CRC})`;
-boot += `{eval(require('Storage').read('bootupdate.js'));}else{\n`;
-boot += `E.setFlags({pretokenise:1});\n`;
-boot += `var bleServices = {}, bleServiceOptions = { uart : true};\n`;
+boot += `eval(require('Storage').read('bootupdate.js'));else{\n`;
+boot += `E.setFlags({pretokenise:1});var bleServices={},bleServiceOptions={uart:true};`;
 bootPost += `NRF.setServices(bleServices,bleServiceOptions);delete bleServices,bleServiceOptions;\n`; // executed after other boot code
 if (s.ble!==false) {
   if (s.HID) { // Human interface device
@@ -61,11 +60,13 @@ if (!NRF.getSecurityStatus().connected) LoopbackA.setConsole();\n`;
 }
 // we just reset, so BLE should be on.
 // Don't disconnect if something is already connected to us
-if (s.ble===false) boot += `if (!NRF.getSecurityStatus().connected) NRF.sleep();\n`;
+if (s.ble===false) boot += `if(!NRF.getSecurityStatus().connected)NRF.sleep();`;
 // Set time
-if (s.timeout!==undefined) boot += `Bangle.setLCDTimeout(${s.timeout});\n`;
-if (!s.timeout) boot += `Bangle.setLCDPower(1);\n`;
+if (s.timeout!==undefined) boot += `Bangle.setLCDTimeout(${s.timeout});`;
+if (!s.timeout) boot += `Bangle.setLCDPower(1);`;
 boot += `E.setTimeZone(${s.timezone});`;
+// Handle charge buzz
+if (s.chargeBuzz!==false) boot += `Bangle.on('charging',c=>c&&Bangle.buzz());\n`;
 // Draw out of memory errors onto the screen if logging enabled
 if (s.log) boot += `E.on('errorFlag', function(errorFlags) {
   g.reset(1).setColor("#ff0000").setFont("6x8").setFontAlign(0,1).drawString(errorFlags,g.getWidth()/2,g.getHeight()-1).flip();
@@ -76,7 +77,7 @@ if (s.log) boot += `E.on('errorFlag', function(errorFlags) {
 if (global.save) boot += `global.save = function() { throw new Error("You can't use save() on Bangle.js without overwriting the bootloader!"); }\n`;
 // Apply any settings-specific stuff
 if (s.options) boot+=`Bangle.setOptions(${E.toJS(s.options)});\n`;
-if (s.brightness && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightness});\n`;
+if (s.brightness!==undefined && s.brightness!=1) boot+=`Bangle.setLCDBrightness(${s.brightness});\n`;
 if (s.bleprivacy || (s.passkey!==undefined && s.passkey.length==6)) {
   let passkey = s.passkey ? `passkey:${E.toJS(s.passkey.toString())},display:1,mitm:1,` : "";
   let privacy = s.bleprivacy ? `privacy:${E.toJS(s.bleprivacy)},` : "";
@@ -116,7 +117,7 @@ let bootFiles = require('Storage').list(/\.boot\.js$/).sort((a,b)=>{
 // precalculate file size
 bootPost += "}";
 let fileOffset,fileSize;
-/* code to output a file, plus preable and postable
+/* code to output a file, plus preamble and postamble
 when called with dst==undefined it just increments
 fileOffset so we can see ho wbig the file has to be */
 let outputFile = (dst,src,pre,post) => {"ram";
@@ -192,8 +193,10 @@ delete widget,widgetPost,widgetFiles;
 // ================================================== .clkinfocache for clockinfos
 let ciFiles = require("Storage").list(/\.clkinfo\.js$/);
 let ci = `// Made by bootupdate.js\n`;
+let ci_exclude = (require("Storage").readJSON("clock_info.json", 1) || {}).exclude;
 if (DEBUG) ci+="var _tm=Date.now();";
 outputFileComplete = (dst,fn) => {
+  if (ci_exclude && ci_exclude[fn]) return;
   outputFile(dst,fn,"try{let fn=",`;let a=fn(),b=menu.find(x=>x.name===a.name);if(b)b.items=b.items.concat(a.items)else menu=menu.concat(a);}catch(e){print(${E.toJS(fn)},e,e.stack)}\n`);
 };
 fileOffset = ci.length;

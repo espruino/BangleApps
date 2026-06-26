@@ -1,6 +1,7 @@
 { "id": "clkinfodist",
   "name": "Clockinfo Distance",
   "version":"0.01",
+  "author": "gfwilliams",
   "description": "Uses the 'My Profile' app's Stride Length to calculate distance travelled based on step count. Tap to reset for measuring distances.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

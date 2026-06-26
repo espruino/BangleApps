@@ -2,6 +2,7 @@
   "name": "Minimal Analog Clock",
   "shortName":"Minimal Clock",
   "version": "0.05",
+  "author": "rozek",
   "description": "a minimal analog clock - just with some hands and no clock face",
   "icon": "app-icon.png",
   "type": "clock",
