@@ -9,7 +9,7 @@ var blankImage = Graphics.createImage(`\n \n`);
 var rowHeight = g.getHeight()/3;
 
 // Load apps list
-var launchCache = require("launch_utils").cache({})
+var launchCache = require("launch_utils").cache({});
 var apps = launchCache.apps; // get a list of apps to show
 
 // Uncomment for testing in the emulator without apps:
@@ -51,6 +51,15 @@ var layout = new Layout({
   ]
 });
 
+// Load icons on demand
+function setIconSrc(icon, app) {
+  icon.src=function() {
+    let icon = app.icon ? require("Storage").read(app.icon) : blankImage;
+    icon.src = icon;
+    return icon;
+  };
+}
+
 // Drawing logic
 function render() {
   if (!apps.length) {
@@ -60,7 +69,7 @@ function render() {
 
   // Previous app
   if (currentApp > 0) {
-    layout.prev_icon.src = apps[currentApp-1].icon;
+    setIconSrc(layout.prev_icon, apps[currentApp-1]);
     layout.prev_name.label = apps[currentApp-1].name;
   } else {
     layout.prev_icon.src = blankImage;
@@ -68,12 +77,12 @@ function render() {
   }
 
   // Current app
-  layout.cur_icon.src = apps[currentApp].icon;
+  setIconSrc(layout.cur_icon, apps[currentApp]);
   layout.cur_name.label = apps[currentApp].name;
 
   // Next app
   if (currentApp < apps.length-1) {
-    layout.next_icon.src = apps[currentApp+1].icon;
+    setIconSrc(layout.next_icon, apps[currentApp+1]);
     layout.next_name.label = apps[currentApp+1].name;
   } else {
     layout.next_icon.src = blankImage;
