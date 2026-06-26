@@ -145,6 +145,7 @@ var chart_max_datum;
 var chart_label;
 var chart_data;
 var current_selection;
+var chart_units;
 
 // find the max value in the array, using a loop due to array size
 function max(arr) {
@@ -169,10 +170,11 @@ function barChart(label, dt, units) {
   chart_max_datum = max(dt);                 // find highest bar, for scaling
   chart_label = label;
   chart_data = dt;
-  drawBarChart(units);
+  chart_units=units
+  drawBarChart();
 }
 // units is units or undefined
-function drawBarChart(units) {
+function drawBarChart() {
   const bar_width = (w - 2) / 9;  // we want 9 bars, bar 5 in the centre
   var bar_top;
   var bar;
@@ -183,7 +185,7 @@ function drawBarChart(units) {
     if (bar == 5) {
       let labelTxt=chart_label + " " + (chart_index + bar -1)
       labelFont =g.findFont(labelTxt,{w:(g.getWidth()/5*2)-7,h:28}).font;
-      let dataTxt=chart_data[chart_index + bar - 1]+(units!==undefined? units :"");
+      let dataTxt=chart_data[chart_index + bar - 1]+(chart_units!==undefined? chart_units :"");
       dataFont =g.findFont(dataTxt,{w:(g.getWidth()/5*3)-7,h:28}).font;
 
       g.setFont(labelFont)
@@ -216,7 +218,7 @@ function drawHorizontalLine(value) {
   g.setColor(g.theme.fg).drawLine(0, top ,g.getWidth(), top);
 }
 
-function setButton(fn, mult,units) {
+function setButton(fn, mult) {
   Bangle.setUI({mode:"custom",
                 back:fn,
                 swipe:(lr,ud) => {
@@ -229,7 +231,7 @@ function setButton(fn, mult,units) {
     } else {
       return fn();
     }
-    drawBarChart(units);
+    drawBarChart();
     if (current_selection == "stepsPerDay") {
       drawHorizontalLine(settings.stepGoal * (mult || 1));
     }
