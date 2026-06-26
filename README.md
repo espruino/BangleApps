@@ -371,6 +371,7 @@ version of what's in `metadata.json`:
 <html>
   <head>
     <link rel="stylesheet" href="../../css/spectre.min.css">
+    <link rel="stylesheet" href="../../css/main.css">
   </head>
   <body>
     <p><button id="upload" class="btn btn-primary">Upload</button></p>

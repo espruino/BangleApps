@@ -5,7 +5,7 @@
     }
     body {
       background-color: light-dark(rgb(253, 253, 255), rgb(44, 44, 44)); /* Background for iFrames, index.html injects its own background with <style> */
-      color: light-dark(#3c3c3c, #cacaca);
+      color: light-dark(#3c3c3c, #b8b8b8);
       padding-left: 1em;
       padding-right: 1em;
     }
@@ -103,6 +103,10 @@
       margin-right: 1.5em;
       background-color:#fff;
     }
+    .card{
+      background-color: light-dark(#ffffff, #2c2c2c);
+      border:light-dark(#d8d8d8, #505050), 1px solid;
+    }
     .menu{
       background-color:light-dark(#ffffff, #313131);
       color: light-dark(#3c3c3c, #cacaca);
@@ -133,7 +137,7 @@
     }
 
     .dropdowns-pill {
-      background-color: rgba(87, 85, 217, 0.066);
+      background-color: light-dark(rgba(87, 85, 217, 0.066), rgba(71, 71, 96, 0.293));
       border-radius: 1em;
       padding-left: 1em;
       padding-right: 1em;
@@ -494,8 +498,8 @@
       color: light-dark(#000000,#FFFFFF);
     }
     .modal-overlay {
-      background: light-dark(#ffffff4b,#5e5e5ebc)!important;
-          /* Add the blur effect */
+      background: light-dark(#9292928c,#4a4a4ad0)!important;
+      /* Add the blur effect */
       /* Apply the blur to the backdrop */
       backdrop-filter: blur(5px);
       -webkit-backdrop-filter: blur(5px); /* Safari support */
@@ -538,6 +542,7 @@
       border-radius: 1.5em;
       background-color: light-dark(rgb(253, 253, 255), rgb(44, 44, 44));
       padding: 1em;
+      box-shadow: 0px 7px 54px rgba(0, 0, 0, 0.307);
     }
 
     .bar {
