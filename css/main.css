@@ -493,6 +493,13 @@
     .modal-title{
       color: light-dark(#000000,#FFFFFF);
     }
+    .modal-overlay {
+      background: light-dark(#ffffff4b,#5e5e5ebc)!important;
+          /* Add the blur effect */
+      /* Apply the blur to the backdrop */
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px); /* Safari support */
+    }
     .hero.bg-gray{
       background-color: light-dark(#F7F7F9,#2C2C2C)!important;
       border-radius:1em;
