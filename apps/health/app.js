@@ -5,7 +5,7 @@ function menuMain() {
   var menu = {
     "": { title: /*LANG*/"Health Tracking" },
     /*LANG*/"< Back": () => load(),
-    /*LANG*/"Step Counting": () => menuStepCount(),
+    /*LANG*/"Steps": () => menuStepCount(),
     /*LANG*/"Movement": () => menuMovement(),
     /*LANG*/"Heart Rate": () => menuHRM(),
     /*LANG*/"Battery": () => menuBattery(),
@@ -20,9 +20,9 @@ function menuStepCount() {
   const menu = {
     "": { title:/*LANG*/"Steps" },
     /*LANG*/"< Back": () => menuMain(),
-    /*LANG*/"per hour": () => showGraph({id:"stepsPerHour",range:"hour",field:"steps", back:menuStepCount}),
+    /*LANG*/"per hour": () => showGraph({id:"stepsPerHour",range:"hour",field:"steps", back:menuStepCount,units:/*LANG*/" steps"}),
     /*LANG*/"per day": () => {
-      showGraph({id:"stepsPerHour",range:"day",field:"steps", back:menuStepCount})
+      showGraph({id:"stepsPerHour",range:"day",field:"steps", back:menuStepCount,units:/*LANG*/" steps"})
       drawHorizontalLine(settings.stepGoal);
     }
   };
@@ -34,13 +34,15 @@ function menuStepCount() {
 }
 
 function menuDistance() {
-  const distMult = parseFloat(require("locale").distance(myprofile.strideLength, 2)); // this removes the distance suffix, e.g. 'm'
+  const dist=require("locale").distance(myprofile.strideLength, 2)
+  const distMult = parseFloat(dist); // this removes the distance suffix, e.g. 'm'
+  const units=dist.replace(/[0-9.,\s]/g, "");
   E.showMenu({
     "": { title:/*LANG*/"Distance" },
     /*LANG*/"< Back": () => menuStepCount(),
-    /*LANG*/"per hour": () => showGraph({id:"stepsPerHour",range:"hour",field:"steps",mult:distMult, back:menuDistance}),
+    /*LANG*/"per hour": () => showGraph({id:"stepsPerHour",range:"hour",field:"steps",mult:distMult, back:menuDistance,units:units}),
     /*LANG*/"per day": () => {
-      showGraph({id:"stepsPerDay",range:"day",field:"steps",mult:distMult, back:menuDistance})
+      showGraph({id:"stepsPerDay",range:"day",field:"steps",mult:distMult, back:menuDistance,units:units})
       drawHorizontalLine(settings.stepGoal * (distMult || 1));
     }
   });
@@ -59,8 +61,8 @@ function menuHRM() {
   E.showMenu({
     "": { title:/*LANG*/"Heart Rate" },
     /*LANG*/"< Back": () => menuMain(),
-    /*LANG*/"per hour": () => showGraph({id:"hrmPerHour",range:"hour",field:"bpm",ignoreZero:true, average:true,back:menuHRM}),
-    /*LANG*/"per day": () => showGraph({id:"hrmPerDay",range:"day",field:"bpm",ignoreZero:true, average:true,back:menuHRM}),
+    /*LANG*/"per hour": () => showGraph({id:"hrmPerHour",range:"hour",field:"bpm",ignoreZero:true, average:true,back:menuHRM,units:/*LANG*/" bpm"}),
+    /*LANG*/"per day": () => showGraph({id:"hrmPerDay",range:"day",field:"bpm",ignoreZero:true, average:true,back:menuHRM,units:/*LANG*/" bpm"}),
   });
 }
 
@@ -68,8 +70,8 @@ function menuBattery() {
   E.showMenu({
     "": { title:/*LANG*/"Battery" },
     /*LANG*/"< Back": () => menuMain(),
-    /*LANG*/"per hour": () => showGraph({id:"batPerHour",range:"hour",field:"battery",average:true,back:menuBattery}),
-    /*LANG*/"per day": () => showGraph({id:"batPerDay",range:"day",field:"battery",average:true,back:menuBattery}),
+    /*LANG*/"per hour": () => showGraph({id:"batPerHour",range:"hour",field:"battery",average:true,back:menuBattery,units:"%"}),
+    /*LANG*/"per day": () => showGraph({id:"batPerDay",range:"day",field:"battery",average:true,back:menuBattery,units:"%"}),
   });
 }
 
@@ -77,8 +79,8 @@ function menuTemperature() {
   E.showMenu({
     "": { title:/*LANG*/"Temperature" },
     /*LANG*/"< Back": () => menuMain(),
-    /*LANG*/"per hour": () => showGraph({id:"batPerHour",range:"hour",field:"temperature",average:true,back:menuTemperature}),
-    /*LANG*/"per day": () => showGraph({id:"batPerDay",range:"day",field:"temperature",average:true,back:menuTemperature}),
+    /*LANG*/"per hour": () => showGraph({id:"batPerHour",range:"hour",field:"temperature",average:true,back:menuTemperature,units:" instanceof"}),
+    /*LANG*/"per day": () => showGraph({id:"batPerDay",range:"day",field:"temperature",average:true,back:menuTemperature,units:" instanceof"}),
   });
 }
 
@@ -93,6 +95,7 @@ function menuTemperature() {
     ignoreZero: bool, // if set, ignore record that were 0 in average
     average: bool, // if set, average records (ignoring)
     back: fn() // callback for back button
+    units: "steps" // units displayed after each metric
   }
 */
 function showGraph(options) {
@@ -127,8 +130,8 @@ function showGraph(options) {
   if (options.mult !== undefined) { // Calculate distance from steps
     data.forEach((d, i) => data[i] = d*options.mult+0.5);
   }
-  setButton(options.back, options.mult);
-  barChart(title, data, options.mult);
+  setButton(options.back, options.mult,options.units);
+  barChart(title, data, options.units);
 }
 
 // Bar Chart Code
@@ -142,6 +145,7 @@ var chart_max_datum;
 var chart_label;
 var chart_data;
 var current_selection;
+var chart_units;
 
 // find the max value in the array, using a loop due to array size
 function max(arr) {
@@ -159,28 +163,43 @@ function get_data_length(arr) {
   return nlen;
 }
 
-function barChart(label, dt) {
+function barChart(label, dt, units) {
   data_len = get_data_length(dt);
   chart_index = Math.max(data_len - 5, -5);  // choose initial index that puts the last day on the end
+
   chart_max_datum = max(dt);                 // find highest bar, for scaling
   chart_label = label;
   chart_data = dt;
+  chart_units=units
   drawBarChart();
 }
-
+// units is units or undefined
 function drawBarChart() {
   const bar_width = (w - 2) / 9;  // we want 9 bars, bar 5 in the centre
   var bar_top;
   var bar;
   g.reset().clearRect(0,24,w,h);
-
+  let labelFont;
+  let dataFont;
   for (bar = 1; bar < 10; bar++) {
     if (bar == 5) {
-      g.setFont('6x8', 2).setFontAlign(0,-1).setColor(g.theme.fg);
-      g.drawString(chart_label + " " + (chart_index + bar -1) + "   " + chart_data[chart_index + bar - 1], g.getWidth()/2, 150);
-      g.setColor("#00f");
+      let labelTxt=chart_label + " " + (chart_index + bar -1)
+      labelFont =g.findFont(labelTxt,{w:(g.getWidth()/5*2)-7,h:28}).font;
+      let dataTxt=chart_data[chart_index + bar - 1]+(chart_units!==undefined? chart_units :"");
+      dataFont =g.findFont(dataTxt,{w:(g.getWidth()/5*3)-7,h:28}).font;
+
+      g.setFont(labelFont)
+        .setFontAlign(-1,0)
+        .setColor(g.theme.fg)
+        .drawString(labelTxt, 4, 160);
+      
+      g.setFont(dataFont)
+        .setFontAlign(1,0)
+        .drawString(dataTxt, g.getWidth()-4, 160);
+      
+      g.setColor(g.theme.bgH);
     } else {
-      g.setColor("#0ff");
+      g.setColor(g.theme.bg2);
     }
 
     // draw a fake 0 height bar if chart_index is outside the bounds of the array
@@ -203,6 +222,7 @@ function setButton(fn, mult) {
   Bangle.setUI({mode:"custom",
                 back:fn,
                 swipe:(lr,ud) => {
+                  if(Bangle.haptic) Bangle.haptic();
     if (lr == 1) {
       // HOUR data starts at index 0, DAY data starts at index 1
       chart_index = Math.max((chart_label == /*LANG*/"DAY") ? -3 : -4, chart_index - 1);

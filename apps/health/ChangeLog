@@ -47,3 +47,4 @@
 0.40: Added setting to delay turning off HRM after a good reading to improve accuracy
 0.41: Fix #4214 (Bangle.js boot broken by bad minification)
 0.42: Add quick menu option for the 'Calories' app, if installed.
+0.43: Use theme colors for bar graphs, show units, and use newer fonts in graphs.
