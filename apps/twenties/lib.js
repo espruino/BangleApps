@@ -6,12 +6,15 @@
   // - Add entry in settings to re-run setup.
 
   const getTimeAtNextBuzz = () => {
-    const isWorkTime = (d) =>
-      d.getDay() % 6 && d.getHours() >= 8 && d.getHours() < 18;
+    let workStart = new Date();
+    let workEnd = new Date();
+    workStart.setHours(8, 0, 0, 0);
+    workEnd.setHours(18, 0, 20, 0);
+    const isWorkTime = (d) => d.getDay() % 6 && d >= workStart && d < workEnd;
     const isLookAwayTime = (d) =>
       d.getMinutes() % 20 === 0 && d.getSeconds() < 20;
     const NOW = new Date();
-    let t = 8 * 3600000;
+    let t = workStart.getHours() * 3600000 + workStart.getMinutes() * 60000;
     if (isWorkTime(NOW)) {
       if (isLookAwayTime(NOW)) {
         t = NOW.getHours() * 3600000 +
