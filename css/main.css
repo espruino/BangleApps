@@ -1,12 +1,8 @@
-<<<<<<< HEAD
     /* NAVIGATION BAR AND GENERAL STYLES */
     :root {
       color-scheme: light dark; /* Informs the browser the site supports both schemes */
       --hero-img-filter: invert(0%);
     }
-=======
-/* NAVIGATION BAR AND GENERAL STYLES */
->>>>>>> master
     body {
       background-color: light-dark(rgb(253, 253, 255), rgb(44, 44, 44)); /* Background for iFrames, index.html injects its own background with <style> */
       color: light-dark(#3c3c3c, #cacaca);
@@ -63,12 +59,8 @@
       background-color: light-dark(#fff, #2d2d2d);
       border: solid 1px light-dark(#dadee4, #3a386f);
       box-shadow: none;
-<<<<<<< HEAD
-      margin: -1;
-      color: light-dark(#3c3c3c, #cacaca);
-=======
       margin: 0;
->>>>>>> master
+      color: light-dark(#3c3c3c, #cacaca);
     }
 
     .panel-header {
@@ -79,7 +71,7 @@
       border-radius: 1em;
       padding-left: 0rem;
       padding-right: 0rem;
-
+      margin: 0px !important;
       border: none;
     }
 
@@ -101,13 +93,7 @@
       85% { transform: scale(1.06, 1.12); }
       100% { transform: scale(1, 1); }
     }
-    .modal-overlay {
-      background: light-dark(#ffffff4b,#5e5e5ebc)!important;
-          /* Add the blur effect */
-      /* Apply the blur to the backdrop */
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px); /* Safari support */
-    }
+
     .btn {
       border-radius: 0.4em;
       background-color: light-dark(#ffffff, #232323);
@@ -126,16 +112,13 @@
       border-bottom-right-radius: 1em;
       border-top-right-radius: 1em;
     }
-<<<<<<< HEAD
-    .btn.btn-clear{
+	.btn.btn-clear{
       color:light-dark(#000000,#FFFFFF);
     }
     .form-select{
       background-color:light-dark(#ffffff, #232323)!important;
       border-radius:0.4em;
     }
-=======
-
     .menu-item {
       cursor: pointer;
     }
@@ -156,8 +139,10 @@
       padding-right: 1em;
 
     }
-
->>>>>>> master
+    .form-select{
+      background-color:light-dark(#ffffff, #232323)!important;
+      border-radius:0.4em;
+    }
     .btn.btn-favourite:focus,
     .btn.btn-favourite:focus-visible,
     .btn-favourite:focus,
@@ -325,10 +310,12 @@
       will-change: transform, width;
     }
 
+    /* Move the indicator to the second tab */
     #tab-navigate:has(li:nth-child(2).active)::after {
       transform: translateX(100%);
     }
 
+    /* Move the indicator to the third tab */
     #tab-navigate:has(li:nth-child(3).active)::after {
       transform: translateX(200%);
     }
@@ -418,11 +405,13 @@
       border-bottom: 1px solid #EEE;
       margin-bottom: 4px;
       min-height: 11em;
+      /* reduced so tiles can be thinner */
     }
 
     .tile-content {
       position: relative;
       overflow-wrap: anywhere;
+      /* stop long text like links pushing the width out too far*/
     }
 
     /* DROPDOWNS */
@@ -466,27 +455,25 @@
     .tile.column.col-6.col-sm-12.col-xs-12.app-tile {
       background-color: rgba(87, 85, 217, 0.025);
       box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.025);
-<<<<<<< HEAD
       
       border: solid 1.3px light-dark(#dadee47c,#484848);
-=======
-      border: solid 1.3px #dadee47c;
->>>>>>> master
       margin: 0;
+      /* spacing handled by container gap */
       padding: 0.9em;
       border-radius: 1em;
       box-sizing: border-box;
+      /* allow tiles to be two columns on wide screens, collapse to one on small screens */
       flex: 1 1 calc(50% - 0.75rem);
       max-width: calc(50% - 0.75rem);
-      min-width: 220px;
+      min-width: 220px; /* ensures tiles wrap down to one column when viewport is too narrow */
     }
 
     .tile.column.col-6.col-sm-12.col-xs-12.app-tile.updateTile {
       background-color: rgba(255, 149, 0, 0.069) !important;
       box-shadow: 0px 3px 6px rgba(151, 111, 0, 0.036);
     }
-<<<<<<< HEAD
-    .chip{
+
+    .chip {
       border-radius: 0.7em;
       background-color: light-dark(#EEF0F3,#424242);
     }
@@ -496,7 +483,6 @@
     .hero-img {
       filter: invert(0%);
     }
-    
 
     html[data-theme="dark"] {
       --hero-img-filter: invert(100%);
@@ -510,13 +496,7 @@
     .hero.bg-gray{
       background-color: light-dark(#F7F7F9,#2C2C2C)!important;
       border-radius:1em;
-=======
-
-    .chip {
-      border-radius: 0.7em;
->>>>>>> master
     }
-
     .link-github {
       position: absolute;
       top: 36px;
@@ -559,15 +539,15 @@
 
     .devicechooser {
       border-radius: 1em;
+      justify-content: center;
       display: flex;
       justify-content: center;
+      /* Centers horizontally */
       align-items: center;
+      /* Centers vertically */
       text-align: left;
-<<<<<<< HEAD
       color: light-dark(#3c3c3c, #cacaca);
 
-=======
->>>>>>> master
     }
 
     .btn.btn-favourite .icon.icon-favourite span {
@@ -591,6 +571,9 @@
       max-width: 99%;
     }
 
+
+
+    /*override spectre*/
     .icon.icon-interface::before {
       position: absolute;
       left: 50%;
