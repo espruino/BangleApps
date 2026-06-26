@@ -4,7 +4,7 @@
       --hero-img-filter: invert(0%);
     }
     body {
-      background-color: light-dark(#ffffff, #232323);
+      background-color: light-dark(rgb(253, 253, 255), rgb(44, 44, 44)); /* Background for iFrames, index.html injects its own background with <style> */
       color: light-dark(#3c3c3c, #cacaca);
       padding-left: 1em;
       padding-right: 1em;
