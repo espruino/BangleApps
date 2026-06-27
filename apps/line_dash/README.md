@@ -6,8 +6,9 @@ Besides the Line Clock, Line Dash provides an additional suite of minimalist gau
 
 ## Features
 
-* **Clock:** A clean, easy-to-read analog clock face.
-* **Steps:** Tracks your daily steps using a sweeping dial. 
+* **Clock:** A clean, easy-to-read analog clock face that automatically inherits your system's 12/24 hour preference.
+* **Steps:** Tracks your daily steps using a sweeping dial.
+* **Distance:** A trip meter that displays distance covered. Tapping the center of the screen resets it to zero!
 * **Heart Rate:** Features a color-coded HR Zone gauge. The HR sensor only activates when you swipe to this screen to conserve battery. *(Note: The "Live HR Updates" feature is highly recommended but disabled by default to save power. Be sure to enable it in the app settings!)*
 * **Battery:** Displays your current battery level.
 
@@ -15,6 +16,7 @@ Besides the Line Clock, Line Dash provides an additional suite of minimalist gau
 
 * **Swipe Left / Right:** Cycle through the different dashboard gauges.
 * **Tap:** Cycle forward to the next gauge.
+* **Center Tap (Distance Only):** Resets the Distance gauge trip meter to zero.
 
 ## Customization
 
@@ -22,7 +24,9 @@ The app includes a comprehensive settings menu where you can configure the follo
 
 * **Show Lock:** Display a padlock icon when the screen is locked.
 * **Show Minute:** Toggle the digital minute display in the center of the clock gauge.
-* **24 Hour Labels:** When enabled, the clock gauge will dynamically relabel its ticks to 24-hour format (13, 14, 15...) during the afternoon.
+* **Distance Unit:** Manually override the distance unit to `km` or `mi`.
+* **Show Distance:** Enable or disable the Distance Trip Meter screen.
+* **Stride (m):** Set your personal stride length (0.40m to 1.20m) for accurate distance calculation.
 * **Show Steps:** Enable or disable the Steps gauge screen.
 * **Steps "k" label:** Toggle the "k" (thousands) suffix on the Steps gauge.
 * **Show Battery:** Enable or disable the Battery gauge screen.
