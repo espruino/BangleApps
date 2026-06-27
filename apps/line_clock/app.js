@@ -322,13 +322,18 @@ Bangle.on('swipe', function(directionLR, directionUD) {
 
 Bangle.on('touch', function(button, xy) {
   if (xy) {
-    // 88 is the exact center pixel of the 176x176 Bangle.js 2 screen.
-    let dx = xy.x - 88;
-    let dy = xy.y - 88;
-    
-    // If tapped anywhere in the central area (radius 60)
-    if (dx * dx + dy * dy <= 60 * 60) {
-      if (screens[currentScreenIdx] === "hrm") {
+    if (screens[currentScreenIdx] === "hrm") {
+      const h = gHeight + lineOffset;
+      const rotatedPoints = rotatePoints([{
+        x: 0,
+        y: -h + hourLength + numberOffset
+      }], hourAngle, radius);
+      
+      let dx = xy.x - rotatedPoints[0];
+      let dy = xy.y - rotatedPoints[1];
+      
+      // The center circle has a radius of 35. We use 45 for a generous tap hit box.
+      if (dx * dx + dy * dy <= 45 * 45) {
         showHrNumber = !showHrNumber;
         draw();
         return;
