@@ -44,10 +44,12 @@
           save();
         },
       },
-      '24 Hour Labels': {
-        value: settings.clock24,
-        onchange: () => {
-          settings.clock24 = !settings.clock24;
+      'Distance Unit': {
+        value: settings.distanceUnit === "mi" ? 1 : 0,
+        min: 0, max: 1,
+        format: v => v ? "mi" : "km",
+        onchange: (v) => {
+          settings.distanceUnit = v ? "mi" : "km";
           save();
         },
       },
