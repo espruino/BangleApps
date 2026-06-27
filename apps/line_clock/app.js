@@ -233,6 +233,32 @@ function drawHour(h, suffix) {
   hourDot(a + 25);
 }
 
+function drawMetricTick(tickIndex, suffix) {
+  if (tickIndex < 0) return;
+  
+  g.setColor(g.theme.fg);
+  g.setFont("Vector:32");
+  const a = tickIndex * 30;
+  g.fillPolyAA(rotatePoints(hourPoints, a, radius));
+  g.fillPolyAA(rotatePoints(hourSPoints, a + 15, radius));
+  
+  const hOff = gHeight + lineOffset;
+  const rotatedPoints = rotatePoints(
+    [{
+      x: 0,
+      y: -hOff + hourLength + hourOffset
+    }], a, radius
+  );
+  let str = String(tickIndex);
+  if (suffix) str += suffix;
+  g.drawString(str, rotatedPoints[0], rotatedPoints[1]);
+  
+  hourDot(a + 5);
+  hourDot(a + 10);
+  hourDot(a + 20);
+  hourDot(a + 25);
+}
+
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = setTimeout(function() {
@@ -309,14 +335,15 @@ function draw() {
     let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
     let steps = health ? health.steps : 0;
     
-    hourAngle = ((steps % 12000) / 12000) * 360;
+    // Smooth angle based on exact steps, without bounds
+    hourAngle = (steps / 12000) * 360;
 
-    let currentStepHour = Math.floor(steps / 1000) % 12;
+    let currentTick = Math.floor(steps / 1000);
     let suffix = initialSettings.showStepsK ? "k" : "";
 
-    drawHour(currentStepHour, suffix);
-    drawHour(currentStepHour - 1, suffix);
-    drawHour(currentStepHour + 1, suffix);
+    drawMetricTick(currentTick, suffix);
+    drawMetricTick(currentTick - 1, suffix);
+    drawMetricTick(currentTick + 1, suffix);
 
     drawHand(0x07E0); // Green for steps
 
