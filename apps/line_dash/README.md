@@ -8,7 +8,7 @@ Besides the Line Clock, Line Dash provides an additional suite of minimalist gau
 
 * **Clock:** A clean, easy-to-read analog clock face that automatically inherits your system's 12/24 hour preference.
 * **Steps:** Tracks your daily steps using a sweeping dial.
-* **Distance:** A trip meter that displays distance covered. Tapping the center of the screen resets it to zero!
+* **Distance:** A trip meter that displays distance covered. Swiping up or down resets it to zero!
 * **Heart Rate:** Features a color-coded HR Zone gauge. The HR sensor only activates when you swipe to this screen to conserve battery. *(Note: The "Live HR Updates" feature is highly recommended but disabled by default to save power. Be sure to enable it in the app settings!)*
 * **Battery:** Displays your current battery level.
 
