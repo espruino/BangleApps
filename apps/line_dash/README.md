@@ -36,4 +36,4 @@ The app includes a comprehensive settings menu where you can configure the follo
 
 ## Credits
 
-Line Dash was built upon the foundation of the [Line Clock](https://github.com/espruino/BangleApps/tree/master/apps/line_clock) app originally created by deepDiverPaul. We took the original minimalist line aesthetic and expanded it into a suite of interactive, swipeable dashboard gauges.
+Line Dash was built upon the foundation of the [Line Clock](https://github.com/espruino/BangleApps/tree/master/apps/line_clock) app originally created by deepDiverPaul. It has been expanded it into a suite of interactive, swipeable dashboard gauges.
