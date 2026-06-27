@@ -394,15 +394,15 @@ function draw() {
     let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
     let steps = health ? health.steps : 0;
     
-    // Smooth angle based on exact steps, without bounds
-    hourAngle = (steps / 12000) * 360;
+    // Smooth angle based on exact steps, rotated to start at 7 o'clock (210 degrees)
+    hourAngle = 210 + (steps / 12000) * 360;
 
     let currentTick = Math.floor(steps / 1000);
     let suffix = initialSettings.showStepsK ? "k" : "";
 
-    if (currentTick - 1 >= 0) drawMetricTick(String(currentTick - 1) + suffix, (currentTick - 1) * 30, 30);
-    drawMetricTick(String(currentTick) + suffix, currentTick * 30, 30);
-    drawMetricTick(String(currentTick + 1) + suffix, (currentTick + 1) * 30, 30);
+    if (currentTick - 1 >= 0) drawMetricTick(String(currentTick - 1) + suffix, 210 + (currentTick - 1) * 30, 30);
+    drawMetricTick(String(currentTick) + suffix, 210 + currentTick * 30, 30);
+    drawMetricTick(String(currentTick + 1) + suffix, 210 + (currentTick + 1) * 30, 30);
 
     drawHand(0x07E0); // Green for steps
 
