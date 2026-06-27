@@ -14,7 +14,8 @@
   new : did we just rebuild the cache?
 }
 settings : {
-  showClocks:bool,
+  showClocks : bool,
+  showLaunchers : bool,
   onNew : function(launchCache) // called if cache is new, before we save it
 }
 */
