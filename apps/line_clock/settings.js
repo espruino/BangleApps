@@ -7,6 +7,7 @@
       showLock: true,
       showMinute: true,
       showSteps: true,
+      showStepsK: true,
     };
     let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
     for (const key in saved_settings) {
@@ -38,6 +39,13 @@
         value: settings.showSteps,
         onchange: () => {
           settings.showSteps = !settings.showSteps;
+          save();
+        },
+      },
+      'Steps "k" label': {
+        value: settings.showStepsK,
+        onchange: () => {
+          settings.showStepsK = !settings.showStepsK;
           save();
         },
       }

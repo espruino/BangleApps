@@ -17,6 +17,7 @@ let initialSettings = {
   showLock: true,
   showMinute: true,
   showSteps: true,
+  showStepsK: true,
 };
 
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || initialSettings;
@@ -166,7 +167,7 @@ function hourDot(a) {
  *
  * @param {number} a - The hour to be converted (between 0 and 360 degrees).
  */
-function hourNumber(a) {
+function hourNumber(a, suffix) {
   const h = gHeight + lineOffset;
   const rotatedPoints = rotatePoints(
     [{
@@ -174,7 +175,9 @@ function hourNumber(a) {
       y: -h + hourLength + hourOffset
     }], a, radius
   );
-  g.drawString(String(a / 30), rotatedPoints[0], rotatedPoints[1]);
+  let str = String(a / 30);
+  if (suffix) str += suffix;
+  g.drawString(str, rotatedPoints[0], rotatedPoints[1]);
 }
 
 /**
@@ -215,7 +218,7 @@ const hourSPoints = getHourCoordinates(true);
  * @param {number} h - The hour to be drawn on the clock face.
  * @return {undefined}
  */
-function drawHour(h) {
+function drawHour(h, suffix) {
   while (h <= 0) h += 12;
   while (h > 12) h -= 12;
   g.setColor(g.theme.fg);
@@ -223,7 +226,7 @@ function drawHour(h) {
   const a = h * 30;
   g.fillPolyAA(rotatePoints(hourPoints, a, radius));
   g.fillPolyAA(rotatePoints(hourSPoints, a + 15, radius));
-  hourNumber(a);
+  hourNumber(a, suffix);
   hourDot(a + 5);
   hourDot(a + 10);
   hourDot(a + 20);
@@ -309,10 +312,11 @@ function draw() {
     hourAngle = ((steps % 12000) / 12000) * 360;
 
     let currentStepHour = Math.floor(steps / 1000) % 12;
+    let suffix = initialSettings.showStepsK ? "k" : "";
 
-    drawHour(currentStepHour);
-    drawHour(currentStepHour - 1);
-    drawHour(currentStepHour + 1);
+    drawHour(currentStepHour, suffix);
+    drawHour(currentStepHour - 1, suffix);
+    drawHour(currentStepHour + 1, suffix);
 
     drawHand(0x07E0); // Green for steps
 
