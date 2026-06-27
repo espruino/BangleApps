@@ -266,8 +266,8 @@ function drawHour(rawH) {
   hourDot(a + 25);
 }
 
-function drawMetricTick(tickStr, a, spacingAngle) {
-  g.setColor(g.theme.fg);
+function drawMetricTick(tickStr, a, spacingAngle, color) {
+  g.setColor(color !== undefined ? color : g.theme.fg);
   g.setFont("Vector:32");
   
   g.fillPolyAA(rotatePoints(hourPoints, a, radius));
@@ -542,7 +542,16 @@ function draw() {
     // 20 segments -> 15 degrees per segment. Draw 7 ticks to fill the screen edge-to-edge.
     for (let i = currentTick - 3; i <= currentTick + 3; i++) {
         if (i >= 0 && i <= 20) {
-            drawMetricTick(String(40 + i * 10), 210 + i * 15, 15);
+            let tickBpm = 40 + i * 10;
+            let tickColor;
+            if (tickBpm < z1) tickColor = 0x07E0; // Green
+            else if (tickBpm < z2) tickColor = 0x07FF; // Cyan
+            else if (tickBpm < z3) tickColor = 0xFFE0; // Yellow
+            else if (tickBpm < z4) tickColor = 0xFD20; // Orange
+            else if (tickBpm < z5) tickColor = 0xFA80; // Light Red
+            else tickColor = 0xF800; // Red
+
+            drawMetricTick(String(tickBpm), 210 + i * 15, 15, tickColor);
         }
     }
 
