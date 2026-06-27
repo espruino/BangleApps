@@ -360,7 +360,7 @@ function draw() {
     // 10 segments -> 36 degrees per segment
     for (let i = currentTick - 1; i <= currentTick + 1; i++) {
         if (i >= 0 && i <= 10) {
-            drawMetricTick(String(i * 10), i * 36, 36);
+            drawMetricTick(String(i * 10) + "%", i * 36, 36);
         }
     }
 
