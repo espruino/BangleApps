@@ -352,9 +352,15 @@ function draw() {
   } else if (screen === "battery") {
     let battery = E.getBattery();
     
-    let color = 0x07E0; // Green
-    if (battery <= 20) color = 0xF800; // Red
-    else if (battery <= 50) color = 0xFFE0; // Yellow
+    let r5, g6;
+    if (battery <= 50) {
+      r5 = 31;
+      g6 = Math.round((battery / 50) * 63);
+    } else {
+      r5 = Math.round((1 - ((battery - 50) / 50)) * 31);
+      g6 = 63;
+    }
+    let color = (r5 << 11) | (g6 << 5);
     
     // Scale 0-100 to 0-360 degrees
     hourAngle = (battery / 100) * 360;
