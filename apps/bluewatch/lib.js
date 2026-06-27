@@ -150,9 +150,7 @@ function processMessage(raw) {
         updateWeatherData(obj);
         break;
     }
-  } else if (obj) {
-    print("Unknown object type, id:", obj.id);
-  }
+  } 
 }
 
 function messageReceived(data) {
