@@ -16,7 +16,7 @@ const SETTINGS_FILE = "line_dash.setting.json";
 let initialSettings = {
   showLock: true,
   showMinute: true,
-  clock24: false,
+  distanceUnit: "km",
   showDistance: true,
   strideLength: 0.8,
   showSteps: true,
@@ -236,7 +236,12 @@ const hourSPoints = getHourCoordinates(true);
  */
 function drawHour(rawH) {
   let displayH = rawH;
-  if (!initialSettings.clock24) {
+  
+  // Read global 12/24 hour system setting
+  let sysSettings = storage.readJSON('setting.json', 1) || {};
+  let is24h = sysSettings["12hour"] === false || sysSettings["12hour"] === undefined; // Usually defaults to 24h if missing
+
+  if (!is24h) {
     while (displayH <= 0) displayH += 12;
     while (displayH > 12) displayH -= 12;
   } else {
@@ -437,7 +442,7 @@ function draw() {
     let tripSteps = Math.max(0, steps - distanceBaselineSteps);
     let distanceM = tripSteps * initialSettings.strideLength;
     
-    let isImperial = (require("locale").distance(10000) || "").indexOf("mi") > -1;
+    let isImperial = initialSettings.distanceUnit === "mi";
     let unitScale = isImperial ? 1609.34 : 1000;
     let unitSuffix = isImperial ? "mi" : "km";
     let distanceUnits = distanceM / unitScale;
