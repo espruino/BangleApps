@@ -38,16 +38,18 @@ function updateSettingsObject() {
     if (settings[d]) delete settings[d];
   }
 launchCache = require("launch_utils").cacheWidgetsCheck(launchCache.apps);
-}
+
 // Add required launch_utils properties to settings object from versions older than 0.17
 //delete settings.trace;
 var settingsKeys = Object.keys(settings);
 settingsKeys.forEach(key => {
   let name = settings[key].name; 
   let app  = apps.find(app=>app.name === name);
+    print(app)
   if (app) settings[key].wid = app.wid;
 });
 storage.writeJSON("quicklaunch.json",settings);
+}
 
 // Add psuedo app to trigger Bangle.showLauncher later
 apps.push({
@@ -119,8 +121,13 @@ function showMainMenu() {
     // If no app is selected the name is an empty string, but we want to display "(none)".
     let appName = settings[key].name==""?"(none)":settings[key].name;
     mainmenu[entry+ ": "+appName] = function() {showSubMenu(keyCurrent);};
+    }
+
+  mainmenu.updateSettingsObject = ()=>{
+    E.showMessage("Updating settings object", "Quick Launch");
+    updateSettingsObject();
+    E.showPrompt("Updated settings object.", {title:"Quick Launch", buttons:{"Ok":null}}).then(showMainMenu);
   }
-    mainmenu.updateSettingsObject = updateSettingsObject(); // FIXME: Make this a good user experience by wrapping in a alert/prompt or something.
 
   return E.showMenu(mainmenu);
 }
