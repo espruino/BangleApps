@@ -280,7 +280,10 @@ function drawMetricTick(tickStr, a, spacingAngle, color) {
       y: -hOff + hourLength + hourOffset
     }], a, radius
   );
+  
+  g.setColor(g.theme.fg);
   g.drawString(tickStr, rotatedPoints[0], rotatedPoints[1]);
+  g.setColor(color !== undefined ? color : g.theme.fg);
   
   let interval = spacingAngle / 6;
   hourDot(a + interval);
