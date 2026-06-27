@@ -16,6 +16,7 @@ const SETTINGS_FILE = "line_dash.setting.json";
 let initialSettings = {
   showLock: true,
   showMinute: true,
+  clock24: false,
   showSteps: true,
   showStepsK: true,
   showBattery: true,
@@ -231,15 +232,27 @@ const hourSPoints = getHourCoordinates(true);
  * @param {number} h - The hour to be drawn on the clock face.
  * @return {undefined}
  */
-function drawHour(h, suffix) {
-  while (h <= 0) h += 12;
-  while (h > 12) h -= 12;
+function drawHour(rawH) {
+  let displayH = rawH;
+  if (!initialSettings.clock24) {
+    while (displayH <= 0) displayH += 12;
+    while (displayH > 12) displayH -= 12;
+  } else {
+    while (displayH < 0) displayH += 24;
+    while (displayH >= 24) displayH -= 24;
+  }
+
+  let angleH = rawH;
+  while (angleH <= 0) angleH += 12;
+  while (angleH > 12) angleH -= 12;
+  let a = angleH * 30;
+
   g.setColor(g.theme.fg);
   g.setFont("Vector:32");
-  const a = h * 30;
+  
   g.fillPolyAA(rotatePoints(hourPoints, a, radius));
   g.fillPolyAA(rotatePoints(hourSPoints, a + 15, radius));
-  hourNumber(a, suffix);
+  hourNumber(a, String(displayH));
   hourDot(a + 5);
   hourDot(a + 10);
   hourDot(a + 20);
@@ -374,9 +387,6 @@ function draw() {
   if (screen === "clock") {
     currentTime = new Date();
     currentHour = currentTime.getHours();
-    if (currentHour > 12) {
-      currentHour -= 12;
-    }
     currentMinute = currentTime.getMinutes();
 
     hourAngle = getHourHandAngle();

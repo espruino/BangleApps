@@ -22,6 +22,7 @@ The app includes a comprehensive settings menu where you can configure the follo
 
 * **Show Lock:** Display a padlock icon when the screen is locked.
 * **Show Minute:** Toggle the digital minute display in the center of the clock gauge.
+* **24 Hour Labels:** When enabled, the clock gauge will dynamically relabel its ticks to 24-hour format (13, 14, 15...) during the afternoon.
 * **Show Steps:** Enable or disable the Steps gauge screen.
 * **Steps "k" label:** Toggle the "k" (thousands) suffix on the Steps gauge.
 * **Show Battery:** Enable or disable the Battery gauge screen.

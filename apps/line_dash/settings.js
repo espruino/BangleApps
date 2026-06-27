@@ -6,6 +6,7 @@
     let settings = {
       showLock: true,
       showMinute: true,
+      clock24: false,
       showSteps: true,
       showStepsK: true,
       showBattery: true,
@@ -38,6 +39,13 @@
         value: settings.showMinute,
         onchange: () => {
           settings.showMinute = !settings.showMinute;
+          save();
+        },
+      },
+      '24 Hour Labels': {
+        value: settings.clock24,
+        onchange: () => {
+          settings.clock24 = !settings.clock24;
           save();
         },
       },
