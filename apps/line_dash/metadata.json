@@ -2,7 +2,7 @@
   "name": "Line Dash",
   "shortName":"Line Dash",
   "version":"0.3",
-  "author": "deepDiverPaul",
+  "author": "pagnotta, deepDiverPaul",
   "description": "A swipeable analog dashboard",
   "icon": "app-icon.png",
   "type": "clock",

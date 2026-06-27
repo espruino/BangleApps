@@ -1,1 +1,3 @@
-0.1: init app
+0.1: Initial release based on Line Clock
+0.2: Add health gauges (steps, distance, HR, battery)
+0.3: Dynamic HR colors, Fast Load support
