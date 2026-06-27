@@ -1,1 +1,1 @@
-require('twenties').setup();
+require('twenties').setup()
