@@ -286,13 +286,11 @@ Bangle.on('lock', lockListenerBw);
 
 let hrmPowerTimeout;
 
-Bangle.on('swipe', function(directionLR, directionUD) {
-  if (directionLR === 0) return; // Ignore up/down swipes
-
+function changeScreen(dir) {
   let oldScreen = screens[currentScreenIdx];
-  if (directionLR === -1) { // Swipe left -> Next
+  if (dir === 1) { // Forward
     currentScreenIdx = (currentScreenIdx + 1) % screens.length;
-  } else if (directionLR === 1) { // Swipe right -> Previous
+  } else if (dir === -1) { // Backward
     currentScreenIdx = (currentScreenIdx - 1 + screens.length) % screens.length;
   }
   let newScreen = screens[currentScreenIdx];
@@ -314,6 +312,15 @@ Bangle.on('swipe', function(directionLR, directionUD) {
   }
 
   draw();
+}
+
+Bangle.on('swipe', function(directionLR, directionUD) {
+  if (directionLR === 0) return; // Ignore up/down swipes
+  changeScreen(directionLR === -1 ? 1 : -1);
+});
+
+Bangle.on('touch', function(button, xy) {
+  changeScreen(1);
 });
 
 let liveBpm = 0;
