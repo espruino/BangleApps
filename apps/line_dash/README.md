@@ -1,15 +1,15 @@
 # Line Dash
 
-A clean, swipeable analog dashboard for Bangle.js 2. 
+A clean, swipeable analog clock and dashboard for Bangle.js 2. 
 
-Line Dash provides a suite of minimalist gauges that you can swipe through to check your daily stats. It is designed to minimize battery drain by only powering sensors when their specific gauge is visible on the screen.
+Besides the Line Clock, Line Dash provides an additional suite of minimalist gauges that you can swipe through to check your daily stats.
 
 ## Features
 
 * **Clock:** A clean, easy-to-read analog clock face.
 * **Steps:** Tracks your daily steps using a sweeping dial. 
-* **Battery:** Displays your remaining battery life on a 7-to-5 o'clock dial.
 * **Heart Rate:** Features a live, color-coded HR Zone gauge. The HR sensor only activates when you swipe to this screen to conserve battery. 
+* **Battery:** Displays your current battery level.
 
 ## Controls
 
@@ -25,7 +25,7 @@ The app includes a comprehensive settings menu where you can configure the follo
 * **Show Steps:** Enable or disable the Steps gauge screen.
 * **Steps "k" label:** Toggle the "k" (thousands) suffix on the Steps gauge.
 * **Show Battery:** Enable or disable the Battery gauge screen.
-* **Dynamic Battery Color:** When enabled, the battery gauge turns red when battery is low.
+* **Dynamic Battery Color:** When enabled, the battery gauge gradually turns red when battery runs low.
 * **Show Heart Rate:** Enable or disable the Heart Rate gauge screen.
 * **Live HR Updates:** Toggle whether the Heart Rate gauge updates live while viewing it.
 * **Live HR Interval:** If Live HR is enabled, select how often the gauge redraws (2s, 5s, 15s, 30s, 60s, 90s, or 120s).

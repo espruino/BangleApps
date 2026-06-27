@@ -33,8 +33,8 @@ for (const key in saved_settings) {
 
 let screens = ["clock"];
 if (initialSettings.showSteps) screens.push("steps");
-if (initialSettings.showBattery) screens.push("battery");
 if (initialSettings.showHrm) screens.push("hrm");
+if (initialSettings.showBattery) screens.push("battery");
 let currentScreenIdx = 0;
 
 let gWidth  = g.getWidth(),  gCenterX = gWidth/2;
