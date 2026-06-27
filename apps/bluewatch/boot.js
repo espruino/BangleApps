@@ -1,11 +1,10 @@
 NRF.setAdvertising({}, { connectable: true });
 
 var blueWatch = require("bluewatch");
-var locInterval;
 var settings = require("Storage").readJSON("bluewatch.settings.json") || {
   overrideGPS: true
 };
-var weatherInterval;
+var weatherLocInterval;
 var systemDataInterval;
 var savedData = require("Storage").readJSON("bluewatchData.json") || {
   phoneConnected: false,
@@ -21,8 +20,7 @@ function updateWeatherAndLocation() {
   }, 60 * 10);
 }
 function setUpdateIntervals() {
-  locInterval = setInterval(updateWeatherAndLocation, 10 * 60 * 1000);
-  weatherInterval = setInterval(blueWatch.sendSystemData, 60 * 1000);
+  weatherLocInterval = setInterval(updateWeatherAndLocation, 10 * 60 * 1000);
   systemDataInterval = setInterval(blueWatch.sendSystemData, 60 * 1000);
 }
 Bangle.on("BlueWatchConnected", function () {
@@ -37,13 +35,13 @@ if (global.phoneConnected) {
 }
 NRF.on("disconnect", function () {
   global.phoneConnected = false;
-  if (locInterval) {
-    clearInterval(locInterval);
-    locInterval = undefined;
+  if (weatherLocInterval) {
+    clearInterval(weatherLocInterval);
+    weatherLocInterval = undefined;
   }
-  if (weatherInterval) {
-    clearInterval(weatherInterval);
-    weatherInterval = undefined;
+  if (systemDataInterval) {
+    clearInterval(systemDataInterval);
+    systemDataInterval = undefined;
   }
 });
 
