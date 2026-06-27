@@ -8059,7 +8059,7 @@
 { "id": "line_dash",
   "name": "Line Dash",
   "shortName":"Line Dash",
-  "version":"0.1",
+  "version":"0.2",
   "author": "deepDiverPaul",
   "description": "A swipeable analog dashboard",
   "icon": "app-icon.png",
