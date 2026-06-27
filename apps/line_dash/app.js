@@ -442,9 +442,9 @@ function draw() {
 
     let currentTick = Math.floor(distanceM / 1000);
     
-    if (currentTick - 1 >= 0) drawMetricTick(String(currentTick - 1), 210 + (currentTick - 1) * 30, 30);
-    drawMetricTick(String(currentTick), 210 + currentTick * 30, 30);
-    drawMetricTick(String(currentTick + 1), 210 + (currentTick + 1) * 30, 30);
+    if (currentTick - 1 >= 0) drawMetricTick(String(currentTick - 1) + "km", 210 + (currentTick - 1) * 30, 30);
+    drawMetricTick(String(currentTick) + "km", 210 + currentTick * 30, 30);
+    drawMetricTick(String(currentTick + 1) + "km", 210 + (currentTick + 1) * 30, 30);
 
     drawHand(0x07FF); // Cyan for distance
 
