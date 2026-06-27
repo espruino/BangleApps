@@ -316,8 +316,9 @@ function draw() {
 
     drawHand(0x07E0); // Green for steps
 
-    // Draw exact steps in the center circle
-    drawNumber(steps, 0x07E0);
+    // Draw the hundreds digit in the center circle (0-9)
+    let hundreds = Math.floor((steps % 1000) / 100);
+    drawNumber(hundreds, 0x07E0);
   }
 }
 
