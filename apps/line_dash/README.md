@@ -4,6 +4,12 @@ A beautiful analog clock with swipeable stats dashboards for Bangle.js 2.
 
 Besides the Line Clock, Line Dash provides an additional suite of minimalist gauges that you can swipe through to check your daily stats.
 
+## Screenshots
+
+| Clock | Heart Rate | Steps | Distance |
+| :---: | :---: | :---: | :---: |
+| ![](app-screenshot.png) | ![](app-screenshot-hr.png) | ![](app-screenshot-step.png) | ![](app-screenshot-dist.png) |
+
 ## Features
 
 * **Clock:** A clean, easy-to-read analog clock face that automatically inherits your system's 12/24 hour preference.
