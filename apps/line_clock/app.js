@@ -392,11 +392,10 @@ function draw() {
   } else if (screen === "hrm") {
     let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("last") : null;
     let bpm = health ? (health.bpm || 0) : 0;
-    let displayBpm = bpm;
     
-    // Scale 40 to 220
+    // Scale 40 to 240
     if (bpm < 40) bpm = 40;
-    if (bpm > 220) bpm = 220;
+    if (bpm > 240) bpm = 240;
     
     // Calculate Zone and Color
     let zone = "REST";
@@ -422,20 +421,22 @@ function draw() {
     }
     let color = (r5 << 11) | (g6 << 5);
 
-    // 40-220 mapped to 0-360 degrees
-    hourAngle = ((bpm - 40) / 180) * 360;
+    // 40-240 mapped to 210-510 degrees (7 o'clock to 5 o'clock)
+    hourAngle = 210 + ((bpm - 40) / 200) * 300;
 
-    let currentTick = Math.floor((bpm - 40) / 20);
+    let currentTick = Math.floor((bpm - 40) / 10);
     
-    // 9 segments (10 ticks) -> 40 degrees per segment
+    // 20 segments -> 15 degrees per segment
     for (let i = currentTick - 1; i <= currentTick + 1; i++) {
-        if (i >= 0 && i <= 9) {
-            drawMetricTick(String(40 + i * 20), i * 40, 40);
+        if (i >= 0 && i <= 20) {
+            drawMetricTick(String(40 + i * 10), 210 + i * 15, 15);
         }
     }
 
     drawHand(color);
-    drawNumber(displayBpm, color, zone);
+    
+    // Zone replaces the digital BPM in the center
+    drawNumber(zone, color);
   }
 }
 
