@@ -5,7 +5,7 @@
   "version": "0.01",
   "description": "Uses the native iOS app BlueWatch to fetch weather, use phone GPS, find phone/watch, and more.",
   "icon": "app.png",
-  "tags": "bluetooth, ios, bluewatch",
+  "tags": "tool,bluetooth,apple,ios,system",
   "supports": ["BANGLEJS2"],
   "dependencies": {"ios": "app"},
   "readme": "README.md",
