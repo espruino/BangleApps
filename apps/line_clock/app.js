@@ -18,6 +18,7 @@ let initialSettings = {
   showMinute: true,
   showSteps: true,
   showStepsK: true,
+  showBattery: true,
 };
 
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || initialSettings;
@@ -27,6 +28,7 @@ for (const key in saved_settings) {
 
 let screens = ["clock"];
 if (initialSettings.showSteps) screens.push("steps");
+if (initialSettings.showBattery) screens.push("battery");
 let currentScreenIdx = 0;
 
 let gWidth  = g.getWidth(),  gCenterX = gWidth/2;
@@ -233,14 +235,12 @@ function drawHour(h, suffix) {
   hourDot(a + 25);
 }
 
-function drawMetricTick(tickIndex, suffix) {
-  if (tickIndex < 0) return;
-  
+function drawMetricTick(tickStr, a, spacingAngle) {
   g.setColor(g.theme.fg);
   g.setFont("Vector:32");
-  const a = tickIndex * 30;
+  
   g.fillPolyAA(rotatePoints(hourPoints, a, radius));
-  g.fillPolyAA(rotatePoints(hourSPoints, a + 15, radius));
+  g.fillPolyAA(rotatePoints(hourSPoints, a + (spacingAngle / 2), radius));
   
   const hOff = gHeight + lineOffset;
   const rotatedPoints = rotatePoints(
@@ -249,14 +249,13 @@ function drawMetricTick(tickIndex, suffix) {
       y: -hOff + hourLength + hourOffset
     }], a, radius
   );
-  let str = String(tickIndex);
-  if (suffix) str += suffix;
-  g.drawString(str, rotatedPoints[0], rotatedPoints[1]);
+  g.drawString(tickStr, rotatedPoints[0], rotatedPoints[1]);
   
-  hourDot(a + 5);
-  hourDot(a + 10);
-  hourDot(a + 20);
-  hourDot(a + 25);
+  let interval = spacingAngle / 6;
+  hourDot(a + interval);
+  hourDot(a + interval * 2);
+  hourDot(a + interval * 4);
+  hourDot(a + interval * 5);
 }
 
 function queueDraw() {
@@ -341,15 +340,34 @@ function draw() {
     let currentTick = Math.floor(steps / 1000);
     let suffix = initialSettings.showStepsK ? "k" : "";
 
-    drawMetricTick(currentTick, suffix);
-    drawMetricTick(currentTick - 1, suffix);
-    drawMetricTick(currentTick + 1, suffix);
+    if (currentTick - 1 >= 0) drawMetricTick(String(currentTick - 1) + suffix, (currentTick - 1) * 30, 30);
+    drawMetricTick(String(currentTick) + suffix, currentTick * 30, 30);
+    drawMetricTick(String(currentTick + 1) + suffix, (currentTick + 1) * 30, 30);
 
     drawHand(0x07E0); // Green for steps
 
     // Draw the hundreds digit in the center circle (0-9)
     let hundreds = Math.floor((steps % 1000) / 100);
     drawNumber(hundreds, 0x07E0);
+  } else if (screen === "battery") {
+    let battery = E.getBattery();
+    
+    // Scale 0-100 to 0-360 degrees
+    hourAngle = (battery / 100) * 360;
+
+    let currentTick = Math.floor(battery / 10);
+    
+    // 10 segments -> 36 degrees per segment
+    for (let i = currentTick - 1; i <= currentTick + 1; i++) {
+        if (i >= 0 && i <= 10) {
+            drawMetricTick(String(i * 10), i * 36, 36);
+        }
+    }
+
+    drawHand(0xFFE0); // Yellow for battery
+
+    // Exact battery percentage in center
+    drawNumber(battery, 0xFFE0);
   }
 }
 

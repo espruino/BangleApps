@@ -8,6 +8,7 @@
       showMinute: true,
       showSteps: true,
       showStepsK: true,
+      showBattery: true,
     };
     let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
     for (const key in saved_settings) {
@@ -46,6 +47,13 @@
         value: settings.showStepsK,
         onchange: () => {
           settings.showStepsK = !settings.showStepsK;
+          save();
+        },
+      },
+      'Show Battery': {
+        value: settings.showBattery,
+        onchange: () => {
+          settings.showBattery = !settings.showBattery;
           save();
         },
       }
