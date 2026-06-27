@@ -504,9 +504,6 @@ function draw() {
     // 40-240 mapped to 210-510 degrees (7 o'clock to 5 o'clock)
     hourAngle = 210 + ((bpm - 40) / 200) * 300;
 
-    let centerText = showHrNumber ? String(Math.round(bpm)) : zone;
-    drawNumber(centerText, color);
-
     let currentTick = Math.floor((bpm - 40) / 10);
     
     // 20 segments -> 15 degrees per segment. Draw 7 ticks to fill the screen edge-to-edge.
@@ -517,6 +514,9 @@ function draw() {
     }
 
     drawHand(color);
+
+    let centerText = showHrNumber ? String(Math.round(bpm)) : zone;
+    drawNumber(centerText, color);
   }
 }
 
