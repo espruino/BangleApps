@@ -16,7 +16,7 @@ Besides the Line Clock, Line Dash provides an additional suite of minimalist gau
 
 * **Swipe Left / Right:** Cycle through the different dashboard gauges.
 * **Tap:** Cycle forward to the next gauge.
-* **Center Tap (Distance Only):** Resets the Distance gauge trip meter to zero.
+* **Swipe Up / Down (Distance Only):** Resets the Distance gauge trip meter to zero.
 
 ## Customization
 

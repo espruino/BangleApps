@@ -335,21 +335,22 @@ function changeScreen(dir) {
 }
 
 Bangle.on('swipe', function(directionLR, directionUD) {
-  if (directionLR === 0) return; // Ignore up/down swipes
-  changeScreen(directionLR === -1 ? 1 : -1);
+  if (directionUD !== 0) {
+    if (screens[currentScreenIdx] === "distance") {
+      let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
+      distanceBaselineSteps = health ? health.steps : 0;
+      draw();
+    }
+    return;
+  }
+  if (directionLR !== 0) {
+    changeScreen(directionLR === -1 ? 1 : -1);
+  }
 });
 
 let distanceBaselineSteps = 0;
 
 Bangle.on('touch', function(button, xy) {
-  let dx = xy.x - gCenterX;
-  let dy = xy.y - gCenterY;
-  if (screens[currentScreenIdx] === "distance" && dx*dx + dy*dy < 2000) {
-    let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
-    distanceBaselineSteps = health ? health.steps : 0;
-    draw();
-    return;
-  }
   changeScreen(1);
 });
 
