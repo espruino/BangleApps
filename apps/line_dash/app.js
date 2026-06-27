@@ -437,20 +437,25 @@ function draw() {
     let tripSteps = Math.max(0, steps - distanceBaselineSteps);
     let distanceM = tripSteps * initialSettings.strideLength;
     
-    // Smooth angle based on exact distance, rotated to start at 7 o'clock (210 degrees)
-    hourAngle = 210 + (distanceM / 12000) * 360;
-
-    let currentTick = Math.floor(distanceM / 1000);
+    let isImperial = (require("locale").distance(10000) || "").indexOf("mi") > -1;
+    let unitScale = isImperial ? 1609.34 : 1000;
+    let unitSuffix = isImperial ? "mi" : "km";
+    let distanceUnits = distanceM / unitScale;
     
-    if (currentTick - 1 >= 0) drawMetricTick(String(currentTick - 1) + "km", 210 + (currentTick - 1) * 30, 30);
-    drawMetricTick(String(currentTick) + "km", 210 + currentTick * 30, 30);
-    drawMetricTick(String(currentTick + 1) + "km", 210 + (currentTick + 1) * 30, 30);
+    // Smooth angle based on exact distance, rotated to start at 7 o'clock (210 degrees)
+    hourAngle = 210 + (distanceUnits / 12) * 360;
+
+    let currentTick = Math.floor(distanceUnits);
+    
+    if (currentTick - 1 >= 0) drawMetricTick(String(currentTick - 1) + unitSuffix, 210 + (currentTick - 1) * 30, 30);
+    drawMetricTick(String(currentTick) + unitSuffix, 210 + currentTick * 30, 30);
+    drawMetricTick(String(currentTick + 1) + unitSuffix, 210 + (currentTick + 1) * 30, 30);
 
     drawHand(0x07FF); // Cyan for distance
 
-    // Center number: just the hundreds of meters (0-9)
-    let hundreds = Math.floor((distanceM % 1000) / 100);
-    drawNumber(hundreds, 0x07FF);
+    // Center number: just the tenths of the current unit (0-9)
+    let fractional = Math.floor((distanceUnits % 1) * 10);
+    drawNumber(fractional, 0x07FF);
   } else if (screen === "battery") {
     let battery = E.getBattery();
     
