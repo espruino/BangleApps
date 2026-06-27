@@ -352,6 +352,10 @@ function draw() {
   } else if (screen === "battery") {
     let battery = E.getBattery();
     
+    let color = 0x07E0; // Green
+    if (battery <= 20) color = 0xF800; // Red
+    else if (battery <= 50) color = 0xFFE0; // Yellow
+    
     // Scale 0-100 to 0-360 degrees
     hourAngle = (battery / 100) * 360;
 
@@ -364,10 +368,10 @@ function draw() {
         }
     }
 
-    drawHand(0xFFE0); // Yellow for battery
+    drawHand(color);
 
     // Exact battery percentage in center
-    drawNumber(battery, 0xFFE0);
+    drawNumber(battery, color);
   }
 }
 
