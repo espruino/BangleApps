@@ -176,7 +176,7 @@ function hourDot(a) {
  *
  * @param {number} a - The hour to be converted (between 0 and 360 degrees).
  */
-function hourNumber(a, suffix) {
+function hourNumber(a, label) {
   const h = gHeight + lineOffset;
   const rotatedPoints = rotatePoints(
     [{
@@ -184,8 +184,7 @@ function hourNumber(a, suffix) {
       y: -h + hourLength + hourOffset
     }], a, radius
   );
-  let str = String(a / 30);
-  if (suffix) str += suffix;
+  let str = label !== undefined ? String(label) : String(a / 30);
   g.drawString(str, rotatedPoints[0], rotatedPoints[1]);
 }
 
