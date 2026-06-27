@@ -285,6 +285,7 @@ function lockListenerBw() {
 Bangle.on('lock', lockListenerBw);
 
 let hrmPowerTimeout;
+let showHrNumber = false;
 
 function changeScreen(dir) {
   let oldScreen = screens[currentScreenIdx];
@@ -320,6 +321,18 @@ Bangle.on('swipe', function(directionLR, directionUD) {
 });
 
 Bangle.on('touch', function(button, xy) {
+  if (xy) {
+    let dx = xy.x - halfWidth;
+    let dy = xy.y - gHeight;
+    // The center circle has a radius of 35. We use 45 for a generous tap hit box.
+    if (dx * dx + dy * dy <= 45 * 45) {
+      if (screens[currentScreenIdx] === "hrm") {
+        showHrNumber = !showHrNumber;
+        draw();
+        return;
+      }
+    }
+  }
   changeScreen(1);
 });
 
@@ -484,6 +497,9 @@ function draw() {
     // 40-240 mapped to 210-510 degrees (7 o'clock to 5 o'clock)
     hourAngle = 210 + ((bpm - 40) / 200) * 300;
 
+    let centerText = showHrNumber ? String(Math.round(bpm)) : zone;
+    drawNumber(centerText, color);
+
     let currentTick = Math.floor((bpm - 40) / 10);
     
     // 20 segments -> 15 degrees per segment. Draw 7 ticks to fill the screen edge-to-edge.
@@ -494,9 +510,6 @@ function draw() {
     }
 
     drawHand(color);
-    
-    // Zone replaces the digital BPM in the center
-    drawNumber(zone, color);
   }
 }
 
