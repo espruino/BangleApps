@@ -335,7 +335,7 @@ function changeScreen(dir) {
   draw();
 }
 
-Bangle.on('swipe', function(directionLR, directionUD) {
+function onSwipe(directionLR, directionUD) {
   if (directionUD !== 0) {
     if (screens[currentScreenIdx] === "distance") {
       let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
@@ -347,17 +347,19 @@ Bangle.on('swipe', function(directionLR, directionUD) {
   if (directionLR !== 0) {
     changeScreen(directionLR === -1 ? 1 : -1);
   }
-});
+}
+Bangle.on('swipe', onSwipe);
 
 let distanceBaselineSteps = 0;
 
-Bangle.on('touch', function(button, xy) {
+function onTouch(button, xy) {
   changeScreen(1);
-});
+}
+Bangle.on('touch', onTouch);
 
 let liveBpm = 0;
 let lastHrmDraw = 0;
-Bangle.on('HRM', function(hrm) {
+function onHRM(hrm) {
   if (screens[currentScreenIdx] === "hrm" && initialSettings.liveHrm) {
     if (hrm.confidence > 50) {
       liveBpm = hrm.bpm;
@@ -368,18 +370,22 @@ Bangle.on('HRM', function(hrm) {
       }
     }
   }
-});
+}
+Bangle.on('HRM', onHRM);
 
 
 
 Bangle.setUI({
   mode : "clock",
-  // TODO implement https://www.espruino.com/Bangle.js+Fast+Load
-  // remove : function() {
-  //   Bangle.removeListener('lock', lockListenerBw);
-  //   if (drawTimeout) clearTimeout(drawTimeout);
-  //   drawTimeout = undefined;
-  // }
+  remove : function() {
+    Bangle.removeListener('lock', lockListenerBw);
+    Bangle.removeListener('swipe', onSwipe);
+    Bangle.removeListener('touch', onTouch);
+    Bangle.removeListener('HRM', onHRM);
+    Bangle.setHRMPower(0, "line_dash");
+    if (drawTimeout) clearTimeout(drawTimeout);
+    drawTimeout = undefined;
+  }
 });
 
 /**
