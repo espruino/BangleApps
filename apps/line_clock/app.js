@@ -216,8 +216,8 @@ const hourSPoints = getHourCoordinates(true);
  * @return {undefined}
  */
 function drawHour(h) {
-  if (h === 0) { h= 12; }
-  if (h === 13) { h= 1; }
+  while (h <= 0) h += 12;
+  while (h > 12) h -= 12;
   g.setColor(g.theme.fg);
   g.setFont("Vector:32");
   const a = h * 30;
@@ -250,28 +250,7 @@ Bangle.on('touch', function(button, xy) {
   draw();
 });
 
-function drawStepTick(h) {
-  if (h >= 0 && h <= 12) {
-    g.setColor(g.theme.fg);
-    g.setFont("Vector:32");
-    const a = h * 30;
-    g.fillPolyAA(rotatePoints(hourPoints, a, radius));
-    
-    if (h < 12) {
-      g.fillPolyAA(rotatePoints(hourSPoints, a + 15, radius));
-      hourDot(a + 5);
-      hourDot(a + 10);
-      hourDot(a + 20);
-      hourDot(a + 25);
-    }
-    
-    const hOff = gHeight + lineOffset;
-    const rotatedPoints = rotatePoints(
-      [{ x: 0, y: -hOff + hourLength + hourOffset }], a, radius
-    );
-    g.drawString(String(h), rotatedPoints[0], rotatedPoints[1]);
-  }
-}
+
 
 Bangle.setUI({
   mode : "clock",
@@ -327,14 +306,13 @@ function draw() {
     let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
     let steps = health ? health.steps : 0;
     
-    // clamp visual steps to 12000 for the angle mapping
-    let visualSteps = steps > 12000 ? 12000 : steps;
-    hourAngle = (visualSteps / 12000) * 360;
+    hourAngle = ((steps % 12000) / 12000) * 360;
 
-    let currentStepHour = Math.round(visualSteps / 1000);
-    drawStepTick(currentStepHour - 1);
-    drawStepTick(currentStepHour);
-    drawStepTick(currentStepHour + 1);
+    let currentStepHour = Math.floor(steps / 1000) % 12;
+
+    drawHour(currentStepHour);
+    drawHour(currentStepHour - 1);
+    drawHour(currentStepHour + 1);
 
     drawHand(0x07E0); // Green for steps
 
