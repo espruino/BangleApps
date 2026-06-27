@@ -10,6 +10,7 @@
       showStepsK: true,
       showBattery: true,
       batteryWarn: true,
+      showHrm: true,
     };
     let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
     for (const key in saved_settings) {
@@ -62,6 +63,13 @@
         value: settings.batteryWarn,
         onchange: () => {
           settings.batteryWarn = !settings.batteryWarn;
+          save();
+        },
+      },
+      'Show Heart Rate': {
+        value: settings.showHrm,
+        onchange: () => {
+          settings.showHrm = !settings.showHrm;
           save();
         },
       }

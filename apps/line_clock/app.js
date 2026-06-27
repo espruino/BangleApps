@@ -20,6 +20,7 @@ let initialSettings = {
   showStepsK: true,
   showBattery: true,
   batteryWarn: true,
+  showHrm: true,
 };
 
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || initialSettings;
@@ -30,6 +31,7 @@ for (const key in saved_settings) {
 let screens = ["clock"];
 if (initialSettings.showSteps) screens.push("steps");
 if (initialSettings.showBattery) screens.push("battery");
+if (initialSettings.showHrm) screens.push("hrm");
 let currentScreenIdx = 0;
 
 let gWidth  = g.getWidth(),  gCenterX = gWidth/2;
@@ -189,7 +191,7 @@ function hourNumber(a, suffix) {
  * @param {number} n - The number to be drawn.
  * @return {void}
  */
-function drawNumber(n, color) {
+function drawNumber(n, color, label) {
   const h = gHeight + lineOffset;
   const halfWidth = handWidth / 2;
   const rotatedPoints = rotatePoints(
@@ -209,7 +211,12 @@ function drawNumber(n, color) {
   if (str.length > 2) fontSize -= (str.length - 2) * 4;
   g.setFont("Vector:"+fontSize);
   
-  g.drawString(str, rotatedPoints[0], rotatedPoints[1]);
+  g.drawString(str, rotatedPoints[0], rotatedPoints[1] - (label ? 6 : 0));
+  if (label) {
+    g.setFont("Vector:12");
+    g.setColor(color || 0xF800);
+    g.drawString(label, rotatedPoints[0], rotatedPoints[1] + 8);
+  }
 }
 
 const hourPoints = getHourCoordinates(false);
@@ -382,6 +389,53 @@ function draw() {
 
     // Exact battery percentage in center
     drawNumber(battery, color);
+  } else if (screen === "hrm") {
+    let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("last") : null;
+    let bpm = health ? (health.bpm || 0) : 0;
+    let displayBpm = bpm;
+    
+    // Scale 40 to 220
+    if (bpm < 40) bpm = 40;
+    if (bpm > 220) bpm = 220;
+    
+    // Calculate Zone and Color
+    let zone = "REST";
+    let r5, g6;
+    if (bpm < 100) {
+      zone = "REST";
+      r5 = 0; g6 = 63; // Green
+    } else if (bpm < 120) {
+      zone = "Z1";
+      r5 = Math.round(((bpm - 100) / 20) * 31); // Green -> Yellow
+      g6 = 63;
+    } else if (bpm < 140) {
+      zone = "Z2";
+      r5 = 31; // Yellow
+      g6 = 63;
+    } else if (bpm < 160) {
+      zone = "Z3";
+      r5 = 31;
+      g6 = Math.round((1 - ((bpm - 140) / 20)) * 63); // Yellow -> Red
+    } else {
+      zone = bpm < 180 ? "Z4" : "Z5";
+      r5 = 31; g6 = 0; // Red
+    }
+    let color = (r5 << 11) | (g6 << 5);
+
+    // 40-220 mapped to 0-360 degrees
+    hourAngle = ((bpm - 40) / 180) * 360;
+
+    let currentTick = Math.floor((bpm - 40) / 20);
+    
+    // 9 segments (10 ticks) -> 40 degrees per segment
+    for (let i = currentTick - 1; i <= currentTick + 1; i++) {
+        if (i >= 0 && i <= 9) {
+            drawMetricTick(String(40 + i * 20), i * 40, 40);
+        }
+    }
+
+    drawHand(color);
+    drawNumber(displayBpm, color, zone);
   }
 }
 
