@@ -17,6 +17,8 @@ let initialSettings = {
   showLock: true,
   showMinute: true,
   clock24: false,
+  showDistance: true,
+  strideLength: 0.8,
   showSteps: true,
   showStepsK: true,
   showBattery: true,
@@ -33,6 +35,7 @@ for (const key in saved_settings) {
 }
 
 let screens = ["clock"];
+if (initialSettings.showDistance) screens.push("distance");
 if (initialSettings.showSteps) screens.push("steps");
 if (initialSettings.showHrm) screens.push("hrm");
 if (initialSettings.showBattery) screens.push("battery");
@@ -331,7 +334,17 @@ Bangle.on('swipe', function(directionLR, directionUD) {
   changeScreen(directionLR === -1 ? 1 : -1);
 });
 
+let distanceBaselineSteps = 0;
+
 Bangle.on('touch', function(button, xy) {
+  let dx = xy.x - gCenterX;
+  let dy = xy.y - gCenterY;
+  if (screens[currentScreenIdx] === "distance" && dx*dx + dy*dy < 2000) {
+    let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
+    distanceBaselineSteps = health ? health.steps : 0;
+    draw();
+    return;
+  }
   changeScreen(1);
 });
 
@@ -418,6 +431,26 @@ function draw() {
     // Draw the hundreds digit in the center circle (0-9)
     let hundreds = Math.floor((steps % 1000) / 100);
     drawNumber(hundreds, 0x07E0);
+  } else if (screen === "distance") {
+    let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
+    let steps = health ? health.steps : 0;
+    let tripSteps = Math.max(0, steps - distanceBaselineSteps);
+    let distanceM = tripSteps * initialSettings.strideLength;
+    
+    // Smooth angle based on exact distance, rotated to start at 7 o'clock (210 degrees)
+    hourAngle = 210 + (distanceM / 12000) * 360;
+
+    let currentTick = Math.floor(distanceM / 1000);
+    
+    if (currentTick - 1 >= 0) drawMetricTick(String(currentTick - 1), 210 + (currentTick - 1) * 30, 30);
+    drawMetricTick(String(currentTick), 210 + currentTick * 30, 30);
+    drawMetricTick(String(currentTick + 1), 210 + (currentTick + 1) * 30, 30);
+
+    drawHand(0x07FF); // Cyan for distance
+
+    // Center number: just the hundreds of meters (0-9)
+    let hundreds = Math.floor((distanceM % 1000) / 100);
+    drawNumber(hundreds, 0x07FF);
   } else if (screen === "battery") {
     let battery = E.getBattery();
     

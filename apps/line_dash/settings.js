@@ -7,6 +7,8 @@
       showLock: true,
       showMinute: true,
       clock24: false,
+      showDistance: true,
+      strideLength: 0.8,
       showSteps: true,
       showStepsK: true,
       showBattery: true,
@@ -46,6 +48,22 @@
         value: settings.clock24,
         onchange: () => {
           settings.clock24 = !settings.clock24;
+          save();
+        },
+      },
+      'Show Distance': {
+        value: settings.showDistance,
+        onchange: () => {
+          settings.showDistance = !settings.showDistance;
+          save();
+        },
+      },
+      'Stride (m)': {
+        value: Math.round((settings.strideLength - 0.4) / 0.05),
+        min: 0, max: 16,
+        format: v => (0.4 + v * 0.05).toFixed(2),
+        onchange: (v) => {
+          settings.strideLength = 0.4 + v * 0.05;
           save();
         },
       },
