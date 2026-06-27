@@ -1,5 +1,3 @@
-var interval;
-
 NRF.setAdvertising({}, { connectable: true });
 
 var blueWatch = require("bluewatch");
@@ -8,6 +6,7 @@ var settings = require("Storage").readJSON("bluewatch.settings.json") || {
   overrideGPS: true
 };
 var weatherInterval;
+var systemDataInterval;
 var savedData = require("Storage").readJSON("bluewatchData.json") || {
   phoneConnected: false,
   appsUsingGPS: []
