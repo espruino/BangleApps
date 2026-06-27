@@ -13,6 +13,6 @@
   "readme": "README.md",
   "storage": [
     { "name": "twenties", "url": "lib.js" },
-    { "name": "RAM", "content": "require('twenties').setup();" }
+    { "name": "RAM", "url": "setup.js", "evaluate":true }
   ]
 }
