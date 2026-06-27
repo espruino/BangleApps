@@ -13,6 +13,7 @@
       showHrm: true,
       liveHrm: false,
       liveHrmInterval: 2,
+      hrDecade: 40,
     };
     let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
     for (const key in saved_settings) {
@@ -88,6 +89,15 @@
         format: v => [2, 5, 15, 30, 60, 90, 120][v] + "s",
         onchange: (v) => {
           settings.liveHrmInterval = [2, 5, 15, 30, 60, 90, 120][v];
+          save();
+        },
+      },
+      'HR Age Decade': {
+        value: Math.max(0, [20, 30, 40, 50, 60, 70, 80].indexOf(settings.hrDecade)),
+        min: 0, max: 6,
+        format: v => [20, 30, 40, 50, 60, 70, 80][v] + "s",
+        onchange: (v) => {
+          settings.hrDecade = [20, 30, 40, 50, 60, 70, 80][v];
           save();
         },
       }

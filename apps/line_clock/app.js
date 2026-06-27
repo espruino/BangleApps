@@ -23,6 +23,7 @@ let initialSettings = {
   showHrm: true,
   liveHrm: false,
   liveHrmInterval: 2,
+  hrDecade: 40,
 };
 
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || initialSettings;
@@ -285,9 +286,15 @@ Bangle.on('lock', lockListenerBw);
 
 let hrmPowerTimeout;
 
-Bangle.on('touch', function(button, xy) {
+Bangle.on('swipe', function(directionLR, directionUD) {
+  if (directionLR === 0) return; // Ignore up/down swipes
+
   let oldScreen = screens[currentScreenIdx];
-  currentScreenIdx = (currentScreenIdx + 1) % screens.length;
+  if (directionLR === -1) { // Swipe left -> Next
+    currentScreenIdx = (currentScreenIdx + 1) % screens.length;
+  } else if (directionLR === 1) { // Swipe right -> Previous
+    currentScreenIdx = (currentScreenIdx - 1 + screens.length) % screens.length;
+  }
   let newScreen = screens[currentScreenIdx];
 
   if (initialSettings.liveHrm) {
@@ -431,33 +438,41 @@ function draw() {
     let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("last") : null;
     let bpm = initialSettings.liveHrm && liveBpm > 0 ? liveBpm : (health ? (health.bpm || 0) : 0);
     
+    let maxHr = 220 - initialSettings.hrDecade;
+    
     // Scale 40 to 240
     if (bpm < 40) bpm = 40;
     if (bpm > 240) bpm = 240;
     
     // Calculate Zone and Color
     let zone = "REST";
-    let r5, g6;
-    if (bpm < 100) {
+    let color = 0x07E0; // Green
+    
+    let z1 = maxHr * 0.5;
+    let z2 = maxHr * 0.6;
+    let z3 = maxHr * 0.7;
+    let z4 = maxHr * 0.8;
+    let z5 = maxHr * 0.9;
+
+    if (bpm < z1) {
       zone = "REST";
-      r5 = 0; g6 = 63; // Green
-    } else if (bpm < 120) {
+      color = 0x07E0; // Green
+    } else if (bpm < z2) {
       zone = "Z1";
-      r5 = Math.round(((bpm - 100) / 20) * 31); // Green -> Yellow
-      g6 = 63;
-    } else if (bpm < 140) {
+      color = 0x07FF; // Cyan
+    } else if (bpm < z3) {
       zone = "Z2";
-      r5 = 31; // Yellow
-      g6 = 63;
-    } else if (bpm < 160) {
+      color = 0xFFE0; // Yellow
+    } else if (bpm < z4) {
       zone = "Z3";
-      r5 = 31;
-      g6 = Math.round((1 - ((bpm - 140) / 20)) * 63); // Yellow -> Red
+      color = 0xFD20; // Orange
+    } else if (bpm < z5) {
+      zone = "Z4";
+      color = 0xFA80; // Dark Orange / Light Red
     } else {
-      zone = bpm < 180 ? "Z4" : "Z5";
-      r5 = 31; g6 = 0; // Red
+      zone = "Z5";
+      color = 0xF800; // Red
     }
-    let color = (r5 << 11) | (g6 << 5);
 
     // 40-240 mapped to 210-510 degrees (7 o'clock to 5 o'clock)
     hourAngle = 210 + ((bpm - 40) / 200) * 300;
