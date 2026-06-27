@@ -426,14 +426,14 @@ function draw() {
     }
     
     // Scale 0-100 to 0-360 degrees
-    hourAngle = (battery / 100) * 360;
+    hourAngle = 210 + (battery / 100) * 300;
 
     let currentTick = Math.floor(battery / 10);
     
-    // 10 segments -> 36 degrees per segment
-    for (let i = currentTick - 1; i <= currentTick + 1; i++) {
+    // 10 segments -> 30 degrees per segment. Draw 7 ticks to fill screen edge-to-edge
+    for (let i = currentTick - 3; i <= currentTick + 3; i++) {
         if (i >= 0 && i <= 10) {
-            drawMetricTick(String(i * 10) + "%", i * 36, 36);
+            drawMetricTick(String(i * 10) + "%", 210 + i * 30, 30);
         }
     }
 
