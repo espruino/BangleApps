@@ -21,6 +21,7 @@ let initialSettings = {
   showBattery: true,
   batteryWarn: true,
   showHrm: true,
+  liveHrm: false,
 };
 
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || initialSettings;
@@ -282,8 +283,29 @@ function lockListenerBw() {
 Bangle.on('lock', lockListenerBw);
 
 Bangle.on('touch', function(button, xy) {
+  let oldScreen = screens[currentScreenIdx];
   currentScreenIdx = (currentScreenIdx + 1) % screens.length;
+  let newScreen = screens[currentScreenIdx];
+
+  if (initialSettings.liveHrm) {
+    if (oldScreen !== "hrm" && newScreen === "hrm") {
+      Bangle.setHRMPower(1, "line_clock");
+    } else if (oldScreen === "hrm" && newScreen !== "hrm") {
+      Bangle.setHRMPower(0, "line_clock");
+    }
+  }
+
   draw();
+});
+
+let liveBpm = 0;
+Bangle.on('HRM', function(hrm) {
+  if (screens[currentScreenIdx] === "hrm" && initialSettings.liveHrm) {
+    if (hrm.confidence > 50) {
+      liveBpm = hrm.bpm;
+      draw();
+    }
+  }
 });
 
 
@@ -391,7 +413,7 @@ function draw() {
     drawNumber(battery, color);
   } else if (screen === "hrm") {
     let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("last") : null;
-    let bpm = health ? (health.bpm || 0) : 0;
+    let bpm = initialSettings.liveHrm && liveBpm > 0 ? liveBpm : (health ? (health.bpm || 0) : 0);
     
     // Scale 40 to 240
     if (bpm < 40) bpm = 40;

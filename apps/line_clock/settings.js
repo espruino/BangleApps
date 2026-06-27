@@ -11,6 +11,7 @@
       showBattery: true,
       batteryWarn: true,
       showHrm: true,
+      liveHrm: false,
     };
     let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
     for (const key in saved_settings) {
@@ -70,6 +71,13 @@
         value: settings.showHrm,
         onchange: () => {
           settings.showHrm = !settings.showHrm;
+          save();
+        },
+      },
+      'Live HR Updates': {
+        value: settings.liveHrm,
+        onchange: () => {
+          settings.liveHrm = !settings.liveHrm;
           save();
         },
       }
