@@ -10,9 +10,7 @@
       showDistance: true,
       strideLength: 0.8,
       showSteps: true,
-      showStepsK: true,
       showBattery: true,
-      batteryWarn: true,
       showHrm: true,
       liveHrm: false,
       liveHrmInterval: 2,
@@ -76,24 +74,10 @@
           save();
         },
       },
-      'Steps "k" label': {
-        value: settings.showStepsK,
-        onchange: () => {
-          settings.showStepsK = !settings.showStepsK;
-          save();
-        },
-      },
       'Show Battery': {
         value: settings.showBattery,
         onchange: () => {
           settings.showBattery = !settings.showBattery;
-          save();
-        },
-      },
-      'Dynamic Battery Color': {
-        value: settings.batteryWarn,
-        onchange: () => {
-          settings.batteryWarn = !settings.batteryWarn;
           save();
         },
       },

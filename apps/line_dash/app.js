@@ -20,9 +20,7 @@ let initialSettings = {
   showDistance: true,
   strideLength: 0.8,
   showSteps: true,
-  showStepsK: true,
   showBattery: true,
-  batteryWarn: true,
   showHrm: true,
   liveHrm: false,
   liveHrmInterval: 2,
@@ -429,7 +427,7 @@ function draw() {
     hourAngle = 210 + (steps / 12000) * 360;
 
     let currentTick = Math.floor(steps / 1000);
-    let suffix = initialSettings.showStepsK ? "k" : "";
+    let suffix = "k";
 
     if (currentTick - 1 >= 0) drawMetricTick(String(currentTick - 1) + suffix, 210 + (currentTick - 1) * 30, 30);
     drawMetricTick(String(currentTick) + suffix, 210 + currentTick * 30, 30);
@@ -468,18 +466,16 @@ function draw() {
   } else if (screen === "battery") {
     let battery = E.getBattery();
     
-    let color = 0xFFE0; // Static Yellow
-    if (initialSettings.batteryWarn) {
-      let r5, g6;
-      if (battery <= 50) {
-        r5 = 31;
-        g6 = Math.round((battery / 50) * 63);
-      } else {
-        r5 = Math.round((1 - ((battery - 50) / 50)) * 31);
-        g6 = 63;
-      }
-      color = (r5 << 11) | (g6 << 5);
+    let color; // Dynamic Color
+    let r5, g6;
+    if (battery <= 50) {
+      r5 = 31;
+      g6 = Math.round((battery / 50) * 63);
+    } else {
+      r5 = Math.round((1 - ((battery - 50) / 50)) * 31);
+      g6 = 63;
     }
+    color = (r5 << 11) | (g6 << 5);
     
     // Scale 0-100 to 0-360 degrees
     hourAngle = 210 + (battery / 100) * 300;

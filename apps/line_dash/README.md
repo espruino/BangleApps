@@ -28,9 +28,7 @@ The app includes a comprehensive settings menu where you can configure the follo
 * **Show Distance:** Enable or disable the Distance Trip Meter screen.
 * **Stride (m):** Set your personal stride length (0.40m to 1.20m) for accurate distance calculation.
 * **Show Steps:** Enable or disable the Steps gauge screen.
-* **Steps "k" label:** Toggle the "k" (thousands) suffix on the Steps gauge.
 * **Show Battery:** Enable or disable the Battery gauge screen.
-* **Dynamic Battery Color:** When enabled, the battery gauge gradually turns red when battery runs low.
 * **Show Heart Rate:** Enable or disable the Heart Rate gauge screen.
 * **Live HR Updates:** Toggle whether the Heart Rate gauge updates live while viewing it.
 * **Live HR Interval:** If Live HR is enabled, select how often the gauge redraws (2s, 5s, 15s, 30s, 60s, 90s, or 120s).
