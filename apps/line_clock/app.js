@@ -19,6 +19,7 @@ let initialSettings = {
   showSteps: true,
   showStepsK: true,
   showBattery: true,
+  batteryWarn: true,
 };
 
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || initialSettings;
@@ -352,15 +353,18 @@ function draw() {
   } else if (screen === "battery") {
     let battery = E.getBattery();
     
-    let r5, g6;
-    if (battery <= 50) {
-      r5 = 31;
-      g6 = Math.round((battery / 50) * 63);
-    } else {
-      r5 = Math.round((1 - ((battery - 50) / 50)) * 31);
-      g6 = 63;
+    let color = 0xFFE0; // Static Yellow
+    if (initialSettings.batteryWarn) {
+      let r5, g6;
+      if (battery <= 50) {
+        r5 = 31;
+        g6 = Math.round((battery / 50) * 63);
+      } else {
+        r5 = Math.round((1 - ((battery - 50) / 50)) * 31);
+        g6 = 63;
+      }
+      color = (r5 << 11) | (g6 << 5);
     }
-    let color = (r5 << 11) | (g6 << 5);
     
     // Scale 0-100 to 0-360 degrees
     hourAngle = (battery / 100) * 360;

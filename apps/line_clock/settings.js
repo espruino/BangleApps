@@ -9,6 +9,7 @@
       showSteps: true,
       showStepsK: true,
       showBattery: true,
+      batteryWarn: true,
     };
     let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
     for (const key in saved_settings) {
@@ -54,6 +55,13 @@
         value: settings.showBattery,
         onchange: () => {
           settings.showBattery = !settings.showBattery;
+          save();
+        },
+      },
+      'Dynamic Battery Color': {
+        value: settings.batteryWarn,
+        onchange: () => {
+          settings.batteryWarn = !settings.batteryWarn;
           save();
         },
       }
