@@ -6,6 +6,7 @@
     let settings = {
       showLock: true,
       showMinute: true,
+      showSteps: true,
     };
     let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
     for (const key in saved_settings) {
@@ -30,6 +31,13 @@
         value: settings.showMinute,
         onchange: () => {
           settings.showMinute = !settings.showMinute;
+          save();
+        },
+      },
+      'Show Steps': {
+        value: settings.showSteps,
+        onchange: () => {
+          settings.showSteps = !settings.showSteps;
           save();
         },
       }

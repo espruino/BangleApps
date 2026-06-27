@@ -16,12 +16,17 @@ const SETTINGS_FILE = "line_clock.setting.json";
 let initialSettings = {
   showLock: true,
   showMinute: true,
+  showSteps: true,
 };
 
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || initialSettings;
 for (const key in saved_settings) {
   initialSettings[key] = saved_settings[key];
 }
+
+let screens = ["clock"];
+if (initialSettings.showSteps) screens.push("steps");
+let currentScreenIdx = 0;
 
 let gWidth  = g.getWidth(),  gCenterX = gWidth/2;
 let gHeight = g.getHeight(), gCenterY = gHeight/2;
@@ -94,8 +99,8 @@ function rotatePoints(points, angle, rad) {
  *
  * @returns {void}
  */
-function drawHand() {
-  g.setColor(0xF800);
+function drawHand(color) {
+  g.setColor(color || 0xF800);
   const halfWidth = handWidth / 2;
 
   const points = [{
@@ -178,7 +183,7 @@ function hourNumber(a) {
  * @param {number} n - The number to be drawn.
  * @return {void}
  */
-function drawNumber(n) {
+function drawNumber(n, color) {
   const h = gHeight + lineOffset;
   const halfWidth = handWidth / 2;
   const rotatedPoints = rotatePoints(
@@ -187,13 +192,18 @@ function drawNumber(n) {
       y: -h + hourLength + numberOffset
     }], hourAngle, radius
   );
-  g.setColor(0xF800);
+  g.setColor(color || 0xF800);
   g.fillCircle(rotatedPoints[0], rotatedPoints[1], numberSize+ halfWidth);
   g.setColor(g.theme.bg);
   g.fillCircle(rotatedPoints[0], rotatedPoints[1], numberSize - halfWidth);
   g.setColor(g.theme.fg);
-  g.setFont("Vector:"+numberSize);
-  g.drawString(String(n), rotatedPoints[0], rotatedPoints[1]);
+  
+  let str = String(n);
+  let fontSize = numberSize;
+  if (str.length > 2) fontSize -= (str.length - 2) * 4;
+  g.setFont("Vector:"+fontSize);
+  
+  g.drawString(str, rotatedPoints[0], rotatedPoints[1]);
 }
 
 const hourPoints = getHourCoordinates(false);
@@ -235,6 +245,34 @@ function lockListenerBw() {
 }
 Bangle.on('lock', lockListenerBw);
 
+Bangle.on('touch', function(button, xy) {
+  currentScreenIdx = (currentScreenIdx + 1) % screens.length;
+  draw();
+});
+
+function drawStepTick(h) {
+  if (h >= 0 && h <= 12) {
+    g.setColor(g.theme.fg);
+    g.setFont("Vector:32");
+    const a = h * 30;
+    g.fillPolyAA(rotatePoints(hourPoints, a, radius));
+    
+    if (h < 12) {
+      g.fillPolyAA(rotatePoints(hourSPoints, a + 15, radius));
+      hourDot(a + 5);
+      hourDot(a + 10);
+      hourDot(a + 20);
+      hourDot(a + 25);
+    }
+    
+    const hOff = gHeight + lineOffset;
+    const rotatedPoints = rotatePoints(
+      [{ x: 0, y: -hOff + hourLength + hourOffset }], a, radius
+    );
+    g.drawString(String(h), rotatedPoints[0], rotatedPoints[1]);
+  }
+}
+
 Bangle.setUI({
   mode : "clock",
   // TODO implement https://www.espruino.com/Bangle.js+Fast+Load
@@ -252,14 +290,6 @@ Bangle.setUI({
  */
 function draw() {
   queueDraw();
-  currentTime = new Date();
-  currentHour = currentTime.getHours();
-  if (currentHour > 12) {
-    currentHour -= 12;
-  }
-  currentMinute = currentTime.getMinutes();
-
-  hourAngle = getHourHandAngle();
 
   g.clear();
   g.setFontAlign(0, 0);
@@ -272,15 +302,44 @@ function draw() {
     g.drawImage(imgLock(), gWidth-16, 2);
   }
 
-  drawHour(currentHour);
-  drawHour(currentHour-1);
-  drawHour(currentHour+1);
+  let screen = screens[currentScreenIdx];
 
+  if (screen === "clock") {
+    currentTime = new Date();
+    currentHour = currentTime.getHours();
+    if (currentHour > 12) {
+      currentHour -= 12;
+    }
+    currentMinute = currentTime.getMinutes();
 
-  drawHand();
+    hourAngle = getHourHandAngle();
 
-  if(initialSettings.showMinute){
-    drawNumber(currentMinute);
+    drawHour(currentHour);
+    drawHour(currentHour-1);
+    drawHour(currentHour+1);
+
+    drawHand(0xF800);
+
+    if(initialSettings.showMinute){
+      drawNumber(currentMinute, 0xF800);
+    }
+  } else if (screen === "steps") {
+    let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
+    let steps = health ? health.steps : 0;
+    
+    // clamp visual steps to 12000 for the angle mapping
+    let visualSteps = steps > 12000 ? 12000 : steps;
+    hourAngle = (visualSteps / 12000) * 360;
+
+    let currentStepHour = Math.round(visualSteps / 1000);
+    drawStepTick(currentStepHour - 1);
+    drawStepTick(currentStepHour);
+    drawStepTick(currentStepHour + 1);
+
+    drawHand(0x07E0); // Green for steps
+
+    // Draw exact steps in the center circle
+    drawNumber(steps, 0x07E0);
   }
 }
 
