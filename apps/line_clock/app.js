@@ -486,8 +486,8 @@ function draw() {
 
     let currentTick = Math.floor((bpm - 40) / 10);
     
-    // 20 segments -> 15 degrees per segment
-    for (let i = currentTick - 1; i <= currentTick + 1; i++) {
+    // 20 segments -> 15 degrees per segment. Draw 7 ticks to fill the screen edge-to-edge.
+    for (let i = currentTick - 3; i <= currentTick + 3; i++) {
         if (i >= 0 && i <= 20) {
             drawMetricTick(String(40 + i * 10), 210 + i * 15, 15);
         }
