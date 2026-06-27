@@ -1,5 +1,5 @@
 # BlueWatch
-This adds support for deeper iOS integration using the native [BlueWatch iOS app](https://apps.apple.com/us/app/bluewatch-for-bangle-js/).
+This adds support for deeper iOS integration using the native [BlueWatch iOS app](https://apps.apple.com/us/app/bluewatch-for-bangle-js/id6769088559).
 
 The app is built from the ground up to support Bangle.js, and features many more capabilities than the base `iOS integration` app.
 
@@ -15,10 +15,10 @@ Bangle.js 1 support coming soon!
 - Find my phone support
 - Use of the phone's GPS for Bangle.js GPS.
 
-**Note:** This app still uses the [iOS Integration app](https://apps.apple.com/us/app/bluewatch-for-bangle-js/) to handle pushing notifications from the phone to the watch.
+**Note:** This app still uses the `iOS Integration app` to handle pushing notifications from the phone to the watch.
 
 ## Get Started:
-To get started, first download and install the [BlueWatch iOS app](https://apps.apple.com/us/app/bluewatch-for-bangle-js/) on your iPhone.
+To get started, first download and install the [BlueWatch iOS app](https://apps.apple.com/us/app/bluewatch-for-bangle-js/id6769088559) on your iPhone.
 
 Then, follow the app instructions and authorize Bluetooth permissions for the app to work. The app will then automatically scan for your Bangle. Make sure Bluetooth is turned on and in the range of your iPhone.
 

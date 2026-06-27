@@ -2,129 +2,133 @@ var interval;
 
 NRF.setAdvertising({}, { connectable: true });
 
-
-var blueWatch=require("bluewatch")
+var blueWatch = require("bluewatch");
 var locInterval;
+var settings = require("Storage").readJSON("bluewatch.settings.json") || {
+  overrideGPS: true
+};
 var weatherInterval;
-var savedData=require("Storage").readJSON("bluewatchData.json")||{
-  phoneConnected:false,
-  appsUsingGPS:[]
-  
-}
-let appsUsingGPS=savedData.appsUsingGPS||[];
-global.phoneConnected=savedData.phoneConnected;
+var savedData = require("Storage").readJSON("bluewatchData.json") || {
+  phoneConnected: false,
+  appsUsingGPS: []
+};
+let appsUsingGPS = savedData.appsUsingGPS || [];
+global.phoneConnected = savedData.phoneConnected;
 
-function updateWeatherAndLocation(){
+function updateWeatherAndLocation() {
   blueWatch.sendData("Request Location");
-  setTimeout(function(){
+  setTimeout(function () {
     blueWatch.sendData("Request Weather");
-  },60*10)
+  }, 60 * 10);
 }
-function setUpdateIntervals(){
-  locInterval=setInterval(updateWeatherAndLocation,10*60*1000)
-  weatherInterval=setInterval(blueWatch.sendSystemData,60*1000);
-  systemDataInterval=setInterval(blueWatch.sendSystemData,60*1000);
+function setUpdateIntervals() {
+  locInterval = setInterval(updateWeatherAndLocation, 10 * 60 * 1000);
+  weatherInterval = setInterval(blueWatch.sendSystemData, 60 * 1000);
+  systemDataInterval = setInterval(blueWatch.sendSystemData, 60 * 1000);
 }
-Bangle.on("BlueWatchConnected",function(){
+Bangle.on("BlueWatchConnected", function () {
   blueWatch.sendSystemData();
   updateWeatherAndLocation();
   blueWatch.sendHealthData();
   setUpdateIntervals();
 });
-if(global.phoneConnected){
-  setUpdateIntervals()
+if (global.phoneConnected) {
+  setUpdateIntervals();
   updateWeatherAndLocation();
 }
-NRF.on('disconnect', function () {
-  global.phoneConnected=false;
-  if(locInterval){
-    clearInterval(locInterval)
-    locInterval=undefined;
+NRF.on("disconnect", function () {
+  global.phoneConnected = false;
+  if (locInterval) {
+    clearInterval(locInterval);
+    locInterval = undefined;
   }
-  if(weatherInterval){
-    clearInterval(weatherInterval)
-    weatherInterval=undefined;
+  if (weatherInterval) {
+    clearInterval(weatherInterval);
+    weatherInterval = undefined;
   }
 });
 
-
-Bangle.on('health', function(health){
-  blueWatch.sendRawHealthData(health)
+Bangle.on("health", function (health) {
+  blueWatch.sendRawHealthData(health);
 });
 
-function refreshGPSFunctions(){
-  if(appsUsingGPS.length<=0){
-    blueWatch.sendData("Stop Polling GPS")
-    Bangle.isGPSOn=()=>false;
+function refreshGPSFunctions() {
+  if (appsUsingGPS.length <= 0) {
+    blueWatch.sendData("Stop Polling GPS");
+    Bangle.isGPSOn = () => false;
   }
-  if(appsUsingGPS.length>0){
-    blueWatch.sendData("Start Polling GPS")
-    Bangle.isGPSOn=()=>true;
+  if (appsUsingGPS.length > 0) {
+    blueWatch.sendData("Start Polling GPS");
+    Bangle.isGPSOn = () => true;
   }
 }
 
-//if(global.phoneConnected){
-  Bangle.setGPSPower=function(isOn,appID){
-    
-    if(isOn){
-      appsUsingGPS.push(appID)
-    }else{
-      appsUsingGPS = appsUsingGPS.filter(app => app !== appID);
+if (settings.overrideGPS) {
+  Bangle.setGPSPower = function (isOn, appID) {
+    if (isOn) {
+      appsUsingGPS.push(appID);
+    } else {
+      appsUsingGPS = appsUsingGPS.filter((app) => app !== appID);
     }
-    appsUsingGPS = appsUsingGPS.filter(app => app!==undefined && app!==null);
-    print(appsUsingGPS)
+    appsUsingGPS = appsUsingGPS.filter(
+      (app) => app !== undefined && app !== null
+    );
+    print(appsUsingGPS);
     refreshGPSFunctions();
-  }
-//}
-refreshGPSFunctions();
+  };
+  refreshGPSFunctions();
+}
 
-Bangle.on("GPS",function(arg){
-  setMyLocation(arg)
-})
+Bangle.on("GPS", function (arg) {
+  setMyLocation(arg);
+});
 
-
-function setMyLocation(d){
-    /* Example:
+function setMyLocation(d) {
+  /* Example:
     {"lat":"2912.0744", "lon":"2333.332", "city":"Chicago"}*/
-    let locationJson = {
-        t: "location",
-        lat:d.lat,
-        lon:d.lon,
-        city:d.city
-    
-    };
-    // Convert string fields to numbers
-    const numFields = ['lat', 'lon'];
-    numFields.forEach(field => {
-      if (locationJson[field] != null) locationJson[field] = +locationJson[field];
-    });
-   
-    //load mylocation file
-    let myLocationJson = Object.assign({
+  let locationJson = {
+    t: "location",
+    lat: d.lat,
+    lon: d.lon,
+    city: d.city
+  };
+  // Convert string fields to numbers
+  const numFields = ["lat", "lon"];
+  numFields.forEach((field) => {
+    if (locationJson[field] != null) locationJson[field] = +locationJson[field];
+  });
+
+  //load mylocation file
+  let myLocationJson = Object.assign(
+    {
       lat: d.lat,
       lon: d.lon,
-      location:d.city
-    }, require("Storage").readJSON("mylocation.json", true) || {});    
-    //remove notification from phone
-    if(Math.abs(myLocationJson.lat - locationJson.lat) < 0.0001	 && Math.abs(myLocationJson.lon -locationJson.lon) < 0.0001){
-      //same location, do not write
-      return;
-    }
-    
-    myLocationJson.lon=locationJson.lon;
-    myLocationJson.lat=locationJson.lat;
-    myLocationJson.location=locationJson.city;
-    require("Storage").writeJSON("mylocation.json",myLocationJson);
-    
+      location: d.city
+    },
+    require("Storage").readJSON("mylocation.json", true) || {}
+  );
+  //remove notification from phone
+  if (
+    Math.abs(myLocationJson.lat - locationJson.lat) < 0.0001 &&
+    Math.abs(myLocationJson.lon - locationJson.lon) < 0.0001
+  ) {
+    //same location, do not write
+    return;
+  }
+
+  myLocationJson.lon = locationJson.lon;
+  myLocationJson.lat = locationJson.lat;
+  myLocationJson.location = locationJson.city;
+  require("Storage").writeJSON("mylocation.json", myLocationJson);
 }
 
-function saveData(){
-  savedData.phoneConnected=global.phoneConnected;
-  savedData.appsUsingGPS=appsUsingGPS;
-  require("Storage").writeJSON("bluewatchData.json",savedData)
+function saveData() {
+  savedData.phoneConnected = global.phoneConnected;
+  savedData.appsUsingGPS = appsUsingGPS;
+  require("Storage").writeJSON("bluewatchData.json", savedData);
 }
 
-E.on('kill', function() {
- //save cals counted
-  saveData()
+E.on("kill", function () {
+  //save cals counted
+  saveData();
 });
