@@ -22,6 +22,7 @@ let initialSettings = {
   batteryWarn: true,
   showHrm: true,
   liveHrm: false,
+  liveHrmInterval: 2,
 };
 
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || initialSettings;
@@ -282,14 +283,24 @@ function lockListenerBw() {
 }
 Bangle.on('lock', lockListenerBw);
 
+let hrmPowerTimeout;
+
 Bangle.on('touch', function(button, xy) {
   let oldScreen = screens[currentScreenIdx];
   currentScreenIdx = (currentScreenIdx + 1) % screens.length;
   let newScreen = screens[currentScreenIdx];
 
   if (initialSettings.liveHrm) {
+    if (hrmPowerTimeout) {
+      clearTimeout(hrmPowerTimeout);
+      hrmPowerTimeout = undefined;
+    }
+
     if (oldScreen !== "hrm" && newScreen === "hrm") {
-      Bangle.setHRMPower(1, "line_clock");
+      hrmPowerTimeout = setTimeout(() => {
+        Bangle.setHRMPower(1, "line_clock");
+        hrmPowerTimeout = undefined;
+      }, 500);
     } else if (oldScreen === "hrm" && newScreen !== "hrm") {
       Bangle.setHRMPower(0, "line_clock");
     }
@@ -299,11 +310,16 @@ Bangle.on('touch', function(button, xy) {
 });
 
 let liveBpm = 0;
+let lastHrmDraw = 0;
 Bangle.on('HRM', function(hrm) {
   if (screens[currentScreenIdx] === "hrm" && initialSettings.liveHrm) {
     if (hrm.confidence > 50) {
       liveBpm = hrm.bpm;
-      draw();
+      let now = Date.now();
+      if (now - lastHrmDraw >= initialSettings.liveHrmInterval * 1000) {
+        lastHrmDraw = now;
+        draw();
+      }
     }
   }
 });

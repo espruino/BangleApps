@@ -12,6 +12,7 @@
       batteryWarn: true,
       showHrm: true,
       liveHrm: false,
+      liveHrmInterval: 2,
     };
     let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
     for (const key in saved_settings) {
@@ -78,6 +79,15 @@
         value: settings.liveHrm,
         onchange: () => {
           settings.liveHrm = !settings.liveHrm;
+          save();
+        },
+      },
+      'Live HR Interval': {
+        value: Math.max(0, [2, 5, 15, 30, 60, 90, 120].indexOf(settings.liveHrmInterval)),
+        min: 0, max: 6,
+        format: v => [2, 5, 15, 30, 60, 90, 120][v] + "s",
+        onchange: (v) => {
+          settings.liveHrmInterval = [2, 5, 15, 30, 60, 90, 120][v];
           save();
         },
       }
