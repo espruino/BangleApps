@@ -212,7 +212,9 @@ function drawNumber(n, color, label) {
   
   let str = String(n);
   let fontSize = numberSize;
-  if (str.length > 2) fontSize -= (str.length - 2) * 4;
+  // Do not count the thin colon as a full character for width calculations
+  let effectiveLength = str.startsWith(":") ? str.length - 1 : str.length;
+  if (effectiveLength > 2) fontSize -= (effectiveLength - 2) * 4;
   g.setFont("Vector:"+fontSize);
   
   g.drawString(str, rotatedPoints[0], rotatedPoints[1] - (label ? 6 : 0));
@@ -433,7 +435,8 @@ function draw() {
     drawHand(0xF800);
 
     if(initialSettings.showMinute){
-      drawNumber(currentMinute, 0xF800);
+      let minStr = currentMinute < 10 ? "0" + currentMinute : currentMinute;
+      drawNumber(":" + minStr, 0xF800);
     }
   } else if (screen === "steps") {
     let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
