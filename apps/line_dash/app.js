@@ -75,6 +75,8 @@ function imgLock() {
   };
 }
 
+
+
 /**
  * Retrieves the angle of the hour hand for the current time.
  *
@@ -218,13 +220,33 @@ function hourNumber(a, label) {
 }
 
 /**
+ * Draws a sharp polygon lightning bolt.
+ * @param {number} x - Center X coordinate.
+ * @param {number} y - Center Y coordinate.
+ * @param {number} color - Color of the lightning bolt.
+ */
+function drawLightning(x, y, color) {
+  g.setColor(color);
+  g.fillPoly([
+    x + 2, y - 6,
+    x - 4, y + 1,
+    x - 1, y + 1,
+    x - 3, y + 8,
+    x + 4, y - 1,
+    x + 1, y - 1
+  ]);
+}
+
+/**
  * Draws the large central value in the middle of the gauge.
  *
  * @param {string|number} n - The value to display.
  * @param {number} [color] - The 16-bit color for the central circle outline.
  * @param {string} [label] - Optional smaller subtitle text to display below the value.
+ * @param {function} [iconFunc] - Optional function returning an image object to draw below the value.
+ * @param {number} [textColor] - Optional 16-bit color for the text and icon. Defaults to theme foreground.
  */
-function drawNumber(n, color, label) {
+function drawNumber(n, color, label, iconFunc, textColor) {
   const h = gHeight + lineOffset;
   const halfWidth = handWidth / 2;
   const rotatedPoints = rotatePoints(
@@ -237,7 +259,6 @@ function drawNumber(n, color, label) {
   g.fillCircle(rotatedPoints[0], rotatedPoints[1], numberSize+ halfWidth);
   g.setColor(g.theme.bg);
   g.fillCircle(rotatedPoints[0], rotatedPoints[1], numberSize - halfWidth);
-  g.setColor(g.theme.fg);
   
   let str = String(n);
   let fontSize = numberSize;
@@ -246,11 +267,13 @@ function drawNumber(n, color, label) {
   if (effectiveLength > 2) fontSize -= (effectiveLength - 2) * 4;
   g.setFont("Vector:"+fontSize);
   
-  g.drawString(str, rotatedPoints[0], rotatedPoints[1] - (label ? 6 : 0));
+  g.setColor(textColor || g.theme.fg);
+  g.drawString(str, rotatedPoints[0], rotatedPoints[1] - (label || iconFunc ? 6 : 0));
   if (label) {
     g.setFont("Vector:12");
-    g.setColor(color || 0xF800);
     g.drawString(label, rotatedPoints[0], rotatedPoints[1] + 8);
+  } else if (iconFunc) {
+    iconFunc(rotatedPoints[0], rotatedPoints[1] + 11, textColor || g.theme.fg);
   }
 }
 
@@ -301,8 +324,9 @@ function drawHour(rawH) {
  * @param {number|function} colorValOrFn - The color, or a function(frac) returning a color for the sub-ticks.
  * @param {number} subIntervals - Number of sub-intervals between main ticks.
  * @param {boolean} isLast - If true, do not draw sub-ticks (because this is the max boundary).
+ * @param {number} [labelSize=16] - Optional font size for the label.
  */
-function drawMetricTick(tickStr, a, spacingAngle, colorValOrFn, subIntervals, isLast) {
+function drawMetricTick(tickStr, a, spacingAngle, colorValOrFn, subIntervals, isLast, labelSize) {
   subIntervals = subIntervals || 10;
   
   function getColor(frac) {
@@ -310,21 +334,24 @@ function drawMetricTick(tickStr, a, spacingAngle, colorValOrFn, subIntervals, is
     return colorValOrFn !== undefined ? colorValOrFn : g.theme.fg;
   }
 
-  g.setFont("Vector:32");
+  g.setFont("Vector:" + (labelSize || 32));
   
   g.setColor(getColor(0));
   g.fillPolyAA(rotatePoints(hourPoints, a, radius));
   
   const hOff = gHeight + lineOffset;
-  const rotatedPoints = rotatePoints(
-    [{
-      x: 0,
-      y: -hOff + hourLength + hourOffset
-    }], a, radius
-  );
   
-  g.setColor(g.theme.fg);
-  g.drawString(tickStr, rotatedPoints[0], rotatedPoints[1]);
+  if (tickStr) {
+    let fSize = labelSize || 32;
+    // Adjust yOffset so the top edge of the text remains at a constant distance from the tick
+    // Base offset was hourLength + hourOffset = 40 + 32 = 72
+    let yOffset = 72 - (32 - fSize) / 2;
+    let rotatedStrPos = rotatePoints([{x: 0, y: -hOff + yOffset}], a, radius);
+    g.setFontAlign(0, 0);
+    g.setFont("Vector:" + fSize);
+    g.setColor(g.theme.fg);
+    g.drawString(tickStr, rotatedStrPos[0], rotatedStrPos[1]);
+  }
   
   if (isLast) return;
 
@@ -460,6 +487,14 @@ function onHRM(hrm) {
 }
 Bangle.on('HRM', onHRM);
 
+/**
+ * Redraws the UI when the charging status changes so the charge icon can appear/disappear.
+ */
+function onCharge(charging) {
+  if (Bangle.isLCDOn()) draw();
+}
+Bangle.on('charging', onCharge);
+
 // Register the app UI mode and cleanup function for when the app is exited
 Bangle.setUI({
   mode : "clock",
@@ -468,6 +503,7 @@ Bangle.setUI({
     Bangle.removeListener('swipe', onSwipe);
     Bangle.removeListener('touch', onTouch);
     Bangle.removeListener('HRM', onHRM);
+    Bangle.removeListener('charging', onCharge);
     Bangle.setHRMPower(0, "line_dash");
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
@@ -485,28 +521,35 @@ Bangle.setUI({
  * @param {number} opt.maxTick - Maximum valid tick index (e.g. 10 for battery).
  * @param {number} opt.tickRange - Number of ticks to draw left and right of the current tick.
  * @param {number} opt.tickSpacing - The angle in degrees between each tick.
+ * @param {number} [opt.startAngle=210] - The starting angle in degrees for the 0th tick.
  * @param {number} [opt.subIntervals=10] - Number of subdivisions between main ticks.
  * @param {function} opt.getTickLabel - Function returning the label string for a given tick index.
  * @param {function|number} opt.getTickColor - Color (or function returning a color) for the tick marks.
  * @param {number} opt.handColor - The color of the main needle pointer.
  * @param {string|number} opt.centerText - The text displayed inside the central circle.
+ * @param {number} [opt.centerColor] - Optional specific color for the central circle.
+ * @param {number} [opt.centerTextColor] - Optional specific color for the central text.
+ * @param {function} [opt.centerIcon] - Function returning an icon to display below the text.
+ * @param {number} [opt.tickLabelSize] - Optional font size for the tick labels.
  */
 function drawDashboardGauge(opt) {
+  let startAngle = opt.startAngle !== undefined ? opt.startAngle : 210;
   for (let i = opt.currentTick - opt.tickRange; i <= opt.currentTick + opt.tickRange; i++) {
     if (i >= opt.minTick && i <= opt.maxTick) {
       let tickColor = typeof opt.getTickColor === 'function' ? function(frac) { return opt.getTickColor(i, frac); } : opt.getTickColor;
       drawMetricTick(
         opt.getTickLabel(i), 
-        210 + i * opt.tickSpacing, 
+        startAngle + i * opt.tickSpacing, 
         opt.tickSpacing, 
         tickColor,
         opt.subIntervals || 10,
-        i === opt.maxTick
+        i === opt.maxTick,
+        opt.tickLabelSize
       );
     }
   }
   drawHand(opt.handColor);
-  drawNumber(opt.centerText, opt.handColor);
+  drawNumber(opt.centerText, opt.centerColor || opt.handColor, undefined, opt.centerIcon, opt.centerTextColor);
 }
 
 /**
@@ -590,6 +633,8 @@ function draw() {
   } else if (screen === "battery") {
     let battery = E.getBattery();
     
+    let isCharging = Bangle.isCharging();
+    
     let r5, g6;
     if (battery <= 50) {
       r5 = 31;
@@ -600,18 +645,23 @@ function draw() {
     }
     let color = (r5 << 11) | (g6 << 5);
     
-    hourAngle = 210 + (battery / 100) * 300;
+    hourAngle = 270 + (battery / 100) * 180;
 
     drawDashboardGauge({
       currentTick: Math.floor(battery / 10),
       minTick: 0,
       maxTick: 10,
-      tickRange: 3,
-      tickSpacing: 30,
+      tickRange: 5,
+      startAngle: 270,
+      tickSpacing: 18,
+      subIntervals: 5,
+      tickLabelSize: 28,
       getTickLabel: i => (i * 10) + "%",
       getTickColor: color,
       handColor: color,
-      centerText: battery
+      centerText: battery,
+      centerTextColor: isCharging ? 0x07E0 : undefined,
+      centerIcon: isCharging ? drawLightning : undefined
     });
   } else if (screen === "hrm") {
     let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("last") : null;
