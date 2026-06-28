@@ -397,6 +397,8 @@ Bangle.setUI({
     Bangle.setHRMPower(0, "line_dash");
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
+    if (hrmPowerTimeout) clearTimeout(hrmPowerTimeout);
+    hrmPowerTimeout = undefined;
   }
 });
 
