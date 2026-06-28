@@ -43,3 +43,7 @@ The app includes a comprehensive settings menu where you can configure the follo
 ## Credits
 
 Line Dash was created by [pagnotta](https://github.com/pagnotta), built upon the foundation of the [Line Clock](https://github.com/espruino/BangleApps/tree/master/apps/line_clock) app originally created by deepDiverPaul. It has been expanded into a suite of interactive, swipeable dashboard gauges.
+
+## License
+
+This app is released under the [MIT License](LICENSE).
