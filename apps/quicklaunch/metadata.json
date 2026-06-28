@@ -12,7 +12,9 @@
   "storage": [
     {"name": "quicklaunch.settings.js", "url": "settings.js"},
     {"name": "quicklaunch.boot.js", "url": "boot.js"},
-    {"name": "quicklaunch.app.js", "url": "app.js"}
+    {"name": "quicklaunch.app.js", "url": "app.js"},
+    {"name": "launch_utils", "url": "../../modules/launch_utils.js"},
+    {"name": "RAM", "url": "setup.js"}
   ],
   "data": [{"name": "quicklaunch.json"}]
 }

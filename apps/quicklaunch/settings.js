@@ -9,47 +9,8 @@ for (let c of ["lapp","rapp","uapp","dapp","tapp"]){ // l=left, r=right, u=up, d
 
 
 var launchCache = require("launch_utils").cache({showClocks:true,showLaunchers:true});
+//launchCache = require("launch_utils").cacheWidgetsCheck(launchCache.apps);
 var apps = launchCache.apps;
-
-function updateSettingsObject() {
-  // Convert settings object from before v0.12 to v0.12.
-  for (let c of ["leftapp","rightapp","upapp","downapp","tapapp"]){
-    if (settings[c]) {
-      let cNew = c.substring(0,1)+"app";
-      settings[cNew] = settings[c];
-      delete settings[c];
-      if (settings[cNew].name=="(none)") settings[cNew].name = "";
-  
-      if (settings[cNew].name=="Quick Launch Extension"){
-        settings[cNew].name = "Extension";
-        for (let d of ["extleftapp","extrightapp","extupapp","extdownapp","exttapapp"]){
-          if (settings[d]) {
-            let dNew = cNew.substring(0,1)+d.substring(3,4)+"app";
-            settings[dNew] = settings[d];
-            delete settings[d];
-            if (settings[dNew].name=="(none)") settings[dNew].name = "";
-          }
-        }
-      }
-      storage.writeJSON("quicklaunch.json",settings);
-    } 
-  }
-  for (let d of ["extleftapp","extrightapp","extupapp","extdownapp","exttapapp"]){
-    if (settings[d]) delete settings[d];
-  }
-launchCache = require("launch_utils").cacheWidgetsCheck(launchCache.apps);
-
-// Add required launch_utils properties to settings object from versions older than 0.17
-//delete settings.trace;
-var settingsKeys = Object.keys(settings);
-settingsKeys.forEach(key => {
-  let name = settings[key].name; 
-  let app  = apps.find(app=>app.name === name);
-    print(app)
-  if (app) settings[key].wid = app.wid;
-});
-storage.writeJSON("quicklaunch.json",settings);
-}
 
 // Add psuedo app to trigger Bangle.showLauncher later
 apps.push({
@@ -122,12 +83,6 @@ function showMainMenu() {
     let appName = settings[key].name==""?"(none)":settings[key].name;
     mainmenu[entry+ ": "+appName] = function() {showSubMenu(keyCurrent);};
     }
-
-  mainmenu.updateSettingsObject = ()=>{
-    E.showMessage("Updating settings object", "Quick Launch");
-    updateSettingsObject();
-    E.showPrompt("Updated settings object.", {title:"Quick Launch", buttons:{"Ok":null}}).then(showMainMenu);
-  }
 
   return E.showMenu(mainmenu);
 }
