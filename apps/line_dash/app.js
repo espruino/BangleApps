@@ -91,15 +91,14 @@ function rotatePoints(points, angle, rad) {
   const ang = degreesToRadians(angle);
   const hAng = degreesToRadians(hourAngle);
   const rotatedPoints = [];
-  points.map(function(point) {
-    return {
-      x: point.x * Math.cos(ang) - point.y * Math.sin(ang),
-      y: point.x * Math.sin(ang) + point.y * Math.cos(ang)
-    };
-  }).forEach(function(point) {
-    rotatedPoints.push(point.x + gCenterX - (rad * Math.sin(hAng)));
-    rotatedPoints.push(point.y + gCenterY + (rad * Math.cos(hAng)));
-  });
+  const cosAng = Math.cos(ang), sinAng = Math.sin(ang);
+  const dx = rad * Math.sin(hAng), dy = rad * Math.cos(hAng);
+  for (let i = 0; i < points.length; i++) {
+    let px = points[i].x;
+    let py = points[i].y;
+    rotatedPoints.push(px * cosAng - py * sinAng + gCenterX - dx);
+    rotatedPoints.push(px * sinAng + py * cosAng + gCenterY + dy);
+  }
   return rotatedPoints;
 }
 
@@ -304,6 +303,8 @@ function drawMetricTick(tickStr, a, spacingAngle, colorValOrFn) {
 
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = undefined;
+  if (!Bangle.isLCDOn()) return; // Don't schedule a timeout if LCD is off
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
     draw();
@@ -313,7 +314,7 @@ function queueDraw() {
 function lockListenerBw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
-  draw();
+  if (Bangle.isLCDOn()) draw();
 }
 Bangle.on('lock', lockListenerBw);
 
@@ -344,7 +345,7 @@ function changeScreen(dir) {
     }
   }
 
-  draw();
+  if (Bangle.isLCDOn()) draw();
 }
 
 function onSwipe(directionLR, directionUD) {
@@ -352,7 +353,7 @@ function onSwipe(directionLR, directionUD) {
     if (screens[currentScreenIdx] === "distance") {
       let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
       distanceBaselineSteps = health ? health.steps : 0;
-      draw();
+      if (Bangle.isLCDOn()) draw();
     }
     return;
   }
@@ -378,7 +379,7 @@ function onHRM(hrm) {
       let now = Date.now();
       if (now - lastHrmDraw >= initialSettings.liveHrmInterval * 1000) {
         lastHrmDraw = now;
-        draw();
+        if (Bangle.isLCDOn()) draw();
       }
     }
   }
@@ -409,6 +410,7 @@ Bangle.setUI({
  */
 function draw() {
   queueDraw();
+  if (!Bangle.isLCDOn()) return; // Extra check, do not render if screen is off
 
   g.clear();
   g.setFontAlign(0, 0);
