@@ -1,8 +1,8 @@
 # Line Dash
 
-A beautiful analog clock with swipeable stats dashboards for Bangle.js 2. 
+A beautiful analog clock with swipeable stats dashboards for Bangle.js 2.
 
-Besides the Line Clock, Line Dash provides an additional suite of minimalist gauges that you can swipe through to check your daily stats.
+Line Dash provides a suite of minimalist gauges that you can swipe through to check your daily stats. It features a clean design where each metric gets its own dedicated screen, keeping your main clock face completely uncluttered.
 
 ## Screenshots
 
