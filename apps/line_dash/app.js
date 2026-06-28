@@ -151,26 +151,37 @@ function drawHand(color) {
  * Retrieves the polygon coordinates for a tick mark.
  * 
  * @param {boolean} small - If true, returns coordinates for a shorter tick mark.
+ * @param {boolean} superSmall - If true, returns coordinates for a very fine, short tick mark.
  * @returns {Array} Array of {x, y} coordinates for the polygon.
  */
-function getHourCoordinates(small) {
-  const dist = small ? (hourSLength - hourLength) : 0;
-  const halfWidth = hourWidth / 2;
+function getHourCoordinates(small, superSmall) {
+  let dist = small ? (hourSLength - hourLength) : 0;
+  let hWidth = hourWidth / 2;
+  
+  if (superSmall) {
+    dist = (10 - hourLength); // super short length
+    hWidth = 2 / 2; // extremely fine width
+  }
+
   const gh = gHeight + lineOffset;
   return [{
-    x: -halfWidth,
+    x: -hWidth,
     y: -gh - dist
   }, {
-    x: halfWidth,
+    x: hWidth,
     y: -gh - dist
   }, {
-    x: halfWidth,
+    x: hWidth,
     y: -gh + hourLength
   }, {
-    x: -halfWidth,
+    x: -hWidth,
     y: -gh + hourLength
   }];
 }
+
+const hourPoints = getHourCoordinates(false, false);
+const hourSPoints = getHourCoordinates(true, false);
+const hourSSPoints = getHourCoordinates(false, true);
 
 /**
  * Draws a small decorative dot at a specific angle.
@@ -243,8 +254,6 @@ function drawNumber(n, color, label) {
   }
 }
 
-const hourPoints = getHourCoordinates(false);
-const hourSPoints = getHourCoordinates(true);
 
 /**
  * Renders an hour tick, its number, and the decorative dots next to it.
@@ -290,8 +299,12 @@ function drawHour(rawH) {
  * @param {number} a - The angle in degrees where the tick should be drawn.
  * @param {number} spacingAngle - The angle span between this tick and the next, used to position sub-ticks.
  * @param {number|function} colorValOrFn - The color, or a function(frac) returning a color for the sub-ticks.
+ * @param {number} subIntervals - Number of sub-intervals between main ticks.
+ * @param {boolean} isLast - If true, do not draw sub-ticks (because this is the max boundary).
  */
-function drawMetricTick(tickStr, a, spacingAngle, colorValOrFn) {
+function drawMetricTick(tickStr, a, spacingAngle, colorValOrFn, subIntervals, isLast) {
+  subIntervals = subIntervals || 10;
+  
   function getColor(frac) {
     if (typeof colorValOrFn === 'function') return colorValOrFn(frac);
     return colorValOrFn !== undefined ? colorValOrFn : g.theme.fg;
@@ -301,9 +314,6 @@ function drawMetricTick(tickStr, a, spacingAngle, colorValOrFn) {
   
   g.setColor(getColor(0));
   g.fillPolyAA(rotatePoints(hourPoints, a, radius));
-  
-  g.setColor(getColor(0.5));
-  g.fillPolyAA(rotatePoints(hourSPoints, a + (spacingAngle / 2), radius));
   
   const hOff = gHeight + lineOffset;
   const rotatedPoints = rotatePoints(
@@ -316,15 +326,19 @@ function drawMetricTick(tickStr, a, spacingAngle, colorValOrFn) {
   g.setColor(g.theme.fg);
   g.drawString(tickStr, rotatedPoints[0], rotatedPoints[1]);
   
-  let interval = spacingAngle / 6;
-  g.setColor(getColor(1/6));
-  hourDot(a + interval);
-  g.setColor(getColor(2/6));
-  hourDot(a + interval * 2);
-  g.setColor(getColor(4/6));
-  hourDot(a + interval * 4);
-  g.setColor(getColor(5/6));
-  hourDot(a + interval * 5);
+  if (isLast) return;
+
+  let intervalStep = spacingAngle / subIntervals;
+  for (let i = 1; i < subIntervals; i++) {
+    let frac = i / subIntervals;
+    g.setColor(getColor(frac));
+    // Draw medium tick at exactly half if it's an even split, else super small tick
+    if (i === subIntervals / 2) {
+      g.fillPolyAA(rotatePoints(hourSPoints, a + i * intervalStep, radius));
+    } else {
+      g.fillPolyAA(rotatePoints(hourSSPoints, a + i * intervalStep, radius));
+    }
+  }
 }
 
 /**
@@ -471,6 +485,7 @@ Bangle.setUI({
  * @param {number} opt.maxTick - Maximum valid tick index (e.g. 10 for battery).
  * @param {number} opt.tickRange - Number of ticks to draw left and right of the current tick.
  * @param {number} opt.tickSpacing - The angle in degrees between each tick.
+ * @param {number} [opt.subIntervals=10] - Number of subdivisions between main ticks.
  * @param {function} opt.getTickLabel - Function returning the label string for a given tick index.
  * @param {function|number} opt.getTickColor - Color (or function returning a color) for the tick marks.
  * @param {number} opt.handColor - The color of the main needle pointer.
@@ -480,7 +495,14 @@ function drawDashboardGauge(opt) {
   for (let i = opt.currentTick - opt.tickRange; i <= opt.currentTick + opt.tickRange; i++) {
     if (i >= opt.minTick && i <= opt.maxTick) {
       let tickColor = typeof opt.getTickColor === 'function' ? function(frac) { return opt.getTickColor(i, frac); } : opt.getTickColor;
-      drawMetricTick(opt.getTickLabel(i), 210 + i * opt.tickSpacing, opt.tickSpacing, tickColor);
+      drawMetricTick(
+        opt.getTickLabel(i), 
+        210 + i * opt.tickSpacing, 
+        opt.tickSpacing, 
+        tickColor,
+        opt.subIntervals || 10,
+        i === opt.maxTick
+      );
     }
   }
   drawHand(opt.handColor);
@@ -617,6 +639,7 @@ function draw() {
       maxTick: 20,
       tickRange: 3,
       tickSpacing: 15,
+      subIntervals: 4,
       getTickLabel: i => String(40 + i * 10),
       getTickColor: function(i, frac) {
         let exactBpm = 40 + i * 10 + frac * 10;
