@@ -453,7 +453,7 @@ function draw() {
 
     // Draw the hundreds digit in the center circle (0-9)
     let hundreds = Math.floor((steps % 1000) / 100);
-    drawNumber(hundreds, 0x07E0);
+    drawNumber("." + hundreds, 0x07E0);
   } else if (screen === "distance") {
     let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
     let steps = health ? health.steps : 0;
@@ -478,7 +478,7 @@ function draw() {
 
     // Center number: just the tenths of the current unit (0-9)
     let fractional = Math.floor((distanceUnits % 1) * 10);
-    drawNumber(fractional, 0x07FF);
+    drawNumber("." + fractional, 0x07FF);
   } else if (screen === "battery") {
     let battery = E.getBattery();
     

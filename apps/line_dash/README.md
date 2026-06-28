@@ -6,9 +6,9 @@ Besides the Line Clock, Line Dash provides an additional suite of minimalist gau
 
 ## Screenshots
 
-| Clock | Heart Rate | Steps |
+| Heart Rate | Clock | Steps |
 | :---: | :---: | :---: |
-| ![](app-screenshot.png) | ![](app-screenshot-hr.png) | ![](app-screenshot-step.png) |
+| ![](app-screenshot.png) | ![](app-screenshot-clock.png) | ![](app-screenshot-step.png) |
 
 ## Features
 
