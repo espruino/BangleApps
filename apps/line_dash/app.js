@@ -264,11 +264,18 @@ function drawHour(rawH) {
   hourDot(a + 25);
 }
 
-function drawMetricTick(tickStr, a, spacingAngle, color) {
-  g.setColor(color !== undefined ? color : g.theme.fg);
+function drawMetricTick(tickStr, a, spacingAngle, colorValOrFn) {
+  function getColor(frac) {
+    if (typeof colorValOrFn === 'function') return colorValOrFn(frac);
+    return colorValOrFn !== undefined ? colorValOrFn : g.theme.fg;
+  }
+
   g.setFont("Vector:32");
   
+  g.setColor(getColor(0));
   g.fillPolyAA(rotatePoints(hourPoints, a, radius));
+  
+  g.setColor(getColor(0.5));
   g.fillPolyAA(rotatePoints(hourSPoints, a + (spacingAngle / 2), radius));
   
   const hOff = gHeight + lineOffset;
@@ -281,12 +288,15 @@ function drawMetricTick(tickStr, a, spacingAngle, color) {
   
   g.setColor(g.theme.fg);
   g.drawString(tickStr, rotatedPoints[0], rotatedPoints[1]);
-  g.setColor(color !== undefined ? color : g.theme.fg);
   
   let interval = spacingAngle / 6;
+  g.setColor(getColor(1/6));
   hourDot(a + interval);
+  g.setColor(getColor(2/6));
   hourDot(a + interval * 2);
+  g.setColor(getColor(4/6));
   hourDot(a + interval * 4);
+  g.setColor(getColor(5/6));
   hourDot(a + interval * 5);
 }
 
@@ -544,19 +554,22 @@ function draw() {
 
     let currentTick = Math.floor((bpm - 40) / 10);
     
+    let currentTickBpm = 0;
+    let colorFn = function(frac) {
+        let exactBpm = currentTickBpm + frac * 10;
+        if (exactBpm < z1) return 0x07E0; // Green
+        if (exactBpm < z2) return 0x07FF; // Cyan
+        if (exactBpm < z3) return 0xFFE0; // Yellow
+        if (exactBpm < z4) return 0xFD20; // Orange
+        if (exactBpm < z5) return 0xFA80; // Light Red
+        return 0xF800; // Red
+    };
+
     // 20 segments -> 15 degrees per segment. Draw 7 ticks to fill the screen edge-to-edge.
     for (let i = currentTick - 3; i <= currentTick + 3; i++) {
         if (i >= 0 && i <= 20) {
-            let tickBpm = 40 + i * 10;
-            let tickColor;
-            if (tickBpm < z1) tickColor = 0x07E0; // Green
-            else if (tickBpm < z2) tickColor = 0x07FF; // Cyan
-            else if (tickBpm < z3) tickColor = 0xFFE0; // Yellow
-            else if (tickBpm < z4) tickColor = 0xFD20; // Orange
-            else if (tickBpm < z5) tickColor = 0xFA80; // Light Red
-            else tickColor = 0xF800; // Red
-
-            drawMetricTick(String(tickBpm), 210 + i * 15, 15, tickColor);
+            currentTickBpm = 40 + i * 10;
+            drawMetricTick(String(currentTickBpm), 210 + i * 15, 15, colorFn);
         }
     }
 
