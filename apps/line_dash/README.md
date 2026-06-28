@@ -6,9 +6,9 @@ Line Dash provides a suite of minimalist gauges that you can swipe through to ch
 
 ## Screenshots
 
-| Clock | Heart Rate | Steps |
-| :---: | :---: | :---: |
-| ![](app-screenshot-clock.png) | ![](app-screenshot.png) | ![](app-screenshot-step.png) |
+| Clock | Heart Rate | Steps | Battery |
+| :---: | :---: | :---: | :---: |
+| ![](app-screenshot-clock.png) | ![](app-screenshot.png) | ![](app-screenshot-step.png) | ![](app-screenshot-bat.png) |
 
 ## Features
 

@@ -12,7 +12,8 @@
   "screenshots": [
     {"url":"app-screenshot.png"},
     {"url":"app-screenshot-clock.png"},
-    {"url":"app-screenshot-step.png"}
+    {"url":"app-screenshot-step.png"},
+    {"url":"app-screenshot-bat.png"}
   ],
   "readme": "README.md",
   "storage": [
