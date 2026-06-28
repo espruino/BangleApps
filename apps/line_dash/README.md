@@ -16,7 +16,7 @@ Line Dash provides a suite of minimalist gauges that you can swipe through to ch
 * **Steps:** Tracks your daily steps using a sweeping dial.
 * **Distance:** A trip meter that displays distance covered. Swiping up or down resets it to zero!
 * **Heart Rate:** Features a color-coded HR Zone gauge. The HR sensor only activates when you swipe to this screen to conserve battery. *(Note: The "Live HR Updates" feature is highly recommended but disabled by default to save power. Be sure to enable it in the app settings!)*
-* **Battery:** Displays your current battery level.
+* **Battery:** Displays your current battery level in a classic 180-degree "fuel gauge" layout. When you plug in your watch, the app automatically switches to this dashboard and displays a dynamic green charging indicator. Unplugging it automatically returns you to the main clock!
 
 ## Controls
 

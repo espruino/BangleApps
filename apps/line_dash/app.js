@@ -488,9 +488,21 @@ function onHRM(hrm) {
 Bangle.on('HRM', onHRM);
 
 /**
- * Redraws the UI when the charging status changes so the charge icon can appear/disappear.
+ * Handles charging state changes, switching to the battery dashboard when plugged in.
+ * @param {boolean} charging - True if the watch is now charging.
  */
 function onCharge(charging) {
+  if (charging) {
+    let batteryIdx = screens.indexOf("battery");
+    if (batteryIdx !== -1 && currentScreenIdx !== batteryIdx) {
+      if (initialSettings.liveHrm && screens[currentScreenIdx] === "hrm") {
+        Bangle.setHRMPower(0, "line_dash");
+      }
+      currentScreenIdx = batteryIdx;
+    }
+  } else {
+    currentScreenIdx = screens.indexOf("clock");
+  }
   if (Bangle.isLCDOn()) draw();
 }
 Bangle.on('charging', onCharge);
