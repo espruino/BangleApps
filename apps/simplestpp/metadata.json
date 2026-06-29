@@ -3,6 +3,7 @@
   "name": "Simplest++ Clock",
   "shortName": "Simplest++",
   "version": "0.04",
+  "author": "Espruino",
   "description": "The simplest working clock, with clock_info, acts as a tutorial piece",
   "readme": "README.md",
   "icon": "app.png",

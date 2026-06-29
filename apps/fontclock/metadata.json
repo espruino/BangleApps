@@ -2,6 +2,7 @@
   "id": "fontclock",
   "name": "Font Clock",
   "version": "0.01",
+  "author": "Espruino",
   "description": "Choose the font and design of clock face from a library of available designs",
   "icon": "fontclock.png",
   "type": "clock",

@@ -3,6 +3,7 @@
   "name": "Pushups",
   "shortName": "Pushups",
   "version": "0.1",
+  "author": "Espruino",
   "description": "Pushups countdown using the accelerometer.",
   "allow_emulator":false,
   "icon": "pushups.png",

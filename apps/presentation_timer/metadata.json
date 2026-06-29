@@ -2,6 +2,7 @@
   "id": "presentation_timer",
   "name": "Presentation Timer",
   "version": "0.04",
+  "author": "Espruino",
   "description": "A touch based presentation timer for Bangle JS 2",
   "icon": "presentation_timer.png",
   "screenshots": [{"url":"screenshot1.png"},{"url":"screenshot2.png"},{"url":"screenshot3.png"},{"url":"screenshot4.png"}],

@@ -3,6 +3,7 @@
   "name": "Smart Switch",
   "shortName": "Smart Switch",
   "version": "0.01",
+  "author": "Espruino",
   "description": "Using EspruinoHub, control your smart devices on and off via Bluetooth Low Energy!",
   "icon": "app.png",
   "type": "app",

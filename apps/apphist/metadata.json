@@ -1,6 +1,7 @@
 { "id": "apphist",
   "name": "App History",
   "version": "0.02",
+  "author": "Espruino",
   "icon": "icon.png",
   "description": "Lets you navigate back trough the series of apps since last you were on the clock face.  Works with the software back button and hardware button.",
   "type":"bootloader",

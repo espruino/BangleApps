@@ -7,6 +7,7 @@
   "icon":"nightwatch.icon.png",
   "screenshots" : [ { "url":"screenshot.png","url":"screenshot2.png" } ],
   "version":"1.1",
+  "author": "Espruino",
   "description":"Logs sensor readings (currently T and p), show min/max and graph.",
   "tags": "tools,outdoors",
   "storage": [

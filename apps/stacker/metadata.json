@@ -2,6 +2,7 @@
   "name": "Stacker",
   "shortName":"Stacker",
   "version": "0.03",
+  "author": "Espruino",
   "description": "Game of Stacking",
   "icon": "app.png",
   "tags": "game",

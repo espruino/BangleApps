@@ -2,6 +2,7 @@
   "name": "Advanced Casio Clock",
   "shortName":"advcasio",
   "version":"0.06",
+  "author": "Espruino",
   "description": "An over-engineered clock inspired by Casio watches. It has current temperature, a timer using swipe and a scratchpad. Can be updated using a dedicated webapp.",
   "icon": "app.png",
   "tags": "clock",

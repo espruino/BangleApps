@@ -5,6 +5,7 @@
   "icon": "screenshot_widpa.png",
   "screenshots": [{"url":"screenshot_widpa.png"}],
   "version":"0.04",
+  "author": "Espruino",
   "type": "widget",
   "supports": ["BANGLEJS", "BANGLEJS2"],
   "readme": "README.md",

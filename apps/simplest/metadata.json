@@ -2,6 +2,7 @@
   "id": "simplest",
   "name": "Simplest Clock",
   "version": "0.06",
+  "author": "Espruino",
   "description": "The simplest working clock, acts as a tutorial piece",
   "readme": "README.md",
   "icon": "simplest.png",

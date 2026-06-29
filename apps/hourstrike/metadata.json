@@ -3,6 +3,7 @@
   "name": "Hour Strike",
   "shortName": "Hour Strike",
   "version": "0.09",
+  "author": "Espruino",
   "description": "Strike the clock on the hour. A great tool to remind you an hour has passed!",
   "icon": "app-icon.png",
   "tags": "tool,alarm",

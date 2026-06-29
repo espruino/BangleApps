@@ -2,6 +2,7 @@
   "id": "stetho",
   "name": "Stethoscope",
   "version": "0.01",
+  "author": "Espruino",
   "description": "Hear your heart rate",
   "icon": "stetho.png",
   "tags": "health",

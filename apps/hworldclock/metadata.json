@@ -3,6 +3,7 @@
   "name": "Hanks World Clock",
   "shortName": "Hanks World Clock",
   "version": "0.37",
+  "author": "Espruino",
   "description": "Current time zone plus up to three others",
   "allow_emulator":true,
   "icon": "app.png",

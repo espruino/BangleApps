@@ -3,6 +3,7 @@
   "name": "Magic 8 Ball Italiano",
   "shortName": "Magic 8 Ball IT",
   "version": "0.01",
+  "author": "Espruino",
   "description": "La palla predice il futuro",
   "icon": "app.png",
   "screenshots": [{"url":"bangle1-magic-8-ball-italiano-screenshot.png"}],

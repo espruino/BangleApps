@@ -3,6 +3,7 @@
 	"name": "Kanagawa clock",
 	"shortName":"kanagawa",
 	"version": "0.04",
+	"author": "Espruino",
 	"description": "A clock that displays the great wave of kanagawa (image from wikipedia) with seconds in active mode.",
 	"icon": "app.png",
 	"tags": "clock,kanagawa,wave",

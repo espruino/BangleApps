@@ -3,6 +3,7 @@
   "name": "Shortcuts",
   "shortName": "Shortcuts",
   "version": "0.02",
+  "author": "Espruino",
   "description": "Quickly load your favourite apps from (almost) any watch face.",
   "icon": "app.png",
   "type": "bootloader",

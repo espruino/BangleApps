@@ -2,6 +2,7 @@
   "id": "clkinfogps",
   "name": "GPS Grid Ref Clockinfo",
   "version":"0.02",
+  "author": "Espruino",
   "description": "Clockinfo that displays the GPS OS Grid Reference",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot1.png"}],
