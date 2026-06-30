@@ -29,12 +29,7 @@ body:
         **Please make sure you have installed the latest (released) firmware!**
         To find your firmware version, check the `About` Bangle.js app or connect with [the App Loader](https://banglejs.com/apps/), click `More...` and look for a `Device Info` heading.
         If the issue occurs only in "Cutting Edge" builds, please mention this.
-        
-        **FW Update instructions:**
-        * **Bangle 2:** [firmware update instructions](https://www.espruino.com/Bangle.js2#firmware-updates)
-        * **Bangle 1:** [firmware update instructions](https://www.espruino.com/Bangle.js#firmware-updates)
-        _Hint: The links will open in-place (hold ctrl/cmd-key and click to open in a new tab instead)_
-      placeholder: e.g. 2v12
+      placeholder: e.g. 2v29
     validations:
       required: true
   - type: textarea
@@ -46,7 +41,7 @@ body:
       placeholder: |
         ### Describe the bug
         A clear and concise description of what the bug is.
-        
+
         ### Expected behavior
         A clear and concise description of what you expected to happen.
 
@@ -62,3 +57,9 @@ body:
     id: apps
     attributes:
       label: Installed apps
+  - type: input
+    id: author
+    attributes:
+      label: Author
+      description: |
+        If known, please enter the app author's GitHub name in here, eg `@espruino`
