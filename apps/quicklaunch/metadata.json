@@ -2,7 +2,7 @@
   "id": "quicklaunch",
   "name": "Quick Launch",
   "icon": "app.png",
-  "version": "0.16",
+  "version": "0.17",
   "author": "frigis1",
   "description": "Tap or swipe left/right/up/down on your clock face to launch up to five apps of your choice. Configurations can be accessed through Settings->Apps.",
   "type": "bootloader",
@@ -12,7 +12,9 @@
   "storage": [
     {"name": "quicklaunch.settings.js", "url": "settings.js"},
     {"name": "quicklaunch.boot.js", "url": "boot.js"},
-    {"name": "quicklaunch.app.js", "url": "app.js"}
+    {"name": "quicklaunch.app.js", "url": "app.js"},
+    {"name": "launch_utils", "url": "../../modules/launch_utils.js"},
+    {"name": "RAM", "url": "setup.js"}
   ],
   "data": [{"name": "quicklaunch.json"}]
 }

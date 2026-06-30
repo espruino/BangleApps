@@ -14,3 +14,4 @@
 0.14: Extension: Don't go down a path if nothing waits at the end. Revisit the current intersection instead.
 0.15: Extension: Compatibility with "Fastload Utils" app history feature.
 0.16: Snappier. Fewer storage interactions.
+0.17: Make use of the launch_utils module to use fastloading when we can.
