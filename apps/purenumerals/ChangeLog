@@ -1,6 +1,2 @@
-0.04: 
-- Battery level with ringbuffer
-- Blinking red dot if device on.
-
-0.03: 
-- First released version.
+0.03: First released version.
+0.04: Battery level with ringbuffer, blinking red dot if device on.
