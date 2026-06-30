@@ -169,7 +169,7 @@ const APP_KEYS = [
   'sortorder', 'readme', 'custom', 'customConnect', 'interface', 'storage', 'data',
   'supports', 'allow_emulator',
   'dependencies', 'provides_modules', 'provides_widgets', 'provides_features', "default",
-  "author"
+  "author","requiredFw"
 ];
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports', 'noOverwrite'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
