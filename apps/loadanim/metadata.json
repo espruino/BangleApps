@@ -3,7 +3,8 @@
   "shortName":"Load Anim",
   "version":"0.02",
   "author": "gfwilliams",
-  "description": "Add an animation that happens while Bangle.js is loading an app. Requires 2v29+ (or 2v28 cutting edge) firmware to work.",
+  "description": "Add an animation that happens while Bangle.js is loading an app.",
+  "requiredFw": "2v29"
   "icon": "app.png",
   "screenshots" : [ { "url":"screenshot.png" } ],
   "type": "settings",
