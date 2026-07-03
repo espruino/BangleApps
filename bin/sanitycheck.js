@@ -169,7 +169,7 @@ const APP_KEYS = [
   'sortorder', 'readme', 'custom', 'customConnect', 'interface', 'storage', 'data',
   'supports', 'allow_emulator',
   'dependencies', 'provides_modules', 'provides_widgets', 'provides_features', "default",
-  "author","requiredFw"
+  "author","requires_firmware"
 ];
 const STORAGE_KEYS = ['name', 'url', 'content', 'evaluate', 'noOverwite', 'supports', 'noOverwrite'];
 const DATA_KEYS = ['name', 'wildcard', 'storageFile', 'url', 'content', 'evaluate'];
@@ -311,7 +311,7 @@ apps.forEach((app,appIdx) => {
     if (app.type && INTERNAL_FILES_IN_APP_TYPE[app.type]) {
       if (INTERNAL_FILES_IN_APP_TYPE[app.type].includes(file.name))
         fileInternal = true;
-    }    
+    }
     if (!app.type=="defaultconfig")
       allFiles.push({app: app.id, file: file.name, internal:fileInternal});
     if (file.url) if (!fs.existsSync(appDir+file.url)) ERROR(`App ${app.id} file ${file.url} doesn't exist`, {file:metadataFile});

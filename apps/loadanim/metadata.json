@@ -4,7 +4,7 @@
   "version":"0.02",
   "author": "gfwilliams",
   "description": "Add an animation that happens while Bangle.js is loading an app.",
-  "requiredFw": "2v29",
+  "requires_firmware": "2v29",
   "icon": "app.png",
   "screenshots" : [ { "url":"screenshot.png" } ],
   "type": "settings",
