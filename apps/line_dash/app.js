@@ -86,40 +86,55 @@ function getHourHandAngle() {
   return hourHandAngle;
 }
 
-let hourAngle = getHourHandAngle();
+const DEG2RAD = Math.PI / 180;
+
+let hourAngle = 0;
+// Rotation center shifted by `radius` along the current hand angle.
+// Cached here so rotatePoints does not recompute sin/cos of hourAngle on every call.
+let rotCX = gCenterX, rotCY = gCenterY;
 
 /**
- * Converts degrees to radians.
+ * Sets the global hand angle and caches the shifted rotation center for it.
  *
- * @param {number} degrees - The degrees to be converted to radians.
- * @return {number} - The equivalent value in radians.
+ * @param {number} angle - The hand angle in degrees.
  */
-function degreesToRadians(degrees) {
-  return degrees * (Math.PI / 180);
+function setHourAngle(angle) {
+  hourAngle = angle;
+  const r = angle * DEG2RAD;
+  rotCX = gCenterX - radius * Math.sin(r);
+  rotCY = gCenterY + radius * Math.cos(r);
 }
+setHourAngle(getHourHandAngle());
 
 /**
- * Rotates an array of points around a given angle and radius.
+ * Rotates a flat array of points ([x0,y0, x1,y1, ...]) around a given angle.
  *
- * @param {Array} points - The array of points to be rotated.
+ * @param {Array} points - Flat array of x,y coordinate pairs to be rotated.
  * @param {number} angle - The angle in degrees to rotate the points.
- * @param {number} rad - The radius to offset the rotation.
- * @returns {Array} - The array of rotated points.
+ * @param {number} rad - If nonzero, rotate around the cached hand-shifted center.
+ * @returns {Array} - Flat array of rotated x,y coordinate pairs.
  */
 function rotatePoints(points, angle, rad) {
-  const ang = degreesToRadians(angle);
-  const hAng = degreesToRadians(hourAngle);
-  const rotatedPoints = [];
+  "ram";
+  const ang = angle * DEG2RAD;
   const cosAng = Math.cos(ang), sinAng = Math.sin(ang);
-  const dx = rad * Math.sin(hAng), dy = rad * Math.cos(hAng);
-  for (let i = 0; i < points.length; i++) {
-    let px = points[i].x;
-    let py = points[i].y;
-    rotatedPoints.push(px * cosAng - py * sinAng + gCenterX - dx);
-    rotatedPoints.push(px * sinAng + py * cosAng + gCenterY + dy);
+  const cx = rad ? rotCX : gCenterX, cy = rad ? rotCY : gCenterY;
+  const rotatedPoints = new Array(points.length);
+  for (let i = 0; i < points.length; i += 2) {
+    const px = points[i], py = points[i + 1];
+    rotatedPoints[i] = px * cosAng - py * sinAng + cx;
+    rotatedPoints[i + 1] = px * sinAng + py * cosAng + cy;
   }
   return rotatedPoints;
 }
+
+// Hand polygon, precomputed as a flat point array
+const handPoints = [
+  -handWidth / 2, -gHeight,
+  handWidth / 2, -gHeight,
+  handWidth / 2, gHeight,
+  -handWidth / 2, gHeight
+];
 
 /**
  * Draws the main central hand (needle) on the canvas.
@@ -128,60 +143,34 @@ function rotatePoints(points, angle, rad) {
  */
 function drawHand(color) {
   g.setColor(color || 0xF800);
-  const halfWidth = handWidth / 2;
-
-  const points = [{
-    x: -halfWidth,
-    y: -gHeight
-  }, {
-    x: halfWidth,
-    y: -gHeight
-  }, {
-    x: halfWidth,
-    y: gHeight
-  }, {
-    x: -halfWidth,
-    y: gHeight
-  }];
-
-  g.fillPolyAA(rotatePoints(points, hourAngle, 0));
+  g.fillPolyAA(rotatePoints(handPoints, hourAngle, 0));
 }
 
 /**
- * Retrieves the polygon coordinates for a tick mark.
- * 
+ * Retrieves the flat polygon coordinates for a tick mark.
+ *
  * @param {boolean} small - If true, returns coordinates for a shorter tick mark.
- * @param {boolean} superSmall - If true, returns coordinates for a very fine, short tick mark.
- * @returns {Array} Array of {x, y} coordinates for the polygon.
+ * @returns {Array} Flat array of x,y coordinates for the polygon.
  */
-function getHourCoordinates(small, superSmall) {
-  let dist = small ? (hourSLength - hourLength) : 0;
-  let hWidth = hourWidth / 2;
-  
-  if (superSmall) {
-    dist = (10 - hourLength); // super short length
-    hWidth = 2 / 2; // extremely fine width
-  }
-
+function getHourCoordinates(small) {
+  const dist = small ? (hourSLength - hourLength) : 0;
+  const hWidth = hourWidth / 2;
   const gh = gHeight + lineOffset;
-  return [{
-    x: -hWidth,
-    y: -gh - dist
-  }, {
-    x: hWidth,
-    y: -gh - dist
-  }, {
-    x: hWidth,
-    y: -gh + hourLength
-  }, {
-    x: -hWidth,
-    y: -gh + hourLength
-  }];
+  return [
+    -hWidth, -gh - dist,
+    hWidth, -gh - dist,
+    hWidth, -gh + hourLength,
+    -hWidth, -gh + hourLength
+  ];
 }
 
-const hourPoints = getHourCoordinates(false, false);
-const hourSPoints = getHourCoordinates(true, false);
-const hourSSPoints = getHourCoordinates(false, true);
+const hourPoints = getHourCoordinates(false);
+const hourSPoints = getHourCoordinates(true);
+// Super-small sub-ticks are drawn as a single AA line (much cheaper than a filled polygon)
+const hourSSLine = [
+  0, -(gHeight + lineOffset) + hourLength - 10,
+  0, -(gHeight + lineOffset) + hourLength
+];
 
 /**
  * Draws a small decorative dot at a specific angle.
@@ -190,12 +179,7 @@ const hourSSPoints = getHourCoordinates(false, true);
  */
 function hourDot(a) {
   const h = gHeight + lineOffset;
-  const rotatedPoints = rotatePoints(
-    [{
-      x: 0,
-      y: -h + hourLength - (hourRadius / 2)
-    }], a, radius
-  );
+  const rotatedPoints = rotatePoints([0, -h + hourLength - (hourRadius / 2)], a, radius);
   g.fillCircle(rotatedPoints[0], rotatedPoints[1], hourRadius);
 }
 
@@ -207,14 +191,9 @@ function hourDot(a) {
  */
 function hourNumber(a, label) {
   const h = gHeight + lineOffset;
-  const rotatedPoints = rotatePoints(
-    [{
-      x: 0,
-      y: -h + hourLength + hourOffset
-    }], a, radius
-  );
+  const rotatedPoints = rotatePoints([0, -h + hourLength + hourOffset], a, radius);
   let str = label !== undefined ? String(label) : String(a / 30);
-  g.setFont("Vector:32");
+  g.setFont("Vector", 32);
   g.drawString(str, rotatedPoints[0], rotatedPoints[1]);
 }
 
@@ -248,12 +227,7 @@ function drawLightning(x, y, color) {
 function drawNumber(n, color, label, iconFunc, textColor) {
   const h = gHeight + lineOffset;
   const halfWidth = handWidth / 2;
-  const rotatedPoints = rotatePoints(
-    [{
-      x: 0,
-      y: -h + hourLength + numberOffset
-    }], hourAngle, radius
-  );
+  const rotatedPoints = rotatePoints([0, -h + hourLength + numberOffset], hourAngle, radius);
   g.setColor(color || 0xF800);
   g.fillCircle(rotatedPoints[0], rotatedPoints[1], numberSize+ halfWidth);
   g.setColor(g.theme.bg);
@@ -264,12 +238,12 @@ function drawNumber(n, color, label, iconFunc, textColor) {
   // Do not count the thin colon as a full character for width calculations
   let effectiveLength = str.startsWith(":") ? str.length - 1 : str.length;
   if (effectiveLength > 2) fontSize -= (effectiveLength - 2) * 4;
-  g.setFont("Vector:"+fontSize);
+  g.setFont("Vector", fontSize);
   
   g.setColor(textColor || g.theme.fg);
   g.drawString(str, rotatedPoints[0], rotatedPoints[1] - (label || iconFunc ? 6 : 0));
   if (label) {
-    g.setFont("Vector:12");
+    g.setFont("Vector", 12);
     g.drawString(label, rotatedPoints[0], rotatedPoints[1] + 8);
   } else if (iconFunc) {
     iconFunc(rotatedPoints[0], rotatedPoints[1] + 11, textColor || g.theme.fg);
@@ -315,47 +289,47 @@ function drawHour(rawH) {
  * @param {string} tickStr - The label for the tick (e.g. "10k" or "50%").
  * @param {number} a - The angle in degrees where the tick should be drawn.
  * @param {number} spacingAngle - The angle span between this tick and the next, used to position sub-ticks.
- * @param {number|function} colorValOrFn - The color, or a function(frac) returning a color for the sub-ticks.
+ * @param {number|function} colorValOrFn - The color, or a function(tickIdx, frac) returning a color.
+ * @param {number} tickIdx - The tick index, passed through to a color function.
  * @param {number} subIntervals - Number of sub-intervals between main ticks.
  * @param {boolean} isLast - If true, do not draw sub-ticks (because this is the max boundary).
- * @param {number} [labelSize=16] - Optional font size for the label.
+ * @param {number} [labelSize=32] - Optional font size for the label.
  */
-function drawMetricTick(tickStr, a, spacingAngle, colorValOrFn, subIntervals, isLast, labelSize) {
+function drawMetricTick(tickStr, a, spacingAngle, colorValOrFn, tickIdx, subIntervals, isLast, labelSize) {
+  "ram";
   subIntervals = subIntervals || 10;
-  
-  function getColor(frac) {
-    if (typeof colorValOrFn === 'function') return colorValOrFn(frac);
-    return colorValOrFn !== undefined ? colorValOrFn : g.theme.fg;
-  }
+  const colorIsFn = typeof colorValOrFn === 'function';
+  const flatColor = colorIsFn ? 0 : (colorValOrFn !== undefined ? colorValOrFn : g.theme.fg);
 
-  g.setColor(getColor(0));
+  g.setColor(colorIsFn ? colorValOrFn(tickIdx, 0) : flatColor);
   g.fillPolyAA(rotatePoints(hourPoints, a, radius));
-  
+
   const hOff = gHeight + lineOffset;
-  
+
   if (tickStr) {
     let fSize = labelSize || 32;
     // Adjust yOffset so the top edge of the text remains at a constant distance from the tick
     // Base offset was hourLength + hourOffset = 40 + 32 = 72
     let yOffset = 72 - (32 - fSize) / 2;
-    let rotatedStrPos = rotatePoints([{x: 0, y: -hOff + yOffset}], a, radius);
+    let rotatedStrPos = rotatePoints([0, -hOff + yOffset], a, radius);
     g.setFontAlign(0, 0);
-    g.setFont("Vector:" + fSize);
+    g.setFont("Vector", fSize);
     g.setColor(g.theme.fg);
     g.drawString(tickStr, rotatedStrPos[0], rotatedStrPos[1]);
   }
-  
+
   if (isLast) return;
 
+  if (!colorIsFn) g.setColor(flatColor);
   let intervalStep = spacingAngle / subIntervals;
   for (let i = 1; i < subIntervals; i++) {
-    let frac = i / subIntervals;
-    g.setColor(getColor(frac));
-    // Draw medium tick at exactly half if it's an even split, else super small tick
+    if (colorIsFn) g.setColor(colorValOrFn(tickIdx, i / subIntervals));
+    // Draw medium tick at exactly half if it's an even split, else a fine line tick
     if (i === subIntervals / 2) {
       g.fillPolyAA(rotatePoints(hourSPoints, a + i * intervalStep, radius));
     } else {
-      g.fillPolyAA(rotatePoints(hourSSPoints, a + i * intervalStep, radius));
+      let p = rotatePoints(hourSSLine, a + i * intervalStep, radius);
+      g.drawLineAA(p[0], p[1], p[2], p[3]);
     }
   }
 }
@@ -542,7 +516,7 @@ Bangle.setUI({
  * @param {number} [opt.startAngle=210] - The starting angle in degrees for the 0th tick.
  * @param {number} [opt.subIntervals=10] - Number of subdivisions between main ticks.
  * @param {function} opt.getTickLabel - Function returning the label string for a given tick index.
- * @param {function|number} opt.getTickColor - Color (or function returning a color) for the tick marks.
+ * @param {function|number} opt.getTickColor - Color, or a function(tickIdx, frac) returning a color for the tick marks.
  * @param {number} opt.handColor - The color of the main needle pointer.
  * @param {string|number} opt.centerText - The text displayed inside the central circle.
  * @param {number} [opt.centerColor] - Optional specific color for the central circle.
@@ -554,12 +528,12 @@ function drawDashboardGauge(opt) {
   let startAngle = opt.startAngle !== undefined ? opt.startAngle : 210;
   for (let i = opt.currentTick - opt.tickRange; i <= opt.currentTick + opt.tickRange; i++) {
     if (i >= opt.minTick && i <= opt.maxTick) {
-      let tickColor = typeof opt.getTickColor === 'function' ? function(frac) { return opt.getTickColor(i, frac); } : opt.getTickColor;
       drawMetricTick(
-        opt.getTickLabel(i), 
-        startAngle + i * opt.tickSpacing, 
-        opt.tickSpacing, 
-        tickColor,
+        opt.getTickLabel(i),
+        startAngle + i * opt.tickSpacing,
+        opt.tickSpacing,
+        opt.getTickColor,
+        i,
         opt.subIntervals || 10,
         i === opt.maxTick,
         opt.tickLabelSize
@@ -593,7 +567,7 @@ function draw() {
     currentHour = currentTime.getHours();
     currentMinute = currentTime.getMinutes();
 
-    hourAngle = getHourHandAngle();
+    setHourAngle(getHourHandAngle());
 
     drawHour(currentHour);
     drawHour(currentHour-1);
@@ -609,7 +583,7 @@ function draw() {
     let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
     let steps = health ? health.steps : 0;
     
-    hourAngle = 210 + (steps / 12000) * 360;
+    setHourAngle(210 + (steps / 12000) * 360);
 
     drawDashboardGauge({
       currentTick: Math.floor(steps / 1000),
@@ -633,7 +607,7 @@ function draw() {
     let unitSuffix = isImperial ? "mi" : "km";
     let distanceUnits = distanceM / unitScale;
     
-    hourAngle = 210 + (distanceUnits / 12) * 360;
+    setHourAngle(210 + (distanceUnits / 12) * 360);
 
     drawDashboardGauge({
       currentTick: Math.floor(distanceUnits),
@@ -661,7 +635,7 @@ function draw() {
     }
     let color = (r5 << 11) | (g6 << 5);
     
-    hourAngle = 270 + (battery / 100) * 180;
+    setHourAngle(270 + (battery / 100) * 180);
 
     drawDashboardGauge({
       currentTick: Math.floor(battery / 10),
@@ -697,7 +671,7 @@ function draw() {
     else if (bpm < z5) { zone = "Z4"; color = 0xFA80; }
     else               { zone = "Z5"; color = 0xF800; }
 
-    hourAngle = 210 + ((bpm - 40) / 200) * 300;
+    setHourAngle(210 + ((bpm - 40) / 200) * 300);
     
     drawDashboardGauge({
       currentTick: Math.floor((bpm - 40) / 10),

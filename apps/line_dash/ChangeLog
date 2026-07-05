@@ -1,4 +1,4 @@
 0.1: Initial release based on Line Clock
 0.2: Add health gauges (steps, distance, HR, battery)
 0.3: Dynamic HR colors, Fast Load support
-0.4: Fix HRM staying powered after unplugging charger, redraw on LCD power-on, cache 12/24h setting, minor cleanups
+0.4: Fix HRM staying powered after unplugging charger, redraw on LCD power-on, cache 12/24h setting, Espruino speed optimizations, minor cleanups
