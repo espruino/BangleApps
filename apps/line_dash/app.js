@@ -166,10 +166,12 @@ function getHourCoordinates(small) {
 
 const hourPoints = getHourCoordinates(false);
 const hourSPoints = getHourCoordinates(true);
-// Super-small sub-ticks are drawn as a single AA line (much cheaper than a filled polygon)
-const hourSSLine = [
-  0, -(gHeight + lineOffset) + hourLength - 10,
-  0, -(gHeight + lineOffset) + hourLength
+// Super-small sub-tick polygon (2px wide, 10px long), precomputed as a flat point array
+const hourSSPoints = [
+  -1, -(gHeight + lineOffset) + hourLength - 10,
+  1, -(gHeight + lineOffset) + hourLength - 10,
+  1, -(gHeight + lineOffset) + hourLength,
+  -1, -(gHeight + lineOffset) + hourLength
 ];
 
 /**
@@ -324,12 +326,11 @@ function drawMetricTick(tickStr, a, spacingAngle, colorValOrFn, tickIdx, subInte
   let intervalStep = spacingAngle / subIntervals;
   for (let i = 1; i < subIntervals; i++) {
     if (colorIsFn) g.setColor(colorValOrFn(tickIdx, i / subIntervals));
-    // Draw medium tick at exactly half if it's an even split, else a fine line tick
+    // Draw medium tick at exactly half if it's an even split, else super small tick
     if (i === subIntervals / 2) {
       g.fillPolyAA(rotatePoints(hourSPoints, a + i * intervalStep, radius));
     } else {
-      let p = rotatePoints(hourSSLine, a + i * intervalStep, radius);
-      g.drawLineAA(p[0], p[1], p[2], p[3]);
+      g.fillPolyAA(rotatePoints(hourSSPoints, a + i * intervalStep, radius));
     }
   }
 }
