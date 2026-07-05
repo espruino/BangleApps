@@ -378,10 +378,14 @@ let hrmPowerTimeout;
  * @param {number} dir - Direction to switch (1 for forward, -1 for backward).
  */
 function changeScreen(dir) {
-  // Leaving the clock face dismisses a visible date overlay
+  // Leaving the screen dismisses a visible date overlay or reset confirmation
   if (dateOverlayTimeout) {
     clearTimeout(dateOverlayTimeout);
     dateOverlayTimeout = undefined;
+  }
+  if (resetConfirmTimeout) {
+    clearTimeout(resetConfirmTimeout);
+    resetConfirmTimeout = undefined;
   }
   let oldScreen = screens[currentScreenIdx];
   if (dir === 1) { // Forward
@@ -444,29 +448,40 @@ function saveTrip() {
   storage.writeJSON(TRIP_FILE, { day: tripDay, baseline: tripBaselineSteps, view: showTripView });
 }
 
+/**
+ * Returns today's step count from the health tracking, or 0 if unavailable.
+ * @returns {number} Steps taken today.
+ */
+function getDaySteps() {
+  let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
+  return health ? health.steps : 0;
+}
+
+// While set, the trip-reset confirmation popup is showing on the distance screen
+const RESET_CONFIRM_MS = 3000;
+let resetConfirmTimeout;
+
 const DATE_OVERLAY_MS = 4000;
 let dateOverlayTimeout;
 
 /**
- * Draws the temporary date overlay (weekday + day/month) in the center of the clock face.
- * Uses the locale module so weekday and month follow the system language.
+ * Draws a centered rounded pill with a small line of text above a large one.
+ * The pill has a colored border and a background fill, so the text stays
+ * readable even when the hand runs through the center.
+ *
+ * @param {string} smallStr - The small upper line (e.g. weekday or "TRIP").
+ * @param {string} bigStr - The large lower line (e.g. "05 JUL" or "RESET?").
+ * @param {number} borderColor - 16-bit color of the pill border.
  */
-function drawDateOverlay() {
-  const d = new Date();
-  const dowStr = locale.dow(d, 0).toUpperCase();
-  const day = d.getDate();
-  const dateStr = (day < 10 ? "0" : "") + day + " " + locale.month(d, 1).toUpperCase();
-
+function drawOverlayPill(smallStr, bigStr, borderColor) {
   g.setFont("Vector", 16);
-  const wDow = g.stringWidth(dowStr);
+  const wSmall = g.stringWidth(smallStr);
   g.setFont("Vector", 28);
-  const wDate = g.stringWidth(dateStr);
-  const halfW = Math.max(wDow, wDate) / 2 + 14;
+  const wBig = g.stringWidth(bigStr);
+  const halfW = Math.max(wSmall, wBig) / 2 + 14;
   const halfH = 33;
 
-  // Accent-colored rounded pill with a background inset, so the text stays
-  // readable even when the red hand runs through the center
-  g.setColor(0xF800);
+  g.setColor(borderColor);
   g.fillRect({x: gCenterX - halfW, y: gCenterY - halfH, x2: gCenterX + halfW, y2: gCenterY + halfH, r: 10});
   g.setColor(g.theme.bg);
   g.fillRect({x: gCenterX - halfW + 2, y: gCenterY - halfH + 2, x2: gCenterX + halfW - 2, y2: gCenterY + halfH - 2, r: 8});
@@ -474,9 +489,23 @@ function drawDateOverlay() {
   g.setFontAlign(0, 0);
   g.setColor(g.theme.fg);
   g.setFont("Vector", 16);
-  g.drawString(dowStr, gCenterX, gCenterY - 16);
+  g.drawString(smallStr, gCenterX, gCenterY - 16);
   g.setFont("Vector", 28);
-  g.drawString(dateStr, gCenterX, gCenterY + 10);
+  g.drawString(bigStr, gCenterX, gCenterY + 10);
+}
+
+/**
+ * Draws the temporary date overlay (weekday + day/month) in the center of the clock face.
+ * Uses the locale module so weekday and month follow the system language.
+ */
+function drawDateOverlay() {
+  const d = new Date();
+  const day = d.getDate();
+  drawOverlayPill(
+    locale.dow(d, 0).toUpperCase(),
+    (day < 10 ? "0" : "") + day + " " + locale.month(d, 1).toUpperCase(),
+    0xF800
+  );
 }
 
 /**
@@ -509,22 +538,43 @@ function onSwipe(directionLR, directionUD) {
     if (screens[currentScreenIdx] === "clock") {
       showDateOverlay();
     } else if (screens[currentScreenIdx] === "distance") {
-      if (directionUD === -1) {
-        // Swipe up: show the trip view. Starts a trip if none is active;
-        // resets the trip if the trip view is already showing.
-        if (tripDay !== todayKey() || showTripView) {
-          let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
-          tripBaselineSteps = health ? health.steps : 0;
+      if (directionUD === -1) { // Swipe up
+        if (tripDay !== todayKey()) {
+          // No active trip: start one and show it (nothing to lose, no confirmation)
+          tripBaselineSteps = getDaySteps();
           tripDay = todayKey();
+          showTripView = true;
+          saveTrip();
+        } else if (!showTripView) {
+          // Active trip: just switch to the trip view
+          showTripView = true;
+          saveTrip();
+        } else if (resetConfirmTimeout) {
+          // Second swipe up while the popup is showing: reset confirmed
+          clearTimeout(resetConfirmTimeout);
+          resetConfirmTimeout = undefined;
+          tripBaselineSteps = getDaySteps();
+          saveTrip();
+        } else {
+          // Swipe up in the trip view: ask for confirmation before resetting
+          resetConfirmTimeout = setTimeout(function() {
+            resetConfirmTimeout = undefined;
+            if (Bangle.isLCDOn()) draw();
+          }, RESET_CONFIRM_MS);
         }
-        showTripView = true;
-        saveTrip();
         if (Bangle.isLCDOn()) draw();
-      } else if (showTripView) {
-        // Swipe down: back to the day total; the trip keeps running
-        showTripView = false;
-        saveTrip();
-        if (Bangle.isLCDOn()) draw();
+      } else { // Swipe down
+        if (resetConfirmTimeout) {
+          // Dismiss the pending reset confirmation, stay in the trip view
+          clearTimeout(resetConfirmTimeout);
+          resetConfirmTimeout = undefined;
+          if (Bangle.isLCDOn()) draw();
+        } else if (showTripView) {
+          // Back to the day total; the trip keeps running
+          showTripView = false;
+          saveTrip();
+          if (Bangle.isLCDOn()) draw();
+        }
       }
     }
     return;
@@ -610,6 +660,8 @@ Bangle.setUI({
     hrmPowerTimeout = undefined;
     if (dateOverlayTimeout) clearTimeout(dateOverlayTimeout);
     dateOverlayTimeout = undefined;
+    if (resetConfirmTimeout) clearTimeout(resetConfirmTimeout);
+    resetConfirmTimeout = undefined;
   }
 });
 
@@ -691,9 +743,8 @@ function draw() {
 
     if (dateOverlayTimeout) drawDateOverlay();
   } else if (screen === "steps") {
-    let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
-    let steps = health ? health.steps : 0;
-    
+    let steps = getDaySteps();
+
     setHourAngle(210 + (steps / 12000) * 360);
 
     drawDashboardGauge({
@@ -708,8 +759,7 @@ function draw() {
       centerText: "." + Math.floor((steps % 1000) / 100)
     });
   } else if (screen === "distance") {
-    let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
-    let steps = health ? health.steps : 0;
+    let steps = getDaySteps();
 
     // A trip expires at midnight: the daily step counter it is based on has reset
     if (tripDay && tripDay !== todayKey()) {
@@ -747,6 +797,8 @@ function draw() {
       g.setColor(0x07FF);
       g.drawString("TRIP", gCenterX, 12);
     }
+
+    if (resetConfirmTimeout) drawOverlayPill("TRIP", "RESET?", 0x07FF);
   } else if (screen === "battery") {
     let battery = E.getBattery();
     

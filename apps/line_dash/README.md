@@ -14,7 +14,7 @@ Line Dash provides a suite of minimalist gauges that you can swipe through to ch
 
 * **Clock:** A clean, easy-to-read analog clock face that automatically inherits your system's 12/24 hour preference. Swipe up or down to briefly show the date (weekday and day/month, following your system language).
 * **Steps:** Tracks your daily steps using a sweeping dial.
-* **Distance:** Shows the distance covered today, plus an optional trip meter: swipe up to start a trip ("count from here"), swipe up again to reset it, swipe down to return to the day total — the trip keeps running in the background. The trip view is marked with a TRIP indicator, survives app reloads, and automatically ends at midnight.
+* **Distance:** Shows the distance covered today, plus an optional trip meter: swipe up to start a trip ("count from here"), swipe down to return to the day total — the trip keeps running in the background. Swiping up in the trip view asks to reset the trip (a RESET? popup); confirm with one more swipe up, or dismiss it by swiping down or waiting. The trip view is marked with a TRIP indicator, survives app reloads, and automatically ends at midnight.
 * **Heart Rate:** Features a color-coded HR Zone gauge. The HR sensor only activates when you swipe to this screen to conserve battery. *(Note: The "Live HR Updates" feature is highly recommended but disabled by default to save power. Be sure to enable it in the app settings!)*
 * **Battery:** Displays your current battery level in a classic 180-degree "fuel gauge" layout. When you plug in your watch, the app automatically switches to this dashboard and displays a dynamic green charging indicator. Unplugging it automatically returns you to the main clock!
 
@@ -23,8 +23,8 @@ Line Dash provides a suite of minimalist gauges that you can swipe through to ch
 * **Swipe Left / Right:** Cycle through the different dashboard gauges.
 * **Tap:** Cycle forward to the next gauge.
 * **Swipe Up / Down (Clock):** Shows the date for a few seconds; swipe again to dismiss it early.
-* **Swipe Up (Distance):** Switches to the trip meter — starts a trip if none is running, or resets the trip if the trip view is already showing.
-* **Swipe Down (Distance):** Switches back to the day total without resetting the trip.
+* **Swipe Up (Distance):** Switches to the trip meter — starts a trip if none is running. In the trip view it shows a RESET? popup; one more swipe up within 3 seconds resets the trip.
+* **Swipe Down (Distance):** Dismisses the RESET? popup, or switches back to the day total without resetting the trip.
 
 ## Customization
 
