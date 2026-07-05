@@ -12,6 +12,7 @@
       showSteps: true,
       showBattery: true,
       showHrm: true,
+      showBaro: true,
       liveHrm: false,
       liveHrmInterval: 2,
       hrDecade: 40,
@@ -85,6 +86,13 @@
         value: settings.showHrm,
         onchange: () => {
           settings.showHrm = !settings.showHrm;
+          save();
+        },
+      },
+      'Show Barometer': {
+        value: settings.showBaro !== false,
+        onchange: () => {
+          settings.showBaro = settings.showBaro === false;
           save();
         },
       },

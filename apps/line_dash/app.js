@@ -35,6 +35,7 @@ let initialSettings = {
   showSteps: true,
   showBattery: true,
   showHrm: true,
+  showBaro: true,
   liveHrm: false,
   liveHrmInterval: 2,
   hrDecade: 40,
@@ -52,6 +53,7 @@ if (initialSettings.showSteps) screens.push("steps");
 if (initialSettings.showDistance) screens.push("distance");
 if (initialSettings.showHrm) screens.push("hrm");
 if (initialSettings.showBattery) screens.push("battery");
+if (initialSettings.showBaro) screens.push("baro");
 let currentScreenIdx = 0;
 
 // Screen dimensions and center coordinates
@@ -413,6 +415,15 @@ function changeScreen(dir) {
     }
   }
 
+  // The barometer starts quickly and cheaply, so no debounce is needed
+  if (typeof Bangle.setBarometerPower === 'function') {
+    if (oldScreen !== "baro" && newScreen === "baro") {
+      Bangle.setBarometerPower(1, "line_dash");
+    } else if (oldScreen === "baro" && newScreen !== "baro") {
+      Bangle.setBarometerPower(0, "line_dash");
+    }
+  }
+
   if (Bangle.isLCDOn()) draw();
 }
 
@@ -449,6 +460,9 @@ let savedScreenIdx = screens.indexOf(savedState.screen);
 if (savedScreenIdx >= 0) currentScreenIdx = savedScreenIdx;
 if (initialSettings.liveHrm && screens[currentScreenIdx] === "hrm") {
   Bangle.setHRMPower(1, "line_dash");
+}
+if (typeof Bangle.setBarometerPower === 'function' && screens[currentScreenIdx] === "baro") {
+  Bangle.setBarometerPower(1, "line_dash");
 }
 
 /**
@@ -656,6 +670,27 @@ function onHRM(hrm) {
 }
 Bangle.on('HRM', onHRM);
 
+let baroPressure = 0;
+let lastBaroDraw = 0;
+
+/**
+ * Processes incoming barometer events while the barometer screen is active.
+ * Redraws are throttled to one per 2 seconds.
+ *
+ * @param {Object} e - The pressure event containing pressure (hPa).
+ */
+function onPressure(e) {
+  if (screens[currentScreenIdx] === "baro" && e.pressure) {
+    baroPressure = e.pressure;
+    let now = Date.now();
+    if (now - lastBaroDraw >= 2000) {
+      lastBaroDraw = now;
+      if (Bangle.isLCDOn()) draw();
+    }
+  }
+}
+Bangle.on('pressure', onPressure);
+
 /**
  * Handles charging state changes, switching to the battery dashboard when plugged in.
  * @param {boolean} charging - True if the watch is now charging.
@@ -676,6 +711,9 @@ function onCharge(charging) {
   if (initialSettings.liveHrm && oldScreen === "hrm" && screens[currentScreenIdx] !== "hrm") {
     Bangle.setHRMPower(0, "line_dash");
   }
+  if (typeof Bangle.setBarometerPower === 'function' && oldScreen === "baro" && screens[currentScreenIdx] !== "baro") {
+    Bangle.setBarometerPower(0, "line_dash");
+  }
   if (Bangle.isLCDOn()) draw();
 }
 Bangle.on('charging', onCharge);
@@ -690,8 +728,10 @@ Bangle.setUI({
     Bangle.removeListener('swipe', onSwipe);
     Bangle.removeListener('touch', onTouch);
     Bangle.removeListener('HRM', onHRM);
+    Bangle.removeListener('pressure', onPressure);
     Bangle.removeListener('charging', onCharge);
     Bangle.setHRMPower(0, "line_dash");
+    if (typeof Bangle.setBarometerPower === 'function') Bangle.setBarometerPower(0, "line_dash");
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
     if (hrmPowerTimeout) clearTimeout(hrmPowerTimeout);
@@ -909,6 +949,29 @@ function draw() {
       },
       handColor: color,
       centerText: zone
+    });
+  } else if (screen === "baro") {
+    // Sea-level air pressure typically ranges 950-1050 hPa; clamp to the scale
+    let p = baroPressure;
+    let hasReading = p > 0;
+    if (!hasReading) p = 1000;
+    if (p < 950) p = 950;
+    if (p > 1050) p = 1050;
+
+    setHourAngle(210 + ((p - 950) / 100) * 300);
+
+    drawDashboardGauge({
+      currentTick: Math.floor((p - 950) / 10),
+      minTick: 0,
+      maxTick: 10,
+      tickRange: 2,
+      tickSpacing: 30,
+      subIntervals: 5,
+      tickLabelSize: 24,
+      getTickLabel: i => String(950 + i * 10),
+      getTickColor: 0xFFE0,
+      handColor: 0xFFE0,
+      centerText: hasReading ? Math.round(p) : "--"
     });
   }
 }
