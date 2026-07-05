@@ -22,5 +22,5 @@
     {"name":"line_dash.settings.js","url":"settings.js"}
   ],
   "data":[{"name":"line_dash.setting.json"},
-          {"name":"line_dash.trip.json"}]
+          {"name":"line_dash.state.json"}]
 }

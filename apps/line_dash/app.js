@@ -414,7 +414,7 @@ function changeScreen(dir) {
   if (Bangle.isLCDOn()) draw();
 }
 
-const TRIP_FILE = "line_dash.trip.json";
+const STATE_FILE = "line_dash.state.json";
 
 /**
  * Returns a key identifying the current day, used to expire trips at midnight.
@@ -433,19 +433,34 @@ let tripDay = "";
 let tripBaselineSteps = 0;
 let showTripView = false;
 
-let savedTrip = storage.readJSON(TRIP_FILE, 1);
-if (savedTrip && savedTrip.day === todayKey()) {
-  tripDay = savedTrip.day;
-  tripBaselineSteps = savedTrip.baseline || 0;
-  showTripView = !!savedTrip.view;
+let savedState = storage.readJSON(STATE_FILE, 1) || {};
+if (savedState.day === todayKey()) {
+  tripDay = savedState.day;
+  tripBaselineSteps = savedState.baseline || 0;
+  showTripView = !!savedState.view;
+}
+
+// Resume on the screen that was active when the app was last unloaded
+// (e.g. when a message fast-loaded over the clock). Falls back to the
+// clock if that screen has been disabled in the settings since.
+let savedScreenIdx = screens.indexOf(savedState.screen);
+if (savedScreenIdx >= 0) currentScreenIdx = savedScreenIdx;
+if (initialSettings.liveHrm && screens[currentScreenIdx] === "hrm") {
+  Bangle.setHRMPower(1, "line_dash");
 }
 
 /**
- * Persists the trip state. Only called from user gestures and the (at most
- * once-daily) midnight expiry, so flash wear is not a concern.
+ * Persists the app state (trip counter and active screen). Only called from
+ * user gestures, app unload and the (at most once-daily) midnight expiry,
+ * so flash wear is not a concern.
  */
-function saveTrip() {
-  storage.writeJSON(TRIP_FILE, { day: tripDay, baseline: tripBaselineSteps, view: showTripView });
+function saveState() {
+  storage.writeJSON(STATE_FILE, {
+    day: tripDay,
+    baseline: tripBaselineSteps,
+    view: showTripView,
+    screen: screens[currentScreenIdx]
+  });
 }
 
 /**
@@ -544,17 +559,17 @@ function onSwipe(directionLR, directionUD) {
           tripBaselineSteps = getDaySteps();
           tripDay = todayKey();
           showTripView = true;
-          saveTrip();
+          saveState();
         } else if (!showTripView) {
           // Active trip: just switch to the trip view
           showTripView = true;
-          saveTrip();
+          saveState();
         } else if (resetConfirmTimeout) {
           // Second swipe up while the popup is showing: reset confirmed
           clearTimeout(resetConfirmTimeout);
           resetConfirmTimeout = undefined;
           tripBaselineSteps = getDaySteps();
-          saveTrip();
+          saveState();
         } else {
           // Swipe up in the trip view: ask for confirmation before resetting
           resetConfirmTimeout = setTimeout(function() {
@@ -572,7 +587,7 @@ function onSwipe(directionLR, directionUD) {
         } else if (showTripView) {
           // Back to the day total; the trip keeps running
           showTripView = false;
-          saveTrip();
+          saveState();
           if (Bangle.isLCDOn()) draw();
         }
       }
@@ -647,6 +662,7 @@ Bangle.on('charging', onCharge);
 Bangle.setUI({
   mode : "clock",
   remove : function() {
+    saveState();
     Bangle.removeListener('lock', lockListenerBw);
     Bangle.removeListener('lcdPower', lcdListener);
     Bangle.removeListener('swipe', onSwipe);
@@ -766,7 +782,7 @@ function draw() {
       tripDay = "";
       tripBaselineSteps = 0;
       showTripView = false;
-      saveTrip();
+      saveState();
     }
 
     let shownSteps = showTripView ? Math.max(0, steps - tripBaselineSteps) : steps;
