@@ -2,7 +2,7 @@
 
 A beautiful analog clock with swipeable stats dashboards for Bangle.js 2.
 
-Line Dash provides a suite of minimalist gauges that you can swipe through to check your daily stats. It features a clean design where each metric gets its own dedicated screen, keeping your main clock face completely uncluttered.
+Line Dash provides a suite of minimalist gauges that you can swipe through to check your daily stats. It features a clean design where each metric gets its own dedicated screen, keeping your main clock face completely uncluttered. The app is intentionally full-screen and does not display widgets.
 
 ## Screenshots
 
@@ -14,7 +14,7 @@ Line Dash provides a suite of minimalist gauges that you can swipe through to ch
 
 * **Clock:** A clean, easy-to-read analog clock face that automatically inherits your system's 12/24 hour preference.
 * **Steps:** Tracks your daily steps using a sweeping dial.
-* **Distance:** A trip meter that displays distance covered. Swiping up or down resets it to zero!
+* **Distance:** A trip meter that displays distance covered. Swiping up or down resets it to zero! *(Note: the trip baseline is not persisted — leaving the app resets the trip meter to the full daily distance.)*
 * **Heart Rate:** Features a color-coded HR Zone gauge. The HR sensor only activates when you swipe to this screen to conserve battery. *(Note: The "Live HR Updates" feature is highly recommended but disabled by default to save power. Be sure to enable it in the app settings!)*
 * **Battery:** Displays your current battery level in a classic 180-degree "fuel gauge" layout. When you plug in your watch, the app automatically switches to this dashboard and displays a dynamic green charging indicator. Unplugging it automatically returns you to the main clock!
 

@@ -63,17 +63,15 @@ let currentMinute = currentTime.getMinutes();
 
 let drawTimeout;
 
-/**
- * Returns an image object for the lock icon.
- * @returns {Object} Image object suitable for g.drawImage
- */
-function imgLock() {
-  return {
-    width : 16, height : 16, bpp : 1,
-    transparent : 0,
-    buffer : E.toArrayBuffer(atob("A8AH4A5wDDAYGBgYP/w//D/8Pnw+fD58Pnw//D/8P/w="))
-  };
-}
+// Read the global 12/24 hour system setting once at startup (defaults to 24h if missing)
+const is24h = (storage.readJSON('setting.json', 1) || {})["12hour"] !== true;
+
+// Lock icon image, created once to avoid re-allocating on every draw
+const imgLock = {
+  width : 16, height : 16, bpp : 1,
+  transparent : 0,
+  buffer : E.toArrayBuffer(atob("A8AH4A5wDDAYGBgYP/w//D/8Pnw+fD58Pnw//D/8P/w="))
+};
 
 
 
@@ -216,6 +214,7 @@ function hourNumber(a, label) {
     }], a, radius
   );
   let str = label !== undefined ? String(label) : String(a / 30);
+  g.setFont("Vector:32");
   g.drawString(str, rotatedPoints[0], rotatedPoints[1]);
 }
 
@@ -285,10 +284,6 @@ function drawNumber(n, color, label, iconFunc, textColor) {
  */
 function drawHour(rawH) {
   let displayH = rawH;
-  
-  // Read global 12/24 hour system setting
-  let sysSettings = storage.readJSON('setting.json', 1) || {};
-  let is24h = sysSettings["12hour"] === false || sysSettings["12hour"] === undefined; // Usually defaults to 24h if missing
 
   if (!is24h) {
     while (displayH <= 0) displayH += 12;
@@ -304,8 +299,7 @@ function drawHour(rawH) {
   let a = angleH * 30;
 
   g.setColor(g.theme.fg);
-  g.setFont("Vector:32");
-  
+
   g.fillPolyAA(rotatePoints(hourPoints, a, radius));
   g.fillPolyAA(rotatePoints(hourSPoints, a + 15, radius));
   hourNumber(a, String(displayH));
@@ -334,8 +328,6 @@ function drawMetricTick(tickStr, a, spacingAngle, colorValOrFn, subIntervals, is
     return colorValOrFn !== undefined ? colorValOrFn : g.theme.fg;
   }
 
-  g.setFont("Vector:" + (labelSize || 32));
-  
   g.setColor(getColor(0));
   g.fillPolyAA(rotatePoints(hourPoints, a, radius));
   
@@ -391,6 +383,15 @@ function lockListenerBw() {
   if (Bangle.isLCDOn()) draw();
 }
 Bangle.on('lock', lockListenerBw);
+
+/**
+ * Redraws when the LCD is powered back on, so the display is not stale.
+ * @param {boolean} on - True if the LCD was just turned on.
+ */
+function lcdListener(on) {
+  if (on) draw();
+}
+Bangle.on('lcdPower', lcdListener);
 
 let hrmPowerTimeout;
 
@@ -492,16 +493,20 @@ Bangle.on('HRM', onHRM);
  * @param {boolean} charging - True if the watch is now charging.
  */
 function onCharge(charging) {
+  // Cancel a pending HRM power-on so it cannot fire after we leave the HRM screen
+  if (hrmPowerTimeout) {
+    clearTimeout(hrmPowerTimeout);
+    hrmPowerTimeout = undefined;
+  }
+  let oldScreen = screens[currentScreenIdx];
   if (charging) {
     let batteryIdx = screens.indexOf("battery");
-    if (batteryIdx !== -1 && currentScreenIdx !== batteryIdx) {
-      if (initialSettings.liveHrm && screens[currentScreenIdx] === "hrm") {
-        Bangle.setHRMPower(0, "line_dash");
-      }
-      currentScreenIdx = batteryIdx;
-    }
+    if (batteryIdx !== -1) currentScreenIdx = batteryIdx;
   } else {
     currentScreenIdx = screens.indexOf("clock");
+  }
+  if (initialSettings.liveHrm && oldScreen === "hrm" && screens[currentScreenIdx] !== "hrm") {
+    Bangle.setHRMPower(0, "line_dash");
   }
   if (Bangle.isLCDOn()) draw();
 }
@@ -512,6 +517,7 @@ Bangle.setUI({
   mode : "clock",
   remove : function() {
     Bangle.removeListener('lock', lockListenerBw);
+    Bangle.removeListener('lcdPower', lcdListener);
     Bangle.removeListener('swipe', onSwipe);
     Bangle.removeListener('touch', onTouch);
     Bangle.removeListener('HRM', onHRM);
@@ -571,15 +577,13 @@ function draw() {
   queueDraw();
   if (!Bangle.isLCDOn()) return; // Extra check, do not render if screen is off
 
+  g.setBgColor(g.theme.bg);
   g.clear();
   g.setFontAlign(0, 0);
 
-  g.setColor(g.theme.bg);
-  g.fillRect(0, 0, gWidth, gHeight);
-
   if(initialSettings.showLock && Bangle.isLocked()){
     g.setColor(g.theme.fg);
-    g.drawImage(imgLock(), gWidth-16, 2);
+    g.drawImage(imgLock, gWidth-16, 2);
   }
 
   let screen = screens[currentScreenIdx];

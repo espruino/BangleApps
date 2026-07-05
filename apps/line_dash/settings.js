@@ -6,7 +6,7 @@
     let settings = {
       showLock: true,
       showMinute: true,
-      clock24: false,
+      distanceUnit: "km",
       showDistance: true,
       strideLength: 0.8,
       showSteps: true,
@@ -26,7 +26,7 @@
     }
 
     E.showMenu({
-      '': { 'title': 'Line Clock' },
+      '': { 'title': 'Line Dash' },
       '< Back': back,
       'Show Lock': {
         value: settings.showLock,
