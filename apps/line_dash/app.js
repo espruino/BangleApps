@@ -479,20 +479,32 @@ let resetConfirmTimeout;
 const DATE_OVERLAY_MS = 4000;
 let dateOverlayTimeout;
 
+// Gap in pixels between the parts of a two-part pill line. The Vector font's
+// space glyph is a full character wide, which looks too spaced out.
+const PILL_PART_GAP = 6;
+
 /**
  * Draws a centered rounded pill with a small line of text above a large one.
  * The pill has a colored border and a background fill, so the text stays
  * readable even when the hand runs through the center.
  *
  * @param {string} smallStr - The small upper line (e.g. weekday or "TRIP").
- * @param {string} bigStr - The large lower line (e.g. "05 JUL" or "RESET?").
+ * @param {string|Array} bigStr - The large lower line (e.g. "RESET?"), or two
+ *   parts (e.g. ["05", "JUL"]) drawn with a narrow fixed gap between them.
  * @param {number} borderColor - 16-bit color of the pill border.
  */
 function drawOverlayPill(smallStr, bigStr, borderColor) {
+  const isPair = Array.isArray(bigStr);
   g.setFont("Vector", 16);
   const wSmall = g.stringWidth(smallStr);
   g.setFont("Vector", 28);
-  const wBig = g.stringWidth(bigStr);
+  let w0, wBig;
+  if (isPair) {
+    w0 = g.stringWidth(bigStr[0]);
+    wBig = w0 + PILL_PART_GAP + g.stringWidth(bigStr[1]);
+  } else {
+    wBig = g.stringWidth(bigStr);
+  }
   const halfW = Math.max(wSmall, wBig) / 2 + 14;
   const halfH = 33;
 
@@ -506,7 +518,15 @@ function drawOverlayPill(smallStr, bigStr, borderColor) {
   g.setFont("Vector", 16);
   g.drawString(smallStr, gCenterX, gCenterY - 16);
   g.setFont("Vector", 28);
-  g.drawString(bigStr, gCenterX, gCenterY + 10);
+  if (isPair) {
+    const xLeft = gCenterX - wBig / 2;
+    g.setFontAlign(-1, 0);
+    g.drawString(bigStr[0], xLeft, gCenterY + 10);
+    g.drawString(bigStr[1], xLeft + w0 + PILL_PART_GAP, gCenterY + 10);
+    g.setFontAlign(0, 0);
+  } else {
+    g.drawString(bigStr, gCenterX, gCenterY + 10);
+  }
 }
 
 /**
@@ -518,7 +538,7 @@ function drawDateOverlay() {
   const day = d.getDate();
   drawOverlayPill(
     locale.dow(d, 0).toUpperCase(),
-    (day < 10 ? "0" : "") + day + " " + locale.month(d, 1).toUpperCase(),
+    [(day < 10 ? "0" : "") + day, locale.month(d, 1).toUpperCase()],
     0xF800
   );
 }
