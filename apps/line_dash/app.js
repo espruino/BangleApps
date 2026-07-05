@@ -228,20 +228,27 @@ function drawLightning(x, y, color) {
  * @param {string} [label] - Optional smaller subtitle text to display below the value.
  * @param {function} [iconFunc] - Optional function returning an image object to draw below the value.
  * @param {number} [textColor] - Optional 16-bit color for the text and icon. Defaults to theme foreground.
- * @param {number} [size] - Optional circle size; larger values keep longer texts readable.
  */
-function drawNumber(n, color, label, iconFunc, textColor, size) {
-  size = size || numberSize;
+function drawNumber(n, color, label, iconFunc, textColor) {
   const h = gHeight + lineOffset;
   const halfWidth = handWidth / 2;
   const rotatedPoints = rotatePoints([0, -h + hourLength + numberOffset], hourAngle, radius);
   g.setColor(color || 0xF800);
-  g.fillCircle(rotatedPoints[0], rotatedPoints[1], size + halfWidth);
+  g.fillCircle(rotatedPoints[0], rotatedPoints[1], numberSize + halfWidth);
   g.setColor(g.theme.bg);
-  g.fillCircle(rotatedPoints[0], rotatedPoints[1], size - halfWidth);
+  g.fillCircle(rotatedPoints[0], rotatedPoints[1], numberSize - halfWidth);
+
+  if (Array.isArray(n)) {
+    // Two stacked lines, e.g. a four-digit pressure split as "10" / "14"
+    g.setColor(textColor || g.theme.fg);
+    g.setFont("Vector", 16);
+    g.drawString(n[0], rotatedPoints[0], rotatedPoints[1] - 8);
+    g.drawString(n[1], rotatedPoints[0], rotatedPoints[1] + 8);
+    return;
+  }
 
   let str = String(n);
-  let fontSize = size;
+  let fontSize = numberSize;
   // Do not count the thin colon as a full character for width calculations
   let effectiveLength = str.startsWith(":") ? str.length - 1 : str.length;
   if (effectiveLength > 2) fontSize -= (effectiveLength - 2) * 4;
@@ -759,9 +766,8 @@ Bangle.setUI({
  * @param {function} opt.getTickLabel - Function returning the label string for a given tick index.
  * @param {function|number} opt.getTickColor - Color, or a function(tickIdx, frac) returning a color for the tick marks.
  * @param {number} opt.handColor - The color of the main needle pointer.
- * @param {string|number} opt.centerText - The text displayed inside the central circle.
+ * @param {string|number|Array} opt.centerText - The text displayed inside the central circle. An array of two strings is rendered as two stacked lines.
  * @param {number} [opt.centerColor] - Optional specific color for the central circle.
- * @param {number} [opt.centerSize] - Optional size of the central circle (default 22).
  * @param {number} [opt.centerTextColor] - Optional specific color for the central text.
  * @param {function} [opt.centerIcon] - Function returning an icon to display below the text.
  * @param {number} [opt.tickLabelSize] - Optional font size for the tick labels.
@@ -783,7 +789,7 @@ function drawDashboardGauge(opt) {
     }
   }
   drawHand(opt.handColor);
-  drawNumber(opt.centerText, opt.centerColor || opt.handColor, undefined, opt.centerIcon, opt.centerTextColor, opt.centerSize);
+  drawNumber(opt.centerText, opt.centerColor || opt.handColor, undefined, opt.centerIcon, opt.centerTextColor);
 }
 
 /**
@@ -963,6 +969,10 @@ function draw() {
 
     setHourAngle(270 + ((p - 950) / 100) * 180);
 
+    // Four-digit readings are stacked in two lines to stay readable in the circle
+    let v = Math.round(p);
+    let centerText = !hasReading ? "--" : (v >= 1000 ? [String(v).slice(0, 2), String(v).slice(2)] : String(v));
+
     drawDashboardGauge({
       currentTick: Math.floor((p - 950) / 10),
       minTick: 0,
@@ -976,8 +986,7 @@ function draw() {
       getTickLabel: i => (i % 2 === 0) ? String(950 + i * 10) : "",
       getTickColor: 0xFFE0,
       handColor: 0xFFE0,
-      centerText: hasReading ? Math.round(p) : "--",
-      centerSize: 30
+      centerText: centerText
     });
   }
 }
