@@ -410,6 +410,40 @@ function changeScreen(dir) {
   if (Bangle.isLCDOn()) draw();
 }
 
+const TRIP_FILE = "line_dash.trip.json";
+
+/**
+ * Returns a key identifying the current day, used to expire trips at midnight.
+ * @returns {string} Key like "2026-6-5".
+ */
+function todayKey() {
+  const d = new Date();
+  return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
+}
+
+// Trip state for the distance screen. A trip is a step-count baseline taken
+// when the trip is started; the view toggles between day total and trip
+// distance without touching the baseline. Persisted so it survives app
+// reloads; a trip is only valid on the day it was started.
+let tripDay = "";
+let tripBaselineSteps = 0;
+let showTripView = false;
+
+let savedTrip = storage.readJSON(TRIP_FILE, 1);
+if (savedTrip && savedTrip.day === todayKey()) {
+  tripDay = savedTrip.day;
+  tripBaselineSteps = savedTrip.baseline || 0;
+  showTripView = !!savedTrip.view;
+}
+
+/**
+ * Persists the trip state. Only called from user gestures and the (at most
+ * once-daily) midnight expiry, so flash wear is not a concern.
+ */
+function saveTrip() {
+  storage.writeJSON(TRIP_FILE, { day: tripDay, baseline: tripBaselineSteps, view: showTripView });
+}
+
 const DATE_OVERLAY_MS = 4000;
 let dateOverlayTimeout;
 
@@ -464,20 +498,34 @@ function showDateOverlay() {
 /**
  * Handles swipe gestures on the touchscreen.
  * Horizontal swipes navigate between dashboards.
- * Vertical swipes show the date on the clock face and reset the distance
- * baseline on the distance dashboard.
+ * Vertical swipes show the date on the clock face and switch between the
+ * day/trip views on the distance dashboard.
  *
  * @param {number} directionLR - Left/Right swipe direction (-1 or 1).
- * @param {number} directionUD - Up/Down swipe direction (-1 or 1).
+ * @param {number} directionUD - Up/Down swipe direction (-1 for up, 1 for down).
  */
 function onSwipe(directionLR, directionUD) {
   if (directionUD !== 0) {
     if (screens[currentScreenIdx] === "clock") {
       showDateOverlay();
     } else if (screens[currentScreenIdx] === "distance") {
-      let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
-      distanceBaselineSteps = health ? health.steps : 0;
-      if (Bangle.isLCDOn()) draw();
+      if (directionUD === -1) {
+        // Swipe up: show the trip view. Starts a trip if none is active;
+        // resets the trip if the trip view is already showing.
+        if (tripDay !== todayKey() || showTripView) {
+          let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
+          tripBaselineSteps = health ? health.steps : 0;
+          tripDay = todayKey();
+        }
+        showTripView = true;
+        saveTrip();
+        if (Bangle.isLCDOn()) draw();
+      } else if (showTripView) {
+        // Swipe down: back to the day total; the trip keeps running
+        showTripView = false;
+        saveTrip();
+        if (Bangle.isLCDOn()) draw();
+      }
     }
     return;
   }
@@ -486,8 +534,6 @@ function onSwipe(directionLR, directionUD) {
   }
 }
 Bangle.on('swipe', onSwipe);
-
-let distanceBaselineSteps = 0;
 
 /**
  * Handles tap gestures on the touchscreen to advance to the next dashboard.
@@ -664,8 +710,17 @@ function draw() {
   } else if (screen === "distance") {
     let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
     let steps = health ? health.steps : 0;
-    let tripSteps = Math.max(0, steps - distanceBaselineSteps);
-    let distanceM = tripSteps * initialSettings.strideLength;
+
+    // A trip expires at midnight: the daily step counter it is based on has reset
+    if (tripDay && tripDay !== todayKey()) {
+      tripDay = "";
+      tripBaselineSteps = 0;
+      showTripView = false;
+      saveTrip();
+    }
+
+    let shownSteps = showTripView ? Math.max(0, steps - tripBaselineSteps) : steps;
+    let distanceM = shownSteps * initialSettings.strideLength;
     
     let isImperial = initialSettings.distanceUnit === "mi";
     let unitScale = isImperial ? 1609.34 : 1000;
@@ -685,6 +740,13 @@ function draw() {
       handColor: 0x07FF,
       centerText: "." + Math.floor((distanceUnits % 1) * 10)
     });
+
+    if (showTripView) {
+      g.setFontAlign(0, 0);
+      g.setFont("Vector", 20);
+      g.setColor(0x07FF);
+      g.drawString("TRIP", gCenterX, 12);
+    }
   } else if (screen === "battery") {
     let battery = E.getBattery();
     

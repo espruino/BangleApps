@@ -21,5 +21,6 @@
     {"name":"line_dash.img","url":"app-icon.js","evaluate":true},
     {"name":"line_dash.settings.js","url":"settings.js"}
   ],
-  "data":[{"name":"line_dash.setting.json"}]
+  "data":[{"name":"line_dash.setting.json"},
+          {"name":"line_dash.trip.json"}]
 }
