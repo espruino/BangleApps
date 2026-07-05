@@ -22,6 +22,7 @@ const numberOffset = 85;
 const numberSize = 22;
 
 const storage = require('Storage');
+const locale = require('locale');
 
 const SETTINGS_FILE = "line_dash.setting.json";
 
@@ -377,6 +378,11 @@ let hrmPowerTimeout;
  * @param {number} dir - Direction to switch (1 for forward, -1 for backward).
  */
 function changeScreen(dir) {
+  // Leaving the clock face dismisses a visible date overlay
+  if (dateOverlayTimeout) {
+    clearTimeout(dateOverlayTimeout);
+    dateOverlayTimeout = undefined;
+  }
   let oldScreen = screens[currentScreenIdx];
   if (dir === 1) { // Forward
     currentScreenIdx = (currentScreenIdx + 1) % screens.length;
@@ -404,17 +410,71 @@ function changeScreen(dir) {
   if (Bangle.isLCDOn()) draw();
 }
 
+const DATE_OVERLAY_MS = 4000;
+let dateOverlayTimeout;
+
+/**
+ * Draws the temporary date overlay (weekday + day/month) in the center of the clock face.
+ * Uses the locale module so weekday and month follow the system language.
+ */
+function drawDateOverlay() {
+  const d = new Date();
+  const dowStr = locale.dow(d, 0).toUpperCase();
+  const day = d.getDate();
+  const dateStr = (day < 10 ? "0" : "") + day + " " + locale.month(d, 1).toUpperCase();
+
+  g.setFont("Vector", 16);
+  const wDow = g.stringWidth(dowStr);
+  g.setFont("Vector", 28);
+  const wDate = g.stringWidth(dateStr);
+  const halfW = Math.max(wDow, wDate) / 2 + 14;
+  const halfH = 33;
+
+  // Accent-colored rounded pill with a background inset, so the text stays
+  // readable even when the red hand runs through the center
+  g.setColor(0xF800);
+  g.fillRect({x: gCenterX - halfW, y: gCenterY - halfH, x2: gCenterX + halfW, y2: gCenterY + halfH, r: 10});
+  g.setColor(g.theme.bg);
+  g.fillRect({x: gCenterX - halfW + 2, y: gCenterY - halfH + 2, x2: gCenterX + halfW - 2, y2: gCenterY + halfH - 2, r: 8});
+
+  g.setFontAlign(0, 0);
+  g.setColor(g.theme.fg);
+  g.setFont("Vector", 16);
+  g.drawString(dowStr, gCenterX, gCenterY - 16);
+  g.setFont("Vector", 28);
+  g.drawString(dateStr, gCenterX, gCenterY + 10);
+}
+
+/**
+ * Shows the date overlay for a few seconds, or hides it early if it is already visible.
+ */
+function showDateOverlay() {
+  if (dateOverlayTimeout) {
+    clearTimeout(dateOverlayTimeout);
+    dateOverlayTimeout = undefined;
+  } else {
+    dateOverlayTimeout = setTimeout(function() {
+      dateOverlayTimeout = undefined;
+      if (Bangle.isLCDOn()) draw();
+    }, DATE_OVERLAY_MS);
+  }
+  if (Bangle.isLCDOn()) draw();
+}
+
 /**
  * Handles swipe gestures on the touchscreen.
  * Horizontal swipes navigate between dashboards.
- * Vertical swipes reset the distance baseline on the distance dashboard.
+ * Vertical swipes show the date on the clock face and reset the distance
+ * baseline on the distance dashboard.
  *
  * @param {number} directionLR - Left/Right swipe direction (-1 or 1).
  * @param {number} directionUD - Up/Down swipe direction (-1 or 1).
  */
 function onSwipe(directionLR, directionUD) {
   if (directionUD !== 0) {
-    if (screens[currentScreenIdx] === "distance") {
+    if (screens[currentScreenIdx] === "clock") {
+      showDateOverlay();
+    } else if (screens[currentScreenIdx] === "distance") {
       let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
       distanceBaselineSteps = health ? health.steps : 0;
       if (Bangle.isLCDOn()) draw();
@@ -502,6 +562,8 @@ Bangle.setUI({
     drawTimeout = undefined;
     if (hrmPowerTimeout) clearTimeout(hrmPowerTimeout);
     hrmPowerTimeout = undefined;
+    if (dateOverlayTimeout) clearTimeout(dateOverlayTimeout);
+    dateOverlayTimeout = undefined;
   }
 });
 
@@ -580,6 +642,8 @@ function draw() {
       let minStr = currentMinute < 10 ? "0" + currentMinute : currentMinute;
       drawNumber(":" + minStr, 0xF800);
     }
+
+    if (dateOverlayTimeout) drawDateOverlay();
   } else if (screen === "steps") {
     let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
     let steps = health ? health.steps : 0;

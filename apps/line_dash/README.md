@@ -12,7 +12,7 @@ Line Dash provides a suite of minimalist gauges that you can swipe through to ch
 
 ## Features
 
-* **Clock:** A clean, easy-to-read analog clock face that automatically inherits your system's 12/24 hour preference.
+* **Clock:** A clean, easy-to-read analog clock face that automatically inherits your system's 12/24 hour preference. Swipe up or down to briefly show the date (weekday and day/month, following your system language).
 * **Steps:** Tracks your daily steps using a sweeping dial.
 * **Distance:** A trip meter that displays distance covered. Swiping up or down resets it to zero! *(Note: the trip baseline is not persisted — leaving the app resets the trip meter to the full daily distance.)*
 * **Heart Rate:** Features a color-coded HR Zone gauge. The HR sensor only activates when you swipe to this screen to conserve battery. *(Note: The "Live HR Updates" feature is highly recommended but disabled by default to save power. Be sure to enable it in the app settings!)*
@@ -22,7 +22,8 @@ Line Dash provides a suite of minimalist gauges that you can swipe through to ch
 
 * **Swipe Left / Right:** Cycle through the different dashboard gauges.
 * **Tap:** Cycle forward to the next gauge.
-* **Swipe Up / Down (Distance Only):** Resets the Distance gauge trip meter to zero.
+* **Swipe Up / Down (Clock):** Shows the date for a few seconds; swipe again to dismiss it early.
+* **Swipe Up / Down (Distance):** Resets the Distance gauge trip meter to zero.
 
 ## Customization
 
