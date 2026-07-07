@@ -175,23 +175,12 @@ Layout.prototype.render = function (l) {
     }, "btn":function(l){"ram";
       var x = l.x+(0|l.pad), y = l.y+(0|l.pad),
           w = l.w-(l.pad<<1), h = l.h-(l.pad<<1);
-      var poly = [
-        x,y+4,
-        x+4,y,
-        x+w-5,y,
-        x+w-1,y+4,
-        x+w-1,y+h-5,
-        x+w-5,y+h-1,
-        x+4,y+h-1,
-        x,y+h-5,
-        x,y+4
-      ],
-      btnborder = l.btnBorderCol!==undefined?l.btnBorderCol:gfx.theme.fg2,
+      var btnborder = l.btnBorderCol!==undefined?l.btnBorderCol:gfx.theme.fg2,
       btnface = l.btnFaceCol!==undefined?l.btnFaceCol:gfx.theme.bg2;
     if(l.selected){
       btnface = gfx.theme.bgH; btnborder = gfx.theme.fgH;
     }
-    gfx.setColor(btnface).fillPoly(poly).setColor(btnborder).drawPoly(poly);
+    gfx.setColor(btnface).fillRect({x:x,y:y,w: l.w,h:l.h,r:10}).setColor(btnborder).drawRect({x:x,y:y,w: l.w,h:l.h,r:10});
     if (l.col!==undefined) gfx.setColor(l.col);
     if (l.src) gfx.setBgColor(btnface).drawImage(
       "function"==typeof l.src?l.src():l.src,
