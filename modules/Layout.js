@@ -180,7 +180,9 @@ Layout.prototype.render = function (l) {
     if(l.selected){
       btnface = gfx.theme.bgH; btnborder = gfx.theme.fgH;
     }
-    gfx.setColor(btnface).fillRect({x:x,y:y,w: l.w,h:l.h,r:10}).setColor(btnborder).drawRect({x:x,y:y,w: l.w,h:l.h,r:10});
+    gfx.setColor(btnborder).fillRect({x:x,y:y,w:w,h:h,r:10});
+    gfx.setColor(btnface).fillRect({x:x+1,y:y+1,w:w-2,h:h-2,r:9});
+    gfx.setColor(btnborder);
     if (l.col!==undefined) gfx.setColor(l.col);
     if (l.src) gfx.setBgColor(btnface).drawImage(
       "function"==typeof l.src?l.src():l.src,
