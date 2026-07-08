@@ -967,7 +967,7 @@ function draw() {
     if (p < 950) p = 950;
     if (p > 1050) p = 1050;
 
-    setHourAngle(270 + ((p - 950) / 100) * 180);
+    setHourAngle(210 + ((p - 950) / 100) * 300);
 
     // Four-digit readings are stacked in two lines to stay readable in the circle
     let v = Math.round(p);
@@ -977,13 +977,11 @@ function draw() {
       currentTick: Math.floor((p - 950) / 10),
       minTick: 0,
       maxTick: 10,
-      tickRange: 10,
-      startAngle: 270,
-      tickSpacing: 18,
+      tickRange: 1,
+      tickSpacing: 30,
       subIntervals: 5,
       tickLabelSize: 24,
-      // Label every second tick only, so the four-digit values do not collide
-      getTickLabel: i => (i % 2 === 0) ? String(950 + i * 10) : "",
+      getTickLabel: i => String(950 + i * 10),
       getTickColor: 0xFFE0,
       handColor: 0xFFE0,
       centerText: centerText
