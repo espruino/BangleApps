@@ -238,15 +238,6 @@ function drawNumber(n, color, label, iconFunc, textColor) {
   g.setColor(g.theme.bg);
   g.fillCircle(rotatedPoints[0], rotatedPoints[1], numberSize - halfWidth);
 
-  if (Array.isArray(n)) {
-    // Two stacked lines, e.g. a four-digit pressure split as "10" / "14"
-    g.setColor(textColor || g.theme.fg);
-    g.setFont("Vector", 16);
-    g.drawString(n[0], rotatedPoints[0], rotatedPoints[1] - 8);
-    g.drawString(n[1], rotatedPoints[0], rotatedPoints[1] + 8);
-    return;
-  }
-
   let str = String(n);
   let fontSize = numberSize;
   // Do not count the thin colon as a full character for width calculations
@@ -766,7 +757,8 @@ Bangle.setUI({
  * @param {function} opt.getTickLabel - Function returning the label string for a given tick index.
  * @param {function|number} opt.getTickColor - Color, or a function(tickIdx, frac) returning a color for the tick marks.
  * @param {number} opt.handColor - The color of the main needle pointer.
- * @param {string|number|Array} opt.centerText - The text displayed inside the central circle. An array of two strings is rendered as two stacked lines.
+ * @param {string|number} opt.centerText - The text displayed inside the central circle.
+ * @param {string} [opt.centerLabel] - Optional small unit label below the central text.
  * @param {number} [opt.centerColor] - Optional specific color for the central circle.
  * @param {number} [opt.centerTextColor] - Optional specific color for the central text.
  * @param {function} [opt.centerIcon] - Function returning an icon to display below the text.
@@ -789,7 +781,7 @@ function drawDashboardGauge(opt) {
     }
   }
   drawHand(opt.handColor);
-  drawNumber(opt.centerText, opt.centerColor || opt.handColor, undefined, opt.centerIcon, opt.centerTextColor);
+  drawNumber(opt.centerText, opt.centerColor || opt.handColor, opt.centerLabel, opt.centerIcon, opt.centerTextColor);
 }
 
 /**
@@ -969,9 +961,9 @@ function draw() {
 
     setHourAngle(210 + ((p - 950) / 100) * 300);
 
-    // Four-digit readings are stacked in two lines to stay readable in the circle
-    let v = Math.round(p);
-    let centerText = !hasReading ? "--" : (v >= 1000 ? [String(v).slice(0, 2), String(v).slice(2)] : String(v));
+    // The dial gives the hundreds; the circle shows the last two digits plus unit
+    let v = Math.round(p) % 100;
+    let centerText = !hasReading ? "--" : (v < 10 ? "0" + v : String(v));
 
     drawDashboardGauge({
       currentTick: Math.floor((p - 950) / 10),
@@ -984,7 +976,8 @@ function draw() {
       getTickLabel: i => String(950 + i * 10),
       getTickColor: 0xFFE0,
       handColor: 0xFFE0,
-      centerText: centerText
+      centerText: centerText,
+      centerLabel: "hPa"
     });
   }
 }
