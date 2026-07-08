@@ -42,7 +42,7 @@ let sort = (a, b) => {
 
 // cache app list so launcher loads more quickly
 let launchCache = s.readJSON("taglaunch.cache.json", true)||{};
-let launchHash = require("Storage").hash(/\.info/);
+let launchHash = s.hash(/\.info/);
 if (launchCache.hash!=launchHash) {
   let appsByTag = Object.keys(tags).reduce((acc,curr)=> (acc[curr]=[],acc),{});
   s.list(/\.info$/).map(app=>s.readJSON(app,1))
@@ -86,7 +86,7 @@ const unload = () => {
 
 let shortcuts=settings.shortcuts;
 let noShortcuts=shortcuts[0]==""&&shortcuts[1]==""&&shortcuts[2]=="";
-  
+
 let loadShortcut=function(idx){
   if(shortcuts[idx]!=""){
     const p = settings.buzz ? Bangle.buzz(25) : Promise.resolve();
@@ -121,14 +121,25 @@ let showTagMenu = (tag) => {
       const loadApp = () => {
         let app = appsByTag[tag][i];
         if (!app) return;
-        if (!app.src || require("Storage").read(app.src)===undefined) {
+        if (!app.src || s.read(app.src)===undefined) {
           Bangle.setUI();
           E.showMessage(/*LANG*/"App Source\nNot found");
           setTimeout(showMainMenu, 2000);
         } else {
-          load(app.src);
+          if (app.wid===undefined) {
+            // If we hadn't stored whether the app uses widgets before, check now
+            let src = s.read(app.src);
+            app.wid = (src!==undefined)&&src.includes("Bangle.loadWidgets");
+            s.writeJSON("taglaunch.cache.json", launchCache);
+          }
+          if (app.wid || global.WIDGETS===undefined) Bangle.load(app.src); // if app uses widgets or we don't have any, we can fast load into it
+          else if (Object.keys(WIDGETS).every(w=>!!WIDGETS[w].remove)) { // are widgets unloadable? !! needed before 2v29 fw
+            Object.keys(WIDGETS).forEach(w=>WIDGETS[w].remove());
+            delete global.WIDGETS;
+            Bangle.load(app.src);
+          } else load(app.src); // otherwise default to slow load
         }
-      };    
+      };
       if(settings.buzz){
         Bangle.buzz(25);
         //let the buzz have effect
@@ -136,7 +147,7 @@ let showTagMenu = (tag) => {
       }else{
         loadApp();
       }
-      
+
     },
     back : showMainMenu,
     remove: unload
@@ -149,7 +160,7 @@ let showMainMenu = () => {
     h : 64*scaleval, c : noShortcuts ? tagKeys.length : tagKeys.length+1,
     draw : (i, r) => {
       g.clearRect((r.x),(r.y),(r.x+r.w-1), (r.y+r.h-1));
-      
+
       if(!noShortcuts)i-=1;
       if(i==-1){
         for(let j=0;j<3;j++){
@@ -161,7 +172,7 @@ let showMainMenu = () => {
           }
         }
 
-        
+
       }else{
         let tag = tagKeys[i]; g.setFont(font).setFontAlign(-1,0).drawString(tags[tag].name,64*scaleval,r.y+(32*scaleval));
 
@@ -175,11 +186,11 @@ let showMainMenu = () => {
       if(!noShortcuts)i-=1;
       if(i==-1){
         if(e.x<g.getWidth()/3){
-          loadShortcut(0)
-        }else if(e.x<(g.getWidth()/3)*2){    
-          loadShortcut(1)
-        }else{     
-          loadShortcut(2)
+          loadShortcut(0);
+        }else if(e.x<(g.getWidth()/3)*2){
+          loadShortcut(1);
+        }else{
+          loadShortcut(2);
         }
       }else{
         if(settings.buzz)Bangle.buzz(25);
