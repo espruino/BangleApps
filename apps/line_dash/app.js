@@ -758,7 +758,6 @@ Bangle.setUI({
  * @param {function|number} opt.getTickColor - Color, or a function(tickIdx, frac) returning a color for the tick marks.
  * @param {number} opt.handColor - The color of the main needle pointer.
  * @param {string|number} opt.centerText - The text displayed inside the central circle.
- * @param {string} [opt.centerLabel] - Optional small unit label below the central text.
  * @param {number} [opt.centerColor] - Optional specific color for the central circle.
  * @param {number} [opt.centerTextColor] - Optional specific color for the central text.
  * @param {function} [opt.centerIcon] - Function returning an icon to display below the text.
@@ -781,7 +780,7 @@ function drawDashboardGauge(opt) {
     }
   }
   drawHand(opt.handColor);
-  drawNumber(opt.centerText, opt.centerColor || opt.handColor, opt.centerLabel, opt.centerIcon, opt.centerTextColor);
+  drawNumber(opt.centerText, opt.centerColor || opt.handColor, undefined, opt.centerIcon, opt.centerTextColor);
 }
 
 /**
@@ -976,8 +975,7 @@ function draw() {
       getTickLabel: i => String(950 + i * 10),
       getTickColor: 0xFFE0,
       handColor: 0xFFE0,
-      centerText: centerText,
-      centerLabel: "hPa"
+      centerText: centerText
     });
   }
 }
