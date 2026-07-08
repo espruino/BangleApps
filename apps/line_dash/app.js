@@ -244,7 +244,9 @@ function drawNumber(n, color, label, iconFunc, textColor) {
   g.setFont("Vector", fontSize);
   
   g.setColor(textColor || g.theme.fg);
-  g.drawString(str, rotatedPoints[0], rotatedPoints[1] - (label || iconFunc ? 6 : 0));
+  // The Vector font advance includes trailing spacing after the last glyph,
+  // which shifts the visible text left of center; nudge it back right
+  g.drawString(str, rotatedPoints[0] + Math.round(fontSize * 0.09), rotatedPoints[1] - (label || iconFunc ? 6 : 0));
   if (label) {
     g.setFont("Vector", 12);
     g.drawString(label, rotatedPoints[0], rotatedPoints[1] + 8);
