@@ -980,7 +980,7 @@ function draw() {
       maxTick: 10,
       tickRange: 1,
       tickSpacing: 30,
-      subIntervals: 5,
+      subIntervals: 10,
       tickLabelSize: 24,
       getTickLabel: i => String(950 + i * 10),
       getTickColor: 0xFFE0,
