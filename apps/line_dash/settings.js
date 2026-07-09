@@ -13,6 +13,7 @@
       showBattery: true,
       showHrm: true,
       showBaro: true,
+      baroCalib: 1,
       liveHrm: false,
       liveHrmInterval: 2,
       hrDecade: 40,
@@ -26,6 +27,11 @@
       storage.write(SETTINGS_FILE, settings)
     }
 
+    // Raw one-shot sensor reading, taken when the menu opens. The sea-level
+    // entry calibrates against it: factor = entered QNH / raw reading.
+    let baroRaw = 0;
+
+    function renderMenu() {
     E.showMenu({
       '': { 'title': 'Line Dash' },
       '< Back': back,
@@ -96,6 +102,17 @@
           save();
         },
       },
+      'Sea level (hPa)': {
+        value: baroRaw > 0 ? Math.round(baroRaw * (settings.baroCalib || 1) * 2) / 2 : 1013,
+        min: 950, max: 1050, step: 0.5,
+        format: v => baroRaw > 0 ? v.toFixed(1) : "wait...",
+        onchange: (v) => {
+          if (baroRaw > 0) {
+            settings.baroCalib = v / baroRaw;
+            save();
+          }
+        },
+      },
       'Live HR Updates': {
         value: settings.liveHrm,
         onchange: () => {
@@ -122,4 +139,17 @@
         },
       }
     });
+    }
+    renderMenu();
+
+    // Fetch the raw reading, then re-render so the sea-level entry shows the
+    // current calibrated value instead of "wait..."
+    if (typeof Bangle.getPressure === 'function') {
+      Bangle.getPressure().then(d => {
+        if (d && d.pressure) {
+          baroRaw = d.pressure;
+          renderMenu();
+        }
+      }).catch(() => {});
+    }
   })

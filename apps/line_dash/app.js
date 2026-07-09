@@ -36,6 +36,7 @@ let initialSettings = {
   showBattery: true,
   showHrm: true,
   showBaro: true,
+  baroCalib: 1,
   liveHrm: false,
   liveHrmInterval: 2,
   hrDecade: 40,
@@ -686,6 +687,9 @@ Bangle.on('HRM', onHRM);
 
 let baroPressure = 0;
 let lastBaroDraw = 0;
+// Sea-level calibration factor (QNH / raw reading), set via the settings menu.
+// Constant per location, so it corrects altitude and sensor offset in one go.
+const baroCalib = initialSettings.baroCalib || 1;
 
 /**
  * Processes incoming barometer events while the barometer screen is active.
@@ -695,7 +699,7 @@ let lastBaroDraw = 0;
  */
 function onPressure(e) {
   if (screens[currentScreenIdx] === "baro" && e.pressure) {
-    baroPressure = e.pressure;
+    baroPressure = e.pressure * baroCalib;
     let now = Date.now();
     if (now - lastBaroDraw >= 2000) {
       lastBaroDraw = now;
@@ -722,7 +726,7 @@ function pollBaroWhileLocked() {
   lastBaroPoll = now;
   Bangle.getPressure().then(d => {
     if (d && d.pressure) {
-      baroPressure = d.pressure;
+      baroPressure = d.pressure * baroCalib;
       if (Bangle.isLCDOn()) draw();
     }
   }).catch(() => {});
