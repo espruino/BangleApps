@@ -816,6 +816,11 @@ function onCharge(charging) {
   if (charging) {
     let batteryIdx = screens.indexOf("battery");
     if (batteryIdx !== -1) currentScreenIdx = batteryIdx;
+    // Wake the backlight and unlock, so plugging in immediately shows the
+    // battery dashboard. The firmware re-locks and dims as after a normal
+    // wake, following the system backlight/lock timeouts.
+    if (typeof Bangle.setLCDPower === 'function') Bangle.setLCDPower(1);
+    if (typeof Bangle.setLocked === 'function' && Bangle.isLocked()) Bangle.setLocked(false);
   } else {
     currentScreenIdx = screens.indexOf("clock");
   }
