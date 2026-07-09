@@ -14,6 +14,7 @@
       showHrm: true,
       showBaro: true,
       baroCalib: 1,
+      baroRefQnh: 1013.25,
       liveHrm: false,
       liveHrmInterval: 2,
       hrDecade: 40,
@@ -109,6 +110,9 @@
         onchange: (v) => {
           if (baroRaw > 0) {
             settings.baroCalib = v / baroRaw;
+            // Also the altimeter reference: altitude is derived from how far
+            // the raw pressure has fallen below this sea-level value
+            settings.baroRefQnh = v;
             save();
           }
         },

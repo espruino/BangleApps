@@ -37,6 +37,7 @@ let initialSettings = {
   showHrm: true,
   showBaro: true,
   baroCalib: 1,
+  baroRefQnh: 1013.25,
   liveHrm: false,
   liveHrmInterval: 2,
   hrDecade: 40,
@@ -565,27 +566,62 @@ function drawDateOverlay() {
   );
 }
 
+// Which pill the baro overlay shows: 1 = exact pressure, 2 = altitude.
+// Only meaningful while infoOverlayTimeout is set on the baro screen.
+let baroOverlayMode = 1;
+
 /**
- * Draws the temporary pressure overlay with the exact reading on the barometer screen.
+ * Draws the temporary overlay on the barometer screen: the exact sea-level
+ * reading, or the altitude derived from the raw pressure and the sea-level
+ * reference entered at calibration (international barometric formula).
  */
 function drawBaroOverlay() {
-  drawOverlayPill("hPa", baroPressure > 0 ? baroPressure.toFixed(1) : "--", 0xFFE0);
+  if (baroOverlayMode === 2) {
+    let alt = Math.round(44330 * (1 - Math.pow(baroRawPressure / baroRefQnh, 0.190295)));
+    drawOverlayPill("ALTITUDE", baroRawPressure > 0 ? alt + "m" : "--", 0xFFE0);
+  } else {
+    drawOverlayPill("hPa", baroPressure > 0 ? baroPressure.toFixed(1) : "--", 0xFFE0);
+  }
 }
 
 /**
- * Shows the info overlay of the current screen (date on the clock, exact
- * pressure on the barometer) for a few seconds, or hides it early if it is
- * already visible.
+ * Arms the auto-hide timeout for an info overlay.
+ */
+function armInfoOverlay() {
+  infoOverlayTimeout = setTimeout(function() {
+    infoOverlayTimeout = undefined;
+    if (Bangle.isLCDOn()) draw();
+  }, INFO_OVERLAY_MS);
+}
+
+/**
+ * Shows the date overlay on the clock face for a few seconds, or hides it
+ * early if it is already visible.
  */
 function showInfoOverlay() {
   if (infoOverlayTimeout) {
     clearTimeout(infoOverlayTimeout);
     infoOverlayTimeout = undefined;
   } else {
-    infoOverlayTimeout = setTimeout(function() {
-      infoOverlayTimeout = undefined;
-      if (Bangle.isLCDOn()) draw();
-    }, INFO_OVERLAY_MS);
+    armInfoOverlay();
+  }
+  if (Bangle.isLCDOn()) draw();
+}
+
+/**
+ * Cycles the barometer overlay: hidden -> exact pressure -> altitude -> hidden.
+ */
+function cycleBaroOverlay() {
+  if (infoOverlayTimeout) {
+    clearTimeout(infoOverlayTimeout);
+    infoOverlayTimeout = undefined;
+    if (baroOverlayMode === 1) {
+      baroOverlayMode = 2;
+      armInfoOverlay();
+    }
+  } else {
+    baroOverlayMode = 1;
+    armInfoOverlay();
   }
   if (Bangle.isLCDOn()) draw();
 }
@@ -601,8 +637,10 @@ function showInfoOverlay() {
  */
 function onSwipe(directionLR, directionUD) {
   if (directionUD !== 0) {
-    if (screens[currentScreenIdx] === "clock" || screens[currentScreenIdx] === "baro") {
+    if (screens[currentScreenIdx] === "clock") {
       showInfoOverlay();
+    } else if (screens[currentScreenIdx] === "baro") {
+      cycleBaroOverlay();
     } else if (screens[currentScreenIdx] === "distance") {
       if (directionUD === -1) { // Swipe up
         if (tripDay !== todayKey()) {
@@ -686,10 +724,14 @@ function onHRM(hrm) {
 Bangle.on('HRM', onHRM);
 
 let baroPressure = 0;
+let baroRawPressure = 0;
 let lastBaroDraw = 0;
 // Sea-level calibration factor (QNH / raw reading), set via the settings menu.
 // Constant per location, so it corrects altitude and sensor offset in one go.
 const baroCalib = initialSettings.baroCalib || 1;
+// Sea-level pressure entered at calibration time, used as the altimeter
+// reference. Altitude drifts ~8m per hPa of weather change since then.
+const baroRefQnh = initialSettings.baroRefQnh || 1013.25;
 
 /**
  * Processes incoming barometer events while the barometer screen is active.
@@ -699,6 +741,7 @@ const baroCalib = initialSettings.baroCalib || 1;
  */
 function onPressure(e) {
   if (screens[currentScreenIdx] === "baro" && e.pressure) {
+    baroRawPressure = e.pressure;
     baroPressure = e.pressure * baroCalib;
     let now = Date.now();
     if (now - lastBaroDraw >= 2000) {
@@ -726,6 +769,7 @@ function pollBaroWhileLocked() {
   lastBaroPoll = now;
   Bangle.getPressure().then(d => {
     if (d && d.pressure) {
+      baroRawPressure = d.pressure;
       baroPressure = d.pressure * baroCalib;
       if (Bangle.isLCDOn()) draw();
     }
