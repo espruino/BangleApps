@@ -3,4 +3,4 @@
 0.3: Dynamic HR colors, Fast Load support
 0.4: Fix HRM staying powered after unplugging charger, redraw on LCD power-on, cache 12/24h setting, Espruino speed optimizations, minor cleanups
 0.5: Date overlay on the clock face (swipe up/down), persistent day/trip views with reset confirmation on the distance screen, resume on the last used screen
-0.6: Barometer gauge
+0.6: Barometer gauge: 300-degree 950-1050 hPa dial with 1 hPa subticks, sea-level calibration in the settings, exact-reading and altitude overlays (swipe up/down), sensor only powered while the screen is shown (one reading per minute while locked), horizontally centered circle values

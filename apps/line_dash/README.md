@@ -47,6 +47,14 @@ The app includes a comprehensive settings menu where you can configure the follo
 * **Live HR Interval:** If Live HR is enabled, select how often the gauge redraws (2s, 5s, 15s, 30s, 60s, 90s, or 120s).
 * **HR Age Decade:** Select your age decade (20s, 30s, 40s, 50s, 60s, 70s, or 80s) to accurately calculate your Max HR and corresponding HR Zones.
 
+### Calibrating the Barometer
+
+1. Look up the current air pressure for your town in any weather app or report (e.g. 1014 hPa). Weather reports always give the sea-level value, which is exactly what you need.
+2. On the watch, open *Settings → Apps → Line Dash → Sea level (hPa)*. The entry shows "wait..." for a second while a reading is taken, then the current calibrated value.
+3. Set it to the value from your weather report. Done.
+
+The correction is a constant for your location — it covers both your altitude above sea level and the sensor's individual offset — so the displayed pressure keeps matching the weather report even as the weather changes. Recalibrate only after moving to a different altitude, or right before a hike if you want the altitude overlay to start as accurately as possible (weather changes shift the altitude estimate by roughly 8 m per hPa).
+
 ## Credits
 
 Line Dash was created by [pagnotta](https://github.com/pagnotta), built upon the foundation of the [Line Clock](https://github.com/espruino/BangleApps/tree/master/apps/line_clock) app originally created by deepDiverPaul. It has been expanded into a suite of interactive, swipeable dashboard gauges.
