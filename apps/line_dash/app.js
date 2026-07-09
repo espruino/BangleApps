@@ -223,6 +223,32 @@ function drawLightning(x, y, color) {
 }
 
 /**
+ * Returns the battery zone color for a charge percentage. The zones use the
+ * display's native 3-bit colors, so they render crisply without dithering:
+ * red reserve below 15%, yellow warning band up to 30%, green above.
+ *
+ * @param {number} pct - Battery charge in percent.
+ * @returns {number} 16-bit zone color.
+ */
+function batteryZoneColor(pct) {
+  if (pct < 15) return 0xF800;
+  if (pct <= 30) return 0xFFE0;
+  return 0x07E0;
+}
+
+/**
+ * Tick color callback for the battery gauge: colors the dial by the fixed
+ * zones, like the reserve markings on a fuel gauge.
+ *
+ * @param {number} tickIdx - Main tick index (one per 10%).
+ * @param {number} frac - Sub-tick position between this tick and the next.
+ * @returns {number} 16-bit zone color.
+ */
+function batteryTickColor(tickIdx, frac) {
+  return batteryZoneColor((tickIdx + frac) * 10);
+}
+
+/**
  * Draws the large central value in the middle of the gauge.
  *
  * @param {string|number} n - The value to display.
@@ -962,19 +988,11 @@ function draw() {
     if (resetConfirmTimeout) drawOverlayPill("TRIP", "RESET?", 0x07FF);
   } else if (screen === "battery") {
     let battery = E.getBattery();
-    
+
     let isCharging = Bangle.isCharging();
-    
-    let r5, g6;
-    if (battery <= 50) {
-      r5 = 31;
-      g6 = Math.round((battery / 50) * 63);
-    } else {
-      r5 = Math.round((1 - ((battery - 50) / 50)) * 31);
-      g6 = 63;
-    }
-    let color = (r5 << 11) | (g6 << 5);
-    
+
+    let color = batteryZoneColor(battery);
+
     setHourAngle(270 + (battery / 100) * 180);
 
     drawDashboardGauge({
@@ -987,7 +1005,8 @@ function draw() {
       subIntervals: 5,
       tickLabelSize: 28,
       getTickLabel: i => (i * 10) + "%",
-      getTickColor: color,
+      // Fixed fuel-gauge zones on the dial; hand and circle take the current one
+      getTickColor: batteryTickColor,
       handColor: color,
       centerText: battery,
       centerTextColor: isCharging ? 0x07E0 : undefined,
