@@ -383,9 +383,9 @@ let hrmPowerTimeout;
  */
 function changeScreen(dir) {
   // Leaving the screen dismisses a visible date overlay or reset confirmation
-  if (dateOverlayTimeout) {
-    clearTimeout(dateOverlayTimeout);
-    dateOverlayTimeout = undefined;
+  if (infoOverlayTimeout) {
+    clearTimeout(infoOverlayTimeout);
+    infoOverlayTimeout = undefined;
   }
   if (resetConfirmTimeout) {
     clearTimeout(resetConfirmTimeout);
@@ -492,8 +492,8 @@ function getDaySteps() {
 const RESET_CONFIRM_MS = 3000;
 let resetConfirmTimeout;
 
-const DATE_OVERLAY_MS = 4000;
-let dateOverlayTimeout;
+const INFO_OVERLAY_MS = 4000;
+let infoOverlayTimeout;
 
 // Gap in pixels between the parts of a two-part pill line. The Vector font's
 // space glyph is a full character wide, which looks too spaced out.
@@ -560,17 +560,26 @@ function drawDateOverlay() {
 }
 
 /**
- * Shows the date overlay for a few seconds, or hides it early if it is already visible.
+ * Draws the temporary pressure overlay with the exact reading on the barometer screen.
  */
-function showDateOverlay() {
-  if (dateOverlayTimeout) {
-    clearTimeout(dateOverlayTimeout);
-    dateOverlayTimeout = undefined;
+function drawBaroOverlay() {
+  drawOverlayPill("hPa", baroPressure > 0 ? baroPressure.toFixed(1) : "--", 0xFFE0);
+}
+
+/**
+ * Shows the info overlay of the current screen (date on the clock, exact
+ * pressure on the barometer) for a few seconds, or hides it early if it is
+ * already visible.
+ */
+function showInfoOverlay() {
+  if (infoOverlayTimeout) {
+    clearTimeout(infoOverlayTimeout);
+    infoOverlayTimeout = undefined;
   } else {
-    dateOverlayTimeout = setTimeout(function() {
-      dateOverlayTimeout = undefined;
+    infoOverlayTimeout = setTimeout(function() {
+      infoOverlayTimeout = undefined;
       if (Bangle.isLCDOn()) draw();
-    }, DATE_OVERLAY_MS);
+    }, INFO_OVERLAY_MS);
   }
   if (Bangle.isLCDOn()) draw();
 }
@@ -578,16 +587,16 @@ function showDateOverlay() {
 /**
  * Handles swipe gestures on the touchscreen.
  * Horizontal swipes navigate between dashboards.
- * Vertical swipes show the date on the clock face and switch between the
- * day/trip views on the distance dashboard.
+ * Vertical swipes show the date on the clock face, the exact reading on the
+ * barometer, and switch between the day/trip views on the distance dashboard.
  *
  * @param {number} directionLR - Left/Right swipe direction (-1 or 1).
  * @param {number} directionUD - Up/Down swipe direction (-1 for up, 1 for down).
  */
 function onSwipe(directionLR, directionUD) {
   if (directionUD !== 0) {
-    if (screens[currentScreenIdx] === "clock") {
-      showDateOverlay();
+    if (screens[currentScreenIdx] === "clock" || screens[currentScreenIdx] === "baro") {
+      showInfoOverlay();
     } else if (screens[currentScreenIdx] === "distance") {
       if (directionUD === -1) { // Swipe up
         if (tripDay !== todayKey()) {
@@ -736,8 +745,8 @@ Bangle.setUI({
     drawTimeout = undefined;
     if (hrmPowerTimeout) clearTimeout(hrmPowerTimeout);
     hrmPowerTimeout = undefined;
-    if (dateOverlayTimeout) clearTimeout(dateOverlayTimeout);
-    dateOverlayTimeout = undefined;
+    if (infoOverlayTimeout) clearTimeout(infoOverlayTimeout);
+    infoOverlayTimeout = undefined;
     if (resetConfirmTimeout) clearTimeout(resetConfirmTimeout);
     resetConfirmTimeout = undefined;
   }
@@ -819,7 +828,7 @@ function draw() {
       drawNumber(":" + minStr, 0xF800);
     }
 
-    if (dateOverlayTimeout) drawDateOverlay();
+    if (infoOverlayTimeout) drawDateOverlay();
   } else if (screen === "steps") {
     let steps = getDaySteps();
 
@@ -960,8 +969,9 @@ function draw() {
 
     setHourAngle(210 + ((p - 950) / 100) * 300);
 
-    // The dial gives the hundreds; the circle shows the last two digits plus unit
-    let v = Math.round(p) % 100;
+    // The dial gives the hundreds; the circle shows the last two digits,
+    // truncated like the steps/distance decimals
+    let v = Math.floor(p) % 100;
     let centerText = !hasReading ? "--" : (v < 10 ? "0" + v : String(v));
 
     drawDashboardGauge({
@@ -977,6 +987,8 @@ function draw() {
       handColor: 0xFFE0,
       centerText: centerText
     });
+
+    if (infoOverlayTimeout) drawBaroOverlay();
   }
 }
 
