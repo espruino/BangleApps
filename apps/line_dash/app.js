@@ -375,7 +375,10 @@ function drawMetricTick(tickStr, a, spacingAngle, colorValOrFn, tickIdx, subInte
 function queueDraw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
-  if (!Bangle.isLCDOn()) return; // Don't schedule a timeout if LCD is off
+  // Don't schedule a timeout if the LCD is off - unless the watch is
+  // charging: the transflective display stays readable with the backlight
+  // out, and the battery dashboard must keep updating on the charger
+  if (!Bangle.isLCDOn() && !Bangle.isCharging()) return;
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
     draw();
@@ -404,11 +407,11 @@ let lastDrawnLocked = false;
  * Also switches the barometer between continuous and once-a-minute mode.
  */
 function lockListenerBw() {
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = undefined;
   updateBaroPower();
-  // Only repaint if the lock state actually differs from what is on screen
+  // Only repaint if the lock state actually differs from what is on screen;
+  // re-arm the minute tick either way so the loop never dies here
   if (Bangle.isLCDOn() && Bangle.isLocked() !== lastDrawnLocked) draw();
+  else queueDraw();
 }
 Bangle.on('lock', lockListenerBw);
 
@@ -417,9 +420,12 @@ Bangle.on('lock', lockListenerBw);
  * @param {boolean} on - True if the LCD was just turned on.
  */
 function lcdListener(on) {
+  if (!on) return;
   // A screen drawn moments ago cannot be stale; skip the duplicate repaint
-  // (happens when the charge handler wakes the LCD right after drawing)
-  if (on && Date.now() - lastDrawMs > 500) draw();
+  // (happens when the charge handler wakes the LCD right after drawing),
+  // but keep the minute tick armed in that case
+  if (Date.now() - lastDrawMs > 500) draw();
+  else queueDraw();
 }
 Bangle.on('lcdPower', lcdListener);
 
@@ -832,7 +838,7 @@ function onCharge(charging) {
     Bangle.setHRMPower(0, "line_dash");
   }
   updateBaroPower();
-  if (Bangle.isLCDOn()) draw();
+  draw(); // draw() itself skips rendering when the display is off and not charging
   // Wake the backlight only after the battery dashboard is fully drawn, so
   // the light reveals the finished screen. It dims again after the normal
   // system backlight timeout; the watch stays locked.
@@ -910,7 +916,9 @@ function drawDashboardGauge(opt) {
  */
 function draw() {
   queueDraw();
-  if (!Bangle.isLCDOn()) return; // Extra check, do not render if screen is off
+  // Do not render if the screen is off - except on the charger, where the
+  // transflective display stays readable and must show fresh values
+  if (!Bangle.isLCDOn() && !Bangle.isCharging()) return;
 
   lastDrawMs = Date.now();
   lastDrawnLocked = Bangle.isLocked();
