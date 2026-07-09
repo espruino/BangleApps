@@ -825,11 +825,6 @@ function onCharge(charging) {
   if (charging) {
     let batteryIdx = screens.indexOf("battery");
     if (batteryIdx !== -1) currentScreenIdx = batteryIdx;
-    // Unlock first, then wake the backlight, so no repaint ever renders a
-    // still-locked state. The firmware re-locks and dims as after a normal
-    // wake, following the system backlight/lock timeouts.
-    if (typeof Bangle.setLocked === 'function' && Bangle.isLocked()) Bangle.setLocked(false);
-    if (typeof Bangle.setLCDPower === 'function') Bangle.setLCDPower(1);
   } else {
     currentScreenIdx = screens.indexOf("clock");
   }
@@ -838,6 +833,10 @@ function onCharge(charging) {
   }
   updateBaroPower();
   if (Bangle.isLCDOn()) draw();
+  // Wake the backlight only after the battery dashboard is fully drawn, so
+  // the light reveals the finished screen. It dims again after the normal
+  // system backlight timeout; the watch stays locked.
+  if (charging && typeof Bangle.setLCDPower === 'function') Bangle.setLCDPower(1);
 }
 Bangle.on('charging', onCharge);
 
