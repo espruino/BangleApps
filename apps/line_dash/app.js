@@ -393,6 +393,12 @@ function updateBaroPower() {
   Bangle.setBarometerPower(screens[currentScreenIdx] === "baro" && !Bangle.isLocked() ? 1 : 0, "line_dash");
 }
 
+// State captured by draw(), used to skip redundant redraws: when the charge
+// handler wakes/unlocks the watch, the resulting lock/lcdPower events would
+// otherwise each repaint a screen that was just drawn.
+let lastDrawMs = 0;
+let lastDrawnLocked = false;
+
 /**
  * Triggers a redraw when the watch is locked/unlocked to immediately update the lock icon.
  * Also switches the barometer between continuous and once-a-minute mode.
@@ -401,7 +407,8 @@ function lockListenerBw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
   updateBaroPower();
-  if (Bangle.isLCDOn()) draw();
+  // Only repaint if the lock state actually differs from what is on screen
+  if (Bangle.isLCDOn() && Bangle.isLocked() !== lastDrawnLocked) draw();
 }
 Bangle.on('lock', lockListenerBw);
 
@@ -410,7 +417,9 @@ Bangle.on('lock', lockListenerBw);
  * @param {boolean} on - True if the LCD was just turned on.
  */
 function lcdListener(on) {
-  if (on) draw();
+  // A screen drawn moments ago cannot be stale; skip the duplicate repaint
+  // (happens when the charge handler wakes the LCD right after drawing)
+  if (on && Date.now() - lastDrawMs > 500) draw();
 }
 Bangle.on('lcdPower', lcdListener);
 
@@ -816,11 +825,11 @@ function onCharge(charging) {
   if (charging) {
     let batteryIdx = screens.indexOf("battery");
     if (batteryIdx !== -1) currentScreenIdx = batteryIdx;
-    // Wake the backlight and unlock, so plugging in immediately shows the
-    // battery dashboard. The firmware re-locks and dims as after a normal
+    // Unlock first, then wake the backlight, so no repaint ever renders a
+    // still-locked state. The firmware re-locks and dims as after a normal
     // wake, following the system backlight/lock timeouts.
-    if (typeof Bangle.setLCDPower === 'function') Bangle.setLCDPower(1);
     if (typeof Bangle.setLocked === 'function' && Bangle.isLocked()) Bangle.setLocked(false);
+    if (typeof Bangle.setLCDPower === 'function') Bangle.setLCDPower(1);
   } else {
     currentScreenIdx = screens.indexOf("clock");
   }
@@ -903,6 +912,9 @@ function drawDashboardGauge(opt) {
 function draw() {
   queueDraw();
   if (!Bangle.isLCDOn()) return; // Extra check, do not render if screen is off
+
+  lastDrawMs = Date.now();
+  lastDrawnLocked = Bangle.isLocked();
 
   g.setBgColor(g.theme.bg);
   g.clear();
