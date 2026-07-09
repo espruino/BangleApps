@@ -180,9 +180,7 @@ Layout.prototype.render = function (l) {
     if(l.selected){
       btnface = gfx.theme.bgH; btnborder = gfx.theme.fgH;
     }
-    gfx.setColor(btnborder).fillRect({x:x,y:y,w:w,h:h,r:10});
-    gfx.setColor(btnface).fillRect({x:x+1,y:y+1,w:w-2,h:h-2,r:9});
-    gfx.setColor(btnborder);
+    gfx.setColor(btnface).fillRect({x:x,y:y,w: l.w,h:l.h,r:10}).setColor(btnborder).drawRect({x:x,y:y,w: l.w,h:l.h,r:10});
     if (l.col!==undefined) gfx.setColor(l.col);
     if (l.src) gfx.setBgColor(btnface).drawImage(
       "function"==typeof l.src?l.src():l.src,
@@ -256,13 +254,18 @@ Layout.prototype.update = function() {
         var m = gfx.setFont(l.font).stringMetrics(l.label);
         l._w = m.width; l._h = m.height;
       }
-    }, "btn": function(l) {"ram";
-      if (l.font && l.font.endsWith("%"))
-        l.font = "Vector"+rnd(gfx.getHeight()*l.font.slice(0,-1)/100);
-      var m = l.src?gfx.imageMetrics("function"==typeof l.src?l.src():l.src):gfx.setFont(l.font||"6x8:2").stringMetrics(l.label);
-      l._h = 16 + m.height;
-      l._w = 20 + m.width;
-    }, "img": function(l) {"ram";
+    }, "btn": function(l) { "ram";
+        if (l.font && l.font.endsWith("%"))
+          l.font = "Vector"+rnd(gfx.getHeight()*l.font.slice(0,-1)/100);
+
+        var m = l.src
+          ? gfx.imageMetrics("function"==typeof l.src ? l.src() : l.src)
+          : gfx.setFont(l.font||"6x8:2").stringMetrics(l.label);
+
+        var s = l.scale || 1;
+        l._h = 16 + Math.ceil(m.height * s);
+        l._w = 20 + Math.ceil(m.width * s);
+      }, "img": function(l) {"ram";
       var m = gfx.imageMetrics("function"==typeof l.src?l.src():l.src), s=l.scale||1; // get width and height out of image
       l._w = m.width*s;
       l._h = m.height*s;
