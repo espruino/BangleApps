@@ -355,11 +355,24 @@ function queueDraw() {
 }
 
 /**
+ * Powers the barometer continuously only while the baro screen is shown AND
+ * the watch is unlocked. Keeping it measuring on a locked screen drained the
+ * battery overnight; while locked, draw() falls back to one cheap one-shot
+ * reading per minute instead.
+ */
+function updateBaroPower() {
+  if (typeof Bangle.setBarometerPower !== 'function') return;
+  Bangle.setBarometerPower(screens[currentScreenIdx] === "baro" && !Bangle.isLocked() ? 1 : 0, "line_dash");
+}
+
+/**
  * Triggers a redraw when the watch is locked/unlocked to immediately update the lock icon.
+ * Also switches the barometer between continuous and once-a-minute mode.
  */
 function lockListenerBw() {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
+  updateBaroPower();
   if (Bangle.isLCDOn()) draw();
 }
 Bangle.on('lock', lockListenerBw);
@@ -416,13 +429,7 @@ function changeScreen(dir) {
   }
 
   // The barometer starts quickly and cheaply, so no debounce is needed
-  if (typeof Bangle.setBarometerPower === 'function') {
-    if (oldScreen !== "baro" && newScreen === "baro") {
-      Bangle.setBarometerPower(1, "line_dash");
-    } else if (oldScreen === "baro" && newScreen !== "baro") {
-      Bangle.setBarometerPower(0, "line_dash");
-    }
-  }
+  updateBaroPower();
 
   if (Bangle.isLCDOn()) draw();
 }
@@ -461,9 +468,7 @@ if (savedScreenIdx >= 0) currentScreenIdx = savedScreenIdx;
 if (initialSettings.liveHrm && screens[currentScreenIdx] === "hrm") {
   Bangle.setHRMPower(1, "line_dash");
 }
-if (typeof Bangle.setBarometerPower === 'function' && screens[currentScreenIdx] === "baro") {
-  Bangle.setBarometerPower(1, "line_dash");
-}
+updateBaroPower();
 
 /**
  * Persists the app state (trip counter and active screen). Only called from
@@ -700,6 +705,29 @@ function onPressure(e) {
 }
 Bangle.on('pressure', onPressure);
 
+// Timestamp of the last one-shot reading taken while locked. The threshold
+// stays just below the minute tick so no tick is skipped due to timer jitter.
+let lastBaroPoll = 0;
+const LOCKED_BARO_POLL_MS = 55000;
+
+/**
+ * Takes a single barometer reading while the watch is locked (the continuous
+ * sensor is off then). Piggybacks on the once-a-minute redraw, so the locked
+ * baro screen costs no more than the locked clock face.
+ */
+function pollBaroWhileLocked() {
+  if (typeof Bangle.getPressure !== 'function') return;
+  let now = Date.now();
+  if (now - lastBaroPoll < LOCKED_BARO_POLL_MS) return;
+  lastBaroPoll = now;
+  Bangle.getPressure().then(d => {
+    if (d && d.pressure) {
+      baroPressure = d.pressure;
+      if (Bangle.isLCDOn()) draw();
+    }
+  }).catch(() => {});
+}
+
 /**
  * Handles charging state changes, switching to the battery dashboard when plugged in.
  * @param {boolean} charging - True if the watch is now charging.
@@ -720,9 +748,7 @@ function onCharge(charging) {
   if (initialSettings.liveHrm && oldScreen === "hrm" && screens[currentScreenIdx] !== "hrm") {
     Bangle.setHRMPower(0, "line_dash");
   }
-  if (typeof Bangle.setBarometerPower === 'function' && oldScreen === "baro" && screens[currentScreenIdx] !== "baro") {
-    Bangle.setBarometerPower(0, "line_dash");
-  }
+  updateBaroPower();
   if (Bangle.isLCDOn()) draw();
 }
 Bangle.on('charging', onCharge);
@@ -960,6 +986,9 @@ function draw() {
       centerText: zone
     });
   } else if (screen === "baro") {
+    // While locked, refresh the reading once a minute instead of continuously
+    if (Bangle.isLocked()) pollBaroWhileLocked();
+
     // Sea-level air pressure typically ranges 950-1050 hPa; clamp to the scale
     let p = baroPressure;
     let hasReading = p > 0;
