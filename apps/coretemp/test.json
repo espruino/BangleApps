@@ -1,0 +1,56 @@
+{
+  "app": "coretemp",
+  "allowCustomApp": true,
+  "tests": [
+    {
+      "description": "CoreTemp installs packaged defaults and runtime modules",
+      "steps": [
+        {
+          "t": "assert",
+          "js": "!!require('Storage').read('coretemp.runtime')",
+          "is": "true",
+          "text": "Runtime module is installed"
+        },
+        {
+          "t": "assert",
+          "js": "!!require('Storage').read('coretemp.ble')",
+          "is": "true",
+          "text": "BLE module is installed"
+        },
+        {
+          "t": "assert",
+          "js": "!!require('Storage').read('coretemp.settingsui')",
+          "is": "true",
+          "text": "Settings UI module is installed"
+        },
+        {
+          "t": "assert",
+          "js": "require('Storage').readJSON('coretemp.json', 1).widget",
+          "is": "true",
+          "text": "Packaged settings enable the widget by default"
+        },
+        {
+          "t": "assert",
+          "js": "require('Storage').readJSON('coretemp.hrm.json', 1).recent.length",
+          "is": "equal",
+          "to": "0",
+          "text": "Packaged HRM settings start with no recent sensors"
+        },
+        {
+          "t": "assert",
+          "js": "require('coretemp.protocol').OPCODES.HRM_SCAN_ANT_START",
+          "is": "equal",
+          "to": "10",
+          "text": "Protocol module exposes ANT scan opcode"
+        },
+        {
+          "t": "assert",
+          "js": "require('coretemp.protocol').makeAntPairParams(4660, 86).join(',')",
+          "is": "equal",
+          "to": "\"52,18,86\"",
+          "text": "Protocol module builds ANT pair params"
+        }
+      ]
+    }
+  ]
+}
