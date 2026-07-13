@@ -496,12 +496,17 @@ let tripDay = "";
 let tripBaselineSteps = 0;
 let showTripView = false;
 
+// Baro sub-view: false = pressure dial, true = altimeter. Persisted like the
+// trip view so it survives app reloads.
+let showAltView = false;
+
 let savedState = storage.readJSON(STATE_FILE, 1) || {};
 if (savedState.day === todayKey()) {
   tripDay = savedState.day;
   tripBaselineSteps = savedState.baseline || 0;
   showTripView = !!savedState.view;
 }
+showAltView = !!savedState.altView;
 
 // Resume on the screen that was active when the app was last unloaded
 // (e.g. when a message fast-loaded over the clock). Falls back to the
@@ -523,6 +528,7 @@ function saveState() {
     day: tripDay,
     baseline: tripBaselineSteps,
     view: showTripView,
+    altView: showAltView,
     screen: screens[currentScreenIdx]
   });
 }
@@ -607,19 +613,22 @@ function drawDateOverlay() {
   );
 }
 
-// Which pill the baro overlay shows: 1 = exact pressure, 2 = altitude.
-// Only meaningful while infoOverlayTimeout is set on the baro screen.
-let baroOverlayMode = 1;
+/**
+ * Returns the altitude in meters derived from the raw pressure and the
+ * sea-level reference entered at calibration (international barometric formula).
+ * @returns {number} Altitude in meters (unrounded).
+ */
+function getBaroAltitude() {
+  return 44330 * (1 - Math.pow(baroRawPressure / baroRefQnh, 0.190295));
+}
 
 /**
  * Draws the temporary overlay on the barometer screen: the exact sea-level
- * reading, or the altitude derived from the raw pressure and the sea-level
- * reference entered at calibration (international barometric formula).
+ * reading on the pressure dial, or the exact altitude on the altimeter view.
  */
 function drawBaroOverlay() {
-  if (baroOverlayMode === 2) {
-    let alt = Math.round(44330 * (1 - Math.pow(baroRawPressure / baroRefQnh, 0.190295)));
-    drawOverlayPill("ALTITUDE", baroRawPressure > 0 ? alt + "m" : "--", 0xFFE0);
+  if (showAltView) {
+    drawOverlayPill("ALTITUDE", baroRawPressure > 0 ? Math.round(getBaroAltitude()) + "m" : "--", 0xFFE0);
   } else {
     drawOverlayPill("hPa", baroPressure > 0 ? baroPressure.toFixed(1) : "--", 0xFFE0);
   }
@@ -636,8 +645,9 @@ function armInfoOverlay() {
 }
 
 /**
- * Shows the date overlay on the clock face for a few seconds, or hides it
- * early if it is already visible.
+ * Shows the info overlay of the current screen (date on the clock, exact
+ * reading on the barometer views) for a few seconds, or hides it early if it
+ * is already visible.
  */
 function showInfoOverlay() {
   if (infoOverlayTimeout) {
@@ -650,36 +660,31 @@ function showInfoOverlay() {
 }
 
 /**
- * Cycles the barometer overlay: hidden -> exact pressure -> altitude -> hidden.
- */
-function cycleBaroOverlay() {
-  if (infoOverlayTimeout) {
-    clearTimeout(infoOverlayTimeout);
-    infoOverlayTimeout = undefined;
-    if (baroOverlayMode === 1) {
-      baroOverlayMode = 2;
-      armInfoOverlay();
-    }
-  } else {
-    baroOverlayMode = 1;
-    armInfoOverlay();
-  }
-  if (Bangle.isLCDOn()) draw();
-}
-
-/**
  * Handles swipe gestures on the touchscreen.
  * Horizontal swipes navigate between dashboards.
  * Vertical swipes navigate between the sub-views of a dashboard: on the
  * distance screen, swipe up enters the trip view (starting a trip if none is
- * running) and swipe down returns to the day total.
+ * running) and swipe down returns to the day total; on the barometer, swipe
+ * up shows the altimeter and swipe down the pressure dial.
  *
  * @param {number} directionLR - Left/Right swipe direction (-1 or 1).
  * @param {number} directionUD - Up/Down swipe direction (-1 for up, 1 for down).
  */
 function onSwipe(directionLR, directionUD) {
   if (directionUD !== 0) {
-    if (screens[currentScreenIdx] === "distance") {
+    if (screens[currentScreenIdx] === "baro") {
+      let wantAlt = directionUD === -1;
+      if (wantAlt !== showAltView) {
+        showAltView = wantAlt;
+        // A visible overlay belongs to the view we are leaving
+        if (infoOverlayTimeout) {
+          clearTimeout(infoOverlayTimeout);
+          infoOverlayTimeout = undefined;
+        }
+        saveState();
+        if (Bangle.isLCDOn()) draw();
+      }
+    } else if (screens[currentScreenIdx] === "distance") {
       if (directionUD === -1) { // Swipe up
         if (tripDay !== todayKey()) {
           // No active trip: start one and show it (nothing to lose, no confirmation)
@@ -718,17 +723,16 @@ Bangle.on('swipe', onSwipe);
 
 /**
  * Handles tap gestures on the touchscreen: shows the info overlay of the
- * current dashboard (date on the clock, exact reading and altitude on the
- * barometer) and drives the trip reset confirmation on the distance screen.
+ * current dashboard (date on the clock, exact pressure or altitude on the
+ * barometer views) and drives the trip reset confirmation on the distance
+ * screen.
  *
  * @param {number} button - The button index.
  * @param {Object} xy - The x and y coordinates of the touch.
  */
 function onTouch(button, xy) {
-  if (screens[currentScreenIdx] === "clock") {
+  if (screens[currentScreenIdx] === "clock" || screens[currentScreenIdx] === "baro") {
     showInfoOverlay();
-  } else if (screens[currentScreenIdx] === "baro") {
-    cycleBaroOverlay();
   } else if (screens[currentScreenIdx] === "distance" && showTripView) {
     if (resetConfirmTimeout) {
       // Second tap while the popup is showing: reset confirmed
@@ -1087,33 +1091,61 @@ function draw() {
     // While locked, refresh the reading once a minute instead of continuously
     if (Bangle.isLocked()) pollBaroWhileLocked();
 
-    // Sea-level air pressure typically ranges 950-1050 hPa; clamp to the scale
-    let p = baroPressure;
-    let hasReading = p > 0;
-    if (!hasReading) p = 1000;
-    if (p < 950) p = 950;
-    if (p > 1050) p = 1050;
+    if (showAltView) {
+      // Altimeter sub-view: one full revolution of the dial covers 100m
+      // (ticks every 10m, subticks every meter), the circle shows the
+      // hundreds of meters
+      let hasReading = baroRawPressure > 0;
+      let alt = hasReading ? Math.max(0, getBaroAltitude()) : 0;
 
-    setHourAngle(210 + ((p - 950) / 100) * 300);
+      setHourAngle(210 + (alt / 100) * 360);
 
-    // The dial gives the hundreds; the circle shows the last two digits,
-    // truncated like the steps/distance decimals
-    let v = Math.floor(p) % 100;
-    let centerText = !hasReading ? "--" : (v < 10 ? "0" + v : String(v));
+      drawDashboardGauge({
+        currentTick: Math.floor(alt / 10),
+        minTick: 0,
+        maxTick: Infinity,
+        tickRange: 1,
+        tickSpacing: 36,
+        subIntervals: 10,
+        getTickLabel: i => String((i % 10) * 10),
+        getTickColor: 0xFFE0,
+        handColor: 0xFFE0,
+        centerText: hasReading ? String(Math.floor(alt / 100)) : "--"
+      });
 
-    drawDashboardGauge({
-      currentTick: Math.floor((p - 950) / 10),
-      minTick: 0,
-      maxTick: 10,
-      tickRange: 1,
-      tickSpacing: 30,
-      subIntervals: 10,
-      tickLabelSize: 24,
-      getTickLabel: i => String(950 + i * 10),
-      getTickColor: 0xFFE0,
-      handColor: 0xFFE0,
-      centerText: centerText
-    });
+      g.setFontAlign(0, 0);
+      g.setFont("Vector", 20);
+      g.setColor(0xFFE0);
+      g.drawString("ALT", gCenterX, 12);
+    } else {
+      // Sea-level air pressure typically ranges 950-1050 hPa; clamp to the scale
+      let p = baroPressure;
+      let hasReading = p > 0;
+      if (!hasReading) p = 1000;
+      if (p < 950) p = 950;
+      if (p > 1050) p = 1050;
+
+      setHourAngle(210 + ((p - 950) / 100) * 300);
+
+      // The dial gives the hundreds; the circle shows the last two digits,
+      // truncated like the steps/distance decimals
+      let v = Math.floor(p) % 100;
+      let centerText = !hasReading ? "--" : (v < 10 ? "0" + v : String(v));
+
+      drawDashboardGauge({
+        currentTick: Math.floor((p - 950) / 10),
+        minTick: 0,
+        maxTick: 10,
+        tickRange: 1,
+        tickSpacing: 30,
+        subIntervals: 10,
+        tickLabelSize: 24,
+        getTickLabel: i => String(950 + i * 10),
+        getTickColor: 0xFFE0,
+        handColor: 0xFFE0,
+        centerText: centerText
+      });
+    }
 
     if (infoOverlayTimeout) drawBaroOverlay();
   }
