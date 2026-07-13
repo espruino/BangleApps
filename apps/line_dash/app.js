@@ -670,19 +670,16 @@ function cycleBaroOverlay() {
 /**
  * Handles swipe gestures on the touchscreen.
  * Horizontal swipes navigate between dashboards.
- * Vertical swipes show the date on the clock face, the exact reading on the
- * barometer, and switch between the day/trip views on the distance dashboard.
+ * Vertical swipes navigate between the sub-views of a dashboard: on the
+ * distance screen, swipe up enters the trip view (starting a trip if none is
+ * running) and swipe down returns to the day total.
  *
  * @param {number} directionLR - Left/Right swipe direction (-1 or 1).
  * @param {number} directionUD - Up/Down swipe direction (-1 for up, 1 for down).
  */
 function onSwipe(directionLR, directionUD) {
   if (directionUD !== 0) {
-    if (screens[currentScreenIdx] === "clock") {
-      showInfoOverlay();
-    } else if (screens[currentScreenIdx] === "baro") {
-      cycleBaroOverlay();
-    } else if (screens[currentScreenIdx] === "distance") {
+    if (screens[currentScreenIdx] === "distance") {
       if (directionUD === -1) { // Swipe up
         if (tripDay !== todayKey()) {
           // No active trip: start one and show it (nothing to lose, no confirmation)
@@ -690,24 +687,13 @@ function onSwipe(directionLR, directionUD) {
           tripDay = todayKey();
           showTripView = true;
           saveState();
+          if (Bangle.isLCDOn()) draw();
         } else if (!showTripView) {
           // Active trip: just switch to the trip view
           showTripView = true;
           saveState();
-        } else if (resetConfirmTimeout) {
-          // Second swipe up while the popup is showing: reset confirmed
-          clearTimeout(resetConfirmTimeout);
-          resetConfirmTimeout = undefined;
-          tripBaselineSteps = getDaySteps();
-          saveState();
-        } else {
-          // Swipe up in the trip view: ask for confirmation before resetting
-          resetConfirmTimeout = setTimeout(function() {
-            resetConfirmTimeout = undefined;
-            if (Bangle.isLCDOn()) draw();
-          }, RESET_CONFIRM_MS);
+          if (Bangle.isLCDOn()) draw();
         }
-        if (Bangle.isLCDOn()) draw();
       } else { // Swipe down
         if (resetConfirmTimeout) {
           // Dismiss the pending reset confirmation, stay in the trip view
@@ -731,13 +717,34 @@ function onSwipe(directionLR, directionUD) {
 Bangle.on('swipe', onSwipe);
 
 /**
- * Handles tap gestures on the touchscreen to advance to the next dashboard.
+ * Handles tap gestures on the touchscreen: shows the info overlay of the
+ * current dashboard (date on the clock, exact reading and altitude on the
+ * barometer) and drives the trip reset confirmation on the distance screen.
  *
  * @param {number} button - The button index.
  * @param {Object} xy - The x and y coordinates of the touch.
  */
 function onTouch(button, xy) {
-  changeScreen(1);
+  if (screens[currentScreenIdx] === "clock") {
+    showInfoOverlay();
+  } else if (screens[currentScreenIdx] === "baro") {
+    cycleBaroOverlay();
+  } else if (screens[currentScreenIdx] === "distance" && showTripView) {
+    if (resetConfirmTimeout) {
+      // Second tap while the popup is showing: reset confirmed
+      clearTimeout(resetConfirmTimeout);
+      resetConfirmTimeout = undefined;
+      tripBaselineSteps = getDaySteps();
+      saveState();
+    } else {
+      // Tap in the trip view: ask for confirmation before resetting
+      resetConfirmTimeout = setTimeout(function() {
+        resetConfirmTimeout = undefined;
+        if (Bangle.isLCDOn()) draw();
+      }, RESET_CONFIRM_MS);
+    }
+    if (Bangle.isLCDOn()) draw();
+  }
 }
 Bangle.on('touch', onTouch);
 
