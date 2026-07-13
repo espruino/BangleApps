@@ -16,7 +16,7 @@
       baroCalib: 1,
       baroRefQnh: 1013.25,
       altUnit: "m",
-      liveHrm: false,
+      liveHrm: true,
       liveHrmInterval: 2,
       hrDecade: 40,
     };
