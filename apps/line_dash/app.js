@@ -38,6 +38,7 @@ let initialSettings = {
   showBaro: true,
   baroCalib: 1,
   baroRefQnh: 1013.25,
+  altUnit: "m",
   liveHrm: false,
   liveHrmInterval: 2,
   hrDecade: 40,
@@ -628,7 +629,9 @@ function getBaroAltitude() {
  */
 function drawBaroOverlay() {
   if (showAltView) {
-    drawOverlayPill("ALTITUDE", baroRawPressure > 0 ? Math.round(getBaroAltitude()) + "m" : "--", 0xFFE0);
+    let isFt = initialSettings.altUnit === "ft";
+    let exact = Math.round(getBaroAltitude() * (isFt ? 3.28084 : 1)) + (isFt ? "ft" : "m");
+    drawOverlayPill("ALTITUDE", baroRawPressure > 0 ? exact : "--", 0xFFE0);
   } else {
     drawOverlayPill("hPa", baroPressure > 0 ? baroPressure.toFixed(1) : "--", 0xFFE0);
   }
@@ -785,6 +788,25 @@ const baroCalib = initialSettings.baroCalib || 1;
 // reference. Altitude drifts ~8m per hPa of weather change since then.
 const baroRefQnh = initialSettings.baroRefQnh || 1013.25;
 
+// Smoothed altitude in meters driving the altimeter needle. The sensor noise
+// (~0.5m) would make an unfiltered needle flutter on the fine dial; the pill
+// keeps showing the exact unsmoothed value.
+let baroAltSmooth;
+let lastAltSmoothMs = 0;
+
+/**
+ * Feeds the current reading into the smoothed altitude (exponential moving
+ * average). After a gap in readings (e.g. the one-shot-per-minute polling
+ * while locked) the value snaps instead, so the needle never lags a hike.
+ */
+function updateAltSmooth() {
+  let alt = getBaroAltitude();
+  let now = Date.now();
+  if (baroAltSmooth === undefined || now - lastAltSmoothMs > 10000) baroAltSmooth = alt;
+  else baroAltSmooth += 0.3 * (alt - baroAltSmooth);
+  lastAltSmoothMs = now;
+}
+
 /**
  * Processes incoming barometer events while the barometer screen is active.
  * Redraws are throttled to one per 2 seconds.
@@ -795,6 +817,7 @@ function onPressure(e) {
   if (screens[currentScreenIdx] === "baro" && e.pressure) {
     baroRawPressure = e.pressure;
     baroPressure = e.pressure * baroCalib;
+    updateAltSmooth();
     let now = Date.now();
     if (now - lastBaroDraw >= 2000) {
       lastBaroDraw = now;
@@ -823,6 +846,7 @@ function pollBaroWhileLocked() {
     if (d && d.pressure) {
       baroRawPressure = d.pressure;
       baroPressure = d.pressure * baroCalib;
+      updateAltSmooth();
       if (Bangle.isLCDOn()) draw();
     }
   }).catch(() => {});
@@ -1093,11 +1117,14 @@ function draw() {
 
     if (showAltView) {
       // Altimeter sub-view, laid out like an aircraft altimeter: 0 sits at
-      // 12 o'clock and one full revolution of the dial covers 100m (ticks
-      // every 10m, subticks every meter, wrapping like the real instrument).
-      // The circle shows the hundreds of meters.
+      // 12 o'clock and one full revolution of the dial covers 100 units,
+      // wrapping like the real instrument. The circle shows the hundreds.
+      // In meters the subticks are 1m; in feet they are 2ft, since 1ft is
+      // below the sensor resolution (~0.5m).
       let hasReading = baroRawPressure > 0;
-      let alt = hasReading ? Math.max(0, getBaroAltitude()) : 0;
+      let isFt = initialSettings.altUnit === "ft";
+      let unitScale = isFt ? 3.28084 : 1;
+      let alt = hasReading && baroAltSmooth !== undefined ? Math.max(0, baroAltSmooth * unitScale) : 0;
 
       setHourAngle((alt / 100) * 360);
 
@@ -1108,10 +1135,10 @@ function draw() {
         tickRange: 1,
         startAngle: 0,
         tickSpacing: 36,
-        subIntervals: 10,
+        subIntervals: isFt ? 5 : 10,
         // The unit on the labels is what tells this view apart from the
         // pressure dial, so no extra indicator is needed
-        getTickLabel: i => (((i % 10) + 10) % 10 * 10) + "m",
+        getTickLabel: i => (((i % 10) + 10) % 10 * 10) + (isFt ? "ft" : "m"),
         getTickColor: 0xFFE0,
         handColor: 0xFFE0,
         centerText: hasReading ? String(Math.floor(alt / 100)) : "--"

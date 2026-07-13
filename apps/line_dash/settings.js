@@ -15,6 +15,7 @@
       showBaro: true,
       baroCalib: 1,
       baroRefQnh: 1013.25,
+      altUnit: "m",
       liveHrm: false,
       liveHrmInterval: 2,
       hrDecade: 40,
@@ -115,6 +116,15 @@
             settings.baroRefQnh = v;
             save();
           }
+        },
+      },
+      'Altitude Unit': {
+        value: settings.altUnit === "ft" ? 1 : 0,
+        min: 0, max: 1,
+        format: v => v ? "ft" : "m",
+        onchange: (v) => {
+          settings.altUnit = v ? "ft" : "m";
+          save();
         },
       },
       'Live HR Updates': {
