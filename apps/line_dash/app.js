@@ -1109,16 +1109,13 @@ function draw() {
         startAngle: 0,
         tickSpacing: 36,
         subIntervals: 10,
-        getTickLabel: i => String(((i % 10) + 10) % 10 * 10),
+        // The unit on the labels is what tells this view apart from the
+        // pressure dial, so no extra indicator is needed
+        getTickLabel: i => (((i % 10) + 10) % 10 * 10) + "m",
         getTickColor: 0xFFE0,
         handColor: 0xFFE0,
         centerText: hasReading ? String(Math.floor(alt / 100)) : "--"
       });
-
-      g.setFontAlign(0, 0);
-      g.setFont("Vector", 20);
-      g.setColor(0xFFE0);
-      g.drawString("ALT", gCenterX, 12);
     } else {
       // Sea-level air pressure typically ranges 950-1050 hPa; clamp to the scale
       let p = baroPressure;
