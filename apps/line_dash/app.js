@@ -1092,22 +1092,24 @@ function draw() {
     if (Bangle.isLocked()) pollBaroWhileLocked();
 
     if (showAltView) {
-      // Altimeter sub-view: one full revolution of the dial covers 100m
-      // (ticks every 10m, subticks every meter), the circle shows the
-      // hundreds of meters
+      // Altimeter sub-view, laid out like an aircraft altimeter: 0 sits at
+      // 12 o'clock and one full revolution of the dial covers 100m (ticks
+      // every 10m, subticks every meter, wrapping like the real instrument).
+      // The circle shows the hundreds of meters.
       let hasReading = baroRawPressure > 0;
       let alt = hasReading ? Math.max(0, getBaroAltitude()) : 0;
 
-      setHourAngle(210 + (alt / 100) * 360);
+      setHourAngle((alt / 100) * 360);
 
       drawDashboardGauge({
         currentTick: Math.floor(alt / 10),
-        minTick: 0,
+        minTick: -Infinity,
         maxTick: Infinity,
         tickRange: 1,
+        startAngle: 0,
         tickSpacing: 36,
         subIntervals: 10,
-        getTickLabel: i => String((i % 10) * 10),
+        getTickLabel: i => String(((i % 10) + 10) % 10 * 10),
         getTickColor: 0xFFE0,
         handColor: 0xFFE0,
         centerText: hasReading ? String(Math.floor(alt / 100)) : "--"
