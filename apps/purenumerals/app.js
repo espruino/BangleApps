@@ -8,7 +8,8 @@
 //  Flashlight (double touch bottom left) and Battery (touch top right)
 //
 //  27.11.2025  Peter Bühler
-//  
+//  29.06.2026  Battery with Ringbuffer
+//              Watchdog (blinking red dot when device is on)  
 
 {
   // globals
@@ -404,8 +405,10 @@
 
     function draw() {
       clearBackground();
-      let percent = E.getBattery();  // Emulator : 0
+      // let percent = E.getBattery();  // Emulator : 0
       //percent = 19;
+
+      let percent = app.getBattery();
 
       // draw battery
       let bx = CENTER - 36, by = CENTER - 42;
@@ -556,6 +559,108 @@
 
   };
 
+  // factory function for the battery manager
+  let createBatteryManager = function() {
+
+    // calculates average of battery charge
+
+    let values = [ -1, -1, -1, -1, -1 ]; // Ringbuffer
+    let index = 0;
+    let interval;
+    const timeout = 1000 * 60 * 5;  // 5 Min
+
+    function putMeasure() {
+      let value =  E.getBattery();
+      let ind = index % values.length;
+      values[ind] = value;
+      index++;
+    }
+
+    // returns the battery charge
+    function getValue() {
+      let sum = 0;
+      let count = 0;
+      for (const v of values) {   // calculate average
+        if ( v !== -1) {
+          sum += v;
+          count++;
+        }
+      }
+      return sum / count;
+    }
+
+    function start() {
+      if (interval) { clearInterval(interval); }
+      putMeasure();   // first measure
+      interval = setInterval(function() {
+        putMeasure();
+      }, timeout);
+    }
+
+    function stop() {
+       if (interval) { clearInterval(interval); }
+    }
+
+    return { start, stop, getValue } ;
+
+  };
+  
+  // factory function for watchdog ---------------------------------------
+  // draws red blinking dot when not watch is locked
+  
+  let createWatchdog = function() {
+  
+    const radius = 4;
+    const gap = 4;
+    const x = DISPLAY_SIZE - radius - gap;
+    const y = DISPLAY_SIZE - radius - gap;
+
+    let on = false;
+    let locked = false;
+    let visible = true;
+    let interval;
+
+    function init() {
+      interval = setInterval(updateState, 500); 
+    }
+  
+    function updateState() {
+      locked = Bangle.isLocked();
+      on = !on;
+      if (visible) { 
+        draw();
+      }
+    }
+  
+    function shutdown() {
+      clearInterval(interval);
+    }
+  
+    function draw() {
+    if (locked) {
+        drawDot('#000000');  // use black (gray is blinking)
+      }
+      else if (on) {
+        drawDot('#FF0000');  // red
+      }
+      else {
+        drawDot('#000000');  // black
+      } 
+    }
+  
+    function drawDot(color) {
+      g.setColor(color);
+      g.fillCircle(x, y, radius);
+    }
+
+    function setVisible(vis) {
+      visible = vis;
+    }
+  
+    return { init, shutdown, setVisible };
+
+  };
+
   // factory function for the app
   let createApp = function () {
 
@@ -581,6 +686,9 @@
     const DOUBLE_TOUCH_TIMEOUT = 500;
     let lastTouchTime = 0;
     let lastTouchArea = undefined;
+
+    let batteryManager;
+    let watchdog = createWatchdog();
 
     function onSwipe(lr, td) {
       // console.log("onSwipe() lr: " + lr + " td: " + td);
@@ -680,6 +788,7 @@
       currentView = viewMap[currentKey];
       lastCarouselKey = (currentKey <= MAX_CAROUSEL_KEY) ? currentKey : lastCarouselKey;
       currentView.enter();
+      watchdog.setVisible(key <= MAX_CAROUSEL_KEY);
     }
 
     // returns offset for step view
@@ -711,6 +820,11 @@
       require("Storage").writeJSON(FILE_NAME, data);
     }
 
+    // returns the battery charge
+    function getBattery() {
+      return batteryManager.getValue();
+    }
+
     // start app
     function start() {
       // console.log("app start()");
@@ -723,6 +837,11 @@
       Bangle.on("midnight", onMidnight);
       Bangle.on("lock", onLock);
 
+      // start battery manager
+      batteryManager = createBatteryManager();
+      batteryManager.start();
+
+      watchdog.init(); // start watchdog
       showView(1); // show hour/minute
     }
 
@@ -731,16 +850,19 @@
       // console.log("app shutdown()");
       if (currentView) { currentView.leave(); }
 
+      batteryManager.stop();
+
       // unregister event handler
       Bangle.removeListener("swipe", onSwipe);
       Bangle.removeListener("touch", onTouch);
       Bangle.removeListener("midnight", onMidnight);
       Bangle.removeListener("lock", onLock);
 
+      watchdog.shutdown();
       writeStepData();
     }
 
-    return { start, shutdown, showLastCarouselView, showView, getStepOffset };
+    return { start, shutdown, showLastCarouselView, showView, getStepOffset, getBattery };
 
   };
 

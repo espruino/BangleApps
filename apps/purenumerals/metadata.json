@@ -2,9 +2,9 @@
   "name": "Pure Numerals Clock",
   "shortName":"Pure Numerals",
   "icon": "app.png",
-  "version":"0.03",
+  "version":"0.04",
   "author":"OST Eastern Switzerland University of Applied Sciences",
-  "description": "A watch with a step counter and heart rate measurement. You can switch views by swiping left or right. Additionally, a flashlight function (double-tap the bottom left) and a battery indicator (tap the top right) are available.",
+  "description": "Pure Numerals is a minimalist digital watch face that displays easy-to-read time and date as two bold blocks of numbers in vivid colors on a deep black background. It also includes a step counter, heart rate measurement, a flashlight and a battery indicator.",
   "tags": "clock",
   "type": "clock",
   "supports": ["BANGLEJS2"],
@@ -13,5 +13,6 @@
   "storage": [
     {"name":"purenumerals.app.js","url":"app.js"},
     {"name":"purenumerals.img","url":"app-icon.js","evaluate":true}
-  ]
+  ],
+  "screenshots": [{"url":"screenshot.png"}]
 }
