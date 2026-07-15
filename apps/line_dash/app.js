@@ -9,8 +9,8 @@
  * navigation, one section per gauge (clock, steps, distance, battery, hrm,
  * baro/alt), the main render loop, and the power & lifecycle wiring at the end.
  *
- * @author pagnotta (Line Dash modifications)
- * @author Paul Spenke (original Line-Clock face)
+ * @author Patrick Heeren (pagnotta) - Line Dash modifications
+ * @author Paul Spenke (deepDiverPaul) - original Line-Clock face
  * @license MIT
  */
 
