@@ -1,0 +1,7 @@
+0.1: Initial release based on Line Clock
+0.2: Add health gauges (steps, distance, HR, battery)
+0.3: Dynamic HR colors, Fast Load support
+0.4: Fix HRM staying powered after unplugging charger, redraw on LCD power-on, cache 12/24h setting, Espruino speed optimizations, minor cleanups
+0.5: Date overlay on the clock face (swipe up/down), persistent day/trip views with reset confirmation on the distance screen, resume on the last used screen
+0.6: Barometer gauge: 300-degree 950-1050 hPa dial with 1 hPa subticks, sea-level calibration in the settings, exact-reading and altitude overlays (swipe up/down), sensor only powered while the screen is shown (one reading per minute while locked), horizontally centered circle values, battery gauge with fixed color zones instead of a dithered gradient
+0.7: Reworked navigation: tap now shows the info overlays (date, exact steps, exact day/trip distance, exact pressure/altitude) instead of advancing to the next gauge; vertical swipes are reserved for sub-views (day/trip on the distance gauge) and the trip reset. Live HR updates are now enabled by default. New altimeter sub-view on the barometer (swipe up), laid out like an aircraft altimeter: 0 at 12 o'clock, one dial revolution per 100 meters or feet (settings), hundreds in the circle, needle smoothed against sensor noise, exact altitude on tap
