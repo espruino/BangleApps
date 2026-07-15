@@ -359,6 +359,16 @@ function saveState() {
 const INFO_OVERLAY_MS = 4000;
 let infoOverlayTimeout;
 
+/**
+ * Hides a visible info overlay without redrawing.
+ */
+function dismissInfoOverlay() {
+  if (infoOverlayTimeout) {
+    clearTimeout(infoOverlayTimeout);
+    infoOverlayTimeout = undefined;
+  }
+}
+
 // Gap in pixels between the parts of a two-part pill line. The Vector font's
 // space glyph is a full character wide, which looks too spaced out.
 const PILL_PART_GAP = 6;
@@ -415,7 +425,7 @@ function drawOverlayPill(smallStr, bigStr, borderColor) {
 function armInfoOverlay() {
   infoOverlayTimeout = setTimeout(function() {
     infoOverlayTimeout = undefined;
-    if (Bangle.isLCDOn()) draw();
+    drawIfOn();
   }, INFO_OVERLAY_MS);
 }
 
@@ -425,13 +435,9 @@ function armInfoOverlay() {
  * is already visible.
  */
 function showInfoOverlay() {
-  if (infoOverlayTimeout) {
-    clearTimeout(infoOverlayTimeout);
-    infoOverlayTimeout = undefined;
-  } else {
-    armInfoOverlay();
-  }
-  if (Bangle.isLCDOn()) draw();
+  if (infoOverlayTimeout) dismissInfoOverlay();
+  else armInfoOverlay();
+  drawIfOn();
 }
 
 // ======================================================================
@@ -446,14 +452,8 @@ function showInfoOverlay() {
  */
 function changeScreen(dir) {
   // Leaving the screen dismisses a visible date overlay or reset confirmation
-  if (infoOverlayTimeout) {
-    clearTimeout(infoOverlayTimeout);
-    infoOverlayTimeout = undefined;
-  }
-  if (resetConfirmTimeout) {
-    clearTimeout(resetConfirmTimeout);
-    resetConfirmTimeout = undefined;
-  }
+  dismissInfoOverlay();
+  dismissResetConfirm();
   let oldScreen = screens[currentScreenIdx];
   if (dir === 1) { // Forward
     currentScreenIdx = (currentScreenIdx + 1) % screens.length;
@@ -481,7 +481,7 @@ function changeScreen(dir) {
   // The barometer starts quickly and cheaply, so no debounce is needed
   updateBaroPower();
 
-  if (Bangle.isLCDOn()) draw();
+  drawIfOn();
 }
 
 /**
@@ -503,21 +503,15 @@ function onSwipe(directionLR, directionUD) {
       if (wantAlt !== showAltView) {
         showAltView = wantAlt;
         // A visible overlay belongs to the view we are leaving
-        if (infoOverlayTimeout) {
-          clearTimeout(infoOverlayTimeout);
-          infoOverlayTimeout = undefined;
-        }
+        dismissInfoOverlay();
         saveState();
-        if (Bangle.isLCDOn()) draw();
+        drawIfOn();
       }
     } else if (screens[currentScreenIdx] === "distance") {
       // A visible exact-value pill belongs to the previous state of the
       // screen; any vertical swipe dismisses it
       let hadOverlay = !!infoOverlayTimeout;
-      if (hadOverlay) {
-        clearTimeout(infoOverlayTimeout);
-        infoOverlayTimeout = undefined;
-      }
+      dismissInfoOverlay();
       if (directionUD === -1) { // Swipe up
         if (tripDay !== todayKey()) {
           // No active trip: start one and show it (nothing to lose, no confirmation)
@@ -531,32 +525,30 @@ function onSwipe(directionLR, directionUD) {
           saveState();
         } else if (resetConfirmTimeout) {
           // Second swipe up while the popup is showing: reset confirmed
-          clearTimeout(resetConfirmTimeout);
-          resetConfirmTimeout = undefined;
+          dismissResetConfirm();
           tripBaselineSteps = getDaySteps();
           saveState();
         } else {
           // Swipe up in the trip view: ask for confirmation before resetting
           resetConfirmTimeout = setTimeout(function() {
             resetConfirmTimeout = undefined;
-            if (Bangle.isLCDOn()) draw();
+            drawIfOn();
           }, RESET_CONFIRM_MS);
         }
-        if (Bangle.isLCDOn()) draw();
+        drawIfOn();
       } else { // Swipe down
         if (resetConfirmTimeout) {
           // Dismiss the pending reset confirmation, stay in the trip view
-          clearTimeout(resetConfirmTimeout);
-          resetConfirmTimeout = undefined;
-          if (Bangle.isLCDOn()) draw();
+          dismissResetConfirm();
+          drawIfOn();
         } else if (showTripView) {
           // Back to the day total; the trip keeps running
           showTripView = false;
           saveState();
-          if (Bangle.isLCDOn()) draw();
+          drawIfOn();
         } else if (hadOverlay) {
           // Day view: the swipe only dismissed the pill
-          if (Bangle.isLCDOn()) draw();
+          drawIfOn();
         }
       }
     }
@@ -730,6 +722,16 @@ let showTripView = false;
 // While set, the trip-reset confirmation popup is showing on the distance screen
 const RESET_CONFIRM_MS = 3000;
 let resetConfirmTimeout;
+
+/**
+ * Hides a pending trip-reset confirmation without redrawing.
+ */
+function dismissResetConfirm() {
+  if (resetConfirmTimeout) {
+    clearTimeout(resetConfirmTimeout);
+    resetConfirmTimeout = undefined;
+  }
+}
 
 /**
  * Draws the distance gauge (day total or trip view, derived from steps and
@@ -912,7 +914,7 @@ function onHRM(hrm) {
       let now = Date.now();
       if (now - lastHrmDraw >= initialSettings.liveHrmInterval * 1000) {
         lastHrmDraw = now;
-        if (Bangle.isLCDOn()) draw();
+        drawIfOn();
       }
     }
   }
@@ -983,6 +985,9 @@ const baroCalib = initialSettings.baroCalib || 1;
 // reference. Altitude drifts ~8m per hPa of weather change since then.
 const baroRefQnh = initialSettings.baroRefQnh || 1013.25;
 
+// Feet per meter, for the altimeter's ft mode
+const FT_PER_M = 3.28084;
+
 /**
  * Powers the barometer continuously only while the baro screen is shown AND
  * the watch is unlocked. Keeping it measuring on a locked screen drained the
@@ -1023,6 +1028,19 @@ function updateAltSmooth() {
 }
 
 /**
+ * Stores a raw pressure reading, applying the sea-level calibration and
+ * feeding the altitude smoothing. Shared by the continuous sensor events
+ * and the one-shot polling while locked.
+ *
+ * @param {number} pressure - Raw pressure reading in hPa.
+ */
+function applyBaroReading(pressure) {
+  baroRawPressure = pressure;
+  baroPressure = pressure * baroCalib;
+  updateAltSmooth();
+}
+
+/**
  * Processes incoming barometer events while the barometer screen is active.
  * Redraws are throttled to one per 2 seconds.
  *
@@ -1030,13 +1048,11 @@ function updateAltSmooth() {
  */
 function onPressure(e) {
   if (screens[currentScreenIdx] === "baro" && e.pressure) {
-    baroRawPressure = e.pressure;
-    baroPressure = e.pressure * baroCalib;
-    updateAltSmooth();
+    applyBaroReading(e.pressure);
     let now = Date.now();
     if (now - lastBaroDraw >= 2000) {
       lastBaroDraw = now;
-      if (Bangle.isLCDOn()) draw();
+      drawIfOn();
     }
   }
 }
@@ -1059,10 +1075,8 @@ function pollBaroWhileLocked() {
   lastBaroPoll = now;
   Bangle.getPressure().then(d => {
     if (d && d.pressure) {
-      baroRawPressure = d.pressure;
-      baroPressure = d.pressure * baroCalib;
-      updateAltSmooth();
-      if (Bangle.isLCDOn()) draw();
+      applyBaroReading(d.pressure);
+      drawIfOn();
     }
   }).catch(() => {});
 }
@@ -1074,7 +1088,7 @@ function pollBaroWhileLocked() {
 function drawBaroOverlay() {
   if (showAltView) {
     let isFt = initialSettings.altUnit === "ft";
-    let exact = Math.round(getBaroAltitude() * (isFt ? 3.28084 : 1)) + (isFt ? "ft" : "m");
+    let exact = Math.round(getBaroAltitude() * (isFt ? FT_PER_M : 1)) + (isFt ? "ft" : "m");
     drawOverlayPill("ALTITUDE", baroRawPressure > 0 ? exact : "--", 0xFFE0);
   } else {
     drawOverlayPill("hPa", baroPressure > 0 ? baroPressure.toFixed(1) : "--", 0xFFE0);
@@ -1097,7 +1111,7 @@ function drawBaroGauge() {
     // below the sensor resolution (~0.5m).
     let hasReading = baroRawPressure > 0;
     let isFt = initialSettings.altUnit === "ft";
-    let unitScale = isFt ? 3.28084 : 1;
+    let unitScale = isFt ? FT_PER_M : 1;
     let alt = hasReading && baroAltSmooth !== undefined ? Math.max(0, baroAltSmooth * unitScale) : 0;
 
     setHourAngle((alt / 100) * 360);
@@ -1198,6 +1212,14 @@ function draw() {
   else if (screen === "baro") drawBaroGauge();
 }
 
+/**
+ * Redraws only when the display is on. Used by event handlers whose state
+ * change does not need to be painted while the screen is dark.
+ */
+function drawIfOn() {
+  if (Bangle.isLCDOn()) draw();
+}
+
 // ======================================================================
 // Power management & lifecycle
 // ======================================================================
@@ -1266,10 +1288,8 @@ Bangle.setUI({
     drawTimeout = undefined;
     if (hrmPowerTimeout) clearTimeout(hrmPowerTimeout);
     hrmPowerTimeout = undefined;
-    if (infoOverlayTimeout) clearTimeout(infoOverlayTimeout);
-    infoOverlayTimeout = undefined;
-    if (resetConfirmTimeout) clearTimeout(resetConfirmTimeout);
-    resetConfirmTimeout = undefined;
+    dismissInfoOverlay();
+    dismissResetConfirm();
   }
 });
 
