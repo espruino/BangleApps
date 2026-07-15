@@ -1,25 +1,22 @@
 /**
  * Line Dash - A swipeable analog dashboard for Bangle.js 2
- * 
+ *
  * Based on the minimalist design of Line Clock, this app extends the concept
  * into a suite of interactive gauges for steps, distance, battery, and heart rate.
- * 
+ *
+ * The file is organized into sections: settings & screen list, the shared
+ * dial engine and gauge renderer, state persistence, info overlays,
+ * navigation, one section per gauge (clock, steps, distance, battery, hrm,
+ * baro/alt), the main render loop, and the power & lifecycle wiring at the end.
+ *
  * @author pagnotta (Line Dash modifications)
  * @author Paul Spenke (original Line-Clock face)
  * @license MIT
  */
 
-// --- Global Rendering Constants ---
-const handWidth = 6;
-const hourRadius = 4;
-const hourWidth = 8;
-const hourLength = 40;
-const hourSLength = 20;
-const radius = 220;
-const lineOffset = 115;
-const hourOffset = 32;
-const numberOffset = 85;
-const numberSize = 22;
+// ======================================================================
+// Settings & screen list
+// ======================================================================
 
 const storage = require('Storage');
 const locale = require('locale');
@@ -59,38 +56,28 @@ if (initialSettings.showBattery) screens.push("battery");
 if (initialSettings.showBaro) screens.push("baro");
 let currentScreenIdx = 0;
 
-// Screen dimensions and center coordinates
-let gWidth  = g.getWidth(),  gCenterX = gWidth/2;
-let gHeight = g.getHeight(), gCenterY = gHeight/2;
-
-let currentTime = new Date();
-let currentHour = currentTime.getHours();
-let currentMinute = currentTime.getMinutes();
-
-let drawTimeout;
-
 // Read the global 12/24 hour system setting once at startup (defaults to 24h if missing)
 const is24h = (storage.readJSON('setting.json', 1) || {})["12hour"] !== true;
 
-// Lock icon image, created once to avoid re-allocating on every draw
-const imgLock = {
-  width : 16, height : 16, bpp : 1,
-  transparent : 0,
-  buffer : E.toArrayBuffer(atob("A8AH4A5wDDAYGBgYP/w//D/8Pnw+fD58Pnw//D/8P/w="))
-};
+// ======================================================================
+// Dial engine (rotating scale, needle, ticks, center circle)
+// ======================================================================
 
+// --- Global Rendering Constants ---
+const handWidth = 6;
+const hourRadius = 4;
+const hourWidth = 8;
+const hourLength = 40;
+const hourSLength = 20;
+const radius = 220;
+const lineOffset = 115;
+const hourOffset = 32;
+const numberOffset = 85;
+const numberSize = 22;
 
-
-/**
- * Retrieves the angle of the hour hand for the current time.
- *
- * @returns {number} The angle of the hour hand in degrees.
- */
-function getHourHandAngle() {
-  let hourHandAngle = 30 * currentHour;
-  hourHandAngle += 0.5 * currentMinute;
-  return hourHandAngle;
-}
+// Screen dimensions and center coordinates
+let gWidth  = g.getWidth(),  gCenterX = gWidth/2;
+let gHeight = g.getHeight(), gCenterY = gHeight/2;
 
 const DEG2RAD = Math.PI / 180;
 
@@ -110,7 +97,6 @@ function setHourAngle(angle) {
   rotCX = gCenterX - radius * Math.sin(r);
   rotCY = gCenterY + radius * Math.cos(r);
 }
-setHourAngle(getHourHandAngle());
 
 /**
  * Rotates a flat array of points ([x0,y0, x1,y1, ...]) around a given angle.
@@ -206,50 +192,6 @@ function hourNumber(a, label) {
 }
 
 /**
- * Draws a sharp polygon lightning bolt.
- * @param {number} x - Center X coordinate.
- * @param {number} y - Center Y coordinate.
- * @param {number} color - Color of the lightning bolt.
- */
-function drawLightning(x, y, color) {
-  g.setColor(color);
-  g.fillPoly([
-    x + 2, y - 6,
-    x - 4, y + 1,
-    x - 1, y + 1,
-    x - 3, y + 8,
-    x + 4, y - 1,
-    x + 1, y - 1
-  ]);
-}
-
-/**
- * Returns the battery zone color for a charge percentage. The zones use the
- * display's native 3-bit colors, so they render crisply without dithering:
- * red reserve below 15%, yellow warning band up to 30%, green above.
- *
- * @param {number} pct - Battery charge in percent.
- * @returns {number} 16-bit zone color.
- */
-function batteryZoneColor(pct) {
-  if (pct < 15) return 0xF800;
-  if (pct <= 30) return 0xFFE0;
-  return 0x07E0;
-}
-
-/**
- * Tick color callback for the battery gauge: colors the dial by the fixed
- * zones, like the reserve markings on a fuel gauge.
- *
- * @param {number} tickIdx - Main tick index (one per 10%).
- * @param {number} frac - Sub-tick position between this tick and the next.
- * @returns {number} 16-bit zone color.
- */
-function batteryTickColor(tickIdx, frac) {
-  return batteryZoneColor((tickIdx + frac) * 10);
-}
-
-/**
  * Draws the large central value in the middle of the gauge.
  *
  * @param {string|number} n - The value to display.
@@ -273,7 +215,7 @@ function drawNumber(n, color, label, iconFunc, textColor) {
   let effectiveLength = str.startsWith(":") ? str.length - 1 : str.length;
   if (effectiveLength > 2) fontSize -= (effectiveLength - 2) * 4;
   g.setFont("Vector", fontSize);
-  
+
   g.setColor(textColor || g.theme.fg);
   // The Vector font advance includes trailing spacing after the last glyph,
   // which shifts the visible text left of center; nudge it back right
@@ -284,39 +226,6 @@ function drawNumber(n, color, label, iconFunc, textColor) {
   } else if (iconFunc) {
     iconFunc(rotatedPoints[0], rotatedPoints[1] + 11, textColor || g.theme.fg);
   }
-}
-
-
-/**
- * Renders an hour tick, its number, and the decorative dots next to it.
- *
- * @param {number} rawH - The hour (0-23) to be drawn.
- */
-function drawHour(rawH) {
-  let displayH = rawH;
-
-  if (!is24h) {
-    while (displayH <= 0) displayH += 12;
-    while (displayH > 12) displayH -= 12;
-  } else {
-    while (displayH < 0) displayH += 24;
-    while (displayH >= 24) displayH -= 24;
-  }
-
-  let angleH = rawH;
-  while (angleH <= 0) angleH += 12;
-  while (angleH > 12) angleH -= 12;
-  let a = angleH * 30;
-
-  g.setColor(g.theme.fg);
-
-  g.fillPolyAA(rotatePoints(hourPoints, a, radius));
-  g.fillPolyAA(rotatePoints(hourSPoints, a + 15, radius));
-  hourNumber(a, String(displayH));
-  hourDot(a + 5);
-  hourDot(a + 10);
-  hourDot(a + 20);
-  hourDot(a + 25);
 }
 
 /**
@@ -369,114 +278,53 @@ function drawMetricTick(tickStr, a, spacingAngle, colorValOrFn, tickIdx, subInte
   }
 }
 
-/**
- * Schedules the next automatic redraw.
- * The timeout aligns with the start of the next minute.
- */
-function queueDraw() {
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = undefined;
-  // Don't schedule a timeout if the LCD is off - unless the watch is
-  // charging: the transflective display stays readable with the backlight
-  // out, and the battery dashboard must keep updating on the charger
-  if (!Bangle.isLCDOn() && !Bangle.isCharging()) return;
-  drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
-    draw();
-  }, 60000 - (Date.now() % 60000));
-}
+// ======================================================================
+// Gauge renderer
+// ======================================================================
 
 /**
- * Powers the barometer continuously only while the baro screen is shown AND
- * the watch is unlocked. Keeping it measuring on a locked screen drained the
- * battery overnight; while locked, draw() falls back to one cheap one-shot
- * reading per minute instead.
+ * Draws a generic interactive gauge on the dashboard.
+ *
+ * @param {Object} opt - Configuration object for the gauge.
+ * @param {number} opt.currentTick - The central tick index currently being pointed at.
+ * @param {number} opt.minTick - Minimum valid tick index (e.g. 0 for battery).
+ * @param {number} opt.maxTick - Maximum valid tick index (e.g. 10 for battery).
+ * @param {number} opt.tickRange - Number of ticks to draw left and right of the current tick.
+ * @param {number} opt.tickSpacing - The angle in degrees between each tick.
+ * @param {number} [opt.startAngle=210] - The starting angle in degrees for the 0th tick.
+ * @param {number} [opt.subIntervals=10] - Number of subdivisions between main ticks.
+ * @param {function} opt.getTickLabel - Function returning the label string for a given tick index.
+ * @param {function|number} opt.getTickColor - Color, or a function(tickIdx, frac) returning a color for the tick marks.
+ * @param {number} opt.handColor - The color of the main needle pointer.
+ * @param {string|number} opt.centerText - The text displayed inside the central circle.
+ * @param {number} [opt.centerColor] - Optional specific color for the central circle.
+ * @param {number} [opt.centerTextColor] - Optional specific color for the central text.
+ * @param {function} [opt.centerIcon] - Function returning an icon to display below the text.
+ * @param {number} [opt.tickLabelSize] - Optional font size for the tick labels.
  */
-function updateBaroPower() {
-  if (typeof Bangle.setBarometerPower !== 'function') return;
-  Bangle.setBarometerPower(screens[currentScreenIdx] === "baro" && !Bangle.isLocked() ? 1 : 0, "line_dash");
-}
-
-// State captured by draw(), used to skip redundant redraws: when the charge
-// handler wakes/unlocks the watch, the resulting lock/lcdPower events would
-// otherwise each repaint a screen that was just drawn.
-let lastDrawMs = 0;
-let lastDrawnLocked = false;
-
-/**
- * Triggers a redraw when the watch is locked/unlocked to immediately update the lock icon.
- * Also switches the barometer between continuous and once-a-minute mode.
- */
-function lockListenerBw() {
-  updateBaroPower();
-  // Only repaint if the lock state actually differs from what is on screen;
-  // re-arm the minute tick either way so the loop never dies here
-  if (Bangle.isLCDOn() && Bangle.isLocked() !== lastDrawnLocked) draw();
-  else queueDraw();
-}
-Bangle.on('lock', lockListenerBw);
-
-/**
- * Redraws when the LCD is powered back on, so the display is not stale.
- * @param {boolean} on - True if the LCD was just turned on.
- */
-function lcdListener(on) {
-  if (!on) return;
-  // A screen drawn moments ago cannot be stale; skip the duplicate repaint
-  // (happens when the charge handler wakes the LCD right after drawing),
-  // but keep the minute tick armed in that case
-  if (Date.now() - lastDrawMs > 500) draw();
-  else queueDraw();
-}
-Bangle.on('lcdPower', lcdListener);
-
-let hrmPowerTimeout;
-
-/**
- * Changes the currently displayed dashboard screen.
- * Handles powering the HRM sensor on/off when entering/leaving the HRM screen.
- * 
- * @param {number} dir - Direction to switch (1 for forward, -1 for backward).
- */
-function changeScreen(dir) {
-  // Leaving the screen dismisses a visible date overlay or reset confirmation
-  if (infoOverlayTimeout) {
-    clearTimeout(infoOverlayTimeout);
-    infoOverlayTimeout = undefined;
-  }
-  if (resetConfirmTimeout) {
-    clearTimeout(resetConfirmTimeout);
-    resetConfirmTimeout = undefined;
-  }
-  let oldScreen = screens[currentScreenIdx];
-  if (dir === 1) { // Forward
-    currentScreenIdx = (currentScreenIdx + 1) % screens.length;
-  } else if (dir === -1) { // Backward
-    currentScreenIdx = (currentScreenIdx - 1 + screens.length) % screens.length;
-  }
-  let newScreen = screens[currentScreenIdx];
-
-  if (initialSettings.liveHrm) {
-    if (hrmPowerTimeout) {
-      clearTimeout(hrmPowerTimeout);
-      hrmPowerTimeout = undefined;
-    }
-
-    if (oldScreen !== "hrm" && newScreen === "hrm") {
-      hrmPowerTimeout = setTimeout(() => {
-        Bangle.setHRMPower(1, "line_dash");
-        hrmPowerTimeout = undefined;
-      }, 500);
-    } else if (oldScreen === "hrm" && newScreen !== "hrm") {
-      Bangle.setHRMPower(0, "line_dash");
+function drawDashboardGauge(opt) {
+  let startAngle = opt.startAngle !== undefined ? opt.startAngle : 210;
+  for (let i = opt.currentTick - opt.tickRange; i <= opt.currentTick + opt.tickRange; i++) {
+    if (i >= opt.minTick && i <= opt.maxTick) {
+      drawMetricTick(
+        opt.getTickLabel(i),
+        startAngle + i * opt.tickSpacing,
+        opt.tickSpacing,
+        opt.getTickColor,
+        i,
+        opt.subIntervals || 10,
+        i === opt.maxTick,
+        opt.tickLabelSize
+      );
     }
   }
-
-  // The barometer starts quickly and cheaply, so no debounce is needed
-  updateBaroPower();
-
-  if (Bangle.isLCDOn()) draw();
+  drawHand(opt.handColor);
+  drawNumber(opt.centerText, opt.centerColor || opt.handColor, undefined, opt.centerIcon, opt.centerTextColor);
 }
+
+// ======================================================================
+// State persistence (trip, sub-views, active screen)
+// ======================================================================
 
 const STATE_FILE = "line_dash.state.json";
 
@@ -488,36 +336,6 @@ function todayKey() {
   const d = new Date();
   return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
 }
-
-// Trip state for the distance screen. A trip is a step-count baseline taken
-// when the trip is started; the view toggles between day total and trip
-// distance without touching the baseline. Persisted so it survives app
-// reloads; a trip is only valid on the day it was started.
-let tripDay = "";
-let tripBaselineSteps = 0;
-let showTripView = false;
-
-// Baro sub-view: false = pressure dial, true = altimeter. Persisted like the
-// trip view so it survives app reloads.
-let showAltView = false;
-
-let savedState = storage.readJSON(STATE_FILE, 1) || {};
-if (savedState.day === todayKey()) {
-  tripDay = savedState.day;
-  tripBaselineSteps = savedState.baseline || 0;
-  showTripView = !!savedState.view;
-}
-showAltView = !!savedState.altView;
-
-// Resume on the screen that was active when the app was last unloaded
-// (e.g. when a message fast-loaded over the clock). Falls back to the
-// clock if that screen has been disabled in the settings since.
-let savedScreenIdx = screens.indexOf(savedState.screen);
-if (savedScreenIdx >= 0) currentScreenIdx = savedScreenIdx;
-if (initialSettings.liveHrm && screens[currentScreenIdx] === "hrm") {
-  Bangle.setHRMPower(1, "line_dash");
-}
-updateBaroPower();
 
 /**
  * Persists the app state (trip counter and active screen). Only called from
@@ -534,18 +352,9 @@ function saveState() {
   });
 }
 
-/**
- * Returns today's step count from the health tracking, or 0 if unavailable.
- * @returns {number} Steps taken today.
- */
-function getDaySteps() {
-  let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
-  return health ? health.steps : 0;
-}
-
-// While set, the trip-reset confirmation popup is showing on the distance screen
-const RESET_CONFIRM_MS = 3000;
-let resetConfirmTimeout;
+// ======================================================================
+// Info overlays (centered pills)
+// ======================================================================
 
 const INFO_OVERLAY_MS = 4000;
 let infoOverlayTimeout;
@@ -601,43 +410,6 @@ function drawOverlayPill(smallStr, bigStr, borderColor) {
 }
 
 /**
- * Draws the temporary date overlay (weekday + day/month) in the center of the clock face.
- * Uses the locale module so weekday and month follow the system language.
- */
-function drawDateOverlay() {
-  const d = new Date();
-  const day = d.getDate();
-  drawOverlayPill(
-    locale.dow(d, 0).toUpperCase(),
-    [(day < 10 ? "0" : "") + day, locale.month(d, 1).toUpperCase()],
-    0xF800
-  );
-}
-
-/**
- * Returns the altitude in meters derived from the raw pressure and the
- * sea-level reference entered at calibration (international barometric formula).
- * @returns {number} Altitude in meters (unrounded).
- */
-function getBaroAltitude() {
-  return 44330 * (1 - Math.pow(baroRawPressure / baroRefQnh, 0.190295));
-}
-
-/**
- * Draws the temporary overlay on the barometer screen: the exact sea-level
- * reading on the pressure dial, or the exact altitude on the altimeter view.
- */
-function drawBaroOverlay() {
-  if (showAltView) {
-    let isFt = initialSettings.altUnit === "ft";
-    let exact = Math.round(getBaroAltitude() * (isFt ? 3.28084 : 1)) + (isFt ? "ft" : "m");
-    drawOverlayPill("ALTITUDE", baroRawPressure > 0 ? exact : "--", 0xFFE0);
-  } else {
-    drawOverlayPill("hPa", baroPressure > 0 ? baroPressure.toFixed(1) : "--", 0xFFE0);
-  }
-}
-
-/**
  * Arms the auto-hide timeout for an info overlay.
  */
 function armInfoOverlay() {
@@ -659,6 +431,56 @@ function showInfoOverlay() {
   } else {
     armInfoOverlay();
   }
+  if (Bangle.isLCDOn()) draw();
+}
+
+// ======================================================================
+// Navigation (swipe / tap)
+// ======================================================================
+
+/**
+ * Changes the currently displayed dashboard screen.
+ * Handles powering the HRM sensor on/off when entering/leaving the HRM screen.
+ *
+ * @param {number} dir - Direction to switch (1 for forward, -1 for backward).
+ */
+function changeScreen(dir) {
+  // Leaving the screen dismisses a visible date overlay or reset confirmation
+  if (infoOverlayTimeout) {
+    clearTimeout(infoOverlayTimeout);
+    infoOverlayTimeout = undefined;
+  }
+  if (resetConfirmTimeout) {
+    clearTimeout(resetConfirmTimeout);
+    resetConfirmTimeout = undefined;
+  }
+  let oldScreen = screens[currentScreenIdx];
+  if (dir === 1) { // Forward
+    currentScreenIdx = (currentScreenIdx + 1) % screens.length;
+  } else if (dir === -1) { // Backward
+    currentScreenIdx = (currentScreenIdx - 1 + screens.length) % screens.length;
+  }
+  let newScreen = screens[currentScreenIdx];
+
+  if (initialSettings.liveHrm) {
+    if (hrmPowerTimeout) {
+      clearTimeout(hrmPowerTimeout);
+      hrmPowerTimeout = undefined;
+    }
+
+    if (oldScreen !== "hrm" && newScreen === "hrm") {
+      hrmPowerTimeout = setTimeout(() => {
+        Bangle.setHRMPower(1, "line_dash");
+        hrmPowerTimeout = undefined;
+      }, 500);
+    } else if (oldScreen === "hrm" && newScreen !== "hrm") {
+      Bangle.setHRMPower(0, "line_dash");
+    }
+  }
+
+  // The barometer starts quickly and cheaply, so no debounce is needed
+  updateBaroPower();
+
   if (Bangle.isLCDOn()) draw();
 }
 
@@ -765,8 +587,317 @@ function onTouch(button, xy) {
 }
 Bangle.on('touch', onTouch);
 
+// ======================================================================
+// Gauge: Clock
+// ======================================================================
+
+let currentTime = new Date();
+let currentHour = currentTime.getHours();
+let currentMinute = currentTime.getMinutes();
+
+/**
+ * Retrieves the angle of the hour hand for the current time.
+ *
+ * @returns {number} The angle of the hour hand in degrees.
+ */
+function getHourHandAngle() {
+  let hourHandAngle = 30 * currentHour;
+  hourHandAngle += 0.5 * currentMinute;
+  return hourHandAngle;
+}
+setHourAngle(getHourHandAngle());
+
+/**
+ * Renders an hour tick, its number, and the decorative dots next to it.
+ *
+ * @param {number} rawH - The hour (0-23) to be drawn.
+ */
+function drawHour(rawH) {
+  let displayH = rawH;
+
+  if (!is24h) {
+    while (displayH <= 0) displayH += 12;
+    while (displayH > 12) displayH -= 12;
+  } else {
+    while (displayH < 0) displayH += 24;
+    while (displayH >= 24) displayH -= 24;
+  }
+
+  let angleH = rawH;
+  while (angleH <= 0) angleH += 12;
+  while (angleH > 12) angleH -= 12;
+  let a = angleH * 30;
+
+  g.setColor(g.theme.fg);
+
+  g.fillPolyAA(rotatePoints(hourPoints, a, radius));
+  g.fillPolyAA(rotatePoints(hourSPoints, a + 15, radius));
+  hourNumber(a, String(displayH));
+  hourDot(a + 5);
+  hourDot(a + 10);
+  hourDot(a + 20);
+  hourDot(a + 25);
+}
+
+/**
+ * Draws the temporary date overlay (weekday + day/month) in the center of the clock face.
+ * Uses the locale module so weekday and month follow the system language.
+ */
+function drawDateOverlay() {
+  const d = new Date();
+  const day = d.getDate();
+  drawOverlayPill(
+    locale.dow(d, 0).toUpperCase(),
+    [(day < 10 ? "0" : "") + day, locale.month(d, 1).toUpperCase()],
+    0xF800
+  );
+}
+
+/**
+ * Draws the analog clock face: the surrounding hours, the hand for the
+ * current time, the digital minute in the center and the date overlay.
+ */
+function drawClockGauge() {
+  currentTime = new Date();
+  currentHour = currentTime.getHours();
+  currentMinute = currentTime.getMinutes();
+
+  setHourAngle(getHourHandAngle());
+
+  drawHour(currentHour);
+  drawHour(currentHour-1);
+  drawHour(currentHour+1);
+
+  drawHand(0xF800);
+
+  if(initialSettings.showMinute){
+    let minStr = currentMinute < 10 ? "0" + currentMinute : currentMinute;
+    drawNumber(":" + minStr, 0xF800);
+  }
+
+  if (infoOverlayTimeout) drawDateOverlay();
+}
+
+// ======================================================================
+// Gauge: Steps
+// ======================================================================
+
+/**
+ * Returns today's step count from the health tracking, or 0 if unavailable.
+ * @returns {number} Steps taken today.
+ */
+function getDaySteps() {
+  let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("day") : null;
+  return health ? health.steps : 0;
+}
+
+/**
+ * Draws the daily step gauge (one main tick per 1000 steps, hundreds in the
+ * circle) and the exact-count overlay.
+ */
+function drawStepsGauge() {
+  let steps = getDaySteps();
+
+  setHourAngle(210 + (steps / 12000) * 360);
+
+  drawDashboardGauge({
+    currentTick: Math.floor(steps / 1000),
+    minTick: 0,
+    maxTick: Infinity,
+    tickRange: 1,
+    tickSpacing: 30,
+    getTickLabel: i => i + "k",
+    getTickColor: 0x07E0,
+    handColor: 0x07E0,
+    centerText: "." + Math.floor((steps % 1000) / 100)
+  });
+
+  if (infoOverlayTimeout) drawOverlayPill("STEPS", String(steps), 0x07E0);
+}
+
+// ======================================================================
+// Gauge: Distance (day total and trip meter)
+// ======================================================================
+
+// Trip state for the distance screen. A trip is a step-count baseline taken
+// when the trip is started; the view toggles between day total and trip
+// distance without touching the baseline. Persisted so it survives app
+// reloads; a trip is only valid on the day it was started.
+let tripDay = "";
+let tripBaselineSteps = 0;
+let showTripView = false;
+
+// While set, the trip-reset confirmation popup is showing on the distance screen
+const RESET_CONFIRM_MS = 3000;
+let resetConfirmTimeout;
+
+/**
+ * Draws the distance gauge (day total or trip view, derived from steps and
+ * stride length), the TRIP indicator, the RESET? popup and the exact-distance
+ * overlay.
+ */
+function drawDistanceGauge() {
+  let steps = getDaySteps();
+
+  // A trip expires at midnight: the daily step counter it is based on has reset
+  if (tripDay && tripDay !== todayKey()) {
+    tripDay = "";
+    tripBaselineSteps = 0;
+    showTripView = false;
+    saveState();
+  }
+
+  let shownSteps = showTripView ? Math.max(0, steps - tripBaselineSteps) : steps;
+  let distanceM = shownSteps * initialSettings.strideLength;
+
+  let isImperial = initialSettings.distanceUnit === "mi";
+  let unitScale = isImperial ? 1609.34 : 1000;
+  let unitSuffix = isImperial ? "mi" : "km";
+  let distanceUnits = distanceM / unitScale;
+
+  setHourAngle(210 + (distanceUnits / 12) * 360);
+
+  drawDashboardGauge({
+    currentTick: Math.floor(distanceUnits),
+    minTick: 0,
+    maxTick: Infinity,
+    tickRange: 1,
+    tickSpacing: 30,
+    getTickLabel: i => i + unitSuffix,
+    getTickColor: 0x07FF,
+    handColor: 0x07FF,
+    centerText: "." + Math.floor((distanceUnits % 1) * 10)
+  });
+
+  if (showTripView) {
+    g.setFontAlign(0, 0);
+    g.setFont("Vector", 20);
+    g.setColor(0x07FF);
+    g.drawString("TRIP", gCenterX, 12);
+  }
+
+  if (resetConfirmTimeout) drawOverlayPill("TRIP", "RESET?", 0x07FF);
+  // Exact distance of whichever view is showing (day total or trip)
+  if (infoOverlayTimeout) drawOverlayPill(showTripView ? "TRIP" : "DISTANCE", distanceUnits.toFixed(2) + unitSuffix, 0x07FF);
+}
+
+// ======================================================================
+// Gauge: Battery
+// ======================================================================
+
+/**
+ * Draws a sharp polygon lightning bolt.
+ * @param {number} x - Center X coordinate.
+ * @param {number} y - Center Y coordinate.
+ * @param {number} color - Color of the lightning bolt.
+ */
+function drawLightning(x, y, color) {
+  g.setColor(color);
+  g.fillPoly([
+    x + 2, y - 6,
+    x - 4, y + 1,
+    x - 1, y + 1,
+    x - 3, y + 8,
+    x + 4, y - 1,
+    x + 1, y - 1
+  ]);
+}
+
+/**
+ * Returns the battery zone color for a charge percentage. The zones use the
+ * display's native 3-bit colors, so they render crisply without dithering:
+ * red reserve below 15%, yellow warning band up to 30%, green above.
+ *
+ * @param {number} pct - Battery charge in percent.
+ * @returns {number} 16-bit zone color.
+ */
+function batteryZoneColor(pct) {
+  if (pct < 15) return 0xF800;
+  if (pct <= 30) return 0xFFE0;
+  return 0x07E0;
+}
+
+/**
+ * Tick color callback for the battery gauge: colors the dial by the fixed
+ * zones, like the reserve markings on a fuel gauge.
+ *
+ * @param {number} tickIdx - Main tick index (one per 10%).
+ * @param {number} frac - Sub-tick position between this tick and the next.
+ * @returns {number} 16-bit zone color.
+ */
+function batteryTickColor(tickIdx, frac) {
+  return batteryZoneColor((tickIdx + frac) * 10);
+}
+
+/**
+ * Handles charging state changes, switching to the battery dashboard when plugged in.
+ * @param {boolean} charging - True if the watch is now charging.
+ */
+function onCharge(charging) {
+  // Cancel a pending HRM power-on so it cannot fire after we leave the HRM screen
+  if (hrmPowerTimeout) {
+    clearTimeout(hrmPowerTimeout);
+    hrmPowerTimeout = undefined;
+  }
+  let oldScreen = screens[currentScreenIdx];
+  if (charging) {
+    let batteryIdx = screens.indexOf("battery");
+    if (batteryIdx !== -1) currentScreenIdx = batteryIdx;
+  } else {
+    currentScreenIdx = screens.indexOf("clock");
+  }
+  if (initialSettings.liveHrm && oldScreen === "hrm" && screens[currentScreenIdx] !== "hrm") {
+    Bangle.setHRMPower(0, "line_dash");
+  }
+  updateBaroPower();
+  draw(); // draw() itself skips rendering when the display is off and not charging
+  // Wake the backlight only after the battery dashboard is fully drawn, so
+  // the light reveals the finished screen. It dims again after the normal
+  // system backlight timeout; the watch stays locked.
+  if (charging && typeof Bangle.setLCDPower === 'function') Bangle.setLCDPower(1);
+}
+Bangle.on('charging', onCharge);
+
+/**
+ * Draws the battery gauge: a 180-degree fuel-gauge dial with fixed color
+ * zones and a charging indicator in the center circle.
+ */
+function drawBatteryGauge() {
+  let battery = E.getBattery();
+
+  let isCharging = Bangle.isCharging();
+
+  let color = batteryZoneColor(battery);
+
+  setHourAngle(270 + (battery / 100) * 180);
+
+  drawDashboardGauge({
+    currentTick: Math.floor(battery / 10),
+    minTick: 0,
+    maxTick: 10,
+    tickRange: 5,
+    startAngle: 270,
+    tickSpacing: 18,
+    subIntervals: 5,
+    tickLabelSize: 28,
+    getTickLabel: i => (i * 10) + "%",
+    // Fixed fuel-gauge zones on the dial; hand and circle take the current one
+    getTickColor: batteryTickColor,
+    handColor: color,
+    centerText: battery,
+    centerTextColor: isCharging ? 0x07E0 : undefined,
+    centerIcon: isCharging ? drawLightning : undefined
+  });
+}
+
+// ======================================================================
+// Gauge: Heart rate
+// ======================================================================
+
 let liveBpm = 0;
 let lastHrmDraw = 0;
+// Debounce for powering the HRM on when swiping onto its screen
+let hrmPowerTimeout;
 
 /**
  * Processes incoming Heart Rate Monitor events.
@@ -788,6 +919,60 @@ function onHRM(hrm) {
 }
 Bangle.on('HRM', onHRM);
 
+/**
+ * Draws the heart-rate gauge: a 40-240 bpm dial colored by the HR zones
+ * derived from the configured age decade, with the zone name in the circle.
+ */
+function drawHrmGauge() {
+  let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("last") : null;
+  let bpm = initialSettings.liveHrm && liveBpm > 0 ? liveBpm : (health ? (health.bpm || 0) : 0);
+
+  let maxHr = 220 - initialSettings.hrDecade;
+  if (bpm < 40) bpm = 40;
+  if (bpm > 240) bpm = 240;
+
+  let z1 = maxHr * 0.5, z2 = maxHr * 0.6, z3 = maxHr * 0.7, z4 = maxHr * 0.8, z5 = maxHr * 0.9;
+
+  let zone = "REST", color = 0x07E0;
+  if (bpm < z1)      { zone = "REST"; color = 0x07E0; }
+  else if (bpm < z2) { zone = "Z1"; color = 0x07FF; }
+  else if (bpm < z3) { zone = "Z2"; color = 0xFFE0; }
+  else if (bpm < z4) { zone = "Z3"; color = 0xFD20; }
+  else if (bpm < z5) { zone = "Z4"; color = 0xFA80; }
+  else               { zone = "Z5"; color = 0xF800; }
+
+  setHourAngle(210 + ((bpm - 40) / 200) * 300);
+
+  drawDashboardGauge({
+    currentTick: Math.floor((bpm - 40) / 10),
+    minTick: 0,
+    maxTick: 20,
+    tickRange: 3,
+    tickSpacing: 15,
+    subIntervals: 4,
+    getTickLabel: i => String(40 + i * 10),
+    getTickColor: function(i, frac) {
+      let exactBpm = 40 + i * 10 + frac * 10;
+      if (exactBpm < z1) return 0x07E0;
+      if (exactBpm < z2) return 0x07FF;
+      if (exactBpm < z3) return 0xFFE0;
+      if (exactBpm < z4) return 0xFD20;
+      if (exactBpm < z5) return 0xFA80;
+      return 0xF800;
+    },
+    handColor: color,
+    centerText: zone
+  });
+}
+
+// ======================================================================
+// Gauge: Barometer / Altimeter
+// ======================================================================
+
+// Baro sub-view: false = pressure dial, true = altimeter. Persisted like the
+// trip view so it survives app reloads.
+let showAltView = false;
+
 let baroPressure = 0;
 let baroRawPressure = 0;
 let lastBaroDraw = 0;
@@ -797,6 +982,26 @@ const baroCalib = initialSettings.baroCalib || 1;
 // Sea-level pressure entered at calibration time, used as the altimeter
 // reference. Altitude drifts ~8m per hPa of weather change since then.
 const baroRefQnh = initialSettings.baroRefQnh || 1013.25;
+
+/**
+ * Powers the barometer continuously only while the baro screen is shown AND
+ * the watch is unlocked. Keeping it measuring on a locked screen drained the
+ * battery overnight; while locked, draw() falls back to one cheap one-shot
+ * reading per minute instead.
+ */
+function updateBaroPower() {
+  if (typeof Bangle.setBarometerPower !== 'function') return;
+  Bangle.setBarometerPower(screens[currentScreenIdx] === "baro" && !Bangle.isLocked() ? 1 : 0, "line_dash");
+}
+
+/**
+ * Returns the altitude in meters derived from the raw pressure and the
+ * sea-level reference entered at calibration (international barometric formula).
+ * @returns {number} Altitude in meters (unrounded).
+ */
+function getBaroAltitude() {
+  return 44330 * (1 - Math.pow(baroRawPressure / baroRefQnh, 0.190295));
+}
 
 // Smoothed altitude in meters driving the altimeter needle. The sensor noise
 // (~0.5m) would make an unfiltered needle flutter on the fine dial; the pill
@@ -863,33 +1068,185 @@ function pollBaroWhileLocked() {
 }
 
 /**
- * Handles charging state changes, switching to the battery dashboard when plugged in.
- * @param {boolean} charging - True if the watch is now charging.
+ * Draws the temporary overlay on the barometer screen: the exact sea-level
+ * reading on the pressure dial, or the exact altitude on the altimeter view.
  */
-function onCharge(charging) {
-  // Cancel a pending HRM power-on so it cannot fire after we leave the HRM screen
-  if (hrmPowerTimeout) {
-    clearTimeout(hrmPowerTimeout);
-    hrmPowerTimeout = undefined;
-  }
-  let oldScreen = screens[currentScreenIdx];
-  if (charging) {
-    let batteryIdx = screens.indexOf("battery");
-    if (batteryIdx !== -1) currentScreenIdx = batteryIdx;
+function drawBaroOverlay() {
+  if (showAltView) {
+    let isFt = initialSettings.altUnit === "ft";
+    let exact = Math.round(getBaroAltitude() * (isFt ? 3.28084 : 1)) + (isFt ? "ft" : "m");
+    drawOverlayPill("ALTITUDE", baroRawPressure > 0 ? exact : "--", 0xFFE0);
   } else {
-    currentScreenIdx = screens.indexOf("clock");
+    drawOverlayPill("hPa", baroPressure > 0 ? baroPressure.toFixed(1) : "--", 0xFFE0);
   }
-  if (initialSettings.liveHrm && oldScreen === "hrm" && screens[currentScreenIdx] !== "hrm") {
-    Bangle.setHRMPower(0, "line_dash");
-  }
-  updateBaroPower();
-  draw(); // draw() itself skips rendering when the display is off and not charging
-  // Wake the backlight only after the battery dashboard is fully drawn, so
-  // the light reveals the finished screen. It dims again after the normal
-  // system backlight timeout; the watch stays locked.
-  if (charging && typeof Bangle.setLCDPower === 'function') Bangle.setLCDPower(1);
 }
-Bangle.on('charging', onCharge);
+
+/**
+ * Draws the barometer screen: the 950-1050 hPa pressure dial, or the
+ * aircraft-style altimeter sub-view, plus the exact-value overlay.
+ */
+function drawBaroGauge() {
+  // While locked, refresh the reading once a minute instead of continuously
+  if (Bangle.isLocked()) pollBaroWhileLocked();
+
+  if (showAltView) {
+    // Altimeter sub-view, laid out like an aircraft altimeter: 0 sits at
+    // 12 o'clock and one full revolution of the dial covers 100 units,
+    // wrapping like the real instrument. The circle shows the hundreds.
+    // In meters the subticks are 1m; in feet they are 2ft, since 1ft is
+    // below the sensor resolution (~0.5m).
+    let hasReading = baroRawPressure > 0;
+    let isFt = initialSettings.altUnit === "ft";
+    let unitScale = isFt ? 3.28084 : 1;
+    let alt = hasReading && baroAltSmooth !== undefined ? Math.max(0, baroAltSmooth * unitScale) : 0;
+
+    setHourAngle((alt / 100) * 360);
+
+    drawDashboardGauge({
+      currentTick: Math.floor(alt / 10),
+      minTick: -Infinity,
+      maxTick: Infinity,
+      tickRange: 1,
+      startAngle: 0,
+      tickSpacing: 36,
+      subIntervals: isFt ? 5 : 10,
+      // The unit on the labels is what tells this view apart from the
+      // pressure dial, so no extra indicator is needed
+      getTickLabel: i => (((i % 10) + 10) % 10 * 10) + (isFt ? "ft" : "m"),
+      getTickColor: 0xFFE0,
+      handColor: 0xFFE0,
+      centerText: hasReading ? String(Math.floor(alt / 100)) : "--"
+    });
+  } else {
+    // Sea-level air pressure typically ranges 950-1050 hPa; clamp to the scale
+    let p = baroPressure;
+    let hasReading = p > 0;
+    if (!hasReading) p = 1000;
+    if (p < 950) p = 950;
+    if (p > 1050) p = 1050;
+
+    setHourAngle(210 + ((p - 950) / 100) * 300);
+
+    // The dial gives the hundreds; the circle shows the last two digits,
+    // truncated like the steps/distance decimals
+    let v = Math.floor(p) % 100;
+    let centerText = !hasReading ? "--" : (v < 10 ? "0" + v : String(v));
+
+    drawDashboardGauge({
+      currentTick: Math.floor((p - 950) / 10),
+      minTick: 0,
+      maxTick: 10,
+      tickRange: 1,
+      tickSpacing: 30,
+      subIntervals: 10,
+      tickLabelSize: 24,
+      getTickLabel: i => String(950 + i * 10),
+      getTickColor: 0xFFE0,
+      handColor: 0xFFE0,
+      centerText: centerText
+    });
+  }
+
+  if (infoOverlayTimeout) drawBaroOverlay();
+}
+
+// ======================================================================
+// Main render loop
+// ======================================================================
+
+// Lock icon image, created once to avoid re-allocating on every draw
+const imgLock = {
+  width : 16, height : 16, bpp : 1,
+  transparent : 0,
+  buffer : E.toArrayBuffer(atob("A8AH4A5wDDAYGBgYP/w//D/8Pnw+fD58Pnw//D/8P/w="))
+};
+
+// State captured by draw(), used to skip redundant redraws: when the charge
+// handler wakes/unlocks the watch, the resulting lock/lcdPower events would
+// otherwise each repaint a screen that was just drawn.
+let lastDrawMs = 0;
+let lastDrawnLocked = false;
+
+/**
+ * Main render loop. Clears the screen and draws the currently active dashboard screen.
+ */
+function draw() {
+  queueDraw();
+  // Do not render if the screen is off - except on the charger, where the
+  // transflective display stays readable and must show fresh values
+  if (!Bangle.isLCDOn() && !Bangle.isCharging()) return;
+
+  lastDrawMs = Date.now();
+  lastDrawnLocked = Bangle.isLocked();
+
+  g.setBgColor(g.theme.bg);
+  g.clear();
+  g.setFontAlign(0, 0);
+
+  if(initialSettings.showLock && Bangle.isLocked()){
+    g.setColor(g.theme.fg);
+    g.drawImage(imgLock, gWidth-16, 2);
+  }
+
+  let screen = screens[currentScreenIdx];
+
+  if (screen === "clock") drawClockGauge();
+  else if (screen === "steps") drawStepsGauge();
+  else if (screen === "distance") drawDistanceGauge();
+  else if (screen === "battery") drawBatteryGauge();
+  else if (screen === "hrm") drawHrmGauge();
+  else if (screen === "baro") drawBaroGauge();
+}
+
+// ======================================================================
+// Power management & lifecycle
+// ======================================================================
+
+let drawTimeout;
+
+/**
+ * Schedules the next automatic redraw.
+ * The timeout aligns with the start of the next minute.
+ */
+function queueDraw() {
+  if (drawTimeout) clearTimeout(drawTimeout);
+  drawTimeout = undefined;
+  // Don't schedule a timeout if the LCD is off - unless the watch is
+  // charging: the transflective display stays readable with the backlight
+  // out, and the battery dashboard must keep updating on the charger
+  if (!Bangle.isLCDOn() && !Bangle.isCharging()) return;
+  drawTimeout = setTimeout(function() {
+    drawTimeout = undefined;
+    draw();
+  }, 60000 - (Date.now() % 60000));
+}
+
+/**
+ * Triggers a redraw when the watch is locked/unlocked to immediately update the lock icon.
+ * Also switches the barometer between continuous and once-a-minute mode.
+ */
+function lockListenerBw() {
+  updateBaroPower();
+  // Only repaint if the lock state actually differs from what is on screen;
+  // re-arm the minute tick either way so the loop never dies here
+  if (Bangle.isLCDOn() && Bangle.isLocked() !== lastDrawnLocked) draw();
+  else queueDraw();
+}
+Bangle.on('lock', lockListenerBw);
+
+/**
+ * Redraws when the LCD is powered back on, so the display is not stale.
+ * @param {boolean} on - True if the LCD was just turned on.
+ */
+function lcdListener(on) {
+  if (!on) return;
+  // A screen drawn moments ago cannot be stale; skip the duplicate repaint
+  // (happens when the charge handler wakes the LCD right after drawing),
+  // but keep the minute tick armed in that case
+  if (Date.now() - lastDrawMs > 500) draw();
+  else queueDraw();
+}
+Bangle.on('lcdPower', lcdListener);
 
 // Register the app UI mode and cleanup function for when the app is exited
 Bangle.setUI({
@@ -916,279 +1273,24 @@ Bangle.setUI({
   }
 });
 
-/**
- * Draws a generic interactive gauge on the dashboard.
- * 
- * @param {Object} opt - Configuration object for the gauge.
- * @param {number} opt.currentTick - The central tick index currently being pointed at.
- * @param {number} opt.minTick - Minimum valid tick index (e.g. 0 for battery).
- * @param {number} opt.maxTick - Maximum valid tick index (e.g. 10 for battery).
- * @param {number} opt.tickRange - Number of ticks to draw left and right of the current tick.
- * @param {number} opt.tickSpacing - The angle in degrees between each tick.
- * @param {number} [opt.startAngle=210] - The starting angle in degrees for the 0th tick.
- * @param {number} [opt.subIntervals=10] - Number of subdivisions between main ticks.
- * @param {function} opt.getTickLabel - Function returning the label string for a given tick index.
- * @param {function|number} opt.getTickColor - Color, or a function(tickIdx, frac) returning a color for the tick marks.
- * @param {number} opt.handColor - The color of the main needle pointer.
- * @param {string|number} opt.centerText - The text displayed inside the central circle.
- * @param {number} [opt.centerColor] - Optional specific color for the central circle.
- * @param {number} [opt.centerTextColor] - Optional specific color for the central text.
- * @param {function} [opt.centerIcon] - Function returning an icon to display below the text.
- * @param {number} [opt.tickLabelSize] - Optional font size for the tick labels.
- */
-function drawDashboardGauge(opt) {
-  let startAngle = opt.startAngle !== undefined ? opt.startAngle : 210;
-  for (let i = opt.currentTick - opt.tickRange; i <= opt.currentTick + opt.tickRange; i++) {
-    if (i >= opt.minTick && i <= opt.maxTick) {
-      drawMetricTick(
-        opt.getTickLabel(i),
-        startAngle + i * opt.tickSpacing,
-        opt.tickSpacing,
-        opt.getTickColor,
-        i,
-        opt.subIntervals || 10,
-        i === opt.maxTick,
-        opt.tickLabelSize
-      );
-    }
-  }
-  drawHand(opt.handColor);
-  drawNumber(opt.centerText, opt.centerColor || opt.handColor, undefined, opt.centerIcon, opt.centerTextColor);
+// Restore the persisted state (runs synchronously at load, before any
+// events can fire, so the declaration order of the sections above is safe)
+let savedState = storage.readJSON(STATE_FILE, 1) || {};
+if (savedState.day === todayKey()) {
+  tripDay = savedState.day;
+  tripBaselineSteps = savedState.baseline || 0;
+  showTripView = !!savedState.view;
 }
+showAltView = !!savedState.altView;
 
-/**
- * Main render loop. Clears the screen and draws the currently active dashboard screen.
- */
-function draw() {
-  queueDraw();
-  // Do not render if the screen is off - except on the charger, where the
-  // transflective display stays readable and must show fresh values
-  if (!Bangle.isLCDOn() && !Bangle.isCharging()) return;
-
-  lastDrawMs = Date.now();
-  lastDrawnLocked = Bangle.isLocked();
-
-  g.setBgColor(g.theme.bg);
-  g.clear();
-  g.setFontAlign(0, 0);
-
-  if(initialSettings.showLock && Bangle.isLocked()){
-    g.setColor(g.theme.fg);
-    g.drawImage(imgLock, gWidth-16, 2);
-  }
-
-  let screen = screens[currentScreenIdx];
-
-  if (screen === "clock") {
-    currentTime = new Date();
-    currentHour = currentTime.getHours();
-    currentMinute = currentTime.getMinutes();
-
-    setHourAngle(getHourHandAngle());
-
-    drawHour(currentHour);
-    drawHour(currentHour-1);
-    drawHour(currentHour+1);
-
-    drawHand(0xF800);
-
-    if(initialSettings.showMinute){
-      let minStr = currentMinute < 10 ? "0" + currentMinute : currentMinute;
-      drawNumber(":" + minStr, 0xF800);
-    }
-
-    if (infoOverlayTimeout) drawDateOverlay();
-  } else if (screen === "steps") {
-    let steps = getDaySteps();
-
-    setHourAngle(210 + (steps / 12000) * 360);
-
-    drawDashboardGauge({
-      currentTick: Math.floor(steps / 1000),
-      minTick: 0,
-      maxTick: Infinity,
-      tickRange: 1,
-      tickSpacing: 30,
-      getTickLabel: i => i + "k",
-      getTickColor: 0x07E0,
-      handColor: 0x07E0,
-      centerText: "." + Math.floor((steps % 1000) / 100)
-    });
-
-    if (infoOverlayTimeout) drawOverlayPill("STEPS", String(steps), 0x07E0);
-  } else if (screen === "distance") {
-    let steps = getDaySteps();
-
-    // A trip expires at midnight: the daily step counter it is based on has reset
-    if (tripDay && tripDay !== todayKey()) {
-      tripDay = "";
-      tripBaselineSteps = 0;
-      showTripView = false;
-      saveState();
-    }
-
-    let shownSteps = showTripView ? Math.max(0, steps - tripBaselineSteps) : steps;
-    let distanceM = shownSteps * initialSettings.strideLength;
-    
-    let isImperial = initialSettings.distanceUnit === "mi";
-    let unitScale = isImperial ? 1609.34 : 1000;
-    let unitSuffix = isImperial ? "mi" : "km";
-    let distanceUnits = distanceM / unitScale;
-    
-    setHourAngle(210 + (distanceUnits / 12) * 360);
-
-    drawDashboardGauge({
-      currentTick: Math.floor(distanceUnits),
-      minTick: 0,
-      maxTick: Infinity,
-      tickRange: 1,
-      tickSpacing: 30,
-      getTickLabel: i => i + unitSuffix,
-      getTickColor: 0x07FF,
-      handColor: 0x07FF,
-      centerText: "." + Math.floor((distanceUnits % 1) * 10)
-    });
-
-    if (showTripView) {
-      g.setFontAlign(0, 0);
-      g.setFont("Vector", 20);
-      g.setColor(0x07FF);
-      g.drawString("TRIP", gCenterX, 12);
-    }
-
-    if (resetConfirmTimeout) drawOverlayPill("TRIP", "RESET?", 0x07FF);
-    // Exact distance of whichever view is showing (day total or trip)
-    if (infoOverlayTimeout) drawOverlayPill(showTripView ? "TRIP" : "DISTANCE", distanceUnits.toFixed(2) + unitSuffix, 0x07FF);
-  } else if (screen === "battery") {
-    let battery = E.getBattery();
-
-    let isCharging = Bangle.isCharging();
-
-    let color = batteryZoneColor(battery);
-
-    setHourAngle(270 + (battery / 100) * 180);
-
-    drawDashboardGauge({
-      currentTick: Math.floor(battery / 10),
-      minTick: 0,
-      maxTick: 10,
-      tickRange: 5,
-      startAngle: 270,
-      tickSpacing: 18,
-      subIntervals: 5,
-      tickLabelSize: 28,
-      getTickLabel: i => (i * 10) + "%",
-      // Fixed fuel-gauge zones on the dial; hand and circle take the current one
-      getTickColor: batteryTickColor,
-      handColor: color,
-      centerText: battery,
-      centerTextColor: isCharging ? 0x07E0 : undefined,
-      centerIcon: isCharging ? drawLightning : undefined
-    });
-  } else if (screen === "hrm") {
-    let health = typeof Bangle.getHealthStatus === 'function' ? Bangle.getHealthStatus("last") : null;
-    let bpm = initialSettings.liveHrm && liveBpm > 0 ? liveBpm : (health ? (health.bpm || 0) : 0);
-    
-    let maxHr = 220 - initialSettings.hrDecade;
-    if (bpm < 40) bpm = 40;
-    if (bpm > 240) bpm = 240;
-    
-    let z1 = maxHr * 0.5, z2 = maxHr * 0.6, z3 = maxHr * 0.7, z4 = maxHr * 0.8, z5 = maxHr * 0.9;
-    
-    let zone = "REST", color = 0x07E0;
-    if (bpm < z1)      { zone = "REST"; color = 0x07E0; }
-    else if (bpm < z2) { zone = "Z1"; color = 0x07FF; }
-    else if (bpm < z3) { zone = "Z2"; color = 0xFFE0; }
-    else if (bpm < z4) { zone = "Z3"; color = 0xFD20; }
-    else if (bpm < z5) { zone = "Z4"; color = 0xFA80; }
-    else               { zone = "Z5"; color = 0xF800; }
-
-    setHourAngle(210 + ((bpm - 40) / 200) * 300);
-    
-    drawDashboardGauge({
-      currentTick: Math.floor((bpm - 40) / 10),
-      minTick: 0,
-      maxTick: 20,
-      tickRange: 3,
-      tickSpacing: 15,
-      subIntervals: 4,
-      getTickLabel: i => String(40 + i * 10),
-      getTickColor: function(i, frac) {
-        let exactBpm = 40 + i * 10 + frac * 10;
-        if (exactBpm < z1) return 0x07E0;
-        if (exactBpm < z2) return 0x07FF;
-        if (exactBpm < z3) return 0xFFE0;
-        if (exactBpm < z4) return 0xFD20;
-        if (exactBpm < z5) return 0xFA80;
-        return 0xF800;
-      },
-      handColor: color,
-      centerText: zone
-    });
-  } else if (screen === "baro") {
-    // While locked, refresh the reading once a minute instead of continuously
-    if (Bangle.isLocked()) pollBaroWhileLocked();
-
-    if (showAltView) {
-      // Altimeter sub-view, laid out like an aircraft altimeter: 0 sits at
-      // 12 o'clock and one full revolution of the dial covers 100 units,
-      // wrapping like the real instrument. The circle shows the hundreds.
-      // In meters the subticks are 1m; in feet they are 2ft, since 1ft is
-      // below the sensor resolution (~0.5m).
-      let hasReading = baroRawPressure > 0;
-      let isFt = initialSettings.altUnit === "ft";
-      let unitScale = isFt ? 3.28084 : 1;
-      let alt = hasReading && baroAltSmooth !== undefined ? Math.max(0, baroAltSmooth * unitScale) : 0;
-
-      setHourAngle((alt / 100) * 360);
-
-      drawDashboardGauge({
-        currentTick: Math.floor(alt / 10),
-        minTick: -Infinity,
-        maxTick: Infinity,
-        tickRange: 1,
-        startAngle: 0,
-        tickSpacing: 36,
-        subIntervals: isFt ? 5 : 10,
-        // The unit on the labels is what tells this view apart from the
-        // pressure dial, so no extra indicator is needed
-        getTickLabel: i => (((i % 10) + 10) % 10 * 10) + (isFt ? "ft" : "m"),
-        getTickColor: 0xFFE0,
-        handColor: 0xFFE0,
-        centerText: hasReading ? String(Math.floor(alt / 100)) : "--"
-      });
-    } else {
-      // Sea-level air pressure typically ranges 950-1050 hPa; clamp to the scale
-      let p = baroPressure;
-      let hasReading = p > 0;
-      if (!hasReading) p = 1000;
-      if (p < 950) p = 950;
-      if (p > 1050) p = 1050;
-
-      setHourAngle(210 + ((p - 950) / 100) * 300);
-
-      // The dial gives the hundreds; the circle shows the last two digits,
-      // truncated like the steps/distance decimals
-      let v = Math.floor(p) % 100;
-      let centerText = !hasReading ? "--" : (v < 10 ? "0" + v : String(v));
-
-      drawDashboardGauge({
-        currentTick: Math.floor((p - 950) / 10),
-        minTick: 0,
-        maxTick: 10,
-        tickRange: 1,
-        tickSpacing: 30,
-        subIntervals: 10,
-        tickLabelSize: 24,
-        getTickLabel: i => String(950 + i * 10),
-        getTickColor: 0xFFE0,
-        handColor: 0xFFE0,
-        centerText: centerText
-      });
-    }
-
-    if (infoOverlayTimeout) drawBaroOverlay();
-  }
+// Resume on the screen that was active when the app was last unloaded
+// (e.g. when a message fast-loaded over the clock). Falls back to the
+// clock if that screen has been disabled in the settings since.
+let savedScreenIdx = screens.indexOf(savedState.screen);
+if (savedScreenIdx >= 0) currentScreenIdx = savedScreenIdx;
+if (initialSettings.liveHrm && screens[currentScreenIdx] === "hrm") {
+  Bangle.setHRMPower(1, "line_dash");
 }
+updateBaroPower();
 
 draw();
