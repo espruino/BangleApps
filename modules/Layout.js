@@ -173,14 +173,16 @@ Layout.prototype.render = function (l) {
         gfx.setFont(l.font).setFontAlign(0,0,l.r).drawString(l.label, l.x+(l.w>>1), l.y+(l.h>>1));
       }
     }, "btn":function(l){"ram";
-      var x = l.x+(0|l.pad), y = l.y+(0|l.pad),
-          w = l.w-(l.pad<<1), h = l.h-(l.pad<<1);
-      var btnborder = l.btnBorderCol!==undefined?l.btnBorderCol:gfx.theme.fg2,
-      btnface = l.btnFaceCol!==undefined?l.btnFaceCol:gfx.theme.bg2;
-    if(l.selected){
-      btnface = gfx.theme.bgH; btnborder = gfx.theme.fgH;
+    var x = l.x+(0|l.pad), y = l.y+(0|l.pad),
+        w = l.w-(l.pad<<1), h = l.h-(l.pad<<1),
+        btnborder = l.btnBorderCol!==undefined?l.btnBorderCol:gfx.theme.fg2,
+        btnface = l.btnFaceCol!==undefined?l.btnFaceCol:gfx.theme.bg2,
+        r = {x:x,y:y,w:w-1,h:h-1,r:10};
+    if (l.selected){
+      btnface = gfx.theme.bgH; 
+      btnborder = gfx.theme.fgH;
     }
-    gfx.setColor(btnface).fillRect({x:x,y:y,w: w,h:h,r:10}).setColor(btnborder).drawRect({x:x,y:y,w: w,h:h,r:10});
+    gfx.setColor(btnface).fillRect(r).setColor(btnborder).drawRect(r);
     if (l.col!==undefined) gfx.setColor(l.col);
     if (l.src) gfx.setBgColor(btnface).drawImage(
       "function"==typeof l.src?l.src():l.src,
