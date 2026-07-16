@@ -257,12 +257,9 @@ Layout.prototype.update = function() {
     }, "btn": function(l) { "ram";
         if (l.font && l.font.endsWith("%"))
           l.font = "Vector"+rnd(gfx.getHeight()*l.font.slice(0,-1)/100);
-
-        var m = l.src
+        var s = l.scale || 1, m = l.src
           ? gfx.imageMetrics("function"==typeof l.src ? l.src() : l.src)
           : gfx.setFont(l.font||"6x8:2").stringMetrics(l.label);
-
-        var s = l.scale || 1;
         l._h = 16 + Math.ceil(m.height * s);
         l._w = 20 + Math.ceil(m.width * s);
       }, "img": function(l) {"ram";
