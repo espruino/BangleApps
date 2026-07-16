@@ -6,8 +6,9 @@
  *
  * The file is organized into sections: settings & screen list, the shared
  * dial engine and gauge renderer, state persistence, info overlays,
- * navigation, one section per gauge (clock, steps, distance, battery, hrm,
- * baro/alt), the main render loop, and the power & lifecycle wiring at the end.
+ * navigation, one section per gauge (clock, steps with its distance/trip
+ * sub-views, battery, hrm, baro/alt), the main render loop, and the power &
+ * lifecycle wiring at the end.
  *
  * @author Patrick Heeren (pagnotta) - Line Dash modifications
  * @author Paul Spenke (deepDiverPaul) - original Line-Clock face
@@ -27,7 +28,6 @@ let initialSettings = {
   showLock: true,
   showMinute: true,
   distanceUnit: "km",
-  showDistance: true,
   strideLength: 0.8,
   showSteps: true,
   showBattery: true,
@@ -50,7 +50,6 @@ for (const key in saved_settings) {
 // Initialize active dashboard screens based on user settings
 let screens = ["clock"];
 if (initialSettings.showSteps) screens.push("steps");
-if (initialSettings.showDistance) screens.push("distance");
 if (initialSettings.showHrm) screens.push("hrm");
 if (initialSettings.showBattery) screens.push("battery");
 if (initialSettings.showBaro) screens.push("baro");
@@ -346,7 +345,7 @@ function saveState() {
   storage.writeJSON(STATE_FILE, {
     day: tripDay,
     baseline: tripBaselineSteps,
-    view: showTripView,
+    stepsView: stepsView,
     altView: showAltView,
     screen: screens[currentScreenIdx]
   });
@@ -488,10 +487,10 @@ function changeScreen(dir) {
  * Handles swipe gestures on the touchscreen.
  * Horizontal swipes navigate between dashboards.
  * Vertical swipes navigate between the sub-views of a dashboard: on the
- * distance screen, swipe up enters the trip view (starting a trip if none is
- * running, asking to reset via a RESET? popup if already there) and swipe
- * down returns to the day total; on the barometer, swipe up shows the
- * altimeter and swipe down the pressure dial.
+ * steps screen they climb the ladder steps -> distance -> trip (swipe up
+ * starts a trip if none is running, and in the trip view asks to reset via
+ * a RESET? popup) and swipe down climbs back; on the barometer, swipe up
+ * shows the altimeter and swipe down the pressure dial.
  *
  * @param {number} directionLR - Left/Right swipe direction (-1 or 1).
  * @param {number} directionUD - Up/Down swipe direction (-1 for up, 1 for down).
@@ -507,21 +506,24 @@ function onSwipe(directionLR, directionUD) {
         saveState();
         drawIfOn();
       }
-    } else if (screens[currentScreenIdx] === "distance") {
+    } else if (screens[currentScreenIdx] === "steps") {
       // A visible exact-value pill belongs to the previous state of the
       // screen; any vertical swipe dismisses it
       let hadOverlay = !!infoOverlayTimeout;
       dismissInfoOverlay();
-      if (directionUD === -1) { // Swipe up
-        if (tripDay !== todayKey()) {
-          // No active trip: start one and show it (nothing to lose, no confirmation)
-          tripBaselineSteps = getDaySteps();
-          tripDay = todayKey();
-          showTripView = true;
+      if (directionUD === -1) { // Swipe up: one rung deeper
+        if (stepsView === 0) {
+          // Steps -> distance day total
+          stepsView = 1;
           saveState();
-        } else if (!showTripView) {
-          // Active trip: just switch to the trip view
-          showTripView = true;
+        } else if (stepsView === 1) {
+          // Distance -> trip, starting a trip if none is running
+          // (nothing to lose, no confirmation)
+          if (tripDay !== todayKey()) {
+            tripBaselineSteps = getDaySteps();
+            tripDay = todayKey();
+          }
+          stepsView = 2;
           saveState();
         } else if (resetConfirmTimeout) {
           // Second swipe up while the popup is showing: reset confirmed
@@ -536,18 +538,18 @@ function onSwipe(directionLR, directionUD) {
           }, RESET_CONFIRM_MS);
         }
         drawIfOn();
-      } else { // Swipe down
+      } else { // Swipe down: one rung back up
         if (resetConfirmTimeout) {
           // Dismiss the pending reset confirmation, stay in the trip view
           dismissResetConfirm();
           drawIfOn();
-        } else if (showTripView) {
-          // Back to the day total; the trip keeps running
-          showTripView = false;
+        } else if (stepsView > 0) {
+          // Trip -> distance -> steps; a running trip keeps running
+          stepsView--;
           saveState();
           drawIfOn();
         } else if (hadOverlay) {
-          // Day view: the swipe only dismissed the pill
+          // Steps view: the swipe only dismissed the pill
           drawIfOn();
         }
       }
@@ -562,18 +564,18 @@ Bangle.on('swipe', onSwipe);
 
 /**
  * Handles tap gestures on the touchscreen: shows the info overlay of the
- * current dashboard (date on the clock, exact steps, exact distance of the
- * day or trip view, exact pressure or altitude on the barometer views).
- * While the RESET? popup is showing on the distance screen it takes
- * priority and taps are ignored.
+ * current dashboard (date on the clock, exact steps or distance of the
+ * current sub-view on the steps screen, exact pressure or altitude on the
+ * barometer views). While the RESET? popup is showing on the trip view it
+ * takes priority and taps are ignored.
  *
  * @param {number} button - The button index.
  * @param {Object} xy - The x and y coordinates of the touch.
  */
 function onTouch(button, xy) {
   let screen = screens[currentScreenIdx];
-  if (screen === "clock" || screen === "baro" || screen === "steps" ||
-      (screen === "distance" && !resetConfirmTimeout)) {
+  if (screen === "clock" || screen === "baro" ||
+      (screen === "steps" && !resetConfirmTimeout)) {
     showInfoOverlay();
   }
 }
@@ -671,8 +673,13 @@ function drawClockGauge() {
 }
 
 // ======================================================================
-// Gauge: Steps
+// Gauge: Steps (with distance and trip sub-views)
 // ======================================================================
+
+// Sub-view ladder of the steps screen, climbed by vertical swipes:
+// 0 = day steps, 1 = day distance, 2 = trip distance. Persisted like the
+// baro sub-view so it survives app reloads.
+let stepsView = 0;
 
 /**
  * Returns today's step count from the health tracking, or 0 if unavailable.
@@ -684,10 +691,16 @@ function getDaySteps() {
 }
 
 /**
- * Draws the daily step gauge (one main tick per 1000 steps, hundreds in the
- * circle) and the exact-count overlay.
+ * Draws the steps screen: the daily step gauge (one main tick per 1000
+ * steps, hundreds in the circle) and the exact-count overlay, or the
+ * distance/trip sub-view the ladder is currently on.
  */
 function drawStepsGauge() {
+  if (stepsView !== 0) {
+    drawDistanceView();
+    return;
+  }
+
   let steps = getDaySteps();
 
   setHourAngle(210 + (steps / 12000) * 360);
@@ -708,18 +721,17 @@ function drawStepsGauge() {
 }
 
 // ======================================================================
-// Gauge: Distance (day total and trip meter)
+// Gauge: Distance & trip (sub-views of the steps screen)
 // ======================================================================
 
-// Trip state for the distance screen. A trip is a step-count baseline taken
-// when the trip is started; the view toggles between day total and trip
+// Trip state for the trip sub-view. A trip is a step-count baseline taken
+// when the trip is started; the ladder switches between day total and trip
 // distance without touching the baseline. Persisted so it survives app
 // reloads; a trip is only valid on the day it was started.
 let tripDay = "";
 let tripBaselineSteps = 0;
-let showTripView = false;
 
-// While set, the trip-reset confirmation popup is showing on the distance screen
+// While set, the trip-reset confirmation popup is showing on the trip view
 const RESET_CONFIRM_MS = 3000;
 let resetConfirmTimeout;
 
@@ -734,22 +746,23 @@ function dismissResetConfirm() {
 }
 
 /**
- * Draws the distance gauge (day total or trip view, derived from steps and
- * stride length), the TRIP indicator, the RESET? popup and the exact-distance
- * overlay.
+ * Draws the distance sub-view of the steps screen (day total or trip,
+ * derived from steps and stride length), the TRIP indicator, the RESET?
+ * popup and the exact-distance overlay.
  */
-function drawDistanceGauge() {
+function drawDistanceView() {
   let steps = getDaySteps();
 
   // A trip expires at midnight: the daily step counter it is based on has reset
   if (tripDay && tripDay !== todayKey()) {
     tripDay = "";
     tripBaselineSteps = 0;
-    showTripView = false;
+    if (stepsView === 2) stepsView = 1;
     saveState();
   }
 
-  let shownSteps = showTripView ? Math.max(0, steps - tripBaselineSteps) : steps;
+  let onTripView = stepsView === 2;
+  let shownSteps = onTripView ? Math.max(0, steps - tripBaselineSteps) : steps;
   let distanceM = shownSteps * initialSettings.strideLength;
 
   let isImperial = initialSettings.distanceUnit === "mi";
@@ -771,7 +784,7 @@ function drawDistanceGauge() {
     centerText: "." + Math.floor((distanceUnits % 1) * 10)
   });
 
-  if (showTripView) {
+  if (onTripView) {
     g.setFontAlign(0, 0);
     g.setFont("Vector", 20);
     g.setColor(0x07FF);
@@ -780,7 +793,7 @@ function drawDistanceGauge() {
 
   if (resetConfirmTimeout) drawOverlayPill("TRIP", "RESET?", 0x07FF);
   // Exact distance of whichever view is showing (day total or trip)
-  if (infoOverlayTimeout) drawOverlayPill(showTripView ? "TRIP" : "DISTANCE", distanceUnits.toFixed(2) + unitSuffix, 0x07FF);
+  if (infoOverlayTimeout) drawOverlayPill(onTripView ? "TRIP" : "DISTANCE", distanceUnits.toFixed(2) + unitSuffix, 0x07FF);
 }
 
 // ======================================================================
@@ -1206,7 +1219,6 @@ function draw() {
 
   if (screen === "clock") drawClockGauge();
   else if (screen === "steps") drawStepsGauge();
-  else if (screen === "distance") drawDistanceGauge();
   else if (screen === "battery") drawBatteryGauge();
   else if (screen === "hrm") drawHrmGauge();
   else if (screen === "baro") drawBaroGauge();
@@ -1299,8 +1311,15 @@ let savedState = storage.readJSON(STATE_FILE, 1) || {};
 if (savedState.day === todayKey()) {
   tripDay = savedState.day;
   tripBaselineSteps = savedState.baseline || 0;
-  showTripView = !!savedState.view;
 }
+stepsView = Math.min(2, Math.max(0, savedState.stepsView | 0));
+// Migration from <=0.7, where distance was its own screen with a trip flag
+if (savedState.screen === "distance") {
+  savedState.screen = "steps";
+  stepsView = savedState.view ? 2 : 1;
+}
+// The trip view is only valid while its trip is running
+if (stepsView === 2 && tripDay !== todayKey()) stepsView = 1;
 showAltView = !!savedState.altView;
 
 // Resume on the screen that was active when the app was last unloaded

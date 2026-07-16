@@ -7,7 +7,6 @@
       showLock: true,
       showMinute: true,
       distanceUnit: "km",
-      showDistance: true,
       strideLength: 0.8,
       showSteps: true,
       showBattery: true,
@@ -57,13 +56,6 @@
         format: v => v ? "mi" : "km",
         onchange: (v) => {
           settings.distanceUnit = v ? "mi" : "km";
-          save();
-        },
-      },
-      'Show Distance': {
-        value: settings.showDistance,
-        onchange: () => {
-          settings.showDistance = !settings.showDistance;
           save();
         },
       },
