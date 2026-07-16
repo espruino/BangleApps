@@ -175,23 +175,12 @@ Layout.prototype.render = function (l) {
     }, "btn":function(l){"ram";
       var x = l.x+(0|l.pad), y = l.y+(0|l.pad),
           w = l.w-(l.pad<<1), h = l.h-(l.pad<<1);
-      var poly = [
-        x,y+4,
-        x+4,y,
-        x+w-5,y,
-        x+w-1,y+4,
-        x+w-1,y+h-5,
-        x+w-5,y+h-1,
-        x+4,y+h-1,
-        x,y+h-5,
-        x,y+4
-      ],
-      btnborder = l.btnBorderCol!==undefined?l.btnBorderCol:gfx.theme.fg2,
+      var btnborder = l.btnBorderCol!==undefined?l.btnBorderCol:gfx.theme.fg2,
       btnface = l.btnFaceCol!==undefined?l.btnFaceCol:gfx.theme.bg2;
     if(l.selected){
       btnface = gfx.theme.bgH; btnborder = gfx.theme.fgH;
     }
-    gfx.setColor(btnface).fillPoly(poly).setColor(btnborder).drawPoly(poly);
+    gfx.setColor(btnface).fillRect({x:x,y:y,w: w,h:h,r:10}).setColor(btnborder).drawRect({x:x,y:y,w: w,h:h,r:10});
     if (l.col!==undefined) gfx.setColor(l.col);
     if (l.src) gfx.setBgColor(btnface).drawImage(
       "function"==typeof l.src?l.src():l.src,
@@ -265,13 +254,15 @@ Layout.prototype.update = function() {
         var m = gfx.setFont(l.font).stringMetrics(l.label);
         l._w = m.width; l._h = m.height;
       }
-    }, "btn": function(l) {"ram";
-      if (l.font && l.font.endsWith("%"))
-        l.font = "Vector"+rnd(gfx.getHeight()*l.font.slice(0,-1)/100);
-      var m = l.src?gfx.imageMetrics("function"==typeof l.src?l.src():l.src):gfx.setFont(l.font||"6x8:2").stringMetrics(l.label);
-      l._h = 16 + m.height;
-      l._w = 20 + m.width;
-    }, "img": function(l) {"ram";
+    }, "btn": function(l) { "ram";
+        if (l.font && l.font.endsWith("%"))
+          l.font = "Vector"+rnd(gfx.getHeight()*l.font.slice(0,-1)/100);
+        var s = l.scale || 1, m = l.src
+          ? gfx.imageMetrics("function"==typeof l.src ? l.src() : l.src)
+          : gfx.setFont(l.font||"6x8:2").stringMetrics(l.label);
+        l._h = 16 + Math.ceil(m.height * s);
+        l._w = 20 + Math.ceil(m.width * s);
+      }, "img": function(l) {"ram";
       var m = gfx.imageMetrics("function"==typeof l.src?l.src():l.src), s=l.scale||1; // get width and height out of image
       l._w = m.width*s;
       l._h = m.height*s;
