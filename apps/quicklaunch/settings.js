@@ -7,34 +7,10 @@ for (let c of ["lapp","rapp","uapp","dapp","tapp"]){ // l=left, r=right, u=up, d
   if (!settings[c]) settings[c] = {"name":""};
 }
 
-// Convert settings object from before v0.12 to v0.12.
-for (let c of ["leftapp","rightapp","upapp","downapp","tapapp"]){
-  if (settings[c]) {
-    let cNew = c.substring(0,1)+"app";
-    settings[cNew] = settings[c];
-    delete settings[c];
-    if (settings[cNew].name=="(none)") settings[cNew].name = "";
 
-    if (settings[cNew].name=="Quick Launch Extension"){
-      settings[cNew].name = "Extension";
-      for (let d of ["extleftapp","extrightapp","extupapp","extdownapp","exttapapp"]){
-        if (settings[d]) {
-          let dNew = cNew.substring(0,1)+d.substring(3,4)+"app";
-          settings[dNew] = settings[d];
-          delete settings[d];
-          if (settings[dNew].name=="(none)") settings[dNew].name = "";
-        }
-      }
-    }
-    storage.writeJSON("quicklaunch.json",settings);
-  } 
-}
-for (let d of ["extleftapp","extrightapp","extupapp","extdownapp","exttapapp"]){
-  if (settings[d]) delete settings[d];
-}
-
-
-var apps = storage.list(/\.info$/).map(app=>{var a=storage.readJSON(app,1);return a&&{name:a.name,type:a.type,sortorder:a.sortorder,src:a.src};}).filter(app=>app && (app.type=="app" || app.type=="launch" || app.type=="clock" || !app.type));
+var launchCache = require("launch_utils").cache({showClocks:true,showLaunchers:true});
+//launchCache = require("launch_utils").cacheWidgetsCheck(launchCache.apps);
+var apps = launchCache.apps;
 
 // Add psuedo app to trigger Bangle.showLauncher later
 apps.push({
@@ -49,7 +25,8 @@ let extension = {
     "name": "Extension",
     "type": "app",
     "sortorder": -11,
-    "src": "quicklaunch.app.js"
+    "src": "quicklaunch.app.js",
+    "wid": true // // Hack: Fool launch_utils that extension screen uses widgets. This way we get the fastest possibe loading in whichever environment we find ourselves.
    };
 apps.push(extension);
 
@@ -105,7 +82,7 @@ function showMainMenu() {
     // If no app is selected the name is an empty string, but we want to display "(none)".
     let appName = settings[key].name==""?"(none)":settings[key].name;
     mainmenu[entry+ ": "+appName] = function() {showSubMenu(keyCurrent);};
-  }
+    }
 
   return E.showMenu(mainmenu);
 }
