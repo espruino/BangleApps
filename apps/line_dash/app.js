@@ -521,8 +521,9 @@ function changeScreen(dir) {
  * starts a trip if none is running, and in the trip view asks to reset via
  * a RESET? popup) and swipe down climbs back; on the clock they climb
  * clock -> timer, and on the timer view pause -> RESET? popup -> reset
- * (swipe down resumes, then returns to the clock); on the barometer, swipe
- * up shows the altimeter and swipe down the pressure dial.
+ * (swipe down resumes, then returns to the clock); on the barometer they
+ * climb pressure dial -> altimeter -> SYNC? popup (one more swipe up
+ * re-bases the altimeter reference on the current reading) and back.
  *
  * @param {number} directionLR - Left/Right swipe direction (-1 or 1).
  * @param {number} directionUD - Up/Down swipe direction (-1 for up, 1 for down).
@@ -530,13 +531,39 @@ function changeScreen(dir) {
 function onSwipe(directionLR, directionUD) {
   if (directionUD !== 0) {
     if (screens[currentScreenIdx] === "baro") {
-      let wantAlt = directionUD === -1;
-      if (wantAlt !== showAltView) {
-        showAltView = wantAlt;
-        // A visible overlay belongs to the view we are leaving
-        dismissInfoOverlay();
-        saveState();
-        drawIfOn();
+      if (directionUD === -1) { // Swipe up: one rung deeper
+        if (!showAltView) {
+          // Pressure dial -> altimeter sub-view
+          showAltView = true;
+          // A visible overlay belongs to the view we are leaving
+          dismissInfoOverlay();
+          saveState();
+          drawIfOn();
+        } else if (resetConfirmTimeout) {
+          // Second swipe up while the popup is showing: sync confirmed —
+          // the current reading becomes the altimeter reference
+          dismissResetConfirm();
+          syncAltimeterReference();
+          drawIfOn();
+        } else if (baroPressure > 0) {
+          // Swipe up on the altimeter: offer to re-base the reference on
+          // the current reading (needs a reading to base it on)
+          dismissInfoOverlay();
+          armResetConfirm();
+          drawIfOn();
+        }
+      } else { // Swipe down: one rung back up
+        if (resetConfirmTimeout) {
+          // Dismiss the pending sync confirmation, stay on the altimeter
+          dismissResetConfirm();
+          drawIfOn();
+        } else if (showAltView) {
+          // Altimeter -> pressure dial
+          showAltView = false;
+          dismissInfoOverlay();
+          saveState();
+          drawIfOn();
+        }
       }
     } else if (screens[currentScreenIdx] === "clock") {
       // Navigate sub-views on the clock screen
@@ -660,7 +687,7 @@ function onSwipe(directionLR, directionUD) {
  */
 function onTouch(button, xy) {
   let screen = screens[currentScreenIdx];
-  if ((screen === "clock" || screen === "steps") && resetConfirmTimeout) return;
+  if (resetConfirmTimeout) return; // a confirmation popup has priority
   if (screen === "clock" && clockView === 1 && !timerIsRunning && timerPausedMs <= 0) {
     showTimerMenu();
     return;
@@ -1288,8 +1315,9 @@ let lastBaroDraw = 0;
 // Constant per location, so it corrects altitude and sensor offset in one go.
 const baroCalib = initialSettings.baroCalib || 1;
 // Sea-level pressure entered at calibration time, used as the altimeter
-// reference. Altitude drifts ~8m per hPa of weather change since then.
-const baroRefQnh = initialSettings.baroRefQnh || 1013.25;
+// reference. Altitude drifts ~8m per hPa of weather change since then; the
+// SYNC? popup on the altimeter view re-bases it on the current reading.
+let baroRefQnh = initialSettings.baroRefQnh || 1013.25;
 
 // Feet per meter, for the altimeter's ft mode
 const FT_PER_M = 3.28084;
@@ -1312,6 +1340,28 @@ function updateBaroPower() {
  */
 function getBaroAltitude() {
   return 44330 * (1 - Math.pow(baroRawPressure / baroRefQnh, 0.190295));
+}
+
+/**
+ * Makes the current calibrated reading the altimeter reference (QNH),
+ * cancelling the weather drift accumulated since the last calibration —
+ * the altitude returns to the value it had back then, so this belongs on
+ * the known height where the calibration was made. Only the altitude
+ * reference changes, the pressure calibration stays untouched. Equivalent
+ * to re-confirming the current value in the settings menu, and persisted
+ * there so both ways stay consistent.
+ */
+function syncAltimeterReference() {
+  if (baroPressure <= 0) return;
+  baroRefQnh = baroPressure;
+  initialSettings.baroRefQnh = baroRefQnh;
+  let s = storage.readJSON(SETTINGS_FILE, 1) || {};
+  s.baroRefQnh = baroRefQnh;
+  storage.writeJSON(SETTINGS_FILE, s);
+  // The altitude just jumped by the drift; let the needle snap instead of
+  // easing over
+  baroAltSmooth = undefined;
+  Bangle.buzz(30);
 }
 
 // Smoothed altitude in meters driving the altimeter needle. The sensor noise
@@ -1466,6 +1516,7 @@ function drawBaroGauge() {
     });
   }
 
+  if (resetConfirmTimeout) drawOverlayPill("ALTIMETER", "SYNC?", 0xFFE0);
   if (infoOverlayTimeout) drawBaroOverlay();
 }
 
