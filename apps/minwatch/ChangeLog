@@ -1,3 +1,4 @@
+0.18: Fixed watch menu icon — replaced broken 8bpp Graphics icon with heatshrink-compressed 4bit image
 0.17: Code review cleanup, cached weather/week, fixed alignment bug, improved date fallback
 0.16: Centered weather icon+temp group horizontally
 0.15: Moved charging icon outside try/catch, repositioned to y=166, new plug shape
