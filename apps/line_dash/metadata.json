@@ -7,7 +7,7 @@
   "icon": "app-icon.png",
   "type": "clock",
   "tags": "clock,analog,health,fitness,hrm,battery,timer",
-  "dependencies": {"sched":"app"},
+  "dependencies": {"scheduler":"type"},
   "supports" : ["BANGLEJS2"],
   "allow_emulator": true,
   "screenshots": [
