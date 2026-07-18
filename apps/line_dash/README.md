@@ -26,8 +26,7 @@ Line Dash provides a suite of minimalist gauges that you can swipe through to ch
 * **Tap (Clock):** Shows the date for a few seconds; tap again to dismiss it early.
 * **Swipe Up (Clock):** Climbs to the timer sub-view. On the timer it pauses a running timer, and asks to reset a paused one (RESET? popup; one more swipe up within 3 seconds confirms).
 * **Swipe Down (Clock):** Dismisses the RESET? popup, resumes a paused timer, or climbs from the timer back to the clock face (a running timer keeps running).
-* **Hold & Turn (Timer):** Holding a finger still until the watch buzzes grabs the dial; turning then winds the timer up (clockwise) or down (counter-clockwise), and releasing starts it. Winding back to zero switches the timer off.
-* **Tap (Timer):** Shows the exact remaining time for a few seconds; tap again to dismiss it early.
+* **Tap (Timer):** With no timer running, opens the menu that sets the duration and starts the timer. On a running or paused timer it shows the exact remaining time for a few seconds; tap again to dismiss it early.
 * **Tap (Steps):** Shows the exact step count — or distance of the current sub-view — for a few seconds; tap again to dismiss it early.
 * **Tap (Barometer):** Shows the exact pressure reading — or, in the altimeter view, the exact altitude — for a few seconds; tap again to dismiss it early.
 * **Swipe Up / Down (Barometer):** Switches between the pressure dial and the altimeter sub-view.

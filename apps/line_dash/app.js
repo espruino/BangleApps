@@ -642,12 +642,9 @@ function onSwipe(directionLR, directionUD) {
     return;
   }
   if (directionLR !== 0) {
-    // Horizontal swipes on the timer view also drag a little vertically
-    if (screens[currentScreenIdx] === "clock" && clockView === 1) revertAdjustIfSwipe();
     changeScreen(directionLR === -1 ? 1 : -1);
   }
 }
-Bangle.on('swipe', onSwipe);
 
 /**
  * Handles tap gestures on the touchscreen: on the timer view in wind-up
@@ -665,48 +662,13 @@ function onTouch(button, xy) {
   let screen = screens[currentScreenIdx];
   if ((screen === "clock" || screen === "steps") && resetConfirmTimeout) return;
   if (screen === "clock" && clockView === 1 && !timerIsRunning && timerPausedMs <= 0) {
-    // Suspend our UI listeners so the native menu can take over safely
-    Bangle.removeListener('swipe', onSwipe);
-    Bangle.removeListener('touch', onTouch);
-    if (drawTimeout) { clearTimeout(drawTimeout); drawTimeout = undefined; }
-
-    if (timerSetMinutes <= 0) timerSetMinutes = 5;
-
-    let menu = {
-      '': { 'title': 'Timer' },
-      'Start': () => {
-         E.showMenu(); // dismiss the menu
-         let m = Math.round(timerSetMinutes);
-         if (m >= 1) {
-           startTimer(m * 60000);
-           Bangle.buzz(30);
-           saveState();
-         }
-         // Restore our UI listeners
-         Bangle.on('swipe', onSwipe);
-         Bangle.on('touch', onTouch);
-         draw();
-      },
-      'Minutes': {
-         value: Math.round(timerSetMinutes),
-         min: 1, max: 60, step: 1,
-         onchange: v => { timerSetMinutes = v; }
-      },
-      '< Cancel': () => {
-         E.showMenu();
-         Bangle.on('swipe', onSwipe);
-         Bangle.on('touch', onTouch);
-         draw();
-      }
-    };
-    E.showMenu(menu);
+    showTimerMenu();
     return;
   }
   if (screen === "clock" || screen === "steps" || screen === "baro") {
     showInfoOverlay();
   }
 }
-Bangle.on('touch', onTouch);
 
 // ======================================================================
 // Gauge: Clock
@@ -893,20 +855,49 @@ function stopTimer() {
 }
 
 // --- Setting the timer ---
-// The duration is adjusted with a vertical drag (dragging up adds time)
-// whenever the timer is NOT running — in the wind-up mode or while paused —
-// and an explicit tap starts it. The needle follows the finger live. The
-// firmware still reports fast vertical drags as swipes right afterwards;
-// onSwipe then reverts the accidental adjustment and navigates instead.
-const DRAG_PX_PER_MIN = 3;
+// The duration is set in a native menu, opened by tapping the timer view
+// while no timer is running (the START hint in the circle points there).
 const SET_MAX_MIN = 60;
-// Wound-up duration in minutes for the next start. Persisted, so the timer
-// remembers its last duration: after a reset or ring, one tap restarts it.
+// Duration in minutes for the next start. Persisted, so the timer remembers
+// its last duration: after a reset or ring, Start restarts the same time.
 let timerSetMinutes = 10;
-// Cached run state so the drag handler does not reread sched.json on every
+// Cached run state so event handlers do not reread sched.json on every
 // event; refreshed by every timer-view draw and every start/stop transition.
 let timerIsRunning = false;
-// The drag logic (Option A) has been removed to rely purely on the native menu (Option C).
+
+/**
+ * Opens the native menu that sets the duration and starts the timer.
+ * Showing a menu replaces the app's UI: Bangle.setUI runs our remove()
+ * callback, which tears down every listener and the button binding — so
+ * dismissing the menu must bring all of it back via registerAppUI().
+ */
+function showTimerMenu() {
+  if (timerSetMinutes <= 0) timerSetMinutes = 5;
+  function closeMenu() {
+    E.showMenu(); // dismiss the menu, leaving no UI registered at all
+    registerAppUI();
+    saveState();
+    draw();
+  }
+  E.showMenu({
+    '': { 'title': 'Timer' },
+    'Start': function() {
+      let m = Math.round(timerSetMinutes);
+      if (m >= 1) {
+        startTimer(m * 60000);
+        Bangle.buzz(30);
+      }
+      closeMenu();
+    },
+    'Minutes': {
+      value: Math.round(timerSetMinutes),
+      min: 1, max: SET_MAX_MIN, step: 1,
+      onchange: v => { timerSetMinutes = v; }
+    },
+    '< Cancel': closeMenu
+  });
+}
+
 /**
  * Fine-grained redraw delay while a running timer is showing on its view:
  * every second during the final minute or while the exact-remaining pill is
@@ -1175,7 +1166,6 @@ function onCharge(charging) {
   // system backlight timeout; the watch stays locked.
   if (charging && typeof Bangle.setLCDPower === 'function') Bangle.setLCDPower(1);
 }
-Bangle.on('charging', onCharge);
 
 /**
  * Draws the battery gauge: a 180-degree fuel-gauge dial with fixed color
@@ -1236,7 +1226,6 @@ function onHRM(hrm) {
     }
   }
 }
-Bangle.on('HRM', onHRM);
 
 /**
  * Draws the heart-rate gauge: a 40-240 bpm dial colored by the HR zones
@@ -1373,7 +1362,6 @@ function onPressure(e) {
     }
   }
 }
-Bangle.on('pressure', onPressure);
 
 // Timestamp of the last one-shot reading taken while locked. The threshold
 // stays just below the minute tick so no tick is skipped due to timer jitter.
@@ -1574,7 +1562,6 @@ function lockListenerBw() {
   if (Bangle.isLCDOn() && Bangle.isLocked() !== lastDrawnLocked) draw();
   else queueDraw();
 }
-Bangle.on('lock', lockListenerBw);
 
 /**
  * Redraws when the LCD is powered back on, so the display is not stale.
@@ -1588,30 +1575,46 @@ function lcdListener(on) {
   if (Date.now() - lastDrawMs > 500) draw();
   else queueDraw();
 }
-Bangle.on('lcdPower', lcdListener);
 
-// Register the app UI mode and cleanup function for when the app is exited
-Bangle.setUI({
-  mode : "clock",
-  remove : function() {
-    saveState();
-    Bangle.removeListener('lock', lockListenerBw);
-    Bangle.removeListener('lcdPower', lcdListener);
-    Bangle.removeListener('swipe', onSwipe);
-    Bangle.removeListener('touch', onTouch);
-    Bangle.removeListener('HRM', onHRM);
-    Bangle.removeListener('pressure', onPressure);
-    Bangle.removeListener('charging', onCharge);
-    Bangle.setHRMPower(0, "line_dash");
-    if (typeof Bangle.setBarometerPower === 'function') Bangle.setBarometerPower(0, "line_dash");
-    if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = undefined;
-    if (hrmPowerTimeout) clearTimeout(hrmPowerTimeout);
-    hrmPowerTimeout = undefined;
-    dismissInfoOverlay();
-    dismissResetConfirm();
-  }
-});
+/**
+ * Registers every event listener and the clock UI mode (short button press
+ * opens the launcher) together with the cleanup callback that removes them
+ * all again. The cleanup runs when the app is exited — but also whenever
+ * something else claims the UI via Bangle.setUI, like the native timer
+ * menu. Whoever dismisses such a takeover must therefore call this function
+ * again to bring the whole UI back, button binding included.
+ */
+function registerAppUI() {
+  Bangle.on('swipe', onSwipe);
+  Bangle.on('touch', onTouch);
+  Bangle.on('charging', onCharge);
+  Bangle.on('HRM', onHRM);
+  Bangle.on('pressure', onPressure);
+  Bangle.on('lock', lockListenerBw);
+  Bangle.on('lcdPower', lcdListener);
+  Bangle.setUI({
+    mode : "clock",
+    remove : function() {
+      saveState();
+      Bangle.removeListener('lock', lockListenerBw);
+      Bangle.removeListener('lcdPower', lcdListener);
+      Bangle.removeListener('swipe', onSwipe);
+      Bangle.removeListener('touch', onTouch);
+      Bangle.removeListener('HRM', onHRM);
+      Bangle.removeListener('pressure', onPressure);
+      Bangle.removeListener('charging', onCharge);
+      Bangle.setHRMPower(0, "line_dash");
+      if (typeof Bangle.setBarometerPower === 'function') Bangle.setBarometerPower(0, "line_dash");
+      if (drawTimeout) clearTimeout(drawTimeout);
+      drawTimeout = undefined;
+      if (hrmPowerTimeout) clearTimeout(hrmPowerTimeout);
+      hrmPowerTimeout = undefined;
+      dismissInfoOverlay();
+      dismissResetConfirm();
+    }
+  });
+}
+registerAppUI();
 
 // Restore the persisted state (runs synchronously at load, before any
 // events can fire, so the declaration order of the sections above is safe)
