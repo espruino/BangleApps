@@ -6,9 +6,9 @@
  *
  * The file is organized into sections: settings & screen list, the shared
  * dial engine and gauge renderer, state persistence, info overlays,
- * navigation, one section per gauge (clock, steps with its distance/trip
- * sub-views, battery, hrm, baro/alt), the main render loop, and the power &
- * lifecycle wiring at the end.
+ * navigation, one section per gauge (clock with its wind-up timer sub-view,
+ * steps with its distance/trip sub-views, battery, hrm, baro/alt), the main
+ * render loop, and the power & lifecycle wiring at the end.
  *
  * @author Patrick Heeren (pagnotta) - Line Dash modifications
  * @author Paul Spenke (deepDiverPaul) - original Line-Clock face
@@ -298,6 +298,7 @@ function drawMetricTick(tickStr, a, spacingAngle, colorValOrFn, tickIdx, subInte
  * @param {string|number} opt.centerText - The text displayed inside the central circle.
  * @param {number} [opt.centerColor] - Optional specific color for the central circle.
  * @param {number} [opt.centerTextColor] - Optional specific color for the central text.
+ * @param {string} [opt.centerLabel] - Optional small subtitle below the central text.
  * @param {function} [opt.centerIcon] - Function returning an icon to display below the text.
  * @param {number} [opt.tickLabelSize] - Optional font size for the tick labels.
  */
@@ -318,7 +319,7 @@ function drawDashboardGauge(opt) {
     }
   }
   drawHand(opt.handColor);
-  drawNumber(opt.centerText, opt.centerColor || opt.handColor, undefined, opt.centerIcon, opt.centerTextColor);
+  drawNumber(opt.centerText, opt.centerColor || opt.handColor, opt.centerLabel, opt.centerIcon, opt.centerTextColor);
 }
 
 // ======================================================================
@@ -347,6 +348,8 @@ function saveState() {
     baseline: tripBaselineSteps,
     stepsView: stepsView,
     altView: showAltView,
+    clockView: clockView,
+    timerPaused: timerPausedMs,
     screen: screens[currentScreenIdx]
   });
 }
@@ -416,6 +419,32 @@ function drawOverlayPill(smallStr, bigStr, borderColor) {
   } else {
     g.drawString(bigStr, gCenterX, gCenterY + 10);
   }
+}
+
+// While set, a reset confirmation popup is showing (on the trip view of the
+// steps screen, or on the timer view of the clock screen)
+const RESET_CONFIRM_MS = 3000;
+let resetConfirmTimeout;
+
+/**
+ * Hides a pending reset confirmation without redrawing.
+ */
+function dismissResetConfirm() {
+  if (resetConfirmTimeout) {
+    clearTimeout(resetConfirmTimeout);
+    resetConfirmTimeout = undefined;
+  }
+}
+
+/**
+ * Shows the reset confirmation popup of the current view until it is
+ * confirmed, dismissed, or times out.
+ */
+function armResetConfirm() {
+  resetConfirmTimeout = setTimeout(function() {
+    resetConfirmTimeout = undefined;
+    drawIfOn();
+  }, RESET_CONFIRM_MS);
 }
 
 /**
@@ -489,8 +518,10 @@ function changeScreen(dir) {
  * Vertical swipes navigate between the sub-views of a dashboard: on the
  * steps screen they climb the ladder steps -> distance -> trip (swipe up
  * starts a trip if none is running, and in the trip view asks to reset via
- * a RESET? popup) and swipe down climbs back; on the barometer, swipe up
- * shows the altimeter and swipe down the pressure dial.
+ * a RESET? popup) and swipe down climbs back; on the clock they climb
+ * clock -> timer, and on the timer view pause -> RESET? popup -> reset
+ * (swipe down resumes, then returns to the clock); on the barometer, swipe
+ * up shows the altimeter and swipe down the pressure dial.
  *
  * @param {number} directionLR - Left/Right swipe direction (-1 or 1).
  * @param {number} directionUD - Up/Down swipe direction (-1 for up, 1 for down).
@@ -505,6 +536,59 @@ function onSwipe(directionLR, directionUD) {
         dismissInfoOverlay();
         saveState();
         drawIfOn();
+      }
+    } else if (screens[currentScreenIdx] === "clock") {
+      // A swipe the firmware saw in a winding gesture is not navigation
+      if (windActive || Date.now() - lastWindEndMs < 400) return;
+      let hadOverlay = !!infoOverlayTimeout;
+      dismissInfoOverlay();
+      if (directionUD === -1) { // Swipe up: one rung deeper
+        if (clockView === 0) {
+          // Clock face -> timer sub-view
+          clockView = 1;
+          saveState();
+        } else if (timerPausedMs > 0) {
+          if (resetConfirmTimeout) {
+            // Second swipe up while the popup is showing: reset confirmed,
+            // the timer is off and the view returns to the wind-up mode
+            dismissResetConfirm();
+            timerPausedMs = 0;
+            saveState();
+          } else {
+            // Swipe up on a paused timer: ask for confirmation before resetting
+            armResetConfirm();
+          }
+        } else if (getTimerRemaining() > 0) {
+          // Running -> paused. sched must not ring while paused, so the
+          // remaining time moves from sched.json into the app state
+          timerPausedMs = getTimerRemaining();
+          stopTimer();
+          saveState();
+          Bangle.buzz(30);
+        }
+        // With no timer set, the swipe only dismissed a visible overlay
+        drawIfOn();
+      } else { // Swipe down: one rung back up
+        if (resetConfirmTimeout) {
+          // Dismiss the pending reset confirmation, the timer stays paused
+          dismissResetConfirm();
+          drawIfOn();
+        } else if (timerPausedMs > 0) {
+          // Resume: the remaining time moves back into sched
+          startTimer(timerPausedMs);
+          timerPausedMs = 0;
+          saveState();
+          Bangle.buzz(30);
+          drawIfOn();
+        } else if (clockView === 1) {
+          // Timer -> clock face; a running timer keeps running
+          clockView = 0;
+          saveState();
+          drawIfOn();
+        } else if (hadOverlay) {
+          // Clock face: the swipe only dismissed the date pill
+          drawIfOn();
+        }
       }
     } else if (screens[currentScreenIdx] === "steps") {
       // A visible exact-value pill belongs to the previous state of the
@@ -532,10 +616,7 @@ function onSwipe(directionLR, directionUD) {
           saveState();
         } else {
           // Swipe up in the trip view: ask for confirmation before resetting
-          resetConfirmTimeout = setTimeout(function() {
-            resetConfirmTimeout = undefined;
-            drawIfOn();
-          }, RESET_CONFIRM_MS);
+          armResetConfirm();
         }
         drawIfOn();
       } else { // Swipe down: one rung back up
@@ -564,18 +645,20 @@ Bangle.on('swipe', onSwipe);
 
 /**
  * Handles tap gestures on the touchscreen: shows the info overlay of the
- * current dashboard (date on the clock, exact steps or distance of the
- * current sub-view on the steps screen, exact pressure or altitude on the
- * barometer views). While the RESET? popup is showing on the trip view it
- * takes priority and taps are ignored.
+ * current dashboard (date on the clock, remaining time on the timer view,
+ * exact steps or distance of the current sub-view on the steps screen,
+ * exact pressure or altitude on the barometer views). While a RESET? popup
+ * is showing it takes priority and taps are ignored, as is the touch the
+ * firmware may emit at the end of a timer winding gesture.
  *
  * @param {number} button - The button index.
  * @param {Object} xy - The x and y coordinates of the touch.
  */
 function onTouch(button, xy) {
+  if (windActive || Date.now() - lastWindEndMs < 400) return;
   let screen = screens[currentScreenIdx];
-  if (screen === "clock" || screen === "baro" ||
-      (screen === "steps" && !resetConfirmTimeout)) {
+  if ((screen === "clock" || screen === "steps") && resetConfirmTimeout) return;
+  if (screen === "clock" || screen === "steps" || screen === "baro") {
     showInfoOverlay();
   }
 }
@@ -649,9 +732,15 @@ function drawDateOverlay() {
 
 /**
  * Draws the analog clock face: the surrounding hours, the hand for the
- * current time, the digital minute in the center and the date overlay.
+ * current time, the digital minute in the center, the bezel-style timer
+ * marker and the date overlay — or the timer sub-view the ladder is on.
  */
 function drawClockGauge() {
+  if (clockView !== 0) {
+    drawTimerView();
+    return;
+  }
+
   currentTime = new Date();
   currentHour = currentTime.getHours();
   currentMinute = currentTime.getMinutes();
@@ -669,7 +758,291 @@ function drawClockGauge() {
     drawNumber(":" + minStr, 0xF800);
   }
 
+  // Bezel-style timer marker: a dot on the dial at the hand position where
+  // the timer will fire, hollow while it is paused. The dot itself is
+  // static — the hand creeps towards it — so it costs no extra redraws.
+  let timerRem = timerPausedMs > 0 ? timerPausedMs : getTimerRemaining();
+  if (timerRem > 0) {
+    let end = new Date(Date.now() + timerRem);
+    let a = 30 * end.getHours() + 0.5 * end.getMinutes();
+    let pt = rotatePoints([0, -(gHeight + lineOffset) + hourLength - (hourRadius / 2)], a, radius);
+    g.setColor(TIMER_COLOR);
+    if (timerPausedMs > 0) g.drawCircle(pt[0], pt[1], hourRadius + 1);
+    else g.fillCircle(pt[0], pt[1], hourRadius + 1);
+  }
+
   if (infoOverlayTimeout) drawDateOverlay();
+}
+
+// ======================================================================
+// Gauge: Timer (sub-view of the clock screen)
+// ======================================================================
+
+// Sub-view ladder of the clock screen, climbed by vertical swipes:
+// 0 = clock face, 1 = wind-up timer. Persisted like the other sub-views so
+// it survives app reloads.
+let clockView = 0;
+
+// Remaining time of a paused timer in ms. A running timer lives in
+// sched.json instead (single source of truth), where the sched boot code
+// re-arms it in every app context — so it rings even when a message viewer
+// or another app has replaced this one, and survives reboots. A paused
+// timer must not ring, so its remaining time is parked here.
+let timerPausedMs = 0;
+
+const TIMER_ALARM_ID = "line_dash";
+// Magenta: the one native (undithered) color no other gauge uses
+const TIMER_COLOR = 0xF81F;
+
+// The sched library is an install-time dependency, but requiring it must not
+// take the whole clock down if it is missing (e.g. a manual install): the
+// timer then simply stays off
+const hasSched = !!storage.read("sched");
+
+/**
+ * Returns the remaining ms of the running system timer, or 0 if none.
+ * @returns {number} Remaining time in ms.
+ */
+function getTimerRemaining() {
+  if (!hasSched) return 0;
+  const sched = require("sched");
+  let alarm = sched.getAlarm(TIMER_ALARM_ID);
+  if (!alarm || !alarm.on) return 0;
+  let t = sched.getTimeToAlarm(alarm);
+  if (t === undefined) {
+    // A timer crossing midnight carries tomorrow's date, which
+    // getTimeToAlarm does not consider active yet; derive the remaining
+    // time directly from the alarm's time of day instead
+    let now = new Date();
+    t = alarm.t - (((now.getHours() * 60 + now.getMinutes()) * 60 + now.getSeconds()) * 1000);
+    if (t < 0) t += 86400000;
+  }
+  return t > 0 ? t : 0;
+}
+
+/**
+ * Starts the system timer via the sched library, replacing a previous one.
+ * @param {number} ms - Timer duration from now.
+ */
+function startTimer(ms) {
+  if (!hasSched) return;
+  const sched = require("sched");
+  sched.setAlarm(TIMER_ALARM_ID, {
+    appid: "line_dash",
+    msg: "Line Dash",
+    timer: ms,
+    del: true // remove from sched.json once fired
+  });
+  sched.reload();
+}
+
+/**
+ * Removes the running system timer, if any.
+ */
+function stopTimer() {
+  if (!hasSched) return;
+  const sched = require("sched");
+  sched.setAlarm(TIMER_ALARM_ID, undefined);
+  sched.reload();
+}
+
+// --- Winding gesture ---
+// The timer is wound up like a mechanical egg timer: holding a finger still
+// for GRAB_HOLD_MS grabs the dial (a short buzz confirms), turning around
+// the center then adds or removes minutes, and letting go commits: >= 1
+// minute (re)starts the timer, 0 switches it off. A touch that moves right
+// away is a tap or swipe and is left to the firmware's own detection.
+const GRAB_HOLD_MS = 150;
+const GRAB_TOLERANCE_PX = 10;
+const WIND_MAX_MIN = 60;
+let windActive = false;
+let windMinutes = 0; // minutes shown while winding (float)
+let windBaseMinutes = 0; // minutes when the dial was grabbed
+let grabTimeout; // pending hold-detection for the current touch
+let dragTouch; // {x, y, moved} of the current touch while pressed
+let lastDragAngle = 0;
+let lastWindDrawMs = 0;
+// End of the last winding gesture; the firmware may emit a touch or swipe
+// event for the same gesture right after release, which must be ignored
+let lastWindEndMs = 0;
+
+/**
+ * Angle of a touch point around the screen center, clockwise from 12 o'clock.
+ * @returns {number} Angle in degrees.
+ */
+function touchAngle(x, y) {
+  return Math.atan2(x - gCenterX, gCenterY - y) / DEG2RAD;
+}
+
+/**
+ * Cancels a pending hold-detection timeout.
+ */
+function clearGrabTimeout() {
+  if (grabTimeout) {
+    clearTimeout(grabTimeout);
+    grabTimeout = undefined;
+  }
+}
+
+/**
+ * Enters winding mode: the dial follows the finger until it is released.
+ */
+function grabDial() {
+  windActive = true;
+  dismissInfoOverlay();
+  dismissResetConfirm();
+  windBaseMinutes = (timerPausedMs > 0 ? timerPausedMs : getTimerRemaining()) / 60000;
+  windMinutes = windBaseMinutes;
+  lastDragAngle = touchAngle(dragTouch.x, dragTouch.y);
+  Bangle.buzz(20);
+  drawIfOn();
+}
+
+/**
+ * Commits the wound-up time when the finger lets go. Releasing without
+ * turning changes nothing, so a paused timer stays paused.
+ */
+function commitWind() {
+  windActive = false;
+  lastWindEndMs = Date.now();
+  if (Math.abs(windMinutes - windBaseMinutes) < 0.5) {
+    drawIfOn();
+    return;
+  }
+  let m = Math.round(windMinutes);
+  timerPausedMs = 0;
+  if (m > 0) startTimer(m * 60000);
+  else stopTimer();
+  saveState();
+  drawIfOn();
+}
+
+/**
+ * Handles drag events on the timer view, implementing the hold-then-turn
+ * winding gesture.
+ *
+ * @param {Object} e - The drag event with x, y and b (1 pressed, 0 released).
+ */
+function onDrag(e) {
+  if (screens[currentScreenIdx] !== "clock" || clockView !== 1) {
+    // Not on the timer view (anymore): forget any gesture in progress
+    clearGrabTimeout();
+    dragTouch = undefined;
+    windActive = false;
+    return;
+  }
+  if (e.b) {
+    if (!dragTouch) {
+      dragTouch = {x: e.x, y: e.y, moved: false};
+      grabTimeout = setTimeout(function() {
+        grabTimeout = undefined;
+        if (dragTouch && !dragTouch.moved) grabDial();
+      }, GRAB_HOLD_MS);
+    }
+    if (windActive) {
+      let a = touchAngle(e.x, e.y);
+      let d = a - lastDragAngle;
+      if (d > 180) d -= 360;
+      if (d < -180) d += 360;
+      lastDragAngle = a;
+      windMinutes = Math.min(WIND_MAX_MIN, Math.max(0, windMinutes + d / 6));
+      let now = Date.now();
+      if (now - lastWindDrawMs >= 100) { // ~10 redraws/s follow a turn just fine
+        lastWindDrawMs = now;
+        drawIfOn();
+      }
+    } else if (!dragTouch.moved) {
+      let dx = e.x - dragTouch.x, dy = e.y - dragTouch.y;
+      if (dx * dx + dy * dy > GRAB_TOLERANCE_PX * GRAB_TOLERANCE_PX) {
+        // Moved too far too soon: a tap or swipe, not a grab
+        dragTouch.moved = true;
+        clearGrabTimeout();
+      }
+    }
+  } else { // finger released
+    clearGrabTimeout();
+    dragTouch = undefined;
+    if (windActive) commitWind();
+  }
+}
+Bangle.on('drag', onDrag);
+
+/**
+ * Draws a small pause icon (two bars) below the center value.
+ * Matches the iconFunc signature used by drawNumber.
+ */
+function drawPauseIcon(x, y, color) {
+  g.setColor(color);
+  g.fillRect(x - 5, y - 4, x - 2, y + 4);
+  g.fillRect(x + 2, y - 4, x + 5, y + 4);
+}
+
+/**
+ * Draws the wind-up timer sub-view of the clock screen: a 0-60 minute dial
+ * (one revolution per hour, main ticks every 5 minutes), the remaining
+ * minutes in the circle (seconds in the final minute, a pause icon while
+ * paused), the TIMER indicator, the RESET? popup and the exact-remaining
+ * overlay. The needle is magenta while the timer runs (and while winding)
+ * and red — the universal "stopped" color, readable on both themes — while
+ * it is paused or off.
+ */
+function drawTimerView() {
+  let remainingMs = timerPausedMs > 0 ? timerPausedMs : getTimerRemaining();
+  let isPaused = timerPausedMs > 0;
+  let isRunning = !isPaused && remainingMs > 0;
+
+  let minutes = windActive ? windMinutes : remainingMs / 60000;
+
+  setHourAngle((minutes / 60) * 360);
+
+  let centerText, centerLabel;
+  if (windActive) {
+    centerText = Math.round(windMinutes);
+    centerLabel = "MIN";
+  } else if (remainingMs > 0 && remainingMs < 60000) {
+    centerText = Math.ceil(remainingMs / 1000);
+    centerLabel = "SEC";
+  } else {
+    centerText = Math.ceil(remainingMs / 60000);
+    centerLabel = "MIN";
+  }
+
+  let needleColor = (isRunning || windActive) ? TIMER_COLOR : 0xF800;
+
+  drawDashboardGauge({
+    currentTick: Math.floor(minutes / 5),
+    minTick: -Infinity,
+    maxTick: Infinity,
+    tickRange: 1,
+    startAngle: 0,
+    tickSpacing: 30,
+    subIntervals: 5,
+    // Minute labels wrapping like the dial: ..., 55, 0, 5, 10, ...
+    getTickLabel: i => String(((i % 12) + 12) % 12 * 5),
+    getTickColor: TIMER_COLOR,
+    handColor: needleColor,
+    centerText: centerText,
+    centerLabel: isPaused ? undefined : centerLabel,
+    centerIcon: isPaused ? drawPauseIcon : undefined
+  });
+
+  g.setFontAlign(0, 0);
+  g.setFont("Vector", 20);
+  g.setColor(TIMER_COLOR);
+  g.drawString("TIMER", gCenterX, 12);
+
+  if (resetConfirmTimeout) drawOverlayPill("TIMER", "RESET?", TIMER_COLOR);
+  if (infoOverlayTimeout) {
+    let secs = Math.ceil(remainingMs / 1000);
+    drawOverlayPill("TIMER", Math.floor(secs / 60) + ":" + ("0" + (secs % 60)).substr(-2), TIMER_COLOR);
+  }
+
+  // While running, the next redraw must land when the circle value changes
+  // (a timer-minute boundary, or each second in the final minute) instead
+  // of the wall-clock minute the other screens tick on
+  if (isRunning && !windActive) {
+    queueDraw((remainingMs > 60000 ? remainingMs % 60000 : remainingMs % 1000) + 50);
+  }
 }
 
 // ======================================================================
@@ -730,20 +1103,6 @@ function drawStepsGauge() {
 // reloads; a trip is only valid on the day it was started.
 let tripDay = "";
 let tripBaselineSteps = 0;
-
-// While set, the trip-reset confirmation popup is showing on the trip view
-const RESET_CONFIRM_MS = 3000;
-let resetConfirmTimeout;
-
-/**
- * Hides a pending trip-reset confirmation without redrawing.
- */
-function dismissResetConfirm() {
-  if (resetConfirmTimeout) {
-    clearTimeout(resetConfirmTimeout);
-    resetConfirmTimeout = undefined;
-  }
-}
 
 /**
  * Draws the distance sub-view of the steps screen (day total or trip,
@@ -1240,9 +1599,12 @@ let drawTimeout;
 
 /**
  * Schedules the next automatic redraw.
- * The timeout aligns with the start of the next minute.
+ * The timeout aligns with the start of the next minute, unless the timer
+ * view passes its own finer-grained delay.
+ *
+ * @param {number} [delay] - Optional delay in ms overriding the minute tick.
  */
-function queueDraw() {
+function queueDraw(delay) {
   if (drawTimeout) clearTimeout(drawTimeout);
   drawTimeout = undefined;
   // Don't schedule a timeout if the LCD is off - unless the watch is
@@ -1252,7 +1614,7 @@ function queueDraw() {
   drawTimeout = setTimeout(function() {
     drawTimeout = undefined;
     draw();
-  }, 60000 - (Date.now() % 60000));
+  }, delay !== undefined ? delay : 60000 - (Date.now() % 60000));
 }
 
 /**
@@ -1291,6 +1653,7 @@ Bangle.setUI({
     Bangle.removeListener('lcdPower', lcdListener);
     Bangle.removeListener('swipe', onSwipe);
     Bangle.removeListener('touch', onTouch);
+    Bangle.removeListener('drag', onDrag);
     Bangle.removeListener('HRM', onHRM);
     Bangle.removeListener('pressure', onPressure);
     Bangle.removeListener('charging', onCharge);
@@ -1300,6 +1663,7 @@ Bangle.setUI({
     drawTimeout = undefined;
     if (hrmPowerTimeout) clearTimeout(hrmPowerTimeout);
     hrmPowerTimeout = undefined;
+    clearGrabTimeout();
     dismissInfoOverlay();
     dismissResetConfirm();
   }
@@ -1321,6 +1685,11 @@ if (savedState.screen === "distance") {
 // The trip view is only valid while its trip is running
 if (stepsView === 2 && tripDay !== todayKey()) stepsView = 1;
 showAltView = !!savedState.altView;
+clockView = savedState.clockView === 1 ? 1 : 0;
+timerPausedMs = savedState.timerPaused > 0 ? savedState.timerPaused : 0;
+// A paused timer cannot coexist with a running one (e.g. restarted from the
+// alarms app while this app was unloaded): the running timer wins
+if (timerPausedMs > 0 && getTimerRemaining() > 0) timerPausedMs = 0;
 
 // Resume on the screen that was active when the app was last unloaded
 // (e.g. when a message fast-loaded over the clock). Falls back to the
