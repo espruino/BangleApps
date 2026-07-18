@@ -670,6 +670,8 @@ function onTouch(button, xy) {
     Bangle.removeListener('touch', onTouch);
     if (drawTimeout) { clearTimeout(drawTimeout); drawTimeout = undefined; }
 
+    if (timerSetMinutes <= 0) timerSetMinutes = 5;
+
     let menu = {
       '': { 'title': 'Timer' },
       'Start': () => {
@@ -686,7 +688,7 @@ function onTouch(button, xy) {
          draw();
       },
       'Minutes': {
-         value: Math.round(timerSetMinutes) || 5,
+         value: Math.round(timerSetMinutes),
          min: 1, max: 60, step: 1,
          onchange: v => { timerSetMinutes = v; }
       },
@@ -916,7 +918,8 @@ function timerTickDelay() {
   if (screens[currentScreenIdx] !== "clock" || clockView !== 1 || timerPausedMs > 0) return undefined;
   let rem = getTimerRemaining();
   if (rem <= 0) return undefined;
-  return (rem <= 60000 || infoOverlayTimeout) ? (rem % 1000) + 50 : (rem % 60000) + 50;
+  // Update every second in the last minute, otherwise every 10 seconds (so the hand moves smoothly)
+  return (rem <= 60000 || infoOverlayTimeout) ? (rem % 1000) + 50 : (rem % 10000) + 50;
 }
 
 /**
