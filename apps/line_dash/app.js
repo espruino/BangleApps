@@ -971,11 +971,14 @@ function drawTimerView() {
 
   let centerText, centerLabel;
   if (isRunning || isPaused) {
+    // Truncate like a digital clock (3:15 left reads "3"), matching the
+    // exact-remaining pill and the truncation the other gauges use
     if (remainingMs < 60000) {
-      centerText = Math.ceil(remainingMs / 1000);
+      // Never show a dead "0" in the final second — count 59...2, 1, ring
+      centerText = Math.max(1, Math.floor(remainingMs / 1000));
       centerLabel = "SEC";
     } else {
-      centerText = Math.ceil(remainingMs / 60000);
+      centerText = Math.floor(remainingMs / 60000);
       centerLabel = "MIN";
     }
   } else {
@@ -1003,7 +1006,7 @@ function drawTimerView() {
 
   if (resetConfirmTimeout) drawOverlayPill("TIMER", "RESET?", accent);
   if (infoOverlayTimeout) {
-    let secs = Math.ceil(remainingMs / 1000);
+    let secs = Math.floor(remainingMs / 1000);
     drawOverlayPill("TIMER", Math.floor(secs / 60) + ":" + ("0" + (secs % 60)).substr(-2), accent);
   }
 }
