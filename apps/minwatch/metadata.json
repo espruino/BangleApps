@@ -1,0 +1,28 @@
+{
+  "id": "minwatch",
+  "name": "Minimal Watch",
+  "shortName": "Minimal Watch",
+  "version": "0.17",
+  "description": "A minimal, battery-saving watchface showing time, date, week number, battery bar, steps, and weather. Requires owmweather for weather data.",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "dependencies": {
+    "app": "owmweather"
+  },
+  "allow_emulator": true,
+  "storage": [
+    {
+      "name": "minwatch.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "minwatch.img",
+      "url": "app-icon.js",
+      "evaluate": true
+    }
+  ]
+}

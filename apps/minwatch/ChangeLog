@@ -1,0 +1,17 @@
+0.17: Code review cleanup, cached weather/week, fixed alignment bug, improved date fallback
+0.16: Centered weather icon+temp group horizontally
+0.15: Moved charging icon outside try/catch, repositioned to y=166, new plug shape
+0.14: Fixed charging icon wiped by draw() every 60s, moved isCharging after setUI
+0.13: Added charging indicator icon (yellow lightning bolt, bottom-right)
+0.12: Fixed apps.local.json version sync for App Loader
+0.11: Shifted content down 16px for vertical centering
+0.10: Fixed weather icon height in centering calculation
+0.09: Code cleanup, cached locale/storage reads, removed redundancy
+0.08: Dynamic centering using Bangle.appRect, simplified timer to setInterval
+0.07: Fixed auto-update timer, dynamic spacing between elements
+0.06: Removed version display, fixed text visibility on LCD
+0.05: Fixed version text off-screen, date truncation for long locales
+0.04: Added screen wake redraw support
+0.03: Reduced time font size to fix overflow, short date format
+0.02: Added error isolation per element, fixed background clear
+0.01: Initial release
