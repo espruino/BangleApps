@@ -11,7 +11,7 @@
     "BANGLEJS2"
   ],
   "dependencies": {
-    "app": "owmweather"
+    "owmweather": "app"
   },
   "allow_emulator": true,
   "storage": [
