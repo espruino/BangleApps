@@ -884,7 +884,10 @@ function stopTimer() {
 // --- Setting the timer ---
 // The duration is set in a native menu, opened by tapping the timer view
 // while no timer is running (the START hint in the circle points there).
-const SET_MAX_MIN = 60;
+// Longest settable duration: 23h59m. The cap keeps the cross-midnight
+// remaining-time fallback in getTimerRemaining unambiguous (it assumes the
+// timer spans less than a day)
+const SET_MAX_MIN = 24 * 60 - 1;
 // Duration in minutes for the next start. Persisted, so the timer remembers
 // its last duration: after a reset or ring, Start restarts the same time.
 let timerSetMinutes = 10;
@@ -900,6 +903,10 @@ let timerIsRunning = false;
  */
 function showTimerMenu() {
   if (timerSetMinutes <= 0) timerSetMinutes = 5;
+  // Hours and minutes as separate rows (the alarm/multitimer convention),
+  // so long durations take one tap instead of sixty
+  let hours = Math.floor(timerSetMinutes / 60);
+  let mins = Math.round(timerSetMinutes % 60);
   function closeMenu() {
     E.showMenu(); // dismiss the menu, leaving no UI registered at all
     registerAppUI();
@@ -909,17 +916,23 @@ function showTimerMenu() {
   E.showMenu({
     '': { 'title': 'Timer' },
     'Start': function() {
-      let m = Math.round(timerSetMinutes);
+      let m = hours * 60 + mins;
       if (m >= 1) {
+        timerSetMinutes = m;
         startTimer(m * 60000);
         Bangle.buzz(30);
       }
       closeMenu();
     },
+    'Hours': {
+      value: hours,
+      min: 0, max: 23, step: 1, wrap: true,
+      onchange: v => { hours = v; }
+    },
     'Minutes': {
-      value: Math.round(timerSetMinutes),
-      min: 1, max: SET_MAX_MIN, step: 1,
-      onchange: v => { timerSetMinutes = v; }
+      value: mins,
+      min: 0, max: 59, step: 1, wrap: true,
+      onchange: v => { mins = v; }
     },
     '< Cancel': closeMenu
   });
@@ -951,10 +964,11 @@ function drawPauseIcon(x, y, color) {
 }
 
 /**
- * Draws the wind-up timer sub-view of the clock screen: a 0-60 minute dial
- * (one revolution per hour, main ticks every 5 minutes) with the remaining
- * minutes in the circle (seconds in the final minute, a pause icon while
- * paused), the RESET? popup and the live exact-remaining overlay. While the
+ * Draws the timer sub-view of the clock screen: a minute dial (one
+ * revolution per hour, main ticks every 5 minutes, wrapping for durations
+ * beyond an hour) with the remaining minutes in the circle (hours above an
+ * hour, seconds in the final minute, a pause icon while paused), the
+ * RESET? popup and the live exact-remaining overlay. While the
  * timer runs the view wears the clock's own white/red look; while it is
  * paused or being wound up, needle and circle turn magenta and the circle
  * label doubles as the START hint for the tap that starts the timer.
@@ -972,14 +986,20 @@ function drawTimerView() {
   let centerText, centerLabel;
   if (isRunning || isPaused) {
     // Truncate like a digital clock (3:15 left reads "3"), matching the
-    // exact-remaining pill and the truncation the other gauges use
+    // exact-remaining pill and the truncation the other gauges use. Beyond
+    // an hour the circle carries the component the dial cannot show — the
+    // hours — while the needle keeps reading the minutes (the altimeter
+    // principle: one revolution per hour, coarse component in the circle)
     if (remainingMs < 60000) {
       // Never show a dead "0" in the final second — count 59...2, 1, ring
       centerText = Math.max(1, Math.floor(remainingMs / 1000));
       centerLabel = "SEC";
-    } else {
+    } else if (remainingMs < 3600000) {
       centerText = Math.floor(remainingMs / 60000);
       centerLabel = "MIN";
+    } else {
+      centerText = Math.floor(remainingMs / 3600000);
+      centerLabel = "HRS";
     }
   } else {
     centerText = Math.round(timerSetMinutes);
@@ -1006,8 +1026,12 @@ function drawTimerView() {
 
   if (resetConfirmTimeout) drawOverlayPill("TIMER", "RESET?", accent);
   if (infoOverlayTimeout) {
+    // m:ss below an hour, h:mm:ss above
     let secs = Math.floor(remainingMs / 1000);
-    drawOverlayPill("TIMER", Math.floor(secs / 60) + ":" + ("0" + (secs % 60)).substr(-2), accent);
+    let hrs = Math.floor(secs / 3600);
+    let mins = Math.floor(secs / 60) % 60;
+    let str = (hrs > 0 ? hrs + ":" + ("0" + mins).substr(-2) : mins) + ":" + ("0" + (secs % 60)).substr(-2);
+    drawOverlayPill("TIMER", str, accent);
   }
 }
 
