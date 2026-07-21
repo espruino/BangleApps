@@ -314,6 +314,7 @@
           case 'none':            return "undefined"
           case 'four-numbered':   return "require('https://raw.githubusercontent.com/rozek/banglejs-2-four-numbered-clock-face/main/ClockFace.js')"
           case 'twelve-numbered': return "require('https://raw.githubusercontent.com/rozek/banglejs-2-twelve-numbered-clock-face/main/ClockFace.js')"
+          case 'twelve-dots':     return "require('https://raw.githubusercontent.com/DanielDecker/banglejs-2-only-dots-clock-face/main/ClockFace.js')"
           case 'rainbow':         return "require('https://raw.githubusercontent.com/rozek/banglejs-2-rainbow-clock-face/main/ClockFace.js')"
           case 'custom':          return "require('" + ClockFaceURL + "')"
         }
@@ -323,7 +324,9 @@
         switch (ClockHands) {
           case 'simple':  return "require('https://raw.githubusercontent.com/rozek/banglejs-2-simple-clock-hands/main/ClockHands.js')"
           case 'rounded': return "require('https://raw.githubusercontent.com/rozek/banglejs-2-rounded-clock-hands/main/ClockHands.js')"
+          case 'roundMin':return "require('https://raw.githubusercontent.com/DanielDecker/banglejs-2-rounded-clock-hands/main/ClockHands.js')"
           case 'hollow':  return "require('https://raw.githubusercontent.com/rozek/banglejs-2-hollow-clock-hands/main/ClockHands.js')"
+          case 'digital': return "require('https://raw.githubusercontent.com/DanielDecker/banglejs-2-digital-clock-hands/main/ClockHands.js')"
           case 'custom':  return "require('" + ClockHandsURL + "')"
         }
       }
@@ -335,6 +338,7 @@
           case 'weekday':       return "require('https://raw.githubusercontent.com/rozek/banglejs-2-weekday-complication/main/Complication.js')"
           case 'calendar-week': return "require('https://raw.githubusercontent.com/rozek/banglejs-2-calendar-week-complication/main/Complication.js')"
           case 'moon-phase':    return "require('https://raw.githubusercontent.com/rozek/banglejs-2-moon-phase-complication/main/Complication.js')"
+          case 'hrm':           return "require('https://raw.githubusercontent.com/DanielDecker/banglejs-2-HRM-complication/main/Complication.js')"
           case 'custom':        return "require('" + customURL + "')"
         }
       }
@@ -506,6 +510,14 @@ console.log(AppSource)
 
      <td>
        <label class="Preview">
+         <input type="radio" name="clock-face" value="twelve-dots">
+         <img src="twelveDotsClockFace.png"/>
+       </label><br>
+       twelve-dots
+     </td>
+
+     <td>
+       <label class="Preview">
          <input type="radio" name="clock-face" value="rainbow">
          <img src="RainbowClockFace.png"/>
        </label><br>
@@ -567,10 +579,26 @@ console.log(AppSource)
 
      <td>
        <label class="Preview">
+         <input type="radio" name="clock-hands" value="roundMin" checked>
+         <img src="minuteClockHands.png"/>
+       </label><br>
+       rounded with minute
+     </td>
+
+     <td>
+       <label class="Preview">
          <input type="radio" name="clock-hands" value="hollow">
          <img src="hollowClockHands.png"/>
        </label><br>
        hollow
+     </td>
+
+      <td>
+       <label class="Preview">
+         <input type="radio" name="clock-hands" value="digital" checked>
+         <img src="digitalClockHands.png"/>
+       </label><br>
+       digital
      </td>
 
      <td>
@@ -666,6 +694,7 @@ console.log(AppSource)
           <option value="weekday">      weekday</option>
           <option value="calendar-week">calendar week</option>
           <option value="moon-phase">   moon phase</option>
+          <option value="hrm">          heart rate monitor</option>
           <option value="custom">       (custom)</option>
         </select>
       </td>
@@ -688,6 +717,7 @@ console.log(AppSource)
           <option value="weekday">      weekday</option>
           <option value="calendar-week">calendar week</option>
           <option value="moon-phase">   moon phase</option>
+          <option value="hrm">          heart rate monitor</option>
           <option value="custom">       (custom)</option>
         </select>
       </td>
@@ -710,6 +740,7 @@ console.log(AppSource)
           <option value="weekday">      weekday</option>
           <option value="calendar-week">calendar week</option>
           <option value="moon-phase">   moon phase</option>
+          <option value="hrm">          heart rate monitor</option>
           <option value="custom">       (custom)</option>
         </select>
       </td>
@@ -732,6 +763,7 @@ console.log(AppSource)
           <option value="weekday">      weekday</option>
           <option value="calendar-week">calendar week</option>
           <option value="moon-phase">   moon phase</option>
+          <option value="hrm">          heart rate monitor</option>
           <option value="custom">       (custom)</option>
         </select>
       </td>
@@ -754,6 +786,7 @@ console.log(AppSource)
           <option value="weekday">      weekday</option>
           <option value="calendar-week">calendar week</option>
           <option value="moon-phase">   moon phase</option>
+          <option value="hrm">          heart rate monitor</option>
           <option value="custom">       (custom)</option>
         </select>
       </td>
@@ -776,6 +809,7 @@ console.log(AppSource)
           <option value="weekday">      weekday</option>
           <option value="calendar-week">calendar week</option>
           <option value="moon-phase">   moon phase</option>
+          <option value="hrm">          heart rate monitor</option>
           <option value="custom">       (custom)</option>
         </select>
       </td>
@@ -798,6 +832,7 @@ console.log(AppSource)
           <option value="weekday">      weekday</option>
           <option value="calendar-week">calendar week</option>
           <option value="moon-phase">   moon phase</option>
+          <option value="hrm">          heart rate monitor</option>
           <option value="custom">       (custom)</option>
         </select>
       </td>
@@ -820,6 +855,7 @@ console.log(AppSource)
           <option value="weekday">      weekday</option>
           <option value="calendar-week">calendar week</option>
           <option value="moon-phase">   moon phase</option>
+          <option value="hrm">          heart rate monitor</option>
           <option value="custom">       (custom)</option>
         </select>
       </td>
