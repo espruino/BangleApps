@@ -11,9 +11,9 @@ you compose your very own, personal analog clock.
 You currently have the choice between
 
 * 2 different clock sizes,
-* 4 different clock faces,
-* 3 different clock hands and
-* 4 different complications
+* 5 different clock faces,
+* 5 different clock hands and
+* 5 different complications
 
 Alternatively, you may specify the GitHub URL of ACCK compatible modules for
 external clock sizes, faces, hands or complications.
@@ -22,11 +22,11 @@ Additionally, you may use the currently configured global theme or configure
 your own colors for clock fore- and background and second hands.
 
 Consequently, even without external modules you already have the choice between
-102144 combinations!
+218880 combinations!
 
 <!--
-  1 + (8 Fg colors * 7 Bg colors) * 2 sizes * 4(7) faces * 3(4) hands *
-  8 positions * 4 complications (w/o placeholder)
+  1 + (8 Fg colors * 7 Bg colors) * 2 sizes * 5(8) faces * 5(6) hands *
+  8 positions * 5 complications (w/o placeholder)
 -->
 
 ## License ##
