@@ -45,9 +45,8 @@ function updateWeatherData(d) {
   require("weather").update(weatherEvent);
 }
 
-function sendData(dataString,forceSend) {
-  if (global.phoneConnected||forceSend) {
-    Bluetooth.write("BlueWatch_PRIMER" + "\n");
+function sendData(dataString, forceSend) {
+  if (global.phoneConnected || forceSend) {
     setTimeout(function () {
       Bluetooth.write(dataString + "\n");
     }, 500);
