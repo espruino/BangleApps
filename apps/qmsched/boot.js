@@ -1,27 +1,33 @@
-// apply Quiet Mode schedules
 (function qm() {
-  if (Bangle.qmTimeout) clearTimeout(Bangle.qmTimeout); // so the app can eval() this file to apply changes right away
+  if (Bangle.qmTimeout) clearTimeout(Bangle.qmTimeout);
   delete Bangle.qmTimeout;
   let bSettings = require('Storage').readJSON('setting.json',true)||{};
   const curr = 0|bSettings.quiet;
   delete bSettings;
-  if (curr) require("qmsched").applyOptions(curr); // no need to re-apply default options
-
+  if (curr) require("qmsched").applyOptions(curr);
   let settings = require('Storage').readJSON('qmsched.json',true)||{};
   let scheds = settings.scheds||[];
   if (!scheds.length) {return;}
-  const now = new Date(),
-    hr = now.getHours()+(now.getMinutes()/60)+(now.getSeconds()/3600); // current (decimal) hour
+  const days = 0b1111111;
+  const now = new Date();
+  const hr = now.getHours()+(now.getMinutes()/60)+(now.getSeconds()/3600);
   scheds.sort((a, b) => a.hr-b.hr);
-  const tday = scheds.filter(s => s.hr>hr),  // scheduled for today
-    tmor = scheds.filter(s => s.hr<=hr); // scheduled for tomorrow
-  const next = tday.length ? tday[0] : tmor[0],
-    mode = next.mode;
-  let t = 3600000*(next.hr-hr); // timeout in milliseconds
-  if (t<0) {t += 86400000;} // scheduled for tomorrow: add a day
-  /* update quiet mode at the correct time. */
+  let best = null, bestT = Infinity;
+  for (let i = 0; i < scheds.length; i++) {
+    const s = scheds[i];
+    const mask = s.days !== undefined ? s.days : days;
+    for (let d = 0; d < 7; d++) {
+      const dayBit = 1 << ((now.getDay() + d) % 7);
+      if (!(mask & dayBit)) continue;
+      let t = 3600000 * (s.hr - hr) + d * 86400000;
+      if (t <= 0) continue;
+      if (t < bestT) { bestT = t; best = s; }
+      break;
+    }
+  }
+  if (!best) {return;}
   Bangle.qmTimeout=setTimeout(() => {
-    require("qmsched").setMode(mode);
-    qm(); // schedule next update
-  }, t);
+    require("qmsched").setMode(best.mode);
+    qm();
+  }, bestT);
 })();
