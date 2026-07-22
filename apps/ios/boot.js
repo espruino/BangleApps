@@ -126,6 +126,7 @@ E.on('notify',msg=>{
     "com.disney.disneyplus": "Disney+",
     "com.hbo.hbonow": "HBO Max",
     "com.adp.adpmobile":"ADP",
+    "com.RK.BlueWatch": "BlueWatch",
     "com.amazon.Amazon": "Amazon Shopping",
     "com.amazon.AmazonVideo": "Prime Video",
     "com.storytel.iphone": "Storytel",
