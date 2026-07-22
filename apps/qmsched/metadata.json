@@ -3,6 +3,7 @@
   "name": "Quiet Mode Schedule and Widget",
   "shortName": "Quiet Mode",
   "version": "0.11",
+  "author": "rigrig",
   "description": "Schedule quiet modes and options to activate at certain times, and provides a clockinfo and widget for changing/viewing modes.",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot_b1_main.png"},{"url":"screenshot_b1_edit.png"},{"url":"screenshot_b1_lcd.png"},
