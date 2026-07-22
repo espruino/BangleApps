@@ -2,11 +2,12 @@
   "id": "messages",
   "name": "Messages",
   "version": "0.70",
+  "author": "gfwilliams",
   "description": "Library to handle, load and store message events received from Android/iOS",
   "icon": "app.png",
   "type": "module",
   "tags": "tool,system",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "provides_modules" : ["messages"],
   "dependencies" : {
     "messagegui":"module",

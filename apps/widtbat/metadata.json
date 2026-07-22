@@ -2,6 +2,7 @@
   "id": "widtbat",
   "name": "Tiny Battery Widget",
   "version": "0.02",
+  "author": "MaBecker",
   "description": "Tiny blueish battery widget, vibs and changes level color when charging",
   "icon": "widget.png",
   "type": "widget",

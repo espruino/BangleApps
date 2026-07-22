@@ -1,5 +1,5 @@
-WIDGETS["bluetooth"]={area:"tr",width:15,draw:function() {
-  g.reset();
+WIDGETS["bluetooth"]={area:"tr",width:15,draw() {
+  g.reset("widget");
   if (NRF.getSecurityStatus().connected) {
     if (g.getBgColor() === 31) { // If background color is blue use cyan instead
       g.setColor("#0ff");
@@ -10,8 +10,12 @@ WIDGETS["bluetooth"]={area:"tr",width:15,draw:function() {
     g.setColor(g.theme.dark ? "#666" : "#999");
   }
   g.drawImage(atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="),2+this.x,2+this.y);
-},changed:function() {
+},changed() {
   WIDGETS["bluetooth"].draw();
+},remove() {
+    NRF.removeListener('connect', WIDGETS["bluetooth"].changed);
+    NRF.removeListener('disconnect', WIDGETS["bluetooth"].changed);
+    delete WIDGETS["bluetooth"];
 }};
 NRF.on('connect',WIDGETS["bluetooth"].changed);
 NRF.on('disconnect',WIDGETS["bluetooth"].changed);

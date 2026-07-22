@@ -2,6 +2,7 @@
   "name": "Crypto-Coins Info",
   "shortName":"Coins Info",
   "version": "0.10",
+  "author": "zwiglm",
   "description": "Crypto-Coins Infos with the help of the Binance API",
   "icon": "app.png",
   "tags": "clkinfo",

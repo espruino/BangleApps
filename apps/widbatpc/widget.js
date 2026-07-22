@@ -36,7 +36,6 @@
       'hideifmorethan': 100,
       'alwaysoncharge': false,
       'removejitter': 0, // 0 == off, 1 == downwards only
-      'buzzoncharge': true,
     };
     Object.keys(DEFAULTS).forEach(k=>{
       if (settings[k]===undefined) settings[k]=DEFAULTS[k];
@@ -112,9 +111,8 @@
     this.prevCharging = Bangle.isCharging();
 
     const c = levelColor(l);
-
     if (Bangle.isCharging() && setting('charger')) {
-      g.setColor(chargerColor()).drawImage(atob(
+      g.reset("widget").setColor(chargerColor()).drawImage(atob(
         "DhgBHOBzgc4HOP////////////////////3/4HgB4AeAHgB4AeAHgB4AeAHg"),x,y);
       x+=16;
     }
@@ -124,8 +122,7 @@
     if (setting('fillbar'))
       xl = x+4+100*(s-12)/100;
 
-    g.setColor(g.theme.fg);
-    g.fillRect(x,y+2,x+s-4,y+21);
+    g.reset("widget").fillRect(x,y+2,x+s-4,y+21);
     g.clearRect(x+2,y+4,x+s-6,y+19);
     g.fillRect(x+s-3,y+10,x+s,y+14);
     g.setColor(c).fillRect(x+4,y+6,xl,y+17);
@@ -169,9 +166,6 @@
   }
 
   Bangle.on('charging',function(charging) {
-    if (setting('buzzoncharge')) {
-      if(charging) Bangle.buzz();
-    }
     update();
     g.flip();
   });

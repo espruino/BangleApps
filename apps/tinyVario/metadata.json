@@ -4,6 +4,7 @@
   "version": "0.07",
   "icon": "app.png",
   "readme": "README.md",
+  "author": "xxDUxx",
   "description": "A very simple app for gliding / paragliding / hang gliding etc.",
   "tags": "outdoors",
   "supports" : ["BANGLEJS2"],

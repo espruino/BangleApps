@@ -2,6 +2,7 @@
   "name": "BLE Scanner",
   "shortName":"BLE Scan",
   "version":"0.01",
+  "author": "gfwilliams",
   "description": "Scans for bluetooth devices nearby and shows their names on the screen ordered by signal strength. The most recently discovered items are highlighted.",
   "icon": "app.png",
   "screenshots" : [ { "url":"screenshot.png" } ],

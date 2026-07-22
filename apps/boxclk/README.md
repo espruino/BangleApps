@@ -1,117 +1,85 @@
 # Box Clock
 
-Box Clock is a customizable clock app for Bangle.js 2 that features an interactive drag and drop interface and easy JSON configuration.
+Box Clock is a customizable Bangle.js 2 clock built around named layouts. Use the App Loader interface to arrange boxes and `clkinfo` regions in a live preview, save multiple layouts, and switch between them on the watch.
 
-## Unique Features
+## Why Use It
 
-__Drag & Drop:__
+- Easy customization in the web editor. Drag boxes, rename them, change fonts, colors, outlines, and backgrounds without hand-editing files.
+- Multiple layouts. Keep different looks for work, weekends, travel, dark rooms, or whatever else you want.
+- `clockbg` support. A layout can use your current Clock Backgrounds setup, or you can switch to a solid color, bundled image, or uploaded image.
+- Works with Bangle.js Fast Load and `clockbg`.
 
-This intuitive feature allows you to reposition any element (box) on the clock face with ease. Tap on the box(s) you want to move and the border will show, drag into position and tap outside of the boxes to finish placing. **Note:** Roll the tip of your finger slowly on the screen for fine adjustments.
+## Quick Start
 
-__Double Tap to Save:__
+1. Install Box Clock from the App Loader.
+2. Open the interface.
+3. Pick a layout, or create a new one from an existing preset.
+4. Drag boxes on the preview, edit their text and appearance, and choose a background.
+5. Upload the result to the watch.
+6. On the watch, choose the layout you want from Box Clock settings.
 
-After you've found the perfect position for your boxes, you can save their positions with a quick double tap on the background. This makes it easy to ensure your custom layout is stored for future use. A save icon will appear momentarily to confirm that your configuration has been saved.
+You do not need to edit JSON for the normal workflow. The web editor is the main way to customize Box Clock.
 
-__JSON Configuration:__
+## Layouts
 
-Each box can be customized extensively via a simple JSON configuration. You can add a custom text string to your configuration with the "string" parameter and you can match system theme colors by using "fg", "bg", "fg2", "bg2", "fgH", or "bgH" for any of the color parameters.
+Box Clock stores its face as named layouts.
 
-## Config File Structure
+It installs with a default layout. The interface also includes optional example layouts that you can add separately.
 
-Here's an example of what a configuration might contain:
+Each saved layout is independent, so you can keep multiple layouts and switch between them from the watch.
 
-```
-{
-  "customBox": {
-    "string": "Your text here",
-    "font": "CustomFont", // Custom fonts must be removed in setUI
-    "fontSize": 1,
-    "outline": 2,
-    "color": "#FF9900", // Use 6 or 3 digit hex color codes
-    "outlineColor": "bgH", // Or match system theme colors like this
-    "border": 65535, // Or use 16-bit RGB565 like this
-    "xPadding": 1,
-    "yPadding": -4,
-    "xOffset": 0,
-    "yOffset": 3,
-    "boxPos": { "x": 0.5, "y": 0.5 },
-    "prefix": "", // Adds a string to the beginning of the main string
-    "suffix": "", // Adds a string to the end of the main string
-    "disableSuffix": true, // Use to remove DayOfMonth suffix only
-    "short": false, // Use long format of time, meridian, date, or DoW
-    "shortMonth": false // Use long format of month within date
+## Background Options
 
-  },
-  "bg": { // Can also be removed for no background
-    "img": "YourImageName.img"
-  }
-}
-```
+Each layout can use one of these background modes:
 
-__Breakdown of Parameters:__
+- `clockbg`
+- `solid`
+- `image`
 
-* **Box Name:** The name of your text box. Box Clock includes functional support for "time", "date", "meridian" (AM/PM), "dow" (Day of Week), "batt" (Battery), and "step" (Step count). You can add additional custom boxes with unique titles.
+If you use `clockbg`, Box Clock can follow the background you already set up with the Clock Backgrounds app. That gives you one place to manage shared backgrounds while still letting Box Clock have multiple layouts.
 
-* **string:** The text string to be displayed inside the box. This is only required for custom Box Names.
+If you want a layout-specific look instead, you can pick:
 
-* **font:** The font name given to g.setFont().
+- a bundled image
+- a custom uploaded image
+- a solid color
 
-* **fontSize:** The size of the font.
+## What You Can Customize
 
-* **outline:** The thickness of the outline around the text.
+In the web editor you can:
 
-* **color:** The color of the text.
+- add boxes for time, date, day, meridian, battery, steps, `clkinfo`, or custom text
+- drag boxes directly on the watch preview
+- resize text and box boundaries
+- duplicate, reorder, and delete boxes
+- rename layouts
+- duplicate layouts
+- import custom `.pbf` font files
+- upload backgrounds and preview them before sending them to the watch
 
-* **outlineColor:** The color of the text outline.
+## Font Tools
 
-* **border:** The color of the box border when moving.
+If you want to build your own `.pbf` fonts for Box Clock, these are the main resources:
 
-* **xPadding, yPadding:** Additional padding around the text inside the box.
+- [Google Fonts](https://fonts.google.com/)
+- [Espruino Font Converter](https://www.espruino.com/Font+Converter)
 
-* **xOffset, yOffset:** Offsets the text position within the box.
+## On-Watch Editing
 
-* **boxPos:** Initial position of the box on the screen. Values are fractions of the screen width (x) and height (y), so { "x": 0.5, "y": 0.5 } would be in the middle of the screen.
+If you only need a quick position tweak on the watch:
 
-* **prefix:** Adds a string to the beginning of the main string. For example, you can set "prefix": "Steps: " to display "Steps: 100" for the step count.
+- triple-tap the clock to enter layout mode
+- tap a box to select it
+- drag it into place
+- double-tap the background to save and exit
 
-* **suffix:** Adds a string to the end of the main string. For example, you can set "suffix": "%" to display "80%" for the battery percentage.
+The web editor is still the better option for full customization.
 
-* **disableSuffix:** Applies only to the "date" box. Set to true to disable the DayOfMonth suffix. This is used to remove the "st","nd","rd", or "th" from the DayOfMonth number.
-
-* **short:** Set to false to get the long format value of time, meridian, date, or DayOfWeek. Short formats are used by default if not specified.
-
-* **shortMonth:** Applies only to the "date" box. Set to false to get the long format value of the month. Short format is used by default if not specified.
-
-* **bg:** This specifies a custom background image, with the img property defining the name of the image file on the Bangle.js storage.
-
-## Multiple Configurations
-
-__Settings Menu:__
-
-The app includes a settings menu that allows you to switch between different configurations. The selected configuration is stored as a number in the default `boxclk.json` file using the selectedConfig property.
-
-If the selectedConfig property is not present or is set to 0, the app will use the default configuration. To create additional configurations, create separate JSON files with the naming convention `boxclk-N.json`, where `N` is the configuration number. The settings menu will list all available configurations.
-
-## Example Configs:
-
-To easily try out other configs, download and place the JSON configs and/or background images from below onto your Bangle.js storage. Then go to the Box Clock settings menu to select the new config number. You can also modify them to suit your personal preferences.
-
-__Space Theme:__
-
-- **Config:** [boxclk-1.json](https://github.com/espruino/BangleApps/tree/master/apps/boxclk/boxclk-1.json)
-- **Background:** [boxclk.space.img](https://github.com/espruino/BangleApps/tree/master/apps/boxclk/boxclk.space.img) ([Original Source](https://www.pixilart.com/art/fallin-from-outer-space-sr2e0c1a705749a))
-
-__System Color Theme:__
-
-- **Config:** [boxclk-2.json](https://github.com/espruino/BangleApps/tree/master/apps/boxclk/boxclk-2.json)
+`clkinfo` boxes work normally on the watch and show a `clkinfo` placeholder while layout mode is active.
 
 ## Compatibility
 
-This app was built and tested with Bangle.js 2.
-
-## Feedback
-
-If you have any issues or suggestions, please open an issue on this GitHub repository. Contributions to improve the application are also welcomed.
+Built for Bangle.js 2.
 
 ## Creator
 

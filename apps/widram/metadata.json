@@ -3,6 +3,7 @@
   "name": "RAM Widget",
   "shortName": "RAM Widget",
   "version": "0.04",
+  "author": "gfwilliams",
   "description": "Display your Bangle's RAM usage percentage in a widget",
   "icon": "widget.png",
   "type": "widget",

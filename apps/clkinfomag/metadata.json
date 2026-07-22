@@ -1,6 +1,7 @@
 { "id": "clkinfomag",
   "name": "Compass Clockinfo",
   "version":"0.02",
+  "author": "gfwilliams",
   "description": "Extra information to add to clock screens. When selected, displays the compass heading and an arrow pointing North",
   "icon": "icon.png",
   "type": "clkinfo",

@@ -2,6 +2,7 @@
   "id": "flagrse",
   "name": "Espruino Flag Raiser",
   "version": "0.01",
+  "author": "gfwilliams",
   "description": "App to send a command to another Espruino to cause it to raise a flag",
   "icon": "app.png",
   "tags": "",

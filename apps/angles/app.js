@@ -45,3 +45,8 @@ Bangle.setUI({
     draw();
   }
 });
+
+// Restore the original screen rotation
+E.on('kill', function() {
+    g.setRotation(0 | require('Storage').readJSON("setting.json").rotate);
+});

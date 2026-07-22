@@ -3,6 +3,7 @@
   "name": "Magic 8 Ball",
   "shortName": "Magic 8 Ball",
   "version": "0.03",
+  "author": "Espruino",
   "description": "A simple fortune telling app",
   "icon": "app.png",
   "tags": "game",

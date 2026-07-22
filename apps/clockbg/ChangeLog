@@ -11,3 +11,7 @@
       Default (solid colour) now uses a variety of shades
       Added .load/.unload to allow changes when fast loading clocks
 0.09: Add more plasma and ring bg colours, random plasma color uses all the available colours
+0.10: Added blobs background
+0.11: Added gradient background with 5 types to choose from
+      Bangle.js 2 can use colorpicker module for custom plasma and gradient colors
+      

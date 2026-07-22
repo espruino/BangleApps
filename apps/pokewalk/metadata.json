@@ -2,6 +2,7 @@
   "id": "pokewalk",
   "name": "pokewalk clock",
   "version": "0.01",
+  "author": "Espruino",
   "description": "A very simple watchface featuring a Pokemon trainer on a walk.",
   "readme": "README.md",
   "icon": "app.png",

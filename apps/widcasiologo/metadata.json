@@ -2,6 +2,7 @@
   "id": "widcasiologo",
   "name": "Casio Logo Widget",
   "version": "0.01",
+  "author": "neris",
   "description": "A simple widget that displays Casio logo when clock screen is active.",
   "icon": "widget.png",
   "type": "widget",

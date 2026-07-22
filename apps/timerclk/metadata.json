@@ -3,6 +3,7 @@
 	"name": "Timer Clock",
 	"shortName":"Timer Clock",
 	"version": "0.07",
+	"author": "Espruino",
 	"description": "A clock with stopwatches, timers and alarms build in.",
 	"icon": "app-icon.png",
 	"type": "clock",

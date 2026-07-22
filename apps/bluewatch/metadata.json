@@ -1,0 +1,24 @@
+{
+  "id": "bluewatch",
+  "name": "BlueWatch iOS Integration",
+  "shortName": "BlueWatch",
+  "version": "0.01",
+  "description": "Uses the native iOS app BlueWatch to fetch weather, use phone GPS, find phone/watch, and more.",
+  "icon": "app.png",
+  "tags": "tool,bluetooth,apple,ios,system",
+  "supports": ["BANGLEJS2"],
+  "dependencies": {"ios": "app"},
+  "readme": "README.md",
+  "author": "RKBoss6",
+  "storage": [
+    {"name":"bluewatch","url":"lib.js"},
+    {"name":"bluewatch.app.js","url":"app.js"},
+    {"name":"bluewatch.boot.js","url":"boot.js"},
+    {"name":"bluewatch.img","url":"app-icon.js","evaluate":true},
+    {"name":"bluewatch.settings.js","url":"settings.js"}
+  ],
+  "data": [
+    {"name":"bluewatchData.json"},
+    {"name":"bluewatch.settings.json"}
+  ]
+}

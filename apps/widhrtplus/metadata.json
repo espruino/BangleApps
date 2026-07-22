@@ -4,6 +4,7 @@
   "icon": "widget.png",
   "screenshots": [{"url":"screenshot.png"}],
   "version":"0.01",
+  "author": "Espruino",
   "type": "widget",
   "supports": ["BANGLEJS2"],
   "readme": "README.md",

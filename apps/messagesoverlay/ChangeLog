@@ -16,3 +16,6 @@
       Handle changed internal callback variable name for watches introduced in 2v21.104
 0.11: Update for new setLCDOverlay remove handler
 0.12: Fix premature handler restoration when overlay is updated during message display
+0.13: Fix several leaks: timers/watches/memory/listeners on close and cleanup
+      Remove cooldown timeout for buzzing
+      Remove workaround for firmware older than 2v21.13

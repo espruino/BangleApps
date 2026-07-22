@@ -70,6 +70,9 @@ You can do:
 * Call `require("recorder").setRecording(true, {force:"new"/"append"/"overwrite")` to start recording (it returns a promise, and will not show a menu)
 * Call `require("recorder").setRecording(false)` to stop recording
 
+`setRecording's` second argument can also include (for example) `{metadata:{activity:"Cycling"}}` to
+allow that data to be stored in a new column `Metadata` (on the very first data line of the file).
+
 And check `require("recorder").isRecording()` to see if we're recording or not.
 
 ### Recording new items
@@ -85,7 +88,7 @@ to the supplied `recorders` array. For example `foobar.recorder.js` could contai
     getValues : () => [123],   // Columns of data (length should match 'fields')
     start : () => {},          // Called when recording starts - turn on any hardware/intervals you need
     stop : () => {},           // Called when recording stops - turn off any hardware/intervals
-    draw (x,y) => {}           // draw 12x12px status image at x,y on g
+    draw (x,y) => {}           // (optional) draw 12x12px status image at x,y on g
   }
 })
 ```

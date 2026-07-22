@@ -1,7 +1,8 @@
 {
   "id": "messagesoverlay",
   "name": "Messages Overlay",
-  "version": "0.12",
+  "version": "0.13",
+  "author": "halemmerich",
   "description": "An overlay based implementation of a messages UI (display notifications from iOS and Gadgetbridge/Android)",
   "icon": "app.png",
   "type": "bootloader",

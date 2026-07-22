@@ -6,7 +6,11 @@ Displays the current hebrew calendar date and upcoming holidays alongside a cloc
 
 ## Usage
 
-Set it up as your clock in the settings
+Set it up as your clock in the settings.
+
+**You must configure it first:** in the app loader, click "Customize" and set your
+location. This generates the calendar (including candle-lighting times) for your area.
+Until you do, the clock shows a reminder instead of events.
 
 ## Features
 

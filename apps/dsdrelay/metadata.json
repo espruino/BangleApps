@@ -3,6 +3,7 @@
   "name": "DSD BLE Relay controller",
   "shortName": "DSDRelay",
   "version": "0.01",
+  "author": "berkenbu",
   "description": "Control BLE relay board from the watch",
   "icon": "icons8-relay-48.png",
   "tags": "ble,bluetooth",

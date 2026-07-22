@@ -36,7 +36,8 @@ const DEMOTEST = {
     "id": "arbitraryid",
     "steps" : [
       {"t":"cmd", "js": "global.testfunction = ()=>{}", "text": "Runs some code on the device"},
-      {"t":"wrap", "fn": "global.testfunction", "id": "testfunc", text:"Wraps a function to count calls and store the last set of arguments on the device"}
+      {"t":"wrap", "fn": "global.testfunction", "id": "testfunc", text:"Wraps a function to count calls and store the last set of arguments on the device"},
+      {"t":"jsonfile", "name": "filename.json", "json": {"key":"value"}, text:"Write a JSON object into a file"}
     ]
   }],
   "tests" : [{
@@ -154,12 +155,12 @@ function assertValue(step){
   console.log("> ASSERT " + `\`${step.js}\``, "IS", step.is.toUpperCase() + (step.to !== undefined ? " TO " + `\`${step.to}\`` : ""), step.text ? "- " + step.text : "");
   let isOK;
   switch (step.is.toLowerCase()){
-    case "truthy": isOK = getValue(`!!${step.js}`); break;
-    case "falsy": isOK = getValue(`!${step.js}`); break;
-    case "true": isOK = getValue(`${step.js} === true`); break;
-    case "false": isOK = getValue(`${step.js} === false`); break;
-    case "equal": isOK = getValue(`${step.js} == ${step.to}`); break;
-    case "function": isOK = getValue(`typeof ${step.js} === "function"`); break;
+    case "truthy": isOK = getValue(`!!(${step.js})`); break;
+    case "falsy": isOK = getValue(`!(${step.js})`); break;
+    case "true": isOK = getValue(`(${step.js}) === true`); break;
+    case "false": isOK = getValue(`(${step.js}) === false`); break;
+    case "equal": isOK = getValue(`(${step.js}) == ${step.to}`); break;
+    case "function": isOK = getValue(`typeof (${step.js}) === "function"`); break;
   }
 
   if (isOK){
@@ -247,6 +248,12 @@ function runStep(step, subtest, test, state){
       p = p.then(() => {
         console.log(`> SENDING JS \`${step.js}\``, step.text ? "- " + step.text : "");
         emu.tx(`${step.js}\n`);
+      });
+      break;
+    case "jsonfile" :
+      p = p.then(() => {
+        console.log(`> SENDING JSON FILE \`${step.name}\``, step.text ? "- " + step.text : "");
+        emu.tx(`require('Storage').writeJSON('${step.name}', ${JSON.stringify(step.json)})\n`);
       });
       break;
     case "wrap" :
@@ -411,7 +418,7 @@ function runTest(test, testState) {
   apploader.reset();
   var app = apploader.apps.find(a=>a.id==test.app);
   if (!app) ERROR(`App ${JSON.stringify(test.app)} not found`);
-  if (app.custom) ERROR(`App ${JSON.stringify(appId)} requires HTML customisation`);
+  if (app.custom && !test.allowCustomApp) ERROR(`App ${JSON.stringify(app.id)} requires HTML customisation`);
   
   return apploader.getAppFilesString(app).then(command => {
     let p = Promise.resolve();
@@ -423,13 +430,17 @@ function runTest(test, testState) {
         if (test.description)
           console.log(`"${test.description}`);
         console.log(`==============================`);
-        emu.factoryReset();
-        console.log("> SENDING APP "+test.app);
-        emu.tx(command);
-        if (verbose)
-          console.log("> SENT APP");
-        emu.tx("reset()\n");
-        console.log("> RESET");
+
+        emu.stopIdle();
+        return emu.init(EMU_OPTIONS).then(() => {
+          console.log("> SENDING APP " + test.app);
+          emu.tx(command);
+          if (verbose)
+            console.log("> SENT APP");
+          emu.tx("reset()\n");
+          console.log("> RESET");
+        });
+
 
       });
 
@@ -452,20 +463,21 @@ function runTest(test, testState) {
         resetUncaughtError();
 
         console.log("> RESULT -",  (state.ok ? "OK": "FAIL") , "- " + test.app + (subtest.description ? (" - " + subtest.description) : ""));
-        testState.push({
+        let result = {
           app: test.app,
           number: subtestIdx,
           result: state.ok ? "SUCCESS": "FAILURE",
           description: subtest.description,
-          error: uncaughtError || null
-        });
+        };
+        if (uncaughtError) result.error = uncaughtError;
+        testState.push(result);
       });
     });
     p = p.then(()=>{
       emu.stopIdle();
     });
     return p;
-  });
+  }).catch(err => console.log("Error during getAppFilesString:" + err));
 }
 
 
@@ -503,7 +515,7 @@ let handleConsoleOutput = (d) => {
 
 let testState = [];
 
-emu.init({
+const EMU_OPTIONS = {
   EMULATOR : EMULATOR,
   DEVICEID : DEVICEID,
   rxCallback : (ch)=>{
@@ -512,31 +524,43 @@ emu.init({
   consoleOutputCallback: (d)=>{
     handleConsoleOutput(d);
   }
-}).then(function() {
-  // Emulator is now loaded
-  console.log("Loading tests");
-  let p = Promise.resolve();
-  let apps = apploader.apps;
+};
 
-  apps.push(DEMOAPP);
+console.log("Loading tests");
+let p = Promise.resolve();
+let apps = apploader.apps;
 
-  if (process.argv.includes("--id")) {
-    let f = process.argv[process.argv.indexOf("--id") + 1];
-    apps = apps.filter(e=>e.id==f);
-    if (apps.length == 0){
-      console.log("No apps left after filtering for " + f);
-      process.exit(255);
+apps.push(DEMOAPP);
+
+if (process.argv.includes("--id")) {
+  let f = process.argv[process.argv.indexOf("--id") + 1];
+  apps = apps.filter(e=>e.id==f);
+  if (apps.length == 0){
+    console.log("No apps left after filtering for " + f);
+    process.exit(255);
+  }
+}
+
+apps.forEach(app => {
+  let test = DEMOTEST;
+  if (app.id != DEMOAPP.id){
+    let testFile = APP_DIR+"/"+app.id+"/test.json";
+    if (!require("fs").existsSync(testFile)) return;
+    test = JSON.parse(require("fs").readFileSync(testFile).toString());
+    test.app = app.id;
+  }
+
+  if (process.argv.includes("--testindex")) {
+    let f = process.argv[process.argv.indexOf("--testindex") + 1];
+    if (test.tests.length - 1 < f){
+      console.log("No test with index " + f);
+      test.tests = [];
+    } else {
+      test.tests = [ test.tests[f] ];
     }
   }
 
-  apps.forEach(app => {
-    let test = DEMOTEST;
-    if (app.id != DEMOAPP.id){
-      let testFile = APP_DIR+"/"+app.id+"/test.json";
-      if (!require("fs").existsSync(testFile)) return;
-      test = JSON.parse(require("fs").readFileSync(testFile).toString());
-      test.app = app.id;
-    }
+  if (test.tests.length > 0) {
     p = p.then(()=>{
       const testName = test.app + (test.description ? ` - ${test.description}` : '');
       return withTimeout(runTest(test, testState), TEST_TIMEOUT_MS, testName)
@@ -560,21 +584,18 @@ emu.init({
             throw err;
           }
         });
-    });
+      });
+    }
   });
-  p.finally(()=>{
-    console.log("\n\n");
-    console.log("Overall results:");
-    console.table(testState);
-
-    // Exit with appropriate code - count failures and timeouts
-    const exitCode = testState.reduce((a, c) => {
-      return a || ((c.result === "SUCCESS") ? 0 : 1);
-    }, 0);
-
-    process.exit(exitCode);
-  });
-  return p;
+p.finally(()=>{
+  console.log("\n\n");
+  console.log("Overall results:");
+  console.table(testState);
+  // Exit with appropriate code - count failures and timeouts
+  const exitCode = testState.reduce((a, c) => {
+    return a || ((c.result === "SUCCESS") ? 0 : 1);
+  }, 0);
+  process.exit(exitCode);
 });
 
 /*

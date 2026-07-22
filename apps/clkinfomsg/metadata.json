@@ -1,6 +1,7 @@
 { "id": "clkinfomsg",
   "name": "Messages Clockinfo",
   "version":"0.01",
+  "author": "kamilkrz",
   "description": "For clocks that display 'clockinfo', this displays the messages count",
   "icon": "app.png",
   "type": "clkinfo",

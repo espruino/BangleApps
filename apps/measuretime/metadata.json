@@ -2,6 +2,7 @@
   "id": "measuretime",
   "name": "Measure Time",
   "version": "0.3",
+  "author": "Espruino",
   "description": "Measure Time in a fancy way.",
   "icon": "measuretime_icon.png",
   "screenshots": [

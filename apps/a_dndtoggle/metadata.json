@@ -3,6 +3,7 @@
   "name": "a_dndtoggle - Toggle Quiet Mode of the watch",
   "shortName": "A_DND Toggle",
   "version": "0.02",
+  "author": "Espruino",
   "description": "Toggle Quiet Mode of the watch just by starting this app.",
   "icon": "a_dndtoggle.png",
   "type": "app",

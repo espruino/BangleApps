@@ -2,6 +2,7 @@
   "id": "cogclock",
   "name": "Cog Clock",
   "version": "0.05",
+  "author": "rigrig",
   "description": "A cross-shaped clock inside a cog",
   "icon": "icon.png",
   "screenshots": [{"url":"screenshot_b1.png"},{"url":"screenshot_b2.png"}],

@@ -2,6 +2,7 @@
   "id": "s7clk",
   "name": "Simple 7 segment Clock",
   "version": "0.03",
+  "author": "gfwilliams",
   "description": "A simple 7 segment Clock with date",
   "icon": "icon.png",
   "screenshots": [{"url":"screenshot_s7segment.png"}],

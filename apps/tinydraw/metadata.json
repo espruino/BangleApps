@@ -3,6 +3,7 @@
   "shortName":"TinyDraw",
   "version": "0.04",
   "type": "app",
+  "author": "radare",
   "description": "Draw stuff in your wrist",
   "icon": "app.png",
   "allow_emulator": true,

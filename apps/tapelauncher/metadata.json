@@ -2,6 +2,7 @@
   "id": "tapelauncher",
   "name": "Tape Launcher",
   "version": "0.02",
+  "author": "Espruino",
   "description": "An App launcher, icons displayed in a horizontal tape, swipe or use buttons",
   "icon": "icon.png",
   "type": "launch",

@@ -3,6 +3,7 @@
   "name": "Game of Life Clock",
   "shortName": "Conway's Clock",
   "version": "0.07",
+  "author": "SamuelVilz",
   "description": "Modification and clockification of Conway's Game of Life",
   "icon": "app.png",
   "type": "clock",

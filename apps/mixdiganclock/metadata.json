@@ -2,6 +2,7 @@
   "id": "mixdiganclock",
   "name": "Mix Dig&Anal Clock",
   "version": "0.05",
+  "author": "dapgo",
   "description": "A dual Analog, Digital Clock, that gives the user the power to improve the aspect on realtime. Too much sun and/or polarized sunglasses? Not be a problem anymore to see the time. Originally based in Mixed Clock ",
   "icon": "mixdiganclock.png",
   "type": "clock",

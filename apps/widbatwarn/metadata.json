@@ -3,6 +3,7 @@
   "name": "Battery Warning",
   "shortName": "Battery Warning",
   "version": "0.03",
+  "author": "rigrig",
   "description": "Show a warning when the battery runs low.",
   "icon": "widget.png",
   "screenshots": [{"url":"screenshot.png"}],

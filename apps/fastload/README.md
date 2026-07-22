@@ -1,6 +1,8 @@
-#### ⚠️EXPERIMENTAL⚠️
+#### ⚠️DEPRECATED⚠️ ⚠️EXPERIMENTAL⚠️
 
 # Fastload Utils
+
+**Deprecated.** This app's functionality has to a large extent been integrated into firmware, with slight adjustments.
 
 **Use this with caution.** When you find something misbehaving please check if the problem actually persists without Fastload Utils
 before filing an issue.
@@ -18,16 +20,9 @@ Bangle will just end up with a memory leak or undefined behaviour**
 
 ## Settings
 
-* Activate app history and navigate back through recent apps instead of immediately loading the clock face
-* If Quick Launch is installed it can be excluded from app history
 * Allows to redirect all loads usually loading the clock to the launcher instead
 * The "Fastloading..." screen can be switched off
 * Enable checking `setting.json` and force a complete load on changes
-
-## App history
-
-* Long press of hardware button clears the app history and loads the clock face
-* Installing the 'Fast Reset' app allows doing fastloads directly to the clock face by pressing the hardware button just a little longer than a click. Useful if there are many apps in the history and the user want to access the clock quickly.
 
 ## Technical Notes
 

@@ -1,4 +1,4 @@
-var Storage = require("Storage");
+// Note: this won't currently fast load as no 'remove' handler is set
 var Layout = require("Layout");
 
 var font = g.getFonts().includes("6x15") ? "6x15" : "6x8:2";
@@ -9,38 +9,8 @@ var blankImage = Graphics.createImage(`\n \n`);
 var rowHeight = g.getHeight()/3;
 
 // Load apps list
-var apps;
-
-var launchCache = Storage.readJSON("launch.cache.json", true)||{};
-var launchHash = require("Storage").hash(/\.info/);
-if (launchCache.hash==launchHash) {
-  apps = launchCache.apps;
-} else {
-  apps = Storage.list(/\.info$/).map(app=>{
-    var a=Storage.readJSON(app,1);
-    return a&&{
-      name:a.name,
-      type:a.type,
-      icon:a.icon ? Storage.read(a.icon) : a.icon,
-      sortorder:a.sortorder,
-      src:a.src
-    };
-  }).filter(app=>app && (
-    app.type=="app"
-  //  || (app.type=="clock" && settings.showClocks)
-    || !app.type
-  ));
-  apps.sort((a,b)=>{
-    var n=(0|a.sortorder)-(0|b.sortorder);
-    if (n) return n; // do sortorder first
-    if (a.name<b.name) return -1;
-    if (a.name>b.name) return 1;
-    return 0;
-  });
-
-  launchCache = { apps, hash: launchHash };
-  Storage.writeJSON("launch.cache.json", launchCache);
-}
+var launchCache = require("launch_utils").cache({});
+var apps = launchCache.apps; // get a list of apps to show
 
 // Uncomment for testing in the emulator without apps:
 // apps = [
@@ -81,16 +51,25 @@ var layout = new Layout({
   ]
 });
 
+// Load icons on demand
+function setIconSrc(icon, app) {
+  icon.src=function() {
+    let icon = app.icon ? require("Storage").read(app.icon) : blankImage;
+    icon.src = icon;
+    return icon;
+  };
+}
+
 // Drawing logic
 function render() {
   if (!apps.length) {
     E.showMessage(/*LANG*/"No apps");
-    return load();
+    return Bangle.showClock();
   }
 
   // Previous app
   if (currentApp > 0) {
-    layout.prev_icon.src = apps[currentApp-1].icon;
+    setIconSrc(layout.prev_icon, apps[currentApp-1]);
     layout.prev_name.label = apps[currentApp-1].name;
   } else {
     layout.prev_icon.src = blankImage;
@@ -98,12 +77,12 @@ function render() {
   }
 
   // Current app
-  layout.cur_icon.src = apps[currentApp].icon;
+  setIconSrc(layout.cur_icon, apps[currentApp]);
   layout.cur_name.label = apps[currentApp].name;
 
   // Next app
   if (currentApp < apps.length-1) {
-    layout.next_icon.src = apps[currentApp+1].icon;
+    setIconSrc(layout.next_icon, apps[currentApp+1]);
     layout.next_name.label = apps[currentApp+1].name;
   } else {
     layout.next_icon.src = blankImage;
@@ -118,13 +97,8 @@ function render() {
 function launch() {
   var app = apps[currentApp];
   if (!app) return;
-  if (!app.src || Storage.read(app.src)===undefined) {
-    E.showMessage(/*LANG*/"App Source\nNot found");
-    setTimeout(render, 2000);
-  } else {
-    E.showMessage(/*LANG*/"Loading...");
-    load(app.src);
-  }
+  E.showMessage(/*LANG*/"Loading...");
+  require("launch_utils").loadApp(app);
 }
 
 // Select previous/next app
@@ -144,7 +118,7 @@ function move(step) {
   // Overscroll threshold reached, return to clock
   if (Math.abs(overscroll) > 3) {
     Bangle.buzz(500, 1);
-    return load();
+    return Bangle.showClock();
   }
 }
 

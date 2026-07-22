@@ -1,0 +1,107 @@
+{
+  "background": {
+    "type": "image",
+    "image": "boxclk.retro.img"
+  },
+  "items": [
+    {
+      "name": "Time",
+      "type": "time",
+      "prefix": "",
+      "suffix": "",
+      "position": {
+        "x": 0.5,
+        "y": 0.74
+      },
+      "appearance": {
+        "font": "7x11Numeric7Seg",
+        "fontSize": 4,
+        "outline": 0,
+        "textColor": "#000",
+        "outlineColor": "#fff",
+        "borderColor": "#000",
+        "boundary": {
+          "x": 9.3,
+          "y": 5.3
+        }
+      },
+      "options": {
+        "timeMode": "system",
+        "showSeconds": false
+      }
+    },
+    {
+      "name": "Date",
+      "type": "date",
+      "prefix": "",
+      "suffix": "",
+      "position": {
+        "x": 0.5,
+        "y": 0.13
+      },
+      "appearance": {
+        "font": "Vector",
+        "fontSize": 15,
+        "outline": 0,
+        "textColor": "#000",
+        "outlineColor": "#fff",
+        "borderColor": "#000",
+        "boundary": {
+          "x": 0,
+          "y": 0.5
+        }
+      },
+      "options": {
+        "longMonth": true,
+        "showYear": true,
+        "suffix": true
+      }
+    },
+    {
+      "name": "Clockinfo",
+      "type": "clkinfo",
+      "prefix": "",
+      "suffix": "",
+      "position": {
+        "x": 0.185,
+        "y": 0.4
+      },
+      "appearance": {
+        "font": "6x8",
+        "fontSize": 1,
+        "outline": 0,
+        "textColor": "#000",
+        "outlineColor": "#fff",
+        "borderColor": "#00ffcc",
+        "boundary": {
+          "x": 52,
+          "y": 49
+        }
+      },
+      "options": {}
+    },
+    {
+      "name": "Clockinfo 2",
+      "type": "clkinfo",
+      "prefix": "",
+      "suffix": "",
+      "position": {
+        "x": 0.68,
+        "y": 0.4
+      },
+      "appearance": {
+        "font": "6x8",
+        "fontSize": 1,
+        "outline": 0,
+        "textColor": "#000",
+        "outlineColor": "#fff",
+        "borderColor": "#00ffcc",
+        "boundary": {
+          "x": 98,
+          "y": 47
+        }
+      },
+      "options": {}
+    }
+  ]
+}

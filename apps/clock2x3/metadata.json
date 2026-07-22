@@ -2,6 +2,7 @@
   "id": "clock2x3",
   "name": "2x3 Pixel Clock",
   "version": "0.05",
+  "author": "sebi5361",
   "description": "This is a simple clock using minimalist 2x3 pixel numerical digits",
   "icon": "clock2x3.png",
   "screenshots": [{"url":"screenshot_pixel.png"}],

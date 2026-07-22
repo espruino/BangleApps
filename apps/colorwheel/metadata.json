@@ -3,6 +3,7 @@
   "name":"Color Wheel",
   "tags":"app,tool",
   "version":"0.01",
+  "author": "rozek",
   "description":"a tappable wheel of good-looking colors",
   "readme":"README.md",
   "supports":["BANGLEJS2"],

@@ -2,6 +2,7 @@
   "id": "widnceu",
   "name": "NCEU Logo Widget",
   "version": "0.02",
+  "author": "gfwilliams",
   "description": "Show the NodeConf EU logo in the top left",
   "icon": "widget.png",
   "type": "widget",

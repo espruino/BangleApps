@@ -21,6 +21,7 @@ With sched version 0.35 or later, when an alarm or timer is triggered, and you h
 - `Unlock at Buzz` - If `Yes` the alarm/timer will unlock the watch
 - `Delete Expired Timers` - Default for whether expired timers are removed after firing.
 - `Default Auto Snooze` - Default _Auto Snooze_ value for newly created alarms (_Alarms_ only)
+- `Button Stops Alarm` - When the alarm screen is showing, pressing the button will stop the alarm (instead of snoozing it)
 - `Default Snooze` - Default _Snooze_ value for newly created alarms/timers
 - `Buzz Count` - The number of buzzes before the watch goes silent, or "forever" to buzz until stopped.
 - `Buzz Interval` - The interval between one buzz and the next
@@ -49,12 +50,14 @@ Alarms are stored in an array in `sched.json`, and take the form:
   date : "2022-04-04", // OPTIONAL date for the alarm, in YYYY-MM-DD format
                        // eg (new Date()).toISOString().substr(0,10)
   msg : "Eat food",    // message to display.
-  last : 0,            // last day of the month we alarmed on - so we don't alarm twice in one day! (No change from 0 on timers)
+  last : 0,            // last day of the month we alarmed on - so we don't alarm twice in one day! (always 0 on timers)
   rp : true,           // repeat the alarm every day? If date is given, pass an object instead of a boolean,
                        // e.g. repeat every 2 months: { interval: "month", num: 2 }.
                        // Supported intervals: day, week, month, year
   vibrate : "...",     // OPTIONAL pattern of '.', '-' and ' ' to use for when buzzing out this alarm (defaults to '..' if not set)
   hidden : false,      // OPTIONAL if true, the widget should not show an icon for this alarm
+  group : "Foo",       // OPTIONAL if set to a string, and `Show Menu Group` is shown in the `Alarms` app, alarms will be
+                       // grouped into a submenu of the same name.
   as : false,          // auto snooze
   timer : 5*60*1000,   // OPTIONAL - if set, this is a timer and it's the time in ms
   del : false,         // OPTIONAL - if true, delete the timer after expiration

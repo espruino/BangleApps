@@ -4,6 +4,7 @@
   "shortName": "Q Alarm",
   "icon": "app.png",
   "version": "0.05",
+  "author": "Espruino",
   "description": "[Not recommended - use 'Alarm & Timer' app] Alarm and timer app with days of week and 'hard' option.",
   "tags": "tool,alarm,widget",
   "supports": ["BANGLEJS", "BANGLEJS2"],

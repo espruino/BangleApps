@@ -1,0 +1,27 @@
+{ "id": "line_dash",
+  "name": "Line Dash",
+  "shortName":"Line Dash",
+  "version":"0.9",
+  "author": "pagnotta",
+  "description": "An analog clock with swipeable dashboards for steps, distance, heart rate, battery, altitude and a wind-up timer",
+  "icon": "app-icon.png",
+  "type": "clock",
+  "tags": "clock,analog,health,fitness,hrm,battery,timer",
+  "dependencies": {"scheduler":"type"},
+  "supports" : ["BANGLEJS2"],
+  "allow_emulator": true,
+  "screenshots": [
+    {"url":"app-screenshot.png"},
+    {"url":"app-screenshot-clock.png"},
+    {"url":"app-screenshot-step.png"},
+    {"url":"app-screenshot-bat.png"}
+  ],
+  "readme": "README.md",
+  "storage": [
+    {"name":"line_dash.app.js","url":"app.js"},
+    {"name":"line_dash.img","url":"app-icon.js","evaluate":true},
+    {"name":"line_dash.settings.js","url":"settings.js"}
+  ],
+  "data":[{"name":"line_dash.setting.json"},
+          {"name":"line_dash.state.json"}]
+}

@@ -2,6 +2,7 @@
   "name": "Golf Score",
   "shortName":"golfscore",
   "version":"0.02",
+  "author": "barakplasma",
   "description": "keeps track of strokes during a golf game",
   "icon": "app.png",
   "tags": "outdoors",

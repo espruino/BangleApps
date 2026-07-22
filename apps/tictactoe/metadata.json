@@ -3,6 +3,7 @@
   "shortName":"TicTacToe",
   "icon": "app.png",
   "version": "0.03",
+  "author": "MissionMake",
   "description": "Tic Tac Toe for two players!",
   "tags": "game",
   "storage": [

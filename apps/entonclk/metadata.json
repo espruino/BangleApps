@@ -2,6 +2,7 @@
   "id": "entonclk",
   "name": "Enton Clock",
   "version": "0.3",
+  "author": "Espruino",
   "description": "A simple clock using the Audiowide font with timer. ",
   "icon": "app.png",
   "screenshots": [{"url":"screenshot.png"}],

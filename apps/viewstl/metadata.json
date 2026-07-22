@@ -3,6 +3,7 @@
   "name": "STL file viewer",
   "shortName": "ViewSTL",
   "version": "0.03",
+  "author": "berkenbu",
   "description": "This app allows you to view STL 3D models on your watch",
   "icon": "icons8-octahedron-48.png",
   "tags": "tool",

@@ -2,6 +2,7 @@
   "name": "Simple Background Clock",
   "shortName":"Simple Bg Clk",
   "version":"0.02",
+  "author": "gfwilliams",
   "description": "A simple clock using 'Clock Backgrounds' to allow custom colour or image backgrounds. The date is in the widget bar which you can swipe down.",
   "icon": "icon.png",
   "screenshots": [{"url":"screenshot.png"}],

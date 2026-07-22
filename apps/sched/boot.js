@@ -12,7 +12,6 @@
   var active = alarms.filter(a =>
     a.on // enabled
     && (a.last != d) // not already fired today
-    && (a.t + 60000 > currentTime) // is not in the past by >1 minute
     && (a.dow >> time.getDay() & 1) // is allowed on this day of the week
     && (!a.date || a.date == time.toLocalISOString().substr(0, 10)) // is allowed on this date
   );

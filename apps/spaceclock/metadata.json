@@ -2,6 +2,7 @@
   "name": "Space Clock (Casio Style)",
   "shortName":"Space Clock",
   "version": "0.02",
+  "author": "TimWue",
   "description": "Watch face in the style of Casio Prototype Space Resist",
   "icon": "app-icon.png",
   "type": "clock",

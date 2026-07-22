@@ -2,6 +2,7 @@
   "name": "Simple Analog Clock",
   "shortName":"Simple Clock",
   "version": "0.04",
+  "author": "rozek",
   "description": "a simple, yet stylish, analog clock",
   "icon": "app-icon.png",
   "type": "clock",

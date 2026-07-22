@@ -35,6 +35,7 @@ This is where you adjust settings for an individual app. (eg. Health app: Adjust
 * **Vibration** enable/disable the vibration motor
 * **Haptic Strength** For devices that have firmware versions 2v29.14 or higher, this will show a menu where you can customize the strength of the vibration in response to user input, or turn  off.
 * **Quiet Mode** prevent notifications/alarms from vibrating/beeping/turning the screen on - see below
+* **Charge Vibration** buzz when charging is initiated
 
 ## Bluetooth
 

@@ -2,6 +2,7 @@
   "name": "Shortcuts Clock Info",
   "shortName": "Shortcuts",
   "version": "0.02",
+  "author": "WhelanB",
   "description": "Add shortcuts to launch your favourite apps straight from the Clock (via a ClockInfo)",
   "icon": "app.png",
   "screenshots": [{"url":"add_shortcuts_screenshot.png"}, {"url":"example_shortcuts_screenshot.png"}],

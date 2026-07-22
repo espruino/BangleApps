@@ -3,16 +3,17 @@
   "name": "Notifications (default)",
   "shortName": "Notifications",
   "version": "0.14",
+  "author": "gfwilliams",
   "description": "Provides the default `notify` module used by applications to display notifications on the screen. This module is installed by default by client applications such as the Gadgetbridge app.  Installing `Fullscreen Notifications` replaces this module with a version that displays the notifications using the full screen",
   "icon": "notify.png",
   "type": "notify",
   "tags": "widget",
-  "supports": ["BANGLEJS","BANGLEJS2"],
+  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
   "provides_modules" : ["notify"],
   "default" : true,
   "readme": "README.md",
   "storage": [
     {"name":"notify","url":"notify_bjs1.js", "supports": ["BANGLEJS"]},
-    {"name":"notify","url":"notify_bjs2.js", "supports": ["BANGLEJS2"]}
+    {"name":"notify","url":"notify_bjs2.js", "supports": ["BANGLEJS2","BANGLEJS3"]}
   ]
 }

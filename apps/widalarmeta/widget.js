@@ -76,7 +76,7 @@
       const seconds = Math.floor(((next-1) % 60000) / 1000).toString();
       drawSeconds = (config.showSeconds & 0b01 && !Bangle.isLocked()) || (config.showSeconds & 0b10 && next <= 1000*60);
 
-      g.reset(); // reset the graphics context to defaults (color/font/etc)
+      g.reset("widget"); // reset the graphics context to defaults (color/font/etc)
       g.setFontAlign(-1,0); // center font in y direction
       g.clearRect(this.x, this.y, this.x+this.width-1, this.y+23);
 
@@ -111,7 +111,7 @@
       calcWidth = 24;
       // next alarm too far in future, draw only widalarm bell
       if (this.bellVisible !== true || fromInterval !== true) {
-        g.reset().drawImage(atob("GBgBAAAAAAAAABgADhhwDDwwGP8YGf+YMf+MM//MM//MA//AA//AA//AA//AA//AA//AB//gD//wD//wAAAAADwAABgAAAAAAAAA"),this.x,this.y);
+        g.reset("widget").drawImage(atob("GBgBAAAAAAAAABgADhhwDDwwGP8YGf+YMf+MM//MM//MA//AA//AA//AA//AA//AA//AB//gD//wD//wAAAAADwAABgAAAAAAAAA"),this.x,this.y);
         this.bellVisible = true;
       }
     }
