@@ -25,7 +25,17 @@ Then, follow the app instructions and authorize Bluetooth permissions for the ap
 After it pairs, it will automatically push weather and location data to the watch. You can turn these features off in the iOS app's settings menu.
 
 For more documentation, please see the [iOS App's README](https://github.com/RKBoss6/BlueWatch/blob/main/README.md)
+## Developer Info
+Upon connect, the module sends an event `"BlueWatchConnected"` which can be listened for using the following:
+```
+Bangle.on("BlueWatchConnected", function (){ ... })
+```
 
+To send a string or a JSON, you can use the following: 
+```
+require("bluewatch").sendData("string or object", true);
+```
+with an optional second parameter `forceSend`. When true, it sends even if BlueWatch is not connected at the time. By default it doesn't send info unless the device handshake is completed and BlueWatch is connected
 ## Author and Creator of the iOS App
 RKBoss6
 

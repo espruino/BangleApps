@@ -45,9 +45,8 @@ function updateWeatherData(d) {
   require("weather").update(weatherEvent);
 }
 
-function sendData(dataString) {
-  if (global.phoneConnected) {
-    Bluetooth.write("BlueWatch_PRIMER" + "\n");
+function sendData(dataString, forceSend) {
+  if (global.phoneConnected || forceSend) {
     setTimeout(function () {
       Bluetooth.write(dataString + "\n");
     }, 500);
@@ -93,6 +92,7 @@ function sendHealthData() {
 }
 
 function onConnect() {
+  sendData("Handshake Successful",true);
   global.phoneConnected = true;
   Bangle.emit("BlueWatchConnected");
   setTimeout(sendHealthData, 1000);
