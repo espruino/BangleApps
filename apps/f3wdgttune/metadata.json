@@ -1,0 +1,25 @@
+{ "id": "f3wdgttune",
+  "name": "F3 Widget Tuner",
+  "shortName":"F3 Widget Tuner",
+  "version":"1.00",
+  "author": "mdoggydog",
+  "description": "Tune your widgets!  Make context-sensitive adjustments to the layout and visibility of widgets.",
+  "icon": "f3wdgttune-icon.png",
+  "type": "bootloader",
+  "tags": "widget,tools",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "screenshots": [{"url": "contexts-menu1.png"},
+                  {"url": "contexts-menu2.png"},
+                  {"url": "edit-context-menu1.png"},
+                  {"url": "edit-context-menu2.png"},
+                  {"url": "edit-tuning-menu1.png"},
+                  {"url": "edit-tuning-menu2.png"}
+                 ],
+  "storage": [ {"name": "f3wdgttune.boot.js", "url": "f3wdgttune.boot.js"},
+               {"name": "f3wdgttune.lib.js", "url": "f3wdgttune.lib.js"},
+               {"name": "f3wdgttune.settings.js", "url": "f3wdgttune.settings.js"},
+               {"name": "f3wdgttune.splash.js", "url": "f3wdgttune.splash.js"}
+             ],
+  "data": [ {"name": "f3wdgttune.json"} ]
+}
