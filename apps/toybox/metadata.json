@@ -1,0 +1,29 @@
+{
+  "id": "toybox",
+  "name": "Toybox",
+  "version": "0.1",
+  "author": "Tonykaku",
+  "description": "A collection of simple toys and demos, to entertain my daugher (who likes to play with my watch and change all kinds of settings. Currently includes two toys: Draw and Ripple Waves, as well as a simple selector.",
+  "icon": "app.png",
+  "screenshots": [
+    {"url": "screenshot.png"},
+    {"url": "screenshot2.png"},
+    {"url": "screenshot3.png"}
+  ],
+  "type": "app",
+  "tags": "app",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+        {
+            "name": "toybox.app.js",
+            "url": "app.js"
+        },
+        {
+            "name": "toybox.img",
+            "url": "app-icon.js",
+            "evaluate": true
+        }
+    ],
+    "data": [{"name":"toybox.json"}]
+}
