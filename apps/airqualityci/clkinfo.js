@@ -8,7 +8,7 @@
       config.rows.forEach((row) => {
         if (row.url) {
           let el = row.url.replace(/\/$/, "").split("/").reverse();
-          let url = `https://api.airvisual.com/v2/city?city=${el[0]}&state=${el[1]}&country=${el[2]}&key=${config.apiKey}`;
+          let url = `https://api.airvisual.com/v2/city?city=${encodeURIComponent(el[0])}&state=${encodeURIComponent(el[1])}&country=${encodeURIComponent(el[2])}&key=${encodeURIComponent(config.apiKey)}`;
           data[row.url] = data[row.url] || {};
           // If neither attempt nor time are set, then we have never tried
           // If attempt was set more than 1 minute ago, try again
