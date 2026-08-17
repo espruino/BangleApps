@@ -1,12 +1,13 @@
 {
   "app": "airqualityci",
+  "allowCustomApp": true,
   "setup": [
     {
       "id": "default",
       "steps": [
-        {"t": "cmd", "js": "var capturedUrl = null; Bangle.http = function(url) { capturedUrl = url; return new Promise(function(){}); };"},
+        {"t": "cmd", "js": "var capturedUrl = null; Bangle.http = function(url) { capturedUrl = url; return {then: function(cb) { return {catch: function(){}}; }}; };"},
         {"t": "cmd", "js": "require('Storage').writeJSON('airqualityci.settings.json', {apiKey: 'test key&special', rows: [{url: 'US/New York/New York City', name: 'NYC', mode: 1}]});"},
-        {"t": "cmd", "js": "var clkinfo = eval(require('Storage').read('airqualityci.clkinfo.js')); clkinfo.items[0].get(function(){});"}
+        {"t": "cmd", "js": "var clkinfo = eval(require('Storage').read('airqualityci.clkinfo.js'))(); clkinfo.items[0].get(function(){});"}
       ]
     }
   ],
