@@ -1,6 +1,6 @@
 { "id": "airqualityci",
   "name": "Air Quality Clockinfo",
-  "version": "0.01",
+  "version": "0.02",
   "author": "chuckwagoncomputing",
   "description": "Create clockinfos for air quality and temperature",
   "icon": "app.png",

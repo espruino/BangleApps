@@ -1,0 +1,27 @@
+{
+  "app": "airqualityci",
+  "setup": [
+    {
+      "id": "default",
+      "steps": [
+        {"t": "cmd", "js": "var capturedUrl = null; Bangle.http = function(url) { capturedUrl = url; return new Promise(function(){}); };"},
+        {"t": "cmd", "js": "require('Storage').writeJSON('airqualityci.settings.json', {apiKey: 'test key&special', rows: [{url: 'US/New York/New York City', name: 'NYC', mode: 1}]});"},
+        {"t": "cmd", "js": "var clkinfo = eval(require('Storage').read('airqualityci.clkinfo.js')); clkinfo.items[0].get(function(){});"}
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "description": "URL parameters are percent-encoded (spaces and special chars in location and API key)",
+      "steps": [
+        {"t": "setup", "id": "default"},
+        {"t": "assert", "js": "capturedUrl !== null", "is": "truthy"},
+        {"t": "assert", "js": "capturedUrl.includes('city=New%20York%20City')", "is": "truthy"},
+        {"t": "assert", "js": "capturedUrl.includes('state=New%20York')", "is": "truthy"},
+        {"t": "assert", "js": "capturedUrl.includes('country=US')", "is": "truthy"},
+        {"t": "assert", "js": "capturedUrl.includes('key=test%20key%26special')", "is": "truthy"},
+        {"t": "assert", "js": "!capturedUrl.includes('city=New York')", "is": "truthy"}
+      ]
+    }
+  ]
+}

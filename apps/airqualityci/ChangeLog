@@ -1,1 +1,2 @@
 0.01: Initial clockinfo release
+0.02: Harden URL construction with encodeURIComponent for city, state, country, and API key params
