@@ -11,6 +11,36 @@ if (Bangle.SCHED) {
 const sched = require("sched");
 const tt = require('tevtimer');
 
+function formatMS(ms) {
+  if (ms < 60000) {
+    // less than a minute → show seconds
+    return Math.round(ms / 1000) + "s";
+  } else {
+    // one minute or more → show minutes
+    return Math.round(ms / 60000) + "m";
+  }
+}
+
+function showSnoozeMenu(alarm) {
+
+  Bangle.buzz(40);
+
+  function onSnooze(snoozeTime) {
+    sched.snoozeAlarm(alarms, alarm, snoozeTime);
+    load();
+  }
+
+  let timerLength = alarm.timer;
+  let buttons = { "15s": 15, "30s": 30, "1m": 60, "2m": 120, "5m": 300 };
+  let formattedLength = formatMS(timerLength) + "*";
+  buttons[formattedLength] = Math.round(timerLength / 1000);
+  //different button lengths
+  E.showPrompt("Choose snooze length", {
+    title: "Snooze Options",
+    buttons
+  }).then(snoozeTime => onSnooze(snoozeTime * 1000));
+}
+
 // Regenerate the system alarms after altering a timer's state and
 // ensure the `alarms` list is up to date with the latest version of the
 // alarms.
@@ -63,15 +93,23 @@ function showAlarm(alarm) {
   // Snooze (retrigger the alarm after a delay).
   // Alarm options for chained timer are OK (dismiss) and Halt (dismiss
   // and pause the triggering timer).
-  let promptButtons = isChainedTimer
+  const promptButtons = isChainedTimer
     ? { 'Halt': 'halt', 'OK': 'ok' }
     : { 'Snooze': 'snooze', 'OK': 'ok' };
+  const buttonsLong = isChainedTimer
+    ? {}
+    : { 'Snooze': 'snoozeCustom' };
   E.showPrompt(message, {
     title: 'tev timer',
     buttons: promptButtons,
+    buttonsLong: buttonsLong,
   }).then(function (action) {
     buzzCount = 0;
 
+    if (action === 'snoozeCustom') {
+      showSnoozeMenu(alarm);
+      return;
+    }
     if (action === 'snooze') {
       sched.snoozeAlarm(alarms, alarm, settings.defaultSnoozeMillis);
     }
