@@ -96,14 +96,16 @@ function showAlarm(alarm) {
   const promptButtons = isChainedTimer
     ? { 'Halt': 'halt', 'OK': 'ok' }
     : { 'Snooze': 'snooze', 'OK': 'ok' };
-  const buttonsLong = isChainedTimer
-    ? {}
-    : { 'Snooze': 'snoozeCustom' };
+  let buttonsLong = {'OK': 'okInvertReturn'};
+  if (!isChainedTimer) {
+    buttonsLong.Snooze = 'snoozeCustom';
+  }
   E.showPrompt(message, {
     title: 'tev timer',
     buttons: promptButtons,
     buttonsLong: buttonsLong,
   }).then(function (action) {
+    let returnToApp = tt.SETTINGS.alarm_return;
     buzzCount = 0;
 
     if (action === 'snoozeCustom') {
@@ -113,7 +115,7 @@ function showAlarm(alarm) {
     if (action === 'snooze') {
       sched.snoozeAlarm(alarms, alarm, settings.defaultSnoozeMillis);
     }
-    if (action === 'ok' || action === 'halt') {
+    if (action === 'ok' || action === 'okInvertReturn' || action === 'halt') {
       sched.dismissAlarm(alarms, alarm);
       if (timer !== chainTimer) {
         timer.pause();
@@ -122,12 +124,15 @@ function showAlarm(alarm) {
         }
       }
     }
+    if (action === 'okInvertReturn') {
+      returnToApp = !returnToApp;
+    }
     if (action === 'halt') {
       chainTimer.pause();
     }
     recomputeAlarms();
 
-    if (action === 'halt' || tt.SETTINGS.alarm_return) {
+    if (action === 'halt' || returnToApp) {
       load('tevtimer.app.js');
     } else {
       load();
