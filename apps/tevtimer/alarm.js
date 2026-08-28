@@ -89,22 +89,7 @@ function showAlarm(alarm) {
   // buzzCount should really be called buzzRepeat, so subtract 1
   let buzzCount = timer.buzz_count - 1;
 
-  // Alarm options for non-chained timer are OK (dismiss the alarm) and
-  // Snooze (retrigger the alarm after a delay).
-  // Alarm options for chained timer are OK (dismiss) and Halt (dismiss
-  // and pause the triggering timer).
-  const promptButtons = isChainedTimer
-    ? { 'Halt': 'halt', 'OK': 'ok' }
-    : { 'Snooze': 'snooze', 'OK': 'ok' };
-  let buttonsLong = {'OK': 'okInvertReturn'};
-  if (!isChainedTimer) {
-    buttonsLong.Snooze = 'snoozeCustom';
-  }
-  E.showPrompt(message, {
-    title: 'tev timer',
-    buttons: promptButtons,
-    buttonsLong: buttonsLong,
-  }).then(function (action) {
+  function doAlarmAction(action) {
     let returnToApp = tt.SETTINGS.alarm_return;
     buzzCount = 0;
 
@@ -137,7 +122,28 @@ function showAlarm(alarm) {
     } else {
       load();
     }
-  });
+  }
+
+  // Alarm options for non-chained timer are OK (dismiss the alarm) and
+  // Snooze (retrigger the alarm after a delay).
+  // Alarm options for chained timer are OK (dismiss) and Halt (dismiss
+  // and pause the triggering timer).
+  let prompt = {
+    title: "tev's timer",
+  }
+  prompt.buttons = isChainedTimer
+    ? { 'Halt': 'halt', 'OK': 'ok' }
+    : { 'Snooze': 'snooze', 'OK': 'ok' };
+  prompt.buttonsLong = {'OK': 'okInvertReturn'};
+  if (prompt.buttons.Snooze) {
+    prompt.buttonsLong.Snooze = 'snoozeCustom';
+  }
+  if (!settings.btnToStop && prompt.buttons.Snooze) {
+    prompt.back = () => doAlarmAction('snooze');
+  } else if (settings.btnToStop) {
+    prompt.back = () => doAlarmAction('ok');
+  }
+  E.showPrompt(message, prompt).then(doAlarmAction);
 
   function buzz() {
     // Handle buzzing and screen unlocking
