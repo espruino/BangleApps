@@ -1,0 +1,62 @@
+name: Update typescript bindings
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 6 * * 4"
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout BangleApps
+        uses: actions/checkout@v4
+        with:
+          path: BangleApps
+          fetch-depth: 0
+
+      - name: Checkout Espruino
+        uses: actions/checkout@v4
+        with:
+          repository: espruino/Espruino
+          path: Espruino
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate typescript
+        run: |
+          cd Espruino
+          node ./scripts/build_types.js
+
+      - name: Check for changes
+        id: git-check
+        run: |
+          cd BangleApps
+          git diff --quiet || echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Commit changes
+        if: steps.git-check.outputs.changed == 'true'
+        run: |
+          cd BangleApps
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b typescript/update
+          git add -A
+          git commit -m "bot: update generated typescript"
+
+      - name: Create Pull Request
+        if: steps.git-check.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          path: BangleApps
+          branch: typescript/update
+          title: "bot: update generated typescript"
+          body: This PR was automatically generated
+          labels: bot
