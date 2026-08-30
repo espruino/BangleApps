@@ -16,13 +16,15 @@ print(ExStats.getList());
   {name: "Steps", id:"step"},
   {name: "Heart (BPM)", id:"bpm"},
   {name: "Max BPM", id:"maxbpm"},
-  {name: "Pace (avr)", id:"pacea"},
+  {name: "Pace (avg)", id:"pacea"},
   {name: "Pace (current)", id:"pacec"},
   {name: "Cadence", id:"caden"},
+  {name: "ETA (avg)", id:"etaa"},
+  {name: "ETA (current)", id:"etac"},
 ]
 
 // Setup and load all statistic types
-var exs = ExStats.getStats(["dist", "time", "pacea","bpm","step","caden"], options);
+var exs = ExStats.getStats(["dist", "time", "pacea","bpm","step","caden","etaa","etac"], options);
 // exs contains
 {
   stats : { time : {
@@ -143,6 +145,13 @@ function formatPace(speed, paceLength) {
   return ('0' + min).substr(-2) + `:` + ('0' + sec).substr(-2);
 }
 
+function eta(speed, state) {
+  if (speed <= 0) return Infinity;
+
+  const distRemaining = (state.distance || 0) % 5000;
+  return distRemaining / speed;
+}
+
 Bangle.on("GPS", function(fix) {
   if (!fix.fix) return; // only process actual fixes
   state.lastGPS = state.thisGPS;
@@ -208,7 +217,9 @@ exports.getList = function() {
     {name: "Pace (curr)", id:"pacec"},
     {name: "Speed", id:"speed"},
     {name: "Cadence", id:"caden"},
-    {name: "Altitude (GPS)", id:"altg"}
+    {name: "Altitude (GPS)", id:"altg"},
+    {name: "ETA (avg)", id:"etaa"},
+    {name: "ETA (current)", id:"etac"},
   ];
   if (Bangle.setBarometerPower) l.push({name: "Altitude (baro)", id:"altb"});
   return l;
@@ -309,6 +320,22 @@ exports.getStats = function(statIDs, options) {
       title : "Altitude",
       getValue : function() { return state.alt; },
       getString : function() { return (state.alt===undefined)?"-":state.alti+"m"; },
+    };
+  }
+  if (statIDs.includes("etaa")) {
+    needGPS = true;
+    stats["etaa"]={
+      title : "A ETA",
+      getValue : function() { return eta(state.avrSpeed, state); },
+      getString : function() { const t = this.getValue(); return isFinite(t) ? formatTime(t) : "__:__"; },
+    };
+  }
+  if (statIDs.includes("etac")) {
+    needGPS = true;
+    stats["etac"]={
+      title : "C ETA",
+      getValue : function() { return eta(state.curSpeed, state); },
+      getString : function() { const t = this.getValue(); return isFinite(t) ? formatTime(t) : "__:__"; },
     };
   }
   // ======================
