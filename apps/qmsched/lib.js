@@ -91,5 +91,13 @@ exports.setMode = function(mode) {
   ));
   exports.applyOptions(mode);
   if (typeof WIDGETS === "object" && "qmsched" in WIDGETS) WIDGETS["qmsched"].draw();
+  //eslint-disable-next-line no-undef
   if (global.setAppQuietMode) setAppQuietMode(mode); // current app knows how to update itself
+};
+/**
+ * Get the active quiet mode
+ * Returns: (int) active quiet mode
+ */
+exports.getMode = function(){
+  return (require("Storage").readJSON("setting.json", 1) || {}).quiet|0;
 };
