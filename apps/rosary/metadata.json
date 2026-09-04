@@ -1,0 +1,23 @@
+{ 
+  "id": "rosary",
+  "name": "Rosary",
+  "shortName": "Rosary",
+  "version": "0.01",
+  "author": "Camroc007",
+  "description": "A simple Catholic Rosary guide.",
+  "icon": "rosary.png",
+  "tags": "tool, health",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {
+      "name": "rosary.app.js",
+      "url": "rosary.app.js"
+    },
+    {
+      "name": "rosary.img",
+      "url": "app-icon.js",
+      "evaluate": true
+    }
+  ]
+}
