@@ -6,7 +6,7 @@
   "author": "Camroc007",
   "description": "A simple Catholic Rosary guide.",
   "icon": "rosary.png",
-  "tags": "tool, health",
+  "tags": "tool,health",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [

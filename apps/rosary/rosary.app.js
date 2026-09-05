@@ -73,6 +73,51 @@ function centerText(text, y, size) {
   g.drawString(text, 88, y);
 }
 
+function wrapText(text, size, maxWidth) {
+  g.setFont("Vector", size);
+  var words = text.split(" ");
+  var lines = [];
+  var current = "";
+
+  for (var i = 0; i < words.length; i++) {
+    var test = current ? current + " " + words[i] : words[i];
+
+    if (g.stringWidth(test) > maxWidth && current) {
+      lines.push(current);
+      current = words[i];
+    } else {
+      current = test;
+    }
+  }
+
+  if (current) {
+    lines.push(current);
+  }
+
+  return lines;
+}
+
+function drawMysteryName(text, yCenter) {
+  var maxWidth = 168;
+  var size = 16;
+  var lines = wrapText(text, size, maxWidth);
+
+  while (lines.length > 2 && size > 10) {
+    size -= 2;
+    lines = wrapText(text, size, maxWidth);
+  }
+
+  g.setFont("Vector", size);
+  g.setFontAlign(0, 0);
+
+  var lineHeight = size + 6;
+  var startY = yCenter - ((lines.length - 1) * lineHeight) / 2;
+
+  for (var i = 0; i < lines.length; i++) {
+    g.drawString(lines[i], 88, startY + i * lineHeight);
+  }
+}
+
 function drawHome() {
   clearScreen();
 
@@ -179,7 +224,7 @@ function drawRosary() {
     centerText("HAIL MARY", 58, 20);
     centerText(p.hailMary + "/10", 88, 26);
   } else {
-    centerText(p.name.toUpperCase(), 65, 16);
+    drawMysteryName(p.name.toUpperCase(), 68);
   }
 
   var remaining;
