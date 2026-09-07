@@ -1,0 +1,21 @@
+{
+  "id": "rokidcontroller",
+  "name": "Rokid Controller",
+  "shortName": "Rokid Ctrl",
+  "icon": "app.png",
+  "version": "0.01",
+  "author": "hoonsubin",
+  "description": "Simulates the Rokid Glasses touchpad (tap, double-tap, swipe, two-finger tap) over BLE HID so you can drive or test a Rokid Glasses app from your wrist. Includes an on-watch settings screen for swipe axis and direction invert.",
+  "tags": "tool,bluetooth,remote",
+  "type": "app",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    { "name": "rokidcontroller.app.js", "url": "app.js" },
+    { "name": "rokidcontroller.img", "url": "app-icon.js", "evaluate": true },
+    { "name": "rokidremote.json" }
+  ],
+  "data": [
+    { "name": "rokidremote.json" }
+  ]
+}
