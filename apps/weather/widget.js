@@ -71,6 +71,7 @@
     return t;
   }
   function draw(){
+    g.reset("widget");
     g.clearRect(this.x, this.y, this.x+this.width-1, this.y+23);
     const w = weather.get();
     if (setting("hide")||!w){
@@ -78,7 +79,7 @@
       return;
     }
     WIDGETS.weather.width=20;
-    g.reset();
+    
     if (w.code||w.txt) {
       if(setting("widgetMonochrome")){
         buffer.clear();
