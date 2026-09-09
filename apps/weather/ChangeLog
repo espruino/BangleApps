@@ -36,3 +36,4 @@
 0.32: Add widget configuration settings menu for icon style, data displayed, etc.
       ClockInfos now show the high/low temp as the min/max for displaying a percent bar.
 0.33: Fix bugs with weather app and clock info
+0.34: Redesign of app interface that adds rain percent, and high/low temperatures
