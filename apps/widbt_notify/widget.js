@@ -39,9 +39,13 @@
     },
 
     onNRF: function(connect) {
-      // setup widget with and reload widgets to show/hide if hideConnected is enabled
+      // show/hide if hideConnected is enabled
       if (this.hideConnected) {
-        this.width = connect ? 0 : 15; // ensures correct redraw
+        if (connect) {
+          if (this.width && this.x!==undefined) 
+            g.reset("widget").clearRect({x:this.x, y:this.y, w:this.width,h:24});
+          this.width = 0;
+        } else this.width = 15;
         Bangle.drawWidgets();
       } else {
         // redraw widget
