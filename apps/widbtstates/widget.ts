@@ -43,7 +43,7 @@
 		area: "tl",
 		sortorder: -1,
 		draw: function() {
-			if (state == State.Asleep)
+			if (state === State.Asleep)
 				return;
 
 			g.reset();
