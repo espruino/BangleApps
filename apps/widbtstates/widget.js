@@ -12,7 +12,14 @@
     var width = function () { return state > 0 ? 15 : 0; };
     var update = function (newState) {
         state = newState;
-        WIDGETS["bluetooth"].width = width();
+        var newWidth = width();
+        var w = WIDGETS["bluetooth"];
+        if (newWidth === 0 && w.width) {
+            g
+                .reset("widget")
+                .clearRect({ x: w.x, y: w.y, w: w.width, h: 24 });
+        }
+        w.width = newWidth;
         setTimeout(Bangle.drawWidgets, 50);
     };
     var colours = (_a = {},
@@ -29,7 +36,7 @@
         area: "tl",
         sortorder: -1,
         draw: function () {
-            if (state == 0)
+            if (state === 0)
                 return;
             g.reset();
             g.setColor(colours[state][g.theme.dark]);
