@@ -7,14 +7,13 @@
 		Connected
 	}
 
-	const getState = () => {
+	let state: State = (() => {
 		const status = NRF.getSecurityStatus();
 
 		if (status.connected) return State.Connected;
 		if (status.advertising) return State.Active;
 		return State.Asleep;
-	};
-	let state = getState();
+	})();
 
 	const width = () => state > State.Asleep ? 15 : 0;
 
@@ -44,20 +43,18 @@
 		area: "tl",
 		sortorder: -1,
 		draw: function() {
-			// sometimes this can change without us getting an event
-			state = getState();
-
 			if (state == State.Asleep)
 				return;
 
-			g
-				.reset()
-				.setColor(colours[state][g.theme.dark as unknown as `${boolean}`])
-				.drawImage(
-					atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="),
-					this.x! + 2,
-					this.y! + 2
-				);
+			g.reset();
+
+			g.setColor(colours[state][g.theme.dark as unknown as `${boolean}`]);
+
+			g.drawImage(
+				atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="),
+				this.x! + 2,
+				this.y! + 2
+			);
 		},
 		width: width(),
 	};
