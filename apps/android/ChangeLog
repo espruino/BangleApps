@@ -50,3 +50,4 @@
 0.45: Don't pass on music messages if nothing has changed
 0.46: Ensure music messages with an empty album don't use the last album's name
 0.47: Send activity and battery status at the same time. Allows Bangle.js to enter low power bluetooth mode more readily
+0.48: Fix memory leak with repeated usages of activity tracking (#4344)
