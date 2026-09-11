@@ -1,3 +1,5 @@
+/* global LITDAY */
+
 (function() {
   var S = require("Storage");
   var SETTINGS_FILE = "litday.json";
