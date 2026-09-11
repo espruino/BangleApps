@@ -111,16 +111,15 @@ var checkCharge = function () {
     }
     drainedRestore();
 };
-if (Bangle.isCharging())
-    checkCharge();
-Bangle.on("charging", function (charging) {
+var onChargeChange = function (charging) {
     if (drainedInterval)
         drainedInterval = clearInterval(drainedInterval);
     if (charging)
         drainedInterval = setInterval(checkCharge, interval * 60 * 1000);
     draw();
-});
-drainedInterval = setInterval(checkCharge, interval * 60 * 1000);
+};
+Bangle.on("charging", function (state) { return onChargeChange(state); });
+onChargeChange(Bangle.isCharging());
 if (!keepStartup) {
     var storage_1 = require("Storage");
     for (var _i = 0, exceptions_1 = exceptions; _i < exceptions_1.length; _i++) {
