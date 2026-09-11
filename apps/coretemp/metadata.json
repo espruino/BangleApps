@@ -1,23 +1,35 @@
 {
   "id": "coretemp",
   "name": "CoreTemp",
-  "version": "0.06",
+  "version": "0.10",
   "author": "ihewitt",
   "description": "Display CoreTemp device sensor data",
   "icon": "coretemp.png",
   "type": "app",
   "tags": "health",
   "readme": "README.md",
+  "customConnect": true,
+  "custom": "custom.html",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
     {"name":"coretemp.wid.js","url":"widget.js"},
     {"name":"coretemp.app.js","url":"coretemp.js"},
+    {"name":"coretemp.runtime","url":"runtime.js"},
+    {"name":"coretemp.ble","url":"ble.js"},
+    {"name":"coretemp.protocol","url":"protocol.js"},
+    {"name":"coretemp.controlpoint","url":"controlpoint.js"},
+    {"name":"coretemp.hrm","url":"hrm.js"},
+    {"name":"coretemp.store","url":"store.js"},
     {"name":"CORESensor","url":"lib.js"},
     {"name":"coretemp.recorder.js","url":"recorder.js"},
     {"name":"coretemp.settings.js","url":"settings.js"},
+    {"name":"coretemp.settingsui","url":"settingsui.js"},
     {"name":"coretemp.img","url":"coretemp-icon.js","evaluate":true},
     {"name":"coretemp.0.boot.js","url":"boot.js"}
   ],
-  "data": [{"name":"coretemp.json","url":"app-settings.json"}],
+  "data": [
+    {"name":"coretemp.json","url":"app-settings.json"},
+    {"name":"coretemp.hrm.json","url":"hrm.json"}
+  ],
   "screenshots": [{"url":"screenshot.png"}]
 }

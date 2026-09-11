@@ -1,6 +1,10 @@
 0.01: New app
-0.02: Cleanup interface and add settings, widget, add skin temp reporting. 
+0.02: Cleanup interface and add settings, widget, add skin temp reporting.
 0.03: Move code for recording to this app
 0.04: Use default Bangle formatter for booleans
 0.05: Minor code improvements
-0.06: Added advanced settings, adapted code to mirror bthrm funcitonality, and will work with latest firmware CORE Sensor Firmware (V0.87)
+0.06: Added advanced settings and updated compatibility with recent CORE Sensor firmware (V0.87)
+0.7: Improve CORE BLE connection handling and recorder/widget integration
+0.8: Modularize CoreTemp runtime and add ANT+ HRM management with tests
+0.9: Improved BLE lifecycle management and added more debug options
+0.10: Add app-loader configurator, default ANT+ HRM pairing shortcut

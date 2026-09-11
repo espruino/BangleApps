@@ -1,4 +1,7 @@
 {
   "enabled":false,
-  "debuglog": false
+  "widget": true,
+  "customprofileonly": false,
+  "debugMode": false,
+  "antScanWindowSec": 5
 }

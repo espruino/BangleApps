@@ -1,0 +1,167 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="../../css/spectre.min.css">
+  <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+</head>
+
+<body>
+  <div class="container">
+    <h3>CoreTemp Settings</h3>
+    <form id="coretempSettings">
+      <div class="form-group">
+        <label class="form-switch">
+          <input type="checkbox" id="widget" name="widget">
+          <i class="form-icon"></i> Show widget
+        </label>
+        <label class="form-switch">
+          <input type="checkbox" id="customprofileonly" name="customprofileonly">
+          <i class="form-icon"></i> Custom CORE profile only
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="debugMode">Debug log</label>
+        <select class="form-select" id="debugMode" name="debugMode">
+          <option value="false">Off</option>
+          <option value="partial">Partial</option>
+          <option value="full">Full</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="antScanWindowSec">ANT+ scan window (seconds)</label>
+        <input class="form-input" type="number" id="antScanWindowSec" name="antScanWindowSec" min="5" max="30" step="1">
+        <p class="form-input-hint">Allowed range: 5-30 seconds.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="antId">Preset ANT+ HRM ID</label>
+        <input class="form-input" type="number" id="antId" name="antId" min="1" max="65535" step="1" placeholder="Optional">
+        <p class="form-input-hint">ANT+ device ID. Leave blank to remove the stored preset ID only. Does not affect HRMs already paired with CORE.</p>
+      </div>
+    </form>
+
+    <p id="status" class="text-gray"></p>
+    <p><button class="btn btn-primary" id="upload">Upload</button></p>
+  </div>
+
+  <script src="../../core/lib/customize.js"></script>
+  <script>
+    const DEFAULT_SETTINGS = {
+      widget: true,
+      customprofileonly: false,
+      debugMode: false,
+      antScanWindowSec: 5
+    };
+    let currentSettings = Object.assign({}, DEFAULT_SETTINGS);
+    let currentHRM = { selected: null, recent: [] };
+
+    function readStorageJSONAsync(filename) {
+      return new Promise((resolve) => {
+        Util.readStorageJSON(filename, function (data) {
+          resolve(data || {});
+        });
+      });
+    }
+
+    function normalizeDebugMode(settings) {
+      if (settings.debuglog) return "full";
+      if (settings.debugpartiallog) return "partial";
+      return settings.debugMode || false;
+    }
+
+    function parseInteger(value) {
+      if (value === undefined || value === null || value === "") return undefined;
+      value = Number(value);
+      if (!Number.isInteger(value)) return undefined;
+      return value;
+    }
+
+    function normalizeScanWindowSec(value) {
+      value = parseInteger(value);
+      if (value === undefined || value < 5 || value > 30) return 5;
+      return value;
+    }
+
+    function normalizeAntId(value) {
+      value = parseInteger(value);
+      if (value === undefined || value <= 0 || value > 65535) return undefined;
+      return value;
+    }
+
+    function setStatus(text, isError) {
+      const status = document.getElementById("status");
+      status.textContent = text || "";
+      status.className = isError ? "text-error" : "text-gray";
+    }
+
+    function fillForm() {
+      document.getElementById("widget").checked = currentSettings.widget !== false;
+      document.getElementById("customprofileonly").checked = currentSettings.customprofileonly === true;
+      document.getElementById("debugMode").value = String(normalizeDebugMode(currentSettings));
+      document.getElementById("antScanWindowSec").value = normalizeScanWindowSec(currentSettings.antScanWindowSec);
+      document.getElementById("antId").value = currentHRM.selected && currentHRM.selected.antId ? currentHRM.selected.antId : "";
+    }
+
+    function buildSettings() {
+      const debugModeValue = document.getElementById("debugMode").value;
+      const settings = Object.assign({}, currentSettings, {
+        widget: document.getElementById("widget").checked,
+        customprofileonly: document.getElementById("customprofileonly").checked,
+        debugMode: debugModeValue === "false" ? false : debugModeValue,
+        antScanWindowSec: normalizeScanWindowSec(document.getElementById("antScanWindowSec").value)
+      });
+      delete settings.debuglog;
+      delete settings.debugpartiallog;
+      delete settings["warn" + "Disconnect"];
+      if (debugModeValue === "full") settings.debuglog = true;
+      if (debugModeValue === "partial") settings.debugpartiallog = true;
+      return settings;
+    }
+
+    function buildHRM() {
+      const antId = normalizeAntId(document.getElementById("antId").value);
+      const existingRecent = Array.isArray(currentHRM.recent) ? currentHRM.recent : [];
+      if (antId === undefined) return { selected: null, recent: existingRecent };
+      const entry = { antId: antId, transport: "ANT+" };
+      const recent = existingRecent.filter(e => e && e.antId !== antId);
+      recent.unshift(entry);
+      return { selected: entry, recent: recent.slice(0, 5) };
+    }
+
+    function onInit() {
+      Promise.all([
+        readStorageJSONAsync("coretemp.json"),
+        readStorageJSONAsync("coretemp.hrm.json")
+      ]).then(function (files) {
+        currentSettings = Object.assign({}, DEFAULT_SETTINGS, files[0]);
+        currentHRM = Object.assign({ selected: null, recent: [] }, files[1]);
+        fillForm();
+      }).catch(function (err) {
+        setStatus("Error loading settings: " + err, true);
+      });
+    }
+
+    window.onload = function () {
+      fillForm();
+      document.getElementById("upload").addEventListener("click", function () {
+        const antIdValue = document.getElementById("antId").value;
+        if (antIdValue !== "" && normalizeAntId(antIdValue) === undefined) {
+          setStatus("ANT+ HRM ID must be an integer from 1 to 65535.", true);
+          return;
+        }
+        const opts = {
+          storage: [
+            { name: "coretemp.json", content: JSON.stringify(buildSettings()) },
+            { name: "coretemp.hrm.json", content: JSON.stringify(buildHRM()) }
+          ]
+        };
+        setStatus("Uploading...");
+        sendCustomizedApp(opts);
+      });
+    };
+  </script>
+</body>
+
+</html>

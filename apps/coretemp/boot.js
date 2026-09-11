@@ -1,1 +1,5 @@
-if ((require('Storage').readJSON("coretemp.json", true) || {}).enabled != false) require("CORESensor").enable();
+var s = require("Storage").readJSON("coretemp.json", true) || {};
+
+if (s.enabled === true) {
+  require("CORESensor").enable();
+}
