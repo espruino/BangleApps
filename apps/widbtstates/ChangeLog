@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: Improve generated JS
 0.03: Recheck state on draw(), to get in-sync
+0.04: Fix icon remaining after disconnect (proper fix compared to 0.03)
