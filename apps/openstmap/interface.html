@@ -46,12 +46,19 @@
       </div>
       <div id="controls">
         <div class="form-group" style="display:inline-block;">
+          <select class="form-select" id="mapMode">
+            <option value="area" selected>Map area</option>
+            <option value="route">GPX route</option>
+          </select>
+        </div>
+        <div class="form-group" style="display:inline-block;">
           <select class="form-select" id="mapStyle">
             <option value="3bit" selected>3 bit</option>
             <option value="8bit">8 bit</option>
             <option value="1bit">1 bit</option>
           </select>
         </div>
+        <span id="areacontrols">
         <div class="form-group" style="display:inline-block;">
           <select class="form-select" id="mapSize">
             <option value="4">Small (4x4)</option>
@@ -61,7 +68,33 @@
             <option value="15">XXL (15x15)</option>
           </select>
         </div>
-        <button id="getmap" class="btn btn-primary">Get Map</button><button class="btn" onclick="showLoadedMaps()">Map List</button><br/>
+        <button id="getmap" class="btn btn-primary">Get Map</button>
+        </span>
+        <span id="routecontrols" style="display:none">
+          <input type="file" id="gpxFile" accept=".gpx" style="display:none"/>
+          <button class="btn" onclick="document.getElementById('gpxFile').click()">Load GPX</button>
+        </span>
+        <button class="btn" onclick="showLoadedMaps()">Map List</button><br/>
+        <span id="routeoptions" style="display:none">
+          <div class="form-group" style="display:inline-block;">
+            <select class="form-select" id="routeRadius">
+              <option value="250">Route &plusmn;250m</option>
+              <option value="500" selected>Route &plusmn;500m</option>
+              <option value="1000">Route &plusmn;1km</option>
+              <option value="2000">Route &plusmn;2km</option>
+            </select>
+          </div>
+          <div class="form-group" style="display:inline-block;">
+            <select class="form-select" id="routeDetail">
+              <option value="14">Low detail</option>
+              <option value="15" selected>Medium detail</option>
+              <option value="16">High detail</option>
+              <option value="17">Very high detail</option>
+            </select>
+          </div>
+          <button id="getroute" class="btn btn-primary">Get Route</button><br/>
+          <span id="routestats"></span>
+        </span><br/>
         <canvas id="maptiles" style="display:none"></canvas>
         <div id="uploadbuttons" style="display:none"><button id="upload" class="btn btn-primary">Upload</button>
         <button id="cancel" class="btn">Cancel</button>
@@ -76,6 +109,8 @@
     <script src="../../webtools/imageconverter.js"></script>
     <script src="https://unpkg.com/leaflet-geosearch@3.6.0/dist/bundle.min.js"></script>
     <script src="imagefilter.js"></script>
+    <script src="gpx.js"></script>
+    <script src="routeplan.js"></script>
     <script>
     /*
 
@@ -190,41 +225,46 @@ TODO:
                 console.log(filename + " => " + JSON.stringify(mapInfo));
                 let mapNumber = filename.match(/\d+/)[0]; // figure out what map number we are
                 loadedMaps[mapNumber] = mapInfo;
-                if (mapInfo!==undefined) {
+                if (mapInfo!==undefined)
                   mapsLoaded.push({mapNumber: mapNumber, mapInfo: mapInfo});
-                  let kBytes = (mapInfo.imgx*mapInfo.imgy*3)>>13;
-                  if (mapInfo.kBytes) kBytes = mapInfo.kBytes;
-                  mapsLoadedContainer.innerHTML += `
-<div class="tile">
-  <div class="tile-icon">
-    <div class="tile-map" id="tile-map-${mapNumber}">
-    </div>
-  </div>
-  <div class="tile-content">
-    <p class="tile-title">Map ${mapNumber}</p>
-    <p class="tile-subtitle">${mapInfo.w*mapInfo.h} Tiles (${kBytes}k)</p>
-  </div>
-  <div class="tile-action">
-    <button class="btn btn-primary" onclick="onMapDelete(${mapNumber})">Delete</button>
-  </div>
-</div>
-                  `;
-                }
                 resolve();
               });
             }));
           });
           promise = promise.then(() => new Promise(resolve => {
+            const entries = mapListEntries(mapsLoaded);
+            entries.forEach((entry, idx) => {
+              const tiles = entry.maps.reduce((r,m) => r + m.mapInfo.w*m.mapInfo.h, 0);
+              const kBytes = entry.maps.reduce((r,m) => r + (m.mapInfo.kBytes || (m.mapInfo.imgx*m.mapInfo.imgy*3)>>13), 0);
+              const mapNumbers = entry.maps.map(m => m.mapNumber);
+              mapsLoadedContainer.innerHTML += `
+<div class="tile">
+  <div class="tile-icon">
+    <div class="tile-map" id="tile-map-${idx}">
+    </div>
+  </div>
+  <div class="tile-content">
+    <p class="tile-title">${entry.title}</p>
+    <p class="tile-subtitle">${tiles} Tiles (${kBytes}k)</p>
+  </div>
+  <div class="tile-action">
+    <button class="btn btn-primary" onclick="onMapDelete([${mapNumbers}])">Delete</button>
+  </div>
+</div>
+              `;
+            });
             setTimeout(() => {
-              mapsLoaded.forEach(mapLoaded => {
-                let latlon = L.latLng(mapLoaded.mapInfo.lat, mapLoaded.mapInfo.lon);
-                let map = L.map(`tile-map-${mapLoaded.mapNumber}`);
+              entries.forEach((entry, idx) => {
+                let map = L.map(`tile-map-${idx}`);
                 L.tileLayer(PREVIEWTILELAYER, {
                   maxZoom: 18
                 }).addTo(map);
-                let marker = new L.marker(latlon).addTo(map);
-                const dist = mapLoaded.mapInfo.scale * mapLoaded.mapInfo.tilesize * mapLoaded.mapInfo.w;
-                map.fitBounds(latlon.toBounds(dist/2/*meters*/), {animation: false});
+                const bounds = entry.maps.map(m => {
+                  const dist = m.mapInfo.scale * m.mapInfo.tilesize * m.mapInfo.w;
+                  return L.latLng(m.mapInfo.lat, m.mapInfo.lon).toBounds(dist/2/*meters*/);
+                }).reduce((all, b) => all.extend(b));
+                new L.marker(L.latLng(entry.maps[0].mapInfo.lat, entry.maps[0].mapInfo.lon)).addTo(map);
+                map.fitBounds(bounds, {animation: false});
               });
             }, 0);
 
@@ -264,14 +304,37 @@ TODO:
         });
       }
 
-      function onMapDelete(mapNumber) {
-        console.log("delete", mapNumber);
-        Util.showModal(`Erasing map ${mapNumber}...`);
-        Util.eraseStorage(`openstmap.${mapNumber}.json`, function() {
-          Util.eraseStorage(`openstmap.${mapNumber}.img`, function() {
-            Util.hideModal();
-            showLoadedMaps();
+      // Maps uploaded for the same route are listed (and deleted) together
+      function mapListEntries(mapsLoaded) {
+        const entries = [];
+        const routeEntries = {};
+        mapsLoaded.forEach(mapLoaded => {
+          const route = mapLoaded.mapInfo.route;
+          if (!route) {
+            entries.push({title: `Map ${mapLoaded.mapNumber}`, maps: [mapLoaded]});
+          } else {
+            if (!routeEntries[route])
+              entries.push(routeEntries[route] = {title: `Route ${route}`, maps: []});
+            routeEntries[route].maps.push(mapLoaded);
+          }
+        });
+        return entries;
+      }
+
+      function onMapDelete(mapNumbers) {
+        console.log("delete", mapNumbers);
+        Util.showModal(`Erasing map ${mapNumbers.join(", ")}...`);
+        let promise = Promise.resolve();
+        mapNumbers.forEach(mapNumber => {
+          ["json", "img"].forEach(ext => {
+            promise = promise.then(() => new Promise(resolve => {
+              Util.eraseStorage(`openstmap.${mapNumber}.${ext}`, resolve);
+            }));
           });
+        });
+        promise.then(() => {
+          Util.hideModal();
+          showLoadedMaps();
         });
       }
 
@@ -281,7 +344,15 @@ TODO:
         document.getElementById("maptiles").style.display="none";
         document.getElementById("uploadbuttons").style.display="none";
         map.invalidateSize();
-        map.locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
+        if (isRouteMode() && route) {
+          map.fitBounds(route.bounds);
+          getStorageFree().then(free => {
+            storageFree = free;
+            showRoutePlan();
+          });
+        } else {
+          map.locate({setView: true, maxZoom: 16, enableHighAccuracy:true});
+        }
       }
 
       // -----------------------------------------------------
@@ -370,7 +441,7 @@ TODO:
       }
 
       // Returns the files for a rendered map: [json, img]
-      function createMapFiles(ctx, area, mapNumber) {
+      function createMapFiles(ctx, area, mapNumber, extraInfo) {
         var mapImageFile = `openstmap.${mapNumber}.img`;
         var files = tilesLoaded(ctx, area.width, area.height, mapImageFile);
         var center = map.unproject([area.x + area.width/2, area.y + area.height/2], area.zoom);
@@ -378,7 +449,7 @@ TODO:
         var pc = map.unproject([area.x, area.y], area.zoom);
         var pd = map.unproject([area.x+1, area.y], area.zoom);
         var scale = bproject(pc.lat, pc.lng).distanceTo(bproject(pd.lat, pd.lng));
-        files.unshift({name:`openstmap.${mapNumber}.json`,content:JSON.stringify({
+        files.unshift({name:`openstmap.${mapNumber}.json`,content:JSON.stringify(Object.assign({
           imgx : area.width,
           imgy : area.height,
           tilesize : TILESIZE,
@@ -389,7 +460,7 @@ TODO:
           h : Math.round(area.height / TILESIZE), // height in tiles
           kBytes : Math.round(files[0].content.length/1000),
           fn : mapImageFile
-        })});
+        }, extraInfo))});
         return files;
       }
 
@@ -397,10 +468,37 @@ TODO:
         return Math.round(files.reduce((r,m)=>m.content.length+r,0)/1000);
       }
 
-      function nextMapNumber() {
-        var mapNumber = 0;
-        while (loadedMaps[mapNumber]) mapNumber++;
-        return mapNumber;
+      function freeMapNumbers(count) {
+        var mapNumbers = [];
+        for (var mapNumber = 0; mapNumbers.length < count; mapNumber++)
+          if (!loadedMaps[mapNumber]) mapNumbers.push(mapNumber);
+        return mapNumbers;
+      }
+
+      // ----------------------------------------------------- Storage space
+      var STORAGE_FILE_OVERHEAD = 36; // Storage file header plus alignment padding
+      var IMAGE_HEADER_SIZE = 3;
+      var MAP_JSON_SIZE = 300; // upper bound of a map's JSON file
+
+      // Bytes we can write - the Bangle compacts Storage by itself when needed
+      function getStorageFree() {
+        return new Promise(resolve => {
+          Puck.eval(`require("Storage").getStats()`, stats => resolve(stats.freeBytes + stats.trashBytes));
+        });
+      }
+
+      function estimateMapBytes(area) {
+        var bpp = imageconverter.getFormats()[currentStyle.img.mode].bpp;
+        var tiles = (area.width / TILESIZE) * (area.height / TILESIZE);
+        return IMAGE_HEADER_SIZE + tiles*Math.ceil(TILESIZE*TILESIZE*bpp/8) + MAP_JSON_SIZE + 2*STORAGE_FILE_OVERHEAD;
+      }
+
+      function filesBytes(files) {
+        return files.reduce((r,file) => r + file.content.length + STORAGE_FILE_OVERHEAD, 0);
+      }
+
+      function notEnoughSpaceMessage(bytes, free) {
+        return `Not enough space on the watch: needs ${Math.round(bytes/1000)}k, ${Math.round(free/1000)}k free`;
       }
 
       document.getElementById("getmap").addEventListener("click", function() {
@@ -412,11 +510,125 @@ TODO:
         canvas.style.display="";
         var ctx = canvas.getContext('2d');
         renderMap(ctx, area).then(() => {
-          mapFiles = createMapFiles(ctx, area, nextMapNumber());
+          mapFiles = createMapFiles(ctx, area, freeMapNumbers(1)[0]);
           document.getElementById("uploadbuttons").style.display="";
           document.getElementById("mapstats").innerText = "Size : "+ (filesSizeInK(mapFiles)+"kb");
           console.log(mapFiles);
         });
+      });
+
+      // ----------------------------------------------------- Route
+      var TILES_PER_ROUTE_MAP = 8; // maximum width and height of each map uploaded for a route
+      var ROUTE_COLOR = "#f0f"; // pure 3 bit colour not used elsewhere by the app
+      var ROUTE_WIDTH = 3;
+      var route; // {name, segments} from the loaded GPX file
+      var storageFree; // bytes free on the Bangle
+      var routeLayer = L.layerGroup();
+      var routeAreaLayer = L.layerGroup();
+
+      function isRouteMode() {
+        return document.getElementById("mapMode").value == "route";
+      }
+
+      function showMapMode() {
+        var routeMode = isRouteMode();
+        document.getElementById("areacontrols").style.display = routeMode ? "none" : "";
+        document.getElementById("routecontrols").style.display = routeMode ? "" : "none";
+        document.getElementById("routeoptions").style.display = routeMode && route ? "" : "none";
+        document.getElementById("maptiles").style.display = "none";
+        document.getElementById("uploadbuttons").style.display = "none";
+        [routeLayer, routeAreaLayer].forEach(layer => routeMode ? layer.addTo(map) : map.removeLayer(layer));
+        if (routeMode && route) map.fitBounds(route.bounds);
+      }
+
+      function routeAreas() {
+        return RoutePlan.areasFor(route.segments, {
+          zoom : parseInt(document.getElementById("routeDetail").value),
+          radius : parseInt(document.getElementById("routeRadius").value),
+          tileSize : TILESIZE,
+          tilesPerArea : TILES_PER_ROUTE_MAP
+        });
+      }
+
+      function areaBounds(area) {
+        return L.latLngBounds(
+          map.unproject([area.x, area.y], area.zoom),
+          map.unproject([area.x + area.width, area.y + area.height], area.zoom));
+      }
+
+      function showRoutePlan() {
+        if (!route) return;
+        var areas = routeAreas();
+        var bytes = areas.reduce((r,area) => r + estimateMapBytes(area), 0);
+        var fits = bytes <= storageFree;
+        routeAreaLayer.clearLayers();
+        areas.forEach(area => L.rectangle(areaBounds(area), {weight:1, fill:false}).addTo(routeAreaLayer));
+        document.getElementById("getroute").disabled = !fits;
+        document.getElementById("routestats").innerText = fits ?
+          `${areas.length} maps, ${Math.round(bytes/1000)}k of ${Math.round(storageFree/1000)}k free` :
+          notEnoughSpaceMessage(bytes, storageFree) + " - lower the detail or narrow the route";
+      }
+
+      function drawRoute(ctx, area) {
+        ctx.strokeStyle = ROUTE_COLOR;
+        ctx.lineWidth = ROUTE_WIDTH;
+        ctx.lineCap = ctx.lineJoin = "round";
+        route.segments.forEach(segment => {
+          ctx.beginPath();
+          segment.forEach(pt => {
+            var p = map.project([pt.lat, pt.lon], area.zoom);
+            ctx.lineTo(p.x - area.x, p.y - area.y);
+          });
+          ctx.stroke();
+        });
+      }
+
+      function loadRoute(file) {
+        return Promise.all([file.text(), getStorageFree()]).then(([gpx, free]) => {
+          var segments = gpxToSegments(new DOMParser().parseFromString(gpx, "application/xml"));
+          if (!segments.length) throw new Error(`No track or route found in ${file.name}`);
+          storageFree = free;
+          route = {
+            name : file.name.replace(/\.gpx$/i, "").replace(/[^\w\- ]/g, "_").substr(0, 24),
+            segments : segments
+          };
+          routeLayer.clearLayers();
+          route.bounds = L.polyline(segments.map(segment => segment.map(pt => [pt.lat, pt.lon])), {color:ROUTE_COLOR}).addTo(routeLayer).getBounds();
+          showMapMode();
+          showRoutePlan();
+        });
+      }
+
+      document.getElementById("gpxFile").addEventListener("change", function(event) {
+        var file = event.target.files[0];
+        event.target.value = ""; // so the same file can be loaded again
+        if (file) loadRoute(file).catch(err => alert(err.message));
+      });
+
+      document.getElementById("mapMode").addEventListener("change", showMapMode);
+      document.getElementById("routeRadius").addEventListener("change", showRoutePlan);
+      document.getElementById("routeDetail").addEventListener("change", showRoutePlan);
+
+      document.getElementById("getroute").addEventListener("click", function() {
+        var areas = routeAreas();
+        var mapNumbers = freeMapNumbers(areas.length);
+        var ctx = document.getElementById("maptiles").getContext('2d');
+        var files = [];
+        let promise = Promise.resolve();
+        areas.forEach((area, i) => {
+          promise = promise.then(() => {
+            Util.showModal(`Downloading map ${i+1} of ${areas.length}...`);
+            return renderMap(ctx, area);
+          }).then(() => {
+            drawRoute(ctx, area);
+            files = files.concat(createMapFiles(ctx, area, mapNumbers[i], {route : route.name}));
+          });
+        });
+        promise.then(() => {
+          mapFiles = files;
+          document.getElementById("uploadbuttons").style.display="";
+          document.getElementById("mapstats").innerText = "Size : "+ (filesSizeInK(mapFiles)+"kb");
+        }).catch(err => alert(err.message)).then(() => Util.hideModal());
       });
 
       document.getElementById("mapStyle").addEventListener("change", function() {
@@ -425,11 +637,15 @@ TODO:
         map.removeLayer(previewTileLayer);
         createMapLayers(MAPSTYLES[style]);
         previewTileLayer.addTo(map);
+        showRoutePlan();
       });
 
       document.getElementById("upload").addEventListener("click", function() {
-        Util.showModal("Uploading...");
-        let promise = Promise.resolve();
+        Util.showModal("Checking space...");
+        let promise = getStorageFree().then(free => {
+          if (filesBytes(mapFiles) > free) throw new Error(notEnoughSpaceMessage(filesBytes(mapFiles), free));
+          Util.showModal("Uploading...");
+        });
         mapFiles.forEach(file => {
           promise = promise.then(function() {
             return new Promise(resolve => {
@@ -441,6 +657,9 @@ TODO:
           Util.hideModal();
           console.log("Upload Complete");
           showLoadedMaps();
+        }).catch(err => {
+          Util.hideModal();
+          alert(err.message);
         });
       });
 
