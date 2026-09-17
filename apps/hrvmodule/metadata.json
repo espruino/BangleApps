@@ -12,7 +12,8 @@
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"hrvmeasure.app.js","url":"measure.js"},
-    {"name":"hrvmodule.boot.js","url":"boot.js"}
+    {"name":"hrvmodule.boot.js","url":"boot.js"},
+    {"name":"hrvmodule.img","url":"icon.js","evaluate":true}
   ],
   "data": [{"name":"hrv.json"}]
 }
