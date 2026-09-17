@@ -116,12 +116,12 @@ Graphics.prototype.setFontMartianMono = function() {
   let clockInfoItems = require("clock_info").load();
   
   let clockInfoMenu = require("clock_info").addInteractive(clockInfoItems, {
-    app: "dailycolorclk", x: 98, y: 38+20+10, w: 70, h: 50,
+    app: "dailycolor", x: 98, y: 38+20+10, w: 70, h: 50,
     draw: clockInfoDraw, bg: g.theme.bg, fg: g.theme.fg,
     hl: (g.theme.fg === g.toColor(bgColor)) ? "#f00" : bgColor
   });
   let clockInfoMenu2 = require("clock_info").addInteractive(clockInfoItems, {
-    app: "dailycolorclk", x: 98, y: 102+10+10, w: 70, h: 50,
+    app: "dailycolor", x: 98, y: 102+10+10, w: 70, h: 50,
     draw: clockInfoDraw, bg: g.theme.bg, fg: g.theme.fg,
     hl: (g.theme.fg === g.toColor(bgColor)) ? "#f00" : bgColor
   });
