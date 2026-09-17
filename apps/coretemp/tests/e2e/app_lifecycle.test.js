@@ -23,7 +23,7 @@ function createGraphics() {
 
 module.exports = [
   {
-    name: "boot loads runtime only when background is enabled",
+    name: "enabled boot initializes APIs without requesting power",
     fn() {
       let enableCount = 0;
       let powerCalls = [];
@@ -61,7 +61,7 @@ module.exports = [
       const powerCalls = [];
       const listeners = {};
       const storage = fakeStorage.create({
-        "coretemp.json": { enabled: false, btid: "core-1" }
+        "coretemp.json": { enabled: true, alwaysOn: false, btid: "core-1" }
       });
       const Bangle = {
         loadWidgets() {},
@@ -111,7 +111,7 @@ module.exports = [
       assert.strictEqual(enableCount, 1);
       assert.strictEqual(typeof listeners.CORESensor, "function");
       assert.deepStrictEqual(powerCalls, [[1, "COREAPP"]]);
-      assert.strictEqual(storage.readJSON("coretemp.json", 1).enabled, false);
+      assert.strictEqual(storage.readJSON("coretemp.json", 1).alwaysOn, false);
       assert.strictEqual(graphics.clears[0].bgColor, "#fff");
 
       graphics.setBgColor("#0f0");
@@ -123,7 +123,7 @@ module.exports = [
 
       assert.strictEqual(listeners.CORESensor, undefined);
       assert.deepStrictEqual(powerCalls, [[1, "COREAPP"], [0, "COREAPP"]]);
-      assert.strictEqual(storage.readJSON("coretemp.json", 1).enabled, false);
+      assert.strictEqual(storage.readJSON("coretemp.json", 1).alwaysOn, false);
     }
   }
 ];

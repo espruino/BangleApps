@@ -1,4 +1,4 @@
-var settings = require("Storage").readJSON("coretemp.json", 1) || {};
+var settings = require("coretemp.store").read();
 var OWNER = "COREAPP";
 var coreStarted = false;
 // Simply listen for core events and show data
@@ -63,7 +63,11 @@ function stopCore() {
 }
 
 function startCore() {
-  if (!settings.btid) {
+  if (!settings.enabled) {
+    drawBackground("Sensor off\nEnable in Settings");
+    return;
+  }
+  if (!settings.btid && !settings.btname) {
     drawBackground("Pair CORE\nin Settings");
     return;
   }

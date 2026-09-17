@@ -62,7 +62,9 @@ exports.enable = function () {
   Bangle.CORESensorHRMClear = hrm.clearANT;
   Bangle.setCORESensorPower = ble.setPower;
 
-  if (store.get().enabled === true && Bangle.setCORESensorPower) {
-    Bangle.setCORESensorPower(1, "coretemp.enabled");
-  }
+  ble.applySettings();
+};
+
+exports.applySettings = function () {
+  ble.applySettings();
 };

@@ -4,6 +4,7 @@ const path = require("path");
 const files = [
   "unit/protocol.test.js",
   "unit/store.test.js",
+  "unit/migration.test.js",
   "unit/controlpoint.test.js",
   "behaviour/hrm_scan.test.js",
   "behaviour/hrm_pair.test.js",
@@ -12,7 +13,9 @@ const files = [
   "e2e/ble_controlpoint.test.js",
   "e2e/coretemp_runtime.test.js",
   "e2e/settings_hrm_flow.test.js",
-  "e2e/manifest_packaging.test.js"
+  "e2e/manifest_packaging.test.js",
+  "e2e/custom_install.test.js",
+  "e2e/consumers.test.js"
 ];
 
 async function run() {

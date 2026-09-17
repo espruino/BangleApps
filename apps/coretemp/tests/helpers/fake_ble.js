@@ -111,8 +111,10 @@ exports.create = function createFakeBLE(protocol, options) {
     }
   };
   const NRF = {
+    requests: [],
     setScan() {},
-    requestDevice() {
+    requestDevice(options) {
+      this.requests.push(options);
       return Promise.resolve(device);
     }
   };

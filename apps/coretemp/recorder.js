@@ -32,6 +32,8 @@
       },
       start : () => {
         hasCore = false;
+        if (!require("coretemp.store").read().enabled) return;
+        require("CORESensor").enable();
         Bangle.on('CORESensor', onCore);
         if (Bangle.setCORESensorPower) Bangle.setCORESensorPower(1, "coretemp.recorder");
       },

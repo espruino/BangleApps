@@ -13,12 +13,14 @@ exports.open = function (back) {
       // Full and partial logs are mutually exclusive settings.
       if (key === "debuglog" && value) delete nextSettings.debugpartiallog;
       if (key === "debugpartiallog" && value) delete nextSettings.debuglog;
-      if (value === undefined || value === false) delete nextSettings[key];
+      if (value === undefined) delete nextSettings[key];
       else nextSettings[key] = value;
+      if (key === "enabled" && !value) nextSettings.alwaysOn = false;
     });
     readSettings();
-    if (key === "enabled" && Bangle.setCORESensorPower) {
-      Bangle.setCORESensorPower(!!value, BACKGROUND_OWNER);
+    if (key === "enabled" || key === "alwaysOn") {
+      require("coretemp.runtime").applySettings();
+      E.showMenu(buildMainMenu());
     }
     if (key === "debuglog" && Bangle.CORESensorSetDebugLog) {
       Bangle.CORESensorSetDebugLog(!!value);
@@ -400,9 +402,12 @@ exports.open = function (back) {
           E.showMenu();
           E.showMessage("Resetting...");
           (Bangle.CORESensorUnpair ? Bangle.CORESensorUnpair() : Promise.resolve()).then(function () {
+            store.setDebug(false);
             try { require("Storage").open("coretemp.log", "r").erase(); } catch (e) {}
             try { require("Storage").open("coretemp.hrm.json", "r").erase(); } catch (e) {}
-            require("Storage").writeJSON("coretemp.json", { enabled: false, widget: true });
+            require("Storage").writeJSON("coretemp.json", require("coretemp.migrate").defaults());
+            require("Storage").writeJSON("coretemp.hrm.json", { selected: null, recent: [] });
+            require("coretemp.hrm").init();
             require("Storage").compact();
             readSettings();
             E.showPrompt("CORE reset complete.", {
@@ -441,7 +446,7 @@ exports.open = function (back) {
             runWithCoreConnection(function () {
               return Bangle.CORESensorPair(device).then(function (result) {
                 readSettings();
-                if (settings.enabled && Bangle.setCORESensorPower) {
+                if (settings.enabled && settings.alwaysOn && Bangle.setCORESensorPower) {
                   Bangle.setCORESensorPower(1, BACKGROUND_OWNER);
                 }
                 return result;
@@ -474,7 +479,7 @@ exports.open = function (back) {
     var menu = {
       "": { title: "CORE Sensor" },
       "< Back": back,
-      "Always On": {
+      "Enable": {
         value: !!settings.enabled,
         onchange: function (v) { writeSetting("enabled", v); }
       },
@@ -482,6 +487,10 @@ exports.open = function (back) {
         value: !!settings.widget,
         onchange: function (v) { writeSetting("widget", v); }
       }
+    };
+    if (settings.enabled) menu["Always On"] = {
+      value: !!settings.alwaysOn,
+      onchange: function (v) { writeSetting("alwaysOn", v); }
     };
     if (settings.btname || settings.btid) {
       menu["Forget " + formatCoreName()] = function () {

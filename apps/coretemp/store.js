@@ -3,12 +3,17 @@ var LOG_FILE = "coretemp.log";
 var LOG_MAX_LINES = 200;
 
 var settings;
+var migrated = false;
 var logEnabled = false;
 var logPartial = false;
 var logBuffer = [];
 var logFlushInterval;
 
 function readSettings() {
+  if (!migrated) {
+    require("coretemp.migrate").run();
+    migrated = true;
+  }
   settings = require("Storage").readJSON(SETTINGS_FILE, 1) || {};
   return settings;
 }
@@ -62,6 +67,7 @@ exports.get = function () {
 };
 
 exports.write = function (mutator) {
+  if (!migrated) readSettings();
   var nextSettings = require("Storage").readJSON(SETTINGS_FILE, 1) || {};
   mutator(nextSettings);
   require("Storage").writeJSON(SETTINGS_FILE, nextSettings);

@@ -1,8 +1,8 @@
 {
   "id": "coretemp",
   "name": "CoreTemp",
-  "version": "0.10",
-  "author": "ihewitt",
+  "version": "0.11",
+  "author": "ihewitt, zyf0717",
   "description": "Display CoreTemp device sensor data",
   "icon": "coretemp.png",
   "type": "app",
@@ -20,12 +20,14 @@
     {"name":"coretemp.controlpoint","url":"controlpoint.js"},
     {"name":"coretemp.hrm","url":"hrm.js"},
     {"name":"coretemp.store","url":"store.js"},
+    {"name":"coretemp.migrate","url":"migration.js"},
     {"name":"CORESensor","url":"lib.js"},
     {"name":"coretemp.recorder.js","url":"recorder.js"},
     {"name":"coretemp.settings.js","url":"settings.js"},
     {"name":"coretemp.settingsui","url":"settingsui.js"},
     {"name":"coretemp.img","url":"coretemp-icon.js","evaluate":true},
-    {"name":"coretemp.0.boot.js","url":"boot.js"}
+    {"name":"coretemp.0.boot.js","url":"boot.js"},
+    {"name":"RAM","content":"require('coretemp.migrate').run();"}
   ],
   "data": [
     {"name":"coretemp.json","url":"app-settings.json"},

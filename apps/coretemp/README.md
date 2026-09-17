@@ -12,7 +12,8 @@ recorders can subscribe to the same sensor readings.
 - A foreground app that temporarily powers a paired CORE sensor while open and
   shows CORE temperature, skin temperature, Heat Strain Index, and battery
   level.
-- A background runtime that keeps a paired CORE sensor connected when enabled.
+- An enabled-by-default runtime that lets apps request a paired CORE sensor,
+  with a separate opt-in Always On background connection.
 - A widget that is visible when the feature is enabled and changes color when
   the CORE sensor is connected.
 - A recorder integration that logs core temperature data into Recorder.
@@ -24,31 +25,51 @@ recorders can subscribe to the same sensor readings.
 1. Install CoreTemp from the Bangle.js app loader.
 2. Open `Settings > Apps > CoreTemp`.
 3. Use `Scan for CORE` to find and pair your CORE/calera sensor.
-4. Enable `Enable` only if you want CoreTemp itself to keep CORE connected in
-   the background.
+4. Leave `Enable` on to let CoreTemp, Recorder, and other apps request CORE.
+   Turn on `Always On` only if you want a continuous background connection.
 5. Enable `Widget` if you want connection status on the clock screen.
 
-By default, CoreTemp installs disabled and does not keep CORE connected in the
-background. Opening the CoreTemp app starts an active foreground session for a
-paired CORE sensor without changing the background `Enable` setting. When
-background mode is enabled, the boot task loads the runtime automatically. The
-runtime connects to the paired CORE sensor, subscribes to measurements, and
-emits a `CORESensor` event for each reading.
+Fresh installs have `Enable` on and `Always On` off. Boot initializes the APIs
+without scanning or connecting. Opening CoreTemp or starting Recorder requests
+the paired sensor; releasing the last app's power owner disconnects it. Always
+On holds a separate power owner to keep the connection alive between sessions.
+The runtime emits a `CORESensor` event for each reading.
+
+Turning Enable off also turns Always On off and stops normal app/Recorder
+connections. Settings can still connect temporarily for pairing, testing, cache
+rebuilding, and HRM management. Turning only Always On off does not interrupt an
+app that still needs CORE.
+
+### Upgrading
+
+Installation migrates saved settings without connecting to a device. Existing
+`enabled` values, including explicit `false`, are preserved; missing values
+default to `true`. Always On defaults to `false` and is never inferred from
+legacy Enable. Existing pairing, cache, widget visibility, logging, and unknown
+settings are retained. A missing legacy widget setting remains hidden.
+
+Name-only CORE pairings remain usable; the device ID is saved after the first
+successful connection. Legacy `ANT_HRM` selections are imported into
+`coretemp.hrm.json`, preserving the ANT transmission type and any newer HRM
+choices. Migration is retryable and runs only when needed; clearing a migrated
+selection does not reimport it. Reset CoreTemp restores fresh-install defaults.
 
 ## Settings
 
 The main settings menu contains:
 
-- `Enable`: turns the background CORE runtime on or off.
+- `Enable`: allows normal app and Recorder connections and initializes the
+  runtime at boot without connecting.
+- `Always On`: keeps CORE connected in the background; available when Enable is on.
 - `Widget`: shows or hides the CoreTemp widget.
 - `Scan for CORE`: scans for CORE sensors when no CORE device is paired.
 - `Test <device>`: connects to the currently paired CORE sensor when it is not
   already connected.
-- `Forget <device>`: removes the saved CORE sensor, disables background CORE
-  connection, and clears cached BLE characteristic handles without erasing
-  global Bangle BLE bonds.
+- `Forget <device>`: removes the saved CORE sensor and cached BLE characteristic
+  handles, turns Always On off, and retains Enable. Global Bangle BLE bonds
+  are not erased.
 - `HRM (ANT+)`: opens heart-rate monitor management for the paired CORE sensor.
-- `Debug`: contains disconnect warning, debug logging, status, cache rebuild,
+- `Debug`: contains debug logging, status, cache rebuild,
   and `Reset CoreTemp` actions.
 - `Full log`: records all debug lines, including every measurement event.
 - `Partial log`: records connection/discovery/control logs but skips measurement
@@ -67,16 +88,17 @@ Open `Settings > Apps > CoreTemp > HRM (ANT+)`.
 Available actions:
 
 - `Status`: queries the CORE sensor for currently paired ANT+ HRMs.
-- `Scan ANT+`: starts an ANT+ scan on CORE, waits 5 seconds locally, then
-  reads the found HRM IDs. Scan results may include HRMs already paired on
-  CORE.
+- `Scan ANT+`: starts an ANT+ scan on CORE, waits for the configured scan
+  window (5–30 seconds, default 5), then reads the found HRM IDs. Set the scan
+  window in the App Loader configurator. Scan results may include HRMs already
+  paired on CORE.
 - `Recent HRMs`: shows HRMs previously paired through CoreTemp.
 - `Clear Paired HRM`: clears ANT+ HRMs paired on CORE and verifies the result.
 
 Pairing flow:
 
 1. Choose `Scan ANT+`.
-2. Wait for the 5 second scan window.
+2. Wait for the configured scan window (default 5 seconds).
 3. Select a found ANT+ HRM ID.
 4. Choose `Pair`.
 5. CoreTemp verifies pairing by reading CORE's paired HRM status.
@@ -104,7 +126,7 @@ back into reconnect.
 flowchart TD
   A[idle] -->|connect / power_on / resume / pair / rebuild| B{paused?}
   B -->|yes| A
-  B -->|no| C{paired device id present?}
+  B -->|no| C{paired device id or name present?}
   C -->|no| A
   C -->|yes| D{pending mode switch?}
 
@@ -196,7 +218,7 @@ flowchart TD
   G --> Y[success<br/>busy=false]
 
   D -->|Scan ANT+| H[request HRM_SCAN_ANT_START]
-  H --> I[wait 5s local scan window]
+  H --> I[wait configured scan window: 5–30s, default 5s]
   I --> J[request HRM_SCAN_ANT_COUNT]
   J --> K[request each HRM_SCAN_ANT_ENTRY]
   K --> L[store lastScan entries]
@@ -246,7 +268,7 @@ HRM notes:
 
 ## CORESensor Events
 
-Apps can enable the runtime and listen for readings:
+When the user's Enable setting is on, apps can initialize the runtime and listen for readings:
 
 ```js
 require("CORESensor").enable();
@@ -299,6 +321,8 @@ Bangle.CORESensorIsPaused();
 ```
 
 `setCORESensorPower` records whether an owner wants CORE connected.
+Normal power requests are ignored while Enable is off. Status results include
+`enabled` (normal app access) and `alwaysOn` (background connection preference).
 `CORESensorPause` temporarily yields the BLE stack without changing any stored
 settings, pairing, or power owner.
 
@@ -371,7 +395,7 @@ temperature characteristic is available.
 
 CoreTemp stores:
 
-- `coretemp.json`: app settings, paired CORE device ID/name, debug flag, and BLE
+- `coretemp.json`: app settings (`enabled`, `alwaysOn`, migration version), paired CORE device ID/name, debug flag, and BLE
   characteristic cache.
 - `coretemp.hrm.json`: selected and recent ANT+ HRMs.
 - `coretemp.log`: debug log output when debug logging is enabled.
@@ -387,6 +411,7 @@ The Recorder integration is named `Core` and records:
 - Core
 - Skin
 - Unit
+- HeartRate
 - HeatFlux
 - HeatStrainIndex
 - Battery
@@ -400,12 +425,14 @@ stops.
 From the repository root:
 
 ```sh
+git submodule update --init core webtools
 node apps/coretemp/tests/run.js
 ```
 
 The tests cover protocol parsing, the strict Control Point actor, HRM scan,
 pair/status/clear behavior, BLE Control Point forwarding, runtime exports,
-settings menu behavior, and manifest packaging.
+settings menu behavior, migration retries, on-demand power ownership, custom
+configuration uploads, and manifest packaging through the pinned App Loader.
 
 ## Creators/Contributors
 

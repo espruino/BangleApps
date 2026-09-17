@@ -16,6 +16,8 @@ module.exports = [
       assert.ok(urls.includes("controlpoint.js"));
       assert.ok(urls.includes("hrm.js"));
       assert.ok(urls.includes("hrm.json"));
+      assert.ok(urls.includes("migration.js"));
+      assert.strictEqual(metadata.storage[metadata.storage.length - 1].name, "RAM");
       assert.strictEqual(urls.some(url => /(^|\/)tests\//.test(url)), false);
     }
   },
@@ -24,7 +26,9 @@ module.exports = [
     fn() {
       const root = path.resolve(__dirname, "../..");
       const settings = JSON.parse(fs.readFileSync(path.join(root, "app-settings.json"), "utf8"));
-      assert.strictEqual(settings.enabled, false);
+      assert.strictEqual(settings.enabled, true);
+      assert.strictEqual(settings.alwaysOn, false);
+      assert.strictEqual(settings.settingsVersion, 1);
       assert.strictEqual(settings.widget, true);
       assert.strictEqual(settings.customprofileonly, false);
       assert.strictEqual(settings.debugMode, false);

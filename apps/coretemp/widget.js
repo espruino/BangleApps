@@ -9,17 +9,17 @@
       if (Bangle.isCORESensorConnected) {
         return {
           connected: Bangle.isCORESensorConnected(),
-          enabled: !!settings.enabled
+          alwaysOn: !!settings.enabled && !!settings.alwaysOn
         };
       }
     } catch (e) {
     }
-    return { connected: false, enabled: false };
+    return { connected: false, alwaysOn: false };
   }
 
   function getWidgetStatus(status) {
     status = getCORESensorStatus(status);
-    if (status.connected) return status.enabled ? "background" : "connected";
+    if (status.connected) return status.alwaysOn ? "background" : "connected";
     return "off";
   }
 
@@ -54,7 +54,7 @@
   }
   // Called by sensor app to update status
   function reload() {
-    settings = require("Storage").readJSON("coretemp.json", 1) || {};
+    settings = require("coretemp.store").read();
     if (!settings.widget) {
       delete WIDGETS["coretemp"];
       return;

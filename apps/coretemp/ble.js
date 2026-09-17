@@ -126,7 +126,7 @@ function standDownCoreRuntime() {
 
 function eraseStoredPairing(disableBackground) {
   writeSettings(function (nextSettings) {
-    if (disableBackground) nextSettings.enabled = false;
+    if (disableBackground) nextSettings.alwaysOn = false;
     delete nextSettings.btid;
     delete nextSettings.btname;
     delete nextSettings.cache;
@@ -653,7 +653,7 @@ function ensureConnectionDesiredOrThrow(stage) {
     powerErr.coreContext = "paused";
     throw powerErr;
   }
-  if (!shouldBeConnected || pendingDisconnect || pendingUnpair) {
+  if (!shouldBeConnected || !isOn() || pendingDisconnect || pendingUnpair) {
     powerErr = new Error("CORESensor power off before " + stage);
     powerErr.coreContext = "power_off";
     throw powerErr;
@@ -681,7 +681,7 @@ function ensureDeviceAvailable() {
   setCoreState(CORE_STATE.SCANNING);
   NRF.setScan();
   targetId = activePairTarget && activePairTarget.id ? activePairTarget.id : store.get().btid;
-  filters = [{ id: targetId }];
+  filters = targetId ? [{ id: targetId }] : [{ name: store.get().btname }];
   return NRF.requestDevice({ filters: filters, active: true })
     .then(function (foundDevice) {
       return waitingPromise(2000).then(function () {
@@ -733,10 +733,17 @@ function ensureTransportReady() {
 }
 
 function performConnectSequence() {
+  var savedName = store.get().btname;
   return ensureDeviceAvailable()
     .then(ensureGattConnected)
     .then(ensureTransportReady)
     .then(function () {
+      ensureConnectionDesiredOrThrow("ready");
+      if (!activePairTarget && !store.get().btid && savedName && device.id) {
+        writeSettings(function (nextSettings) {
+          if (!nextSettings.btid && nextSettings.btname === savedName) nextSettings.btid = device.id;
+        });
+      }
       lastError = undefined;
       pendingReconnect = false;
       resetReconnectBackoff();
@@ -797,7 +804,7 @@ function handleLifecycleFailure(err) {
       pendingReconnect = false;
       clearReconnectTimer();
       setCoreState(CORE_STATE.IDLE, context);
-    } else if (shouldBeConnected && !isPaused() && !pendingDisconnect && !pendingUnpair && settings.btid) {
+    } else if (shouldBeConnected && !isPaused() && !pendingDisconnect && !pendingUnpair && (settings.btid || settings.btname)) {
       scheduleReconnect(context);
     } else {
       pendingReconnect = false;
@@ -924,7 +931,7 @@ function reconcileLifecycle(kind) {
     setCoreState(CORE_STATE.IDLE, "no connection requested");
     return Promise.resolve();
   }
-  if (!settings.btid) {
+  if (!settings.btid && !settings.btname) {
     pendingReconnect = false;
     clearReconnectTimer();
     clearProfileUpgradeTimer();
@@ -961,7 +968,10 @@ function isTransientOwner(owner) {
 }
 
 function isOn() {
-  return !!(Bangle._PWR && Bangle._PWR.CORESensor && Bangle._PWR.CORESensor.length);
+  var owners = (Bangle._PWR && Bangle._PWR.CORESensor) || [];
+  return owners.some(function (owner) {
+    return store.get().enabled === true || isTransientOwner(owner);
+  });
 }
 
 function isConnected() {
@@ -1026,7 +1036,7 @@ function requestTransportReconnect(reason, err) {
 function connect() {
   readSettings();
   if (!isOn()) return Promise.reject(new Error("CORESensor has no power owner"));
-  if (!store.get().btid) return Promise.reject(new Error("CORE device is not paired"));
+  if (!store.get().btid && !store.get().btname) return Promise.reject(new Error("CORE device is not paired"));
   if (isPaused()) {
     clearReconnectTimer();
     pendingReconnect = false;
@@ -1091,7 +1101,7 @@ function unpairDevice() {
 
 function rebuildCache() {
   readSettings();
-  if (!store.get().btid) return Promise.reject(new Error("CORE device is not paired"));
+  if (!store.get().btid && !store.get().btname) return Promise.reject(new Error("CORE device is not paired"));
   return runWithTemporaryPower("coretemp.rebuild", function () {
     return enqueueLifecycle("rebuild", function () {
       clearReconnectTimer();
@@ -1117,7 +1127,8 @@ function getStatus() {
   readSettings();
   return {
     enabled: store.get().enabled === true,
-    paired: !!store.get().btid,
+    alwaysOn: store.get().enabled === true && store.get().alwaysOn === true,
+    paired: !!(store.get().btid || store.get().btname),
     deviceId: store.get().btid,
     deviceName: store.get().btname,
     state: coreState,
@@ -1176,8 +1187,10 @@ function resume(owner) {
 
 function setPower(isOnValue, app) {
   if (!app) app = "?";
+  if (isOnValue && readSettings().enabled !== true && !isTransientOwner(app)) return;
   if (Bangle._PWR === undefined) Bangle._PWR = {};
   if (Bangle._PWR.CORESensor === undefined) Bangle._PWR.CORESensor = [];
+  var wasOff = !Bangle._PWR.CORESensor.length;
   log("setCORESensorPower ->", { on: !!isOnValue, owner: app });
   if (isOnValue && Bangle._PWR.CORESensor.indexOf(app) < 0) Bangle._PWR.CORESensor.push(app);
   if (!isOnValue && Bangle._PWR.CORESensor.indexOf(app) >= 0) {
@@ -1189,6 +1202,9 @@ function setPower(isOnValue, app) {
     // Transient owners borrow power for settings operations. They should not
     // override a pending disconnect/unpair or create background desire alone.
     if (isTransientOwner(app)) return;
+    // A new session supersedes a queued last-owner release, even if both
+    // requests arrived before the lifecycle queue could reconcile them.
+    if (isOnValue && wasOff && !pendingUnpair) pendingDisconnect = false;
     if (!pendingDisconnect && !pendingUnpair) shouldBeConnected = true;
     if (isPaused()) {
       clearReconnectTimer();
@@ -1214,6 +1230,23 @@ function setPower(isOnValue, app) {
   }
 }
 
+function applySettings() {
+  var settings = readSettings();
+  var owners = (Bangle._PWR && Bangle._PWR.CORESensor) || [];
+  var hadOwners = owners.length;
+  var background = settings.enabled === true && settings.alwaysOn === true;
+  if (settings.enabled !== true) {
+    if (settings.alwaysOn) writeSettings(function (next) { next.alwaysOn = false; });
+    if (Bangle._PWR) Bangle._PWR.CORESensor = owners.filter(isTransientOwner);
+  }
+  if (background) {
+    if (owners.indexOf("coretemp.enabled") < 0) setPower(1, "coretemp.enabled");
+  } else if (owners.indexOf("coretemp.enabled") >= 0 || (hadOwners && !isOn())) {
+    setPower(0, "coretemp.enabled");
+  }
+  emitStatus();
+}
+
 function runWithConnectedSession(owner, fn) {
   return runWithTemporaryPower(owner, function () {
     return connect().then(function () {
@@ -1237,6 +1270,7 @@ exports.rebuildCache = rebuildCache;
 exports.writeControlPoint = writeControlPoint;
 exports.getStatus = getStatus;
 exports.setPower = setPower;
+exports.applySettings = applySettings;
 exports.pause = pause;
 exports.resume = resume;
 exports.isPaused = isPaused;

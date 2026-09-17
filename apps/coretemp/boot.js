@@ -1,4 +1,4 @@
-var s = require("Storage").readJSON("coretemp.json", true) || {};
+var s = require("coretemp.migrate").run();
 
 if (s.enabled === true) {
   require("CORESensor").enable();

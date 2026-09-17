@@ -635,19 +635,7 @@ module.exports = [
       });
       const loaded = loader.create({
         storage,
-        globals: { Bangle, E, NRF: {} },
-        overrides: {
-          "coretemp.store": {
-            read() { return storage.readJSON("coretemp.json", 1) || {}; },
-            write(mutator) {
-              const next = storage.readJSON("coretemp.json", 1) || {};
-              mutator(next);
-              storage.writeJSON("coretemp.json", next);
-              return next;
-            },
-            log() {}
-          }
-        }
+        globals: { Bangle, E, NRF: {} }
       });
 
       loaded.require("coretemp.settingsui").open(function () {});
@@ -656,9 +644,9 @@ module.exports = [
 
       assert.strictEqual(unpairCalls, 1);
       assert.match(prompts[0].text, /BLE bonds\nare not erased/);
-      assert.deepStrictEqual(storage.files["coretemp.json"], { enabled: false, widget: true });
+      assert.deepStrictEqual(storage.files["coretemp.json"], JSON.parse(JSON.stringify(loader.create().require("coretemp.migrate").defaults())));
       assert.strictEqual(storage.files["coretemp.log"], undefined);
-      assert.strictEqual(storage.files["coretemp.hrm.json"], undefined);
+      assert.deepStrictEqual(storage.files["coretemp.hrm.json"], { selected: null, recent: [] });
       assert.deepStrictEqual(Bangle._PWR.CORESensor, []);
     }
   },

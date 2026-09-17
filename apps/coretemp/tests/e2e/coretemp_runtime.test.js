@@ -25,6 +25,7 @@ module.exports = [
           "coretemp.hrm": hrm,
           "coretemp.ble": {
             init() {},
+            applySettings() {},
             shutdown() {},
             getStatus() { return { state: "connected" }; },
             isOn() {},

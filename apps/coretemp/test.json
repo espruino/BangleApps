@@ -7,6 +7,18 @@
       "steps": [
         {
           "t": "assert",
+          "js": "require('Storage').readJSON('coretemp.json', 1).enabled",
+          "is": "true",
+          "text": "Fresh installs enable on-demand APIs"
+        },
+        {
+          "t": "assert",
+          "js": "require('Storage').readJSON('coretemp.json', 1).alwaysOn",
+          "is": "false",
+          "text": "Fresh installs do not acquire background power"
+        },
+        {
+          "t": "assert",
           "js": "!!require('Storage').read('coretemp.runtime')",
           "is": "true",
           "text": "Runtime module is installed"

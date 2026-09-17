@@ -119,6 +119,143 @@ async function drain() {
 
 module.exports = [
   {
+    name: "rapid release and reacquire honors the latest power demand",
+    async fn() {
+      const { ble, Bangle } = createLoadedBLE();
+      ble.init();
+      await ble.connect();
+      ble.setPower(0, "test");
+      ble.setPower(1, "recorder");
+      await drain();
+      assert.strictEqual(ble.isConnected(), true);
+      assert.deepStrictEqual(Array.from(Bangle._PWR.CORESensor), ["recorder"]);
+      ble.setPower(0, "recorder");
+      await drain();
+      assert.strictEqual(ble.isConnected(), false);
+    }
+  },
+  {
+    name: "on-demand startup stays idle and multiple owners share one connection",
+    async fn() {
+      const { ble, Bangle, env } = createLoadedBLE();
+      Bangle._PWR.CORESensor = [];
+      ble.init();
+      ble.applySettings();
+      await drain();
+      assert.strictEqual(env.NRF.requests.length, 0);
+      assert.strictEqual(ble.isOn(), false);
+      ble.setPower(1, "app");
+      ble.setPower(1, "recorder");
+      await drain();
+      assert.strictEqual(env.NRF.requests.length, 1);
+      assert.strictEqual(ble.isConnected(), true);
+      ble.setPower(0, "app");
+      await drain();
+      assert.strictEqual(ble.isConnected(), true);
+      ble.setPower(0, "recorder");
+      await drain();
+      assert.strictEqual(ble.isConnected(), false);
+      assert.strictEqual(ble.getStatus().reconnectScheduled, false);
+    }
+  },
+  {
+    name: "Always On releases only its owner and Enable off releases all ordinary owners",
+    async fn() {
+      const { ble, Bangle, storage } = createLoadedBLE({ settings: { enabled: true, alwaysOn: true } });
+      ble.init();
+      ble.applySettings();
+      await drain();
+      assert.ok(Bangle._PWR.CORESensor.includes("coretemp.enabled"));
+      assert.strictEqual(ble.getStatus().alwaysOn, true);
+      const settings = storage.readJSON("coretemp.json");
+      settings.alwaysOn = false;
+      storage.writeJSON("coretemp.json", settings);
+      ble.applySettings();
+      await drain();
+      assert.strictEqual(ble.isConnected(), true);
+      assert.deepStrictEqual(Array.from(Bangle._PWR.CORESensor), ["test"]);
+      settings.enabled = false;
+      settings.alwaysOn = true;
+      storage.writeJSON("coretemp.json", settings);
+      ble.applySettings();
+      await drain();
+      assert.strictEqual(ble.isConnected(), false);
+      assert.strictEqual(ble.getStatus().alwaysOn, false);
+      assert.strictEqual(storage.readJSON("coretemp.json").alwaysOn, false);
+      assert.strictEqual(Bangle._PWR.CORESensor.length, 0);
+    }
+  },
+  {
+    name: "disabled normal requests are blocked but temporary settings operations work",
+    async fn() {
+      const { ble, Bangle, env } = createLoadedBLE({ settings: { enabled: false } });
+      Bangle._PWR.CORESensor = [];
+      ble.init();
+      ble.setPower(1, "app");
+      await assert.rejects(ble.connect(), /no power owner/);
+      assert.strictEqual(env.NRF.requests.length, 0);
+      ble.setPower(1, "coretemp.settings");
+      await ble.connect();
+      assert.strictEqual(ble.isConnected(), true);
+      ble.setPower(0, "coretemp.settings");
+      await drain();
+      assert.strictEqual(ble.isConnected(), false);
+      await ble.rebuildCache();
+      await drain();
+      assert.strictEqual(ble.isConnected(), false);
+      await ble.pairDevice(env.device);
+      await drain();
+      assert.strictEqual(ble.isConnected(), false);
+    }
+  },
+  {
+    name: "disabling Enable during discovery prevents a late connection or retry",
+    async fn() {
+      const { ble, storage, env, timers } = createLoadedBLE({ timers: { manualReconnect: true } });
+      const discover = env.gatt.getPrimaryServices.bind(env.gatt);
+      let finish;
+      env.gatt.getPrimaryServices = () => new Promise(resolve => { finish = () => discover().then(resolve); });
+      ble.init();
+      const connecting = ble.connect();
+      const rejected = assert.rejects(connecting, /power off/);
+      await drain();
+      storage.writeJSON("coretemp.json", Object.assign(storage.readJSON("coretemp.json"), { enabled: false }));
+      ble.applySettings();
+      finish();
+      await rejected;
+      await drain();
+      assert.strictEqual(ble.isConnected(), false);
+      assert.strictEqual(timers.hasReconnect(), false);
+    }
+  },
+  {
+    name: "name-only pairing resolves an ID after success and subsequently prefers it",
+    async fn() {
+      const { ble, storage, env } = createLoadedBLE({ settings: { btid: undefined, btname: "CORE" } });
+      ble.init();
+      assert.strictEqual(ble.getStatus().paired, true);
+      await ble.connect();
+      assert.deepStrictEqual(JSON.parse(JSON.stringify(env.NRF.requests[0].filters)), [{ name: "CORE" }]);
+      assert.strictEqual(storage.readJSON("coretemp.json").btid, "core-1");
+      await ble.rebuildCache();
+      assert.deepStrictEqual(JSON.parse(JSON.stringify(env.NRF.requests[1].filters)), [{ id: "core-1" }]);
+    }
+  },
+  {
+    name: "failed name-only connections keep the saved name and remain retryable",
+    async fn() {
+      const { ble, storage, env, timers } = createLoadedBLE({
+        settings: { btid: undefined, btname: "CORE" }, timers: { manualReconnect: true }
+      });
+      env.NRF.requestDevice = () => Promise.reject(new Error("not found"));
+      ble.init();
+      await assert.rejects(ble.connect(), /not found/);
+      assert.strictEqual(storage.readJSON("coretemp.json").btname, "CORE");
+      assert.strictEqual(storage.readJSON("coretemp.json").btid, undefined);
+      assert.strictEqual(timers.hasReconnect(), true);
+    }
+  },
+  {
     name: "unpair clears paired CORE state without erasing global BLE bonds",
     async fn() {
       const { ble, storage, Bangle } = createLoadedBLE({
@@ -147,7 +284,8 @@ module.exports = [
       assert.strictEqual(settings.btid, undefined);
       assert.strictEqual(settings.btname, undefined);
       assert.strictEqual(settings.cache, undefined);
-      assert.strictEqual(settings.enabled, false);
+      assert.strictEqual(settings.enabled, true);
+      assert.strictEqual(settings.alwaysOn, false);
       assert.deepStrictEqual(JSON.parse(JSON.stringify(Bangle._PWR.CORESensor)), []);
       assert.strictEqual(ble.getStatus().paired, false);
       assert.strictEqual(ble.getStatus().desiredConnected, false);
