@@ -1,5 +1,5 @@
 {
-  "id": "hrvmodule",
+  "id": "hrvtracking",
   "name": "HRV Tracking",
   "shortName": "HRV",
   "version": "0.01",
@@ -12,8 +12,9 @@
   "supports": ["BANGLEJS2"],
   "storage": [
     {"name":"hrvmeasure.app.js","url":"measure.js"},
-    {"name":"hrvmodule.boot.js","url":"boot.js"},
-    {"name":"hrvmodule.img","url":"icon.js","evaluate":true}
+    {"name":"hrvtracking.app.js","url":"app.js"},
+    {"name":"hrvtracking.boot.js","url":"boot.js"},
+    {"name":"hrvtracking.img","url":"icon.js","evaluate":true}
   ],
   "data": [{"name":"hrv.json"}]
 }
