@@ -4,8 +4,10 @@ You can see your HRV as well as past HRVs in the app, and the HRV updates every 
 
 Note: HRV measurements do not match up with other smartwatches, because each smartwatch measures HRV differently. This app uses the RMSSD formula. You should also not rely on these measurements as a medical diagnosis, as the HRM sensor & these algorithms on the Bangle.js will never be as good as Apple or Garmin. Treat these simply as additional insight, and not a concrete diagnosis, as the measurements can always be wrong.
 
+
+
 ## Interpreting values
-HRV measurements are different for everyone, which is why HRV measurements are always compared to your personal baseline. 
+HRV measurements are different for everyone, which is why HRV measurements are always compared to your personal baseline. HRV is how watches like Apple and Garmin estimate features like stress levels, body battery/energy, and training readiness.
 
 Generally, if your HRV is higher than your baseline, you are fully recovered/rested and ready for heavy training. It can also mean that your stress is much less than usual (if you have persistent stress)
 
