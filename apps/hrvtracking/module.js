@@ -1,7 +1,7 @@
 var dataSaved = require("Storage").readJSON("hrv.json")||{};
 if(!dataSaved.hrv) dataSaved.hrv = [];
 if(!dataSaved.hrvDailyAverages) dataSaved.hrvDailyAverages = [];
-
+if(!dataSaved.daysTracked) dataSaved.daysTracked = 0;
 function writeData(){
     trimData()
 
@@ -36,7 +36,7 @@ function trimData(){
   
   
   dataSaved.hrv=currentData.hrv;
-  dataSaved.hrvDailyAverages.slice(0, 30)
+  dataSaved.hrvDailyAverages.slice(0, 20)
 }
 
 
@@ -57,23 +57,25 @@ exports.calculateDailyData = function calculateDailyHrv(){
   dataSaved.hrvDailyAverages.unshift({
     timestamp:Date.now(),
     readableTimestamp:formatDate(new Date()),
-    avgHrv:avg
+    hrv:avg
   })
- dataSaved.hrvBaseline = Math.round(getAverage(dataSaved.hrvDailyAverages.map(avgObj => avgObj.avgHrv)));
+  dataSaved.daysTracked += 1;
+ dataSaved.hrvBaseline = Math.round(getAverage(dataSaved.hrvDailyAverages.map(avgObj => avgObj.hrv)));
 
   writeData()
 }
 
-exports.getFullData = function(){
+exports.getAllData = function(){
   return dataSaved;
 }
 
 exports.getData = function(){
-  //returns list of 10 previous averages, baseline, and most recent
+  //returns list of 6 previous averages, baseline, and most recent
   return {
-    dailyHrvs: dataSaved.hrvDailyAverages.slice(0, 10),
-    mostRecentHrv:dataSaved.hrvDailyAverages[0],
-    hrvBaseline:dataSaved.hrvBaseline
+    dailyHrvs: dataSaved.hrvDailyAverages.slice(0, 6),
+    latestHrv:dataSaved.hrvDailyAverages[0],
+    hrvBaseline:dataSaved.hrvBaseline,
+    daysTracked:dataSaved.daysTracked
   }
 }
 

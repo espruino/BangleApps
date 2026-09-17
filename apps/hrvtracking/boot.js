@@ -1,4 +1,4 @@
-var dataSaved = require("hrvtracking").getFullData()
+var dataSaved = require("hrvtracking").getAllData()
 const startHour=3;
 const endHour=4; // inclusive
 
