@@ -1,0 +1,17 @@
+{
+  "id": "hrvmodule",
+  "name": "HRV Tracking",
+  "shortName": "HRV",
+  "version": "0.01",
+  "author": "RKBoss6",
+  "description": "Measures your HRV each day while you're asleep to provide you with day-to-day HRV insights and baselines.",
+  "icon": "app.png",
+  "type": "app",
+  "tags": "health",
+  "supports": ["BANGLEJS2"],
+  "storage": [
+    {"name":"hrvmeasure.app.js","url":"measure.js"},
+    {"name":"hrvmodule.boot.js","url":"boot.js"}
+  ],
+  "data": [{"name":"hrv.json"}]
+}
