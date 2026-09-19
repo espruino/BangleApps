@@ -74,30 +74,69 @@ function drawTime() {
       24: "Twelve"
     };
 
-    const quarters = [
-      "o'clock",
-      "quarter past",
-      "half past",
-      "quarter to"
-    ];
+    const minutesByQuarterString = {
+      0: "O'Clock",
+      15: "Fifteen",
+      30: "Thirty",
+      45: "Fourty-Five"
+    };
+
+    let minutesByQuarter;
+
+    if (minute < 10) {
+      minutesByQuarter = 0;
+    } else if (minute < 20) {
+      minutesByQuarter = 15;
+    } else if (minute < 40) {
+      minutesByQuarter = 30;
+    } else if (minute < 55) {
+      minutesByQuarter = 45;
+    } else {
+      minutesByQuarter = 0;
+    }
 
     let displayHour = hour;
 
-    if (minute >= 53) {
+    if (minute > 54) {
       displayHour++;
     }
 
-    const quarter =
-      Math.floor((minute + 7) / 15) % 4;
+    let prefix;
 
-    const number =
-      (displayHour % 24) || 24;
+    if (minute === minutesByQuarter) {
+      prefix = " exactly";
+    } else if (minutesByQuarter - minute < -54) {
+      prefix = " nearly";
+    } else if (minutesByQuarter - minute < -5) {
+      prefix = " after";
+    } else if (minutesByQuarter - minute < 0) {
+      prefix = " just after";
+    } else if (minutesByQuarter - minute > 5) {
+      prefix = " before";
+    } else {
+      prefix = " nearly";
+    }
 
-    text =
-      quarters[quarter] +
-      " " +
-      numbers[number];
+    const lines = [
+      "It's" + prefix,
+      numbers[(displayHour % 24) || 24],
+      minutesByQuarterString[minutesByQuarter]
+    ];
 
+    g.setFont("Vector", 24);
+
+    lines.forEach(function(line, i) {
+      const x =
+        (g.getWidth() - g.stringWidth(line)) / 2;
+
+      g.drawString(
+        line,
+        x,
+        35 + i * 40
+      );
+    });
+
+    return;
 
   // LEVEL 3
   } else if (level === 3) {
