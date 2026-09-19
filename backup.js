@@ -53,11 +53,17 @@ function bangleDownload() {
   }).then(content => {
     Progress.hide({ sticky: true });
     showToast('Backup complete!', 'success');
+    const dateStr = new Intl.DateTimeFormat(undefined, {
+      month: '2-digit',
+      day: '2-digit',
+      year: 'numeric'
+    }).format(new Date());
     if (typeof Android !== "undefined" && typeof Android.saveFile === 'function') {
       // Recent Gadgetbridge version that provides the saveFile interface
       Android.saveFile("Banglejs backup.zip", "application/zip", btoa(content));
     } else {
-      Espruino.Core.Utils.fileSaveDialog(content, "Banglejs backup.zip");
+      // save as Bangle.js Backup 05-30-22
+      Espruino.Core.Utils.fileSaveDialog(content, `Bangle.js Backup ${dateStr}.zip`);
     }
   }).catch(err => {
     Progress.hide({ sticky: true });
