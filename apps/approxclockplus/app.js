@@ -1,3 +1,13 @@
+const Storage = require("Storage");
+
+const settings =
+  Storage.readJSON("approxclockplus.json", 1) || {};
+
+const level =
+  typeof settings.level === "number"
+    ? settings.level
+    : 2;
+
 function drawTime() {
   const date = new Date();
 
@@ -5,12 +15,28 @@ function drawTime() {
 
   let text;
 
-  if (hour < 4) {
-    text = "Just after yesterday";
-  } else if (hour < 20) {
-    text = "Today";
+  if (level === 0) {
+    if (hour < 4) {
+      text = "Just after yesterday";
+    } else if (hour < 20) {
+      text = "Today";
+    } else {
+      text = "Almost tomorrow";
+    }
+
+  } else if (level === 1) {
+    if (hour < 6) {
+      text = "Night";
+    } else if (hour < 12) {
+      text = "Morning";
+    } else if (hour < 18) {
+      text = "Day";
+    } else {
+      text = "Evening";
+    }
+
   } else {
-    text = "Almost tomorrow";
+    text = "Level " + level;
   }
 
   g.reset();
