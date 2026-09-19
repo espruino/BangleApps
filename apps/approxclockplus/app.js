@@ -347,34 +347,10 @@ function drawLevel3(hour, minutes) {
 // --------------------------------------------------
 
 function drawTime() {
-  const date = new Date();
-
-  const hour = date.getHours();
-  const minutes = date.getMinutes();
-
-  switch (level) {
-    case 0:
-      drawLevel0(hour);
-      break;
-
-    case 1:
-      drawLevel1(hour);
-      break;
-
-    case 2:
-      drawLevel2(hour, minutes);
-      break;
-
-    case 3:
-      drawLevel3(hour, minutes);
-      break;
-
-    default:
-      drawLevel2(hour, minutes);
-      break;
-  }
-
-  queueDraw();
+  g.clear();
+  g.setColor(1, 1, 1);
+  g.setFont("Vector", 30);
+  g.drawString("HELLO", 50, 100);
 }
 
 
