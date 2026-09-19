@@ -83,6 +83,101 @@ function drawTime() {
     text = quarters[quarter] + " " + numbers[(hour % 24) || 24];
   }
 
+  } else if (level === 3) {
+    const hourWords = [
+      "Twelve",
+      "One",
+      "Two",
+      "Three",
+      "Four",
+      "Five",
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine",
+      "Ten",
+      "Eleven"
+    ];
+
+    const minuteWords = [
+      "O'clock",
+      "One",
+      "Two",
+      "Three",
+      "Four",
+      "Five",
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine",
+      "Ten",
+      "Eleven",
+      "Twelve",
+      "Thirteen",
+      "Fourteen",
+      "Fifteen",
+      "Sixteen",
+      "Seventeen",
+      "Eighteen",
+      "Nineteen",
+      "Twenty",
+      "Twenty One",
+      "Twenty Two",
+      "Twenty Three",
+      "Twenty Four",
+      "Twenty Five",
+      "Twenty Six",
+      "Twenty Seven",
+      "Twenty Eight",
+      "Twenty Nine",
+      "Thirty",
+      "Thirty One",
+      "Thirty Two",
+      "Thirty Three",
+      "Thirty Four",
+      "Thirty Five",
+      "Thirty Six",
+      "Thirty Seven",
+      "Thirty Eight",
+      "Thirty Nine",
+      "Forty",
+      "Forty One",
+      "Forty Two",
+      "Forty Three",
+      "Forty Four",
+      "Forty Five",
+      "Forty Six",
+      "Forty Seven",
+      "Forty Eight",
+      "Forty Nine",
+      "Fifty",
+      "Fifty One",
+      "Fifty Two",
+      "Fifty Three",
+      "Fifty Four",
+      "Fifty Five",
+      "Fifty Six",
+      "Fifty Seven",
+      "Fifty Eight",
+      "Fifty Nine"
+    ];
+
+    const hour12 = date.getHours() % 12;
+    const minute = date.getMinutes();
+
+    const lines = [
+      "It's",
+      hourWords[hour12],
+      minuteWords[minute]
+    ];
+
+    g.setFont("Vector", 24);
+
+    lines.forEach((line, i) => {
+      const x = (g.getWidth() - g.stringWidth(line)) / 2;
+      g.drawString(line, x, 35 + i * 40);
+    });
+      
   g.reset();
   g.setBgColor(0, 0, 0);
   g.clearRect(0, 0, g.getWidth(), g.getHeight());
