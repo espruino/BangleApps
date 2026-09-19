@@ -19,16 +19,16 @@
 
     "< Back": back,
 
-    "Detail Level": {
+    "Level": {
       value: settings.level,
       min: 0,
       max: 3,
       step: 1,
       format: v => {
         return [
-          "0 - Day",
-          "1 - Broad",
-          "2 - Quarter Hour",
+          "0 - Broad",
+          "1 - Loose",
+          "2 - Close",
           "3 - Exact"
         ][v];
       },
