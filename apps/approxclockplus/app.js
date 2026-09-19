@@ -1,7 +1,3 @@
-const Storage = require("Storage");
-
-const SETTINGS_FILE = "approxclockplus.json";
-
 function drawTime() {
   const date = new Date();
 
