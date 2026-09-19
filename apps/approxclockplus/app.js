@@ -8,14 +8,16 @@ const level =
     ? settings.level
     : 2;
 
+
 function drawTime() {
   const date = new Date();
-
   const hour = date.getHours();
-
   let text;
 
+
+  // LEVEL 0
   if (level === 0) {
+
     if (hour < 4) {
       text = "Just after yesterday";
     } else if (hour < 20) {
@@ -24,7 +26,10 @@ function drawTime() {
       text = "Almost tomorrow";
     }
 
+
+  // LEVEL 1
   } else if (level === 1) {
+
     if (hour < 6) {
       text = "Night";
     } else if (hour < 12) {
@@ -35,7 +40,10 @@ function drawTime() {
       text = "Evening";
     }
 
+
+  // LEVEL 2
   } else if (level === 2) {
+
     const minute = date.getMinutes();
 
     const numbers = {
@@ -51,6 +59,7 @@ function drawTime() {
       10: "Ten",
       11: "Eleven",
       12: "Twelve",
+
       13: "One",
       14: "Two",
       15: "Three",
@@ -72,18 +81,27 @@ function drawTime() {
       "quarter to"
     ];
 
-    let hour = date.getHours();
+    let displayHour = hour;
 
     if (minute >= 53) {
-      hour++;
+      displayHour++;
     }
 
-    const quarter = Math.floor((minute + 7) / 15) % 4;
+    const quarter =
+      Math.floor((minute + 7) / 15) % 4;
 
-    text = quarters[quarter] + " " + numbers[(hour % 24) || 24];
-  }
+    const number =
+      (displayHour % 24) || 24;
 
+    text =
+      quarters[quarter] +
+      " " +
+      numbers[number];
+
+
+  // LEVEL 3
   } else if (level === 3) {
+
     const hourWords = [
       "Twelve",
       "One",
@@ -162,7 +180,7 @@ function drawTime() {
       "Fifty Nine"
     ];
 
-    const hour12 = date.getHours() % 12;
+    const hour12 = hour % 12;
     const minute = date.getMinutes();
 
     const lines = [
@@ -173,16 +191,22 @@ function drawTime() {
 
     g.setFont("Vector", 24);
 
-    lines.forEach((line, i) => {
-      const x = (g.getWidth() - g.stringWidth(line)) / 2;
-      g.drawString(line, x, 35 + i * 40);
-    });
-      
-  g.reset();
-  g.setBgColor(0, 0, 0);
-  g.clearRect(0, 0, g.getWidth(), g.getHeight());
-  g.setColor(1, 1, 1);
+    lines.forEach(function(line, i) {
+      const x =
+        (g.getWidth() - g.stringWidth(line)) / 2;
 
+      g.drawString(
+        line,
+        x,
+        35 + i * 40
+      );
+    });
+
+    return;
+  }
+
+
+  // Draw Levels 0, 1 and 2
   g.setFont("Vector", 24);
 
   const x =
@@ -195,6 +219,27 @@ function drawTime() {
   );
 }
 
+
+function clearFace() {
+  g.reset();
+  g.setBgColor(0, 0, 0);
+  g.clearRect(
+    0,
+    0,
+    g.getWidth(),
+    g.getHeight()
+  );
+  g.setColor(1, 1, 1);
+}
+
+
 Bangle.setUI("clock");
 
-drawTime();
+
+function draw() {
+  clearFace();
+  drawTime();
+}
+
+
+draw();
