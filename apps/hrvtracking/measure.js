@@ -465,6 +465,6 @@ Bangle.on("HRM-raw", onHRMRaw);
 E.on("kill",function(){
   sd = Storage.readJSON("hrv.json") || {};
   sd.started=false;
-  Storage.writeJSON("hrv.json", savedData);
+  Storage.writeJSON("hrv.json", sd);
 
 })

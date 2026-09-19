@@ -1,7 +1,6 @@
 var dataSaved = require("hrvtracking").getAllData()
-const startHour=3;
-const endHour=4; // inclusive
-
+var d_startHour=3;
+var d_endHour=4; // inclusive
 
 
 function isTimestampToday(unixTimestamp) {
@@ -18,13 +17,13 @@ function isTimestampToday(unixTimestamp) {
 // hrv objects in the .hrv array NEEDS to be in order of most recent on top.
 
 function checkForTime(){
- // Bangle.buzz(400);
+  // Bangle.buzz(1000);
   if(global.__FILE__ == "hrvmeasure.app.js") return;
   let now = new Date();
   let currentHour = now.getHours();
-
+  
   // Triggers every time if the hour is 3 (3:00-3:59) or 4 (4:00-4:59)
-  if ((currentHour == startHour || currentHour == endHour)) {
+  if ((currentHour == d_startHour || currentHour == d_endHour)) {
 
     load("hrvmeasure.app.js"); 
     return;

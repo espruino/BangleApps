@@ -65,11 +65,11 @@ var layout = new Layout(
             type: "v",
             pad: 5,
             c: [
-              { type: "txt", font: "9%", label: "Tue", id: "day3Ago" },
+              { type: "txt", font: "9%", label: "---", id: "day3Ago" },
               {
                 type: "txt",
                 font: "10%",
-                label: "46ms",
+                label: "-- ms",
                 id: "day3AgoVal",
                 pad: 2,
                 fillx: 1,
@@ -80,11 +80,11 @@ var layout = new Layout(
             type: "v",
             pad: 5,
             c: [
-              { type: "txt", font: "9%", label: "Wed", id: "day2Ago" },
+              { type: "txt", font: "9%", label: "---", id: "day2Ago" },
               {
                 type: "txt",
                 font: "10%",
-                label: "43ms",
+                label: "-- ms",
                 id: "day2AgoVal",
                 pad: 2,
                 fillx: 1,
@@ -95,11 +95,11 @@ var layout = new Layout(
             type: "v",
             pad: 5,
             c: [
-              { type: "txt", font: "9%", label: "Thu", id: "day1Ago" },
+              { type: "txt", font: "9%", label: "---", id: "day1Ago" },
               {
                 type: "txt",
                 font: "10%",
-                label: "53ms",
+                label: "-- ms",
                 id: "day1AgoVal",
                 pad: 2,
                 fillx: 1,
@@ -113,10 +113,14 @@ var layout = new Layout(
   },
   { lazy: true }
 );
-
+function getShortDayName(timestamp) {
+  const date = new Date(timestamp);
+  const locale = require("locale");
+  return locale.dow(date, 1);
+}
 function getRelativeDay(timestamp) {
-  // Convert Unix seconds timestamp to milliseconds
-  const date = new Date(timestamp * 1000); 
+  // Use the timestamp directly because it is already in milliseconds
+  const date = new Date(timestamp);
   const now = new Date();
 
   // Reset hours, minutes, seconds, and ms to compare pure calendar days
@@ -128,24 +132,40 @@ function getRelativeDay(timestamp) {
 
   if (diff === 0) return "Today";
   if (diff === oneDay) return "Yesterday";
-  if (diff === -oneDay) return "Tomorrow";
-  
-  // Use Bangle.js locale module for localized short month name (e.g. "Sep")
+  if (diff === -oneDay) return "Tomorrow"; // Fixed the string typo here
+
+  // Use Bangle.js locale module for localized short month name
   const locale = require("locale");
-  const monthStr = locale.month(date, 1); // 1 flags it to return abbreviated name
+  const monthStr = locale.month(date, 1); 
   const dayStr = date.getDate();
-  
-  // Returns formatted string e.g., "Sep 13"
-  return monthStr + " " + dayStr; 
+
+  return monthStr + " " + dayStr;
 }
+
 
 function updateInfo(){
   let data = require("hrvtracking").getData()
-  layout.hrvDate.label = data.latestHrv ? getRelativeDay(data.latestHrv.timestamp) : "Yesterday"
-  layout.hrvData.label = data.latestHrv ? data.latestHrv.hrv+"ms" : "--ms"
-  layout.baselineData.label = data.hrvBaseline ? data.hrvBaseline.toFixed(1)+"ms"  : "--ms"
-  
- // layout.baselineData = data.hrvBaseline ? data.hrvBaseline.toFixed(1) : "--ms"
+  layout.hrvDate.label = data.latestHrv ? getRelativeDay(data.latestHrv.timestamp) : "Today"
+  layout.hrvData.label = data.latestHrv ? Math.round(data.latestHrv.avgHrv)+"ms" : "--ms"
+  layout.baselineData.label = data.hrvBaseline ? data.hrvBaseline.toFixed(0)+"ms"  : "--ms"
+  if(data.dailyHrvs[1]){
+    
+     layout.day1AgoVal.label = data.dailyHrvs[1].avgHrv ? 
+        Math.round(data.dailyHrvs[1].avgHrv) + "ms" : "-- ms"
+      layout.day1Ago.label = getShortDayName(data.dailyHrvs[1].timestamp)
+  }
+  if(data.dailyHrvs[2]){
+    
+     layout.day2AgoVal.label = data.dailyHrvs[2].avgHrv ? 
+        Math.round(data.dailyHrvs[2].avgHrv) + "ms" : "-- ms"
+      layout.day2Ago.label = getShortDayName(data.dailyHrvs[2].timestamp)
+  }
+  if(data.dailyHrvs[3]){
+    
+     layout.day3AgoVal.label = data.dailyHrvs[3].avgHrv ? 
+        Math.round(data.dailyHrvs[3].avgHrv) + "ms" : "-- ms"
+      layout.day3Ago.label = getShortDayName(data.dailyHrvs[3].timestamp)
+  }
 }
 
 g.clear()

@@ -44,26 +44,39 @@ function trimData(){
 exports.calculateDailyData = function calculateDailyHrv(){
   trimData()
   let hrvsToday = []
+  
   for (let hrvObj of dataSaved.hrv) {
-    if(isTimestampToday(hrvObj.timestamp)){
-      if (hrvObj.hrv  ) {
+    // Guard against a missing/null hrvObj or missing timestamp
+    if (hrvObj && hrvObj.timestamp && isTimestampToday(hrvObj.timestamp)){
+      if (hrvObj.hrv) {
         hrvsToday.push(parseFloat(hrvObj.hrv));
       }
-    }else{
+    } else {
       break;
     }
   }
-  let avg = getAverage(hrvsToday);
+  
+  let avg = getAverage(hrvsToday).toFixed(2);
+
   dataSaved.hrvDailyAverages.unshift({
-    timestamp:Date.now(),
-    readableTimestamp:formatDate(new Date()),
-    hrv:avg
+    timestamp: Date.now(),
+    readableTimestamp: formatDate(new Date()),
+    avgHrv: avg 
   })
+  
   dataSaved.daysTracked += 1;
- dataSaved.hrvBaseline = Math.round(getAverage(dataSaved.hrvDailyAverages.map(avgObj => avgObj.hrv)));
+  
+  const validHistory = dataSaved.hrvDailyAverages
+    .map(avgObj => avgObj ? (avgObj.avgHrv || avgObj.hrv) : null) 
+    .filter(val => val !== null && val !== undefined && !isNaN(val)); // make sure no nulls are sneaking in
+
+  dataSaved.hrvBaseline = validHistory.length > 0 
+    ? getAverage(validHistory).toFixed(2) 
+    : 0;
 
   writeData()
 }
+
 
 exports.getAllData = function(){
   return dataSaved;
