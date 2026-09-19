@@ -157,7 +157,7 @@ function drawTime() {
     ];
 
     const minuteWords = [
-      "O'clock",
+      "O'Clock",
       "One",
       "Two",
       "Three",
@@ -228,7 +228,7 @@ function drawTime() {
 
     if (minute === 0) {
 
-      phrase = "O'clock";
+      phrase = "O'Clock";
       displayHourWord = hourWords[displayHour];
 
     } else if (minute === 15) {
@@ -288,10 +288,13 @@ function drawTime() {
   const x =
     (g.getWidth() - g.stringWidth(text)) / 2;
 
+  const y =
+    (g.getHeight() - g.getFontHeight()) / 2;
+
   g.drawString(
     text,
     x,
-    100
+    y
   );
 }
 
