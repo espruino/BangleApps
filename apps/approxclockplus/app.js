@@ -31,3 +31,5 @@ function drawTime() {
 }
 
 Bangle.setUI("clock");
+
+drawTime();
