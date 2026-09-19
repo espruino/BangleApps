@@ -35,8 +35,52 @@ function drawTime() {
       text = "Evening";
     }
 
-  } else {
-    text = "Level " + level;
+  } else if (level === 2) {
+    const minute = date.getMinutes();
+
+    const numbers = {
+      1: "One",
+      2: "Two",
+      3: "Three",
+      4: "Four",
+      5: "Five",
+      6: "Six",
+      7: "Seven",
+      8: "Eight",
+      9: "Nine",
+      10: "Ten",
+      11: "Eleven",
+      12: "Twelve",
+      13: "One",
+      14: "Two",
+      15: "Three",
+      16: "Four",
+      17: "Five",
+      18: "Six",
+      19: "Seven",
+      20: "Eight",
+      21: "Nine",
+      22: "Ten",
+      23: "Eleven",
+      24: "Twelve"
+    };
+
+    const quarters = [
+      "o'clock",
+      "quarter past",
+      "half past",
+      "quarter to"
+    ];
+
+    let hour = date.getHours();
+
+    if (minute >= 53) {
+      hour++;
+    }
+
+    const quarter = Math.floor((minute + 7) / 15) % 4;
+
+    text = quarters[quarter] + " " + numbers[(hour % 24) || 24];
   }
 
   g.reset();
