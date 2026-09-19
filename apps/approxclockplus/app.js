@@ -1,15 +1,3 @@
-const Storage = require("Storage");
-
-const settings = Storage.readJSON(
-  "approxclockplus.json",
-  1
-) || {};
-
-const level =
-  typeof settings.level === "number"
-    ? settings.level
-    : 2;
-
 function drawTime() {
   const date = new Date();
 
@@ -43,5 +31,3 @@ function drawTime() {
 }
 
 Bangle.setUI("clock");
-
-drawTime();
