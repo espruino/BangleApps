@@ -1,3 +1,15 @@
+const Storage = require("Storage");
+
+const settings = Storage.readJSON(
+  "approxclockplus.json",
+  1
+) || {};
+
+const level =
+  typeof settings.level === "number"
+    ? settings.level
+    : 2;
+
 function drawTime() {
   const date = new Date();
 
@@ -12,15 +24,21 @@ function drawTime() {
   g.setFont("Vector", 30);
 
   g.drawString(
+    "Level: " + level,
+    20,
+    60
+  );
+
+  g.drawString(
     "Hour: " + hour,
     20,
-    80
+    110
   );
 
   g.drawString(
     "Minute: " + minutes,
     20,
-    130
+    160
   );
 }
 
