@@ -180,13 +180,50 @@ function drawTime() {
       "Fifty Nine"
     ];
 
-    const hour12 = hour % 12;
+    const hour = date.getHours();
     const minute = date.getMinutes();
+
+    let displayHour = hour % 12;
+    let phrase;
+    let displayHourWord;
+
+    if (minute === 0) {
+
+      phrase = "O'clock";
+      displayHourWord = hourWords[displayHour];
+
+    } else if (minute === 15) {
+
+      phrase = "Quarter past";
+      displayHourWord = hourWords[displayHour];
+
+    } else if (minute === 30) {
+
+      phrase = "Half past";
+      displayHourWord = hourWords[displayHour];
+
+    } else if (minute === 45) {
+
+      phrase = "Quarter to";
+      displayHourWord =
+        hourWords[(displayHour + 1) % 12];
+
+    } else if (minute < 30) {
+
+      phrase = minuteWords[minute];
+      displayHourWord = "after " + hourWords[displayHour];
+
+    } else {
+
+      phrase = minuteWords[60 - minute];
+      displayHourWord =
+        "to " + hourWords[(displayHour + 1) % 12];
+    }
 
     const lines = [
       "It's",
-      hourWords[hour12],
-      minuteWords[minute]
+      phrase,
+      displayHourWord
     ];
 
     g.setFont("Vector", 24);
