@@ -10,7 +10,7 @@ const Storage = require("Storage");
 const SETTINGS_FILE = "approxclockplus.json";
 
 const settings = Storage.readJSON(SETTINGS_FILE, 1) || {};
-const level = (typeof settings.level === "number") ? settings.level : 2;
+// const level = (typeof settings.level === "number") ? settings.level : 2;
 
 
 // --------------------------------------------------
@@ -226,121 +226,6 @@ function drawLevel0(hour) {
 }
 
 
-// --------------------------------------------------
-// Level 1
-// --------------------------------------------------
-
-function drawLevel1(hour) {
-  clearFace();
-
-  g.setFont("Vector", 30);
-
-  drawCentered(
-    getBroadTimeDescription(hour),
-    "Vector",
-    height * 0.45
-  );
-}
-
-
-// --------------------------------------------------
-// Level 2
-// Original approximate clock
-// --------------------------------------------------
-
-function drawLevel2(hour, minutes) {
-  const minutesByQuarter = getMinutesByQuarter(minutes);
-
-  const prefix =
-    "It's" +
-    getApproximatePrefix(minutes, minutesByQuarter);
-
-  const hourWord =
-    numbers[getNearestHour(hour, minutes)];
-
-  const minuteWord =
-    quarterWords[minutesByQuarter];
-
-  clearFace();
-
-  g.setFont("Vector", 22);
-
-  drawCentered(
-    prefix,
-    "Vector",
-    height * 0.25
-  );
-
-  g.setFont("Vector", 30);
-
-  drawCentered(
-    hourWord,
-    "Vector",
-    height * 0.45
-  );
-
-  g.setFont("Vector", 22);
-
-  drawCentered(
-    minuteWord,
-    "Vector",
-    height * 0.70
-  );
-}
-
-
-// --------------------------------------------------
-// Level 3
-// Exact time as words
-// --------------------------------------------------
-
-function drawLevel3(hour, minutes) {
-  // Convert 24-hour time to the same 12-hour style
-  // used by the approximate clock.
-
-  let displayHour = hour % 12;
-
-  if (displayHour === 0) {
-    displayHour = 12;
-  }
-
-  const hourWord = numbers[displayHour];
-
-  let minuteWord;
-
-  if (minutes === 0) {
-    minuteWord = "O'Clock";
-  } else {
-    minuteWord = numbers[minutes];
-  }
-
-  clearFace();
-
-  g.setFont("Vector", 22);
-
-  drawCentered(
-    "It's",
-    "Vector",
-    height * 0.25
-  );
-
-  g.setFont("Vector", 30);
-
-  drawCentered(
-    hourWord,
-    "Vector",
-    height * 0.45
-  );
-
-  g.setFont("Vector", 22);
-
-  drawCentered(
-    minuteWord,
-    "Vector",
-    height * 0.70
-  );
-}
-
 
 // --------------------------------------------------
 // Main clock drawing
@@ -373,20 +258,7 @@ function drawTime() {
 }
 
 
-// --------------------------------------------------
-// Draw once per minute
-// --------------------------------------------------
 
-function queueDraw() {
-  if (drawTimeout) {
-    clearTimeout(drawTimeout);
-  }
-
-  drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
-    drawTime();
-  }, 60000 - (Date.now() % 60000));
-}
 
 
 // --------------------------------------------------
