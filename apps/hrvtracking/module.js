@@ -41,6 +41,7 @@ function trimData(){
 
 
 
+
 exports.calculateDailyData = function calculateDailyHrv(){
   trimData()
   let hrvsToday = []
@@ -61,21 +62,24 @@ exports.calculateDailyData = function calculateDailyHrv(){
   dataSaved.hrvDailyAverages.unshift({
     timestamp: Date.now(),
     readableTimestamp: formatDate(new Date()),
-    avgHrv: avg 
+    avgHrv: parseFloat(avg)
   })
   
   dataSaved.daysTracked += 1;
   
   const validHistory = dataSaved.hrvDailyAverages
-    .map(avgObj => avgObj ? (avgObj.avgHrv || avgObj.hrv) : null) 
-    .filter(val => val !== null && val !== undefined && !isNaN(val)); // make sure no nulls are sneaking in
+    .map(avgObj => avgObj ? parseFloat(avgObj.avgHrv || avgObj.hrv) : NaN)
+    .filter(val => !isNaN(val));
 
   dataSaved.hrvBaseline = validHistory.length > 0 
-    ? getAverage(validHistory).toFixed(2) 
+    ? parseFloat(getAverage(validHistory).toFixed(2))
     : 0;
 
   writeData()
 }
+
+
+
 
 
 exports.getAllData = function(){

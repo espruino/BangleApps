@@ -27,8 +27,8 @@ function checkForTime(){
 
     load("hrvmeasure.app.js"); 
     return;
-  }else if (currentHour > endHour){
-    let shouldCalculateAverage = !dataSaved.hrvDailyAverages[0] || (currentHour>endHour && !isTimestampToday(dataSaved.hrvDailyAverages[0].timestamp))
+  }else if (currentHour > d_endHour){
+    let shouldCalculateAverage = !dataSaved.hrvDailyAverages[0] || (currentHour>d_endHour && !isTimestampToday(dataSaved.hrvDailyAverages[0].timestamp))
     if(shouldCalculateAverage){
       require("hrvtracking").calculateDailyData()
     }
