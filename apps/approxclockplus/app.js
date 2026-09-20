@@ -15,16 +15,45 @@ function drawTime() {
   let text;
 
 
-  // LEVEL 0
-  if (level === 0) {
+// LEVEL 0
+if (level === 0) {
 
-    if (hour < 4) {
-      text = "Just after yesterday";
-    } else if (hour < 20) {
-      text = "Today";
-    } else {
-      text = "Almost tomorrow";
-    }
+  let lines;
+
+  if (hour < 4) {
+    lines = [
+      "Just after",
+      "yesterday"
+    ];
+
+  } else if (hour < 20) {
+    lines = [
+      "Today"
+    ];
+
+  } else {
+    lines = [
+      "Almost",
+      "tomorrow"
+    ];
+  }
+
+  g.setFont("Vector", 24);
+
+  lines.forEach(function(line, i) {
+    const x =
+      (g.getWidth() - g.stringWidth(line)) / 2;
+
+    const y =
+      lines.length === 1
+        ? (g.getHeight() - g.getFontHeight()) / 2
+        : 55 + i * 40;
+
+    g.drawString(line, x, y);
+  });
+
+  return;
+}
 
 
   // LEVEL 1
