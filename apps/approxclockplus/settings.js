@@ -46,7 +46,7 @@
       step: 1,
       format: v => {
         return [
-          "Default",
+          "System",
           "Dark",
           "Light"
         ][v];
