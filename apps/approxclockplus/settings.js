@@ -7,6 +7,10 @@
     settings.level = 2;
   }
 
+  if (typeof settings.theme !== "string") {
+    settings.theme = "Default";
+  }
+
   function save(key, value) {
     settings[key] = value;
     Storage.write("approxclockplus.json", settings);
@@ -33,6 +37,16 @@
         ][v];
       },
       onchange: v => save("level", v)
+    },
+
+    "Theme": {
+      value: settings.theme,
+      options: [
+        "Default",
+        "Dark",
+        "Light"
+      ],
+      onchange: v => save("theme", v)
     }
   };
 
