@@ -4,21 +4,22 @@
 
 Get a rough idea of the time at a quick glance
 
-Exact time and date can be viewed temporarily by touching the screen.
+Select a level of clarity or ambiguity
+Light, dark theming.  Linked to system or independent.
 
 ## Levels
-* Level 0 - Today
+* Level 0 - Almost only "Today" (with a little "yesterday" and "tomorrow")
 * Level 1 - Very broad time (Morning, Day, Evening, Night)
-* Level 2 - Time within a quarter hour
+* Level 2 - Approximate time within a quarter hour
 * Level 3 - The exact time
 
 ## Set-Up
 
-Levels can be changed in Bangle.js settings
+Levels and theming can be changed in Bangle.js settings
 
 # Acknowledgements
 
-Inspiration: approxclock by charlestietjen
+Inspiration: [approxclock](https://github.com/espruino/BangleApps/tree/master/apps/approxclock) by charlestietjen
 
 ## Creator
 
