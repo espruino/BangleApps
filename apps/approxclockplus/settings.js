@@ -7,8 +7,8 @@
     settings.level = 2;
   }
 
-  if (typeof settings.theme !== "string") {
-    settings.theme = "Default";
+  if (typeof settings.theme !== "number") {
+    settings.theme = 0;
   }
 
   function save(key, value) {
@@ -41,15 +41,15 @@
 
     "Theme": {
       value: settings.theme,
-      min: 1,
+      min: 0,
       max: 2,
       step: 1,
-      format: v=> {
-        return: [
+      format: v => {
+        return [
           "Default",
           "Dark",
           "Light"
-        ][v]
+        ][v];
       },
       onchange: v => save("theme", v)
     }

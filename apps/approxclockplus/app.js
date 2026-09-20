@@ -302,11 +302,11 @@ function drawTime() {
 function clearFace() {
   g.reset();
 
-  if (settings.theme === "Dark") {
+  if (settings.theme === 1) {
     g.setBgColor(0, 0, 0);
     g.setColor(1, 1, 1);
 
-  } else if (settings.theme === "Light") {
+  } else if (settings.theme === 2) {
     g.setBgColor(1, 1, 1);
     g.setColor(0, 0, 0);
   }
