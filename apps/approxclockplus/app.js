@@ -15,45 +15,44 @@ function drawTime() {
   let text;
 
 
-// LEVEL 0
-if (level === 0) {
+  // LEVEL 0
+  if (level === 0) {
 
-  let lines;
+    let lines;
 
-  if (hour < 4) {
-    lines = [
-      "Just after",
-      "yesterday"
-    ];
+    if (hour < 4) {
+      lines = [
+        "Just after",
+        "yesterday"
+      ];
 
-  } else if (hour < 20) {
-    lines = [
-      "Today"
-    ];
+    } else if (hour < 20) {
+      lines = [
+        "Today"
+      ];
 
-  } else {
-    lines = [
-      "Almost",
-      "tomorrow"
-    ];
-  }
+    } else {
+      lines = [
+        "Almost",
+        "tomorrow"
+      ];
+    }
 
-  g.setFont("Vector", 24);
+    g.setFont("Vector", 24);
 
-  lines.forEach(function(line, i) {
-    const x =
-      (g.getWidth() - g.stringWidth(line)) / 2;
+    lines.forEach(function(line, i) {
+      const x =
+        (g.getWidth() - g.stringWidth(line)) / 2;
 
-    const y =
-      lines.length === 1
-        ? (g.getHeight() - g.getFontHeight()) / 2
-        : 55 + i * 40;
+      const y =
+        lines.length === 1
+          ? (g.getHeight() - g.getFontHeight()) / 2
+          : 55 + i * 40;
 
-    g.drawString(line, x, y);
-  });
+      g.drawString(line, x, y);
+    });
 
-  return;
-}
+    return;
 
 
   // LEVEL 1
@@ -167,6 +166,7 @@ if (level === 0) {
 
     return;
 
+
   // LEVEL 3
   } else if (level === 3) {
 
@@ -248,7 +248,6 @@ if (level === 0) {
       "Fifty Nine"
     ];
 
-    const hour = date.getHours();
     const minute = date.getMinutes();
 
     let displayHour = hour % 12;
