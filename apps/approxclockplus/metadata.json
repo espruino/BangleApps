@@ -11,6 +11,7 @@
   "tags": "clock",
   "supports": ["BANGLEJS2"],
   "allow_emulator": true,
+  "screenshots": [ {"url":"level3-dark.png"}, {"url":"level2-light.png"} ],
   "storage": [
     {
       "name": "approxclockplus.app.js",
