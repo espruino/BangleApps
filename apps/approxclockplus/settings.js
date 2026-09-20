@@ -41,11 +41,16 @@
 
     "Theme": {
       value: settings.theme,
-      options: [
-        "Default",
-        "Dark",
-        "Light"
-      ],
+      min: 1,
+      max: 2,
+      step: 1,
+      format: v=> {
+        return: [
+          "Default",
+          "Dark",
+          "Light"
+        ][v]
+      },
       onchange: v => save("theme", v)
     }
   };
