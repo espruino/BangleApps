@@ -3,7 +3,6 @@
   var Storage=require("Storage");
   var CFG_FILE="orbit.cal.json";
   var EVENT_FILE="orbit.events.json";
-  var DAY=86400000;
   var HOL_CACHE_VER=1,HOL_BYTES=46,HOL_RAM_MAX=2;
   function cacheFileParts(f){
     var m=/^orh([0-9]+)(jp|ew|sc|ni)([0-9][0-9][0-9][0-9])$/.exec(f);
@@ -65,24 +64,22 @@
     var W=g.getWidth(),H=g.getHeight();
     var BLACK=0x0000,WHITE=0xFFFF,BLUE=0x001F,RED=0xF800,GREEN=0x07E0,YELLOW=0xFFE0,CYAN=0x07FF,MAGENTA=0xF81F,ORANGE=0xFD20,GRAY=0x4208;
     var cfg,today,pageStart,selected;
-    var active=false,onReturn,onSelect,onDiag,startTapMs,firstTapMs;
-    var tapTimer,tapCount=0,lastXY;
+    var active=false,onReturn,onSelect,startTapMs,firstTapMs;
+    var tapTimer,lastXY;
     var TAP_WINDOW=400;
     var blinkTimer,blinkWhite=true,autoTimer;
     var holidayFlags=new Uint8Array(35),dayNums=new Uint8Array(35),monthNums=new Uint8Array(35),yearNums=new Uint16Array(35),doyNums=new Uint16Array(35),todayIndex=-1,lastCellPrepMs=0;
     var eventFlags=new Uint8Array(35),eventBlinkFlags=new Uint8Array(35),eventColors=new Uint16Array(35);
     var extraEvents=[],eventBlinkTimer,eventBlinkPhase=true;
-    var holidayTimer,holidayToken=0,lastHolidayCalcMs=0,lastHolidayDrawMs=0,lastHolidayElapsedMs=0;
+    var holidayTimer,holidayToken=0,lastHolidayCalcMs=0,lastHolidayDrawMs=0;
     var holRam=[],primeTimer,primeQueue,primePos=0;
     var cellX1=new Int16Array(7),cellX2=new Int16Array(7),cellY1=new Int16Array(5),cellY2=new Int16Array(5);
     var weekdayImgs,weekdayPal;
-    var lastWidgetMs=0,lastWeekdayMs=0,lastBodyMs=0,lastTopMs=0;
 
     function midnight(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate());}
     function copyDate(d){return d?new Date(d.getFullYear(),d.getMonth(),d.getDate()):undefined;}
     function addDays(d,n){var x=copyDate(d);x.setDate(x.getDate()+n);return x;}
     function mondayOf(d){var x=copyDate(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return x;}
-    function sameDay(a,b){return !!a&&!!b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
     function civilDay(y,m,d){
       y-=m<=2?1:0;
       var era=Math.floor(y/400),yoe=y-era*400;
@@ -95,30 +92,6 @@
     function dowYMD(y,m,d){var q=(civilDay(y,m,d)+4)%7;return q<0?q+7:q;}
     function leap(y){return (y%4===0&&y%100!==0)||y%400===0;}
     function dim(y,m){return m===2?(leap(y)?29:28):([31,0,31,30,31,30,31,31,30,31,30,31][m-1]);}
-    function packYMD(y,m,d){return y*10000+m*100+d;}
-    function unpackY(k){
-      return Math.floor(k/10000);
-    }
-    function unpackM(k,y){return Math.floor((k-y*10000)/100);}
-    function unpackD(k,y,m){return k-y*10000-m*100;}
-    function prevKey(y,m,d){
-      d--;
-      if(d<1){m--;if(m<1){m=12;y--;}d=dim(y,m);}
-      return packYMD(y,m,d);
-    }
-    function prevKeyOf(k){
-      var y=unpackY(k),m=unpackM(k,y),d=unpackD(k,y,m);
-      return prevKey(y,m,d);
-    }
-    function nextKey(y,m,d){
-      d++;
-      if(d>dim(y,m)){d=1;m++;if(m>12){m=1;y++;}}
-      return packYMD(y,m,d);
-    }
-    function dowKey(k){
-      var y=unpackY(k),m=unpackM(k,y),d=unpackD(k,y,m);
-      return dowYMD(y,m,d);
-    }
     function pad2(n){return (n<10?"0":"")+n;}
     function nthMonday(y,m,n){return 1+((8-dowYMD(y,m,1))%7)+7*(n-1);}
     function lastMonday(y,m){var n=dim(y,m);return n-((dowYMD(y,m,n)+6)%7);}
@@ -324,54 +297,6 @@
 
 
 
-    function baseHolidayYMD(y,m,n){
-      if(m===1&&n===1)return true;
-      if(m===1&&((y>=2000&&n===nthMonday(y,1,2))||(y>=1949&&y<2000&&n===15)))return true;
-      if(m===2&&n===11&&y>=1967)return true;
-      if(m===2&&n===23&&y>=2020)return true;
-      if(m===3&&y>=1949&&n===vernal(y))return true;
-      if(m===4&&n===29&&y>=1949)return true;
-      if(m===5&&n===3&&y>=1949)return true;
-      if(m===5&&n===4&&y>=2007)return true;
-      if(m===5&&n===5&&y>=1949)return true;
-      if(y===2020&&m===7&&n===23)return true;
-      if(y===2021&&m===7&&n===22)return true;
-      if(y!==2020&&y!==2021&&m===7&&((y>=2003&&n===nthMonday(y,7,3))||(y>=1996&&y<2003&&n===20)))return true;
-      if(y===2020&&m===8&&n===10)return true;
-      if(y===2021&&m===8&&n===8)return true;
-      if(y!==2020&&y!==2021&&y>=2016&&m===8&&n===11)return true;
-      if(m===9&&((y>=2003&&n===nthMonday(y,9,3))||(y>=1966&&y<2003&&n===15)))return true;
-      if(m===9&&y>=1948&&n===autumn(y))return true;
-      if(y===2020&&m===7&&n===24)return true;
-      if(y===2021&&m===7&&n===23)return true;
-      if(y!==2020&&y!==2021&&m===10&&((y>=2000&&n===nthMonday(y,10,2))||(y>=1966&&y<2000&&n===10)))return true;
-      if(m===11&&n===3&&y>=1948)return true;
-      if(m===11&&n===23&&y>=1948)return true;
-      if(m===12&&n===23&&y>=1989&&y<=2018)return true;
-      if(y===2019&&((m===5&&n===1)||(m===10&&n===22)))return true;
-      return false;
-    }
-    function baseHolidayKey(k){
-      var y=unpackY(k),m=unpackM(k,y),n=unpackD(k,y,m);
-      return baseHolidayYMD(y,m,n);
-    }
-    function isJapanHoliday(d){
-      var y=d.getFullYear(),m=d.getMonth()+1,n=d.getDate();
-      if(baseHolidayYMD(y,m,n))return true;
-      if(y>=1986){
-        var pk=prevKey(y,m,n),nk=nextKey(y,m,n);
-        if(baseHolidayKey(pk)&&baseHolidayKey(nk))return true;
-      }
-      if(y>=1973){
-        var p=prevKey(y,m,n);
-        if(y<2007)return dowYMD(y,m,n)===1&&baseHolidayKey(p)&&dowKey(p)===0;
-        while(baseHolidayKey(p)){
-          if(dowKey(p)===0)return true;
-          p=prevKeyOf(p);
-        }
-      }
-      return false;
-    }
     function easterSunday(y){
       var a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4;
       var f=Math.floor((b+8)/25),gg=Math.floor((b-f+1)/3);
@@ -380,76 +305,6 @@
       var q=h+l-7*mm+114,month=Math.floor(q/31),day=(q%31)+1;
       return new Date(y,month-1,day);
     }
-    function commonUKSpecial(d){
-      var y=d.getFullYear(),m=d.getMonth()+1,n=d.getDate();
-      if(y===2011&&m===4&&n===29)return true;
-      if(y===2022&&m===9&&n===19)return true;
-      if(y===2023&&m===5&&n===8)return true;
-      return false;
-    }
-    function christmasHoliday(d){
-      var y=d.getFullYear(),m=d.getMonth()+1,n=d.getDate();
-      if(m!==12)return false;
-      var xd=dowYMD(y,12,25),x=(xd===0||xd===6)?27:25;
-      if(n===x)return true;
-      var bd=dowYMD(y,12,26),bb=(bd===0||bd===6)?28:26;
-      return n===bb;
-    }
-    function isEnglandWalesHoliday(d){
-      var y=d.getFullYear(),m=d.getMonth()+1,n=d.getDate();
-      var dow=dowYMD(y,1,1),ny=(dow===6)?3:(dow===0?2:1);
-      if(m===1&&n===ny)return true;
-      var easter=easterSunday(y);
-      if(sameDay(d,addDays(easter,-2))||sameDay(d,addDays(easter,1)))return true;
-      if(y===2020){if(m===5&&n===8)return true;}else if(m===5&&n===nthMonday(y,5,1))return true;
-      if(y===2002){if(m===6&&(n===3||n===4))return true;}
-      else if(y===2012){if(m===6&&(n===4||n===5))return true;}
-      else if(y===2022){if(m===6&&(n===2||n===3))return true;}
-      else if(m===5&&n===lastMonday(y,5))return true;
-      if(commonUKSpecial(d))return true;
-      if(m===8&&n===lastMonday(y,8))return true;
-      return christmasHoliday(d);
-    }
-    function isScotlandHoliday(d){
-      var y=d.getFullYear(),m=d.getMonth()+1,n=d.getDate();
-      var dow=dowYMD(y,1,1),ny1,ny2;
-      if(dow===6){ny1=3;ny2=4;}else if(dow===0){ny1=2;ny2=3;}else if(dow===5){ny1=1;ny2=4;}else{ny1=1;ny2=2;}
-      if(m===1&&(n===ny1||n===ny2))return true;
-      var easter=easterSunday(y);
-      if(sameDay(d,addDays(easter,-2)))return true;
-      if(y===2020){if(m===5&&n===8)return true;}else if(m===5&&n===nthMonday(y,5,1))return true;
-      if(y===2002){if(m===6&&(n===3||n===4))return true;}
-      else if(y===2012){if(m===6&&(n===4||n===5))return true;}
-      else if(y===2022){if(m===6&&(n===2||n===3))return true;}
-      else if(m===5&&n===lastMonday(y,5))return true;
-      if(commonUKSpecial(d))return true;
-      if(y===2026&&m===6&&n===15)return true;
-      if(m===8&&n===nthMonday(y,8,1))return true;
-      var sd=dowYMD(y,11,30),sm=11,sn=30;
-      if(sd===6){sm=12;sn=2;}else if(sd===0){sm=12;sn=1;}
-      if(m===sm&&n===sn)return true;
-      return christmasHoliday(d);
-    }
-    function isNorthernIrelandHoliday(d){
-      var y=d.getFullYear(),m=d.getMonth()+1,n=d.getDate(),w;
-      w=dowYMD(y,1,1);var ny=(w===6)?3:(w===0?2:1);if(m===1&&n===ny)return true;
-      w=dowYMD(y,3,17);var sp=(w===6)?19:(w===0?18:17);if(m===3&&n===sp)return true;
-      var easter=easterSunday(y);
-      if(sameDay(d,addDays(easter,-2))||sameDay(d,addDays(easter,1)))return true;
-      if(y===2020){if(m===5&&n===8)return true;}else if(m===5&&n===nthMonday(y,5,1))return true;
-      if(y===2002){if(m===6&&(n===3||n===4))return true;}
-      else if(y===2012){if(m===6&&(n===4||n===5))return true;}
-      else if(y===2022){if(m===6&&(n===2||n===3))return true;}
-      else if(m===5&&n===lastMonday(y,5))return true;
-      if(commonUKSpecial(d))return true;
-      w=dowYMD(y,7,12);var bo=(w===6)?14:(w===0?13:12);if(m===7&&n===bo)return true;
-      if(m===8&&n===lastMonday(y,8))return true;
-      return christmasHoliday(d);
-    }
-    function isEnglishHoliday(d){
-      return cfg.ukRegion==="sc"?isScotlandHoliday(d):(cfg.ukRegion==="ni"?isNorthernIrelandHoliday(d):isEnglandWalesHoliday(d));
-    }
-
     function topFreeGap(){
       var spans=[];
       if(typeof WIDGETS!=="undefined")Object.keys(WIDGETS).forEach(function(k){var wd=WIDGETS[k];if(!wd||!wd.width||!wd.area||wd.area.charAt(0)!=="t")return;if(typeof wd.x==="number")spans.push([wd.x,wd.x+wd.width-1]);});
@@ -471,17 +326,6 @@
     function drawSelectionAck(d){
       drawTop("SEL "+pad2(d.getMonth()+1)+"/"+pad2(d.getDate()));
       try{g.flip();}catch(e){}
-    }
-    function line2(x1,y1,x2,y2){g.drawLine(x1,y1,x2,y2);g.drawLine(x1+1,y1,x2+1,y2);}
-    function weekdayGlyph(c,x,y){
-      g.setColor(WHITE);
-      if(c===0){line2(x-6,y-8,x-6,y+8);line2(x+5,y-8,x+5,y+8);line2(x-6,y-8,x+5,y-8);line2(x-6,y-2,x+5,y-2);line2(x-6,y+4,x+5,y+4);}
-      else if(c===1){line2(x,y-8,x,y+2);line2(x-2,y-1,x-7,y-6);line2(x+2,y-1,x+7,y-6);line2(x,y+1,x-6,y+8);line2(x,y+1,x+7,y+8);}
-      else if(c===2){line2(x,y-8,x,y+8);line2(x-2,y-1,x-7,y-4);line2(x-2,y-1,x-7,y+6);line2(x+2,y-2,x+7,y-5);line2(x+1,y,x+7,y+6);line2(x-1,y-7,x+2,y-4);}
-      else if(c===3){line2(x,y-8,x,y+8);line2(x-7,y-2,x+7,y-2);line2(x,y-1,x-7,y+7);line2(x,y-1,x+7,y+7);}
-      else if(c===4){line2(x,y-8,x-7,y-2);line2(x,y-8,x+7,y-2);line2(x-5,y-2,x+5,y-2);line2(x-6,y+3,x+6,y+3);line2(x,y-2,x,y+7);line2(x-7,y+8,x+7,y+8);line2(x-5,y+5,x-7,y+2);line2(x+5,y+5,x+7,y+2);}
-      else if(c===5){line2(x,y-8,x,y+7);line2(x-5,y-4,x+5,y-4);line2(x-7,y+7,x+7,y+7);}
-      else{line2(x-6,y-8,x+5,y-8);line2(x-6,y+8,x+5,y+8);line2(x-6,y-8,x-6,y+8);line2(x+5,y-8,x+5,y+8);line2(x-6,y,x+5,y);}
     }
     function buildWeekdayImages(){
       if(weekdayImgs)return;
@@ -508,12 +352,6 @@
       }else{
         g.drawImage(weekdayImgs[c],cx-8,26);
       }
-    }
-    function drawWeekday(c){
-      var x1=cellX1[c],x2=cellX2[c],bg=BLACK;
-      if(c===5)bg=BLUE;else if(c===6)bg=RED;
-      g.setColor(bg).fillRect(x1,24,x2,47);
-      drawWeekdayLabel(c);
     }
     function buildGeometry(){
       var c,r,top=48,gh=H-48;
@@ -726,7 +564,7 @@
     function redrawSelected(){var i=selectedIndex();if(i>=0)drawCell(i);}
     function drawSelectedCell(on){
       var i=selectedIndex();if(i<0)return;
-      if(!on){drawCell(i);try{g.flip();}catch(e){};return;}
+      if(!on){drawCell(i);try{g.flip();}catch(e){}return;}
 
       var q=cellGeometry(i);
       g.setColor(YELLOW).fillRect(q.x1,q.y1,q.x2,q.y2);
@@ -736,24 +574,17 @@
       try{g.flip();}catch(e){}
     }
     function drawCalendarFast(full){
-      var t0,t1,c,r,i,bg,fg,x,y;
+      var c,r,i,bg,fg,x,y;
       g.setBgColor(BLACK).setColor(BLACK);
 
-      t0=Math.round(getTime()*1000);
       if(full){
         g.clear();
         try{Bangle.drawWidgets();}catch(e){}
       }else g.fillRect(0,24,W-1,H-1);
-      lastWidgetMs=Math.round(getTime()*1000)-t0;
-
-      t0=Math.round(getTime()*1000);
       g.setColor(BLACK).fillRect(0,24,W-1,47);
       g.setColor(BLUE).fillRect(cellX1[5],24,cellX2[5],47);
       g.setColor(RED).fillRect(cellX1[6],24,cellX2[6],47);
       for(c=0;c<7;c++)drawWeekdayLabel(c);
-      lastWeekdayMs=Math.round(getTime()*1000)-t0;
-
-      t0=Math.round(getTime()*1000);
       /* Fill the body by large regions, not 35 individual cell rectangles. */
       g.setColor(BLACK).fillRect(0,48,W-1,H-1);
       g.setColor(BLUE).fillRect(cellX1[5],48,cellX2[5],H-1);
@@ -792,12 +623,8 @@
         g.setColor(fg).setBgColor(bg)
           .drawString(""+dayNums[i],(cellX1[c]+cellX2[c])>>1,(cellY1[r]+cellY2[r])>>1);
       }
-      lastBodyMs=Math.round(getTime()*1000)-t0;
-
-      t0=Math.round(getTime()*1000);
       drawTop();
       try{g.flip();}catch(e){}
-      lastTopMs=Math.round(getTime()*1000)-t0;
     }
     function drawCalendar(full){
       drawCalendarFast(full);
@@ -805,7 +632,7 @@
     function report(x){}
 
     function clearTimer(t){if(t)clearTimeout(t);}
-    function clearTaps(){clearTimer(tapTimer);tapTimer=undefined;tapCount=0;lastXY=undefined;firstTapMs=undefined;}
+    function clearTaps(){clearTimer(tapTimer);tapTimer=undefined;lastXY=undefined;firstTapMs=undefined;}
     function stopBlink(){clearTimer(blinkTimer);blinkTimer=undefined;}
     function blinkTick(){
       blinkTimer=undefined;
@@ -828,7 +655,7 @@
     }
     function stopAuto(){clearTimer(autoTimer);autoTimer=undefined;}
     function armAuto(){stopAuto();if(!active||!cfg||!(cfg.timeout>=15))return;autoTimer=setTimeout(function(){autoTimer=undefined;returnToOrbit();},cfg.timeout*1000);}
-    function stop(){cancelHolidayBatch();stopEventBlink();stopBlink();stopAuto();clearTaps();firstTapMs=undefined;active=false;onReturn=undefined;onSelect=undefined;onDiag=undefined;}
+    function stop(){cancelHolidayBatch();stopEventBlink();stopBlink();stopAuto();clearTaps();firstTapMs=undefined;active=false;onReturn=undefined;onSelect=undefined;}
     function resetTransient(){cancelHolidayBatch();stopEventBlink();selected=undefined;clearTaps();stopBlink();stopAuto();today=midnight(new Date());pageStart=mondayOf(today);}
     function returnToOrbit(){
       if(!active)return;
@@ -851,19 +678,6 @@
       var c=Math.floor(xy.x*7/W),r=Math.floor((xy.y-48)*5/(H-48));
       if(c<0||c>6||r<0||r>4)return -1;
       return r*7+c;
-    }
-    function dateAt(xy){
-      var i=dateIndexAt(xy);
-      return i<0?undefined:addDays(pageStart,i);
-    }
-    function showCoordError(){
-      try{
-        g.setColor(RED).fillRect(48,4,127,20);
-        g.setColor(WHITE).setBgColor(RED).setFont("6x8",2).setFontAlign(0,0);
-        g.drawString("NO XY",87,12);
-        try{g.flip();}catch(e){}
-      }catch(e){}
-      try{Bangle.buzz(500);}catch(e){}
     }
     function selectAt(xy,dt){
       var stage="IDX",idx=-1,offset=0;
@@ -927,7 +741,7 @@
           if(dt<=TAP_WINDOW){
             var selectXY=lastXY||p;
             clearTimer(tapTimer);
-            tapTimer=undefined;tapCount=0;lastXY=undefined;firstTapMs=undefined;
+            tapTimer=undefined;lastXY=undefined;firstTapMs=undefined;
             report({calTap2Seen:1,calTap2Ms:now,calDoubleDtMs:dt,singleOnly:0});
             selectAt(selectXY,dt);
             return;
@@ -941,10 +755,10 @@
           return;
         }
 
-        firstTapMs=now;lastXY=p;tapCount=1;
+        firstTapMs=now;lastXY=p;
         report({calTap1Seen:1,calTap1Ms:now,singleOnly:0});
         tapTimer=setTimeout(function(){
-          tapTimer=undefined;tapCount=0;lastXY=undefined;
+          tapTimer=undefined;lastXY=undefined;
           var waited=firstTapMs===undefined?TAP_WINDOW:
             Math.round(getTime()*1000)-firstTapMs;
           firstTapMs=undefined;
@@ -976,7 +790,7 @@
     }
     function start(opts){
       opts=opts||{};stop();cfg=readConfig();active=true;
-      onReturn=opts.onReturn;onSelect=opts.onSelect;onDiag=opts.onDiag;startTapMs=opts.tapMs;
+      onReturn=opts.onReturn;onSelect=opts.onSelect;startTapMs=opts.tapMs;
       var startMs=Math.round(getTime()*1000);
       today=midnight(new Date());
       var focus=opts.focusDate?midnight(opts.focusDate):(opts.selectedDate?midnight(opts.selectedDate):today);
