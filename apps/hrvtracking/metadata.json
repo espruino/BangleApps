@@ -15,7 +15,8 @@
     {"name":"hrvmeasure.app.js","url":"measure.js"},
     {"name":"hrvtracking.app.js","url":"app.js"},
     {"name":"hrvtracking.boot.js","url":"boot.js"},
+    {"name":"hrvtracking.settings.js","url":"settings.js"},
     {"name":"hrvtracking.img","url":"icon.js","evaluate":true}
   ],
-  "data": [{"name":"hrv.json"}]
+  "data": [{"name":"hrv.json"},{"name":"hrvtracking.settings.json"}]
 }
