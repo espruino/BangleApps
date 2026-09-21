@@ -43,8 +43,6 @@
     if(calSource){calModule=eval(calSource);calendar=calModule.create();}
     calSource=undefined;
   }catch(calErr){calModule=undefined;calendar=undefined;}
-  /* Load widgets at startup so the first calendar open stays responsive. */
-  try{if(typeof WIDGETS==="undefined")Bangle.loadWidgets();}catch(e){}
   var BLACK=0x0000,WHITE=0xFFFF,NAVY=0x000F,DARKBLUE=0x0008,CYAN=0x07FF,YELLOW=0xFFE0,ORANGE=0xFD20,RED=0xF800,GREEN=0x07E0;
   var busy=false,killed=false,minuteTimer,secondTimer,idleTimer,tapTimer,unlockTimer;
   var mode="orbit",interactive=true,tapCount=0,resetOnWake=false;
@@ -927,6 +925,8 @@
   buildEarthMapCache();
   buildMoonCache();
   try{Bangle.setUI({mode:"custom",touch:onTouch,swipe:onSwipe,btn:onButton});}catch(e){}
+  /* Load widgets only after setUI, as required for clock/widget state tracking. */
+  try{if(typeof WIDGETS==="undefined")Bangle.loadWidgets();}catch(e){}
   Bangle.on("faceUp",onFaceUp);
   Bangle.on("lcdPower",onLCD);
   Bangle.on("lock",onLock);
