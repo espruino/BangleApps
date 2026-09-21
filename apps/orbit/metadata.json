@@ -1,0 +1,54 @@
+{
+  "id": "orbit",
+  "name": "orbit",
+  "shortName": "orbit",
+  "version": "0.04",
+  "author": "onisY",
+  "description": "Sun-Earth-Moon clock with integrated calendar.",
+  "icon": "app.png",
+  "type": "clock",
+  "tags": "clock,science,astronomy,calendar,moon",
+  "supports": [
+    "BANGLEJS2"
+  ],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {
+      "name": "orbit.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "orbit.cal.js",
+      "url": "calendar.js"
+    },
+    {
+      "name": "orbit.settings.js",
+      "url": "settings.js"
+    },
+    {
+      "name": "orbitloc",
+      "url": "locations.js"
+    },
+    {
+      "name": "orbitjp.dat",
+      "url": "japan-municipalities.dat"
+    },
+    {
+      "name": "orbit.img",
+      "url": "app-icon.js",
+      "evaluate": true
+    }
+  ],
+  "data": [
+    {
+      "name": "orbit.json"
+    },
+    {
+      "name": "orbit.cal.json"
+    },
+    {
+      "name": "orbit.events.json"
+    }
+  ]
+}
