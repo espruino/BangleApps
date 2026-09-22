@@ -1,6 +1,11 @@
 var dataSaved = require("hrvtracking").getAllData()
-var d_startHour=3;
-var d_endHour=4; // inclusive
+let settings = require("Storage").readJSON("hrvtracking.settings.json",1)||{
+    startTime:3*60, //minutes
+    endTime:5*60, 
+    enabled:true
+  };
+var d_startMins=settings.startTime;
+var d_endMins=settings.endTime; // inclusive
 
 
 function isTimestampToday(unixTimestamp) {
@@ -20,15 +25,16 @@ function checkForTime(){
   // Bangle.buzz(1000);
   if(global.__FILE__ == "hrvmeasure.app.js") return;
   let now = new Date();
-  let currentHour = now.getHours();
+  const currentMinute = (now.getHours() * 60) + now.getMinutes();
+
   
-  // Triggers every time if the hour is 3 (3:00-3:59) or 4 (4:00-4:59)
-  if ((currentHour == d_startHour || currentHour == d_endHour)) {
+  // Triggers every time if between set times
+  if ((currentMinute >= d_startMins && currentMinute <= d_endMins)&&settings.enabled==true) {
 
     load("hrvmeasure.app.js"); 
     return;
-  }else if (currentHour > d_endHour){
-    let shouldCalculateAverage = !dataSaved.hrvDailyAverages[0] || (currentHour>d_endHour && !isTimestampToday(dataSaved.hrvDailyAverages[0].timestamp))
+  }else if (currentMinute > d_endMins){
+    let shouldCalculateAverage = !dataSaved.hrvDailyAverages[0] || (currentMinute>d_endMins && !isTimestampToday(dataSaved.hrvDailyAverages[0].timestamp))
     if(shouldCalculateAverage){
       require("hrvtracking").calculateDailyData()
     }

@@ -1,7 +1,7 @@
 (function(back) {
   var settings = require("Storage").readJSON("hrvtracking.settings.json",1)||{
     startTime:3*60, //minutes
-    endTime:4*60, // inclusive
+    endTime:5*60,
     enabled:true
   };
   

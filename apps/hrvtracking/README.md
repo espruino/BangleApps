@@ -26,11 +26,11 @@ You must choose the start and end date for measurements - this must be while you
 
 Measurements are NOT accurate while you are moving the slightest bit, as this introduces lots of motion artifacts that the HRV algorithm gets confused on. This is why the measurements are taken while asleep, when you are still. Measurements are taken once every 20-30 minutes. (24 minutes is the interval, but depending on apps loaded while sleeping, this could change)
 
-Start time - Selects the time to start measurements at. 
+**Start time** - Selects the time to start measurements at. 
 
-End time - Selects the time to end measurements at.
+**End time** - Selects the time to end measurements at.
 
-Enabled - Whether or not measurements should be taken at all.
+**Enabled** - Whether or not measurements should be taken at all.
 ## App
 In the app, you can see your HRV for today, your personal baseline or usual, and past HRV readings. 
 
