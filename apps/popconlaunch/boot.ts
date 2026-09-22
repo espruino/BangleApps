@@ -112,14 +112,14 @@ const recordLaunch = (src?: string) => {
 	}
 };
 
-const oldLoad = load as (src?: string) => void;
+const oldLoad = load;
 global.load = (src: string) => {
 	recordLaunch(src);
 	return oldLoad(src);
 };
-const oldBangleLoad = Bangle.load as (src?: string) => void;
+const oldBangleLoad = Bangle.load;
 Bangle.load = (src?: string) => {
 	recordLaunch(src);
-	return oldBangleLoad(src);
+	return oldBangleLoad(src!); // calls with undefined are fine
 };
 })()
