@@ -96,9 +96,8 @@ require("Storage").readJSON = ((fname, skipExceptions) => {
 	return j;
 }) satisfies typeof oldRead;
 
-const oldLoad = load;
-global.load = (src: string) => {
-	if(src){
+const recordLaunch = (src?: string) => {
+	if (src) {
 		const cache = ensureCache();
 		const ent = cache[src] ||= {
 			pop: 0,
@@ -107,10 +106,20 @@ global.load = (src: string) => {
 		};
 		ent.pop++;
 		ent.last = Date.now();
+		console.debug(`[popconlaunch] Launching ${src}, pop=${ent.pop}, last=${ent.last}`);
 		const orderChanged = sortCache();
 		saveCache(cache, orderChanged);
 	}
+};
 
+const oldLoad = load as (src?: string) => void;
+global.load = (src: string) => {
+	recordLaunch(src);
 	return oldLoad(src);
+};
+const oldBangleLoad = Bangle.load as (src?: string) => void;
+Bangle.load = (src?: string) => {
+	recordLaunch(src);
+	return oldBangleLoad(src);
 };
 })()
