@@ -2,7 +2,7 @@
   "id": "popconlaunch",
   "name": "Popcon Launcher",
   "shortName": "Popcon",
-  "version": "0.05",
+  "version": "0.06",
   "author": "bobrippling",
   "description": "Launcher modification - your launchers will display your favourite (popular) apps first. Overrides `readJSON`, may slow down your watch",
   "readme": "README.md",
