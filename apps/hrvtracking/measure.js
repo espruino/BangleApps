@@ -46,10 +46,7 @@ var onHRMRaw=function(hrm) {
         }
     }
 }
-// 2304 samples gives roughly 45 seconds at ~51.6 Hz (reduced by 25% from 3072)
 var raw_HR_array = new Float32Array(2304);
-
-// upscale() produces approximately 2x as many samples
 var alternate_array = new Float32Array(4608);
 
 var pulse_array = [];
