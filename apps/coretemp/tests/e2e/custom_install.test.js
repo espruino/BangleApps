@@ -7,7 +7,7 @@ const loader = require("../helpers/module_loader");
 const fakeStorage = require("../helpers/fake_storage");
 const root = path.resolve(__dirname, "../..");
 
-function customPage(seed) {
+function customPage(seed, options = {}) {
   const elements = {};
   let uploaded;
   const storage = fakeStorage.create(seed);
@@ -20,11 +20,14 @@ function customPage(seed) {
       }
     },
     window: {},
-    Util: { readStorageJSON(name, callback) { callback(storage.readJSON(name)); } },
+    setTimeout: options.setTimeout || setTimeout,
+    clearTimeout: options.clearTimeout || clearTimeout,
+    Util: { readStorageJSON: options.readStorageJSON || function (name, callback) { callback(storage.readJSON(name)); } },
     sendCustomizedApp(options) { uploaded = JSON.parse(JSON.stringify(options)); }
   });
   vm.runInContext(fs.readFileSync(path.join(root, "migration.js"), "utf8"), context);
   const html = fs.readFileSync(path.join(root, "custom.html"), "utf8");
+  context.document.getElementById("upload").disabled = /<button[^>]*id="upload"[^>]*\bdisabled\b/.test(html);
   vm.runInContext(html.match(/<script>([\s\S]*?)<\/script>/)[1], context);
   context.window.onload();
   return { context, elements, storage, upload() {
@@ -67,6 +70,56 @@ async function install(storage, customized) {
 }
 
 module.exports = [
+  {
+    name: "custom initialization serializes delayed reads and enables upload only after both finish",
+    async fn() {
+      const pending = [];
+      const page = customPage(undefined, {
+        readStorageJSON(name, callback) { pending.push({ name, callback }); }
+      });
+      const ready = page.context.onInit();
+      assert.deepStrictEqual(pending.map(read => read.name), ["coretemp.json"]);
+      assert.strictEqual(page.elements.upload.disabled, true);
+      assert.strictEqual(page.upload(), undefined);
+      pending[0].callback({ enabled: false, warnDisconnect: true });
+      await Promise.resolve();
+      assert.deepStrictEqual(pending.map(read => read.name), ["coretemp.json", "coretemp.hrm.json"]);
+      assert.strictEqual(page.elements.upload.disabled, true);
+      assert.strictEqual(page.upload(), undefined);
+      pending[1].callback({ selected: { antId: 19457, txType: 86 }, recent: [] });
+      await ready;
+      assert.strictEqual(page.elements.upload.disabled, false);
+      assert.strictEqual(page.elements.status.textContent, "");
+      assert.strictEqual(page.elements.antId.value, 19457);
+      const uploaded = page.upload();
+      const settings = JSON.parse(uploaded.storage.find(file => file.name === "coretemp.json").content);
+      assert.strictEqual(settings.enabled, false);
+      assert.strictEqual(settings.warnDisconnect, true);
+      const hrm = JSON.parse(uploaded.storage.find(file => file.name === "coretemp.hrm.json").content);
+      assert.strictEqual(hrm.selected.txType, 86);
+    }
+  },
+  {
+    name: "custom read timeout keeps upload blocked even after a late callback",
+    async fn() {
+      let expire, respond;
+      const page = customPage(undefined, {
+        readStorageJSON(name, callback) { respond = callback; },
+        setTimeout(callback) { expire = callback; return 1; },
+        clearTimeout() {}
+      });
+      assert.strictEqual(page.elements.upload.disabled, true);
+      const ready = page.context.onInit();
+      expire();
+      await ready;
+      assert.match(page.elements.status.textContent, /Timed out reading coretemp.json/);
+      assert.match(page.elements.status.textContent, /Reconnect/);
+      respond({ enabled: true });
+      await Promise.resolve();
+      assert.strictEqual(page.elements.upload.disabled, true);
+      assert.strictEqual(page.upload(), undefined);
+    }
+  },
   {
     name: "standard installation migrates before no-overwrite data defaults",
     async fn() {

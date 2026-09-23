@@ -51,8 +51,8 @@
       </div>
     </form>
 
-    <p id="status" class="text-gray"></p>
-    <p><button class="btn btn-primary" id="upload">Upload</button></p>
+    <p id="status" class="text-gray">Loading existing settings...</p>
+    <p><button class="btn btn-primary" id="upload" disabled>Upload</button></p>
   </div>
 
   <script src="../../core/lib/customize.js"></script>
@@ -64,8 +64,12 @@
     let initialized = false;
 
     function readStorageJSONAsync(filename) {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
+        const timeout = setTimeout(function () {
+          reject(new Error("Timed out reading " + filename + ". Reconnect and reopen CoreTemp settings."));
+        }, 30000);
         Util.readStorageJSON(filename, function (data) {
+          clearTimeout(timeout);
           resolve(data);
         });
       });
@@ -148,19 +152,24 @@
       return Object.assign({}, currentHRM, { selected: entry, recent: recent.slice(0, 5) });
     }
 
-    function onInit() {
-      return Promise.all([
-        readStorageJSONAsync("coretemp.json"),
-        readStorageJSONAsync("coretemp.hrm.json")
-      ]).then(function (files) {
-        const migrated = CoreTempMigration.normalize(files[0], files[1]);
+    async function onInit() {
+      initialized = false;
+      document.getElementById("upload").disabled = true;
+      setStatus("Loading existing settings...");
+      try {
+        // The App Loader uses one shared callback for device file reads.
+        const settings = await readStorageJSONAsync("coretemp.json");
+        const hrm = await readStorageJSONAsync("coretemp.hrm.json");
+        const migrated = CoreTempMigration.normalize(settings, hrm);
         currentSettings = migrated.settings;
         currentHRM = migrated.hrm;
-        initialized = true;
         fillForm();
-      }).catch(function (err) {
+        initialized = true;
+        document.getElementById("upload").disabled = false;
+        setStatus("");
+      } catch (err) {
         setStatus("Error loading settings: " + err, true);
-      });
+      }
     }
 
     window.onload = function () {
