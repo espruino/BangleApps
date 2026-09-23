@@ -9,6 +9,15 @@ function writeData(){
 }
 const getAverage = (arr) => arr.reduce((sum, num) => sum + num, 0) / arr.length;
 
+function isTimestampToday(unixTimestamp) {
+  const date = new Date(unixTimestamp);
+  const today = new Date();
+  
+  return date.getFullYear() === today.getFullYear() &&
+         date.getMonth() === today.getMonth() &&
+         date.getDate() === today.getDate();
+}
+
 function formatDate(date) {
   var locale = require("locale");
 
