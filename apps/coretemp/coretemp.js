@@ -30,7 +30,7 @@ function onCore(c) {
   g.clearRect(0, 32 + 48, g.getWidth(), 32 + 48 + 24 * 4);
   g.setColor(g.theme.dark ? "#CCC" : "#333");  // gray
   g.setFont("6x8", sz).drawString("Core: " + ((c.core < 327) ? (c.core + c.unit) : 'n/a'), px, 48 + 48);
-  g.setFont("6x8", sz).drawString("Skin: " + c.skin + c.unit, px, 48 + 48 + 14);
+  g.setFont("6x8", sz).drawString("Skin: " + ((typeof c.skin === "number" && isFinite(c.skin)) ? (c.skin + c.unit) : "n/a"), px, 48 + 48 + 14);
   var hrText = "n/a";
   if (c.hr && c.hr > 0) {
     hrText = c.hr + " BPM";

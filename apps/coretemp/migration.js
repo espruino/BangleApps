@@ -3,7 +3,7 @@ var CoreTempMigration = (function () {
   function defaults() {
     return {
       enabled: true, alwaysOn: false, widget: true,
-      customprofileonly: false, debugMode: false, antScanWindowSec: 5,
+      customprofileonly: true, debugMode: false, antScanWindowSec: 5,
       settingsVersion: 1
     };
   }

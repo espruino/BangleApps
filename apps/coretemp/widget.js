@@ -19,6 +19,7 @@
 
   function getWidgetStatus(status) {
     status = getCORESensorStatus(status);
+    if (status.connected && status.profile === "health_thermometer") return "fallback";
     if (status.connected) return status.alwaysOn ? "background" : "connected";
     return "off";
   }
@@ -39,7 +40,9 @@
     g.setFontAlign(0, 0);
     g.clearRect(this.x, this.y, this.x + 23, this.y + 23);
 
-    if (CORESensorStatus === "background") {
+    if (CORESensorStatus === "fallback") {
+      g.setColor("#f80"); // temperature-only fallback = orange
+    } else if (CORESensorStatus === "background") {
       g.setColor("#00f"); // background connected = blue
     } else if (CORESensorStatus === "connected") {
       g.setColor("#0f0"); // green

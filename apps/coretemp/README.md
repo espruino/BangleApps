@@ -62,6 +62,8 @@ The main settings menu contains:
   runtime at boot without connecting.
 - `Always On`: keeps CORE connected in the background; available when Enable is on.
 - `Widget`: shows or hides the CoreTemp widget.
+  Orange indicates a connected Health Thermometer fallback; green indicates an
+  on-demand CORE connection, blue an Always On CORE connection, and grey disconnected.
 - `Scan for CORE`: scans for CORE sensors when no CORE device is paired.
 - `Test <device>`: connects to the currently paired CORE sensor when it is not
   already connected.
@@ -74,7 +76,7 @@ The main settings menu contains:
 - `Full log`: records all debug lines, including every measurement event.
 - `Partial log`: records connection/discovery/control logs but skips measurement
   `data` lines to reduce log volume.
-- `Custom CORE only`: requires CORE's custom temperature characteristic and
+- `Custom CORE only` (default on): requires CORE's custom temperature characteristic and
   disables the standard Health Thermometer fallback.
 
 ## ANT+ HRM Pairing
@@ -372,8 +374,8 @@ CoreTemp supports CORE's custom Core Body Temperature Service:
 - Temperature characteristic: `00002101-5b1e-4347-b07c-97b514dae121`
 - Control Point characteristic: `00002102-5b1e-4347-b07c-97b514dae121`
 
-For older/basic compatibility it also accepts the standard BLE Health
-Thermometer profile:
+For older/basic compatibility, turn off `Custom CORE only` in Debug to accept
+the standard BLE Health Thermometer profile:
 
 - Service: `0x1809` / `00001809-0000-1000-8000-00805f9b34fb`
 - Temperature Measurement characteristic: `0x2a1c` /
@@ -387,9 +389,9 @@ When CoreTemp falls back to Health Thermometer mode, it periodically performs a
 background profile upgrade attempt. This disconnects briefly, rebuilds the
 characteristic cache, and switches to the custom CORE profile if it is available.
 
-Enable `Custom CORE only` in Debug if you want CoreTemp to reject the standard
-Health Thermometer fallback and keep reconnecting until the custom CORE
-temperature characteristic is available.
+`Custom CORE only` defaults to on, rejecting the standard Health Thermometer
+fallback and retrying until the custom CORE temperature characteristic is
+available. Existing explicit settings are preserved when upgrading.
 
 ## Storage
 

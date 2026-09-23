@@ -505,6 +505,7 @@ module.exports = [
     name: "connect accepts standard health thermometer temperature without control point",
     async fn() {
       const { ble, protocol, env, emitted } = createLoadedBLE({
+        settings: { customprofileonly: false },
         fakeBLE: { healthThermometerOnly: true }
       });
       ble.init();
@@ -544,6 +545,7 @@ module.exports = [
     name: "health thermometer fallback schedules profile upgrade discovery",
     async fn() {
       const { ble, timers } = createLoadedBLE({
+        settings: { customprofileonly: false },
         fakeBLE: { healthThermometerOnly: true },
         timers: { manualProfileUpgrade: true, manualReconnect: true }
       });
