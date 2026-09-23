@@ -1,0 +1,202 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="../../css/spectre.min.css">
+  <link rel="stylesheet" href="../../css/spectre-icons.min.css">
+</head>
+
+<body>
+  <div class="container">
+    <h3>CoreTemp Settings</h3>
+    <form id="coretempSettings">
+      <div class="form-group">
+        <label class="form-switch">
+          <input type="checkbox" id="enabled" name="enabled">
+          <i class="form-icon"></i> Enable CoreTemp
+        </label>
+        <label class="form-switch">
+          <input type="checkbox" id="alwaysOn" name="alwaysOn">
+          <i class="form-icon"></i> Always On (background connection)
+        </label>
+        <p class="form-input-hint">Enable allows apps to request CORE. Always On keeps it connected between sessions.</p>
+        <label class="form-switch">
+          <input type="checkbox" id="widget" name="widget">
+          <i class="form-icon"></i> Show widget
+        </label>
+        <label class="form-switch">
+          <input type="checkbox" id="customprofileonly" name="customprofileonly">
+          <i class="form-icon"></i> Custom CORE profile only
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="debugMode">Debug log</label>
+        <select class="form-select" id="debugMode" name="debugMode">
+          <option value="false">Off</option>
+          <option value="partial">Partial</option>
+          <option value="full">Full</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="antScanWindowSec">ANT+ scan window (seconds)</label>
+        <input class="form-input" type="number" id="antScanWindowSec" name="antScanWindowSec" min="5" max="30" step="1">
+        <p class="form-input-hint">Allowed range: 5-30 seconds.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="antId">Preset ANT+ HRM ID</label>
+        <input class="form-input" type="number" id="antId" name="antId" min="1" max="65535" step="1" placeholder="Optional">
+        <p class="form-input-hint">ANT+ device ID. Leave blank to remove the stored preset ID only. Does not affect HRMs already paired with CORE.</p>
+      </div>
+    </form>
+
+    <p id="status" class="text-gray">Loading existing settings...</p>
+    <p><button class="btn btn-primary" id="upload" disabled>Upload</button></p>
+  </div>
+
+  <script src="../../core/lib/customize.js"></script>
+  <script src="migration.js"></script>
+  <script>
+    const DEFAULT_SETTINGS = CoreTempMigration.defaults();
+    let currentSettings = Object.assign({}, DEFAULT_SETTINGS);
+    let currentHRM = { selected: null, recent: [] };
+    let initialized = false;
+
+    function readStorageJSONAsync(filename) {
+      return new Promise((resolve, reject) => {
+        const timeout = setTimeout(function () {
+          reject(new Error("Timed out reading " + filename + ". Reconnect and reopen CoreTemp settings."));
+        }, 30000);
+        Util.readStorageJSON(filename, function (data) {
+          clearTimeout(timeout);
+          resolve(data);
+        });
+      });
+    }
+
+    function normalizeDebugMode(settings) {
+      if (settings.debuglog) return "full";
+      if (settings.debugpartiallog) return "partial";
+      return settings.debugMode || false;
+    }
+
+    function parseInteger(value) {
+      if (value === undefined || value === null || value === "") return undefined;
+      value = Number(value);
+      if (!Number.isInteger(value)) return undefined;
+      return value;
+    }
+
+    function normalizeScanWindowSec(value) {
+      value = parseInteger(value);
+      if (value === undefined || value < 5 || value > 30) return 5;
+      return value;
+    }
+
+    function normalizeAntId(value) {
+      value = parseInteger(value);
+      if (value === undefined || value <= 0 || value > 65535) return undefined;
+      return value;
+    }
+
+    function setStatus(text, isError) {
+      const status = document.getElementById("status");
+      status.textContent = text || "";
+      status.className = isError ? "text-error" : "text-gray";
+    }
+
+    function fillForm() {
+      document.getElementById("enabled").checked = currentSettings.enabled === true;
+      document.getElementById("alwaysOn").checked = currentSettings.alwaysOn === true;
+      updatePowerControls();
+      document.getElementById("widget").checked = currentSettings.widget !== false;
+      document.getElementById("customprofileonly").checked = currentSettings.customprofileonly === true;
+      document.getElementById("debugMode").value = String(normalizeDebugMode(currentSettings));
+      document.getElementById("antScanWindowSec").value = normalizeScanWindowSec(currentSettings.antScanWindowSec);
+      document.getElementById("antId").value = currentHRM.selected && currentHRM.selected.antId ? currentHRM.selected.antId : "";
+    }
+
+    function updatePowerControls() {
+      const enabled = document.getElementById("enabled").checked;
+      document.getElementById("alwaysOn").disabled = !enabled;
+      if (!enabled) document.getElementById("alwaysOn").checked = false;
+    }
+
+    function buildSettings() {
+      const debugModeValue = document.getElementById("debugMode").value;
+      const settings = Object.assign({}, currentSettings, {
+        enabled: document.getElementById("enabled").checked,
+        alwaysOn: document.getElementById("enabled").checked && document.getElementById("alwaysOn").checked,
+        widget: document.getElementById("widget").checked,
+        customprofileonly: document.getElementById("customprofileonly").checked,
+        debugMode: debugModeValue === "false" ? false : debugModeValue,
+        antScanWindowSec: normalizeScanWindowSec(document.getElementById("antScanWindowSec").value)
+      });
+      delete settings.debuglog;
+      delete settings.debugpartiallog;
+      if (debugModeValue === "full") settings.debuglog = true;
+      if (debugModeValue === "partial") settings.debugpartiallog = true;
+      return settings;
+    }
+
+    function buildHRM() {
+      const antId = normalizeAntId(document.getElementById("antId").value);
+      const existingRecent = Array.isArray(currentHRM.recent) ? currentHRM.recent : [];
+      if (antId === undefined) return Object.assign({}, currentHRM, { selected: null, recent: existingRecent });
+      const previous = currentHRM.selected && currentHRM.selected.antId === antId ? currentHRM.selected :
+        existingRecent.find(e => e && e.antId === antId);
+      const entry = Object.assign({}, previous || {}, { antId: antId, transport: "ANT+" });
+      const recent = existingRecent.filter(e => e && e.antId !== antId);
+      recent.unshift(entry);
+      return Object.assign({}, currentHRM, { selected: entry, recent: recent.slice(0, 5) });
+    }
+
+    async function onInit() {
+      initialized = false;
+      document.getElementById("upload").disabled = true;
+      setStatus("Loading existing settings...");
+      try {
+        // The App Loader uses one shared callback for device file reads.
+        const settings = await readStorageJSONAsync("coretemp.json");
+        const hrm = await readStorageJSONAsync("coretemp.hrm.json");
+        const migrated = CoreTempMigration.normalize(settings, hrm);
+        currentSettings = migrated.settings;
+        currentHRM = migrated.hrm;
+        fillForm();
+        initialized = true;
+        document.getElementById("upload").disabled = false;
+        setStatus("");
+      } catch (err) {
+        setStatus("Error loading settings: " + err, true);
+      }
+    }
+
+    window.onload = function () {
+      fillForm();
+      document.getElementById("enabled").addEventListener("change", updatePowerControls);
+      document.getElementById("upload").addEventListener("click", function () {
+        if (!initialized) {
+          setStatus("Wait for existing settings to load before uploading.", true);
+          return;
+        }
+        const antIdValue = document.getElementById("antId").value;
+        if (antIdValue !== "" && normalizeAntId(antIdValue) === undefined) {
+          setStatus("ANT+ HRM ID must be an integer from 1 to 65535.", true);
+          return;
+        }
+        const opts = {
+          storage: [
+            { name: "coretemp.hrm.json", content: JSON.stringify(buildHRM()) },
+            { name: "coretemp.json", content: JSON.stringify(buildSettings()) },
+            { name: "RAM", content: "require('coretemp.migrate').run();" }
+          ]
+        };
+        setStatus("Uploading...");
+        sendCustomizedApp(opts);
+      });
+    };
+  </script>
+</body>
+
+</html>
