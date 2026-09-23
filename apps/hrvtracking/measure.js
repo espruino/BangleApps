@@ -72,16 +72,6 @@ function storeMyData(data) {
     log[log.length - 1] = data;
 }
 
-function average(samples) {
-    var sum = 0;
-
-    for (var i = 0; i < samples.length; i++) {
-        sum += samples[i];
-    }
-
-    return sum / samples.length;
-}
-
 function StandardDeviation(data) {
     if (data.length < 2) return 0;
 
@@ -460,7 +450,7 @@ var hasLock = false;
 
 Bangle.on("HRM-raw", onHRMRaw);
 E.on("kill",function(){
-  sd = Storage.readJSON("hrv.json") || {};
+  let sd = Storage.readJSON("hrv.json") || {};
   sd.started=false;
   Storage.writeJSON("hrv.json", sd);
 
