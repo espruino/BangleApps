@@ -40,7 +40,6 @@
         step:30,
         min:0,max:23*60
       },
-      "< Back" : back,
       /*LANG*/"End Time" : {
         value : settings.endTime,
         onchange: v => {
