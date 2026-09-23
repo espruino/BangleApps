@@ -2,7 +2,7 @@
   "id": "coretemp",
   "name": "CoreTemp",
   "version": "0.11",
-  "author": ["ihewitt", "zyf0717"],
+  "author": "ihewitt, zyf0717",
   "description": "Display CoreTemp device sensor data",
   "icon": "coretemp.png",
   "type": "app",
