@@ -29,10 +29,10 @@
             require("dailycolor").regenerateQueue()
             E.showAlert("Regenerated Queue!", "Success")
               .then(function (v) {
-                eval(require("Storage").read("dailycolorclk.settings.js"))(() => load());
+                eval(require("Storage").read("dailycolor.settings.js"))(() => load());
               })     
             }else{
-              eval(require("Storage").read("dailycolorclk.settings.js"))(() => load());   
+              eval(require("Storage").read("dailycolor.settings.js"))(() => load());   
             }
 
         })

@@ -1,12 +1,12 @@
 let settings;
 let getSettings = function () {
   settings = Object.assign(
-    require("Storage").readJSON("dailycolorclk.json", true) || {}
+    require("Storage").readJSON("dailycolor.json", true) || {}
   );
   if (!settings.bgColors) settings.bgColors = ["#0F0", "#FF0", "#F00", "#00F"];
 }
 let writeSettings = function () {
-  require("Storage").writeJSON("dailycolorclk.json", settings);
+  require("Storage").writeJSON("dailycolor.json", settings);
 }
 
 let shuffleArray = function (array) {
