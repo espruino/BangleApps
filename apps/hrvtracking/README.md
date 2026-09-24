@@ -24,6 +24,8 @@ If your HRV is substantially lower than usual, this could mean several things:
 ## Settings
 You must choose the start and end date for measurements - this must be while you are asleep. 3AM to 5AM is the default, but if you sleep at different times, you can change this. 
 
+Note: The longer interval you collect data for, the more readings will be present - meaning more battery drain and memory usage. In 2 hours (the default), around 4-5 readings are taken. You also don't want only 1 or 2 readings in case they are skewed due to movement.
+
 Measurements are NOT accurate while you are moving the slightest bit, as this introduces lots of motion artifacts that the HRV algorithm gets confused on. This is why the measurements are taken while asleep, when you are still. Measurements are taken once every 20-30 minutes. (24 minutes is the interval, but depending on apps loaded while sleeping, this could change)
 
 **Start time** - Selects the time to start measurements at. 
