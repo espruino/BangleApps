@@ -1,5 +1,5 @@
 # HRV Tracking
-Tracks your HRV over time while you're asleep and establishes a personal baseline (average) for 30 days.
+Tracks your HRV over time while you're asleep and establishes a personal baseline (average) for 20 days.
 You can see your HRV as well as past HRVs in the app, and the HRV updates every day (while asleep)
 
 Note: HRV measurements do not match up with other smartwatches, because each smartwatch measures HRV differently. This app uses the RMSSD formula. You should also not rely on these measurements as a medical diagnosis, as the HRM sensor & these algorithms on the Bangle.js will never be as good as Apple or Garmin. Treat these simply as additional insight, and not a concrete diagnosis, as the measurements can always be wrong.
@@ -21,6 +21,7 @@ If your HRV is substantially lower than usual, this could mean several things:
 - Your body is recovering from strenuous physical activity
 - Your body is suffering from poor sleep
 - Heavy alcohol consumption
+You can see your baseline and daily HRV in the app.
 ## Settings
 You must choose the start and end date for measurements - this must be while you are asleep. 3AM to 5AM is the default, but if you sleep at different times, you can change this. 
 
