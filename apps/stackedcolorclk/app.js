@@ -43,11 +43,8 @@ Graphics.prototype.setFontMartianMono = function() {
 
   let drawTimeout;
   
-  const slopeHeight = 90;
   const fontBorder = 6;
   const hoursYPos = 68-5+7;
-  const minOffset = 4;
-  const slopeBorder = 4;
   let bgColor = require("dailycolor").getDailyColor()
   let dateStr = "";
 
@@ -66,7 +63,6 @@ Graphics.prototype.setFontMartianMono = function() {
       let minStr = " " + t[1].padStart(2, '0') + " ";
 
       dateStr = locale.month(date, 1) + " " + date.getDate();
-      let yo = slopeHeight + minOffset;
       g.setColor(g.theme.bg)
         .setFontAlign(-1, 0)
         .setFontMartianMono()
