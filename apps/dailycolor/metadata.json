@@ -6,6 +6,7 @@
   "description": "A simple module that clocks can use to get a 'color of the day' that uses a queue to change every day at midnight",
   "icon": "app.png",
   "type": "module",
+  "provides_modules":["dailycolor"],
   "tags": "clock",
   "supports" : ["BANGLEJS","BANGLEJS2"],
   "storage": [
