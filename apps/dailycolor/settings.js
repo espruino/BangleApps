@@ -40,6 +40,7 @@
       /*LANG*/'Colors': () => { 
         require("colorpicker").show({
           onSelect:function(colors){
+            if (!colors || !colors.length) return; // Don't allow saving an empty palette
             settings.bgColors=colors;
             writeSettings();
           },
