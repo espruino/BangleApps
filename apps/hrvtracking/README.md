@@ -4,6 +4,7 @@ You can see your HRV as well as past HRVs in the app, and the HRV updates every 
 
 Note: HRV measurements do not match up with other smartwatches, because each smartwatch measures HRV differently. This app uses the RMSSD formula. You should also not rely on these measurements as a medical diagnosis, as the HRM sensor & these algorithms on the Bangle.js will never be as good as Apple or Garmin. Treat these simply as additional insight, and not a concrete diagnosis, as the measurements can always be wrong.
 
+Provides an additional Clock Info to monitor your HRV at a glance.
 ## How it works
 The reading starts by looking at the raw HR data. It detects the peaks (beats) and the time between the beats. Next, it uses the RMSSD formula to create the HRV measurement.
 
@@ -36,7 +37,18 @@ Measurements are NOT accurate while you are moving the slightest bit, as this in
 **Enabled** - Whether or not measurements should be taken at all.
 ## App
 In the app, you can see your HRV for today, your personal baseline or usual, and past HRV readings. 
+## Developer Info
+You can query HRV data by running
+```
+require("hrvtracking").getData();
+```
+which will return an object with `dailyHrvs` (HRVs from the past 6 days including today), `latestHrv` (The last HRV measurement. Can be from yesterday), `hrvBaseline` (The user's average baseline), and `daysTracked` (how many days the HRV module has been keeping track of HRV).
 
+To request all available information, you can run:
+```
+require("hrvtracking").getAllData();
+```
+which will return all available data saved in file, regardless of memory taken up. Use sparingly, as it is a large object.
 ## Authors
 - RKBoss6
 

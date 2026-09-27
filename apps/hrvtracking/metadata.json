@@ -17,6 +17,7 @@
     {"name":"hrvtracking.boot.js","url":"boot.js"},
     {"name":"hrvtracking.settings.js","url":"settings.js"},
     {"name":"hrvtracking","url":"module.js"},
+    {"name":"hrvtracking.clkinfo.js","url":"clkinfo.js"},
     {"name":"hrvtracking.img","url":"icon.js","evaluate":true}
   ],
   "data": [{"name":"hrv.json"},{"name":"hrvtracking.settings.json"}]
