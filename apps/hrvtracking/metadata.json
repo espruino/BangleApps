@@ -8,7 +8,7 @@
   "icon": "icon.png",
   "type": "app",
   "readme":"README.md",
-  "tags": "health",
+  "tags": "health,clkinfo",
   "supports": ["BANGLEJS2"],
   "provides_modules" : ["hrvtracking"],
   "storage": [
