@@ -158,8 +158,8 @@ function showMapMessage(msg) {
     distance = require("locale").distance(msg.distance);
   if (msg.instr) {
     var instr = msg.instr.replace(/\s*\/\s*/g," \/\n"); // convert slashes to newlines
-    if (instr.includes("towards") || instr.includes("toward")) {
-      m = instr.split(/towards|toward/);
+    m = instr.split(/towards|toward/);
+    if (m.length>1) {
       target = m[0].trim();
       street = m[1].trim();
     }else
