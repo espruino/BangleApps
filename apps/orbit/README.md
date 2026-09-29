@@ -2,7 +2,7 @@
 
 # orbit
 
-**orbit 0.04 stable**
+**orbit 0.05 stable**
 
 A clock app for Bangle.js 2 that lets you read the time, the phases of the Moon and related information from the relative positions of the Sun, Earth and Moon.
 
@@ -10,7 +10,7 @@ A clock app for Bangle.js 2 that lets you read the time, the phases of the Moon 
 
 orbit is an approximate clock that lets you look not only at the current time, but also at **how the Sun, Earth and Moon are positioned relative to one another right now** on the small screen of a wristwatch.
 
-The clock face shows the Sun, Earth, Moon, the day and night sides of the Earth, the selected location, sunrise and sunset directions, the phase of the Moon, date and time, battery level, and the selected country and place name. The Earth is drawn as a simplified map and rotates according to the time and selected location.
+The clock face shows the Sun, Earth, Moon, the day and night sides of the Earth, the selected location, sunrise and sunset directions, the phase of the Moon, date and time, native Bangle.js status widgets, and the selected country and place name. The Earth is drawn as a simplified map. Its astronomical orientation is calculated from the absolute UTC time and the selected longitude, independently of the civil time-zone or daylight-saving-time setting used for the text clock.
 
 The Moon is shown around the Earth using a simplified model based on the mean synodic month. You can enjoy watching, like a small celestial model, how the Moon moves as the date advances and how its position relates to the Sun around full moon and new moon.
 
@@ -34,7 +34,7 @@ Using the built-in five-week calendar, you can select another date and display t
 
 The location display at the bottom-right changes according to the selected location method.
 
-- **Place name**: Shows the country on the upper line and the municipality or city on the lower line. Text is made as large as practical and moves where necessary to avoid overlapping the Moon.
+- **Place name**: Shows the country on the upper line and the municipality or city on the lower line.
 - **Manual**: Shows latitude and longitude.
 - **GPS**: Shows a satellite symbol together with latitude and longitude.
 
@@ -43,7 +43,7 @@ The location display at the bottom-right changes according to the selected locat
 - Displays 35 days, Monday to Sunday, across five weeks.
 - Saturdays are blue, Sundays and public holidays are red, and today is green.
 - **Double-tap** a date to select it; the selected date blinks yellow.
-- **Single-tap** the calendar to return to the clock display while retaining the selected date.
+- **Single-tap** the calendar to return to the clock display while retaining the selected date blinking yellow.
 - **Double-tap** outside the date cells to clear the selected date.
 - **Swipe up or down** to move backwards or forwards by five weeks.
 
@@ -51,9 +51,8 @@ The location display at the bottom-right changes according to the selected locat
 
 There are three ways to set the location.
 
-**Place name**
-- Outside Japan: normally select country → capital. Representative cities are also included for some large countries that use several civil time zones.
-- Japan: select prefecture → municipality.
+**Place 
+- Select country → capital. Representative cities are also included for some large countries that use several civil time zones → push "Use place >".
 
 **Manual**
 - Enter latitude and longitude directly.
@@ -61,10 +60,25 @@ There are three ways to set the location.
 **GPS**
 - GPS is used only when **Get GPS fix** is selected in the settings screen.
 - GPS is switched off after a valid fix, after cancelling, or when leaving the settings screen.
-- GPS is not used during normal clock display. A saved GPS fix is used only as stored latitude and longitude, so there is no GPS power consumption during normal display.
+- GPS is not used during normal clock display. A saved GPS fix is used only as stored latitude and longitude.
+
+### Time display source
+
+The date and time drawn by orbit can be selected independently from the astronomical calculation.
+
+- **Bangle** (default): Uses the same local date and time currently shown by Bangle.js.
+- **Place**: When a named place is selected, orbit converts the watch's absolute UTC time using the standard UTC offset and daylight-saving-time (DST) rule stored for that place.
+
+Changing **Time source** never changes the Sun / Earth / Moon geometry. The astronomical display always uses UTC.
+
+Place time is available only for **Place name** locations. Manual and GPS locations do not contain enough information to determine a legal civil time zone reliably, so they fall back to Bangle time.
+
+orbit does not change the Bangle.js system time zone or DST setting when Place time is used. The conversion is performed only inside orbit.
 
 ### Other settings
 
+- **Date pos / Time pos**: Header / Top left / Below Sun can be selected independently.
+- **Date size / Time size**: Font sizes for on-face date/time text. Header text follows the native widget-bar theme; on-face text is drawn on black.
 - **View side**: North / South
 - Display sizes of the Sun, Earth and Moon
 - Lunar orbit radius
@@ -73,21 +87,24 @@ There are three ways to set the location.
 - Anniversaries and exceptional holidays
 - Deletion of holiday cache
 
+When the normal Bangle.js wrist-view gesture wakes the watch, orbit restores the LCD/backlight for the configured system LCD timeout. This does not affect the astronomical calculation.
+
 ## 3. Program structure
 
 ### `app.js`
 
 The main clock program. Its principal responsibilities are:
 
-- Date, time and battery display
-- Approximate solar-position calculation
+- Date/time display and native widget integration
+- UTC-based approximate solar-position calculation
 - Drawing the Earth, day/night boundary and simplified map
 - Observer location and sunrise/sunset directions
 - Moon position and phase display
 - Country/place name or coordinate display
 - Tap detection
 - Switching between the clock and calendar
-- State handling when the LCD turns OFF/ON
+- Selectable Bangle / Place civil-time display
+- State handling when the LCD turns OFF/ON and wrist-view backlight wake
 
 On Bangle.js it is stored as `orbit.app.js`.
 
@@ -110,6 +127,8 @@ On Bangle.js it is stored as `orbit.cal.js`.
 The settings screen.
 
 - Place name / Manual / GPS
+- Bangle / Place time-source selection
+- Saving the selected place's standard UTC offset and compact DST-rule id
 - On-demand GPS fixing and reliable GPS power-off
 - North / South
 - Celestial-body sizes and lunar-orbit size
@@ -123,6 +142,14 @@ On Bangle.js it is stored as `orbit.settings.js`.
 
 Contains the country, capital and selected representative-city data, together with the Japanese prefecture index. Because the full list of Japanese municipalities is relatively large, it is kept in a separate file. The `[offset, length]` pair for each prefecture is stored in `exports.jpidx`.
 
+### `timezone.js`
+
+Contains the compact civil-time table used only when **Time source = Place** is selected.
+
+The table is parallel to the world-place table and stores only small numeric values: the standard UTC offset in minutes and a shared DST-rule id. Places that use the same DST rule therefore do not duplicate full start/end-date descriptions. Japan uses one shared UTC+9 / no-DST definition for all municipalities.
+
+On Bangle.js it is stored as `orbittz`. The module is needed while a named place is being saved; normal clock operation keeps only the selected `tzBase` and `tzRule` values in `orbit.json`.
+
 ### `japan-municipalities.dat`
 
 Contains the orbit display name and representative latitude/longitude for municipalities throughout Japan, stored as concatenated JSON arrays by prefecture.
@@ -131,7 +158,7 @@ The whole data set is not expanded into RAM during normal operation. When a pref
 
 ### User data
 
-- `orbit.json`: Location, view direction, celestial-body sizes, etc.
+- `orbit.json`: Location, view direction, celestial-body sizes, time source, selected-place UTC offset and DST-rule id, etc.
 - `orbit.cal.json`: Calendar region, auto-return time, etc.
 - `orbit.events.json`: Anniversaries and exceptional holidays
 
@@ -144,6 +171,7 @@ The location coordinates `manualLat` / `manualLon` are used as the common refere
 - Reuse of drawing arrays to reduce garbage-collection load
 - Caching of Moon geometry for a fixed period
 - Loading place-name tables only when required
+- Compact numeric time-zone/DST data, loaded only while saving a named place
 - Loading Japanese municipalities one prefecture at a time
 - Compact yearly bit-table caching for public holidays
 - GPS used only while setting a location
@@ -229,6 +257,22 @@ The country names and capital coordinates are a static place table created durin
 
 orbit does not call the currently hosted REST Countries API at run time. Representative cities later added for some countries with multiple civil time zones were added manually for orbit.
 
+### Time zones and daylight saving time
+
+The compact Place-time table was prepared with reference to the IANA Time Zone Database (tzdb) and the open-source **countries-and-timezones** project.
+
+- IANA Time Zone Database / tz repository  
+  https://github.com/eggert/tz
+- tz code and data are, unless otherwise specified in that repository, public domain.
+- manuelmhtr / countries-and-timezones  
+  https://github.com/manuelmhtr/countries-and-timezones
+- Licence: **MIT License**  
+  https://github.com/manuelmhtr/countries-and-timezones/blob/master/LICENSE
+
+orbit does not include or execute the full tzdb. It stores the standard UTC offset and a compact shared DST-rule id for the named places included in orbit, and calculates the displayed Place time locally.
+
+Civil time-zone and DST rules are set by governments and can change. Therefore the Place-time table is a static approximation that may require updating when rules change. It must not be used where legally authoritative or safety-critical local time is required.
+
 ### Bangle.js / Espruino
 
 - Bangle.js App Loader / BangleApps  
@@ -244,7 +288,7 @@ orbit follows the BangleApps repository licensing policy and is provided under t
 
 Third-party data remains subject to the respective terms and licences listed above.
 
-### creater
+### Creator
 
 onisY
 
@@ -254,7 +298,7 @@ onisY
 
 # orbit
 
-**orbit 0.04 stable**
+**orbit 0.05 stable**
 
 Bangle.js 2 用の、太陽・地球・月の位置関係から時刻、月の満ち欠け等を読み取る時計アプリです。
 
@@ -262,7 +306,7 @@ Bangle.js 2 用の、太陽・地球・月の位置関係から時刻、月の�
 
 orbit は、現在時刻だけでなく、**「今、太陽・地球・月がどのような関係にあるか」**を腕時計の小さな画面で眺める、大まかな時計です。
 
-時計画面には、太陽、地球、月、地球の昼側・夜側、設定地点、日の出・日の入り方向、月の満ち欠け、日付・時刻、バッテリー残量、設定した国名・地名などを表示します。地球は簡略化した地図として描かれ、時刻と設定地点に応じて回転します。
+時計画面には、太陽、地球、月、地球の昼側・夜側、設定地点、日の出・日の入り方向、月の満ち欠け、日付・時刻、Bangle.js標準の状態ウィジェット、設定した国名・地名などを表示します。地球は簡略化した地図として描かれます。天体配置と地球の回転角は絶対時刻（UTC）と設定経度から算出し、文字として表示する現地時刻のタイムゾーンやサマータイム（DST）からは独立しています。
 
 月は平均朔望月を使った簡略モデルで地球の周囲に表示します。満月・新月のころの太陽との位置関係や、日付を進めたときの月の動きを、天体模型のように楽しめます。
 
@@ -304,8 +348,7 @@ orbit は、現在時刻だけでなく、**「今、太陽・地球・月がど
 位置設定は3方式です。
 
 **Place name**
-- 日本以外: 原則として国 → 首都を選択します。複数の標準時を持つ広い国の一部には代表都市も収録しています。
-- 日本: 都道府県 → 市区町村の順に選択します。
+- 原則として国 → 首都を選択します。複数の標準時を持つ広い国の一部には代表都市も収録しています。は
 
 
 **Manual**
@@ -316,8 +359,23 @@ orbit は、現在時刻だけでなく、**「今、太陽・地球・月がど
 - 有効な測位結果を得た後、キャンセルしたとき、または設定画面を離れたときには GPS をOFFにします。
 - 通常の時計表示中に GPS は使用しません。保存済みの測位結果は単なる緯度・経度として使うため、通常表示時のGPS電力消費はありません。
 
+### 時刻表示の基準
+
+orbitが文字として表示する日付・時刻は、天体配置の計算とは独立して選択できます。
+
+- **Bangle**（初期設定）: Bangle.js本体が現在表示している現地日時をそのまま使用します。
+- **Place**: Place nameで地名を選択した場合、その地点に保存された標準UTC差とDSTルールを使い、Bangle本体の絶対時刻（UTC）から現地日時をorbit内部で算出します。
+
+**Time sourceを変更しても、太陽・地球・月の配置は変化しません。** 天体配置は常にUTCから計算します。
+
+Place timeを利用できるのは **Place name** で地点を選択した場合です。Manual/GPSの緯度・経度だけから法的なタイムゾーン境界を正確に特定することはできないため、Manual/GPSではBangle timeへフォールバックします。
+
+Place timeを使用しても、Bangle.js本体のタイムゾーン設定やDST設定は変更しません。現地時刻への変換はorbitの内部だけで行います。
+
 ### その他の設定
 
+- Date pos / Time pos で Header / Top left / Below Sun を個別に選択できます。
+- Date size / Time size で、描画面に表示する場合の文字サイズを選択できます。Header表示ではウィジェット帯の配色に合わせ、描画面では黒背景に白系文字で表示します。
 - **View side**: North / South
 - 太陽・地球・月の表示サイズ
 - 月の公転半径
@@ -332,15 +390,16 @@ orbit は、現在時刻だけでなく、**「今、太陽・地球・月がど
 
 時計本体です。主に以下を担当します。
 
-- 日付・時刻・バッテリー表示
-- 太陽位置の概算
+- 日付・時刻表示とBangle.js標準ウィジェット連携
+- UTC基準の太陽位置概算
 - 地球・昼夜境界・簡略地図の描画
 - 観測地点と日の出・日の入り方向
 - 月の位置・月相表示
 - 国名・地名または座標表示
 - タップ判定
 - カレンダーとの画面切替
-- LCD OFF/ON 時の状態管理
+- Bangle / Place の時刻表示切替
+- LCD OFF/ON と腕を見る動作によるバックライト復帰の状態管理
 
 Bangle.js 内では `orbit.app.js` として保存されます。
 
@@ -363,6 +422,8 @@ Bangle.js 内では `orbit.cal.js` として保存されます。
 設定画面です。
 
 - Place name / Manual / GPS
+- Bangle / Place の時刻表示基準選択
+- 選択地点の標準UTC差とコンパクトなDSTルールIDの保存
 - GPS のオンデマンド測位と確実な電源OFF
 - North / South
 - 天体サイズと月軌道サイズ
@@ -376,6 +437,14 @@ Bangle.js 内では `orbit.settings.js` として保存されます。
 
 国・首都・一部代表都市、日本の都道府県索引を持ちます。日本の市区町村本体は大きいため別ファイルにし、都道府県ごとの `[offset, length]` を `exports.jpidx` に保持します。
 
+### `timezone.js`
+
+**Time source = Place** のときに使う、現地時刻用のコンパクトなデータです。
+
+世界の地点表と同じ並びに対応させ、標準UTC差（分）と共通DSTルールIDだけを数値で保持します。同じDST制度を使う地点ごとに開始・終了規則を重複保存しません。日本は全市区町村で共通の UTC+9 / DSTなしを1組だけ使用します。
+
+Bangle.js 内では `orbittz` として保存されます。地名確定時に必要な情報だけを `orbit.json` の `tzBase` / `tzRule` へ保存するため、通常時計表示中に世界のタイムゾーン表を常時RAMへ展開する必要はありません。
+
 ### `japan-municipalities.dat`
 
 日本全国の市区町村について、orbit の表示名と代表地点の緯度・経度を都道府県別JSON配列として連結したデータです。
@@ -384,7 +453,7 @@ Bangle.js 内では `orbit.settings.js` として保存されます。
 
 ### ユーザーデータ
 
-- `orbit.json`: 位置・表示方向・天体サイズなど
+- `orbit.json`: 位置・表示方向・天体サイズ・時刻表示基準・選択地点のUTC差/DSTルールなど
 - `orbit.cal.json`: カレンダー地域・自動復帰時間など
 - `orbit.events.json`: 記念日・独自休日
 
@@ -397,6 +466,7 @@ Bangle.js 内では `orbit.settings.js` として保存されます。
 - 描画配列を再利用してGC負荷を低減
 - 月形状を一定時間キャッシュ
 - 地名表を必要時だけ読み込む
+- タイムゾーン/DST情報は小さな数値表とし、地名確定時だけ読み込む
 - 日本の市区町村は都道府県単位で部分読み込み
 - 祝日は年単位のコンパクトなビット表でキャッシュ
 - GPS は位置設定時だけ使用
@@ -480,7 +550,7 @@ orbit 0.04 のデータ更新では、P05-22から作成されたオープンソ
 - Mozilla Public License 2.0  
   https://www.mozilla.org/MPL/2.0/
 
-現在の hosted REST Countries API を orbit が実行時に呼び出すことはありません。複数標準時を持つ一部の国について後から追加した代表都市は、orbit用に手動で追加したものです。
+現在の hosted REST Countries API を orbit が実行時に呼び出すことはありません。複数標準時を持つ一部の国について後から追加した代表都市は、orbit専用に手動で追加したものです。
 
 ### Bangle.js / Espruino
 
@@ -496,7 +566,22 @@ orbit 0.04 のデータ更新では、P05-22から作成されたオープンソ
 orbit は BangleApps リポジトリのライセンス方針に従い、**MIT License** で扱います。詳細はリポジトリ直下の `LICENSE` を参照してください。
 
 第三者データには上記それぞれの利用条件・ライセンスが適用されます。
+### タイムゾーン・サマータイム
+
+Place time用のコンパクトな時刻データは、IANA Time Zone Database（tzdb）およびオープンソースの **countries-and-timezones** を参考に作成しています。
+
+- IANA Time Zone Database / tz repository  
+  https://github.com/eggert/tz
+- 同リポジトリのtz code/dataは、特記があるファイルを除き public domain
+- manuelmhtr / countries-and-timezones  
+  https://github.com/manuelmhtr/countries-and-timezones
+- ライセンス: **MIT License**  
+  https://github.com/manuelmhtr/countries-and-timezones/blob/master/LICENSE
+
+orbitは完全なtzdbを収録・実行するのではなく、orbitに収録した地名について、標準UTC差と共通DSTルールIDを小さな表として保持し、Place time表示時にorbit内部で現地日時を計算します。
+
+タイムゾーンやDST制度は各国・地域の政策によって変更されることがあります。そのため、このPlace timeデータは静的な近似データであり、制度変更時には更新が必要になる場合があります。法的に厳密な時刻や安全上重要な用途には使用しないでください。
 
 ### 作者
 
-onishi(R8/9/21)
+onishi
