@@ -64,7 +64,7 @@
     calSource=undefined;
   }catch(calErr){calModule=undefined;calendar=undefined;}
   var BLACK=0x0000,WHITE=0xFFFF,NAVY=0x000F,DARKBLUE=0x0008,CYAN=0x07FF,YELLOW=0xFFE0,ORANGE=0xFD20,RED=0xF800,GREEN=0x04C0;
-  var busy=false,killed=false,minuteTimer,timeTimer,idleTimer,tapTimer,unlockTimer;
+  var busy=false,killed=false,minuteTimer,timeTimer,idleTimer,tapTimer;
   var mode="orbit",interactive=true,tapCount=0,resetOnWake=false;
   var selectedDayOffset=0,hasSelectedDate=false;
   var nativeDrawWidgets,widgetDrawWrapper;
@@ -891,8 +891,10 @@
     clear(idleTimer);idleTimer=undefined;
     clearTaps();
     interactive=false;
-    try{Bangle.setLCDPower(0);}catch(e){}
-    try{Bangle.setLocked(false);}catch(e){}
+    /* Bangle.js 2 uses a memory-in-pixel LCD which is normally left powered.
+       Only switch the backlight off here. Forcing LCD power off bypasses the
+       normal Q3 wake path because lcdPowerTimeout is intentionally zero. */
+    try{Bangle.setBacklight(false);}catch(e){}
   }
 
   function startOrbit(keepInteractive){
@@ -1027,7 +1029,6 @@
       clearTaps();
       clear(idleTimer);idleTimer=undefined;
       interactive=false;
-      try{Bangle.setLocked(false);}catch(e){}
 
       if(mode==="calendar"&&calendar)calendar.stop();
       if(mode!=="orbit"){
@@ -1048,15 +1049,6 @@
     }
   }
 
-  function onLock(isLocked){
-    if(!isLocked||killed)return;
-    clear(unlockTimer);
-    unlockTimer=setTimeout(function(){
-      unlockTimer=undefined;
-      if(!killed)try{Bangle.setLocked(false);}catch(e){}
-    },0);
-  }
-
   function onButton(){
     if(killed)return;
     cleanup();
@@ -1075,14 +1067,12 @@
     if(killed)return;
     killed=true;
     stopOrbitTimers();
-    clear(unlockTimer);unlockTimer=undefined;
     if(calendar)calendar.stop();
     removeWidgetRedrawHook();
     try{Bangle.setUI();}catch(e){}
     try{Bangle.removeListener("faceUp",onFaceUp);}catch(e){}
     try{Bangle.removeListener("twist",onTwist);}catch(e){}
     try{Bangle.removeListener("lcdPower",onLCD);}catch(e){}
-    try{Bangle.removeListener("lock",onLock);}catch(e){}
     try{E.removeListener("kill",cleanup);}catch(e){}
   }
 
@@ -1098,7 +1088,6 @@
   Bangle.on("faceUp",onFaceUp);
   Bangle.on("twist",onTwist);
   Bangle.on("lcdPower",onLCD);
-  Bangle.on("lock",onLock);
   E.on("kill",cleanup);
   try{Bangle.setLocked(false);}catch(e){}
   drawBase();
