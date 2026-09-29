@@ -2,7 +2,7 @@
   "id": "orbit",
   "name": "orbit",
   "shortName": "orbit",
-  "version": "0.04",
+  "version": "0.05",
   "author": "onisY",
   "description": "Sun-Earth-Moon clock with integrated calendar.",
   "icon": "app.png",
@@ -29,6 +29,10 @@
     {
       "name": "orbitloc",
       "url": "locations.js"
+    },
+    {
+      "name": "orbittz",
+      "url": "timezone.js"
     },
     {
       "name": "orbitjp.dat",
