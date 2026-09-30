@@ -157,7 +157,7 @@ function draw_triangle(lay, flip) {
   // triangle
 
   flip = flip ? lay.width : 0;
-  g.setColor(g.theme.fg2)
+  g.setColor(g.theme.fg)
    .fillPoly([flip + lay.x, lay.y + lay.height / 2,
               lay.x + lay.width - flip, lay.y,
               lay.x + lay.width - flip, lay.y + lay.height]);
