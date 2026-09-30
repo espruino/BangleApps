@@ -156,11 +156,11 @@ function draw_triangle(lay, flip) {
   // Render right-pointing triangle if `flip`, else left-pointing
   // triangle
 
-  flip = flip ? lay.width : 0;
+  flip = flip ? lay.w : 0;
   g.setColor(g.theme.fg)
-   .fillPoly([flip + lay.x, lay.y + lay.height / 2,
-              lay.x + lay.width - flip, lay.y,
-              lay.x + lay.width - flip, lay.y + lay.height]);
+   .fillPoly([flip + lay.x, lay.y + lay.h / 2,
+              lay.x + lay.w - flip, lay.y,
+              lay.x + lay.w - flip, lay.y + lay.h]);
 }
 
 
@@ -177,8 +177,8 @@ function update_status_widget(timer) {
         x: WIDGETS.tevtimer.x,
         // Center the arrow vertically in the 24-pixel-height widget area
         y: WIDGETS.tevtimer.y + Math.floor((24 - ARROW_BTN_SIZE) / 2),
-        width: ARROW_BTN_SIZE,
-        height: ARROW_BTN_SIZE
+        w: ARROW_BTN_SIZE,
+        h: ARROW_BTN_SIZE
       }, true);
     }
   }
@@ -610,7 +610,7 @@ class TimerFormatView {
 
       // Enlarge tap area by this amount in the X direction to make it
       // easier to hit
-      const x_tolerance = 20;
+      const x_tolerance = 40;
 
       for (let row_id of ROW_IDS) {
         for (let btn_id of ['prev', 'next']) {
@@ -649,6 +649,28 @@ class TimerFormatView {
   }
 
   _initLayout() {
+
+    function arrow_btn(id, mirror) {
+      // Generate a layout container for back/forward arrow buttons. It
+      // creates a container layout element that is the full height of
+      // the row, allowing for a large tap target, with a square arrow
+      // graphic centered vertically inside.
+      return {
+        type: 'h',
+        id: id,
+        width: ARROW_BTN_SIZE,
+        filly: 1,
+        c: [
+          {
+            type: 'custom',
+            render: lay => draw_triangle(lay, mirror),
+            width: ARROW_BTN_SIZE,
+            height: ARROW_BTN_SIZE,
+          }
+        ]
+      }
+    }
+
     const layout = new Layout(
       {
         type: 'v',
@@ -657,13 +679,7 @@ class TimerFormatView {
           {
             type: 'h',
             c: [
-              {
-                type: 'custom',
-                id: 'row1.prev',
-                render: lay => draw_triangle(lay, false),
-                width: ARROW_BTN_SIZE,
-                height: ARROW_BTN_SIZE,
-              },
+              arrow_btn('row1.prev', false),
               {
                 type: 'txt',
                 id: 'row1',
@@ -672,25 +688,13 @@ class TimerFormatView {
                 font: row_font('row1', 'format-menu'),
                 fillx: 1,
               },
-              {
-                type: 'custom',
-                id: 'row1.next',
-                render: lay => draw_triangle(lay, true),
-                width: ARROW_BTN_SIZE,
-                height: ARROW_BTN_SIZE,
-              },
+              arrow_btn('row1.next', true),
             ],
           },
           {
             type: 'h',
             c: [
-              {
-                type: 'custom',
-                id: 'row2.prev',
-                render: lay => draw_triangle(lay, false),
-                width: ARROW_BTN_SIZE,
-                height: ARROW_BTN_SIZE,
-              },
+              arrow_btn('row2.prev', false),
               {
                 type: 'txt',
                 id: 'row2',
@@ -699,25 +703,13 @@ class TimerFormatView {
                 font: row_font('row2', 'format-menu'),
                 fillx: 1,
               },
-              {
-                type: 'custom',
-                id: 'row2.next',
-                render: lay => draw_triangle(lay, true),
-                width: ARROW_BTN_SIZE,
-                height: ARROW_BTN_SIZE,
-              },
+              arrow_btn('row2.next', true),
             ],
           },
           {
             type: 'h',
             c: [
-              {
-                type: 'custom',
-                id: 'row3.prev',
-                render: lay => draw_triangle(lay, false),
-                width: ARROW_BTN_SIZE,
-                height: ARROW_BTN_SIZE,
-              },
+              arrow_btn('row3.prev', false),
               {
                 type: 'txt',
                 id: 'row3',
@@ -726,13 +718,7 @@ class TimerFormatView {
                 font: row_font('row3', 'format-menu'),
                 fillx: 1,
               },
-              {
-                type: 'custom',
-                id: 'row3.next',
-                render: lay => draw_triangle(lay, true),
-                width: ARROW_BTN_SIZE,
-                height: ARROW_BTN_SIZE,
-              },
+              arrow_btn('row3.next', true),
             ],
           },
           {
