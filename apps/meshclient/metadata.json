@@ -1,0 +1,22 @@
+{ "id": "meshclient",
+  "name": "Meshtastic Client",
+  "shortName": "Mesh Client",
+  "icon": "app-icon.png",
+  "version": "0.02",
+  "author": "g0730n",
+  "description": "A lightweight standalone Meshtastic client",
+  "readme": "readme.md",
+  "screenshots": [
+    {"url": "screenshot1.png"}, 
+    {"url": "screenshot2.png"}, 
+    {"url": "screenshot3.png"},
+    {"url": "screenshot3.png"},
+  ],
+  "tags": "bluetooth",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": false,
+  "storage": [
+    {"name": "meshclient.app.js", "url": "meshclient.app.js"},
+    {"name": "meshclient.img", "url": "app-icon.js", "evaluate":true},
+  ],
+}
