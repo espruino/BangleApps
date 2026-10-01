@@ -127,3 +127,4 @@
 0.92: Add support for displaying the time since the message was received using the 'date' parameter when pushing a message.
 0.93: Add support for notification actions.
 0.94: Fix crash with certain navigation messages (fix #4364)
+0.95: Fix for crash when messages contain malformed images (fix #4367)
