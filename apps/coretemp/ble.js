@@ -2,1272 +2,633 @@ var store = require("coretemp.store");
 var protocol = require("coretemp.protocol");
 var controlpoint = require("coretemp.controlpoint");
 
-var CORE_STATE = {
-  IDLE: "idle",
-  SCANNING: "scanning",
-  CONNECTING: "connecting",
-  DISCOVERING: "discovering",
-  ATTACHING: "attaching",
-  CONNECTED: "connected",
-  RECONNECT_WAIT: "reconnect_wait",
-  DISCONNECTING: "disconnecting",
-  ERROR: "error"
-};
-
-var RECONNECT_DELAY_MIN_MS = 5000;
-var RECONNECT_DELAY_MAX_MS = 30000;
-var BLE_SETTLE_DELAY_MS = 2000;
-var BLE_REBUILD_SETTLE_DELAY_MS = 4000;
-var BLE_BUSY_RETRY_LIMIT = 3;
-var PROFILE_UPGRADE_RETRY_MS = 60000;
-
-var initialized;
-var gatt;
-var device;
-var characteristics = [];
-var controlPointChar;
-var reconnectTimer;
-var reconnectDelayMs = RECONNECT_DELAY_MIN_MS;
-var expectedDisconnectDevice;
-var batteryLevel = 0;
-var coreState = CORE_STATE.IDLE;
-var lastError;
-var lifecycleQueue = Promise.resolve();
-var activeLifecycleTask;
-var shouldBeConnected = false;
-var pendingReconnect = false;
-var pendingRebuildCache = false;
-var pendingPairTarget;
-var activePairTarget;
-var pendingUnpair = false;
-var pendingDisconnect = false;
-var connectedHandlers = [];
-var connectionSessionId = 0;
-var activeProfile;
-var profileUpgradeTimer;
+var SETTLE_MS = 2000;
+var REBUILD_SETTLE_MS = 4000;
+var BUSY_RETRIES = 3;
+var RETRY_MIN_MS = 5000;
+var RETRY_MAX_MS = 30000;
+var transport;
+var generation = 0;
+var stopped = false;
+// Intent is independent of owners: an explicit disconnect suppresses automatic
+// connections until connect() or a subsequent complete power release/reacquire.
+var intent = "released";
+var pendingAction;
 var pauseOwners = [];
+var temporaryOwners = {};
+var lifecycleQueue = Promise.resolve();
+var activeTask;
+var reconnectTimer;
+var reconnectDelay = RETRY_MIN_MS;
+var state = "idle";
+var lastError;
+var waits = [];
 
-// BLE lifecycle is driven by desired state plus one-shot pending flags. Public
-// actions enqueue a reconciliation pass instead of directly mutating transport.
-function log(text, param) {
-  store.log(text, param);
-}
-
-function notifyConnectedHandlers(sessionId) {
-  var promise = Promise.resolve();
-  connectedHandlers.forEach(function (handler) {
-    promise = promise.then(function () {
-      return handler(sessionId);
-    }).catch(function (err) {
-      log("CORE connected handler failed", err);
-    });
+function log(message, value) { store.log(message, value); }
+function wait(ms, token) {
+  if (token !== undefined && token !== generation) {
+    return Promise.reject(error("CORE operation superseded", "superseded"));
+  }
+  if (stopped) return Promise.resolve();
+  return new Promise(function (resolve, reject) {
+    var entry = { resolve: resolve, reject: reject, token: token };
+    waits.push(entry);
+    entry.timer = setTimeout(function () {
+      var index = waits.indexOf(entry);
+      if (index < 0) return;
+      waits.splice(index, 1);
+      resolve();
+    }, ms);
   });
-  return promise;
 }
-
-function readSettings() {
-  return store.read();
+function cancelWaits(all) {
+  waits = waits.filter(function (entry) {
+    if (!all && entry.token === undefined) return true;
+    clearTimeout(entry.timer);
+    if (entry.token === undefined) entry.resolve();
+    else entry.reject(error("CORE operation superseded", "superseded"));
+    return false;
+  });
 }
-
-function writeSettings(mutator) {
-  return store.write(mutator);
+function error(message, context) {
+  var err = new Error(message);
+  err.coreContext = context;
+  return err;
 }
-
-function setCoreState(nextState, reason) {
-  coreState = nextState;
-  if (reason !== undefined) log("CORE state -> " + nextState, reason);
-  else log("CORE state -> " + nextState);
-  emitStatus();
+function normalizeError(err) { return err instanceof Error ? err : new Error(String(err)); }
+function isBusy(err) { return /in progress|0x11\b|\(BUSY\)/i.test(String(err)); }
+function isPaused() { return pauseOwners.length > 0; }
+function owners() { return (Bangle._PWR && Bangle._PWR.CORESensor) || []; }
+function isTransient(owner) { return /^coretemp\.(settings|pair|rebuild)$/.test(owner); }
+function isOn() {
+  return owners().some(function (owner) { return store.get().enabled === true || isTransient(owner); });
 }
+function isConnected() { return !!(transport && transport.gatt && transport.gatt.connected); }
+function wanted() { return !stopped && intent === "on" && isOn() && !isPaused(); }
+function paired() { return !!(store.get().btid || store.get().btname); }
+function ready() { return isConnected() && transport.ready && transport.token === generation; }
 
 function emitStatus() {
-  if (typeof Bangle === "undefined" || typeof Bangle.emit !== "function") return;
-  try {
-    Bangle.emit("CORESensorStatus", getStatus());
-  } catch (e) {
-    log("CORESensorStatus emit failed", e);
-  }
+  if (typeof Bangle.emit !== "function") return;
+  try { Bangle.emit("CORESensorStatus", getStatus()); }
+  catch (err) { log("CORE status listener failed", String(err)); }
 }
-
-function waitingPromise(timeout) {
-  return new Promise(function (resolve) {
-    log("Start waiting for " + timeout);
-    setTimeout(function () {
-      log("Done waiting for " + timeout);
-      resolve();
-    }, timeout);
-  });
+function setState(next, reason) {
+  state = next;
+  log("CORE state -> " + next, reason);
+  emitStatus();
 }
-
-function waitForBleSettle(reason) {
-  log("Waiting for BLE settle", reason);
-  return waitingPromise(BLE_SETTLE_DELAY_MS);
-}
-
-function waitForBleRebuildSettle(reason) {
-  log("Waiting for BLE rebuild settle", reason);
-  return waitingPromise(BLE_REBUILD_SETTLE_DELAY_MS);
-}
-
-function clearPowerOwners() {
-  if (typeof Bangle === "undefined" || !Bangle._PWR) return;
-  // setCORESensorPower follows Bangle's reference-counted owner convention.
-  Bangle._PWR.CORESensor = [];
-}
-
-function standDownCoreRuntime() {
-  clearReconnectTimer();
-  clearProfileUpgradeTimer();
-  pendingReconnect = false;
-  shouldBeConnected = false;
-  lastError = undefined;
-  clearPowerOwners();
-}
-
-function eraseStoredPairing(disableBackground) {
-  writeSettings(function (nextSettings) {
-    if (disableBackground) nextSettings.alwaysOn = false;
-    delete nextSettings.btid;
-    delete nextSettings.btname;
-    delete nextSettings.cache;
-  });
-}
-
-function resetReconnectBackoff() {
-  reconnectDelayMs = RECONNECT_DELAY_MIN_MS;
-}
-
-function increaseReconnectBackoff() {
-  reconnectDelayMs = Math.min(reconnectDelayMs * 2, RECONNECT_DELAY_MAX_MS);
-}
-
-function clearReconnectTimer() {
-  if (!reconnectTimer) return;
-  clearTimeout(reconnectTimer);
+function clearRetry() {
+  if (reconnectTimer) clearTimeout(reconnectTimer);
   reconnectTimer = undefined;
-  if (!shouldBeConnected) setCoreState(CORE_STATE.IDLE, "reconnect cancelled");
+}
+function invalidate(reason) {
+  generation++;
+  if (transport) transport.ready = false;
+  controlpoint.close("CORE transport closed: " + reason);
+  cancelWaits(false);
+}
+function check(s) {
+  if (stopped) throw error("CORE runtime stopped", "superseded");
+  if (isPaused()) throw error("CORESensor paused", "paused");
+  if (intent !== "on" || !isOn()) throw error("CORESensor power off", "power_off");
+  if (s.disconnected) throw error("Disconnected during CORE operation", "connect");
+  if (s !== transport || s.token !== generation) throw error("CORE operation superseded", "superseded");
+}
+function checkAction(action) {
+  if (stopped || pendingAction !== action) throw error("CORE action superseded", "superseded");
 }
 
-function clearProfileUpgradeTimer() {
-  if (!profileUpgradeTimer) return;
-  clearTimeout(profileUpgradeTimer);
-  profileUpgradeTimer = undefined;
+// Track native operations so teardown can invalidate immediately but wait for
+// the outstanding GATT operation before disconnecting. No overlapping BLE tasks.
+function io(s, fn) {
+  check(s);
+  var operation = (s.io || Promise.resolve()).then(function () { check(s); return fn(); });
+  s.io = operation.then(function () {}, function () {});
+  return operation.then(function (result) { check(s); return result; });
+}
+function listen(s, object, event, fn) {
+  var handler = function (value) {
+    if (transport === s && s.token === generation && !stopped) fn(value);
+  };
+  object.on(event, handler);
+  s.listeners.push({ object: object, event: event, handler: handler });
+}
+function detach(s) {
+  s.listeners.forEach(function (entry) {
+    if (entry.object.removeListener) entry.object.removeListener(entry.event, entry.handler);
+  });
+  s.listeners = [];
+}
+function disconnectGatt(s, attempt) {
+  if (!s.gatt || !s.gatt.connected) return Promise.resolve();
+  var result;
+  // Invoke immediately so shutdown still attempts disconnection before unload.
+  try { result = s.gatt.disconnect(); }
+  catch (err) { result = Promise.reject(err); }
+  return Promise.resolve(result).catch(function (err) {
+    if (!stopped && isBusy(err) && attempt < BUSY_RETRIES) {
+      return wait(SETTLE_MS).then(function () {
+        if (!stopped) return disconnectGatt(s, attempt + 1);
+      });
+    }
+    err = normalizeError(err);
+    err.coreContext = "disconnect";
+    throw err;
+  });
+}
+function closeTransport(reason, settleMs) {
+  var s = transport;
+  if (!s) return Promise.resolve();
+  clearRetry();
+  invalidate(reason);
+  detach(s);
+  setState("disconnecting", reason);
+  return (s.io || Promise.resolve()).then(function () {
+    return disconnectGatt(s, 1);
+  }).then(function () {
+    if (transport === s) transport = undefined;
+    store.flush();
+    return wait(settleMs || SETTLE_MS);
+  });
 }
 
-function isPaused() {
-  return pauseOwners.length > 0;
+function scheduleRetry() {
+  if (!wanted() || !paired() || pendingAction || reconnectTimer) return;
+  var delay = reconnectDelay;
+  reconnectDelay = Math.min(delay * 2, RETRY_MAX_MS);
+  setState("reconnect_wait", delay);
+  reconnectTimer = setTimeout(function () {
+    reconnectTimer = undefined;
+    if (wanted() && !pendingAction) background(requestAction("reconnect"));
+  }, delay);
 }
-
-function shouldAttemptProfileUpgrade() {
-  // Some devices initially expose only the standard thermometer profile. Keep
-  // that connection alive, then periodically rebuild discovery to pick up the
-  // richer custom CORE profile when it becomes visible.
-  return activeProfile === "health_thermometer" &&
-    !isCustomProfileOnly() &&
-    shouldBeConnected &&
-    !isPaused() &&
-    !pendingDisconnect &&
-    !pendingUnpair &&
-    isOn();
+function background(promise) {
+  promise.catch(function (err) { log("CORE background operation failed", String(err)); });
 }
-
-function scheduleProfileUpgrade() {
-  if (profileUpgradeTimer || !shouldAttemptProfileUpgrade()) return;
-  log("Scheduling CORE profile upgrade", PROFILE_UPGRADE_RETRY_MS);
-  profileUpgradeTimer = setTimeout(function () {
-    profileUpgradeTimer = undefined;
-    if (!shouldAttemptProfileUpgrade()) return;
-    enqueueLifecycle("profile_upgrade", function () {
-      pendingReconnect = false;
-      pendingRebuildCache = true;
-    }).catch(function (err) {
-      log("CORE profile upgrade failed", err);
-    });
-  }, PROFILE_UPGRADE_RETRY_MS);
-}
-
-function logSecurityStatus(currentGatt) {
-  var status;
-  if (!currentGatt || !currentGatt.getSecurityStatus) return Promise.resolve();
-  try {
-    status = currentGatt.getSecurityStatus();
-  } catch (e) {
-    log("Unable to read CORE security status", e);
-    return Promise.resolve();
-  }
-  log("CORE security status", status);
-  return Promise.resolve();
-}
-
-function isBleTransportError(err) {
-  var msg = String(err);
-  return msg.indexOf("GATT") >= 0 ||
-    msg.indexOf("Disconnected") >= 0 ||
-    msg.indexOf("disconnected") >= 0 ||
-    msg.indexOf("not connected") >= 0;
-}
-
-function isBleBusyError(err) {
-  var msg = String(err).toLowerCase();
-  return msg.indexOf("in progress") >= 0;
+function onDisconnect(s, reason) {
+  s.disconnected = true;
+  lastError = "Disconnected: " + reason;
+  log("Disconnect", reason);
+  invalidate("disconnect");
+  // Also queue this during readiness callbacks, where the active task may have
+  // already finished its last GATT operation. Cleanup and retry are idempotent.
+  background(enqueue("disconnect_event"));
 }
 
 function normalizeUuid(uuid) {
-  var normalized = uuid === undefined || uuid === null ? "" : String(uuid).toLowerCase();
-  if (normalized.length === 36 &&
-    normalized.indexOf("0000") === 0 &&
-    normalized.indexOf("-0000-1000-8000-00805f9b34fb") === 8) {
-    return "0x" + normalized.substr(4, 4);
-  }
-  return normalized;
+  var value = String(uuid || "").toLowerCase();
+  if (value.length === 36 && value.indexOf("0000") === 0 &&
+      value.indexOf("-0000-1000-8000-00805f9b34fb") === 8) return "0x" + value.substr(4, 4);
+  return value;
 }
-
-function isCustomProfileOnly() {
-  return store.get().customprofileonly === true;
+function supported(characteristic) {
+  return protocol.SUPPORTED_CHARACTERISTIC_UUIDS.indexOf(normalizeUuid(characteristic.uuid)) >= 0;
 }
-
-function isSupportedService(uuid) {
-  // customprofileonly is a diagnostic escape hatch: ignore the fallback
-  // Health Thermometer profile so discovery failures expose custom-profile bugs.
-  if (isCustomProfileOnly() && normalizeUuid(uuid) === protocol.HEALTH_THERMOMETER_SERVICE_UUID) return false;
-  return protocol.SUPPORTED_SERVICES.indexOf(normalizeUuid(uuid)) >= 0;
+function findCharacteristic(chars, uuid) {
+  for (var i = 0; i < chars.length; i++) if (normalizeUuid(chars[i].uuid) === uuid) return chars[i];
 }
-
-function isSupportedCharacteristic(uuid) {
-  if (isCustomProfileOnly() && normalizeUuid(uuid) === protocol.TEMPERATURE_MEASUREMENT_UUID) return false;
-  return protocol.SUPPORTED_CHARACTERISTIC_UUIDS.indexOf(normalizeUuid(uuid)) >= 0;
-}
-
-function characteristicProperties(characteristic) {
-  var properties = characteristic.properties || {};
-  return {
-    notify: !!properties.notify,
-    indicate: !!properties.indicate,
-    read: !!properties.read,
-    write: !!properties.write
-  };
-}
-
-function describeCharacteristicRole(uuid) {
-  uuid = normalizeUuid(uuid);
-  if (uuid === protocol.CORE_TEMP_UUID) return "custom_core_temperature";
-  if (uuid === protocol.TEMPERATURE_MEASUREMENT_UUID) return "health_thermometer_temperature";
-  if (uuid === protocol.CORE_CONTROL_POINT_UUID) return "custom_core_control_point";
-  if (uuid === protocol.BATTERY_LEVEL_UUID) return "battery_level";
-  return "unknown";
-}
-
-function missingRequiredCoreCharacteristics(chars) {
-  var hasTemp = false;
-  var customOnly = isCustomProfileOnly();
-  chars.forEach(function (characteristic) {
-    var uuid = normalizeUuid(characteristic.uuid);
-    if (uuid === protocol.CORE_TEMP_UUID || (!customOnly && uuid === protocol.TEMPERATURE_MEASUREMENT_UUID)) hasTemp = true;
-  });
-  var missing = [];
-  if (!hasTemp) missing.push(customOnly ? protocol.CORE_TEMP_UUID : protocol.CORE_TEMP_UUID + " or " + protocol.TEMPERATURE_MEASUREMENT_UUID);
-  return missing;
-}
-
-function getCharacteristicsProfile(chars) {
-  var hasCustomTemperature = false;
-  var hasHealthThermometer = false;
-  var hasControlPoint = false;
-  chars.forEach(function (characteristic) {
-    var uuid = normalizeUuid(characteristic.uuid);
-    if (uuid === protocol.CORE_TEMP_UUID) hasCustomTemperature = true;
-    if (uuid === protocol.TEMPERATURE_MEASUREMENT_UUID) hasHealthThermometer = true;
-    if (uuid === protocol.CORE_CONTROL_POINT_UUID) hasControlPoint = true;
-  });
-  if (hasCustomTemperature && hasControlPoint) return "custom_core";
-  if (hasCustomTemperature) return "custom_core_temperature";
-  if (hasHealthThermometer) return "health_thermometer";
-  return undefined;
-}
-
-function makeDiscoveryMismatchError(prefix, chars) {
-  var missing = missingRequiredCoreCharacteristics(chars);
-  var err = new Error(prefix + ": missing " + missing.join(", "));
-  err.coreContext = "discover";
+function requireTemperature(chars) {
+  if (findCharacteristic(chars, protocol.CORE_TEMP_UUID)) return;
+  var err = error("Runtime discovery missing required CORE characteristics: missing " +
+    protocol.CORE_TEMP_UUID, "discover");
   err.coreDiscoveryMismatch = true;
-  err.missingCharacteristics = missing;
-  return err;
+  err.missingCharacteristics = [protocol.CORE_TEMP_UUID];
+  throw err;
 }
-
-function setControlPointCharacteristic(characteristic) {
-  controlPointChar = characteristic;
-  if (!controlPointChar) {
-    controlpoint.setAdapter(undefined);
-    return;
-  }
-  controlpoint.setAdapter({
-    write: function (bytes) {
-      return controlPointChar.writeValue(new Uint8Array(bytes));
-    },
-    log: log
-  });
-}
-
-function addNotificationHandler(characteristic) {
-  var uuid = normalizeUuid(characteristic.uuid);
-  // Cached characteristics can be reattached across reconnects; mark the object
-  // so repeated attach attempts do not register duplicate notification handlers.
-  if (characteristic._coretempHandlerAdded) return;
-  characteristic._coretempHandlerAdded = true;
-  characteristic.on("characteristicvaluechanged", function (ev) {
-    if (uuid === protocol.CORE_TEMP_UUID) {
-      var data = protocol.parseMeasurement(ev.target.value, batteryLevel);
-      log("data", data);
-      Bangle.emit("CORESensor", data);
-    } else if (uuid === protocol.TEMPERATURE_MEASUREMENT_UUID) {
-      var tempData = protocol.parseTemperatureMeasurement(ev.target.value, batteryLevel);
-      log("data", tempData);
-      Bangle.emit("CORESensor", tempData);
-    } else if (uuid === protocol.CORE_CONTROL_POINT_UUID) {
-      log("Control point response", protocol.dataViewToArray(ev.target.value));
-      controlpoint.onNotification(ev.target.value);
-    } else if (uuid === protocol.BATTERY_LEVEL_UUID) {
-      batteryLevel = protocol.parseBattery(ev.target.value);
-      log("Got battery", batteryLevel);
-    }
-  });
-}
-
-function characteristicsFromCache(currentDevice) {
+function cachedCharacteristics(s) {
   var cache = store.get().cache;
-  var restored = [];
-  var service = { device: currentDevice };
-  var cached;
-  var characteristic;
-  var uuid;
-  if (!cache || !cache.characteristics) return restored;
-  log("Read cached characteristics");
-  // Espruino exposes BluetoothRemoteGATTCharacteristic enough for handle-based
-  // reconstruction, avoiding full service discovery on every reconnect.
-  for (uuid in cache.characteristics) {
-    if (!cache.characteristics.hasOwnProperty(uuid)) continue;
-    cached = cache.characteristics[uuid];
-    characteristic = new BluetoothRemoteGATTCharacteristic();
-    characteristic.handle_value = cached.handle;
+  if (!cache || !cache.characteristics) return [];
+  var chars = [];
+  Object.keys(cache.characteristics).forEach(function (key) {
+    var cached = cache.characteristics[key];
+    if (!supported(cached)) return;
+    var characteristic = new BluetoothRemoteGATTCharacteristic();
     characteristic.uuid = normalizeUuid(cached.uuid);
+    characteristic.handle_value = cached.handle;
+    characteristic.service = { device: s.device };
     characteristic.properties = {
-      notify: cached.notify,
-      indicate: cached.indicate,
-      read: cached.read,
-      write: cached.write
+      notify: cached.notify, indicate: cached.indicate, read: cached.read, write: cached.write
     };
-    characteristic.service = service;
-    addNotificationHandler(characteristic);
-    restored.push(characteristic);
-  }
-  restored = preferCustomCoreTemperature(restored);
-  if (!hasRequiredCoreCharacteristics(restored)) {
-    log("Cached characteristics do not satisfy current profile settings", {
-      profile: getCharacteristicsProfile(restored),
-      customOnly: isCustomProfileOnly()
-    });
-    return [];
-  }
-  return restored;
-}
-
-function saveCache(chars) {
-  writeSettings(function (nextSettings) {
-    var cache = { characteristics: {} };
-    chars.forEach(function (characteristic) {
-      var uuid = normalizeUuid(characteristic.uuid);
-      cache.characteristics[uuid] = {
-        handle: characteristic.handle_value,
-        uuid: uuid,
-        notify: characteristic.properties.notify,
-        indicate: characteristic.properties.indicate,
-        read: characteristic.properties.read,
-        write: characteristic.properties.write
-      };
-    });
-    nextSettings.cache = cache;
+    chars.push(characteristic);
   });
+  return findCharacteristic(chars, protocol.CORE_TEMP_UUID) ? chars : [];
 }
-
-function deleteCache() {
-  writeSettings(function (nextSettings) {
-    delete nextSettings.cache;
-  });
-}
-
-function hasRequiredCoreCharacteristics(chars) {
-  return missingRequiredCoreCharacteristics(chars).length === 0;
-}
-
-function preferCustomCoreTemperature(chars) {
-  var hasCustomTemperature = false;
-  var customOnly = isCustomProfileOnly();
-  chars.forEach(function (characteristic) {
-    if (normalizeUuid(characteristic.uuid) === protocol.CORE_TEMP_UUID) hasCustomTemperature = true;
-  });
-  if (!customOnly && !hasCustomTemperature) return chars;
-  // Prefer the custom CORE stream whenever present; the standard Health
-  // Thermometer value lacks skin temp, HR, heat flux, HSI, and quality bits.
-  return chars.filter(function (characteristic) {
+function saveCache(s, target) {
+  check(s);
+  var cache = { characteristics: {} };
+  s.chars.forEach(function (characteristic) {
     var uuid = normalizeUuid(characteristic.uuid);
-    if (customOnly && uuid === protocol.TEMPERATURE_MEASUREMENT_UUID) {
-      log("Skipping standard temperature measurement because custom CORE profile is required");
-      return false;
+    cache.characteristics[uuid] = Object.assign(
+      { handle: characteristic.handle_value, uuid: uuid }, characteristic.properties);
+  });
+  store.write(function (settings) {
+    settings.cache = cache;
+    if (target) {
+      settings.btid = target.id;
+      if (target.name) settings.btname = target.name;
+      else delete settings.btname;
     }
-    if (hasCustomTemperature && uuid === protocol.TEMPERATURE_MEASUREMENT_UUID) {
-      log("Skipping standard temperature measurement because custom CORE temperature is available");
-      return false;
-    }
-    return true;
   });
 }
+function deleteCache() { store.write(function (settings) { delete settings.cache; }); }
 
-function isTransportReady() {
-  return !!(gatt && gatt.connected && hasRequiredCoreCharacteristics(characteristics));
-}
-
-function createCharacteristicPromise(characteristic) {
-  var result = Promise.resolve();
-  var supportsUpdates;
+function notification(s, characteristic, ev) {
   var uuid = normalizeUuid(characteristic.uuid);
-  if (uuid === protocol.CORE_CONTROL_POINT_UUID) setControlPointCharacteristic(characteristic);
-  supportsUpdates = uuid === protocol.CORE_CONTROL_POINT_UUID ||
-    (characteristic.properties &&
-      (characteristic.properties.notify || characteristic.properties.indicate));
-  if (characteristic.properties && characteristic.properties.read) {
-    result = result.then(function () {
-      log("Reading characteristic", { uuid: uuid, role: describeCharacteristicRole(uuid) });
-      return characteristic.readValue().then(function (data) {
-        if (uuid === protocol.BATTERY_LEVEL_UUID) batteryLevel = protocol.parseBattery(data);
-      });
-    });
+  if (uuid === protocol.CORE_TEMP_UUID) {
+    var data = protocol.parseMeasurement(ev.target.value, s.battery);
+    log("data", data);
+    Bangle.emit("CORESensor", data);
+  } else if (uuid === protocol.CORE_CONTROL_POINT_UUID) {
+    log("Control point response", protocol.dataViewToArray(ev.target.value));
+    controlpoint.onNotification(ev.target.value);
+  } else if (uuid === protocol.BATTERY_LEVEL_UUID) {
+    s.battery = protocol.parseBattery(ev.target.value);
   }
-  if (supportsUpdates) {
-    result = result.then(function () {
-      log("Starting notifications", { uuid: uuid, role: describeCharacteristicRole(uuid) });
-      return characteristic.startNotifications()
-        .then(function () {
-          log("Notifications started", { uuid: uuid, role: describeCharacteristicRole(uuid) });
-        })
-        .then(function () {
-          // Give the watch BLE stack time to finish enabling CCCDs before the
-          // next characteristic operation; without this, writes can race setup.
-          return waitingPromise(3000);
-        });
-    });
-  }
-  return result;
 }
-
-function attachCharacteristics() {
-  var promise = Promise.resolve();
-  setCoreState(CORE_STATE.ATTACHING);
-  activeProfile = getCharacteristicsProfile(characteristics);
-  log("Attaching CORE profile", activeProfile);
-  characteristics.forEach(function (characteristic) {
-    promise = promise.then(function () {
-      addNotificationHandler(characteristic);
-      return createCharacteristicPromise(characteristic);
-    });
-  });
-  return promise.then(function () {
-    if (!hasRequiredCoreCharacteristics(characteristics)) {
-      throw makeDiscoveryMismatchError("Missing required CORE characteristics", characteristics);
-    }
-  });
-}
-
-function assertGattConnectedForDiscovery(currentGatt) {
-  if (!currentGatt || !currentGatt.connected) {
-    var err = new Error("Disconnected before discovery fallback");
-    err.coreContext = "connect";
-    throw err;
-  }
-  return currentGatt;
-}
-
-function discoverCharacteristics(currentGatt) {
-  currentGatt = assertGattConnectedForDiscovery(currentGatt);
-  setCoreState(CORE_STATE.DISCOVERING);
-  characteristics = [];
-  setControlPointCharacteristic(undefined);
-  log("Runtime discovery: getting services");
-  return currentGatt.getPrimaryServices().then(function (services) {
-    var promise = Promise.resolve();
-    log("Runtime discovery: got services", services.length);
-    services.forEach(function (service) {
-      var serviceUuid = normalizeUuid(service.uuid);
-      var serviceSupported = isSupportedService(serviceUuid);
-      log("Runtime discovery service", { uuid: serviceUuid, supported: serviceSupported });
-      if (!serviceSupported) return;
-      promise = promise.then(function () {
-        return service.getCharacteristics().then(function (chars) {
-          chars.forEach(function (characteristic) {
-            var uuid = normalizeUuid(characteristic.uuid);
-            var accepted = isSupportedCharacteristic(uuid);
-            log("Runtime discovery characteristic", {
-              service: serviceUuid,
-              uuid: uuid,
-              role: describeCharacteristicRole(uuid),
-              accepted: accepted,
-              properties: characteristicProperties(characteristic)
-            });
-            if (!accepted) return;
-            characteristics.push(characteristic);
+function attach(s) {
+  check(s);
+  requireTemperature(s.chars);
+  setState("attaching");
+  var chain = Promise.resolve();
+  s.chars.forEach(function (characteristic) {
+    chain = chain.then(function () {
+      check(s);
+      var uuid = normalizeUuid(characteristic.uuid);
+      var properties = characteristic.properties || {};
+      listen(s, characteristic, "characteristicvaluechanged", function (ev) { notification(s, characteristic, ev); });
+      var read = properties.read ? io(s, function () { return characteristic.readValue(); }) : Promise.resolve();
+      return read.then(function (value) {
+        check(s);
+        if (properties.read && uuid === protocol.BATTERY_LEVEL_UUID) s.battery = protocol.parseBattery(value);
+        if (properties.notify || properties.indicate || uuid === protocol.CORE_CONTROL_POINT_UUID) {
+          log("Starting notifications", uuid);
+          return io(s, function () { return characteristic.startNotifications(); }).then(function () {
+            // Preserve the tested CCCD settle interval before another operation.
+            return wait(3000);
           });
+        }
+      });
+    });
+  });
+  return chain.then(function () {
+    check(s);
+    s.cp = findCharacteristic(s.chars, protocol.CORE_CONTROL_POINT_UUID);
+    s.profile = s.cp ? "custom_core" : "custom_core_temperature";
+    if (s.cp) controlpoint.setAdapter({
+      write: function (bytes) { return io(s, function () { return s.cp.writeValue(new Uint8Array(bytes)); }); },
+      log: log
+    });
+    s.ready = true;
+  });
+}
+function discover(s) {
+  check(s);
+  setState("discovering");
+  s.chars = [];
+  function service(uuid) {
+    log("Runtime discovery: getting service", uuid);
+    // Explicit UUID lookup registers CORE's vendor base with Espruino. An
+    // unfiltered service scan may report only 0x0000[vendor].
+    return io(s, function () { return s.gatt.getPrimaryService(uuid); }).catch(function (err) {
+      if (!/^(Error: )?No Services found$/.test(String(err))) throw err;
+    }).then(function (found) {
+      check(s);
+      log("Runtime discovery service", { uuid: uuid, found: !!found });
+      if (!found) return;
+      return io(s, function () { return found.getCharacteristics(); }).then(function (chars) {
+        (chars || []).forEach(function (characteristic) {
+          log("Runtime discovery characteristic", {
+            service: uuid, uuid: characteristic.uuid, accepted: supported(characteristic)
+          });
+          if (supported(characteristic)) s.chars.push(characteristic);
         });
       });
     });
-    return promise;
-  }).then(function () {
-    characteristics = preferCustomCoreTemperature(characteristics);
-    if (!hasRequiredCoreCharacteristics(characteristics)) {
-      throw makeDiscoveryMismatchError("Runtime discovery missing required CORE characteristics", characteristics);
-    }
-    return attachCharacteristics();
-  }).then(function () {
-    saveCache(characteristics);
-  });
-}
-
-function attachCachedOrDiscover() {
-  var usedCache = false;
-  var currentGatt = gatt;
-  // Pairing deliberately bypasses saved handles because the target device may
-  // differ from the previously paired CORE.
-  if (activePairTarget) return discoverCharacteristics(currentGatt);
-  if (!characteristics.length) {
-    characteristics = characteristicsFromCache(device);
-    usedCache = characteristics.length > 0;
   }
-  if (!characteristics.length) return discoverCharacteristics(currentGatt);
-  return attachCharacteristics().catch(function (err) {
-    if (!usedCache) throw err;
-    log("Cached characteristics failed, evaluating discovery fallback", err);
-    assertGattConnectedForDiscovery(currentGatt);
-    log("Cached characteristics failed, rebuilding cache", err);
+  return service(protocol.CORE_SERVICE_UUID).then(function () {
+    requireTemperature(s.chars);
+    return service(protocol.BATTERY_SERVICE_UUID);
+  }).then(function () { s.discovered = true; return attach(s); });
+}
+function attachCachedOrDiscover(s, forceDiscovery) {
+  s.chars = forceDiscovery ? [] : cachedCharacteristics(s);
+  if (!s.chars.length) return discover(s);
+  log("Read cached characteristics");
+  return attach(s).catch(function (err) {
+    // A BUSY stack says nothing about handle validity. Retry with the cache.
+    if (isBusy(err)) throw err;
+    if (!s.gatt.connected) throw error("Disconnected during cached attach", "connect");
+    check(s);
+    log("Cached characteristics failed, rebuilding cache", String(err));
     deleteCache();
-    characteristics = [];
-    setControlPointCharacteristic(undefined);
-    return discoverCharacteristics(currentGatt);
+    detach(s);
+    listen(s, s.device, "gattserverdisconnected", function (reason) { onDisconnect(s, reason); });
+    return discover(s);
   });
 }
 
-function resetTransportState(reason) {
-  log("resetTransportState", reason);
-  store.flush();
-  clearProfileUpgradeTimer();
-  controlpoint.cancelActive("CORE transport closed: " + reason);
-  setControlPointCharacteristic(undefined);
-  characteristics = [];
-  batteryLevel = 0;
-  activeProfile = undefined;
-  // A future requestDevice call may return the same object; allow its disconnect
-  // handler to be installed again after transport state is rebuilt.
-  if (device) device._coretempDisconnectHandlerAdded = false;
-  gatt = undefined;
-  device = undefined;
-}
-
-function cleanupGatt(reason) {
-  var currentGatt = gatt;
-  var currentDevice = device;
-  log("cleanupGatt", reason);
-  resetTransportState(reason);
-  if (currentGatt && currentGatt.connected) {
-    expectedDisconnectDevice = currentDevice;
-    try {
-      currentGatt.disconnect();
-    } catch (e) {
-      log("cleanup disconnect error", e);
-      try {
-        NRF.disconnect();
-      } catch (e2) {
-        log("cleanup NRF.disconnect error", e2);
-      }
-    }
-  }
-}
-
-function scheduleReconnect(reason) {
-  // Capture the current delay before increasing it so the first retry is quick
-  // while subsequent failures back off up to RECONNECT_DELAY_MAX_MS.
-  var delay = reconnectDelayMs;
-  if (isPaused()) {
-    clearReconnectTimer();
-    pendingReconnect = false;
-    setCoreState(CORE_STATE.IDLE, "paused");
-    return;
-  }
-  if (reconnectTimer || !shouldBeConnected || pendingDisconnect || pendingUnpair) return;
-  increaseReconnectBackoff();
-  pendingReconnect = true;
-  setCoreState(CORE_STATE.RECONNECT_WAIT, delay);
-  reconnectTimer = setTimeout(function () {
-    reconnectTimer = undefined;
-    if (shouldBeConnected && !isPaused() && !pendingDisconnect && !pendingUnpair) {
-      enqueueLifecycle("reconnect", function () {
-        pendingReconnect = true;
-      }).catch(function (e) {
-        log("Reconnect task failed", e);
-      });
-    } else {
-      setCoreState(CORE_STATE.IDLE, reason || "power released before reconnect");
-    }
-  }, delay);
-}
-
-function enqueueLifecycle(kind, mutator) {
-  if (mutator) mutator();
-  // Serialize lifecycle work. BLE connect/disconnect/discovery operations are
-  // fragile when overlapped, and each queued pass reconciles the latest flags.
-  lifecycleQueue = lifecycleQueue.then(function () {
-    activeLifecycleTask = { kind: kind };
-    log("Lifecycle task start", kind);
-    return reconcileLifecycle(kind).then(function (result) {
-      activeLifecycleTask = undefined;
-      log("Lifecycle task done", kind);
-      return result;
-    }, function (err) {
-      activeLifecycleTask = undefined;
-      log("Lifecycle task error", { kind: kind, error: String(err) });
-      throw err;
-    });
-  }, function () {
-    activeLifecycleTask = { kind: kind };
-    return reconcileLifecycle(kind).then(function (result) {
-      activeLifecycleTask = undefined;
-      return result;
-    }, function (err) {
-      activeLifecycleTask = undefined;
-      throw err;
-    });
-  });
-  return lifecycleQueue;
-}
-
-function ensureConnectionDesiredOrThrow(stage) {
-  var powerErr;
-  if (isPaused()) {
-    powerErr = new Error("CORESensor paused before " + stage);
-    powerErr.coreContext = "paused";
-    throw powerErr;
-  }
-  if (!shouldBeConnected || !isOn() || pendingDisconnect || pendingUnpair) {
-    powerErr = new Error("CORESensor power off before " + stage);
-    powerErr.coreContext = "power_off";
-    throw powerErr;
-  }
-}
-
-function ensureDisconnectHandler(bleDevice) {
-  if (!bleDevice || bleDevice._coretempDisconnectHandlerAdded) return bleDevice;
-  bleDevice._coretempDisconnectHandlerAdded = true;
-  bleDevice.on("gattserverdisconnected", function (reason) {
-    onDisconnect(bleDevice, reason);
-  });
-  return bleDevice;
-}
-
-function ensureDeviceAvailable() {
-  var filters;
-  var targetId;
-  ensureConnectionDesiredOrThrow("connect");
-  if (device) {
-    ensureDisconnectHandler(device);
-    log("Reuse device", device);
-    return Promise.resolve(device);
-  }
-  setCoreState(CORE_STATE.SCANNING);
-  NRF.setScan();
-  targetId = activePairTarget && activePairTarget.id ? activePairTarget.id : store.get().btid;
-  filters = targetId ? [{ id: targetId }] : [{ name: store.get().btname }];
-  return NRF.requestDevice({ filters: filters, active: true })
-    .then(function (foundDevice) {
-      return waitingPromise(2000).then(function () {
-        return foundDevice;
-      });
-    })
-    .then(function (foundDevice) {
-      device = ensureDisconnectHandler(foundDevice);
-      return foundDevice;
-    }, function (err) {
-      err.coreContext = "request_device";
-      throw err;
-    });
-}
-
-function ensureGattConnected() {
-  ensureConnectionDesiredOrThrow("connect");
-  if (!device) {
-    var err = new Error("CORE device is unavailable");
-    err.coreContext = "connect";
-    throw err;
-  }
-  gatt = device.gatt;
-  if (gatt.connected) {
-    if (expectedDisconnectDevice === device) expectedDisconnectDevice = undefined;
-    return logSecurityStatus(gatt);
-  }
-  setCoreState(CORE_STATE.CONNECTING);
-  return gatt.connect()
-    .then(function () {
-      if (expectedDisconnectDevice === device) expectedDisconnectDevice = undefined;
-      return waitingPromise(2000);
-    })
-    .then(function () {
-      return logSecurityStatus(gatt);
-    }, function (err) {
-      if (!err.coreContext) err.coreContext = "connect";
-      throw err;
-    });
-}
-
-function ensureTransportReady() {
-  ensureConnectionDesiredOrThrow("attach");
-  if (isTransportReady()) {
-    setCoreState(CORE_STATE.CONNECTED, "transport already ready");
-    return Promise.resolve();
-  }
-  return attachCachedOrDiscover();
-}
-
-function performConnectSequence() {
-  var savedName = store.get().btname;
-  return ensureDeviceAvailable()
-    .then(ensureGattConnected)
-    .then(ensureTransportReady)
-    .then(function () {
-      ensureConnectionDesiredOrThrow("ready");
-      if (!activePairTarget && !store.get().btid && savedName && device.id) {
-        writeSettings(function (nextSettings) {
-          if (!nextSettings.btid && nextSettings.btname === savedName) nextSettings.btid = device.id;
-        });
-      }
-      lastError = undefined;
-      pendingReconnect = false;
-      resetReconnectBackoff();
-      connectionSessionId++;
-      setCoreState(CORE_STATE.CONNECTED);
-      scheduleProfileUpgrade();
-      return notifyConnectedHandlers(connectionSessionId);
-    })
-    .catch(function (err) {
-      if (String(err).indexOf("power off") >= 0) err.coreContext = "power_off";
-      else if (!err.coreContext && coreState === CORE_STATE.DISCOVERING) err.coreContext = "discover";
-      else if (!err.coreContext && coreState === CORE_STATE.ATTACHING) err.coreContext = "attach";
-      else if (!err.coreContext) err.coreContext = "connect";
-      throw err;
-    });
-}
-
-function handleLifecycleFailure(err) {
-  var context = err.coreContext || "connect";
-  var isPairAttempt = !!activePairTarget || !!(activeLifecycleTask && activeLifecycleTask.kind === "pair");
+function openTransport(target) {
+  if (!target && !paired()) return Promise.reject(error("CORE device is not paired", "no_pairing"));
+  var s = { token: ++generation, listeners: [], chars: [], battery: 0, ready: false };
+  transport = s;
   var settings = store.get();
-  lastError = String(err);
-  log("BLE failure", { context: context, error: lastError });
-  setCoreState(CORE_STATE.ERROR, context);
-  if (isPairAttempt) {
-    shouldBeConnected = false;
-    pendingReconnect = false;
-    clearReconnectTimer();
+  var id = target ? target.id : settings.btid;
+  var scan;
+  if (target && target.device) scan = Promise.resolve(target.device);
+  else {
+    setState("scanning");
+    scan = io(s, function () {
+      NRF.setScan();
+      return NRF.requestDevice({ filters: id ? [{ id: id }] : [{ name: settings.btname }], active: true });
+    }).then(function (found) { return wait(SETTLE_MS).then(function () { return found; }); });
   }
-  if (context === "no_pairing") {
-    clearReconnectTimer();
-    clearProfileUpgradeTimer();
-    pendingReconnect = false;
-    setCoreState(CORE_STATE.IDLE, context);
-    throw err;
-  }
-  if (context === "power_off") {
-    clearReconnectTimer();
-    cleanupGatt(context);
-    return waitForBleSettle(context).then(function () {
-      setCoreState(CORE_STATE.IDLE, context);
-      throw err;
-    });
-  }
-  if (context === "paused") {
-    clearReconnectTimer();
-    clearProfileUpgradeTimer();
-    pendingReconnect = false;
-    cleanupGatt(context);
-    return waitForBleSettle(context).then(function () {
-      setCoreState(CORE_STATE.IDLE, context);
-      throw err;
-    });
-  }
-  cleanupGatt(context);
-  return waitForBleSettle(context).then(function () {
-    if (isPairAttempt) {
-      pendingReconnect = false;
-      clearReconnectTimer();
-      setCoreState(CORE_STATE.IDLE, context);
-    } else if (shouldBeConnected && !isPaused() && !pendingDisconnect && !pendingUnpair && (settings.btid || settings.btname)) {
-      scheduleReconnect(context);
-    } else {
-      pendingReconnect = false;
-      clearReconnectTimer();
-      setCoreState(CORE_STATE.IDLE, context);
+  return scan.then(function (found) {
+    check(s);
+    s.device = found;
+    s.gatt = found.gatt;
+    listen(s, found, "gattserverdisconnected", function (reason) { onDisconnect(s, reason); });
+    if (s.gatt.connected) return;
+    setState("connecting");
+    return io(s, function () { return s.gatt.connect(); }).then(function () { return wait(SETTLE_MS); });
+  }).then(function () {
+    check(s);
+    if (!s.gatt.connected) throw error("Disconnected before discovery", "connect");
+    if (s.gatt.getSecurityStatus) {
+      try { log("CORE security status", s.gatt.getSecurityStatus()); }
+      catch (err) { log("CORE security status unavailable", String(err)); }
     }
-    throw err;
+    return attachCachedOrDiscover(s, !!target);
+  }).then(function () {
+    check(s);
+    if (!s.gatt.connected) throw error("Disconnected before ready", "connect");
+    if (!target && s.discovered) saveCache(s);
+    if (!target && !settings.btid && settings.btname) {
+      store.write(function (next) { if (next.btname === settings.btname && !next.btid) next.btid = s.device.id; });
+    }
+    lastError = undefined;
+    reconnectDelay = RETRY_MIN_MS;
+    if (!target) setState("connected");
   });
 }
-
-function performBusyRetry(attempt, err) {
-  lastError = String(err);
-  log("BLE stack busy", { attempt: attempt, error: lastError });
-  setCoreState(CORE_STATE.ERROR, "stack busy");
-  cleanupGatt("stack busy");
-  return waitForBleSettle("stack busy");
-}
-
-function reconcileLifecycle(kind) {
-  var settings = readSettings();
-  if (pendingUnpair) {
-    standDownCoreRuntime();
-    setCoreState(CORE_STATE.DISCONNECTING, "unpair");
-    cleanupGatt("unpair");
-    return waitForBleSettle("unpair").then(function () {
-      eraseStoredPairing(true);
-      standDownCoreRuntime();
-      pendingUnpair = false;
-      pendingDisconnect = false;
-      pendingPairTarget = undefined;
-      pendingRebuildCache = false;
-      setCoreState(CORE_STATE.IDLE, "unpaired");
-    });
-  }
-  if (pendingDisconnect) {
-    clearReconnectTimer();
-    clearProfileUpgradeTimer();
-    pendingReconnect = false;
-    shouldBeConnected = false;
-    setCoreState(CORE_STATE.DISCONNECTING, "requested disconnect");
-    cleanupGatt("requested disconnect");
-    return waitForBleSettle("requested disconnect").then(function () {
-      pendingDisconnect = false;
-      setCoreState(CORE_STATE.IDLE, "requested disconnect");
-    });
-  }
-  if (isPaused()) {
-    clearReconnectTimer();
-    clearProfileUpgradeTimer();
-    pendingReconnect = false;
-    if (gatt || device) {
-      setCoreState(CORE_STATE.DISCONNECTING, "paused");
-      cleanupGatt("paused");
-      return waitForBleSettle("paused").then(function () {
-        setCoreState(CORE_STATE.IDLE, "paused");
-      });
-    }
-    setCoreState(CORE_STATE.IDLE, "paused");
-    return Promise.resolve();
-  }
-  if (pendingPairTarget) {
-    clearReconnectTimer();
-    clearProfileUpgradeTimer();
-    pendingReconnect = false;
-    shouldBeConnected = true;
-    setCoreState(CORE_STATE.DISCONNECTING, "pair target");
-    cleanupGatt("pair target");
-    return waitForBleSettle("pair target").then(function () {
-      // Move the pending target into activePairTarget for the duration of
-      // discovery so cache use and status handling know this is a pair attempt.
-      var pairTarget = pendingPairTarget;
-      pendingPairTarget = undefined;
-      activePairTarget = pairTarget;
-      if (pairTarget && pairTarget.device) device = pairTarget.device;
-      pendingRebuildCache = false;
-      return connectWithBusyRetry().then(function (result) {
-        writeSettings(function (nextSettings) {
-          nextSettings.btid = pairTarget.id;
-          if (pairTarget.name) nextSettings.btname = pairTarget.name;
-          else delete nextSettings.btname;
-        });
-        activePairTarget = undefined;
-        return result;
-      }, function (err) {
-        activePairTarget = undefined;
-        throw err;
-      });
-    });
-  }
-  if (pendingRebuildCache) {
-    clearReconnectTimer();
-    pendingReconnect = false;
-    shouldBeConnected = true;
-    setCoreState(CORE_STATE.DISCONNECTING, "rebuild cache");
-    cleanupGatt("rebuild cache");
-    deleteCache();
-    return waitForBleRebuildSettle("rebuild cache").then(function () {
-      pendingRebuildCache = false;
-      return connectWithBusyRetry();
-    });
-  }
-  if (pendingReconnect) {
-    clearReconnectTimer();
-    clearProfileUpgradeTimer();
-    setCoreState(CORE_STATE.DISCONNECTING, "reconnect requested");
-    cleanupGatt("reconnect requested");
-    return waitForBleSettle("reconnect requested").then(function () {
-      return connectWithBusyRetry();
-    }).then(function (result) {
-      pendingReconnect = false;
-      return result;
-    });
-  }
-  if (!shouldBeConnected) {
-    clearReconnectTimer();
-    clearProfileUpgradeTimer();
-    if (gatt || device) {
-      setCoreState(CORE_STATE.DISCONNECTING, "no connection requested");
-      cleanupGatt("no connection requested");
-      return waitForBleSettle("no connection requested").then(function () {
-        setCoreState(CORE_STATE.IDLE, "no connection requested");
-      });
-    }
-    setCoreState(CORE_STATE.IDLE, "no connection requested");
-    return Promise.resolve();
-  }
-  if (!settings.btid && !settings.btname) {
-    pendingReconnect = false;
-    clearReconnectTimer();
-    clearProfileUpgradeTimer();
-    lastError = "CORE device is not paired";
-    setCoreState(CORE_STATE.IDLE, "no_pairing");
-    if (kind === "connect" || kind === "power_on" || kind === "reconnect") {
-      var pairErr = new Error("CORE device is not paired");
-      pairErr.coreContext = "no_pairing";
-      throw pairErr;
-    }
-    return Promise.resolve();
-  }
-  return connectWithBusyRetry();
-}
-
-function connectWithBusyRetry() {
+function connectWithRetry(target, action) {
   var attempts = 0;
-  function attemptConnect() {
+  function attempt() {
+    if (action) checkAction(action);
     attempts++;
-    return performConnectSequence().catch(function (err) {
-      if (isBleBusyError(err) && shouldBeConnected && !isPaused() && attempts < BLE_BUSY_RETRY_LIMIT) {
-        return performBusyRetry(attempts, err).then(attemptConnect);
-      }
-      return handleLifecycleFailure(err);
+    return openTransport(target).catch(function (err) {
+      if (!isBusy(err) || !wanted() || attempts >= BUSY_RETRIES || (action && pendingAction !== action)) throw err;
+      log("BLE stack busy", { attempt: attempts, error: String(err) });
+      return closeTransport("stack busy").then(attempt);
     });
   }
-  return attemptConnect();
+  return attempt();
 }
-
-function isTransientOwner(owner) {
-  return owner === "coretemp.settings" ||
-    owner === "coretemp.pair" ||
-    owner === "coretemp.rebuild";
-}
-
-function isOn() {
-  var owners = (Bangle._PWR && Bangle._PWR.CORESensor) || [];
-  return owners.some(function (owner) {
-    return store.get().enabled === true || isTransientOwner(owner);
+function reconcile(kind, action) {
+  store.read();
+  if (action) {
+    checkAction(action);
+    return closeTransport(action.kind, action.kind === "rebuild" ? REBUILD_SETTLE_MS : SETTLE_MS).then(function () {
+      checkAction(action);
+      if (action.kind === "unpair") {
+        store.write(function (settings) {
+          settings.alwaysOn = false;
+          delete settings.btid;
+          delete settings.btname;
+          delete settings.cache;
+        });
+        if (Bangle._PWR) Bangle._PWR.CORESensor = [];
+        intent = "released";
+        lastError = undefined;
+        setState("idle", "unpaired");
+        return;
+      }
+      if (action.kind === "rebuild") deleteCache();
+      return connectWithRetry(action.target, action).then(function () {
+        checkAction(action);
+        if (action.kind === "pair") {
+          saveCache(transport, action.target);
+          setState("connected");
+        }
+      });
+    });
+  }
+  // Explicit actions run in their own queue slots; background requests cannot
+  // consume or replace them, nor bypass an already scheduled retry delay.
+  if (pendingAction) return Promise.resolve();
+  if (!wanted()) return closeTransport(isPaused() ? "paused" : "power off").then(function () {
+    if (!stopped) setState("idle");
   });
+  if (kind === "disconnect_event") return closeTransport("disconnect").then(scheduleRetry);
+  if (reconnectTimer || ready()) return Promise.resolve();
+  return closeTransport("new connection").then(function () { return connectWithRetry(); });
 }
-
-function isConnected() {
-  return !!(gatt && gatt.connected);
-}
-
-function runWithTemporaryPower(owner, fn) {
-  var acquiredPower = false;
-  var promise;
-  // Settings/debug actions need a live connection but should not leave the
-  // sensor powered after they finish unless another owner already held power.
-  if (!isOn()) {
-    setPower(1, owner);
-    acquiredPower = true;
-  }
-  try {
-    promise = Promise.resolve(fn());
-  } catch (e) {
-    promise = Promise.reject(e);
-  }
-  return promise.then(function (result) {
-    if (acquiredPower) setPower(0, owner);
+function enqueue(kind, action) {
+  var task = lifecycleQueue.then(function () {
+    if (stopped) throw error("CORE runtime stopped", "superseded");
+    activeTask = kind;
+    log("Lifecycle task start", kind);
+    return reconcile(kind, action);
+  }).then(function (result) {
+    if (action && pendingAction === action) pendingAction = undefined;
     return result;
-  }, function (err) {
-    if (acquiredPower) setPower(0, owner);
-    throw err;
+  }, function (failure) {
+    var err = normalizeError(failure);
+    if (!err.coreContext) {
+      err.coreContext = state === "discovering" || state === "attaching" ? state.replace(/ing$/, "") : "connect";
+    }
+    var cancelled = /^(superseded|power_off|paused)$/.test(err.coreContext);
+    if (action && pendingAction === action) {
+      pendingAction = undefined;
+      if (action.kind === "pair") intent = "released";
+    }
+    if (stopped) throw err;
+    if (!cancelled) {
+      lastError = String(err);
+      setState("error", err.coreContext);
+    }
+    var cleanup = err.coreContext === "disconnect" ? Promise.resolve() : closeTransport(err.coreContext);
+    return cleanup.catch(function (closeError) {
+      log("CORE cleanup failed", String(closeError));
+    }).then(function () {
+      if (!stopped) {
+        setState("idle");
+        if (!cancelled && kind !== "pair") scheduleRetry();
+      }
+      throw err;
+    });
   });
+  // Keep the queue fulfilled after failure, while each caller receives its own
+  // rejection. Both outcomes use the same execution and cleanup path.
+  lifecycleQueue = task.then(function () { activeTask = undefined; }, function () { activeTask = undefined; });
+  return task;
 }
-
-function onDisconnect(disconnectedDevice, reason) {
-  // cleanupGatt intentionally disconnects; ignore that event so requested
-  // disconnects do not schedule a reconnect.
-  if (expectedDisconnectDevice && expectedDisconnectDevice === disconnectedDevice) {
-    expectedDisconnectDevice = undefined;
-    log("Ignoring expected disconnect", reason);
-    return;
-  }
-  log("Disconnect", reason);
-  lastError = "Disconnected: " + reason;
-  resetTransportState("disconnect");
-  if (shouldBeConnected && !isPaused() && !pendingDisconnect && !pendingUnpair && isOn()) {
-    scheduleReconnect("disconnect");
-  } else {
-    pendingReconnect = false;
-    clearReconnectTimer();
-    setCoreState(CORE_STATE.IDLE, "disconnect while off");
-  }
-}
-
-function requestTransportReconnect(reason, err) {
-  log("Request transport reconnect", { reason: reason, error: String(err) });
-  lastError = String(err);
-  if (!shouldBeConnected || isPaused() || pendingDisconnect || pendingUnpair || !isOn()) return;
-  pendingReconnect = true;
-  enqueueLifecycle("transport_recovery", function () {
-    pendingReconnect = true;
-  }).catch(function (queueErr) {
-    log("Transport recovery failed", queueErr);
-  });
+function requestAction(kind, target) {
+  var action = { kind: kind, target: target };
+  pendingAction = action;
+  intent = kind === "unpair" ? "released" : "on";
+  clearRetry();
+  invalidate(kind);
+  return enqueue(kind, action);
 }
 
 function connect() {
-  readSettings();
-  if (!isOn()) return Promise.reject(new Error("CORESensor has no power owner"));
-  if (!store.get().btid && !store.get().btname) return Promise.reject(new Error("CORE device is not paired"));
-  if (isPaused()) {
-    clearReconnectTimer();
-    pendingReconnect = false;
-    setCoreState(CORE_STATE.IDLE, "paused");
-    return Promise.resolve();
+  store.read();
+  if (!isOn()) return Promise.reject(error("CORESensor has no power owner", "power_off"));
+  if (!paired()) return Promise.reject(error("CORE device is not paired", "no_pairing"));
+  if (pendingAction) {
+    pendingAction = undefined;
+    invalidate("connect requested");
   }
-  return enqueueLifecycle("connect", function () {
-    pendingDisconnect = false;
-    pendingUnpair = false;
-    pendingReconnect = false;
-    shouldBeConnected = true;
-  });
+  clearRetry();
+  intent = "on";
+  return enqueue("connect");
 }
-
 function disconnect() {
-  return enqueueLifecycle("disconnect", function () {
-    clearReconnectTimer();
-    pendingReconnect = false;
-    pendingDisconnect = true;
-    shouldBeConnected = false;
-  });
+  intent = "disconnect";
+  pendingAction = undefined;
+  clearRetry();
+  invalidate("requested disconnect");
+  return enqueue("disconnect");
 }
-
-function pairDevice(deviceOrId, deviceName) {
-  var pairTarget;
-  if (deviceOrId && typeof deviceOrId === "object") {
-    if (!deviceOrId.id) return Promise.reject(new Error("Missing CORE device id"));
-    pairTarget = {
-      id: deviceOrId.id,
-      name: deviceOrId.name,
-      device: deviceOrId
-    };
-  } else {
-    if (!deviceOrId) return Promise.reject(new Error("Missing CORE device id"));
-    pairTarget = {
-      id: deviceOrId,
-      name: deviceName
-    };
+function runWithTemporaryPower(owner, fn) {
+  // Count overlapping internal leases without changing Bangle's idempotent
+  // public owner API. A cancelled operation cannot release another's lease.
+  var lease = temporaryOwners[owner];
+  if (!lease) {
+    lease = temporaryOwners[owner] = { count: 0, acquired: owners().indexOf(owner) < 0 };
+    if (lease.acquired) setPower(1, owner);
   }
-  return runWithTemporaryPower("coretemp.pair", function () {
-    return enqueueLifecycle("pair", function () {
-      clearReconnectTimer();
-      pendingReconnect = false;
-      pendingDisconnect = false;
-      pendingUnpair = false;
-      pendingRebuildCache = false;
-      pendingPairTarget = pairTarget;
-      shouldBeConnected = true;
-    });
-  });
-}
-
-function unpairDevice() {
-  return enqueueLifecycle("unpair", function () {
-    clearReconnectTimer();
-    pendingReconnect = false;
-    pendingDisconnect = false;
-    pendingUnpair = true;
-    shouldBeConnected = false;
-  });
-}
-
-function rebuildCache() {
-  readSettings();
-  if (!store.get().btid && !store.get().btname) return Promise.reject(new Error("CORE device is not paired"));
-  return runWithTemporaryPower("coretemp.rebuild", function () {
-    return enqueueLifecycle("rebuild", function () {
-      clearReconnectTimer();
-      pendingReconnect = false;
-      pendingDisconnect = false;
-      pendingRebuildCache = true;
-      shouldBeConnected = true;
-    });
-  });
-}
-
-function writeControlPoint(opCode, params, options) {
-  if (!controlPointChar || !gatt || !gatt.connected) {
-    return Promise.reject(new Error("CORE control point is not connected"));
+  lease.count++;
+  function release() {
+    if (--lease.count) return;
+    delete temporaryOwners[owner];
+    if (lease.acquired) setPower(0, owner);
   }
-  return controlpoint.request(opCode, params, options).catch(function (err) {
-    if (isBleTransportError(err)) requestTransportReconnect("control_point_transport", err);
+  return Promise.resolve().then(fn).then(function (result) {
+    release();
+    return result;
+  }, function (err) {
+    release();
     throw err;
   });
 }
-
+function runWithConnectedSession(owner, fn) {
+  return runWithTemporaryPower(owner, function () { return connect().then(fn); });
+}
+function pairDevice(deviceOrId, name) {
+  var target = typeof deviceOrId === "object" && deviceOrId ?
+    { id: deviceOrId.id, name: deviceOrId.name, device: deviceOrId } : { id: deviceOrId, name: name };
+  if (!target.id) return Promise.reject(new Error("Missing CORE device id"));
+  return runWithTemporaryPower("coretemp.pair", function () { return requestAction("pair", target); });
+}
+function rebuildCache() {
+  store.read();
+  if (!paired()) return Promise.reject(new Error("CORE device is not paired"));
+  return runWithTemporaryPower("coretemp.rebuild", function () { return requestAction("rebuild"); });
+}
+function pause(owner) {
+  owner = owner || "?";
+  if (pauseOwners.indexOf(owner) < 0) pauseOwners.push(owner);
+  clearRetry();
+  invalidate("paused");
+  log("CORESensor pause", pauseOwners);
+  return enqueue("pause");
+}
+function resume(owner) {
+  owner = owner || "?";
+  pauseOwners = pauseOwners.filter(function (item) { return item !== owner; });
+  log("CORESensor resume", pauseOwners);
+  return enqueue("resume");
+}
+function setPower(on, owner) {
+  owner = owner || "?";
+  if (on && store.read().enabled !== true && !isTransient(owner)) return;
+  if (!Bangle._PWR) Bangle._PWR = {};
+  if (!Bangle._PWR.CORESensor) Bangle._PWR.CORESensor = [];
+  var wasOff = !isOn();
+  var list = Bangle._PWR.CORESensor;
+  if (on && list.indexOf(owner) < 0) list.push(owner);
+  if (!on) Bangle._PWR.CORESensor = list.filter(function (item) { return item !== owner; });
+  if (stopped) return;
+  log("setCORESensorPower", { on: !!on, owner: owner });
+  if (!isOn()) {
+    intent = "released";
+    clearRetry();
+    invalidate("power off");
+    background(enqueue("power_off"));
+  } else if (!isTransient(owner)) {
+    if (!(pendingAction && pendingAction.kind === "unpair") && (wasOff || intent !== "disconnect")) intent = "on";
+    background(enqueue("power_on"));
+  }
+}
+function applySettings() {
+  var settings = store.read();
+  var previous = owners();
+  if (!settings.enabled) {
+    if (settings.alwaysOn) store.write(function (next) { next.alwaysOn = false; });
+    if (Bangle._PWR) Bangle._PWR.CORESensor = previous.filter(isTransient);
+  }
+  if (settings.enabled && settings.alwaysOn) {
+    if (previous.indexOf("coretemp.enabled") < 0) setPower(1, "coretemp.enabled");
+  } else if (previous.indexOf("coretemp.enabled") >= 0 || (previous.length && !isOn())) {
+    setPower(0, "coretemp.enabled");
+  }
+  emitStatus();
+}
+function writeControlPoint(opcode, params, options, token) {
+  if (token !== undefined && token !== generation) {
+    return Promise.reject(error("CORE operation superseded", "superseded"));
+  }
+  if (!ready() || !transport.cp) return Promise.reject(new Error("CORE control point is not connected"));
+  var s = transport;
+  return controlpoint.request(opcode, params, options).then(function (response) {
+    check(s);
+    return response;
+  }).catch(function (err) {
+    if (err.coreTransportFailure && transport === s && s.token === generation) {
+      lastError = String(err);
+      invalidate("control point failure");
+      if (wanted() && !pendingAction) background(enqueue("disconnect_event"));
+    }
+    throw err;
+  });
+}
 function getStatus() {
-  readSettings();
+  var settings = store.read();
   return {
-    enabled: store.get().enabled === true,
-    alwaysOn: store.get().enabled === true && store.get().alwaysOn === true,
-    paired: !!(store.get().btid || store.get().btname),
-    deviceId: store.get().btid,
-    deviceName: store.get().btname,
-    state: coreState,
-    connected: !!(gatt && gatt.connected),
+    enabled: settings.enabled === true,
+    alwaysOn: settings.enabled === true && settings.alwaysOn === true,
+    paired: paired(),
+    deviceId: settings.btid,
+    deviceName: settings.btname,
+    state: state,
+    connected: isConnected(),
     reconnectScheduled: !!reconnectTimer,
-    profileUpgradeScheduled: !!profileUpgradeTimer,
-    hasCache: !!(store.get().cache && store.get().cache.characteristics),
-    profile: activeProfile,
-    customProfileOnly: store.get().customprofileonly === true,
+    profileUpgradeScheduled: false,
+    customProfileOnly: true,
+    hasCache: !!(settings.cache && settings.cache.characteristics),
+    profile: transport && transport.profile,
     lastError: lastError,
-    activeTask: activeLifecycleTask && activeLifecycleTask.kind,
-    desiredConnected: !!shouldBeConnected,
-    pendingReconnect: !!pendingReconnect,
+    activeTask: activeTask,
+    desiredConnected: intent === "on",
+    pendingReconnect: !!reconnectTimer || !!(pendingAction && pendingAction.kind === "reconnect"),
     paused: isPaused(),
     pauseOwners: pauseOwners.slice()
   };
 }
 
-function pause(owner) {
-  if (!owner) owner = "?";
-  if (pauseOwners.indexOf(owner) < 0) pauseOwners.push(owner);
-  log("CORESensor pause ->", { owner: owner, owners: pauseOwners.slice() });
-  clearReconnectTimer();
-  clearProfileUpgradeTimer();
-  pendingReconnect = false;
-  return enqueueLifecycle("pause", function () {
-    clearReconnectTimer();
-    clearProfileUpgradeTimer();
-    pendingReconnect = false;
-  });
-}
-
-function resume(owner) {
-  if (!owner) owner = "?";
-  if (pauseOwners.indexOf(owner) >= 0) {
-    pauseOwners = pauseOwners.filter(function (activeOwner) {
-      return activeOwner !== owner;
-    });
-  }
-  log("CORESensor resume ->", { owner: owner, owners: pauseOwners.slice() });
-  if (isPaused()) return Promise.resolve();
-  if (!isOn()) {
-    pendingReconnect = false;
-    clearReconnectTimer();
-    clearProfileUpgradeTimer();
-    setCoreState(CORE_STATE.IDLE, "resume without power");
-    return Promise.resolve();
-  }
-  return enqueueLifecycle("resume", function () {
-    pendingDisconnect = false;
-    pendingUnpair = false;
-    pendingReconnect = false;
-    shouldBeConnected = true;
-  });
-}
-
-function setPower(isOnValue, app) {
-  if (!app) app = "?";
-  if (isOnValue && readSettings().enabled !== true && !isTransientOwner(app)) return;
-  if (Bangle._PWR === undefined) Bangle._PWR = {};
-  if (Bangle._PWR.CORESensor === undefined) Bangle._PWR.CORESensor = [];
-  var wasOff = !Bangle._PWR.CORESensor.length;
-  log("setCORESensorPower ->", { on: !!isOnValue, owner: app });
-  if (isOnValue && Bangle._PWR.CORESensor.indexOf(app) < 0) Bangle._PWR.CORESensor.push(app);
-  if (!isOnValue && Bangle._PWR.CORESensor.indexOf(app) >= 0) {
-    Bangle._PWR.CORESensor = Bangle._PWR.CORESensor.filter(function (owner) {
-      return owner !== app;
-    });
-  }
-  if (Bangle._PWR.CORESensor.length > 0) {
-    // Transient owners borrow power for settings operations. They should not
-    // override a pending disconnect/unpair or create background desire alone.
-    if (isTransientOwner(app)) return;
-    // A new session supersedes a queued last-owner release, even if both
-    // requests arrived before the lifecycle queue could reconcile them.
-    if (isOnValue && wasOff && !pendingUnpair) pendingDisconnect = false;
-    if (!pendingDisconnect && !pendingUnpair) shouldBeConnected = true;
-    if (isPaused()) {
-      clearReconnectTimer();
-      pendingReconnect = false;
-      setCoreState(CORE_STATE.IDLE, "paused");
-      return;
-    }
-    enqueueLifecycle("power_on", function () {
-      if (!pendingDisconnect && !pendingUnpair) shouldBeConnected = true;
-    }).catch(function (e) {
-      log("Auto connect failed", e);
-    });
-  } else {
-    shouldBeConnected = false;
-    enqueueLifecycle("power_off", function () {
-      clearReconnectTimer();
-      pendingReconnect = false;
-      pendingDisconnect = true;
-      shouldBeConnected = false;
-    }).catch(function (e) {
-      log("CORESensor disconnect error", e);
-    });
-  }
-}
-
-function applySettings() {
-  var settings = readSettings();
-  var owners = (Bangle._PWR && Bangle._PWR.CORESensor) || [];
-  var hadOwners = owners.length;
-  var background = settings.enabled === true && settings.alwaysOn === true;
-  if (settings.enabled !== true) {
-    if (settings.alwaysOn) writeSettings(function (next) { next.alwaysOn = false; });
-    if (Bangle._PWR) Bangle._PWR.CORESensor = owners.filter(isTransientOwner);
-  }
-  if (background) {
-    if (owners.indexOf("coretemp.enabled") < 0) setPower(1, "coretemp.enabled");
-  } else if (owners.indexOf("coretemp.enabled") >= 0 || (hadOwners && !isOn())) {
-    setPower(0, "coretemp.enabled");
-  }
-  emitStatus();
-}
-
-function runWithConnectedSession(owner, fn) {
-  return runWithTemporaryPower(owner, function () {
-    return connect().then(function () {
-      return fn();
-    });
-  });
-}
-
-exports.init = function () {
-  if (initialized) return;
-  initialized = true;
-};
-
+exports.init = function () { stopped = false; };
 exports.isOn = isOn;
 exports.isConnected = isConnected;
 exports.connect = connect;
 exports.disconnect = disconnect;
 exports.pairDevice = pairDevice;
-exports.unpairDevice = unpairDevice;
+exports.unpairDevice = function () { return requestAction("unpair"); };
 exports.rebuildCache = rebuildCache;
 exports.writeControlPoint = writeControlPoint;
+exports.getSessionToken = function () { return generation; };
+exports.waitForSession = wait;
 exports.getStatus = getStatus;
 exports.setPower = setPower;
 exports.applySettings = applySettings;
@@ -1275,25 +636,23 @@ exports.pause = pause;
 exports.resume = resume;
 exports.isPaused = isPaused;
 exports.runWithConnectedSession = runWithConnectedSession;
-exports.onConnected = function (handler) {
-  if (typeof handler !== "function") return;
-  connectedHandlers.push(handler);
-};
-
 exports.shutdown = function () {
-  store.flush();
-  clearReconnectTimer();
-  clearProfileUpgradeTimer();
-  shouldBeConnected = false;
-  pendingReconnect = false;
-  pendingDisconnect = false;
-  pendingUnpair = false;
-  pendingPairTarget = undefined;
-  activePairTarget = undefined;
-  pendingRebuildCache = false;
+  stopped = true;
+  intent = "released";
+  pendingAction = undefined;
   pauseOwners = [];
-  if (gatt || device) {
-    setCoreState(CORE_STATE.DISCONNECTING, "kill");
-    cleanupGatt("kill");
+  clearRetry();
+  invalidate("kill");
+  cancelWaits(true);
+  var s = transport;
+  transport = undefined;
+  if (s) {
+    detach(s);
+    // The interpreter may be unloaded immediately; never schedule kill retries.
+    background(disconnectGatt(s, BUSY_RETRIES));
+    // A pending connect may finish after shutdown. Close that connection too,
+    // without restarting the runtime or scheduling retries.
+    if (s.io) background(s.io.then(function () { return disconnectGatt(s, BUSY_RETRIES); }));
   }
+  store.flush();
 };

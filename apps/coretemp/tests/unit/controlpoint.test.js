@@ -60,6 +60,8 @@ module.exports = [
       const { cp } = makeControlPoint();
       const first = cp.request(0x0A, [0xFF], 5);
       await assert.rejects(first, /timeout/);
+      await assert.rejects(cp.request(0x0B, [], 50), /not connected/);
+      cp.setAdapter({ write() { return Promise.resolve(); } });
       const second = cp.request(0x0B, [], 50);
       await tick();
       cp.onNotification(dv.fromBytes(packets.response(0x0B, [1])));
@@ -109,3 +111,74 @@ module.exports = [
     }
   }
 ];
+
+module.exports.push(
+  {
+    name: "close rejects active and queued requests without teardown writes",
+    async fn() {
+      const { cp, writes } = makeControlPoint();
+      const results = Promise.allSettled([cp.request(1), cp.request(2), cp.request(3)]);
+      await tick();
+      cp.close("teardown");
+      assert.ok((await results).every(item => item.status === "rejected" && /teardown/.test(item.reason)));
+      await tick();
+      assert.deepStrictEqual(plain(writes), [[1]]);
+      await assert.rejects(cp.request(4), /not connected/);
+    }
+  },
+  {
+    name: "sync and async write failures close the whole request session",
+    async fn() {
+      for (const synchronous of [true, false]) {
+        const { cp } = makeControlPoint();
+        let writes = 0;
+        cp.setAdapter({ write() {
+          writes++;
+          if (synchronous) throw new Error("write failed");
+          return Promise.reject(new Error("write failed"));
+        } });
+        const results = await Promise.allSettled([cp.request(1), cp.request(2)]);
+        assert.strictEqual(writes, 1);
+        assert.ok(results.every(item => item.status === "rejected" && item.reason.coreTransportFailure));
+        await assert.rejects(cp.request(3), /not connected/);
+      }
+    }
+  },
+  {
+    name: "timeout cancels queued commands and late write rejection cannot close a new adapter",
+    async fn() {
+      const { cp } = makeControlPoint();
+      let rejectOldWrite;
+      const writes = [];
+      cp.setAdapter({ write(bytes) {
+        writes.push(bytes);
+        return new Promise((resolve, reject) => { rejectOldWrite = reject; });
+      } });
+      const results = await Promise.allSettled([cp.request(1, [], 5), cp.request(2)]);
+      assert.ok(results.every(item => item.status === "rejected" && /timeout/.test(item.reason)));
+      assert.strictEqual(writes.length, 1);
+      cp.setAdapter({ write(bytes) { writes.push(bytes); } });
+      const next = cp.request(3, [], 50);
+      rejectOldWrite(new Error("late old failure"));
+      await tick();
+      cp.onNotification(dv.fromBytes(packets.response(3, [])));
+      await next;
+      assert.strictEqual(writes.length, 2);
+    }
+  },
+  {
+    name: "protocol errors reject one command and allow the next queued command",
+    async fn() {
+      const { cp, writes } = makeControlPoint();
+      const first = assert.rejects(cp.request(1), /error code 5/);
+      const second = cp.request(2);
+      await tick();
+      cp.onNotification(dv.fromBytes(packets.response(1, [], 5)));
+      await first;
+      await tick();
+      cp.onNotification(dv.fromBytes(packets.response(2, [])));
+      await second;
+      assert.deepStrictEqual(plain(writes), [[1], [2]]);
+    }
+  }
+);

@@ -9,22 +9,32 @@ function tick() {
 
 function createTimers(options) {
   const reconnectTimers = [];
-  const profileUpgradeTimers = [];
+  const heldTimers = [];
+  let held = false;
+
   options = options || {};
   return {
+    hold(value) { held = value; },
+    runDelay(ms) {
+      const timer = heldTimers.find(item => item.active && item.ms === ms);
+      assert.ok(timer, "No pending timer for " + ms);
+      timer.active = false;
+      timer.fn();
+    },
+    pendingCount() { return heldTimers.concat(reconnectTimers).filter(item => item.active).length; },
     setTimeout(fn, ms) {
+      if (held) {
+        const timer = { fn, ms, active: true };
+        heldTimers.push(timer);
+        return timer;
+      }
       if (ms === 2000 || ms === 3000 || ms === 4000) {
         Promise.resolve().then(fn);
         return -1;
       }
-      if (options.manualReconnect && (ms === 5000 || ms === 10000 || ms === 30000)) {
-        const timer = { fn, active: true };
+      if (options.manualReconnect && (ms === 5000 || ms === 10000 || ms === 20000 || ms === 30000)) {
+        const timer = { fn, ms, active: true };
         reconnectTimers.push(timer);
-        return timer;
-      }
-      if (ms === 60000) {
-        const timer = { fn, active: true };
-        profileUpgradeTimers.push(timer);
         return timer;
       }
       return setTimeout(fn, ms);
@@ -42,13 +52,6 @@ function createTimers(options) {
     },
     hasReconnect() {
       return reconnectTimers.some(timer => timer.active);
-    },
-    runNextProfileUpgrade() {
-      const timer = profileUpgradeTimers.shift();
-      if (timer && timer.active) Promise.resolve().then(timer.fn);
-    },
-    hasProfileUpgrade() {
-      return profileUpgradeTimers.some(timer => timer.active);
     }
   };
 }
@@ -70,7 +73,7 @@ function createLoadedBLE(options) {
   const timers = createTimers(options.timers);
   const storage = fakeStorage.create({
     "coretemp.json": Object.assign({
-      btid: "core-1"
+      btid: "core-1", settingsVersion: 2
     }, options.settings || {})
   });
   const loaded = loader.create({
@@ -81,7 +84,7 @@ function createLoadedBLE(options) {
       BluetoothRemoteGATTCharacteristic: function () {
         return {
           on() {},
-          readValue() { return Promise.resolve(); },
+          readValue() { return Promise.resolve(new DataView(new Uint8Array([90]).buffer)); },
           startNotifications() {
             if (cachedAttachFailureMode === "disconnect_once") {
               cachedAttachFailureMode = undefined;
@@ -103,6 +106,7 @@ function createLoadedBLE(options) {
     }
   });
   return {
+    loaded,
     ble: loaded.require("coretemp.ble"),
     protocol,
     env,
@@ -118,6 +122,65 @@ async function drain() {
 }
 
 module.exports = [
+  {
+    name: "fresh discovery resolves CORE directly when unfiltered discovery hides vendor UUIDs",
+    async fn() {
+      const { ble, protocol, env, emitted } = createLoadedBLE();
+      let unfilteredCalls = 0;
+      env.gatt.getPrimaryServices = () => {
+        unfilteredCalls++;
+        return Promise.resolve([{ uuid: "0x0000[vendor]" }]);
+      };
+      ble.init();
+      await ble.connect();
+
+      assert.strictEqual(unfilteredCalls, 0);
+      assert.deepStrictEqual(env.getPrimaryServiceCalls, [protocol.CORE_SERVICE_UUID, protocol.BATTERY_SERVICE_UUID]);
+      assert.strictEqual(env.tempChar.notificationsStarted, true);
+      assert.strictEqual(env.controlPointChar.notificationsStarted, true);
+      env.tempChar.emitValue([0, 0x74, 0x0e]);
+      const measurement = emitted.find(e => e.name === "CORESensor").data;
+      assert.strictEqual(measurement.core, 37);
+      assert.strictEqual(measurement.battery, 90);
+      assert.strictEqual(ble.getStatus().hasCache, true);
+    }
+  },
+  {
+    name: "missing battery service does not prevent temperature attachment",
+    async fn() {
+      const { ble, protocol, env } = createLoadedBLE();
+      const discover = env.gatt.getPrimaryService.bind(env.gatt);
+      env.gatt.getPrimaryService = uuid => uuid === protocol.BATTERY_SERVICE_UUID ?
+        Promise.reject("No Services found") : discover(uuid);
+      ble.init();
+      await ble.connect();
+      assert.strictEqual(ble.getStatus().profile, "custom_core");
+      assert.strictEqual(env.tempChar.notificationsStarted, true);
+    }
+  },
+  {
+    name: "service discovery transport errors propagate without trying other services",
+    async fn() {
+      for (const failedService of ["CORE_SERVICE_UUID", "BATTERY_SERVICE_UUID"]) {
+        const { ble, protocol, env, timers } = createLoadedBLE({
+            timers: { manualReconnect: true }
+        });
+        const discover = env.gatt.getPrimaryService.bind(env.gatt);
+        const calls = [];
+        const failure = new Error("Disconnected during service discovery");
+        env.gatt.getPrimaryService = uuid => {
+          calls.push(uuid);
+          return uuid === protocol[failedService] ? Promise.reject(failure) : discover(uuid);
+        };
+        ble.init();
+        await assert.rejects(ble.connect(), err => err === failure);
+        assert.deepStrictEqual(calls, failedService === "CORE_SERVICE_UUID" ?
+          [protocol.CORE_SERVICE_UUID] : [protocol.CORE_SERVICE_UUID, protocol.BATTERY_SERVICE_UUID]);
+        assert.strictEqual(ble.getStatus().hasCache, false);
+        assert.strictEqual(timers.hasReconnect(), true);
+      }
+    }
+  },
   {
     name: "rapid release and reacquire honors the latest power demand",
     async fn() {
@@ -212,9 +275,12 @@ module.exports = [
     name: "disabling Enable during discovery prevents a late connection or retry",
     async fn() {
       const { ble, storage, env, timers } = createLoadedBLE({ timers: { manualReconnect: true } });
-      const discover = env.gatt.getPrimaryServices.bind(env.gatt);
+      const discover = env.gatt.getPrimaryService.bind(env.gatt);
       let finish;
-      env.gatt.getPrimaryServices = () => new Promise(resolve => { finish = () => discover().then(resolve); });
+      env.gatt.getPrimaryService = uuid => {
+        env.gatt.getPrimaryService = discover;
+        return new Promise(resolve => { finish = () => discover(uuid).then(resolve); });
+      };
       ble.init();
       const connecting = ble.connect();
       const rejected = assert.rejects(connecting, /power off/);
@@ -435,7 +501,7 @@ module.exports = [
       ble.init();
 
       await assert.rejects(ble.connect(), /Disconnected/);
-      assert.strictEqual(env.getPrimaryServicesCalls(), 0);
+      assert.strictEqual(env.getPrimaryServiceCalls.length, 0);
       assert.strictEqual(ble.getStatus().reconnectScheduled, true);
       assert.match(ble.getStatus().lastError, /Disconnected/);
 
@@ -444,10 +510,11 @@ module.exports = [
 
       assert.strictEqual(ble.getStatus().connected, true);
       assert.strictEqual(ble.getStatus().state, "connected");
+      assert.strictEqual(env.getPrimaryServiceCalls.length, 0);
     }
   },
   {
-    name: "cached BUSY attach failure rebuilds cache while transport stays connected",
+    name: "cached BUSY attach retries without discarding handles",
     async fn() {
       const { ble, env } = createLoadedBLE({
         cachedAttachFailureMode: "busy_once",
@@ -470,7 +537,7 @@ module.exports = [
 
       await ble.connect();
 
-      assert.strictEqual(env.getPrimaryServicesCalls(), 1);
+      assert.deepStrictEqual(env.getPrimaryServiceCalls, []);
       assert.strictEqual(ble.getStatus().connected, true);
       assert.strictEqual(ble.getStatus().hasCache, true);
     }
@@ -502,29 +569,6 @@ module.exports = [
     }
   },
   {
-    name: "connect accepts standard health thermometer temperature without control point",
-    async fn() {
-      const { ble, protocol, env, emitted } = createLoadedBLE({
-        settings: { customprofileonly: false },
-        fakeBLE: { healthThermometerOnly: true }
-      });
-      ble.init();
-      await ble.connect();
-      assert.strictEqual(ble.getStatus().connected, true);
-      await assert.rejects(
-        ble.writeControlPoint(protocol.OPCODES.HRM_PAIRED_COUNT, [], { timeoutMs: 20 }),
-        /not connected/
-      );
-
-      env.healthThermometerChar.emitValue([0x00, 0x77, 0x01, 0x00, 0xFF]);
-
-      const measurements = emitted.filter(e => e.name === "CORESensor");
-      assert.strictEqual(measurements.length, 1);
-      assert.strictEqual(measurements[0].data.core, 37.5);
-      assert.strictEqual(measurements[0].data.profile, "health_thermometer");
-    }
-  },
-  {
     name: "state changes emit CORE status events",
     async fn() {
       const { ble, emitted } = createLoadedBLE({
@@ -542,46 +586,22 @@ module.exports = [
     }
   },
   {
-    name: "health thermometer fallback schedules profile upgrade discovery",
-    async fn() {
-      const { ble, timers } = createLoadedBLE({
-        settings: { customprofileonly: false },
-        fakeBLE: { healthThermometerOnly: true },
-        timers: { manualProfileUpgrade: true, manualReconnect: true }
-      });
-      ble.init();
-      await ble.connect();
-
-      assert.strictEqual(ble.getStatus().profile, "health_thermometer");
-      assert.strictEqual(ble.getStatus().profileUpgradeScheduled, true);
-      assert.strictEqual(timers.hasProfileUpgrade(), true);
-
-      timers.runNextProfileUpgrade();
-      await drain();
-
-      assert.strictEqual(ble.getStatus().desiredConnected, true);
-    }
-  },
-  {
     name: "custom CORE profile does not schedule profile upgrade discovery",
     async fn() {
-      const { ble, timers } = createLoadedBLE({
-        timers: { manualProfileUpgrade: true }
-      });
+      const { ble } = createLoadedBLE();
       ble.init();
       await ble.connect();
 
       assert.strictEqual(ble.getStatus().profile, "custom_core");
       assert.strictEqual(ble.getStatus().profileUpgradeScheduled, false);
-      assert.strictEqual(timers.hasProfileUpgrade(), false);
+      assert.strictEqual(ble.getStatus().customProfileOnly, true);
     }
   },
   {
-    name: "custom-only setting rejects standard health thermometer fallback",
+    name: "custom-only runtime rejects standard health thermometer fallback",
     async fn() {
-      const { ble, timers } = createLoadedBLE({
+      const { ble, timers, env, protocol } = createLoadedBLE({
         fakeBLE: { healthThermometerOnly: true },
-        settings: { customprofileonly: true },
         timers: { manualReconnect: true }
       });
       ble.init();
@@ -589,6 +609,7 @@ module.exports = [
         ble.connect(),
         /Runtime discovery missing required CORE characteristics: missing 00002101-5b1e-4347-b07c-97b514dae121/
       );
+      assert.deepStrictEqual(env.getPrimaryServiceCalls, [protocol.CORE_SERVICE_UUID]);
       assert.strictEqual(ble.getStatus().reconnectScheduled, true);
 
       timers.runNextReconnect();
@@ -597,13 +618,12 @@ module.exports = [
     }
   },
   {
-    name: "custom-only setting ignores cached standard temperature fallback",
+    name: "custom-only runtime ignores cached standard temperature fallback",
     async fn() {
       const { ble } = createLoadedBLE({
         fakeBLE: { healthThermometerOnly: true },
         timers: { manualReconnect: true },
         settings: {
-          customprofileonly: true,
           cache: {
             characteristics: {
               "0x2a1c": {
@@ -629,7 +649,7 @@ module.exports = [
   {
     name: "connect prefers custom CORE temperature when both profiles are present",
     async fn() {
-      const { ble, env } = createLoadedBLE({
+      const { ble, env, protocol } = createLoadedBLE({
         fakeBLE: { includeHealthThermometer: true }
       });
       ble.init();
@@ -637,6 +657,7 @@ module.exports = [
 
       assert.strictEqual(env.tempChar.notificationsStarted, true);
       assert.strictEqual(env.healthThermometerChar.notificationsStarted, undefined);
+      assert.deepStrictEqual(env.getPrimaryServiceCalls, [protocol.CORE_SERVICE_UUID, protocol.BATTERY_SERVICE_UUID]);
     }
   },
   {
@@ -705,3 +726,365 @@ module.exports = [
     }
   }
 ];
+
+module.exports.push(
+  {
+    name: "temperature-only custom CORE connects without battery or Control Point",
+    async fn() {
+      const { ble, env, emitted } = createLoadedBLE({ fakeBLE: { includeControlPoint: false, includeBattery: false } });
+      await ble.connect();
+      assert.strictEqual(ble.getStatus().profile, "custom_core_temperature");
+      env.tempChar.emitValue([0, 0x74, 0x0e]);
+      assert.strictEqual(emitted.filter(item => item.name === "CORESensor")[0].data.core, 37);
+      await assert.rejects(ble.writeControlPoint(4), /not connected/);
+      await ble.disconnect();
+    }
+  },
+  {
+    name: "ordinary teardown finishes native discovery before targeted disconnect",
+    async fn() {
+      const { ble, env, storage, timers } = createLoadedBLE({ timers: { manualReconnect: true } });
+      const events = [];
+      let finish;
+      env.gatt.getPrimaryService = () => new Promise(resolve => { finish = resolve; });
+      env.gatt.disconnect = () => { events.push("disconnect"); env.gatt.connected = false; };
+      env.NRF.disconnect = () => { throw new Error("global disconnect must not be used"); };
+      const connecting = assert.rejects(ble.connect(), /power off/);
+      await drain();
+      const disconnecting = ble.disconnect();
+      ble.setPower(1, "another-owner");
+      await drain();
+      assert.deepStrictEqual(events, []);
+      events.push("discovery finished");
+      finish(undefined);
+      await connecting;
+      await disconnecting;
+      await drain();
+      assert.deepStrictEqual(events, ["discovery finished", "disconnect"]);
+      assert.strictEqual(env.NRF.requests.length, 1);
+      assert.strictEqual(storage.readJSON("coretemp.json").cache, undefined);
+      assert.strictEqual(timers.hasReconnect(), false);
+    }
+  },
+  {
+    name: "shutdown cancels settle timers and rejects late native connect without recovery",
+    async fn() {
+      for (const duringConnect of [false, true]) {
+        const { ble, env, timers, storage } = createLoadedBLE({ timers: { manualReconnect: true } });
+        let finish;
+        if (duringConnect) env.gatt.connect = () => new Promise(resolve => {
+          finish = () => { env.gatt.connected = true; resolve(); };
+        });
+        else timers.hold(true);
+        const connecting = assert.rejects(ble.connect(), /stopped/);
+        await drain();
+        ble.shutdown();
+        if (finish) finish();
+        await connecting;
+        await drain();
+        assert.strictEqual(env.gatt.connected, false);
+        assert.strictEqual(timers.pendingCount(), 0);
+        assert.strictEqual(storage.readJSON("coretemp.json").cache, undefined);
+        assert.strictEqual(ble.getStatus().reconnectScheduled, false);
+      }
+    }
+  },
+  {
+    name: "pair supersession rejects the old caller and only saves the new device and cache",
+    async fn() {
+      const { ble, env, storage, protocol } = createLoadedBLE();
+      const other = fakeBLE.create(protocol);
+      other.device.id = "core-2";
+      let finish;
+      const discover = env.gatt.getPrimaryService.bind(env.gatt);
+      env.gatt.getPrimaryService = uuid => new Promise(resolve => { finish = () => discover(uuid).then(resolve); });
+      const first = assert.rejects(ble.pairDevice(env.device), /superseded/);
+      await drain();
+      const second = ble.pairDevice(other.device);
+      await drain();
+      assert.strictEqual(storage.readJSON("coretemp.json").cache, undefined);
+      finish();
+      await first;
+      await second;
+      await drain();
+      assert.strictEqual(storage.readJSON("coretemp.json").btid, "core-2");
+      assert.ok(storage.readJSON("coretemp.json").cache);
+      assert.strictEqual(env.gatt.connected, false);
+      assert.strictEqual(other.gatt.connected, true);
+      await ble.disconnect();
+    }
+  },
+  {
+    name: "pending unpair survives power updates and a previously scheduled retry",
+    async fn() {
+      const { ble, env, timers, storage } = createLoadedBLE({ timers: { manualReconnect: true } });
+      env.NRF.requestDevice = () => Promise.reject(new Error("out of range"));
+      await assert.rejects(ble.connect(), /out of range/);
+      const unpair = ble.unpairDevice();
+      ble.setPower(1, "new-owner");
+      timers.runNextReconnect();
+      await unpair;
+      await drain();
+      assert.strictEqual(storage.readJSON("coretemp.json").btid, undefined);
+      assert.strictEqual(ble.getStatus().reconnectScheduled, false);
+      assert.strictEqual(ble.isOn(), false);
+    }
+  },
+  {
+    name: "obsolete notifications and disconnect callbacks cannot affect a rebuilt transport",
+    async fn() {
+      const { ble, env, emitted } = createLoadedBLE();
+      await ble.connect();
+      const oldTemperature = env.tempChar.handlers.characteristicvaluechanged[0];
+      const oldControlPoint = env.controlPointChar.handlers.characteristicvaluechanged[0];
+      const oldDisconnect = env.disconnectHandlers[0];
+      await ble.rebuildCache();
+      await ble.rebuildCache();
+      assert.strictEqual(env.tempChar.handlers.characteristicvaluechanged.length, 1);
+      assert.strictEqual(env.disconnectHandlers.length, 1);
+      const readings = emitted.filter(item => item.name === "CORESensor").length;
+      oldTemperature({ target: { value: new DataView(new Uint8Array([0, 0x74, 0x0e]).buffer) } });
+      oldDisconnect("late");
+      let resolved = false;
+      const request = ble.writeControlPoint(4).then(result => { resolved = true; return result; });
+      await tick();
+      oldControlPoint({ target: { value: new DataView(new Uint8Array([0x80, 4, 1, 9]).buffer) } });
+      await tick();
+      assert.strictEqual(resolved, false);
+      assert.strictEqual(emitted.filter(item => item.name === "CORESensor").length, readings);
+      assert.strictEqual(ble.getStatus().state, "connected");
+      env.controlPointChar.emitValue([0x80, 4, 1, 0]);
+      assert.strictEqual((await request).payload[0], 0);
+      env.tempChar.emitValue([0, 0x74, 0x0e]);
+      assert.strictEqual(emitted.filter(item => item.name === "CORESensor").length, readings + 1);
+      await ble.disconnect();
+    }
+  },
+  {
+    name: "disconnect during successful discovery completion backs off normally",
+    async fn() {
+      const { ble, env, timers } = createLoadedBLE({ timers: { manualReconnect: true } });
+      env.gatt.getPrimaryService = () => {
+        env.device.emitDisconnect("out of range");
+        return Promise.resolve(undefined);
+      };
+      await assert.rejects(ble.connect(), /Disconnected/);
+      await drain();
+      assert.strictEqual(timers.hasReconnect(), true);
+      assert.strictEqual(ble.getStatus().state, "reconnect_wait");
+      ble.shutdown();
+    }
+  },
+  {
+    name: "BUSY spellings use bounded retries and generic power updates respect backoff",
+    async fn() {
+      for (const message of ["Operation in progress", "ERR 0x11 (BUSY)"]) {
+        const { ble, env, timers } = createLoadedBLE({ timers: { manualReconnect: true } });
+        let attempts = 0;
+        env.gatt.connect = () => { attempts++; return Promise.reject(new Error(message)); };
+        await assert.rejects(ble.connect(), new RegExp(message.replace(/[()]/g, "\\$&")));
+        assert.strictEqual(attempts, 3);
+        ble.setPower(1, "another-owner");
+        await drain();
+        assert.strictEqual(attempts, 3);
+        timers.runNextReconnect();
+        await drain();
+        assert.strictEqual(attempts, 6);
+        ble.shutdown();
+      }
+    }
+  },
+  {
+    name: "overlapping Settings sessions retain power until their last operation finishes",
+    async fn() {
+      const { ble, Bangle } = createLoadedBLE();
+      await ble.connect();
+      let finishFirst, finishSecond;
+      const first = ble.runWithConnectedSession("coretemp.settings", () => new Promise(resolve => { finishFirst = resolve; }));
+      const second = ble.runWithConnectedSession("coretemp.settings", () => new Promise(resolve => { finishSecond = resolve; }));
+      await drain();
+      ble.setPower(0, "test");
+      finishFirst();
+      await first;
+      assert.deepStrictEqual(Array.from(Bangle._PWR.CORESensor), ["coretemp.settings"]);
+      assert.strictEqual(ble.isConnected(), true);
+      finishSecond();
+      await second;
+      await drain();
+      assert.strictEqual(ble.isConnected(), false);
+      assert.strictEqual(ble.isOn(), false);
+    }
+  }
+);
+
+async function startHRM() {
+  const h = createLoadedBLE({ timers: { manualReconnect: true } });
+  const saved = { selected: { antId: 48065, txType: 12 }, recent: [{ antId: 48065, txType: 12 }] };
+  h.storage.writeJSON("coretemp.hrm.json", saved);
+  await h.ble.connect();
+  h.hrm = h.loaded.require("coretemp.hrm");
+  h.hrm.init();
+  h.saved = saved;
+  h.timers.hold(true);
+  h.respond = async (opcode, payload) => {
+    await tick();
+    assert.strictEqual(h.env.controlPointChar.writes.slice(-1)[0][0], opcode);
+    h.env.controlPointChar.emitValue([0x80, opcode, 1].concat(payload || []));
+    await tick();
+  };
+  h.reconnect = async () => {
+    h.timers.hold(false);
+    h.env.device.emitDisconnect("HRM test drop");
+    await drain();
+    await h.ble.rebuildCache();
+  };
+  return h;
+}
+
+module.exports.push(
+  {
+    name: "HRM scan interrupted during its window cannot query a new transport",
+    async fn() {
+      const h = await startHRM();
+      const scan = assert.rejects(h.hrm.scanANT(), /superseded/);
+      await h.respond(0x0a);
+      await assert.rejects(h.hrm.getStatus(), /already in progress/);
+      await h.reconnect();
+      await scan;
+      assert.deepStrictEqual(h.env.controlPointChar.writes, [[0x0a, 255]]);
+      assert.deepStrictEqual(h.storage.readJSON("coretemp.hrm.json"), h.saved);
+      assert.strictEqual(h.hrm.getState().busy, false);
+      await h.ble.disconnect();
+    }
+  },
+  {
+    name: "HRM replacement interrupted during settle cannot pair on a new transport",
+    async fn() {
+      const h = await startHRM();
+      const pairing = assert.rejects(h.hrm.pairANT(1234, true), /superseded/);
+      await h.respond(4, [1]);
+      await h.respond(5, [0xc1, 0xbb, 12]);
+      await h.respond(1);
+      await h.reconnect();
+      await pairing;
+      assert.deepStrictEqual(h.env.controlPointChar.writes.map(bytes => bytes[0]), [4, 5, 1]);
+      assert.deepStrictEqual(h.storage.readJSON("coretemp.hrm.json"), h.saved);
+      await h.ble.disconnect();
+    }
+  },
+  {
+    name: "disconnect during pair and clear verification preserves stored selections",
+    async fn() {
+      for (const clear of [false, true]) {
+        const h = await startHRM();
+        const rejected = assert.rejects(clear ? h.hrm.clearANT() : h.hrm.pairANT(1234), /closed|Disconnected/);
+        if (!clear) await h.respond(4, [0]);
+        await h.respond(clear ? 1 : 2);
+        assert.strictEqual(h.env.controlPointChar.writes.slice(-1)[0][0], 4);
+        h.env.device.emitDisconnect("verification drop");
+        await rejected;
+        h.timers.hold(false);
+        await drain();
+        assert.deepStrictEqual(h.storage.readJSON("coretemp.hrm.json"), h.saved);
+        h.ble.shutdown();
+      }
+    }
+  },
+  {
+    name: "HRM and public Control Point failures share one recovery and cancel queued commands",
+    async fn() {
+      for (const failure of ["sync", "async", "timeout"]) {
+        const h = await startHRM();
+        let writes = 0;
+        h.env.controlPointChar.writeValue = () => {
+          writes++;
+          if (failure === "sync") throw new Error("write failed");
+          if (failure === "async") return Promise.reject(new Error("write failed"));
+          return Promise.resolve();
+        };
+        const results = Promise.allSettled([h.hrm.getStatus(), Promise.resolve().then(() => h.ble.writeControlPoint(0x0b))]);
+        await tick();
+        if (failure === "timeout") h.timers.runDelay(5000);
+        h.timers.hold(false);
+        await results.then(items => {
+          assert.ok(items.every(item => item.status === "rejected" && item.reason.coreTransportFailure));
+        });
+        // Cleanup may already be waiting on its settle timer.
+        if (h.timers.pendingCount() && !h.timers.hasReconnect()) h.timers.runDelay(2000);
+        await drain();
+        assert.strictEqual(writes, 1);
+        assert.strictEqual(h.timers.pendingCount(), 1);
+        assert.strictEqual(h.ble.getStatus().state, "reconnect_wait");
+        assert.deepStrictEqual(h.storage.readJSON("coretemp.hrm.json"), h.saved);
+        h.ble.shutdown();
+      }
+    }
+  }
+);
+
+module.exports.push(
+  {
+    name: "ordinary Control Point teardown waits for the native write and cancels the queue without writes",
+    async fn() {
+      const { ble, env } = createLoadedBLE();
+      await ble.connect();
+      let finish;
+      let writes = 0;
+      env.controlPointChar.writeValue = () => {
+        writes++;
+        return new Promise(resolve => { finish = resolve; });
+      };
+      const requests = Promise.allSettled([ble.writeControlPoint(4), ble.writeControlPoint(5)]);
+      await tick();
+      const disconnecting = ble.disconnect();
+      const results = await requests;
+      assert.ok(results.every(item => item.status === "rejected" && /closed/.test(item.reason)));
+      await drain();
+      assert.strictEqual(env.gatt.connected, true);
+      assert.strictEqual(writes, 1);
+      finish();
+      await disconnecting;
+      assert.strictEqual(env.gatt.connected, false);
+      assert.strictEqual(writes, 1);
+    }
+  },
+  {
+    name: "shutdown during discovery ignores its late result and creates no cache or retry",
+    async fn() {
+      const { ble, env, storage, timers } = createLoadedBLE({ timers: { manualReconnect: true } });
+      const discover = env.gatt.getPrimaryService.bind(env.gatt);
+      let finish;
+      env.gatt.getPrimaryService = uuid => new Promise(resolve => { finish = () => discover(uuid).then(resolve); });
+      const connecting = assert.rejects(ble.connect(), /stopped/);
+      await drain();
+      ble.shutdown();
+      finish();
+      await connecting;
+      await drain();
+      assert.strictEqual(env.gatt.connected, false);
+      assert.strictEqual(env.tempChar.notificationsStarted, undefined);
+      assert.strictEqual(storage.readJSON("coretemp.json").cache, undefined);
+      assert.strictEqual(timers.pendingCount(), 0);
+    }
+  },
+  {
+    name: "targeted disconnect BUSY retries are bounded and never use global disconnect",
+    async fn() {
+      for (const succeeds of [true, false]) {
+        const { ble, env, timers } = createLoadedBLE({ timers: { manualReconnect: true } });
+        await ble.connect();
+        let attempts = 0;
+        env.NRF.disconnect = () => { throw new Error("must not globally disconnect"); };
+        env.gatt.disconnect = () => {
+          attempts++;
+          if (!succeeds || attempts < 3) throw new Error("ERR 0x11 (BUSY)");
+          env.gatt.connected = false;
+        };
+        if (succeeds) await ble.disconnect();
+        else await assert.rejects(ble.disconnect(), /BUSY/);
+        assert.strictEqual(attempts, 3);
+        assert.strictEqual(timers.hasReconnect(), false);
+      }
+    }
+  }
+);

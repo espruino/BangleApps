@@ -1,445 +1,123 @@
 # CoreTemp
 
-Connect a Bangle.js watch to a [CORE](https://corebodytemp.com/) or
-[calera](https://info.greenteg.com/calera-research) sensor from greenteg and
-display live body temperature data.
+Display body/skin temperature, Heat Strain Index, and battery from a
+[CORE](https://corebodytemp.com/) or [calera](https://info.greenteg.com/calera-research)
+sensor on Bangle.js. Includes a connection widget, Recorder integration, and
+ANT+ heart-rate monitor management through CORE.
 
-CoreTemp also installs a `CORESensor` module so other apps, widgets, and
-recorders can subscribe to the same sensor readings.
+## Setup and power
 
-## What It Provides
+1. Install CoreTemp and open **Settings > Apps > CoreTemp**.
+2. Choose **Scan for CORE** and pair your sensor.
+3. Leave **Enable** on for app/Recorder access. Turn on **Always On** only for a
+   continuous background connection.
 
-- A foreground app that temporarily powers a paired CORE sensor while open and
-  shows CORE temperature, skin temperature, Heat Strain Index, and battery
-  level.
-- An enabled-by-default runtime that lets apps request a paired CORE sensor,
-  with a separate opt-in Always On background connection.
-- A widget that is visible when the feature is enabled and changes color when
-  the CORE sensor is connected.
-- A recorder integration that logs core temperature data into Recorder.
-- An ANT+ HRM manager for pairing a heart-rate monitor through the CORE
-  Control Point characteristic.
+Fresh installs enable app access and the widget, with Always On off. Opening
+CoreTemp or starting Recorder requests the sensor; releasing the last power
+owner disconnects it. Always On keeps its own owner. Turning Enable off stops
+normal connections; Settings can still connect temporarily for management.
 
-## Setup
+The widget is **green** for on-demand connections, **blue** for Always On, and
+**grey** when disconnected. **Forget <device>** removes CORE identity/cache and
+turns Always On off without erasing global BLE bonds or saved ANT+ selections.
 
-1. Install CoreTemp from the Bangle.js app loader.
-2. Open `Settings > Apps > CoreTemp`.
-3. Use `Scan for CORE` to find and pair your CORE/calera sensor.
-4. Leave `Enable` on to let CoreTemp, Recorder, and other apps request CORE.
-   Turn on `Always On` only if you want a continuous background connection.
-5. Enable `Widget` if you want connection status on the clock screen.
+## ANT+ HRMs
 
-Fresh installs have `Enable` on and `Always On` off. Boot initializes the APIs
-without scanning or connecting. Opening CoreTemp or starting Recorder requests
-the paired sensor; releasing the last app's power owner disconnects it. Always
-On holds a separate power owner to keep the connection alive between sessions.
-The runtime emits a `CORESensor` event for each reading.
+Open **HRM (ANT+) > Scan ANT+**, select an ID, and choose **Pair**. The scan
+window is 5 seconds by default, configurable to 5–30 seconds in the App Loader.
+**Status** reads CORE's pairing; **Recent HRMs** and **Preset HRM** (when saved)
+let you reuse a selection. The watch has no manual ID entry.
 
-Turning Enable off also turns Always On off and stops normal app/Recorder
-connections. Settings can still connect temporarily for pairing, testing, cache
-rebuilding, and HRM management. Turning only Always On off does not interrupt an
-app that still needs CORE.
+CoreTemp manages one HRM at a time. Replacing or explicitly re-pairing one asks
+for confirmation, clears it, waits 2 seconds, then pairs and verifies the result.
+If multiple HRMs are paired, use **Clear Paired HRM** first. Failed operations
+preserve saved selections. Disconnects abort ongoing operations; reconnecting
+never automatically pairs an HRM or replays pair/clear commands.
 
-### Upgrading
+## BLE compatibility and recovery
 
-Installation migrates saved settings without connecting to a device. Existing
-`enabled` values, including explicit `false`, are preserved; missing values
-default to `true`. Always On defaults to `false` and is never inferred from
-legacy Enable. Existing pairing, cache, widget visibility, logging, and unknown
-settings are retained. A missing legacy widget setting remains hidden.
+CoreTemp 0.12 requires CORE's custom temperature service. Health Thermometer-only
+devices are unsupported. Battery and Control Point are optional for temperature
+readings; ANT+ management requires Control Point.
 
-Name-only CORE pairings remain usable; the device ID is saved after the first
-successful connection. Legacy `ANT_HRM` selections are imported into
-`coretemp.hrm.json`, preserving the ANT transmission type and any newer HRM
-choices. Migration is retryable and runs only when needed; clearing a migrated
-selection does not reimport it. Reset CoreTemp restores fresh-install defaults.
+Cached handles are tried first. Fresh discovery directly requests CORE service
+`00002100-5b1e-4347-b07c-97b514dae121`, avoiding unresolved vendor UUIDs from
+unfiltered discovery. BLE operations share one lifecycle queue; obsolete
+transports cannot deliver readings or save pairing/cache. HeatSuite pause
+owners nest, with reconnection allowed only after the final resume.
 
-## Settings
+BUSY errors receive bounded retries without discarding the cache. Other failures
+back off for 5, 10, 20, then 30 seconds while power and connection intent permit.
+An explicit disconnect suppresses recovery. Control Point write failures/timeouts
+cancel active and queued commands before BLE recovery; protocol errors reject
+only their request.
 
-The main settings menu contains:
+Upgrading to settings version 2 clears the characteristic cache once and removes
+`customprofileonly`, preserving CORE identity, explicit power preferences, HRM
+selections, and unrelated settings. Legacy ANT+ migration remains retryable and
+does not restore an explicitly cleared selection. See [ChangeLog](ChangeLog).
 
-- `Enable`: allows normal app and Recorder connections and initializes the
-  runtime at boot without connecting.
-- `Always On`: keeps CORE connected in the background; available when Enable is on.
-- `Widget`: shows or hides the CoreTemp widget.
-  Orange indicates a connected Health Thermometer fallback; green indicates an
-  on-demand CORE connection, blue an Always On CORE connection, and grey disconnected.
-- `Scan for CORE`: scans for CORE sensors when no CORE device is paired.
-- `Test <device>`: connects to the currently paired CORE sensor when it is not
-  already connected.
-- `Forget <device>`: removes the saved CORE sensor and cached BLE characteristic
-  handles, turns Always On off, and retains Enable. Global Bangle BLE bonds
-  are not erased.
-- `HRM (ANT+)`: opens heart-rate monitor management for the paired CORE sensor.
-- `Debug`: contains debug logging, status, cache rebuild,
-  and `Reset CoreTemp` actions.
-- `Full log`: records all debug lines, including every measurement event.
-- `Partial log`: records connection/discovery/control logs but skips measurement
-  `data` lines to reduce log volume.
-- `Custom CORE only` (default on): requires CORE's custom temperature characteristic and
-  disables the standard Health Thermometer fallback.
+## Troubleshooting
 
-## ANT+ HRM Pairing
+Use **Debug > Partial log** for connection/control traffic or **Full log** to
+include measurements; output is saved in `coretemp.log`. **Debug > Status**
+shows runtime state, and **Rebuild cache** forces fresh discovery.
 
-CORE can pair with a heart-rate monitor and use that heart-rate data for its own
-accuracy. CoreTemp manages ANT+ HRMs through CORE's Control Point
-characteristic.
+A missing `00002101-5b1e-4347-b07c-97b514dae121` means custom temperature discovery
+failed. Check the explicit service lookup in the log and rebuild the cache if
+failures persist. This does not establish that ANT+ pairing was lost: after BLE
+recovers, check **HRM > Status**, including after switching the HRM off/on.
 
-Open `Settings > Apps > CoreTemp > HRM (ANT+)`.
+## App integration
 
-Available actions:
-
-- `Status`: queries the CORE sensor for currently paired ANT+ HRMs.
-- `Scan ANT+`: starts an ANT+ scan on CORE, waits for the configured scan
-  window (5–30 seconds, default 5), then reads the found HRM IDs. Set the scan
-  window in the App Loader configurator. Scan results may include HRMs already
-  paired on CORE.
-- `Recent HRMs`: shows HRMs previously paired through CoreTemp.
-- `Clear Paired HRM`: clears ANT+ HRMs paired on CORE and verifies the result.
-
-Pairing flow:
-
-1. Choose `Scan ANT+`.
-2. Wait for the configured scan window (default 5 seconds).
-3. Select a found ANT+ HRM ID.
-4. Choose `Pair`.
-5. CoreTemp verifies pairing by reading CORE's paired HRM status.
-
-CoreTemp treats pairing as a single-HRM app policy:
-
-- If no HRM is paired, the selected HRM is paired.
-- If one HRM is already paired, CoreTemp asks whether to replace or re-pair it.
-  Replacement clears CORE's paired HRM, waits 2 seconds, then pairs the
-  selected HRM.
-- If multiple HRMs are paired, clear paired HRMs before pairing another one.
-
-There is no manual ANT ID entry in the on-watch settings UI. The watch pairing
-path is scan, select, pair. Previously paired HRMs can be paired again from
-`Recent HRMs`.
-
-## BLE Lifecycle
-
-`ble.js` serializes connect, reconnect, pause, pair, unpair, and cache rebuild
-work through one lifecycle queue. The state machine below shows the runtime
-states, the main transitions between them, and the recovery branches that feed
-back into reconnect.
-
-```mermaid
-flowchart TD
-  A[idle] -->|connect / power_on / resume / pair / rebuild| B{paused?}
-  B -->|yes| A
-  B -->|no| C{paired device id or name present?}
-  C -->|no| A
-  C -->|yes| D{pending mode switch?}
-
-  D -->|pair target| E[disconnecting: pair target]
-  D -->|rebuild cache| F[disconnecting: rebuild cache]
-  D -->|reconnect requested| G[disconnecting: reconnect requested]
-  D -->|explicit disconnect| H[disconnecting: requested disconnect]
-  D -->|unpair| I[disconnecting: unpair]
-  D -->|none| J{have reusable device?}
-
-  E -->|BLE settle| K[connectWithBusyRetry]
-  F -->|delete cache + rebuild settle| K
-  G -->|BLE settle| K
-  H -->|BLE settle| A
-  I -->|BLE settle + clear pairing/cache| A
-
-  J -->|no| L[scanning]
-  J -->|yes| M[connecting]
-  L -->|requestDevice success| M
-  L -->|requestDevice failure| X[error]
-
-  M -->|gatt.connect + security log| N{transport already ready?}
-  M -->|connect failure| X
-
-  N -->|yes| O[connected]
-  N -->|no| P{cached chars available?}
-
-  P -->|no| Q[discovering]
-  P -->|yes| R[attaching]
-
-  R -->|attach succeeds| O
-  R -->|cached attach fails and gatt still connected| S[delete cache]
-  R -->|cached attach fails after disconnect| X
-  S --> Q
-
-  Q -->|services + characteristics found| R
-  Q -->|missing required characteristics| X
-  Q -->|disconnect before fallback discovery| X
-
-  O -->|pause| T[disconnecting: paused]
-  O -->|disconnect / transport error| U[reset transport]
-  O -->|profile upgrade timer| F
-  O -->|explicit disconnect| H
-  O -->|explicit unpair| I
-
-  T -->|BLE settle| A
-  U -->|should stay connected| V[reconnect_wait]
-  U -->|power released / paused / unpaired| A
-
-  X -->|busy error and retries remain| W[error: stack busy]
-  X -->|other failure| Y[cleanupGatt + BLE settle]
-  W --> K
-  Y -->|should stay connected and paired| V
-  Y -->|pair flow / pause / power off / no pairing| A
-
-  V -->|timer fires| G
-```
-
-Key points:
-
-- Cached characteristic fallback is only allowed to rebuild/discover while the
-  current GATT is still connected. If the transport drops first, the lifecycle
-  aborts, cleans up, settles, and lets the reconnect loop retry.
-- The standard Health Thermometer fallback can reach `connected`, but a profile
-  upgrade timer later forces a controlled reconnect and cache rebuild so the
-  runtime can switch to the custom CORE service when it becomes available.
-- Transport disconnects from notifications or Control Point traffic do not try
-  to recover inline. They request a queued reconnect so all BLE transitions
-  still pass through the same serialized lifecycle.
-
-## HRM ANT+ Lifecycle
-
-All HRM actions run through `hrm.js`, which uses `controlpoint.js` as a strict
-single-request actor on top of the connected CORE Control Point characteristic.
-Unexpected or stale indications are discarded by the Control Point layer and do
-not change the HRM workflow.
-
-```mermaid
-flowchart TD
-  A[HRM action requested] --> B{hrmState.busy?}
-  B -->|yes| Z[reject: HRM operation already in progress]
-  B -->|no| C[runOperation<br/>set busy=true<br/>operation=name]
-
-  C --> D{action}
-
-  D -->|Status| E[request HRM_PAIRED_COUNT]
-  E --> F[request each HRM_PAIRED_ANT_ENTRY]
-  F --> G[update pairedSensors/currentSource]
-  G --> Y[success<br/>busy=false]
-
-  D -->|Scan ANT+| H[request HRM_SCAN_ANT_START]
-  H --> I[wait configured scan window: 5–30s, default 5s]
-  I --> J[request HRM_SCAN_ANT_COUNT]
-  J --> K[request each HRM_SCAN_ANT_ENTRY]
-  K --> L[store lastScan entries]
-  L --> Y
-
-  D -->|Pair ANT+| M[normalize entry/id]
-  M -->|invalid| X[error]
-  M -->|valid| N[queryPairedEntries]
-  N --> O{paired count}
-  O -->|more than 1| X
-  O -->|0| P[pairNormalizedEntry]
-  O -->|1 same ANT id + replaceExisting=false| Q[remember selected/recent]
-  O -->|1 different + replaceExisting=false| X
-  O -->|1 paired + replaceExisting=true| R[request HRM_CLEAR_ANT]
-  R --> R2[wait 2s settle]
-  R2 --> P
-  Q --> Y
-
-  P --> S[request HRM_PAIR_ANT]
-  S --> T[queryPairedEntries again]
-  T --> U{new entry present?}
-  U -->|yes| V[remember selected/recent]
-  U -->|no| X
-  V --> Y
-
-  D -->|Clear Paired HRM| AA[request HRM_CLEAR_ANT]
-  AA --> AB[queryPairedEntries again]
-  AB --> AC{entries remain?}
-  AC -->|no| AD[clear selected + persist config]
-  AC -->|yes| X
-  AD --> Y
-
-  X --> AE[set lastError<br/>busy=false]
-```
-
-HRM notes:
-
-- `Status`, `Scan ANT+`, `Pair ANT+`, and `Clear Paired HRM` are all verified
-  reads or write-then-read flows. The module does not trust an ACK alone.
-- `pairANT` enforces a single-HRM app policy: same ID is idempotent only when
-  `replaceExisting` is false. With `replaceExisting`, the flow clears, waits
-  2 seconds, and pairs the selected HRM. Multiple paired HRMs are treated as a
-  manual cleanup case.
-- Control Point transport errors still come from the BLE layer. If the CORE
-  connection drops, the HRM operation fails, `lastError` is recorded, and BLE
-  recovery continues through the reconnect lifecycle above.
-
-## CORESensor Events
-
-When the user's Enable setting is on, apps can initialize the runtime and listen for readings:
+With Enable on, subscribe and hold a power owner while readings are needed:
 
 ```js
 require("CORESensor").enable();
+function onCore(data) { print(data.core, data.unit); }
+Bangle.on("CORESensor", onCore);
 Bangle.setCORESensorPower(1, "myapp");
-Bangle.on("CORESensor", function (data) {
-  // Use CORE sensor data here.
-});
+
+// Call when the consumer stops.
+function stopCore() {
+  Bangle.removeListener("CORESensor", onCore);
+  Bangle.setCORESensorPower(0, "myapp");
+}
 ```
 
-Release power when your app no longer needs the sensor:
+Measurements include `core`, `skin`, `unit`, `hr`, `hrState`, `heatflux`, `hsi`,
+`hsiValid`, `battery`, `dataQuality`, and `flags`; see [protocol.js](protocol.js)
+for parsing and unavailable values. [runtime.js](runtime.js) lists the `Bangle`
+connection, status, pause/resume, Control Point, HRM, and logging APIs and aliases.
+`CORESensorStatus` emits connection status changes.
 
-```js
-Bangle.setCORESensorPower(0, "myapp");
-```
+Recorder's **Core** integration holds its own power owner and writes **Core,
+Skin, Unit, HeartRate, HeatFlux, HeatStrainIndex, Battery, Quality**. Settings and
+BLE cache live in `coretemp.json`; selected/recent HRMs in `coretemp.hrm.json`.
 
-Each `CORESensor` event contains:
-
-- `core`: estimated/predicted core temperature, or the CORE invalid sentinel
-  when unavailable.
-- `skin`: measured skin temperature.
-- `unit`: `"C"` or `"F"`.
-- `hr`: heart-rate value from CORE measurements when provided, otherwise `0`.
-- `hrState`: CORE heart-rate state when provided by the measurement flags.
-- `heatflux`: heat flux value.
-- `hsiValid`: whether `hsi` is valid.
-- `hsi`: Heat Strain Index value from CORE's exertional algorithm.
-- `battery`: CORE battery level.
-- `dataQuality`: measurement quality/trust level from the low bits of CORE's
-  quality/state byte.
-- `flags`: raw measurement flags.
-
-## Runtime APIs
-
-After `require("CORESensor").enable()`, CoreTemp exposes these helpers on
-`Bangle`:
-
-```js
-Bangle.isCORESensorOn();
-Bangle.isCORESensorConnected();
-Bangle.CORESensorConnect();
-Bangle.CORESensorDisconnect();
-Bangle.CORESensorPair(deviceOrId, name);
-Bangle.CORESensorUnpair();
-Bangle.CORESensorRebuildCache();
-Bangle.CORESensorGetStatus();
-Bangle.setCORESensorPower(on, owner);
-Bangle.CORESensorPause(owner);
-Bangle.CORESensorResume(owner);
-Bangle.CORESensorIsPaused();
-```
-
-`setCORESensorPower` records whether an owner wants CORE connected.
-Normal power requests are ignored while Enable is off. Status results include
-`enabled` (normal app access) and `alwaysOn` (background connection preference).
-`CORESensorPause` temporarily yields the BLE stack without changing any stored
-settings, pairing, or power owner.
-
-Debug helpers:
-
-```js
-Bangle.enableCORESensorLog();
-Bangle.disableCORESensorLog();
-Bangle.CORESensorSetDebugLog(true);
-```
-
-HRM helpers:
-
-```js
-Bangle.CORESensorHRMGetState();
-Bangle.CORESensorHRMGetStatus();
-Bangle.CORESensorHRMScanANT();
-Bangle.CORESensorHRMPairANT(entryOrId, replaceExisting);
-Bangle.CORESensorHRMClearANT();
-```
-
-`CORESensorHRMPairANT` remains available for scripts or other apps, but the
-watch settings UI does not expose manual ID input.
-
-## Control Point Model
-
-CoreTemp's HRM support is split into small modules:
-
-- `protocol.js`: CORE UUIDs, opcodes, measurement parsing, Control Point
-  response parsing, and ANT entry parsing.
-- `controlpoint.js`: one strict Control Point request actor. It writes one
-  opcode at a time and only settles on a matching `[0x80, opcode, ...]`
-  indication.
-- `hrm.js`: user-level HRM workflows such as scan, status, pair, recent HRMs,
-  and clear.
-- `ble.js`: CORE BLE connection, service discovery, characteristic caching, and
-  notification forwarding.
-
-Unexpected, stale, or mismatched Control Point indications are logged and
-discarded. They are not surfaced as HRM workflow errors.
-
-## BLE Compatibility
-
-CoreTemp supports CORE's custom Core Body Temperature Service:
-
-- Service: `00002100-5b1e-4347-b07c-97b514dae121`
-- Temperature characteristic: `00002101-5b1e-4347-b07c-97b514dae121`
-- Control Point characteristic: `00002102-5b1e-4347-b07c-97b514dae121`
-
-For older/basic compatibility, turn off `Custom CORE only` in Debug to accept
-the standard BLE Health Thermometer profile:
-
-- Service: `0x1809` / `00001809-0000-1000-8000-00805f9b34fb`
-- Temperature Measurement characteristic: `0x2a1c` /
-  `00002a1c-0000-1000-8000-00805f9b34fb`
-
-The standard Health Thermometer path provides temperature readings only. CORE
-Control Point and ANT+ HRM management require the custom Control Point
-characteristic.
-
-When CoreTemp falls back to Health Thermometer mode, it periodically performs a
-background profile upgrade attempt. This disconnects briefly, rebuilds the
-characteristic cache, and switches to the custom CORE profile if it is available.
-
-`Custom CORE only` defaults to on, rejecting the standard Health Thermometer
-fallback and retrying until the custom CORE temperature characteristic is
-available. Existing explicit settings are preserved when upgrading.
-
-## Storage
-
-CoreTemp stores:
-
-- `coretemp.json`: app settings (`enabled`, `alwaysOn`, migration version), paired CORE device ID/name, debug flag, and BLE
-  characteristic cache.
-- `coretemp.hrm.json`: selected and recent ANT+ HRMs.
-- `coretemp.log`: debug log output when debug logging is enabled.
-
-The repository also includes `apps/coretemp/tests/` for local regression tests.
-That folder is committed for development but is not listed in `metadata.json`,
-so it is not installed on the watch.
-
-## Recorder
-
-The Recorder integration is named `Core` and records:
-
-- Core
-- Skin
-- Unit
-- HeartRate
-- HeatFlux
-- HeatStrainIndex
-- Battery
-- Quality
-
-Recorder powers the CORE runtime while recording and releases it when recording
-stops.
-
-## Development Tests
+## Development and hardware checks
 
 From the repository root:
 
 ```sh
 git submodule update --init core webtools
 node apps/coretemp/tests/run.js
+npx eslint --max-warnings 0 apps/coretemp/*.js apps/coretemp/tests
+git diff --check
 ```
 
-The tests cover protocol parsing, the strict Control Point actor, HRM scan,
-pair/status/clear behavior, BLE Control Point forwarding, runtime exports,
-settings menu behavior, migration retries, on-demand power ownership, custom
-configuration uploads, and manifest packaging through the pinned App Loader.
+Tests simulate BLE and include migration and installer packaging. Optional
+on-watch checks can record firmware versions and partial logs:
 
-## Creators/Contributors
+- Cold discovery: upgrade/rebuild, verify readings and HRM Status; retain saved IDs.
+- Cached reconnect: reuse handles and receive one event per notification.
+- HRM off/on: recover heart-rate data without automatic pairing; interrupt scan/replacement safely.
+- CORE out of range: back off and recover; explicit disconnect prevents retries.
+- HeatSuite pause/resume: reconnect after the final pause owner releases.
+- App switching during discovery: no stale readings/cache writes or shutdown retries;
+  verify Recorder and Always On ownership across app exit.
 
-Ivor Hewitt
+## Contributors
 
-[Nicholas Ravanelli](https://github.com/nravanelli)
-
-[Zheng Yifei](https://github.com/zyf0717)
+Ivor Hewitt, [Nicholas Ravanelli](https://github.com/nravanelli), and
+[Zheng Yifei](https://github.com/zyf0717).

@@ -55,6 +55,7 @@ module.exports = [
         storage,
         globals: { Bangle, E, NRF: {} },
         overrides: {
+          "coretemp.ble": { runWithConnectedSession(owner, fn) { return Bangle.CORESensorConnect().then(fn); } },
           "coretemp.store": {
             read() { return storage.readJSON("coretemp.json", 1) || {}; },
             write(mutator) {
@@ -83,7 +84,7 @@ module.exports = [
       currentMenu["Debug"]();
       assert.strictEqual(typeof currentMenu["Full log"], "object");
       assert.strictEqual(typeof currentMenu["Partial log"], "object");
-      assert.strictEqual(typeof currentMenu["Custom CORE only"], "object");
+      assert.strictEqual(currentMenu["Custom CORE only"], undefined);
       assert.strictEqual(currentMenu["Alert on disconnect"], undefined);
       assert.strictEqual(typeof currentMenu["Reset CoreTemp"], "function");
       assert.strictEqual(currentMenu["Erase BLE Bonds"], undefined);
@@ -146,6 +147,7 @@ module.exports = [
         storage,
         globals: { Bangle, E, NRF: {} },
         overrides: {
+          "coretemp.ble": { runWithConnectedSession(owner, fn) { return Bangle.CORESensorConnect().then(fn); } },
           "coretemp.store": {
             read() { return storage.readJSON("coretemp.json", 1) || {}; },
             write(mutator) {
@@ -234,6 +236,7 @@ module.exports = [
         storage,
         globals: { Bangle, E, NRF: {} },
         overrides: {
+          "coretemp.ble": { runWithConnectedSession(owner, fn) { return Bangle.CORESensorConnect().then(fn); } },
           "coretemp.store": {
             read() { return storage.readJSON("coretemp.json", 1) || {}; },
             write(mutator) {
@@ -323,6 +326,7 @@ module.exports = [
         storage,
         globals: { Bangle, E, NRF: {} },
         overrides: {
+          "coretemp.ble": { runWithConnectedSession(owner, fn) { return Bangle.CORESensorConnect().then(fn); } },
           "coretemp.store": {
             read() { return storage.readJSON("coretemp.json", 1) || {}; },
             write(mutator) {
@@ -409,6 +413,7 @@ module.exports = [
         storage,
         globals: { Bangle, E, NRF: {} },
         overrides: {
+          "coretemp.ble": { runWithConnectedSession(owner, fn) { return Bangle.CORESensorConnect().then(fn); } },
           "coretemp.store": {
             read() { return storage.readJSON("coretemp.json", 1) || {}; },
             write(mutator) {
@@ -494,6 +499,7 @@ module.exports = [
         storage,
         globals: { Bangle, E, NRF: {} },
         overrides: {
+          "coretemp.ble": { runWithConnectedSession(owner, fn) { return Bangle.CORESensorConnect().then(fn); } },
           "coretemp.store": {
             read() { return storage.readJSON("coretemp.json", 1) || {}; },
             write(mutator) {
@@ -570,6 +576,7 @@ module.exports = [
         storage,
         globals: { Bangle, E, NRF: {}, g },
         overrides: {
+          "coretemp.ble": { runWithConnectedSession(owner, fn) { return Bangle.CORESensorConnect().then(fn); } },
           "coretemp.store": {
             read() { return storage.readJSON("coretemp.json", 1) || {}; },
             write(mutator) {
@@ -684,6 +691,7 @@ module.exports = [
         storage,
         globals: { Bangle, E, NRF: {} },
         overrides: {
+          "coretemp.ble": { runWithConnectedSession(owner, fn) { return Bangle.CORESensorConnect().then(fn); } },
           "coretemp.store": {
             read() { return storage.readJSON("coretemp.json", 1) || {}; },
             write(mutator) {

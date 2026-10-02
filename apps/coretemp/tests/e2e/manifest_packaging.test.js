@@ -10,6 +10,8 @@ module.exports = [
       const root = path.resolve(__dirname, "../..");
       const metadata = JSON.parse(fs.readFileSync(path.join(root, "metadata.json"), "utf8"));
       const urls = metadata.storage.concat(metadata.data || []).map(entry => entry.url);
+      assert.strictEqual(metadata.version, "0.12");
+      assert.ok(!fs.readFileSync(path.join(root, "custom.html"), "utf8").includes("customprofileonly"));
       assert.strictEqual(metadata.custom, "custom.html");
       assert.strictEqual(metadata.customConnect, true);
       assert.ok(urls.includes("protocol.js"));
@@ -28,9 +30,9 @@ module.exports = [
       const settings = JSON.parse(fs.readFileSync(path.join(root, "app-settings.json"), "utf8"));
       assert.strictEqual(settings.enabled, true);
       assert.strictEqual(settings.alwaysOn, false);
-      assert.strictEqual(settings.settingsVersion, 1);
+      assert.strictEqual(settings.settingsVersion, 2);
       assert.strictEqual(settings.widget, true);
-      assert.strictEqual(settings.customprofileonly, true);
+      assert.strictEqual(settings.customprofileonly, undefined);
       assert.strictEqual(settings.debugMode, false);
       assert.strictEqual(settings.antScanWindowSec, 5);
       assert.strictEqual(Object.prototype.hasOwnProperty.call(settings, "warn" + "Disconnect"), false);

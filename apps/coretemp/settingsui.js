@@ -28,9 +28,6 @@ exports.open = function (back) {
     if ((key === "debuglog" || key === "debugpartiallog") && Bangle.CORESensorSetLogMode) {
       Bangle.CORESensorSetLogMode(settings.debuglog ? "full" : (settings.debugpartiallog ? "partial" : "off"));
     }
-    if (key === "customprofileonly" && value && Bangle.CORESensorRebuildCache) {
-      Promise.resolve(Bangle.CORESensorRebuildCache()).catch(function () {});
-    }
   }
 
   function showNext(next) {
@@ -53,24 +50,10 @@ exports.open = function (back) {
   }
 
   function runWithCoreConnection(fn, skipConnect) {
-    var acquiredPower = false;
-    var promise = Promise.resolve();
     if (!ensureRuntime()) return Promise.reject(new Error("CORESensor runtime is unavailable"));
-    // Settings actions borrow sensor power and release it afterward when no
-    // app/background owner already had the CORE runtime active.
-    if (Bangle.setCORESensorPower && Bangle.isCORESensorOn && !Bangle.isCORESensorOn()) {
-      Bangle.setCORESensorPower(1, OWNER);
-      acquiredPower = true;
-    }
-    if (!skipConnect) promise = promise.then(function () { return Bangle.CORESensorConnect(); });
-    promise = promise.then(fn);
-    return promise.then(function (result) {
-      if (acquiredPower) Bangle.setCORESensorPower(0, OWNER);
-      return result;
-    }, function (err) {
-      if (acquiredPower) Bangle.setCORESensorPower(0, OWNER);
-      throw err;
-    });
+    // Pair/rebuild already acquire temporary power in the BLE module.
+    if (skipConnect) return Promise.resolve().then(fn);
+    return require("coretemp.ble").runWithConnectedSession(OWNER, fn);
   }
 
   function formatError(err) {
@@ -155,8 +138,6 @@ exports.open = function (back) {
     text = "State: " + status.state + "\n" +
       "Task: " + (status.activeTask || "") + "\n" +
       "Profile: " + (status.profile || "") + "\n" +
-      "Custom only: " + status.customProfileOnly + "\n" +
-      "Upgrade: " + status.profileUpgradeScheduled + "\n" +
       "HRM: " + (status.hrm ? status.hrm.operation || "" : "") + "\n" +
       "Paired: " + status.paired + "\n" +
       "Connected: " + status.connected + "\n" +
@@ -387,10 +368,6 @@ exports.open = function (back) {
           writeSetting("debugpartiallog", v);
           E.showMenu(debugMenu());
         }
-      },
-      "Custom CORE only": {
-        value: !!settings.customprofileonly,
-        onchange: function (v) { writeSetting("customprofileonly", v); }
       },
       "Status": showCoreStatus,
       "Rebuild cache": rebuildCache,

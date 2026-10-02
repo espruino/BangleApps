@@ -16,7 +16,8 @@ async function scanWithSettings(settings) {
   const loaded = loader.create({
     storage,
     overrides: {
-      "coretemp.controlpoint": cp,
+      "coretemp.ble": { writeControlPoint: cp.request, getSessionToken() { return 1; },
+        waitForSession(ms) { scanWindowMs = ms; return Promise.resolve(); } },
       "coretemp.store": {
         get() { return storage.readJSON("coretemp.json", 1) || {}; },
         log() {},
@@ -52,7 +53,8 @@ module.exports = [
       const loaded = loader.create({
         storage: fakeStorage.create(),
         overrides: {
-          "coretemp.controlpoint": cp,
+          "coretemp.ble": { writeControlPoint: cp.request, getSessionToken() { return 1; },
+        waitForSession(ms) { scanWindowMs = ms; return Promise.resolve(); } },
           "coretemp.store": { get() { return {}; }, log() {}, init() {}, flush() {} }
         },
         globals: {

@@ -7,8 +7,12 @@ function createCharacteristic(uuid, properties) {
     uuid,
     properties: properties || {},
     writes,
+    handlers,
     on(name, handler) {
-      handlers[name] = handler;
+      (handlers[name] || (handlers[name] = [])).push(handler);
+    },
+    removeListener(name, handler) {
+      handlers[name] = (handlers[name] || []).filter(item => item !== handler);
     },
     startNotifications() {
       this.notificationsStarted = true;
@@ -22,19 +26,21 @@ function createCharacteristic(uuid, properties) {
       return Promise.resolve();
     },
     emitValue(bytes) {
-      handlers.characteristicvaluechanged({
+      (handlers.characteristicvaluechanged || []).slice().forEach(handler => handler({
         target: {
           value: dataview.fromBytes(bytes)
         }
-      });
+      }));
     }
   };
 }
 
+exports.createCharacteristic = createCharacteristic;
+
 exports.create = function createFakeBLE(protocol, options) {
   options = options || {};
   const disconnectHandlers = [];
-  let getPrimaryServicesCalls = 0;
+  const getPrimaryServiceCalls = [];
   const coreServiceUuid = options.uppercaseUuids ? protocol.CORE_SERVICE_UUID.toUpperCase() : protocol.CORE_SERVICE_UUID;
   const tempUuid = options.uppercaseUuids ? protocol.CORE_TEMP_UUID.toUpperCase() : protocol.CORE_TEMP_UUID;
   const controlPointUuid = options.uppercaseUuids ? protocol.CORE_CONTROL_POINT_UUID.toUpperCase() : protocol.CORE_CONTROL_POINT_UUID;
@@ -48,12 +54,12 @@ exports.create = function createFakeBLE(protocol, options) {
     indicate: true
   });
   const coreCharacteristics = options.includeCoreCharacteristics === false ?
-    [batteryChar] :
-    [tempChar, controlPointChar];
+    [] :
+    (options.includeControlPoint === false ? [tempChar] : [tempChar, controlPointChar]);
   const services = options.healthThermometerOnly ? [{
     uuid: "00001809-0000-1000-8000-00805f9b34fb",
     getCharacteristics() {
-      return Promise.resolve([healthThermometerChar, batteryChar]);
+      return Promise.resolve([healthThermometerChar]);
     }
   }] : options.includeHealthThermometer ? [{
     uuid: "00001809-0000-1000-8000-00805f9b34fb",
@@ -71,6 +77,12 @@ exports.create = function createFakeBLE(protocol, options) {
       return Promise.resolve(coreCharacteristics);
     }
   }];
+  if (options.includeBattery !== false) services.push({
+    uuid: protocol.BATTERY_SERVICE_UUID,
+    getCharacteristics() {
+      return Promise.resolve([batteryChar]);
+    }
+  });
   const gatt = {
     connected: false,
     bondCalls: 0,
@@ -95,8 +107,12 @@ exports.create = function createFakeBLE(protocol, options) {
       return Promise.resolve();
     },
     getPrimaryServices() {
-      getPrimaryServicesCalls++;
       return Promise.resolve(services);
+    },
+    getPrimaryService(uuid) {
+      getPrimaryServiceCalls.push(uuid);
+      const normalize = value => value.toLowerCase().replace(/^0000([0-9a-f]{4})-0000-1000-8000-00805f9b34fb$/, "0x$1");
+      return Promise.resolve(services.find(service => normalize(service.uuid) === normalize(uuid)));
     }
   };
   const device = {
@@ -106,8 +122,15 @@ exports.create = function createFakeBLE(protocol, options) {
     on(name, handler) {
       if (name === "gattserverdisconnected") disconnectHandlers.push(handler);
     },
+    removeListener(name, handler) {
+      if (name === "gattserverdisconnected") {
+        const index = disconnectHandlers.indexOf(handler);
+        if (index >= 0) disconnectHandlers.splice(index, 1);
+      }
+    },
     emitDisconnect(reason) {
-      disconnectHandlers.forEach(handler => handler(reason));
+      gatt.connected = false;
+      disconnectHandlers.slice().forEach(handler => handler(reason));
     }
   };
   const NRF = {
@@ -123,9 +146,9 @@ exports.create = function createFakeBLE(protocol, options) {
     NRF,
     device,
     gatt,
-    getPrimaryServicesCalls() {
-      return getPrimaryServicesCalls;
-    },
+    getPrimaryServiceCalls,
+    disconnectHandlers,
+    batteryChar,
     tempChar,
     controlPointChar,
     healthThermometerChar

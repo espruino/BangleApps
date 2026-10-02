@@ -1,80 +1,59 @@
 var protocol = require("coretemp.protocol");
-
 var adapter;
 var activeRequest;
 var requestQueue = [];
 
-function log(text, value) {
-  if (adapter && adapter.log) adapter.log(text, value);
-}
-
-function normalizeOptions(options) {
-  if (typeof options === "number") return { timeoutMs: options };
-  return options || {};
-}
-
+function log(text, value) { if (adapter && adapter.log) adapter.log(text, value); }
 function clearRequest(req) {
   if (req.timeout) clearTimeout(req.timeout);
   if (activeRequest === req) activeRequest = undefined;
 }
-
-function writeBytes(bytes) {
-  if (!adapter || !adapter.write) {
-    return Promise.reject(new Error("CORE control point is not connected"));
+function close(reason) {
+  var err = reason instanceof Error ? reason : new Error(reason || "CORE control point is not connected");
+  // Detach before rejecting anything. Cancellation must never pump the queue.
+  adapter = undefined;
+  var pending = requestQueue;
+  requestQueue = [];
+  if (activeRequest) {
+    pending.unshift(activeRequest);
+    clearRequest(activeRequest);
   }
-  return Promise.resolve(adapter.write(bytes));
+  pending.forEach(function (req) { req.reject(err); });
 }
-
+function failTransport(req, reason) {
+  if (activeRequest !== req) return;
+  var err = reason instanceof Error ? reason : new Error(String(reason));
+  err.coreTransportFailure = true;
+  close(err);
+}
 function pumpQueue() {
-  var req;
-  var bytes;
-  // CORE accepts one control-point procedure at a time; keep later commands
-  // queued until the matching response or timeout resolves the active one.
   if (activeRequest || !requestQueue.length) return;
-  req = requestQueue.shift();
-  bytes = [req.opcode].concat(req.params);
-  activeRequest = req;
+  var req = activeRequest = requestQueue.shift();
   req.timeout = setTimeout(function () {
-    if (activeRequest !== req) return;
-    clearRequest(req);
-    req.reject(new Error("CORE control point timeout for opcode " + req.opcode));
-    pumpQueue();
+    failTransport(req, new Error("CORE control point timeout for opcode " + req.opcode));
   }, req.timeoutMs);
-
-  writeBytes(bytes).then(function () {
-    log("Sent control point opcode", req.opcode);
-  }).catch(function (err) {
+  Promise.resolve().then(function () {
     if (activeRequest !== req) return;
-    clearRequest(req);
-    req.reject(err);
-    pumpQueue();
-  });
+    return adapter.write([req.opcode].concat(req.params));
+  }).then(function () {
+    if (activeRequest === req) log("Sent control point opcode", req.opcode);
+  }).catch(function (err) { failTransport(req, err); });
 }
 
 exports.setAdapter = function (nextAdapter) {
+  close("CORE control point session replaced");
   adapter = nextAdapter;
-  if (!adapter) exports.cancelActive("CORE control point is not connected");
 };
-
-exports.isBusy = function () {
-  return !!activeRequest;
-};
-
-exports.cancelActive = function (reason) {
-  var req = activeRequest;
-  if (!req) return;
-  clearRequest(req);
-  req.reject(new Error(reason || "CORE control point request cancelled"));
-  pumpQueue();
-};
-
+exports.close = close;
+exports.cancelActive = close;
+exports.isBusy = function () { return !!activeRequest; };
 exports.request = function (opcode, params, options) {
-  params = params || [];
-  options = normalizeOptions(options);
+  if (!adapter) return Promise.reject(new Error("CORE control point is not connected"));
+  options = typeof options === "number" ? { timeoutMs: options } : (options || {});
   return new Promise(function (resolve, reject) {
     requestQueue.push({
       opcode: opcode,
-      params: params.slice ? params.slice() : [],
+      params: (params || []).slice(),
       timeoutMs: options.timeoutMs || 10000,
       resolve: resolve,
       reject: reject
@@ -82,35 +61,15 @@ exports.request = function (opcode, params, options) {
     pumpQueue();
   });
 };
-
 exports.onNotification = function (dv) {
   var response = protocol.parseResponse(dv);
-  var req;
-
-  // Responses are async BLE notifications, so verify both the response opcode
-  // and the original request opcode before resolving the active request.
-  if (response.opCode !== protocol.OPCODES.RESPONSE) {
-    log("Ignoring non-control point response", response.bytes);
+  if (response.opCode !== protocol.OPCODES.RESPONSE || !activeRequest || response.requestOpCode !== activeRequest.opcode) {
+    log("Discarding unexpected control point response", response.bytes);
     return;
   }
-  if (!activeRequest) {
-    log("Discarding stale control point response", response.bytes);
-    return;
-  }
-  if (response.requestOpCode !== activeRequest.opcode) {
-    log("Discarding mismatched control point response", {
-      expected: activeRequest.opcode,
-      bytes: response.bytes
-    });
-    return;
-  }
-
-  req = activeRequest;
+  var req = activeRequest;
   clearRequest(req);
-  if (response.resultCode === 0x01) {
-    req.resolve(response);
-  } else {
-    req.reject(new Error("Control point error code " + response.resultCode));
-  }
+  if (response.resultCode === 0x01) req.resolve(response);
+  else req.reject(new Error("Control point error code " + response.resultCode));
   pumpQueue();
 };
