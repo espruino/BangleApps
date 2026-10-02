@@ -1,10 +1,25 @@
-/* orbit 0.05 stable: settings and editable event data. */
+/* tenkyu 0.01: settings and editable event data. */
 (function(back){
   var Storage=require("Storage");
+  /* Prefer tenkyugi data, then Orbit; never overwrite tenkyu data. */
+  (function(){
+    ["json","cal.json","events.json"].forEach(function(suffix){
+      var target="tenkyu."+suffix;
+      if(Storage.read(target)!==undefined)return;
+      var legacy=Storage.read("tenkyugi."+suffix);
+      if(legacy===undefined)legacy=Storage.read("orbit."+suffix);
+      if(legacy!==undefined)Storage.write(target,legacy);
+    });
+    var system=Storage.readJSON("setting.json",1);
+    if(system&&(system.clock==="orbit.app.js"||system.clock==="tenkyugi.app.js")){
+      system.clock="tenkyu.app.js";Storage.writeJSON("setting.json",system);
+    }
+  })();
+
   var C,P,JPI;
-  var JPFILE="orbitjp.dat",jpPrefCache=-1,jpMunicipalities;
-  var CFG="orbit.json",CAL="orbit.cal.json",EVENTS="orbit.events.json";
-  var GPS_ID="orbitsettings";
+  var JPFILE="tenkyujp.dat",jpPrefCache=-1,jpMunicipalities;
+  var CFG="tenkyu.json",CAL="tenkyu.cal.json",EVENTS="tenkyu.events.json";
+  var GPS_ID="tenkyusettings";
   var COLORS=["red","yellow","green","blue","cyan","magenta","orange","white","gray","black"];
   var TYPES=["holiday","family","birthday","custom"];
   var TYPE_NAMES=["Holiday","Anniversary","Birthday","Other"];
@@ -18,7 +33,7 @@
   /* Load place tables lazily and release them when location editing ends. */
   function loadPlaceIndex(){
     if(C&&P)return;
-    var d=require("orbitloc");
+    var d=require("tenkyuloc");
     C=d.countries;P=d.prefs;JPI=d.jpidx||[];
     d=undefined;
   }
@@ -32,8 +47,8 @@
     try{
       if(typeof Modules!=="undefined"&&Modules.getCached){
         var mc=Modules.getCached();
-        if(mc.includes("orbitloc"))Modules.removeCached("orbitloc");
-        if(mc.includes("orbittz"))Modules.removeCached("orbittz");
+        if(mc.includes("tenkyuloc"))Modules.removeCached("tenkyuloc");
+        if(mc.includes("tenkyutz"))Modules.removeCached("tenkyutz");
       }
     }catch(e){}
   }
@@ -71,6 +86,8 @@
     if(!isFinite(s.datePos))s.datePos=1;if(!isFinite(s.timePos))s.timePos=2;
     if(!isFinite(s.dateSize))s.dateSize=22;if(!isFinite(s.timeSize))s.timeSize=22;
     set("timeSource",(s.timeSource===1||s.timeSource==="1")?1:0);
+    set("orbitHourSize",Math.max(6,Math.min(12,isFinite(s.orbitHourSize)?s.orbitHourSize|0:8)));
+    set("orbitHourStep",[1,2,3,6].indexOf(s.orbitHourStep)>=0?s.orbitHourStep:1);
     s.sunSize=Math.max(6,Math.min(15,s.sunSize|0));
     s.earthSize=Math.max(40,Math.min(45,s.earthSize|0));
     s.moonSize=Math.max(14,Math.min(16,s.moonSize|0));
@@ -176,7 +193,7 @@
   function placeTimeData(q){
     var t;
     try{
-      var z=require("orbittz");
+      var z=require("tenkyutz");
       t=z.get(q.ci,q.pi);
       z=undefined;
     }catch(e){t=undefined;}
@@ -262,7 +279,7 @@
       if(fix.fix&&isFinite(fix.lat)&&isFinite(fix.lon)){
         applyGPS(s,fix);stopGPS();
         try{Bangle.buzz(300);}catch(e){}
-        E.showAlert("GPS location saved\n"+gpsLocationText(s),"orbit GPS").then(main);
+        E.showAlert("GPS location saved\n"+gpsLocationText(s),"tenkyu GPS").then(main);
         return;
       }
       showGPSProgress(s,false);
@@ -271,7 +288,7 @@
     try{Bangle.setGPSPower(1,GPS_ID);}
     catch(e){
       stopGPS();
-      E.showAlert("Could not start GPS","orbit GPS").then(function(){gpsMenu(s);});
+      E.showAlert("Could not start GPS","tenkyu GPS").then(function(){gpsMenu(s);});
       return;
     }
     showGPSProgress(s,true);
@@ -280,7 +297,7 @@
     var prefix=s.locationMode===0?(s.locPref||"Place"):(s.locationMode===2?"GPS":"Manual");
     E.showAlert(prefix+" / "+(s.locName||"")+
       "\nLat "+Number(s.manualLat).toFixed(3)+
-      "\nLon "+Number(s.manualLon).toFixed(3),"orbit location")
+      "\nLon "+Number(s.manualLon).toFixed(3),"tenkyu location")
       .then(next||function(){locationMenu(s);});
   }
 
@@ -373,16 +390,16 @@
   // ---------- Holiday cache ----------
   function cacheInfo(){
     var out={jp:0,ew:0,sc:0,ni:0,total:0};
-    Storage.list(/^orh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/).forEach(function(f){
-      var m=/^orh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/.exec(f);
+    Storage.list(/^tenh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/).forEach(function(f){
+      var m=/^tenh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/.exec(f);
       if(m){out[m[1]]++;out.total++;}
     });
     return out;
   }
   function clearCache(region,cb){
     var n=0;
-    Storage.list(/^orh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/).forEach(function(f){
-      var m=/^orh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/.exec(f);
+    Storage.list(/^tenh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/).forEach(function(f){
+      var m=/^tenh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/.exec(f);
       if(m&&(!region||m[1]===region)){Storage.erase(f);n++;}
     });
     E.showAlert("Deleted "+n,"Holiday cache").then(cb);
@@ -476,7 +493,7 @@
   function exitToOrbit(){
     stopGPS();releasePlaceData();
     try{E.removeListener("kill",onKill);}catch(e){}
-    load("orbit.app.js");
+    load("tenkyu.app.js");
   }
   function onKill(){stopGPS();releasePlaceData();}
 
@@ -485,8 +502,8 @@
     var s=appCfg(),c=calCfg();
     var minOrbit=s.earthSize+s.moonSize+4;
     if(s.moonOrbit<minOrbit){s.moonOrbit=minOrbit;write(CFG,s);}
-    var m={"":{title:"orbit"},"< Back":leave,
-      "Exit to orbit":exitToOrbit,
+    var m={"":{title:"tenkyu"},"< Back":leave,
+      "Exit to tenkyu":exitToOrbit,
       "Location":function(){locationMenu(s);},
       "Time source":{value:s.timeSource,min:0,max:1,step:1,
         format:function(v){return v?"Place":"Bangle";},
@@ -510,6 +527,11 @@
       },
       "Date size":{value:s.dateSize,min:12,max:30,step:2,onchange:function(v){s.dateSize=v;write(CFG,s);}},
       "Time size":{value:s.timeSize,min:12,max:30,step:2,onchange:function(v){s.timeSize=v;write(CFG,s);}},
+      "Hour size":{value:s.orbitHourSize,min:6,max:12,step:1,onchange:function(v){s.orbitHourSize=v;write(CFG,s);}},
+      "Hour step":{value:[1,2,3,6].indexOf(s.orbitHourStep),min:0,max:3,step:1,
+        format:function(v){return [1,2,3,6][v]+" h";},
+        onchange:function(v){s.orbitHourStep=[1,2,3,6][v];write(CFG,s);}
+      },
       "Sun size":{value:s.sunSize,min:6,max:15,step:1,onchange:function(v){s.sunSize=v;write(CFG,s);}},
       "Earth size":{value:s.earthSize,min:40,max:45,step:1,onchange:function(v){
         s.earthSize=v;var mn=s.earthSize+s.moonSize+4;if(s.moonOrbit<mn)s.moonOrbit=mn;

@@ -1,7 +1,22 @@
-/* orbit 0.05 stable */
+/* tenkyu 0.01 (tenkyu storage) */
 (function(){
   var W=g.getWidth(),H=g.getHeight();
-  var Storage=require("Storage"),CFGFILE="orbit.json";
+  var Storage=require("Storage"),CFGFILE="tenkyu.json";
+  /* Prefer tenkyugi data, then Orbit; never overwrite tenkyu data. */
+  (function(){
+    ["json","cal.json","events.json"].forEach(function(suffix){
+      var target="tenkyu."+suffix;
+      if(Storage.read(target)!==undefined)return;
+      var legacy=Storage.read("tenkyugi."+suffix);
+      if(legacy===undefined)legacy=Storage.read("orbit."+suffix);
+      if(legacy!==undefined)Storage.write(target,legacy);
+    });
+    var system=Storage.readJSON("setting.json",1);
+    if(system&&(system.clock==="orbit.app.js"||system.clock==="tenkyugi.app.js")){
+      system.clock="tenkyu.app.js";Storage.writeJSON("setting.json",system);
+    }
+  })();
+
   var cfg=Storage.readJSON(CFGFILE,1)||{};
   var sysCfg=Storage.readJSON("setting.json",1)||{};
   var VIEWLIGHT_MS=isFinite(sysCfg.timeout)?Math.max(0,+sysCfg.timeout)*1000:10000;
@@ -27,6 +42,8 @@
     set("dateSize",Math.max(12,Math.min(30,ds)));set("timeSize",Math.max(12,Math.min(30,ts)));
     /* Bangle time remains the default. Place time is opt-in. */
     set("timeSource",(cfg.timeSource===1||cfg.timeSource==="1")?1:0);
+    set("orbitHourSize",Math.max(6,Math.min(12,isFinite(cfg.orbitHourSize)?cfg.orbitHourSize|0:8)));
+    set("orbitHourStep",[1,2,3,6].indexOf(cfg.orbitHourStep)>=0?cfg.orbitHourStep:1);
 
     var lat,lon;
     if(cfg.coordVersion!==2){
@@ -56,16 +73,16 @@
     if(changed)try{Storage.writeJSON(CFGFILE,cfg);}catch(e){}
   })();
   /* GPS is settings-only; release any stale settings-owned request. */
-  try{Bangle.setGPSPower(0,"orbitsettings");}catch(e){}
+  try{Bangle.setGPSPower(0,"tenkyusettings");}catch(e){}
   var calModule,calendar;
   try{
-    var calSource=Storage.read("orbit.cal.js");
+    var calSource=Storage.read("tenkyu.cal.js");
     if(calSource){calModule=eval(calSource);calendar=calModule.create();}
     calSource=undefined;
   }catch(calErr){calModule=undefined;calendar=undefined;}
   var BLACK=0x0000,WHITE=0xFFFF,NAVY=0x000F,DARKBLUE=0x0008,CYAN=0x07FF,YELLOW=0xFFE0,ORANGE=0xFD20,RED=0xF800,GREEN=0x04C0;
   var busy=false,killed=false,minuteTimer,timeTimer,idleTimer,tapTimer;
-  var mode="orbit",interactive=true,tapCount=0,resetOnWake=false;
+  var mode="tenkyu",interactive=true,tapCount=0,resetOnWake=false;
   var selectedDayOffset=0,hasSelectedDate=false;
   var nativeDrawWidgets,widgetDrawWrapper;
   var SUNR=Math.max(6,Math.min(15,cfg.sunSize|0));
@@ -87,6 +104,8 @@
   var VIEW_SOUTH=!!cfg.viewSide;
   var DATEPOS=cfg.datePos|0,TIMEPOS=cfg.timePos|0,DATESIZE=cfg.dateSize|0,TIMESIZE=cfg.timeSize|0;
   var TIMESOURCE=cfg.timeSource===1?1:0;
+  var HOURSIZE=cfg.orbitHourSize|0,HOURSTEP=cfg.orbitHourStep|0;
+  var ROMAN=["XII","I","II","III","IV","V","VI","VII","VIII","IX","X","XI"];
   var PLACETZ=isFinite(cfg.tzBase)?+cfg.tzBase:NaN;
   var PLACEDST=isFinite(cfg.tzRule)?(cfg.tzRule|0):0;
   /* Copy only location fields needed by the clock; place tables stay unloaded.
@@ -203,7 +222,7 @@
   }
 
   /* Compact civil-time rules used only by Place time.
-     Rule ids are stored in orbittz; astronomy never calls this function. */
+     Rule ids are stored in tenkyutz; astronomy never calls this function. */
   function placeOffset(ms){
     var base=PLACETZ,rule=PLACEDST;
     if(!isFinite(base))return 0;
@@ -479,7 +498,7 @@
   }
 
   function drawHeaderClock(){
-    if(killed||mode!=="orbit"||(DATEPOS!==0&&TIMEPOS!==0))return;
+    if(killed||mode!=="tenkyu"||(DATEPOS!==0&&TIMEPOS!==0))return;
     var gap=topFreeGap();if(!gap)return;
     var d=displayParts(virtualNowMs()),date=pad(d.m)+pad(d.d),time=pad(d.h)+pad(d.mi);
     var size=20,showDate=DATEPOS===0,showTime=TIMEPOS===0,space=(showDate&&showTime)?" ":"";
@@ -531,7 +550,7 @@
     clear(timeTimer);
     timeTimer=setTimeout(function(){
       timeTimer=undefined;
-      if(!killed&&mode==="orbit"){
+      if(!killed&&mode==="tenkyu"){
         if(TIMEPOS===0)drawHeaderClock();else screenGroup(TIMEPOS,MOON_CACHE_DATA);
         try{g.flip();}catch(e){}
         armTime();
@@ -711,6 +730,23 @@
     return m;
   }
 
+
+  function drawOrbitHours(sol){
+    /* A revolution is 24 hours. Anchor civil hours to the observer's
+       zenith line, including the selected time source and DST. */
+    var p=displayParts(virtualNowMs());
+    var hour=p.h+p.mi/60+p.s/3600,dir=VIEW_SOUTH?1:-1;
+    var base=SUNANG+dir*(sol.ha-hour*Math.PI/12);
+    var radius=MOONORBIT+7;
+    g.setBgColor(BLACK).setColor(WHITE).setFont("Vector",HOURSIZE).setFontAlign(0,0);
+    for(var h=0;h<24;h+=HOURSTEP){
+      var a=base+dir*h*Math.PI/12;
+      var x=Math.round(EARTHX+radius*Math.cos(a));
+      var y=Math.round(EARTHY+radius*Math.sin(a));
+      g.drawString(ROMAN[h%12],x,y,true);
+    }
+  }
+
   function drawObserver(sol){
     var sunAng=Math.atan2(SUNY-EARTHY,SUNX-EARTHX);
     var rr=EARTHR*Math.cos(rad(TESTLAT));
@@ -838,6 +874,7 @@
     drawSun();
     var sol=safeSolar();
     drawEarth(sol);
+    drawOrbitHours(sol);
     drawObserver(sol);
     var moon=drawMoon();
     drawLocationStatus(moon);
@@ -874,12 +911,12 @@
 
   function armIdle(){
     clear(idleTimer);
-    if(mode!=="orbit"||!interactive)return;
+    if(mode!=="tenkyu"||!interactive)return;
     if(VIEWLIGHT_MS>0)idleTimer=setTimeout(goIdle,VIEWLIGHT_MS);
   }
 
   function startInteraction(){
-    if(killed||mode!=="orbit")return;
+    if(killed||mode!=="tenkyu")return;
     interactive=true;
     try{Bangle.setLocked(false);}catch(e){}
     try{if(!Bangle.isLCDOn())Bangle.setLCDPower(1);}catch(e){}
@@ -900,7 +937,7 @@
   function startOrbit(keepInteractive){
     if(killed)return;
     if(calendar&&calendar.isActive())calendar.stop();
-    mode="orbit";
+    mode="tenkyu";
     busy=false;
     drawBase();
     armMinute();
@@ -928,7 +965,7 @@
 
 
   function openCalendar(){
-    if(killed||mode!=="orbit")return;
+    if(killed||mode!=="tenkyu")return;
     stopOrbitTimers();
     mode="calendar";
     interactive=false;
@@ -964,24 +1001,24 @@
         }
       });
     }catch(e){
-      mode="orbit";
+      mode="tenkyu";
       busy=false;
       startOrbit(true);
     }
   }
 
   function openSettings(){
-    if(killed||mode!=="orbit")return;
+    if(killed||mode!=="tenkyu")return;
     stopOrbitTimers();
-    var src=Storage.read("orbit.settings.js");
+    var src=Storage.read("tenkyu.settings.js");
     if(!src){startOrbit(true);return;}
     cleanup();
     try{
       var fn=eval(src);
-      if(typeof fn==="function")fn(function(){load("orbit.app.js");});
-      else load("orbit.app.js");
+      if(typeof fn==="function")fn(function(){load("tenkyu.app.js");});
+      else load("tenkyu.app.js");
     }catch(e){
-      load("orbit.app.js");
+      load("tenkyu.app.js");
     }
   }
 
@@ -991,7 +1028,7 @@
       if(calendar)calendar.touch(xy);
       return;
     }
-    if(mode!=="orbit"||busy)return;
+    if(mode!=="tenkyu"||busy)return;
     try{if(!Bangle.isLCDOn())return;}catch(e){}
 
     tapCount++;
@@ -999,7 +1036,7 @@
       clear(tapTimer);
       tapTimer=setTimeout(function(){
         tapTimer=undefined;
-        if(killed||mode!=="orbit")return;
+        if(killed||mode!=="tenkyu")return;
         tapCount=0;
         openCalendar();
       },400);
@@ -1017,11 +1054,11 @@
   }
 
   function onFaceUp(up){
-    if(up&&mode==="orbit")startInteraction();
+    if(up&&mode==="tenkyu")startInteraction();
   }
 
   function onTwist(){
-    if(mode==="orbit")startInteraction();
+    if(mode==="tenkyu")startInteraction();
   }
 
   function onLCD(on){
@@ -1031,7 +1068,7 @@
       interactive=false;
 
       if(mode==="calendar"&&calendar)calendar.stop();
-      if(mode!=="orbit"){
+      if(mode!=="tenkyu"){
         /* Preserve the selected calendar date across LCD power cycles. */
         resetOnWake=true;
       }
@@ -1042,7 +1079,7 @@
       resetOnWake=false;
       startOrbit(false);
     }
-    if(mode==="orbit"){
+    if(mode==="tenkyu"){
       interactive=true;
       try{Bangle.setBacklight(true);}catch(e){}
       armIdle();
@@ -1059,7 +1096,7 @@
     clear(minuteTimer);
     minuteTimer=setTimeout(function(){
       minuteTimer=undefined;
-      if(!killed&&mode==="orbit"){drawBase();armMinute();}
+      if(!killed&&mode==="tenkyu"){drawBase();armMinute();}
     },60000-(Date.now()%60000)+25);
   }
 
