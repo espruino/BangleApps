@@ -109,3 +109,19 @@ module.exports = [
     }
   }
 ];
+
+module.exports.push(
+  {
+    name: "close rejects active and queued requests without teardown writes",
+    async fn() {
+      const { cp, writes } = makeControlPoint();
+      const results = Promise.allSettled([cp.request(1), cp.request(2), cp.request(3)]);
+      await tick();
+      cp.close("teardown");
+      assert.ok((await results).every(item => item.status === "rejected" && /teardown/.test(item.reason)));
+      await tick();
+      assert.deepStrictEqual(plain(writes), [[1]]);
+      await assert.rejects(cp.request(4), /not connected/);
+    }
+  }
+);

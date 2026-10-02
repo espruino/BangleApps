@@ -18,6 +18,19 @@ function clearRequest(req) {
   if (activeRequest === req) activeRequest = undefined;
 }
 
+function close(reason) {
+  var err = reason instanceof Error ? reason : new Error(reason || "CORE control point is not connected");
+  // Detach before rejecting anything. Cancellation must never pump the queue.
+  adapter = undefined;
+  var pending = requestQueue;
+  requestQueue = [];
+  if (activeRequest) {
+    pending.unshift(activeRequest);
+    clearRequest(activeRequest);
+  }
+  pending.forEach(function (req) { req.reject(err); });
+}
+
 function writeBytes(bytes) {
   if (!adapter || !adapter.write) {
     return Promise.reject(new Error("CORE control point is not connected"));
@@ -52,21 +65,16 @@ function pumpQueue() {
 }
 
 exports.setAdapter = function (nextAdapter) {
+  close("CORE control point session replaced");
   adapter = nextAdapter;
-  if (!adapter) exports.cancelActive("CORE control point is not connected");
 };
 
 exports.isBusy = function () {
   return !!activeRequest;
 };
 
-exports.cancelActive = function (reason) {
-  var req = activeRequest;
-  if (!req) return;
-  clearRequest(req);
-  req.reject(new Error(reason || "CORE control point request cancelled"));
-  pumpQueue();
-};
+exports.close = close;
+exports.cancelActive = close;
 
 exports.request = function (opcode, params, options) {
   params = params || [];

@@ -7,8 +7,12 @@ function createCharacteristic(uuid, properties) {
     uuid,
     properties: properties || {},
     writes,
+    handlers,
     on(name, handler) {
-      handlers[name] = handler;
+      (handlers[name] || (handlers[name] = [])).push(handler);
+    },
+    removeListener(name, handler) {
+      handlers[name] = (handlers[name] || []).filter(item => item !== handler);
     },
     startNotifications() {
       this.notificationsStarted = true;
@@ -22,14 +26,16 @@ function createCharacteristic(uuid, properties) {
       return Promise.resolve();
     },
     emitValue(bytes) {
-      handlers.characteristicvaluechanged({
+      (handlers.characteristicvaluechanged || []).slice().forEach(handler => handler({
         target: {
           value: dataview.fromBytes(bytes)
         }
-      });
+      }));
     }
   };
 }
+
+exports.createCharacteristic = createCharacteristic;
 
 exports.create = function createFakeBLE(protocol, options) {
   options = options || {};
@@ -116,8 +122,15 @@ exports.create = function createFakeBLE(protocol, options) {
     on(name, handler) {
       if (name === "gattserverdisconnected") disconnectHandlers.push(handler);
     },
+    removeListener(name, handler) {
+      if (name === "gattserverdisconnected") {
+        const index = disconnectHandlers.indexOf(handler);
+        if (index >= 0) disconnectHandlers.splice(index, 1);
+      }
+    },
     emitDisconnect(reason) {
-      disconnectHandlers.forEach(handler => handler(reason));
+      gatt.connected = false;
+      disconnectHandlers.slice().forEach(handler => handler(reason));
     }
   };
   const NRF = {
@@ -134,6 +147,8 @@ exports.create = function createFakeBLE(protocol, options) {
     device,
     gatt,
     getPrimaryServiceCalls,
+    disconnectHandlers,
+    batteryChar,
     tempChar,
     controlPointChar,
     healthThermometerChar
