@@ -1,7 +1,7 @@
 {
   "id": "coretemp",
   "name": "CoreTemp",
-  "version": "0.11",
+  "version": "0.12",
   "author": "ihewitt, zyf0717",
   "description": "Display CoreTemp device sensor data",
   "icon": "coretemp.png",

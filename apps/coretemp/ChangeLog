@@ -9,3 +9,4 @@
 0.9: Improved BLE lifecycle management and added more debug options
 0.10: Add app-loader configurator, default ANT+ HRM pairing shortcut
 0.11: Preserve on-demand connections, separate Enable and Always On, migrate legacy pairing and HRM settings, enable fresh installs and Custom CORE only by default, display unavailable skin temperature as n/a, and show fallback connections with an orange widget
+0.12: Require custom CORE temperature (remove Health Thermometer fallback and profile upgrades), use direct UUID discovery, consolidate BLE lifecycle and temporary power, cancel stale Control Point/ANT+ operations safely, and migrate settings to version 2 with a one-time cache reset.
