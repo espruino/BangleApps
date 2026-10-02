@@ -731,3 +731,27 @@ module.exports = [
     }
   }
 ];
+
+module.exports.push(
+  {
+    name: "overlapping Settings sessions retain power until their last operation finishes",
+    async fn() {
+      const { ble, Bangle } = createLoadedBLE();
+      await ble.connect();
+      let finishFirst, finishSecond;
+      const first = ble.runWithConnectedSession("coretemp.settings", () => new Promise(resolve => { finishFirst = resolve; }));
+      const second = ble.runWithConnectedSession("coretemp.settings", () => new Promise(resolve => { finishSecond = resolve; }));
+      await drain();
+      ble.setPower(0, "test");
+      finishFirst();
+      await first;
+      assert.deepStrictEqual(Array.from(Bangle._PWR.CORESensor), ["coretemp.settings"]);
+      assert.strictEqual(ble.isConnected(), true);
+      finishSecond();
+      await second;
+      await drain();
+      assert.strictEqual(ble.isConnected(), false);
+      assert.strictEqual(ble.isOn(), false);
+    }
+  }
+);

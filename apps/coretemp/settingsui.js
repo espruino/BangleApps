@@ -50,24 +50,10 @@ exports.open = function (back) {
   }
 
   function runWithCoreConnection(fn, skipConnect) {
-    var acquiredPower = false;
-    var promise = Promise.resolve();
     if (!ensureRuntime()) return Promise.reject(new Error("CORESensor runtime is unavailable"));
-    // Settings actions borrow sensor power and release it afterward when no
-    // app/background owner already had the CORE runtime active.
-    if (Bangle.setCORESensorPower && Bangle.isCORESensorOn && !Bangle.isCORESensorOn()) {
-      Bangle.setCORESensorPower(1, OWNER);
-      acquiredPower = true;
-    }
-    if (!skipConnect) promise = promise.then(function () { return Bangle.CORESensorConnect(); });
-    promise = promise.then(fn);
-    return promise.then(function (result) {
-      if (acquiredPower) Bangle.setCORESensorPower(0, OWNER);
-      return result;
-    }, function (err) {
-      if (acquiredPower) Bangle.setCORESensorPower(0, OWNER);
-      throw err;
-    });
+    // Pair/rebuild already acquire temporary power in the BLE module.
+    if (skipConnect) return Promise.resolve().then(fn);
+    return require("coretemp.ble").runWithConnectedSession(OWNER, fn);
   }
 
   function formatError(err) {

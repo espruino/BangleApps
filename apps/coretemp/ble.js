@@ -44,6 +44,7 @@ var connectedHandlers = [];
 var connectionSessionId = 0;
 var activeProfile;
 var pauseOwners = [];
+var temporaryOwners = {};
 
 // BLE lifecycle is driven by desired state plus one-shot pending flags. Public
 // actions enqueue a reconciliation pass instead of directly mutating transport.
@@ -858,6 +859,8 @@ function isTransientOwner(owner) {
     owner === "coretemp.rebuild";
 }
 
+function owners() { return (Bangle._PWR && Bangle._PWR.CORESensor) || []; }
+
 function isOn() {
   var owners = (Bangle._PWR && Bangle._PWR.CORESensor) || [];
   return owners.some(function (owner) {
@@ -870,24 +873,24 @@ function isConnected() {
 }
 
 function runWithTemporaryPower(owner, fn) {
-  var acquiredPower = false;
-  var promise;
-  // Settings/debug actions need a live connection but should not leave the
-  // sensor powered after they finish unless another owner already held power.
-  if (!isOn()) {
-    setPower(1, owner);
-    acquiredPower = true;
+  // Count overlapping internal leases without changing Bangle's idempotent
+  // public owner API. A cancelled operation cannot release another's lease.
+  var lease = temporaryOwners[owner];
+  if (!lease) {
+    lease = temporaryOwners[owner] = { count: 0, acquired: owners().indexOf(owner) < 0 };
+    if (lease.acquired) setPower(1, owner);
   }
-  try {
-    promise = Promise.resolve(fn());
-  } catch (e) {
-    promise = Promise.reject(e);
+  lease.count++;
+  function release() {
+    if (--lease.count) return;
+    delete temporaryOwners[owner];
+    if (lease.acquired) setPower(0, owner);
   }
-  return promise.then(function (result) {
-    if (acquiredPower) setPower(0, owner);
+  return Promise.resolve().then(fn).then(function (result) {
+    release();
     return result;
   }, function (err) {
-    if (acquiredPower) setPower(0, owner);
+    release();
     throw err;
   });
 }
