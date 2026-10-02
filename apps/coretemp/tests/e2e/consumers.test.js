@@ -99,7 +99,7 @@ module.exports = [
     }
   },
   {
-    name: "widget distinguishes fallback, on-demand, Always On and disconnected states",
+    name: "widget distinguishes on-demand, Always On and disconnected states",
     fn() {
       const h = harness({ enabled: true, alwaysOn: false, widget: true });
       h.loaded.require("coretemp.widget");
@@ -110,14 +110,11 @@ module.exports = [
       assert.ok(h.colors.includes("#00f"));
       for (const alwaysOn of [false, true]) {
         h.colors.length = 0;
-        h.handlers.CORESensorStatus({ connected: true, alwaysOn, profile: "health_thermometer" });
-        assert.ok(h.colors.includes("#f80"));
-        h.colors.length = 0;
         h.handlers.CORESensorStatus({ connected: true, alwaysOn, profile: "custom_core" });
         assert.ok(h.colors.includes(alwaysOn ? "#00f" : "#0f0"));
       }
       h.colors.length = 0;
-      h.handlers.CORESensorStatus({ connected: false, alwaysOn: true, profile: "health_thermometer" });
+      h.handlers.CORESensorStatus({ connected: false, alwaysOn: true, profile: "custom_core" });
       assert.ok(h.colors.includes("#CCC"));
       const hidden = harness({ enabled: true, widget: false });
       hidden.loaded.require("coretemp.widget");

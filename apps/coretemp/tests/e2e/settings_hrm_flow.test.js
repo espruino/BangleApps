@@ -83,7 +83,7 @@ module.exports = [
       currentMenu["Debug"]();
       assert.strictEqual(typeof currentMenu["Full log"], "object");
       assert.strictEqual(typeof currentMenu["Partial log"], "object");
-      assert.strictEqual(typeof currentMenu["Custom CORE only"], "object");
+      assert.strictEqual(currentMenu["Custom CORE only"], undefined);
       assert.strictEqual(currentMenu["Alert on disconnect"], undefined);
       assert.strictEqual(typeof currentMenu["Reset CoreTemp"], "function");
       assert.strictEqual(currentMenu["Erase BLE Bonds"], undefined);

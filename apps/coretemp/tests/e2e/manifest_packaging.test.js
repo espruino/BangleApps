@@ -10,6 +10,7 @@ module.exports = [
       const root = path.resolve(__dirname, "../..");
       const metadata = JSON.parse(fs.readFileSync(path.join(root, "metadata.json"), "utf8"));
       const urls = metadata.storage.concat(metadata.data || []).map(entry => entry.url);
+      assert.ok(!fs.readFileSync(path.join(root, "custom.html"), "utf8").includes("customprofileonly"));
       assert.strictEqual(metadata.custom, "custom.html");
       assert.strictEqual(metadata.customConnect, true);
       assert.ok(urls.includes("protocol.js"));

@@ -36,14 +36,13 @@ module.exports = [
     }
   },
   {
-    name: "parses standard health thermometer temperature measurement",
+    name: "parses custom CORE temperature and battery",
     fn() {
       const protocol = loader.create().require("coretemp.protocol");
-      const data = protocol.parseTemperatureMeasurement(dv.fromBytes([0x00, 0x77, 0x01, 0x00, 0xFF]), 88);
+      const data = protocol.parseMeasurement(dv.fromBytes([0x00, 0xA6, 0x0E]), 88);
       assert.strictEqual(data.core, 37.5);
       assert.strictEqual(data.unit, "C");
       assert.strictEqual(data.battery, 88);
-      assert.strictEqual(data.profile, "health_thermometer");
     }
   }
 ];

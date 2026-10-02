@@ -19,7 +19,6 @@ var RECONNECT_DELAY_MAX_MS = 30000;
 var BLE_SETTLE_DELAY_MS = 2000;
 var BLE_REBUILD_SETTLE_DELAY_MS = 4000;
 var BLE_BUSY_RETRY_LIMIT = 3;
-var PROFILE_UPGRADE_RETRY_MS = 60000;
 
 var initialized;
 var gatt;
@@ -44,7 +43,6 @@ var pendingDisconnect = false;
 var connectedHandlers = [];
 var connectionSessionId = 0;
 var activeProfile;
-var profileUpgradeTimer;
 var pauseOwners = [];
 
 // BLE lifecycle is driven by desired state plus one-shot pending flags. Public
@@ -117,7 +115,6 @@ function clearPowerOwners() {
 
 function standDownCoreRuntime() {
   clearReconnectTimer();
-  clearProfileUpgradeTimer();
   pendingReconnect = false;
   shouldBeConnected = false;
   lastError = undefined;
@@ -148,42 +145,8 @@ function clearReconnectTimer() {
   if (!shouldBeConnected) setCoreState(CORE_STATE.IDLE, "reconnect cancelled");
 }
 
-function clearProfileUpgradeTimer() {
-  if (!profileUpgradeTimer) return;
-  clearTimeout(profileUpgradeTimer);
-  profileUpgradeTimer = undefined;
-}
-
 function isPaused() {
   return pauseOwners.length > 0;
-}
-
-function shouldAttemptProfileUpgrade() {
-  // Some devices initially expose only the standard thermometer profile. Keep
-  // that connection alive, then periodically rebuild discovery to pick up the
-  // richer custom CORE profile when it becomes visible.
-  return activeProfile === "health_thermometer" &&
-    !isCustomProfileOnly() &&
-    shouldBeConnected &&
-    !isPaused() &&
-    !pendingDisconnect &&
-    !pendingUnpair &&
-    isOn();
-}
-
-function scheduleProfileUpgrade() {
-  if (profileUpgradeTimer || !shouldAttemptProfileUpgrade()) return;
-  log("Scheduling CORE profile upgrade", PROFILE_UPGRADE_RETRY_MS);
-  profileUpgradeTimer = setTimeout(function () {
-    profileUpgradeTimer = undefined;
-    if (!shouldAttemptProfileUpgrade()) return;
-    enqueueLifecycle("profile_upgrade", function () {
-      pendingReconnect = false;
-      pendingRebuildCache = true;
-    }).catch(function (err) {
-      log("CORE profile upgrade failed", err);
-    });
-  }, PROFILE_UPGRADE_RETRY_MS);
 }
 
 function logSecurityStatus(currentGatt) {
@@ -222,19 +185,11 @@ function normalizeUuid(uuid) {
   return normalized;
 }
 
-function isCustomProfileOnly() {
-  return store.get().customprofileonly === true;
-}
-
 function isSupportedService(uuid) {
-  // customprofileonly is a diagnostic escape hatch: ignore the fallback
-  // Health Thermometer profile so discovery failures expose custom-profile bugs.
-  if (isCustomProfileOnly() && normalizeUuid(uuid) === protocol.HEALTH_THERMOMETER_SERVICE_UUID) return false;
-  return protocol.SUPPORTED_SERVICES.indexOf(normalizeUuid(uuid)) >= 0;
+  return [protocol.CORE_SERVICE_UUID, protocol.BATTERY_SERVICE_UUID].indexOf(normalizeUuid(uuid)) >= 0;
 }
 
 function isSupportedCharacteristic(uuid) {
-  if (isCustomProfileOnly() && normalizeUuid(uuid) === protocol.TEMPERATURE_MEASUREMENT_UUID) return false;
   return protocol.SUPPORTED_CHARACTERISTIC_UUIDS.indexOf(normalizeUuid(uuid)) >= 0;
 }
 
@@ -251,7 +206,6 @@ function characteristicProperties(characteristic) {
 function describeCharacteristicRole(uuid) {
   uuid = normalizeUuid(uuid);
   if (uuid === protocol.CORE_TEMP_UUID) return "custom_core_temperature";
-  if (uuid === protocol.TEMPERATURE_MEASUREMENT_UUID) return "health_thermometer_temperature";
   if (uuid === protocol.CORE_CONTROL_POINT_UUID) return "custom_core_control_point";
   if (uuid === protocol.BATTERY_LEVEL_UUID) return "battery_level";
   return "unknown";
@@ -259,29 +213,25 @@ function describeCharacteristicRole(uuid) {
 
 function missingRequiredCoreCharacteristics(chars) {
   var hasTemp = false;
-  var customOnly = isCustomProfileOnly();
   chars.forEach(function (characteristic) {
     var uuid = normalizeUuid(characteristic.uuid);
-    if (uuid === protocol.CORE_TEMP_UUID || (!customOnly && uuid === protocol.TEMPERATURE_MEASUREMENT_UUID)) hasTemp = true;
+    if (uuid === protocol.CORE_TEMP_UUID) hasTemp = true;
   });
   var missing = [];
-  if (!hasTemp) missing.push(customOnly ? protocol.CORE_TEMP_UUID : protocol.CORE_TEMP_UUID + " or " + protocol.TEMPERATURE_MEASUREMENT_UUID);
+  if (!hasTemp) missing.push(protocol.CORE_TEMP_UUID);
   return missing;
 }
 
 function getCharacteristicsProfile(chars) {
   var hasCustomTemperature = false;
-  var hasHealthThermometer = false;
   var hasControlPoint = false;
   chars.forEach(function (characteristic) {
     var uuid = normalizeUuid(characteristic.uuid);
     if (uuid === protocol.CORE_TEMP_UUID) hasCustomTemperature = true;
-    if (uuid === protocol.TEMPERATURE_MEASUREMENT_UUID) hasHealthThermometer = true;
     if (uuid === protocol.CORE_CONTROL_POINT_UUID) hasControlPoint = true;
   });
   if (hasCustomTemperature && hasControlPoint) return "custom_core";
   if (hasCustomTemperature) return "custom_core_temperature";
-  if (hasHealthThermometer) return "health_thermometer";
   return undefined;
 }
 
@@ -319,10 +269,6 @@ function addNotificationHandler(characteristic) {
       var data = protocol.parseMeasurement(ev.target.value, batteryLevel);
       log("data", data);
       Bangle.emit("CORESensor", data);
-    } else if (uuid === protocol.TEMPERATURE_MEASUREMENT_UUID) {
-      var tempData = protocol.parseTemperatureMeasurement(ev.target.value, batteryLevel);
-      log("data", tempData);
-      Bangle.emit("CORESensor", tempData);
     } else if (uuid === protocol.CORE_CONTROL_POINT_UUID) {
       log("Control point response", protocol.dataViewToArray(ev.target.value));
       controlpoint.onNotification(ev.target.value);
@@ -347,6 +293,7 @@ function characteristicsFromCache(currentDevice) {
   for (uuid in cache.characteristics) {
     if (!cache.characteristics.hasOwnProperty(uuid)) continue;
     cached = cache.characteristics[uuid];
+    if (!isSupportedCharacteristic(cached.uuid)) continue;
     characteristic = new BluetoothRemoteGATTCharacteristic();
     characteristic.handle_value = cached.handle;
     characteristic.uuid = normalizeUuid(cached.uuid);
@@ -360,11 +307,10 @@ function characteristicsFromCache(currentDevice) {
     addNotificationHandler(characteristic);
     restored.push(characteristic);
   }
-  restored = preferCustomCoreTemperature(restored);
   if (!hasRequiredCoreCharacteristics(restored)) {
     log("Cached characteristics do not satisfy current profile settings", {
       profile: getCharacteristicsProfile(restored),
-      customOnly: isCustomProfileOnly()
+      customOnly: true
     });
     return [];
   }
@@ -397,29 +343,6 @@ function deleteCache() {
 
 function hasRequiredCoreCharacteristics(chars) {
   return missingRequiredCoreCharacteristics(chars).length === 0;
-}
-
-function preferCustomCoreTemperature(chars) {
-  var hasCustomTemperature = false;
-  var customOnly = isCustomProfileOnly();
-  chars.forEach(function (characteristic) {
-    if (normalizeUuid(characteristic.uuid) === protocol.CORE_TEMP_UUID) hasCustomTemperature = true;
-  });
-  if (!customOnly && !hasCustomTemperature) return chars;
-  // Prefer the custom CORE stream whenever present; the standard Health
-  // Thermometer value lacks skin temp, HR, heat flux, HSI, and quality bits.
-  return chars.filter(function (characteristic) {
-    var uuid = normalizeUuid(characteristic.uuid);
-    if (customOnly && uuid === protocol.TEMPERATURE_MEASUREMENT_UUID) {
-      log("Skipping standard temperature measurement because custom CORE profile is required");
-      return false;
-    }
-    if (hasCustomTemperature && uuid === protocol.TEMPERATURE_MEASUREMENT_UUID) {
-      log("Skipping standard temperature measurement because custom CORE temperature is available");
-      return false;
-    }
-    return true;
-  });
 }
 
 function isTransportReady() {
@@ -520,7 +443,6 @@ function discoverCharacteristics(currentGatt) {
     });
     return promise;
   }).then(function () {
-    characteristics = preferCustomCoreTemperature(characteristics);
     if (!hasRequiredCoreCharacteristics(characteristics)) {
       throw makeDiscoveryMismatchError("Runtime discovery missing required CORE characteristics", characteristics);
     }
@@ -556,7 +478,6 @@ function attachCachedOrDiscover() {
 function resetTransportState(reason) {
   log("resetTransportState", reason);
   store.flush();
-  clearProfileUpgradeTimer();
   controlpoint.cancelActive("CORE transport closed: " + reason);
   setControlPointCharacteristic(undefined);
   characteristics = [];
@@ -749,7 +670,6 @@ function performConnectSequence() {
       resetReconnectBackoff();
       connectionSessionId++;
       setCoreState(CORE_STATE.CONNECTED);
-      scheduleProfileUpgrade();
       return notifyConnectedHandlers(connectionSessionId);
     })
     .catch(function (err) {
@@ -775,7 +695,6 @@ function handleLifecycleFailure(err) {
   }
   if (context === "no_pairing") {
     clearReconnectTimer();
-    clearProfileUpgradeTimer();
     pendingReconnect = false;
     setCoreState(CORE_STATE.IDLE, context);
     throw err;
@@ -790,7 +709,6 @@ function handleLifecycleFailure(err) {
   }
   if (context === "paused") {
     clearReconnectTimer();
-    clearProfileUpgradeTimer();
     pendingReconnect = false;
     cleanupGatt(context);
     return waitForBleSettle(context).then(function () {
@@ -841,7 +759,6 @@ function reconcileLifecycle(kind) {
   }
   if (pendingDisconnect) {
     clearReconnectTimer();
-    clearProfileUpgradeTimer();
     pendingReconnect = false;
     shouldBeConnected = false;
     setCoreState(CORE_STATE.DISCONNECTING, "requested disconnect");
@@ -853,7 +770,6 @@ function reconcileLifecycle(kind) {
   }
   if (isPaused()) {
     clearReconnectTimer();
-    clearProfileUpgradeTimer();
     pendingReconnect = false;
     if (gatt || device) {
       setCoreState(CORE_STATE.DISCONNECTING, "paused");
@@ -867,7 +783,6 @@ function reconcileLifecycle(kind) {
   }
   if (pendingPairTarget) {
     clearReconnectTimer();
-    clearProfileUpgradeTimer();
     pendingReconnect = false;
     shouldBeConnected = true;
     setCoreState(CORE_STATE.DISCONNECTING, "pair target");
@@ -908,7 +823,6 @@ function reconcileLifecycle(kind) {
   }
   if (pendingReconnect) {
     clearReconnectTimer();
-    clearProfileUpgradeTimer();
     setCoreState(CORE_STATE.DISCONNECTING, "reconnect requested");
     cleanupGatt("reconnect requested");
     return waitForBleSettle("reconnect requested").then(function () {
@@ -920,7 +834,6 @@ function reconcileLifecycle(kind) {
   }
   if (!shouldBeConnected) {
     clearReconnectTimer();
-    clearProfileUpgradeTimer();
     if (gatt || device) {
       setCoreState(CORE_STATE.DISCONNECTING, "no connection requested");
       cleanupGatt("no connection requested");
@@ -934,7 +847,6 @@ function reconcileLifecycle(kind) {
   if (!settings.btid && !settings.btname) {
     pendingReconnect = false;
     clearReconnectTimer();
-    clearProfileUpgradeTimer();
     lastError = "CORE device is not paired";
     setCoreState(CORE_STATE.IDLE, "no_pairing");
     if (kind === "connect" || kind === "power_on" || kind === "reconnect") {
@@ -1134,10 +1046,10 @@ function getStatus() {
     state: coreState,
     connected: !!(gatt && gatt.connected),
     reconnectScheduled: !!reconnectTimer,
-    profileUpgradeScheduled: !!profileUpgradeTimer,
+    profileUpgradeScheduled: false,
     hasCache: !!(store.get().cache && store.get().cache.characteristics),
     profile: activeProfile,
-    customProfileOnly: store.get().customprofileonly === true,
+    customProfileOnly: true,
     lastError: lastError,
     activeTask: activeLifecycleTask && activeLifecycleTask.kind,
     desiredConnected: !!shouldBeConnected,
@@ -1152,11 +1064,9 @@ function pause(owner) {
   if (pauseOwners.indexOf(owner) < 0) pauseOwners.push(owner);
   log("CORESensor pause ->", { owner: owner, owners: pauseOwners.slice() });
   clearReconnectTimer();
-  clearProfileUpgradeTimer();
   pendingReconnect = false;
   return enqueueLifecycle("pause", function () {
     clearReconnectTimer();
-    clearProfileUpgradeTimer();
     pendingReconnect = false;
   });
 }
@@ -1173,7 +1083,6 @@ function resume(owner) {
   if (!isOn()) {
     pendingReconnect = false;
     clearReconnectTimer();
-    clearProfileUpgradeTimer();
     setCoreState(CORE_STATE.IDLE, "resume without power");
     return Promise.resolve();
   }
@@ -1283,7 +1192,6 @@ exports.onConnected = function (handler) {
 exports.shutdown = function () {
   store.flush();
   clearReconnectTimer();
-  clearProfileUpgradeTimer();
   shouldBeConnected = false;
   pendingReconnect = false;
   pendingDisconnect = false;

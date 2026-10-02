@@ -28,9 +28,6 @@ exports.open = function (back) {
     if ((key === "debuglog" || key === "debugpartiallog") && Bangle.CORESensorSetLogMode) {
       Bangle.CORESensorSetLogMode(settings.debuglog ? "full" : (settings.debugpartiallog ? "partial" : "off"));
     }
-    if (key === "customprofileonly" && value && Bangle.CORESensorRebuildCache) {
-      Promise.resolve(Bangle.CORESensorRebuildCache()).catch(function () {});
-    }
   }
 
   function showNext(next) {
@@ -155,8 +152,6 @@ exports.open = function (back) {
     text = "State: " + status.state + "\n" +
       "Task: " + (status.activeTask || "") + "\n" +
       "Profile: " + (status.profile || "") + "\n" +
-      "Custom only: " + status.customProfileOnly + "\n" +
-      "Upgrade: " + status.profileUpgradeScheduled + "\n" +
       "HRM: " + (status.hrm ? status.hrm.operation || "" : "") + "\n" +
       "Paired: " + status.paired + "\n" +
       "Connected: " + status.connected + "\n" +
@@ -387,10 +382,6 @@ exports.open = function (back) {
           writeSetting("debugpartiallog", v);
           E.showMenu(debugMenu());
         }
-      },
-      "Custom CORE only": {
-        value: !!settings.customprofileonly,
-        onchange: function (v) { writeSetting("customprofileonly", v); }
       },
       "Status": showCoreStatus,
       "Rebuild cache": rebuildCache,

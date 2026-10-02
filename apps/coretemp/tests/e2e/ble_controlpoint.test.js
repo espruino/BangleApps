@@ -43,10 +43,6 @@ function createTimers(options) {
     hasReconnect() {
       return reconnectTimers.some(timer => timer.active);
     },
-    runNextProfileUpgrade() {
-      const timer = profileUpgradeTimers.shift();
-      if (timer && timer.active) Promise.resolve().then(timer.fn);
-    },
     hasProfileUpgrade() {
       return profileUpgradeTimers.some(timer => timer.active);
     }
@@ -502,29 +498,6 @@ module.exports = [
     }
   },
   {
-    name: "connect accepts standard health thermometer temperature without control point",
-    async fn() {
-      const { ble, protocol, env, emitted } = createLoadedBLE({
-        settings: { customprofileonly: false },
-        fakeBLE: { healthThermometerOnly: true }
-      });
-      ble.init();
-      await ble.connect();
-      assert.strictEqual(ble.getStatus().connected, true);
-      await assert.rejects(
-        ble.writeControlPoint(protocol.OPCODES.HRM_PAIRED_COUNT, [], { timeoutMs: 20 }),
-        /not connected/
-      );
-
-      env.healthThermometerChar.emitValue([0x00, 0x77, 0x01, 0x00, 0xFF]);
-
-      const measurements = emitted.filter(e => e.name === "CORESensor");
-      assert.strictEqual(measurements.length, 1);
-      assert.strictEqual(measurements[0].data.core, 37.5);
-      assert.strictEqual(measurements[0].data.profile, "health_thermometer");
-    }
-  },
-  {
     name: "state changes emit CORE status events",
     async fn() {
       const { ble, emitted } = createLoadedBLE({
@@ -542,27 +515,6 @@ module.exports = [
     }
   },
   {
-    name: "health thermometer fallback schedules profile upgrade discovery",
-    async fn() {
-      const { ble, timers } = createLoadedBLE({
-        settings: { customprofileonly: false },
-        fakeBLE: { healthThermometerOnly: true },
-        timers: { manualProfileUpgrade: true, manualReconnect: true }
-      });
-      ble.init();
-      await ble.connect();
-
-      assert.strictEqual(ble.getStatus().profile, "health_thermometer");
-      assert.strictEqual(ble.getStatus().profileUpgradeScheduled, true);
-      assert.strictEqual(timers.hasProfileUpgrade(), true);
-
-      timers.runNextProfileUpgrade();
-      await drain();
-
-      assert.strictEqual(ble.getStatus().desiredConnected, true);
-    }
-  },
-  {
     name: "custom CORE profile does not schedule profile upgrade discovery",
     async fn() {
       const { ble, timers } = createLoadedBLE({
@@ -577,11 +529,11 @@ module.exports = [
     }
   },
   {
-    name: "custom-only setting rejects standard health thermometer fallback",
+    name: "custom-only runtime rejects standard health thermometer fallback",
     async fn() {
       const { ble, timers } = createLoadedBLE({
         fakeBLE: { healthThermometerOnly: true },
-        settings: { customprofileonly: true },
+        settings: { customprofileonly: false },
         timers: { manualReconnect: true }
       });
       ble.init();
@@ -597,13 +549,13 @@ module.exports = [
     }
   },
   {
-    name: "custom-only setting ignores cached standard temperature fallback",
+    name: "custom-only runtime ignores cached standard temperature fallback",
     async fn() {
       const { ble } = createLoadedBLE({
         fakeBLE: { healthThermometerOnly: true },
         timers: { manualReconnect: true },
         settings: {
-          customprofileonly: true,
+          customprofileonly: false,
           cache: {
             characteristics: {
               "0x2a1c": {
