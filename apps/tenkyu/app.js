@@ -760,15 +760,14 @@
 
     /* Draw sunrise/sunset rays at +/-H0; omit them in polar day/night. */
     if(!rs.polar){
-      var plen=EARTHR+8;
       var ar=a-rs.h0,as=a+rs.h0;
       g.setColor(0xF81F);
-      g.drawLine(x,y,
-        Math.round(px+Math.cos(ar)*plen),
-        Math.round(py+Math.sin(ar)*plen));
-      g.drawLine(x,y,
-        Math.round(px+Math.cos(as)*plen),
-        Math.round(py+Math.sin(as)*plen));
+      g.drawLine(EARTHX,EARTHY,
+        Math.round(EARTHX+Math.cos(ar)*MOONORBIT),
+        Math.round(EARTHY+Math.sin(ar)*MOONORBIT));
+      g.drawLine(EARTHX,EARTHY,
+        Math.round(EARTHX+Math.cos(as)*MOONORBIT),
+        Math.round(EARTHY+Math.sin(as)*MOONORBIT));
     }
 
     /* Extend the zenith line into the lunar-orbit region. */
