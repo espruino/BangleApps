@@ -83,7 +83,7 @@ Roman numerals sit just outside the lunar orbit. A revolution represents 24 hour
 - **Hour step**: Show every 1, 2, 3 or 6 hours (default 1).
 - The Moon and status/date/time overlays take priority where they overlap the scale. Large orbit/font settings can hide some labels at the screen or widget boundary.
 
-The app ID and storage filenames use `tenkyu`. On first use, existing tenkyugi or Orbit settings, locations and events are copied if the corresponding tenkyu files are absent. Install tenkyu and open it once before removing the old tenkyugi or Orbit app. If Orbit or tenkyugi was the default clock, tenkyu becomes the default; other system settings are preserved.
+The app ID and storage filenames use `tenkyu`. Install it as a new, independent app. Settings, locations and events start from tenkyu's defaults; data from Orbit or tenkyugi is not imported. To use tenkyu as the default clock, select it in the watch's system settings.
 
 ### Other settings
 
@@ -301,7 +301,7 @@ Place timeを使用しても、Bangle.js本体のタイムゾーン設定やDST�
 - **Hour step**：1・2・3・6時間おきに表示（初期値1）。
 - 月・地名・日付・時刻を優先して描画します。軌道や文字を大きくすると、一部の数字が画面端やウィジェットに隠れる場合があります。
 
-内部IDと保存ファイル名も `tenkyu` です。初回起動時、新しい保存ファイルが存在しない場合だけ旧tenkyugiまたはOrbitの設定・地名・イベントをコピーします。旧tenkyugiまたはOrbitを削除する前にtenkyuをインストールし、一度起動してください。旧時計を標準時計にしていた場合はtenkyuに切り替え、それ以外の本体設定は保持します。
+内部IDと保存ファイル名も `tenkyu` です。独立した新しいアプリとしてインストールしてください。設定・地名・イベントはtenkyuの初期設定から始まり、旧Orbitやtenkyugiのデータは取り込みません。標準時計にする場合は、本体の設定でtenkyuを選択してください。
 
 ### その他の設定
 

@@ -1,21 +1,6 @@
 /* tenkyu 0.01: settings and editable event data. */
 (function(back){
   var Storage=require("Storage");
-  /* Prefer tenkyugi data, then Orbit; never overwrite tenkyu data. */
-  (function(){
-    ["json","cal.json","events.json"].forEach(function(suffix){
-      var target="tenkyu."+suffix;
-      if(Storage.read(target)!==undefined)return;
-      var legacy=Storage.read("tenkyugi."+suffix);
-      if(legacy===undefined)legacy=Storage.read("orbit."+suffix);
-      if(legacy!==undefined)Storage.write(target,legacy);
-    });
-    var system=Storage.readJSON("setting.json",1);
-    if(system&&(system.clock==="orbit.app.js"||system.clock==="tenkyugi.app.js")){
-      system.clock="tenkyu.app.js";Storage.writeJSON("setting.json",system);
-    }
-  })();
-
   var C,P,JPI;
   var JPFILE="tenkyujp.dat",jpPrefCache=-1,jpMunicipalities;
   var CFG="tenkyu.json",CAL="tenkyu.cal.json",EVENTS="tenkyu.events.json";

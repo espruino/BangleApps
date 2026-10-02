@@ -2,21 +2,6 @@
 (function(){
   var W=g.getWidth(),H=g.getHeight();
   var Storage=require("Storage"),CFGFILE="tenkyu.json";
-  /* Prefer tenkyugi data, then Orbit; never overwrite tenkyu data. */
-  (function(){
-    ["json","cal.json","events.json"].forEach(function(suffix){
-      var target="tenkyu."+suffix;
-      if(Storage.read(target)!==undefined)return;
-      var legacy=Storage.read("tenkyugi."+suffix);
-      if(legacy===undefined)legacy=Storage.read("orbit."+suffix);
-      if(legacy!==undefined)Storage.write(target,legacy);
-    });
-    var system=Storage.readJSON("setting.json",1);
-    if(system&&(system.clock==="orbit.app.js"||system.clock==="tenkyugi.app.js")){
-      system.clock="tenkyu.app.js";Storage.writeJSON("setting.json",system);
-    }
-  })();
-
   var cfg=Storage.readJSON(CFGFILE,1)||{};
   var sysCfg=Storage.readJSON("setting.json",1)||{};
   var VIEWLIGHT_MS=isFinite(sysCfg.timeout)?Math.max(0,+sysCfg.timeout)*1000:10000;
