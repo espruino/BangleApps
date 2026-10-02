@@ -55,13 +55,6 @@ function error(message, context) {
   err.coreContext = context;
   return err;
 }
-function isBleTransportError(err) {
-  var msg = String(err);
-  return msg.indexOf("GATT") >= 0 ||
-    msg.indexOf("Disconnected") >= 0 ||
-    msg.indexOf("disconnected") >= 0 ||
-    msg.indexOf("not connected") >= 0;
-}
 function normalizeError(err) { return err instanceof Error ? err : new Error(String(err)); }
 function isBusy(err) { return /in progress|0x11\b|\(BUSY\)/i.test(String(err)); }
 function isPaused() { return pauseOwners.length > 0; }
@@ -593,7 +586,7 @@ function writeControlPoint(opcode, params, options, token) {
     check(s);
     return response;
   }).catch(function (err) {
-    if ((err.coreTransportFailure || isBleTransportError(err)) && transport === s && s.token === generation) {
+    if (err.coreTransportFailure && transport === s && s.token === generation) {
       lastError = String(err);
       invalidate("control point failure");
       if (wanted() && !pendingAction) background(enqueue("disconnect_event"));

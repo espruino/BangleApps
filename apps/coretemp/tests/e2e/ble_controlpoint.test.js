@@ -917,6 +917,111 @@ module.exports.push(
   }
 );
 
+async function startHRM() {
+  const h = createLoadedBLE({ timers: { manualReconnect: true } });
+  const saved = { selected: { antId: 48065, txType: 12 }, recent: [{ antId: 48065, txType: 12 }] };
+  h.storage.writeJSON("coretemp.hrm.json", saved);
+  await h.ble.connect();
+  h.hrm = h.loaded.require("coretemp.hrm");
+  h.hrm.init();
+  h.saved = saved;
+  h.timers.hold(true);
+  h.respond = async (opcode, payload) => {
+    await tick();
+    assert.strictEqual(h.env.controlPointChar.writes.slice(-1)[0][0], opcode);
+    h.env.controlPointChar.emitValue([0x80, opcode, 1].concat(payload || []));
+    await tick();
+  };
+  h.reconnect = async () => {
+    h.timers.hold(false);
+    h.env.device.emitDisconnect("HRM test drop");
+    await drain();
+    await h.ble.rebuildCache();
+  };
+  return h;
+}
+
+module.exports.push(
+  {
+    name: "HRM scan interrupted during its window cannot query a new transport",
+    async fn() {
+      const h = await startHRM();
+      const scan = assert.rejects(h.hrm.scanANT(), /superseded/);
+      await h.respond(0x0a);
+      await assert.rejects(h.hrm.getStatus(), /already in progress/);
+      await h.reconnect();
+      await scan;
+      assert.deepStrictEqual(h.env.controlPointChar.writes, [[0x0a, 255]]);
+      assert.deepStrictEqual(h.storage.readJSON("coretemp.hrm.json"), h.saved);
+      assert.strictEqual(h.hrm.getState().busy, false);
+      await h.ble.disconnect();
+    }
+  },
+  {
+    name: "HRM replacement interrupted during settle cannot pair on a new transport",
+    async fn() {
+      const h = await startHRM();
+      const pairing = assert.rejects(h.hrm.pairANT(1234, true), /superseded/);
+      await h.respond(4, [1]);
+      await h.respond(5, [0xc1, 0xbb, 12]);
+      await h.respond(1);
+      await h.reconnect();
+      await pairing;
+      assert.deepStrictEqual(h.env.controlPointChar.writes.map(bytes => bytes[0]), [4, 5, 1]);
+      assert.deepStrictEqual(h.storage.readJSON("coretemp.hrm.json"), h.saved);
+      await h.ble.disconnect();
+    }
+  },
+  {
+    name: "disconnect during pair and clear verification preserves stored selections",
+    async fn() {
+      for (const clear of [false, true]) {
+        const h = await startHRM();
+        const rejected = assert.rejects(clear ? h.hrm.clearANT() : h.hrm.pairANT(1234), /closed|Disconnected/);
+        if (!clear) await h.respond(4, [0]);
+        await h.respond(clear ? 1 : 2);
+        assert.strictEqual(h.env.controlPointChar.writes.slice(-1)[0][0], 4);
+        h.env.device.emitDisconnect("verification drop");
+        await rejected;
+        h.timers.hold(false);
+        await drain();
+        assert.deepStrictEqual(h.storage.readJSON("coretemp.hrm.json"), h.saved);
+        h.ble.shutdown();
+      }
+    }
+  },
+  {
+    name: "HRM and public Control Point failures share one recovery and cancel queued commands",
+    async fn() {
+      for (const failure of ["sync", "async", "timeout"]) {
+        const h = await startHRM();
+        let writes = 0;
+        h.env.controlPointChar.writeValue = () => {
+          writes++;
+          if (failure === "sync") throw new Error("write failed");
+          if (failure === "async") return Promise.reject(new Error("write failed"));
+          return Promise.resolve();
+        };
+        const results = Promise.allSettled([h.hrm.getStatus(), Promise.resolve().then(() => h.ble.writeControlPoint(0x0b))]);
+        await tick();
+        if (failure === "timeout") h.timers.runDelay(5000);
+        h.timers.hold(false);
+        await results.then(items => {
+          assert.ok(items.every(item => item.status === "rejected" && item.reason.coreTransportFailure));
+        });
+        // Cleanup may already be waiting on its settle timer.
+        if (h.timers.pendingCount() && !h.timers.hasReconnect()) h.timers.runDelay(2000);
+        await drain();
+        assert.strictEqual(writes, 1);
+        assert.strictEqual(h.timers.pendingCount(), 1);
+        assert.strictEqual(h.ble.getStatus().state, "reconnect_wait");
+        assert.deepStrictEqual(h.storage.readJSON("coretemp.hrm.json"), h.saved);
+        h.ble.shutdown();
+      }
+    }
+  }
+);
+
 module.exports.push(
   {
     name: "ordinary Control Point teardown waits for the native write and cancels the queue without writes",
@@ -983,17 +1088,3 @@ module.exports.push(
     }
   }
 );
-
-module.exports.push({
-  name: "public Control Point transport errors still schedule BLE recovery",
-  async fn() {
-    const { ble, env, timers } = createLoadedBLE({ timers: { manualReconnect: true } });
-    await ble.connect();
-    env.controlPointChar.writeValue = () => Promise.reject(new Error("GATT operation failed"));
-    await assert.rejects(ble.writeControlPoint(4), /GATT operation failed/);
-    await drain();
-    assert.strictEqual(ble.getStatus().state, "reconnect_wait");
-    assert.strictEqual(timers.hasReconnect(), true);
-    ble.shutdown();
-  }
-});

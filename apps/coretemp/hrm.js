@@ -1,4 +1,5 @@
-var cp = require("coretemp.controlpoint");
+var ble = require("coretemp.ble");
+var operationToken;
 var protocol = require("coretemp.protocol");
 var store = require("coretemp.store");
 
@@ -116,15 +117,12 @@ function formatError(err) {
   }
 }
 
-function waitMs(ms) {
-  return new Promise(function (resolve) {
-    setTimeout(resolve, ms);
-  });
+function request(opcode, params, timeout) {
+  checkOperation();
+  return ble.writeControlPoint(opcode, params, timeout, operationToken);
 }
-
-function decorateEntry(entry) {
-  entry.transport = entry.transport || "ANT+";
-  return entry;
+function checkOperation() {
+  if (operationToken !== ble.getSessionToken()) throw new Error("CORE HRM operation superseded by transport change");
 }
 
 function buildStatus() {
@@ -144,44 +142,34 @@ function buildStatus() {
   };
 }
 
-function setPaired(entries) {
-  hrmState.paired = entries.map(function (entry, index) {
-    entry.index = index;
-    return decorateEntry(entry);
+function readEntries(countOpcode, entryOpcode, countTimeout, entryTimeout) {
+  return request(countOpcode, [], countTimeout).then(function (response) {
+    var entries = [];
+    var chain = Promise.resolve();
+    for (var i = 0; i < protocol.parseCount(response); i++) {
+      (function (index) {
+        chain = chain.then(function () {
+          return request(entryOpcode, [index], entryTimeout).then(function (result) {
+            entries.push(cloneEntry(protocol.parseAntEntry(result, index)));
+          });
+        });
+      })(i);
+    }
+    return chain.then(function () { return entries; });
   });
 }
 
 function queryPairedEntries() {
-  return cp.request(protocol.OPCODES.HRM_PAIRED_COUNT, [], STATUS_TIMEOUT_MS)
-    .then(function (response) {
-      var count = protocol.parseCount(response);
-      var entries = [];
-      var promise = Promise.resolve();
-      var i;
-      // Control-point requests must stay serialized; build an explicit promise
-      // chain rather than issuing all entry reads concurrently.
-      for (i = 0; i < count; i++) {
-        (function (index) {
-          promise = promise.then(function () {
-            return cp.request(
-              protocol.OPCODES.HRM_PAIRED_ANT_ENTRY,
-              [index],
-              STATUS_TIMEOUT_MS
-            ).then(function (entryResponse) {
-              entries.push(decorateEntry(protocol.parseAntEntry(entryResponse, index)));
-            });
-          });
-        })(i);
-      }
-      return promise.then(function () {
-        entries.sort(function (a, b) { return a.index - b.index; });
-        setPaired(entries);
-        return entries;
-      });
-    });
+  return readEntries(protocol.OPCODES.HRM_PAIRED_COUNT, protocol.OPCODES.HRM_PAIRED_ANT_ENTRY,
+    STATUS_TIMEOUT_MS, STATUS_TIMEOUT_MS).then(function (entries) {
+    checkOperation();
+    hrmState.paired = entries;
+    return entries;
+  });
 }
 
 function remember(entry) {
+  checkOperation();
   var normalized = normalizeEntry(entry);
   var next = [];
   var i;
@@ -201,6 +189,7 @@ function runOperation(name, fn) {
   }
   // Scan, pair, clear, and status all share the CORE control point. A module
   // level operation lock keeps UI actions from interleaving multi-step flows.
+  operationToken = ble.getSessionToken();
   hrmState.busy = true;
   hrmState.operation = name;
   hrmState.lastError = null;
@@ -220,7 +209,7 @@ function runOperation(name, fn) {
 }
 
 function pairNormalizedEntry(entry) {
-  return cp.request(
+  return request(
     protocol.OPCODES.HRM_PAIR_ANT,
     protocol.makeAntPairParams(entry.antId, entry.txType),
     PAIR_TIMEOUT_MS
@@ -239,9 +228,9 @@ function pairNormalizedEntry(entry) {
 }
 
 function replacePairedEntry(entry) {
-  return cp.request(protocol.OPCODES.HRM_CLEAR_ANT, [], CLEAR_TIMEOUT_MS)
+  return request(protocol.OPCODES.HRM_CLEAR_ANT, [], CLEAR_TIMEOUT_MS)
     .then(function () {
-      return waitMs(REPLACE_CLEAR_SETTLE_MS);
+      return ble.waitForSession(REPLACE_CLEAR_SETTLE_MS, operationToken);
     })
     .then(function () {
       return pairNormalizedEntry(entry);
@@ -267,39 +256,19 @@ exports.getStatus = function () {
 exports.scanANT = function () {
   return runOperation("scan_ant", function () {
     // CORE scan results may include HRMs that are already paired.
-    return cp.request(
+    return request(
       protocol.OPCODES.HRM_SCAN_ANT_START,
       [0xFF],
       SCAN_START_ACK_TIMEOUT_MS
     ).then(function () {
-      return waitMs(getScanWindowMs());
+      return ble.waitForSession(getScanWindowMs(), operationToken);
     }).then(function () {
-      return cp.request(protocol.OPCODES.HRM_SCAN_ANT_COUNT, [], SCAN_COUNT_TIMEOUT_MS);
-    }).then(function (response) {
-      var count = protocol.parseCount(response);
-      var found = [];
-      var promise = Promise.resolve();
-      var i;
-      // As with paired-entry reads, CORE returns scan entries by index through
-      // the single control point instead of in the count response.
-      for (i = 0; i < count; i++) {
-        (function (index) {
-          promise = promise.then(function () {
-            return cp.request(
-              protocol.OPCODES.HRM_SCAN_ANT_ENTRY,
-              [index],
-              SCAN_ENTRY_TIMEOUT_MS
-            ).then(function (entryResponse) {
-              found.push(decorateEntry(protocol.parseAntEntry(entryResponse, index)));
-            });
-          });
-        })(i);
-      }
-      return promise.then(function () {
-        found.sort(function (a, b) { return a.index - b.index; });
-        hrmState.lastScan = found;
-        return found.map(cloneEntry);
-      });
+      return readEntries(protocol.OPCODES.HRM_SCAN_ANT_COUNT, protocol.OPCODES.HRM_SCAN_ANT_ENTRY,
+        SCAN_COUNT_TIMEOUT_MS, SCAN_ENTRY_TIMEOUT_MS);
+    }).then(function (found) {
+      checkOperation();
+      hrmState.lastScan = found;
+      return found.map(cloneEntry);
     });
   });
 };
@@ -329,9 +298,10 @@ exports.pairANT = function (entry, replaceExisting) {
 
 exports.clearANT = function () {
   return runOperation("clear_ant", function () {
-    return cp.request(protocol.OPCODES.HRM_CLEAR_ANT, [], CLEAR_TIMEOUT_MS)
+    return request(protocol.OPCODES.HRM_CLEAR_ANT, [], CLEAR_TIMEOUT_MS)
       .then(queryPairedEntries)
       .then(function (entries) {
+        checkOperation();
         if (entries.length) throw new Error("HRM clear verification failed");
         hrmState.selected = null;
         persistConfig();

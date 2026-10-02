@@ -8,7 +8,7 @@ function loadHRM(cp, storage) {
   return loader.create({
     storage,
     overrides: {
-      "coretemp.controlpoint": cp,
+      "coretemp.ble": { writeControlPoint: cp.request, getSessionToken() { return 1; } },
       "coretemp.store": { log() {}, init() {}, flush() {} }
     }
   }).require("coretemp.hrm");

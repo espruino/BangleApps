@@ -9,7 +9,8 @@ function loadHRM(cp, storage, globals) {
     storage,
     globals,
     overrides: {
-      "coretemp.controlpoint": cp,
+      "coretemp.ble": { writeControlPoint: cp.request, getSessionToken() { return 1; },
+        waitForSession(ms) { return new Promise(resolve => ((globals && globals.setTimeout) || setTimeout)(resolve, ms)); } },
       "coretemp.store": { log() {}, init() {}, flush() {} }
     }
   }).require("coretemp.hrm");
