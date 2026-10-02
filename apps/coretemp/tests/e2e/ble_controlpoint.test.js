@@ -73,7 +73,7 @@ function createLoadedBLE(options) {
   const timers = createTimers(options.timers);
   const storage = fakeStorage.create({
     "coretemp.json": Object.assign({
-      btid: "core-1", settingsVersion: 1
+      btid: "core-1", settingsVersion: 2
     }, options.settings || {})
   });
   const loaded = loader.create({

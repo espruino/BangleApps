@@ -2,8 +2,7 @@
   "enabled": true,
   "alwaysOn": false,
   "widget": true,
-  "customprofileonly": true,
   "debugMode": false,
   "antScanWindowSec": 5,
-  "settingsVersion": 1
+  "settingsVersion": 2
 }

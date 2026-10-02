@@ -18,7 +18,7 @@ module.exports = [
       assert.strictEqual(first.enabled, true);
       assert.strictEqual(first.alwaysOn, false);
       assert.strictEqual(first.widget, true);
-      assert.strictEqual(first.settingsVersion, 1);
+      assert.strictEqual(first.settingsVersion, 2);
       storage.writeJSON = () => { throw new Error("unnecessary write"); };
       migrate.run();
     }
@@ -36,7 +36,8 @@ module.exports = [
         assert.strictEqual(result.enabled, enabled !== false);
         assert.strictEqual(result.alwaysOn, false);
         assert.strictEqual(result.widget, false);
-        for (const key of Object.keys(seed)) assert.deepStrictEqual(result[key], seed[key]);
+        for (const key of Object.keys(seed).filter(key => key !== "cache")) assert.deepStrictEqual(result[key], seed[key]);
+        assert.strictEqual(result.cache, undefined);
       }
       const { migrate } = create({ "coretemp.json": { enabled: false, widget: false, alwaysOn: true } });
       assert.strictEqual(migrate.run().alwaysOn, false);
@@ -95,9 +96,35 @@ module.exports = [
         assert.strictEqual(storage.readJSON("coretemp.json").settingsVersion, undefined);
         storage.writeJSON = write;
         migrate.run();
-        assert.strictEqual(storage.readJSON("coretemp.json").settingsVersion, 1);
+        assert.strictEqual(storage.readJSON("coretemp.json").settingsVersion, 2);
         assert.strictEqual(storage.readJSON("coretemp.hrm.json").recent.length, 1);
       }
     }
   }
 ];
+
+module.exports.push({
+  name: "version 1 upgrade removes obsolete profile and cache once, preserving identity and HRM choices",
+  fn() {
+    const hrm = { selected: null, recent: [{ antId: 48065, txType: 12 }], custom: true };
+    const { storage, migrate } = create({
+      "coretemp.json": { settingsVersion: 1, enabled: true, alwaysOn: true,
+        btid: "core-1", btname: "CORE", customprofileonly: false, cache: { characteristics: { "0x2a1c": {} } },
+        extra: 42, ANT_HRM: { antId: 123 } },
+      "coretemp.hrm.json": hrm
+    });
+    const next = migrate.run();
+    assert.strictEqual(next.settingsVersion, 2);
+    assert.strictEqual(next.customprofileonly, undefined);
+    assert.strictEqual(next.cache, undefined);
+    assert.strictEqual(next.btid, "core-1");
+    assert.strictEqual(next.btname, "CORE");
+    assert.strictEqual(next.alwaysOn, true);
+    assert.strictEqual(next.extra, 42);
+    assert.deepStrictEqual(storage.readJSON("coretemp.hrm.json"), hrm);
+    next.cache = { characteristics: { custom: { handle: 1 } } };
+    storage.writeJSON("coretemp.json", next);
+    storage.writeJSON = () => { throw new Error("unnecessary migration write"); };
+    assert.deepStrictEqual(migrate.run().cache, next.cache);
+  }
+});

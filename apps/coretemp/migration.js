@@ -3,8 +3,8 @@ var CoreTempMigration = (function () {
   function defaults() {
     return {
       enabled: true, alwaysOn: false, widget: true,
-      customprofileonly: true, debugMode: false, antScanWindowSec: 5,
-      settingsVersion: 1
+      debugMode: false, antScanWindowSec: 5,
+      settingsVersion: 2
     };
   }
 
@@ -29,6 +29,11 @@ var CoreTempMigration = (function () {
         }
       }
       next.settingsVersion = 1;
+    }
+    if (!settings || !(settings.settingsVersion >= 2)) {
+      delete next.customprofileonly;
+      delete next.cache;
+      next.settingsVersion = 2;
     }
     return { settings: next, hrm: config };
   }

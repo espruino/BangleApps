@@ -29,9 +29,9 @@ module.exports = [
       const settings = JSON.parse(fs.readFileSync(path.join(root, "app-settings.json"), "utf8"));
       assert.strictEqual(settings.enabled, true);
       assert.strictEqual(settings.alwaysOn, false);
-      assert.strictEqual(settings.settingsVersion, 1);
+      assert.strictEqual(settings.settingsVersion, 2);
       assert.strictEqual(settings.widget, true);
-      assert.strictEqual(settings.customprofileonly, true);
+      assert.strictEqual(settings.customprofileonly, undefined);
       assert.strictEqual(settings.debugMode, false);
       assert.strictEqual(settings.antScanWindowSec, 5);
       assert.strictEqual(Object.prototype.hasOwnProperty.call(settings, "warn" + "Disconnect"), false);
