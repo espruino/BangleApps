@@ -185,22 +185,8 @@ function normalizeUuid(uuid) {
   return normalized;
 }
 
-function isSupportedService(uuid) {
-  return [protocol.CORE_SERVICE_UUID, protocol.BATTERY_SERVICE_UUID].indexOf(normalizeUuid(uuid)) >= 0;
-}
-
 function isSupportedCharacteristic(uuid) {
   return protocol.SUPPORTED_CHARACTERISTIC_UUIDS.indexOf(normalizeUuid(uuid)) >= 0;
-}
-
-function characteristicProperties(characteristic) {
-  var properties = characteristic.properties || {};
-  return {
-    notify: !!properties.notify,
-    indicate: !!properties.indicate,
-    read: !!properties.read,
-    write: !!properties.write
-  };
 }
 
 function describeCharacteristicRole(uuid) {
@@ -414,40 +400,33 @@ function discoverCharacteristics(currentGatt) {
   setCoreState(CORE_STATE.DISCOVERING);
   characteristics = [];
   setControlPointCharacteristic(undefined);
-  log("Runtime discovery: getting services");
-  return currentGatt.getPrimaryServices().then(function (services) {
-    var promise = Promise.resolve();
-    log("Runtime discovery: got services", services.length);
-    services.forEach(function (service) {
-      var serviceUuid = normalizeUuid(service.uuid);
-      var serviceSupported = isSupportedService(serviceUuid);
-      log("Runtime discovery service", { uuid: serviceUuid, supported: serviceSupported });
-      if (!serviceSupported) return;
-      promise = promise.then(function () {
-        return service.getCharacteristics().then(function (chars) {
-          chars.forEach(function (characteristic) {
-            var uuid = normalizeUuid(characteristic.uuid);
-            var accepted = isSupportedCharacteristic(uuid);
-            log("Runtime discovery characteristic", {
-              service: serviceUuid,
-              uuid: uuid,
-              role: describeCharacteristicRole(uuid),
-              accepted: accepted,
-              properties: characteristicProperties(characteristic)
-            });
-            if (!accepted) return;
-            characteristics.push(characteristic);
+  function service(uuid) {
+    log("Runtime discovery: getting service", uuid);
+    // Explicit UUID lookup registers CORE's vendor base with Espruino. An
+    // unfiltered service scan may report only 0x0000[vendor].
+    return currentGatt.getPrimaryService(uuid).catch(function (err) {
+      if (!/^(Error: )?No Services found$/.test(String(err))) throw err;
+    }).then(function (found) {
+      assertGattConnectedForDiscovery(currentGatt);
+      log("Runtime discovery service", { uuid: uuid, found: !!found });
+      if (!found) return;
+      return found.getCharacteristics().then(function (chars) {
+        (chars || []).forEach(function (characteristic) {
+          var accepted = isSupportedCharacteristic(characteristic.uuid);
+          log("Runtime discovery characteristic", {
+            service: uuid, uuid: characteristic.uuid, accepted: accepted
           });
+          if (accepted) characteristics.push(characteristic);
         });
       });
     });
-    return promise;
-  }).then(function () {
+  }
+  return service(protocol.CORE_SERVICE_UUID).then(function () {
     if (!hasRequiredCoreCharacteristics(characteristics)) {
       throw makeDiscoveryMismatchError("Runtime discovery missing required CORE characteristics", characteristics);
     }
-    return attachCharacteristics();
-  }).then(function () {
+    return service(protocol.BATTERY_SERVICE_UUID);
+  }).then(attachCharacteristics).then(function () {
     saveCache(characteristics);
   });
 }

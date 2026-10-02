@@ -34,7 +34,7 @@ function createCharacteristic(uuid, properties) {
 exports.create = function createFakeBLE(protocol, options) {
   options = options || {};
   const disconnectHandlers = [];
-  let getPrimaryServicesCalls = 0;
+  const getPrimaryServiceCalls = [];
   const coreServiceUuid = options.uppercaseUuids ? protocol.CORE_SERVICE_UUID.toUpperCase() : protocol.CORE_SERVICE_UUID;
   const tempUuid = options.uppercaseUuids ? protocol.CORE_TEMP_UUID.toUpperCase() : protocol.CORE_TEMP_UUID;
   const controlPointUuid = options.uppercaseUuids ? protocol.CORE_CONTROL_POINT_UUID.toUpperCase() : protocol.CORE_CONTROL_POINT_UUID;
@@ -48,12 +48,12 @@ exports.create = function createFakeBLE(protocol, options) {
     indicate: true
   });
   const coreCharacteristics = options.includeCoreCharacteristics === false ?
-    [batteryChar] :
-    [tempChar, controlPointChar];
+    [] :
+    (options.includeControlPoint === false ? [tempChar] : [tempChar, controlPointChar]);
   const services = options.healthThermometerOnly ? [{
     uuid: "00001809-0000-1000-8000-00805f9b34fb",
     getCharacteristics() {
-      return Promise.resolve([healthThermometerChar, batteryChar]);
+      return Promise.resolve([healthThermometerChar]);
     }
   }] : options.includeHealthThermometer ? [{
     uuid: "00001809-0000-1000-8000-00805f9b34fb",
@@ -71,6 +71,12 @@ exports.create = function createFakeBLE(protocol, options) {
       return Promise.resolve(coreCharacteristics);
     }
   }];
+  if (options.includeBattery !== false) services.push({
+    uuid: protocol.BATTERY_SERVICE_UUID,
+    getCharacteristics() {
+      return Promise.resolve([batteryChar]);
+    }
+  });
   const gatt = {
     connected: false,
     bondCalls: 0,
@@ -95,8 +101,12 @@ exports.create = function createFakeBLE(protocol, options) {
       return Promise.resolve();
     },
     getPrimaryServices() {
-      getPrimaryServicesCalls++;
       return Promise.resolve(services);
+    },
+    getPrimaryService(uuid) {
+      getPrimaryServiceCalls.push(uuid);
+      const normalize = value => value.toLowerCase().replace(/^0000([0-9a-f]{4})-0000-1000-8000-00805f9b34fb$/, "0x$1");
+      return Promise.resolve(services.find(service => normalize(service.uuid) === normalize(uuid)));
     }
   };
   const device = {
@@ -123,9 +133,7 @@ exports.create = function createFakeBLE(protocol, options) {
     NRF,
     device,
     gatt,
-    getPrimaryServicesCalls() {
-      return getPrimaryServicesCalls;
-    },
+    getPrimaryServiceCalls,
     tempChar,
     controlPointChar,
     healthThermometerChar

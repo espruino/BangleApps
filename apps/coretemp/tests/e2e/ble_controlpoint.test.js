@@ -115,6 +115,77 @@ async function drain() {
 
 module.exports = [
   {
+    name: "fresh discovery resolves CORE directly when unfiltered discovery hides vendor UUIDs",
+    async fn() {
+      const { ble, protocol, env, emitted } = createLoadedBLE();
+      let unfilteredCalls = 0;
+      env.gatt.getPrimaryServices = () => {
+        unfilteredCalls++;
+        return Promise.resolve([{ uuid: "0x0000[vendor]" }]);
+      };
+      ble.init();
+      await ble.connect();
+
+      assert.strictEqual(unfilteredCalls, 0);
+      assert.deepStrictEqual(env.getPrimaryServiceCalls, [protocol.CORE_SERVICE_UUID, protocol.BATTERY_SERVICE_UUID]);
+      assert.strictEqual(env.tempChar.notificationsStarted, true);
+      assert.strictEqual(env.controlPointChar.notificationsStarted, true);
+      env.tempChar.emitValue([0, 0x74, 0x0e]);
+      const measurement = emitted.find(e => e.name === "CORESensor").data;
+      assert.strictEqual(measurement.core, 37);
+      assert.strictEqual(measurement.battery, 90);
+      assert.strictEqual(ble.getStatus().hasCache, true);
+    }
+  },
+  {
+    name: "missing battery service does not prevent temperature attachment",
+    async fn() {
+      const { ble, protocol, env } = createLoadedBLE();
+      const discover = env.gatt.getPrimaryService.bind(env.gatt);
+      env.gatt.getPrimaryService = uuid => uuid === protocol.BATTERY_SERVICE_UUID ?
+        Promise.reject("No Services found") : discover(uuid);
+      ble.init();
+      await ble.connect();
+      assert.strictEqual(ble.getStatus().profile, "custom_core");
+      assert.strictEqual(env.tempChar.notificationsStarted, true);
+    }
+  },
+  {
+    name: "service discovery transport errors propagate without trying other services",
+    async fn() {
+      for (const failedService of ["CORE_SERVICE_UUID", "BATTERY_SERVICE_UUID"]) {
+        const { ble, protocol, env, timers } = createLoadedBLE({
+            timers: { manualReconnect: true }
+        });
+        const discover = env.gatt.getPrimaryService.bind(env.gatt);
+        const calls = [];
+        const failure = new Error("Disconnected during service discovery");
+        env.gatt.getPrimaryService = uuid => {
+          calls.push(uuid);
+          return uuid === protocol[failedService] ? Promise.reject(failure) : discover(uuid);
+        };
+        ble.init();
+        await assert.rejects(ble.connect(), err => err === failure);
+        assert.deepStrictEqual(calls, failedService === "CORE_SERVICE_UUID" ?
+          [protocol.CORE_SERVICE_UUID] : [protocol.CORE_SERVICE_UUID, protocol.BATTERY_SERVICE_UUID]);
+        assert.strictEqual(ble.getStatus().hasCache, false);
+        assert.strictEqual(timers.hasReconnect(), true);
+      }
+    }
+  },
+  {
+    name: "temperature-only custom CORE connects without battery or Control Point",
+    async fn() {
+      const { ble, env, emitted } = createLoadedBLE({ fakeBLE: { includeControlPoint: false, includeBattery: false } });
+      await ble.connect();
+      assert.strictEqual(ble.getStatus().profile, "custom_core_temperature");
+      env.tempChar.emitValue([0, 0x74, 0x0e]);
+      assert.strictEqual(emitted.filter(item => item.name === "CORESensor")[0].data.core, 37);
+      await assert.rejects(ble.writeControlPoint(4), /not connected/);
+      await ble.disconnect();
+    }
+  },
+  {
     name: "rapid release and reacquire honors the latest power demand",
     async fn() {
       const { ble, Bangle } = createLoadedBLE();
@@ -208,9 +279,12 @@ module.exports = [
     name: "disabling Enable during discovery prevents a late connection or retry",
     async fn() {
       const { ble, storage, env, timers } = createLoadedBLE({ timers: { manualReconnect: true } });
-      const discover = env.gatt.getPrimaryServices.bind(env.gatt);
+      const discover = env.gatt.getPrimaryService.bind(env.gatt);
       let finish;
-      env.gatt.getPrimaryServices = () => new Promise(resolve => { finish = () => discover().then(resolve); });
+      env.gatt.getPrimaryService = uuid => {
+        env.gatt.getPrimaryService = discover;
+        return new Promise(resolve => { finish = () => discover(uuid).then(resolve); });
+      };
       ble.init();
       const connecting = ble.connect();
       const rejected = assert.rejects(connecting, /power off/);
@@ -431,7 +505,7 @@ module.exports = [
       ble.init();
 
       await assert.rejects(ble.connect(), /Disconnected/);
-      assert.strictEqual(env.getPrimaryServicesCalls(), 0);
+      assert.strictEqual(env.getPrimaryServiceCalls.length, 0);
       assert.strictEqual(ble.getStatus().reconnectScheduled, true);
       assert.match(ble.getStatus().lastError, /Disconnected/);
 
@@ -466,7 +540,7 @@ module.exports = [
 
       await ble.connect();
 
-      assert.strictEqual(env.getPrimaryServicesCalls(), 1);
+      assert.strictEqual(env.getPrimaryServiceCalls.length, 2);
       assert.strictEqual(ble.getStatus().connected, true);
       assert.strictEqual(ble.getStatus().hasCache, true);
     }
