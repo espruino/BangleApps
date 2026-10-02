@@ -834,12 +834,15 @@
         if(pr&&pl)p=(rightSpace>=leftSpace)?pr:pl;
         else if(pr)p=pr;
         else if(pl)p=pl;
+        if(pl&&p===pl)p.left=true;
       }
-      g.setBgColor(BLACK).setColor(WHITE).setFontAlign(1,-1);
+      /* Align both lines to the screen edge on their selected side. */
+      var labelX=p.left?2:p.right;
+      g.setBgColor(BLACK).setColor(WHITE).setFontAlign(p.left?-1:1,-1);
       g.setFont("Vector",p.country.size);
-      g.drawString(p.country.text,p.right,p.yCountry);
+      g.drawString(p.country.text,labelX,p.yCountry);
       g.setFont("Vector",p.place.size);
-      g.drawString(p.place.text,p.right,p.yPlace);
+      g.drawString(p.place.text,labelX,p.yPlace);
       return;
     }
 
