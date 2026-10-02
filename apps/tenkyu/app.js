@@ -873,9 +873,10 @@
     drawSun();
     var sol=safeSolar();
     drawEarth(sol);
-    drawOrbitHours(sol);
     drawObserver(sol);
     var moon=drawMoon();
+    /* Keep hour numerals visible over both sides of the Moon. */
+    drawOrbitHours(sol);
     drawLocationStatus(moon);
     drawDateTime(moon);
     try{Bangle.drawWidgets();}catch(e){}
