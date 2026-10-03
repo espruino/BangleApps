@@ -67,7 +67,7 @@
     calSource=undefined;
   }catch(calErr){calModule=undefined;calendar=undefined;}
   var BLACK=0x0000,WHITE=0xFFFF,NAVY=0x000F,DARKBLUE=0x0008,CYAN=0x07FF,YELLOW=0xFFE0,ORANGE=0xFD20,RED=0xF800,GREEN=0x04C0;
-  var busy=false,killed=false,minuteTimer,timeTimer,idleTimer,tapTimer;
+  var busy=false,killed=false,minuteTimer,idleTimer,tapTimer;
   var mode="tenkyu",interactive=true,tapCount=0,resetOnWake=false;
   var selectedDayOffset=0,hasSelectedDate=false;
   var nativeDrawWidgets,widgetDrawWrapper;
@@ -89,6 +89,7 @@
   var TESTLON=Math.max(-180,Math.min(180,+cfg.manualLon));
   var VIEW_SOUTH=!!cfg.viewSide;
   var DATEPOS=cfg.datePos|0,TIMEPOS=cfg.timePos|0,DATESIZE=cfg.dateSize|0,TIMESIZE=cfg.timeSize|0;
+  var TIMEBOX,lastBaseBucket=-1;
   var TIMESOURCE=cfg.timeSource===1?1:0;
   var HOURSIZE=cfg.orbitHourSize|0,HOURSTEP=cfg.orbitHourStep|0;
   var HOURENABLED=cfg.orbitHourEnabled;
@@ -486,6 +487,7 @@
 
   function drawHeaderClock(){
     if(killed||mode!=="tenkyu"||(DATEPOS!==0&&TIMEPOS!==0))return;
+    if(TIMEPOS===0)TIMEBOX=undefined;
     var gap=topFreeGap();if(!gap)return;
     var d=displayParts(virtualNowMs()),date=pad(d.m)+pad(d.d),time=pad(d.h)+pad(d.mi);
     var size=20,showDate=DATEPOS===0,showTime=TIMEPOS===0,space=(showDate&&showTime)?" ":"";
@@ -494,11 +496,14 @@
     g.setFont("Vector",size);
     while(size>8&&g.stringWidth(txt)>maxW){size--;g.setFont("Vector",size);}
     var x=gap[0]+1,y=Math.max(0,Math.floor((24-size)/2));
-    var bg=g.theme.bg,fg=g.theme.fg,dim=0x8410;
+    var bg=g.theme.bg,fg=g.theme.fg;
     g.setColor(bg).fillRect(gap[0],0,gap[1],23);
     g.setBgColor(bg).setFont("Vector",size).setFontAlign(-1,-1);
     if(showDate){g.setColor(fg).drawString(date,x,y);x+=g.stringWidth(date+space);}
-    if(showTime)g.setColor((Math.floor(Date.now()/2000)&1)?dim:fg).drawString(time,x,y);
+    if(showTime){
+      TIMEBOX={x:x,y:0,w:gap[1]-x+1,h:24,size:size,tx:x,ty:y,align:-1};
+      drawTimeOnly();
+    }
   }
 
   function screenGroup(pos,m){
@@ -506,7 +511,8 @@
     if(!hasDate&&!hasTime)return;
     var d=displayParts(virtualNowMs()),date=pad(d.m)+pad(d.d),time=pad(d.h)+pad(d.mi);
     g.setFont("Vector",DATESIZE);var dw=hasDate?g.stringWidth(date):0;
-    g.setFont("Vector",TIMESIZE);var tw=hasTime?g.stringWidth(time):0;
+    g.setFont("Vector",TIMESIZE);var tw=0;
+    if(hasTime)for(var digit=0;digit<10;digit++)tw=Math.max(tw,g.stringWidth(""+digit)*4);
     var w=Math.max(dw,tw),h=(hasDate?DATESIZE+1:0)+(hasDate&&hasTime?2:0)+(hasTime?TIMESIZE+1:0);
     var right=pos===2,x=right?W-2-w:2,y=pos===2?SUNY+SUNR+SUNRAY+3:25;
     if(moonHitsRect(m,x,y,w,h)){
@@ -522,9 +528,9 @@
       g.drawString(date,right?x+w:x,yy);yy+=DATESIZE+3;
     }
     if(hasTime){
-      g.setBgColor(BLACK).setColor((Math.floor(Date.now()/2000)&1)?0x8410:WHITE)
-        .setFont("Vector",TIMESIZE).setFontAlign(right?1:-1,-1);
-      g.drawString(time,right?x+w:x,yy);
+      TIMEBOX={x:x-1,y:yy-1,w:w+3,h:TIMESIZE+3,size:TIMESIZE,
+        tx:right?x+w:x,ty:yy,align:right?1:-1};
+      drawTimeOnly();
     }
   }
 
@@ -533,16 +539,12 @@
     screenGroup(2,m);
   }
 
-  function armTime(){
-    clear(timeTimer);
-    timeTimer=setTimeout(function(){
-      timeTimer=undefined;
-      if(!killed&&mode==="tenkyu"){
-        if(TIMEPOS===0)drawHeaderClock();else screenGroup(TIMEPOS,MOON_CACHE_DATA);
-        try{g.flip();}catch(e){}
-        armTime();
-      }
-    },2000-(Date.now()%2000)+20);
+  function drawTimeOnly(){
+    if(killed||mode!=="tenkyu"||!TIMEBOX)return;
+    var b=TIMEBOX,d=displayParts(virtualNowMs());
+    g.setColor(WHITE).fillRect(b.x,b.y,b.x+b.w-1,b.y+b.h-1);
+    g.setBgColor(WHITE).setColor(BLACK).setFont("Vector",b.size).setFontAlign(b.align,-1);
+    g.drawString(pad(d.h)+pad(d.mi),b.tx,b.ty);
   }
 
   function installWidgetRedrawHook(){
@@ -860,6 +862,8 @@
   }
 
   function drawBase(){
+    TIMEBOX=undefined;
+    lastBaseBucket=Math.floor(Date.now()/300000);
     g.reset().setBgColor(BLACK).setColor(BLACK).clear();
     drawSun();
     var sol=safeSolar();
@@ -895,7 +899,6 @@
 
   function stopOrbitTimers(){
     clear(minuteTimer);minuteTimer=undefined;
-    clear(timeTimer);timeTimer=undefined;
     clear(idleTimer);idleTimer=undefined;
     clearTaps();
   }
@@ -932,7 +935,6 @@
     busy=false;
     drawBase();
     armMinute();
-    armTime();
     interactive=!!keepInteractive;
     if(interactive){
       try{Bangle.setLocked(false);}catch(e){}
@@ -1054,6 +1056,7 @@
 
   function onLCD(on){
     if(!on){
+      clear(minuteTimer);minuteTimer=undefined;
       clearTaps();
       clear(idleTimer);idleTimer=undefined;
       interactive=false;
@@ -1066,11 +1069,13 @@
       return;
     }
 
+    var restarted=resetOnWake;
     if(resetOnWake){
       resetOnWake=false;
       startOrbit(false);
     }
     if(mode==="tenkyu"){
+      if(!restarted){drawBase();armMinute();}
       interactive=true;
       try{Bangle.setBacklight(true);}catch(e){}
       armIdle();
@@ -1087,7 +1092,11 @@
     clear(minuteTimer);
     minuteTimer=setTimeout(function(){
       minuteTimer=undefined;
-      if(!killed&&mode==="tenkyu"){drawBase();armMinute();}
+      if(!killed&&mode==="tenkyu"){
+        if(Math.floor(Date.now()/300000)!==lastBaseBucket)drawBase();
+        else{drawTimeOnly();try{g.flip();}catch(e){}}
+        armMinute();
+      }
     },60000-(Date.now()%60000)+25);
   }
 
@@ -1120,5 +1129,4 @@
   try{Bangle.setLocked(false);}catch(e){}
   drawBase();
   armMinute();
-  armTime();
 })();

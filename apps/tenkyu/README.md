@@ -87,6 +87,10 @@ Roman numerals sit just outside the lunar orbit. A revolution represents 24 hour
 
 The app ID and storage filenames use `tenkyu`. Install it as a new, independent app. Settings, locations and events start from tenkyu's defaults; data from Orbit or tenkyugi is not imported. To use tenkyu as the default clock, select it in the watch's system settings.
 
+### Display refresh
+
+The time area updates once per minute. The rest of the clock face redraws at five-minute boundaries. A single minute timer schedules both, and stops while the LCD is off or another screen is open. Opening the clock or waking the LCD redraws immediately. Widget redraws restore header text as needed. These reduce application drawing work; battery-life improvement has not been measured.
+
 ### Settings menu
 
 The root menu contains six categories: **Location**, **Date/time**, **Bodies**, **Dial**, **Digital clock**, and **Calendar**. Location contains place names, manual coordinates and GPS; Date/time contains the time source; Bodies contains view direction, body sizes and lunar orbit radius; Dial contains the Roman numeral toggle, size and interval; Digital clock contains date/time positions and font sizes; Calendar contains holiday region, auto-return, events and cache management. Events and cache menus return to Calendar.
@@ -94,7 +98,7 @@ The root menu contains six categories: **Location**, **Date/time**, **Bodies**, 
 ### Other settings
 
 - **Date pos / Time pos**: Header / Top left / Below Sun can be selected independently.
-- **Date size / Time size**: Font sizes for on-face date/time text. Header text follows the native widget-bar theme; on-face text is drawn on black.
+- **Date size / Time size**: Font sizes for on-face date/time text. The date keeps its existing theme; the time is steady black text on a white background.
 - **View side**: North / South
 - Display sizes of the Sun, Earth and Moon
 - Lunar tenkyu radius
@@ -311,6 +315,10 @@ Place timeを使用しても、Bangle.js本体のタイムゾーン設定やDST�
 
 内部IDと保存ファイル名も `tenkyu` です。独立した新しいアプリとしてインストールしてください。設定・地名・イベントはtenkyuの初期設定から始まり、旧Orbitやtenkyugiのデータは取り込みません。標準時計にする場合は、本体の設定でtenkyuを選択してください。
 
+### 画面の更新
+
+時刻の領域だけを毎分更新し、時計画面のその他の部分は5分区切りで更新します。タイマーは1本にまとめ、LCD消灯時や別画面への切り替え時には停止します。時計画面を開いた時やLCD復帰時は即座に描画します。ウィジェット更新時には必要なヘッダー文字を復元します。描画処理を減らす設計であり、実際の電池持ちの改善量は未測定です。
+
 ### 設定メニューの構成
 
 トップは **Location（地域）・Date/time（日時）・Bodies（天体配置）・Dial（文字盤）・Digital clock（デジタル時計）・Calendar（カレンダー）** の6分類です。
@@ -325,7 +333,7 @@ Place timeを使用しても、Bangle.js本体のタイムゾーン設定やDST�
 ### その他の設定
 
 - Date pos / Time pos で Header / Top left / Below Sun を個別に選択できます。
-- Date size / Time size で、描画面に表示する場合の文字サイズを選択できます。Header表示ではウィジェット帯の配色に合わせ、描画面では黒背景に白系文字で表示します。
+- Date size / Time size で、描画面に表示する場合の文字サイズを選択できます。日付の配色は従来どおりで、時刻は白背景に黒文字で点滅せず表示します。
 - **View side**: North / South
 - 太陽・地球・月の表示サイズ
 - 月の公転半径
