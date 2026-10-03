@@ -29,6 +29,7 @@
     set("timeSource",(cfg.timeSource===1||cfg.timeSource==="1")?1:0);
     set("orbitHourSize",Math.max(6,Math.min(12,isFinite(cfg.orbitHourSize)?cfg.orbitHourSize|0:8)));
     set("orbitHourStep",[1,2,3,6].indexOf(cfg.orbitHourStep)>=0?cfg.orbitHourStep:1);
+    set("orbitHourEnabled",cfg.orbitHourEnabled!==false);
 
     var lat,lon;
     if(cfg.coordVersion!==2){
@@ -90,6 +91,7 @@
   var DATEPOS=cfg.datePos|0,TIMEPOS=cfg.timePos|0,DATESIZE=cfg.dateSize|0,TIMESIZE=cfg.timeSize|0;
   var TIMESOURCE=cfg.timeSource===1?1:0;
   var HOURSIZE=cfg.orbitHourSize|0,HOURSTEP=cfg.orbitHourStep|0;
+  var HOURENABLED=cfg.orbitHourEnabled;
   var ROMAN=["XII","I","II","III","IV","V","VI","VII","VIII","IX","X","XI"];
   var PLACETZ=isFinite(cfg.tzBase)?+cfg.tzBase:NaN;
   var PLACEDST=isFinite(cfg.tzRule)?(cfg.tzRule|0):0;
@@ -717,6 +719,7 @@
 
 
   function drawOrbitHours(sol){
+    if(!HOURENABLED)return;
     /* A revolution is 24 hours. Anchor civil hours to the observer's
        zenith line, including the selected time source and DST. */
     var p=displayParts(virtualNowMs());

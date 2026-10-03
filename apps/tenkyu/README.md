@@ -79,11 +79,17 @@ tenkyu does not change the Bangle.js system time zone or DST setting when Place 
 
 Roman numerals sit just outside the lunar orbit. A revolution represents 24 hours, so I–XII occur twice. The labels follow **Time source** (Bangle / Place) and align with the observer's zenith direction; XII is not necessarily on the Earth–Sun line because civil noon differs from apparent solar noon.
 
+- Open **Dial** in the settings root menu for the Roman hour scale options.
+- **Enabled**: Show or hide the Roman numerals (default on). Hiding them preserves the size and interval settings.
 - **Hour size**: 6–12 pixels (default 8).
 - **Hour step**: Show every 1, 2, 3 or 6 hours (default 1).
 - The Moon and status/date/time overlays take priority where they overlap the scale. Large orbit/font settings can hide some labels at the screen or widget boundary.
 
 The app ID and storage filenames use `tenkyu`. Install it as a new, independent app. Settings, locations and events start from tenkyu's defaults; data from Orbit or tenkyugi is not imported. To use tenkyu as the default clock, select it in the watch's system settings.
+
+### Settings menu
+
+The root menu contains six categories: **Location**, **Date/time**, **Bodies**, **Dial**, **Digital clock**, and **Calendar**. Location contains place names, manual coordinates and GPS; Date/time contains the time source; Bodies contains view direction, body sizes and lunar orbit radius; Dial contains the Roman numeral toggle, size and interval; Digital clock contains date/time positions and font sizes; Calendar contains holiday region, auto-return, events and cache management. Events and cache menus return to Calendar.
 
 ### Other settings
 
@@ -297,11 +303,24 @@ Place timeを使用しても、Bangle.js本体のタイムゾーン設定やDST�
 
 月の軌道の少し外側にローマ数字を表示します。一周が24時間に対応するため、Ⅰ〜Ⅻを午前・午後の2回配置します。数字の位置は **Time source**（Bangle / Place）に従い、設定地点の天頂線に対応します。標準時と真太陽時には差があるため、Ⅻが太陽方向と一致するとは限りません。
 
+- 設定のルート階層にある **Dial（文字盤）** に、ローマ数字の設定をまとめています。
+- **Enabled**：ローマ数字の表示をオン・オフ（初期値オン）。オフにしても文字サイズと間引きの設定を保持します。
 - **Hour size**：文字サイズ6〜12ピクセル（初期値8）。
 - **Hour step**：1・2・3・6時間おきに表示（初期値1）。
 - 月・地名・日付・時刻を優先して描画します。軌道や文字を大きくすると、一部の数字が画面端やウィジェットに隠れる場合があります。
 
 内部IDと保存ファイル名も `tenkyu` です。独立した新しいアプリとしてインストールしてください。設定・地名・イベントはtenkyuの初期設定から始まり、旧Orbitやtenkyugiのデータは取り込みません。標準時計にする場合は、本体の設定でtenkyuを選択してください。
+
+### 設定メニューの構成
+
+トップは **Location（地域）・Date/time（日時）・Bodies（天体配置）・Dial（文字盤）・Digital clock（デジタル時計）・Calendar（カレンダー）** の6分類です。
+
+- **地域**：地名選択、緯度・経度の手動設定、GPS、現在の座標。
+- **日時**：時刻の基準（Bangle / Place）、時計画面へ戻る。
+- **天体配置**：北・南の表示方向、太陽・地球・月の大きさ、月の公転半径。
+- **文字盤**：ローマ数字のオン・オフ、文字サイズ、間引き。
+- **デジタル時計**：日付・時刻の表示位置と文字サイズ。
+- **カレンダー**：祝日地域、自動復帰時間、記念日・独自休日、祝日キャッシュ。記念日・キャッシュ画面から戻るとカレンダー設定へ戻ります。
 
 ### その他の設定
 
