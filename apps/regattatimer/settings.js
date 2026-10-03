@@ -10,6 +10,7 @@
       "dial": "Numeric",
       "gps": true,
       "record": false,
+      "speedalt": false,
       "theme": "Dark",
     }, storage.readJSON(file, true) || {});
 
@@ -42,6 +43,12 @@
       value: !!settings.buzzer,  // !! converts undefined to false
       onchange: v => {
         save("buzzer", v);
+      }
+    },
+    "GPS Adv Sprt" : {
+      value: !!settings.speedalt,  // !! converts undefined to false
+      onchange: v => {
+        save("speedalt", v);
       }
     },
     /*

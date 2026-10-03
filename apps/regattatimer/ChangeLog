@@ -5,3 +5,4 @@
 0.32: replaced icons with "Graphics.createImage"
 0.40: Fixing lint warnings for unused vars
 0.41: removed no longer required import of "heatshrink"
+0.42: alternative navigation to GPS Adv Sport app
