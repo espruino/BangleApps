@@ -10,10 +10,10 @@
   "supports": ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [
-    {"name": "regattatimer.app.js", "url": "app.js"},
-    {"name": "regattatimer.settings.js", "url": "settings.js"},
-    {"name": "regattatimer.img", "url": "app-icon.js", "evaluate": true}
+    {"name": "regattatimerSW.app.js", "url": "app.js"},
+    {"name": "regattatimerSW.settings.js", "url": "settings.js"},
+    {"name": "regattatimerSW.img", "url": "app-icon.js", "evaluate": true}
   ],
   "data": [{"name": "regattatimerSW.json"}],
-  "screenshots": [{"url": "screenshot.png"},{"url": "screenshot-1.png"},{"url": "screenshot-2.png"},{"url": "screenshot-3.png"},{"url": "screenshot-4.png"},{"url": "screenshot-5.png"},{"url": "screenshot-6.png"},{"url": "screenshot-7.png"}]
+  "screenshots": [{"url": "screen1.png"},{"url": "screen2.png"},{"url": "screen3.png"},{"url": "screen4.png"},{"url": "screen5.png"},{"url": "screenshot.png"},{"url": "screenshot-1.png"},{"url": "screenshot-2.png"},{"url": "screenshot-3.png"},{"url": "screenshot-4.png"},{"url": "screenshot-5.png"},{"url": "screenshot-6.png"},{"url": "screenshot-7.png"}]
 }
