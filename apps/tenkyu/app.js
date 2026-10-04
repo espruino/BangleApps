@@ -509,7 +509,7 @@
   function screenGroup(pos,m){
     var hasDate=DATEPOS===pos,hasTime=TIMEPOS===pos;
     if(!hasDate&&!hasTime)return;
-    var d=displayParts(virtualNowMs()),date=pad(d.m)+pad(d.d),time=pad(d.h)+pad(d.mi);
+    var d=displayParts(virtualNowMs()),date=pad(d.m)+pad(d.d);
     g.setFont("Vector",DATESIZE);var dw=hasDate?g.stringWidth(date):0;
     g.setFont("Vector",TIMESIZE);var tw=0;
     if(hasTime)for(var digit=0;digit<10;digit++)tw=Math.max(tw,g.stringWidth(""+digit)*4);
