@@ -2,7 +2,7 @@
 
 # tenkyu
 
-**tenkyu 0.01**
+**tenkyu 0.02**
 
 A clock app for Bangle.js 2 that lets you read the time, the phases of the Moon and related information from the relative positions of the Sun, Earth and Moon.
 
@@ -92,6 +92,8 @@ The app ID and storage filenames use `tenkyu`. Install it as a new, independent 
 The time area updates once per minute. The rest of the clock face redraws at five-minute boundaries. A single minute timer schedules both, and stops while the LCD is off or another screen is open. Opening the clock or waking the LCD redraws immediately. Widget redraws restore header text as needed. These reduce application drawing work; battery-life improvement has not been measured.
 
 ### Settings menu
+
+Default settings: Roman hour numerals are hidden, the date is below the Sun, the time is in the header, and the location is Japan / Tokyo / Chiyoda-ku (35.6940 N, 139.7536 E). Existing saved settings are retained when updating.
 
 The root menu contains six categories: **Location**, **Date/time**, **Bodies**, **Dial**, **Digital clock**, and **Calendar**. Location contains place names, manual coordinates and GPS; Date/time contains the time source; Bodies contains view direction, body sizes and lunar orbit radius; Dial contains the Roman numeral toggle, size and interval; Digital clock contains date/time positions and font sizes; Calendar contains holiday region, auto-return, events and cache management. Events and cache menus return to Calendar.
 

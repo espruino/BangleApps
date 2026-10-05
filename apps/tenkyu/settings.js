@@ -1,4 +1,4 @@
-/* tenkyu 0.01: settings and editable event data. */
+/* tenkyu 0.02: settings and editable event data. */
 (function(back){
   var Storage=require("Storage");
   var C,P,JPI;
@@ -64,16 +64,30 @@
     var s=readJSON(CFG,{}),changed=false;
     function set(k,v){if(s[k]!==v){s[k]=v;changed=true;}}
 
+    /* Default to the Chiyoda ward office without loading place tables.
+       Preserve any previously selected place, manual coordinates or GPS fix. */
+    if(s.locationSource===undefined&&s.locationMode===undefined&&
+       !s.locName&&!s.locPref&&s.manualLat===undefined&&s.manualLon===undefined&&
+       s.lat===undefined&&s.lon===undefined&&s.countryName===undefined&&
+       s.pref===undefined&&s.municipality===undefined&&s.place===undefined){
+      set("locationSource","place");set("locationMode",0);
+      set("countryName","Japan");set("locPref","Tokyo");set("locName","Chiyoda-ku");
+      set("pref",12);set("municipality",0);set("place",0);set("placeStateVersion",1);
+      set("manualLat",35.694);set("manualLon",139.7536);
+      set("tzBase",540);set("tzRule",0);
+    }
+
+
     if(!isFinite(s.sunSize))s.sunSize=8;
     if(!isFinite(s.earthSize))s.earthSize=42;
     if(!isFinite(s.moonSize))s.moonSize=15;
     if(!isFinite(s.moonOrbit))s.moonOrbit=62;
-    if(!isFinite(s.datePos))s.datePos=1;if(!isFinite(s.timePos))s.timePos=2;
+    if(!isFinite(s.datePos))set("datePos",2);if(!isFinite(s.timePos))set("timePos",0);
     if(!isFinite(s.dateSize))s.dateSize=22;if(!isFinite(s.timeSize))s.timeSize=22;
     set("timeSource",(s.timeSource===1||s.timeSource==="1")?1:0);
     set("orbitHourSize",Math.max(6,Math.min(12,isFinite(s.orbitHourSize)?s.orbitHourSize|0:8)));
     set("orbitHourStep",[1,2,3,6].indexOf(s.orbitHourStep)>=0?s.orbitHourStep:1);
-    set("orbitHourEnabled",s.orbitHourEnabled!==false);
+    set("orbitHourEnabled",s.orbitHourEnabled===undefined?false:s.orbitHourEnabled!==false);
     s.sunSize=Math.max(6,Math.min(15,s.sunSize|0));
     s.earthSize=Math.max(40,Math.min(45,s.earthSize|0));
     s.moonSize=Math.max(14,Math.min(16,s.moonSize|0));

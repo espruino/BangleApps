@@ -1,4 +1,4 @@
-/* tenkyu 0.01 (tenkyu storage) */
+/* tenkyu 0.02 (tenkyu storage) */
 (function(){
   var W=g.getWidth(),H=g.getHeight();
   var Storage=require("Storage"),CFGFILE="tenkyu.json";
@@ -10,6 +10,20 @@
   (function(){
     var changed=false;
     function set(k,v){if(cfg[k]!==v){cfg[k]=v;changed=true;}}
+
+    /* Default to the Chiyoda ward office without loading place tables.
+       Preserve any previously selected place, manual coordinates or GPS fix. */
+    if(cfg.locationSource===undefined&&cfg.locationMode===undefined&&
+       !cfg.locName&&!cfg.locPref&&cfg.manualLat===undefined&&cfg.manualLon===undefined&&
+       cfg.lat===undefined&&cfg.lon===undefined&&cfg.countryName===undefined&&
+       cfg.pref===undefined&&cfg.municipality===undefined&&cfg.place===undefined){
+      set("locationSource","place");set("locationMode",0);
+      set("countryName","Japan");set("locPref","Tokyo");set("locName","Chiyoda-ku");
+      set("pref",12);set("municipality",0);set("place",0);set("placeStateVersion",1);
+      set("manualLat",35.694);set("manualLon",139.7536);
+      set("tzBase",540);set("tzRule",0);
+    }
+
     var sun=isFinite(cfg.sunSize)?(cfg.sunSize|0):8;
     var earth=isFinite(cfg.earthSize)?(cfg.earthSize|0):42;
     var moon=isFinite(cfg.moonSize)?(cfg.moonSize|0):15;
@@ -21,7 +35,7 @@
     orb=Math.max(mn,Math.min(70,orb));
     set("sunSize",sun);set("earthSize",earth);set("moonSize",moon);set("moonOrbit",orb);
     set("layoutVersion",2);
-    var dp=isFinite(cfg.datePos)?(cfg.datePos|0):1,tp=isFinite(cfg.timePos)?(cfg.timePos|0):2;
+    var dp=isFinite(cfg.datePos)?(cfg.datePos|0):2,tp=isFinite(cfg.timePos)?(cfg.timePos|0):0;
     var ds=isFinite(cfg.dateSize)?(cfg.dateSize|0):22,ts=isFinite(cfg.timeSize)?(cfg.timeSize|0):22;
     set("datePos",Math.max(0,Math.min(2,dp)));set("timePos",Math.max(0,Math.min(2,tp)));
     set("dateSize",Math.max(12,Math.min(30,ds)));set("timeSize",Math.max(12,Math.min(30,ts)));
@@ -29,7 +43,7 @@
     set("timeSource",(cfg.timeSource===1||cfg.timeSource==="1")?1:0);
     set("orbitHourSize",Math.max(6,Math.min(12,isFinite(cfg.orbitHourSize)?cfg.orbitHourSize|0:8)));
     set("orbitHourStep",[1,2,3,6].indexOf(cfg.orbitHourStep)>=0?cfg.orbitHourStep:1);
-    set("orbitHourEnabled",cfg.orbitHourEnabled!==false);
+    set("orbitHourEnabled",cfg.orbitHourEnabled===undefined?false:cfg.orbitHourEnabled!==false);
 
     var lat,lon;
     if(cfg.coordVersion!==2){
