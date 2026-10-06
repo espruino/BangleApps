@@ -1050,6 +1050,13 @@ class TimerEditMenu {
       // Hide the Name menu item if text input module is not available
       delete menu.Name;
     }
+    if (!this.timer.is_countdown()) {
+      // Hide the non-applicable alarm-related functions for a countup
+      // timer
+      delete menu['At end'];
+      delete menu['Vibrate pattern'];
+      delete menu['Buzz count'];
+    }
 
     E.showMenu(menu);
   }
@@ -1120,6 +1127,8 @@ class TimerEditStart {
       onchange: (h, m, s) => {
         ok = true;
         this.timer.origin = h * 3600 + m * 60 + s;
+        // Define timer as countup if origin is 0, else countdown
+        this.timer.rate = Math.abs(this.timer.rate) * (this.timer.origin === 0 ? 1 : -1);
         tt.set_timers_dirty();
       }
     });
