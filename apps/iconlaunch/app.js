@@ -153,9 +153,11 @@
 
   let swipeHandler = (h,_) => { if(settings.swipeExit && h==1) { Bangle.showClock(); } };
 
-  Bangle.on("swipe", swipeHandler)
+  Bangle.on("swipe", swipeHandler);
   Bangle.on("drag", updateTimeout);
-  Bangle.on("touch", updateTimeout);
+  // Fix updateTimeout() firing after remove function called.
+  // Any icon touch will also trigger a "drag" event, so timeout should work anyway.
+  //Bangle.on("touch", updateTimeout);
 
   updateTimeout();
 }
