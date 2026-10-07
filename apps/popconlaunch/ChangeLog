@@ -3,3 +3,4 @@
 0.03: Avoid polluting global scope
 0.04: Add settings app for resetting popcon
 0.05: Handle info files potentially not existing
+0.06: Update to work with launchers that use Bangle.load() (e.g., recent versions of Launcher and Desktop Launcher)

@@ -75,8 +75,7 @@
         }
         return j;
     });
-    var oldLoad = load;
-    global.load = function (src) {
+    var recordLaunch = function (src) {
         if (src) {
             var cache_2 = ensureCache();
             var ent = cache_2[src] || (cache_2[src] = {
@@ -86,9 +85,19 @@
             });
             ent.pop++;
             ent.last = Date.now();
+            console.debug("[popconlaunch] Launching ".concat(src, ", pop=").concat(ent.pop, ", last=").concat(ent.last));
             var orderChanged = sortCache();
             saveCache(cache_2, orderChanged);
         }
+    };
+    var oldLoad = load;
+    global.load = function (src) {
+        recordLaunch(src);
         return oldLoad(src);
+    };
+    var oldBangleLoad = Bangle.load;
+    Bangle.load = function (src) {
+        recordLaunch(src);
+        return oldBangleLoad(src);
     };
 })();

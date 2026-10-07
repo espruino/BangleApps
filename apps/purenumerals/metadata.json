@@ -2,7 +2,7 @@
   "name": "Pure Numerals Clock",
   "shortName":"Pure Numerals",
   "icon": "app.png",
-  "version":"0.04",
+  "version":"0.05",
   "author":"OST Eastern Switzerland University of Applied Sciences",
   "description": "Pure Numerals is a minimalist digital watch face that displays easy-to-read time and date as two bold blocks of numbers in vivid colors on a deep black background. It also includes a step counter, heart rate measurement, a flashlight and a battery indicator.",
   "tags": "clock",

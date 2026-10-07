@@ -7,20 +7,29 @@
 		Connected
 	}
 
-	const getState = () => {
+	let state: State = (() => {
 		const status = NRF.getSecurityStatus();
 
 		if (status.connected) return State.Connected;
 		if (status.advertising) return State.Active;
 		return State.Asleep;
-	};
-	let state = getState();
+	})();
 
 	const width = () => state > State.Asleep ? 15 : 0;
 
 	const update = (newState: State) => {
 		state = newState;
-		WIDGETS["bluetooth"]!.width = width();
+
+		const newWidth = width();
+		const w = WIDGETS["bluetooth"]!;
+		if (newWidth === 0 && w.width){
+			// hiding widget, clear our area
+			g
+				.reset("widget")
+				.clearRect({ x: w.x!, y: w.y!, w: w.width, h: 24 });
+		}
+		w.width = newWidth;
+
 		setTimeout(Bangle.drawWidgets, 50); // no need for .bind()
 	};
 
@@ -44,20 +53,18 @@
 		area: "tl",
 		sortorder: -1,
 		draw: function() {
-			// sometimes this can change without us getting an event
-			state = getState();
-
-			if (state == State.Asleep)
+			if (state === State.Asleep)
 				return;
 
-			g
-				.reset()
-				.setColor(colours[state][g.theme.dark as unknown as `${boolean}`])
-				.drawImage(
-					atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="),
-					this.x! + 2,
-					this.y! + 2
-				);
+			g.reset();
+
+			g.setColor(colours[state][g.theme.dark as unknown as `${boolean}`]);
+
+			g.drawImage(
+				atob("CxQBBgDgFgJgR4jZMawfAcA4D4NYybEYIwTAsBwDAA=="),
+				this.x! + 2,
+				this.y! + 2
+			);
 		},
 		width: width(),
 	};

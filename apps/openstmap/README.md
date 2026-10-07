@@ -22,6 +22,15 @@ quality, but uploads faster and takes less space). Bangle.js 2 is limited to 3bp
 can change settings, move the map around, and click `Get Map` again.
 * When you're ready, click `Upload`
 
+To add the maps for a route:
+
+* Click `Add Map`, choose `GPX route` instead of `Map area`, then `Load GPX` and choose a GPX file with a track or route
+* Choose how far either side of the route to include (eg `Route ±500m`) and the level of detail.
+Higher detail makes labels readable on the Bangle but needs a lot more space. The areas that
+will be uploaded are outlined, along with how much space they need and how much is free on your Bangle
+* Click `Get Route`, which downloads the maps and draws the route on them in magenta
+* When you're ready, click `Upload`. Maps for a route are listed and deleted together
+
 **Note:** By default on Bangle.js, pre-dithered 3 bpp bitmaps will be uploaded
 (which match the screen bit depth). However you can untick the `3 bit` checkbox
 to use 8 bit maps, which take up 2.6x more space but look much better when

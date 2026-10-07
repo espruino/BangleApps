@@ -1,0 +1,35 @@
+{
+  "id": "approxclockplus",
+  "name": "Approximate Clock +",
+  "shortName": "Approx Clock +",
+  "version": "0.01",
+  "icon": "app.png",
+  "author": "ZubaZ21",
+  "description": "A spelled-out clock with selectable levels of time detail.",
+  "readme": "README.md",
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "screenshots": [ {"url":"level3-dark.png"}, {"url":"level2-light.png"} ],
+  "storage": [
+    {
+      "name": "approxclockplus.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "approxclockplus.img",
+      "url": "app-icon.js",
+      "evaluate": true
+    },
+    {
+      "name": "approxclockplus.settings.js",
+      "url": "settings.js"
+    }
+  ],
+  "data": [
+    {
+      "name": "approxclockplus.json"
+    }
+  ]
+}

@@ -158,8 +158,8 @@ function showMapMessage(msg) {
     distance = require("locale").distance(msg.distance);
   if (msg.instr) {
     var instr = msg.instr.replace(/\s*\/\s*/g," \/\n"); // convert slashes to newlines
-    if (instr.includes("towards") || instr.includes("toward")) {
-      m = instr.split(/towards|toward/);
+    m = instr.split(/towards|toward/);
+    if (m.length>1) {
       target = m[0].trim();
       street = m[1].trim();
     }else
@@ -462,13 +462,18 @@ function showMessage(msgid, persist) {
   }
   if (body) { // Try and find a font that fits...
     let w = g.getWidth()-2, h = Bangle.appRect.h-80;
-    if (g.setFont(bodyFont).wrapString(body, w).length*g.getFontHeight() > h) {
-      bodyFont = fontBig;
-      if (settings.fontSize!=1 && g.setFont(bodyFont).wrapString(body, w).length*g.getFontHeight() > h) {
-        bodyFont = fontMedium;
+    try {
+      if (g.setFont(bodyFont).wrapString(body, w).length*g.getFontHeight() > h) {
+        bodyFont = fontBig;
+        if (settings.fontSize!=1 && g.setFont(bodyFont).wrapString(body, w).length*g.getFontHeight() > h) {
+          bodyFont = fontMedium;
+        }
       }
+      lines = g.setFont(bodyFont).wrapString(body, w);
+    } catch (e) {
+      console.log("Invalid message body", e);
+      lines = ["[Invalid message]"];
     }
-    lines = g.setFont(bodyFont).wrapString(body, w);
   }
   // By this point, `title` must be a string and `lines` must be an array of strings.
   // Either or both can be empty, but neither can be `undefined` (#3969).
@@ -685,7 +690,13 @@ function checkMessages(options) {
         // if the body includes an image, it probably won't be small enough to allow>1 line
         let maxLines = Math.floor(34/g.getFontHeight());
         if (body.includes("\0")) { maxLines=1; }
-        var l = g.wrapString(body, r.w-(x+8));
+        var l;
+        try {
+          l = g.wrapString(body, r.w-(x+8));
+        } catch(e) {
+          console.log("Invalid message body", e);
+          l = ["[Invalid message]"];
+        }
         if (l.length>maxLines) {
           l = l.slice(0,maxLines);
           l[l.length-1]+="...";

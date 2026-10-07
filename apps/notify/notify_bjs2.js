@@ -140,7 +140,7 @@ exports.show = function(options) {
     if (pos > -size) setTimeout(anim, 15);
   }
   anim();
-  Bangle.on("touch", onTouch);
+  Bangle.prependListener("touch", onTouch);
   if (options.onHide)
     hideCallback = options.onHide;
 };
