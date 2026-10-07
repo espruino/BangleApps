@@ -139,7 +139,7 @@ function getRelativeDay(timestamp) {
 }
 
 function updateInfo() {
-  let data = require("hrvtracking").getData();
+  let data = require("hrvtracking").getRecentData();
   layout.hrvDate.label = data.latestHrv
     ? getRelativeDay(data.latestHrv.timestamp)
     : "Today";

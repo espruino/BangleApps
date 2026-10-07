@@ -80,13 +80,14 @@ exports.calculateDailyData = function calculateDailyHrv() {
       : 0;
 
   writeData();
-};
-
-exports.getAllData = function () {
-  return dataSaved;
+  Bangle.emit("hrv",exports.getRecentData())
 };
 
 exports.getData = function () {
+  return dataSaved;
+};
+
+exports.getRecentData = function () {
   //returns list of 6 previous averages, baseline, and most recent
   return {
     dailyHrvs: dataSaved.hrvDailyAverages.slice(0, 6),

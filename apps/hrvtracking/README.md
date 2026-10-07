@@ -40,15 +40,17 @@ In the app, you can see your HRV for today, your personal baseline or usual, and
 ## Developer Info
 You can query HRV data by running
 ```
-require("hrvtracking").getData();
+require("hrvtracking").getRecentData();
 ```
 which will return an object with `dailyHrvs` (HRVs from the past 6 days including today), `latestHrv` (The last HRV measurement. Can be from yesterday), `hrvBaseline` (The user's average baseline), and `daysTracked` (how many days the HRV module has been keeping track of HRV).
 
 To request all available information, you can run:
 ```
-require("hrvtracking").getAllData();
+require("hrvtracking").getData();
 ```
 which will return all available data saved in file, regardless of memory taken up. Use sparingly, as it is a large object.
+
+An event, `hrv`, is emitted when a new HRV is calculated for that day, which can be listened for using `Bangle.on("hrv")` 
 ## Authors
 - RKBoss6
 

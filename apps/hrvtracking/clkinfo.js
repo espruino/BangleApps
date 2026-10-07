@@ -1,4 +1,6 @@
 (function() {
+  Bangle.on("hrv",()=>{this.emit("redraw")})
+  Bangle.on("midnight",()=>{this.emit("redraw")})
   function isTimestampToday(unixTimestamp) {
     const date = new Date(unixTimestamp);
     const today = new Date();
@@ -7,7 +9,7 @@
           date.getMonth() === today.getMonth() &&
           date.getDate() === today.getDate();
   }
-  let hrv=require("hrvtracking").getData().latestHrv
+  let hrv=require("hrvtracking").getRecentData().latestHrv
   let text="--"
   if(hrv != undefined && isTimestampToday(hrv.timestamp)) text=Math.round(hrv.avgHrv)+" ms"
   return {

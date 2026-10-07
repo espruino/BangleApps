@@ -1,4 +1,4 @@
-var dataSaved = require("hrvtracking").getAllData();
+var dataSaved = require("hrvtracking").getData();
 let settings = require("Storage").readJSON("hrvtracking.settings.json", 1) || {
   startTime: 3 * 60, //minutes
   endTime: 5 * 60,
