@@ -1,10 +1,10 @@
-/* tenkyu 0.02: settings and editable event data. */
+/* tenkyu 0.01: settings and editable event data. */
 (function(back){
   var Storage=require("Storage");
   var C,P,JPI;
-  var JPFILE="tenkyujp.dat",jpPrefCache=-1,jpMunicipalities;
-  var CFG="tenkyu.json",CAL="tenkyu.cal.json",EVENTS="tenkyu.events.json";
-  var GPS_ID="tenkyusettings";
+  var JPFILE="orbitjp.dat",jpPrefCache=-1,jpMunicipalities;
+  var CFG="orbit.json",CAL="orbit.cal.json",EVENTS="orbit.events.json";
+  var GPS_ID="orbitsettings";
   var COLORS=["red","yellow","green","blue","cyan","magenta","orange","white","gray","black"];
   var TYPES=["holiday","family","birthday","custom"];
   var TYPE_NAMES=["Holiday","Anniversary","Birthday","Other"];
@@ -18,7 +18,7 @@
   /* Load place tables lazily and release them when location editing ends. */
   function loadPlaceIndex(){
     if(C&&P)return;
-    var d=require("tenkyuloc");
+    var d=require("orbitloc");
     C=d.countries;P=d.prefs;JPI=d.jpidx||[];
     d=undefined;
   }
@@ -32,8 +32,8 @@
     try{
       if(typeof Modules!=="undefined"&&Modules.getCached){
         var mc=Modules.getCached();
-        if(mc.includes("tenkyuloc"))Modules.removeCached("tenkyuloc");
-        if(mc.includes("tenkyutz"))Modules.removeCached("tenkyutz");
+        if(mc.includes("orbitloc"))Modules.removeCached("orbitloc");
+        if(mc.includes("orbittz"))Modules.removeCached("orbittz");
       }
     }catch(e){}
   }
@@ -193,7 +193,7 @@
   function placeTimeData(q){
     var t;
     try{
-      var z=require("tenkyutz");
+      var z=require("orbittz");
       t=z.get(q.ci,q.pi);
       z=undefined;
     }catch(e){t=undefined;}
@@ -390,16 +390,16 @@
   // ---------- Holiday cache ----------
   function cacheInfo(){
     var out={jp:0,ew:0,sc:0,ni:0,total:0};
-    Storage.list(/^tenh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/).forEach(function(f){
-      var m=/^tenh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/.exec(f);
+    Storage.list(/^orbh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/).forEach(function(f){
+      var m=/^orbh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/.exec(f);
       if(m){out[m[1]]++;out.total++;}
     });
     return out;
   }
   function clearCache(region,cb){
     var n=0;
-    Storage.list(/^tenh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/).forEach(function(f){
-      var m=/^tenh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/.exec(f);
+    Storage.list(/^orbh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/).forEach(function(f){
+      var m=/^orbh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/.exec(f);
       if(m&&(!region||m[1]===region)){Storage.erase(f);n++;}
     });
     E.showAlert("Deleted "+n,"Holiday cache").then(cb);
@@ -493,7 +493,7 @@
   function exitToOrbit(){
     stopGPS();releasePlaceData();
     try{E.removeListener("kill",onKill);}catch(e){}
-    load("tenkyu.app.js");
+    load("orbit.app.js");
   }
   function onKill(){stopGPS();releasePlaceData();}
 

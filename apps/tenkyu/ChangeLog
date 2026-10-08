@@ -1,2 +1,0 @@
-0.01: Initial tenkyu release, derived from Orbit 0.06. Use tenkyu as the app ID, source directory, module names and storage filenames. Preserve the Sun-Earth-Moon clock, integrated calendar, place selection and civil-time options.
-0.02: Replace the launcher and App Loader icons with a 48x48 colour globe, Moon, thin orbit and Sun-direction marker. Default to hidden Roman numerals, date below the Sun, time in the header and Japan / Tokyo / Chiyoda-ku; preserve saved settings.

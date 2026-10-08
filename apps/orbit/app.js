@@ -1,7 +1,7 @@
-/* tenkyu 0.02 (tenkyu storage) */
+/* tenkyu 0.01 (orbit storage) */
 (function(){
   var W=g.getWidth(),H=g.getHeight();
-  var Storage=require("Storage"),CFGFILE="tenkyu.json";
+  var Storage=require("Storage"),CFGFILE="orbit.json";
   var cfg=Storage.readJSON(CFGFILE,1)||{};
   var sysCfg=Storage.readJSON("setting.json",1)||{};
   var VIEWLIGHT_MS=isFinite(sysCfg.timeout)?Math.max(0,+sysCfg.timeout)*1000:10000;
@@ -73,10 +73,10 @@
     if(changed)try{Storage.writeJSON(CFGFILE,cfg);}catch(e){}
   })();
   /* GPS is settings-only; release any stale settings-owned request. */
-  try{Bangle.setGPSPower(0,"tenkyusettings");}catch(e){}
+  try{Bangle.setGPSPower(0,"orbitsettings");}catch(e){}
   var calModule,calendar;
   try{
-    var calSource=Storage.read("tenkyu.cal.js");
+    var calSource=Storage.read("orbit.cal.js");
     if(calSource){calModule=eval(calSource);calendar=calModule.create();}
     calSource=undefined;
   }catch(calErr){calModule=undefined;calendar=undefined;}
@@ -224,7 +224,7 @@
   }
 
   /* Compact civil-time rules used only by Place time.
-     Rule ids are stored in tenkyutz; astronomy never calls this function. */
+     Rule ids are stored in orbittz; astronomy never calls this function. */
   function placeOffset(ms){
     var base=PLACETZ,rule=PLACEDST;
     if(!isFinite(base))return 0;
@@ -1017,15 +1017,15 @@
   function openSettings(){
     if(killed||mode!=="tenkyu")return;
     stopOrbitTimers();
-    var src=Storage.read("tenkyu.settings.js");
+    var src=Storage.read("orbit.settings.js");
     if(!src){startOrbit(true);return;}
     cleanup();
     try{
       var fn=eval(src);
-      if(typeof fn==="function")fn(function(){load("tenkyu.app.js");});
-      else load("tenkyu.app.js");
+      if(typeof fn==="function")fn(function(){load("orbit.app.js");});
+      else load("orbit.app.js");
     }catch(e){
-      load("tenkyu.app.js");
+      load("orbit.app.js");
     }
   }
 

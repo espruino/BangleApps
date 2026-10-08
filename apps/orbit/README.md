@@ -2,7 +2,7 @@
 
 # tenkyu
 
-**tenkyu 0.02**
+**tenkyu 0.01**
 
 A clock app for Bangle.js 2 that lets you read the time, the phases of the Moon and related information from the relative positions of the Sun, Earth and Moon.
 
@@ -85,7 +85,7 @@ Roman numerals sit just outside the lunar orbit. A revolution represents 24 hour
 - **Hour step**: Show every 1, 2, 3 or 6 hours (default 1).
 - The Moon and status/date/time overlays take priority where they overlap the scale. Large orbit/font settings can hide some labels at the screen or widget boundary.
 
-The app ID and storage filenames use `tenkyu`. Install it as a new, independent app. Settings, locations and events start from tenkyu's defaults; data from Orbit or tenkyugi is not imported. To use tenkyu as the default clock, select it in the watch's system settings.
+The display name is `tenkyu` and the internal app ID and storage filenames use `orbit`. This release uses the refined tenkyu implementation. No settings are imported from the standalone tenkyu app. Select tenkyu in the watch's system settings to use it as the default clock.
 
 ### Display refresh
 

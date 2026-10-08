@@ -1,5 +1,5 @@
 /* tenkyu 0.01 timezone table.
-   Parallel to tenkyuloc.countries. Values are [standard UTC offset minutes, DST rule id].
+   Parallel to orbitloc.countries. Values are [standard UTC offset minutes, DST rule id].
    Japan uses one country-wide value; no municipality rows are duplicated.
    Rules: 0 none, 1 EU, 2 US/Canada, 3 Australia, 4 New Zealand, 5 Cuba,
           6 Chile, 7 Egypt, 8 Israel, 9 Palestine, 10 Lebanon, 11 Morocco.

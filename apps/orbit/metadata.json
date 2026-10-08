@@ -1,8 +1,8 @@
 {
-  "id": "tenkyu",
+  "id": "orbit",
   "name": "tenkyu",
   "shortName": "tenkyu",
-  "version": "0.02",
+  "version": "0.01",
   "author": "onisY",
   "description": "Sun-Earth-Moon clock with integrated calendar and configurable Roman hour scale.",
   "icon": "app.png",
@@ -15,44 +15,44 @@
   "allow_emulator": true,
   "storage": [
     {
-      "name": "tenkyu.app.js",
+      "name": "orbit.app.js",
       "url": "app.js"
     },
     {
-      "name": "tenkyu.cal.js",
+      "name": "orbit.cal.js",
       "url": "calendar.js"
     },
     {
-      "name": "tenkyu.settings.js",
+      "name": "orbit.settings.js",
       "url": "settings.js"
     },
     {
-      "name": "tenkyuloc",
+      "name": "orbitloc",
       "url": "locations.js"
     },
     {
-      "name": "tenkyutz",
+      "name": "orbittz",
       "url": "timezone.js"
     },
     {
-      "name": "tenkyujp.dat",
+      "name": "orbitjp.dat",
       "url": "japan-municipalities.dat"
     },
     {
-      "name": "tenkyu.img",
+      "name": "orbit.img",
       "url": "app-icon.js",
       "evaluate": true
     }
   ],
   "data": [
     {
-      "name": "tenkyu.json"
+      "name": "orbit.json"
     },
     {
-      "name": "tenkyu.cal.json"
+      "name": "orbit.cal.json"
     },
     {
-      "name": "tenkyu.events.json"
+      "name": "orbit.events.json"
     }
   ]
 }
