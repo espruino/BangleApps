@@ -1,0 +1,17 @@
+{ "id": "polarix",
+  "name": "Polarix Clock",
+  "shortName":"Polarix",
+  "icon": "app.png",
+  "version":"0.01",
+  "author":"OST Eastern Switzerland University of Applied Sciences",
+  "description": "The Polarix watch face features an abstract, geometric, minimalist design built around a concentric orbital layout. It has form- and color-coded time indicators: a central red capsule indicates the hours, stationed in the middle like Polaris, while an orbiting cyan orb marks the minutes. Twelve subtle dark blue dots along the outer square frame serve as hour markers. When activated, a yellow orb appears in the outermost orbit with a date readout sitting at the bottom edge.",
+  "tags": "clock",
+  "type": "clock",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "storage": [
+    {"name":"polarix.app.js","url":"app.js"},
+    {"name":"polarix.img","url":"app-icon.js","evaluate":true}
+  ],
+  "screenshots": [{"url":"screenshot.png"}]
+}
