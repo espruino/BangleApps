@@ -413,6 +413,12 @@
       overflow: visible;
     }
 
+    .tile .tile-content br {
+      display: block;
+      line-height: 100;
+      padding: 2em;
+    }
+
     .tile .tile-content p {
       margin: 0 0 0.2rem 0;
     }
