@@ -40,13 +40,7 @@ Watchface Polarix
     const SEC_SHAPE = { width: HOUR_SQUARE_WIDTH, radius: HOUR_SQUARE_RADIUS };
     const SEC_COLOR = "#FF0";
 
-    // Animation
-    //const STEP_WIDTH = 4;
-    //const MIN_COLORS = [ "#0094FF", "#0076CC", "#005999", "#003B66", "#001E33", "#000000"];
-
-    const STEP_WIDTH = 3;
-    const MIN_COLORS = ["#0094FF", "#007DDA", "#0066B6", "#005091", "#00396D", "#002249", "#000B24", "#000000"];
-
+    
     // Factory für Berechnungsfunktinen
     let createGeom = function() {
 
@@ -186,7 +180,6 @@ Watchface Polarix
             const n = 13;    // Anzahl Punkte pro Ende    
             const da = Math.PI / (n-1);
             const radius = width * 0.5;
-            let i, xk, yk, a0, angle;
 
             function pushArc(xk, yk, startAngle) {
                 for (let i=0; i<n; i++) {
