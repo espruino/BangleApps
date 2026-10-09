@@ -147,7 +147,7 @@ XoX o o XoX
     onGPS: function(fix) {
       if(this.mode == "race") {
         if(fix.fix && isFinite(fix.speed)) {
-          this.layout.clear(layout.speed);
+          this.layout.clear(this.layout.speed);
           this.layout.speed.label = fix.speed.toFixed(2);
           this.layout.render(this.layout.speed);
         }
