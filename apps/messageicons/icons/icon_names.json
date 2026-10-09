@@ -130,5 +130,6 @@
   { "app":"meet", "icon":"videoconf.png" },
   { "app":"music", "icon":"music.png" },
   { "app":"sms message", "icon":"default.png" },
-  { "app":"mail", "icon":"default.png" }
+  { "app":"mail", "icon":"default.png" },
+  { "app":"quik", "icon":"quik.png" }
 ]
