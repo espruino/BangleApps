@@ -1,14 +1,14 @@
 <!-- English -->
 
-# orbit
+# tenkyu
 
-**orbit 0.05 stable**
+**tenkyu 0.01**
 
 A clock app for Bangle.js 2 that lets you read the time, the phases of the Moon and related information from the relative positions of the Sun, Earth and Moon.
 
-## 1. Purpose of orbit
+## 1. Purpose of tenkyu
 
-orbit is an approximate clock that lets you look not only at the current time, but also at **how the Sun, Earth and Moon are positioned relative to one another right now** on the small screen of a wristwatch.
+tenkyu is an approximate clock that lets you look not only at the current time, but also at **how the Sun, Earth and Moon are positioned relative to one another right now** on the small screen of a wristwatch.
 
 The clock face shows the Sun, Earth, Moon, the day and night sides of the Earth, the selected location, sunrise and sunset directions, the phase of the Moon, date and time, native Bangle.js status widgets, and the selected country and place name. The Earth is drawn as a simplified map. Its astronomical orientation is calculated from the absolute UTC time and the selected longitude, independently of the civil time-zone or daylight-saving-time setting used for the text clock.
 
@@ -22,14 +22,14 @@ The Earth display can also be used to make a rough reading of the current time f
 
 Using the built-in five-week calendar, you can select another date and display the clock for that date. This allows you to view daylight and darkness, and the Moon's phase, not only now but also several days or weeks ahead.
 
-> orbit is a simplified model intended for educational, display and hobby use. Do not use it for astronomical observation, navigation, surveying or any other purpose requiring high-precision ephemerides or position calculations.
+> tenkyu is a simplified model intended for educational, display and hobby use. Do not use it for astronomical observation, navigation, surveying or any other purpose requiring high-precision ephemerides or position calculations.
 
 ## 2. How to use
 
-### orbit screen
+### tenkyu screen
 
 - **Single tap**: Open the five-week calendar.
-- **Double tap**: Open orbit settings.
+- **Double tap**: Open tenkyu settings.
 - **BTN**: Open the Bangle.js launcher.
 
 The location display at the bottom-right changes according to the selected location method.
@@ -64,30 +64,52 @@ There are three ways to set the location.
 
 ### Time display source
 
-The date and time drawn by orbit can be selected independently from the astronomical calculation.
+The date and time drawn by tenkyu can be selected independently from the astronomical calculation.
 
 - **Bangle** (default): Uses the same local date and time currently shown by Bangle.js.
-- **Place**: When a named place is selected, orbit converts the watch's absolute UTC time using the standard UTC offset and daylight-saving-time (DST) rule stored for that place.
+- **Place**: When a named place is selected, tenkyu converts the watch's absolute UTC time using the standard UTC offset and daylight-saving-time (DST) rule stored for that place.
 
 Changing **Time source** never changes the Sun / Earth / Moon geometry. The astronomical display always uses UTC.
 
 Place time is available only for **Place name** locations. Manual and GPS locations do not contain enough information to determine a legal civil time zone reliably, so they fall back to Bangle time.
 
-orbit does not change the Bangle.js system time zone or DST setting when Place time is used. The conversion is performed only inside orbit.
+tenkyu does not change the Bangle.js system time zone or DST setting when Place time is used. The conversion is performed only inside orbit.
+
+### Roman hour scale
+
+Roman numerals sit just outside the lunar orbit. A revolution represents 24 hours, so I–XII occur twice. The labels follow **Time source** (Bangle / Place) and align with the observer's zenith direction; XII is not necessarily on the Earth–Sun line because civil noon differs from apparent solar noon.
+
+- Open **Dial** in the settings root menu for the Roman hour scale options.
+- **Enabled**: Show or hide the Roman numerals (default on). Hiding them preserves the size and interval settings.
+- **Hour size**: 6–12 pixels (default 8).
+- **Hour step**: Show every 1, 2, 3 or 6 hours (default 1).
+- The Moon and status/date/time overlays take priority where they overlap the scale. Large orbit/font settings can hide some labels at the screen or widget boundary.
+
+The display name is `tenkyu` and the internal app ID and storage filenames use `orbit`. This release uses the refined tenkyu implementation. No settings are imported from the standalone tenkyu app. Select tenkyu in the watch's system settings to use it as the default clock.
+
+### Display refresh
+
+The time area updates once per minute. The rest of the clock face redraws at five-minute boundaries. A single minute timer schedules both, and stops while the LCD is off or another screen is open. Opening the clock or waking the LCD redraws immediately. Widget redraws restore header text as needed. These reduce application drawing work; battery-life improvement has not been measured.
+
+### Settings menu
+
+Default settings: Roman hour numerals are hidden, the date is below the Sun, the time is in the header, and the location is Japan / Tokyo / Chiyoda-ku (35.6940 N, 139.7536 E). Existing saved settings are retained when updating.
+
+The root menu contains six categories: **Location**, **Date/time**, **Bodies**, **Dial**, **Digital clock**, and **Calendar**. Location contains place names, manual coordinates and GPS; Date/time contains the time source; Bodies contains view direction, body sizes and lunar orbit radius; Dial contains the Roman numeral toggle, size and interval; Digital clock contains date/time positions and font sizes; Calendar contains holiday region, auto-return, events and cache management. Events and cache menus return to Calendar.
 
 ### Other settings
 
 - **Date pos / Time pos**: Header / Top left / Below Sun can be selected independently.
-- **Date size / Time size**: Font sizes for on-face date/time text. Header text follows the native widget-bar theme; on-face text is drawn on black.
+- **Date size / Time size**: Font sizes for on-face date/time text. The date keeps its existing theme; the time is steady black text on a white background.
 - **View side**: North / South
 - Display sizes of the Sun, Earth and Moon
-- Lunar orbit radius
+- Lunar tenkyu radius
 - Public holiday region: Japan / England & Wales / Scotland / Northern Ireland
 - Calendar auto-return time
 - Anniversaries and exceptional holidays
 - Deletion of holiday cache
 
-When the normal Bangle.js wrist-view gesture wakes the watch, orbit restores the LCD/backlight for the configured system LCD timeout. This does not affect the astronomical calculation.
+When the normal Bangle.js wrist-view gesture wakes the watch, tenkyu restores the LCD/backlight for the configured system LCD timeout. This does not affect the astronomical calculation.
 
 ## 3. Sources, licences and related information
 
@@ -109,7 +131,7 @@ Moon-phase display uses the mean synodic month.
 - New Moon at 18:14 UTC on 6 January 2000  
   https://eclipse.gsfc.nasa.gov/phase/phases1901.html
 
-NASA/GSFC material gives the mean synodic month around the year 2000 as approximately 29.530588 days. orbit uses a simplified periodic model based on this value and does not reproduce the variation between individual synodic months.
+NASA/GSFC material gives the mean synodic month around the year 2000 as approximately 29.530588 days. tenkyu uses a simplified periodic model based on this value and does not reproduce the variation between individual synodic months.
 
 ### Public holidays
 
@@ -132,7 +154,7 @@ United Kingdom:
 
 Locations classified by P05 as `P05_002=1` (main offices: city, ward, town and village offices) are used as representative locations for municipalities.
 
-For the orbit 0.04 data update, the municipality-code mapping and representative-location table from the open-source **jp-address-search** project, created from P05-22, were used to recreate the coordinates while preserving orbit's existing municipality display names and prefecture order.
+For the tenkyu 0.04 data update, the municipality-code mapping and representative-location table from the open-source **jp-address-search** project, created from P05-22, were used to recreate the coordinates while preserving orbit's existing municipality display names and prefecture order.
 
 - uiuifree / jp-address-search  
   https://github.com/uiuifree/rust-jp-address-search
@@ -147,15 +169,15 @@ For three locations where the conversion process cannot use the P05 main-office 
   https://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html
 
 **Processing carried out for orbit**
-- Matching municipality codes to the existing orbit display names
-- Retaining city-level entries for designated cities, preserving the municipality granularity previously used by orbit
+- Matching municipality codes to the existing tenkyu display names
+- Retaining city-level entries for designated cities, preserving the municipality granularity previously used by tenkyu
 - Rounding latitude and longitude to four decimal places
 - Recreating the per-prefecture random-access offset table `jpidx`
 
-The romanised place names used for display are the existing orbit spellings and are not spellings supplied by MLIT.
+The romanised place names used for display are the existing tenkyu spellings and are not spellings supplied by MLIT.
 
 **Attribution**  
-Based on “National Land Numerical Information (Municipal Offices and Public Meeting Facilities Data)” (MLIT, 2022 edition, CC BY 4.0), processed and restructured for orbit with reference to the public conversion process in jp-address-search.
+Based on “National Land Numerical Information (Municipal Offices and Public Meeting Facilities Data)” (MLIT, 2022 edition, CC BY 4.0), processed and restructured for tenkyu with reference to the public conversion process in jp-address-search.
 
 ### Countries and capitals worldwide
 
@@ -166,7 +188,7 @@ The country names and capital coordinates are a static place table created durin
 - Mozilla Public License 2.0  
   https://www.mozilla.org/MPL/2.0/
 
-orbit does not call the currently hosted REST Countries API at run time. Representative cities later added for some countries with multiple civil time zones were added manually for orbit.
+tenkyu does not call the currently hosted REST Countries API at run time. Representative cities later added for some countries with multiple civil time zones were added manually for orbit.
 
 ### Time zones and daylight saving time
 
@@ -180,7 +202,7 @@ The compact Place-time table was prepared with reference to the IANA Time Zone D
 - Licence: **MIT License**  
   https://github.com/manuelmhtr/countries-and-timezones/blob/master/LICENSE
 
-orbit does not include or execute the full tzdb. It stores the standard UTC offset and a compact shared DST-rule id for the named places included in orbit, and calculates the displayed Place time locally.
+tenkyu does not include or execute the full tzdb. It stores the standard UTC offset and a compact shared DST-rule id for the named places included in orbit, and calculates the displayed Place time locally.
 
 Civil time-zone and DST rules are set by governments and can change. Therefore the Place-time table is a static approximation that may require updating when rules change. It must not be used where legally authoritative or safety-critical local time is required.
 
@@ -193,9 +215,9 @@ Civil time-zone and DST rules are set by governments and can change. Therefore t
 - Espruino Reference  
   https://www.espruino.com/Reference
 
-### orbit software licence
+### tenkyu software licence
 
-orbit follows the BangleApps repository licensing policy and is provided under the **MIT License**. See the repository-root `LICENSE` file for details.
+tenkyu follows the BangleApps repository licensing policy and is provided under the **MIT License**. See the repository-root `LICENSE` file for details.
 
 Third-party data remains subject to the respective terms and licences listed above.
 
@@ -207,15 +229,15 @@ onisY
 
 <!-- 日本語 -->
 
-# orbit
+# tenkyu
 
-**orbit 0.05 stable**
+**tenkyu 0.01**
 
 Bangle.js 2 用の、太陽・地球・月の位置関係から時刻、月の満ち欠け等を読み取る時計アプリです。
 
-## 1. orbitの目的
+## 1. tenkyuの目的
 
-orbit は、現在時刻だけでなく、**「今、太陽・地球・月がどのような関係にあるか」**を腕時計の小さな画面で眺める、大まかな時計です。
+tenkyu は、現在時刻だけでなく、**「今、太陽・地球・月がどのような関係にあるか」**を腕時計の小さな画面で眺める、大まかな時計です。
 
 時計画面には、太陽、地球、月、地球の昼側・夜側、設定地点、日の出・日の入り方向、月の満ち欠け、日付・時刻、Bangle.js標準の状態ウィジェット、設定した国名・地名などを表示します。地球は簡略化した地図として描かれます。天体配置と地球の回転角は絶対時刻（UTC）と設定経度から算出し、文字として表示する現地時刻のタイムゾーンやサマータイム（DST）からは独立しています。
 
@@ -229,14 +251,14 @@ orbit は、現在時刻だけでなく、**「今、太陽・地球・月がど
 
 内蔵の5週間カレンダーで別の日を選ぶと、その日を基準に 時計画面を表示できます。現在だけでなく、数日後・数週間後の昼夜や月相を眺めることができます。
 
-> orbit は教育・表示・趣味用途を目的とした簡略モデルです。天文観測、航法、測量など、高精度な天体暦や位置計算を必要とする用途には使用しないでください。
+> tenkyu は教育・表示・趣味用途を目的とした簡略モデルです。天文観測、航法、測量など、高精度な天体暦や位置計算を必要とする用途には使用しないでください。
 
 ## 2. 使い方
 
-### orbit 画面
+### tenkyu 画面
 
 - **1回タップ**: 5週間カレンダーを開きます。
-- **2回タップ**: orbit の設定画面を開きます。
+- **2回タップ**: tenkyu の設定画面を開きます。
 - **BTN**: Bangle.js のランチャーを開きます。
 
 画面右下の位置表示は設定方法によって変わります。
@@ -272,21 +294,48 @@ orbit は、現在時刻だけでなく、**「今、太陽・地球・月がど
 
 ### 時刻表示の基準
 
-orbitが文字として表示する日付・時刻は、天体配置の計算とは独立して選択できます。
+tenkyuが文字として表示する日付・時刻は、天体配置の計算とは独立して選択できます。
 
 - **Bangle**（初期設定）: Bangle.js本体が現在表示している現地日時をそのまま使用します。
-- **Place**: Place nameで地名を選択した場合、その地点に保存された標準UTC差とDSTルールを使い、Bangle本体の絶対時刻（UTC）から現地日時をorbit内部で算出します。
+- **Place**: Place nameで地名を選択した場合、その地点に保存された標準UTC差とDSTルールを使い、Bangle本体の絶対時刻（UTC）から現地日時をtenkyu内部で算出します。
 
 **Time sourceを変更しても、太陽・地球・月の配置は変化しません。** 天体配置は常にUTCから計算します。
 
 Place timeを利用できるのは **Place name** で地点を選択した場合です。Manual/GPSの緯度・経度だけから法的なタイムゾーン境界を正確に特定することはできないため、Manual/GPSではBangle timeへフォールバックします。
 
-Place timeを使用しても、Bangle.js本体のタイムゾーン設定やDST設定は変更しません。現地時刻への変換はorbitの内部だけで行います。
+Place timeを使用しても、Bangle.js本体のタイムゾーン設定やDST設定は変更しません。現地時刻への変換はtenkyuの内部だけで行います。
+
+### ローマ数字の時刻目盛り
+
+月の軌道の少し外側にローマ数字を表示します。一周が24時間に対応するため、Ⅰ〜Ⅻを午前・午後の2回配置します。数字の位置は **Time source**（Bangle / Place）に従い、設定地点の天頂線に対応します。標準時と真太陽時には差があるため、Ⅻが太陽方向と一致するとは限りません。
+
+- 設定のルート階層にある **Dial（文字盤）** に、ローマ数字の設定をまとめています。
+- **Enabled**：ローマ数字の表示をオン・オフ（初期値オン）。オフにしても文字サイズと間引きの設定を保持します。
+- **Hour size**：文字サイズ6〜12ピクセル（初期値8）。
+- **Hour step**：1・2・3・6時間おきに表示（初期値1）。
+- 月・地名・日付・時刻を優先して描画します。軌道や文字を大きくすると、一部の数字が画面端やウィジェットに隠れる場合があります。
+
+内部IDと保存ファイル名も `tenkyu` です。独立した新しいアプリとしてインストールしてください。設定・地名・イベントはtenkyuの初期設定から始まり、旧Orbitやtenkyugiのデータは取り込みません。標準時計にする場合は、本体の設定でtenkyuを選択してください。
+
+### 画面の更新
+
+時刻の領域だけを毎分更新し、時計画面のその他の部分は5分区切りで更新します。タイマーは1本にまとめ、LCD消灯時や別画面への切り替え時には停止します。時計画面を開いた時やLCD復帰時は即座に描画します。ウィジェット更新時には必要なヘッダー文字を復元します。描画処理を減らす設計であり、実際の電池持ちの改善量は未測定です。
+
+### 設定メニューの構成
+
+トップは **Location（地域）・Date/time（日時）・Bodies（天体配置）・Dial（文字盤）・Digital clock（デジタル時計）・Calendar（カレンダー）** の6分類です。
+
+- **地域**：地名選択、緯度・経度の手動設定、GPS、現在の座標。
+- **日時**：時刻の基準（Bangle / Place）、時計画面へ戻る。
+- **天体配置**：北・南の表示方向、太陽・地球・月の大きさ、月の公転半径。
+- **文字盤**：ローマ数字のオン・オフ、文字サイズ、間引き。
+- **デジタル時計**：日付・時刻の表示位置と文字サイズ。
+- **カレンダー**：祝日地域、自動復帰時間、記念日・独自休日、祝日キャッシュ。記念日・キャッシュ画面から戻るとカレンダー設定へ戻ります。
 
 ### その他の設定
 
 - Date pos / Time pos で Header / Top left / Below Sun を個別に選択できます。
-- Date size / Time size で、描画面に表示する場合の文字サイズを選択できます。Header表示ではウィジェット帯の配色に合わせ、描画面では黒背景に白系文字で表示します。
+- Date size / Time size で、描画面に表示する場合の文字サイズを選択できます。日付の配色は従来どおりで、時刻は白背景に黒文字で点滅せず表示します。
 - **View side**: North / South
 - 太陽・地球・月の表示サイズ
 - 月の公転半径
@@ -315,7 +364,7 @@ Place timeを使用しても、Bangle.js本体のタイムゾーン設定やDST�
 - 2000年1月6日 18:14 UTC の新月表  
   https://eclipse.gsfc.nasa.gov/phase/phases1901.html
 
-NASA/GSFC の資料では2000年の平均朔望月を約29.530588日としています。orbit はこれを基礎にした簡略周期モデルであり、個々の朔望月の変動は再現しません。
+NASA/GSFC の資料では2000年の平均朔望月を約29.530588日としています。tenkyu はこれを基礎にした簡略周期モデルであり、個々の朔望月の変動は再現しません。
 
 ### 祝日
 
@@ -338,7 +387,7 @@ NASA/GSFC の資料では2000年の平均朔望月を約29.530588日としてい
 
 P05の施設分類 `P05_002=1`（本庁: 市役所・区役所・町役場・村役場）の位置を、市区町村の代表地点として利用しています。
 
-orbit 0.04 のデータ更新では、P05-22から作成されたオープンソースの変換表 **jp-address-search** の市区町村コード対応と代表地点表を用いて、orbit の既存の市区町村表示名・都道府県順を維持したまま座標を再作成しました。
+tenkyu 0.04 のデータ更新では、P05-22から作成されたオープンソースの変換表 **jp-address-search** の市区町村コード対応と代表地点表を用いて、tenkyu の既存の市区町村表示名・都道府県順を維持したまま座標を再作成しました。
 
 - uiuifree / jp-address-search  
   https://github.com/uiuifree/rust-jp-address-search
@@ -352,16 +401,16 @@ orbit 0.04 のデータ更新では、P05-22から作成されたオープンソ
 - 国土地理院コンテンツ利用規約  
   https://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html
 
-**orbit側で行った加工**
+**tenkyu側で行った加工**
 - 市区町村コードと既存のorbit表示名を対応付け
-- 政令指定都市は市レベルを採用し、orbitが従来扱っていた市区町村の粒度を維持
+- 政令指定都市は市レベルを採用し、tenkyuが従来扱っていた市区町村の粒度を維持
 - 緯度・経度を小数点以下4桁に丸める
 - 都道府県ごとのランダムアクセス用オフセット表 `jpidx` を再作成
 
-表示用のローマ字地名は既存orbitの表記を保持しており、国土交通省が作成した表記ではありません。
+表示用のローマ字地名は既存tenkyuの表記を保持しており、国土交通省が作成した表記ではありません。
 
 **出典表示**  
-「国土数値情報（市町村役場等及び公的集会施設データ）」（国土交通省、2022年版、CC BY 4.0）をもとに、jp-address-search の公開変換処理を参考として orbit 用に加工・再構成。
+「国土数値情報（市町村役場等及び公的集会施設データ）」（国土交通省、2022年版、CC BY 4.0）をもとに、jp-address-search の公開変換処理を参考として tenkyu 用に加工・再構成。
 
 ### 世界の国・首都
 
@@ -372,7 +421,7 @@ orbit 0.04 のデータ更新では、P05-22から作成されたオープンソ
 - Mozilla Public License 2.0  
   https://www.mozilla.org/MPL/2.0/
 
-現在の hosted REST Countries API を orbit が実行時に呼び出すことはありません。複数標準時を持つ一部の国について後から追加した代表都市は、orbit専用に手動で追加したものです。
+現在の hosted REST Countries API を tenkyu が実行時に呼び出すことはありません。複数標準時を持つ一部の国について後から追加した代表都市は、orbit専用に手動で追加したものです。
 
 ### Bangle.js / Espruino
 
@@ -383,9 +432,9 @@ orbit 0.04 のデータ更新では、P05-22から作成されたオープンソ
 - Espruino Reference  
   https://www.espruino.com/Reference
 
-### orbit のソフトウェアライセンス
+### tenkyu のソフトウェアライセンス
 
-orbit は BangleApps リポジトリのライセンス方針に従い、**MIT License** で扱います。詳細はリポジトリ直下の `LICENSE` を参照してください。
+tenkyu は BangleApps リポジトリのライセンス方針に従い、**MIT License** で扱います。詳細はリポジトリ直下の `LICENSE` を参照してください。
 
 第三者データには上記それぞれの利用条件・ライセンスが適用されます。
 ### タイムゾーン・サマータイム
@@ -400,7 +449,7 @@ Place time用のコンパクトな時刻データは、IANA Time Zone Database�
 - ライセンス: **MIT License**  
   https://github.com/manuelmhtr/countries-and-timezones/blob/master/LICENSE
 
-orbitは完全なtzdbを収録・実行するのではなく、orbitに収録した地名について、標準UTC差と共通DSTルールIDを小さな表として保持し、Place time表示時にorbit内部で現地日時を計算します。
+tenkyuは完全なtzdbを収録・実行するのではなく、orbitに収録した地名について、標準UTC差と共通DSTルールIDを小さな表として保持し、Place time表示時にtenkyu内部で現地日時を計算します。
 
 タイムゾーンやDST制度は各国・地域の政策によって変更されることがあります。そのため、このPlace timeデータは静的な近似データであり、制度変更時には更新が必要になる場合があります。法的に厳密な時刻や安全上重要な用途には使用しないでください。
 

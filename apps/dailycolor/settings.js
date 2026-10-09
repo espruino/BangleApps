@@ -1,5 +1,5 @@
 (function(back) {
-  const SETTINGS_FILE = "dailycolorclk.json";
+  const SETTINGS_FILE = "dailycolor.json";
   const storage = require('Storage');
   let settings = Object.assign(
       require("Storage").readJSON(SETTINGS_FILE, true) || {}
@@ -14,7 +14,7 @@
 
   function showMainMenu() {
     let menu = {
-      '': { 'title': 'Daily Color Clock' },
+      '': { 'title': 'Daily Color' },
       /*LANG*/'< Back': back,
       /*LANG*/'Hide Widgets': {
         value: !!settings.hideWidgets,
@@ -26,23 +26,22 @@
       /*LANG*/'Regenerate Queue': function () {
         E.showPrompt("Are you sure you want to regenerate queue?",{title:"Confirm",buttons:{ "Yes":true,"Cancel":false}}).then(function(v){
           if(v===true){
-            settings.regenerate = true;
-            writeSettings();
+            require("dailycolor").regenerateQueue()
             E.showAlert("Regenerated Queue!", "Success")
               .then(function (v) {
-                eval(require("Storage").read("dailycolorclk.settings.js"))(() => load());
+                eval(require("Storage").read("dailycolor.settings.js"))(() => load());
               })     
             }else{
-              eval(require("Storage").read("dailycolorclk.settings.js"))(() => load());   
+              eval(require("Storage").read("dailycolor.settings.js"))(() => load());   
             }
 
         })
       },
       /*LANG*/'Colors': () => { 
         require("colorpicker").show({
-          onSelect : function (colors) {
-            if (!colors || !colors.length) return; // don't allow saving an empty palette
-            settings.bgColors = colors;
+          onSelect:function(colors){
+            if (!colors || !colors.length) return; // Don't allow saving an empty palette
+            settings.bgColors=colors;
             writeSettings();
           },
           startingSelection:settings.bgColors,
