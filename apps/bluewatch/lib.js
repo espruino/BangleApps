@@ -173,10 +173,21 @@ function processMessage(raw) {
       case "GPS":
         Bangle.emit("GPS", obj);
         break;
+      case "Time":
+        updateTime(obj)
+        break;
     }
   } 
 }
-
+function updateTime(obj){
+  if(obj.tz!==undefined){
+    let currentSettings = require('Storage').readJSON('setting.json',1)
+    E.setTimeZone(obj.tz);
+    currentSettings.timezone=obj.tz
+    require('Storage').writeJSON('setting.json', currentSettings);
+  }
+  if(obj.time) setTime(obj.time);
+}
 function messageReceived(data) {
   // 1. Force conversion to string if it's a byte array
   if (typeof data !== "string") {
