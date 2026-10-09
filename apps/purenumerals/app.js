@@ -11,6 +11,7 @@
 //  29.06.2026  Battery with Ringbuffer
 //              Watchdog (blinking red dot when device is on)
 //  05.10.2026  Battery, Beat with PT1, Steps started, no carousel 
+//  08.10.2026  Steps using Health
 //
 
 {
@@ -473,72 +474,31 @@
     // factory function for step count
     let createStepsView = function () {
 
-        const FILE_NAME = "purenumerals.data.json";
-
-        let stepTimestamp;  // measure started
-        let stepOffset;     // step count when measure started
+        let currentSteps = 0;
 
         function init() {
-
-            // add date change listener
-            Bangle.on("midnight", onMidnight);
-
-            // read JSON file 
-            let obj = require("Storage").readJSON(FILE_NAME, 1);
-            if (obj === undefined) {  // File not found
-                initMeasure();
-                return;
-            }
-
-            const stepTimestampJson = obj.stepTimestamp;
-            const stepOffsetJson = obj.stepOffset;
-            if (stepTimestampJson == null || stepOffsetJson == null) {  // checks undefined as well
-                initMeasure();
-                return;
-            }
-
-            const now = new Date();
-            const last = new Date(stepTimestampJson);
-            if (now.getDate() !== last.getDate()) {  // Date has changed
-                initMeasure();
-                return;
-            }
-            
-            // continue counting steps
-            stepTimestamp = stepTimestampJson;
-            stepOffset = stepOffsetJson;
-        }
-
-        // set timestamp and offset
-        function initMeasure() {
-            stepTimestamp = Date.now();
-            stepOffset = Bangle.getStepCount();
-        }
-
-        function onStep(up) {
-            draw();
-        }
-
-        function onMidnight() {
-            initMeasure();
+            let status = Bangle.getHealthStatus("day");
+            currentSteps = status ? status.steps : 0;
         }
 
         function enter() {
-            // add step listener
-            Bangle.on("step", onStep);
+            // add event listener
+            Bangle.on("health", onHealth);
+            draw();
+        }
+
+        function onHealth(e) {
+            currentSteps = e.steps;
             draw();
         }
 
         function draw() {
 
-            let allSteps = Bangle.getStepCount();
-            let steps = allSteps - stepOffset;
-
             clearBackground();
 
             // shrink font to dispay width
             let fontsize = 66;
-            let svalue = steps.toString();
+            let svalue = currentSteps.toString();
             let width = font.getNumberWidth(svalue, fontsize);
             while (width > 132) {  // border = 22
                 fontsize -= 4;
@@ -547,43 +507,22 @@
             let y = 55 - fontsize / 2;  // center vertically 
             font.drawNumberCentered(svalue, y, fontsize, COLOR.steps);
 
-            g.setFont("Vector", 32);
+            g.setFont("Vector", 44);
             g.setColor("#FFFFFF");
             g.setFontAlign(0, 0);
-            g.drawString("Steps", CENTER, CENTER + 32);
+            g.drawString("Steps", CENTER, CENTER + 44);
 
-            // print time info since started
-            let x = formatDate(new Date(stepTimestamp));
-            g.setFont("Vector", 14);
-            g.drawString("since " + x, CENTER, CENTER + 68);
-        }
-
-        function formatDate(date) {
-            return String(date.getDate()).padStart(2, "0") + "." +
-                String(date.getMonth() + 1).padStart(2, "0") + ". " +
-                String(date.getHours()).padStart(2, "0") + ":" +
-                String(date.getMinutes()).padStart(2, "0");
         }
 
         function leave() {
-            // remove step listener
-            Bangle.removeListener("step", onStep);
+            // remove event listener
+            Bangle.removeListener("health", onHealth);
         }
 
-        function shutdown() {
-            // save data to file
-            let data = {};
-            data.stepTimestamp = stepTimestamp;
-            data.stepOffset = stepOffset;
-            require("Storage").writeJSON(FILE_NAME, data);
-
-            // remove date change listener
-            Bangle.removeListener("midnight", onMidnight);
-        }
 
         init();
 
-        return { enter, leave, shutdown };
+        return { enter, leave };
     };
 
     // factory function for heartbeat
@@ -855,7 +794,6 @@
             if (currentView) { currentView.leave(); }
 
             viewMap[10].shutdown();     // BatteryView
-            viewMap[3].shutdown();      // StepView
 
             // unregister event handler
             Bangle.removeListener("swipe", onSwipe);

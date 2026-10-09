@@ -1,3 +1,4 @@
 0.03: First released version.
 0.04: Battery level with ringbuffer, blinking red dot if device on.
 0.05: Battery, Heartbeat PT1 filter, no carousel navigation.
+0.06: Stepcounter using health.
