@@ -13,6 +13,7 @@
 * **Race**
   Race time, local time, SOA, number reachable GPS satellites and battery level are shown.
   `Button` switches to "stopped mode".
+  Alternatively start the [GPS Adv. Sport app](https://banglejs.com/apps/?id=speedalt), once the race starts. 
 * **Stoped**
   The race counter stops.
   `Button` switches to idle mode.
