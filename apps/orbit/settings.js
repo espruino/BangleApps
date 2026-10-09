@@ -1,4 +1,4 @@
-/* orbit 0.05 stable: settings and editable event data. */
+/* tenkyu 0.01: settings and editable event data. */
 (function(back){
   var Storage=require("Storage");
   var C,P,JPI;
@@ -64,13 +64,30 @@
     var s=readJSON(CFG,{}),changed=false;
     function set(k,v){if(s[k]!==v){s[k]=v;changed=true;}}
 
+    /* Default to the Chiyoda ward office without loading place tables.
+       Preserve any previously selected place, manual coordinates or GPS fix. */
+    if(s.locationSource===undefined&&s.locationMode===undefined&&
+       !s.locName&&!s.locPref&&s.manualLat===undefined&&s.manualLon===undefined&&
+       s.lat===undefined&&s.lon===undefined&&s.countryName===undefined&&
+       s.pref===undefined&&s.municipality===undefined&&s.place===undefined){
+      set("locationSource","place");set("locationMode",0);
+      set("countryName","Japan");set("locPref","Tokyo");set("locName","Chiyoda-ku");
+      set("pref",12);set("municipality",0);set("place",0);set("placeStateVersion",1);
+      set("manualLat",35.694);set("manualLon",139.7536);
+      set("tzBase",540);set("tzRule",0);
+    }
+
+
     if(!isFinite(s.sunSize))s.sunSize=8;
     if(!isFinite(s.earthSize))s.earthSize=42;
     if(!isFinite(s.moonSize))s.moonSize=15;
     if(!isFinite(s.moonOrbit))s.moonOrbit=62;
-    if(!isFinite(s.datePos))s.datePos=1;if(!isFinite(s.timePos))s.timePos=2;
+    if(!isFinite(s.datePos))set("datePos",2);if(!isFinite(s.timePos))set("timePos",0);
     if(!isFinite(s.dateSize))s.dateSize=22;if(!isFinite(s.timeSize))s.timeSize=22;
     set("timeSource",(s.timeSource===1||s.timeSource==="1")?1:0);
+    set("orbitHourSize",Math.max(6,Math.min(12,isFinite(s.orbitHourSize)?s.orbitHourSize|0:8)));
+    set("orbitHourStep",[1,2,3,6].indexOf(s.orbitHourStep)>=0?s.orbitHourStep:1);
+    set("orbitHourEnabled",s.orbitHourEnabled===undefined?false:s.orbitHourEnabled!==false);
     s.sunSize=Math.max(6,Math.min(15,s.sunSize|0));
     s.earthSize=Math.max(40,Math.min(45,s.earthSize|0));
     s.moonSize=Math.max(14,Math.min(16,s.moonSize|0));
@@ -262,7 +279,7 @@
       if(fix.fix&&isFinite(fix.lat)&&isFinite(fix.lon)){
         applyGPS(s,fix);stopGPS();
         try{Bangle.buzz(300);}catch(e){}
-        E.showAlert("GPS location saved\n"+gpsLocationText(s),"orbit GPS").then(main);
+        E.showAlert("GPS location saved\n"+gpsLocationText(s),"tenkyu GPS").then(main);
         return;
       }
       showGPSProgress(s,false);
@@ -271,7 +288,7 @@
     try{Bangle.setGPSPower(1,GPS_ID);}
     catch(e){
       stopGPS();
-      E.showAlert("Could not start GPS","orbit GPS").then(function(){gpsMenu(s);});
+      E.showAlert("Could not start GPS","tenkyu GPS").then(function(){gpsMenu(s);});
       return;
     }
     showGPSProgress(s,true);
@@ -280,7 +297,7 @@
     var prefix=s.locationMode===0?(s.locPref||"Place"):(s.locationMode===2?"GPS":"Manual");
     E.showAlert(prefix+" / "+(s.locName||"")+
       "\nLat "+Number(s.manualLat).toFixed(3)+
-      "\nLon "+Number(s.manualLon).toFixed(3),"orbit location")
+      "\nLon "+Number(s.manualLon).toFixed(3),"tenkyu location")
       .then(next||function(){locationMenu(s);});
   }
 
@@ -373,22 +390,22 @@
   // ---------- Holiday cache ----------
   function cacheInfo(){
     var out={jp:0,ew:0,sc:0,ni:0,total:0};
-    Storage.list(/^orh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/).forEach(function(f){
-      var m=/^orh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/.exec(f);
+    Storage.list(/^orbh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/).forEach(function(f){
+      var m=/^orbh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/.exec(f);
       if(m){out[m[1]]++;out.total++;}
     });
     return out;
   }
   function clearCache(region,cb){
     var n=0;
-    Storage.list(/^orh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/).forEach(function(f){
-      var m=/^orh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/.exec(f);
+    Storage.list(/^orbh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/).forEach(function(f){
+      var m=/^orbh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/.exec(f);
       if(m&&(!region||m[1]===region)){Storage.erase(f);n++;}
     });
     E.showAlert("Deleted "+n,"Holiday cache").then(cb);
   }
   function cacheMenu(){
-    var n=cacheInfo(),m={"":{title:"Holiday cache"},"< Back":main};
+    var n=cacheInfo(),m={"":{title:"Holiday cache"},"< Back":calendarMenu};
     [["jp","Japan",n.jp],["ew","England/Wales",n.ew],["sc","Scotland",n.sc],["ni","N. Ireland",n.ni]].forEach(function(x){
       m[x[1]+" ("+x[2]+")"]=function(){E.showPrompt("Delete "+x[1]+" cache?").then(function(ok){if(ok)clearCache(x[0],cacheMenu);else cacheMenu();});};
     });
@@ -458,7 +475,7 @@
     doc.events.push(e);write(EVENTS,doc);editEvent(doc.events.length-1);
   }
   function eventsMenu(){
-    var doc=eventDoc(),m={"":{title:"Events"},"< Back":main,
+    var doc=eventDoc(),m={"":{title:"Events"},"< Back":calendarMenu,
       "Add anniversary":function(){addEvent("family");},
       "Add holiday":function(){addEvent("holiday");}
     };
@@ -480,14 +497,20 @@
   }
   function onKill(){stopGPS();releasePlaceData();}
 
-  function main(){
-    stopGPS();releasePlaceData();
-    var s=appCfg(),c=calCfg();
-    var minOrbit=s.earthSize+s.moonSize+4;
-    if(s.moonOrbit<minOrbit){s.moonOrbit=minOrbit;write(CFG,s);}
-    var m={"":{title:"orbit"},"< Back":leave,
-      "Exit to orbit":exitToOrbit,
-      "Location":function(){locationMenu(s);},
+  function dialMenu(s){
+    E.showMenu({"":{title:"Dial"},"< Back":main,
+      "Enabled":{value:s.orbitHourEnabled,onchange:function(v){s.orbitHourEnabled=!!v;write(CFG,s);}},
+      "Hour size":{value:s.orbitHourSize,min:6,max:12,step:1,onchange:function(v){s.orbitHourSize=v;write(CFG,s);}},
+      "Hour step":{value:[1,2,3,6].indexOf(s.orbitHourStep),min:0,max:3,step:1,
+        format:function(v){return [1,2,3,6][v]+" h";},
+        onchange:function(v){s.orbitHourStep=[1,2,3,6][v];write(CFG,s);}
+      }
+    });
+  }
+
+  function dateTimeMenu(s){
+    E.showMenu({"":{title:"Date/time"},"< Back":main,
+      "Exit to tenkyu":exitToOrbit,
       "Time source":{value:s.timeSource,min:0,max:1,step:1,
         format:function(v){return v?"Place":"Bangle";},
         onchange:function(v){
@@ -495,11 +518,33 @@
           if(s.timeSource===1&&s.locationSource==="place"&&!isFinite(s.tzBase))saveSelectedPlace(s);
           write(CFG,s);releasePlaceData();
         }
-      },
+      }
+    });
+  }
+
+  function bodiesMenu(s){
+    var minOrbit=s.earthSize+s.moonSize+4;
+    if(s.moonOrbit<minOrbit){s.moonOrbit=minOrbit;write(CFG,s);}
+    E.showMenu({"":{title:"Bodies"},"< Back":main,
       "View side":{value:s.viewSide,min:0,max:1,step:1,
         format:function(v){return v?"South":"North";},
         onchange:function(v){s.viewSide=v?1:0;write(CFG,s);}
       },
+      "Sun size":{value:s.sunSize,min:6,max:15,step:1,onchange:function(v){s.sunSize=v;write(CFG,s);}},
+      "Earth size":{value:s.earthSize,min:40,max:45,step:1,onchange:function(v){
+        s.earthSize=v;var mn=s.earthSize+s.moonSize+4;if(s.moonOrbit<mn)s.moonOrbit=mn;
+        write(CFG,s);setTimeout(function(){bodiesMenu(s);},10);
+      }},
+      "Moon size":{value:s.moonSize,min:14,max:16,step:1,onchange:function(v){
+        s.moonSize=v;var mn=s.earthSize+s.moonSize+4;if(s.moonOrbit<mn)s.moonOrbit=mn;
+        write(CFG,s);setTimeout(function(){bodiesMenu(s);},10);
+      }},
+      "Moon orbit":{value:s.moonOrbit,min:minOrbit,max:70,step:1,onchange:function(v){s.moonOrbit=v;write(CFG,s);}}
+    });
+  }
+
+  function digitalMenu(s){
+    E.showMenu({"":{title:"Digital clock"},"< Back":main,
       "Date pos":{value:s.datePos,min:0,max:2,step:1,
         format:function(v){return ["Header","Top left","Below Sun"][v];},
         onchange:function(v){s.datePos=v;write(CFG,s);}
@@ -509,23 +554,31 @@
         onchange:function(v){s.timePos=v;write(CFG,s);}
       },
       "Date size":{value:s.dateSize,min:12,max:30,step:2,onchange:function(v){s.dateSize=v;write(CFG,s);}},
-      "Time size":{value:s.timeSize,min:12,max:30,step:2,onchange:function(v){s.timeSize=v;write(CFG,s);}},
-      "Sun size":{value:s.sunSize,min:6,max:15,step:1,onchange:function(v){s.sunSize=v;write(CFG,s);}},
-      "Earth size":{value:s.earthSize,min:40,max:45,step:1,onchange:function(v){
-        s.earthSize=v;var mn=s.earthSize+s.moonSize+4;if(s.moonOrbit<mn)s.moonOrbit=mn;
-        write(CFG,s);setTimeout(main,10);
-      }},
-      "Moon size":{value:s.moonSize,min:14,max:16,step:1,onchange:function(v){
-        s.moonSize=v;var mn=s.earthSize+s.moonSize+4;if(s.moonOrbit<mn)s.moonOrbit=mn;
-        write(CFG,s);setTimeout(main,10);
-      }},
-      "Moon orbit":{value:s.moonOrbit,min:minOrbit,max:70,step:1,onchange:function(v){s.moonOrbit=v;write(CFG,s);}},
+      "Time size":{value:s.timeSize,min:12,max:30,step:2,onchange:function(v){s.timeSize=v;write(CFG,s);}}
+    });
+  }
+
+  function calendarMenu(){
+    var c=calCfg();
+    E.showMenu({"":{title:"Calendar"},"< Back":main,
       "Calendar region":{value:calRegion(c),min:0,max:3,step:1,format:function(v){return ["Japan","England/Wales","Scotland","N. Ireland"][v];},onchange:function(v){setCalRegion(c,v);}},
       "Auto return":{value:c.timeout,min:15,max:120,step:15,format:function(v){return v+" s";},onchange:function(v){c.timeout=v;write(CAL,c);}},
       "Events":eventsMenu,
       "Holiday cache":cacheMenu
-    };
-    E.showMenu(m);
+    });
+  }
+
+  function main(){
+    stopGPS();releasePlaceData();
+    var s=appCfg();
+    E.showMenu({"":{title:"tenkyu"},"< Back":leave,
+      "Location":function(){locationMenu(s);},
+      "Date/time":function(){dateTimeMenu(s);},
+      "Bodies":function(){bodiesMenu(s);},
+      "Dial":function(){dialMenu(s);},
+      "Digital clock":function(){digitalMenu(s);},
+      "Calendar":calendarMenu
+    });
   }
 
   // Release any stale settings-owned GPS request on entry.

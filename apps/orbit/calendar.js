@@ -1,17 +1,17 @@
-/* orbit 0.04 stable: integrated five-week calendar module. */
+/* tenkyu 0.01 stable: integrated five-week calendar module. */
 (function(){
   var Storage=require("Storage");
   var CFG_FILE="orbit.cal.json";
   var EVENT_FILE="orbit.events.json";
   var HOL_CACHE_VER=1,HOL_BYTES=46,HOL_RAM_MAX=2;
   function cacheFileParts(f){
-    var m=/^orh([0-9]+)(jp|ew|sc|ni)([0-9][0-9][0-9][0-9])$/.exec(f);
+    var m=/^orbh([0-9]+)(jp|ew|sc|ni)([0-9][0-9][0-9][0-9])$/.exec(f);
     return m?{ver:parseInt(m[1],10),region:m[2],year:parseInt(m[3],10)}:undefined;
   }
   function listHolidayCaches(){
     var out={jp:0,ew:0,sc:0,ni:0,total:0};
     try{
-      Storage.list(/^orh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/).forEach(function(f){
+      Storage.list(/^orbh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/).forEach(function(f){
         var p=cacheFileParts(f);if(!p)return;
         out[p.region]++;out.total++;
       });
@@ -21,7 +21,7 @@
   function clearHolidayCaches(region){
     var n=0;
     try{
-      Storage.list(/^orh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/).forEach(function(f){
+      Storage.list(/^orbh[0-9]+(jp|ew|sc|ni)[0-9][0-9][0-9][0-9]$/).forEach(function(f){
         var p=cacheFileParts(f);if(!p)return;
         if(region===undefined||p.region===region){Storage.erase(f);n++;}
       });
@@ -122,7 +122,7 @@
     /* Intentional coupling: Japanese display -> Japan holidays.
        English display -> selected UK region (EW/Scotland/Northern Ireland). */
     function holRegion(){return cfg.lang==="ja"?"jp":cfg.ukRegion;}
-    function holFile(region,year){return "orh"+HOL_CACHE_VER+region+year;}
+    function holFile(region,year){return "orbh"+HOL_CACHE_VER+region+year;}
     function bitsToString(bits){
       var s="";for(var i=0;i<HOL_BYTES;i++)s+=String.fromCharCode(bits[i]);return s;
     }
