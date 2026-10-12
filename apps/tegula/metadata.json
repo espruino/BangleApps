@@ -4,7 +4,7 @@
   "icon": "app.png",
   "version": "0.01",
   "author": "Stefan Keller",
-  "description": "A clock face as a mosaic: a random Lohse square of 11 x 11 tiles in one of three color palettes, with the time as black tiles in a 4x5-tile digit font. New image every hour, on swipe up and on every start. Swipes show date and seconds, double tap bottom left for a flash light.",
+  "description": "Wear your love of art on your wrist. Tegula shows the time over a color composition in the spirit of the Swiss Concrete artist Richard Paul Lohse. Every hour brings a new one, out of more than 20 million. Swipes show date, seconds, a new composition or widgets; double tap bottom left for a flashlight.",
   "tags": "clock",
   "type": "clock",
   "supports": ["BANGLEJS2"],
