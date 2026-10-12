@@ -1,0 +1,4 @@
+0.01: First release
+0.02: While the watch is unlocked, the mosaic turns paler for 2 s and back for 1 s, instead of the blinking bottom right tile
+      While the watch is unlocked, thin white lines show the view (top) and the time until the screen locks (right)
+      New image on start and on swipe up only, no longer every hour
