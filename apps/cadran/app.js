@@ -1,5 +1,5 @@
 // Code from Graphical Editor
-var txt, largeur, hauteur, d, glyph, sec_top, dizminpre, dizmin, charge, dizheu, dizdat, dizmoi, vit, sec, nomjou, uniminpre, flash, uniheu, jou1, unidat, unimoi, BLE, gps, min, jou, mode, cor_int, vit_pre, jou2, z0, recalage, interval_boucle, unimin, jou3, z1, interval_cligno, z2, chargeur, heu, dat, z3, moi, z4, chargeur_pre, z5, z6, an, gps_listener, z7, z8, z9, zA, zD, zE, zI, zJ, zL, zM, zN, zR, zS, diff, zU, zV, z2points, zBTon, zBTof, zAPPS, zSYNC, zGPS;
+var txt, largeur, hauteur, sec_top, glyph, dizminpre, dizmin, charge, dizheu, dizdat, dizmoi, vit, d, nomjou, uniminpre, flash, uniheu, jou1, unidat, unimoi, BLE, gps, sec, jou, mode, vit_pre, jou2, min, z0, cor_int, recalage, interval_boucle, unimin, jou3, z1, interval_cligno, z2, chargeur, heu, dat, z3, moi, z4, chargeur_prec, z5, gps_listener, z6, an, z7, z8, z9, zA, zD, zE, zI, zJ, zL, zM, zN, zR, zS, zU, diff, zV, z2points, zBTon, zBTof, zAPPS, zSYNC, zGPS;
 
 // Describe this function...
 function bouton() {
@@ -44,6 +44,7 @@ function bouton() {
 
 // Describe this function...
 function initialisation() {
+  sec_top = 2;
   d = new Date();
   sec = d.getSeconds();
   min = d.getMinutes();
@@ -153,15 +154,15 @@ function aff_ponct() {
 
 // Describe this function...
 function horloge() {
-  sec_top = sec_top - cor_int;
-  if (sec_top >= 60) {
+  sec_top = sec_top - cor_int / 1000;
+  if (sec_top >= 62) {
     sec_top = sec_top - 60;
-  } else if (sec_top <= -60) {
+  } else if (sec_top <= -58) {
     sec_top = sec_top + 60;
   }
   if (recalage == true) {
     recalage = false;
-    cor_int = Math.round(vit * (1000 / (60 * 24))) / 1000;
+    cor_int = Math.round(vit * 1000 * (1000 / (60 * 24))) / 1000;
     eval("changeInterval(interval_boucle, 60000 - cor_int)");
   }
   if (min != 59) {
@@ -197,10 +198,10 @@ function horloge() {
   }
   MAJ_min();
   chargeur = Bangle.isCharging();
-  if (chargeur != chargeur_pre) {
+  if (chargeur == true || chargeur != chargeur_prec) {
     chargement();
   }
-  chargeur_pre = chargeur;
+  chargeur_prec = chargeur;
 }
 
 // Describe this function...
@@ -223,11 +224,10 @@ function variables() {
   flash = false;
   gps = false;
   chargeur = false;
-  chargeur_pre = false;
   gps_listener = 0;
   BLE = 'BT off';
   cor_int = 0;
-  sec_top = 2;
+  chargeur_prec = false;
 }
 
 // Describe this function...
@@ -388,21 +388,21 @@ function MAJ_heu() {
 }
 
 // Describe this function...
-function jour() {
-  nom_du_jour();
-  jou1 = 'z' + String(nomjou.charAt(0));
-  jou2 = 'z' + String(nomjou.charAt(1));
-  jou3 = 'z' + String(nomjou.charAt(2));
-  aff_jou();
-}
-
-// Describe this function...
 function plus() {
   g.setColor(1,1,0);
   eval("g.fillRect(94, 0, 175, 47)");
   g.setColor(0,0,0);
   eval("g.fillRect(121, 19, 148, 28)");
   eval("g.fillRect(130, 10, 139, 37)");
+}
+
+// Describe this function...
+function jour() {
+  nom_du_jour();
+  jou1 = 'z' + String(nomjou.charAt(0));
+  jou2 = 'z' + String(nomjou.charAt(1));
+  jou3 = 'z' + String(nomjou.charAt(2));
+  aff_jou();
 }
 
 // Describe this function...
@@ -456,7 +456,8 @@ function params() {
   eval("Bangle.removeAllListeners('touch')");
   eval("Bangle.setGPSPower(false, \"cadran\")");
   eval("Bangle.removeListener('GPS', gps_listener)");
-  d = new Date(2000 + an, moi, dat, heu, min, Math.floor(sec_top));
+  sec_top = Math.round(sec_top);
+  d = new Date(2000 + an, moi, dat, heu, min, sec_top);
   eval("setTime(d.getTime() / 1000)");
   eval("Bangle.showLauncher()");
 }
@@ -511,6 +512,8 @@ function fix_reussi() {
 
 
 eval("Bluetooth.setConsole(true)");
+eval("Bangle.removeAllListeners('lock');");
+eval("clearWatch();");
 g.setBgColor(1,1,0);
 g.clear();
 g.setColor(0,0,0);
