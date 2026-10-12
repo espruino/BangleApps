@@ -1,5 +1,5 @@
 // Code from Graphical Editor
-var txt, largeur, hauteur, sec_top, glyph, dizminpre, dizmin, charge, dizheu, dizdat, dizmoi, vit, d, nomjou, uniminpre, flash, uniheu, jou1, unidat, unimoi, BLE, gps, sec, jou, mode, vit_pre, jou2, min, z0, cor_int, recalage, interval_boucle, unimin, jou3, z1, interval_cligno, z2, chargeur, heu, dat, z3, moi, z4, chargeur_prec, z5, gps_listener, z6, an, z7, z8, z9, zA, zD, zE, zI, zJ, zL, zM, zN, zR, zS, zU, diff, zV, z2points, zBTon, zBTof, zAPPS, zSYNC, zGPS;
+var txt, largeur, hauteur, cum_cor, glyph, dizminpre, dizmin, dizheu, charge, dizdat, dizmoi, vit, d, nomjou, uniminpre, flash, uniheu, jou1, unidat, unimoi, BLE, gps, sec, jou, mode, recalage, vit_pre, jou2, min, z0, cor_int, interval_boucle, unimin, jou3, z1, chargeur, interval_cligno, z2, heu, dat, z3, chargeur_prec, moi, z4, z5, an, gps_listener, z6, z7, z8, z9, zA, zD, zE, zI, zJ, zL, zM, zN, zR, zS, zU, diff, zV, z2points, zBTon, zBTof, zAPPS, zSYNC, zGPS;
 
 // Describe this function...
 function bouton() {
@@ -9,12 +9,12 @@ function bouton() {
     mode = 'menu';
     vit_pre = vit;
     eval("Bangle.on('touch', function(zone, e) {\n  if (e.x >= 0 && e.x < 83 && e.y >= 0 && e.y < 52) {\n    bluetooth();\n  }\n});");
-    eval("Bangle.on('touch', function(zone, e) {\n  if (e.x >= 0 && e.x < 83 && e.y >= 62 && e.y < 114) {\n    params();\n  }\n});");
+    eval("Bangle.on('touch', function(zone, e) {\n  if (e.x >= 0 && e.x < 83 && e.y >= 62 && e.y < 114) {\n    lanceur();\n  }\n});");
     eval("Bangle.on('touch', function(zone, e) {\n  if (e.x >= 0 && e.x < 83 && e.y >= 124 && e.y < 176) {\n    GPS();\n  }\n});");
     eval("Bangle.on('touch', function(zone, e) {\n  if (e.x >= 94 && e.x < 176 && e.y >= 0 && e.y < 48) {\n    avance();\n  }\n});");
     eval("Bangle.on('touch', function(zone, e) {\n  if (e.x >= 94 && e.x < 176 && e.y >= 128 && e.y < 176) {\n    recule();\n  }\n});");
     aff_BLE();
-    aff_params();
+    aff_lanceur();
     aff_GPS();
     moins();
     plus();
@@ -44,7 +44,7 @@ function bouton() {
 
 // Describe this function...
 function initialisation() {
-  sec_top = 2;
+  cum_cor = 0;
   d = new Date();
   sec = d.getSeconds();
   min = d.getMinutes();
@@ -154,12 +154,7 @@ function aff_ponct() {
 
 // Describe this function...
 function horloge() {
-  sec_top = sec_top - cor_int / 1000;
-  if (sec_top >= 62) {
-    sec_top = sec_top - 60;
-  } else if (sec_top <= -58) {
-    sec_top = sec_top + 60;
-  }
+  cum_cor = cum_cor + cor_int / 1000;
   if (recalage == true) {
     recalage = false;
     cor_int = Math.round(vit * 1000 * (1000 / (60 * 24))) / 1000;
@@ -287,7 +282,7 @@ function aff_jou() {
 }
 
 // Describe this function...
-function aff_params() {
+function aff_lanceur() {
   eval("g.setColor(0,0,1)");
   eval("g.fillRect(0, 62, 82, 113)");
   eval("g.setBgColor(0,0,1)");
@@ -365,6 +360,13 @@ function aff_moi() {
 }
 
 // Describe this function...
+function MAJ_heu() {
+  dizheu = 'z' + String(String(Math.floor(heu / 10)));
+  uniheu = 'z' + String(String(heu).slice(-1));
+  aff_heu();
+}
+
+// Describe this function...
 function chargement() {
   charge = E.getBattery();
   charge = Math.round((charge / 100) * 176);
@@ -381,10 +383,12 @@ function chargement() {
 }
 
 // Describe this function...
-function MAJ_heu() {
-  dizheu = 'z' + String(String(Math.floor(heu / 10)));
-  uniheu = 'z' + String(String(heu).slice(-1));
-  aff_heu();
+function jour() {
+  nom_du_jour();
+  jou1 = 'z' + String(nomjou.charAt(0));
+  jou2 = 'z' + String(nomjou.charAt(1));
+  jou3 = 'z' + String(nomjou.charAt(2));
+  aff_jou();
 }
 
 // Describe this function...
@@ -397,12 +401,10 @@ function plus() {
 }
 
 // Describe this function...
-function jour() {
-  nom_du_jour();
-  jou1 = 'z' + String(nomjou.charAt(0));
-  jou2 = 'z' + String(nomjou.charAt(1));
-  jou3 = 'z' + String(nomjou.charAt(2));
-  aff_jou();
+function date() {
+  dizdat = 'z' + String(String(Math.floor(dat / 10)));
+  unidat = 'z' + String(String(dat).slice(-1));
+  aff_dat();
 }
 
 // Describe this function...
@@ -411,13 +413,6 @@ function moins() {
   eval("g.fillRect(94, 128, 175, 175)");
   g.setColor(0,0,0);
   eval("g.fillRect(121, 147, 148, 156)");
-}
-
-// Describe this function...
-function date() {
-  dizdat = 'z' + String(String(Math.floor(dat / 10)));
-  unidat = 'z' + String(String(dat).slice(-1));
-  aff_dat();
 }
 
 // Describe this function...
@@ -451,14 +446,13 @@ function bluetooth() {
 }
 
 // Describe this function...
-function params() {
+function lanceur() {
   eval("clearInterval()");
   eval("Bangle.removeAllListeners('touch')");
   eval("Bangle.setGPSPower(false, \"cadran\")");
   eval("Bangle.removeListener('GPS', gps_listener)");
-  sec_top = Math.round(sec_top);
-  d = new Date(2000 + an, moi, dat, heu, min, sec_top);
-  eval("setTime(d.getTime() / 1000)");
+  d = new Date();
+  eval("setTime((d.getTime() / 1000)+cum_cor)");
   eval("Bangle.showLauncher()");
 }
 
