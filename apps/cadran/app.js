@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // Code from Graphical Editor
 var txt, largeur, hauteur, cum_cor, glyph, dizminpre, dizmin, dizheu, charge, dizdat, dizmoi, vit, d, nomjou, uniminpre, flash, uniheu, jou1, unidat, unimoi, BLE, gps, sec, jou, mode, recalage, vit_pre, jou2, min, z0, cor_int, interval_boucle, unimin, jou3, z1, chargeur, interval_cligno, z2, heu, dat, z3, chargeur_prec, moi, z4, z5, an, gps_listener, z6, z7, z8, z9, zA, zD, zE, zI, zJ, zL, zM, zN, zR, zS, zU, diff, zV, z2points, zBTon, zBTof, zAPPS, zSYNC, zGPS;
 
