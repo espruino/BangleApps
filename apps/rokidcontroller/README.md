@@ -13,14 +13,9 @@ Glasses app directly from your Bangle.js 2.
 | Horizontal drag | `KEYCODE_DPAD_RIGHT` / `KEYCODE_DPAD_LEFT` | Swipe forward/backward |
 | Hold BTN1 (400ms+) | `KEYCODE_ENTER` + BLE UART `"2TAP"` | Two-finger tap |
 
-## Settings
-
-Tap the **CFG** icon (top-right) or press `BTN1` twice quickly to open settings:
-
-- **Axis**: choose whether swipes are read vertically (sends `Up`/`Down`) or horizontally (sends `Left`/`Right`).
-- **Invert**: flip which physical direction counts as "forward".
-
-Settings are saved to `rokidremote.json` in Bangle storage and persist across reboots.
+The swipe direction is decided by the dominant axis of the actual drag, so all four
+directions work at all times (horizontal swipes send `Left`/`Right`, vertical swipes
+send `Down`/`Up`).
 
 ## Pairing
 

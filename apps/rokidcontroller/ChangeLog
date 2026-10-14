@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: Advertise the HID service and Appearance so hosts recognise the watch as a keyboard, and fall back to the default usage code if a key name is unavailable
 0.03: Composite HID report (keyboard + consumer control) so double tap sends a real Back (AC Back, the only HID usage that reaches KEYCODE_BACK); swipe keys follow the configured axis (Left/Right when horizontal); HID send failures are surfaced on the watch
+0.04: Swipes are recognised from the actual swipe axis (dominant drag component decides Left/Right vs Up/Down, all four directions); removed the axis/invert settings screen and its stored config

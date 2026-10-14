@@ -2,9 +2,9 @@
   "id": "rokidcontroller",
   "name": "Rokid Controller",
   "shortName": "Rokid",
-  "version": "0.03",
+  "version": "0.04",
   "author": "hoonsubin",
-  "description": "Simulates the Rokid Glasses touchpad (tap, double-tap, swipe, two-finger tap) over BLE HID so you can drive or test a Rokid Glasses app from your wrist. Includes an on-watch settings screen for swipe axis and direction invert.",
+  "description": "Simulates the Rokid Glasses touchpad (tap, double-tap, swipe, two-finger tap) over BLE HID so you can drive or test a Rokid Glasses app from your wrist. All four swipe directions are read from the actual swipe axis.",
   "readme": "README.md",
   "icon": "app.png",
   "type": "app",
@@ -21,9 +21,5 @@
       "evaluate": true
     }
   ],
-  "data": [
-    {
-      "name": "rokidremote.json"
-    }
-  ]
+  "data": []
 }

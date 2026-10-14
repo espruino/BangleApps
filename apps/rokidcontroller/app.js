@@ -6,9 +6,9 @@
  * Controls
  * - Tap: Select / Enter
  * - Double tap: Back (HID consumer "AC Back"; a keyboard report cannot send KEYCODE_BACK)
- * - Swipe: Previous / Next (vertical sends Up/Down, horizontal sends Left/Right)
+ * - Swipe: all four directions, decided by the actual swipe axis
+ *   (horizontal -> Left/Right, vertical -> Up/Down)
  * - Hold BTN1: Confirm / Enter and send UART command "2TAP"
- * - Double press BTN1: Open settings; press again to save and return
  */
 
 var CX = 88;
@@ -75,8 +75,7 @@ var SIM_MODE = !HAS_HID;
 // carrying "AC Back" and "AC Home". Bangle.js 2 exposes a single input report with
 // a maximum length of 8 bytes, and the report id counts towards that length, so the
 // keyboard collection carries five keys instead of six (the same trade ble_hid_combo
-// makes). AC Back is the only way to reach KEYCODE_BACK, which is why the old
-// double tap (a keyboard Escape) never did anything.
+// makes). AC Back is the only way to reach KEYCODE_BACK.
 var HID_ID_KEYBOARD = 1;
 var HID_ID_CONSUMER = 2;
 
@@ -162,19 +161,6 @@ if (HAS_HID) {
   log("HID unavailable; emulator mode active");
 }
 
-var Storage = require("Storage");
-var CFG_FILE = "rokidremote.json";
-var cfg = Object.assign(
-  { axis: "vertical", invert: false },
-  Storage.readJSON(CFG_FILE, 1) || {}
-);
-
-function saveCfg() {
-  safeCall(function () {
-    Storage.writeJSON(CFG_FILE, cfg);
-  }, "Storage.writeJSON");
-}
-
 var screen = "main";
 var state = {
   action: "",
@@ -184,45 +170,19 @@ var state = {
 
 var lastTapTime = 0;
 var dragStart = null;
+var dragPos = null;
 var btnDownTime = 0;
-var btnPressTimes = [];
 
 var DOUBLE_TAP_MS = 350;
 var SWIPE_THRESHOLD = 30;
 var HOLD_MS = 400;
-var BTN_DBL_WINDOW_MS = 450;
 
 var R = {
   title: { y1: 18, y2: 42 },
   status: { y1: 50, y2: 62 },
   action: { y1: 72, y2: 106 },
-  mode: { y1: 113, y2: 124 },
   footer: { y1: 142, y2: 153 }
 };
-
-var SETTINGS_ROWS = [
-  {
-    key: "axis",
-    y1: 59,
-    y2: 81,
-    label: "SWIPE AXIS",
-    value: function () { return cfg.axis.toUpperCase(); }
-  },
-  {
-    key: "invert",
-    y1: 87,
-    y2: 109,
-    label: "DIRECTION",
-    value: function () { return cfg.invert ? "INVERTED" : "NORMAL"; }
-  },
-  {
-    key: "back",
-    y1: 115,
-    y2: 137,
-    label: "SAVE + RETURN",
-    value: function () { return "<"; }
-  }
-];
 
 function divider(y, color) {
   line(color, 38, y, 138, y);
@@ -292,17 +252,13 @@ function drawMainFrame() {
   centered("LAST ACTION", 72);
   divider(84, THEME.dim);
 
-  setC(THEME.dim);
-  centered("SWIPE: " + cfg.axis.toUpperCase(), R.mode.y1);
-  centered("MODE: " + (cfg.invert ? "INVERTED" : "NORMAL"), R.mode.y1 + 10);
-
   divider(135, THEME.dim);
 
   if (lastError) {
     drawError();
   } else {
     setC(THEME.mid);
-    centered("TAP SELECT  ·  x2 CONFIG", R.footer.y1);
+    centered("TAP SELECT  ·  x2 BACK", R.footer.y1);
     centered("HOLD BTN CONFIRM", R.footer.y1 + 10);
   }
 
@@ -318,49 +274,6 @@ function drawAction(label, force) {
   setC(THEME.neon);
   centered(label, 88);
   g.flip(30, 87, 146, 106);
-}
-
-function drawSettingRow(row) {
-  line(THEME.mid, 30, row.y1, 146, row.y1);
-  line(THEME.dim, 30, row.y2, 146, row.y2);
-
-  g.setFont("6x8", 1);
-  setC(THEME.cyan);
-  g.drawString(row.label, 31, row.y1 + 7);
-
-  var value = row.value();
-  setC(THEME.neon);
-  g.drawString(value, 145 - g.stringWidth(value), row.y1 + 7);
-}
-
-function drawSettings() {
-  g.clear();
-  drawHeader("ROKID CONFIG", "INPUT PROFILE");
-
-  SETTINGS_ROWS.forEach(drawSettingRow);
-
-  g.setFont("6x8", 1);
-  setC(THEME.dim);
-  centered("TAP A ROW TO CHANGE", 149);
-  centered("BTN x2 SAVES AND EXITS", 159);
-
-  g.flip();
-}
-
-function openSettings() {
-  screen = "settings";
-  drawSettings();
-  log("settings opened");
-}
-
-function closeSettings() {
-  screen = "main";
-  saveCfg();
-  state.action = "";
-  state.status = "";
-  drawMainFrame();
-  drawAction("READY", true);
-  log("settings saved");
 }
 
 // Reports go out one at a time: NRF.sendHIDReport throws "BLE HID already sending"
@@ -427,29 +340,6 @@ function sendUartCmd(command) {
 }
 
 Bangle.on("touch", function (zone, e) {
-  var y = e && e.y;
-
-  if (screen === "settings") {
-    if (typeof y !== "number") return;
-
-    var hit = SETTINGS_ROWS.filter(function (row) {
-      return y >= row.y1 && y <= row.y2;
-    })[0];
-
-    if (!hit) return;
-
-    if (hit.key === "axis") {
-      cfg.axis = cfg.axis === "vertical" ? "horizontal" : "vertical";
-      drawSettings();
-    } else if (hit.key === "invert") {
-      cfg.invert = !cfg.invert;
-      drawSettings();
-    } else {
-      closeSettings();
-    }
-    return;
-  }
-
   var now = Date.now();
   if (now - lastTapTime < DOUBLE_TAP_MS) {
     sendConsumer(CONSUMER.BACK, "BACK");
@@ -460,33 +350,36 @@ Bangle.on("touch", function (zone, e) {
   }
 });
 
+// Swipe recognition uses the real swipe axis: the dominant component of the
+// gesture decides whether it maps to Left/Right or Up/Down, so all four
+// directions work with no mode setting. The release event can carry no usable
+// x/y, so the last in-drag position is tracked and used instead.
 Bangle.on("drag", function (e) {
   if (screen !== "main") return;
 
-  var primary = cfg.axis === "horizontal" ? e.x : e.y;
-  if (typeof primary !== "number") return;
-
-  if (e.b && dragStart === null) {
-    dragStart = primary;
+  if (e.b) {
+    if (dragStart === null) {
+      dragStart = { x: e.x, y: e.y };
+      dragPos = { x: e.x, y: e.y };
+    } else if (typeof e.x === "number" && typeof e.y === "number") {
+      dragPos = { x: e.x, y: e.y };
+    }
     return;
   }
 
-  if (!e.b && dragStart !== null) {
-    var delta = primary - dragStart;
-    dragStart = null;
+  if (dragStart === null) return;
 
-    if (Math.abs(delta) <= SWIPE_THRESHOLD) return;
+  var dx = dragPos.x - dragStart.x;
+  var dy = dragPos.y - dragStart.y;
+  dragStart = null;
+  dragPos = null;
 
-    var forward = delta > 0;
-    if (cfg.invert) forward = !forward;
-
-    // The glasses' launcher moves through its app grid with Left/Right and only
-    // uses Up/Down inside vertical lists, so the axis setting picks the key.
-    var code = cfg.axis === "horizontal"
-      ? (forward ? KEY.RIGHT : KEY.LEFT)
-      : (forward ? KEY.DOWN : KEY.UP);
-
-    tapKey(code, forward ? "NEXT" : "PREVIOUS");
+  if (Math.abs(dx) > Math.abs(dy)) {
+    if (Math.abs(dx) <= SWIPE_THRESHOLD) return;
+    tapKey(dx > 0 ? KEY.RIGHT : KEY.LEFT, dx > 0 ? "RIGHT" : "LEFT");
+  } else {
+    if (Math.abs(dy) <= SWIPE_THRESHOLD) return;
+    tapKey(dy > 0 ? KEY.DOWN : KEY.UP, dy > 0 ? "DOWN" : "UP");
   }
 });
 
@@ -499,19 +392,6 @@ var btnWatch = setWatch(function (e) {
   if (Date.now() - btnDownTime >= HOLD_MS) {
     tapKey(KEY.ENTER, "CONFIRM");
     sendUartCmd("2TAP");
-    return;
-  }
-
-  var now = Date.now();
-  btnPressTimes.push(now);
-  btnPressTimes = btnPressTimes.filter(function (t) {
-    return now - t < BTN_DBL_WINDOW_MS;
-  });
-
-  if (btnPressTimes.length >= 2) {
-    btnPressTimes = [];
-    if (screen === "main") openSettings();
-    else closeSettings();
   }
 }, BTN1, {
   repeat: true,
