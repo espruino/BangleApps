@@ -5,8 +5,8 @@
  *
  * Controls
  * - Tap: Select / Enter
- * - Double tap: Back / Escape
- * - Swipe: Previous / Next (configured axis and direction)
+ * - Double tap: Back (HID consumer "AC Back"; a keyboard report cannot send KEYCODE_BACK)
+ * - Swipe: Previous / Next (vertical sends Up/Down, horizontal sends Left/Right)
  * - Hold BTN1: Confirm / Enter and send UART command "2TAP"
  * - Double press BTN1: Open settings; press again to save and return
  */
@@ -40,12 +40,26 @@ function centered(text, y) {
   g.drawString(text, CX - g.stringWidth(text) / 2, y);
 }
 
+var lastError = "";
+
 function safeCall(fn, label) {
   try {
     fn();
   } catch (e) {
-    log("ERROR " + label + ": " + e.message);
+    reportError(label, e);
   }
+}
+
+function reportError(label, e) {
+  lastError = label + (e && e.message ? ": " + e.message : "");
+  log("ERROR " + lastError);
+  if (screen === "main") drawError();
+}
+
+function clearError() {
+  if (!lastError) return;
+  lastError = "";
+  if (screen === "main") drawMainFrame();
 }
 
 function log(msg) {
@@ -57,20 +71,79 @@ var HAS_UART = typeof Bluetooth !== "undefined" && typeof Bluetooth.println === 
 var HAS_SEC = typeof NRF !== "undefined" && typeof NRF.getSecurityStatus === "function";
 var SIM_MODE = !HAS_HID;
 
-var kb = null;
-try {
-  kb = require("ble_hid_keyboard");
-} catch (e) {
-  log("ble_hid_keyboard unavailable");
-}
+// Composite HID descriptor: report 1 is a keyboard, report 2 is consumer control
+// carrying "AC Back" and "AC Home". Bangle.js 2 exposes a single input report with
+// a maximum length of 8 bytes, and the report id counts towards that length, so the
+// keyboard collection carries five keys instead of six (the same trade ble_hid_combo
+// makes). AC Back is the only way to reach KEYCODE_BACK, which is why the old
+// double tap (a keyboard Escape) never did anything.
+var HID_ID_KEYBOARD = 1;
+var HID_ID_CONSUMER = 2;
 
-if (HAS_HID && kb) {
+var HID_REPORT = new Uint8Array([
+  0x05, 0x01,        // Usage Page (Generic Desktop)
+  0x09, 0x06,        // Usage (Keyboard)
+  0xa1, 0x01,        // Collection (Application)
+  0x85, 0x01,        //   Report ID (1)
+  0x05, 0x07,        //   Usage Page (Key Codes)
+  0x19, 0xe0,        //   Usage Minimum (224)
+  0x29, 0xe7,        //   Usage Maximum (231)
+  0x15, 0x00,        //   Logical Minimum (0)
+  0x25, 0x01,        //   Logical Maximum (1)
+  0x75, 0x01,        //   Report Size (1)
+  0x95, 0x08,        //   Report Count (8)
+  0x81, 0x02,        //   Input (Data, Var, Abs)          modifiers
+  0x75, 0x08,        //   Report Size (8)
+  0x95, 0x01,        //   Report Count (1)
+  0x81, 0x01,        //   Input (Const, Ary, Abs)         reserved
+  0x19, 0x00,        //   Usage Minimum (0)
+  0x29, 0x73,        //   Usage Maximum (115)
+  0x15, 0x00,        //   Logical Minimum (0)
+  0x25, 0x73,        //   Logical Maximum (115)
+  0x95, 0x05,        //   Report Count (5)
+  0x75, 0x08,        //   Report Size (8)
+  0x81, 0x00,        //   Input (Data, Ary, Abs)          five keys
+  0xc0,              // End Collection
+  0x05, 0x0c,        // Usage Page (Consumer Devices)
+  0x09, 0x01,        // Usage (Consumer Control)
+  0xa1, 0x01,        // Collection (Application)
+  0x85, 0x02,        //   Report ID (2)
+  0x15, 0x00,        //   Logical Minimum (0)
+  0x25, 0x01,        //   Logical Maximum (1)
+  0x75, 0x01,        //   Report Size (1)
+  0x95, 0x02,        //   Report Count (2)
+  0x09, 0x24, 0x02,  //   Usage (AC Back)                 -> KEYCODE_BACK
+  0x09, 0x23, 0x02,  //   Usage (AC Home)                 -> KEYCODE_HOME
+  0x81, 0x06,        //   Input (Data, Var, Rel)
+  0x95, 0x06,        //   Report Count (6)
+  0x81, 0x01,        //   Input (Const, Ary, Abs)         pad to one byte
+  0xc0               // End Collection
+]);
+
+var KEY = {
+  ENTER: 0x28,
+  ESC: 0x29,
+  DOWN: 0x51,
+  UP: 0x52,
+  LEFT: 0x50,
+  RIGHT: 0x4f
+};
+
+var CONSUMER = {
+  BACK: 0x01,
+  HOME: 0x02
+};
+
+var hidReady = false;
+
+if (HAS_HID) {
   safeCall(function () {
     NRF.setServices(undefined, {
-      hid: kb.report,
+      hid: HID_REPORT,
       uart: true
     });
-    log("BLE HID service registered");
+    hidReady = true;
+    log("HID service registered (report 1 keyboard, report 2 consumer)");
   }, "NRF.setServices");
 
   // A host decides what a BLE peripheral is from its advertising data, not
@@ -157,6 +230,7 @@ function divider(y, color) {
 
 function statusText() {
   if (SIM_MODE) return "EMULATOR";
+  if (!hidReady) return "HID OFF";
 
   var connected = false;
   if (HAS_SEC) {
@@ -194,6 +268,20 @@ function drawStatus(force) {
   centered(text, 51);
 }
 
+function drawError() {
+  fill(THEME.bg, 8, 138, 168, 158);
+  g.setFont("6x8", 1);
+  setC([1, 0.35, 0.35]);
+
+  var msg = "ERR " + lastError;
+  if (g.stringWidth(msg) > 158) msg = msg.substr(0, 21) + "..";
+  centered(msg, 142);
+
+  setC(THEME.mid);
+  centered("HID SEND FAILED", 152);
+  g.flip(8, 138, 168, 158);
+}
+
 function drawMainFrame() {
   g.clear();
   drawHeader("ROKID REMOTE", "HID CONTROL");
@@ -210,9 +298,13 @@ function drawMainFrame() {
 
   divider(135, THEME.dim);
 
-  setC(THEME.mid);
-  centered("TAP SELECT  ·  x2 CONFIG", R.footer.y1);
-  centered("HOLD BTN CONFIRM", R.footer.y1 + 10);
+  if (lastError) {
+    drawError();
+  } else {
+    setC(THEME.mid);
+    centered("TAP SELECT  ·  x2 CONFIG", R.footer.y1);
+    centered("HOLD BTN CONFIRM", R.footer.y1 + 10);
+  }
 
   g.flip();
 }
@@ -271,26 +363,59 @@ function closeSettings() {
   log("settings saved");
 }
 
-function keyCode(name, fallback) {
-  if (kb && kb.KEY && kb.KEY[name] !== undefined) return kb.KEY[name];
-  return fallback;
-}
+// Reports go out one at a time: NRF.sendHIDReport throws "BLE HID already sending"
+// when it is called while a report is in flight, so each report waits for the
+// previous one's callback.
+function sendReports(reports, label) {
+  if (!HAS_HID) return;
 
-function sendKey(code, action) {
-  log("input " + action + " -> " + code + (SIM_MODE ? " [SIM]" : ""));
+  var index = 0;
 
-  if (HAS_HID && kb) {
+  function next() {
+    if (index >= reports.length) {
+      clearError();
+      return;
+    }
+
+    var report = reports[index];
+    index += 1;
     safeCall(function () {
-      kb.tap(code, 0, function () {});
-    }, "kb.tap");
+      NRF.sendHIDReport(report, next);
+    }, label);
   }
 
+  next();
+}
+
+function buzz() {
   if (typeof Bangle !== "undefined" && Bangle.buzz) {
     safeCall(function () {
       Bangle.buzz(30);
     }, "Bangle.buzz");
   }
+}
 
+function tapKey(code, action) {
+  log("input " + action + " -> keyboard " + code + (SIM_MODE ? " [SIM]" : ""));
+
+  sendReports([
+    [HID_ID_KEYBOARD, 0, 0, code, 0, 0, 0, 0],
+    [HID_ID_KEYBOARD, 0, 0, 0, 0, 0, 0, 0]
+  ], "keyboard report");
+
+  buzz();
+  drawAction(action);
+}
+
+function sendConsumer(bit, action) {
+  log("input " + action + " -> consumer " + bit + (SIM_MODE ? " [SIM]" : ""));
+
+  sendReports([
+    [HID_ID_CONSUMER, bit],
+    [HID_ID_CONSUMER, 0]
+  ], "consumer report");
+
+  buzz();
   drawAction(action);
 }
 
@@ -327,10 +452,10 @@ Bangle.on("touch", function (zone, e) {
 
   var now = Date.now();
   if (now - lastTapTime < DOUBLE_TAP_MS) {
-    sendKey(keyCode("ESC", 0x29), "BACK");
+    sendConsumer(CONSUMER.BACK, "BACK");
     lastTapTime = 0;
   } else {
-    sendKey(keyCode("ENTER", 0x28), "SELECT");
+    tapKey(KEY.ENTER, "SELECT");
     lastTapTime = now;
   }
 });
@@ -355,10 +480,13 @@ Bangle.on("drag", function (e) {
     var forward = delta > 0;
     if (cfg.invert) forward = !forward;
 
-    sendKey(
-      forward ? keyCode("DOWN", 0x51) : keyCode("UP", 0x52),
-      forward ? "NEXT" : "PREVIOUS"
-    );
+    // The glasses' launcher moves through its app grid with Left/Right and only
+    // uses Up/Down inside vertical lists, so the axis setting picks the key.
+    var code = cfg.axis === "horizontal"
+      ? (forward ? KEY.RIGHT : KEY.LEFT)
+      : (forward ? KEY.DOWN : KEY.UP);
+
+    tapKey(code, forward ? "NEXT" : "PREVIOUS");
   }
 });
 
@@ -369,7 +497,7 @@ var btnWatch = setWatch(function (e) {
   }
 
   if (Date.now() - btnDownTime >= HOLD_MS) {
-    sendKey(keyCode("ENTER", 0x28), "CONFIRM");
+    tapKey(KEY.ENTER, "CONFIRM");
     sendUartCmd("2TAP");
     return;
   }

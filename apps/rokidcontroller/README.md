@@ -8,15 +8,16 @@ Glasses app directly from your Bangle.js 2.
 | Bangle input | Sent as | Rokid touchpad equivalent |
 |---|---|---|
 | Tap | `KEYCODE_ENTER` | Tap (select/confirm) |
-| Double-tap | `KEYCODE_BACK`-style Escape | Double-tap (back) |
-| Vertical/horizontal drag | `KEYCODE_DPAD_DOWN` / `KEYCODE_DPAD_UP` | Swipe forward/backward |
+| Double-tap | HID consumer `AC Back` → `KEYCODE_BACK` | Double-tap (back) |
+| Vertical drag | `KEYCODE_DPAD_DOWN` / `KEYCODE_DPAD_UP` | Swipe forward/backward |
+| Horizontal drag | `KEYCODE_DPAD_RIGHT` / `KEYCODE_DPAD_LEFT` | Swipe forward/backward |
 | Hold BTN1 (400ms+) | `KEYCODE_ENTER` + BLE UART `"2TAP"` | Two-finger tap |
 
 ## Settings
 
 Tap the **CFG** icon (top-right) or press `BTN1` twice quickly to open settings:
 
-- **Axis**: choose whether swipes are read vertically or horizontally.
+- **Axis**: choose whether swipes are read vertically (sends `Up`/`Down`) or horizontally (sends `Left`/`Right`).
 - **Invert**: flip which physical direction counts as "forward".
 
 Settings are saved to `rokidremote.json` in Bangle storage and persist across reboots.
@@ -36,3 +37,7 @@ Settings are saved to `rokidremote.json` in Bangle storage and persist across re
   Android KeyEvent layer. If your target app reads raw multi-touch `MotionEvent`s
   instead, use the `"2TAP"` BLE UART message with a companion Accessibility Service
   that injects a genuine two-pointer gesture.
+- HID failures are visible on the watch: the status line reads `HID OFF` when the HID
+  service was never registered (Espruino cannot enable HID while a connection is
+  active, so a connection at app load leaves it off), and a rejected report is shown
+  in the footer instead of being swallowed.
