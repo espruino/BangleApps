@@ -72,6 +72,19 @@ if (HAS_HID && kb) {
     });
     log("BLE HID service registered");
   }, "NRF.setServices");
+
+  // A host decides what a BLE peripheral is from its advertising data, not
+  // from the GATT server alone. Without the HID service UUID and an Appearance
+  // here, Android binds no HID profile to the watch ("No profiles"), so it
+  // never attaches an input device and every report below goes nowhere.
+  safeCall(function () {
+    NRF.setAdvertising([{}, [ // second packet: HID service + Keyboard appearance
+      2, 1, 6,                // flags
+      3, 3, 0x12, 0x18,       // HID Service (0x1812)
+      3, 0x19, 0xc1, 0x03     // Appearance: Keyboard (0x03C1)
+    ]]);
+    log("HID advertising set");
+  }, "NRF.setAdvertising");
 } else {
   log("HID unavailable; emulator mode active");
 }
@@ -259,7 +272,8 @@ function closeSettings() {
 }
 
 function keyCode(name, fallback) {
-  return kb && kb.KEY ? kb.KEY[name] : fallback;
+  if (kb && kb.KEY && kb.KEY[name] !== undefined) return kb.KEY[name];
+  return fallback;
 }
 
 function sendKey(code, action) {

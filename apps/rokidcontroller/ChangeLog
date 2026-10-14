@@ -1,1 +1,2 @@
 0.01: New App!
+0.02: Advertise the HID service and Appearance so hosts recognise the watch as a keyboard, and fall back to the default usage code if a key name is unavailable
