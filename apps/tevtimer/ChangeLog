@@ -1,3 +1,14 @@
 0.01: Official release
 0.02: Fix misbehavior if multiple alarms become active at once
 0.03: Fix issues with snoozing timers past midnight (#4241)
+0.04: Various UI improvements:
+      * Implement recent features from sched's alarm alert (snooze
+        menu on long-press, support for Button Stops Alarm setting in
+        Alarm app)
+      * Allow long-press on alarm alert OK button to override “On
+        alarm go to” setting
+      * Use correct theme color of timer-running widget
+      * Improve tap detection of format screen arrows
+      * Improve support of count-up timers (no negative sign, proper
+        reset confirmation, hide inapplicable options, better default
+        name)

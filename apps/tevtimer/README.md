@@ -1,4 +1,4 @@
-# tev's timer
+# Tev's Timer
 
 This Bangle.js 2 app aims to be an ergonomic timer that features:
 
@@ -30,7 +30,7 @@ The on-screen menu button displays the following menu items:
 The following parameters can be adjusted individually for each timer by displaying that timer on the main screen and then selecting **Edit** from the menu:
 
 * **Name:** (available when a keyboard app is installed) Allows you to assign a custom name to the timer to display in menus
-* **Start:** Set the starting time of the countdown timer. You can also set this to zero to create a simple stopwatch that counts upward instead of downward (when the timer is running, a dash will appear to the left of the time to indicate this).
+* **Start:** Set the starting time of the countdown timer. You can also set this to zero to create a simple stopwatch that counts upward instead of downward. The settings **At end**, **Vibrate pattern**, and **Buzz count** are not available when the timer is in stopwatch mode.
 * **At end:** Allows for creating interval or repeat timers. Selecting “Stop” causes the timer to simply stop when it expires and the resulting alert is dismissed. Selecting a timer here will cause the selected timer to reset and automatically begin counting down once this timer expires. See “Chained timers” below.
 * **Vibrate pattern:** Choose the vibration pattern for the alert when the timer expires
 * **Buzz count:** Choose the number of times the vibration pattern signals when the timer expires before silencing itself
@@ -81,7 +81,7 @@ Likewise, to protect against accidentally deleting a timer a confirmation menu a
 
 ### On alarm go to
 
-If set to Clock (default), when a timer expires and its alert is displayed, dismissing the alert will return to the default app (normally the preferred clock app). Setting this option to Timer will automatically restart the Tev Timer app instead.
+If set to Clock (default), when a timer expires and its alert is displayed, dismissing the alert will return to the default app (normally the preferred clock app). Setting this option to Timer will automatically restart the Tev's Timer app instead.
 
 ### Auto reset
 
@@ -89,4 +89,8 @@ When a timer expires, it will by default begin counting up a time that represent
 
 ## Timer alerts
 
-When a timer expires, it will display an alert like the ones produced by the standard Scheduler app. For a timer that is not chained, or the last timer in a chain, two buttons “OK” and “Snooze” appear when an alert fires. “OK” completely dismisses the alert, while “Snooze” temporarily dismisses it (it will recur after the snooze interval configured in the Scheduler settings). For chained timers, the options are instead “OK” and “Halt”. “OK” dismisses the individual alert while allowing the next chained timer to continue running in the background, eventually sounding its alert. “Halt” stops the timer and cancels the chaining action, and the display will return to the timer that was running at the point when the “Halt” button was tapped. If you accidentally create a repeating timer that alerts too frequently and makes it impossible to use the Bangle.js watch normally, quickly tap the “Halt” button to stop the chaining action and regain control.
+When a timer expires, it will display an alert like the ones produced by the standard Scheduler app. For a timer that is not chained, or the last timer in a chain, two buttons “OK” and “Snooze” appear when an alert fires. “OK” completely dismisses the alert, while “Snooze” temporarily dismisses it (it will recur after the snooze interval configured in the Scheduler settings). You can long-press the “Snooze” button instead to select a different snooze interval for this particular timer. For chained timers, the options are instead “OK” and “Halt”. “OK” dismisses the individual alert while allowing the next chained timer to continue running in the background, eventually sounding its alert. “Halt” stops the timer and cancels the chaining action, and the display will return to the timer that was running at the point when the “Halt” button was tapped. If you accidentally create a repeating timer that alerts too frequently and makes it impossible to use the Bangle.js watch normally, quickly tap the “Halt” button to stop the chaining action and regain control.
+
+The “OK” button will return either to the default clock app or to Tev's Timer depending on the “On alarm go to” setting. For a particular timer alert, you can return to the alternate location by long-pressing “OK”.
+
+As with the system alarms, you can press the physical button as a shortcut to either snooze or dismiss the alarm according to the setting “Button Stops Alarm” in the Alarms app (under Advanced > Scheduler Settings). When this setting is on, the physical button will do the same thing as tapping “OK”. If it is off, pressing the button will snooze the alarm if this option is available; in the case of chained timers when Snooze is not available, the physical button will not function.

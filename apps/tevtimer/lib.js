@@ -58,10 +58,15 @@ class PrimitiveTimer {
     // Return a generated name for the timer based on the timer's
     // origin and current value
 
+    if (this.is_countdown()) {
+      return (
+        format_duration_2(this.to_msec(this.origin))
+        + ' / '
+        + format_duration_2(this.to_msec())
+      );
+    }
     return (
-      format_duration_2(this.to_msec(this.origin))
-      + ' / '
-      + format_duration_2(this.to_msec())
+      'Chrono: ' + format_duration_2(this.to_msec())
     );
   }
 
@@ -82,6 +87,13 @@ class PrimitiveTimer {
     }
 
     return status;
+  }
+
+  is_countdown() {
+    // Return true if the timer is a countdown timer, false if it is a
+    // countup timer
+
+    return this.rate < 0;
   }
 
   is_running() {
@@ -255,6 +267,15 @@ function load_timers() {
     timers = [new PrimitiveTimer(600, false, -0.001, '', 1)];
     timers[0].end_alarm = true;
   }
+
+  // Convert simulated countup timers from old app version to real
+  // countup timers
+  for (let timer of timers) {
+    if (timer.origin === 0) {
+      timer.rate = Math.abs(timer.rate);
+    }
+  }
+
   return timers;
 }
 
@@ -442,6 +463,9 @@ function set_system_alarms() {
 
   for (let idx = 0; idx < TIMERS.length; idx++) {
     let timer = TIMERS[idx];
+    if (!timer.is_countdown()) {
+      continue;
+    }
     let time_to_next_alarm = timer.to_msec();
     if (timer.is_running() && time_to_next_alarm > 0) {
       console.debug('set_system_alarms: set sched alarm ' + timer.id

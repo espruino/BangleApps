@@ -30,8 +30,6 @@ function getLongitudeOffset() {
 }
 
 function drawMap() {
-  g.setBgColor(0, 0, 0);
-
   // does not flip on it's own, but there is a draw function after that does
   g.drawImages([{
     x: -lonOffset * W / 360,
@@ -103,19 +101,20 @@ function drawDaylightMap() {
     g.fillPoly([0, YOFFSET].concat(graph, W, YOFFSET));
   }
 
+  // honor system theme with map and line colors
+  g.reset();
+
   drawMap();
 
-  // day-night line, white
-  g.setColor(1, 1, 1);
+  // day-night line
   g.drawPoly(graph, false);
 }
 
 function drawClock() {
   // clock area
-  g.clearRect(0, YOFFSET, W, 24);
+  g.reset().clearRect(0, YOFFSET, W, 24);
 
   // clock text
-  g.setColor(1, 1, 1);
   g.setFontAlign(0, -1);
   g.setFont("Vector", 58);
   // with the vector font this leaves 26px above the text
@@ -153,8 +152,6 @@ Bangle.setUI("clock");
 
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-
-g.setBgColor(0, 0, 0);
 
 var now = new Date();
 
@@ -196,7 +193,6 @@ Bangle.on('drag', function(touch) {
     g.clearRect(0, YOFFSET, W, 24);
 
     // text
-    g.setColor(1, 1, 1);
     g.setFontAlign(0, -1);
     g.setFont("Dennis8", 2);
     // could not get ° (degree sign) to render

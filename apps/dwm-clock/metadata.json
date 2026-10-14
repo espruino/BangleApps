@@ -2,7 +2,7 @@
   "id": "dwm-clock",
   "name": "Daylight World Map Clock",
   "shortName": "DWM Clock",
-  "version": "0.02",
+  "version": "0.03",
   "author": "g-rden",
   "description": "A clock with a daylight world map",
   "readme":"README.md",
