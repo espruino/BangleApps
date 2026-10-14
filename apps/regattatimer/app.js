@@ -89,6 +89,7 @@ XoX o o XoX
       "dial": "Numeric",
       "gps": true,
       "record": false,
+      "speedalt": false, //for direct navigation to speedalt app
       "theme": "Dark",
     }, require('Storage').readJSON("regattatimer.json", true) || {}),
 
@@ -146,7 +147,7 @@ XoX o o XoX
     onGPS: function(fix) {
       if(this.mode == "race") {
         if(fix.fix && isFinite(fix.speed)) {
-          this.layout.clear(layout.speed);
+          this.layout.clear(this.layout.speed);
           this.layout.speed.label = fix.speed.toFixed(2);
           this.layout.render(this.layout.speed);
         }
@@ -303,6 +304,11 @@ XoX o o XoX
     },
     setLayoutRace: function() {
       g.clear();
+
+      if (this.settings.speedalt) {
+        load('speedalt.app.js');
+        return; 
+      }
 
       this.layout = new Layout({
         type: "v",

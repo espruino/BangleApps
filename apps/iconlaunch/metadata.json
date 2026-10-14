@@ -2,7 +2,7 @@
 	"id": "iconlaunch",
 	"name": "Icon Launcher",
 	"shortName" : "Icon launcher",
-	"version": "0.23",
+	"version": "0.24",
 	"icon": "app.png",
 	"author": "TheGLander",
 	"description": "A launcher inspired by smartphones, with an icon-only scrollable menu.",

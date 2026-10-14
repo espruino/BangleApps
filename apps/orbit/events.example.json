@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "events": [
+    {
+      "date": "10-15",
+      "repeat": "yearly",
+      "type": "family",
+      "label": "Anniversary",
+      "region": "all",
+      "color": "yellow",
+      "blink": true
+    },
+    {
+      "date": "2030-05-02",
+      "type": "holiday",
+      "label": "Extra holiday",
+      "region": "jp",
+      "color": "red",
+      "blink": false
+    },
+    {
+      "from": "12-29",
+      "to": "01-03",
+      "repeat": "yearly",
+      "type": "custom",
+      "label": "Year end",
+      "region": "all",
+      "color": "orange",
+      "blink": false
+    }
+  ]
+}

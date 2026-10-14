@@ -1,7 +1,7 @@
 {
   "id": "messageicons",
   "name": "Message Icons",
-  "version": "0.17",
+  "version": "0.18",
   "author": "gfwilliams",
   "description": "Library containing a list of icons and colors for popular phone apps, used by Message UIs",
   "icon": "app.png",

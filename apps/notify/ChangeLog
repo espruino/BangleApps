@@ -12,3 +12,4 @@
 0.13: Add a default title background for the dark theme
 0.14: Stop event propagation on notification tap
 0.15: Only stop event propagation during events
+0.16: Prepend touch listener to stop propagation

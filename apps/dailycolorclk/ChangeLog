@@ -1,3 +1,4 @@
 0.01: New App!
 0.02: Rework of the app to include a color queue avoiding duplicate colors back to back, smarter settings page, more colors, and now easier to add your own.
 0.03: Use colorpicker module for faster and more intuitive color selection, always format hours as 0X, for visual balance.
+0.04: Use new Daily Color module instead of handling color ourselves.

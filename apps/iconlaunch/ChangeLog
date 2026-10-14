@@ -29,3 +29,4 @@
 0.21: Display placeholder icons at start and render line by line to the screen to make loading seem faster
 0.22: Use launcher_utils library for app cacheing  and fast load
 0.23: Use Bangle.haptic if available
+0.24: Fix updateTimeout() firing after remove function was called

@@ -188,8 +188,10 @@ exports.gbHandler = (event) => {
     "act": function() {
       if (exports.actInterval) clearInterval(exports.actInterval);
       exports.actInterval = undefined;
-      if (exports.actHRMHandler)
+      if (exports.actHRMHandler) {
+        Bangle.removeListener('HRM', exports.actHRMHandler);
         exports.actHRMHandler = undefined;
+      }
       Bangle.setHRMPower(event.hrm,"androidact");
       if (!(event.hrm || event.stp)) return;
       if (!isFinite(event.int)) event.int=1;

@@ -143,16 +143,16 @@ const checkCharge = () => {
   drainedRestore();
 };
 
-if (Bangle.isCharging())
-  checkCharge();
-
-Bangle.on("charging", charging => {
+const onChargeChange = (charging: boolean) => {
   if(drainedInterval)
     drainedInterval = clearInterval(drainedInterval) as undefined;
   if(charging)
     drainedInterval = setInterval(checkCharge, interval * 60 * 1000);
   draw(); // redraw to update charging status on screen
-});
+};
+
+Bangle.on("charging", state => onChargeChange(state /*workaround typing problem*/as boolean));
+onChargeChange(Bangle.isCharging());
 
 if(!keepStartup){
   const storage = require("Storage");

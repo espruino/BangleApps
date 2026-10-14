@@ -42,3 +42,5 @@
 0.33: Map zoom by tapping is now only when tapping at each corner (helps with accidental zooming)
       When GPS location is offscreen, draw a blue circle showing the direction to scroll
       Added 'Autoscroll' option to automatically scroll the map when GPS location moves off it
+0.34: Uploader can upload the maps along a GPX route, with the route drawn on them
+      Uploader checks there is enough free space on the Bangle before uploading

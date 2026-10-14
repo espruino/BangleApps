@@ -1,0 +1,27 @@
+{ 
+  "id": "examen",
+  "name": "Examen",
+  "shortName": "Examen",
+  "version": "0.01",
+  "author": "Camroc007",
+  "description": "A simple Examination of Conscience",
+  "icon": "examen.png",
+  "tags": "tool,health",
+  "supports" : ["BANGLEJS2"],
+  "readme": "README.md",
+  "storage": [
+    {
+      "name": "examen.app.js",
+      "url": "examen.app.js"
+    },
+    {
+      "name": "examen.boot.js",
+      "url": "examen.boot.js"
+    },
+    {
+      "name": "examen.img",
+      "url": "app-icon.js",
+      "evaluate": true
+    }
+  ]
+}

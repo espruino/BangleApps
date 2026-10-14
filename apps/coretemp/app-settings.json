@@ -1,4 +1,8 @@
 {
-  "enabled":false,
-  "debuglog": false
+  "enabled": true,
+  "alwaysOn": false,
+  "widget": true,
+  "debugMode": false,
+  "antScanWindowSec": 5,
+  "settingsVersion": 2
 }
