@@ -2,7 +2,7 @@
 
 A clock face as a mosaic (Latin *tegula*: tile). The 176 × 176 px screen is divided into a grid of 11 × 11 square tiles of 16 px. The tiles form a random **Lohse square**, a color arrangement named after the Swiss painter Richard Paul Lohse. The time is drawn over it as **HH above MM** with a 4 × 5-tile digit font derived from the seven-segment display. The square has no gaps. The digit tiles are black and drawn slightly smaller than their cells, so a frame in the color of the square underneath separates them.
 
-A new image (Lohse square, color palette and colors) appears every 60 minutes, on swipe up and whenever the clock starts. The algorithm can generate 20 846 892 different background images (see [Number of images](#number-of-images)). While the watch is unlocked, gestures show the date or the seconds, switch on a flash light and show the widgets.
+A new image (Lohse square, color palette and colors) appears on swipe up and whenever the clock starts. The algorithm can generate 20 846 892 different background images (see [Number of images](#number-of-images)). While the watch is unlocked, the mosaic turns paler for 2 s and back for 1 s, two thin white lines show the view and the time until the screen locks, and gestures show the date or the seconds, switch on a flash light and show the widgets.
 
 ![Tegula at 12:34](screenshot.png)
 
@@ -18,24 +18,43 @@ The touchscreen only reacts while the watch is unlocked. Press the button to unl
 | Double tap bottom left | Flash light | Any tap |
 | Swipe down | Widget bar (only with `FAST_LOAD`, the default) | After 2 s, or swipe up |
 
-### Blinking tile
+### Light pulse
 
-While the watch is unlocked, the bottom right tile changes every 500 ms between its normal content and the opposite. This tile lies in the margin column to the right of the lower right digit, so it is a color tile that blinks black.
+While the watch is unlocked, in all three views, all tiles turn pale for 2 s (`PULSE_PALE`): they are drawn in their colors blended with white (`LIGHTEN`, 0.25), with the black squares of the digits on top. Then they show their own colors for 1 s (`PULSE_NORMAL`), and so on.
 
-The tile is inverted right when the watch is unlocked and returns to normal when the screen locks.
+- The pale colors are computed with `g.blendColor(color, "#fff", LIGHTEN)` once per image. They are 16-bit colors like the others, and the firmware dithers them as usual.
+- The pulse starts pale on every unlock, after every swipe and when the flash light goes off. Its start is rounded to the nearest full second, so it switches on whole seconds, and the first pale phase lasts 1.5 to 2.5 s.
+- While unlocked, all three views are redrawn every second, as MM/SS always was for its seconds: `drawTiles()` draws all tiles in one of the two color sets in a single pass, then the [white lines](#white-lines) follow. There is no separate pulse timer. `pulsePale()` takes the phase from the time since the start, rounded to whole seconds, so a timer that fires a little early or late does not shift it.
+- An earlier attempt made only the tiles next to the digits paler. In the 11 × 11 grid these were nearly all tiles anyway (105 of 121 at 10:30), so the whole grid is simpler and looks more even.
+- When the screen locks, the pulse goes off. The locked face is pixel-identical to the face without pulse.
+
+### White lines
+
+While the watch is unlocked, `drawLines()` draws two lines after the tiles, each 2 px of white on the edge of the screen with 2 px of black inside, as white alone vanishes on pale tiles (1 px was too thin to see on the watch):
+
+| Line | White | Black | Extent |
+|---|---|---|---|
+| View | y = 0..1 | y = 2..3 | DD/MM x 0..58, HH/MM x 59..117, MM/SS x 118..175 |
+| Lock countdown | x = 174..175 | x = 172..173 | 2h px centered on y = 88, from y = 88 - h to 87 + h |
+
+- **Countdown:** h = round(88 × remaining / timeout), from 88 (176 px, the full height) down to 0. The timeout is `Bangle.getOptions().lockTimeout` in ms, which the LCD Timeout of the system sets (`Bangle.setLCDTimeout()` sets the backlight and the lock timeout together). With 0 (never lock), there is no countdown line.
+- **Restart:** on unlock and on every touch. The firmware restarts its lock timer at every change on the touchscreen, so the clock listens to the `drag` event, which comes for every such change, taps and swipes included. A button press restarts the firmware timer too, but in clock mode it opens the launcher at once.
+- **The lock always wins:** the line only shows the remaining time and never locks or delays anything. If the firmware locks before the line has run out, for example after the launcher, whose last touch came a moment before the clock started, the line goes with the lock. If something else restarts the firmware timer, for example `Bangle.setLCDPower(1)` from a widget, the line runs out before the lock.
+- **Drawing:** every second, the tiles are drawn first and the lines on top, so a line that shrinks or moves leaves no trace. Both black lines come before both white ones: with MM/SS and the full countdown, they meet in the top right corner as a frame (white outside, black inside). The black of the view line (y = 2..3) runs along the top of the digit squares of the upper row (y = 2..13) and merges with them. The countdown stays within column 10, which never holds a digit.
+- **Locked and flash light:** no lines. The locked face is pixel-identical to the face without lines.
+- With the widget bar shown, the bar covers the top line.
 
 ### Date and seconds
 
 - Swipe right shows DD/MM, swipe left shows MM/SS, both in the same layout as HH/MM. Swiping the other way returns to HH/MM. A second swipe in the same direction has no effect.
-- DD/MM is redrawn every minute, so the date changes at midnight. MM/SS is redrawn every second.
+- Unlocked, every view is redrawn every second (pulse and lines), so the seconds of MM/SS change every second and the date changes at midnight. Locked, HH/MM is redrawn every minute.
 - When the screen locks, the clock returns to HH/MM.
 - As there is no separator, 11 October looks the same as 11:10.
 
 ### New image
 
 - Every image has a random color palette (1, 2 or 3, each with a probability of 1/3), a random Lohse square and a random start color and direction on the color wheel.
-- **Automatically** every 60 minutes, at every full hour (local time).
-- **Swipe up** shows a new image at once, in the current view (HH/MM, DD/MM or MM/SS). It does not shift the automatic changes.
+- **Swipe up** shows a new image at once, in the current view (HH/MM, DD/MM or MM/SS).
 - **Every start** of the clock also shows a new image, for example when coming back from the launcher or an app.
 - While the widget bar is visible, swipe up only hides the bar. While the flash light is on, swipe up is ignored.
 
@@ -43,7 +62,7 @@ The tile is inverted right when the watch is unlocked and returns to normal when
 
 - Tap twice within 500 ms in the left half of the bottom quarter (x < 88, y > 132).
 - The screen turns white at full brightness. The backlight and lock timeouts are switched off, so the light stays on.
-- Any tap switches it off and brings back the previous view with the same image, or a new one if a full hour was crossed in the meantime. The timeouts and the brightness from the system settings (`setting.json`) are restored. This also happens if the clock is left while the light is on.
+- Any tap switches it off and brings back the previous view with the same image. The timeouts and the brightness from the system settings (`setting.json`) are restored. This also happens if the clock is left while the light is on.
 - Left, right and up swipes are ignored while the light is on.
 
 ### Widgets
@@ -70,6 +89,8 @@ The image is built from the top down by shifting:
 
 ## Algorithm
 
+In the code, `a` is `ROW_SHIFT`, drawn by `newSquare()`; `newColors()` fills the colors of the image.
+
 - Tile (column j, row i) gets color `(a[i] + j) mod N`, with N = 11. Each row is the color wheel, cyclically shifted by `a[i]` (horizontal permutations only).
 - `a` is a permutation of `0..N-1` with `a[0] = 0`, in which every jump `a[i+1] - a[i]` (mod N) lies in `2..N-2`. This makes the square Latin and keeps diagonal neighbors different. The jump from the last row back to the first must also lie in `2..N-2`, so the rules hold across the edges too.
 - `a` is drawn without backtracking: each step picks a random unused value, excluding predecessor +1 and -1. As at most two values are excluded, dead ends can only occur in the last two steps, and the draw then restarts, also if the jump back to the first row is invalid (1.42 attempts on average).
@@ -92,7 +113,7 @@ Four random choices fix a background image, and different choices always give di
 - The jump sequences are the closed tours through the 11 positions of the color wheel that never step to a neighboring position: 157 931 tours ([OEIS A002816](https://oeis.org/A002816), n = 11), each in two directions, all starting at `a[0] = 0`.
 - In total, the algorithm can generate 3 × 2 × 11 × 315 862 = **20 846 892** different background images. They also look different on the display: no two palettes share the same set of dither patterns, and in palette 3, where yellow and golden yellow look alike, each row is already fixed by the positions of its other 9 colors.
 - The images are not equally likely, as each value of `a` is drawn from the values still allowed: the most likely jump sequence is 3.9 times as likely as the least likely one. With 24.27 bits, the entropy per image stays close to the 24.31 bits of a uniform choice.
-- At one image per hour, the same image appears twice within about 5 200 images (7 months) with a probability of 50 %.
+- The same image appears twice within about 5 200 images with a probability of 50 %.
 
 ### Random numbers
 
@@ -175,7 +196,7 @@ The closest pairs, 2 tiles apart, are 0/8, 2/8, 4/9 and 5/8.
 ### Known weaknesses
 
 - The 1 leaves the three left columns of its cell empty. This is most noticeable when it is the first digit, from 10:00 to 19:59.
-- Dark colors such as purple contrast less with the black digit tiles than light ones.
+- Dark colors such as purple contrast less with the black digit tiles than light ones. While the watch is unlocked, the pulse makes them paler for 2 s out of 3.
 
 ## Layout
 
@@ -192,23 +213,26 @@ The closest pairs, 2 tiles apart, are 0/8, 2/8, 4/9 and 5/8.
 
 - **Tile boundaries:** 11 divides 176 evenly, so every tile is exactly 16 × 16 px.
 - **Gaps:** The tiles of the Lohse square fill their cells completely. Each digit tile is drawn GAP px (default 4) smaller than its cell, which leaves a frame of 2 px on every side and a gap of 4 px between two digit tiles. For an even gap, the space is split equally between the two sides; for an odd gap, the extra pixel goes right and below. The gap is transparent: it shows the color of the cell underneath, so two adjacent digit tiles are separated by the colors of their own cells.
-- **Colors:** The digit tiles are black, everything else shows the color of the Lohse square. The system theme is ignored. With GAP = 0, the digit tiles fill their cells and touch.
+- **Colors:** The digit tiles are black, everything else shows the color of the Lohse square (paler during the pulse while unlocked), apart from the [white lines](#white-lines) while unlocked. The system theme is ignored. With GAP = 0, the digit tiles fill their cells and touch.
 
 ## Configuration
 
-There are no user settings. Four constants at the top of `app.js`:
+There are no user settings. Six constants at the top of `app.js`:
 
 ```js
 const FAST_LOAD = true;       // widgets on swipe down and fast loading (false: neither)
 const N = 11;                 // grid size: 11 x 11 tiles, two rows of 5-tile digits + 1 row
-const ART_MIN = 60;           // new image every 60 minutes (a divisor of 1440)
-const GAP = 4;                // gap between digit tiles in px (0 to 4): a frame of GAP/2 px
+const GAP = 4;                // gap between digit tiles in px (0 to 4): a border of GAP/2 px
+const PULSE_PALE = 2000;      // unlocked: all tiles pale for 2 s,
+const PULSE_NORMAL = 1000;    //   then in their own colors for 1 s (both whole seconds)
+const LIGHTEN = 0.25;         // pale: blended with white by 0.25 (0.5: paler)
 ```
 
 - **FAST_LOAD:** see [Fast loading and widgets](#fast-loading-and-widgets).
 - **N:** The 4 × 5 font and the layout are made for 11 × 11 tiles. Other grid sizes are not supported.
-- **ART_MIN:** The image changes at the multiples of this interval since midnight (local time). A divisor of 1440 gives the same times every day.
 - **GAP:** see [Tiles and gaps](#tiles-and-gaps).
+- **PULSE_PALE, PULSE_NORMAL:** milliseconds of the pale and of the normal phase of the pulse, whole seconds only: the pulse switches with the redraw every second, see [Light pulse](#light-pulse).
+- **LIGHTEN:** how much the pale colors are blended with white, from 0 (unchanged) to 1 (white).
 
 The color palette is chosen at random for every image.
 
@@ -244,6 +268,10 @@ A launcher that supports fast loading still starts the clock without a reset. To
 In the emulator with its 5 default widgets, the whole system used 1467 memory blocks of 14 bytes with the clock running and `FAST_LOAD = true`, and 508 with `false`.
 
 ## Testing
+
+Version 0.02 (light pulse, no hourly image) was checked in a Node.js simulation of the screen and the timers (in the pale phase all 121 tiles pale and the black squares intact, pale for 2 s and normal for 1 s in all three views, the normal phase pixel-identical to the drawing without pulse, the flash light, the screen lock, no timers left after `remove`), and the locked screen was compared pixel by pixel with version 0.01 over 30 minutes: identical. In the official Bangle.js 2 emulator, it ran without errors or warnings: locked, no pulse; unlocked, pale for 2 s and normal for 1 s in all three views (the first pale phase 1.5 to 2.5 s), the digits stayed black; after `remove`, only the timers of the system and of the battery widget were left. The BangleApps sanity check and the BangleApps ESLint rules for the app folder gave no errors or warnings. The full test run described next was made with the earlier development version 0.07 and has not been repeated for 0.02.
+
+The two lines of 0.02 (white, 2 px) were checked in the Node.js simulation: at every redraw, every pixel of the screen against a model of the tiles, the digit squares and both lines in their drawing order, in all three views, with the countdown length 2 × round(88 × remaining / timeout) every second, the corner, the restart by a touch, no countdown with a timeout of 0, no lines with the flash light or when locked, no timers or listeners left after `remove`, and the same with timers firing up to 40 ms late or 0.4 ms early. The locked screen stayed pixel-identical to version 0.01 over 30 minutes. The emulator checks were made with the earlier red lines of 1 px: with taps and swipes through its touch controller, the view line in all three views, the countdown from 176 px to 0 in 10 s, restarted by a tap and by swipes, the shape of both lines against the tiles and their 2 × 2 dither pattern, LCD timeout 0, the flash light, and the locked screen pixel-identical before unlocking and after locking. The emulator does not lock by itself, so the screen was locked with `Bangle.setLocked(true)`.
 
 Version 0.07 was run on the official Bangle.js 2 emulator (Espruino firmware 2v29.74, compiled to JavaScript, from the Espruino Web IDE) in Node.js, together with the current Bootloader (0.69), Launcher (0.27) and Fastload Utils (0.07) from BangleApps. It was installed through the BangleApps App Loader library, pretokenised as by default and with `widget_utils` bundled. The emulator took its time from a simulated clock, touches and swipes went through its touch controller and button presses through its pin events. The digit tiles were compared with a separately derived copy of the font, and every checked screen was compared pixel by pixel with a model built from the Lohse square, the digit tiles and the 2 × 2 dither pattern of the firmware.
 

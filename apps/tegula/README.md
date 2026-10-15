@@ -2,16 +2,18 @@
 
 > **Time, set in tiles.**
 
-Tegula (Latin for tile) turns your Bangle.js 2 into a mosaic. The screen is divided into 11 × 11 tiles that form a Lohse square, a color arrangement named after the Swiss painter Richard Paul Lohse. The time is laid over it in black tiles: hours at the top, minutes at the bottom. A small piece of Concrete Art on your wrist, new every hour.
+Tegula (Latin for tile) turns your Bangle.js 2 into a mosaic. The screen is divided into 11 × 11 tiles that form a Lohse square, a color arrangement named after the Swiss painter Richard Paul Lohse. The time is laid over it in black tiles: hours at the top, minutes at the bottom. While the watch is unlocked, the mosaic turns paler for 2 seconds, then shows its own colors for 1 second, and two thin white lines show the view and the time until the screen locks. A small piece of Concrete Art on your wrist, new with every swipe up.
 
 ![Tegula at 12:34](screenshot.png)
 
 ## Features
 
-- **A new image every full hour**, or anytime with a swipe up
-- **More than 20 million different images**, enough for nearly 2 400 years at one image per hour
+- **A new image anytime you swipe up** and after using other apps, including the launcher
+- **More than 20 million different images**
 - **Bold tile digits** in a retro font inspired by seven-segment displays
 - **Date, seconds and flashlight**, each just one gesture away
+- **Light pulse**, when the watch is unlocked, the mosaic turns paler for 2 seconds and back for 1 second, for better readability
+- **Two thin white lines** when the watch is unlocked, the top one shows the view, the right one shrinks until the screen locks
 - **Widgets on demand**, hidden until you swipe down
 
 ---
@@ -20,11 +22,11 @@ Tegula (Latin for tile) turns your Bangle.js 2 into a mosaic. The screen is divi
 
 ### Waking Up the Clock
 
-Under _Settings → System → LCD_, configure which interactions wake the clock from sleep: Button, Tap, Double Tap, FaceUp or Twist.
+Under _Settings → System → LCD_, configure which interactions wake the clock from sleep: Button, Tap, Double Tap, FaceUp or Twist. By default, only Button is switched on.
 
 ### LCD Timeout
 
-Found under _Settings → System → LCD_. Determines how long the watch waits before going to sleep, which locks the touchscreen and switches off the backlight to save power. Default: 10 seconds.
+Found under _Settings → System → LCD_. Determines how long the watch waits before going to sleep, which locks the touchscreen and switches off the backlight to save power. Default: 10 seconds. While the watch is unlocked, the white line on the right edge shrinks over this time.
 
 ### LCD Brightness
 
@@ -44,9 +46,13 @@ Multiple watch faces can be installed on the Bangle. Make Tegula your default cl
 
 ## Primary Views
 
-The touchscreen only reacts while the watch is unlocked: press the button to unlock it. A blinking bottom right tile indicates that the watch is unlocked.
+While the watch is locked, Tegula shows the time (Hours/Minutes) in black digits and updates it once a minute.
 
-Swipe right for the date (Day/Month) and left for the seconds (Minutes/Seconds). Swipe the other way, or let the screen lock, to return to the time (Hours/Minutes). In every view, swipe up for a new image.
+The touchscreen only reacts while the watch is unlocked: press the button to unlock it. Swipe right for the date (Day/Month) and left for the seconds (Minutes/Seconds). Swipe the other way, or let the screen lock, to return to the time (Hours/Minutes). In every view, swipe up for a new image.
+
+While the watch is unlocked, the whole mosaic turns paler for 2 seconds, then shows its own colors for 1 second, and so on. This makes the digits easier to read and shows that the touchscreen reacts. It runs in all three views, in the seconds view together with the seconds, and starts paler on every unlock and after every swipe.
+
+Two thin white lines also appear while the watch is unlocked. The line at the top edge shows the view: the left third for the date, the middle third for the time, the right third for the seconds. The line on the right edge starts at full height and shrinks towards its center until the screen locks. Every touch starts it again, just as it restarts the LCD timeout of the watch. With an LCD timeout of 0 (never lock), only the top line is shown. Both lines disappear when the screen locks.
 
 ---
 
@@ -81,6 +87,14 @@ The image is built from the top down by shifting:
 ### Digits
 
 The digit font was chosen carefully to fit into the tile grid of the background image. It is inspired by the retro design of seven-segment displays, known from early digital watches and calculators. Each digit is 4 tiles wide and 5 tiles high, so two rows of digits with one row between them fill exactly the 11 rows of the grid. A thin frame in the color underneath separates the black tiles.
+
+### Light Pulse
+
+The pulse makes all tiles paler by blending their colors with white. The black squares stay black, and after 2 seconds the tiles show their own colors again for 1 second, so the Lohse square stays intact.
+
+### White Lines
+
+Each line is 2 pixels wide and has a black line of 2 pixels on its inner side, as white alone would vanish on pale tiles. They cover only the outermost pixels of the mosaic, and the locked clock face shows no trace of them.
 
 ---
 

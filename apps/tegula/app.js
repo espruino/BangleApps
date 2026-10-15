@@ -1,29 +1,36 @@
 // Tegula - Digital Art Clock for Bangle.js 2
+// Version 0.02
+//
 // The 176x176 px screen is divided into 11 x 11 square tiles of 16 px.
 // The tiles show a random Lohse square without gaps, and HH above MM in a 4x5-tile
-// digit font as black tiles. Digit tiles are drawn smaller than their cell, so a frame
+// digit font as black tiles. Digit tiles are drawn smaller than their cell, so a border
 // in the color of the square underneath separates them (see README.md).
-// New image (square, palette, colors) on every start, every ART_MIN minutes and on swipe up.
+// New image (square, palette, colors) on every start and on swipe up.
 //
 // While the watch is unlocked:
-// - the bottom right tile blinks
+// - in all three views, all tiles turn pale (blended with white) for 2 s, then show their
+//   own colors for 1 s, and so on; the digits stay black
+// - a white line at the top shows the view: left DD/MM, middle HH/MM, right MM/SS
+// - a white line at the right shrinks from full height to a point until the screen locks
 // - swipe right shows DD/MM, swipe left shows MM/SS (until the screen locks)
 // - swipe up shows a new image
 // - double tap bottom left switches the flash light on (until the next tap)
 // - swipe down shows the widgets (only with FAST_LOAD)
 //
 // Lohse square as a Cayley table of the cyclic group Z_N:
-//   tile (column c, row r) = color (a[r] + c) mod N, a position on the color wheel
-// a is a permutation of 0..N-1 with a[0] = 0, every jump a[r+1] - a[r] lies in 2..N-2
-// (mod N), also the jump a[0] - a[N-1] from the last row back to the first:
-//   Latin:             a is a permutation, every row is a cyclic shift
-//   diagonals differ:  no jump is +1 or -1
+//   tile (column c, row r) = color (ROW_SHIFT[r] + c) mod N, a position on the color wheel
+// ROW_SHIFT is a permutation of 0..N-1 with ROW_SHIFT[0] = 0, every step from one row to
+// the next lies in 2..N-2 (mod N), also the step from the last row back to the first:
+//   Latin:             ROW_SHIFT is a permutation, every row is a cyclic shift
+//   diagonals differ:  no step is +1 or -1
 //   torus:             all of this also holds when tiling across the edges
 {
   const FAST_LOAD = true;       // widgets on swipe down and fast loading (false: neither)
   const N = 11;                 // grid size: 11 x 11 tiles, two rows of 5-tile digits + 1 row
-  const ART_MIN = 60;           // new image every 60 minutes (a divisor of 1440)
-  const GAP = 4;                // gap between digit tiles in px (0 to 4): a frame of GAP/2 px
+  const GAP = 4;                // gap between digit tiles in px (0 to 4): a border of GAP/2 px
+  const PULSE_PALE = 2000;      // unlocked: all tiles pale for 2 s,
+  const PULSE_NORMAL = 1000;    //   then in their own colors for 1 s (both whole seconds)
+  const LIGHTEN = 0.25;         // pale: blended with white by 0.25 (0.5: paler)
 
   // Without FAST_LOAD, the clock must not run with widgets that the previous app left in
   // memory when it fast loaded the clock. The boot loader and Fastload Utils only prevent
@@ -42,6 +49,7 @@
   const S = 176 / N;            // tile size: 16 px
   const G0 = GAP >> 1;          // part of the gap left/above a digit tile, the rest right/below
   const G1 = G0 - GAP + S - 1;  // right/bottom edge of a digit tile within its cell
+  const PULSE = PULSE_PALE + PULSE_NORMAL;  // one pulse: 3 s
 
   // 11-color wheels (RGB), interpolated to N colors
   const PALETTES = [
@@ -108,107 +116,138 @@
       if (f[y * 5 + x] === "1") FONT[5 * i + y] |= 1 << x;
   });
 
-  const A = new Uint8Array(N);       // jump sequence: color of the first tile in each row
-  const P = new Uint16Array(2 * N);  // palette twice, P[k] = P[k + N]: no % while drawing
-  const T = new Uint16Array(N);      // digit tiles: bit c of T[r] set if tile (column c, row r) is one
+  // Image and screen state. A digit tile is a tile of a digit, drawn in black.
+  const ROW_SHIFT = new Uint8Array(N);   // Lohse square: color of the first tile in row r,
+                                         //   tile (c, r) has color ROW_SHIFT[r] + c (mod N)
+  const COLORS = new Uint16Array(2 * N); // the N colors of the image, twice:
+                                         //   COLORS[k] = COLORS[k + N], no % while drawing
+  const PALE = new Uint16Array(2 * N);   // the same colors, blended with white for the pulse
+  const FRAME = new Uint16Array(N);      // the digit tiles of the view, per row r:
+                                         //   bit c of FRAME[r] set: tile (c, r) is a digit tile
 
   let key;              // color wheel of the current image (one of PALETTES)
-  let slot;             // time slot of the current image (ART_MIN)
-  let drawTimeout, blinkInterval;
+  let drawTimeout;      // next redraw: unlocked or MM/SS next second, else next minute
   let view = 0;         // -1: DD/MM, 0: HH/MM, 1: MM/SS
-  let blink = false;    // bottom right tile is inverted
+  let locked = true;    // screen is locked
   let light = false;    // flash light is on
   let saved;            // timeouts to restore after the flash light
   let lastTap = 0;      // time of the last tap bottom left
+  let pulseSince;       // start of the pulse in ms (a whole second), kept by the periodic redraws
+  let countdownSince;   // start of the lock countdown in ms: unlock or last touch
 
-  // Jump sequence a[0..N-1] with a[0] = 0: a random a[0] would only rotate the colors once
-  // more, which the random start color in palette() already does. Each further value is
-  // drawn uniformly from the unused values, except predecessor +-1. No backtracking: at
-  // most 2 values are excluded per step, so dead ends can only occur in the last 2 steps,
-  // then restart. Local variables: faster lookups than in the enclosing scope.
-  const jumps = () => {
+  // New Lohse square: picks ROW_SHIFT, the color of the first tile in each row (rules at
+  // the top). From there, each row runs once through the color wheel.
+  // Row 0 starts with color 0: a random start would only rotate the colors, which
+  // newColors() already does. Each further row starts with a random color that no row
+  // used yet and that is no neighbor (+1 or -1) of the previous row's color. At the end,
+  // the last row must not be a neighbor of row 0 either (torus). No backtracking: at most
+  // 2 colors are excluded per row, so a dead end can only occur in the last 2 rows, then
+  // start over. Local variables: faster lookups than in the enclosing scope.
+  const newSquare = () => {
     "ram";
-    const rnd = Math.random, a = A, n = N, r = new Uint8Array(n - 1);  // r: unused values
-    let i, j, m, c, x, up, dn, used;
+    const random = Math.random, rowShift = ROW_SHIFT, n = N, unused = new Uint8Array(n - 1);
+    let row, pick, free, prev, color, plus1, minus1, usedMask;
     for (;;) {
-      for (m = 0; m < n - 1; m++) r[m] = m + 1;   // 1..N-1 unused, m of them
-      c = a[0] = 0; used = 1;
-      for (i = 1; i < n; i++) {
-        up = c + 1; if (up === n) up = 0;
-        dn = c - 1; if (dn < 0) dn = n - 1;
-        // only neighbors of c left: dead end
-        if (m < 3 && m === ((used >> up & 1) ^ 1) + ((used >> dn & 1) ^ 1)) break;
-        do { j = (rnd() * m) | 0; x = r[j]; } while (x === up || x === dn);
-        r[j] = r[--m];                            // remove x, the last unused value takes its place
-        a[i] = c = x; used |= 1 << x;
+      for (free = 0; free < n - 1; free++) unused[free] = free + 1;  // colors 1..N-1 unused
+      prev = rowShift[0] = 0; usedMask = 1;           // prev: color of the previous row
+      for (row = 1; row < n; row++) {
+        plus1 = prev + 1; if (plus1 === n) plus1 = 0;   // the neighbors of prev on the wheel
+        minus1 = prev - 1; if (minus1 < 0) minus1 = n - 1;
+        // only neighbors of prev left: dead end
+        if (free < 3 &&
+            free === ((usedMask >> plus1 & 1) ^ 1) + ((usedMask >> minus1 & 1) ^ 1)) break;
+        do { pick = (random() * free) | 0; color = unused[pick]; }
+        while (color === plus1 || color === minus1);
+        unused[pick] = unused[--free];                // remove color, the last unused one takes its place
+        rowShift[row] = prev = color; usedMask |= 1 << color;
       }
-      if (i === n && c > 1 && c < n - 1) return;  // jump back to a[0] = 0 valid too (torus)
+      if (row === n && prev > 1 && prev < n - 1) return;  // step back to row 0 (color 0) valid too (torus)
     }
   };
 
-  // N colors evenly spaced on the wheel of the K key colors, random start color and
-  // direction. Position p in units of 1/N key color: integer, hence exact.
+  // New COLORS: N colors evenly spaced on the wheel of the K key colors (key), random
+  // start color and direction. Position p in units of 1/N key color: integer, hence exact.
   // With K = N = 11, every image shows the 11 key colors, without interpolation.
-  const palette = () => {
+  // PALE: each color blended with white, once per image (16-bit, dithered when drawn).
+  const newColors = () => {
     const n = N, C = key, K = C.length / 3, W = K * n, s = Math.random() < 0.5 ? K : W - K;
     let k, i0, i1, f, p = ((Math.random() * K) | 0) * n;
     for (k = 0; k < n; k++) {
       i0 = (p / n) | 0; f = (p - i0 * n) / n;
       i1 = i0 === K - 1 ? 0 : 3 * i0 + 3; i0 *= 3;
-      P[k] = P[k + n] = g.toColor(
+      COLORS[k] = COLORS[k + n] = g.toColor(
         (C[i0] + (C[i1] - C[i0]) * f) / 255,
         (C[i0 + 1] + (C[i1 + 1] - C[i0 + 1]) * f) / 255,
         (C[i0 + 2] + (C[i1 + 2] - C[i0 + 2]) * f) / 255);
+      PALE[k] = PALE[k + n] = g.blendColor(COLORS[k], "#fff", LIGHTEN);
       p += s; if (p >= W) p -= W;
     }
   };
 
-  // Time slot of the date: changes every ART_MIN minutes (local time)
-  const slotOf = d => d.getDate() * 1440 + ((d.getHours() * 60 + d.getMinutes()) / ART_MIN | 0);
-
-  // New image: color palette (1 to 3 at random), Lohse square and colors
-  const newArt = d => {
+  // New image: color palette (1 to 3 at random), Lohse square and colors.
+  // Only on start and on swipe up.
+  const newArt = () => {
     key = PALETTES[(Math.random() * PALETTES.length) | 0];
-    jumps();
-    palette();
-    slot = slotOf(d);
+    newSquare();
+    newColors();
   };
 
-  // Tile (column c, row r): the whole cell in its color, a digit tile in black on top,
-  // shrunk by the gap. The gap is transparent: it shows the color of the cell.
-  const tile = (c, r, digit) => {
-    const x = c * S, y = r * S;
-    g.setColor(P[A[r] + c]).fillRect(x, y, x + S - 1, y + S - 1);
-    if (digit) g.setColor(0).fillRect(x + G0, y + G0, x + G1, y + G1);
-  };
-
-  // All tiles: the Lohse square without gaps, the digit tiles in black.
+  // All tiles: the Lohse square without gaps, the digit tiles in black. Each tile: the
+  // whole cell in its color (pale: in its pale color), a digit tile in black on top, shrunk
+  // by the gap. The gap is transparent: it shows the color of the cell.
   // Local copies of the constants: faster lookups than in the enclosing scope.
-  const drawTiles = () => {
+  const drawTiles = pale => {
     "ram";
-    const G = g.reset(), p = P, a = A, t = T, n = N, s = S, s1 = S - 1, g0 = G0, g1 = G1;
-    let r, c, k, x, y, bits;
-    for (r = 0, y = 0; r < n; r++, y += s) {
-      k = a[r]; bits = t[r];
-      for (c = 0, x = 0; c < n; c++, x += s) {
-        G.setColor(p[k + c]).fillRect(x, y, x + s1, y + s1);
-        if (bits & 1) G.setColor(0).fillRect(x + g0, y + g0, x + g1, y + g1);
-        bits >>= 1;
+    const G = g.reset(), colors = pale ? PALE : COLORS, rowShift = ROW_SHIFT, frame = FRAME,
+          n = N, size = S, last = S - 1, g0 = G0, g1 = G1;  // last: last pixel of a cell
+    let row, col, shift, x, y, digitTiles;
+    for (row = 0, y = 0; row < n; row++, y += size) {
+      shift = rowShift[row]; digitTiles = frame[row];  // bit 0: digit tile in this column
+      for (col = 0, x = 0; col < n; col++, x += size) {
+        G.setColor(colors[shift + col]).fillRect(x, y, x + last, y + last);
+        if (digitTiles & 1) G.setColor(0).fillRect(x + g0, y + g0, x + g1, y + g1);
+        digitTiles >>= 1;
       }
     }
   };
 
-  // Bottom right tile: a digit tile or not. Swapped while blinking
-  const drawCorner = () => {
-    if (light) return;
-    const k = N - 1;
-    g.reset();
-    tile(k, k, ((T[k] >> k & 1) === 1) !== blink);
+  // Pulse: while unlocked without flash light, in all three views, all tiles turn pale for
+  // PULSE_PALE ms (their colors blended with white, PALE), then show their own colors for
+  // PULSE_NORMAL ms, and so on. The black squares stay black. It starts pale at pulseSince,
+  // the start rounded to a whole second: so it switches on whole seconds, with the redraw
+  // every second while unlocked, and the first pale phase lasts 1.5 to 2.5 s.
+
+  // Pale at this redraw? The periodic redraws come on whole seconds after pulseSince:
+  // rounding to whole seconds absorbs the jitter of the timer.
+  const pulsePale = () =>
+    Math.round((Date.now() - pulseSince) / 1000) * 1000 % PULSE < PULSE_PALE;
+
+  // Two lines while unlocked, 2 px white with 2 px black inside (white alone vanishes on
+  // pale tiles), drawn after all tiles: a line that shrinks or moves leaves no trace.
+  // - view, at the top: white y = 0..1, black y = 2..3, over the third of the width that
+  //   belongs to the view: DD/MM left (x 0..58), HH/MM middle (59..117), MM/SS right (118..175)
+  // - lock countdown, at the right: white x = 174..175, black x = 172..173, centered on
+  //   y = 88. It shrinks from 176 px at the unlock or last touch to a point at the lock,
+  //   over the lock timeout of the system (LCD Timeout); none if that is 0 (never locks).
+  // Both black lines first, then both white ones: where they meet in the top right corner
+  // (MM/SS with the full countdown), the white stays outside.
+  const drawLines = () => {
+    const x0 = 59 * (view + 1), x1 = Math.min(x0 + 58, 175),
+          timeout = Bangle.getOptions().lockTimeout,   // in ms
+          left = Math.min(timeout, timeout - (Date.now() - countdownSince)),  // ms to the lock
+          h = left > 0 ? Math.round(88 * left / timeout) : 0;  // half the length of the line
+    const G = g.reset().setColor(0).fillRect(x0, 2, x1, 3);
+    if (h) G.fillRect(172, 88 - h, 173, 87 + h);
+    G.setColor("#fff").fillRect(x0, 0, x1, 1);
+    if (h) G.fillRect(174, 88 - h, 175, 87 + h);
   };
 
-  const draw = () => {
+  // Redraw. tick: periodic redraw (next second or minute), the pulse goes on; otherwise it
+  // starts again, pale.
+  const draw = tick => {
     if (drawTimeout) clearTimeout(drawTimeout);
     drawTimeout = undefined;
+    if (!tick) pulseSince = Math.round(Date.now() / 1000) * 1000;
 
     // Flash light: white screen, nothing else
     if (light) {
@@ -216,11 +255,8 @@
       return;
     }
 
-    // New image when the time slot changes (every ART_MIN minutes)
-    const d = new Date();
-    if (slotOf(d) !== slot) newArt(d);
-
     // First number in the upper half, second number in the lower half
+    const d = new Date();
     const v = view < 0 ? [d.getDate(), d.getMonth() + 1] :
               view > 0 ? [d.getMinutes(), d.getSeconds()] :
                          [d.getHours(), d.getMinutes()];
@@ -229,17 +265,20 @@
     // Digit tiles: 4x5 tiles per digit, 1 tile between the digits and between HH and MM.
     // Columns 1 + 4 + 1 + 4 + 1 = 11: digit i starts in column 1 + 5 * (i % 2).
     // Rows 5 + 1 + 5 = 11 (no margin): digit i starts in row 6 * (i >> 1).
-    T.fill(0);
+    FRAME.fill(0);
     digits.forEach((dig, i) => {
       const c0 = 1 + 5 * (i % 2), r0 = 6 * (i >> 1);
-      for (let y = 0; y < 5; y++) T[r0 + y] |= FONT[5 * dig + y] << c0;
+      for (let y = 0; y < 5; y++) FRAME[r0 + y] |= FONT[5 * dig + y] << c0;
     });
-    drawTiles();
-    if (blink) drawCorner();
+    // Unlocked: tiles with the pulse, then the lines on top (draw() never gets here with the
+    // flash light on). Locked: tiles in their own colors only.
+    drawTiles(!locked && pulsePale());
+    if (!locked) drawLines();
 
-    // Redraw at the start of the next minute (MM/SS: next second)
-    const t = view > 0 ? 1000 : 60000;
-    drawTimeout = setTimeout(() => { drawTimeout = undefined; draw(); }, t - Date.now() % t);
+    // Redraw at the start of the next second (unlocked: pulse and lines; MM/SS: seconds),
+    // otherwise at the start of the next minute
+    const t = locked && view <= 0 ? 60000 : 1000;
+    drawTimeout = setTimeout(() => { drawTimeout = undefined; draw(true); }, t - Date.now() % t);
   };
 
   // Flash light on: white screen at full brightness, no timeout
@@ -262,19 +301,22 @@
     Bangle.setLCDBrightness(s.brightness === undefined ? 1 : s.brightness);
   };
 
-  // Locked: flash light off, back to HH/MM. Unlocked: blink every 500 ms
-  const onLock = locked => {
-    if (blinkInterval) clearInterval(blinkInterval);
-    blinkInterval = undefined;
-    blink = !locked;
-    if (locked) {
+  // Locked: flash light off, back to HH/MM, no lines (draw). Unlocked: lock countdown from
+  // now on, pulse and lines (draw).
+  const onLock = l => {
+    locked = l;
+    if (l) {
       lightOff();
       view = 0;
     } else {
-      blinkInterval = setInterval(() => { blink = !blink; drawCorner(); }, 500);
+      countdownSince = Date.now();
     }
     draw();
   };
+
+  // Every touch (tap, swipe, drag) restarts the lock countdown, as it restarts the lock
+  // timer of the firmware. A button press would too, but it opens the launcher (clock mode).
+  const onDrag = () => { countdownSince = Date.now(); };
 
   // Any tap: flash light off. Double tap bottom left: flash light on
   const onTouch = (b, e) => {
@@ -305,7 +347,7 @@
     } else if (ud < 0 && !(FAST_LOAD && require("widget_utils").offset > -24)) {
       E.stopEventPropagation();
       if (light) return;
-      newArt(new Date());
+      newArt();
       draw();
     }
   };
@@ -316,9 +358,9 @@
     Bangle.removeListener("lock", onLock);
     Bangle.removeListener("touch", onTouch);
     Bangle.removeListener("swipe", onSwipe);
+    Bangle.removeListener("drag", onDrag);
     if (drawTimeout) clearTimeout(drawTimeout);
-    if (blinkInterval) clearInterval(blinkInterval);
-    drawTimeout = blinkInterval = undefined;
+    drawTimeout = undefined;
     lightOff();
     require("widget_utils").show();
   } : undefined });
@@ -331,6 +373,8 @@
 
   Bangle.on("lock", onLock);
   Bangle.on("touch", onTouch);
+  Bangle.on("drag", onDrag);
   Bangle.prependListener("swipe", onSwipe);   // before the widget_utils handler
-  onLock(Bangle.isLocked());                  // blink if unlocked, then draw (first image)
+  newArt();                                   // first image
+  onLock(Bangle.isLocked());                  // draw, pulse and lines if unlocked
 }
