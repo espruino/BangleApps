@@ -138,31 +138,56 @@
   // New Lohse square: picks ROW_SHIFT, the color of the first tile in each row (rules at
   // the top). From there, each row runs once through the color wheel.
   // Row 0 starts with color 0: a random start would only rotate the colors, which
-  // newColors() already does. Each further row starts with a random color that no row
-  // used yet and that is no neighbor (+1 or -1) of the previous row's color. At the end,
-  // the last row must not be a neighbor of row 0 either (torus). No backtracking: at most
-  // 2 colors are excluded per row, so a dead end can only occur in the last 2 rows, then
-  // start over. Local variables: faster lookups than in the enclosing scope.
+  // newColors() already does. Each further row takes a random unused color at a valid
+  // step from the row above. No backtracking: only the 2 neighbors of the row above are
+  // excluded, so a dead end can only occur in the last 2 rows. Then, or if the step from
+  // the last row back to row 0 is invalid (torus), the whole square starts over.
+  // Local variables: faster lookups than in the enclosing scope.
   const newSquare = () => {
     "ram";
-    const random = Math.random, rowShift = ROW_SHIFT, n = N, unused = new Uint8Array(n - 1);
-    let row, pick, free, prev, color, plus1, minus1, usedMask;
-    for (;;) {
-      for (free = 0; free < n - 1; free++) unused[free] = free + 1;  // colors 1..N-1 unused
-      prev = rowShift[0] = 0; usedMask = 1;           // prev: color of the previous row
-      for (row = 1; row < n; row++) {
-        plus1 = prev + 1; if (plus1 === n) plus1 = 0;   // the neighbors of prev on the wheel
-        minus1 = prev - 1; if (minus1 < 0) minus1 = n - 1;
-        // only neighbors of prev left: dead end
-        if (free < 3 &&
-            free === ((usedMask >> plus1 & 1) ^ 1) + ((usedMask >> minus1 & 1) ^ 1)) break;
-        do { pick = (random() * free) | 0; color = unused[pick]; }
-        while (color === plus1 || color === minus1);
-        unused[pick] = unused[--free];                // remove color, the last unused one takes its place
-        rowShift[row] = prev = color; usedMask |= 1 << color;
+    const n = N, rowShift = ROW_SHIFT, random = Math.random;
+    const unused = new Uint8Array(n - 1);  // colors no row has used yet: unused[0..unusedCount-1]
+    let unusedCount;
+
+    // Valid step from color a to color b: b lies 2..N-2 positions further on the wheel, so
+    // it is neither a itself nor a neighbor of a (+1 or -1)
+    const isValidStep = (a, b) => {
+      const step = (b - a + n) % n;
+      return step >= 2 && step <= n - 2;
+    };
+
+    // Dead end: no unused color at a valid step from color, only its neighbors are left.
+    // As color has just 2 neighbors, this needs at most 2 unused colors.
+    const isDeadEnd = color => {
+      if (unusedCount > 2) return false;
+      for (let i = 0; i < unusedCount; i++) if (isValidStep(color, unused[i])) return false;
+      return true;
+    };
+
+    // A random unused color at a valid step from color, drawn again until the step is
+    // valid. It is used from now on: the last unused color takes its place.
+    const takeNextColor = color => {
+      let i;
+      do { i = (random() * unusedCount) | 0; } while (!isValidStep(color, unused[i]));
+      const next = unused[i];
+      unused[i] = unused[--unusedCount];
+      return next;
+    };
+
+    // One attempt, row by row. False at a dead end or if the step from the last row back
+    // to row 0 is invalid.
+    const fillRows = () => {
+      for (let i = 0; i < n - 1; i++) unused[i] = i + 1;  // all colors except 0
+      unusedCount = n - 1;
+      let color = rowShift[0] = 0;                        // color of the row above
+      for (let row = 1; row < n; row++) {
+        if (isDeadEnd(color)) return false;
+        color = rowShift[row] = takeNextColor(color);
       }
-      if (row === n && prev > 1 && prev < n - 1) return;  // step back to row 0 (color 0) valid too (torus)
-    }
+      return isValidStep(color, rowShift[0]);             // back to row 0 (torus)
+    };
+
+    while (!fillRows()) { /* start over */ }
   };
 
   // New COLORS: N colors evenly spaced on the wheel of the K key colors (key), random
@@ -222,24 +247,21 @@
   const pulsePale = () =>
     Math.round((Date.now() - pulseSince) / 1000) * 1000 % PULSE < PULSE_PALE;
 
-  // Two lines while unlocked, 2 px white with 2 px black inside (white alone vanishes on
-  // pale tiles), drawn after all tiles: a line that shrinks or moves leaves no trace.
-  // - view, at the top: white y = 0..1, black y = 2..3, over the third of the width that
-  //   belongs to the view: DD/MM left (x 0..58), HH/MM middle (59..117), MM/SS right (118..175)
-  // - lock countdown, at the right: white x = 174..175, black x = 172..173, centered on
-  //   y = 88. It shrinks from 176 px at the unlock or last touch to a point at the lock,
-  //   over the lock timeout of the system (LCD Timeout); none if that is 0 (never locks).
-  // Both black lines first, then both white ones: where they meet in the top right corner
-  // (MM/SS with the full countdown), the white stays outside.
+  // Two white lines while unlocked, 4 px wide, drawn after all tiles: a line that shrinks
+  // or moves leaves no trace.
+  // - view, at the top: y = 0..3, over the third of the width that belongs to the view:
+  //   DD/MM left (x 0..58), HH/MM middle (59..117), MM/SS right (118..175). It covers the
+  //   top 2 px of the digit tiles below it (row 0, y = 2..13).
+  // - lock countdown, at the right: x = 172..175, centered on y = 88. It shrinks from
+  //   176 px at the unlock or last touch to a point at the lock, over the lock timeout of
+  //   the system (LCD Timeout); none if that is 0 (never locks).
   const drawLines = () => {
     const x0 = 59 * (view + 1), x1 = Math.min(x0 + 58, 175),
           timeout = Bangle.getOptions().lockTimeout,   // in ms
           left = Math.min(timeout, timeout - (Date.now() - countdownSince)),  // ms to the lock
           h = left > 0 ? Math.round(88 * left / timeout) : 0;  // half the length of the line
-    const G = g.reset().setColor(0).fillRect(x0, 2, x1, 3);
-    if (h) G.fillRect(172, 88 - h, 173, 87 + h);
-    G.setColor("#fff").fillRect(x0, 0, x1, 1);
-    if (h) G.fillRect(174, 88 - h, 175, 87 + h);
+    const G = g.reset().setColor("#fff").fillRect(x0, 0, x1, 3);
+    if (h) G.fillRect(172, 88 - h, 175, 87 + h);
   };
 
   // Redraw. tick: periodic redraw (next second or minute), the pulse goes on; otherwise it
