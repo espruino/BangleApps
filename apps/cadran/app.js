@@ -1,5 +1,5 @@
-/* eslint-disable no-unused-vars */
-var txt, largeur, hauteur, cum_cor, glyph, dizminpre, dizmin, dizheu, charge, dizdat, dizmoi, vit, d, nomjou, uniminpre, flash, uniheu, jou1, unidat, unimoi, BLE, gps, sec, jou, mode, recalage, vit_pre, jou2, min, z0, cor_int, interval_boucle, unimin, jou3, z1, chargeur, interval_cligno, z2, heu, dat, z3, chargeur_prec, moi, z4, z5, an, gps_listener, z6, z7, z8, z9, zA, zD, zE, zI, zJ, zL, zM, zN, zR, zS, zU, diff, zV, z2points, zBTon, zBTof, zAPPS, zSYNC, zGPS;
+var largeur, hauteur, cum_cor, glyph, dizminpre, dizmin, dizheu, charge, dizdat, dizmoi, vit, d, nomjou, uniminpre, flash, uniheu, jou1, unidat, unimoi, BLE, gps, sec, jou, mode, recalage, vit_pre, jou2, min, cor_int, interval_boucle, unimin, jou3, chargeur, interval_cligno, heu, dat, chargeur_prec, moi, an, gps_listener, diff, z2points, zBTon, zBTof, zAPPS, zSYNC, zGPS;
+var glyphes = {};
 
 function bouton() {
   g.setBgColor(0,0,0);
@@ -177,30 +177,30 @@ function cree_caract() {
   glyph = '';
   hauteur = 53;
   largeur = 32;
-  z0 = creerGlyph("0", largeur, hauteur);
-  z1 = creerGlyph("1", largeur, hauteur);
-  z2 = creerGlyph("2", largeur, hauteur);
-  z3 = creerGlyph("3", largeur, hauteur);
-  z4 = creerGlyph("4", largeur, hauteur);
-  z5 = creerGlyph("5", largeur, hauteur);
-  z6 = creerGlyph("6", largeur, hauteur);
-  z7 = creerGlyph("7", largeur, hauteur);
-  z8 = creerGlyph("8", largeur, hauteur);
-  z9 = creerGlyph("9", largeur, hauteur);
+  glyphes.z0 = creerGlyph("0", largeur, hauteur);
+  glyphes.z1 = creerGlyph("1", largeur, hauteur);
+  glyphes.z2 = creerGlyph("2", largeur, hauteur);
+  glyphes.z3 = creerGlyph("3", largeur, hauteur);
+  glyphes.z4 = creerGlyph("4", largeur, hauteur);
+  glyphes.z5 = creerGlyph("5", largeur, hauteur);
+  glyphes.z6 = creerGlyph("6", largeur, hauteur);
+  glyphes.z7 = creerGlyph("7", largeur, hauteur);
+  glyphes.z8 = creerGlyph("8", largeur, hauteur);
+  glyphes.z9 = creerGlyph("9", largeur, hauteur);
   hauteur = 40;
   largeur = 52;
-  zA = creerGlyph("A", largeur, hauteur);
-  zD = creerGlyph("D", largeur, hauteur);
-  zE = creerGlyph("E", largeur, hauteur);
-  zI = creerGlyph("I", 26, hauteur);
-  zJ = creerGlyph("J", largeur, hauteur);
-  zL = creerGlyph("L", largeur, hauteur);
-  zM = creerGlyph("M", largeur, hauteur);
-  zN = creerGlyph("N", largeur, hauteur);
-  zR = creerGlyph("R", largeur, hauteur);
-  zS = creerGlyph("S", largeur, hauteur);
-  zU = creerGlyph("U", largeur, hauteur);
-  zV = creerGlyph("V", largeur, hauteur);
+  glyphes.zA = creerGlyph("A", largeur, hauteur);
+  glyphes.zD = creerGlyph("D", largeur, hauteur);
+  glyphes.zE = creerGlyph("E", largeur, hauteur);
+  glyphes.zI = creerGlyph("I", 26, hauteur);
+  glyphes.zJ = creerGlyph("J", largeur, hauteur);
+  glyphes.zL = creerGlyph("L", largeur, hauteur);
+  glyphes.zM = creerGlyph("M", largeur, hauteur);
+  glyphes.zN = creerGlyph("N", largeur, hauteur);
+  glyphes.zR = creerGlyph("R", largeur, hauteur);
+  glyphes.zS = creerGlyph("S", largeur, hauteur);
+  glyphes.zU = creerGlyph("U", largeur, hauteur);
+  glyphes.zV = creerGlyph("V", largeur, hauteur);
   z2points = creerGlyph(":", 10, 30);
   hauteur = 40;
   largeur = 70;
@@ -270,7 +270,7 @@ function aff_unimin() {
     g.setColor(0,0,0);
     g.fillRect(144, 0, 175, 52);
     g.setColor(1,1,0);
-    g.drawImage(global[unimin],144,0);
+    g.drawImage(glyphes[unimin],144,0);
   }
 }
 
@@ -294,7 +294,7 @@ function aff_dizmin() {
     g.setColor(0,0,0);
     g.fillRect(104, 0, 135, 52);
     g.setColor(1,1,0);
-    g.drawImage(global[dizmin],104,0);
+    g.drawImage(glyphes[dizmin],104,0);
   }
 }
 
@@ -319,8 +319,8 @@ function aff_heu() {
     g.setColor(0,0,0);
     g.fillRect(0, 0, 71, 52);
     g.setColor(1,1,0);
-    g.drawImage(global[dizheu],0,0);
-    g.drawImage(global[uniheu],40,0);
+    g.drawImage(glyphes[dizheu],0,0);
+    g.drawImage(glyphes[uniheu],40,0);
   }
 }
 
@@ -330,13 +330,13 @@ function aff_jou() {
     g.fillRect(0, 62, 175, 101);
     g.setColor(1,1,0);
     if (nomjou == 'DIM') {
-      g.drawImage(global[jou1], 13, 62);
-      g.drawImage(global[jou2], 75, 62);
-      g.drawImage(global[jou3], 111, 62);
+      g.drawImage(glyphes[jou1], 13, 62);
+      g.drawImage(glyphes[jou2], 75, 62);
+      g.drawImage(glyphes[jou3], 111, 62);
     } else {
-      g.drawImage(global[jou1], 0, 62);
-      g.drawImage(global[jou2], 62, 62);
-      g.drawImage(global[jou3], 124, 62);
+      g.drawImage(glyphes[jou1], 0, 62);
+      g.drawImage(glyphes[jou2], 62, 62);
+      g.drawImage(glyphes[jou3], 124, 62);
     }
   }
 }
@@ -367,8 +367,8 @@ function aff_dat() {
     g.setColor(0,0,0);
     g.fillRect(0, 110, 71,  162);
     g.setColor(1,1,0);
-    g.drawImage(global[dizdat], 0, 110);
-    g.drawImage(global[unidat],40, 110);
+    g.drawImage(glyphes[dizdat], 0, 110);
+    g.drawImage(glyphes[unidat],40, 110);
   }
 }
 
@@ -408,8 +408,8 @@ function aff_moi() {
     g.setColor(0,0,0);
     g.fillRect(104, 110, 175,  162);
     g.setColor(1,1,0);
-    g.drawImage(global[dizmoi], 104, 110);
-    g.drawImage(global[unimoi], 144, 110);
+    g.drawImage(glyphes[dizmoi], 104, 110);
+    g.drawImage(glyphes[unimoi], 144, 110);
   }
 }
 
