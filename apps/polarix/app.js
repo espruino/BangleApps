@@ -6,6 +6,7 @@ Watchface Polarix
 - Farbe wird dunkler, Strichdicke kleiner, Länge reduziert
 - Minutenkreis auch als Polygon gerendert
 - Rundungen der Quadrate grösser
+- Sek etwas orangener, Stunden schmaller
 
 */
 
@@ -27,7 +28,7 @@ Watchface Polarix
     const HOUR_SHAPE = { width: HOUR_SQUARE_WIDTH, radius: HOUR_SQUARE_RADIUS };
     const HOUR_MARKER_SIZE = 3;
     const HOUR_LENGTH = 26;     // ohne Abrundung
-    const HOUR_WIDTH = 22;
+    const HOUR_WIDTH = 21;      // statt 22
     const HOUR_COLOR = "#F00";
 
     // Minutenanzeige
@@ -38,7 +39,7 @@ Watchface Polarix
     // Sekundenanzeige
     const SEC_SIZE = 7;
     const SEC_SHAPE = { width: HOUR_SQUARE_WIDTH, radius: HOUR_SQUARE_RADIUS };
-    const SEC_COLOR = "#FF0";
+    const SEC_COLOR = "#FFD400";
 
     
     // Factory für Berechnungsfunktinen
