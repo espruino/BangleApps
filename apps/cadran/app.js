@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 var largeur, hauteur, cum_cor, glyph, dizminpre, dizmin, dizheu, charge, dizdat, dizmoi, vit, d, nomjou, uniminpre, flash, uniheu, jou1, unidat, unimoi, BLE, gps, sec, jou, mode, recalage, vit_pre, jou2, min, cor_int, interval_boucle, unimin, jou3, chargeur, interval_cligno, heu, dat, chargeur_prec, moi, an, gps_listener, diff, z2points, zBTon, zBTof, zAPPS, zSYNC, zGPS;
 var glyphes = {};
 
