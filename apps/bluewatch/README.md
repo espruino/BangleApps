@@ -15,6 +15,7 @@ Bangle.js 1 support coming soon!
 - Find my phone support
 - Use of the phone's GPS for Bangle.js GPS.
 - Sending and storing of heart rate, steps, battery, and active/resting calories (if installed) to Apple Health/BlueWatch app
+- Syncing of time from phone to watch
 
 Additionally, the iOS app provides shortcuts actions to create your own workflows and automations. By hooking into when BlueWatch receives a message (see developer info), you can send messages through shortcuts that your watch receives and handles. This allows you to create complex workflows such as: 
 - When you reach home, alert your watch to change the clock to an inexact clock face to relax
