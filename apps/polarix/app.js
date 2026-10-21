@@ -7,6 +7,7 @@ Watchface Polarix
 - Minutenkreis auch als Polygon gerendert
 - Rundungen der Quadrate grösser
 - Sek etwas orangener, Stunden schmaller
+- Sek orange
 
 */
 
@@ -39,7 +40,7 @@ Watchface Polarix
     // Sekundenanzeige
     const SEC_SIZE = 7;
     const SEC_SHAPE = { width: HOUR_SQUARE_WIDTH, radius: HOUR_SQUARE_RADIUS };
-    const SEC_COLOR = "#FFD400";
+    const SEC_COLOR = "#FF9900";
 
     
     // Factory für Berechnungsfunktinen
