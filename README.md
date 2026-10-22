@@ -566,26 +566,21 @@ You can use `g.setColor(r,g,b)` OR `g.setColor(16bitnumber)` - some common 16 bi
 
 ## Fonts
 
-A recent addition to Bangle.js is the ability to use extra fonts with support for more characters.
-For example [all regions](https://banglejs.com/apps/?id=fontall) or [extended](https://banglejs.com/apps/?id=fontext) fonts.
+Bangle.js comes with several fonts for standard Latin (ISO8859-1) character sets (you can run `g.getFonts()` in the REPL to see a list),
+however you can also install 'font apps' with support for more characters. You [can see a list of available fonts here](https://banglejs.com/apps/?c=fonts).
 
-Once installed, these apps cause a new font, `Intl` to be added to `Graphics`, which can be used with just `g.setFont("Intl")`.
+For example:
 
-There is also a `font` library - this is not implemented yet, but more information about the planned implementation
-is available at https://github.com/espruino/BangleApps/issues/3109
+* [All regions](https://banglejs.com/apps/?id=fontall) is a 16px font that supports over 50,000 characters (nearly all languages), but is 2MB
+* [Extended](https://banglejs.com/apps/?id=fontext) is a 16px font that supports 150 languages but is only 20kb
 
-For now, to make your app work with the international font, you can check if `Graphics.prototype.setFontIntl` exists,
-and if so you can change the font you plan on using:
+Once installed, these apps cause a new font, `Intl` to be added to `Graphics`, which can be used with `g.setFont("Intl")` or `g.setFont("Intl:2")` for a double-size font. Main apps like `Messages` will automatically use it when needed, as will built-in functions like `E.showMessage` and `E.showMenu`.
 
-```JS
-myFont = "6x8:2";
-if (Graphics.prototype.setFontIntl)
-  myFont = "Intl";
-```
+The best solution for apps is to use [`g.findFont(text, options)`](https://www.espruino.com/Reference#l_Graphics_findFont) to find the best font to display the supplied text,
+and this will choose an International font if it is installed and the given text contains characters that can't be rendered in other fonts. If you plan to use `g.setFont("Intl")` directly in your app, make sure your app either depends on the `fonts` module, or check if the international font is installed first with `if (Graphics.prototype.setFontIntl) ...`.
 
-Any new Font library must contain the metadata `"icon": "app.png", "tags": "font", "type": "module", "provides_modules" : ["fonts"],`
-and should provide a `font` library, as well as a `boot.js` that adds `Graphics.prototype.setFontIntl`. If you plan on
-making a new library it's best to just copy one of the existing ones for now.
+If you're making a new Font library, it should contain the metadata `"icon": "app.png", "tags": "font", "type": "module", "provides_modules" : ["fonts"],`
+and should provide a `font` library, as well as a `boot.js` that adds `Graphics.prototype.setFontIntl`. It would be best to use [one of the existing ones](https://banglejs.com/apps/?c=fonts) as a base.
 
 
 ## API Reference
