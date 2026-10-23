@@ -1,10 +1,11 @@
-/* tenkyu 0.01 (orbit storage) */
+/* tenkyu 0.067 (orbit storage) */
 (function(){
   var W=g.getWidth(),H=g.getHeight();
   var Storage=require("Storage"),CFGFILE="orbit.json";
   var cfg=Storage.readJSON(CFGFILE,1)||{};
   var sysCfg=Storage.readJSON("setting.json",1)||{};
-  var VIEWLIGHT_MS=isFinite(sysCfg.timeout)?Math.max(0,+sysCfg.timeout)*1000:10000;
+  var VIEWLIGHT_MS=isFinite(sysCfg.timeout)&&sysCfg.timeout>0?
+    Math.max(1000,+sysCfg.timeout*1000):10000; // Never leave touch/backlight on indefinitely.
   sysCfg=undefined;
   /* Normalize persisted settings and migrate legacy coordinates once. */
   (function(){
@@ -81,7 +82,15 @@
     calSource=undefined;
   }catch(calErr){calModule=undefined;calendar=undefined;}
   var BLACK=0x0000,WHITE=0xFFFF,NAVY=0x000F,DARKBLUE=0x0008,CYAN=0x07FF,YELLOW=0xFFE0,ORANGE=0xFD20,RED=0xF800,GREEN=0x04C0;
-  var busy=false,killed=false,minuteTimer,idleTimer,tapTimer;
+  var ECLIPSE_ENABLED=cfg.eclipseEnabled===undefined?true:cfg.eclipseEnabled!==false;
+  var ECLIPSE_UPDATE_MS=30000,eclipseDisplay,eclipseActive=false,lastClockMinute=-1;
+  var nextEclipseCheck=0;
+  // Once per 5-minute slot, cache day/night for the 288 recorded bars.
+  var restDay=new Uint8Array(288),restDaySlot=new Uint32Array(288);
+  var REST_ENABLED=cfg.restEnabled!==false;
+  var REST_MAX_HEIGHT=Math.max(1,Math.min(14,isFinite(cfg.restBarHeight)?cfg.restBarHeight|0:10));
+  var restService;
+  var busy=false,killed=false,minuteTimer,idleTimer,tapTimer,transitionTimer;
   var mode="tenkyu",interactive=true,tapCount=0,resetOnWake=false;
   var selectedDayOffset=0,hasSelectedDate=false;
   var nativeDrawWidgets,widgetDrawWrapper;
@@ -730,6 +739,8 @@
     g.setColor(YELLOW).fillPoly(MOON_CACHE_LIT);
     g.setColor(BLACK).fillPoly(MOON_CACHE_FAR);
     g.setColor(WHITE).drawPoly(MOON_CACHE_NEAR,false);
+    // Global eclipse alert: accent the outer lunar rim, not the phase boundary.
+    if(eclipseActive)g.setColor(RED).drawCircle(m.x,m.y,MOONR);
     return m;
   }
 
@@ -751,6 +762,7 @@
     }
   }
 
+  var lastObserverDay;
   function drawObserver(sol){
     var sunAng=Math.atan2(SUNY-EARTHY,SUNX-EARTHX);
     var rr=EARTHR*Math.cos(rad(TESTLAT));
@@ -782,7 +794,8 @@
     /* Draw the 5 px-wide zenith line as one filled quadrilateral. */
     var hw=2;
     var qx=-uy*hw,qy=ux*hw;
-    g.setColor(0x07E0).fillPoly([
+    lastObserverDay=sol.el>=0;
+    g.setColor(lastObserverDay?0x07E0:YELLOW).fillPoly([
       Math.round(x+qx),Math.round(y+qy),
       Math.round(zx+qx),Math.round(zy+qy),
       Math.round(zx-qx),Math.round(zy-qy),
@@ -875,15 +888,73 @@
     }
   }
 
+  /* Load eclipse modules only when enabled; numeric lunar tables are lazy. */
+  function loadEclipseModule(name){
+    var source=Storage.read(name);
+    if(!source)throw new Error("Missing "+name);
+    var exports={};(new Function("exports",source))(exports);return exports;
+  }
+  function updateEclipse(){
+    if(!ECLIPSE_ENABLED)return false;
+    if(!eclipseDisplay){
+      var engine=loadEclipseModule("orbit.eclipse");
+      var renderer=loadEclipseModule("orbit.ecldraw");
+      eclipseDisplay=renderer.create(engine);
+      ECLIPSE_UPDATE_MS=renderer.UPDATE_MS;
+    }
+    var active=eclipseDisplay.update(new Date(virtualNowMs()));
+    nextEclipseCheck=Date.now()+(active?30000:300000);
+    return active;
+  }
+  function drawEclipse(sol){
+    if(!eclipseActive||!eclipseDisplay)return;
+    eclipseDisplay.draw(g,{radiusPx:EARTHR,cx:EARTHX,cy:EARTHY,
+      longitudeDeg:TESTLON,south:VIEW_SOUTH,
+      rotationRad:SUNANG+(VIEW_SOUTH?sol.ha:-sol.ha)});
+  }
+
+  function initRest(){
+    if(!REST_ENABLED)return;
+    restService=Bangle.orbitRest;
+    if(!restService){
+      var source=Storage.read("orbit.rest");
+      if(!source)return;
+      var exports={};(new Function("exports",source))(exports);
+      restService=exports.install(Bangle,Storage,E);
+    }
+    restService.configure(Storage.readJSON(CFGFILE,1)||{});
+  }
+  function restIsDayAt(ms){
+    var slot=Math.floor(ms/300000),index=slot%288;
+    if(restDaySlot[index]!==slot){
+      restDaySlot[index]=slot;
+      restDay[index]=solarPosition(ms,TESTLAT,TESTLON).el>=0?1:0;
+    }
+    return restDay[index]!==0;
+  }
+  function drawRest(sol){
+    // The ring is a real 24-hour recorder, not a future-date prediction.
+    if(!restService||selectedDayOffset!==0)return;
+    var now=Date.now();restService.sync(now);
+    restService.draw(g,{nowMs:now,radiusPx:MOONORBIT,
+      maxHeightPx:REST_MAX_HEIGHT,cx:EARTHX,cy:EARTHY,south:VIEW_SOUTH,
+      currentAngleRad:SUNANG+(VIEW_SOUTH?sol.ha:-sol.ha),
+      isDayAt:restIsDayAt});
+  }
+
   function drawBase(){
     TIMEBOX=undefined;
+    eclipseActive=updateEclipse();
+    lastClockMinute=Math.floor(Date.now()/60000);
     lastBaseBucket=Math.floor(Date.now()/300000);
     g.reset().setBgColor(BLACK).setColor(BLACK).clear();
     drawSun();
     var sol=safeSolar();
     drawEarth(sol);
-    drawObserver(sol);
+    drawEclipse(sol); // Earth's shadow first.
     var moon=drawMoon();
+    drawRest(sol); // Rest bars overwrite the Moon, as requested.
+    drawObserver(sol); // The red location point is still the topmost overlay.
     /* Keep hour numerals visible over both sides of the Moon. */
     drawOrbitHours(sol);
     drawLocationStatus(moon);
@@ -916,6 +987,31 @@
     clear(idleTimer);idleTimer=undefined;
     clearTaps();
   }
+  // Draw a minimal first frame *before* performing expensive navigation.
+  // g.flip makes the input acknowledgement visible even on the MiP LCD.
+  function showTransition(label){
+    try{
+      var w=g.getWidth(),h=g.getHeight();
+      g.reset().setBgColor(BLACK).setColor(BLACK).fillRect(0,24,w-1,h-1);
+      g.setColor(WHITE).setFont("6x8",2).setFontAlign(0,0)
+        .drawString(label,w>>1,(h+24)>>1);
+      try{g.flip();}catch(e){}
+    }catch(e){}
+  }
+  function queueTransition(label,run){
+    if(killed)return;
+    stopOrbitTimers();
+    clear(transitionTimer);transitionTimer=undefined;
+    mode="transition";interactive=false;
+    try{Bangle.setLocked(false);}catch(e){}
+    try{Bangle.setBacklight(true);}catch(e){}
+    showTransition(label);
+    // Yield one event loop before the new screen's heavy drawing starts.
+    transitionTimer=setTimeout(function(){
+      transitionTimer=undefined;
+      if(!killed&&mode==="transition")run();
+    },0);
+  }
 
   function armIdle(){
     clear(idleTimer);
@@ -940,6 +1036,7 @@
        Only switch the backlight off here. Forcing LCD power off bypasses the
        normal Q3 wake path because lcdPowerTimeout is intentionally zero. */
     try{Bangle.setBacklight(false);}catch(e){}
+    try{Bangle.setLocked(true);}catch(e){} // Keep LCD on, disable power-hungry touch.
   }
 
   function startOrbit(keepInteractive){
@@ -955,7 +1052,7 @@
       try{Bangle.setBacklight(true);}catch(e){}
       armIdle();
     }else{
-      try{Bangle.setLocked(false);}catch(e){}
+      try{Bangle.setLocked(true);}catch(e){}
     }
   }
 
@@ -973,60 +1070,45 @@
 
   function openCalendar(){
     if(killed||mode!=="tenkyu")return;
-    stopOrbitTimers();
-    mode="calendar";
-    interactive=false;
-    try{Bangle.setLocked(false);}catch(e){}
-    try{Bangle.setBacklight(true);}catch(e){}
-
-    if(!calendar){
-      startOrbit(true);
-      return;
-    }
-
-    var focus=hasSelectedDate?virtualDate():new Date();
-    try{
-      calendar.start({
-        focusDate:focus,
-        selectedDate:hasSelectedDate?focus:undefined,
-        onSelect:function(d,offset){
-          if(killed)return;
-          if(!d){
-            setDateFromCalendar(undefined);
-            return;
+    queueTransition("Calendar...",function(){
+      mode="calendar";
+      if(!calendar){startOrbit(true);return;}
+      var focus=hasSelectedDate?virtualDate():new Date();
+      try{
+        calendar.start({
+          focusDate:focus,
+          selectedDate:hasSelectedDate?focus:undefined,
+          onSelect:function(d,offset){
+            if(killed)return;
+            if(!d){setDateFromCalendar(undefined);return;}
+            if(typeof offset==="number"&&isFinite(offset)){
+              selectedDayOffset=offset|0;
+              hasSelectedDate=true;
+              MOON_CACHE_BUCKET=-1;
+            }else setDateFromCalendar(d);
+          },
+          onReturn:function(d){
+            if(killed)return;
+            setDateFromCalendar(d);
+            queueTransition("Orbit...",function(){startOrbit(true);});
           }
-          if(typeof offset==="number"&&isFinite(offset)){
-            selectedDayOffset=offset|0;
-            hasSelectedDate=true;
-            MOON_CACHE_BUCKET=-1;
-          }else setDateFromCalendar(d);
-        },
-        onReturn:function(d){
-          if(killed)return;
-          setDateFromCalendar(d);
-          startOrbit(true);
-        }
-      });
-    }catch(e){
-      mode="tenkyu";
-      busy=false;
-      startOrbit(true);
-    }
+        });
+      }catch(e){startOrbit(true);}
+    });
   }
 
   function openSettings(){
     if(killed||mode!=="tenkyu")return;
-    stopOrbitTimers();
-    var src=Storage.read("orbit.settings.js");
-    if(!src){startOrbit(true);return;}
-    cleanup();
-    try{
-      var fn=eval(src);
-      if(typeof fn==="function")fn(function(){load("orbit.app.js");});
-      else load("orbit.app.js");
-    }catch(e){
-      load("orbit.app.js");
-    }
+    queueTransition("Settings...",function(){
+      var src=Storage.read("orbit.settings.js");
+      if(!src){startOrbit(true);return;}
+      cleanup();
+      try{
+        var fn=eval(src);
+        if(typeof fn==="function")fn(function(){load("orbit.app.js");});
+        else load("orbit.app.js");
+      }catch(e){load("orbit.app.js");}
+    });
   }
 
   function onTouch(button,xy){
@@ -1040,6 +1122,8 @@
 
     tapCount++;
     if(tapCount===1){
+      // The 400ms single/double-tap disambiguation now has an immediate cue.
+      try{g.setColor(YELLOW).fillCircle(8,g.getHeight()-8,3);g.flip();}catch(e){}
       clear(tapTimer);
       tapTimer=setTimeout(function(){
         tapTimer=undefined;
@@ -1070,7 +1154,9 @@
 
   function onLCD(on){
     if(!on){
+      try{Bangle.setLocked(true);}catch(e){}
       clear(minuteTimer);minuteTimer=undefined;
+      clear(transitionTimer);transitionTimer=undefined;
       clearTaps();
       clear(idleTimer);idleTimer=undefined;
       interactive=false;
@@ -1083,41 +1169,62 @@
       return;
     }
 
-    var restarted=resetOnWake;
     if(resetOnWake){
       resetOnWake=false;
-      startOrbit(false);
+      queueTransition("Orbit...",function(){startOrbit(true);});
+      return;
     }
     if(mode==="tenkyu"){
-      if(!restarted){drawBase();armMinute();}
       interactive=true;
+      try{Bangle.setLocked(false);}catch(e){}
       try{Bangle.setBacklight(true);}catch(e){}
-      armIdle();
+      // Existing clock drawing may be expensive after LCD power restoration.
+      queueTransition("Orbit...",function(){
+        mode="tenkyu";interactive=true;drawBase();armMinute();armIdle();
+      });
     }
   }
 
   function onButton(){
-    if(killed)return;
-    cleanup();
-    Bangle.showLauncher();
+    if(killed||mode==="transition")return;
+    queueTransition("Launcher...",function(){
+      cleanup();
+      Bangle.showLauncher();
+    });
   }
 
   function armMinute(){
     clear(minuteTimer);
+    // Normal minute clock updates are cheap. Eclipse ephemerides normally run
+    // every 5 minutes, and switch to 30-second tracking only during eclipses.
+    var tick=ECLIPSE_ENABLED&&eclipseActive?ECLIPSE_UPDATE_MS:60000;
     minuteTimer=setTimeout(function(){
       minuteTimer=undefined;
       if(!killed&&mode==="tenkyu"){
-        if(Math.floor(Date.now()/300000)!==lastBaseBucket)drawBase();
-        else{drawTimeOnly();try{g.flip();}catch(e){}}
+        var wasActive=eclipseActive;
+        if(ECLIPSE_ENABLED&&Date.now()>=nextEclipseCheck)eclipseActive=updateEclipse();
+        /* Rebuild Earth when shadow moves/disappears: no accumulated black trail.
+           Far from eclipse, keep the original five-minute base refresh. */
+        if(wasActive||eclipseActive||Math.floor(Date.now()/300000)!==lastBaseBucket||
+           (safeSolar().el>=0)!==lastObserverDay)drawBase();
+        else if(Math.floor(Date.now()/60000)!==lastClockMinute){
+          lastClockMinute=Math.floor(Date.now()/60000);
+          drawTimeOnly();try{g.flip();}catch(e){}
+        }
         armMinute();
       }
-    },60000-(Date.now()%60000)+25);
+    },tick-(Date.now()%tick)+25);
   }
 
   function cleanup(){
     if(killed)return;
     killed=true;
+    clear(transitionTimer);transitionTimer=undefined;
     stopOrbitTimers();
+    if(eclipseDisplay)eclipseDisplay.reset();
+    // The boot-owned recorder keeps running in menus and other apps.
+    restService=undefined;
+    eclipseDisplay=undefined;
     if(calendar)calendar.stop();
     removeWidgetRedrawHook();
     try{Bangle.setUI();}catch(e){}
@@ -1132,6 +1239,7 @@
   buildLightingCache();
   buildEarthMapCache();
   buildMoonCache();
+  initRest();
   try{Bangle.setUI({mode:"custom",clock:1,touch:onTouch,swipe:onSwipe,btn:onButton});}catch(e){}
   /* Load widgets only after setUI, as required for clock/widget state tracking. */
   try{if(typeof WIDGETS==="undefined")Bangle.loadWidgets();}catch(e){}
@@ -1143,4 +1251,7 @@
   try{Bangle.setLocked(false);}catch(e){}
   drawBase();
   armMinute();
+  armIdle(); // Also enforce a finite timeout when the system timeout is zero.
 })();
+
+

@@ -1,6 +1,14 @@
-/* tenkyu 0.01: settings and editable event data. */
+/* tenkyu 0.06: settings and editable event data. */
 (function(back){
   var Storage=require("Storage");
+  var REST_THRESHOLDS=[0.001,0.003,0.009,0.027,0.081,0.243,0.729];
+  function thresholdIndex(v){
+    if(!isFinite(v)||v<=0)return 3;
+    var best=0;
+    for(var i=1;i<7;i++)if(Math.abs(Math.log(v/REST_THRESHOLDS[i]))<Math.abs(Math.log(v/REST_THRESHOLDS[best])))best=i;
+    return best;
+  }
+
   var C,P,JPI;
   var JPFILE="orbitjp.dat",jpPrefCache=-1,jpMunicipalities;
   var CFG="orbit.json",CAL="orbit.cal.json",EVENTS="orbit.events.json";
@@ -84,6 +92,16 @@
     if(!isFinite(s.moonOrbit))s.moonOrbit=62;
     if(!isFinite(s.datePos))set("datePos",2);if(!isFinite(s.timePos))set("timePos",0);
     if(!isFinite(s.dateSize))s.dateSize=22;if(!isFinite(s.timeSize))s.timeSize=22;
+    set("eclipseEnabled",s.eclipseEnabled===undefined?true:s.eclipseEnabled!==false);
+    set("restEnabled",s.restEnabled!==false);
+    set("restBarHeight",Math.max(1,Math.min(14,isFinite(s.restBarHeight)?s.restBarHeight|0:10)));
+    set("restThreshold",REST_THRESHOLDS[thresholdIndex(s.restThreshold)]);
+    set("restWearEnabled",s.restWearEnabled!==false);
+    set("restWearThreshold",REST_THRESHOLDS[thresholdIndex(s.restWearThreshold===undefined?0.009:s.restWearThreshold)]);
+    [["restProbeSeconds",10,60,30],
+      ["restPulseConfidence",1,100,90],["restPulseMin",20,100,40],["restPulseMax",120,240,200]].forEach(function(q){
+      set(q[0],Math.max(q[1],Math.min(q[2],isFinite(s[q[0]])?+s[q[0]]:q[3])));
+    });
     set("timeSource",(s.timeSource===1||s.timeSource==="1")?1:0);
     set("orbitHourSize",Math.max(6,Math.min(12,isFinite(s.orbitHourSize)?s.orbitHourSize|0:8)));
     set("orbitHourStep",[1,2,3,6].indexOf(s.orbitHourStep)>=0?s.orbitHourStep:1);
@@ -485,15 +503,25 @@
     E.showMenu(m);
   }
 
-  function leave(){
-    stopGPS();releasePlaceData();
-    try{E.removeListener("kill",onKill);}catch(e){}
-    back();
+  function showExitFrame(){
+    // First-frame acknowledgement before reloading the large orbit clock.
+    try{
+      var w=g.getWidth(),h=g.getHeight();
+      g.reset().setBgColor(0).setColor(0).fillRect(0,24,w-1,h-1);
+      g.setColor(0xFFFF).setFont("6x8",2).setFontAlign(0,0)
+        .drawString("Orbit...",w>>1,(h+24)>>1);
+      try{g.flip();}catch(e){}
+    }catch(e){}
   }
-  function exitToOrbit(){
+  function exitWithFrame(continuation){
     stopGPS();releasePlaceData();
     try{E.removeListener("kill",onKill);}catch(e){}
-    load("orbit.app.js");
+    showExitFrame();
+    setTimeout(continuation,0);
+  }
+  function leave(){exitWithFrame(back);}
+  function exitToOrbit(){
+    exitWithFrame(function(){load("orbit.app.js");});
   }
   function onKill(){stopGPS();releasePlaceData();}
 
@@ -543,6 +571,61 @@
     });
   }
 
+  function eclipseMenu(s){
+    E.showMenu({"":{title:"Solar eclipse"},"< Back":main,
+      "Enabled":{value:s.eclipseEnabled,format:function(v){return v?"On":"Off";},
+        onchange:function(v){s.eclipseEnabled=v;write(CFG,s);}}
+    });
+  }
+
+  function applyRest(s){
+    write(CFG,s);
+    if(!Bangle.orbitRest&&s.restEnabled){
+      var source=Storage.read("orbit.rest");
+      if(source){var exports={};(new Function("exports",source))(exports);exports.install(Bangle,Storage,E);}
+    }
+    if(Bangle.orbitRest)Bangle.orbitRest.configure(s);
+  }
+  function thresholdMenu(s,key){return {value:thresholdIndex(s[key]),min:0,max:6,step:1,
+    format:function(v){return REST_THRESHOLDS[v].toFixed(3)+" g";},
+    onchange:function(v){s[key]=REST_THRESHOLDS[v];applyRest(s);}};}
+  function wearMenu(s){
+    E.showMenu({"":{title:"Non-wear"},"< Back":function(){restMenu(s);},
+      "Enabled":{value:s.restWearEnabled,onchange:function(v){s.restWearEnabled=!!v;applyRest(s);}},
+      "3D drift":thresholdMenu(s,"restWearThreshold"),
+      "Probe seconds":{value:s.restProbeSeconds,min:10,max:60,step:5,
+        onchange:function(v){s.restProbeSeconds=v;applyRest(s);}},
+      "Pulse confidence":{value:s.restPulseConfidence,min:1,max:100,step:1,
+        format:function(v){return v+" %";},onchange:function(v){s.restPulseConfidence=v;applyRest(s);}},
+      "Min pulse BPM":{value:s.restPulseMin,min:20,max:100,step:5,
+        onchange:function(v){s.restPulseMin=v;applyRest(s);}},
+      "Max pulse BPM":{value:s.restPulseMax,min:120,max:240,step:5,
+        onchange:function(v){s.restPulseMax=v;applyRest(s);}}
+    });
+  }
+  function showRestDiagnostics(s){
+    var api=Bangle.orbitRest,d=api&&api.getDiagnostics&&api.getDiagnostics();
+    var list=d&&d.recent,last=list&&list.length?list[list.length-1]:undefined;
+    var hr=["Pending","Detected","Absent","Failed"];
+    var value=!last?"N/A":last.result===254?"0 (unworn)":
+      last.result===255?"Unknown":"Rest "+(1+Math.min(4,Math.floor(Math.min(99,last.result)/20)));
+    var message=last?("Value: "+value+"\nReason: "+last.reason+
+      "\nPulse: "+(hr[last.pulse]||"?")+
+      "\n3D: "+last.driftG+"g"+
+      "\nData: "+last.coverageSec+"s"):"No complete 5-min bin yet";
+    E.showAlert(message,"Rest diagnostics").then(function(){restMenu(s);});
+  }
+  function restMenu(s){
+    E.showMenu({"":{title:"Rest graph"},"< Back":main,
+      "Enabled":{value:s.restEnabled,onchange:function(v){s.restEnabled=!!v;applyRest(s);}},
+      "Max bar height":{value:s.restBarHeight,min:1,max:14,step:1,
+        format:function(v){return v+" px";},onchange:function(v){s.restBarHeight=v;write(CFG,s);}},
+      "Peak threshold":thresholdMenu(s,"restThreshold"),
+      "Non-wear":function(){wearMenu(s);},
+      "Last check":function(){showRestDiagnostics(s);}
+    });
+  }
+
   function digitalMenu(s){
     E.showMenu({"":{title:"Digital clock"},"< Back":main,
       "Date pos":{value:s.datePos,min:0,max:2,step:1,
@@ -575,6 +658,8 @@
       "Location":function(){locationMenu(s);},
       "Date/time":function(){dateTimeMenu(s);},
       "Bodies":function(){bodiesMenu(s);},
+      "Solar eclipse":function(){eclipseMenu(s);},
+      "Rest graph":function(){restMenu(s);},
       "Dial":function(){dialMenu(s);},
       "Digital clock":function(){digitalMenu(s);},
       "Calendar":calendarMenu
@@ -586,3 +671,5 @@
   E.on("kill",onKill);
   main();
 })
+
+
