@@ -58,13 +58,30 @@
 		}
 
 		renderG2(): void {
+			const border = 3;
+
 			this.g2
 				.reset()
 				.setColor(g.theme.bg)
-				.fillRect(0, 0, this.width, this.height)
+				.fillRect(0, 0, this.width, this.height) // background (transparent)
+
 				.setColor(colour.on.bg)
-				.drawRect(0, 0, this.width - 1, this.height - 1)
-				.drawRect(1, 1, this.width - 2, this.height - 2);
+				.fillRect({
+						x: 0,
+						y: 0,
+						w: this.width,
+						h: this.height,
+						r: 20
+				}) // outer shape
+
+				.setColor(g.theme.bg)
+				.fillRect({
+						x: border,
+						y: border,
+						w: this.width - (border * 2),
+						h: this.height - (border * 2),
+						r: 16
+				});
 		}
 	}
 
@@ -85,7 +102,7 @@
 		},
 		off: {
 			fg: "#000",
-			bg: "#bbb",
+			bg: g.theme.dark ? "#fff" : "#bbb",
 		},
 	} as const;
 
@@ -117,14 +134,17 @@
 				{ x: width / 4 - 10,   y: centreY - circleGapY },
 				{ x: width / 2,        y: centreY - circleGapY },
 				{ x: width * 3/4 + 10, y: centreY - circleGapY },
-				{ x: width / 3,        y: centreY + circleGapY },
-				{ x: width * 2/3,      y: centreY + circleGapY },
+				{ x: width / 4 - 10, y: centreY + circleGapY },
+				{ x: width / 2, y: centreY + circleGapY },
+				{ x: width * 3 / 4 + 10, y: centreY + circleGapY },
 			].map((xy, i) => {
 				const ctrl = xy as Control;
 				const from = controls[i]!;
+
 				ctrl.text = from.text;
-				ctrl.cb = from.cb;
-				Object.assign(ctrl, from.cb(false) ? colour.on : colour.off);
+				ctrl.img = from.img;
+
+				Object.assign(ctrl, ctrl.cb(false) ? colour.on : colour.off);
 				return ctrl;
 			}) as FiveOf<Control>;
 		}
@@ -139,7 +159,7 @@
 					.setColor(ctrl.bg)
 					.fillCircle(ctrl.x, ctrl.y, 23)
 					.setColor(ctrl.fg)
-					.drawString(ctrl.text, ctrl.x, ctrl.y);
+					.drawImage(ctrl.img, ctrl.x-12, ctrl.y-12);
 			}
 		}
 
@@ -181,17 +201,21 @@
 		const controls: FiveOf<ControlTemplate> = [
 			{
 				text: "BLE",
+				img: atob("GBiBAAAAAAAYAAAcAAAfAAAbgAAZ4AYYYAcY4AOZwAH/AAB+AAA8AAA8AAB+AAD/AAOZwAcY4A4YYAQZ4AAbgAAfAAAcAAAYAAAAAA=="),
 				cb: tap => {
-					const on = NRF.getSecurityStatus().advertising;
+					let on = NRF.getSecurityStatus().advertising;
 					if(tap){
 						if(on) NRF.sleep();
 						else NRF.wake();
+
+						on = !on;
 					}
-					return on !== tap; // on ^ tap
+					return on;
 				}
 			},
 			{
 				text: "DnD",
+				img:atob("GBiBAAAAAAAAAAA8AAAYAAAYAAD/AAH/gAH/gAP/wAP/wAP/wAP/wAP/wAP/wAP/wAf/4Af/4A//8B//+A//8AAAAAA8AAAAAAAAAA=="),
 				cb: tap => {
 					let on;
 					if((on = !!origBuzz)){
@@ -210,26 +234,31 @@
 							}, 1000 * 60 * 10);
 						}
 					}
-					return on !== tap; // on ^ tap
+
+					if(tap) on = !on;
+
+					return on;
 				}
 			},
 			{
 				text: "HRM",
+				img:atob("GBiBAAAAAA+B8B/D+D/n/H///v/////////P///P///H/3+WQAC2Xj82HB86uA/48Af54AP9wAH9gAD/AAB+AAA8AAAYAAAAAAAAAA=="),
 				cb: tap => {
 					const id = "widhid";
 					const hrm = (Bangle as any)._PWR?.HRM as undefined | Array<string> ;
 					const off = !hrm || hrm.indexOf(id) === -1;
-					if(off){
-						if(tap)
-							Bangle.setHRMPower(1, id);
-					}else if(tap){
-						Bangle.setHRMPower(0, id);
+
+					if(tap){
+						Bangle.setHRMPower(off, id);
+						off = !off;
 					}
-					return !off !== tap; // on ^ tap
+
+					return !off;
 				}
 			},
 			{
 				text: "clk",
+				img:atob("GBiBAAB+AAP/wAeB4A4AcBgAGDAADHAYDmAYBmAYBsAYA8AYA8AYA8AcA8AOA8AHA2ADBmAABnAADjAADBgAGA4AcAeB4AP/wAB+AA=="),
 				cb: tap => {
 					if (tap) Bangle.showClock(), terminateUI();
 					return true;
@@ -237,10 +266,20 @@
 			},
 			{
 				text: "lch",
+				img:atob("GBiBAAAAAAAAAAAAAA/AwB/gwBhgwBhn+Bhn+BhgwB/gwA/AwAAAAAAAAA/D8B/n+BhmGBhmGBhmGBhmGB/n+A/D8AAAAAAAAAAAAA=="),
 				cb: tap => {
 					if (tap) Bangle.showLauncher(), terminateUI();
 					return true;
 				},
+			},
+			{
+				text: "settings",
+				img: atob("GBiBAAA8AAB+AAR+IA7/cB//+D///B//+A/D8B8A+H8A/v4Af/4Af/4Af/4Af38A/h8A+A/D8B//+D///B//+A7/cAR+IAB+AAA8AA=="),
+				cb: tap => {
+					if(tap)
+						Bangle.load("setting.app.js"), terminateUI()
+					return false;
+				}
 			},
 		];
 
@@ -284,7 +323,7 @@
 
 			case State.Idle:
 				if(e.b && !touchDown){ // no need to check Bangle.CLKINFO_FOCUS
-					if(e.y <= 40){
+					if(e.y <= 10){
 						state = State.TopDrag
 						startY = e.y;
 						E.stopEventPropagation?.();
@@ -378,12 +417,25 @@
 	const onCtrlTap = (ctrl: Control, ui: UI) => {
 		Bangle.buzz(20);
 
-		const col = ctrl.cb(true) ? colour.on : colour.off;
-		ctrl.fg = col.fg;
-		ctrl.bg = col.bg;
-		//console.log("hit on " + ctrl.text + ", col: " + ctrl.fg);
+		const result = ctrl.cb(true);
 
-		ui.ctrls.draw(ui.overlay.g2, ctrl);
+		if (result === "close"){
+			terminateUI();
+			return;
+		}
+		ui.ctrlx.controls.forEach(c => {
+			const isActive = c.cb(false);
+			Object.assign(c, isActive ? colour.on : colour.off);
+		});
+
+		// Clear and Redraw the buffer
+		ui.overlay.renderG2();
+		ui.ctrls.draw(ui.overlay.g2);
+
+		// Force an update through the overlay
+		const y = g.getHeight() - ui.overlay.height;
+		Bangle.setLCDOverlay(ui.overlay.g2, 2, y - 10);
+		Bangle.buzz(10);
 	};
 
 	Bangle.prependListener("drag", onDrag);
