@@ -1,0 +1,17 @@
+{ 
+  "id": "gesturelock",
+  "name": "Gesture Lock",
+  "shortName":"AI Lock",
+  "icon":"icon.png",
+  "version":"0.01",
+  "description": "Uses an AI model to detect a gesture that locks the Bangle",
+  "type":"bootloader",    
+  "tags": "tool",
+  "supports": ["BANGLEJS","BANGLEJS2"],
+  "readme":"README.md",
+  "storage": [
+    {"name":"gesturelock.boot.js","url":"boot.js"},
+    {"name":".tfmodel","url":"model.lite"},
+    {"name":".tfnames","url":"tfnames.txt"}
+  ]
+}
