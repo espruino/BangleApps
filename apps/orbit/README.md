@@ -2,7 +2,7 @@
 
 # tenkyu
 
-**tenkyu 0.01**
+**tenkyu 0.067**
 
 A clock app for Bangle.js 2 that lets you read the time, the phases of the Moon and related information from the relative positions of the Sun, Earth and Moon.
 
@@ -122,6 +122,18 @@ The approximate solar-position formulae are based on NOAA's **General Solar Posi
 
 `solarPosition()` calculates the fractional year, equation of time, solar declination, true solar time, hour angle, and solar elevation / azimuth.
 
+### 24-hour rest graph
+
+Every five minutes, a **five-stage rest bar** extends **outward from the lunar orbit**. There are 288 positions per 24 hours. Bars are **green by day and yellow by night**. The rest bars intentionally overwrite the Moon (foreground); the red observer point stays above them.
+
+The accelerometer's screen-normal **Z axis** is high-pass filtered to remove gravity and slow orientation changes. Both directions of motion are counted as peaks in the **absolute value** of the filtered signal. Each interval first records the **percentage of detected peaks at or below the configured threshold**, then displays a five-stage height: 0–19% → 1, 20–39% → 2, 40–59% → 3, 60–79% → 4, 80–100% → 5. The goal is approximately **walking/high motion=1, desk work=3, sleep-like stillness=5**, but actual values depend on watch movement and peak threshold and must be validated on-device; this is not a sleep classifier. An otherwise valid and worn interval with no peaks is 100%. An incomplete interval (under 270 s coverage) has no bar. Non-wear, inferred from absent pulse plus low **3-axis acceleration-vector drift**, also has **no bar (stage 0)**. The 3-axis non-wear test is orientation-independent: it averages X/Y/Z readings in one-second windows and compares each averaged vector with the initial one using a single Euclidean-distance threshold in g. This detects both tilt and magnitude changes; the seven 0.001–0.729 g settings now appear under **Non-wear → 3D drift**. The separate five-stage rest activity calculation still uses Z-axis peaks. Stage 1 remains visible even at 0% quiet peaks.
+
+**Rest graph** settings: **Enabled**, **Max bar height** (stage 5: 1–14 pixels, default 10), **Peak threshold** (seven choices from 0.001 to 0.729 g), and **Non-wear** options. Recording continues with the LCD off and in other apps. History survives restarts. Percentage data from v2 are read, and new v3 history distinctly stores missing and non-wear as separate codes; the incompatible v1 levels are not reused. A different date selected in the calendar hides the live graph. On a valid pulse, the HRM LED is switched off early; otherwise it runs up to the configured maximum. The 288 day/night bar colors are cached by five-minute slot, not recalculated for each redraw.
+
+Previous behavior (v0.065) required pulse evidence for all rest bars.
+
+**Motion-first non-wear policy (v0.066):** first require 270 seconds of valid three-axis accelerometer coverage in the five-minute bin. If 3D vector drift is **above the selected threshold**, always draw the existing Z-peak-based **stage 1–5 bar regardless of heart-rate results**. If the drift is **at or below the threshold** (motionless), a valid detected heartbeat produces **stage 5**; an absent, failed, pending, or unavailable heartbeat produces **stage 0 (no bar)**. An insufficient accelerometer record is still unknown (no bar). This is the user-selected prioritization, not proof that the watch is truly off-wrist; e.g., an immobile sleeping wearer whose optical sensor cannot register a pulse will be shown as unworn. Probe results may update the last completed interval. In **Rest graph → Last check**, see the recent result, reason, HRM status, 3D drift and covered seconds. Historic recorded bars are not reclassified; they age out after 24 hours.
+
 ### Moon phase
 
 Moon-phase display uses the mean synodic month.
@@ -231,7 +243,7 @@ onisY
 
 # tenkyu
 
-**tenkyu 0.01**
+**tenkyu 0.067**
 
 Bangle.js 2 用の、太陽・地球・月の位置関係から時刻、月の満ち欠け等を読み取る時計アプリです。
 
@@ -355,6 +367,18 @@ Place timeを使用しても、Bangle.js本体のタイムゾーン設定やDST�
 
 `solarPosition()` では fractional year、equation of time、solar declination、true solar time、hour angle、solar elevation / azimuth を求めています。
 
+### 24時間の安静度グラフ
+
+月の軌道から**外側に伸びる5段階の棒**で5分ごとの安静度を表します（24時間、288本）。**棒は月より手前に描画**し、赤い観測点はさらに前面に保持します。色は日の出～日の入りが緑、夜間が黄色です。
+
+画面と垂直なZ軸の加速度を重力成分から分離し、その絶対値ピークのうち閾値以下の割合を記録します。棒の長さへの換算は **0〜19%=段階1、20〜39%=2、40〜59%=3、60〜79%=4、80〜100%=5** です。目安として**歩行=1、デスクワーク=3、睡眠時の無動=5**を目標にしますが、実際の動きや閾値に依存し、睡眠・活動状態を確定する分類器ではありません。完全に静止してピークがない装着区間は5、非装着と観測不足は棒なし（非装着の段階0）です。非装着判定はZ軸だけではなく、**X/Y/Zの3軸加速度ベクトル**を1秒ごとに平均し、区間冒頭の平均ベクトルからの距離で判定します。時計の置き方によらず同じ閾値（g単位）を使用し、姿勢方向の変化と加速度の大きさの変化を両方検出します。設定は **Non-wear → 3D drift** で、従来の7段階を引き継ぎます。安静度の5段階は従来どおりZ軸ピークで計算します。
+
+設定 **Rest graph** の **Enabled**、**Max bar height**（段階5の高さ：1〜14画素、初期値10画素）、**Peak threshold**（0.001〜0.729g、7段階）、**Non-wear**を調整できます。画面消灯中や他アプリでも加速度を記録します。5分ごとの心拍試験は有効な脈を検出した時点でLEDを消灯し、未検出なら最大設定秒数まで継続します。v0.063の記録形式（v3）では非装着と欠損を区別し、v2の割合データも引き継ぎます。v1の古い5段階データとは混在させません。描画時の288区間の昼夜判定はキャッシュして不要な再計算を抑えます。
+
+以前のv0.065は、動いていても心拍を検出できなければ棒を非表示としていました。
+
+**v0.066の判定優先順位：**5分間に270秒以上の有効な3軸加速度記録があれば、まず**3軸加速度ベクトルの変動**を設定閾値と比較します。**変動が閾値を超えたら、心拍検出の有無・失敗に関係なくZ軸ピークから安静度1～5を描画**します。**変動が閾値以下なら、心拍検出が確認された場合だけ安静度5**、心拍が未検出・計測失敗・未実施・未確定なら**非装着0（棒なし）**です。有効な加速度記録が270秒未満のときだけ判定不能（棒なし）にします。静止して眠っている装着者で心拍センサーが脈を検知できなかった場合にも0になる可能性があります。診断画面 **Rest graph → Last check** には判定結果と理由、心拍状態、3D変動量、有効データ時間を表示します。過去の棒は再判定しないため、24時間以内に順次入れ替わります。
+
 ### 月相
 
 月相表示では平均朔望月を用いています。
@@ -456,3 +480,75 @@ tenkyuは完全なtzdbを収録・実行するのではなく、orbitに収録�
 ### 作者
 
 onishi
+
+## Day/night observer line (0.02)
+
+The line extending from the red observer dot is green when the solar center is at or above the geometric horizon, and yellow when below it. This matches the existing geometric sunrise/sunset definition, without atmospheric refraction. Color transitions are checked each minute, including polar day/night.
+
+### 位置の赤点から伸びる線の昼夜色（0.02）
+
+太陽中心が幾何学的な地平線以上なら緑、下なら黄色です。従来の日の出・日の入り線と同じ基準で、大気差は含みません。白夜・極夜を含め毎分色の切り替えを確認します。
+
+
+## Power management (0.063)
+
+The backlight and touchscreen lock after the configured display timeout; if the system
+timeout is 0 or unavailable, tenkyu uses a 10-second fallback. The low-power memory-in-pixel
+LCD remains on. Twist and face-up still wake and unlock the watch. Eclipse calculations
+are checked about every five minutes outside eclipses, but every 30 seconds when an
+eclipse is active, while the clock continues its minute updates. This saves CPU and
+touch-controller power without raising the accelerometer polling rate. Power draw and
+wrist-gesture behavior still need real-device measurements.
+
+### 省電力動作（0.063）
+
+設定された消灯時間後にバックライトを消し、タッチパネルもロックします。
+システムの時間設定が0または未指定なら、10秒を安全側の初期値とします。
+LCD自体は表示を保持し、TwistやFace Upで解除します。日食でない通常時は
+約5分ごとに日食判定し、発生中だけ30秒ごとに計算します。
+時計の時刻は従来どおり毎分更新し、加速度の取得周期も変更しません。
+実機での消費電流やジェスチャー動作の確認は未実施です。
+
+## Solar eclipse shading (0.03)
+
+Settings → **Solar eclipse → Enabled** turns calculation and shading on or off (default On).
+At the displayed absolute date/time, the Moon's umbra is black. The surrounding penumbra
+reduces average surface brightness using black ordered dithering proportional to the
+fraction of the Sun covered. This is a geometric illustration, not a simulation of
+atmospheric illumination. The red observer dot and its green/yellow line are drawn above
+the shadow. Annular eclipses darken the center without treating it as a total shadow.
+
+Eclipse state and shading update every **30 seconds** during an eclipse. Ordinary dates
+use cheap screening and retain the existing five-minute base redraw. The option Off
+avoids loading eclipse code/data. No GPS, Bluetooth or Internet requests are added.
+A subpixel total shadow has a one-pixel black center marker. Only the hemisphere selected
+in Bodies → View side is shown. **During any globally detected eclipse, the Moon's outer
+rim is red**, even when its shadow is on the hemisphere not currently displayed.
+This does not change the Moon phase shading, and the rim returns to its normal
+appearance when the eclipse ends (or Solar eclipse is disabled). The existing
+30-second eclipse refresh handles the transitions without an extra timer.
+Actual watch runtime and battery use remain unmeasured.
+
+### 日食の影（0.03）
+
+設定の **Solar eclipse → Enabled** で計算・表示をオン／オフにできます（初期値オン）。
+表示対象の絶対日時における本影を黒で、半影を太陽の隠れる割合に応じた黒い点描で重ねます。
+大気による散乱光を含む実際の地表照明の再現ではなく、幾何学的な表示です。
+赤い位置点と緑／黄色の線分は、月影より上に描きます。金環日食の中心は部分的に暗くなります。
+
+日食の計算・影の表示は **30秒間隔**です。日食のない日時は軽い判定で詳細計算を省き、
+従来の5分間隔の地球再描画を維持します。オフ時は日食コード・係数を読み込みません。
+GPS・Bluetooth・通信は追加しません。1画素より小さい皆既の影には中心の黒い1画素を表示します。
+Bodies → View sideで選んだ半球だけが表示対象です。ただし、**地球上のどこかで
+日食を検出している間は月の外周を赤色**にします。現在の表示半球に影が見えない場合も
+赤くなり、満ち欠けの塗り分けは従来どおりです。日食終了時（または日食表示オフ時）は
+通常の外観に戻ります。従来の30秒更新を利用し、追加タイマーは使いません。
+実機での計算時間・電池消費は未測定です。
+
+### Visible screen-transition feedback (v0.067)
+
+The first tap is acknowledged with a small yellow dot while the 400 ms single/double-tap interval is resolved. Once navigation is determined, tenkyu immediately displays a low-cost **Calendar...**, **Settings...**, **Orbit...** or **Launcher...** transition frame, explicitly flushes it to the memory-in-pixel display, then schedules the expensive new-screen drawing for the next event-loop turn. Calendar swipes similarly display **Calendar...** before updating the 35 date cells, holiday flags and event layers; multiple rapid swipes are combined into a single final repaint. Leaving Settings also displays **Orbit...** before reloading the clock. Screen-wake transitions preserve the existing backlight/lock timeout. This change does not alter tap semantics: one tap opens Calendar; double tap opens Settings.
+
+### 画面遷移の入力応答（v0.067）
+
+最初のタップ時に黄色の小さな点を即時表示し、400msのシングル／ダブルタップ判定中でも入力を受け付けたことが分かるようにしました。画面遷移が決まったら **Calendar... / Settings... / Orbit... / Launcher...** をまず描画・反映し、次のイベントループで詳細な画面を作成します。カレンダーの上下スワイプでも、最初に **Calendar...** を表示してから日付・祝日・予定を更新します。連続するスワイプは最後のページまでまとめて再描画します。設定から時計に戻る際も同じ方式です。時計の消灯・タッチロックの省電力動作、および「1タップ＝カレンダー／2タップ＝設定」の操作仕様は維持します。
