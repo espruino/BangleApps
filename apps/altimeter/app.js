@@ -112,8 +112,8 @@ function updateState () {
 Bangle.on('lock', updateState);
 Bangle.on('lcdPower',on=>{
   if (!on) { // stop draw timer
-    if (drawTimeout) clearTimeout(drawTimeout);
-    drawTimeout = undefined;
+    if (timeoutID) clearTimeout(timeoutID);
+    timeoutID = undefined;
   }
 });
 
