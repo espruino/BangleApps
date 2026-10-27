@@ -53,3 +53,14 @@ E.showScroller({
   },
   back : Bangle.showClock,
 });
+// 10s of inactivity goes back to clock
+
+Bangle.setLocked(false); // unlock initially
+let lockTimeout;
+let lockHandler = function(locked) {
+  if (lockTimeout) clearTimeout(lockTimeout);
+  lockTimeout = undefined;
+  if (locked)
+    lockTimeout = setTimeout(Bangle.showClock, 10000);
+};
+Bangle.on("lock", lockHandler);
