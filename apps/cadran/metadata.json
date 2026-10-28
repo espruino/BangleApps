@@ -3,7 +3,7 @@
   "name": "Cadran",
   "shortName": "Cadran",
   "icon": "app.png",
-  "version": "0.01",
+  "version": "0.02",
   "author": "Jeff-Nash",
   "description": "Cadran de montre Bangle.js 2 personnalise en Francais a grande lisibilite, optimise pour une grande autonomie.",
   "tags": "clock",
