@@ -1,4 +1,4 @@
-var largeur, hauteur, cum_cor, glyph, dizminpre, dizmin, dizheu, charge, dizdat, dizmoi, vit, d, nomjou, uniminpre, flash, uniheu, jou1, unidat, unimoi, BLE, gps, sec, jou, mode, recalage, vit_pre, jou2, min, cor_int, interval_boucle, unimin, jou3, chargeur, interval_cligno, heu, dat, chargeur_prec, moi, an, gps_listener, diff, z2points, zBTon, zBTof, zAPPS, zSYNC, zGPS;
+var cum_cor, dizminpre, dizmin, dizheu, dizdat, dizmoi, vit, d, nomjou, uniminpre, flash, uniheu, jou1, unidat, unimoi, BLE, gps, jou, mode, recalage, vit_pre, jou2, min, cor_int, interval_boucle, unimin, jou3, chargeur, interval_cligno, heu, dat, chargeur_prec, moi, an, gps_listener, z2points, zBTon, zBTof, zAPPS, zSYNC, zGPS;
 var glyphes = {};
 
 function bouton() {
@@ -62,6 +62,7 @@ function bouton() {
 }
 
 function initialisation() {
+  var sec, diff;
   cum_cor = 0;
   d = new Date();
   sec = d.getSeconds();
@@ -93,34 +94,27 @@ function initialisation() {
 }
 
 function creerGlyph(txt, largeur, hauteur) {
-  glyph = Graphics.createArrayBuffer(largeur, hauteur, 1, {msb:true});
+  var glyph = Graphics.createArrayBuffer(largeur, hauteur, 1, {msb:true});
+  var polys = g.getVectorFontPolys(txt);
+  var xmin = 32767, xmax = -32767, ymin = 32767, ymax = -32767;
+  var n, poly, i, sx, sy, p;
   glyph.transparent = 0;
   glyph.setColor(1);
-
-  var polys = g.getVectorFontPolys(txt);
-
-  var xmin = 32767;
-  var xmax = -32767;
-  var ymin = 32767;
-  var ymax = -32767;
-
-  for (var n = 0; n < polys.length; n++) {
-    var poly = polys[n];
-    for (var i = 0; i < poly.length; i += 2) {
+  for (n = 0; n < polys.length; n++) {
+    poly = polys[n];
+    for (i = 0; i < poly.length; i += 2) {
       if (poly[i] < xmin) xmin = poly[i];
       if (poly[i] > xmax) xmax = poly[i];
       if (poly[i + 1] < ymin) ymin = poly[i + 1];
       if (poly[i + 1] > ymax) ymax = poly[i + 1];
     }
   }
-
-  var sx = largeur / (xmax - xmin);
-  var sy = hauteur / (ymax - ymin);
-
-  for (var n = 0; n < polys.length; n++) {
-    var poly = polys[n];
-    var p = new Int16Array(poly.length);
-    for (var i = 0; i < poly.length; i += 2) {
+  sx = largeur / (xmax - xmin);
+  sy = hauteur / (ymax - ymin);
+  for (n = 0; n < polys.length; n++) {
+    poly = polys[n];
+    p = new Int16Array(poly.length);
+    for (i = 0; i < poly.length; i += 2) {
       p[i] = Math.round((poly[i] - xmin) * sx);
       p[i + 1] = Math.round((poly[i + 1] - ymin) * sy);
     }
@@ -130,16 +124,15 @@ function creerGlyph(txt, largeur, hauteur) {
 }
 
 function nettoyage() {
+  Bluetooth.setConsole(true);
+  clearInterval();
   Bangle.setHRMPower(false, "cadran");
   Bangle.setGPSPower(false, "cadran");
   Bangle.setCompassPower(false, "cadran");
   Bangle.setBarometerPower(false, "cadran");
-
   Bangle.accelWr(0x18, 0x0A);
-
-  try { NRF.sleep(); } catch (e) { }
   NRF.setServices({}, {uart:true, hid:undefined});
-
+  try { NRF.sleep(); } catch (e) { }
   Bangle.setOptions({
     wakeOnBTN1: true,
     wakeOnFaceUp: false,
@@ -150,7 +143,6 @@ function nettoyage() {
     twistMaxY: -800,
     twistTimeout: 1000
   });
-
   Bangle.setLCDBrightness(0);
   Bangle.setLocked(true);
 }
@@ -170,52 +162,6 @@ function nom_du_jour() {
     nomjou = 'VEN';
   } else if (jou == 6) {
     nomjou = 'SAM';
-  }
-}
-
-function cree_caract() {
-  glyph = '';
-  hauteur = 53;
-  largeur = 32;
-  glyphes.z0 = creerGlyph("0", largeur, hauteur);
-  glyphes.z1 = creerGlyph("1", largeur, hauteur);
-  glyphes.z2 = creerGlyph("2", largeur, hauteur);
-  glyphes.z3 = creerGlyph("3", largeur, hauteur);
-  glyphes.z4 = creerGlyph("4", largeur, hauteur);
-  glyphes.z5 = creerGlyph("5", largeur, hauteur);
-  glyphes.z6 = creerGlyph("6", largeur, hauteur);
-  glyphes.z7 = creerGlyph("7", largeur, hauteur);
-  glyphes.z8 = creerGlyph("8", largeur, hauteur);
-  glyphes.z9 = creerGlyph("9", largeur, hauteur);
-  hauteur = 40;
-  largeur = 52;
-  glyphes.zA = creerGlyph("A", largeur, hauteur);
-  glyphes.zD = creerGlyph("D", largeur, hauteur);
-  glyphes.zE = creerGlyph("E", largeur, hauteur);
-  glyphes.zI = creerGlyph("I", 26, hauteur);
-  glyphes.zJ = creerGlyph("J", largeur, hauteur);
-  glyphes.zL = creerGlyph("L", largeur, hauteur);
-  glyphes.zM = creerGlyph("M", largeur, hauteur);
-  glyphes.zN = creerGlyph("N", largeur, hauteur);
-  glyphes.zR = creerGlyph("R", largeur, hauteur);
-  glyphes.zS = creerGlyph("S", largeur, hauteur);
-  glyphes.zU = creerGlyph("U", largeur, hauteur);
-  glyphes.zV = creerGlyph("V", largeur, hauteur);
-  z2points = creerGlyph(":", 10, 30);
-  hauteur = 40;
-  largeur = 70;
-  zBTon = creerGlyph("BTon", largeur, hauteur);
-  zBTof = creerGlyph("BTof", largeur, hauteur);
-  zAPPS = creerGlyph("APPS", largeur, hauteur);
-  zSYNC = creerGlyph("SYNC", largeur, hauteur);
-  zGPS = creerGlyph("GPS", largeur, hauteur);
-}
-
-function aff_ponct() {
-  if (mode == 'montre') {
-    g.setColor(1,1,0);
-    g.drawImage(z2points, 84, 22);
-    g.fillPoly([91,110,100,110,82,163,75,163]);
   }
 }
 
@@ -263,6 +209,52 @@ function horloge() {
     chargement();
   }
   chargeur_prec = chargeur;
+}
+
+function cree_caract() {
+  var largeur, hauteur;
+  hauteur = 53;
+  largeur = 32;
+  glyphes.z0 = creerGlyph("0", largeur, hauteur);
+  glyphes.z1 = creerGlyph("1", largeur, hauteur);
+  glyphes.z2 = creerGlyph("2", largeur, hauteur);
+  glyphes.z3 = creerGlyph("3", largeur, hauteur);
+  glyphes.z4 = creerGlyph("4", largeur, hauteur);
+  glyphes.z5 = creerGlyph("5", largeur, hauteur);
+  glyphes.z6 = creerGlyph("6", largeur, hauteur);
+  glyphes.z7 = creerGlyph("7", largeur, hauteur);
+  glyphes.z8 = creerGlyph("8", largeur, hauteur);
+  glyphes.z9 = creerGlyph("9", largeur, hauteur);
+  hauteur = 40;
+  largeur = 52;
+  glyphes.zA = creerGlyph("A", largeur, hauteur);
+  glyphes.zD = creerGlyph("D", largeur, hauteur);
+  glyphes.zE = creerGlyph("E", largeur, hauteur);
+  glyphes.zI = creerGlyph("I", 26, hauteur);
+  glyphes.zJ = creerGlyph("J", largeur, hauteur);
+  glyphes.zL = creerGlyph("L", largeur, hauteur);
+  glyphes.zM = creerGlyph("M", largeur, hauteur);
+  glyphes.zN = creerGlyph("N", largeur, hauteur);
+  glyphes.zR = creerGlyph("R", largeur, hauteur);
+  glyphes.zS = creerGlyph("S", largeur, hauteur);
+  glyphes.zU = creerGlyph("U", largeur, hauteur);
+  glyphes.zV = creerGlyph("V", largeur, hauteur);
+  z2points = creerGlyph(":", 10, 30);
+  hauteur = 40;
+  largeur = 70;
+  zBTon = creerGlyph("BTon", largeur, hauteur);
+  zBTof = creerGlyph("BTof", largeur, hauteur);
+  zAPPS = creerGlyph("APPS", largeur, hauteur);
+  zSYNC = creerGlyph("SYNC", largeur, hauteur);
+  zGPS = creerGlyph("GPS", largeur, hauteur);
+}
+
+function aff_ponct() {
+  if (mode == 'montre') {
+    g.setColor(1,1,0);
+    g.drawImage(z2points, 84, 22);
+    g.fillPoly([91,110,100,110,82,163,75,163]);
+  }
 }
 
 function aff_unimin() {
@@ -362,16 +354,6 @@ function aff_GPS() {
   }
 }
 
-function aff_dat() {
-  if (mode == 'montre') {
-    g.setColor(0,0,0);
-    g.fillRect(0, 110, 71,  162);
-    g.setColor(1,1,0);
-    g.drawImage(glyphes[dizdat], 0, 110);
-    g.drawImage(glyphes[unidat],40, 110);
-  }
-}
-
 function MAJ_min() {
   dizmin = 'z' + String(String(Math.floor(min / 10)));
   if (dizmin != dizminpre) {
@@ -383,6 +365,16 @@ function MAJ_min() {
     aff_unimin();
   }
   uniminpre = unimin;
+}
+
+function aff_dat() {
+  if (mode == 'montre') {
+    g.setColor(0,0,0);
+    g.fillRect(0, 110, 71,  162);
+    g.setColor(1,1,0);
+    g.drawImage(glyphes[dizdat], 0, 110);
+    g.drawImage(glyphes[unidat],40, 110);
+  }
 }
 
 function cligno() {
@@ -420,7 +412,7 @@ function MAJ_heu() {
 }
 
 function chargement() {
-  charge = E.getBattery();
+  var charge = E.getBattery();
   charge = Math.round((charge / 100) * 176);
   if (mode == 'montre') {
     g.setColor(0,0,0);
@@ -497,8 +489,6 @@ function lanceur() {
   Bangle.removeAllListeners('touch');
   Bangle.setGPSPower(false, "cadran");
   Bangle.removeListener('GPS', gps_listener);
-  d = new Date();
-  setTime((d.getTime() / 1000)+cum_cor);
   Bangle.showLauncher();
 }
 
@@ -526,11 +516,7 @@ function GPS() {
     gps_listener = Bangle.on('GPS', function(fix) {
       if (fix.time) {
         setTime(fix.time.getTime() / 1000);
-        var d = new Date();
-        if (Math.abs(d.getTime() - fix.time.getTime()) < 1000) {
-          Bangle.removeListener('GPS', gps_listener);
-          fix_reussi();
-        }
+        fix_reussi();
       }
     });
   } else {
@@ -556,9 +542,13 @@ function fix_reussi() {
   initialisation();
 }
 
-Bluetooth.setConsole(true);
 Bangle.removeAllListeners('lock');
 clearWatch();
+Bangle.setOptions({btnLoadTimeout: 1500});
+E.on('kill', function() {
+  d = new Date();
+  setTime((d.getTime() / 1000) + cum_cor);
+});
 g.setBgColor(1,1,0);
 g.clear();
 g.setColor(0,0,0);
