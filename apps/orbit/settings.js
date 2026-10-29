@@ -1,7 +1,24 @@
-/* tenkyu 0.06: settings and editable event data. */
+/* tenkyu 0.080: settings, rest diagnostics and flash-backed location picker. */
 (function(back){
   var Storage=require("Storage");
+  // Read-only version display: title is not a selectable button.
+  var VERSION="0.080";
   var REST_THRESHOLDS=[0.001,0.003,0.009,0.027,0.081,0.243,0.729];
+  var REST_ACTIVITY_DEFAULTS=[0.5,2,6,18];
+  // Bangle.js 2 has a 3-bit colour screen (8 actual dial colours).
+  var DIAL_COLOR_NAMES=["White","Red","Green","Blue","Yellow","Cyan","Magenta","Black"];
+  var DIAL_COLOR_VALUES=[0xFFFF,0xF800,0x07E0,0x001F,0xFFE0,0x07FF,0xF81F,0];
+  function restActivityCuts(s){
+    var a=[],prev=0;
+    for(var i=0;i<4;i++){
+      var n=+s["restActivityT"+(i+1)];
+      if(!isFinite(n)||n<=prev)n=REST_ACTIVITY_DEFAULTS[i];
+      if(n<=prev)n=prev+0.1;
+      n=Math.round(n*1000)/1000;
+      a.push(n);prev=n;
+    }
+    return a;
+  }
   function thresholdIndex(v){
     if(!isFinite(v)||v<=0)return 3;
     var best=0;
@@ -9,8 +26,9 @@
     return best;
   }
 
-  var C,P,JPI;
-  var JPFILE="orbitjp.dat",jpPrefCache=-1,jpMunicipalities;
+  var C,P,JPI,cityOffsets,cityCacheIndex=-1,cityCache;
+  var JPFILE="orbitjp.dat",CITYFILE="orbitcities.dat",
+    jpPrefCache=-1,jpMunicipalities;
   var CFG="orbit.json",CAL="orbit.cal.json",EVENTS="orbit.events.json";
   var GPS_ID="orbitsettings";
   var COLORS=["red","yellow","green","blue","cyan","magenta","orange","white","gray","black"];
@@ -27,7 +45,9 @@
   function loadPlaceIndex(){
     if(C&&P)return;
     var d=require("orbitloc");
-    C=d.countries;P=d.prefs;JPI=d.jpidx||[];
+    // Country names are an inexpensive string index; city lists stay on flash.
+    C=d.countryNames.split("|");P=d.prefs;JPI=d.jpidx||[];
+    cityOffsets=d.cityOffsets;
     d=undefined;
   }
   function releaseMunicipalities(){
@@ -36,7 +56,8 @@
   }
   function releasePlaceData(){
     releaseMunicipalities();
-    C=undefined;P=undefined;JPI=undefined;
+    cityCache=undefined;cityCacheIndex=-1;
+    C=undefined;P=undefined;JPI=undefined;cityOffsets=undefined;
     try{
       if(typeof Modules!=="undefined"&&Modules.getCached){
         var mc=Modules.getCached();
@@ -46,8 +67,21 @@
     }catch(e){}
   }
   function countryIndex(name){
-    for(var i=0;C&&i<C.length;i++)if(C[i][0]===name)return i;
+    for(var i=0;C&&i<C.length;i++)if(C[i]===name)return i;
     return -1;
+  }
+  function loadCities(ci){
+    loadPlaceIndex();
+    if(ci===cityCacheIndex&&cityCache)return cityCache;
+    if(ci<0||ci>=C.length)throw new Error("Country index");
+    var len=cityOffsets[ci+1]-cityOffsets[ci]-1;
+    var raw=Storage.read(CITYFILE,cityOffsets[ci],len);
+    if(!raw)throw new Error("Missing city data "+C[ci]);
+    var list=JSON.parse(raw);
+    if(!list.length)throw new Error("Empty city data "+C[ci]);
+    cityCache=undefined;cityCacheIndex=-1;
+    cityCache=list;cityCacheIndex=ci;
+    return list;
   }
   function prefIndex(name){
     for(var i=0;P&&i<P.length;i++)if(P[i][0]===name)return i;
@@ -96,18 +130,23 @@
     set("restEnabled",s.restEnabled!==false);
     set("restBarHeight",Math.max(1,Math.min(14,isFinite(s.restBarHeight)?s.restBarHeight|0:10)));
     set("restThreshold",REST_THRESHOLDS[thresholdIndex(s.restThreshold)]);
+    var activityCuts=restActivityCuts(s);
+    for(var ai=0;ai<4;ai++)set("restActivityT"+(ai+1),activityCuts[ai]);
     set("restWearEnabled",s.restWearEnabled!==false);
+    set("restWearHold",s.restWearHold!==false);
     set("restWearThreshold",REST_THRESHOLDS[thresholdIndex(s.restWearThreshold===undefined?0.009:s.restWearThreshold)]);
     [["restProbeSeconds",10,60,30],
-      ["restPulseConfidence",1,100,90],["restPulseMin",20,100,40],["restPulseMax",120,240,200]].forEach(function(q){
+      ["restPulseConfidence",1,100,90]].forEach(function(q){
       set(q[0],Math.max(q[1],Math.min(q[2],isFinite(s[q[0]])?+s[q[0]]:q[3])));
     });
     set("timeSource",(s.timeSource===1||s.timeSource==="1")?1:0);
     set("orbitHourSize",Math.max(6,Math.min(12,isFinite(s.orbitHourSize)?s.orbitHourSize|0:8)));
     set("orbitHourStep",[1,2,3,6].indexOf(s.orbitHourStep)>=0?s.orbitHourStep:1);
     set("orbitHourEnabled",s.orbitHourEnabled===undefined?false:s.orbitHourEnabled!==false);
+    if(DIAL_COLOR_VALUES.indexOf(s.orbitHourColor)<0)set("orbitHourColor",0xFFFF);
+    set("restEco",s.restEco===true);
     s.sunSize=Math.max(6,Math.min(15,s.sunSize|0));
-    s.earthSize=Math.max(40,Math.min(45,s.earthSize|0));
+    s.earthSize=Math.max(25,Math.min(50,s.earthSize|0));
     s.moonSize=Math.max(14,Math.min(16,s.moonSize|0));
     s.datePos=Math.max(0,Math.min(2,s.datePos|0));s.timePos=Math.max(0,Math.min(2,s.timePos|0));
     s.dateSize=Math.max(12,Math.min(30,s.dateSize|0));s.timeSize=Math.max(12,Math.min(30,s.timeSize|0));
@@ -128,6 +167,8 @@
     set("manualLon",Math.max(-180,Math.min(180,lon)));
     if(s.lat!==undefined){delete s.lat;changed=true;}
     if(s.lon!==undefined){delete s.lon;changed=true;}
+    if(s.restPulseMin!==undefined){delete s.restPulseMin;changed=true;}
+    if(s.restPulseMax!==undefined){delete s.restPulseMax;changed=true;}
 
     if(s.locName==="GPS"||s.locPref==="GPS")set("locationSource","gps");
     else if(s.locName==="Custom"||s.locPref==="Manual")set("locationSource","manual");
@@ -147,13 +188,14 @@
     return s;
   }
 
-  function normalizePlaceState(s){
+  function normalizePlaceState(s,withCities){
     loadPlaceIndex();
     if(countryIndex(s.countryName)<0)s.countryName="Japan";
     var pi=prefIndex(s.locPref);
-    if(pi>=0&&s.countryName==="Japan")s.pref=pi;
+    if(pi>=0&&s.countryName==="Japan"&&s.placeStateVersion!==1)s.pref=pi;
     s.pref=Math.max(0,Math.min(P.length-1,s.pref|0));
-
+    // Do not parse even one municipality/city record to show Place name.
+    if(withCities===false)return;
     if(s.countryName==="Japan"){
       var ml=loadMunicipalities(s.pref),found=-1;
       if(s.placeStateVersion!==1&&s.locName)
@@ -161,7 +203,7 @@
       if(found>=0)s.municipality=found;
       s.municipality=Math.max(0,Math.min(Math.max(0,ml.length-1),s.municipality|0));
     }else{
-      var ci=countryIndex(s.countryName),list=C[ci][1]||[],f=-1;
+      var ci=countryIndex(s.countryName),list=loadCities(ci),f=-1;
       if(s.placeStateVersion!==1&&s.locName)
         for(var j=0;j<list.length;j++)if(list[j][0]===s.locName){f=j;break;}
       if(f>=0)s.place=f;
@@ -198,6 +240,155 @@
   function defaultColor(type){return type==="holiday"?"red":type==="birthday"?"magenta":type==="family"?"yellow":"yellow";}
 
   // ---------- Location ----------
+  // A visible, inexpensive acknowledgement must precede loading 197 country
+  // entries or parsing municipality data. Never block the touch callback.
+  function locationLoading(label){
+    try{
+      var w=g.getWidth(),h=g.getHeight();
+      g.reset().setBgColor(0).setColor(0).fillRect(0,24,w-1,h-1);
+      g.setColor(0xffff).setFont("6x8",2).setFontAlign(0,0)
+        .drawString(label,w>>1,(h+24)>>1);
+      if(g.flip)g.flip();
+    }catch(e){}
+  }
+  function openPlace(s){
+    // The menu now needs no data: draw it immediately, not on a later timer.
+    locationLoading("Places...");
+    try{placeMenu(s);}
+    catch(e){
+      releasePlaceData();
+      E.showAlert("Cannot open locations\n"+String(e),"tenkyu")
+        .then(function(){locationMenu(s);});
+    }
+  }
+  function chosenCountry(s,ci){
+    s.countryName=C[ci];
+    s.place=0;s.municipality=0;s.placeStateVersion=1;
+    releaseMunicipalities();
+    openPlace(s);
+  }
+  function countryPage(s,letter,page){
+    var ids=[],i;
+    for(i=0;i<C.length;i++)
+      if(C[i].charAt(0).toUpperCase()===letter)ids.push(i);
+    var size=7,start=page*size;
+    if(start>=ids.length){page=0;start=0;}
+    var m={"":{title:letter+" countries"},
+      "< Back":function(){countryLetters(s,letter);}};
+    if(page>0)m["< Previous"]=function(){countryPage(s,letter,page-1);};
+    for(i=start;i<Math.min(start+size,ids.length);i++)(function(ci){
+      m[C[ci]]=function(){chosenCountry(s,ci);};
+    })(ids[i]);
+    if(start+size<ids.length)
+      m["Next >"]=function(){countryPage(s,letter,page+1);};
+    E.showMenu(m);
+  }
+  function countryLetters(s,range){
+    var m={"":{title:"Initial "+range},
+      "< Back":function(){countryGroups(s);}};
+    for(var j=range.charCodeAt(0);j<=range.charCodeAt(range.length-1);j++){
+      var letter=String.fromCharCode(j),count=0;
+      for(var i=0;i<C.length;i++)
+        if(C[i].charAt(0).toUpperCase()===letter)count++;
+      if(count)(function(c,n){
+        m[c+" ("+n+")"]=function(){countryPage(s,c,0);};
+      })(letter,count);
+    }
+    E.showMenu(m);
+  }
+  function openCountries(s){
+    locationLoading("Countries...");
+    setTimeout(function(){
+      try{loadPlaceIndex();countryGroups(s);}
+      catch(e){
+        E.showAlert("Cannot open countries\n"+String(e),"tenkyu")
+          .then(function(){placeMenu(s);});
+      }
+    },0);
+  }
+  function countryGroups(s){
+    var m={"":{title:"Choose country"},
+      "< Back":function(){placeMenu(s);},
+      "Japan (quick)":function(){chosenCountry(s,countryIndex("Japan"));}};
+    var ranges=["A-D","E-H","I-L","M-P","Q-T","U-Z"];
+    for(var i=0;i<ranges.length;i++)(function(range){
+      m[range]=function(){countryLetters(s,range);};
+    })(ranges[i]);
+    E.showMenu(m);
+  }
+  function openMunicipalities(s){
+    locationLoading("Cities...");
+    setTimeout(function(){
+      try{municipalityPage(s,Math.floor((s.municipality|0)/7));}
+      catch(e){
+        E.showAlert("Cannot open cities\n"+String(e),"tenkyu")
+          .then(function(){placeMenu(s);});
+      }
+    },0);
+  }
+  function municipalityPage(s,page){
+    var ml=loadMunicipalities(s.pref),size=7;
+    if(page*size>=ml.length)page=0;
+    var m={"":{title:"Municipalities"},
+      "< Back":function(){placeMenu(s);}};
+    if(page>0)m["< Previous"]=function(){municipalityPage(s,page-1);};
+    for(var i=page*size;i<Math.min((page+1)*size,ml.length);i++)
+      (function(j){
+        m[ml[j][0]]=function(){
+          s.municipality=j;saveSelectedPlace(s);placeMenu(s);
+        };
+      })(i);
+    if((page+1)*size<ml.length)
+      m["Next >"]=function(){municipalityPage(s,page+1);};
+    E.showMenu(m);
+  }
+  function openCityList(s){
+    locationLoading("Cities...");
+    setTimeout(function(){
+      try{cityPage(s,Math.floor((s.place|0)/7));}
+      catch(e){
+        E.showAlert("Cannot open cities\n"+String(e),"tenkyu")
+          .then(function(){placeMenu(s);});
+      }
+    },0);
+  }
+  function cityPage(s,page){
+    loadPlaceIndex();
+    var ci=countryIndex(s.countryName),list=loadCities(ci),size=7;
+    if(page*size>=list.length)page=0;
+    var m={"":{title:"Cities"},"< Back":function(){placeMenu(s);}};
+    if(page>0)m["< Previous"]=function(){cityPage(s,page-1);};
+    for(var i=page*size;i<Math.min((page+1)*size,list.length);i++)
+      (function(j){
+        m[list[j][0]]=function(){s.place=j;saveSelectedPlace(s);placeMenu(s);};
+      })(i);
+    if((page+1)*size<list.length)
+      m["Next >"]=function(){cityPage(s,page+1);};
+    E.showMenu(m);
+  }
+  function openPrefectures(s){
+    locationLoading("Prefectures...");
+    setTimeout(function(){
+      try{loadPlaceIndex();prefecturePage(s,Math.floor((s.pref|0)/7));}
+      catch(e){
+        E.showAlert("Cannot open prefectures\n"+String(e),"tenkyu")
+          .then(function(){placeMenu(s);});
+      }
+    },0);
+  }
+  function prefecturePage(s,page){
+    var size=7,start=page*size,i,m={"":{title:"Prefectures"},
+      "< Back":function(){placeMenu(s);}};
+    if(page>0)m["< Previous"]=function(){prefecturePage(s,page-1);};
+    for(i=start;i<Math.min(start+size,P.length);i++)(function(pi){
+      m[P[pi][0]]=function(){
+        s.pref=pi;s.municipality=0;s.placeStateVersion=1;
+        releaseMunicipalities();openPlace(s);
+      };
+    })(i);
+    if(start+size<P.length)m["Next >"]=function(){prefecturePage(s,page+1);};
+    E.showMenu(m);
+  }
   function selectedPlace(s){
     normalizePlaceState(s);
     var ci=countryIndex(s.countryName);
@@ -205,8 +396,8 @@
       var jl=loadMunicipalities(s.pref);
       return {group:P[s.pref][0],place:jl[s.municipality],ci:ci,pi:0};
     }
-    var list=C[ci][1]||[];
-    return {group:C[ci][0],place:list[s.place],ci:ci,pi:s.place|0};
+    var list=loadCities(ci);
+    return {group:C[ci],place:list[s.place],ci:ci,pi:s.place|0};
   }
   function placeTimeData(q){
     var t;
@@ -321,48 +512,33 @@
 
   function placeMenu(s){
     stopGPS();
-    normalizePlaceState(s);
-    var ci=countryIndex(s.countryName);
-    var m={"":{title:"Place name"},"< Back":function(){releasePlaceData();locationMenu(s);},
-      "Country":{value:ci,min:0,max:C.length-1,step:1,
-        format:function(v){return C[v][0];},
-        onchange:function(v){
-          s.countryName=C[v][0];s.place=0;s.municipality=0;
-          releaseMunicipalities();
-          setTimeout(function(){placeMenu(s);},10);
-        }
-      }
+    // Never require the country module or parse a municipality record just
+    // to display Place name. Opening this menu must be constant-time.
+    var name=s.countryName||"Japan";
+    var m={"":{title:"Place name"},
+      "< Back":function(){releasePlaceData();locationMenu(s);},
+      "Country":function(){openCountries(s);},
+      "Selected":{value:0,min:0,max:0,
+        format:function(){return name;}}
     };
-
-    if(s.countryName==="Japan"){
-      m["Prefecture"]={value:s.pref,min:0,max:P.length-1,step:1,
-        format:function(v){return P[v][0];},
-        onchange:function(v){
-          s.pref=v;s.municipality=0;releaseMunicipalities();
-          setTimeout(function(){placeMenu(s);},10);
+    if(name==="Japan"){
+      m["Prefecture"]=function(){openPrefectures(s);};
+      m["Area"]={value:0,min:0,max:0,
+        format:function(){
+          return P&&P[s.pref]?P[s.pref][0]:(s.locPref||"Tokyo");
+        }};
+      m["Municipality"]=function(){openMunicipalities(s);};
+    }else m["City"]=function(){openCityList(s);};
+    m["Use place"]=function(){
+      locationLoading("Saving...");
+      setTimeout(function(){
+        try{commitPlace(s);}
+        catch(e){
+          E.showAlert("Cannot save location\n"+String(e),"tenkyu")
+            .then(function(){placeMenu(s);});
         }
-      };
-      var ml=loadMunicipalities(s.pref);
-      s.municipality=Math.max(0,Math.min(ml.length-1,s.municipality|0));
-      m["Municipality"]={value:s.municipality,min:0,max:ml.length-1,step:1,
-        format:function(v){return ml[v][0];},
-        onchange:function(v){s.municipality=v;saveSelectedPlace(s);}
-      };
-    }else{
-      var list=C[ci][1]||[];
-      if(list.length>1){
-        s.place=Math.max(0,Math.min(list.length-1,s.place|0));
-        m["City"]={value:s.place,min:0,max:list.length-1,step:1,
-          format:function(v){return list[v][0];},
-          onchange:function(v){s.place=v;saveSelectedPlace(s);}
-        };
-      }else{
-        s.place=0;
-        m["Capital"]={value:0,min:0,max:0,format:function(){return list[0][0];}};
-      }
-    }
-
-    m["Use place"]=function(){commitPlace(s);};
+      },0);
+    };
     E.showMenu(m);
   }
 
@@ -396,7 +572,7 @@
     stopGPS();releasePlaceData();
     if(!s)s=appCfg();
     var m={"":{title:"Location"},"< Back":main,
-      "Place name":function(){placeMenu(s);},
+      "Place name":function(){openPlace(s);},
       "Manual":function(){manualMenu(s);},
       "GPS":function(){gpsMenu(s);},
       "Current coords":function(){locationInfo(s,function(){locationMenu(s);});}
@@ -529,6 +705,11 @@
     E.showMenu({"":{title:"Dial"},"< Back":main,
       "Enabled":{value:s.orbitHourEnabled,onchange:function(v){s.orbitHourEnabled=!!v;write(CFG,s);}},
       "Hour size":{value:s.orbitHourSize,min:6,max:12,step:1,onchange:function(v){s.orbitHourSize=v;write(CFG,s);}},
+      "Hour color":{value:Math.max(0,DIAL_COLOR_VALUES.indexOf(s.orbitHourColor)),
+        min:0,max:DIAL_COLOR_NAMES.length-1,step:1,
+        format:function(v){return DIAL_COLOR_NAMES[v];},
+        onchange:function(v){s.orbitHourColor=DIAL_COLOR_VALUES[v];write(CFG,s);}
+      },
       "Hour step":{value:[1,2,3,6].indexOf(s.orbitHourStep),min:0,max:3,step:1,
         format:function(v){return [1,2,3,6][v]+" h";},
         onchange:function(v){s.orbitHourStep=[1,2,3,6][v];write(CFG,s);}
@@ -559,7 +740,7 @@
         onchange:function(v){s.viewSide=v?1:0;write(CFG,s);}
       },
       "Sun size":{value:s.sunSize,min:6,max:15,step:1,onchange:function(v){s.sunSize=v;write(CFG,s);}},
-      "Earth size":{value:s.earthSize,min:40,max:45,step:1,onchange:function(v){
+      "Earth size":{value:s.earthSize,min:25,max:50,step:1,onchange:function(v){
         s.earthSize=v;var mn=s.earthSize+s.moonSize+4;if(s.moonOrbit<mn)s.moonOrbit=mn;
         write(CFG,s);setTimeout(function(){bodiesMenu(s);},10);
       }},
@@ -592,35 +773,80 @@
   function wearMenu(s){
     E.showMenu({"":{title:"Non-wear"},"< Back":function(){restMenu(s);},
       "Enabled":{value:s.restWearEnabled,onchange:function(v){s.restWearEnabled=!!v;applyRest(s);}},
+      "Keep until move":{value:s.restWearHold,format:function(v){return v?"On":"Off";},
+        onchange:function(v){s.restWearHold=!!v;applyRest(s);}},
       "3D drift":thresholdMenu(s,"restWearThreshold"),
       "Probe seconds":{value:s.restProbeSeconds,min:10,max:60,step:5,
         onchange:function(v){s.restProbeSeconds=v;applyRest(s);}},
       "Pulse confidence":{value:s.restPulseConfidence,min:1,max:100,step:1,
-        format:function(v){return v+" %";},onchange:function(v){s.restPulseConfidence=v;applyRest(s);}},
-      "Min pulse BPM":{value:s.restPulseMin,min:20,max:100,step:5,
-        onchange:function(v){s.restPulseMin=v;applyRest(s);}},
-      "Max pulse BPM":{value:s.restPulseMax,min:120,max:240,step:5,
-        onchange:function(v){s.restPulseMax=v;applyRest(s);}}
+        format:function(v){return "> "+v+" %";},
+        onchange:function(v){s.restPulseConfidence=v;applyRest(s);}}
     });
   }
   function showRestDiagnostics(s){
     var api=Bangle.orbitRest,d=api&&api.getDiagnostics&&api.getDiagnostics();
     var list=d&&d.recent,last=list&&list.length?list[list.length-1]:undefined;
     var hr=["Pending","Detected","Absent","Failed"];
-    var value=!last?"N/A":last.result===254?"0 (unworn)":
-      last.result===255?"Unknown":"Rest "+(1+Math.min(4,Math.floor(Math.min(99,last.result)/20)));
-    var message=last?("Value: "+value+"\nReason: "+last.reason+
-      "\nPulse: "+(hr[last.pulse]||"?")+
-      "\n3D: "+last.driftG+"g"+
-      "\nData: "+last.coverageSec+"s"):"No complete 5-min bin yet";
-    E.showAlert(message,"Rest diagnostics").then(function(){restMenu(s);});
+    var reasons={
+      accel_missing:"No accel",nonwear_disabled:"Disabled",
+      motion:"Motion",pulse_detected_still:"Pulse+still",
+      nonwear_hrm_failed:"HRM failed",hrm_retry_wait:"Retry wait",
+      nonwear_hrm_unknown:"HRM unknown",
+      nonwear:"No pulse",nonwear_held:"Held unworn",
+      pulse_held_still:"Held worn",accel_uncertain:"Uncertain"
+    };
+    // E.showAlert does not scroll on Bangle.js 2. Use read-only
+    // menu rows for a scrollable diagnostic display instead.
+    function readOnly(value){
+      return {value:0,min:0,max:0,format:function(){return String(value);}};
+    }
+    var m={"":{title:"Last check"},"< Back":function(){restMenu(s);}};
+    if(!last)m["Status"]=readOnly("No 5-min bin");
+    m["Result"]=readOnly(!last?"--":last.result===254?"Unworn":
+      last.result===253?"HRM failed":
+      last.result===255?"Unknown":"Rest "+(1+Math.min(4,Math.floor(Math.min(99,last.result)/20))));
+    m["Reason"]=readOnly(last?(reasons[last.reason]||last.reason):"--");
+    m["Pulse"]=readOnly(last?(hr[last.pulse]||"?"):"--");
+    m["Hold"]=readOnly(d&&d.holdState===1?"Worn":
+      d&&d.holdState===2?"Unworn":
+      d&&d.holdState===3?"HRM failed":"Unknown");
+    m["Shared HRM"]=readOnly(d?d.sharedPulseCount||0:0);
+    m["Conf."]=readOnly(last&&last.confidence>=0?last.confidence+"%":"--");
+    m["3D drift"]=readOnly(last&&isFinite(last.driftG)?last.driftG+" g":"--");
+    m["Peak sum"]=readOnly(last&&typeof last.activity300==="number"&&isFinite(last.activity300)?
+      last.activity300.toFixed(3)+" g":
+      last&&isFinite(last.activity)?last.activity.toFixed(3)+" g":"--");
+    if(last&&typeof last.activity300==="number"&&isFinite(last.activity300))
+      m["Raw sum"]=readOnly(isFinite(last.activity)?last.activity.toFixed(3)+" g":"--");
+    m["Data"]=readOnly(last?last.coverageSec+" s":"--");
+    E.showMenu(m);
+  }
+  function activityMenu(s){
+    var cuts=restActivityCuts(s);
+    var m={"":{title:"Rest levels"},"< Back":function(){restMenu(s);}};
+    for(var i=0;i<4;i++)(function(k){
+      m["L"+(5-k)+"/"+(4-k)+" boundary"]={
+        value:cuts[k],min:k?+(cuts[k-1]+0.1).toFixed(3):0.1,
+        max:k<3?+(cuts[k+1]-0.1).toFixed(3):500,
+        step:0.1,format:function(v){return v.toFixed(1)+" g";},
+        onchange:function(v){
+          s["restActivityT"+(k+1)]=+v.toFixed(3);
+          applyRest(s);
+          setTimeout(function(){activityMenu(s);},10);
+        }
+      };
+    })(i);
+    E.showMenu(m);
   }
   function restMenu(s){
     E.showMenu({"":{title:"Rest graph"},"< Back":main,
       "Enabled":{value:s.restEnabled,onchange:function(v){s.restEnabled=!!v;applyRest(s);}},
+      "Eco sampling":{value:s.restEco,format:function(v){return v?"5 Hz":"Full";},
+        onchange:function(v){s.restEco=!!v;applyRest(s);}},
       "Max bar height":{value:s.restBarHeight,min:1,max:14,step:1,
         format:function(v){return v+" px";},onchange:function(v){s.restBarHeight=v;write(CFG,s);}},
-      "Peak threshold":thresholdMenu(s,"restThreshold"),
+      "Peak gate":thresholdMenu(s,"restThreshold"),
+      "Stage boundaries":function(){activityMenu(s);},
       "Non-wear":function(){wearMenu(s);},
       "Last check":function(){showRestDiagnostics(s);}
     });
@@ -654,7 +880,7 @@
   function main(){
     stopGPS();releasePlaceData();
     var s=appCfg();
-    E.showMenu({"":{title:"tenkyu"},"< Back":leave,
+    E.showMenu({"":{title:"tenkyu v"+VERSION},"< Back":leave,
       "Location":function(){locationMenu(s);},
       "Date/time":function(){dateTimeMenu(s);},
       "Bodies":function(){bodiesMenu(s);},
