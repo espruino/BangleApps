@@ -1,4 +1,4 @@
-// Clock by Giles Booth for BangleJS2 using Büro Destruct Console Remix font
+// Clock by Giles Booth for BangleJS2 using BÃ¼ro Destruct Console Remix font
 // based on code in https://www.espruino.com/Bangle.js+Clock+Font
 
 Graphics.prototype.setFontBDGemini = function() {
@@ -25,20 +25,15 @@ function queueDraw() {
 function draw() {
   g.reset();  
   // work out locale-friendly date/time
+  var locale = require("locale");
   var date = new Date();
-  var timeStr = require("locale").time(date,1);
-  var hh = timeStr.substr(0,2);
-  // Kludge to add leading zeros to hours - if recoding please implement leading zeros:
-  // Leading zeroes are an integral part of the design.
-  // If the hour is single digit the first character of the string will be 
-  // space, in which case a zero is added. As there is no space in the font, 
-  // spaces are ignored.
-  if (hh.substr(0,1) == ' ') {
-    hh = '0' + hh;
-  }
-  var mm = timeStr.substr(-3);
-  var dayName = require("locale").dow(new Date(), 1);
-  var longDateStr = date.getDate() + ' ' + require("locale").month(new Date(), 1);  
+  var hours = date.getHours();
+  if (locale.is12Hours()) hours = (hours % 12) || 12;
+  // pad hours and minutes with leading zeros
+  var hh = hours.toString().padStart(2,"0");
+  var mm = ":" + date.getMinutes().toString().padStart(2,"0");
+  var dayName = locale.dow(date, 1);
+  var longDateStr = date.getDate() + ' ' + locale.month(date, 1);
   // draw time
   g.setFont("BDGemini");
   g.clearRect(0,24,175,175); // clear the background
