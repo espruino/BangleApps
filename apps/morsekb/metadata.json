@@ -1,0 +1,16 @@
+{
+  "id": "morsekb",
+  "name": "Morse Keyboard",
+  "shortName": "MorseKB",
+  "version": "0.03",
+  "author": "Spiegie",
+  "description": "A Morse code keyboard for text input",
+  "icon": "morsekb.png",
+  "readme": "README.md",
+  "type":"textinput",
+  "tags": "keyboard",
+  "storage": [
+    {"name":"textinput","url":"lib.js"}
+  ],
+  "supports": ["BANGLEJS2"]
+}
