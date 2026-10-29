@@ -393,6 +393,20 @@ E.emit("ANCS", {
 */
 
 {
+  function tryCTSGetTime(attempts, onFinish, onError){
+    try{
+      NRF.ctsGetTime();
+      onFinish();
+    } catch (error) {
+	  attempts -= 1;
+      if(attempts>0){
+        setTimeout(tryCTSGetTime, 300, attempts, onFinish, onError);
+      } else{
+        onError();
+      }
+    }
+  }
+
   let settings = require("Storage").readJSON("ios.settings.json",1)||{};
   let ctsUpdate = e=>{
     if (process.env.VERSION=="2v19")
@@ -409,7 +423,8 @@ E.emit("ANCS", {
   };
   if (settings.timeSync && NRF.ctsGetTime) {
     if (NRF.ctsIsActive())
-      NRF.ctsGetTime().then(ctsUpdate, function(){ /* */ })
+      // ctsGetTime can fail if Bluetooth is busy from before a reboot
+      tryCTSGetTime(3, ctsUpdate, function(){ /* */ });
     E.on('CTS',ctsUpdate);
   }
   if (settings.no_utf8 || !require("Storage").read("font")) {
