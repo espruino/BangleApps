@@ -148,7 +148,8 @@ function formatPace(speed, paceLength) {
 function eta(speed, state) {
   if (speed <= 0) return Infinity;
 
-  const distRemaining = (state.distance || 0) % 5000;
+  const distance = state.distance || 0;
+  const distRemaining = 5000 - (distance % 5000);
   return distRemaining / speed;
 }
 
@@ -327,7 +328,7 @@ exports.getStats = function(statIDs, options) {
     stats["etaa"]={
       title : "A ETA",
       getValue : function() { return eta(state.avrSpeed, state); },
-      getString : function() { const t = this.getValue(); return isFinite(t) ? formatTime(t) : "__:__"; },
+      getString : function() { const t = this.getValue(); return isFinite(t) ? formatTime(t * 1000) : "__:__"; },
     };
   }
   if (statIDs.includes("etac")) {
@@ -335,7 +336,7 @@ exports.getStats = function(statIDs, options) {
     stats["etac"]={
       title : "C ETA",
       getValue : function() { return eta(state.curSpeed, state); },
-      getString : function() { const t = this.getValue(); return isFinite(t) ? formatTime(t) : "__:__"; },
+      getString : function() { const t = this.getValue(); return isFinite(t) ? formatTime(t * 1000) : "__:__"; },
     };
   }
   // ======================
