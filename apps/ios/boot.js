@@ -393,19 +393,21 @@ E.emit("ANCS", {
 */
 
 {
-  function tryCTSGetTime(attempts, onFinish, onError){
-    try{
-      NRF.ctsGetTime();
-      onFinish();
-    } catch (error) {
-	  attempts -= 1;
+  let tryCTSGetTime = function(attempts, onFinish, onError){
+    let retry = function(){
+      attempts -= 1;
       if(attempts>0){
         setTimeout(tryCTSGetTime, 300, attempts, onFinish, onError);
       } else{
         onError();
       }
+    };
+    try {
+      NRF.ctsGetTime().then(e=>{onFinish(e);}, retry);
+    } catch (error) {
+      retry();
     }
-  }
+  };
 
   let settings = require("Storage").readJSON("ios.settings.json",1)||{};
   let ctsUpdate = e=>{
