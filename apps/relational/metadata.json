@@ -1,0 +1,18 @@
+{ "id": "relational",
+  "name": "Relational - Digital Art Clock",
+  "shortName": "Relational",
+  "icon": "app.png",
+  "version": "0.01",
+  "author": "Stefan Keller",
+  "description": "Wear your love of art on your wrist. Relational shows the time over a random composition inspired by the Relational Paintings of the Swiss Concrete artist Fritz Glarner. Each start of the clock brings a new one, out of more than 1 billion. Unlocked, it shows seconds and date; swipe up for a new composition, swipe down for widgets, double tap bottom left for a flashlight.",
+  "tags": "clock",
+  "type": "clock",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "readme": "README.md",
+  "storage": [
+    {"name": "relational.app.js", "url": "app.js"},
+    {"name": "relational.img", "url": "app-icon.js", "evaluate": true}
+  ],
+  "screenshots": [{"url": "screenshot.png"}]
+}
