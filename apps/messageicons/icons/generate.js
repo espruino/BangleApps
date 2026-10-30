@@ -25,6 +25,7 @@ const COLORS = {
   /* generic colors, using B2-safe colors */
     "adp": "#f00",
     "agenda": "#206cd5",
+    "bluewatch": "#0080FF",
     "airbnb": "#ff385c", // https://news.airbnb.com/media-assets/category/brand/
     "mail": "#ff0",
     "music": "#f0f",
