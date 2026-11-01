@@ -30,7 +30,14 @@ See **Basic logic** below for more details.
 
 ## Display
 
+### Widget 
 Widget shows clock error in milliseconds and PPM.
+This can be disabled in settings.
+
+### App
+The app tries to get a GPS fix when launched.
+It takes the time signal from the GPS to calculate the clock error as PPM and displays the result on the screen.
+The app won't change the PPM setting.
 
 ## Basic logic
 
