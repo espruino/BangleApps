@@ -3,10 +3,10 @@ Bangle.drawWidgets();
 
 var notes = require("Storage").readJSON("noteify.json", true) || [];
 var alarms = require("sched").getAlarms();
-msg = "";
+var msg = "";
 
 function startNote(idx) {
-  idx == undefined ? note = "" : note = notes[idx].note;
+  var note = idx == undefined ? "" : notes[idx].note;
   require("textinput").input({text:note}).then(result => {
   if (result != "") {
     idx == undefined ? notes.push({"note" : result}) : notes[idx].note = result;
