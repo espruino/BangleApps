@@ -5,3 +5,4 @@
 0.07: Re-upload to store the translated app name correctly as UTF-8.
 0.08: Re-upload so .info is written with UTF-8 (keeps the Č in the app name).
 0.09: Upload .info as UTF-8 bytes so the app name is stored correctly.
+0.24: Bundle a small Czech font (czech.pbf) so Czech characters render in status and buttons.

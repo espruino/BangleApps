@@ -1,7 +1,7 @@
 {
   "id": "gpstime",
   "name": "GPS Time",
-  "version": "0.09",
+  "version": "0.24",
   "author": "ra100",
   "description": "Update the Bangle.js's clock based on the time from the GPS receiver",
   "icon": "gpstime.png",
@@ -9,6 +9,7 @@
   "supports": ["BANGLEJS","BANGLEJS2"],
   "storage": [
     {"name":"gpstime.app.js","url":"gpstime.js"},
-    {"name":"gpstime.img","url":"gpstime-icon.js","evaluate":true}
+    {"name":"gpstime.img","url":"gpstime-icon.js","evaluate":true},
+    {"name":"czech.pbf","url":"czech.pbf"}
   ]
 }
