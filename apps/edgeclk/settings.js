@@ -30,30 +30,30 @@
   }
 
   E.showMenu({
-    '': { 'title': 'Edge Clock' },
+    '': { 'title': /*LANG*/'Edge Clock' },
     '< Back': back,
-    'Charge Buzz': {
+    /*LANG*/'Charge Buzz': {
       value: settings.buzzOnCharge,
       onchange: () => {
         settings.buzzOnCharge = !settings.buzzOnCharge;
         save();
       },
     },
-    'Month First': {
+    /*LANG*/'Month First': {
       value: settings.monthFirst,
       onchange: () => {
         settings.monthFirst = !settings.monthFirst;
         save();
       },
     },
-    '24h Clock': {
+    /*LANG*/'24h Clock': {
       value: settings.twentyFourH,
       onchange: () => {
         settings.twentyFourH = !settings.twentyFourH;
         save();
       },
     },
-    'Show AM/PM': {
+    /*LANG*/'Show AM/PM': {
       value: settings.showAmPm,
       onchange: () => {
         settings.showAmPm = !settings.showAmPm;
@@ -63,7 +63,7 @@
         save();
       },
     },
-    'Show Seconds': {
+    /*LANG*/'Show Seconds': {
       value: settings.showSeconds,
       onchange: () => {
         settings.showSeconds = !settings.showSeconds;
@@ -73,7 +73,7 @@
         save();
       },
     },
-    'Show Weather': {
+    /*LANG*/'Show Weather': {
       value: settings.showWeather,
       onchange: () => {
         settings.showWeather = !settings.showWeather;
@@ -83,7 +83,7 @@
         save();
       },
     },
-    'Step Goal': {
+    /*LANG*/'Step Goal': {
       value: settings.stepGoal,
       min: 250,
       max: 50000,
@@ -93,36 +93,36 @@
         save();
       }
     },
-    'Step Progress': {
+    /*LANG*/'Step Progress': {
       value: settings.stepBar,
       onchange: () => {
         settings.stepBar = !settings.stepBar;
         save();
       }
     },
-    'Week Progress': {
+    /*LANG*/'Week Progress': {
       value: settings.weekBar,
       onchange: () => {
         settings.weekBar = !settings.weekBar;
         save();
       },
     },
-    'Week Start': {
+    /*LANG*/'Week Start': {
       value: settings.mondayFirst,
-      format: () => settings.mondayFirst ? 'Monday' : 'Sunday',
+      format: () => settings.mondayFirst ? /*LANG*/'Monday' : /*LANG*/'Sunday',
       onchange: () => {
         settings.mondayFirst = !settings.mondayFirst;
         save();
       },
     },
-    'Day Progress': {
+    /*LANG*/'Day Progress': {
       value: settings.dayBar,
       onchange: () => {
         settings.dayBar = !settings.dayBar;
         save();
       },
     },
-    'Live steps': {
+    /*LANG*/'Live steps': {
       value: settings.redrawOnStep,
       onchange: () => {
         settings.redrawOnStep = !settings.redrawOnStep;

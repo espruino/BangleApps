@@ -76,7 +76,7 @@ let fmt = {
       return "" + d + " " + mf + "'" + s.toFixed(0) + '"';
     }
     }
-    return "bad mode?";
+    return /*LANG*/"bad mode?";
   },
   fmtPos: function(pos) {
     let x = pos.lat;
@@ -98,7 +98,7 @@ let fmt = {
       return this.fmtSpeed(fix.speed) + " " +
         this.fmtAlt(fix.alt);
     } else {
-      return "N/FIX " + this.fmtTimeDiff(t);
+      return /*LANG*/"N/FIX " + this.fmtTimeDiff(t);
     }
   },
   fmtSpeed: function(kph) {
@@ -228,7 +228,7 @@ function on_gps(fix) {
     msg = "" + fix.speed.toFixed(1) + "km/h " +
       fix.alt.toFixed(0) + "m";
   } else {
-    msg = "N/FIX "
+    msg = /*LANG*/"N/FIX "
       + (getTime() - gps.gps_start).toFixed(0) + "s";
   }
 

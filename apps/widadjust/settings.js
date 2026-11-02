@@ -7,7 +7,7 @@
 
   const DEFAULT_UPDATE_INTERVAL = 60000;
   let intervalV = [  10000,  30000, 60000, 180000, 600000, 1800000, 3600000 ];
-  let intervalN = [ "10 s", "30 s", "1 m",  "3 m", "10 m",  "30 m",   "1 h" ];
+  let intervalN = [ /*LANG*/"10 s", /*LANG*/"30 s", /*LANG*/"1 m",  /*LANG*/"3 m", /*LANG*/"10 m",  /*LANG*/"30 m",   /*LANG*/"1 h" ];
 
   let stateFileErased = false;
 
@@ -36,7 +36,7 @@
   }
 
   let mainMenu = {
-    '': { 'title' : 'Adjust Clock' },
+    '': { 'title' : /*LANG*/'Adjust Clock' },
 
     '< Back': () => {
       require('Storage').writeJSON(SETTINGS_FILE, settings);
@@ -75,7 +75,7 @@
       onchange : onPpmChange,
     },
 
-    'Update Interval': {
+    /*LANG*/'Update Interval': {
       value: intervalV.indexOf(settings.updateInterval),
       min: 0,
       max: intervalV.length - 1,
@@ -83,7 +83,7 @@
       onchange: v => settings.updateInterval = intervalV[v] ,
     },
 
-    'Threshold': {
+    /*LANG*/'Threshold': {
       value: thresholdV.indexOf(settings.adjustThreshold),
       min: 0,
       max: thresholdV.length - 1,
@@ -93,7 +93,7 @@
       },
     },
 
-    'Save State': {
+    /*LANG*/'Save State': {
       value: settings.saveState,
       onchange: (v) => {
         settings.saveState = v;
@@ -104,12 +104,12 @@
       },
     },
 
-    'Debug Log': {
+    /*LANG*/'Debug Log': {
       value: settings.debugLog,
       onchange: v => settings.debugLog = v,
     },
 
-    'Hide Widget': {
+    /*LANG*/'Hide Widget': {
       value: settings.hide || false,
       onchange: v => settings.hide = v,
     },

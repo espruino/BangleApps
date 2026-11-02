@@ -96,3 +96,8 @@ of 'Select Clock'
 0.84: Add 'Haptic Strength' option for 2v29.14 or higher
       Rename Alerts -> Sound/Vibration
       Ensure themes include bgW/fgW in readiness for Bangle.js 2v30
+0.85: Mark remaining menu labels (Back, passkey digits) for translation.
+0.86: Handle null setting.json/options instead of crashing.
+      Split the shutdown prompt so the app loader can translate it safely.
+0.87: Use g.findFont for calibration text so Czech characters display correctly.
+0.88: Keep the special '< Back' menu key untranslated so the back button works.

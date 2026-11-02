@@ -17,6 +17,16 @@
     liveSteps: false,
   }, require('Storage').readJSON('edgeclk.settings.json', true) || {});
 
+  const locale = require("locale");
+  const DAY_ASCII = {
+    "Á":"A", "Č":"C", "Ď":"D", "É":"E", "Ě":"E", "Í":"I", "Ň":"N",
+    "Ó":"O", "Ř":"R", "Š":"S", "Ť":"T", "Ú":"U", "Ů":"U", "Ý":"Y", "Ž":"Z"
+  };
+  const weekdayLabel = date => locale.dow(date, 1)
+    .toUpperCase()
+    .replace(/\./g, "")
+    .replace(/[ÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]/g, ch => DAY_ASCII[ch]);
+
   /* Runtime Variables
   ------------------------------------------------------------------------------*/
 
@@ -88,7 +98,7 @@
     // weekday
     g.setFontCustom(font, 48, 10, 512 + 12); // double size (1<<9)
     g.setFontAlign(-1, -1); // left top
-    g.drawString(date.toString().slice(0,3).toUpperCase(), 0, top + 12, true);
+    g.drawString(weekdayLabel(date), 0, top + 12, true);
 
     // date
     g.setFontAlign(1, -1); // right top

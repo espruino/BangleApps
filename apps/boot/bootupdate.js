@@ -13,7 +13,7 @@ if (DEBUG) {
   bootPost += "delete _tm;";
 }
 if (FWVERSION < 216) {
-  E.showMessage(/*LANG*/"Please update Bangle.js firmware\n\nCurrent = "+process.env.VERSION,{title:"ERROR"});
+  E.showMessage(/*LANG*/"Please update Bangle.js firmware\n\nCurrent = "+process.env.VERSION,{title:/*LANG*/"ERROR"});
   throw new Error("Old firmware");
 }
 let CRC = E.CRC32(require('Storage').read('setting.json'))+require('Storage').hash(/\.js$/)+E.CRC32(process.env.GIT_COMMIT);

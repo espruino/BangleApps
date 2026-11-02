@@ -55,7 +55,7 @@
       min: 4,
       max: 15,
       step: 1,
-      format: v => v === 4 ? "Forever" : v,
+      format: v => v === 4 ? /*LANG*/"Forever" : v,
       onchange: v => {
         settings.buzzCount = v === 4 ? null : v;
         require("sched").setSettings(settings);

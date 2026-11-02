@@ -44,4 +44,5 @@
 0.41: Fix issue with snoozing alarms and timers beyond midnight causing the alarm/timer to go off immediately instead of snoozing
 0.42: Fix timer snooze 5m button adding 6 minutes instead of 5
 0.43: Introduce `snoozeAlarm` and `dismissAlarm` functions for easier alarm handling by custom JS
-
+0.44: Mark remaining scheduler labels for translation.
+0.45: Keep the special '< Back' menu key untranslated so the back button works.

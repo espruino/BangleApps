@@ -3,3 +3,6 @@
 0.03: Add option to hide widget
 0.04: Add auto-adjust app
 0.05: Fix auto-adjust text display
+0.06: Mark settings and status messages for translation.
+0.07: Keep the special '< Back' menu key untranslated so the back button works.
+0.08: Upload .info as UTF-8 bytes so Czech app names survive.
