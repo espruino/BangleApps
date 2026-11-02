@@ -34,13 +34,42 @@
   let launchCache = require("launch_utils").cache(settings);
   let apps = launchCache.apps; // get a list of apps to show
 
+  // Does this string contain characters outside ISO8859-1? It may either be
+  // a UTF-8 string or a byte string containing UTF-8 data from Storage.
+  function hasWideChars(s) {
+    for (var i=0;i<s.length;i++) {
+      var c = s.charCodeAt(i);
+      if (c>0xFF) return true;
+      if (c>=0xC2 && c<=0xF4) { // possible UTF-8 lead byte
+        var len = c<0xE0?2 : c<0xF0?3 : 4;
+        if (i+len<=s.length) {
+          var cp = c & (len==2?0x1F:len==3?0x0F:0x07), ok = true;
+          for (var j=1;j<len;j++) {
+            var cc = s.charCodeAt(i+j);
+            if ((cc&0xC0)!=0x80) { ok=false; break; }
+            cp = (cp<<6)|(cc&0x3F);
+          }
+          if (ok && cp>0xFF) return true;
+        }
+      }
+    }
+    return false;
+  }
+
   const drawMenu = () => {
     E.showScroller({
       h : height, c : apps.length,
       draw : (i, r, sel) => {
         var app = apps[i];
         if (!app) return;
-        g.setBgColor(sel?g.theme.bgH:g.theme.bg).clearRect(r).setFont(font).setFontAlign(-1,0).drawString(app.name,imgsize+pad*2,r.y+2+r.h/2);
+        var nameFont = font, nameText = app.name;
+        // use the Intl font if the app name has characters the chosen font can't display
+        if (hasWideChars(nameText)) {
+          var nameInfo = g.findFont(nameText, {w:r.w-(imgsize+pad*2)-pad, h:r.h-pad, trim:1});
+          nameFont = nameInfo.font;
+          nameText = nameInfo.text;
+        }
+        g.setBgColor(sel?g.theme.bgH:g.theme.bg).clearRect(r).setFont(nameFont).setFontAlign(-1,0).drawString(nameText,imgsize+pad*2,r.y+2+r.h/2);
         if (app.icon) {
           if (!app.img) app.img = s.read(app.icon); // load icon if it wasn't loaded
           try {g.drawImage(app.img, pad, r.y+pad, {scale: imgscale});} catch(e){}

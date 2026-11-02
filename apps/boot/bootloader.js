@@ -25,6 +25,6 @@ if (!_clkApp) {
 }
 if (s.clock) __FILE__=s.clock;
 delete s;
-if (!_clkApp) _clkApp=`E.showMessage("No Clock Found");setWatch(()=>{Bangle.showLauncher();}, global.BTN2||BTN, {repeat:false,edge:"falling"});`;
+if (!_clkApp) _clkApp=`E.showMessage(${JSON.stringify(/*LANG*/"No Clock Found")});setWatch(()=>{Bangle.showLauncher();}, global.BTN2||BTN, {repeat:false,edge:"falling"});`;
 eval(_clkApp);
 delete _clkApp;

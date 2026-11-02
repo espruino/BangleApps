@@ -2,7 +2,7 @@
   "id": "launch",
   "name": "Launcher",
   "shortName": "Launcher",
-  "version": "0.27",
+  "version": "0.30",
   "author": "gfwilliams",
   "description": "This is needed to display a menu allowing you to choose your own applications. You can replace this with a customised launcher.",
   "readme": "README.md",
@@ -10,12 +10,32 @@
   "type": "launch",
   "default": true,
   "tags": "tool,system,launcher",
-  "supports": ["BANGLEJS","BANGLEJS2","BANGLEJS3"],
+  "supports": [
+    "BANGLEJS",
+    "BANGLEJS2",
+    "BANGLEJS3"
+  ],
   "allow_emulator": true,
   "storage": [
-    {"name":"launch.app.js","url":"app.js"},
-    {"name":"launch.settings.js","url":"settings.js"}
+    {
+      "name": "launch.app.js",
+      "url": "app.js"
+    },
+    {
+      "name": "launch.settings.js",
+      "url": "settings.js"
+    }
   ],
-  "data": [{"name":"launch.json"},{"name":"launch.cache.json"}],
-  "sortorder": -10
+  "data": [
+    {
+      "name": "launch.json"
+    },
+    {
+      "name": "launch.cache.json"
+    }
+  ],
+  "sortorder": -10,
+  "dependencies": {
+    "font": "module"
+  }
 }

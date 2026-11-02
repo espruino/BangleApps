@@ -94,8 +94,8 @@ function resetSettings() {
 }
 
 settings = storage.readJSON('setting.json', 1);
-if (("object" != typeof settings) ||
-    ("object" != typeof settings.options))
+if (!settings || typeof settings !== "object" ||
+    !settings.options || typeof settings.options !== "object")
   resetSettings();
 
 function mainMenu() {
@@ -417,7 +417,7 @@ function passkeyMenu() {
     updateSettings();
   }
   for (var i=0;i<6;i++) (function(i){
-    menu[`Digit ${i+1}`] = {
+    menu[/*LANG*/"Digit "+(i+1)] = {
       value : 0|settings.passkey[i],
       min: 0, max: 9,
       onchange: v => {
@@ -745,7 +745,7 @@ function utilMenu() {
       });
     };
   menu[/*LANG*/"Turn Off"] = () => {
-    E.showPrompt(/*LANG*/"Are you sure? Alarms and timers won't fire", {
+    E.showPrompt(/*LANG*/"Are you sure?"+" "+/*LANG*/"Alarms and timers won't fire", {
       title:/*LANG*/"Turn Off",back
     }).then((confirmed) => {
       if (confirmed) {
@@ -989,6 +989,16 @@ function showTouchscreenCalibration() {
     x1 : 0, y1 : 0, x2 : 0, y2 : 0
   };
 
+  function drawCalibrationText(text) {
+    // use the Intl font if the text has characters the built-in font can't display
+    if (g.findFont && /[^\x00-\xFF]/.test(text)) {
+      var f = g.findFont(text, {w:g.getWidth(), h:g.getHeight(), max:16});
+      g.setFont(f.font).setFontAlign(0,0).drawString(f.text, g.getWidth()/2, g.getHeight()/2);
+    } else {
+      g.setFont("6x8:2").setFontAlign(0,0).drawString(text, g.getWidth()/2, g.getHeight()/2);
+    }
+  }
+
   function showTapSpot() {
     var spot = corners[currentCorner];
     g.clear(1);
@@ -996,7 +1006,7 @@ function showTouchscreenCalibration() {
     g.drawLine(spot[0],spot[1]-32,spot[0],spot[1]+32);
     g.drawCircle(spot[0],spot[1], 16);
     var tapsLeft = (2-currentTry)*4+(4-currentCorner);
-    g.setFont("6x8:2").setFontAlign(0,0).drawString(tapsLeft+/*LANG*/" taps\nto go", g.getWidth()/2, g.getHeight()/2);
+    drawCalibrationText(tapsLeft+/*LANG*/" taps\nto go");
   }
 
   function calcCalibration() {
@@ -1016,7 +1026,7 @@ function showTouchscreenCalibration() {
     var dx = calib.x2-calib.x1;
     var dy = calib.y2-calib.y1;
     if(dx<100 || dx>280 || dy<100 || dy>280) {
-      g.setFont("6x8:2").setFontAlign(0,0).drawString(/*LANG*/"Out of Range.\nPlease\ntry again", g.getWidth()/2, g.getHeight()/2);
+      drawCalibrationText(/*LANG*/"Out of Range.\nPlease\ntry again");
     } else {
       Bangle.setOptions({
         touchX1: calib.x1, touchY1: calib.y1, touchX2: calib.x2, touchY2: calib.y2

@@ -15,9 +15,9 @@ E.showMessage(/*LANG*/"Loading..."); // avoid showing rubbish on screen
 function setGPSTime() {
   if (fix.time!==undefined) {
     setTime(fix.time.getTime()/1000);
-    E.showMessage("System time set", {img:require("heatshrink").decompress(atob("lEo4UBvvv///vEFBYNVAAWq1QFDBAgKGrQJD0oJDtQJD1IICqwGBFoIDByocDwAJBgQeDtWoJwcqDwWq0EAgfAgEKHoQcCBIQeBGAQaBBIQzBytaEwQJDlWlrQmBBIkK0tqBI+ptRNCBIcCBKhECBIh6CAgUL8AJHl/4BI8+3gJRl/8GJH/BI8Ah6MDLIZQB+BjGAAIoBBI84BIaVCAAaVBVIYJEWYLkEXobRDAAbRBcoYACcoT5DEwYJCtQoElWpBINaDwYcB0oJBGQIzCAYIwBDwQGBAAIcCDwYACDgQACBIYIEBQYFDA="))});
+    E.showMessage(/*LANG*/"System time set", {img:require("heatshrink").decompress(atob("lEo4UBvvv///vEFBYNVAAWq1QFDBAgKGrQJD0oJDtQJD1IICqwGBFoIDByocDwAJBgQeDtWoJwcqDwWq0EAgfAgEKHoQcCBIQeBGAQaBBIQzBytaEwQJDlWlrQmBBIkK0tqBI+ptRNCBIcCBKhECBIh6CAgUL8AJHl/4BI8+3gJRl/8GJH/BI8Ah6MDLIZQB+BjGAAIoBBI84BIaVCAAaVBVIYJEWYLkEXobRDAAbRBcoYACcoT5DEwYJCtQoElWpBINaDwYcB0oJBGQIzCAYIwBDwQGBAAIcCDwYACDgQACBIYIEBQYFDA="))});
   } else {
-    E.showMessage("No GPS time to set");
+    E.showMessage(/*LANG*/"No GPS time to set");
   }
 
   Bangle.removeListener('GPS',onGPS);
@@ -33,14 +33,14 @@ var layout = new Layout( {
     {type:"h", c:[
       {type:"img", src:satelliteImage },
       { type:"v", fillx:1, c: [
-       {type:"txt", font:"6x8:2", label:"Waiting\nfor GPS", id:"status" },
+       {type:"txt", font:"6x8:2", label:/*LANG*/"Waiting\nfor GPS", id:"status" },
        {type:"txt", font:"6x8", label:"---", id:"sat" },
      ]},
     ]},
     {type:"txt", fillx:1, filly:1, font:"6x8:2", label:"---", id:"gpstime" }
   ]},{lazy:true, btns: [
-    { label : "Set", cb : setGPSTime},
-    { label : "Back", cb : ()=>load() }
+    { label : /*LANG*/"Set", cb : setGPSTime},
+    { label : /*LANG*/"Back", cb : ()=>load() }
   ]});
 
 
@@ -51,11 +51,11 @@ function onGPS(f) {
   }
   fix = f;
   if (fix.fix) {
-    layout.status.label = "GPS\nAcquired";
+    layout.status.label = /*LANG*/"GPS\nAcquired";
   } else {
-    layout.status.label = "Waiting\nfor GPS";
+    layout.status.label = /*LANG*/"Waiting\nfor GPS";
   }
-  layout.sat.label = fix.satellites+" satellites";
+  layout.sat.label = fix.satellites+" "+/*LANG*/"satellites";
 
   var t = ["","---",""];
   if (fix.time!==undefined) {

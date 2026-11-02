@@ -82,3 +82,4 @@
 0.69: Implement "Charge Vibration" option in Settings (was in widbat before)
       Allow fast load to clock if WIDGETS are not defined.
       Small tidyup to help reduce time spent executing JS in old .boot0 file
+0.70: Mark remaining bootloader messages for translation.

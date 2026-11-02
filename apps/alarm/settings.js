@@ -9,7 +9,7 @@
   const DATE_FORMATS_LABELS = [/*LANG*/'Default', /*LANG*/'MMDD'];
 
   const appMenu = {
-      '': {title: 'alarm'}, '< Back': back,
+      '': {title: /*LANG*/'Alarms'}, '< Back': back,
       /*LANG*/'Menu Date Format': {
         value: DATE_FORMATS.indexOf(settings.menuDateFormat || 'default'),
         format: v => DATE_FORMATS_LABELS[v],

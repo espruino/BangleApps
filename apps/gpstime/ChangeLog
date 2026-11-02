@@ -1,3 +1,7 @@
 0.03: Fix time output on new firmwares when no GPS time set (fix #104)
 0.04: Fix shown UTC time zone sign
 0.05: Use new 'layout library for Bangle2, fix #764 by adding a back button
+0.06: Mark all UI text for translation.
+0.07: Re-upload to store the translated app name correctly as UTF-8.
+0.08: Re-upload so .info is written with UTF-8 (keeps the Č in the app name).
+0.09: Upload .info as UTF-8 bytes so the app name is stored correctly.

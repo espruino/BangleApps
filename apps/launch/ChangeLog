@@ -31,3 +31,6 @@
 0.26: Use launcher_utils library for app cacheing  and fast load
       Highlight each item if showScroller calls draw(selected=true)
 0.27: Use Bangle.haptic if available
+0.28: Use g.findFont for app names so non-Latin1 characters display correctly.
+0.29: Keep the special '< Back' menu key untranslated so the back button works.
+0.30: Detect UTF-8 app names stored as bytes and use the Intl font for them.

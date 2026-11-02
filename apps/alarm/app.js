@@ -89,7 +89,7 @@ function showMainMenu(scroll, group, scrollback) {
   const getIcon = (e)=>{return e.on ? (e.timer ? iconTimerOn : iconAlarmOn) : (e.timer ? iconTimerOff : iconAlarmOff);};
 
   alarms.forEach((e, index) => {if (!e.hidden || settings.showHidden) {
-    const E_GROUP = e.group||(e.hidden?"Hidden":undefined);
+    const E_GROUP = e.group||(e.hidden?/*LANG*/"Hidden":undefined);
     const showAlarmInMainMenu = !(E_GROUP && settings.showGroup) && !group;
     const showAlarmInGroupMenu = settings.showGroup && (group ? E_GROUP === group : false);
     if (showAlarmInMainMenu && showAlarmInGroupMenu) throw new Error("Alarm should not belong to both main and group menu."); // To catch if future changes mess it up.

@@ -62,3 +62,5 @@
 0.54: Hide hidden alarms from main menu by default, change in settings, see readme.
       Hide the `Hidden` setting from "New..." menu by default, change in settings.
 0.55: Fix alarms with same label overlapping in menu only showing one of them.
+0.56: Mark remaining menu labels for translation.
+0.57: Keep the special '< Back' menu key untranslated so the back button works.
