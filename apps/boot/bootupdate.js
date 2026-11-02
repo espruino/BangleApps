@@ -161,10 +161,12 @@ let outputFileComplete = (dst,fn) => {
   // with no semicolon we don't end up with (function(){ ... }()(function(){ ... }()
   // which would cause an error!
   // we write:
-  // "//"+bootFile+"\n"+require('Storage').read(bootFile)+";\n";
+  // "//"+bootFile+"\n"+require('Storage').read(bootFile)+"\n;\n";
   // but we need to do this without ever loading everything into RAM as some
   // boot files seem to be getting pretty big now.
-  outputFile(dst,fn,"",";\n");
+  // The newline before the semicolon ensures that if the file ends in a
+  // `// comment` with no trailing newline, the comment doesn't swallow it (#3939)
+  outputFile(dst,fn,"","\n;\n");
 };
 fileOffset = boot.length + bootPost.length;
 bootFiles.forEach(fn=>outputFileComplete(undefined,fn)); // just get sizes
@@ -180,7 +182,8 @@ let widget = `// Made by bootupdate.js\nglobal.WIDGETS={};`, widgetPost = `var W
 Object.keys(W).sort((a,b)=>(0|W[b].sortorder)-(0|W[a].sortorder)).forEach(k=>WIDGETS[k]=W[k]);`; // sort
 if (DEBUG) widget+="var _tm=Date.now();";
 outputFileComplete = (dst,fn) => {
-  outputFile(dst,fn,"try{",`}catch(e){print(${E.toJS(fn)},e,e.stack)}\n`);
+  // newline before '}' in case the widget ends in a '// comment' (#3939)
+  outputFile(dst,fn,"try{",`\n}catch(e){print(${E.toJS(fn)},e,e.stack)}\n`);
 };
 fileOffset = widget.length + widgetPost.length;
 widgetFiles.forEach(fn=>outputFileComplete(undefined,fn)); // just get sizes
@@ -197,7 +200,8 @@ let ci_exclude = (require("Storage").readJSON("clock_info.json", 1) || {}).exclu
 if (DEBUG) ci+="var _tm=Date.now();";
 outputFileComplete = (dst,fn) => {
   if (ci_exclude && ci_exclude[fn]) return;
-  outputFile(dst,fn,"try{let fn=",`;let a=fn(),b=menu.find(x=>x.name===a.name);if(b)b.items=b.items.concat(a.items)else menu=menu.concat(a);}catch(e){print(${E.toJS(fn)},e,e.stack)}\n`);
+  // newline before ';' in case the clockinfo ends in a '// comment' (#3939)
+  outputFile(dst,fn,"try{let fn=",`\n;let a=fn(),b=menu.find(x=>x.name===a.name);if(b)b.items=b.items.concat(a.items)else menu=menu.concat(a);}catch(e){print(${E.toJS(fn)},e,e.stack)}\n`);
 };
 fileOffset = ci.length;
 ciFiles.forEach(fn=>outputFileComplete(undefined,fn)); // just get sizes
