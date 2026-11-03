@@ -399,7 +399,7 @@ E.emit("ANCS", {
       let retryInterval = setInterval(function(){
         if (attempts==0){
           clearInterval(retryInterval);
-          reject(error);
+          return reject(error);
         }
         try{
           NRF.ctsGetTime().then(e=>{
