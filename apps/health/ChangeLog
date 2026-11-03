@@ -50,3 +50,4 @@
 0.43: Use theme colors for bar graphs, show units, and use newer fonts in graphs.
 0.44: Add setting to allow health data to be stored in UTC time for frequent timezone travellers (#4301)
 0.45: Use boot.js so the step goal notification can be translated.
+0.46: Keep the special < Back menu key untranslated so the back button works.

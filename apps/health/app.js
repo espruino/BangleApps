@@ -4,7 +4,7 @@ const myprofile = require("Storage").readJSON("myprofile.json",1)||{};
 function menuMain() {
   var menu = {
     "": { title: /*LANG*/"Health Tracking" },
-    /*LANG*/"< Back": () => load(),
+    "< Back": () => load(),
     /*LANG*/"Steps": () => menuStepCount(),
     /*LANG*/"Movement": () => menuMovement(),
     /*LANG*/"Heart Rate": () => menuHRM(),
@@ -19,7 +19,7 @@ function menuMain() {
 function menuStepCount() {
   const menu = {
     "": { title:/*LANG*/"Steps" },
-    /*LANG*/"< Back": () => menuMain(),
+    "< Back": () => menuMain(),
     /*LANG*/"per hour": () => showGraph({id:"stepsPerHour",range:"hour",field:"steps", back:menuStepCount,units:/*LANG*/" steps"}),
     /*LANG*/"per day": () => {
       showGraph({id:"stepsPerHour",range:"day",field:"steps", back:menuStepCount,units:/*LANG*/" steps"})
@@ -39,7 +39,7 @@ function menuDistance() {
   const units=dist.replace(/[0-9.,\s]/g, "");
   E.showMenu({
     "": { title:/*LANG*/"Distance" },
-    /*LANG*/"< Back": () => menuStepCount(),
+    "< Back": () => menuStepCount(),
     /*LANG*/"per hour": () => showGraph({id:"stepsPerHour",range:"hour",field:"steps",mult:distMult, back:menuDistance,units:units}),
     /*LANG*/"per day": () => {
       showGraph({id:"stepsPerDay",range:"day",field:"steps",mult:distMult, back:menuDistance,units:units})
@@ -51,7 +51,7 @@ function menuDistance() {
 function menuMovement() {
   E.showMenu({
     "": { title:/*LANG*/"Movement" },
-    /*LANG*/"< Back": () => menuMain(),
+    "< Back": () => menuMain(),
     /*LANG*/"per hour": () => showGraph({id:"movementPerHour",range:"hour",field:"movement",average:true,back:menuMovement}),
     /*LANG*/"per day": () => showGraph({id:"movementPerDay",range:"day",field:"movement",average:true,back:menuMovement}),
   });
@@ -60,7 +60,7 @@ function menuMovement() {
 function menuHRM() {
   E.showMenu({
     "": { title:/*LANG*/"Heart Rate" },
-    /*LANG*/"< Back": () => menuMain(),
+    "< Back": () => menuMain(),
     /*LANG*/"per hour": () => showGraph({id:"hrmPerHour",range:"hour",field:"bpm",ignoreZero:true, average:true,back:menuHRM,units:/*LANG*/" bpm"}),
     /*LANG*/"per day": () => showGraph({id:"hrmPerDay",range:"day",field:"bpm",ignoreZero:true, average:true,back:menuHRM,units:/*LANG*/" bpm"}),
   });
@@ -69,7 +69,7 @@ function menuHRM() {
 function menuBattery() {
   E.showMenu({
     "": { title:/*LANG*/"Battery" },
-    /*LANG*/"< Back": () => menuMain(),
+    "< Back": () => menuMain(),
     /*LANG*/"per hour": () => showGraph({id:"batPerHour",range:"hour",field:"battery",average:true,back:menuBattery,units:"%"}),
     /*LANG*/"per day": () => showGraph({id:"batPerDay",range:"day",field:"battery",average:true,back:menuBattery,units:"%"}),
   });
@@ -78,7 +78,7 @@ function menuBattery() {
 function menuTemperature() {
   E.showMenu({
     "": { title:/*LANG*/"Temperature" },
-    /*LANG*/"< Back": () => menuMain(),
+    "< Back": () => menuMain(),
     /*LANG*/"per hour": () => showGraph({id:"batPerHour",range:"hour",field:"temperature",average:true,back:menuTemperature,units:" instanceof"}),
     /*LANG*/"per day": () => showGraph({id:"batPerDay",range:"day",field:"temperature",average:true,back:menuTemperature,units:" instanceof"}),
   });

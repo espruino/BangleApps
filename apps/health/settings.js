@@ -15,7 +15,7 @@
   E.showMenu({
     "": { title: /*LANG*/"Health Tracking" },
 
-    /*LANG*/"< Back": () => back(),
+    "< Back": () => back(),
 
     /*LANG*/"HRM Interval": {
       value: settings.hrm,
