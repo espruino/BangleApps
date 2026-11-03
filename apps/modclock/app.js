@@ -182,6 +182,9 @@ let draw = function() {
    // align bottom right
   
   g.setFontBold();
+  // clear the whole time area - the bold font has no space character, so
+  // padding the string doesn't clear wider digits from the previous draw
+  g.clearRect(0,0,g.getWidth(),64);
   
   if(meridian!=""){
     //calculate alignment
@@ -193,7 +196,6 @@ let draw = function() {
     var meridianStrWidth=g.stringWidth(meridian);
     var totalStrWidth=meridianStrWidth+padding+clkStrWidth;
     var startX = ((g.getWidth() - totalStrWidth) / 2)+6;
-    g.clearRect(0,0,g.getWidth(),64);
     g.setFontBold();
     g.setFontAlign(-1,1);
     g.drawString(clock, startX, Y+4);
@@ -205,7 +207,7 @@ let draw = function() {
     
     g.setFontBold();
     g.setFontAlign(0,1);
-    g.drawString("  "+clock+"  ", X, Y+4,true);
+    g.drawString(clock, X, Y+4);
     
   }
   
