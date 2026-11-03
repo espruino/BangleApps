@@ -4,3 +4,4 @@
 0.04: Fix date not clearing
 0.05: Add settings menu with option for accent color when focusing on clockInfo
 0.06: Cut down memory consumption by only using font in 0-9.:/ range instead of all 96 chars
+0.07: Fix remnants of the previous time staying on screen when the time is redrawn in 24 hour mode
