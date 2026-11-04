@@ -3,7 +3,7 @@
     area: "tl",
     width: ((require("Storage").readJSON("setting.json", 1) || {}).quiet|0) ? 24 : 0,
     draw: function() {
-      const mode = (require("Storage").readJSON("setting.json", 1) || {}).quiet|0;
+      const mode = require("qmsched").getMode();
       if (mode===0) { // Off
         if (this.width!==0) {
           this.width = 0;
