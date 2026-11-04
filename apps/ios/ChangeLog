@@ -25,3 +25,4 @@
 0.24: Pass notification time to Message GUI where it can be displayed in v0.92 like "13m ago"
 0.25: Fix issues regarding stability of notification parsing.
 0.26: Add "BlueWatch" app to bundleIDs
+0.27: Fix CTS sync failure on boot when Bluetooth is busy
