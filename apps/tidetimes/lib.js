@@ -24,7 +24,7 @@ exports = {
   },
   load : function() {
     let s = require("Storage").readJSON("tidetimes.json",1)||{};
-    this.offset = 0|s.offset;
+    if (s.offset!==undefined) this.offset = s.offset;
     if (s.period) this.period = 0|s.period;
   }
 };

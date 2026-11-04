@@ -1,7 +1,7 @@
 { "id": "tidetimes",
   "name": "Tide Times",
   "shortName":"Tides",
-  "version":"0.01",
+  "version":"0.02",
   "author": "gfwilliams",
   "description": "A simple app to keep track of tide times. Set up the time of the next high/low tide, and this will show you the next high/low tides based on a 6hr 12min interval",
   "icon": "app.png",
