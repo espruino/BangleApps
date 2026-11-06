@@ -1,2 +1,3 @@
 0.01: New app
 0.02: Fix last row not showing apps
+0.03: Return to clock after inactivity when locked

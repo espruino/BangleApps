@@ -2,7 +2,7 @@
 
 # tenkyu
 
-**tenkyu 0.01**
+**tenkyu 0.03**
 
 A clock app for Bangle.js 2 that lets you read the time, the phases of the Moon and related information from the relative positions of the Sun, Earth and Moon.
 
@@ -122,6 +122,20 @@ The approximate solar-position formulae are based on NOAA's **General Solar Posi
 
 `solarPosition()` calculates the fractional year, equation of time, solar declination, true solar time, hour angle, and solar elevation / azimuth.
 
+### 24-hour rest graph
+
+Every five minutes, a **five-stage rest bar** extends **outward from the lunar orbit**. There are 288 positions per 24 hours. Bars are **green by day and yellow by night**. The rest bars intentionally overwrite the Moon (foreground); the red observer point stays above them.
+
+The rest graph in **v0.068** uses all three accelerometer axes X/Y/Z, each with a first-order high-pass filter (time constant 1.6s, approximately 0.1Hz). Every sensor sample calculates the squared combined magnitude `q=X'²+Y'²+Z'²` and **first compares q with the squared Peak gate**. Only local peaks above the gate are accepted; for accepted peaks, the code computes `sqrt(q_peak) - gate` and sums these excess amplitudes for the entire five-minute interval. Subthreshold peaks are never accumulated and no per-sample square root is needed.
+
+Four ascending user-adjustable **Stage boundaries** convert the five-minute total A (units: g accumulated over peaks) into rest stages 5,4,3,2,1. Their initial values are **0.5 / 2 / 6 / 18 g**, intended as adjustable experimental starting values, not physiological calibration. The previous peak-count percentage method is no longer used for newly recorded bins. Set the noise gate via **Rest graph → Peak gate** (seven options 0.001–0.729g), stage boundaries via **Rest graph → Stage boundaries**, and 3D non-wear drift separately via **Non-wear → 3D drift**.
+
+For each five-minute interval, at least 270 seconds of valid XYZ coverage is required. Motion beyond the independent three-axis drift threshold produces a stage 1–5 bar irrespective of HRM. With no significant motion, an accepted pulse gives stage 5 and otherwise stage 0 (unworn); missing XYZ coverage means unknown (no bar). The green/day and yellow/night colors, 288-bin/24-hour graph, drawing order, HRM LED power savings and settings are preserved. Previously saved history retains its prior drawn stages; changing stage thresholds affects future records, not past bins.
+
+Previous behavior (v0.065) required pulse evidence for all rest bars.
+
+**Motion-first non-wear policy (v0.066):** first require 270 seconds of valid three-axis accelerometer coverage in the five-minute bin. If 3D vector drift is **above the selected threshold**, always draw the existing Z-peak-based **stage 1–5 bar regardless of heart-rate results**. If the drift is **at or below the threshold** (motionless), a valid detected heartbeat produces **stage 5**; an absent, failed, pending, or unavailable heartbeat produces **stage 0 (no bar)**. An insufficient accelerometer record is still unknown (no bar). This is the user-selected prioritization, not proof that the watch is truly off-wrist; e.g., an immobile sleeping wearer whose optical sensor cannot register a pulse will be shown as unworn. Probe results may update the last completed interval. In **Rest graph → Last check**, see the recent result, reason, HRM status, 3D drift and covered seconds. Historic recorded bars are not reclassified; they age out after 24 hours.
+
 ### Moon phase
 
 Moon-phase display uses the mean synodic month.
@@ -231,7 +245,7 @@ onisY
 
 # tenkyu
 
-**tenkyu 0.01**
+**tenkyu 0.03**
 
 Bangle.js 2 用の、太陽・地球・月の位置関係から時刻、月の満ち欠け等を読み取る時計アプリです。
 
@@ -355,6 +369,20 @@ Place timeを使用しても、Bangle.js本体のタイムゾーン設定やDST�
 
 `solarPosition()` では fractional year、equation of time、solar declination、true solar time、hour angle、solar elevation / azimuth を求めています。
 
+### 24時間の安静度グラフ
+
+月の軌道から**外側に伸びる5段階の棒**で5分ごとの安静度を表します（24時間、288本）。**棒は月より手前に描画**し、赤い観測点はさらに前面に保持します。色は日の出～日の入りが緑、夜間が黄色です。
+
+**v0.068 の安静グラフ計算方式**は、X・Y・Zの3軸それぞれに時定数約1.6秒（カットオフ約0.1Hz）のハイパスフィルターを適用します。各サンプルについて3軸合成加速度の二乗 `q=X'²+Y'²+Z'²` を計算し、**ピーク検出の前に `q ≥ Peak gate²` を判定**します。閾値以上の局所ピークだけ平方根を計算し、**（ピーク高さ−検出閾値）を5分間積算**します。閾値未満のピークの高さは積算しません。3軸を合成してからピークを検出するため、同じ動きの重複計数も避けられます。
+
+安静度1〜5の境界4個は **Rest graph → Stage boundaries** で個別に調整できます。暫定初期値は積算値 **0.5 / 2 / 6 / 18 g** で、実機での較正が必要です。ピーク検出の閾値は **Rest graph → Peak gate**（0.001〜0.729g、7段階）、非装着判定用の3軸変動閾値は **Non-wear → 3D drift** で別々に変更できます。
+
+5分間に270秒以上の有効な3軸データがあることを前提に、3軸変動があれば心拍と無関係に1〜5段階の棒を表示します。変動なしなら有効な心拍を検出した場合だけ5、そうでなければ非装着0とします。昼は緑、夜は黄色、24時間288本の履歴、バックグラウンド計測、月より手前で観測点より奥の描画順序を維持します。従来の履歴は以前の棒の長さのまま残ります。段階閾値の変更は変更後の記録に適用し、過去の棒は再計算しません。
+
+以前のv0.065は、動いていても心拍を検出できなければ棒を非表示としていました。
+
+**v0.066の判定優先順位：**5分間に270秒以上の有効な3軸加速度記録があれば、まず**3軸加速度ベクトルの変動**を設定閾値と比較します。**変動が閾値を超えたら、心拍検出の有無・失敗に関係なくZ軸ピークから安静度1～5を描画**します。**変動が閾値以下なら、心拍検出が確認された場合だけ安静度5**、心拍が未検出・計測失敗・未実施・未確定なら**非装着0（棒なし）**です。有効な加速度記録が270秒未満のときだけ判定不能（棒なし）にします。静止して眠っている装着者で心拍センサーが脈を検知できなかった場合にも0になる可能性があります。診断画面 **Rest graph → Last check** には判定結果と理由、心拍状態、3D変動量、有効データ時間を表示します。過去の棒は再判定しないため、24時間以内に順次入れ替わります。
+
 ### 月相
 
 月相表示では平均朔望月を用いています。
@@ -456,3 +484,111 @@ tenkyuは完全なtzdbを収録・実行するのではなく、orbitに収録�
 ### 作者
 
 onishi
+
+## Day/night observer line (0.02)
+
+The line extending from the red observer dot is green when the solar center is at or above the geometric horizon, and yellow when below it. This matches the existing geometric sunrise/sunset definition, without atmospheric refraction. Color transitions are checked each minute, including polar day/night.
+
+### 位置の赤点から伸びる線の昼夜色（0.02）
+
+太陽中心が幾何学的な地平線以上なら緑、下なら黄色です。従来の日の出・日の入り線と同じ基準で、大気差は含みません。白夜・極夜を含め毎分色の切り替えを確認します。
+
+
+## Power management (0.063)
+
+The backlight and touchscreen lock after the configured display timeout; if the system
+timeout is 0 or unavailable, tenkyu uses a 10-second fallback. The low-power memory-in-pixel
+LCD remains on. Twist and face-up still wake and unlock the watch. Eclipse calculations
+are checked about every five minutes outside eclipses, but every 30 seconds when an
+eclipse is active, while the clock continues its minute updates. This saves CPU and
+touch-controller power without raising the accelerometer polling rate. Power draw and
+wrist-gesture behavior still need real-device measurements.
+
+### 省電力動作（0.063）
+
+設定された消灯時間後にバックライトを消し、タッチパネルもロックします。
+システムの時間設定が0または未指定なら、10秒を安全側の初期値とします。
+LCD自体は表示を保持し、TwistやFace Upで解除します。日食でない通常時は
+約5分ごとに日食判定し、発生中だけ30秒ごとに計算します。
+時計の時刻は従来どおり毎分更新し、加速度の取得周期も変更しません。
+実機での消費電流やジェスチャー動作の確認は未実施です。
+
+## Solar eclipse shading (0.03)
+
+Settings → **Solar eclipse → Enabled** turns calculation and shading on or off (default On).
+At the displayed absolute date/time, the Moon's umbra is black. The surrounding penumbra
+reduces average surface brightness using black ordered dithering proportional to the
+fraction of the Sun covered. This is a geometric illustration, not a simulation of
+atmospheric illumination. The red observer dot and its green/yellow line are drawn above
+the shadow. Annular eclipses darken the center without treating it as a total shadow.
+
+Eclipse state and shading update every **30 seconds** during an eclipse. Ordinary dates
+use cheap screening and retain the existing five-minute base redraw. The option Off
+avoids loading eclipse code/data. No GPS, Bluetooth or Internet requests are added.
+A subpixel total shadow has a one-pixel black center marker. Only the hemisphere selected
+in Bodies → View side is shown. **During any globally detected eclipse, the Moon's outer
+rim is red**, even when its shadow is on the hemisphere not currently displayed.
+This does not change the Moon phase shading, and the rim returns to its normal
+appearance when the eclipse ends (or Solar eclipse is disabled). The existing
+30-second eclipse refresh handles the transitions without an extra timer.
+Actual watch runtime and battery use remain unmeasured.
+
+### 日食の影（0.03）
+
+設定の **Solar eclipse → Enabled** で計算・表示をオン／オフにできます（初期値オン）。
+表示対象の絶対日時における本影を黒で、半影を太陽の隠れる割合に応じた黒い点描で重ねます。
+大気による散乱光を含む実際の地表照明の再現ではなく、幾何学的な表示です。
+赤い位置点と緑／黄色の線分は、月影より上に描きます。金環日食の中心は部分的に暗くなります。
+
+日食の計算・影の表示は **30秒間隔**です。日食のない日時は軽い判定で詳細計算を省き、
+従来の5分間隔の地球再描画を維持します。オフ時は日食コード・係数を読み込みません。
+GPS・Bluetooth・通信は追加しません。1画素より小さい皆既の影には中心の黒い1画素を表示します。
+Bodies → View sideで選んだ半球だけが表示対象です。ただし、**地球上のどこかで
+日食を検出している間は月の外周を赤色**にします。現在の表示半球に影が見えない場合も
+赤くなり、満ち欠けの塗り分けは従来どおりです。日食終了時（または日食表示オフ時）は
+通常の外観に戻ります。従来の30秒更新を利用し、追加タイマーは使いません。
+実機での計算時間・電池消費は未測定です。
+
+### Visible screen-transition feedback (v0.067)
+
+The first tap is acknowledged with a small yellow dot while the 400 ms single/double-tap interval is resolved. Once navigation is determined, tenkyu immediately displays a low-cost **Calendar...**, **Settings...**, **Orbit...** or **Launcher...** transition frame, explicitly flushes it to the memory-in-pixel display, then schedules the expensive new-screen drawing for the next event-loop turn. Calendar swipes similarly display **Calendar...** before updating the 35 date cells, holiday flags and event layers; multiple rapid swipes are combined into a single final repaint. Leaving Settings also displays **Orbit...** before reloading the clock. Screen-wake transitions preserve the existing backlight/lock timeout. This change does not alter tap semantics: one tap opens Calendar; double tap opens Settings.
+
+### 画面遷移の入力応答（v0.067）
+
+最初のタップ時に黄色の小さな点を即時表示し、400msのシングル／ダブルタップ判定中でも入力を受け付けたことが分かるようにしました。画面遷移が決まったら **Calendar... / Settings... / Orbit... / Launcher...** をまず描画・反映し、次のイベントループで詳細な画面を作成します。カレンダーの上下スワイプでも、最初に **Calendar...** を表示してから日付・祝日・予定を更新します。連続するスワイプは最後のページまでまとめて再描画します。設定から時計に戻る際も同じ方式です。時計の消灯・タッチロックの省電力動作、および「1タップ＝カレンダー／2タップ＝設定」の操作仕様は維持します。
+
+### Location picker improvements (v0.069)
+
+Opening Settings → Location → Place name now immediately displays **Places...** before loading country and municipality data. If the data fails to load, the error is reported instead of silently appearing unresponsive. Select **Country** to browse six alphabetic groups (A–D, E–H, I–L, M–P, Q–T, U–Z), then an initial letter and a page of up to seven country names; Previous/Next buttons scroll between pages. **Japan (quick)** opens Japan directly. Japan's **Prefecture** is also chosen from seven-entry pages. Existing municipality/city, GPS, manual coordinate and timezone/DST behavior remains intact.
+
+### 地名選択の改善（v0.069）
+
+設定の **Location → Place name** を押すと、国・市区町村データの読み込みに先立って **Places...** を表示します。データ読込に失敗した場合は、無反応になる代わりにエラーを表示します。国名は **Country** から、まず頭文字の範囲（A–D / E–H / I–L / M–P / Q–T / U–Z）を選び、次に頭文字を選択し、各ページ最大7か国から選べます。**Previous / Next** でページを移動できます。日本は **Japan (quick)** ですぐ選択できます。都道府県も7件ずつページに分けました。市区町村・都市・手動座標・GPS・時差・夏時間の仕組みは維持しています。
+
+### Low-memory Place name editor (v0.070)
+
+Opening **Settings → Location → Place name** now displays its basic menu without importing any country, city or Japanese municipality database. The previous v0.069 implementation deferred an expensive **synchronous** full country/city parse until just after the "Places..." message, which could appear stuck on memory-constrained Bangle.js 2. The expensive work has been removed from the initial transition. The new `orbitloc` module contains only a compact country-name index, small prefecture-capital table, and offsets. Its 197 foreign city lists are separate `orbitcities.dat` flash records, with only the requested country's list read and parsed on pressing **City**. For Japan, **Municipality** reads only the selected prefecture's pre-existing `orbitjp.dat` slice. Each city and municipality list is browsed in pages of seven entries. Existing country filters (first letter), Japan shortcut, saved location, GPS/manual coordinates, timezone/DST, calendar and sensor features are retained. Country-name/coordinate data were compared against the earlier dataset: all 197 country entries were preserved without modification. The update uses one additional installed data file (`orbitcities.dat`); install the complete v0.070 release, not just settings.js.
+
+### 地名設定の省メモリ化（v0.070）
+
+**Settings → Location → Place name** を押しただけでは、国名・都市・日本の市区町村データを一切読み込まないよう変更しました。以前のv0.069では **Places...** の直後に全世界の国と都市のデータを同期的に展開していたため、Bangle.js 2の空きメモリが少ない場合に固まる可能性がありました。v0.070では、国名・都道府県の小さな索引だけを必要時に読み込み、各国の都市は新しい `orbitcities.dat` から選択された国だけ取り出します。日本の市区町村も、都道府県を指定して **Municipality** を選択するまで読み込みません。都市・市区町村は7件ずつのページから選択します。国名の頭文字検索、日本へのショートカット、登録済みの場所・座標・時差・夏時間は維持しています。197か国の名前・都市・座標は旧データと照合済みです。新たに `orbitcities.dat` が必要になるため、**設定ファイルだけでなく、v0.070のアプリ全体を更新**してください。
+
+### Non-wear intervals on the lunar orbit (v0.071)
+
+The 24-hour rest graph now also shows confirmed **non-wear** intervals (stored code FE / 254) as **red one-pixel-wide arc segments** directly over the existing thin Moon-orbit circumference. Each recorded five-minute interval corresponds to 1.25° of the orbit. Consecutive unworn intervals produce a continuous red arc. Worn stages 1–5 remain the same green/day or yellow/night radial bars, and insufficient/missing sensor data (FF / 255) remain unpainted. The existing orbit line itself and the separate red observer marker are unchanged. The recorder, 3D drift/HRM non-wear decision, 288-slot/24-hour history, data format, flash writes, and power settings are unchanged. Existing recorded FE intervals will appear red immediately after installing v0.071; no sensor recalculation or data migration is required. The rendering adds a bounded number of short lines only for visible non-wear records.
+
+### 非装着時間を月の軌道上に赤く表示（v0.071）
+
+24時間の安静グラフで、**非装着（保存値FE／254）だった5分間**を、月の軌道の細い線の上に**同じ1画素幅の赤い円弧**として描きます。5分間は軌道上の1.25°に相当し、長時間外していた場合は赤い円弧が連続します。装着時の1〜5段階の緑（昼）・黄色（夜）の放射状の棒は従来どおりです。データ不足（FF／255）は赤くせず、従来の軌道線のままにします。非装着の判定方法、記録間隔、24時間288区間の履歴、保存形式、心拍計測、省電力設定は一切変更していません。旧版で保存された非装着記録もv0.071のインストール直後から赤く表示されます。
+
+### Version display and non-wear diagnostics (v0.072)
+
+**Settings** displays **tenkyu v0.072** in its fixed title (not as a button). **Rest graph → Non-wear** has no minimum or maximum BPM controls: only a positive finite BPM estimate with **confidence strictly greater than** the configured **Pulse confidence** value counts as pulse evidence. The confidence describes BPM estimation quality; it is **not** a validated probability of skin contact. Pulse detection alone does not guarantee wearing. If the measured three-axis movement exceeds the separate 3D drift threshold (two consecutive one-second averaged deviations, or one deviation above three times the threshold), the watch is classified as worn regardless of pulse data. A static watch with no sufficiently reliable pulse is non-worn and its completed five-minute arc is red. Short skipped sensor events no longer force an entire 5-minute interval to unknown if at least 270 seconds of valid coverage were received. Truly insufficient data still remains unknown, not red.
+
+The optical HRM LED powers on only for a still watch during the configured final 10–60s of each five-minute window (30s default); detected 3D movement skips the optical probe entirely. Successful pulse measurement **immediately** calls `Bangle.setHRMPower(0,"orbitrest")`, as does movement during a probe, normal timeout, application shutdown and changed settings. The program releases only its own HRM power request; firmware or other apps may hold independent requests. **Rest graph → Last check** additionally reports the greatest usable BPM confidence observed, to help investigate red-arc misclassification. A one-second accelerometer spike is insufficient to indicate motion unless its magnitude exceeds three times the movement threshold. Existing saved red/worn/unknown history is preserved.
+
+### バージョン表示・非装着判定の見直し（v0.072）
+
+設定の見出しに操作不要の固定表示 **tenkyu v0.072** を追加しました。**Rest graph → Non-wear** の心拍数の上限・下限設定を削除しました。正の心拍数が得られ、**Pulse confidence の設定値を厳密に超えた場合だけ**心拍検出成功とします。信頼度は心拍数推定の品質指標であり、装着確率ではありません。3軸加速度の1秒平均が2秒以上続けて閾値を超えるか、閾値の3倍を超える変化があれば、心拍と無関係に装着と判定します。動きも信頼できる心拍もなければ非装着として赤線を描きます。短いセンサー欠測によって5分間全体を判定不能にしないよう修正しました。ただし5分間に有効な加速度データが270秒未満なら赤線ではなくデータ不足とします。
+
+心拍センサーは、加速度で装着を確認できている5分区間には起動せず、静止時だけ5分区間の終わりに最大設定秒数（標準30秒）試行します。信頼できる脈拍の検出時、測定中の動作検出時、測定時間終了時、アプリ終了時には `orbitrest` の心拍センサー電源要求を解除します。他のアプリがセンサーを使用している場合は、それらまで停止させません。**Last check** で直近の判定理由・加速度・信頼度を確認できます。

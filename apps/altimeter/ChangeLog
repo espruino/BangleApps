@@ -3,3 +3,4 @@
 0.03: Display sea-level pressure, too, and allow calibration
 0.04: Switch to using system code for pressure calibration
 0.05: Prompt before resetting calibration (stops long-press of button resetting calibration)
+0.06: Limit readings to 1 per minute when screen is locked

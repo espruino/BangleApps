@@ -1,0 +1,18 @@
+{ "id": "tegula",
+  "name": "Tegula - Digital Art Clock",
+  "shortName": "Tegula",
+  "icon": "app.png",
+  "version": "0.02",
+  "author": "Stefan Keller",
+  "description": "Wear your love of art on your wrist. Tegula shows the time over a color composition in the spirit of the Swiss Concrete artist Richard Paul Lohse. Each start of the clock brings a new one, out of more than 20 million. Swipes show date, seconds, a new composition or widgets; double tap bottom left for a flashlight.",
+  "tags": "clock",
+  "type": "clock",
+  "supports": ["BANGLEJS2"],
+  "allow_emulator": true,
+  "readme": "README.md",
+  "storage": [
+    {"name": "tegula.app.js", "url": "app.js"},
+    {"name": "tegula.img", "url": "app-icon.js", "evaluate": true}
+  ],
+  "screenshots": [{"url": "screenshot.png"}]
+}

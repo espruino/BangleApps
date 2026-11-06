@@ -530,7 +530,6 @@ function fix_reussi() {
   initialisation();
 }
 
-
 Bangle.removeAllListeners('lock');
 clearWatch();
 Bangle.setOptions({btnLoadTimeout: 1500});

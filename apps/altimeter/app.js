@@ -8,6 +8,9 @@ var y = R.y + R.h/2;
 var MEDIANLENGTH = 20;
 var avr = [];
 var updateDisplay = true;
+var timeoutID;
+let queueMillis = 0;
+let queueCount = 0;
 
 function fmt(t) {
   if ((t > -100) && (t < 1000))
@@ -15,6 +18,24 @@ function fmt(t) {
   else
     t = t.toFixed(0);
   return t;
+}
+
+// windup timer if screen is locked
+function windup() {
+  if (queueMillis > 0) {
+    if (queueCount > 0)
+      queueCount--;
+    else {
+      Bangle.setBarometerPower(false, "altimeter");
+      if (timeoutID)
+        clearTimeout(timeoutID);
+      timeoutID = setTimeout(function() {
+        timeoutID = undefined;
+        Bangle.setBarometerPower(true, "altimeter");
+        queueCount = 20;
+      }, queueMillis - (Date.now() % queueMillis));
+    }
+  }
 }
 
 Bangle.on('pressure', function(e) {
@@ -42,7 +63,8 @@ Bangle.on('pressure', function(e) {
       print("pressure:", e.pressure);
       print("sea pressure:", sea);
   }*/
-    g.setFont("Vector",25).setFontAlign(-1,0).drawString(t, 10, R.y+R.h - 35);
+  g.setFont("Vector",25).setFontAlign(-1,0).drawString(t, 10, R.y+R.h - 35);
+  windup();
 });
 
 function setPressure(m, a) {
@@ -73,4 +95,26 @@ function start() {
     if (btn>0) setPressure(1, -1);
   });
 }
+
+// decide if readings should get updated now or after one minute
+function updateState () {
+  if ((Bangle.isLocked())) {
+    queueMillis = 60000;
+    queueCount = 0;
+  }
+  else {
+    queueMillis = 0;
+    Bangle.setBarometerPower(true, "altimeter");
+  }
+}
+
+// Register hooks for LCD on/off event and screen lock on/off event
+Bangle.on('lock', updateState);
+Bangle.on('lcdPower',on=>{
+  if (!on) { // stop draw timer
+    if (timeoutID) clearTimeout(timeoutID);
+    timeoutID = undefined;
+  }
+});
+
 start();

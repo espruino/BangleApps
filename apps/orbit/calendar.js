@@ -71,7 +71,7 @@
     var holidayFlags=new Uint8Array(35),dayNums=new Uint8Array(35),monthNums=new Uint8Array(35),yearNums=new Uint16Array(35),doyNums=new Uint16Array(35),todayIndex=-1,lastCellPrepMs=0;
     var eventFlags=new Uint8Array(35),eventBlinkFlags=new Uint8Array(35),eventColors=new Uint16Array(35);
     var extraEvents=[],eventBlinkTimer,eventBlinkPhase=true;
-    var holidayTimer,holidayToken=0,lastHolidayCalcMs=0,lastHolidayDrawMs=0;
+    var holidayTimer,holidayToken=0,lastHolidayCalcMs=0,lastHolidayDrawMs=0,swipeTimer;
     var holRam=[],primeTimer,primeQueue,primePos=0;
     var cellX1=new Int16Array(7),cellX2=new Int16Array(7),cellY1=new Int16Array(5),cellY2=new Int16Array(5);
     var weekdayImgs,weekdayPal;
@@ -322,6 +322,14 @@
       var gap=topFreeGap(),x1=gap[0]+2,x2=gap[1]-2;if(x2<x1){x1=gap[0];x2=gap[1];}
       g.setBgColor(BLACK).setColor(BLACK).fillRect(x1,1,x2,22);
       g.setColor(WHITE).setFont("6x8",2).setFontAlign(0,0).drawString(s,(x1+x2)>>1,12);
+    }
+    function showWorking(message){
+      // Paint and flush a small, high-contrast first frame before any
+      // costly calendar cell, holiday or event processing.
+      g.setBgColor(BLACK).setColor(BLACK).fillRect(0,24,W-1,H-1);
+      g.setColor(WHITE).setFont("6x8",2).setFontAlign(0,0)
+        .drawString(message,W>>1,(H+24)>>1);
+      try{g.flip();}catch(e){}
     }
     function drawSelectionAck(d){
       drawTop("SEL "+pad2(d.getMonth()+1)+"/"+pad2(d.getDate()));
@@ -655,8 +663,16 @@
     }
     function stopAuto(){clearTimer(autoTimer);autoTimer=undefined;}
     function armAuto(){stopAuto();if(!active||!cfg||!(cfg.timeout>=15))return;autoTimer=setTimeout(function(){autoTimer=undefined;returnToOrbit();},cfg.timeout*1000);}
-    function stop(){cancelHolidayBatch();stopEventBlink();stopBlink();stopAuto();clearTaps();firstTapMs=undefined;active=false;onReturn=undefined;onSelect=undefined;}
-    function resetTransient(){cancelHolidayBatch();stopEventBlink();selected=undefined;clearTaps();stopBlink();stopAuto();today=midnight(new Date());pageStart=mondayOf(today);}
+    function stop(){
+      if(swipeTimer!==undefined){clearTimeout(swipeTimer);swipeTimer=undefined;}
+      cancelHolidayBatch();stopEventBlink();stopBlink();stopAuto();
+      clearTaps();firstTapMs=undefined;active=false;onReturn=undefined;onSelect=undefined;
+    }
+    function resetTransient(){
+      if(swipeTimer!==undefined){clearTimeout(swipeTimer);swipeTimer=undefined;}
+      cancelHolidayBatch();stopEventBlink();selected=undefined;clearTaps();
+      stopBlink();stopAuto();today=midnight(new Date());pageStart=mondayOf(today);
+    }
     function returnToOrbit(){
       if(!active)return;
       var cb=onReturn,sel=selected?copyDate(selected):undefined;
@@ -728,9 +744,16 @@
       }
     }
     function touch(xy){
-      if(!active)return;
+      // Do not select stale date cells while a swiped page is being rebuilt.
+      if(!active||swipeTimer!==undefined)return;
       try{
         armAuto();
+        // The 400ms single/double-tap gesture must acknowledge its first tap.
+        // Avoid changing the selected date before the gesture is resolved.
+        if(!tapTimer){
+          g.setColor(YELLOW).fillCircle(W-8,32,3);
+          try{g.flip();}catch(e){}
+        }
         var now=Math.round(getTime()*1000),p=copyXY(xy);
 
         if(tapTimer){
@@ -773,20 +796,25 @@
     function swipe(lr,ud){
       if(!active||!ud)return;
       clearTaps();armAuto();cancelHolidayBatch();stopBlink();
-      pageStart=addDays(pageStart,ud<0?35:-35);
-
       stopEventBlink();
-      var cMs=buildBasicCellData();
-      var holidayState=preparePageHolidayState();
-      buildEventPage();
-      var t0=Math.round(getTime()*1000);
-      drawCalendar(false);
-      var dMs=Math.round(getTime()*1000)-t0;
-
-      report({calCellMs:cMs,calDrawMs:dMs,holidayDeferred:holidayState.years.length?1:0});
-      startHolidayBatch(dMs,dMs,cMs,holidayState);
-      startEventBlink();
-      startBlink();
+      pageStart=addDays(pageStart,ud<0?35:-35);
+      showWorking("Calendar...");
+      // Collapse rapid swipes into one page redraw, but never lose their offsets.
+      if(swipeTimer!==undefined)clearTimeout(swipeTimer);
+      swipeTimer=setTimeout(function(){
+        swipeTimer=undefined;
+        if(!active)return;
+        var cMs=buildBasicCellData();
+        var holidayState=preparePageHolidayState();
+        buildEventPage();
+        var t0=Math.round(getTime()*1000);
+        drawCalendar(false);
+        var dMs=Math.round(getTime()*1000)-t0;
+        report({calCellMs:cMs,calDrawMs:dMs,holidayDeferred:holidayState.years.length?1:0});
+        startHolidayBatch(dMs,dMs,cMs,holidayState);
+        startEventBlink();
+        startBlink();
+      },0);
     }
     function start(opts){
       opts=opts||{};stop();cfg=readConfig();active=true;
