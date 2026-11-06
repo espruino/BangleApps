@@ -1,4 +1,5 @@
 (() => {
+  var drawTimeout = null;
   var stat = {date: 0};
   var d = Date.now();
   var settings = require("Storage").readJSON("widdevst.settings.json", 1)||{};
@@ -32,7 +33,10 @@
     g.setColor(col(stat.sto)); g.drawRect(x + 2, y + 21, x + 2 + stat.sto * 18, y + 22);
     g.setColor(col(t)); g.drawRect(x + 1, y + 21 - t * 20, x + 2, y + 21);
     // if there's nothing active, don't queue a redraw (rely on Bangle.on(...) below)
-    if (redrawBars || again) setTimeout(draw, drawTime());
+    if (redrawBars || again) {
+      if (drawTimeout) clearTimeout(drawTimeout);
+      drawTimeout = setTimeout(draw, drawTime());
+    }
   }};
 
   function col(p) {
