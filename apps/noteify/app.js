@@ -3,10 +3,10 @@ Bangle.drawWidgets();
 
 var notes = require("Storage").readJSON("noteify.json", true) || [];
 var alarms = require("sched").getAlarms();
-msg = "";
+var msg = "";
 
 function startNote(idx) {
-  idx == undefined ? note = "" : note = notes[idx].note;
+  var note = idx == undefined ? "" : notes[idx].note;
   require("textinput").input({text:note}).then(result => {
   if (result != "") {
     idx == undefined ? notes.push({"note" : result}) : notes[idx].note = result;
@@ -226,8 +226,8 @@ function editAlarm(alarmIndex, alarm) {
   };
   menu["Save"] = function() {
     a.t = encodeTime(t);
+    // if the time has already passed today, don't fire until tomorrow
     a.last = (a.t < getCurrentTime()) ? (new Date()).getDate() : 0;
-    a.last = 0;
     if (newAlarm) alarms.push(a);
     else alarms[alarmIndex] = a;
     saveAndReload();
@@ -280,7 +280,13 @@ function editTimer(alarmIndex, alarm) {
   };
   menu["Save"] = function() {
     a.timer = encodeTime(t);
-    a.t = getCurrentTime() + a.timer;
+    var currentTime = getCurrentTime();
+    a.t = (currentTime + a.timer) % 86400000; // time of day the timer fires
+    a.last = 0;
+    delete a.ot; // (re)starting the timer cancels any snooze
+    // if the timer runs past midnight, only allow it to fire on that day
+    if (a.t < currentTime) a.date = new Date(Date.now() + a.timer).toLocalISOString().substr(0, 10);
+    else delete a.date;
     if (newAlarm) alarms.push(a);
     else alarms[alarmIndex] = a;
     saveAndReload();
