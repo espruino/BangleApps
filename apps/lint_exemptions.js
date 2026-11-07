@@ -767,12 +767,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/keytimer/common.js": {
-    "hash": "5cd0e0e924eefa951240330eaf483338003fcb0cc106d140210a8605172e4bb8",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/kanawatch/app.js": {
     "hash": "01c3fede367b7cbdbaf6b532ebfd4e6ffff61b2e20ce44b25dd04117853a44f2",
     "rules": [
