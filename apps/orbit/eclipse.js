@@ -196,17 +196,21 @@ function prepare(date,options){
   s=rotateZKm(s,-theta);m=rotateZKm(m,-theta);
   var ax=shadowAxisKm(s,m),k=options.moonK===undefined?0.272281:+options.moonK;
   if(!(k>0&&k<1))throw new Error("Invalid moonK Earth-radius ratio");
-  var p=intersectWGS84Km(ax),result={axisHitsEarth:!!p,lat:null,lon:null,gamma:ax.gamma,type:"none"};
+  ax.moonRadiusKm=k*A_KM;
+  // The cheapest global penumbral bound is enough to reject non-eclipses.
+  // Skip the ellipsoid ray intersection and central-eclipse classification
+  // unless the same global detection used by the renderer is positive.
+  var pen=ax.moonRadiusKm+(Math.abs(ax.mu)+A_KM)*(SUN_KM+ax.moonRadiusKm)/ax.distanceKm;
+  ax.active=ax.mu<0&&norm(ax.c)<A_KM+pen;
+  var p=ax.active?intersectWGS84Km(ax):null;
+  var result={axisHitsEarth:!!p,lat:null,lon:null,gamma:ax.gamma,type:"none"};
   if(p){
     var geo=geographicDeg(p);result.lat=geo.lat;result.lon=geo.lon;
     var dm=norm([m[0]-p[0],m[1]-p[1],m[2]-p[2]]);
     var ds=norm([s[0]-p[0],s[1]-p[1],s[2]-p[2]]);
     result.type=k*A_KM/dm>=SUN_KM/ds?"total":"annular";
   }
-  ax.sun=s;ax.moon=m;ax.moonRadiusKm=k*A_KM;ax.result=result;
-  // Conservative penumbra bound. Covers partial-only eclipses with no axis hit.
-  var pen=ax.moonRadiusKm+(Math.abs(ax.mu)+A_KM)*(SUN_KM+ax.moonRadiusKm)/ax.distanceKm;
-  ax.active=ax.mu<0&&norm(ax.c)<A_KM+pen;
+  ax.sun=s;ax.moon=m;ax.result=result;
   ax.time=time;return ax;
 }
 function calculate(date,options){return prepare(date,options).result;}

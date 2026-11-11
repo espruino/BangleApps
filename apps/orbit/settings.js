@@ -1,10 +1,10 @@
-/* tenkyu 0.080: settings, rest diagnostics and flash-backed location picker. */
+/* tenkyu 0.082: settings, rest diagnostics and flash-backed location picker. */
 (function(back){
   var Storage=require("Storage");
   // Read-only version display: title is not a selectable button.
-  var VERSION="0.080";
+  var VERSION="0.109";
   var REST_THRESHOLDS=[0.001,0.003,0.009,0.027,0.081,0.243,0.729];
-  var REST_ACTIVITY_DEFAULTS=[0.5,2,6,18];
+  var REST_ACTIVITY_DEFAULTS=[1,2,6,18];
   // Bangle.js 2 has a 3-bit colour screen (8 actual dial colours).
   var DIAL_COLOR_NAMES=["White","Red","Green","Blue","Yellow","Cyan","Magenta","Black"];
   var DIAL_COLOR_VALUES=[0xFFFF,0xF800,0x07E0,0x001F,0xFFE0,0x07FF,0xF81F,0];
@@ -12,13 +12,19 @@
     var a=[],prev=0;
     for(var i=0;i<4;i++){
       var n=+s["restActivityT"+(i+1)];
-      if(!isFinite(n)||n<=prev)n=REST_ACTIVITY_DEFAULTS[i];
-      if(n<=prev)n=prev+0.1;
-      n=Math.round(n*1000)/1000;
+      if(!isFinite(n)||n<=0)n=REST_ACTIVITY_DEFAULTS[i];
+      if(i===0){
+        // Only the L5/L4 boundary uses 0.1-resolution.
+        n=Math.max(0.1,Math.min(995.9,Math.round(n*10)/10));
+      }else{
+        n=Math.round(n);
+        n=Math.max(Math.floor(prev)+1,Math.min(996+i,n));
+      }
       a.push(n);prev=n;
     }
     return a;
   }
+  function activityCutLabel(n,k){return k===0?n.toFixed(1):String(n);}
   function thresholdIndex(v){
     if(!isFinite(v)||v<=0)return 3;
     var best=0;
@@ -95,7 +101,11 @@
     var list;
     try{
       var q=JPI[pi];
-      if(q)list=JSON.parse(Storage.read(JPFILE,q[0],q[1])||"[]");
+      if(q){
+        var raw=Storage.read(JPFILE,q[0],q[1]);
+        if(raw)list=JSON.parse(raw);
+        raw=undefined;
+      }
     }catch(e){list=undefined;}
     if(!list||!list.length)list=P[pi][1]||[];
     jpPrefCache=pi;jpMunicipalities=list;
@@ -145,6 +155,7 @@
     set("orbitHourEnabled",s.orbitHourEnabled===undefined?false:s.orbitHourEnabled!==false);
     if(DIAL_COLOR_VALUES.indexOf(s.orbitHourColor)<0)set("orbitHourColor",0xFFFF);
     set("restEco",s.restEco===true);
+    set("earthTexture",Math.max(0,Math.min(2,s.earthTexture|0)));
     s.sunSize=Math.max(6,Math.min(15,s.sunSize|0));
     s.earthSize=Math.max(25,Math.min(50,s.earthSize|0));
     s.moonSize=Math.max(14,Math.min(16,s.moonSize|0));
@@ -739,6 +750,10 @@
         format:function(v){return v?"South":"North";},
         onchange:function(v){s.viewSide=v?1:0;write(CFG,s);}
       },
+      "Earth texture":{value:s.earthTexture|0,min:0,max:2,step:1,
+        format:function(v){return ["Solid","Land","30deg mesh"][v];},
+        onchange:function(v){s.earthTexture=v|0;write(CFG,s);}
+      },
       "Sun size":{value:s.sunSize,min:6,max:15,step:1,onchange:function(v){s.sunSize=v;write(CFG,s);}},
       "Earth size":{value:s.earthSize,min:25,max:50,step:1,onchange:function(v){
         s.earthSize=v;var mn=s.earthSize+s.moonSize+4;if(s.moonOrbit<mn)s.moonOrbit=mn;
@@ -793,7 +808,9 @@
       nonwear_hrm_failed:"HRM failed",hrm_retry_wait:"Retry wait",
       nonwear_hrm_unknown:"HRM unknown",
       nonwear:"No pulse",nonwear_held:"Held unworn",
-      pulse_held_still:"Held worn",accel_uncertain:"Uncertain"
+      pulse_pending_rest5:"Pulse pending",rest_1_to_4:"Rest 1-4",
+      pulse_held_still:"Held worn",accel_uncertain:"Uncertain",
+      charging:"Charging"
     };
     // E.showAlert does not scroll on Bangle.js 2. Use read-only
     // menu rows for a scrollable diagnostic display instead.
@@ -802,7 +819,8 @@
     }
     var m={"":{title:"Last check"},"< Back":function(){restMenu(s);}};
     if(!last)m["Status"]=readOnly("No 5-min bin");
-    m["Result"]=readOnly(!last?"--":last.result===254?"Unworn":
+    m["Result"]=readOnly(!last?"--":last.result>=101&&last.result<=201?
+      "Charge "+(last.result-101)+"%":last.result===254?"Unworn":
       last.result===253?"HRM failed":
       last.result===255?"Unknown":"Rest "+(1+Math.min(4,Math.floor(Math.min(99,last.result)/20))));
     m["Reason"]=readOnly(last?(reasons[last.reason]||last.reason):"--");
@@ -811,6 +829,8 @@
       d&&d.holdState===2?"Unworn":
       d&&d.holdState===3?"HRM failed":"Unknown");
     m["Shared HRM"]=readOnly(d?d.sharedPulseCount||0:0);
+    m["Charging"]=readOnly(d&&d.charging?"Yes":"No");
+    if(d&&d.charging)m["Battery"]=readOnly(d.chargePercent+"%");
     m["Conf."]=readOnly(last&&last.confidence>=0?last.confidence+"%":"--");
     m["3D drift"]=readOnly(last&&isFinite(last.driftG)?last.driftG+" g":"--");
     m["Peak sum"]=readOnly(last&&typeof last.activity300==="number"&&isFinite(last.activity300)?
@@ -821,19 +841,85 @@
     m["Data"]=readOnly(last?last.coverageSec+" s":"--");
     E.showMenu(m);
   }
+  function showRenderDiagnostics(s){
+    var p=Bangle.orbitPerf||{full:{},staged:{},restParts:{}};
+    function row(v){return {value:0,min:0,max:0,
+      format:function(){return v===undefined?"--":String(v)+" ms";}};}
+    var m={"":{title:"Draw timing"},"< Back":function(){restMenu(s);}};
+    if(!p)m["Status"]=row("Not measured");
+    else{
+      var f=p.full||{},q=p.staged||{};
+      m["Full total"]=row(f.total);
+      m["Full Earth"]=row(f.earth);
+      m["Full Moon"]=row(f.moon);
+      m["Full Dial"]=row(f.dial);
+      m["Full Rest"]=row(f.rest);
+      var z=p.restParts||{};
+      // High-frequency diagnostic timers are disabled for performance.
+      m["Rest detail"]={value:0,min:0,max:0,format:function(){return "Off";}};
+      m["Rest bars"]={value:0,min:0,max:0,format:function(){return String(z.bars||0);}};
+      m["Saved full"]={value:0,min:0,max:0,format:function(){
+        var c=Storage.readJSON("orbit.perfdiag.json",1);
+        return c&&typeof c.fullRest==="number"?Math.round(c.fullRest)+" ms":"--";}};
+      m["No lines"]={value:0,min:0,max:0,format:function(){
+        var c=Storage.readJSON("orbit.perfdiag.json",1);return c&&typeof c.noLines==="number"?Math.round(c.noLines)+" ms":"--";}};
+      var names=[["Visit only","visit"],["Classify","classify"],
+        ["Geometry","geometry"],["Daylight","daylight"]];
+      names.forEach(function(pair){
+        m[pair[0]]={value:0,min:0,max:0,format:function(){
+          var c=Storage.readJSON("orbit.perfdiag.json",1);
+          return c&&typeof c[pair[1]]==="number"?
+            Math.round(c[pair[1]])+" ms":"--";}};
+      });
+      m["Run staged test"]=function(){
+        Storage.erase("orbit.perfdiag.json");
+        Storage.write("orbit.perfrequest","1");
+        E.showAlert("Test queued. Return to tenkyu, then reopen Draw timing.", "Draw timing").then(function(){showRenderDiagnostics(s);});
+      };
+      m["Stage total"]=row(q.total);
+      m["Stage Earth"]=row(q.earth);
+      m["Stage Moon"]=row(q.moon);
+      m["Stage Dial"]=row(q.dial);
+      m["Stage Rest"]=row(q.rest);
+    }
+    E.showMenu(m);
+  }
+  function activityDigitMenu(s,k){
+    var cuts=restActivityCuts(s),key="restActivityT"+(k+1),n=cuts[k];
+    var m={"":{title:"Boundary "+(k+1)},"< Back":function(){activityMenu(s);}};
+    (k===0?[100,10,1,0.1]:[100,10,1]).forEach(function(place){
+      var label=place===100?"Hundreds":place===10?"Tens":
+        place===1?"Ones":"Tenths";
+      var digit=place===0.1?Math.round(n*10)%10:Math.floor(n/place)%10;
+      m[label]={value:digit,min:0,max:9,step:1,wrap:true,
+        format:function(v){return String(v);},
+        onchange:function(v){
+          var all=restActivityCuts(s),old=all[k];
+          var oldDigit=place===0.1?Math.round(old*10)%10:
+            Math.floor(old/place)%10;
+          var next=Math.round((old+(v-oldDigit)*place)*10)/10;
+          var low=k?Math.floor(all[k-1])+1:0.1;
+          var high=k<3?all[k+1]-(k===0?0.1:1):999;
+          if(next<low-0.000001||next>high+0.000001){
+            E.showAlert("Allowed: "+low+" to "+high,"Boundary")
+              .then(function(){activityDigitMenu(s,k);});
+            return;
+          }
+          s[key]=next;applyRest(s);
+          setTimeout(function(){activityDigitMenu(s,k);},10);
+        }
+      };
+    });
+    m["Value"]={value:0,min:0,max:0,
+      format:function(){return activityCutLabel(restActivityCuts(s)[k],k);}};
+    E.showMenu(m);
+  }
   function activityMenu(s){
     var cuts=restActivityCuts(s);
     var m={"":{title:"Rest levels"},"< Back":function(){restMenu(s);}};
     for(var i=0;i<4;i++)(function(k){
-      m["L"+(5-k)+"/"+(4-k)+" boundary"]={
-        value:cuts[k],min:k?+(cuts[k-1]+0.1).toFixed(3):0.1,
-        max:k<3?+(cuts[k+1]-0.1).toFixed(3):500,
-        step:0.1,format:function(v){return v.toFixed(1)+" g";},
-        onchange:function(v){
-          s["restActivityT"+(k+1)]=+v.toFixed(3);
-          applyRest(s);
-          setTimeout(function(){activityMenu(s);},10);
-        }
+      m["L"+(5-k)+"/"+(4-k)+"  "+activityCutLabel(cuts[k],k)]=function(){
+        activityDigitMenu(s,k);
       };
     })(i);
     E.showMenu(m);
@@ -848,7 +934,8 @@
       "Peak gate":thresholdMenu(s,"restThreshold"),
       "Stage boundaries":function(){activityMenu(s);},
       "Non-wear":function(){wearMenu(s);},
-      "Last check":function(){showRestDiagnostics(s);}
+      "Last check":function(){showRestDiagnostics(s);},
+      "Draw timing":function(){showRenderDiagnostics(s);}
     });
   }
 
