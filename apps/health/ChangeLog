@@ -49,3 +49,4 @@
 0.42: Add quick menu option for the 'Calories' app, if installed.
 0.43: Use theme colors for bar graphs, show units, and use newer fonts in graphs.
 0.44: Add setting to allow health data to be stored in UTC time for frequent timezone travellers (#4301)
+0.45: Web interface: click on a day in the monthly table or graph to view hourly data for that day (#4116)
