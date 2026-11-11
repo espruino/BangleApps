@@ -5,7 +5,7 @@
   "author": "gfwilliams",
   "description": "A simple app to draw a graph of data from the accelerometer on the screen",
   "icon": "app.png",
-  "tags": "tool,debug",
+  "tags": "devel,debug",
   "supports" : ["BANGLEJS","BANGLEJS2"],
   "screenshots": [{"url":"screenshot.png"}],
   "storage": [

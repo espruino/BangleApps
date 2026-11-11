@@ -6,7 +6,7 @@
   "description": "Write all messages to a file, for debugging purposes",
   "icon": "app.png",
   "type": "bootloader",
-  "tags": "tool,system",
+  "tags": "devel,system",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "interface": "interface.html",
   "storage": [

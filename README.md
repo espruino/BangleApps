@@ -287,6 +287,7 @@ and which gives information about the app for the Launcher.
                               //   'system' - used by the system
                               //   'clkinfo' - provides or uses clock_info module for data on your clock face or clocks that support it (see apps/clock_info/README.md)
                               //   'health' - e.g. heart rate monitors or step counting
+                              //   'devel' - for developing and debugging apps (shown under 'Development')
   "supports": ["BANGLEJS2"],  // List of device IDs supported, either BANGLEJS, BANGLEJS2, BANGLEJS3 or BANGLEJS3_COMPAT(faking the 176x176 LCD)
   "dependencies" : { "notify":"type" } // optional, app 'types' we depend on (see "type" above)
   "dependencies" : { "messages":"app" } // optional, depend on a specific app ID
@@ -352,7 +353,7 @@ and which gives information about the app for the Launcher.
 ```
 
 * name, icon and description present the app in the app loader.
-* tags is used for grouping apps in the library, separate multiple entries by comma. Known tags are `tool`, `system`, `clock`, `game`, `sound`, `gps`, `widget`, `launcher`, `bluetooth` or empty.
+* tags is used for grouping apps in the library, separate multiple entries by comma. Known tags are `tool`, `system`, `clock`, `game`, `sound`, `gps`, `widget`, `launcher`, `bluetooth`, `devel` or empty.
 * storage is used to identify the app files and how to handle them
 * data is used to clean up files when the app is uninstalled
 
