@@ -1,9 +1,10 @@
 (function(){
   if (!Bangle.isHRMOn) return; // old firmware
   var hp = Bangle.setHRMPower;
-  Bangle.setHRMPower = () => {
-    hp.apply(Bangle, arguments);
-    WIDGETS.widhrt.draw();
+  Bangle.setHRMPower = function() {
+    var isOn = hp.apply(Bangle, arguments);
+    if (global.WIDGETS && WIDGETS.widhrt) WIDGETS.widhrt.draw();
+    return isOn;
   };
 
   var bp = Math.round(Bangle.getHealthStatus().bpm||Bangle.getHealthStatus("last").bpm);
@@ -12,7 +13,7 @@
     //console.log('onHrm');
     if (e && e.confidence>60) bp = Math.round(e.bpm);
     if (bp == 0) bp = Math.round(Bangle.getHealthStatus().bpm||Bangle.getHealthStatus("last").bpm);
-    WIDGETS["widhrt"].draw();
+    if (global.WIDGETS && WIDGETS.widhrt) WIDGETS.widhrt.draw();
   });
   
   WIDGETS.widhrt={area:"tr",sortorder:9,width:56,draw:function() {
@@ -26,6 +27,7 @@
     var w = text_w + 3 + hw + 2;
     // we need this to be able to shrink or grow on the 3,2,1 digit bpm
     if (w != this.width) {this.width = w; setTimeout(() => Bangle.drawWidgets(),10); return;}
+    if (this.x === undefined) return;
     //var h = 12; // height
 
     g.setColor(g.theme.bg);

@@ -1,0 +1,2 @@
+0.01: Initial release
+0.02: Return Bangle.setHRMPower boolean result and guard drawing before widget layout
