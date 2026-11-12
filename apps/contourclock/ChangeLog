@@ -13,3 +13,4 @@
 0.31: Bugfix, no more freeze.
 0.32: Minor code improvements
 0.33: Messages would sometimes halt the clock. This should be fixed now.
+0.34: The font selection page now pre-selects the fonts that are already installed

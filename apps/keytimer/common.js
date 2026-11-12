@@ -44,5 +44,6 @@ exports.pauseTimer = function () {
 exports.deleteTimer = function () {
     sched.setAlarm('keytimer');
     exports.state.timeLeft = 0;
+    exports.state.inputString = '0';
     sched.reload();
 }

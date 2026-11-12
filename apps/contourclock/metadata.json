@@ -1,7 +1,7 @@
 { "id": "contourclock",
   "name": "Contour Clock",
   "shortName" : "Contour Clock",
-  "version": "0.33",
+  "version": "0.34",
   "icon": "app.png",
   "readme": "README.md",
   "author": "xxDUxx",
@@ -9,6 +9,7 @@
   "screenshots" : [{"url":"cc-screenshot-1.png"},{"url":"cc-screenshot-2.png"}],
   "tags": "clock",
   "custom": "custom.html",
+  "customConnect": true,
   "supports" : ["BANGLEJS2"],
   "type": "clock",
   "storage": [

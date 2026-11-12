@@ -62,6 +62,24 @@
         }
     });
     document.forms[0].appendChild(btn);
+
+    // Pre-select the fonts that are already installed, so that
+    // updating the app doesn't lose the previous choice
+    function onInit(device) {
+      if (!device || !device.appsInstalled ||
+          !device.appsInstalled.some(app => app.id == "contourclock")) return;
+      // Font files start with their name, eg. {"name":"Archivo Narrow",...
+      Puck.eval('require("Storage").list(/^contourclock-\\d+\\.json$/).map(f=>require("Storage").read(f,0,64))', function(headers) {
+        if (!Array.isArray(headers)) return;
+        var normalise = name => name.replace(/\s/g,"").toLowerCase();
+        var installed = headers.map(header => {
+          var match = header && header.match(/"name"\s*:\s*"([^"]*)"/);
+          return match ? normalise(match[1]) : undefined;
+        });
+        for (var fontElement of document.getElementsByName("font"))
+          fontElement.checked = installed.includes(normalise(fontElement.id));
+      });
+    }
     </script>
   </form>
 </body>
