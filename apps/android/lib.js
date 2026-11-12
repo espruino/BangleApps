@@ -4,9 +4,37 @@ exports.gbSend = function(message) {
 }
 let lastMsg, // for GadgetBridge workaround - may not be needed now...
     gpsState = {}, // keep information on GPS via Gadgetbridge
-    settings = Object.assign({rp:true,as:true,vibrate:".."},
+    settings = Object.assign({rp:true,as:true,vibrate:"..",calReminders:true},
       require("Storage").readJSON("android.settings.json",1)||{}
     );
+
+// Calendar reminders become hidden one-off alarms, so they also go off without a phone connection.
+// ids: the events to remove the old reminders of; event: the new event with "reminders" (Unix seconds), if any
+function setCalendarReminders(ids, event) {
+  if (!require("Storage").read("sched")) return;
+  var sched = require("sched");
+  var alarms = sched.getAlarms().filter(a => !(a.appid == "gbcalendar" && ids.includes(a.event)));
+  if (settings.calReminders && event && event.reminders) event.reminders.forEach((ts, i) => {
+    if (ts * 1000 < Date.now()) return;
+    var d = new Date(ts * 1000);
+    var minutes = Math.round((event.timestamp - ts) / 60);
+    alarms.push({
+      id: "gbcal" + event.id + "_" + i,
+      appid: "gbcalendar",
+      event: event.id,
+      msg: event.title + (minutes > 0 ? "\nin " + minutes + " min" : ""),
+      date: d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).substr(-2) + "-" + ("0" + d.getDate()).substr(-2),
+      t: ((d.getHours() * 60 + d.getMinutes()) * 60 + d.getSeconds()) * 1000,
+      dow: 127,
+      on: true,
+      hidden: true,
+      vibrate: ".",
+      del: true
+    });
+  });
+  sched.setAlarms(alarms);
+  sched.reload();
+}
 
 exports.gbHandler = (event) => {
   var HANDLERS = {
@@ -112,6 +140,7 @@ exports.gbHandler = (event) => {
       else
         cal[i] = event;
       require("Storage").writeJSON("android.calendar.json", cal);
+      setCalendarReminders([event.id], event);
     },
     // {t:"calendar-", id:int}
     "calendar-" : function() {
@@ -123,6 +152,7 @@ exports.gbHandler = (event) => {
       else
         cal = cal.filter(e=>e.id!=event.id);
       require("Storage").writeJSON("android.calendar.json", cal);
+      setCalendarReminders(Array.isArray(event.id) ? event.id : [event.id]);
     },
     //triggered by GB, send all ids
     // { t:"force_calendar_sync_start" }
