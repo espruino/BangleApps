@@ -28,3 +28,4 @@
 0.25: Add ability to filter-out installed clockinfos
 0.26: Add setting to move HRM and Steps clockinfos to its own 'Health' category for better organization.
 0.27: Change BLE clockInfo to use event-based updating, and added a "Conn" display when connected to a device.
+0.28: Stop uploading lib.js into clock_info.json, clean up corrupt clock_info.json on load, and fix Filtering settings crash/setting.json erase
