@@ -10,3 +10,4 @@
 0.10: Issue newline before GB commands (solves issue with console.log and ignored commands)
 0.11: Minor code improvements
 0.12: Add slider functionality
+0.13: Add optional direct HTTP webhook URL mode and guard missing ha.trigger.json
