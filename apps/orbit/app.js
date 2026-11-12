@@ -1,4 +1,4 @@
-/* tenkyu 0.04 (orbit storage) */
+/* tenkyu 0.109 (orbit storage) */
 (function(){
   var W=g.getWidth(),H=g.getHeight();
   var Storage=require("Storage"),CFGFILE="orbit.json";
@@ -82,16 +82,31 @@
     if(calSource){calModule=eval(calSource);calendar=calModule.create();}
     calSource=undefined;
   }catch(calErr){calModule=undefined;calendar=undefined;}
-  var BLACK=0x0000,WHITE=0xFFFF,NAVY=0x000F,DARKBLUE=0x0008,CYAN=0x07FF,YELLOW=0xFFE0,ORANGE=0xFD20,RED=0xF800,GREEN=0x04C0;
+  var BLACK=0x0000,WHITE=0xFFFF,NAVY=0x000F,DARKBLUE=0x0008,BLUE=0x001F,CYAN=0x07FF,YELLOW=0xFFE0,ORANGE=0xFD20,RED=0xF800,GREEN=0x04C0;
   var ECLIPSE_ENABLED=cfg.eclipseEnabled===undefined?true:cfg.eclipseEnabled!==false;
   var ECLIPSE_UPDATE_MS=30000,eclipseDisplay,eclipseActive=false,lastClockMinute=-1;
   var nextEclipseCheck=0;
   // Once per 5-minute slot, cache day/night for the 288 recorded bars.
-  var restDay=new Uint8Array(288),restDaySlot=new Uint32Array(288);
+  // One local-day sunrise/sunset estimate; reused for all 288 rest bins.
+  var restSunDay=-1,restSunRise=0,restSunSet=0,restSunPolar=0;
   var REST_ENABLED=cfg.restEnabled!==false;
   var REST_MAX_HEIGHT=Math.max(1,Math.min(14,isFinite(cfg.restBarHeight)?cfg.restBarHeight|0:10));
   var restService;
   var busy=false,killed=false,minuteTimer,idleTimer,tapTimer,transitionTimer;
+  var renderTimer,renderGeneration=0,earthCacheReady=false,moonCacheReady=false,restReady=false;
+  // Volatile, low-overhead profiler: no flash writes and no extra redraws.
+  // Date.now() has 1 ms resolution; values below 1 ms round to zero.
+  var perf={full:{},staged:{},restParts:{},count:0};
+  Bangle.orbitPerf=perf;
+  function timed(target,key,fn){
+    var start=Date.now(),out=fn(),dt=Date.now()-start;
+    target[key]=dt;
+    return out;
+  }
+  function endPerf(target,start){
+    target.total=Date.now()-start;
+    target.updated=Date.now();
+  }
   var mode="tenkyu",interactive=true,tapCount=0,resetOnWake=false;
   var selectedDayOffset=0,hasSelectedDate=false;
   var nativeDrawWidgets,widgetDrawWrapper;
@@ -112,6 +127,9 @@
   var TESTLAT=Math.max(-90,Math.min(90,+cfg.manualLat));
   var TESTLON=Math.max(-180,Math.min(180,+cfg.manualLon));
   var VIEW_SOUTH=!!cfg.viewSide;
+  var EARTH_TEXTURE=Math.max(0,Math.min(2,cfg.earthTexture|0));
+  var EARTH_MAP,EARTH_MASKS,EARTH_NORTH,EARTH_NORTH_MASKS;
+  var EARTH_IMG_OPT={rotate:0,scale:1};
   var DATEPOS=cfg.datePos|0,TIMEPOS=cfg.timePos|0,DATESIZE=cfg.dateSize|0,TIMESIZE=cfg.timeSize|0;
   var TIMEBOX,lastBaseBucket=-1;
   var TIMESOURCE=cfg.timeSource===1?1:0;
@@ -135,65 +153,12 @@
   var LOCLON=Math.abs(TESTLON).toFixed(3)+(TESTLON<0?"W":"E");
   /* Drop the configuration object after extracting runtime values. */
   cfg=undefined;
-  var LIGHTSPAN=[],LIGHTBX=[],LIGHTBY=[],LIGHTLIMB=[],LIGHTSTEPS=6,LUX=0,LUY=0,LVX=0,LVY=0;
+  var LIGHTSPAN=[],LIGHTBX=[],LIGHTBY=[],LIGHTLIMB=[],LIGHTSTEPS=24,LUX=0,LUY=0,LVX=0,LVY=0;
   var LIGHTTERM=[],LIGHTNIGHT=[];
-
-  /* Simplified hemisphere geometry balances recognition and redraw cost. */
-  var HEMI_LAND_N=[
-    /* North America incl. Alaska and Mexico.  Mexico is intentionally
-       exaggerated slightly so the peninsula/waist remains visible at ~30 px radius. */
-    [72,-168,65,-154,58,-143,55,-136,49,-127,39,-123,32,-117,
-     29,-115,25,-112,22,-108,19,-105,16,-96,18,-90,21,-87,
-     22,-91,20,-97,24,-101,27,-98,29,-90,27,-82,32,-80,
-     39,-74,49,-64,59,-56,67,-72,74,-96,74,-130],
-    /* Greenland */
-    [59,-46,67,-57,78,-52,83,-30,75,-18,65,-31],
-    /* Eurasia */
-    [43,-1,54,2,63,31,71,60,72,100,67,140,59,175,47,145,40,130,32,123,
-     24,117,13,106,10,95,20,82,31,63,35,37,41,21,44,11],
-    /* North Africa */
-    [36,-6,37,10,34,25,27,34,20,25,25,5,31,-8],
-    /* Japan main islands, exaggerated slightly for the 176 px display */
-    [31,129,33,131,34,134,35,137,38,141,41,142,40,139,37,136,34,133],
-    /* Hokkaido */
-    [41.5,140,43.5,143,45.5,145,45,142],
-    /* Great Britain */
-    [50,-5,53,-4,57,-4.5,58,-1,54,-1,50.5,-1]
-  ];
-
-  var HEMI_LAND_S=[
-    /* South America */
-    [-2,-80,-8,-79,-15,-76,-22,-71,-30,-72,-38,-73,-46,-75,
-     -53,-70,-56,-66,-52,-60,-45,-55,-36,-52,-28,-49,-20,-44,
-     -12,-38,-5,-35,0,-45],
-    /* Southern Africa */
-    [0,9,-7,12,-15,13,-23,16,-30,18,-35,20,-34,27,-29,32,
-     -22,35,-15,39,-8,40,-2,35,0,29],
-    /* Australia */
-    [-12,113,-16,121,-20,129,-18,137,-22,145,-28,153,-35,151,
-     -39,145,-38,136,-34,128,-31,116,-24,113],
-    /* Madagascar */
-    [-12,49,-16,50,-21,48,-26,45,-23,43,-17,44],
-    /* New Zealand */
-    [-34,172,-39,176,-44,170,-47,168,-43,166,-38,169]
-  ];
-
-  /* Hudson Bay is a sea cutout inside the North America polygon. */
-  var HEMI_WATER_N=[
-    [64,-95,62,-88,58,-80,53,-79,51,-85,54,-94,59,-97]
-  ];
-
-  var HEMI_WATER_S=[];
-  var HEMI_LAND=VIEW_SOUTH?HEMI_LAND_S:HEMI_LAND_N;
-  var HEMI_WATER=VIEW_SOUTH?HEMI_WATER_S:HEMI_WATER_N;
-  var HEMI_XY=[],HEMI_WATER_XY=[],HEMI_SCREEN=[],HEMI_WATER_SCREEN=[],HEMI_ICE_R=0;
-  /* Redraw only coastlines that remain useful at this display scale. */
-  var HEMI_COAST=VIEW_SOUTH?[0,1,2,3,4]:[0,1,2,4];
-  var HEMI_MAT=[1,0,0,1,0,0];
-  var HEMI_NATIVE=(typeof g.transformVertices==="function");
 
   function clear(t){if(t)clearTimeout(t);}
   function pad(n){return n<10?"0"+n:""+n;}
+  function formatClockTime(d){return d.h+":"+d.mi;}
   function rad(d){return d*Math.PI/180;}
   function deg(r){return r*180/Math.PI;}
   function virtualNowMs(){return Date.now()+selectedDayOffset*86400000;}
@@ -420,36 +385,6 @@
     LIGHTNIGHT=new Array((LIGHTSTEPS+1)*4);
   }
 
-  function buildEarthMapCache(){
-    /* Precompute map coordinates and reuse screen buffers to limit allocation/GC. */
-    HEMI_XY=[];HEMI_WATER_XY=[];HEMI_SCREEN=[];HEMI_WATER_SCREEN=[];
-
-    function cacheSet(srcSet,dstSet,screenSet){
-      for(var k=0;k<srcSet.length;k++){
-        var src=srcSet[k],dst=[],scr=new Array(src.length);
-        for(var i=0;i<src.length;i+=2){
-          var rr=EARTHR*Math.cos(rad(src[i]));
-          var da=(VIEW_SOUTH?1:-1)*rad(src[i+1]-TESTLON);
-          dst.push(rr*Math.cos(da),rr*Math.sin(da));
-        }
-        dstSet.push(dst);
-        screenSet.push(scr);
-      }
-    }
-
-    cacheSet(HEMI_LAND,HEMI_XY,HEMI_SCREEN);
-    cacheSet(HEMI_WATER,HEMI_WATER_XY,HEMI_WATER_SCREEN);
-    HEMI_ICE_R=Math.max(2,Math.round(EARTHR*Math.cos(rad(VIEW_SOUTH?65:78))));
-  }
-
-  function mapPolyInto(src,p,ca,sa,cx,cy){
-    for(var i=0;i<src.length;i+=2){
-      var lx=src[i],ly=src[i+1];
-      p[i]=(cx+lx*ca-ly*sa+0.5)|0;
-      p[i+1]=(cy+lx*sa+ly*ca+0.5)|0;
-    }
-  }
-
   function buildLightingInto(dec,cx,cy){
     /* Reuse fixed arrays instead of allocating term/night polygons each redraw. */
     var sd=Math.sin(dec)*(VIEW_SOUTH?-1:1),i,u,x,y,j=0;
@@ -514,7 +449,7 @@
     if(killed||mode!=="tenkyu"||(DATEPOS!==0&&TIMEPOS!==0))return;
     if(TIMEPOS===0)TIMEBOX=undefined;
     var gap=topFreeGap();if(!gap)return;
-    var d=displayParts(virtualNowMs()),date=pad(d.m)+pad(d.d),time=pad(d.h)+pad(d.mi);
+    var d=displayParts(virtualNowMs()),date=pad(d.m)+pad(d.d),time=formatClockTime(d);
     var size=20,showDate=DATEPOS===0,showTime=TIMEPOS===0,space=(showDate&&showTime)?" ":"";
     var txt=(showDate?date:"")+space+(showTime?time:"");
     var maxW=Math.max(1,gap[1]-gap[0]-2);
@@ -537,7 +472,7 @@
     var d=displayParts(virtualNowMs()),date=pad(d.m)+pad(d.d);
     g.setFont("Vector",DATESIZE);var dw=hasDate?g.stringWidth(date):0;
     g.setFont("Vector",TIMESIZE);var tw=0;
-    if(hasTime)for(var digit=0;digit<10;digit++)tw=Math.max(tw,g.stringWidth(""+digit)*4);
+    if(hasTime)tw=g.stringWidth("88:88"); // Allow h:m including a colon.
     var w=Math.max(dw,tw),h=(hasDate?DATESIZE+1:0)+(hasDate&&hasTime?2:0)+(hasTime?TIMESIZE+1:0);
     var right=pos===2,x=right?W-2-w:2,y=pos===2?SUNY+SUNR+SUNRAY+3:25;
     if(moonHitsRect(m,x,y,w,h)){
@@ -569,7 +504,7 @@
     var b=TIMEBOX,d=displayParts(virtualNowMs());
     g.setColor(WHITE).fillRect(b.x,b.y,b.x+b.w-1,b.y+b.h-1);
     g.setBgColor(WHITE).setColor(BLACK).setFont("Vector",b.size).setFontAlign(b.align,-1);
-    g.drawString(pad(d.h)+pad(d.mi),b.tx,b.ty);
+    g.drawString(formatClockTime(d),b.tx,b.ty);
   }
 
   function installWidgetRedrawHook(){
@@ -588,75 +523,116 @@
     widgetDrawWrapper=undefined;nativeDrawWidgets=undefined;
   }
 
-  function drawSun(){
-    var i;
-    /* Reference axis is intentionally behind both bodies. */
-    g.setColor(0x8410).drawLine(EARTHX,EARTHY,SUNX,SUNY);
+  function drawSun(recolorOnly){
+    var i,solarColor=eclipseActive?RED:YELLOW;
+    var detailColor=eclipseActive?RED:ORANGE;
+    // The reference axis belongs behind Earth; do not repaint it when
+    // recoloring the Sun after the progressive Earth layer was drawn.
+    if(!recolorOnly)g.setColor(0x8410).drawLine(EARTHX,EARTHY,SUNX,SUNY);
 
     /* Cached corona rays: no redraw-time trigonometry. */
-    g.setColor(ORANGE);
+    g.setColor(detailColor);
     for(i=0;i<SUN_RAYS.length;i+=4)
       g.drawLine(SUN_RAYS[i],SUN_RAYS[i+1],SUN_RAYS[i+2],SUN_RAYS[i+3]);
 
     /* Photosphere: yellow disk, orange limb/granulation, small dark sunspot. */
-    g.setColor(YELLOW).fillCircle(SUNX,SUNY,SUNR);
-    g.setColor(ORANGE).drawCircle(SUNX,SUNY,SUNR);
+    g.setColor(solarColor).fillCircle(SUNX,SUNY,SUNR);
+    g.setColor(detailColor).drawCircle(SUNX,SUNY,SUNR);
     for(i=0;i<SUN_TEX_ORANGE.length;i+=2)
       g.setPixel(SUNX+SUN_TEX_ORANGE[i],SUNY+SUN_TEX_ORANGE[i+1]);
 
-    /* Solar active region: visible red surround with a black spot core. */
+    /* Preserve the dark sunspot in either solar color mode. */
     var sx=SUNX+SUN_SPOT_X,sy=SUNY+SUN_SPOT_Y;
     g.setColor(RED).fillCircle(sx,sy,1);
     g.setColor(BLACK).setPixel(sx,sy);
   }
 
-  function drawEarth(sol){
-    /* Use native vertex transforms when available; otherwise use cached JS transforms. */
-    buildLightingInto(sol.dec,EARTHX,EARTHY);
+  function drawEarthMesh(ca,sa){
+    /* 30-degree polar mesh; blue 3-pixel strokes on black. */
+    var i,r,angle,x,y,dx,dy,rotation=Math.atan2(sa,ca);
+    g.setColor(BLUE);
+    for(i=0;i<12;i++){
+      angle=rotation+i*Math.PI/6;
+      x=EARTHX+Math.round(EARTHR*Math.cos(angle));
+      y=EARTHY+Math.round(EARTHR*Math.sin(angle));
+      dx=Math.round(Math.sin(angle));
+      dy=-Math.round(Math.cos(angle));
+      g.drawLine(EARTHX,EARTHY,x,y);
+      g.drawLine(EARTHX+dx,EARTHY+dy,x+dx,y+dy);
+      g.drawLine(EARTHX-dx,EARTHY-dy,x-dx,y-dy);
+    }
+    for(i=30;i<=60;i+=30){
+      r=Math.max(2,Math.round(EARTHR*Math.cos(rad(i))));
+      g.drawCircle(EARTHX,EARTHY,r-1);
+      g.drawCircle(EARTHX,EARTHY,r);
+      g.drawCircle(EARTHX,EARTHY,r+1);
+    }
+  }
 
+  function earthMapOptions(angle,scale){
+    /* One reusable options object; image coordinates are centred by rotation. */
+    EARTH_IMG_OPT.rotate=angle;
+    EARTH_IMG_OPT.scale=scale;
+    return EARTH_IMG_OPT;
+  }
+
+  function drawNaturalEarth(angle){
+    var scale=EARTHR/64,opts=earthMapOptions(angle,scale);
+    if(!VIEW_SOUTH){
+      /* 128px North-polar texture: one 2bpp palette image instead of
+         three independently transformed monochrome images. */
+      if(!EARTH_NORTH){
+        EARTH_NORTH=require("orbit.north");
+        EARTH_NORTH_MASKS=EARTH_NORTH.get();
+      }
+      g.drawImage(EARTH_NORTH_MASKS[0],EARTHX,EARTHY,opts);
+      return;
+    }
+    /* Retain the existing South-polar map until its 128px conversion. */
+    if(!EARTH_MAP){
+      EARTH_MAP=require("orbit.earth");
+      EARTH_MASKS=EARTH_MAP.get(true);
+    }
+    var colors=[GREEN,CYAN,WHITE],i;
+    opts.scale=EARTHR/32;
+    for(i=0;i<3;i++){
+      g.setColor(colors[i]);
+      g.drawImage(EARTH_MASKS[i],EARTHX,EARTHY,opts);
+    }
+  }
+
+  function drawEarth(sol){
+    buildLightingInto(sol.dec,EARTHX,EARTHY);
     var sunAng=Math.atan2(SUNY-EARTHY,SUNX-EARTHX);
     var baseA=sunAng+(VIEW_SOUTH?sol.ha:-sol.ha);
     var ca=Math.cos(baseA),sa=Math.sin(baseA);
-    var i;
+    var mapA=baseA+(VIEW_SOUTH?1:-1)*(Math.PI/2-rad(TESTLON));
 
-    HEMI_MAT[0]=ca; HEMI_MAT[1]=sa;
-    HEMI_MAT[2]=-sa; HEMI_MAT[3]=ca;
-    HEMI_MAT[4]=EARTHX; HEMI_MAT[5]=EARTHY;
-
-    if(HEMI_NATIVE){
-      try{
-        for(i=0;i<HEMI_XY.length;i++)
-          HEMI_SCREEN[i]=g.transformVertices(HEMI_XY[i],HEMI_MAT);
-        for(i=0;i<HEMI_WATER_XY.length;i++)
-          HEMI_WATER_SCREEN[i]=g.transformVertices(HEMI_WATER_XY[i],HEMI_MAT);
-      }catch(ex){
-        HEMI_NATIVE=false;
+    /* Ocean is a cheap solid disk; land/sea-ice/ice-sheet are image pixels. */
+    g.setColor(EARTH_TEXTURE===2?BLACK:BLUE).fillCircle(EARTHX,EARTHY,EARTHR);
+    if(EARTH_TEXTURE===1){
+      drawNaturalEarth(mapA);
+      /* Darken the night hemisphere, then restore outlines on both sides. */
+      g.setColor(DARKBLUE).fillPoly(LIGHTNIGHT);
+      g.setColor(WHITE);
+      if(VIEW_SOUTH){
+        g.drawImage(EARTH_MASKS[3],EARTHX,EARTHY,
+          earthMapOptions(mapA,EARTHR/32));
+      }else{
+        g.drawImage(EARTH_NORTH_MASKS[1],EARTHX,EARTHY,
+          earthMapOptions(mapA,EARTHR/64));
       }
+    }else{
+      if(EARTH_TEXTURE===2)drawEarthMesh(ca,sa);
+      else g.setColor(DARKBLUE).fillPoly(LIGHTNIGHT);
     }
-    if(!HEMI_NATIVE){
-      for(i=0;i<HEMI_XY.length;i++)
-        mapPolyInto(HEMI_XY[i],HEMI_SCREEN[i],ca,sa,EARTHX,EARTHY);
-      for(i=0;i<HEMI_WATER_XY.length;i++)
-        mapPolyInto(HEMI_WATER_XY[i],HEMI_WATER_SCREEN[i],ca,sa,EARTHX,EARTHY);
-    }
-
-    g.setColor(CYAN).fillCircle(EARTHX,EARTHY,EARTHR);
-    g.setColor(GREEN);
-    for(i=0;i<HEMI_SCREEN.length;i++)g.fillPoly(HEMI_SCREEN[i]);
-
-    g.setColor(CYAN);
-    for(i=0;i<HEMI_WATER_SCREEN.length;i++)g.fillPoly(HEMI_WATER_SCREEN[i]);
-
-    g.setColor(DARKBLUE).fillPoly(LIGHTNIGHT);
-
-    g.setColor(WHITE);
-    for(i=0;i<HEMI_COAST.length;i++)
-      g.drawPoly(HEMI_SCREEN[HEMI_COAST[i]],true);
-    if(HEMI_WATER_SCREEN.length)g.drawPoly(HEMI_WATER_SCREEN[0],true);
-
-    g.fillCircle(EARTHX,EARTHY,HEMI_ICE_R);
+    g.setColor(EARTH_TEXTURE===2?BLUE:WHITE);
     g.drawPoly(LIGHTTERM,false);
-    g.drawCircle(EARTHX,EARTHY,EARTHR);
+    if(EARTH_TEXTURE===2){
+      g.drawCircle(EARTHX,EARTHY,EARTHR-1);
+      g.drawCircle(EARTHX,EARTHY,EARTHR);
+      g.drawCircle(EARTHX,EARTHY,EARTHR+1);
+    }else g.drawCircle(EARTHX,EARTHY,EARTHR);
   }
 
   function moonData(nowMs){
@@ -908,7 +884,10 @@
       ECLIPSE_UPDATE_MS=renderer.UPDATE_MS;
     }
     var active=eclipseDisplay.update(new Date(virtualNowMs()));
-    nextEclipseCheck=Date.now()+(active?30000:300000);
+    // Keep 5-minute checks far from eclipse; tighten to 1 minute near
+    // the penumbral boundary, 30 seconds once the global eclipse starts.
+    nextEclipseCheck=Date.now()+(active?30000:
+      (eclipseDisplay.getState()?60000:300000));
     return active;
   }
   function drawEclipse(sol){
@@ -929,25 +908,157 @@
     }
     restService.configure(Storage.readJSON(CFGFILE,1)||{});
   }
-  function restIsDayAt(ms){
-    var slot=Math.floor(ms/300000),index=slot%288;
-    if(restDaySlot[index]!==slot){
-      restDaySlot[index]=slot;
-      restDay[index]=solarPosition(ms,TESTLAT,TESTLON).el>=0?1:0;
+  // Convert the day's sunrise and sunset to absolute five-minute
+  // bucket boundaries once; yesterday uses the same clock times.
+  var restSunFirst=0,restSunLast=0;
+  function prepareRestDayBuckets(now){
+    var d=new Date(now);
+    var dayStart=new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();
+    if(restSunDay!==dayStart){
+      restSunDay=dayStart;
+      var noon=dayStart+12*3600000,sol=solarPosition(noon,TESTLAT,TESTLON);
+      var rs=riseSetHourAngle(TESTLAT,sol.dec);
+      restSunPolar=rs.polar?(rs.day?1:-1):0;
+      if(!rs.polar){
+        var h=rs.h0*180/Math.PI/15;
+        var solarNoon=noon-sol.ha*12*3600000/Math.PI;
+        restSunRise=solarNoon-h*3600000;
+        restSunSet=solarNoon+h*3600000;
+        // A bar is labeled by its END instant: bucket b ends at
+        // (b+1)*300000. Preserve the old sunrise-inclusive rule.
+        restSunFirst=Math.ceil(restSunRise/300000)-1;
+        restSunLast=Math.ceil(restSunSet/300000)-1;
+      }
     }
-    return restDay[index]!==0;
+    return {first:restSunFirst,last:restSunLast,polar:restSunPolar};
   }
+  // Diagnostic comparison is run on demand, never during routine redraw.
   function drawRest(sol){
-    // The ring is a real 24-hour recorder, not a future-date prediction.
     if(!restService||selectedDayOffset!==0)return;
     var now=Date.now();restService.sync(now);
-    restService.draw(g,{nowMs:now,radiusPx:MOONORBIT,
+    var args={nowMs:now,radiusPx:MOONORBIT,
       maxHeightPx:REST_MAX_HEIGHT,cx:EARTHX,cy:EARTHY,south:VIEW_SOUTH,
       currentAngleRad:SUNANG+(VIEW_SOUTH?sol.ha:-sol.ha),
-      isDayAt:restIsDayAt});
+      dayBuckets:prepareRestDayBuckets(now),perf:perf.restParts};
+    var request=Storage.read("orbit.perfrequest");
+    if(!request){
+      restService.draw(g,args);
+      return;
+    }
+    Storage.erase("orbit.perfrequest");
+    // Staged diagnostic; only the last pass writes pixels.
+    var blank={setColor:function(){},drawLine:function(){}};
+    var times=[],i,t;
+    for(i=0;i<=5;i++){
+      args.diagnosticStage=i;
+      t=Date.now();
+      restService.draw(i===5?g:blank,args);
+      times.push(Date.now()-t);
+    }
+    Storage.writeJSON("orbit.perfdiag.json",{
+      visit:times[0],classify:times[1],geometry:times[2],
+      daylight:times[3],noLines:times[4],fullRest:times[5],
+      bars:perf.restParts.bars,at:Date.now()});
+  }
+
+  function showProgressStatus(label,step,total){
+    if(killed||mode!=="tenkyu")return;
+    try{
+      var w=g.getWidth(),y=0;
+      g.setColor(BLACK).fillRect(0,y,w-1,23);
+      g.setBgColor(BLACK).setColor(WHITE).setFont("6x8",1).setFontAlign(-1,-1);
+      g.drawString(label,2,y+2);
+      var barX=2,barY=y+9,barW=Math.max(20,w-26),barH=3;
+      var fillW=Math.max(0,Math.round((barW*(step+1))/Math.max(1,total)));
+      g.setColor(0x4444).drawRect(barX,barY,barX+barW,barY+barH);
+      g.setColor(0x07E0).fillRect(barX+1,barY+1,barX+fillW,barY+barH-1);
+    }catch(e){}
+  }
+
+  function cancelProgressive(){
+    renderGeneration++;
+    clear(renderTimer);renderTimer=undefined;
+    busy=false;
+  }
+  // On opening/returning to the clock, show each completed layer rather
+  // than holding the "Orbit..." acknowledgement until the final g.flip().
+  // The inexpensive initial Sun/orbit frame precedes map/HRM/eclipse loads.
+  // Periodic five-minute refreshes still use the single-flip drawBase().
+  function drawProgressively(){
+    if(killed||mode!=="tenkyu")return;
+    cancelProgressive();busy=true;
+    var ticket=renderGeneration,step=0,sol,moon;
+    var perfStart=Date.now(),stageStart;
+    TIMEBOX=undefined;
+    lastClockMinute=Math.floor(Date.now()/60000);
+    lastBaseBucket=Math.floor(Date.now()/300000);
+    g.reset().setBgColor(BLACK).setColor(BLACK).clear();
+    drawSun();
+    g.setColor(0x8410).drawCircle(EARTHX,EARTHY,MOONORBIT);
+    g.setColor(CYAN).drawCircle(EARTHX,EARTHY,EARTHR);
+    showProgressStatus("Loading sky...",0,3);
+    try{g.flip();}catch(e){}
+    function nextLayer(){
+      renderTimer=undefined;
+      if(killed||mode!=="tenkyu"||ticket!==renderGeneration)return;
+      try{
+        stageStart=Date.now();
+        if(step===0){
+          if(!earthCacheReady){/* map now comes from fixed flash masks */earthCacheReady=true;}
+          sol=safeSolar();
+          showProgressStatus("Earth...",0,3);
+          timed(perf.staged,"earth",function(){drawEarth(sol);});
+        }else if(step===1){
+          showProgressStatus("Moon...",1,3);
+          eclipseActive=updateEclipse();
+          // The first minute timer was armed before eclipse discovery.
+          // Switch to 30-second updates when the initial shadow is active.
+          if(eclipseActive){
+            // The fast opening frame was drawn before the eclipse check.
+            // Recolor the Sun without repainting the axis over the Earth.
+            drawSun(true);
+            armMinute();
+          }
+          drawEclipse(sol);
+          if(!moonCacheReady){buildMoonCache();moonCacheReady=true;}
+          moon=timed(perf.staged,"moon",drawMoon);
+          timed(perf.staged,"dial",function(){drawOrbitHours(sol);});
+        }else{
+          // Final pass restores the widget/header area below.
+          if(!restReady){initRest();restReady=true;}
+          timed(perf.staged,"rest",function(){drawRest(sol);});
+          drawObserver(sol);
+          drawLocationStatus(moon);drawDateTime(moon);
+          g.setColor(BLACK).fillRect(0,0,W-1,23);
+          try{Bangle.drawWidgets();}catch(e){}
+          drawHeaderClock();
+        }
+        try{g.flip();}catch(e){}
+        perf.staged["stage"+step]=Date.now()-stageStart;
+        step++;
+        if(step<3)renderTimer=setTimeout(nextLayer,12);
+        else{
+          endPerf(perf.staged,perfStart);
+          busy=false;
+        }
+      }catch(e){
+        // A failed incremental stage must not leave touch permanently blocked.
+        cancelProgressive();
+        try{drawBase();}catch(ex){busy=false;}
+      }
+    }
+    renderTimer=setTimeout(nextLayer,12);
   }
 
   function drawBase(){
+    cancelProgressive();
+    busy=true;
+    var perfStart=Date.now();
+    // A timer may request a normal redraw before the staged opening has
+    // completed; build any missing caches only in that exceptional path.
+    if(!earthCacheReady){earthCacheReady=true;}
+    if(!moonCacheReady){buildMoonCache();moonCacheReady=true;}
+    if(!restReady){initRest();restReady=true;}
     TIMEBOX=undefined;
     eclipseActive=updateEclipse();
     lastClockMinute=Math.floor(Date.now()/60000);
@@ -955,17 +1066,19 @@
     g.reset().setBgColor(BLACK).setColor(BLACK).clear();
     drawSun();
     var sol=safeSolar();
-    drawEarth(sol);
+    timed(perf.full,"earth",function(){drawEarth(sol);});
     drawEclipse(sol); // Earth's shadow first.
-    var moon=drawMoon();
-    drawOrbitHours(sol); // Dial numerals are behind the rest graph.
-    drawRest(sol); // Rest bars/arcs take priority over the Moon and dial.
+    var moon=timed(perf.full,"moon",drawMoon);
+    timed(perf.full,"dial",function(){drawOrbitHours(sol);});
+    timed(perf.full,"rest",function(){drawRest(sol);});
     drawObserver(sol); // Red observer marker stays above the rest graph.
     drawLocationStatus(moon);
     drawDateTime(moon);
     try{Bangle.drawWidgets();}catch(e){}
     drawHeaderClock();
     try{g.flip();}catch(err){}
+    endPerf(perf.full,perfStart);
+    perf.count++;
     busy=false;
   }
 
@@ -1005,6 +1118,7 @@
   function queueTransition(label,run){
     if(killed)return;
     stopOrbitTimers();
+    cancelProgressive();
     clear(transitionTimer);transitionTimer=undefined;
     mode="transition";interactive=false;
     try{Bangle.setLocked(false);}catch(e){}
@@ -1047,8 +1161,7 @@
     if(killed)return;
     if(calendar&&calendar.isActive())calendar.stop();
     mode="tenkyu";
-    busy=false;
-    drawBase();
+    drawProgressively();
     armMinute();
     interactive=!!keepInteractive;
     if(interactive){
@@ -1159,6 +1272,7 @@
 
   function onLCD(on){
     if(!on){
+      cancelProgressive(); // Don't spend CPU on layers while LCD is off.
       try{Bangle.setLocked(true);}catch(e){}
       clear(minuteTimer);minuteTimer=undefined;
       clear(transitionTimer);transitionTimer=undefined;
@@ -1185,7 +1299,7 @@
       try{Bangle.setBacklight(true);}catch(e){}
       // Existing clock drawing may be expensive after LCD power restoration.
       queueTransition("Orbit...",function(){
-        mode="tenkyu";interactive=true;drawBase();armMinute();armIdle();
+        mode="tenkyu";interactive=true;drawProgressively();armMinute();armIdle();
       });
     }
   }
@@ -1211,6 +1325,7 @@
         /* Rebuild Earth when shadow moves/disappears: no accumulated black trail.
            Far from eclipse, keep the original five-minute base refresh. */
         if(wasActive||eclipseActive||Math.floor(Date.now()/300000)!==lastBaseBucket||
+           (REST_ENABLED&&typeof Bangle.isCharging==="function"&&Bangle.isCharging())||
            (safeSolar().el>=0)!==lastObserverDay)drawBase();
         else if(Math.floor(Date.now()/60000)!==lastClockMinute){
           lastClockMinute=Math.floor(Date.now()/60000);
@@ -1221,11 +1336,21 @@
     },tick-(Date.now()%tick)+25);
   }
 
+  // Charger transitions are rare; refresh the active graph immediately,
+  // while keeping the boot-owned rest recorder independent of the clock.
+  function onChargingChange(){
+    if(killed||mode!=="tenkyu"||selectedDayOffset!==0)return;
+    if(typeof Bangle.isLCDOn==="function"&&!Bangle.isLCDOn())return;
+    setTimeout(function(){
+      if(!killed&&mode==="tenkyu"&&!busy)drawBase();
+    },50);
+  }
+
   function cleanup(){
     if(killed)return;
     killed=true;
     clear(transitionTimer);transitionTimer=undefined;
-    stopOrbitTimers();
+    stopOrbitTimers();cancelProgressive();
     if(eclipseDisplay)eclipseDisplay.reset();
     // The boot-owned recorder keeps running in menus and other apps.
     restService=undefined;
@@ -1236,15 +1361,14 @@
     try{Bangle.removeListener("faceUp",onFaceUp);}catch(e){}
     try{Bangle.removeListener("twist",onTwist);}catch(e){}
     try{Bangle.removeListener("lcdPower",onLCD);}catch(e){}
+    try{Bangle.removeListener("charging",onChargingChange);}catch(e){}
     try{E.removeListener("kill",cleanup);}catch(e){}
   }
 
   layoutBodies();
   buildSunCache();
   buildLightingCache();
-  buildEarthMapCache();
-  buildMoonCache();
-  initRest();
+  // Defer costly map/ephemeris/rest loading until after the first real frame.
   try{Bangle.setUI({mode:"custom",clock:1,touch:onTouch,swipe:onSwipe,btn:onButton});}catch(e){}
   /* Load widgets only after setUI, as required for clock/widget state tracking. */
   try{if(typeof WIDGETS==="undefined")Bangle.loadWidgets();}catch(e){}
@@ -1252,9 +1376,10 @@
   Bangle.on("faceUp",onFaceUp);
   Bangle.on("twist",onTwist);
   Bangle.on("lcdPower",onLCD);
+  Bangle.on("charging",onChargingChange);
   E.on("kill",cleanup);
   try{Bangle.setLocked(false);}catch(e){}
-  drawBase();
+  drawProgressively();
   armMinute();
   armIdle(); // Also enforce a finite timeout when the system timeout is zero.
 })();
