@@ -2,7 +2,7 @@
   if (!Bangle.isHRMOn) return; // old firmware
   var hp = Bangle.setHRMPower;
   Bangle.setHRMPower = function() {
-    var isOn = hp.apply(Bangle, arguments);
+    var isOn = hp.apply(this, arguments);
     WIDGETS.widhrt.draw();
     return isOn;
   };
