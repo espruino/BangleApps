@@ -268,7 +268,7 @@ function showMonthDataAsTable(data, date, monthstr) {
   destroyCharts();
   var htmlOverview = `<h1>` + monthstr + `</ h1>
   <button class="btn btn-primary" id="backtomonth" style="float: right;margin-right: 5px;">Back</button>
-  <p>Click on a day to view hourly data</p>
+  <p style="font-size:50%;">Click on a day to view hourly data</p>
   <table class="table table-striped table-hover">
   <thead>
     <tr>
@@ -285,8 +285,8 @@ function showMonthDataAsTable(data, date, monthstr) {
   for (var i = 1; i <= daysInMonth; i++) {
     var dayData = dailyData[i];
     if (dayData) {
-      htmlOverview += `<tr>
-      <td><button class="btn btn-link" day="${i}">${i}</button></td>
+      htmlOverview += `<tr day="${i}" style="cursor:pointer;">
+      <td>${i}</td>
       <td>${dayData.steps}</td>
       <td>${Math.round(dayData.bpm)}</td>
       <td>${dayData.movement}</td></tr>`
@@ -297,8 +297,8 @@ function showMonthDataAsTable(data, date, monthstr) {
   domContent.querySelector("#backtomonth").addEventListener("click",event => {
     getMonthList();
   });
-  domContent.querySelectorAll("button[day]").forEach(button => {
-    button.addEventListener("click",event => {
+  domContent.querySelectorAll("tr[day]").forEach(row => {
+    row.addEventListener("click",event => {
       var day = parseInt(event.currentTarget.getAttribute("day"));
       showDayData(data, date, monthstr, day, "table");
     });
@@ -318,7 +318,7 @@ function showMonthDataAsGraph(data, date, monthstr) {
   destroyCharts();
   var html = `<h1>` + monthstr + `</ h1>
   <button class="btn btn-primary" id="backtomonth" style="float: right;margin-right: 5px;">Back</button>
-  <p>Click on a day to view hourly data</p>
+  <p style="font-size:50%;">Click on a day to view hourly data</p>
   <h2>Steps</h2>
   <canvas id="chartSteps"></canvas>
   <h2>BPM</h2>
