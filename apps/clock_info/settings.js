@@ -4,7 +4,7 @@
   function save(key, value) {
     if (key)
       settings[key] = value;
-    require("Storage").writeJSON("clock_info.json", settings);
+    require('Storage').writeJSON("clock_info.json", settings);
   }
 
   let forced = false;
@@ -12,7 +12,7 @@
     if(forced) return;
 
     const fname = "setting.json";
-    const j = require("Storage").readJSON(fname, 1) || {};
+    const j = require("Storage").readJSON(fname);
     j.toggle = !j.toggle;
     require("Storage").writeJSON(fname, j);
     forced = true;
@@ -77,15 +77,13 @@
 
       let changed = false;
       // clean up stale entries
-      if (settings.exclude) {
-        Object
-          .keys(settings.exclude)
-          .filter(k => !(k.replace(re, "") in filterMenu))
-          .forEach(k => {
-            delete settings.exclude[k];
-            changed = true;
-          });
-      }
+      Object
+        .keys(settings.exclude || {})
+        .filter(k => !(k.replace(re, "") in filterMenu))
+        .forEach(k => {
+          delete settings.exclude[k];
+          changed = true;
+        });
 
       if(changed) save();
 

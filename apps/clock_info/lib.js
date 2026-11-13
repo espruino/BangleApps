@@ -19,9 +19,6 @@ exports.clockInfoMenus = undefined;
 
 /// Load the settings, with defaults
 exports.loadSettings = function() {
-  let json = storage.readJSON("clock_info.json", 1);
-  if (json === undefined && storage.read("clock_info.json") !== undefined)
-    storage.erase("clock_info.json");
   return Object.assign({
       hrmOn : 0, // 0(Always), 1(Tap)
       defocusOnLock : true,
@@ -30,7 +27,7 @@ exports.loadSettings = function() {
       haptics:true,
       apps : {}
     },
-    json||{}
+    require("Storage").readJSON("clock_info.json",1)||{}
   );
 };
 
