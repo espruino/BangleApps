@@ -3,7 +3,7 @@
   var hp = Bangle.setHRMPower;
   Bangle.setHRMPower = function() {
     var isOn = hp.apply(Bangle, arguments);
-    if (global.WIDGETS && WIDGETS.widhrt) WIDGETS.widhrt.draw();
+    WIDGETS.widhrt.draw();
     return isOn;
   };
 
@@ -13,7 +13,7 @@
     //console.log('onHrm');
     if (e && e.confidence>60) bp = Math.round(e.bpm);
     if (bp == 0) bp = Math.round(Bangle.getHealthStatus().bpm||Bangle.getHealthStatus("last").bpm);
-    if (global.WIDGETS && WIDGETS.widhrt) WIDGETS.widhrt.draw();
+    WIDGETS["widhrt"].draw();
   });
   
   WIDGETS.widhrt={area:"tr",sortorder:9,width:56,draw:function() {
