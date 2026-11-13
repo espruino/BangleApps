@@ -16,8 +16,8 @@
     {"url":"screenshot_3.png"}
   ],
   "data": [
-    {"name":"ha.trigger.json"},
-    {"name":"ha.json"}
+      {"name":"ha.trigger.json" },
+      {"name":"ha.json" }
   ],
   "storage": [
     {"name":"ha.app.js","url":"ha.app.js"},

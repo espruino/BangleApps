@@ -21,21 +21,21 @@
     <script>
        function onInit(){
           /*
-          * Load trigger and optional webhook config from Bangle.js
+          * Load trigger from Bangle.js
           */
           console.log("Loading trigger from Bangle.js...");
           try {
-            Util.readStorage("ha.trigger.json", data=>{
-              if (data && data.length > 0) {
-                document.getElementById("triggers").value = data;
-                console.log("Loaded trigger from Bangle.js.");
-              }
-            });
-            Util.readStorageJSON("ha.json", cfg=>{
-              if (cfg && typeof cfg.webhookUrl === "string") {
-                document.getElementById("webhookUrl").value = cfg.webhookUrl;
-              }
-            });
+          Util.readStorage("ha.trigger.json", data=>{
+                if(data.length > 0){
+                  document.getElementById("triggers").innerHTML = data;
+                  console.log("Loaded trigger from Bangle.js.");
+                }
+              });
+          Util.readStorageJSON("ha.json", cfg=>{
+                if(cfg && cfg.webhookUrl){
+                  document.getElementById("webhookUrl").value = cfg.webhookUrl;
+                }
+              });
           } catch(ex) {
               console.log("(Warning) Could not load trigger from Bangle.js.");
               console.log(ex);
@@ -46,27 +46,22 @@
          * Upload trigger to Bangle.js
          */
         document.getElementById("upload").addEventListener("click", function() {
+            // get the text to add
             var triggerText = document.getElementById("triggers").value;
             var webhookUrl = document.getElementById("webhookUrl").value.trim();
-            try {
-              JSON.parse(triggerText);
-            } catch (ex) {
-              alert("Invalid trigger JSON: " + ex.message);
-              return;
-            }
 
-            Util.showModal("Saving...");
-            Util.writeStorage("ha.trigger.json", triggerText, ()=>{
-              if (webhookUrl) {
-                Util.writeStorage("ha.json", JSON.stringify({webhookUrl: webhookUrl}), ()=>{
-                  Util.hideModal();
-                });
-              } else {
-                Util.eraseStorage("ha.json", ()=>{
-                  Util.hideModal();
-                });
-              }
-            });
+             Util.showModal("Saving...");
+              Util.writeStorage("ha.trigger.json", triggerText, ()=>{
+                if (webhookUrl) {
+                  Util.writeStorage("ha.json", JSON.stringify({webhookUrl: webhookUrl}), ()=>{
+                    Util.hideModal();
+                  });
+                } else {
+                  Util.eraseStorage("ha.json", ()=>{
+                    Util.hideModal();
+                  });
+                }
+              });
             console.log("Sent ha.trigger.json!");
         });
 

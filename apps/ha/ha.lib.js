@@ -33,15 +33,18 @@ function _getIcon(){
 }
 
 exports.getConfig = function(){
-    var cfg = require("Storage").readJSON("ha.json", 1);
-    return {
-        webhookUrl: (cfg && typeof cfg.webhookUrl === "string") ? cfg.webhookUrl.trim() : ""
-    };
+    return require("Storage").readJSON("ha.json", 1) || {};
 };
 
 exports.getTriggers = function(){
-    var triggers = require("Storage").readJSON("ha.trigger.json", 1);
-    if (!Array.isArray(triggers) || !triggers.length) {
+    var triggers;
+
+    try{
+        triggers = require("Storage").readJSON("ha.trigger.json");
+    } catch(e) {
+        console.log("ha: error loading triggers:", e);
+    }
+    if (!triggers) {
         // In case there are no user triggers yet, we show the default...
         triggers = [
             {display: "Empty", trigger: "NOP", icon: "ha"},
@@ -55,10 +58,10 @@ exports.getTriggers = function(){
     // method of each trigger...
     triggers.forEach(trigger => {
         trigger.getIcon = _getIcon.bind(trigger);
-    });
+    })
 
     return triggers;
-};
+}
 
 function sendPayload(extra){
     var webhookUrl = exports.getConfig().webhookUrl;
@@ -70,7 +73,7 @@ function sendPayload(extra){
         }
         var body = JSON.stringify(extra);
         var headers = {"Content-Type": "application/json"};
-        if (typeof Bangle !== "undefined" && Bangle.http) {
+        if (Bangle.http) {
             Bangle.http(url, {
                 method: "POST",
                 body: body,
@@ -91,17 +94,20 @@ function sendPayload(extra){
         return;
     }
 
-    var retries = 3;
-    while (retries > 0) {
-        try {
+    var retries=3;
+
+    while(retries > 0){
+        try{
+            // Now lets send the trigger that we sould send.
             Bluetooth.println("");
             Bluetooth.println(JSON.stringify({
-                t: "intent",
-                action: "com.espruino.gadgetbridge.banglejs.HA",
+                t:"intent",
+                action:"com.espruino.gadgetbridge.banglejs.HA",
                 extra: extra
             }));
             break;
-        } catch(e) {
+
+        } catch(e){
             retries--;
         }
     }
@@ -112,5 +118,5 @@ exports.sendTrigger = function(triggerName){
 };
 
 exports.sendValue = function(trigger, value){
-    sendPayload({ trigger: trigger, value: value });
+    sendPayload({ trigger, value });
 };
