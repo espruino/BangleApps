@@ -6,7 +6,7 @@
   "author": "gfwilliams",
   "description": "Finds Bluetooth devices with a specific name (eg 'Puck.js'), connects and uploads code. Great for programming many devices at once!",
   "icon": "app.png",
-  "tags": "tool,bluetooth",
+  "tags": "devel,bluetooth",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "custom": "custom.html",

@@ -7,7 +7,7 @@
   "description": "Tools for testing and debugging apps that use sensor input",
   "icon": "icon.png",
   "type": "bootloader",
-  "tags": "tool,boot,debug",
+  "tags": "devel,boot,debug",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "readme": "README.md",
   "storage": [

@@ -5,7 +5,7 @@
   "author": "gfwilliams",
   "description": "Debug info for Gadgetbridge. Run this app and when Gadgetbridge messages arrive they are displayed on-screen.",
   "icon": "app.png",
-  "tags": "",
+  "tags": "devel",
   "supports" : ["BANGLEJS2"],
   "readme": "README.md",
   "storage": [

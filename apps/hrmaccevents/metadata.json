@@ -7,7 +7,7 @@
   "author": "halemmerich",
   "description": "Record HRM and accelerometer events in high resolution to CSV files in your browser",
   "icon": "app.png",
-  "tags": "debug",
+  "tags": "devel,debug",
   "supports": ["BANGLEJS","BANGLEJS2"],
   "custom": "custom.html",
   "customConnect": true,
