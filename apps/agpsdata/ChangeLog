@@ -6,3 +6,4 @@
 0.05: Show last success date
       Do not start A-GPS update automatically
 0.06: Switch off gps after updating
+0.07: Check lastUpdate on boot/BLE connect so background refresh survives app reloads, and reset chunk index per pull

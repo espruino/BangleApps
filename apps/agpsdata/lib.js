@@ -19,6 +19,7 @@ function setAGPS(b64) {
     Serial1.println(CASIC_CHECKSUM("$PCAS04," + gnsstype)); // set GNSS mode
 
     try {
+      chunkI = 0;
       writeChunks(atob(b64), ()=>{
         setTimeout(()=>{
           Bangle.setGPSPower(0,"agpsdata");
@@ -40,7 +41,7 @@ function writeChunks(bin, resolve) {
     setTimeout(function() {
       if (chunkI < bin.length) {
         var chunk = bin.substr(chunkI, chunkSize);
-        Serial1.write(atob(btoa(chunk)));
+        Serial1.write(chunk);
         
         chunkI += chunkSize;
         writeChunks(bin, resolve);
