@@ -32,14 +32,20 @@ function _getIcon(){
     };
 }
 
+exports.getConfig = function(){
+    return require("Storage").readJSON("ha.json", 1) || {};
+};
+
 exports.getTriggers = function(){
     var triggers;
 
     try{
         triggers = require("Storage").readJSON("ha.trigger.json");
     } catch(e) {
-        // In case there are no user triggers yet, we show the default...
         console.log("ha: error loading triggers:", e);
+    }
+    if (!triggers) {
+        // In case there are no user triggers yet, we show the default...
         triggers = [
             {display: "Empty", trigger: "NOP", icon: "ha"},
         ];
@@ -57,7 +63,37 @@ exports.getTriggers = function(){
     return triggers;
 }
 
-exports.sendTrigger = function(triggerName){
+function sendPayload(extra){
+    var webhookUrl = exports.getConfig().webhookUrl;
+    if (webhookUrl) {
+        var sep = webhookUrl.indexOf("?") >= 0 ? "&" : "?";
+        var url = webhookUrl + sep + "trigger=" + encodeURIComponent(extra.trigger);
+        if (extra.value !== undefined) {
+            url += "&value=" + encodeURIComponent(extra.value);
+        }
+        var body = JSON.stringify(extra);
+        var headers = {"Content-Type": "application/json"};
+        if (Bangle.http) {
+            Bangle.http(url, {
+                method: "POST",
+                body: body,
+                headers: headers,
+                timeout: 10000
+            }).catch(() => {});
+        } else {
+            Bluetooth.println("");
+            Bluetooth.println(JSON.stringify({
+                t: "http",
+                id: "ha",
+                url: url,
+                method: "POST",
+                body: body,
+                headers: headers
+            }));
+        }
+        return;
+    }
+
     var retries=3;
 
     while(retries > 0){
@@ -67,10 +103,8 @@ exports.sendTrigger = function(triggerName){
             Bluetooth.println(JSON.stringify({
                 t:"intent",
                 action:"com.espruino.gadgetbridge.banglejs.HA",
-                extra:{
-                    trigger: triggerName
-                }})
-            );
+                extra: extra
+            }));
             break;
 
         } catch(e){
@@ -79,12 +113,10 @@ exports.sendTrigger = function(triggerName){
     }
 }
 
+exports.sendTrigger = function(triggerName){
+    sendPayload({ trigger: triggerName });
+};
+
 exports.sendValue = function(trigger, value){
-    Bluetooth.println(
-        JSON.stringify({
-            t: "intent",
-            action: "com.espruino.gadgetbridge.banglejs.HA",
-            extra: { trigger, value },
-        })
-    );
+    sendPayload({ trigger, value });
 };

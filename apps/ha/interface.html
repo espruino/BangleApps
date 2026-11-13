@@ -4,6 +4,10 @@
   </head>
   <body>
     <h3>Home Assistant trigger config</h3>
+    <div class="form-group" style="max-width:500px">
+      <label class="form-label" for="webhookUrl">Webhook URL (optional, leave empty to use Android Companion broadcasts)</label>
+      <input id="webhookUrl" class="form-input" type="url" placeholder="http://homeassistant.local:8123/api/webhook/bangle_ha">
+    </div>
     <p><textarea id="triggers" style="width:500px; height:300px">
 [
   {"display": "Open", "trigger": "OPEN_DOOR", "icon":"door"},
@@ -27,6 +31,11 @@
                   console.log("Loaded trigger from Bangle.js.");
                 }
               });
+          Util.readStorageJSON("ha.json", cfg=>{
+                if(cfg && cfg.webhookUrl){
+                  document.getElementById("webhookUrl").value = cfg.webhookUrl;
+                }
+              });
           } catch(ex) {
               console.log("(Warning) Could not load trigger from Bangle.js.");
               console.log(ex);
@@ -39,10 +48,19 @@
         document.getElementById("upload").addEventListener("click", function() {
             // get the text to add
             var triggerText = document.getElementById("triggers").value;
+            var webhookUrl = document.getElementById("webhookUrl").value.trim();
 
              Util.showModal("Saving...");
               Util.writeStorage("ha.trigger.json", triggerText, ()=>{
-                Util.hideModal();
+                if (webhookUrl) {
+                  Util.writeStorage("ha.json", JSON.stringify({webhookUrl: webhookUrl}), ()=>{
+                    Util.hideModal();
+                  });
+                } else {
+                  Util.eraseStorage("ha.json", ()=>{
+                    Util.hideModal();
+                  });
+                }
               });
             console.log("Sent ha.trigger.json!");
         });

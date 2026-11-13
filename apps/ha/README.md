@@ -29,6 +29,16 @@ This setup must be done only once -- now you are ready to configure your BangleJ
 control some devices or entities in your Home Assistant :)
 
 
+# Alternative Setup: Direct HTTP Webhook
+If you use the internet-enabled Bangle.js Gadgetbridge app and want to send triggers directly to Home Assistant without the Android Companion app broadcast receiver:
+
+1.) Create an automation in Home Assistant with a **Webhook** trigger (leave HTTP `POST` enabled) and copy its Webhook URL (for example `http://homeassistant.local:8123/api/webhook/bangle_ha`).
+
+2.) Paste that URL into the **Webhook URL** field in the app upload page on the App Loader and click **Upload trigger**.
+
+3.) In your Home Assistant automation conditions or actions, match the trigger name via `{{ trigger.json.trigger }}` (or `{{ trigger.query.trigger }}`) and optional slider value via `{{ trigger.json.value }}`. Leave the Webhook URL field empty to keep using Android broadcast intents.
+
+
 # Setup Trigger
 1.) Upload the app and all corresponding triggers through the AppStore UI. You must specify
 the display name, the trigger as well as an icon.
