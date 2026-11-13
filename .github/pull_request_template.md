@@ -10,7 +10,7 @@ repository (https://github.com/your_user/BangleApps/actions) shows a green
 tick next to the latest commit.
 
 If this pull request was generated with AI or had any part generated with AI, please include a mention 
-to help our reviewers out.
+of your usage to help our reviewers out.
 
 If there's a red cross, click on it, then click on `build` under `nodejs.yml`
 to see a list of warnings/errors and where they occur.
