@@ -32,3 +32,4 @@
 0.32: Fix settings - permit CoreT as an option for the rows.
 0.33: Stop deleting the timer alarm when switching away from clock (bug introduced in v0.29).
 0.34: Fix lint warnings. Harmonise file names with rest of repository.
+0.35: Fix wrong wind speed when the locale does not use kph (fix #3988).
