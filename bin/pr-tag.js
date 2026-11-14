@@ -173,6 +173,8 @@ async function previousTags() {
 
   const tags = {};
 
+  debug(`comments: ${JSON.stringify(comments)}`);
+
   comments
     .filter(({ user: { login, type } }) => type === "Bot" && login === "github-actions[bot]")
     .map(({ body }) => body)
