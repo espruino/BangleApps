@@ -1,0 +1,383 @@
+// FliesClockNegative: FliesClock mit schwarzen Fliegen auf weißem Grund.
+// Erzeugt von bangle/tools/flysprites.py aus FliesClock.js, nicht von Hand bearbeiten.
+// FliesClock: 3×5-Ziffern mit ausgedünnten Zellen, eine Fliege pro Zelle. Stunden oben, Minuten unten.
+// Die Fliegen landen neben ihrer Zelle und laufen das letzte Stück zu Fuß.
+// Sitzende Fliegen bewegen sich nicht. Ohne fliegende oder laufende Fliege läuft kein Intervall,
+// die Uhr schläft bis zum nächsten Minutenwechsel, einer Berührung oder heftigem Schütteln.
+{
+// <sprites> erzeugt von bangle/tools/flysprites.py aus shared/assets/fly/flyex.png
+const SPRITE_SIZE = 22;
+// [Pose][Richtung]: Pose 0 sitzt mit eingeklappten Flügeln, 1–3 Flügelschlag, 4–8 Laufen; Richtung 0 = Norden, im Uhrzeigersinn.
+const SPRITES = [
+  ["AAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAFQAAAAAHdAAAABRVRQAAABVVAAAAAGZAAAAAFmUAAAAFppQAAAUaaRQAAAGmkAAAAFppQAAABaaUAAABBVQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFAQAAAAARUAAAAVFdUAAAAWl0AAAAapVAAABappAAAFGpqVAAABpqQQAAAVqlAAAABakQAAAAFUEAAAAABAAAAAABAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAABAQBAAAAFBAQAAABVUQAAABqpVRAAAaqpdAAAFVVVQAABqql0AAAaqVUQAABVUQAAAAUEBAAAAQEAQAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAQAAAAAABAAAAAAVQQAAAAWpEAAAAVqlAAAAGmpBAABRqalQAABappAAAABqlUAAAAFpdAAAAVFdUAAAABFQAAAABQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQVUEAAABaaUAAAAWmlAAAABppAAAAUaaRQAAAWmlAAAABZlAAAAAGZAAAAAFVUAAAAUVUUAAAAHdAAAAAAVAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAEAAAAAAEAAAAABBVAAAAARqUAAAAFqlQAAAQamkAAAFampFAAAGmqUAAAFWqQAAAB1pQAAABXVFQAAABUQAAAAAQFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAQBAQAAAEBBQAAAARVUAAARVaqQAAB1qqkAAAVVVVAAAHWqqQAAEVWqkAAAARVUAAAAQEFAAAAEAQEAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAUAAAAAVEAAAABXVFQAAAHWlAAAABVqkAAAAGmqUAAAVqakUAAEGppAAAAFqlQAAABGpQAAAAQVQAAAAAEAAAAAAAQAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=="],
+  ["AAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAFQAAAAVHdFQAAWlVWlAAGqlaqQABqqaqkAAWqVqlAAAVVVUAAAUVVRQAAAFVUAAAAFVVQAAABFVEAAABAVAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAVAAAAAAakAAAAAapAAAAABqQQAAAAapUAAAAVqdUAAAAWl0AAAAFVVAAABVValQAFFVWqpAABVVaqQAAVVVqkAABVQVkAAAFUEEAAAABAAAAAABAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAVQAAAABGlAAABAWqQAAAFBqkAAAAVakAAAAVWpRAAAVVZdAAAFVVVQAABVVl0AAAFVqUQAAAVakAAAAUGqQAAAQFqkAAAABGlAAAAABVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAQAAAAAABAAAAAAVQQQAAAVUFZAAAVVVqkAAFVVqpABRVVqqQABVValQAAAVVUAAAAFpdAAAAVqdUAAABqlQAAAAakEAAAAapAAAAABqQAAAAAFQAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQFQEAAABFVEAAAAVVVAAAABVVAAAAUVVRQAABVVVQAAFqlapQABqqaqkAAaqVqpAAFpVVpQAAVHdFQAAAAVAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAEAAAAAAEAAAABBBVAAABlQVUAABqlVVQAAaqVVUAAGqpVVFAAVqVVUAAAFVVAAAAB1pQAAABXalQAAABWqQAAAAQakAAAAAGqQAAAABqQAAAAAFQAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFUAAAAAFpEAAAABqlAQAAAapBQAAABqVQAAARalVAAAB1lVUAAAVVVVAAAHWVVQAAEWpVQAAABqVQAAABqkFAAAAapQEAAAFpEAAAAAVQAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAVAAAAAAakAAAAAGqQAAABBqQAAAAVqkAAABXalQAAAHWlAAAABVVQAAAVqVVUAAaqlVUUAGqlVVAABqlVVQAAGVBVQAAAQQVQAAAAAEAAAAAAAQAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=="],
+  ["AAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAFQAAABVHdFUABalVWpQAaqlaqkAGqqaqpABaqVqpQAFVVVVQAAUVVRQAAAFVUAAAAFVVQAAABFVEAAABAVAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAABQAAAAABpAAAAABqkAAAAAaqQQAAAGqlUAAAAWqdUAAAAal0AAAAFVVAAABVVaUAAFFVWqQAABVVapAAAVVWqkAABVQapAAAFUGpAAAABAVAAAABAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAABVAAAAABaUAAAABapAAABAWqQAAAFBqkAAAAVakAAAAVWpRAAAVVZdAAAFVVVQAABVVl0AAAFVqUQAAAVakAAAAUGqQAAAQFqkAAAABapAAAAAFpQAAAAAVQAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAQAAAAAABAVAAAAVQakAAAVUGqQAAVVWqkAAFVWqkABRVVqkAABVVaUAAAAVVUAAAAFpdAAAAWqdUAAAaqVQAAAGqkEAAABqkAAAAAGkAAAAAAUAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQFQEAAABFVEAAAAVVVAAAABVVAAAAUVVRQAAVVVVVAAWqlaqUAGqqaqpABqqVqqQAWpVVqUABVHdFUAAAAVAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAEAAAAFQEAAAAGpBVAAAGqQVUAABqpVVQAAGqVVUAAAapVVFAABaVVUAAAFVVAAAAB1qQAAABXapQAAABVqpAAAAQaqQAAAABqkAAAAAGkAAAAAAUAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAVQAAAAAWlAAAAAGqUAAAABqlAQAAAapBQAAABqVQAAARalVAAAB1lVUAAAVVVVAAAHWVVQAAEWpVQAAABqVQAAABqkFAAAAapQEAAAGqUAAAABaUAAAAAFUAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAABQAAAAABpAAAAABqkAAABBqpAAAAVaqQAABXapQAAAHWlAAAABVVQAAABaVVUAABqlVUUABqpVVAABqpVVQAAapBVQAABqQVQAAAFQEAAAAAAAQAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=="],
+  ["AAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAFQAAAAAHdAAAAFVVVUAAFqlapQABqqaqkAAaqVqpAAFpVVpQAAVVVVQAAAFVUAAAAFVVQAAABFVEAAABAVAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAQAAAAAAZQAAAAAapAQAAAGqlUAAABqqdUAAAFal0AAAAFVVAAABVVaQAAFFVWpAAABVVqkAAAVVWpAAABVRqkAAAFUakAAAABBUAAAABAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAABVAAAAABaUAAABAapAAAAFGqQAAAAVakAAAAVWpRAAAVVZdAAAFVVVQAABVVl0AAAFVqUQAAAVakAAAAUapAAAAQGqQAAAABaUAAAAAFUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAQAAAAAABBUAAAAVRqQAAAVUapAAAVVWpAAAFVWqQABRVVqQAABVVaQAAAAVVUAAABWpdAAABqqdUAAAaqVQAAAGqQEAAAAZQAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQFQEAAABFVEAAAAVVVAAAABVVAAAAVVVVQAAWlVWlAAGqlaqQABqqaqkAAWqVqlAABVVVVAAAAHdAAAAAAVAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAEAAAABUEAAAABqRVAAABqkVUAAAGpVVQAABqlVUAAAGpVVFAAAaVVUAAAFVVAAAAB1qVAAABXaqkAAABVqpAAAAQGqQAAAAAWQAAAAAAQAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABVAAAAABaUAAAAAapAQAAAGqRQAAABqVQAAARalVAAAB1lVUAAAVVVVAAAHWVVQAAEWpVQAAABqVQAAAAapFAAAAGqQEAAABaUAAAAAFUAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAWQAAABAapAAAAVaqQAABXaqkAAAHWpUAAABVVQAAAAaVVUAAAalVUUAAapVVAAAGpVVQAAGqRVQAAAakVQAAABUEAAAAAAAQAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=="],
+  ["AAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAFQAAAAAHdAAAABRVRQAAABVVAAAAAGZAAAAAFmUAAAAFppQAAAUaaRQAAAGmkAAAAFppQAAABaaUAAABBVQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFAQAAAAARUAAAAVFdUAAAAWl0AAAAapVAAABappAAAFGpqVAAABpqQQAAAVqlAAAABakQAAAAFUEAAAAABAAAAAABAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAABAQBAAAAFBAQAAABVUQAAABqpVRAAAaqpdAAAFVVVQAABqql0AAAaqVUQAABVUQAAAAUEBAAAAQEAQAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAQAAAAAABAAAAAAVQQAAAAWpEAAAAVqlAAAAGmpBAABRqalQAABappAAAABqlUAAAAFpdAAAAVFdUAAAABFQAAAABQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQVUEAAABaaUAAAAWmlAAAABppAAAAUaaRQAAAWmlAAAABZlAAAAAGZAAAAAFVUAAAAUVUUAAAAHdAAAAAAVAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAEAAAAAAEAAAAABBVAAAAARqUAAAAFqlQAAAQamkAAAFampFAAAGmqUAAAFWqQAAAB1pQAAABXVFQAAABUQAAAAAQFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAQBAQAAAEBBQAAAARVUAAARVaqQAAB1qqkAAAVVVVAAAHWqqQAAEVWqkAAAARVUAAAAQEFAAAAEAQEAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAUAAAAAVEAAAABXVFQAAAHWlAAAABVqkAAAAGmqUAAAVqakUAAEGppAAAAFqlQAAABGpQAAAAQVQAAAAAEAAAAAAAQAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=="],
+  ["AAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAFQAAAAAHdBAAAABVRAAAAVVVAAAAAGZAAAAFFmUAAAAFppQAAAAaaRQAAAGmkAAAABppQAAABaaUAAAARVQQAAAEAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAQAAAARRUAAAAEFdUAAABWl0AAAAapVAAABappAAABGpqVQAFBpqQAAAAVqkAAAABalQAAAAFUEAAAAABAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQABEAAABUBBAAAABVUQAAABqpVRAAAaqpdAAAFVVVQAABqql0AAAaqVUQAABVUQAAAAUEBAAAAQEAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAQAAAAAAEAAAAAAAQAAAAAABAAAAAAVQAAAAAWpVAAAAVqkAAAAGmpFAAARqalAAABappAAAABqlUAAAAVpdAAAAUFdUAAAABFQAAAAAQEAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAABAAAAQVUQAAABaaUAAAAWmkAAAABppAAAAUaaQAAAAWmlAAAABZlFAAAAGZAAAAAFVVQAAAEVUAAAAEHdAAAAAAVAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAEAAAAABBVAAAAAVqUAAAABqlQAAAAamkFAAVampEAAAGmqUAAAFWqQAAAB1pUAAABXVBAAAABUUQAAAAQBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAABABAQAAAEBBQAAAARVUAAARVaqQAAB1qqkAAAVVVVAAAHWqqQAAEVWqkAAAARVUAAAAEEBUAAABEAAQAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAABAQAAAAAVEAAAABXVBQAAAHWlQAAABVqkAAAAGmqUAAAFqakQAAFGppAAAABqlQAAAFWpQAAAAAVQAAAAAEAAAAAAAQAAAAAABAAAAAAAQAAAAAAAAAAAAAAAAAA=="],
+  ["AAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAFQAAAAAHdAAAAABVRQAAABVVAAAAFGZAAAAAFmUAAABVppQAAAAaaRAAAAGmkEAAAFppAAAAEaaUAAAABVRAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAFRUAAAAUFdUAAABWl0AAAAapVAAABappAAAAGpqVAAABpqQQAAAVqkAAAABalAAAAAFUQAAAAABEAAAAABAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAQEQAAAABBEAAAABVUQAAABqpVRAAAaqpdAAAFVVVQAABqql0AAAaqVUQAABVUQAAABQEBAAABAEAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAVQQAAAAWpUAAAAVqkQAAAGmpEAABRqalAAABappAAAABqlUAAAFVpdAAAAAFdUAAAABFQAAAABQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAEVUAAAABaaRAAAAGmlAAABBppAAAAEaaQAAAAWmlUAAABZlAAAAAGZFAAAAFVUAAAAUVUAAAAAHdAAAAAAVAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAEAAAAABEAAAAAARVAAAAAFqUAAAABqlQAAAQamkAAAFampAAAAGmqUAAAFWqQAAAB1pUAAABXVBQAAABUVAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAQBAEAAAEBAUAAAARVUAAARVaqQAAB1qqkAAAVVVVAAAHWqqQAAEVWqkAAAARVUAAAABEEAAAAARAQAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAUAAAAAVEAAAABXVAAAAAHWlVAAABVqkAAAAGmqUAAAFqakUAABGppAAAARqlQAAABWpQAAAAQVQAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="],
+  ["AAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAFQAAAAEHdAAAAARVQAAAABVVUAAAAGZAAAAAFmUUAAAFppQAAAUaaQAAAAGmkAAAAFppAAAABaaUAAABBVRAAAAAAAQAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAABAQAAAAARUAAAAAFdUAAAVWl0AAAAapVAAABappAAABGpqUAAABpqRAAAAVqkQAAABalQAAAAFUEAAAAABAAAAAABAAAAAABAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAABAQAQAAAFBAQAAABVUQAAABqpVRAAAaqpdAAAFVVVQAABqql0AAAaqVUQAABVUQAAAFQEEAAAEAARAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAABEAAAAAVRAAAAAWpQAAAAVqkAAAUGmpAAAARqalUAABappAAAABqlUAAAAVpdAAAAUFdUAAAAVFQAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAQAAAAAAEVUEAAABaaUAAAAGmlAAAABppAAAAAaaRQAAAWmlAAABRZlAAAAAGZAAAABVVUAAAAAVUQAAAAHdBAAAAAVAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAEAAAAAAEAAAAAAEAAAAABBVAAAAAVqUAAAARqlQAAAEamkAAABampEAAAGmqUAAAFWqQAAAB1pVQAABXVAAAAABUQAAAAAQEAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAEQABAAABBAVAAAARVUAAARVaqQAAB1qqkAAAVVVVAAAHWqqQAAEVWqkAAAARVUAAAAQEFAAAAQAQEAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAVFQAAABXVBQAAAHWlQAAABVqkAAAAGmqUAABVqakQAAAGppBQAABqlQAAAAWpQAAAAEVQAAAABEAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="],
+  ["AAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAFQAAAAAHdAAAABRVQAAAABVVAAAAAGZFAAAAFmUAAAAFppVAAAEaaQAAAEGmkAAAABppQAAABaaRAAAARVQAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFAQAAAAARUAAAAAFdUAABVWl0AAAAapVAAABappAAAFGpqUAAABpqRAAAAVqkQAAABalAAAAAFUQAAAAABEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAEAQBAAAAUBAQAAABVUQAAABqpVRAAAaqpdAAAFVVVQAABqql0AAAaqVUQAABVUQAAAAEEQAAAAEBEAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAQQAAAAABEAAAAAVRAAAAAWpQAAAAVqkAAAAGmpBAAABqalQAABappAAAABqlUAAAFVpdAAAAAFdUAAAAVFQAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAVUQAAAEaaUAAAAWmkAAAABppBAAAAaaRAAAFWmlAAAABZlAAAAFGZAAAAAFVUAAAAAVUUAAAAHdAAAAAAVAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEAAAAAARVAAAAAFqUAAAARqlQAAAEamkAAABampFAAAGmqUAAAFWqQAAAB1pVUAABXVAAAAABUQAAAAAQFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAABEBAAAAARBAAAAARVUAAARVaqQAAB1qqkAAAVVVVAAAHWqqQAAEVWqkAAAARVUAAAAQEBQAAAEAQBAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAVFQAAABXVAAAAAHWlVAAABVqkAAAAGmqUAAAVqakAAAEGppAAAABqlQAAAAWpQAAAAEVQAAAABEAAAAAAQQAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=="]
+];
+// </sprites>
+
+const W = g.getWidth();
+const H = g.getHeight();
+const PITCH = Math.floor(Math.min(W / 7.5, H / 10.6));
+const ROW_GAP = Math.round(PITCH / 2);
+const HALF = SPRITE_SIZE >> 1;
+const HOP = PITCH * 1.6;
+const SPEED = PITCH * 0.3;
+const WALK_SPEED = 1.2;
+// Abstand des Landepunkts von der Zelle, in Vielfachen von PITCH.
+const LAND_MIN = 0.6;
+const LAND_MAX = 1.8;
+const SCARE = PITCH * 2.5;
+// Schütteln: SHAKE_HITS Sprünge über SHAKE_G (in g) innerhalb von SHAKE_WINDOW_MS, danach SHAKE_PAUSE_MS Ruhe.
+const SHAKE_G = 0.8;
+const SHAKE_HITS = 3;
+const SHAKE_WINDOW_MS = 1000;
+const SHAKE_PAUSE_MS = 3000;
+const FRAME_MS = 50;
+// Aus: Bei gesperrter Uhr springen die Fliegen ohne Flug auf ihre Plätze.
+const FLY_WHEN_LOCKED = true;
+
+// 3×5-Raster, auf möglichst wenige Zellen ausgedünnt.
+const FONT = [
+  ["010", "101", "101", "101", "010"],
+  ["010", "110", "010", "010", "010"],
+  ["110", "001", "010", "100", "111"],
+  ["110", "001", "010", "001", "110"],
+  ["100", "101", "111", "001", "001"],
+  ["111", "100", "110", "001", "110"],
+  ["011", "100", "110", "101", "010"],
+  ["111", "001", "010", "010", "010"],
+  ["010", "101", "010", "101", "010"],
+  ["010", "101", "011", "001", "110"]
+];
+// Flügelschlag: Die Flugbilder 1–3 unterscheiden sich nur um wenige Pixel und wirken auf dem trägen Display starr,
+// darum wechseln gespreizte (2, 3) und eingeklappte Flügel (0) mit jedem Bild.
+const FLAP = [2, 0, 3, 0];
+// Laufschritte wie im Simulator (Frames 5, 6, 7, 5, 8, 9): Posen 4–8.
+const WALK = [4, 5, 6, 4, 7, 8];
+
+// <colors> Negativ: weißer Grund, ohne Rand.
+// Hintergrund; Palette der Sprites: transparent, Körper schwarz, Flügel weiß, Augen rot.
+const BG = [1, 1, 1];
+const PALETTE = new Uint16Array([0, g.toColor(0, 0, 0), g.toColor(1, 1, 1), g.toColor(1, 0, 0)]);
+// </colors>
+const IMAGES = SPRITES.map((row) => row.map((data) => ({
+  width: SPRITE_SIZE, height: SPRITE_SIZE, bpp: 2, transparent: 0, palette: PALETTE, buffer: E.toArrayBuffer(atob(data))
+})));
+
+let flies = [];
+let slots = {};
+let frameTimer;
+let minuteTimer;
+
+function wrap(angle) {
+  while (angle > Math.PI) angle -= 2 * Math.PI;
+  while (angle < -Math.PI) angle += 2 * Math.PI;
+  return angle;
+}
+
+// 0 = Norden, im Uhrzeigersinn.
+function directionOf(vx, vy, previous) {
+  const ax = Math.abs(vx);
+  const ay = Math.abs(vy);
+  if (ax < 0.05 && ay < 0.05) return previous;
+  if (ay > ax * 2) return vy < 0 ? 0 : 4;
+  if (ax > ay * 2) return vx < 0 ? 6 : 2;
+  if (vy < 0) return vx < 0 ? 7 : 1;
+  return vx < 0 ? 5 : 3;
+}
+
+// Slot-Ids hängen an Stelle und Zelle, damit bleibende Zellen ihre Fliege behalten.
+function slotsFor(date) {
+  const h = date.getHours();
+  const m = date.getMinutes();
+  const digits = [h >= 10 ? Math.floor(h / 10) : -1, h % 10, Math.floor(m / 10), m % 10];
+  const x0 = (W - 7 * PITCH) / 2 + PITCH / 2;
+  const y0 = (H - 10 * PITCH - ROW_GAP) / 2 + PITCH / 2;
+  const result = {};
+  digits.forEach((digit, i) => {
+    if (digit < 0) return;
+    const bx = x0 + (i % 2) * 4 * PITCH;
+    const by = y0 + (i >> 1) * (5 * PITCH + ROW_GAP);
+    FONT[digit].forEach((row, r) => {
+      for (let c = 0; c < 3; c++) {
+        if (row[c] === "1") result[i + ":" + r + ":" + c] = { x: bx + c * PITCH, y: by + r * PITCH };
+      }
+    });
+  });
+  return result;
+}
+
+function outside() {
+  const t = Math.random();
+  const m = SPRITE_SIZE;
+  switch (Math.floor(Math.random() * 4)) {
+    case 0: return { x: t * W, y: -m };
+    case 1: return { x: W + m, y: t * H };
+    case 2: return { x: t * W, y: H + m };
+    default: return { x: -m, y: t * H };
+  }
+}
+
+// Kurze Sprünge mit Richtungsrauschen; der letzte Punkt liegt genau auf dem Ziel.
+function route(from, to) {
+  const points = [];
+  let x = from.x;
+  let y = from.y;
+  let heading = Math.atan2(to.y - y, to.x - x);
+  for (let i = 0; i < 8; i++) {
+    const dx = to.x - x;
+    const dy = to.y - y;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    if (len < HOP * 1.5) break;
+    heading += wrap(Math.atan2(dy, dx) - heading) * 0.6 + (Math.random() - 0.5) * 1.2;
+    const step = Math.min(len, HOP * (1 + Math.random()));
+    x += Math.cos(heading) * step;
+    y += Math.sin(heading) * step;
+    points.push({ x: x, y: y });
+  }
+  points.push({ x: to.x, y: to.y });
+  return points;
+}
+
+function clamp(value, max) {
+  return Math.max(HALF, Math.min(max - HALF, value));
+}
+
+// Fliegt zu einem Punkt neben der Zelle und läuft danach zu Fuß weiter.
+function flyTo(fly, from, target) {
+  const angle = Math.random() * 2 * Math.PI;
+  const reach = PITCH * (LAND_MIN + Math.random() * (LAND_MAX - LAND_MIN));
+  const spot = { x: clamp(target.x + Math.cos(angle) * reach, W), y: clamp(target.y + Math.sin(angle) * reach, H) };
+  fly.walking = false;
+  return route(from, spot);
+}
+
+function takeNearest(list, target) {
+  let best = -1;
+  let bestDist = Infinity;
+  list.forEach((fly, i) => {
+    const d = (fly.x - target.x) * (fly.x - target.x) + (fly.y - target.y) * (fly.y - target.y);
+    if (d < bestDist) { bestDist = d; best = i; }
+  });
+  return best < 0 ? undefined : list.splice(best, 1)[0];
+}
+
+// Fliegen auf wegfallenden Zellen fliegen zu neuen Zellen, der Rest verlässt die Uhr.
+function sync() {
+  hideWidgets();
+  const next = slotsFor(new Date());
+  const free = [];
+  const taken = {};
+  flies.forEach((fly) => {
+    if (fly.slot && !next[fly.slot]) { fly.slot = undefined; free.push(fly); }
+    else if (fly.slot) taken[fly.slot] = true;
+  });
+  for (const id in next) {
+    if (taken[id]) continue;
+    let fly = takeNearest(free, next[id]);
+    if (!fly) {
+      const start = outside();
+      fly = { x: start.x, y: start.y, dir: directionOf(next[id].x - start.x, next[id].y - start.y, 0), anim: Math.floor(Math.random() * FLAP.length) };
+      flies.push(fly);
+    }
+    fly.slot = id;
+    fly.exit = false;
+    fly.route = flyTo(fly, fly, next[id]);
+  }
+  free.forEach((fly) => {
+    fly.exit = true;
+    fly.walking = false;
+    fly.route = route(fly, outside());
+  });
+  slots = next;
+  animate();
+}
+
+function moving(fly) {
+  return fly.route || fly.walking;
+}
+
+// Setzt die Fliege sofort auf ihre Zelle bzw. lässt sie verschwinden.
+function settle(fly) {
+  fly.route = undefined;
+  fly.walking = false;
+  if (fly.exit) {
+    fly.gone = true;
+    return;
+  }
+  fly.x = slots[fly.slot].x;
+  fly.y = slots[fly.slot].y;
+}
+
+// Bewegt die Fliege um höchstens `speed` auf `point` zu; true, wenn sie ihn erreicht hat.
+function advance(fly, point, speed) {
+  const dx = point.x - fly.x;
+  const dy = point.y - fly.y;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  fly.anim++;
+  if (dist <= speed) {
+    fly.x = point.x;
+    fly.y = point.y;
+    return true;
+  }
+  fly.x += dx / dist * speed;
+  fly.y += dy / dist * speed;
+  fly.dir = directionOf(dx, dy, fly.dir);
+  return false;
+}
+
+function step(fly) {
+  if (fly.walking) {
+    if (advance(fly, slots[fly.slot], WALK_SPEED)) settle(fly);
+    return;
+  }
+  if (!advance(fly, fly.route[0], SPEED)) return;
+  fly.route.shift();
+  if (fly.route.length) return;
+  if (fly.exit) {
+    settle(fly);
+    return;
+  }
+  fly.route = undefined;
+  fly.walking = true;
+  fly.anim = 0;
+}
+
+function draw() {
+  g.reset();
+  g.setBgColor(BG[0], BG[1], BG[2]);
+  g.clearRect(0, 0, W - 1, H - 1);
+  flies.forEach((fly) => {
+    const pose = fly.route ? FLAP[fly.anim % FLAP.length] : fly.walking ? WALK[(fly.anim >> 1) % WALK.length] : 0;
+    g.drawImage(IMAGES[pose][fly.dir], Math.round(fly.x) - HALF, Math.round(fly.y) - HALF);
+  });
+}
+
+function tick() {
+  let busy = 0;
+  flies.forEach((fly) => {
+    if (!moving(fly)) return;
+    step(fly);
+    if (moving(fly)) busy++;
+  });
+  flies = flies.filter((fly) => !fly.gone);
+  draw();
+  if (!busy && frameTimer) {
+    clearInterval(frameTimer);
+    frameTimer = undefined;
+  }
+}
+
+function animate() {
+  if (!FLY_WHEN_LOCKED && Bangle.isLocked()) {
+    flies.forEach((fly) => { if (moving(fly)) settle(fly); });
+    flies = flies.filter((fly) => !fly.gone);
+    draw();
+    return;
+  }
+  if (!frameTimer) frameTimer = setInterval(tick, FRAME_MS);
+}
+
+function scheduleMinute() {
+  minuteTimer = setTimeout(() => {
+    minuteTimer = undefined;
+    sync();
+    scheduleMinute();
+  }, 60000 - (Date.now() % 60000) + 20);
+}
+
+// Statusleiste ohne widget_utils ausblenden (das Modul fehlt bei Einzeldatei-Übertragung):
+// Ohne draw und area zeichnet Bangle.drawWidgets() beim Entsperren weder Widgets noch Leistenhintergrund.
+function hideWidgets() {
+  if (!global.WIDGETS) return;
+  for (const id in WIDGETS) {
+    const w = WIDGETS[id];
+    if (w.hiddenDraw) continue;
+    w.hiddenDraw = w.draw;
+    w.hiddenArea = w.area;
+    w.draw = () => { };
+    w.area = "";
+  }
+}
+
+function showWidgets() {
+  if (!global.WIDGETS) return;
+  for (const id in WIDGETS) {
+    const w = WIDGETS[id];
+    if (!w.hiddenDraw) continue;
+    w.draw = w.hiddenDraw;
+    w.area = w.hiddenArea;
+    delete w.hiddenDraw;
+    delete w.hiddenArea;
+  }
+}
+
+// Aufgeschreckte Fliegen springen weg, landen wieder in der Nähe ihrer Zelle und laufen zurück.
+function scare(fly, away, reach) {
+  const flee = { x: fly.x + Math.cos(away) * reach, y: fly.y + Math.sin(away) * reach };
+  fly.route = [flee].concat(flyTo(fly, flee, slots[fly.slot]));
+}
+
+function onTouch(button, xy) {
+  if (!xy) return;
+  let scared = false;
+  flies.forEach((fly) => {
+    if (fly.exit || !fly.slot) return;
+    const dx = fly.x - xy.x;
+    const dy = fly.y - xy.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist > SCARE) return;
+    scare(fly, (dist < 1 ? Math.random() * 2 * Math.PI : Math.atan2(dy, dx)) + (Math.random() - 0.5), PITCH * (2 + Math.random() * 2));
+    scared = true;
+  });
+  if (scared) animate();
+}
+
+// Heftiges Schütteln: mehrere starke Beschleunigungssprünge kurz hintereinander schrecken alle Fliegen auf.
+let shakeHits = 0;
+let shakeSince = 0;
+let shakeQuietUntil = 0;
+function onAccel(a) {
+  if (a.diff < SHAKE_G) return;
+  const now = Date.now();
+  if (now < shakeQuietUntil) return;
+  if (now - shakeSince > SHAKE_WINDOW_MS) {
+    shakeSince = now;
+    shakeHits = 0;
+  }
+  if (++shakeHits < SHAKE_HITS) return;
+  shakeHits = 0;
+  shakeQuietUntil = now + SHAKE_PAUSE_MS;
+  flies.forEach((fly) => {
+    if (!fly.exit && fly.slot) scare(fly, Math.random() * 2 * Math.PI, PITCH * (3 + Math.random() * 4));
+  });
+  animate();
+}
+
+Bangle.setUI({
+  mode: "clock",
+  remove: () => {
+    if (frameTimer) clearInterval(frameTimer);
+    if (minuteTimer) clearTimeout(minuteTimer);
+    frameTimer = undefined;
+    minuteTimer = undefined;
+    Bangle.removeListener("touch", onTouch);
+    Bangle.removeListener("accel", onAccel);
+    showWidgets();
+  }
+});
+Bangle.on("touch", onTouch);
+Bangle.on("accel", onAccel);
+Bangle.loadWidgets();
+hideWidgets();
+g.setBgColor(BG[0], BG[1], BG[2]);
+g.clear();
+sync();
+scheduleMinute();
+}

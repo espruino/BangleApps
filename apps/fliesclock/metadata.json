@@ -1,0 +1,19 @@
+{
+  "id": "fliesclock",
+  "name": "FliesClock (White on Black)",
+  "shortName": "FliesClock",
+  "version": "0.01",
+  "author": "mamekudz",
+  "description": "Flies form the digits of the time. Every minute they fly to their new places, land nearby and walk the last bit. Touch the screen or shake the watch to startle them.",
+  "icon": "app.png",
+  "screenshots": [{"url": "screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name": "fliesclock.app.js", "url": "app.js"},
+    {"name": "fliesclock.img", "url": "app-icon.js", "evaluate": true}
+  ]
+}
