@@ -53,7 +53,7 @@ async function main() {
 
     const authors = (Array.isArray(authorField) ? authorField : [authorField])
       .flatMap(a => String(a).split(","))
-      .map(a => a.trim().replace(/^@/, ""))
+      .map(parseAuthor)
       .filter(a => {
         if(isGitHubHandle(a)) return true;
         if(a) debug(`Ignoring author "${a}" - not a GitHub username`);
@@ -146,7 +146,14 @@ function parseLine(line) {
   const parts = line.split(" ");
 
   if(parts.length >= 4 && parts[0] === "tagging" && parts[2] === "for")
-    return { author: parts[1], apps: parts.slice(3).map(app => app.replace(/[,`]/g, "")) };
+    return {
+      author: parseAuthor(parts[1]),
+      apps: parts.slice(3).map(app => app.replace(/[,`]/g, "")),
+    };
+}
+
+function parseAuthor(author) {
+  return author.trim().replace(/^@/, "");
 }
 
 // allow skipping of tagging if the PR description contains a specific message
@@ -172,8 +179,6 @@ async function previousTags() {
   });
 
   const tags = {};
-
-  debug(`comments: ${JSON.stringify(comments)}`);
 
   comments
     .filter(({ user: { login, type } }) => type === "Bot" && login === "github-actions[bot]")
