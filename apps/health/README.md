@@ -8,6 +8,11 @@ Once installed, health data is logged automatically. Entries are stored with a 1
 
 To view data, run the `Health` app from your watch.
 
+You can also view your data from the App Loader: connect to your Bangle, go to `My Apps`,
+and click the download icon next to `Health Tracking`. Each month of data can be downloaded
+as a CSV file, or shown as a table or graph of daily totals. Click on a day in the table or
+graph to see that day's data hour by hour, and use `Previous day`/`Next day` to move between days.
+
 ## Features
 
 Stores:
