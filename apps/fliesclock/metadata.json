@@ -1,7 +1,7 @@
 {
   "id": "fliesclock",
   "name": "FliesClock (White on Black)",
-  "shortName": "FliesClock",
+  "shortName": "FliesClock (White on Black)",
   "version": "0.01",
   "author": "mamekudz",
   "description": "Flies form the digits of the time. Every minute they fly to their new places, land nearby and walk the last bit. Touch the screen or shake the watch to startle them.",
