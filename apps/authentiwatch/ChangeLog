@@ -5,3 +5,4 @@
 0.05: Add support for bulk importing and exporting tokens
 0.06: Add spaces to codes for improved readability (thanks @BartS23)
 0.07: Bangle 2: Improve drag responsiveness and exit on button press
+0.08: Encrypt token store (SHA-256 keystream cipher with HMAC-SHA256 encrypt-then-MAC tag, keys from PIN via a 400-round key-stretching chain). PIN keypad gate on launch; configurable trusted session minutes; import/merge from plaintext, wipe, PIN change via held button. Store file moves from authentiwatch.json to authentiwatch.lock.

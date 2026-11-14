@@ -38,3 +38,26 @@ Keep those copies safe and secure.
 ## Creator
 
 Andrew Gregory (andrew.gregory at gmail)
+
+## Encryption (v0.08)
+
+Tokens are stored in `authentiwatch.lock` as an authenticated ciphertext blob:
+
+- **Cipher:** a SHA-256 keystream built from the firmware's crypto module (`ct = pt XOR SHA256(encKey || iv || be32(i))`, 32-byte blocks). The nRF firmware only exposes hashes to JS, so the cipher is hash-based rather than a hand-rolled AES.
+- **Integrity:** encrypt-then-MAC; HMAC-SHA256 over `iv||ct` with a key derived separately from the encryption key, so a wrong PIN or a tampered file yields no data.
+- **PIN:** a numeric PIN of 4-8 digits is entered on the watch keypad at every launch. The PIN never leaves the watch and is not stored anywhere; the store key comes from a 400-round SHA256 chain over `salt||PIN` (~2-4 s per unlock on a Bangle.js 2), split into an encryption key and a MAC key via domain separation ("enc"/"mac" labels).
+- **Trusted session:** while the app stays open it remains decrypted for a configurable number of minutes (BTN1 held -> 2/5/15 min, default 5). Any reload, app switch or reboot asks for the PIN again.
+- **Interoperability:** the store format is verified byte-for-byte against a Python reference implementation (hashlib-only), which can seal, rotate or audit the blob off-watch.
+- **IV/salt quality:** the nRF52840 hardware RNG is not exposed to JS on 2v29, so IVs/salt mix an erase-free boot counter (which makes IV reuse impossible across reboots), wall-clock time, the temperature sensor and `Math.random`, hashed through SHA256. A fresh salt is chosen at every (re)set.
+- **What this protects:** a flash dump, a Storage-level file pull (app-loader backups, the Gadgetbridge storage browser) yields nothing without the PIN. What it cannot protect: the paired phone (with BLE console access) and an unlocked session, plus offline guessing of short PINs (the PIN's own entropy is the ceiling). A 6-digit PIN stretched 400x costs minutes of single-core commodity CPU per full sweep; longer PINs scale that cost directly.
+
+## Buttons
+
+- Launch → PIN keypad. Entering shows dots; OK applies (4–8 digits).
+- BTN1 tap (short) → leave to launcher (session wiped from RAM).
+- BTN1 held ~2.5 s at the PIN gate → *Import* plaintext `authentiwatch.json` into the encrypted store, or *Wipe* the store entirely (destructive: secrets must be re-provisioned afterwards).
+- BTN1 held ~2.5 s inside the app → change PIN or set the trusted-session length.
+
+### Migration
+
+After installing 0.08 with a plaintext `authentiwatch.json` present, the first launch asks for a new PIN (twice), encrypts the existing tokens, erases the plaintext file, and continues.
