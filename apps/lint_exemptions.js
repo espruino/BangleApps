@@ -563,12 +563,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/regattatimer/app.js": {
-    "hash": "8d579cc62d82599f776e5e230651f03481f18c3934f35f4fedfb6382a46db861",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/rclock/rclock.app.js": {
     "hash": "8e698787730601a1bba71aff03204c2adfaf7eeb77b35dc706534755f63f613b",
     "rules": [
@@ -967,12 +961,6 @@ module.exports = {
   },
   "apps/bad/bad.app.js": {
     "hash": "d1354613102818190dd4e6e28fd715db7dc4d51b8e618cae61a3135529cc97eb",
-    "rules": [
-      "no-undef"
-    ]
-  },
-  "apps/authentiwatch/app.js": {
-    "hash": "02aafe5b6f3f3dce979d5b04f4660f90261e0c893cb39e9eeb2cf0bdb2c256b8",
     "rules": [
       "no-undef"
     ]
