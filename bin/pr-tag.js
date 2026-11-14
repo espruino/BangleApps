@@ -1,5 +1,4 @@
-const { execSync } = require("child_process");
-const { readFileSync } = require("fs");
+const { execFileSync } = require("child_process");
 const https = require("https");
 
 function usage(){
@@ -33,25 +32,33 @@ async function main() {
     process.exit(0);
   }
 
-  const apps = execSync(
-    `git diff --name-only ${rev} -- apps/ |
-      grep -o "apps/[^/]*" |
-      sort |
-      uniq`,
-    { encoding: "utf8" }
-  ).split("\n").filter(x => x);
+  const apps = changedApps(rev);
 
-  if(apps.length === 0) process.exit(1); // pipeline failed
+  if(apps.length === 0){
+    debug("No apps changed");
+    process.exit(0);
+  }
 
   const authorToApp = {};
 
   for(const app of apps){
-    const metadata = JSON.parse(readFileSync(`${app}/metadata.json`, "utf8"));
+    const metadata = readMetadata(app, rev);
+    if(!metadata){
+      debug(`Skipping ${app} - no metadata.json`);
+      continue;
+    }
     let authorField = metadata.author;
     debug(`Changed app: ${app}, author field: ${authorField}`);
     if(!authorField) continue;
 
-    const authors = Array.isArray(authorField) ? authorField : [authorField];
+    const authors = (Array.isArray(authorField) ? authorField : [authorField])
+      .flatMap(a => String(a).split(","))
+      .map(a => a.trim().replace(/^@/, ""))
+      .filter(a => {
+        if(isGitHubHandle(a)) return true;
+        if(a) debug(`Ignoring author "${a}" - not a GitHub username`);
+        return false;
+      });
 
     for(const author of authors){
       if(!authorToApp[author])
@@ -91,6 +98,44 @@ async function main() {
   }
 }
 
+function changedApps(rev) {
+  const files = execFileSync(
+    "git", ["diff", "--name-only", "-z", rev, "--", "apps/"],
+    { encoding: "utf8" }
+  ).split("\0").filter(x => x);
+
+  const apps = new Set();
+  for(const file of files){
+    const m = /^(apps\/[^/]+)\//.exec(file);
+    if(m) apps.add(m[1]);
+  }
+
+  return [...apps].sort();
+}
+
+function readMetadata(app, rev) {
+  const [base, head] = rev.split(/\.{2,3}/); // branch1..branch2
+  const refs = rev.includes("..")
+    ? [head || "HEAD", base || "HEAD"]
+    : ["HEAD", rev];
+
+  for(const ref of refs){
+    try {
+      const json = execFileSync(
+        "git", ["show", `${ref}:${app}/metadata.json`],
+        { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }
+      );
+      return JSON.parse(json);
+    }catch(e){
+      // not present at this ref
+    }
+  }
+}
+
+function isGitHubHandle(name) {
+  return /^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$/.test(name);
+}
+
 function makeLine({ author, apps }) {
   apps = [...apps].sort();
 
@@ -112,7 +157,7 @@ async function shouldSkip() {
     token: getenv("GITHUB_TOKEN"),
   });
 
-  return desc
+  return (desc || "")
     .split("\n")
     .filter(line => /^tag-bot: skip\s*$/.test(line))
     .length > 0;
@@ -150,14 +195,23 @@ function fetchPRDesc({ prNumber, repo, token }) {
   return fetchGH({
     path: `/repos/${repo}/pulls/${prNumber}`,
     token
-  }).then(data => JSON.parse(data).body);
+  }).then(({ data }) => JSON.parse(data).body);
 }
 
-function fetchPRComments({ prNumber, repo, token }) {
-  return fetchGH({
-    path: `/repos/${repo}/issues/${prNumber}/comments`,
-    token
-  }).then(data => JSON.parse(data));
+async function fetchPRComments({ prNumber, repo, token }) {
+  const perPage = 100;
+  const comments = [];
+
+  for(let page = 1; ; page++){
+    const { data } = await fetchGH({
+      path: `/repos/${repo}/issues/${prNumber}/comments?per_page=${perPage}&page=${page}`,
+      token
+    });
+    const batch = JSON.parse(data);
+    comments.push(...batch);
+    if(batch.length < perPage)
+      return comments;
+  }
 }
 
 function postComment({ prNumber, repo, token, comment }) {
@@ -165,40 +219,42 @@ function postComment({ prNumber, repo, token, comment }) {
     path: `/repos/${repo}/issues/${prNumber}/comments`,
     token,
     data: { body: comment },
-  }).then(data => JSON.parse(data));
+  }).then(({ data }) => JSON.parse(data));
 }
 
 function fetchGH({ path, token, data }) {
   return new Promise((resolve, reject) => {
-    const options = {
-      hostname: "api.github.com",
-      path,
-      method: data ? "POST" : "GET",
-      headers: {
-        "User-Agent": "node.js",
-        "Authorization": `Bearer ${token}`,
-        "Accept": "application/vnd.github+json"
-      },
+    const payload = data ? JSON.stringify(data) : undefined;
+    const headers = {
+      "User-Agent": "node.js",
+      "Authorization": `Bearer ${token}`,
+      "Accept": "application/vnd.github+json"
     };
 
-    if(data)
-      options.body = data;
+    if(payload){
+      headers["Content-Type"] = "application/json";
+      headers["Content-Length"] = Buffer.byteLength(payload);
+    }
 
-    https.get(options, res => {
+    const req = https.request({
+      hostname: "api.github.com",
+      path,
+      method: payload ? "POST" : "GET",
+      headers,
+    }, res => {
       let data = "";
       res.on("data", chunk => data += chunk);
       res.on("end", () => {
-        if (res.statusCode === 200) {
-          try {
-            resolve(data);
-          } catch (e) {
-            reject(e);
-          }
-        } else {
-          reject(new Error(`GitHub API error: ${res.statusCode}`));
-        }
+        if (res.statusCode >= 200 && res.statusCode < 300)
+          resolve({ data, headers: res.headers });
+        else
+          reject(new Error(`GitHub API error: ${res.statusCode}: ${data}`));
       });
-    }).on("error", reject);
+    });
+
+    req.on("error", reject);
+    if(payload) req.write(payload);
+    req.end();
   });
 }
 
