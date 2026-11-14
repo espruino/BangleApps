@@ -34,6 +34,13 @@
         updateSettings();
       }
     },
+    /*LANG*/"Cal. Reminders" : {
+      value : settings.calReminders!==false,
+      onchange: v => {
+        settings.calReminders = v;
+        updateSettings();
+      }
+    },
     /*LANG*/"Messages" : ()=>require("messages").openGUI(),
   };
   E.showMenu(mainmenu);
