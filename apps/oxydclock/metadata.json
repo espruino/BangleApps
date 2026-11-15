@@ -1,0 +1,18 @@
+{
+  "id": "oxydclock",
+  "name": "Oxyd",
+  "version": "0.01",
+  "author": "mamekudz",
+  "description": "Oxyd digits show the time, hours on top and minutes below, in white on black. The face is drawn again at the next minute.",
+  "icon": "app.png",
+  "screenshots": [{"url": "screenshot.png"}],
+  "type": "clock",
+  "tags": "clock",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "allow_emulator": true,
+  "storage": [
+    {"name": "oxydclock.app.js", "url": "app.js"},
+    {"name": "oxydclock.img", "url": "app-icon.js", "evaluate": true}
+  ]
+}
