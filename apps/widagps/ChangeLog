@@ -1,2 +1,3 @@
 0.01: first version
 0.02: Issue newline before GB commands (solves issue with console.log and ignored commands)
+0.03: Restore lastAGPS on boot, filter HTTP responses by request ID, chunk GPS UART writes asynchronously, and drop emulator testData from widget RAM

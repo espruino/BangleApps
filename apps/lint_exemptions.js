@@ -183,13 +183,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/widagps/widget.js": {
-    "hash": "a58cdc481962575ef0aa0bfaedcc1f9de3ce966218c5b16168d8ed8b4b9672b8",
-    "rules": [
-      "no-unused-vars",
-      "no-undef"
-    ]
-  },
   "apps/qmsched/app.js": {
     "hash": "4b7dbabed6c252021531d6b0449c16a3adc2e405f2ddda33ca0a65f5fa42c663",
     "rules": [
