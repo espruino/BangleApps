@@ -184,6 +184,9 @@ function environment(start,config={},data,extraModules){
     {get:(o,k)=>k in o?o[k]:k==="transformVertices"?undefined:(...args)=>{
       if(k==="setColor")color=args[0];log.push({op:k,args,color});return g;}});
   const b=new EventEmitter(),events=new EventEmitter(),locks=[],lights=[];
+  let charging=false,battery=0;
+  b.isCharging=()=>charging;
+  events.getBattery=()=>battery;
   for(const n of ["setGPSPower","loadWidgets","drawWidgets"])
     b[n]=()=>{};
   b.setUI=ui=>{b.ui=ui;};
@@ -218,6 +221,8 @@ function environment(start,config={},data,extraModules){
     now=t;
   }
   return {b,events,log,timers,cfg,store,storage,placeReads,
+    setCharging:(state,pct)=>{charging=!!state;battery=pct;b.emit("charging",charging);},
+    setBattery:pct=>{battery=pct;},
     placeIndexLoads:()=>placeIndexLoads,
     execute,power,locks,lights,advance,writes:()=>writes,setNow:t=>now=t,
     feed:(end,a=quiet)=>{for(let t=now;t<=end;t+=800){now=t;b.emit("accel",a);}now=end;}};
@@ -227,6 +232,31 @@ function environment(start,config={},data,extraModules){
 const app=environment(base);
 app.execute("boot.js");assert.strictEqual(app.b.listenerCount("accel"),1);
 app.execute("app.js");assert.strictEqual(app.b.listenerCount("accel"),1);
+// First display update precedes Earth-map caching and full globe rendering.
+assert(app.log.some(e=>e.op==="fillCircle"),
+  "Opening the clock should immediately paint the Sun");
+assert(!app.log.some(e=>e.op==="fillPoly"),
+  "Map and eclipse rendering should be deferred after first LCD flush");
+assert(app.log.some(e=>e.op==="flip"),
+  "First layer must be made visible before expensive rendering");
+app.advance(base); // Drain the three zero-delay stages.
+assert(app.log.some(e=>e.op==="fillPoly"),
+  "Earth and Moon must appear on subsequent frames");
+// Only the NIGHT polygon resolution changes. Leave the white coastline,
+// polar cap and final white limb rendering in their existing order.
+const nightMaskAt=app.log.findIndex(e=>e.op==="fillPoly"&&
+  e.color===0x0008&&Array.isArray(e.args[0]));
+assert(nightMaskAt>=0,"Earth night mask must be painted");
+const nightMask=app.log[nightMaskAt].args[0];
+assert.strictEqual(nightMask.length,100,
+  "24 mask subdivisions should yield 50 vertices / 100 XY coordinates");
+assert(nightMask.length/2<=64,"Espruino fillPoly is limited to 64 points");
+assert(app.log.slice(nightMaskAt+1).some(e=>e.op==="drawPoly"&&e.color===0xFFFF),
+  "Preserve white coastlines above the night mask");
+assert(app.log.slice(nightMaskAt+1).some(e=>e.op==="fillCircle"&&e.color===0xFFFF),
+  "Preserve the white polar cap above the night mask");
+const initialFlipCount=app.log.filter(e=>e.op==="flip").length;
+assert(initialFlipCount>=4,"Opening must visibly flush each incremental stage");
 assert([...app.timers.values()].some(x=>x.ms<=10000),
   "Backlight must have a finite default-off timer");
 app.advance(base+10000);
@@ -248,6 +278,7 @@ assert(graph>=0&&observer>graph);
 const layered=environment(base,{orbitHourEnabled:true,orbitHourStep:3,restWearEnabled:false},
   {"orbit.rest.json":{v:3,end:base/S-1,levels:"ff".repeat(287)+"64"}});
 layered.execute("boot.js");layered.execute("app.js");
+layered.advance(base); // Complete staged initial layers.
 const dialIndices=[];
 layered.log.forEach((e,i)=>{
   if(e.op==="drawString"&&/^(XII|I|II|III|IV|V|VI|VII|VIII|IX|X|XI)$/.test(e.args[0]))
@@ -279,7 +310,7 @@ assert.strictEqual(off.b.listenerCount("accel"),0);
 // Menus expose five-level height, seven 3-axis peak gates and four boundaries.
 const menus=[];app.events.showMenu=m=>menus.push(m);
 app.execute("settings.js")(()=>{});
-assert.strictEqual(menus.at(-1)[""].title,"tenkyu v0.080");
+assert.strictEqual(menus.at(-1)[""].title,"tenkyu v0.082");
 assert(!menus.at(-1)["Version"],"Version is a static title, not a button");
 menus.at(-1)["Rest graph"]();
 assert.strictEqual(menus.at(-1)["Max bar height"].max,14);
@@ -373,7 +404,7 @@ for(const [iso,c] of [["2026-10-19T18:00:00Z",0x07e0],["2026-10-19T06:00:00Z",0x
   const now=Date.parse(iso),end=Math.floor(now/S);
   const h=environment(now,{},{"orbit.rest.json":{v:2,end:end-1,
     levels:"64".repeat(288),active:{bucket:end,covered:0,peaks:0,quietPeaks:0}}});
-  h.execute("boot.js");h.execute("app.js");
+  h.execute("boot.js");h.execute("app.js");h.advance(now);
   const bars=h.log.filter(x=>x.op==="drawLine"&&(x.color===0x07e0||x.color===0xffe0));
   assert.strictEqual(bars.length,288);
   assert(bars.some(x=>x.color===0x07e0)&&bars.some(x=>x.color===0xffe0));
@@ -393,8 +424,8 @@ function runWear(pulse,zAt=()=>1,cfg={}){
 }
 const nw=runWear();assert.strictEqual(nw.b.orbitRest.getEngine().level(base/S),0);
 assert.strictEqual(nw.b.orbitRest.getDiagnostics().recent.at(-1).reason,"nonwear");
-// Non-wear (FE) is a red *one-pixel arc on the lunar orbit*, never a bar.
-// No-data (FF) must not be drawn red. The original five-stage bars remain.
+// Non-wear (FE) is a grey full stage-5-length bar; charging is red by battery %.
+// No-data (FF) must stay invisible, and the original five-stage bars remain.
 function restStrokes(engine,ms){
   const lines=[];let ink;
   const graphics={setColor:c=>{ink=c;return graphics;},
@@ -403,13 +434,13 @@ function restStrokes(engine,ms){
     cx:85,cy:90,south:false,currentAngleRad:0,isDayAt:()=>true});
   return lines;
 }
-const arcLines=restStrokes(nw.b.orbitRest.getEngine(),base+S+1000);
-assert.strictEqual(arcLines.length,1);
-assert.strictEqual(arcLines[0].color,0xF800);
-const [x1,y1,x2,y2]=arcLines[0].points;
-assert(Math.abs(Math.hypot(x1-85,y1-90)-70)<1,"Red start must lie on the orbit");
-assert(Math.abs(Math.hypot(x2-85,y2-90)-70)<1,"Red end must lie on the orbit");
-assert(Math.hypot(x1-x2,y1-y2)<=3,"Five-minute arc must stay short");
+const nonWearBars=restStrokes(nw.b.orbitRest.getEngine(),base+S+1000);
+assert.strictEqual(nonWearBars.length,1);
+assert.strictEqual(nonWearBars[0].color,0x8410);
+const [x1,y1,x2,y2]=nonWearBars[0].points;
+assert(Math.abs(Math.hypot(x1-85,y1-90)-70)<1.1,"Grey bar must start on orbit");
+assert(Math.abs(Math.hypot(x2-85,y2-90)-80)<1.1,"Grey bar must reach rest stage-5 length");
+assert(Math.hypot(x1-x2,y1-y2)>=9,"Grey non-wear must be radial, not a short arc");
 const missing=r.create({wearEnabled:true,nowMs:base});
 feed(missing,base,base+100000);
 missing.sync(base+S);
@@ -418,25 +449,121 @@ assert.deepStrictEqual(restStrokes(missing,base+S+1000),[],
   "Unknown data must not be painted red");
 const restoredNonWear=r.create({saved:nw.b.orbitRest.getEngine().snapshot(),
   nowMs:base+S+1000});
-assert.deepStrictEqual(restStrokes(restoredNonWear,base+S+1000),arcLines,
-  "Unworn red arcs must survive saving and reopening the clock");
+assert.deepStrictEqual(restStrokes(restoredNonWear,base+S+1000),nonWearBars,
+  "Unworn grey bars must survive saving and reopening the clock");
 const normalBar=restStrokes(high,base+S*2);
 assert(normalBar.length===1&&normalBar[0].color===0x07E0,
   "Normal motion must retain its green radial bar");
-// Full-day absence paints 288 joined red chords on the existing orbit.
+// Full-day absence paints 288 full-length grey radial bars.
 const allOff=r.create({saved:{v:3,end:base/S+287,
   levels:"fe".repeat(288)},nowMs:base+S*288+1000});
 const allOffLines=restStrokes(allOff,base+S*288+1000);
 assert.strictEqual(allOffLines.length,288);
-assert(allOffLines.every(x=>x.color===0xF800));
-for(let i=1;i<allOffLines.length;i++)
-  assert.deepStrictEqual(allOffLines[i-1].points.slice(2),
-    allOffLines[i].points.slice(0,2),
-    "Adjacent non-wear arcs must join without angular gaps");
-// A legacy v2 code 00 is "missing", not a red non-wear interval.
+assert(allOffLines.every(x=>x.color===0x8410));
+for(const line of allOffLines){
+  const [ax,ay,bx,by]=line.points;
+  assert(Math.abs(Math.hypot(ax-85,ay-90)-70)<1.1,
+    "Full-day unworn bar must start at the orbit");
+  assert(Math.abs(Math.hypot(bx-85,by-90)-80)<1.1,
+    "Full-day unworn bar must have rest stage-5 length");
+}
+// A legacy v2 code 00 is "missing", not a non-wear interval.
 const legacyMissing=r.create({saved:{v:2,end:base/S,
   levels:"ff".repeat(287)+"00"},nowMs:base+S+1000});
 assert.deepStrictEqual(restStrokes(legacyMissing,base+S+1000),[]);
+// Charging uses special v3 codes 101..201 without altering 254/unworn.
+// Its red radial length represents remaining battery percentage, not
+// percentage of five-minute charging time. No XYZ coverage is required.
+function chargingTrial(pct){
+  const e=r.create({nowMs:base,wearEnabled:true});
+  e.sync(base);e.setCharging(true,pct);
+  e.sync(base+S);
+  return e;
+}
+assert.strictEqual(r.constants.chargeBase,101);
+assert.strictEqual(r.constants.chargeEnd,201);
+for(const pct of [0,10,25,50,75,100]){
+  const e=chargingTrial(pct),value=101+pct;
+  assert.strictEqual(e.snapshot().levels.slice(-2),value.toString(16).padStart(2,"0"));
+  assert.strictEqual(e.getDiagnostics().recent.at(-1).reason,"charging");
+  let readings=[];
+  e.visit(base+S+1000,()=>{},()=>{},()=>{},(bucket,battery)=>readings.push(battery));
+  assert.deepStrictEqual(readings,[pct]);
+  const strokes=restStrokes(e,base+S+1000);
+  assert.strictEqual(strokes.length,1);
+  assert.strictEqual(strokes[0].color,0xF800);
+  const [ax,ay,bx,by]=strokes[0].points;
+  const bar=Math.hypot(bx-85,by-90)-Math.hypot(ax-85,ay-90);
+  assert(Math.abs(bar-10*pct/100)<1.2,
+    "Charging bar must scale with battery: "+pct+"%, actual "+bar);
+  const restored=r.create({saved:e.snapshot(),nowMs:base+S+1000});
+  assert.deepStrictEqual(restStrokes(restored,base+S+1000),strokes,
+    "Charging percent survives flash snapshot");
+}
+const partCharge=r.create({nowMs:base,wearEnabled:false});
+partCharge.sample(quiet,base);
+partCharge.setCharging(true,42);
+partCharge.setCharging(false,42);
+partCharge.sync(base+S);
+assert.strictEqual(partCharge.snapshot().levels.slice(-2),"8f",
+  "Any charging during the five-minute interval takes priority over rest stage");
+const liveCharge=r.create({nowMs:base});
+liveCharge.sync(base);liveCharge.setCharging(true,60);
+assert.strictEqual(restStrokes(liveCharge,base+150000).length,1,
+  "Current charging interval must be displayed without waiting 5 minutes");
+assert.strictEqual(restStrokes(liveCharge,base+150000)[0].color,0xF800);
+
+// Boot recorder observes the hardware charger without starting HRM.
+const chargedWatch=environment(base,{restWearEnabled:true});
+chargedWatch.execute("boot.js");
+assert.strictEqual(chargedWatch.b.listenerCount("charging"),1);
+chargedWatch.setCharging(true,55);
+assert.strictEqual(chargedWatch.b.orbitRest.getEngine().getLive().charging,true);
+chargedWatch.setBattery(62);
+chargedWatch.feed(base+S);
+assert.strictEqual(chargedWatch.b.orbitRest.getEngine().snapshot().levels.slice(-2),
+  (101+62).toString(16),"Charging records the last sampled percentage");
+assert.strictEqual(chargedWatch.b.orbitRest.getDiagnostics().recent.at(-1).reason,
+  "charging");
+assert.strictEqual(chargedWatch.power.filter(x=>x[1]===1).length,0,
+  "Charging must never turn on optical HRM");
+chargedWatch.setCharging(false,62);
+chargedWatch.feed(base+2*S);
+const afterUnplug=chargedWatch.b.orbitRest.getEngine().snapshot().levels.slice(-2);
+assert(!(parseInt(afterUnplug,16)>=101&&parseInt(afterUnplug,16)<=201),
+  "Unplugging must restore normal 3D motion/HRM classification");
+// Initial charging state must be read even if the event occurred before boot.
+const chargingAtBoot=environment(base,{restWearEnabled:true});
+chargingAtBoot.setCharging(true,80);
+chargingAtBoot.execute("boot.js");
+assert.strictEqual(chargingAtBoot.b.orbitRest.getEngine().getLive().chargePercent,80);
+chargingAtBoot.advance(base+S);
+chargingAtBoot.b.emit("accel",quiet);
+assert.strictEqual(chargingAtBoot.b.orbitRest.getEngine().snapshot().levels.slice(-2),"b5");
+
+// Keep recording for hours while charging even with NO accelerometer events.
+const noAccelCharge=environment(base,{restWearEnabled:true});
+noAccelCharge.setCharging(true,34);
+noAccelCharge.execute("boot.js");
+noAccelCharge.setBattery(47);
+noAccelCharge.advance(base+S+1000); // Charger minute timer must roll the slot.
+assert.strictEqual(noAccelCharge.b.orbitRest.getEngine().snapshot().levels.slice(-2),
+  (101+47).toString(16),"Charging must record without accelerometer events");
+// A pending HRM probe must release its sensor power as soon as charging begins.
+const stopOnCharge=environment(base,{restWearEnabled:true});
+stopOnCharge.execute("boot.js");
+for(let t=0;t<270000;t+=1000){
+  stopOnCharge.advance(base+t);
+  stopOnCharge.b.emit("accel",quiet);
+}
+stopOnCharge.advance(base+270000);
+assert(stopOnCharge.b.orbitRest.isProbing());
+stopOnCharge.setCharging(true,35);
+assert.strictEqual(stopOnCharge.b.orbitRest.isProbing(),false);
+assert.deepStrictEqual(stopOnCharge.power.slice(-2),
+  [[base+270000,1,"orbitrest"],[base+270000,0,"orbitrest"]],
+  "Stop an active optical HRM measurement on charge");
+
 // 297 seconds are more than 270s coverage and are valid for non-wear.
 // Previous code incorrectly required a sample within 2.5s of the slot start.
 const lateStart=environment(base+3000,{restWearEnabled:true});
@@ -492,7 +619,8 @@ assert.strictEqual(skipped.snapshot().levels.slice(-2),"fe");
 assert.strictEqual(skipped.getDiagnostics().recent.at(-1).reason,"nonwear");
 assert(nw.b.orbitRest.getEngine().snapshot().levels.endsWith("fe"));
 assert.deepStrictEqual(nw.power,[[base+270000,1,"orbitrest"],[base+S,0,"orbitrest"]]);
-assert.strictEqual(nw.b.listenerCount("HRM"),0);
+assert.strictEqual(nw.b.listenerCount("HRM"),1,
+  "Shared HRM listener stays attached for readings from other apps");
 // Motion detected before the HRM window must save all optical LED energy.
 const moving=runWear(null,t=>({x:.6+.02*t/S,y:.8,z:0}));
 assert.deepStrictEqual(moving.power,[],
@@ -544,7 +672,8 @@ assert.deepStrictEqual(interrupted.power.slice(0,2).map(q=>q[1]),[1,0]);
 assert(interrupted.power[1][0]<base+S,
   "Motion must turn the optical sensor off before its timeout");
 assert.strictEqual(interrupted.b.orbitRest.isProbing(),false);
-assert.strictEqual(interrupted.b.listenerCount("HRM"),0);
+assert.strictEqual(interrupted.b.listenerCount("HRM"),1,
+  "Shared HRM event listener remains active when an owned probe stops");
 assert.strictEqual(detected.b.orbitRest.getDiagnostics().recent.at(-1).confidence,91);
 assert.strictEqual(runWear({bpm:60,confidence:90}).b.orbitRest.getEngine().level(base/S),0,
   "Confidence equal to configured threshold is insufficient");
@@ -635,7 +764,7 @@ const fakeCalendar="({create:function(){var live=false,onReturn;" +
   "g.drawString('CALENDAR READY',10,80);g.flip()}," +
   "touch:function(){if(onReturn)onReturn(undefined)},swipe:function(){}};}})";
 const nav=environment(base,{},undefined,{"orbit.cal.js":fakeCalendar});
-nav.execute("boot.js");nav.execute("app.js");nav.log.length=0;
+nav.execute("boot.js");nav.execute("app.js");nav.advance(base);nav.log.length=0;
 nav.b.ui.touch(1,{x:50,y:70});
 assert(nav.log.some(x=>x.op==="fillCircle"),"First tap needs instant cue");
 nav.advance(base+400);
@@ -653,7 +782,7 @@ nav.advance(base+402);
 assert(nav.log.filter(x=>x.op==="drawString").length>beforeReturn);
 const navSettings=environment(base,{},undefined,{"orbit.settings.js":
   "(function(back){g.drawString('SETTINGS READY',10,80);g.flip();})"});
-navSettings.execute("boot.js");navSettings.execute("app.js");
+navSettings.execute("boot.js");navSettings.execute("app.js");navSettings.advance(base);
 navSettings.log.length=0;
 navSettings.b.ui.touch(1,{x:30,y:60});
 navSettings.b.ui.touch(1,{x:30,y:60});
@@ -662,19 +791,48 @@ assert(!navSettings.log.some(x=>x.op==="drawString"&&x.args[0]==="SETTINGS READY
 navSettings.advance(base+1);
 assert(navSettings.log.some(x=>x.op==="drawString"&&x.args[0]==="SETTINGS READY"));
 const navWake=environment(base);
-navWake.execute("app.js");navWake.log.length=0;
+navWake.execute("app.js");navWake.advance(base);navWake.log.length=0;
 navWake.b.emit("lcdPower",true);
 assert(navWake.log.some(x=>x.op==="drawString"&&x.args[0]==="Orbit..."));
 navWake.advance(base+1);
 assert([...navWake.timers.values()].some(x=>x.ms<=10000),
   "LCD wake must re-arm its idle timeout");
 const navButton=environment(base);
-navButton.execute("app.js");navButton.log.length=0;
+navButton.execute("app.js");navButton.advance(base);navButton.log.length=0;
 navButton.b.ui.btn();
 assert(navButton.log.some(x=>x.op==="drawString"&&x.args[0]==="Launcher..."));
 assert(!navButton.log.some(x=>x.op==="showLauncher"));
 navButton.advance(base+1);
 assert(navButton.log.some(x=>x.op==="showLauncher"));
+// Clock h:m must never add a leading zero to either hour or minute.
+const timeAtNineFive=new Date(2026,9,19,9,5).getTime();
+const shortTime=environment(timeAtNineFive,{restEnabled:false,timePos:1,datePos:2});
+shortTime.execute("app.js");shortTime.advance(timeAtNineFive+100);
+assert(shortTime.log.some(x=>x.op==="drawString"&&x.args[0]==="9:5"),
+  "Clock time must be h:m without zero padding");
+
+// The immutable 128px North-polar bitmap contains Earth-relative water cuts.
+// These texture cells rotate with the globe: no screen-fixed strait strokes.
+const northMap=require("./earth-north-128.js").get();
+assert.strictEqual(northMap[0].width,128);
+assert.strictEqual(northMap[0].height,128);
+assert.strictEqual(northMap[0].buffer.byteLength,4096);
+assert.strictEqual(northMap[1].buffer.byteLength,2048);
+assert.strictEqual(northMap[0].palette[1],0x05A0,"Land uses the muted green palette");
+const packedNorth=new Uint8Array(northMap[0].buffer);
+function northPixel(x,y){
+  const q=y*128+x;
+  return (packedNorth[q>>2]>>(6-2*(q&3)))&3;
+}
+const straitCells=[[60,104],[61,104],[62,104],[63,104],[64,104],[65,104],
+  [58,115],[59,115],[60,115],[61,115],[63,115],[62,114],[63,114]];
+for(const [x,y] of straitCells)
+  assert.strictEqual(northPixel(x,y),0,
+    "Corrected water channel must be ocean at "+x+","+y);
+for(const [x,y] of [[61,101],[70,104],[57,114],[60,116]])
+  assert.strictEqual(northPixel(x,y),1,
+    "Nearby land must be retained at "+x+","+y);
+
 // Repeated 12.5 Hz accelerometer events should not allocate growing sample arrays.
 const perf=r.create({thresholdG:.027});
 const benchStart=Date.now(),benchSamples=15000;

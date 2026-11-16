@@ -2,7 +2,7 @@
 
 # tenkyu
 
-**tenkyu 0.03**
+**tenkyu 0.109**
 
 A clock app for Bangle.js 2 that lets you read the time, the phases of the Moon and related information from the relative positions of the Sun, Earth and Moon.
 
@@ -245,7 +245,7 @@ onisY
 
 # tenkyu
 
-**tenkyu 0.03**
+**tenkyu 0.109**
 
 Bangle.js 2 用の、太陽・地球・月の位置関係から時刻、月の満ち欠け等を読み取る時計アプリです。
 

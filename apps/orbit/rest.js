@@ -5,6 +5,9 @@
  */
 var SLOT_MS=300000,COUNT=288,DAY_MS=SLOT_MS*COUNT;
 var HRM_FAILED=253,NOT_WORN=254,NO_DATA=255;
+var CHARGE_BASE=101,CHARGE_END=201; // Battery percentage 0..100%.
+function batteryPercent(v){return isFinite(v)?Math.round(Math.max(0,Math.min(100,+v))):0;}
+function chargingCode(v){return CHARGE_BASE+batteryPercent(v);}
 var HR_PENDING=0,HR_FOUND=1,HR_ABSENT=2,HR_FAILED=3;
 var MAX_GAP_MS=2500,MIN_COVERAGE_MS=270000;
 var THRESHOLDS=[0.001,0.003,0.009,0.027,0.081,0.243,0.729];
@@ -45,7 +48,8 @@ function wearConfig(s){return {enabled:s.restWearEnabled!==false,
 
 /* Rest history retains 0..100 presentation codes for v2/v3 compatibility.
  * New results are quantized into 0,20,40,60,100 (stages 1..5).
- * 253=HRM failed (white); 254=unworn (red); 255=missing XYZ (blank).
+ * 101..201=charging (red 0..100% radial bar).
+ * 253=HRM failed (white); 254=unworn (grey); 255=missing XYZ (blank).
  * Old percentages keep their displayed stages.
  */
 function create(options){
@@ -58,7 +62,8 @@ function create(options){
   var vecSX=0,vecSY=0,vecSZ=0,vecCount=0,vecSecond=-1;
   var vecRefX,vecRefY,vecRefZ,vecMaxD2=0;
   var closedBucket=-1,closedStill=false,closedVectorOK=false,
-    closedPercent=0,closedPulse=HR_PENDING,closedMotion=false;
+    closedPercent=0,closedPulse=HR_PENDING,closedMotion=false,closedCharge=-1;
+  var charging=false,chargePercent=0,chargedThisBucket=-1;
   var current=-1,covered=0,activity=0,peakCount=0,lastMs,lastValid=false;
   var wearEnabled=!!options.wearEnabled,holdEnabled=!!options.holdEnabled,pulseState=HR_PENDING;
   var holdPulse=HR_PENDING,holdX,holdY,holdZ,lastX,lastY,lastZ,holdRun=0;
@@ -83,6 +88,9 @@ function create(options){
       covered=Math.max(0,Math.min(SLOT_MS,+old.active.covered||0));
       activity=Math.max(0,+old.active.activity||0);
       peakCount=Math.max(0,+old.active.peakCount||0);
+      if(isFinite(old.active.charge)&&old.active.charge>=0&&
+         old.active.charge<=100)
+        chargedThisBucket=batteryPercent(old.active.charge);
     }
   }
   function resetPeak(){
@@ -132,21 +140,32 @@ function create(options){
     if(second!==vecSecond){flushVector();vecSecond=second;}
     vecSX+=a.x;vecSY+=a.y;vecSZ+=a.z;vecCount++;
   }
-  // Motion is enough evidence to plot the rest level; HRM is only needed
-  // to distinguish a motionless worn watch from one lying on a table.
+  // Only a stage-5 interval is eligible for non-wear. The one-second
+  // vector drift is accumulated cheaply throughout the slot because its
+  // five-minute history cannot be reconstructed after stage classification.
+  // At probe time this is provisional; the final stage is checked at closure.
+  function isStage5Candidate(bucket){
+    return wearEnabled&&!charging&&bucket===current&&
+      covered>=240000&&
+      activityLevel(activity300(activity,covered),cuts)===100&&
+      !vecWornMotion&&vecRefX!==undefined;
+  }
   function chooseLevel(ok,still,motion,hr,percent){
     if(!ok)return NO_DATA;
-    if(!wearEnabled||motion)return percent;
+    if(!wearEnabled||percent!==100||motion)return percent;
     if(still){
-      if(hr===HR_FOUND||hr===HR_PENDING&&holdPulse===HR_FOUND)return 100;
+      if(hr===HR_FOUND||hr===HR_PENDING&&holdPulse===HR_FOUND)return percent;
+      if(hr===HR_ABSENT||hr===HR_PENDING&&holdPulse===HR_ABSENT)return NOT_WORN;
       if(hr===HR_FAILED||hr===HR_PENDING&&holdPulse===HR_FAILED)return HRM_FAILED;
-      return NOT_WORN;
+      // No HRM measurement yet: do not equate missing evidence with non-wear.
+      return percent;
     }
-    return NO_DATA;
+    return percent;
   }
-  function makeReason(ok,still,motion,hr){
+  function makeReason(ok,still,motion,hr,percent){
     if(!ok)return "accel_missing";
     if(!wearEnabled)return "nonwear_disabled";
+    if(percent!==100)return "rest_1_to_4";
     if(motion)return "motion";
     if(still){
       if(hr===HR_FOUND)return "pulse_detected_still";
@@ -154,21 +173,31 @@ function create(options){
       if(hr===HR_PENDING&&holdPulse===HR_FOUND)return "pulse_held_still";
       if(hr===HR_PENDING&&holdPulse===HR_ABSENT)return "nonwear_held";
       if(hr===HR_PENDING&&holdPulse===HR_FAILED)return "hrm_retry_wait";
-      if(hr===HR_PENDING)return "nonwear_hrm_unknown";
+      if(hr===HR_PENDING)return "pulse_pending_rest5";
       return "nonwear";
     }
     return "accel_uncertain";
   }
+  function setCharging(active,pct){
+    if(!!active!==charging)clearHold();
+    charging=!!active;
+    if(charging){
+      chargePercent=batteryPercent(pct);
+      chargedThisBucket=chargePercent;
+    }
+  }
   function updateClosed(){
     if(closedBucket<0||stamps[closedBucket%COUNT]!==closedBucket)return;
-    var v=chooseLevel(closedVectorOK,closedStill,closedMotion,closedPulse,closedPercent);
+    var v=closedCharge>=0?chargingCode(closedCharge):
+      chooseLevel(closedVectorOK,closedStill,closedMotion,closedPulse,closedPercent);
     levels[closedBucket%COUNT]=v;
     for(var j=diag.length-1;j>=0;j--)if(diag[j].bucket===closedBucket){
       diag[j].pulse=closedPulse;diag[j].confidence=closedConfidence;diag[j].result=v;
-      diag[j].reason=makeReason(closedVectorOK,closedStill,closedMotion,closedPulse);
+      diag[j].reason=closedCharge>=0?"charging":
+        makeReason(closedVectorOK,closedStill,closedMotion,closedPulse,closedPercent);
       break;
     }
-    if(closedVectorOK&&closedStill&&closedPulse!==HR_PENDING)
+    if(closedCharge<0&&closedPercent===100&&closedVectorOK&&closedStill&&closedPulse!==HR_PENDING)
       establishHold(closedPulse);
     if(save)save();
   }
@@ -198,8 +227,10 @@ function create(options){
       var corrected=closedVectorOK?activity300(activity,covered):undefined;
       closedPercent=activityLevel(corrected===undefined?activity:corrected,cuts);
       closedPulse=pulseState;closedConfidence=pulseConfidence;
+      closedCharge=chargedThisBucket;
       i=current%COUNT;stamps[i]=current;
-      levels[i]=chooseLevel(closedVectorOK,closedStill,closedMotion,closedPulse,closedPercent);
+      levels[i]=closedCharge>=0?chargingCode(closedCharge):
+        chooseLevel(closedVectorOK,closedStill,closedMotion,closedPulse,closedPercent);
       diag.push({bucket:current,coverageSec:Math.round(covered/1000),
         driftG:Math.round(Math.sqrt(vecMaxD2)*10000)/10000,
         motion:closedMotion,
@@ -207,9 +238,11 @@ function create(options){
         activity300:corrected===undefined?null:Math.round(corrected*1000)/1000,
         peaks:peakCount,valid:closedVectorOK,pulse:closedPulse,confidence:closedConfidence,
         result:levels[i],
-        reason:makeReason(closedVectorOK,closedStill,closedMotion,closedPulse)});
+        reason:closedCharge>=0?"charging":
+          makeReason(closedVectorOK,closedStill,closedMotion,closedPulse,closedPercent)});
       if(diag.length>12)diag.shift();
-      if(closedVectorOK&&closedStill&&closedPulse!==HR_PENDING)
+      if(closedPercent!==100)clearHold();
+      if(closedCharge<0&&closedPercent===100&&closedVectorOK&&closedStill&&closedPulse!==HR_PENDING)
         establishHold(closedPulse);
       changed=true;
     }else if(current>=0&&target<current){
@@ -217,6 +250,7 @@ function create(options){
       clearHold();closedBucket=-1;changed=true;
     }
     current=target;covered=0;activity=0;peakCount=0;resetPeak();resetVector();
+    chargedThisBucket=charging?chargePercent:-1;
     // No persistent gap-failure flag: covered duration is authoritative.
     pulseState=HR_PENDING;pulseConfidence=-1;
     if(changed&&save)save();
@@ -239,6 +273,7 @@ function create(options){
     // Only accepted peaks compute sqrt; subthreshold peaks never do.
     if(qOld!==undefined&&qPrev>=threshold2&&qPrev>qOld&&qPrev>=q){
       activity+=Math.sqrt(qPrev)-threshold;peakCount++;
+      if(activity>=cuts[0]&&holdPulse!==HR_PENDING)clearHold();
     }
     qOld=qPrev;qPrev=q;
   }
@@ -279,13 +314,15 @@ function create(options){
   function failedProbe(bucket){markProbe(bucket,HR_FAILED);}
   function level(bucket){return stamps[bucket%COUNT]===bucket?
     (levels[bucket%COUNT]>100?0:levels[bucket%COUNT]):0;}
-  function visit(ms,fn,onNonWear,onFailure){
+  function visit(ms,fn,onNonWear,onFailure,onCharging){
     var end=Math.floor(ms/SLOT_MS)-1,b,v;
     for(b=end-COUNT+1;b<=end;b++)if(b>=0&&stamps[b%COUNT]===b){
       v=levels[b%COUNT];
       if(v<=100)fn(b,v);
       else if(v===NOT_WORN&&onNonWear)onNonWear(b);
       else if(v===HRM_FAILED&&onFailure)onFailure(b);
+      else if(v>=CHARGE_BASE&&v<=CHARGE_END&&onCharging)
+        onCharging(b,v-CHARGE_BASE);
       // Missing XYZ coverage (255) is always transparent.
     }
   }
@@ -299,9 +336,11 @@ function create(options){
     }
     return {v:3,end:end,levels:out,diag:diag,
       active:{metric:2,bucket:current,gate:threshold,cuts:cuts,
-        covered:covered,activity:activity,peakCount:peakCount}};
+        covered:covered,activity:activity,peakCount:peakCount,
+        charge:chargedThisBucket}};
   }
-  return {sample:sample,sync:sync,absentPulse:absentPulse,detectedPulse:detectedPulse,
+  return {sample:sample,sync:sync,setCharging:setCharging,
+    absentPulse:absentPulse,detectedPulse:detectedPulse,
     failedProbe:failedProbe,visit:visit,snapshot:snapshot,level:level,
     getDiagnostics:function(){return {bucket:current,coverageSec:Math.round(covered/1000),
       driftG:Math.round(Math.sqrt(vecMaxD2)*10000)/10000,
@@ -314,16 +353,60 @@ function create(options){
     hasRecentAccel:function(ms){return lastValid&&lastMs!==undefined&&
       ms>=lastMs&&ms-lastMs<=MAX_GAP_MS;},
     getWearHold:function(){return holdPulse;},
+    isStage5Candidate:isStage5Candidate,
     getLive:function(){return {bucket:current,covered:covered,peaks:peakCount,
-      activity:activity,level:activityLevel(activity,cuts)};}};
+      activity:activity,level:activityLevel(activity,cuts),
+       charging:charging,chargePercent:chargePercent};}};
 }
 function install(bangle,storage,events,clock){
   clock=clock||function(){return Date.now();};
   if(bangle.orbitRest)return bangle.orbitRest;
   var engine,enabled=false,configKey,api,wear,probe,timer,failedAttempts=0;
   var sampleMs=0,nextSampleAt=0,sharedPulseCount=0;
+  var charging=false,chargePercent=0,nextBatteryAt=0,chargeTimer;
   var HR_ID="orbitrest";
   function persist(){if(engine)try{storage.writeJSON("orbit.rest.json",engine.snapshot());}catch(e){}}
+  function isCharging(){
+    try{return typeof bangle.isCharging==="function"&&!!bangle.isCharging();}
+    catch(e){return false;}
+  }
+  function getBattery(){
+    try{return batteryPercent(events&&typeof events.getBattery==="function"?
+      events.getBattery():chargePercent);}
+    catch(e){return chargePercent;}
+  }
+  function stopChargeTimer(){
+    if(chargeTimer!==undefined){clearTimeout(chargeTimer);chargeTimer=undefined;}
+  }
+  function chargeTick(){
+    chargeTimer=undefined;
+    if(!enabled||!charging||!engine)return;
+    if(!isCharging()){onCharging(false);return;}
+    var now=clock();
+    chargePercent=getBattery();
+    engine.setCharging(true,chargePercent);
+    engine.sync(now); // Works even without accelerometer events.
+    nextBatteryAt=now+60000;
+    chargeTimer=setTimeout(chargeTick,60000);
+  }
+  function onCharging(state){
+    if(!enabled||!engine)return;
+    var now=clock();
+    engine.sync(now);
+    stopChargeTimer();
+    var wasCharging=charging;
+    charging=!!state;nextBatteryAt=now+60000;
+    if(charging){
+      chargePercent=getBattery();
+      engine.setCharging(true,chargePercent);
+      stopProbe();
+      chargeTimer=setTimeout(chargeTick,60000);
+    }else{
+      engine.setCharging(false,chargePercent);
+      failedAttempts=0;stopProbe();scheduleProbe();
+    }
+    if(charging||wasCharging)persist(); // No flash write on ordinary startup.
+  }
   function onAccel(a){
     var now=clock();
     if(sampleMs){
@@ -333,12 +416,23 @@ function install(bangle,storage,events,clock){
       nextSampleAt=nextSampleAt&&now-nextSampleAt<=sampleMs?
         nextSampleAt+sampleMs:now+sampleMs;
     }
+    if(now>=nextBatteryAt){
+      nextBatteryAt=now+60000;
+      var state=isCharging();
+      if(state!==charging)onCharging(state);
+    }
+    if(charging){
+      // The charging bucket is already classified as non-worn.
+      // No peak filtering or HRM checks are needed until unplugged.
+      engine.sync(now);
+      return;
+    }
     var wasFailed=engine.getWearHold()===HR_FAILED;
     engine.sample(a,now);
     if(wasFailed&&engine.getWearHold()!==HR_FAILED){
       // Motion or a sensor-data gap invalidates the prior failure verdict.
       failedAttempts=0;stopProbe();scheduleProbe(Math.floor(now/SLOT_MS)+1);
-    }else if(probe&&engine.hasMotion(probe.bucket)){
+    }else if(probe&&!engine.isStage5Candidate(probe.bucket)){
       var bucket=probe.bucket;
       failedAttempts=0;stopProbe();scheduleProbe(bucket+1);
     }
@@ -347,7 +441,7 @@ function install(bangle,storage,events,clock){
     // Subscribe once for the lifetime of the boot-owned recorder.
     // Events from another HRM user are accepted without powering the
     // optical sensor on. An existing, good pulse avoids a new probe.
-    if(!enabled||!wear.enabled||!h||!isFinite(h.bpm)||h.bpm<0||
+    if(!enabled||charging||!wear.enabled||!h||!isFinite(h.bpm)||h.bpm<0||
        !isFinite(h.confidence))return;
     if(probe){
       probe.hasData=true;
@@ -355,7 +449,7 @@ function install(bangle,storage,events,clock){
     }
     if(h.bpm<=0||h.confidence<=wear.confidence)return;
     var now=clock(),bucket=Math.floor(now/SLOT_MS);
-    if(!engine.hasRecentAccel(now)||engine.hasMotion(bucket))return;
+    if(!engine.hasRecentAccel(now)||!engine.isStage5Candidate(bucket))return;
     if(engine.getWearHold()===HR_FOUND||engine.hasPulse(bucket))return;
     // Only live, sufficiently reliable readings count. Never reuse
     // the firmware's older heart-rate history for wear detection.
@@ -378,7 +472,7 @@ function install(bangle,storage,events,clock){
   function failProbe(bucket){
     engine.failedProbe(bucket);
     failedAttempts++;
-    if(!enabled||!wear.enabled)return;
+    if(!enabled||charging||!wear.enabled)return;
     var delay=failedAttempts===1?60000:900000;
     timer=setTimeout(function(){
       timer=undefined;
@@ -386,15 +480,16 @@ function install(bangle,storage,events,clock){
         failedAttempts=0;scheduleProbe();return;
       }
       var now=clock(),b=Math.floor(now/SLOT_MS);
-      if(!engine.hasRecentAccel(now)||engine.hasMotion(b)){
+      if(!engine.hasRecentAccel(now)||!engine.isStage5Candidate(b)){
         failedAttempts=0;scheduleProbe(b+1);return;
       }
       beginProbe(b,now+wear.seconds*1000);
     },delay);
   }
   function beginProbe(bucket,end){
+    if(charging)return;
     var begin=clock();
-    if(!engine.hasRecentAccel(begin)||engine.hasMotion(Math.floor(begin/SLOT_MS))){
+    if(!engine.hasRecentAccel(begin)||!engine.isStage5Candidate(Math.floor(begin/SLOT_MS))){
       failedAttempts=0;scheduleProbe(Math.floor(begin/SLOT_MS)+1);return;
     }
     probe={bucket:bucket,maxConfidence:-1,hasData:false,ownsPower:false};
@@ -417,7 +512,7 @@ function install(bangle,storage,events,clock){
       if(p){
         if(p.hasData){
           failedAttempts=0;engine.absentPulse(p.bucket,p.maxConfidence);
-          engine.sync(done);scheduleProbe(p.bucket+1);
+          engine.sync(done);scheduleProbe(p.bucket+3);
         }else{
           failProbe(p.bucket);engine.sync(done);
         }
@@ -425,7 +520,7 @@ function install(bangle,storage,events,clock){
     },Math.max(1,end-clock()));
   }
   function scheduleProbe(minBucket){
-    if(!enabled||!wear.enabled)return;
+    if(!enabled||charging||!wear.enabled)return;
     var now=clock(),bucket=Math.max(Math.floor(now/SLOT_MS),minBucket||0);
     var start=(bucket+1)*SLOT_MS-wear.seconds*1000;
     if(start<now){bucket++;start+=SLOT_MS;}
@@ -437,7 +532,8 @@ function install(bangle,storage,events,clock){
       var begin=clock(),end=(bucket+1)*SLOT_MS;
       if(begin<start||begin>end-10000){failProbe(bucket);return;}
       if(engine.getWearHold()===HR_FOUND||engine.getWearHold()===HR_ABSENT||
-        engine.hasPulse(bucket)||engine.hasMotion(bucket)||!engine.hasRecentAccel(begin)){
+        engine.hasPulse(bucket)||!engine.isStage5Candidate(bucket)||
+        !engine.hasRecentAccel(begin)){
         scheduleProbe(bucket+1);return;
       }
       beginProbe(bucket,end);
@@ -450,36 +546,40 @@ function install(bangle,storage,events,clock){
     var eco=s.restEco===true;
     var key=JSON.stringify([t,w,stages,eco]);
     if(on===enabled&&(!on||key===configKey))return;
-    stopProbe();
+    stopProbe();stopChargeTimer();
     if(enabled){
       bangle.removeListener("accel",onAccel);
       bangle.removeListener("HRM",onHRM);
+      bangle.removeListener("charging",onCharging);
       persist();
     }
     enabled=on;configKey=key;wear=w;failedAttempts=0;sharedPulseCount=0;
-    sampleMs=eco?200:0;nextSampleAt=0;
+    sampleMs=eco?200:0;nextSampleAt=0;nextBatteryAt=0;charging=false;
     if(on){
       engine=create({thresholdG:t,activityThresholds:stages,
         wearThresholdG:w.z,wearEnabled:w.enabled,holdEnabled:w.hold,
         nowMs:clock(),saved:storage.readJSON("orbit.rest.json",1),onCommit:persist});
       bangle.on("accel",onAccel);
+      bangle.on("charging",onCharging);
       if(w.enabled)bangle.on("HRM",onHRM);
-      scheduleProbe();
+      onCharging(isCharging());
     }else engine=undefined;
   }
   api={configure:configure,save:persist,isEnabled:function(){return enabled;},
     draw:function(graphics,map){draw(graphics,engine,map);},
     getDiagnostics:function(){
       var d=engine?engine.getDiagnostics():{disabled:true};
-      d.sharedPulseCount=sharedPulseCount;return d;
+      d.sharedPulseCount=sharedPulseCount;d.charging=charging;
+      d.chargePercent=chargePercent;return d;
     },
     getEngine:function(){return engine;},
     isProbing:function(){return !!probe;},
     sync:function(ms){if(engine)engine.sync(ms);}};
   bangle.orbitRest=api;
   if(events)events.on("kill",function(){
-    stopProbe();
+    stopProbe();stopChargeTimer();
     bangle.removeListener("HRM",onHRM);
+    bangle.removeListener("charging",onCharging);
     persist();
   });
   configure(storage.readJSON("orbit.json",1)||{});
@@ -491,19 +591,24 @@ function stageFor(percent){
 }
 function draw(graphics,engine,map){
   if(!engine)return;
-  // The selected maximum is now the stage-5 height.
+  // Diagnostic stages: 0=visit, 1=classify, 2=geometry,
+  // 3=geometry+day, 4=no-op graphics, 5=real graphics.
+  var mode=map.diagnosticStage===undefined?5:map.diagnosticStage;
+  var perf=map.perf,bars=0;
+  if(mode===0){
+    engine.visit(map.nowMs,function(){bars++;},
+      function(){bars++;},function(){bars++;},function(){bars++;});
+    if(engine.getLive&&engine.getLive().charging)bars++;
+    if(perf)perf.bars=bars;
+    return;
+  }
   var r=map.radiusPx,height=Math.max(1,Math.min(map.maxHeightPx,14));
   var dir=map.south?1:-1,now=map.nowMs,scale=2*Math.PI/DAY_MS;
-  // One five-minute slot spans 1.25 degrees around the lunar orbit.
-  // Rotate each arc endpoint using constants to avoid extra trig calls.
   var step=dir*2*Math.PI/COUNT,cs=Math.cos(step),ss=Math.sin(step);
   var lastBucket=-2,ca=0,sa=0;
   function pointAt(bucket){
-    // When bins are contiguous, reuse a single rotation rather than
-    // recomputing sine/cosine twice for each of up to 288 bars.
     if(bucket===lastBucket+1){
-      var nc=ca*cs-sa*ss;
-      sa=sa*cs+ca*ss;ca=nc;
+      var nc=ca*cs-sa*ss;sa=sa*cs+ca*ss;ca=nc;
     }else if(bucket!==lastBucket){
       var a=map.currentAngleRad-dir*(now-(bucket+1)*SLOT_MS)*scale;
       ca=Math.cos(a);sa=Math.sin(a);
@@ -511,26 +616,58 @@ function draw(graphics,engine,map){
     lastBucket=bucket;
   }
   function drawArc(bucket,color){
+    bars++;
+    if(mode===1)return;
     pointAt(bucket);
-    graphics.setColor(color);
-    graphics.drawLine(
-      Math.round(map.cx+r*(ca*cs+sa*ss)),
-      Math.round(map.cy+r*(sa*cs-ca*ss)),
-      Math.round(map.cx+r*ca),Math.round(map.cy+r*sa));
+    var x1=Math.round(map.cx+r*(ca*cs+sa*ss));
+    var y1=Math.round(map.cy+r*(sa*cs-ca*ss));
+    var x2=Math.round(map.cx+r*ca),y2=Math.round(map.cy+r*sa);
+    if(mode>=4){graphics.setColor(color);graphics.drawLine(x1,y1,x2,y2);}
+  }
+  function drawRadial(bucket,color,pct){
+    bars++;
+    if(mode===1)return;
+    pointAt(bucket);
+    var outer=r+height*pct/100;
+    var x1=Math.round(map.cx+r*ca),y1=Math.round(map.cy+r*sa);
+    var x2=Math.round(map.cx+outer*ca),y2=Math.round(map.cy+outer*sa);
+    if(mode>=4){graphics.setColor(color);graphics.drawLine(x1,y1,x2,y2);}
   }
   engine.visit(now,function(bucket,value){
-    // Plot at the interval END: a completed bar expires exactly 24 h later.
+    bars++;
+    var stage=stageFor(value);
+    if(mode===1)return;
     pointAt(bucket);
-    var endMs=(bucket+1)*SLOT_MS,outer=r+height*stageFor(value)/5;
-    // Match the observer ray's geometric sunrise/sunset at this bar's time.
-    graphics.setColor(map.isDayAt&&map.isDayAt(endMs)?0x07E0:0xFFE0);
-    graphics.drawLine(Math.round(map.cx+r*ca),Math.round(map.cy+r*sa),
-      Math.round(map.cx+outer*ca),Math.round(map.cy+outer*sa));
+    var outer=r+height*stage/5;
+    var x1=Math.round(map.cx+r*ca),y1=Math.round(map.cy+r*sa);
+    var x2=Math.round(map.cx+outer*ca),y2=Math.round(map.cy+outer*sa);
+    if(mode===2)return;
+    // Compare bucket indices only. The 24-hour history may cross midnight.
+    var sun=map.dayBuckets,day=false;
+    if(sun){
+      if(sun.polar)day=sun.polar>0;
+      else day=(bucket>=sun.first&&bucket<sun.last)||
+        (bucket>=sun.first-COUNT&&bucket<sun.last-COUNT);
+    }
+    if(mode>=4){graphics.setColor(day?0x07E0:0xFFE0);
+      graphics.drawLine(x1,y1,x2,y2);}
   },function(bucket){
-    drawArc(bucket,0xF800); // Confirmed no pulse: red.
-  },function(bucket){
-    drawArc(bucket,0xFFFF); // HRM failed: white.
-  });
+    drawRadial(bucket,0x8410,100); // Nonwear grey, same length as stage 5.
+  },function(bucket){drawArc(bucket,0xFFFF);},
+    function(bucket,pct){drawRadial(bucket,0xF800,pct);});
+  // Show the active charging window immediately, without waiting five minutes.
+  var live=engine.getLive&&engine.getLive();
+  if(live&&live.charging&&live.bucket===Math.floor(now/SLOT_MS)){
+    bars++;
+    if(mode>=2){
+      var a=map.currentAngleRad,cc=Math.cos(a),ss=Math.sin(a);
+      var x1=Math.round(map.cx+r*cc),y1=Math.round(map.cy+r*ss);
+      var outer=r+height*live.chargePercent/100;
+      var x2=Math.round(map.cx+outer*cc),y2=Math.round(map.cy+outer*ss);
+      if(mode>=4){graphics.setColor(0xF800);graphics.drawLine(x1,y1,x2,y2);}
+    }
+  }
+  if(perf)perf.bars=bars;
 }
 exports.create=create;
 exports.install=install;
@@ -540,7 +677,8 @@ exports.activity300=activity300;
 exports.activityThresholds=activityThresholds;
 exports.stageFor=stageFor;
 exports.constants={slotMs:SLOT_MS,count:COUNT,maxGapMs:MAX_GAP_MS,minCoverageMs:MIN_COVERAGE_MS,
-  hrmFailed:HRM_FAILED,unworn:NOT_WORN,noData:NO_DATA};
+  hrmFailed:HRM_FAILED,unworn:NOT_WORN,noData:NO_DATA,
+  chargeBase:CHARGE_BASE,chargeEnd:CHARGE_END};
 
 
 exports.thresholdG=thresholdG;
