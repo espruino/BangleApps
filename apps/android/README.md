@@ -22,6 +22,8 @@ of Gadgetbridge - making your phone make noise so you can find it.
 keep any messages it has received, or should it delete them?
 * `Overwrite GPS` - when GPS is requested by an app, this doesn't use Bangle.js's GPS
 but instead asks Gadgetbridge on the phone to use the phone's GPS
+* `Cal. Reminders` - default is `On`. The reminders of calendar events become
+alarms on Bangle.js, so they also go off when the phone isn't connected
 * `Messages` - launches the messages app, showing a list of messages
 
 ## How it works
