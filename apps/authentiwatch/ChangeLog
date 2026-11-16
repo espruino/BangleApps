@@ -5,3 +5,4 @@
 0.05: Add support for bulk importing and exporting tokens
 0.06: Add spaces to codes for improved readability (thanks @BartS23)
 0.07: Bangle 2: Improve drag responsiveness and exit on button press
+0.08: Encrypt token store behind an on-watch PIN gate (authentiwatch.json -> authentiwatch.lock, see README)
