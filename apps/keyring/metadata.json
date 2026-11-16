@@ -1,0 +1,21 @@
+{
+  "id":"keyring",
+  "name":"Keyring",
+  "shortName":"Keyring",
+  "icon":"keyring.png",
+  "version":"0.01",
+  "author":"Bangle.js contributors",
+  "description":"PIN-gated encrypted secrets on the wrist, powered by the EncStore module. Entries are provisioned off-watch with tools/seal_lock.py from the authentiwatch app.",
+  "tags":"tool",
+  "supports":["BANGLEJS2"],
+  "readme":"README.md",
+  "allow_emulator": true,
+  "storage":[
+    {"name":"keyring.app.js","url":"app.js"},
+    {"name":"encstore","url":"../../modules/encstore.js"},
+    {"name":"keyring.img","url":"app-icon.js","evaluate":true}
+  ],
+  "data":[
+    {"name":"keyring.lock"}
+  ]
+}
