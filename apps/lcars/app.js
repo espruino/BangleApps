@@ -674,10 +674,10 @@ let getWeather = function(){
     // Humidity
     weather.hum = weather.hum + "%";
 
-    // Wind
-    const wind = locale.speed(weather.wind).match(/^(\D*\d*)(.*)$/);
+    // Wind - weather.json stores it in kph, so convert from that directly
+    // rather than from the locale's unit (which may already be mph)
     let speedFactor = settings.speed == "kph" ? 1.0 : 1.0 / 1.60934;
-    weather.wind = Math.round(wind[1] * speedFactor);
+    weather.wind = Math.round(weather.wind * speedFactor);
 
     return weather;
 
