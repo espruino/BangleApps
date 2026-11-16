@@ -665,12 +665,6 @@ module.exports = {
       "no-undef"
     ]
   },
-  "apps/noteify/app.js": {
-    "hash": "f0a403bcae6d1d4b9c019dc4ab335f9936c782115010a5e5f9e0cf7db2e9cb50",
-    "rules": [
-      "no-undef"
-    ]
-  },
   "apps/neonx/neonx.settings.js": {
     "hash": "39df1566e1e4fb139076c34f1db098304b973f1c1df0d60ba655942b21b948af",
     "rules": [

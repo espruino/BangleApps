@@ -2,3 +2,4 @@
 0.02: Use default Bangle formatter for booleans
 0.03: Drop duplicate alarm widget
 0.04: Make notes available to clock info
+0.05: Fix alarms set for earlier in the day and timers running past midnight firing immediately
