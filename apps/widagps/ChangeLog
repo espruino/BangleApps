@@ -1,2 +1,5 @@
 0.01: first version
 0.02: Issue newline before GB commands (solves issue with console.log and ignored commands)
+0.03: Fix issue where Bangle could lock up because GPS was turned off right after upload
+      Remove debug AGPS data that used up memory
+      Use Bangle.http to http requests so other http requests don't trigger a GPS write
