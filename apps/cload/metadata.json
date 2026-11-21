@@ -1,0 +1,14 @@
+{ "id": "cload",
+  "name": "Code Load",
+  "version": "0.01",
+  "description": "Run C code on Espruino",
+  "icon": "app.png",
+  "readme": "README.md",
+  "supports" : ["BANGLEJS2"],
+  "tags": "tool",
+  "storage": [
+      {"name":"cload.app.js","url":"cload.app.js"},
+      {"name":"cload.bin","url":"cload.bin"},
+      {"name":"cload.img","url":"app-icon.js","evaluate":true}
+  ]
+}
