@@ -139,7 +139,7 @@ function isGitHubHandle(name) {
 function makeLine({ author, apps }) {
   apps = [...apps].sort();
 
-  return `tagging @${author} for ${apps.map(a => `\`${a}\``).join(", ")}`
+  return `Tagging @${author} as the author of ${apps.map(a => `\`${a}\``).join(", ")}`
 }
 
 function parseLine(line) {
