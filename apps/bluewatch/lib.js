@@ -8,6 +8,15 @@ function queueSend(msg) {
   sendNext();
 }
 
+function isToday(ms) {
+  const dateToCheck = new Date(ms);
+  const today = new Date();
+
+  return dateToCheck.getDate() === today.getDate() &&
+         dateToCheck.getMonth() === today.getMonth() &&
+         dateToCheck.getFullYear() === today.getFullYear();
+}
+
 function sendNext() {
   if (sending) return;
   if (!queue.length) return;
@@ -71,7 +80,28 @@ function sendData(dataString, forceSend) {
     print("Phone not connected");
   }
 }
+function sendHRVData(){
+  try {
+    let hrv=require("hrvtracking").getRecentData();
+    let baseline=hrv.hrvBaseline
+    hrv=hrv.latestHrv
+    if(isToday(hrv.timestamp)){
 
+
+      let obj={
+        type:"hrv",
+        time:hrv.timestamp,
+        hrv:hrv.avgHrv,
+        baseline:baseline
+      }
+      setTimeout(function () {
+        sendData(JSON.stringify(obj));
+      }, 3000);
+    }
+  } catch (error) {
+     return;
+  } 
+}
 /*
 Expects object containing any of these:
 * bpm
@@ -103,13 +133,13 @@ function sendRawHealthData(data) {
   }
   setTimeout(function () {
     sendData(JSON.stringify(sendableData));
-  }, 3000);
+  }, 1500);
 }
 
 function sendHealthData() {
   setTimeout(function () {
     sendRawHealthData(Bangle.getHealthStatus("last"));
-  }, 3000);
+  }, 1500);
 }
 
 function onConnect() {
@@ -156,6 +186,9 @@ function processMessage(raw) {
       case "Request Health":
         sendHealthData();
         break;
+      case "Request HRV":
+        sendHRVData();
+        break;
       case "Request System Info":
         exports.sendSystemData();
         break;
@@ -166,6 +199,8 @@ function processMessage(raw) {
   }
 
   if (obj) {
+    print("Got object:", obj);
+
     switch (obj.id) {
       case "Weather":
         updateWeatherData(obj);

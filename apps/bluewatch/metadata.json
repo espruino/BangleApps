@@ -2,7 +2,7 @@
   "id": "bluewatch",
   "name": "BlueWatch iOS Integration",
   "shortName": "BlueWatch",
-  "version": "0.05",
+  "version": "0.06",
   "description": "Uses the native iOS app 'BlueWatch' to fetch weather/time/location, use phone GPS, find phone/watch, and more.",
   "icon": "app.png",
   "tags": "tool,bluetooth,apple,ios,system",

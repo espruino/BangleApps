@@ -3,3 +3,4 @@
 0.03: Fix data intervals firing randomly, pairing issues, increased time between battery pushing, and queued data sending (Requires BlueWatch on iOS version 1.02)
 0.04: Add sending of calories (if installed), fix myLocation not saving if file doesn't exist, and emit BlueWatchMessage event upon message received
 0.05: Allows BlueWatch to update and sync watch's time (Requires BlueWatch on iOS version 1.05)
+0.06: Supports sending of HRV data if 'HRV Tracking' app is installed (Requires BlueWatch on iOS version 1.06)
