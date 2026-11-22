@@ -68,6 +68,7 @@ async function main() {
     }
   }
 
+  const prAuthor = local ? null : parseAuthor(getenv("PR_AUTHOR", ""));
   const prevTags = local ? {} : await previousTags();
   const output = [];
 
@@ -78,6 +79,10 @@ async function main() {
         debug(`Skipping ${author} - no new apps`);
         continue;
       }
+    }
+    if(author == prAuthor){
+      debug(`Skipping ${author} - author of this PR`);
+      continue;
     }
 
     output.push(makeLine({ author, apps }));
@@ -265,9 +270,11 @@ function fetchGH({ path, token, data }) {
   });
 }
 
-function getenv(name) {
+function getenv(name, fallback) {
   const val = process.env[name];
   if(!val){
+    if(fallback != null) return fallback;
+
     console.error(`Need environment variable $${name}`);
     process.exit(1);
   }
