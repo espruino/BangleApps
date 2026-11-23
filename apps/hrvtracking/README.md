@@ -51,6 +51,8 @@ require("hrvtracking").getData();
 which will return all available data saved in file, regardless of memory taken up. Use sparingly, as it is a large object.
 
 An event, `hrv`, is emitted when a new HRV is calculated for that day, which can be listened for using `Bangle.on("hrv")` 
+
+When Gadgetbridge fetches activity data (`actfetch`), each reading newer than its `ts` is sent as `{t:"hrv", ts, hrv}` (RMSSD in milliseconds).
 ## Authors
 - RKBoss6
 
