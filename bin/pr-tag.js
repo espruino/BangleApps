@@ -85,7 +85,7 @@ async function main() {
       continue;
     }
 
-    output.push(makeLine({ author, apps }));
+    output.push(comment.makeLine({ author, apps }));
   }
 
   if(output.length){
@@ -141,21 +141,27 @@ function isGitHubHandle(name) {
   return /^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$/.test(name);
 }
 
-function makeLine({ author, apps }) {
-  apps = [...apps].sort();
+const comment = {
+  makeLine({ author, apps }) {
+    apps = [...apps].sort();
 
-  return `Tagging @${author} as the author of ${apps.map(a => `\`${a}\``).join(", ")}`
-}
+    // ensure parseLine() is updated
+    return `Tagging @${author} as the author of ${apps.map(a => `\`${a}\``).join(", ")}`
+  },
 
-function parseLine(line) {
-  const parts = line.split(" ");
+  parseLine(line) {
+    // ensure makeLine() is updated
+    const match = /Tagging @(\S+) as the author of (.*)/.exec(line);
+    if(!match) return null;
 
-  if(parts.length >= 4 && parts[0] === "tagging" && parts[2] === "for")
+    const [_, author, apps] = match;
+
     return {
-      author: parseAuthor(parts[1]),
-      apps: parts.slice(3).map(app => app.replace(/[,`]/g, "")),
+      author: parseAuthor(author),
+      apps: apps.split(", ").map(app => app.replace(/`/g, "")),
     };
-}
+  },
+};
 
 function parseAuthor(author) {
   return author.trim().replace(/^@/, "");
@@ -191,7 +197,7 @@ async function previousTags() {
     .flatMap(body =>
       body
         .split("\n")
-        .map(parseLine)
+        .map(comment.parseLine)
         .filter(x => x)
     )
     .forEach(({ author, apps }) => {
