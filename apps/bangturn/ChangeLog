@@ -1,0 +1,2 @@
+0.01: First version: one-hour walk timer on sched, turnaround alarm at 30 min, walk-back countdown buzzes, GPS average speed (Out and Back) and a minutes-left widget
+1.00: First release in the App Loader: walk length setting, kph or mph, countdown buzzes at 1/2, 1/4 and 1/8 of the way back, time to get back and speed needed along the path walked, phone GPS (Gadgetbridge) with GPS status in Info, tap the widget to open, back to the clock 8 min after the walk ends
