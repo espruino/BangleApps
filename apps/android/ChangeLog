@@ -52,3 +52,4 @@
 0.47: Send activity and battery status at the same time. Allows Bangle.js to enter low power bluetooth mode more readily
 0.48: Fix memory leak with repeated usages of activity tracking (#4344)
 0.49: Add a "Cal. Reminders" setting: calendar events with "reminders" (Unix seconds) set hidden one-off alarms, so reminders also go off without a phone connection
+0.50: Send active calories in activity data if the "Calorie Tracker" app is installed

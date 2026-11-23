@@ -36,6 +36,23 @@ function setCalendarReminders(ids, event) {
   sched.reload();
 }
 
+// MyProfile data, or undefined if the "calories" app is not installed or a field calcCalories() needs is missing.
+// getActCalories() relies on this check: require("calories") throws if the app is not installed, and calcCalories()
+// shows a prompt and reloads the app if a field is missing. Either would stop the activity data sent to Gadgetbridge.
+exports.getCalProfile = function() {
+  var p = require("Storage").readJSON("myprofile.json", 1);
+  if (require("Storage").read("calories") === undefined || !p || !p.weight || !p.minHrm || !p.maxHrm || !p.birthday || !p.height) return;
+  return p;
+};
+
+// Active calories (kcal) of a 10 minute health record, undefined if unknown
+exports.getActCalories = function(r, p) {
+  if (!p || !r.bpm || r.activity == "NOT_WORN") return;
+  // Safe only because p comes from getCalProfile(), which checked that the "calories" module exists
+  var c = require("calories").calcCalories({steps: r.steps, bpm: r.bpm, duration: 10}, p);
+  if (c) return c.activeCalories;
+};
+
 exports.gbHandler = (event) => {
   var HANDLERS = {
     // {t:"notify",id:int, src,title,subject,body,sender,tel:string} add
@@ -241,6 +258,7 @@ exports.gbHandler = (event) => {
     "actfetch": function() {
       exports.gbSend({t: "actfetch", state: "start"});
       var actCount = 0;
+      var calProfile = exports.getCalProfile();
       var actCb = function(r) {
         // The health lib saves the samples at the start of the 10-minute block
         // However, GB expects them at the end of the block, so let's offset them
@@ -253,7 +271,8 @@ exports.gbHandler = (event) => {
             stp: r.steps,
             hrm: r.bpm,
             mov: r.movement,
-            act: r.activity
+            act: r.activity,
+            cal: exports.getActCalories(r, calProfile)
           });
           actCount++;
         }

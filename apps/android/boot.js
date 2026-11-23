@@ -31,7 +31,9 @@
   });
   // Health tracking - if 'realtime' data is sent with 'rt:1', but let's still send our activity log every 10 mins
   Bangle.on('health', h=>{
-    require("android").gbSend({ t: "act", stp: h.steps, hrm: h.bpm, mov: h.movement, act: h.activity }); // h.activity added in 2v26
+    var android = require("android");
+    android.gbSend({ t: "act", stp: h.steps, hrm: h.bpm, mov: h.movement, act: h.activity, // h.activity added in 2v26
+      cal: android.getActCalories(h, android.getCalProfile()) });
     sendBattery();
   });
   // Music control
