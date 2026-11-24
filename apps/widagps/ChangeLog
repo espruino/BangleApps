@@ -3,3 +3,4 @@
 0.03: Fix issue where Bangle could lock up because GPS was turned off right after upload
       Remove debug AGPS data that used up memory
       Use Bangle.http to http requests so other http requests don't trigger a GPS write
+0.04: Restore lastAGPS from agpsdata.json on start (prevents a new A-GPS fetch on every connect), and skip re-entry while a request is in flight
