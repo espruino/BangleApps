@@ -74,14 +74,24 @@ g.drawImage(atob("FBQBAAAABgAAYAAPAACwABOAATgAI8ACPABD4AQ+AEPgD8EAg/AQP4AD+CD/wj
       var chunkSize = 128;
       var gnss_select="1";
       Serial1.println(CASIC_CHECKSUM("$PCAS04,"+gnss_select)); // set GNSS mode
-      for (var i=0;i<bin.length;i+=chunkSize)
-        Serial1.write(atob(btoa(bin.substr(i,chunkSize))));
-      gpsTimeout = setTimeout(function() {
-        // wait 2 sec after we complete before turning GPS off to allow serial output buffer to empty
-        // see https://github.com/espruino/Espruino/pull/2782
-        gpsTimeout = undefined;
-        Bangle.setGPSPower(false, "agpsdata");
-      }, 2000);
+      var i = 0;
+      // Write one chunk every 200ms (128 bytes take 133ms at 9600 baud) so the serial output buffer never fills.
+      // Writing everything at once reset the Bangle when the GPS sent its first line while the buffer was full.
+      function writeChunk() {
+        if (i < bin.length) {
+          Serial1.write(atob(btoa(bin.substr(i,chunkSize))));
+          i += chunkSize;
+          gpsTimeout = setTimeout(writeChunk, 200);
+          return;
+        }
+        gpsTimeout = setTimeout(function() {
+          // wait 2 sec after we complete before turning GPS off to allow serial output buffer to empty
+          // see https://github.com/espruino/Espruino/pull/2782
+          gpsTimeout = undefined;
+          Bangle.setGPSPower(false, "agpsdata");
+        }, 2000);
+      }
+      writeChunk();
       return true;
     } catch(e) {
       Bangle.setGPSPower(false, "agpsdata");
