@@ -198,16 +198,22 @@ if (global.sleeplog.conf.enabled) {
         }
       }
 
-      // check if changing to deep sleep from non sleeping
-      if (data.status === 4 && global.sleeplog.status <= 2) {
+      // re-check wearing while already asleep, if movement is near zero and
+      // watch temperature check is enabled
+      // (a full charge leaves `isCharging()` false while the watch sits in its dock)
+      if (conf.wearTemp !== 19.5 && data.status >= 3 && global.sleeplog.status >= 3 &&
+        !Bangle.isCharging() && (data.movement || 0) < 50) {
         global.sleeplog.checkIsWearing((isWearing, data) => {
-          // correct status
           if (!isWearing) data.status = 1;
-          // set status
+          global.sleeplog.setStatus(data);
+        }, data);
+      // check if changing to deep sleep from non sleeping
+      } else if (data.status === 4 && global.sleeplog.status <= 2) {
+        global.sleeplog.checkIsWearing((isWearing, data) => {
+          if (!isWearing) data.status = 1;
           global.sleeplog.setStatus(data);
         }, data);
       } else {
-        // set status
         global.sleeplog.setStatus(data);
       }
       // update activity in the 'health' event for when it's logged/sent to Gadgetbridge
