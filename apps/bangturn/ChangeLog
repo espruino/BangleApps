@@ -5,3 +5,4 @@
 1.03: Use watch GPS setting: set it to no to keep the watch's own GPS chip off and use only the phone's GPS
 1.04: Countdown buzzes just buzz: no re-lock afterwards (a buzz may light and unlock the watch for a moment)
 1.05: A tap on the widget bar no longer starts a walk, so other apps' widgets can be tapped on the start screen
+1.06: New icon: the U-turn arrow is one continuous line (the old one had a gap that looked like it had been cut)

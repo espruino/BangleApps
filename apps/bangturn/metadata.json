@@ -2,7 +2,7 @@
   "id": "bangturn",
   "name": "BangTurn",
   "shortName": "BangTurn",
-  "version": "1.05",
+  "version": "1.06",
   "description": "Turnaround timer for out-and-back walks: buzzes when it's time to turn around (halfway through an hour, or the length you set), counts you home with short buzzes, and shows your GPS speed, the time it will take to get back and the speed you need. A widget shows the minutes left.",
   "icon": "app.png",
   "screenshots": [
