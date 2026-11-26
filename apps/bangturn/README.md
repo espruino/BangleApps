@@ -24,9 +24,31 @@ Press the button on the start screen for a menu:
   length applies to the next walk.
 - **Info**: where the GPS comes from and the battery (see below).
 - **Units**: tap to switch the speeds between kph and mph.
+- **GPS log**: off by default. When on, each walk records every GPS fix the
+  watch gets, so the speeds can be checked against what GPS really sent (see
+  below).
+- **Use watch GPS**: yes by default. Set it to **no** to keep the watch's own
+  GPS chip (the big battery drain) off: walks then use only the phone's GPS
+  (see Battery below), and if the phone's fixes stop, the speeds and the way
+  home wait for them rather than switching to the watch. Without the phone's
+  GPS set up, a walk then has no GPS at all: the timer and buzzes still work,
+  and the speeds show `--`. It applies at once, also during a walk.
 
-Length and Units are also in Settings > Apps > BangTurn, and Info and Units
-in the menu during a walk.
+Length, Units, GPS log and Use watch GPS are also in Settings > Apps > BangTurn, and Info,
+Units and Use watch GPS in the menu during a walk.
+
+## GPS log
+
+Switch **GPS log** on before a walk. The walk then saves each GPS fix as it
+arrives (from the phone or the watch) to `bangturn.log` on the watch, about
+250 KB an hour, up to 1 MB. Info shows its size. The log of the last walk
+stays on the watch until the next walk starts a new one.
+
+To download it after the walk: open the App Loader you installed BangTurn
+from (on a computer, disconnect the watch from Gadgetbridge first), connect,
+go to **My Apps**, and press the download button next to BangTurn.
+Gadgetbridge's own App Loader on the phone works too, without disconnecting.
+**Download GPS log** saves it as a CSV file. The same page can delete it.
 
 ## Leaving the app
 
@@ -57,7 +79,8 @@ What to expect (rough figures):
 - **A walk with the phone's GPS** (Android Integration, "Overwrite GPS" on):
   the watch's GPS chip goes off once the phone's fixes arrive, so the walk
   should cost the watch much less. The phone's battery pays instead. If the
-  phone stops sending fixes, the watch's own GPS takes over.
+  phone stops sending fixes, the watch's own GPS takes over, unless **Use
+  watch GPS** is set to no.
 
 To use the phone's GPS, all three of these are needed (otherwise every
 walk runs the watch's own GPS):

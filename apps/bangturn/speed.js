@@ -62,6 +62,7 @@ var SNAP = 25;        // m: this near an earlier point of the trail is back on i
 var SAVED = 12;       // m a cut must save, so a right-angle corner isn't one
 var SCAN = 5;         // m to move before the trail is looked through again
 var MAXC = 512;       // points kept: a longer trail is thinned to every other one
+var LOG = "bangturn.log"; // the GPS log (a StorageFile), when the setting is on
 
 /* Saved as bangturn.gps.json:
    { start,          the walk this belongs to (bangturn.json's start)
@@ -98,6 +99,9 @@ var px, py;         // where you are (the last good fix), in the trail's metres
 var sx, sy;         // where the trail was last looked through from
 var origMove;       // Android Integration's Bangle.moveGPSPower, while phoneFirst is in
 var holdTimer;      // pending: the watch's own GPS comes on unless the phone sends a fix
+var lf, lb;         // the GPS log being written (StorageFile) and its size so far
+var lsrc;           // sources ("p"/"w") whose first fix the log has in full
+var allow = true;   // the Watch GPS setting, read when tracking starts (and on "settings")
 
 /* Save the state. quick: leave the trail's file as it is. */
 function save(quick) {
@@ -113,12 +117,16 @@ function listen() {
   armEnd();
   if (tracking) return;
   tracking = true;
+  allow = require("bangturn").getWatchGps();
   phoneFirst();
-  Bangle.setGPSPower(1, "bangturn");
+  // With the watch's GPS not allowed and no phone GPS (Android Integration's
+  // "Overwrite GPS" off) there is nothing to ask: the request would only
+  // power the chip.
+  if (allow || origMove) Bangle.setGPSPower(1, "bangturn");
   // Android Integration has just powered the watch's GPS, as it does on
   // every app load until the phone's next fix. If the phone was supplying
-  // GPS a moment ago, wait for it instead.
-  if (origMove && S && Date.now() - S.ph < PHONE_FRESH && btUp()) hold();
+  // GPS a moment ago, wait for it instead. Not allowed: off now, for good.
+  if (origMove && (!allow || S && Date.now() - S.ph < PHONE_FRESH && btUp())) hold();
   Bangle.on("GPS", onGPS);
   E.on("kill", save);
 }
@@ -131,7 +139,8 @@ function listen() {
    irregularly. The chip then flaps on and off all walk, which is the drain
    the phone's GPS is there to avoid. So during a walk BangTurn steps in:
    while the phone is connected, the chip only comes on after exports.PHONE_WAIT
-   with no phone fix. With no Bluetooth it comes on at once, as before. */
+   with no phone fix. With no Bluetooth it comes on at once, as before.
+   With the Watch GPS setting off it never comes on: hold() just keeps it off. */
 exports.PHONE_WAIT = 60000;
 
 function btUp() { return !!NRF.getSecurityStatus().connected; }
@@ -140,7 +149,9 @@ function btUp() { return !!NRF.getSecurityStatus().connected; }
    android app then calls moveGPSPower(0), which cancels this). */
 function hold() {
   if (holdTimer) clearTimeout(holdTimer);
+  holdTimer = undefined;
   origMove(0);
+  if (!allow) return;
   holdTimer = setTimeout(function () { holdTimer = undefined; origMove(1); }, exports.PHONE_WAIT);
 }
 /* Give the chip back at once if a hold is pending (no-op if no app wants GPS) */
@@ -154,7 +165,7 @@ function phoneFirst() {
   if (origMove || typeof Bangle.moveGPSPower != "function") return;
   origMove = Bangle.moveGPSPower;
   Bangle.moveGPSPower = function (on) {
-    if (on && btUp()) return hold();
+    if (on && (!allow || btUp())) return hold();
     if (holdTimer) clearTimeout(holdTimer);
     holdTimer = undefined;
     origMove(on);
@@ -185,10 +196,55 @@ function armEnd() {
   }, Math.max(0, T0 + DUR - Date.now()) + END_MARGIN);
 }
 
+/* ---- GPS log (the "GPS log" setting, off by default) ----
+   For checking the speeds against what GPS really sent: every GPS event
+   with a position, as it came and before any filtering, one CSV line each:
+     now,time,lat,lon,hdop,speed,sats,src
+   now: the watch's clock (ms); time: the fix's own time (ms, empty if it
+   has none); speed as the event gives it; src: p (the phone, through
+   Gadgetbridge) or w (the watch's own GPS). Lines starting with # are notes:
+   the walk at the top ("# start=<ms> t0=<ms> dur=<ms>", t0 being the start
+   moved by any -1 min), "# t0=<ms>" when -1 min moves it, and the first fix
+   from each source in full ("# p {...}"), to show every field it carries.
+   Each walk starts a new log. It stays after the walk until the next one, to
+   download with BangTurn's button in the App Loader (interface.html). */
+exports.LOG_MAX = 1000000; // bytes: the log stops here (about 4 hours of a fix a second)
+function logOpen(fresh) {
+  lf = undefined;
+  lsrc = "";
+  if (!require("bangturn").getLog()) return;
+  var st = require("Storage");
+  if (fresh && st.getFree() < exports.LOG_MAX) return; // no room: no log, rather than a full watch
+  lf = st.open(LOG, fresh ? "w" : "a");
+  lb = fresh ? 0 : lf.getLength();
+  if (!lb) logLine("# bangturn GPS log 1 start=" + S.start + " t0=" + T0 + " dur=" + DUR +
+    "\nnow,time,lat,lon,hdop,speed,sats,src");
+}
+function logLine(l) {
+  if (lb > exports.LOG_MAX) {
+    lf.write("# full\n");
+    lf = undefined;
+    return;
+  }
+  lf.write(l + "\n");
+  lb += l.length + 1;
+}
+function num(v) { return typeof v == "number" && !isNaN(v) ? v : ""; }
+function logFix(f, now) {
+  var c = f.externalSource ? "p" : "w";
+  if (lsrc.indexOf(c) < 0) {
+    lsrc += c;
+    logLine("# " + c + " " + JSON.stringify(f));
+  }
+  if (lf) logLine(now + "," + (f.time ? f.time.getTime() : "") + "," + f.lat + "," + f.lon + "," +
+    num(f.hdop) + "," + num(f.speed) + "," + num(f.satellites) + "," + c);
+}
+
 /* Stop tracking and turn GPS off, keeping the numbers. */
 function stop() {
   if (endTimer) clearTimeout(endTimer);
   endTimer = undefined;
+  lf = undefined;
   if (tracking) {
     tracking = false;
     Bangle.removeListener("GPS", onGPS);
@@ -351,7 +407,10 @@ function onGPS(f) {
   src = f.externalSource ? "phone" : "watch";
   srcAt = Date.now();
   if (f.externalSource && S) { S.ph = srcAt; dirty = true; }
-  if (f.fix && !isNaN(f.lat) && !isNaN(f.lon)) fixAt = srcAt;
+  if (f.fix && !isNaN(f.lat) && !isNaN(f.lon)) {
+    fixAt = srcAt;
+    if (lf) logFix(f, srcAt);
+  }
   // The walk is over. The core's "end" follows, but never leave GPS on.
   if (el >= DUR) return stop();
   if (!f.fix || isNaN(f.lat) || isNaN(f.lon) || f.hdop > HDOP_MAX) return;
@@ -416,8 +475,10 @@ function begin(s, fresh) {
     py = sy = Math.round((S.la - S.oa) * 1000 * KM_PER_DEG);
     trailAt = S.lt;
   } else if (S !== f) require("Storage").erase(TRAIL); // a new walk: a new trail
-  if (Date.now() - T0 < DUR) listen();
-  else stop();
+  if (Date.now() - T0 < DUR) {
+    logOpen(S !== f); // a new walk: a new log
+    listen();
+  } else stop();
 }
 
 /* Called by bangturn.boot.js when it finds a walk running. */
@@ -427,6 +488,19 @@ exports.resume = function (s) {
 
 /* Called by bangturn.boot.js for each Bangle "bangturn" event. */
 exports.event = function (type) {
+  if (type == "settings") {
+    // the Watch GPS setting changed during a walk: start GPS again with it
+    // (the numbers and the trail carry on from the saved state)
+    if (tracking && require("bangturn").getWatchGps() != allow) {
+      dirty = true;
+      stop();
+      begin(require("bangturn").read());
+      // allowed again: the android app gave the chip up for the phone long
+      // ago (its own wait has passed), so turn it on unless hold() waits
+      if (allow && origMove && !holdTimer) origMove(1);
+    }
+    return;
+  }
   if (type == "end" || type == "cancel") {
     dirty = false; // nothing to keep
     stop();
@@ -445,7 +519,9 @@ exports.event = function (type) {
     begin(s, true);
   } else if (!S || S.start !== s.start) begin(s);
   else {
-    T0 = require("bangturn").startTime(s); // "-1 min" moves the turnaround
+    var t0 = require("bangturn").startTime(s); // "-1 min" moves the turnaround
+    if (lf && t0 != T0) logLine("# t0=" + t0);
+    T0 = t0;
     if (tracking) armEnd(); // and the end
   }
 };
@@ -518,6 +594,11 @@ exports.trail = function () {
   return { n: N, m: N ? C[N - 1] : 0, cd: S ? S.cd : CRUMB };
 };
 
+/* Size of the GPS log in bytes (the last walk's, or this one's so far), 0 if none */
+exports.logSize = function () {
+  return require("Storage").open(LOG, "r").getLength();
+};
+
 /* A speed from get() as text: "5.2 kph", or "-- kph" when it is null.
    (Not toFixed(1): Espruino's doesn't carry, so 4.96 would give "4.9".) */
 exports.fmt = function (kph) {
@@ -531,6 +612,7 @@ exports.fmt = function (kph) {
    { from: "phone"|"watch"|null (no GPS event in the last SRC_MS),
      chip: true while the watch's own GPS chip is powered,
      wait: true while the chip is held off, waiting for the phone's next fix,
+     allow: the Watch GPS setting (false: the chip is never used),
      fixAge: ms since the last GPS event with a position, or null if none
        this walk (since the app loaded) }.
    chip asks the firmware (Bangle.getGPSFix() is undefined when the chip is
@@ -539,6 +621,6 @@ exports.fmt = function (kph) {
 var SRC_MS = 30000;
 exports.source = function () {
   var fresh = srcAt !== undefined && Date.now() - srcAt < SRC_MS;
-  return { from: fresh ? src : null, chip: Bangle.getGPSFix() !== undefined, wait: !!holdTimer,
+  return { from: fresh ? src : null, chip: Bangle.getGPSFix() !== undefined, wait: !!holdTimer, allow: tracking ? allow : require("bangturn").getWatchGps(),
     fixAge: fixAt === undefined ? null : Date.now() - fixAt };
 };

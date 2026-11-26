@@ -13,8 +13,7 @@ var T = exports.T = {
   gap: 300,        // countdown buzz off
   long: 600,       // turnaround buzz on
   longGap: 200,    // turnaround buzz off
-  turnMax: 6000,   // turnaround alarm stops after this
-  settle: 500      // after the last countdown buzz, still re-lock an unlock
+  turnMax: 6000    // turnaround alarm stops after this
 };
 
 /* One short confirmation buzz when a walk starts. Called by the app. */
@@ -23,30 +22,21 @@ exports.started = function () {
 };
 
 /* Buzzing shakes the accelerometer, and on a real Bangle.js 2 that can
-   read as a twist or a tap, which unlocks the watch and lights it (Chris
-   saw this on the countdown buzzes). The user's twist and tap wake-ups
-   stay on (Chris wants them), so instead: a countdown locks the watch
-   again if it unlocks while buzzing, and the turnaround alarm doesn't
+   read as a twist or a tap: the firmware's twist and tap detection don't
+   know the motor is running. So a buzz may unlock the watch and light it
+   for a moment, as the user's own twist or tap would; it locks again on
+   its normal timeout. The countdown just buzzes and leaves that alone
+   (Chris, 2026-11-25: no workarounds; an earlier re-lock turned the
+   display off and left the screen black). The turnaround alarm doesn't
    treat an unlock as "seen it" (only a button press or a tap stops it). */
 
-/* Walk-back countdown: n short buzzes (1 at 15 min left, 2 at 8, 3 at 4,
-   4 at 1). Runs inside whatever app is open: no drawing, no load(). Must
-   not unlock the watch or light the screen: if the watch was locked and
-   unlocks while we buzz (or just after, T.settle), it is locked again. */
+/* Walk-back countdown: n short buzzes (1 at 1/2 of the way back, 2 at 1/4,
+   3 at 1/8). Runs inside whatever app is open: no drawing, no load(), and
+   it doesn't touch the lock, the backlight or the display. */
 exports.countdown = function (n) {
-  var i = 0, wasLocked = Bangle.isLocked();
-  var wasLit = Bangle.isBacklightOn ? Bangle.isBacklightOn() : Bangle.isLCDOn();
-  function onLock(locked) {
-    if (locked || !wasLocked) return;
-    Bangle.setLocked(true);
-    if (!wasLit) Bangle.setLCDPower(0);
-  }
-  Bangle.on("lock", onLock);
+  var i = 0;
   (function next() {
-    if (i++ >= n) { // last buzz done; the shake can be read a moment later
-      setTimeout(function () { Bangle.removeListener("lock", onLock); }, T.settle);
-      return;
-    }
+    if (i++ >= n) return;
     Bangle.buzz(T.short, 1);
     setTimeout(next, T.short + T.gap);
   })();

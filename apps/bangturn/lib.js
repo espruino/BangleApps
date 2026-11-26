@@ -81,6 +81,37 @@ exports.setUnits = function (u) {
   emit("settings");
   return u;
 };
+/* The GPS log setting: when on, each walk records every GPS fix it gets
+   to bangturn.log (see bangturn.speed), for checking the speeds against
+   what GPS really sent. Saved in bangturn.settings.json as { log }. Off by
+   default. Applies from the next walk. Emits "settings". */
+exports.getLog = function () {
+  return !!(require("Storage").readJSON(SETTINGS, 1) || {}).log;
+};
+exports.setLog = function (on) {
+  var o = require("Storage").readJSON(SETTINGS, 1) || {};
+  o.log = !!on;
+  require("Storage").writeJSON(SETTINGS, o);
+  emit("settings");
+  return o.log;
+};
+/* The Watch GPS setting: whether BangTurn may use the watch's own GPS chip
+   (the big battery drain). Saved in bangturn.settings.json as { wgps:
+   false } when not; allowed by default, as before the setting. When not
+   allowed, a walk takes GPS only from the phone (Android Integration's
+   "Overwrite GPS"), and the chip stays off even when the phone's fixes
+   stop (see bangturn.speed). Applies at once, also during a walk. Emits
+   "settings". */
+exports.getWatchGps = function () {
+  return (require("Storage").readJSON(SETTINGS, 1) || {}).wgps !== false;
+};
+exports.setWatchGps = function (on) {
+  var o = require("Storage").readJSON(SETTINGS, 1) || {};
+  if (on) delete o.wgps; else o.wgps = false;
+  require("Storage").writeJSON(SETTINGS, o);
+  emit("settings");
+  return !!on;
+};
 /* A speed in kph, in units `u` (a non-number is passed through) */
 exports.toUnits = function (v, u) {
   return u == "mph" && typeof v == "number" ? v / MPH : v;
