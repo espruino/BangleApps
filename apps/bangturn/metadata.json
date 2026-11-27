@@ -1,0 +1,41 @@
+{
+  "id": "bangturn",
+  "name": "BangTurn",
+  "shortName": "BangTurn",
+  "version": "1.06",
+  "description": "Turnaround timer for out-and-back walks: buzzes when it's time to turn around (halfway through an hour, or the length you set), counts you home with short buzzes, and shows your GPS speed, the time it will take to get back and the speed you need. A widget shows the minutes left.",
+  "icon": "app.png",
+  "screenshots": [
+    { "url": "screenshots/1-start.png" },
+    { "url": "screenshots/2-walking-out.png" },
+    { "url": "screenshots/3-turn-around.png" },
+    { "url": "screenshots/4-walking-back.png" },
+    { "url": "screenshots/5-walk-menu.png" }
+  ],
+  "type": "app",
+  "tags": "outdoors,gps,tool,widget",
+  "supports": ["BANGLEJS2"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "author": "cbishopvelti",
+  "allow_emulator": true,
+  "dependencies": { "scheduler": "type" },
+  "storage": [
+    { "name": "bangturn.app.js", "url": "app.js" },
+    { "name": "bangturn.img", "url": "app-icon.js", "evaluate": true },
+    { "name": "bangturn", "url": "lib.js" },
+    { "name": "bangturn.alerts", "url": "alerts.js" },
+    { "name": "bangturn.speed", "url": "speed.js" },
+    { "name": "bangturn.picker", "url": "picker.js" },
+    { "name": "bangturn.settings.js", "url": "settings.js" },
+    { "name": "bangturn.boot.js", "url": "boot.js" },
+    { "name": "bangturn.wid.js", "url": "widget.js" }
+  ],
+  "data": [
+    { "name": "bangturn.json" },
+    { "name": "bangturn.gps.json" },
+    { "name": "bangturn.trail" },
+    { "name": "bangturn.settings.json" },
+    { "name": "bangturn.log", "storageFile": true }
+  ]
+}

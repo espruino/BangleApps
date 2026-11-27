@@ -1,0 +1,81 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/spectre.min.css">
+  </head>
+  <body>
+    <!-- BangTurn's page in the App Loader (the download button in My Apps):
+         download or delete the GPS log, bangturn.log (docs/spec.md, "GPS log"). -->
+    <div class="container" style="padding:8px">
+      <h4>BangTurn GPS log</h4>
+      <p id="status">Reading the log from the watch...</p>
+      <button class="btn btn-primary" id="download" disabled>Download GPS log</button>
+      <button class="btn" id="delete" disabled>Delete log</button>
+      <p class="text-gray" style="margin-top:12px">Switch <b>GPS log</b> on in BangTurn's button menu (or
+        Settings &gt; Apps &gt; BangTurn) before a walk. Each walk starts a new log, and the last one
+        stays on the watch until then.</p>
+    </div>
+
+    <script src="../../core/lib/interface.js"></script>
+    <script>
+var LOG = "bangturn.log";
+var data = "";
+var info = document.getElementById("status");
+var btnDownload = document.getElementById("download");
+var btnDelete = document.getElementById("delete");
+
+function pad(n) { return ("0" + n).slice(-2); }
+/* "2026-11-24 12:05" in this computer's time zone */
+function when(ms) {
+  var d = new Date(ms);
+  return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + " " +
+    pad(d.getHours()) + ":" + pad(d.getMinutes());
+}
+/* What the log holds, in a sentence */
+function summary(text) {
+  var lines = text.split("\n"), p = 0, w = 0, first, last, start;
+  lines.forEach(function (l) {
+    var m = /^# bangturn GPS log \d+ start=(\d+)/.exec(l);
+    if (m) start = +m[1];
+    if (!/^\d/.test(l)) return;
+    var c = l.split(","), now = +c[0];
+    if (c[7] == "p") p++; else w++;
+    if (first === undefined) first = now;
+    last = now;
+  });
+  if (!p && !w) return "The log has no GPS fixes yet.";
+  return "Walk started " + (start ? when(start) : "?") + ": " + (p + w) + " fixes (" + p + " from the phone, " +
+    w + " from the watch) over " + Math.round((last - first) / 60000) + " min, " +
+    Math.round(text.length / 1024) + " KB.";
+}
+
+function read() {
+  info.textContent = "Reading the log from the watch...";
+  btnDownload.disabled = btnDelete.disabled = true;
+  Util.readStorageFile(LOG, function (text) {
+    data = text || "";
+    if (!data) {
+      info.textContent = "There's no GPS log on the watch.";
+      return;
+    }
+    info.textContent = summary(data);
+    btnDownload.disabled = btnDelete.disabled = false;
+  });
+}
+
+btnDownload.addEventListener("click", function () {
+  var m = /start=(\d+)/.exec(data);
+  var name = "bangturn-gps-" + (m ? when(+m[1]).replace(/[ :]/g, "-") : "log");
+  Util.saveFile(name + ".csv", "text/csv", data);
+});
+btnDelete.addEventListener("click", function () {
+  Util.showModal("Deleting the GPS log...");
+  Util.eraseStorageFile(LOG, function () {
+    Util.hideModal();
+    read();
+  });
+});
+
+function onInit() { read(); }
+    </script>
+  </body>
+</html>
