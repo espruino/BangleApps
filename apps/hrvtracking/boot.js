@@ -47,3 +47,13 @@ function checkForTime() {
 
 //checkForTime()
 setInterval(checkForTime, 3600000 / 2.5); // Fires every 24 minutes
+
+// Send the readings to Gadgetbridge when it fetches activity data (Android Integration emits "GB" for each message)
+Bangle.on("GB", e => {
+  if (e.t != "actfetch") return;
+  ((require("Storage").readJSON("hrv.json", 1) || {}).hrv || []).forEach(r => {
+    if (r.timestamp < e.ts || !r.hrv) return;
+    Bluetooth.println("");
+    Bluetooth.println(JSON.stringify({t: "hrv", ts: Math.round(r.timestamp), hrv: r.hrv}));
+  });
+});
